@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# cjk-gs-integrate - setup ghostscript for CID/TTF CJK fonts
+# cjk-gs-integrate - setup Ghostscript for CID/TTF CJK fonts
 #
 # Copyright 2015-2017 by Norbert Preining
 # Copyright 2016-2017 by Japanese TeX Development Community
@@ -16,9 +16,9 @@
 #
 # TODO:
 # - how to deal with MacTeX pre-shipped configuration files?
-# - interoperability with updmap-config-kanji
-# - input from CK about font priorities
+# - interoperability with kanji-config-updmap
 #
+# Note that symlink names should be consistent with ptex-fontmaps!
 
 $^W = 1;
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
@@ -28,11 +28,8 @@ use Cwd 'abs_path';
 use strict;
 
 (my $prg = basename($0)) =~ s/\.pl$//;
-my $version = '20170505.0';
+my $version = '20170624.0';
 
-# if windows, we might create batch file for links
-my $winbatch = '';
-my $winbatch_content = '';
 if (win32()) {
   # conversion between internal (utf-8) and console (cp932):
   # multibyte characters should be encoded in cp932 at least during
@@ -43,15 +40,10 @@ if (win32()) {
   # routines. make sure all of these should be restricted to win32 mode!
   # TODO: what to do with $opt_fontdef, @opt_aliases and $opt_filelist,
   #       with regard to encodings?
-  # TODO: running with --link-texmf option for multiple times is harmful,
-  #       because kpathsea catches texmflocal links and abs_path misunderstand
-  #       it as an actual file; currently the users have to run with --remove
-  #       first, before re-running with --link-texmf.
   use utf8;
   use Encode;
   # some perl functions (symlink, -l test) does not work
   print_warning("Sorry, we have only partial support for Windows!\n");
-  $winbatch = "makefontlinks.bat";
 }
 
 my %encode_list = (
@@ -253,6 +245,13 @@ my $akotfps_pathpart = "dvips/ps2otfps";
 my $akotfps_datafilename = "psnames-for-otf";
 my $akotfps_datacontent = '';
 
+# if windows, we might create batch file for links
+my $winbatch = "makefontlinks.bat";
+my $winbatch_content = '';
+
+# dump output for data file (for easy editing for users)
+my $dump_datafile = "$prg-data.dat";
+
 my $opt_output;
 my $opt_fontdef;
 my @opt_aliases;
@@ -261,8 +260,10 @@ my $opt_texmflink;
 my $opt_akotfps;
 my $opt_force = 0;
 my $opt_remove = 0;
+my $opt_cleanup = 0;
 my $opt_hardlink = 0;
-my $opt_winbatch = 0;
+my $opt_winbatch;
+my $opt_dump_data;
 my $opt_only_aliases = 0;
 my $opt_listaliases = 0;
 my $opt_listallaliases = 0;
@@ -276,28 +277,30 @@ my $opt_help = 0;
 my $opt_markdown = 0;
 
 if (! GetOptions(
-        "o|output=s"  => \$opt_output,
-        "f|fontdef=s" => \$opt_fontdef,
-        "a|alias=s"   => \@opt_aliases,
-        "filelist=s"  => \$opt_filelist,
-        "link-texmf:s" => \$opt_texmflink,
-        "otfps:s"      => \$opt_akotfps,
-        "force"       => \$opt_force,
-        "remove"       => \$opt_remove,
-        "hardlink"     => \$opt_hardlink,
-        "winbatch"     => \$opt_winbatch,
-        "only-aliases" => \$opt_only_aliases,
-        "list-aliases" => \$opt_listaliases,
+        "o|output=s"       => \$opt_output,
+        "f|fontdef=s"      => \$opt_fontdef,
+        "a|alias=s"        => \@opt_aliases,
+        "filelist=s"       => \$opt_filelist,
+        "link-texmf:s"     => \$opt_texmflink,
+        "otfps:s"          => \$opt_akotfps,
+        "force"            => \$opt_force,
+        "remove"           => \$opt_remove,
+        "cleanup"          => \$opt_cleanup,
+        "hardlink"         => \$opt_hardlink,
+        "winbatch:s"       => \$opt_winbatch,
+        "dump-data:s"      => \$opt_dump_data,
+        "only-aliases"     => \$opt_only_aliases,
+        "list-aliases"     => \$opt_listaliases,
         "list-all-aliases" => \$opt_listallaliases,
-        "list-fonts"  => \$opt_listfonts,
-        "info"        => \$opt_info,
+        "list-fonts"       => \$opt_listfonts,
+        "info"             => \$opt_info,
         "machine-readable" => \$opt_machine,
-        "n|dry-run"   => \$dry_run,
-        "q|quiet"     => \$opt_quiet,
-        "d|debug+"    => \$opt_debug,
-        "h|help"      => \$opt_help,
-        "markdown"    => \$opt_markdown,
-        "v|version"   => sub { print &version(); exit(0); }, ) ) {
+        "n|dry-run"        => \$dry_run,
+        "q|quiet"          => \$opt_quiet,
+        "d|debug+"         => \$opt_debug,
+        "h|help"           => \$opt_help,
+        "markdown"         => \$opt_markdown,
+        "v|version"        => sub { print &version(); exit(0); }, ) ) {
   die "Try \"$0 --help\" for more information.\n";
 }
 
@@ -309,7 +312,7 @@ my %fontdb;
 my %aliases;
 my %user_aliases;
 
-if ($opt_help) {
+if ($opt_help || $opt_markdown) {
   Usage();
   exit 0;
 }
@@ -347,91 +350,98 @@ if (defined($opt_akotfps)) {
   $opt_akotfps = $foo;
 }
 
+if (defined($opt_winbatch)) {
+  if ($opt_winbatch ne '') {
+    $winbatch = $opt_winbatch;
+  }
+  if (win32()) {
+    $opt_winbatch = 1;
+    unlink $winbatch if (-f $winbatch);
+  } else {
+    print_warning("ignoring --winbatch option due to non-Windows\n");
+    $opt_winbatch = 0;
+  }
+} else {
+  $opt_winbatch = 0;
+}
+if ($opt_hardlink) {
+  if (win32()) {
+    $opt_hardlink = 1;
+  } else {
+    print_warning("ignoring --hardlink option due to non-Windows\n");
+    $opt_hardlink = 0;
+  }
+}
+
+if (defined($opt_dump_data)) {
+  if ($opt_dump_data ne '') {
+    $dump_datafile = $opt_dump_data;
+  }
+  $opt_dump_data = 1;
+  unlink $dump_datafile if (-f $dump_datafile);
+} else {
+  $opt_dump_data = 0;
+}
+if ($opt_dump_data && $opt_fontdef) {
+  print_warning("-f/--fontdef option ignored due to --dump-data\n");
+  $opt_fontdef = 0;
+}
+
+if ($opt_cleanup) {
+  $opt_remove = 1;
+}
+
+if ($opt_info) {
+  $opt_listfonts = 1;
+  $opt_listaliases = 1;
+}
+if ($opt_listallaliases && $opt_listfonts) {
+  print_error("Options --list-all-aliases and --list-fonts cannot be used at the same time!\n");
+  exit(1);
+}
+
 main(@ARGV);
 
 #
 # only sub definitions from here on
 #
 sub main {
+  # first, read font database to obtain %fontdb
+  # if $opt_dump_data is given, exit after dumping <DATA> to $dump_datafile
   print_info("reading font database ...\n");
   read_font_database();
+  if ($opt_dump_data) {
+    if (-f $dump_datafile) {
+      print_info("*** Data dumped to $dump_datafile ***\n");
+      exit(0);
+    } else {
+      print_error("Failed to dump data to $dump_datafile!\n");
+      exit(1);
+    }
+  }
+  # second, determine non-otf link name
+  # this is actually required only by info_found_fonts() and do_nonotf_fonts()
+  # operations, but it does no harm for other cases too
   determine_nonotf_link_name(); # see comments there
-  if ($opt_winbatch) {
-    if (win32()) {
-      $opt_winbatch = 1;
-      unlink $winbatch if (-f $winbatch);
-    } else {
-      print_warning("ignoring --winbatch option due to non-Windows\n");
-      $opt_winbatch = 0;
-    }
-  }
-  if ($opt_hardlink) {
-    if (win32()) {
-      $opt_hardlink = 1;
-    } else {
-      print_warning("ignoring --hardlink option due to non-Windows\n");
-      $opt_hardlink = 0;
-    }
-  }
-  if (!$opt_listallaliases) {
+
+  # set 'available' flags and 'type' by kpsewhich search
+  # if $opt_cleanup or $opt_listallaliases is given, treat all files
+  # in the database as if they were actually available as OTF
+  if (!$opt_cleanup && !$opt_listallaliases) {
     print_info("checking for files ...\n");
     check_for_files();
   } else {
     make_all_available();
   }
+  # obtain %aliases and %user_aliases
   compute_aliases();
-  if ($opt_info) {
-    $opt_listfonts = 1;
-    $opt_listaliases = 1;
-  }
+
+  # informative operations
   if ($opt_listfonts) {
     info_found_fonts();
   }
   if ($opt_listaliases || $opt_listallaliases) {
-    print "List of ", ($opt_listaliases ? "all" : "available"), " aliases and their options (in decreasing priority):\n" unless $opt_machine;
-    my (@jal, @kal, @tal, @sal);
-    for my $al (sort keys %aliases) {
-      my $cl;
-      my @ks = sort { $a <=> $b} keys(%{$aliases{$al}});
-      my $foo = '';
-      $foo = "$al:\n" unless $opt_machine;
-      for my $p (@ks) {
-        my $t = $aliases{$al}{$p};
-        my $fn = ($opt_listallaliases ? "-" : $fontdb{$t}{'target'} );
-        # should always be the same ;-)
-        $cl = $fontdb{$t}{'class'};
-        if (!$opt_listallaliases && ($fontdb{$t}{'type'} eq 'TTC' || $fontdb{$t}{'type'} eq 'OTC')) {
-          $fn .= "($fontdb{$t}{'subfont'})";
-        }
-        if ($opt_machine) {
-          $foo .= "$al:$p:$aliases{$al}{$p}:$fn\n";
-        } else {
-          $foo .= "\t($p) $aliases{$al}{$p} ($fn)\n";
-        }
-      }
-      if ($cl eq 'Japan') {
-        push @jal, $foo;
-      } elsif ($cl eq 'Korea') {
-        push @kal, $foo;
-      } elsif ($cl eq 'GB') {
-        push @sal, $foo;
-      } elsif ($cl eq 'CNS') {
-        push @tal, $foo;
-      } else {
-        print STDERR "unknown class $cl for $al\n";
-      }
-    }
-    if ($opt_machine) {
-      print @jal if @jal;
-      print @kal if @kal;
-      print @tal if @tal;
-      print @sal if @sal;
-    } else {
-      print "Aliases for Japanese fonts:\n", @jal, "\n" if @jal;
-      print "Aliases for Korean fonts:\n", @kal, "\n" if @kal;
-      print "Aliases for Traditional Chinese fonts:\n", @tal, "\n" if @tal;
-      print "Aliases for Simplified Chinese fonts:\n", @sal, "\n" if @sal;
-    }
+    info_list_aliases();
   }
   exit(0) if ($opt_listfonts || $opt_listaliases || $opt_listallaliases);
   # if $opt_machine is still alive after the above exit(0), it's useless
@@ -442,11 +452,12 @@ sub main {
     exit(1);
   }
 
+  # do actual setup/removing operations
   if (! $opt_output) {
-    print_info("searching for GhostScript resource\n");
+    print_info("searching for Ghostscript resource\n");
     my $gsres = find_gs_resource();
     if (!$gsres) {
-      print_error("Cannot find GhostScript, terminating!\n");
+      print_error("Cannot find Ghostscript, terminating!\n");
       exit(1);
     } else {
       $opt_output = $gsres;
@@ -456,89 +467,96 @@ sub main {
     $dry_run || mkdir($opt_output) || 
       die ("Cannot create directory $opt_output: $!");
   }
-  print_info("output is going to $opt_output\n");
+  if ($opt_cleanup) {
+    print_info("going to clean up $opt_output\n");
+  } else {
+    print_info("output is going to $opt_output\n");
+  }
   if (!$opt_only_aliases) {
-    print_info(($opt_remove ? "removing" : "generating") . " font snippets and link CID fonts ...\n");
-    do_otf_fonts();
-    print_info(($opt_remove ? "removing" : "generating") . " font snippets, links, and cidfmap.local for TTF fonts ...\n");
-    do_nonotf_fonts();
+    if ($opt_cleanup) {
+      # all font types are handled at the same time
+      print_info("cleaning up all links, snippets and cidfmap.local ...\n");
+      do_all_fonts();
+    } else {
+      # OTF and TTF/TTC/OTC must be handled separately, depending on the found files
+      print_info(($opt_remove ? "removing" : "generating") . " links and snippets for CID fonts ...\n");
+      do_otf_fonts();
+      print_info(($opt_remove ? "removing" : "generating") . " links, snippets and cidfmap.local for non-CID fonts ...\n");
+      do_nonotf_fonts();
+    }
     write_winbatch() if ($opt_winbatch);
   }
-  print_info(($opt_remove ? "removing" : "generating") . " font aliases ...\n");
+  print_info(($opt_remove ? "removing" : "generating") . " snippets and cidfmap.aliases for font aliases ...\n");
   do_aliases();
   write_akotfps_datafile() if ($opt_akotfps);
   print_info("finished\n");
-  if ($opt_winbatch && -f $winbatch) {
-    print_info("*** Batch file $winbatch created ***\n");
-    print_info("*** to complete, run it as administrator privilege.***\n");
-  }
-}
-
-sub update_master_cidfmap {
-  my $add = shift;
-  my $cidfmap_master = "$opt_output/$cidfmap_pathpart";
-  print_info(sprintf("%s $add %s cidfmap file ...\n", 
-    ($opt_remove ? "removing" : "adding"), ($opt_remove ? "from" : "to")));
-  if (-r $cidfmap_master) {
-    open(FOO, "<", $cidfmap_master) ||
-      die ("Cannot open $cidfmap_master for reading: $!");
-    my $found = 0;
-    my $newmaster = "";
-    # in add mode: just search for the entry and set $found
-    # in remove mode: collect all lines that do not match
-    while(<FOO>) {
-      if (m/^\s*\(\Q$add\E\)\s\s*\.runlibfile\s*$/) {
-        $found = 1;
-      } else {
-        $newmaster .= $_;
-      }
-    }
-    close(FOO);
-    # if the master cidfmap has a new line at end of file,
-    # then $newmaster should end with "\n".
-    # otherwise we add a new line, since there is a possibility of %EOF comment
-    # without trailing new line (e.g. TL before r44039)
-    $newmaster =~ s/\n$//g;
-    $newmaster =~ s/$/\n/g;
-    if ($opt_remove) {
-      if ($found) {
-        return if $dry_run;
-        open(FOO, ">", $cidfmap_master) ||
-          die ("Cannot clean up $cidfmap_master: $!");
-        print FOO $newmaster;
-        close FOO;
-      }
+  if ($opt_winbatch) {
+    if (-f $winbatch) {
+      print_info("*** Batch file $winbatch created ***\n");
+      print_info("*** to complete, run it as administrator privilege.***\n");
     } else {
-      if ($found) {
-        print_info("$add already loaded in $cidfmap_master, no changes\n");
-      } else {
-        return if $dry_run;
-        open(FOO, ">", $cidfmap_master) ||
-          die ("Cannot open $cidfmap_master for appending: $!");
-        print FOO $newmaster;
-        print FOO "($add) .runlibfile\n";
-        close(FOO);
-      }
+      print_error("Failed to create $winbatch!\n");
+      exit(1);
     }
-  } else {
-    return if $dry_run;
-    return if $opt_remove;
-    open(FOO, ">", $cidfmap_master) ||
-      die ("Cannot open $cidfmap_master for writing: $!");
-    print FOO "($add) .runlibfile\n";
-    close(FOO);
   }
 }
 
-sub make_dir {
-  my ($d, $w) = @_;
-  if (-r $d) {
-    if (! -d $d) {
-      print_error("$d is not a directory, $w\n");
-      exit 1;
+sub do_all_fonts {
+  # try to clean up all possible links/snippets/cidfmap which could have been
+  # generated in the previous runs
+  # previous versions of cjk-gs-integrate included following bugs:
+  #   * the database sometimes identified GB/CNS classes wrongly
+  #   * symlink names were sometimes invalid (some of which contained
+  #     white-spaces, due to the absence of proper database entry) or
+  #     inconsistent with ptex-fontmaps (Name <-> PSName or redundant Filename)
+  #   * confused symlinks between TTF/TTC/OTC (including ttf <-> ttc links)
+  # also, current version generates OTC links into $otf_pathpart instead of
+  # $ttf_pathpart, which was not true in the older versions
+  # we'd like to clean up all such files
+  my $fontdest = "$opt_output/Font";
+  my $ciddest  = "$opt_output/CIDFont";
+  my $cidfsubst = "$opt_output/CIDFSubst";
+  for my $k (sort keys %fontdb) {
+    #
+    # remove snippets: note that $class = $fontdb{$k}{'class'} is not enough
+    # due to previous bugs
+    for my $class (%encode_list) {
+      for my $enc (@{$encode_list{$class}}) {
+        unlink "$fontdest/$k-$enc" if (-f "$fontdest/$k-$enc");
+      }
     }
-  } else {
-    $dry_run || make_path($d);
+    #
+    # remove links; borrow link_font operation here for convenience
+    # since we don't need target in cleanup mode, initialize with stub "none"
+    #
+    # for OTF/TTF fonts, first remove both $k[.otf,ttf] and $fontdb{$k}{'origname'}[.otf]
+    # the links $k.otf and $fontdb{$k}{'origname'} are coming from previous bugs,
+    # and the links $k.ttf are (sometimes) coming from inconsistency
+    if ($fontdb{$k}{'origname'}) { # this test skips alias-only fonts (e.g. Ryumin-Light)
+      link_font("none", $ciddest, $k);
+      link_font("none", $cidfsubst, "$k.ttf");
+      link_font("none", "$opt_texmflink/$otf_pathpart", "$k.otf")
+        if $opt_texmflink;
+      link_font("none", "$opt_texmflink/$ttf_pathpart", "$k.ttf")
+        if $opt_texmflink;
+      link_font("none", $ciddest, $fontdb{$k}{'origname'});
+      link_font("none", "$opt_texmflink/$otf_pathpart", "$fontdb{$k}{'origname'}.otf")
+        if $opt_texmflink;
+    }
+    # for OTF/TTF/TTC/OTC fonts, loop through all file candidates
+    for my $f (keys %{$fontdb{$k}{'files'}}) {
+      # check for subfont extension
+      my $foo = $f;
+      $foo =~ s/^(.*)\(\d*\)$/$1/;
+      link_font("none", $cidfsubst, "$foo");
+      link_font("none", "$opt_texmflink/$otf_pathpart", "$foo") if $opt_texmflink;
+      link_font("none", "$opt_texmflink/$ttf_pathpart", "$foo") if $opt_texmflink;
+    }
+  }
+  update_master_cidfmap('cidfmap.local');
+  # we are in cleanup mode, also remove cidfmap.local itself
+  if (-f "$opt_output/$cidfmap_local_pathpart") {
+    unlink "$opt_output/$cidfmap_local_pathpart";
   }
 }
 
@@ -550,7 +568,7 @@ sub do_otf_fonts {
   make_dir("$opt_texmflink/$otf_pathpart",
            "cannot link fonts to it!")
     if $opt_texmflink;
-  for my $k (keys %fontdb) {
+  for my $k (sort keys %fontdb) {
     if ($fontdb{$k}{'available'} && $fontdb{$k}{'type'} eq 'OTF') {
       generate_font_snippet($fontdest,
         $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
@@ -558,124 +576,6 @@ sub do_otf_fonts {
       link_font($fontdb{$k}{'target'}, "$opt_texmflink/$otf_pathpart", "$fontdb{$k}{'origname'}.otf")
         if $opt_texmflink;
     }
-  }
-}
-
-sub generate_font_snippet {
-  my ($fd, $n, $c, $f) = @_;
-  return if $dry_run;
-  if ($opt_akotfps) {
-    add_akotfps_data($n);
-    return;
-  }
-  for my $enc (@{$encode_list{$c}}) {
-    if ($opt_remove) {
-      unlink "$fd/$n-$enc" if (-f "$fd/$n-$enc");
-      next;
-    }
-    open(FOO, ">$fd/$n-$enc") || 
-      die("cannot open $fd/$n-$enc for writing: $!");
-    print FOO "%!PS-Adobe-3.0 Resource-Font
-%%DocumentNeededResources: $enc (CMap)
-%%IncludeResource: $enc (CMap)
-%%BeginResource: Font ($n-$enc)
-($n-$enc)
-($enc) /CMap findresource
-[($n) /CIDFont findresource]
-composefont
-pop
-%%EndResource
-%%EOF
-";
-    close(FOO);
-  }
-}
-
-sub add_akotfps_data {
-  my ($fn) = @_;
-  return if $dry_run;
-  if (! $opt_remove) {
-    $akotfps_datacontent .= "$fn\n";
-  }
-}
-
-#
-# link_font operation
-# $opt_force is *not* treated first to warn only 
-# at really critical cases
-# case 1:
-#   exists, is link, link targets agree
-#     $opt_force is ignored
-#     remove or remove+add according to $opt_remove
-# case 2:
-#   exists, is link, dangling symlink
-#     $opt_force is ignored
-#     remove or remove+add according to $opt_remove
-# case 3:
-#   exists, is link, link target different
-#     if $opt_force
-#       warn, remove or remove+add according to $opt_remove
-#     else
-#       error message
-# case 4:
-#   exists, not a link
-#     if $opt_force
-#       warn, remove or remove+add according to $opt_remove
-#     else
-#       error message
-# case 5:
-#   not exists
-#     $opt_force is ignored
-#     do nothing or add according to $opt_remove
-#     
-sub link_font {
-  my ($f, $cd, $n) = @_;
-  return if $dry_run;
-  if (!$n) {
-    $n = basename($f);
-  }
-  my $target = "$cd/$n";
-  my $do_unlink = 0;
-  if (-l $target) {
-    my $linkt = readlink($target);
-    if ($linkt) {
-      if ($linkt eq $f) {
-        # case 1: exists, link, targets agree
-        $do_unlink = 1;
-      } elsif (-r $linkt) {
-        # case 3: exists, link, targets different
-        if ($opt_force) {
-          print_info("Removing link $target due to --force!\n");
-          $do_unlink = 1;
-        } else {
-          print_error("Link $target already existing, but different target then $target, exiting!\n");
-          exit(1);
-        }
-      } else {
-        # case 2: dangling symlink
-        print_warning("Removing dangling symlink $target to $linkt\n");
-        $do_unlink = 1;
-      }
-    } else {
-      print_error("This should not happen, we have a link but cannot read the target?\n");
-      exit(1);
-    }
-  } elsif (-r $target) {
-    # case 4: exists, but not link
-    if ($opt_force) {
-      print_info("Removing $target due to --force!\n");
-      $do_unlink = 1;
-    } else {
-      print_error("$target already existing, exiting!\n");
-      exit(1);
-    }
-  } # otherwise it is not existing!
-
-  # if we are still here and $do_unlink is set, remove it
-  maybe_unlink($target) if $do_unlink;
-  # recreate link if we are not in the remove case
-  if (! $opt_remove) {
-    maybe_symlink($f, $target) || die("Cannot link font $f to $target: $!");
   }
 }
 
@@ -688,7 +588,7 @@ sub do_nonotf_fonts {
   make_dir("$opt_texmflink/$ttf_pathpart",
            "cannot link fonts to it!")
     if $opt_texmflink;
-  for my $k (keys %fontdb) {
+  for my $k (sort keys %fontdb) {
     if ($fontdb{$k}{'available'} && $fontdb{$k}{'type'} eq 'TTF') {
       generate_font_snippet($fontdest,
         $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
@@ -704,10 +604,10 @@ sub do_nonotf_fonts {
       link_font($fontdb{$k}{'target'}, "$opt_texmflink/$ttf_pathpart", $fontdb{$k}{'ttcname'})
         if $opt_texmflink;
     } elsif ($fontdb{$k}{'available'} && $fontdb{$k}{'type'} eq 'OTC') {
-    # currently ghostscript does not have OTC support; not creating gs resource
-    print_ddebug("gs does not support OTC, not creating gs resource for $k\n");
+      # currently Ghostscript does not have OTC support; not creating gs resource
+      print_debug("gs does not support OTC, not creating gs resource for $k\n");
     # generate_font_snippet($fontdest,
-    #  $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
+    #   $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
     # $outp .= generate_cidfmap_entry($k, $fontdb{$k}{'class'}, $fontdb{$k}{'otcname'}, $fontdb{$k}{'subfont'});
     # link_font($fontdb{$k}{'target'}, $cidfsubst, $fontdb{$k}{'otcname'});
       link_font($fontdb{$k}{'target'}, "$opt_texmflink/$otf_pathpart", $fontdb{$k}{'otcname'})
@@ -806,6 +706,66 @@ sub do_aliases {
     close(FOO);
   }
   update_master_cidfmap('cidfmap.aliases');
+  # if we are in cleanup mode, also remove cidfmap.aliases itself
+  if (-f "$opt_output/$cidfmap_aliases_pathpart") {
+    unlink "$opt_output/$cidfmap_aliases_pathpart" if ($opt_cleanup);
+  }
+}
+
+sub update_master_cidfmap {
+  my $add = shift;
+  my $cidfmap_master = "$opt_output/$cidfmap_pathpart";
+  print_info(sprintf("%s $add %s cidfmap file ...\n", 
+    ($opt_remove ? "removing" : "adding"), ($opt_remove ? "from" : "to")));
+  if (-r $cidfmap_master) {
+    open(FOO, "<", $cidfmap_master) ||
+      die ("Cannot open $cidfmap_master for reading: $!");
+    my $found = 0;
+    my $newmaster = "";
+    # in add mode: just search for the entry and set $found
+    # in remove mode: collect all lines that do not match
+    while(<FOO>) {
+      if (m/^\s*\(\Q$add\E\)\s\s*\.runlibfile\s*$/) {
+        $found = 1;
+      } else {
+        $newmaster .= $_;
+      }
+    }
+    close(FOO);
+    # if the master cidfmap has a new line at end of file,
+    # then $newmaster should end with "\n".
+    # otherwise we add a new line, since there is a possibility of %EOF comment
+    # without trailing new line (e.g. TL before r44039)
+    $newmaster =~ s/\n$//g;
+    $newmaster =~ s/$/\n/g;
+    if ($opt_remove) {
+      if ($found) {
+        return if $dry_run;
+        open(FOO, ">", $cidfmap_master) ||
+          die ("Cannot clean up $cidfmap_master: $!");
+        print FOO $newmaster;
+        close FOO;
+      }
+    } else {
+      if ($found) {
+        print_info("$add already loaded in $cidfmap_master, no changes\n");
+      } else {
+        return if $dry_run;
+        open(FOO, ">", $cidfmap_master) ||
+          die ("Cannot open $cidfmap_master for appending: $!");
+        print FOO $newmaster;
+        print FOO "($add) .runlibfile\n";
+        close(FOO);
+      }
+    }
+  } else {
+    return if $dry_run;
+    return if $opt_remove;
+    open(FOO, ">", $cidfmap_master) ||
+      die ("Cannot open $cidfmap_master for writing: $!");
+    print FOO "($add) .runlibfile\n";
+    close(FOO);
+  }
 }
 
 sub generate_cidfmap_entry {
@@ -833,6 +793,145 @@ sub generate_cidfmap_entry {
   }
   $s .= " >> ;\n";
   return $s;
+}
+
+sub generate_font_snippet {
+  my ($fd, $n, $c, $f) = @_;
+  return if $dry_run;
+  if ($opt_akotfps) {
+    add_akotfps_data($n);
+    return;
+  }
+  for my $enc (@{$encode_list{$c}}) {
+    if ($opt_remove) {
+      unlink "$fd/$n-$enc" if (-f "$fd/$n-$enc");
+      next;
+    }
+    open(FOO, ">$fd/$n-$enc") || 
+      die("cannot open $fd/$n-$enc for writing: $!");
+    print FOO "%!PS-Adobe-3.0 Resource-Font
+%%DocumentNeededResources: $enc (CMap)
+%%IncludeResource: $enc (CMap)
+%%BeginResource: Font ($n-$enc)
+($n-$enc)
+($enc) /CMap findresource
+[($n) /CIDFont findresource]
+composefont
+pop
+%%EndResource
+%%EOF
+";
+    close(FOO);
+  }
+}
+
+sub add_akotfps_data {
+  my ($fn) = @_;
+  return if $dry_run;
+  if (! $opt_remove) {
+    $akotfps_datacontent .= "$fn\n";
+  }
+}
+
+#
+# link_font operation
+# $opt_force is *not* treated first to warn only 
+# at really critical cases
+# case 1:
+#   exists, is link, link targets agree
+#     $opt_force is ignored
+#     remove or remove+add according to $opt_remove
+# case 2:
+#   exists, is link, dangling symlink
+#     $opt_force is ignored
+#     remove or remove+add according to $opt_remove
+# case 3:
+#   exists, is link, link target different
+#     if $opt_force
+#       warn, remove or remove+add according to $opt_remove
+#     else
+#       error message
+# case 4:
+#   exists, not a link
+#     if $opt_force
+#       warn, remove or remove+add according to $opt_remove
+#     else
+#       error message
+# case 5:
+#   not exists
+#     $opt_force is ignored
+#     do nothing or add according to $opt_remove
+#     
+sub link_font {
+  my ($f, $cd, $n) = @_;
+  return if $dry_run;
+  if (!$n) {
+    $n = basename($f);
+  }
+  my $target = "$cd/$n";
+  my $do_unlink = 0;
+  if (-l $target) {
+    if ($opt_cleanup) {
+      $do_unlink = 1;
+    } else {
+      my $linkt = readlink($target);
+      if ($linkt) {
+        if ($linkt eq $f) {
+          # case 1: exists, link, targets agree
+          $do_unlink = 1;
+        } elsif (-r $linkt) {
+          # case 3: exists, link, targets different
+          if ($opt_force) {
+            print_info("Removing link $target due to --force!\n");
+            $do_unlink = 1;
+          } else {
+            print_error("Link $target already existing, but target different from $f, exiting!\n");
+            exit(1);
+          }
+        } else {
+          # case 2: dangling symlink or link-to-link
+          print_warning("Removing dangling symlink $target to $linkt\n");
+          $do_unlink = 1;
+        }
+      } else {
+        print_error("This should not happen, we have a link but cannot read the target?\n");
+        exit(1);
+      }
+    }
+  } elsif (-r $target) {
+    # case 4: exists, but not link (NTFS hardlink on win32 falls into this)
+    if (-s $target) {
+      if ($opt_force) {
+        print_info("Removing $target due to --force!\n");
+        $do_unlink = 1;
+      } else {
+        print_error("$target already existing, exiting!\n");
+        exit(1);
+      }
+    } else {
+      # NTFS symlink on win32 has file size 0, we're safe to remove it
+      $do_unlink = 1;
+    }
+  } # case 5: otherwise it is not existing!
+
+  # if we are still here and $do_unlink is set, remove it
+  maybe_unlink($target) if $do_unlink;
+  # recreate link if we are not in the remove case
+  if (! $opt_remove) {
+    maybe_symlink($f, $target) || die("Cannot link font $f to $target: $!");
+  }
+}
+
+sub make_dir {
+  my ($d, $w) = @_;
+  if (-r $d) {
+    if (! -d $d) {
+      print_error("$d is not a directory, $w\n");
+      exit 1;
+    }
+  } else {
+    $dry_run || make_path($d);
+  }
 }
 
 # perl symlink function does not work on windows, so leave it to
@@ -951,13 +1050,17 @@ $akotfps_datacontent";
 # dump found files
 sub info_found_fonts {
   print "List of found fonts:\n\n";
-  for my $k (keys %fontdb) {
+  for my $k (sort keys %fontdb) {
     my @foundfiles;
     if ($fontdb{$k}{'available'}) {
       print "Font:  $k\n";
       print "Type:  $fontdb{$k}{'type'}\n";
       print "Class: $fontdb{$k}{'class'}\n";
       my $fn = $fontdb{$k}{'target'};
+      # cp932 for win32 console
+      if (win32()) {
+        $fn = encode_utftocp($fn);
+      }
       if ($fontdb{$k}{'type'} eq 'TTC' || $fontdb{$k}{'type'} eq 'OTC') {
         $fn .= "($fontdb{$k}{'subfont'})";
       }
@@ -986,13 +1089,66 @@ sub info_found_fonts {
   }
 }
 
+#
+# dump aliases
+sub info_list_aliases {
+  print "List of ", ($opt_listallaliases ? "all" : "available"), " aliases and their options (in decreasing priority):\n" unless $opt_machine;
+  my (@jal, @kal, @tal, @sal);
+  for my $al (sort keys %aliases) {
+    my $cl;
+    my @ks = sort { $a <=> $b} keys(%{$aliases{$al}});
+    my $foo = '';
+    $foo = "$al:\n" unless $opt_machine;
+    for my $p (@ks) {
+      my $t = $aliases{$al}{$p};
+      my $fn = ($opt_listallaliases ? "-" : $fontdb{$t}{'target'} );
+      # cp932 for win32 console
+      if (win32()) {
+        $fn = encode_utftocp($fn);
+      }
+      # should always be the same ;-)
+      $cl = $fontdb{$t}{'class'};
+      if (!$opt_listallaliases && ($fontdb{$t}{'type'} eq 'TTC' || $fontdb{$t}{'type'} eq 'OTC')) {
+        $fn .= "($fontdb{$t}{'subfont'})";
+      }
+      if ($opt_machine) {
+        $foo .= "$al:$p:$aliases{$al}{$p}:$fn\n";
+      } else {
+        $foo .= "\t($p) $aliases{$al}{$p} ($fn)\n";
+      }
+    }
+    if ($cl eq 'Japan') {
+      push @jal, $foo;
+    } elsif ($cl eq 'Korea') {
+      push @kal, $foo;
+    } elsif ($cl eq 'GB') {
+      push @sal, $foo;
+    } elsif ($cl eq 'CNS') {
+      push @tal, $foo;
+    } else {
+      print STDERR "unknown class $cl for $al\n";
+    }
+  }
+  if ($opt_machine) {
+    print @jal if @jal;
+    print @kal if @kal;
+    print @sal if @sal;
+    print @tal if @tal;
+  } else {
+    print "Aliases for Japanese fonts:\n", @jal, "\n" if @jal;
+    print "Aliases for Korean fonts:\n", @kal, "\n" if @kal;
+    print "Aliases for Simplified Chinese fonts:\n", @sal, "\n" if @sal;
+    print "Aliases for Traditional Chinese fonts:\n", @tal, "\n" if @tal;
+  }
+}
 
 #
 # make all fonts available for listing all aliases
 sub make_all_available {
   for my $k (keys %fontdb) {
     $fontdb{$k}{'available'} = 1;
-    delete $fontdb{$k}{'files'};
+    $fontdb{$k}{'type'} = 'OTF';
+    delete $fontdb{$k}{'files'} if (!$opt_cleanup);
   }
 }
 
@@ -1067,7 +1223,8 @@ sub check_for_files {
       }
     }
     # prepare for kpsewhich call, we need to do quoting
-    my $cmdl = 'kpsewhich ';
+    # we need as much candidate files as possible, so -all is needed
+    my $cmdl = 'kpsewhich -all ';
     for my $f (@fn) {
       $cmdl .= " \"$f\" ";
     }
@@ -1092,13 +1249,26 @@ sub check_for_files {
       print_warning("dead link or strange file found: $f - ignored!\n");
       next;
     }
+    if (win32()) {
+      # abs_path cannot read NTFS symlink/hardlink, and it serves as
+      # identity transformation.
+      # this might lead to dangling links for multiple runs of cjk-gs-integrate,
+      # when $opt_texmflink (in the previous run) is contained in the (current)
+      # kpsewhich search path.
+      # to avoid this, ignore targets which contain $otf_pathpart or $ttf_pathpart
+      my $temp_realfdir = "$realf";
+      $temp_realfdir =~ s!^(.*)/(.*)$!$1!;
+      next if ($temp_realfdir =~ $otf_pathpart || $temp_realfdir =~ $ttf_pathpart);
+    }
     # decode now on windows! (cp932 -> internal utf-8)
     if (win32()) {
       $f = encode_cptoutf($f);
       $realf = encode_cptoutf($realf);
     }
     my $bn = basename($f);
-    $bntofn{$bn} = $realf;
+    # kpsewhich -all might return multiple files with the same basename;
+    # choose the first one among them
+    $bntofn{$bn} = $realf if (!$bntofn{$bn});
   }
 
   # show the %fontdb before file check
@@ -1131,12 +1301,11 @@ sub check_for_files {
   # second round to determine the winner in case of more targets
   for my $k (keys %fontdb) {
     if ($fontdb{$k}{'available'}) {
-      my $mp = 1000000; my $mf; my $mt;
+      my $mp = 1000000; my $mf;
       for my $f (keys %{$fontdb{$k}{'files'}}) {
         if ($fontdb{$k}{'files'}{$f}{'priority'} < $mp) {
           $mp = $fontdb{$k}{'files'}{$f}{'priority'};
           $mf = $f;
-          $mt = $fontdb{$k}{'files'}{$f}{'type'};
         }
       }
       # extract subfont if necessary
@@ -1174,8 +1343,8 @@ sub compute_aliases {
         } else {
           # if OTC font is caught, then skip it as Ghostscript doesn't support it (2016/12/12)
           if ($fontdb{$k}{'type'} eq 'OTC') {
-            print_warning("Currently Ghostscript does not support OTC font,\n");
-            print_warning("not adding $fontdb{$k}{'otcname'} to alias candidates\n");
+            print_debug("Currently Ghostscript does not support OTC font,\n");
+            print_debug("not adding $fontdb{$k}{'otcname'} to alias candidates\n");
           } else {
             $aliases{$p}{$fontdb{$k}{'provides'}{$p}} = $k;
           }
@@ -1273,6 +1442,12 @@ sub read_font_database {
   chomp(@dbl);
   # add a "final empty line" to easy parsing
   push @dbl, "";
+
+  if ($opt_dump_data) {
+    open(FOO, ">$dump_datafile") || 
+      die("cannot open $dump_datafile for writing: $!");
+  }
+
   my $fontname = "";
   my $fontclass = "";
   my %fontprovides = ();
@@ -1280,8 +1455,12 @@ sub read_font_database {
   my $psname = "";
   my $lineno = 0;
   for my $l (@dbl) {
-    $lineno++;
+    if ($opt_dump_data) {
+      print FOO "$l\n";
+      next;
+    }
 
+    $lineno++;
     next if ($l =~ m/^\s*#/);
     if ($l =~ m/^\s*$/) {
       if ($fontname || $fontclass || keys(%fontfiles)) {
@@ -1399,6 +1578,10 @@ sub read_font_database {
     print_error("Cannot parse this file at line $lineno, exiting. Strange line: >>>$l<<<\n");
     exit (1);
   }
+
+  if ($opt_dump_data) {
+    close(FOO);
+  }
 }
 
 sub find_gs_resource {
@@ -1496,11 +1679,11 @@ sub version {
 }
 
 sub Usage {
-  my $headline = "Configuring GhostScript for CJK CID/TTF fonts";
+  my $headline = "Configuring Ghostscript for CJK CID/TTF fonts";
   my $usage = "[perl] $prg\[.pl\] [OPTIONS]";
   my $options = "
 -o, --output DIR      specifies the base output dir, if not provided,
-                      the Resource directory of an installed GhostScript
+                      the Resource directory of an installed Ghostscript
                       is searched and used.
 -f, --fontdef FILE    specify alternate set of font definitions, if not
                       given, the built-in set is used
@@ -1521,6 +1704,9 @@ sub Usage {
                       instead of generating snippets
 --force               do not bail out if linked fonts already exist
 --remove              try to remove instead of create
+--cleanup             try to clean up all possible links/snippets and
+                      cidfmap.local/cidfmap.aliases, which could have been
+                      generated in the previous runs
 -n, --dry-run         do not actually output anything
 -q, --quiet           be less verbose
 -d, --debug           output debug information, can be given multiple times
@@ -1530,26 +1716,31 @@ sub Usage {
 
   my $winonlyoptions = "
 --hardlink            create hardlinks instead of symlinks
---winbatch            prepare a batch file for link generation, instead of
+--winbatch [FILE]     prepare a batch file for link generation, instead of
                       generating links right away
+                      the batch file name defaults to $winbatch
 ";
 
   my $commandoptions = "
---only-aliases        do only regenerate the cidfmap.alias file instead of all
+--dump-data [FILE]    dump the built-in set of font definitions; you can
+                      easily modify it, and tell me with -f (or --fontdef)
+                      the data file name defaults to $dump_datafile
+--only-aliases        regenerate only cidfmap.aliases file, instead of all
 --list-aliases        lists the available aliases and their options, with the
                       selected option on top
---list-all-aliases    list all possible aliases without searching for actually
-                      present files
+--list-all-aliases    list all possible aliases without searching for
+                      actually present files
 --list-fonts          lists the fonts found on the system
---info                combines the above two information
+--info                combines the information of --list-aliases and
+                      --list-fonts
 --machine-readable    output of --list-aliases is machine readable
 ";
 
   my $shortdesc = "
 This script searches a list of directories for CJK fonts, and makes
-them available to an installed GhostScript. In the simplest case with
+them available to an installed Ghostscript. In the simplest case with
 sufficient privileges, a run without arguments should effect in a
-complete setup of GhostScript.
+complete setup of Ghostscript.
 ";
 
 my $operation = "
@@ -1571,7 +1762,8 @@ and links the font to
     <Resource>/CIDFont/
 
 The `<Resource>` dir is either given by `-o`/`--output`, or otherwise searched
-from an installed GhostScript (binary name is assumed to be 'gs').
+from an installed Ghostscript (binary name is assumed to be 'gs' on unix,
+'gswin32c' on win32).
 
 Aliases are added to 
 
@@ -1612,7 +1804,7 @@ searched in addition.
 ';
 
   my $outputfile = "
-If no output option is given, the program searches for a GhostScript
+If no output option is given, the program searches for a Ghostscript
 interpreter 'gs' and determines its Resource directory. This might
 fail, in which case one need to pass the output directory manually.
 
@@ -1635,8 +1827,8 @@ Korean:
 
 Simplified Chinese:
 
-    STSong-Light STHeiti-Regular STHeiti-Light STKaiti-Regular
-    STFangsong-Light STFangsong-Regular
+    STSong-Light STSong-Regular STHeiti-Regular STHeiti-Light
+    STKaiti-Regular STFangsong-Light STFangsong-Regular
 
 Traditional Chinese:
 
@@ -1659,7 +1851,7 @@ For the Korean fonts:
     (Hanyang,) Adobe, Solaris-hanyang, MS, Unfonts, Baekmuk
 
 For the Simplified Chinese:
-    Adobe, Fandol, Hiragino, MS, CJKUnifonts, Arphic, CJKUnifonts-ttf
+    Adobe, Fandol, Hiragino, Founder, MS, CJKUnifonts, Arphic, CJKUnifonts-ttf
 
 For the Traditional Chinese:
     Adobe, MS, CJKUnifonts, Arphic, CJKUnifonts-ttf
@@ -2175,6 +2367,21 @@ OTCname(30): ヒラギノ明朝 ProN W6.ttc(0)
 OTCname(29): ヒラギノ明朝 ProN W6.ttc(0)
 OTCname(28): HiraginoSerif-W6.ttc(0)
 
+# Following Hiragino fonts are not bundled with OS X,
+# but used in ptex-fontmaps
+
+Name: HiraMinPro-W2
+Class: Japan
+OTFname(20): ヒラギノ明朝 Pro W2.otf
+OTFname(19): ヒラギノ明朝 Pro W2.otf
+OTFname(10): HiraMinPro-W2.otf
+
+Name: HiraMinProN-W2
+Class: Japan
+OTFname(20): ヒラギノ明朝 ProN W2.otf
+OTFname(19): ヒラギノ明朝 ProN W2.otf
+OTFname(10): HiraMinProN-W2.otf
+
 # Yu-fonts MacOS version
 
 # Note about Mac OS X:
@@ -2270,7 +2477,13 @@ OTCname(30): YuMincho.ttc(5)
 #   YuGoth{B,L,M,R}.ttf
 #   yumin.ttf, yumin{db,l}.ttf
 # are bundled with Office for Mac 2016.
-# Also, symlink names should be consistent with ptex-fontmaps!
+
+# In the following database, Yu Font Pack entries do not appear
+# as separate lines, but they are implied by Windows 10 entries
+# since win32 is case-insensitive.
+# Currently we don't add VS2013 YuGothic.ttf (YuGothic) and
+# YuGothic-Bold.ttf (YuGothic-Bold) on purpose, because these files
+# are smaller than Windows 8.1 yugothic.ttf and yugothib.ttf
 
 Name: YuMincho-Regular
 Class: Japan
@@ -2279,12 +2492,12 @@ Provides(90): RyuminPro-Light
 Provides(90): HiraMinProN-W3
 Provides(90): HiraMinPro-W3
 TTFname(20): yumin.ttf
-#TTFname(50): YuMincho-Regular.ttf
+#TTFname(50): YuMincho-Regular.ttf # never existed
 
 Name: YuMincho-Light
 Class: Japan
 TTFname(20): yuminl.ttf
-#TTFname(50): YuMincho-Light.ttf
+#TTFname(50): YuMincho-Light.ttf # never existed
 
 Name: YuMincho-DemiBold
 Class: Japan
@@ -2293,7 +2506,7 @@ Provides(90): FutoMinA101Pro-Bold
 Provides(90): HiraMinProN-W6
 Provides(90): HiraMinPro-W6
 TTFname(20): yumindb.ttf
-#TTFname(50): YuMincho-DemiBold.ttf
+#TTFname(50): YuMincho-DemiBold.ttf # never existed
 
 Name: YuGothic-Regular
 Class: Japan
@@ -2301,22 +2514,22 @@ Provides(90): GothicBBB-Medium
 Provides(90): GothicBBBPro-Medium
 Provides(90): HiraKakuProN-W3
 Provides(90): HiraKakuPro-W3
-TTFname(20): yugothic.ttf
-TTCname(30): YuGothR.ttc(0)
+TTFname(25): yugothic.ttf
+TTCname(20): YuGothR.ttc(0)
 TTFname(40): YuGothR.ttf
-#TTFname(50): YuGothic-Regular.ttf
+#TTFname(50): YuGothic-Regular.ttf # never existed
 
 Name: YuGothic-Medium
 Class: Japan
-TTCname(30): YuGothM.ttc(0)
+TTCname(20): YuGothM.ttc(0)
 TTFname(40): YuGothM.ttf
 
 Name: YuGothic-Light
 Class: Japan
-TTFname(20): yugothil.ttf
-TTCname(30): YuGothL.ttc(0)
+TTFname(25): yugothil.ttf
+TTCname(20): YuGothL.ttc(0)
 TTFname(40): YuGothL.ttf
-#TTFname(50): YuGothic-Light.ttf
+#TTFname(50): YuGothic-Light.ttf # never existed
 
 Name: YuGothic-Bold
 Class: Japan
@@ -2332,10 +2545,32 @@ Provides(90): MidashiGo-MB31
 Provides(90): MidashiGoPro-MB31
 Provides(90): HiraKakuStdN-W8
 Provides(90): HiraKakuStd-W8
-TTFname(20): yugothib.ttf
-TTCname(30): YuGothB.ttc(0)
+TTFname(25): yugothib.ttf
+TTCname(20): YuGothB.ttc(0)
 TTFname(40): YuGothB.ttf
-TTFname(50): YuGothic-Bold.ttf
+#TTFname(50): YuGothic-Bold.ttf
+
+# Yu-UI-fonts (Windows only)
+
+Name: YuGothicUI-Semilight
+Class: Japan
+TTCname(20): YuGothR.ttc(1)
+
+Name: YuGothicUI-Regular
+Class: Japan
+TTCname(20): YuGothM.ttc(1)
+
+Name: YuGothicUI-Light
+Class: Japan
+TTCname(20): YuGothL.ttc(1)
+
+Name: YuGothicUI-Bold
+Class: Japan
+TTCname(20): YuGothB.ttc(1)
+
+Name: YuGothicUI-Semibold
+Class: Japan
+TTCname(20): YuGothB.ttc(2)
 
 # IPA (free)
 
@@ -3155,6 +3390,7 @@ TTFname(10): STFangsong.ttf
 Name: STSong
 Class: GB
 #Provides(??): STSong-Light # fails
+#Provides(??): STSong-Regular # fails
 TTCname(10): Songti.ttc(4)
 TTCname(20): 宋体.ttc(3)
 TTFname(30): STSong.ttf
@@ -3163,6 +3399,7 @@ TTFname(40): 华文宋体.ttf
 Name: STSongti-SC-Light
 Class: GB
 #Provides(??): STSong-Light # fails
+#Provides(??): STSong-Regular # fails
 TTCname(10): Songti.ttc(3)
 TTCname(20): 宋体.ttc(2)
 #TTFname(30): STSongti-SC-Light.ttf
@@ -3357,7 +3594,84 @@ Name: STYuanti-TC-Light
 Class: CNS
 TTCname: Yuanti.ttc(5)
 
-# Beijing Founder Electronics (OS X)
+# Beijing Founder Electronics
+# note:
+#   FZ****.TTF (13 files)
+# are bundled with with WPS Office (formerly Kingsoft Office) Linux.
+#   Lantinghei.ttc
+# is bundled with OS X 10.9 Mavericks or later versions.
+
+# FZShuSong-Z01
+Name: FZSSK--GBK1-0
+Class: GB
+Provides(55): STSong-Light
+TTFname: FZSSK.TTF
+
+# FZXiaoBiaoSong-B05
+Name: FZXBSK--GBK1-0
+Class: GB
+Provides(55): STSong-Regular
+TTFname: FZXBSK.TTF
+
+# FZXiHeiI-Z08
+Name: FZXH1K--GBK1-0
+Class: GB
+Provides(55): STHeiti-Light
+TTFname: FZXH1K.TTF
+
+# FZHei-B01
+Name: FZHTK--GBK1-0
+Class: GB
+Provides(55): STHeiti-Regular
+TTFname: FZHTK.TTF
+
+# FZKai-Z03
+Name: FZKTK--GBK1-0
+Class: GB
+Provides(55): STKaiti-Regular
+TTFname: FZKTK.TTF
+
+# FZFangSong-Z02
+Name: FZFSK--GBK1-0
+Class: GB
+Provides(55): STFangsong-Light
+Provides(55): STFangsong-Regular
+TTFname: FZFSK.TTF
+
+# FZXingKai-S04
+Name: FZXKK--GBK1-0
+Class: GB
+TTFname: FZXKK.TTF
+
+# FZWeiBei-S03
+Name: FZWBK--GBK1-0
+Class: GB
+TTFname: FZWBK.TTF
+
+# FZChaoCuHei-M10
+Name: FZCCHK--GBK1-0
+Class: GB
+TTFname: FZCCHK.TTF
+
+# FZLiShu-S01
+Name: FZLSK--GBK1-0
+Class: GB
+TTFname: FZLSK.TTF
+
+# FZYaoTi-M06
+Name: FZYTK--GBK1-0
+Class: GB
+TTFname: FZYTK.TTF
+
+# FZSongS-Extended
+Name: FZSONGS--GB1-5
+Class: GB
+TTFname: FZSongS_20100603.TTF
+
+# FZSongS-Extended(SIP)
+Name: FZSONGS_SIP--GB1-5
+Class: GB
+TTFname: FZSongS(SIP)_2010603.TTF
 
 # Lantinghei SC Demibold
 Name: FZLTZHK--GBK1-0
@@ -3496,6 +3810,7 @@ TTFname(10): LiGothicMed.ttf
 Name: AdobeSongStd-Light
 Class: GB
 Provides(30): STSong-Light
+Provides(30): STSong-Regular
 OTFname(10): AdobeSongStd-Light.otf
 
 Name: AdobeHeitiStd-Regular
@@ -3537,6 +3852,7 @@ Provides(40): STSong-Light
 OTFname(10): FandolSong-Regular.otf
 
 Name: FandolSong-Bold
+Provides(40): STSong-Regular
 Class: GB
 OTFname(10): FandolSong-Bold.otf
 
@@ -3566,6 +3882,7 @@ OTFname(10): FandolFang-Regular.otf
 Name: BousungEG-Light-GB
 Class: GB
 Provides(80): STSong-Light
+Provides(80): STSong-Regular
 Provides(80): STFangsong-Light
 Provides(80): STFangsong-Regular
 TTFname: gbsn00lp.ttf
@@ -3594,6 +3911,7 @@ TTFname: bkai00mp.ttf
 Name: UMingCN
 Class: GB
 Provides(70): STSong-Light
+Provides(70): STSong-Regular
 Provides(70): STFangsong-Light
 Provides(70): STFangsong-Regular
 TTCname: uming.ttc(0)
@@ -3625,10 +3943,12 @@ Class: CNS
 Provides(90): MSung-Light
 Provides(90): MSung-Medium
 TTFname: uming.ttf
+
 # GB
 Name: ShanHeiSun-Uni-Adobe-GB1
 Class: GB
 Provides(90): STSong-Light
+Provides(90): STSong-Regular
 Provides(90): STFangsong-Light
 Provides(90): STFangsong-Regular
 TTFname: uming.ttf
@@ -3639,6 +3959,7 @@ Class: CNS
 Provides(90): MKai-Medium
 Provides(90): MHei-Medium
 TTFname: ukai.ttf
+
 # GB
 Name: ZenKai-Uni-Adobe-GB1
 Class: GB
@@ -3653,6 +3974,7 @@ TTFname: ukai.ttf
 Name: WenQuanYiMicroHei
 Class: GB
 TTCname(10): wqy-microhei.ttc(0)
+
 # CNS
 Name: WenQuanYiMicroHei-Adobe-CNS1
 Class: CNS
@@ -3662,6 +3984,7 @@ TTCname(10): wqy-microhei.ttc(0)
 Name: WenQuanYiMicroHeiMono
 Class: GB
 TTCname(10): wqy-microhei.ttc(1)
+
 # CNS
 Name: WenQuanYiMicroHeiMono-Adobe-CNS1
 Class: CNS
@@ -3672,6 +3995,7 @@ Name: WenQuanYiZenHei
 Class: GB
 TTCname(10): wqy-zenhei.ttc(0)
 TTFname(20): wqy-zenhei.ttf
+
 # CNS
 Name: WenQuanYiZenHei-Adobe-CNS1
 Class: CNS
@@ -3682,6 +4006,7 @@ TTFname(20): wqy-zenhei.ttf
 Name: WenQuanYiZenHeiMono
 Class: GB
 TTCname(10): wqy-zenhei.ttc(1)
+
 # CNS:
 Name: WenQuanYiZenHeiMono-Adobe-CNS1
 Class: CNS
@@ -3691,6 +4016,7 @@ TTCname(10): wqy-zenhei.ttc(1)
 Name: WenQuanYiZenHeiSharp
 Class: GB
 TTCname(10): wqy-zenhei.ttc(2)
+
 # CNS
 Name: WenQuanYiZenHeiSharp-Adobe-CNS1
 Class: CNS
@@ -4101,32 +4427,32 @@ OTFname: AdobeGothicStd-Light.otf
 
 Name: Batang
 Class: Korea
-Provides(50): HYSMyeongJo-Medium
 TTFname(50): Batang.ttf
 TTCname(20): batang.ttc(0)
 
 Name: BatangChe
 Class: Korea
+Provides(50): HYSMyeongJo-Medium
 TTCname(20): batang.ttc(1)
 
 Name: Dotum
 Class: Korea
-Provides(50): HYGoThic-Medium
 TTCname(20): gulim.ttc(2)
 
 Name: DotumChe
 Class: Korea
+Provides(50): HYGoThic-Medium
 TTCname(20): gulim.ttc(3)
 
 Name: Gulim
 Class: Korea
-Provides(50): HYRGoThic-Medium
-Provides(90): HYGoThic-Medium
 TTFname(50): Gulim.ttf
 TTCname(20): gulim.ttc(0)
 
 Name: GulimChe
 Class: Korea
+Provides(50): HYRGoThic-Medium
+Provides(90): HYGoThic-Medium
 TTCname(20): gulim.ttc(1)
 
 Name: Gungsuh
@@ -4161,6 +4487,7 @@ TTFname(20): simhei.ttf
 Name: SimSun
 Class: GB
 Provides(60): STSong-Light
+Provides(60): STSong-Regular
 TTFname(50): SimSun.ttf
 TTCname(20): simsun.ttc(0)
 
@@ -4353,6 +4680,22 @@ TTFname(50): Meiryo Italic.ttf
 TTFname(40): MeiryoItalic.ttf
 TTFname(30): Meiryo-Italic.ttf
 TTCname(20): meiryo.ttc(1)
+
+Name: MeiryoUI
+Class: Japan
+TTCname(20): meiryo.ttc(2)
+
+Name: MeiryoUI-Bold
+Class: Japan
+TTCname(20): meiryob.ttc(2)
+
+Name: MeiryoUI-BoldItalic
+Class: Japan
+TTCname(20): meiryob.ttc(3)
+
+Name: MeiryoUI-Italic
+Class: Japan
+TTCname(20): meiryo.ttc(3)
 
 Name: HGGothicE
 Class: Japan
