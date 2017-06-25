@@ -19,6 +19,7 @@ AC_CONFIG_HEADERS([config.h])
 
 # We don't use libpathsea, so add '-DNO_DEBUG' not to overload fopen.
 KPSE_KPATHSEA_FLAGS([no-debug])
+KPSE_COND_WIN32
 
 AC_CONFIG_FILES([Makefile])
 
