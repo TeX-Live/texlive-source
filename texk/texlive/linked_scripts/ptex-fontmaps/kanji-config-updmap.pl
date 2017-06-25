@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20170505.0
+# Version 20170624.0
 #
 # formerly known as updmap-setup-kanji
 #
@@ -22,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20170505.0';
+my $version = '20170624.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -128,6 +128,7 @@ my %representatives = (
     #"sinotype"      => "STSong.ttf", # removed
     "adobe"         => "AdobeSongStd-Light.otf",
     "fandol"        => "FandolSong-Regular.otf",
+    "founder"       => "FZSSK.TTF",
     "arphic"        => "gbsn00lp.ttf",
     "cjkunifonts"   => "uming.ttc",
     "cjkunifonts-ttf" => "uming.ttf",
