@@ -1,3 +1,8 @@
+2017-06-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure{,ac}, aclocal.m4:
+	Better configuration for Windows & kpathsea.
+
 2017-06-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvidvi.c, configure, Makefile.{am,in}:
