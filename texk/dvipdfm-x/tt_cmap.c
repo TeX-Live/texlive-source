@@ -1486,7 +1486,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
   } else {
     gsub_list = NULL;
   }
-  cmap_id = load_base_CMap(base_name, wmode,
+  cmap_id = load_base_CMap(cmap_name, wmode,
                            (is_cidfont ? &csi : NULL), GIDToCIDMap,
                            gsub_vert, gsub_list, ttcmap);
   if (cmap_id < 0)

@@ -1,3 +1,8 @@
+2017-06-25  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_cmap.c: Fixed a bug that different CMaps are not attached
+	to each instances of font using differect OpenType layout features.
+
 2017-06-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_pdfm.c: Remove unused variable attr in spc_handler_pdfm_image().
