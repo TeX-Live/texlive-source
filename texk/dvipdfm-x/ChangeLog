@@ -1,14 +1,14 @@
 2017-06-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* pdfdoc.c: discard the backward compatibility for pdf BoundingBox
+	* pdfdoc.c: Discard the backward compatibility for pdf BoundingBox
 	in pdf_doc_get_page(), to be consistent with the latex
 	driver dvipdfmx.def.
 
 2017-06-25  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
-	* tt_cmap.c: Fixed a bug that different CMaps are not attached
-	to each instances of font using differect OpenType layout features.
-	Fixed a bug that ToUnicode support for substituted glyph was incomplete.
+	* tt_cmap.c: Fix a bug that different CMaps are not attached
+	to each instances of font using different OpenType layout features.
+	Fix a bug that ToUnicode support for substituted glyph was incomplete.
 
 2017-06-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
