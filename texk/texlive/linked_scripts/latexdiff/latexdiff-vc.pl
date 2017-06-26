@@ -27,7 +27,12 @@
 #
 # TODO/IDEAS: - option to call external pre-processing codes
 #             - choose type of latex processor / bibtex (luatex, xelatex etc)
-# versio 1.2.0:
+# version 1.2.1 (22 June 2017)
+#    - bug fix: --hg option was not recognised (partially fixes github issue #93 )
+#    - wrap passed-through options to latexdiff in quotation marks (fix github issue #58 )
+#    - program names for latexdiff, latex, dvips, bibtex configurable (fixes issue #40)
+#
+# version 1.2.0:
 #    - depracation fix: left brace in RegEx now needs to be escaped
 #
 # version 1.1.1:
@@ -63,8 +68,8 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.2.0
-  (c) 2005-2016 F J Tilmann
+This is LATEXDIFF-VC 1.2.1
+  (c) 2005-2017 F J Tilmann
 EOF
 
 # output debug and intermediate files, set to 0 in final distribution
@@ -72,15 +77,30 @@ my $debug=0;
 
 
 # Option names
-my ($version,$help,$fast,$so,$postscript,$pdf,$onlychanges,$flatten,$force,$dir,$cvs,$rcs,$svn,$git,$hg,$diffcmd,$patchcmd,@revs);
+my ($version,$help,$fast,$showconfig,$so,$postscript,$pdf,$onlychanges,$flatten,$force,$dir,$cvs,$rcs,$svn,$git,$hg,
+    $run,$rundvi2,$diffcmd,$patchcmd,@revs,@configlist);
+# for passing through config options to latexdiff:
+my ($configlatexdiff,@config,$config,$assign);
+
 # Preset Variables
-my $latexdiff="latexdiff"; # Program for making the comparison
-my $latexcmd="latex"; # latex compiler if not further identified
+#my $latexdiff="latexdiff"; # Program for making the comparison
+#my $latexcmd="latex"; # latex compiler if not further identified
 my $vc="";
 my $tempdir=tempdir(CLEANUP => 1);   # generate a temp dir, which will automatically be deleted at program exit
 # Variables
 my ($file1,$file2,$diff,$diffbase,$rootdir,$answer,$options,$infile,$append,$dirname,$cwd);
 my (@files,@ldoptions,@tmpfiles,@ptmpfiles,@difffiles,$extracomp); # ,
+
+
+# keep commands to be used in config hash
+my (%CFG)=( 
+   LATEX     => "latex",
+   LATEXDIFF => "latexdiff",
+   DVI2      => "dvips",
+   BIBTEX    => "bibtex"
+   );
+
+
 
 Getopt::Long::Configure('pass_through','bundling');
 
@@ -91,6 +111,8 @@ GetOptions('revision|r:s' => \@revs,
            'git' => \$git,
            'hg' => \$hg,
            'dir|d:s' => \$dir,
+	   'run' => \$run,
+	   'dvi' => \$rundvi2,
 	   'fast' => \$fast,
 	   'so' => \$so,
            'postscript|ps' => \$postscript,
@@ -98,6 +120,8 @@ GetOptions('revision|r:s' => \@revs,
            'force' => \$force,
 	   'only-changes' => \$onlychanges,
 	   'flatten:s' => \$flatten,
+	   'config|c=s' => \@configlist,
+	   'show-config' => \$showconfig,
            'version' => \$version,
 	   'help|h' => \$help,
 	   'debug!' => \$debug);
@@ -116,11 +140,11 @@ if ( $version ) {
 }
 
 if ( $so ) {
-  $latexdiff='latexdiff-so';
+  $CFG{LATEXDIFF}='latexdiff-so';
 }
 if ( $fast ) { 
   die "Cannot specify more than one of --fast or --so " if ($so);
-  $latexdiff='latexdiff-fast';
+  $CFG{LATEXDIFF}='latexdiff-fast';
 }
 
 if ( $cvs ) {
@@ -137,6 +161,65 @@ if ( $svn ) {
 if ( $git ) {
   die "Cannot specify more than one of --cvs, --rcs, --svn --git or --hg." if ($vc);
   $vc="GIT";
+}
+if ( $hg ) {
+  die "Cannot specify more than one of --cvs, --rcs, --svn --git or --hg." if ($vc);
+  $vc="HG";
+}
+
+if ( $pdf ) {
+  $CFG{LATEX} = "pdflatex";
+  $run=1;
+} elsif ( $postscript ) {
+  $CFG{LATEX} = "latex";
+  $rundvi2=1;
+}
+
+if ( $rundvi2 ) {
+  $run=1;
+}
+
+# setting config variables from command line. Explicitly set configuration options take precedence over convenience options,
+# therefore this is executed last
+@config=();
+foreach $config ( @configlist ) {
+  if (-f $config || lc $config eq '/dev/null' ) {
+    open(FILE,$config) or die ("Couldn't open configuration file $config: $!");
+    while (<FILE>) {
+      chomp;
+      next if /^\s*#/ || /^\s*%/ || /^\s*$/ ;
+      push (@config,$_);
+    }
+    close(FILE);
+  }
+  else {
+#    foreach ( split(",",$config) ) {
+#      push @config,$_;
+#    }
+     push @config,split(",",$config)
+  }
+}
+
+$configlatexdiff="";
+foreach $assign ( @config ) {
+  $assign=~ m/\s*(\w*)\s*=\s*(\S*)\s*$/ or die "Illegal assignment $assign in configuration list (must be variable=value)";  
+  if ( defined($CFG{$1})) {
+    # known latexdiff-vc option
+    $CFG{$1}=$2;
+  } else {
+    # unknown option, assume it is a latexdiff configuration variable
+    $configlatexdiff .= "$1=$2,";
+  }
+}
+# delete last comma inv $configlatexdiff if present
+$configlatexdiff =~ s/,$// ;
+
+if ($showconfig) {
+  print "# Configuration variables (latexdiff-vc):\n";
+  foreach ( keys %CFG ) {
+    print "$_=$CFG{$_}\n";
+  }
+  exit 0;
 }
 
 
@@ -156,7 +239,7 @@ if ( defined($flatten) && ( -f $flatten || $flatten =~ /^-/ ) ) {
   $flatten="";
 }
 
-print "DEBUG: PDF $pdf latexdiff-vc command line: ", join(" ",@ARGV), "\n" if $debug; 
+print STDERR "DEBUG: PDF $pdf latexdiff-vc command line: ", join(" ",@ARGV), "\n" if $debug; 
 
 $file2=pop @ARGV;
 ( defined($file2) && $file2 =~ /\.(tex|bbl|flt)$/ ) or pod2usage("Must specify at least one tex, bbl or flt file");
@@ -217,7 +300,7 @@ if ( scalar(@revs)>0 ) {
     # $diffcmd  = "git diff ";
     # $patchcmd = "patch -R -p1";
   } elsif ( $vc eq "HG" ) {
-    $diffcmd  = "hg diff -r";
+    $diffcmd  = "hg diff --root . -r";
     $patchcmd = "patch -R -p1";
   } else {
     print STDERR "Unknown versioning system $vc \n";
@@ -241,6 +324,10 @@ while( $file1=pop @ARGV ) {
   }
 }
 
+if ( length $configlatexdiff >0 ) {
+  push @ldoptions, "--config $configlatexdiff";
+}
+
 if ( defined($flatten) ) {
   push @ldoptions, "--flatten" ;
 }
@@ -252,15 +339,15 @@ if ( $onlychanges ) {
 
 if ( scalar(@revs) == 0 ) {
   pod2usage("When -r option is not used, two .tex files (old and new) must be given on the command line") unless @files==2;
-  warn "Option -flatten should normally be combined with -r option (Results will probably not be as expected)" if $flatten;
+  warn "Option -flatten should normally be combined with -r option (Results will probably not be as expected)" if defined($flatten);
     #  compare two files
   $file1=shift @files ;
 } else {
   # revision control
-  if ( $flatten ) {
+  if ( defined($flatten) ) {
     pod2usage("Only one root file must be given  if --flatten option is used with version control") if  @files != 1;
     $tempdir='.' if ( $flatten eq "keep-intermediate" );
-    print "flatten tempdir |$tempdir|\n";
+    print STDERR "flatten tempdir |$tempdir|\n" if $debug;
     if ( $vc eq "SVN" ) {
       my (@infoout)=`svn info`;
       my (@urlline) = grep(/^URL:/, @infoout);
@@ -293,6 +380,12 @@ if ( ($vc eq "SVN" || $vc eq "CVS") && scalar(@revs)) {
   length($revs[0]) > 0 or $revs[0]="HEAD";
 }
 
+if ($vc eq "HG" && scalar(@revs)) {
+  length($revs[$#revs]) > 0 or $revs[$#revs]="tip";
+  length($revs[0]) > 0 or $revs[0]="tip";
+}
+
+print STDERR "DEBUG LDOptions($#ldoptions): " . join(":",@ldoptions) . "\n" if $debug;
 
 
 # cycle through all files
@@ -357,7 +450,11 @@ while ( $infile=$file2=shift @files ) {
   system("mkdir -p $dirname") unless ( -e $dirname );
 
   # Remaining options are passed to latexdiff
-  $options = join(" ",@ldoptions);
+  if (scalar(@ldoptions) > 0 ) {
+    $options = "\'" . join("\' \'",@ldoptions) . "\'";
+  } else {
+    $options = "";
+  }
    
   if ( -e $diff && ! $force ) {
     print STDERR "OK to overwrite existing file $diff (y/n)? ";
@@ -367,13 +464,13 @@ while ( $infile=$file2=shift @files ) {
       die "Abort ... " ;
     }
   }
-  print "Running: $latexdiff  $options \"$file1\" \"$file2\" > \"$diff\"\n";
-  unless ( system("$latexdiff $options \"$file1\" \"$file2\" > \"$diff\"") == 0 ) { 
-    print STDERR  "Something went wrong in $latexdiff. Deleting $diff and abort\n" ; unlink $diff ; exit(5) 
+  print STDERR "Running: $CFG{LATEXDIFF}  $options \"$file1\" \"$file2\" > \"$diff\"\n";
+  unless ( system("$CFG{LATEXDIFF} $options \"$file1\" \"$file2\" > \"$diff\"") == 0 ) { 
+    print STDERR  "Something went wrong in $CFG{LATEXDIFF}. Deleting $diff and abort\n" ; unlink $diff ; exit(5) 
   };
   print "Generated difference file $diff\n";
    
-  if ( ( $postscript or $pdf ) and !( scalar(@revs) && greptex( qr/\\document(?:class|style)/ , $diff ) ) ) {
+  if ( $run and !( scalar(@revs) && greptex( qr/\\document(?:class|style)/ , $diff ) ) ) {
     # save filename for later processing if postscript or pdf conversion is requested and either two-file mode was used (scalar(@revs)==0) or the diff file contains documentclass statement (ie. is a root document)
     push @difffiles, $diff ;
   }
@@ -393,46 +490,53 @@ foreach $diff ( @difffiles ) {
   # adapt magically changebar styles to [pdftex] display driver if pdf output was selected
   if ( $pdf ) {
     system("sed \"s/Package\\[dvips\\]/Package[pdftex]/\" \"$diff\" > \"$diff.tmp$$\" ; \\mv \"$diff.tmp$$\" \"$diff\"");
-    $latexcmd = "pdflatex";
-  } elsif ( $postscript ) {
-    $latexcmd = "latex";
   }
 
-  if ( $pdf | $postscript ) {
+  if ( $run ) {
     print STDERR "PDF: $pdf Postscript: $postscript cwd $cwd\n" if $debug;
 
     if ( system("grep -q \'^[^%]*\\\\bibliography{\' \"$diff\"") == 0 ) { 
-      system("$latexcmd --interaction=batchmode \"$diff\"; bibtex \"$diffbase\";");
+      system("$CFG{LATEX} --interaction=batchmode \"$diff\"; $CFG{BIBTEX} \"$diffbase\";");
       push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
     }
 
     # if special needs, as CHANGEBAR
     if ( $extracomp ) {
       # print "Extracomp\n";
-      system("$latexcmd --interaction=batchmode \"$diff\";");
+      system("$CFG{LATEX} --interaction=batchmode \"$diff\";");
     }
 
     # final compilation
-    system("$latexcmd --interaction=batchmode \"$diff\";"); # needed if cross-refs
-    system("$latexcmd \"$diff\";"); # final, with possible error messages
+    system("$CFG{LATEX} --interaction=batchmode \"$diff\";"); # needed if cross-refs
+    system("$CFG{LATEX} \"$diff\";"); # final, with possible error messages
 
-    if ( $postscript ) {
+    if ( $rundvi2 ) {
       my $dvi="$diffbase.dvi";
-      my $ps="$diffbase.ps";
+      #my $ps="$diffbase.ps";
       my $ppoption="";
       
       if ( $onlychanges ) {
 	$ppoption="-pp ".join(",",findchangedpages("$diffbase.aux"));
       }
-      system("dvips $ppoption -o $ps $dvi");
+      #system("$CFG{DVI2} $ppoption -o $ps $dvi");
+      system("$CFG{DVI2} $ppoption $dvi");
       push @ptmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
-      print "Generated postscript file $ps\n";
-    } elsif ( $pdf ) {
+      #print STDERR "Generated postscript file $ps\n";
+    } elsif ( $run ) {
       if ( $onlychanges ) {
 	my @pages=findchangedpages("$diffbase.aux");
 	###      print ("Running pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"\n") or 
-	system ("pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"")==0 or 
-	  die ("Could not execute <pdftk $diffbase.pdf cat " . join(" ",@pages) . " output $diffbase-changedpage.pdf> . Return code: $?");
+        my $qpdf = `which qpdf`;
+        $qpdf =~ s/^\s+|\s+$//g;
+        my $pdftk = `which pdftk`;
+        $pdftk =~ s/^\s+|\s+$//g;
+        if (-x $qpdf) {
+          system("qpdf --linearize \"$diffbase.pdf\" --pages \"$diffbase.pdf\" " . join(",", @pages) . " -- \"$diffbase-changedpage.pdf\" ") == 0
+            or die("could not execute qpdf to strip pages. Return code: $?");
+        } elsif (-x $pdftk) {
+          system ("pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"")==0 or
+            die ("Could not execute <pdftk $diffbase.pdf cat " . join(" ",@pages) . " output $diffbase-changedpage.pdf> . Return code: $?");
+        }
 	move("$diffbase-changedpage.pdf","$diffbase.pdf");
       }
       push @ptmpfiles, "$diffbase.aux","$diffbase.log";
@@ -591,6 +695,51 @@ The generic usage of this function is : C<latexdiff-vc --flatten -r rev1 [-r rev
 
 With C<--flatten=keep-intermediate>, the intermediate revision snapshots are kept in the current directory (Default is to store them in a temporary directory and delete them after generating the diff file.)
 
+=item B<--config var1=val1,var2=val2,...> or B<-c var1=val1,..>
+
+
+
+=item B<--only-changes>
+
+Post-process the output such that only pages with changes on them are displayed. This requires the use of subtype ZLABEL 
+in latexdiff, which will be set automatically, but any manually set -s option will be overruled (also requires zref package to 
+be installed). (note that this option must be combined with --ps or --pdf to make sense)
+
+=item B<--force>
+
+Overwrite existing diff files without asking for confirmation. Default 
+behaviour is to ask for confirmation before overwriting an existing difference
+file.
+
+=item B<--run>
+
+run latex command on diff file after generation of diff file.
+
+=item B<--dvi>
+
+run latex and dvixxx commands after generation of diff file.
+
+=item B<-c configfile>
+
+Set configuration variables for latexdiff and latexdiff-vc.  The option can be repeated to set different
+variables (as an alternative to the comma-separated list).
+Available variables for latexdiff-vc:
+
+=over 8
+
+=item C<LATEXDIFF> latexdiff command (e.g. latexdiff-fast, latexdiff-so). This command should support the option C<--interaction=batchmode>
+
+=item C<LATEX> latex command (e.g. pdflatex, lualatex)
+
+=item C<DVI2>  Command for conversion of dvi file (e.g. dvips, dvipdf)
+
+=item C<BIBTEX> Command replacing bibtex
+
+=back
+
+All other config variables are passed to latexdiff. Explicity set configuration changes always override implicit
+changes by the following shortcut options B<--fast>, B<--so>, B<--ps> and B<--pdf>. 
+
 =item B<--fast> or B<--so>
 
 Use C<latexdiff-fast> or C<latexdiff-so>, respectively (instead of C<latexdiff>).
@@ -609,21 +758,15 @@ bibtex; latex; latex; dvips>.
 Generate pdf output from difference file using C<pdflatex>. This will
 run the sequence C<pdflatex; pdflatex> on the difference file, or
 C<pdflatex; bibtex; pdflatex; pdflatex> for files requiring bibtex.
+Note that this is not just a shortcut for setting configuration variable but also triggers 
+some special behaviour.
 
-=item B<--only-changes>
 
-Post-process the output such that only pages with changes on them are displayed. This requires the use of subtype ZLABEL 
-in latexdiff, which will be set automatically, but any manually set -s option will be overruled (also requires zref package to 
-be installsed). (note that this option must be combined with --ps or --pdf to make sense)
+=item B<--show-config>
 
-=item B<--force>
+Show values of configuration variables.
 
-Overwrite existing diff files without asking for confirmation. Default 
-behaviour is to ask for confirmation before overwriting an existing difference
-file.
-
-=item B<--help> or
-B<-h>
+=item B<--help> or B<-h>
 
 Show help text
 
@@ -654,8 +797,8 @@ or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the version number 
 
 =head1 AUTHOR
 
-Version 1.2.0
-Copyright (C) 2005-2016 Frederik Tilmann
+Version 1.2.1
+Copyright (C) 2005-2017 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3
