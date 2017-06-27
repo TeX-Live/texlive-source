@@ -1,3 +1,8 @@
+2017-06-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfdoc.c: Simplify the change in pdf_doc_get_page().
+	* configure.ac: Change version number to distinguish from TL 2017.
+
 2017-06-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfdoc.c: Discard the backward compatibility for pdf BoundingBox
