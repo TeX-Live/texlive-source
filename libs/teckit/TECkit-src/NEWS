@@ -1,3 +1,9 @@
+2017-06-22
+    Version 2.5.7
+    Updated Unicode character names and normalization data to 10.0.0
+    Added a 64-bit Windows build
+    Updated documentation
+
 2016-04-19
     Version 2.5.6
     Added a diversion of /usr/bin/teckit_compile to avoid a conflict with the

@@ -1,8 +1,8 @@
 	Avoid more compiler warnings.
 
-diff -ur teckit-2.5.6.orig/source/Compiler.cpp teckit-2.5.6/source/Compiler.cpp
---- teckit-2.5.6.orig/source/Compiler.cpp	Tue May 31 05:37:08 2016
-+++ teckit-2.5.6/source/Compiler.cpp	Fri Dec 30 18:04:55 2016
+diff -ur teckit-2.5.7.orig/source/Compiler.cpp teckit-2.5.7/source/Compiler.cpp
+--- teckit-2.5.7.orig/source/Compiler.cpp	Tue Jun 27 05:50:43 2017
++++ teckit-2.5.7/source/Compiler.cpp	Tue Jun 27 17:25:31 2017
 @@ -189,14 +189,14 @@
  		free(table);
  }
@@ -29,9 +29,10 @@ diff -ur teckit-2.5.6.orig/source/Compiler.cpp teckit-2.5.6/source/Compiler.cpp
  	errorState = true;
  	++errorCount;
  }
-diff -ur teckit-2.5.6.orig/source/Engine.cpp teckit-2.5.6/source/Engine.cpp
---- teckit-2.5.6.orig/source/Engine.cpp	Tue May 31 05:37:08 2016
-+++ teckit-2.5.6/source/Engine.cpp	Fri Dec 30 18:18:57 2016
+
+diff -ur teckit-2.5.7.orig/source/Engine.cpp teckit-2.5.7/source/Engine.cpp
+--- teckit-2.5.7.orig/source/Engine.cpp	Tue Jun 27 05:50:43 2017
++++ teckit-2.5.7/source/Engine.cpp	Tue Jun 27 17:40:37 2017
 @@ -1093,7 +1075,7 @@
  			if (matchElems == 0 && allowInsertion == false)
  				continue;
@@ -50,9 +51,10 @@ diff -ur teckit-2.5.6.orig/source/Engine.cpp teckit-2.5.6/source/Engine.cpp
  					UInt16	copyBytes = *nameLength < bufferSize ? *nameLength : bufferSize;
  					if (copyBytes > 0)
  						memcpy(nameBuffer, namePtr, copyBytes);
-diff -ur teckit-2.5.6.orig/source/Engine.h teckit-2.5.6/source/Engine.h
---- teckit-2.5.6.orig/source/Engine.h	Tue May 31 05:37:08 2016
-+++ teckit-2.5.6/source/Engine.h	Fri Dec 30 18:09:51 2016
+
+diff -ur teckit-2.5.7.orig/source/Engine.h teckit-2.5.7/source/Engine.h
+--- teckit-2.5.7.orig/source/Engine.h	Tue Jun 27 05:50:43 2017
++++ teckit-2.5.7/source/Engine.h	Tue Jun 27 17:30:22 2017
 @@ -117,7 +117,7 @@
  
  	UInt32				match(int index, int repeats, int textLoc);
@@ -62,9 +64,10 @@ diff -ur teckit-2.5.6.orig/source/Engine.h teckit-2.5.6/source/Engine.h
  	int					patternLength;
  	int					direction;
  	MatchInfo			info[256];
-diff -ur teckit-2.5.6.orig/source/Public-headers/TECkit_Compiler.h teckit-2.5.6/source/Public-headers/TECkit_Compiler.h
---- teckit-2.5.6.orig/source/Public-headers/TECkit_Compiler.h	Tue May 31 05:37:08 2016
-+++ teckit-2.5.6/source/Public-headers/TECkit_Compiler.h	Fri Dec 30 18:21:02 2016
+
+diff -ur teckit-2.5.7.orig/source/Public-headers/TECkit_Compiler.h teckit-2.5.7/source/Public-headers/TECkit_Compiler.h
+--- teckit-2.5.7.orig/source/Public-headers/TECkit_Compiler.h	Tue Jun 27 05:50:43 2017
++++ teckit-2.5.7/source/Public-headers/TECkit_Compiler.h	Tue Jun 27 17:42:50 2017
 @@ -56,7 +59,7 @@
  #define kCompilerOpts_Compress	0x00000010	/* generate compressed mapping table */
  #define kCompilerOpts_XML		0x00000020	/* instead of a compiled binary table, generate an XML representation of the mapping */
@@ -83,9 +86,10 @@ diff -ur teckit-2.5.6.orig/source/Public-headers/TECkit_Compiler.h teckit-2.5.6/
  WINAPI EXPORTED
  TECkit_GetUnicodeName(UInt32 usv);
  	/* returns the Unicode name of usv, if available, else NULL */
-diff -ur teckit-2.5.6.orig/source/Sample-tools/TECkit_Compile.cpp teckit-2.5.6/source/Sample-tools/TECkit_Compile.cpp
---- teckit-2.5.6.orig/source/Sample-tools/TECkit_Compile.cpp	Tue May 31 05:37:08 2016
-+++ teckit-2.5.6/source/Sample-tools/TECkit_Compile.cpp	Fri Dec 30 18:14:53 2016
+
+diff -ur teckit-2.5.7.orig/source/Sample-tools/TECkit_Compile.cpp teckit-2.5.7/source/Sample-tools/TECkit_Compile.cpp
+--- teckit-2.5.7.orig/source/Sample-tools/TECkit_Compile.cpp	Tue Jun 27 05:50:43 2017
++++ teckit-2.5.7/source/Sample-tools/TECkit_Compile.cpp	Tue Jun 27 17:36:27 2017
 @@ -24,13 +24,13 @@
  #endif
  
@@ -98,7 +102,7 @@ diff -ur teckit-2.5.6.orig/source/Sample-tools/TECkit_Compile.cpp teckit-2.5.6/s
  void
  CALLBACK
 -errFunc(void* /*userData*/, char* msg, char* param, UInt32 line)
-+errFunc(void* /*userData*/, const char* msg, const char* param, UInt32 line)
++errFunc(void* /* userData */, const char* msg, const char* param, UInt32 line)
  {
  	fprintf(stderr, "%s", msg);
  	if (param != 0)

@@ -30,7 +30,7 @@ extern "C" {
 static
 void
 CALLBACK
-errFunc(void* /*userData*/, const char* msg, const char* param, UInt32 line)
+errFunc(void* /* userData */, const char* msg, const char* param, UInt32 line)
 {
 	fprintf(stderr, "%s", msg);
 	if (param != 0)

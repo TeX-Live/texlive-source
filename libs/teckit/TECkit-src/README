@@ -7,14 +7,12 @@ tools or by linking with other software packages.
 See the Documentation folder for information on the TECkit mapping language
 and conversion tool usage notes.
 
-The teckit_compile tool now supports a new option, not described in the PDF
-documentation:
+The TECkit libraries have been updated to support the Unicode 10.0.0 character
+repertoire.
 
-    -x    generate XML representation rather than compiled table
-
-This is primarily intended for use by the Reprise utility, and the XML format
-produced is subject to change according to the needs of that tool.
-
-The TECkit libraries have been updated to support the Unicode 7.0.0 character
-repertoire; the documentation and GUI tools (Mapping Editor, DropTEC text file
-converter) have not been modified since version 2.5.1 (2006).
+Starting with TECkit version 2.5.7 there are several changes with the Windows
+builds. First, a 64-bit build has been added to the already existing 32-bit
+build. Second, the runtime files have changed. The file libwinpthread-1.dll
+is no longer needed. The file libstdc++-6.dll needs to match the build
+(32 or 64 bit) of the rest of the code. The 32-bit build needs
+libgcc_s_sjlj-1.dll, while the 64-bit build needs libgcc_s_seh-1.dll.
