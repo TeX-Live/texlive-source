@@ -1,5 +1,5 @@
-Changes applied to the TECkit-2.5.6/ tree obtained from:
-	https://github.com/silnrsi/teckit/archive/2.5.6.tar.gz.
+Changes applied to the TECkit-2.5.7/ tree obtained from:
+	https://github.com/silnrsi/teckit/archive/2.5.7.tar.gz.
 
 Removed execute permissions from:
 	installed-top.pc.in
@@ -7,16 +7,22 @@ Removed execute permissions from:
 	uninstalled-top.pc.in
 
 Removed:
-	.gitignore
+	aclocal.m4
+	bin/Makefile.in
+	compile
+	config.guess
+	config.sub
+	configure
+	decomp
+	docs/Makefile.in
+	install-sh
+	lib/Makefile.in
+	ltmain.sh
+	Makefile.in
+	missing
+	test/Makefile.in
+	test-driver
 	SFconv/
-	TECkit.mcp
-	build-mac-binaries.sh
-	build-linux-package.sh
-	build-windows-binaries.sh
-	debian-src/
-	mac-installer/
-	perl_binaries/
-	source/teckitjni/
 	zlib-1.2.3/
 
 Converted Dos/Win line ends to native:
@@ -28,7 +34,3 @@ Converted Dos/Win line ends to native:
 	test/ISO-8859-1.map
 	test/Mrk-GNT.sf
 	test/mrk.sf.legacy.txt.orig
-
-Added newline at end of file:
-	source/Carbon.r
-

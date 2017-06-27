@@ -1,0 +1,48 @@
+.TH SFCONV 1 "2015-11-13" "TECkit"
+.SH NAME
+sfconv \- A tool for converting the encoding of Standard Format (SF) files
+.SH SYNOPSIS
+.SS "8-bit to Unicode:"
+.TP
+sfconv \fB\-8u\fR [\-utf8|\-be|\-le] [\-bom] \fB\-c\fR ControlFile [\-d MappingDirectory] \fB\-i\fR InFile \fB\-o\fR OutFile
+.SS "Unicode to 8-bit:"
+.TP
+sfconv \fB\-u8\fR [\-utf8|\-be|\-le] \fB\-c\fR ControlFile [\-d MappingDirectory] \fB\-i\fR InFile \fB\-o\fR OutFile
+.SH "DESCRIPTION"
+A tool for converting Standard Format (SF) files is included in the current TECkit package.
+This is \fBsfconv\fR , a command-line tool that uses an XML “control file” to specify the
+mappings associated with the various markers in an SF file. Note that the current SFconv tool
+should be considered a prototype rather than a full solution to the issue of SF conversions. A
+more complete tool with an improved user interface would be desirable.
+.SH "OPTIONS"
+The SFconv utility uses command-line options to specify the conversion direction,
+control file, and input and output files. The required arguments are:
+.TP
+.BR  \-8u | \-u8
+conversion direction: 8-bit to Unicode or vice versa
+.TP
+.BR  \-c  controlFile
+specifies XML control file
+.TP
+.BR  \-i  inFile
+specifies filename of input SF file
+.TP
+.BR  \-o  outFile
+specifies filename for converted output
+
+In addition, the following optional arguments may be used if appropriate:
+.TP
+.BR  \-d mappingDir
+directory where mapping files ( .tec files) are to be found
+.TP
+.BR  \-utf8 | \-be | \-le
+Unicode encoding form: UTF-8, UTF-16BE, or UTF16-LE (default is UTF8 for output, or detected from input file if BOM is present)
+.TP
+.BR  \-bom
+(only when mapping to Unicode) write initial BOM to the output file
+.TP
+.BR  \-nfc | \-nfd
+(only when mapping to Unicode) normalize to NFC or NFD
+.SH Further Information
+For further information see the document TECkit_Tools.pdf.
+On a Debian system, this can be found in /usr/share/doc/teckit.

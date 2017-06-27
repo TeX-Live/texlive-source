@@ -1,0 +1,28 @@
+.TH TECKIT_COMPILE 1 "2015-11-14" "TECkit"
+.SH NAME
+teckit_compile \- manual page for command line error at --version
+.SH SYNOPSIS
+.B teckit_compile
+[\fI\,-u\/\fR] [\fI\,-x\/\fR] [\fI\,-z\/\fR] \fI\,mapping_description \/\fR[\fI\,-o compiled_table\/\fR]
+.SH OPTIONS
+Required argument:
+.IP
+\fBsource\fR mapping description (.map) file
+.PP
+Optional arguments:
+.TP
+.BR \fB\-o\fR file
+output compiled table (.tec) file ("\-" for stdout)
+.TP
+.BR \fB\-u\fR
+read source text as UTF8 even if no BOM found
+.TP
+.BR \fB\-x\fR
+generate XML representation rather than compiled table
+.TP
+.BR \fB\-z\fR
+generate uncompressed table format
+.SH Further Information
+For further information see the document TECkit_Tools.pdf.
+A description of the mapping description language used by the compiler, with examples, is found in TECkit_Language.pdf.
+On a Debian system, these can be found in /usr/share/doc/teckit.

@@ -1,7 +1,0 @@
-TECkit_Compile
-TECkit_CompileOpt
-TECkit_DisposeCompiled
-TECkit_GetCompilerVersion
-TECkit_GetUnicodeName
-TECkit_GetTECkitName
-TECkit_GetUnicodeValue

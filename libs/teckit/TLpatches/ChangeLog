@@ -1,3 +1,10 @@
+2017-06-27  Akira Kakuto  <kakuto@.fuk.kindai.ac.jp>
+
+	Imported TECkit-2.5.7 source tree (teckit) from
+	https://github.com/silnrsi/teckit/archive/2.5.7.tar.gz.
+	patch-02-warning, patch-03-warnings, patch-04-pragmas,
+	patch-05-static, and patch patch-06-dont-build-sfconv: Adapted.
+
 2017-01-11  Norbert Preining  <norbert@preining.info>
 
 	Remove SFconv directory, contains non-free ConvertUTF.{c,h}

@@ -1,0 +1,50 @@
+.TH TXTCONV 1 "2015-11-13" "TECkit"
+.SH NAME
+txtconv \- A tool to apply TECkit mappings to convert the encoding of a plain text file
+.SH SYNOPSIS
+.B txtconv
+\fI\,-i inFile -o outFile \/\fR[\fI\,-t tecFile\/\fR] [\fI\,-r\/\fR] [\fI\,-if inForm\/\fR] [\fI\,-of outForm\/\fR] [\fI\,-nobom\/\fR] [\fI\,-nf\/\fR[\fI\,cd\/\fR]] [\fI\,-u n\/\fR]
+.SH "OPTIONS"
+\fBRequired arguments:\fR
+.TP
+\fB\-i\fR <file>
+input file
+.TP
+\fB\-o\fR <file>
+output file
+.PP
+\fBOptional arguments:\fR
+.TP
+\fB\-t\fR <file>
+compiled TECkit mapping (.tec) file
+.TP
+\fB\-r\fR
+reverse (RHS\->LHS, or Unicode\->Byte) mapping
+.TP
+\fB\-if\fR <form>
+input encoding form
+.TP
+\fB\-of\fR <form>
+output encoding form
+.TP
+\fB\-nobom\fR
+don't write a BOM to Unicode output
+.TP
+\fB\-nf[cd]\fR
+apply NFC or NFD normalization to Unicode output
+.TP
+\fB\-u\fR <n>
+handling of unmappable input:
+.IP
+\(bu 0 = use replacement character
+\.IP
+\(bu 1 = use replacement but generate warning
+\.IP
+\(bu 2 = stop conversion
+.PP
+\fBEncoding forms:\fR
+.IP
+bytes utf8 utf16be utf16le utf16 utf32be utf32le utf32
+.SH Further Information
+For further information see the document TECkit_Tools.pdf.
+On a Debian system, this can be found in /usr/share/doc/teckit.

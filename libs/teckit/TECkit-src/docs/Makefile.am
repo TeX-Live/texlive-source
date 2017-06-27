@@ -1,3 +1,4 @@
-EXTRA_DIST = TECkit_Binary_Format.doc.pdf
-EXTRA_DIST += TECkit_Language_2.1.doc.pdf
-EXTRA_DIST += TECkit_version_2.1.doc.pdf
+dist_man1_MANS = teckit_compile.1 txtconv.1 sfconv.1
+EXTRA_DIST = TECkit_Binary_Format.pdf
+EXTRA_DIST += TECkit_Language.pdf
+EXTRA_DIST += TECkit_Tools.pdf
