@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH AUTOSP 1 2017-04-06  "" ""
+.TH AUTOSP 1 2017-06-21  "" ""
 
 .SH NAME
 autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
@@ -39,7 +39,7 @@ generates
 .fi
 Typically,
 an
-\\anotes command is expanded into several conventional
+\\anotes command generates several conventional
 note-spacing commands.
 
 If the
@@ -62,6 +62,21 @@ has neither .aspc nor .tex extension, input is taken from
 if that file exists, or from 
 .IR infile .tex 
 otherwise.
+If the
+input is from a file
+.IR infile .aspc
+and no 
+.I outfile 
+argument is provided, output will go to
+.IR infile .tex
+(or to
+.IR infile .ltx
+if a \\documentclass declaration is encountered).
+If the input is from a file
+.IR infile .tex,
+an 
+.I outfile
+argument must be provided.
 
 For
 \\anotes commands (and, for a .tex file, all conventional note-spacing commands), 
@@ -87,20 +102,9 @@ is acceptable and generates
 .fi
 
 
-If
-no 
-.IR outfile
-argument is provided, 
-output goes to
-.IR infile .tex 
-if the 
-.I infile 
-name
-has extension .aspc, or to standard output otherwise.
-
 If the 
 .B \-l 
-( \fB\-\-log\fP ) option is used, a log 
+( \fB\-\-log\fP ) option is used, a very detailed log 
 .IR infile .alog
 is generated.
 
@@ -127,17 +131,34 @@ the non-standard command \\Cpause in a note segment generates a
 bar-centered rest.
 
 Spacing commands \\sk and \\hsk in the source are discarded,
-but not \\qsk, \\hqsk or \\qqsk;
+but not \\qsk, \\tqsk, \\hqsk or \\qqsk;
 moreover
 non-standard commands
-\\Qsk, \\HQsk and \\QQsk generate "global" skips; i.e., the effect of \\qsk, \\hqsk or \\qqsk in 
+\\QQsk, \\HQsk \\TQsk and \\Qsk in the source generate "global" skips; i.e., the effect of \\qqsk, \\hqsk, \\tqsk or \\qsk, respectively,  in 
 .I every 
-staff.
+staff. These ensure that staffs remain synchronized if additional spacing is needed in one staff. 
+
+Global skips may also be obtained within collective-coding sequences by using
+one, two, three or four successive commas 
+to get the effects of \\QQsk, \\HQsk, \\TQsk or \\Qsk, respectively.
+Global skips (equivalent to one, two or three commas, depending on the beaming and the accidental)  are 
+automatically inserted before accidentals ('^', '_', '=', '<', '>') on beamed collective-coding notes. 
+The spacing can be increased by adding sufficient commas or locally re-defining 
+the relevant skip commands (\\qqsk, \\hqsk, \\tqsk, \\qsk).
+
 
 A note segment can be completely empty, but if a note segment should start
 with or contain a "space," the note-value
 of that space must be made explicit with a command of the
 form \\ha{*}, \\qa{.*}, \\qa{*}, \\ca{*}, etc. 
+
+From version 2017-06-14, the effects of \\TransformNotes calls are implemented by the pre-processor. This
+enables use of 
+.B autosp 
+scores
+with musixlyr.tex, which is incompatible with the
+musixtnt.tex 
+implementation of \\TransformNotes.
 
 All other conventional MusiXTeX commands are output exactly as given in the input.
 
@@ -167,6 +188,7 @@ Collective coding of note sequences (including accidentals and dots) is handled
 by expanding the sequence
 into a sequence of individual note commands.
 
+ 
 .SH LIMITATIONS
 
 .B autosp
@@ -214,11 +236,15 @@ of
 64ths.
 .B autosp
 cannot deal with simultaneous x-tuplets in multiple staffs unless the x values and
-note durations are identical. Global skips (\\QQsk, \\HQsk and \\Qsk) are
-ineffective if a staff has an x-tuplet; however, "local" skips (\\qqsk, \\hqsk, \\qsk)
-are effective.
+note durations are identical. 
 
-User-defined macros are not processed or expanded.
+User-defined macros are generally not processed or expanded; however, definitions of the form
+.nf
+
+    \\def\\atnextbar{\\znotes ... \\en}
+
+.fi
+generate definitions that take account of \\TransformNotes.
 
 All staffs are assumed to have the same meter; see kinder2.aspc for
 an example of how to work around this.
