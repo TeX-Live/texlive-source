@@ -28,7 +28,7 @@
 \setname3{A}
 \setname4{S}
 \songtop4\songbottom1
-\fulltitle{\BIgfont \so{Quodlibet}}
+\fulltitle{\sc\so{Quodlibet}}
 \subtitle{\it Variation 30 of the Goldberg Variations for Clavier}
 \title{\it Quodlibet}
 \author{J. S. Bach (1685--1750)}
@@ -82,25 +82,25 @@
 \anotes
   \itieu0a\qa a\ttie0\ibbl0a{-2}\qb0{aNM}\tqb0L&
   \ibl1l{-2}\qb1l\tqb1k\cl{^j}\ds&
-  \qa{.o}\ibbl2i2\qb2i\qsk\tqb2{^j}&
+  \qa{.o}\ibbl2i2\qb2i\tqb2{^j}&
   \shake{n}\ibl3i0\qb3{^j}\nbbl3\qb3i\tqb3j\cu h\ds\en
 \bar%7
 \anotes\qa{MK}&\ibu1g0\qb1{fgh}\tqh1f&\ibl2k0\qb2{klm}\tqb2k&\qa{hh}\en
 \anotes\qa{NG}&\ibu1g{-2}\qb1{gfe}\tqh1d&\ibl2i4\qb2{ikn}\tqb2m&\qa{ii}\en
 \bar%8
-\vnotes0.4\elemskip&&&\en
+\nspace
 \anotes
   \qu{.H}\cu{^J}&
   \ibu1c4\qb1{^cde}\itied1h\tqh1h&
-  \ibl2l{-1}\qb2{.l}\itieu2k\tbbl2\tqb2k\ttie2\ibbl2j0\qb2k\hqsk\tbbl2\qb2{^j}\itieu2l\tqb2l&
+  \ibl2l{-1}\qb2{.l}\itieu2k\tbbl2\tqb2k\ttie2\ibbl2j0\qb2k\tbbl2\qb2{,,,^j}\itieu2l\tqb2l&
   \ibu3h{0}\qb3{hih}\tqh3g\en
 \anotes
   \ql K\cl K&
   \ttie1\ibu1h{-2}\qb1h\tqh1g\cu f&
   \ttie2\ibbl2l{-1}\qb2{lkl}\tqb2j\cl k&
   \ibu3f{-1}\qb3f\tqh3e\cu d\en
-\advance\barno by -1%
-\leftrightrepeat%8
+\leftrightrepeat%9
+\advance\barno-1%
 \anotes\ds&\cl m&\ds&\cl o\en
 \bar%9
 \anotes\qa{dc}&\ibl1k0\qb1{kmk}\tqb1{m}&\qa{oo}&\ibl3m0\qb3{mom}\tqb3o\en
@@ -118,14 +118,14 @@
   \qa{.a}\cl{^a}&
   \ibl1m{-1}\qb1{mnm}\tqb1l&
   \qa{qq}&
-  \ibbl3k2\qb3{^klm}\tqb3n\ibl3o{-2}\qb3o\nbbl3\qb3n\qsk\tqb3m\en
+  \ibbl3k2\qb3{^klm}\tqb3n\ibl3o{-2}\qb3o\nbbl3\qb3n\tqb3m\en
 \bar%12
-\vnotes0.4\elemskip&&&\en
+\nspace
 \anotes
   \qa b\qa I&
   \ibl1k2\qb1{^k}\nbbl1\qb1l\tqb1m\itied1i\qu i&
   \ibl2o{-1}\qb2p\qb2q\qb2p\tqb2o&
-  \ibl3n{-2}\qb3n\nbbl3\qb3m\tqb3l\qsk\ibbl3k0\qb3{^kl}\qb3m\tqb3k\en
+  \ibl3n{-2}\qb3n\nbbl3\qb3m\tqb3l\ibbl3k0\qb3{,,,^kl}\qb3m\tqb3k\en
 \anotes
   \qa{.L}\cl{=K}&
   \ttie1\ibu1i0\qb1i\nbbu1\qb1h\tqh1i\ibu1g2\qb1g\nbbu1\qb1h\tqh1i&

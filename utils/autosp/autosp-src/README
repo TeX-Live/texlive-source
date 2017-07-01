@@ -1,5 +1,5 @@
 This is the README for the autosp package, 
-version 2017-04-06.
+version 2017-06-21.
 
 autosp is a preprocessor that generates note-spacing
 commands for MusiXTeX scores. It simplifies the creation
@@ -39,13 +39,18 @@ by using the non-standard command \Cpause in a note segment.
 
 Spacing commands \sk and \hsk in the source are discarded,
 but not \qsk, \hqsk or \qqsk; moreover non-standard commands
-\Qsk, \HQsk and \QQsk generate "global" skips; i.e., the
-effect of \qsk, \hqsk or \qqsk in *every* staff.
+\Qsk, \TQsk, \HQsk and \QQsk generate "global" skips; i.e., the
+effect of \qsk, \tqsk, \hqsk or \qqsk in *every* staff.
 
 A note segment can be completely empty, but if a note
 segment should start with or contain a "space," the
 note-value of that space must be made explicit with a
 command of the form \ha{*}, \qa{.*}, \qa{*}, \ca{*}, etc.
+
+From version 2017-06-14, the effects of \TransformNotes calls are
+implemented by the pre-processor. This enables use of autosp with
+musixlyr.tex, which is incompatible with the musixtnt.tex implementation
+of \TransformNotes.
 
 All other conventional MusiXTeX commands are output exactly
 as given in the input.

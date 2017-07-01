@@ -1,6 +1,16 @@
 AUTOSP
 
+  Support for global skips within collective-coding
+    sequences by using commas between notes.
+  Automatic added spacing for accidentals on beamed sixteenth notes 
+    and smaller.
+
+2017-06-14
+
   \hl distinguished from \hloff
+  \TransformNotes implemented in the pre-processor
+  Output file-name extension changed to .ltx if \documentclass encountered
+  Support for global skips \QQsk, \HQsk, \TQsk, \Qsk
 
 2016-11-02
 
