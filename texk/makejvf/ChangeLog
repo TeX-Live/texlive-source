@@ -1,5 +1,6 @@
 2017-07-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
+	* makejvf.1: More detailed description in English.
 	* tests/min10.{tfm,vf}: Remove redundant entry JIS 2577.
 	* tests/tmin10.vf, makejvf.test: Correct command-line option.
 	Now all test files are the same with ptex-fonts.

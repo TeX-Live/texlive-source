@@ -8,6 +8,52 @@ makejvf \- Make Japanese VF file from Japanese \*(TX TFM file
 .SH DESCRIPTION
 \fBmakejvf\fP is a tool to generate Japanese VF file from Japanese \*(TX TFM
 (JFM) file for use with dvips.
+.SH OPTIONS
+.PP
+.TP 10
+\fB-C\fR
+Condensed ("Cho-tai") mode.
+.TP 10
+\fB-K\fI <TFMfile>\fR
+Name of the PS font TFM for Kana (more exactly, non-Kanji) characters.
+.TP 10
+\fB-b\fI <integer>\fR
+Base line shift amount; the \fIinteger\fR represents a relative value,
+using the character height as a base of 1000.
+When a positive integer is specified, the characters are lowered.
+When a negative integer is specified, the characters are raised.
+.TP 10
+\fB-m\fR
+Replace single/double quotation marks (', '') with prime quotation marks
+(so-called "minute") in vertical writing.
+.TP 10
+\fB-a\fI <AFMfile>\fR
+Name of the AFM file. Used for Kana-tsume mode.
+.TP 10
+\fB-k\fI <integer>\fR
+Kana-tsume (narrower spaces between Kana characters) margin amount;
+the \fIinteger\fR represents a relative value, using the character width
+as a base of 1000. This option should be accompanied with \fB-a\fR option.
+.TP 10
+\fB-u\fI <Charset>\fR
+UCS mode. Available charsets are: gb (GB = Simplified Chinese),
+cns (CNS = Traditional Chinese), ks (KS = Korean),
+jis (JIS = Japanese), jisq (JIS quote only).
+.TP 10
+\fB-J\fI <TFMfile>\fR
+JIS encoded PS font TFM name for quote, double quote (with UCS mode)
+.TP 10
+\fB-U\fI <TFMfile>\fR
+UCS encoded PS font TFM name for quote, double quote (with UCS mode)
+.TP 10
+\fB-3\fR
+Use set3 (with UCS mode)
+.TP 10
+\fB-H\fR
+Use half-width Katakana (with UCS mode)
+.TP 10
+\fB-i\fR
+Start font ID from No. 0.
 .SH EXAMPLE
 .TP 5
 If you want to use min10 as Ryumin-Light-H, run
