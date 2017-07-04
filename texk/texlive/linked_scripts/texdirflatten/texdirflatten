@@ -14,13 +14,17 @@ single output directory -- i.e., flattens its hierarchy.
 
 =head1 SYNOPSIS
 
-texdirflatten [-1|--onetex] [-f|--file input.tex] [-o outputdir] [-?|--help]
+texdirflatten [-1|--onetex] [-f|--file input.tex] [-o outputdir] 
+    	      [--imgexts .ext1,.ext2,...] [--debug] [-V|--version] [-?|--help]
 
 =head1 DESCRIPTION
 
-It parses the source file, following its included children (La)TeX
-files recursively, to collect together its components, such as
-graphics and BiBTeX bibliography files in different directories.
+This Perl script parses a LaTeX file recursively, scanning all child
+files, and collects details of any included and other data files, such
+as graphics and BiBTeX bibliography files. These component files, are
+then all put into a single directory (thus "flattening" the document's
+directory tree). This is useful in distributing manuscripts to
+collaborators or in submitting to journals.
 
 =for comment
 Run without parameters to see usage.
@@ -43,6 +47,23 @@ If specified, produces a single TeX file by expanding all \input and
 Directory to collect all files. B<texdirflatten> will copy each source
 file, graphics and bibliography file to this directory. It will be
 created if it is unexistent. If unspecified, it defaults to C<flat/>.
+
+=item B<--imgexts> I<.ext1,.ext2[,...]>
+
+Prepends to the prioritized list of image extensions to search when
+trying to find the image to copy to output folder. The first file with
+the extension found will be copied and search stopped. Default order
+is C<"", ".eps", ".pdf", ".pstex"> (note that it includes files with
+no extension). If using pdflatex, one may want to add PDF before EPS
+with C<--imgexts .pdf>. Don't forget the dot before the extension!
+
+=item B<--debug>
+
+Enables copious amounts of debugging output - useful if something is going wrong.
+
+=item B<--version>, B<-V>
+
+Displays the current version number and the usage and exits.
 
 =item B<--help>, B<-?>
 
@@ -84,9 +105,9 @@ it under the same terms as Perl itself.
 =cut
 
 # TODO:
-#
 # - parse BIBINPUTS environment variable and search figures and such
 # there as well.
+# - also copy bibtex style file
 
 package texdirflatten;
 
@@ -99,7 +120,11 @@ use re 'eval';
 # Global
 my $outputdir   = "flat";	# Output directory
 my $file = "";			# File to read
+my @imgexts = ("", ".eps", ".pdf", ".pstex"); # Ordered list of image extensions to search and copy
+my $imgexts_pre;			    # Prepend to @imgexts
 my $onetex = 0;			# Indicates all input and include commands be expanded
+my $version = "1.3";		# 2017-02-02
+my $DEBUG = 0;			# Enable debugging output
 my $help;
 
 # parse helpers
@@ -109,6 +134,10 @@ my %texfiles;
 my $result = GetOptions ("output|o=s" => \$outputdir,
 			 "onetex|1" => \$onetex,
 			 "file|f=s" => \$file,
+			 "imgexts=s" => \$imgexts_pre,
+			 "debug" => \$DEBUG,
+			 "version|V" => sub { print "texdirflatten version $version\n"; 
+					      pod2usage( -section => "SYNOPSIS"); },
 			 "help|?" => \$help );
 
 # regexp for none or an even number of backslashes (\):
@@ -117,11 +146,15 @@ my $unescaped =
 
 # counter for files translated (like LyX does)
 $::filecount = 0;
-my $DEBUG = 1;
 
 pod2usage( -verbose => 2 ) if ($help);
 
 pod2usage( -section => "SYNOPSIS") if ($file eq "");
+
+if ($imgexts_pre) {
+    unshift(@imgexts, split(/,/, $imgexts_pre));
+    print "imgexts: ". join(",", @imgexts) . "\n" if $DEBUG;
+}
 
 system "mkdir $outputdir" if (not -d $outputdir);
 
@@ -159,7 +192,7 @@ sub parseTeX {
   # Look for graphics include statement
   if ($contents =~ /\\input\@path\{\{([^}]*)\}\}/) {
     $inputdir = $1;
-    print "Found input directory: $inputdir\n";
+    print "Found input directory: $inputdir\n" if $DEBUG;
   }
 
   print "Parsing '$file' in directory '$inputdir'\n";
@@ -190,12 +223,11 @@ sub parseTeX {
       $long =~ s/\\lyxdot /./g;
       $flat =~ s/\\lyxdot /./g;
 
-      print "Looking for graphics: '$long'\n";
+      print "Looking for graphics: '$long'\n" if $DEBUG;
 
-      my @exts = ("", ".eps", ".pdf", ".pstex");
       my @dirs = ("", "$inputdir", $inputdir . '../figures/');
 
-      seekfile($long, $flat, ["", ".eps", ".pdf", ".pstex"], 
+      seekfile($long, $flat, \@imgexts, 
 	       ["", "$inputdir", $inputdir . '../figures/']);
 
     }
@@ -220,7 +252,7 @@ sub parseTeX {
 
     foreach $long (@longs) {
       $flat = shift @flats;
-      print "Found Input/Include: '$long'\n";
+      print "Found Input/Include: '$long'\n" if $DEBUG;
       # recurse to parse that tex file unless it's done already
 
       if (not exists $texfiles{$flat}) {
@@ -273,15 +305,15 @@ sub seekfile {
       foreach my $ext (@exts) {
 	  my $tryfile = "$dir$file$ext";
 	  if (-r $tryfile) {
-	      # add the extension to $dest only if it hasn't any dots
-	      my $dext = '';
-	      $dext = $ext if (! $dest =~ /\./); 
+	      # add the extension to $dest only if it hasn't have any dots
+	      #(! ($dest =~ /\./)) ? $ext : ""; => better not to have this
+	      my $dext = $ext; 
 	      
 	      if (system("cp $tryfile $outputdir/$dest$dext") != 0) {
 		  die "Cannot copy $tryfile!\n";
 	      }
 	      # If we found it, then get out of the loop
-	      print "Found: '$tryfile'\n";
+	      print "Copied: '$tryfile' (ext: $ext) -> '$dest$dext'\n" if $DEBUG;
 	      last OUT;
 	  }
       }
@@ -354,7 +386,7 @@ sub replacebibs {
       (?{ #print "\n+++ $#::flats; $#::refs; $#::longs\n";
           #push @::flats, @_flats; push @longs, @_longs; push @refs, @_refs;
           #print "Refs: @::refs\n";
-    })/"\\bibliography$1" . "{@::refs}"/egmx;# &&
+    })/"\\bibliography" . ($1 || "") . "{@::refs}"/egmx;# &&
       #print "bib contents: $$contentsref\n";
       #print "\n*** $#::flats; $#::refs; $#::longs\n";
   $" = ' ';			# restore list item separator
@@ -366,13 +398,13 @@ sub replacebibs {
 
     foreach $long (@::longs) {
       $flat = shift @::flats;
-      print "Found bib. file: '$long'\n";
+      print "Found bib. file: '$long'\n" if $DEBUG;
       # recurse to parse that tex file unless it's done already
 
       # convert LyX directory dots
       $long =~ s/\\lyxdot /./g;
 
-      seekfile($long, "$flat.bib", [".bib"], 
+      seekfile($long, "$flat", [".bib"], 
 	       ["", "$inputdir"]);
     }
   }
