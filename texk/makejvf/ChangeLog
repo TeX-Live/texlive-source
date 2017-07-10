@@ -1,3 +1,7 @@
+2017-07-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* write.c: Fix a bug in -m option on UCS mode.
+
 2017-07-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* makejvf.1: More detailed description in English.

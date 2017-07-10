@@ -433,6 +433,7 @@ void writevfu(int code, FILE *fp)
 				fputnum2(skip2,fp);
 			}
 			if (kanatfm) fputc(173+fidshift,fp); /* FONT_NUM_2 */
+			fputc(129,fp); /* SET2 */
 			if (code == 0x2018)
 				fputnum(0x2032,2,fp); /* char code */
 			else
