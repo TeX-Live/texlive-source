@@ -520,9 +520,9 @@ void writevfu(int code, FILE *fp)
 		if (jfm_id == 9 && minute) { /* 縦書き時はミニュートへ変換 */
 			if (afp) {
 				if (code == 0x2019)
-					sprintf(buf2,"CH <216C>");
+					sprintf(buf2,"CH <2032>");
 				else
-					sprintf(buf2,"CH <216D>");
+					sprintf(buf2,"CH <2033>");
 				rewind(afp);
 				while (fgets(buf,255,afp)!=NULL) {
 					if (jfm_id==9 && !strncmp(buf,"FontBBox ",9)) {
@@ -762,10 +762,12 @@ void writevfu(int code, FILE *fp)
 			}
 		}
 		else {
-			if (kanatfm || code>=0x10000)
+			if (kanatfm)
 				cc=4;
 			else
 				cc=3;
+			if (code>=0x10000)
+				cc+=1;
 			if (skip)
 				cc+=numcount(skip)+1;
 			if (skip2)

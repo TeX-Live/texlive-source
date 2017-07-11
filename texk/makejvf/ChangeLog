@@ -1,3 +1,9 @@
+2017-07-11  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* write.c: Fix a bug which occurs when —3 and -K are used at
+	the same time (Thanks Takayuki YATO). Char code consistency in
+	AFM parsing (though -a option is never supported).
+
 2017-07-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* write.c: Fix a bug in -m option on UCS mode.
