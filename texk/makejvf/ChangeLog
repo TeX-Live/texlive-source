@@ -1,3 +1,9 @@
+2017-07-12  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* write.c: Fix a bug in generating non-Kanji TFM on UCS mode.
+	Now all non-Kanji char codes are included in non-Kanji TFM.
+	* makejvf.1: -a and -k options are never supported, per README.txt.
+
 2017-07-11  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* write.c: Fix a bug which occurs when -3 and -K are used at

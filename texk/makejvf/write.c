@@ -670,7 +670,7 @@ void writevfu(int code, FILE *fp)
 		}
 	default:
 		if (w != zw) {
-			if (((code >= 0x3041 && code <= 0x30F6) || code == 0x30FC ) && kanatume>=0) {
+			if ((code >= 0x3041 && code <= 0x33FF) && kanatume>=0) {
 				sprintf(buf2,"CH <%X>",code);
 				rewind(afp);
 				while (fgets(buf,255,afp)!=NULL) {
@@ -788,7 +788,7 @@ void writevfu(int code, FILE *fp)
 		fputnum2(skip2,fp);
 	}
 	if (kanatfm) {
-		if (code <= 0x30F6)
+		if (code <= 0x33FF)
 			fputc(173+fidshift,fp); /* FONT_NUM_2 */
 		else
 			fputc(172+fidshift,fp); /* FONT_NUM_1 */
