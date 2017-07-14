@@ -43,7 +43,7 @@ This package is mainly for developers, it contains the following files:
 * `synctex_parser_utils.h`
 * `synctex_parser_local.h`
 * `synctex_parser.h`
-* `synctex_parser_private.h`
+* `synctex_parser_advanced.h`
 * `synctex_parser.c`
 
 The file you are reading contains more informations about the __SyncTeX__ parser history.
@@ -62,7 +62,7 @@ In order to support __SyncTeX__ in a viewer, it is sufficient to include
 in the source the files `synctex_parser.c` and `synctex_parser_utils.c`.
 The synctex parser usage is described in `synctex_parser.h` header file.
 
-More advanced usage is found in `synctex_parser_private.h`
+More advanced usage is found in `synctex_parser_advanced.h`
 
 The other files are used by tex engines or by the synctex command line utility:
 
@@ -221,7 +221,7 @@ TeX and friends are not concerned by these changes.
   the same vertical position because many objects belong
   to the same line. When the options read `-synctex=±2` or more,
   a very basic compression algorithm is used:
-  if synctex is about write the same number then it writes
+  if synctex is about to write the same number then it writes
   an `=` sign instead. This saves approximately 10% of the
   synctex output file, either compressed or not.
   The new synctex parser has been updated accordingly.
