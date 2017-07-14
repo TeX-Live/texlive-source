@@ -537,7 +537,7 @@ typedef struct synctex_reader_t {
     int size;
     int lastv;
     int line_number;
-    SYNCTEX_DECLARE_CHAR_OFFSET;
+    SYNCTEX_DECLARE_CHAR_OFFSET
 } synctex_reader_s;
 
 typedef synctex_reader_s * synctex_reader_p;
@@ -783,7 +783,7 @@ synctex_reader_p synctex_reader_init_with_output_file(synctex_reader_p reader, c
 }
 
 #   if defined(SYNCTEX_USE_HANDLE)
-#       define SYNCTEX_DECLARE_HANDLE synctex_node_p handle
+#       define SYNCTEX_DECLARE_HANDLE synctex_node_p handle;
 #   else
 #       define SYNCTEX_DECLARE_HANDLE
 #   endif
@@ -799,8 +799,8 @@ synctex_reader_p synctex_reader_init_with_output_file(synctex_reader_p reader, c
  */
 struct synctex_scanner_t {
     synctex_reader_p reader;
-    SYNCTEX_DECLARE_NODE_COUNT;
-    SYNCTEX_DECLARE_HANDLE;
+    SYNCTEX_DECLARE_NODE_COUNT
+    SYNCTEX_DECLARE_HANDLE
     char * output_fmt;          /*  dvi or pdf, not yet used */
     synctex_iterator_p iterator;/*  result iterator */
     int version;                /*  1, not yet used */
@@ -8160,6 +8160,27 @@ static int _synctex_updater_print(synctex_updater_p updater, const char * format
     }
     return result;
 }
+#if defined(_MSC_VER)
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
+static int vasprintf(char **ret,
+              const char *format,
+              va_list ap)
+{
+  int len;
+  len = _vsnprintf(NULL, 0, format, ap);
+  if (len < 0) return -1;
+  *ret = malloc(len + 1);
+  if (!*ret) return -1;
+  _vsnprintf(*ret, len+1, format, ap);
+  (*ret)[len] = '\0';
+  return len;
+}
+
+#endif
+
 /**
  *  gzvprintf is not available until OSX 10.10
  */

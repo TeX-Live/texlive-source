@@ -1,3 +1,8 @@
+2017-07-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex_parser.c, synctex_parser_util.c: Support
+	Visual Studio 2015.
+
 2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* synctex-ep-mem.ch0, synctex-p-mem.ch0,
