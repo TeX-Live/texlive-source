@@ -26,6 +26,7 @@ int fputnum2(int num, FILE *fp);
 int fputstr(char *str, int byte, FILE *fp);
 
 /* write.c */
+int pstfm_nt,pstfm_codes[256];
 FILE *vfopen(char *name);
 void writevf(int code, FILE *fp);
 void writevfu(int code, FILE *fp);
