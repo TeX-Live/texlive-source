@@ -162,15 +162,6 @@ void writevf(int code, FILE *fp)
 	case 0x2158: /* ¡Ø */
 	case 0x215a: /* ¡Ú */
 		skip = -(zw-w);
-		if (kanatfm)
-			cc=4;
-		else
-			cc=3;
-		if (skip)
-			cc+=numcount(skip)+1;
-		if (skip2)
-			cc+=numcount(skip2)+1;
-		fputnum(cc,4,fp);
 		break;
 	case 0x2147: /* ¡Ç */
 	case 0x2149: /* ¡É */
@@ -254,13 +245,6 @@ void writevf(int code, FILE *fp)
 	case 0x216b: /* ¡ë */
 	case 0x216c: /* ¡ì */
 	case 0x216d: /* ¡í */
-		if (kanatfm)
-			cc=4;
-		else
-			cc=3;
-		if (skip2)
-			cc+=numcount(skip2)+1;
-		fputnum(cc,4,fp);
 		break;
 	default:
 		if (w != zw) {
@@ -311,46 +295,26 @@ void writevf(int code, FILE *fp)
 						else {
 							skip=-(int)(((double)(cc-kanatume)/1000.0)*zw);
 						}
-						if (kanatfm)
-							cc=4;
-						else
-							cc=3;
-						if (skip)
-							cc+=numcount(skip)+1;
-						if (skip2)
-							cc+=numcount(skip2)+1;
-						fputnum(cc,4,fp);
 						break;
 					}
 				}
 			}
 			else {
 				skip = -(zw-w)/2;
-				if (kanatfm)
-					cc=4;
-				else
-					cc=3;
-				if (skip)
-					cc+=numcount(skip)+1;
-				if (skip2)
-					cc+=numcount(skip2)+1;
-				fputnum(cc,4,fp);
 			}
-		}
-		else {
-			if (kanatfm)
-				cc=4;
-			else
-				cc=3;
-			if (skip)
-				cc+=numcount(skip)+1;
-			if (skip2)
-				cc+=numcount(skip2)+1;
-			fputnum(cc,4,fp);
 		}
 		break;
 	}
 
+	if (kanatfm)
+		cc=4;
+	else
+		cc=3;
+	if (skip)
+		cc+=numcount(skip)+1;
+	if (skip2)
+		cc+=numcount(skip2)+1;
+	fputnum(cc,4,fp);
 	fputnum(code,4,fp); /* char code */
 	fputnum(w,4,fp); /* char width */
 	if (skip) {
@@ -507,15 +471,6 @@ void writevfu(int code, FILE *fp)
 	case 0x301D: /* JIS X 0213  1-13-64 »Ï¤á¥À¥Ö¥ë¥ß¥Ë¥å¡¼¥È */
 		if (ucs != ENTRY_JQ)
 			skip = -(zw-w);
-		if (kanatfm)
-			cc=4;
-		else
-			cc=3;
-		if (skip)
-			cc+=numcount(skip)+1;
-		if (skip2)
-			cc+=numcount(skip2)+1;
-		fputnum(cc,4,fp);
 		break;
 	case 0x2019: /* ¡Ç */
 	case 0x201d: /* ¡É */
@@ -639,13 +594,6 @@ void writevfu(int code, FILE *fp)
 	case 0x00B0: /* ¡ë */
 	case 0x2032: /* ¡ì */
 	case 0x2033: /* ¡í */
-		if (kanatfm)
-			cc=4;
-		else
-			cc=3;
-		if (skip2)
-			cc+=numcount(skip2)+1;
-		fputnum(cc,4,fp);
 		break;
 	case 0xFF61: case 0xFF62: case 0xFF63: case 0xFF64: case 0xFF65: case 0xFF66: case 0xFF67:
 	case 0xFF68: case 0xFF69: case 0xFF6A: case 0xFF6B: case 0xFF6C: case 0xFF6D: case 0xFF6E: case 0xFF6F:
@@ -656,25 +604,9 @@ void writevfu(int code, FILE *fp)
 	case 0xFF90: case 0xFF91: case 0xFF92: case 0xFF93: case 0xFF94: case 0xFF95: case 0xFF96: case 0xFF97:
 	case 0xFF98: case 0xFF99: case 0xFF9A: case 0xFF9B: case 0xFF9C: case 0xFF9D: case 0xFF9E: case 0xFF9F:
 		if (jfm_id == 11 && hankana) { /* È¾³ÑÊÒ²¾Ì¾¡¢²£½ñ¤­»ş */
-			if (kanatfm)
-				cc=4;
-			else
-				cc=3;
-			if (skip2)
-				cc+=numcount(skip2)+1;
-			fputnum(cc,4,fp);
-			fputnum(code,4,fp); /* char code */
-			fputnum(w,4,fp); /* char width */
-			if (skip2) {
-				fputc(157+numcount(skip2)-1,fp); /* DOWN */
-				fputnum2(skip2,fp);
-			}
-			if (kanatfm) fputc(173+fidshift,fp); /* FONT_NUM_2 */
-			fputc(129,fp); /* SET2 */
-			fputnum(code,2,fp); /* char code */
 			pstfm_codes[pstfm_nt-1]=code;
 			pstfm_nt+=1;
-			return;
+			break;
 		}
 	default:
 		if (w != zw) {
@@ -743,48 +675,28 @@ void writevfu(int code, FILE *fp)
 						else {
 							skip=-(int)(((double)(cc-kanatume)/1000.0)*zw);
 						}
-						if (kanatfm)
-							cc=4;
-						else
-							cc=3;
-						if (skip)
-							cc+=numcount(skip)+1;
-						if (skip2)
-							cc+=numcount(skip2)+1;
-						fputnum(cc,4,fp);
 						break;
 					}
 				}
 			}
 			else {
 				skip = -(zw-w)/2;
-				if (kanatfm)
-					cc=4;
-				else
-					cc=3;
-				if (skip)
-					cc+=numcount(skip)+1;
-				if (skip2)
-					cc+=numcount(skip2)+1;
-				fputnum(cc,4,fp);
 			}
-		}
-		else {
-			if (kanatfm)
-				cc=4;
-			else
-				cc=3;
-			if (code>=0x10000)
-				cc+=1;
-			if (skip)
-				cc+=numcount(skip)+1;
-			if (skip2)
-				cc+=numcount(skip2)+1;
-			fputnum(cc,4,fp);
 		}
 		break;
 	}
 
+	if (kanatfm)
+		cc=4;
+	else
+		cc=3;
+	if (code>=0x10000)
+		cc+=1;
+	if (skip)
+		cc+=numcount(skip)+1;
+	if (skip2)
+		cc+=numcount(skip2)+1;
+	fputnum(cc,4,fp);
 	fputnum(code,4,fp); /* char code */
 	fputnum(w,4,fp); /* char width */
 	if (skip) {
@@ -863,19 +775,15 @@ void maketfm(char *name)
 	fputnum(0,4,fp); /* check sum */
 	fputnum(10*(1<<20),4,fp); /* design size */
 
-	/* others */
 	fputnum(0,2,fp); /* char code */
 	fputnum(0,2,fp); /* char type */
-	/* hankaku-kana */
 	for (i=0;i<pstfm_nt-1;i++) {
 		fputnum(pstfm_codes[i],2,fp); /* char code */
 		fputnum(1,2,fp); /* char type */
 	}
 
-	/* hankaku-kana */
 	if (pstfm_nt>1)
 		fputnum((2<<24)+(1<<20)+(1<<16),4,fp); /* char info */
-	/* others */
 	fputnum((1<<24)+(1<<20)+(1<<16),4,fp); /* char info */
 	fputnum(0,4,fp); /* width */
 	if (pstfm_nt>1)
