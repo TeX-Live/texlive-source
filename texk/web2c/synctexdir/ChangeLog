@@ -13,10 +13,10 @@
 	synctex-ep-mem.ch1, synctex-p-mem.ch1:
 	Adapt to changes in ptexdir/ptex-base.ch (p\TeX -> \pTeX).
 
-2017-04-22 Jerome Laurens
-    <jerome.laurens@u-bourgogne.fr>
-
-    * man5/synctex.1, man5/synctex.5, synctex-pdf-rec.ch2, synctex-pdftex.h, synctex-rec.ch0, synctex.c, synctex.defines, synctex.h: add support for \pdfxform
+2017-04-22  Jerome Laurens  <jerome.laurens@u-bourgogne.fr>
+	* man5/synctex.1, man5/synctex.5, synctex-pdf-rec.ch2,
+	synctex-pdftex.h, synctex-rec.ch0, synctex.c, synctex.defines,
+	synctex.h: add support for \pdfxform
 
 2016-03-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
