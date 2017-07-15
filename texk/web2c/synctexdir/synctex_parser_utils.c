@@ -60,7 +60,9 @@
 #define SYNCTEX_OS2 1
 #endif
 
+#if defined(_WIN32)
 #define SYNCTEX_RECENT_WINDOWS 1
+#endif
 
 #ifdef SYNCTEX_WINDOWS
 #include <windows.h>
