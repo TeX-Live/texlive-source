@@ -3,6 +3,7 @@
 extern char *vtfmname,*kanatfm,*jistfm,*ucsqtfm;
 extern int unit,zh,zw,jfm_id;
 extern int kanatume,chotai,baseshift,minute,hankana,fidzero;
+extern int pstfm_nt;
 extern FILE *afp;
 extern long ucs;
 
@@ -26,7 +27,6 @@ int fputnum2(int num, FILE *fp);
 int fputstr(char *str, int byte, FILE *fp);
 
 /* write.c */
-int pstfm_nt,pstfm_codes[256];
 FILE *vfopen(char *name);
 void writevf(int code, FILE *fp);
 void writevfu(int code, FILE *fp);

@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int pstfm_codes[256];
+
 FILE *vfopen(char *name)
 {
 	FILE *fp;

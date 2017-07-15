@@ -10,6 +10,7 @@
 FILE *vfp,*afp=NULL;
 char *atfmname,*vtfmname,*afmname,*vfname,*kanatfm,*jistfm,*ucsqtfm;
 int kanatume=-1,chotai=0,baseshift=0,minute=0,useset3=0,hankana=0,fidzero=0;
+int pstfm_nt;
 long ucs=0;
 
 int main(int argc, char ** argv)

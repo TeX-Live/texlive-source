@@ -5,6 +5,7 @@
 
 #include "uniblock.h"
 
+int uniblock_iskanji;
 struct ublock {
   long min, max, cjk;
   int kanji;
