@@ -6963,12 +6963,12 @@ static synctex_nd_s _synctex_eq_closest_child_v2(synctex_point_p hitP, synctex_n
 #       pragma mark Queries
 #   endif
 
-typedef struct synctex_iterator_t {
+struct synctex_iterator_t {
     synctex_node_p seed;
     synctex_node_p next;
     int count0;
     int count;
-} synctex_iterator_s;
+};
 
 SYNCTEX_INLINE static synctex_iterator_p _synctex_iterator_new(synctex_node_p result, int count) {
     synctex_iterator_p iterator;
