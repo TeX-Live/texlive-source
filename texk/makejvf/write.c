@@ -306,6 +306,14 @@ void writevf(int code, FILE *fp)
 		break;
 	}
 
+	if (skip != -rightamount && enhanced) {
+		fprintf(stderr,
+			"[Warning] Conflicting MOVERIGHT value for code %x,\n"
+			"[Warning]   makejvf default:    %08x\n"
+			"[Warning]   suggested from JFM: %08x <= I'll use this ...\n",
+			code, skip, -rightamount);
+		skip=-rightamount;
+	}
 	if (kanatfm)
 		cc=4;
 	else
@@ -686,6 +694,14 @@ void writevfu(int code, FILE *fp)
 		break;
 	}
 
+	if (skip != -rightamount && enhanced) {
+		fprintf(stderr,
+			"[Warning] Conflicting MOVERIGHT value for code %x,\n"
+			"[Warning]   makejvf default:    %08x\n"
+			"[Warning]   suggested from JFM: %08x <= I'll use this ...\n",
+			code, skip, -rightamount);
+		skip=-rightamount;
+	}
 	if (kanatfm)
 		cc=4;
 	else

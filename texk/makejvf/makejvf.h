@@ -2,7 +2,8 @@
 
 extern char *vtfmname,*kanatfm,*jistfm,*ucsqtfm;
 extern int unit,zh,zw,jfm_id;
-extern int kanatume,chotai,baseshift,minute,hankana,fidzero;
+extern unsigned int rightamount;
+extern int kanatume,chotai,baseshift,minute,hankana,fidzero,enhanced;
 extern int pstfm_nt;
 extern FILE *afp;
 extern long ucs;
