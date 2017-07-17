@@ -1,3 +1,8 @@
+2017-07-17  Jonathan Kew  <jfkthame@gmail.com>
+
+	* xetex.ch: Set a non-zero exit code if the pipe
+	to the output driver closes with a non-zero code.
+
 2017-04-27  Karl Berry  <karl@tug.org>
 
 	* am/xetex.am (xetex_ldadd): add $(ICU_LIBS_EXTRA).
