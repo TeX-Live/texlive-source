@@ -1,5 +1,6 @@
 #include <kpathsea/kpathsea.h>
 #include <ptexenc/ptexenc.h>
+#include "version.h"
 #include "makejvf.h"
 #include "uniblock.h"
 
@@ -173,7 +174,7 @@ int main(int argc, char ** argv)
 
 void usage(void)
 {
-	fputs2("MAKEJVF version 20170716 -- make Japanese VF file.\n", stderr);
+	fprintf(stderr, "MAKEJVF version %s -- make Japanese VF file.\n", VERSION);
 	fputs2("%% makejvf [<options>] <TFMfile> <PSfontTFM>\n", stderr);
 	fputs2("options:\n", stderr);
 	fputs2("-C           長体モード\n", stderr);
@@ -195,5 +196,5 @@ void usage(void)
 	fputs2("-i           font ID from No.0\n", stderr);
 	fputs2("-e           enhanced mode; the horizontal shift amount is determined\n", stderr);
 	fputs2("             from the glue/kern table of <TFMfile> input\n", stderr);
-	fputs2("Email bug reports to issue@texjp.org.\n", stderr);
+	fprintf(stderr, "Email bug reports to %s.\n", BUG_ADDRESS);
 }

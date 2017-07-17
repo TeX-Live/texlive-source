@@ -89,7 +89,7 @@ void writevf(int code, FILE *fp)
 
 	if (fidzero) fidshift=-1;
 
-	w = jfmread(code);
+	w = jfmread(code); /* rightamount is also obtained */
 
 	fputc(242,fp); /* long_char */
 
@@ -351,7 +351,7 @@ void writevfu(int code, FILE *fp)
 
 	if (fidzero) fidshift=-1;
 
-	w = jfmread(code);
+	w = jfmread(code); /* rightamount is also obtained */
 
 	fputc(242,fp); /* long_char */
 
@@ -614,6 +614,7 @@ void writevfu(int code, FILE *fp)
 		if (jfm_id == 11 && hankana) { /* È¾³ÑÊÒ²¾Ì¾¡¢²£½ñ¤­»þ */
 			pstfm_codes[pstfm_nt-1]=code;
 			pstfm_nt+=1;
+			rightamount=0; /* discard jfmread() result */
 			break;
 		}
 	default:
