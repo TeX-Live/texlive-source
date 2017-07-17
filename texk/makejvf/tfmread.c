@@ -68,7 +68,7 @@ int jfmread(int kcode)
 					break;
 			}
 		}
-		if (ll + w + rr == zw)
+		if (abs(zw - ll - w - rr) <= 1) /* allow round-off error */
 			/* character width is truncated,
 			   and metric glue/kern is inserted as a substitute to fill zenkaku */
 			rightamount = ll;
