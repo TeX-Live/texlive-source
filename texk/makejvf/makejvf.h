@@ -1,5 +1,5 @@
 
-
+#define MAX_LIG_STEPS 32510
 extern char *vtfmname,*kanatfm,*jistfm,*ucsqtfm;
 extern int unit,zh,zw,jfm_id;
 extern unsigned int rightamount;

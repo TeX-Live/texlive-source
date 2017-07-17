@@ -1,3 +1,14 @@
+2017-07-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	makejvf version 20170717.
+	* Makefile.am: Add version.h.
+	* main.c: Move version declaration to version.h.
+	* makejvf.h, tfmread.c, write.c: Improve enhanced mode;
+	More compatible with normal mode, by reading glue/kern table
+	more deliberately.
+	* version.h: Added.
+	* makejvf.1: Update.
+
 2017-07-16  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	makejvf version 20170716.

@@ -1,6 +1,7 @@
 ## Makefile.am for the TeX Live subdirectory texk/makejvfk/
 ##
 ## Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2016-2017 Japanese TeX Development Community <issue@texjp.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
@@ -9,7 +10,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 bin_PROGRAMS = makejvf
 
 makejvf_SOURCES = \
-	main.c makejvf.h tfmread.c tool.c uniblock.c uniblock.h write.c
+	main.c makejvf.h tfmread.c tool.c uniblock.c uniblock.h version.h write.c
 
 $(makejvf_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 

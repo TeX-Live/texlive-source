@@ -13,6 +13,7 @@ unsigned char *header,*char_type,*char_info,*glue_kern,*kern,*glue;
 int jfmread(int kcode)
 {
 	int i,ctype = 0,w_ind,w,gk_ind,k_ind,g_ind;
+	unsigned int ll,rr;
 
 	for (i = 0 ; i < nt ; i++) {
 		if (upair(&char_type[i*4]) == kcode) {
@@ -25,25 +26,55 @@ int jfmread(int kcode)
 	w_ind = char_info[ctype*4];
 	w = width[w_ind];
 
-	/* get natural length of JFM glue between <type0> and <type of kcode> */
-	gk_ind = char_info[0*4+3]; /* remainder for type 0 */
 	rightamount = 0;
-	if (ctype >0) {
-		for (i = 0 ; i < 65536 ; i++) {
-			if (glue_kern[(gk_ind+i)*4+1] == ctype) {
-				if (glue_kern[(gk_ind+i)*4+2] >= 128) {
-					k_ind = glue_kern[(gk_ind+i)*4+3];
-					rightamount = mquad(&kern[k_ind*4]);
+	if (w != zw) {
+		/* get natural length of JFM glue between <type0> and <type of kcode> */
+		gk_ind = char_info[0*4+3]; /* remainder for <type0> */
+		ll = 0;
+		if (ctype > 0) {
+			for (i = 0 ; i < MAX_LIG_STEPS ; i++) {
+				if (glue_kern[(gk_ind+i)*4+1] == ctype) {
+					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
+						k_ind = glue_kern[(gk_ind+i)*4+3];
+						ll = mquad(&kern[k_ind*4]);
+					}
+					else {
+						g_ind = glue_kern[(gk_ind+i)*4+3];
+						ll = mquad(&glue[3*g_ind*4]);
+					}
+					break;
 				}
-				else {
-					g_ind = glue_kern[(gk_ind+i)*4+3];
-					rightamount = mquad(&glue[3*g_ind*4]);
-				}
-				break;
+				if (glue_kern[(gk_ind+i)*4] >= 128)
+					break;
 			}
-			if (glue_kern[(gk_ind+i)*4] >= 128)
-				break;
 		}
+		/* get natural length of JFM glue between <type of kcode> and <type0> */
+		gk_ind = char_info[ctype*4+3]; /* remainder for <type of kcode> */
+		rr = 0;
+		if (ctype > 0) {
+			for (i = 0 ; i < MAX_LIG_STEPS ; i++) {
+				if (glue_kern[(gk_ind+i)*4+1] == 0) {
+					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
+						k_ind = glue_kern[(gk_ind+i)*4+3];
+						rr = mquad(&kern[k_ind*4]);
+					}
+					else {
+						g_ind = glue_kern[(gk_ind+i)*4+3];
+						rr = mquad(&glue[3*g_ind*4]);
+					}
+					break;
+				}
+				if (glue_kern[(gk_ind+i)*4] >= 128)
+					break;
+			}
+		}
+		if (ll + w + rr == zw)
+			/* character width is truncated,
+			   and metric glue/kern is inserted as a substitute to fill zenkaku */
+			rightamount = ll;
+		else
+			/* character width is actually truncated */
+			rightamount = (zw - w)/2;
 	}
 
 	return(w);
