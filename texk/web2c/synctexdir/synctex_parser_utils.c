@@ -83,7 +83,7 @@ void _synctex_free(void * ptr) {
     }
 }
 
-#if !defined(_MSC_VER)
+#if !defined(_WIN32)
 #   include <syslog.h>
 #endif
 
