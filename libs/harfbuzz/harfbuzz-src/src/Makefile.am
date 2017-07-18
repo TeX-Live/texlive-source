@@ -151,7 +151,7 @@ CLEANFILES += libharfbuzz-fuzzing.la
 if HAVE_ICU
 if HAVE_ICU_BUILTIN
 HBCFLAGS += $(ICU_CFLAGS)
-HBLIBS += $(ICU_LIBS) $(ICU_LIBS_EXTRA)
+HBLIBS += $(ICU_LIBS)
 HBSOURCES += $(HB_ICU_sources)
 HBHEADERS += $(HB_ICU_headers)
 else
@@ -159,7 +159,7 @@ lib_LTLIBRARIES += libharfbuzz-icu.la
 libharfbuzz_icu_la_SOURCES = $(HB_ICU_sources)
 libharfbuzz_icu_la_CPPFLAGS = $(ICU_CFLAGS)
 libharfbuzz_icu_la_LDFLAGS = $(AM_LDFLAGS) -version-info $(HB_LIBTOOL_VERSION_INFO) -no-undefined
-libharfbuzz_icu_la_LIBADD = $(ICU_LIBS) $(ICU_LIBS_EXTRA) libharfbuzz.la
+libharfbuzz_icu_la_LIBADD = $(ICU_LIBS) libharfbuzz.la
 pkginclude_HEADERS += $(HB_ICU_headers)
 pkgconfig_DATA += harfbuzz-icu.pc
 endif

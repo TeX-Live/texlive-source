@@ -1,3 +1,360 @@
+commit fc15e60eadfc89aca5b8815262b8ee888f285169
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 18 11:24:42 2017 -0700
+
+    1.4.7
+
+ NEWS         | 10 ++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+commit c1432bce3cfc1156d19b21892d4083afa8838d94
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 14 17:34:47 2017 +0100
+
+    [arabic] Adjust feature order again
+
+    Fixes https://github.com/behdad/harfbuzz/issues/505
+
+ src/hb-ot-shape-complex-arabic.cc                        |   7 ++++++-
+ .../sha1sum/bf39b0e91ef9807f15a9e283a21a14a209fd2cfc.ttf | Bin 0 ->
+ 7312 bytes
+ test/shaping/tests/arabic-feature-order.tests            |   1 +
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+commit 9813be3d1212eef5a525d64978e0bb2032cd44d9
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Fri Jul 14 17:11:46 2017 +0100
+
+    [coretext] Allow to disable kern (#508)
+
+    * Minor
+
+    * [coretext] Fix leak
+
+    * [coretext] Do not reset num_features
+
+    * [coretext] allow to disable kern; re-enabling doesn't seem to
+    be working
+
+ src/hb-coretext.cc | 41 ++++++++++++++++++++++++++++++++---------
+ 1 file changed, 32 insertions(+), 9 deletions(-)
+
+commit 9dd29c681e8e856c139f20f405d7c0e04928aa70
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 14 17:01:27 2017 +0100
+
+    [use] Allow up to two medial-below letters
+
+    Fixes https://github.com/behdad/harfbuzz/issues/376
+
+ src/hb-ot-shape-complex-use-machine.rl                   |   3 ++-
+ .../sha1sum/e68a88939e0f06e34d2bc911f09b70890289c8fd.ttf | Bin 0 ->
+ 2192 bytes
+ test/shaping/tests/use-syllable.tests                    |   3 +++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
+
+commit 216b003c914d2209a6846b1ce61fe7a3421c789c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 14 16:38:51 2017 +0100
+
+    [use] Fix shaping of U+AA29 CHAM VOWEL SIGN AA
+
+    Part of https://github.com/behdad/harfbuzz/issues/376
+    Also see https://github.com/roozbehp/unicode-data/issues/6
+
+    Test added, using NotoSansCham built from Noto Phase III sources.
+
+ src/gen-arabic-table.py                                  |   2 +-
+ src/gen-indic-table.py                                   |   2 +-
+ src/gen-use-table.py                                     |   8 +++++---
+ src/hb-ot-shape-complex-use-table.cc                     |   4 ++--
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/96490dd2ff81233b335a650e7eb660e0e7b2eeea.ttf | Bin 0 ->
+ 1368 bytes
+ test/shaping/tests/use-syllable.tests                    |   1 +
+ 7 files changed, 11 insertions(+), 7 deletions(-)
+
+commit f1cd7ca89306ff252816e9747177d8dab00524f6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 14 15:59:40 2017 +0100
+
+    [indic] Add github URL
+
+ src/hb-ot-shape-complex-indic.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 3cc84f45b995b243fca82ce18481f11d69846eb5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 14 15:50:22 2017 +0100
+
+    [indic] Fix https://github.com/behdad/harfbuzz/issues/478
+
+ src/hb-ot-shape-complex-indic-private.hh                 |   2 +-
+ src/hb-ot-shape-complex-indic.cc                         |   8 ++++++++
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/54674a3111d209fb6be0ed31745314b7a8d2c244.ttf | Bin 0 ->
+ 1352 bytes
+ test/shaping/tests/indic-syllable.tests                  |   1 +
+ 5 files changed, 11 insertions(+), 1 deletion(-)
+
+commit e359a4b8f57bbc778843f233c4f5d6fb07ff11d9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 14 14:14:35 2017 +0100
+
+    [indic] Disable automatic ZWNJ handling for Indic features
+
+    Fixes https://github.com/behdad/harfbuzz/issues/294
+
+    Also fixes a bunch of other Indic issues.  Test results after:
+
+    BENGALI: 353725 out of 354188 tests passed. 463 failed (0.130722%)
+    DEVANAGARI: 707307 out of 707394 tests passed. 87 failed (0.0122987%)
+    GUJARATI: 366355 out of 366457 tests passed. 102 failed (0.0278341%)
+    GURMUKHI: 60732 out of 60747 tests passed. 15 failed (0.0246926%)
+    KANNADA: 951201 out of 951913 tests passed. 712 failed (0.0747968%)
+    KHMER: 299071 out of 299124 tests passed. 53 failed (0.0177184%)
+    MALAYALAM: 1048136 out of 1048334 tests passed. 198 failed
+    (0.0188871%)
+    ORIYA: 42320 out of 42329 tests passed. 9 failed (0.021262%)
+    SINHALA: 271662 out of 271847 tests passed. 185 failed (0.068053%)
+    TAMIL: 1091754 out of 1091754 tests passed. 0 failed (0%)
+    TELUGU: 970555 out of 970573 tests passed. 18 failed (0.00185457%)
+
+    Before:
+
+    BENGALI: 353725 out of 354188 tests passed. 463 failed (0.130722%)
+    DEVANAGARI: 707307 out of 707394 tests passed. 87 failed (0.0122987%)
+    GUJARATI: 366349 out of 366457 tests passed. 108 failed (0.0294714%)
+    GURMUKHI: 60732 out of 60747 tests passed. 15 failed (0.0246926%)
+    KANNADA: 951190 out of 951913 tests passed. 723 failed (0.0759523%)
+    KHMER: 299070 out of 299124 tests passed. 54 failed (0.0180527%)
+    MALAYALAM: 1048136 out of 1048334 tests passed. 198 failed
+    (0.0188871%)
+    ORIYA: 42320 out of 42329 tests passed. 9 failed (0.021262%)
+    SINHALA: 271662 out of 271847 tests passed. 185 failed (0.068053%)
+    TAMIL: 1091753 out of 1091754 tests passed. 1 failed (9.15957e-05%)
+    TELUGU: 970555 out of 970573 tests passed. 18 failed (0.00185457%)
+
+ src/hb-ot-shape-complex-indic.cc                         |   4 ++--
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/f443753e8ffe8e8aae606cfba158e00334b6efb1.ttf | Bin 0 ->
+ 3972 bytes
+ test/shaping/tests/indic-joiners.tests                   |   2 ++
+ 4 files changed, 5 insertions(+), 2 deletions(-)
+
+commit cdf1fd0627c5517c948ca05d2e9427c3e441adf9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 14 12:43:34 2017 +0100
+
+    [indic] Add infrastructure to disable ZWNJ-skipping in
+    context-matching
+
+    Not used yet.
+
+ src/hb-ot-layout-gsubgpos-private.hh | 45
+ ++++++++++++++++++++----------------
+ src/hb-ot-layout.cc                  |  1 +
+ src/hb-ot-map-private.hh             | 10 +++++---
+ src/hb-ot-map.cc                     |  8 +++++--
+ 4 files changed, 39 insertions(+), 25 deletions(-)
+
+commit 3a73e0d5e17b87ac7e307d855c2cb43d040bd195
+Author: Dominik Schlösser <dominik.schloesser@gmail.com>
+Date:   Fri Jul 14 13:14:55 2017 +0200
+
+    Shaping tests for Tibetan vowels (#446)
+
+    * Shaping tests for Tibetan vowels
+
+    * Test-cases for the Dzongkha contractions with multiple vowel-signs
+    added.
+
+    * going to be removed
+
+    * Extended contraction-test-cases to all test cases in
+    contractions.txt that actually use multiple-vowels (113 cases)
+
+ test/shaping/Makefile.am                           |   3 ++
+ .../2de1ab4907ab688c0cfc236b0bf51151db38bf2e.ttf   | Bin 0 -> 125256
+ bytes
+ .../82f4f3b57bb55344e72e70231380202a52af5805.ttf   | Bin 0 -> 11116 bytes
+ .../a02a7f0ad42c2922cb37ad1358c9df4eb81f1bca.ttf   | Bin 0 -> 106096
+ bytes
+ test/shaping/tests/tibetan-contractions-1.tests    |  60
+ +++++++++++++++++++++
+ test/shaping/tests/tibetan-contractions-2.tests    |  53
+ ++++++++++++++++++
+ test/shaping/tests/tibetan-vowels.tests            |  11 ++++
+ 7 files changed, 127 insertions(+)
+
+commit 4e21ec546932c2a982aa52fce718c1a0d90a71d6
+Author: Dominik Schlösser <dominik.schloesser@gmail.com>
+Date:   Fri Jul 14 13:14:23 2017 +0200
+
+    Fix for reordering of Tibetan vowel u (#443)
+
+    * Undone change for Tibetan vowel u
+
+    * removed comment on reordering that became invalid with roll-back
+
+    * Support for Dzongkha contractions with multiple vowel-signs
+
+    * Removed non-functional and unnecessary defines for
+    HB_MODIFIED_COMBINING_CLASS_CCC138,140
+
+ src/hb-unicode-private.hh | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+commit ad52e044bcf733bcc6c0373bafcd78a8c0beb400
+Author: fanc999 <fanc999@yahoo.com.tw>
+Date:   Wed Jun 21 22:19:57 2017 +0800
+
+    Win32/NMake builds: Support builds from GIT (#498)
+
+    Add Python scripts to generate the full win32/config.h.win32 and
+    src/hb-version.h which can be used to build directly from a GIT
+    checkout.  Since the scripts are currently intended for building
+    from a
+    GIT checkout, these are not distributed in the release tarballs.
+
+    Also, support the re-build of Ragel-generated .hh headers using
+    the NMake
+    build system, and allow one to specify the path of the Ragel
+    executable
+    if a suitable one cannot be found in the PATH.
+
+    Update the Win32/NMake build documentation to let people know
+    about how
+    these mechanisms can be utilized.
+
+ win32/README.txt            |  20 ++++++-
+ win32/build-rules-msvc.mak  |   5 +-
+ win32/config-msvc.mak       |   7 +++
+ win32/create-lists-msvc.mak |   9 ++++
+ win32/generate-msvc.mak     |   6 +++
+ win32/info-msvc.mak         |   8 ++-
+ win32/pc_base.py            | 124
+ ++++++++++++++++++++++++++++++++++++++++++++
+ win32/replace.py            | 115
+ ++++++++++++++++++++++++++++++++++++++++
+ win32/setup.py              |  62 ++++++++++++++++++++++
+ 9 files changed, 353 insertions(+), 3 deletions(-)
+
+commit 3b0e47ca006b8fe6a24ace72dd931e3649bb8e6f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 19 14:47:09 2017 +0430
+
+    Fix arm-none-eabi build (fixes #451) (#496)
+
+ CMakeLists.txt                          |  4 ++--
+ src/hb-buffer.cc                        |  4 ++--
+ src/hb-common.cc                        | 28 ++++++++++++++++++++--
+ src/hb-ot-font.cc                       |  2 +-
+ src/hb-ot-layout.cc                     |  2 +-
+ src/hb-ot-shape-complex-arabic-table.hh | 14 +++++------
+ src/hb-ot-shape-complex-arabic.cc       |  2 +-
+ src/hb-ot-shape-complex-hangul.cc       | 16 ++++++-------
+ src/hb-ot-shape-complex-indic-table.cc  | 22 ++++++++---------
+ src/hb-ot-shape-complex-indic.cc        | 12 +++++-----
+ src/hb-ot-shape-complex-myanmar.cc      |  2 +-
+ src/hb-ot-shape-complex-thai.cc         | 12 +++++-----
+ src/hb-ot-shape-complex-use-table.cc    | 42
+ ++++++++++++++++-----------------
+ src/hb-unicode-private.hh               | 16 ++++++-------
+ src/hb-utf-private.hh                   | 18 +++++++-------
+ 15 files changed, 110 insertions(+), 86 deletions(-)
+
+commit 76c4873e8cad2871d2d547318d371b9a89d8c806
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jun 2 21:53:10 2017 +0430
+
+    Support branch prediction helpers on clang compiles (#491)
+
+ src/hb-private.hh | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 7dba30639a6f62803dfc21706bc7c654799f373e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jun 1 11:44:42 2017 -0400
+
+    Handle allocation failure in hb-language code
+
+ src/hb-common.cc | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+commit 92e2c4baafa0401cb8d7dd2bbd70acfaeaf2aabf
+Author: Sebastian Rasmussen <sebras@gmail.com>
+Date:   Mon May 29 12:53:30 2017 -0500
+
+    Avoid using strdup inside library. (#488)
+
+    If an application provides a malloc replacement through
+    hb_malloc_impl() it is important that it is used to allocate
+    everything, but the use of strdup() circumvents this and
+    causes system malloc() to be called instead. This pairs
+    badly with the custom hb_free_impl() being called later.
+
+ src/hb-common.cc  | 8 +++++++-
+ src/hb-private.hh | 4 ----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+commit 06cfe3f7369684fc05fa16da7f6778350f8bcba5
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed May 17 21:32:47 2017 +0300
+
+    Do not skip TAG characters in glyph substitution (#487)
+
+    Hide them like Mongolian Free Variation Selectors instead.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/463
+
+ src/hb-ot-layout-gsubgpos-private.hh                     |   2 +-
+ src/hb-ot-layout-private.hh                              |  13
+ +++++++++----
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/53374c7ca3657be37efde7ed02ae34229a56ae1f.ttf | Bin 0 ->
+ 5044 bytes
+ test/shaping/tests/emoji-flag-tags.tests                 |   2 ++
+ 5 files changed, 13 insertions(+), 5 deletions(-)
+
+commit 1817221620dce713aae67352568ebcc231ab9512
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 16 14:26:28 2017 -0700
+
+    Minor
+
+ src/hb-atomic-private.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 152736981d5bb9e098c1a8b86fcf8fe577a4a9ec
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat May 13 21:32:56 2017 +0430
+
+    [cmake] Add framework build support (#484)
+
+ CMakeLists.txt | 46 +++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 39 insertions(+), 7 deletions(-)
+
+commit bf50ddaf2b416bd80ae8849593bc745b578193d9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu May 4 20:31:42 2017 +0430
+
+    [cmake] minor (#482)
+
+ CMakeLists.txt | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
+
+commit 141b33de9a141248e2f034d55f48460159536cb9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Apr 23 16:19:13 2017 -0700
+
+    1.4.6
+
+ NEWS         | 9 +++++++++
+ configure.ac | 2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
 commit 74b99ef2249107e7cd01bd1ee522a5d9ce61e05f
 Author: mhosken <mhosken@users.noreply.github.com>
 Date:   Thu Apr 20 19:13:22 2017 +0100
