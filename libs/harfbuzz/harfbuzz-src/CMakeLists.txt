@@ -1,8 +1,22 @@
 cmake_minimum_required(VERSION 2.8.0)
 project(harfbuzz)
 
-## Disallow in-source builds
-if ("${PROJECT_BINARY_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
+
+## Limit framework build to Xcode generator
+if (BUILD_FRAMEWORK)
+  # for a framework on macOS, use `cmake .. -DBUILD_FRAMEWORK:BOOL=true -G Xcode`
+  if (NOT "${CMAKE_GENERATOR}" STREQUAL "Xcode")
+    message(FATAL_ERROR
+      "You should use Xcode generator with BUILD_FRAMEWORK enabled")
+  endif ()
+  set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_32_64_BIT)")
+  set(CMAKE_MACOSX_RPATH ON)
+  set(BUILD_SHARED_LIBS ON)
+endif ()
+
+
+## Disallow in-source builds, as CMake generated make files can collide with autotools ones
+if (NOT MSVC AND "${PROJECT_BINARY_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
   message(FATAL_ERROR
     "
 In-source builds are not permitted!  Make a separate folder for"
@@ -14,7 +28,7 @@ Before that, remove the files created by this failed run with"
     "
   rm -rf CMakeCache.txt CMakeFiles")
 endif ()
-##
+
 
 ## HarfBuzz build configurations
 option(HB_HAVE_FREETYPE "Enable freetype interop helpers" OFF)
@@ -53,14 +67,16 @@ endif ()
 if (WIN32 AND NOT MINGW AND BUILD_SHARED_LIBS)
   add_definitions("-DHB_EXTERN=__declspec(dllexport) extern")
 endif ()
-##
 
+
+## Detect if we are running inside a distribution or regular repository folder
 set(IN_HB_DIST FALSE)
-if (EXISTS "${PROJECT_SOURCE_DIR}/src/hb-version.h")
+if (EXISTS "${PROJECT_SOURCE_DIR}/ChangeLog")
   # perhaps we are on dist directory
   set(IN_HB_DIST TRUE)
   set(HB_VERSION_H "${PROJECT_SOURCE_DIR}/src/hb-version.h")
 endif ()
+
 
 ## Extract variables from Makefile files
 # http://stackoverflow.com/a/27630120/1414809
@@ -108,11 +124,11 @@ set(HB_VERSION ${CMAKE_MATCH_1})
 set(HB_VERSION_MAJOR ${CMAKE_MATCH_2})
 set(HB_VERSION_MINOR ${CMAKE_MATCH_3})
 set(HB_VERSION_MICRO ${CMAKE_MATCH_4})
-##
 
+
+## Define ragel tasks
 if (NOT IN_HB_DIST)
-  ## Define ragel tasks
-  find_program(RAGEL "ragel")
+  find_program(RAGEL "ragel" CMAKE_FIND_ROOT_PATH_BOTH)
 
   if (RAGEL)
     message(STATUS "ragel found at: ${RAGEL}")
@@ -131,19 +147,22 @@ if (NOT IN_HB_DIST)
   endforeach ()
 
   mark_as_advanced(RAGEL)
-  ##
+endif ()
 
-  ## Generate hb-version.h
+
+## Generate hb-version.h
+if (NOT IN_HB_DIST)
   set(HB_VERSION_H_IN "${PROJECT_SOURCE_DIR}/src/hb-version.h.in")
   set(HB_VERSION_H "${PROJECT_BINARY_DIR}/src/hb-version.h")
   set_source_files_properties("${HB_VERSION_H}" PROPERTIES GENERATED true)
   configure_file("${HB_VERSION_H_IN}" "${HB_VERSION_H}.tmp" @ONLY)
   execute_process(COMMAND "${CMAKE_COMMAND}" -E copy_if_different
     "${HB_VERSION_H}.tmp"
-    "${HB_VERSION_H}")
+    "${HB_VERSION_H}"
+    )
   file(REMOVE "${HB_VERSION_H}.tmp")
-  ##
 endif ()
+
 
 ## Define sources and headers of the project
 set(project_sources
@@ -161,6 +180,8 @@ set(project_headers
   ${HB_OT_headers}
   )
 
+
+## Find and include needed header folders and libraries
 if (HB_HAVE_FREETYPE)
   add_definitions(-DHAVE_FREETYPE=1 -DHAVE_FT_FACE_GETCHARVARIANTINDEX=1)
 
@@ -209,7 +230,8 @@ if (HB_BUILTIN_UCDN)
 
   list(APPEND project_sources
     ${PROJECT_SOURCE_DIR}/src/hb-ucdn.cc
-    ${LIBHB_UCDN_sources})
+    ${LIBHB_UCDN_sources}
+    )
 endif ()
 
 if (HB_HAVE_GLIB)
@@ -285,7 +307,7 @@ if (WIN32 AND HB_HAVE_DIRECTWRITE)
 
   list(APPEND THIRD_PARTY_LIBS dwrite rpcrt4)
 endif ()
-##
+
 
 ## Atomic ops availability detection
 file(WRITE "${PROJECT_BINARY_DIR}/try_compile_intel_atomic_primitives.c"
@@ -317,11 +339,28 @@ try_compile(HB_HAVE_SOLARIS_ATOMIC_OPS
 if (HB_HAVE_SOLARIS_ATOMIC_OPS)
   add_definitions(-DHAVE_SOLARIS_ATOMIC_OPS)
 endif ()
-##
 
+
+## Define harfbuzz library
 add_library(harfbuzz ${project_sources} ${project_headers})
 target_link_libraries(harfbuzz ${THIRD_PARTY_LIBS})
 
+
+## Additional framework build configs
+if (BUILD_FRAMEWORK)
+  set(CMAKE_MACOSX_RPATH ON)
+  set_target_properties(harfbuzz PROPERTIES
+    FRAMEWORK TRUE
+    PUBLIC_HEADER "${project_headers}"
+    XCODE_ATTRIBUTE_INSTALL_PATH "@rpath"
+  )
+  set(MACOSX_FRAMEWORK_IDENTIFIER "harfbuzz")
+  set(MACOSX_FRAMEWORK_SHORT_VERSION_STRING "${HB_VERSION}")
+  set(MACOSX_FRAMEWORK_BUNDLE_VERSION "${HB_VERSION}")
+endif ()
+
+
+## Additional harfbuzz build artifacts
 if (HB_BUILD_UTILS)
   # https://github.com/WebKit/webkit/blob/master/Source/cmake/FindCairo.cmake
   find_package(PkgConfig)
@@ -343,8 +382,9 @@ if (HB_BUILD_UTILS)
   add_executable(hb-ot-shape-closure ${HB_OT_SHAPE_CLOSURE_sources})
   target_link_libraries(hb-ot-shape-closure harfbuzz)
 
-  mark_as_advanced(CAIRO_LIBRARIESNAMES)
+  mark_as_advanced(CAIRO_INCLUDE_DIRS CAIRO_LIBRARIESNAMES)
 endif ()
+
 
 ## Install
 if (NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL)
@@ -356,6 +396,6 @@ if (NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin
+    FRAMEWORK DESTINATION Library/Frameworks
     )
 endif ()
-##
