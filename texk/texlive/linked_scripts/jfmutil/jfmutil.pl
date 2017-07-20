@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 #
 # This is file 'jfmutil.pl'.
 #
@@ -2769,8 +2770,8 @@ package main;
 #================================================= BEGIN
 use Encode qw(encode decode);
 my $prog_name = 'jfmutil';
-my $version = '1.0.0';
-my $mod_date = '2017/07/17';
+my $version = '1.0.1';
+my $mod_date = '2017/07/21';
 #use Data::Dump 'dump';
 #
 my ($sw_hex, $sw_uptool, $sw_noencout, $inenc, $exenc);
