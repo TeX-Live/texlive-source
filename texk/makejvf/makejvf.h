@@ -1,8 +1,7 @@
 
 #define MAX_LIG_STEPS 32510
 extern char *vtfmname,*kanatfm,*jistfm,*ucsqtfm;
-extern int unit,zh,zw,jfm_id;
-extern unsigned int rightamount;
+extern int unit,zh,zw,jfm_id,rightamount;
 extern int kanatume,chotai,baseshift,minute,hankana,fidzero,enhanced;
 extern int pstfm_nt;
 extern FILE *afp;
