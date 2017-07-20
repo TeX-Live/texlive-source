@@ -41,8 +41,12 @@ When a positive integer is specified, the characters are lowered.
 When a negative integer is specified, the characters are raised.
 .TP 10
 \fB-m\fR
-Replace single/double quotation marks (', '') with prime quotation marks
-(so-called "minute") in vertical writing.
+Replace single/double quotation marks (', '') with single/double prime
+quotation marks (so-called "minute") in vertical writing.
+The replacement is realized by manipulating glyphs of prime and
+double prime (JIS 0x216C and 0x216D; Unicode U+2032 and U+2033),
+\fInot\fR by putting actual glyphs designed for quotation marks
+(Unicode U+301D and U+301E/U+301F).
 .TP 10
 \fB-a\fI <AFMfile>\fR
 Name of the AFM file. Used for Kana-tsume mode.
