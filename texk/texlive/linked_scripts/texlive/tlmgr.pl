@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44452 2017-06-04 23:45:39Z karl $
+# $Id: tlmgr.pl 44836 2017-07-17 23:59:48Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44452 $';
-my $datrev = '$Date: 2017-06-05 01:45:39 +0200 (Mon, 05 Jun 2017) $';
+my $svnrev = '$Revision: 44836 $';
+my $datrev = '$Date: 2017-07-18 01:59:48 +0200 (Tue, 18 Jul 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -6262,7 +6262,7 @@ END_NO_CHECKSUMS
   $remotetlpdb->make_virtual;
 
   my $locstr = $repos{'main'};
-  my ($tlmdb, $errormsg) = setup_one_remotetlpdb($locstr);
+  my ($tlmdb, $errormsg) = setup_one_remotetlpdb($locstr, 'main');
   if (!defined($tlmdb)) {
     return (0, $errormsg);
   }
@@ -6336,7 +6336,7 @@ sub _init_tlmedia {
   }
 
   my $errormsg;
-  ($remotetlpdb, $errormsg) = setup_one_remotetlpdb($location);
+  ($remotetlpdb, $errormsg) = setup_one_remotetlpdb($location, 'main');
   if (!defined($remotetlpdb)) {
     return(0, $errormsg);
   }
@@ -6359,6 +6359,8 @@ sub _init_tlmedia {
 
 sub setup_one_remotetlpdb {
   my $location = shift;
+  my $addarg = shift;
+  my $is_main = ((defined($addarg) && ($addarg eq 'main')) ? 1 : 0);
   my $remotetlpdb;
 
   # TODO
@@ -6493,6 +6495,16 @@ $rroot
   ($texlive_minrelease_year--$texlive_release_year)
 do not include the version of the local installation
   ($TeXLive::TLConfig::ReleaseYear).");
+    }
+    #
+    # if the release of the installed TL is less than the release
+    # of the main remote repository, then
+    # warn that one needs to call update-tlmgr-latest.sh --update
+    if ($is_main && $TeXLive::TLConfig::ReleaseYear < $texlive_release_year) {
+      return (undef, "Remote repository is newer than local ($TeXLive::TLConfig::ReleaseYear < $texlive_release_year)\n"
+              . "Cross release updates are only supported with\n"
+              . "  update-tlmgr-latest(.sh/.exe) --update\n"
+              . "Please see https://tug.org/texlive/upgrade.html for details.")
     }
   } else {
     # $texlive_minrelease not defined, so only one year is valid
@@ -8887,7 +8899,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 44452 2017-06-04 23:45:39Z karl $
+$Id: tlmgr.pl 44836 2017-07-17 23:59:48Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
