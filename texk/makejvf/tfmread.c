@@ -5,15 +5,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-int nt,unit,zh,zw,jfm_id;
+int nt,unit,zh,zw,jfm_id,rightamount;
 int *width,*height,*depth,*italic,*param;
-unsigned int rightamount;
 unsigned char *header,*char_type,*char_info,*glue_kern,*kern,*glue;
 
 int jfmread(int kcode)
 {
-	int i,ctype = 0,w_ind,w,gk_ind,k_ind,g_ind;
-	unsigned int ll,rr;
+	int i,ctype = 0,w_ind,w,ll,rr,gk_ind,k_ind,g_ind;
 
 	for (i = 0 ; i < nt ; i++) {
 		if (upair(&char_type[i*4]) == kcode) {

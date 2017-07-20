@@ -1,6 +1,8 @@
 2017-07-20  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	makejvf version 20170720.
+	* tfmread.c, makejvf.h: Declare "rightamount" as signed,
+	to be consistent with "skip" in write.c.
 	* write.c: Improve -m option for UCS mode.
 	* version.h: Adjusted.
 	* makejvf.1: Add documentation of -m option.
