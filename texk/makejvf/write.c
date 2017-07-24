@@ -122,7 +122,7 @@ void writevf(int code, FILE *fp)
 				skip2+=-(int)((0.65)*zh);
 			}
 			else {
-				skip2+=-(int)((0.6)*zh);
+				skip2+=-(int)(zh*3/5.0); /* skip2+=-(int)((0.6)*zh); */
 			}
 
 			if (kanatfm)
@@ -190,7 +190,7 @@ void writevf(int code, FILE *fp)
 				skip2+=(int)((0.65)*zh);
 			}
 			else {
-				skip2+=(int)((0.6)*zh);
+				skip2+=(int)(zh*3/5.0); /* skip2+=(int)((0.6)*zh); */
 			}
 
 			if (kanatfm)
