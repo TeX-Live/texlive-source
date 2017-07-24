@@ -1,3 +1,8 @@
+2017-07-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* tfmread.c, makejvf.h: More efficient code. Note that
+	GLUEKERN table parser is still not working for nl > 255.
+
 2017-07-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* write.c: Trivial change to avoid round-off error in
