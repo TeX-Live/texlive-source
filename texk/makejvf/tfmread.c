@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-int nt,unit,zh,zw,jfm_id,rightamount;
-int *width,*height,*depth,*italic,*param;
-unsigned char *header,*char_type,*char_info,*glue_kern,*kern,*glue;
+int nt,nl,unit,zh,zw,jfm_id,rightamount;
+int *width,*height,*depth,*italic,*kern,*glue,*param;
+unsigned char *header,*char_type,*char_info,*glue_kern;
 
 int jfmread(int kcode)
 {
@@ -30,15 +30,15 @@ int jfmread(int kcode)
 		gk_ind = char_info[0*4+3]; /* remainder for <type0> */
 		ll = 0;
 		if (ctype > 0) {
-			for (i = 0 ; i < MAX_LIG_STEPS ; i++) {
+			for (i = 0 ; i < nl-gk_ind ; i++) {
 				if (glue_kern[(gk_ind+i)*4+1] == ctype) {
 					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
 						k_ind = glue_kern[(gk_ind+i)*4+3];
-						ll = mquad(&kern[k_ind*4]);
+						ll = kern[k_ind];
 					}
 					else {
 						g_ind = glue_kern[(gk_ind+i)*4+3];
-						ll = mquad(&glue[3*g_ind*4]);
+						ll = glue[3*g_ind];
 					}
 					break;
 				}
@@ -50,15 +50,15 @@ int jfmread(int kcode)
 		gk_ind = char_info[ctype*4+3]; /* remainder for <type of kcode> */
 		rr = 0;
 		if (ctype > 0) {
-			for (i = 0 ; i < MAX_LIG_STEPS ; i++) {
+			for (i = 0 ; i < nl-gk_ind ; i++) {
 				if (glue_kern[(gk_ind+i)*4+1] == 0) {
 					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
 						k_ind = glue_kern[(gk_ind+i)*4+3];
-						rr = mquad(&kern[k_ind*4]);
+						rr = kern[k_ind];
 					}
 					else {
 						g_ind = glue_kern[(gk_ind+i)*4+3];
-						rr = mquad(&glue[3*g_ind*4]);
+						rr = glue[3*g_ind];
 					}
 					break;
 				}
@@ -104,7 +104,7 @@ int tfmget(char *name)
 int tfmidx(FILE *fp)
 {
 	int i;
-	int lh,ec,nw,nh,nd,ni,nl,nk,ng,np;
+	int lh,ec,nw,nh,nd,ni,nk,ng,np;
 
 	jfm_id = fpair(fp);
 
@@ -155,13 +155,13 @@ int tfmidx(FILE *fp)
 		for (i = 0 ; i < nl*4 ; i++) {
 			glue_kern[i] = fgetc(fp);
 		}
-		kern = xmalloc(nk*4);
-		for (i = 0 ; i < nk*4 ; i++) {
-			kern[i] = fgetc(fp);
+		kern = xmalloc(nk*sizeof(int));
+		for (i = 0 ; i < nk ; i++) {
+			kern[i] = fquad(fp);
 		}
-		glue = xmalloc(ng*4);
-		for (i = 0 ; i < ng*4 ; i++) {
-			glue[i] = fgetc(fp);
+		glue = xmalloc(ng*sizeof(int));
+		for (i = 0 ; i < ng ; i++) {
+			glue[i] = fquad(fp);
 		}
 		param = xmalloc(np*sizeof(int));
 		for (i = 0 ; i < np ; i++) {
