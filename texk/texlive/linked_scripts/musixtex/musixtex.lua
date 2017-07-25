@@ -1,12 +1,12 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.17a"
+VERSION = "0.18"
 
 --[[
      musixtex.lua: processes MusiXTeX files using prepmx and/or pmxab and/or 
      autosp as pre-processors (and deletes intermediate files)
 
-     (c) Copyright 2011-2016 Bob Tennent rdt@cs.queensu.ca
+     (c) Copyright 2011-2017 Bob Tennent rdt@cs.queensu.ca
                              and Dirk Laurie dirk.laurie@gmail.com
 
      This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,8 @@ VERSION = "0.17a"
 --[[
 
   ChangeLog:
+     version 0.18   2017-06-13 RDT
+       Allow autosp to generate .ltx files
 
      version 0.17a   2017-01-08 RDT
        Added -D option.
@@ -117,7 +119,7 @@ function usage()
 Usage:  [texlua] musixtex.lua { option | basename[.mtx | .pmx | .aspc | .tex | .ltx] } ...
         When no extension is given, extensions are tried in the above order
         until a source file is found. Preprocessing goes mtx-pmx-tex or 
-        aspc-tex, with the entry point determined by the extension.
+        aspc-tex/ltx, with the entry point determined by the extension.
         The normal route after preprocessing goes tex-dvi-ps-pdf, but shorter 
         routes are also available, see the options.
 Options: -v  version
@@ -404,7 +406,10 @@ function preprocess(basename,extension)
   end
   if extension == "aspc" then
     if execute ("autosp " .. basename .. ".aspc" ) == 0 then
-      extension = "tex"
+      if exists ( basename .. ".ltx")
+        then extension = "ltx"
+        else extension = "tex"
+      end
     else
       print ("!! autosp preprocessing of " .. basename .. ".aspc fails.")
       exit_code = exit_code+1
