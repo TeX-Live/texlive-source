@@ -11,7 +11,7 @@ unsigned char *header,*char_type,*char_info,*glue_kern;
 
 int jfmread(int kcode)
 {
-	int i,ctype = 0,w_ind,w,ll,rr,gk_ind,k_ind,g_ind;
+	int i,ctype=0,w_ind,w,ll=0,rr=0,gk_ind,k_ind,g_ind;
 
 	for (i = 0 ; i < nt ; i++) {
 		if (upair(&char_type[i*4]) == kcode) {
@@ -25,46 +25,40 @@ int jfmread(int kcode)
 	w = width[w_ind];
 
 	rightamount = 0;
-	if (w != zw) {
+	if (w != zw && ctype > 0) {
 		/* get natural length of JFM glue between <type0> and <type of kcode> */
 		gk_ind = char_info[0*4+3]; /* remainder for <type0> */
-		ll = 0;
-		if (ctype > 0) {
-			for (i = 0 ; i < nl-gk_ind ; i++) {
-				if (glue_kern[(gk_ind+i)*4+1] == ctype) {
-					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
-						k_ind = glue_kern[(gk_ind+i)*4+3];
-						ll = kern[k_ind];
-					}
-					else {
-						g_ind = glue_kern[(gk_ind+i)*4+3];
-						ll = glue[3*g_ind];
-					}
-					break;
+		for (i = 0 ; i < nl-gk_ind ; i++) {
+			if (glue_kern[(gk_ind+i)*4+1] == ctype) {
+				if (glue_kern[(gk_ind+i)*4+2] >= 128) {
+					k_ind = glue_kern[(gk_ind+i)*4+3];
+					ll = kern[k_ind];
 				}
-				if (glue_kern[(gk_ind+i)*4] >= 128)
-					break;
+				else {
+					g_ind = glue_kern[(gk_ind+i)*4+3];
+					ll = glue[3*g_ind];
+				}
+				break;
 			}
+			if (glue_kern[(gk_ind+i)*4] >= 128)
+				break;
 		}
 		/* get natural length of JFM glue between <type of kcode> and <type0> */
 		gk_ind = char_info[ctype*4+3]; /* remainder for <type of kcode> */
-		rr = 0;
-		if (ctype > 0) {
-			for (i = 0 ; i < nl-gk_ind ; i++) {
-				if (glue_kern[(gk_ind+i)*4+1] == 0) {
-					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
-						k_ind = glue_kern[(gk_ind+i)*4+3];
-						rr = kern[k_ind];
-					}
-					else {
-						g_ind = glue_kern[(gk_ind+i)*4+3];
-						rr = glue[3*g_ind];
-					}
-					break;
+		for (i = 0 ; i < nl-gk_ind ; i++) {
+			if (glue_kern[(gk_ind+i)*4+1] == 0) {
+				if (glue_kern[(gk_ind+i)*4+2] >= 128) {
+					k_ind = glue_kern[(gk_ind+i)*4+3];
+					rr = kern[k_ind];
 				}
-				if (glue_kern[(gk_ind+i)*4] >= 128)
-					break;
+				else {
+					g_ind = glue_kern[(gk_ind+i)*4+3];
+					rr = glue[3*g_ind];
+				}
+				break;
 			}
+			if (glue_kern[(gk_ind+i)*4] >= 128)
+				break;
 		}
 		if (abs(zw - ll - w - rr) <= 1) /* allow round-off error */
 			/* character width is truncated,
