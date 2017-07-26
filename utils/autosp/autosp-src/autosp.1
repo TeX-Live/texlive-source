@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH AUTOSP 1 2017-06-21  "" ""
+.TH AUTOSP 1 2017-07-140  "" ""
 
 .SH NAME
 autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
@@ -11,8 +11,14 @@ autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
 .B autosp
 .RB [ \-d\ |\ \-\-dotted ]
 .RB [ \-l\ |\ \-\-log ]
-.IR infile [\ \fR.aspc\fP\ |\ \fR.tex\fP\ ]
+.IR infile [\fR.aspc\fP]
 .RI [ outfile [ \fR.tex\fP ]]
+
+.B autosp
+.RB [ \-d\ |\ \-\-dotted ]
+.RB [ \-l\ |\ \-\-log ]
+.IR infile \fR.tex\fP\ 
+.IR outfile [ \fR.tex\fP ]
 
 
 This program makes it easier to create MusiXTeX scores by converting (non-standard) commands of the 
@@ -126,25 +132,31 @@ as indicated.
 
 If there is a single staff, consecutive whole-bar rest bars
 are merged into a multi-bar rest. Bar-centered rests can be
-coded using the standard \\def\\atnextbar notation but also
-the non-standard command \\Cpause in a note segment generates a
+coded using the standard \\def\\atnextbar notation but 
+the non-standard command \\Cpause in a note segment also generates a
 bar-centered rest.
 
-Spacing commands \\sk and \\hsk in the source are discarded,
-but not \\qsk, \\tqsk, \\hqsk or \\qqsk;
-moreover
+Spacing commands \\sk and \\hsk in the source are discarded
+(but not \\qsk, \\tqsk, \\hqsk or \\qqsk);
+however,
 non-standard commands
 \\QQsk, \\HQsk \\TQsk and \\Qsk in the source generate "global" skips; i.e., the effect of \\qqsk, \\hqsk, \\tqsk or \\qsk, respectively,  in 
 .I every 
-staff. These ensure that staffs remain synchronized if additional spacing is needed in one staff. 
+staff. These ensure that staffs remain synchronized if additional spacing is needed in any staff(s). 
 
 Global skips may also be obtained within collective-coding sequences by using
-one, two, three or four successive commas 
-to get the effects of \\QQsk, \\HQsk, \\TQsk or \\Qsk, respectively.
-Global skips (equivalent to one, two or three commas, depending on the beaming and the accidental)  are 
-automatically inserted before accidentals ('^', '_', '=', '<', '>') on beamed collective-coding notes. 
-The spacing can be increased by adding sufficient commas or locally re-defining 
-the relevant skip commands (\\qqsk, \\hqsk, \\tqsk, \\qsk).
+up to four successive commas 
+to get the effects of \\qqsk, \\hqsk, \\tqsk or \\qsk, respectively,
+as global skips.
+Global skips are 
+automatically inserted before accidentals ('^', '_', '=', '<', '>') on collective-coding notes. 
+If the automatic spacing is insufficient, the spacing may be increased by adding sufficient commas or 
+using a conventional notes command instead of \\anotes.  Automatic skips are 
+.I not 
+inserted
+for any of the 
+.I explicit 
+accidental commands: \\sh, \\fl, \\na, \\smallsh, \\bigsh, etc.
 
 
 A note segment can be completely empty, but if a note segment should start

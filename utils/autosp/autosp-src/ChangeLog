@@ -1,9 +1,13 @@
 AUTOSP
 
+  Determination of automatic spacing for accidentals simplified
+  Many comments corrected and expanded
+
+2017-06-21
+
   Support for global skips within collective-coding
     sequences by using commas between notes.
-  Automatic added spacing for accidentals on beamed sixteenth notes 
-    and smaller.
+  Automatic added spacing for accidentals on beamed notes 
 
 2017-06-14
 
