@@ -71,7 +71,7 @@ static void mp_ps_kanji_string_out (MP mp, char *s)
 @x
   mp_ps_print_nl(mp, "%%Creator: MetaPost ");
 @y
-  mp_ps_print_nl(mp, "%%Creator: MetaPost (" P_UP "MetaPost) ");
+  mp_ps_print_nl(mp, "%%Creator: MetaPost ("@= @>P_UP@= @>"MetaPost) ");
 @z
 
 %
