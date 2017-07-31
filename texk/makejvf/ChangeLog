@@ -1,3 +1,8 @@
+2017-07-31  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	makejvf version 20170731.
+	* tfmread.c, version.h: Support large GLUEKERN table.
+
 2017-07-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tfmread.c, makejvf.h: More efficient code. Note that
