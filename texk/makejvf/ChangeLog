@@ -1,7 +1,9 @@
 2017-07-31  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	makejvf version 20170731.
-	* tfmread.c, version.h: Support large GLUEKERN table.
+	* tfmread.c: Support large GLUEKERN table.
+	* write.c: Add support for 0x00AB and 0x00BB in writevfu().
+	* version.h: Adjusted.
 
 2017-07-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 

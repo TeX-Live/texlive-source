@@ -476,6 +476,7 @@ void writevfu(int code, FILE *fp)
 	case 0xFF5F: /* JIS X 0213  1-02-54 始め二重バーレーン */
 	case 0x3018: /* JIS X 0213  1-02-56 始め二重亀甲括弧 */
 	case 0x3016: /* JIS X 0213  1-02-58 始めすみ付き括弧(白) */
+	case 0x00AB: /* JIS X 0213  1-09-08 始め二重山括弧引用記号/始めギュメ */
 	case 0x301D: /* JIS X 0213  1-13-64 始めダブルミニュート */
 		if (ucs != ENTRY_JQ)
 			skip = -(zw-w);
@@ -598,6 +599,7 @@ void writevfu(int code, FILE *fp)
 	case 0xFF60: /* JIS X 0213  1-02-55 終わり二重バーレーン */
 	case 0x3019: /* JIS X 0213  1-02-57 終わり二重亀甲括弧 */
 	case 0x3017: /* JIS X 0213  1-02-59 終わりすみ付き括弧(白) */
+	case 0x00BB: /* JIS X 0213  1-09-18 終わり二重山括弧引用記号/終わりギュメ */
 	case 0x301F: /* JIS X 0213  1-13-65 終わりダブルミニュート */
 	case 0x00B0: /* ° */
 	case 0x2032: /* ′ */
