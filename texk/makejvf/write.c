@@ -605,22 +605,16 @@ void writevfu(int code, FILE *fp)
 	case 0x2032: /* ¡ì */
 	case 0x2033: /* ¡í */
 		break;
-	case 0xFF61: case 0xFF62: case 0xFF63: case 0xFF64: case 0xFF65: case 0xFF66: case 0xFF67:
-	case 0xFF68: case 0xFF69: case 0xFF6A: case 0xFF6B: case 0xFF6C: case 0xFF6D: case 0xFF6E: case 0xFF6F:
-	case 0xFF70: case 0xFF71: case 0xFF72: case 0xFF73: case 0xFF74: case 0xFF75: case 0xFF76: case 0xFF77:
-	case 0xFF78: case 0xFF79: case 0xFF7A: case 0xFF7B: case 0xFF7C: case 0xFF7D: case 0xFF7E: case 0xFF7F:
-	case 0xFF80: case 0xFF81: case 0xFF82: case 0xFF83: case 0xFF84: case 0xFF85: case 0xFF86: case 0xFF87:
-	case 0xFF88: case 0xFF89: case 0xFF8A: case 0xFF8B: case 0xFF8C: case 0xFF8D: case 0xFF8E: case 0xFF8F:
-	case 0xFF90: case 0xFF91: case 0xFF92: case 0xFF93: case 0xFF94: case 0xFF95: case 0xFF96: case 0xFF97:
-	case 0xFF98: case 0xFF99: case 0xFF9A: case 0xFF9B: case 0xFF9C: case 0xFF9D: case 0xFF9E: case 0xFF9F:
-		if (jfm_id == 11 && hankana) { /* È¾³ÑÊÒ²¾Ì¾¡¢²£½ñ¤­»þ */
-			pstfm_codes[pstfm_nt-1]=code;
-			pstfm_nt+=1;
-			rightamount=0; /* discard jfmread() result */
-			break;
-		}
 	default:
 		if (w != zw) {
+			if ((code >= 0xFF61 && code <= 0xFFDC) || (code >= 0xFFE8 && code <= 0xFFEE)) {
+				if (jfm_id == 11 && hankana) { /* È¾³ÑÊÒ²¾Ì¾¤Ê¤É¡¢²£½ñ¤­»þ */
+					pstfm_codes[pstfm_nt-1]=code;
+					pstfm_nt+=1;
+					rightamount=0; /* discard jfmread() result */
+					break;
+				}
+			}
 			if (!uniblock_iskanji && kanatume>=0) {
 				sprintf(buf2,"CH <%X>",code);
 				rewind(afp);
