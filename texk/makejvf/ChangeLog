@@ -1,9 +1,15 @@
+2017-08-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	makejvf version 20170801.
+	* write.c: Simplify code, add more hankaku characters.
+	* version.h: Bump version.
+
 2017-07-31  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	makejvf version 20170731.
 	* tfmread.c: Support large GLUEKERN table.
 	* write.c: Add support for 0x00AB and 0x00BB in writevfu().
-	* version.h: Adjusted.
+	* version.h: Bump version.
 
 2017-07-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
@@ -22,7 +28,7 @@
 	* tfmread.c, makejvf.h: Declare "rightamount" as signed,
 	to be consistent with "skip" in write.c.
 	* write.c: Improve -m option for UCS mode.
-	* version.h: Adjusted.
+	* version.h: Bump version.
 	* makejvf.1: Add documentation of -m option.
 
 2017-07-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
