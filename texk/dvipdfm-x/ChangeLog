@@ -1,3 +1,9 @@
+2017-08-06  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dpxutil.[ch], epdf.c, pdfdoc.[ch], pdfximage.c, xbb.c:
+	Support for /Rotate page attribute in PDF inclusion.
+	configure.ac: Version 20170806.
+
 2017-06-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfdoc.c: Simplify the change in pdf_doc_get_page().
