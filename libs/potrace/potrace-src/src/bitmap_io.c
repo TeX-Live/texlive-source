@@ -689,11 +689,11 @@ static int bm_readbody_bmp(FILE *f, double threshold, potrace_bitmap_t **bmp) {
 	    x=0;
 	    y++;
 	  }
-	  if (y>=bmpinfo.h) {
+	  if (x>=bmpinfo.w || y>=bmpinfo.h) {
 	    break;
 	  }
           realheight = y+1;
-	  BM_UPUT(bm, x, y, col[i&1]);
+	  BM_PUT(bm, x, y, col[i&1]);
 	  x++;
 	}
       } else if (c == 0) {
@@ -719,7 +719,7 @@ static int bm_readbody_bmp(FILE *f, double threshold, potrace_bitmap_t **bmp) {
 	    x=0;
 	    y++;
 	  }
-	  if (y>=bmpinfo.h) {
+	  if (x>=bmpinfo.w || y>=bmpinfo.h) {
 	    break;
 	  }
           realheight = y+1;
@@ -747,11 +747,11 @@ static int bm_readbody_bmp(FILE *f, double threshold, potrace_bitmap_t **bmp) {
 	    x=0;
 	    y++;
 	  }
-	  if (y>=bmpinfo.h) {
+	  if (x>=bmpinfo.w || y>=bmpinfo.h) {
 	    break;
 	  }
           realheight = y+1;
-	  BM_UPUT(bm, x, y, COLTABLE(c));
+	  BM_PUT(bm, x, y, COLTABLE(c));
 	  x++;
 	}
       } else if (c == 0) {
@@ -775,7 +775,7 @@ static int bm_readbody_bmp(FILE *f, double threshold, potrace_bitmap_t **bmp) {
             x=0;
             y++;
           }
-          if (y>=bmpinfo.h) {
+	  if (x>=bmpinfo.w || y>=bmpinfo.h) {
             break;
           }
           realheight = y+1;

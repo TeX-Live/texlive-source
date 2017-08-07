@@ -7,7 +7,13 @@
    filter (evening out background gradients), lowpass filter
    (smoothing foreground details), interpolated scaling, inversion. */
 
-#define _XOPEN_SOURCE 500
+#ifndef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#ifndef _NETBSD_SOURCE
+#define _NETBSD_SOURCE 1
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -332,9 +338,9 @@ static void *interpolate_cubic(greymap_t *gm, int s, int bilevel, double c) {
 	    v += window[k][i] * poly[l][i];
 	  }
 	  if (bilevel) {
-	    BM_UPUT(bm_out, x*s+l, y*s+k, v < c1);
+	    BM_PUT(bm_out, x*s+l, y*s+k, v < c1);
 	  } else {
-	    GM_UPUT(gm_out, x*s+l, y*s+k, v);
+	    GM_PUT(gm_out, x*s+l, y*s+k, v);
 	  }	    
 	}
       }

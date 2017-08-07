@@ -41,7 +41,7 @@ typedef struct greymap_s greymap_t;
 #define GM_INC(gm, x, y, b) (gm_safe(gm, x, y) ? GM_UINC(gm, x, y, b) : 0)
 #define GM_INV(gm, x, y) (gm_safe(gm, x, y) ? GM_UINV(gm, x, y) : 0)
 #define GM_PUT(gm, x, y, b) (gm_safe(gm, x, y) ? GM_UPUT(gm, x, y, b) : 0)
-#define GM_BGET(gm, x, y) GM_UGET(gm, gm_bound(x, gm->w), gm_bound(y, gm->h))
+#define GM_BGET(gm, x, y) ((gm)->w == 0 || (gm)->h == 0 ? 0 : GM_UGET(gm, gm_bound(x, (gm)->w), gm_bound(y, (gm)->h)))
 
 /* modes for cutting off out-of-range values. The following names
    refer to winding numbers. I.e., make a pixel black if winding

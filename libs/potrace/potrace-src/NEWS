@@ -1,3 +1,12 @@
+August 5, 2017: Release 1.15
+
+ This release consists of bugfixes and minor portability improvements.
+ Some potential buffer overflows and arithmetic overflows were fixed,
+ including CVE-2017-12067. A bug triggered by very large bitmaps has
+ been fixed. A new configuration option --enable-local-getopt was
+ added. Thanks to Agostino Sarubbo, Daniel Macks, and Michael Voříšek
+ for reporting bugs and suggesting improvements.
+
 February 19, 2017: Release 1.14
 
  This release consists of bugfixes and minor portability improvements.

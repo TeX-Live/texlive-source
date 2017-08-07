@@ -845,11 +845,11 @@ static int gm_readbody_bmp(FILE *f, greymap_t **gmp) {
 	    x=0;
 	    y++;
 	  }
-	  if (y>=bmpinfo.h) {
+	  if (x>=bmpinfo.w || y>=bmpinfo.h) {
 	    break;
 	  }
           realheight = y+1;
-	  GM_UPUT(gm, x, y, col[i&1]);
+	  GM_PUT(gm, x, y, col[i&1]);
 	  x++;
 	}
       } else if (c == 0) {
@@ -875,7 +875,7 @@ static int gm_readbody_bmp(FILE *f, greymap_t **gmp) {
 	    x=0;
 	    y++;
 	  }
-	  if (y>=bmpinfo.h) {
+	  if (x>=bmpinfo.w || y>=bmpinfo.h) {
 	    break;
 	  }
           realheight = y+1;
@@ -903,11 +903,11 @@ static int gm_readbody_bmp(FILE *f, greymap_t **gmp) {
 	    x=0;
 	    y++;
 	  }
-	  if (y>=bmpinfo.h) {
+	  if (x>=bmpinfo.w || y>=bmpinfo.h) {
 	    break;
 	  }
           realheight = y+1;
-	  GM_UPUT(gm, x, y, COLTABLE(c));
+	  GM_PUT(gm, x, y, COLTABLE(c));
 	  x++;
 	}
       } else if (c == 0) {
@@ -931,7 +931,7 @@ static int gm_readbody_bmp(FILE *f, greymap_t **gmp) {
             x=0;
             y++;
           }
-          if (y>=bmpinfo.h) {
+	  if (x>=bmpinfo.w || y>=bmpinfo.h) {
             break;
           }
           realheight = y+1;

@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
 
 #include "potracelib.h"
 #include "curve.h"
@@ -199,7 +202,8 @@ static void setbbox_path(bbox_t *bbox, path_t *p) {
    cannot have length 0). Sign is required for correct interpretation
    of turnpolicies. */
 static path_t *findpath(potrace_bitmap_t *bm, int x0, int y0, int sign, int turnpolicy) {
-  int x, y, dirx, diry, len, size, area;
+  int x, y, dirx, diry, len, size;
+  uint64_t area;
   int c, d, tmp;
   point_t *pt, *pt1;
   path_t *p = NULL;
@@ -276,7 +280,7 @@ static path_t *findpath(potrace_bitmap_t *bm, int x0, int y0, int sign, int turn
 
   p->priv->pt = pt;
   p->priv->len = len;
-  p->area = area;
+  p->area = area <= INT_MAX ? area : INT_MAX; /* avoid overflow */
   p->sign = sign;
 
   return p;

@@ -10,8 +10,8 @@ man page for general information on usage, how to compile Potrace,
 etc.
 
 
-INSTALLATION for Windows 95/98/2000/NT/XP/Vista/7/whatever:
-===========================================================
+INSTALLATION for Windows:
+=========================
 
 Download the file potrace-XXX.win32.zip (or potrace-XXX.win64.zip if
 you want the 64-bit version).  Unpack it with your favorite unzipping
@@ -28,10 +28,6 @@ amend your PATH environment variable, by adding something like the
 following line to C:\AUTOEXEC.BAT:
 
         PATH=%PATH%;C:\DIRECTORY\WHERE\FILES\ARE
-
-Note: as of version 1.6, the Potrace Windows distribution is built
-using MinGW and not Cygwin. It is no longer necessary to install a
-separate DLL file with Potrace.
 
 
 RUNNING:
@@ -51,15 +47,3 @@ Wildcards can also be used, as in:
 
  potrace h:\data\*.*
  potrace h:/data/*.*
-
-Earlier versions of Potrace had some problems when wildcards and
-backslashes were mixed; these problems seem to have been solved by the
-switch from Cygwin to MinGW.
-
-Another problem that some users have reported is that the generated
-".ps" and ".eps" were not executable under Windows (i.e., one could
-not simply display these files by typing their name on the MSDOS
-Prompt, as should normally be the case if a default application for
-PostScript files has been configured). I was never able to replicate
-this problem, but I believe that it has also been solved by the switch
-to MinGW.
