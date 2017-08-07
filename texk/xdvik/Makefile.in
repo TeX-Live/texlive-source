@@ -579,7 +579,7 @@ xdvidir = $(datarootdir)/texmf-dist/xdvi
 dist_xdvi_DATA = texmf/XDvi
 pixmapdir = $(datarootdir)/texmf-dist/xdvi/pixmap
 dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
-dvipsconfdir = $(datarootdir)/texmf-dist/dvips/config
+dvipsconfdir = $(datarootdir)/texmf-dist/dvips/xdvi
 dist_noinst_DATA = texmf/config.xdvi
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
