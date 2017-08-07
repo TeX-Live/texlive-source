@@ -1,5 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/xdvik/
 ##
+## Copyright (C) 2017 Karl Berry <tex-live@tug.org>
 ## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -203,7 +204,7 @@ dist_xdvi_DATA = texmf/XDvi
 pixmapdir = $(datarootdir)/texmf-dist/xdvi/pixmap
 dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
 
-dvipsconfdir = $(datarootdir)/texmf-dist/dvips/config
+dvipsconfdir = $(datarootdir)/texmf-dist/dvips/xdvi
 dist_noinst_DATA = texmf/config.xdvi
 
 install-data-hook:

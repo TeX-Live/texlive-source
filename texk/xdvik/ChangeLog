@@ -1,3 +1,8 @@
+2017-08-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* Makefile.am: config.xdvi is installed under
+	texmf-dist/dvips/xdvi, not texmf-dist/dvips/config.
+
 2016-04-06  Karl Berry  <karl@tug.org>
 
 	* Import xdvik-22.87.03.
