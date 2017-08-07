@@ -8,7 +8,13 @@
    output. Postscript compression is optionally supplied via the
    functions in flate.c. */
 
-#define _XOPEN_SOURCE 500
+#ifndef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#ifndef _NETBSD_SOURCE
+#define _NETBSD_SOURCE 1
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

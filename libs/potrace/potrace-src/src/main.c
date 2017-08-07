@@ -2,7 +2,13 @@
    This file is part of Potrace. It is free software and it is covered
    by the GNU General Public License. See the file COPYING for details. */
 
-#define _XOPEN_SOURCE 500
+#ifndef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#ifndef _NETBSD_SOURCE
+#define _NETBSD_SOURCE 1
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -101,12 +107,12 @@ struct backend_s {
 typedef struct backend_s backend_t;  
 
 static backend_t backend[] = {
+  { "svg",        ".svg", 0, 0, 0,   NULL,     page_svg,     NULL,     1 },
+  { "pdf",        ".pdf", 0, 0, 1,   init_pdf, page_pdf,     term_pdf, 1 },
+  { "pdfpage",    ".pdf", 1, 0, 1,   init_pdf, page_pdfpage, term_pdf, 1 },
   { "eps",        ".eps", 0, 0, 0,   NULL,     page_eps,     NULL,     1 },
   { "postscript", ".ps",  1, 0, 1,   init_ps,  page_ps,      term_ps,  1 },
   { "ps",         ".ps",  1, 0, 1,   init_ps,  page_ps,      term_ps,  1 },
-  { "pdf",        ".pdf", 0, 0, 1,   init_pdf, page_pdf,     term_pdf, 1 },
-  { "pdfpage",    ".pdf", 1, 0, 1,   init_pdf, page_pdfpage, term_pdf, 1 },
-  { "svg",        ".svg", 0, 0, 0,   NULL,     page_svg,     NULL,     1 },
   { "dxf",        ".dxf", 0, 1, 0,   NULL,     page_dxf,     NULL,     1 },
   { "geojson",    ".json",0, 1, 0,   NULL,     page_geojson, NULL,     1 },
   { "pgm",        ".pgm", 0, 1, 1,   NULL,     page_pgm,     NULL,     1 },
@@ -203,12 +209,12 @@ static void usage(FILE *f) {
   fprintf(f, " --                         - end of options; 0 or more input filenames follow\n");
   fprintf(f, "Backend selection:\n");
   fprintf(f, " -b, --backend <name>       - select backend by name\n");
-  fprintf(f, " -e, --eps                  - EPS backend (encapsulated PostScript) (default)\n");
-  fprintf(f, " -p, --postscript           - PostScript backend\n");
-  fprintf(f, " -s, --svg                  - SVG backend (scalable vector graphics)\n");
-  fprintf(f, " -g, --pgm                  - PGM backend (portable greymap)\n");
+  fprintf(f, " -b svg, -s, --svg          - SVG backend (scalable vector graphics)\n");
   fprintf(f, " -b pdf                     - PDF backend (portable document format)\n");
   fprintf(f, " -b pdfpage                 - fixed page-size PDF backend\n");
+  fprintf(f, " -b eps, -e, --eps          - EPS backend (encapsulated PostScript) (default)\n");
+  fprintf(f, " -b ps, -p, --postscript    - PostScript backend\n");
+  fprintf(f, " -b pgm, -g, --pgm          - PGM backend (portable greymap)\n");
   fprintf(f, " -b dxf                     - DXF backend (drawing interchange format)\n");
   fprintf(f, " -b geojson                 - GeoJSON backend\n");
   fprintf(f, " -b gimppath                - Gimppath backend (GNU Gimp)\n");
@@ -613,8 +619,8 @@ static void dopts(int ac, char *av[]) {
       }
       parse_dimensions(optarg, &p, &dimx, &dimy);
       if (*p == 0) {
-	info.paperwidth = (int)rint(double_of_dim(dimx, DEFAULT_DIM));
-	info.paperheight = (int)rint(double_of_dim(dimy, DEFAULT_DIM));
+	info.paperwidth = (int)round(double_of_dim(dimx, DEFAULT_DIM));
+	info.paperheight = (int)round(double_of_dim(dimy, DEFAULT_DIM));
 	break;
       }
       if (matches == 0) {

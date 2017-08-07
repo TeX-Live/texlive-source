@@ -7,16 +7,16 @@ DESCRIPTION
 
  Potrace is a tool for tracing a bitmap, which means, transforming a
  bitmap into a smooth, scalable image.  The input is a bitmap (PBM,
- PGM, PPM, or BMP), and the default output is one of several vector
- file formats.  A typical use is to create EPS files from scanned
+ PGM, PPM, or BMP), and the output is one of several vector file
+ formats.  A typical use is to create SVG or PDF files from scanned
  data, such as company or university logos, handwritten notes, etc.
  The resulting image is not "jaggy" like a bitmap, but smooth. It can
  then be rendered at any resolution.
 
- Potrace can currently produce the following output formats: EPS,
- PostScript, PDF, SVG (scalable vector graphics), DXF, GeoJSON, PGM
- (for easy antialiasing of pixel-based images), Gimppath, and
- XFig. Additional backends might be added in the future.
+ Potrace can currently produce the following output formats: SVG, PDF,
+ EPS, PostScript, DXF, GeoJSON, PGM (for easy antialiasing of
+ pixel-based images), Gimppath, and XFig. Additional backends might be
+ added in the future.
 
  A separate program, mkbitmap, is also provided. This program can act
  as a pre-processor for Potrace, applying scaling and various filters
@@ -40,6 +40,7 @@ COMPILATION
   --enable-metric         use metric units (centimeters) as default
   --enable-a4             use a4 as the default papersize
   --enable-dumb-tty       use simplified ASCII-only progress bar
+  --enable-local-getopt   avoid using the system-wide getopt library
 
  See also ./configure --help.
 
@@ -69,12 +70,12 @@ USAGE
   --                         - end of options; 0 or more input filenames follow
  Backend selection:
   -b, --backend <name>       - select backend by name
-  -e, --eps                  - EPS backend (encapsulated PostScript) (default)
-  -p, --postscript           - PostScript backend
-  -s, --svg                  - SVG backend (scalable vector graphics)
-  -g, --pgm                  - PGM backend (portable greymap)
+  -b svg, -s, --svg          - SVG backend (scalable vector graphics)
   -b pdf                     - PDF backend (portable document format)
   -b pdfpage                 - fixed page-size PDF backend
+  -b eps, -e, --eps          - EPS backend (encapsulated PostScript) (default)
+  -b ps, -p, --postscript    - PostScript backend
+  -b pgm, -g, --pgm          - PGM backend (portable greymap)
   -b dxf                     - DXF backend (drawing interchange format)
   -b geojson                 - GeoJSON backend
   -b gimppath                - Gimppath backend (GNU Gimp)
@@ -125,7 +126,7 @@ USAGE
  Dimensions can have optional units, e.g. 6.5in, 15cm, 100pt.
  Default is inches (or pixels for pgm, dxf, and gimppath backends).
  Possible input file formats are: pnm (pbm, pgm, ppm), bmp.
- Backends are: eps, postscript, ps, pdf, pdfpage, svg, dxf, geojson, pgm, 
+ Backends are: svg, pdf, pdfpage, eps, postscript, ps, dxf, geojson, pgm,
  gimppath, xfig.
 
 POTRACE LIBRARY (FOR DEVELOPERS)
@@ -159,6 +160,9 @@ COPYRIGHT
 
  Copyright (C) 2001-2017 Peter Selinger
 
+ The use of the name "Potrace" is governed by a separate policy, see
+ TRADEMARKS below.
+
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or (at
@@ -175,6 +179,34 @@ COPYRIGHT
  See also http://www.gnu.org/.
 
  See the file COPYING for details.
+
+TRADEMARKS
+
+ "Potrace" is a trademark of Peter Selinger.
+
+ Policy on using the name "Potrace". If you are planning to modify
+ Potrace, including making a port of Potrace to another programming
+ language, please be aware of the following. While the source code of
+ Potrace is licensed under the GNU General Public License, the name
+ "Potrace" is my trademark, and may only be used with my permission.
+
+ In practice, I will permit the use of the name "Potrace" in
+ connection with a port of Potrace to another programming language,
+ provided that the port complies with the term of the GNU General
+ Public License and produces the same high quality vectorized output
+ as the original Potrace. Ports that are buggy or do not produce high
+ quality output are not permitted to use the name "Potrace". To ensure
+ compliance with this policy, please run your port by me before making
+ it public. Also, if you use the "Potrace" name (or any derivative,
+ such as "MyPotrace"), you must provide a name and email address where
+ I can reach you. Derivatives of Potrace that are posted anonymously
+ or where the authors cannot be reached or do not reply to email or
+ bug reports are not permitted to use the name "Potrace".
+
+ The purpose of this policy is to allow people to port Potrace to as
+ many programming languages as possible, while also ensuring that all
+ such ports are of the same high quality that has come to be
+ associated with the name "Potrace".
 
 GPG KEY
 

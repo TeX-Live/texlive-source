@@ -121,7 +121,7 @@ potrace_param_t *potrace_param_default(void);
 /* free parameter set */
 void potrace_param_free(potrace_param_t *p);
 
-/* trace a bitmap*/
+/* trace a bitmap */
 potrace_state_t *potrace_trace(const potrace_param_t *param, 
 			       const potrace_bitmap_t *bm);
 

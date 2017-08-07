@@ -6,13 +6,13 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl ----------------------------------------------------------------------
 dnl Package info
-AC_INIT([potrace],[1.14],[selinger at users.sourceforge.net])
+AC_INIT([potrace],[1.15],[selinger at users.sourceforge.net])
 AC_CONFIG_SRCDIR(src/trace.c)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 
-DATE="February 2017"
+DATE="August 2017"
 
 dnl ----------------------------------------------------------------------
 dnl The names of the installed executables are defined here, but
@@ -34,7 +34,7 @@ dnl Also add CADD to the CFLAGS at configure time or compile time
 AC_SUBST(CADD)
 
 AC_MSG_CHECKING(what compiler options to use)
-AC_MSG_RESULT($CFLAGS $CADD)
+AC_MSG_RESULT($CADD $CFLAGS)
 
 dnl ----------------------------------------------------------------------
 dnl check if --with-libpotrace was given - this must be done
@@ -192,6 +192,11 @@ fi
 AC_CHECK_LIB(m, floor, true, AC_MSG_ERROR([cannot find the m library (-lm)]))
 
 dnl ----------------------------------------------------------------------
+dnl Check for types
+
+AC_TYPE_UINT64_T
+
+dnl ----------------------------------------------------------------------
 dnl Check for library functions.
 
 dnl Check for getopt_long
@@ -216,8 +221,17 @@ if test "$have_getopt_long" = "yes"; then
    [AC_MSG_RESULT(maybe (cross-compiling))
    have_getopt_long=no])
 fi
-if test "$have_getopt_long" != "yes"; then 
+
+AC_ARG_ENABLE(local-getopt,
+ AS_HELP_STRING([--enable-local-getopt],[avoid using the system-wide getopt library]))
+
+AC_MSG_CHECKING(whether to use local getopt)
+if test "$have_getopt_long" != "yes" || test "$enable_local_getopt" = yes; then 
    EXTRA_OBJS="$EXTRA_OBJS getopt.o getopt1.o"
+   EXTRA_INCLUDES="$EXTRA_INCLUDES -I\$(srcdir)/include/getopt"
+   AC_MSG_RESULT(yes)
+else
+   AC_MSG_RESULT(no)
 fi
 
 AC_CHECK_FUNC(strcasecmp, ,
@@ -255,6 +269,7 @@ AC_SUBST(DATE)
 AC_SUBST(POTRACE)
 AC_SUBST(MKBITMAP)
 AC_SUBST(EXTRA_OBJS)
+AC_SUBST(EXTRA_INCLUDES)
 AC_SUBST(EXTRA_LIBS)
 AC_SUBST(AM_CPPFLAGS)
 AC_SUBST(POTRACELIB_VERSION)

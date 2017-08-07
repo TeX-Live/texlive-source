@@ -282,9 +282,9 @@ static int calc_sums(privpath_t *pp) {
     y = pp->pt[i].y - pp->y0;
     pp->sums[i+1].x = pp->sums[i].x + x;
     pp->sums[i+1].y = pp->sums[i].y + y;
-    pp->sums[i+1].x2 = pp->sums[i].x2 + x*x;
-    pp->sums[i+1].xy = pp->sums[i].xy + x*y;
-    pp->sums[i+1].y2 = pp->sums[i].y2 + y*y;
+    pp->sums[i+1].x2 = pp->sums[i].x2 + (double)x*x;
+    pp->sums[i+1].xy = pp->sums[i].xy + (double)x*y;
+    pp->sums[i+1].y2 = pp->sums[i].y2 + (double)y*y;
   }
   return 0;  
 

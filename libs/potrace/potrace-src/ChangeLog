@@ -1,5 +1,25 @@
 ChangeLog
 
+v1.15 2017/08/05
+	(2017/08/05) PS1 - use round() instead of rint()
+	(2017/08/05) PS1 - portability: set both _POSIX_C_SOURCE and
+	_NETBSD_SOURCE to enable strdup prototype in string.h, as
+	_XOPEN_SOURCE=500 doesn't work on macOS, _XOPEN_SOURCE=600 doesn't
+	work on SunOS, and _POSIX_C_SOURCE alone doesn't work on Minix.
+	(2017/08/02) PS1 - fixed a potential arithmetic overflow.
+	(2017/06/17) PS1 - fixed a bug with very large bitmaps. Reported
+	by Michael Voříšek.
+	(2017/03/05) PS1 - autoconf: added --enable-local-getopt to avoid
+	using the system-wide getopt library (it may still end up being
+	used on GNU systems).
+	(2017/03/05) PS1 - portability: moved getopt.h to a subdirectory,
+	to be included only when needed. Reported by Daniel Macks.
+	(2017/03/05) PS1 - portability: use _XOPEN_SOURCE=600 to fix macOS
+	warning.
+	(2017/02/27) PS1 - fixed more buffer overflows (not security
+	critical), including one reported by Agostino Sarubbo. This also
+	fixes CVE-2017-12067.
+
 v1.14 2017/02/19
 	(2017/02/19) PS1 - speed: use clang as default compiler if
 	available, and no longer use -ffloat-store even with gcc.

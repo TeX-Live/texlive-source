@@ -32,6 +32,8 @@ potracelib_demo_SOURCES = potracelib_demo.c
 potracelib_demo_LDADD = libpotrace.la -lm
 potracelib_demo_DEPENDENCIES = libpotrace.la
 
+AM_CPPFLAGS = @EXTRA_INCLUDES@
+
 #----------------------------------------------------------------------
 # Potrace library:
 
@@ -42,7 +44,7 @@ libsources = curve.c curve.h trace.c trace.h decompose.c		\
 lib_LTLIBRARIES = $(INSTLIBS)
 EXTRA_LTLIBRARIES = libpotrace.la
 libpotrace_la_SOURCES = $(libsources)
-libpotrace_la_LDFLAGS = -version-info 0:4:0 -rpath '$(libdir)' \
+libpotrace_la_LDFLAGS = -version-info 0:5:0 -rpath '$(libdir)' \
  -export-symbols $(srcdir)/libpotrace-export.sym -no-undefined
 libpotrace_la_LIBADD = -lm
 MOSTLYCLEANFILES = libpotrace.la
@@ -54,4 +56,4 @@ EXTRA_HEADERS = potracelib.h
 #----------------------------------------------------------------------
 # other stuff to distribute
 
-EXTRA_DIST = getopt.c getopt1.c getopt.h libpotrace-export.sym
+EXTRA_DIST = getopt.c getopt1.c include/getopt/getopt.h libpotrace-export.sym
