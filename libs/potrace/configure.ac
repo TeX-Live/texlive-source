@@ -31,6 +31,10 @@ fi
 
 AC_SEARCH_LIBS([sqrt], [m])
 
+dnl Check for types
+
+AC_TYPE_UINT64_T
+
 AC_SUBST([POTRACE_TREE], [potrace-src])
 
 AC_CONFIG_FILES([Makefile include/Makefile])

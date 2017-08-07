@@ -1,3 +1,7 @@
+2017-08-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* configure.ac: check uint64_t.
+
 2017-08-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import potrace-1.15.
