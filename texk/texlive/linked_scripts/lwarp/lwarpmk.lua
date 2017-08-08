@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.33"
+printversion = "v0.34"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -304,7 +304,7 @@ function compilelatexmk ( fsuffix )
     err=os.execute ( "latexmk -pdf -dvi- -ps- -recorder "
         .. "-e "
         .. opquote
-        .. "$makeindex = q/"
+        .. "$makeindex = q/" -- $
         .. xindycmd
         .. "  -M " .. xdyfile
         .. "  -L " .. language .. " /"
