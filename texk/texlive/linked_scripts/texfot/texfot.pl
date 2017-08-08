@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.32 2016/02/09 19:13:22 karl Exp $
+# $Id: texfot,v 1.37 2017/07/25 15:06:53 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -8,7 +8,7 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.32 2016/02/09 19:13:22 karl Exp $';
+my $ident = '$Id: texfot,v 1.37 2017/07/25 15:06:53 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -134,12 +134,13 @@ sub process_output {
      |LaTeX\ Font\ Warning:\ Size\ substitutions
      |Package\ caption\ Warning:\ Unsupported\ document\ class
      |Package\ fixltx2e\ Warning:\ fixltx2e\ is\ not\ required
-     |Package\ frenchb\.ldf\ Warning:\ (Figures|The\ definition)
-     |Reloading\ Xunicode\ for\ encoding  # spurious ***
-     |This\ is.*(epsf\.tex|\.sty)         # so what
+     |Package\ frenchb?\.ldf\ Warning:\ (Figures|The\ definition)
+     |\*\*\*\ Reloading\ Xunicode\ for\ encoding  # spurious ***
+     |This\ is\ `?(epsf\.tex|.*\.sty|TAP) # so what
      |pdfTeX\ warning:.*inclusion:\ fou   #nd PDF version ...
      |pdfTeX\ warning:.*inclusion:\ mul   #tiple pdfs with page group
      |libpng\ warning:\ iCCP:\ Not\ recognizing
+     |!\ $
     )/x;
     
     # don't anchor user ignores, leave it up to them.
@@ -152,9 +153,10 @@ sub process_output {
     if (/^(
       .*?:[0-9]+:        # usual file:lineno: form
      |!                  # usual ! form
+     |>\ [^<]            # from \show..., but not "> <img.whatever"
      |.*pdfTeX\ warning  # pdftex complaints often cross lines
      |LaTeX\ Font\ Warning:\ Font\ shape
-     |>\ [^<]            # from \show..., but not "> <img.whatever"
+     |Package\ hyperref\ Warning:\ Token\ not\ allowed
      |removed\ on\ input\ line  # hyperref
      |Runaway\ argument
     )/x) {
@@ -170,6 +172,7 @@ sub process_output {
       This\ is
      |Output\ written
      |No\ pages\ of\ output
+     |\(.*end\ occurred\ inside\ a\ group
      |(Und|Ov)erfull
      |(LaTeX|Package|Class).*(Error|Warning)
      |.*Citation.*undefined
