@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44836 2017-07-17 23:59:48Z preining $
+# $Id: tlmgr.pl 44958 2017-08-05 09:14:35Z hironobu $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44836 $';
-my $datrev = '$Date: 2017-07-18 01:59:48 +0200 (Tue, 18 Jul 2017) $';
+my $svnrev = '$Revision: 44958 $';
+my $datrev = '$Date: 2017-08-05 11:14:35 +0200 (Sat, 05 Aug 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4546,6 +4546,10 @@ sub action_generate {
     return $F_ERROR;
   }
   my $what = shift @ARGV;
+  if (!defined($what)) {
+    tlwarn("$prg: action `generate' requires an argument!\n");
+    return ($F_ERROR);
+  }
   init_local_db();
 
   # we create fmtutil.cnf, language.dat, language.def in TEXMFSYSVAR and
@@ -5867,8 +5871,12 @@ sub action_key {
 # 
 sub action_shell {
   my $protocol = 1;
-  sub do_prompt {
-    my $default_prompt = "tlmgr>";
+  my $default_prompt = "tlmgr>";
+  # we need to do an anonymous sub here otherwise the $default_prompt will get
+  # only fixed once and remain forever. With anonymous subs it is rebound
+  # on every call!
+  my $do_prompt;
+  $do_prompt = sub {
     my $prompt = "";
     my @options;
     my @guarantee;
@@ -5897,7 +5905,7 @@ sub action_shell {
         $did_prompt = 1;
       }
     }
-    print "default_prompt " if (!$did_prompt);
+    print "$default_prompt " if (!$did_prompt);
     my $ans = <STDIN>;
     if (!defined($ans)) {
       # we got Ctrl-D, just break out
@@ -5923,15 +5931,15 @@ sub action_shell {
       }
       if (!$isok) {
         print("Please answer one of: @guarantee\n");
-        return(do_prompt(@savedargs));
+        return(&$do_prompt(@savedargs));
       }
     }
     return($ans);
-  }
+  };
 
   print "protocol $protocol\n";
   while (1) {
-    my $ans = do_prompt('tlmgr>');
+    my $ans = &$do_prompt($default_prompt);
     return $F_OK if !defined($ans); # done if eof
 
     my ($cmd, @args) = TeXLive::TLUtils::quotewords('\s+', 0, $ans);
@@ -5954,13 +5962,13 @@ sub action_shell {
       my @valid_bool_keys
          = qw/debug-translation machine-readable no-execute-actions
               require-verification verify-downloads/;  
-      my @valid_string_keys = qw/repository/;
+      my @valid_string_keys = qw/repository prompt/;
       my @valid_keys = (@valid_bool_keys, @valid_string_keys);
       #
       my $key = shift @args;
       my $val = shift @args;
       if (!$key) {
-        $key = do_prompt('Choose one of...', -menu => \@valid_keys, '>');
+        $key = &$do_prompt('Choose one of...', -menu => \@valid_keys, '>');
       }
       if (!$key) {
         print("ERROR missing key argument for get/set\n");
@@ -5972,9 +5980,11 @@ sub action_shell {
       }
       if ($cmd eq "set" && !defined($val)) {
         if ($key eq "repository") {
-          $val = do_prompt('Enter repository:');
+          $val = &$do_prompt('Enter repository:');
+        } elsif ($key eq "prompt") {
+          $val = &$do_prompt('Enter new prompt:');
         } else {
-          $val = do_prompt('Enter 1 for on, 0 for off:', -guarantee => [0,1]);
+          $val = &$do_prompt('Enter 1 for on, 0 for off:', -guarantee => [0,1]);
         }
         # deal with Ctrl-D
         if (!defined($val)) {
@@ -5992,6 +6002,13 @@ sub action_shell {
           } else {
             print "repository = <UNDEFINED>\n";
           }
+        }
+        print "OK\n";
+      } elsif ($key eq "prompt") {
+        if ($cmd eq "set") {
+          $default_prompt = scalar($val);
+        } else {
+          print "Current prompt: $default_prompt (but you know that, or?)\n";
         }
         print "OK\n";
       } elsif (TeXLive::TLUtils::member($key, @valid_bool_keys)) {
@@ -6018,7 +6035,7 @@ sub action_shell {
     } elsif ($cmd eq "load") {
       my $what = shift @args;
       if (!defined($what)) {
-        $what = do_prompt("Choose...", -menu => ['local', 'remote'], '>');
+        $what = &$do_prompt("Choose...", -menu => ['local', 'remote'], '>');
       }
       if ($what eq "local") {
         init_local_db();
@@ -8007,10 +8024,11 @@ Save the local TLPDB, presumably after other operations have changed it.
 
 Get the value of I<var>, or set it to I<val>.  Possible I<var> names:
 C<debug-translation>, C<machine-readable>, C<no-execute-actions>,
-C<require-verification>, C<verify-downloads>, and C<repository>. All
-except C<repository> are booleans, taking values 0 and 1, and behave
+C<require-verification>, C<verify-downloads>, C<repository>, and C<prompt>. All
+except C<repository> and C<prompt> are booleans, taking values 0 and 1, and behave
 like the corresponding command line option.  The C<repository> variable
-takes a string, and sets the remote repository location. 
+takes a string, and sets the remote repository location. The C<prompt> variable
+takes a string, and sets the current default prompt.
 
 If I<var> or then I<val> is not specified, it is prompted for.
 
@@ -8899,7 +8917,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 44836 2017-07-17 23:59:48Z preining $
+$Id: tlmgr.pl 44958 2017-08-05 09:14:35Z hironobu $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
