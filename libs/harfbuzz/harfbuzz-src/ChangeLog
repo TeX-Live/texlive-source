@@ -1,3 +1,79 @@
+commit 5dc30451b80f6bb0079424a130875c10486e4d34
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 7 21:37:07 2017 -0700
+
+    Two fixes to avar mapping
+
+    1. Handle segment with two entries correctly,
+
+    2. Fix rounding math.  Ouch!
+
+    Fixes https://github.com/behdad/harfbuzz/issues/521
+
+ src/hb-ot-var-avar-table.hh | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+commit dc2c418e397bf251faf03d824fc780ac19bb1dee
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 3 12:34:15 2017 +0100
+
+    [check-defs/symbols.sh] Drop empty-symbol lines
+
+    Fixes https://github.com/behdad/harfbuzz/issues/510
+
+ src/check-defs.sh    | 2 +-
+ src/check-symbols.sh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 6f38845d9c6852812eb1963a1fd7e5ec771e5ce3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 19 17:20:55 2017 -0700
+
+    [hb-shape] Rename --show-messages to --trace
+
+    https://github.com/behdad/harfbuzz/issues/506
+
+ util/hb-shape.cc | 2 +-
+ util/options.cc  | 2 +-
+ util/options.hh  | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit e60350551addbd945491f662e98464c9e3e9fec5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 18 19:14:19 2017 -0700
+
+    [hb-shape] Improve shaping-debug output
+
+    Before, that was printed using --debug (and in both hb-shape and
+    hb-view).
+    Changed it, now hb-shape has a new command-line argument called
+    --show-messages.
+    When invoked, it also respects other output formatting options.
+    The messages
+    are better formatted and printed to te same place that hb-shape
+    output is
+    directed to.  Previously they were written to stderr.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/506
+
+ util/hb-ot-shape-closure.cc | 10 +++++++---
+ util/hb-shape.cc            | 33 +++++++++++++++++++++++++++++++--
+ util/main-font-text.hh      | 27 ++++-----------------------
+ util/options.cc             | 10 +++++++---
+ util/options.hh             |  2 ++
+ util/shape-consumer.hh      | 18 ++++++++++++------
+ util/view-cairo.hh          |  4 ++--
+ 7 files changed, 65 insertions(+), 39 deletions(-)
+
+commit 65f64d14005e4d0808e818b3c97bd3d600628011
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jul 19 02:42:53 2017 +0430
+
+    Unbreak arm-none-eabi build again (#514)
+
+ src/hb-ot-shape-complex-indic.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 commit fc15e60eadfc89aca5b8815262b8ee888f285169
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Jul 18 11:24:42 2017 -0700
