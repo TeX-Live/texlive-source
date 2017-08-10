@@ -435,6 +435,7 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_context_scripts)
 
 bin_links = \
+	texdef:latexdef \
 	epstopdf:repstopdf \
 	pdfcrop:rpdfcrop
 
