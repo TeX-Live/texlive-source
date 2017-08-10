@@ -222,8 +222,9 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_other_scripts) \
 	$(texmf_context_scripts)
 
-## Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
+## Symlinks within $(bindir): FILE:LINK here means "ln -s FILE LINK" is done.
 bin_links = \
+	texdef:latexdef \
 	epstopdf:repstopdf \
 	pdfcrop:rpdfcrop
 
