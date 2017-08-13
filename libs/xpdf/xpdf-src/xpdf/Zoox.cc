@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "GString.h"
 #include "GList.h"
 #include "GHash.h"
@@ -78,6 +79,54 @@ ZxNode::~ZxNode() {
     firstChild = firstChild->next;
     delete child;
   }
+}
+
+ZxNode *ZxNode::deleteChild(ZxNode *child) {
+  ZxNode *p1, *p2;
+
+  for (p1 = NULL, p2 = firstChild;
+       p2 && p2 != child;
+       p1 = p2, p2 = p2->next) ;
+  if (!p2) {
+    return NULL;
+  }
+  if (p1) {
+    p1->next = child->next;
+  } else {
+    firstChild = child->next;
+  }
+  child->parent = NULL;
+  child->next = NULL;
+  return child;
+}
+
+void ZxNode::appendChild(ZxNode *child) {
+  ZxNode *p1;
+
+  if (child->parent || child->next) {
+    return;
+  }
+  if (firstChild) {
+    for (p1 = firstChild; p1->next; p1 = p1->next) ;
+    p1->next = child;
+  } else {
+    firstChild = child;
+  }
+  child->parent = this;
+}
+
+void ZxNode::insertChildAfter(ZxNode *child, ZxNode *prev) {
+  if (child->parent || child->next || (prev && prev->parent != this)) {
+    return;
+  }
+  if (prev) {
+    child->next = prev->next;
+    prev->next = child;
+  } else {
+    child->next = firstChild;
+    firstChild = child;
+  }
+  child->parent = this;
 }
 
 ZxElement *ZxNode::findFirstElement(const char *type) {
@@ -197,6 +246,21 @@ ZxDoc *ZxDoc::loadFile(const char *fileName) {
 }
 
 ZxDoc::~ZxDoc() {
+}
+
+static bool writeToFileFunc(void *stream, const char *data, int length) {
+  return (int)fwrite(data, 1, length, (FILE *)stream) == length;
+}
+
+bool ZxDoc::writeFile(const char *fileName) {
+  FILE *f;
+
+  if (!(f = fopen(fileName, "wb"))) {
+    return false;
+  }
+  write(&writeToFileFunc, f);
+  fclose(f);
+  return true;
 }
 
 void ZxDoc::addChild(ZxNode *node) {
@@ -733,6 +797,20 @@ bool ZxDoc::match(const char *s) {
   return parseEnd - parsePtr >= n && !strncmp(parsePtr, s, n);
 }
 
+bool ZxDoc::write(ZxWriteFunc writeFunc, void *stream) {
+  ZxNode *child;
+
+  for (child = getFirstChild(); child; child = child->getNextChild()) {
+    if (!child->write(writeFunc, stream)) {
+      return false;
+    }
+    if (!(*writeFunc)(stream, "\n", 1)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 //------------------------------------------------------------------------
 
 ZxXMLDecl::ZxXMLDecl(GString *versionA, GString *encodingA, bool standaloneA) {
@@ -748,6 +826,27 @@ ZxXMLDecl::~ZxXMLDecl() {
   }
 }
 
+bool ZxXMLDecl::write(ZxWriteFunc writeFunc, void *stream) {
+  GString *s;
+  bool ok;
+
+  s = new GString("<?xml version=\"");
+  s->append(version);
+  s->append("\"");
+  if (encoding) {
+    s->append(" encoding=\"");
+    s->append(encoding);
+    s->append("\"");
+  }
+  if (standalone) {
+    s->append(" standlone=\"yes\"");
+  }
+  s->append("?>");
+  ok = (*writeFunc)(stream, s->getCString(), s->getLength());
+  delete s;
+  return ok;
+}
+
 //------------------------------------------------------------------------
 
 ZxDocTypeDecl::ZxDocTypeDecl(GString *nameA) {
@@ -756,6 +855,18 @@ ZxDocTypeDecl::ZxDocTypeDecl(GString *nameA) {
 
 ZxDocTypeDecl::~ZxDocTypeDecl() {
   delete name;
+}
+
+bool ZxDocTypeDecl::write(ZxWriteFunc writeFunc, void *stream) {
+  GString *s;
+  bool ok;
+
+  s = new GString("<!DOCTYPE ");
+  s->append(name);
+  s->append(">");
+  ok = (*writeFunc)(stream, s->getCString(), s->getLength());
+  delete s;
+  return ok;
 }
 
 //------------------------------------------------------------------------
@@ -768,6 +879,18 @@ ZxComment::~ZxComment() {
   delete text;
 }
 
+bool ZxComment::write(ZxWriteFunc writeFunc, void *stream) {
+  GString *s;
+  bool ok;
+
+  s = new GString("<!--");
+  s->append(text);
+  s->append("-->");
+  ok = (*writeFunc)(stream, s->getCString(), s->getLength());
+  delete s;
+  return ok;
+}
+
 //------------------------------------------------------------------------
 
 ZxPI::ZxPI(GString *targetA, GString *textA) {
@@ -778,6 +901,20 @@ ZxPI::ZxPI(GString *targetA, GString *textA) {
 ZxPI::~ZxPI() {
   delete target;
   delete text;
+}
+
+bool ZxPI::write(ZxWriteFunc writeFunc, void *stream) {
+  GString *s;
+  bool ok;
+
+  s = new GString("<?");
+  s->append(target);
+  s->append(" ");
+  s->append(text);
+  s->append("?>");
+  ok = (*writeFunc)(stream, s->getCString(), s->getLength());
+  delete s;
+  return ok;
 }
 
 //------------------------------------------------------------------------
@@ -813,6 +950,70 @@ void ZxElement::addAttr(ZxAttr *attr) {
   attr->next = NULL;
 }
 
+bool ZxElement::write(ZxWriteFunc writeFunc, void *stream) {
+  GString *s;
+  ZxAttr *attr;
+  ZxNode *child;
+  bool ok;
+
+  s = new GString("<");
+  s->append(type);
+  for (attr = firstAttr; attr; attr = attr->getNextAttr()) {
+    s->append(" ");
+    s->append(attr->name);
+    s->append("=\"");
+    appendEscapedAttrValue(s, attr->value);
+    s->append("\"");
+  }
+  if ((child = getFirstChild())) {
+    s->append(">");
+  } else {
+    s->append("/>");
+  }
+  ok = (*writeFunc)(stream, s->getCString(), s->getLength());
+  delete s;
+  if (!ok) {
+    return false;
+  }
+  if (child) {
+    for (; child; child = child->getNextChild()) {
+      if (!child->write(writeFunc, stream)) {
+	return false;
+      }
+    }
+    s = new GString();
+    s->append("</");
+    s->append(type);
+    s->append(">");
+    ok = (*writeFunc)(stream, s->getCString(), s->getLength());
+    delete s;
+    if (!ok) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void ZxElement::appendEscapedAttrValue(GString *out, GString *s) {
+  char c;
+  int i;
+
+  for (i = 0; i < s->getLength(); ++i) {
+    c = s->getChar(i);
+    if (c == '<') {
+      out->append("&lt;");
+    } else if (c == '>') {
+      out->append("&gt;");
+    } else if (c == '&') {
+      out->append("&amp;");
+    } else if (c == '"') {
+      out->append("&quot;");
+    } else {
+      out->append(c);
+    }
+  }
+}
+
 //------------------------------------------------------------------------
 
 ZxAttr::ZxAttr(GString *nameA, GString *valueA) {
@@ -836,4 +1037,34 @@ ZxCharData::ZxCharData(GString *dataA, bool parsedA) {
 
 ZxCharData::~ZxCharData() {
   delete data;
+}
+
+bool ZxCharData::write(ZxWriteFunc writeFunc, void *stream) {
+  GString *s;
+  char c;
+  int i;
+  bool ok;
+
+  s = new GString();
+  if (parsed) {
+    for (i = 0; i < data->getLength(); ++i) {
+      c = data->getChar(i);
+      if (c == '<') {
+	s->append("&lt;");
+      } else if (c == '>') {
+	s->append("&gt;");
+      } else if (c == '&') {
+	s->append("&amp;");
+      } else {
+	s->append(c);
+      }
+    }
+  } else {
+    s->append("<![CDATA[");
+    s->append(data);
+    s->append("]]>");
+  }
+  ok = (*writeFunc)(stream, s->getCString(), s->getLength());
+  delete s;
+  return ok;
 }

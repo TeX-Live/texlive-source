@@ -95,6 +95,10 @@ public:
   // for OpenType CFF fonts.)
   void getFontMatrix(double *mat);
 
+  // Returns true if this looks like a CJK font that uses bytecode
+  // instructions to assemble glyphs.
+  GBool checkForTrickyCJK();
+
   // Convert to a Type 42 font, suitable for embedding in a PostScript
   // file.  <psName> will be used as the PostScript font name (so we
   // don't need to depend on the 'name' table in the font).  The

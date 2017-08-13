@@ -17,6 +17,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "gfile.h"
 #include "GString.h"
 #include "Error.h"
@@ -200,9 +201,6 @@ CMap::CMap(GString *collectionA, GString *cMapNameA) {
     vector[i].cid = 0;
   }
   refCnt = 1;
-#if MULTITHREADED
-  gInitMutex(&mutex);
-#endif
 }
 
 CMap::CMap(GString *collectionA, GString *cMapNameA, int wModeA) {
@@ -212,9 +210,6 @@ CMap::CMap(GString *collectionA, GString *cMapNameA, int wModeA) {
   wMode = wModeA;
   vector = NULL;
   refCnt = 1;
-#if MULTITHREADED
-  gInitMutex(&mutex);
-#endif
 }
 
 void CMap::useCMap(CMapCache *cache, char *useName) {
@@ -324,9 +319,6 @@ CMap::~CMap() {
   if (vector) {
     freeCMapVector(vector);
   }
-#if MULTITHREADED
-  gDestroyMutex(&mutex);
-#endif
 }
 
 void CMap::freeCMapVector(CMapVectorEntry *vec) {
@@ -342,11 +334,9 @@ void CMap::freeCMapVector(CMapVectorEntry *vec) {
 
 void CMap::incRefCnt() {
 #if MULTITHREADED
-  gLockMutex(&mutex);
-#endif
+  gAtomicIncrement(&refCnt);
+#else
   ++refCnt;
-#if MULTITHREADED
-  gUnlockMutex(&mutex);
 #endif
 }
 
@@ -354,11 +344,9 @@ void CMap::decRefCnt() {
   GBool done;
 
 #if MULTITHREADED
-  gLockMutex(&mutex);
-#endif
+  done = gAtomicDecrement(&refCnt) == 0;
+#else
   done = --refCnt == 0;
-#if MULTITHREADED
-  gUnlockMutex(&mutex);
 #endif
   if (done) {
     delete this;

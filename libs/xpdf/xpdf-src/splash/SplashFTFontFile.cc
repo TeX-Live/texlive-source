@@ -8,13 +8,14 @@
 
 #include <aconf.h>
 
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
+#if HAVE_FREETYPE_H
 
 #ifdef USE_GCC_PRAGMAS
 #pragma implementation
 #endif
 
 #include "gmem.h"
+#include "gmempp.h"
 #include "GString.h"
 #include "SplashFTFontEngine.h"
 #include "SplashFTFont.h"
@@ -26,14 +27,14 @@
 
 SplashFontFile *SplashFTFontFile::loadType1Font(SplashFTFontEngine *engineA,
 						SplashFontFileID *idA,
+						SplashFontType fontTypeA,
 #if LOAD_FONTS_FROM_MEM
 						GString *fontBufA,
 #else
 						char *fileNameA,
 						GBool deleteFileA,
 #endif
-						const char **encA,
-						GBool useLightHintingA) {
+						const char **encA) {
   FT_Face faceA;
   int *codeToGIDA;
   const char *name;
@@ -55,18 +56,18 @@ SplashFontFile *SplashFTFontFile::loadType1Font(SplashFTFontEngine *engineA,
     }
   }
 
-  return new SplashFTFontFile(engineA, idA,
+  return new SplashFTFontFile(engineA, idA, fontTypeA,
 #if LOAD_FONTS_FROM_MEM
 			      fontBufA,
 #else
 			      fileNameA, deleteFileA,
 #endif
-			      faceA, codeToGIDA, 256,
-			      gFalse, useLightHintingA);
+			      faceA, codeToGIDA, 256);
 }
 
 SplashFontFile *SplashFTFontFile::loadCIDFont(SplashFTFontEngine *engineA,
 					      SplashFontFileID *idA,
+					      SplashFontType fontTypeA,
 #if LOAD_FONTS_FROM_MEM
 					      GString *fontBufA,
 #else
@@ -86,18 +87,18 @@ SplashFontFile *SplashFTFontFile::loadCIDFont(SplashFTFontEngine *engineA,
     return NULL;
   }
 
-  return new SplashFTFontFile(engineA, idA,
+  return new SplashFTFontFile(engineA, idA, fontTypeA,
 #if LOAD_FONTS_FROM_MEM
 			      fontBufA,
 #else
 			      fileNameA, deleteFileA,
 #endif
-			      faceA, codeToGIDA, codeToGIDLenA,
-			      gFalse, gFalse);
+			      faceA, codeToGIDA, codeToGIDLenA);
 }
 
 SplashFontFile *SplashFTFontFile::loadTrueTypeFont(SplashFTFontEngine *engineA,
 						   SplashFontFileID *idA,
+						   SplashFontType fontTypeA,
 #if LOAD_FONTS_FROM_MEM
 						   GString *fontBufA,
 #else
@@ -118,38 +119,35 @@ SplashFontFile *SplashFTFontFile::loadTrueTypeFont(SplashFTFontEngine *engineA,
     return NULL;
   }
 
-  return new SplashFTFontFile(engineA, idA,
+  return new SplashFTFontFile(engineA, idA, fontTypeA,
 #if LOAD_FONTS_FROM_MEM
 			      fontBufA,
 #else
 			      fileNameA, deleteFileA,
 #endif
-			      faceA, codeToGIDA, codeToGIDLenA,
-			      gTrue, gFalse);
+			      faceA, codeToGIDA, codeToGIDLenA);
 }
 
 SplashFTFontFile::SplashFTFontFile(SplashFTFontEngine *engineA,
 				   SplashFontFileID *idA,
+				   SplashFontType fontTypeA,
 #if LOAD_FONTS_FROM_MEM
 				   GString *fontBufA,
 #else
 				   char *fileNameA, GBool deleteFileA,
 #endif
 				   FT_Face faceA,
-				   int *codeToGIDA, int codeToGIDLenA,
-				   GBool trueTypeA, GBool useLightHintingA):
+				   int *codeToGIDA, int codeToGIDLenA):
 #if LOAD_FONTS_FROM_MEM
-  SplashFontFile(idA, fontBufA)
+  SplashFontFile(idA, fontTypeA, fontBufA)
 #else
-  SplashFontFile(idA, fileNameA, deleteFileA)
+  SplashFontFile(idA, fontTypeA, fileNameA, deleteFileA)
 #endif
 {
   engine = engineA;
   face = faceA;
   codeToGID = codeToGIDA;
   codeToGIDLen = codeToGIDLenA;
-  trueType = trueTypeA;
-  useLightHinting = useLightHintingA;
 }
 
 SplashFTFontFile::~SplashFTFontFile() {
@@ -170,4 +168,4 @@ SplashFont *SplashFTFontFile::makeFont(SplashCoord *mat,
   return font;
 }
 
-#endif // HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
+#endif // HAVE_FREETYPE_H

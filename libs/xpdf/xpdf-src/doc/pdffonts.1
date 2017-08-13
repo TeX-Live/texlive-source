@@ -1,8 +1,8 @@
-.\" Copyright 1999-2014 Glyph & Cog, LLC
-.TH pdffonts 1 "28 May 2014"
+.\" Copyright 1999-2017 Glyph & Cog, LLC
+.TH pdffonts 1 "10 Aug 2017"
 .SH NAME
 pdffonts \- Portable Document Format (PDF) font analyzer (version
-3.04)
+4.00)
 .SH SYNOPSIS
 .B pdffonts
 [options]
@@ -31,6 +31,10 @@ the font type -- see below for details
 "yes" if there is an explicit "ToUnicode" map in the PDF file (the
 absence of a ToUnicode map doesn't necessarily mean that the text
 can't be converted to Unicode)
+.TP
+.B prob
+"X" if this font is likely to be problematic when converting text to
+Unicode
 .TP
 .B object ID
 the font dictionary object ID (number and generation)
@@ -143,7 +147,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdffonts software and documentation are copyright 1996-2014 Glyph
+The pdffonts software and documentation are copyright 1996-2017 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),
@@ -157,4 +161,4 @@ The pdffonts software and documentation are copyright 1996-2014 Glyph
 .BR pdfimages (1),
 .BR xpdfrc (5)
 .br
-.B http://www.foolabs.com/xpdf/
+.B http://www.xpdfreader.com/

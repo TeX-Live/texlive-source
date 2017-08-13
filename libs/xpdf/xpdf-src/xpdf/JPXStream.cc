@@ -14,6 +14,7 @@
 
 #include <limits.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "Error.h"
 #include "JArithmeticDecoder.h"
 #include "JPXStream.h"
@@ -264,6 +265,10 @@ JPXStream::~JPXStream() {
   delete bufStr;
 }
 
+Stream *JPXStream::copy() {
+  return new JPXStream(str->copy());
+}
+
 void JPXStream::reset() {
   bufStr->reset();
   if (readBoxes() == jpxDecodeFatalError) {
@@ -405,7 +410,7 @@ void JPXStream::fillReadBuf() {
   GBool eol;
 
   do {
-    if (curY >= img.ySizeR) {
+    if (curY >= (img.ySize >> reduction)) {
       return;
     }
     tileIdx = ((curY - img.yTileOffsetR) / img.yTileSizeR) * img.nXTiles
@@ -434,7 +439,7 @@ void JPXStream::fillReadBuf() {
     if (++curComp == (Guint)(havePalette ? palette.nComps : img.nComps)) {
 #endif
       curComp = 0;
-      if (++curX == img.xSizeR) {
+      if (++curX == (img.xSize >> reduction)) {
 	curX = img.xOffsetR;
 	++curY;
 	eol = gTrue;
@@ -582,11 +587,13 @@ void JPXStream::getImageParams2(int *bitsPerComponent,
 
 JPXDecodeResult JPXStream::readBoxes() {
   JPXDecodeResult result;
+  GBool haveCodestream;
   Guint boxType, boxLen, dataLen;
   Guint bpc1, compression, unknownColorspace, ipr;
   Guint i, j;
 
   haveImgHdr = gFalse;
+  haveCodestream = gFalse;
 
   // check for a naked JPEG 2000 codestream (without the JP2/JPX
   // wrapper) -- this appears to be a violation of the PDF spec, but
@@ -746,12 +753,13 @@ JPXDecodeResult JPXStream::readBoxes() {
       if ((result = readCodestream(dataLen)) != jpxDecodeOk) {
 	return result;
       }
+      haveCodestream = gTrue;
       break;
     default:
       cover(16);
       if (bufStr->discardChars(dataLen) != dataLen) {
 	error(errSyntaxError, getPos(), "Unexpected EOF in JPX stream");
-	return jpxDecodeFatalError;
+	return haveCodestream ? jpxDecodeNonFatalError : jpxDecodeFatalError;
       }
       break;
     }
@@ -937,14 +945,14 @@ JPXDecodeResult JPXStream::readCodestream(Guint len) {
 	error(errSyntaxError, getPos(), "Error in JPX SIZ marker segment");
 	return jpxDecodeFatalError;
       }
-      img.xSizeR = img.xSize >> reduction;
-      img.ySizeR = img.ySize >> reduction;
-      img.xOffsetR = img.xOffset >> reduction;
-      img.yOffsetR = img.yOffset >> reduction;
-      img.xTileSizeR = img.xTileSize >> reduction;
-      img.yTileSizeR = img.yTileSize >> reduction;
-      img.xTileOffsetR = img.xTileOffset >> reduction;
-      img.yTileOffsetR = img.yTileOffset >> reduction;
+      img.xSizeR = jpxCeilDivPow2(img.xSize, reduction);
+      img.ySizeR = jpxCeilDivPow2(img.ySize, reduction);
+      img.xOffsetR = jpxCeilDivPow2(img.xOffset, reduction);
+      img.yOffsetR = jpxCeilDivPow2(img.yOffset, reduction);
+      img.xTileSizeR = jpxCeilDivPow2(img.xTileSize, reduction);
+      img.yTileSizeR = jpxCeilDivPow2(img.yTileSize, reduction);
+      img.xTileOffsetR = jpxCeilDivPow2(img.xTileOffset, reduction);
+      img.yTileOffsetR = jpxCeilDivPow2(img.yTileOffset, reduction);
       img.nXTiles = (img.xSize - img.xTileOffset + img.xTileSize - 1)
 	            / img.xTileSize;
       img.nYTiles = (img.ySize - img.yTileOffset + img.yTileSize - 1)
@@ -1916,10 +1924,8 @@ GBool JPXStream::readTilePart() {
       tileComp->y1 = jpxCeilDiv(tile->y1, tileComp->vSep);
       tileComp->cbW = 1 << tileComp->codeBlockW;
       tileComp->cbH = 1 << tileComp->codeBlockH;
-      tileComp->w = (tileComp->x1 - tileComp->x0 + (1 << reduction) - 1)
-	              >> reduction;
-      tileComp->h = (tileComp->y1 - tileComp->y0 + (1 << reduction) - 1)
-	              >> reduction;
+      tileComp->w = jpxCeilDivPow2(tileComp->x1 - tileComp->x0, reduction);
+      tileComp->h = jpxCeilDivPow2(tileComp->y1 - tileComp->y0, reduction);
       tileComp->data = (int *)gmallocn(tileComp->w * tileComp->h, sizeof(int));
       if (tileComp->x1 - tileComp->x0 > tileComp->y1 - tileComp->y0) {
 	n = tileComp->x1 - tileComp->x0;
@@ -1940,6 +1946,8 @@ GBool JPXStream::readTilePart() {
 	  resLevel->by0[0] = resLevel->y0;
 	  resLevel->bx1[0] = resLevel->x1;
 	  resLevel->by1[0] = resLevel->y1;
+	  resLevel->empty = resLevel->bx0[0] == resLevel->bx1[0] ||
+	                    resLevel->by0[0] == resLevel->by1[0];
 	} else {
 	  resLevel->bx0[0] = jpxCeilDivPow2(tileComp->x0 - (1 << (k-1)), k);
 	  resLevel->by0[0] = resLevel->y0;
@@ -1953,6 +1961,12 @@ GBool JPXStream::readTilePart() {
 	  resLevel->by0[2] = jpxCeilDivPow2(tileComp->y0 - (1 << (k-1)), k);
 	  resLevel->bx1[2] = jpxCeilDivPow2(tileComp->x1 - (1 << (k-1)), k);
 	  resLevel->by1[2] = jpxCeilDivPow2(tileComp->y1 - (1 << (k-1)), k);
+	  resLevel->empty = (resLevel->bx0[0] == resLevel->bx1[0] ||
+			     resLevel->by0[0] == resLevel->by1[0]) &&
+	                    (resLevel->bx0[1] == resLevel->bx1[1] ||
+			     resLevel->by0[1] == resLevel->by1[1]) &&
+	                    (resLevel->bx0[2] == resLevel->bx1[2] ||
+			     resLevel->by0[2] == resLevel->by1[2]);
 	}
 	resLevel->precincts = (JPXPrecinct *)gmallocn(1, sizeof(JPXPrecinct));
 	for (pre = 0; pre < 1; ++pre) {
@@ -2113,6 +2127,10 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
     tileComp = &tile->tileComps[tile->comp];
     resLevel = &tileComp->resLevels[tile->res];
     precinct = &resLevel->precincts[tile->precinct];
+
+    if (resLevel->empty) {
+      goto nextPacket;
+    }
 
     //----- packet header
 
@@ -2343,6 +2361,7 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
 
     //----- next packet
 
+  nextPacket:
     switch (tile->progOrder) {
     case 0: // layer, resolution level, component, precinct
       cover(58);
@@ -2873,11 +2892,31 @@ void JPXStream::inverseTransformLevel(JPXTileComp *tileComp,
   Guint nx1, nx2, ny1, ny2, offset;
   Guint x, y, sb, cbX, cbY;
 
-  //----- fixed-point adjustment and dequantization
-
   qStyle = tileComp->quantStyle & 0x1f;
   guard = (tileComp->quantStyle >> 5) & 7;
   precinct = &resLevel->precincts[0];
+
+  //----- compute subband bounds
+
+  //    0   nx1  nx2
+  //    |    |    |
+  //    v    v    v
+  //   +----+----+
+  //   | LL | HL | <- 0
+  //   +----+----+
+  //   | LH | HH | <- ny1
+  //   +----+----+
+  //               <- ny2
+  nx1 = precinct->subbands[1].x1 - precinct->subbands[1].x0;
+  nx2 = nx1 + precinct->subbands[0].x1 - precinct->subbands[0].x0;
+  ny1 = precinct->subbands[0].y1 - precinct->subbands[0].y0;
+  ny2 = ny1 + precinct->subbands[1].y1 - precinct->subbands[1].y0;
+  if (nx2 == 0 || ny2 == 0) {
+    return;
+  }
+
+  //----- fixed-point adjustment and dequantization
+
   for (sb = 0; sb < 3; ++sb) {
 
     // i-quant parameters
@@ -2945,21 +2984,6 @@ void JPXStream::inverseTransformLevel(JPXTileComp *tileComp,
   }
 
   //----- inverse transform
-
-  // compute the subband bounds:
-  //    0   nx1  nx2
-  //    |    |    |
-  //    v    v    v
-  //   +----+----+
-  //   | LL | HL | <- 0
-  //   +----+----+
-  //   | LH | HH | <- ny1
-  //   +----+----+
-  //               <- ny2
-  nx1 = precinct->subbands[1].x1 - precinct->subbands[1].x0;
-  nx2 = nx1 + precinct->subbands[0].x1 - precinct->subbands[0].x0;
-  ny1 = precinct->subbands[0].y1 - precinct->subbands[0].y0;
-  ny2 = ny1 + precinct->subbands[1].y1 - precinct->subbands[1].y0;
 
   // horizontal (row) transforms
   if (r == tileComp->nDecompLevels) {

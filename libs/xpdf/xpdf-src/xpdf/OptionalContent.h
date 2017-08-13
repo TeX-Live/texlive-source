@@ -115,6 +115,7 @@ public:
   OptionalContentGroup *getOCG() { return ocg; }
   int getNumChildren();
   OCDisplayNode *getChild(int idx);
+  OCDisplayNode *getParent() { return parent; }
 
 private:
 
@@ -126,6 +127,7 @@ private:
 
   TextString *name;		// display name
   OptionalContentGroup *ocg;	// NULL for display labels
+  OCDisplayNode *parent;	// parent node; NULL at root
   GList *children;		// NULL if there are no children
 				//   [OCDisplayNode]
 };

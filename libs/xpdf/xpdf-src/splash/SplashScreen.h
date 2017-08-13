@@ -21,6 +21,8 @@
 // SplashScreen
 //------------------------------------------------------------------------
 
+typedef Guchar *SplashScreenCursor;
+
 class SplashScreen {
 public:
 
@@ -37,6 +39,20 @@ public:
     xx = x & sizeM1;
     yy = y & sizeM1;
     return value < mat[(yy << log2Size) + xx] ? 0 : 1;
+  }
+
+  // To do a series of tests with the same y value, call
+  // getTestCursor(y), and then call testWithCursor(cursor, x, value)
+  // for each x.
+  SplashScreenCursor getTestCursor(int y) {
+    int yy;
+    yy = y & sizeM1;
+    return &mat[yy << log2Size];
+  }
+
+  int testWithCursor(SplashScreenCursor cursor, int x, Guchar value) {
+    int xx = x & sizeM1;
+    return value >= cursor[xx];
   }
 
   // Returns true if value is above the white threshold or below the

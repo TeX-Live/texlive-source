@@ -1,3 +1,11 @@
+2017-08-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Imported xpdf-4.00 source tree:
+	  http://www.xpdfreader.com/download.html
+	  xpdf-4.00.tar.gz
+	* patch-bunched: Added patch-10, patch-20, patch-22, patch-30,
+	patch-40, and patch-41 by Peter, for simplicity.
+
 2015-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-41-W32TeX: On Windows use USERPROFILE instead of HOME.

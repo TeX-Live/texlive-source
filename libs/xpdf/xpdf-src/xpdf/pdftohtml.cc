@@ -9,8 +9,9 @@
 #include <aconf.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "parseargs.h"
 #include "gmem.h"
+#include "gmempp.h"
+#include "parseargs.h"
 #include "gfile.h"
 #include "GString.h"
 #include "GlobalParams.h"
@@ -28,8 +29,10 @@ static GBool createIndex(char *htmlDir);
 
 static int firstPage = 1;
 static int lastPage = 0;
+static double zoom = 1;
 static int resolution = 150;
 static GBool skipInvisible = gFalse;
+static GBool allInvisible = gFalse;
 static char ownerPassword[33] = "\001";
 static char userPassword[33] = "\001";
 static GBool quiet = gFalse;
@@ -42,10 +45,14 @@ static ArgDesc argDesc[] = {
    "first page to convert"},
   {"-l",       argInt,      &lastPage,      0,
    "last page to convert"},
+  {"-z",      argFP,       &zoom,     0,
+   "initial zoom level (1.0 means 72dpi)"},
   {"-r",      argInt,      &resolution,     0,
    "resolution, in DPI (default is 150)"},
   {"-skipinvisible", argFlag, &skipInvisible, 0,
    "do not draw invisible text"},
+  {"-allinvisible",  argFlag, &allInvisible,  0,
+   "treat all text as invisible"},
   {"-opw",     argString,   ownerPassword,  sizeof(ownerPassword),
    "owner password (for encrypted files)"},
   {"-upw",     argString,   userPassword,   sizeof(userPassword),
@@ -86,9 +93,6 @@ int main(int argc, char *argv[]) {
 
   exitCode = 99;
 
-#ifdef _MSC_VER
-  (void)kpse_set_program_name(argv[0], NULL);
-#endif
   // parse args
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc != 3 || printVersion || printHelp) {
@@ -163,7 +167,9 @@ int main(int argc, char *argv[]) {
     exitCode = 99;
     goto err1;
   }
+  htmlGen->setZoom(zoom);
   htmlGen->setDrawInvisibleText(!skipInvisible);
+  htmlGen->setAllTextInvisible(allInvisible);
   htmlGen->startDoc(doc);
 
   // convert the pages

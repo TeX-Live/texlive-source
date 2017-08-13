@@ -124,42 +124,4 @@ private:
   GBool ok;
 };
 
-#ifdef ENABLE_PLUGINS
-//------------------------------------------------------------------------
-// ExternalSecurityHandler
-//------------------------------------------------------------------------
-
-class ExternalSecurityHandler: public SecurityHandler {
-public:
-
-  ExternalSecurityHandler(PDFDoc *docA, Object *encryptDictA,
-			  XpdfSecurityHandler *xshA);
-  virtual ~ExternalSecurityHandler();
-
-  virtual void *makeAuthData(GString *ownerPassword,
-			     GString *userPassword);
-  virtual void *getAuthData();
-  virtual void freeAuthData(void *authData);
-  virtual GBool authorize(void *authData);
-  virtual int getPermissionFlags() { return permFlags; }
-  virtual GBool getOwnerPasswordOk() { return gFalse; }
-  virtual Guchar *getFileKey() { return fileKey; }
-  virtual int getFileKeyLength() { return fileKeyLength; }
-  virtual int getEncVersion() { return encVersion; }
-  virtual CryptAlgorithm getEncAlgorithm() { return encAlgorithm; }
-
-private:
-
-  Object encryptDict;
-  XpdfSecurityHandler *xsh;
-  void *docData;
-  int permFlags;
-  Guchar fileKey[16];
-  int fileKeyLength;
-  int encVersion;
-  CryptAlgorithm encAlgorithm;
-  GBool ok;
-};
-#endif // ENABLE_PLUGINS
-
 #endif

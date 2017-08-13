@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "gfile.h"
 #include "GString.h"
 #include "Error.h"
@@ -34,18 +35,17 @@ struct CharCodeToUnicodeString {
 
 //------------------------------------------------------------------------
 
-static int getCharFromString(void *data) {
-  char *p;
-  int c;
+struct GStringIndex {
+  GString *s;
+  int i;
+};
 
-  p = *(char **)data;
-  if (*p) {
-    c = *p++;
-    *(char **)data = p;
-  } else {
-    c = EOF;
+static int getCharFromGString(void *data) {
+  GStringIndex *idx = (GStringIndex *)data;
+  if (idx->i >= idx->s->getLength()) {
+    return EOF;
   }
-  return c;
+  return idx->s->getChar(idx->i++) & 0xff;
 }
 
 static int getCharFromFile(void *data) {
@@ -234,23 +234,28 @@ CharCodeToUnicode *CharCodeToUnicode::make8BitToUnicode(Unicode *toUnicode) {
 
 CharCodeToUnicode *CharCodeToUnicode::parseCMap(GString *buf, int nBits) {
   CharCodeToUnicode *ctu;
-  char *p;
+  GStringIndex idx;
 
   ctu = new CharCodeToUnicode(NULL);
-  p = buf->getCString();
-  ctu->parseCMap1(&getCharFromString, &p, nBits);
+  idx.s = buf;
+  idx.i = 0;
+  if (!ctu->parseCMap1(&getCharFromGString, &idx, nBits)) {
+    delete ctu;
+    return NULL;
+  }
   return ctu;
 }
 
 void CharCodeToUnicode::mergeCMap(GString *buf, int nBits) {
-  char *p;
+  GStringIndex idx;
 
-  p = buf->getCString();
-  parseCMap1(&getCharFromString, &p, nBits);
+  idx.s = buf;
+  idx.i = 0;
+  parseCMap1(&getCharFromGString, &idx, nBits);
 }
 
-void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
-				   int nBits) {
+GBool CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
+				    int nBits) {
   PSTokenizer *pst;
   char tok1[256], tok2[256], tok3[256];
   int n1, n2, n3;
@@ -258,7 +263,9 @@ void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
   CharCode maxCode, code1, code2;
   GString *name;
   FILE *f;
+  GBool ok;
 
+  ok = gFalse;
   maxCode = (nBits == 8) ? 0xff : (nBits == 16) ? 0xffff : 0xffffffff;
   pst = new PSTokenizer(getCharFunc, data);
   pst->getToken(tok1, sizeof(tok1), &n1);
@@ -267,7 +274,9 @@ void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
       if (tok1[0] == '/') {
 	name = new GString(tok1 + 1);
 	if ((f = globalParams->findToUnicodeFile(name))) {
-	  parseCMap1(&getCharFromFile, f, nBits);
+	  if (parseCMap1(&getCharFromFile, f, nBits)) {
+	    ok = gTrue;
+	  }
 	  fclose(f);
 	} else {
 	  error(errSyntaxError, -1,
@@ -305,6 +314,7 @@ void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
 		"Invalid entry in bfchar block in ToUnicode CMap");
 	}
 	addMapping(code1, tok2 + 1, n2 - 2, 0);
+	ok = gTrue;
       }
       pst->getToken(tok1, sizeof(tok1), &n1);
     } else if (!strcmp(tok2, "beginbfrange")) {
@@ -350,6 +360,7 @@ void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
 	      if (code1 + i <= code2) {
 		tok1[n1 - 1] = '\0';
 		addMapping(code1 + i, tok1 + 1, n1 - 2, 0);
+		ok = gTrue;
 	      }
 	    } else {
 	      error(errSyntaxWarning, -1,
@@ -361,11 +372,90 @@ void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
 	  tok3[n3 - 1] = '\0';
 	  for (i = 0; code1 <= code2; ++code1, ++i) {
 	    addMapping(code1, tok3 + 1, n3 - 2, i);
+	    ok = gTrue;
 	  }
-
 	} else {
 	  error(errSyntaxWarning, -1,
 		"Illegal entry in bfrange block in ToUnicode CMap");
+	}
+      }
+      pst->getToken(tok1, sizeof(tok1), &n1);
+    } else if (!strcmp(tok2, "begincidchar")) {
+      // the begincidchar operator is not allowed in ToUnicode CMaps,
+      // but some buggy PDF generators incorrectly use
+      // code-to-CID-type CMaps here
+      error(errSyntaxWarning, -1,
+	    "Invalid 'begincidchar' operator in ToUnicode CMap");
+      while (pst->getToken(tok1, sizeof(tok1), &n1)) {
+	if (!strcmp(tok1, "endcidchar")) {
+	  break;
+	}
+	if (!pst->getToken(tok2, sizeof(tok2), &n2) ||
+	    !strcmp(tok2, "endcidchar")) {
+	  error(errSyntaxWarning, -1,
+		"Illegal entry in cidchar block in ToUnicode CMap");
+	  break;
+	}
+	if (!(tok1[0] == '<' && tok1[n1 - 1] == '>')) {
+	  error(errSyntaxWarning, -1,
+		"Illegal entry in cidchar block in ToUnicode CMap");
+	  continue;
+	}
+	tok1[n1 - 1] = '\0';
+	if (!parseHex(tok1 + 1, n1 - 2, &code1)) {
+	  error(errSyntaxWarning, -1,
+		"Illegal entry in cidchar block in ToUnicode CMap");
+	  continue;
+	}
+	if (code1 > maxCode) {
+	  error(errSyntaxWarning, -1,
+		"Invalid entry in cidchar block in ToUnicode CMap");
+	}
+	addMappingInt(code1, atoi(tok2));
+	ok = gTrue;
+      }
+      pst->getToken(tok1, sizeof(tok1), &n1);
+    } else if (!strcmp(tok2, "begincidrange")) {
+      // the begincidrange operator is not allowed in ToUnicode CMaps,
+      // but some buggy PDF generators incorrectly use
+      // code-to-CID-type CMaps here
+      error(errSyntaxWarning, -1,
+	    "Invalid 'begincidrange' operator in ToUnicode CMap");
+      while (pst->getToken(tok1, sizeof(tok1), &n1)) {
+	if (!strcmp(tok1, "endcidrange")) {
+	  break;
+	}
+	if (!pst->getToken(tok2, sizeof(tok2), &n2) ||
+	    !strcmp(tok2, "endcidrange") ||
+	    !pst->getToken(tok3, sizeof(tok3), &n3) ||
+	    !strcmp(tok3, "endcidrange")) {
+	  error(errSyntaxWarning, -1,
+		"Illegal entry in cidrange block in ToUnicode CMap");
+	  break;
+	}
+	if (!(tok1[0] == '<' && tok1[n1 - 1] == '>' &&
+	      tok2[0] == '<' && tok2[n2 - 1] == '>')) {
+	  error(errSyntaxWarning,
+		-1, "Illegal entry in cidrange block in ToUnicode CMap");
+	  continue;
+	}
+	tok1[n1 - 1] = tok2[n2 - 1] = '\0';
+	if (!parseHex(tok1 + 1, n1 - 2, &code1) ||
+	    !parseHex(tok2 + 1, n2 - 2, &code2)) {
+	  error(errSyntaxWarning, -1,
+		"Illegal entry in cidrange block in ToUnicode CMap");
+	  continue;
+	}
+	if (code1 > maxCode || code2 > maxCode) {
+	  error(errSyntaxWarning, -1,
+		"Invalid entry in cidrange block in ToUnicode CMap");
+	  if (code2 > maxCode) {
+	    code2 = maxCode;
+	  }
+	}
+	for (i = atoi(tok3); code1 <= code2; ++code1, ++i) {
+	  addMappingInt(code1, i);
+	  ok = gTrue;
 	}
       }
       pst->getToken(tok1, sizeof(tok1), &n1);
@@ -374,6 +464,7 @@ void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
     }
   }
   delete pst;
+  return ok;
 }
 
 void CharCodeToUnicode::addMapping(CharCode code, char *uStr, int n,
@@ -426,6 +517,28 @@ void CharCodeToUnicode::addMapping(CharCode code, char *uStr, int n,
   }
 }
 
+void CharCodeToUnicode::addMappingInt(CharCode code, Unicode u) {
+  CharCode oldLen, i;
+
+  if (code > 0xffffff) {
+    // This is an arbitrary limit to avoid integer overflow issues.
+    // (I've seen CMaps with mappings for <ffffffff>.)
+    return;
+  }
+  if (code >= mapLen) {
+    oldLen = mapLen;
+    mapLen = mapLen ? 2 * mapLen : 256;
+    if (code >= mapLen) {
+      mapLen = (code + 256) & ~255;
+    }
+    map = (Unicode *)greallocn(map, mapLen, sizeof(Unicode));
+    for (i = oldLen; i < mapLen; ++i) {
+      map[i] = 0;
+    }
+  }
+  map[code] = u;
+}
+
 CharCodeToUnicode::CharCodeToUnicode() {
   tag = NULL;
   map = NULL;
@@ -433,9 +546,6 @@ CharCodeToUnicode::CharCodeToUnicode() {
   sMap = NULL;
   sMapLen = sMapSize = 0;
   refCnt = 1;
-#if MULTITHREADED
-  gInitMutex(&mutex);
-#endif
 }
 
 CharCodeToUnicode::CharCodeToUnicode(GString *tagA) {
@@ -450,9 +560,6 @@ CharCodeToUnicode::CharCodeToUnicode(GString *tagA) {
   sMap = NULL;
   sMapLen = sMapSize = 0;
   refCnt = 1;
-#if MULTITHREADED
-  gInitMutex(&mutex);
-#endif
 }
 
 CharCodeToUnicode::CharCodeToUnicode(GString *tagA, Unicode *mapA,
@@ -471,9 +578,6 @@ CharCodeToUnicode::CharCodeToUnicode(GString *tagA, Unicode *mapA,
   sMapLen = sMapLenA;
   sMapSize = sMapSizeA;
   refCnt = 1;
-#if MULTITHREADED
-  gInitMutex(&mutex);
-#endif
 }
 
 CharCodeToUnicode::~CharCodeToUnicode() {
@@ -482,18 +586,13 @@ CharCodeToUnicode::~CharCodeToUnicode() {
   }
   gfree(map);
   gfree(sMap);
-#if MULTITHREADED
-  gDestroyMutex(&mutex);
-#endif
 }
 
 void CharCodeToUnicode::incRefCnt() {
 #if MULTITHREADED
-  gLockMutex(&mutex);
-#endif
+  gAtomicIncrement(&refCnt);
+#else
   ++refCnt;
-#if MULTITHREADED
-  gUnlockMutex(&mutex);
 #endif
 }
 
@@ -501,11 +600,9 @@ void CharCodeToUnicode::decRefCnt() {
   GBool done;
 
 #if MULTITHREADED
-  gLockMutex(&mutex);
-#endif
+  done = gAtomicDecrement(&refCnt) == 0;
+#else
   done = --refCnt == 0;
-#if MULTITHREADED
-  gUnlockMutex(&mutex);
 #endif
   if (done) {
     delete this;

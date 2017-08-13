@@ -29,7 +29,7 @@ class SplashFont;
 
 #define splashFontCacheSize 16
 
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
+#if HAVE_FREETYPE_H
 #define splashFTNoHinting (1 << 0)
 #endif
 
@@ -42,7 +42,7 @@ public:
 
   // Create a font engine.
   SplashFontEngine(
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
+#if HAVE_FREETYPE_H
 		   GBool enableFreeType,
 		   Guint freeTypeFlags,
 #endif
@@ -78,11 +78,11 @@ public:
 				      const char **enc);
   SplashFontFile *loadCIDFont(SplashFontFileID *idA,
 #if LOAD_FONTS_FROM_MEM
-			      GString *fontBuf
+			      GString *fontBuf,
 #else
-			      char *fileName, GBool deleteFile
+			      char *fileName, GBool deleteFile,
 #endif
-			      );
+			      int *codeToGID, int codeToGIDLen);
   SplashFontFile *loadOpenTypeCFFFont(SplashFontFileID *idA,
 #if LOAD_FONTS_FROM_MEM
 				      GString *fontBuf,
@@ -115,7 +115,7 @@ private:
 
   SplashFont *fontCache[splashFontCacheSize];
 
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
+#if HAVE_FREETYPE_H
   SplashFTFontEngine *ftEngine;
 #endif
 };

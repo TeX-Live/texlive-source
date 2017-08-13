@@ -13,6 +13,7 @@
 #endif
 
 #include <stddef.h>
+#include "gmempp.h"
 #include "Object.h"
 #include "Stream.h"
 #include "GfxState.h"
@@ -125,7 +126,7 @@ void OutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *str,
 				    Stream *maskStr,
 				    int maskWidth, int maskHeight,
 				    GfxImageColorMap *maskColorMap,
-				    GBool interpolate) {
+				    double *matte, GBool interpolate) {
   drawImage(state, ref, str, width, height, colorMap, NULL, gFalse,
 	    interpolate);
 }

@@ -18,9 +18,15 @@
 #include <algorithm>
 #endif
 #include "gmem.h"
+#include "gmempp.h"
 #include "SplashMath.h"
 #include "SplashPath.h"
 #include "SplashXPath.h"
+
+//------------------------------------------------------------------------
+
+#define minCosSquaredJoinAngle 0.75
+#define maxPointToLineDistanceSquared 0.04
 
 //------------------------------------------------------------------------
 
@@ -54,29 +60,58 @@ inline void SplashXPath::transform(SplashCoord *matrix,
 // SplashXPath
 //------------------------------------------------------------------------
 
-SplashXPath::SplashXPath(SplashPath *path, SplashCoord *matrix,
-			 SplashCoord flatness, GBool closeSubpaths) {
-  SplashXPathPoint *pts;
-  SplashCoord x0, y0, x1, y1, x2, y2, x3, y3, xsp, ysp;
-  SplashCoord xMinFP, xMaxFP, yMinFP, yMaxFP;
-  int curSubpath, i;
+// SplashXPath segment coords are clipped to +/-maxCoord to avoid
+// problems.  The xMin/yMin/xMax/yMax fields are 32-bit integers, so
+// coords need to be < 2^31 / aa{Horiz,Vert}.
+#define maxCoord 100000000.0
 
-  // transform the points
+void SplashXPath::clampCoords(SplashCoord *x, SplashCoord *y) {
+#if !USE_FIXEDPOINT
+  if (*x > maxCoord) {
+    *x = maxCoord;
+  } else if (*x < -maxCoord) {
+    *x = -maxCoord;
+  }
+  if (*y > maxCoord) {
+    *y = maxCoord;
+  } else if (*y < -maxCoord) {
+    *y = -maxCoord;
+  }
+#endif
+}
+
+SplashXPath::SplashXPath(SplashPath *path, SplashCoord *matrix,
+			 SplashCoord flatness, GBool closeSubpaths,
+			 GBool simplify,
+			 SplashStrokeAdjustMode strokeAdjMode) {
+  SplashXPathPoint *pts;
+  SplashCoord x0, y0, x1, y1, x2, y2, x3, y3, xsp, ysp, t;
+  int curSubpath, firstSegInSubpath, i;
+  GBool adjusted;
+
+  //--- transform the points
   pts = (SplashXPathPoint *)gmallocn(path->length, sizeof(SplashXPathPoint));
   for (i = 0; i < path->length; ++i) {
     transform(matrix, path->pts[i].x, path->pts[i].y, &pts[i].x, &pts[i].y);
+    clampCoords(&pts[i].x, &pts[i].y);
   }
 
-  // do stroke adjustment
+  //--- do stroke adjustment
   if (path->hints) {
-    strokeAdjust(pts, path->hints, path->hintsLength);
+    adjusted = strokeAdjust(pts, path->hints, path->hintsLength,
+			    strokeAdjMode);
+  } else {
+    adjusted = gFalse;
   }
+
+  //--- construct the segments
 
   segs = NULL;
   length = size = 0;
 
   x0 = y0 = xsp = ysp = 0; // make gcc happy
   curSubpath = 0;
+  firstSegInSubpath = 0;
   i = 0;
   while (i < path->length) {
 
@@ -123,66 +158,85 @@ SplashXPath::SplashXPath(SplashPath *path, SplashCoord *matrix,
 	++i;
       }
 
-      // close a subpath
-      if (closeSubpaths &&
-	  (path->flags[i-1] & splashPathLast) &&
-	  (pts[i-1].x != pts[curSubpath].x ||
-	   pts[i-1].y != pts[curSubpath].y)) {
-	addSegment(x0, y0, xsp, ysp);
+      // end a subpath
+      if (path->flags[i-1] & splashPathLast) {
+	if (closeSubpaths &&
+	    (pts[i-1].x != pts[curSubpath].x ||
+	     pts[i-1].y != pts[curSubpath].y)) {
+	  addSegment(x0, y0, xsp, ysp);
+	}
+	if (simplify && !adjusted) {
+	  mergeSegments(firstSegInSubpath);
+	}
+	firstSegInSubpath = length;
       }
     }
   }
 
   gfree(pts);
 
-#if HAVE_STD_SORT
-  std::sort(segs, segs + length, SplashXPathSeg::cmpY);
-#else
-  qsort(segs, length, sizeof(SplashXPathSeg), &SplashXPathSeg::cmpY);
-#endif
+  finishSegments();
 
-  if (length == 0) {
-    xMin = yMin = xMax = yMax = 0;
-  } else {
-    if (segs[0].x0 < segs[0].x1) {
-      xMinFP = segs[0].x0;
-      xMaxFP = segs[0].x1;
-    } else {
-      xMinFP = segs[0].x1;
-      xMaxFP = segs[0].x0;
+  //--- check for a rectangle
+  isRect = gFalse;
+  rectX0 = rectY0 = rectX1 = rectY1 = 0;
+  if (length == 4) {
+#if HAVE_STD_SORT
+    std::sort(segs, segs + length, SplashXPathSeg::cmpY);
+#else
+    qsort(segs, length, sizeof(SplashXPathSeg), &SplashXPathSeg::cmpY);
+#endif
+    if (segs[0].y0 == segs[0].y1 &&
+	segs[1].x0 == segs[1].x1 &&
+	segs[2].x0 == segs[2].x1 &&
+	segs[3].y0 == segs[3].y1) {
+      isRect = gTrue;
+      rectX0 = segs[1].x0;
+      rectX1 = segs[2].x0;
+      rectY0 = segs[0].y0;
+      rectY1 = segs[3].y0;
+    } else if (segs[0].x0 == segs[0].x1 &&
+	       segs[1].y0 == segs[1].y1 &&
+	       segs[2].x0 == segs[2].x1 &&
+	       segs[3].y0 == segs[3].y1) {
+      isRect = gTrue;
+      rectX0 = segs[0].x0;
+      rectX1 = segs[2].x0;
+      rectY0 = segs[1].y0;
+      rectY1 = segs[3].y0;
+    } else if (segs[0].x0 == segs[0].x1 &&
+	       segs[1].x0 == segs[1].x1 &&
+	       segs[2].y0 == segs[2].y1 &&
+	       segs[3].y0 == segs[3].y1) {
+      isRect = gTrue;
+      rectX0 = segs[0].x0;
+      rectX1 = segs[1].x0;
+      rectY0 = segs[2].y0;
+      rectY1 = segs[3].y0;
     }
-    yMinFP = segs[0].y0;
-    yMaxFP = segs[0].y1;
-    for (i = 1; i < length; ++i) {
-      if (segs[i].x0 < xMinFP) {
-	xMinFP = segs[i].x0;
-      } else if (segs[i].x0 > xMaxFP) {
-	xMaxFP = segs[i].x0;
+    if (isRect) {
+      if (rectX0 > rectX1) {
+	t = rectX0;  rectX0 = rectX1;  rectX1 = t;
       }
-      if (segs[i].x1 < xMinFP) {
-	xMinFP = segs[i].x1;
-      } else if (segs[i].x1 > xMaxFP) {
-	xMaxFP = segs[i].x1;
-      }
-      if (segs[i].y1 > yMaxFP) {
-	yMaxFP = segs[i].y1;
+      if (rectY0 > rectY1) {
+	t = rectY0;  rectY0 = rectY1;  rectY1 = t;
       }
     }
-    xMin = splashFloor(xMinFP);
-    yMin = splashFloor(yMinFP);
-    xMax = splashFloor(xMaxFP);
-    yMax = splashFloor(yMaxFP);
   }
 }
 
-void SplashXPath::strokeAdjust(SplashXPathPoint *pts,
-			       SplashPathHint *hints, int nHints) {
+GBool SplashXPath::strokeAdjust(SplashXPathPoint *pts,
+				SplashPathHint *hints, int nHints,
+				SplashStrokeAdjustMode strokeAdjMode) {
   SplashXPathAdjust *adjusts, *adjust;
   SplashPathHint *hint;
   SplashCoord x0, y0, x1, y1, x2, y2, x3, y3;
-  SplashCoord adj0, adj1, d;
+  SplashCoord adj0, adj1, w, d;
   int xi0, xi1;
   int i, j;
+  GBool adjusted;
+
+  adjusted = gFalse;
 
   // set up the stroke adjustment hints
   adjusts = (SplashXPathAdjust *)gmallocn(nHints, sizeof(SplashXPathAdjust));
@@ -192,14 +246,21 @@ void SplashXPath::strokeAdjust(SplashXPathPoint *pts,
     x1 = pts[hint->ctrl0 + 1].x;    y1 = pts[hint->ctrl0 + 1].y;
     x2 = pts[hint->ctrl1    ].x;    y2 = pts[hint->ctrl1    ].y;
     x3 = pts[hint->ctrl1 + 1].x;    y3 = pts[hint->ctrl1 + 1].y;
+    w = -1;
     if (x0 == x1 && x2 == x3) {
       adjusts[i].vert = gTrue;
       adj0 = x0;
       adj1 = x2;
+      if (hint->projectingCap) {
+	w = splashAbs(y1 - y0);
+      }
     } else if (y0 == y1 && y2 == y3) {
       adjusts[i].vert = gFalse;
       adj0 = y0;
       adj1 = y2;
+      if (hint->projectingCap) {
+	w = splashAbs(x1 - x0);
+      }
     } else {
       goto done;
     }
@@ -220,7 +281,7 @@ void SplashXPath::strokeAdjust(SplashXPathPoint *pts,
     adjusts[i].xmb = (SplashCoord)0.5 * (adj0 + adj1) + d;
     adjusts[i].x1a = adj1 - d;
     adjusts[i].x1b = adj1 + d;
-    splashStrokeAdjust(adj0, adj1, &xi0, &xi1);
+    splashStrokeAdjust(adj0, adj1, &xi0, &xi1, strokeAdjMode, w);
     adjusts[i].x0 = (SplashCoord)xi0;
     // the "minus epsilon" thing here is needed when vector
     // antialiasing is turned off -- otherwise stroke adjusted lines
@@ -255,9 +316,11 @@ void SplashXPath::strokeAdjust(SplashXPathPoint *pts,
       }
     }
   }
+  adjusted = gTrue;
 
  done:
   gfree(adjusts);
+  return adjusted;
 }
 
 SplashXPath::SplashXPath(SplashXPath *xPath) {
@@ -380,38 +443,202 @@ void SplashXPath::addCurve(SplashCoord x0, SplashCoord y0,
 void SplashXPath::addSegment(SplashCoord x0, SplashCoord y0,
 			     SplashCoord x1, SplashCoord y1) {
   grow(1);
-  if (y0 <= y1) {
-    segs[length].x0 = x0;
-    segs[length].y0 = y0;
-    segs[length].x1 = x1;
-    segs[length].y1 = y1;
-    segs[length].count = 1;
-  } else {
-    segs[length].x0 = x1;
-    segs[length].y0 = y1;
-    segs[length].x1 = x0;
-    segs[length].y1 = y0;
-    segs[length].count = -1;
+  segs[length].x0 = x0;
+  segs[length].y0 = y0;
+  segs[length].x1 = x1;
+  segs[length].y1 = y1;
+  ++length;
+}
+
+// Returns true if the angle between (x0,y0)-(x1,y1) and
+// (x1,y1)-(x2,y2) is close to 180 degrees.
+static GBool joinAngleIsFlat(SplashCoord x0, SplashCoord y0,
+			     SplashCoord x1, SplashCoord y1,
+			     SplashCoord x2, SplashCoord y2) {
+  SplashCoord dx1, dy1, dx2, dy2, d, len1, len2;
+
+  dx1 = x1 - x0;
+  dy1 = y1 - y0;
+  dx2 = x2 - x1;
+  dy2 = y2 - y1;
+  d = dx1 * dx2 + dy1 * dy2;
+  len1 = dx1 * dx1 + dy1 * dy1;
+  len2 = dx2 * dx2 + dy2 * dy2;
+  return d > 0 && d * d > len1 * len2 * minCosSquaredJoinAngle;
+}
+
+// Returns true if (x1,y1) is sufficiently close to the segment
+// (x0,y0)-(x2,y2), looking at the perpendicular point-to-line
+// distance.
+static GBool pointCloseToSegment(SplashCoord x0, SplashCoord y0,
+				 SplashCoord x1, SplashCoord y1,
+				 SplashCoord x2, SplashCoord y2) {
+  SplashCoord t1, t2, dx, dy;
+
+  // compute the perpendicular distance from the point to the segment,
+  // i.e., the projection of (x0,y0)-(x1,y1) onto a unit normal to the
+  // segment (this actually computes the square of the distance)
+  dx = x2 - x0;
+  dy = y2 - y0;
+  t1 = dx*dx + dy*dy;
+  if (t1 < 0.0001) {
+    // degenerate case: (x0,y0) and (x2,y2) are (nearly) identical --
+    // just compute the distance to (x1,y1)
+    dx = x0 - x1;
+    dy = y0 - y1;
+    t2 = dx*dx + dy*dy;
+    return t2 < maxPointToLineDistanceSquared;
   }
-#if USE_FIXEDPOINT
-  if (y0 == y1 || x0 == x1 ||
-      !FixedPoint::divCheck(x1 - x0, y1 - y0, &segs[length].dxdy) ||
-      !FixedPoint::divCheck(y1 - y0, x1 - x0, &segs[length].dydx)) {
-    segs[length].dxdy = 0;
-    segs[length].dydx = 0;
+  t2 = x1 * dy - dx * y1 - x0 * y2 + x2 * y0;
+  // actual distance = t2 / sqrt(t1)
+  return t2 * t2 < t1 * maxPointToLineDistanceSquared;
+}
+
+// Attempt to simplify the path by merging sequences of consecutive
+// segments in [first] .. [length]-1.
+void SplashXPath::mergeSegments(int first) {
+  GBool horiz, vert;
+  int in, out, prev, i, j;
+
+  in = out = first;
+  while (in < length) {
+
+    // skip zero-length segments
+    if (segs[in].x0 == segs[in].x1 && segs[in].y0 == segs[in].y1) {
+      ++in;
+      continue;
+    }
+
+    horiz = segs[in].y0 == segs[in].y1;
+    vert = segs[in].x0 == segs[in].x1;
+
+    // check for a sequence of mergeable segments: in .. i
+    prev = in;
+    for (i = in + 1; i < length; ++i) {
+
+      // skip zero-length segments
+      if (segs[i].x0 == segs[i].x1 && segs[i].y0 == segs[i].y1) {
+	continue;
+      }
+
+      // check for a horizontal or vertical segment
+      if ((horiz && segs[in].y0 != segs[in].y1) ||
+	  (vert && segs[in].x0 != segs[in].x1)) {
+	break;
+      }
+
+      // check the angle between segs i-1 and i
+      // (actually, we compare seg i to the previous non-zero-length
+      // segment, which may not be i-1)
+      if (!joinAngleIsFlat(segs[prev].x0, segs[prev].y0,
+			   segs[i].x0, segs[i].y0,
+			   segs[i].x1, segs[i].y1)) {
+	break;
+      }
+
+      // check the distances from the ends of segs in .. i-1 to the
+      // proposed new segment
+      for (j = in; j < i; ++j) {
+	if (!pointCloseToSegment(segs[in].x0, segs[in].y0,
+				 segs[j].x1, segs[j].y1,
+				 segs[i].x1, segs[i].y1)) {
+	  break;
+	}
+      }
+      if (j < i) {
+	break;
+      }
+
+      prev = i;
+    }
+
+    // we can merge segs: in .. i-1
+    // (this may be the single segment: in)
+    segs[out].x0 = segs[in].x0;
+    segs[out].y0 = segs[in].y0;
+    segs[out].x1 = segs[i-1].x1;
+    segs[out].y1 = segs[i-1].y1;
+    in = i;
+    ++out;
   }
-#else
-  if (y0 == y1 || x0 == x1) {
-    segs[length].dxdy = 0;
-    segs[length].dydx = 0;
-  } else {
-    segs[length].dxdy = (x1 - x0) / (y1 - y0);
-    if (segs[length].dxdy == 0) {
-      segs[length].dydx = 0;
+
+  length = out;
+}
+
+void SplashXPath::finishSegments() {
+  SplashXPathSeg *seg;
+  SplashCoord xMinFP, xMaxFP, yMinFP, yMaxFP, t;
+  int i;
+
+  xMinFP = yMinFP = xMaxFP = yMaxFP = 0;
+
+  for (i = 0; i < length; ++i) {
+    seg = &segs[i];
+
+    //--- compute the slopes
+    if (seg->y0 <= seg->y1) {
+      seg->count = 1;
     } else {
-      segs[length].dydx = 1 / segs[length].dxdy;
+      t = seg->x0;  seg->x0 = seg->x1;  seg->x1 = t;
+      t = seg->y0;  seg->y0 = seg->y1;  seg->y1 = t;
+      seg->count = -1;
+    }
+#if USE_FIXEDPOINT
+    if (seg->y0 == seg->y1 || seg->x0 == seg->x1 ||
+	!FixedPoint::divCheck(seg->x1 - seg->x0, seg->y1 - seg->y0,
+			      &seg->dxdy) ||
+	!FixedPoint::divCheck(seg->y1 - seg->y0, seg->x1 - seg->x0,
+			      &seg->dydx)) {
+      seg->dxdy = 0;
+      seg->dydx = 0;
+    }
+#else
+    if (seg->y0 == seg->y1 || seg->x0 == seg->x1) {
+      seg->dxdy = 0;
+      seg->dydx = 0;
+    } else {
+      seg->dxdy = (seg->x1 - seg->x0) / (seg->y1 - seg->y0);
+      if (seg->dxdy == 0) {
+	seg->dydx = 0;
+      } else {
+	seg->dydx = 1 / seg->dxdy;
+      }
+    }
+#endif
+
+    //--- update bbox
+    if (i == 0) {
+      if (seg->x0 <= seg->x1) {
+	xMinFP = seg->x0;
+	xMaxFP = seg->x1;
+      } else {
+	xMinFP = seg->x1;
+	xMaxFP = seg->x0;
+      }
+      yMinFP = seg->y0;
+      yMaxFP = seg->y1;
+    } else {
+      if (seg->x0 < xMinFP) {
+	xMinFP = seg->x0;
+      } else if (seg->x0 > xMaxFP) {
+	xMaxFP = seg->x0;
+      }
+      if (seg->x1 < xMinFP) {
+	xMinFP = seg->x1;
+      } else if (seg->x1 > xMaxFP) {
+	xMaxFP = seg->x1;
+      }
+      if (seg->y0 < yMinFP) {
+	yMinFP = seg->y0;
+      }
+      if (seg->y1 > yMaxFP) {
+	yMaxFP = seg->y1;
+      }
     }
   }
-#endif
-  ++length;
+
+  xMin = splashFloor(xMinFP);
+  yMin = splashFloor(yMinFP);
+  xMax = splashFloor(xMaxFP);
+  yMax = splashFloor(yMaxFP);
 }

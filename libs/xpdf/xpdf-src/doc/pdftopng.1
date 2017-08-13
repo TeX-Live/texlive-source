@@ -1,8 +1,8 @@
-.\" Copyright 2014 Glyph & Cog, LLC
-.TH pdftopng 1 "28 May 2014"
+.\" Copyright 2017 Glyph & Cog, LLC
+.TH pdftopng 1 "10 Aug 2017"
 .SH NAME
 pdftopng \- Portable Document Format (PDF) to Portable Network Graphics
-(PNG) converter (version 3.04)
+(PNG) converter (version 4.00)
 .SH SYNOPSIS
 .B pdftopng
 [options]
@@ -50,6 +50,11 @@ Generate a monochrome image (instead of a color image).
 .TP
 .B \-gray
 Generate a grayscale image (instead of a color image).
+.TP
+.B \-alpha
+Generate an alpha channel in the PNG file.  This is only useful with
+PDF files that have been constructed with a transparent background.
+The \-alpha flag cannot be used with \-mono.
 .TP
 .BI \-freetype " yes | no"
 Enable or disable FreeType (a TrueType / Type 1 font rasterizer).
@@ -102,7 +107,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftopng software and documentation are copyright 1996-2014 Glyph
+The pdftopng software and documentation are copyright 1996-2017 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),
@@ -116,4 +121,4 @@ The pdftopng software and documentation are copyright 1996-2014 Glyph
 .BR pdfimages (1),
 .BR xpdfrc (5)
 .br
-.B http://www.foolabs.com/xpdf/
+.B http://www.xpdfreader.com/

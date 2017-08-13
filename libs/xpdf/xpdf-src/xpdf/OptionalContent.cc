@@ -12,6 +12,7 @@
 #pragma implementation
 #endif
 
+#include "gmempp.h"
 #include "GString.h"
 #include "GList.h"
 #include "Error.h"
@@ -69,7 +70,7 @@ OptionalContent::OptionalContent(PDFDoc *doc) {
       //----- read the default viewing OCCD
       if (ocProps->dictLookup("D", &defView)->isDict()) {
 
-	//----- initial state
+	//----- initial state from OCCD
 	if (defView.dictLookup("OFF", &obj1)->isArray()) {
 	  for (i = 0; i < obj1.arrayGetLength(); ++i) {
 	    if (obj1.arrayGetNF(i, &obj2)->isRef()) {
@@ -85,6 +86,34 @@ OptionalContent::OptionalContent(PDFDoc *doc) {
 	  }
 	}
 	obj1.free();
+	// the default OCCD is required to have a BaseState of ON, so
+	// the ON array is redundant -- but some (broken) PDF files
+	// include OCGs in both the OFF and ON arrays
+	if (defView.dictLookup("ON", &obj1)->isArray()) {
+	  for (i = 0; i < obj1.arrayGetLength(); ++i) {
+	    if (obj1.arrayGetNF(i, &obj2)->isRef()) {
+	      ref1 = obj2.getRef();
+	      if ((ocg = findOCG(&ref1))) {
+		ocg->setState(gTrue);
+	      } else {
+		error(errSyntaxError, -1,
+		      "Invalid OCG reference in ON array in default viewing OCCD");
+	      }
+	    }
+	    obj2.free();
+	  }
+	}
+	obj1.free();
+
+	//----- initial state from OCG usage dict
+	for (i = 0; i < ocgs->getLength(); ++i) {
+	  ocg = (OptionalContentGroup *)ocgs->get(i);
+	  //~ should this look at PrintState when printing, or is it
+	  //~   better to always print the ViewState?
+	  if (ocg->getViewState() == ocUsageOff) {
+	    ocg->setState(gFalse);
+	  }
+	}
 
 	//----- display order
 	if (defView.dictLookup("Order", &obj1)->isArray()) {
@@ -418,6 +447,7 @@ OCDisplayNode *OCDisplayNode::parse(Object *obj, OptionalContent *oc,
 OCDisplayNode::OCDisplayNode() {
   name = new TextString();
   ocg = NULL;
+  parent = NULL;
   children = NULL;
 }
 
@@ -438,21 +468,31 @@ void OCDisplayNode::addChild(OCDisplayNode *child) {
     children = new GList();
   }
   children->append(child);
+  child->parent = this;
 }
 
 void OCDisplayNode::addChildren(GList *childrenA) {
+  int i;
+
   if (!children) {
     children = new GList();
   }
   children->append(childrenA);
+  for (i = 0; i < childrenA->getLength(); ++i) {
+    ((OCDisplayNode *)childrenA->get(i))->parent = this;
+  }
   delete childrenA;
 }
 
 GList *OCDisplayNode::takeChildren() {
   GList *childrenA;
+  int i;
 
   childrenA = children;
   children = NULL;
+  for (i = 0; i < childrenA->getLength(); ++i) {
+    ((OCDisplayNode *)childrenA->get(i))->parent = NULL;
+  }
   return childrenA;
 }
 

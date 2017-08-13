@@ -18,6 +18,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "gfile.h"
 #include "Object.h"
 #include "Stream.h"
@@ -54,6 +55,8 @@ public:
   ~XRefPosSet();
   void add(GFileOffset pos);
   GBool check(GFileOffset pos);
+  int getLength() { return len; }
+  GFileOffset get(int idx) { return tab[idx]; }
 
 private:
 
@@ -154,6 +157,7 @@ private:
 
 ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   Stream *str;
+  Lexer *lexer;
   Parser *parser;
   int *offsets;
   Object objStr, obj1, obj2;
@@ -204,7 +208,8 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   objStr.streamReset();
   obj1.initNull();
   str = new EmbedStream(objStr.getStream(), &obj1, gTrue, first);
-  parser = new Parser(xref, new Lexer(xref, str), gFalse);
+  lexer = new Lexer(xref, str);
+  parser = new Parser(xref, lexer, gFalse);
   for (i = 0; i < nObjects; ++i) {
     parser->getObj(&obj1, gTrue);
     parser->getObj(&obj2, gTrue);
@@ -226,7 +231,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
       goto err2;
     }
   }
-  while (str->getChar() != EOF) ;
+  lexer->skipToEOF();
   delete parser;
 
   // skip to the first object - this shouldn't be necessary because
@@ -245,9 +250,10 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
       str = new EmbedStream(objStr.getStream(), &obj1, gTrue,
 			    offsets[i+1] - offsets[i]);
     }
-    parser = new Parser(xref, new Lexer(xref, str), gFalse);
+    lexer = new Lexer(xref, str);
+    parser = new Parser(xref, lexer, gFalse);
     parser->getObj(&objs[i]);
-    while (str->getChar() != EOF) ;
+    lexer->skipToEOF();
     delete parser;
   }
 
@@ -274,9 +280,11 @@ ObjectStream::~ObjectStream() {
 
 Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
   if (objIdx < 0 || objIdx >= nObjects || objNum != objNums[objIdx]) {
-    return obj->initNull();
+    obj->initNull();
+  } else {
+    objs[objIdx].copy(obj);
   }
-  return objs[objIdx].copy(obj);
+  return obj;
 }
 
 //------------------------------------------------------------------------
@@ -294,6 +302,9 @@ XRef::XRef(BaseStream *strA, GBool repair) {
   size = 0;
   last = -1;
   entries = NULL;
+  lastStartxrefPos = 0;
+  xrefTablePos = NULL;
+  xrefTablePosLen = 0;
   streamEnds = NULL;
   streamEndsLen = 0;
   for (i = 0; i < objStrCacheSize; ++i) {
@@ -307,6 +318,11 @@ XRef::XRef(BaseStream *strA, GBool repair) {
   for (i = 0; i < xrefCacheSize; ++i) {
     cache[i].num = -1;
   }
+
+#if MULTITHREADED
+  gInitMutex(&objStrsMutex);
+  gInitMutex(&cacheMutex);
+#endif
 
   str = strA;
   start = str->getStart();
@@ -332,6 +348,12 @@ XRef::XRef(BaseStream *strA, GBool repair) {
     // read the xref table
     posSet = new XRefPosSet();
     while (readXRef(&pos, posSet)) ;
+    xrefTablePosLen = posSet->getLength();
+    xrefTablePos = (GFileOffset *)gmallocn(xrefTablePosLen,
+					   sizeof(GFileOffset));
+    for (i = 0; i < xrefTablePosLen; ++i)  {
+      xrefTablePos[i] = posSet->get(i);
+    }
     delete posSet;
     if (!ok) {
       errCode = errDamaged;
@@ -368,6 +390,9 @@ XRef::~XRef() {
   }
   gfree(entries);
   trailerDict.free();
+  if (xrefTablePos) {
+    gfree(xrefTablePos);
+  }
   if (streamEnds) {
     gfree(streamEnds);
   }
@@ -376,6 +401,10 @@ XRef::~XRef() {
       delete objStrs[i];
     }
   }
+#if MULTITHREADED
+  gDestroyMutex(&objStrsMutex);
+  gDestroyMutex(&cacheMutex);
+#endif
 }
 
 // Read the 'startxref' position.
@@ -400,6 +429,7 @@ GFileOffset XRef::getStartXref() {
   }
   for (p = &buf[i+9]; isspace(*p & 0xff); ++p) ;
   lastXRefPos = strToFileOffset(p);
+  lastStartxrefPos = str->getPos() - n + i;
 
   return lastXRefPos;
 }
@@ -631,6 +661,7 @@ GBool XRef::readXRefTable(GFileOffset *pos, int offset, XRefPosSet *posSet) {
     readXRef(&pos2, posSet);
     if (!ok) {
       obj2.free();
+      obj.free();
       goto err1;
     }
   }
@@ -957,6 +988,20 @@ void XRef::setEncryption(int permFlagsA, GBool ownerPasswordOkA,
   encAlgorithm = encAlgorithmA;
 }
 
+GBool XRef::getEncryption(int *permFlagsA, GBool *ownerPasswordOkA,
+			  int *keyLengthA, int *encVersionA,
+			  CryptAlgorithm *encAlgorithmA) {
+  if (!encrypted) {
+    return gFalse;
+  }
+  *permFlagsA = permFlags;
+  *ownerPasswordOkA = ownerPasswordOk;
+  *keyLengthA = keyLength;
+  *encVersionA = encVersion;
+  *encAlgorithmA = encAlgorithm;
+  return gTrue;
+}
+
 GBool XRef::okToPrint(GBool ignoreOwnerPW) {
   return (!ignoreOwnerPW && ownerPasswordOk) || (permFlags & permPrint);
 }
@@ -976,7 +1021,6 @@ GBool XRef::okToAddNotes(GBool ignoreOwnerPW) {
 Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
   XRefEntry *e;
   Parser *parser;
-  ObjectStream *objStr;
   Object obj1, obj2, obj3;
   XRefCacheEntry tmp;
   int i, j;
@@ -987,8 +1031,15 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
   }
 
   // check the cache
+#if MULTITHREADED
+  gLockMutex(&cacheMutex);
+#endif
   if (cache[0].num == num && cache[0].gen == gen) {
-    return cache[0].obj.copy(obj);
+    cache[0].obj.copy(obj);
+#if MULTITHREADED
+    gUnlockMutex(&cacheMutex);
+#endif
+    return obj;
   }
   for (i = 1; i < xrefCacheSize; ++i) {
     if (cache[i].num == num && cache[i].gen == gen) {
@@ -997,9 +1048,16 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
 	cache[j] = cache[j - 1];
       }
       cache[0] = tmp;
-      return cache[0].obj.copy(obj);
+      cache[0].obj.copy(obj);
+#if MULTITHREADED
+      gUnlockMutex(&cacheMutex);
+#endif
+      return obj;
     }
   }
+#if MULTITHREADED
+  gUnlockMutex(&cacheMutex);
+#endif
 
   e = &entries[num];
   switch (e->type) {
@@ -1044,10 +1102,9 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
       error(errSyntaxError, -1, "Invalid object stream");
       goto err;
     }
-    if (!(objStr = getObjectStream((int)e->offset))) {
+    if (!getObjectStreamObject((int)e->offset, e->gen, num, obj)) {
       goto err;
     }
-    objStr->getObject(e->gen, num, obj);
     break;
 
   default:
@@ -1056,6 +1113,9 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
 
   // put the new object in the cache, throwing away the oldest object
   // currently in the cache
+#if MULTITHREADED
+  gLockMutex(&cacheMutex);
+#endif
   if (cache[xrefCacheSize - 1].num >= 0) {
     cache[xrefCacheSize - 1].obj.free();
   }
@@ -1065,6 +1125,9 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
   cache[0].num = num;
   cache[0].gen = gen;
   obj->copy(&cache[0].obj);
+#if MULTITHREADED
+  gUnlockMutex(&cacheMutex);
+#endif
 
   return obj;
 
@@ -1072,13 +1135,32 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
   return obj->initNull();
 }
 
+GBool XRef::getObjectStreamObject(int objStrNum, int objIdx,
+				   int objNum, Object *obj) {
+  ObjectStream *objStr;
+
+#if MULTITHREADED
+  gLockMutex(&objStrsMutex);
+#endif
+  if (!(objStr = getObjectStream(objStrNum))) {
+    return gFalse;
+  }
+  objStr->getObject(objIdx, objNum, obj);
+#if MULTITHREADED
+  gUnlockMutex(&objStrsMutex);
+#endif
+  return gTrue;
+}
+
+// NB: objStrsMutex must be locked when calling this function.
 ObjectStream *XRef::getObjectStream(int objStrNum) {
   ObjectStream *objStr;
   int i, j;
 
   // check the MRU entry in the cache
   if (objStrs[0] && objStrs[0]->getObjStrNum() == objStrNum) {
-    return objStrs[0];
+    objStr = objStrs[0];
+    return objStr;
   }
 
   // check the rest of the cache
@@ -1099,6 +1181,8 @@ ObjectStream *XRef::getObjectStream(int objStrNum) {
     delete objStr;
     return NULL;
   }
+
+  // add to the cache
   if (objStrs[objStrCacheSize - 1]) {
     delete objStrs[objStrCacheSize - 1];
   }
@@ -1106,6 +1190,7 @@ ObjectStream *XRef::getObjectStream(int objStrNum) {
     objStrs[j] = objStrs[j - 1];
   }
   objStrs[0] = objStr;
+
   return objStr;
 }
 

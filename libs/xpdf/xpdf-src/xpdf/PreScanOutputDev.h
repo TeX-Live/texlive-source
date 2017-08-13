@@ -68,7 +68,7 @@ public:
   virtual void fill(GfxState *state);
   virtual void eoFill(GfxState *state);
   virtual void tilingPatternFill(GfxState *state, Gfx *gfx, Object *strRef,
-				 int paintType, Dict *resDict,
+				 int paintType, int tilingType, Dict *resDict,
 				 double *mat, double *bbox,
 				 int x0, int y0, int x1, int y1,
 				 double xStep, double yStep);
@@ -107,7 +107,7 @@ public:
 				   Stream *maskStr,
 				   int maskWidth, int maskHeight,
 				   GfxImageColorMap *maskColorMap,
-				   GBool interpolate);
+				   double *matte, GBool interpolate);
 
   //----- transparency groups and soft masks
   virtual void beginTransparencyGroup(GfxState *state, double *bbox,
@@ -143,7 +143,7 @@ public:
 
 private:
 
-  void check(GfxColorSpace *colorSpace, GfxColor *color,
+  void check(GfxState *state, GfxColorSpace *colorSpace, GfxColor *color,
 	     double opacity, GfxBlendMode blendMode);
 
   GBool mono;

@@ -26,6 +26,10 @@ class ZxXMLDecl;
 
 //------------------------------------------------------------------------
 
+typedef bool (*ZxWriteFunc)(void *stream, const char *data, int length);
+
+//------------------------------------------------------------------------
+
 class ZxNode {
 public:
 
@@ -42,11 +46,17 @@ public:
   virtual bool isCharData() { return false; }
   virtual ZxNode *getFirstChild() { return firstChild; }
   virtual ZxNode *getNextChild() { return next; }
+  ZxNode *getParent() { return parent; }
+  ZxNode *deleteChild(ZxNode *child);
+  void appendChild(ZxNode *child);
+  void insertChildAfter(ZxNode *child, ZxNode *prev);
   ZxElement *findFirstElement(const char *type);
   ZxElement *findFirstChildElement(const char *type);
   GList *findAllElements(const char *type);
   GList *findAllChildElements(const char *type);
   virtual void addChild(ZxNode *child);
+
+  virtual bool write(ZxWriteFunc writeFunc, void *stream) = 0;
 
 protected:
 
@@ -73,11 +83,16 @@ public:
 
   virtual ~ZxDoc();
 
+  // Write to disk.  Returns false on error.
+  bool writeFile(const char *fileName);
+
   virtual bool isDoc() { return true; }
   ZxXMLDecl *getXMLDecl() { return xmlDecl; }
   ZxDocTypeDecl *getDocTypeDecl() { return docTypeDecl; }
   ZxElement *getRoot() { return root; }
   virtual void addChild(ZxNode *node);
+
+  virtual bool write(ZxWriteFunc writeFunc, void *stream);
 
 private:
 
@@ -119,6 +134,8 @@ public:
   GString *getEncoding() { return encoding; }
   bool getStandalone() { return standalone; }
 
+  virtual bool write(ZxWriteFunc writeFunc, void *stream);
+
 private:
 
   GString *version;
@@ -137,6 +154,8 @@ public:
   virtual bool isDocTypeDecl() { return true; }
   GString *getName() { return name; }
 
+  virtual bool write(ZxWriteFunc writeFunc, void *stream);
+
 private:
 
   GString *name;
@@ -152,6 +171,8 @@ public:
 
   virtual bool isComment() { return true; }
   GString *getText() { return text; }
+
+  virtual bool write(ZxWriteFunc writeFunc, void *stream);
 
 private:
 
@@ -169,6 +190,8 @@ public:
   virtual bool isPI() { return true; }
   GString *getTarget() { return target; }
   GString *getText() { return text; }
+
+  virtual bool write(ZxWriteFunc writeFunc, void *stream);
 
 private:
 
@@ -191,7 +214,11 @@ public:
   ZxAttr *getFirstAttr() { return firstAttr; }
   void addAttr(ZxAttr *attr);
 
+  virtual bool write(ZxWriteFunc writeFunc, void *stream);
+
 private:
+
+  void appendEscapedAttrValue(GString *out, GString *s);
 
   GString *type;
   GHash *attrs;			// [ZxAttr]
@@ -209,6 +236,7 @@ public:
   GString *getName() { return name; }
   GString *getValue() { return value; }
   ZxAttr *getNextAttr() { return next; }
+  ZxNode *getParent() { return parent; }
 
 private:
 
@@ -231,6 +259,8 @@ public:
   virtual bool isCharData() { return true; }
   GString *getData() { return data; }
   bool isParsed() { return parsed; }
+
+  virtual bool write(ZxWriteFunc writeFunc, void *stream);
 
 private:
 

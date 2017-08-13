@@ -1,8 +1,8 @@
-.\" Copyright 1996-2014 Glyph & Cog, LLC
-.TH pdftops 1 "28 May 2014"
+.\" Copyright 1996-2017 Glyph & Cog, LLC
+.TH pdftops 1 "10 Aug 2017"
 .SH NAME
 pdftops \- Portable Document Format (PDF) to PostScript converter
-(version 3.04)
+(version 4.00)
 .SH SYNOPSIS
 .B pdftops
 [options]
@@ -65,6 +65,11 @@ Generate Level 2 PostScript.  Level 2 supports color images and image
 compression.  This is the default setting.
 .RB "[config file: " psLevel ]
 .TP
+.B \-level2gray
+Generate grayscale Level 2 PostScript.  All colors, including images,
+are converted to grayscale.
+.RB "[config file: " psLevel ]
+.TP
 .B \-level2sep
 Generate Level 2 separable PostScript.  All colors are converted to
 CMYK.  The PostScript separation convention operators are used to
@@ -74,6 +79,11 @@ handle custom (spot) colors.
 .B \-level3
 Generate Level 3 PostScript.  This enables all Level 2 features plus
 CID font embedding and masked image generation.
+.RB "[config file: " psLevel ]
+.TP
+.B \-level3gray
+Generate grayscale Level 3 PostScript.  All colors, including images,
+are converted to grayscale.
 .RB "[config file: " psLevel ]
 .TP
 .B \-level3Sep
@@ -174,6 +184,10 @@ Treat the CropBox as the PDF page size.  By default, the MediaBox is
 used as the page size.
 .RB "[config file: " psUseCropBoxAsPage ]
 .TP
+.B \-userunit
+Honor the UserUnit settings on PDF pages when computing page/paper
+size.  By default, pdftops ignores UserUnit.
+.TP
 .B \-duplex
 Set the Duplex pagedevice entry in the PostScript file.  This tells
 duplex-capable printers to enable duplexing.
@@ -222,7 +236,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftops software and documentation are copyright 1996-2014 Glyph &
+The pdftops software and documentation are copyright 1996-2017 Glyph &
 Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),
@@ -236,4 +250,4 @@ Cog, LLC.
 .BR pdfimages (1),
 .BR xpdfrc (5)
 .br
-.B http://www.foolabs.com/xpdf/
+.B http://www.xpdfreader.com/

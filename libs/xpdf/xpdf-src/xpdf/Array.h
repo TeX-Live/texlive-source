@@ -15,6 +15,9 @@
 #pragma interface
 #endif
 
+#if MULTITHREADED
+#include "GMutex.h"
+#endif
 #include "Object.h"
 
 class XRef;
@@ -33,8 +36,13 @@ public:
   ~Array();
 
   // Reference counting.
+#if MULTITHREADED
+  int incRef() { return gAtomicIncrement(&ref); }
+  int decRef() { return gAtomicDecrement(&ref); }
+#else
   int incRef() { return ++ref; }
   int decRef() { return --ref; }
+#endif
 
   // Get number of elements.
   int getLength() { return length; }
@@ -52,7 +60,11 @@ private:
   Object *elems;		// array of elements
   int size;			// size of <elems> array
   int length;			// number of elements in array
+#if MULTITHREADED
+  GAtomicCounter ref;		// reference count
+#else
   int ref;			// reference count
+#endif
 };
 
 #endif

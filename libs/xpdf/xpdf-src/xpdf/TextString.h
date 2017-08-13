@@ -43,8 +43,10 @@ public:
   TextString *append(Unicode c);
   TextString *append(GString *s);
 
-  // Insert a Unicode character or PDF text string in this TextString.
+  // Insert a Unicode character, sequence of Unicode characters, or
+  // PDF text string in this TextString.
   TextString *insert(int idx, Unicode c);
+  TextString *insert(int idx, Unicode *u2, int n);
   TextString *insert(int idx, GString *s);
 
   // Get the Unicode characters in the TextString.

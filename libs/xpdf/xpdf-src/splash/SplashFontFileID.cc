@@ -12,6 +12,7 @@
 #pragma implementation
 #endif
 
+#include "gmempp.h"
 #include "SplashFontFileID.h"
 
 //------------------------------------------------------------------------

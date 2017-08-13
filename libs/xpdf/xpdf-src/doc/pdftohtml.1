@@ -1,8 +1,8 @@
-.\" Copyright 1997-2014 Glyph & Cog, LLC
-.TH pdftohtml 1 "28 May 2014"
+.\" Copyright 1997-2017 Glyph & Cog, LLC
+.TH pdftohtml 1 "10 Aug 2017"
 .SH NAME
 pdftohtml \- Portable Document Format (PDF) to HTML converter
-(version 3.04)
+(version 4.00)
 .SH SYNOPSIS
 .B pdftohtml
 [options]
@@ -38,9 +38,29 @@ Specifies the first page to convert.
 .BI \-l " number"
 Specifies the last page to convert.
 .TP
-.B \-r
-Specifies the resolution, in DPI, for background images.  The default
-is 150 DPI.
+.BI \-z " number"
+Specifies the initial zoom level.  The default is 1.0, which means
+72dpi, i.e., 1 point in the PDF file will be 1 pixel in the HTML.
+Using \'-z 1.5', for example, will make the initial view 50% larger.
+.TP
+.BI \-r " number"
+Specifies the resolution, in DPI, for background images.  This
+controls the pixel size of the background image files.  The initial
+zoom level is controlled by the \'-z' option.  Specifying a larger
+\'-r' value will allow the viewer to zoom in farther without upscaling
+artifacts in the background.
+.TP
+.B \-skipinvisible
+Don't draw invisible text.  By default, invisible text (commonly used
+in OCR'ed PDF files) is drawn as transparent (alpha=0) HTML text.
+This option tells pdftohtml to discard invisible text entirely.
+.TP
+.B \-allinvisible
+Treat all text as invisible.  By default, regular (non-invisible) text
+is not drawn in the background image, and is instead drawn with HTML
+on top of the image.  This option tells pdftohtml to include the
+regular text in the background image, and then draw it as transparent
+(alpha=0) HTML text.
 .TP
 .BI \-opw " password"
 Specify the owner password for the PDF file.  Providing this will
@@ -89,7 +109,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftohtml software and documentation are copyright 1996-2014 Glyph
+The pdftohtml software and documentation are copyright 1996-2017 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),
@@ -103,4 +123,4 @@ The pdftohtml software and documentation are copyright 1996-2014 Glyph
 .BR pdfimages (1),
 .BR xpdfrc (5)
 .br
-.B http://www.foolabs.com/xpdf/
+.B http://www.xpdfreader.com/

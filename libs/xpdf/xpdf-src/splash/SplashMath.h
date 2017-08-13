@@ -12,9 +12,13 @@
 #include <aconf.h>
 
 #if USE_FIXEDPONT
-#include "FixedPoint.h"
+#  include "FixedPoint.h"
 #else
-#include <math.h>
+#  include <math.h>
+#  if (defined(__GNUC__) && defined(__SSE2__)) || \
+      (defined(_WIN32) && (_M_IX86_FP == 2 || defined(_M_X64)))
+#    include <emmintrin.h>
+#  endif
 #endif
 #include "SplashTypes.h"
 
@@ -26,14 +30,40 @@ static inline SplashCoord splashAbs(SplashCoord x) {
 #endif
 }
 
+// floor() and (int)() are implemented separately, which results
+// in changing the FPCW multiple times - so we optimize it with
+// some inline assembly or SSE intrinsics.
 static inline int splashFloor(SplashCoord x) {
 #if USE_FIXEDPOINT
+
+  //--- fixed point
+
   return FixedPoint::floor(x);
-#else
-#if __GNUC__ && __i386__
-  // floor() and (int)() are implemented separately, which results
-  // in changing the FPCW multiple times - so we optimize it with
-  // some inline assembly
+
+#elif (defined(__GNUC__) && defined(__SSE2__)) || \
+      (defined(_WIN32) && (_M_IX86_FP == 2 || defined(_M_X64)))
+
+  //--- SSE2 intrinsics
+  // NB: 64-bit x86 guarantees availability of SSE2.
+
+  __m128d m1, m2;
+  __m128i m3;
+  int s, i;
+
+  m1 = _mm_set_sd(x);		// m1 = x
+  i = _mm_cvttsd_si32(m1);	// i = trunc(x)
+  m2 = _mm_cvtsi32_sd(m1, i);	// m2 = (double)trunc(x)
+  m1 = _mm_sub_sd(m1, m2);	// m1 = x - trunc(x)
+  m3 = _mm_castpd_si128(m1); 	// m3 = m1 (as 64-bit int)
+  m3 = _mm_srli_epi64(m3, 63);	// m3 = m3 >> 63
+  s = _mm_cvtsi128_si32(m3);	// s = m3 = sign bit of x - trunc(x)
+  return i - s;			// trunc(x) - sign bit
+
+#elif defined(__GNUC__) && defined(__i386__) && !defined(__APPLE__)
+
+  //--- x87 inline assembly (gcc/clang)
+  // (this code fails on OSX for reasons I don't understand)
+
   Gushort oldCW, newCW, t;
   int result;
 
@@ -48,10 +78,11 @@ static inline int splashFloor(SplashCoord x) {
 		   : "=m" (oldCW), "=m" (newCW), "=m" (result), "=r" (t)
 		   : "t" (x));
   return result;
+
 #elif defined(_WIN32) && defined(_M_IX86)
-  // floor() and (int)() are implemented separately, which results
-  // in changing the FPCW multiple times - so we optimize it with
-  // some inline assembly
+
+  //--- x87 inline assembly (VC)
+
   Gushort oldCW, newCW;
   int result;
 
@@ -65,20 +96,50 @@ static inline int splashFloor(SplashCoord x) {
   __asm fistp DWORD PTR result
   __asm fldcw WORD PTR oldCW
   return result;
+
 #else
+
+  //--- all others
+
   return (int)floor(x);
-#endif
+
 #endif
 }
 
+// ceil() and (int)() are implemented separately, which results
+// in changing the FPCW multiple times - so we optimize it with
+// some inline assembly or SSE intrinsics.
 static inline int splashCeil(SplashCoord x) {
 #if USE_FIXEDPOINT
+
+  //--- fixed point
+
   return FixedPoint::ceil(x);
-#else
-#if __GNUC__ && __i386__
-  // ceil() and (int)() are implemented separately, which results
-  // in changing the FPCW multiple times - so we optimize it with
-  // some inline assembly
+
+#elif (defined(__GNUC__) && defined(__SSE2__)) || \
+      (defined(_WIN32) && (_M_IX86_FP == 2 || defined(_M_X64)))
+
+  //--- SSE2 intrinsics
+  // NB: 64-bit x86 guarantees availability of SSE2.
+
+  __m128d m1, m2;
+  __m128i m3;
+  int s, i;
+
+  m1 = _mm_set_sd(x);		// m1 = x
+  i = _mm_cvttsd_si32(m1);	// i = trunc(x)
+  m2 = _mm_cvtsi32_sd(m1, i);	// m2 = (double)trunc(x)
+  m2 = _mm_sub_sd(m2, m1);	// m2 = trunc(x) - x
+  m3 = _mm_castpd_si128(m2); 	// m3 = m2 (as 64-bit int)
+  m3 = _mm_srli_epi64(m3, 63);	// m3 = m3 >> 63
+  s = _mm_cvtsi128_si32(m3);	// s = m3 = sign bit of x - trunc(x)
+  return i + s;			// trunc(x) + sign bit
+
+#elif defined(__GNUC__) && defined(__i386__) && !defined(__APPLE__)
+
+  //--- x87 inline assembly (gcc/clang)
+  // (this code fails on OSX for reasons I don't understand)
+
   Gushort oldCW, newCW, t;
   int result;
 
@@ -93,7 +154,11 @@ static inline int splashCeil(SplashCoord x) {
 		   : "=m" (oldCW), "=m" (newCW), "=m" (result), "=r" (t)
 		   : "t" (x));
   return result;
+
 #elif defined(_WIN32) && defined(_M_IX86)
+
+  //--- x87 inline assembly (VC)
+
   // ceil() and (int)() are implemented separately, which results
   // in changing the FPCW multiple times - so we optimize it with
   // some inline assembly
@@ -110,56 +175,29 @@ static inline int splashCeil(SplashCoord x) {
   __asm fistp DWORD PTR result
   __asm fldcw WORD PTR oldCW
   return result;
+
 #else
+
+  //--- all others
+
   return (int)ceil(x);
-#endif
+
 #endif
 }
 
 static inline int splashRound(SplashCoord x) {
 #if USE_FIXEDPOINT
+
+  //--- fixed point
+
   return FixedPoint::round(x);
-#else
-#if __GNUC__ && __i386__
-  // this could use round-to-nearest mode and avoid the "+0.5",
-  // but that produces slightly different results (because i+0.5
-  // sometimes rounds up and sometimes down using the even rule)
-  Gushort oldCW, newCW, t;
-  int result;
 
-  x += 0.5;
-  __asm__ volatile("fnstcw %0\n"
-		   "movw   %0, %3\n"
-		   "andw   $0xf3ff, %3\n"
-		   "orw    $0x0400, %3\n"
-		   "movw   %3, %1\n"       // round down
-		   "fldcw  %1\n"
-		   "fistl %2\n"
-		   "fldcw  %0\n"
-		   : "=m" (oldCW), "=m" (newCW), "=m" (result), "=r" (t)
-		   : "t" (x));
-  return result;
-#elif defined(_WIN32) && defined(_M_IX86)
-  // this could use round-to-nearest mode and avoid the "+0.5",
-  // but that produces slightly different results (because i+0.5
-  // sometimes rounds up and sometimes down using the even rule)
-  Gushort oldCW, newCW;
-  int result;
-
-  x += 0.5;
-  __asm fld QWORD PTR x
-  __asm fnstcw WORD PTR oldCW
-  __asm mov ax, WORD PTR oldCW
-  __asm and ax, 0xf3ff
-  __asm or ax, 0x0400
-  __asm mov WORD PTR newCW, ax     // round down
-  __asm fldcw WORD PTR newCW
-  __asm fistp DWORD PTR result
-  __asm fldcw WORD PTR oldCW
-  return result;
 #else
-  return (int)floor(x + 0.5);
-#endif
+
+  //--- all others
+
+  return splashFloor(x + 0.5);
+
 #endif
 }
 
@@ -262,23 +300,53 @@ static inline GBool splashCheckDet(SplashCoord m11, SplashCoord m12,
 //         but
 //               xMin  = 10.1   xMax  = 11.3   (width = 1.2)
 //           --> xMinI = 10     xMaxI = 12     (width = 2)
+//
+// 4. Use a hybrid approach, choosing between two of the above
+//    options, based on width.  E.g., use #2 if width <= 4, and use #1
+//    if width > 4.
+//
+// If w >= 0 and strokeAdjMode is splashStrokeAdjustCAD then a special
+// mode for projecting line caps is enabled, with w being the
+// transformed line width.
+
 static inline void splashStrokeAdjust(SplashCoord xMin, SplashCoord xMax,
-				      int *xMinI, int *xMaxI) {
+				      int *xMinI, int *xMaxI,
+				      SplashStrokeAdjustMode strokeAdjMode,
+				      SplashCoord w = -1) {
   int x0, x1;
 
-  // NB: enable exactly one of these.
+  // this will never be called with strokeAdjMode == splashStrokeAdjustOff
+  if (strokeAdjMode == splashStrokeAdjustCAD) {
+    x0 = splashRound(xMin);
+    if (w >= 0) {
+      x1 = splashRound(xMax - w) + splashRound(w);
+    } else {
+      x1 = x0 + splashRound(xMax - xMin);
+    }
+  } else {
+    // NB: enable exactly one of these.
 #if 1 // 1. Round both edge coordinates.
-  x0 = splashRound(xMin);
-  x1 = splashRound(xMax);
+    x0 = splashRound(xMin);
+    x1 = splashRound(xMax);
 #endif
 #if 0 // 2. Round the min coordinate; add the ceiling of the width.
-  x0 = splashRound(xMin);
-  x1 = x0 + splashCeil(xMax - xMin);
+    x0 = splashRound(xMin);
+    x1 = x0 + splashCeil(xMax - xMin);
 #endif
 #if 0 // 3. Use floor on the min coord and ceiling on the max coord.
-  x0 = splashFloor(xMin);
-  x1 = splashCeil(xMax);
+    x0 = splashFloor(xMin);
+    x1 = splashCeil(xMax);
 #endif
+#if 0 // 4. Hybrid.
+    SplashCoord w = xMax - xMin;
+    x0 = splashRound(xMin);
+    if (w > 4) {
+      x1 = splashRound(xMax);
+    } else {
+      x1 = x0 + splashRound(w);
+    }
+#endif
+  }
   if (x1 == x0) {
     ++x1;
   }

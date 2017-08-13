@@ -16,8 +16,9 @@
 #  include <fenv.h>
 #  include <fpu_control.h>
 #endif
-#include "parseargs.h"
 #include "gmem.h"
+#include "gmempp.h"
+#include "parseargs.h"
 #include "GString.h"
 #include "GlobalParams.h"
 #include "Object.h"
@@ -29,9 +30,12 @@
 
 static int firstPage = 1;
 static int lastPage = 0;
-static int resolution = 150;
+static double resolution = 150;
 static GBool mono = gFalse;
 static GBool gray = gFalse;
+#if SPLASH_CMYK
+static GBool cmyk = gFalse;
+#endif
 static char enableFreeTypeStr[16] = "";
 static char antialiasStr[16] = "";
 static char vectorAntialiasStr[16] = "";
@@ -47,13 +51,17 @@ static ArgDesc argDesc[] = {
    "first page to print"},
   {"-l",      argInt,      &lastPage,      0,
    "last page to print"},
-  {"-r",      argInt,      &resolution,    0,
+  {"-r",      argFP,       &resolution,    0,
    "resolution, in DPI (default is 150)"},
   {"-mono",   argFlag,     &mono,          0,
    "generate a monochrome PBM file"},
   {"-gray",   argFlag,     &gray,          0,
    "generate a grayscale PGM file"},
-#if HAVE_FREETYPE_FREETYPE_H | HAVE_FREETYPE_H
+#if SPLASH_CMYK
+  {"-cmyk",   argFlag,     &cmyk,          0,
+   "generate a CMYK PAM file"},
+#endif
+#if HAVE_FREETYPE_H
   {"-freetype",   argString,      enableFreeTypeStr, sizeof(enableFreeTypeStr),
    "enable FreeType font rasterizer: yes, no"},
 #endif
@@ -92,7 +100,8 @@ int main(int argc, char *argv[]) {
   SplashOutputDev *splashOut;
   GBool ok;
   int exitCode;
-  int pg;
+  int pg, n;
+  const char *ext;
 
 #ifdef DEBUG_FP_LINUX
   // enable exceptions on floating point div-by-zero
@@ -103,7 +112,7 @@ int main(int argc, char *argv[]) {
   // emulation (yes, this is a kludge; but it's pretty much
   // unavoidable given the x87 instruction set; see gcc bug 323 for
   // more info)
-  fpu_control_t cw; 
+  fpu_control_t cw;
   _FPU_GETCW(cw);
   cw = (cw & ~_FPU_EXTENDED) | _FPU_DOUBLE;
   _FPU_SETCW(cw);
@@ -111,12 +120,15 @@ int main(int argc, char *argv[]) {
 
   exitCode = 99;
 
-#ifdef _MSC_VER
-  (void)kpse_set_program_name(argv[0], NULL);
-#endif
   // parse args
   ok = parseArgs(argDesc, &argc, argv);
-  if (mono && gray) {
+  n = 0;
+  n += mono ? 1 : 0;
+  n += gray ? 1 : 0;
+#if SPLASH_CMYK
+  n += cmyk ? 1 : 0;
+#endif
+  if (n > 1) {
     ok = gFalse;
   }
   if (!ok || argc != 3 || printVersion || printHelp) {
@@ -181,6 +193,19 @@ int main(int argc, char *argv[]) {
   if (lastPage < 1 || lastPage > doc->getNumPages())
     lastPage = doc->getNumPages();
 
+  // file name extension
+  if (mono) {
+    ext = "pbm";
+  } else if (gray) {
+    ext = "pgm";
+#if SPLASH_CMYK
+  } else if (cmyk) {
+    ext = "pam";
+#endif
+  } else {
+    ext = "ppm";
+  }
+
 
   // write PPM files
   if (mono) {
@@ -189,6 +214,11 @@ int main(int argc, char *argv[]) {
   } else if (gray) {
     paperColor[0] = 0xff;
     splashOut = new SplashOutputDev(splashModeMono8, 1, gFalse, paperColor);
+#if SPLASH_CMYK
+  } else if (cmyk) {
+    paperColor[0] = paperColor[1] = paperColor[2] = paperColor[3] = 0;
+    splashOut = new SplashOutputDev(splashModeCMYK8, 1, gFalse, paperColor);
+#endif
   } else {
     paperColor[0] = paperColor[1] = paperColor[2] = 0xff;
     splashOut = new SplashOutputDev(splashModeRGB8, 1, gFalse, paperColor);
@@ -203,9 +233,7 @@ int main(int argc, char *argv[]) {
 #endif
       splashOut->getBitmap()->writePNMFile(stdout);
     } else {
-      ppmFile = GString::format("{0:s}-{1:06d}.{2:s}",
-				ppmRoot, pg,
-				mono ? "pbm" : gray ? "pgm" : "ppm");
+      ppmFile = GString::format("{0:s}-{1:06d}.{2:s}", ppmRoot, pg, ext);
       splashOut->getBitmap()->writePNMFile(ppmFile->getCString());
       delete ppmFile;
     }

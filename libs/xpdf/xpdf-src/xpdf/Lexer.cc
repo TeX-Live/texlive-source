@@ -16,6 +16,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <ctype.h>
+#include "gmempp.h"
 #include "Lexer.h"
 #include "Error.h"
 
@@ -111,7 +112,7 @@ int Lexer::lookChar() {
 Object *Lexer::getObj(Object *obj) {
   char *p;
   int c, c2;
-  GBool comment, neg, done;
+  GBool comment, neg, doubleMinus, done;
   int numParen;
   int xi;
   double xf, scale;
@@ -141,10 +142,31 @@ Object *Lexer::getObj(Object *obj) {
   case '0': case '1': case '2': case '3': case '4':
   case '5': case '6': case '7': case '8': case '9':
   case '-': case '.':
+    // Adobe's number lexer has some "interesting" behavior:
+    // "--123" is interpreted as 0
+    // "--123.4" is interpreted as -123.4 [I've seen this in the wild]
+    // "50-100" is interpreted as 50 [I've seen this in the wild]
+    // "50--100" is interpreted as 50
+    // "50-100.0" is an error -- but older versions of Acrobat may
+    //   have interpreted it as 50100.0 (?)
+    // "50--100.0" is an error -- but older versions of Acrobat may
+    //   have interpreted it as 50100.0 (?)
+    // "50.0-100" is interpreted as 50.0 (or maybe 50.0100?)
+    // "50.0--100" is interpreted as 50.0 (or maybe 50.0100?)
+    // "-50-100" is interpreted as -50
+    // "-" is interpreted as 0
+    // "-." is interpreted as 0.0
     neg = gFalse;
+    doubleMinus = gFalse;
     xf = xi = 0;
     if (c == '-') {
       neg = gTrue;
+      if (lookChar() == '-') {
+	doubleMinus = gTrue;
+	do {
+	  getChar();
+	} while (lookChar() == '-');
+      }
     } else if (c == '.') {
       goto doReal;
     } else {
@@ -163,8 +185,14 @@ Object *Lexer::getObj(Object *obj) {
 	break;
       }
     }
+    while ((c = lookChar()) == '-' || isdigit(c)) {
+      getChar();
+    }
     if (neg) {
       xi = -xi;
+    }
+    if (doubleMinus) {
+      xi = 0;
     }
     obj->initInt(xi);
     break;
@@ -173,8 +201,6 @@ Object *Lexer::getObj(Object *obj) {
     while (1) {
       c = lookChar();
       if (c == '-') {
-	// ignore minus signs in the middle of numbers to match
-	// Adobe's behavior
 	error(errSyntaxWarning, getPos(), "Badly formatted number");
 	getChar();
 	continue;
@@ -185,6 +211,9 @@ Object *Lexer::getObj(Object *obj) {
       getChar();
       xf = xf + scale * (c - '0');
       scale *= 0.1;
+    }
+    while ((c = lookChar()) == '-' || isdigit(c)) {
+      getChar();
     }
     if (neg) {
       xf = -xf;
@@ -321,20 +350,22 @@ Object *Lexer::getObj(Object *obj) {
 	} else if (c2 >= 'a' && c2 <= 'f') {
 	  c = c2 - 'a' + 10;
 	} else {
+	  error(errSyntaxError, getPos(), "Invalid hex escape in name");
 	  goto notEscChar;
 	}
 	getChar();
-	c <<= 4;
-	c2 = getChar();
+	c2 = lookChar();
 	if (c2 >= '0' && c2 <= '9') {
-	  c += c2 - '0';
+	  c = (c << 4) + (c2 - '0');
 	} else if (c2 >= 'A' && c2 <= 'F') {
-	  c += c2 - 'A' + 10;
+	  c = (c << 4) + (c2 - 'A' + 10);
 	} else if (c2 >= 'a' && c2 <= 'f') {
-	  c += c2 - 'a' + 10;
+	  c = (c << 4) + (c2 - 'a' + 10);
 	} else {
-	  error(errSyntaxError, getPos(), "Illegal digit in hex char in name");
+	  error(errSyntaxError, getPos(), "Invalid hex escape in name");
+	  goto notEscChar;
 	}
+	getChar();
       }
      notEscChar:
       // the PDF spec claims that names are limited to 127 chars, but
@@ -494,6 +525,10 @@ void Lexer::skipToNextLine() {
       return;
     }
   }
+}
+
+void Lexer::skipToEOF() {
+  while (getChar() != EOF) ;
 }
 
 GBool Lexer::isSpace(int c) {

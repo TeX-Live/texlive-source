@@ -112,6 +112,7 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/Stream.cc \
 	@XPDF_TREE@/xpdf/TextString.cc \
 	@XPDF_TREE@/xpdf/UnicodeMap.cc \
+	@XPDF_TREE@/xpdf/UTF8.cc \
 	@XPDF_TREE@/xpdf/XFAForm.cc \
 	@XPDF_TREE@/xpdf/XRef.cc \
 	@XPDF_TREE@/xpdf/Zoox.cc

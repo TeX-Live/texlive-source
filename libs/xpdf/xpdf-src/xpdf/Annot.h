@@ -93,6 +93,10 @@ public:
   double getYMax() { return yMax; }
   Object *getObject(Object *obj);
 
+  // Check if point is inside the annotation rectangle.
+  GBool inRect(double x, double y)
+    { return xMin <= x && x <= xMax && yMin <= y && y <= yMax; }
+
   // Get appearance object.
   Object *getAppearance(Object *obj) { return appearance.fetch(xref, obj); }
 
@@ -108,6 +112,7 @@ private:
   void generateLineAppearance();
   void generatePolyLineAppearance();
   void generatePolygonAppearance();
+  void generateFreeTextAppearance();
   void setLineStyle(AnnotBorderStyle *bs, double *lineWidth);
   void setStrokeColor(double *color, int nComps);
   GBool setFillColor(Object *colorObj);
@@ -121,6 +126,8 @@ private:
   void drawCircle(double cx, double cy, double r, const char *cmd);
   void drawCircleTopLeft(double cx, double cy, double r);
   void drawCircleBottomRight(double cx, double cy, double r);
+  void drawText(GString *text, GString *da, int quadding, double margin,
+		int rot);
 
   PDFDoc *doc;
   XRef *xref;			// the xref table for this PDF file
@@ -154,6 +161,11 @@ public:
   int getNumAnnots() { return nAnnots; }
   Annot *getAnnot(int i) { return annots[i]; }
 
+  // If point <x>,<y> is in an annotation, return the associated
+  // annotation; else return NULL.
+  Annot *find(double x, double y);
+  int findIdx(double x, double y);
+
   // Generate an appearance stream for any non-form-field annotation
   // that is missing it.
   void generateAnnotAppearances();
@@ -162,6 +174,7 @@ private:
 
   void scanFieldAppearances(Dict *node, Ref *ref, Dict *parent,
 			    Dict *acroForm);
+
   Annot *findAnnot(Ref *ref);
 
   PDFDoc *doc;

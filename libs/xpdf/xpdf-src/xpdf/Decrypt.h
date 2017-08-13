@@ -80,10 +80,11 @@ struct DecryptAES256State {
 class DecryptStream: public FilterStream {
 public:
 
-  DecryptStream(Stream *strA, Guchar *fileKey,
-		CryptAlgorithm algoA, int keyLength,
-		int objNum, int objGen);
+  DecryptStream(Stream *strA, Guchar *fileKeyA,
+		CryptAlgorithm algoA, int keyLengthA,
+		int objNumA, int objGenA);
   virtual ~DecryptStream();
+  virtual Stream *copy();
   virtual StreamKind getKind() { return strWeird; }
   virtual void reset();
   virtual int getChar();
@@ -93,7 +94,10 @@ public:
 
 private:
 
+  Guchar fileKey[32];
   CryptAlgorithm algo;
+  int keyLength;
+  int objNum, objGen;
   int objKeyLength;
   Guchar objKey[32];
 

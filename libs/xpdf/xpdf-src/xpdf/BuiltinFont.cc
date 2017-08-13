@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "FontEncodingTables.h"
 #include "BuiltinFont.h"
 

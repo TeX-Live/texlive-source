@@ -105,9 +105,6 @@ public:
   // End a page.
   virtual void endPage() {}
 
-  // Dump page contents to display.
-  virtual void dump() {}
-
   //----- coordinate conversion
 
   // Convert between device and user coordinates.
@@ -143,6 +140,7 @@ public:
   virtual void updateFillOverprint(GfxState *state) {}
   virtual void updateStrokeOverprint(GfxState *state) {}
   virtual void updateOverprintMode(GfxState *state) {}
+  virtual void updateRenderingIntent(GfxState *state) {}
   virtual void updateTransfer(GfxState *state) {}
 
   //----- update text state
@@ -163,7 +161,7 @@ public:
   virtual void fill(GfxState *state) {}
   virtual void eoFill(GfxState *state) {}
   virtual void tilingPatternFill(GfxState *state, Gfx *gfx, Object *strRef,
-				 int paintType, Dict *resDict,
+				 int paintType, int tilingType, Dict *resDict,
 				 double *mat, double *bbox,
 				 int x0, int y0, int x1, int y1,
 				 double xStep, double yStep) {}
@@ -221,7 +219,7 @@ public:
 				   Stream *maskStr,
 				   int maskWidth, int maskHeight,
 				   GfxImageColorMap *maskColorMap,
-				   GBool interpolate);
+				   double *matte, GBool interpolate);
 
 #if OPI_SUPPORT
   //----- OPI functions

@@ -15,6 +15,9 @@
 #pragma interface
 #endif
 
+#if MULTITHREADED
+#include "GMutex.h"
+#endif
 #include "Object.h"
 
 struct DictEntry;
@@ -33,8 +36,13 @@ public:
   ~Dict();
 
   // Reference counting.
+#if MULTITHREADED
+  int incRef() { return gAtomicIncrement(&ref); }
+  int decRef() { return gAtomicDecrement(&ref); }
+#else
   int incRef() { return ++ref; }
   int decRef() { return --ref; }
+#endif
 
   // Get number of entries.
   int getLength() { return length; }
@@ -67,7 +75,11 @@ private:
   DictEntry **hashTab;		// hash table pointers
   int size;			// size of <entries> array
   int length;			// number of entries in dictionary
+#if MULTITHREADED
+  GAtomicCounter ref;		// reference count
+#else
   int ref;			// reference count
+#endif
 
   DictEntry *find(const char *key);
   void expand();

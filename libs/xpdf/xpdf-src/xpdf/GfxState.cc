@@ -2,7 +2,7 @@
 //
 // GfxState.cc
 //
-// Copyright 1996-2003 Glyph & Cog, LLC
+// Copyright 1996-2016 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -16,7 +16,9 @@
 #include <math.h>
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "Error.h"
+#include "GlobalParams.h"
 #include "Object.h"
 #include "Array.h"
 #include "Page.h"
@@ -28,6 +30,7 @@
 // Max depth of nested color spaces.  This is used to catch infinite
 // loops in the color space object structure.
 #define colorSpaceRecursionLimit 8
+
 
 //------------------------------------------------------------------------
 
@@ -88,6 +91,7 @@ static const char *gfxColorSpaceModeNames[] = {
 };
 
 #define nGfxColorSpaceModes ((sizeof(gfxColorSpaceModeNames) / sizeof(char *)))
+
 
 
 //------------------------------------------------------------------------
@@ -212,15 +216,18 @@ GfxColorSpace *GfxDeviceGrayColorSpace::copy() {
 }
 
 
-void GfxDeviceGrayColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxDeviceGrayColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				      GfxRenderingIntent ri) {
   *gray = clip01(color->c[0]);
 }
 
-void GfxDeviceGrayColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+void GfxDeviceGrayColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				     GfxRenderingIntent ri) {
   rgb->r = rgb->g = rgb->b = clip01(color->c[0]);
 }
 
-void GfxDeviceGrayColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxDeviceGrayColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				      GfxRenderingIntent ri) {
   cmyk->c = cmyk->m = cmyk->y = 0;
   cmyk->k = clip01(gfxColorComp1 - color->c[0]);
 }
@@ -307,15 +314,18 @@ GfxColorSpace *GfxCalGrayColorSpace::parse(Array *arr, int recursion) {
   return cs;
 }
 
-void GfxCalGrayColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxCalGrayColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				   GfxRenderingIntent ri) {
   *gray = clip01(color->c[0]);
 }
 
-void GfxCalGrayColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+ void GfxCalGrayColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				   GfxRenderingIntent ri) {
   rgb->r = rgb->g = rgb->b = clip01(color->c[0]);
 }
 
-void GfxCalGrayColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxCalGrayColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				   GfxRenderingIntent ri) {
   cmyk->c = cmyk->m = cmyk->y = 0;
   cmyk->k = clip01(gfxColorComp1 - color->c[0]);
 }
@@ -343,19 +353,22 @@ GfxColorSpace *GfxDeviceRGBColorSpace::copy() {
 }
 
 
-void GfxDeviceRGBColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxDeviceRGBColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				     GfxRenderingIntent ri) {
   *gray = clip01((GfxColorComp)(0.3  * color->c[0] +
 				0.59 * color->c[1] +
 				0.11 * color->c[2] + 0.5));
 }
 
-void GfxDeviceRGBColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+void GfxDeviceRGBColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				    GfxRenderingIntent ri) {
   rgb->r = clip01(color->c[0]);
   rgb->g = clip01(color->c[1]);
   rgb->b = clip01(color->c[2]);
 }
 
-void GfxDeviceRGBColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxDeviceRGBColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				     GfxRenderingIntent ri) {
   GfxColorComp c, m, y, k;
 
   c = clip01(gfxColorComp1 - color->c[0]);
@@ -486,19 +499,22 @@ GfxColorSpace *GfxCalRGBColorSpace::parse(Array *arr, int recursion) {
 }
 
 
-void GfxCalRGBColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxCalRGBColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				  GfxRenderingIntent ri) {
   *gray = clip01((GfxColorComp)(0.299 * color->c[0] +
 				0.587 * color->c[1] +
 				0.114 * color->c[2] + 0.5));
 }
 
-void GfxCalRGBColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+void GfxCalRGBColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				 GfxRenderingIntent ri) {
   rgb->r = clip01(color->c[0]);
   rgb->g = clip01(color->c[1]);
   rgb->b = clip01(color->c[2]);
 }
 
-void GfxCalRGBColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxCalRGBColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				  GfxRenderingIntent ri) {
   GfxColorComp c, m, y, k;
 
   c = clip01(gfxColorComp1 - color->c[0]);
@@ -542,14 +558,16 @@ GfxColorSpace *GfxDeviceCMYKColorSpace::copy() {
 }
 
 
-void GfxDeviceCMYKColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxDeviceCMYKColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				      GfxRenderingIntent ri) {
   *gray = clip01((GfxColorComp)(gfxColorComp1 - color->c[3]
 				- 0.3  * color->c[0]
 				- 0.59 * color->c[1]
 				- 0.11 * color->c[2] + 0.5));
 }
 
-void GfxDeviceCMYKColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+void GfxDeviceCMYKColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				     GfxRenderingIntent ri) {
   double c, m, y, k, c1, m1, y1, k1, r, g, b, x;
 
   c = colToDbl(color->c[0]);
@@ -611,7 +629,8 @@ void GfxDeviceCMYKColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
   rgb->b = clip01(dblToCol(b));
 }
 
-void GfxDeviceCMYKColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxDeviceCMYKColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				      GfxRenderingIntent ri) {
   cmyk->c = clip01(color->c[0]);
   cmyk->m = clip01(color->c[1]);
   cmyk->y = clip01(color->c[2]);
@@ -625,6 +644,7 @@ void GfxDeviceCMYKColorSpace::getDefaultColor(GfxColor *color) {
   color->c[2] = 0;
   color->c[3] = gfxColorComp1;
 }
+
 
 //------------------------------------------------------------------------
 // GfxLabColorSpace
@@ -741,16 +761,18 @@ GfxColorSpace *GfxLabColorSpace::parse(Array *arr, int recursion) {
 }
 
 
-void GfxLabColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxLabColorSpace::getGray(GfxColor *color, GfxGray *gray,
+			       GfxRenderingIntent ri) {
   GfxRGB rgb;
 
-  getRGB(color, &rgb);
+  getRGB(color, &rgb, ri);
   *gray = clip01((GfxColorComp)(0.299 * rgb.r +
 				0.587 * rgb.g +
 				0.114 * rgb.b + 0.5));
 }
 
-void GfxLabColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+void GfxLabColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+			      GfxRenderingIntent ri) {
   double X, Y, Z;
   double t1, t2;
   double r, g, b;
@@ -788,12 +810,13 @@ void GfxLabColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
   rgb->b = dblToCol(pow(clip01(b * kb), 0.5));
 }
 
-void GfxLabColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxLabColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+			       GfxRenderingIntent ri) {
   GfxRGB rgb;
   GfxColorComp c, m, y, k;
 
 
-  getRGB(color, &rgb);
+  getRGB(color, &rgb, ri);
   c = clip01(gfxColorComp1 - rgb.r);
   m = clip01(gfxColorComp1 - rgb.g);
   y = clip01(gfxColorComp1 - rgb.b);
@@ -950,16 +973,19 @@ GfxColorSpace *GfxICCBasedColorSpace::parse(Array *arr,
 }
 
 
-void GfxICCBasedColorSpace::getGray(GfxColor *color, GfxGray *gray) {
-  alt->getGray(color, gray);
+void GfxICCBasedColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				    GfxRenderingIntent ri) {
+  alt->getGray(color, gray, ri);
 }
 
-void GfxICCBasedColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
-  alt->getRGB(color, rgb);
+void GfxICCBasedColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				   GfxRenderingIntent ri) {
+  alt->getRGB(color, rgb, ri);
 }
 
-void GfxICCBasedColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
-  alt->getCMYK(color, cmyk);
+void GfxICCBasedColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				    GfxRenderingIntent ri) {
+  alt->getCMYK(color, cmyk, ri);
 }
 
 
@@ -993,6 +1019,7 @@ void GfxICCBasedColorSpace::getDefaultRanges(double *decodeLow,
   }
 #endif
 }
+
 
 //------------------------------------------------------------------------
 // GfxIndexedColorSpace
@@ -1107,33 +1134,42 @@ GfxColor *GfxIndexedColorSpace::mapColorToBase(GfxColor *color,
 					       GfxColor *baseColor) {
   Guchar *p;
   double low[gfxColorMaxComps], range[gfxColorMaxComps];
-  int n, i;
+  int n, i, k;
 
   n = base->getNComps();
   base->getDefaultRanges(low, range, indexHigh);
-  p = &lookup[(int)(colToDbl(color->c[0]) + 0.5) * n];
+  k = (int)(colToDbl(color->c[0]) + 0.5);
+  if (k < 0) {
+    k = 0;
+  } else if (k > indexHigh) {
+    k = indexHigh;
+  }
+  p = &lookup[k * n];
   for (i = 0; i < n; ++i) {
     baseColor->c[i] = dblToCol(low[i] + (p[i] / 255.0) * range[i]);
   }
   return baseColor;
 }
 
-void GfxIndexedColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxIndexedColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				   GfxRenderingIntent ri) {
   GfxColor color2;
 
-  base->getGray(mapColorToBase(color, &color2), gray);
+  base->getGray(mapColorToBase(color, &color2), gray, ri);
 }
 
-void GfxIndexedColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+void GfxIndexedColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				  GfxRenderingIntent ri) {
   GfxColor color2;
 
-  base->getRGB(mapColorToBase(color, &color2), rgb);
+  base->getRGB(mapColorToBase(color, &color2), rgb, ri);
 }
 
-void GfxIndexedColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxIndexedColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				   GfxRenderingIntent ri) {
   GfxColor color2;
 
-  base->getCMYK(mapColorToBase(color, &color2), cmyk);
+  base->getCMYK(mapColorToBase(color, &color2), cmyk, ri);
 }
 
 
@@ -1196,7 +1232,6 @@ GfxColorSpace *GfxSeparationColorSpace::copy() {
   return cs;
 }
 
-//~ handle the 'All' and 'None' colorants
 GfxColorSpace *GfxSeparationColorSpace::parse(Array *arr,
 					      int recursion) {
   GfxSeparationColorSpace *cs;
@@ -1242,7 +1277,8 @@ GfxColorSpace *GfxSeparationColorSpace::parse(Array *arr,
 }
 
 
-void GfxSeparationColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxSeparationColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				      GfxRenderingIntent ri) {
   double x;
   double c[gfxColorMaxComps];
   GfxColor color2;
@@ -1253,10 +1289,11 @@ void GfxSeparationColorSpace::getGray(GfxColor *color, GfxGray *gray) {
   for (i = 0; i < alt->getNComps(); ++i) {
     color2.c[i] = dblToCol(c[i]);
   }
-  alt->getGray(&color2, gray);
+  alt->getGray(&color2, gray, ri);
 }
 
-void GfxSeparationColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+void GfxSeparationColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				     GfxRenderingIntent ri) {
   double x;
   double c[gfxColorMaxComps];
   GfxColor color2;
@@ -1267,10 +1304,11 @@ void GfxSeparationColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
   for (i = 0; i < alt->getNComps(); ++i) {
     color2.c[i] = dblToCol(c[i]);
   }
-  alt->getRGB(&color2, rgb);
+  alt->getRGB(&color2, rgb, ri);
 }
 
-void GfxSeparationColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxSeparationColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				      GfxRenderingIntent ri) {
   double x;
   double c[gfxColorMaxComps];
   GfxColor color2;
@@ -1281,7 +1319,7 @@ void GfxSeparationColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
   for (i = 0; i < alt->getNComps(); ++i) {
     color2.c[i] = dblToCol(c[i]);
   }
-  alt->getCMYK(&color2, cmyk);
+  alt->getCMYK(&color2, cmyk, ri);
 }
 
 
@@ -1296,12 +1334,14 @@ void GfxSeparationColorSpace::getDefaultColor(GfxColor *color) {
 GfxDeviceNColorSpace::GfxDeviceNColorSpace(int nCompsA,
 					   GString **namesA,
 					   GfxColorSpace *altA,
-					   Function *funcA) {
+					   Function *funcA,
+					   Object *attrsA) {
   int i;
 
   nComps = nCompsA;
   alt = altA;
   func = funcA;
+  attrsA->copy(&attrs);
   nonMarking = gTrue;
   overprintMask = 0;
   for (i = 0; i < nComps; ++i) {
@@ -1327,6 +1367,7 @@ GfxDeviceNColorSpace::GfxDeviceNColorSpace(int nCompsA,
 					   GString **namesA,
 					   GfxColorSpace *altA,
 					   Function *funcA,
+					   Object *attrsA,
 					   GBool nonMarkingA,
 					   Guint overprintMaskA) {
   int i;
@@ -1334,6 +1375,7 @@ GfxDeviceNColorSpace::GfxDeviceNColorSpace(int nCompsA,
   nComps = nCompsA;
   alt = altA;
   func = funcA;
+  attrsA->copy(&attrs);
   nonMarking = nonMarkingA;
   overprintMask = overprintMaskA;
   for (i = 0; i < nComps; ++i) {
@@ -1349,17 +1391,17 @@ GfxDeviceNColorSpace::~GfxDeviceNColorSpace() {
   }
   delete alt;
   delete func;
+  attrs.free();
 }
 
 GfxColorSpace *GfxDeviceNColorSpace::copy() {
   GfxDeviceNColorSpace *cs;
 
   cs = new GfxDeviceNColorSpace(nComps, names, alt->copy(), func->copy(),
-				nonMarking, overprintMask);
+				&attrs, nonMarking, overprintMask);
   return cs;
 }
 
-//~ handle the 'None' colorant
 GfxColorSpace *GfxDeviceNColorSpace::parse(Array *arr,
 					   int recursion) {
   GfxDeviceNColorSpace *cs;
@@ -1367,7 +1409,7 @@ GfxColorSpace *GfxDeviceNColorSpace::parse(Array *arr,
   GString *namesA[gfxColorMaxComps];
   GfxColorSpace *altA;
   Function *funcA;
-  Object obj1, obj2;
+  Object attrsA, obj1, obj2;
   int i;
 
   if (arr->getLength() != 4 && arr->getLength() != 5) {
@@ -1408,7 +1450,13 @@ GfxColorSpace *GfxDeviceNColorSpace::parse(Array *arr,
     goto err4;
   }
   obj1.free();
-  cs = new GfxDeviceNColorSpace(nCompsA, namesA, altA, funcA);
+  if (arr->getLength() == 5) {
+    arr->get(4, &attrsA);
+  } else {
+    attrsA.initNull();
+  }
+  cs = new GfxDeviceNColorSpace(nCompsA, namesA, altA, funcA, &attrsA);
+  attrsA.free();
   return cs;
 
  err4:
@@ -1424,7 +1472,8 @@ GfxColorSpace *GfxDeviceNColorSpace::parse(Array *arr,
 }
 
 
-void GfxDeviceNColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxDeviceNColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				   GfxRenderingIntent ri) {
   double x[gfxColorMaxComps], c[gfxColorMaxComps];
   GfxColor color2;
   int i;
@@ -1436,10 +1485,11 @@ void GfxDeviceNColorSpace::getGray(GfxColor *color, GfxGray *gray) {
   for (i = 0; i < alt->getNComps(); ++i) {
     color2.c[i] = dblToCol(c[i]);
   }
-  alt->getGray(&color2, gray);
+  alt->getGray(&color2, gray, ri);
 }
 
-void GfxDeviceNColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+void GfxDeviceNColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				  GfxRenderingIntent ri) {
   double x[gfxColorMaxComps], c[gfxColorMaxComps];
   GfxColor color2;
   int i;
@@ -1451,10 +1501,11 @@ void GfxDeviceNColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
   for (i = 0; i < alt->getNComps(); ++i) {
     color2.c[i] = dblToCol(c[i]);
   }
-  alt->getRGB(&color2, rgb);
+  alt->getRGB(&color2, rgb, ri);
 }
 
-void GfxDeviceNColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxDeviceNColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				   GfxRenderingIntent ri) {
   double x[gfxColorMaxComps], c[gfxColorMaxComps];
   GfxColor color2;
   int i;
@@ -1466,7 +1517,7 @@ void GfxDeviceNColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
   for (i = 0; i < alt->getNComps(); ++i) {
     color2.c[i] = dblToCol(c[i]);
   }
-  alt->getCMYK(&color2, cmyk);
+  alt->getCMYK(&color2, cmyk, ri);
 }
 
 
@@ -1527,15 +1578,18 @@ GfxColorSpace *GfxPatternColorSpace::parse(Array *arr,
 }
 
 
-void GfxPatternColorSpace::getGray(GfxColor *color, GfxGray *gray) {
+void GfxPatternColorSpace::getGray(GfxColor *color, GfxGray *gray,
+				   GfxRenderingIntent ri) {
   *gray = 0;
 }
 
-void GfxPatternColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
+void GfxPatternColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				  GfxRenderingIntent ri) {
   rgb->r = rgb->g = rgb->b = 0;
 }
 
-void GfxPatternColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
+void GfxPatternColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
+				   GfxRenderingIntent ri) {
   cmyk->c = cmyk->m = cmyk->y = 0;
   cmyk->k = 1;
 }
@@ -2162,6 +2216,7 @@ GfxAxialShading *GfxAxialShading::parse(Dict *dict
   } else {
     error(errSyntaxError, -1,
 	  "Missing or invalid Coords in shading dictionary");
+    obj1.free();
     goto err1;
   }
   obj1.free();
@@ -3129,7 +3184,7 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
 	p->x[1][0] = x[7];
 	p->y[1][0] = y[7];
 	for (j = 0; j < nCompsA; ++j) {
-	  p->color[0][1][j] = patchesA[nPatchesA-1].color[1][0][j];
+	  p->color[0][0][j] = patchesA[nPatchesA-1].color[1][0][j];
 	  p->color[0][1][j] = patchesA[nPatchesA-1].color[0][0][j];
 	  p->color[1][1][j] = c[0][j];
 	  p->color[1][0][j] = c[1][j];
@@ -3572,7 +3627,8 @@ GfxImageColorMap::~GfxImageColorMap() {
   }
 }
 
-void GfxImageColorMap::getGray(Guchar *x, GfxGray *gray) {
+void GfxImageColorMap::getGray(Guchar *x, GfxGray *gray,
+			       GfxRenderingIntent ri) {
   GfxColor color;
   int i;
 
@@ -3580,16 +3636,16 @@ void GfxImageColorMap::getGray(Guchar *x, GfxGray *gray) {
     for (i = 0; i < nComps2; ++i) {
       color.c[i] = lookup2[i][x[0]];
     }
-    colorSpace2->getGray(&color, gray);
+    colorSpace2->getGray(&color, gray, ri);
   } else {
     for (i = 0; i < nComps; ++i) {
       color.c[i] = lookup[i][x[i]];
     }
-    colorSpace->getGray(&color, gray);
+    colorSpace->getGray(&color, gray, ri);
   }
 }
 
-void GfxImageColorMap::getRGB(Guchar *x, GfxRGB *rgb) {
+void GfxImageColorMap::getRGB(Guchar *x, GfxRGB *rgb, GfxRenderingIntent ri) {
   GfxColor color;
   int i;
 
@@ -3597,16 +3653,17 @@ void GfxImageColorMap::getRGB(Guchar *x, GfxRGB *rgb) {
     for (i = 0; i < nComps2; ++i) {
       color.c[i] = lookup2[i][x[0]];
     }
-    colorSpace2->getRGB(&color, rgb);
+    colorSpace2->getRGB(&color, rgb, ri);
   } else {
     for (i = 0; i < nComps; ++i) {
       color.c[i] = lookup[i][x[i]];
     }
-    colorSpace->getRGB(&color, rgb);
+    colorSpace->getRGB(&color, rgb, ri);
   }
 }
 
-void GfxImageColorMap::getCMYK(Guchar *x, GfxCMYK *cmyk) {
+void GfxImageColorMap::getCMYK(Guchar *x, GfxCMYK *cmyk,
+			       GfxRenderingIntent ri) {
   GfxColor color;
   int i;
 
@@ -3614,12 +3671,12 @@ void GfxImageColorMap::getCMYK(Guchar *x, GfxCMYK *cmyk) {
     for (i = 0; i < nComps2; ++i) {
       color.c[i] = lookup2[i][x[0]];
     }
-    colorSpace2->getCMYK(&color, cmyk);
+    colorSpace2->getCMYK(&color, cmyk, ri);
   } else {
     for (i = 0; i < nComps; ++i) {
       color.c[i] = lookup[i][x[i]];
     }
-    colorSpace->getCMYK(&color, cmyk);
+    colorSpace->getCMYK(&color, cmyk, ri);
   }
 }
 
@@ -3637,7 +3694,8 @@ void GfxImageColorMap::getColor(Guchar *x, GfxColor *color) {
   }
 }
 
-void GfxImageColorMap::getGrayByteLine(Guchar *in, Guchar *out, int n) {
+void GfxImageColorMap::getGrayByteLine(Guchar *in, Guchar *out, int n,
+				       GfxRenderingIntent ri) {
   GfxColor color;
   GfxGray gray;
   int i, j;
@@ -3647,7 +3705,7 @@ void GfxImageColorMap::getGrayByteLine(Guchar *in, Guchar *out, int n) {
       for (i = 0; i < nComps2; ++i) {
 	color.c[i] = lookup2[i][in[j]];
       }
-      colorSpace2->getGray(&color, &gray);
+      colorSpace2->getGray(&color, &gray, ri);
       out[j] = colToByte(gray);
     }
   } else {
@@ -3655,13 +3713,14 @@ void GfxImageColorMap::getGrayByteLine(Guchar *in, Guchar *out, int n) {
       for (i = 0; i < nComps; ++i) {
 	color.c[i] = lookup[i][in[j * nComps + i]];
       }
-      colorSpace->getGray(&color, &gray);
+      colorSpace->getGray(&color, &gray, ri);
       out[j] = colToByte(gray);
     }
   }
 }
 
-void GfxImageColorMap::getRGBByteLine(Guchar *in, Guchar *out, int n) {
+void GfxImageColorMap::getRGBByteLine(Guchar *in, Guchar *out, int n,
+				      GfxRenderingIntent ri) {
   GfxColor color;
   GfxRGB rgb;
   int i, j;
@@ -3671,7 +3730,7 @@ void GfxImageColorMap::getRGBByteLine(Guchar *in, Guchar *out, int n) {
       for (i = 0; i < nComps2; ++i) {
 	color.c[i] = lookup2[i][in[j]];
       }
-      colorSpace2->getRGB(&color, &rgb);
+      colorSpace2->getRGB(&color, &rgb, ri);
       out[j*3] = colToByte(rgb.r);
       out[j*3 + 1] = colToByte(rgb.g);
       out[j*3 + 2] = colToByte(rgb.b);
@@ -3681,7 +3740,7 @@ void GfxImageColorMap::getRGBByteLine(Guchar *in, Guchar *out, int n) {
       for (i = 0; i < nComps; ++i) {
 	color.c[i] = lookup[i][in[j * nComps + i]];
       }
-      colorSpace->getRGB(&color, &rgb);
+      colorSpace->getRGB(&color, &rgb, ri);
       out[j*3] = colToByte(rgb.r);
       out[j*3 + 1] = colToByte(rgb.g);
       out[j*3 + 2] = colToByte(rgb.b);
@@ -3689,7 +3748,8 @@ void GfxImageColorMap::getRGBByteLine(Guchar *in, Guchar *out, int n) {
   }
 }
 
-void GfxImageColorMap::getCMYKByteLine(Guchar *in, Guchar *out, int n) {
+void GfxImageColorMap::getCMYKByteLine(Guchar *in, Guchar *out, int n,
+				       GfxRenderingIntent ri) {
   GfxColor color;
   GfxCMYK cmyk;
   int i, j;
@@ -3699,7 +3759,7 @@ void GfxImageColorMap::getCMYKByteLine(Guchar *in, Guchar *out, int n) {
       for (i = 0; i < nComps2; ++i) {
 	color.c[i] = lookup2[i][in[j]];
       }
-      colorSpace2->getCMYK(&color, &cmyk);
+      colorSpace2->getCMYK(&color, &cmyk, ri);
       out[j*4] = colToByte(cmyk.c);
       out[j*4 + 1] = colToByte(cmyk.m);
       out[j*4 + 2] = colToByte(cmyk.y);
@@ -3710,7 +3770,7 @@ void GfxImageColorMap::getCMYKByteLine(Guchar *in, Guchar *out, int n) {
       for (i = 0; i < nComps; ++i) {
 	color.c[i] = lookup[i][in[j * nComps + i]];
       }
-      colorSpace->getCMYK(&color, &cmyk);
+      colorSpace->getCMYK(&color, &cmyk, ri);
       out[j*4] = colToByte(cmyk.c);
       out[j*4 + 1] = colToByte(cmyk.m);
       out[j*4 + 2] = colToByte(cmyk.y);
@@ -3983,6 +4043,7 @@ GfxState::GfxState(double hDPIA, double vDPIA, PDFRectangle *pageBox,
   strokeOpacity = 1;
   fillOverprint = gFalse;
   strokeOverprint = gFalse;
+  renderingIntent = gfxRenderingIntentRelativeColorimetric;
   overprintMode = 0;
   transfer[0] = transfer[1] = transfer[2] = transfer[3] = NULL;
 
@@ -4165,8 +4226,8 @@ double GfxState::getTransformedFontSize() {
 
 void GfxState::getFontTransMat(double *m11, double *m12,
 			       double *m21, double *m22) {
-  *m11 = (textMat[0] * ctm[0] + textMat[1] * ctm[2]) * fontSize;
-  *m12 = (textMat[0] * ctm[1] + textMat[1] * ctm[3]) * fontSize;
+  *m11 = (textMat[0] * ctm[0] + textMat[1] * ctm[2]) * fontSize * horizScaling;
+  *m12 = (textMat[0] * ctm[1] + textMat[1] * ctm[3]) * fontSize * horizScaling;
   *m21 = (textMat[2] * ctm[0] + textMat[3] * ctm[2]) * fontSize;
   *m22 = (textMat[2] * ctm[1] + textMat[3] * ctm[3]) * fontSize;
 }

@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "gfile.h"
 #include "GString.h"
 #include "GList.h"
@@ -119,9 +120,6 @@ UnicodeMap::UnicodeMap(GString *encodingNameA) {
   eMaps = NULL;
   eMapsLen = 0;
   refCnt = 1;
-#if MULTITHREADED
-  gInitMutex(&mutex);
-#endif
 }
 
 UnicodeMap::UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
@@ -134,9 +132,6 @@ UnicodeMap::UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
   eMaps = NULL;
   eMapsLen = 0;
   refCnt = 1;
-#if MULTITHREADED
-  gInitMutex(&mutex);
-#endif
 }
 
 UnicodeMap::UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
@@ -148,9 +143,6 @@ UnicodeMap::UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
   eMaps = NULL;
   eMapsLen = 0;
   refCnt = 1;
-#if MULTITHREADED
-  gInitMutex(&mutex);
-#endif
 }
 
 UnicodeMap::~UnicodeMap() {
@@ -161,18 +153,13 @@ UnicodeMap::~UnicodeMap() {
   if (eMaps) {
     gfree(eMaps);
   }
-#if MULTITHREADED
-  gDestroyMutex(&mutex);
-#endif
 }
 
 void UnicodeMap::incRefCnt() {
 #if MULTITHREADED
-  gLockMutex(&mutex);
-#endif
+  gAtomicIncrement(&refCnt);
+#else
   ++refCnt;
-#if MULTITHREADED
-  gUnlockMutex(&mutex);
 #endif
 }
 
@@ -180,11 +167,9 @@ void UnicodeMap::decRefCnt() {
   GBool done;
 
 #if MULTITHREADED
-  gLockMutex(&mutex);
-#endif
+  done = gAtomicDecrement(&refCnt) == 0;
+#else
   done = --refCnt == 0;
-#if MULTITHREADED
-  gUnlockMutex(&mutex);
 #endif
   if (done) {
     delete this;

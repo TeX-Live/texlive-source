@@ -1,14 +1,14 @@
 Xpdf
 ====
 
-version 3.04
-2014-may-28
+version 4.00
+2017-aug-10
 
 The Xpdf software and documentation are
-copyright 1996-2014 Glyph & Cog, LLC.
+copyright 1996-2017 Glyph & Cog, LLC.
 
-Email: derekn@foolabs.com
-WWW: http://www.foolabs.com/xpdf/
+Email: xpdf@xpdfreader.com
+WWW: http://www.xpdfreader.com/
 
 
 Compiling xpdf
@@ -18,179 +18,157 @@ Xpdf is written in C++ (with a little bit of C).  It should work with
 any ANSI-compliant C++ and C compilers.  The systems and compilers
 it's been tested with are listed on the xpdf web page.
 
-Xpdf requires the Motif (or Lesstif) toolkit.
+Xpdf requires the Qt toolkit.  The non-GUI command line tools do not
+use Qt.
 
 The following notes give specific instructions for compiling on
 different systems.
 
 
-**************
-***  UNIX  ***
-**************
+*********************
+***  Linux, OS X  ***
+*********************
 
-* Install FreeType 2 (this is required).  WARNING: You must have
-  version 2.0.5 or newer.  Some older versions of XFree86 ship with an
-  older version of FreeType, which means you'll need to explicitly set
-  include and library paths to get the correct version:
+* Make sure you have the following installed:
 
-    --with-freetype2-library=PATH
-    --with-freetype2-includes=PATH
+    - CMake 2.8.8 or newer
+    - FreeType 2.0.5 or newer
+    - Qt 4.8.x or 5.x (for xpdf only)
+    - libpng (for pdftoppm and pdftohtml)
+    - zlib (for pdftoppm and pdftohtml)
 
-* If you have Motif (or Lesstif) installed in a non-standard place,
-  you can use the following options to tell configure where to find
-  it:
+  If Qt isn't found, the GUI viewer (xpdf) won't be built, but the
+  command line tools will still be built.
 
-    --with-Xm-library=PATH
-    --with-Xm-includes=PATH
+* Create a build directory.  These instructions assume that you create
+  a directory called "build" under the top-level xpdf source
+  directory, but the build directory can be anywhere you like.  Create
+  the directory and cd into it:
 
-* Run the configure script:
+      cd ..../xpdf-X.YY
+      mkdir build
+      cd build
 
-    ./configure
+* Run cmake:
 
-  This should produce a set of makefiles customized for your system.
-  The configure script accepts the following options (in addition to
-  the usual things accepted by autoconf configure scripts):
+      cmake -DCMAKE_BUILD_TYPE=Release {other options - see below} ..
 
-    --prefix=PREFIX
-        Changes the directory where xpdf is installed.  The default is
-        /usr/local.
+  If your build directory isn't under the source, use the full path to
+  the source directory:
 
-    --enable-a4-paper
+      cmake -DCMAKE_BUILD_TYPE=Release {other options} ..../xpdf-X.YY
+
+* If cmake doesn't find FreeType, you can set FREETYPE_DIR to point to
+  the FreeType install directory.  Add this to the cmake command line:
+
+      -DFREETYPE_DIR=/opt/freetype
+
+  Cmake will look for ${FREETYPE_DIR}/include.
+
+  You can also set the FreeType library location with:
+
+      -DFREETYPE_LIBRARY=/opt/freetype/lib/libfreetype.so
+
+* If cmake doesn't find Qt, make sure qmake is on your executable
+  search path.
+
+* To change the xpdf install directory, use:
+
+      -DCMAKE_INSTALL_PREFIX=/opt/xpdf
+
+  If you're familiar with autoconf, this is similar to the "--prefix"
+  option.
+
+* Other configuration options are:
+
+    -DSPLASH_CMYK=ON
+        Enable CMYK rasterization support.
+
+    -DA4_PAPER=ON
         Switches the default paper size for PostScript output (xpdf
         and pdftops) to A4.  The default is Letter size.
 
-    --enable-no-text-select
+    -DNO_TEXT_SELECT=ON
         With this option, xpdf will not copy text.  (This is only
         useful on closed systems where the user can't get at the PDF
         file directly.)
 
-    --enable-opi
+    -DOPI_SUPPORT=ON
         Enables support for generation of OPI (Open Prepress
         Interface) comments with pdftops.
 
-    --sysconfdir=DIR
-        Look for the system-wide xpdfrc config file in this directory.
-        The default is PREFIX/etc.
+    -DMULTITHREADED=0
+        Disables multithreading, which also disables building the GUI
+        viewer (xpdf).  This does not affect the command line tools.
+        Disabling multithreading should only be necessary if you're
+        building with a compiler other than gcc, clang, or Microsoft
+        Visual Studio.
 
-    --with-appdef-dir=DIR
-        Use the specified app-defaults directory.  The default is
-        /usr/lib/X11/app-defaults.
+    -DSYSTEM_XPDFRC="/etc/xpdfrc"
+        Look for a system-wide xpdfrc config file in this directory.
 
-  If you need to pass specific options to the C and/or C++ compiler,
-  you can set the CFLAGS and/or CXXFLAGS environment variables before
-  running the configure script.  Any options given that way will be
-  added to the CFLAGS/CXXFLAGS used by all of the Xpdf makefiles.
+     -DCMAKE_DISABLE_FIND_PACKAGE_Qt4=1
+     -DCMAKE_DISABLE_FIND_PACKAGE_Qt5Widgets=1
+        Do not search for the Qt4/Qt5 libraries.  This will disable
+        building the GUI viewer (xpdf).
 
-* Type 'make'.  This should build the executables:
+     -DCMAKE_C_FLAGS="..."
+     -DCMAKE_CXX_FLAGS="..."
+        Set additional options to pass to the C and/or C++ compilers.
 
-    xpdf/xpdf
-    xpdf/pdftops
-    xpdf/pdftotext
-    xpdf/pdfinfo
-    xpdf/pdffonts
-    xpdf/pdfdetach
-    xpdf/pdftoppm
-    xpdf/pdfimages
+     -DCMAKE_EXE_LINKER_FLAGS="..."
+        Set additional options to pass to the linker.
 
-* If desired, type 'make install' to install the binaries and man
-  pages.
+* Build:
 
-The old Makefile.config and Makefiles are no longer provided or
-supported.  If you really want to manually configure Xpdf (which is
-not recommended), the files that need to be created are aconf.h,
-Makefile, goo/Makefile, fofi/Makefile, splash/Makefile, and
-xpdf/Makefile, all of which are generated from the corresponding '.in'
-files.
+      make
+
+  This will build the executables in the build directory:
+
+      xpdf/xpdf
+      xpdf/pdftops
+      xpdf/pdftotext
+      xpdf/pdftohtml
+      xpdf/pdfinfo
+      xpdf/pdffonts
+      xpdf/pdfdetach
+      xpdf/pdftoppm
+      xpdf/pdftopng
+      xpdf/pdfimages
+      xpdf-qt/xpdf
+
+* If desired, install the binaries and man pages:
+
+      make install
 
 If you want to run a quick test, there is a tiny PDF file included
 with xpdf, as misc/hello.pdf .
 
 
-**************
-***  OS/2  ***
-**************
+*****************
+***  Windows  ***
+*****************
 
-Xpdf is known to run under OS/2 with the EMX runtime environment and
-XFree86.  Using a proper autoconf port you can generate a valid
-configure script version.
+The Windows build procedure is essentially the same as for Unix.  If
+building with cygwin, the procedure is identical to Unix.
 
+If building with Visual Studio:
 
-***************
-***  Win32  ***
-***************
+* Make sure you have CMake, FreeType, libpng, and zlib installed.
 
-The non-X programs (pdftops, pdftotext, pdfinfo, pdffonts, pdfdetach,
-pdfimages, and pdftoppm) will compile with both gcc (from cygwin),
-djgpp (the Delorie port of gcc) and Microsoft Visual C++.
+* You'll need to set the FREETYPE_DIR variable to point to your
+  FreeType installation, CMAKE_INCLUDE_PATH to point to your libpng
+  includes, CMAKE_LIBRARY_PATH to point to your libpng library, and
+  ZLIB_ROOT to point to your zlib installation.
 
-With cygwin, the build procedure is the same as for Unix:
+      cmake -G "NMake Makefiles"
+            -DCMAKE_BUILD_TYPE=Release
+            -DFREETYPE_DIR="c:/software/freetype"
+            -DCMAKE_INCLUDE_PATH="c:/software/libpng"
+            -DCMAKE_LIBRARY_PATH="c:/software/libpng"
+            -DZLIB_ROOT="c:/software/zlib"
+            ..
 
-  * Open a shell.
+* Build:
 
-  * ./configure
-
-  * make
-
-  * make install
-
-It is also possible to build the Xpdf viewer with the cygwin XFree86
-port (thanks to Michael A. Richmond for these instructions):
-
-  * make sure you have the lesstif, XFree86-base, and XFree86-prog
-    cygwin packages installed (all from the "XFree86" category)
-
-  * to build xpdf:
-    - cd xpdf-x.yy
-    - ./configure
-        --with-freetype2-library=/usr/lib
-        --with-freetype2-includes=/usr/include/freetype2
-        --with-Xm-library=/usr/lib
-        --with-Xm-includes=/usr/include
-      (all on one line)
-    - make
-    (this should build xpdf.exe, in addition to the command line
-    utilities)
-
-With djgpp:
-
-  * Open a DOS window.
-
-  * ./dj_make
-
-  * djgpp is a DOS/Windows port of gcc, available from
-    http://www.delorie.com/
-
-With djgpp, for DOS 6 (instead of Win32):
-
-  * ./dj_make
-
-  * cd xpdf
-
-  * strip pdftops.exe
-
-  * exe2coff pdftops.exe
-
-  * copy /B c:\djgpp\bin\cwsdstub.exe+pdftops pdftops.exe
-
-  * upx pdftops.exe
-    - if you want compressed executables
-
-  * and similarly for the other executables
-
-  * cwsdstub.exe comes from djgpp/v2misc/csdpmi5b.zip on any of the
-    djgpp ftp mirrors; exe2coff is part of the standard djgpp install
-
-  * upx comes from http://upx.sourceforge.net/
-
-With the Microsoft tools:
-
-  * Open a DOS window.
-
-  * Type "cl".  If you get the message "Bad command or file name", you
-    must run VCVARS32.BAT. (The location of this BAT file can be
-    determined with Explorer.)
-
-  * Type "ms_make"
-
-The dj_make and ms_make scripts don't build pdftoppm -- you'll need to
-install FreeType 2 before you can compile pdftoppm.
+      nmake

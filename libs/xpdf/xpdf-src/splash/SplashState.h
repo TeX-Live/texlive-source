@@ -70,6 +70,10 @@ public:
   void setLineDash(SplashCoord *lineDashA, int lineDashLengthA,
 		   SplashCoord lineDashPhaseA);
 
+  // Returns true if the current line dash pattern contains one or
+  // more zero-length "on" sections (dashes).
+  GBool lineDashContainsZeroLengthDashes();
+
   void clipResetToRect(SplashCoord x0, SplashCoord y0,
 		       SplashCoord x1, SplashCoord y1);
   SplashError clipToRect(SplashCoord x0, SplashCoord y0,
@@ -101,7 +105,7 @@ private:
   SplashCoord *lineDash;
   int lineDashLength;
   SplashCoord lineDashPhase;
-  GBool strokeAdjust;
+  SplashStrokeAdjustMode strokeAdjust;
   SplashClip *clip;
   GBool clipIsShared;
   SplashBitmap *softMask;
@@ -112,11 +116,14 @@ private:
          rgbTransferG[256],
          rgbTransferB[256];
   Guchar grayTransfer[256];
+#if SPLASH_CMYK
   Guchar cmykTransferC[256],
          cmykTransferM[256],
          cmykTransferY[256],
          cmykTransferK[256];
+#endif
   Guint overprintMask;
+  GBool enablePathSimplification;
 
   SplashState *next;		// used by Splash class
 

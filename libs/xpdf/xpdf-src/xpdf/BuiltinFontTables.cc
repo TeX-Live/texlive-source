@@ -8,6 +8,7 @@
 
 #include <aconf.h>
 #include <stdlib.h>
+#include "gmempp.h"
 #include "FontEncodingTables.h"
 #include "BuiltinFontTables.h"
 

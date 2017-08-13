@@ -13,6 +13,7 @@
 #endif
 
 #include <stddef.h>
+#include "gmempp.h"
 #include "Object.h"
 #include "Array.h"
 #include "Dict.h"
@@ -42,7 +43,11 @@ const char *objTypeNames[numObjTypes] = {
 };
 
 #ifdef DEBUG_MEM
+#if MULTITHREADED
+GAtomicCounter Object::numAlloc[numObjTypes] =
+#else
 int Object::numAlloc[numObjTypes] =
+#endif
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #endif
 
@@ -87,7 +92,7 @@ Object *Object::copy(Object *obj) {
     dict->incRef();
     break;
   case objStream:
-    stream->incRef();
+    obj->stream = stream->copy();
     break;
   case objCmd:
     obj->cmd = copyString(cmd);
@@ -96,7 +101,11 @@ Object *Object::copy(Object *obj) {
     break;
   }
 #ifdef DEBUG_MEM
+#if MULTITHREADED
+  gAtomicIncrement(&numAlloc[type]);
+#else
   ++numAlloc[type];
+#endif
 #endif
   return obj;
 }
@@ -125,9 +134,7 @@ void Object::free() {
     }
     break;
   case objStream:
-    if (!stream->decRef()) {
-      delete stream;
-    }
+    delete stream;
     break;
   case objCmd:
     gfree(cmd);
@@ -136,7 +143,11 @@ void Object::free() {
     break;
   }
 #ifdef DEBUG_MEM
+#if MULTITHREADED
+  gAtomicDecrement(&numAlloc[type]);
+#else
   --numAlloc[type];
+#endif
 #endif
   type = objNone;
 }
@@ -224,7 +235,7 @@ void Object::memCheck(FILE *f) {
     fprintf(f, "Allocated objects:\n");
     for (i = 0; i < numObjTypes; ++i) {
       if (numAlloc[i] > 0)
-	fprintf(f, "  %-20s: %6d\n", objTypeNames[i], numAlloc[i]);
+	fprintf(f, "  %-20s: %6ld\n", objTypeNames[i], numAlloc[i]);
     }
   }
 #endif

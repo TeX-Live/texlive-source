@@ -160,6 +160,7 @@ am__objects_3 = @XPDF_TREE@/xpdf/AcroForm.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Stream.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/TextString.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/UnicodeMap.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/UTF8.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/XFAForm.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/XRef.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Zoox.$(OBJEXT)
@@ -472,6 +473,7 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/Stream.cc \
 	@XPDF_TREE@/xpdf/TextString.cc \
 	@XPDF_TREE@/xpdf/UnicodeMap.cc \
+	@XPDF_TREE@/xpdf/UTF8.cc \
 	@XPDF_TREE@/xpdf/XFAForm.cc \
 	@XPDF_TREE@/xpdf/XRef.cc \
 	@XPDF_TREE@/xpdf/Zoox.cc
@@ -677,6 +679,9 @@ clean-noinstLIBRARIES:
 @XPDF_TREE@/xpdf/UnicodeMap.$(OBJEXT):  \
 	@XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/UTF8.$(OBJEXT):  \
+	@XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/XFAForm.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/XRef.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
@@ -748,6 +753,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Stream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/TextString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po@am__quote@
