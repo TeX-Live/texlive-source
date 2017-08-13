@@ -34,9 +34,13 @@ enum ErrorCategory {
   errInternal		// internal error - malfunction within the Xpdf code
 };
 
+extern const char *errorCategoryNames[];
+
 extern void setErrorCallback(void (*cbk)(void *data, ErrorCategory category,
 					 int pos, char *msg),
 			     void *data);
+
+extern void *getErrorCallbackData();
 
 extern void CDECL error(ErrorCategory category, GFileOffset pos,
 			const char *msg, ...);

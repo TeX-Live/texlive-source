@@ -17,6 +17,7 @@
 
 #include "gtypes.h"
 #include "SplashTypes.h"
+#include "SplashMath.h"
 
 struct SplashGlyphBitmap;
 struct SplashFontCacheTag;
@@ -54,10 +55,14 @@ public:
   GBool matches(SplashFontFile *fontFileA, SplashCoord *matA,
 		SplashCoord *textMatA) {
     return fontFileA == fontFile &&
-           matA[0] == mat[0] && matA[1] == mat[1] &&
-           matA[2] == mat[2] && matA[3] == mat[3] &&
-           textMatA[0] == textMat[0] && textMatA[1] == textMat[1] &&
-           textMatA[2] == textMat[2] && textMatA[3] == textMat[3];
+           splashAbs(matA[0] - mat[0]) < 0.0001 &&
+	   splashAbs(matA[1] - mat[1]) < 0.0001 &&
+           splashAbs(matA[2] - mat[2]) < 0.0001 &&
+           splashAbs(matA[3] - mat[3]) < 0.0001 &&
+           splashAbs(textMatA[0] - textMat[0]) < 0.0001 &&
+           splashAbs(textMatA[1] - textMat[1]) < 0.0001 &&
+           splashAbs(textMatA[2] - textMat[2]) < 0.0001 &&
+	   splashAbs(textMatA[3] - textMat[3]) < 0.0001;
   }
 
   // Get a glyph - this does a cache lookup first, and if not found,

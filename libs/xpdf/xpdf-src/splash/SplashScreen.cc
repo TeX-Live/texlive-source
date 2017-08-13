@@ -18,6 +18,7 @@
 #include <algorithm>
 #endif
 #include "gmem.h"
+#include "gmempp.h"
 #include "SplashMath.h"
 #include "SplashScreen.h"
 

@@ -49,35 +49,35 @@ public:
 
   FixedPoint operator =(FixedPoint x) { val = x.val; return *this; }
 
-  int operator ==(FixedPoint x) const { return val == x.val; }
-  int operator ==(double x) const { return *this == (FixedPoint)x; }
-  int operator ==(int x) const { return *this == (FixedPoint)x; }
-  int operator ==(long x) const { return *this == (FixedPoint)x; }
+  bool operator ==(FixedPoint x) const { return val == x.val; }
+  bool operator ==(double x) const { return *this == (FixedPoint)x; }
+  bool operator ==(int x) const { return *this == (FixedPoint)x; }
+  bool operator ==(long x) const { return *this == (FixedPoint)x; }
 
-  int operator !=(FixedPoint x) const { return val != x.val; }
-  int operator !=(double x) const { return *this != (FixedPoint)x; }
-  int operator !=(int x) const { return *this != (FixedPoint)x; }
-  int operator !=(long x) const { return *this != (FixedPoint)x; }
+  bool operator !=(FixedPoint x) const { return val != x.val; }
+  bool operator !=(double x) const { return *this != (FixedPoint)x; }
+  bool operator !=(int x) const { return *this != (FixedPoint)x; }
+  bool operator !=(long x) const { return *this != (FixedPoint)x; }
 
-  int operator <(FixedPoint x) const { return val < x.val; }
-  int operator <(double x) const { return *this < (FixedPoint)x; }
-  int operator <(int x) const { return *this < (FixedPoint)x; }
-  int operator <(long x) const { return *this < (FixedPoint)x; }
+  bool operator <(FixedPoint x) const { return val < x.val; }
+  bool operator <(double x) const { return *this < (FixedPoint)x; }
+  bool operator <(int x) const { return *this < (FixedPoint)x; }
+  bool operator <(long x) const { return *this < (FixedPoint)x; }
 
-  int operator <=(FixedPoint x) const { return val <= x.val; }
-  int operator <=(double x) const { return *this <= (FixedPoint)x; }
-  int operator <=(int x) const { return *this <= (FixedPoint)x; }
-  int operator <=(long x) const { return *this <= (FixedPoint)x; }
+  bool operator <=(FixedPoint x) const { return val <= x.val; }
+  bool operator <=(double x) const { return *this <= (FixedPoint)x; }
+  bool operator <=(int x) const { return *this <= (FixedPoint)x; }
+  bool operator <=(long x) const { return *this <= (FixedPoint)x; }
 
-  int operator >(FixedPoint x) const { return val > x.val; }
-  int operator >(double x) const { return *this > (FixedPoint)x; }
-  int operator >(int x) const { return *this > (FixedPoint)x; }
-  int operator >(long x) const { return *this > (FixedPoint)x; }
+  bool operator >(FixedPoint x) const { return val > x.val; }
+  bool operator >(double x) const { return *this > (FixedPoint)x; }
+  bool operator >(int x) const { return *this > (FixedPoint)x; }
+  bool operator >(long x) const { return *this > (FixedPoint)x; }
 
-  int operator >=(FixedPoint x) const { return val >= x.val; }
-  int operator >=(double x) const { return *this >= (FixedPoint)x; }
-  int operator >=(int x) const { return *this >= (FixedPoint)x; }
-  int operator >=(long x) const { return *this >= (FixedPoint)x; }
+  bool operator >=(FixedPoint x) const { return val >= x.val; }
+  bool operator >=(double x) const { return *this >= (FixedPoint)x; }
+  bool operator >=(int x) const { return *this >= (FixedPoint)x; }
+  bool operator >=(long x) const { return *this >= (FixedPoint)x; }
 
   FixedPoint operator -() { return make(-val); }
 
@@ -135,7 +135,6 @@ public:
   // Computes (x+y)/2 avoiding overflow and LSbit accuracy issues.
   static FixedPoint avg(FixedPoint x, FixedPoint y)
     { return make((x.val >> 1) + (y.val >> 1) + ((x.val | y.val) & 1)); }
-
 
   static FixedPoint sqrt(FixedPoint x);
 

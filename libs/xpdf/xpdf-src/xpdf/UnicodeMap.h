@@ -94,9 +94,10 @@ private:
   int len;			// (user, resident)
   UnicodeMapExt *eMaps;		// (user)
   int eMapsLen;			// (user)
-  int refCnt;
 #if MULTITHREADED
-  GMutex mutex;
+  GAtomicCounter refCnt;
+#else
+  int refCnt;
 #endif
 };
 

@@ -15,7 +15,7 @@
 /*
  * This controls the use of the interface/implementation pragmas.
  */
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #define USE_GCC_PRAGMAS
 #endif
 /* There is a bug in the version of gcc which ships with MacOS X 10.2 */

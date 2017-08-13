@@ -95,7 +95,7 @@ public:
   SplashCoord *getLineDash();
   int getLineDashLength();
   SplashCoord getLineDashPhase();
-  GBool getStrokeAdjust();
+  SplashStrokeAdjustMode getStrokeAdjust();
   SplashClip *getClip();
   SplashBitmap *getSoftMask();
   GBool getInNonIsolatedGroup();
@@ -118,7 +118,7 @@ public:
   // the <lineDash> array will be copied
   void setLineDash(SplashCoord *lineDash, int lineDashLength,
 		   SplashCoord lineDashPhase);
-  void setStrokeAdjust(GBool strokeAdjust);
+  void setStrokeAdjust(SplashStrokeAdjustMode strokeAdjust);
   // NB: uses transformed coordinates.
   void clipResetToRect(SplashCoord x0, SplashCoord y0,
 		       SplashCoord x1, SplashCoord y1);
@@ -133,6 +133,7 @@ public:
 			      GBool nonIsolated, GBool knockout);
   void setTransfer(Guchar *red, Guchar *green, Guchar *blue, Guchar *gray);
   void setOverprintMask(Guint overprintMask);
+  void setEnablePathSimplification(GBool en);
 
   //----- state save/restore
 
@@ -149,9 +150,6 @@ public:
 
   // Fill a path using the current fill pattern.
   SplashError fill(SplashPath *path, GBool eo);
-
-  // Fill a path, XORing with the current fill pattern.
-  SplashError xorFill(SplashPath *path, GBool eo);
 
   // Draw a character, using the current fill pattern.
   SplashError fillChar(SplashCoord x, SplashCoord y, int c, SplashFont *font);
@@ -213,6 +211,12 @@ public:
   SplashError blitTransparent(SplashBitmap *src, int xSrc, int ySrc,
 			      int xDest, int yDest, int w, int h);
 
+  // Copy a rectangular region from the bitmap belonging to this
+  // Splash object to <dest>.  The alpha values are corrected for a
+  // non-isolated group.
+  SplashError blitCorrectedAlpha(SplashBitmap *dest, int xSrc, int ySrc,
+				 int xDest, int yDest, int w, int h);
+
   //----- misc
 
   // Construct a path for a stroke, given the path to be stroked and
@@ -220,7 +224,14 @@ public:
   // the current state.  If <flatten> is true, this function will
   // first flatten the path and handle the linedash.
   SplashPath *makeStrokePath(SplashPath *path, SplashCoord w,
+			     int lineCap, int lineJoin,
 			     GBool flatten = gTrue);
+
+  // Reduce the size of a rectangle as much as possible by moving any
+  // edges that are completely outside the clip region.  Returns the
+  // clipping status of the resulting rectangle.
+  SplashClipResult limitRectToClipRect(int *xMin, int *yMin,
+				       int *xMax, int *yMax);
 
   // Return the associated bitmap.
   SplashBitmap *getBitmap() { return bitmap; }
@@ -296,7 +307,8 @@ private:
   void updateModY(int y);
   void strokeNarrow(SplashPath *path);
   void drawStrokeSpan(SplashPipe *pipe, int x0, int x1, int y, GBool noClip);
-  void strokeWide(SplashPath *path, SplashCoord w);
+  void strokeWide(SplashPath *path, SplashCoord w,
+		  int lineCap, int lineJoin);
   SplashPath *flattenPath(SplashPath *path, SplashCoord *matrix,
 			  SplashCoord flatness);
   void flattenCurve(SplashCoord x0, SplashCoord y0,
@@ -407,10 +419,10 @@ private:
   int bitmapComps;
   SplashState *state;
   Guchar *scanBuf;
+  Guchar *scanBuf2;
   SplashBitmap			// for transparency groups, this is the bitmap
     *groupBackBitmap;		//   containing the alpha0/color0 values
   int groupBackX, groupBackY;	// offset within groupBackBitmap
-  Guchar aaGamma[256];
   SplashCoord minLineWidth;
   int modXMin, modYMin, modXMax, modYMax;
   SplashClipResult opClipRes;

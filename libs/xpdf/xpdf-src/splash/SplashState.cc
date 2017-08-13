@@ -14,6 +14,7 @@
 
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "SplashPattern.h"
 #include "SplashScreen.h"
 #include "SplashClip.h"
@@ -55,7 +56,7 @@ SplashState::SplashState(int width, int height, GBool vectorAntialias,
   lineDash = NULL;
   lineDashLength = 0;
   lineDashPhase = 0;
-  strokeAdjust = gFalse;
+  strokeAdjust = splashStrokeAdjustOff;
   clip = new SplashClip(0, 0, width, height);
   clipIsShared = gFalse;
   softMask = NULL;
@@ -67,12 +68,15 @@ SplashState::SplashState(int width, int height, GBool vectorAntialias,
     rgbTransferG[i] = (Guchar)i;
     rgbTransferB[i] = (Guchar)i;
     grayTransfer[i] = (Guchar)i;
+#if SPLASH_CMYK
     cmykTransferC[i] = (Guchar)i;
     cmykTransferM[i] = (Guchar)i;
     cmykTransferY[i] = (Guchar)i;
     cmykTransferK[i] = (Guchar)i;
+#endif
   }
   overprintMask = 0xffffffff;
+  enablePathSimplification = gFalse;
   next = NULL;
 }
 
@@ -99,7 +103,7 @@ SplashState::SplashState(int width, int height, GBool vectorAntialias,
   lineDash = NULL;
   lineDashLength = 0;
   lineDashPhase = 0;
-  strokeAdjust = gFalse;
+  strokeAdjust = splashStrokeAdjustOff;
   clip = new SplashClip(0, 0, width, height);
   clipIsShared = gFalse;
   softMask = NULL;
@@ -111,12 +115,15 @@ SplashState::SplashState(int width, int height, GBool vectorAntialias,
     rgbTransferG[i] = (Guchar)i;
     rgbTransferB[i] = (Guchar)i;
     grayTransfer[i] = (Guchar)i;
+#if SPLASH_CMYK
     cmykTransferC[i] = (Guchar)i;
     cmykTransferM[i] = (Guchar)i;
     cmykTransferY[i] = (Guchar)i;
     cmykTransferK[i] = (Guchar)i;
+#endif
   }
   overprintMask = 0xffffffff;
+  enablePathSimplification = gFalse;
   next = NULL;
 }
 
@@ -153,11 +160,14 @@ SplashState::SplashState(SplashState *state) {
   memcpy(rgbTransferG, state->rgbTransferG, 256);
   memcpy(rgbTransferB, state->rgbTransferB, 256);
   memcpy(grayTransfer, state->grayTransfer, 256);
+#if SPLASH_CMYK
   memcpy(cmykTransferC, state->cmykTransferC, 256);
   memcpy(cmykTransferM, state->cmykTransferM, 256);
   memcpy(cmykTransferY, state->cmykTransferY, 256);
   memcpy(cmykTransferK, state->cmykTransferK, 256);
+#endif
   overprintMask = state->overprintMask;
+  enablePathSimplification = state->enablePathSimplification;
   next = NULL;
 }
 
@@ -202,6 +212,32 @@ void SplashState::setLineDash(SplashCoord *lineDashA, int lineDashLengthA,
   lineDashPhase = lineDashPhaseA;
 }
 
+GBool SplashState::lineDashContainsZeroLengthDashes() {
+  int i;
+
+  if (lineDashLength == 0) {
+    return gFalse;
+  }
+
+  // if the line dash array has an odd number of elements, we need to
+  // check all of the elements; if the length is even, we only need to
+  // check even-number elements
+  if (lineDashLength & 1) {
+    for (i = 0; i < lineDashLength; ++i) {
+      if (lineDash[i] == 0) {
+	return gTrue;
+      }
+    }
+  } else {
+    for (i = 0; i < lineDashLength; i += 2) {
+      if (lineDash[i] == 0) {
+	return gTrue;
+      }
+    }
+  }
+  return gFalse;
+}
+
 void SplashState::clipResetToRect(SplashCoord x0, SplashCoord y0,
 				  SplashCoord x1, SplashCoord y1) {
   if (clipIsShared) {
@@ -225,7 +261,8 @@ SplashError SplashState::clipToPath(SplashPath *path, GBool eo) {
     clip = clip->copy();
     clipIsShared = gFalse;
   }
-  return clip->clipToPath(path, matrix, flatness, eo);
+  return clip->clipToPath(path, matrix, flatness, eo,
+			  enablePathSimplification, strokeAdjust);
 }
 
 void SplashState::setSoftMask(SplashBitmap *softMaskA) {
@@ -238,16 +275,20 @@ void SplashState::setSoftMask(SplashBitmap *softMaskA) {
 
 void SplashState::setTransfer(Guchar *red, Guchar *green, Guchar *blue,
 			      Guchar *gray) {
+#if SPLASH_CMYK
   int i;
+#endif
 
   memcpy(rgbTransferR, red, 256);
   memcpy(rgbTransferG, green, 256);
   memcpy(rgbTransferB, blue, 256);
   memcpy(grayTransfer, gray, 256);
+#if SPLASH_CMYK
   for (i = 0; i < 256; ++i) {
     cmykTransferC[i] = 255 - rgbTransferR[255 - i];
     cmykTransferM[i] = 255 - rgbTransferG[255 - i];
     cmykTransferY[i] = 255 - rgbTransferB[255 - i];
     cmykTransferK[i] = 255 - grayTransfer[255 - i];
   }
+#endif
 }

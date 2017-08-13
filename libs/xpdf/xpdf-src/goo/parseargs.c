@@ -26,14 +26,19 @@ GBool parseArgs(ArgDesc *args, int *argc, char *argv[]) {
   while (i < *argc) {
     if (!strcmp(argv[i], "--")) {
       --*argc;
-      for (j = i; j < *argc; ++j)
+      for (j = i; j < *argc; ++j) {
 	argv[j] = argv[j+1];
+      }
       break;
     } else if ((arg = findArg(args, argv[i]))) {
-      if (!grabArg(arg, i, argc, argv))
+      if (!grabArg(arg, i, argc, argv)) {
 	ok = gFalse;
+      }
+    } else if (argv[i][0] == '-') {
+      ok = gFalse;
+      break;
     } else {
-      ++i;
+      break;
     }
   }
   return ok;
@@ -65,7 +70,7 @@ void printUsage(const char *program, const char *otherArgs, ArgDesc *args) {
       break;
     case argFP:
     case argFPDummy:
-      typ = " <fp>";
+      typ = " <number>";
       break;
     case argString:
     case argStringDummy:

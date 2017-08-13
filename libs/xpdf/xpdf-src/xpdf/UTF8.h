@@ -2,55 +2,41 @@
 //
 // UTF8.h
 //
-// Copyright 2001-2003 Glyph & Cog, LLC
+// Copyright 2001-2017 Glyph & Cog, LLC
 //
 //========================================================================
 
-static int mapUTF8(Unicode u, char *buf, int bufSize) {
-  if        (u <= 0x0000007f) {
-    if (bufSize < 1) {
-      return 0;
-    }
-    buf[0] = (char)u;
-    return 1;
-  } else if (u <= 0x000007ff) {
-    if (bufSize < 2) {
-      return 0;
-    }
-    buf[0] = (char)(0xc0 + (u >> 6));
-    buf[1] = (char)(0x80 + (u & 0x3f));
-    return 2;
-  } else if (u <= 0x0000ffff) {
-    if (bufSize < 3) {
-      return 0;
-    }
-    buf[0] = (char)(0xe0 + (u >> 12));
-    buf[1] = (char)(0x80 + ((u >> 6) & 0x3f));
-    buf[2] = (char)(0x80 + (u & 0x3f));
-    return 3;
-  } else if (u <= 0x0010ffff) {
-    if (bufSize < 4) {
-      return 0;
-    }
-    buf[0] = (char)(0xf0 + (u >> 18));
-    buf[1] = (char)(0x80 + ((u >> 12) & 0x3f));
-    buf[2] = (char)(0x80 + ((u >> 6) & 0x3f));
-    buf[3] = (char)(0x80 + (u & 0x3f));
-    return 4;
-  } else {
-    return 0;
-  }
-}
+#ifndef UTF8_H
+#define UTF8_H
 
-static int mapUCS2(Unicode u, char *buf, int bufSize) {
-  if (u <= 0xffff) {
-    if (bufSize < 2) {
-      return 0;
-    }
-    buf[0] = (char)((u >> 8) & 0xff);
-    buf[1] = (char)(u & 0xff);
-    return 2;
-  } else {
-    return 0;
-  }
-}
+#include <aconf.h>
+
+#include "gtypes.h"
+#include "GString.h"
+#include "CharTypes.h"
+
+// Convert [u] to UTF-8 in [buf].  Returns the number of bytes written
+// to [buf].  If [u] requires more then [bufSize] bytes in UTF-8,
+// writes nothing and returns 0.
+extern int mapUTF8(Unicode u, char *buf, int bufSize);
+
+// Convert [u] to UCS-2BE in [buf].  Returns the number of bytes
+// written to [buf].  If [u] requires more then [bufSize] bytes in
+// UCS-2, writes nothing and returns 0.
+extern int mapUCS2(Unicode u, char *buf, int bufSize);
+
+// Parse one UTF-8 character from [s], starting at *[i].  Writes the
+// character to *[u], updates *[i] to point to the next available byte
+// in [s], and returns true.  At end of string: writes nothing to *[u]
+// or *[i] and returns false.  For an invalid UTF-8 character: sets
+// *[u] to the next byte, advances *[i] by one (to avoid infinite
+// loops), and returns true.
+extern GBool getUTF8(GString *s, int *i, Unicode *u);
+
+// Same as getUTF8, but for UTF-16BE.
+extern GBool getUTF16BE(GString *s, int *i, Unicode *u);
+
+// Same as getUTF8, but for UTF-16LE.
+extern GBool getUTF16LE(GString *s, int *i, Unicode *u);
+
+#endif

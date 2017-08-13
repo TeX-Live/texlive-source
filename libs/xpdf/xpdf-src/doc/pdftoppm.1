@@ -1,8 +1,8 @@
-.\" Copyright 2005-2014 Glyph & Cog, LLC
-.TH pdftoppm 1 "28 May 2014"
+.\" Copyright 2005-2017 Glyph & Cog, LLC
+.TH pdftoppm 1 "10 Aug 2017"
 .SH NAME
 pdftoppm \- Portable Document Format (PDF) to Portable Pixmap (PPM)
-converter (version 3.04)
+converter (version 4.00)
 .SH SYNOPSIS
 .B pdftoppm
 [options]
@@ -48,10 +48,13 @@ Specifies the last page to convert.
 Specifies the resolution, in DPI.  The default is 150 DPI.
 .TP
 .B \-mono
-Generate a monochrome PBM file (instead of a color PPM file).
+Generate a monochrome PBM file (instead of an RGB PPM file).
 .TP
 .B \-gray
-Generate a grayscale PGM file (instead of a color PPM file).
+Generate a grayscale PGM file (instead of an RGB PPM file).
+.TP
+.B \-cmyk
+Generate a CMYK PAM file (instead of an RGB PPM file).
 .TP
 .BI \-freetype " yes | no"
 Enable or disable FreeType (a TrueType / Type 1 font rasterizer).
@@ -104,7 +107,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftoppm software and documentation are copyright 1996-2014 Glyph
+The pdftoppm software and documentation are copyright 1996-2017 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),
@@ -118,4 +121,4 @@ The pdftoppm software and documentation are copyright 1996-2014 Glyph
 .BR pdfimages (1),
 .BR xpdfrc (5)
 .br
-.B http://www.foolabs.com/xpdf/
+.B http://www.xpdfreader.com/

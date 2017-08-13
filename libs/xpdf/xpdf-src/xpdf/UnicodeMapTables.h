@@ -2,7 +2,7 @@
 //
 // UnicodeMapTables.h
 //
-// Copyright 2001-2009 Glyph & Cog, LLC
+// Copyright 2001-2014 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -28,6 +28,7 @@ static UnicodeMapRange latin1UnicodeMapRanges[] = {
   { 0x02c6, 0x02c6, 0x5e, 1 },
   { 0x02da, 0x02da, 0xb0, 1 },
   { 0x02dc, 0x02dc, 0x7e, 1 },
+  { 0x2010, 0x2010, 0x2d, 1 },
   { 0x2013, 0x2013, 0xad, 1 },
   { 0x2014, 0x2014, 0x2d2d, 2 },
   { 0x2018, 0x2018, 0x60, 1 },

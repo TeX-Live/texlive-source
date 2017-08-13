@@ -1,8 +1,8 @@
-.\" Copyright 1997-2014 Glyph & Cog, LLC
-.TH pdftotext 1 "28 May 2014"
+.\" Copyright 1997-2017 Glyph & Cog, LLC
+.TH pdftotext 1 "10 Aug 2017"
 .SH NAME
 pdftotext \- Portable Document Format (PDF) to text converter
-(version 3.04)
+(version 4.00)
 .SH SYNOPSIS
 .B pdftotext
 [options]
@@ -52,6 +52,13 @@ hyphenation, etc.) and output the text in reading order.  If the
 option is given, character spacing within each line will be determined
 by the specified character pitch.
 .TP
+.B \-simple
+Similar to
+.BR \-layout ,
+but optimized for simple one-column pages.  This mode will do a better
+job of maintaining horizontal spacing, but it will only work properly
+with a single column of text.
+.TP
 .B \-table
 Table mode is similar to physical layout mode, but optimized for
 tabular data, with the goal of keeping rows and columns aligned (at
@@ -92,6 +99,11 @@ Text which is hidden because of clipping is removed before doing
 layout, and then added back in.  This can be helpful for tables where
 clipped (invisible) text would overlap the next column.
 .TP
+.B \-nodiag
+Diagonal text, i.e., text that is not close to one of the 0, 90, 180,
+or 270 degree axes, is discarded.  This is useful to skip watermarks
+drawn on top of body text, etc.
+.TP
 .BI \-enc " encoding-name"
 Sets the encoding to use for text output.  The
 .I encoding\-name
@@ -108,6 +120,10 @@ Sets the end-of-line convention to use for text output.
 .B \-nopgbrk
 Don't insert page breaks (form feed characters) between pages.
 .RB "[config file: " textPageBreaks ]
+.TP
+.B \-bom
+Insert a Unicode byte order marker (BOM) at the start of the text
+output.
 .TP
 .BI \-opw " password"
 Specify the owner password for the PDF file.  Providing this will
@@ -156,7 +172,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftotext software and documentation are copyright 1996-2014 Glyph
+The pdftotext software and documentation are copyright 1996-2017 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),
@@ -170,4 +186,4 @@ The pdftotext software and documentation are copyright 1996-2014 Glyph
 .BR pdfimages (1),
 .BR xpdfrc (5)
 .br
-.B http://www.foolabs.com/xpdf/
+.B http://www.xpdfreader.com/

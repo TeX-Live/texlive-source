@@ -1,3 +1,9 @@
+2017-08-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import xpdf-4.00.
+	* Makefile.am, version.ac: Adjust.
+	* xpdf-foolabs: Remove.
+
 2017-03-27  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (EXTRA_DIST): TLpatches not Tlpatches.

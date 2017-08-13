@@ -2,7 +2,7 @@
 //
 // config.h
 //
-// Copyright 1996-2014 Glyph & Cog, LLC
+// Copyright 1996-2017 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -14,13 +14,13 @@
 //------------------------------------------------------------------------
 
 // xpdf version
-#define xpdfVersion          "3.04"
-#define xpdfVersionNum       3.04
-#define xpdfMajorVersion     3
-#define xpdfMinorVersion     4
+#define xpdfVersion          "4.00"
+#define xpdfVersionNum       4.00
+#define xpdfMajorVersion     4
+#define xpdfMinorVersion     0
 #define xpdfUpdateVersion    0
-#define xpdfMajorVersionStr  "3"
-#define xpdfMinorVersionStr  "4"
+#define xpdfMajorVersionStr  "4"
+#define xpdfMinorVersionStr  "0"
 #define xpdfUpdateVersionStr "0"
 
 // supported PDF version
@@ -28,11 +28,11 @@
 #define supportedPDFVersionNum 1.7
 
 // copyright notice
-#define xpdfCopyright "Copyright 1996-2014 Glyph & Cog, LLC"
+#define xpdfCopyright "Copyright 1996-2017 Glyph & Cog, LLC"
 
 // Windows resource file stuff
-#define winxpdfVersion "WinXpdf 3.04"
-#define xpdfCopyrightAmp "Copyright 1996-2014 Glyph && Cog, LLC"
+#define winxpdfVersion "WinXpdf 4.00"
+#define xpdfCopyrightAmp "Copyright 1996-2017 Glyph && Cog, LLC"
 
 //------------------------------------------------------------------------
 // paper size
@@ -78,7 +78,7 @@
 // popen
 //------------------------------------------------------------------------
 
-#if defined(VMS) || defined(VMCMS) || defined(DOS) || defined(OS2) || defined(__EMX__) || defined(_WIN32) || defined(__DJGPP__) || defined(MACOS)
+#if defined(VMS) || defined(VMCMS) || defined(DOS) || defined(OS2) || defined(__EMX__) || defined(_WIN32) || defined(__DJGPP__)
 #define POPEN_READ_MODE "rb"
 #else
 #define POPEN_READ_MODE "r"

@@ -11,7 +11,7 @@
 
 #include <aconf.h>
 
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
+#if HAVE_FREETYPE_H
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface
@@ -60,11 +60,11 @@ public:
 				      const char **enc);
   SplashFontFile *loadCIDFont(SplashFontFileID *idA,
 #if LOAD_FONTS_FROM_MEM
-			      GString *fontBuf
+			      GString *fontBuf,
 #else
-			      char *fileName, GBool deleteFile
+			      char *fileName, GBool deleteFile,
 #endif
-			      );
+			      int *codeToGID, int codeToGIDLen);
   SplashFontFile *loadOpenTypeCFFFont(SplashFontFileID *idA,
 #if LOAD_FONTS_FROM_MEM
 				      GString *fontBuf,
@@ -94,6 +94,6 @@ private:
   friend class SplashFTFont;
 };
 
-#endif // HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
+#endif // HAVE_FREETYPE_H
 
 #endif

@@ -1,8 +1,8 @@
-.\" Copyright 1998-2014 Glyph & Cog, LLC
-.TH pdfimages 1 "28 May 2014"
+.\" Copyright 1998-2017 Glyph & Cog, LLC
+.TH pdfimages 1 "10 Aug 2017"
 .SH NAME
 pdfimages \- Portable Document Format (PDF) image extractor
-(version 3.04)
+(version 4.00)
 .SH SYNOPSIS
 .B pdfimages
 [options]
@@ -10,17 +10,18 @@ pdfimages \- Portable Document Format (PDF) image extractor
 .SH DESCRIPTION
 .B Pdfimages
 saves images from a Portable Document Format (PDF) file as Portable
-Pixmap (PPM), Portable Bitmap (PBM), or JPEG files.
+Pixmap (PPM), Portable Graymap (PGM), Portable Bitmap (PBM), or JPEG
+files.
 .PP
 Pdfimages reads the PDF file, scans one or more pages,
 .IR PDF-file ,
-and writes one PPM, PBM, or JPEG file for each image,
+and writes one PPM, PGM, PBM, or JPEG file for each image,
 .IR image-root - nnnn . xxx ,
 where
 .I nnnn
 is the image number and
 .I xxx
-is the image type (.ppm, .pbm, .jpg).
+is the image type (.ppm, .pgm, .pbm, .jpg).
 .PP
 NB: pdfimages extracts the raw image data from the PDF file, without
 performing any additional transforms.  Any rotation, clipping,
@@ -45,10 +46,23 @@ Specifies the first page to scan.
 Specifies the last page to scan.
 .TP
 .B \-j
-Normally, all images are written as PBM (for monochrome images) or PPM
-(for non-monochrome images) files.  With this option, images in DCT
-format are saved as JPEG files.  All non-DCT images are saved in
-PBM/PPM format as usual.
+Normally, all images are written as PBM (for monochrome images), PGM
+(for grayscale images), or PPM (for color images) files.  With this
+option, images in DCT format are saved as JPEG files.  All non-DCT
+images are saved in PBM/PGM/PPM format as usual.  (Inline images are
+always saved in PBM/PGM/PPM format.)
+.TP
+.B \-raw
+Write all images in PDF-native formats.  Most of the formats are not
+standard image formats, so this option is primarily useful as input to
+a tool that generates PDF files.  (Inline images are always saved in
+PBM/PGM/PPM format.)
+.TP
+.B \-list
+Write a one-line summary to stdout for each image.  The summary
+provides the image file name, the page number, the image width and
+height, the horizontal and vertical resolution (DPI) as drawn, the
+color space type, and the number of bits per component (BPC).
 .TP
 .BI \-opw " password"
 Specify the owner password for the PDF file.  Providing this will
@@ -88,7 +102,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdfimages software and documentation are copyright 1998-2014 Glyph
+The pdfimages software and documentation are copyright 1998-2017 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),
@@ -102,4 +116,4 @@ The pdfimages software and documentation are copyright 1998-2014 Glyph
 .BR pdftopng (1),
 .BR xpdfrc (5)
 .br
-.B http://www.foolabs.com/xpdf/
+.B http://www.xpdfreader.com/

@@ -13,6 +13,7 @@
 #endif
 
 #include <stddef.h>
+#include "gmempp.h"
 #include "GlobalParams.h"
 #include "Object.h"
 #include "Array.h"
@@ -266,12 +267,22 @@ Page::Page(PDFDoc *docA, int numA, Dict *pageDict, PageAttrs *attrsA) {
     goto err1;
   }
 
+  // thumbnail
+  pageDict->lookupNF("Thumb", &thumbnail);
+  if (!thumbnail.isRef()) {
+    if (!thumbnail.isNull()) {
+      thumbnail.free();
+      thumbnail.initNull();
+    }
+  }
+
   return;
 
  err2:
   annots.initNull();
  err1:
   contents.initNull();
+  thumbnail.initNull();
   ok = gFalse;
 }
 
@@ -282,6 +293,7 @@ Page::Page(PDFDoc *docA, int numA) {
   attrs = new PageAttrs();
   annots.initNull();
   contents.initNull();
+  thumbnail.initNull();
   ok = gTrue;
 }
 
@@ -289,6 +301,7 @@ Page::~Page() {
   delete attrs;
   annots.free();
   contents.free();
+  thumbnail.free();
 }
 
 Links *Page::getLinks() {
@@ -358,13 +371,7 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
   if (!obj.isNull()) {
     gfx->saveState();
     gfx->display(&contents);
-    while (gfx->getState()->hasSaves()) {
-      gfx->restoreState();
-    }
-  } else {
-    // empty pages need to call dump to do any setup required by the
-    // OutputDev
-    out->dump();
+    gfx->endOfPage();
   }
   obj.free();
 
@@ -378,17 +385,22 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
 	printf("***** Annotations\n");
       }
       for (i = 0; i < annotList->getNumAnnots(); ++i) {
+	if (abortCheckCbk && (*abortCheckCbk)(abortCheckCbkData)) {
+	  break;
+	}
 	annotList->getAnnot(i)->draw(gfx, printing);
       }
-      out->dump();
     }
     delete annotList;
   }
 
   // draw form fields
-  if ((form = doc->getCatalog()->getForm())) {
-    form->draw(num, gfx, printing);
-    out->dump();
+  if (globalParams->getDrawFormFields()) {
+    if ((form = doc->getCatalog()->getForm())) {
+      if (!(abortCheckCbk && (*abortCheckCbk)(abortCheckCbkData))) {
+	form->draw(num, gfx, printing);
+      }
+    }
   }
 
   delete gfx;

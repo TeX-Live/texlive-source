@@ -14,8 +14,10 @@
 
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "GString.h"
 #include "PDFDocEncoding.h"
+#include "UTF8.h"
 #include "TextString.h"
 
 //------------------------------------------------------------------------
@@ -53,26 +55,7 @@ TextString *TextString::append(Unicode c) {
 }
 
 TextString *TextString::append(GString *s) {
-  int n, i;
-
-  if ((s->getChar(0) & 0xff) == 0xfe &&
-      (s->getChar(1) & 0xff) == 0xff) {
-    n = (s->getLength() - 2) / 2;
-    expand(n);
-    for (i = 0; i < n; ++i) {
-      u[len + i] = ((s->getChar(2 + 2*i) & 0xff) << 8) |
-	           (s->getChar(3 + 2*i) & 0xff);
-    }
-    len += n;
-  } else {
-    n = s->getLength();
-    expand(n);
-    for (i = 0; i < n; ++i) {
-      u[len + i] = pdfDocEncoding[s->getChar(i) & 0xff];
-    }
-    len += n;
-  }
-  return this;
+  return insert(len, s);
 }
 
 TextString *TextString::insert(int idx, Unicode c) {
@@ -87,22 +70,78 @@ TextString *TextString::insert(int idx, Unicode c) {
   return this;
 }
 
+TextString *TextString::insert(int idx, Unicode *u2, int n) {
+  if (idx >= 0 && idx <= len) {
+    expand(n);
+    if (idx < len) {
+      memmove(u + idx + n, u + idx, (len - idx) * sizeof(Unicode));
+    }
+    memcpy(u + idx, u2, n * sizeof(Unicode));
+    len += n;
+  }
+  return this;
+}
+
 TextString *TextString::insert(int idx, GString *s) {
+  Unicode uBuf[100];
   int n, i;
 
   if (idx >= 0 && idx <= len) {
+    // look for a UTF-16BE BOM
     if ((s->getChar(0) & 0xff) == 0xfe &&
 	(s->getChar(1) & 0xff) == 0xff) {
-      n = (s->getLength() - 2) / 2;
-      expand(n);
-      if (idx < len) {
-	memmove(u + idx + n, u + idx, (len - idx) * sizeof(Unicode));
+      i = 2;
+      n = 0;
+      while (getUTF16BE(s, &i, uBuf + n)) {
+	++n;
+	if (n == sizeof(uBuf) / sizeof(Unicode)) {
+	  insert(idx, uBuf, n);
+	  idx += n;
+	  n = 0;
+	}
       }
-      for (i = 0; i < n; ++i) {
-	u[idx + i] = ((s->getChar(2 + 2*i) & 0xff) << 8) |
-	  (s->getChar(3 + 2*i) & 0xff);
+      if (n > 0) {
+	insert(idx, uBuf, n);
       }
-      len += n;
+
+    // look for a UTF-16LE BOM
+    // (technically, this isn't allowed by the PDF spec, but some
+    // PDF files use it)
+    } else if ((s->getChar(0) & 0xff) == 0xff &&
+	       (s->getChar(1) & 0xff) == 0xfe) {
+      i = 2;
+      n = 0;
+      while (getUTF16LE(s, &i, uBuf + n)) {
+	++n;
+	if (n == sizeof(uBuf) / sizeof(Unicode)) {
+	  insert(idx, uBuf, n);
+	  idx += n;
+	  n = 0;
+	}
+      }
+      if (n > 0) {
+	insert(idx, uBuf, n);
+      }
+
+    // look for a UTF-8 BOM
+    } else if ((s->getChar(0) & 0xff) == 0xef &&
+	       (s->getChar(1) & 0xff) == 0xbb &&
+	       (s->getChar(2) & 0xff) == 0xbf) {
+      i = 3;
+      n = 0;
+      while (getUTF8(s, &i, uBuf + n)) {
+	++n;
+	if (n == sizeof(uBuf) / sizeof(Unicode)) {
+	  insert(idx, uBuf, n);
+	  idx += n;
+	  n = 0;
+	}
+      }
+      if (n > 0) {
+	insert(idx, uBuf, n);
+      }
+
+    // otherwise, use PDFDocEncoding
     } else {
       n = s->getLength();
       expand(n);

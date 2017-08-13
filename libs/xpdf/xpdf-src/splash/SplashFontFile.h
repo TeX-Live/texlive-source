@@ -18,10 +18,28 @@
 #include "gtypes.h"
 #include "SplashTypes.h"
 
+#if MULTITHREADED
+#include "GMutex.h"
+#endif
+
 class GString;
 class SplashFontEngine;
 class SplashFont;
 class SplashFontFileID;
+
+//------------------------------------------------------------------------
+// SplashFontType
+//------------------------------------------------------------------------
+
+enum SplashFontType {
+  splashFontType1,		// GfxFontType.fontType1
+  splashFontType1C,		// GfxFontType.fontType1C
+  splashFontOpenTypeT1C,	// GfxFontType.fontType1COT
+  splashFontCID,		// GfxFontType.fontCIDType0/fontCIDType0C
+  splashFontOpenTypeCFF,	// GfxFontType.fontCIDType0COT
+  splashFontTrueType		// GfxFontType.fontTrueType/fontTrueTypeOT/
+				//             fontCIDType2/fontCIDType2OT
+};
 
 //------------------------------------------------------------------------
 // SplashFontFile
@@ -49,6 +67,7 @@ public:
 protected:
 
   SplashFontFile(SplashFontFileID *idA,
+		 SplashFontType fontTypeA,
 #if LOAD_FONTS_FROM_MEM
 		 GString *fontBufA
 #else
@@ -57,13 +76,18 @@ protected:
 		 );
 
   SplashFontFileID *id;
+  SplashFontType fontType;
 #if LOAD_FONTS_FROM_MEM
   GString *fontBuf;
 #else
   GString *fileName;
   GBool deleteFile;
 #endif
+#if MULTITHREADED
+  GAtomicCounter refCnt;
+#else
   int refCnt;
+#endif
 
   friend class SplashFontEngine;
 };

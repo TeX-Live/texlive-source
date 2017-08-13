@@ -1,10 +1,10 @@
-pdftops(1)                                                          pdftops(1)
+pdftops(1)                  General Commands Manual                 pdftops(1)
 
 
 
 NAME
        pdftops  - Portable Document Format (PDF) to PostScript converter (ver-
-       sion 3.04)
+       sion 4.00)
 
 SYNOPSIS
        pdftops [options] [PDF-file [PS-file]]
@@ -54,15 +54,23 @@ OPTIONS
               image compression.  This is the default setting.  [config  file:
               psLevel]
 
+       -level2gray
+              Generate  grayscale  Level  2 PostScript.  All colors, including
+              images, are converted to grayscale.  [config file: psLevel]
+
        -level2sep
               Generate Level 2 separable PostScript.  All colors are converted
-              to CMYK.  The PostScript  separation  convention  operators  are
+              to  CMYK.   The  PostScript  separation convention operators are
               used to handle custom (spot) colors.  [config file: psLevel]
 
        -level3
-              Generate  Level 3 PostScript.  This enables all Level 2 features
-              plus CID font embedding and masked  image  generation.   [config
+              Generate Level 3 PostScript.  This enables all Level 2  features
+              plus  CID  font  embedding and masked image generation.  [config
               file: psLevel]
+
+       -level3gray
+              Generate grayscale Level 3 PostScript.   All  colors,  including
+              images, are converted to grayscale.  [config file: psLevel]
 
        -level3Sep
               Generate  Level 3 separable PostScript.  The separation handling
@@ -153,13 +161,17 @@ OPTIONS
               Treat  the CropBox as the PDF page size.  By default, the Media-
               Box is used as the page size.  [config file: psUseCropBoxAsPage]
 
+       -userunit
+              Honor  the  UserUnit  settings  on  PDF  pages  when   computing
+              page/paper size.  By default, pdftops ignores UserUnit.
+
        -duplex
-              Set the Duplex pagedevice entry in the  PostScript  file.   This
-              tells  duplex-capable  printers  to  enable  duplexing.  [config
+              Set  the  Duplex  pagedevice entry in the PostScript file.  This
+              tells duplex-capable  printers  to  enable  duplexing.   [config
               file: psDuplex]
 
        -opw password
-              Specify the owner password for the  PDF  file.   Providing  this
+              Specify  the  owner  password  for the PDF file.  Providing this
               will bypass all security restrictions.
 
        -upw password
@@ -189,14 +201,14 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdftops software and documentation are copyright 1996-2014 Glyph  &
+       The  pdftops software and documentation are copyright 1996-2017 Glyph &
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1), pdffonts(1), pdfde-
+       xpdf(1), pdftotext(1), pdftohtml(1),  pdfinfo(1),  pdffonts(1),  pdfde-
        tach(1), pdftoppm(1), pdftopng(1), pdfimages(1), xpdfrc(5)
-       http://www.foolabs.com/xpdf/
+       http://www.xpdfreader.com/
 
 
 
-                                  28 May 2014                       pdftops(1)
+                                  10 Aug 2017                       pdftops(1)

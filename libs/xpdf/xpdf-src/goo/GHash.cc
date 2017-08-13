@@ -13,6 +13,7 @@
 #endif
 
 #include "gmem.h"
+#include "gmempp.h"
 #include "GString.h"
 #include "GHash.h"
 

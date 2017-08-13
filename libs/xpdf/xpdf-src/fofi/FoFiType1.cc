@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "FoFiEncodings.h"
 #include "FoFiType1.h"
 
@@ -198,7 +199,7 @@ void FoFiType1::parse() {
 
   gotMatrix = gFalse;
   for (i = 1, line = (char *)file;
-       i <= 100 && line && (!name || !encoding);
+       i <= 100 && line && (!name || !encoding || !gotMatrix);
        ++i) {
 
     // get font name
@@ -255,6 +256,7 @@ void FoFiType1::parse() {
 	    if (code >= 0 && code < 256) {
 	      c = *p2;
 	      *p2 = '\0';
+	      gfree(encoding[code]);
 	      encoding[code] = copyString(p);
 	      *p2 = c;
 	    }

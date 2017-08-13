@@ -16,6 +16,7 @@
 #ifndef _WIN32
 #  include <unistd.h>
 #endif
+#include "gmempp.h"
 #include "GString.h"
 #include "SplashFontFile.h"
 #include "SplashFontFileID.h"
@@ -31,6 +32,7 @@ extern "C" int unlink(char *filename);
 //------------------------------------------------------------------------
 
 SplashFontFile::SplashFontFile(SplashFontFileID *idA,
+			       SplashFontType fontTypeA,
 #if LOAD_FONTS_FROM_MEM
 			       GString *fontBufA
 #else
@@ -38,6 +40,7 @@ SplashFontFile::SplashFontFile(SplashFontFileID *idA,
 #endif
 			       ) {
   id = idA;
+  fontType = fontTypeA;
 #if LOAD_FONTS_FROM_MEM
   fontBuf = fontBufA;
 #else
@@ -60,11 +63,22 @@ SplashFontFile::~SplashFontFile() {
 }
 
 void SplashFontFile::incRefCnt() {
+#if MULTITHREADED
+  gAtomicIncrement(&refCnt);
+#else
   ++refCnt;
+#endif
 }
 
 void SplashFontFile::decRefCnt() {
-  if (!--refCnt) {
+  GBool done;
+
+#if MULTITHREADED
+  done = gAtomicDecrement(&refCnt) == 0;
+#else
+  done = --refCnt == 0;
+#endif
+  if (done) {
     delete this;
   }
 }

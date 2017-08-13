@@ -1,10 +1,10 @@
-pdftoppm(1)                                                        pdftoppm(1)
+pdftoppm(1)                 General Commands Manual                pdftoppm(1)
 
 
 
 NAME
        pdftoppm - Portable Document Format (PDF) to Portable Pixmap (PPM) con-
-       verter (version 3.04)
+       verter (version 4.00)
 
 SYNOPSIS
        pdftoppm [options] PDF-file PPM-root
@@ -41,9 +41,11 @@ OPTIONS
        -r number
               Specifies the resolution, in DPI.  The default is 150 DPI.
 
-       -mono  Generate a monochrome PBM file (instead of a color PPM file).
+       -mono  Generate a monochrome PBM file (instead of an RGB PPM file).
 
-       -gray  Generate a grayscale PGM file (instead of a color PPM file).
+       -gray  Generate a grayscale PGM file (instead of an RGB PPM file).
+
+       -cmyk  Generate a CMYK PAM file (instead of an RGB PPM file).
 
        -freetype yes | no
               Enable or disable FreeType (a TrueType /  Type  1  font  raster-
@@ -84,14 +86,14 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdftoppm software and documentation are copyright 1996-2014 Glyph &
+       The pdftoppm software and documentation are copyright 1996-2017 Glyph &
        Cog, LLC.
 
 SEE ALSO
        xpdf(1),   pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),  pdf-
        fonts(1), pdfdetach(1), pdftopng(1), pdfimages(1), xpdfrc(5)
-       http://www.foolabs.com/xpdf/
+       http://www.xpdfreader.com/
 
 
 
-                                  28 May 2014                      pdftoppm(1)
+                                  10 Aug 2017                      pdftoppm(1)

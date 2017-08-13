@@ -2,7 +2,7 @@
 //
 // PDFCore.h
 //
-// Copyright 2004 Glyph & Cog, LLC
+// Copyright 2004-2014 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include "SplashTypes.h"
 #include "CharTypes.h"
+#include "DisplayState.h"
+#include "TextOutputDev.h"
 
 class GString;
 class GList;
@@ -28,72 +30,16 @@ class PDFDoc;
 class Links;
 class LinkDest;
 class LinkAction;
+class Annot;
+class Annots;
+class FormField;
 class TextPage;
 class HighlightFile;
-class CoreOutputDev;
+class OptionalContentGroup;
+class TileMap;
+class TileCache;
+class TileCompositor;
 class PDFCore;
-
-//------------------------------------------------------------------------
-// zoom factor
-//------------------------------------------------------------------------
-
-#define zoomPage  -1
-#define zoomWidth -2
-#define defZoom   125
-
-//------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------
-
-// Number of pixels of matte color between pages in continuous mode.
-#define continuousModePageSpacing 3
-
-//------------------------------------------------------------------------
-// PDFCorePage
-//------------------------------------------------------------------------
-
-class PDFCorePage {
-public:
-
-  PDFCorePage(int pageA, int wA, int hA, int tileWA, int tileHA);
-  ~PDFCorePage();
-
-  int page;
-  GList *tiles;			// cached tiles [PDFCoreTile]
-  int xDest, yDest;		// position of upper-left corner
-				//   in the drawing area
-  int w, h;			// size of whole page bitmap
-  int tileW, tileH;		// size of tiles
-  Links *links;			// hyperlinks for this page
-  TextPage *text;		// extracted text
-};
-
-//------------------------------------------------------------------------
-// PDFCoreTile
-//------------------------------------------------------------------------
-
-class PDFCoreTile {
-public:
-
-  PDFCoreTile(int xDestA, int yDestA);
-  virtual ~PDFCoreTile();
-
-  int xMin, yMin, xMax, yMax;
-  int xDest, yDest;
-  Guint edges;
-  SplashBitmap *bitmap;
-  double ctm[6];		// coordinate transform matrix:
-				//   default user space -> device space
-  double ictm[6];		// inverse CTM
-};
-
-#define pdfCoreTileTopEdge      0x01
-#define pdfCoreTileBottomEdge   0x02
-#define pdfCoreTileLeftEdge     0x04
-#define pdfCoreTileRightEdge    0x08
-#define pdfCoreTileTopSpace     0x10
-#define pdfCoreTileBottomSpace  0x20
 
 //------------------------------------------------------------------------
 // PDFHistory
@@ -110,6 +56,14 @@ struct PDFHistory {
 
 #define pdfHistorySize 50
 
+//------------------------------------------------------------------------
+// SelectMode
+//------------------------------------------------------------------------
+
+enum SelectMode {
+  selectModeBlock,
+  selectModeLinear
+};
 
 //------------------------------------------------------------------------
 // PDFCore
@@ -118,9 +72,8 @@ struct PDFHistory {
 class PDFCore {
 public:
 
-  PDFCore(SplashColorMode colorModeA, int bitmapRowPadA,
-	  GBool reverseVideoA, SplashColorPtr paperColorA,
-	  GBool incrementalUpdate);
+  PDFCore(SplashColorMode colorMode, int bitmapRowPad,
+	  GBool reverseVideo, SplashColorPtr paperColor);
   virtual ~PDFCore();
 
   //----- loadFile / displayPage / displayDest
@@ -144,6 +97,10 @@ public:
   // Load an already-created PDFDoc object.
   virtual void loadDoc(PDFDoc *docA);
 
+  // Reload the current file.  This only works if the PDF was loaded
+  // via a file.  Returns pdfOk or error code.
+  virtual int reload();
+
   // Clear out the current document, if any.
   virtual void clear();
 
@@ -152,20 +109,22 @@ public:
   virtual PDFDoc *takeDoc(GBool redraw);
 
   // Display (or redisplay) the specified page.  If <scrollToTop> is
-  // set, the window is vertically scrolled to the top; otherwise, no
-  // scrolling is done.  If <addToHist> is set, this page change is
-  // added to the history list.
-  virtual void displayPage(int topPageA, double zoomA, int rotateA,
-			   GBool scrollToTop, GBool addToHist);
+  // set, the window is vertically scrolled to the top; if
+  // <scrollToBottom> is set, the window is vertically scrolled to the
+  // bottom; otherwise, no scrolling is done.  If <addToHist> is set,
+  // this page change is added to the history list.
+  virtual void displayPage(int page, GBool scrollToTop,
+			   GBool scrollToBottom, GBool addToHist = gTrue);
 
   // Display a link destination.
-  virtual void displayDest(LinkDest *dest, double zoomA, int rotateA,
-			   GBool addToHist);
+  virtual void displayDest(LinkDest *dest);
 
-  // Update the display, given the specified parameters.
-  virtual void update(int topPageA, int scrollXA, int scrollYA,
-		      double zoomA, int rotateA, GBool force,
-		      GBool addToHist, GBool adjustScrollX);
+  // Called before any update is started.
+  virtual void startUpdate();
+
+  // Called after any update is complete.  Subclasses can check for
+  // changes in the display parameters here.
+  virtual void finishUpdate(GBool addToHist, GBool checkForChangedFile);
 
   //----- page/position changes
 
@@ -189,28 +148,45 @@ public:
   virtual void scrollToBottomEdge();
   virtual void scrollToTopLeft();
   virtual void scrollToBottomRight();
-  virtual void zoomToRect(int pg, double ulx, double uly,
+  virtual void setZoom(double zoom);
+  virtual void zoomToRect(int page, double ulx, double uly,
 			  double lrx, double lry);
-  virtual void zoomCentered(double zoomA);
+  virtual void zoomCentered(double zoom);
   virtual void zoomToCurrentWidth();
-  virtual void setContinuousMode(GBool cm);
+  virtual void setRotate(int rotate);
+  virtual void setDisplayMode(DisplayMode mode);
+  virtual void setOCGState(OptionalContentGroup *ocg, GBool ocgState);
 
   //----- selection
+
+  // Selection mode.
+  SelectMode getSelectMode() { return selectMode; }
+  void setSelectMode(SelectMode mode);
 
   // Selection color.
   void setSelectionColor(SplashColor color);
 
-  // Current selected region.
-  void setSelection(int newSelectPage,
-		    int newSelectULX, int newSelectULY,
-		    int newSelectLRX, int newSelectLRY);
-  void moveSelection(int pg, int x, int y);
+  // Modify the selection.  These functions use device coordinates.
+  void setSelection(int page, int x0, int y0, int x1, int y1);
+  void setLinearSelection(int page, TextPosition *pos0, TextPosition *pos1);
+  void clearSelection();
+  void startSelectionDrag(int pg, int x, int y);
+  void moveSelectionDrag(int pg, int x, int y);
+  void finishSelectionDrag();
+
+  // Retrieve the current selection.  This function uses user
+  // coordinates.  Returns false if there is no selection.
   GBool getSelection(int *pg, double *ulx, double *uly,
 		     double *lrx, double *lry);
+  GBool hasSelection();
 
   // Text extraction.
+  void setTextExtractionMode(TextOutputMode mode);
+  GBool getDiscardDiagonalText();
+  void setDiscardDiagonalText(GBool discard);
   GString *extractText(int pg, double xMin, double yMin,
 		       double xMax, double yMax);
+  GString *getSelectedText();
 
   //----- find
 
@@ -223,16 +199,18 @@ public:
 
   //----- coordinate conversion
 
-  // user space: per-pace, as defined by PDF file; unit = point
+  // user space: per-page, as defined by PDF file; unit = point
   // device space: (0,0) is upper-left corner of a page; unit = pixel
   // window space: (0,0) is upper-left corner of drawing area; unit = pixel
 
   GBool cvtWindowToUser(int xw, int yw, int *pg, double *xu, double *yu);
   GBool cvtWindowToDev(int xw, int yw, int *pg, int *xd, int *yd);
-  void cvtUserToWindow(int pg, double xy, double yu, int *xw, int *yw);
+  GBool cvtUserToWindow(int pg, double xy, double yu, int *xw, int *yw);
   void cvtUserToDev(int pg, double xu, double yu, int *xd, int *yd);
-  void cvtDevToWindow(int pg, int xd, int yd, int *xw, int *yw);
+  GBool cvtDevToWindow(int pg, int xd, int yd, int *xw, int *yw);
   void cvtDevToUser(int pg, int xd, int yd, double *xu, double *yu);
+  void getWindowPageRange(int x, int y, int w, int h,
+			  int *firstPage, int *lastPage);
 
   //----- password dialog
 
@@ -241,78 +219,112 @@ public:
   //----- misc access
 
   PDFDoc *getDoc() { return doc; }
-  int getPageNum() { return topPage; }
-  double getZoom() { return zoom; }
-  double getZoomDPI() { return dpi; }
-  int getRotate() { return rotate; }
-  GBool getContinuousMode() { return continuousMode; }
-  virtual void setReverseVideo(GBool reverseVideoA);
+  int getPageNum();
+  int getMidPageNum();
+  double getZoom();
+  double getZoomDPI(int page);
+  int getRotate();
+  DisplayMode getDisplayMode();
+  virtual void setPaperColor(SplashColorPtr paperColor);
+  virtual void setMatteColor(SplashColorPtr matteColor);
+  virtual void setReverseVideo(GBool reverseVideo);
   GBool canGoBack() { return historyBLen > 1; }
   GBool canGoForward() { return historyFLen > 0; }
-  int getScrollX() { return scrollX; }
-  int getScrollY() { return scrollY; }
-  int getDrawAreaWidth() { return drawAreaWidth; }
-  int getDrawAreaHeight() { return drawAreaHeight; }
+  int getScrollX();
+  int getScrollY();
+  int getWindowWidth();
+  int getWindowHeight();
   virtual void setBusyCursor(GBool busy) = 0;
   LinkAction *findLink(int pg, double x, double y);
+  Annot *findAnnot(int pg, double x, double y);
+  int findAnnotIdx(int pg, double x, double y);
+  Annot *getAnnot(int idx);
+  FormField *findFormField(int pg, double x, double y);
+  int findFormFieldIdx(int pg, double x, double y);
+  FormField *getFormField(int idx);
+  void forceRedraw();
+  void setTileDoneCbk(void (*cbk)(void *data), void *data);
 
 protected:
 
-  int loadFile2(PDFDoc *newDoc);
-  void addPage(int pg, int rot);
-  void needTile(PDFCorePage *page, int x, int y);
-  void xorRectangle(int pg, int x0, int y0, int x1, int y1,
-		    SplashPattern *pattern, PDFCoreTile *oneTile = NULL);
-  int loadHighlightFile(HighlightFile *hf, SplashColorPtr color,
-			SplashColorPtr selectColor, GBool selectable);
-  PDFCorePage *findPage(int pg);
-  static void redrawCbk(void *data, int x0, int y0, int x1, int y1,
-			GBool composited);
-  void redrawWindow(int x, int y, int width, int height,
-		    GBool needUpdate);
-  virtual PDFCoreTile *newTile(int xDestA, int yDestA);
-  virtual void updateTileData(PDFCoreTile *tileA, int xSrc, int ySrc,
-			      int width, int height, GBool composited);
-  virtual void redrawRect(PDFCoreTile *tileA, int xSrc, int ySrc,
-			  int xDest, int yDest, int width, int height,
-			  GBool composited) = 0;
-  void clippedRedrawRect(PDFCoreTile *tile, int xSrc, int ySrc,
-			 int xDest, int yDest, int width, int height,
-			 int xClip, int yClip, int wClip, int hClip,
-			 GBool needUpdate, GBool composited = gTrue);
+  //--- calls from PDFCore subclass
+
+  // Set the window size (when the window is resized).
+  void setWindowSize(int winWidthA, int winHeightA);
+
+  // Get the current window bitmap.  If <wholeWindow> is true, the
+  // full window is being redrawn -- this is used to end incremental
+  // updates when the rasterization is done.
+  SplashBitmap *getWindowBitmap(GBool wholeWindow);
+
+  // Returns true if the last call to getWindowBitmap() returned a
+  // finished bitmap; or false if the bitmap was still being
+  // rasterized.
+  GBool isBitmapFinished() { return bitmapFinished; }
+
+  // This should be called periodically (typically every ~0.1 seconds)
+  // to do incremental updates.  If an update is required, it will
+  // trigger a call to invalidate().
+  virtual void tick();
+
+  //--- callbacks to PDFCore subclass
+
+  // Invalidate the specified rectangle (in window coordinates).
+  virtual void invalidate(int x, int y, int w, int h) = 0;
+
+  // Update the scrollbars.
   virtual void updateScrollbars() = 0;
+
+  // This returns true if the PDF file has changed on disk (if it can
+  // be checked).
   virtual GBool checkForNewFile() { return gFalse; }
 
-  PDFDoc *doc;			// current PDF file
-  GBool continuousMode;		// false for single-page mode, true for
-				//   continuous mode
-  int drawAreaWidth,		// size of the PDF display area
-      drawAreaHeight;
-  double maxUnscaledPageW,	// maximum unscaled page size
-         maxUnscaledPageH;
-  int maxPageW;			// maximum page width (only used in
-				//   continuous mode)
-  int totalDocH;		// total document height (only used in
-				//   continuous mode)
-  int *pageY;			// top coordinates for each page (only used
-				//   in continuous mode)
-  int topPage;			// page at top of window
-  int midPage;			// page at middle of window
-  int scrollX, scrollY;		// offset from top left corner of topPage
-				//   to top left corner of window
-  double zoom;			// current zoom level, in percent of 72 dpi
-  double dpi;			// current zoom level, in DPI
-  int rotate;			// current page rotation
+  // This is called just before a PDF file is loaded.
+  virtual void preLoad() {}
 
-  int selectPage;		// page number of current selection
-  int selectULX,		// coordinates of current selection,
-      selectULY,		//   in device space -- (ULX==LRX || ULY==LRY)
-      selectLRX,		//   means there is no selection
-      selectLRY;
-  GBool dragging;		// set while selection is being dragged
-  GBool lastDragLeft;		// last dragged selection edge was left/right
-  GBool lastDragTop;		// last dragged selection edge was top/bottom
-  SplashColor selectXorColor;	// selection xor color
+  // This is called just after a PDF file is loaded.
+  virtual void postLoad() {}
+
+  //--- internal
+
+  int loadFile2(PDFDoc *newDoc);
+  void addToHistory();
+  void clearPage();
+  void loadLinks(int pg);
+  void loadAnnots(int pg);
+  void loadText(int pg);
+  void getSelectionBBox(int *wxMin, int *wyMin, int *wxMax, int *wyMax);
+  void getSelectRectListBBox(GList *rects, int *wxMin, int *wyMin,
+			     int *wxMax, int *wyMax);
+  void checkInvalidate(int x, int y, int w, int h);
+  void invalidateWholeWindow();
+
+  PDFDoc *doc;
+
+  int linksPage;		// cached links for one page
+  Links *links;
+
+  int annotsPage;		// cached annotations for one page
+  Annots *annots;
+
+  int textPage;			// cached extracted text for one page
+  double textDPI;
+  int textRotate;
+  TextOutputControl textOutCtrl;
+  TextPage *text;
+
+  DisplayState *state;
+  TileMap *tileMap;
+  TileCache *tileCache;
+  TileCompositor *tileCompositor;
+  GBool bitmapFinished;
+
+  SelectMode selectMode;
+  int selectPage;	 	// page of current selection
+  int selectStartX,		// for block mode: start point of current
+      selectStartY;		//   selection, in device coords
+  TextPosition selectStartPos;	// for linear mode: start position of
+				//   current selection
 
   PDFHistory			// page history queue
     history[pdfHistorySize];
@@ -321,16 +333,6 @@ protected:
                                 //   current entry
   int historyFLen;              // number of valid entries forward from
                                 //   current entry
-
-
-  GList *pages;			// cached pages [PDFCorePage]
-  PDFCoreTile *curTile;		// tile currently being rasterized
-  PDFCorePage *curPage;		// page to which curTile belongs
-
-  SplashColor paperColor;
-  CoreOutputDev *out;
-
-  friend class PDFCoreTile;
 };
 
 #endif

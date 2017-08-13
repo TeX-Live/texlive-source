@@ -13,6 +13,8 @@
 #endif
 
 #include <stdlib.h>
+#include "gmem.h"
+#include "gmempp.h"
 #include "GString.h"
 #include "GList.h"
 #include "GHash.h"
@@ -25,8 +27,10 @@
 #include "XFAForm.h"
 
 #ifdef _WIN32
-#  define strcasecmp stricmp
-#  define strncasecmp strnicmp
+#  undef strcasecmp
+#  undef strncasecmp
+#  define strcasecmp _stricmp
+#  define strncasecmp _strnicmp
 #endif
 
 //------------------------------------------------------------------------
@@ -165,18 +169,214 @@ static Guchar code3Of9Data[128][10] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+// 3 bars + 3 spaces -- each can be 1, 2, 3, or 4 units wide
+static Guchar code128Data[107][6] = {
+  { 2, 1, 2, 2, 2, 2 },
+  { 2, 2, 2, 1, 2, 2 },
+  { 2, 2, 2, 2, 2, 1 },
+  { 1, 2, 1, 2, 2, 3 },
+  { 1, 2, 1, 3, 2, 2 },
+  { 1, 3, 1, 2, 2, 2 },
+  { 1, 2, 2, 2, 1, 3 },
+  { 1, 2, 2, 3, 1, 2 },
+  { 1, 3, 2, 2, 1, 2 },
+  { 2, 2, 1, 2, 1, 3 },
+  { 2, 2, 1, 3, 1, 2 },
+  { 2, 3, 1, 2, 1, 2 },
+  { 1, 1, 2, 2, 3, 2 },
+  { 1, 2, 2, 1, 3, 2 },
+  { 1, 2, 2, 2, 3, 1 },
+  { 1, 1, 3, 2, 2, 2 },
+  { 1, 2, 3, 1, 2, 2 },
+  { 1, 2, 3, 2, 2, 1 },
+  { 2, 2, 3, 2, 1, 1 },
+  { 2, 2, 1, 1, 3, 2 },
+  { 2, 2, 1, 2, 3, 1 },
+  { 2, 1, 3, 2, 1, 2 },
+  { 2, 2, 3, 1, 1, 2 },
+  { 3, 1, 2, 1, 3, 1 },
+  { 3, 1, 1, 2, 2, 2 },
+  { 3, 2, 1, 1, 2, 2 },
+  { 3, 2, 1, 2, 2, 1 },
+  { 3, 1, 2, 2, 1, 2 },
+  { 3, 2, 2, 1, 1, 2 },
+  { 3, 2, 2, 2, 1, 1 },
+  { 2, 1, 2, 1, 2, 3 },
+  { 2, 1, 2, 3, 2, 1 },
+  { 2, 3, 2, 1, 2, 1 },
+  { 1, 1, 1, 3, 2, 3 },
+  { 1, 3, 1, 1, 2, 3 },
+  { 1, 3, 1, 3, 2, 1 },
+  { 1, 1, 2, 3, 1, 3 },
+  { 1, 3, 2, 1, 1, 3 },
+  { 1, 3, 2, 3, 1, 1 },
+  { 2, 1, 1, 3, 1, 3 },
+  { 2, 3, 1, 1, 1, 3 },
+  { 2, 3, 1, 3, 1, 1 },
+  { 1, 1, 2, 1, 3, 3 },
+  { 1, 1, 2, 3, 3, 1 },
+  { 1, 3, 2, 1, 3, 1 },
+  { 1, 1, 3, 1, 2, 3 },
+  { 1, 1, 3, 3, 2, 1 },
+  { 1, 3, 3, 1, 2, 1 },
+  { 3, 1, 3, 1, 2, 1 },
+  { 2, 1, 1, 3, 3, 1 },
+  { 2, 3, 1, 1, 3, 1 },
+  { 2, 1, 3, 1, 1, 3 },
+  { 2, 1, 3, 3, 1, 1 },
+  { 2, 1, 3, 1, 3, 1 },
+  { 3, 1, 1, 1, 2, 3 },
+  { 3, 1, 1, 3, 2, 1 },
+  { 3, 3, 1, 1, 2, 1 },
+  { 3, 1, 2, 1, 1, 3 },
+  { 3, 1, 2, 3, 1, 1 },
+  { 3, 3, 2, 1, 1, 1 },
+  { 3, 1, 4, 1, 1, 1 },
+  { 2, 2, 1, 4, 1, 1 },
+  { 4, 3, 1, 1, 1, 1 },
+  { 1, 1, 1, 2, 2, 4 },
+  { 1, 1, 1, 4, 2, 2 },
+  { 1, 2, 1, 1, 2, 4 },
+  { 1, 2, 1, 4, 2, 1 },
+  { 1, 4, 1, 1, 2, 2 },
+  { 1, 4, 1, 2, 2, 1 },
+  { 1, 1, 2, 2, 1, 4 },
+  { 1, 1, 2, 4, 1, 2 },
+  { 1, 2, 2, 1, 1, 4 },
+  { 1, 2, 2, 4, 1, 1 },
+  { 1, 4, 2, 1, 1, 2 },
+  { 1, 4, 2, 2, 1, 1 },
+  { 2, 4, 1, 2, 1, 1 },
+  { 2, 2, 1, 1, 1, 4 },
+  { 4, 1, 3, 1, 1, 1 },
+  { 2, 4, 1, 1, 1, 2 },
+  { 1, 3, 4, 1, 1, 1 },
+  { 1, 1, 1, 2, 4, 2 },
+  { 1, 2, 1, 1, 4, 2 },
+  { 1, 2, 1, 2, 4, 1 },
+  { 1, 1, 4, 2, 1, 2 },
+  { 1, 2, 4, 1, 1, 2 },
+  { 1, 2, 4, 2, 1, 1 },
+  { 4, 1, 1, 2, 1, 2 },
+  { 4, 2, 1, 1, 1, 2 },
+  { 4, 2, 1, 2, 1, 1 },
+  { 2, 1, 2, 1, 4, 1 },
+  { 2, 1, 4, 1, 2, 1 },
+  { 4, 1, 2, 1, 2, 1 },
+  { 1, 1, 1, 1, 4, 3 },
+  { 1, 1, 1, 3, 4, 1 },
+  { 1, 3, 1, 1, 4, 1 },
+  { 1, 1, 4, 1, 1, 3 },
+  { 1, 1, 4, 3, 1, 1 },
+  { 4, 1, 1, 1, 1, 3 },
+  { 4, 1, 1, 3, 1, 1 },
+  { 1, 1, 3, 1, 4, 1 },
+  { 1, 1, 4, 1, 3, 1 },
+  { 3, 1, 1, 1, 4, 1 },
+  { 4, 1, 1, 1, 3, 1 },
+  { 2, 1, 1, 4, 1, 2 }, // start code A
+  { 2, 1, 1, 2, 1, 4 }, // start code B
+  { 2, 1, 1, 2, 3, 2 }, // start code C
+  { 2, 3, 3, 1, 1, 1 }  // stop code (without final bar)
+};
+
+//------------------------------------------------------------------------
+
+class XFATableInfo {
+public:
+
+  XFATableInfo(ZxAttr *columnWidthsAttr);
+  ~XFATableInfo();
+  void computeRowHeight(ZxElement *rowSubform);
+
+  int nColumns;			// number of columns
+  double *columnRight;		// right edge (x coord) of each column
+  int rowIdx;			// current row index
+  int columnIdx;		// current column index
+  double rowTop;		// top edge (y coord) of current row
+  double rowHeight;		// height of current row (max cell height
+				//   so far)
+};
+
+XFATableInfo::XFATableInfo(ZxAttr *columnWidthsAttr) {
+  GString *s;
+  double w;
+  int i, columnRightSize;
+
+  nColumns = 0;
+  columnRight = NULL;
+  columnRightSize = 0;
+  if (columnWidthsAttr) {
+    s = columnWidthsAttr->getValue();
+    i = 0;
+    while (1) {
+      for (;
+	   i < s->getLength() &&
+	     (s->getChar(i) == ' ' || s->getChar(i) == '\t' ||
+	      s->getChar(i) == '\r' || s->getChar(i) == '\n');
+	   ++i) ;
+      if (i == s->getLength()) {
+	break;
+      }
+      w = XFAFormField::getMeasurement(s, i);
+      if (nColumns == columnRightSize) {
+	columnRightSize = columnRightSize ? 2 * columnRightSize : 8;
+	columnRight = (double *)greallocn(columnRight, columnRightSize,
+					  sizeof(double));
+      }
+      columnRight[nColumns] = (nColumns > 0 ? columnRight[nColumns - 1] : 0) + w;
+      ++nColumns;
+      for (++i;
+	   i < s->getLength() &&
+	     !(s->getChar(i) == ' ' || s->getChar(i) == '\t' ||
+	       s->getChar(i) == '\r' || s->getChar(i) == '\n');
+	   ++i) ;
+    }
+  }
+  rowIdx = -1;
+  columnIdx = 0;
+  rowTop = rowHeight = 0;
+}
+
+XFATableInfo::~XFATableInfo() {
+  gfree(columnRight);
+}
+
+void XFATableInfo::computeRowHeight(ZxElement *rowSubform) {
+  ZxNode *child;
+  ZxAttr *attr;
+  double h;
+
+  rowHeight = 0;
+  for (child = rowSubform->getFirstChild();
+       child;
+       child = child->getNextChild()) {
+    if (child->isElement("field") || child->isElement("draw")) {
+      if (!(attr = ((ZxElement *)child)->findAttr("h"))) {
+	attr = ((ZxElement *)child)->findAttr("minH");
+      }
+      h = XFAFormField::getMeasurement(attr,  0);
+      if (h > rowHeight) {
+	rowHeight = h;
+      }
+    }
+  }
+}
+
 //------------------------------------------------------------------------
 // XFAForm
 //------------------------------------------------------------------------
 
-XFAForm *XFAForm::load(PDFDoc *docA, Object *acroFormObj, Object *xfaObj) {
+XFAForm *XFAForm::load(PDFDoc *docA, Catalog *catalog,
+		       Object *acroFormObj, Object *xfaObj) {
   XFAForm *xfaForm;
+  XFAFormField *field;
   ZxDoc *xmlA;
   ZxElement *tmpl;
   Object catDict, resourceDictA, obj1;
   GString *data;
   GBool fullXFAA;
-  GString *name;
+  GString *name, *fullName;
   char buf[4096];
   int n, i;
 
@@ -223,113 +423,328 @@ XFAForm *XFAForm::load(PDFDoc *docA, Object *acroFormObj, Object *xfaObj) {
     acroFormObj->dictLookup("DR", &resourceDictA);
   }
 
-  xfaForm = new XFAForm(docA, xmlA, &resourceDictA, fullXFAA);
+  xfaForm = new XFAForm(docA, catalog->getNumPages(),
+			xmlA, &resourceDictA, fullXFAA);
 
   resourceDictA.free();
 
   if (xfaForm->xml->getRoot()) {
     if ((tmpl = xfaForm->xml->getRoot()->findFirstChildElement("template"))) {
       name = new GString("form");
-      xfaForm->curPageNum = 1;
+      fullName = new GString("form");
+      xfaForm->curPageNum = 0;
       xfaForm->curXOffset = xfaForm->curYOffset = 0;
-      xfaForm->scanFields(tmpl, name, name);
+      xfaForm->scanNamedNode(tmpl, name, fullName, gFalse, NULL);
       delete name;
+      delete fullName;
+
+      // apply pageOffsetX/Y (the pageSet/pageArea/contentArea offset)
+      // to all fields
+      if (xfaForm->pageSetNPages >= 1 &&
+	  xfaForm->pageSetNPages < xfaForm->nPages) {
+	for (i = xfaForm->pageSetNPages + 1; i <= xfaForm->nPages; ++i) {
+	  xfaForm->pageOffsetX[i - 1] =
+	      xfaForm->pageOffsetX[xfaForm->pageSetNPages - 1];
+	  xfaForm->pageOffsetY[i - 1] =
+	      xfaForm->pageOffsetY[xfaForm->pageSetNPages - 1];
+	}
+      }
+      for (i = 0; i < xfaForm->fields->getLength(); ++i) {
+	field = (XFAFormField *)xfaForm->fields->get(i);
+	if (field->pageNum >= 1 && field->pageNum <= xfaForm->nPages) {
+	  field->xOffset += xfaForm->pageOffsetX[field->pageNum - 1];
+	  field->yOffset += xfaForm->pageOffsetY[field->pageNum - 1];
+	}
+      }
     }
   }
 
   return xfaForm;
 }
 
-XFAForm::XFAForm(PDFDoc *docA, ZxDoc *xmlA, Object *resourceDictA,
-		 GBool fullXFAA): Form(docA) {
+XFAForm::XFAForm(PDFDoc *docA, int nPagesA, ZxDoc *xmlA,
+		 Object *resourceDictA, GBool fullXFAA):
+  Form(docA) {
+  int pg;
+
   xml = xmlA;
   fields = new GList();
   resourceDictA->copy(&resourceDict);
   fullXFA = fullXFAA;
+  nPages = nPagesA;
+  pageSetNPages = 0;
+  pageOffsetX = (double *)gmallocn(nPages, sizeof(double));
+  pageOffsetY = (double *)gmallocn(nPages, sizeof(double));
+  for (pg = 0; pg < nPages; ++pg) {
+    pageOffsetX[pg] = pageOffsetY[pg] = 0;
+  }
 }
 
 XFAForm::~XFAForm() {
   delete xml;
   deleteGList(fields, XFAFormField);
   resourceDict.free();
+  gfree(pageOffsetX);
+  gfree(pageOffsetY);
 }
 
-void XFAForm::scanFields(ZxElement *elem, GString *name, GString *dataName) {
-  ZxAttr *attr;
+// Scan all children of <elem>, which is a named internal (non-field)
+// node, with the specified name.
+void XFAForm::scanNamedNode(ZxElement *elem, GString *name, GString *fullName,
+			    GBool inPageSet, XFATableInfo *tableInfo) {
+  GHash *childNameCount, *childNameIdx;
   ZxNode *child;
-  ZxElement *bindElem;
-  GHash *names1, *names2;
-  GString *childName, *fullName, *fullDataName;
-  int i;
 
-  //~ need to handle subform
+  childNameCount = new GHash();
+  for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
+    if (child->isElement()) {
+      scanNames((ZxElement *)child, childNameCount);
+    }
+  }
+  childNameIdx = new GHash();
+  for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
+    if (child->isElement()) {
+      scanFields((ZxElement *)child, name, fullName, inPageSet,
+		 tableInfo, childNameCount, childNameIdx);
+    }
+  }
+  delete childNameIdx;
+  delete childNameCount;
+}
+
+// Traverse all children of <elem>, incrementing nameCount[name] for
+// each named child.  Traversal stops at each named child.
+void XFAForm::scanNames(ZxElement *elem, GHash *nameCount) {
+  ZxNode *child;
+  GString *childName;
+
+  if ((childName = getNodeName(elem))) {
+    if (nodeIsBindGlobal(elem)) {
+      nameCount->replace(childName, 1);
+    } else {
+      nameCount->replace(childName, nameCount->lookupInt(childName) + 1);
+    }
+  } else {
+    for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
+      if (child->isElement()) {
+	scanNames((ZxElement *)child, nameCount);
+      }
+    }
+  }
+}
+
+// Create fields for <elem> and its children.  <parentName> is the
+// name of <elem>'s parent.  <siblingNameCount> contains the number of
+// occurrences of the siblings' (parent's childrens') names.
+// <siblingNameIdx> contains the number of occurrences of each name
+// used so far.
+void XFAForm::scanFields(ZxElement *elem, GString *parentName,
+			 GString *parentFullName, GBool inPageSet,
+			 XFATableInfo *tableInfo,
+			 GHash *siblingNameCount, GHash *siblingNameIdx) {
+  XFATableInfo *newTableInfo;
+  ZxElement *brk, *contentArea;
+  ZxNode *child;
+  ZxAttr *attr;
+  GString *elemName, *elemFullName, *name, *fullName;
+  double xSubOffset, ySubOffset, columnWidth, rowHeight;
+  int savedPageNum;
+  int colSpan, i;
 
   //~ need to handle exclGroup
   //~ - fields in an exclGroup may/must(?) not have names
   //~ - each field has an items element with the the value when that
   //~   field is selected
 
-  if (elem->isElement("field")) {
-    fields->append(new XFAFormField(this, elem, name->copy(),
-				    dataName->copy(), curPageNum,
-				    curXOffset, curYOffset));
-  } else if (elem->isElement("breakBefore")) {
-    if ((attr = elem->findAttr("targetType")) &&
-	!attr->getValue()->cmp("pageArea") &&
-	(attr = elem->findAttr("startNew")) &&
-	!attr->getValue()->cmp("1")) {
-      ++curPageNum;
-    }
-  } else if (elem->isElement("break")) {
-    if ((attr = elem->findAttr("before")) &&
-	!attr->getValue()->cmp("pageArea") &&
-	(attr = elem->findAttr("startNew")) &&
-	!attr->getValue()->cmp("1")) {
-      ++curPageNum;
-    }
-  } else if (elem->isElement("contentArea")) {
-    curXOffset = XFAFormField::getMeasurement(elem->findAttr("x"), 0);
-    curYOffset = XFAFormField::getMeasurement(elem->findAttr("y"), 0);
+  if ((elemName = getNodeName(elem))) {
+    name = GString::format("{0:t}.{1:t}", parentName, elemName);
   } else {
-    names1 = new GHash();
-    for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
-      if (child->isElement() &&
-	  (attr = ((ZxElement *)child)->findAttr("name"))) {
-	childName = attr->getValue();
-	names1->replace(childName, names1->lookupInt(childName) + 1);
-      }
-    }
-    names2 = new GHash();
-    for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
-      if (child->isElement()) {
-	if (!((bindElem = child->findFirstChildElement("bind")) &&
-	      (attr = bindElem->findAttr("match")) &&
-	      !attr->getValue()->cmp("none"))  &&
-	    (attr = ((ZxElement *)child)->findAttr("name"))) {
-	  childName = attr->getValue();
-	  if (names1->lookupInt(childName) > 1) {
-	    i = names2->lookupInt(childName);
-	    fullName = GString::format("{0:t}.{1:t}[{2:d}]",
-				       name, childName, i);
-	    fullDataName = GString::format("{0:t}.{1:t}[{2:d}]",
-					   dataName, childName, i);
-	    names2->replace(childName, i + 1);
-	  } else {
-	    fullName = GString::format("{0:t}.{1:t}", name, childName);
-	    fullDataName = GString::format("{0:t}.{1:t}", dataName, childName);
-	  }
-	} else {
-	  fullName = name->copy();
-	  fullDataName = dataName->copy();
-	}
-	scanFields((ZxElement *)child, fullName, fullDataName);
-	delete fullName;
-	delete fullDataName;
-      }
-    }
-    delete names1;
-    delete names2;
+    name = parentName;
   }
+
+  if ((elemFullName = getNodeFullName(elem))) {
+    fullName = GString::format("{0:t}.{1:t}", parentFullName, elemFullName);
+  } else {
+    fullName = parentFullName;
+  }
+
+  //~ do we need a separate siblingNameCount/siblingNameIndex for
+  //~   elemName and elemFullName?
+  if (elemFullName && siblingNameCount->lookupInt(elemFullName) > 1) {
+    i = siblingNameIdx->lookupInt(elemFullName);
+    fullName->appendf("[{0:d}]", i);
+    if (elemName) {
+      name->appendf("[{0:d}]", i);
+    }
+    siblingNameIdx->replace(elemFullName, i + 1);
+  }
+
+  if (tableInfo && (elem->isElement("field") || elem->isElement("draw"))) {
+    if ((attr = elem->findAttr("colSpan"))) {
+      colSpan = atoi(attr->getValue()->getCString());
+    } else {
+      colSpan = 1;
+    }
+  } else {
+    colSpan = 0;
+  }
+
+  if (elem->isElement("field")) {
+    if (curPageNum == 0) {
+      curPageNum = 1;
+    }
+    xSubOffset = ySubOffset = 0;
+    columnWidth = rowHeight = 0;
+    if (tableInfo) {
+      if (tableInfo->columnIdx > 0 &&
+	  tableInfo->columnIdx <= tableInfo->nColumns) {
+	xSubOffset = tableInfo->columnRight[tableInfo->columnIdx - 1];
+      }
+      if (tableInfo->columnIdx + colSpan <= tableInfo->nColumns) {
+	columnWidth = tableInfo->columnRight[tableInfo->columnIdx + colSpan - 1]
+	              - xSubOffset;
+      }
+      ySubOffset = tableInfo->rowTop;
+      rowHeight = tableInfo->rowHeight;
+      curXOffset += xSubOffset;
+      curYOffset += ySubOffset;
+    }
+    fields->append(new XFAFormField(this, elem, name->copy(), fullName->copy(),
+				    curPageNum, curXOffset, curYOffset,
+				    columnWidth, rowHeight));
+    if (tableInfo) {
+      curXOffset -= xSubOffset;
+      curYOffset -= ySubOffset;
+    }
+  } else {
+    newTableInfo = tableInfo;
+    if (elem->isElement("subform")) {
+      if (((brk = elem->findFirstChildElement("breakBefore")) &&
+	   (attr = brk->findAttr("targetType")) &&
+	   !attr->getValue()->cmp("pageArea")) ||
+	  ((brk = elem->findFirstChildElement("break")) &&
+	   (attr = brk->findAttr("before")) &&
+	   !attr->getValue()->cmp("pageArea"))) {
+	if (curPageNum < nPages) {
+	  ++curPageNum;
+	}
+      }
+      if ((attr = elem->findAttr("layout"))) {
+	if (!attr->getValue()->cmp("table")) {
+	  newTableInfo = new XFATableInfo(elem->findAttr("columnWidths"));
+	  newTableInfo->rowIdx = -1;
+	  newTableInfo->columnIdx = 0;
+	} else if (tableInfo && !attr->getValue()->cmp("row")) {
+	  ++tableInfo->rowIdx;
+	  tableInfo->columnIdx = 0;
+	  tableInfo->rowTop += tableInfo->rowHeight;
+	  tableInfo->computeRowHeight(elem);
+	}
+      }
+      xSubOffset = XFAFormField::getMeasurement(elem->findAttr("x"), 0);
+      ySubOffset = XFAFormField::getMeasurement(elem->findAttr("y"), 0);
+      curXOffset += xSubOffset;
+      curYOffset += ySubOffset;
+    } else if (elem->isElement("area")) {
+      xSubOffset = XFAFormField::getMeasurement(elem->findAttr("x"), 0);
+      ySubOffset = XFAFormField::getMeasurement(elem->findAttr("y"), 0);
+      curXOffset += xSubOffset;
+      curYOffset += ySubOffset;
+    } else {
+      xSubOffset = ySubOffset = 0;
+    }
+    savedPageNum = curPageNum;
+    if (elem->isElement("pageSet")) {
+      inPageSet = gTrue;
+      curPageNum = 0;
+    } else if (elem->isElement("pageArea")) {
+      if (inPageSet) {
+	if (curPageNum < nPages) {
+	  ++curPageNum;
+	}
+	if ((contentArea = elem->findFirstChildElement("contentArea"))) {
+	  pageOffsetX[curPageNum - 1] =
+	      XFAFormField::getMeasurement(contentArea->findAttr("x"), 0);
+	  pageOffsetY[curPageNum - 1] =
+	      XFAFormField::getMeasurement(contentArea->findAttr("y"), 0);
+	  // looks like the contentArea offset (pageOffsetX/Y) should
+	  // not be added to fields defined inside the pageArea
+	  // element (?)
+	  xSubOffset -= pageOffsetX[curPageNum - 1];
+	  ySubOffset -= pageOffsetY[curPageNum - 1];
+	  curXOffset -= pageOffsetX[curPageNum - 1];
+	  curYOffset -= pageOffsetY[curPageNum - 1];
+	}
+      }
+    }
+    if (elemName) {
+      scanNamedNode(elem, name, fullName, inPageSet, newTableInfo);
+    } else {
+      for (child = elem->getFirstChild();
+	   child;
+	   child = child->getNextChild()) {
+	if (child->isElement()) {
+	  scanFields((ZxElement *)child, name, fullName, inPageSet,
+		     newTableInfo, siblingNameCount, siblingNameIdx);
+	}
+      }
+    }
+    curXOffset -= xSubOffset;
+    curYOffset -= ySubOffset;
+    if (newTableInfo != tableInfo) {
+      delete newTableInfo;
+    }
+    if (elem->isElement("pageSet")) {
+      pageSetNPages = curPageNum;
+      curPageNum = savedPageNum;
+      inPageSet = gFalse;
+    }
+  }
+
+  if (tableInfo) {
+    tableInfo->columnIdx += colSpan;
+  }
+
+  if (name != parentName) {
+    delete name;
+  }
+  if (fullName != parentFullName) {
+    delete fullName;
+  }
+}
+
+GString *XFAForm::getNodeName(ZxElement *elem) {
+  ZxElement *bindElem;
+  ZxAttr *attr;
+
+  if (!(elem->getType()->cmp("field") &&
+	(bindElem = elem->findFirstChildElement("bind")) &&
+	(attr = bindElem->findAttr("match")) &&
+	!attr->getValue()->cmp("none")) &&
+      !elem->isElement("area") &&
+      (attr = elem->findAttr("name"))) {
+    return attr->getValue();
+  }
+  return NULL;
+}
+
+GString *XFAForm::getNodeFullName(ZxElement *elem) {
+  ZxAttr *attr;
+
+  if (!elem->isElement("area") &&
+      (attr = elem->findAttr("name"))) {
+    return attr->getValue();
+  }
+  return NULL;
+}
+
+GBool XFAForm::nodeIsBindGlobal(ZxElement *elem) {
+  ZxElement *bindElem;
+  ZxAttr *attr;
+
+  return (bindElem = elem->findFirstChildElement("bind")) &&
+         (attr = bindElem->findAttr("match")) &&
+         !attr->getValue()->cmp("global");
 }
 
 void XFAForm::draw(int pageNum, Gfx *gfx, GBool printing) {
@@ -338,13 +753,13 @@ void XFAForm::draw(int pageNum, Gfx *gfx, GBool printing) {
   int i;
 
   // build the font dictionary
-  if (resourceDict.isDict() &&
-      resourceDict.dictLookup("Font", &obj1)->isDict()) {
-    fontDict = new GfxFontDict(doc->getXRef(), NULL, obj1.getDict());
-  } else {
-    fontDict = NULL;
+  fontDict = NULL;
+  if (resourceDict.isDict()) {
+    if (resourceDict.dictLookup("Font", &obj1)->isDict()) {
+      fontDict = new GfxFontDict(doc->getXRef(), NULL, obj1.getDict());
+    }
+    obj1.free();
   }
-  obj1.free();
 
   for (i = 0; i < fields->getLength(); ++i) {
     ((XFAFormField *)fields->get(i))->draw(pageNum, gfx, printing, fontDict);
@@ -365,21 +780,28 @@ FormField *XFAForm::getField(int idx) {
 // XFAFormField
 //------------------------------------------------------------------------
 
-XFAFormField::XFAFormField(XFAForm *xfaFormA, ZxElement *xmlA, GString *nameA,
-			   GString *dataNameA, int pageNumA,
-			   double xOffsetA, double yOffsetA) {
+XFAFormField::XFAFormField(XFAForm *xfaFormA, ZxElement *xmlA,
+			   GString *nameA, GString *fullNameA,
+			   int pageNumA, double xOffsetA, double yOffsetA,
+			   double columnWidthA, double rowHeightA) {
   xfaForm = xfaFormA;
   xml = xmlA;
   name = nameA;
-  dataName = dataNameA;
+  fullName = fullNameA;
   pageNum = pageNumA;
   xOffset = xOffsetA;
   yOffset = yOffsetA;
+  columnWidth = columnWidthA;
+  rowHeight = rowHeightA;
 }
 
 XFAFormField::~XFAFormField() {
   delete name;
-  delete dataName;
+  delete fullName;
+}
+
+int XFAFormField::getPageNum() {
+  return pageNum;
 }
 
 const char *XFAFormField::getType() {
@@ -390,6 +812,14 @@ const char *XFAFormField::getType() {
     for (node = uiElem->getFirstChild(); node; node = node->getNextChild()) {
       if (node->isElement("textEdit")) {
 	return "Text";
+      } else if (node->isElement("numericEdit")) {
+	return "Numeric";
+      } else if (node->isElement("dateTimeEdit")) {
+	return "DateTime";
+      } else if (node->isElement("choiceList")) {
+	return "ChoiceList";
+      } else if (node->isElement("checkButton")) {
+	return "CheckButton";
       } else if (node->isElement("barcode")) {
 	return "BarCode";
       }
@@ -415,8 +845,20 @@ Unicode *XFAFormField::getValue(int *length) {
     for (node = uiElem->getFirstChild(); node; node = node->getNextChild()) {
       if (node->isElement("textEdit")) {
 	s = getFieldValue("text");
+	break;
+      } else if (node->isElement("numericEdit")) {
+	//~ not sure if this is correct
+	s = getFieldValue("text");
+	break;
+      } else if (node->isElement("dateTimeEdit")) {
+	s = getFieldValue("text");
+	break;
+      } else if (node->isElement("checkButton")) {
+	s = getFieldValue("integer");
+	break;
       } else if (node->isElement("barcode")) {
 	s = getFieldValue("text");
+	break;
       }
       //~ other field types go here
     }
@@ -478,24 +920,216 @@ Unicode *XFAFormField::utf8ToUnicode(GString *s, int *length) {
   return u;
 }
 
+void XFAFormField::getBBox(double *llx, double *lly,
+			   double *urx, double *ury) {
+  double xfaX, xfaY, xfaW, xfaH, pdfX, pdfY, pdfW, pdfH;
+  int pdfRot;
+
+  getRectangle(&xfaX, &xfaY, &xfaW, &xfaH,
+	       &pdfX, &pdfY, &pdfW, &pdfH, &pdfRot);
+  *llx = pdfX;
+  *lly = pdfY;
+  *urx = pdfX + pdfW;
+  *ury = pdfY + pdfH;
+}
+
+void XFAFormField::getFont(Ref *fontID, double *fontSize) {
+  ZxElement *fontElem;
+  ZxAttr *attr;
+  GBool bold, italic;
+
+  fontID->num = fontID->gen = -1;
+  *fontSize = 0;
+  if ((fontElem = xml->findFirstChildElement("font"))) {
+    bold = italic = gFalse;
+    if ((attr = fontElem->findAttr("weight"))) {
+      if (!attr->getValue()->cmp("bold")) {
+	bold = gTrue;
+      }
+    }
+    if ((attr = fontElem->findAttr("posture"))) {
+      if (!attr->getValue()->cmp("italic")) {
+	italic = gTrue;
+      }
+    }
+    if ((attr = fontElem->findAttr("typeface"))) {
+      *fontID = findFontName(attr->getValue(), bold, italic);
+    }
+    if ((attr = fontElem->findAttr("size"))) {
+      *fontSize = getMeasurement(attr, 0);
+    }
+  }
+}
+
+void XFAFormField::getColor(double *red, double *green, double *blue) {
+  ZxElement *fontElem, *fillElem, *colorElem;
+  ZxAttr *attr;
+  int r, g, b;
+
+  *red = *green = *blue = 0;
+  if ((fontElem = xml->findFirstChildElement("font"))) {
+    if ((fillElem = fontElem->findFirstChildElement("fill"))) {
+      if ((colorElem = fillElem->findFirstChildElement("color"))) {
+	if ((attr = colorElem->findAttr("value"))) {
+	  if (sscanf(attr->getValue()->getCString(), "%d,%d,%d",
+		     &r, &g, &b) == 3) {
+	    *red = r / 255.0;
+	    *green = g / 255.0;
+	    *blue = b / 255.0;
+	  }
+	}
+      }
+    }
+  }
+}
+
 void XFAFormField::draw(int pageNumA, Gfx *gfx, GBool printing,
 			GfxFontDict *fontDict) {
-  Page *page;
-  PDFRectangle *pageRect;
   ZxElement *uiElem;
   ZxNode *node;
-  ZxAttr *attr;
   GString *appearBuf;
   MemStream *appearStream;
-  Object appearDict, appearance, obj1, obj2;
+  Object appearDict, appearance, resourceDict, resourceSubdict;
+  Object fontResources, fontResource, defaultFont;
+  Object obj1, obj2;
+  char *resType, *fontName;
   double mat[6];
-  double x, y, w, h, x2, y2, w2, h2, x3, y3, w3, h3;
-  double anchorX, anchorY;
-  int pageRot, rot, rot3;
+  double xfaX, xfaY, xfaW, xfaH, pdfX, pdfY, pdfW, pdfH;
+  int rot3, i;
 
   if (pageNumA != pageNum) {
     return;
   }
+
+  getRectangle(&xfaX, &xfaY, &xfaW, &xfaH, &pdfX, &pdfY, &pdfW, &pdfH, &rot3);
+
+  // generate transform matrix
+  switch (rot3) {
+  case 0:
+  default:
+    mat[0] = 1;  mat[1] = 0;
+    mat[2] = 0;  mat[3] = 1;
+    mat[4] = 0;  mat[5] = 0;
+    break;
+  case 90:
+    mat[0] =  0;  mat[1] = 1;
+    mat[2] = -1;  mat[3] = 0;
+    mat[4] =  xfaH;  mat[5] = 0;
+    break;
+  case 180:
+    mat[0] = -1;  mat[1] =  0;
+    mat[2] =  0;  mat[3] = -1;
+    mat[4] =  xfaW;  mat[5] =  xfaH;
+    break;
+  case 270:
+    mat[0] = 0;  mat[1] = -1;
+    mat[2] = 1;  mat[3] =  0;
+    mat[4] = 0;  mat[5] =  xfaW;
+    break;
+  }
+
+  // get the appearance stream data
+  appearBuf = new GString();
+#if 0 //~ for debugging
+  double debugPad = 0;
+  appearBuf->appendf("q 1 1 0 rg {0:.4f} {1:.4f} {2:.4f} {3:.4f} re f Q\n",
+		     debugPad, debugPad, xfaW - 2*debugPad, xfaH - 2*debugPad);
+#endif
+  if ((uiElem = xml->findFirstChildElement("ui"))) {
+    for (node = uiElem->getFirstChild(); node; node = node->getNextChild()) {
+      if (node->isElement("textEdit") ||
+	  node->isElement("numericEdit")) {
+	drawTextEdit(fontDict, xfaW, xfaH, rot3, appearBuf);
+	break;
+      } else if (node->isElement("dateTimeEdit")) {
+	drawTextEdit(fontDict, xfaW, xfaH, rot3, appearBuf);
+	break;
+      } else if (node->isElement("choiceList")) {
+	drawTextEdit(fontDict, xfaW, xfaH, rot3, appearBuf);
+	break;
+      } else if (node->isElement("checkButton")) {
+	drawCheckButton(fontDict, xfaW, xfaH, rot3, appearBuf);
+	break;
+      } else if (node->isElement("barcode")) {
+	drawBarCode(fontDict, xfaW, xfaH, rot3, appearBuf);
+	break;
+      }
+      //~ other field types go here
+    }
+  } else {
+    drawTextEdit(fontDict, xfaW, xfaH, rot3, appearBuf);
+  }
+
+  // create the appearance stream
+  appearDict.initDict(xfaForm->doc->getXRef());
+  appearDict.dictAdd(copyString("Length"),
+		     obj1.initInt(appearBuf->getLength()));
+  appearDict.dictAdd(copyString("Subtype"), obj1.initName("Form"));
+  obj1.initArray(xfaForm->doc->getXRef());
+  obj1.arrayAdd(obj2.initReal(0));
+  obj1.arrayAdd(obj2.initReal(0));
+  obj1.arrayAdd(obj2.initReal(xfaW));
+  obj1.arrayAdd(obj2.initReal(xfaH));
+  appearDict.dictAdd(copyString("BBox"), &obj1);
+  obj1.initArray(xfaForm->doc->getXRef());
+  obj1.arrayAdd(obj2.initReal(mat[0]));
+  obj1.arrayAdd(obj2.initReal(mat[1]));
+  obj1.arrayAdd(obj2.initReal(mat[2]));
+  obj1.arrayAdd(obj2.initReal(mat[3]));
+  obj1.arrayAdd(obj2.initReal(mat[4]));
+  obj1.arrayAdd(obj2.initReal(mat[5]));
+  appearDict.dictAdd(copyString("Matrix"), &obj1);
+  // NB: we need to deep-copy the resource dict and font resource
+  // subdict, because the font subdict is modified, and multiple
+  // threads can be sharing these objects.
+  resourceDict.initDict(xfaForm->doc->getXRef());
+  if (xfaForm->resourceDict.isDict()) {
+    for (i = 0; i < xfaForm->resourceDict.dictGetLength(); ++i) {
+      resType = xfaForm->resourceDict.dictGetKey(i);
+      if (strcmp(resType, "Font")) {
+	xfaForm->resourceDict.dictGetVal(i, &resourceSubdict);
+	resourceDict.dictAdd(copyString(resType), &resourceSubdict);
+      }
+    }
+  }
+  fontResources.initDict(xfaForm->doc->getXRef());
+  if (xfaForm->resourceDict.isDict() &&
+      xfaForm->resourceDict.dictLookup("Font", &resourceSubdict)->isDict()) {
+    for (i = 0; i < resourceSubdict.dictGetLength(); ++i) {
+      fontName = resourceSubdict.dictGetKey(i);
+      resourceSubdict.dictGetVal(i, &fontResource);
+      fontResources.dictAdd(copyString(fontName), &fontResource);
+    }
+    resourceSubdict.free();
+  }
+  defaultFont.initDict(xfaForm->doc->getXRef());
+  defaultFont.dictAdd(copyString("Type"), obj1.initName("Font"));
+  defaultFont.dictAdd(copyString("Subtype"), obj1.initName("Type1"));
+  defaultFont.dictAdd(copyString("BaseFont"), obj1.initName("Helvetica"));
+  defaultFont.dictAdd(copyString("Encoding"), obj1.initName("WinAnsiEncoding"));
+  fontResources.dictAdd(copyString("xpdf_default_font"), &defaultFont);
+  resourceDict.dictAdd(copyString("Font"), &fontResources);
+  appearDict.dictAdd(copyString("Resources"), &resourceDict);
+  appearStream = new MemStream(appearBuf->getCString(), 0,
+			       appearBuf->getLength(), &appearDict);
+  appearance.initStream(appearStream);
+  gfx->drawAnnot(&appearance, NULL, pdfX, pdfY, pdfX + pdfW, pdfY + pdfH);
+  appearance.free();
+  delete appearBuf;
+}
+
+void XFAFormField::getRectangle(double *xfaX, double *xfaY,
+				double *xfaW, double *xfaH,
+				double *pdfX, double *pdfY,
+				double *pdfW, double *pdfH,
+				int *pdfRot) {
+  Page *page;
+  PDFRectangle *pageRect;
+  ZxElement *captionElem, *paraElem, *marginElem;
+  ZxAttr *attr;
+  double x2, y2, w2, h2, t;
+  double anchorX, anchorY;
+  int pageRot, rot;
 
   page = xfaForm->doc->getCatalog()->getPage(pageNum);
   pageRect = page->getMediaBox();
@@ -533,10 +1167,22 @@ void XFAFormField::draw(int pageNumA, Gfx *gfx, GBool printing,
       anchorY = 1;
     }
   }
-  x = getMeasurement(xml->findAttr("x"), 0) + xOffset;
-  y = getMeasurement(xml->findAttr("y"), 0) + yOffset;
-  w = getMeasurement(xml->findAttr("w"), 0);
-  h = getMeasurement(xml->findAttr("h"), 0);
+  *xfaX = getMeasurement(xml->findAttr("x"), 0) + xOffset;
+  *xfaY = getMeasurement(xml->findAttr("y"), 0) + yOffset;
+  if (!(attr = xml->findAttr("w"))) {
+    attr = xml->findAttr("minW");
+  }
+  *xfaW = getMeasurement(attr, 0);
+  if (*xfaW < columnWidth) {
+    *xfaW = columnWidth;
+  }
+  if (!(attr = xml->findAttr("h"))) {
+    attr = xml->findAttr("minH");
+  }
+  *xfaH = getMeasurement(attr, 0);
+  if (*xfaH < rowHeight) {
+    *xfaH = rowHeight;
+  }
   if ((attr = xml->findAttr("rotate"))) {
     rot = atoi(attr->getValue()->getCString());
     if ((rot %= 360) < 0) {
@@ -544,6 +1190,66 @@ void XFAFormField::draw(int pageNumA, Gfx *gfx, GBool printing,
     }
   } else {
     rot = 0;
+  }
+
+  // look for <caption reserve="...."> -- add the caption width/height
+  // (plus a margin allowance)
+  if ((captionElem = xml->findFirstChildElement("caption"))) {
+    if ((attr = captionElem->findAttr("reserve"))) {
+      t = getMeasurement(attr, 0);
+      if ((attr = captionElem->findAttr("placement"))) {
+	if (!attr->getValue()->cmp("left")) {
+	  *xfaX += t + 1.5;
+	  *xfaW -= t + 1.5;
+	} else if (!attr->getValue()->cmp("right")) {
+	  *xfaW -= t + 1.5;
+	} else if (!attr->getValue()->cmp("top")) {
+	  *xfaY += t;
+	  *xfaH -= t;
+	} else if (!attr->getValue()->cmp("bottom")) {
+	  *xfaH -= t;
+	}
+      } else {
+	// default is placement="left"
+	*xfaX += t + 1.5;
+	*xfaW -= t + 1.5;
+      }
+    }
+  }
+
+  // look for <margin>
+  if ((marginElem = xml->findFirstChildElement("margin"))) {
+    if ((attr = marginElem->findAttr("leftInset"))) {
+      t = getMeasurement(attr, 0);
+      *xfaX += t;
+      *xfaW -= t;
+    }
+    if ((attr = marginElem->findAttr("rightInset"))) {
+      t = getMeasurement(attr, 0);
+      *xfaW -= t;
+    }
+    if ((attr = marginElem->findAttr("topInset"))) {
+      t = getMeasurement(attr, 0);
+      *xfaY += t;
+      *xfaH -= t;
+    }
+    if ((attr = marginElem->findAttr("bottomInset"))) {
+      t = getMeasurement(attr, 0);
+      *xfaH -= t;
+    }
+  }
+
+  // look for <para> -- add the margin
+  if ((paraElem = xml->findFirstChildElement("para"))) {
+    if ((attr = paraElem->findAttr("marginLeft"))) {
+      t = getMeasurement(attr, 0);
+      *xfaX += t;
+      *xfaW -= t;
+    }
+    if ((attr = paraElem->findAttr("marginRight"))) {
+      t = getMeasurement(attr, 0);
+      *xfaW -= t;
+    }
   }
 
   // get annot rect (UL corner, width, height) in XFA coords
@@ -554,28 +1260,28 @@ void XFAFormField::draw(int pageNumA, Gfx *gfx, GBool printing,
   switch (rot) {
   case 0:
   default:
-    x2 = x - anchorX * w;
-    y2 = y - anchorY * h;
-    w2 = w;
-    h2 = h;
+    x2 = *xfaX - anchorX * *xfaW;
+    y2 = *xfaY - anchorY * *xfaH;
+    w2 = *xfaW;
+    h2 = *xfaH;
     break;
   case 90:
-    x2 = x - anchorY * h;
-    y2 = y - (1 - anchorX) * w;
-    w2 = h;
-    h2 = w;
+    x2 = *xfaX - anchorY * *xfaH;
+    y2 = *xfaY - (1 - anchorX) * *xfaW;
+    w2 = *xfaH;
+    h2 = *xfaW;
     break;
   case 180:
-    x2 = x - (1 - anchorX) * w;
-    y2 = y - (1 - anchorY) * h;
-    w2 = w;
-    h2 = h;
+    x2 = *xfaX - (1 - anchorX) * *xfaW;
+    y2 = *xfaY - (1 - anchorY) * *xfaH;
+    w2 = *xfaW;
+    h2 = *xfaH;
     break;
   case 270:
-    x2 = x - (1 - anchorY) * h;
-    y2 = y - anchorX * w;
-    w2 = h;
-    h2 = w;
+    x2 = *xfaX - (1 - anchorY) * *xfaH;
+    y2 = *xfaY - anchorX * *xfaW;
+    w2 = *xfaH;
+    h2 = *xfaW;
     break;
   }
 
@@ -584,113 +1290,42 @@ void XFAFormField::draw(int pageNumA, Gfx *gfx, GBool printing,
   switch (pageRot) {
   case 0:
   default:
-    x3 = pageRect->x1 + x2;
-    y3 = pageRect->y2 - (y2 + h2);
-    w3 = w2;
-    h3 = h2;
+    *pdfX = pageRect->x1 + x2;
+    *pdfY = pageRect->y2 - (y2 + h2);
+    *pdfW = w2;
+    *pdfH = h2;
     break;
   case 90:
-    x3 = pageRect->x1 + y2;
-    y3 = pageRect->y1 + x2;
-    w3 = h2;
-    h3 = w2;
+    *pdfX = pageRect->x1 + y2;
+    *pdfY = pageRect->y1 + x2;
+    *pdfW = h2;
+    *pdfH = w2;
     break;
   case 180:
-    x3 = pageRect->x2 - (x2 + w2);
-    y3 = pageRect->y1 + y2;
-    w3 = w2;
-    h3 = h2;
+    *pdfX = pageRect->x2 - (x2 + w2);
+    *pdfY = pageRect->y1 + y2;
+    *pdfW = w2;
+    *pdfH = h2;
     break;
   case 270:
-    x3 = pageRect->x2 - (y2 + h2);
-    y3 = pageRect->y1 + (x2 + w2);
-    w3 = h2;
-    h3 = w2;
+    *pdfX = pageRect->x2 - (y2 + h2);
+    *pdfY = pageRect->y1 + (x2 + w2);
+    *pdfW = h2;
+    *pdfH = w2;
     break;
   }
-  rot3 = (rot + pageRot) % 360;
-
-  // generate transform matrix
-  switch (rot3) {
-  case 0:
-  default:
-    mat[0] = 1;  mat[1] = 0;
-    mat[2] = 0;  mat[3] = 1;
-    mat[4] = 0;  mat[5] = 0;
-    break;
-  case 90:
-    mat[0] =  0;  mat[1] = 1;
-    mat[2] = -1;  mat[3] = 0;
-    mat[4] =  h;  mat[5] = 0;
-    break;
-  case 180:
-    mat[0] = -1;  mat[1] =  0;
-    mat[2] =  0;  mat[3] = -1;
-    mat[4] =  w;  mat[5] =  h;
-    break;
-  case 270:
-    mat[0] = 0;  mat[1] = -1;
-    mat[2] = 1;  mat[3] =  0;
-    mat[4] = 0;  mat[5] =  w;
-    break;
-  }
-
-  // get the appearance stream data
-  appearBuf = new GString();
-#if 0 //~ for debugging
-  appearBuf->appendf("q 1 1 0 rg 0 0 {0:.4f} {1:.4f} re f Q\n", w, h);
-#endif
-  if ((uiElem = xml->findFirstChildElement("ui"))) {
-    for (node = uiElem->getFirstChild(); node; node = node->getNextChild()) {
-      if (node->isElement("textEdit")) {
-	drawTextEdit(fontDict, w, h, rot3, appearBuf);
-	break;
-      } else if (node->isElement("barcode")) {
-	drawBarCode(fontDict, w, h, rot3, appearBuf);
-	break;
-      }
-      //~ other field types go here
-    }
-  }
-
-  // create the appearance stream
-  appearDict.initDict(xfaForm->doc->getXRef());
-  appearDict.dictAdd(copyString("Length"),
-		     obj1.initInt(appearBuf->getLength()));
-  appearDict.dictAdd(copyString("Subtype"), obj1.initName("Form"));
-  obj1.initArray(xfaForm->doc->getXRef());
-  obj1.arrayAdd(obj2.initReal(0));
-  obj1.arrayAdd(obj2.initReal(0));
-  obj1.arrayAdd(obj2.initReal(w));
-  obj1.arrayAdd(obj2.initReal(h));
-  appearDict.dictAdd(copyString("BBox"), &obj1);
-  obj1.initArray(xfaForm->doc->getXRef());
-  obj1.arrayAdd(obj2.initReal(mat[0]));
-  obj1.arrayAdd(obj2.initReal(mat[1]));
-  obj1.arrayAdd(obj2.initReal(mat[2]));
-  obj1.arrayAdd(obj2.initReal(mat[3]));
-  obj1.arrayAdd(obj2.initReal(mat[4]));
-  obj1.arrayAdd(obj2.initReal(mat[5]));
-  appearDict.dictAdd(copyString("Matrix"), &obj1);
-  if (xfaForm->resourceDict.isDict()) {
-    appearDict.dictAdd(copyString("Resources"),
-		       xfaForm->resourceDict.copy(&obj1));
-  }
-  appearStream = new MemStream(appearBuf->getCString(), 0,
-			       appearBuf->getLength(), &appearDict);
-  appearance.initStream(appearStream);
-  gfx->drawAnnot(&appearance, NULL, x3, y3, x3 + w3, y3 + h3);
-  appearance.free();
-  delete appearBuf;
+  *pdfRot = (rot + pageRot) % 360;
 }
 
 void XFAFormField::drawTextEdit(GfxFontDict *fontDict,
 				double w, double h, int rot,
 				GString *appearBuf) {
+  ZxElement *formatElem, *pictureElem;
+  ZxNode *pictureChildElem;
   ZxElement *valueElem, *textElem, *uiElem, *textEditElem, *combElem;
   ZxElement *fontElem, *paraElem;
   ZxAttr *attr;
-  GString *value, *fontName;
+  GString *picture, *value, *formattedValue, *fontName;
   double fontSize;
   int maxChars, combCells;
   GBool multiLine, bold, italic;
@@ -699,6 +1334,28 @@ void XFAFormField::drawTextEdit(GfxFontDict *fontDict,
 
   if (!(value = getFieldValue("text"))) {
     return;
+  }
+
+  uiElem = xml->findFirstChildElement("ui");
+
+  //--- picture formatting
+  if (uiElem &&
+      (formatElem = xml->findFirstChildElement("format")) &&
+      (pictureElem = formatElem->findFirstChildElement("picture")) &&
+      (pictureChildElem = pictureElem->getFirstChild()) &&
+      pictureChildElem->isCharData()) {
+    picture = ((ZxCharData *)pictureChildElem)->getData();
+    if (uiElem->findFirstChildElement("dateTimeEdit")) {
+      formattedValue = pictureFormatDateTime(value, picture);
+    } else if (uiElem->findFirstChildElement("numericEdit")) {
+      formattedValue = pictureFormatNumber(value, picture);
+    } else if (uiElem->findFirstChildElement("textEdit")) {
+      formattedValue = pictureFormatText(value, picture);
+    } else {
+      formattedValue = value->copy();
+    }
+  } else {
+    formattedValue = value->copy();
   }
 
   maxChars = 0;
@@ -710,7 +1367,7 @@ void XFAFormField::drawTextEdit(GfxFontDict *fontDict,
 
   multiLine = gFalse;
   combCells = 0;
-  if ((uiElem = xml->findFirstChildElement("ui")) &&
+  if (uiElem &&
       (textEditElem = uiElem->findFirstChildElement("textEdit"))) {
     if ((attr = textEditElem->findAttr("multiLine")) &&
 	!attr->getValue()->cmp("1")) {
@@ -776,10 +1433,71 @@ void XFAFormField::drawTextEdit(GfxFontDict *fontDict,
     }
   }
 
-  drawText(value, multiLine, combCells,
+  drawText(formattedValue, multiLine, combCells,
 	   fontName, bold, italic, fontSize,
 	   hAlign, vAlign, 0, 0, w, h, gFalse, fontDict, appearBuf);
   delete fontName;
+  delete formattedValue;
+}
+
+void XFAFormField::drawCheckButton(GfxFontDict *fontDict,
+				   double w, double h, int rot,
+				   GString *appearBuf) {
+  ZxElement *items;
+  ZxNode *firstItem, *firstItemVal;
+  const char *itemType;
+  const char *onValue;
+  GString *value;
+  double x, y;
+
+  // get the "on" value for this check button
+  itemType = "integer";
+  onValue = "1";
+  if ((items = xml->findFirstChildElement("items"))) {
+    if ((firstItem = items->getFirstChild())) {
+      if (firstItem->isElement("text") && firstItem->getFirstChild()) {
+	itemType = "text";
+	if ((firstItemVal = firstItem->getFirstChild())->isCharData()) {
+	  onValue = ((ZxCharData *)firstItemVal)->getData()->getCString();
+	}
+      } else if (firstItem->isElement("integer") &&
+		 firstItem->getFirstChild()) {
+	itemType = "integer";
+	if ((firstItemVal = firstItem->getFirstChild())->isCharData()) {
+	  onValue = ((ZxCharData *)firstItemVal)->getData()->getCString();
+	}
+      }
+    }
+  }
+
+  // compare its value to the "on" value
+  if (!(value = getFieldValue(itemType))) {
+    return;
+  }
+  if (value->cmp(onValue)) {
+    return;
+  }
+
+  // adjust shape to be square
+  x = y = 0;
+  if (w > h) {
+    x += 0.5 * (w - h);
+    w = h;
+  } else {
+    y += 0.5 * (h - w);
+    h = w;
+  }
+
+  // margins
+  x += 1.5;
+  w -= 3;
+  y += 1.5;
+  h -= 3;
+
+  //~ this should look at the "shape" and "mark" attributes
+
+  appearBuf->appendf("0.5 w {0:.4f} {1:.4f} m {2:.4f} {3:.4f} l {0:.4f} {3:.4f} m {2:.4f} {1:.4f} l S\n",
+		     x, y, x + w, y + h);
 }
 
 void XFAFormField::drawBarCode(GfxFontDict *fontDict,
@@ -792,7 +1510,7 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
   double wideNarrowRatio, fontSize;
   double yText, wText, yBarcode, hBarcode, wNarrow, xx;
   GBool doText;
-  int dataLength;
+  int dataLength, checksum;
   GBool bold, italic;
   char *p;
   int i, j, c;
@@ -815,7 +1533,7 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
     if ((attr = barcodeElem->findAttr("wideNarrowRatio"))) {
       s1 = attr->getValue();
       if ((p = strchr(s1->getCString(), ':'))) {
-	s2 = new GString(s1, 0, p - s1->getCString());
+	s2 = new GString(s1, 0, (int)(p - s1->getCString()));
 	wideNarrowRatio = atof(p + 1);
 	if (wideNarrowRatio == 0) {
 	  wideNarrowRatio = 1;
@@ -900,14 +1618,15 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
   wText = w;
 
   //--- remove extraneous start/stop chars
-  //~ this may depend on barcode type
   value2 = value->copy();
-  if (value2->getLength() >= 1 && value2->getChar(0) == '*') {
-    value2->del(0);
-  }
-  if (value2->getLength() >= 1 &&
-      value2->getChar(value2->getLength() - 1) == '*') {
-    value2->del(value2->getLength() - 1);
+  if (!barcodeType->cmp("code3Of9")) {
+    if (value2->getLength() >= 1 && value2->getChar(0) == '*') {
+      value2->del(0);
+    }
+    if (value2->getLength() >= 1 &&
+	value2->getChar(value2->getLength() - 1) == '*') {
+      value2->del(value2->getLength() - 1);
+    }
   }
 
   //--- draw the bar code
@@ -932,6 +1651,43 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
     }
     // center the text on the drawn barcode (not the max length barcode)
     wText = (value2->getLength() + 2) * (7 + 3 * wideNarrowRatio) * wNarrow;
+  } else if (!barcodeType->cmp("code128B")) {
+    appearBuf->append("0 g\n");
+    wNarrow = w / (11 * (dataLength + 3) + 2);
+    xx = 0;
+    checksum = 0;
+    for (i = -1; i <= value2->getLength() + 1; ++i) {
+      if (i == -1) {
+	// start code B
+	c = 104;
+	checksum += c;
+      } else if (i == value2->getLength()) {
+	// checksum
+	c = checksum % 103;
+      } else if (i == value2->getLength() + 1) {
+	// stop code
+	c = 106;
+      } else {
+	c = value2->getChar(i) & 0xff;
+	if (c >= 32 && c <= 127) {
+	  c -= 32;
+	} else {
+	  c = 0;
+	}	  
+	checksum += (i + 1) * c;
+      }
+      for (j = 0; j < 6; j += 2) {
+	appearBuf->appendf("{0:.4f} {1:.4f} {2:.4f} {3:.4f} re f\n",
+			   xx, yBarcode,
+			   code128Data[c][j] * wNarrow, hBarcode);
+	xx += (code128Data[c][j] + code128Data[c][j+1]) * wNarrow;
+      }
+    }
+    // final bar of the stop code
+    appearBuf->appendf("{0:.4f} {1:.4f} {2:.4f} {3:.4f} re f\n",
+		       xx, yBarcode, 2 * wNarrow, hBarcode);
+    // center the text on the drawn barcode (not the max length barcode)
+    wText = (11 * (value2->getLength() + 3) + 2) * wNarrow;
   } else {
     error(errSyntaxError, -1,
 	  "Unimplemented barcode type in XFA barcode field");
@@ -956,15 +1712,20 @@ Object *XFAFormField::getResources(Object *res) {
 
 double XFAFormField::getMeasurement(ZxAttr *attr, double defaultVal) {
   GString *s;
-  double val, mul;
-  GBool neg;
-  int i;
 
   if (!attr) {
     return defaultVal;
   }
   s = attr->getValue();
-  i = 0;
+  return getMeasurement(s, 0);
+}
+
+double XFAFormField::getMeasurement(GString *s, int begin) {
+  double val, mul;
+  GBool neg;
+  int i;
+
+  i = begin;
   neg = gFalse;
   if (i < s->getLength() && s->getChar(i) == '+') {
     ++i;
@@ -1010,8 +1771,42 @@ double XFAFormField::getMeasurement(ZxAttr *attr, double defaultVal) {
 }
 
 GString *XFAFormField::getFieldValue(const char *valueChildType) {
-  ZxElement *valueElem, *datasets, *data, *elem;
+  ZxElement *valueElem, *datasets, *data, *formElem, *elem;
   char *p;
+
+  // check the <datasets> packet
+  p = name->getCString();
+  if (xfaForm->xml->getRoot() && !strncmp(p, "form.",  5)) {
+    if ((datasets =
+	 xfaForm->xml->getRoot()->findFirstChildElement("xfa:datasets")) &&
+	(data = datasets->findFirstChildElement("xfa:data"))) {
+      elem = findFieldInDatasets(data, p + 5);
+      if (elem &&
+	  elem->getFirstChild() &&
+	  elem->getFirstChild()->isCharData() &&
+	  ((ZxCharData *)elem->getFirstChild())->getData()->getLength() > 0) {
+	return ((ZxCharData *)elem->getFirstChild())->getData();
+      }
+    }
+  }
+
+  // check the <form> element
+  p = fullName->getCString();
+  if (xfaForm->xml->getRoot() && !strncmp(p, "form.",  5)) {
+    if ((formElem = xfaForm->xml->getRoot()->findFirstChildElement("form"))) {
+      elem = findFieldInFormElem(formElem, p + 5);
+      if (elem &&
+	  (valueElem = elem->findFirstChildElement("value")) &&
+	  (elem = valueElem->findFirstChildElement(valueChildType))) {
+	if (elem->getFirstChild() &&
+	    elem->getFirstChild()->isCharData() &&
+	    ((ZxCharData *)elem->getFirstChild())
+	    ->getData()->getLength() > 0) {
+	  return ((ZxCharData *)elem->getFirstChild())->getData();
+	}
+      }
+    }
+  }
 
   // check the <value> element within the field
   if ((valueElem = xml->findFirstChildElement("value")) &&
@@ -1023,31 +1818,10 @@ GString *XFAFormField::getFieldValue(const char *valueChildType) {
     }
   }
 
-  // check the <datasets> packet
-  if (!xfaForm->xml->getRoot() ||
-      !(datasets =
-	  xfaForm->xml->getRoot()->findFirstChildElement("xfa:datasets")) ||
-      !(data = datasets->findFirstChildElement("xfa:data"))) {
-    return NULL;
-  }
-  p = name->getCString();
-  if (!strncmp(p, "form.",  5)) {
-    p += 5;
-  } else {
-    return NULL;
-  }
-  elem = findFieldData(data, p);
-  if (elem &&
-      elem->getFirstChild() &&
-      elem->getFirstChild()->isCharData() &&
-      ((ZxCharData *)elem->getFirstChild())->getData()->getLength() > 0) {
-    return ((ZxCharData *)elem->getFirstChild())->getData();
-  }
-
   return NULL;
 }
 
-ZxElement *XFAFormField::findFieldData(ZxElement *elem, char *partName) {
+ZxElement *XFAFormField::findFieldInDatasets(ZxElement *elem, char *partName) {
   ZxNode *node;
   GString *nodeName;
   int curIdx, idx, n;
@@ -1070,8 +1844,46 @@ ZxElement *XFAFormField::findFieldData(ZxElement *elem, char *partName) {
 	if (!partName[n]) {
 	  return (ZxElement *)node;
 	} else if (partName[n] == '.') {
-	  return findFieldData((ZxElement *)node, partName + n + 1);
+	  return findFieldInDatasets((ZxElement *)node, partName + n + 1);
 	}
+      }
+    }
+  }
+  return NULL;
+}
+
+ZxElement *XFAFormField::findFieldInFormElem(ZxElement *elem, char *partName) {
+  ZxElement *elem2;
+  ZxNode *node;
+  ZxAttr *attr;
+  GString *nodeName;
+  int curIdx, idx, n;
+
+  curIdx = 0;
+  for (node = elem->getFirstChild(); node; node = node->getNextChild()) {
+    if ((node->isElement("subform") || node->isElement("field")) &&
+	((attr = ((ZxElement *)node)->findAttr("name")))) {
+      nodeName = attr->getValue();
+      n = nodeName->getLength();
+      if (!strncmp(partName, nodeName->getCString(), n)) { 
+	if (partName[n] == '[') {
+	  idx = atoi(partName + n + 1);
+	  if (idx == curIdx) {
+	    for (++n; partName[n] && partName[n-1] != ']'; ++n) ;
+	  } else {
+	    ++curIdx;
+	    continue;
+	  }
+	}
+	if (!partName[n]) {
+	  return (ZxElement *)node;
+	} else if (partName[n] == '.') {
+	  return findFieldInFormElem((ZxElement *)node, partName + n + 1);
+	}
+      }
+    } else if (node->isElement("subform")) {
+      if ((elem2 = findFieldInFormElem((ZxElement *)node, partName))) {
+	return elem2;
       }
     }
   }
@@ -1111,32 +1923,61 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
 			    GBool whiteBackground,
 			    GfxFontDict *fontDict, GString *appearBuf) {
   GfxFont *font;
+  const char *fontTag;
   GString *s;
-  double xx, yy, tw, charWidth, lineHeight;
-  double rectX, rectY, rectW, rectH;
-  int line, i, j, k, c, rectI;
+  double yTop, xx, yy, tw, charWidth, lineHeight;
+  double ascent, descent, rectX, rectY, rectW, rectH, blkH;
+  int nLines, line, i, j, k, c, rectI;
 
   //~ deal with Unicode text (is it UTF-8?)
 
   // find the font
-  if (!(font = findFont(fontDict, fontName, bold, italic))) {
+  if ((font = findFont(fontDict, fontName, bold, italic))) {
+    fontTag = font->getTag()->getCString();
+    ascent = font->getAscent() * fontSize;
+    descent = font->getDescent() * fontSize;
+  } else {
     error(errSyntaxError, -1, "Couldn't find a font for '{0:t}', {1:s}, {2:s} used in XFA field",
 	  fontName, bold ? "bold" : "non-bold",
 	  italic ? "italic" : "non-italic");
-    return;
+    fontTag = "xpdf_default_font";
+    ascent = 0.718 * fontSize;
+    descent = -0.207 * fontSize;
   }
 
   // setup
   rectW = rectH = 0;
   rectI = appearBuf->getLength();
   appearBuf->append("BT\n");
-  appearBuf->appendf("/{0:t} {1:.2f} Tf\n", font->getTag(), fontSize);
+  appearBuf->appendf("/{0:s} {1:.2f} Tf\n", fontTag, fontSize);
 
   // multi-line text
   if (multiLine) {
 
-    // figure out how many lines will fit
+    // compute line height
     lineHeight = 1.2 * fontSize;
+
+    // handle bottom/middle alignment
+    if (vAlign == xfaVAlignBottom || vAlign == xfaVAlignMiddle) {
+      nLines = 0;
+      i = 0;
+      while (i < text->getLength()) {
+	getNextLine(text, i, font, fontSize, w, &j, &tw, &k);
+	++nLines;
+	i = k;
+      }
+      blkH = nLines * lineHeight - (lineHeight - fontSize);
+      if (vAlign == xfaVAlignBottom) {
+	yTop = y + blkH;
+      } else {
+	yTop = y + 0.5 * (h + blkH);
+      }
+      if (yTop > y + h) {
+	yTop = y + h;
+      }
+    } else {
+      yTop = y + h;
+    }
 
     // write a series of lines of text
     line = 0;
@@ -1161,7 +2002,7 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
 	xx = x + w - tw;
 	break;
       }
-      yy = y + h - fontSize * font->getAscent() - line * lineHeight;
+      yy = yTop - line * lineHeight - ascent;
 
       // draw the line
       appearBuf->appendf("1 0 0 1 {0:.4f} {1:.4f} Tm\n", xx, yy);
@@ -1185,7 +2026,7 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     }
     rectH = line * lineHeight;
     rectY = y + h - rectH;
-
+ 
   // comb formatting
   } else if (combCells > 0) {
 
@@ -1209,23 +2050,22 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     switch (vAlign) {
     case xfaVAlignTop:
     default:
-      yy = y + h - fontSize * font->getAscent();
+      yy = y + h - ascent;
       break;
     case xfaVAlignMiddle:
-      yy = y + 0.5 * (h - fontSize * (font->getAscent() +
-				      font->getDescent()));
+      yy = y + 0.5 * (h - (ascent + descent));
       break;
     case xfaVAlignBottom:
-      yy = y - fontSize * font->getDescent();
+      yy = y - descent;
       break;
     }
-    rectY = yy + fontSize * font->getDescent();
-    rectH = fontSize * (font->getAscent() - font->getDescent());
+    rectY = yy + descent;
+    rectH = ascent - descent;
 
     // write the text string
     for (i = 0; i < text->getLength(); ++i) {
       c = text->getChar(i) & 0xff;
-      if (!font->isCIDFont()) {
+      if (font && !font->isCIDFont()) {
 	charWidth = fontSize * ((Gfx8BitFont *)font)->getWidth(c);
 	appearBuf->appendf("1 0 0 1 {0:.4f} {1:.4f} Tm\n",
 			   xx + i * tw + 0.5 * (tw - charWidth), yy);
@@ -1249,7 +2089,7 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
   } else {
 
     // compute string width
-    if (!font->isCIDFont()) {
+    if (font && !font->isCIDFont()) {
       tw = 0;
       for (i = 0; i < text->getLength(); ++i) {
 	tw += ((Gfx8BitFont *)font)->getWidth(text->getChar(i));
@@ -1277,18 +2117,17 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     switch (vAlign) {
     case xfaVAlignTop:
     default:
-      yy = y + h - fontSize * font->getAscent();
+      yy = y + h - ascent;
       break;
     case xfaVAlignMiddle:
-      yy = y + 0.5 * (h - fontSize * (font->getAscent() +
-				      font->getDescent()));
+      yy = y + 0.5 * (h - (ascent + descent));
       break;
     case xfaVAlignBottom:
-      yy = y - fontSize * font->getDescent();
+      yy = y - descent;
       break;
     }
-    rectY = yy + fontSize * font->getDescent();
-    rectH = fontSize * (font->getAscent() - font->getDescent());
+    rectY = yy + descent;
+    rectH = ascent - descent;
     appearBuf->appendf("{0:.4f} {1:.4f} Td\n", xx, yy);
 
     // write the text string
@@ -1326,6 +2165,8 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     }
     rectX -= 0.25 * fontSize;
     rectW += 0.5 * fontSize;
+    rectY -= 0.1 * fontSize;
+    rectH += 0.2 * fontSize;
     s = GString::format("q 1 g {0:.4f} {1:.4f} {2:.4f} {3:.4f} re f Q\n",
 			rectX, rectY, rectW, rectH);
     appearBuf->insert(rectI, s);
@@ -1389,6 +2230,77 @@ GfxFont *XFAFormField::findFont(GfxFontDict *fontDict, GString *fontName,
 
   delete reqName;
   return NULL;
+}
+
+// Searches the font resource dict for a font matching(<name>, <bold>,
+// <italic>), and returns the font object ID.  This does not require a
+// GfxFontDict, and it does not do any parsing of font objects beyond
+// looking at BaseFont.
+Ref XFAFormField::findFontName(GString *name, GBool bold, GBool italic) {
+  Object fontDictObj, fontObj, baseFontObj, fontRef;
+  Ref fontID;
+  GString *reqName, *testName;
+  GBool foundName, foundBold, foundItalic;
+  char *p;
+  char c;
+  int i;
+
+  fontID.num = fontID.gen = -1;
+
+  // remove space chars from the requested name
+  reqName = new GString();
+  for (i = 0; i < name->getLength(); ++i) {
+    c = name->getChar(i);
+    if (c != ' ') {
+      reqName->append(c);
+    }
+  }
+
+  if (xfaForm->resourceDict.isDict()) {
+    if (xfaForm->resourceDict.dictLookup("Font", &fontDictObj)->isDict()) {
+      for (i = 0; i < fontDictObj.dictGetLength() && fontID.num < 0; ++i) {
+	fontDictObj.dictGetVal(i, &fontObj);
+	if (fontObj.dictLookup("BaseFont", &baseFontObj)->isName()) {
+
+	  // remove space chars from the font name
+	  testName = new GString();
+	  for (p = baseFontObj.getName(); *p; ++p) {
+	    if (*p != ' ') {
+	      testName->append(p);
+	    }
+	  }
+
+	  // compare the names
+	  foundName = foundBold = foundItalic = gFalse;
+	  for (p = testName->getCString(); *p; ++p) {
+	    if (!strncasecmp(p, reqName->getCString(), reqName->getLength())) {
+	      foundName = gTrue;
+	    }
+	    if (!strncasecmp(p, "bold", 4)) {
+	      foundBold = gTrue;
+	    }
+	    if (!strncasecmp(p, "italic", 6) || !strncasecmp(p, "oblique", 7)) {
+	      foundItalic = gTrue;
+	    }
+	  }
+	  delete testName;
+	  if (foundName && foundBold == bold && foundItalic == italic) {
+	    if (fontObj.dictGetValNF(i, &fontRef)) {
+	      fontID = fontRef.getRef();
+	    }
+	    fontRef.free();
+	  }
+	}
+
+	baseFontObj.free();
+	fontObj.free();
+      }
+    }
+    fontDictObj.free();
+  }
+  delete reqName;
+
+  return fontID;
 }
 
 // Figure out how much text will fit on the next line.  Returns:
@@ -1455,4 +2367,691 @@ void XFAFormField::getNextLine(GString *text, int start,
     ++j;
   }
   *next = j;
+}
+
+//------------------------------------------------------------------------
+// 'picture' formatting
+//------------------------------------------------------------------------
+
+class XFAPictureNode {
+public:
+  virtual ~XFAPictureNode() {}
+  virtual GBool isLiteral() { return gFalse; }
+  virtual GBool isSign() { return gFalse; }
+  virtual GBool isDigit() { return gFalse; }
+  virtual GBool isDecPt() { return gFalse; }
+  virtual GBool isSeparator() { return gFalse; }
+  virtual GBool isYear() { return gFalse; }
+  virtual GBool isMonth() { return gFalse; }
+  virtual GBool isDay() { return gFalse; }
+  virtual GBool isHour() { return gFalse; }
+  virtual GBool isMinute() { return gFalse; }
+  virtual GBool isSecond() { return gFalse; }
+  virtual GBool isChar() { return gFalse; }
+};
+
+class XFAPictureLiteral: public XFAPictureNode {
+public:
+  XFAPictureLiteral(GString *sA) { s = sA; }
+  virtual ~XFAPictureLiteral() { delete s; }
+  virtual GBool isLiteral() { return gTrue; }
+  GString *s;
+};
+
+class XFAPictureSign: public XFAPictureNode {
+public:
+  XFAPictureSign(char cA) { c = cA; }
+  virtual GBool isSign() { return gTrue; }
+  char c;
+};
+
+class XFAPictureDigit: public XFAPictureNode {
+public:
+  XFAPictureDigit(char cA) { c = cA; pos = 0; }
+  virtual GBool isDigit() { return gTrue; }
+  char c;
+  int pos;
+};
+
+class XFAPictureDecPt: public XFAPictureNode {
+public:
+  XFAPictureDecPt() { }
+  virtual GBool isDecPt() { return gTrue; }
+};
+
+class XFAPictureSeparator: public XFAPictureNode {
+public:
+  XFAPictureSeparator() { }
+  virtual GBool isSeparator() { return gTrue; }
+};
+
+class XFAPictureYear: public XFAPictureNode {
+public:
+  XFAPictureYear(int nDigitsA) { nDigits = nDigitsA; }
+  virtual GBool isYear() { return gTrue; }
+  int nDigits;
+};
+
+class XFAPictureMonth: public XFAPictureNode {
+public:
+  XFAPictureMonth(int nDigitsA) { nDigits = nDigitsA; }
+  virtual GBool isMonth() { return gTrue; }
+  int nDigits;
+};
+
+class XFAPictureDay: public XFAPictureNode {
+public:
+  XFAPictureDay(int nDigitsA) { nDigits = nDigitsA; }
+  virtual GBool isDay() { return gTrue; }
+  int nDigits;
+};
+
+class XFAPictureHour: public XFAPictureNode {
+public:
+  XFAPictureHour(GBool is24HourA, int nDigitsA)
+    { is24Hour = is24HourA; nDigits = nDigitsA; }
+  virtual GBool isHour() { return gTrue; }
+  GBool is24Hour;
+  int nDigits;
+};
+
+class XFAPictureMinute: public XFAPictureNode {
+public:
+  XFAPictureMinute(int nDigitsA) { nDigits = nDigitsA; }
+  virtual GBool isMinute() { return gTrue; }
+  int nDigits;
+};
+
+class XFAPictureSecond: public XFAPictureNode {
+public:
+  XFAPictureSecond(int nDigitsA) { nDigits = nDigitsA; }
+  virtual GBool isSecond() { return gTrue; }
+  int nDigits;
+};
+
+class XFAPictureChar: public XFAPictureNode {
+public:
+  XFAPictureChar() {}
+  virtual GBool isChar() { return gTrue; }
+};
+
+GString *XFAFormField::pictureFormatDateTime(GString *value, GString *picture) {
+  GList *pic;
+  XFAPictureNode *node;
+  GString *ret, *s;
+  char c;
+  int year, month, day, hour, min, sec;
+  int len, picStart, picEnd, u, n, i, j;
+
+  len = value->getLength();
+  if (len == 0) {
+    return value->copy();
+  }
+
+  //--- parse the value
+
+  // expected format is yyyy(-mm(-dd)?)?Thh(:mm(:ss)?)?
+  // where:
+  // - the '-'s and ':'s are optional
+  // - the 'T' is literal
+  // - we're ignoring optional time zone info at the end
+  // (if the value is not in this canonical format, we just punt and
+  // return the value string)
+  //~ another option would be to parse the value following the
+  //~   <ui><picture> element
+  year = month = day = hour = min = sec = 0;
+  i = 0;
+  if (!(i + 4 <= len && isValidInt(value, i, 4))) {
+    return value->copy();
+  }
+  year = convertInt(value, i, 4);
+  i += 4;
+  if (i < len && value->getChar(i) == '-') {
+    ++i;
+  }
+  if (i + 2 <= len && isValidInt(value, i, 2)) {
+    month = convertInt(value, i, 2);
+    i += 2;
+    if (i < len && value->getChar(i) == '-') {
+      ++i;
+    }
+    if (i + 2 <= len && isValidInt(value, i, 2)) {
+      day = convertInt(value, i, 2);
+      i += 2;
+    }
+  }
+  if (i < len) {
+    if (value->getChar(i) != 'T') {
+      return value->copy();
+    }
+    ++i;
+    if (!(i + 2 <= len && isValidInt(value, i, 2))) {
+      return value->copy();
+    }
+    hour = convertInt(value, i, 2);
+    i += 2;
+    if (i < len && value->getChar(i) == ':') {
+      ++i;
+    }
+    if (i + 2 <= len && isValidInt(value, i, 2)) {
+      min = convertInt(value, i, 2);
+      i += 2;
+      if (i < len && value->getChar(i) == ':') {
+	++i;
+      }
+      if (i + 2 <= len && isValidInt(value, i, 2)) {
+	sec = convertInt(value, i, 2);
+	i += 2;
+      }
+    }
+  }
+  if (i < len) {
+    return value->copy();
+  }
+
+  //--- skip the category and locale in the picture
+
+  picStart = 0;
+  picEnd = picture->getLength();
+  for (i = 0; i < picture->getLength(); ++i) {
+    c = picture->getChar(i);
+    if (c == '{') {
+      picStart = i + 1;
+      for (picEnd = picStart;
+	   picEnd < picture->getLength() && picture->getChar(picEnd) != '}';
+	   ++picEnd) ;
+      break;
+    } else if (!((c >= 'a' && c <= 'z') ||
+		 (c >= 'A' && c <= 'Z') ||
+		 c == '(' ||
+		 c == ')')) {
+      break;
+    }
+  }
+
+  //--- parse the picture
+
+  pic = new GList();
+  i = picStart;
+  while (i < picEnd) {
+    c = picture->getChar(i);
+    ++i;
+    if (c == '\'') {
+      s = new GString();
+      while (i < picEnd) {
+	c = picture->getChar(i);
+	if (c == '\'') {
+	  ++i;
+	  if (i < picEnd && picture->getChar(i) == '\'') {
+	    s->append('\'');
+	    ++i;
+	  } else {
+	    break;
+	  }
+	} else if (c == '\\') {
+	  ++i;
+	  if (i == picEnd) {
+	    break;
+	  }
+	  c = picture->getChar(i);
+	  ++i;
+	  if (c == 'u' && i+4 <= picEnd) {
+	    u = 0;
+	    for (j = 0; j < 4; ++j, ++i) {
+	      c = picture->getChar(i);
+	      u <<= 4;
+	      if (c >= '0' && c <= '9') {
+		u += c - '0';
+	      } else if (c >= 'a' && c <= 'F') {
+		u += c - 'a' + 10;
+	      } else if (c >= 'A' && c <= 'F') {
+		u += c - 'A' + 10;
+	      }
+	    }
+	    //~ this should convert to UTF-8 (?)
+	    if (u <= 0xff) {
+	      s->append((char)u);
+	    }
+	  } else {
+	    s->append(c);
+	  }
+	} else {
+	  s->append(c);
+	}
+      }
+      pic->append(new XFAPictureLiteral(s));
+    } else if (c == ',' || c == '-' || c == ':' ||
+	       c == '/' || c == '.' || c == ' ') {
+      s = new GString();
+      s->append(c);
+      pic->append(new XFAPictureLiteral(s));
+    } else if (c == 'Y') {
+      for (n = 1; n < 4 && i < picEnd && picture->getChar(i) == 'Y'; ++n, ++i) ;
+      pic->append(new XFAPictureYear(n));
+    } else if (c == 'M') {
+      for (n = 1; n < 2 && i < picEnd && picture->getChar(i) == 'M'; ++n, ++i) ;
+      pic->append(new XFAPictureMonth(n));
+    } else if (c == 'D') {
+      for (n = 1; n < 2 && i < picEnd && picture->getChar(i) == 'D'; ++n, ++i) ;
+      pic->append(new XFAPictureDay(n));
+    } else if (c == 'h') {
+      for (n = 1; n < 2 && i < picEnd && picture->getChar(i) == 'h'; ++n, ++i) ;
+      pic->append(new XFAPictureHour(gFalse, n));
+    } else if (c == 'H') {
+      for (n = 1; n < 2 && i < picEnd && picture->getChar(i) == 'H'; ++n, ++i) ;
+      pic->append(new XFAPictureHour(gTrue, n));
+    } else if (c == 'M') {
+      for (n = 1; n < 2 && i < picEnd && picture->getChar(i) == 'M'; ++n, ++i) ;
+      pic->append(new XFAPictureMinute(n));
+    } else if (c == 'S') {
+      for (n = 1; n < 2 && i < picEnd && picture->getChar(i) == 'S'; ++n, ++i) ;
+      pic->append(new XFAPictureSecond(n));
+    }
+  }
+
+  //--- generate formatted text
+
+  ret = new GString();
+  for (i = 0; i < pic->getLength(); ++i) {
+    node = (XFAPictureNode *)pic->get(i);
+    if (node->isLiteral()) {
+      ret->append(((XFAPictureLiteral *)node)->s);
+    } else if (node->isYear()) {
+      if (((XFAPictureYear *)node)->nDigits == 2) {
+	if (year >= 1930 && year < 2030) {
+	  ret->appendf("{0:02d}", year % 100);
+	} else {
+	  ret->append("??");
+	}
+      } else {
+	ret->appendf("{0:04d}", year);
+      }
+    } else if (node->isMonth()) {
+      if (((XFAPictureMonth *)node)->nDigits == 1) {
+	ret->appendf("{0:d}", month);
+      } else {
+	ret->appendf("{0:02d}", month);
+      }
+    } else if (node->isDay()) {
+      if (((XFAPictureDay *)node)->nDigits == 1) {
+	ret->appendf("{0:d}", day);
+      } else {
+	ret->appendf("{0:02d}", day);
+      }
+    } else if (node->isHour()) {
+      if (((XFAPictureHour *)node)->is24Hour) {
+	n = hour;
+      } else {
+	n = hour % 12;
+	if (n == 0) {
+	  n = 12;
+	}
+      }
+      if (((XFAPictureHour *)node)->nDigits == 1) {
+	ret->appendf("{0:d}", n);
+      } else {
+	ret->appendf("{0:02d}", n);
+      }
+    } else if (node->isMinute()) {
+      if (((XFAPictureMinute *)node)->nDigits == 1) {
+	ret->appendf("{0:d}", min);
+      } else {
+	ret->appendf("{0:02d}", min);
+      }
+    } else if (node->isSecond()) {
+      if (((XFAPictureSecond *)node)->nDigits == 1) {
+	ret->appendf("{0:d}", sec);
+      } else {
+	ret->appendf("{0:02d}", sec);
+      }
+    }
+  }
+  deleteGList(pic, XFAPictureNode);
+
+  return ret;
+}
+
+GString *XFAFormField::pictureFormatNumber(GString *value, GString *picture) {
+  GList *pic;
+  XFAPictureNode *node;
+  GString *ret, *s;
+  GBool neg, haveDigits;
+  char c;
+  int start, decPt, trailingZero, len;
+  int picStart, picEnd, u, pos, i, j;
+
+  len = value->getLength();
+  if (len == 0) {
+    return value->copy();
+  }
+
+  //--- parse the value
+
+  // -nnnn.nnnn0000
+  //  ^   ^    ^   ^
+  //  |   |    |   +-- len
+  //  |   |    +------ trailingZero
+  //  |   +----------- decPt
+  //  +--------------- start
+  start = 0;
+  neg = gFalse;
+  if (value->getChar(start) == '-') {
+    neg = gTrue;
+    ++start;
+  } else if (value->getChar(start) == '+') {
+    ++start;
+  }
+  for (decPt = start; decPt < len && value->getChar(decPt) != '.'; ++decPt) ;
+  for (trailingZero = len;
+       trailingZero > decPt && value->getChar(trailingZero - 1) == '0';
+       --trailingZero) ;
+
+  //--- skip the category and locale in the picture
+
+  picStart = 0;
+  picEnd = picture->getLength();
+  for (i = 0; i < picture->getLength(); ++i) {
+    c = picture->getChar(i);
+    if (c == '{') {
+      picStart = i + 1;
+      for (picEnd = picStart;
+	   picEnd < picture->getLength() && picture->getChar(picEnd) != '}';
+	   ++picEnd) ;
+      break;
+    } else if (!((c >= 'a' && c <= 'z') ||
+		 (c >= 'A' && c <= 'Z') ||
+		 c == '(' ||
+		 c == ')')) {
+      break;
+    }
+  }
+
+  //--- parse the picture
+
+  pic = new GList();
+  i = picStart;
+  while (i < picEnd) {
+    c = picture->getChar(i);
+    ++i;
+    if (c == '\'') {
+      s = new GString();
+      while (i < picEnd) {
+	c = picture->getChar(i);
+	if (c == '\'') {
+	  ++i;
+	  if (i < picEnd && picture->getChar(i) == '\'') {
+	    s->append('\'');
+	    ++i;
+	  } else {
+	    break;
+	  }
+	} else if (c == '\\') {
+	  ++i;
+	  if (i == picEnd) {
+	    break;
+	  }
+	  c = picture->getChar(i);
+	  ++i;
+	  if (c == 'u' && i+4 <= picEnd) {
+	    u = 0;
+	    for (j = 0; j < 4; ++j, ++i) {
+	      c = picture->getChar(i);
+	      u <<= 4;
+	      if (c >= '0' && c <= '9') {
+		u += c - '0';
+	      } else if (c >= 'a' && c <= 'F') {
+		u += c - 'a' + 10;
+	      } else if (c >= 'A' && c <= 'F') {
+		u += c - 'A' + 10;
+	      }
+	    }
+	    //~ this should convert to UTF-8 (?)
+	    if (u <= 0xff) {
+	      s->append((char)u);
+	    }
+	  } else {
+	    s->append(c);
+	  }
+	} else {
+	  s->append(c);
+	  ++i;
+	}
+      }
+      pic->append(new XFAPictureLiteral(s));
+    } else if (c == '-' || c == ':' || c == '/' || c == ' ') {
+      s = new GString();
+      s->append(c);
+      pic->append(new XFAPictureLiteral(s));
+    } else if (c == 's' || c == 'S') {
+      pic->append(new XFAPictureSign(c));
+    } else if (c == 'Z' || c == 'z' || c == '8' || c == '9') {
+      pic->append(new XFAPictureDigit(c));
+    } else if (c == '.') {
+      pic->append(new XFAPictureDecPt());
+    } else if (c == ',') {
+      pic->append(new XFAPictureSeparator());
+    }
+  }
+  for (i = 0; i < pic->getLength(); ++i) {
+    node = (XFAPictureNode *)pic->get(i);
+    if (node->isDecPt()) {
+      break;
+    }
+  }
+  pos = 0;
+  for (j = i - 1; j >= 0; --j) {
+    node = (XFAPictureNode *)pic->get(j);
+    if (node->isDigit()) {
+      ((XFAPictureDigit *)node)->pos = pos;
+      ++pos;
+    }
+  }
+  pos = -1;
+  for (j = i + 1; j < pic->getLength(); ++j) {
+    node = (XFAPictureNode *)pic->get(j);
+    if (node->isDigit()) {
+      ((XFAPictureDigit *)node)->pos = pos;
+      --pos;
+    }
+  }
+
+  //--- generate formatted text
+
+  ret = new GString();
+  haveDigits = gFalse;
+  for (i = 0; i < pic->getLength(); ++i) {
+    node = (XFAPictureNode *)pic->get(i);
+    if (node->isLiteral()) {
+      ret->append(((XFAPictureLiteral *)node)->s);
+    } else if (node->isSign()) {
+      if (((XFAPictureSign *)node)->c == 'S') {
+	ret->append(neg ? '-' : ' ');
+      } else {
+	if (neg) {
+	  ret->append('-');
+	}
+      }
+    } else if (node->isDigit()) {
+      pos = ((XFAPictureDigit *)node)->pos;
+      c = ((XFAPictureDigit *)node)->c;
+      if (pos >= 0 && pos < decPt - start) {
+	ret->append(value->getChar(decPt - 1 - pos));
+	haveDigits = gTrue;
+      } else if (pos < 0 && -pos <= trailingZero - decPt - 1) {
+	ret->append(value->getChar(decPt - pos));
+	haveDigits = gTrue;
+      } else if (c == '8' &&
+		 pos < 0 &&
+		 -pos <= len - decPt - 1) {
+	ret->append('0');
+	haveDigits = gTrue;
+      } else if (c == '9') {
+	ret->append('0');
+	haveDigits = gTrue;
+      } else if (c == 'Z' && pos >= 0) {
+	ret->append(' ');
+      }
+    } else if (node->isDecPt()) {
+      if (!(i+1 < pic->getLength() &&
+	    ((XFAPictureNode *)pic->get(i+1))->isDigit() &&
+	    ((XFAPictureDigit *)pic->get(i+1))->c == 'z') ||
+	  trailingZero > decPt + 1) {
+	ret->append('.');
+      }
+    } else if (node->isSeparator()) {
+      if (haveDigits) {
+	ret->append(',');
+      }
+    }
+  }
+  deleteGList(pic, XFAPictureNode);
+
+  return ret;
+}
+
+GString *XFAFormField::pictureFormatText(GString *value, GString *picture) {
+  GList *pic;
+  XFAPictureNode *node;
+  GString *ret, *s;
+  char c;
+  int len, picStart, picEnd, u, i, j;
+
+  len = value->getLength();
+  if (len == 0) {
+    return value->copy();
+  }
+
+  //--- skip the category and locale in the picture
+
+  picStart = 0;
+  picEnd = picture->getLength();
+  for (i = 0; i < picture->getLength(); ++i) {
+    c = picture->getChar(i);
+    if (c == '{') {
+      picStart = i + 1;
+      for (picEnd = picStart;
+	   picEnd < picture->getLength() && picture->getChar(picEnd) != '}';
+	   ++picEnd) ;
+      break;
+    } else if (!((c >= 'a' && c <= 'z') ||
+		 (c >= 'A' && c <= 'Z') ||
+		 c == '(' ||
+		 c == ')')) {
+      break;
+    }
+  }
+
+  //--- parse the picture
+
+  pic = new GList();
+  i = picStart;
+  while (i < picEnd) {
+    c = picture->getChar(i);
+    ++i;
+    if (c == '\'') {
+      s = new GString();
+      while (i < picEnd) {
+	c = picture->getChar(i);
+	if (c == '\'') {
+	  ++i;
+	  if (i < picEnd && picture->getChar(i) == '\'') {
+	    s->append('\'');
+	    ++i;
+	  } else {
+	    break;
+	  }
+	} else if (c == '\\') {
+	  ++i;
+	  if (i == picEnd) {
+	    break;
+	  }
+	  c = picture->getChar(i);
+	  ++i;
+	  if (c == 'u' && i+4 <= picEnd) {
+	    u = 0;
+	    for (j = 0; j < 4; ++j, ++i) {
+	      c = picture->getChar(i);
+	      u <<= 4;
+	      if (c >= '0' && c <= '9') {
+		u += c - '0';
+	      } else if (c >= 'a' && c <= 'F') {
+		u += c - 'a' + 10;
+	      } else if (c >= 'A' && c <= 'F') {
+		u += c - 'A' + 10;
+	      }
+	    }
+	    //~ this should convert to UTF-8 (?)
+	    if (u <= 0xff) {
+	      s->append((char)u);
+	    }
+	  } else {
+	    s->append(c);
+	  }
+	} else {
+	  s->append(c);
+	  ++i;
+	}
+      }
+      pic->append(new XFAPictureLiteral(s));
+    } else if (c == ',' || c == '-' || c == ':' ||
+	       c == '/' || c == '.' || c == ' ') {
+      s = new GString();
+      s->append(c);
+      pic->append(new XFAPictureLiteral(s));
+    } else if (c == 'A' || c == 'X' || c == 'O' || c == '0' || c == '9') {
+      pic->append(new XFAPictureChar());
+    }
+  }
+
+  //--- generate formatted text
+
+  ret = new GString();
+  j = 0;
+  for (i = 0; i < pic->getLength(); ++i) {
+    node = (XFAPictureNode *)pic->get(i);
+    if (node->isLiteral()) {
+      ret->append(((XFAPictureLiteral *)node)->s);
+    } else if (node->isChar()) {
+      // if there are more chars in the picture than in the value,
+      // Adobe renders the value as-is, without picture formatting
+      if (j >= value->getLength()) {
+	delete ret;
+	ret = value->copy();
+	break;
+      }
+      ret->append(value->getChar(j));
+      ++j;
+    }
+  }
+  deleteGList(pic, XFAPictureNode);
+
+  return ret;
+}
+
+GBool XFAFormField::isValidInt(GString *s, int start, int len) {
+  int i;
+
+  for (i = 0; i < len; ++i) {
+    if (!(start + i < s->getLength() &&
+	  s->getChar(start + i) >= '0' &&
+	  s->getChar(start + i) <= '9')) {
+      return gFalse;
+    }
+  }
+  return gTrue;
+}
+
+int XFAFormField::convertInt(GString *s, int start, int len) {
+  char c;
+  int x, i;
+
+  x = 0;
+  for (i = 0; i < len && start + i < s->getLength(); ++i) {
+    c = s->getChar(start + i);
+    if (c < '0' || c > '9') {
+      break;
+    }
+    x = x * 10 + (c - '0');
+  }
+  return x;
 }

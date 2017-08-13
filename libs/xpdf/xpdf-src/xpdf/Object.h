@@ -21,6 +21,9 @@
 #include "gmem.h"
 #include "gfile.h"
 #include "GString.h"
+#if MULTITHREADED
+#include "GMutex.h"
+#endif
 
 class XRef;
 class Array;
@@ -69,7 +72,11 @@ enum ObjType {
 //------------------------------------------------------------------------
 
 #ifdef DEBUG_MEM
-#define initObj(t) ++numAlloc[type = t]
+#  if MULTITHREADED
+#    define initObj(t) gAtomicIncrement(&numAlloc[type = t])
+#  else
+#    define initObj(t) ++numAlloc[type = t]
+#  endif
 #else
 #define initObj(t) type = t
 #endif
@@ -210,8 +217,13 @@ private:
   };
 
 #ifdef DEBUG_MEM
+#if MULTITHREADED
+  static GAtomicCounter		// number of each type of object
+    numAlloc[numObjTypes];	//   currently allocated
+#else
   static int			// number of each type of object
     numAlloc[numObjTypes];	//   currently allocated
+#endif
 #endif
 };
 

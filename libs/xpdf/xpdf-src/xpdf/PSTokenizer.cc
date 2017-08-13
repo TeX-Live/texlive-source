@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "gmempp.h"
 #include "PSTokenizer.h"
 
 //------------------------------------------------------------------------

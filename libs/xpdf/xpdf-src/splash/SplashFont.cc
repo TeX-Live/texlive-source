@@ -14,6 +14,7 @@
 
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "SplashMath.h"
 #include "SplashGlyphBitmap.h"
 #include "SplashFontFile.h"
@@ -66,6 +67,12 @@ void SplashFont::initCache() {
   // deal with rounding errors
   glyphW = xMax - xMin + 3;
   glyphH = yMax - yMin + 3;
+  if (glyphW > 1000 || glyphH > 1000) {
+    // if the glyphs are too large, don't cache them -- setting the
+    // cache bitmap size to something tiny will cause getGlyph() to
+    // fall back to the uncached case
+    glyphW = glyphH = 1;
+  }
   if (aa) {
     glyphSize = glyphW * glyphH;
   } else {
@@ -76,7 +83,7 @@ void SplashFont::initCache() {
   cacheAssoc = splashFontCacheAssoc;
   for (cacheSets = splashFontCacheMaxSets;
        cacheSets > 1 &&
-	 cacheSets * cacheAssoc * glyphSize > splashFontCacheSize;
+	 glyphSize > splashFontCacheSize / (cacheSets * cacheAssoc);
        cacheSets >>= 1) ;
   cache = (Guchar *)gmallocn(cacheSets * cacheAssoc, glyphSize);
   cacheTags = (SplashFontCacheTag *)gmallocn(cacheSets * cacheAssoc,

@@ -15,6 +15,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "Object.h"
 #include "XRef.h"
 #include "Dict.h"

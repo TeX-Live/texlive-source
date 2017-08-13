@@ -1,17 +1,17 @@
 Xpdf
 ====
 
-version 3.04
-2014-may-28
+version 4.00
+2017-aug-10
 
 The Xpdf software and documentation are
-copyright 1996-2014 Glyph & Cog, LLC.
+copyright 1996-2017 Glyph & Cog, LLC.
 
-Email: derekn@foolabs.com
-WWW: http://www.foolabs.com/xpdf/
+Email: xpdf@xpdfreader.com
+WWW: http://www.xpdfreader.com/
 
 The PDF data structures, operators, and specification are
-copyright 1985-2006 Adobe Systems Inc.
+documented in ISO 32000-1:2008.
 
 
 What is Xpdf?
@@ -23,16 +23,14 @@ the name of Adobe's PDF software.)  The Xpdf project also includes a
 PDF text extractor, PDF-to-PostScript converter, and various other
 utilities.
 
-Xpdf runs under the X Window System on UNIX and OS/2.  The non-X
-components (pdftops, pdftotext, etc.) also run on Windows and Mac OSX
-systems and should run on pretty much any system with a decent C++
-compiler.  Xpdf will run on 32-bit and 64-bit machines.
+The Xpdf viewer uses the Qt cross-platform GUI toolkit.  The other
+command line utilties do not require Qt.
 
 
 License & Distribution
 ----------------------
 
-Xpdf is licensed under the GNU General Pulbic License (GPL), version 2
+Xpdf is licensed under the GNU General Public License (GPL), version 2
 or 3.  This means that you can distribute derivatives of Xpdf under
 any of the following:
   - GPL v2 only
@@ -64,17 +62,13 @@ Cog web site:
 Compatibility
 -------------
 
-Xpdf is developed and tested on Linux.
+Xpdf uses the Qt toolkit and runs on Linux, Windows, and OS X -- and
+probably other systems that have a Qt port.
 
-In addition, it has been compiled by others on Solaris, AIX, HP-UX,
-Digital Unix, Irix, and numerous other Unix implementations, as well
-as OS/2.  It should work on pretty much any system which runs X11 and
-has Unix-like libraries.  You'll need ANSI C++ and C compilers to
-compile it.
-
-The non-X components of Xpdf (pdftops, pdftotext, pdfinfo, pdffonts,
-pdfdetach, pdftoppm, and pdfimages) can also be compiled on Windows
-and Mac OSX systems.  See the Xpdf web page for details.
+The non-GUI command line utilities (pdftops, pdftotext, pdftohtml,
+pdfinfo, pdffonts, pdfdetach, pdftoppm, pdftopng, and pdfimages) run
+on Linux, Windows, and OS X -- and should run on pretty much any
+system with a decent C++ compiler.
 
 If you compile Xpdf for a system not listed on the web page, please
 let me know.  If you're willing to make your binary available by ftp
@@ -85,20 +79,13 @@ disk space and support reasons).
 If you can't get Xpdf to compile on your system, send me email and
 I'll try to help.
 
-Xpdf has been ported to the Acorn, Amiga, BeOS, and EPOC.  See the
-Xpdf web page for links.
-
 
 Getting Xpdf
 ------------
 
 The latest version is available from:
 
-  http://www.foolabs.com/xpdf/
-
-or:
-
-  ftp://ftp.foolabs.com/pub/xpdf/
+  http://www.xpdfreader.com/
 
 Source code and several precompiled executables are available.
 
@@ -114,8 +101,7 @@ To run xpdf, simply type:
 
   xpdf file.pdf
 
-To generate a PostScript file, hit the "print" button in xpdf, or run
-pdftops:
+To generate a PostScript file, run pdftops:
 
   pdftops file.pdf
 
@@ -123,9 +109,10 @@ To generate a plain text file, run pdftotext:
 
   pdftotext file.pdf
 
-There are five additional utilities (which are fully described in
+There are several additional utilities (which are fully described in
 their man pages):
 
+  pdftohtml -- converts a PDF file to HTML
   pdfinfo -- dumps a PDF file's Info dictionary (plus some other
              useful information)
   pdffonts -- lists the fonts used in a PDF file along with various
@@ -134,6 +121,7 @@ their man pages):
                PDF file
   pdftoppm -- converts a PDF file to a series of PPM/PGM/PBM-format
               bitmaps
+  pdftopng -- converts a PDF file to a series of PNG image files
   pdfimages -- extracts the images from a PDF file
 
 Command line options and many other details are described in the man
@@ -141,30 +129,6 @@ pages: xpdf(1), etc.
 
 All of these utilities read an optional configuration file: see the
 xpdfrc(5) man page.
-
-
-Upgrading from Xpdf 3.02 (and earlier)
---------------------------------------
-
-The font configuration system has been changed.  Previous versions
-used mostly separate commands to configure fonts for display and for
-PostScript output.  As of 3.03, configuration options that make sense
-for both display and PS output have been unified.
-
-The following xpdfrc commands have been removed:
-* displayFontT1, displayFontTT: replaced with fontFile
-* displayNamedCIDFontT1, displayNamedCIDFontTT: replaced with fontFile
-* displayCIDFontT1, displayCIDFontTT: replaced with fontFileCC
-* psFont: replaced with psResidentFont
-* psNamedFont16: replaced with psResidentFont16
-* psFont16: replaced with psResidentFontCC
-
-See the xpdfrc(5) man page for more information on the new commands.
-
-Pdftops will now embed external 16-bit fonts (configured with the
-fontFileCC command) when the PDF file refers to a non-embedded font.
-It does not do any subsetting (yet), so the resulting PS files will be
-large.
 
 
 Compiling Xpdf
@@ -187,7 +151,8 @@ Third-Party Libraries
 
 Xpdf uses the following libraries:
 * FreeType [http://www.freetype.org/]
-* libpng [http://www.libpng.com/pub/png/libpng.html] (used by pdftohtml)
+* libpng [http://www.libpng.com/pub/png/libpng.html] (used by pdftohtml
+  and pdftopng)
 * zlib [http://zlib.net/] (used by pdftohtml)
 
 
@@ -231,15 +196,20 @@ pdftex project:
 References
 ----------
 
-Adobe Systems Inc., _PDF Reference, sixth edition: Adobe Portable
-Document Format version 1.7_.
+Adobe Systems Inc., ISO 32000-1:2008, Document Management - Portable
+document format - Part 1: PDF 1.7.
 http://www.adobe.com/devnet/pdf/pdf_reference.html
 [The manual for PDF version 1.7.]
 
-Adobe Systems Inc., "Errata for the PDF Reference, sixth edition,
-version 1.7", October 16, 2006.
+Adobe Systems Inc., Adobe Supplement to the ISO 32000, BaseVersion
+1.7, ExtensionLevel 3, June 2008.
 http://www.adobe.com/devnet/pdf/pdf_reference.html
-[The errata for the PDF 1.7 spec.]
+[Additions to the PDF 1.7 spec.]
+
+Adobe Systems Inc., Adobe Supplement to ISO 32000-1, BaseVersion 1.7,
+ExtensionLevel 5, June 2009.
+http://www.adobe.com/devnet/pdf/pdf_reference.html
+[Additions to the PDF 1.7 spec.]
 
 Adobe Systems Inc., _PostScript Language Reference_, 3rd ed.
 Addison-Wesley, 1999, ISBN 0-201-37922-8.

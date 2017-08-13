@@ -27,6 +27,7 @@ class Links;
 class LinkAction;
 class LinkDest;
 class Outline;
+class OutlineItem;
 class OptionalContent;
 class PDFCore;
 
@@ -131,6 +132,10 @@ public:
 #ifndef DISABLE_OUTLINE
   // Return the outline object.
   Outline *getOutline() { return outline; }
+
+  // Return the target page number for an outline item.  Returns 0 if
+  // the item doesn't target a page in this PDF file.
+  int getOutlineTargetPage(OutlineItem *outlineItem);
 #endif
 
   // Return the OptionalContent object.
@@ -171,9 +176,9 @@ public:
     { return catalog->getEmbeddedFileName(idx); }
   int getEmbeddedFileNameLength(int idx)
     { return catalog->getEmbeddedFileNameLength(idx); }
-  GBool saveEmbeddedFile(int idx, char *path);
+  GBool saveEmbeddedFile(int idx, const char *path);
 #ifdef _WIN32
-  GBool saveEmbeddedFile(int idx, wchar_t *path, int pathLen);
+  GBool saveEmbeddedFile(int idx, const wchar_t *path, int pathLen);
 #endif
   char *getEmbeddedFileMem(int idx, int *size);
 

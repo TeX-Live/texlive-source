@@ -1,10 +1,10 @@
-pdftopng(1)                                                        pdftopng(1)
+pdftopng(1)                 General Commands Manual                pdftopng(1)
 
 
 
 NAME
        pdftopng  - Portable Document Format (PDF) to Portable Network Graphics
-       (PNG) converter (version 3.04)
+       (PNG) converter (version 4.00)
 
 SYNOPSIS
        pdftopng [options] PDF-file PNG-root
@@ -43,6 +43,10 @@ OPTIONS
        -mono  Generate a monochrome image (instead of a color image).
 
        -gray  Generate a grayscale image (instead of a color image).
+
+       -alpha Generate  an alpha channel in the PNG file.  This is only useful
+              with PDF files that have been  constructed  with  a  transparent
+              background.  The -alpha flag cannot be used with -mono.
 
        -freetype yes | no
               Enable  or  disable  FreeType  (a TrueType / Type 1 font raster-
@@ -83,14 +87,14 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdftopng software and documentation are copyright 1996-2014 Glyph &
+       The pdftopng software and documentation are copyright 1996-2017 Glyph &
        Cog, LLC.
 
 SEE ALSO
        xpdf(1),  pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),   pdf-
        fonts(1), pdfdetach(1), pdftoppm(1), pdfimages(1), xpdfrc(5)
-       http://www.foolabs.com/xpdf/
+       http://www.xpdfreader.com/
 
 
 
-                                  28 May 2014                      pdftopng(1)
+                                  10 Aug 2017                      pdftopng(1)

@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <png.h>
 #include "gmem.h"
+#include "gmempp.h"
 #include "GString.h"
 #include "GList.h"
 #include "SplashBitmap.h"
@@ -36,12 +37,6 @@
 #include "TextOutputDev.h"
 #include "SplashOutputDev.h"
 #include "ErrorCodes.h"
-#if EVAL_MODE
-#  include "SplashMath.h"
-#  include "Splash.h"
-#  include "BuiltinFontTables.h"
-#  include "FontEncodingTables.h"
-#endif
 #include "HTMLGen.h"
 
 #ifdef _WIN32
@@ -74,6 +69,7 @@ static FontStyleTagInfo fontStyleTags[] = {
   {"Bold",                     4, gTrue,  gFalse},
   {"Italic",                   6, gFalse, gTrue},
   {"Oblique",                  7, gFalse, gTrue},
+  {"Light",                    5, gFalse, gFalse},
   {NULL,                       0, gFalse, gFalse}
 };
 
@@ -159,69 +155,22 @@ privateUnicodeMap[privateUnicodeMapEnd - privateUnicodeMapStart + 1] = {
   0x00d8, 0x00d9, 0x00da, 0x00db, 0x00dc, 0x00dd, 0x00de, 0x0178
 };
 
+enum VerticalAlignment {
+  vertAlignBaseline,
+  vertAlignSub,
+  vertAlignSuper,
+  vertAlignTop
+};
+
+static const char *vertAlignNames[] = {
+  "baseline",
+  "sub",
+  "super",
+  "top"
+};
+
 //------------------------------------------------------------------------
 
-#if EVAL_MODE
-
-#define EVAL_MODE_MSG "XpdfHTML evaluation - www.glyphandcog.com"
-
-static void drawEvalModeMsg(SplashOutputDev *out) {
-  BuiltinFont *bf;
-  SplashFont *font;
-  GString *fontName;
-  char *msg;
-  SplashCoord mat[4], ident[6];
-  SplashCoord diag, size, textW, x, y;
-  Gushort cw;
-  int w, h, n, i;
-
-  // get the Helvetica font info
-  bf = builtinFontSubst[4];
-
-  msg = EVAL_MODE_MSG;
-  n = strlen(msg);
-
-  w = out->getBitmap()->getWidth();
-  h = out->getBitmap()->getHeight();
-
-  ident[0] = 1;  ident[1] = 0;
-  ident[2] = 0;  ident[3] = -1;
-  ident[4] = 0;  ident[5] = h;
-  out->getSplash()->setMatrix(ident);
-
-  diag = splashSqrt((SplashCoord)(w*w + h*h));
-  size = diag / (0.67 * n);
-  if (size < 8) {
-    size = 8;
-  }
-  mat[0] = size * (SplashCoord)w / diag;
-  mat[3] = mat[0];
-  mat[1] = size * (SplashCoord)h / diag;
-  mat[2] = -mat[1];
-  fontName = new GString(bf->name);
-  font = out->getFont(fontName, mat);
-  delete fontName;
-  if (!font) {
-    return;
-  }
-
-  textW = 0;
-  for (i = 0; i < n; ++i) {
-    bf->widths->getWidth(winAnsiEncoding[msg[i] & 0xff], &cw);
-    textW += size * cw * 0.001;
-  }
-
-  out->setFillColor(255, 0, 0);
-  x = 0.5 * (diag - textW) * (SplashCoord)w / diag;
-  y = 0.5 * (diag - textW) * (SplashCoord)h / diag;
-  for (i = 0; i < n; ++i) {
-    out->getSplash()->fillChar(x, y, msg[i], font);
-    bf->widths->getWidth(winAnsiEncoding[msg[i] & 0xff], &cw);
-    x += mat[0] * cw * 0.001;
-    y += mat[1] * cw * 0.001;
-  }
-}
-#endif
 
 //------------------------------------------------------------------------
 
@@ -232,7 +181,9 @@ HTMLGen::HTMLGen(double backgroundResolutionA) {
   ok = gTrue;
 
   backgroundResolution = backgroundResolutionA;
+  zoom = 1.0;
   drawInvisibleText = gTrue;
+  allTextInvisible = gFalse;
 
   // set up the TextOutputDev
   textOutControl.mode = textOutReadingOrder;
@@ -245,7 +196,6 @@ HTMLGen::HTMLGen(double backgroundResolutionA) {
   // set up the SplashOutputDev
   paperColor[0] = paperColor[1] = paperColor[2] = 0xff;
   splashOut = new SplashOutputDev(splashModeRGB8, 1, gFalse, paperColor);
-  splashOut->setSkipText(gTrue, gFalse);
 }
 
 HTMLGen::~HTMLGen() {
@@ -302,26 +252,21 @@ int HTMLGen::convertPage(
   Guchar *p;
   double pageW, pageH;
   TextPage *text;
-  GList *fonts, *cols, *pars, *lines, *words;
-  double *fontScales;
+  GList *cols, *pars, *lines, *words;
   TextFontInfo *font;
   TextColumn *col;
   TextParagraph *par;
   TextLine *line;
-  TextWord *word0, *word1;
   GString *s;
-  double base, base1;
-  int subSuper0, subSuper1;
-  double r0, g0, b0, r1, g1, b1;
-  int colIdx, parIdx, lineIdx, wordIdx;
-  int y, i, u;
+  double base;
+  int primaryDir, spanDir;
+  int colIdx, parIdx, lineIdx, firstWordIdx, lastWordIdx;
+  int y, i;
 
   // generate the background bitmap
+  splashOut->setSkipText(!allTextInvisible, gFalse);
   doc->displayPage(splashOut, pg, backgroundResolution, backgroundResolution,
 		   0, gFalse, gTrue, gFalse);
-#if EVAL_MODE
-  drawEvalModeMsg(splashOut);
-#endif
   bitmap = splashOut->getBitmap();
   if (!(png = png_create_write_struct(PNG_LIBPNG_VER_STRING,
 				       NULL, NULL, NULL)) ||
@@ -354,6 +299,7 @@ int HTMLGen::convertPage(
   doc->displayPage(textOut, pg, 72, 72, 0, gFalse, gTrue, gFalse);
   doc->processLinks(textOut, pg);
   text = textOut->takeText();
+  primaryDir = text->primaryDirectionIsLR() ? 1 : -1;
 
   // HTML header
   pr(writeHTML, htmlStream, "<html>\n");
@@ -371,9 +317,18 @@ int HTMLGen::convertPage(
   }
   pr(writeHTML, htmlStream, "</style>\n");
   pr(writeHTML, htmlStream, "</head>\n");
-  pr(writeHTML, htmlStream, "<body onload=\"start()\">\n");
-  pf(writeHTML, htmlStream, "<img id=\"background\" style=\"position:absolute; left:0px; top:0px;\" width=\"{0:d}\" height=\"{1:d}\" src=\"{2:s}\">\n",
-	 (int)pageW, (int)pageH, pngURL);
+  if (primaryDir >= 0) {
+    pr(writeHTML, htmlStream, "<body>\n");
+  } else {
+    pr(writeHTML, htmlStream, "<body dir=\"rtl\">\n");
+  }
+  if (primaryDir >= 0) {
+    pf(writeHTML, htmlStream, "<img id=\"background\" style=\"position:absolute; left:0px; top:0px;\" width=\"{0:d}\" height=\"{1:d}\" src=\"{2:s}\">\n",
+       (int)(pageW * zoom), (int)(pageH * zoom), pngURL);
+  } else {
+    pf(writeHTML, htmlStream, "<img id=\"background\" style=\"position:absolute; right:0px; top:0px;\" width=\"{0:d}\" height=\"{1:d}\" src=\"{2:s}\">\n",
+       (int)(pageW * zoom), (int)(pageH * zoom), pngURL);
+  }
 
   // generate the HTML text
   cols = text->makeColumns();
@@ -389,101 +344,32 @@ int HTMLGen::convertPage(
 	  continue;
 	}
 	words = line->getWords();
-	base = line->getBaseline();
-	s = new GString();
-	word0 = NULL;
-	subSuper0 = 0; // make gcc happy
-	r0 = g0 = b0 = 0; // make gcc happy
-	for (wordIdx = 0; wordIdx < words->getLength(); ++wordIdx) {
-	  word1 = (TextWord *)words->get(wordIdx);
-	  if (!drawInvisibleText && word1->isInvisible()) {
-	    continue;
-	  }
-	  word1->getColor(&r1, &g1, &b1);
-	  base1 = word1->getBaseline();
-	  if (base1 - base < -1) {
-	    subSuper1 = -1;  // superscript
-	  } else if (base1 - base > 1) {
-	    subSuper1 = 1;   // subscript
-	  } else {
-	    subSuper1 = 0;
-	  }
-	  if (!word0 ||
-	      word1->getFontInfo() != word0->getFontInfo() ||
-	      word1->getFontSize() != word0->getFontSize() ||
-	      subSuper1 != subSuper0 ||
-	      r1 != r0 || g1 != g0 || b1 != b0) {
-	    if (word0) {
-	      s->append("</span>");
-	    }
-	    for (i = 0; i < fonts->getLength(); ++i) {
-	      if (word1->getFontInfo() == (TextFontInfo *)fonts->get(i)) {
-		break;
-	      }
-	    }
-	    s->appendf("<span id=\"f{0:d}\" style=\"font-size:{1:d}px;vertical-align:{2:s};color:#{3:02x}{4:02x}{5:02x};\">",
-		       i, (int)(fontScales[i] * word1->getFontSize()),
-		       subSuper1 < 0 ? "super"
-		                     : subSuper1 > 0 ? "sub"
-		                                     : "baseline",
-		       (int)(r1 * 255), (int)(g1 * 255), (int)(b1 * 255));
-	  }
-	  for (i = 0; i < word1->getLength(); ++i) {
-	    u = word1->getChar(i);
-	    if (u >= privateUnicodeMapStart &&
-		u <= privateUnicodeMapEnd &&
-		privateUnicodeMap[u - privateUnicodeMapStart]) {
-	      u = privateUnicodeMap[u - privateUnicodeMapStart];
-	    }
-	    if (u <= 0x7f) {
-	      if (u == '&') {
-		s->append("&amp;");
-	      } else if (u == '<') {
-		s->append("&lt;");
-	      } else if (u == '>') {
-		s->append("&gt;");
-	      } else {
-		s->append((char)u);
-	      }
-	    } else if (u <= 0x7ff) {
-	      s->append((char)(0xc0 + (u >> 6)));
-	      s->append((char)(0x80 + (u & 0x3f)));
-	    } else if (u <= 0xffff) {
-	      s->append((char)0xe0 + (u >> 12));
-	      s->append((char)0x80 + ((u >> 6) & 0x3f));
-	      s->append((char)0x80 + (u & 0x3f));
-	    } else if (u <= 0x1fffff) {
-	      s->append((char)0xf0 + (u >> 18));
-	      s->append((char)0x80 + ((u >> 12) & 0x3f));
-	      s->append((char)0x80 + ((u >> 6) & 0x3f));
-	      s->append((char)0x80 + (u & 0x3f));
-	    } else if (u <= 0x3ffffff) {
-	      s->append((char)0xf8 + (u >> 24));
-	      s->append((char)0x80 + ((u >> 18) & 0x3f));
-	      s->append((char)0x80 + ((u >> 12) & 0x3f));
-	      s->append((char)0x80 + ((u >> 6) & 0x3f));
-	      s->append((char)0x80 + (u & 0x3f));
-	    } else if (u <= 0x7fffffff) {
-	      s->append((char)0xfc + (u >> 30));
-	      s->append((char)0x80 + ((u >> 24) & 0x3f));
-	      s->append((char)0x80 + ((u >> 18) & 0x3f));
-	      s->append((char)0x80 + ((u >> 12) & 0x3f));
-	      s->append((char)0x80 + ((u >> 6) & 0x3f));
-	      s->append((char)0x80 + (u & 0x3f));
-	    }
-	  }
-	  if (word1->getSpaceAfter()) {
-	    s->append(' ');
-	  }
-	  word0 = word1;
-	  subSuper0 = subSuper1;
-	  r0 = r1;
-	  g0 = g1;
-	  b0 = b1;
+	if (lineIdx == 0 && par->hasDropCap() && words->getLength() >= 2) {
+	  base = ((TextWord *)words->get(1))->getBaseline();
+	} else {
+	  base = line->getBaseline();
 	}
-	s->append("</span>");
-	pf(writeHTML, htmlStream, "<div class=\"txt\" style=\"position:absolute; left:{0:d}px; top:{1:d}px;\">{2:t}</div>\n",
-	   (int)line->getXMin(), (int)line->getYMin(), s);
+	s = new GString();
+	for (firstWordIdx = (primaryDir >= 0) ? 0 : words->getLength() - 1;
+	     (primaryDir >= 0) ? firstWordIdx < words->getLength()
+	                       : firstWordIdx >= 0;
+	     firstWordIdx = lastWordIdx + primaryDir) {
+	  lastWordIdx = findDirSpan(words, firstWordIdx,
+				    primaryDir, &spanDir);
+	  appendSpans(words, firstWordIdx, lastWordIdx,
+		      primaryDir, spanDir,
+		      base, lineIdx == 0 && par->hasDropCap(),
+		      s);
+	}
+	if (primaryDir >= 0) {
+	  pf(writeHTML, htmlStream, "<div class=\"txt\" style=\"position:absolute; left:{0:d}px; top:{1:d}px;\">{2:t}</div>\n",
+	     (int)(line->getXMin() * zoom),
+	     (int)(line->getYMin() * zoom), s);
+	} else {
+	  pf(writeHTML, htmlStream, "<div class=\"txt\" style=\"position:absolute; right:{0:d}px; top:{1:d}px;\">{2:t}</div>\n",
+	     (int)((pageW - line->getXMax()) * zoom),
+	     (int)(line->getYMin() * zoom), s);
+	}
 	delete s;
       }
     }
@@ -497,6 +383,208 @@ int HTMLGen::convertPage(
   pr(writeHTML, htmlStream, "</html>\n");
 
   return errNone;
+}
+
+// Find a sequence of words, starting at <firstWordIdx>, that have the
+// same writing direction.  Returns the index of the last word, and
+// sets *<spanDir> to the span direction.
+int HTMLGen::findDirSpan(GList *words, int firstWordIdx, int primaryDir,
+			 int *spanDir) {
+  int dir0, dir1, nextWordIdx;
+
+  dir0 = ((TextWord *)words->get(firstWordIdx))->getDirection();
+  for (nextWordIdx = firstWordIdx + primaryDir;
+       (primaryDir >= 0) ? nextWordIdx < words->getLength()
+	                 : nextWordIdx >= 0;
+       nextWordIdx += primaryDir) {
+    dir1 = ((TextWord *)words->get(nextWordIdx))->getDirection();
+    if (dir0 == 0) {
+      dir0 = dir1;
+    } else if (dir1 != 0 && dir1 != dir0) {
+      break;
+    }
+  }
+
+  if (dir0 == 0) {
+    *spanDir = primaryDir;
+  } else {
+    *spanDir = dir0;
+  }
+
+  return nextWordIdx - primaryDir;
+}
+
+// Create HTML spans for words <firstWordIdx> .. <lastWordIdx>, and
+// append them to <s>.
+void HTMLGen::appendSpans(GList *words, int firstWordIdx, int lastWordIdx,
+			  int primaryDir, int spanDir,
+			  double base, GBool dropCapLine, GString *s) {
+  TextWord *word0, *word1;
+  VerticalAlignment vertAlign0, vertAlign1;
+  const char *dirTag;
+  Unicode u;
+  GBool invisible, sp;
+  double r0, g0, b0, r1, g1, b1;
+  double base1;
+  int wordIdx, t, i;
+
+  if (spanDir != primaryDir) {
+    t = firstWordIdx;
+    firstWordIdx = lastWordIdx;
+    lastWordIdx = t;
+  }
+
+  word0 = NULL;
+  vertAlign0 = vertAlignBaseline; // make gcc happy
+  r0 = g0 = b0 = 0; // make gcc happy
+  for (wordIdx = firstWordIdx;
+       (spanDir >= 0) ? wordIdx <= lastWordIdx : wordIdx >= lastWordIdx;
+       wordIdx += spanDir) {
+    word1 = (TextWord *)words->get(wordIdx);
+    invisible = allTextInvisible || word1->isInvisible();
+    if (!drawInvisibleText && invisible) {
+      continue;
+    }
+    word1->getColor(&r1, &g1, &b1);
+    base1 = word1->getBaseline();
+    if (dropCapLine) {
+      //~ this will fail if there are subscripts or superscripts in
+      //~   the first line of a paragraph with a drop cap
+      vertAlign1 = vertAlignTop;
+    } else if (base1 - base < -1) {
+      vertAlign1 = vertAlignSuper;
+    } else if (base1 - base > 1) {
+      vertAlign1 = vertAlignSub;
+    } else {
+      vertAlign1 = vertAlignBaseline;
+    }
+    if (!word0 ||
+	word1->getFontInfo() != word0->getFontInfo() ||
+	word1->getFontSize() != word0->getFontSize() ||
+	word1->isInvisible() != word0->isInvisible() ||
+	vertAlign1 != vertAlign0 ||
+	r1 != r0 || g1 != g0 || b1 != b0) {
+      if (word0) {
+	s->append("</span>");
+      }
+      for (i = 0; i < fonts->getLength(); ++i) {
+	if (word1->getFontInfo() == (TextFontInfo *)fonts->get(i)) {
+	  break;
+	}
+      }
+      // we force spans to be LTR or RTL; this is a kludge, but it's
+      // far easier than implementing the full Unicode bidi algorithm
+      if (spanDir == primaryDir) {
+	dirTag = "";
+      } else if (spanDir < 0) {
+	dirTag = " dir=\"rtl\"";
+      } else {
+	dirTag = " dir=\"ltr\"";
+      }
+      s->appendf("<span id=\"f{0:d}\"{1:s} style=\"font-size:{2:d}px;vertical-align:{3:s};{4:s}color:rgba({5:d},{6:d},{7:d},{8:d});\">",
+		 i,
+		 dirTag,
+		 (int)(fontScales[i] * word1->getFontSize() * zoom),
+		 vertAlignNames[vertAlign1],
+		 (dropCapLine && wordIdx == 0) ? "line-height:75%;" : "",
+		 (int)(r1 * 255), (int)(g1 * 255), (int)(b1 * 255),
+		 invisible ? 0 : 1);
+    }
+
+    // add a space before the word, if needed
+    // -- this only happens with the first word in a reverse section
+    if (spanDir != primaryDir && wordIdx == firstWordIdx) {
+      if (spanDir >= 0) {
+	if (wordIdx > 0) {
+	  sp = ((TextWord *)words->get(wordIdx - 1))->getSpaceAfter();
+	} else {
+	  sp = gFalse;
+	}
+      } else {
+	sp = word1->getSpaceAfter();
+      }
+      if (sp) {
+	s->append(' ');
+      }
+    }
+
+    for (i = (spanDir >= 0) ? 0 : word1->getLength() - 1;
+	 (spanDir >= 0) ? i < word1->getLength() : i >= 0;
+	 i += spanDir) {
+      u = word1->getChar(i);
+      if (u >= privateUnicodeMapStart &&
+	  u <= privateUnicodeMapEnd &&
+	  privateUnicodeMap[u - privateUnicodeMapStart]) {
+	u = privateUnicodeMap[u - privateUnicodeMapStart];
+      }
+      appendUTF8(u, s);
+    }
+
+    // add a space after the word, if needed
+    // -- there is never a space after the last word in a reverse
+    //    section (this will be handled as a space after the last word
+    //    in the previous primary-direction section)
+    if (spanDir != primaryDir && wordIdx == lastWordIdx) {
+      sp = gFalse;
+    } else if (spanDir >= 0) {
+      sp = word1->getSpaceAfter();
+    } else {
+      if (wordIdx > 0) {
+	sp = ((TextWord *)words->get(wordIdx - 1))->getSpaceAfter();
+      } else {
+	sp = gFalse;
+      }
+    }
+    if (sp) {
+      s->append(' ');
+    }
+
+    word0 = word1;
+    vertAlign0 = vertAlign1;
+    r0 = r1;
+    g0 = g1;
+    b0 = b1;
+  }
+  s->append("</span>");
+}
+
+void HTMLGen::appendUTF8(Unicode u, GString *s) {
+  if (u <= 0x7f) {
+    if (u == '&') {
+      s->append("&amp;");
+    } else if (u == '<') {
+      s->append("&lt;");
+    } else if (u == '>') {
+      s->append("&gt;");
+    } else {
+      s->append((char)u);
+    }
+  } else if (u <= 0x7ff) {
+    s->append((char)(0xc0 + (u >> 6)));
+    s->append((char)(0x80 + (u & 0x3f)));
+  } else if (u <= 0xffff) {
+    s->append((char)0xe0 + (u >> 12));
+    s->append((char)0x80 + ((u >> 6) & 0x3f));
+    s->append((char)0x80 + (u & 0x3f));
+  } else if (u <= 0x1fffff) {
+    s->append((char)0xf0 + (u >> 18));
+    s->append((char)0x80 + ((u >> 12) & 0x3f));
+    s->append((char)0x80 + ((u >> 6) & 0x3f));
+    s->append((char)0x80 + (u & 0x3f));
+  } else if (u <= 0x3ffffff) {
+    s->append((char)0xf8 + (u >> 24));
+    s->append((char)0x80 + ((u >> 18) & 0x3f));
+    s->append((char)0x80 + ((u >> 12) & 0x3f));
+    s->append((char)0x80 + ((u >> 6) & 0x3f));
+    s->append((char)0x80 + (u & 0x3f));
+  } else if (u <= 0x7fffffff) {
+    s->append((char)0xfc + (u >> 30));
+    s->append((char)0x80 + ((u >> 24) & 0x3f));
+    s->append((char)0x80 + ((u >> 18) & 0x3f));
+    s->append((char)0x80 + ((u >> 12) & 0x3f));
+    s->append((char)0x80 + ((u >> 6) & 0x3f));
+    s->append((char)0x80 + (u & 0x3f));
+  }
 }
 
 GString *HTMLGen::getFontDefn(TextFontInfo *font, double *scale) {

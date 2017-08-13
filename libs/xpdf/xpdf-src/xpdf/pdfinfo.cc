@@ -13,9 +13,10 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include "gmem.h"
+#include "gmempp.h"
 #include "parseargs.h"
 #include "GString.h"
-#include "gmem.h"
 #include "gfile.h"
 #include "GlobalParams.h"
 #include "Object.h"
@@ -100,9 +101,6 @@ int main(int argc, char *argv[]) {
 
   exitCode = 99;
 
-#ifdef _MSC_VER
-  (void)kpse_set_program_name(argv[0], NULL);
-#endif
   // parse args
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc != 2 || printVersion || printHelp) {
@@ -194,7 +192,11 @@ int main(int argc, char *argv[]) {
   if ((acroForm = doc->getCatalog()->getAcroForm())->isDict()) {
     acroForm->dictLookup("XFA", &xfa);
     if (xfa.isStream() || xfa.isArray()) {
-      printf("Form:           XFA\n");
+      if (doc->getCatalog()->getNeedsRendering()) {
+	printf("Form:           dynamic XFA\n");
+      } else {
+	printf("Form:           static XFA\n");
+      }
     } else {
       printf("Form:           AcroForm\n");
     }

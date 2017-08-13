@@ -20,12 +20,15 @@
 #include "Object.h"
 #include "CharTypes.h"
 
+class GList;
+class GHash;
 class Dict;
 class CMap;
 class CharCodeToUnicode;
 class FoFiTrueType;
 struct GfxFontCIDWidths;
 struct Base14FontMapEntry;
+class FNVHash;
 
 //------------------------------------------------------------------------
 // GfxFontType
@@ -204,6 +207,10 @@ public:
 			  Unicode *u, int uSize, int *uLen,
 			  double *dx, double *dy, double *ox, double *oy) = 0;
 
+  // Returns true if this font is likely to be problematic when
+  // converting text to Unicode.
+  virtual GBool problematicForUnicode() = 0;
+
 protected:
 
   static GfxFontType getFontType(XRef *xref, Dict *fontDict, Ref *embID);
@@ -225,6 +232,7 @@ protected:
   double missingWidth;		// "default" width
   double ascent;		// max height above baseline
   double descent;		// max depth below baseline
+  GBool hasToUnicode;		// true if the font has a ToUnicode map
   GBool ok;
 };
 
@@ -276,6 +284,8 @@ public:
   // Return the Type 3 Resources dictionary, or NULL if none.
   Dict *getResources();
 
+  virtual GBool problematicForUnicode();
+
 private:
 
   Base14FontMapEntry *base14;	// for Base-14 fonts only; NULL otherwise
@@ -285,6 +295,8 @@ private:
   CharCodeToUnicode *ctu;	// char code --> Unicode
   GBool hasEncoding;
   GBool usesMacRomanEnc;
+  GBool baseEncFromFontFile;
+  GBool usedNumericHeuristic;
   double widths[256];		// character widths
   Object charProcs;		// Type 3 CharProcs dictionary
   Object resources;		// Type 3 Resources dictionary
@@ -324,7 +336,13 @@ public:
   int *getCIDToGID() { return cidToGID; }
   int getCIDToGIDLen() { return cidToGIDLen; }
 
+  virtual GBool problematicForUnicode();
+
 private:
+
+  void getHorizontalMetrics(CID cid, double *w);
+  void getVerticalMetrics(CID cid, double *h,
+			  double *vx, double *vy);
 
   GString *collection;		// collection name
   CMap *cMap;			// char code --> CID
@@ -335,6 +353,8 @@ private:
   int *cidToGID;		// CID --> GID mapping (for embedded
 				//   TrueType fonts)
   int cidToGIDLen;
+  GBool hasKnownCollection;
+  GBool hasIdentityCIDToGID;
 };
 
 //------------------------------------------------------------------------
@@ -355,13 +375,18 @@ public:
   GfxFont *lookupByRef(Ref ref);
 
   // Iterative access.
-  int getNumFonts() { return numFonts; }
-  GfxFont *getFont(int i) { return fonts[i]; }
+  int getNumFonts();
+  GfxFont *getFont(int i);
 
 private:
 
-  GfxFont **fonts;		// list of fonts
-  int numFonts;			// number of fonts
+  int hashFontObject(Object *obj);
+  void hashFontObject1(Object *obj, FNVHash *h);
+
+  GHash *fonts;			// hash table of fonts -- this may
+				//   include duplicates, i.e., when
+				//   two tags map to the same font
+  GList *uniqueFonts;		// list of all unique font objects (no dups)
 };
 
 #endif

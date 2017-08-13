@@ -58,8 +58,8 @@ potrace 1.15 - checked 07aug17
 teckit 2.5.7 - checked 27jun17
   https://github.com/silnrsi/teckit/archive/2.5.7.tar.gz
 
-xpdf 3.04 - checked 28may14
-  ftp://ftp.foolabs.com/pub/xpdf/
+xpdf 4.00 - checked 13aug17
+  http://www.xpdfreader.com/download.html
   with modifications for pdftex
 
 zlib 1.2.11 - checked 15jan17

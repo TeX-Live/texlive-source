@@ -19,6 +19,7 @@
 #ifdef _WIN32
 #  include <windows.h>
 #endif
+#include "gmempp.h"
 #include "GString.h"
 #include "config.h"
 #include "GlobalParams.h"
@@ -204,6 +205,7 @@ PDFDoc::PDFDoc(BaseStream *strA, GString *ownerPassword,
 }
 
 GBool PDFDoc::setup(GString *ownerPassword, GString *userPassword) {
+
   str->reset();
 
   // check header
@@ -421,6 +423,47 @@ void PDFDoc::processLinks(OutputDev *out, int page) {
   catalog->getPage(page)->processLinks(out);
 }
 
+#ifndef DISABLE_OUTLINE
+int PDFDoc::getOutlineTargetPage(OutlineItem *outlineItem) {
+  LinkAction *action;
+  LinkActionKind kind;
+  LinkDest *dest;
+  GString *namedDest;
+  Ref pageRef;
+  int pg;
+
+  if (outlineItem->pageNum >= 0) {
+    return outlineItem->pageNum;
+  }
+  if (!(action = outlineItem->getAction())) {
+    outlineItem->pageNum = 0;
+    return 0;
+  }
+  kind = action->getKind();
+  if (kind != actionGoTo) {
+    outlineItem->pageNum = 0;
+    return 0;
+  }
+  if ((dest = ((LinkGoTo *)action)->getDest())) {
+    dest = dest->copy();
+  } else if ((namedDest = ((LinkGoTo *)action)->getNamedDest())) {
+    dest = findDest(namedDest);
+  }
+  pg = 0;
+  if (dest) {
+    if (dest->isPageRef()) {
+      pageRef = dest->getPageRef();
+      pg = findPage(pageRef.num, pageRef.gen);
+    } else {
+      pg = dest->getPageNum();
+    }
+    delete dest;
+  }
+  outlineItem->pageNum = pg;
+  return pg;
+}
+#endif
+
 GBool PDFDoc::isLinearized() {
   Parser *parser;
   Object obj1, obj2, obj3, obj4, obj5;
@@ -470,7 +513,7 @@ GBool PDFDoc::saveAs(GString *name) {
   return gTrue;
 }
 
-GBool PDFDoc::saveEmbeddedFile(int idx, char *path) {
+GBool PDFDoc::saveEmbeddedFile(int idx, const char *path) {
   FILE *f;
   GBool ret;
 
@@ -483,7 +526,7 @@ GBool PDFDoc::saveEmbeddedFile(int idx, char *path) {
 }
 
 #ifdef _WIN32
-GBool PDFDoc::saveEmbeddedFile(int idx, wchar_t *path, int pathLen) {
+GBool PDFDoc::saveEmbeddedFile(int idx, const wchar_t *path, int pathLen) {
   FILE *f;
   OSVERSIONINFO version;
   wchar_t path2w[_MAX_PATH + 1];

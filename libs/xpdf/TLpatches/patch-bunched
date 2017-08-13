@@ -1,0 +1,176 @@
+diff -ur xpdf-4.00.orig/goo/gfile.cc xpdf-4.00/goo/gfile.cc
+--- xpdf-4.00.orig/goo/gfile.cc	Wed Aug 09 08:22:50 2017
++++ xpdf-4.00/goo/gfile.cc	Sun Aug 13 13:46:03 2017
+@@ -7,6 +7,9 @@
+ // Copyright 1996-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
+ 
+ #include <aconf.h>
+ 
+@@ -51,7 +54,11 @@
+   char *s;
+   GString *ret;
+ 
++#ifdef _WIN32
++  if ((s = getenv("USERPROFILE")))
++#else
+   if ((s = getenv("HOME")))
++#endif
+     ret = new GString(s);
+   else
+     ret = new GString(".");
+@@ -400,6 +407,7 @@
+ #endif
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ GBool openTempFile(GString **name, FILE **f,
+ 		   const char *mode, const char *ext) {
+ #if defined(_WIN32)
+@@ -514,10 +522,11 @@
+   return gTrue;
+ #endif
+ }
++#endif
+ 
+ GBool createDir(char *path, int mode) {
+ #ifdef _WIN32
+-  return !mkdir(path);
++  return !_mkdir(path);
+ #else
+   return !mkdir(path, mode);
+ #endif
+diff -ur xpdf-4.00.orig/xpdf/GlobalParams.cc xpdf-4.00/xpdf/GlobalParams.cc
+--- xpdf-4.00.orig/xpdf/GlobalParams.cc	Wed Aug 09 08:22:50 2017
++++ xpdf-4.00/xpdf/GlobalParams.cc	Sun Aug 13 13:51:37 2017
+@@ -5,6 +5,9 @@
+ // Copyright 2001-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
+ 
+ #include <aconf.h>
+ 
+@@ -38,8 +41,12 @@
+ #include "GlobalParams.h"
+ 
+ #ifdef _WIN32
+-#  define strcasecmp stricmp
+-#  define strncasecmp strnicmp
++#  undef strcasecmp
++#  undef strncasecmp
++#  define strcasecmp _stricmp
++#  define strncasecmp _strnicmp
++#else
++#  include <strings.h>
+ #endif
+ 
+ #if MULTITHREADED
+@@ -677,6 +684,7 @@
+   f = NULL;
+   fileName = NULL;
+   if (cfgFileName && cfgFileName[0]) {
++#ifndef PDF_PARSER_ONLY
+     fileName = new GString(cfgFileName);
+     if (!(f = fopen(fileName->getCString(), "r"))) {
+       delete fileName;
+@@ -709,6 +717,7 @@
+     parseFile(fileName, f);
+     delete fileName;
+     fclose(f);
++#endif /* !PDF_PARSER_ONLY */
+   }
+ }
+ 
+@@ -2105,8 +2114,11 @@
+ 				   base14->fontNum,
+ 				   displayFontTab[i].obliqueFactor));
+       } else {
++// Do not display unnecessary looking message on W32
++#ifndef _WIN32
+ 	error(errConfig, -1, "No display font for '{0:s}'",
+ 	      displayFontTab[i].name);
++#endif
+       }
+     }
+   }
+diff -ur xpdf-4.00.orig/xpdf/GlobalParams.h xpdf-4.00/xpdf/GlobalParams.h
+--- xpdf-4.00.orig/xpdf/GlobalParams.h	Wed Aug 09 08:22:50 2017
++++ xpdf-4.00/xpdf/GlobalParams.h	Sun Aug 13 13:32:19 2017
+@@ -5,6 +5,9 @@
+ // Copyright 2001-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
+ 
+ #ifndef GLOBALPARAMS_H
+ #define GLOBALPARAMS_H
+@@ -217,7 +220,7 @@
+ 
+   // Initialize the global parameters by attempting to read a config
+   // file.
+-  GlobalParams(const char *cfgFileName);
++  GlobalParams(const char *cfgFileName = NULL);
+ 
+   ~GlobalParams();
+ 
+diff -ur xpdf-4.00.orig/xpdf/Page.cc xpdf-4.00/xpdf/Page.cc
+--- xpdf-4.00.orig/xpdf/Page.cc	Wed Aug 09 08:22:50 2017
++++ xpdf-4.00/xpdf/Page.cc	Sun Aug 13 13:24:07 2017
+@@ -480,9 +480,9 @@
+   delete links;
+ }
+ 
+-#ifndef PDF_PARSER_ONLY
+ void Page::getDefaultCTM(double *ctm, double hDPI, double vDPI,
+ 			 int rotate, GBool useMediaBox, GBool upsideDown) {
++#ifndef PDF_PARSER_ONLY
+   GfxState *state;
+   int i;
+ 
+@@ -499,5 +499,5 @@
+     ctm[i] = state->getCTM()[i];
+   }
+   delete state;
+-}
+ #endif
++}
+diff -ur xpdf-4.00.orig/xpdf/XFAForm.cc xpdf-4.00/xpdf/XFAForm.cc
+--- xpdf-4.00.orig/xpdf/XFAForm.cc	Wed Aug 09 08:22:50 2017
++++ xpdf-4.00/xpdf/XFAForm.cc	Sun Aug 13 14:28:34 2017
+@@ -27,8 +27,10 @@
+ #include "XFAForm.h"
+ 
+ #ifdef _WIN32
+-#  define strcasecmp stricmp
+-#  define strncasecmp strnicmp
++#  undef strcasecmp
++#  undef strncasecmp
++#  define strcasecmp _stricmp
++#  define strncasecmp _strnicmp
+ #endif
+ 
+ //------------------------------------------------------------------------
+diff -ur xpdf-4.00.orig/xpdf/config.h xpdf-4.00/xpdf/config.h
+--- xpdf-4.00.orig/xpdf/config.h	Wed Aug 09 08:22:50 2017
++++ xpdf-4.00/xpdf/config.h	Sun Aug 13 13:42:04 2017
+@@ -78,11 +78,6 @@
+ // popen
+ //------------------------------------------------------------------------
+ 
+-#if defined(_MSC_VER) || defined(__BORLANDC__)
+-#define popen _popen
+-#define pclose _pclose
+-#endif
+-
+ #if defined(VMS) || defined(VMCMS) || defined(DOS) || defined(OS2) || defined(__EMX__) || defined(_WIN32) || defined(__DJGPP__)
+ #define POPEN_READ_MODE "rb"
+ #else

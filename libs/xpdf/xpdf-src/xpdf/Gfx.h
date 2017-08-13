@@ -2,7 +2,7 @@
 //
 // Gfx.h
 //
-// Copyright 1996-2003 Glyph & Cog, LLC
+// Copyright 1996-2016 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -17,6 +17,7 @@
 
 #include "gtypes.h"
 #include "gfile.h"
+#include "GfxState.h"
 
 class GString;
 class GList;
@@ -30,19 +31,6 @@ class Function;
 class OutputDev;
 class GfxFontDict;
 class GfxFont;
-class GfxPattern;
-class GfxTilingPattern;
-class GfxShadingPattern;
-class GfxShading;
-class GfxFunctionShading;
-class GfxAxialShading;
-class GfxRadialShading;
-class GfxGouraudTriangleShading;
-class GfxPatchMeshShading;
-struct GfxPatch;
-class GfxState;
-struct GfxColor;
-class GfxColorSpace;
 class Gfx;
 class PDFRectangle;
 class AnnotBorderStyle;
@@ -189,6 +177,9 @@ public:
   // the new Gfx object.
   void takeContentStreamStack(Gfx *oldGfx);
 
+  // Clear the state stack and the marked content stack.
+  void endOfPage();
+
 private:
 
   PDFDoc *doc;
@@ -197,7 +188,8 @@ private:
   GBool subPage;		// is this a sub-page object?
   GBool printCommands;		// print the drawing commands (for debugging)
   GfxResources *res;		// resource stack
-  int updateLevel;
+  int opCounter;		// operation counter (used to decide when
+				//   to check for an abort)
 
   GfxState *state;		// current graphics state
   GBool fontChanged;		// set if font or text matrix has changed
@@ -206,9 +198,6 @@ private:
   double baseMatrix[6];		// default matrix for most recent
 				//   page/form/pattern
   int formDepth;
-  double textClipBBox[4];	// text clipping bounding box
-  GBool textClipBBoxEmpty;	// true if textClipBBox has not been
-				//   initialized yet
   GBool ocState;		// true if drawing is enabled, false if
 				//   disabled
   GList *markedContentStack;	// BMC/BDC/EMC stack [GfxMarkedContent]
@@ -246,6 +235,7 @@ private:
 		  GBool isolated, GBool knockout,
 		  Function *transferFunc, GfxColor *backdropColor);
   void opSetRenderingIntent(Object args[], int numArgs);
+  GfxRenderingIntent parseRenderingIntent(const char *name);
 
   // color operators
   void opSetFillGray(Object args[], int numArgs);
@@ -345,7 +335,7 @@ private:
 
   // in-line image operators
   void opBeginImage(Object args[], int numArgs);
-  Stream *buildImageStream();
+  Stream *buildImageStream(GBool *haveLength);
   void opImageData(Object args[], int numArgs);
   void opEndImage(Object args[], int numArgs);
 

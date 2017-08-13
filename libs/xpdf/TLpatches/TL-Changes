@@ -1,6 +1,6 @@
-Changes applied to the xpdf-3.04/ tree as obtained from:
-	ftp://ftp.foolabs.com/pub/xpdf/
+Changes applied to the xpdf-4.00/ tree as obtained from:
+	http://www.xpdfreader.com/download.html
 
 Removed:
-	install-sh
-
+	aconf.h.in
+	xpdf-qt/

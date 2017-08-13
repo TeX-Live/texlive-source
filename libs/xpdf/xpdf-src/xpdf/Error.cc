@@ -15,11 +15,12 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdarg.h>
+#include "gmempp.h"
 #include "GString.h"
 #include "GlobalParams.h"
 #include "Error.h"
 
-static const char *errorCategoryNames[] = {
+const char *errorCategoryNames[] = {
   "Syntax Warning",
   "Syntax Error",
   "Config Error",
@@ -39,6 +40,10 @@ void setErrorCallback(void (*cbk)(void *data, ErrorCategory category,
 		      void *data) {
   errorCbk = cbk;
   errorCbkData = data;
+}
+
+void *getErrorCallbackData() {
+  return errorCbkData;
 }
 
 void CDECL error(ErrorCategory category, GFileOffset pos,
@@ -71,6 +76,7 @@ void CDECL error(ErrorCategory category, GFileOffset pos,
   if (errorCbk) {
     (*errorCbk)(errorCbkData, category, (int)pos, sanitized->getCString());
   } else {
+    fflush(stdout);
     if (pos >= 0) {
       fprintf(stderr, "%s (%d): %s\n",
 	      errorCategoryNames[category], (int)pos, sanitized->getCString());

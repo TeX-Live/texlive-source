@@ -170,6 +170,7 @@ struct JPXResLevel {
   Guint x0, y0, x1, y1;		// bounds of the tile-comp (for this res level)
   Guint bx0[3], by0[3],		// subband bounds
         bx1[3], by1[3];
+  GBool empty;			// true if all subbands are zero width or height
 
   //---- children
   JPXPrecinct *precincts;	// the precincts
@@ -280,6 +281,7 @@ public:
 
   JPXStream(Stream *strA);
   virtual ~JPXStream();
+  virtual Stream *copy();
   virtual StreamKind getKind() { return strJPX; }
   virtual void reset();
   virtual void close();
