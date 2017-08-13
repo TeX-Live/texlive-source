@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2014 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2017 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -179,7 +179,10 @@ int main(int argc, char *argv[])
                     obj1.free();
                     obj2.free();
                 }
+/* FIXME: crashes here for xpdf 4.00. Is this line really necessary?
+          Temporarily this line is disabled.
                 while (str->getChar() != EOF) ;
+*/
                 delete parser;
                 objStr.free();
 

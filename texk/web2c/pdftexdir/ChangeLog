@@ -1,3 +1,8 @@
+2017-08-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftosrc.cc: Remove a line, which I believe is not necessary,
+	to avoid a crash for xpdf-4.00.
+
 2017-04-19  Karl Berry  <karl@freefriends.org>
 
 	* mapfile.c (read_field): new parameter buf_size,
