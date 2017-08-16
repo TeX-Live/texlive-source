@@ -179,8 +179,10 @@ int main(int argc, char *argv[])
                     obj1.free();
                     obj2.free();
                 }
-/* FIXME: crashes here for xpdf 4.00. Is this line really necessary?
-          Temporarily this line is disabled.
+/* The stream str is local, and it is never used hereafter.
+   When parser is deleted, Lexer(xref, str), and the stream str
+   are automatically deleted. Thus this line, which causes a crash
+   in the case of xpdf-4.00, is not necessary.
                 while (str->getChar() != EOF) ;
 */
                 delete parser;
