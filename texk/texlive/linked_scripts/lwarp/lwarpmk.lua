@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.35"
+printversion = "v0.36"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -190,8 +190,8 @@ function reruntoget (filesource)
 local fsource = io.open(filesource)
 for line in fsource:lines() do
 if ( string.find(line,"Rerun to get") ~= nil ) then
-io.close(fsource)
-return true
+    io.close(fsource)
+    return true
 end
 end
 io.close(fsource)
