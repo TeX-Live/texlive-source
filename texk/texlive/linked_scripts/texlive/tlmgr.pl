@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44958 2017-08-05 09:14:35Z hironobu $
+# $Id: tlmgr.pl 45046 2017-08-15 06:29:03Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44958 $';
-my $datrev = '$Date: 2017-08-05 11:14:35 +0200 (Sat, 05 Aug 2017) $';
+my $svnrev = '$Revision: 45046 $';
+my $datrev = '$Date: 2017-08-15 08:29:03 +0200 (Tue, 15 Aug 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -531,7 +531,7 @@ for the full story.\n";
 
   # --machine-readable is only supported by update.
   if ($::machinereadable && 
-    $action ne "update" && $action ne "install" && $action ne "option") {
+    $action ne "update" && $action ne "install" && $action ne "option" && $action ne "shell") {
     tlwarn("$prg: --machine-readable output not supported for $action\n");
   }
 
@@ -3473,7 +3473,7 @@ sub action_update {
   # warn if nothing is updated.  Unless they said --self, in which case
   # we've already reported it.
   if (!(@new || @updated) && ! $opts{"self"}) {
-    info("$prg: no updates available\n");
+    info("$prg: no updates available\n") if (!$::machinereadable);
     if ($remotetlpdb->media ne "NET"
         && $remotetlpdb->media ne "virtual"
         && !$opts{"dry-run"}
@@ -5872,6 +5872,8 @@ sub action_key {
 sub action_shell {
   my $protocol = 1;
   my $default_prompt = "tlmgr>";
+  # set auto flush unconditionally in action shell
+  $| = 1;
   # we need to do an anonymous sub here otherwise the $default_prompt will get
   # only fixed once and remain forever. With anonymous subs it is rebound
   # on every call!
@@ -5884,8 +5886,11 @@ sub action_shell {
     my $did_prompt = 0;
     while (defined(my $arg = shift @_)) {
       if ($arg =~ m/^-prompt$/) {
-        print shift @_, " ";
-        $did_prompt = 1;
+        # only do allow for prompt rewriting in case of ! machine readable!
+        if (!$::machinereadable) {
+          print shift @_, " ";
+          $did_prompt = 1;
+        }
       } elsif ($arg =~ m/^-menu$/) {
         my $options = shift @_;
         @options = @$options;
@@ -5901,11 +5906,17 @@ sub action_shell {
       } elsif ($arg =~ m/^-/) {
         print "ERROR unsupported prompt command, please report: $arg!\n";
       } else {
-        print $arg, " ";
-        $did_prompt = 1;
+        # only do allow for prompt rewriting in case of ! machine readable!
+        if (!$::machinereadable) {
+          print $arg, " ";
+          $did_prompt = 1;
+        }
       }
     }
     print "$default_prompt " if (!$did_prompt);
+    # to make sure that flushing is done properly, we ship out
+    # a new line in buffer mode:
+    print "\n" if $::machinereadable;
     my $ans = <STDIN>;
     if (!defined($ans)) {
       # we got Ctrl-D, just break out
@@ -5931,6 +5942,7 @@ sub action_shell {
       }
       if (!$isok) {
         print("Please answer one of: @guarantee\n");
+        print "\n" if $::machinereadable;
         return(&$do_prompt(@savedargs));
       }
     }
@@ -6308,7 +6320,11 @@ END_NO_CHECKSUMS
   $remotetlpdb->virtual_pinning($pinfile);
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
-  print "location-url\t$locstr\n" if $::machinereadable;
+  if ($::machinereadable) {
+    print "location-url\t$locstr\n";
+    return 1;
+  }
+  # from here on only in non-machine-readable mode!
   info("$prg: package repositories\n");
   my $verstat = "";
   if (!$remotetlpdb->virtual_get_tlpdb('main')->is_verified) {
@@ -8917,7 +8933,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 44958 2017-08-05 09:14:35Z hironobu $
+$Id: tlmgr.pl 45046 2017-08-15 06:29:03Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
