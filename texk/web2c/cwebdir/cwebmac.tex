@@ -1,8 +1,8 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 3.69 --- February 2016
+% Version 3.70 --- July 2017
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB3.69}
-\chardef\cwebversion=3 \chardef\cwebrevision=69
+\xdef\fmtversion{\fmtversion+CWEB3.70}
+\chardef\cwebversion=3 \chardef\cwebrevision=70
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
 % Uncomment the following line if you want PDF goodies to be the default
@@ -412,7 +412,8 @@
 \newdimen\pagewidth \pagewidth=6.5in % the width of each page
 \newdimen\pageheight \pageheight=8.7in % the height of each page
 \newdimen\fullpageheight \fullpageheight=9in % page height including headlines
-\newdimen\pageshift \pageshift=0in % shift righthand pages wrt lefthand ones
+\newdimen\pageshift \pageshift=\hoffset
+   % shift righthand pages wrt lefthand ones (changed in version 3.70)
 \def\magnify#1{\mag=#1\pagewidth=6.5truein\pageheight=8.7truein
   \fullpageheight=9truein\setpage}
 \def\setpage{\hsize\pagewidth\vsize\pageheight} % use after changing page size
