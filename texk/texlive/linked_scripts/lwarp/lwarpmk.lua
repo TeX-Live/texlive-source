@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.36"
+printversion = "v0.37"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -25,7 +25,7 @@ lwarpmk pdftohtml [project]:
     For use with latexmk or a Makefile:
     Convert project_html.pdf to project_html.html and
     individual HTML files.
-lwarpmk clean [project]: Remove project.aux, .toc, .lof/t, .idx, .ind, .log, .gl*
+lwarpmk clean [project]: Remove project.aux, .toc, .lof/t, .idx, .ind, .log, *_html_inc.*, .gl*
 lwarpmk cleanall [project]: Remove auxiliary files and also project.pdf, *.html
 lwarpmk -h: Print this help message.
 lwarpmk --help: Print this help message.
@@ -254,7 +254,8 @@ function removeaux ()
         sourcename ..".idx " .. sourcename .. "_html.idx " ..
         sourcename ..".ind " .. sourcename .. "_html.ind " ..
         sourcename ..".log " .. sourcename .. "_html.log " ..
-        sourcename ..".gl* " .. sourcename .. "_html.gl* "
+        sourcename ..".gl* " .. sourcename .. "_html.gl* " ..
+        "*_html_inc.*"
         )
 end
 
@@ -473,7 +474,7 @@ print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
 -- lwarpmk clean:
--- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log, .gl*
+-- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log, *_html_inc.*, .gl*
 
 elseif arg[1] == "clean" then
 loadconf ()
@@ -481,7 +482,7 @@ removeaux ()
 print ("lwarpmk: Done.")
 
 -- lwarpmk cleanall
--- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log, .gl*
+-- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log, *_html_inc.*, .gl*
 --    and also project.pdf, *.html
 
 elseif arg[1] == "cleanall" then
