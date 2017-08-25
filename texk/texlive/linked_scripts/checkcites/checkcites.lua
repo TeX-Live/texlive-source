@@ -1,684 +1,721 @@
 #!/usr/bin/env texlua
--- ******************************************************************
+-- -----------------------------------------------------------------
 -- checkcites.lua
--- Copyright 2012 Enrico Gregorio, Paulo Roberto Massa Cereda
+-- Copyright 2012, 2017, Enrico Gregorio, Paulo Roberto Massa Cereda
 --
--- This work may be distributed and/or modified under the
--- conditions of the LaTeX Project Public License, either version 1.3
--- of this license or (at your option) any later version.
+-- This work may be distributed and/or modified under the conditions
+-- of the LaTeX  Project Public License, either version  1.3 of this
+-- license or (at your option) any later version.
 --
 -- The latest version of this license is in
---   http://www.latex-project.org/lppl.txt
--- and version 1.3 or later is part of all distributions of LaTeX
+--
+-- http://www.latex-project.org/lppl.txt
+--
+-- and version  1.3 or later is  part of all distributions  of LaTeX
 -- version 2005/12/01 or later.
 --
--- This work has the LPPL maintenance status `maintained'.
--- 
--- The Current Maintainers of this work are the original authors.
+-- This  work  has the  LPPL  maintenance  status `maintained'.  the
+-- current maintainers of  this work are the  original authors. This
+-- work consists of the file checkcites.lua.
 --
--- This work consists of the file checkcites.lua.
---
--- Project page: http://github.com/cereda/checkcites
--- ******************************************************************
+-- Project repository: http://github.com/cereda/checkcites
+-- -----------------------------------------------------------------
 
--- version and date, to be updated on each release/commit
-VERSION = "1.0i"
-DATE = "December 18, 2012"
-
--- globals
--- warning about \citation{*}
-globalAsteriskWarning = true
-
--- The following code adds a 'split' function to the string type,
--- thanks to the codebase available here:
--- http://lua-users.org/wiki/SplitJoin
-string.split = function(str, pattern)
-
-    pattern = pattern or "[^%s]+"
-    
-    if pattern:len() == 0 then
-    
-        pattern = "[^%s]+"
-    
+-- Checks if the table contains the element.
+-- @param a Table.
+-- @param hit Element.
+-- @return Boolean value if the table contains the element.
+local function exists(a, hit)
+  for _, v in ipairs(a) do
+    if v == hit then
+      return true
     end
-    
-    local parts = {__index = table.insert}
-    
-    setmetatable(parts, parts)
-    
-    str:gsub(pattern, parts)
-    
-    setmetatable(parts, nil)
-    
-    parts.__index = nil
-    
-    return parts
-
+  end
+  return false
 end
 
--- In order to make our lives easier, we borrowed the following
--- codes for implementing common set operations, available here:
--- http://www.phailed.me/2011/02/common-set-operations-in-lua/
-function setFind(a, tbl)
-
-	for _,a_ in ipairs(tbl) do
-        
-        if a_==a then
-            
-            return true
+-- Parses the list of arguments based on a configuration map.
+-- @param map Configuration map.
+-- @param args List of command line arguments.
+-- @return Table containing the valid keys and entries.
+-- @return Table containing the invalid keys.
+local function parse(map, args)
+  local keys, key, unknown = {}, 'unpaired', {}
+  local a, b
+  for _, v in ipairs(args) do
+    a, _, b = string.find(v, '^%-(%w)$')
+    if a then
+      for _, x in ipairs(map) do
+        key = 'unpaired'
+        if x['short'] == b then
+          key = x['long']
+          break
         end
-    
-    end
-
-end
-
--- This code returns a table containing the difference between
--- the two other tables, also available here:
--- http://www.phailed.me/2011/02/common-set-operations-in-lua/
-function setDifference(a, b)
-
-	local ret = {}
-
-	for _,a_ in ipairs(a) do
-
-		if not setFind(a_,b) then
-            
-            table.insert(ret, a_)
-        
-        end
-
-	end
-
-	return ret
-
-end
-
--- Code to remove duplicates from a table array.
-function removeDuplicates(tb)
-
-    -- new table
-    local ret = {}
-
-    -- flag to spot new insertions
-    local flag
-
-    -- set local variables
-    local i
-    local k
-    local j
-    local l
-
-    -- iterate through the original table
-    for i, k in pairs(tb) do
-
-        -- at first, insert element
-        flag = true
-
-        -- iterate through the new table
-        for j, l in pairs(ret) do
-
-            -- if the element already exists
-            if k == l then
-
-                -- set flag to false, so the
-                -- new element won't be inserted
-                flag = false
-
-            end
-
-        end
-
-        -- if it's ok to insert
-        if flag then
-
-            -- insert new element
-            table.insert(ret, k)
-
-        end
-
-    end
-
-    -- return new table
-    return ret
-end
-
--- This function opens and gets all data from the provided
--- aux file.
--- Return:
---   * list of citations
---   * list of bibfiles
-function getDataFromAuxFile(theAuxFile)
-
-    -- open a file handler
-	local fileHandler = io.open(theAuxFile,"r")
-
-    -- check if the handler is valid
-	if fileHandler then
-
-        -- create a local table for citations
-		local theCitations = {}
-
-        -- and a local reference to the bib file
-		local theBibFiles = {}
-
-        -- define local variables
-        local currentLine
-        local citation
-        local index
-        local theCitation
-        local theBibFile
-        local entry
-
-        -- now let's iterate through the lines
-		for currentLine in fileHandler:lines() do
-
-            -- if the citation matches, extract it
-			for citation in string.gmatch(currentLine, '\\citation{(.+)}') do
-
-                -- sanity check, in case it's an '*'
-				if citation ~= "*" then
-
-                    -- break the citations list, in case of multiple
-                    -- citations in the same \citation{}
-					local parts = string.split(citation, "[^,%s]+" )
-
-                    -- for every entry in the citations list
-					for index, theCitation in pairs(parts) do
-                        
-                        -- insert the reference
-						table.insert(theCitations, theCitation)
-
-					end
-
-                -- found a '*'
-                else
-
-                    -- check if warning is still valid, that is,
-                    -- if not displayed yet
-                    if globalAsteriskWarning then
-
-                        -- show message
-                        print("Warning: '\\nocite{*}' found, I'll do the check nonetheless.\n")
-
-                        -- warning already displayed, so
-                        -- set flag to false
-                        globalAsteriskWarning = false
-
-                    end
-
-                end
-
-            -- end of citation in current line
-            end
-
-            -- in the same current line, check if there's the 
-            -- bibdata entry and extract it
-			for entry in string.gmatch(currentLine, '\\bibdata{(.+)}') do
-
-                -- break the bib files list, in case of multiple
-                -- files in the same \bibdata{}
-				local parts = string.split(entry, "[^,%s]+" )
-
-                -- for every entry in the bib files list
-				for index, theBibFile in pairs(parts) do
-
-                    -- insert the file
-        			table.insert(theBibFiles, theBibFile)
-
-				end
-
-            -- end of bib files in the current line
-            end
-
-        -- end of current line
-        end
-
-        -- close the file handler
-		fileHandler:close()
-
-        -- remove duplicated citations
-        theCitations = removeDuplicates(theCitations)
-
-        -- print a message about the citations
-		print("I found " .. #theCitations .. " citation(s).")
-
-        -- remove possible duplicated files
-        theBibFiles = removeDuplicates(theBibFiles)
-
-        -- if there are no bib files
-        if #theBibFiles == 0 then
-
-            -- show message
-            print("I couldn't find any bibliography files.\nI'm afraid I have nothing to do now.")
-
-            -- and abort the script
-    		os.exit()
-
-        -- if there is only one bib file
-        elseif #theBibFiles == 1 then
-
-            -- show message
-            print("Great, there's only one 'bib' file. Let me check it.")
-
-        -- there are more bib files
-        else
-
-            -- show message
-            print("Oh no, I have to check more than one 'bib' file. Please wait.")
-
-        end
-
-        -- return both citations and bib files
-        return theCitations, theBibFiles
-
-    -- the file handler is invalid
+      end
+      if key == 'unpaired' then
+        table.insert(unknown, '-' .. b)
+      end
+      if not keys[key] then
+        keys[key] = {}
+      end
     else
-
-        -- print an error message
-		print("File '" .. theAuxFile .. "' does not exist or is unavailable. Aborting script.")
-
-        -- and abort the script
-		os.exit()
-
-    end
-
--- end of function
-end
-
--- This function opens and gets all data from all the available
--- bib files.
-function getDataFromBibFiles(theBibFiles)
-
-    -- create a table to store the citations
-	local theReferences = {}
-
-    -- set local variables
-    local index
-    local theBibFile
-    local currentLine
-    local reference
-
-    -- iterate through all bib files
-    for index, theBibFile in pairs(theBibFiles) do
-
-        -- open the bib file
-		local fileHandler = io.open(theBibFile .. ".bib","r")
-
-        -- check if the handler is valid
-		if fileHandler then
-
-            -- iterate through every line of the bib file
-			for currentLine in fileHandler:lines() do
-
-                -- if a reference is found
-				for reference in string.gmatch(currentLine, '@%w+{%s*(.+),') do
-
-                    -- insert the reference
-					table.insert(theReferences, reference)
-
-                end
-
-            -- end current line
+      a, _, b = string.find(v, '^%-%-([%w-]+)$')
+      if a then
+        for _, x in ipairs(map) do
+          key = 'unpaired'
+          if x['long'] == b then
+            key = b
+            break
+          end
+        end
+        if key == 'unpaired' then
+          if not exists(unknown, '--' .. b) then
+            table.insert(unknown, '--' .. b)
+          end
+        end
+        if not keys[key] then
+          keys[key] = {}
+        end
+      else
+        if not keys[key] then
+          keys[key] = {}
+        end
+        if key ~= 'unpaired' then
+          for _, x in ipairs(map) do
+            if x['long'] == key then
+              if not (x['argument'] and
+                 #keys[key] == 0) then
+                key = 'unpaired'
+              end
+              break
             end
-
-            -- close the file handler
-			fileHandler:close()
-
-        -- bib file does not exist
+          end
+          if not keys[key] then
+            keys[key] = {}
+          end
+          table.insert(keys[key], v)
         else
-
-            -- error message
-			print("File '" .. theBibFile .. ".bib' does not exist. Aborting.")
-
-			-- abort script
-			os.exit()
-
+          if not keys[key] then
+            keys[key] = {}
+          end
+          table.insert(keys[key], v)
         end
-
-    -- end iteration through the bib files
+      end
     end
-
-    -- remove duplicated references
-    theReferences = removeDuplicates(theReferences)
-
-    -- print message
-	print("I found " .. #theReferences .. " reference(s).")
-
-    -- return references
-	return theReferences
-
--- end of function
+  end
+  return keys, unknown
 end
 
--- This function show all the undefined references. It's very
--- simple, it's a difference between two sets.
-function showUndefinedReferences(citations, references)
-
-    -- get all undefined references
-	local undefined = setDifference(citations, references)
-
-    -- print message
-    print("\nUndefined reference(s) in your TeX file: " .. #undefined)
-
-	-- if there are undefined references
-	if #undefined ~= 0 then
-
-        -- local variables
-        local index
-        local reference
-
-		-- iterate
-		for index, reference in pairs(undefined) do
-
-			-- and print
-			print("- " .. reference)
-
-		end
-
+-- Calculates the difference between two tables.
+-- @param a First table.
+-- @param b Second table.
+-- @return Table containing the difference between two tables.
+local function difference(a, b)
+  local result = {}
+  for _, v in ipairs(a) do
+    if not exists(b, v) then
+      table.insert(result, v)
     end
-
--- end of function
+  end
+  return result
 end
 
--- This function show all the unused references. It's very
--- simple, it's a difference between two sets.
-function showUnusedReferences(citations, references)
-
--- get all undefined references
-	local unused = setDifference(references, citations)
-
-    -- print message
-   	print("\nUnused reference(s) in your bibliography file(s): " .. #unused)
-
-	-- if there are unused references
-	if #unused ~= 0 then
-
-        -- local variables
-        local index
-        local reference
-
-		-- iterate
-		for index, reference in pairs(unused) do
-
-			-- and print
-			print("- " .. reference)
-
-		end
-        
-    end
-
--- end of function
+-- Splits the string based on a pattern.
+-- @param str String.
+-- @param pattern Pattern.
+local function split(str, pattern)
+  local result = {}
+  string.gsub(str, pattern, function(a)
+              table.insert(result, a) end)
+  return result
 end
 
--- This function parses the command line arguments and returns a
--- bunch of info for us to use.
--- Return:
---   * an argument code
---   * the filename
---   * an action code
-function parseArguments(theArgs)
+-- Reads lines from a file.
+-- @param file File.
+-- @returns Table representing the lines.
+local function read(file)
+  local handler = io.open(file, 'r')
+  local lines = {}
+  if handler then
+    for line in handler:lines() do
+      table.insert(lines, line)
+    end
+    handler:close()
+  end
+  return lines
+end
 
-    -- check if there are no arguments
-    if #theArgs == 0 then
+-- Normalizes the string, removing leading and trailing spaces.
+-- @param str String.
+-- @return Normalized string without leading and trailing spaces.
+local function normalize(str)
+  local result, _ = string.gsub(str, '^%s', '')
+  result, _ = string.gsub(result, '%s$', '')
+  return result
+end
 
-        -- return usage code
-        return 0, nil, nil
+-- Checks if the element is in a blacklist.
+-- @param a Element.
+-- @return Boolean value if the element is blacklisted.
+local function blacklist(a)
+  local list = {}
+  for _, v in ipairs(list) do
+    if v == a then
+      return true
+    end
+  end
+  return false
+end
 
-    -- there is one argument
-    elseif #theArgs == 1 then
+-- Extracts the biblographic key.
+-- @param lines Lines of a file.
+-- @return Table containing bibliographic keys.
+local function extract(lines)
+  local result = {}
+  for _, line in ipairs(lines) do
+    local hit = string.match(line,
+                '^%s*%@%w+%s*{%s*(.+),')
+    if hit then
+      if not exists(result, hit) then
+        hit = normalize(hit)
+        table.insert(result, hit)
+      end
+    end
+  end
+  return result
+end
 
-        -- check if it's help
-        if theArgs[1] == "--help" then
+-- Gets a pluralized word based on a counter.
+-- @param i Counter.
+-- @param a Word in singular.
+-- @param b Word in plural.
+-- @return Either the first or second word based on the counter.
+local function plural(i, a, b)
+  if i == 1 then
+    return a
+  else
+    return b
+  end
+end
 
-            -- return help code
-            return 1, nil, nil
+-- Backend namespace
+local backends = {}
 
-            -- check if it's version
-        elseif theArgs[1] == "--version" then
-
-            -- return version code
-            return 2, nil, nil
-
-        -- check if it's invalid
-        elseif string.sub(theArgs[1], 1, 1) == "-" then
-
-            -- return invalid code
-            return 3, nil, nil
-
-        -- it seems a clean argument
-        else
-
-            -- return it as a valid argument
-            return 4, theArgs[1], nil
-
-        -- end for one parameter
+-- Gets data from auxiliary files (BibTeX).
+-- @param lines Lines of a file.
+-- @return Boolean indicating if an asterisk was found.
+-- @return Table containing the citations.
+-- @return Table containing the bibliography files.
+backends.bibtex = function(lines)
+  local citations, bibliography = {}, {}
+  local asterisk, parts, hit = false
+  for _, line in ipairs(lines) do
+    hit = string.match(line, '^%s*\\citation{(.+)}$')
+    if hit then
+      if hit ~= '*' then
+        parts = split(hit, '[^,%s]+')
+        for _, v in ipairs(parts) do
+          v = normalize(v)
+          if not exists(citations, v) then
+            table.insert(citations, v)
+          end
         end
-
-    -- there are two arguments
-    elseif #theArgs == 2 then
-
-        -- check if both are valid
-        if ((theArgs[1] == "--all" or theArgs[1] == "--unused" or theArgs[1] == "--undefined") and string.sub(theArgs[2], 1, 1) ~= "-") or ((theArgs[2] == "--all" or theArgs[2] == "--unused" or theArgs[2] == "--undefined") and string.sub(theArgs[1], 1, 1) ~= "-") then
-
-            -- create an action code
-            local actionCode
-
-            -- check which one is the file name
-            if string.sub(theArgs[1], 1, 1) ~= "-" then
-
-                -- check for --all
-                if theArgs[2] == "--all" then
-
-                    -- set the action code
-                    actionCode = 0
-
-                -- check for --unused
-                elseif theArgs[2] == "--unused" then
-
-                    -- set the action code
-                    actionCode = 1
-
-                -- it's --undefined
-                else
-
-                    -- set the action code
-                    actionCode = 2
-
-                end
-
-                -- it's the first
-                return 4, theArgs[1], actionCode
-
-            else
-
-                -- check for --all
-                if theArgs[1] == "--all" then
-
-                    -- set the action code
-                    actionCode = 0
-
-                -- check for --unused
-                elseif theArgs[1] == "--unused" then
-
-                    -- set the action code
-                    actionCode = 1
-
-                else
-
-                    -- it's --undefined
-                    actionCode = 2
-
-                end
-
-                -- it's the second
-                return 4, theArgs[2], actionCode
-
-            end
-
-        else
-
-            -- return invalid code
-            return 3, nil, nil
-
-        end
-
+      else
+        asterisk = true
+      end
     else
-
-        -- more than two arguments, return usage code
-        return 0, nil, nil
-
-    end
-
--- end of function
-end
-
--- This function prints the script header.
-function printHeader()
-
-    -- print message
-	print("checkcites.lua -- a reference checker script (v" .. VERSION .. ")")
-	print("Copyright (c) 2012 Enrico Gregorio, Paulo Roberto Massa Cereda\n")
-
--- end of function
-end
-
--- This function prints the script usage
-function printUsage()
-
-    -- show message
-	print("Usage: " .. arg[0] .. " [--all | --unused | --undefined] file.aux\n")
-    print("--all         Lists all unused and undefined references.")
-    print("--unused      Lists only unused references in your 'bib' file.")
-    print("--undefined   Lists only undefined references in your 'tex' file.\n")
-    print("If no flag is provided, '--all' is set by default.")
-	print("Be sure to have all your 'bib' files in the same directory.")
-
--- end of function
-end
-
-function printHelp()
-
-    -- show message
-    print("checkcites.lua is a Lua script written for the sole purpose of")
-    print("detecting undefined/unused references from LaTeX auxiliary or")
-    print("bibliography files. It's very easy to use!\n")
-
-    -- print usage
-    printUsage()
-
--- end of function
-end
-
--- This function prints the script version.
-function printVersion()
-
-    -- print message
-    print("checkcites.lua version " .. VERSION .. " (dated " .. DATE .. ")")
-    print("You can find more information about this script in the official")
-    print("source code repository:\n")
-    print("http://github.com/cereda/checkcites\n")
-    print("checkcites.lua is licensed under the LaTeX Project Public License.")
-
--- end of function
-end
-
--- This function prints a message for invalid parameters.
-function printInvalid()
-
-    -- print message
-    print("Oh no, it seems you used an invalid argument.\n")
-
-    -- print usage
-    printUsage()
-
--- end of function
-end
-
--- This is our main function.
-function runMain(theArgs)
-
-   	-- print the script header
-	printHeader()
-
-    -- set local variables
-    local argCode
-    local fileName
-    local actionCode
-
-    -- parse arguments and get the result
-    argCode, fileName, actionCode = parseArguments(theArgs)
-
-    -- check for usage
-    if argCode == 0 then
-
-        -- print usage
-        printUsage()
-
-    -- it's help
-    elseif argCode == 1 then
-
-        -- print help
-        printHelp()
-
-    -- it's version
-    elseif argCode == 2 then
-
-        -- print version
-        printVersion()
-
-    -- it's an invalid parameter
-    elseif argCode == 3 then
-
-        -- print invalid
-        printInvalid()
-
-    -- it's a valid operation
-    else
-
-        -- get data from aux
-        a, b = getDataFromAuxFile(fileName)
-
-        -- get data from bib
-        c = getDataFromBibFiles(b)
-
-        -- if there is an action code
-        if actionCode ~= nil then
-
-            -- it's --all
-            if actionCode == 0 then
-
-                -- do everything
-                showUnusedReferences(a,c)
-                showUndefinedReferences(a,c)
-
-            -- it's --unused
-            elseif actionCode == 1 then
-
-                -- only show unused
-                showUnusedReferences(a,c)
-
-            -- it's --undefined
-            else
-
-                -- only show undefined
-                showUndefinedReferences(a,c)
-
-            end
-
-        -- there's only one parameter, the file name,
-        -- so we set --all
-        else
-
-            -- show everything
-            showUnusedReferences(a,c)
-            showUndefinedReferences(a,c)
-
+      hit = string.match(line, '^%s*\\bibdata{(.+)}$')
+      if hit then
+        parts = split(hit, '[^,%s]+')
+        for _, v in ipairs(parts) do
+          v = normalize(v)
+          if not exists(bibliography, v) and
+             not blacklist(v) then
+            table.insert(bibliography, v)
+          end
         end
-
+      end
     end
-
--- end of function
+  end
+  return asterisk, citations, bibliography
 end
 
--- run the main function
-runMain(arg)
+-- Gets data from auxiliary files (Biber).
+-- @param lines Lines of a file.
+-- @return Boolean indicating if an asterisk was found.
+-- @return Table containing the citations.
+-- @return Table containing the bibliography files.
+backends.biber = function(lines)
+  local citations, bibliography = {}, {}
+  local asterisk, parts, hit = false
+  for _, line in ipairs(lines) do
+    hit = string.match(line, '^%s*<bcf:citekey order="%d+">' ..
+          '(.+)</bcf:citekey>$')
+    if hit then
+      if hit ~= '*' then
+        parts = split(hit, '[^,%s]+')
+        for _, v in ipairs(parts) do
+          v = normalize(v)
+          if not exists(citations, v) then
+            table.insert(citations, v)
+          end
+        end
+      else
+        asterisk = true
+      end
+    else
+      hit = string.match(line, '^%s*<bcf:datasource type="file" ' ..
+            'datatype="%w+">(.+)</bcf:datasource>$')
+      if hit then
+        parts = split(hit, '[^,%s]+')
+        for _, v in ipairs(parts) do
+          v = normalize(v)
+          if not exists(bibliography, v) and
+             not blacklist(v) then
+            table.insert(bibliography, v)
+          end
+        end
+      end
+    end
+  end
+  return asterisk, citations, bibliography
+end
+
+-- Counts the number of elements of a nominal table.
+-- @param t Table.
+-- @return Table size.
+local function count(t)
+  local counter = 0
+  for _, _ in pairs(t) do
+    counter = counter + 1
+  end
+  return counter
+end
+
+-- Repeats the provided char a certain number of times.
+-- @param c Char.
+-- @param w Number of times.
+-- @return String with a char repeated a certain number of times.
+local function pad(c, w)
+  local r = c
+  while #r < w do
+    r = r .. c
+  end
+  return r
+end
+
+-- Adds the extension if the file does not have it.
+-- @param file File.
+-- @param extension Extension.
+-- @return File with proper extension.
+local function sanitize(file, extension)
+  extension = '.' .. extension
+  if string.sub(file, -#extension) ~= extension then
+    file = file .. extension
+  end
+  return file
+end
+
+-- Flattens a table of tables into only one table.
+-- @param t Table.
+-- @return Flattened table.
+local function flatten(t)
+  local result = {}
+  for _, v in ipairs(t) do
+    for _, k in ipairs(v) do
+      if not exists(result, k) then
+        table.insert(result, k)
+      end
+    end
+  end
+  return result
+end
+
+-- Applies a function to elements of a table.
+-- @param c Table.
+-- @param f Function.
+-- @return A new table.
+local function apply(c, f)
+  local result = {}
+  for _, v in ipairs(c) do
+    table.insert(result, f(v))
+  end
+  return result
+end
+
+-- Wraps a string based on a line width.
+-- @param str String.
+-- @param size Line width.
+-- @return Wrapped string.
+local function wrap(str, size)
+  local parts = split(str, '[^%s]+')
+  local r, l = '', ''
+  for _, v in ipairs(parts) do
+    if (#l + #v) > size then
+      r = r .. '\n' .. l
+      l = v
+    else
+      l = normalize(l .. ' ' .. v)
+    end
+  end
+  r = normalize(r .. '\n' .. l)
+  return r
+end
+
+-- Prints the script header.
+local function header()
+print("     _           _       _ _")
+print(" ___| |_ ___ ___| |_ ___|_| |_ ___ ___")
+print("|  _|   | -_|  _| '_|  _| |  _| -_|_ -|")
+print("|___|_|_|___|___|_,_|___|_|_| |___|___|")
+print()
+  print(wrap('checkcites.lua -- a reference ' ..
+             'checker script (v2.0)', 74))
+  print(wrap('Copyright (c) 2012, 2017, ' ..
+             'Enrico Gregorio, Paulo ' ..
+             'Roberto Massa Cereda', 74))
+end
+
+-- Operation namespace
+local operations = {}
+
+-- Reports the unused references.
+-- @param citations Citations.
+-- @param references References.
+-- @return Integer representing the status.
+operations.unused = function(citations, references)
+  print()
+  print(pad('-', 74))
+  print(wrap('Report of unused references in your TeX ' ..
+             'document (that is, references present in ' ..
+             'bibliography files, but not cited in ' ..
+             'the TeX source file)', 74))
+  print(pad('-', 74))
+  local r = difference(references, citations)
+  print()
+  print(wrap('Unused references in your TeX document: ' ..
+             tostring(#r), 74))
+  if #r == 0 then
+    return 0
+  else
+    for _, v in ipairs(r) do
+      print('=> ' .. v)
+    end
+    return 1
+  end
+end
+
+-- Reports the undefined references.
+-- @param citations Citations.
+-- @param references References.
+-- @return Integer value indicating the status.
+operations.undefined = function(citations, references)
+  print()
+  print(pad('-', 74))
+  print(wrap('Report of undefined references in your TeX ' ..
+             'document (that is, references cited in the ' ..
+             'TeX source file, but not present in the ' ..
+             'bibliography files)', 74))
+  print(pad('-', 74))
+  local r = difference(citations, references)
+  print()
+  print(wrap('Undefined references in your TeX document: ' ..
+        tostring(#r), 74))
+  if #r == 0 then
+    return 0
+  else
+    for _, v in ipairs(r) do
+      print('=> ' .. v)
+    end
+    return 1
+  end
+end
+
+-- Reports both unused and undefined references.
+-- @param citations Citations.
+-- @param references References.
+-- @return Integer value indicating the status.
+operations.all = function(citations, references)
+  local x, y
+  x = operations.unused(citations, references)
+  y = operations.undefined(citations, references)
+  if x + y > 0 then
+    return 1
+  else
+    return 0
+  end
+end
+
+-- Checks if a file exists.
+-- @param file File.
+-- @return Boolean value indicating if the file exists.
+local function valid(file)
+  local handler = io.open(file, 'r')
+  if handler then
+    handler:close()
+    return true
+  else
+    return false
+  end
+end
+
+-- Filters a table of files, keeping the inexistent ones.
+-- @param files Table.
+-- @return Table of inexistent files.
+local function validate(files)
+  local result = {}
+  for _, v in ipairs(files) do
+    if not valid(v) then
+      table.insert(result, v)
+    end
+  end
+  return result
+end
+
+-- Main function.
+-- @param args Command line arguments.
+-- @return Integer value indicating the status
+local function checkcites(args)
+  header()
+
+  local parameters = {
+    { short = 'a', long = 'all', argument = false },
+    { short = 'u', long = 'unused', argument = false },
+    { short = 'U', long = 'undefined', argument = false },
+    { short = 'v', long = 'version', argument = false },
+    { short = 'h', long = 'help', argument = false },
+    { short = 'b', long = 'backend', argument = true }
+  }
+
+  local keys, err = parse(parameters, args)
+  local check, backend = 'all', 'bibtex'
+
+  if #err ~= 0 then
+    print()
+    print(pad('-', 74))
+    print(wrap('I am sorry, but I do not recognize ' ..
+               'the following ' .. plural(#err, 'option',
+               'options') .. ':', 74))
+    for _, v in ipairs(err) do
+      print('=> ' .. v)
+    end
+
+    print()
+    print(wrap('Please make sure to use the correct ' ..
+               'options when running this script. You ' ..
+               'can also refer to the user documentation ' ..
+               'for a list of valid options. The script ' ..
+               'will end now.', 74))
+    return 1
+  end
+
+  if count(keys) == 0 then
+    print()
+    print(pad('-', 74))
+    print(wrap('I am sorry, but you have not provided ' ..
+               'any command line argument, including ' ..
+               'files to check and options. Make ' ..
+               'sure to invoke the script with the actual ' ..
+               'arguments. Refer to the user documentation ' ..
+               'if you are unsure of how this tool ' ..
+               'works. The script will end now.', 74))
+    return 1
+  end
+
+  if keys['version'] or keys['help'] then
+    if keys['version'] then
+      print()
+      print(wrap('checkcites.lua, version 2.0 (dated August ' ..
+                 '25, 2017)', 74))
+
+      print(pad('-', 74))
+      print(wrap('You can find more details about this ' ..
+                 'script, as well as the user documentation, ' ..
+                 'in the official source code repository:', 74))
+
+      print()
+      print('https://github.com/cereda/checkcites')
+
+      print()
+      print(wrap('The checkcites.lua script is licensed ' ..
+                 'under the LaTeX Project Public License, ' ..
+                 'version 1.3. The current maintainers ' ..
+                 'are the original authors.', 74))
+    else
+      print()
+      print(wrap('Usage: ' .. args[0] .. ' [ [ --all | --unused | ' ..
+                 '--undefined ] [ --backend <arg> ] <file> [ ' ..
+                 '<file 2> ... <file n> ] | --help | --version ' ..
+                 ']', 74))
+
+      print()
+      print('-a,--all           list all unused and undefined references')
+      print('-u,--unused        list only unused references in your bibliography files')
+      print('-U,--undefined     list only undefined references in your TeX source file')
+      print('-b,--backend <arg> set the backend-based file lookup policy')
+      print('-h,--help          print the help message')
+      print('-v,--version       print the script version')
+
+      print()
+      print(wrap('Unless specified, the script lists all unused and ' ..
+                 'undefined references by default. Also, the default ' ..
+                 'backend is set to "bibtex". Please refer to the user ' ..
+                 'documentation for more details.', 74))
+    end
+    return 0
+  end
+
+  if not keys['unpaired'] then
+    print()
+    print(pad('-', 74))
+    print(wrap('I am sorry, but you have not provided ' ..
+               'files to process. The tool requires ' ..
+               'least one file in order to properly ' ..
+               'work. Make sure to invoke the script ' ..
+               'with an actual file (or files). Refer ' ..
+               'to the user documentation if you are ' ..
+               'unsure of how this tool works. The ' ..
+               'script will end now.', 74))
+    return 1
+  end
+
+  if keys['backend'] then
+    if not exists({ 'bibtex', 'biber' }, keys['backend'][1]) then
+      print()
+      print(pad('-', 74))
+      print(wrap('I am sorry, but you provided an ' ..
+                 'invalid backend. I know two: ' ..
+                 '"bibtex" (which is the default ' ..
+                 'one) and "biber". Please make ' ..
+                 'sure to select one of the two. ' ..
+                 'Also refer to the user documentation ' ..
+                 'for more information on how these ' ..
+                 'backends work. The script will end ' ..
+                 'now.', 74))
+      return 1
+    else
+      backend = keys['backend'][1]
+    end
+  end
+
+  if not keys['all'] then
+    if keys['unused'] and keys['undefined'] then
+      check = 'all'
+    elseif keys['unused'] or keys['undefined'] then
+      check = (keys['unused'] and 'unused') or
+              (keys['undefined'] and 'undefined')
+    end
+  end
+
+  local auxiliary = apply(keys['unpaired'], function(a)
+                    return sanitize(a, (backend == 'bibtex'
+                    and 'aux') or 'bcf') end)
+
+  local vld = validate(auxiliary)
+  if #vld ~= 0 then
+    print()
+    print(pad('-', 74))
+    print(wrap('I am sorry, but I was unable to ' ..
+               'locate ' .. plural(#vld, 'this file',
+               'these files')  .. ' (the extension ' ..
+               'is automatically set based on the ' ..
+               '"' .. backend .. '" backend):', 74))
+    for _, v in ipairs(vld) do
+      print('=> ' .. v)
+    end
+
+    print()
+    print(wrap('Selected backend: ' .. backend, 74))
+    print(wrap('File lookup policy: add ".' ..
+               ((backend == 'bibtex' and 'aux') or 'bcf') ..
+               '" to files if not provided.', 74))
+
+    print()
+    print(wrap('Please make sure the ' .. plural(#vld,
+               'path is', 'paths are') .. ' ' ..
+               'correct and the ' .. plural(#vld,
+               'file exists', 'files exist') ..  '. ' ..
+               'There is nothing I can do at the moment. ' ..
+               'Refer to the user documentation for ' ..
+               'details on the file lookup. If ' .. plural(#vld,
+               'this is not the file', 'these are not the ' ..
+               'files') .. ' you were expecting, ' ..
+               'double-check your source file or ' ..
+               'change the backend option when running ' ..
+               'this tool. The script will end now.', 74))
+    return 1
+  end
+
+  local lines = flatten(apply(auxiliary, read))
+  local asterisk, citations, bibliography = backends[backend](lines)
+
+  print()
+  print(wrap('Great, I found ' .. tostring(#citations) .. ' ' ..
+             plural(#citations, 'citation', 'citations') .. ' in ' ..
+             tostring(#auxiliary) .. ' ' .. plural(#auxiliary, 'file',
+             'files') ..'. I also found ' .. tostring(#bibliography) ..
+             ' ' .. 'bibliography ' .. plural(#bibliography, 'file',
+             'files') .. '. Let me check ' .. plural(#bibliography,
+             'this file', 'these files') .. ' and extract the ' ..
+             'references. Please wait a moment.', 74))
+
+  if asterisk then
+    print()
+    print(wrap('Also, it is worth noticing that I found a mention to ' ..
+               'a special "*" when retrieving citations. That means ' ..
+               'your TeX document contains "\\nocite{*}" somewhere in ' ..
+               'the source code. I will continue with the check ' ..
+               'nonetheless.', 74))
+  end
+
+  bibliography = apply(bibliography, function(a)
+                 return sanitize(a, 'bib') end)
+
+  vld = validate(bibliography)
+  if #vld ~= 0 then
+    print()
+    print(pad('-', 74))
+    print(wrap('I am sorry, but I was unable to locate ' ..
+               plural(#vld, 'this file', 'these files') .. ' ' ..
+               '(the extension is automatically set to ' ..
+               '".bib", if not provided):', 74))
+    for _, v in ipairs(vld) do
+      print('=> ' .. v)
+    end
+
+    print()
+    print(wrap('Please make sure the ' .. plural(#vld,
+               'path is', 'paths are') .. ' ' ..
+               'correct and the ' .. plural(#vld,
+               'file exists', 'files exist') ..  '. ' ..
+               'There is nothing I can do at the moment. ' ..
+               'Refer to to the user documentation ' ..
+               'for details on bibliography lookup. If ' ..
+               plural(#vld, 'this is not the file',
+               'these are not the files') .. ' you were ' ..
+               'expecting (wrong bibliography), double-check ' ..
+               'your source file. The script will end ' ..
+               'now.', 74))
+    return 1
+  end
+
+  local references = flatten(apply(bibliography, function(a)
+                     return extract(read(a)) end))
+
+  print()
+  print(wrap('Fantastic, I found ' .. tostring(#references) ..
+             ' ' .. plural(#references, 'reference',
+             'references') .. ' in ' .. tostring(#bibliography) ..
+             ' bibliography ' .. plural(#bibliography, 'file',
+             'files') .. '. Please wait a moment while the ' ..
+             plural(((check == 'all' and 2) or 1), 'report is',
+             'reports are') .. ' generated.', 74))
+
+  return operations[check](citations, references)
+end
+
+-- Call and exit
+os.exit(checkcites(arg))
+
+-- EOF
+
