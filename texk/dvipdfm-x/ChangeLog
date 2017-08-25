@@ -1,3 +1,8 @@
+2017-08-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfximage.h, spc_pdfm.c: Remove MAX_IMAGES which is not
+	needed.
+
 2017-08-06  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dpxutil.[ch], epdf.c, pdfdoc.[ch], pdfximage.c, xbb.c:
