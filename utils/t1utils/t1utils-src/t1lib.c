@@ -2,7 +2,7 @@
  *
  * This file contains functions for reading PFA and PFB files.
  *
- * Copyright (c) 1998-2013 Eddie Kohler
+ * Copyright (c) 1998-2017 Eddie Kohler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

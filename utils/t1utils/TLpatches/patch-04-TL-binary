@@ -1,8 +1,8 @@
 	In TeX Live we treat all output files as binary.
 
-diff -ur t1utils-1.39.orig/t1ascii.c t1utils-1.39/t1ascii.c
---- t1utils-1.39.orig/t1ascii.c	2014-12-12 19:58:33.000000000 +0100
-+++ t1utils-1.39/t1ascii.c	2015-03-02 08:52:29.000000000 +0100
+diff -ur t1utils-1.41.orig/t1ascii.c t1utils-1.41/t1ascii.c
+--- t1utils-1.41.orig/t1ascii.c	Thu Aug 17 01:31:02 2017
++++ t1utils-1.41/t1ascii.c	Mon Aug 28 14:22:17 2017
 @@ -286,6 +286,7 @@
    /* As we are processing a PFB (binary) input */
    /* file, we must set its file mode to binary. */
@@ -11,10 +11,10 @@ diff -ur t1utils-1.39.orig/t1ascii.c t1utils-1.39/t1ascii.c
  #endif
  
    /* prepare font reader */
-diff -ur t1utils-1.39.orig/t1disasm.c t1utils-1.39/t1disasm.c
---- t1utils-1.39.orig/t1disasm.c	2015-03-02 08:50:06.000000000 +0100
-+++ t1utils-1.39/t1disasm.c	2015-03-02 08:52:29.000000000 +0100
-@@ -717,6 +717,7 @@
+diff -ur t1utils-1.41.orig/t1disasm.c t1utils-1.41/t1disasm.c
+--- t1utils-1.41.orig/t1disasm.c	Thu Aug 17 01:31:24 2017
++++ t1utils-1.41/t1disasm.c	Mon Aug 28 14:23:22 2017
+@@ -727,6 +727,7 @@
    /* As we might be processing a PFB (binary) input file, we must set its file
       mode to binary. */
    _setmode(_fileno(ifp), _O_BINARY);
@@ -22,10 +22,10 @@ diff -ur t1utils-1.39.orig/t1disasm.c t1utils-1.39/t1disasm.c
  #endif
  
    /* prepare font reader */
-diff -ur t1utils-1.39.orig/t1unmac.c t1utils-1.39/t1unmac.c
---- t1utils-1.39.orig/t1unmac.c	2014-12-12 19:58:33.000000000 +0100
-+++ t1utils-1.39/t1unmac.c	2015-03-02 08:52:29.000000000 +0100
-@@ -656,8 +656,7 @@
+diff -ur t1utils-1.41.orig/t1unmac.c t1utils-1.41/t1unmac.c
+--- t1utils-1.41.orig/t1unmac.c	Thu Aug 17 01:31:39 2017
++++ t1utils-1.41/t1unmac.c	Mon Aug 28 14:26:09 2017
+@@ -656,8 +655,7 @@
    _setmode(_fileno(ifp), _O_BINARY);
    /* If we are processing a PFB (binary) output */
    /* file, we must set its file mode to binary. */

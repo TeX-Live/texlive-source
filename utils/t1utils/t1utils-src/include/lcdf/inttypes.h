@@ -2,6 +2,8 @@
 #define LCDF_INTTYPES_H
 /* Define known-width integer types. */
 
+#include <stddef.h>
+
 #ifdef HAVE_INTTYPES_H
 # include <inttypes.h>
 #elif defined(HAVE_SYS_TYPES_H)

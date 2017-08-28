@@ -4,7 +4,7 @@
  * converts it to binary (PFB) format.
  *
  * Copyright (c) 1992 by I. Lee Hetherington, all rights reserved.
- * Copyright (c) 1998-2013 Eddie Kohler
+ * Copyright (c) 1998-2017 Eddie Kohler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
@@ -215,7 +215,7 @@ main(int argc, char *argv[])
 
      case VERSION_OPT:
       printf("t1binary (LCDF t1utils) %s\n", VERSION);
-      printf("Copyright (C) 1992-2010 I. Lee Hetherington, Eddie Kohler et al.\n\
+      printf("Copyright (C) 1992-2017 I. Lee Hetherington, Eddie Kohler et al.\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

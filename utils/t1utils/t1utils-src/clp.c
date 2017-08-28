@@ -2,18 +2,22 @@
 /* clp.c - Complete source code for CLP.
  * This file is part of CLP, the command line parser package.
  *
- * Copyright (c) 1997-2012 Eddie Kohler, ekohler@gmail.com
+ * Copyright (c) 1997-2014 Eddie Kohler, ekohler@gmail.com
+ *
+ * CLP is free software. It is distributed under the GNU General Public
+ * License, Version 2, or, alternatively and at your discretion, under the
+ * more permissive (BSD-like) Click LICENSE file as described below.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, subject to the conditions
- * listed in the Click LICENSE file, which is available in full at
- * http://www.pdos.lcs.mit.edu/click/license.html. The conditions include: you
- * must preserve this copyright notice, and you cannot mention the copyright
- * holders in advertising related to the Software without their permission.
- * The Software is provided WITHOUT ANY WARRANTY, EXPRESS OR IMPLIED. This
- * notice is a summary of the Click LICENSE file; the license in that file is
- * legally binding. */
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, subject to the
+ * conditions listed in the Click LICENSE file, which is available in full at
+ * http://github.com/kohler/click/blob/master/LICENSE. The conditions
+ * include: you must preserve this copyright notice, and you cannot mention
+ * the copyright holders in advertising related to the Software without
+ * their permission. The Software is provided WITHOUT ANY WARRANTY, EXPRESS
+ * OR IMPLIED. This notice is a summary of the Click LICENSE file; the
+ * license in that file is binding. */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -25,10 +29,19 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <ctype.h>
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#if HAVE_INTTYPES_H || !defined(HAVE_CONFIG_H)
+# include <inttypes.h>
+#endif
 
-/* By default, assume we have strtoul. */
-#if !defined(HAVE_STRTOUL) && !defined(HAVE_CONFIG_H)
+/* By default, assume we have inttypes.h, strtoul, and uintptr_t. */
+#if !HAVE_STRTOUL && !defined(HAVE_CONFIG_H)
 # define HAVE_STRTOUL 1
+#endif
+#if !HAVE_UINTPTR_T && !HAVE_INTTYPES_H && defined(HAVE_CONFIG_H)
+typedef unsigned long uintptr_t;
 #endif
 
 #ifdef __cplusplus
@@ -39,7 +52,7 @@ extern "C" {
 /** @file clp.h
  * @brief Functions for parsing command line options.
  *
- * The CLP functions are used to parse command line arugments into options.
+ * The CLP functions are used to parse command line arguments into options.
  * It automatically handles value parsing, error messages, long options with
  * minimum prefix matching, short options, and negated options.
  *
@@ -222,15 +235,22 @@ struct Clp_ParserState {
 
 
 typedef struct Clp_StringList {
-
     Clp_Option *items;
     Clp_InternOption *iopt;
     int nitems;
 
-    int allow_int;
+    unsigned char allow_int;
+    unsigned char val_long;
     int nitems_invalid_report;
-
 } Clp_StringList;
+
+
+static const Clp_Option clp_option_sentinel[] = {
+    {"", 0, Clp_NotOption, 0, 0},
+    {"", 0, Clp_Done, 0, 0},
+    {"", 0, Clp_BadOption, 0, 0},
+    {"", 0, Clp_Error, 0, 0}
+};
 
 
 static int parse_string(Clp_Parser *, const char *, int, void *);
@@ -430,6 +450,18 @@ compare_options(Clp_Parser *clp, const Clp_Option *o1, Clp_InternOption *io1,
     }
 }
 
+static void
+calculate_lmm(Clp_Parser *clp, const Clp_Option *opt, Clp_InternOption *iopt, int nopt)
+{
+    int i, j;
+    for (i = 0; i < nopt; ++i) {
+	iopt[i].lmmpos = iopt[i].lmmneg = 1;
+	iopt[i].lmmpos_short = iopt[i].lmmneg_short = 0;
+	for (j = 0; j < nopt; ++j)
+	    compare_options(clp, &opt[i], &iopt[i], &opt[j], &iopt[j]);
+    }
+}
+
 /** @param argc number of arguments
  * @param argv argument array
  * @param nopt number of option definitions
@@ -451,7 +483,8 @@ compare_options(Clp_Parser *clp, const Clp_Option *o1, Clp_InternOption *io1,
  * one of the substrings "UTF-8", "UTF8", or "utf8".  Override this with
  * Clp_SetUTF8().</li>
  * <li>The Clp_ValString, Clp_ValStringNotOption, Clp_ValInt, Clp_ValUnsigned,
- * Clp_ValBool, and Clp_ValDouble types are installed.</li>
+ * Clp_ValLong, Clp_ValUnsignedLong, Clp_ValBool, and Clp_ValDouble types are
+ * installed.</li>
  * <li>Errors are reported to standard error.</li>
  * </ul>
  *
@@ -476,7 +509,7 @@ Clp_NewParser(int argc, const char * const *argv, int nopt, const Clp_Option *op
     if (!clp || !cli || !iopt || !cli->valtype)
 	goto failed;
 
-    clp->opt = -1;
+    clp->option = &clp_option_sentinel[-Clp_Done];
     clp->negated = 0;
     clp->have_val = 0;
     clp->vstr = 0;
@@ -514,8 +547,10 @@ Clp_NewParser(int argc, const char * const *argv, int nopt, const Clp_Option *op
     cli->nvaltype = 0;
     Clp_AddType(clp, Clp_ValString, 0, parse_string, 0);
     Clp_AddType(clp, Clp_ValStringNotOption, Clp_DisallowOptions, parse_string, 0);
-    Clp_AddType(clp, Clp_ValInt, 0, parse_int, 0);
-    Clp_AddType(clp, Clp_ValUnsigned, 0, parse_int, (void *)cli);
+    Clp_AddType(clp, Clp_ValInt, 0, parse_int, (void*) (uintptr_t) 0);
+    Clp_AddType(clp, Clp_ValUnsigned, 0, parse_int, (void*) (uintptr_t) 1);
+    Clp_AddType(clp, Clp_ValLong, 0, parse_int, (void*) (uintptr_t) 2);
+    Clp_AddType(clp, Clp_ValUnsignedLong, 0, parse_int, (void*) (uintptr_t) 3);
     Clp_AddType(clp, Clp_ValBool, 0, parse_bool, 0);
     Clp_AddType(clp, Clp_ValDouble, 0, parse_double, 0);
 
@@ -599,15 +634,9 @@ int
 Clp_SetUTF8(Clp_Parser *clp, int utf8)
 {
     Clp_Internal *cli = clp->internal;
-    int i, j, old_utf8 = cli->utf8;
+    int old_utf8 = cli->utf8;
     cli->utf8 = utf8;
-    for (i = 0; i < cli->nopt; ++i) {
-	cli->iopt[i].lmmpos = cli->iopt[i].lmmneg = 1;
-	cli->iopt[i].lmmpos_short = cli->iopt[i].lmmneg_short = 0;
-	for (j = 0; j < cli->nopt; ++j)
-	    compare_options(clp, &cli->opt[i], &cli->iopt[i],
-			    &cli->opt[j], &cli->iopt[j]);
-    }
+    calculate_lmm(clp, cli->opt, cli->iopt, cli->nopt);
     return old_utf8;
 }
 
@@ -679,7 +708,7 @@ Clp_OptionChar(Clp_Parser *clp, int c)
 int
 Clp_SetOptionChar(Clp_Parser *clp, int c, int type)
 {
-    int i, j, long1pos, long1neg;
+    int i, long1pos, long1neg;
     int old = Clp_OptionChar(clp, c);
     Clp_Internal *cli = clp->internal;
 
@@ -718,13 +747,7 @@ Clp_SetOptionChar(Clp_Parser *clp, int c, int type)
 	/* Must recheck option set */
 	cli->long1pos = long1pos;
 	cli->long1neg = long1neg;
-	for (i = 0; i < cli->nopt; ++i) {
-	    cli->iopt[i].lmmpos = cli->iopt[i].lmmneg = 1;
-	    cli->iopt[i].lmmpos_short = cli->iopt[i].lmmneg_short = 0;
-	    for (j = 0; j < cli->nopt; ++j)
-		compare_options(clp, &cli->opt[i], &cli->iopt[i],
-				&cli->opt[j], &cli->iopt[j]);
-	}
+	calculate_lmm(clp, cli->opt, cli->iopt, cli->nopt);
     }
 
     return old;
@@ -762,7 +785,7 @@ Clp_SetOptions(Clp_Parser *clp, int nopt, const Clp_Option *opt)
 {
     Clp_Internal *cli = clp->internal;
     Clp_InternOption *iopt;
-    int i, j;
+    int i;
     static unsigned opt_generation = 0;
 
     if (nopt > cli->nopt) {
@@ -780,7 +803,9 @@ Clp_SetOptions(Clp_Parser *clp, int nopt, const Clp_Option *opt)
     cli->current_option = -1;
 
     /* Massage the options to make them usable */
-    for (i = 0; i < nopt; i++) {
+    for (i = 0; i < nopt; ++i) {
+	memset(&iopt[i], 0, sizeof(iopt[i]));
+
 	/* Ignore negative option_ids, which are internal to CLP */
 	if (opt[i].option_id < 0) {
 	    Clp_OptionError(clp, "CLP internal error: option %d has negative option_id", i);
@@ -819,12 +844,7 @@ Clp_SetOptions(Clp_Parser *clp, int nopt, const Clp_Option *opt)
     }
 
     /* Check option set */
-    for (i = 0; i < nopt; ++i) {
-	iopt[i].lmmpos = iopt[i].lmmneg = 1;
-	iopt[i].lmmpos_short = iopt[i].lmmneg_short = 0;
-	for (j = 0; j < nopt; ++j)
-	    compare_options(clp, &opt[i], &iopt[i], &opt[j], &iopt[j]);
-    }
+    calculate_lmm(clp, opt, iopt, nopt);
 
     return 0;
 }
@@ -1072,39 +1092,44 @@ parse_string(Clp_Parser *clp, const char *arg, int complain, void *user_data)
 }
 
 static int
-parse_int(Clp_Parser *clp, const char *arg, int complain, void *user_data)
+parse_int(Clp_Parser* clp, const char* arg, int complain, void* user_data)
 {
     const char *val;
     char *temp;
+    uintptr_t type = (uintptr_t) user_data;
     if (*arg == 0 || isspace((unsigned char) *arg)
-	|| (user_data != 0 && *arg == '-'))
+	|| ((type & 1) && *arg == '-'))
 	val = arg;
-    else if (user_data != 0) {	/* unsigned */
+    else if (type & 1) { /* unsigned */
 #if HAVE_STRTOUL
-	clp->val.u = strtoul(arg, &temp, 0);
+	clp->val.ul = strtoul(arg, &temp, 0);
 	val = temp;
 #else
 	/* don't bother really trying to do it right */
 	if (arg[0] == '-')
 	    val = arg;
 	else {
-	    clp->val.u = strtol(arg, &temp, 0);
+	    clp->val.l = strtol(arg, &temp, 0);
 	    val = temp;
 	}
 #endif
     } else {
-	clp->val.i = strtol(arg, &temp, 0);
+	clp->val.l = strtol(arg, &temp, 0);
 	val = temp;
     }
+    if (type <= 1)
+        clp->val.u = (unsigned) clp->val.ul;
     if (*arg != 0 && *val == 0)
 	return 1;
-    else if (complain) {
-	const char *message = user_data != 0
-	    ? "%<%O%> expects a nonnegative integer, not %<%s%>"
-	    : "%<%O%> expects an integer, not %<%s%>";
-	return Clp_OptionError(clp, message, arg);
-    } else
-	return 0;
+    else {
+        if (complain) {
+            const char *message = type & 1
+                ? "%<%O%> expects a nonnegative integer, not %<%s%>"
+                : "%<%O%> expects an integer, not %<%s%>";
+            Clp_OptionError(clp, message, arg);
+        }
+        return 0;
+    }
 }
 
 static int
@@ -1121,10 +1146,11 @@ parse_double(Clp_Parser *clp, const char *arg, int complain, void *user_data)
     }
     if (*arg != 0 && *val == 0)
 	return 1;
-    else if (complain)
-	return Clp_OptionError(clp, "%<%O%> expects a real number, not %<%s%>", arg);
-    else
+    else {
+        if (complain)
+            Clp_OptionError(clp, "%<%O%> expects a real number, not %<%s%>", arg);
 	return 0;
+    }
 }
 
 static int
@@ -1176,27 +1202,26 @@ parse_string_list(Clp_Parser *clp, const char *arg, int complain, void *user_dat
 	 &ambiguous, ambiguous_values);
     if (idx >= 0) {
 	clp->val.i = sl->items[idx].option_id;
-	return 1;
+        if (sl->val_long)
+            clp->val.l = clp->val.i;
+        return 1;
     }
 
     if (sl->allow_int) {
-	if (parse_int(clp, arg, 0, 0))
+	if (parse_int(clp, arg, 0, (void*) (uintptr_t) (sl->val_long ? 2 : 0)))
 	    return 1;
     }
 
     if (complain) {
-	const char *complaint;
-	if (ambiguous)
-	    complaint = "ambiguous value %<%s%> for option %<%O%>";
-	else {
-	    complaint = "unknown value %<%s%> for option %<%O%>";
+	const char *complaint = (ambiguous ? "ambiguous" : "invalid");
+	if (!ambiguous) {
 	    ambiguous = sl->nitems_invalid_report;
 	    for (idx = 0; idx < ambiguous; idx++)
 		ambiguous_values[idx] = idx;
 	}
 	return ambiguity_error
 	    (clp, ambiguous, ambiguous_values, sl->items, sl->iopt,
-	     "", complaint, arg);
+	     "", "option %<%V%> is %s", complaint);
     } else
 	return 0;
 }
@@ -1206,7 +1231,7 @@ static int
 finish_string_list(Clp_Parser *clp, int val_type, int flags,
 		   Clp_Option *items, int nitems, int itemscap)
 {
-    int i, j;
+    int i;
     Clp_StringList *clsl = (Clp_StringList *)malloc(sizeof(Clp_StringList));
     Clp_InternOption *iopt = (Clp_InternOption *)malloc(sizeof(Clp_InternOption) * nitems);
     if (!clsl || !iopt)
@@ -1216,6 +1241,7 @@ finish_string_list(Clp_Parser *clp, int val_type, int flags,
     clsl->iopt = iopt;
     clsl->nitems = nitems;
     clsl->allow_int = (flags & Clp_AllowNumbers) != 0;
+    clsl->val_long = (flags & Clp_StringListLong) != 0;
 
     if (nitems < MAX_AMBIGUOUS_VALUES && nitems < itemscap && clsl->allow_int) {
 	items[nitems].long_name = "any integer";
@@ -1228,12 +1254,8 @@ finish_string_list(Clp_Parser *clp, int val_type, int flags,
     for (i = 0; i < nitems; i++) {
 	iopt[i].ilong = iopt[i].ipos = 1;
 	iopt[i].ishort = iopt[i].ineg = iopt[i].ilongoff = iopt[i].iprefmatch = 0;
-	iopt[i].lmmpos = 1;
-	iopt[i].lmmpos_short = 0;
     }
-    for (i = 0; i < nitems; i++)
-	for (j = 0; j < nitems; j++)
-	    compare_options(clp, &items[i], &iopt[i], &items[j], &iopt[j]);
+    calculate_lmm(clp, items, iopt, nitems);
 
     if (Clp_AddType(clp, val_type, 0, parse_string_list, clsl) >= 0)
 	return 0;
@@ -1290,7 +1312,12 @@ Clp_AddStringListType(Clp_Parser *clp, int val_type, int flags, ...)
 	char *name = va_arg(val, char *);
 	if (!name)
 	    break;
-	value = va_arg(val, int);
+        if (flags & Clp_StringListLong) {
+            long lvalue = va_arg(val, long);
+            value = (int) lvalue;
+            assert(value == lvalue);
+        } else
+            value = va_arg(val, int);
 
 	if (nitems >= itemscap) {
 	    Clp_Option *new_items;
@@ -1768,8 +1795,10 @@ find_short(Clp_Parser *clp, const char *text)
 
     for (i = 0; i < cli->nopt; i++)
 	if (iopt[i].ishort && opt[i].short_name == c
-	    && (clp->negated ? iopt[i].ineg : iopt[i].ipos))
+            && (!clp->negated || iopt[i].ineg)) {
+            clp->negated = clp->negated || !iopt[i].ipos;
 	    return i;
+        }
 
     return -1;
 }
@@ -1815,7 +1844,7 @@ find_short(Clp_Parser *clp, const char *text)
  * </dl>
  *
  * The parsed argument is shifted off the argument list, so that sequential
- * calls to Clp_Next() step through the arugment list.
+ * calls to Clp_Next() step through the argument list.
  */
 int
 Clp_Next(Clp_Parser *clp)
@@ -1833,8 +1862,9 @@ Clp_Next(Clp_Parser *clp)
     /* Get the next argument or option */
     if (!next_argument(clp, cli->option_processing ? 0 : 2)) {
 	clp->val.s = clp->vstr;
-	clp->opt = clp->have_val ? Clp_NotOption : Clp_Done;
-	return clp->opt;
+	optno = clp->have_val ? Clp_NotOption : Clp_Done;
+	clp->option = &clp_option_sentinel[-optno];
+	return optno;
     }
 
     clp->negated = cli->whole_negated;
@@ -1872,7 +1902,8 @@ Clp_Next(Clp_Parser *clp)
 	    Clp_OptionError(clp, "unrecognized option %<%s%s%>",
 			    cli->option_chars, cli->xtext);
 
-	return (clp->opt = Clp_BadOption);
+	clp->option = &clp_option_sentinel[-Clp_BadOption];
+	return Clp_BadOption;
     }
 
     /* Set the current option */
@@ -1885,20 +1916,27 @@ Clp_Next(Clp_Parser *clp)
 	|| (!cli->iopt[optno].imandatory && !cli->iopt[optno].ioptional)) {
 	if (clp->have_val) {
 	    Clp_OptionError(clp, "%<%O%> can%,t take an argument");
-	    clp->opt = Clp_BadOption;
-	} else
-	    clp->opt = cli->opt[optno].option_id;
-	return clp->opt;
+	    clp->option = &clp_option_sentinel[-Clp_BadOption];
+	    return Clp_BadOption;
+	} else {
+	    clp->option = &cli->opt[optno];
+	    return cli->opt[optno].option_id;
+	}
     }
 
     /* Get an argument if we need one, or if it's optional */
     /* Sanity-check the argument type. */
     opt = &cli->opt[optno];
-    if (opt->val_type <= 0)
-	return (clp->opt = Clp_Error);
+    if (opt->val_type <= 0) {
+	clp->option = &clp_option_sentinel[-Clp_Error];
+	return Clp_Error;
+    }
     vtpos = val_type_binsearch(cli, opt->val_type);
-    if (vtpos == cli->nvaltype || cli->valtype[vtpos].val_type != opt->val_type)
-	return (clp->opt = Clp_Error);
+    if (vtpos == cli->nvaltype
+	|| cli->valtype[vtpos].val_type != opt->val_type) {
+	clp->option = &clp_option_sentinel[-Clp_Error];
+	return Clp_Error;
+    }
 
     /* complain == 1 only if the argument was explicitly given,
        or it is mandatory. */
@@ -1918,31 +1956,34 @@ Clp_Next(Clp_Parser *clp)
 		Clp_OptionError(clp, "%<%O%> requires a non-option argument");
 	    else
 		Clp_OptionError(clp, "%<%O%> requires an argument");
-	    return (clp->opt = Clp_BadOption);
+	    clp->option = &clp_option_sentinel[-Clp_BadOption];
+	    return Clp_BadOption;
 	}
 
     } else if (cli->is_short && !clp->have_val
-	       && cli->xtext[clp_utf8_charlen(cli, cli->xtext)]) {
+	       && cli->xtext[clp_utf8_charlen(cli, cli->xtext)])
 	/* The -[option]argument case:
 	   Assume that the rest of the current string is the argument. */
 	next_argument(clp, 1);
-	complain = 1;
-    }
 
     /* Parse the argument */
+    clp->option = opt;
     if (clp->have_val) {
 	Clp_ValType *atr = &cli->valtype[vtpos];
 	if (atr->func(clp, clp->vstr, complain, atr->user_data) <= 0) {
 	    /* parser failed */
 	    clp->have_val = 0;
-	    if (complain)
-		return (clp->opt = Clp_BadOption);
-	    else
+	    if (complain) {
+		clp->option = &clp_option_sentinel[-Clp_BadOption];
+		return Clp_BadOption;
+	    } else {
 		Clp_RestoreParser(clp, &clpsave);
+                clp->option = opt;
+            }
 	}
     }
 
-    return (clp->opt = opt->option_id);
+    return opt->option_id;
 }
 
 
@@ -1972,59 +2013,51 @@ Clp_Shift(Clp_Parser *clp, int allow_options)
  **/
 
 typedef struct Clp_BuildString {
-    char *text;
-    char *pos;
-    int capacity;
-    int bad;
+    char* data;
+    char* pos;
+    char* end_data;
+    char buf[256];
 } Clp_BuildString;
 
-static Clp_BuildString *
-new_build_string(void)
-{
-    Clp_BuildString *bs = (Clp_BuildString *)malloc(sizeof(Clp_BuildString));
-    if (!bs) goto bad;
-    bs->text = (char *)malloc(256);
-    if (!bs->text) goto bad;
-    bs->pos = bs->text;
-    bs->capacity = 256;
-    bs->bad = 0;
-    return bs;
+static void build_string_program_prefix(Clp_BuildString* bs,
+                                        const Clp_Parser* clp);
 
-  bad:
-    if (bs) free(bs);
-    return 0;
+static void build_string_init(Clp_BuildString* bs, Clp_Parser* clp) {
+    bs->data = bs->pos = bs->buf;
+    bs->end_data = &bs->buf[sizeof(bs->buf)];
+    if (clp)
+        build_string_program_prefix(bs, clp);
 }
 
-static void
-free_build_string(Clp_BuildString *bs)
-{
-    if (bs) free(bs->text);
-    free(bs);
+static void build_string_cleanup(Clp_BuildString* bs) {
+    if (bs->data != bs->buf)
+        free(bs->data);
 }
 
-static int
-grow_build_string(Clp_BuildString *bs, int want)
-{
-    char *new_text;
-    int ipos = bs->pos - bs->text;
-    int new_capacity = bs->capacity;
-    while (want >= new_capacity)
-	new_capacity *= 2;
-    new_text = (char *)realloc(bs->text, new_capacity);
-    if (!new_text) {
-	bs->bad = 1;
-	return 0;
+static int build_string_grow(Clp_BuildString* bs, size_t want) {
+    size_t ipos = bs->pos - bs->data, ncap;
+    if (!bs->pos)
+        return 0;
+    for (ncap = (bs->end_data - bs->data) << 1; ncap < want; ncap *= 2)
+        /* nada */;
+    if (bs->data == bs->buf) {
+        if ((bs->data = (char*) malloc(ncap)))
+            memcpy(bs->data, bs->buf, bs->pos - bs->buf);
+    } else
+        bs->data = (char*) realloc(bs->data, ncap);
+    if (!bs->data) {
+        bs->pos = bs->end_data = bs->data;
+        return 0;
     } else {
-	bs->text = new_text;
-	bs->pos = bs->text + ipos;
-	bs->capacity = new_capacity;
-	return 1;
+        bs->pos = bs->data + ipos;
+        bs->end_data = bs->data + ncap;
+        return 1;
     }
 }
 
-#define ENSURE_BUILD_STRING(bs, space) \
-  ((((bs)->pos - (bs)->text) + (space) >= (bs)->capacity)		\
-   || grow_build_string((bs), ((bs)->pos - (bs)->text) + (space)))
+#define ENSURE_BUILD_STRING(bs, space)                                  \
+    ((((bs)->end_data - (bs)->pos) >= (space))                          \
+     || build_string_grow((bs), (bs)->pos - (bs)->data + (space)))
 
 static void
 append_build_string(Clp_BuildString *bs, const char *s, int l)
@@ -2037,23 +2070,24 @@ append_build_string(Clp_BuildString *bs, const char *s, int l)
     }
 }
 
-
-static Clp_BuildString *
-Clp_VaOptionError(Clp_Parser *clp, Clp_BuildString *bs,
-		  const char *fmt, va_list val)
+static void
+build_string_program_prefix(Clp_BuildString* bs, const Clp_Parser* clp)
 {
-    Clp_Internal *cli = clp->internal;
-    const char *percent;
-    int c;
-
-    if (!bs)
-	bs = new_build_string();
-    if (!bs)
-	return 0;
+    const Clp_Internal* cli = clp->internal;
     if (cli->program_name && cli->program_name[0]) {
 	append_build_string(bs, cli->program_name, -1);
 	append_build_string(bs, ": ", 2);
     }
+}
+
+
+static void
+Clp_vbsprintf(Clp_Parser *clp, Clp_BuildString *bs,
+              const char *fmt, va_list val)
+{
+    Clp_Internal *cli = clp->internal;
+    const char *percent;
+    int c;
 
     for (percent = strchr(fmt, '%'); percent; percent = strchr(fmt, '%')) {
 	append_build_string(bs, fmt, percent - fmt);
@@ -2061,10 +2095,7 @@ Clp_VaOptionError(Clp_Parser *clp, Clp_BuildString *bs,
 
 	  case 's': {
 	      const char *s = va_arg(val, const char *);
-	      if (s)
-		  append_build_string(bs, s, -1);
-	      else
-		  append_build_string(bs, "(null)", 6);
+              append_build_string(bs, s ? s : "(null)", -1);
 	      break;
 	  }
 
@@ -2109,29 +2140,37 @@ Clp_VaOptionError(Clp_Parser *clp, Clp_BuildString *bs,
 	      break;
 	  }
 
-	  case 'O': {
-	      int optno = cli->current_option;
-	      const Clp_Option *opt = &cli->opt[optno];
-	      if (optno < 0)
-		  append_build_string(bs, "(no current option!)", -1);
-	      else if (cli->current_short) {
-		  append_build_string(bs, cli->option_chars, -1);
-		  if (ENSURE_BUILD_STRING(bs, 5)) {
-		      if (cli->utf8)
-			  bs->pos = encode_utf8(bs->pos, 5, opt->short_name);
-		      else
-			  *bs->pos++ = opt->short_name;
-		  }
-	      } else if (cli->negated_by_no) {
-		  append_build_string(bs, cli->option_chars, -1);
-		  append_build_string(bs, "no-", 3);
-		  append_build_string(bs, opt->long_name + cli->iopt[optno].ilongoff, -1);
-	      } else {
-		  append_build_string(bs, cli->option_chars, -1);
-		  append_build_string(bs, opt->long_name + cli->iopt[optno].ilongoff, -1);
-	      }
-	      break;
-	  }
+        case 'O':
+        case 'V': {
+            int optno = cli->current_option;
+            const Clp_Option *opt = &cli->opt[optno];
+            if (optno < 0)
+                append_build_string(bs, "(no current option!)", -1);
+            else if (cli->current_short) {
+                append_build_string(bs, cli->option_chars, -1);
+                if (ENSURE_BUILD_STRING(bs, 5)) {
+                    if (cli->utf8)
+                        bs->pos = encode_utf8(bs->pos, 5, opt->short_name);
+                    else
+                        *bs->pos++ = opt->short_name;
+                }
+            } else if (cli->negated_by_no) {
+                append_build_string(bs, cli->option_chars, -1);
+                append_build_string(bs, "no-", 3);
+                append_build_string(bs, opt->long_name + cli->iopt[optno].ilongoff, -1);
+            } else {
+                append_build_string(bs, cli->option_chars, -1);
+                append_build_string(bs, opt->long_name + cli->iopt[optno].ilongoff, -1);
+            }
+            if (optno >= 0 && clp->have_val && *percent == 'V') {
+                if (cli->current_short && !cli->iopt[optno].ioptional)
+                    append_build_string(bs, " ", 1);
+                else if (!cli->current_short)
+                    append_build_string(bs, "=", 1);
+                append_build_string(bs, clp->vstr, -1);
+            }
+            break;
+        }
 
 	  case '%':
 	    if (ENSURE_BUILD_STRING(bs, 1))
@@ -2149,6 +2188,10 @@ Clp_VaOptionError(Clp_Parser *clp, Clp_BuildString *bs,
 	    append_build_string(bs, (cli->utf8 ? "\342\200\231" : "'"), -1);
 	    break;
 
+        case 0:
+            append_build_string(bs, "%", 1);
+            goto done;
+
 	  default:
 	    if (ENSURE_BUILD_STRING(bs, 2)) {
 		*bs->pos++ = '%';
@@ -2160,22 +2203,24 @@ Clp_VaOptionError(Clp_Parser *clp, Clp_BuildString *bs,
 	fmt = ++percent;
     }
 
+ done:
     append_build_string(bs, fmt, -1);
-    append_build_string(bs, "\n", 1);
+}
 
-    return bs;
+static const char* build_string_text(Clp_BuildString* bs, int report_oom) {
+    if (bs->pos) {
+        *bs->pos = 0;
+        return bs->data;
+    } else if (report_oom)
+        return "out of memory\n";
+    else
+        return NULL;
 }
 
 static void
 do_error(Clp_Parser *clp, Clp_BuildString *bs)
 {
-    const char *text;
-    if (bs && !bs->bad) {
-	*bs->pos = 0;
-	text = bs->text;
-    } else
-	text = "out of memory\n";
-
+    const char *text = build_string_text(bs, 1);
     if (clp->internal->error_handler != 0)
 	(*clp->internal->error_handler)(clp, text);
     else
@@ -2185,9 +2230,10 @@ do_error(Clp_Parser *clp, Clp_BuildString *bs)
 /** @param clp the parser
  * @param format error format
  *
- * Format an error message from @a format and any additional arguments in the
- * ellipsis.  The resulting error string by printing it to standard error or
- * passing it to Clp_SetErrorHandler.
+ * Format an error message from @a format and any additional arguments in
+ * the ellipsis. The resulting error string is then printed to standard
+ * error (or passed to the error handler specified by Clp_SetErrorHandler).
+ * Returns the number of characters printed.
  *
  * The following format characters are accepted:
  *
@@ -2208,6 +2254,9 @@ do_error(Clp_Parser *clp, Clp_BuildString *bs)
  * <dt><tt>%</tt><tt>O</tt></dt>
  * <dd>The current option.  No values are read from the argument list; the
  * current option is defined in the Clp_Parser object itself.</dd>
+ * <dt><tt>%</tt><tt>V</tt></dt>
+ * <dd>Like <tt>%</tt><tt>O</tt>, but also includes the current value,
+ * if any.</dd>
  * <dt><tt>%%</tt></dt>
  * <dd>Prints a percent character.</dd>
  * <dt><tt>%</tt><tt>&lt;</tt></dt>
@@ -2229,14 +2278,94 @@ do_error(Clp_Parser *clp, Clp_BuildString *bs)
 int
 Clp_OptionError(Clp_Parser *clp, const char *format, ...)
 {
-    Clp_BuildString *bs;
+    Clp_BuildString bs;
     va_list val;
     va_start(val, format);
-    bs = Clp_VaOptionError(clp, 0, format, val);
+    build_string_init(&bs, clp);
+    Clp_vbsprintf(clp, &bs, format, val);
+    append_build_string(&bs, "\n", 1);
     va_end(val);
-    do_error(clp, bs);
-    free_build_string(bs);
-    return 0;
+    do_error(clp, &bs);
+    build_string_cleanup(&bs);
+    return bs.pos - bs.data;
+}
+
+/** @param clp the parser
+ * @param f output file
+ * @param format error format
+ *
+ * Format an error message using @a format and additional arguments in the
+ * ellipsis, according to the Clp_OptionError formatting conventions. The
+ * resulting message is written to @a f.
+ *
+ * @sa Clp_OptionError */
+int
+Clp_fprintf(Clp_Parser* clp, FILE* f, const char* format, ...)
+{
+    Clp_BuildString bs;
+    va_list val;
+    va_start(val, format);
+    build_string_init(&bs, NULL);
+    Clp_vbsprintf(clp, &bs, format, val);
+    va_end(val);
+    if (bs.pos != bs.data)
+        fwrite(bs.data, 1, bs.pos - bs.data, f);
+    build_string_cleanup(&bs);
+    return bs.pos - bs.data;
+}
+
+/** @param clp the parser
+ * @param f output file
+ * @param format error format
+ * @param val arguments
+ *
+ * Format an error message using @a format and @a val, according to the
+ * Clp_OptionError formatting conventions. The resulting message is written
+ * to @a f.
+ *
+ * @sa Clp_OptionError */
+int
+Clp_vfprintf(Clp_Parser* clp, FILE* f, const char* format, va_list val)
+{
+    Clp_BuildString bs;
+    build_string_init(&bs, NULL);
+    Clp_vbsprintf(clp, &bs, format, val);
+    if (bs.pos != bs.data)
+        fwrite(bs.data, 1, bs.pos - bs.data, f);
+    build_string_cleanup(&bs);
+    return bs.pos - bs.data;
+}
+
+/** @param clp the parser
+ * @param str output string
+ * @param size size of output string
+ * @param format error format
+ *
+ * Format an error message from @a format and any additional arguments in
+ * the ellipsis, according to the Clp_OptionError formatting conventions.
+ * The resulting string is written to @a str. At most @a size characters are
+ * written to @a str, including a terminating null byte. The return value is
+ * the number of characters that would have been written (excluding the
+ * terminating null byte) if @a size were large enough to contain the entire
+ * string.
+ *
+ * @sa Clp_OptionError */
+int
+Clp_vsnprintf(Clp_Parser* clp, char* str, size_t size,
+              const char* format, va_list val)
+{
+    Clp_BuildString bs;
+    build_string_init(&bs, NULL);
+    Clp_vbsprintf(clp, &bs, format, val);
+    if ((size_t) (bs.pos - bs.data) < size) {
+        memcpy(str, bs.data, bs.pos - bs.data);
+        str[bs.pos - bs.data] = 0;
+    } else {
+        memcpy(str, bs.data, size - 1);
+        str[size - 1] = 0;
+    }
+    build_string_cleanup(&bs);
+    return bs.pos - bs.data;
 }
 
 static int
@@ -2245,18 +2374,17 @@ ambiguity_error(Clp_Parser *clp, int ambiguous, int *ambiguous_values,
 		const char *prefix, const char *fmt, ...)
 {
     Clp_Internal *cli = clp->internal;
-    Clp_BuildString *bs;
+    Clp_BuildString bs;
     int i;
     va_list val;
-    va_start(val, fmt);
-    bs = Clp_VaOptionError(clp, 0, fmt, val);
-    if (!bs) goto done;
 
-    if (clp->internal->program_name && clp->internal->program_name[0]) {
-	append_build_string(bs, clp->internal->program_name, -1);
-	append_build_string(bs, ": ", 2);
-    }
-    append_build_string(bs, "(Possibilities are", -1);
+    va_start(val, fmt);
+    build_string_init(&bs, clp);
+    Clp_vbsprintf(clp, &bs, fmt, val);
+    append_build_string(&bs, "\n", 1);
+
+    build_string_program_prefix(&bs, clp);
+    append_build_string(&bs, "(Possibilities are", -1);
 
     for (i = 0; i < ambiguous && i < MAX_AMBIGUOUS_VALUES; i++) {
 	int value = ambiguous_values[i];
@@ -2264,26 +2392,25 @@ ambiguity_error(Clp_Parser *clp, int ambiguous, int *ambiguous_values,
 	if (value < 0)
 	    value = -(value + 1), no_dash = "no-";
 	if (i == 0)
-	    append_build_string(bs, " ", 1);
+	    append_build_string(&bs, " ", 1);
 	else if (i == ambiguous - 1)
-	    append_build_string(bs, (i == 1 ? " and " : ", and "), -1);
+	    append_build_string(&bs, (i == 1 ? " and " : ", and "), -1);
 	else
-	    append_build_string(bs, ", ", 2);
-	append_build_string(bs, (cli->utf8 ? "\342\200\230" : "'"), -1);
-	append_build_string(bs, prefix, -1);
-	append_build_string(bs, no_dash, -1);
-	append_build_string(bs, opt[value].long_name + iopt[value].ilongoff, -1);
-	append_build_string(bs, (cli->utf8 ? "\342\200\231" : "'"), -1);
+	    append_build_string(&bs, ", ", 2);
+	append_build_string(&bs, (cli->utf8 ? "\342\200\230" : "'"), -1);
+	append_build_string(&bs, prefix, -1);
+	append_build_string(&bs, no_dash, -1);
+	append_build_string(&bs, opt[value].long_name + iopt[value].ilongoff, -1);
+	append_build_string(&bs, (cli->utf8 ? "\342\200\231" : "'"), -1);
     }
 
     if (ambiguous > MAX_AMBIGUOUS_VALUES)
-	append_build_string(bs, ", and others", -1);
-    append_build_string(bs, ".)\n", -1);
+	append_build_string(&bs, ", and others", -1);
+    append_build_string(&bs, ".)\n", -1);
     va_end(val);
 
-  done:
-    do_error(clp, bs);
-    free_build_string(bs);
+    do_error(clp, &bs);
+    build_string_cleanup(&bs);
     return 0;
 }
 
@@ -2353,6 +2480,22 @@ Clp_CurOptionName(Clp_Parser *clp)
     static char buf[256];
     Clp_CurOptionNameBuf(clp, buf, 256);
     return buf;
+}
+
+int
+Clp_IsLong(Clp_Parser *clp, const char *long_name)
+{
+    Clp_Internal *cli = clp->internal;
+    int optno = cli->current_option;
+    return optno >= 0 && strcmp(cli->opt[optno].long_name, long_name) == 0;
+}
+
+int
+Clp_IsShort(Clp_Parser *clp, int short_name)
+{
+    Clp_Internal *cli = clp->internal;
+    int optno = cli->current_option;
+    return optno >= 0 && cli->opt[optno].short_name == short_name;
 }
 
 #ifdef __cplusplus
