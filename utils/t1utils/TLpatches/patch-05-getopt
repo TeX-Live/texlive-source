@@ -1,6 +1,6 @@
-diff -ur t1utils-1.39.orig/t1unmac.c t1utils-1.39/t1unmac.c
---- t1utils-1.39.orig/t1unmac.c	2015-03-02 08:52:29.000000000 +0100
-+++ t1utils-1.39/t1unmac.c	2015-03-02 08:57:05.000000000 +0100
+diff -ur t1utils-1.41.orig/t1unmac.c t1utils-1.41/t1unmac.c
+--- t1utils-1.41.orig/t1unmac.c	Thu Aug 17 01:31:39 2017
++++ t1utils-1.41/t1unmac.c	Mon Aug 28 14:26:09 2017
 @@ -41,7 +41,6 @@
  #endif
  #if defined(_MSDOS) || defined(_WIN32)

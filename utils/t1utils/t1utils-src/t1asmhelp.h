@@ -8,27 +8,35 @@ static int lenIV = 4;
    of each charstring. */
 
 static void
-set_lenIV(const char* line)
+set_lenIV(const char* line, size_t line_len)
 {
-  char *p = strstr(line, "/lenIV ");
+  char* p = memmem(line, line_len, "/lenIV ", 7);
 
   /* Allow lenIV to be negative. Thanks to Tom Kacvinsky <tjk@ams.org> */
-  if (p && (isdigit((unsigned char) p[7]) || p[7] == '+' || p[7] == '-')) {
-    lenIV = atoi(p + 7);
+  if (p && p + 7 < line + line_len) {
+    const char* x = p + 7 + (p[7] == '+' || p[7] == '-');
+    if (x < line + line_len && isdigit((unsigned char) *x)) {
+      lenIV = (unsigned char) *x - '0';
+      for (++x; x < line + line_len && isdigit((unsigned char) *x); ++x)
+        lenIV = 10 * lenIV + (unsigned char) *x - '0';
+      if (p[7] == '-')
+        lenIV = -lenIV;
+    }
   }
 }
+
 
 static char cs_start_init[] = "";
 static char *cs_start = cs_start_init;
 
 static void
-set_cs_start(const char* line)
+set_cs_start(const char* line, size_t line_len)
 {
     static int cs_start_set = 0;
     char *p, *q, *r;
 
-    if ((p = strstr(line, "string currentfile"))
-        && strstr(line, "readstring")) {
+    if ((p = memmem(line, line_len, "string currentfile", 18))
+        && memmem(line, line_len, "readstring", 10)) {
         /* locate the name of the charstring start command */
         for (q = p; q != line && q[-1] != '/'; --q)
             /* nada */;

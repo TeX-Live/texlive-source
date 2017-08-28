@@ -1,3 +1,8 @@
+2017-08-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import t1utils-1.41.
+	* version.ac, configure.ac: Adapted.
+
 2016-02-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

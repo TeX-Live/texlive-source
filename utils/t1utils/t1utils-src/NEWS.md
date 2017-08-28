@@ -1,146 +1,157 @@
 T1utils NEWS
-
-Version 1.39   26.Feb.2015
+============
+
+## Version 1.41 – 16.Aug.2017
+
+* t1asm, t1disasm: More security fixes.
+
+
+## Version 1.40 – 23.Jul.2017
+
+* t1disasm: More security fixes reported by Jakub Wilk and Niels Thykier.
+
+
+## Version 1.39 – 26.Feb.2015
 
 * t1disasm: Security fixes for buffer overrun reported by Jakub Wilk
   and Niels Thykier.
 
-
-Version 1.38   29.Sep.2013
+
+## Version 1.38 – 29.Sep.2013
 
 * t1disasm: Fix an infinite loop on some fonts reported by Niels
   Thykier.
 
-
-Version 1.37   29.Jun.2011
+
+## Version 1.37 – 29.Jun.2011
 
 * t1asm: Use a dynamically allocated buffer to handle huge characters
   (reported by Werner Lemberg).
 
-
-Version 1.36   29.May.2010
+
+## Version 1.36 – 29.May.2010
 
 * Several minor cleanups.
 
-
-Version 1.35   22.Oct.2009
+
+## Version 1.35 – 22.Oct.2009
 
 * Don't use "getline" as a symbol (reported by Karl Berry and
   C.M. Connelly).
 
-
-Version 1.34   1.Mar.2008
 
-* Add '--enable-multiplatform' (requested by Karl Berry).
+## Version 1.34 – 1.Mar.2008
 
-
-Version 1.33   8.Jan.2008
+* Add `--enable-multiplatform` (requested by Karl Berry).
+
+
+## Version 1.33 – 8.Jan.2008
 
 * Several minor cleanups.
 
-
-Version 1.32   23.Feb.2004
 
-* t1disasm: Avoid memory corruption bug (strings passed to eexec_line are
+## Version 1.32 – 23.Feb.2004
+
+* t1disasm: Avoid memory corruption bug (strings passed to `eexec_line` are
   not null terminated).  Reported by Werner Lemberg.
 
-
-Version 1.31   8.Feb.2004
+
+## Version 1.31 – 8.Feb.2004
 
 * All: Support fonts where the eexec-encrypted portion is binary, and the
   first ciphertext byte is 0.  Reported by Werner Lemberg.
 
-
-Version 1.30   6.Jan.2004
+
+## Version 1.30 – 6.Jan.2004
 
 * All: Support fonts, such as those in PostScript files printed by
-  acroread, where "currentfile eexec" is not followed by a newline.
+  acroread, where `currentfile eexec` is not followed by a newline.
 
-
-Version 1.29   6.Oct.2003
+
+## Version 1.29 – 6.Oct.2003
 
 * t1disasm: Support odd fonts where a character is defined on the
   "/CharStrings" line. Reported by Werner Lemberg.
 
-
-Version 1.28   7.Aug.2003
+
+## Version 1.28 – 7.Aug.2003
 
 * Address build problems reported by Nelson H.F. Beebe.
 
-
-Version 1.27   26.Mar.2003
+
+## Version 1.27 – 26.Mar.2003
 
 * t1ascii: Add optional warning when output lines are longer than 255
   characters. Requested by Werner Lemberg <wl@gnu.org>.
 
-
-Version 1.26   16.Apr.2002
+
+## Version 1.26 – 16.Apr.2002
 
 * t1mac: Fix buglet (C++ comment, and temporary file left behind). Reported
   by Vladimir Volovich <vvv@vsu.ru>.
 
-
-Version 1.25   3.Jan.2002
 
-* t1asm: Beware extra characters after `currentfile closefile'. Reported by
+## Version 1.25 – 3.Jan.2002
+
+* t1asm: Beware extra characters after `currentfile closefile`. Reported by
   Luc Devroye <luc@cs.mcgill.ca>.
 
-
-Version 1.24   6.Sep.2001
+
+## Version 1.24 – 6.Sep.2001
 
 * Fixed compilation bugs on various platforms reported by Nelson H. F.
   Beebe <beebe@math.utah.edu>.
 
-
-Version 1.23   18.Jun.2001
+
+## Version 1.23 – 18.Jun.2001
 
 * Fixed Macintosh file bugs: the MacBinary CRC was calculated incorrectly,
   and extended finder flags were set to random values in BinHex output.
   Reported, and patch provided, by Tom Kacvinsky <tjk@ams.org>.
 
-
-Version 1.22   6.Mar.2001
+
+## Version 1.22 – 6.Mar.2001
 
 * Fixed bug on processing PFA fonts with DOS line endings. The symptom was
   t1binary producing strange/unusable fonts. Problem: the all-zeros line,
   which signals the end of the font's binary section, was not being
-  recognized because of an extra '\r'. This has been a bug since version
+  recognized because of an extra `\r`. This has been a bug since version
   1.13 -- chagrin! Problem reported by Han The Thanh
   <thanh@informatics.muni.cz>.
 
-
-Version 1.21   9.Feb.2001
+
+## Version 1.21 – 9.Feb.2001
 
 * t1ascii, t1asm, t1unmac: Raised minimum PFA line length to 8. The Adobe
   spec may imply that there cannot be whitespace within the first 8 bytes
   of an ASCII-encoded eexec section; it's somewhat ambiguous. Reported by
   Rainer Menzner <Rainer.Menzner@neuroinformatik.ruhr-uni-bochum.de>.
 
-
-Version 1.20   22.Jun.2000
 
-* t1asm: Fixed bug where `t1asm -a' would give a `warning: line length
-  raised to 4' error message. Reported by Tom Kacvinsky <tjk@ams.org>.
+## Version 1.20 – 22.Jun.2000
 
-
-Version 1.19   3.May.2000
+* t1asm: Fixed bug where `t1asm -a` would give a “warning: line length
+  raised to 4” error message. Reported by Tom Kacvinsky <tjk@ams.org>.
+
+
+## Version 1.19 – 3.May.2000
 
 * t1mac: Generated Macintosh fonts now use a custom-drawn icon set, rather
   than Adobe's default. They also have a t1utils-specific creator signature
   (T1UT), and their file information mentions t1utils.
 
-* t1mac: Added the `--filename' option.
+* t1mac: Added the `--filename` option.
 
-
-Version 1.18   2.May.2000
+
+## Version 1.18 – 2.May.2000
 
 * t1mac: Fixed bug where generated files appeared corrupted to Macintoshes.
   Reported by Marten Thavenius <marten.thavenius@bahnhof.se>.
 
-
-Version 1.17   27.Apr.2000
 
-* Added new program, `t1mac', which translates PFA or PFB fonts into
+## Version 1.17 – 27.Apr.2000
+
+* Added new program, `t1mac`, which translates PFA or PFB fonts into
   Macintosh-style fonts. T1mac can output in MacBinary, AppleSingle,
   AppleDouble, or BinHex format. Suggested by Marten Thavenius
   <marten.thavenius@bahnhof.se>.
@@ -149,29 +160,29 @@ Version 1.17   27.Apr.2000
 
 * t1unmac: Fixed bugs in manual page and program options.
 
-
-Version 1.16   25.Apr.2000
+
+## Version 1.16 – 25.Apr.2000
 
 * t1unmac: Supports AppleSingle and AppleDouble files with the
-  `--applesingle/double' option. Requested by Kent Boortz
+  `--applesingle/double` option. Requested by Kent Boortz
   <kent@erix.ericsson.se>.
 
-
-Version 1.15   4.Apr.2000
+
+## Version 1.15 – 4.Apr.2000
 
 * t1ascii, t1binary, and t1disasm: Fixed bad error message.
 
 * t1unmac: Generates PFB fonts by default.
 
-
-Version 1.14   25.Aug.1999
+
+## Version 1.14 – 25.Aug.1999
 
 * t1asm: Version 1.13 produced complete crap output. My test cases were too
   limited to catch this. Found by Rainer Menzner
   <Rainer.Menzner@neuroinformatik.ruhr-uni-bochum.de>.
 
-
-Version 1.13   2.Aug.1999
+
+## Version 1.13 – 2.Aug.1999
 
 * t1disasm: Complete rewrite. It now uses t1lib.c functions; the goal is to
   handle PFA and PFB fonts consistently. This has been extensively tested,
@@ -185,22 +196,22 @@ Version 1.13   2.Aug.1999
 * t1ascii, t1binary, t1disasm: Changes in t1lib.c to support reading binary
   PFA fonts. Requested by Tom Kacvinsky <tjk@ams.org>.
 
-
-Version 1.12   1.Aug.1999
+
+## Version 1.12 – 1.Aug.1999
 
 * t1ascii, t1binary, t1asm, t1disasm: Support fonts with whitespace
-  following the "currentfile eexec" line. Embedded fonts in PostScript
+  following the `currentfile eexec` line. Embedded fonts in PostScript
   generated by Acrobat Reader have this property. Reported by Tom Kacvinsky
   <tjk@ams.org>.
 
 * t1ascii, t1asm, t1unmac: Use lowercase hex digits instead of uppercase.
 
-* t1unmac: Added `--line-length' option for PFA output.
+* t1unmac: Added `--line-length` option for PFA output.
 
-
-Version 1.11   29.May.1999
 
-* Bug fix in t1asm/t1disasm: if a `readhexstring' procedure was defined, we
+## Version 1.11 – 29.May.1999
+
+* Bug fix in t1asm/t1disasm: if a `readhexstring` procedure was defined, we
   got confused. Reported by Luc Devroye <luc@CS.McGill.CA>.
 
 * t1binary now has a maximum block length of 2^32 - 1. "Feature" requested
@@ -208,40 +219,39 @@ Version 1.11   29.May.1999
 
 * t1ascii and t1binary each accept both PFA and PFB fonts. If you pass an
   ASCII font (PFA) to t1ascii, it will output it mostly unchanged, and
-  similarly for PFB fonts and t1binary. The `-l' options will still take
-  effect, so you can use `t1ascii -l 60' to shorten the encrypted line
+  similarly for PFB fonts and t1binary. The `-l` options will still take
+  effect, so you can use `t1ascii -l 60` to shorten the encrypted line
   lengths of a PFA font. t1ascii also does some newline translation
   (changes carriage returns to newlines).
 
-
-Version 1.10.1   12.Apr.1999
 
-* t1asm: Fixed bug when `-l' option wasn't provided. Caught by Giuseppe
-  Ghib� <ghibo@caesar.polito.it>.
+## Version 1.10.1 – 12.Apr.1999
 
-
-Version 1.10   11.Apr.1999
+* t1asm: Fixed bug when `-l` option wasn't provided. Caught by Giuseppe
+  Ghibò <ghibo@caesar.polito.it>.
+
+
+## Version 1.10 – 11.Apr.1999
 
 * t1asm/t1disasm: Provide support for Type1C (Compact Font Format) font
   files. These fonts have unencrypted character strings, signalled by a
   negative lenIV value. Suggestion and patch thanks to Tom Kacvinsky
   <tjk@ams.org>.
 
-* t1ascii/t1asm: Added `-l/--line-length' option to control maximum
-  encrypted line length. Suggestion thanks to Giuseppe Ghib�
-  <ghibo@caesar.polito.it>.
+* t1ascii/t1asm: Added `-l/--line-length` option to control maximum encrypted
+  line length. Suggestion thanks to Giuseppe Ghibò <ghibo@caesar.polito.it>.
 
-
-Version 1.9   14.Feb.1999
+
+## Version 1.9 – 14.Feb.1999
 
 * t1asm/t1disasm: Be more robust on fonts that don't end in `mark
-  currentfile closefile'. John Vromans <JVromans@squirrel.nl> provided a
-  font that ended with `mark' on one line and `currentfile closefile' on
+  currentfile closefile`. John Vromans <JVromans@squirrel.nl> provided a
+  font that ended with `mark` on one line and `currentfile closefile` on
   another; t1asm and t1disasm did not recognize the encrypted section of
   the font had ended, and generated some garbage.
 
-
-Version 1.8   2.Jan.1999
+
+## Version 1.8 – 2.Jan.1999
 
 * Added some more Type 2 commands (flex, flex1, hflex, hflex1) from a
   revision of the Type 2 spec. (I wouldn't have known about this except for
@@ -252,20 +262,20 @@ Version 1.8   2.Jan.1999
 * t1asm: Fixed one Type 2 command's translation (cntrmask was incorrectly
   mapped to 18, not 20).
 
-
-Version 1.7.2   11.Dec.1998
+
+## Version 1.7.2 – 11.Dec.1998
 
 * Integrated patches from Jan-Jaap van der Heijden
   <J.J.vanderHeijden@student.utwente.nl> to support building t1utils under
   32-bit Windows.
 
-
-Version 1.7.1   5.Dec.1998
+
+## Version 1.7.1 – 5.Dec.1998
 
 * The t1utils package now uses automake.
 
-
-Version 1.7   27.Nov.1998
+
+## Version 1.7 – 27.Nov.1998
 
 * t1asm: Should now work with fonts that have no /Subrs sections. Previously,
   assembling such a font would silently fail; all the character definitions
@@ -277,43 +287,43 @@ Version 1.7   27.Nov.1998
 
 * Changed fgetc/fputc into getc/putc.
 
-
-Version 1.6   27.Sep.1998
 
-* `--help' now prints to stdout, following the GNU Coding Standards.
+## Version 1.6 – 27.Sep.1998
 
-* Makefiles: Added `make uninstall' target, enabled `./configure's
+* `--help` now prints to stdout, following the GNU Coding Standards.
+
+* Makefiles: Added `make uninstall` target, enabled `./configure`'s
   program name transformations, made VPATH builds possible.
 
-
-Version 1.5.2   6.Aug.1998
+
+## Version 1.5.2 – 6.Aug.1998
 
 * t1asm/t1disasm: Changed unknown charstring commands at the request of
   Werner Lemberg and LEE Chun-Yu. An unknown escape in the charstring, like
   12 X, is translated to "escape_X" rather than "UNKNOWN_12_X".
 
-
-Version 1.5.1   31.May.1998
 
-* t1unmac did not actually understand the -r and -b options. Fixed.
+## Version 1.5.1 – 31.May.1998
+
+* t1unmac did not actually understand the `-r` and `-b` options. Fixed.
 
 * t1unmac: Added better diagnostics to help you diagnose seeking problems.
 
-
-Version 1.5   5.Mar.1998
+
+## Version 1.5 – 5.Mar.1998
 
 * Initial release with Eddie Kohler as maintainer.
 
-* All: Updated to the GNU program behavior standards (long options, --help,
-  --version). Banners removed. Added more error messages.
+* All: Updated to the GNU program behavior standards (long options, `--help`,
+  `--version`). Banners removed. Added more error messages.
 
 * t1binary: Removed fixed limit on line length.
 
-* t1binary: Supports Macintosh files, whose lines end in `\r'.
+* t1binary: Supports Macintosh files, whose lines end in `\r`.
 
 * t1binary: Supports an odd number of hex digits in a line.
 
-* t1asm/t1disasm: Added support for Type 2 commands like `blend' and `add',
+* t1asm/t1disasm: Added support for Type 2 commands like `blend` and `add`,
   which also appear in some multiple master fonts like Adobe Jenson.
 
 * t1asm/t1disasm: Added support for unknown charstring commands. t1disasm
@@ -321,4 +331,4 @@ Version 1.5   5.Mar.1998
 
 * t1asm/t1unmac: Changed default output to PFB.
 
-* t1unmac: Used to be called `unpost'. `t1unmac' is a much better name.
+* t1unmac: Used to be called `unpost`. `t1unmac` is a much better name.

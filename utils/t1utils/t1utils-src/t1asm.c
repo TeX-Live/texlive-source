@@ -1,4 +1,4 @@
-/* t1asm	-*- c-basic-offset: 2 -*-
+/* t1asm        -*- c-basic-offset: 2 -*-
  *
  * This program `assembles' Adobe Type-1 font programs in pseudo-PostScript
  * form into either PFB or PFA format.  The human readable/editable input is
@@ -8,7 +8,7 @@
  * file.
  *
  * Copyright (c) 1992 by I. Lee Hetherington, all rights reserved.
- * Copyright (c) 1998-2013 Eddie Kohler
+ * Copyright (c) 1998-2017 Eddie Kohler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
@@ -97,76 +97,77 @@ static int charstring_bufsiz;
 
 /* decryption stuff */
 static uint16_t er, cr;
-static uint16_t c1 = 52845, c2 = 22719;
+static const uint32_t c1 = 52845;
+static const uint32_t c2 = 22719;
 
 /* table of charstring commands */
 static struct command {
   const char *name;
   int one, two;
 } command_table[] = {
-  { "abs", 12, 9 },		/* Type 2 */
-  { "add", 12, 10 },		/* Type 2 */
-  { "and", 12, 3 },		/* Type 2 */
-  { "blend", 16, -1 },		/* Type 2 */
-  { "callgsubr", 29, -1 },	/* Type 2 */
-  { "callother", 12, 16 },	/* Type 1 ONLY */
-  { "callothersubr", 12, 16 },	/* Type 1 ONLY */
+  { "abs", 12, 9 },             /* Type 2 */
+  { "add", 12, 10 },            /* Type 2 */
+  { "and", 12, 3 },             /* Type 2 */
+  { "blend", 16, -1 },          /* Type 2 */
+  { "callgsubr", 29, -1 },      /* Type 2 */
+  { "callother", 12, 16 },      /* Type 1 ONLY */
+  { "callothersubr", 12, 16 },  /* Type 1 ONLY */
   { "callsubr", 10, -1 },
-  { "closepath", 9, -1 },	/* Type 1 ONLY */
-  { "cntrmask", 20, -1 },	/* Type 2 */
+  { "closepath", 9, -1 },       /* Type 1 ONLY */
+  { "cntrmask", 20, -1 },       /* Type 2 */
   { "div", 12, 12 },
-  { "dotsection", 12, 0 },	/* Type 1 ONLY */
-  { "drop", 12, 18 },		/* Type 2 */
-  { "dup", 12, 27 },		/* Type 2 */
+  { "dotsection", 12, 0 },      /* Type 1 ONLY */
+  { "drop", 12, 18 },           /* Type 2 */
+  { "dup", 12, 27 },            /* Type 2 */
   { "endchar", 14, -1 },
-  { "eq", 12, 15 },		/* Type 2 */
-  { "error", 0, -1 },		/* special */
-  { "escape", 12, -1 },		/* special */
-  { "exch", 12, 28 },		/* Type 2 */
-  { "flex", 12, 35 },		/* Type 2 */
-  { "flex1", 12, 37 },		/* Type 2 */
-  { "get", 12, 21 },		/* Type 2 */
-  { "hflex", 12, 34 },		/* Type 2 */
-  { "hflex1", 12, 36 },		/* Type 2 */
-  { "hhcurveto", 27, -1 },	/* Type 2 */
-  { "hintmask", 19, -1 },	/* Type 2 */
+  { "eq", 12, 15 },             /* Type 2 */
+  { "error", 0, -1 },           /* special */
+  { "escape", 12, -1 },         /* special */
+  { "exch", 12, 28 },           /* Type 2 */
+  { "flex", 12, 35 },           /* Type 2 */
+  { "flex1", 12, 37 },          /* Type 2 */
+  { "get", 12, 21 },            /* Type 2 */
+  { "hflex", 12, 34 },          /* Type 2 */
+  { "hflex1", 12, 36 },         /* Type 2 */
+  { "hhcurveto", 27, -1 },      /* Type 2 */
+  { "hintmask", 19, -1 },       /* Type 2 */
   { "hlineto", 6, -1 },
   { "hmoveto", 22, -1 },
-  { "hsbw", 13, -1 },		/* Type 1 ONLY */
+  { "hsbw", 13, -1 },           /* Type 1 ONLY */
   { "hstem", 1, -1 },
-  { "hstem3", 12, 2 },		/* Type 1 ONLY */
-  { "hstemhm", 18, -1 },	/* Type 2 */
+  { "hstem3", 12, 2 },          /* Type 1 ONLY */
+  { "hstemhm", 18, -1 },        /* Type 2 */
   { "hvcurveto", 31, -1 },
-  { "ifelse", 12, 22 },		/* Type 2 */
-  { "index", 12, 29 },		/* Type 2 */
-  { "load", 12, 13 },		/* Type 2 */
-  { "mul", 12, 24 },		/* Type 2 */
-  { "neg", 12, 14 },		/* Type 2 */
-  { "not", 12, 5 },		/* Type 2 */
-  { "or", 12, 4 },		/* Type 2 */
-  { "pop", 12, 17 },		/* Type 1 ONLY */
-  { "put", 12, 20 },		/* Type 2 */
-  { "random", 12, 23 },		/* Type 2 */
-  { "rcurveline", 24, -1 },	/* Type 2 */
+  { "ifelse", 12, 22 },         /* Type 2 */
+  { "index", 12, 29 },          /* Type 2 */
+  { "load", 12, 13 },           /* Type 2 */
+  { "mul", 12, 24 },            /* Type 2 */
+  { "neg", 12, 14 },            /* Type 2 */
+  { "not", 12, 5 },             /* Type 2 */
+  { "or", 12, 4 },              /* Type 2 */
+  { "pop", 12, 17 },            /* Type 1 ONLY */
+  { "put", 12, 20 },            /* Type 2 */
+  { "random", 12, 23 },         /* Type 2 */
+  { "rcurveline", 24, -1 },     /* Type 2 */
   { "return", 11, -1 },
-  { "rlinecurve", 25, -1 },	/* Type 2 */
+  { "rlinecurve", 25, -1 },     /* Type 2 */
   { "rlineto", 5, -1 },
   { "rmoveto", 21, -1 },
-  { "roll", 12, 30 },		/* Type 2 */
+  { "roll", 12, 30 },           /* Type 2 */
   { "rrcurveto", 8, -1 },
-  { "sbw", 12, 7 },		/* Type 1 ONLY */
-  { "seac", 12, 6 },		/* Type 1 ONLY */
+  { "sbw", 12, 7 },             /* Type 1 ONLY */
+  { "seac", 12, 6 },            /* Type 1 ONLY */
   { "setcurrentpoint", 12, 33 }, /* Type 1 ONLY */
-  { "sqrt", 12, 26 },		/* Type 2 */
-  { "store", 12, 8 },		/* Type 2 */
-  { "sub", 12, 11 },		/* Type 2 */
+  { "sqrt", 12, 26 },           /* Type 2 */
+  { "store", 12, 8 },           /* Type 2 */
+  { "sub", 12, 11 },            /* Type 2 */
   { "vhcurveto", 30, -1 },
   { "vlineto", 7, -1 },
   { "vmoveto", 4, -1 },
   { "vstem", 3, -1 },
-  { "vstem3", 12, 1 },		/* Type 1 ONLY */
-  { "vstemhm", 23, -1 },	/* Type 2 */
-  { "vvcurveto", 26, -1 },	/* Type 2 */
+  { "vstem3", 12, 1 },          /* Type 1 ONLY */
+  { "vstemhm", 23, -1 },        /* Type 2 */
+  { "vvcurveto", 26, -1 },      /* Type 2 */
 };                                                /* alphabetical */
 
 /* Two separate encryption functions because eexec and charstring encryption
@@ -211,8 +212,8 @@ static void output_byte(byte b)
     if (in_eexec) {
       /* trim hexadecimal lines to `blocklen' columns */
       if (hexcol >= blocklen) {
-	putc('\n', ofp);
-	hexcol = 0;
+        putc('\n', ofp);
+        hexcol = 0;
       }
       putc(hexchar[(b >> 4) & 0xf], ofp);
       putc(hexchar[b & 0xf], ofp);
@@ -298,10 +299,10 @@ static void t1utils_getline(void)
     else if (active && !comment && c == '{') {
       /* 25.Aug.1999 -- new check for whether we should stop be active */
       if (check_line_charstring()) {
-	start_charstring = 1;
-	break;
+        start_charstring = 1;
+        break;
       } else
-	active = 0;
+        active = 0;
     }
 
     *p++ = (char) c;
@@ -310,7 +311,7 @@ static void t1utils_getline(void)
     if (c == '\r') {
       c = getc(ifp);
       if (c != '\n')
-	ungetc(c, ifp);
+        ungetc(c, ifp);
       p[-1] = '\n';
       break;
     } else if (c == '\n')
@@ -465,8 +466,8 @@ static void get_charstring_token(void)
       *p++ = c;
       c = getc(ifp);
       if (c == EOF || isspace(c) || c == '%' || c == '}') {
-	ungetc(c, ifp);
-	break;
+        ungetc(c, ifp);
+        break;
       }
     }
     *p = 0;
@@ -494,45 +495,45 @@ static void parse_charstring(void)
       int ok = 0;
 
       cp = (struct command *)
-	bsearch((void *) line, (void *) command_table,
-		sizeof(command_table) / sizeof(struct command),
-		sizeof(struct command),
-		command_compare);
+        bsearch((void *) line, (void *) command_table,
+                sizeof(command_table) / sizeof(struct command),
+                sizeof(struct command),
+                command_compare);
 
       if (cp) {
-	one = cp->one;
-	two = cp->two;
-	ok = 1;
+        one = cp->one;
+        two = cp->two;
+        ok = 1;
 
       } else if (strncmp(line, "escape_", 7) == 0) {
-	/* Parse the `escape' keyword requested by Lee Chun-Yu and Werner
+        /* Parse the `escape' keyword requested by Lee Chun-Yu and Werner
            Lemberg */
-	one = 12;
-	if (sscanf(line + 7, "%d", &two) == 1)
-	  ok = 1;
+        one = 12;
+        if (sscanf(line + 7, "%d", &two) == 1)
+          ok = 1;
 
       } else if (strncmp(line, "UNKNOWN_", 8) == 0) {
-	/* Allow unanticipated UNKNOWN commands. */
-	one = 12;
-	if (sscanf(line + 8, "12_%d", &two) == 1)
-	  ok = 1;
-	else if (sscanf(line + 8, "%d", &one) == 1) {
-	  two = -1;
-	  ok = 1;
-	}
+        /* Allow unanticipated UNKNOWN commands. */
+        one = 12;
+        if (sscanf(line + 8, "12_%d", &two) == 1)
+          ok = 1;
+        else if (sscanf(line + 8, "%d", &one) == 1) {
+          two = -1;
+          ok = 1;
+        }
       }
 
       if (!ok)
-	error("unknown charstring command `%s'", line);
+        error("unknown charstring command `%s'", line);
       else if (one < 0 || one > 255)
-	error("bad charstring command number `%d'", one);
+        error("bad charstring command number `%d'", one);
       else if (two > 255)
-	error("bad charstring command number `%d'", two);
+        error("bad charstring command number `%d'", two);
       else if (two < 0)
-	charstring_byte(one);
+        charstring_byte(one);
       else {
-	charstring_byte(one);
-	charstring_byte(two);
+        charstring_byte(one);
+        charstring_byte(two);
       }
     }
   }
@@ -544,12 +545,12 @@ static void parse_charstring(void)
  * Command line
  **/
 
-#define BLOCK_LEN_OPT	300
-#define OUTPUT_OPT	301
-#define VERSION_OPT	302
-#define HELP_OPT	303
-#define PFB_OPT		304
-#define PFA_OPT		305
+#define BLOCK_LEN_OPT   300
+#define OUTPUT_OPT      301
+#define VERSION_OPT     302
+#define HELP_OPT        303
+#define PFB_OPT         304
+#define PFA_OPT         305
 
 static Clp_Option options[] = {
   { "block-length", 'l', BLOCK_LEN_OPT, Clp_ValInt, 0 },
@@ -590,7 +591,7 @@ short_usage(void)
 {
   fprintf(stderr, "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n\
 Try `%s --help' for more information.\n",
-	  program_name, program_name);
+          program_name, program_name);
 }
 
 static void
@@ -641,11 +642,11 @@ int main(int argc, char *argv[])
      output_file:
      case OUTPUT_OPT:
       if (ofp)
-	fatal_error("output file already specified");
+        fatal_error("output file already specified");
       if (strcmp(clp->vstr, "-") == 0)
-	ofp = stdout;
+        ofp = stdout;
       else if (!(ofp = fopen(clp->vstr, "w")))
-	fatal_error("%s: %s", clp->vstr, strerror(errno));
+        fatal_error("%s: %s", clp->vstr, strerror(errno));
       break;
 
      case PFB_OPT:
@@ -663,7 +664,7 @@ int main(int argc, char *argv[])
 
      case VERSION_OPT:
       printf("t1asm (LCDF t1utils) %s\n", VERSION);
-      printf("Copyright (C) 1992-2010 I. Lee Hetherington, Eddie Kohler et al.\n\
+      printf("Copyright (C) 1992-2017 I. Lee Hetherington, Eddie Kohler et al.\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
@@ -672,13 +673,13 @@ particular purpose.\n");
 
      case Clp_NotOption:
       if (ifp && ofp)
-	fatal_error("too many arguments");
+        fatal_error("too many arguments");
       else if (ifp)
-	goto output_file;
+        goto output_file;
       if (strcmp(clp->vstr, "-") == 0)
-	ifp = stdin;
+        ifp = stdin;
       else if (!(ifp = fopen(clp->vstr, "r")))
-	fatal_error("%s: %s", clp->vstr, strerror(errno));
+        fatal_error("%s: %s", clp->vstr, strerror(errno));
       break;
 
      case Clp_Done:
@@ -738,41 +739,41 @@ particular purpose.\n");
 
     if (!ever_active) {
       if (strncmp(line, "currentfile eexec", 17) == 0 && isspace((unsigned char) line[17])) {
-	/* Allow arbitrary whitespace after "currentfile eexec".
-	   Thanks to Tom Kacvinsky <tjk@ams.org> for reporting this.
-	   Note: strlen("currentfile eexec") == 17. */
-	for (p = line + 18; isspace((unsigned char) *p); p++)
-	  ;
-	eexec_start(p);
-	continue;
+        /* Allow arbitrary whitespace after "currentfile eexec".
+           Thanks to Tom Kacvinsky <tjk@ams.org> for reporting this.
+           Note: strlen("currentfile eexec") == 17. */
+        for (p = line + 18; isspace((unsigned char) *p); p++)
+          ;
+        eexec_start(p);
+        continue;
       } else if (strncmp(line, "/lenIV", 6) == 0) {
-        set_lenIV(line);
+        set_lenIV(line, strlen(line));
       } else if ((p = strstr(line, "string currentfile"))) {
-        set_cs_start(line);
+        set_cs_start(line, strlen(line));
       }
     }
 
     if (!active) {
       if ((p = strstr(line, "/Subrs")) && isdigit((unsigned char) p[7]))
-	ever_active = active = 1;
+        ever_active = active = 1;
       else if ((p = strstr(line, "/CharStrings")) && isdigit((unsigned char) p[13]))
-	ever_active = active = 1;
+        ever_active = active = 1;
     }
     if ((p = strstr(line, "currentfile closefile"))) {
       /* 2/14/99 -- happy Valentine's day! -- don't look for `mark
-	 currentfile closefile'; the `mark' might be on a different line */
+         currentfile closefile'; the `mark' might be on a different line */
       /* 1/3/2002 -- happy new year! -- Luc Devroye reports a failure with
          some printers when `currentfile closefile' is followed by space */
       p += sizeof("currentfile closefile") - 1;
       for (q = p; isspace((unsigned char) *q) && *q != '\n'; q++)
-	/* nada */;
+        /* nada */;
       if (q == p && !*q)
-	error("warning: `currentfile closefile' line too long");
+        error("warning: `currentfile closefile' line too long");
       else if (q != p) {
-	if (*q != '\n')
-	  error("text after `currentfile closefile' ignored");
-	*p++ = '\n';
-	*p++ = '\0';
+        if (*q != '\n')
+          error("text after `currentfile closefile' ignored");
+        *p++ = '\n';
+        *p++ = '\0';
       }
       eexec_string(line);
       break;
@@ -783,7 +784,7 @@ particular purpose.\n");
     /* output line data */
     if (start_charstring) {
       if (!cs_start[0])
-	fatal_error("couldn't find charstring start command");
+        fatal_error("couldn't find charstring start command");
       parse_charstring();
     }
   }

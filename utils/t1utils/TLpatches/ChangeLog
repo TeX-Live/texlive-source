@@ -1,3 +1,9 @@
+2017-08-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import t1utils-1.41.
+	* patch-03-warnings, patch-04-TL-binary, patch-05-getopt,
+	patch-07-warnings: Adapded.
+
 2015-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import t1utils-1.39.
@@ -53,4 +59,3 @@
 2009-06-12  Francois Charette  <firmicus@ankabut.net>
 
 	* patch-01-getline (new): Avoid getline name conflict.
-

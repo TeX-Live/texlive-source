@@ -415,7 +415,7 @@ am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/../../am/dist_hook.am \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog \
-	strerror.c
+	memmem.c strerror.c
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -730,6 +730,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/memmem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strerror.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@T1UTILS_TREE@/$(DEPDIR)/clp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@T1UTILS_TREE@/$(DEPDIR)/t1ascii.Po@am__quote@

@@ -9,6 +9,9 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define to 1 if you have the `memmem' function. */
+#undef HAVE_MEMMEM
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
@@ -89,7 +92,13 @@ extern "C" {
 
 /* Prototype strerror if we don't have it. */
 #if !HAVE_STRERROR
-char *strerror(int errno);
+char* strerror(int errno);
+#endif
+
+/* Prototype memmem if we don't have it. */
+#if !HAVE_MEMMEM
+void* memmem(const void* haystack, size_t haystack_len,
+             const void* needle, size_t needle_len);
 #endif
 
 #ifdef __cplusplus
