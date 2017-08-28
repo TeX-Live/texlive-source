@@ -1,8 +1,9 @@
 
 #define ENTRY_NO    0x01
+#define ENTRY_CUSTOM   0x10000
 /* for JIS, quote only */
-/* for GB, CNS, JIS, KS */
 #define ENTRY_JQ    0x1000
+/* for GB, CNS, JIS, KS */
 #define ENTRY_G     0x02
 #define ENTRY_C     0x04
 #define ENTRY_J     0x08
@@ -19,7 +20,7 @@
 #define ENTRY_CJK           ENTRY_C|ENTRY_J|ENTRY_K
 #define ENTRY_GCJK  ENTRY_G|ENTRY_C|ENTRY_J|ENTRY_K
 
-extern int search_cjk_entry(int *ib, long ch, long cjk);
+extern int search_cjk_entry(long ch, long cjk);
 extern int uniblock_iskanji;
 
 #define U_OPEN_SQUOTE   0x2018

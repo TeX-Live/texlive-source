@@ -10,7 +10,8 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 bin_PROGRAMS = makejvf
 
 makejvf_SOURCES = \
-	main.c makejvf.h tfmread.c tool.c uniblock.c uniblock.h version.h write.c
+	main.c makejvf.h tfmread.c tool.c \
+	uniblock.c uniblock.h usrtable.c usrtable.h version.h write.c
 
 $(makejvf_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 

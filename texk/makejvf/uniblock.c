@@ -1,9 +1,11 @@
+#include "uniblock.h"
+#include "usrtable.h"
 
 #ifdef DEBUG
 #include <stdio.h>
+int usertable_charset_max=0;
+struct USERTABLE_CHARSET usertable_charset[MAX_CHAR_TABLE];
 #endif
-
-#include "uniblock.h"
 
 int uniblock_iskanji;
 struct ublock {
@@ -306,34 +308,48 @@ static struct ublock ublock_data[] = {
 };
 
 
-int search_cjk_entry(int *ib, long ch, long cjk) {
+int search_cjk_entry(long ch, long cjk) {
+  static int ib = 0, ic = 0;
   uniblock_iskanji = 0; /* initialize */
-  if (cjk==ENTRY_NO) return 1;
   if (cjk==ENTRY_JQ) return
 	(ch==U_OPEN_SQUOTE || ch==U_CLOSE_SQUOTE
 	 || ch==U_OPEN_DQUOTE || ch==U_CLOSE_DQUOTE);
-  while(ublock_data[*ib].max<ch) (*ib)++;
-  if (ublock_data[*ib].min<=ch && ch<=ublock_data[*ib].max) {
-    uniblock_iskanji = ublock_data[*ib].kanji;
-    return ublock_data[*ib].cjk & cjk;
+  while(ublock_data[ib].max<ch) ib++;
+  if (ublock_data[ib].min<=ch && ch<=ublock_data[ib].max)
+    uniblock_iskanji = ublock_data[ib].kanji;
+  if (cjk==ENTRY_NO) {
+    return 1;
+  } else if (cjk==ENTRY_CUSTOM) {
+    while(usertable_charset[ic].max<ch) ic++;
+    return (usertable_charset[ic].min<=ch && ch<=usertable_charset[ic].max);
+  } else if (ublock_data[ib].min<=ch && ch<=ublock_data[ib].max) {
+    return ublock_data[ib].cjk & cjk;
   } else {
     return 0;
   }
 }
 
 
+/* for unit test                                      */
+/*   ex. $ gcc -g -o uniblock.test uniblock.c -DDEBUG */
 #ifdef DEBUG
 int main() {
   long ch;
-  int ib;
 
-  ib=0;
+  /* trial inputs */
+  usertable_charset_max=2;
+  usertable_charset[0].min=0xFFF0;
+  usertable_charset[0].max=0xFFF3;
+  usertable_charset[1].min=0xFFF8;
+  usertable_charset[1].max=0xFFFB;
+
   for (ch=0x0;ch<0x10000;ch++) {
-    printf(" %05x %2d %2d %2d %2d %2d\n", ch, ib,
-	   search_cjk_entry(&ib,ch,ENTRY_G),
-	   search_cjk_entry(&ib,ch,ENTRY_C),
-	   search_cjk_entry(&ib,ch,ENTRY_J),
-	   search_cjk_entry(&ib,ch,ENTRY_K));
+    printf(" %05x %1d G:%2d C:%2d J:%2d K:%2d custom:%2d\n", ch, uniblock_iskanji,
+	   search_cjk_entry(ch,ENTRY_G),
+	   search_cjk_entry(ch,ENTRY_C),
+	   search_cjk_entry(ch,ENTRY_J),
+	   search_cjk_entry(ch,ENTRY_K),
+	   search_cjk_entry(ch,ENTRY_CUSTOM));
   }
 
 }

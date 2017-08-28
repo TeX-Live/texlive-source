@@ -3,27 +3,28 @@
 #include "version.h"
 #include "makejvf.h"
 #include "uniblock.h"
+#include "usrtable.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 FILE *vfp,*afp=NULL;
-char *atfmname,*vtfmname,*afmname,*vfname,*kanatfm,*jistfm,*ucsqtfm;
+char *atfmname,*vtfmname,*afmname,*vfname,*kanatfm,*jistfm,*ucsqtfm,*usertable;
 int kanatume=-1,chotai=0,baseshift=0,minute=0,useset3=0,hankana=0,fidzero=0,enhanced=0;
 int pstfm_nt;
 long ucs=0;
 
 int main(int argc, char ** argv)
 {
-	int i,j,ib;
+	int i,j;
 	int c;
-	long ch;
+	long ch,ch_max;
 
 	kpse_set_program_name(argv[0], "makejvf");
 	set_enc_string("sjis", "euc");
 
-	while ((c = getopt (argc, argv, "k:K:Ca:b:mu:3J:U:Hie")) != -1)
+	while ((c = getopt (argc, argv, "k:K:Ca:b:mu:3J:U:Hiet:")) != -1)
 		switch (c) {
 
 
@@ -67,8 +68,10 @@ int main(int argc, char ** argv)
 				ucs = ENTRY_J;
 			else if (!strcmp(optarg, "ks"))
 				ucs = ENTRY_K;
+			else if (!strcmp(optarg, "custom"))
+				ucs = ENTRY_CUSTOM;
 			else {
-				fprintf(stderr,"Charset is not set\n");
+				fprintf(stderr,"[Warning] Charset is not set.\n");
 				ucs = ENTRY_NO;
 			}
 			break;
@@ -89,6 +92,9 @@ int main(int argc, char ** argv)
 			break;
 		case 'e':
 			enhanced=1;
+			break;
+		case 't':
+			usertable = xstrdup(optarg);
 			break;
 		default:
 			usage();
@@ -125,17 +131,30 @@ int main(int argc, char ** argv)
 
 	tfmget(atfmname);
 
+	if (usertable) {
+		get_usertable(usertable);
+	}
+	if (ucs!=ENTRY_CUSTOM && usertable_charset_max>0) {
+		fprintf(stderr,
+			"[Warning] Custom charset is defined in usertable\n"
+			"[Warning]   but it will be ignored.\n");
+	}
+	if (ucs==ENTRY_CUSTOM && usertable_charset_max<1) {
+		fprintf(stderr,"No custom charset definition in usertable.\n");
+		exit(101);
+	}
+
 	vfp = vfopen(vfname);
 
 	pstfm_nt=1; /* initialize */
 	if (ucs) {
-		ib=0;
-		for (i=0;i<(useset3*2+1);i++)
-			for (j=0;j<65536;j++) {
-				ch=i*65536+j;
-				if (search_cjk_entry(&ib,ch,ucs))
-					writevfu(ch,vfp);
-			}
+		if (ucs==ENTRY_CUSTOM) ch_max=usertable_charset[usertable_charset_max-1].max;
+		else if (useset3) ch_max=0x2FFFF;
+		else ch_max=0xFFFF;
+		for (ch=0;ch<=ch_max;ch++) {
+			if (search_cjk_entry(ch,ucs))
+				writevfu(ch,vfp);
+		}
 	} else {
 		for (i=0;i<94;i++)
 			for (j=0;j<94;j++)
@@ -196,5 +215,6 @@ void usage(void)
 	fputs2("-i           font ID from No.0\n", stderr);
 	fputs2("-e           enhanced mode; the horizontal shift amount is determined\n", stderr);
 	fputs2("             from the glue/kern table of <TFMfile> input\n", stderr);
+	fputs2("-t <CNFfile> use <CNFfile> as a configuration file\n", stderr);
 	fprintf(stderr, "Email bug reports to %s.\n", BUG_ADDRESS);
 }
