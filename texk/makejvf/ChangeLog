@@ -1,3 +1,12 @@
+2017-08-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	makejvf version 20170828.
+	Largely contributed by H. Yamashita-san.
+	* usrtable.[ch]: New files to support a configuration file.
+	* main.c, write.c, uniblock.[ch], makejvf.h: Support a configuration file.
+	* Makefile.{am,in}: Add usrtable.[ch].
+	* version.h: Bump version.
+
 2017-08-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	makejvf version 20170801.
