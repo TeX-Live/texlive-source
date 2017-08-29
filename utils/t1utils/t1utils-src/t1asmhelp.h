@@ -38,7 +38,7 @@ set_cs_start(const char* line, size_t line_len)
     if ((p = memmem(line, line_len, "string currentfile", 18))
         && memmem(line, line_len, "readstring", 10)) {
         /* locate the name of the charstring start command */
-        for (q = p; q != line && q[-1] != '/'; --q)
+        for (q = p; q != line && *(q-1) != '/'; --q)
             /* nada */;
         if (q != line) {
             for (r = q; r != p && !isspace((unsigned char) *r) && *r != '{'; ++r)
