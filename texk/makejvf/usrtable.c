@@ -29,8 +29,8 @@ void get_usertable(char *name)
 		exit(1);
 	}
 	for (l = 0; fgets(buf, BUF_SIZE, fp) != NULL; l++) {
-		if (endptr=strchr(buf, '%')) strcpy(endptr,"\n");  /* ignore after '%'  */
-		if (!strncmp(buf, "\n", 1)) continue;              /* ignore empty line */
+		if ((endptr=strchr(buf, '%')) != NULL) strcpy(endptr,"\n");  /* ignore after '%'  */
+		if (!strncmp(buf, "\n", 1)) continue;                        /* ignore empty line */
 		tok = strtok(buf, "\t");
 		if (!strcmp(tok, "REPLACE")) {
 			if (usertable_replace_max >= MAX_TABLE) goto buferr;
@@ -56,8 +56,8 @@ void get_usertable(char *name)
 		}
 		if ((!strcmp(tok, "+") && charset_mode) || !strcmp(tok, "CHARSET")) {
 			charset_mode = 1;
-			while (tok=strtok(NULL, ",\t\n")) {
-				if (endptr=strstr(tok,"..")) {
+			while ((tok=strtok(NULL, ",\t\n")) != NULL) {
+				if ((endptr=strstr(tok,"..")) != NULL) {
 					*endptr = '\0';
 					if (sscanf(tok,     "%7s",str0) != 1) goto taberr;
 					if (sscanf(endptr+2,"%7s",str1) != 1) goto taberr;
@@ -102,7 +102,6 @@ buferr:
 #ifdef DEBUG
 int main() {
   int i;
-  long ch0,ch1;
   char name[]="test_user_table";
   get_usertable(name);
 
@@ -119,7 +118,8 @@ int main() {
   if (usertable_charset_max>0) {
     printf("CHARSET::\n");
     for(i=0;i<usertable_charset_max;i++)
-      printf("%6d:  %06x .. %06x\n", i, usertable_charset[i].min, usertable_charset[i].max);
+      printf("%6d:  %06lx .. %06lx\n", i, usertable_charset[i].min, usertable_charset[i].max);
   }
+  return(0);
 }
 #endif
