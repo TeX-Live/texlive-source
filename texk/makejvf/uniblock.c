@@ -344,13 +344,13 @@ int main() {
   usertable_charset[1].max=0xFFFB;
 
   for (ch=0x0;ch<0x10000;ch++) {
-    printf(" %05x %1d G:%2d C:%2d J:%2d K:%2d custom:%2d\n", ch, uniblock_iskanji,
+    printf(" %05lx %1d G:%2d C:%2d J:%2d K:%2d custom:%2d\n", ch, uniblock_iskanji,
 	   search_cjk_entry(ch,ENTRY_G),
 	   search_cjk_entry(ch,ENTRY_C),
 	   search_cjk_entry(ch,ENTRY_J),
 	   search_cjk_entry(ch,ENTRY_K),
 	   search_cjk_entry(ch,ENTRY_CUSTOM));
   }
-
+  return(0);
 }
 #endif
