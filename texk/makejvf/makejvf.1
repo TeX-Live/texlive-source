@@ -61,16 +61,21 @@ This option is unsupported.
 \fB-u\fI <Charset>\fR
 UCS mode. Available charsets are: gb (GB = Simplified Chinese),
 cns (CNS = Traditional Chinese), ks (KS = Korean),
-jis (JIS = Japanese), jisq (JIS quote only).
+jis (JIS = Japanese), jisq (JIS quote only),
+custom (see configuration file format section).
 .TP 10
 \fB-J\fI <TFMfile>\fR
-JIS encoded PS font TFM name for quote, double quote (with UCS mode)
+JIS encoded PS font TFM name for quote, double quote (with UCS mode).
 .TP 10
 \fB-U\fI <TFMfile>\fR
-UCS encoded PS font TFM name for quote, double quote (with UCS mode)
+UCS encoded PS font TFM name for quote, double quote (with UCS mode).
 .TP 10
 \fB-3\fR
-Use set3 (with UCS mode)
+Use set3, that is, enable non-BMP characters support (with UCS mode).
+By default \fBmakejvf\fR does not output >=U+10000, to reduce file
+size and to avoid problems with old DVI drivers. Recent versions of
+dvipdfmx and others can handle VF with >=U+10000 (= set3 in DVI
+language), therefore \fB-3\fR might be helpful.
 .TP 10
 \fB-H\fR
 Use half-width Katakana (with UCS mode)
@@ -91,9 +96,12 @@ output most suitable VF for the JFM.
 For most standard Japanese JFM (like jis.tfm and its derivatives), \
 the output VFs from both modes will have no significant difference. \
 For simplified/traditional Chinese JFM (like upschrm-h.tfm and \
-uptchcrm-h.tfm), the output VF from enhanced mode will be better. \
+uptchrm-h.tfm), the output VF from enhanced mode will be better. \
 For min10.tfm and its derivatives, enhanced mode should \fInever\fR be \
 enabled, since the characterization in min10.tfm is non-standard.
+.TP 10
+\fB-t\fI <CNFfile>\fR
+Use \fI<CNFfile>\fR as a configuration file.
 .SH EXAMPLE
 .TP 5
 If you want to use min10 as Ryumin-Light-H, run
@@ -102,12 +110,39 @@ If you want to use min10 as Ryumin-Light-H, run
 This generates min10.vf and rml.tfm. Put these files in an appropriate \
 directory under TEXMF tree, and add the following line to psfonts.map.
      rml Ryumin-Light-H
+.SH CONFIGURATION FILE FORMAT
+.TP 5
+With \fB-t\fR option, you can give \fBmakejvf\fR a custom settings \
+for generating VF. The syntax is:
+
+     % comment line
+     MOVE	<code>	<right>	<down>
+     
+     REPLACE	<code>	<new code>
+     CHARSET	<code>,<code>,<code>..<code>,<code>,
+     +	<code>,<code>..<code>
+
+.TP 5
+Each line should begin with a command, and should be TAB-separated. \
+Line starting with % is a comment, and empty lines are ignored.
+.TP 5
+The \fBMOVE\fR command specifies horizontal/vertical shift amount \
+for the individual character \fI<code>\fR. \
+The \fBREPLACE\fR command replaces the character \fI<code>\fR with \
+\fI<new code>\fR. \
+The \fBCHARSET\fR command sets the custom character set of output VF; \
+the + character continues from the previous line.
+.TP 5
+An example usage can be found in uptex-fonts project. \
+See GitHub repository
+     <https://github.com/texjporg/uptex-fonts>.
 .SH SEE ALSO
 More detailed description of \fBmakejvf\fR in Japanese is available at
      $TEXMFDIST/doc/fonts/ptex-fonts/README_makejvf
 .SH AUTHOR
 This manual page was written by Japanese \*(TX Development Community \
-<https://texjp.org>. For more information, see GitHub repository \
-<https://github.com/texjporg/ptex-fonts>.
+<https://texjp.org>. For more information, see GitHub repository
+     <https://github.com/texjporg/ptex-fonts>.
+.TP 5
 Many thanks to Atsuhito KOHDA <kohda@debian.org>, \
 for providing another manpage in Debian GNU/Linux system.
