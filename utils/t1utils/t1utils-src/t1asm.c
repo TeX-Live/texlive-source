@@ -715,8 +715,7 @@ particular purpose.\n");
 #if defined(_MSDOS) || defined(_WIN32)
   /* If we are processing a PFB (binary) output */
   /* file, we must set its file mode to binary. */
-  if (pfb)
-    _setmode(_fileno(ofp), _O_BINARY);
+  _setmode(_fileno(ofp), _O_BINARY);
 #endif
 
   /* Finally, we loop until no more input. Some special things to look for are
