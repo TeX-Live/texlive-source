@@ -69,13 +69,10 @@ do_test() {
         {"img.wbmp",    0,  1,  0},
         {"img.bmp",     0,  1,  0},
         {"img-ref.xpm", 0,  0,  1},
-        
-        // These break the test so I'm skipping them since the point
-        // of this test is not those loaders.
-        {"img-ref.xbm", 0, -1,  1},
-        {"img-ref.tga", 0, -1,  1},
-        {"img.webp",    0, -1,  0},
-        {"img.tiff",    0, -1,  0},
+        {"img-ref.xbm", 0,  1,  1},
+        {"img-ref.tga", 0,  1,  1},
+        {"img.webp",   10,  1,  0},
+        {"img.tiff",    0,  1,  0},
 
         {NULL, 0}
     };
@@ -84,6 +81,7 @@ do_test() {
         gdImagePtr orig, copy;
         int status;
         char *full_filename = NULL;
+        unsigned int pixels;
 
         /* Some image readers are buggy and crash the program so we
          * skip them.  Bug fixers should remove these from the list of
@@ -97,7 +95,7 @@ do_test() {
          * it.  (If it's one of the built-in types, *that* a different
          * problem; we assert that here.) */
         if (!gdSupportsFileType(names[n].nm, 0)) {
-            gdTestAssertMsg(!names[n].required, "GD doesn't support required file type: %s\n", full_filename);
+            gdTestAssertMsg(!names[n].required, "GD doesn't support required file type: %s\n", names[n].nm);
             continue;
         }/* if */
 
@@ -120,7 +118,8 @@ do_test() {
         gdTestAssertMsg(!!copy, "Failed to load %s\n", full_filename);
         if (!copy) continue;
 
-        gdTestAssertMsg(gdMaxPixelDiff(orig, copy) <= names[n].maxdiff,"Pixels different on %s\n", full_filename, full_filename);
+        pixels = gdMaxPixelDiff(orig, copy);
+        gdTestAssertMsg(pixels <= names[n].maxdiff, "%u pixels different on %s\n", pixels, full_filename);
 
         if (!names[n].readonly) {
             status = remove(full_filename);

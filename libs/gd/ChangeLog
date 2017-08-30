@@ -1,3 +1,8 @@
+2017-08-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import libgd-2.2.5.
+	* version.ac: Adapted.
+
 2017-01-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import libgd-2.2.4.
