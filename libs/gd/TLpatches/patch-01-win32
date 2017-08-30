@@ -1,6 +1,6 @@
-diff -ur libgd-2.2.4.orig/src/gdft.c libgd-2.2.4/src/gdft.c
---- libgd-2.2.4.orig/src/gdft.c	Wed Jan 18 20:01:19 2017
-+++ libgd-2.2.4/src/gdft.c	Thu Jan 19 07:20:24 2017
+diff -ur libgd-2.2.5.orig/src/gdft.c libgd-2.2.5/src/gdft.c
+--- libgd-2.2.5.orig/src/gdft.c	Wed Aug 30 20:05:55 2017
++++ libgd-2.2.5/src/gdft.c	Thu Aug 31 07:35:10 2017
 @@ -1683,6 +1683,16 @@
  	 */
  	*fontpath = NULL;

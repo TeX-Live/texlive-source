@@ -1,6 +1,6 @@
-diff -ur libgd-2.2.4.orig/src/gd.h libgd-2.2.4/src/gd.h
---- libgd-2.2.4.orig/src/gd.h	Wed Jan 18 20:01:19 2017
-+++ libgd-2.2.4/src/gd.h	Thu Jan 19 07:22:18 2017
+diff -ur libgd-2.2.5.orig/src/gd.h libgd-2.2.5/src/gd.h
+--- libgd-2.2.5.orig/src/gd.h	Wed Aug 30 20:05:54 2017
++++ libgd-2.2.5/src/gd.h	Thu Aug 31 07:36:57 2017
 @@ -63,7 +63,7 @@
  #   define BGD_EXPORT_DATA_PROT __declspec(dllimport)
  #  endif
