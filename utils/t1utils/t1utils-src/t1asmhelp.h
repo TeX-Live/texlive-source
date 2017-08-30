@@ -7,6 +7,8 @@ static int lenIV = 4;
    lenIV to <num>.  This indicates the number of random bytes at the beginning
    of each charstring. */
 
+#define memmem my_memmem
+
 static void
 set_lenIV(const char* line, size_t line_len)
 {

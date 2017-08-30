@@ -50,11 +50,13 @@ t1binary_SOURCES = \
 t1asm_SOURCES = \
 	@T1UTILS_TREE@/clp.c \
 	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/memmem.c \
 	@T1UTILS_TREE@/t1asm.c
 
 t1disasm_SOURCES = \
 	@T1UTILS_TREE@/clp.c \
 	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/memmem.c \
 	@T1UTILS_TREE@/t1disasm.c
 
 t1unmac_SOURCES = \

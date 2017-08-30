@@ -28,7 +28,7 @@ dnl
 dnl strerror()?
 dnl
 
-AC_REPLACE_FUNCS([strerror memmem])
+AC_REPLACE_FUNCS([strerror])
 
 AC_CHECK_FUNCS([strtoul])
 
@@ -105,11 +105,9 @@ extern "C" {
 char *strerror(int errno);
 #endif
 
-/* Prototype memmem if we don't have it. */
-#if !HAVE_MEMMEM
-void *memmem(const void* haystack, size_t haystack_len,
+/* Prototype my_memmem */
+void *my_memmem(const void* haystack, size_t haystack_len,
              const void* needle, size_t needle_len);
-#endif
 
 #ifdef __cplusplus
 }

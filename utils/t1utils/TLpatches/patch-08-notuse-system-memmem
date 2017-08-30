@@ -1,0 +1,25 @@
+diff -ur t1utils-1.41.orig/memmem.c t1utils-1.41/memmem.c
+--- t1utils-1.41.orig/memmem.c	Thu Aug 17 00:20:27 2017
++++ t1utils-1.41/memmem.c	Wed Aug 30 13:40:56 2017
+@@ -9,6 +9,8 @@
+ extern "C" {
+ #endif
+ 
++#define memmem my_memmem
++
+ void*
+ memmem(const void* haystack, size_t haystack_len,
+        const void* needle, size_t needle_len)
+diff -ur t1utils-1.41.orig/t1asmhelp.h t1utils-1.41/t1asmhelp.h
+--- t1utils-1.41.orig/t1asmhelp.h	Thu Aug 17 00:20:27 2017
++++ t1utils-1.41/t1asmhelp.h	Wed Aug 30 13:42:34 2017
+@@ -7,6 +7,8 @@
+    lenIV to <num>.  This indicates the number of random bytes at the beginning
+    of each charstring. */
+ 
++#define memmem my_memmem
++
+ static void
+ set_lenIV(const char* line, size_t line_len)
+ {
+
