@@ -14,4 +14,3 @@ Removed:
 
 Moved this file to ../:
 	strerror.c
-	memmem.c

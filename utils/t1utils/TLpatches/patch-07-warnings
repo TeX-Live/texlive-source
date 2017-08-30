@@ -2,8 +2,8 @@
 
 diff -ur t1utils-1.41.orig/t1asmhelp.h t1utils-1.41/t1asmhelp.h
 --- t1utils-1.41.orig/t1asmhelp.h	Thu Aug 17 00:20:27 2017
-+++ t1utils-1.41/t1asmhelp.h	Mon Aug 28 14:30:14 2017
-@@ -26,7 +26,8 @@
++++ t1utils-1.41/t1asmhelp.h	Wed Aug 30 13:42:34 2017
+@@ -26,7 +28,8 @@
  }
  
  
@@ -13,7 +13,14 @@ diff -ur t1utils-1.41.orig/t1asmhelp.h t1utils-1.41/t1asmhelp.h
  
  static void
  set_cs_start(const char* line, size_t line_len)
-@@ -43,7 +44,7 @@
+@@ -37,13 +40,13 @@
+     if ((p = memmem(line, line_len, "string currentfile", 18))
+         && memmem(line, line_len, "readstring", 10)) {
+         /* locate the name of the charstring start command */
+-        for (q = p; q != line && q[-1] != '/'; --q)
++        for (q = p; q != line && *(q-1) != '/'; --q)
+             /* nada */;
+         if (q != line) {
              for (r = q; r != p && !isspace((unsigned char) *r) && *r != '{'; ++r)
                  /* nada */;
              if (cs_start_set)

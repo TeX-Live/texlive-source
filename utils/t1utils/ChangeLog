@@ -1,3 +1,7 @@
+2017-08-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Makefile.am, configure.ac: Do not use system memmem.
+
 2017-08-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import t1utils-1.41.

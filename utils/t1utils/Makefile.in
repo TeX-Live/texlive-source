@@ -113,7 +113,8 @@ t1ascii_OBJECTS = $(am_t1ascii_OBJECTS)
 t1ascii_LDADD = $(LDADD)
 t1ascii_DEPENDENCIES = @LIBOBJS@
 am_t1asm_OBJECTS = @T1UTILS_TREE@/clp.$(OBJEXT) \
-	@T1UTILS_TREE@/t1lib.$(OBJEXT) @T1UTILS_TREE@/t1asm.$(OBJEXT)
+	@T1UTILS_TREE@/t1lib.$(OBJEXT) @T1UTILS_TREE@/memmem.$(OBJEXT) \
+	@T1UTILS_TREE@/t1asm.$(OBJEXT)
 t1asm_OBJECTS = $(am_t1asm_OBJECTS)
 t1asm_LDADD = $(LDADD)
 t1asm_DEPENDENCIES = @LIBOBJS@
@@ -124,7 +125,7 @@ t1binary_OBJECTS = $(am_t1binary_OBJECTS)
 t1binary_LDADD = $(LDADD)
 t1binary_DEPENDENCIES = @LIBOBJS@
 am_t1disasm_OBJECTS = @T1UTILS_TREE@/clp.$(OBJEXT) \
-	@T1UTILS_TREE@/t1lib.$(OBJEXT) \
+	@T1UTILS_TREE@/t1lib.$(OBJEXT) @T1UTILS_TREE@/memmem.$(OBJEXT) \
 	@T1UTILS_TREE@/t1disasm.$(OBJEXT)
 t1disasm_OBJECTS = $(am_t1disasm_OBJECTS)
 t1disasm_LDADD = $(LDADD)
@@ -415,7 +416,7 @@ am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/../../am/dist_hook.am \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog \
-	memmem.c strerror.c
+	strerror.c
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -560,11 +561,13 @@ t1binary_SOURCES = \
 t1asm_SOURCES = \
 	@T1UTILS_TREE@/clp.c \
 	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/memmem.c \
 	@T1UTILS_TREE@/t1asm.c
 
 t1disasm_SOURCES = \
 	@T1UTILS_TREE@/clp.c \
 	@T1UTILS_TREE@/t1lib.c \
+	@T1UTILS_TREE@/memmem.c \
 	@T1UTILS_TREE@/t1disasm.c
 
 t1unmac_SOURCES = \
@@ -692,6 +695,8 @@ clean-binPROGRAMS:
 t1ascii$(EXEEXT): $(t1ascii_OBJECTS) $(t1ascii_DEPENDENCIES) $(EXTRA_t1ascii_DEPENDENCIES) 
 	@rm -f t1ascii$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(t1ascii_OBJECTS) $(t1ascii_LDADD) $(LIBS)
+@T1UTILS_TREE@/memmem.$(OBJEXT): @T1UTILS_TREE@/$(am__dirstamp) \
+	@T1UTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
 @T1UTILS_TREE@/t1asm.$(OBJEXT): @T1UTILS_TREE@/$(am__dirstamp) \
 	@T1UTILS_TREE@/$(DEPDIR)/$(am__dirstamp)
 
@@ -730,9 +735,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/memmem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strerror.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@T1UTILS_TREE@/$(DEPDIR)/clp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@T1UTILS_TREE@/$(DEPDIR)/memmem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@T1UTILS_TREE@/$(DEPDIR)/t1ascii.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@T1UTILS_TREE@/$(DEPDIR)/t1asm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@T1UTILS_TREE@/$(DEPDIR)/t1binary.Po@am__quote@
