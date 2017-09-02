@@ -679,8 +679,7 @@ clean-noinstLIBRARIES:
 @XPDF_TREE@/xpdf/UnicodeMap.$(OBJEXT):  \
 	@XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
-@XPDF_TREE@/xpdf/UTF8.$(OBJEXT):  \
-	@XPDF_TREE@/xpdf/$(am__dirstamp) \
+@XPDF_TREE@/xpdf/UTF8.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/XFAForm.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
@@ -752,8 +751,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/SecurityHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Stream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/TextString.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po@am__quote@

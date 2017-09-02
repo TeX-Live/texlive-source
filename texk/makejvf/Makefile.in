@@ -113,9 +113,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_makejvf_OBJECTS = main.$(OBJEXT) tfmread.$(OBJEXT) \
-	tool.$(OBJEXT) uniblock.$(OBJEXT) usrtable.$(OBJEXT) \
-	write.$(OBJEXT)
+am_makejvf_OBJECTS = main.$(OBJEXT) tfmread.$(OBJEXT) tool.$(OBJEXT) \
+	uniblock.$(OBJEXT) usrtable.$(OBJEXT) write.$(OBJEXT)
 makejvf_OBJECTS = $(am_makejvf_OBJECTS)
 makejvf_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
