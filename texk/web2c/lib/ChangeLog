@@ -1,3 +1,15 @@
+2017-09-05  Karl Berry  <karl@tug.org>
+        and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c (IS_SPC_OR_EOL): new macro.
+	(topenin): use it, instead of ISBLANK.
+	(parse_first_line): doc fix.
+	(input_line): remove only trailing space characters
+	instead of using ISBLANK.
+	See also analogous change in xetexdir/XeTeX_ext.c.
+	Original bug report from Evan Aad,
+	http://tug.org/pipermail/tex-k/2017-August/002801.html
+
 2017-03-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Adopt Jonathan's solution for the Change on 2017-02-01.

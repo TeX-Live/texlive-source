@@ -1,3 +1,12 @@
+2017-09-05  Karl Berry  <karl@tug.org>
+        and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* xetexdir/XeTeX_ext.c (IS_SPC_OR_EOL): new macro.
+	(input_line): use it, instead of ISBLANK.
+	See also analogous change in lib/texmfmp.c.
+	Original bug report from Evan Aad,
+	http://tug.org/pipermail/tex-k/2017-August/002801.html
+
 2017-08-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfimage.cpp: Support /Rotate in PDF image inclusion with
