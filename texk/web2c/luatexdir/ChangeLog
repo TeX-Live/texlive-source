@@ -1,3 +1,15 @@
+2017-09-05  Karl Berry  <karl@tug.org>
+        and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* luatex.c (IS_SPC_OR_EOL): new macro.
+	(topenin): use it, instead of ISBLANK.
+	(input_line): remove only trailing space characters
+	instead of using ISBLANK.
+	See also analogous change in lib/texmfmp.c.
+	Original bug report from Evan Aad,
+	http://tug.org/pipermail/tex-k/2017-August/002801.html.
+	Fix a bug to skip BOM (w32 only).
+
 2017-02-07  Luigi Scarso <luigi.scarso@gmail.com>
 
 	* luaffi/: First attempt to implement the ffi module in lua
