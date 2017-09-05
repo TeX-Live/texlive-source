@@ -1079,10 +1079,15 @@ topenin (void)
   for (last = first; buffer[last]; ++last)
     ;
 
-  /* Make `last' be one past the last non-blank character in `buffer'.  */
-  /* ??? The test for '\r' should not be necessary.  */
-  for (--last; last >= first
-       && ISBLANK (buffer[last]) && buffer[last] != '\r'; --last) 
+  /* Make `last' be one past the last non-space character in `buffer',
+     ignoring line terminators (but not, e.g., tabs).  This is because
+     we are supposed to treat this like a line of TeX input.  Although
+     there are pathological cases (SPC CR SPC CR) where this differs
+     from input_line below, and from previous behavior of removing all
+     whitespace, the simplicity of removing all trailing line terminators
+     seems more in keeping with actual command line processing.  */
+#define IS_SPC_OR_EOL(c) ((c) == ' ' || (c) == '\r' || (c) == '\n')
+  for (--last; last >= first && IS_SPC_OR_EOL (buffer[last]); --last) 
     ;
   last++;
 
@@ -1945,6 +1950,8 @@ parse_first_line (const_string filename)
       int npart;
       char **parse;
 
+      /* Here we use ISBLANK instead of IS_SPC_OR_EOL because we are
+         parsing the whitespace-delimited %& line, not TeX input.  */
       for (s = first_line+2; ISBLANK(*s); ++s)
         ;
       npart = 0;
@@ -2404,8 +2411,13 @@ input_line (FILE *f)
       ungetc (i, f);
   }
   
-  /* Trim trailing whitespace.  */
-  while (last > first && ISBLANK (buffer[last - 1]))
+  /* Trim trailing space character (but not, e.g., tabs).  We can't have
+     line terminators because we stopped reading at the first \r or \n.
+     TeX's rule is to strip only trailing spaces (and eols).  David
+     Fuchs mentions that this stripping was done to ensure portability
+     of TeX documents given the padding with spaces on fixed-record
+     "lines" on some systems of the time, e.g., IBM VM/CMS and OS/360.  */
+  while (last > first && buffer[last - 1] == ' ')
     --last;
 
   /* Don't bother using xord if we don't need to.  */
