@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45102 2017-08-23 09:38:03Z siepo $
+# $Id: tlmgr.pl 45190 2017-09-01 08:01:01Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45102 $';
-my $datrev = '$Date: 2017-08-23 11:38:03 +0200 (Wed, 23 Aug 2017) $';
+my $svnrev = '$Revision: 45190 $';
+my $datrev = '$Date: 2017-09-01 10:01:01 +0200 (Fri, 01 Sep 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1408,7 +1408,7 @@ sub action_info {
     @datafields = split(',', $opts{'data'});
     # check for correctness of data fields
     for my $d (@datafields) {
-      if ($d !~ m/name|category|localrev|remoterev|shortdesc|longdesc|installed|relocatable|cat-version|cat-date|cat-license/) {
+      if ($d !~ m/name|category|localrev|remoterev|shortdesc|longdesc|size|installed|relocatable|cat-version|cat-date|cat-license/) {
         tlwarn("unknown data field: $d\n");
         return($F_ERROR);
       }
@@ -3609,6 +3609,17 @@ sub show_one_package_csv {
       push @out, ($is_installed ? $loctlp->revision : 0);
     } elsif ($d eq "remoterev") {
       push @out, ($is_available ? $remtlp->revision : 0);
+    } elsif ($d eq "size") {
+      # tlp->*size is in 4k blocks!
+      my $srcsize = $tlp->srcsize * $TeXLive::TLConfig::BlockSize;
+      my $docsize = $tlp->docsize * $TeXLive::TLConfig::BlockSize;
+      my $runsize = $tlp->runsize * $TeXLive::TLConfig::BlockSize;
+      my $binsize = 0;
+      my $binsizes = $tlp->binsize;
+      for my $a (keys %$binsizes) { $binsize += $binsizes->{$a} ; }
+      $binsize *= $TeXLive::TLConfig::BlockSize;
+      my $totalsize = $srcsize + $docsize + $runsize + $binsize;
+      push @out, $totalsize;
     } else {
       tlwarn("$prg: unkown data field $d\n");
       return($F_WARNING);
@@ -7599,7 +7610,7 @@ locally installed packages, collections, or schemes are listed.
 
 If the option C<--data> is given, its argument must be a comma separated
 list of field names from: C<name>, C<category>, C<localrev>, C<remoterev>,
-C<shortdesc>, C<longdesc>, C<installed>, C<relocatable>, C<cat-version>,
+C<shortdesc>, C<longdesc>, C<installed>, C<size>, C<relocatable>, C<cat-version>,
 C<cat-date>, or C<cat-licence>. In this case the requested packages' 
 information is listed in CSV format one package per line, and the
 column information is given by the C<itemN>.
@@ -9067,7 +9078,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45102 2017-08-23 09:38:03Z siepo $
+$Id: tlmgr.pl 45190 2017-09-01 08:01:01Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
