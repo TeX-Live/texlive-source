@@ -624,7 +624,8 @@ void topenin(void)
      seems more in keeping with actual command line processing.  */
 #define IS_SPC_OR_EOL(c) ((c) == ' ' || (c) == '\r' || (c) == '\n')
   for (--last; last >= first && IS_SPC_OR_EOL (buffer[last]); --last) 
-    last++;
+    ;
+  last++;
 
     /* One more time, this time converting to TeX's internal character
        representation.  */
