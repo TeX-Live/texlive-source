@@ -1,3 +1,156 @@
+commit d03f11f246efec13e48fd68a9ce136db771b22bf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 4 20:14:13 2017 -0700
+
+    Fix buffer_diff for empty buffers
+
+    If buffers are empty, content type should be ignored.
+
+    This fixes last of the failing tests: fuzzed.tests.  Green again!
+
+ src/hb-buffer.cc | 2 +-
+ src/hb-buffer.h  | 4 ++--
+ util/options.hh  | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 7cc348041d0b026ca6d2c240134e8f9100600e99
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 4 20:04:59 2017 -0700
+
+    [unsafe-to-break] Fix unsafe-to-break for cluster-level=1
+
+    Fixes tests/shaping/tests/cluster.tests
+
+ src/hb-ot-shape.cc | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+commit 61a9d7e6d0e6df7b48f58fa1679f0f93407993b2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 4 19:48:52 2017 -0700
+
+    Minor
+
+ test/shaping/run-tests.sh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 03a5a6f873e5a50011f1c2418f5ceab86d9c2931
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Sep 1 19:09:54 2017 -0700
+
+    [util] Add --unicodes to hb-view / hb-shape
+
+    Fixes https://github.com/behdad/harfbuzz/issues/154
+
+ test/shaping/hb_test_tools.py |  2 +-
+ util/options.cc               | 65
+ ++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 65 insertions(+), 2 deletions(-)
+
+commit 0e5b475d98dd67e927534508fe2cd8dc9765e24e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Sep 1 18:28:47 2017 -0700
+
+    Minor
+
+ test/shaping/run-tests.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3e1fc6d18ba0019bbeede78b95070a6e7156c314
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Sep 1 10:46:48 2017 -0700
+
+    Minor
+
+ test/shaping/run-tests.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 04f009f84891b513087830c7aa1b755addd016d9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Sep 1 10:38:25 2017 -0700
+
+    Add test accidentally removed in previous commit
+
+ test/shaping/tests/indic-syllable.tests | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 06cb162cd79cc922b572e5f532ca867223b6dc4c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Sep 1 10:34:21 2017 -0700
+
+    [indic] Treat Consonant_With_Stacker as consonant
+
+    Fixes https://github.com/behdad/harfbuzz/issues/528
+    "Kannada JIHVAMULIYA and UPADHMANIYA insert dotted circles"
+
+ src/hb-ot-shape-complex-indic-private.hh                  |   2 +-
+ .../sha1sum/3d0b77a2360aa6faa1385aaa510509ab70dfbeff.ttf  | Bin 0 ->
+ 988 bytes
+ test/shaping/tests/indic-syllable.tests                   |   3 ++-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+
+commit c449d2d8c9e27502380faa0b568a374c838ac9a7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 30 17:28:22 2017 -0700
+
+    [unsafe-to-break] Mark during fraction-slash formation
+
+    Fixes tests/automatic-fractions.tests
+
+ src/hb-ot-shape.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit b262ebcc9c9539076d17751e9bae06a8fd5001ff
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 30 17:25:10 2017 -0700
+
+    [util] Fix cluster sweeping during --verify
+
+    If *I* get this wrong in 2017, I have no idea how others get their
+    head around
+    cluster math...
+
+    Fixes tests/arabic-fallback-shaping.tests
+
+ util/options.hh | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+commit 69d701b02e5ebc3597b0d0576dbab8e1ece51944
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 30 17:07:29 2017 -0700
+
+    [util] When --verify fails, return reconstructed shape results
+
+ util/options.hh    | 8 +++-----
+ util/view-cairo.hh | 2 +-
+ 2 files changed, 4 insertions(+), 6 deletions(-)
+
+commit 099472e08bf81d6dd8ca1647999592df6b7fdfb9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 30 16:45:06 2017 -0700
+
+    hb_buffer_diff() tweak
+
+    I like to have a mode where CONTAINS_NOTDEF and CONTAINS_DOTTEDCIRCLE
+    are not
+    returned.  Abused a value of -1 for that.  hb-shape now uses it.
+    Fixes two
+    of the six tests failing with --verify in test/shaping/run-tests.sh.
+
+ src/hb-buffer.cc          | 16 ++++++++--------
+ test/shaping/run-tests.sh |  4 ++--
+ util/options.hh           |  2 +-
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+commit e8b364b86023731e0416ab4eb433467c4b7a0ec2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 23 15:00:45 2017 -0700
+
+    1.5.0
+
+ NEWS         | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 45 insertions(+), 1 deletion(-)
+
 commit 224d20e4e1c62416ff842a81188dfeff069f895b
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Aug 23 14:41:48 2017 -0700
