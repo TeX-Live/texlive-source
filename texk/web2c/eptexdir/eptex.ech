@@ -343,7 +343,7 @@ epTeX_input_encoding_code:@<Implement \.{\\epTeXinputencoding}@>;
   begin
     scan_file_name;
     pack_cur_name;
-    if setinfileenc(cur_file,stringcast(name_of_file+1)) = false then
+    if setinfileenc(input_file[in_open],stringcast(name_of_file+1)) = false then
     begin
       wlog_cr;
       wlog('Unknown encoding `');
