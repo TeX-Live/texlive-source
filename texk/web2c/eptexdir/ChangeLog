@@ -1,3 +1,7 @@
+2017-09-06  Noriyuki Abe  <abenori@math.sci.hokudai.ac.jp>
+
+	* eptex.ech: fix a bug in \epTeXinputencoding.
+
 2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.ech, etex.ch1, euptex.ch0, pdfutils.ch:
