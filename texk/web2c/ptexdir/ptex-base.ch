@@ -56,6 +56,7 @@
 %                  with non-vanishing \ybaselineshift.
 % (2016-06-06) AK  Hironori Kitagawa fixed a bug in check_box(box_p:pointer).
 %                  pTeX p3.7.1.
+% (2017-09-07) HK  pTeX p3.7.2 More restrictions on direction change commands.
 %
 
 @x
@@ -69,7 +70,7 @@
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k
 @y
-@d pTeX_version_string=='-p3.7.1' {current \pTeX\ version}
+@d pTeX_version_string=='-p3.7.2' {current \pTeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.14159265',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner

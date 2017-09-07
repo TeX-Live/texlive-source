@@ -1,4 +1,4 @@
-2017-09-03  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+2017-09-07  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: More restrictions on direction change commands.
 	 - Direction change is not allowed in unrestricted horizontal mode,
