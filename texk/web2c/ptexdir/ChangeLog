@@ -1,3 +1,13 @@
+2017-09-03  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: More restrictions on direction change commands.
+	 - Direction change is not allowed in unrestricted horizontal mode,
+	   nor math modes.
+	 - In external vertical mode, direction change is allowed only if
+	   both the current page nor recent contributions do not contain
+	   any boxes and rules.
+	* ptex_version.h: pTeX version p3.7.2.
+
 2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: p\TeX -> \pTeX.

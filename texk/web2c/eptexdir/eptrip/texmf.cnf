@@ -10,7 +10,7 @@ max_print_line = 72
 mem_bot          =    1
 main_memory      = 4500
 max_strings     = 3300
-pool_size       = 36000
+pool_size       = 40000
 
 string_vacancies = 8000
 

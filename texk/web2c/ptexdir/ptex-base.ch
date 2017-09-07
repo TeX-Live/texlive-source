@@ -1,4 +1,4 @@
-% This is a change file for pTeX 3.4
+% This is a change file for pTeX
 % By Sadayuki Tanaka and ASCII MEDIA WORKS.
 %
 % Thanks for :
@@ -978,7 +978,7 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
 @d set_box=def+1 {set a box ( \.{\\setbox} )}
 @d hyph_data=set_box+1 {hyphenation data ( \.{\\hyphenation}, \.{\\patterns} )}
 @d set_interaction=hyph_data+1 {define level of interaction ( \.{\\batchmode}, etc.~)}
-@d set_auto_spacing=set_interaction+1 {set auto spaceing mode
+@d set_auto_spacing=set_interaction+1 {set auto spacing mode
   ( \.{\\autospacing}, \.{\\noautospacing}, ( \.{\\autoxspacing}, \.{\\noautoxspacing} )}
 @d max_command=set_auto_spacing {the largest command code seen at |big_switch|}
 @z
@@ -1019,7 +1019,7 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
   end
 @z
 
-@x [16.215] l.4477 - pTeX: last_jchar, direction, adjust_dir, prev_node
+@x [16.215] l.4477 - pTeX: last_jchr, direction, adjust_dir, prev_node
 mode:=vmode; head:=contrib_head; tail:=contrib_head;
 @y
 mode:=vmode; head:=contrib_head; tail:=contrib_head; prev_node:=tail;
@@ -2510,7 +2510,7 @@ loop@+begin
     append_char(Hi(cur_chr)); {kanji upper byte}
     append_char(Lo(cur_chr)); {kanji lower byte}
     end
-  else if (cur_cmd>other_char)or(cur_chr>255) then {not a alphabet}
+  else if (cur_cmd>other_char)or(cur_chr>255) then {not an alphabet}
     begin back_input; goto done;
     end
   {If |cur_chr| is a space and we're not scanning a token list, check
@@ -2549,19 +2549,19 @@ This is called BigEndian order.
 This is called BigEndian order.
 @!@^BigEndian order@>
 
-We use to get \TeX\ knowledge about KANJI fonts from \.{JFM} files.
-The \.{JFM} format holds more two 16-bit integers ,|id| and |nt|,
+We get \TeX\ knowledge about KANJI fonts from \.{JFM} files.
+The \.{JFM} format holds more two 16-bit integers, |id| and |nt|,
 at the top of the file.
 $$\vbox{\halign{\hfil#&$\null=\null$#\hfil\cr
 |id|&identification code of the file;\cr
 |nt|&number of words in the |char_type| table;\cr}}$$
-The identification byte, |id| equals~11 or~9. When \TeX read a font file,
+The identification byte, |id| equals~11 or~9. When \TeX\ reads a font file,
 the |id| equals~11 or~9 then the font is the \.{JFM}, othercases it is
 the \.{TFM} file. The \.{TFM} holds |lf| at the same postion of |id|,
-usually it take a larger number than~9 or~11.
-The |nt| is nonngative and less than $2^{15}$.
+usually it takes a larger number than~9 or~11.
+The |nt| is nonnegative and less than $2^{15}$.
 
-We must have |ec=0|,
+We must have |bc=0|,
 $$\hbox{|lf=7+lh+nt+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np|.}$$
 
 @d yoko_jfm_id=11 {for `yoko-kumi' fonts}
@@ -2575,7 +2575,7 @@ operation looks for both |list_tag| and |ext_tag|.
 
 If the \.{JFM}, the |lig_tag| is called |gk_tag|. The |gk_tag| means that
 this character has a glue/kerning program starting at position |remainder|
-in the |glue_kern| array. And a \.{JFM} not used |tag=2| and |tag=3|.
+in the |glue_kern| array. And a \.{JFM} does not use |tag=2| and |tag=3|.
 @z
 
 @x [30.544] l.11088 - pTeX: gk_tag
@@ -2863,7 +2863,7 @@ comes next; this currently equals~2, as in the preamble.
 @ The last part of the postamble, following the |post_post| byte that
 signifies the end of the font definitions, contains |q|, a pointer to the
 |post| command that started the postamble.  An identification byte, |i|,
-comes next; this equals~2 or~3. If not used \pTeX primitives then the
+comes next; this equals~2 or~3. If \pTeX\ primitives are not used then the
 identification byte equals~2, othercase this is set to~3.
 @z
 
@@ -4762,7 +4762,7 @@ end;
 var p,@!q:pointer; {for short-term use}
 @y
 var p,@!q:pointer; {for short-term use}
-@!r:pointer; {temporaly}
+@!r:pointer; {temporary}
 @z
 
 @x [47.1071] l.21485 - pTeX: \tate, \yoko, \dtou
@@ -4801,10 +4801,19 @@ any_mode(make_box): begin_box(0);
 any_mode(make_box): begin_box(0);
 any_mode(chg_dir):
   begin  if cur_group<>align_group then
-    if head=tail then
-      begin direction:=cur_chr;
-      if mode=vmode then page_dir:=cur_chr;
+    if mode=hmode then 
+      begin print_err("Improper `"); print_cmd_chr(cur_cmd,cur_chr);
+      print("'"); 
+      help2("You cannot change the direction in unrestricted")
+      ("horizontal mode."); error;
       end
+    else if abs(mode)=mmode then
+      begin print_err("Improper `"); print_cmd_chr(cur_cmd,cur_chr);
+      print("'");
+      help1("You cannot change the direction in math mode."); error;
+      end
+    else if nest_ptr=0 then change_page_direction(cur_chr)
+    else if head=tail then direction:=cur_chr
     else begin print_err("Use `"); print_cmd_chr(cur_cmd,cur_chr);
       print("' at top of list");
       help2("Direction change command is available only while")
@@ -5232,7 +5241,7 @@ case abs(box_dir(p)) of
     if abs(direction)<>abs(box_dir(p)) then begin
       print_err("Incompatible direction list can't be unboxed");
       help2("Sorry, Pandora. (You sneaky devil.)")@/
-      ("I refuse to unbox a box in differrent direction.");@/
+      ("I refuse to unbox a box in different direction.");@/
       error; return;
     end;
 endcases;
@@ -6112,7 +6121,7 @@ if (ep>=1)and(kchar_code(f)(sp)<=jc)and(jc<=kchar_code(f)(ep)) then
 get_jfm_pos:=kchar_type(f)(0);
 end;
 
-@ Following codes are used to calcutation a KANJI width and height.
+@ Following codes are used to calculate a KANJI width and height.
 
 @<Local variables for dimension calculations@>=
 @!t: eight_bits;
@@ -6148,13 +6157,13 @@ if not is_char_kanji(cur_val) then
   begin print_err("Invalid KANSUJI char (");
   print_hex(cur_val); print_char(")");
 @.Invalid KANSUJI char@>
-  help1("I'm skip this control sequences.");@/
+  help1("I'm skipping this control sequences.");@/
   error; return;
   end
 else if (n<0)or(n>9) then
   begin print_err("Invalid KANSUJI number ("); print_int(n); print_char(")");
 @.Invalid KANSUJI number@>
-  help1("I'm skip this control sequences.");@/
+  help1("I'm skipping this control sequences.");@/
   error; return;
   end
 else
@@ -6179,7 +6188,7 @@ begin k:=0;
   end;
 end;
 
-@ pTeX inserts a glue specified by \.{\\kanjiskip} between 2byte-characters,
+@ \pTeX\ inserts a glue specified by \.{\\kanjiskip} between 2byte-characters,
 automatically, if \.{\\autospacing}.  This glue is suppressed by
 \.{\\noautospacing}.
 \.{\\xkanjiskip}, \.{\\noautoxspacing}, \.{\\autoxspacing}, \.{\\xspcode} is
@@ -6284,7 +6293,7 @@ if is_char_kanji(n) then
   begin j:=get_inhibit_pos(tokanji(n),new_pos);
   if j=no_entry then
     begin print_err("Inhibit table is full!!");
-    help1("I'm skip this control sequences.");@/
+    help1("I'm skipping this control sequences.");@/
     error; return;
   end;
   define(inhibit_xsp_code_base+j,cur_val,n);
@@ -6292,7 +6301,7 @@ if is_char_kanji(n) then
 else
   begin print_err("Invalid KANJI code ("); print_hex(n); print_char(")");
 @.Invalid KANJI code@>
-  help1("I'm skip this control sequences.");@/
+  help1("I'm skipping this control sequences.");@/
   error; return;
   end;
 end;
@@ -6358,7 +6367,7 @@ if is_char_ascii(n) or is_char_kanji(n) then
   begin j:=get_kinsoku_pos(tokanji(n),new_pos);
   if j=no_entry then
     begin print_err("KINSOKU table is full!!");
-    help1("I'm skip this control sequences.");@/
+    help1("I'm skipping this control sequences.");@/
     error; return;
     end;
   if (p=pre_break_penalty_code)or(p=post_break_penalty_code) then
@@ -6375,7 +6384,7 @@ else
   else print_char("?");
   print("breakpenalty ("); print_hex(n); print_char(")");
 @.Invalid KANJI code@>
-  help1("I'm skip this control sequences.");@/
+  help1("I'm skipping this control sequences.");@/
   error; return;
   end;
 end;
@@ -6486,9 +6495,9 @@ begin
   endcases
 end;
 
-@ This function is called from |adjust_hlist| to used to check, whether
-a list which pointed |box_p| contain a printing character.
-If the list contain such a character, then return `true', otherwise `false'.
+@ This function is called from |adjust_hlist| to check, whether
+a list which pointed |box_p| contains a printing character.
+If the list contains such a character, then return `true', otherwise `false'.
 If the first matter is a character, |first_char| is stored it.
 |last_char| is stored a last character.  If no printing characters exist
 in the list, |first_char| and |last_char| is null.
@@ -6584,9 +6593,9 @@ var q,s,t,u,v,x,z:pointer;
   i,k:halfword;
   a: pointer; { temporary pointer for accent }
   insert_skip:no_skip..after_wchar;
-  cx:KANJI_code; {temporaly register for KANJI character}
-  ax:ASCII_code; {temporaly register for ASCII character}
-  do_ins:boolean; {for inserting |xkanji_skip| into prevous (or after) KANJI}
+  cx:KANJI_code; {temporary register for KANJI character}
+  ax:ASCII_code; {temporary register for ASCII character}
+  do_ins:boolean; {for inserting |xkanji_skip| into previous (or after) KANJI}
 begin if link(p)=null then goto exit;
 if auto_spacing>0 then
   begin delete_glue_ref(space_ptr(p)); space_ptr(p):=kanji_skip;
@@ -6914,7 +6923,7 @@ if d<0 then print("(math)");
 print(" direction");
 end;
 
-@ The procedure |set_math_kchar| is same as |set_math_char| which
+@ The procedure |set_math_kchar| is same as |set_math_char| which is
 written in section 48.
 
 @<Declare act...@>=
@@ -7091,6 +7100,36 @@ begin
 if s>255 then
   begin print_char(Hi(s)); print_char(Lo(s));
   end else print_char(s);
+end;
+
+@ This procedure changes the direction of the page, if |page_contents|
+is |empty| and ``recent contributions'' does not contain any boxes,
+rules nor insertions.
+
+@<Declare act...@>=
+procedure change_page_direction(@!d: halfword);
+label done;
+var p: pointer; flag:boolean;
+begin flag:=(page_contents=empty);
+if flag and (head<>tail) then begin
+  p:=link(head);
+  while p<>null do
+    case type(p) of
+      hlist_node,vlist_node,dir_node,rule_node,ins_node:
+        begin flag:=false; goto done; end;
+      { |glue_node|, |kern_node|, |penalty_node| are discarded }
+      othercases p:=link(p);
+    endcases;
+  done: do_nothing;
+end;
+if flag then begin direction:=d; page_dir:=d; end
+else begin
+  print_err("Use `"); print_cmd_chr(cur_cmd,d);
+  print("' at top of the page");
+  help3("You can change the direction of the page only when")
+  ("the current page and recent contributions consist of only")
+  ("marks and whatsits."); error;
+  end;
 end;
 
 @* \[56] System-dependent changes.
