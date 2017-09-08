@@ -1,6 +1,6 @@
 /* mpfr_printf -- printf function and friends.
 
-Copyright 2007-2016 Free Software Foundation, Inc.
+Copyright 2007-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -40,7 +40,6 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 # endif /* HAVE___VA_COPY */
 #endif /* HAVE_VA_COPY */
 
-#include <errno.h>
 #include "mpfr-impl.h"
 
 #ifdef _MPFR_H_HAVE_FILE

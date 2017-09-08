@@ -1,7 +1,7 @@
 /* mpfr_ui_div -- divide a machine integer by a floating-point number
    mpfr_si_div -- divide a machine number by a floating-point number
 
-Copyright 2000-2016 Free Software Foundation, Inc.
+Copyright 2000-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.

@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_COPYRIGHT([
-Copyright 1999-2016 Free Software Foundation, Inc.
+Copyright 1999-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 ])
 
 dnl Add check-news when it checks for more than 15 lines
-AC_INIT([MPFR],[3.1.5])
+AC_INIT([MPFR],[3.1.6])
 
 dnl Older Automake versions than 1.13 may still be supported, but no longer
 dnl tested, and many things have changed in 1.13. Moreover the INSTALL file
@@ -263,7 +263,7 @@ dnl with the mode32 ABI, e.g. "-m32 -mpowerpc64 -mtune=970 -O3"; this
 dnl is detected by the x != x test below.
 AC_ARG_ENABLE(decimal-float,
    [  --enable-decimal-float  build conversion functions from/to decimal floats
-                          [[default=no]]],
+                          (requires --with-gmp-build) [[default=no]]],
    [ case $enableval in
       yes) AC_DEFINE([MPFR_WANT_DECIMAL_FLOATS],1,
               [Build decimal float functions])
@@ -441,6 +441,36 @@ error
   ;;
 esac
 
+dnl Under Linux, make sure that the old dtags are used if LD_LIBRARY_PATH
+dnl is defined. The issue is that with the new dtags, LD_LIBRARY_PATH has
+dnl the precedence over the run path, so that if a compatible MPFR library
+dnl is installed in some directory from $LD_LIBRARY_PATH, then the tested
+dnl MPFR library will be this library instead of the MPFR library from the
+dnl build tree. Other OS with the same issue might be added later.
+dnl
+dnl References:
+dnl   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=859732
+dnl   http://lists.gnu.org/archive/html/libtool/2017-05/msg00000.html
+dnl
+dnl We need to check whether --disable-new-dtags is supported as alternate
+dnl linkers may be used (e.g., with tcc: CC=tcc LD=tcc).
+dnl
+case $host in
+  *-*-linux*)
+    if test -n "$LD_LIBRARY_PATH"; then
+      saved_LDFLAGS="$LDFLAGS"
+      LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags"
+      AC_MSG_CHECKING(whether --disable-new-dtags is supported by the linker)
+      AC_LINK_IFELSE([AC_LANG_SOURCE([[
+int main (void) { return 0; }
+      ]])],
+      [AC_MSG_RESULT(yes (use it since LD_LIBRARY_PATH is set))],
+      [AC_MSG_RESULT(no)
+       LDFLAGS="$saved_LDFLAGS"
+      ])
+    fi
+    ;;
+esac
 
 dnl
 dnl For mpfr-longlong.h - TODO: should be replaced (see acinclude.m4).

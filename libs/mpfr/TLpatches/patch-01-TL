@@ -1,6 +1,6 @@
-diff -ur mpfr-3.1.5.orig/src/mparam_h.in mpfr-3.1.5/src/mparam_h.in
---- mpfr-3.1.5.orig/src/mparam_h.in	Tue Sep 27 16:58:15 2016
-+++ mpfr-3.1.5/src/mparam_h.in	Wed Sep 28 16:53:41 2016
+diff -ur mpfr-3.1.6.orig/src/mparam_h.in mpfr-3.1.6/src/mparam_h.in
+--- mpfr-3.1.6.orig/src/mparam_h.in	Sun Jan 01 10:39:09 2017
++++ mpfr-3.1.6/src/mparam_h.in	Fri Sep 08 14:51:25 2017
 @@ -27,7 +27,9 @@
     for example with gcc -dM -E -xc /dev/null
     As of gcc 4.2, you can also use: -march=native or -mtune=native */
@@ -12,9 +12,9 @@ diff -ur mpfr-3.1.5.orig/src/mparam_h.in mpfr-3.1.5/src/mparam_h.in
  #define MPFR_TUNE_CASE "src/x86_64/pentium4/mparam.h"
  #include "x86_64/pentium4/mparam.h"
  
-diff -ur mpfr-3.1.5.orig/src/mpfr-impl.h mpfr-3.1.5/src/mpfr-impl.h
---- mpfr-3.1.5.orig/src/mpfr-impl.h	Tue Sep 27 16:58:15 2016
-+++ mpfr-3.1.5/src/mpfr-impl.h	Wed Sep 28 16:55:05 2016
+diff -ur mpfr-3.1.6.orig/src/mpfr-impl.h mpfr-3.1.6/src/mpfr-impl.h
+--- mpfr-3.1.6.orig/src/mpfr-impl.h	Tue Sep 05 21:54:34 2017
++++ mpfr-3.1.6/src/mpfr-impl.h	Fri Sep 08 14:53:23 2017
 @@ -23,6 +23,11 @@
  #ifndef __MPFR_IMPL_H__
  #define __MPFR_IMPL_H__

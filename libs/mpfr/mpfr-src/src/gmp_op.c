@@ -1,6 +1,6 @@
 /* Implementations of operations between mpfr and mpz/mpq data
 
-Copyright 2001, 2003-2016 Free Software Foundation, Inc.
+Copyright 2001, 2003-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
