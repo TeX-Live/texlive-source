@@ -1,4 +1,1001 @@
 ------------------------------------------------------------------------
+r11719 | vlefevre | 2017-09-07 11:36:44 +0000 (Thu, 07 Sep 2017) | 1 line
+Changed paths:
+   M /branches/3.1/VERSION
+   M /branches/3.1/configure.ac
+   M /branches/3.1/doc/mpfr.texi
+   M /branches/3.1/src/mpfr.h
+   M /branches/3.1/src/version.c
+
+Updated version to 3.1.6.
+------------------------------------------------------------------------
+r11710 | vlefevre | 2017-09-05 15:17:22 +0000 (Tue, 05 Sep 2017) | 1 line
+Changed paths:
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Updated the month.
+------------------------------------------------------------------------
+r11709 | vlefevre | 2017-09-05 12:59:09 +0000 (Tue, 05 Sep 2017) | 2 lines
+Changed paths:
+   M /branches/3.1/VERSION
+   M /branches/3.1/configure.ac
+   M /branches/3.1/doc/mpfr.texi
+   M /branches/3.1/src/mpfr.h
+   M /branches/3.1/src/version.c
+
+Updated version to 3.1.6-rc2 (at least for the developers, so that
+intermediate versions with new changes cannot be confused with rc1).
+------------------------------------------------------------------------
+r11708 | vlefevre | 2017-09-05 12:55:34 +0000 (Tue, 05 Sep 2017) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tsprintf.c
+
+[tests/tsprintf.c] With MPFR_CHECK_LIBC_PRINTF, disable the test of
+the "'" flag with a non-glibc C library (SUS extension in printf).
+In particular, it is not supported by AIX 7.2.
+(merged changesets r11704,11706 from the trunk)
+------------------------------------------------------------------------
+r11707 | vlefevre | 2017-09-05 12:54:34 +0000 (Tue, 05 Sep 2017) | 5 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/mpfr-impl.h
+
+[src/mpfr-impl.h] In case decimal_point and/or thousands_sep are
+non-single-byte characters (as found on FreeBSD 11 in fr_FR.UTF-8),
+revert to the default value. Added a FIXME to support multibyte
+decimal_point and thousands_sep.
+(merged changeset r11705 from the trunk)
+------------------------------------------------------------------------
+r11703 | vlefevre | 2017-09-05 11:40:33 +0000 (Tue, 05 Sep 2017) | 10 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/Makefile.am
+   M /branches/3.1/tests/tfprintf.c
+   M /branches/3.1/tests/tout_str.c
+   M /branches/3.1/tests/toutimpl.c
+   M /branches/3.1/tests/tprintf.c
+
+[tests]
+  * tfprintf.c, tout_str.c, tprintf.c: Do not use the same filename
+    for result files created in these test programs, as this may break
+    parallel tests.
+  * toutimpl.c: Changed the filename of the result file like what
+    has been done in other test programs, to make sure that it will
+    not be reused by mistake. Removed comments about tmpname (which
+    does not exist).
+  * Makefile.am: added a CLEANFILES line with these files.
+(merged changesets r11698-11699 from the trunk)
+------------------------------------------------------------------------
+r11694 | vlefevre | 2017-09-01 15:17:43 +0000 (Fri, 01 Sep 2017) | 1 line
+Changed paths:
+   M /branches/3.1/tests/turandom.c
+
+[tests/turandom.c] Correction for 16-bit int.
+------------------------------------------------------------------------
+r11693 | zimmerma | 2017-08-30 06:57:37 +0000 (Wed, 30 Aug 2017) | 2 lines
+Changed paths:
+   M /branches/3.1/tests/turandom.c
+
+[tests/turandom.c] print got/expected probabilities in test_underflow()
+
+------------------------------------------------------------------------
+r11692 | zimmerma | 2017-08-29 12:58:37 +0000 (Tue, 29 Aug 2017) | 2 lines
+Changed paths:
+   M /branches/3.1/tests/turandom.c
+
+[tests/turandom.c] forgot exp=1 case
+
+------------------------------------------------------------------------
+r11691 | zimmerma | 2017-08-29 12:52:50 +0000 (Tue, 29 Aug 2017) | 2 lines
+Changed paths:
+   M /branches/3.1/tests/turandom.c
+
+added test_underflow()
+
+------------------------------------------------------------------------
+r11689 | vlefevre | 2017-08-29 12:17:13 +0000 (Tue, 29 Aug 2017) | 1 line
+Changed paths:
+   M /branches/3.1/src/urandom.c
+
+[src/urandom.c] Clarified a comment about a subtle case.
+------------------------------------------------------------------------
+r11687 | vlefevre | 2017-08-28 20:58:45 +0000 (Mon, 28 Aug 2017) | 3 lines
+Changed paths:
+   M /branches/3.1/configure.ac
+
+[configure.ac] In "configure --help" output for --enable-decimal-float,
+mention that this option requires --with-gmp-build (this is for the 3.1
+branch only).
+------------------------------------------------------------------------
+r11682 | vlefevre | 2017-08-28 11:25:28 +0000 (Mon, 28 Aug 2017) | 1 line
+Changed paths:
+   M /branches/3.1/ChangeLog
+
+ChangeLog update with "TZ=UTC svn log -rHEAD:0 -v" (in UTF-8 locales).
+------------------------------------------------------------------------
+r11681 | vlefevre | 2017-08-28 11:23:02 +0000 (Mon, 28 Aug 2017) | 2 lines
+Changed paths:
+   M /branches/3.1/VERSION
+   M /branches/3.1/configure.ac
+   M /branches/3.1/doc/mpfr.texi
+   M /branches/3.1/src/Makefile.am
+   M /branches/3.1/src/mpfr.h
+   M /branches/3.1/src/version.c
+
+Updated version to 3.1.6-rc1 and updated libmpfr_la_LDFLAGS in
+src/Makefile.am for the next release.
+------------------------------------------------------------------------
+r11672 | vlefevre | 2017-08-28 00:51:57 +0000 (Mon, 28 Aug 2017) | 5 lines
+Changed paths:
+   M /branches/3.1/tests/tests.c
+   M /branches/3.1/tests/turandom.c
+
+Corrections for use with --with-gmp-build.
+  * tests/tests.c: use __gmp_rands instead of mpfr_rands
+    (which was introduced by r11666).
+  * tests/turandom.c: use RANDS instead of mpfr_rands
+    (which was introduced by r11649).
+------------------------------------------------------------------------
+r11670 | vlefevre | 2017-08-27 22:09:01 +0000 (Sun, 27 Aug 2017) | 3 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/turandom.c
+
+[tests/turandom.c] Disabled the reprod_abi test with GMP < 4.2.0
+since the hardcoded values would be different.
+(merged changeset r11669 from the trunk)
+------------------------------------------------------------------------
+r11668 | vlefevre | 2017-08-27 21:07:18 +0000 (Sun, 27 Aug 2017) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/turandom.c
+
+[tests/turandom.c] Check that the behavior does not depend on the
+platform ABI or MPFR version.
+(merged changeset r11663 from the trunk, and updated the hardcoded
+values for this 3.1 branch)
+------------------------------------------------------------------------
+r11667 | vlefevre | 2017-08-27 20:54:16 +0000 (Sun, 27 Aug 2017) | 3 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/turandom.c
+
+[tests/turandom.c] In bug20170123, use a local gmp_randstate_t variable
+instead of mpfr_rands, due to the gmp_randseed_ui.
+(merged changeset r11654 from the trunk)
+------------------------------------------------------------------------
+r11666 | vlefevre | 2017-08-27 20:52:18 +0000 (Sun, 27 Aug 2017) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src/mpfr-gmp.h
+   M /branches/3.1/tests/tests.c
+
+[src/mpfr-gmp.h,tests/tests.c] Got rid of __gmp_randstate_struct, which
+is internal to GMP: its use came from very old code (r2330 in 2003-06)
+and it is no longer needed.
+(marked changeset r11652 as merged from the trunk)
+------------------------------------------------------------------------
+r11665 | vlefevre | 2017-08-27 20:36:53 +0000 (Sun, 27 Aug 2017) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/turandom.c
+
+[tests/turandom.c] Disabled a test with GMP < 4.2.0 since it depends on
+a specific behavior of the random generator, which changed in GMP 4.2.0
+(the test would probably fail with such old GMP versions).
+(applied a part of r8787 and merged changeset r11651 from the trunk)
+------------------------------------------------------------------------
+r11649 | vlefevre | 2017-08-22 13:17:15 +0000 (Tue, 22 Aug 2017) | 16 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/doc/mpfr.texi
+   M /branches/3.1/src
+   M /branches/3.1/src/urandom.c
+   M /branches/3.1/tests/turandom.c
+
+[src/urandom.c] Generate the exception flags for mpfr_urandom almost as
+  expected:
+    * Set the underflow flag if the drawn exponent is less than emin.
+      This corresponds to "underflow before rounding" while the normal
+      rule in MPFR is "underflow after rounding". This is not fixable
+      in the 3.1 branch since the significand is not drawn in this
+      case, and drawing the significand to determine whether there is
+      an underflow would change the state of the PRNG at the end of
+      the function, breaking the ABI and the users' expectations.
+    * Set the inexact flag on underflow (this was not done before).
+[tests/turandom.c] Added underflow and overflow tests.
+[doc/mpfr.texi] Documented the above issue with the underflow flag for
+  mpfr_urandom.
+(merged changesets r11220,11635,11637-11641,11643-11647 from the trunk;
+instead of merging the conflicting r11636, did all the changes manually;
+replaced mpfr_flags_t by unsigned int)
+------------------------------------------------------------------------
+r11648 | vlefevre | 2017-08-22 11:57:20 +0000 (Tue, 22 Aug 2017) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/urandom.c
+   M /branches/3.1/tests/turandom.c
+
+[src/urandom.c] Fixed bug reported by Trevor Spiteri:
+  <https://sympa.inria.fr/sympa/arc/mpfr/2017-01/msg00020.html>
+[tests/turandom.c] Added non-regression test.
+(merged changesets r11218-11219,11221 from the trunk)
+------------------------------------------------------------------------
+r11633 | vlefevre | 2017-08-21 12:31:22 +0000 (Mon, 21 Aug 2017) | 2 lines
+Changed paths:
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Slightly changed the paragraph about memory allocation
+by MPFR (after a discussion with PZ).
+------------------------------------------------------------------------
+r11632 | vlefevre | 2017-08-21 09:49:52 +0000 (Mon, 21 Aug 2017) | 2 lines
+Changed paths:
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Update about the memory allocation (added references
+to Section "Memory Handling").
+------------------------------------------------------------------------
+r11631 | vlefevre | 2017-08-21 09:40:40 +0000 (Mon, 21 Aug 2017) | 1 line
+Changed paths:
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Added a paragraph about memory allocation by MPFR.
+------------------------------------------------------------------------
+r11618 | vlefevre | 2017-08-03 08:16:53 +0000 (Thu, 03 Aug 2017) | 1 line
+Changed paths:
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Updated the month.
+------------------------------------------------------------------------
+r11616 | vlefevre | 2017-08-03 08:12:50 +0000 (Thu, 03 Aug 2017) | 3 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Updated paragraph on the MPFR formatted output functions
+and overflow on the return type int. Removed obsolete comments.
+(merged changesets r11403,11614-11615 from the trunk)
+------------------------------------------------------------------------
+r11613 | vlefevre | 2017-08-02 11:21:33 +0000 (Wed, 02 Aug 2017) | 1 line
+Changed paths:
+   M /branches/3.1/NEWS
+
+[NEWS] Update for GNU MPFR 3.1.6.
+------------------------------------------------------------------------
+r11606 | vlefevre | 2017-08-01 09:48:11 +0000 (Tue, 01 Aug 2017) | 4 lines
+Changed paths:
+   M /branches/3.1/tests/mpf_compat.h
+
+[tests/mpf_compat.h] Include "mpfr-test.h" instead of "mpfr-impl.h",
+in order to avoid a link failure under MS Windows with DLL. See:
+  https://sympa.inria.fr/sympa/arc/mpfr/2017-07/msg00012.html
+  https://sympa.inria.fr/sympa/arc/mpfr/2017-07/msg00017.html
+------------------------------------------------------------------------
+r11605 | vlefevre | 2017-08-01 09:44:46 +0000 (Tue, 01 Aug 2017) | 4 lines
+Changed paths:
+   M /branches/3.1/tools/mpfrlint
+
+[tools/mpfrlint] Detect "mpfr-impl.h" inclusion by the test programs:
+"mpfr-test.h" should be included instead; otherwise __MPFR_WITHIN_MPFR
+will be defined, yielding failures under MS Windows with DLL.
+(Similar to r11603 in the trunk.)
+------------------------------------------------------------------------
+r11591 | vlefevre | 2017-07-17 23:25:27 +0000 (Mon, 17 Jul 2017) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/sin_cos.c
+
+[src/sin_cos.c] Avoid integer overflows with precision 1100000 and
+the 32-bit ABI (32-bit long), fixing bug reported by Simon Byrne:
+https://sympa.inria.fr/sympa/arc/mpfr/2017-07/msg00002.html
+(merged changeset r11590 from the trunk)
+------------------------------------------------------------------------
+r11587 | vlefevre | 2017-07-17 12:30:40 +0000 (Mon, 17 Jul 2017) | 4 lines
+Changed paths:
+   M /branches/3.1/configure.ac
+
+[configure.ac] Under Linux, make sure that the old dtags are used
+if LD_LIBRARY_PATH is defined, avoiding the following issue:
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=859732
+  http://lists.gnu.org/archive/html/libtool/2017-05/msg00000.html
+------------------------------------------------------------------------
+r11580 | vlefevre | 2017-06-05 17:06:13 +0000 (Mon, 05 Jun 2017) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/mpfr-impl.h
+
+[src/mpfr-impl.h] Fixed the mpfr_get_default_rounding_mode() macro for
+C++ (it didn't have the correct type), and improved the similar ones.
+(merged changeset r8997 from the trunk; needed by r11579 when using a
+C++ compiler)
+------------------------------------------------------------------------
+r11579 | vlefevre | 2017-06-05 16:50:17 +0000 (Mon, 05 Jun 2017) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/mpf2mpfr.h
+   M /branches/3.1/tests/mpf_compat.h
+
+[src/mpf2mpfr.h] Fixed mpf_fits_s* and mpf_get_si macros.
+[tests/mpf_compat.h] Added non-regression tests.
+(merged changesets r11565,11571 from the trunk, and did some changes
+in the inclusions of header files due to the use of MPFR_ASSERTN)
+------------------------------------------------------------------------
+r11541 | vlefevre | 2017-05-29 06:50:59 +0000 (Mon, 29 May 2017) | 3 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/vasprintf.c
+
+[src/vasprintf.c] In a macro definition, changed a parameter to
+lowercase so that it doesn't look like a constant to mpfrlint.
+(merged changeset r11521 from the trunk, completing r11538)
+------------------------------------------------------------------------
+r11540 | vlefevre | 2017-05-28 22:12:53 +0000 (Sun, 28 May 2017) | 7 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tsprintf.c
+
+[tests/tsprintf.c] Fixed setlocale usage (problem detected with MinGW
+in the trunk) by not using the returned string any longer. Indeed,
+ISO C99 says that this string "may be overwritten by a subsequent call
+to the setlocale function". The tests in the 3.1 branch are different,
+so that this problem was not detected here on the tested platforms,
+including MinGW.
+(merged changeset r11533 from the trunk)
+------------------------------------------------------------------------
+r11539 | vlefevre | 2017-05-28 21:58:53 +0000 (Sun, 28 May 2017) | 7 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/printf.c
+   M /branches/3.1/src/vasprintf.c
+   M /branches/3.1/tests/tprintf.c
+
+[src] Moved "#include <errno.h>" from printf.c to vasprintf.c (this
+  should have been done in r5230, where EOVERFLOW was moved).
+(merged changeset r11532 from the trunk)
+[tests/tprintf.c] Added errno test for check_long_string(), which is
+  called when MPFR_CHECK_LARGEMEM is defined, to trigger the above
+  bug. A merge from the trunk was not possible due to many changes
+  in the mpfr_*printf code and the tests.
+------------------------------------------------------------------------
+r11538 | vlefevre | 2017-05-28 21:19:11 +0000 (Sun, 28 May 2017) | 13 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/vasprintf.c
+
+[src/vasprintf.c] Fixed overflow checking in partition_number().
+In details:
+  * The computation of the number of characters to be written could
+    be incorrect by 1 when the thousands separator was not empty.
+    However, in the 3.1 branch (without additional patches), this
+    value is currently only used for overflow checking, so that this
+    bug could have only very little effect (contrary to the trunk).
+  * When the int and long types have the same size, the code assumed
+    "wrapping behavior in two's complement". But this is actually
+    undefined behavior in ISO C; in practice, a smart compiler may
+    have ignored "total < 0" tests, because total is computed with
+    sums of non-negative integers.
+(merged changesets r11513,11515-11516 from the trunk)
+------------------------------------------------------------------------
+r11537 | vlefevre | 2017-05-28 20:55:53 +0000 (Sun, 28 May 2017) | 6 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tl2b.c
+   M /branches/3.1/tests/tpow_all.c
+
+[tests] Increase buffer sizes to avoid a build failure with GCC 7
+under some conditions due to the following bug:
+  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=79257
+This increase is not a problem for the tests, where optimal code
+is useless.
+(merged changesets r11469,11470 from the trunk)
+------------------------------------------------------------------------
+r11536 | vlefevre | 2017-05-28 20:44:27 +0000 (Sun, 28 May 2017) | 10 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/mpfr-impl.h
+
+[src/mpfr-impl.h] In the MPFR_RET macro, avoid the use of an integer
+in a boolean context (even though that this is not wrong in C). Fix
+after a bug report from David Binderman. Explanations:
+  https://sympa.inria.fr/sympa/arc/mpfr/2016-09/msg00028.html
+(merged changeset r10879 from the trunk)
+
+NOTE. This change has been merged in the 3.1 branch because it is
+needed to be able to build MPFR with -Wall -Werror as of GCC 7,
+due to the new -Wint-in-bool-context option enabled by -Wall:
+  https://gcc.gnu.org/gcc-7/changes.html
+------------------------------------------------------------------------
+r11432 | vlefevre | 2017-04-07 15:03:37 +0000 (Fri, 07 Apr 2017) | 1 line
+Changed paths:
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Updated the month.
+------------------------------------------------------------------------
+r11431 | vlefevre | 2017-04-07 15:02:16 +0000 (Fri, 07 Apr 2017) | 5 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi]
+  * Clarified mpfr_asprintf & mpfr_vasprintf specification in case
+    of error.
+  * Corrected an English error.
+(merged changesets r11264,11430 from the trunk)
+------------------------------------------------------------------------
+r11345 | vlefevre | 2017-02-26 02:06:02 +0000 (Sun, 26 Feb 2017) | 1 line
+Changed paths:
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Updated the month.
+------------------------------------------------------------------------
+r11344 | vlefevre | 2017-02-26 02:05:19 +0000 (Sun, 26 Feb 2017) | 2 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Completed mpfr_root description: the 0th root gives NaN.
+(merged changesets r9929,9933 from the trunk)
+------------------------------------------------------------------------
+r11329 | vlefevre | 2017-02-21 10:20:45 +0000 (Tue, 21 Feb 2017) | 1 line
+Changed paths:
+   M /branches/3.1/src/sum.c
+
+[src/sum.c] Added a note about the "const" position in the prototypes.
+------------------------------------------------------------------------
+r11120 | vlefevre | 2017-01-01 01:39:54 +0000 (Sun, 01 Jan 2017) | 1 line
+Changed paths:
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Updated the month.
+------------------------------------------------------------------------
+r11119 | vlefevre | 2017-01-01 01:39:09 +0000 (Sun, 01 Jan 2017) | 5 lines
+Changed paths:
+   M /branches/3.1/BUGS
+   M /branches/3.1/INSTALL
+   M /branches/3.1/Makefile.am
+   M /branches/3.1/NEWS
+   M /branches/3.1/README
+   M /branches/3.1/TODO
+   M /branches/3.1/acinclude.m4
+   M /branches/3.1/configure.ac
+   M /branches/3.1/doc/FAQ.html
+   M /branches/3.1/doc/Makefile.am
+   M /branches/3.1/doc/README.dev
+   M /branches/3.1/doc/faq.xsl
+   M /branches/3.1/doc/mpfr.texi
+   M /branches/3.1/examples/divworst.c
+   M /branches/3.1/examples/rndo-add.c
+   M /branches/3.1/examples/sample.c
+   M /branches/3.1/examples/version.c
+   M /branches/3.1/src/Makefile.am
+   M /branches/3.1/src/abort_prec_max.c
+   M /branches/3.1/src/acos.c
+   M /branches/3.1/src/acosh.c
+   M /branches/3.1/src/add.c
+   M /branches/3.1/src/add1.c
+   M /branches/3.1/src/add1sp.c
+   M /branches/3.1/src/add_d.c
+   M /branches/3.1/src/add_ui.c
+   M /branches/3.1/src/agm.c
+   M /branches/3.1/src/ai.c
+   M /branches/3.1/src/amd/amdfam10/mparam.h
+   M /branches/3.1/src/amd/athlon/mparam.h
+   M /branches/3.1/src/amd/k8/mparam.h
+   M /branches/3.1/src/arm/mparam.h
+   M /branches/3.1/src/asin.c
+   M /branches/3.1/src/asinh.c
+   M /branches/3.1/src/atan.c
+   M /branches/3.1/src/atan2.c
+   M /branches/3.1/src/atanh.c
+   M /branches/3.1/src/bernoulli.c
+   M /branches/3.1/src/buildopt.c
+   M /branches/3.1/src/cache.c
+   M /branches/3.1/src/cbrt.c
+   M /branches/3.1/src/check.c
+   M /branches/3.1/src/clear.c
+   M /branches/3.1/src/clears.c
+   M /branches/3.1/src/cmp.c
+   M /branches/3.1/src/cmp2.c
+   M /branches/3.1/src/cmp_abs.c
+   M /branches/3.1/src/cmp_d.c
+   M /branches/3.1/src/cmp_ld.c
+   M /branches/3.1/src/cmp_si.c
+   M /branches/3.1/src/cmp_ui.c
+   M /branches/3.1/src/comparisons.c
+   M /branches/3.1/src/const_catalan.c
+   M /branches/3.1/src/const_euler.c
+   M /branches/3.1/src/const_log2.c
+   M /branches/3.1/src/const_pi.c
+   M /branches/3.1/src/constant.c
+   M /branches/3.1/src/copysign.c
+   M /branches/3.1/src/cos.c
+   M /branches/3.1/src/cosh.c
+   M /branches/3.1/src/cot.c
+   M /branches/3.1/src/coth.c
+   M /branches/3.1/src/csc.c
+   M /branches/3.1/src/csch.c
+   M /branches/3.1/src/d_div.c
+   M /branches/3.1/src/d_sub.c
+   M /branches/3.1/src/digamma.c
+   M /branches/3.1/src/dim.c
+   M /branches/3.1/src/div.c
+   M /branches/3.1/src/div_2exp.c
+   M /branches/3.1/src/div_2si.c
+   M /branches/3.1/src/div_2ui.c
+   M /branches/3.1/src/div_d.c
+   M /branches/3.1/src/div_ui.c
+   M /branches/3.1/src/dump.c
+   M /branches/3.1/src/eint.c
+   M /branches/3.1/src/eq.c
+   M /branches/3.1/src/erf.c
+   M /branches/3.1/src/erfc.c
+   M /branches/3.1/src/exceptions.c
+   M /branches/3.1/src/exp.c
+   M /branches/3.1/src/exp10.c
+   M /branches/3.1/src/exp2.c
+   M /branches/3.1/src/exp3.c
+   M /branches/3.1/src/exp_2.c
+   M /branches/3.1/src/expm1.c
+   M /branches/3.1/src/extract.c
+   M /branches/3.1/src/factorial.c
+   M /branches/3.1/src/fits_intmax.c
+   M /branches/3.1/src/fits_s.h
+   M /branches/3.1/src/fits_sint.c
+   M /branches/3.1/src/fits_slong.c
+   M /branches/3.1/src/fits_sshort.c
+   M /branches/3.1/src/fits_u.h
+   M /branches/3.1/src/fits_uint.c
+   M /branches/3.1/src/fits_uintmax.c
+   M /branches/3.1/src/fits_ulong.c
+   M /branches/3.1/src/fits_ushort.c
+   M /branches/3.1/src/fma.c
+   M /branches/3.1/src/fms.c
+   M /branches/3.1/src/frac.c
+   M /branches/3.1/src/free_cache.c
+   M /branches/3.1/src/frexp.c
+   M /branches/3.1/src/gamma.c
+   M /branches/3.1/src/gammaonethird.c
+   M /branches/3.1/src/gen_inverse.h
+   M /branches/3.1/src/generic/mparam.h
+   M /branches/3.1/src/get_d.c
+   M /branches/3.1/src/get_d64.c
+   M /branches/3.1/src/get_exp.c
+   M /branches/3.1/src/get_f.c
+   M /branches/3.1/src/get_flt.c
+   M /branches/3.1/src/get_ld.c
+   M /branches/3.1/src/get_si.c
+   M /branches/3.1/src/get_sj.c
+   M /branches/3.1/src/get_str.c
+   M /branches/3.1/src/get_ui.c
+   M /branches/3.1/src/get_uj.c
+   M /branches/3.1/src/get_z.c
+   M /branches/3.1/src/get_z_exp.c
+   M /branches/3.1/src/gmp_op.c
+   M /branches/3.1/src/grandom.c
+   M /branches/3.1/src/hppa/mparam.h
+   M /branches/3.1/src/hypot.c
+   M /branches/3.1/src/ia64/mparam.h
+   M /branches/3.1/src/ieee_floats.h
+   M /branches/3.1/src/init.c
+   M /branches/3.1/src/init2.c
+   M /branches/3.1/src/inits.c
+   M /branches/3.1/src/inits2.c
+   M /branches/3.1/src/inp_str.c
+   M /branches/3.1/src/int_ceil_log2.c
+   M /branches/3.1/src/isinf.c
+   M /branches/3.1/src/isinteger.c
+   M /branches/3.1/src/isnan.c
+   M /branches/3.1/src/isnum.c
+   M /branches/3.1/src/isqrt.c
+   M /branches/3.1/src/isregular.c
+   M /branches/3.1/src/iszero.c
+   M /branches/3.1/src/jn.c
+   M /branches/3.1/src/jyn_asympt.c
+   M /branches/3.1/src/li2.c
+   M /branches/3.1/src/lngamma.c
+   M /branches/3.1/src/log.c
+   M /branches/3.1/src/log10.c
+   M /branches/3.1/src/log1p.c
+   M /branches/3.1/src/log2.c
+   M /branches/3.1/src/logging.c
+   M /branches/3.1/src/min_prec.c
+   M /branches/3.1/src/minmax.c
+   M /branches/3.1/src/modf.c
+   M /branches/3.1/src/mp_clz_tab.c
+   M /branches/3.1/src/mparam_h.in
+   M /branches/3.1/src/mpf2mpfr.h
+   M /branches/3.1/src/mpfr-gmp.c
+   M /branches/3.1/src/mpfr-gmp.h
+   M /branches/3.1/src/mpfr-impl.h
+   M /branches/3.1/src/mpfr-intmax.h
+   M /branches/3.1/src/mpfr-longlong.h
+   M /branches/3.1/src/mpfr-thread.h
+   M /branches/3.1/src/mpfr.h
+   M /branches/3.1/src/mpn_exp.c
+   M /branches/3.1/src/mul.c
+   M /branches/3.1/src/mul_2exp.c
+   M /branches/3.1/src/mul_2si.c
+   M /branches/3.1/src/mul_2ui.c
+   M /branches/3.1/src/mul_d.c
+   M /branches/3.1/src/mul_ui.c
+   M /branches/3.1/src/mulders.c
+   M /branches/3.1/src/neg.c
+   M /branches/3.1/src/next.c
+   M /branches/3.1/src/out_raw.c
+   M /branches/3.1/src/out_str.c
+   M /branches/3.1/src/pow.c
+   M /branches/3.1/src/pow_si.c
+   M /branches/3.1/src/pow_ui.c
+   M /branches/3.1/src/pow_z.c
+   M /branches/3.1/src/powerof2.c
+   M /branches/3.1/src/powerpc32/mparam.h
+   M /branches/3.1/src/powerpc64/mparam.h
+   M /branches/3.1/src/print_raw.c
+   M /branches/3.1/src/print_rnd_mode.c
+   M /branches/3.1/src/printf.c
+   M /branches/3.1/src/rec_sqrt.c
+   M /branches/3.1/src/reldiff.c
+   M /branches/3.1/src/rem1.c
+   M /branches/3.1/src/rint.c
+   M /branches/3.1/src/root.c
+   M /branches/3.1/src/round_near_x.c
+   M /branches/3.1/src/round_p.c
+   M /branches/3.1/src/round_prec.c
+   M /branches/3.1/src/round_raw_generic.c
+   M /branches/3.1/src/scale2.c
+   M /branches/3.1/src/sec.c
+   M /branches/3.1/src/sech.c
+   M /branches/3.1/src/set.c
+   M /branches/3.1/src/set_d.c
+   M /branches/3.1/src/set_d64.c
+   M /branches/3.1/src/set_dfl_prec.c
+   M /branches/3.1/src/set_exp.c
+   M /branches/3.1/src/set_f.c
+   M /branches/3.1/src/set_flt.c
+   M /branches/3.1/src/set_inf.c
+   M /branches/3.1/src/set_ld.c
+   M /branches/3.1/src/set_nan.c
+   M /branches/3.1/src/set_prc_raw.c
+   M /branches/3.1/src/set_prec.c
+   M /branches/3.1/src/set_q.c
+   M /branches/3.1/src/set_rnd.c
+   M /branches/3.1/src/set_si.c
+   M /branches/3.1/src/set_si_2exp.c
+   M /branches/3.1/src/set_sj.c
+   M /branches/3.1/src/set_str.c
+   M /branches/3.1/src/set_str_raw.c
+   M /branches/3.1/src/set_ui.c
+   M /branches/3.1/src/set_ui_2exp.c
+   M /branches/3.1/src/set_uj.c
+   M /branches/3.1/src/set_z.c
+   M /branches/3.1/src/set_z_exp.c
+   M /branches/3.1/src/set_zero.c
+   M /branches/3.1/src/setmax.c
+   M /branches/3.1/src/setmin.c
+   M /branches/3.1/src/setsign.c
+   M /branches/3.1/src/sgn.c
+   M /branches/3.1/src/si_op.c
+   M /branches/3.1/src/signbit.c
+   M /branches/3.1/src/sin.c
+   M /branches/3.1/src/sin_cos.c
+   M /branches/3.1/src/sinh.c
+   M /branches/3.1/src/sinh_cosh.c
+   M /branches/3.1/src/sparc64/mparam.h
+   M /branches/3.1/src/sqr.c
+   M /branches/3.1/src/sqrt.c
+   M /branches/3.1/src/sqrt_ui.c
+   M /branches/3.1/src/stack_interface.c
+   M /branches/3.1/src/strtofr.c
+   M /branches/3.1/src/sub.c
+   M /branches/3.1/src/sub1.c
+   M /branches/3.1/src/sub1sp.c
+   M /branches/3.1/src/sub_d.c
+   M /branches/3.1/src/sub_ui.c
+   M /branches/3.1/src/subnormal.c
+   M /branches/3.1/src/sum.c
+   M /branches/3.1/src/swap.c
+   M /branches/3.1/src/tan.c
+   M /branches/3.1/src/tanh.c
+   M /branches/3.1/src/uceil_exp2.c
+   M /branches/3.1/src/uceil_log2.c
+   M /branches/3.1/src/ufloor_log2.c
+   M /branches/3.1/src/ui_div.c
+   M /branches/3.1/src/ui_pow.c
+   M /branches/3.1/src/ui_pow_ui.c
+   M /branches/3.1/src/ui_sub.c
+   M /branches/3.1/src/urandom.c
+   M /branches/3.1/src/urandomb.c
+   M /branches/3.1/src/vasprintf.c
+   M /branches/3.1/src/version.c
+   M /branches/3.1/src/volatile.c
+   M /branches/3.1/src/x86/core2/mparam.h
+   M /branches/3.1/src/x86/mparam.h
+   M /branches/3.1/src/x86_64/core2/mparam.h
+   M /branches/3.1/src/x86_64/pentium4/mparam.h
+   M /branches/3.1/src/yn.c
+   M /branches/3.1/src/zeta.c
+   M /branches/3.1/src/zeta_ui.c
+   M /branches/3.1/tests/Makefile.am
+   M /branches/3.1/tests/cmp_str.c
+   M /branches/3.1/tests/data/digamma
+   M /branches/3.1/tests/data/li2
+   M /branches/3.1/tests/memory.c
+   M /branches/3.1/tests/mpf_compat.c
+   M /branches/3.1/tests/mpf_compat.h
+   M /branches/3.1/tests/mpfr-test.h
+   M /branches/3.1/tests/mpfr_compat.c
+   M /branches/3.1/tests/random2.c
+   M /branches/3.1/tests/reuse.c
+   M /branches/3.1/tests/rnd_mode.c
+   M /branches/3.1/tests/tabs.c
+   M /branches/3.1/tests/tacos.c
+   M /branches/3.1/tests/tacosh.c
+   M /branches/3.1/tests/tadd.c
+   M /branches/3.1/tests/tadd1sp.c
+   M /branches/3.1/tests/tadd_d.c
+   M /branches/3.1/tests/tadd_ui.c
+   M /branches/3.1/tests/tagm.c
+   M /branches/3.1/tests/tai.c
+   M /branches/3.1/tests/tasin.c
+   M /branches/3.1/tests/tasinh.c
+   M /branches/3.1/tests/tatan.c
+   M /branches/3.1/tests/tatanh.c
+   M /branches/3.1/tests/taway.c
+   M /branches/3.1/tests/tbuildopt.c
+   M /branches/3.1/tests/tcan_round.c
+   M /branches/3.1/tests/tcbrt.c
+   M /branches/3.1/tests/tcheck.c
+   M /branches/3.1/tests/tcmp.c
+   M /branches/3.1/tests/tcmp2.c
+   M /branches/3.1/tests/tcmp_d.c
+   M /branches/3.1/tests/tcmp_ld.c
+   M /branches/3.1/tests/tcmp_ui.c
+   M /branches/3.1/tests/tcmpabs.c
+   M /branches/3.1/tests/tcomparisons.c
+   M /branches/3.1/tests/tconst_catalan.c
+   M /branches/3.1/tests/tconst_euler.c
+   M /branches/3.1/tests/tconst_log2.c
+   M /branches/3.1/tests/tconst_pi.c
+   M /branches/3.1/tests/tcopysign.c
+   M /branches/3.1/tests/tcos.c
+   M /branches/3.1/tests/tcosh.c
+   M /branches/3.1/tests/tcot.c
+   M /branches/3.1/tests/tcoth.c
+   M /branches/3.1/tests/tcsc.c
+   M /branches/3.1/tests/tcsch.c
+   M /branches/3.1/tests/td_div.c
+   M /branches/3.1/tests/td_sub.c
+   M /branches/3.1/tests/tdigamma.c
+   M /branches/3.1/tests/tdim.c
+   M /branches/3.1/tests/tdiv.c
+   M /branches/3.1/tests/tdiv_d.c
+   M /branches/3.1/tests/tdiv_ui.c
+   M /branches/3.1/tests/teint.c
+   M /branches/3.1/tests/teq.c
+   M /branches/3.1/tests/terf.c
+   M /branches/3.1/tests/tests.c
+   M /branches/3.1/tests/texceptions.c
+   M /branches/3.1/tests/texp.c
+   M /branches/3.1/tests/texp10.c
+   M /branches/3.1/tests/texp2.c
+   M /branches/3.1/tests/texpm1.c
+   M /branches/3.1/tests/tfactorial.c
+   M /branches/3.1/tests/tfits.c
+   M /branches/3.1/tests/tfma.c
+   M /branches/3.1/tests/tfmod.c
+   M /branches/3.1/tests/tfms.c
+   M /branches/3.1/tests/tfprintf.c
+   M /branches/3.1/tests/tfrac.c
+   M /branches/3.1/tests/tfrexp.c
+   M /branches/3.1/tests/tgamma.c
+   M /branches/3.1/tests/tgeneric.c
+   M /branches/3.1/tests/tgeneric_ui.c
+   M /branches/3.1/tests/tget_d.c
+   M /branches/3.1/tests/tget_d_2exp.c
+   M /branches/3.1/tests/tget_f.c
+   M /branches/3.1/tests/tget_flt.c
+   M /branches/3.1/tests/tget_ld_2exp.c
+   M /branches/3.1/tests/tget_set_d64.c
+   M /branches/3.1/tests/tget_sj.c
+   M /branches/3.1/tests/tget_str.c
+   M /branches/3.1/tests/tget_z.c
+   M /branches/3.1/tests/tgmpop.c
+   M /branches/3.1/tests/tgrandom.c
+   M /branches/3.1/tests/thyperbolic.c
+   M /branches/3.1/tests/thypot.c
+   M /branches/3.1/tests/tinits.c
+   M /branches/3.1/tests/tinp_str.c
+   M /branches/3.1/tests/tinternals.c
+   M /branches/3.1/tests/tisnan.c
+   M /branches/3.1/tests/tisqrt.c
+   M /branches/3.1/tests/tj0.c
+   M /branches/3.1/tests/tj1.c
+   M /branches/3.1/tests/tjn.c
+   M /branches/3.1/tests/tl2b.c
+   M /branches/3.1/tests/tlgamma.c
+   M /branches/3.1/tests/tli2.c
+   M /branches/3.1/tests/tlngamma.c
+   M /branches/3.1/tests/tlog.c
+   M /branches/3.1/tests/tlog10.c
+   M /branches/3.1/tests/tlog1p.c
+   M /branches/3.1/tests/tlog2.c
+   M /branches/3.1/tests/tmin_prec.c
+   M /branches/3.1/tests/tminmax.c
+   M /branches/3.1/tests/tmodf.c
+   M /branches/3.1/tests/tmul.c
+   M /branches/3.1/tests/tmul_2exp.c
+   M /branches/3.1/tests/tmul_d.c
+   M /branches/3.1/tests/tmul_ui.c
+   M /branches/3.1/tests/tnext.c
+   M /branches/3.1/tests/tout_str.c
+   M /branches/3.1/tests/toutimpl.c
+   M /branches/3.1/tests/tpow.c
+   M /branches/3.1/tests/tpow3.c
+   M /branches/3.1/tests/tpow_all.c
+   M /branches/3.1/tests/tpow_z.c
+   M /branches/3.1/tests/tprintf.c
+   M /branches/3.1/tests/trandom.c
+   M /branches/3.1/tests/trec_sqrt.c
+   M /branches/3.1/tests/tremquo.c
+   M /branches/3.1/tests/trint.c
+   M /branches/3.1/tests/troot.c
+   M /branches/3.1/tests/tround_prec.c
+   M /branches/3.1/tests/tsec.c
+   M /branches/3.1/tests/tsech.c
+   M /branches/3.1/tests/tset.c
+   M /branches/3.1/tests/tset_d.c
+   M /branches/3.1/tests/tset_exp.c
+   M /branches/3.1/tests/tset_f.c
+   M /branches/3.1/tests/tset_ld.c
+   M /branches/3.1/tests/tset_q.c
+   M /branches/3.1/tests/tset_si.c
+   M /branches/3.1/tests/tset_sj.c
+   M /branches/3.1/tests/tset_str.c
+   M /branches/3.1/tests/tset_z.c
+   M /branches/3.1/tests/tset_z_exp.c
+   M /branches/3.1/tests/tsgn.c
+   M /branches/3.1/tests/tsi_op.c
+   M /branches/3.1/tests/tsin.c
+   M /branches/3.1/tests/tsin_cos.c
+   M /branches/3.1/tests/tsinh.c
+   M /branches/3.1/tests/tsinh_cosh.c
+   M /branches/3.1/tests/tsprintf.c
+   M /branches/3.1/tests/tsqr.c
+   M /branches/3.1/tests/tsqrt.c
+   M /branches/3.1/tests/tsqrt_ui.c
+   M /branches/3.1/tests/tstckintc.c
+   M /branches/3.1/tests/tstdint.c
+   M /branches/3.1/tests/tstrtofr.c
+   M /branches/3.1/tests/tsub.c
+   M /branches/3.1/tests/tsub1sp.c
+   M /branches/3.1/tests/tsub_d.c
+   M /branches/3.1/tests/tsub_ui.c
+   M /branches/3.1/tests/tsubnormal.c
+   M /branches/3.1/tests/tsum.c
+   M /branches/3.1/tests/tswap.c
+   M /branches/3.1/tests/ttan.c
+   M /branches/3.1/tests/ttanh.c
+   M /branches/3.1/tests/ttrunc.c
+   M /branches/3.1/tests/tui_div.c
+   M /branches/3.1/tests/tui_pow.c
+   M /branches/3.1/tests/tui_sub.c
+   M /branches/3.1/tests/turandom.c
+   M /branches/3.1/tests/tvalist.c
+   M /branches/3.1/tests/tversion.c
+   M /branches/3.1/tests/ty0.c
+   M /branches/3.1/tests/ty1.c
+   M /branches/3.1/tests/tyn.c
+   M /branches/3.1/tests/tzeta.c
+   M /branches/3.1/tests/tzeta_ui.c
+   M /branches/3.1/tools/ck-copyright-notice
+   M /branches/3.1/tools/ck-mparam
+   M /branches/3.1/tools/ck-news
+   M /branches/3.1/tools/ck-version-info
+   M /branches/3.1/tools/get_patches.sh
+   M /branches/3.1/tune/Makefile.am
+   M /branches/3.1/tune/bidimensional_sample.c
+   M /branches/3.1/tune/speed.c
+   M /branches/3.1/tune/tuneup.c
+
+Copyright notice update: added 2017 with
+  perl -pi -e 's/ (\d{4}-)?(2016)(?= Free Software)/
+               " ".($1||"$2-").($2+1)/e' **/*(^/)
+under zsh (the m4 and tools/mbench directories were not modified).
+Removed 2016 from the example in the doc/README.dev file.
+------------------------------------------------------------------------
+r11069 | vlefevre | 2016-12-19 16:11:17 +0000 (Mon, 19 Dec 2016) | 5 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/strtofr.c
+   M /branches/3.1/tests/tstrtofr.c
+
+[src/strtofr.c] Fixed bug in mpfr_strtofr(): in round-to-nearest,
+  the ternary value could be incorrect.
+[tests/tstrtofr.c] Added test case.
+(merged changesets from the trunk: r11055, a part of r11056, and
+r11059,11066-11068)
+------------------------------------------------------------------------
+r11043 | vlefevre | 2016-12-15 07:45:45 +0000 (Thu, 15 Dec 2016) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/vasprintf.c
+   M /branches/3.1/tests/tsprintf.c
+
+[src/vasprintf.c] Fixed a bug: spec.prec can be a negative number other
+  than -1 (when such a value is given as an argument with ".*").
+[tests/tsprintf.c] Added non-regression test.
+(merged changesets r11037-11038 from the trunk)
+------------------------------------------------------------------------
+r10921 | vlefevre | 2016-10-25 06:59:05 +0000 (Tue, 25 Oct 2016) | 2 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/mpfr-impl.h
+
+[src/mpfr-impl.h] Fixed r10917 (thanks to Eli Zaretskii for the report).
+(merged changeset r10920 from the trunk)
+------------------------------------------------------------------------
+r10919 | vlefevre | 2016-10-24 13:31:44 +0000 (Mon, 24 Oct 2016) | 2 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/mpfr-impl.h
+
+[src/mpfr-impl.h] Improved a macro from r10917 (just in case...).
+(merged changeset r10918 from the trunk)
+------------------------------------------------------------------------
+r10917 | vlefevre | 2016-10-24 13:03:53 +0000 (Mon, 24 Oct 2016) | 9 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/const_catalan.c
+   M /branches/3.1/src/const_euler.c
+   M /branches/3.1/src/const_log2.c
+   M /branches/3.1/src/const_pi.c
+   M /branches/3.1/src/exceptions.c
+   M /branches/3.1/src/mpfr-impl.h
+   M /branches/3.1/src/set_dfl_prec.c
+   M /branches/3.1/src/set_rnd.c
+
+[src] Support build as thread-safe DLL on Windows: clean-up.
+  * Increased the use of macros to avoid some code duplication
+    (with risks of typos) and to prevent the problems related
+    to thread-safe DLL from appearing in the .c files.
+  * The prototypes of the functions to access the address of a
+    TLS variable are now defined. Otherwise one gets warnings:
+    https://sympa.inria.fr/sympa/arc/mpfr/2016-10/msg00004.html
+(merged changeset r10916 from the trunk, with conflict resolved
+by replacing mpfr_flags_t with unsigned int)
+------------------------------------------------------------------------
+r10896 | vlefevre | 2016-09-27 09:17:54 +0000 (Tue, 27 Sep 2016) | 1 line
+Changed paths:
+   M /branches/3.1/INSTALL
+   M /branches/3.1/VERSION
+   M /branches/3.1/configure.ac
+   M /branches/3.1/doc/mpfr.texi
+   M /branches/3.1/src/mpfr.h
+   M /branches/3.1/src/version.c
+
+Updated version to 3.1.6-dev.
+------------------------------------------------------------------------
+r10892 | vlefevre | 2016-09-27 07:51:01 +0000 (Tue, 27 Sep 2016) | 1 line
+Changed paths:
+   M /branches/3.1/ChangeLog
+
+ChangeLog update with "TZ=UTC svn log -rHEAD:0 -v" (in UTF-8 locales).
+------------------------------------------------------------------------
 r10891 | vlefevre | 2016-09-27 07:48:20 +0000 (Tue, 27 Sep 2016) | 1 line
 Changed paths:
    M /branches/3.1/VERSION
@@ -10747,7 +11744,7 @@ Changed paths:
    M /trunk/src/mul.c
 
 [mul.c] fixed bug introduced in revision 7183, and reported by Brian Gladman
-	on Windows, where mpfr_exp_t has 32 bits and mpfr_limb_t has 64 bits
+	on Windows, where mpfr_exp_t has 32 bits and mp_limb_t has 64 bits
 
 ------------------------------------------------------------------------
 r7257 | vlefevre | 2010-11-09 14:24:34 +0000 (Tue, 09 Nov 2010) | 2 lines

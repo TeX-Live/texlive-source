@@ -1,6 +1,6 @@
 /* mpfr.h -- Include file for mpfr.
 
-Copyright 1999-2016 Free Software Foundation, Inc.
+Copyright 1999-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -26,8 +26,8 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 /* Define MPFR version number */
 #define MPFR_VERSION_MAJOR 3
 #define MPFR_VERSION_MINOR 1
-#define MPFR_VERSION_PATCHLEVEL 5
-#define MPFR_VERSION_STRING "3.1.5"
+#define MPFR_VERSION_PATCHLEVEL 6
+#define MPFR_VERSION_STRING "3.1.6"
 
 /* Macros dealing with MPFR VERSION */
 #define MPFR_VERSION_NUM(a,b,c) (((a) << 16L) | ((b) << 8) | (c))

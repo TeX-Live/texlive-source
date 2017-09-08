@@ -1,7 +1,7 @@
 /* mpfr_vasprintf -- main function for the printf functions family
    plus helper macros & functions.
 
-Copyright 2007-2016 Free Software Foundation, Inc.
+Copyright 2007-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -51,6 +51,8 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #else
 #include <stddef.h>             /* for ptrdiff_t */
 #endif
+
+#include <errno.h>
 
 #define MPFR_NEED_LONGLONG_H
 #include "mpfr-intmax.h"
@@ -1452,7 +1454,7 @@ partition_number (struct number_parts *np, mpfr_srcptr p,
                   struct printf_spec spec)
 {
   char *str;
-  long total;
+  unsigned int total;  /* can hold the sum of two non-negative int's + 1 */
   int uppercase;
 
   /* WARNING: left justification means right space padding */
@@ -1593,7 +1595,7 @@ partition_number (struct number_parts *np, mpfr_srcptr p,
         }
       else if (spec.spec == 'f' || spec.spec == 'F')
         {
-          if (spec.prec == -1)
+          if (spec.prec < 0)
             spec.prec = 6;
           if (regular_fg (np, p, spec, NULL) == -1)
             goto error;
@@ -1645,43 +1647,43 @@ partition_number (struct number_parts *np, mpfr_srcptr p,
 
   /* compute the number of characters to be written verifying it is not too
      much */
+
+#define INCR_TOTAL(v)                           \
+  do {                                          \
+    MPFR_ASSERTD ((v) >= 0);                    \
+    if (MPFR_UNLIKELY ((v) > INT_MAX))          \
+      goto error;                               \
+    total += (v);                               \
+    if (MPFR_UNLIKELY (total > INT_MAX))        \
+      goto error;                               \
+  } while (0)
+
   total = np->sign ? 1 : 0;
-  total += np->prefix_size;
-  total += np->ip_size;
-  if (MPFR_UNLIKELY (total < 0 || total > INT_MAX))
-    goto error;
-  total += np->ip_trailing_zeros;
-  if (MPFR_UNLIKELY (total < 0 || total > INT_MAX))
-    goto error;
+  INCR_TOTAL (np->prefix_size);
+  INCR_TOTAL (np->ip_size);
+  INCR_TOTAL (np->ip_trailing_zeros);
+  MPFR_ASSERTD (np->ip_size + np->ip_trailing_zeros >= 1);
   if (np->thousands_sep)
     /* ' flag, style f and the thousands separator in current locale is not
        reduced to the null character */
-    total += (np->ip_size + np->ip_trailing_zeros) / 3;
-  if (MPFR_UNLIKELY (total < 0 || total > INT_MAX))
-    goto error;
+    INCR_TOTAL ((np->ip_size + np->ip_trailing_zeros - 1) / 3);
   if (np->point)
     ++total;
-  total += np->fp_leading_zeros;
-  if (MPFR_UNLIKELY (total < 0 || total > INT_MAX))
-    goto error;
-  total += np->fp_size;
-  if (MPFR_UNLIKELY (total < 0 || total > INT_MAX))
-    goto error;
-  total += np->fp_trailing_zeros;
-  if (MPFR_UNLIKELY (total < 0 || total > INT_MAX))
-    goto error;
-  total += np->exp_size;
-  if (MPFR_UNLIKELY (total < 0 || total > INT_MAX))
-    goto error;
+  INCR_TOTAL (np->fp_leading_zeros);
+  INCR_TOTAL (np->fp_size);
+  INCR_TOTAL (np->fp_trailing_zeros);
+  INCR_TOTAL (np->exp_size);
 
   if (spec.width > total)
     /* pad with spaces or zeros depending on np->pad_type */
     {
       np->pad_size = spec.width - total;
       total += np->pad_size; /* here total == spec.width,
-                                so 0 < total < INT_MAX */
+                                so 0 < total <= INT_MAX */
+      MPFR_ASSERTD (total == spec.width);
     }
 
+  MPFR_ASSERTD (total > 0 && total <= INT_MAX);
   return total;
 
  error:

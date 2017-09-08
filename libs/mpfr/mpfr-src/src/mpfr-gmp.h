@@ -1,6 +1,6 @@
 /* Interface to replace gmp-impl.h
 
-Copyright 2004-2016 Free Software Foundation, Inc.
+Copyright 2004-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -249,8 +249,6 @@ __MPFR_DECLSPEC extern gmp_randstate_t  mpfr_rands;
         gmp_randclear (__gmp_rands);    \
       }                                 \
   } while (0)
-
-typedef __gmp_randstate_struct *gmp_randstate_ptr;
 
 /* Allocate func are defined in gmp-impl.h */
 

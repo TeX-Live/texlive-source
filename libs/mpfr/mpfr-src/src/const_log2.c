@@ -1,6 +1,6 @@
 /* mpfr_const_log2 -- compute natural logarithm of 2
 
-Copyright 1999, 2001-2016 Free Software Foundation, Inc.
+Copyright 1999, 2001-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -25,21 +25,11 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 
 /* Declare the cache */
 #ifndef MPFR_USE_LOGGING
-MPFR_DECL_INIT_CACHE(__gmpfr_cache_const_log2, mpfr_const_log2_internal);
+MPFR_DECL_INIT_CACHE (__gmpfr_cache_const_log2, mpfr_const_log2_internal)
 #else
-MPFR_DECL_INIT_CACHE(__gmpfr_normal_log2, mpfr_const_log2_internal);
-MPFR_DECL_INIT_CACHE(__gmpfr_logging_log2, mpfr_const_log2_internal);
-MPFR_THREAD_ATTR mpfr_cache_ptr __gmpfr_cache_const_log2 = __gmpfr_normal_log2;
-#endif
-
-#ifdef MPFR_WIN_THREAD_SAFE_DLL
-# ifndef MPFR_USE_LOGGING
-mpfr_cache_t   * __gmpfr_cache_const_log2_f() { return &__gmpfr_cache_const_log2; }
-# else
-mpfr_cache_t   * __gmpfr_normal_log2_f()      { return &__gmpfr_normal_log2; }
-mpfr_cache_t   * __gmpfr_logging_log2_f()     { return &__gmpfr_logging_log2; }
-mpfr_cache_ptr * __gmpfr_cache_const_log2_f() { return &__gmpfr_cache_const_log2; }
-# endif
+MPFR_DECL_INIT_CACHE (__gmpfr_normal_log2, mpfr_const_log2_internal)
+MPFR_DECL_INIT_CACHE (__gmpfr_logging_log2, mpfr_const_log2_internal)
+MPFR_THREAD_VAR (mpfr_cache_ptr, __gmpfr_cache_const_log2, __gmpfr_normal_log2)
 #endif
 
 /* Set User interface */

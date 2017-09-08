@@ -1,6 +1,6 @@
 /* mpfr_sin_cos -- sine and cosine of a floating-point number
 
-Copyright 2002-2016 Free Software Foundation, Inc.
+Copyright 2002-2017 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -350,10 +350,12 @@ sin_bs_aux (mpz_t Q0, mpz_t S0, mpz_t C0, mpz_srcptr p, mpfr_prec_t r,
          which reduces to T[k] = (2*i+2)*(2*i+3)*2^r-pp,
          Q[k] = (2*i)*(2*i+1)*(2*i+2)*(2*i+3). */
       log2_nb_terms[k] = 1;
-      mpz_set_ui (Q[k], (2 * i + 2) * (2 * i + 3));
+      mpz_set_ui (Q[k], 2 * i + 2);
+      mpz_mul_ui (Q[k], Q[k], 2 * i + 3);
       mpz_mul_2exp (T[k], Q[k], r);
       mpz_sub (T[k], T[k], pp);
-      mpz_mul_ui (Q[k], Q[k], (2 * i) * (2 * i + 1));
+      mpz_mul_ui (Q[k], Q[k], 2 * i);
+      mpz_mul_ui (Q[k], Q[k], 2 * i + 1);
       /* the next term of the series is divided by Q[k] and multiplied
          by pp^2/2^(2r), thus the mult. factor < 1/2^mult[k] */
       mult[k] = mpz_sizeinbase (Q[k], 2) + 2 * r - size_ptoj[1] - 1;
