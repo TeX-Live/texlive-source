@@ -1,3 +1,9 @@
+2017-09-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+	and Noriyuki Abe  <abenori@math.sci.hokudai.ac.jp>
+
+	* eptex.ech: \epTeXinputencoding works also with the terminal.
+	* eptex.defines: Add a new function setstdinenc().
+
 2017-09-06  Noriyuki Abe  <abenori@math.sci.hokudai.ac.jp>
 
 	* eptex.ech: fix a bug in \epTeXinputencoding.
