@@ -1,3 +1,7 @@
+2017-09-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* euptex.defines: Add a new function setstdinenc().
+
 2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* euptex.ch0: Adapt to changes in ptexdir/ptex-base.ch (p\TeX -> \pTeX).

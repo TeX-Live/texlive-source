@@ -20,6 +20,7 @@
 @define function inputline2 ();
 
 @define function setinfileenc ();
+@define function setstdinenc ();
 
 @define function fromJIS ();
 @define function fromEUC ();
