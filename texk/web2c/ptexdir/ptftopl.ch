@@ -92,6 +92,7 @@ else
   if eof(tfm_file) then abort('The input file is only four bytes long!');
   read(tfm_file,tfm[4]);
   if eof(tfm_file) then abort('The input file is only five bytes long!');
+  if tfm[4]>127 then abort('The fifth byte of the input file exceeds 127!');
   read(tfm_file,tfm[5]); lf:=tfm[4]*@'400+tfm[5];
   tmp_ptr:=6;
   end;
