@@ -188,6 +188,21 @@ endif('notdef')
 @d out(#)==putbyte(#,tfm_file)
 @z
 
+% [130] web2c extends the range of 'lf' from 0..32767 into
+% short (-32768..32767), but the overflow here ends up in
+% Bad metric (TFM) file. So we add test here.
+@x
+lf:=6+lh+(ec-bc+1)+memory[width]+memory[height]+memory[depth]+
+memory[italic]+nl+lk_offset+nk+ne+np;
+@y
+lf:=6+lh+(ec-bc+1)+memory[width]+memory[height]+memory[depth]+
+memory[italic]+nl+lk_offset+nk+ne+np;
+if lf<0 then begin
+  print_ln('The total number of words in the TFM file too large!');
+  uexit(1);
+  end
+@z
+
 @x [136] Fix output of reals.
 @p procedure out_scaled(x:fix_word); {outputs a scaled |fix_word|}
 var @!n:byte; {the first byte after the sign}
