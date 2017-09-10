@@ -35,6 +35,8 @@ accfonts/vpl2ovp
 accfonts/vpl2vpl
 arara/arara.sh
 authorindex/authorindex
+bib2gls/bib2gls.sh
+bib2gls/convertgls2bib.sh
 bundledoc/arlatex
 bundledoc/bundledoc
 cachepic/cachepic.tlu
