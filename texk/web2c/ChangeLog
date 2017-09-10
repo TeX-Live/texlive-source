@@ -1,3 +1,9 @@
+2017-09-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pltotf.ch: web2c extends the range of 'lf' from 0..32767
+	into short (-32768..32767), but the overflow here ends up in
+	Bad metric (TFM) file. So add a test.
+
 2017-03-27  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
