@@ -46,6 +46,7 @@ installdirs-local:
 ##
 ## WIN_WRAPPER is w32_wrapper for 32-bit or w64_wrapper for 64-bit.
 ## 
+## The "shell" list aren't just shell scripts, in either direction.
 ## Some /bin/sh scripts are listed as `other' or `context'
 ## scripts because they are correctly handled by the wrapper binaries.
 ## Conversely, some non-sh scripts are listed as `shell' because they
@@ -90,6 +91,8 @@ texmf_other_scripts = \
 	accfonts/vpl2vpl \
 	arara/arara.sh \
 	authorindex/authorindex \
+	bib2gls/bib2gls.sh \
+	bib2gls/convertgls2bib.sh \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
