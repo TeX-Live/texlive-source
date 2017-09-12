@@ -96,6 +96,7 @@
 #   endif
 
 #include <stdlib.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -125,12 +126,11 @@ typedef char *(*synctex_node_str_f)(synctex_node_p);
  *  Each nodes has a class, it is therefore called an object.
  *  Each class has a unique scanner.
  *  Each class has a type which is a unique identifier.
- *  Each class has a node mask which identifies node's attributes.
- *  Each class has an info mask which info's attributes.
  *  The class points to various methods,
  *  each of them vary amongst objects.
- *  The navigator records the offsets of the tree members getters.
- *  The modelator records the offsets of the data members getters, relative to the last navigator getter.
+ *  Each class has a data model which stores node's attributes.
+ *  Each class has an tree model which stores children and parent.
+ *  Inspectors give access to data and tree elements.
  */
 
 /*  8 fields + size: spcflnat */
@@ -265,9 +265,9 @@ struct synctex_class_t {
 
 /**
  *  Nota bene: naming convention.
- *  For static API, when the name contains proxy, it applies to proxies.
- *  When the name contains noxy, it applies to non proxies only.
- *  When the name contains node, weel it depends...
+ *  For static API, when the name contains "proxy", it applies to proxies.
+ *  When the name contains "noxy", it applies to non proxies only.
+ *  When the name contains "node", well it depends...
  */
 
 typedef synctex_node_p synctex_proxy_p;
@@ -2391,7 +2391,7 @@ SYNCTEX_INLINE static synctex_node_p __synctex_new_proxy_from_ref_to(synctex_nod
         return NULL;
     }
     _synctex_data_set_h(proxy, _synctex_data_h(ref));
-    _synctex_data_set_v(proxy, _synctex_data_v(ref));
+    _synctex_data_set_v(proxy, _synctex_data_v(ref)-_synctex_data_height(to_node));
     _synctex_tree_set_target(proxy,to_node);
 #   if defined(SYNCTEX_USE_CHARINDEX)
     proxy->line_index=to_node?to_node->line_index:0;
@@ -5194,9 +5194,11 @@ content_loop:
                     synctex_node_p node = _synctex_tree_child(parent);
                     synctex_node_p sibling = NULL;
                     /*  Ignore the first node (a box_bdry) */
-                    if (node && (node = __synctex_tree_sibling(node))) {
+                    if (node && (sibling = __synctex_tree_sibling(node))) {
                         unsigned int node_weight = 0;
                         unsigned int cumulated_line_numbers = 0;
+                        _synctex_data_set_line(node, _synctex_data_line(sibling));
+                        node = sibling;
                         do {
                             if (synctex_node_type(node)==synctex_node_type_hbox) {
                                 if (_synctex_data_weight(node)) {
@@ -6752,12 +6754,19 @@ int synctex_node_column(synctex_node_p node) {
  *  - author: JL
  */
 int synctex_node_mean_line(synctex_node_p node) {
-    synctex_node_p target = _synctex_tree_target(node);
-    if (target) {
-        node = target;
+    synctex_node_p other = _synctex_tree_target(node);
+    if (other) {
+        node = other;
     }
-    return _synctex_data_has_mean_line(node)?
-    _synctex_data_mean_line(node):_synctex_data_line(node);
+    if (_synctex_data_has_mean_line(node)) {
+        return _synctex_data_mean_line(node);
+    }
+    if ((other = synctex_node_parent(node))) {
+        if (_synctex_data_has_mean_line(other)) {
+            return _synctex_data_mean_line(other);
+        }
+    }
+    return synctex_node_line(node);
 }
 /**
  *  The weight of the node.
