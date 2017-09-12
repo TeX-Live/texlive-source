@@ -369,7 +369,6 @@ extern "C" {
 
     int synctex_node_form_tag(synctex_node_p node);
     
-    int synctex_node_mean_line(synctex_node_p node);
     int synctex_node_weight(synctex_node_p node);
     int synctex_node_child_count(synctex_node_p node);
     
