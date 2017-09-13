@@ -5,7 +5,7 @@ use strict;			# to be sure, that all is safe ... :-)
 use v5.18;
 # $Id: pst2pdf.pl 119 2014-09-24 12:04:09Z herbert $
 # v. 0.16	 2014-09-14 simplify the use of PSTricks with pdf
-# 2014-09-24	(c) Herbert Voss <hvoss@tug.org> 
+# 2017-09-11	(c) Herbert Voss <hvoss@tug.org> 
 #                   Pablo González Luengo <pablogonz@yahoo.com>
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -59,10 +59,10 @@ my $other    = "other";     		# search other verbatim environment
 
 #---------------- Program identification, options and help -------------
 my $program = 'pst2pdf';
-my $nv='v0.16';
-my $ident = '$Id: pst2pdf.pl 119 2014-09-24 12:04:09Z herbert $';
+my $nv='v0.17';
+my $ident = '$Id: pst2pdf.pl 119 2017-09-11 12:04:09Z herbert $';
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2011-2014 (c) Herbert Voss <hvoss\@tug.org> and Pablo González.
+Copyright 2011-2017 (c) Herbert Voss <hvoss\@tug.org> and Pablo González.
 END_COPYRIGHT
 my $licensetxt= <<END_LICENSE ;
     This program is free software; you can redistribute it and/or modify
@@ -502,7 +502,7 @@ my $archivo;
 close $ENTRADA;
  
 ## Partición del documento
-my($cabeza,$cuerpo,$final) = $archivo =~ m/\A (.+? ^\\begin{document}) (.+) (^ \\end{document} .*) \z/msx;
+my($cabeza,$cuerpo,$final) = $archivo =~ m/\A (.+? ^\\begin\{document\}) (.+) (^ \\end\{document\} .*) \z/msx;
 
 ## Variables y constantes
 my $no_del = "\0";
