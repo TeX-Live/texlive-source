@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45190 2017-09-01 08:01:01Z preining $
+# $Id: tlmgr.pl 45275 2017-09-12 00:47:29Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45190 $';
-my $datrev = '$Date: 2017-09-01 10:01:01 +0200 (Fri, 01 Sep 2017) $';
+my $svnrev = '$Revision: 45275 $';
+my $datrev = '$Date: 2017-09-12 02:47:29 +0200 (Tue, 12 Sep 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -3702,9 +3702,9 @@ sub show_one_package_detail {
       print "installed:   No\n";
       return($F_OK);
     }
-    #if (!$remotetlpdb) {
-    #  init_tlmedia_or_die();
-    #}
+    if (!$remotetlpdb) {
+      init_tlmedia_or_die(1);
+    }
     if (defined($tag)) {
       if (!$remotetlpdb->is_virtual) {
         tlwarn("$prg: specifying implicit tags not allowed for non-virtual databases!\n");
@@ -3724,39 +3724,33 @@ sub show_one_package_detail {
         tlwarn("$prg: Cannot find package $pkg in repository $tag\n");
         return($F_WARNING);
       }
-      if ($remotetlpdb->is_virtual) {
+      my @cand = $remotetlpdb->candidates($pkg);
+      if (@cand) {
+        # if @cand is not empty, then we have a virtual database
         # we might have a package that is available in a
         # subsidiary repository, but not installable
         # because it is not pinned
         # we will list it but warn about this fact
-        my @cand = $remotetlpdb->candidates($pkg);
-        if (@cand) {
-          my $first = shift @cand;
-          if (defined($first)) {
-            tlwarn("$prg: strange, we have a first candidate but no tlp: $pkg\n");
-            return($F_WARNING);
-          }
-          # already shifted away the first element
-          if ($#cand >= 0) {
-            # recursively showing all tags, but warn
-            print "package:     ", $pkg, "\n";
-            print "WARNING:     This package is not pinned but present in subsidiary repositories\n";
-            print "WARNING:     As long as it is not pinned it is not installable.\n";
-            print "WARNING:     Listing all available copies of the package.\n";
-            my @aaa;
-            for my $a (@cand) {
-              my ($t,$r) = split(/\//, $a, 2);
-              push @aaa, "$pkg" . '@' . $t;
-            }
-            $ret |= action_info(@aaa);
-            return($ret);
-          } else {
-            tlwarn("$prg: strange, package listed but no residual candidates: $pkg\n");
-            return($F_WARNING);
-          }
-        } else {
-          tlwarn("$prg: strange, package listed but no candidates: $pkg\n");
+        # useless test, @cand will always be defined becuase $remotetlpdb is virtual
+        my $first = shift @cand;
+        if (defined($first)) {
+          tlwarn("$prg: strange, we have a first candidate but no tlp: $pkg\n");
           return($F_WARNING);
+        }
+        # already shifted away the first element
+        if ($#cand >= 0) {
+          # recursively showing all tags, but warn
+          print "package:     ", $pkg, "\n";
+          print "WARNING:     This package is not pinned but present in subsidiary repositories\n";
+          print "WARNING:     As long as it is not pinned it is not installable.\n";
+          print "WARNING:     Listing all available copies of the package.\n";
+          my @aaa;
+          for my $a (@cand) {
+            my ($t,$r) = split(/\//, $a, 2);
+            push @aaa, "$pkg" . '@' . $t;
+          }
+          $ret |= action_info(@aaa);
+          return($ret);
         }
       }
       # we didn't find a package like this, so use search
@@ -9078,7 +9072,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45190 2017-09-01 08:01:01Z preining $
+$Id: tlmgr.pl 45275 2017-09-12 00:47:29Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
