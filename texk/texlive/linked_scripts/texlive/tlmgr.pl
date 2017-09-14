@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45275 2017-09-12 00:47:29Z preining $
+# $Id: tlmgr.pl 45286 2017-09-13 01:55:27Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45275 $';
-my $datrev = '$Date: 2017-09-12 02:47:29 +0200 (Tue, 12 Sep 2017) $';
+my $svnrev = '$Revision: 45286 $';
+my $datrev = '$Date: 2017-09-13 03:55:27 +0200 (Wed, 13 Sep 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -6454,7 +6454,7 @@ END_NO_CHECKSUMS
   my $verstat = "";
   if (!$remotetlpdb->virtual_get_tlpdb('main')->is_verified) {
     $verstat = ": ";
-    $verstat .= $remotetlpdb->virtual_get_tlpdb('main')->verification_status;
+    $verstat .= $VerificationStatusDescription{$remotetlpdb->virtual_get_tlpdb('main')->verification_status};
   }
   info("\tmain = " . $repos{'main'} . " (" . 
     ($remotetlpdb->virtual_get_tlpdb('main')->is_verified ? "" : "not ") .
@@ -6464,7 +6464,7 @@ END_NO_CHECKSUMS
       $verstat = "";
       if (!$remotetlpdb->virtual_get_tlpdb($t)->is_verified) {
         $verstat = ": ";
-        $verstat .= $remotetlpdb->virtual_get_tlpdb($t)->verification_status;
+        $verstat .= $VerificationStatusDescription{$remotetlpdb->virtual_get_tlpdb($t)->verification_status};
       }
       info("\t$t = " . $repos{$t} . " (" .
         ($remotetlpdb->virtual_get_tlpdb($t)->is_verified ? "" : "not ") .
@@ -6511,7 +6511,7 @@ sub _init_tlmedia {
     my $verstat = "";
     if (!$remotetlpdb->is_verified) {
       $verstat = ": ";
-      $verstat .= $remotetlpdb->verification_status;
+      $verstat .= $VerificationStatusDescription{$remotetlpdb->verification_status};
     }
     info("$prg: package repository $location (" . 
       ($remotetlpdb->is_verified ? "" : "not ") . "verified$verstat)\n");
@@ -6561,7 +6561,7 @@ sub setup_one_remotetlpdb {
 
       my ($ret,$msg)
         = TeXLive::TLCrypto::verify_checksum($loc_copy_of_remote_tlpdb, $path);
-      if ($ret == -1) {
+      if ($ret == $VS_CONNECTION_ERROR) {
         info(<<END_NO_INTERNET);
 No connection to the internet.
 Unable to download the checksum of the remote TeX Live database,
@@ -6577,23 +6577,28 @@ END_NO_INTERNET
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
-      } elsif ($ret == -2) {
+      } elsif ($ret == $VS_UNSIGNED) {
+        # we require the main database to be signed, but allow for
+        # subsidiary to be unsigned
+        if ($is_main) {
+          tldie("$prg: main database at $location is not signed: $msg\n");
+        }
         # the remote database has not be signed, warn
         debug("$prg: remote database is not signed, continuing anyway!\n");
-      } elsif ($ret == -3) {
+      } elsif ($ret == $VS_GPG_UNAVAILABLE) {
         # no gpg available
         debug("$prg: no gpg available for verification, continuing anyway!\n");
-      } elsif ($ret == -4) {
+      } elsif ($ret == $VS_PUBKEY_MISSING) {
         # pubkey missing
         debug("$prg: $msg, continuing anyway!\n");
-      } elsif ($ret == 1) {
+      } elsif ($ret == $VS_CHECKSUM_ERROR) {
         # no problem, checksum is wrong, we need to get new tlpdb
-      } elsif ($ret == 2) {
+      } elsif ($ret == $VS_SIGNATURE_ERROR) {
         # umpf, signature error
         # TODO should we die here? Probably yes because one of 
         # checksum file or signature file has changed!
         tldie("$prg: verification of checksum for $location failed: $msg\n");
-      } elsif ($ret == 0) {
+      } elsif ($ret == $VS_VERIFIED) {
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
@@ -6606,6 +6611,12 @@ END_NO_INTERNET
   }
   if (!$local_copy_tlpdb_used) {
     $remotetlpdb = TeXLive::TLPDB->new(root => $location, verify => 1);
+    if ($is_main) {
+      if ($remotetlpdb->verification_status == $VS_UNSIGNED) {
+        # we don't allow unsigned main data bases!
+        tldie("$prg: main database at $location is not signed\n");
+      }
+    }
   }
   if (!defined($remotetlpdb)) {
     return(undef, $loadmediasrcerror . $location);
@@ -9072,7 +9083,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45275 2017-09-12 00:47:29Z preining $
+$Id: tlmgr.pl 45286 2017-09-13 01:55:27Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
