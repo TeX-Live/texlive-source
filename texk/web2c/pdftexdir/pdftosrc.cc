@@ -153,6 +153,7 @@ int main(int argc, char *argv[])
                         (e->type == xrefEntryFree ? "f" : "n"));
             else {              // e->offset is the object number of the object stream
                 Stream *str;
+                Lexer *lexer;
                 Parser *parser;
                 Object objStr, obj1, obj2;
                 int nObjects, first, n;
@@ -170,7 +171,8 @@ int main(int argc, char *argv[])
                 objStr.streamReset();
                 obj1.initNull();
                 str = new EmbedStream(objStr.getStream(), &obj1, gTrue, first);
-                parser = new Parser(xref, new Lexer(xref, str), gFalse);
+                lexer = new Lexer(xref, str);
+                parser = new Parser(xref, lexer, gFalse);
                 for (n = 0; n < nObjects; ++n) {
                     parser->getObj(&obj1);
                     parser->getObj(&obj2);
@@ -179,12 +181,11 @@ int main(int argc, char *argv[])
                     obj1.free();
                     obj2.free();
                 }
-/* The stream str is local, and it is never used hereafter.
-   When parser is deleted, Lexer(xref, str), and the stream str
-   are automatically deleted. Thus this line, which causes a crash
-   in the case of xpdf-4.00, is not necessary.
+#ifdef POPPLER_VERSION /* 0.57.0 or older (or xpdf 3.04) */
                 while (str->getChar() != EOF) ;
-*/
+#else /* xpdf 4.00 */
+                lexer->skipToEOF();
+#endif
                 delete parser;
                 objStr.free();
 
