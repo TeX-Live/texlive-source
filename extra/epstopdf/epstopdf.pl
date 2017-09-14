@@ -35,7 +35,11 @@
 #
 # emacs-page
 #
-my $ver = "2.26";
+my $ver = "2.27";
+#  2017/09/14 v2.27 (Karl Berry)
+#    * extract value from --gsopt with $3 not $2 (extra regexp group
+#      added previously), and check it with ^(...)$ so anchors apply to all.
+#      (report to Karl from Yannick Berker, 7 Sep 2017 14:07:09.)
 #  2017/01/07 v2.26 (Norbert Preining, Karl Berry)
 #    * allow cmdline of infile outfile.pdf.
 #    * explicitly allow -o as abbreviation for --outfile,
@@ -295,6 +299,7 @@ my %optcheck = qw<
   MonoImageFilter /(CCITTFaxEncode|FlateEncode|RunLengthEncode)
   MonoImageResolution \d+
   NOCIE true
+  NODISPLAY true
   NOEPS true
   NOINTERPOLATE true
   NOPSICC true
@@ -628,9 +633,9 @@ foreach my $gsopt (@::opt_gsopt) {
     my $ok = 0;
     if ($gsopt =~ /^-[dD]([A-Za-z0-9]+)(=(.*))?$/) {
       my $name = $1;
-      my $value = $2;
+      my $value = $3;
       $value = 'true' if not defined $value;
-      if ($optcheck{$name} and $value =~ /^$optcheck{$name}$/) {
+      if ($optcheck{$name} and $value =~ /^($optcheck{$name})$/) {
         $ok = 1;
       }
       else {
