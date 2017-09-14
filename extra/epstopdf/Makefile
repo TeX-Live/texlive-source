@@ -51,6 +51,10 @@ check-restricted-gscmd: $(re2p_script)
 	! $(re2p) --gscmd=/bin/unsafe test-simple.eps
 	! $(re2p) --gscmd=unsafe test-simple.eps
 
+check-restricted-gsopt: $(re2p_script)
+	$(re2p) --gsopt=-dAutoFilterColorImages=true test-simple.eps
+	! $(re2p) --gsopt=-dNOSAFER=false test-simple.eps
+
 check-restricted-safe-in: $(re2p_script)
 	! $(re2p) /unsafe/in.eps
 
@@ -79,15 +83,15 @@ check-write-error:
 
 check-gscmd:
 	! $(e2p) --gscmd=false test-simple.eps
-	! $(e2p) --gscmd='foo bar' test-simple.eps # fails
+	! $(e2p) --gscmd='foo bar' test-simple.eps
 
 check-gsopt:
 	! $(e2p) --gscmd=false --gsopt=foo --gsopt=bar test-simple.eps
-	! $(e2p) --restricted --gsopt=bar test-simple.eps # fails
+	! $(e2p) --restricted --gsopt=bar test-simple.eps
 
 check-gsopts:
 	$(e2p) --gscmd=echo --gsopts='foo bar' test-simple.eps
-	! $(e2p) --restricted --gsopts=bar test-simple.eps # fails
+	! $(e2p) --restricted --gsopts=bar test-simple.eps
 
 check-nogs:
 	$(e2p) --no-gs test-simple.eps >test-simple.out
