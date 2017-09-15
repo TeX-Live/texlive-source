@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2017 Free Software Foundation, Inc.
 
-timestamp='2017-04-02'
+timestamp='2017-09-13'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -228,9 +228,6 @@ case $os in
 		;;
 	-ptx*)
 		basic_machine=`echo $1 | sed -e 's/86-.*/86-sequent/'`
-		;;
-	-windowsnt*)
-		os=`echo $os | sed -e 's/windowsnt/winnt/'`
 		;;
 	-psos*)
 		os=-psos
@@ -1366,8 +1363,8 @@ esac
 if [ x"$os" != x"" ]
 then
 case $os in
-	# First match some system type aliases
-	# that might get confused with valid system types.
+	# First match some system type aliases that might get confused
+	# with valid system types.
 	# -solaris* is a basic system type, with this one exception.
 	-auroraux)
 		os=-auroraux
@@ -1387,9 +1384,9 @@ case $os in
 	-gnu/linux*)
 		os=`echo $os | sed -e 's|gnu/linux|linux-gnu|'`
 		;;
-	# First accept the basic system types.
+	# Now accept the basic system types.
 	# The portable systems comes first.
-	# Each alternative MUST END IN A *, to match a version number.
+	# Each alternative MUST end in a * to match a version number.
 	# -sysv* is not here because it comes later, after sysvr4.
 	-gnu* | -bsd* | -mach* | -minix* | -genix* | -ultrix* | -irix* \
 	      | -*vms* | -sco* | -esix* | -isc* | -aix* | -cnk* | -sunos | -sunos[34]*\
