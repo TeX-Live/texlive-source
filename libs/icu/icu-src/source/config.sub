@@ -1256,6 +1256,9 @@ case $basic_machine in
 		basic_machine=hppa1.1-winbond
 		os=-proelf
 		;;
+	x64)
+		basic_machine=x86_64-pc
+		;;
 	xbox)
 		basic_machine=i686-pc
 		os=-mingw32
