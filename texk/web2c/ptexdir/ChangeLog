@@ -1,3 +1,9 @@
+2017-09-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Remove JFM glue after kinsoku penalty at the top
+	of list in adjust_hlist. Do not insert kinsoku penalty when it is
+	set to zero.
+
 2017-09-09  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptftopl.ch: Check for fifth byte (= upper byte of lf) of input JFM.
