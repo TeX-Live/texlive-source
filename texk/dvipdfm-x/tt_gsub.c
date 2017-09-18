@@ -1604,7 +1604,7 @@ otl_gsub_set_chain (otl_gsub *gsub_list, const char *otl_tags) {
     if (!nextptr)
       nextptr = endptr;
     if (scan_otl_tag(p, nextptr, script, language, feature) >= 0) {
-    idx = gsub_find(gsub_list, script, language, feature);
+      idx = gsub_find(gsub_list, script, language, feature);
       if (idx >= 0 && idx <= gsub_list->num_gsubs) {
         struct gsub_entry *entry;
         entry = NEW(1, struct gsub_entry);
