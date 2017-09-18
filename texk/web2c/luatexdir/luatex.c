@@ -582,58 +582,85 @@ main (int ac, string *av)
 
     return EXIT_SUCCESS;
 }
-
 
-/* This is supposed to ``open the terminal for input'', but what we
-   really do is copy command line arguments into TeX's or Metafont's
-   buffer, so they can handle them.  If nothing is available, or we've
-   been called already (and hence, argc==0), we return with
-   `last=first'.  */
+/*
+    This is supposed to ``open the terminal for input'', but what we
+    really do is copy command line arguments into TeX's or Metafont's
+    buffer, so they can handle them.  If nothing is available, or we've
+    been called already (and hence, argc==0), we return with
+   `last=first'.
+*/
 
 void topenin(void)
 {
     int i;
 
+    buffer[first] = 0;          /* In case there are no arguments. */
 
-    buffer[first] = 0;          /* In case there are no arguments.  */
-
-    if (optind < argc) {        /* We have command line arguments.  */
+    if (optind < argc) {        /* We have command line arguments. */
         int k = first;
         for (i = optind; i < argc; i++) {
             char *ptr = &(argv[i][0]);
-            /* Don't use strcat, since in Aleph the buffer elements aren't
-               single bytes.  */
+            /*
+                We cannot use strcat, because we have multibyte UTF-8 input.
+            */
             while (*ptr) {
                 buffer[k++] = (packed_ASCII_code) * (ptr++);
             }
             buffer[k++] = ' ';
         }
-        argc = 0;               /* Don't do this again.  */
+        argc = 0;               /* Don't do this again. */
         buffer[k] = 0;
     }
 
-    /* Find the end of the buffer.  */
+    /*
+        Find the end of the buffer looking at spaces and newlines.
+    */
+
     for (last = first; buffer[last]; ++last);
 
-  /* Make `last' be one past the last non-space character in `buffer',
-     ignoring line terminators (but not, e.g., tabs).  This is because
-     we are supposed to treat this like a line of TeX input.  Although
-     there are pathological cases (SPC CR SPC CR) where this differs
-     from input_line below, and from previous behavior of removing all
-     whitespace, the simplicity of removing all trailing line terminators
-     seems more in keeping with actual command line processing.  */
+    /*
+        We conform to the way Web2c does handle trailing tabs and spaces. This
+        decade old behaviour was changed in September 2017 and can introduce
+        compatibility issues in existing workflows. Because we don't want too
+        many differences with upstream TeXlive we just follow up on that patch
+        and it's up to macro packages to deal with possible issues (which can be
+        done via the usual callbacks. One can wonder why we then still prune
+        spaces but we leave that to the reader.
+    */
+
+    /*  Patched original comment:
+
+        Make `last' be one past the last non-space character in `buffer',
+        ignoring line terminators (but not, e.g., tabs).  This is because
+        we are supposed to treat this like a line of TeX input.  Although
+        there are pathological cases (SPC CR SPC CR) where this differs
+        from input_line below, and from previous behavior of removing all
+        whitespace, the simplicity of removing all trailing line terminators
+        seems more in keeping with actual command line processing.
+    */
+
+    /*
+        The IS_SPC_OR_EOL macro deals with space characters (SPACE 32) and
+        newlines (CR and LF) and no longer looks at tabs (TAB 9).
+
+    */
+
 #define IS_SPC_OR_EOL(c) ((c) == ' ' || (c) == '\r' || (c) == '\n')
-  for (--last; last >= first && IS_SPC_OR_EOL (buffer[last]); --last) 
+  for (--last; last >= first && IS_SPC_OR_EOL (buffer[last]); --last)
     ;
   last++;
 
-    /* One more time, this time converting to TeX's internal character
-       representation.  */
+    /*
+        One more time, this time converting to TeX's internal character
+        representation.
+    */
 }
-
+
 /* IPC for TeX.  By Tom Rokicki for the NeXT; it makes TeX ship out the
    DVI file in a pipe to TeXView so that the output can be displayed
    incrementally.  Shamim Mohamed adapted it for Web2c.  */
+
 #if defined (TeX) && defined (IPC)
 
 #ifdef WIN32
