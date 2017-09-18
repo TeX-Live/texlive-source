@@ -1,3 +1,9 @@
+2017-09-11  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Assigning the default value frees the KINSOKU table
+	and inhibit table, only if global or \currentgrouplevel=0.
+	* tests/kinsoku_table.tex: Added.
+
 2017-09-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Remove JFM glue after kinsoku penalty at the top
