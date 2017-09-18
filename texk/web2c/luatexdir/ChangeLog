@@ -1,3 +1,7 @@
+2017-09-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* luatex.c : Import comment from the upstream.
+
 2017-09-05  Karl Berry  <karl@tug.org>
         and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
