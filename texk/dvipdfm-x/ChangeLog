@@ -1,3 +1,9 @@
+2017-09-18  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_gsub.c: Fixed a bug that only last specified OTL GSUB
+	feature was enabled.
+	* configure.ac: Version 20170918.
+
 2017-08-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfximage.h, spc_pdfm.c: Remove MAX_IMAGES which is not
@@ -7,7 +13,7 @@
 
 	* dpxutil.[ch], epdf.c, pdfdoc.[ch], pdfximage.c, xbb.c:
 	Support for /Rotate page attribute in PDF inclusion.
-	configure.ac: Version 20170806.
+	* configure.ac: Version 20170806.
 
 2017-06-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
