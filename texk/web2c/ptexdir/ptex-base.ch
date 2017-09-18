@@ -6401,7 +6401,7 @@ end
 
 @<Insert kinsoku penalty@>=
 begin kp:=get_kinsoku_pos(cx,cur_pos);
-if kp<>no_entry then
+if kp<>no_entry then if kinsoku_penalty(kp)<>0 then
   begin if kinsoku_type(kp)=pre_break_penalty_code then
     begin if not is_char_node(cur_q)and(type(cur_q)=penalty_node) then
       penalty(cur_q):=penalty(cur_q)+kinsoku_penalty(kp)
@@ -6419,7 +6419,7 @@ end;
 
 @ @<Insert |pre_break_penalty| of |cur_chr|@>=
 begin kp:=get_kinsoku_pos(cur_chr,cur_pos);
-if kp<>no_entry then
+if kp<>no_entry then if kinsoku_penalty(kp)<>0 then
   begin if kinsoku_type(kp)=pre_break_penalty_code then
     if not is_char_node(tail)and(type(tail)=penalty_node) then
       penalty(tail):=penalty(tail)+kinsoku_penalty(kp)
@@ -6432,7 +6432,7 @@ end;
 
 @ @<Insert |post_break_penalty|@>=
 begin kp:=get_kinsoku_pos(cx,cur_pos);
-if kp<>no_entry then
+if kp<>no_entry then if kinsoku_penalty(kp)<>0 then
   begin if kinsoku_type(kp)=post_break_penalty_code then
     begin tail_append(new_penalty(kinsoku_penalty(kp)));
     subtype(tail):=kinsoku_pena;
@@ -6608,11 +6608,19 @@ if auto_xspacing>0 then
   end;
 u:=space_ptr(p); add_glue_ref(u);
 s:=xspace_ptr(p); add_glue_ref(s);
-if not is_char_node(link(p)) {p1.0.9d}
-    and(type(link(p))=glue_node)and(subtype(link(p))=jfm_skip+1) then
+if not is_char_node(link(p)) then
+  if (type(link(p))=glue_node)and(subtype(link(p))=jfm_skip+1) then
   begin v:=link(p); link(p):=link(v);
   fast_delete_glue_ref(glue_ptr(v)); free_node(v,small_node_size);
-  end;
+  end
+  else if (type(link(p))=penalty_node)and(subtype(link(p))=kinsoku_pena) then
+    begin v:=link(link(p));
+    if (not is_char_node(v)) and (type(v)=glue_node)and(subtype(v)=jfm_skip+1) then
+      begin link(link(p)):=link(v);
+      fast_delete_glue_ref(glue_ptr(v)); free_node(v,small_node_size);
+      end
+    end;
+
 i:=0; insert_skip:=no_skip; p:=link(p); v:=p; q:=p;
 while p<>null do
   begin if is_char_node(p) then
