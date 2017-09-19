@@ -1,3 +1,7 @@
+2017-09-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* db.c: Fix for DOSISH systems in which _WIN32 is not defined.
+
 2017-05-03  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFAUXTREES): new variable (default value empty

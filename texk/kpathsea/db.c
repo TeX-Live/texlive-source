@@ -93,9 +93,9 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
   string top_dir = (string)xmalloc (len + 1);
   string cur_dir = NULL; /* First thing in ls-R might be a filename.  */
   FILE *db_file = fopen (db_filename, FOPEN_R_MODE);
-#if defined(WIN32)
+#if defined(MONOCASE_FILENAMES)
   string pp;
-#endif
+#endif /* MONOCASE_FILENAMES */
 
   strncpy (top_dir, db_filename, len);
   top_dir[len] = 0;
@@ -104,14 +104,16 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
     while ((line = read_line (db_file)) != NULL) {
       len = strlen (line);
 
-#if defined(WIN32)
+#if defined(MONOCASE_FILENAMES)
       for (pp = line; *pp; pp++) {
+#if defined(_WIN32)
         if (kpathsea_IS_KANJI(kpse, pp))
           pp++;
         else
+#endif /* _WIN32 */
           *pp = TRANSFORM(*pp);
       }
-#endif
+#endif /* MONOCASE_FILENAMES */
 
       /* A line like `/foo:' = new dir foo.  Allow both absolute (/...)
          and explicitly relative (./...) names here.  It's a kludge to
