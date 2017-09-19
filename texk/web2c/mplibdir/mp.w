@@ -1,3 +1,5 @@
+% $Id: mp.w 2137 2017-09-19 19:01:58Z luigi.scarso@gmail.com $
+%
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
 % See the <Show version...> code in mpost.w for more info.
