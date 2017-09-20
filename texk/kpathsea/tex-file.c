@@ -1013,6 +1013,7 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
 {
 #if defined(_WIN32) && !defined(__MINGW32__)
   char tmpbuffer[512];
+  char tmpbuffer2[512];
 #endif
   string *target, name;
   const_string *ext;
@@ -1140,12 +1141,14 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
   if (ret && *ret) {
     if (all) {
       for (count = 0; ret[count] != NULL; count++) {
-        if (kpathsea_getlongpath (kpse, tmpbuffer, ret[count], 500) &&
+        strcpy (tmpbuffer2, ret[count]);
+        if (kpathsea_getlongpath (kpse, tmpbuffer, tmpbuffer2, 500) &&
             strlen (tmpbuffer) == strlen (ret[count]))
           strcpy (ret[count], tmpbuffer);
       }
     } else {
-      if (kpathsea_getlongpath (kpse, tmpbuffer, *ret, 500) &&
+      strcpy (tmpbuffer2, *ret);
+      if (kpathsea_getlongpath (kpse, tmpbuffer, tmpbuffer2, 500) &&
           strlen (tmpbuffer) == strlen (*ret))
         strcpy (*ret, tmpbuffer);
     } 
