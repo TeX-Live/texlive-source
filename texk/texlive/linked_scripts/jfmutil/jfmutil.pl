@@ -2770,8 +2770,8 @@ package main;
 #================================================= BEGIN
 use Encode qw(encode decode);
 my $prog_name = 'jfmutil';
-my $version = '1.0.1';
-my $mod_date = '2017/07/21';
+my $version = '1.1.0';
+my $mod_date = '2017/09/16';
 #use Data::Dump 'dump';
 #
 my ($sw_hex, $sw_uptool, $sw_noencout, $inenc, $exenc);
@@ -2860,9 +2860,13 @@ sub main_zpl2tfm {
 }
 
 sub show_usage {
-  my ($v, $m) = @_;
+  print(usage_message());
+  exit;
+}
+sub usage_message {
+  my ($v, $m);
   ($v, $m) = textool_version() or error();
-  print <<"END"; exit;
+  return <<"END";
 This is $prog_name v$version <$mod_date> by 'ZR'.
 [ZRTeXtor library v$v <$m> by 'ZR']
 Usage: $prog_name vf2zvp0 [<options>] <in.vf> [<out.zvp0>]
@@ -2871,7 +2875,11 @@ Usage: $prog_name vf2zvp0 [<options>] <in.vf> [<out.zvp0>]
        $prog_name zvp2vf [<options>] <in.zvp> [<out.vf> <out.tfm>]
        $prog_name zpl2tfm [<options>] <in.zvp0> [<out.vf>]
        $prog_name tfm2zpl [<options>] <in.zvp0> [<out.vf>]
-  VF and TFM files are searched by kpsewhich.
+Arguments:
+  <in.xxx>        input files
+    N.B. Input TFM/VF files are searched by Kpathsea. (ZVP/ZVP9 are not.)
+  <out.xxx>       output files
+Options:
        --hex      output charcode in 'H' form [default]
   -o / --octal    output charcode in 'O' form
   --uptool        use upTeX tools (uppltotf etc.)
@@ -2981,6 +2989,156 @@ sub error {
 
 #================================================= END
 
+#------------------------------------------------- pxcopyfont interfaces
+
+*usage_message_org = \&usage_message;
+
+*usage_message = sub {
+  local $_ = usage_message_org();
+  my ($part1, $part2) = (<<"EOT1", <<"EOT2");
+
+* ZVP Conversion
+EOT1
+
+* VF Replication
+Usage: $prog_name vfcopy [<options>] <in.vf> <out.zvf> <out_base.tfm>...
+       $prog_name vfinfo [<options>] <in.vf>
+Arguments:
+  <in.vf>       input virtual font name
+    N.B. Input TFM/VF files are searched by Kpathsea.
+  <out.vf>      output virtual font name
+  <out_base.tfm>  names of raw TFMs referred by the output virtual font;
+                each entry replaces a font mapping in the input font in
+                the given order, so the exactly same number of entries
+                must be given as font mappings
+Options:
+  -z / --zero     change first fontmap id in vf to zero
+EOT2
+  s/(Usage:)/$part1$1/; s/$/$part2/;
+  return $_;
+};
+
+%procs = (%procs,
+  vfinfo  => \&main_vfinfo,
+  vfcopy  => \&main_vfcopy,
+);
+
+sub main_vfinfo {
+  PXCopyFont::read_option(1);
+  PXCopyFont::info_vf();
+}
+
+sub main_vfcopy {
+  PXCopyFont::read_option(0);
+  PXCopyFont::copy_vf();
+}
+
+#------------------------------------------------- pxcopyfont stuffs
+package PXCopyFont;
+
+*info = *main::show_info;
+*error = *main::error;
+
+our ($src_main, $dst_main, @dst_base, $op_zero);
+
+sub copy_vf {
+  local $_ = main::read_whole_file(main::kpse("$src_main.vf"), 1) or error();
+  my $vfc = parse_vf($_);
+  my ($nb, $nb1) = (scalar(@{$vfc->[0]}), scalar(@dst_base));
+  info("number of base TFMs in '$src_main'", $nb);
+  if ($dst_base[-1] eq '...' && $nb1 <= $nb) {
+    foreach ($nb1-1 .. $nb-1) { $dst_base[$_] = $vfc->[0][$_][1]; }
+  } elsif ($nb != $nb1) {
+    error("wrong number of base TFMs given", $nb1);
+  }
+  main::write_whole_file("$dst_main.vf", form_vf($vfc), 1) or error();
+  main::write_whole_file("$dst_main.tfm",
+      main::read_whole_file(main::kpse("$src_main.tfm"), 1), 1) or error();
+  foreach my $k (0 .. $#dst_base) {
+    my $sfn = $vfc->[0][$k][1]; my $dfn = $dst_base[$k];
+    ($sfn ne $dfn) or next;
+    main::write_whole_file("$dfn.tfm",
+      main::read_whole_file(main::kpse("$sfn.tfm"), 1), 1) or error();
+  }
+}
+
+sub parse_vf {
+  my ($vf) = @_; my (@fs, @lst, $pos);
+  @fs = unpack("CCC", $vf);
+  ($fs[0] == 0xf7 && $fs[1] == 0xca) or return;
+  $pos = $fs[2] + 11; my $hd = substr($vf, 0, $pos);
+  while (1) {
+    @fs = unpack("CC", substr($vf, $pos, 2));
+    (243 <= $fs[0] && $fs[0] <= 246) or last;
+    my $fid = ($fs[0] == 243) ? $fs[1] : 999;
+    my $t = $fs[0] - 242 + 13;
+    @fs = unpack("a${t}CC", substr($vf, $pos, 260));
+    my $l = $fs[1] + $fs[2]; my $n = substr($vf, $pos + $t + 2, $l);
+    $pos += $t + 2 + $l; push(@lst, [ $fs[0], $n, $fid ]);
+    if ($n !~ m/^[\x21-\x7e]+$/) {
+      $n =~ s/([^\x21-\x5b\x5d-\x7e])/sprintf("\\x%02x", ord($1))/g;
+      error("bad tfm name recorded in VF", $n);
+    }
+  }
+  my $ft = substr($vf, $pos); $ft =~ s/\xf8+\z//g;
+  return [ \@lst, $hd, $ft ];
+}
+
+sub info_vf {
+  local $_ = main::read_whole_file(main::kpse("$src_main.vf"), 1) or error();
+  my $vfc = parse_vf($_);
+  foreach (@{$vfc->[0]}) {
+    printf("%d=%s\n", $_->[2], $_->[1]);
+  }
+}
+
+sub form_vf {
+  my ($vfc) = @_; my (@lst);
+  if ($op_zero) {{
+    my $t = $vfc->[0][0] or last;
+    ($t->[2] == 0) and last; # already zero
+    info("change first fontmap id to zero (from " . $t->[2] . ")");
+    substr($t->[0], 1, 1) = "\0"; $t->[2] = 0;
+  }}
+  foreach my $k (0 .. $#{$vfc->[0]}) {
+    my $t = $vfc->[0][$k]; my $sfn = $t->[1];
+    my $dfn = $dst_base[$k];
+    (length($dfn) < 256) or error("TFM name too long", $dfn);
+    info("id=".$t->[2], $sfn, $dfn);
+    push(@lst, $t->[0], "\0" . chr(length($dfn)), $dfn);
+  }
+  my $tfm = join('', $vfc->[1], @lst, $vfc->[2]);
+  return $tfm . ("\xf8" x (4 - length($tfm) % 4));
+}
+
+sub read_option {
+  my ($op_info) = @_;
+  $op_zero = 0;
+  while ($ARGV[0] =~ m/^-/) {
+    my $opt = shift(@ARGV);
+    if ($opt =~ m/--?h(elp)?/) {
+      show_usage();
+    } elsif ($opt eq '-z' || $opt eq '--zero') {
+      $op_zero = 1;
+    } else {
+      error("invalid option", $opt);
+    }
+  }
+  ($src_main, $dst_main, @dst_base) = @ARGV;
+  $src_main =~ s/\.vf$//;
+  (defined $src_main) or error("no argument given");
+  (!!$op_info == (!defined $dst_main))
+    or error("wrong number of arguments");
+  if (defined $dst_main) {
+    $dst_main =~ s/\.vf$//;
+    foreach (@dst_base) { s/\.tfm$//; }
+    ($src_main ne $dst_main)
+      or error("output vf name is same as input");
+    (@dst_base) or error("no base tfm name given");
+  }
+}
+
 #------------------------------------------------- go to main
+package main;
 main();
 ## EOF
