@@ -1,3 +1,7 @@
+2017-09-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex-file.c: Fix to return actual file names (W32 only).
+
 2017-09-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* db.c: Fix for DOSISH systems in which _WIN32 is not defined.
