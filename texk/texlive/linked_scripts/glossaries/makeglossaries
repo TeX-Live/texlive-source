@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.21
+# Version : 4.33
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,11 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="2.21 (2017-05-11)";
+my $version="4.33 (2017-09-20)";
 
 # History:
+# v4.33:
+#   * Version number synchronized with glossaries.sty
 # v2.21:
 #   * Fixed spelling of \GlsAddXdyLocation
 #   * Adjusted range encap clash
@@ -1497,15 +1499,15 @@ makeglossaries  - Calls makeindex/xindy for LaTeX documents using glossaries pac
 
 =head1 SYNOPSIS
 
-B<makeglossaries> [B<-o> I<file>] [B<-q>] [B<-Q>] [B<-s> I<file>]
-[B<-t> I<file>] [B<-L> I<language>] [B<-c>] [B<-g>] [B<-l>]
+B<makeglossaries> [B<-o> I<file>] [B<-q>] [B<-Q>] [B<-k>] [B<-n>]
+[B<-s> I<file>] [B<-t> I<file>] [B<-L> I<language>] [B<-c>] [B<-g>] [B<-l>]
 [B<-p> I<num>] [B<-r>] [B<-d> I<aux dir>] [B<-m> I<file>] [B<-x> I<file>]
-[B<--version>] [B<--help>] I<filename>
+[B<--version>] [B<--help>] I<basename>
 
 =head1 DESCRIPTION
 
 B<makeglossaries> is designed for use with LaTeX documents that
-use the glossaries package. The mandatory argument I<filename> should
+use the glossaries package. The mandatory argument I<basename> should
 be the name of the LaTeX document without the .tex extension. 
 B<makeglossaries> will read the auxiliary file to determine whether
 B<makeindex> or B<xindy> should be called. All the information
@@ -1529,6 +1531,10 @@ Silences warning about being unable to fork.
 
 Don't try forking with piped redirection. (Lessens the
 effect of -q)
+
+=item B<-n>
+
+Print the commands that would normally be executed but don't run them.
 
 =item B<-o> I<file>
 

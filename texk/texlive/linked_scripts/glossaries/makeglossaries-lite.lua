@@ -26,6 +26,8 @@
    This work has the LPPL maintenance status `maintained'.
   
    History:
+   * 4.33:
+     - Version number synchronized with glossaries.sty
    * 1.3
      - added check for \glsxtr@makeglossaries
    * 1.2 (2016-05-27)
@@ -35,7 +37,7 @@
      - changed first line from lua to texlua
 --]]
 
-thisversion = "1.3 2016-12-16"
+thisversion = "4.33 2017-09-20"
 
 quiet = false
 dryrun = false
