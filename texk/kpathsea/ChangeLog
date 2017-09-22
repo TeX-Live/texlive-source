@@ -1,3 +1,8 @@
+2017-09-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex-file.c: Use a standard API function GetLongPathName()
+	instead of the custom kpathsea_getlongpath() (W32 only).
+
 2017-09-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tex-file.c: Fix to return actual file names (W32 only).
