@@ -1011,9 +1011,8 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
                             kpse_file_format_type format,
                             boolean must_exist, boolean all)
 {
-#if defined(_WIN32) && !defined(__MINGW32__)
+#if defined(_WIN32)
   char tmpbuffer[512];
-  char tmpbuffer2[512];
 #endif
   string *target, name;
   const_string *ext;
@@ -1137,20 +1136,23 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
   }
 
   free (name);
-#if defined(_WIN32) && !defined(__MINGW32__)
+#if defined(_WIN32)
   if (ret && *ret) {
+    size_t cplen;
     if (all) {
       for (count = 0; ret[count] != NULL; count++) {
-        strcpy (tmpbuffer2, ret[count]);
-        if (kpathsea_getlongpath (kpse, tmpbuffer, tmpbuffer2, 500) &&
-            strlen (tmpbuffer) == strlen (ret[count]))
+        if ((cplen = GetLongPathName (ret[count], tmpbuffer, 500))) {
+          if (cplen > strlen (ret[count]))
+            ret[count] = realloc (ret[count], cplen + 1);
           strcpy (ret[count], tmpbuffer);
+        }
       }
     } else {
-      strcpy (tmpbuffer2, *ret);
-      if (kpathsea_getlongpath (kpse, tmpbuffer, tmpbuffer2, 500) &&
-          strlen (tmpbuffer) == strlen (*ret))
+      if ((cplen = GetLongPathName (*ret, tmpbuffer, 500))) {
+        if (cplen > strlen (*ret))
+          *ret = realloc (*ret, cplen + 1);
         strcpy (*ret, tmpbuffer);
+      }
     } 
   }
 #endif
