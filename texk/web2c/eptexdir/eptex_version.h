@@ -1,1 +1,1 @@
-#define EPTEX_VERSION "161114"
+#define EPTEX_VERSION "170924"
