@@ -1,7 +1,7 @@
 2017-09-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfutils.ch: Avoid overwriting prim_* entries by primitive().
-	* eptex.ech: Change version to 170924.
+	* eptex.ech, eptex_version.h: Change version to 170924.
 
 2017-09-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 	and Noriyuki Abe  <abenori@math.sci.hokudai.ac.jp>
