@@ -1,3 +1,7 @@
+2017-09-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdxtex.web: Avoid overwriting prim_* entries by primitive().
+
 2017-09-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftosrc.cc: Fix a potential bug which I introduced on
