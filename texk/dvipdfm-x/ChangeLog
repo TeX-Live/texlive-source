@@ -1,3 +1,8 @@
+2017-10-02  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* dvi.c: Initialize direction mode in clear_state(). See
+	https://github.com/texjporg/tex-jp-build/issues/30
+
 2017-09-18  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* tt_gsub.c: Fixed a bug that only last specified OTL GSUB
