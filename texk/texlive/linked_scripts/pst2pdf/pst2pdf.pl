@@ -4,9 +4,9 @@ eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $
 use strict;			# to be sure, that all is safe ... :-)
 use v5.18;
 # $Id: pst2pdf.pl 119 2014-09-24 12:04:09Z herbert $
-# v. 0.16	 2014-09-14 simplify the use of PSTricks with pdf
-# 2017-09-11	(c) Herbert Voss <hvoss@tug.org> 
-#                   Pablo González Luengo <pablogonz@yahoo.com>
+# v. 0.18	 2017-10-04 simplify the use of PSTricks with pdf
+# (c) Herbert Voss <hvoss@tug.org> 
+#     Pablo González Luengo <pablgonz@yahoo.com>
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ my $other    = "other";     		# search other verbatim environment
 
 #---------------- Program identification, options and help -------------
 my $program = 'pst2pdf';
-my $nv='v0.17';
+my $nv='v0.18';
 my $ident = '$Id: pst2pdf.pl 119 2017-09-11 12:04:09Z herbert $';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2011-2017 (c) Herbert Voss <hvoss\@tug.org> and Pablo González.
@@ -80,7 +80,7 @@ my $usage = <<"END_OF_USAGE";
 ${title}Usage: $program <texfile.tex>  [Options]
 pst2pdf run a TeX source, read all PS-related part and convert in images
 	in pdf,eps,jpg or png format (default pdf) and create new file 
-	whitout pst-enviroment and runs (pdf/Xe)latex. 
+	whitout pst-environment and runs (pdf/Xe)latex. 
 	See pst2pdf documentation for more info.
 Options:
   -h,--help          - display this help and exit
@@ -109,7 +109,7 @@ Examples:
 * $program test.tex -e -p -j -c --imgdir=pics
 * produce test-pdf.tex whitout pstriks related parts and create image
 * dir whit all images (pdf,eps,png,jpg) and source (.tex) for all pst 
-* enviroment in "pics" dir using Ghostscript and cleaning all tmp files. 
+* environment in "pics" dir using Ghostscript and cleaning all tmp files. 
 * suport bundling for short options $program test.tex -epjc --imgdir=pics
 END_OF_USAGE
 #
@@ -1037,7 +1037,7 @@ if (opendir(DIR,$dir)) {                              # abro el directorio
     } # close ppm
 } # cerramos runPSTimg
 
-#--------------------- Replace PST enviroment for images----------------
+#--------------------- Replace PST environment for images----------------
 sub runpdfTeX() {
 
   my ($name,$pdfname) = @_;
