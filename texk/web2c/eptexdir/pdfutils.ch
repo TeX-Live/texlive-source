@@ -410,7 +410,9 @@ end;
   {permanent `\.{\\special}'}
 @d frozen_primitive=frozen_control_sequence+11
   {permanent `\.{\\pdfprimitive}'}
-@d frozen_null_font=frozen_control_sequence+12
+@d prim_eqtb_base=frozen_primitive+1
+@d prim_size=2100 {maximum number of primitives }
+@d frozen_null_font=prim_eqtb_base+prim_size+1
   {permanent `\.{\\nullfont}'}
 @z
 
@@ -445,7 +447,6 @@ pdf_page_height_code:   print_esc("pdfpageheight");
 
 @ Primitive support needs a few extra variables and definitions
 
-@d prim_size=2100 {maximum number of primitives }
 @d prim_prime=1777 {about 85\pct! of |primitive_size|}
 @d prim_base=1
 @d prim_next(#) == prim[#].lh {link for coalesced lists}
@@ -454,16 +455,15 @@ pdf_page_height_code:   print_esc("pdfpageheight");
 @d prim_eq_level_field(#)==#.hh.b1
 @d prim_eq_type_field(#)==#.hh.b0
 @d prim_equiv_field(#)==#.hh.rh
-@d prim_eq_level(#)==prim_eq_level_field(prim_eqtb[#]) {level of definition}
-@d prim_eq_type(#)==prim_eq_type_field(prim_eqtb[#]) {command code for equivalent}
-@d prim_equiv(#)==prim_equiv_field(prim_eqtb[#]) {equivalent value}
+@d prim_eq_level(#)==prim_eq_level_field(eqtb[prim_eqtb_base+#]) {level of definition}
+@d prim_eq_type(#)==prim_eq_type_field(eqtb[prim_eqtb_base+#]) {command code for equivalent}
+@d prim_equiv(#)==prim_equiv_field(eqtb[prim_eqtb_base+#]) {equivalent value}
 @d undefined_primitive=0
 @d biggest_char=255 { 65535 in XeTeX }
 
 @<Glob...@>=
 @!prim: array [0..prim_size] of two_halves;  {the primitives table}
 @!prim_used:pointer; {allocation pointer for |prim|}
-@!prim_eqtb:array[0..prim_size] of memory_word;
 @z
 
 @x \[if]pdfprimitive
@@ -474,10 +474,6 @@ no_new_control_sequence:=true; {new identifiers are usually forbidden}
 no_new_control_sequence:=true; {new identifiers are usually forbidden}
 prim_next(0):=0; prim_text(0):=0;
 for k:=1 to prim_size do prim[k]:=prim[0];
-prim_eq_level(0) := level_zero;
-prim_eq_type(0) := undefined_cs;
-prim_equiv(0) := null;
-for k:=1 to prim_size do prim_eqtb[k]:=prim_eqtb[0];
 @z
 
 @x \[if]pdfprimitive
@@ -1039,6 +1035,7 @@ any_mode(ignore_spaces): begin
     if cur_cs<>undefined_primitive then begin
       cur_cmd := prim_eq_type(cur_cs);
       cur_chr := prim_equiv(cur_cs);
+      cur_tok := cs_token_flag+prim_eqtb_base+cur_cs;
       goto reswitch;
       end;
     end;
@@ -1050,7 +1047,6 @@ any_mode(ignore_spaces): begin
 @y
 @<Dump the hash table@>=
 for p:=0 to prim_size do dump_hh(prim[p]);
-for p:=0 to prim_size do dump_wd(prim_eqtb[p]);
 @z
 
 @x \[if]pdfprimitive: undump prim table
@@ -1058,7 +1054,6 @@ for p:=0 to prim_size do dump_wd(prim_eqtb[p]);
 @y
 @ @<Undump the hash table@>=
 for p:=0 to prim_size do undump_hh(prim[p]);
-for p:=0 to prim_size do undump_wd(prim_eqtb[p]);
 @z
 
 @x

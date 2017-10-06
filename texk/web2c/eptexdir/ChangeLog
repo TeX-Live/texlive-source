@@ -1,3 +1,10 @@
+2017-10-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfutils.ch: Merge prim_eqtb into eqtb, to avoid a bug in
+	the use of \pdfprimitive inside vertical mode.
+	* tests/pdfprimitive-test.tex, tests/pdfprimitive-eptex.log:
+	Add more tests for \pdfprimitive.
+
 2017-09-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfutils.ch: Avoid overwriting prim_* entries by primitive().

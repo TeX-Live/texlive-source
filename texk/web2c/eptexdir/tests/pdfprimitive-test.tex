@@ -20,4 +20,14 @@
 \ifpdfprimitive\fuga\message{T}\else\message{F}\fi  % ==> F (macro)
 
 \show\pdfstrcmp % ==> \pdfstrcmp
+
+% fix for overwriting entries (170924)
+\ifpdfprimitive\ \message{T}\else\message{F}\fi     % ==> T
+\ifpdfprimitive\vrule\message{T}\else\message{F}\fi % ==> T
+
+% fix for back_input in vertical mode (170924)
+\setbox0=\vbox{\pdfprimitive\ \undefined}
+% ==> ``! Undefined control sequence.'' error
+\setbox0=\vbox{\pdfprimitive\vrule\undefined}
+% ==> ``! Undefined control sequence.'' error
 \end
