@@ -1,4 +1,8 @@
-pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)
+- bugfixes:
+  - \ifpdfprimitive now correctly returns true for "\ " (r45394).
+
+---------------------------------------------------------------
+pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)  (April 27, 2017)
 - changes:
   - rename envvar SOURCE_DATE_EPOCH_TEX_PRIMITIVES to FORCE_SOURCE_DATE;
     no changes in functionality.
@@ -6,9 +10,9 @@ pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)
     omitting output of the default /MediaBox.
 
 - bugfixes:
-  - \pdflastmatch more reliable when there was no match
+  - \pdflastmatch more reliable when there was no match.
 
----------------------------------------------------
+------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.17 (TeX Live 2016)  (May 20, 2016)
 - changes:
   - if the environment variable SOURCE_DATE_EPOCH is set, use its value for
@@ -33,7 +37,7 @@ pdfTeX 3.14159265-2.6-1.40.17 (TeX Live 2016)  (May 20, 2016)
 - bugfixes:
   - do not crash if font size of a vf >= 2048pt.
 
----------------------------------------------------
+---------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.16 (TeX Live 2015)
 - changes:
   - support JPEG Exif as well as JFIF.
@@ -43,7 +47,7 @@ pdfTeX 3.14159265-2.6-1.40.16 (TeX Live 2015)
 - bugfixes:
   - ensure line-ending after a group dict in the output.
 
----------------------------------------------------
+---------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.15 (TeX Live 2014)
 - changes:
   - sync with Knuth TeX 3.14159265, e-TeX 2.6
@@ -51,7 +55,7 @@ pdfTeX 3.14159265-2.6-1.40.15 (TeX Live 2014)
   - new primitives for fake interword spaces:
     \pdfinterwordspaceon, \pdfinterwordspaceoff, \pdffakespace
 
----------------------------------------------------
+-------------------------------------------------------------------
 pdfTeX 3.1415926-1.40.14 was released on 2013-05-30 (TeX Live 2013)
 - changes:
   - sync with e-TeX 2.5
@@ -60,7 +64,7 @@ pdfTeX 3.1415926-1.40.14 was released on 2013-05-30 (TeX Live 2013)
 - bugfixes:
   - inclusion of particular pdf's failed (http://bugs.debian.org/672951)
 
----------------------------------------------------
+-------------------------------------------------------------------
 pdfTeX 3.1415926-1.40.13 was released on 2012-04-21 (TeX Live 2012)
 - changes:
   - new warning-suppression parameters
@@ -70,7 +74,7 @@ pdfTeX 3.1415926-1.40.13 was released on 2012-04-21 (TeX Live 2012)
   - better support for uniABCD and indexXYZ glyph names
   - large-file support (from peb)
 
----------------------------------------------------
+-------------------------------------------------------------------
 pdfTeX 3.1415926-1.40.12 was released on 2011-06-20 (TeX Live 2011)
 - bugfixes:
   - for 16-bit images in PDF 1.4 mode
