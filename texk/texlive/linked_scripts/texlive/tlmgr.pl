@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45286 2017-09-13 01:55:27Z preining $
+# $Id: tlmgr.pl 45499 2017-10-08 14:26:19Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45286 $';
-my $datrev = '$Date: 2017-09-13 03:55:27 +0200 (Wed, 13 Sep 2017) $';
+my $svnrev = '$Revision: 45499 $';
+my $datrev = '$Date: 2017-10-08 16:26:19 +0200 (Sun, 08 Oct 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -2363,6 +2363,8 @@ sub action_update {
   my @excluded_pkgs = ();
   if ($opts{"exclude"}) {
     @excluded_pkgs = @{$opts{"exclude"}};
+  } elsif ($config{'update-exclude'}) {
+    @excluded_pkgs = @{$config{'update-exclude'}};
   }
 
   if (!$opts{"list"}) {
@@ -6812,6 +6814,10 @@ sub load_options_from_config {
         tlwarn("$prg: $fn: Unknown value for persistent-downloads: $val\n");
       }
 
+    } elsif ($key eq "update-exclude") {
+      my @exs = split(/,/, $val);
+      $config{'update-exclude'} = \@exs;
+
     } elsif ($key eq "gui-lang") {
       $config{'gui-lang'} = $val;
 
@@ -8307,6 +8313,10 @@ for auto-installation, auto-removal, or reinstallation of a forcibly
 removed package, C<tlmgr> quits with an error message.  Excludes are not
 supported in these circumstances.
 
+This option can also be set permanently in the tlmgr config file with 
+the key C<update-exclude>.
+
+
 =item B<--no-auto-remove> [I<pkg>]...
 
 By default, C<tlmgr> tries to remove packages which have disappeared on
@@ -8443,6 +8453,10 @@ command-line option.
 
 =item C<require-verification>, value 0 or 1 (default 0), same as
 command-line option.
+
+=item C<update-exclude>, value: comma-separated list of packages
+(no space allowed). Same as the command line option C<--exclude>
+for the action C<update>.
 
 =item C<verify-downloads>, value 0 or 1 (default 1), same as
 command-line option.
@@ -9083,7 +9097,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45286 2017-09-13 01:55:27Z preining $
+$Id: tlmgr.pl 45499 2017-10-08 14:26:19Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
