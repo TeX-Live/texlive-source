@@ -2,10 +2,14 @@
 
 This file is part of the __SyncTeX__ package.
 
-[//]: # (Version: 1.19)
+[//]: # (Version: 1.20)
 [//]: # (Date: Fri Jul 14 16:20:41 UTC 2017)
 
 ## Important
+
+* Changes in version `1.20`
+
+    One bug fixed in some initialization and different syntax to make some compilers happy.
 
 * Changes in version `1.19`
 
