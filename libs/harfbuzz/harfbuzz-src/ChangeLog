@@ -1,3 +1,1059 @@
+commit 74f1b88e3720103562552780af7058131c5492d5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 13 11:01:55 2017 +0200
+
+    [ucdn] Fix compiler warnings
+
+ src/hb-ucdn.cc | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+commit c2cf68dbdffcbf45297dd161b4b6b2de667b5ae4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 13 10:30:19 2017 +0200
+
+    [coretext] Fix build
+
+ src/hb-coretext.cc | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+commit 95883fc5d486ecd194253bb223802f930de73e28
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 13 10:21:07 2017 +0200
+
+    [coretext] Pass correct font size to CoreText
+
+    CoreText "point"s are not typographic points, but CSS pixels.  Ie.
+    they are 96 per inch, not 72 per inch.
+
+ src/hb-coretext.cc | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+commit 4f9a83ec2109b754a75c962e88117d063e6fed43
+Merge: fa48ccbe 40b05d7b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 12 14:08:58 2017 +0200
+
+    Merge remote-tracking branch 'origin/master'
+
+commit fa48ccbe127a2e61ab316f3638e4056940964dae
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 12 14:07:37 2017 +0200
+
+    [indic] Special-case Kannada Ra,H,ZWJ sequence
+
+    Fixes https://github.com/behdad/harfbuzz/issues/435
+
+ src/hb-ot-shape-complex-indic.cc                         |  15
+ +++++++++++++++
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/3cae6bfe5b57c07ba81ddbd54c02fe4f3a1e3bf6.ttf | Bin 0 ->
+ 2984 bytes
+ test/shaping/tests/indic-special-cases.tests             |   3 +++
+ 4 files changed, 19 insertions(+)
+
+commit 40b05d7b770b8045f176f66231c412b32482d874
+Author: n8willis <n8willis@users.noreply.github.com>
+Date:   Thu Oct 12 12:48:48 2017 +0100
+
+    Replacing 'cluster' with 'syllable' when comments describe certain
+    Indic shaping behavior (#563)
+
+    * Clarified wording of syllable/cluster behavior in Uniscribe in
+    final_reordering; changed one other probable typo.
+
+    * Additional syllable/cluster swap in comments for final reordering
+    and for initial-reordering matra decomposition.
+
+ src/hb-ot-shape-complex-indic.cc | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 6bac4ac2bebb612debecc8ec10b845e977c0afe1
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Thu Oct 12 15:15:49 2017 +0330
+
+    Minor BUILD.md fix (#565)
+
+ BUILD.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8923033eb2dab75e9361e9ea1333deb1213393ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 12 12:01:48 2017 +0200
+
+    [coretext] Use fabs() to silence compiler warning
+
+ src/hb-coretext.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit dd4b321b4a429c6e6a28441ea9ae52f8f9dd1dad
+Author: Dominik Röttsches <drott@chromium.org>
+Date:   Thu Oct 12 11:49:37 2017 +0200
+
+    [coretext] Activate tracking for system fonts
+
+    Another attempt at fully fixing
+    https://github.com/behdad/harfbuzz/issues/360
+
+ src/hb-coretext.cc | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
+
+commit 6760021d6f4beef852c6560607b32090bcfa5acb
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Thu Oct 12 12:05:08 2017 +0300
+
+    CMakelists.txt fix for Freetype builds (#564)
+
+    Instead of searching for freetype using pkg-config, use the
+    FindFreetype
+    feature of CMake. This allows for better integration with other
+    projects
+    that make use of CMake.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/518
+
+ CMakeLists.txt | 24 +++++++-----------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
+
+commit 6a2cbc6ef51680309eb3970ed9c66ff766dc8040
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 12 10:46:09 2017 +0200
+
+    [coretext] Use fabsf() instead of abs()
+
+    Fixes bots.
+
+    Link libharfbuzz.so with -lm.  Surprising that we survived without
+    it so far!
+
+ src/Makefile.am    | 2 +-
+ src/harfbuzz.pc.in | 2 +-
+ src/hb-coretext.cc | 5 +++--
+ 3 files changed, 5 insertions(+), 4 deletions(-)
+
+commit dfeccd073a5e78f6a2c630355c04121b70d2b4aa
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Thu Oct 12 12:11:47 2017 +0330
+
+    Remove nmake port of harfbuzz (#562)
+
+ BUILD.md                        |  12 ++-
+ Makefile.am                     |   2 +-
+ appveyor.yml                    |  30 ------
+ configure.ac                    |   2 -
+ win32/Makefile.am               |  18 ----
+ win32/Makefile.vc               |  67 ------------
+ win32/README.txt                |  97 -----------------
+ win32/build-rules-msvc.mak      | 130 -----------------------
+ win32/config-msvc.mak           | 230
+ ----------------------------------------
+ win32/config.h.win32.in         | 158 ---------------------------
+ win32/create-lists-msvc.mak     | 147 -------------------------
+ win32/create-lists.bat          |  42 --------
+ win32/detectenv-msvc.mak        | 146 -------------------------
+ win32/generate-msvc.mak         |  39 -------
+ win32/hb-introspection-msvc.mak |  42 --------
+ win32/info-msvc.mak             | 162 ----------------------------
+ win32/install.mak               |  25 -----
+ win32/introspection-msvc.mak    |  73 -------------
+ win32/pc_base.py                | 124 ----------------------
+ win32/replace.py                | 115 --------------------
+ win32/sed-enums-srcs.py         |  36 -------
+ win32/setup.py                  |  62 -----------
+ 22 files changed, 9 insertions(+), 1750 deletions(-)
+
+commit 4e4781319b36bba154f3e5d4eb678945d8f6b4fc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 12 10:33:16 2017 +0200
+
+    [ft] Add hb_ft_font_changed()
+
+    When the font size or variations settings on underlying FT_Face
+    change,
+    one can call hb_ft_font_changed() and continue using hb_font
+    created using
+    hb_ft_font_create().
+
+    Fixes https://github.com/behdad/harfbuzz/issues/559
+
+    New API:
+    hb_ft_font_changed()
+
+ docs/harfbuzz-sections.txt |  1 +
+ src/hb-ft.cc               | 15 +++++++++++++--
+ src/hb-ft.h                |  8 +++++++-
+ 3 files changed, 21 insertions(+), 3 deletions(-)
+
+commit 94b3cafc3a042aea69ee7040227557fe98a21d87
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 17:22:44 2017 +0200
+
+    Add hb_face_get_table_tags()
+
+    New API:
+    hb_face_get_table_tags()
+
+    Fixes https://github.com/behdad/harfbuzz/issues/560
+
+ src/hb-face.cc              | 29 +++++++++++++++++++++++++++++
+ src/hb-face.h               |  5 +++++
+ src/hb-open-file-private.hh | 18 ++++++++++++++++++
+ 3 files changed, 52 insertions(+)
+
+commit e1b6d923021f68713784e2fd68f631c053ef3497
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 15:51:31 2017 +0200
+
+    Remove cast of functions to (hb_destroy_func_t)
+
+    Fixes https://github.com/behdad/harfbuzz/issues/474
+
+ src/hb-blob.cc     |  8 +++++++-
+ src/hb-coretext.cc | 10 ++++++++--
+ src/hb-face.cc     |  6 ++++--
+ src/hb-ft.cc       | 20 +++++++++++---------
+ src/hb-glib.cc     |  9 ++++++++-
+ src/hb-ot-font.cc  |  6 ++++--
+ 6 files changed, 42 insertions(+), 17 deletions(-)
+
+commit 717fcb51dd051ca27d8537e5cf3a32d0447f78b5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 15:38:21 2017 +0200
+
+    [coretext] Minor
+
+ src/hb-coretext.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 374bb48d902025e8b8d8acbe525ff43540daee36
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 15:37:50 2017 +0200
+
+    Change ptem API to make 0 mean unset
+
+ src/hb-font.cc | 5 ++---
+ src/hb-font.h  | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+commit 06c14225b20aa43ae88d362be2de577f6cf3f7b9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 15:29:53 2017 +0200
+
+    [coretext] Minor
+
+ src/hb-coretext.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit a4b46212c5e76494cfde5af6f299e08902aff0d5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 15:29:22 2017 +0200
+
+    [coretext] Adjust font size check for 0
+
+ src/hb-coretext.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 269cf1ca82c34c6f6ea126e7333743e5c381453b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 15:24:22 2017 +0200
+
+    Correctly initialize ptem
+
+ src/hb-font.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 84686bf4c75c001e7cfb2eabdf391b2e76cae335
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 15:02:48 2017 +0200
+
+    [coretext-aat] Also pass through CoreText if font has kerx table
+
+    SFNSText has kerx table which apparently is applied.
+
+ src/hb-coretext.cc | 20 +++++++++-----------
+ src/hb-coretext.h  |  1 +
+ 2 files changed, 10 insertions(+), 11 deletions(-)
+
+commit 296d0134c9d04c82cc0bffd545b0fd9a308a2530
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 14:09:30 2017 +0200
+
+    [coretext] Change default point size to 12
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7b23c286a71883ac3e5777a2dee262af48c76854
+Merge: 8d450dd1 a5ebe1d4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 13:35:32 2017 +0200
+
+    Merge branch 'coretext-optical-sizing'
+
+    Should fix https://github.com/behdad/harfbuzz/issues/360
+
+commit a5ebe1d4aec41bc5e289a7969e5e5f7bb57733b6
+Author: Dominik Röttsches <drott@chromium.org>
+Date:   Wed Oct 11 13:32:38 2017 +0200
+
+    [coretext] Recreate CTFont if pt size changed
+
+    Attempt at fixing #360
+
+ src/hb-coretext.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit db7a73ce0781d1fec0235e419ac448565dcfc8ca
+Author: Dominik Röttsches <drott@chromium.org>
+Date:   Wed Oct 11 13:24:39 2017 +0200
+
+    [coretext] Fix build
+
+ src/hb-coretext.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit f33413075655e6383cd16bc31f0bf804dcec1c64
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 13:17:46 2017 +0200
+
+    [coretext] Another try
+
+ src/hb-coretext.cc | 32 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 19 deletions(-)
+
+commit a8e466c3c12a3499028cb576721e5f85ff4cbf2d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 13:05:59 2017 +0200
+
+    [coretext] Move CT_Font to font data
+
+    Towards implementing optical sizing.  Untested; won't compile.
+
+    https://github.com/behdad/harfbuzz/issues/360
+
+ src/hb-coretext.cc | 85
+ ++++++++++++++++++++++++------------------------------
+ 1 file changed, 37 insertions(+), 48 deletions(-)
+
+commit f9b4c6570a4725eec5393f86e6468a189ac8c6be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 12:51:25 2017 +0200
+
+    [coretext] Move font size to a macro
+
+ src/hb-coretext.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 8d450dd188dea2d63a03f74d903a76741de8a217
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 12:43:46 2017 +0200
+
+    Infrastructure for creating CTFont with correct font size
+
+    https://github.com/behdad/harfbuzz/issues/360
+
+ src/hb-shaper-private.hh | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+commit 16d02a58cf187dbcecc1c796acdc5d3a70ca288e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 12:28:06 2017 +0200
+
+    [coretext] Change default font size from 36 to 18
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c0c2dbc871667c32ac8eedb11de64078ef24a429
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 12:23:35 2017 +0200
+
+    Remove dirty tracking
+
+    Turns out I don't need this to resolve CoreText optical sizing
+    issue after all.
+
+    https://github.com/behdad/harfbuzz/issues/360
+
+ src/hb-face-private.hh |  9 ---------
+ src/hb-face.cc         | 17 -----------------
+ src/hb-font-private.hh | 13 -------------
+ src/hb-font.cc         | 39 ---------------------------------------
+ 4 files changed, 78 deletions(-)
+
+commit b57f18da700837a57df9606290160ea6e96accc8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 11:47:47 2017 +0200
+
+    Add hb_font_[sg]et_ptem() to set/get point size on font
+
+    New API:
+    hb_font_set_ptem()
+    hb_font_get_ptem()
+
+    Needed for hb-coretext optical sizing:
+    https://github.com/behdad/harfbuzz/issues/360
+
+ docs/harfbuzz-sections.txt |  2 ++
+ src/hb-font-private.hh     |  5 ++++-
+ src/hb-font.cc             | 41 +++++++++++++++++++++++++++++++++++++++++
+ src/hb-font.h              | 10 ++++++++++
+ 4 files changed, 57 insertions(+), 1 deletion(-)
+
+commit 3f9370d9e5051b1abf2fc94be2e10a39c8069f75
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 11 11:34:53 2017 +0200
+
+    Fix TODO item
+
+ src/hb-font.cc | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+commit 5f50f8837f918ca1d176355d1538e0e6c9703f41
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 7 13:17:33 2017 +0200
+
+    [arabic] Fix cluster merging
+
+ src/hb-ot-shape-complex-arabic.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c2545b921523538e8237ff6a2591f6cb75ee79f1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 7 12:56:53 2017 +0200
+
+    Add check for HB_EXTERNs
+
+    https://github.com/behdad/harfbuzz/pull/555
+
+ src/Makefile.am      |  1 +
+ src/check-externs.sh | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
+
+commit 48a9406839f086735a05a2f1a07987b8a6bd6d33
+Author: fanc999 <fanc999@yahoo.com.tw>
+Date:   Sat Oct 7 18:57:14 2017 +0800
+
+    Fix build of HarfBuzz tools and HarfBuzz-GObject on Visual Studio
+    (#555)
+
+    * hb-buffer.h: Mark hb_buffer_diff() for export
+
+    This will fix the tools builds on Visual Studio, as the symbol is used
+    by the tools.
+
+    * build: Adapt NMake Makefiles for GLib 2.53.4 or later
+
+    glib-mkenums was ported from a PERL script to a Python script, so we
+    need to update how we generate the enum sources for HarfBuzz-GObject
+    in
+    the NMake builds.  Let this be known in the build documentation
+    for MSVC
+    builds.
+
+    One of the problems with the underlying cmd.exe that the NMake
+    Makefiles
+    run on is that shebang lines are not recognized, so we need to to test
+    run the script with Python and see whether it succeeded by outputing a
+    source file that is larger than 0 in file size (since running the PERL
+    version of the script will clearly fail and cause an empty file to be
+    created).
+
+    If it succeeds, we then run a small Python utility script that
+    makes the
+    necessary string replacements, and we are done.  If that fails,
+    then we
+    run the glib-mkenums script with PERL, and do the replacements
+    with the
+    PERL one-liners as we did before.
+
+    We need to make replace.py use latin-1 encoding when using Python
+    3.x to
+    cope with the copyright sign that is in the generated enum sources.
+
+ src/hb-buffer.h         |  2 +-
+ win32/Makefile.am       |  4 +++-
+ win32/README.txt        |  5 +++--
+ win32/generate-msvc.mak | 17 ++++++++++++-----
+ win32/info-msvc.mak     |  5 ++++-
+ win32/replace.py        |  2 +-
+ win32/sed-enums-srcs.py | 36 ++++++++++++++++++++++++++++++++++++
+ 7 files changed, 60 insertions(+), 11 deletions(-)
+
+commit c9e2cf6f55c7682b8e7020654945ddd074ebfd24
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 4 16:59:22 2017 +0200
+
+    [ot] Remove 'mal' and 'gle' lang tags
+
+    Fixes https://github.com/behdad/harfbuzz/issues/477
+
+ src/hb-ot-tag.cc | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 621c49cb8657a79ee6897c4d313d0e825b2b228f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 4 15:06:48 2017 +0200
+
+    Improve performance of ligature component matching
+
+    This O(N^2) was introduced in
+    8b2c94c43fd335b944d5e5487265706b8e0f9041.
+    Make it O(N).
+
+ src/hb-ot-layout-gsubgpos-private.hh | 37
+ +++++++++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 13 deletions(-)
+
+commit ab8d70ec7023e51ba6fd7267d2b41c5f95ef0787
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 4 14:47:10 2017 +0200
+
+    [arabic] Implement Unicode Arabic Mark Ordering Algorithm UTR#53
+
+    Fixes https://github.com/behdad/harfbuzz/issues/509
+
+ src/hb-ot-shape-complex-arabic.cc                  |  75
+ +++++++++++++++++++++
+ src/hb-ot-shape-complex-default.cc                 |   1 +
+ src/hb-ot-shape-complex-hangul.cc                  |   1 +
+ src/hb-ot-shape-complex-hebrew.cc                  |   1 +
+ src/hb-ot-shape-complex-indic.cc                   |   1 +
+ src/hb-ot-shape-complex-myanmar.cc                 |   2 +
+ src/hb-ot-shape-complex-private.hh                 |  12 ++++
+ src/hb-ot-shape-complex-thai.cc                    |   1 +
+ src/hb-ot-shape-complex-tibetan.cc                 |   1 +
+ src/hb-ot-shape-complex-use.cc                     |   1 +
+ src/hb-ot-shape-normalize.cc                       |   8 ++-
+ test/shaping/Makefile.am                           |   1 +
+ .../24b8d24d00ae86f49791b746da4c9d3f717a51a8.ttf   | Bin 0 -> 7160 bytes
+ .../94a5d6fb15a27521fba9ea4aee9cb39b2d03322a.ttf   | Bin 0 -> 6816 bytes
+ test/shaping/record-test.sh                        |   2 +-
+ test/shaping/tests/arabic-mark-order.tests         |   2 +
+ 16 files changed, 106 insertions(+), 3 deletions(-)
+
+commit b6fe0ab636ffac0a246e160b3508cc4841cb1823
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 4 13:37:08 2017 +0200
+
+    Add info_cc() convenience macro
+
+ src/hb-ot-layout-private.hh  | 2 ++
+ src/hb-ot-shape-normalize.cc | 6 +++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+commit 7f9e7f8689e1d260596f5256947dfbd474afb1ec
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 4 13:20:33 2017 +0200
+
+    Adjust normalizer for out-of-order marks
+
+    We are going to implement Unicode Arabic Mark Ordering Algorithm:
+
+      http://www.unicode.org/reports/tr53/tr53-1.pdf
+
+    which will reorder marks out of their sorted ccc order.  Adjust
+    normalizer to stop combining as soon as dangerous ordering is
+    detected.
+
+ src/hb-ot-shape-normalize.cc | 62
+ ++++++++++++++++++++++++++------------------
+ 1 file changed, 37 insertions(+), 25 deletions(-)
+
+commit a252ad61f077c3b7bbfd8335e1b105a57beb58ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 4 13:07:08 2017 +0200
+
+    Minor
+
+ src/hb-unicode-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 4c05a405acc25c4ef0d70a97c0ae59013abca2df
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 4 13:06:51 2017 +0200
+
+    Revert "Treat HAMZA ABOVE similar to SHADD for sorting purposes"
+
+    This reverts commit 5a330575768f5a213072230b9ec8faabac9c5737.
+
+    Proper fix coming soon.
+
+ src/hb-unicode-private.hh | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit d695cacbf4dd5f77b5e7134cf60553775c515ef1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 4 11:33:47 2017 +0200
+
+    Shorthand format controls should not be ignored
+
+    Fixes https://github.com/behdad/harfbuzz/issues/503
+
+ src/hb-unicode-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 50e95229d79bd258ad1d3f6392bfffa128f6df2a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 4 11:28:04 2017 +0200
+
+    Add Chinantec language tags
+
+    Fixes https://github.com/behdad/harfbuzz/issues/516
+
+ src/hb-ot-tag.cc | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+commit 9786fcd8fdc0adbe8b6269ddd174ee2818d6fa9e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 3 17:22:43 2017 +0200
+
+    Fix GPOS v_origin ordering
+
+    This should affect mark attachment in vertical text.  I have no font
+    to test,
+    but this sounds the right order.
+
+    Noticed while debugging https://github.com/behdad/harfbuzz/issues/532
+
+ src/hb-ot-shape.cc | 44 ++++++++++++++++++++------------------------
+ 1 file changed, 20 insertions(+), 24 deletions(-)
+
+commit 63db692fa9efcd760f2e90f93f4e1428d79a3433
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 3 16:00:18 2017 +0200
+
+    [indic] Fix shaping of U+0AFB GUJARATI SIGN SHADDA
+
+    Fixes https://github.com/behdad/harfbuzz/issues/552
+
+ src/hb-ot-shape-complex-indic-private.hh | 2 +-
+ src/hb-ot-shape-complex-indic.cc         | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+commit f559c633073f63b9d87cb2440048b4413cfa1c05
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 3 15:20:07 2017 +0200
+
+    [indic] Implement Consonent_With_Stacker
+
+    Fixes https://github.com/behdad/harfbuzz/issues/528
+
+ src/hb-ot-shape-complex-indic-machine.rl   | 5 +++--
+ src/hb-ot-shape-complex-indic-private.hh   | 7 ++++---
+ src/hb-ot-shape-complex-myanmar-machine.rl | 5 +++--
+ src/hb-ot-shape-complex-myanmar.cc         | 6 +++---
+ 4 files changed, 13 insertions(+), 10 deletions(-)
+
+commit e07669fc43c0e23d337ad984aa128c3a08c9c1bb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 3 14:57:14 2017 +0200
+
+    [use] Implement Consonant_With_Stacker
+
+    Related to https://github.com/behdad/harfbuzz/issues/528
+
+ src/gen-use-table.py                   | 7 ++++---
+ src/hb-ot-shape-complex-use-machine.rl | 5 +++--
+ src/hb-ot-shape-complex-use-private.hh | 3 ++-
+ src/hb-ot-shape-complex-use-table.cc   | 6 ++++--
+ 4 files changed, 13 insertions(+), 8 deletions(-)
+
+commit 3ca9c92aa68956889642690e176c9161ff52edfe
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Tue Oct 3 08:07:02 2017 -0400
+
+    Test Consonant_With_Stacker in Kannada (#530)
+
+ test/shaping/Makefile.am                           |   1 +
+ test/shaping/fonts/COPYING                         | 100
+ +++++++++++++++++++++
+ .../341421e629668b1a1242245d39238ca48432d35d.ttf   | Bin 0 -> 1084 bytes
+ .../55c88ebbe938680b08f92c3de20713183e0c7481.ttf   | Bin 0 -> 3300 bytes
+ .../663aef6b019dbf45ffd74089e2b5f2496ceceb18.ttf   | Bin 0 -> 1204 bytes
+ .../a014549f766436cf55b2ceb40e462038938ee899.ttf   | Bin 0 -> 2720 bytes
+ .../tests/indic-consonant-with-stacker.tests       |   4 +
+ 7 files changed, 105 insertions(+)
+
+commit 5d98de1f382254a8a21fd9a04b642268a21be16f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 3 13:46:25 2017 +0200
+
+    Tweak mark-base attachment
+
+    Apparently a base glyph can also become an attached component of a
+    ligature if the ligature-forming lookup used IgnoreBase.  This was
+    being confused with a non-first component of a MultipleSubst and
+    hence not matched for mark-attachment.  Tweak test to fix.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/543
+
+ src/hb-ot-layout-gpos-table.hh                           |   4 +++-
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/98b7887cff91f722b92a8ff800120954606354f9.ttf | Bin 0 ->
+ 1168 bytes
+ test/shaping/tests/mark-attachment.tests                 |   1 +
+ 4 files changed, 5 insertions(+), 1 deletion(-)
+
+commit ea772932d2430ebc7ea712a8c46ec2500966225d
+Merge: 771970ef c44657a0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 3 13:25:44 2017 +0200
+
+    Merge commit 'c44657a05d565ec5f2c32ac15d4ecfbee00ac5f7'
+
+commit 771970efa15fc0b77841b7f0a3e266cdcf51246e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 3 13:23:31 2017 +0200
+
+    Minor
+
+ .travis.yml  | 2 +-
+ appveyor.yml | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 09cbeb2246217dce61ccc0638edb6211facca4b0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 3 13:22:07 2017 +0200
+
+    Make bots happy
+
+    Fixes https://github.com/behdad/harfbuzz/issues/551
+
+ test/shaping/tests/indic-syllable.tests | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c44657a05d565ec5f2c32ac15d4ecfbee00ac5f7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 3 13:14:17 2017 +0200
+
+    Tweak input matching some more
+
+    Followup to 8b2c94c43fd335b944d5e5487265706b8e0f9041
+
+    Allow matching sequences of marks attached to different ligatures,
+    as supposedly the base of the subsequent marks were already jumped
+    over.
+
+ src/hb-ot-layout-gsubgpos-private.hh | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit bbe94777c94637da1bcf944124b5079662618a1e
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Mon Oct 2 22:36:14 2017 +0200
+
+    Print test-suite.log when CI builds fail
+
+ .travis.yml  | 2 +-
+ appveyor.yml | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 1633513996f902e95642fcaf9205dded55f509ff
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 20:28:56 2017 +0200
+
+    Add test for U+0A51
+
+    New Indic numbers are:
+
+    BENGALI: 353725 out of 354188 tests passed. 463 failed (0.130722%)
+    DEVANAGARI: 707307 out of 707394 tests passed. 87 failed (0.0122987%)
+    GUJARATI: 366355 out of 366457 tests passed. 102 failed (0.0278341%)
+    GURMUKHI: 60729 out of 60747 tests passed. 18 failed (0.0296311%)
+    KANNADA: 951201 out of 951913 tests passed. 712 failed (0.0747968%)
+    KHMER: 299071 out of 299124 tests passed. 53 failed (0.0177184%)
+    MALAYALAM: 1048136 out of 1048334 tests passed. 198 failed
+    (0.0188871%)
+    ORIYA: 42320 out of 42329 tests passed. 9 failed (0.021262%)
+    SINHALA: 271662 out of 271847 tests passed. 185 failed (0.068053%)
+    TAMIL: 1091754 out of 1091754 tests passed. 0 failed (0%)
+    TELUGU: 970555 out of 970573 tests passed. 18 failed (0.00185457%)
+
+    Before 71c0a1429db7c7e7e32507be248c9457e1cbfc7d GURMUKHI used to be
+    at 15,
+    because Uniscribe seems to allow this character standalone, but
+    that looks
+    wrong.
+
+ .../sha1sum/1735326da89f0818cd8c51a0600e9789812c0f94.ttf | Bin 0 ->
+ 1008 bytes
+ test/shaping/tests/indic-syllable.tests                  |   2 ++
+ 2 files changed, 2 insertions(+)
+
+commit 8b2c94c43fd335b944d5e5487265706b8e0f9041
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 20:02:45 2017 +0200
+
+    Tweak ligature component matching for ligature formation
+
+    If two marks want to ligate and they belong to different components
+    of the
+    same ligature glyph, and said ligature glyph is to be ignored
+    according to
+    mark-filtering rules, then allow.
+
+    Example Burmese senquence:
+
+      U+1004,U+103A,U+1039,U+101B,U+103D,U+102D
+
+    Test font provided by Norbert Lindenberg.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/545
+
+ src/hb-ot-layout-gsubgpos-private.hh               |  59
+ +++++++++++++++++----
+ .../a6c76d1bafde4a0b1026ebcc932d2e5c6fd02442.ttf   | Bin 0 -> 1384 bytes
+ test/shaping/tests/ligature-id.tests               |   1 +
+ 3 files changed, 51 insertions(+), 9 deletions(-)
+
+commit 71c0a1429db7c7e7e32507be248c9457e1cbfc7d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 18:56:10 2017 +0200
+
+    [indic] Fix shaping of U+0A51
+
+    Mark it as matra below to allow the sequence U+0A15, U+0A51, U+0A47.
+    Oh well...
+
+    Fixes https://github.com/behdad/harfbuzz/issues/524
+
+ src/hb-ot-shape-complex-indic.cc                         |   6 ++++++
+ .../sha1sum/85fe0be440c64ac77699e21c2f1bd933a919167e.ttf | Bin 0 ->
+ 1224 bytes
+ test/shaping/tests/indic-syllable.tests                  |   1 +
+ 3 files changed, 7 insertions(+)
+
+commit 6eb8950e6265b23d88ba35daab1cff4fc3fe8753
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 18:30:05 2017 +0200
+
+    [ucdn] Oops!
+
+ src/hb-ucdn/{unicodedata_db.h => ucdn_db.h} | 4324
+ ++++++++++++++-------------
+ 1 file changed, 2175 insertions(+), 2149 deletions(-)
+
+commit cbec0cd65e1787b20ea55dd5583a7444938bd381
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 18:26:52 2017 +0200
+
+    Remove some really old cruft
+
+ src/hb-common.h    | 14 --------------
+ src/hb-ucdn/ucdn.h | 14 --------------
+ 2 files changed, 28 deletions(-)
+
+commit b3dff7720c1fac8ca9bdd7087ac368a0af4349e8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 18:22:51 2017 +0200
+
+    [ucdn] Update README
+
+ src/hb-ucdn/README | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 57c55ef8341c760145170dedd002c5afb380e6c8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 18:21:27 2017 +0200
+
+    [ot] Improve shaper selection heuristic
+
+ src/hb-ot-shape-complex-private.hh | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+commit 5680ef884cf31ab9b42c587ffa260e390c88b8eb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 18:20:51 2017 +0200
+
+    [use] Hack to fix shaping of U+1A7F
+
+    Fixes https://github.com/behdad/harfbuzz/issues/525
+
+ src/gen-use-table.py                 | 3 +++
+ src/hb-ot-shape-complex-use-table.cc | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+commit 0faa16a25349906ee0ab98b73d9a3d96327a0955
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 17:15:46 2017 +0200
+
+    [ucdn] Update to Unicode 10
+
+    Update to commit c000ebf79c095a7d58cf90090bde5715592c4834
+    plus this bug-fix: https://github.com/grigorig/ucdn/issues/18
+
+ src/hb-ucdn.cc               |  4 +++
+ src/hb-ucdn/Makefile.sources |  2 +-
+ src/hb-ucdn/ucdn.c           | 69
+ ++++++++++++++++++++++----------------------
+ src/hb-ucdn/ucdn.h           |  7 +++++
+ 4 files changed, 47 insertions(+), 35 deletions(-)
+
+commit ea535a1dfa63f82280607273cd282a6134c334da
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 17:02:39 2017 +0200
+
+    [use] Update to Unicode 10
+
+ src/gen-use-table.py                 |  5 +--
+ src/hb-ot-shape-complex-use-table.cc | 69
+ ++++++++++++++++++++++++++----------
+ 2 files changed, 54 insertions(+), 20 deletions(-)
+
+commit 29c244aff6e3c359796bb033496c14ad5537dbe0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 16:36:21 2017 +0200
+
+    Minor
+
+ src/gen-use-table.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 1535f8c67216e8559fa48691fe6d9c2726c08973
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 16:12:18 2017 +0200
+
+    Add Unicode 10 scripts
+
+ src/hb-common.h                    | 8 ++++++++
+ src/hb-ot-shape-complex-private.hh | 5 +++++
+ 2 files changed, 13 insertions(+)
+
+commit bdbe974f525d33b8c735fb5d7fd76c236c4dd0ea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 10:00:31 2017 -0400
+
+    [indic] Update table to Unicode 10
+
+ src/hb-ot-shape-complex-indic-table.cc | 70
+ +++++++++++++++++-----------------
+ 1 file changed, 36 insertions(+), 34 deletions(-)
+
+commit cc79b666bc4a81a0342ed1e706dd7db109739dc5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 09:19:15 2017 -0400
+
+    [indic] Add test for 1a0a356a0f2b2932581e4fd0437c01c058f4f6d1
+
+    https://github.com/behdad/harfbuzz/issues/538
+
+ .../sha1sum/87f85d17d26f1fe9ad28d7365101958edaefb967.ttf | Bin 0 ->
+ 1000 bytes
+ test/shaping/tests/indic-syllable.tests                  |   1 +
+ 2 files changed, 1 insertion(+)
+
+commit 819cc360499a5f136325b5a1a18098ebc2aee081
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 09:03:16 2017 -0400
+
+    [indic] Move manual code out of generated table
+
+ src/hb-ot-shape-complex-indic-table.cc | 7 -------
+ src/hb-ot-shape-complex-indic.cc       | 5 +++++
+ 2 files changed, 5 insertions(+), 7 deletions(-)
+
+commit da4866f7177a4e2836cc70b844e2e64ab671761f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 08:57:06 2017 -0400
+
+    [arabic] Update table to Unicode 10 data
+
+ src/hb-ot-shape-complex-arabic-table.hh | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+commit 1a0a356a0f2b2932581e4fd0437c01c058f4f6d1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 2 08:49:23 2017 -0400
+
+    [indic] Categorize U+0980 BENGALI ANJI as placeholder
+
+    Fixes https://github.com/behdad/harfbuzz/issues/538
+
+ src/hb-ot-shape-complex-indic.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 19e77e01bc13f44138e1d50533327d314dd0a018
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Mon Oct 2 13:08:49 2017 +0100
+
+    [shape-plan] Don't look for a cached plan if variation coords are
+    specified. Fixes #549. (#550)
+
+    This is a temporary hack just to avoid incorrect shaping results,
+    pending proper support
+    for caching shape-plans with variation coordinates.
+
+ src/hb-shape-plan.cc | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+commit db446cce4ef4cd1a4f1652e3aa3e5e5ed1881d39
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 1 12:06:00 2017 -0400
+
+    Add RELEASING.md to dist
+
+ Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 933a81d74fee0d5856fc7b15b58a16e0e0168e48
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Sun Oct 1 19:35:24 2017 +0330
+
+    Add release checklist (#529)
+
+ RELEASING.md | 96
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
+
+commit 66128d3cfb12705530141b5a4bd2706f0cbb9fc5
+Author: mhosken <mhosken@users.noreply.github.com>
+Date:   Wed Sep 27 01:29:45 2017 +0700
+
+    Fix missing xscale in rtl graphite unpacking (#541)
+
+    * Fix missing xscale in rtl graphite unpacking
+
+    * Oops didn't need to mess with yscale
+
+ src/hb-graphite2.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3ca69c8c32b8408dd9f8e6e866cd07e58c0d79b7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Sep 14 20:50:35 2017 -0400
+
+    Use strtod_l() to correctly parse decimal numbers in French &
+    other locales
+
+    Test with, eg.:
+    $ LC_ALL=fr_FR.utf-8 ./hb-view NotoSansArabic-VF.ttf بهداد
+    --variations wght=1.2
+
+ configure.ac     |  4 ++--
+ src/hb-common.cc | 53
+ +++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 53 insertions(+), 4 deletions(-)
+
+commit 9355218f582a6c2425cadcb868204f81b17d5767
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Sep 9 11:21:07 2017 -0700
+
+    [util] Add a few shorthand forms for commandline options
+
+    -o, -O, -u, -v, -V
+
+ util/options.cc | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit a984e0c4d921a6dff82cc1b5c686cc957215bc7e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 5 11:18:35 2017 -0700
+
+    1.5.1
+
+ NEWS         | 13 +++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
 commit d03f11f246efec13e48fd68a9ce136db771b22bf
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Sep 4 20:14:13 2017 -0700

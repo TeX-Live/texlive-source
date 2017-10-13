@@ -1,4 +1,4 @@
-Changes applied to the harfbuzz-1.5.1/ tree as obtained from:
+Changes applied to the harfbuzz-1.6.0/ tree as obtained from:
 	http://www.freedesktop.org/software/harfbuzz/release/
 
 Removed:
@@ -24,5 +24,5 @@ Removed unused dirs:
 	m4
 	test
 	util
-	win32
+	win32 -- deleted upstream
 	src/hb-ucdn
