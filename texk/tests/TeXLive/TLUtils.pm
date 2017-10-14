@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 44243 $';
+my $svnrev = '$Revision: 44872 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -802,30 +802,59 @@ sub dir_writable {
 
 =item C<mkdirhier($path, [$mode])>
 
-The function C<mkdirhier> does the same as the UNIX command C<mkdir -p>,
-and dies on failure.  The optional parameter sets the permission bits.
+The function C<mkdirhier> does the same as the UNIX command C<mkdir -p>.
+It behaves differently depending on the context in which it is called:
+If called in void context it will die on failure. If called in
+scalar context, it will return 1/0 on sucess/failure. If called in
+list context, it returns 1/0 as first element and an error message
+as second, if an error occurred (and no second element in case of
+success). The optional parameter sets the permission bits.
 
 =cut
 
 sub mkdirhier {
   my ($tree,$mode) = @_;
+  my $ret = 1;
+  my $reterror;
 
-  return if (-d "$tree");
-  my $subdir = "";
-  # win32 is special as usual: we need to separate //servername/ part
-  # from the UNC path, since (! -d //servername/) tests true
-  $subdir = $& if ( win32() && ($tree =~ s!^//[^/]+/!!) );
+  if (-d "$tree") {
+    $ret = 1;
+  } else {
+    my $subdir = "";
+    # win32 is special as usual: we need to separate //servername/ part
+    # from the UNC path, since (! -d //servername/) tests true
+    $subdir = $& if ( win32() && ($tree =~ s!^//[^/]+/!!) );
 
-  @dirs = split (/\//, $tree);
-  for my $dir (@dirs) {
-    $subdir .= "$dir/";
-    if (! -d $subdir) {
-      if (defined $mode) {
-        mkdir ($subdir, $mode)
-        || die "$0: mkdir($subdir,$mode) failed, goodbye: $!\n";
-      } else {
-        mkdir ($subdir) || die "$0: mkdir($subdir) failed, goodbye: $!\n";
+    @dirs = split (/\//, $tree);
+    for my $dir (@dirs) {
+      $subdir .= "$dir/";
+      if (! -d $subdir) {
+        if (defined $mode) {
+          if (! mkdir ($subdir, $mode)) {
+            $ret = 0;
+            $reterror = "mkdir($subdir,$mode) failed: $!";
+            last;
+          }
+        } else {
+          if (! mkdir ($subdir)) {
+            $ret = 0;
+            $reterror = "mkdir($subdir) failed: $!";
+            last;
+          }
+        }
       }
+    }
+  }
+  if ($ret) {
+    return(1);  # nothing bad here returning 1 in any case, will
+                # be ignored in void context, and give 1 in list context
+  } else {
+    if (wantarray) {
+      return(0, $reterror);
+    } elsif (defined wantarray) {
+      return(0);
+    } else {
+      die "$0: $reterror\n";
     }
   }
 }
@@ -1809,7 +1838,11 @@ On Windows it returns undefined.
 
 sub add_link_dir_dir {
   my ($from,$to) = @_;
-  mkdirhier ($to);
+  my ($ret, $err) = mkdirhier ($to);
+  if (!$ret) {
+    tlwarn("$err\n");
+    return 0;
+  }
   if (-w $to) {
     debug ("linking files from $from to $to\n");
     chomp (@files = `ls "$from"`);
@@ -1864,7 +1897,7 @@ sub remove_link_dir_dir {
         tlwarn ("not removing $to/$f, not a link or wrong destination!\n");
       }
     }
-    # trry to remove the destination directory, it might be empty and
+    # try to remove the destination directory, it might be empty and
     # we might have write permissions, ignore errors
     # `rmdir "$to" 2>/dev/null`;
     return $ret;
@@ -1896,7 +1929,7 @@ sub add_remove_symlinks {
   } else {
     die ("should not happen, unknown mode $mode in add_remove_symlinks!");
   }
-  
+
   # man
   my $top_man_dir = "$Master/texmf-dist/doc/man";
   debug("$mode symlinks for man pages to $sys_man from $top_man_dir\n");
@@ -1904,25 +1937,35 @@ sub add_remove_symlinks {
     ; # better to be silent?
     #info("skipping add of man symlinks, no source directory $top_man_dir\n");
   } else {
-    mkdirhier $sys_man if ($mode eq "add");
-    if (-w $sys_man) {
-      my $foo = `(cd "$top_man_dir" && echo *)`;
-      my @mans = split (' ', $foo);
-      chomp (@mans);
-      foreach my $m (@mans) {
-        my $mandir = "$top_man_dir/$m";
-        next unless -d $mandir;
-        if ($mode eq "add") {
-          $errors++ unless add_link_dir_dir($mandir, "$sys_man/$m");
-        } else {
-          $errors++ unless remove_link_dir_dir($mandir, "$sys_man/$m");
-        }
+    my $man_doable = 1;
+    if ($mode eq "add") {
+      my ($ret, $err) = mkdirhier $sys_man;
+      if (!$ret) {
+        $man_doable = 0;
+        tlwarn("$err\n");
+        $errors++;
       }
-      #`rmdir "$sys_man" 2>/dev/null` if ($mode eq "remove");
-    } else {
-      tlwarn("man symlink destination ($sys_man) not writable,"
-        . "cannot $mode symlinks.\n");
-      $errors++;
+    }
+    if ($man_doable) {
+      if (-w $sys_man) {
+        my $foo = `(cd "$top_man_dir" && echo *)`;
+        my @mans = split (' ', $foo);
+        chomp (@mans);
+        foreach my $m (@mans) {
+          my $mandir = "$top_man_dir/$m";
+          next unless -d $mandir;
+          if ($mode eq "add") {
+            $errors++ unless add_link_dir_dir($mandir, "$sys_man/$m");
+          } else {
+            $errors++ unless remove_link_dir_dir($mandir, "$sys_man/$m");
+          }
+        }
+        #`rmdir "$sys_man" 2>/dev/null` if ($mode eq "remove");
+      } else {
+        tlwarn("man symlink destination ($sys_man) not writable, "
+          . "cannot $mode symlinks.\n");
+        $errors++;
+      }
     }
   }
   

@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45499 2017-10-08 14:26:19Z preining $
+# $Id: tlmgr.pl 45532 2017-10-13 06:50:59Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45499 $';
-my $datrev = '$Date: 2017-10-08 16:26:19 +0200 (Sun, 08 Oct 2017) $';
+my $svnrev = '$Revision: 45532 $';
+my $datrev = '$Date: 2017-10-13 08:50:59 +0200 (Fri, 13 Oct 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -169,7 +169,7 @@ my %action_specification = (
     "function" => \&action_conf
   },
   "dump-tlpdb" => { 
-    "options"  => { "local" => 1, remote => 1 },
+    "options"  => { local => 1, remote => 1, json => 1 },
     "run-post" => 0,
     "function" => \&action_dumptlpdb
   },
@@ -210,6 +210,7 @@ my %action_specification = (
   "info" => { 
     "options"  => { 
       "data" => "=s",
+      "all" => 1,
       "list" => 1, 
       "only-installed" => 1,
     },
@@ -334,6 +335,7 @@ my %action_specification = (
       "no-auto-remove"             => 1,
       "no-depends"                 => 1,
       "no-depends-at-all"          => 1,
+      "no-restart"                 => 1,
       "reinstall-forcibly-removed" => 1,
       "self" => 1,
     },
@@ -1376,14 +1378,22 @@ sub action_dumptlpdb {
   $::machinereadable = 1;
   
   if ($opts{"local"} && !$opts{"remote"}) {
-    # for consistency we write out the location of the installation,
-    # too, in the same format as when dumping the remote tlpdb
-    print "location-url\t", $localtlpdb->root, "\n";
-    $localtlpdb->writeout;
+    if ($opts{"json"}) {
+      print $localtlpdb->as_json;
+    } else {
+      # for consistency we write out the location of the installation,
+      # too, in the same format as when dumping the remote tlpdb
+      print "location-url\t", $localtlpdb->root, "\n";
+      $localtlpdb->writeout;
+    }
 
   } elsif ($opts{"remote"} && !$opts{"local"}) {
-    init_tlmedia_or_die();
-    $remotetlpdb->writeout;
+    init_tlmedia_or_die(1);
+    if ($opts{"json"}) {
+      print $remotetlpdb->as_json;
+    } else {
+      $remotetlpdb->writeout;
+    }
 
   } else {
     tlwarn("$prg dump-tlpdb: need exactly one of --local and --remote.\n");
@@ -1402,13 +1412,34 @@ sub action_info {
   my $ret = $F_OK | $F_NOPOSTACTION;
   my @datafields;
   my $fmt = "list";
-  if ($opts{'data'}) {
+  if ($opts{'data'} eq "json") {
+    eval { require JSON; };
+    if ($@) {
+      # that didn't work out, give some usefull error message and stop
+      if ($^O =~ /^MSWin/i) {
+        # that should not happen, we are shipping Tk!!
+        require Win32;
+        my $msg = "Cannot load JSON:PP, that should not happen as we ship it!\n(Error message: $@)\n";
+        Win32::MsgBox($msg, 1|Win32::MB_ICONSTOP(), "Warning");
+      } else {
+        printf STDERR "
+$prg: Cannot load JSON. 
+This module is shipped with core Perl unless you have a very old Perl,
+in which case you cannot use the json option.
+Goodbye.
+";
+      }
+    }
+    $fmt = 'json';
+    # the 1 is the silent mode!
+    init_tlmedia_or_die(1);
+  } elsif ($opts{'data'}) {
     # output format is changed to csv with " as quotes
     # we need to determine the fields
     @datafields = split(',', $opts{'data'});
     # check for correctness of data fields
     for my $d (@datafields) {
-      if ($d !~ m/name|category|localrev|remoterev|shortdesc|longdesc|size|installed|relocatable|cat-version|cat-date|cat-license/) {
+      if ($d !~ m/name|category|localrev|remoterev|shortdesc|longdesc|size|installed|relocatable|depends|cat-version|cat-date|cat-license/) {
         tlwarn("unknown data field: $d\n");
         return($F_ERROR);
       }
@@ -1430,14 +1461,21 @@ sub action_info {
   }
   # we are still here, so $what is defined and neither collection nor scheme,
   # so assume the arguments are package names
-  $fmt = ($opts{'data'} ? "csv" : "detail");
+  if ($opts{'data'} ne "json") {
+    $fmt = ($opts{'data'} ? "csv" : "detail");
+  }
   my @adds;
   if ($opts{'data'}) {
     @adds = @datafields;
   }
+  print "[\n" if ($fmt eq "json");
+  my $first = 1;
   foreach my $ppp ($what, @todo) {
+    print "," if ($fmt eq "json" && !$first);
+    $first = 0;
     $ret |= show_one_package($ppp, $fmt, @adds);
   }
+  print "]\n" if ($fmt eq "json");
   return ($ret);
 }
 
@@ -2379,7 +2417,7 @@ sub action_update {
   }
   my $dry_run_cont = $opts{"dry-run"} && ($opts{"dry-run"} < 0);
   if ( !$dry_run_cont  && !$opts{"self"} && @critical) {
-    critical_updates_warning();
+    critical_updates_warning() if (!$::machinereadable);
     if ($opts{"force"}) {
       tlwarn("$prg: Continuing due to --force.\n");
     } elsif ($opts{"list"}) {
@@ -3216,7 +3254,7 @@ sub action_update {
   }
 
   my $restart_tlmgr = 0;
-  if ($opts{"self"} && @critical &&
+  if ($opts{"self"} && @critical && !$opts{'no-restart'} &&
       $infra_update_done && $other_updates_asked_for) {
     # weed out the --self argument from the saved arguments
     @::SAVEDARGV = grep (!m/^-?-self$/, @::SAVEDARGV);
@@ -3265,14 +3303,15 @@ sub action_update {
   # warn if nothing is updated.  Unless they said --self, in which case
   # we've already reported it.
   if (!(@new || @updated) && ! $opts{"self"}) {
-    info("$prg: no updates available\n") if (!$::machinereadable);
-    if ($remotetlpdb->media ne "NET"
-        && $remotetlpdb->media ne "virtual"
-        && !$opts{"dry-run"}
-        && !$opts{"repository"}
-        && !$ENV{"TEXLIVE_INSTALL_ENV_NOCHECK"}
-       ) {
-      tlwarn(<<END_DISK_WARN);
+    if (!$::machinereadable) {
+      info("$prg: no updates available\n");
+      if ($remotetlpdb->media ne "NET"
+          && $remotetlpdb->media ne "virtual"
+          && !$opts{"dry-run"}
+          && !$opts{"repository"}
+          && !$ENV{"TEXLIVE_INSTALL_ENV_NOCHECK"}
+        ) {
+        tlwarn(<<END_DISK_WARN);
 $prg: Your installation is set up to look on the disk for updates.
 To install from the Internet for this one time only, run:
   tlmgr -repository $TeXLiveURL ACTION ARG...
@@ -3281,6 +3320,7 @@ where ACTION is install, update, etc.; see tlmgr -help if needed.
 To change the default for all future updates, run:
   tlmgr option repository $TeXLiveURL
 END_DISK_WARN
+      }
     }
   }
   return ($ret);
@@ -3359,7 +3399,7 @@ sub action_install {
   # check for updates to tlmgr itself, and die unless --force is given
   if (!$opts{"usermode"}) {
     if (check_for_critical_updates( $localtlpdb, $remotetlpdb)) {
-      critical_updates_warning();
+      critical_updates_warning() if (!$::machinereadable);
       if ($opts{"force"}) {
         tlwarn("$prg: Continuing due to --force\n");
       } else {
@@ -3556,12 +3596,32 @@ sub show_one_package {
     $ret = show_one_package_detail($pkg, @rest);
   } elsif ($fmt eq "csv") {
     $ret = show_one_package_csv($pkg, @rest);
+  } elsif ($fmt eq "json") {
+    $ret = show_one_package_json($pkg);
   } else {
     tlwarn("$prg: show_one_package: unknown format: $fmt\n");
     return($F_ERROR);
   }
   return($ret);
 }
+
+sub show_one_package_json {
+  my ($p) = @_;
+  my @out;
+  my $loctlp = $localtlpdb->get_package($p);
+  my $remtlp = $remotetlpdb->get_package($p);
+  my $is_installed = (defined($loctlp) ? 1 : 0);
+  my $is_available = (defined($remtlp) ? 1 : 0);
+  if (!($is_installed || $is_available)) {
+    tlwarn("$prg: package $p not found neither locally nor remote!\n");
+    return($F_WARNING);
+  }
+  my $tlp = ($is_installed ? $loctlp : $remtlp);
+  my $str = $tlp->as_json();
+  print $str, "\n";
+  return($F_OK);
+}
+
 
 sub show_one_package_csv {
   my ($p, @datafields) = @_;
@@ -3611,6 +3671,8 @@ sub show_one_package_csv {
       push @out, ($is_installed ? $loctlp->revision : 0);
     } elsif ($d eq "remoterev") {
       push @out, ($is_available ? $remtlp->revision : 0);
+    } elsif ($d eq "depends") {
+      push @out, (join(":", $tlp->depends));
     } elsif ($d eq "size") {
       # tlp->*size is in 4k blocks!
       my $srcsize = $tlp->srcsize * $TeXLive::TLConfig::BlockSize;
@@ -6217,7 +6279,7 @@ sub action_shell {
         print "OK\n";
       }
       # make sure that we restart after having called update --self!
-      if (($cmd eq 'update') && $opts{'self'}) {
+      if (($cmd eq 'update') && $opts{'self'} && !$opts{'no-restart'}) {
         print "tlmgr has been updated, restarting!\n";
         exec("tlmgr", @::SAVEDARGV);
       }
@@ -7621,10 +7683,15 @@ locally installed packages, collections, or schemes are listed.
 
 If the option C<--data> is given, its argument must be a comma separated
 list of field names from: C<name>, C<category>, C<localrev>, C<remoterev>,
-C<shortdesc>, C<longdesc>, C<installed>, C<size>, C<relocatable>, C<cat-version>,
-C<cat-date>, or C<cat-licence>. In this case the requested packages' 
-information is listed in CSV format one package per line, and the
-column information is given by the C<itemN>.
+C<shortdesc>, C<longdesc>, C<installed>, C<size>, C<relocatable>, C<depends>,
+C<cat-version>, C<cat-date>, or C<cat-licence>. In this case the requested
+packages' information is listed in CSV format one package per line, and the
+column information is given by the C<itemN>. The C<depends> column contains
+the name of all dependencies separated by C<:>.
+
+In case the only value passed to C<--data> is C<json>, the output is a
+JSON encoded array where each array element is the JSON representation of
+the internal object.
 
 
 =back
@@ -9097,7 +9164,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45499 2017-10-08 14:26:19Z preining $
+$Id: tlmgr.pl 45532 2017-10-13 06:50:59Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
