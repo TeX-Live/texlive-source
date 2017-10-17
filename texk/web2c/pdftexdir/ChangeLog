@@ -1,3 +1,17 @@
+2017-10-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftosrc.cc: Support also xpdf-3.04 if XPDF304 is defined.
+	* pdftoepdf-newpoppler.cc, pdftosrc-newpoppler.cc: New files
+	added in order to support poppler 0.59.0 or newer versions.
+	POPPLER_VERSION should be defined. At present, simply overwrite
+	pdftoepdf.cc and pdftosrc.cc by pdftoepdf-newpoppler.cc and
+	pdftosrc-newpoppler.cc, respectively, in order to use these
+	files.
+	The current pdftoepdf.cc and pdftosrc.cc support
+	xpdf-4.00 by default, xpdf-3.04 if XPDF304 is defined, and
+	poppler 0.57.0 or older versions if POPPLER_VERSION is
+	defined.
+
 2017-10-10  Shreevatsa R <shreevatsa.public@gmail.com>
 
 	* pdftex.web: formatting-only fixes to make weave-able.
