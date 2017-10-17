@@ -40,10 +40,7 @@ POPPLER_VERSION should be defined.
 #include <goo/gmem.h>
 #include <goo/gfile.h>
 #else
-#include <aconf.h>
-#include <GString.h>
-#include <gmem.h>
-#include <gfile.h>
+#error POPPLER_VERSION should be defined.
 #endif
 #include <assert.h>
 

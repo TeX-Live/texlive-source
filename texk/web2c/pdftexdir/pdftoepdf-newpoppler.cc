@@ -48,10 +48,7 @@ POPPLER_VERSION should be defined.
 #include <goo/gfile.h>
 #define GString GooString
 #else
-#include <aconf.h>
-#include <GString.h>
-#include <gmem.h>
-#include <gfile.h>
+#error POPPLER_VERSION should be defined.
 #endif
 #include <assert.h>
 
@@ -679,7 +676,7 @@ static void writeEncodings()
 #ifdef POPPLER_VERSION
         r->font->decRefCnt();
 #else
-        delete r->font;
+#error POPPLER_VERSION should be defined.
 #endif
         delete r;
     }
@@ -722,7 +719,7 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
 #ifdef POPPLER_VERSION
     int pdf_major_version_found, pdf_minor_version_found;
 #else
-    float pdf_version_found, pdf_version_wanted;
+#error POPPLER_VERSION should be defined.
 #endif
     // initialize
     if (!isInit) {
@@ -754,19 +751,7 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
         }
     }
 #else
-    pdf_version_found = pdf_doc->doc->getPDFVersion();
-    pdf_version_wanted = 1 + (minor_pdf_version_wanted * 0.1);
-    if (pdf_version_found > pdf_version_wanted + 0.01) {
-        char msg[] =
-            "PDF inclusion: found PDF version <%.1f>, but at most version <%.1f> allowed";
-        if (pdf_inclusion_errorlevel > 0) {
-            pdftex_fail(msg, pdf_version_found, pdf_version_wanted);
-        } else if (pdf_inclusion_errorlevel < 0) {
-            ; /* do nothing */
-        } else { /* = 0, give warning */
-            pdftex_warn(msg, pdf_version_found, pdf_version_wanted);
-        }
-    }
+#error POPPLER_VERSION should be defined.
 #endif
     epdf_num_pages = pdf_doc->doc->getCatalog()->getNumPages();
     if (page_name) {
