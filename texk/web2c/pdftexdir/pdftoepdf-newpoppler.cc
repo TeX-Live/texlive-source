@@ -979,7 +979,7 @@ kind of pdf images, for example, figure_missing.pdf in gnuplot.
 A change
             groupDict = Object(page->getGroup()).copy();
 does not improve the situation.
-The changes below seem to work fine, 
+The changes below seem to work fine. 
 */
 // begin modification
             groupDict = pageDict->lookup("Group");
