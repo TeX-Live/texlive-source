@@ -12,10 +12,6 @@
 #include <ptexenc/ptexenc.h>
 #endif
 
-#if !defined(_WIN32)
-#include <sys/stat.h>
-#endif
-
 #ifdef WIN32
 #undef fopen
 #undef xfopen
@@ -150,14 +146,6 @@ recorder_record_output (const_string name)
    whether or not the open succeeded.  If it did, `nameoffile' is set to
    the full filename opened, and `namelength' to its length.  */
 
-#if !defined(_WIN32)
-static int is_dirp (char *buff)
-{
-    struct stat stats;
-    return stat (buff, &stats) == 0 && S_ISDIR (stats.st_mode);
-}
-#endif
-
 boolean
 open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
 {
@@ -189,7 +177,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
 /*
     if fname is a directory, discard it.
 */
-        if (*f_ptr && is_dirp (fname)) {
+        if (*f_ptr && dir_p (fname)) {
             fclose (*f_ptr);
             *f_ptr = NULL;
         }
