@@ -38,7 +38,6 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-buffer-private.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-serialize.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer.cc \
-	@HARFBUZZ_TREE@/src/hb-cache-private.hh \
 	@HARFBUZZ_TREE@/src/hb-common.cc \
 	@HARFBUZZ_TREE@/src/hb-face-private.hh \
 	@HARFBUZZ_TREE@/src/hb-face.cc \
@@ -60,6 +59,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-ot-var-mvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-tag.cc \
 	@HARFBUZZ_TREE@/src/hb-private.hh \
+	@HARFBUZZ_TREE@/src/hb-set-digest-private.hh \
 	@HARFBUZZ_TREE@/src/hb-set-private.hh \
 	@HARFBUZZ_TREE@/src/hb-set.cc \
 	@HARFBUZZ_TREE@/src/hb-shape.cc \

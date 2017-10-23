@@ -8,7 +8,6 @@ HB_BASE_sources = \
 	hb-buffer-private.hh \
 	hb-buffer-serialize.cc \
 	hb-buffer.cc \
-	hb-cache-private.hh \
 	hb-common.cc \
 	hb-face-private.hh \
 	hb-face.cc \
@@ -30,6 +29,7 @@ HB_BASE_sources = \
 	hb-ot-post-table.hh \
 	hb-ot-tag.cc \
 	hb-private.hh \
+	hb-set-digest-private.hh \
 	hb-set-private.hh \
 	hb-set.cc \
 	hb-shape.cc \
@@ -72,7 +72,9 @@ HB_NODIST_headers = \
 	hb-version.h \
 	$(NULL)
 
-HB_FALLBACK_sources = hb-fallback-shape.cc
+HB_FALLBACK_sources = \
+	hb-fallback-shape.cc	\
+	$(NULL)
 
 HB_OT_sources = \
 	hb-ot-font.cc \

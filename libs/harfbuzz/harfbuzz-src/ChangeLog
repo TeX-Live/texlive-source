@@ -1,3 +1,592 @@
+commit d59d5dc7d339deb45cc84cffd084b52752765a08
+Merge: ced86da7 3ee15a60
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 22 17:08:29 2017 -0400
+
+    Merge commit '3ee15a60358f4d894bbf2431d7a7df38b7acc4ce'
+
+commit ced86da7ddbbd0d64f8ba1290b8e67600b1db2d4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 22 17:03:36 2017 -0400
+
+    Another try at fixing mingw32 build bot fail
+
+ src/hb-private.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit bc1183aa6ba45a527084d391d6e7f801d6196060
+Merge: d45a2138 bfe0faf1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 22 17:06:00 2017 -0400
+
+    Merge commit 'bfe0faf1a2d39302129a7202994456afd96694ca'
+
+commit 3ee15a60358f4d894bbf2431d7a7df38b7acc4ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 22 17:03:36 2017 -0400
+
+    Another try at fixing mingw32 build bot fail
+
+ src/hb-private.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit bfe0faf1a2d39302129a7202994456afd96694ca
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 22 15:54:50 2017 -0400
+
+    [docs] Deprecate hb_set_invert()
+
+ docs/harfbuzz-sections.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d45a2138d9d54eab158046d6503f1bb104efce25
+Merge: d8adaa97 41b18251
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Sat Oct 21 10:19:55 2017 +0330
+
+    Merge pull request #572 from fanc999/master.msvc
+
+    builds: Support HarfBuzz-GObject and introspection in CMake builds
+
+commit d8adaa97fbf33071b8a4b5c05c3f2f15f2fd22ea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 20 13:57:43 2017 -0400
+
+    Another try at fixing build bots
+
+    hb-ot-shape.cc:287:18: error: comparison of constant 32 with
+    expression of type 'hb_unicode_general_category_t' is always true
+    [-Werror,-Wtautological-constant-out-of-range-compare]
+
+ src/hb-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 6058f98825e8f134893a1bbfb402e45d85b56ff0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 19 11:39:52 2017 -0700
+
+    Remove FLAG_SAFE()
+
+    No flag is safe, over time... See previous commit.
+
+ src/hb-ot-shape-complex-arabic.cc |  4 ++--
+ src/hb-ot-shape-complex-indic.cc  | 12 ++++++------
+ src/hb-ot-shape-complex-use.cc    |  2 +-
+ src/hb-private.hh                 |  5 ++---
+ src/hb-unicode-private.hh         |  4 ++--
+ 5 files changed, 13 insertions(+), 14 deletions(-)
+
+commit 7c561dacc3c5fb9306db8bda27b7289331bd523f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 19 11:35:51 2017 -0700
+
+    [myanmar] Fix unsafe usage of FLAG_SAFE()
+
+    The commit f559c633073f63b9d87cb2440048b4413cfa1c05 caused
+    "undefined-shift" errors in Myanmar shaper as we changed the
+    numeric value of type D from 19 to 32 there, making the
+    "FLAG_SAFE (info.myanmar_category())" wrong.
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=3546
+
+ src/hb-ot-shape-complex-myanmar.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 41b1825196235d4337c76f97e09f0b7c6d6c56ae
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Thu Oct 19 18:36:32 2017 +0800
+
+    CMake builds: Support introspection builds
+
+    This adds support for introspection builds on Windows that is
+    enabled by
+    the HB_HAVE_INTROSPECTION option, which will also enable
+    HB_HAVE_GOBJECT
+    (and so HB_HAVE_GLIB) as they are required for introspection.
+
+    In order for this to work one must ensure that the Python installation
+    listed in PYTHON_EXECUTABLE is the same Python release series that was
+    used to build _giscanner.pyd (the Python module that is used by
+    g-ir-scanner), with the same architecture.  PKG_CONFIG_PATH and PATH
+    must be set correctly if $(PREFIX)\bin and/or $(PREFIX)\lib\pkgconfig
+    are not in the standard PATH and PKG_CONFIG_PATH, which is actually
+    in-line with the *NIX builds.
+
+ CMakeLists.txt | 161
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 154 insertions(+), 7 deletions(-)
+
+commit 53db221259b5eea4d2244321b2fe96beb39aef7d
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Wed Oct 18 15:43:57 2017 +0800
+
+    CMake: Support building HarfBuzz-GObject
+
+    This adds support to the CMake build files to support building
+    HarfBuzz-GObject, which is actually a little bit complicated,
+    as we need to:
+
+    -Run glib-mkenums, which is a Python (for newer GLib/GObject) or PERL
+     (for older, pre 2.53.4, GLib/GObject) script.  This matters more for
+     Visual Studio builds as shebang lines are not supported, so we
+     need to
+     test-run it with PERL or Python to determine which is the correct
+     interpretor to use.
+
+    -Next, we need to replace strings in the sources that we obtain from
+     running glib-mkenums.  So, the solution here is to use a small
+     utility
+     CMake script for our purposes here, to maintain maximum
+     compatibility.
+
+    -Ensure that things do work in the Visual Studio IDE builds.
+
+ CMakeLists.txt             | 128
+ +++++++++++++++++++++++++++++++++++++++++++++
+ Makefile.am                |   1 +
+ replace-enum-strings.cmake |  21 ++++++++
+ 3 files changed, 150 insertions(+)
+
+commit 162575f2c69f519aae1b18ff1c501e7e4c2cdd4b
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Wed Oct 18 22:27:28 2017 +0800
+
+    CMake builds: Fix builds
+
+    Include the fallback sources in the build, and update
+    src/Makefile.sources so that it can be read by the CMake build files.
+
+    Fix a typo in the DirectWrite configure option so that we can properly
+    enable DirectWrite builds.
+
+    Also, when building the utility program, install them as well.
+
+ CMakeLists.txt       | 21 ++++++++++++++++++++-
+ src/Makefile.sources |  4 +++-
+ 2 files changed, 23 insertions(+), 2 deletions(-)
+
+commit d6f612fac800c31989c298b5101845baed2297b1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 17 16:32:12 2017 -0700
+
+    [bsearch] Micro-optimization
+
+ src/hb-open-type-private.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 41b1984be946cc2f53313dd48eac392cc8a3ad2b
+Author: Fredrik Roubert <fredrik@roubert.name>
+Date:   Tue Oct 17 15:06:31 2017 -0700
+
+    Switch from ICU deprecated unorm_normalize to unorm2_normalize. (#569)
+
+    The new unorm2_normalize has been public API since ICU 4.4, while
+    the old unorm_normalize has been deprecated since ICU 56.
+
+    Now, beginning with ICU 60, unorm_normalize will also be annotated
+    U_DEPRECATED and trigger the compiler -Wdeprecated-declarations
+    warning.
+
+ src/hb-icu.cc | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit b98adefbb9ee45fc1e800a52f701bf4224e9bb81
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 17 12:00:34 2017 -0700
+
+    Update docs symbols
+
+ docs/harfbuzz-sections.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit ba8b56960733b25bbb88fbdb60e7e244127d6e0c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 17 11:16:36 2017 -0700
+
+    Try fixing build on VC
+
+    c:\projects\harfbuzz\src\hb-set-private.hh(151): error C2327:
+    'hb_set_t::page_t::v': is not a type name, static, or enumerator
+    [C:\projects\harfbuzz\build\harfbuzz.vcxproj]
+
+ src/hb-set-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 80cc0a7e3e05fb7fcfbdc0188cb60b115ad47d04
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 17 11:14:48 2017 -0700
+
+    [coretext] Fix build
+
+    error: static_assert expression is not an integral constant expression
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a11249ee93439856ea2410524b993ac1f1379961
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 16 01:33:32 2017 -0400
+
+    [set] Fix merge logic
+
+ src/hb-set-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ab8f327eb47184409d9e9208ca46b631d1afd0d4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 18:21:35 2017 -0400
+
+    Ouch.
+
+ src/hb-set-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit bb9917913f735855aea54f41f10e0c7be3632e88
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 18:20:25 2017 -0400
+
+    [set] Disable vectorization
+
+    Fixes clang "non-const reference cannot bind to vector element" error.
+
+ src/hb-set-private.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 221ce6c18f2a1e878b68eb0a97f235efa4c044d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 17:58:58 2017 -0400
+
+    Fix bots
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0cf7d957b7ffb17c4cec75b631c9829327ab5d52
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 17:01:31 2017 -0400
+
+    [set] Remove TODO items not worth pursuing
+
+ src/hb-set-private.hh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 10d43658e7655b36cb86e674dde8af4036b7cc52
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 16:56:05 2017 -0400
+
+    [set] Speed up intersects()
+
+ src/hb-set-private.hh | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+commit 56ef4e0c52d5b474518bf0c1e4adba80f2ae6946
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 16:38:29 2017 -0400
+
+    Simplify hb_prealloced_array_t initialization
+
+ src/hb-private.hh | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+commit 7737e87ac4582d57945f3ffbbae1012f62c6b482
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 16:21:03 2017 -0400
+
+    Properly detect vector_size attribute and use fallback otherwise
+
+ src/hb-private.hh     | 67
+ +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-set-private.hh | 62
+ ++---------------------------------------------
+ 2 files changed, 69 insertions(+), 60 deletions(-)
+
+commit f8a0ec50e23264fdfe9e3a5a2e0453a87f415b3d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 16:10:35 2017 -0400
+
+    [set] Add fallback implementation of int-vector type
+
+ src/hb-set-private.hh | 64
+ ++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 45 insertions(+), 19 deletions(-)
+
+commit deed4a48d15d4a475f8695aa3269547adf63867a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 16:53:09 2017 +0200
+
+    Faster hb_set_t
+
+    Fixes https://github.com/behdad/harfbuzz/pull/23
+
+ src/hb-private.hh     |  56 ++++---
+ src/hb-set-private.hh | 431
+ +++++++++++++++++++++++++++++++++++++++++---------
+ test/api/test-set.c   |   6 -
+ 3 files changed, 391 insertions(+), 102 deletions(-)
+
+commit 1d3971200be5b1c949d3eca185654e48584a0868
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 16:15:24 2017 +0200
+
+    Deprecate hb_set_invert()
+
+ src/hb-deprecated.h | 4 ++++
+ src/hb-set.cc       | 3 ++-
+ src/hb-set.h        | 3 ---
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+
+commit 5e74044b6bd78c495561eb7d2981415d2c3336f4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 16:15:06 2017 +0200
+
+    Add bfind() to prealloaced_array_t
+
+ src/hb-private.hh | 31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
+
+commit db5f7ef18916abb0907bc8b569a65c9c6bbd4015
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 16:00:22 2017 +0200
+
+    Inline another bsearch()
+
+ src/hb-ot-map-private.hh |  4 ++--
+ src/hb-private.hh        | 32 ++++++++++++++++++++++++++++----
+ 2 files changed, 30 insertions(+), 6 deletions(-)
+
+commit 6fb4ac73f94636d19fcac143472b84f9d91985c9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 16:00:09 2017 +0200
+
+    Add popcount for 64bit ints
+
+ src/hb-private.hh | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+commit 473b17af4d421f4ce7ac18c769731bb2aa4088f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 14:10:34 2017 +0200
+
+    Remove unused hb_cache_t
+
+ src/Makefile.sources    |  1 -
+ src/hb-cache-private.hh | 74
+ -------------------------------------------------
+ src/hb-ft.cc            |  2 --
+ 3 files changed, 77 deletions(-)
+
+commit a433e60a43c4594c41a82c3741d3f870f6eec247
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 14:09:46 2017 +0200
+
+    Remove unused hb_frozen_set_t
+
+ src/hb-set-private.hh | 55
+ ---------------------------------------------------
+ 1 file changed, 55 deletions(-)
+
+commit 826a1daf2f2075459ff25a20ed8abec030d95c52
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 14:09:05 2017 +0200
+
+    Move set-digests into their own header file
+
+ src/Makefile.sources         |   1 +
+ src/hb-ot-layout-private.hh  |   2 +-
+ src/hb-set-digest-private.hh | 144
+ +++++++++++++++++++++++++++++++++++++++++++
+ src/hb-set-private.hh        | 113 ---------------------------------
+ 4 files changed, 146 insertions(+), 114 deletions(-)
+
+commit 3c13e153fe89d559d33027c0a5b30a19a6de1bad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 14:02:58 2017 +0200
+
+    Try fixing AppVeyor bots
+
+ src/hb-private.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 7e3015a315afe2312134ac33b9cb2d73689a044f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 12:13:19 2017 +0200
+
+    Fix warnings
+
+ src/hb-font.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 2075008f3e0b1cfbd7006f1d8c1fa22ac014f4bb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 12:12:10 2017 +0200
+
+    Use C++11
+
+ configure.ac | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit dbdbfe3d7b36613d893832dcb1884c756c20bfda
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 12:11:08 2017 +0200
+
+    Use nullptr instead of NULL
+
+ src/hb-blob.cc                             |  12 ++--
+ src/hb-buffer-serialize.cc                 |  16 ++---
+ src/hb-buffer.cc                           |  10 +--
+ src/hb-common.cc                           |  18 ++---
+ src/hb-coretext.cc                         |  66 ++++++++---------
+ src/hb-directwrite.cc                      |  28 ++++----
+ src/hb-face.cc                             |  10 +--
+ src/hb-font.cc                             |  32 ++++-----
+ src/hb-ft.cc                               |  56 +++++++--------
+ src/hb-glib.cc                             |   2 +-
+ src/hb-gobject-structs.cc                  |   2 +-
+ src/hb-graphite2.cc                        |  26 +++----
+ src/hb-icu.cc                              |   4 +-
+ src/hb-mutex-private.hh                    |   2 +-
+ src/hb-object-private.hh                   |   2 +-
+ src/hb-open-type-private.hh                |  32 ++++-----
+ src/hb-ot-cbdt-table.hh                    |   4 +-
+ src/hb-ot-cmap-table.hh                    |   2 +-
+ src/hb-ot-font.cc                          |  42 +++++------
+ src/hb-ot-layout-common-private.hh         |  14 ++--
+ src/hb-ot-layout-gsub-table.hh             |   2 +-
+ src/hb-ot-layout-gsubgpos-private.hh       |  54 +++++++-------
+ src/hb-ot-layout-jstf-table.hh             |   4 +-
+ src/hb-ot-layout.cc                        |  30 ++++----
+ src/hb-ot-map-private.hh                   |   6 +-
+ src/hb-ot-map.cc                           |   4 +-
+ src/hb-ot-math-table.hh                    |   8 +--
+ src/hb-ot-shape-complex-arabic-fallback.hh |   8 +--
+ src/hb-ot-shape-complex-arabic.cc          |  32 ++++-----
+ src/hb-ot-shape-complex-default.cc         |  22 +++---
+ src/hb-ot-shape-complex-hangul.cc          |  12 ++--
+ src/hb-ot-shape-complex-hebrew.cc          |  18 ++---
+ src/hb-ot-shape-complex-indic.cc           |  12 ++--
+ src/hb-ot-shape-complex-myanmar.cc         |  40 +++++------
+ src/hb-ot-shape-complex-private.hh         |  26 +++----
+ src/hb-ot-shape-complex-thai.cc            |  22 +++---
+ src/hb-ot-shape-complex-tibetan.cc         |  20 +++---
+ src/hb-ot-shape-complex-use.cc             |  16 ++---
+ src/hb-ot-shape-private.hh                 |   2 +-
+ src/hb-ot-shape.cc                         |   8 +--
+ src/hb-ot-tag.cc                           |   2 +-
+ src/hb-ot-var.cc                           |   2 +-
+ src/hb-private.hh                          |  37 +++++-----
+ src/hb-set-private.hh                      |   2 +-
+ src/hb-shape-plan.cc                       |  24 +++----
+ src/hb-shape.cc                            |   8 +--
+ src/hb-shaper-private.hh                   |   6 +-
+ src/hb-shaper.cc                           |   6 +-
+ src/hb-ucdn.cc                             |   2 +-
+ src/hb-unicode.cc                          |   4 +-
+ src/hb-uniscribe.cc                        |  50 ++++++-------
+ src/main.cc                                |   4 +-
+ src/test-buffer-serialize.cc               |   8 +--
+ src/test-size-params.cc                    |   6 +-
+ src/test-would-substitute.cc               |   8 +--
+ src/test.cc                                |  12 ++--
+ util/ansi-print.cc                         |   2 +-
+ util/hb-fc.cc                              |   6 +-
+ util/hb-ot-shape-closure.cc                |  10 +--
+ util/hb-shape.cc                           |  14 ++--
+ util/helper-cairo.cc                       |  12 ++--
+ util/main-font-text.hh                     |   4 +-
+ util/options.cc                            | 110
+ ++++++++++++++---------------
+ util/options.hh                            |  56 +++++++--------
+ util/shape-consumer.hh                     |  10 +--
+ 65 files changed, 563 insertions(+), 568 deletions(-)
+
+commit fbb937b6807597c9ae002280c6a6278a97b701f3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 12:04:16 2017 +0200
+
+    Don't use NULL in public headers
+
+ src/hb-buffer.h | 4 ++--
+ src/hb-common.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit c3448e8d21963eb7fc357a37a7a426a4bf130ef3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 12:02:00 2017 +0200
+
+    Use static_assert instead of custom ASSERT_STATIC
+
+ src/hb-buffer-private.hh                   |  4 ++--
+ src/hb-buffer.cc                           |  2 +-
+ src/hb-cache-private.hh                    |  4 ++--
+ src/hb-coretext.cc                         |  2 +-
+ src/hb-open-type-private.hh                |  6 +++---
+ src/hb-ot-layout-common-private.hh         |  2 +-
+ src/hb-ot-layout-gdef-table.hh             |  6 +++---
+ src/hb-ot-layout.cc                        | 14 ++++++------
+ src/hb-ot-map.cc                           |  2 +-
+ src/hb-ot-math-table.hh                    |  4 ++--
+ src/hb-ot-shape-complex-arabic-fallback.hh |  6 +++---
+ src/hb-ot-shape-complex-indic.cc           |  2 +-
+ src/hb-ot-shape-complex-use.cc             |  2 +-
+ src/hb-private.hh                          | 34
+ +++++++++++++-----------------
+ src/hb-set-private.hh                      |  8 +++----
+ src/hb-uniscribe.cc                        |  2 +-
+ util/options.cc                            |  3 ++-
+ 17 files changed, 50 insertions(+), 53 deletions(-)
+
+commit 76dcbf8b23475b25f8f1918f982bfd8f0dd3456e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 11:24:35 2017 +0200
+
+    Add polyfill for static_assert and nullptr
+
+    Also fix hb_assert_constant_t.
+
+ src/hb-private.hh | 38 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 34 insertions(+), 4 deletions(-)
+
+commit dad431e75bf998dcb09cff795c0f1083b3bd5449
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 10:55:32 2017 +0200
+
+    [util] Include hb-private.hh
+
+    Simplifies compatibility issues by centralizing all boilerplate code
+    in hb-private.hh.
+
+ util/options.hh | 31 +++++--------------------------
+ 1 file changed, 5 insertions(+), 26 deletions(-)
+
+commit 81e2b9b8a959cb7d7503f58fca70761238697fc1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 15 10:48:19 2017 +0200
+
+    Never skip over CGJ
+
+    We might want to tweak this some more.  For now, never skipping over
+    it is better behavior than always skipping.
+
+    Part of https://github.com/behdad/harfbuzz/issues/554
+
+ src/hb-ot-layout-private.hh                          |  19
+ +++++++++++--------
+ .../bf962d3202883a820aed019d9b5c1838c2ff69c6.ttf     | Bin 0 ->
+ 2468 bytes
+ test/shaping/tests/default-ignorables.tests          |   1 +
+ 3 files changed, 12 insertions(+), 8 deletions(-)
+
+commit 25846cc39fb8a9516b8de4333f909851d471156f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 13 16:30:33 2017 +0200
+
+    1.6.0
+
+ NEWS                   | 35 +++++++++++++++++++++++++++++++++++
+ configure.ac           |  2 +-
+ docs/harfbuzz-docs.xml |  4 ++++
+ 3 files changed, 40 insertions(+), 1 deletion(-)
+
 commit 74f1b88e3720103562552780af7058131c5492d5
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Oct 13 11:01:55 2017 +0200
