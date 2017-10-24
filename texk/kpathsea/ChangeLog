@@ -1,3 +1,9 @@
+2017-10-25  Karl Berry  <karl@tug.org>
+
+	* expand.c (brace_expand): do not look past the terminating
+	null with bad input like "a{\0whatever".
+	From Doug McKenna, personal mail, 23oct17.
+
 2017-09-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tex-file.c: Use a standard API function GetLongPathName()
