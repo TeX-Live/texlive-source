@@ -1,3 +1,145 @@
+commit 30a591e3cef67818ef1ffec92c6a022b5a5f5e77
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 23 14:28:35 2017 -0400
+
+    [set] Rewrite another way :P
+
+ src/hb-set-private.hh | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
+
+commit 8170801d78a5bf9480d8c06ade849b30bc4e2956
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 23 14:26:48 2017 -0400
+
+    [set] Fix crash
+
+    Ouch!  That's what happens when one plays with increment/decrement
+    operators!
+
+    Fixes https://github.com/behdad/harfbuzz/issues/578
+
+ src/hb-set-private.hh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit 61d1c60a1c555c58205964df4e449ee57125a739
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 23 13:10:21 2017 -0400
+
+    [RELEASING] Format
+
+ RELEASING.md | 67
+ +++++++++++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 48 insertions(+), 19 deletions(-)
+
+commit 6a2e1649debd992211bf96ef80d075d2d04a49ed
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 23 13:01:34 2017 -0400
+
+    [doap] Switch to github issues
+
+    https://github.com/behdad/harfbuzz/pull/575#issuecomment-338514596
+
+ harfbuzz.doap | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8a898c1929cf7ffc9b0011461b34281ecc98705c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 23 13:00:36 2017 -0400
+
+    [RELEASING] Minor
+
+    https://github.com/behdad/harfbuzz/pull/575
+
+ RELEASING.md | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 2ee710e02fad1a8a4b94589bb6f0b90e2aeb7121
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 23 08:37:48 2017 -0400
+
+    Minor
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit dd33e4e96b9345a6b1a9051a6aa4b7d114c74f1e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 23 08:36:40 2017 -0400
+
+    [set] Don't use major()
+
+    Fixes https://github.com/behdad/harfbuzz/issues/577
+
+ src/hb-set-private.hh | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit d0f0ff85b9fe959ef4b90f8daf58be73fca49dd0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 23 08:34:30 2017 -0400
+
+    [set] Don't use PAGE_SIZE
+
+    Fixes https://github.com/behdad/harfbuzz/issues/576
+
+ src/hb-set-private.hh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 57cf978fa314bd87405a2b133e58fcb116e574a6
+Merge: ce979454 6cc49762
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 22 18:24:59 2017 -0400
+
+    Merge commit '6cc49762c4fdfd0e2770a84d1b1f055acf42376f'
+
+commit ce979454400c3870717ba40b1065a2f3727cfb93
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 22 18:23:38 2017 -0400
+
+    [icu] Fix error check
+
+ src/hb-icu.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 6cc49762c4fdfd0e2770a84d1b1f055acf42376f
+Merge: 8b9d9b71 19923279
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Mon Oct 23 01:48:22 2017 +0330
+
+    Merge pull request #575 from behdad/releasing-edit
+
+    Clarify the last step of release
+
+commit 19923279abd4c7615e8b02e05a02ba18f5c0b298
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Mon Oct 23 01:47:51 2017 +0330
+
+    Clarify the last step of release
+
+ RELEASING.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8b9d9b71b04c9d5698ec146658b31381060c700d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 22 17:48:06 2017 -0400
+
+    Fix set initialization issues
+
+ src/hb-ot-layout-gsubgpos-private.hh | 12 ++++++------
+ src/hb-ot-shape.cc                   | 17 +++++++++--------
+ src/hb-set-private.hh                |  9 ---------
+ src/hb-set.cc                        |  6 ++++--
+ 4 files changed, 19 insertions(+), 25 deletions(-)
+
+commit 0ca915efc3734111a57ff71f05d9cbf0e8af3de9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 22 17:38:33 2017 -0400
+
+    1.6.1
+
+ NEWS         | 13 +++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
 commit d59d5dc7d339deb45cc84cffd084b52752765a08
 Merge: ced86da7 3ee15a60
 Author: Behdad Esfahbod <behdad@behdad.org>
