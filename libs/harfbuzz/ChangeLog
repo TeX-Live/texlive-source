@@ -1,3 +1,10 @@
+2017-10-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import harfbuzz-1.6.3.
+	* version.ac: Adjusted.
+	Note that c++11 is required from the version 1.6.1. Works for
+	the c++11 configuration are not yet done.
+
 2017-10-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import harfbuzz-1.6.2.

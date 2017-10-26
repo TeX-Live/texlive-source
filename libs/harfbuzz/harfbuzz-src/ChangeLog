@@ -1,3 +1,202 @@
+commit 729c9e13355eefafdc0fdef9aa68bd792ca4dba4
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Thu Oct 26 10:29:28 2017 -0400
+
+    Include all relevant glyphs in the subsetted font
+
+ test/shaping/record-test.sh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit cb6c6b0c425e560f32b297c15dc6775e297d5b1d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 26 11:43:33 2017 -0600
+
+    Fix warning
+
+    https://github.com/behdad/harfbuzz/commit/49a41dc75931cc2d2f7e74b7801f8cc327039e8e#commitcomment-25203194
+
+ test/api/test-set.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit dfd234a97d2e2f9908eaf0598de765f76ba86c82
+Author: Jonathan Kew <jfkthame@gmail.com>
+Date:   Thu Oct 26 16:59:50 2017 +0100
+
+    [set] Fix page_map[] indexing in backward loop.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/579.
+
+ src/hb-set-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 7339926525416620aa7922371775ed65eed4eae4
+Author: Jonathan Kew <jfkthame@gmail.com>
+Date:   Thu Oct 26 12:55:36 2017 +0100
+
+    [test] Extend hb_set test for issue 579 (currently failing)
+
+ test/api/test-set.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+commit 3d6f7df42a87ef366197581cb4696c5f30c3bcbb
+Author: Jonathan Kew <jfkthame@gmail.com>
+Date:   Thu Oct 26 17:54:55 2017 +0100
+
+    [test] Additional coverage in test_set_iter.
+
+    This adds a couple extra entries to the set used, such that iteration
+    would fail in 1.6.2 due to the bug in hb_set_t::page_t::next().
+
+ test/api/test-set.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+commit d511cfb5577a58e31d8dd4214750b0ad4efa625a
+Author: Jonathan Kew <jfkthame@gmail.com>
+Date:   Thu Oct 26 15:08:29 2017 +0100
+
+    [set] Bugfix for hb_set_next
+
+ src/hb-set-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 92bac64bd2d5fffe70229790be27d335aa6c6de3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 25 18:22:47 2017 -0600
+
+    [post] Oops!
+
+    https://ci.appveyor.com/project/behdad/harfbuzz/build/1.0.668/job/ikfj8peowgrp059t
+
+ src/hb-ot-post-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 543bd58d7a4fbe285ec9304ff3223a728dbdbb76
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 25 17:40:50 2017 -0600
+
+    [post] Touch up and fixes
+
+    The get_glyph_from_name() is incorrect; needs fixing.
+
+ src/hb-ot-font.cc       |   9 ++--
+ src/hb-ot-post-table.hh | 139
+ +++++++++++++++++++++++++++---------------------
+ 2 files changed, 81 insertions(+), 67 deletions(-)
+
+commit d9e166f74c3ba3128c9ef3ccd8d7799e67f14eab
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Oct 18 20:49:16 2017 +0200
+
+    [ot-font] Implement hb_ot_get_glyph_from_name
+
+ src/hb-ot-font.cc       | 22 ++++++++++++++++++-
+ src/hb-ot-post-table.hh | 58
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+), 1 deletion(-)
+
+commit 9d4d2fb9af446d5d41058fbb1da8117b3af048d3
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Mon Oct 16 10:05:42 2017 +0200
+
+    [ot-font] Implement hb_ot_get_glyph_name
+
+    Turns out we already have support for “post” table, it just
+    needed to be
+    activated and put in use.
+
+ src/hb-ot-font.cc                             | 46 ++++++++++++-
+ src/hb-ot-post-table.hh                       | 96
+ +++++++++++++++++++++++++++
+ test/shaping/tests/fallback-positioning.tests |  2 +-
+ test/shaping/tests/indic-syllable.tests       |  2 +-
+ test/shaping/tests/use.tests                  |  2 +-
+ 5 files changed, 143 insertions(+), 5 deletions(-)
+
+commit bf133497e53e8b1dcd22df62080d33e7f3d85b68
+Merge: fd786c76 49a41dc7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 25 17:23:20 2017 -0600
+
+    Merge commit '49a41dc75931cc2d2f7e74b7801f8cc327039e8e'
+
+commit 49a41dc75931cc2d2f7e74b7801f8cc327039e8e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 25 16:17:45 2017 -0600
+
+    [test] Add more hb-set tests
+
+    https://github.com/behdad/harfbuzz/issues/579
+
+ test/api/test-set.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+commit fd786c768f838ab61090004dd46b8cefeb270dfd
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Wed Oct 25 14:31:22 2017 -0400
+
+    Use `mktemp -d` instead of `mktemp --directory`
+
+ test/shaping/record-test.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c4944920c0c11d6424d600ebc9130c9055382f80
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Wed Oct 25 16:06:40 2017 -0400
+
+    Fix and run indic-script-extensions.tests
+
+ test/shaping/Makefile.am                         | 1 +
+ test/shaping/tests/indic-script-extensions.tests | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit d8df714251c61e13d7d12eb3f7393dd3a75a3719
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Wed Oct 25 16:06:01 2017 -0400
+
+    Fix code point iteration in narrow Python
+
+ test/shaping/hb_test_tools.py | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
+
+commit 33ca3b67bfb5d9ae4e490c796c93793a7e03ef2c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 25 12:09:11 2017 -0400
+
+    Check for headers in builddir first, in check-*.sh
+
+    Fixes https://bugs.freedesktop.org/show_bug.cgi?id=103346
+
+ src/check-c-linkage-decls.sh | 4 ++--
+ src/check-externs.sh         | 2 +-
+ src/check-header-guards.sh   | 2 +-
+ src/check-includes.sh        | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+
+commit 9ac2e5c6c01db3ebe419e3aa07f4d1a3777d2bb6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 24 10:06:25 2017 -0400
+
+    check-externs.sh: Make output more verbose
+
+    Trying to figure out why this is failing on some Debian bots:
+    https://bugs.freedesktop.org/show_bug.cgi?id=103346
+
+    Maybe I should check for GNU grep specifically now that I'm using
+    -n as well.
+
+ src/check-externs.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 3b7388aab6889b5d1fc602b5780a7b29da84e100
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 23 14:35:16 2017 -0400
+
+    1.6.2
+
+ NEWS         | 10 ++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
 commit 30a591e3cef67818ef1ffec92c6a022b5a5f5e77
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Oct 23 14:28:35 2017 -0400
