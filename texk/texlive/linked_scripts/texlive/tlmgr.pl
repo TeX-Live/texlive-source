@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45532 2017-10-13 06:50:59Z preining $
+# $Id: tlmgr.pl 45613 2017-10-26 23:18:10Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45532 $';
-my $datrev = '$Date: 2017-10-13 08:50:59 +0200 (Fri, 13 Oct 2017) $';
+my $svnrev = '$Revision: 45613 $';
+my $datrev = '$Date: 2017-10-27 01:18:10 +0200 (Fri, 27 Oct 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1412,7 +1412,7 @@ sub action_info {
   my $ret = $F_OK | $F_NOPOSTACTION;
   my @datafields;
   my $fmt = "list";
-  if ($opts{'data'} eq "json") {
+  if ($opts{'data'} && ($opts{'data'} eq "json")) {
     eval { require JSON; };
     if ($@) {
       # that didn't work out, give some usefull error message and stop
@@ -1448,21 +1448,44 @@ Goodbye.
     # the 1 is the silent mode!
     init_tlmedia_or_die(1);
   }
+  my $tlm;
+  if ($opts{"only-installed"}) {
+    $tlm = $localtlpdb;
+  } else {
+    # silent mode
+    init_tlmedia_or_die(1);
+    $tlm = $remotetlpdb;
+  }
+
   #
   # tlmgr info
   # tlmgr info collection
   # tlmgr info scheme
   # these commands just list the packages/collections/schemes installed with 
   # a short list
+  my @whattolist;
   $what = ($what || "-all");
-  if ($what =~ m/^(collections|schemes|-all)$/i) {
-    $ret |= show_list_of_packages($fmt, $what, @datafields);
-    return ($ret);
+  if ($what =~ m/^collections$/i) {
+    @whattolist = $tlm->collections;
+  } elsif ($what =~ m/^schemes$/i) {
+    @whattolist = $tlm->schemes;
+  } elsif ($what =~ m/^-all$/i) {
+    if ($tlm->is_virtual) {
+      @whattolist = $tlm->list_packages("-all");
+    } else {
+      @whattolist = $tlm->list_packages;
+    }
+    # add also the local packages
+    TeXLive::TLUtils::push_uniq(@whattolist, $localtlpdb->list_packages);
+  } else {
+    @whattolist = ($what, @todo);
   }
-  # we are still here, so $what is defined and neither collection nor scheme,
-  # so assume the arguments are package names
-  if ($opts{'data'} ne "json") {
-    $fmt = ($opts{'data'} ? "csv" : "detail");
+  if ($opts{'data'}) {
+    if ($opts{'data'} ne "json") {
+      $fmt = "csv";
+    }
+  } else {
+    $fmt = "detail";
   }
   my @adds;
   if ($opts{'data'}) {
@@ -1470,7 +1493,8 @@ Goodbye.
   }
   print "[\n" if ($fmt eq "json");
   my $first = 1;
-  foreach my $ppp ($what, @todo) {
+  foreach my $ppp (@whattolist) {
+    next if ($ppp =~ m/^00texlive\./);
     print "," if ($fmt eq "json" && !$first);
     $first = 0;
     $ret |= show_one_package($ppp, $fmt, @adds);
@@ -3613,11 +3637,19 @@ sub show_one_package_json {
   my $is_installed = (defined($loctlp) ? 1 : 0);
   my $is_available = (defined($remtlp) ? 1 : 0);
   if (!($is_installed || $is_available)) {
-    tlwarn("$prg: package $p not found neither locally nor remote!\n");
-    return($F_WARNING);
+    # output proper JSON for unavailable packages
+    print "{ \"name\":\"$p\", \"available\":false }\n";
+    #tlwarn("$prg: package $p not found neither locally nor remote!\n");
+    #return($F_WARNING);
+    return($F_OK);
   }
-  my $tlp = ($is_installed ? $loctlp : $remtlp);
-  my $str = $tlp->as_json();
+  my $tlp = ($is_available ? $remtlp : $loctlp);
+  # add available, installed, lrev, rrev fields and remove revision field
+  my $str = $tlp->as_json(available => ($is_available ? $JSON::true : $JSON::false), 
+                          installed => ($is_installed ? $JSON::true : $JSON::false),
+                          lrev      => ($is_installed ? $loctlp->revision : 0),
+                          rrev      => ($is_available ? $remtlp->revision : 0),
+                          revision  => undef);
   print $str, "\n";
   return($F_OK);
 }
@@ -3979,41 +4011,6 @@ sub show_one_package_detail {
     }
   }
   print "\n";
-  return($ret);
-}
-
-sub show_list_of_packages {
-  init_local_db();
-  my ($fmt, $what, @datafields) = @_;
-  my $ret = $F_OK;
-  my $tlm;
-  if ($opts{"only-installed"}) {
-    $tlm = $localtlpdb;
-  } else {
-    # silent mode
-    init_tlmedia_or_die(1);
-    $tlm = $remotetlpdb;
-  }
-  my @whattolist;
-  if ($what =~ m/^collections/i) {
-    @whattolist = $tlm->collections;
-  } elsif ($what =~ m/^schemes/i) {
-    @whattolist = $tlm->schemes;
-  } elsif ($what =~ m/^-all/i) {
-    if ($tlm->is_virtual) {
-      @whattolist = $tlm->list_packages("-all");
-    } else {
-      @whattolist = $tlm->list_packages;
-    }
-  } else {
-    tlwarn("$prg: show_list_of_package: don't know what to list: $what\n");
-    return($F_ERROR);
-  }
-  my @extra;
-  foreach (@whattolist) {
-    next if ($_ =~ m/^00texlive/);
-    $ret |= show_one_package($_, $fmt, @datafields);
-  }
   return($ret);
 }
 
@@ -5921,25 +5918,25 @@ sub texconfig_conf_mimic {
   info(give_version());
   info("==================== executables found by searching PATH =================\n");
   info("PATH: $PATH\n");
-  for my $cmd (qw/kpsewhich updmap fmtutil tlmgr tex pdftex mktexpk
-                  dvips dvipdfmx/) {
-    info("$cmd: " . TeXLive::TLUtils::which($cmd) . "\n");
+  for my $cmd (qw/kpsewhich updmap fmtutil tlmgr tex pdftex luatex xetex
+                  mktexpk dvips dvipdfmx/) {
+    info(sprintf("%-10s %s\n", "$cmd:", TeXLive::TLUtils::which($cmd)));
   }
   info("=========================== active config files ==========================\n");
   for my $m (qw/texmf.cnf updmap.cfg/) {
     for my $f (`kpsewhich -all $m`) {
-      info("$m: $f");
+      info(sprintf("%-17s %s", "$m:", $f));
     }
   }
   for my $m (qw/fmtutil.cnf config.ps mktex.cnf pdftexconfig.tex/) {
-    info("$m: " . `kpsewhich $m`);
+    info(sprintf("%-17s %s", "$m:", `kpsewhich $m`));
   }
 
   #tlwarn("$prg: missing finding of XDvi, config!\n");
 
   info("============================= font map files =============================\n");
   for my $m (qw/psfonts.map pdftex.map ps2pk.map kanjix.map/) {
-    info("$m: " . `kpsewhich $m`);
+    info(sprintf("%-12s %s", "$m:", `kpsewhich $m`));
   }
 
   info("=========================== kpathsea variables ===========================\n");
@@ -7482,7 +7479,7 @@ but tinkering with settings in this way is strongly discouraged.  Again,
 no error checking on either keys or values is done, so any sort of
 breakage is possible.
 
-=head2 dump-tlpdb [--local|--remote]
+=head2 dump-tlpdb [--local|--remote] [--json]
 
 Dump complete local or remote TLPDB to standard output, as-is.  The
 output is analogous to the C<--machine-readable> output; see
@@ -7499,6 +7496,11 @@ Dump the local TLPDB.
 =item B<--remote>
 
 Dump the remote TLPDB.
+
+=item B<--json>
+
+Instead of dumping the actual content, the database is dumped as
+JSON.
 
 =back
 
@@ -9164,7 +9166,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45532 2017-10-13 06:50:59Z preining $
+$Id: tlmgr.pl 45613 2017-10-26 23:18:10Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
