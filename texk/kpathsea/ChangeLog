@@ -1,3 +1,9 @@
+2017-10-29  Karl Berry  <karl@freefriends.org>
+
+	* elt-dirs.c (do_subdir): assert must include elt_length>0
+	to guarantee the assert of elt[elt_length-1] is valid.
+        From Doug McKenna, personal mail, 29oct17.
+
 2017-10-25  Karl Berry  <karl@tug.org>
 
 	* expand.c (brace_expand): do not look past the terminating
