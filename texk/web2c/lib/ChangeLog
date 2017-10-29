@@ -2,10 +2,13 @@
 
 	* openclose.c: If opened fname is a directory in
 	output_directory, discard it in Unix platforms.
-	In windows, fopen (fname, mode) is always NULL, in the case
+	Report from Duncan Steele,
+	http://tug.org/pipermail/tex-live/2017-October/040731.html
+	
+	In Windows, fopen (fname, mode) is always NULL, in the case
 	where fname is a directory, thus it is discarded automatically.
-	Thanks to Hironobu Yamashita for the information:
-	http://tug.org/pipermail/tex-live/2017-October/040735.html.
+	Thanks to Hironobu Yamashita,
+	http://tug.org/pipermail/tex-live/2017-October/040735.html
 
 2017-09-05  Karl Berry  <karl@tug.org>
         and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
