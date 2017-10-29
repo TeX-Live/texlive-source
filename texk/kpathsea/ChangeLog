@@ -1,5 +1,7 @@
 2017-10-29  Karl Berry  <karl@freefriends.org>
 
+	* several files: missed copyright 2017 updates.
+
 	* elt-dirs.c (do_subdir): assert must include elt_length>0
 	to guarantee the assert of elt[elt_length-1] is valid.
         From Doug McKenna, personal mail, 29oct17.

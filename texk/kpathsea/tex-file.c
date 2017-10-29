@@ -1,7 +1,7 @@
 /* tex-file.c: high-level file searching by format.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010, 2011
-             2012, 2014, 2016 Karl Berry.
+             2012, 2014, 2016, 2017 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or

@@ -1,6 +1,7 @@
 /* db.c: an external database to avoid filesystem lookups.
 
-   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012, 2014, 2016 Karl Berry.
+   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012, 2014, 2016,
+   2017 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
