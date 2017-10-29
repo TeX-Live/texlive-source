@@ -1,7 +1,7 @@
 /* expand.c: general expansion.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2005, 2008, 2009, 2011,
-             2012, 2016 Karl Berry.
+             2012, 2016, 2017 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
