@@ -1,6 +1,7 @@
 /* elt-dirs.c: Translate a path element to its corresponding director{y,ies}.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009, 2010, 2011, 2016 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009, 2010, 2011, 2016,
+   2017 Karl Berry.
    Copyright 1997, 1998, 1999, 2000, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -100,7 +101,7 @@ static void expand_elt (kpathsea, str_llist_type *, string, unsigned);
 /* POST is a pointer into the original element (which may no longer be
    ELT) to just after the doubled DIR_SEP, perhaps to the null.  Append
    subdirectories of ELT (up to ELT_LENGTH, which must be a /) to
-   STR_LIST_PTR.  */
+   STR_LIST_PTR.  ELT must not be the empty string (or NULL).  */
 
 #ifdef WIN32
 /* Shared across recursive calls, it acts like a stack. */
@@ -127,8 +128,9 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
   /* Some old compilers don't allow aggregate initialization.  */
   name = fn_copy0 (elt, elt_length);
 
-  assert (IS_DIR_SEP_CH (elt[elt_length - 1])
-          || IS_DEVICE_SEP (elt[elt_length - 1]));
+  assert (elt_length > 0
+          && (IS_DIR_SEP_CH (elt[elt_length - 1])
+              || IS_DEVICE_SEP (elt[elt_length - 1])));
 
 #if defined (WIN32)
   strcpy(dirname, FN_STRING(name));
