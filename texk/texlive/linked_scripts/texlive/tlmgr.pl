@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45613 2017-10-26 23:18:10Z preining $
+# $Id: tlmgr.pl 45623 2017-10-27 14:41:58Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45613 $';
-my $datrev = '$Date: 2017-10-27 01:18:10 +0200 (Fri, 27 Oct 2017) $';
+my $svnrev = '$Revision: 45623 $';
+my $datrev = '$Date: 2017-10-27 16:41:58 +0200 (Fri, 27 Oct 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -104,7 +104,7 @@ use TeXLive::TLDownload;
 use TeXLive::TLConfFile;
 use TeXLive::TLCrypto;
 TeXLive::TLUtils->import(qw(member info give_ctan_mirror win32 dirname
-                            mkdirhier copy debug tlcmp));
+                            mkdirhier copy debug tlcmp repository_to_array));
 use TeXLive::TLPaper;
 
 #
@@ -1419,7 +1419,7 @@ sub action_info {
       if ($^O =~ /^MSWin/i) {
         # that should not happen, we are shipping Tk!!
         require Win32;
-        my $msg = "Cannot load JSON:PP, that should not happen as we ship it!\n(Error message: $@)\n";
+        my $msg = "Cannot load JSON, that should not happen as we ship it!\n(Error message: $@)\n";
         Win32::MsgBox($msg, 1|Win32::MB_ICONSTOP(), "Warning");
       } else {
         printf STDERR "
@@ -3643,7 +3643,9 @@ sub show_one_package_json {
     #return($F_WARNING);
     return($F_OK);
   }
-  my $tlp = ($is_available ? $remtlp : $loctlp);
+  # prefer local TLPs as they have RELOC replaced by proper paths
+  my $tlp = ($is_installed ? $loctlp : $remtlp);
+  #my $tlp = ($is_available ? $remtlp : $loctlp);
   # add available, installed, lrev, rrev fields and remove revision field
   my $str = $tlp->as_json(available => ($is_available ? $JSON::true : $JSON::false), 
                           installed => ($is_installed ? $JSON::true : $JSON::false),
@@ -4153,30 +4155,6 @@ sub array_to_repository {
     push @ret, $v;
   }
   return "@ret";
-}
-sub repository_to_array {
-  my $r = shift;
-  my %r;
-  my @repos = split ' ', $r;
-  if ($#repos == 0) {
-    # only one repo, this is the main one!
-    $r{'main'} = $repos[0];
-    return %r;
-  }
-  for my $rr (@repos) {
-    my $tag;
-    my $url;
-    # decode spaces and % in reverse order
-    $rr =~ s/%20/ /g;
-    $rr =~ s/%25/%/g;
-    $tag = $url = $rr;
-    if ($rr =~ m/^([^#]+)#(.*)$/) {
-      $tag = $2;
-      $url = $1;
-    }
-    $r{$tag} = $url;
-  }
-  return %r;
 }
 sub merge_sub_packages {
   my %pkgs;
@@ -5918,29 +5896,29 @@ sub texconfig_conf_mimic {
   info(give_version());
   info("==================== executables found by searching PATH =================\n");
   info("PATH: $PATH\n");
-  for my $cmd (qw/kpsewhich updmap fmtutil tlmgr tex pdftex luatex xetex
-                  mktexpk dvips dvipdfmx/) {
+  for my $cmd (sort(qw/kpsewhich updmap fmtutil tlmgr tex pdftex luatex xetex
+                  mktexpk dvips dvipdfmx/)) {
     info(sprintf("%-10s %s\n", "$cmd:", TeXLive::TLUtils::which($cmd)));
   }
   info("=========================== active config files ==========================\n");
+  for my $m (sort(qw/fmtutil.cnf config.ps mktex.cnf pdftexconfig.tex/)) {
+    info(sprintf("%-17s %s", "$m:", `kpsewhich $m`));
+  }
   for my $m (qw/texmf.cnf updmap.cfg/) {
     for my $f (`kpsewhich -all $m`) {
       info(sprintf("%-17s %s", "$m:", $f));
     }
   }
-  for my $m (qw/fmtutil.cnf config.ps mktex.cnf pdftexconfig.tex/) {
-    info(sprintf("%-17s %s", "$m:", `kpsewhich $m`));
-  }
 
   #tlwarn("$prg: missing finding of XDvi, config!\n");
 
   info("============================= font map files =============================\n");
-  for my $m (qw/psfonts.map pdftex.map ps2pk.map kanjix.map/) {
+  for my $m (sort(qw/psfonts.map pdftex.map ps2pk.map kanjix.map/)) {
     info(sprintf("%-12s %s", "$m:", `kpsewhich $m`));
   }
 
   info("=========================== kpathsea variables ===========================\n");
-  for my $v (qw/TEXMFMAIN TEXMFDIST TEXMFLOCAL TEXMFSYSVAR TEXMFSYSCONFIG TEXMFVAR TEXMFCONFIG TEXMFHOME VARTEXFONTS TEXMF SYSTEXMF TEXMFDBS WEB2C TEXPSHEADERS TEXCONFIG ENCFONTS TEXFONTMAPS/) {
+  for my $v (sort(qw/TEXMFMAIN TEXMFDIST TEXMFLOCAL TEXMFSYSVAR TEXMFSYSCONFIG TEXMFVAR TEXMFCONFIG TEXMFHOME VARTEXFONTS TEXMF SYSTEXMF TEXMFDBS WEB2C TEXPSHEADERS TEXCONFIG ENCFONTS TEXFONTMAPS/)) {
     info("$v=" . `kpsewhich -var-value=$v`);
   }
 
@@ -6752,7 +6730,7 @@ and the repository are not compatible:
   }
 
   # check for being frozen
-  if ($remotetlpdb->option("frozen")) {
+  if ($remotetlpdb->config_frozen) {
     my $frozen_msg = <<FROZEN;
 TeX Live $TeXLive::TLConfig::ReleaseYear is frozen forever and will no
 longer be updated.  This happens in preparation for a new release.
@@ -7500,7 +7478,8 @@ Dump the remote TLPDB.
 =item B<--json>
 
 Instead of dumping the actual content, the database is dumped as
-JSON.
+JSON. For the format of JSON output see C<tlpkg/doc/JSON-formats.txt>,
+format definition C<TLPDB>.
 
 =back
 
@@ -7693,7 +7672,8 @@ the name of all dependencies separated by C<:>.
 
 In case the only value passed to C<--data> is C<json>, the output is a
 JSON encoded array where each array element is the JSON representation of
-the internal object.
+a single C<TLPOBJ> but with additional information. For details see
+C<tlpkg/doc/JSON-formats.txt>, format definition: C<TLPOBJINFO>.
 
 
 =back
@@ -9166,7 +9146,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45613 2017-10-26 23:18:10Z preining $
+$Id: tlmgr.pl 45623 2017-10-27 14:41:58Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
