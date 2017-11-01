@@ -1,3 +1,11 @@
+2017-10-31  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac: update AC_CHECK_FUNCS and AC_CHECK_HEADERS
+	for 1.6.3.
+	(CXXFLAGS): merge gcc additions from distribution source,
+	most notably including -std=c++11.
+	(HAVE_GCC): new conditional, also from dist source.
+
 2017-10-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import harfbuzz-1.6.3.

@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -30,22 +31,46 @@ KPSE_GRAPHITE2_FLAGS
 KPSE_ICU_FLAGS
 
 # Functions and headers
-AC_CHECK_FUNCS([atexit mprotect sysconf getpagesize sched_yield mmap _setmode isatty])
-AC_CHECK_HEADERS([unistd.h sys/mman.h sched.h io.h])
+AC_CHECK_FUNCS(atexit mprotect sysconf getpagesize mmap isatty newlocale strtod_l)
+AC_CHECK_HEADERS(unistd.h sys/mman.h xlocale.h)
 
 # Compiler flags
 AC_CANONICAL_HOST
 AC_CHECK_ALIGNOF([struct{char;}])
 if test "x$GCC" = "xyes"; then
+
+	# Make symbols link locally
+	LDFLAGS="$LDFLAGS -Bsymbolic-functions"
+
+	# Choose C++ version
+	CXXFLAGS="$CXXFLAGS -std=c++11"
+
+	# Make sure we don't link to libstdc++
+	CXXFLAGS="$CXXFLAGS -fno-rtti -fno-exceptions"
+
+	# Assorted warnings
+	CXXFLAGS="$CXXFLAGS -Wcast-align"
+
+	case "$host" in
+		*-*-mingw*)
+		;;
+		*)
+			# Hide inline methods
+			CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
+		;;
+	esac
+
 	case "$host" in
 		arm-*-*)
 			if test "x$ac_cv_alignof_struct_char__" != x1; then
 				# Request byte alignment
-				AM_CXXFLAGS="-mstructure-size-boundary=8"
+				CXXFLAGS="$CXXFLAGS -mstructure-size-boundary=8"
 			fi
 		;;
 	esac
 fi
+AM_CONDITIONAL(HAVE_GCC, test "x$GCC" = "xyes")
+
 AC_SUBST([AM_CXXFLAGS])
 
 AC_CONFIG_HEADERS([config.h])

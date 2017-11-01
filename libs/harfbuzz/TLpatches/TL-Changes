@@ -24,5 +24,4 @@ Removed unused dirs:
 	m4
 	test
 	util
-	win32 -- deleted upstream
 	src/hb-ucdn
