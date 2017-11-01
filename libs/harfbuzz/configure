@@ -630,6 +630,8 @@ HARFBUZZ_TREE
 build_FALSE
 build_TRUE
 AM_CXXFLAGS
+HAVE_GCC_FALSE
+HAVE_GCC_TRUE
 EGREP
 GREP
 CPP
@@ -5778,7 +5780,7 @@ fi
 
 
 # Functions and headers
-for ac_func in atexit mprotect sysconf getpagesize sched_yield mmap _setmode isatty
+for ac_func in atexit mprotect sysconf getpagesize mmap isatty newlocale strtod_l
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6187,7 +6189,7 @@ fi
 done
 
 
-for ac_header in unistd.h sys/mman.h sched.h io.h
+for ac_header in unistd.h sys/mman.h xlocale.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -6239,15 +6241,46 @@ _ACEOF
 
 
 if test "x$GCC" = "xyes"; then
+
+	# Make symbols link locally
+	LDFLAGS="$LDFLAGS -Bsymbolic-functions"
+
+	# Choose C++ version
+	CXXFLAGS="$CXXFLAGS -std=c++11"
+
+	# Make sure we don't link to libstdc++
+	CXXFLAGS="$CXXFLAGS -fno-rtti -fno-exceptions"
+
+	# Assorted warnings
+	CXXFLAGS="$CXXFLAGS -Wcast-align"
+
+	case "$host" in
+		*-*-mingw*)
+		;;
+		*)
+			# Hide inline methods
+			CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
+		;;
+	esac
+
 	case "$host" in
 		arm-*-*)
 			if test "x$ac_cv_alignof_struct_char__" != x1; then
 				# Request byte alignment
-				AM_CXXFLAGS="-mstructure-size-boundary=8"
+				CXXFLAGS="$CXXFLAGS -mstructure-size-boundary=8"
 			fi
 		;;
 	esac
 fi
+ if test "x$GCC" = "xyes"; then
+  HAVE_GCC_TRUE=
+  HAVE_GCC_FALSE='#'
+else
+  HAVE_GCC_TRUE='#'
+  HAVE_GCC_FALSE=
+fi
+
+
 
 
 ac_config_headers="$ac_config_headers config.h"
@@ -6463,6 +6496,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_GCC_TRUE}" && test -z "${HAVE_GCC_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_GCC\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then

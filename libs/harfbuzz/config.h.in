@@ -39,9 +39,6 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the <io.h> header file. */
-#undef HAVE_IO_H
-
 /* Define to 1 if you have the `isatty' function. */
 #undef HAVE_ISATTY
 
@@ -54,17 +51,14 @@
 /* Define to 1 if you have the `mprotect' function. */
 #undef HAVE_MPROTECT
 
+/* Define to 1 if you have the `newlocale' function. */
+#undef HAVE_NEWLOCALE
+
 /* Use native OpenType Layout backend */
 #undef HAVE_OT
 
 /* Use POSIX threads */
 #undef HAVE_PTHREAD
-
-/* Define to 1 if you have the <sched.h> header file. */
-#undef HAVE_SCHED_H
-
-/* Define to 1 if you have the `sched_yield' function. */
-#undef HAVE_SCHED_YIELD
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -77,6 +71,9 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
+
+/* Define to 1 if you have the `strtod_l' function. */
+#undef HAVE_STRTOD_L
 
 /* Define to 1 if you have the `sysconf' function. */
 #undef HAVE_SYSCONF
@@ -99,8 +96,8 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have the `_setmode' function. */
-#undef HAVE__SETMODE
+/* Define to 1 if you have the <xlocale.h> header file. */
+#undef HAVE_XLOCALE_H
 
 /* Name of package */
 #undef PACKAGE
