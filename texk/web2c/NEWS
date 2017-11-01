@@ -8,15 +8,20 @@ This file records noteworthy changes.  (Public domain.)
 2016 (for TeX Live 2016, 21 May 2016)
 2015 (for TeX Live 2015, 21 May 2015)
 2014 (for TeX Live 2014, 24 May 2014)
-2013 (for TeX Live 2013, 30 May 2013)
-2012 (for TeX Live 2012, 1 July 2012)
 * Ditto.
 
-2011 (for TeX Live 2011, 5 July 2011)
+2013 (for TeX Live 2013, 30 May 2013)
 * Doc changes and bug fixes.
+
+2012 (for TeX Live 2012, 1 July 2012)
+* upTeX and e-upTeX Japanese engines added.
+
+2011 (for TeX Live 2011, 5 July 2011)
+* epTeX Japanese engine added.
 
 2010 (for TeX Live 2010, 4 June 2010)
 * BibTeX line-breaking bug fix in bibtex.web.
+* pTeX Japanese engine added.
 
 2009 (for TeX Live 2009, 13 October 2009)
 * --shell-restricted aka shell_escape=p for restricted shell access.
