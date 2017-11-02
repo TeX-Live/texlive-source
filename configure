@@ -643,8 +643,8 @@ cross_TRUE
 ICU_CONFIG
 FT2_CONFIG
 PKG_CONFIG
-MAKE_SUBDIRS
 CONF_SUBDIRS
+MAKE_SUBDIRS
 CXXCPP
 WARNING_CXXFLAGS
 am__fastdepCXX_FALSE
@@ -21076,15 +21076,16 @@ fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TeX specific libraries to build" >&5
 $as_echo_n "checking for TeX specific libraries to build... " >&6; }
-CONF_SUBDIRS=
+echo 'dbg:_KPSE_RECURSE called: list=texlibs, text=TeX specific libraries, cond=test "x$with_system_Kpse_pkg" != xyes && test "x$need_Kpse_pkg" = xyes, prefix=texk/.' >&5
 MAKE_SUBDIRS=
-if test -x $srcdir/texk/ptexenc/configure && test "x$with_system_ptexenc" != xyes && test "x$need_ptexenc" = xyes; then
+CONF_SUBDIRS=
+if test -x $srcdir/texk/ptexenc/configure; then
+  test "x$with_system_ptexenc" != xyes && test "x$need_ptexenc" = xyes && MAKE_SUBDIRS="texk/ptexenc $MAKE_SUBDIRS"
   CONF_SUBDIRS="texk/ptexenc $CONF_SUBDIRS"
-  MAKE_SUBDIRS="texk/ptexenc $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/texk/kpathsea/configure && test "x$with_system_kpathsea" != xyes && test "x$need_kpathsea" = xyes; then
+if test -x $srcdir/texk/kpathsea/configure; then
+  test "x$with_system_kpathsea" != xyes && test "x$need_kpathsea" = xyes && MAKE_SUBDIRS="texk/kpathsea $MAKE_SUBDIRS"
   CONF_SUBDIRS="texk/kpathsea $CONF_SUBDIRS"
-  MAKE_SUBDIRS="texk/kpathsea $MAKE_SUBDIRS"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5

@@ -589,8 +589,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-MAKE_SUBDIRS
 CONF_SUBDIRS
+MAKE_SUBDIRS
 WARNING_CFLAGS
 MAINT
 MAINTAINER_MODE_FALSE
@@ -6394,55 +6394,56 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Utils programs to build" >&5
 $as_echo_n "checking for Utils programs to build... " >&6; }
-CONF_SUBDIRS=
+echo 'dbg:_KPSE_RECURSE called: list=utils, text=Utils programs, cond=test "x$enable_Kpse_pkg" = xyes, prefix=.' >&5
 MAKE_SUBDIRS=
-if test -x $srcdir/autosp/configure && test "x$enable_autosp" = xyes; then
+CONF_SUBDIRS=
+if test -x $srcdir/autosp/configure; then
+  test "x$enable_autosp" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS autosp"
   CONF_SUBDIRS="$CONF_SUBDIRS autosp"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS autosp"
 fi
-if test -x $srcdir/devnag/configure && test "x$enable_devnag" = xyes; then
+if test -x $srcdir/devnag/configure; then
+  test "x$enable_devnag" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS devnag"
   CONF_SUBDIRS="$CONF_SUBDIRS devnag"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS devnag"
 fi
-if test -x $srcdir/lacheck/configure && test "x$enable_lacheck" = xyes; then
+if test -x $srcdir/lacheck/configure; then
+  test "x$enable_lacheck" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
   CONF_SUBDIRS="$CONF_SUBDIRS lacheck"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
 fi
-if test -x $srcdir/m-tx/configure && test "x$enable_m_tx" = xyes; then
+if test -x $srcdir/m-tx/configure; then
+  test "x$enable_m_tx" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS m-tx"
   CONF_SUBDIRS="$CONF_SUBDIRS m-tx"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS m-tx"
 fi
-if test -x $srcdir/pmx/configure && test "x$enable_pmx" = xyes; then
+if test -x $srcdir/pmx/configure; then
+  test "x$enable_pmx" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS pmx"
   CONF_SUBDIRS="$CONF_SUBDIRS pmx"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS pmx"
 fi
-if test -x $srcdir/ps2eps/configure && test "x$enable_ps2eps" = xyes; then
+if test -x $srcdir/ps2eps/configure; then
+  test "x$enable_ps2eps" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ps2eps"
   CONF_SUBDIRS="$CONF_SUBDIRS ps2eps"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS ps2eps"
 fi
-if test -x $srcdir/t1utils/configure && test "x$enable_t1utils" = xyes; then
+if test -x $srcdir/t1utils/configure; then
+  test "x$enable_t1utils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS t1utils"
   CONF_SUBDIRS="$CONF_SUBDIRS t1utils"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS t1utils"
 fi
-if test -x $srcdir/texdoctk/configure && test "x$enable_texdoctk" = xyes; then
+if test -x $srcdir/texdoctk/configure; then
+  test "x$enable_texdoctk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS texdoctk"
   CONF_SUBDIRS="$CONF_SUBDIRS texdoctk"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS texdoctk"
 fi
-if test -x $srcdir/tpic2pdftex/configure && test "x$enable_tpic2pdftex" = xyes; then
+if test -x $srcdir/tpic2pdftex/configure; then
+  test "x$enable_tpic2pdftex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS tpic2pdftex"
   CONF_SUBDIRS="$CONF_SUBDIRS tpic2pdftex"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS tpic2pdftex"
 fi
-if test -x $srcdir/vlna/configure && test "x$enable_vlna" = xyes; then
+if test -x $srcdir/vlna/configure; then
+  test "x$enable_vlna" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS vlna"
   CONF_SUBDIRS="$CONF_SUBDIRS vlna"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS vlna"
 fi
-if test -x $srcdir/xindy/configure && test "x$enable_xindy" = xyes; then
+if test -x $srcdir/xindy/configure; then
+  test "x$enable_xindy" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xindy"
   CONF_SUBDIRS="$CONF_SUBDIRS xindy"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS xindy"
 fi
-if test -x $srcdir/xpdfopen/configure && test "x$enable_xpdfopen" = xyes; then
+if test -x $srcdir/xpdfopen/configure; then
+  test "x$enable_xpdfopen" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xpdfopen"
   CONF_SUBDIRS="$CONF_SUBDIRS xpdfopen"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS xpdfopen"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5

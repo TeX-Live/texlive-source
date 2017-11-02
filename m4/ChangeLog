@@ -1,3 +1,13 @@
+2017-11-02  Karl Berry  <karl@freefriends.org>
+
+	* kpse-setup.m4 (_KPSE_RECURSE): revert previous change,
+	as (1) it causes configure to fail in the cut-down pdftex source tree,
+	and (2) for 2018, more packages (icu, poppler, ...) are going to
+	require C++11, so we can't hack around it again. So not worth
+	spending more time refining.
+	Also, add debugging line writing to >&AS_MESSAGE_LOG_FD (config.log).
+	reautoconf.
+
 2017-02-17  Karl Berry  <karl@freefriends.org>
 
 	* kpse-setup.m4 (_KPSE_RECURSE): do not add a package to
