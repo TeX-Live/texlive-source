@@ -1,4 +1,4 @@
-# $Id$  (m4/kpse-setup.m4)
+# $Id$
 # Private macros for the TeX Live (TL) tree.
 # Copyright 2017      Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
@@ -15,8 +15,8 @@
 #     --with-system-LIB --with-LIB-includes --with-LIB-libdir
 #   configure options for programs:
 #     --disable-PROG --enable-PROG
-#   additional package-specific configure options, if any
-#   library dependencies for programs and libraries, if any
+#   additional program specific configure options (if any)
+#   library dependencies for programs and libraries
 AC_DEFUN([KPSE_SETUP], [dnl
 AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AC_REQUIRE([_KPSE_MSG_WARN_PREPARE])[]dnl
@@ -266,23 +266,47 @@ m4_popdef([Kpse_add])[]dnl
 # -----------------------------------------
 # Internal subroutine.  Determine which of the libraries or programs in
 # kpse_LIST_pkgs to build: if a package's source directory contains a
-# configure script, and COND is true, then add to the output variables
-# MAKE_SUBDIRS and CONF_SUBDIRS.  Thus, if a package directory does not
-# exist at all, or if the package has been disabled, it will be ignored.
-#
+# configure script, then add to CONF_SUBDIRS.  If COND is true, also add
+# to MAKE_SUBDIRS.  PREFIX, if present, is prepended to the package name
+# for the directory.
+# 
+# Thus if a directory has a configure script, the configure must succeed,
+# even if the package has been disabled. This is suboptimal, but see below.
+# 
 m4_define([_KPSE_RECURSE], [dnl
 AC_MSG_CHECKING([for $2 to build])
-CONF_SUBDIRS=
+echo 'dbg:[_KPSE_RECURSE] called: list=$1, text=$2, cond=$3, prefix=$4.' >&AS_MESSAGE_LOG_FD
 MAKE_SUBDIRS=
+CONF_SUBDIRS=
 KPSE_FOR_PKGS([$1], [dnl
 m4_ifdef([have_]Kpse_pkg, [dnl
-if test -x $srcdir/$4Kpse_Pkg/configure && $3; then
+if test -x $srcdir/$4Kpse_Pkg/configure; then
+  $3 && Kpse_add([MAKE_SUBDIRS])
   Kpse_add([CONF_SUBDIRS])
-  Kpse_add([MAKE_SUBDIRS])
 fi
 ])[]dnl m4_ifdef
 ])
-AC_SUBST([CONF_SUBDIRS])[]dnl
 AC_SUBST([MAKE_SUBDIRS])[]dnl
+AC_SUBST([CONF_SUBDIRS])[]dnl
 AC_MSG_RESULT([$MAKE_SUBDIRS])[]dnl
-]) # _KPSE_RECURSE
+dnl
+dnl Historic (and current) method: assume all directories present will be
+dnl configured, but only make if the package is enabled.  This works in
+dnl the cut-down pdftex source tree, but means that configure always has
+dnl to succeed; not desirable in, e.g., 2017 when dvisvgm newly required
+dnl C++11. But for 2018, all kinds of other things also require C++11, so
+dnl might as well go back to it instead of debugging further.
+dnl #old if test -x $srcdir/$4Kpse_Pkg/configure; then
+dnl #old   $3 && Kpse_add([MAKE_SUBDIRS])
+dnl #old   Kpse_add([CONF_SUBDIRS])
+dnl #old fi
+dnl
+dnl new (and not used) method: don't try to configure if a package has
+dnl been disabled, even if the directory exists. This is more intuitive,
+dnl but does not work in the cut-down pdftex source tree.
+dnl #new if test -x $srcdir/$4Kpse_Pkg/configure && $3; then
+dnl #new   Kpse_add([CONF_SUBDIRS])
+dnl #new   Kpse_add([MAKE_SUBDIRS])
+dnl #new fi
+dnl 
+]) dnl _KPSE_RECURSE

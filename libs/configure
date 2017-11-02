@@ -589,8 +589,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-MAKE_SUBDIRS
 CONF_SUBDIRS
+MAKE_SUBDIRS
 WARNING_CFLAGS
 MAINT
 MAINTAINER_MODE_FALSE
@@ -6394,83 +6394,84 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for generic libraries to build" >&5
 $as_echo_n "checking for generic libraries to build... " >&6; }
-CONF_SUBDIRS=
+echo 'dbg:_KPSE_RECURSE called: list=libs, text=generic libraries, cond=test "x$with_system_Kpse_pkg" != xyes && test "x$need_Kpse_pkg" = xyes, prefix=.' >&5
 MAKE_SUBDIRS=
-if test -x $srcdir/harfbuzz/configure && test "x$with_system_harfbuzz" != xyes && test "x$need_harfbuzz" = xyes; then
+CONF_SUBDIRS=
+if test -x $srcdir/harfbuzz/configure; then
+  test "x$with_system_harfbuzz" != xyes && test "x$need_harfbuzz" = xyes && MAKE_SUBDIRS="harfbuzz $MAKE_SUBDIRS"
   CONF_SUBDIRS="harfbuzz $CONF_SUBDIRS"
-  MAKE_SUBDIRS="harfbuzz $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/icu/configure && test "x$with_system_icu" != xyes && test "x$need_icu" = xyes; then
+if test -x $srcdir/icu/configure; then
+  test "x$with_system_icu" != xyes && test "x$need_icu" = xyes && MAKE_SUBDIRS="icu $MAKE_SUBDIRS"
   CONF_SUBDIRS="icu $CONF_SUBDIRS"
-  MAKE_SUBDIRS="icu $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/teckit/configure && test "x$with_system_teckit" != xyes && test "x$need_teckit" = xyes; then
+if test -x $srcdir/teckit/configure; then
+  test "x$with_system_teckit" != xyes && test "x$need_teckit" = xyes && MAKE_SUBDIRS="teckit $MAKE_SUBDIRS"
   CONF_SUBDIRS="teckit $CONF_SUBDIRS"
-  MAKE_SUBDIRS="teckit $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/graphite2/configure && test "x$with_system_graphite2" != xyes && test "x$need_graphite2" = xyes; then
+if test -x $srcdir/graphite2/configure; then
+  test "x$with_system_graphite2" != xyes && test "x$need_graphite2" = xyes && MAKE_SUBDIRS="graphite2 $MAKE_SUBDIRS"
   CONF_SUBDIRS="graphite2 $CONF_SUBDIRS"
-  MAKE_SUBDIRS="graphite2 $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/zziplib/configure && test "x$with_system_zziplib" != xyes && test "x$need_zziplib" = xyes; then
+if test -x $srcdir/zziplib/configure; then
+  test "x$with_system_zziplib" != xyes && test "x$need_zziplib" = xyes && MAKE_SUBDIRS="zziplib $MAKE_SUBDIRS"
   CONF_SUBDIRS="zziplib $CONF_SUBDIRS"
-  MAKE_SUBDIRS="zziplib $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/xpdf/configure && test "x$with_system_xpdf" != xyes && test "x$need_xpdf" = xyes; then
+if test -x $srcdir/xpdf/configure; then
+  test "x$with_system_xpdf" != xyes && test "x$need_xpdf" = xyes && MAKE_SUBDIRS="xpdf $MAKE_SUBDIRS"
   CONF_SUBDIRS="xpdf $CONF_SUBDIRS"
-  MAKE_SUBDIRS="xpdf $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/poppler/configure && test "x$with_system_poppler" != xyes && test "x$need_poppler" = xyes; then
+if test -x $srcdir/poppler/configure; then
+  test "x$with_system_poppler" != xyes && test "x$need_poppler" = xyes && MAKE_SUBDIRS="poppler $MAKE_SUBDIRS"
   CONF_SUBDIRS="poppler $CONF_SUBDIRS"
-  MAKE_SUBDIRS="poppler $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/mpfr/configure && test "x$with_system_mpfr" != xyes && test "x$need_mpfr" = xyes; then
+if test -x $srcdir/mpfr/configure; then
+  test "x$with_system_mpfr" != xyes && test "x$need_mpfr" = xyes && MAKE_SUBDIRS="mpfr $MAKE_SUBDIRS"
   CONF_SUBDIRS="mpfr $CONF_SUBDIRS"
-  MAKE_SUBDIRS="mpfr $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/gmp/configure && test "x$with_system_gmp" != xyes && test "x$need_gmp" = xyes; then
+if test -x $srcdir/gmp/configure; then
+  test "x$with_system_gmp" != xyes && test "x$need_gmp" = xyes && MAKE_SUBDIRS="gmp $MAKE_SUBDIRS"
   CONF_SUBDIRS="gmp $CONF_SUBDIRS"
-  MAKE_SUBDIRS="gmp $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/cairo/configure && test "x$with_system_cairo" != xyes && test "x$need_cairo" = xyes; then
+if test -x $srcdir/cairo/configure; then
+  test "x$with_system_cairo" != xyes && test "x$need_cairo" = xyes && MAKE_SUBDIRS="cairo $MAKE_SUBDIRS"
   CONF_SUBDIRS="cairo $CONF_SUBDIRS"
-  MAKE_SUBDIRS="cairo $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/pixman/configure && test "x$with_system_pixman" != xyes && test "x$need_pixman" = xyes; then
+if test -x $srcdir/pixman/configure; then
+  test "x$with_system_pixman" != xyes && test "x$need_pixman" = xyes && MAKE_SUBDIRS="pixman $MAKE_SUBDIRS"
   CONF_SUBDIRS="pixman $CONF_SUBDIRS"
-  MAKE_SUBDIRS="pixman $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/potrace/configure && test "x$with_system_potrace" != xyes && test "x$need_potrace" = xyes; then
+if test -x $srcdir/potrace/configure; then
+  test "x$with_system_potrace" != xyes && test "x$need_potrace" = xyes && MAKE_SUBDIRS="potrace $MAKE_SUBDIRS"
   CONF_SUBDIRS="potrace $CONF_SUBDIRS"
-  MAKE_SUBDIRS="potrace $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/gd/configure && test "x$with_system_gd" != xyes && test "x$need_gd" = xyes; then
+if test -x $srcdir/gd/configure; then
+  test "x$with_system_gd" != xyes && test "x$need_gd" = xyes && MAKE_SUBDIRS="gd $MAKE_SUBDIRS"
   CONF_SUBDIRS="gd $CONF_SUBDIRS"
-  MAKE_SUBDIRS="gd $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/freetype2/configure && test "x$with_system_freetype2" != xyes && test "x$need_freetype2" = xyes; then
+if test -x $srcdir/freetype2/configure; then
+  test "x$with_system_freetype2" != xyes && test "x$need_freetype2" = xyes && MAKE_SUBDIRS="freetype2 $MAKE_SUBDIRS"
   CONF_SUBDIRS="freetype2 $CONF_SUBDIRS"
-  MAKE_SUBDIRS="freetype2 $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/libpng/configure && test "x$with_system_libpng" != xyes && test "x$need_libpng" = xyes; then
+if test -x $srcdir/libpng/configure; then
+  test "x$with_system_libpng" != xyes && test "x$need_libpng" = xyes && MAKE_SUBDIRS="libpng $MAKE_SUBDIRS"
   CONF_SUBDIRS="libpng $CONF_SUBDIRS"
-  MAKE_SUBDIRS="libpng $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/libpaper/configure && test "x$with_system_libpaper" != xyes && test "x$need_libpaper" = xyes; then
+if test -x $srcdir/libpaper/configure; then
+  test "x$with_system_libpaper" != xyes && test "x$need_libpaper" = xyes && MAKE_SUBDIRS="libpaper $MAKE_SUBDIRS"
   CONF_SUBDIRS="libpaper $CONF_SUBDIRS"
-  MAKE_SUBDIRS="libpaper $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/luajit/configure && test "x$with_system_luajit" != xyes && test "x$need_luajit" = xyes; then
+if test -x $srcdir/luajit/configure; then
+  test "x$with_system_luajit" != xyes && test "x$need_luajit" = xyes && MAKE_SUBDIRS="luajit $MAKE_SUBDIRS"
   CONF_SUBDIRS="luajit $CONF_SUBDIRS"
-  MAKE_SUBDIRS="luajit $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/lua52/configure && test "x$with_system_lua52" != xyes && test "x$need_lua52" = xyes; then
+if test -x $srcdir/lua52/configure; then
+  test "x$with_system_lua52" != xyes && test "x$need_lua52" = xyes && MAKE_SUBDIRS="lua52 $MAKE_SUBDIRS"
   CONF_SUBDIRS="lua52 $CONF_SUBDIRS"
-  MAKE_SUBDIRS="lua52 $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/zlib/configure && test "x$with_system_zlib" != xyes && test "x$need_zlib" = xyes; then
+if test -x $srcdir/zlib/configure; then
+  test "x$with_system_zlib" != xyes && test "x$need_zlib" = xyes && MAKE_SUBDIRS="zlib $MAKE_SUBDIRS"
   CONF_SUBDIRS="zlib $CONF_SUBDIRS"
-  MAKE_SUBDIRS="zlib $MAKE_SUBDIRS"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5

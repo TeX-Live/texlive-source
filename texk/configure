@@ -589,8 +589,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-MAKE_SUBDIRS
 CONF_SUBDIRS
+MAKE_SUBDIRS
 WARNING_CFLAGS
 MAINT
 MAINTAINER_MODE_FALSE
@@ -6394,131 +6394,132 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TeXk programs to build" >&5
 $as_echo_n "checking for TeXk programs to build... " >&6; }
-CONF_SUBDIRS=
+echo 'dbg:_KPSE_RECURSE called: list=texk, text=TeXk programs, cond=test "x$enable_Kpse_pkg" = xyes, prefix=.' >&5
 MAKE_SUBDIRS=
-if test -x $srcdir/web2c/configure && test "x$enable_web2c" = xyes; then
+CONF_SUBDIRS=
+if test -x $srcdir/web2c/configure; then
+  test "x$enable_web2c" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS web2c"
   CONF_SUBDIRS="$CONF_SUBDIRS web2c"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS web2c"
 fi
-if test -x $srcdir/afm2pl/configure && test "x$enable_afm2pl" = xyes; then
+if test -x $srcdir/afm2pl/configure; then
+  test "x$enable_afm2pl" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS afm2pl"
   CONF_SUBDIRS="$CONF_SUBDIRS afm2pl"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS afm2pl"
 fi
-if test -x $srcdir/bibtex-x/configure && test "x$enable_bibtex_x" = xyes; then
+if test -x $srcdir/bibtex-x/configure; then
+  test "x$enable_bibtex_x" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS bibtex-x"
   CONF_SUBDIRS="$CONF_SUBDIRS bibtex-x"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS bibtex-x"
 fi
-if test -x $srcdir/chktex/configure && test "x$enable_chktex" = xyes; then
+if test -x $srcdir/chktex/configure; then
+  test "x$enable_chktex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS chktex"
   CONF_SUBDIRS="$CONF_SUBDIRS chktex"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS chktex"
 fi
-if test -x $srcdir/cjkutils/configure && test "x$enable_cjkutils" = xyes; then
+if test -x $srcdir/cjkutils/configure; then
+  test "x$enable_cjkutils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS cjkutils"
   CONF_SUBDIRS="$CONF_SUBDIRS cjkutils"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS cjkutils"
 fi
-if test -x $srcdir/detex/configure && test "x$enable_detex" = xyes; then
+if test -x $srcdir/detex/configure; then
+  test "x$enable_detex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS detex"
   CONF_SUBDIRS="$CONF_SUBDIRS detex"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS detex"
 fi
-if test -x $srcdir/dtl/configure && test "x$enable_dtl" = xyes; then
+if test -x $srcdir/dtl/configure; then
+  test "x$enable_dtl" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dtl"
   CONF_SUBDIRS="$CONF_SUBDIRS dtl"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS dtl"
 fi
-if test -x $srcdir/dvi2tty/configure && test "x$enable_dvi2tty" = xyes; then
+if test -x $srcdir/dvi2tty/configure; then
+  test "x$enable_dvi2tty" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvi2tty"
   CONF_SUBDIRS="$CONF_SUBDIRS dvi2tty"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS dvi2tty"
 fi
-if test -x $srcdir/dvidvi/configure && test "x$enable_dvidvi" = xyes; then
+if test -x $srcdir/dvidvi/configure; then
+  test "x$enable_dvidvi" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvidvi"
   CONF_SUBDIRS="$CONF_SUBDIRS dvidvi"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS dvidvi"
 fi
-if test -x $srcdir/dviljk/configure && test "x$enable_dviljk" = xyes; then
+if test -x $srcdir/dviljk/configure; then
+  test "x$enable_dviljk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dviljk"
   CONF_SUBDIRS="$CONF_SUBDIRS dviljk"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS dviljk"
 fi
-if test -x $srcdir/dvipdfm-x/configure && test "x$enable_dvipdfm_x" = xyes; then
+if test -x $srcdir/dvipdfm-x/configure; then
+  test "x$enable_dvipdfm_x" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdfm-x"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipdfm-x"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdfm-x"
 fi
-if test -x $srcdir/dvipng/configure && test "x$enable_dvipng" = xyes; then
+if test -x $srcdir/dvipng/configure; then
+  test "x$enable_dvipng" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipng"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipng"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS dvipng"
 fi
-if test -x $srcdir/dvipos/configure && test "x$enable_dvipos" = xyes; then
+if test -x $srcdir/dvipos/configure; then
+  test "x$enable_dvipos" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipos"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipos"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS dvipos"
 fi
-if test -x $srcdir/dvipsk/configure && test "x$enable_dvipsk" = xyes; then
+if test -x $srcdir/dvipsk/configure; then
+  test "x$enable_dvipsk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipsk"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipsk"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS dvipsk"
 fi
-if test -x $srcdir/dvisvgm/configure && test "x$enable_dvisvgm" = xyes; then
+if test -x $srcdir/dvisvgm/configure; then
+  test "x$enable_dvisvgm" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvisvgm"
   CONF_SUBDIRS="$CONF_SUBDIRS dvisvgm"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS dvisvgm"
 fi
-if test -x $srcdir/gregorio/configure && test "x$enable_gregorio" = xyes; then
+if test -x $srcdir/gregorio/configure; then
+  test "x$enable_gregorio" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS gregorio"
   CONF_SUBDIRS="$CONF_SUBDIRS gregorio"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS gregorio"
 fi
-if test -x $srcdir/gsftopk/configure && test "x$enable_gsftopk" = xyes; then
+if test -x $srcdir/gsftopk/configure; then
+  test "x$enable_gsftopk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS gsftopk"
   CONF_SUBDIRS="$CONF_SUBDIRS gsftopk"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS gsftopk"
 fi
-if test -x $srcdir/lcdf-typetools/configure && test "x$enable_lcdf_typetools" = xyes; then
+if test -x $srcdir/lcdf-typetools/configure; then
+  test "x$enable_lcdf_typetools" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS lcdf-typetools"
   CONF_SUBDIRS="$CONF_SUBDIRS lcdf-typetools"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS lcdf-typetools"
 fi
-if test -x $srcdir/makeindexk/configure && test "x$enable_makeindexk" = xyes; then
+if test -x $srcdir/makeindexk/configure; then
+  test "x$enable_makeindexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS makeindexk"
   CONF_SUBDIRS="$CONF_SUBDIRS makeindexk"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS makeindexk"
 fi
-if test -x $srcdir/makejvf/configure && test "x$enable_makejvf" = xyes; then
+if test -x $srcdir/makejvf/configure; then
+  test "x$enable_makejvf" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS makejvf"
   CONF_SUBDIRS="$CONF_SUBDIRS makejvf"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS makejvf"
 fi
-if test -x $srcdir/mendexk/configure && test "x$enable_mendexk" = xyes; then
+if test -x $srcdir/mendexk/configure; then
+  test "x$enable_mendexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS mendexk"
   CONF_SUBDIRS="$CONF_SUBDIRS mendexk"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS mendexk"
 fi
-if test -x $srcdir/musixtnt/configure && test "x$enable_musixtnt" = xyes; then
+if test -x $srcdir/musixtnt/configure; then
+  test "x$enable_musixtnt" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS musixtnt"
   CONF_SUBDIRS="$CONF_SUBDIRS musixtnt"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS musixtnt"
 fi
-if test -x $srcdir/ps2pk/configure && test "x$enable_ps2pk" = xyes; then
+if test -x $srcdir/ps2pk/configure; then
+  test "x$enable_ps2pk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ps2pk"
   CONF_SUBDIRS="$CONF_SUBDIRS ps2pk"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS ps2pk"
 fi
-if test -x $srcdir/psutils/configure && test "x$enable_psutils" = xyes; then
+if test -x $srcdir/psutils/configure; then
+  test "x$enable_psutils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS psutils"
   CONF_SUBDIRS="$CONF_SUBDIRS psutils"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS psutils"
 fi
-if test -x $srcdir/seetexk/configure && test "x$enable_seetexk" = xyes; then
+if test -x $srcdir/seetexk/configure; then
+  test "x$enable_seetexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS seetexk"
   CONF_SUBDIRS="$CONF_SUBDIRS seetexk"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS seetexk"
 fi
-if test -x $srcdir/tex4htk/configure && test "x$enable_tex4htk" = xyes; then
+if test -x $srcdir/tex4htk/configure; then
+  test "x$enable_tex4htk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS tex4htk"
   CONF_SUBDIRS="$CONF_SUBDIRS tex4htk"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS tex4htk"
 fi
-if test -x $srcdir/ttf2pk2/configure && test "x$enable_ttf2pk2" = xyes; then
+if test -x $srcdir/ttf2pk2/configure; then
+  test "x$enable_ttf2pk2" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk2"
   CONF_SUBDIRS="$CONF_SUBDIRS ttf2pk2"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk2"
 fi
-if test -x $srcdir/ttfdump/configure && test "x$enable_ttfdump" = xyes; then
+if test -x $srcdir/ttfdump/configure; then
+  test "x$enable_ttfdump" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ttfdump"
   CONF_SUBDIRS="$CONF_SUBDIRS ttfdump"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS ttfdump"
 fi
-if test -x $srcdir/upmendex/configure && test "x$enable_upmendex" = xyes; then
+if test -x $srcdir/upmendex/configure; then
+  test "x$enable_upmendex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS upmendex"
   CONF_SUBDIRS="$CONF_SUBDIRS upmendex"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS upmendex"
 fi
-if test -x $srcdir/xdvik/configure && test "x$enable_xdvik" = xyes; then
+if test -x $srcdir/xdvik/configure; then
+  test "x$enable_xdvik" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xdvik"
   CONF_SUBDIRS="$CONF_SUBDIRS xdvik"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS xdvik"
 fi
-if test -x $srcdir/texlive/configure && test "x$enable_texlive" = xyes; then
+if test -x $srcdir/texlive/configure; then
+  test "x$enable_texlive" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS texlive"
   CONF_SUBDIRS="$CONF_SUBDIRS texlive"
-  MAKE_SUBDIRS="$MAKE_SUBDIRS texlive"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
