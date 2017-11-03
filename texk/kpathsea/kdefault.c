@@ -3,7 +3,7 @@
    make a program `default' from it, since we have a target `default';
    and OSF/1 make doesn't understand .PHONY.)
 
-   Copyright 1993, 1994, 1996, 2008, 2009, 2011 Karl Berry.
+   Copyright 1993, 1994, 1996, 2008, 2009, 2011, 2017 Karl Berry.
    Copyright 2002, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -34,12 +34,13 @@ kpathsea_expand_default (kpathsea kpse, const_string path,
 {
   unsigned path_length;
   string expansion;
-  (void)kpse; /* currenty not used */
+
+  (void) kpse; /* unused */
 
   /* The default path better not be null.  */
   assert (fallback);
 
-  if (path == NULL)
+  if (path == NULL || *path == 0)
     expansion = xstrdup (fallback);
 
   /* Solitary or leading :?  */
