@@ -1,6 +1,6 @@
 /* default.h: declare default path expander.
 
-   Copyright 1993, 1994, 2008, 2011 Karl Berry.
+   Copyright 1993, 1994, 2008, 2011, 2017 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@
 
 /* Replace a leading or trailing or doubled : in PATH with DFLT.  If
    no extra colons, return PATH.  Only one extra colon is replaced.
+   If PATH is NULL or the empty string, DFLT is returned.
    DFLT may not be NULL.  The result is always in new memory.  */
 
 extern string kpathsea_expand_default (kpathsea kpse, const_string path,

@@ -1,3 +1,15 @@
+2017-11-03  Karl Berry  <karl@freefriends.org>
+
+	* default.h: document that NULL or empty input path returns the
+	default string.
+	* kdefault.c (kpathsea_expand_default): check for empty input path.
+        From Doug McKenna, personal mail, 2nov17.	
+
+	* cnf.c (do_line): do not move past a nul byte on erroneous input
+	(with a . but no program name).
+	* hash.c: doc fix.
+        From Doug McKenna, personal mail, 31oct17.	
+
 2017-10-29  Karl Berry  <karl@freefriends.org>
 
 	* several files: missed copyright 2017 updates.

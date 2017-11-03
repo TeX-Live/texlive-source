@@ -1,6 +1,6 @@
 /* hash.c: hash table operations.
 
-   Copyright 1994-2000, 2002, 2005, 2008, 2012, 2016
+   Copyright 1994-2000, 2002, 2005, 2008, 2012, 2016, 2017
    Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ hash (hash_table_type table,  const_string key)
   return n;
 }
 
-/* Identical has function as above, but does not normalize keys. */
+/* Identical hash function as above, but does not normalize keys. */
 static unsigned
 hash_normalized (hash_table_type table,  const_string key)
 {
