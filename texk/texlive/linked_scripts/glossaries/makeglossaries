@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 4.33
+# Version : 4.34
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,11 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="4.33 (2017-09-20)";
+my $version="4.34 (2017-11-03)";
 
 # History:
+# v4.34:
+#   * Added check for \glsxtr@resource
 # v4.33:
 #   * Version number synchronized with glossaries.sty
 # v2.21:
@@ -315,18 +317,30 @@ my $letterordering = defined($opt_l);
 # v2.19 added:
 my $extramkidxopts = '';
 
-# check aux file for other glossary types
-# and for ist file name
+# v4.34 added:
+my $foundbib2glsresource = '';
+
+# Check aux file for other glossary types,
+# style file name and various other bits of information.
 
 &scan_aux($name);
 
 # has the style file been specified?
 unless ($istfile)
 {
-   die "No \\\@istfilename found in '$name.aux'.\n",
-       "Did your LaTeX run fail?\n",
-       "Did your LaTeX run produce any output?\n",
-       "Did you remember to use \\makeglossaries?\n";
+   if ($foundbib2glsresource)
+   {
+      die "Found \\glsxtr\@resource in '$name.aux',\n",
+          "but not found \\\@istfilename.\n",
+          "You need to run bib2gls not makeglossaries.\n";
+   }
+   else
+   {
+      die "No \\\@istfilename found in '$name.aux'.\n",
+          "Did your LaTeX run fail?\n",
+          "Did your LaTeX run produce any output?\n",
+          "Did you remember to use \\makeglossaries?\n";
+   }
 }
 
 # v2.08 added $xindyapp and $makeindexapp
@@ -658,17 +672,6 @@ sub scan_aux{
   {
      while (<AUXFILE>)
      {
-        #v2.20 added
-        if (m/\\glsxtr\@makeglossaries\{(.*)\}/)
-        {
-           $glslist = $1;
-
-           unless ($opt_q)
-           {
-              print "only processing subset '$glslist'\n";
-           }
-        }
-
         #v2.14 added
         if (m/\\\@gls\@reference/ and not $glslist)
         {
@@ -676,20 +679,31 @@ sub scan_aux{
                "You don't need makeindex or xindy.\n";
         }
 
-        # v1.9 added
-        # v2.17 escaped { in regex
-        if (m/\\\@input\{(.+)\.aux\}/)
+        if (m/\\glsxtr\@makeglossaries\{(.*)\}/)
         {
+           #v2.20 added
+
+           $glslist = $1;
+
+           unless ($opt_q)
+           {
+              print "only processing subset '$glslist'\n";
+           }
+        }
+        elsif (m/\\\@input\{(.+)\.aux\}/)
+        {
+           # v1.9 added
+           # v2.17 escaped { in regex
            &scan_aux($1);
 
            # v2.04 added
            # (Fix provided by Daniel Grund) 
            next;
         }
-
-        # v2.17 escaped { in regex
-        if (m/\\\@newglossary\s*\{(.*)\}\{(.*)\}\{(.*)\}\{(.*)\}/)
+        elsif (m/\\\@newglossary\s*\{(.*)\}\{(.*)\}\{(.*)\}\{(.*)\}/)
         {
+           # v2.17 escaped { in regex
+
            $exttype{$1}{'log'} = $2;
            $exttype{$1}{'out'} = $3;
            $exttype{$1}{'in'}  = $4;
@@ -699,10 +713,10 @@ sub scan_aux{
               print "added glossary type '$1' ($2,$3,$4)\n";
            }
         }
-
-        # v2.17 escaped { in regex
-        if (m/\\\@istfilename\s*\{([^}]*)\}/)
+        elsif (m/\\\@istfilename\s*\{([^}]*)\}/)
         {
+           # v2.17 escaped { in regex
+
            $istfile = $1;
 
            # check if double quotes were added to \jobname
@@ -718,25 +732,34 @@ sub scan_aux{
               $istfile=~tr/\*/ /;
            }
         }
-
-        # v1.5 added
-        # v2.17 escaped { in regex
-        if (m/\\\@xdylanguage\s*\{([^}]+)\}\{([^}]*)\}/)
+        elsif (m/\\\@xdylanguage\s*\{([^}]+)\}\{([^}]*)\}/)
         {
+           # v1.5 added
+           # v2.17 escaped { in regex
+
            $language{$1} = $2;
         }
-
-        # v1.5 added
-        # v2.17 escaped { in regex
-        if (m/\\\@gls\@codepage\s*\{([^}]+)\}\{([^}]*)\}/)
+        elsif (m/\\\@gls\@codepage\s*\{([^}]+)\}\{([^}]*)\}/)
         {
+           # v1.5 added
+           # v2.17 escaped { in regex
+
            $codepage{$1} = $2;
         }
-
-        # v2.19 added
-        if (m/\\\@gls\@extramakeindexopts\{(.*)\}/)
+        elsif (m/\\\@gls\@extramakeindexopts\{(.*)\}/)
         {
+           # v2.19 added
+
            $extramkidxopts .= $1;
+        }
+        elsif (m/\\glsxtr\@resource/)
+        {
+           # v4.34 added
+
+           # No error at this point as a hybrid method is allowed.
+           # Error only occurs if no \@istfilename found.
+
+           $foundbib2glsresource = 1;
         }
 
         # v1.5 added
