@@ -127,10 +127,10 @@ if (test -f /.attbin/uname) >/dev/null 2>&1 ; then
 	PATH=$PATH:/.attbin ; export PATH
 fi
 
-UNAME_MACHINE=`uname -m 2>/dev/null` || UNAME_MACHINE=unknown
-UNAME_RELEASE=`uname -r 2>/dev/null` || UNAME_RELEASE=unknown
-UNAME_SYSTEM=`uname -s 2>/dev/null`  || UNAME_SYSTEM=unknown
-UNAME_VERSION=`uname -v 2>/dev/null` || UNAME_VERSION=unknown
+UNAME_MACHINE=`(uname -m) 2>/dev/null` || UNAME_MACHINE=unknown
+UNAME_RELEASE=`(uname -r) 2>/dev/null` || UNAME_RELEASE=unknown
+UNAME_SYSTEM=`(uname -s) 2>/dev/null`  || UNAME_SYSTEM=unknown
+UNAME_VERSION=`(uname -v) 2>/dev/null` || UNAME_VERSION=unknown
 
 case "${UNAME_SYSTEM}" in
 Linux|GNU|GNU/*)
@@ -168,10 +168,10 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
 	# Note: NetBSD doesn't particularly care about the vendor
 	# portion of the name.  We always set it to "unknown".
 	sysctl="sysctl -n hw.machine_arch"
-	UNAME_MACHINE_ARCH=`uname -p 2>/dev/null || \
+	UNAME_MACHINE_ARCH=`(uname -p 2>/dev/null || \
 	    /sbin/$sysctl 2>/dev/null || \
 	    /usr/sbin/$sysctl 2>/dev/null || \
-	    echo unknown`
+	    echo unknown)`
 	case "${UNAME_MACHINE_ARCH}" in
 	    armeb) machine=armeb-unknown ;;
 	    arm*) machine=arm-unknown ;;
@@ -347,7 +347,7 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
 	exit ;;
     Pyramid*:OSx*:*:* | MIS*:OSx*:*:* | MIS*:SMP_DC-OSx*:*:*)
 	# akee@wpdis03.wpafb.af.mil (Earle F. Ake) contributed MIS and NILE.
-	if test "`/bin/universe 2>/dev/null`" = att ; then
+	if test "`(/bin/universe) 2>/dev/null`" = att ; then
 		echo pyramid-pyramid-sysv3
 	else
 		echo pyramid-pyramid-bsd
@@ -1094,7 +1094,7 @@ EOF
 		UNAME_REL=`sed -n 's/.*Version //p' </usr/options/cb.name`
 		echo ${UNAME_MACHINE}-pc-isc$UNAME_REL
 	elif /bin/uname -X 2>/dev/null >/dev/null ; then
-		UNAME_REL=`/bin/uname -X|grep Release|sed -e 's/.*= //'`
+		UNAME_REL=`(/bin/uname -X|grep Release|sed -e 's/.*= //')`
 		(/bin/uname -X|grep i80486 >/dev/null) && UNAME_MACHINE=i486
 		(/bin/uname -X|grep '^Machine.*Pentium' >/dev/null) \
 			&& UNAME_MACHINE=i586
@@ -1188,7 +1188,7 @@ EOF
 	exit ;;
     *:SINIX-*:*:*)
 	if uname -p 2>/dev/null >/dev/null ; then
-		UNAME_MACHINE=`uname -p 2>/dev/null`
+		UNAME_MACHINE=`(uname -p) 2>/dev/null`
 		echo ${UNAME_MACHINE}-sni-sysv4
 	else
 		echo ns32k-sni-sysv
@@ -1374,7 +1374,7 @@ EOF
 	echo ${UNAME_MACHINE}-unknown-dragonfly`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`
 	exit ;;
     *:*VMS:*:*)
-	UNAME_MACHINE=`uname -p 2>/dev/null`
+	UNAME_MACHINE=`(uname -p) 2>/dev/null`
 	case "${UNAME_MACHINE}" in
 	    A*) echo alpha-dec-vms ; exit ;;
 	    I*) echo ia64-dec-vms ; exit ;;
@@ -1429,20 +1429,20 @@ provide the necessary information to handle your system.
 
 config.guess timestamp = $timestamp
 
-uname -m = `uname -m 2>/dev/null || echo unknown`
-uname -r = `uname -r 2>/dev/null || echo unknown`
-uname -s = `uname -s 2>/dev/null || echo unknown`
-uname -v = `uname -v 2>/dev/null || echo unknown`
+uname -m = `(uname -m) 2>/dev/null || echo unknown`
+uname -r = `(uname -r) 2>/dev/null || echo unknown`
+uname -s = `(uname -s) 2>/dev/null || echo unknown`
+uname -v = `(uname -v) 2>/dev/null || echo unknown`
 
-/usr/bin/uname -p = `/usr/bin/uname -p 2>/dev/null`
-/bin/uname -X     = `/bin/uname -X 2>/dev/null`
+/usr/bin/uname -p = `(/usr/bin/uname -p) 2>/dev/null`
+/bin/uname -X     = `(/bin/uname -X) 2>/dev/null`
 
-hostinfo               = `hostinfo 2>/dev/null`
-/bin/universe          = `/bin/universe 2>/dev/null`
-/usr/bin/arch -k       = `/usr/bin/arch -k 2>/dev/null`
-/bin/arch              = `/bin/arch 2>/dev/null`
-/usr/bin/oslevel       = `/usr/bin/oslevel 2>/dev/null`
-/usr/convex/getsysinfo = `/usr/convex/getsysinfo 2>/dev/null`
+hostinfo               = `(hostinfo) 2>/dev/null`
+/bin/universe          = `(/bin/universe) 2>/dev/null`
+/usr/bin/arch -k       = `(/usr/bin/arch -k) 2>/dev/null`
+/bin/arch              = `(/bin/arch) 2>/dev/null`
+/usr/bin/oslevel       = `(/usr/bin/oslevel) 2>/dev/null`
+/usr/convex/getsysinfo = `(/usr/convex/getsysinfo) 2>/dev/null`
 
 UNAME_MACHINE = ${UNAME_MACHINE}
 UNAME_RELEASE = ${UNAME_RELEASE}
