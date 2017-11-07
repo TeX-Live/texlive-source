@@ -1,3 +1,9 @@
+2017-11-07  Jonathan Kew  <jfkthame@gmail.com>
+
+	* XeTeX_ext.c: Guard against out-of-range result from UTF-8
+	decoding, and return U+FFFD Replacement Character instead
+	to avoid a crash for invalid inputs (from A. Kakuto).
+
 2017-09-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* xetex.web: Avoid overwriting prim_* entries by primitive().
