@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45623 2017-10-27 14:41:58Z preining $
+# $Id: tlmgr.pl 45719 2017-11-08 12:19:02Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45623 $';
-my $datrev = '$Date: 2017-10-27 16:41:58 +0200 (Fri, 27 Oct 2017) $';
+my $svnrev = '$Revision: 45719 $';
+my $datrev = '$Date: 2017-11-08 13:19:02 +0100 (Wed, 08 Nov 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1491,7 +1491,7 @@ Goodbye.
   if ($opts{'data'}) {
     @adds = @datafields;
   }
-  print "[\n" if ($fmt eq "json");
+  print "[" if ($fmt eq "json");
   my $first = 1;
   foreach my $ppp (@whattolist) {
     next if ($ppp =~ m/^00texlive\./);
@@ -3638,7 +3638,7 @@ sub show_one_package_json {
   my $is_available = (defined($remtlp) ? 1 : 0);
   if (!($is_installed || $is_available)) {
     # output proper JSON for unavailable packages
-    print "{ \"name\":\"$p\", \"available\":false }\n";
+    print "{ \"name\":\"$p\", \"available\":false }";
     #tlwarn("$prg: package $p not found neither locally nor remote!\n");
     #return($F_WARNING);
     return($F_OK);
@@ -3652,7 +3652,7 @@ sub show_one_package_json {
                           lrev      => ($is_installed ? $loctlp->revision : 0),
                           rrev      => ($is_available ? $remtlp->revision : 0),
                           revision  => undef);
-  print $str, "\n";
+  print $str;
   return($F_OK);
 }
 
@@ -8554,6 +8554,13 @@ report C<(verified)> after loading the TLPDB; otherwise, they report
 C<(not verified)>.  Either way, by default the installation and/or
 updates proceed normally.
 
+If a program C<gpg> is available (that is, it is found in the C<PATH>),
+cryptographic signatures will be checked. In this case we require that
+the main repository is signed. This is not required for additional r
+repositories. If C<gpg> is not available, signatures are not checked
+and no verification is carried out, but C<tlmgr> proceeds normally.
+This is the behavior of C<tlmgr> up to TeX Live 2016.
+
 The attempted verification can be suppressed by specifying
 C<--no-verify-downloads> on the command line, or the entry
 C<verify-downloads = 0> in a C<tlmgr> config file (described in
@@ -8561,6 +8568,9 @@ L<CONFIGURATION FILE FOR TLMGR>).  On the other hand, it is possible to
 I<require> verification by specifying C<--require-verification> on the
 command line, or C<require-verification = 1> in a C<tlmgr> config file;
 in this case, if verification is not possible, the program quits.
+Note that as mentioned above, if C<gpg> is available, the main repository
+is always required to have a signature. Using the C<--require-verification>
+switch, C<tlmgr> also requires signatures from additional repositories.
 
 Cryptographic verification requires checksum checking (described just
 above) to succeed, and a working GnuPG (C<gpg>) program (see below for
@@ -9146,7 +9156,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45623 2017-10-27 14:41:58Z preining $
+$Id: tlmgr.pl 45719 2017-11-08 12:19:02Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
