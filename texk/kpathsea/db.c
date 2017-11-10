@@ -772,7 +772,7 @@ kpathsea_db_search_list (kpathsea kpse, string* names,
               /* If we have a real file, add it to the list, maybe done.  */
               if (found) {
                 str_list_add (ret, found);
-                if (!all && found)
+                if (!all)
                   done = true;
               }
             } else { /* no match in the db */

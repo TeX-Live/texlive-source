@@ -1,3 +1,8 @@
+2017-11-09  Karl Berry  <karl@freefriends.org>
+
+	* db.c (kpathsea_db_search_list): remove redundant test of `found'.
+        From Doug McKenna, personal mail, 7nov17.
+
 2017-11-03  Karl Berry  <karl@freefriends.org>
 
 	* default.h: document that NULL or empty input path returns the
