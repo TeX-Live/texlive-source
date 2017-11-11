@@ -1,3 +1,9 @@
+2017-11-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex-file.c: Again use a custom kpathsea_getlongpath()
+	instead of a standard API function GetLongPathName(), since
+	the latter sometimes does not work as desired (W32 only).
+
 2017-11-09  Karl Berry  <karl@freefriends.org>
 
 	* db.c (kpathsea_db_search_list): remove redundant test of `found'.
