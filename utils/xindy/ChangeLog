@@ -1,3 +1,9 @@
+2017-11-13  Karl Berry  <karl@tug.org>
+
+	* xindy-src/make-rules/inputenc/make-inp-rules.pl: must use \{
+	to placate current Perl.
+	Report from Josua Stingelin on tex-k, 12 Nov 2017 11:21:27.
+
 2017-03-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xindy-src/user-commands/xindy.in: If a module name cantains directory
@@ -6,9 +12,9 @@
 
 2016-06-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* xindy-src/user-commands/xindy.in: Use kpsewhich to search for modules.
-	Performance is lost. However user modules specified by the -M option
-	can be under <anytexmf>/xindy/modules/.
+	* xindy-src/user-commands/xindy.in: Use kpsewhich to search for
+	modules. Performance is lost. However user modules specified by
+	the -M option can be under <anytexmf>/xindy/modules/.
 
 2016-02-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
@@ -173,7 +179,6 @@
 
 	* configure.ac (AC_CONFIG_AUX_DIR): Use auxiliary files from
 	../../build-aux in TeX Live tree.
-
 
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -1,0 +1,11 @@
+--- make-inp-rules.pl	(revision 45762)
++++ make-inp-rules.pl	(working copy)
+@@ -8,7 +8,7 @@
+ 
+ 
+ while (<STDIN>) {
+-  if (/\\indexentry{(.+)--([8-9a-f][0-9a-f])\}\{1\}/) {
++  if (/\\indexentry\{(.+)--([8-9a-f][0-9a-f])\}\{1\}/) {
+     if (!($1 =~ /inputenc Error|\@inpenc\@undefined/)) {
+       $i = hex($2);
+       $macro = $1;
