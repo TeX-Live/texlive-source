@@ -30,6 +30,7 @@
 #define HB_OPEN_TYPE_PRIVATE_HH
 
 #include "hb-private.hh"
+#include "hb-debug.hh"
 #include "hb-face-private.hh"
 
 
@@ -130,14 +131,16 @@ static inline Type& StructAfter(TObject &X)
  */
 
 /* Global nul-content Null pool.  Enlarge as necessary. */
-/* TODO This really should be a extern HB_INTERNAL and defined somewhere... */
-static const void *_NullPool[(256+8) / sizeof (void *)];
+
+#define HB_NULL_POOL_SIZE 264
+static_assert (HB_NULL_POOL_SIZE % sizeof (void *) == 0, "Align HB_NULL_POOL_SIZE.");
+extern HB_INTERNAL const void * const _hb_NullPool[HB_NULL_POOL_SIZE / sizeof (void *)];
 
 /* Generic nul-content Null objects. */
 template <typename Type>
 static inline const Type& Null (void) {
-  static_assert ((sizeof (Type) <= sizeof (_NullPool)), "");
-  return *CastP<Type> (_NullPool);
+  static_assert (sizeof (Type) <= HB_NULL_POOL_SIZE, "Increase HB_NULL_POOL_SIZE.");
+  return *CastP<Type> (_hb_NullPool);
 }
 
 /* Specializaiton for arbitrary-content arbitrary-sized Null objects. */
@@ -171,16 +174,6 @@ struct hb_dispatch_context_t
 /*
  * Sanitize
  */
-
-#ifndef HB_DEBUG_SANITIZE
-#define HB_DEBUG_SANITIZE (HB_DEBUG+0)
-#endif
-
-
-#define TRACE_SANITIZE(this) \
-	hb_auto_trace_t<HB_DEBUG_SANITIZE, bool> trace \
-	(&c->debug_depth, c->get_name (), this, HB_FUNC, \
-	 "");
 
 /* This limits sanitizing time on really broken fonts. */
 #ifndef HB_SANITIZE_MAX_EDITS
@@ -384,16 +377,6 @@ struct Sanitizer
 /*
  * Serialize
  */
-
-#ifndef HB_DEBUG_SERIALIZE
-#define HB_DEBUG_SERIALIZE (HB_DEBUG+0)
-#endif
-
-
-#define TRACE_SERIALIZE(this) \
-	hb_auto_trace_t<HB_DEBUG_SERIALIZE, bool> trace \
-	(&c->debug_depth, "SERIALIZE", c, HB_FUNC, \
-	 "");
 
 
 struct hb_serialize_context_t
@@ -632,10 +615,11 @@ struct IntType
   inline bool operator == (const IntType<Type,Size> &o) const { return (Type) v == (Type) o.v; }
   inline bool operator != (const IntType<Type,Size> &o) const { return !(*this == o); }
   static inline int cmp (const IntType<Type,Size> *a, const IntType<Type,Size> *b) { return b->cmp (*a); }
-  inline int cmp (Type a) const
+  template <typename Type2>
+  inline int cmp (Type2 a) const
   {
     Type b = v;
-    if (sizeof (Type) < sizeof (int))
+    if (sizeof (Type) < sizeof (int) && sizeof (Type2) < sizeof (int))
       return (int) a - (int) b;
     else
       return a < b ? -1 : a == b ? 0 : +1;
@@ -943,7 +927,7 @@ struct ArrayOf
   inline bool sanitize_shallow (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
-    return_trace (c->check_struct (this) && c->check_array (array, Type::static_size, len));
+    return_trace (len.sanitize (c) && c->check_array (array, Type::static_size, len));
   }
 
   public:
@@ -1009,12 +993,6 @@ struct HeadlessArrayOf
     return_trace (true);
   }
 
-  inline bool sanitize_shallow (hb_sanitize_context_t *c) const
-  {
-    return c->check_struct (this)
-	&& c->check_array (this, Type::static_size, len);
-  }
-
   inline bool sanitize (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
@@ -1032,6 +1010,15 @@ struct HeadlessArrayOf
     return_trace (true);
   }
 
+  private:
+  inline bool sanitize_shallow (hb_sanitize_context_t *c) const
+  {
+    TRACE_SANITIZE (this);
+    return_trace (len.sanitize (c) &&
+		  (!len || c->check_array (array, Type::static_size, len - 1)));
+  }
+
+  public:
   LenType len;
   Type array[VAR];
   public:
@@ -1039,7 +1026,9 @@ struct HeadlessArrayOf
 };
 
 
-/* An array with sorted elements.  Supports binary searching. */
+/*
+ * An array with sorted elements.  Supports binary searching.
+ */
 template <typename Type, typename LenType=USHORT>
 struct SortedArrayOf : ArrayOf<Type, LenType>
 {
@@ -1063,6 +1052,33 @@ struct SortedArrayOf : ArrayOf<Type, LenType>
     return -1;
   }
 };
+
+/*
+ * Binary-search arrays
+ */
+
+struct BinSearchHeader
+{
+  inline operator uint32_t (void) const { return len; }
+
+  inline bool sanitize (hb_sanitize_context_t *c) const
+  {
+    TRACE_SANITIZE (this);
+    return_trace (c->check_struct (this));
+  }
+
+  protected:
+  USHORT	len;
+  USHORT	searchRangeZ;
+  USHORT	entrySelectorZ;
+  USHORT	rangeShiftZ;
+
+  public:
+  DEFINE_SIZE_STATIC (8);
+};
+
+template <typename Type>
+struct BinSearchArrayOf : SortedArrayOf<Type, BinSearchHeader> {};
 
 
 /* Lazy struct and blob loaders. */
