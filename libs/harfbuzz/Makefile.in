@@ -651,6 +651,8 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-serialize.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer.cc \
 	@HARFBUZZ_TREE@/src/hb-common.cc \
+	@HARFBUZZ_TREE@/src/hb-debug.hh \
+	@HARFBUZZ_TREE@/src/hb-dsalgs.hh \
 	@HARFBUZZ_TREE@/src/hb-face-private.hh \
 	@HARFBUZZ_TREE@/src/hb-face.cc \
 	@HARFBUZZ_TREE@/src/hb-fallback-shape.cc \
@@ -664,9 +666,11 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-head-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-hhea-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-hmtx-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-kern-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-maxp-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-name-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-os2-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-post-macroman.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-post-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-mvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-tag.cc \
@@ -680,6 +684,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-shaper-impl-private.hh \
 	@HARFBUZZ_TREE@/src/hb-shaper-private.hh \
 	@HARFBUZZ_TREE@/src/hb-shaper.cc \
+	@HARFBUZZ_TREE@/src/hb-string-array.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode-private.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode.cc \
 	@HARFBUZZ_TREE@/src/hb-utf-private.hh \
