@@ -1,3 +1,4 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl   Copyright 2016-2017 Karl Berry <tex-live@tug.org>
@@ -14,7 +15,7 @@ AC_CONFIG_SRCDIR([harfbuzz-src/src/harfbuzz.pc.in])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-KPSE_BASIC([harfbuzz])
+KPSE_BASIC([harfbuzz], no-define)
 
 KPSE_LIB_VERSION([harfbuzz])[]dnl
 AC_SUBST([HB_VERSION_MAJOR], [harfbuzz_major])[]dnl

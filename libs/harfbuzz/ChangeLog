@@ -1,3 +1,10 @@
+2017-11-14  Karl Berry  <karl@tug.org>
+
+	* configure.ac (KPSE_BASIC): pass Automake option no-define
+	to stop the #define of VERSION (and PACKAGE), which harfbuzz
+	and/or C++ is apparently now using for its own incompatible purposes.
+	* config.h.in (PACKAGE, VERSION): hence auto-removed (by aclocal).
+
 2017-11-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import harfbuzz-1.7.0.
