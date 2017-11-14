@@ -1,3 +1,11 @@
+2017-11-14  Anders Kaseorg  <andersk@mit.edu>
+
+	* utils.c (printID): Do not hash the current directory name into
+	the PDF ID field, since any variability in it leads to
+	non-reproducible builds.
+	pdftex mailing list, 2 Sep 2017 01:52:43
+	https://bugs.debian.org/874102
+
 2017-10-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftosrc.cc: Support also xpdf-3.04 if XPDF304 is defined.
