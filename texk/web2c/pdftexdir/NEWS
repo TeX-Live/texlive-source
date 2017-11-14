@@ -1,6 +1,11 @@
+- changes:
+  - do not hash current directory into PDF ID, for more reproducible builds.
+
 - bugfixes:
   - \ifpdfprimitive now correctly returns true for "\ " (r45394).
 
+- source: support xpdf-4 by default, or xpdf-3.04,
+  or poppler-0.59.0 and newer, or poppler-0.57.0 and older, via #defines.
 ---------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)  (April 27, 2017)
 - changes:

@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2015 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2017 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -697,9 +697,10 @@ void unescapehex(poolpointer in)
   </blockquote>
   This stipulates only that the two IDs must be identical when the file is
   created and that they should be reasonably unique. Since it's difficult
-  to get the file size at this point in the execution of pdfTeX and
-  scanning the info dict is also difficult, we start with a simpler
-  implementation using just the first two items.
+  to get the file size at this point in the execution of pdfTeX, scanning
+  the info dict is also difficult, and any variability in the current
+  directory name leads to non-reproducible builds, we start with a
+  simpler implementation using just the current time and the file name.
  */
 void printID(strnumber filename)
 {
@@ -707,29 +708,13 @@ void printID(strnumber filename)
     md5_byte_t digest[16];
     char id[64];
     char *file_name;
-    char pwd[4096];
     /* start md5 */
     md5_init(&state);
     /* get the time */
     initstarttime();
     md5_append(&state, (const md5_byte_t *) start_time_str, strlen(start_time_str));
     /* get the file name */
-    if (getcwd(pwd, sizeof(pwd)) == NULL)
-        pdftex_fail("getcwd() failed (%s), path too long?", strerror(errno));
-#ifdef WIN32
-    {
-        char *p;
-        for (p = pwd; *p; p++) {
-            if (*p == '\\')
-                *p = '/';
-            else if (IS_KANJI(p))
-                p++;
-        }
-    }
-#endif
     file_name = makecstring(filename);
-    md5_append(&state, (const md5_byte_t *) pwd, strlen(pwd));
-    md5_append(&state, (const md5_byte_t *) "/", 1);
     md5_append(&state, (const md5_byte_t *) file_name, strlen(file_name));
     /* finish md5 */
     md5_finish(&state, digest);
