@@ -1,6 +1,7 @@
 #! /bin/sh -vx
-
-# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# $Id$
+# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 tests=pmpostdir/tests

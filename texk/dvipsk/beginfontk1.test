@@ -1,4 +1,6 @@
-#! /bin/sh
+#! /bin/sh -vx
+# $Id$
+# Public domain.
 # ensure -K1 does not remove newline after %%BeginFont line.
 # Report from T S, 1 Jan 2010 16:32:16.
 

@@ -1,3 +1,7 @@
+2017-11-15  Karl Berry  <karl@tug.org>
+
+	* *.test: use -vx.
+
 2017-03-21  Karl Berry  <karl@freefriends.org>
 
 	* everywhere: use EXTRA_DIST=TLpatches instead of <pkgname>-PATCHES.

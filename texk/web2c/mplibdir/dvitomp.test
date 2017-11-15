@@ -1,6 +1,6 @@
-#! /bin/sh
-
-# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+#! /bin/sh -vx
+# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests

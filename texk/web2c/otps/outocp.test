@@ -1,4 +1,6 @@
-#! /bin/sh
+#! /bin/sh -vx
+# $Id$
+# Public domain. Originally written by Peter Breitenlohner.
 
 TEXMFCNF=$srcdir/../../kpathsea \
   ./outocp $srcdir/uni2lat.ocp >xuni2lat.out || exit 1
