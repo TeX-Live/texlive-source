@@ -1,3 +1,72 @@
+commit f93c6f8bfa228e95311d8d6d02dcc64b603c6e36
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 14 11:09:19 2017 -0800
+
+    1.7.1
+
+ NEWS         | 8 ++++++++
+ configure.ac | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+commit 93f7c1652a05e806c2e3ac7edf498d2f4a508a3a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 14 10:59:54 2017 -0800
+
+    Revert "[glib/ucdn/icu/ft/ot] Make returned funcs inert"
+
+    This reverts commit 5daf3bd4494cce6b4fb074533be9e99c4d9e0edd.
+
+    If other atexit callbacks try to destruct the objects we destruct
+    in atexit callbacks, bad things will happen.
+
+    I'll come up with some other way to catch premature destruction
+    of HB-owned objects.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/618
+
+ src/hb-ft.cc             |  3 ---
+ src/hb-glib.cc           |  3 ---
+ src/hb-icu.cc            |  3 ---
+ src/hb-object-private.hh | 37 ++++++-------------------------------
+ src/hb-ot-font.cc        |  3 ---
+ src/hb-ucdn.cc           |  3 ---
+ 6 files changed, 6 insertions(+), 46 deletions(-)
+
+commit c48475f33ab88be6664d41b039f7be7c3e56a5a7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 13 20:26:29 2017 -0800
+
+    Whitespace
+
+ src/hb-open-type-private.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 83d68027360ff655d3b59371fb606fc9e40df4ac
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 13 20:25:02 2017 -0800
+
+    Clean up GlyphID
+
+    After 4a27c17ea0234dfe33e62f5830d9f92c26d48d30 we do not need
+    the special GlyphID.cmp(hb_codepoint_t), so just make GlyphID
+    a typedef.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/612
+
+ src/hb-open-type-private.hh | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+commit 7f39f576148643b4790fd70361e328b4b4da3149
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 13 15:04:13 2017 -0800
+
+    Implement strtod_l() on MSVC
+
+    Patch from Jean Ghali on mailing list.
+
+ src/hb-common.cc | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
 commit e5d709889200571b62a611e0f44a410591983f8a
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Nov 13 09:42:37 2017 -0800

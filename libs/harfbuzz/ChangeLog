@@ -1,3 +1,8 @@
+2017-11-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import harfbuzz-1.7.1.
+	* version.ac: Adjusted.
+
 2017-11-14  Karl Berry  <karl@tug.org>
 
 	* configure.ac (KPSE_BASIC): pass Automake option no-define
