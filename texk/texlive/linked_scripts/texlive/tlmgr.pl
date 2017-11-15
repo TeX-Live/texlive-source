@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45788 2017-11-14 00:49:39Z karl $
+# $Id: tlmgr.pl 45806 2017-11-14 21:16:47Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45788 $';
-my $datrev = '$Date: 2017-11-14 01:49:39 +0100 (Tue, 14 Nov 2017) $';
+my $svnrev = '$Revision: 45806 $';
+my $datrev = '$Date: 2017-11-14 22:16:47 +0100 (Tue, 14 Nov 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -110,6 +110,8 @@ use TeXLive::TLPaper;
 #
 # set up $prg for warning messages
 $prg = TeXLive::TLUtils::basename($0);
+# for usage in various Perl modules
+$::prg = $prg;
 
 binmode(STDOUT, ":utf8");
 binmode(STDERR, ":utf8");
@@ -1242,6 +1244,10 @@ sub action_paper {
 
     } else { # tlmgr paper {a4|letter} => do it.
       return ($F_ERROR) if !check_on_writable();
+      if ($opts{'json'}) {
+        tlwarn("$prg: option --json not supported with other arguments\n");
+        return ($F_ERROR);
+      }
       my $ret = $F_OK;
       for my $prog (sort keys %TeXLive::TLPaper::paper) {
         my $pkg = $TeXLive::TLPaper::paper{$prog}{'pkg'};
@@ -1254,6 +1260,10 @@ sub action_paper {
     }
 
   } else {  # program-specific paper
+    if ($opts{'json'}) {
+      tlwarn("$prg: option --json not supported with other arguments\n");
+      return ($F_ERROR);
+    }
     my $prog = $action;     # first argument is the program to change
     my $pkg = $TeXLive::TLPaper::paper{$prog}{'pkg'};
     if (!$pkg) {
@@ -4392,7 +4402,13 @@ sub action_option {
   $what = "show" unless defined($what);
   init_local_db();
   my $ret = $F_OK;
+  my %json;
   if ($what =~ m/^show$/i) {
+    if ($opts{'json'}) {
+      my $json = $localtlpdb->options_as_json();
+      print("$json\n");
+      return($ret);
+    }
     for my $o (sort keys %{$localtlpdb->options}) {
       # ignore some things which are w32 specific
       next if ($o eq "desktop_integration" && !win32());
@@ -4414,6 +4430,11 @@ sub action_option {
       }
     }
   } elsif ($what =~ m/^showall$/i) {
+    if ($opts{'json'}) {
+      my $json = $localtlpdb->options_as_json();
+      print("$json\n");
+      return($ret);
+    }
     my %loc = %{$localtlpdb->options};
     for my $o (sort keys %TLPDBOptions) {
       if ($::machinereadable) {
@@ -4431,7 +4452,7 @@ sub action_option {
     }
     my $found = 0;
     for my $opt (keys %TLPDBOptions) {
-      if ($what eq $TLPDBOptions{$opt}->[2]) {
+      if (($what eq $TLPDBOptions{$opt}->[2]) || ($what eq $opt)) {
         $found = 1;
         # the option argument matches the name
         my $val = shift @ARGV;
@@ -7833,23 +7854,29 @@ from the local keyring.
 
 =over 4
 
-=item B<option [show]>
+=item B<option [--json] [show]>
 
-=item B<option showall>
+=item B<option [--json] showall>
 
 =item B<option I<key> [I<value>]>
 
 =back
 
-The first form shows the global TeX Live settings currently saved in the
-TLPDB with a short description and the C<key> used for changing it in
-parentheses.
+The first form, C<show>, shows the global TeX Live settings currently
+saved in the TLPDB with a short description and the C<key> used for
+changing it in parentheses.
 
-The second form is similar, but also shows options which can be defined
-but are not currently set to any value.
+The second form, C<showall>, is similar, but also shows options which
+can be defined but are not currently set to any value.
 
-In the third form, if I<value> is not given, the setting for I<key> is
-displayed.  If I<value> is present, I<key> is set to I<value>.
+Both C<show...> forms take an option C<--json>, which dumps the option
+information in JSON format.  In this case, both forms dump the same
+data. For the format of the JSON output see
+C<tlpkg/doc/JSON-formats.txt>, format definition C<TLOPTION>.
+
+In the third form, with I<key>, if I<value> is not given, the setting
+for I<key> is displayed.  If I<value> is present, I<key> is set to
+I<value>.
 
 Possible values for I<key> are (run C<tlmgr option showall> for
 the definitive list):
@@ -7876,21 +7903,22 @@ DVD.  To do this, you can run
 
 The C<install-tl> documentation has more information about the possible
 values for C<repository>.  (For backward compatibility, C<location> can
-be used as alternative name for C<repository>.)
+be used as a synonym for C<repository>.)
 
 If C<formats> is set (this is the default), then formats are regenerated
 when either the engine or the format files have changed.  Disable this
-only when you know what you are doing.
+only when you know how and want to regenerate formats yourself.
 
 The C<postcode> option controls execution of per-package
 postinstallation action code.  It is set by default, and again disabling
-is not likely to be of interest except perhaps to developers.
+is not likely to be of interest except to developers doing debugging.
 
 The C<docfiles> and C<srcfiles> options control the installation of
-their respective files of a package. By default both are enabled (1).
-Either or both can be disabled (set to 0) if disk space is limited or
-for minimal testing installations, etc.  When disabled, the respective
-files are not downloaded at all.
+their respective file groups (documentation, sources; grouping is
+approximate) per package. By default both are enabled (1).  Either or
+both can be disabled (set to 0) if disk space is limited or for minimal
+testing installations, etc.  When disabled, the respective files are not
+downloaded at all.
 
 The options C<autobackup> and C<backupdir> determine the defaults for
 the actions C<update>, C<backup> and C<restore>.  These three actions
@@ -7910,22 +7938,21 @@ To setup C<autobackup> to C<-1> on the command line, use:
 
   tlmgr option -- autobackup -1
 
-The C<--> avoids having the C<-1> treated as an option.  (C<--> stops
-parsing for options at the point where it appears; this is a general
-feature across most Unix programs.)
+The C<--> avoids having the C<-1> treated as an option.  (The C<-->
+stops parsing for options at the point where it appears; this is a
+general feature across most Unix programs.)
 
-The C<sys_bin>, C<sys_man>, and C<sys_info> options are used on
-Unix-like systems to control the generation of links for executables,
-info files and man pages. See the C<path> action for details.
+The C<sys_bin>, C<sys_man>, and C<sys_info> options are used on Unix
+systems to control the generation of links for executables, Info files
+and man pages. See the C<path> action for details.
 
-The last three options also affect behavior on Windows installations.
-If C<desktop_integration> is set, then some packages will install items
-in a sub-folder of the Start menu for C<tlmgr gui>, documentation, etc.
-If C<fileassocs> is set, Windows file associations are made (see also
-the C<postaction> action).  Finally, if C<multiuser> is set, then
-adaptions to the registry and the menus are done for all users on the
-system instead of only the current user.  All three options are on by
-default.
+The last three options affect behavior on Windows installations.  If
+C<desktop_integration> is set, then some packages will install items in
+a sub-folder of the Start menu for C<tlmgr gui>, documentation, etc.  If
+C<fileassocs> is set, Windows file associations are made (see also the
+C<postaction> action).  Finally, if C<multiuser> is set, then adaptions
+to the registry and the menus are done for all users on the system
+instead of only the current user.  All three options are on by default.
 
 =head2 paper
 
@@ -9232,7 +9259,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45788 2017-11-14 00:49:39Z karl $
+$Id: tlmgr.pl 45806 2017-11-14 21:16:47Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
