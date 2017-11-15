@@ -105,6 +105,7 @@ texmf_other_scripts = \
 	crossrefware/bibmradd.pl \
 	crossrefware/bibzbladd.pl \
 	crossrefware/ltx2crossrefxml.pl \
+	ctan-o-mat/ctan-o-mat.pl \
 	ctanify/ctanify \
 	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
