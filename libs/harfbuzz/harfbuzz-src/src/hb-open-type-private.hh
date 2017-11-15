@@ -635,9 +635,9 @@ struct IntType
   DEFINE_SIZE_STATIC (Size);
 };
 
-typedef	IntType<int8_t	, 1> CHAR;	/* 8-bit signed integer. */
-typedef	IntType<uint8_t	, 1> BYTE;	/* 8-bit unsigned integer. */
-typedef	IntType<int8_t	, 1> INT8;	/* 8-bit signed integer. */
+typedef IntType<int8_t,   1> CHAR;	/* 8-bit signed integer. */
+typedef IntType<uint8_t,  1> BYTE;	/* 8-bit unsigned integer. */
+typedef IntType<int8_t,   1> INT8;	/* 8-bit signed integer. */
 typedef IntType<uint16_t, 2> USHORT;	/* 16-bit unsigned integer. */
 typedef IntType<int16_t,  2> SHORT;	/* 16-bit signed integer. */
 typedef IntType<uint32_t, 4> ULONG;	/* 32-bit unsigned integer. */
@@ -697,10 +697,7 @@ struct Tag : ULONG
 DEFINE_NULL_DATA (Tag, "    ");
 
 /* Glyph index number, same as uint16 (length = 16 bits) */
-struct GlyphID : USHORT {
-  static inline int cmp (const GlyphID *a, const GlyphID *b) { return b->USHORT::cmp (*a); }
-  inline int cmp (hb_codepoint_t a) const { return (int) a - (int) *this; }
-};
+typedef USHORT GlyphID;
 
 /* Script/language-system/feature index */
 struct Index : USHORT {
