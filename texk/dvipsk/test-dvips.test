@@ -1,4 +1,6 @@
-#! /bin/sh
+#! /bin/sh -vx
+# $Id$
+# Public domain.
 
 rm -f mtest.ps
 

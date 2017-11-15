@@ -1,6 +1,7 @@
-#! /bin/sh
+#! /bin/sh -vx
+# $Id$
+# Public domain.
 # Test oname == iname.
-# Code changed by Akira Kakuto, 2013-03-18.
 
 rm -f same-name.dvi same-name.out
 

@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -vx
 # $Id$
 # Public domain.  Originally written by Peter Breitenlohner, 2009.
 

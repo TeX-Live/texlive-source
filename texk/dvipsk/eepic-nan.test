@@ -1,4 +1,6 @@
-#! /bin/sh
+#! /bin/sh -vx
+# $Id$
+# Public domain.
 # ensure we don't get nan from eepic doc.
 # Report from Stefan Moser to mactex-support, 20 Oct 2010 02:37:45.
 
