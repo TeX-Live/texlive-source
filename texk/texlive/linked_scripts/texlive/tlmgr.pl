@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45806 2017-11-14 21:16:47Z karl $
+# $Id: tlmgr.pl 45815 2017-11-15 03:45:40Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45806 $';
-my $datrev = '$Date: 2017-11-14 22:16:47 +0100 (Tue, 14 Nov 2017) $';
+my $svnrev = '$Revision: 45815 $';
+my $datrev = '$Date: 2017-11-15 04:45:40 +0100 (Wed, 15 Nov 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1500,7 +1500,7 @@ sub action_info {
       @whattolist = $tlm->list_packages;
     }
     # add also the local packages
-    TeXLive::TLUtils::push_uniq(@whattolist, $localtlpdb->list_packages);
+    TeXLive::TLUtils::push_uniq(\@whattolist, $localtlpdb->list_packages);
   } else {
     @whattolist = ($what, @todo);
   }
@@ -6731,7 +6731,7 @@ END_NO_INTERNET
   }
   if (!$local_copy_tlpdb_used) {
     $remotetlpdb = TeXLive::TLPDB->new(root => $location, verify => 1);
-    if ($is_main) {
+    if ($is_main && $remotetlpdb) {
       if ($remotetlpdb->verification_status == $VS_UNSIGNED) {
         # we don't allow unsigned main data bases!
         tldie("$prg: main database at $location is not signed\n");
@@ -9259,7 +9259,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45806 2017-11-14 21:16:47Z karl $
+$Id: tlmgr.pl 45815 2017-11-15 03:45:40Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
