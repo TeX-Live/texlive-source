@@ -78,7 +78,7 @@ $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
 my $USAGE="USAGE: $0  [-d] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibzbladd v2.1
+bibzbladd v2.2
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the

@@ -1,14 +1,15 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45815 2017-11-15 03:45:40Z preining $
+# $Id: tlmgr.pl 45838 2017-11-17 02:13:42Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45815 $';
-my $datrev = '$Date: 2017-11-15 04:45:40 +0100 (Wed, 15 Nov 2017) $';
+my $svnrev = '$Revision: 45838 $';
+my $datrev = '$Date: 2017-11-17 03:13:42 +0100 (Fri, 17 Nov 2017) $';
 my $tlmgrrevision;
+my $tlmgrversion;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -17,7 +18,7 @@ if ($svnrev =~ m/: ([0-9]+) /) {
 }
 $datrev =~ s/^.*Date: //;
 $datrev =~ s/ \(.*$//;
-$tlmgrrevision .= " ($datrev)";
+$tlmgrversion = "$tlmgrrevision ($datrev)";
 
 our $Master;
 our $ismain;
@@ -522,7 +523,7 @@ sub main {
       } else {
         # give a short message about usage
         print "
-tlmgr revision $tlmgrrevision
+tlmgr revision $tlmgrversion
 usage: tlmgr  OPTION...  ACTION  ARGUMENT...
 where ACTION is one of:\n";
         for my $k (sort keys %action_specification) {
@@ -541,7 +542,7 @@ for the full story.\n";
 
   # --machine-readable is only supported by update.
   if ($::machinereadable && 
-    $action ne "update" && $action ne "install" && $action ne "option" && $action ne "shell") {
+    $action ne "update" && $action ne "install" && $action ne "option" && $action ne "shell" && $action ne "remove") {
     tlwarn("$prg: --machine-readable output not supported for $action\n");
   }
 
@@ -666,29 +667,45 @@ for the full story.\n";
 sub give_version {
   if (!defined($::version_string)) {
     $::version_string = "";
-    $::version_string .= "tlmgr revision $tlmgrrevision\n";
+    $::mrversion = "";
+    $::version_string .= "tlmgr revision $tlmgrversion\n";
+    $::mrversion .= "revision $tlmgrrevision\n";
     $::version_string .= "tlmgr using installation: $Master\n";
+    $::mrversion .= "installation $Master\n";
     if (open (REL_TL, "$Master/release-texlive.txt")) {
-      # print first and last lines, which have the TL version info.
-      my @rel_tl = <REL_TL>;
-      $::version_string .= $rel_tl[0];
-      $::version_string .= $rel_tl[$#rel_tl];
+      # print first, which has the TL version info.
+      my $rel_tl = <REL_TL>;
+      $::version_string .= $rel_tl;
+      # for machine readable we only want the last word which is the version
+      my @foo = split(' ', $rel_tl);
+      $::mrversion .= "tlversion $foo[$#foo]\n";
       close (REL_TL);
     }
+    #
+    # add the list of revisions
+    if ($::opt_verbosity > 0) {
+      $::version_string .= "Revisions of TeXLive:: modules:";
+      $::version_string .= "\nTLConfig: " . TeXLive::TLConfig->module_revision();
+      $::version_string .= "\nTLUtils:  " . TeXLive::TLUtils->module_revision();
+      $::version_string .= "\nTLPOBJ:   " . TeXLive::TLPOBJ->module_revision();
+      $::version_string .= "\nTLPDB:    " . TeXLive::TLPDB->module_revision();
+      $::version_string .= "\nTLPaper:  " . TeXLive::TLPaper->module_revision();
+      $::version_string .= "\nTLWinGoo: " . TeXLive::TLWinGoo->module_revision();
+      $::version_string .= "\n";
+    }
+    $::mrversion      .= "TLConfig "   . TeXLive::TLConfig->module_revision();
+    $::mrversion      .= "\nTLUtils "  . TeXLive::TLUtils->module_revision();
+    $::mrversion      .= "\nTLPOBJ "   . TeXLive::TLPOBJ->module_revision();
+    $::mrversion      .= "\nTLPDB "    . TeXLive::TLPDB->module_revision();
+    $::mrversion      .= "\nTLPaper "  . TeXLive::TLPaper->module_revision();
+    $::mrversion      .= "\nTLWinGoo " . TeXLive::TLWinGoo->module_revision();
+    $::mrversion      .= "\n";
   }
-  #
-  # add the list of revisions
-  if ($::opt_verbosity > 0) {
-    $::version_string .= "Revisions of TeXLive:: modules:";
-    $::version_string .= "\nTLConfig: " . TeXLive::TLConfig->module_revision();
-    $::version_string .= "\nTLUtils:  " . TeXLive::TLUtils->module_revision();
-    $::version_string .= "\nTLPOBJ:   " . TeXLive::TLPOBJ->module_revision();
-    $::version_string .= "\nTLPDB:    " . TeXLive::TLPDB->module_revision();
-    $::version_string .= "\nTLPaper:  " . TeXLive::TLPaper->module_revision();
-    $::version_string .= "\nTLWinGoo: " . TeXLive::TLWinGoo->module_revision();
-    $::version_string .= "\n";
+  if ($::machinereadable) {
+    return $::mrversion;
+  } else {
+    return $::version_string;
   }
-  return $::version_string;
 }
 
 
@@ -1120,6 +1137,20 @@ sub action_remove {
     }
   }
   @packs = keys %packs;
+
+  my %sizes = %{$localtlpdb->sizes_of_packages(
+    $localtlpdb->option("install_srcfiles"),
+    $localtlpdb->option("install_docfiles"), undef, @packs)};
+  defined($sizes{'__TOTAL__'}) || ($sizes{'__TOTAL__'} = 0);
+  my $totalsize = $sizes{'__TOTAL__'};
+  my $totalnr = $#packs;
+  my $currnr = 1;
+  my $starttime = time();
+  my $donesize = 0;
+  
+  print "total-bytes\t$sizes{'__TOTAL__'}\n" if $::machinereadable;
+  print "end-of-header\n" if $::machinereadable;
+
   foreach my $pkg (sort @packs) {
     my $tlp = $localtlpdb->get_package($pkg);
     next if defined($already_removed{$pkg});
@@ -1127,17 +1158,27 @@ sub action_remove {
       info("$pkg: package not present, cannot remove\n");
       $ret |= $F_WARNING;
     } else {
+      my ($estrem, $esttot) = TeXLive::TLUtils::time_estimate($totalsize,
+                                                              $donesize, $starttime);
+
       # in the first round we only remove collections, nothing else
       # but removing collections will remove all dependencies, too
       # save the information of which packages have already been removed
       # into %already_removed.
       if ($tlp->category eq "Collection") {
         my $foo = 0;
-        info ("$prg: removing $pkg\n");
+        if ($::machinereadable) {
+          machine_line($pkg, "d", $tlp->revision, "-", $sizes{$pkg}, $estrem, $esttot);
+        } else {
+          # info ("$prg: removing $pkg\n");
+          info("[$currnr/$totalnr, $estrem/$esttot] remove: $pkg\n");
+        }
         if (!$opts{"dry-run"}) {
           $foo = backup_and_remove_package($pkg, $autobackup);
           logpackage("remove: $pkg");
         }
+        $currnr++;
+        $donesize += $sizes{$pkg};
         if ($foo) {
           # removal was successful, so the return is at least 0x0001 mktexlsr
           # remove dependencies, too
@@ -1153,8 +1194,19 @@ sub action_remove {
     }
   }
   foreach my $pkg (sort @more_removal) {
+    my $tlp = $localtlpdb->get_package($pkg);
     if (!defined($already_removed{$pkg})) {
-      info ("$prg: removing package $pkg\n");
+      my ($estrem, $esttot) = TeXLive::TLUtils::time_estimate($totalsize,
+                                                              $donesize, $starttime);
+      # info ("$prg: removing package $pkg\n");
+      if ($::machinereadable) {
+        machine_line($pkg, "d", $tlp->revision, "-", $sizes{$pkg}, $estrem, $esttot);
+      } else {
+        # info ("$prg: removing $pkg\n");
+        info("[$currnr/$totalnr, $estrem/$esttot] remove: $pkg\n");
+      }
+      $currnr++;
+      $donesize += $sizes{$pkg};
       if (!$opts{"dry-run"}) {
         if (backup_and_remove_package($pkg, $autobackup)) {
           # removal was successful
@@ -1164,6 +1216,7 @@ sub action_remove {
       }
     }
   }
+  print "end-of-updates\n" if $::machinereadable;
   if ($opts{"dry-run"}) {
     # stop here, don't do any postinstall actions
     return ($ret | $F_NOPOSTACTION);
@@ -1171,9 +1224,11 @@ sub action_remove {
     $localtlpdb->save;
     my @foo = sort keys %already_removed;
     if (@foo) {
-      info("$prg: ultimately removed these packages: @foo\n");
+      info("$prg: ultimately removed these packages: @foo\n")
+        if (!$::machinereadable);
     } else {
-      info("$prg: no packages removed.\n");
+      info("$prg: no packages removed.\n")
+        if (!$::machinereadable);
     }
   }
   return ($ret);
@@ -6194,7 +6249,7 @@ sub action_shell {
     } elsif ($cmd eq "help") {
       print "Please see tlmgr help or http://tug.org/texlive/tlmgr.html.\n";
     } elsif ($cmd eq "version") {
-      print give_version(), "\n";
+      print give_version();
     } elsif ($cmd =~ m/^(quit|end|bye(bye)?)$/i) {
       return $F_OK;
     } elsif ($cmd eq "setup-location") {
@@ -9259,7 +9314,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45815 2017-11-15 03:45:40Z preining $
+$Id: tlmgr.pl 45838 2017-11-17 02:13:42Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

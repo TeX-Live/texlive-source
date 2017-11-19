@@ -8,13 +8,15 @@ bbl2bib.pl - convert thebibliography environment to a bib file
 
 =head1 SYNOPSIS
 
-bbl2bib.pl [B<-o> I<output>] I<file>
+bbl2bib.pl [-d] [B<-o> I<output>] I<file>
 
 =head1 OPTIONS
 
 =over 4
 
+=item [-d]
 
+Send debugging output to stdout
 
 =item B<-o> I<output>
 
@@ -98,10 +100,13 @@ use LaTeX::ToUnicode qw (convert);
 use Getopt::Std;
 use URI::Escape;
 use LWP::Simple;
+# Sometimes AMS forgets to update certificates
+$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
+
 
 my $USAGE="USAGE: $0 [-o output] file\n";
 my $VERSION = <<END;
-bbl2bib v2.1a
+bbl2bib v2.2
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -109,7 +114,7 @@ extent permitted by law.
 $USAGE
 END
 our %opts;
-getopts('c:o:s:hV',\%opts) or die $USAGE;
+getopts('do:hV',\%opts) or die $USAGE;
 
 if ($opts{h} || $opts{V}){
     print $VERSION;
@@ -130,6 +135,10 @@ if (exists $opts{o}) {
     $outputfile = $opts{o};
 }
 
+my $debug=0;
+if ($opts{d}) {
+    $debug=1;
+}
 
 
 my $input= IO::File->new($inputfile) or 
@@ -168,7 +177,15 @@ sub ProcessBibitem {
     my $bibitem = shift;
     my $key = $bibitem->{key};
     my $text=$bibitem->{text};
+
+    if ($debug) {
+	print STDOUT "DEBUG: Processing item $key\n";
+    }
+    
     if (!length($text) || $text =~ /^\s+$/s) {
+	if ($debug) {
+	    print STDOUT "DEBUG: No text found\n";
+	}
 	return;
     }
 
@@ -180,21 +197,33 @@ sub ProcessBibitem {
 
     # Arxiv entry?
     if ($text =~ s/\\arxiv\{([^\}]+)\}\.?//) {
+	if ($debug) {
+	    print STDOUT "DEBUG: Found arXiv number $1\n";
+	}
 	$bibitem->{arxiv}=$1;
     }
 
     # Mr number exists?
     if ($text =~ s/\\mr\{([^\}]+)\}\.?//) {
+	if ($debug) {
+	    print STDOUT "DEBUG: Found mr number $1\n";
+	}
 	$bibitem->{mr}=$1;
     }
 
     # zbl  number exists?
     if ($text =~ s/\\zbl\{([^\}]+)\}\.?//) {
+	if ($debug) {
+	    print STDOUT "DEBUG: Found zbl number $1\n";
+	}
 	$bibitem->{zbl}=$1;
     }
 
     # doi  number exists?
     if ($text =~ s/\\doi\{([^\}]+)\}\.?//) {
+	if ($debug) {
+	    print STDOUT "DEBUG: Found doi $1\n";
+	}
 	$bibitem->{doi}=$1;
     }
 
@@ -208,8 +237,14 @@ sub SearchMref {
     my $bibitem = shift;
     my $mirror = "http://www.ams.org/mathscinet-mref";
     my $string=uri_escape_utf8($bibitem->{text});
+    if ($debug) {
+	print STDOUT "Sending $mirror?ref=$string".'&'."dataType=bibtex\n"
+    }
     my $response = $userAgent->get("$mirror?ref=$string&dataType=bibtex") ->
 	decoded_content();
+    if ($debug) {
+	print STDOUT "DEBUG: Response $response\n";
+    }
     if ($response =~ /<pre>(.*)<\/pre>/s) {
 	my $bib= $1;
 	my $fh = new FileHandle;
