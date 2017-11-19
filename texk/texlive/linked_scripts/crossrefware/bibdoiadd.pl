@@ -104,10 +104,12 @@ use LaTeX::ToUnicode qw (convert);
 use Getopt::Std;
 use URI::Escape;
 use LWP::Simple;
+# Sometimes AMS forgets to update certificates
+$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
 my $USAGE="USAGE: $0 [-c config] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibdoiadd v2.1
+bibdoiadd v2.2
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the

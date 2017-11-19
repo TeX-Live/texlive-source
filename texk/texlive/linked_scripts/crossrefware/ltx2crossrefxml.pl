@@ -82,7 +82,7 @@ extent permitted by law.
  use File::Spec;
  my $USAGE="USAGE: $0 [-c config] [-o output] file1 file2 ...\n";
 my $VERSION = <<END;
-ltx2crossrefxml v2.0
+ltx2crossrefxml v2.2
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the

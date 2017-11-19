@@ -75,10 +75,12 @@ use Getopt::Std;
 use URI::Escape;
 use LWP::UserAgent;
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
+# Sometimes AMS forgets to update certificates
+$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
 my $USAGE="USAGE: $0  [-d] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibmradd v2.1
+bibmradd v2.2
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
