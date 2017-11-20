@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 
+# SEE "POSSIBLE BUG" aournd line 2221
+
 # ?? Still need to fix bcf error issue.
 # Don't keep looping after error
 # pvc: Only re-run on USER FILE CHANGE.
@@ -121,13 +123,13 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.52c';
-$version_details = "$My_name, John Collins, 19 Jan. 2017";
+$version_num = '4.54';
+$version_details = "$My_name, John Collins, 20 Nov. 2017";
 
 use Config;
 use File::Basename;
 use File::Copy;
-use File::Glob ':glob';    # Better glob.  Does not use space as item separator.
+use File::Glob ':bsd_glob';    # Better glob.  Does not use space as item separator.
 use File::Path 2.08 qw( make_path );
 use FileHandle;
 use File::Find;
@@ -195,9 +197,43 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##    20 Nov 2017   John Collins  Ver. 4.54
+##    18 Nov 2017   John Collins  Add item to @file_not_found for generic
+##                                  package warning about "No file", as produced
+##                                  by glossaries-extra.
+##                                In run_bibtex, make change in environment
+##                                  be local, not global.
+##     4 Sep 2017   John Collins  Restore default of $analyze_input_log_always 
+##                                  to 1.  This restores the default detection
+##                                  of certain constructs for dependencies for
+##                                  input files in the .log file. See the
+##                                  comments on this variable.  This corrects
+##                                  a problem caused by a change in the
+##                                  behavior of lualatex in TeXLive 2017.
+##     2 Sep 2017   John Collins  Remove insertion of name of deps file in
+##                                  list of targets in deps file.
+##                                Don't print deps info in deps mode (unless
+##                                  diagnostics on).
+##     1 Sep 2017   John Collins  Customized default previewers for MSys
+##    14 Jul 2017   John Collins  Correct collection of timing information so 
+##                                  that it works even in silent mode
+##    14 Jun 2017   John Collins  Extra value for $bibtex_use
+##    12 Jun 2017   John Collins  Change glob to bsd_glob, since
+##                                  File::Glob's glob is now deprecated.
+##                                Remove unused glob_list.
+##    16 May 2017   John Collins  Optimize away current directory string in
+##                                  $out_dir and $aux_dir.
+##    15 May 2017   John Collins  Fix incorrect deletion of non-generated
+##                                   aux files.
+##    13 May 2017   John Collins  Correct ordering of list of options given
+##                                  by -help
+##     6 Apr 2017   John Collins  In deps_list, correct bug in identifying
+##                                generated files.  Otherwise, generated files
+##                                may be identified as true source files.
 ##    19 Jan 2017   John Collins  Make -jobname work with -pdfxe and -pdflua
-##                                (v. 4.53c)
-##    17 Jan 2017   John Collins  Fix bbl file detection bug.
+##    18 Jan 2017   John Collins  Update to v. 4.53.
+##    17 Jan 2017   John Collins  Update to v. 4.52b (official release).
+##                                Fix bbl file detection bug.
 ##                                Bbl files were previously only identified
 ##                                  from occurrence as input files in log
 ##                                  file rather than from fls as well.
@@ -299,6 +335,7 @@ $log_wrap = 79;
     '.*?:\\d*: LaTeX Error: File `([^\\\']*)\\\' not found\\.',
     '^LaTeX Warning: File `([^\\\']*)\\\' not found',
     '^Package .* [fF]ile `([^\\\']*)\\\' not found',
+    '^Package .* No file `([^\\\']*)\\\'',
     'Error: pdflatex \(file ([^\)]*)\): cannot find image file',
     ': File (.*) not found:\s*$',
     '! Unable to load picture or PDF file \\\'([^\\\']+)\\\'.',
@@ -527,12 +564,22 @@ $bibtex  = 'bibtex %O %B';
 # Switch(es) to make biber & bibtex silent:
 $biber_silent_switch  = '--onlylog';
 $bibtex_silent_switch  = '-terse';
-$bibtex_use = 1;   # Whether to actually run bibtex to update bbl files
-                   # 0:  Never run bibtex
+$bibtex_use = 1;   # Whether to actually run bibtex to update bbl files.
+                   # This variable is also used in deciding whether to
+                   #   delete bbl files in clean up operations.
+                   # 0:  Never run bibtex.
+                   #     Do NOT delete bbl files on clean up.
                    # 1:  Run bibtex only if the bibfiles exists 
                    #     according to kpsewhich, and the bbl files
-                   #     appear to be out-of-date
+                   #     appear to be out-of-date.
+                   #     Do NOT delete bbl files on clean up.
+                   # 1.5:  Run bibtex only if the bibfiles exists 
+                   #     according to kpsewhich, and the bbl files
+                   #     appear to be out-of-date.
+                   #     Only delete bbl files on clean up if bibfiles exist.
                    # 2:  Run bibtex when the bbl files are out-of-date
+                   #     Delete bbl files on clean up.
+                   #
                    # In any event bibtex is only run if the log file
                    #   indicates that the document uses bbl files.
 
@@ -661,8 +708,8 @@ $MSWin_fudge_break = 1; # Give special treatment to ctrl/C and ctrl/break
 
 # System-dependent overrides:
 # Currently, the cases I have tests for are: MSWin32, cygwin, linux and 
-#   darwin, with the main complications being for MSWin32 and cygwin.
-# Special treatment may also be useful for MSYS (for which $^O reports 
+#   darwin, msys, with the main complications being for MSWin32 and cygwin.
+# Further special treatment may also be useful for MSYS (for which $^O reports 
 #   "msys").  This is another *nix-emulation/system for MSWindows.  At
 #   present it is treated as unix-like, but the environment variables
 #   are those of Windows.  (The test for USERNAME as well as USER was
@@ -845,6 +892,13 @@ elsif ( $^O eq "cygwin" ) {
         'NONE $pscmd variable is not configured to detect running processes';
     $pid_position = -1;     # offset of PID in output of pscmd.  
                             # Negative means I cannot use ps
+}
+elsif ( $^O eq "msys" ) {
+    $pdf_previewer = q[sh -c 'start %S'];
+    $ps_previewer = q[sh -c 'start %S'];
+    $dvi_previewer = q[sh -c 'start %S'];
+    $ps_previewer_landscape  = $ps_previewer;
+    $dvi_previewer_landscape = "$dvi_previewer";
 }
 else {
     # Assume anything else is UNIX or clone
@@ -1049,10 +1103,26 @@ $silent = 0;            # Silence latex's messages?
 $silence_logfile_warnings = 0; # Do list warnings in log file
 $kpsewhich_show = 0;    # Show calls to and results from kpsewhich
 $landscape_mode = 0;    # default to portrait mode
-$analyze_input_log_always = 0; # Always analyze .log for input files in the
+$analyze_input_log_always = 1; # Always analyze .log for input files in the
                         #  <...> and (...) constructions.  Otherwise, only
                         # do the analysis when fls file doesn't exist or is
                         # out of date.
+                        # Under normal circumstances, the data in the fls file
+                        # is reliable, and the test of the log file gets lots
+                        # of false positives; usually $analyze_input_log_always
+                        # is best set to zero.  But the test of the log file
+                        # is needed at least in the following situation:
+                        # When a user needs to persuade latexmk that a certain
+                        # file is a source file, and latexmk doesn't otherwise
+                        # find it.  User code causes line with (...) to be
+                        # written to log file.  One important case is for 
+                        # lualatex, which doesn't always generate lines in the
+                        # .fls file for input lua files.  (The situation with
+                        # lualatex is HIGHLY version dependent, e.g., between
+                        # 2016 and 2017.)
+                        # To keep backward compatibility with older versions
+                        # of latexmk, the default is to set
+                        # $analyze_input_log_always to 1.
 
 # The following two arrays contain lists of extensions (without
 # period) for files that are read in during a (pdf)LaTeX run but that
@@ -1522,6 +1592,7 @@ while ($_ = $ARGV[0])
   elsif (/^-bibtex-$/) { $bibtex_use = 0; }
   elsif (/^-nobibtex$/) { $bibtex_use = 0; }
   elsif (/^-bibtex-cond$/) { $bibtex_use = 1; }
+  elsif (/^-bibtex-cond1$/) { $bibtex_use = 1.5; }
   elsif (/^-c$/)        { $cleanup_mode = 2; $cleanup_fdb = 1; $cleanup_only = 1; }
   elsif (/^-C$/ || /^-CA$/ ) { $cleanup_mode = 1; $cleanup_fdb = 1; $cleanup_only = 1; }
   elsif (/^-CF$/)    { $cleanup_fdb = 1; }
@@ -1753,17 +1824,20 @@ if ( $bad_options > 0 ) {
 warn "$My_name: This is $version_details, version: $version_num.\n",
    unless $silent;
 
+
 if ( ($out_dir ne '') && ($aux_dir eq '') ){
     $aux_dir = $out_dir;
 }
 
-# Versions terminating in directory/path separator
+# Normalize versions terminating in directory/path separator
+# and versions referring to current directory
 $out_dir1 = $out_dir;
 $aux_dir1 = $aux_dir;
 foreach ( $aux_dir1, $out_dir1 ) {
     if ( ($_ ne '')  && ! m([\\/\:]$) ) {
        $_ .= '/';
     }
+    while ( s[^\.\/][] ) {}
 }
 
 # At least one widely package (revtex4-1) generates a bib file
@@ -2190,6 +2264,8 @@ foreach $filename ( @file_list )
         my %other_generated = ();
         my @index_bibtex_generated = ();
         my @aux_files = ();
+        my @missing_bib_files = ();
+	my $bibs_all_exist = 0;
         $have_fdb = 0;
         if ( -e $fdb_name ) {
             print "$My_name: Examining fdb file '$fdb_name' for rules ...\n"
@@ -2207,15 +2283,29 @@ foreach $filename ( @file_list )
                     elsif ( $rule =~ /^(bibtex|biber)/ ) {
                         push @index_bibtex_generated, $$Pdest, "$base.blg";
                         push @aux_files, $$Psource;
-                    }
+                        if ( $bibtex_use == 1.5) {
+                            foreach ( keys %$PHsource ) {
+                                if ( ( /\.bib$/ ) && (! -e $_) ) {
+                                    push @missing_bib_files, $_;
+			        }
+			    }
+			}
+		    }
                     elsif ( exists $other_generated{$$Psource} ) {
-                        $other_generated{$$Pdest};
+#			print "=========== CHECKING: source file of rule '$rule', '$$Psource'\n",
+#                              "  is a generated file.\n";
+			## OLD with apparent bug:
+                        #$other_generated{$$Pdest};
                     }
+		    foreach my $key (keys %$PHdest) {
+			$other_generated{$key} = 1;
+		    }
                 },
                 sub {  # Find generated files at source file level
                     if ( $file =~ /\.aux$/ ) { push @aux_files, $file; }
                 }
-            );
+	    );
+   	    if ($#missing_bib_files == -1) { $bibs_all_exist = 1; }
         }
         elsif ( -e $log_name ) {
             # No fdb file, but log file exists, so do inferior job by parse_log
@@ -2242,21 +2332,34 @@ foreach $filename ( @file_list )
         if ( ($go_mode == 2) && !$silent ) {
             warn "$My_name: Removing all generated files\n" unless $silent;
         }
-        if ($bibtex_use < 2) { 
-           delete $generated_exts_all{'bbl'}; 
+	my $keep_bbl = 1;
+	if ( ($bibtex_use > 1.6)
+	     ||
+             (  ($bibtex_use == 1.5) && ($bibs_all_exist) )
+	   ) {
+               $keep_bbl = 0;
+	}
+	if ($keep_bbl) {
+            delete $generated_exts_all{'bbl'}; 
         }
         # Convert two arrays to hashes:
         my %index_bibtex_generated = ();
         my %aux_files = ();
+        my %aux_files_to_save = ();
         foreach (@index_bibtex_generated) {
             $index_bibtex_generated{$_} = 1
-               unless ( /\.bbl$/ && ($bibtex_use < 2) );
+               unless ( /\.bbl$/ && ($keep_bbl) );
             delete( $other_generated{$_} );
         }
         foreach (@aux_files) {
-            $aux_files{$_} = 1;
-            delete( $other_generated{$_} );
+	    if (exists $other_generated{$_} ) {
+		$aux_files{$_} = 1;
+	    }
+	    else {
+		$aux_files_to_save{$_} = 1;
+	    }
         }
+
         if ($diagnostics) {
             show_array( "For deletion, the following were determined from fdb file or log file:\n"
                        ." Generated (from makeindex and bibtex):", 
@@ -2265,9 +2368,12 @@ foreach $filename ( @file_list )
             show_array( " Other generated files:\n"
                        ." (only deleted if \$cleanup_includes_generated is set): ",
                         keys %other_generated );
-            show_array( " Yet other generated files:\n",
+            show_array( " Yet other generated files are specified by patterns:\n".
+                        " Explicit pattern with %R or root-filename.extension:",
                         keys %generated_exts_all );
+            show_array( " Aux files to SAVE and not delete:", keys %aux_files_to_save );
         }
+
         &cleanup1( $aux_dir1, $fdb_ext, 'blg', 'ilg', 'log', 'aux.bak', 'idx.bak',
                    split('\s+',$clean_ext),
                    keys %generated_exts_all 
@@ -3249,8 +3355,8 @@ sub cleanup1 {
     my $dir = fix_pattern( shift );
     my $root_fixed = fix_pattern( $root_filename );
     foreach (@_) { 
-        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/$dir$root_fixed/;
-        unlink_or_move( glob( "$name" ) );
+        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/${dir}${root_fixed}/;
+        unlink_or_move( bsd_glob( "$name" ) );
     }
 } #END cleanup1
 
@@ -3370,7 +3476,9 @@ sub print_help
   "                 - Currently this only works with MiKTeX\n",
   "   -bibtex       - use bibtex when needed (default)\n",
   "   -bibtex-      - never use bibtex\n",
-  "   -bibtex-cond  - use bibtex when needed, but only if the bib files exist\n",
+  "   -bibtex-cond  - use bibtex when needed, but only if the bib file exists\n",
+  "   -bibtex-cond1 - use bibtex when needed, but only if the bib file exists;\n",
+  "                   on cleanup delete bbl file only if bib file exists\n",
   "   -bm <message> - Print message across the page when converting to postscript\n",
   "   -bi <intensity> - Set contrast or intensity of banner\n",
   "   -bs <scale> - Set scale for banner\n",
@@ -3416,6 +3524,8 @@ sub print_help
   "               give list of warnings after run of (pdf)latex\n",
   "   -logfilewarninglist- or -logfilewarnings- \n",
   "               do not give list of warnings after run of (pdf)latex\n",
+  "   -lualatex     - use lualatex for processing files to pdf\n",
+  "                   and turn dvi/ps modes off\n",
   "   -M     - Show list of dependent files after processing\n",
   "   -MF file - Specifies name of file to receives list dependent files\n",
   "   -MP    - List of dependent files includes phony target for each source file.\n",
@@ -3472,8 +3582,6 @@ sub print_help
   "   -view=none    - no viewer is used\n",
   "   -view=ps      - viewer is for ps\n",
   "   -view=pdf     - viewer is for pdf\n",
-  "   -lualatex     - use lualatex for processing files to pdf\n",
-  "                   and turn dvi/ps modes off\n",
   "   -xelatex      - use xelatex for processing files to pdf\n",
   "                   and turn dvi/ps modes off\n",
   "\n",
@@ -3665,6 +3773,8 @@ sub check_biber_log {
 
 sub run_bibtex {
     my $return = 999;
+    # Prevent changes we make to environment becoming global:
+    local %ENV = %ENV;
     if ( $aux_dir ) {
         # Use \Q and \E round directory name in regex to avoid interpretation
         #   of metacharacters in directory name:
@@ -5919,7 +6029,7 @@ sub deps_list {
     # Call: deps_list(fh)
     # List dependent files to file open on fh
     my $fh = $_[0];
-    print $fh "#===Dependents for $filename:\n";
+    print $fh "#===Dependents, and related info, for $filename:\n";
     my @dest_exts = ();
     if ($pdf_mode) {push @dest_exts, '.pdf';}
     if ($dvi_mode) {push @dest_exts, '.dvi';}
@@ -5929,25 +6039,35 @@ sub deps_list {
     my @accessible_all = rdb_accessible( keys %requested_filerules );
     rdb_for_some(
         \@accessible_all,
-        sub{ 
+        sub{
 #             foreach (keys %$PHdest) { print "-----   $_\n"; }
              push @generated, keys %$PHdest; 
            },
         sub{ $source{$file} = 1; }
     );
     foreach (keys %generated_exts_all) {
-        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/$root_filename/;
+        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/${aux_dir1}${root_filename}/;
         push @generated, $name;
     }
+    show_array( "Generated:", @generated )  if $diagnostics;
     foreach (@generated) {
         delete $source{$_};
     }
+    show_array( "Sources:", keys %source ) if $diagnostics;
     foreach my $ext (@dest_exts) {
-       if ($deps_file eq '-' ) {
-          print $fh "${out_dir1}${root_filename}${ext} :";
-       } else {
-          print $fh "${out_dir1}${root_filename}${ext} $deps_file :";
-       }
+         # Don't insert name of deps file in targets.
+         # The previous behavior of inserting the name of the deps file
+         # matched the method recommended by GNU make for automatically
+         # generated prerequisites -- see Sec. "Generating Prerequisites
+         # Automatically" of GNU make manual (v. 4.2).  But this can
+         # cause problems in complicated cases, and as far as I can see,
+         # it doesn't actually help, despite the reasoning given.
+         # The only purpose of the deps file is to to determine source
+         # files for a particular rule.  The files whose changes make the
+         # deps file out-of-date are the same as those that make the real
+         # target file (e.g., .pdf) out-of-date. So the GNU method seems
+         # completely unnecessary.
+       print $fh "${out_dir1}${root_filename}${ext} :";
        foreach (sort keys %source) {
            print $fh "\\\n    $_";
        }
@@ -6328,7 +6448,7 @@ sub rdb_make1 {
         if ($bibtex_use == 0) {
            $bibtex_not_run = 2;
         }
-        elsif ($bibtex_use == 1) {
+        elsif ( ($bibtex_use == 1) || ($bibtex_use == 1.5) ) {
             foreach ( keys %$PHsource ) {
                 if ( ( /\.bib$/ ) && (! -e $_) ) {
                     push @missing_bib_files, $_;
@@ -6474,7 +6594,7 @@ sub rdb_make1 {
            # Missing output file was reported to be NOT an error
            $$Pout_of_date = 0;
         }
-        elsif ( ($bibtex_use <= 1) && ($bibtex_not_run > 0) ) {
+        elsif ( ($bibtex_use <= 1.5) && ($bibtex_not_run > 0) ) {
            # Lack of destination file is not to be treated as an error
            # for a bibtex rule when latexmk is configured not to treat
            # this as an error, and the lack of a destination file is the
@@ -7769,18 +7889,6 @@ sub Parray {
 
 #************************************************************
 
-sub glob_list {
-    # Glob a collection of filenames.  Sort and eliminate duplicates
-    # Usage: e.g., @globbed = glob_list(string, ...);
-    my @globbed = ();
-    foreach (@_) {
-        push @globbed, glob;
-    }
-    return uniqs( @globbed );
-}
-
-#==================================================
-
 sub glob_list1 {
     # Glob a collection of filenames.  
     # But no sorting or elimination of duplicates
@@ -7803,7 +7911,7 @@ sub glob_list1 {
         }
         else { 
             # This glob fails to work as desired, if the pattern contains spaces.
-            push @globbed, glob( "$file_spec" );
+            push @globbed, bsd_glob( "$file_spec" );
         }
     }
     return @globbed;
@@ -8463,8 +8571,15 @@ sub tempfile1 {
 sub Run_msg {
     # Same as Run, but give message about my running
     warn_running( "Running '$_[0]'" );
+    return Run($_[0]);
+} #END Run_msg
+
+#==================
+
+sub Run {
+    # This is wrapper around Run_no_time to capture timing information
     my $time1 = processing_time();
-    my ($pid, $return) = Run($_[0]);
+    my ($pid, $return) = Run_no_time($_[0]);
     my $time = processing_time() - $time1;
     push @timings, "'$_[0]': time = $time\n"; 
     return ($pid, $return);
@@ -8472,9 +8587,9 @@ sub Run_msg {
 
 #==================
 
-sub Run {
-# Usage: Run ("command string");
-#    or  Run ("one-or-more keywords command string");
+sub Run_no_time {
+# Usage: Run_no_time ("command string");
+#    or  Run_no_time ("one-or-more keywords command string");
 # Possible keywords: internal, NONE, start, nostart.
 #
 # A command string not started by keywords just gives a call to system with
