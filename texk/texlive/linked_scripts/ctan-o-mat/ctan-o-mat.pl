@@ -76,6 +76,13 @@ Print this short summary about the usage and exit the program.
 
 Create an empty template for a configuration.
 
+=item --list licenses
+
+List the known licenses of CTAN to the standard output stream.
+Each license is represented as one line. The line contains the fields
+key, name, free indicator. Those fields are separated by tab characters.
+Afterwards the program terminates without processing any further arguments.
+
 =item --config <package configuration>
 
 =item --pkg <package configuration>
@@ -167,7 +174,7 @@ use FileHandle;
 use File::Basename;
 use Cwd;
 
-use constant VERSION => '1.1';
+use constant VERSION => '1.2';
 
 #------------------------------------------------------------------------------
 # Function:		usage
@@ -215,28 +222,39 @@ $CTAN_URL .= '/' if not $CTAN_URL =~ m/\/$/;
 
 use Getopt::Long;
 GetOptions(
-	"config=s"      => \$cfg,
+	"config=s" => \$cfg,
+	"debug"    => \$debug,
+	"h|help"   => \&usage,
+	"i|init:s" => sub {
+		local $_ = pkg_name_or_fallback( $_[1], '' );
+		( new CTAN::Pkg() )->add( pkg => $_ )
+		  ->write( new CTAN::Upload::Fields() );
+		exit(0);
+	},
+	"list=s" => sub {
+		if ( $_[1] eq 'licenses' ) {
+			new CTAN::Licenses()->print();
+		}
+		else {
+			print STDERR "*** Unknown entity $_[1]\n";
+		}
+		exit(0);
+	},
+	"n|noaction"    => sub { $submit = undef; },
 	"pkg=s"         => \$cfg,
 	"package=s"     => \$cfg,
-	"debug"         => \$debug,
-	"h|help"        => \&usage,
-	"i|init:s"      => sub { local $_ = pkg_name_or_fallback($_[1], '');
-							 (new CTAN::Pkg())
-							 	->add(pkg => $_)
-								->write(new CTAN::Upload::Fields());
-							 exit(0);
-						   },
-	"n|noaction"    => sub { $submit = undef; },
 	"submit|upload" => sub { $submit = 1; },
-	"v|verbose"     => \$verbose,
 	"validate"      => sub { $submit = undef; },
-	"version"       => sub { print STDOUT VERSION, "\n"; exit(0); },
+	"v|verbose"     => \$verbose,
+	"version"       => sub {
+		print STDOUT VERSION, "\n";
+		exit(0);
+	},
 );
 
-(new CTAN::Pkg())
-	->read(pkg_name_or_fallback($ARGV[0] || $cfg, '.pkg'))
-	->upload($submit);
-
+new CTAN::Pkg()
+  ->read( pkg_name_or_fallback( $ARGV[0] || $cfg, '.pkg' ) )
+  ->upload($submit);
 
 #------------------------------------------------------------------------------
 # Function:		pkg_name_or_fallback
@@ -246,13 +264,127 @@ GetOptions(
 #				not defined.
 #
 sub pkg_name_or_fallback {
-	my ($value, $ext) =  @_;
-    if ( not defined $value or $value eq '') {
+	my ( $value, $ext ) = @_;
+	if ( not defined $value or $value eq '' ) {
 		$value = cwd();
 		$value =~ s|.*[/\\]||;
 		$value = $value . $ext;
 	}
 	return $value;
+}
+
+###############################################################################
+
+package JSON::Parser;
+
+#------------------------------------------------------------------------------
+# Constructor:	new
+# Description:	This is the constructor
+#
+sub new {
+	my $proto = shift;
+	my $class = ref($proto) || $proto;
+	my $this = {};
+
+	return bless $this, $class;
+}
+
+#------------------------------------------------------------------------------
+# Method:		parse
+# Arguments:
+#	$json		the JSON list with the messages
+# Description:	Parse the input string for a JSON object and retrun the Perl
+#				representation of it.
+#
+sub parse {
+	my ( $this, $json ) = @_;
+
+	my ( $result, $remainder ) = $this->scan($json);
+	chomp $remainder;
+	if ( $remainder ne '' ) {
+		die "*** Unprocessed JSON: $remainder\n";
+	}
+	return $result;
+}
+
+#------------------------------------------------------------------------------
+# Method:		scan
+# Arguments:
+#	$json		the JSON list with the messages
+# Description:	Scan the input string for the next token
+#
+sub scan {
+	my ( $this, $json ) = @_;
+	local $_ = $json;
+
+	s/^\s+//;
+	if ( m/^\[\s*/ ) {
+		my @a = ();
+		$_ = $';
+		while ( not m/^\]/ ) {
+			my ( $el, $remainder ) = $this->scan($_);
+			push @a, $el;
+			$_ = $remainder;
+			s/^\s*,\s*//;
+		}
+		$_ = substr( $_, 1 );
+		return ( \@a, $_ );
+	}
+	elsif ( m/^\{\s*/ ) {
+		my %a = ();
+		$_ = $';
+		while ( not m/^\}/ ) {
+			my ( $key, $remainder ) = $this->scan($_);
+			$_ = $remainder;
+			s/^\s*:\s*//;
+			my ( $val, $remainder2 ) = $this->scan($_);
+			$_ = $remainder2;
+			$a{$key} = $val;
+			s/^\s*,\s*//;
+		}
+		$_ = substr( $_, 1 );
+		return ( \%a, $_ );
+	}
+	elsif ( $_ =~ m/^"/ ) {
+		$_ = $';
+		my $s = '';
+		while ( m/(\\.|")/ ) {
+			$s .= $`;
+			$_ = $';
+			if ( $& eq '"' ) {
+				return ( $s, $_ );
+			}
+			if ( $& eq '\\n' ) {
+				$s .= "\n";
+			}
+			elsif ( $& eq '\\"' ) {
+				$s .= '"';
+			}
+			elsif ( $& eq '\\t' ) {
+				$s .= "\t";
+			}
+			elsif ( $& eq '\\\\' ) {
+				$s .= "\\";
+			}
+			elsif ( $& eq '\\r' ) {
+				$s .= "\r";
+			}
+			elsif ( $& eq '\\b' ) {
+				$s .= "\b";
+			}
+			else {
+				$s .= "\\";
+			}
+		}
+		die "*** Missing end of string\n";
+	}
+	elsif ( m/^([0-9]+|[a-z]+)/i ) {
+		$_ = $';
+		$_ = $&;
+		return ( $_, $_ );
+	}
+
+	die "*** Parse error at: $_\n";
 }
 
 ###############################################################################
@@ -266,32 +398,32 @@ use HTTP::Request::Common;
 # Variable:		@parameter
 # Description:	The list of fields.
 #
-my @parameter = ();
+my @parameter = ();    # FIXME
 
 #------------------------------------------------------------------------------
 # Constructor:	new
 # Description:	This is the constructor
 #
-sub new
-{ my $proto = shift;
-  my $class = ref($proto) || $proto;
-  my $this  = {};
-  bless $this,$class;
-  return $this->load();
+sub new {
+	my $proto = shift;
+	my $class = ref($proto) || $proto;
+	my $this  = {};
+	bless $this, $class;
+	return $this->_load();
 }
 
 #------------------------------------------------------------------------------
-# Method:		load
+# Method:		_load
 # Arguments:	none
 # Description:	Retrieve a list of currently supported fields from the
 #				CTAN server.
 #
-sub load {
+sub _load {
 	my $this = shift;
-	my $url = $CTAN_URL . 'submit/fields';
-	
-	print STDERR "Retrieving fields from CTAN..." if $::verbose;
-	print STDERR $url,"\n" if $debug;
+	my $url  = $CTAN_URL . 'submit/fields';
+
+	print STDERR "--- Retrieving fields from CTAN..." if $::verbose;
+	print STDERR $url, "\n" if $debug;
 	my $response;
 	eval {
 		my $ua      = LWP::UserAgent->new();
@@ -300,8 +432,10 @@ sub load {
 		$response = $ua->request($request);
 	};
 
-	die CTAN::ErrorHandler::format( $response->decoded_content,
-								    $response->status_line ), "\n"
+	die CTAN::ErrorHandler::format(
+		$response->decoded_content, $response->status_line
+	  ),
+	  "\n"
 	  if not $response->is_success;
 
 	local $_ = $response->decoded_content;
@@ -322,6 +456,87 @@ sub load {
 	return $this;
 }
 
+###############################################################################
+package CTAN::Licenses;
+
+use LWP::UserAgent;
+use LWP::Protocol::https;
+use HTTP::Request::Common;
+
+use Data::Dumper;
+
+#------------------------------------------------------------------------------
+# Constructor:	new
+# Description:	This is the constructor
+#
+sub new {
+	my $proto = shift;
+	my $class = ref($proto) || $proto;
+	my $this  = [];
+	bless $this, $class;
+	return $this->_load();
+}
+
+#------------------------------------------------------------------------------
+# Method:		_load
+# Arguments:	none
+# Description:	Retrieve a list of currently supported licenses from the
+#				CTAN server.
+#
+sub _load {
+	my $this = shift;
+	my $url  = $CTAN_URL . 'json/1.3/licenses';
+
+	print STDERR "--- Retrieving licenses from CTAN..." if $verbose;
+	print STDERR $url, "\t" if $debug;
+	my $response;
+	eval {
+		my $ua      = LWP::UserAgent->new();
+		my $request = GET $url;
+		print STDERR "done\n" if $verbose;
+		$response = $ua->request($request);
+	};
+
+	die CTAN::ErrorHandler::format(
+		$response->decoded_content, $response->status_line
+	  ),
+	  "\n"
+	  if not $@ and not $response->is_success;
+
+	print STDERR "done\n" if $verbose;
+	local $_ = $response->decoded_content;
+
+	eval {
+		$this->[0] = new JSON::Parser()->parse($_);
+	};
+	if ($@) {
+		s/^[0-9]+ */*** /;
+		die $_;
+	}
+
+	return $this;
+}
+
+#------------------------------------------------------------------------------
+# Method:		print
+# Arguments:	none
+# Description:	Print the licenses to stdout.
+#
+sub print {
+	my $this = shift;
+	local $_ = $this->[0];
+	my @a = @$_;
+
+	foreach (@a) {
+		print $_->{key}, "\t", $_->{name}, "\t";
+		if ( $_->{free} eq 'true' ) {
+			print "free\n";
+		}
+		else {
+			print "non-free\n";
+		}
+	}
+}
 
 ###############################################################################
 package CTAN::ErrorHandler;
@@ -331,9 +546,9 @@ package CTAN::ErrorHandler;
 # Arguments:
 #	$json		the JSON list with the messages
 #   $fallback	the fallback message if the first parameter is empty
-# Description:
+# Description:	format the JSON error message
 #
-sub format{
+sub format {
 	local $_ = shift;
 	if ( $_ eq '' ) {
 		return shift;
@@ -341,11 +556,17 @@ sub format{
 	if (m/^(<!DOCTYPE html>|<html)/i) {
 		return "Unexpected HTML response found under $CTAN_URL";
 	}
-	
-	my $json = (new JSON::Parser())->parse($_);
-	return join("\n", map { join(': ', @$_ )} @$json);
-}
 
+	my $json;
+	eval {
+		$json = new JSON::Parser()->parse($_);
+	};
+	if ($@) {
+		s/^[0-9]+ */*** /;
+		die $_;
+	}
+	return join( "\n", map { join( ': ', @$_ ) } @$json );
+}
 
 ###############################################################################
 package CTAN::Pkg;
@@ -358,11 +579,11 @@ use HTTP::Request::Common;
 # Constructor:	new
 # Description:	This is the constructor
 #
-sub new
-{ my $proto = shift;
-  my $class = ref($proto) || $proto;
-  my $this  = [];
-  return bless $this,$class;
+sub new {
+	my $proto = shift;
+	my $class = ref($proto) || $proto;
+	my $this  = [];
+	return bless $this, $class;
 }
 
 #------------------------------------------------------------------------------
@@ -373,11 +594,14 @@ sub new
 #
 sub add {
 	my $this = shift;
-	my ($key, $val);
+	my ( $key, $val );
 	$key = shift;
 	$val = shift;
-	while (defined $key and defined $val) {
-		push @$this, $key => $val;
+	while ( defined $key and defined $val ) {
+		if ( $key eq 'file' ) {
+			push @$this, $key => [$val];
+		}
+		else { push @$this, $key => $val; }
 		$key = shift;
 		$val = shift;
 	}
@@ -392,11 +616,11 @@ sub add {
 #   it as hash-like list.
 #
 sub read {
-	my ($this, $file) = @_;
+	my ( $this, $file ) = @_;
 	die "*** Configuration file missing.\n" if not defined $file;
-	
+
 	my $fields = new CTAN::Upload::Fields();
-	my $fd  = new FileHandle($file)
+	my $fd     = new FileHandle($file)
 	  || die "*** Configuration file `$file' could not be read.\n";
 	local $_;
 
@@ -409,22 +633,22 @@ sub read {
 			if ( $keyword eq 'begin' ) {
 				die "$file:$.: missing {environment} instead of $_\n"
 				  if not m/^[ \t]*\{([a-z]*)\}/i;
-				my $tag = $1;
+				$keyword = $1;
 				my $val = '';
 				$_ = $';
-				while ( not m/\\end\{$tag\}/ ) {
+				while ( not m/\\end\{$keyword\}/ ) {
 					$val .= $_;
 					$_ = <$fd>;
 					die "$file:$.: "
-					  . "unexpected end of file while searching end of $tag\n"
+					  . "unexpected end of file while searching end of $keyword\n"
 					  if not defined $_;
 				}
-				m/\\end\{$tag\}/;
+				m/\\end\{$keyword\}/;
 				$_ = $';
 				$val .= $`;
 				$val =~ s/^[ \t\n\r]*//m;
 				$val =~ s/[ \t\n\r]*$//m;
-				push @$this, $tag => $val;
+				$this->add( $keyword => $val );
 			}
 			elsif ( $keyword eq 'endinput' ) {
 				last;
@@ -432,10 +656,8 @@ sub read {
 			elsif ( defined $fields->{$keyword} ) {
 				die "$file:$.: missing {environment} instead of $_\n"
 				  if not m/^[ \t]*\{([^{}]*)\}/i;
-
-				if ( $keyword eq 'file' ) {	push @$this, $keyword => [$1];
-				} 			 	     else { push @$this, $keyword => $1; }
 				$_ = $';
+				$this->add( $keyword => $1 );
 			}
 			else {
 				die "$file:$.: undefined keyword $keyword\n";
@@ -449,39 +671,45 @@ sub read {
 
 #------------------------------------------------------------------------------
 # Method:		upload
-# Arguments:	...
+# Arguments:	Upload a file and the parameters
 # Description:	Connect to the CTAN server to upload or validate the package.
 #
 sub upload {
-	my $this = shift;
+	my $this   = shift;
 	my $submit = shift;
 
-	print STDERR "Uploading to CTAN..." if $verbose;
 	my $service_url;
 	if ($submit) {
+		print STDERR "--- Sending to CTAN for submission..." if $verbose;
 		$service_url = $CTAN_URL . 'submit/upload';
-	} else {
+	}
+	else {
+		print STDERR "--- Uploading to CTAN for validation..." if $verbose;
 		$service_url = $CTAN_URL . 'submit/validate';
 	}
 	my $ua      = LWP::UserAgent->new();
-	my $request = POST ($service_url,
-	  'Content_Type' => 'multipart/form-data',
-	  'Content'      => $this);
-
-	print STDERR "done\n" if $verbose;
+	my $request = POST(
+		$service_url,
+		'Content_Type' => 'multipart/form-data',
+		'Content'      => $this
+	);
 	my $response = $ua->request($request);
+	print STDERR "done\n" if $verbose;
 
-	die CTAN::ErrorHandler::format($response->decoded_content,
-								   $response->status_line),
-	  "\n"
+	die CTAN::ErrorHandler::format( $response->decoded_content,
+		$response->status_line )
+	  . "\n"
 	  if not $response->is_success;
 
 	if ( not $submit and $response->decoded_content eq '[]' ) {
 		print "ok\n";
+		print STDERR "--- The validation has succeeded.\n",
+		  "--- You can now submit your package to CTAN for publication.\n"
+		  if $verbose;
 	}
 	else {
 		print CTAN::ErrorHandler::format( $response->decoded_content, 'ok' ),
-			  "\n";
+		  "\n";
 	}
 	return $this;
 }
@@ -492,8 +720,8 @@ sub upload {
 # Description:	Write a new configuration to stdout.
 #
 sub write {
-	my $this = shift;
-	my %this = @$this;
+	my $this   = shift;
+	my %this   = @$this;
 	my $fields = shift;
 
 	print <<__EOF__;
@@ -532,8 +760,8 @@ __EOF__
 			print "% It may have a relative or absolute directory.\n";
 		}
 		if ( defined $fields->{$_}->{'maxsize'} ) {
-			print
-"% The value is restricted to $fields->{$_}->{'maxsize'} characters.\n";
+			print "% The value is restricted to ", $fields->{$_}->{'maxsize'},
+			  " characters.\n";
 		}
 		if ( defined $fields->{$_}->{'list'} ) {
 			print "% Multiple values are allowed.\n\\$_\{}\n";
@@ -541,118 +769,30 @@ __EOF__
 		elsif ( defined $fields->{$_}->{'maxsize'}
 			and $fields->{$_}->{'maxsize'} ne 'null'
 			and $fields->{$_}->{'maxsize'} < 256 )
-		{   my $v = $this{$_};
-			$v = ''  if not defined $v;
+		{
+			my $v = $this{$_};
+			$v = '' if not defined $v;
+			print "\\$_\{$v\}\n";
+		}
+		elsif ( defined $fields->{$_}->{'file'}
+			and $fields->{$_}->{'file'} eq 'true' )
+		{
+			my $v = $this{$_};
+			$v = '' if not defined $v;
 			print "\\$_\{$v\}\n";
 		}
 		else {
 			my $v = $this{$_};
-			if (defined $v) {
+			if ( defined $v ) {
 				$v = "\n  " + $v + "\n";
-			} else {
+			}
+			else {
 				$v = '';
 			}
-			
+
 			print "\\begin{$_}$v\\end{$_}\n";
 		}
 	}
-}
-
-###############################################################################
-
-package JSON::Parser;
-#------------------------------------------------------------------------------
-# Constructor:	new
-# Description:	This is the constructor
-#
-sub new
-{ my $proto = shift;
-  my $class = ref($proto) || $proto;
-  my $this  = {};
-  return bless $this,$class;
-}
-
-#------------------------------------------------------------------------------
-# Method:		parse
-# Arguments:
-#	$json		the JSON list with the messages
-# Description:	Parse the input string for a JSON object and retrun the Perl
-#				representation of it.
-#
-sub parse {
-	my ($this, $json) = @_;
-	my ( $result, $remainder ) = $this->scan($json);
-	chomp $remainder;
-	if ($remainder ne '' ) {
-		die "Unprocessed JSON: $remainder\n";
-	}
-	return $result;
-}
-
-#------------------------------------------------------------------------------
-# Method:		scan
-# Arguments:
-#	$json		the JSON list with the messages
-# Description:	Scan the input string for the next token
-#
-sub scan {
-	my ($this, $json) = @_;
-	local $_;
-	$json =~ s/^\s+//;
-	if ($json =~ m/^\[\s*/) {
-		my @a = ();
-		$json = $';
-		while ( not $json =~ m/^\]/ ) {
-			my ($el, $remainder) = $this->scan($json);
-			push @a, $el;
-			$json = $remainder;
-			if ($json =~ m/^\s*,/) {
-				$json = $';
-			}
-		}
-		$json = substr($json, 1);
-		return ( \@a, $json );
-	}
-	elsif ($json =~ m/^"/) {
-		$json = $';
-		my $s = '';
-		while ($json =~ m/(\\.|")/) {
-			$s .= $`;
-			$json = $';
-			if ( $& eq '"' ) {
-				return ($s, $json);
-			}
-			if ( $& eq '\\n' ) {
-				$s .= "\n";
-			}
-			elsif ( $& eq '\\"' ) {
-				$s .= '"';
-			}
-			elsif ( $& eq '\\t' ) {
-				$s .= "\t";
-			}
-			elsif ( $& eq '\\\\' ) {
-				$s .= "\\";
-			}
-			elsif ( $& eq '\\r' ) {
-				$s .= "\r";
-			}
-			elsif ( $& eq '\\b' ) {
-				$s .= "\b";
-			}
-			else {
-				$s .= "\\";
-			}
-		}
-		die "missing end of string\n";
-	}
-	elsif ($json =~ m/^([0-9]+|[a-z]+)/i) {
-		$json = $';
-		$_ = $&;
-		return ( $_, $json );
-	}
-
-	die "Parse error at: $json\n";
 }
 
 #------------------------------------------------------------------------------
