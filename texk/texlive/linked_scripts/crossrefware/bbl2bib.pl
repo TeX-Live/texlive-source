@@ -8,7 +8,7 @@ bbl2bib.pl - convert thebibliography environment to a bib file
 
 =head1 SYNOPSIS
 
-bbl2bib.pl [-d] [B<-o> I<output>] I<file>
+bbl2bib.pl [-d] [-u] [B<-o> I<output>] I<file>
 
 =head1 OPTIONS
 
@@ -24,6 +24,15 @@ Output file.  If this option is not used, the name for the
 output file is formed by changing the extension to C<.bib>
 
 
+=item B<-u>
+
+Do not clean URL fields.
+
+Normally C<bbl2bib> recognizes URL fields of the kind
+C<http://dx.doi.org> and their variants and converts them to DOI
+fields (see also L<biburl2doi(1)> script).  The switch B<-u>
+suppresses this cleanup.  
+
 =back
 
 =head1 DESCRIPTION
@@ -38,6 +47,7 @@ The script reads a TeX or Bbl file and extracts from it the
 C<thebibliography> environment.  For each bibitem it creates a plain
 text bibliography entry, and then  tries to match it in
 the database.  
+
 =head1 INPUT FILE
 
 We assume some structure of the input file:
@@ -104,9 +114,9 @@ use LWP::Simple;
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
 
-my $USAGE="USAGE: $0 [-o output] file\n";
+my $USAGE="USAGE: $0 [-d] [-u] [-o output] file\n";
 my $VERSION = <<END;
-bbl2bib v2.2
+bbl2bib v2.3
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -114,7 +124,7 @@ extent permitted by law.
 $USAGE
 END
 our %opts;
-getopts('do:hV',\%opts) or die $USAGE;
+getopts('do:huV',\%opts) or die $USAGE;
 
 if ($opts{h} || $opts{V}){
     print $VERSION;
@@ -140,6 +150,10 @@ if ($opts{d}) {
     $debug=1;
 }
 
+my $cleanUrls = 1;
+if ($opts{u}) {
+    $cleanUrls = 0;
+}
 
 my $input= IO::File->new($inputfile) or 
     die "Cannot find Bbl or TeX file $inputfile\n$USAGE\n";
@@ -228,6 +242,11 @@ sub ProcessBibitem {
     }
 
     $bibitem->{bib} = SearchMref($bibitem);
+
+    if ($cleanUrls) {
+	$bibitem->{bib} = CleanUrl ($bibitem->{bib});
+    }
+    
     PrintBibitem($bibitem);
     return;
 }
@@ -258,7 +277,25 @@ sub SearchMref {
     }
 }
 
+sub CleanUrl {
+    my $entry = shift;
+    if (!ref($entry)) {
+	return $entry;
+    }
 
+    if ($entry->has('doi')) {
+	return $entry;
+    }
+    if (!$entry->has('url')) {
+	return $entry;
+    }
+    if ($entry->field('url') =~ m|^http(?:s)?://(?:dx\.)?doi\.org/(.*)$|) {
+	$entry->field('doi', $1);
+	delete $entry->{'url'};
+    }
+    return $entry;
+    
+}
 
 
 sub PrintBibitem {
