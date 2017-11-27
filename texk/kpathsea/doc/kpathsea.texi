@@ -2318,16 +2318,24 @@ The format of fontmap files is straightforward:
 
 @itemize @bullet
 @cindex comments, in fontmap files
-@item Comments start with @samp{%} and continue to the end of the line.
+@item Comments start with the last @samp{%} on a line and continue to
+the end of the line. (This provides for names that include a %,
+ill-advised as that may be.)
+
 @cindex whitespace, in fontmap files
 @item Blank lines are ignored.
+
 @item Each nonblank line is broken up into a series of @dfn{words}:
   a sequence of non-whitespace characters.
+
 @findex include @r{fontmap directive}
 @item If the first word is @samp{include}, the second word is used as
   a filename, and it is searched for and read.
+
 @item Otherwise, the first word on each line is the true filename;
+
 @item the second word is the alias;
+
 @item subsequent words are ignored.
 @end itemize
 
