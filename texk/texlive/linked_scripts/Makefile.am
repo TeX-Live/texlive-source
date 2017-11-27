@@ -103,6 +103,7 @@ texmf_other_scripts = \
 	crossrefware/bbl2bib.pl \
 	crossrefware/bibdoiadd.pl \
 	crossrefware/bibmradd.pl \
+	crossrefware/biburl2doi.pl \
 	crossrefware/bibzbladd.pl \
 	crossrefware/ltx2crossrefxml.pl \
 	ctan-o-mat/ctan-o-mat.pl \

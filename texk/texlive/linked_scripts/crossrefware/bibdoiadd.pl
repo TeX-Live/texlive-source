@@ -8,7 +8,7 @@ bibdoiadd.pl - add DOI numbers to papers in a given bib file
 
 =head1 SYNOPSIS
 
-bibdoiadd [B<-c> I<config_file>] [B<-e> 1|0] [B<-f>] [B<-o> I<output>] I<bib_file>
+bibdoiadd [B<-c> I<config_file>] [B<-C> 1|0] [B<-e> 1|0] [B<-f>] [B<-o> I<output>] I<bib_file>
 
 =head1 OPTIONS
 
@@ -18,6 +18,10 @@ bibdoiadd [B<-c> I<config_file>] [B<-e> 1|0] [B<-f>] [B<-o> I<output>] I<bib_fil
 
 Configuration file.  If this file is absent, some defaults are used.
 See below for its format.
+
+=item B<-C> 1|0
+
+Whether to canonize names in the output (1) or not (0).  By default, 1.
 
 =item B<-e>
 
@@ -39,9 +43,9 @@ output file is formed by adding C<_doi> to the input file
 =head1 DESCRIPTION
 
 The script reads a BibTeX file.  It checks whether the entries have
-DOIs.  If now, tries to contact http://www.crossref.org to get the
+DOIs.  If not, it tries to contact http://www.crossref.org to get the
 corresponding DOI.  The result is a BibTeX file with the fields
-C<doi=...> added.  
+C<doi=...> added.
 
 The name of the output file is either set by the B<-o> option or 
 is derived by adding the suffix C<_doi> to the output file.
@@ -107,7 +111,7 @@ use LWP::Simple;
 # Sometimes AMS forgets to update certificates
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
-my $USAGE="USAGE: $0 [-c config] [-e 1|0] [-f] [-o output] file\n";
+my $USAGE="USAGE: $0 [-c config] [-C 1|0] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
 bibdoiadd v2.2
 This is free software.  You may redistribute copies of it under the
@@ -117,7 +121,7 @@ extent permitted by law.
 $USAGE
 END
 our %opts;
-getopts('fe:c:o:hV',\%opts) or die $USAGE;
+getopts('fe:c:C:o:hV',\%opts) or die $USAGE;
 
 if ($opts{h} || $opts{V}){
     print $VERSION;
@@ -143,6 +147,11 @@ my $forceEmpty = 1;
 if (exists $opts{e}) {
     $forceEmpty = $opts{e};
 }		
+
+my $canonizeNames = 1;
+if (exists $opts{C}) {
+    $canonizeNames = $opts{C};
+}
 
 our $mode='free';
 our $email;
@@ -195,7 +204,8 @@ while (my $entry = $parser->next) {
 	next;
     }
 
-    if (!($entry->type() eq 'ARTICLE')) {
+    if (!($entry->type() eq 'ARTICLE') && !($entry->type() eq 'BOOK')
+	&& !($entry->type() eq 'INCOLLECTION')) {
 	print $output $entry->raw_bibtex(), "\n\n";
 	next;
     }
@@ -210,7 +220,10 @@ while (my $entry = $parser->next) {
      if (length($doi) || $forceEmpty) {
  	$entry->field('doi',$doi);
      }
-    print $output $entry->to_string(), "\n\n";
+
+    print $output 
+	 $entry->to_string(canonize_names=>$canonizeNames), 
+	 "\n\n";
 
 
 }
