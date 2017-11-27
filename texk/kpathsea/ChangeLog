@@ -1,3 +1,11 @@
+2017-11-28  Karl Berry  <karl@tug.org>
+
+	* doc/unixtex.texi: no longer in ~ftp, etc.
+	
+	* doc/kpathsea.texi (Fontmap): clarify that it's the last %
+	on a line that starts a comment. From Doug McKenna, personal
+	email, 21nov17.
+
 2017-11-18  Karl Berry  <karl@tug.org>
 
 	* db.c (elt_in_db): protect against either argument being NULL or

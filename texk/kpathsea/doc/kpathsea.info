@@ -1,4 +1,4 @@
-This is kpathsea.info, produced by makeinfo version 6.3 from
+This is kpathsea.info, produced by makeinfo version 6.5 from
 kpathsea.texi.
 
 This file documents the Kpathsea library for path searching.
@@ -200,31 +200,30 @@ File: kpathsea.info,  Node: unixtex.ftp,  Next: Security,  Prev: Introduction,  
 2 'unixtex.ftp': Obtaining TeX
 ******************************
 
-This is <ftp://ftp.tug.org/tex/unixtex.ftp>, last updated 13 June 2010.
-Also available as <http://www.tug.org/unixtex.ftp>.  Email
-<tex-k@tug.org> with comments or questions.
+This is <https://tug.org/tex/unixtex.ftp>, last updated 28 November
+2017.  Email <tex-k@tug.org> with comments or questions.
 
    The principal free TeX distribution for Unix-like systems is TeX
 Live, on the web at <http://tug.org/texlive>.  The pages there describe
-many ways to acquire and build TeX, over the Internet or on physical
+many ways to acquire and.or build TeX, over the Internet or on physical
 media, both the sources and precompiled binaries for many systems,
 either standalone or as part of various operating system distributions.
 
-   Web2C, Kpathsea, Dvips, and Dviljk are no longer released as a
+   Web2c, Kpathsea, Dvips, and Dviljk are no longer released as a
 separate packages.  Their sources are now maintained as part of TeX
 Live.
 
    The host ftp.cs.stanford.edu is the original source for the files for
 which Donald Knuth is directly responsible: 'tex.web', 'plain.tex', etc.
-However, unless you want to undertake the very significant project of
-building your TeX installation from scratch, it is far more reliable and
-less work to retrieve these files as part of a larger package
+However, unless you want to undertake the project of building your TeX
+installation from scratch, it is more reliable and less work to retrieve
+these files as part of a larger package.
 
    In any case, the Stanford ftp site is not the canonical source for
 anything except what was created as part of Knuth's original TeX, so do
 not rely on any other files available there being up-to-date.  The best
 place to check for up-to-date files is CTAN (the Comprehensive TeX
-Archive Network), <http://www.ctan.org>.
+Archive Network), <https://ctan.org>.
 
 
 File: kpathsea.info,  Node: Security,  Next: TeX directory structure,  Prev: unixtex.ftp,  Up: Top
@@ -1733,14 +1732,22 @@ found are read; earlier definitions override later ones.
 
    The format of fontmap files is straightforward:
 
-   * Comments start with '%' and continue to the end of the line.
+   * Comments start with the last '%' on a line and continue to the end
+     of the line.  (This provides for names that include a %,
+     ill-advised as that may be.)
+
    * Blank lines are ignored.
+
    * Each nonblank line is broken up into a series of "words": a
      sequence of non-whitespace characters.
+
    * If the first word is 'include', the second word is used as a
      filename, and it is searched for and read.
+
    * Otherwise, the first word on each line is the true filename;
+
    * the second word is the alias;
+
    * subsequent words are ignored.
 
    If an alias has an extension, it matches only those files with that
@@ -3142,7 +3149,7 @@ Index
                                                               (line 239)
 * fopen, redefined:                      Debugging.           (line  54)
 * format of external database:           Database format.     (line   6)
-* ftp.cs.stanford.edu:                   unixtex.ftp.         (line  20)
+* ftp.cs.stanford.edu:                   unixtex.ftp.         (line  19)
 * ftp.tug.org:                           unixtex.ftp.         (line   6)
 * fundamental purpose of Kpathsea:       Introduction.        (line   6)
 * gdb, recommended:                      Bug checklist.       (line  58)
@@ -3172,7 +3179,7 @@ Index
 * home directories in paths:             Tilde expansion.     (line   6)
 * HOME, as ~ expansion:                  Tilde expansion.     (line   6)
 * identifiers, characters valid in:      Config files.        (line  47)
-* include fontmap directive:             Fontmap.             (line  30)
+* include fontmap directive:             Fontmap.             (line  36)
 * INDEXSTYLE:                            Supported file formats.
                                                               (line  84)
 * input lines, reading:                  Calling sequence.    (line 110)
@@ -3183,7 +3190,7 @@ Index
 * kdebug::                               Debugging.           (line 105)
 * kdefault.c:                            Default expansion.   (line  48)
 * Knuth, Donald E.:                      History.             (line   6)
-* Knuth, Donald E., archive of programs by: unixtex.ftp.      (line  20)
+* Knuth, Donald E., archive of programs by: unixtex.ftp.      (line  19)
 * Kpathsea config file, source for path: Path sources.        (line  17)
 * kpathsea.h:                            Programming overview.
                                                               (line  24)
@@ -3493,7 +3500,7 @@ Index
                                                               (line  24)
 * tex-k@tug.org:                         Mailing lists.       (line   6)
 * tex-k@tug.org (bug address):           Reporting bugs.      (line   6)
-* tex.web:                               unixtex.ftp.         (line  20)
+* tex.web:                               unixtex.ftp.         (line  19)
 * TEXBIB:                                Supported file formats.
                                                               (line  30)
 * TEXBIB <1>:                            Supported file formats.
@@ -3621,7 +3628,7 @@ Index
 * Weber, Olaf:                           History.             (line  73)
 * WEBINPUTS:                             Supported file formats.
                                                               (line 223)
-* whitespace, in fontmap files:          Fontmap.             (line  27)
+* whitespace, in fontmap files:          Fontmap.             (line  31)
 * whitespace, not ignored on continuation lines: Config files.
                                                               (line  37)
 * www.tug.org:                           unixtex.ftp.         (line   6)
@@ -3640,55 +3647,55 @@ Node: Top1480
 Node: Introduction2259
 Node: History4204
 Node: unixtex.ftp8801
-Node: Security10296
-Node: TeX directory structure12800
-Node: Path searching16848
-Node: Searching overview17506
-Node: Path sources20901
-Node: Config files21959
-Node: Path expansion25886
-Node: Default expansion26835
-Node: Variable expansion28905
-Node: Tilde expansion30306
-Node: Brace expansion31286
-Node: KPSE_DOT expansion32211
-Node: Subdirectory expansion32724
-Node: Filename database35078
-Node: ls-R36132
-Node: Filename aliases39027
-Node: Database format40205
-Node: Invoking kpsewhich41218
-Node: Path searching options42173
-Node: Specially-recognized files50093
-Node: Auxiliary tasks51448
-Node: Standard options53787
-Node: TeX support54143
-Node: Supported file formats55495
-Node: File lookup63160
-Node: Glyph lookup64909
-Node: Basic glyph lookup66033
-Node: Fontmap66913
-Node: Fallback font69334
-Node: Suppressing warnings70246
-Node: mktex scripts71373
-Node: mktex configuration72588
-Node: mktex script names78391
-Node: mktex script arguments79777
-Node: Programming80656
-Node: Programming overview81178
-Node: Calling sequence83875
-Node: Program-specific files90407
-Node: Programming with config files91430
-Node: Reporting bugs92742
-Node: Bug checklist93420
-Node: Mailing lists96892
-Node: Debugging97567
-Node: Logging102644
-Node: Common problems104511
-Node: Unable to find files104988
-Node: Slow path searching107398
-Node: Unable to generate fonts108773
-Node: TeX or Metafont failing111244
-Node: Index112597
+Node: Security10226
+Node: TeX directory structure12730
+Node: Path searching16778
+Node: Searching overview17436
+Node: Path sources20831
+Node: Config files21889
+Node: Path expansion25816
+Node: Default expansion26765
+Node: Variable expansion28835
+Node: Tilde expansion30236
+Node: Brace expansion31216
+Node: KPSE_DOT expansion32141
+Node: Subdirectory expansion32654
+Node: Filename database35008
+Node: ls-R36062
+Node: Filename aliases38957
+Node: Database format40135
+Node: Invoking kpsewhich41148
+Node: Path searching options42103
+Node: Specially-recognized files50023
+Node: Auxiliary tasks51378
+Node: Standard options53717
+Node: TeX support54073
+Node: Supported file formats55425
+Node: File lookup63090
+Node: Glyph lookup64839
+Node: Basic glyph lookup65963
+Node: Fontmap66843
+Node: Fallback font69372
+Node: Suppressing warnings70284
+Node: mktex scripts71411
+Node: mktex configuration72626
+Node: mktex script names78429
+Node: mktex script arguments79815
+Node: Programming80694
+Node: Programming overview81216
+Node: Calling sequence83913
+Node: Program-specific files90445
+Node: Programming with config files91468
+Node: Reporting bugs92780
+Node: Bug checklist93458
+Node: Mailing lists96930
+Node: Debugging97605
+Node: Logging102682
+Node: Common problems104549
+Node: Unable to find files105026
+Node: Slow path searching107436
+Node: Unable to generate fonts108811
+Node: TeX or Metafont failing111282
+Node: Index112635
 
 End Tag Table
