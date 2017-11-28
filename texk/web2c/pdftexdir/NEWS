@@ -1,12 +1,16 @@
 - changes:
-  - do not hash current directory into PDF ID, for more reproducible builds.
+  - do not hash current directory into PDF ID, for more reproducible builds
+    (pdftex r782).
 
 - bugfixes:
-  - \ifpdfprimitive now correctly returns true for "\ " (r45394).
+  - \pdfprimitive does nothing, rather than give an error, when given a
+    non-primitive (pdftex r784).
+  - \pdfprimitive does not swallow a following control sequence (pdftex r784).
+  - \ifpdfprimitive now correctly returns true for "\ " (TL r45394).
 
 - source: support xpdf-4 by default, or xpdf-3.04, or poppler-0.57.0
-  and older, via #defines. provide new files, pdftoepdf-newpoppler.cc
-  and pdftosrc-newpoppler.cc, to support poppler-0.59.0 and newer.
+  and older, via #defines. Provide new files, pdftoepdf-newpoppler.cc
+  and pdftosrc-newpoppler.cc, to support poppler-0.59.0 and newer:
   they should be renamed as pdftoepdf.cc and pdftosrc.cc, respectively,
   before compilation.
 
@@ -21,7 +25,7 @@ pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)  (April 27, 2017)
 - bugfixes:
   - \pdflastmatch more reliable when there was no match.
 
-------------------------------------------------------------
+-------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.17 (TeX Live 2016)  (May 20, 2016)
 - changes:
   - if the environment variable SOURCE_DATE_EPOCH is set, use its value for
