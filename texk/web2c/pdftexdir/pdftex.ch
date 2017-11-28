@@ -41,7 +41,7 @@
 @d frozen_null_font=frozen_control_sequence+11
   {permanent `\.{\\nullfont}'}
 @y
-@d frozen_null_font=frozen_control_sequence+12
+@d frozen_null_font=frozen_control_sequence+12+prim_size
   {permanent `\.{\\nullfont}'}
 @z
 

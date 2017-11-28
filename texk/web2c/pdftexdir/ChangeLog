@@ -1,3 +1,24 @@
+2017-11-28  Hironori KITAGAWA <h_kitagawa2001@yahoo.co.jp>
+
+	Stop \pdfprimitive\vrule\q from swallowing q, by moving prim_eqtb
+	into the end of region 2 of eqtb instead of being a separate table.
+	* pdftex.ch (frozen_null_font): add prim_size.
+	* pdftex.web (prim_size): move to other region 2 definitions.
+	(prim_eqtb_base): new constant.
+	(prim_eq_level, prim_eq_type, prim_equiv): use prim_eqtb_base.
+	(prim_eqtb): remove array.
+	(Set init...): remove initializations.
+	(Basic printing...),
+	(Basic printing procedures): handle primitives after prim_eqtb_base.
+	(Implement \.{\\pdfprimitive}): do not give error if argument is
+	 not a primitive, just do nothing.
+	(Reset |cur_tok| for unexpandable primitives, goto restart):
+	 handle primitive lookups via prim_eqtb_base instead of cur_cmd*@'400.
+	(Cases of |main_control| that are not part of the inner loop):
+	<not undefined_primitive>: also set cur_tok.
+	(Dump the hash table): do not dump prim_eqtb.
+	(Undump the hash table): do not undump prim_eqtb.
+	
 2017-11-14  Anders Kaseorg  <andersk@mit.edu>
 
 	* utils.c (printID): Do not hash the current directory name into
