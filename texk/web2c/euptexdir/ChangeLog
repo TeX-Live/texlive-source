@@ -1,3 +1,8 @@
+2017-11-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfstrcmp-eup-post.ch, tests/pdfprimitive-euptex.log: Adapt
+	to eptex update.
+
 2017-10-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* tests/pdfprimitive-euptex.log: Adapt to eptex update.

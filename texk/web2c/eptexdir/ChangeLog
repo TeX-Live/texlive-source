@@ -1,3 +1,10 @@
+2017-11-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfutils.ch: \pdfprimitive gives no error if argument is not a
+	primitive, just do nothing. (Synchronized pdftex r784, tl r45936)
+	* tests/pdfprimitive-test.tex, tests/pdfprimitive-eptex.log:
+	Add more tests for \pdfprimitive.
+
 2017-10-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfutils.ch: Merge prim_eqtb into eqtb, to avoid a bug in

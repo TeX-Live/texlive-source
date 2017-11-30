@@ -1,6 +1,12 @@
 %#!euptex pdfprimitive-test.tex
 \catcode`\{=1\catcode`\}=2
 \scrollmode
+\catcode`\Q=14
+\ifdefined\pdfprimitive\else\catcode`\Q=11 \fi
+
+Q\let\pdfprimitive\primitive\let\ifpdfprimitive\ifprimitive
+\catcode`\Q=11 
+
 \def\relax{\message{RELAX}}
 \def\fuga{\message{FUGA}}
 \let\input=\halign
@@ -30,4 +36,12 @@
 % ==> ``! Undefined control sequence.'' error
 \setbox0=\vbox{\pdfprimitive\vrule\undefined}
 % ==> ``! Undefined control sequence.'' error
+
+\setbox0=\hbox{%
+  \def\A{\message{<\the\count42>}\ignorespaces}
+  \count42=\pdfprimitive\X 1\A
+  \count42=\pdfprimitive\- 2\A
+  \count42=\pdfprimitive\vrule 3\A
+}
+
 \end
