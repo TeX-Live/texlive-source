@@ -555,6 +555,23 @@ for k:=j+1 to j+l-1 do
 table, since we can use the character code itself as a direct address.
 @z
 
+@x print_cs: \pdfprimitive
+else  begin l:=text(p);
+@y
+else  begin
+  if (p>=prim_eqtb_base)and(p<frozen_null_font) then
+    l:=prim_text(p-prim_eqtb_base)-1 else l:=text(p);
+@z
+
+@x
+else print_esc(text(p));
+@y
+else if (p>=prim_eqtb_base)and(p<frozen_null_font) then
+    print_esc(prim_text(p-prim_eqtb_base)-1)
+else print_esc(text(p));
+@z
+
+
 @x \[if]pdfprimitive
 @p @!init procedure primitive(@!s:str_number;@!c:quarterword;@!o:halfword);
 var k:pool_pointer; {index into |str_pool|}
@@ -666,12 +683,6 @@ if cur_cs<>undefined_primitive then begin
     p:=get_avail; info(p):=cs_token_flag+frozen_primitive;
     link(p):=loc; loc:=p; start:=p;
     end;
-  end
-else begin
-  print_err("Missing primitive name");
-  help2("The control sequence marked <to be read again> does not")@/
-    ("represent any known primitive.");
-  back_error;
   end;
 end
 
@@ -685,11 +696,15 @@ expansion creating new errors.
 @<Reset |cur_tok| for unexpandable primitives, goto restart @>=
 begin
 get_token;
-cur_cs := prim_lookup(text(cur_cs));
+if cur_cs < hash_base then
+  cur_cs := prim_lookup(cur_cs-single_base)
+else
+  cur_cs  := prim_lookup(text(cur_cs));
 if cur_cs<>undefined_primitive then begin
   cur_cmd := prim_eq_type(cur_cs);
   cur_chr := prim_equiv(cur_cs);
-  cur_tok := (cur_cmd*@'400)+cur_chr;
+  cur_cs  := prim_eqtb_base+cur_cs;
+  cur_tok := cs_token_flag+cur_cs;
   end
 else begin
   cur_cmd := relax;
