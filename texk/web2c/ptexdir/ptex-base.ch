@@ -1410,6 +1410,30 @@ end;
 tats
 @z
 
+@x [17.???] l.???? - pTeX multibyte control symbol
+procedure print_cs(@!p:integer); {prints a purported control sequence}
+@y
+procedure print_cs(@!p:integer); {prints a purported control sequence}
+var j, l:pool_pointer; @!cat:0..max_char_code;
+@z
+
+@x
+else  begin print_esc(text(p));
+  print_char(" ");
+  end;
+@y
+else  begin l:=text(p);
+  print_esc(l); j:=str_start[l]; l:=str_start[l+1];
+  if l>j+1 then begin
+    if l-j=multistrlen(ustringcast(str_pool), l, j) then
+      begin cat:=kcat_code(kcatcodekey(fromBUFF(ustringcast(str_pool), l, j)));
+      if (cat<>other_kchar) then print_char(" ");
+      end
+    else print_char(" "); end
+  else print_char(" ");
+  end;
+@z
+
 @x [18.265] l.5903 - pTeX: \jfont \tfont
 primitive("font",def_font,0);@/
 @!@:font_}{\.{\\font} primitive@>
