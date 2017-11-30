@@ -1,3 +1,9 @@
+2017-11-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Suppress a space character printed after the name
+	of a multibyte control symbol in print_cs().
+	* tests/control-symbol.tex: Added.
+
 2017-10-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Direction check in \discretionary.
