@@ -1,6 +1,7 @@
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 pdftex_cppflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
@@ -72,6 +73,13 @@ pdftex_ch_srcs = \
 	$(pdftex_ch_synctex) \
 	pdftexdir/pdftex.ch \
 	tex-binpool.ch
+
+# Convenience target for making the typeset output; not invoked automatically
+pdftex.pdf: pdftex.tex
+	env MKTEXFMT=0 pdftex '\nonstopmode\input pdftex.tex'
+pdftex.tex: $(srcdir)/pdftexdir/pdftex.web
+	weave $(srcdir)/pdftexdir/pdftex.web
+	
 ##
 EXTRA_DIST += $(pdftex_ch_srcs) pdftexdir/pdftex.defines
 

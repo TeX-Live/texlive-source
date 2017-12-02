@@ -1,3 +1,8 @@
+2017-12-02  Karl Berry  <karl@tug.org>
+
+	* am/pdftex.am (pdftex.pdf, pdftex.tex): new convenience targets
+	for simple weave && pdftex to generate typeset output.
+
 2017-11-28  Hironori KITAGAWA <h_kitagawa2001@yahoo.co.jp>
 
 	Stop \pdfprimitive\vrule\q from swallowing q, by moving prim_eqtb
