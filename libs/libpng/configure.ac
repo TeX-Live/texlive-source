@@ -1,7 +1,8 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2016 Karl Berry <tex-live@tug.org>
-dnl   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -17,6 +18,7 @@ AC_CONFIG_MACRO_DIR([../../m4])
 KPSE_BASIC([libpng])
 
 AC_PROG_CC
+AM_PROG_AS
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
@@ -24,6 +26,7 @@ KPSE_COMPILER_VISIBILITY
 
 AC_CONFIG_HEADERS([config.h])
 
+if false; then
 # For GCC 5 the default mode for C is -std=gnu11 instead of -std=gnu89
 # In pngpriv.h we request just the POSIX 1003.1 and C89 APIs by defining _POSIX_SOURCE to 1
 # This is incompatible with the new default mode, so we test for that and force the 
@@ -37,6 +40,7 @@ fi
 AC_MSG_RESULT(yes)
 CFLAGS="$CFLAGS -std=c89"
 ])
+fi
 
 # Checks for header files.
 AC_HEADER_STDC
@@ -69,6 +73,53 @@ fi
 AC_SUBST([LIBPNG_TREE], [libpng-src])
 
 AC_SUBST([LIBPNG_DEFINES], ['-DPNG_CONFIGURE_LIBPNG -DPNG_NO_MMX_CODE'])
+
+# emacs-page
+# ARM
+# ===
+#
+# ARM NEON (SIMD) support.
+
+AC_ARG_ENABLE([arm-neon],
+   AS_HELP_STRING([[[--enable-arm-neon]]],
+      [Enable ARM NEON optimizations: =no/off, check, api, yes/on:]
+      [no/off: disable the optimizations; check: use internal checking code]
+      [(deprecated and poorly supported); api: disable by default, enable by]
+      [a call to png_set_option; yes/on: turn on unconditionally.]
+      [If not specified: determined by the compiler.]),
+   [case "$enableval" in
+      no|off)
+         # disable the default enabling on __ARM_NEON__ systems:
+         AC_DEFINE([PNG_ARM_NEON_OPT], [0],
+                   [Disable ARM Neon optimizations])
+         # Prevent inclusion of the assembler files below:
+         enable_arm_neon=no;;
+      check)
+         AC_DEFINE([PNG_ARM_NEON_CHECK_SUPPORTED], [],
+                   [Check for ARM Neon support at run-time]);;
+      api)
+         AC_DEFINE([PNG_ARM_NEON_API_SUPPORTED], [],
+                   [Turn on ARM Neon optimizations at run-time]);;
+      yes|on)
+         AC_DEFINE([PNG_ARM_NEON_OPT], [2],
+                   [Enable ARM Neon optimizations])
+         AC_MSG_WARN([--enable-arm-neon: please specify 'check' or 'api', if]
+            [you want the optimizations unconditionally pass -mfpu=neon]
+            [to the compiler.]);;
+      *)
+         AC_MSG_ERROR([--enable-arm-neon=${enable_arm_neon}: invalid value])
+   esac])
+
+# Add ARM specific files to all builds where the host_cpu is arm ('arm*') or
+# where ARM optimizations were explicitly requested (this allows a fallback if a
+# future host CPU does not match 'arm*')
+
+AM_CONDITIONAL([PNG_ARM_NEON],
+   [test "$enable_arm_neon" != 'no' &&
+    case "$host_cpu" in
+      arm*|aarch64*) :;;
+      *)    test "$enable_arm_neon" != '';;
+    esac])
 
 AC_CONFIG_FILES([Makefile include/Makefile])
 

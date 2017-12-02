@@ -1,3 +1,12 @@
+2017-12-02  Karl Berry  <karl@freefriends.org>
+
+	Import ARM support from upstream to TL configure.
+	* Makefile.am (nodist_libpng_a_SOURCES): add arm/*.[cS] files
+	per upstream Makefile.am.
+	* configure.ac (AM_PROG_AS),
+	(AC_ARG_ENABLE([arm-neon]): add.
+	Report from Johannes Hielscher, tlbuild mail 1 Nov 2017 02:39:55.
+
 2017-09-29 Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import libpng-1.6.34.
