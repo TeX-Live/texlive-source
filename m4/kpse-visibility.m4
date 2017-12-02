@@ -1,5 +1,7 @@
+# $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2013-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -13,6 +15,7 @@
 # them a Makefile.am must use them, e.g., in AM_CFLAGS or AM_CXXFLAGS.
 AC_DEFUN([KPSE_COMPILER_VISIBILITY],
 [dnl arrange that AC_PROG_CC uses _KPSE_VISIBILITY_CFLAGS etc.
+echo 'dbg:[_KPSE_COMPILER_VISIBILITY] called.' >&AS_MESSAGE_LOG_FD
 AC_PROVIDE_IFELSE([AC_PROG_CC],
                   [_KPSE_VISIBILITY_CFLAGS],
                   [m4_define([AC_PROG_CC],
@@ -64,11 +67,10 @@ for kpse_flag in '-fvisibility=hidden -fvisibility-inlines-hidden' '-fvisibility
   AS_TR_CPP($2)="$kpse_save_flags -Werror $kpse_flag"
   AC_COMPILE_IFELSE([], [kpse_cv_visibility_$2=$kpse_flag; break])
 done
+AS_TR_CPP($2)=$kpse_save_flags
 AC_LANG_POP([$1])
 ])
-AS_TR_CPP($2)=$kpse_save_flags
 AS_CASE([$kpse_cv_visibility_$2],
         [unknown], [],
         [AC_SUBST([VISIBILITY_]AS_TR_CPP($2), [$kpse_cv_visibility_$2])])
 ]) # _KPSE_VISIBILITY_FLAGS
-

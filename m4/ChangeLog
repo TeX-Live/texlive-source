@@ -1,3 +1,11 @@
+2017-12-02  Karl Berry  <karl@freefriends.org>
+
+	* kpse-visibility.m4 (KPSE_COMPILER_VISIBILITY): write debug line.
+	(_KPSE_VISIBILITY_FLAGS): only restore from kpse_save_flags
+	if we set it, i.e., if not using the cached value. (Otherwise,
+	e.g., in libpng, we can end up overriding the user-set CFLAGS with
+	the empty string.)
+
 2017-11-02  Karl Berry  <karl@freefriends.org>
 
 	* kpse-setup.m4 (_KPSE_RECURSE): revert previous change,
@@ -5,7 +13,7 @@
 	and (2) for 2018, more packages (icu, poppler, ...) are going to
 	require C++11, so we can't hack around it again. So not worth
 	spending more time refining.
-	Also, add debugging line writing to >&AS_MESSAGE_LOG_FD (config.log).
+	Also, write debug line to >&AS_MESSAGE_LOG_FD (config.log).
 	reautoconf.
 
 2017-02-17  Karl Berry  <karl@freefriends.org>
