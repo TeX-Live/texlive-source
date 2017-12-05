@@ -1,7 +1,7 @@
 /* c-minmax.h: define INT_MIN, etc.  Assume a 32-bit machine if the
    values aren't defined.
 
-   Copyright 1992, 1993, 2008 Karl Berry.
+   Copyright 1992, 1993, 2008, 2017 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@
 #define SCHAR_MIN (-127)
 #endif
 #ifndef SCHAR_MAX
-#define SCHAR_MAX 128
+#define SCHAR_MAX 127
 #endif
 #ifndef UCHAR_MAX
 #define UCHAR_MAX 255
