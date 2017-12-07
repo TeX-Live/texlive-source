@@ -1,5 +1,7 @@
-# Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+# $Id$
+# ICU support for the TeX Live (TL) tree.
+# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -24,7 +26,8 @@ m4_popdef([kpse_icu_config_args])[]dnl
 # Internal subroutine.
 #
 # LIBNAME and OPTIONS as for _KPSE_LIB_FLAGS().
-# MORE-ICU-LIBS: icu libraries from the TL tree in addition to icuuc and icudata.
+# MORE-ICU-LIBS: icu libraries from the TL tree in addition to icuuc and
+# icudata.
 m4_define([_KPSE_ICU_FLAGS], [dnl
 _KPSE_LIB_FLAGS([icu], [$1], [$2],
                 [-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include],
@@ -41,19 +44,24 @@ AC_DEFUN([KPSE_ICU_OPTIONS], [dnl
 m4_ifval([$1],
          [AC_ARG_WITH([system-icu],
                       AS_HELP_STRING([--with-system-icu],
-                                     [use installed ICU headers and libraries (requires icu-config)]))])[]dnl
+                                     [use installed ICU headers and libraries (requires pkg-config or icu-config)]))])[]dnl
 ]) # KPSE_ICU_OPTIONS
 
 # KPSE_ICU_SYSTEM_FLAGS
 # ---------------------
 AC_DEFUN([KPSE_ICU_SYSTEM_FLAGS], [dnl
 AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+echo 'dbg:[_KPSE_ICU_SYSTEM_FLAGS] called.' >&AS_MESSAGE_LOG_FD
 AC_CHECK_TOOL([ICU_CONFIG], [icu-config], [false])[]dnl
+AC_CHECK_TOOL([PKG_CONFIG], [pkg-config], [false])[]dnl
 if $ICU_CONFIG --version >/dev/null 2>&1; then
   ICU_INCLUDES=`$ICU_CONFIG --cppflags`
   ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath m4_ifset([kpse_icu_config_args],
                                                       [kpse_icu_config_args ])--ldflags-libsonly --ldflags-system`
+elif $PKG_CONFIG --libs icu-uc icu-io >/dev/null 2>&1; then
+  ICU_INCLUDES=`$PKG_CONFIG --cflags icu-uc icu-io`
+  ICU_LIBS=`$PKG_CONFIG --libs icu-uc icu-io`
 elif test "x$need_icu:$with_system_icu" = xyes:yes; then
-  AC_MSG_ERROR([did not find icu-config required for system icu libraries])
+  AC_MSG_ERROR([did not find either pkg-config or icu-config; one is required for system icu library support])
 fi
 ]) # KPSE_ICU_SYSTEM_FLAGS

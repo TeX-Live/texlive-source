@@ -1,3 +1,8 @@
+2017-12-08  Norbert Preining  <preining@logic.at>
+
+	* kpse-icu-flags.m4 (KPSE_ICU_SYSTEM_FLAGS): also check for PKG_CONFIG.
+	(KPSE_ICU_SYSTEM_FLAGS): try pkg-config if icu-config fails.
+
 2017-12-02  Karl Berry  <karl@freefriends.org>
 
 	* kpse-visibility.m4 (KPSE_COMPILER_VISIBILITY): write debug line.
