@@ -110,9 +110,11 @@ dnl check for misc headers and functions
 AC_CHECK_HEADERS([libgen.h byteswap.h signal.h setjmp.h fenv.h sys/wait.h])
 AC_CHECK_FUNCS([ctime_r drand48 flockfile funlockfile getline link strndup])
 
-dnl check for win32 headers (this detects mingw as well)
-AC_CHECK_HEADERS([windows.h], have_windows=yes, have_windows=no)
-
+dnl Check if the runtime platform is a native Win32 host.
+AC_COMPILE_IFELSE([[
+#ifdef _WIN32
+ choke me
+#endif]], [have_windows=no], [have_windows=yes])
 
 dnl Possible headers for mkdir
 AC_CHECK_HEADERS([sys/stat.h io.h])
