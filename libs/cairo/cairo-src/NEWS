@@ -1,3 +1,46 @@
+Release 1.14.12   (2017-06-13  Bryce Harrington <bryce@osg.samsung.com>)
+========================================================================
+Another bugfix release rolling up backported fixes for the past half year.
+
+For a complete log of changes since 1.14.10, please see:
+
+    http://cairographics.org/releases/ChangeLog.cairo-1.14.12
+
+
+Features
+--------
+None
+
+API Changes
+-----------
+None
+
+Dependency Changes
+------------------
+None
+
+Performance Optimizations
+-------------------------
+None
+
+Bug Fixes
+---------
+* Fix assertion hit with PDFs using Type 4 fonts rendered with user
+  fonts, due to error when destroying glyph page.
+  (Bug #103335)
+* Fix build error with util/font-view
+* Fix handling of truetype fonts with excessively long font names
+  (Bug #103249)
+* Fix falling back to system font with PDFs using certain embedded
+  fonts, due to truncated font names.
+  (Bug #103249)
+* Fix sigabrt printing documents with fonts lacking the mandatory .nodef
+  glyph.
+  (Bug #102922)
+* Fix undefined-behavior with integer math.
+* Fix various warnings and typos
+
+
 Release 1.14.10   (2017-06-13  Bryce Harrington <bryce@osg.samsung.com>)
 ========================================================================
 Bugfix release rolling up backported fixes for the past half year.
