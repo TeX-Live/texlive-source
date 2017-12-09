@@ -1,3 +1,9 @@
+2017-12-09  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* tt_cmap.c (is_PUA_or_presentation, add_to_cmap_if_used):
+	Skip KANGXI RADICALs which are commonly double encoded.
+	http://tug.org/pipermail/xetex/2017-June/027147.html
+
 2017-10-02  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* dvi.c: Initialize direction mode in clear_state(). See
