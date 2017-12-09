@@ -1,7 +1,14 @@
+2017-12-08  Karl Berry  <karl@freefriends.org>
+
+	* tex-file.c (kpathsea_init_format_return_varlist)
+	<kpse_program_text_format>, <kpse_program_binary_format>:
+	use DIR_SEP_STRING instead of hardwired /
+	Report from Douglas McKenna, tex-k 5 Dec 2017 22:27:10.
+
 2017-12-05  Karl Berry  <karl@freefriends.org>
 
 	* c-minmax.h (SCHAR_MAX): decrement to the correct 127.
-	Report from Doug McKenna, tex-k 4 Dec 2017 18:26:35.
+	Report from Douglas McKenna, tex-k 4 Dec 2017 18:26:35.
 
 2017-11-28  Karl Berry  <karl@tug.org>
 
