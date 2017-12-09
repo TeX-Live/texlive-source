@@ -1,3 +1,10 @@
+2017-12-09  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* tex-glyph.c (try_fallback_resolutions):
+	Avoid warning: taking the absolute value of unsigned type
+	'unsigned int' has no effect [-Wabsolute-value]
+	ref. https://github.com/jjgod/texlive/commit/4cbec4c
+
 2017-12-08  Karl Berry  <karl@freefriends.org>
 
 	* tex-file.c (kpathsea_init_format_return_varlist)
