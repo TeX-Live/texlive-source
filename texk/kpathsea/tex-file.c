@@ -730,14 +730,16 @@ kpathsea_init_format_return_varlist(kpathsea kpse,kpse_file_format_type format)
       break;
     case kpse_program_text_format:
       INIT_FORMAT ("other text files",
-                   concatn (".", ENV_SEP_STRING, "$TEXMF/",
-                            kpse->program_name, "//", NULL),
+                   concatn (".", ENV_SEP_STRING, "$TEXMF", DIR_SEP_STRING,
+                            kpse->program_name,
+                            DIR_SEP_STRING, DIR_SEP_STRING, NULL),
                    concat (uppercasify (kpse->program_name), "INPUTS"));
       break;
     case kpse_program_binary_format:
       INIT_FORMAT ("other binary files",
-                   concatn (".", ENV_SEP_STRING, "$TEXMF/",
-                            kpse->program_name, "//", NULL),
+                   concatn (".", ENV_SEP_STRING, "$TEXMF", DIR_SEP_STRING,
+                            kpse->program_name,
+                            DIR_SEP_STRING, DIR_SEP_STRING, NULL),
                    concat (uppercasify (kpse->program_name), "INPUTS"));
       FMT_INFO.binmode = true;
       break;
