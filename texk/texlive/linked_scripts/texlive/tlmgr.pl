@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 45838 2017-11-17 02:13:42Z preining $
+# $Id: tlmgr.pl 46009 2017-12-07 01:54:36Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 45838 $';
-my $datrev = '$Date: 2017-11-17 03:13:42 +0100 (Fri, 17 Nov 2017) $';
+my $svnrev = '$Revision: 46009 $';
+my $datrev = '$Date: 2017-12-07 02:54:36 +0100 (Thu, 07 Dec 2017) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -776,10 +776,16 @@ sub do_cmd_and_check {
   if ($opts{"dry-run"}) {
     $ret = $F_OK;
     $out = "";
+  } elsif (win32() && (! -r "$Master/bin/win32/luatex.dll")) {
+    # deal with the case where only scheme-infrastructure is installed
+    # on Windows, thus no luatex.dll is available and the wrapper cannot be started
+    tlwarn("Cannot run wrapper due to missing luatex.dll\n");
+    $ret = $F_OK;
+    $out = "";
   } else {
     ($out, $ret) = TeXLive::TLUtils::run_cmd("$cmd 2>&1");
   }
-  if ($ret == 0) {
+  if ($ret == $F_OK) {
     info("done running $cmd.\n");
     ddebug("--output of $cmd:\n$out\n--end of output of $cmd.");
     return ($F_OK);
@@ -1514,16 +1520,23 @@ sub action_info {
     # output format is changed to csv with " as quotes
     # we need to determine the fields
     @datafields = split(',', $opts{'data'});
-    # check for correctness of data fields
+    # check for correctness of data fields and whether remote is necessary
+    my $load_remote = 0;
     for my $d (@datafields) {
+      $load_remote = 1 if ($d eq "remoterev");
       if ($d !~ m/name|category|localrev|remoterev|shortdesc|longdesc|size|installed|relocatable|depends|cat-version|cat-date|cat-license/) {
         tlwarn("unknown data field: $d\n");
         return($F_ERROR);
       }
     }
     $fmt = "csv";
-    # the 1 is the silent mode!
-    init_tlmedia_or_die(1);
+    if ($load_remote) {
+      if ($opts{"only-installed"}) {
+        tlwarn("requesting only-installed with data field remoterev, loading remote anyway!\n");
+        $opts{"only-installed"} = 0;
+      }
+      # loading of tlpdb is done below
+    }
   } else {
     $fmt = "detail";
   }
@@ -3774,11 +3787,15 @@ sub show_one_package_csv {
   my ($p, @datafields) = @_;
   my @out;
   my $loctlp = $localtlpdb->get_package($p);
-  my $remtlp = $remotetlpdb->get_package($p);
+  my $remtlp = $remotetlpdb->get_package($p) unless ($opts{'only-installed'});
   my $is_installed = (defined($loctlp) ? 1 : 0);
   my $is_available = (defined($remtlp) ? 1 : 0);
   if (!($is_installed || $is_available)) {
-    tlwarn("$prg: package $p not found neither locally nor remote!\n");
+    if ($opts{'only-installed'}) {
+      tlwarn("$prg: package $p not locally!\n");
+    } else {
+      tlwarn("$prg: package $p not found neither locally nor remote!\n");
+    }
     return($F_WARNING);
   }
   my $tlp = ($is_installed ? $loctlp : $remtlp);
@@ -9314,7 +9331,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 45838 2017-11-17 02:13:42Z preining $
+$Id: tlmgr.pl 46009 2017-12-07 01:54:36Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
