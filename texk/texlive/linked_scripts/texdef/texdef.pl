@@ -115,14 +115,14 @@ my $ISCONTEXT = 0;
 my $BEGINENVSTR = '%s';
 my $ENDENVSTR   = '%s';
 
-my $VERSION = 'Version 1.7b -- 2012/05/15';
+my $VERSION = 'Version 1.7c -- 2017/12/09';
 sub usage {
     my $option = shift;
     my $ret    = ($option) ? 0 : 1;
 print << 'EOT';
 texdef -- Show definitions of TeX commands
-Version 1.7b -- 2012/05/15
-Copyright (C) 2011-2012  Martin Scharrer <martin@scharrer-online.de>
+Version 1.7c -- 2017/12/09
+Copyright (C) 2011-2017  Martin Scharrer <martin@scharrer-online.de>
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
 
@@ -388,10 +388,10 @@ sub testdef {
             my $protectedmacro = $2;
             unshift @cmds, $protectedmacro;
         }
-        elsif ($macrodef =~ /^\\\@protected\@testopt {?\\.*? }? *(\\\\.*?) /) {
+        elsif ($macrodef =~ /^\\\@protected\@testopt \{?\\.*? \}? *(\\\\.*?) /) {
             unshift @cmds, $1;
         }
-        elsif ($macrodef =~ /^\\\@testopt {?(\\.*?) }?/) {
+        elsif ($macrodef =~ /^\\\@testopt \{?(\\.*?) \}?/) {
             unshift @cmds, $1;
         }
     }
