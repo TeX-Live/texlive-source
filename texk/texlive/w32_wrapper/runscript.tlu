@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 44235 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2017-05-07 11:20:39 +0200 (Sun, 07 May 2017) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision$", "%d+") or "0"
+local svndate     = string.match("$Date$", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -675,6 +675,9 @@ elseif progname == 'tlgs' then
   ARGV = {[0]=GSEXE, GSNAME}
 elseif progname == 'tlperl' then
   ARGV = {[0]=PERLEXE, 'perl'}
+elseif progname == 'latexdef' then
+  progname = 'texdef'
+  argline = ' --tex latex ' .. argline
 end
 
 -- general case
