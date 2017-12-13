@@ -1,5 +1,5 @@
 % fam256.ch
-% (C) 2009, 2011 by Hironori Kitagawa.
+% (C) 2009--2017 by Hironori Kitagawa.
 %
 % This patch is derived from om16bit.ch and omfi.ch (both in Omega).
 % (Omega is copyright by John Plaice and Yannis Haralambous.)
@@ -178,6 +178,28 @@ primitive("radical",radical,0);@/
 @!@:radical_}{\.{\\radical} primitive@>
 primitive("oradical",radical,1);@/
 @!@:radical_}{\.{\\oradical} primitive@>
+@z
+%-----------------------------------------------
+@x
+delim_num: print_esc("delimiter");
+@y
+delim_num: if chr_code=0 then print_esc("delimiter")
+  else print_esc("odelimiter");
+@z
+@x
+math_accent: print_esc("mathaccent");
+math_char_num: print_esc("mathchar");
+@y
+math_accent: if chr_code=0 then print_esc("mathaccent")
+  else print_esc("omathaccent");
+math_char_num: if chr_code=0 then print_esc("mathchar")
+  else print_esc("omathchar");
+@z
+@x
+radical: print_esc("radical");
+@y
+radical: if chr_code=0 then print_esc("radical")
+  else print_esc("oradical");
 @z
 %-----------------------------------------------
 @x
