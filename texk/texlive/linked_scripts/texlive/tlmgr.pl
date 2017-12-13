@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 46009 2017-12-07 01:54:36Z preining $
+# $Id: tlmgr.pl 46034 2017-12-11 01:54:21Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 46009 $';
-my $datrev = '$Date: 2017-12-07 02:54:36 +0100 (Thu, 07 Dec 2017) $';
+my $svnrev = '$Revision: 46034 $';
+my $datrev = '$Date: 2017-12-11 02:54:21 +0100 (Mon, 11 Dec 2017) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1537,6 +1537,8 @@ sub action_info {
       }
       # loading of tlpdb is done below
     }
+  } elsif (!$what || $what =~ m/^(collections|schemes)$/i) {
+    $fmt = "list";
   } else {
     $fmt = "detail";
   }
@@ -9331,7 +9333,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 46009 2017-12-07 01:54:36Z preining $
+$Id: tlmgr.pl 46034 2017-12-11 01:54:21Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
