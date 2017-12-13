@@ -1,7 +1,5 @@
 #!/usr/bin/env perl
 
-# SEE "POSSIBLE BUG" aournd line 2221
-
 # ?? Still need to fix bcf error issue.
 # Don't keep looping after error
 # pvc: Only re-run on USER FILE CHANGE.
@@ -123,13 +121,39 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.54';
-$version_details = "$My_name, John Collins, 20 Nov. 2017";
+$version_num = '4.54c';
+$version_details = "$My_name, John Collins, 12 Dec. 2017";
 
 use Config;
 use File::Basename;
 use File::Copy;
-use File::Glob ':bsd_glob';    # Better glob.  Does not use space as item separator.
+
+# If possible, use better glob, which does not use space as item separator.
+# It's either File::Glob::bsd_glob or File::Glob::glob
+# The first does not exist in old versions of Perl, while the second
+# is deprecated in more recent versions and will be removed
+$have_bsd_glob = 0;
+sub my_glob {
+    if ($have_bsd_glob) { return bsd_glob( $_[0] ); }
+    else { return glob( $_[0] ); }
+}
+use File::Glob;
+if ( eval{ File::Glob->import('bsd_glob'); 1; } ) {
+    # Success in importing bsd_glob
+    $have_bsd_glob = 1;
+}
+elsif ( eval{ File::Glob->import('glob'); 1; } ) {
+    warn "$My_name: I could not import File::Glob:bsd_glob, probably because your\n",
+	 "  Perl is too old.  I have arranged to use the deprecated File::Glob:glob\n",
+	 "  instead.\n",
+	 "  WARNING: It may malfunction on clean up operation on filenames containing\n",
+  	 "           spaces.\n";
+    $have_bsd_glob = 0;
+}
+else {
+    die "Could not import 'File::Glob:bsd_glob' or 'File::Glob:glob'\n";
+}
+
 use File::Path 2.08 qw( make_path );
 use FileHandle;
 use File::Find;
@@ -197,6 +221,9 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##    12 Dec 2017   John Collins  Further correct bsd_glob fudge (to be in subroutine my_glob)
+##     8 Dec 2017   John Collins  Correct bsd_glob fudge
+##     2 Dec 2017   John Collins  Fudge on bsd_glob if it doesn't exist
 ##    20 Nov 2017   John Collins  Ver. 4.54
 ##    18 Nov 2017   John Collins  Add item to @file_not_found for generic
 ##                                  package warning about "No file", as produced
@@ -3356,7 +3383,7 @@ sub cleanup1 {
     my $root_fixed = fix_pattern( $root_filename );
     foreach (@_) { 
         (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/${dir}${root_fixed}/;
-        unlink_or_move( bsd_glob( "$name" ) );
+        unlink_or_move( my_glob( "$name" ) );
     }
 } #END cleanup1
 
@@ -7910,8 +7937,7 @@ sub glob_list1 {
            push @globbed, $file_spec; 
         }
         else { 
-            # This glob fails to work as desired, if the pattern contains spaces.
-            push @globbed, bsd_glob( "$file_spec" );
+            push @globbed, my_glob( "$file_spec" );
         }
     }
     return @globbed;
