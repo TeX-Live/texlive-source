@@ -945,6 +945,28 @@ settext(frozen_relax,"relax");
 set_new_eqtb(frozen_relax,new_eqtb(cur_val));@/
 @z
 %---------------------------------------
+@x
+delim_num: print_esc("delimiter");
+@y
+delim_num: if chr_code=0 then print_esc("delimiter")
+  else print_esc("odelimiter");
+@z
+@x
+math_accent: print_esc("mathaccent");
+math_char_num: print_esc("mathchar");
+@y
+math_accent: if chr_code=0 then print_esc("mathaccent")
+  else print_esc("omathaccent");
+math_char_num: if chr_code=0 then print_esc("mathchar")
+  else print_esc("omathchar");
+@z
+@x
+radical: print_esc("radical");
+@y
+radical: if chr_code=0 then print_esc("radical")
+  else print_esc("oradical");
+@z
+%---------------------------------------
 @x [19] m.276 l.5951 - Omega
 else  begin save_stack[save_ptr]:=eqtb[p]; incr(save_ptr);
 @y
@@ -2305,6 +2327,23 @@ primitive("omathchardef",shorthand_def,omath_char_def_code);@/
 @!@:math_char_def_}{\.{\\omathchardef} primitive@>
 @z
 %---------------------------------------
+@x
+  math_char_def_code: print_esc("mathchardef");
+@y
+  math_char_def_code: print_esc("mathchardef");
+  omath_char_def_code: print_esc("omathchardef");
+@z
+%---------------------------------------
+@x
+math_given: begin print_esc("mathchar"); print_hex(chr_code);
+  end;
+@y
+math_given: begin print_esc("mathchar"); print_hex(chr_code);
+  end;
+omath_given: begin print_esc("omathchar"); print_hex(chr_code);
+  end;
+@z
+%---------------------------------------
 @x [49] m.1224 l.22833 - Omega
 shorthand_def: begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
   scan_optional_equals;
@@ -2353,6 +2392,20 @@ primitive("delcode",def_code,del_code_base);
 @!@:del_code_}{\.{\\delcode} primitive@>
 primitive("odelcode",def_code,del_code_base+256);
 @!@:del_code_}{\.{\\odelcode} primitive@>
+@z
+%---------------------------------------
+@x
+  else if chr_code=lc_code_base then print_esc("lccode")
+  else if chr_code=uc_code_base then print_esc("uccode")
+  else if chr_code=sf_code_base then print_esc("sfcode")
+  else print_esc("delcode");
+@y
+  else if chr_code=math_code_base+256 then print_esc("omathcode")
+  else if chr_code=lc_code_base then print_esc("lccode")
+  else if chr_code=uc_code_base then print_esc("uccode")
+  else if chr_code=sf_code_base then print_esc("sfcode")
+  else if chr_code=del_code_base then print_esc("delcode")
+  else print_esc("odelcode");
 @z
 %---------------------------------------
 @x [49] m.1232 l.22990 - Omega
