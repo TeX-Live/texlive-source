@@ -716,6 +716,23 @@ goto restart;
 end
 @z
 
+@x scan_keyword
+@!k:pool_pointer; {index into |str_pool|}
+begin p:=backup_head; link(p):=null; k:=str_start[s];
+@y
+@!k:pool_pointer; {index into |str_pool|}
+@!save_cur_cs:pointer; {to save |cur_cs|}
+begin p:=backup_head; link(p):=null; k:=str_start[s];
+save_cur_cs:=cur_cs;
+@z
+
+@x scan_keyword
+    scan_keyword:=false; return;
+@y
+    cur_cs:=save_cur_cs;
+    scan_keyword:=false; return;
+@z
+
 @x \[if]pdfprimitive : scan_something_internal
 procedure scan_something_internal(@!level:small_number;@!negative:boolean);
   {fetch an internal parameter}
@@ -843,10 +860,12 @@ eTeX_revision_code: do_nothing;
 pdf_strcmp_code:
   begin
     save_scanner_status := scanner_status;
+    save_warning_index := warning_index;
     save_def_ref := def_ref;
     save_cur_string;
     compare_strings;
     def_ref := save_def_ref;
+    warning_index := save_warning_index;
     scanner_status := save_scanner_status;
     restore_cur_string;
   end;
@@ -1318,11 +1337,12 @@ procedure compare_strings; {to implement \.{\\pdfstrcmp}}
 label done;
 var s1, s2: str_number;
     i1, i2, j1, j2: pool_pointer;
+    save_cur_cs: pointer;
 begin
-    call_func(scan_toks(false, true));
+    save_cur_cs:=cur_cs; call_func(scan_toks(false, true));
     isprint_utf8:=true; s1 := tokens_to_string(def_ref); isprint_utf8:=false;
     delete_token_ref(def_ref);
-    call_func(scan_toks(false, true));
+    cur_cs:=save_cur_cs; call_func(scan_toks(false, true));
     isprint_utf8:=true; s2 := tokens_to_string(def_ref); isprint_utf8:=false;
     delete_token_ref(def_ref);
     i1 := str_start[s1];

@@ -1,3 +1,8 @@
+2017-12-15  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfutils.ch: Fix a error message "! File ended while ..."
+	while \pdfstrcmp, \pdfmdfivesum, etc. are used.
+
 2017-12-13  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* fam256.ch: \show\odelimiter should be \odelimiter, etc.
