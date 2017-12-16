@@ -33807,11 +33807,12 @@ procedure compare_strings; {to implement \.{\\pdfstrcmp}}
 label done;
 var s1, s2: str_number;
     i1, i2, j1, j2: pool_pointer;
+    save_cur_cs: pointer;
 begin
-    call_func(scan_toks(false, true));
+    save_cur_cs:=cur_cs; call_func(scan_toks(false, true));
     s1 := tokens_to_string(def_ref);
     delete_token_ref(def_ref);
-    call_func(scan_toks(false, true));
+    cur_cs:=save_cur_cs; call_func(scan_toks(false, true));
     s2 := tokens_to_string(def_ref);
     delete_token_ref(def_ref);
     i1 := str_start[s1];
