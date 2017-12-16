@@ -1,3 +1,14 @@
+2017-12-16  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdftex.web (compare_strings): Fix \pdfstrcmp error message
+        "! File ended while ..." to report control sequence correctly.
+	http://tug.org/pipermail/tex-k/2017-December/002838.html
+
+2017-12-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tounicode.c (deftounicode): check that value is in range [0,10FFFF].
+	Original report from Ross Moore, ntg-pdftex 30 May 2017 06:03:04.
+
 2017-12-02  Karl Berry  <karl@tug.org>
 
 	* am/pdftex.am (pdftex.pdf, pdftex.tex): new convenience targets
