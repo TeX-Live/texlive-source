@@ -1,3 +1,7 @@
+2017-12-18  Karl Berry  <karl@tug.org>
+
+	* texconfig.sh: more updates from Norbert to use tlmgr (from 45882).
+
 2017-04-24  Paul Vojta  <vojta@math.berkeley.edu>
 
 	* texconfig.sh: xdvi paper size updates (also in TLPaper.pm).

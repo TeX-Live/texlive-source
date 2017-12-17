@@ -188,6 +188,18 @@ setupTmpDir()
 }
 
 ###############################################################################
+# setupTexmfroot() - get value for MT_TEXMFROOT (with caching)
+#
+setupTexmfroot()
+{
+  case $MT_TEXMFROOT in
+    "") MT_TEXMFROOT=`kpsewhich -var-value=TEXMFROOT`;;
+    *) return;;
+  esac
+}
+
+
+###############################################################################
 # setupTexmfmain() - get value for MT_TEXMFMAIN (with caching)
 #
 setupTexmfmain()
@@ -537,8 +549,9 @@ checkElemInList()
 showDistVersionInfo()
 {
   # TeX Live file.
-  test -f $MT_TEXMFMAIN/../release-texlive.txt \
-  && sed 1q $MT_TEXMFMAIN/../release-texlive.txt
+  setupTexmfroot
+  test -f $MT_TEXMFROOT/release-texlive.txt \
+  && sed 1q $MT_TEXMFROOT/release-texlive.txt
 
   # no harm in continuing to look for the teTeX files.
   test -f $MT_TEXMFMAIN/release-tetex-src.txt \
@@ -560,7 +573,7 @@ the TeX installation.
 Usage: $progname conf                  (show configuration information)
        $progname dvipdfmx paper PAPER  (dvipdfmx paper size)
        $progname dvips [OPTION...]     (dvips options)
-       $progname faq                   (show teTeX faq)
+       $progname faq                   (show pointer to TeX Live docs)
        $progname findprog PROG...      (show locations of PROGs, a la which)
        $progname font vardir DIR
        $progname font ro
@@ -633,7 +646,9 @@ Valid PAPER settings:
         paper)
           case $3 in
             letter|legal|ledger|tabloid|a4|a3)
-              fmgrConfigReplace dvipdfmx.cfg '^p' "p $3";;
+              tlmgr dvipdfmx paper $3
+              ;;
+              # fmgrConfigReplace dvipdfmx.cfg '^p' "p $3";;
             "") echo "$help" >&2; rc=1;;
             *)
              echo "$progname: unknown PAPER \`$3' given as argument for \`$progname dvipdfmx paper'" >&2
@@ -781,7 +796,8 @@ Valid PAPER settings:
                   ;;
                 *)
                   if grep "@ $tcBatchDvipsPaper " $configPsFile >/dev/null 2>&1; then
-                    setupDvipsPaper "$tcBatchDvipsPaper"
+                    tlmgr dvips paper $tcBatchDvipsPaper
+                    # setupDvipsPaper "$tcBatchDvipsPaper"
                   else
                     echo "$progname: paper \`$tcBatchDvipsPaper' not found in file \`$configPsFile'" >&2; rc=1
                   fi
@@ -857,14 +873,17 @@ Valid MODE settings:"
       ;;
 
     faq)
-      setupTexmfmain
-      if test -f $MT_TEXMFMAIN/doc/tetex/teTeX-FAQ; then
-        <$MT_TEXMFMAIN/doc/tetex/teTeX-FAQ eval ${PAGER-more}
-      else
-        echo "$progname: faq not found (usually in \$TEXMFMAIN/doc/tetex/teTeX-FAQ)" >&2
-        rc=1
-      fi
+      echo "Please see https://tug.org/texlive/doc/ for the documentation"
+      echo "available in TeX Live."
       ;;
+      # setupTexmfmain
+      # if test -f $MT_TEXMFMAIN/doc/tetex/teTeX-FAQ; then
+      #   <$MT_TEXMFMAIN/doc/tetex/teTeX-FAQ eval ${PAGER-more}
+      # else
+      #   echo "$progname: faq not found (usually in \$TEXMFMAIN/doc/tetex/teTeX-FAQ)" >&2
+      #   rc=1
+      # fi
+      # ;;
 
     findprog)
       shift
@@ -873,6 +892,7 @@ Valid MODE settings:"
 
     # handle "texconfig font"
     font)
+      setupTexmfroot
       help="Usage: $progname font vardir DIR
        $progname font ro
        $progname font rw
@@ -899,7 +919,9 @@ For more information about these \`features', consult the teTeX manual
               ;;
             *)
               tcBatchFontVardir=$3
-              tfc=`kpsewhich texmf.cnf`
+              # tfc=`kpsewhich texmf.cnf`
+              tfc="$MT_TEXMFROOT/texmf.cnf"
+              touch "$tfc"
               if test -n "$tfc"; then
                 if test -w "$tfc"; then
                   configReplace "$tfc" '^VARTEXFONTS' "VARTEXFONTS  = $tcBatchFontVardir"
@@ -1240,25 +1262,28 @@ Valid PAPER settings:
 
         paper)
           case $3 in
-            letter)
-              w="8.5 true in"; h="11 true in"
-              setupTmpDir
-              fmgrConfigReplace pdftexconfig.tex pdfpagewidth '\pdfpagewidth='"$w"
-              wChanged=$fmgrConfigReplaceChanged
-              fmgrConfigReplace pdftexconfig.tex pdfpageheight '\pdfpageheight='"$h"
-              if $wChanged || $fmgrConfigReplaceChanged; then
-                fmtutil --refresh
-              fi
+            letter|a4)
+              tlmgr pdftex paper $3
               ;;
-            a4)
-              w="210 true mm"; h="297 true mm"
-              fmgrConfigReplace pdftexconfig.tex pdfpagewidth '\pdfpagewidth='"$w"
-              wChanged=$fmgrConfigReplaceChanged
-              fmgrConfigReplace pdftexconfig.tex pdfpageheight '\pdfpageheight='"$h"
-              if $wChanged || $fmgrConfigReplaceChanged; then
-                fmtutil --refresh
-              fi
-              ;;
+            #letter)
+            #  w="8.5 true in"; h="11 true in"
+            #  setupTmpDir
+            #  fmgrConfigReplace pdftexconfig.tex pdfpagewidth '\pdfpagewidth='"$w"
+            #  wChanged=$fmgrConfigReplaceChanged
+            #  fmgrConfigReplace pdftexconfig.tex pdfpageheight '\pdfpageheight='"$h"
+            #  if $wChanged || $fmgrConfigReplaceChanged; then
+            #    fmtutil --refresh
+            #  fi
+            #  ;;
+            #a4)
+            #  w="210 true mm"; h="297 true mm"
+            #  fmgrConfigReplace pdftexconfig.tex pdfpagewidth '\pdfpagewidth='"$w"
+            #  wChanged=$fmgrConfigReplaceChanged
+            #  fmgrConfigReplace pdftexconfig.tex pdfpageheight '\pdfpageheight='"$h"
+            #  if $wChanged || $fmgrConfigReplaceChanged; then
+            #    fmtutil --refresh
+            #  fi
+            #  ;;
             "") echo "$help" >&2; rc=1;;
             *)
              echo "$progname: unknown PAPER \`$3' given as argument for \`$progname pdftex paper'" >&2
@@ -1378,7 +1403,8 @@ Valid PAPER settings:
         paper)
           case $3 in
             [abc][0-9]|[abc]10|[abc][0-9]r|[abc]10r|us|letter|ledger|tabloid|usr|legal|legalr|foolscap|foolscapr)
-              fmgrConfigReplace XDvi paper: "*paper: $3"
+              tlmgr xdvi paper $3
+              # fmgrConfigReplace XDvi paper: "*paper: $3"
               ;;
             "") echo "$help" >&2; rc=1;;
             *)
