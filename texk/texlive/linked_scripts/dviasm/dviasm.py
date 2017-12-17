@@ -1,10 +1,10 @@
-#! /usr/bin/env python
-# -*- coding: utf_8 -*-
+#! /usr/bin/env python2.7
+# -*- coding: utf-8 -*-
 #
 # This is DVIasm, a DVI utility for editing DVI files directly.
 #
 # Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
-# Copyright (C) 2011-2015 by Khaled Hosny <khaledhosny@eglug.org>
+# Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,10 +53,12 @@ FNT_DEF1 = 243; FNT_DEF2 = 244; FNT_DEF3 = 245; FNT_DEF4 = 246;
 PRE = 247; POST = 248; POST_POST = 249;
 # DVIV opcodes
 DIR = 255;
-# XDV opcodes
+# DVI-IVD opcodes
 BEGIN_REFLECT = 250; END_REFLECT = 251;
+# XDV opcodes
 NATIVE_FONT_DEF = 252;
 GLYPHS = 253;
+TEXT_GLYPHS = 254;
 # XDV flags
 XDV_FLAG_VERTICAL = 0x0100;
 XDV_FLAG_COLORED = 0x0200;
@@ -64,10 +66,16 @@ XDV_FLAG_EXTEND = 0x1000;
 XDV_FLAG_SLANT = 0x2000;
 XDV_FLAG_EMBOLDEN = 0x4000;
 # DVI identifications
-DVI_ID = 2; DVIV_ID = 3; XDV_ID = 6;
+DVI_ID = 2; DVIV_ID = 3; XDVI_ID = 6; XDV_ID = 7;
+DVI_IDS = (DVI_ID, DVIV_ID, XDVI_ID, XDV_ID)
 
 def warning(msg):
   sys.stderr.write('%s\n' % msg)
+
+def ValidID(dvi_id):
+    if dvi_id not in DVI_IDS:
+        return False
+    return True
 
 def BadDVI(msg):
   raise AttributeError, 'Bad DVI file: %s!' % msg
@@ -144,7 +152,6 @@ def PutSigned(q):
 def PutGlyphs(width, glyphs):
   s = []
   length = len(glyphs)
-  s.append(PutByte(GLYPHS))
   s.append(PutSignedQuad(width))
   s.append(Put2Bytes(length))
   for glyph in glyphs:
@@ -152,6 +159,16 @@ def PutGlyphs(width, glyphs):
     s.append(PutSignedQuad(glyph["y"]))
   for glyph in glyphs:
     s.append(Put2Bytes(glyph["id"]))
+
+  return ''.join(s)
+
+def PutTextGlyphs(text, width, glyphs):
+  s = []
+  length = len(text)
+  s.append(Put2Bytes(length))
+  for ch in text:
+    s.append(Put2Bytes(ch))
+  s.append(PutGlyphs(width, glyphs))
 
   return ''.join(s)
 
@@ -292,7 +309,7 @@ class DVI(object):
     fp.seek(0)
     if GetByte(fp) != PRE: BadDVI("First byte isn't start of preamble")
     id = GetByte(fp)
-    if id != DVI_ID and id != DVIV_ID and id != XDV_ID:
+    if not ValidID(id):
       warning("ID byte is %d; use the default %d!" % (id, DVI_ID))
     else:
       self.id = id
@@ -321,7 +338,7 @@ class DVI(object):
       if   k < 0:    BadDVI('all 223s; is it a DVI file?') # found EOF
       elif k != 223: break
       fp.seek(-2, 1)
-    if k != DVI_ID and k != DVIV_ID and k != XDV_ID:
+    if not ValidID(k):
       warning('ID byte is %d' % k)
     fp.seek(-5, 1)
     q = SignedQuad(fp)
@@ -358,8 +375,8 @@ class DVI(object):
     if SignedQuad(fp) != self.post_loc:
       warning('bad postamble pointer in byte %d!' % (fp.tell() - 4))
     m = GetByte(fp)
-    if m != DVI_ID and m != DVIV_ID and m != XDV_ID:
-      warning('identification in byte %d should be %d, %d, or %d!' % (fp.tell() - 1, DVI_ID, DVIV_ID, XDV_ID))
+    if not ValidID(m):
+      warning('identification in byte %d should be one of: %s!' % (fp.tell() - 1, DVI_IDS))
 
   def DefineFont(self, e, fp):
     c = SignedQuad(fp) # font_check_sum
@@ -476,6 +493,8 @@ class DVI(object):
         self.DefineNativeFont(p, fp)
       elif o == GLYPHS:
         s.append([GLYPHS, self.GetGlyphs(fp)])
+      elif o == TEXT_GLYPHS:
+        s.append([TEXT_GLYPHS, self.GetTextGlyphs(fp)])
       elif o == DIR:
         s.append([DIR, p])
       elif o == BEGIN_REFLECT:
@@ -531,6 +550,15 @@ class DVI(object):
 
     return (width, glyphs)
 
+  def GetTextGlyphs(self, fp):
+    length = Get2Bytes(fp)
+    chars = []
+    for i in range(length):
+      chars.append(Get2Bytes(fp))
+    width, glyphs = self.GetGlyphs(fp)
+
+    return (chars, width, glyphs)
+
   def ReadGlyphs(self, val):
     import re
     glyphs = []
@@ -547,6 +575,15 @@ class DVI(object):
       glyphs.append({"id": int(gid), 'x': self.ConvLen(x), 'y': self.ConvLen(y)})
 
     return (self.ConvLen(w), glyphs)
+
+  def ReadTextGlyphs(self, val):
+    _, text, glyphs = val.split(val[0])
+    text = "'%s'" % text
+    glyphs = glyphs.lstrip()
+    chars = GetStr(text)
+    w, glyphs = self.ReadGlyphs(glyphs)
+
+    return (chars, w, glyphs)
 
   ##########################################################
   # Save: Internal Format -> DVI
@@ -610,7 +647,11 @@ class DVI(object):
         elif cmd[0] == END_REFLECT:
           s.append(chr(END_REFLECT))
         elif cmd[0] == GLYPHS:
+          s.append(PutByte(GLYPHS))
           s.append(PutGlyphs(cmd[1], cmd[2]))
+        elif cmd[0] == TEXT_GLYPHS:
+          s.append(PutByte(TEXT_GLYPHS))
+          s.append(PutTextGlyphs(cmd[1], cmd[2], cmd[3]))
         else:
           warning('invalid command %s!' % cmd[0])
       s.append(chr(EOP))
@@ -693,8 +734,8 @@ class DVI(object):
       # ParsePreamble
       if key == "id":
         self.id = GetInt(val)
-        if self.id != DVI_ID and self.id != DVIV_ID and self.id != XDV_ID:
-          warning("identification byte should be %d, %d, or %d!" % (DVI_ID, DVIV_ID, XDV_ID))
+        if not ValidID(self.id):
+          warning('identification byte %d should be one of: %s!' % (self.id, DVI_IDS))
       elif key == "numerator":
         d = GetInt(val)
         if d <= 0:
@@ -815,6 +856,9 @@ class DVI(object):
       elif key == 'setglyphs':
         w, glyphs = self.ReadGlyphs(val)
         self.cur_page.append([GLYPHS, w, glyphs])
+      elif key == 'settextglyphs':
+        text, w, glyphs = self.ReadTextGlyphs(val)
+        self.cur_page.append([TEXT_GLYPHS, text, w, glyphs])
       else:
         warning('invalid command %s!' % key)
 
@@ -901,6 +945,8 @@ class DVI(object):
             fp.write("at %s\n" % self.by_pt_conv(cur_ssize))
         elif cmd[0] == GLYPHS:
           fp.write("setglyphs: %s\n" % self.DumpGlyphs(cmd[1][0], cmd[1][1]))
+        elif cmd[0] == TEXT_GLYPHS:
+          fp.write("settextglyphs: %s\n" % self.DumpTextGlyphs(cmd[1][0], cmd[1][1], cmd[1][2]))
         elif cmd[0] == RIGHT1:
           fp.write("right: %s\n" % self.byconv(cmd[1]))
         elif cmd[0] == DOWN1:
@@ -939,6 +985,9 @@ class DVI(object):
         glyphs.append("%s(%s)" % (gid, x))
 
     return "%s %s" % (self.byconv(w), " ".join(glyphs))
+
+  def DumpTextGlyphs(self, t, w, g):
+    return "%s %s" % (PutStrUTF8(t), self.DumpGlyphs(w, g))
 
   ##########################################################
   # Misc Functions
@@ -1080,10 +1129,10 @@ binary format. It is fully documented at
 http://tug.org/TUGboat/Articles/tb28-2/tb89cho.pdf 
 http://ajt.ktug.kr/assets/2008/5/1/0201cho.pdf"""
 
-  version = """This is %prog-20150412 by Jin-Hwan Cho (Korean TeX Society)
+  version = """This is %prog-20171216 by Jin-Hwan Cho (Korean TeX Society)
   
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
-Copyright (C) 2011-2015 by Khaled Hosny <khaledhosny@eglug.org>
+Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
 
 This is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
