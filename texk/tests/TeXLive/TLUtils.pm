@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 44872 $';
+my $svnrev = '$Revision: 46045 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -98,6 +98,13 @@ C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
   TeXLive::TLUtils::mktexupd();
   TeXLive::TLUtils::setup_sys_user_mode($optsref,$tmfc, $tmfsc, $tmfv, $tmfsv);
   TeXLive::TLUtils::prepend_own_path();
+  TeXLive::TLUtils::repository_to_array($str);
+
+=head2 JSON
+
+  TeXLive::TLUtils::encode_json($ref);
+  TeXLive::TLUtils::True();
+  TeXLive::TLUtils::False();
 
 =head1 DESCRIPTION
 
@@ -112,6 +119,7 @@ use vars qw(
   $TeXLive::TLDownload::net_lib_avail
     $::checksum_method $::gui_mode $::machinereadable $::no_execute_actions
     $::regenerate_all_formats
+  $JSON::false $JSON::true
 );
 
 BEGIN {
@@ -185,6 +193,10 @@ BEGIN {
     &nulldev
     &get_full_line
     &sort_archs
+    &repository_to_array
+    &encode_json
+    &True
+    &False
   );
   @EXPORT = qw(setup_programs download_file process_logging_options
                tldie tlwarn info log debug ddebug dddebug debug_hash
@@ -1933,7 +1945,7 @@ sub add_remove_symlinks {
   # man
   my $top_man_dir = "$Master/texmf-dist/doc/man";
   debug("$mode symlinks for man pages to $sys_man from $top_man_dir\n");
-  if (! -d $top_man_dir && $mode eq "add") {
+  if (! -d $top_man_dir) {
     ; # better to be silent?
     #info("skipping add of man symlinks, no source directory $top_man_dir\n");
   } else {
@@ -3187,7 +3199,7 @@ package.
 sub debug {
   my $str = "D:" . join("", @_);
   return if ($::opt_verbosity < 1);
-  logit(\*STDOUT, 1, $str);
+  logit(\*STDERR, 1, $str);
   for my $i (@::debug_hook) {
     &{$i}($str);
   }
@@ -3209,7 +3221,7 @@ each package, in addition to the first level.
 sub ddebug {
   my $str = "DD:" . join("", @_);
   return if ($::opt_verbosity < 2);
-  logit(\*STDOUT, 2, $str);
+  logit(\*STDERR, 2, $str);
   for my $i (@::ddebug_hook) {
     &{$i}($str);
   }
@@ -3231,7 +3243,7 @@ levels.
 sub dddebug {
   my $str = "DDD:" . join("", @_);
   return if ($::opt_verbosity < 3);
-  logit(\*STDOUT, 3, $str);
+  logit(\*STDERR, 3, $str);
   for my $i (@::dddebug_hook) {
     &{$i}($str);
   }
@@ -4128,8 +4140,207 @@ sub prepend_own_path {
 }
 
 
+sub repository_to_array {
+  my $r = shift;
+  my %r;
+  my @repos = split ' ', $r;
+  if ($#repos == 0) {
+    # only one repo, this is the main one!
+    $r{'main'} = $repos[0];
+    return %r;
+  }
+  for my $rr (@repos) {
+    my $tag;
+    my $url;
+    # decode spaces and % in reverse order
+    $rr =~ s/%20/ /g;
+    $rr =~ s/%25/%/g;
+    $tag = $url = $rr;
+    if ($rr =~ m/^([^#]+)#(.*)$/) {
+      $tag = $2;
+      $url = $1;
+    }
+    $r{$tag} = $url;
+  }
+  return %r;
+}
+
+=item C<encode_json($ref)>
+
+Returns the JSON representation of the object C<$ref> is pointing at.
+This tries to load the C<JSON> Perl module, and uses it if available,
+otherwise falls back to module internal conversion.
+
+The used backend can be selected by setting the environment variable
+C<TL_JSONMODE> to either C<json> or C<texlive> (all other values are
+ignored). If C<json> is requested and the C<JSON> module cannot be loaded
+the program terminates.
+
+=cut
+
+my $TLTrueValue = 1;
+my $TLFalseValue = 0;
+my $TLTrue = \$TLTrueValue;
+my $TLFalse = \$TLFalseValue;
+bless $TLTrue, 'TLBOOLEAN';
+bless $TLFalse, 'TLBOOLEAN';
+
+our $jsonmode = "";
+
+=item C<True()>
+=item C<False()>
+
+these two function must be used to get proper JSON C<true> and C<false> 
+in the output independent of the backend used.
+
+=cut
+
+sub True {
+  ensure_json_available();
+  if ($jsonmode eq "json") {
+    return($JSON::true);
+  } else {
+    return($TLTrue);
+  }
+}
+sub False {
+  ensure_json_available();
+  if ($jsonmode eq "json") {
+    return($JSON::false);
+  } else {
+    return($TLFalse);
+  }
+}
+
+sub ensure_json_available {
+  return if ($jsonmode);
+  # check the environment for mode to use:
+  # $ENV{'TL_JSONMODE'} = texlive | json
+  my $envdefined = 0;
+  if ($ENV{'TL_JSONMODE'}) {
+    $envdefined = 1;
+    if ($ENV{'TL_JSONMODE'} eq "texlive") {
+      $jsonmode = "texlive";
+      debug("texlive json module used!\n");
+      return;
+    } elsif ($ENV{'TL_JSONMODE'} eq "json") {
+      # nothing to do
+    } else {
+      tlwarn("Unsupported mode \'$ENV{TL_JSONMODE}\' set in TL_JSONMODE, ignoring it!");
+      $envdefined = 0;
+    }
+  }
+  return if ($jsonmode); # was set to texlive
+  eval { require JSON; };
+  if ($@) {
+    # that didn't work out, use home-grown json
+    if ($envdefined) {
+      # environment asks for JSON but cannot be loaded, die!
+      tldie("env variable TL_JSONMODE request JSON module but cannot be load!\n");
+    }
+    $jsonmode = "texlive";
+    debug("texlive json module used!\n");
+  } else {
+    $jsonmode = "json";
+    my $json = JSON->new;
+    debug("JSON " . $json->backend . " used!\n");
+  }
+}
+
+sub encode_json {
+  my $val = shift;
+  ensure_json_available();
+  if ($jsonmode eq "json") {
+    my $utf8_encoded_json_text = JSON::encode_json($val);
+    return $utf8_encoded_json_text;
+  } else {
+    my $type = ref($val);
+    if ($type eq "") {
+      tldie("encode_json: accept only refs: $val");
+    } elsif ($type eq 'SCALAR') {
+      return(scalar_to_json($$val));
+    } elsif ($type eq 'ARRAY') {
+      return(array_to_json($val));
+    } elsif ($type eq 'HASH') {
+      return(hash_to_json($val));
+    } elsif ($type eq 'REF') {
+      return(encode_json($$val));
+    } elsif (Scalar::Util::blessed($val)) {
+      if ($type eq "TLBOOLEAN") {
+        return($$val ? "true" : "false");
+      } else {
+        tldie("encode_json: unsupported blessed object");
+      }
+    } else {
+      tldie("encode_json: unsupported format $type");
+    }
+  }
+}
+
+sub scalar_to_json {
+  sub looks_like_numeric {
+    # code from JSON/backportPP.pm
+    my $value = shift;
+    no warnings 'numeric';
+    # detect numbers
+    # string & "" -> ""
+    # number & "" -> 0 (with warning)
+    # nan and inf can detect as numbers, so check with * 0
+    return unless length((my $dummy = "") & $value);
+    return unless 0 + $value eq $value;
+    return 1 if $value * 0 == 0;
+    return -1; # inf/nan
+  }
+  my $val = shift;
+  if (defined($val)) {
+    if (looks_like_numeric($val)) {
+      return("$val");
+    } else {
+      return(string_to_json($val));
+    }
+  } else {
+    return("null");
+  }
+}
+
+sub string_to_json {
+  my $val = shift;
+  my %esc = (
+    "\n" => '\n',
+    "\r" => '\r',
+    "\t" => '\t',
+    "\f" => '\f',
+    "\b" => '\b',
+    "\"" => '\"',
+    "\\" => '\\\\',
+    "\'" => '\\\'',
+  );
+  $val =~ s/([\x22\x5c\n\r\t\f\b])/$esc{$1}/g;
+  return("\"$val\"");
+}
+
+sub hash_to_json {
+  my $hr = shift;
+  my @retvals;
+  for my $k (keys(%$hr)) {
+    my $val = $hr->{$k};
+    push @retvals, "\"$k\":" . encode_json(\$val);
+  }
+  my $ret = "{" . join(",", @retvals) . "}";
+  return($ret);
+}
+
+sub array_to_json {
+  my $hr = shift;
+  my $ret = "[" . join(",", map { encode_json(\$_) } @$hr) . "]";
+  return($ret);
+}
+
+
+
 =back
 =cut
+
 1;
 __END__
 

@@ -5,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 44018 $';
+my $svnrev = '$Revision: 45617 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -107,12 +107,14 @@ our $DefaultContainerFormat = "xz";
 our $DefaultContainerExtension = "tar.$DefaultContainerFormat";
 
 # archive (not user) settings.
+# these can be overriden by putting them into 00texlive.config.tlpsrc
 our %TLPDBConfigs = (
   "container_split_src_files" => 1,
   "container_split_doc_files" => 1,
   "container_format" => $DefaultContainerFormat,
   "minrelease" => $MinRelease,
   "release" => $ReleaseYear,
+  "frozen" => 0,
 );
 
 # definition of the option strings and their value types 
