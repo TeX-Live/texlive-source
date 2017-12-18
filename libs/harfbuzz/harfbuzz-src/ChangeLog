@@ -1,3 +1,370 @@
+commit 1245395a60ab6b04fc4653c448a97bb6ffee672c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 17 12:32:33 2017 -0500
+
+    [coretext] In hb_coretext_font_create() set ptem
+
+    Otherwise setting the CTFont was ineffective as it would have been
+    recreated anyway unless font size was set to 18 CSS points.
+
+ src/hb-coretext.cc | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+commit 493a005d9527b6075f3c1ca4b41c22d7805f975c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 16 11:49:39 2017 -0500
+
+    [set] In add_sorted_array(), bail if data is not sorted
+
+ src/hb-set-private.hh | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit a7bd6d7a4c53ff61d7d8286a594aaa0a0e15b1a1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 16 11:11:18 2017 -0500
+
+    [collect_glyphs] Bail if input data looks like garbage
+
+    Specificaly, when a range or sorted array has unexpected order,
+    we take that as
+    font data being garbage and bail out.  This fixes significant slowdown
+    on a bad
+    version of Chandas font which has a 600KB GPOS with garbage inside.
+
+    Later on, I like to add a maximum-work counter for collect_glyphs
+    to protect
+    against malicious fonts as well.
+
+    Fixes https://bugs.chromium.org/p/chromium/issues/detail?id=794896
+
+ src/hb-ot-layout-common-private.hh | 14 +++++++-------
+ src/hb-set-private.hh              |  4 ++--
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+commit 1ce7d6e215ef9d5386010bcdbbca79ef01811596
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 16 11:36:16 2017 -0500
+
+    [set] Optimize add_array() / add_sorted_array()
+
+    Does page lookup as needed.
+
+ src/hb-set-private.hh | 54
+ ++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 38 insertions(+), 16 deletions(-)
+
+commit 71e6adf1e2d65eb905a0ba247672fe36169955ef
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 16 11:07:37 2017 -0500
+
+    [collect_glyphs] handle ClassDef better
+
+ src/hb-ot-layout-common-private.hh   | 63
+ ++++++++++++++++++++++++++++++------
+ src/hb-ot-layout-gdef-table.hh       |  2 +-
+ src/hb-ot-layout-gpos-table.hh       |  5 +--
+ src/hb-ot-layout-gsubgpos-private.hh |  2 +-
+ 4 files changed, 56 insertions(+), 16 deletions(-)
+
+commit 87cc5a65cb4b98a3a857b5846085ef0814b392a8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 16 06:18:07 2017 -0800
+
+    [collect_glyphs] In PairPosFornat2 do not collect classDef1
+
+    The coverage already covered that.
+
+ src/hb-ot-layout-gpos-table.hh | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+commit 81f27df4d9db1bfc1dd04593cbd121397b86e9a6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 16 06:12:06 2017 -0800
+
+    More work towards improving collect_glyphs() against bad input
+
+    The three "XXXXX"'s should be switched to false.  Doing that
+    separately for ease
+    of bisecting...
+
+ src/hb-ot-layout-common-private.hh |  7 +++----
+ src/hb-ot-layout-gpos-table.hh     | 25 ++++++++++---------------
+ src/hb-ot-layout-gsub-table.hh     | 35
+ +++++++++++++----------------------
+ src/hb-set-digest-private.hh       |  6 ++++--
+ src/hb-set-private.hh              | 36
+ ++++++++++++++++++------------------
+ 5 files changed, 48 insertions(+), 61 deletions(-)
+
+commit 5d02572034e3dafbe87000fd0aa34b858bd95075
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 14 19:33:55 2017 -0800
+
+    [set] Add add_sorted_array()
+
+    Not optimized to use sortedness yet.  Also start putting in place
+    infra
+    to faster reject bad data.
+
+    A version of Chandas.ttf found on some Chrome bots has 660kb of GPOS,
+    mostly junk.  That is causing 48 million of set->add() calls in
+    collect_glyphs(), which is insane.
+
+    In the upcoming commits, I'll be speeding that up by optimizing
+    add_sorted_array(), while also reducing work by rejecting out-of-sort
+    arrays quickly and propagate the rejection.
+
+    Part of https://bugs.chromium.org/p/chromium/issues/detail?id=794896
+
+ src/hb-ot-layout-common-private.hh   | 51
+ +++++++++++++++++++++++-------------
+ src/hb-ot-layout-gdef-table.hh       |  2 +-
+ src/hb-ot-layout-gpos-table.hh       | 10 +++----
+ src/hb-ot-layout-gsubgpos-private.hh |  2 +-
+ src/hb-set-digest-private.hh         | 31 ++++++++++++++++++----
+ src/hb-set-private.hh                | 21 +++++++++++++--
+ 6 files changed, 84 insertions(+), 33 deletions(-)
+
+commit 9d6511a7343ba150e8072e5fe91732db54a92309
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 14 19:04:55 2017 -0800
+
+    [set] Reduce number of preallocated pages from 8 to 1
+
+    Now that pagesize is 8192, this feels better.
+
+ src/hb-set-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ae2e2b068e1ab68d1f814165cb86fa38deef1f5b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 14 18:15:14 2017 -0800
+
+    Fix partial tracing debug builds
+
+ src/hb-debug.hh | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+commit 9daa88cd790b80a8bc7eaae2e7eec6f2f9fc60cf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 14 13:37:48 2017 -0800
+
+    Minor
+
+ src/hb-set-private.hh | 11 +++++++++++
+ src/hb-set.cc         |  6 ++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
+commit f424a342233ae32bbfabbdeadf59c82420b0880b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 14 13:30:38 2017 -0800
+
+    [set] Change pagesize from 512 bits to 8192 bits
+
+    Fixes perf regression on some heavy fonts in Chrome's FT+HB
+    interaction.
+
+    See:
+    https://bugs.chromium.org/p/chromium/issues/detail?id=782220
+
+    More work to be done:
+    https://bugs.chromium.org/p/chromium/issues/detail?id=794896
+
+ src/hb-set-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0fe62c1f333200523e10663f47a58b82e3f22154
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 13 13:12:20 2017 -0800
+
+    [set] Add add_array()
+
+    To be used to optimize adding a whole bunch of (sorted) items at
+    the same time,
+    as in CoverageFormat1.
+
+ src/hb-ot-layout-common-private.hh |  4 +---
+ src/hb-set-digest-private.hh       | 12 ++++++++++++
+ src/hb-set-private.hh              |  6 ++++++
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+
+commit 20e69c950d431391f92335f8845e5d4291aca8f3
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Thu Dec 7 12:24:12 2017 +0330
+
+    [test] print commented line, like the original script (#649)
+
+ test/shaping/run-tests.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 71ad2777c52aeb0842038881899499a49cb895f2
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Thu Dec 7 11:35:36 2017 +0330
+
+    [ci] Add an after distribution test runner (#648)
+
+ .circleci/config.yml | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+commit 5f061d27d5289c7608a6579dca668b1f5be7f4e8
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Thu Dec 7 11:22:55 2017 +0330
+
+    Rewrite run-tests in python (#647)
+
+ test/shaping/Makefile.am  |   4 +-
+ test/shaping/run-tests.py | 115
+ ++++++++++++++++++++++++++++++++++++++++++++++
+ test/shaping/run-tests.sh |  65 --------------------------
+ 3 files changed, 117 insertions(+), 67 deletions(-)
+
+commit 3ce6c7bd96296a44950110e84ade76c7c1df06e4
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Dec 6 21:08:20 2017 +0200
+
+    [ci] Sort out Travis configuration
+
+    Use a matrix to avoid a gazillion if's.
+
+ .ci/deploy-docs.sh   |  2 ++
+ .ci/run-coveralls.sh | 14 +++++++++++
+ .travis.yml          | 69
+ ++++++++++++++++++++++++++++++++--------------------
+ 3 files changed, 58 insertions(+), 27 deletions(-)
+
+commit 5a6d2b986a02fc47fa9dcbb330e6949af8e375ff
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Wed Dec 6 18:27:27 2017 +0330
+
+    [ci] minor improvements (#644)
+
+ .circleci/config.yml | 3 +++
+ appveyor.yml         | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+commit 840a32e3f3ed0a85bfa84e69efaeb504d92d1aa7
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Dec 6 00:49:25 2017 +0200
+
+    Run cmake tests on CI builds
+
+ .circleci/config.yml | 6 ++++--
+ appveyor.yml         | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+commit c8609551485cfca6f9629c565b9dd5f02aa14f3e
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Dec 6 00:43:28 2017 +0200
+
+    Add API tests to cmake build
+
+ CMakeLists.txt          |  5 +++++
+ test/CMakeLists.txt     |  1 +
+ test/api/CMakeLists.txt | 39 +++++++++++++++++++++++++++++++++++++++
+ test/api/hb-test.h      |  2 ++
+ test/api/test-c.c       |  2 ++
+ 5 files changed, 49 insertions(+)
+
+commit f19126dd35b03f6e05a67cbc406b3ce4a3e35022
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Tue Dec 5 22:52:54 2017 +0200
+
+    We are already inside “if HAVE_GLIB” check
+
+ test/api/Makefile.am | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 7af48a3f37abac0aa1a1ad79c98399a9a71bd903
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Wed Dec 6 14:22:19 2017 +0330
+
+    [ci] Don't cache msys2 folder
+
+ appveyor.yml | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit b6f505c7164e302d2990cf056b73e918a641e976
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Wed Dec 6 13:51:04 2017 +0330
+
+    [ci] Enable glib and freetype on appveyor cmake (#643)
+
+ appveyor.yml | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
+
+commit 03b7a221f701a9b003890878e730ad175c3fdd86
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 5 13:12:11 2017 -0800
+
+    [debug] Use %p to print pointers
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/640
+
+ src/hb-debug.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 353cc6fbf09d16aad18b48a3a46ec7dd348aedc6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Dec 6 00:04:30 2017 +0330
+
+    [ci] Fix appveyor badge
+
+ README | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0dc03ef75724376927a7d63b991508c2901fcdf9
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Tue Dec 5 17:43:09 2017 +0000
+
+    Indic: always hyphenate pre-base-reordering, for clarity.
+
+ src/hb-ot-shape-complex-indic.cc | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit be59f3cbf4e3269ea05d5a707cdae04a32e097ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 5 09:01:28 2017 -0800
+
+    Silence unused-variables warning on MSVC
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/635
+
+ src/hb-private.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 80c1b01f054c5d65ca96a568aaf1c28ffe97215b
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Tue Dec 5 08:28:42 2017 -0500
+
+    Allow digits in language system tags
+
+ src/hb-ot-tag.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 85bb89a88bdfae02fb7c27c7b994f4f22723442a
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Mon Dec 4 15:15:27 2017 -0500
+
+    Fix string matching in parse_bool
+
+ src/hb-common.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0fd89dc61c6a26253aa9bb85e8dfd9faded11440
+Author: Olivier Blin <olivier.blin@softathome.com>
+Date:   Mon Dec 4 18:58:41 2017 +0100
+
+    [hb-ft] Fix build when Multiple Master font support is disabled
+    in freetype
+
+    FT_Set_Var_Blend_Coordinates() is not available when "Multiple Master
+    font interface" is disabled in freetype's modules.cfg
+
+ configure.ac         | 1 +
+ src/hb-ft.cc         | 2 ++
+ util/helper-cairo.cc | 2 ++
+ 3 files changed, 5 insertions(+)
+
 commit 843f7f70355f62511a5d8be3b905c853bf362629
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Dec 4 08:52:39 2017 -0800
