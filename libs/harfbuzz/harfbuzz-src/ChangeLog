@@ -1,3 +1,33 @@
+commit a9432bde7e61894056a42ea24d56fd7fd908a1ce
+Author: Volker H. Simonis <volker.simonis@gmail.com>
+Date:   Tue Dec 19 11:33:25 2017 +0100
+
+    HarfBuzz 1.7.1 and later don't compile on AIX with xlC (#655)
+
+ src/hb-ot-shape-complex-arabic-fallback.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 2fe5f885b6f66f2665292b93e07baaae0aa46da8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 19 14:48:26 2017 -0500
+
+    [set] Handle nil set in add_range() / add_sorted_array()
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/657
+
+ src/hb-set-private.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit b5bbb791d32467b91caf6f1bf7ccee7cb2ca8c52
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 18 09:18:51 2017 -0500
+
+    1.7.3
+
+ NEWS         | 10 ++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
 commit 1245395a60ab6b04fc4653c448a97bb6ffee672c
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sun Dec 17 12:32:33 2017 -0500
