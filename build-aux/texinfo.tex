@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2017-12-01.13}
+\def\texinfoversion{2017-12-18.20}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2503,25 +2503,13 @@ end
 
 
 % In order for the font changes to affect most math symbols and letters,
-% we have to define the \textfont of the standard families.
+% we have to define the \textfont of the standard families.  We don't
+% bother to reset \scriptfont and \scriptscriptfont; awaiting user need.
 %
 \def\resetmathfonts{%
   \textfont0=\rmfont \textfont1=\ifont \textfont2=\syfont
   \textfont\itfam=\itfont \textfont\slfam=\slfont \textfont\bffam=\bffont
   \textfont\ttfam=\ttfont \textfont\sffam=\sffont
-  %
-  \scriptfont0=\rmfont \scriptfont1=\ifont \scriptfont2=\syfont
-  \scriptfont\itfam=\itfont \scriptfont\slfam=\slfont \scriptfont\bffam=\bffont
-  \scriptfont\ttfam=\ttfont \scriptfont\sffam=\sffont
-  %
-  \scriptscriptfont0=\rmfont
-  \scriptscriptfont1=\ifont
-  \scriptscriptfont2=\syfont
-  \scriptscriptfont\itfam=\itfont
-  \scriptscriptfont\slfam=\slfont
-  \scriptscriptfont\bffam=\bffont
-  \scriptscriptfont\ttfam=\ttfont
-  \scriptscriptfont\sffam=\sffont
 }
 
 %
