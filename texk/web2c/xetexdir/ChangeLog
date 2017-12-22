@@ -1,3 +1,9 @@
+2017-12-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* image/jpegimage.c: If j_info->xdpi and j_info->ydpi are not
+	determined in some JPEG format, they are assumed to be 72.0
+	in order to avoid division by zero.
+
 2017-11-07  Jonathan Kew  <jfkthame@gmail.com>
 
 	* XeTeX_ext.c: Guard against out-of-range result from UTF-8
