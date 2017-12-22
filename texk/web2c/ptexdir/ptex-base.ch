@@ -2259,6 +2259,14 @@ else if scan_keyword("sp") then goto done
 @.sp@>
 @z
 
+@x [26.459] pTeX: help message
+help6("Dimensions can be in units of em, ex, in, pt, pc,")@/
+  ("cm, mm, dd, cc, bp, or sp; but yours is a new one!")@/
+@y
+help6("Dimensions can be in units of em, ex, zw, zh, in, pt, pc,")@/
+  ("cm, mm, dd, cc, bp, H, Q, or sp; but yours is a new one!")@/
+@z
+
 @x [27.464] l.9475 - pTeX: str_toks
   if t=" " then t:=space_token
   else t:=other_token+t;
