@@ -1,3 +1,8 @@
+2017-12-21  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Include zw etc. in "Dimensions can be in units ..."
+	help message.
+
 2017-11-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Suppress a space character printed after the name
