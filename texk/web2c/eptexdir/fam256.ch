@@ -328,7 +328,10 @@ else if m=del_code_base then begin
       ("I changed this one to zero."); error;
     scanned_result(0)(int_val);
     end
-  else scanned_result(cur_val1*@"1000+cur_val)(int_val);
+  else if cur_val1<0 then
+    scanned_result(cur_val)(int_val)
+  else
+    scanned_result(cur_val1*@"1000+cur_val)(int_val);
   end
 else if m=(del_code_base+128) then begin
   { Aleph seems \.{\\odelcode} always returns $-1$.}
@@ -1280,10 +1283,13 @@ def_code: begin
       define(p-128,data,hi(cur_val));
       end
     else if cur_val1=del_code_base then begin
-      cur_val1:=cur_val div @"1000;
-      cur_val1:=(cur_val1 div @"1000)*@"10000 + cur_val1 mod @"1000;
-      cur_val:=cur_val mod @"1000;
-      del_word_define(p,cur_val1,cur_val);
+      if cur_val>=0 then begin
+        cur_val1:=cur_val div @"1000;
+        cur_val1:=(cur_val1 div @"1000)*@"10000 + cur_val1 mod @"1000;
+        cur_val:=cur_val mod @"1000;
+        del_word_define(p,cur_val1,cur_val); end
+      else
+        del_word_define(p, -1, cur_val);
       end
     else define(p,data,cur_val);
     end;
