@@ -1,7 +1,7 @@
 2017-12-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* fam256.ch: \delcode defaults to -1, not -4097, to be compatible
-	with TeX82.
+	with TeX82. Correct assignment of negative \delcode.
 
 2017-12-15  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
