@@ -303,7 +303,9 @@ if (om_mode=no_mode) or
   j:=str_start(s);
   while j<str_start(s+1) do begin
     new_s:=so(str_pool[j]);
-    if new_s<@"20 then begin
+    if (new_s=new_line_char)and(selector<pseudo) then
+      print_ln {added, to be more compatible with TeX}
+    else if new_s<@"20 then begin
       print_char(@"5E); print_char(@"5E); print_char(new_s+@'100);
       end
     else if new_s<@"7F then
