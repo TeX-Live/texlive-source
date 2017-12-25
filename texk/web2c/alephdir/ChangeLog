@@ -1,3 +1,8 @@
+2017-12-25  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* omtrans.ch (omega_print): expand \newlinechar for terminal and
+	log output. (Without this, LaTeX error messages contain ^^J.)
+
 2017-12-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* om16bit.ch: \show\odelimiter should be \odelimiter, etc.
