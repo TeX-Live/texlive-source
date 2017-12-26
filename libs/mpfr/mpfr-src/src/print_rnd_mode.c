@@ -27,7 +27,7 @@ mpfr_print_rnd_mode (mpfr_rnd_t rnd_mode)
 {
   /* If we forget to update this function after a new rounding mode
      is added, this will be detected by the following assertion. */
-  MPFR_ASSERTN (MPFR_RND_MAX == MPFR_RNDA + 1);
+  MPFR_STAT_STATIC_ASSERT (MPFR_RND_MAX == MPFR_RNDF + 1);
   switch (rnd_mode)
     {
     case MPFR_RNDD:
@@ -40,6 +40,8 @@ mpfr_print_rnd_mode (mpfr_rnd_t rnd_mode)
       return "MPFR_RNDZ";
     case MPFR_RNDA:
       return "MPFR_RNDA";
+    case MPFR_RNDF:
+      return "MPFR_RNDF";
     default:
       return (const char*) 0;
     }

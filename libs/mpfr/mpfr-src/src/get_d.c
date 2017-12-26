@@ -151,8 +151,7 @@ mpfr_get_d_2exp (long *expptr, mpfr_srcptr src, mpfr_rnd_t rnd_mode)
       return negative ? DBL_NEG_ZERO : 0.0;
     }
 
-  tmp[0] = *src;        /* Hack copy mpfr_t */
-  MPFR_SET_EXP (tmp, 0);
+  MPFR_ALIAS (tmp, src, MPFR_SIGN (src), 0);
   ret = mpfr_get_d (tmp, rnd_mode);
 
   if (MPFR_IS_PURE_FP(src))

@@ -104,7 +104,7 @@ mpfr_asinh (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
             break;
         }
 
-      /* actualisation of the precision */
+      /* actualization of the precision */
       MPFR_ZIV_NEXT (loop, Nt);
       mpfr_set_prec (t, Nt);
     }

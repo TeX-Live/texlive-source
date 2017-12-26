@@ -82,7 +82,7 @@ mpfr_cosh (mpfr_ptr y, mpfr_srcptr xt , mpfr_rnd_t rnd_mode)
     /* The optimal number of bits : see algorithms.tex */
     Nt = Ny + 3 + MPFR_INT_CEIL_LOG2 (Ny);
 
-    /* initialise of intermediary variables */
+    /* initialize of intermediary variables */
     MPFR_GROUP_INIT_2 (group, Nt, t, te);
 
     /* First computation of cosh */

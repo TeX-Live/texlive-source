@@ -255,3 +255,10 @@ mpfr_fmod (mpfr_ptr rem, mpfr_srcptr x, mpfr_srcptr y, mpfr_rnd_t rnd)
 {
   return mpfr_rem1 (rem, (long *) 0, MPFR_RNDZ, x, y, rnd);
 }
+
+int
+mpfr_fmodquo (mpfr_ptr rem, long *quo, mpfr_srcptr x, mpfr_srcptr y,
+              mpfr_rnd_t rnd)
+{
+  return mpfr_rem1 (rem, quo, MPFR_RNDZ, x, y, rnd);
+}

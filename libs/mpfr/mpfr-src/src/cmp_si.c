@@ -43,7 +43,7 @@ mpfr_cmp_si_2exp (mpfr_srcptr b, long int i, mpfr_exp_t f)
       else if (MPFR_IS_ZERO(b))
         return i != 0 ? -si : 0;
       /* NAN */
-      MPFR_SET_ERANGE ();
+      MPFR_SET_ERANGEFLAG ();
       return 0;
     }
   else if (MPFR_SIGN(b) != si || i == 0)

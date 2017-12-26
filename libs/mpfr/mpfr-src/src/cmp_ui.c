@@ -37,7 +37,7 @@ mpfr_cmp_ui_2exp (mpfr_srcptr b, unsigned long int i, mpfr_exp_t f)
     {
       if (MPFR_IS_NAN (b))
         {
-          MPFR_SET_ERANGE ();
+          MPFR_SET_ERANGEFLAG ();
           return 0;
         }
       else if (MPFR_IS_INF(b))
