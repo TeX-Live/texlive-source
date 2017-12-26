@@ -30,7 +30,7 @@ mpfr_sqrt_ui (mpfr_ptr r, unsigned long u, mpfr_rnd_t rnd_mode)
     {
       mpfr_t uu;
       mp_limb_t up[1];
-      unsigned long cnt;
+      int cnt;
       int inex;
       MPFR_SAVE_EXPO_DECL (expo);
 

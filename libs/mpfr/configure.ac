@@ -74,8 +74,8 @@ dnl see http://gmplib.org/list-archives/gmp-bugs/2011-August/002345.html.
 AC_MSG_CHECKING([for recent GMP])
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
 #include "gmp.h"
-#if (__GNU_MP_VERSION*100+__GNU_MP_VERSION_MINOR*10 < 410)
-# error "min GMP version is 4.1.0"
+#if (__GNU_MP_VERSION*100+__GNU_MP_VERSION_MINOR*10 < 500)
+# error "min GMP version is 5.0.0"
 error
 #endif
 ]])], [AC_MSG_RESULT([yes])], [

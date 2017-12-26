@@ -29,8 +29,8 @@ double
 __gmpfr_ceil_exp2 (double d)
 {
   long exp;
-#if _GMP_IEEE_FLOATS
-  union ieee_double_extract x;
+#if _MPFR_IEEE_FLOATS
+  union mpfr_ieee_double_extract x;
 #else
   struct {double d;} x;
 #endif
@@ -41,7 +41,7 @@ __gmpfr_ceil_exp2 (double d)
     exp++;
   /* now exp = ceil(d) */
   x.d = 1.0;
-#if _GMP_IEEE_FLOATS
+#if _MPFR_IEEE_FLOATS
   x.s.exp = exp <= -1022 ? 1 : 1023 + exp;
 #else
   if (exp >= 0)
@@ -60,6 +60,6 @@ __gmpfr_ceil_exp2 (double d)
           exp++;
         }
     }
-#endif
+#endif /* _MPFR_IEEE_FLOATS */
   return x.d;
 }

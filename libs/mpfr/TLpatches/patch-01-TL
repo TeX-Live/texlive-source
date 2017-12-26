@@ -1,42 +1,12 @@
-diff -ur mpfr-3.1.6.orig/src/mparam_h.in mpfr-3.1.6/src/mparam_h.in
---- mpfr-3.1.6.orig/src/mparam_h.in	Sun Jan 01 10:39:09 2017
-+++ mpfr-3.1.6/src/mparam_h.in	Fri Sep 08 14:51:25 2017
-@@ -27,7 +27,9 @@
+diff -ur mpfr-4.0.0.orig/src/mparam_h.in mpfr-4.0.0/src/mparam_h.in
+--- mpfr-4.0.0.orig/src/mparam_h.in	Sun Jan 01 10:34:35 2017
++++ mpfr-4.0.0/src/mparam_h.in	Tue Dec 26 19:31:48 2017
+@@ -32,6 +32,8 @@
     for example with gcc -dM -E -xc /dev/null
     As of gcc 4.2, you can also use: -march=native or -mtune=native */
  
--#if defined (__tune_pentium4__) /* Threshold for Pentium 4 */
-+#if 1 /* no processor specific optimization for TeX Live */
++#elif 1 /* no processor specific optimization for TeX Live */
 +#define MPFR_TUNE_CASE "default"
-+#elif defined (__tune_pentium4__) /* Threshold for Pentium 4 */
+ #elif defined (__tune_pentium4__) /* Threshold for Pentium 4 */
  #define MPFR_TUNE_CASE "src/x86_64/pentium4/mparam.h"
  #include "x86_64/pentium4/mparam.h"
- 
-diff -ur mpfr-3.1.6.orig/src/mpfr-impl.h mpfr-3.1.6/src/mpfr-impl.h
---- mpfr-3.1.6.orig/src/mpfr-impl.h	Tue Sep 05 21:54:34 2017
-+++ mpfr-3.1.6/src/mpfr-impl.h	Fri Sep 08 14:53:23 2017
-@@ -23,6 +23,11 @@
- #ifndef __MPFR_IMPL_H__
- #define __MPFR_IMPL_H__
- 
-+/* Include MPFR 'config.h' before ANY system headers */
-+#ifdef HAVE_CONFIG_H
-+# include "config.h"
-+#endif
-+
- /* Let's include some standard headers unconditionally as they are
-    already needed by several source files or when some options are
-    enabled/disabled, and it is easy to forget them (some configure
-@@ -55,12 +60,6 @@
- /******************************************************
-  ****************** Include files *********************
-  ******************************************************/
--
--/* Include 'config.h' before using ANY configure macros if needed
--   NOTE: It isn't MPFR 'config.h', but GMP's one! */
--#ifdef HAVE_CONFIG_H
--# include "config.h"
--#endif
- 
- /* For the definition of MPFR_THREAD_ATTR. GCC/ICC detection macros are
-    no longer used, as they sometimes gave incorrect information about

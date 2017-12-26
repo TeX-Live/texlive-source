@@ -1,3 +1,8 @@
+2017-12-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import mpfr-4.0.0.
+	* configure.ac, Makefile.am, version.ac: Adjust.
+
 2017-09-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import mpfr-3.1.6.

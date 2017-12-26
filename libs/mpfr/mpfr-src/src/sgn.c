@@ -31,7 +31,7 @@ int
         return 0;
       if (MPFR_UNLIKELY (MPFR_IS_NAN (a)))
         {
-          MPFR_SET_ERANGE ();
+          MPFR_SET_ERANGEFLAG ();
           return 0;
         }
       /* Remains infinity, handled by the return below. */

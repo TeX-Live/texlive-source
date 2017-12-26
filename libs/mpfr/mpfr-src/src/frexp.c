@@ -26,7 +26,7 @@ int
 mpfr_frexp (mpfr_exp_t *exp, mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd)
 {
   int inex;
-  unsigned int saved_flags = __gmpfr_flags;
+  mpfr_flags_t saved_flags = __gmpfr_flags;
   MPFR_BLOCK_DECL (flags);
 
   MPFR_LOG_FUNC

@@ -108,9 +108,9 @@ mpfr_frac (mpfr_ptr r, mpfr_srcptr u, mpfr_rnd_t rnd_mode)
   t0 = tn - un;
   tp = MPFR_MANT(t);
   if (sh == 0)
-    MPN_COPY_DECR(tp + t0, up, un + 1);
+    mpn_copyd (tp + t0, up, un + 1);
   else /* warning: un may be 0 here */
-    tp[tn] = k | ((un) ? mpn_lshift (tp + t0, up, un, sh) : (mp_limb_t) 0);
+    tp[tn] = k | ((un) ? mpn_lshift (tp + t0, up, un, sh) : MPFR_LIMB_ZERO);
   if (t0 > 0)
     MPN_ZERO(tp, t0);
 

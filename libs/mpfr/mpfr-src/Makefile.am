@@ -18,16 +18,22 @@ AUTOMAKE_OPTIONS = gnu
 # old Automake version.
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = doc src tests tune
+SUBDIRS = doc src tests tune tools/bench
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = mpfr.pc
 
 nobase_dist_doc_DATA = AUTHORS BUGS COPYING COPYING.LESSER NEWS TODO \
   examples/ReadMe examples/divworst.c examples/rndo-add.c examples/sample.c \
-  examples/version.c
+  examples/version.c examples/can_round.c
 
-EXTRA_DIST = PATCHES VERSION \
-  tools/ck-copyright-notice tools/ck-news tools/ck-version-info \
-  tools/get_patches.sh \
+EXTRA_DIST = PATCHES VERSION doc/README.dev doc/check-typography \
+  tools/ck-clz_tab tools/ck-copyright-notice tools/ck-news \
+  tools/ck-version-info tools/get_patches.sh \
   $(DATAFILES)
+
+bench:
+	cd tools/bench && $(MAKE) $(AM_MAKEFLAGS) bench
 
 # Various checks for "make dist".
 # * Check consistency concerning -version-info. Moreover if the VERSION
@@ -39,3 +45,13 @@ dist-hook:
 	cd $(srcdir) && tools/ck-version-info
 	cd $(srcdir) && tools/ck-copyright-notice
 	cd $(srcdir) && tools/ck-news
+	cd $(srcdir) && tools/ck-clz_tab
+	cd $(srcdir)/doc && ./check-typography
+
+# Check that MPFR does not use GMP internal symbols. Of course, do not run
+# this rule if you use --with-gmp-build or --enable-gmp-internals. This
+# test does nothing if --disable-shared has been used.
+check-gmp-symbols:
+	cd src && $(MAKE) check-gmp-symbols
+
+.PHONY: check-gmp-symbols

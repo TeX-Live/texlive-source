@@ -62,7 +62,7 @@ mpfr_acosh (mpfr_ptr y, mpfr_srcptr x , mpfr_rnd_t rnd_mode)
     }
   else if (MPFR_UNLIKELY (comp == 0))
     {
-      MPFR_SET_ZERO (y); /* acosh(1) = 0 */
+      MPFR_SET_ZERO (y); /* acosh(1) = +0 */
       MPFR_SET_POS (y);
       MPFR_RET (0);
     }

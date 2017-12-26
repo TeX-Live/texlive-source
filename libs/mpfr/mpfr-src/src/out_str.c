@@ -73,7 +73,7 @@ mpfr_out_str (FILE *stream, int base, size_t n_digits, mpfr_srcptr op,
     || fputc (*s++, stream) == EOF  /* leading digit */
     || fputc ((unsigned char) MPFR_DECIMAL_POINT, stream) == EOF
     || fputs (s, stream) == EOF;     /* trailing significand */
-  (*__gmp_free_func) (s0, l);
+  mpfr_free_func (s0, l);
   if (MPFR_UNLIKELY (err))
     return 0;
 

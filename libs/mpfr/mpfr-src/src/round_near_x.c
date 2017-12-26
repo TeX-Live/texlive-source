@@ -157,7 +157,10 @@ mpfr_round_near_x (mpfr_ptr y, mpfr_srcptr v, mpfr_uexp_t err, int dir,
                    mpfr_rnd_t rnd)
 {
   int inexact, sign;
-  unsigned int old_flags = __gmpfr_flags;
+  mpfr_flags_t old_flags = __gmpfr_flags;
+
+  if (rnd == MPFR_RNDF)
+    rnd = MPFR_RNDZ;
 
   MPFR_ASSERTD (!MPFR_IS_SINGULAR (v));
   MPFR_ASSERTD (dir == 0 || dir == 1);
@@ -207,21 +210,21 @@ mpfr_round_near_x (mpfr_ptr y, mpfr_srcptr v, mpfr_uexp_t err, int dir,
               inexact = -sign;
               mpfr_nexttozero (y);
               if (MPFR_UNLIKELY (MPFR_IS_ZERO (y)))
-                mpfr_set_underflow ();
+                MPFR_SET_UNDERFLOW ();
             }
         }
       else /* The error term is positive for v positive */
         {
           inexact = -sign;
           /* Round Away */
-            if (rnd != MPFR_RNDN && !MPFR_IS_LIKE_RNDZ (rnd, MPFR_IS_NEG_SIGN(sign)))
+            if (MPFR_IS_LIKE_RNDA (rnd, MPFR_IS_NEG_SIGN(sign)))
             {
               /* case nexttoinf */
               /* The overflow flag should be set if the result is infinity */
               inexact = sign;
               mpfr_nexttoinf (y);
               if (MPFR_UNLIKELY (MPFR_IS_INF (y)))
-                mpfr_set_overflow ();
+                MPFR_SET_OVERFLOW ();
             }
         }
     }

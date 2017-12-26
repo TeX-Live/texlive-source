@@ -26,5 +26,5 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 int
 mpfr_signbit (mpfr_srcptr x)
 {
-  return MPFR_SIGN (x) < 0;
+  return MPFR_IS_NEG (x);
 }
