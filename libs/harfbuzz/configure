@@ -6332,7 +6332,7 @@ if test "x$GCC" = "xyes"; then
 	LDFLAGS="$LDFLAGS -Bsymbolic-functions"
 
 	# Choose C++ version
-	CXXFLAGS="$CXXFLAGS -std=c++11"
+	CXXFLAGS="$CXXFLAGS -std=c++11 -D_GNU_SOURCE"
 
 	# Make sure we don't link to libstdc++
 	CXXFLAGS="$CXXFLAGS -fno-rtti -fno-exceptions"
