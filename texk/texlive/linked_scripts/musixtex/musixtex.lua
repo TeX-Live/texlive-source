@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.18"
+VERSION = "0.19"
 
 --[[
      musixtex.lua: processes MusiXTeX files using prepmx and/or pmxab and/or 
@@ -28,6 +28,11 @@ VERSION = "0.18"
 --[[
 
   ChangeLog:
+
+     version 0.19   2017-12-10 RDT
+       Allow non-standard extensions.
+       Add -M and -A options.
+
      version 0.18   2017-06-13 RDT
        Allow autosp to generate .ltx files
 
@@ -131,6 +136,8 @@ Options: -v  version
          -D dvixx  use dvixx as the dvi processor
          -c  preprocess pmx file using pmxchords
          -m  stop at pmx
+         -M prepmxx use prepmxx as the mtx preprocessor
+         -A autospx use autospx as the aspc preprocessor
          -t  stop at tex/mid
          -s  stop at dvi
          -g  stop at ps
@@ -189,6 +196,7 @@ local dvips = "dvips -e0"
 function defaults()
   prepmx = "prepmx"
   pmx = "pmxab"
+  autosp = "autosp"
   tex = "etex"
   musixflx = "musixflx"
   dvi = dvips
@@ -313,6 +321,12 @@ function process_option(this_arg)
   elseif this_arg == "-m" then
     pmx, tex, dvi, ps2pdf = nil,nil,nil,nil
     protect.pmx = true
+  elseif this_arg == "-M" then
+    narg = narg+1
+    prepmx = arg[narg]
+  elseif this_arg == "-A" then
+    narg = narg+1
+    autosp = arg[narg]
   elseif this_arg == "-q" then
     if not tempname then
       tempname = tempname or os.tmpname()
@@ -327,40 +341,21 @@ end
 
 function find_file(this_arg)
   basename, extension = this_arg:match"(.*)%.(.*)"  
-  if extension then
   extensions = {["mtx"] = true, ["pmx"] = true, ["aspc"] = true, ["tex"] = true, ["ltx"] = true}
-  if not extensions[extension] then
-      print("!! extension " .. extension .. " unrecognized; valid extensions are mtx|pmx|aspc|tex|ltx.")
-      exit_code = exit_code+1
-      return
+  if extensions[extension] then
+    return basename, extension
+  end
+  basename, extension  = this_arg, null
+  for ext in ("mtx,pmx,aspc,tex,ltx"):gmatch"[^,]+" do
+    if exists (basename .. "." .. ext) then
+      extension = ext
+      break
     end
-  else
-    basename = this_arg 
-    for ext in ("mtx,pmx,aspc,tex,ltx"):gmatch"[^,]+" do
-      if exists (basename .. "." .. ext) then
-        extension = ext
-        break
-     end
-    end
-    if not extension then
-      print("!! No file " .. basename .. ".[mtx|pmx|aspc|tex|ltx]")
-      exit_code = exit_code+1
-      return
-    end
-  end       
-  if tex then -- tex output enabled, now select engine
-    if tex:match"pdf" then dvi = nil end
-    if not dvi then ps2pdf = nil end
-    -- .ltx extension will be taken into account later, in `process`
-    -- deduce tex/latex from current engine name if -l is not specified
-    if not override:match"l" then latex = tex:match"latex" end 
-    if not force_engine then -- select appropriate default engine
-      if latex then 
-        if dvi==nil then tex = "pdflatex" else tex = "latex" end
-      else 
-        if dvi==nil then tex = "pdfetex" else tex = "etex" end
-      end  
-    end
+  end
+  if extension == null then
+    print("!! No file " .. basename .. ".[mtx|pmx|aspc|tex|ltx]")
+    exit_code = exit_code+1
+    return
   end
   return basename, extension
 end
@@ -405,7 +400,7 @@ function preprocess(basename,extension)
     end
   end
   if extension == "aspc" then
-    if execute ("autosp " .. basename .. ".aspc" ) == 0 then
+    if execute (autosp .. " " .. basename .. ".aspc" ) == 0 then
       if exists ( basename .. ".ltx")
         then extension = "ltx"
         else extension = "tex"
@@ -564,6 +559,20 @@ repeat
   if this_arg:match"^%-" then process_option(this_arg)
   else
     basename, extension = find_file(this_arg)  -- nil,nil if not found
+    if tex then -- tex output enabled, now select engine
+      if tex:match"pdf" then dvi = nil end
+      if not dvi then ps2pdf = nil end
+      -- .ltx extension will be taken into account later, in `process`
+      -- deduce tex/latex from current engine name if -l is not specified
+      if not override:match"l" then latex = tex:match"latex" end 
+      if not force_engine then -- select appropriate default engine
+        if latex then 
+          if dvi==nil then tex = "pdflatex" else tex = "latex" end
+        else 
+          if dvi==nil then tex = "pdfetex" else tex = "etex" end
+        end  
+      end
+    end
     extension = preprocess(basename, extension)
     tex_process(tex,basename,extension)
     if basename and io.open(basename..".log") then -- to be printed later
