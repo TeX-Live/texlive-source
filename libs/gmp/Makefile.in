@@ -140,6 +140,8 @@ am__objects_2 = mp_bases.$(OBJEXT) popcount.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/binvert.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/cmp.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/com.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/copyd.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/copyi.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_q.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_qr.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/dcpi1_div_q.$(OBJEXT) \
@@ -241,24 +243,29 @@ am__objects_3 = @GMP_TREE@/mpz/abs.$(OBJEXT) \
 	@GMP_TREE@/mpz/aorsmul.$(OBJEXT) \
 	@GMP_TREE@/mpz/aorsmul_i.$(OBJEXT) \
 	@GMP_TREE@/mpz/cfdiv_q_2exp.$(OBJEXT) \
-	@GMP_TREE@/mpz/clear.$(OBJEXT) @GMP_TREE@/mpz/cmp_ui.$(OBJEXT) \
+	@GMP_TREE@/mpz/clear.$(OBJEXT) @GMP_TREE@/mpz/cmp.$(OBJEXT) \
+	@GMP_TREE@/mpz/cmp_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/cmpabs.$(OBJEXT) \
 	@GMP_TREE@/mpz/divexact.$(OBJEXT) \
 	@GMP_TREE@/mpz/fdiv_q.$(OBJEXT) \
 	@GMP_TREE@/mpz/fdiv_q_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/fdiv_qr.$(OBJEXT) \
+	@GMP_TREE@/mpz/fits_slong.$(OBJEXT) \
 	@GMP_TREE@/mpz/gcdext.$(OBJEXT) \
 	@GMP_TREE@/mpz/get_si.$(OBJEXT) @GMP_TREE@/mpz/init.$(OBJEXT) \
-	@GMP_TREE@/mpz/invert.$(OBJEXT) @GMP_TREE@/mpz/iset.$(OBJEXT) \
-	@GMP_TREE@/mpz/iset_ui.$(OBJEXT) @GMP_TREE@/mpz/mod.$(OBJEXT) \
-	@GMP_TREE@/mpz/mul.$(OBJEXT) @GMP_TREE@/mpz/mul_2exp.$(OBJEXT) \
+	@GMP_TREE@/mpz/init2.$(OBJEXT) @GMP_TREE@/mpz/invert.$(OBJEXT) \
+	@GMP_TREE@/mpz/iset.$(OBJEXT) @GMP_TREE@/mpz/iset_ui.$(OBJEXT) \
+	@GMP_TREE@/mpz/mod.$(OBJEXT) @GMP_TREE@/mpz/mul.$(OBJEXT) \
+	@GMP_TREE@/mpz/mul_2exp.$(OBJEXT) \
 	@GMP_TREE@/mpz/mul_si.$(OBJEXT) \
 	@GMP_TREE@/mpz/mul_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/n_pow_ui.$(OBJEXT) @GMP_TREE@/mpz/neg.$(OBJEXT) \
 	@GMP_TREE@/mpz/powm.$(OBJEXT) @GMP_TREE@/mpz/powm_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/realloc.$(OBJEXT) \
-	@GMP_TREE@/mpz/scan1.$(OBJEXT) @GMP_TREE@/mpz/set.$(OBJEXT) \
-	@GMP_TREE@/mpz/size.$(OBJEXT) @GMP_TREE@/mpz/set_ui.$(OBJEXT) \
+	@GMP_TREE@/mpz/realloc2.$(OBJEXT) \
+	@GMP_TREE@/mpz/scan0.$(OBJEXT) @GMP_TREE@/mpz/scan1.$(OBJEXT) \
+	@GMP_TREE@/mpz/set.$(OBJEXT) @GMP_TREE@/mpz/size.$(OBJEXT) \
+	@GMP_TREE@/mpz/set_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/sizeinbase.$(OBJEXT) \
 	@GMP_TREE@/mpz/sqrt.$(OBJEXT) @GMP_TREE@/mpz/sub.$(OBJEXT) \
 	@GMP_TREE@/mpz/sub_ui.$(OBJEXT) @GMP_TREE@/mpz/swap.$(OBJEXT) \
@@ -776,6 +783,8 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/binvert.c \
 	@GMP_TREE@/mpn/generic/cmp.c \
 	@GMP_TREE@/mpn/generic/com.c \
+	@GMP_TREE@/mpn/generic/copyd.c \
+	@GMP_TREE@/mpn/generic/copyi.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_q.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_qr.c \
 	@GMP_TREE@/mpn/generic/dcpi1_div_q.c \
@@ -893,8 +902,6 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/cnd_add_n.c \
 	@GMP_TREE@/mpn/generic/cnd_sub_n.c \
 	@GMP_TREE@/mpn/generic/comb_tables.c \
-	@GMP_TREE@/mpn/generic/copyd.c \
-	@GMP_TREE@/mpn/generic/copyi.c \
 	@GMP_TREE@/mpn/generic/div_qr_1.c \
 	@GMP_TREE@/mpn/generic/div_qr_1n_pi1.c \
 	@GMP_TREE@/mpn/generic/div_qr_2.c \
@@ -956,15 +963,18 @@ mpz_sources = \
 	@GMP_TREE@/mpz/aorsmul_i.c \
 	@GMP_TREE@/mpz/cfdiv_q_2exp.c \
 	@GMP_TREE@/mpz/clear.c \
+	@GMP_TREE@/mpz/cmp.c \
 	@GMP_TREE@/mpz/cmp_ui.c \
 	@GMP_TREE@/mpz/cmpabs.c \
 	@GMP_TREE@/mpz/divexact.c \
 	@GMP_TREE@/mpz/fdiv_q.c \
 	@GMP_TREE@/mpz/fdiv_q_ui.c \
 	@GMP_TREE@/mpz/fdiv_qr.c \
+	@GMP_TREE@/mpz/fits_slong.c \
 	@GMP_TREE@/mpz/gcdext.c \
 	@GMP_TREE@/mpz/get_si.c \
 	@GMP_TREE@/mpz/init.c \
+	@GMP_TREE@/mpz/init2.c \
 	@GMP_TREE@/mpz/invert.c \
 	@GMP_TREE@/mpz/iset.c \
 	@GMP_TREE@/mpz/iset_ui.c \
@@ -978,6 +988,8 @@ mpz_sources = \
 	@GMP_TREE@/mpz/powm.c \
 	@GMP_TREE@/mpz/powm_ui.c \
 	@GMP_TREE@/mpz/realloc.c \
+	@GMP_TREE@/mpz/realloc2.c \
+	@GMP_TREE@/mpz/scan0.c \
 	@GMP_TREE@/mpz/scan1.c \
 	@GMP_TREE@/mpz/set.c \
 	@GMP_TREE@/mpz/size.c \
@@ -1011,7 +1023,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/cfdiv_r_2exp.c \
 	@GMP_TREE@/mpz/clears.c \
 	@GMP_TREE@/mpz/clrbit.c \
-	@GMP_TREE@/mpz/cmp.c \
 	@GMP_TREE@/mpz/cmp_d.c \
 	@GMP_TREE@/mpz/cmp_si.c \
 	@GMP_TREE@/mpz/cmpabs_d.c \
@@ -1036,7 +1047,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/fib2_ui.c \
 	@GMP_TREE@/mpz/fib_ui.c \
 	@GMP_TREE@/mpz/fits_sint.c \
-	@GMP_TREE@/mpz/fits_slong.c \
 	@GMP_TREE@/mpz/fits_sshort.c \
 	@GMP_TREE@/mpz/fits_uint.c \
 	@GMP_TREE@/mpz/fits_ulong.c \
@@ -1050,7 +1060,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/getlimbn.c \
 	@GMP_TREE@/mpz/hamdist.c \
 	@GMP_TREE@/mpz/import.c \
-	@GMP_TREE@/mpz/init2.c \
 	@GMP_TREE@/mpz/inits.c \
 	@GMP_TREE@/mpz/inp_raw.c \
 	@GMP_TREE@/mpz/inp_str.c \
@@ -1087,13 +1096,11 @@ mpz_unused = \
 	@GMP_TREE@/mpz/prodlimbs.c \
 	@GMP_TREE@/mpz/random.c \
 	@GMP_TREE@/mpz/random2.c \
-	@GMP_TREE@/mpz/realloc2.c \
 	@GMP_TREE@/mpz/remove.c \
 	@GMP_TREE@/mpz/roinit_n.c \
 	@GMP_TREE@/mpz/root.c \
 	@GMP_TREE@/mpz/rootrem.c \
 	@GMP_TREE@/mpz/rrandomb.c \
-	@GMP_TREE@/mpz/scan0.c \
 	@GMP_TREE@/mpz/set_d.c \
 	@GMP_TREE@/mpz/set_f.c \
 	@GMP_TREE@/mpz/set_q.c \
@@ -1253,6 +1260,12 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/com.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/copyd.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/copyi.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/dcpi1_bdiv_q.$(OBJEXT):  \
@@ -1563,6 +1576,8 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/clear.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/cmp.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/cmp_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/cmpabs.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
@@ -1575,11 +1590,15 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/fdiv_qr.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/fits_slong.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/gcdext.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/get_si.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/init.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/init2.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/invert.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
@@ -1606,6 +1625,10 @@ clean-noinstLIBRARIES:
 @GMP_TREE@/mpz/powm_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/realloc.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/realloc2.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/scan0.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/scan1.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
@@ -1689,6 +1712,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/binvert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/cmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/com.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/copyd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/copyi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_bdiv_q.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_bdiv_qr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_div_q.Po@am__quote@
@@ -1792,15 +1817,18 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/aorsmul_i.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/cfdiv_q_2exp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/clear.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/cmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/cmp_ui.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/cmpabs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/divexact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fdiv_q.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fdiv_q_ui.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fdiv_qr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fits_slong.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/gcdext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/get_si.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/init.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/init2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/invert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/iset.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/iset_ui.Po@am__quote@
@@ -1814,6 +1842,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/powm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/powm_ui.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/realloc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/realloc2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/scan0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/scan1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/set.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/set_ui.Po@am__quote@
