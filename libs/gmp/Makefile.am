@@ -89,6 +89,8 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/binvert.c \
 	@GMP_TREE@/mpn/generic/cmp.c \
 	@GMP_TREE@/mpn/generic/com.c \
+	@GMP_TREE@/mpn/generic/copyd.c \
+	@GMP_TREE@/mpn/generic/copyi.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_q.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_qr.c \
 	@GMP_TREE@/mpn/generic/dcpi1_div_q.c \
@@ -206,8 +208,6 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/cnd_add_n.c \
 	@GMP_TREE@/mpn/generic/cnd_sub_n.c \
 	@GMP_TREE@/mpn/generic/comb_tables.c \
-	@GMP_TREE@/mpn/generic/copyd.c \
-	@GMP_TREE@/mpn/generic/copyi.c \
 	@GMP_TREE@/mpn/generic/div_qr_1.c \
 	@GMP_TREE@/mpn/generic/div_qr_1n_pi1.c \
 	@GMP_TREE@/mpn/generic/div_qr_2.c \
@@ -269,15 +269,18 @@ mpz_sources = \
 	@GMP_TREE@/mpz/aorsmul_i.c \
 	@GMP_TREE@/mpz/cfdiv_q_2exp.c \
 	@GMP_TREE@/mpz/clear.c \
+	@GMP_TREE@/mpz/cmp.c \
 	@GMP_TREE@/mpz/cmp_ui.c \
 	@GMP_TREE@/mpz/cmpabs.c \
 	@GMP_TREE@/mpz/divexact.c \
 	@GMP_TREE@/mpz/fdiv_q.c \
 	@GMP_TREE@/mpz/fdiv_q_ui.c \
 	@GMP_TREE@/mpz/fdiv_qr.c \
+	@GMP_TREE@/mpz/fits_slong.c \
 	@GMP_TREE@/mpz/gcdext.c \
 	@GMP_TREE@/mpz/get_si.c \
 	@GMP_TREE@/mpz/init.c \
+	@GMP_TREE@/mpz/init2.c \
 	@GMP_TREE@/mpz/invert.c \
 	@GMP_TREE@/mpz/iset.c \
 	@GMP_TREE@/mpz/iset_ui.c \
@@ -291,6 +294,8 @@ mpz_sources = \
 	@GMP_TREE@/mpz/powm.c \
 	@GMP_TREE@/mpz/powm_ui.c \
 	@GMP_TREE@/mpz/realloc.c \
+	@GMP_TREE@/mpz/realloc2.c \
+	@GMP_TREE@/mpz/scan0.c \
 	@GMP_TREE@/mpz/scan1.c \
 	@GMP_TREE@/mpz/set.c \
 	@GMP_TREE@/mpz/size.c \
@@ -324,7 +329,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/cfdiv_r_2exp.c \
 	@GMP_TREE@/mpz/clears.c \
 	@GMP_TREE@/mpz/clrbit.c \
-	@GMP_TREE@/mpz/cmp.c \
 	@GMP_TREE@/mpz/cmp_d.c \
 	@GMP_TREE@/mpz/cmp_si.c \
 	@GMP_TREE@/mpz/cmpabs_d.c \
@@ -349,7 +353,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/fib2_ui.c \
 	@GMP_TREE@/mpz/fib_ui.c \
 	@GMP_TREE@/mpz/fits_sint.c \
-	@GMP_TREE@/mpz/fits_slong.c \
 	@GMP_TREE@/mpz/fits_sshort.c \
 	@GMP_TREE@/mpz/fits_uint.c \
 	@GMP_TREE@/mpz/fits_ulong.c \
@@ -363,7 +366,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/getlimbn.c \
 	@GMP_TREE@/mpz/hamdist.c \
 	@GMP_TREE@/mpz/import.c \
-	@GMP_TREE@/mpz/init2.c \
 	@GMP_TREE@/mpz/inits.c \
 	@GMP_TREE@/mpz/inp_raw.c \
 	@GMP_TREE@/mpz/inp_str.c \
@@ -400,13 +402,11 @@ mpz_unused = \
 	@GMP_TREE@/mpz/prodlimbs.c \
 	@GMP_TREE@/mpz/random.c \
 	@GMP_TREE@/mpz/random2.c \
-	@GMP_TREE@/mpz/realloc2.c \
 	@GMP_TREE@/mpz/remove.c \
 	@GMP_TREE@/mpz/roinit_n.c \
 	@GMP_TREE@/mpz/root.c \
 	@GMP_TREE@/mpz/rootrem.c \
 	@GMP_TREE@/mpz/rrandomb.c \
-	@GMP_TREE@/mpz/scan0.c \
 	@GMP_TREE@/mpz/set_d.c \
 	@GMP_TREE@/mpz/set_f.c \
 	@GMP_TREE@/mpz/set_q.c \
