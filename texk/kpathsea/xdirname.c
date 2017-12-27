@@ -43,15 +43,9 @@ xdirname (const_string name)
         limit = 2;
     } else if (IS_UNC_NAME(name)) {
         for (limit = 2; name[limit] && !IS_DIR_SEP (name[limit]); limit++)
-#if defined(WIN32) && defined(KPSE_COMPAT_API)
-            if (IS_KANJI(name+limit)) limit++
-#endif
             ;
         if (name[limit++] && name[limit] && !IS_DIR_SEP (name[limit])) {
             for (; name[limit] && !IS_DIR_SEP (name[limit]); limit++)
-#if defined(WIN32) && defined(KPSE_COMPAT_API)
-                if (IS_KANJI(name+limit)) limit++
-#endif
                 ;
             limit--;
         } else
