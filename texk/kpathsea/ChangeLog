@@ -1,6 +1,6 @@
 2017-12-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* xbasename.c: Remove IS_KANJI test for UNC names.
+	* xbasename.c, xdirname.c: Remove IS_KANJI test for UNC names.
 	Report by Douglas McKenna:
 	http://tug.org/pipermail/tex-k/2017-December/002840.html
 
