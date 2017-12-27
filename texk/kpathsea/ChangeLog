@@ -1,3 +1,9 @@
+2017-12-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* xbasename.c: Remove IS_KANJI test for UNC names.
+	Report by Douglas McKenna:
+	http://tug.org/pipermail/tex-k/2017-December/002840.html
+
 2017-12-09  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* tex-glyph.c (try_fallback_resolutions):
