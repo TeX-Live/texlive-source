@@ -1,3 +1,8 @@
+2016-12-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Makefile.am: Move several files from unused to used
+	to avoid link error for mpfr-4.0.0.
+
 2017-01-11  Karl Berry  <karl@tug.org>
 
 	* m4/gmp-alloca.m4: use gmp-src instead of gmp-6.1.2.
