@@ -38,15 +38,9 @@ xbasename (const_string name)
         unsigned limit;
 
         for (limit = 2; name[limit] && !IS_DIR_SEP (name[limit]); limit++)
-#if defined(WIN32) && defined (KPSE_COMPAT_API)
-            if (IS_KANJI(name+limit)) limit++
-#endif
             ;
         if (name[limit++] && name[limit] && !IS_DIR_SEP (name[limit])) {
             for (; name[limit] && !IS_DIR_SEP (name[limit]); limit++)
-#if defined(WIN32) && defined (KPSE_COMPAT_API)
-                if (IS_KANJI(name+limit)) limit++
-#endif
                 ;
         } else
             /* malformed UNC name, backup */
