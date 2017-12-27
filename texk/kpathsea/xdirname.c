@@ -1,6 +1,6 @@
 /* xdirname.c: return the directory part of a path.
 
-   Copyright 1999, 2008, 2011, 2016 Karl Berry.
+   Copyright 1999, 2008, 2011, 2016, 2017 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or

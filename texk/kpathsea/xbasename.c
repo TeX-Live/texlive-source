@@ -1,6 +1,6 @@
 /* xbasename.c: return the last element in a path.
 
-   Copyright 1992, 1994, 1995, 1996, 2008, 2011, 2016 Karl Berry.
+   Copyright 1992, 1994, 1995, 1996, 2008, 2011, 2016, 2017 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
