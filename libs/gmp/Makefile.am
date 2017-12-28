@@ -279,6 +279,7 @@ mpz_sources = \
 	@GMP_TREE@/mpz/fits_slong.c \
 	@GMP_TREE@/mpz/gcdext.c \
 	@GMP_TREE@/mpz/get_si.c \
+	@GMP_TREE@/mpz/get_ui.c \
 	@GMP_TREE@/mpz/init.c \
 	@GMP_TREE@/mpz/init2.c \
 	@GMP_TREE@/mpz/invert.c \
@@ -362,7 +363,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/get_d.c \
 	@GMP_TREE@/mpz/get_d_2exp.c \
 	@GMP_TREE@/mpz/get_str.c \
-	@GMP_TREE@/mpz/get_ui.c \
 	@GMP_TREE@/mpz/getlimbn.c \
 	@GMP_TREE@/mpz/hamdist.c \
 	@GMP_TREE@/mpz/import.c \

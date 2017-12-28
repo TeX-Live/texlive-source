@@ -252,7 +252,8 @@ am__objects_3 = @GMP_TREE@/mpz/abs.$(OBJEXT) \
 	@GMP_TREE@/mpz/fdiv_qr.$(OBJEXT) \
 	@GMP_TREE@/mpz/fits_slong.$(OBJEXT) \
 	@GMP_TREE@/mpz/gcdext.$(OBJEXT) \
-	@GMP_TREE@/mpz/get_si.$(OBJEXT) @GMP_TREE@/mpz/init.$(OBJEXT) \
+	@GMP_TREE@/mpz/get_si.$(OBJEXT) \
+	@GMP_TREE@/mpz/get_ui.$(OBJEXT) @GMP_TREE@/mpz/init.$(OBJEXT) \
 	@GMP_TREE@/mpz/init2.$(OBJEXT) @GMP_TREE@/mpz/invert.$(OBJEXT) \
 	@GMP_TREE@/mpz/iset.$(OBJEXT) @GMP_TREE@/mpz/iset_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/mod.$(OBJEXT) @GMP_TREE@/mpz/mul.$(OBJEXT) \
@@ -973,6 +974,7 @@ mpz_sources = \
 	@GMP_TREE@/mpz/fits_slong.c \
 	@GMP_TREE@/mpz/gcdext.c \
 	@GMP_TREE@/mpz/get_si.c \
+	@GMP_TREE@/mpz/get_ui.c \
 	@GMP_TREE@/mpz/init.c \
 	@GMP_TREE@/mpz/init2.c \
 	@GMP_TREE@/mpz/invert.c \
@@ -1056,7 +1058,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/get_d.c \
 	@GMP_TREE@/mpz/get_d_2exp.c \
 	@GMP_TREE@/mpz/get_str.c \
-	@GMP_TREE@/mpz/get_ui.c \
 	@GMP_TREE@/mpz/getlimbn.c \
 	@GMP_TREE@/mpz/hamdist.c \
 	@GMP_TREE@/mpz/import.c \
@@ -1596,6 +1597,8 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/get_si.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/get_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/init.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/init2.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
@@ -1827,6 +1830,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fits_slong.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/gcdext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/get_si.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/get_ui.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/init.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/init2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/invert.Po@am__quote@
