@@ -83,7 +83,8 @@ texmf_shell_scripts = \
 	texosquery/texosquery.sh \
 	texosquery/texosquery-jre5.sh \
 	texosquery/texosquery-jre8.sh \
-	typeoutfileinfo/typeoutfileinfo.sh
+	typeoutfileinfo/typeoutfileinfo.sh \
+	wordcount/wordcount.sh
 texmf_other_scripts = \
 	a2ping/a2ping.pl \
 	accfonts/mkt1font \
