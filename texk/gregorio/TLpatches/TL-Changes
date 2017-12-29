@@ -1,5 +1,5 @@
-Changes applied to the gregorio-5.0.1 tree as obtained from:
-	https://github.com/gregorio-project/gregorio/releases/download/v5.0.1
+Changes applied to the gregorio-5.0.2 tree as obtained from:
+	https://github.com/gregorio-project/gregorio/releases/download/v5.0.2
 
 Remove:
 	Makefile.in

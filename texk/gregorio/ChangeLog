@@ -1,3 +1,8 @@
+2017-12-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import gregorio-5.0.2. (nothing changed except for the version)
+	* version.ac: Adapted.
+
 2017-04-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Import gregorio-5.0.1.
