@@ -1,4 +1,4 @@
-2016-12-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2017-12-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Makefile.am: Move several files from unused to used
 	to avoid link error for mpfr-4.0.0.
