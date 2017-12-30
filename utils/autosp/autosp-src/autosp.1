@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH AUTOSP 1 2017-07-140  "" ""
+.TH AUTOSP 1 2017-12-19  "" ""
 
 .SH NAME
 autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
@@ -136,9 +136,10 @@ coded using the standard \\def\\atnextbar notation but
 the non-standard command \\Cpause in a note segment also generates a
 bar-centered rest.
 
-Spacing commands \\sk and \\hsk in the source are discarded
-(but not \\qsk, \\tqsk, \\hqsk or \\qqsk);
-however,
+Spacing commands \\sk and \\bsk in the source are discarded,
+but not "small" skips \\hsk, \\qsk, \\tqsk, \\hqsk or \\qqsk,
+or the small "backward" skips \\hbsk, \\bqsk, \\btsk, or \\bhsk.
+Moreover,
 non-standard commands
 \\QQsk, \\HQsk \\TQsk and \\Qsk in the source generate "global" skips; i.e., the effect of \\qqsk, \\hqsk, \\tqsk or \\qsk, respectively,  in 
 .I every 
@@ -146,17 +147,21 @@ staff. These ensure that staffs remain synchronized if additional spacing is nee
 
 Global skips may also be obtained within collective-coding sequences by using
 up to four successive commas 
-to get the effects of \\qqsk, \\hqsk, \\tqsk or \\qsk, respectively,
-as global skips.
-Global skips are 
-automatically inserted before accidentals ('^', '_', '=', '<', '>') on collective-coding notes. 
-If the automatic spacing is insufficient, the spacing may be increased by adding sufficient commas or 
-using a conventional notes command instead of \\anotes.  Automatic skips are 
+to get the effects of \\QQsk, \\HQsk, \\TQsk or \\Qsk, respectively.
+Global skips \\tqsk (or, for double-flats, \\qsk) are 
+automatically inserted before accidentals ('^', '_', '=', '<', '>') on collective-coding notes
+(except when the preceding note is "virtual"; i.e., a skip).
+If this automatic additional spacing is 
 .I not 
-inserted
-for any of the 
+wanted in some context, it may be avoided by
+replacing 
+the accidental in the collective-coding sequence
+by 
+any of the 
 .I explicit 
 accidental commands: \\sh, \\fl, \\na, \\smallsh, \\bigsh, etc.
+If the automatic spacing is insufficient, the spacing may be increased by adding sufficient commas or 
+using a conventional notes command instead of \\anotes.  
 
 
 A note segment can be completely empty, but if a note segment should start
@@ -164,11 +169,14 @@ with or contain a "space," the note-value
 of that space must be made explicit with a command of the
 form \\ha{*}, \\qa{.*}, \\qa{*}, \\ca{*}, etc. 
 
-From version 2017-06-14, the effects of \\TransformNotes calls are implemented by the pre-processor. This
+From version 2017-06-14, the effects of \\TransformNotes calls are implemented by the 
+.B autosp
+pre-processor. This
 enables use of 
+musixlyr in
 .B autosp 
-scores
-with musixlyr.tex, which is incompatible with the
+scores; musixlyr.tex 
+is incompatible with the
 musixtnt.tex 
 implementation of \\TransformNotes.
 
@@ -215,6 +223,7 @@ of 1.45\\elemskip is used. If this isn't suitable and can't be corrected with a 
 supports 
 .I x-tuplets 
 introduced using \\xtuplet{\fIx\fP}
+or \\xxtuplet{\fIx:y\fP}
 and 
 .I triplets 
 introduced
@@ -228,11 +237,6 @@ using any of the following commands (regardless of any re-definition of \\txt or
   \\downtuplet
 
 .fi
-However,
-MusiXTeX notation does not 
-specify the 
-.I intended 
-duration of an x-tuplet.
 .B autosp 
 assumes that an x-tuplet is to be played in 
 (\fIx\fP\-1)/\fIx\fP 
@@ -240,23 +244,58 @@ of the apparent x-tuplet duration.
 So, for example, a triplet in eighths is assumed to be played in the time of one quarter note.
 If this assumption
 isn't valid, the x-tuplet must
-be coded explicitly using a \\vnotes command; see the first
+be coded explicitly using a suitable \\vnotes command; see the first
 measure of barsant2.aspc for an example of a non-standard x-tuplet: a 5-tuple 
 of 64th notes with an intended duration
 of 
 .I six 
 64ths.
-.B autosp
-cannot deal with simultaneous x-tuplets in multiple staffs unless the x values and
-note durations are identical. 
 
-User-defined macros are generally not processed or expanded; however, definitions of the form
+In some polyrhythmic scores, the \\txt numeral may be displaced, even if the notes
+themselves are correctly spaced. In these cases, it is possible to suppress 
+the normal output of \\txt by using the non-standard commands \\Triolet (no arguments)
+or \\Xtuplet{k}\\
+and placing a numeral at the correct location using \\zcn (i.e., \\zcharnote).
+
+.B autosp
+can deal with simultaneous x-tuplets in multiple staffs provided the x values and
+total note durations are identical.  
+
+In some baroque scores, particularly by J.S. Bach, a beamed sixteenth note is vertically aligned
+with
+the third note of a triplet of eighth notes in another staff (implying that they should
+be sounded simultaneously); e.g.,
+.nf
+
+    \\ibl0L0\\qb0{.L}\\tqql0L
+
+.fi
+would be played as if notated 
+.nf
+
+    \\uptrio{b}10\\ql L\\hroff{\\cl L}
+
+.fi
+The following coding will align the beamed sixteenth note 
+with the third note of a triplet in another staff:
+.nf
+
+    \\ibl0L0\\qb0{.L}\\hbsk\\tqql0L
+
+.fi
+and, similarly, for triplets of sixteenth notes:
+.nf
+
+    \\ibbu0J0\\qb0{.J}\\hbsk\\nqqqu0J\\qb0{.J}\\hbsk\\tqqqu0J
+
+.fi
+Generally, user-defined macros are not processed or expanded; however, definitions of the form
 .nf
 
     \\def\\atnextbar{\\znotes ... \\en}
 
 .fi
-generate definitions that take account of \\TransformNotes.
+generate definitions that do take account of \\TransformNotes.
 
 All staffs are assumed to have the same meter; see kinder2.aspc for
 an example of how to work around this.
@@ -270,9 +309,13 @@ initially and add them into the resulting TeX file.
 .SH EXAMPLES
 See files quod2.aspc, kinder2.aspc, geminiani.aspc and barsant2.aspc for scores suitable for input to  
 .BR autosp .
+The program
+.B tex2aspc
+can be used to convert "legacy" MusiXTeX scores to .aspc format.
 
 .SH SEE ALSO
 .BR msxlint (1)
+.BR tex2aspc (1)
 .PP 
 musixdoc.pdf
 

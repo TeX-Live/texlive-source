@@ -1,0 +1,21 @@
+#! /bin/sh -vx
+
+# Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+echo && echo "*** tex2aspc --help"
+./tex2aspc --help || exit 1
+
+echo && echo "*** tex2aspc --version"
+./tex2aspc --version || exit 1
+
+echo && echo "*** tex2aspc  (missing infile)"
+./tex2aspc  && exit 1
+
+echo && echo "*** tex2aspc quod2.tex quod4.aspc"
+cp tests/quod4.aspc .
+rm -f quod4.aspc
+./tex2aspc quod2.tex quod4.aspc || exit 1
+
+echo && echo "*** diff quod4.aspc tests/quod4.aspc"
+diff quod4.aspc tests/quod4.aspc || exit 1

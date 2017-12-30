@@ -76,7 +76,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = autosp$(EXEEXT) rebar$(EXEEXT)
+bin_PROGRAMS = autosp$(EXEEXT) rebar$(EXEEXT) tex2aspc$(EXEEXT)
 subdir = .
 DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
@@ -101,6 +101,9 @@ autosp_LDADD = $(LDADD)
 am_rebar_OBJECTS = utils.$(OBJEXT) rebar.$(OBJEXT)
 rebar_OBJECTS = $(am_rebar_OBJECTS)
 rebar_LDADD = $(LDADD)
+am_tex2aspc_OBJECTS = utils.$(OBJEXT) tex2aspc.$(OBJEXT)
+tex2aspc_OBJECTS = $(am_tex2aspc_OBJECTS)
+tex2aspc_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -129,8 +132,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(autosp_SOURCES) $(rebar_SOURCES)
-DIST_SOURCES = $(autosp_SOURCES) $(rebar_SOURCES)
+SOURCES = $(autosp_SOURCES) $(rebar_SOURCES) $(tex2aspc_SOURCES)
+DIST_SOURCES = $(autosp_SOURCES) $(rebar_SOURCES) $(tex2aspc_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -468,12 +471,13 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 autosp_SOURCES = utils.h utils.c autosp.c 
 rebar_SOURCES = utils.h utils.c rebar.c
+tex2aspc_SOURCES = utils.h utils.c tex2aspc.c
 AM_CFLAGS = -O4 -ansi -Wall -Wextra -pedantic-errors
-dist_man_MANS = autosp.1 rebar.1 
-TESTS = autosp.test rebar.test 
+dist_man_MANS = autosp.1 rebar.1 tex2aspc.1
+TESTS = autosp.test rebar.test tex2aspc.test
 EXTRA_DIST = $(TESTS) tests/quod2.aspc tests/quod2.tex \
-	tests/quod3.aspc
-DISTCLEANFILES = quod2.* quod3.*
+	tests/quod3.aspc tests/quod4.aspc
+DISTCLEANFILES = quod2.* quod3.* quod4.*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -579,6 +583,10 @@ rebar$(EXEEXT): $(rebar_OBJECTS) $(rebar_DEPENDENCIES) $(EXTRA_rebar_DEPENDENCIE
 	@rm -f rebar$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(rebar_OBJECTS) $(rebar_LDADD) $(LIBS)
 
+tex2aspc$(EXEEXT): $(tex2aspc_OBJECTS) $(tex2aspc_DEPENDENCIES) $(EXTRA_tex2aspc_DEPENDENCIES) 
+	@rm -f tex2aspc$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tex2aspc_OBJECTS) $(tex2aspc_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -587,6 +595,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autosp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rebar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tex2aspc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
 
 .c.o:
