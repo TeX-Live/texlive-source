@@ -1,7 +1,21 @@
 AUTOSP
 
-  Determination of automatic spacing for accidentals simplified
-  Many comments corrected and expanded
+2017-12-21
+
+  Allow for new commands \nqq, \nqqq, \hap and \happ.
+  Allow for single-note xtuplet.
+  Handle restbars > 1 in process_xtuplet or process_appogg
+
+2017-10-10
+
+  Corrected nastaffs setting for \startpiece and \startextract.
+  Introduced vspacings_active[i] to suppress unnecesary added spacing for 
+    accidentals.
+  Applying TransformNotes to bar_rest output.
+
+2017-07-14
+
+  Automatic added spacing for all collective-coding accidentals.
 
 2017-06-21
 

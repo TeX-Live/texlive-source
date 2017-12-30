@@ -1,0 +1,37 @@
+.\" This manpage is licensed under the GNU Public License
+.TH TEX2ASPC 1 2017-12-13  "" ""
+
+.SH NAME
+
+tex2aspc \- converts conventional MusiXTeX scores to .aspc format 
+for processing by
+.BR autosp (1).
+
+.SH SYNOPSIS
+
+.B tex2aspc 
+.RB  [ \-v\ |\ \-\-version\ |\ \-h\ |\ \-\-help ]
+
+.B tex2aspc
+.IR infile [\fR.tex\fP]
+.RI [ outfile [ \fR.aspc\fP ]]
+
+This program re-factors (sequences of) conventional 
+note-spacing commands (\\notes \\Notes \\NOtes ...)
+into
+\\anotes commands.
+This is intended for "legacy" scores in order to take advantage of
+features 
+only provided by 
+.BR autosp (1),
+such as "global" skips.
+
+.SH SEE ALSO
+.BR autosp (1)
+.PP 
+musixdoc.pdf
+
+.SH AUTHOR 
+This program and manual page were written by Bob Tennent <rdt@cs.queensu.ca>.
+
+
