@@ -1,0 +1,4 @@
+2018-01-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Add patch-01-binary-write to avoid errors in test on
+	Windows.
