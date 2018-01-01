@@ -1,0 +1,73 @@
+diff -ur autosp-2017-12-26.orig/autosp.c autosp-2017-12-26/autosp.c
+--- autosp-2017-12-26.orig/autosp.c	Fri Dec 22 23:28:50 2017
++++ autosp-2017-12-26/autosp.c	Mon Jan 01 09:04:08 2018
+@@ -511,7 +511,7 @@
+     update_global_skip (n);
+       /* commas will be discarded by filter_output (i) */
+     if (*s == '.' && new_beaming == 0 && !dottedbeamnotes) 
+-      spacing = spacing * 1.50; 
++      spacing = (int)(spacing * 1.50); 
+     else if ( (*s == '^' || *s == '_' || *s == '=' || *s == '>') 
+               && !vspacing_active[i]  /* is additional spacing needed? */
+             )
+@@ -985,7 +985,7 @@
+    || prefix ("\\qbpp", s) 
+    || prefix ("\\dspp", s) 
+    || doubledotted  )
+-  { spacing *= 1.75; doubledotted = false;}
++  { spacing = (int)(spacing * 1.75); doubledotted = false;}
+   else 
+   if (prefix ("\\whp", s)
+    || prefix ("\\hup", s)
+@@ -1009,7 +1009,7 @@
+    || prefix ("\\qbp", s) 
+    || prefix ("\\dsp", s) 
+     || dotted  ) 
+-  { spacing *= 1.5; dotted = false; }
++  { spacing = (int)(spacing * 1.5); dotted = false; }
+ 
+   t = strpbrk (s+1, "{\\&|$"); /* collective coding?  */
+   if (*t == '{')  /*  {...}  */
+@@ -2176,7 +2176,7 @@
+       printf ("\n");
+       error ("outfile same as infile.");
+     }
+-    outfile = fopen (outfilename, "w");
++    outfile = fopen (outfilename, "wb");
+     if (outfile == NULL)
+     { printf ("Can't open %s\n", outfilename);
+       exit (EXIT_FAILURE);
+@@ -2194,7 +2194,7 @@
+   *logfilename_n = '\0';
+   append (logfilename, &logfilename_n, "alog", sizeof (logfilename));
+   if (debug)  
+-  { logfile = fopen (logfilename, "w");
++  { logfile = fopen (logfilename, "wb");
+     if (logfile == NULL)
+     { printf ("Can't open %s\n", logfilename);
+       exit (EXIT_FAILURE);
+Only in autosp-2017-12-26: config.h
+diff -ur autosp-2017-12-26.orig/rebar.c autosp-2017-12-26/rebar.c
+--- autosp-2017-12-26.orig/rebar.c	Thu Jun 15 03:08:12 2017
++++ autosp-2017-12-26/rebar.c	Mon Jan 01 09:04:08 2018
+@@ -262,7 +262,7 @@
+       else
+         append (outfilename, &outfilename_n, ".aspc", sizeof (outfilename));
+     }
+-    outfile = fopen (outfilename, "w");
++    outfile = fopen (outfilename, "wb");
+     if (outfile == NULL)
+     { fprintf (stderr,"Can't open %s\n", outfilename);
+       exit (EXIT_FAILURE);
+diff -ur autosp-2017-12-26.orig/tex2aspc.c autosp-2017-12-26/tex2aspc.c
+--- autosp-2017-12-26.orig/tex2aspc.c	Sat Dec 16 00:04:13 2017
++++ autosp-2017-12-26/tex2aspc.c	Mon Jan 01 09:04:08 2018
+@@ -337,7 +337,7 @@
+     append (outfilename, &outfilename_n, ".aspc", sizeof (outfilename));
+   }
+ 
+-  outfile = fopen (outfilename, "w");
++  outfile = fopen (outfilename, "wb");
+   if (outfile == NULL)
+   { printf ("Can't open %s\n", outfilename);
+     exit (EXIT_FAILURE);
