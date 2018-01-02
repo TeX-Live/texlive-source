@@ -1,5 +1,5 @@
-{
-Copyright 1996-2017 Han The Thanh, <thanh@pdftex.org>
+{ pdftex.defines: Web2C pseudo-Pascal identifiers for pdfTeX.
+Copyright 1996-2018 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -38,6 +38,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 { functions from mapfile.c }
 @define function hasfmentry();
+@define function isscalable();
 @define procedure checkextfm();
 @define procedure pdfmapfile();
 @define procedure pdfmapline();
