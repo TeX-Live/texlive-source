@@ -1,3 +1,36 @@
+2018-01-01  Pali Roh\'ar <pali.rohar@gmail.com>
+
+	Patch 1: explicitly detect bitmap PK font in fm_scan_line,
+	instead of the implicit check of ps_name and ff_name being NULL.
+	* ptexmac.h (F_PK, set_pk, unset_pk, is_pk): new macros.
+	* writefont.c (dopdffont): call writet3 if is_pk.
+	* mapfile.c (fm_scan_line): call set_pk if no fontfile
+	and no ps_name on encoding line.
+
+	Patch 2: Always embed bitmap fonts with different sizes
+	separately, even if it has a fontmap entry; i.e., no geometric
+	scaling in the generated PDF.
+	* pdftex.defines (isscalable),
+	* ptexlib.h (isscalable),
+	* mapfile.c (isscalable): new fn.
+	* pdftex.web: call isscalable instead of hasfmentry
+	in all cases except @<Output fonts definition@>.
+		
+	Patch 3: Allow .enc files for bitmap PK fonts.
+	* ptexlib.h (writet3): take additional fm_entry* parameter.
+	* writefont.c (dopdffont): change call.
+	* writet3.c (writet3): change definition;
+	write_tounicode and encoding vector if we can.
+	(remove_duplicate_glyph_names): new fn.
+	
+	Patch 4: Additional checks for PK fonts in map file.
+	* mapfile.c (check_fm_entry): 
+
+	ChangeLog entry, some comments, error messages written or tweaked
+	by Karl Berry; all substantive code by Pali. Patch posted at
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2017-August/004183.html.
+	See test-pkmap.tex for more references and some tests.
+
 2017-12-16  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdftex.web (compare_strings): Fix \pdfstrcmp error message

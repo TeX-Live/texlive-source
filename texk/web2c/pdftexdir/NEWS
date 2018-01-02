@@ -1,6 +1,7 @@
 - changes:
   - do not hash current directory into PDF ID, for more reproducible builds
     (pdftex r782).
+  - allow encoding vectors for bitmap PK fonts (r790).
 
 - bugfixes:
   - \pdfprimitive does nothing, rather than give an error, when given a
