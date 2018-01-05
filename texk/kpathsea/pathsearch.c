@@ -1,6 +1,6 @@
 /* pathsearch.c: look up a filename in a path.
 
-   Copyright 1993, 1994, 1995, 1997, 2007, 2009-2012 Karl Berry.
+   Copyright 1993, 1994, 1995, 1997, 2007, 2009-2012, 2018 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -117,6 +117,7 @@ dir_list_search (kpathsea kpse, str_llist_type *dirs,  const_string name,
                     boolean search_all)
 {
   str_llist_elt_type *elt;
+  str_llist_elt_type *next_elt;
   str_list_type ret;
   unsigned name_len = strlen (name);
   unsigned allocated = INIT_ALLOC;
@@ -124,10 +125,12 @@ dir_list_search (kpathsea kpse, str_llist_type *dirs,  const_string name,
 
   ret = str_list_init ();
 
-  for (elt = *dirs; elt; elt = STR_LLIST_NEXT (*elt))
+  for (elt = *dirs; elt; elt = next_elt)
     {
       const_string dir = STR_LLIST (*elt);
       unsigned dir_len = strlen (dir);
+
+      next_elt = STR_LLIST_NEXT (*elt); /* in case elt floats */
 
       while (dir_len + name_len + 1 > allocated)
         {
@@ -165,21 +168,25 @@ dir_list_search (kpathsea kpse, str_llist_type *dirs,  const_string name,
 }
 
 /* Note: NAMES[i] is not modified.  */
+
 static str_list_type
 dir_list_search_list (kpathsea kpse, str_llist_type *dirs, string* names,
                       boolean search_all)
 {
   str_llist_elt_type *elt;
+  str_llist_elt_type *next_elt;
   str_list_type ret;
   unsigned allocated = INIT_ALLOC;
   string potential = XTALLOC(allocated, char);
 
   ret = str_list_init ();
 
-  for (elt = *dirs; elt; elt = STR_LLIST_NEXT(*elt)) {
+  for (elt = *dirs; elt; elt = next_elt) {
       const_string dir = STR_LLIST (*elt);
       unsigned dir_len = strlen (dir);
       int i;
+
+      next_elt = STR_LLIST_NEXT (*elt); /* in case elt floats */
 
       for (i = 0; names[i]; i++) {
           const_string name = names[i];
