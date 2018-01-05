@@ -26,8 +26,13 @@ that document).
 
 Build information for some of the platforms.
 
-x86_64-linux: Debian 6.0 (Squeeze), Feb 2009.
-  
+aarch64-linux:
+  aarch64 Debian GNU/Linux 9 (stretch)
+  gcc (Debian 6.3.0-18) 6.3.0 20170516
+  ./Build --enable-xindy --without-x --enable-arm-neon=check
+    with the libpng-1.6.34 source directory copied over from SVN -r45971
+    (where it has been reconfigured to expose --enable-arm-neon)
+
 amd64-netbsd:
   gcc version 4.5.3 (NetBSD nb2 20110806)
   NetBSD/amd64 6.1.3
@@ -69,3 +74,5 @@ x86_64-darwinlegacy, i386-darwin, powerpc-darwin:
   x86_64 binaries only work on >= 10.6 (and should work on any >= 10.6 machine)
     but will only be used for < 10.10 since x86_64-darwin covers newer.
   PPC binaries made with gcc-4.2 and Intel binaries with clang-3.7.
+
+x86_64-linux: Debian 6.0 (Squeeze), Feb 2009.
