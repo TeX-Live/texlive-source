@@ -1,3 +1,10 @@
+2018-01-06  Karl Berry  <karl@freefriends.org>
+
+	* pdftex.web (literal): if a non-PDF special is ignored,
+	also output "<special> " and the first 64 characters of the special.
+	(slow_print_substr): new procedure, although surely there's
+	already a way to print a substring of a pool string.
+
 2018-01-01  Pali Roh\'ar <pali.rohar@gmail.com>
 
 	Patch 1: explicitly detect bitmap PK font in fm_scan_line,

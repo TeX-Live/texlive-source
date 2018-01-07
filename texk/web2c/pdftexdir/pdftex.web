@@ -16249,6 +16249,19 @@ begin
     pdf_print_ln("]");
 end;
 
+{Prints first |len| characters of string |s| (if it's that long).
+ There must be a better way to print a substring?}
+procedure slow_print_substr(@!s,@!max_len:integer);
+var j:pool_pointer; {current character code position}
+begin if (s>=str_ptr) or (s<256) then print(s)
+else begin j:=str_start[s];
+  while (j<str_start[s+1]) and (j<=str_start[s]+max_len) do
+    begin print(so(str_pool[j])); incr(j);
+    end;
+  end;
+  if j<str_start[s+1] then print("..."); {indicate truncation}
+end;
+
 procedure literal(s: str_number; literal_mode: integer; warn: boolean);
 var j: pool_pointer; {current character code position}
 begin
@@ -16257,8 +16270,13 @@ begin
         if not (str_in_str(s, "PDF:", 0) or str_in_str(s, "pdf:", 0)) then begin
             if warn and not (str_in_str(s, "SRC:", 0)
                 or str_in_str(s, "src:", 0)
-                or (length(s) = 0)) then
+                or (length(s) = 0)) then begin
                     print_nl("Non-PDF special ignored!");
+                    print_nl("<special> ");
+                    slow_print_substr(s, 64);
+                    {length of printed line should be <=78; good enough.}
+                    print_ln;
+            end;
             return;
         end;
         j := j + length("PDF:");
