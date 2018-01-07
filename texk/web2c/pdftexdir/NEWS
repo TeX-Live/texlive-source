@@ -2,6 +2,8 @@
   - do not hash current directory into PDF ID, for more reproducible builds
     (pdftex r782).
   - allow encoding vectors for bitmap PK fonts (r790).
+  - when a non-PDF special is ignored, output a (leading substring of the)
+  special, preceded by "<special> ".
 
 - bugfixes:
   - \pdfprimitive does nothing, rather than give an error, when given a
