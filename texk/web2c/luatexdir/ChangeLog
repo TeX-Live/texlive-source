@@ -1,23 +1,64 @@
-2017-09-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2017-10-03  Luigi Scarso <luigi.scarso@gmail.com>
+	A not exhaustive list of changes:
 
-	* luatex.c : Import comment from the upstream.
+	* luaffi/: Fix to compile with gcc 7.1, 
+	patch for callbacks.
+	* lpeg/: version 1.0.1
 
-2017-09-05  Karl Berry  <karl@tug.org>
-        and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+	* luatex.c: We conform to the way Web2c does handle trailing tabs and spaces. This
+	decade old behaviour was changed in September 2017 and can introduce
+	compatibility issues in existing workflows. Because we don't want too
+	many differences with upstream TeXlive we just follow up on that patch
+	and it's up to macro packages to deal with possible issues (which can be
+	done via the usual callbacks. One can wonder why we then still prune
+	spaces but we leave that to the reader.
 
-	* luatex.c (IS_SPC_OR_EOL): new macro.
-	(topenin): use it, instead of ISBLANK.
-	(input_line): remove only trailing space characters
-	instead of using ISBLANK.
-	See also analogous change in lib/texmfmp.c.
-	Original bug report from Evan Aad,
-	http://tug.org/pipermail/tex-k/2017-August/002801.html.
-	Fix a bug to skip BOM (w32 only).
+	* option to set exit code (status.setexitcode) (HH). Changed paths:
+	luatexdir/tex/errors.h, luatexdir/tex/errors.w
+
+	* missing_glyph callback (HH). Changed paths:
+	luatexdir/font/texfont.h, luatexdir/font/texfont.w,luatexdir/lua/lcallbacklib.c
+	luatexdir/luatexcallbackids.h, 	luatexdir/pdf/pdffont.w, luatexdir/pdf/pdfglyph.w;
+
+	* \mathdelimitersmode (see manual) (HH). Changed paths:
+	luatexdir/tex/mlist.w, luatexdir/tex/texnodes.h
+
+	* fixes in protect/unprotect and list support in set/getglue (HH). Changed paths:
+	luatexdir/lua/lnodelib.c
+
+	* 'class' string in pdf vf command optional (HH). Changed paths:
+	luatexdir/font/luafont.w
+
+	* cleanup expansion (HH). Changed paths:
+	luatexdir/font/luafont.w, luatexdir/font/texfont.h, luatexdir/font/texfont.w
+	luatexdir/lua/lfontlib.c, luatexdir/lua/luatex-api.h, luatexdir/tex/dumpdata.w
+
+	* possibly better fix for extended font embedding (HH). Changed paths:
+	luatexdir/font/writefont.w
+
+	* protect_glyphs accepts range and also made consistent with manual (HH). Changed path:
+	luatexdir/lua/lnodelib.c
+
+	* some more control over syntex fields (HH). Changed paths:
+	luatexdir/tex/texnodes.w
+
+	* fix for neg display skips (HH). Changed paths:
+	luatexdir/tex/texmath.w
+
+	* \breakafterdirmode (value 1 will honor glue breaks after a dir node) (HH). Changed paths:
+	luatexdir/tex/commands.w, luatexdir/tex/dumpdata.w, luatexdir/tex/equivalents.h,
+	luatexdir/tex/linebreak.w, luatexdir/tex/texnodes.h
+
+	* fix width array of extended font (shared with normal)(HH). Changed paths:
+	luatexdir/font/writefont.w
+
+
 
 2017-02-07  Luigi Scarso <luigi.scarso@gmail.com>
 
 	* luaffi/: First attempt to implement the ffi module in lua
 	compatible with the ffi module of luajit.
+
 
 2015-11-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
@@ -529,11 +570,11 @@
 	* lua/lepdflib.cc: No need to test for Annot::decRefCnt with
 	poppler 0.18 or better.
 
-2012-11-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2012-11-06  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* pdf/pdflistout.w: sync with r4471 (a bug fix by H. Henkel).
 
-2012-10-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2012-10-13  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* tex/texfileio.w: input by pipe was impossible. enable it.
 
@@ -541,7 +582,7 @@
 
 	* lua/luainit.w (lua_initialize): Free two malloc()ed strings.
 
-2012-10-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2012-10-10  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* luatex.c: Modify determination of fullpath for restricted shell
 	escape commands.
@@ -567,7 +608,7 @@
 
 	* lua/luainit.w (parse_options): Avoid cast const => non-const.
 
-2012-09-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2012-09-13  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* lua/luainit.w (parse_options): allow lualatex "\input" "a b" on
 	Windows.
@@ -577,7 +618,7 @@
 	* luatex-api.h: Avoid conflicting extern declaration of environ,
 	declared in <stdlib.h> for WIN32 (from W32TeX).
 
-2012-08-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2012-08-21  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* tex/texdeffont.w (tex_def_font): Recover the old code, because the
 	new code seems not to work.

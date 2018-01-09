@@ -2311,6 +2311,7 @@ static int do_variable_pdf(halfword c)
     else if (scan_keyword("imageresolution"))      { do_variable_backend_int(c_pdf_image_resolution); }
     else if (scan_keyword("pkresolution"))         { do_variable_backend_int(c_pdf_pk_resolution); }
     else if (scan_keyword("uniqueresname"))        { do_variable_backend_int(c_pdf_unique_resname); }
+    else if (scan_keyword("majorversion"))         { do_variable_backend_int(c_pdf_major_version); }
     else if (scan_keyword("minorversion"))         { do_variable_backend_int(c_pdf_minor_version); }
     else if (scan_keyword("pagebox"))              { do_variable_backend_int(c_pdf_pagebox); }
     else if (scan_keyword("inclusionerrorlevel"))  { do_variable_backend_int(c_pdf_inclusion_errorlevel); }
@@ -2775,11 +2776,6 @@ void conv_toks(void)
             print(get_luatexrevision());
             pop_selector;
             break;
-        case luatex_date_code:
-            push_selector;
-            print_int(get_luatex_date_info());
-            pop_selector;
-            break;
         case etex_code:
             push_selector;
             tprint(eTeX_version_string);
@@ -3007,9 +3003,6 @@ str_number the_convert_string(halfword c, int i)
             break;
         case luatex_revision_code:
             print(get_luatexrevision());
-            break;
-        case luatex_date_code:
-            print_int(get_luatex_date_info());
             break;
         case etex_code:
             tprint(eTeX_version_string);

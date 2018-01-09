@@ -1,6 +1,6 @@
 /*
 ** Standard library header.
-** Copyright (C) 2005-2016 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2017 Mike Pall. See Copyright Notice in luajit.h
 */
 
 #ifndef _LUALIB_H
@@ -23,7 +23,7 @@
 #define LUA_FFILIBNAME	"ffi"
 
 #define LUA_BITLIBNAME_32  "bit32"
-
+ 
 LUALIB_API int luaopen_base(lua_State *L);
 LUALIB_API int luaopen_math(lua_State *L);
 LUALIB_API int luaopen_string(lua_State *L);

@@ -1,0 +1,26 @@
+diff -bur LuaJIT-2.1.0-beta3-orig/src/lj_load.c LuaJIT-2.1.0-beta3/src/lj_load.c
+--- LuaJIT-2.1.0-beta3-orig/src/lj_load.c	2017-05-01 21:05:00.000000000 +0200
++++ LuaJIT-2.1.0-beta3/src/lj_load.c	2017-06-19 18:05:35.864190001 +0200
+@@ -166,3 +166,22 @@
+     return 1;
+ }
+ 
++
++
++/* -- Luajittex needs this one because it overloads loadfile  -- */
++LUALIB_API int RESERVED_load_aux_JIT(lua_State *L, int status, int envarg)
++{
++  if (status == 0) {
++    if (tvistab(L->base+envarg-1)) {
++      GCfunc *fn = funcV(L->top-1);
++      GCtab *t = tabV(L->base+envarg-1);
++      setgcref(fn->c.env, obj2gco(t));
++      lj_gc_objbarrier(L, fn, t);
++    }
++    return 1;
++  } else {
++    setnilV(L->top-2);
++    return 2;
++  }
++}
++

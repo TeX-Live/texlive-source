@@ -72,8 +72,7 @@ luatex_sources = \
 	mplibdir/lmplib.c
 
 EXTRA_DIST += \
-	$(luatex_sources) \
-	luatexdir/getluatexsvnversion.sh
+	$(luatex_sources) 
 
 call_luatex_CPPFLAGS = -DEXEPROG=\"luatex.exe\"
 nodist_call_luatex_SOURCES = callexe.c

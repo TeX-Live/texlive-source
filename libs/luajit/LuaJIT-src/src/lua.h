@@ -39,7 +39,8 @@
 #define lua_upvalueindex(i)	(LUA_GLOBALSINDEX-(i))
 
 
-/* thread status; 0 is OK */
+/* thread status */
+#define LUA_OK		0
 #define LUA_YIELD	1
 #define LUA_ERRRUN	2
 #define LUA_ERRSYNTAX	3
@@ -102,10 +103,8 @@ typedef LUA_NUMBER lua_Number;
 /* type for integer functions */
 typedef LUA_INTEGER lua_Integer;
 
-
 /* communication with LuaJiTTeX */
 LUA_API int luajittex_choose_hash_function; 
-
 
 /*
 ** state manipulation
@@ -350,16 +349,21 @@ LUA_API void *lua_upvalueid (lua_State *L, int idx, int n);
 LUA_API void lua_upvaluejoin (lua_State *L, int idx1, int n1, int idx2, int n2);
 LUA_API int lua_loadx (lua_State *L, lua_Reader reader, void *dt,
 		       const char *chunkname, const char *mode);
+LUA_API const lua_Number *lua_version (lua_State *L);
+LUA_API void lua_copy (lua_State *L, int fromidx, int toidx);
+LUA_API lua_Number lua_tonumberx (lua_State *L, int idx, int *isnum);
+LUA_API lua_Integer lua_tointegerx (lua_State *L, int idx, int *isnum);
 
 
 #define LUA_OPEQ 0
 #define LUA_OPLT 1
 #define LUA_OPLE 2
-#define LUA_OK  0
-
+ 
 /* see http://comments.gmane.org/gmane.comp.programming.swig/18673 */
 # define lua_rawlen lua_objlen 
 
+/* From Lua 5.3. */
+LUA_API int lua_isyieldable (lua_State *L);
 
 
 struct lua_Debug {

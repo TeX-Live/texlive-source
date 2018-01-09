@@ -1,3 +1,8 @@
+2017-20-06 Luigi Scarso <luigi.scarso@gmail.com>
+	* Luajit-2.1.0-beta3
+	* Removed lj_bcdef.h, lj_ffdef.h, lj_folddef.h, lj_libdef.h
+	  lj_recdef.h, they are generated at building time.
+
 2016-03-07 Luigi Scarso <luigi.scarso@gmail.com>
 	Luajit-2.1.0-beta2
 

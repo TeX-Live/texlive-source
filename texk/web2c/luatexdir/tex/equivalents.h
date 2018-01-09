@@ -291,8 +291,18 @@ the |number_regs| \.{\\dimen} registers.
 #  define hyphen_penalty_mode_code 100
 #  define automatic_hyphen_penalty_code 101
 #  define explicit_hyphen_penalty_code 102
+#  define automatic_hyphen_mode_code 103
+#  define break_after_dir_mode_code 104
 
-#  define math_option_code (explicit_hyphen_penalty_code+1)
+#  define pre_bin_op_penalty_code 105
+#  define pre_rel_penalty_code 106
+#  define math_penalties_mode_code 107
+#  define math_delimiters_mode_code 108
+#  define math_script_box_mode_code 109
+
+#  define suppress_primitive_error_code 110
+
+#  define math_option_code (suppress_primitive_error_code+1)
 
 #  define mathoption_int_base_code (math_option_code+1)                 /* one reserve */
 #  define mathoption_int_last_code (mathoption_int_base_code+8)
@@ -648,6 +658,11 @@ extern halfword last_cs_name;
 #define delimiter_factor_par               int_par(delimiter_factor_code)
 #define bin_op_penalty_par                 int_par(bin_op_penalty_code)
 #define rel_penalty_par                    int_par(rel_penalty_code)
+#define pre_bin_op_penalty_par             int_par(pre_bin_op_penalty_code)
+#define pre_rel_penalty_par                int_par(pre_rel_penalty_code)
+#define math_penalties_mode_par            int_par(math_penalties_mode_code)
+#define math_delimiters_mode_par           int_par(math_delimiters_mode_code)
+#define math_script_box_mode_par           int_par(math_script_box_mode_code)
 #define null_delimiter_space_par           dimen_par(null_delimiter_space_code)
 #define disable_lig_par                    int_par(disable_lig_code)
 #define disable_kern_par                   int_par(disable_kern_code)
@@ -740,6 +755,7 @@ extern halfword last_cs_name;
 #define suppress_mathpar_error_par         int_par(suppress_mathpar_error_code)
 #define suppress_fontnotfound_error_par    int_par(suppress_fontnotfound_error_code)
 #define suppress_ifcsname_error_par        int_par(suppress_ifcsname_error_code)
+#define suppress_primitive_error_par       int_par(suppress_primitive_error_code)
 #define error_context_lines_par            int_par(error_context_lines_code)
 
 #define math_old_par                       mathoption_int_par(c_mathoption_old_code)
@@ -773,6 +789,8 @@ extern halfword last_cs_name;
 #define hyphen_penalty_mode_par            int_par(hyphen_penalty_mode_code)
 #define automatic_hyphen_penalty_par       int_par(automatic_hyphen_penalty_code)
 #define explicit_hyphen_penalty_par        int_par(explicit_hyphen_penalty_code)
+#define automatic_hyphen_mode_par          int_par(automatic_hyphen_mode_code)
+#define break_after_dir_mode_par           int_par(break_after_dir_mode_code)
 
 #define cur_lang_par                       int_par(cur_lang_code)
 #define cur_font_par                       equiv(cur_font_loc)

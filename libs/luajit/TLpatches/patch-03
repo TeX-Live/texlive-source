@@ -1,0 +1,12 @@
+diff -bur LuaJIT-2.1.0-beta3-orig/src/host/buildvm.c LuaJIT-2.1.0-beta3/src/host/buildvm.c
+--- LuaJIT-2.1.0-beta3-orig/src/host/buildvm.c	2017-05-01 21:05:00.000000000 +0200
++++ LuaJIT-2.1.0-beta3/src/host/buildvm.c	2017-06-16 18:56:14.538560987 +0200
+@@ -113,7 +113,7 @@
+       name[0] = name[1] == 'R' ? '_' : '@';  /* Just for _RtlUnwind@16. */
+     else
+       *p = '\0';
+-#elif LJ_TARGET_PPC && !LJ_TARGET_CONSOLE
++#elif LJ_TARGET_PPC && !LJ_TARGET_OSX && !LJ_TARGET_CONSOLE
+     /* Keep @plt etc. */
+ #else
+     *p = '\0';

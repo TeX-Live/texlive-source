@@ -5,14 +5,14 @@
 --     copyright = 'LuaTeX Development Team',
 -- }
 
-LUATEXCOREVERSION = 1.002
+LUATEXCOREVERSION = 1.003
 
 -- This file overloads some Lua functions. The readline variants provide the same
 -- functionality as LuaTeX <= 1.04 and doing it this way permits us to keep the
 -- original io libraries clean. Performance is probably even a bit better now.
 
 local type, next, getmetatable, require = type, next, getmetatable, require
-local find, gsub = string.find, string.gsub
+local find, gsub, format = string.find, string.gsub, string.format
 
 local io_open             = io.open
 local io_popen            = io.popen
@@ -28,8 +28,8 @@ local saferoption         = status.safer_option
 local shellescape         = status.shell_escape -- 0 (disabled) 1 (anything) 2 (restricted)
 local kpseused            = status.kpse_used    -- 0 1
 
-io.saved_open             = io_open  -- can be protected
--- (deleted for tl17 rebuild) io.saved_popen            = io_popen -- can be protected
+local write_nl            = texio.write_nl
+
 io.saved_lines            = io_lines -- always readonly
 mt.saved_lines            = mt_lines -- always readonly
 
@@ -105,28 +105,44 @@ end
 
 if saferoption == 1 then
 
-    os.execute = nil
-    os.spawn   = nil
-    os.exec    = nil
-    os.setenv  = nil
-    os.tempdir = nil
+    local function installdummy(str,f)
+        local reported = false
+        return function(...)
+            if not reported then
+                write_nl(format("safer option set, function %q is %s",
+                    str,f and "limited" or "disabled"))
+                reported = true
+            end
+            if f then
+                return f(...)
+            end
+        end
+    end
 
-    io.popen   = nil
-    io.open    = nil
+    local function installlimit(str,f)
+        local reported = false
+    end
 
-    os.rename  = nil
-    os.remove  = nil
+    os.execute = installdummy("os.execute")
+    os.spawn   = installdummy("os.spawn")
+    os.exec    = installdummy("os.exec")
+    os.setenv  = installdummy("os.setenv")
+    os.tempdir = installdummy("os.tempdir")
 
-    io.tmpfile = nil
-    io.output  = nil
+    io.popen   = installdummy("io.popen")
+    io.open    = installdummy("io.open",luatex_io_open_readonly)
 
-    lfs.chdir  = nil
-    lfs.lock   = nil
-    lfs.touch  = nil
-    lfs.rmdir  = nil
-    lfs.mkdir  = nil
+    os.rename  = installdummy("os.rename")
+    os.remove  = installdummy("os.remove")
 
-    io.saved_open  = luatex_io_open_readonly
+    io.tmpfile = installdummy("io.tmpfile")
+    io.output  = installdummy("io.output")
+
+    lfs.chdir  = installdummy("lfs.chdir")
+    lfs.lock   = installdummy("lfs.lock")
+    lfs.touch  = installdummy("lfs.touch")
+    lfs.rmdir  = installdummy("lfs.rmdir")
+    lfs.mkdir  = installdummy("lfs.mkdir")
 
 end
 

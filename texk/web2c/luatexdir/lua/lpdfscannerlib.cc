@@ -944,7 +944,7 @@ LUALIB_API int luaopen_pdfscanner(lua_State * L)
     luaL_openlib(L, 0, scannerlib_meta, 0);
     lua_pushvalue(L, -1);
     lua_setfield(L, -2, "__index");
-    luaL_openlib(L, NULL, scannerlib_m, 0);
+    luaL_register(L, NULL, scannerlib_m);
     luaL_register(L, "pdfscanner", scannerlib);
     return 1;
 }
