@@ -1,3 +1,9 @@
+2017-20-06 Luigi Scarso <luigi.scarso@gmail.com>
+
+	Import LuaJIT-2.1.0-beta3.
+	* version.ac: Adjust.
+
+
 2016-03-09 Luigi Scarso <luigi.scarso@gmail.com>
 
 	Import LuaJIT-2.1.0-beta2.

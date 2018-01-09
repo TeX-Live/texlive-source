@@ -1,0 +1,11 @@
+diff -bur LuaJIT-2.1.0-beta3-orig/src/lib_init.c LuaJIT-2.1.0-beta3/src/lib_init.c
+--- LuaJIT-2.1.0-beta3-orig/src/lib_init.c	2017-05-01 21:05:00.000000000 +0200
++++ LuaJIT-2.1.0-beta3/src/lib_init.c	2017-06-16 19:19:00.352961298 +0200
+@@ -26,6 +26,7 @@
+   { LUA_DBLIBNAME,	luaopen_debug },
+   { LUA_BITLIBNAME,	luaopen_bit },
+   { LUA_JITLIBNAME,	luaopen_jit },
++  { LUA_BITLIBNAME_32,	luaopen_bit32 },
+   { NULL,		NULL }
+ };
+ 

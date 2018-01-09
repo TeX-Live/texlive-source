@@ -1,0 +1,12 @@
+diff -bur LuaJIT-2.1.0-beta3-orig/src/lj_def.h LuaJIT-2.1.0-beta3/src/lj_def.h
+--- LuaJIT-2.1.0-beta3-orig/src/lj_def.h	2017-05-01 21:05:00.000000000 +0200
++++ LuaJIT-2.1.0-beta3/src/lj_def.h	2017-06-19 17:52:54.085933629 +0200
+@@ -66,7 +66,7 @@
+ #define LJ_MAX_BCINS	(1<<26)		/* Max. # of bytecode instructions. */
+ #define LJ_MAX_SLOTS	250		/* Max. # of slots in a Lua func. */
+ #define LJ_MAX_LOCVAR	200		/* Max. # of local variables. */
+-#define LJ_MAX_UPVAL	60		/* Max. # of upvalues. */
++#define LJ_MAX_UPVAL	249		/* Max. # of upvalues. */
+ 
+ #define LJ_MAX_IDXCHAIN	100		/* __index/__newindex chain limit. */
+ #define LJ_STACK_EXTRA	(5+2*LJ_FR2)	/* Extra stack space (metamethods). */

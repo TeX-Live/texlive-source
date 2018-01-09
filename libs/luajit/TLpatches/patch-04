@@ -1,0 +1,44 @@
+diff -bur LuaJIT-2.1.0-beta3-orig/src/lauxlib.h LuaJIT-2.1.0-beta3/src/lauxlib.h
+--- LuaJIT-2.1.0-beta3-orig/src/lauxlib.h	2017-05-01 21:05:00.000000000 +0200
++++ LuaJIT-2.1.0-beta3/src/lauxlib.h	2017-06-16 19:12:18.325405265 +0200
+@@ -92,6 +92,31 @@
+ LUALIB_API void (luaL_setmetatable) (lua_State *L, const char *tname);
+ 
+ 
++
++/*
++** {======================================================
++** File handles for IO library
++** =======================================================
++*/
++
++/*
++** A file handle is a userdata with metatable 'LUA_FILEHANDLE' and
++** initial structure 'luaL_Stream' (it may contain other fields
++** after that initial structure).
++*/
++
++#define LUA_FILEHANDLE          "FILE*"
++
++
++typedef struct luaL_Stream {
++  FILE *f;  /* stream (NULL for incompletely created streams) */
++  lua_CFunction closef;  /* to close stream (NULL for closed streams) */
++} luaL_Stream;
++
++/* }====================================================== */
++
++
++
+ /*
+ ** ===============================================================
+ ** some useful macros
+@@ -155,6 +180,8 @@
+ LUALIB_API void (luaL_addvalue) (luaL_Buffer *B);
+ LUALIB_API void (luaL_pushresult) (luaL_Buffer *B);
+ 
++/* Luajittex needs this one because it overloads loadfile */
++LUALIB_API int (RESERVED_load_aux_JIT) (lua_State *L, int status, int envarg);
+ 
+ /* }====================================================== */
+ 

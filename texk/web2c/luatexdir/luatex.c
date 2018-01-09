@@ -12,6 +12,7 @@
 
 /* We |#define DLLPROC| in order to build LuaTeX and LuajitTeX as DLL
    for W32TeX.  */
+
 #if defined LuajitTeX
 #define DLLPROC dllluajittexmain
 #else
@@ -21,20 +22,20 @@
 #include "ptexlib.h"
 #include "luatex.h"
 #include "lua/luatex-api.h"
-/*
-#include "luatex_svnversion.h"
-*/
-
 
 #define TeX
 
-/* for tl17 update, change luatex_date_info but nothing else,
-   as context depends on the numeric version number. */
-int luatex_version = 100;        /* \.{\\luatexversion}  */
-int luatex_revision = '4';      /* \.{\\luatexrevision}  */
-int luatex_date_info = 2017060901;     /* the compile date is now hardwired :YEAR MONTH DAY HOUR*/
-const char *luatex_version_string = "1.0.4";
-const char *engine_name = my_name;     /* the name of this engine */
+/*
+    The version number can be queried with \.{\\luatexversion} and the revision with
+    with \.{\\luatexrevision}. Traditionally the revision can be any character and
+    pdf\TeX\ occasionally used no digits. Here we still use a character but we will
+    stick to "0" upto "9" so users can expect a number represented as string.
+*/
+
+int luatex_version = 106;
+int luatex_revision = '3';
+const char *luatex_version_string = "1.06.3";
+const char *engine_name = my_name;
 
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/line.h>
@@ -582,6 +583,7 @@ main (int ac, string *av)
 
     return EXIT_SUCCESS;
 }
+
 
 /*
     This is supposed to ``open the terminal for input'', but what we
