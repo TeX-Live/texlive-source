@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 46034 2017-12-11 01:54:21Z preining $
+# $Id: tlmgr.pl 46207 2018-01-04 18:34:36Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 46034 $';
-my $datrev = '$Date: 2017-12-11 02:54:21 +0100 (Mon, 11 Dec 2017) $';
+my $svnrev = '$Revision: 46207 $';
+my $datrev = '$Date: 2018-01-04 19:34:36 +0100 (Thu, 04 Jan 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -364,6 +364,7 @@ my %globaloptions = (
   "pause" => 1,
   "pin-file" => "=s",
   "print-platform|print-arch" => 1,
+  "print-platform-info" => 1,
   "usermode|user-mode" => 1,
   "usertree|user-tree" => "=s",
   "verify-downloads" => "!",
@@ -417,8 +418,10 @@ sub main {
   if (!defined($action)) {
     if ($opts{"gui"}) {   # -gui = gui
       $action = "gui";
-    } elsif ($opts{"print-platform"}) { # -print-arch = print-arch
+    } elsif ($opts{"print-platform"}) {
       $action = "print-platform";
+    } elsif ($opts{"print-platform-info"}) {
+      $action = "print-platform-info";
     } else {
       $action = "";
     }
@@ -445,6 +448,14 @@ sub main {
 
   if (defined($action) && $action eq "print-platform") {
     print TeXLive::TLUtils::platform(), "\n";
+    exit 0;
+  }
+
+  if (defined($action) && $action eq "print-platform-info") {
+    print "config.guess  ", `$::installerdir/tlpkg/installer/config.guess`;
+    my $plat = TeXLive::TLUtils::platform();
+    print "platform      ", $plat, "\n";
+    print "platform_desc ", TeXLive::TLUtils::platform_desc($plat), "\n";
     exit 0;
   }
 
@@ -8190,6 +8201,11 @@ Print the TeX Live identifier for the detected platform
 (hardware/operating system) combination to standard output, and exit.
 C<--print-arch> is a synonym.
 
+=head2 print-platform-info
+
+Print the TeX Live platform identifier, TL platform long name, and
+original output from guess.
+
 =head2 remove [I<option>]... I<pkg>...
 
 Remove each I<pkg> specified.  Removing a collection removes all package
@@ -8796,7 +8812,8 @@ currently not supported, but may be in a future release.
 
 Some C<tlmgr> actions don't need any write permissions and thus work the
 same in user mode and normal mode.  Currently these are: C<check>,
-C<help>, C<list>, C<print-platform>, C<search>, C<show>, C<version>.
+C<help>, C<list>, C<print-platform>, C<print-platform-info>, C<search>,
+C<show>, C<version>.
 
 On the other hand, most of the actions dealing with package management
 do need write permissions, and thus behave differently in user mode, as
@@ -9333,7 +9350,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 46034 2017-12-11 01:54:21Z preining $
+$Id: tlmgr.pl 46207 2018-01-04 18:34:36Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
