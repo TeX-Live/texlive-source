@@ -16,11 +16,11 @@
 //
 // Copyright (C) 2005-2008 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2005, 2009, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2009, 2012, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Nickolay V. Shmyrev <nshmyrev@yandex.ru>
-// Copyright (C) 2006-2011, 2013, 2014 Carlos Garcia Campos <carlosgc@gnome.org>
+// Copyright (C) 2006-2011, 2013, 2014, 2017 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2008 Carl Worth <cworth@cworth.org>
-// Copyright (C) 2008-2016 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2008-2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2008, 2009 Chris Wilson <chris@chris-wilson.co.uk>
 // Copyright (C) 2008, 2012 Hib Eris <hib@hiberis.nl>
@@ -41,13 +41,13 @@
 #pragma implementation
 #endif
 
+#include <cstdint>
 #include <string.h>
 #include <math.h>
 #include <assert.h>
 #include <cairo.h>
 
 #include "goo/gfile.h"
-#include "goo/gtypes_p.h"
 #include "GlobalParams.h"
 #include "Error.h"
 #include "Object.h"
@@ -143,7 +143,11 @@ CairoOutputDev::CairoOutputDev() {
   strokePathClip = NULL;
   cairo = NULL;
   currentFont = NULL;
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
+  prescaleImages = gFalse;
+#else
   prescaleImages = gTrue;
+#endif
   printing = gTrue;
   use_show_text_glyphs = gFalse;
   inUncoloredPattern = gFalse;
@@ -165,7 +169,7 @@ CairoOutputDev::CairoOutputDev() {
 
   // the SA parameter supposedly defaults to false, but Acrobat
   // apparently hardwires it to true
-  stroke_adjust = globalParams->getStrokeAdjust();
+  stroke_adjust = gTrue;
   align_stroke_coords = gFalse;
   adjusted_stroke_width = gFalse;
   xref = NULL;
@@ -1830,7 +1834,7 @@ void CairoOutputDev::setSoftMask(GfxState * state, double * bbox, GBool alpha,
     /* convert to a luminocity map */
     uint32_t *source_data = (uint32_t*)cairo_image_surface_get_data(source);
     /* get stride in units of 32 bits */
-    int stride = cairo_image_surface_get_stride(source)/4;
+    ptrdiff_t stride = cairo_image_surface_get_stride(source)/4;
     for (int y=0; y<height; y++) {
       for (int x=0; x<width; x++) {
 	int lum = alpha ? fill_opacity : luminocity(source_data[y*stride + x]);
@@ -1961,7 +1965,7 @@ CairoOutputDev::getFilterForSurface(cairo_surface_t *image,
 				    GBool interpolate)
 {
   if (interpolate)
-    return CAIRO_FILTER_BILINEAR;
+    return CAIRO_FILTER_BEST;
 
   int orig_width = cairo_image_surface_get_width (image);
   int orig_height = cairo_image_surface_get_height (image);
@@ -1981,7 +1985,7 @@ CairoOutputDev::getFilterForSurface(cairo_surface_t *image,
   if (scaled_width / orig_width >= 4 || scaled_height / orig_height >= 4)
 	  return CAIRO_FILTER_NEAREST;
 
-  return CAIRO_FILTER_BILINEAR;
+  return CAIRO_FILTER_BEST;
 }
 
 void CairoOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
@@ -2123,7 +2127,7 @@ void CairoOutputDev::drawImageMaskRegular(GfxState *state, Object *ref, Stream *
   Guchar *pix;
   cairo_matrix_t matrix;
   int invert_bit;
-  int row_stride;
+  ptrdiff_t row_stride;
   cairo_filter_t filter;
 
   /* TODO: Do we want to cache these? */
@@ -2174,9 +2178,6 @@ void CairoOutputDev::drawImageMaskRegular(GfxState *state, Object *ref, Stream *
 
   cairo_pattern_set_filter (pattern, filter);
 
-  if (!printing)
-    cairo_pattern_set_extend (pattern, CAIRO_EXTEND_PAD);
-
   cairo_matrix_init_translate (&matrix, 0, height);
   cairo_matrix_scale (&matrix, width, -height);
   cairo_pattern_set_matrix (pattern, &matrix);
@@ -2192,6 +2193,11 @@ void CairoOutputDev::drawImageMaskRegular(GfxState *state, Object *ref, Stream *
     cairo_save (cairo);
     cairo_rectangle (cairo, 0., 0., 1., 1.);
     cairo_clip (cairo);
+    if (strokePathClip) {
+      cairo_push_group (cairo);
+      fillToStrokePathClip (state);
+      cairo_pop_group_to_source (cairo);
+    }
     cairo_mask (cairo, pattern);
     cairo_restore (cairo);
   } else {
@@ -2228,7 +2234,7 @@ void CairoOutputDev::drawImageMaskPrescaled(GfxState *state, Object *ref, Stream
   Guchar *pix;
   cairo_matrix_t matrix;
   int invert_bit;
-  int row_stride;
+  ptrdiff_t row_stride;
 
   /* cairo does a very poor job of scaling down images so we scale them ourselves */
 
@@ -2521,7 +2527,7 @@ void CairoOutputDev::drawMaskedImage(GfxState *state, Object *ref,
 				     GBool maskInterpolate)
 {
   ImageStream *maskImgStr, *imgStr;
-  int row_stride;
+  ptrdiff_t row_stride;
   unsigned char *maskBuffer, *buffer;
   unsigned char *maskDest;
   unsigned int *dest;
@@ -2679,7 +2685,7 @@ void CairoOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *s
 					 GBool maskInterpolate)
 {
   ImageStream *maskImgStr, *imgStr;
-  int row_stride;
+  ptrdiff_t row_stride;
   unsigned char *maskBuffer, *buffer;
   unsigned char *maskDest;
   unsigned int *dest;
@@ -2708,7 +2714,9 @@ void CairoOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *s
   for (y = 0; y < maskHeight; y++) {
     maskDest = (unsigned char *) (maskBuffer + y * row_stride);
     pix = maskImgStr->getLine();
-    maskColorMap->getGrayLine (pix, maskDest, maskWidth);
+    if (likely(pix != nullptr)) {
+        maskColorMap->getGrayLine (pix, maskDest, maskWidth);
+    }
   }
 
   maskImgStr->close();
@@ -2956,9 +2964,8 @@ void CairoOutputDev::setMimeData(GfxState *state, Stream *str, Object *ref,
       return;
   }
 
-  str->getDict()->lookup("ColorSpace", &obj);
+  obj = str->getDict()->lookup("ColorSpace");
   colorSpace = GfxColorSpace::parse(NULL, &obj, this, state);
-  obj.free();
 
   // colorspace in stream dict may be different from colorspace in jpx
   // data
@@ -3072,10 +3079,16 @@ public:
       }
     }
 
-    if (printing || scaledWidth >= width || scaledHeight >= height) {
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
+    bool needsCustomDownscaling = false;
+#else
+    bool needsCustomDownscaling = true;
+#endif
+
+    if (!needsCustomDownscaling || printing || scaledWidth >= width || scaledHeight >= height) {
       // No downscaling. Create cairo image containing the source image data.
       unsigned char *buffer;
-      int stride;
+      ptrdiff_t stride;
 
       image = cairo_image_surface_create (maskColors ?
                                           CAIRO_FORMAT_ARGB32 :
@@ -3119,7 +3132,7 @@ public:
     return image;
   }
 
-  void getRow(int row_num, uint32_t *row_data) {
+  void getRow(int row_num, uint32_t *row_data) override {
     int i;
     Guchar *pix;
 
@@ -3186,7 +3199,7 @@ void CairoOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
   cairo_matrix_t matrix;
   int width, height;
   int scaledWidth, scaledHeight;
-  cairo_filter_t filter = CAIRO_FILTER_BILINEAR;
+  cairo_filter_t filter = CAIRO_FILTER_BEST;
   RescaleDrawImage rescale;
 
   LOG (printf ("drawImage %dx%d\n", widthA, heightA));

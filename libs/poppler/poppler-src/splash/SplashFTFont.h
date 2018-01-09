@@ -14,6 +14,7 @@
 // Copyright (C) 2007-2009, 2011 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
 // Copyright (C) 2011 Andreas Hartmetz <ahartmetz@gmail.com>
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -24,8 +25,6 @@
 #define SPLASHFTFONT_H
 
 #include "poppler-config.h"
-
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface
@@ -50,19 +49,19 @@ public:
   virtual ~SplashFTFont();
 
   // Munge xFrac and yFrac before calling SplashFont::getGlyph.
-  virtual GBool getGlyph(int c, int xFrac, int yFrac,
-			 SplashGlyphBitmap *bitmap, int x0, int y0, SplashClip *clip, SplashClipResult *clipRes);
+  GBool getGlyph(int c, int xFrac, int yFrac,
+		 SplashGlyphBitmap *bitmap, int x0, int y0, SplashClip *clip, SplashClipResult *clipRes) override;
 
   // Rasterize a glyph.  The <xFrac> and <yFrac> values are the same
   // as described for getGlyph.
-  virtual GBool makeGlyph(int c, int xFrac, int yFrac,
-			  SplashGlyphBitmap *bitmap, int x0, int y0, SplashClip *clip, SplashClipResult *clipRes);
+  GBool makeGlyph(int c, int xFrac, int yFrac,
+		  SplashGlyphBitmap *bitmap, int x0, int y0, SplashClip *clip, SplashClipResult *clipRes) override;
 
   // Return the path for a glyph.
-  virtual SplashPath *getGlyphPath(int c);
+  SplashPath *getGlyphPath(int c) override;
 
   // Return the advance of a glyph. (in 0..1 range)
-  virtual double getGlyphAdvance(int c);
+  double getGlyphAdvance(int c) override;
 
 private:
 
@@ -74,7 +73,5 @@ private:
   GBool enableFreeTypeHinting;
   GBool enableSlightHinting;
 };
-
-#endif // HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
 
 #endif

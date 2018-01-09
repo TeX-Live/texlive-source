@@ -1,6 +1,8 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2018 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -17,6 +19,7 @@ KPSE_BASIC([poppler], [no-define])
 
 AC_PROG_CC
 AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX([11])
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
@@ -27,7 +30,10 @@ if test $ac_cv_sizeof_long_long -lt 8; then
   AC_MSG_ERROR([Sorry, your compiler has no `long long' with at least 8 bytes.])
 fi
 
-test "x$GXX" = xyes && NO_WARN_CXXFLAGS='-Wno-write-strings'
+if test "x$GXX" = xyes; then
+  NO_WARN_CXXFLAGS='-Wno-write-strings'
+fi
+
 AC_SUBST([NO_WARN_CXXFLAGS])  
 
 dnl ##### Optional features.
@@ -63,14 +69,30 @@ AC_ARG_ENABLE([fixedpoint],
 fi
 ])
 
+AC_ARG_ENABLE([dctdecoder],
+              AS_HELP_STRING([--enable-dctdecoder],
+                             [use dctdecoder]),
+              [if test "x$enableval" = xlibjpeg; then
+  AC_DEFINE([HAVE_DCT_DECODER], 1, [Do we have any DCT decoder?.])
+fi
+])
+
+AC_ARG_ENABLE([libopenjpeg],
+              AS_HELP_STRING([--enable-libopenjpeg],
+                             [use openjpeg decoder]),
+              [if test "x$enableval" = xopenjpeg2; then
+  AC_DEFINE([HAVE_JPX_DECODER], 1, [Do we have any JPX decoder?.])
+fi
+])
+
 dnl **** Checks for header files ****
 
 AC_CHECK_HEADERS([strings.h])
 AC_HEADER_DIRENT
 
-dnl **** Checks for library functions ****
-
-AC_CHECK_FUNCS([gettimeofday gmtime_r mkstemp popen rand_r timegm])
+dnl Checks for library functions (from goo/glibc.h and more).
+AC_CHECK_FUNCS([gettimeofday gmtime_r localtime_r mkstemp popen rand_r \
+                timegm strtok_r])
 AC_SYS_LARGEFILE
 AC_FUNC_FSEEKO
 AC_CHECK_FUNC([ftell64], [AC_CHECK_FUNCS([fseek64])])

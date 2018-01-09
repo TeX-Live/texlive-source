@@ -14,8 +14,9 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2008 Koji Otani <sho@bbr.jp>
-// Copyright (C) 2008, 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2009, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2013 Fabio D'Urso <fabiodurso@hotmail.it>
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -116,15 +117,11 @@ CMap *CMap::parse(CMapCache *cache, GooString *collectionA,
 }
 
 CMap *CMap::parse(CMapCache *cache, GooString *collectionA, Stream *str) {
-  Object obj1;
-  CMap *cMap;
-
-  cMap = new CMap(collectionA->copy(), NULL);
-
-  if (!str->getDict()->lookup("UseCMap", &obj1)->isNull()) {
+  CMap *cMap = new CMap(collectionA->copy(), NULL);
+  Object obj1 = str->getDict()->lookup("UseCMap");
+  if (!obj1.isNull()) {
     cMap->useCMap(cache, &obj1);
   }
-  obj1.free();
 
   str->reset();
   cMap->parse2(cache, &getCharFromStream, str);
@@ -316,7 +313,7 @@ CMap::CMap(GooString *collectionA, GooString *cMapNameA) {
     vector[i].cid = 0;
   }
   refCnt = 1;
-#if MULTITHREADED
+#ifdef MULTITHREADED
   gInitMutex(&mutex);
 #endif
 }
@@ -328,7 +325,7 @@ CMap::CMap(GooString *collectionA, GooString *cMapNameA, int wModeA) {
   wMode = wModeA;
   vector = NULL;
   refCnt = 1;
-#if MULTITHREADED
+#ifdef MULTITHREADED
   gInitMutex(&mutex);
 #endif
 }
@@ -436,7 +433,7 @@ CMap::~CMap() {
   if (vector) {
     freeCMapVector(vector);
   }
-#if MULTITHREADED
+#ifdef MULTITHREADED
   gDestroyMutex(&mutex);
 #endif
 }
@@ -453,11 +450,11 @@ void CMap::freeCMapVector(CMapVectorEntry *vec) {
 }
 
 void CMap::incRefCnt() {
-#if MULTITHREADED
+#ifdef MULTITHREADED
   gLockMutex(&mutex);
 #endif
   ++refCnt;
-#if MULTITHREADED
+#ifdef MULTITHREADED
   gUnlockMutex(&mutex);
 #endif
 }
@@ -465,11 +462,11 @@ void CMap::incRefCnt() {
 void CMap::decRefCnt() {
   GBool done;
 
-#if MULTITHREADED
+#ifdef MULTITHREADED
   gLockMutex(&mutex);
 #endif
   done = --refCnt == 0;
-#if MULTITHREADED
+#ifdef MULTITHREADED
   gUnlockMutex(&mutex);
 #endif
   if (done) {

@@ -5,7 +5,7 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright (C) 2009 Stefan Thomas <thomas@eload24.com>
-// Copyright (C) 2010, 2012 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2010, 2012, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2010 Jürg Billeter <j@bitron.ch>
 // Copyright (C) 2010 Harry Roberts <harry.roberts@midnight-labs.org>
 // Copyright (C) 2010 Brian Cameron <brian.cameron@oracle.com>
@@ -39,13 +39,15 @@ public:
   JpegWriter(Format format = RGB);
   ~JpegWriter();
 
-  bool init(FILE *f, int width, int height, int hDPI, int vDPI);
+  void setQuality(int quality);
+  void setProgressive(bool progressive);
+  bool init(FILE *f, int width, int height, int hDPI, int vDPI) override;
 
-  bool writePointers(unsigned char **rowPointers, int rowCount);
-  bool writeRow(unsigned char **row);
+  bool writePointers(unsigned char **rowPointers, int rowCount) override;
+  bool writeRow(unsigned char **row) override;
 
-  bool close();
-  bool supportCMYK();
+  bool close() override;
+  bool supportCMYK() override;
 
 private:
   JpegWriter(const JpegWriter &other);

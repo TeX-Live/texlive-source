@@ -3,6 +3,12 @@
 /* Use zlib instead of builtin zlib decoder. */
 #undef ENABLE_ZLIB
 
+/* define if the compiler supports basic C++11 syntax */
+#undef HAVE_CXX11
+
+/* Do we have any DCT decoder?. */
+#undef HAVE_DCT_DECODER
+
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H
@@ -21,6 +27,12 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Do we have any JPX decoder?. */
+#undef HAVE_JPX_DECODER
+
+/* Define to 1 if you have the `localtime_r' function. */
+#undef HAVE_LOCALTIME_R
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
@@ -48,6 +60,9 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
+
+/* Define to 1 if you have the `strtok_r' function. */
+#undef HAVE_STRTOK_R
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */

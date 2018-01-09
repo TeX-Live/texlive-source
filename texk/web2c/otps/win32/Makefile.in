@@ -92,6 +92,7 @@ bin_PROGRAMS = mkocp$(EXEEXT) mkofm$(EXEEXT)
 subdir = otps/win32
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
+	$(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-asm.m4 \
 	$(top_srcdir)/../../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
@@ -267,6 +268,7 @@ GREP = @GREP@
 HARFBUZZ_DEPEND = @HARFBUZZ_DEPEND@
 HARFBUZZ_INCLUDES = @HARFBUZZ_INCLUDES@
 HARFBUZZ_LIBS = @HARFBUZZ_LIBS@
+HAVE_CXX11 = @HAVE_CXX11@
 ICU_CONFIG = @ICU_CONFIG@
 ICU_DEPEND = @ICU_DEPEND@
 ICU_INCLUDES = @ICU_INCLUDES@

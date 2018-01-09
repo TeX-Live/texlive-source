@@ -12,6 +12,8 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2006 Takashi Iwai <tiwai@suse.de>
+// Copyright (C) 2017 Oliver Sander <oliver.sander@tu-dresden.de>
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -20,8 +22,6 @@
 
 #ifndef SPLASHFTFONTFILE_H
 #define SPLASHFTFONTFILE_H
-
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
 
 #ifdef USE_GCC_PRAGMAS
 #pragma interface
@@ -55,12 +55,15 @@ public:
 					  int codeToGIDLenA,
 					  int faceIndexA=0);
 
-  virtual ~SplashFTFontFile();
+  ~SplashFTFontFile();
 
   // Create a new SplashFTFont, i.e., a scaled instance of this font
   // file.
-  virtual SplashFont *makeFont(SplashCoord *mat,
-			       SplashCoord *textMat);
+  SplashFont *makeFont(SplashCoord *mat,
+		       SplashCoord *textMat) override;
+
+  // Provide access to the code-to-GID map
+  int* getCodeToGID();
 
 private:
 
@@ -80,7 +83,5 @@ private:
 
   friend class SplashFTFont;
 };
-
-#endif // HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
 
 #endif

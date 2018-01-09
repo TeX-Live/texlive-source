@@ -1,3 +1,11 @@
+2018-01-08  Karl Berry  <karl@freefriends.org>
+
+	Imported poppler-0.52.0 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-02-LLONG_MAX, patch-03-Object-functions: try removing,
+	seems like the source may have moved on by now, especially
+	what with requiring C++11.
+
 2017-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Imported poppler-0.52.0 source tree from:

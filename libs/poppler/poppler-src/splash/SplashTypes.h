@@ -16,6 +16,7 @@
 // Copyright (C) 2009, 2011-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Stefan Thomas <thomas@eload24.com>
 // Copyright (C) 2010 William Bader <williambader@hotmail.com>
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -31,10 +32,10 @@
 // coordinates
 //------------------------------------------------------------------------
 
-#if USE_FIXEDPOINT
+#if defined(USE_FIXEDPOINT)
 #include "goo/FixedPoint.h"
 typedef FixedPoint SplashCoord;
-#elif USE_FLOAT
+#elif defined(USE_FLOAT)
 typedef float SplashCoord;
 #else
 typedef double SplashCoord;
@@ -64,7 +65,7 @@ enum SplashColorMode {
 				//   BGRBGR...
   splashModeXBGR8		// 1 byte per component, 4 bytes per pixel:
 				//   XBGRXBGR...
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   ,
   splashModeCMYK8,	// 1 byte per component, 4 bytes per pixel:
 				//   CMYKCMYK...
@@ -85,7 +86,7 @@ enum SplashThinLineMode {
 extern int splashColorModeNComps[];
 
 // max number of components in any SplashColor
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
 #define splashMaxColorComps SPOT_NCOMPS+4
 #else
 #define splashMaxColorComps 4
@@ -104,7 +105,7 @@ static inline Guchar splashBGR8R(SplashColorPtr bgr8) { return bgr8[2]; }
 static inline Guchar splashBGR8G(SplashColorPtr bgr8) { return bgr8[1]; }
 static inline Guchar splashBGR8B(SplashColorPtr bgr8) { return bgr8[0]; }
 
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
 // CMYK8
 static inline Guchar splashCMYK8C(SplashColorPtr cmyk8) { return cmyk8[0]; }
 static inline Guchar splashCMYK8M(SplashColorPtr cmyk8) { return cmyk8[1]; }
@@ -123,7 +124,7 @@ static inline void splashClearColor(SplashColorPtr dest) {
   dest[0] = 0;
   dest[1] = 0;
   dest[2] = 0;
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   dest[3] = 0;
   for (int i = SPOT_NCOMPS; i < SPOT_NCOMPS + 4; i++)
     dest[i] = 0;
@@ -134,7 +135,7 @@ static inline void splashColorCopy(SplashColorPtr dest, SplashColorPtr src) {
   dest[0] = src[0];
   dest[1] = src[1];
   dest[2] = src[2];
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   dest[3] = src[3];
   for (int i = SPOT_NCOMPS; i < SPOT_NCOMPS + 4; i++)
     dest[i] = src[i];
@@ -145,7 +146,7 @@ static inline void splashColorXor(SplashColorPtr dest, SplashColorPtr src) {
   dest[0] ^= src[0];
   dest[1] ^= src[1];
   dest[2] ^= src[2];
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   dest[3] ^= src[3];
   for (int i = SPOT_NCOMPS; i < SPOT_NCOMPS + 4; i++)
     dest[i] ^= src[i];

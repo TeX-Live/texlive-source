@@ -1,6 +1,8 @@
+dnl $Id$
 dnl Process this file with Autoconf to produce a configure script for Web2c.
 dnl
-dnl   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2018 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -15,9 +17,7 @@ dnl   more than 256 fonts.
 dnl - NONASCII: necessary for the character translation feature.
 dnl - REGFIX: modern compilers mostly ignore register declarations, anyway.
 dnl The code for these things remains (where applicable), so you can
-dnl get these features if you are willing to hack the sources. If not,
-dnl it'll take a good argument to convince me to invest the time to make
-dnl them configurable.
+dnl get these features if you are willing to hack the sources.
 dnl
 m4_include([../../version.ac])[] dnl define tex_live_version
 AC_INIT([Web2C], tex_live_version(), [tex-k@tug.org])
@@ -45,6 +45,15 @@ KPSE_LT_HACK
 dnl Include additional code for web2c.
 KPSE_WEB2C_PREPARE
 m4_include([ac/web2c.ac])
+
+dnl LuaTeX requires C++11 because poppler does :(.
+if test "x$enable_xetex" = xyes \
+   || test "x$enable_luatex" = xyes \
+   || test "x$enable_luajittex" = xyes \
+   || test "x$enable_luatex53" = xyes; then
+  AC_MSG_NOTICE(LuaTeX enabled, requiring C++11 support)
+  AX_CXX_COMPILE_STDCXX([11])
+fi
 
 AS_IF([test "x$enable_texlive_build" = xyes],
       [banner_pre='TeX Live'],
