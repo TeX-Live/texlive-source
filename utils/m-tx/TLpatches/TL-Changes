@@ -1,4 +1,4 @@
-Changes applied to the mtx-0.62 tree as obtained from:
+Changes applied to the mtx-0.63 tree as obtained from:
 	http://www.ctan.org/tex-archive/support/m-tx/
 
 Remove:
@@ -8,6 +8,7 @@ Remove:
 	depcomp
 	install-sh
 	missing
+	test-driver
 
 Move to top directory:
 	tests/*

@@ -35,6 +35,7 @@ prepmx_SOURCES = \
 	prepmx.c \
 	status.c \
 	status.h \
+##      strings.c \  ## p2c generated, replaced by cfuncs.c
 	strings.h \
 	uptext.c \
 	uptext.h \

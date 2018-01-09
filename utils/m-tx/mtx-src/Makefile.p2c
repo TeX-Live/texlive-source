@@ -1,12 +1,8 @@
 all: globals.c mtx.c preamble.c lyrics.c analyze.c mtxline.c\
-  status.c uptext.c prepmx.c files.c notes.c multfile.c utility.c control.c
+  status.c uptext.c prepmx.c files.c notes.c multfile.c utility.c control.c strings.c
 
-multfile.c: multfile.pas
-	p2c -a -LTurbo multfile.pas -o temp.c
-	sed -e "s/Malloc/malloc/" < temp.c > multfile.c
-	rm temp.c
-	
 %.c: %.pas 
 	p2c -a -LTurbo $*.pas
 	cp $*.c $*.c.orig
+	sed -e "s/#include <p2c\/p2c.h>/#include \"p2c.h\"/" < $*.c.orig > $*.c
 

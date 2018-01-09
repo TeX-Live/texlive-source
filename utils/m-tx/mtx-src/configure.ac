@@ -8,10 +8,11 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define mtx_version
 AC_INIT([mtx], mtx_version, [rdt@cs.queensu.ca])
-AC_PREREQ([2.63])
+AC_PREREQ([2.69])
 AC_CONFIG_SRCDIR([analyze.c])
+AC_CONFIG_AUX_DIR([.])
 
-AM_INIT_AUTOMAKE(mtx, mtx_version)
+AM_INIT_AUTOMAKE
 
 dnl Check compiler and flags
 AC_PROG_CC

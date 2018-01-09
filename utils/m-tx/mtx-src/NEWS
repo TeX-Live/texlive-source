@@ -3,6 +3,35 @@ Corrections and enhancements to M-Tx starting from 0.53
    
 Newest items at top. You might also want to look at file `MAINTENANCE`.
 
+Version 0.63
+------------
+
+1. `Space` can put in optional extra space between title block and 
+    first stave.
+2. Multibar rest may appear after comment lines in its paragraph. (Thanks
+   to Christian Mondrup for finding the bug.)
+3. Spurious error message when using `][` corrected. (Thanks
+   to Christian Mondrup for finding the bug.)
+4. Pickup consisting of rests allowed with multibar rest. (Feature requested
+   by  Christian Mondrup.)
+5. Also recognizes `F` as doubling duration in multiplet. (Feature requested
+   by  Christian Mondrup.)
+6. No longer adds an undesired duration to rests in a multiplet.  (Thanks
+   to Christian Mondrup for finding the bug.)
+
+Version 0.62c
+-------------
+
+1. Emit one `rmN` per stave, rather than only one. This error was
+  introduced in Version 0.61a when the multibar coding was streamlined.
+
+Version 0.62b
+-------------
+
+1. An error is raised if a cumulative preamble command like TeX grows 
+   too long.
+2. Typo corrected in Makefile item README.md.
+
 Version 0.62a
 -------------
 

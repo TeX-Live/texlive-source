@@ -3,6 +3,59 @@ Corrections and enhancements to M-Tx starting from 0.53
    
 Newest items at top. You might also want to look at file `MAINTENANCE`.
 
+Version 0.63
+------------
+
+1. `Space` can put in optional extra space between title block and 
+first stave.
+2. Multibar rest may appear after comment lines in its paragraph. (Thanks
+to Christian Mondrup for finding the bug.)
+3. Spurious error message when using `][` corrected. (Thanks
+to Christian Mondrup for finding the bug.)
+4. Pickup consisting of rests allowed with multibar rest. (Feature requested
+by  Christian Mondrup.)
+5. Also recognizes `F` as doubling duration in multiplet. (Feature requested
+by  Christian Mondrup.)
+6. No longer adds an undesired duration to rests in a multiplet.  (Thanks
+to Christian Mondrup for finding the bug.)
+
+Version 0.62c
+-------------
+
+1. Emit one `rmN` per stave, rather than only one. This error was
+  introduced in Version 0.61a when the multibar coding was streamlined.
+
+Version 0.62b
+-------------
+
+1. An error is raised if a cumulative preamble command like TeX grows 
+  too long.
+2. Typo corrected in Makefile item README.md.
+
+Version 0.62a
+-------------
+
+1. Fonts bigtype and BIgtype, needed because PMX header font sizes
+were made smaller in July 2015, added to \mtxPalatino. Also, for
+completeness, \mtxbigsf and \mtxBIGsf. This version tagged on GitHub
+as 0.62.
+
+Version 0.62
+------------
+
+1. `\mtxlatex` command no longer needed.
+2. Various subtleties in the code have been commented.
+
+Version 0.61a
+-------------
+
+1. Special code for multi-bar rests removed, taking advantage of
+upstream improvements. 
+2. MusiXTeX 1.21 and PMX 2.71 required in `mtx.tex`.
+3. When the last line of a file does not have an end-of-line,
+its line number in comments and error messages was 0. Corrected now. 
+(This bug was almost 11 years old.)
+
 Version 0.61
 ------------
 
@@ -205,4 +258,12 @@ Version 0.53a
   From Christian Mondrup
     preamble.pas: added trailing backslash to \mtxTenorClef
     mtx.tex: changed \mtxmtxNormalSize to \mtxNormalSize 
+
+Changes since 0.52b, undated.
+   Uses mtx.tex file
+   More than one # or % per word treated correctly in uptext
+   Better way of handling line numbers in lyrics
+
+For earlier history, see comments in prepmx.pas of 0.52b.
+
 

@@ -114,9 +114,9 @@ end;
 function isMultiBarRest(rest: string): boolean;
 begin  isMultibarRest:=false;  if length(rest)<3 then exit;
   if rest[2]<>'m' then exit;
-  if multi_bar_rest then error(
+  if multi_bar_rest<>'' then error(
     'Only one multibar rest allowed per line',print);
-  multi_bar_rest := true; isMultibarRest:=true;
+  multi_bar_rest := rest; isMultibarRest:=true;
 end;
 
 { Double-length in xtuplet detected by a brute search for D anywhere.
@@ -211,7 +211,7 @@ begin
   repeat  GetNextMusWord(buf,note,nscan);  if length(note)=0 then break; count:=0;
 {    if isNoteOrRest(note) and not (isPause(note) or isMultibarRest(note))
       then note:=toStandard(note); }
-    doublex := pos1('D',note)>0; 
+    doublex := (pos1('D',note)>0) or (pos1('F',note)>0); 
     if nscan=mword then
     begin 
       if length(note)=0 then 
@@ -221,7 +221,8 @@ begin
       else bar:=barLength(note);
     end
     else if nscan=rword then
-      if not (isPause(note) or isMultiBarRest(note)) then
+      if not (isPause(note) or isMultiBarRest(note) 
+        or (ngrace + nmulti > 0)) then  {0.63: allow rests in xtuples}
       begin
         processNote(note,xnote,dur1,lastdur,count);
         checkSticky(note,rest_attrib[voice]);
@@ -230,7 +231,7 @@ begin
     enote := note;
     if (nscan=macro) or (nscan=endMacro) then examineMacro;
     if nscan=abcdefg then
-      if (not multi_bar_rest) and (ngrace + nmulti = 0) then
+      if (multi_bar_rest='') and (ngrace + nmulti = 0) then
       begin
         processNote(enote,xnote,dur1,lastdur,count);
         if xnote<>'' then
@@ -249,7 +250,7 @@ begin
     else if bar_length=0 then markBar(voice)
     else if (numberOfBars(voice)=0) and (bar_length<bar) then
     begin  if has_next then
-      has_next:=false  {Should check whether pickups are equal}
+      has_next:=false  {TODO Should check whether pickups are equal}
       else if left_over>0 then error3(voice,'Bar is too short');
       left_over:=bar_length;  bar_length := 0;
     end;
@@ -258,7 +259,7 @@ begin
       else barForward(voice,-1);  has_next := true;
     end
     else  if isPause(note) then  inc(bar_length,bar)
-    else  if multi_bar_rest then {do nothing}
+    else  if multi_bar_rest<>'' then {do nothing}
     else if not done and isNoteOrRest(note) then countIt
       else maybeGroup;
     dur1:=lastdur; 

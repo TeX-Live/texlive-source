@@ -32,20 +32,20 @@ procedure testParagraph;
       extra, l, nbar: integer;
 begin
   nbars:=0; pickup:=0; nleft:=0; if top>bottom then exit;
-  pickup:=0;  nv:=0;  leader:=0;  multi_bar_rest := false;
+  pickup:=0;  nv:=0;  leader:=0;  multi_bar_rest := '';
   for voice:=top to bottom do
   begin mus:=musicLineNo(voice);
     if mus>0 then   {* -------------- Voice is present  ---- }
     begin  inc(nv); line_no:=orig_line_no[mus];
       scanMusic(voice,l);
-      if multi_bar_rest and (nv>1) then error(
+      if (multi_bar_rest<>'') and (nv>1) then error(
         'Multi-bar rest allows only one voice',print);
       if not pmx_preamble_done then
       if voice=top then pickup:=l
         else if pickup<>l then
         error3(voice,'The same pickup must appear in all voices');
       nbar := numberOfBars(voice);  extra := extraLength(voice);
-      if multi_bar_rest and ((nbar>0) or (extra>0)) then error3(voice,
+      if (multi_bar_rest<>'') and ((nbar>0) or (extra>0)) then error3(voice,
         'Multi-bar rest allows no other rests or notes');
       if (nbar>nbars) or (nbar=nbars) and (extra>nleft) then
       begin nbars:=nbar; nleft:=extra; leader:=voice; end;
