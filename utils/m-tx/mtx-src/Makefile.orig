@@ -9,7 +9,7 @@ prepmx: $(pasfiles)
 	fpc -g -B -vn -So prepmx -T$(SYSTEM)
 
 README.md: README.txt
-	pandoc -s -t markdown_githum README.txt
+	pandoc -s -t markdown_github README.txt
 
 commit: $(pasfiles) $(sfiles) README.txt README.md
 	make -C doc commit

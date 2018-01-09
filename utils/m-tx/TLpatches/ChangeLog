@@ -1,3 +1,8 @@
+2018-01-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-01-write-bin: Update for 0.63.
+	* patch-02-malloc, patch-03-different-size: Remove.
+
 2016-02-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* patch-01-write-bin, patch-02-malloc, patch-03-different-size:

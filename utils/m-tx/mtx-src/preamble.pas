@@ -349,24 +349,31 @@ end;
 
 procedure setRange(line: string);
   var v,p: integer;
+      vl: string;
 begin 
   line_no := orig_range_line;
   for v:=1 to nvoices do 
-  begin p:=pos(voice_label[v]+'=',line);
+  begin vl := voice_label[v];
+    p:=pos(vl+'=',line);
     if p>0 then
     begin
       if length(line)<p+6 then
-        error('At least five characters must follow "'+voice_label[v]+'="',
+        error('At least five characters must follow "'+vl+'="',
         print);
-      defineRange(v,substr(line,p+2,5));
+      defineRange(v,substr(line,p+1+length(vl),5));
     end
-    else defineRange(v,'');
+    else begin
+      warning('No range defined for voice '+vl,print);
+      defineRange(v,'');
+    end
   end;
 end;
 
+{ TODO: This procedure should test for assertions in a comment
+ or be removed }
 function isAssertion(var line: string): boolean;
 begin 
-  exit(false)
+  isAssertion := false
 end;  
 
 function doCommand(line: string): line_type;
@@ -387,7 +394,12 @@ begin
     if last_command<>none then
     begin 
       if mustAppend(last_command) and redefined[last_command] then
-        cline[last_command]:=cline[last_command]+#10+line
+        begin
+          if length(cline[last_command])+length(line)>254 then
+          error('Total length of preamble command '+commands[last_command]+
+            ' must not exceed 255',not print);
+          cline[last_command]:=cline[last_command]+#10+line
+        end
       else 
       begin cline[last_command]:=line;
         if warn_redefine and redefined[last_command] then
@@ -487,7 +499,8 @@ begin
   some_vocal:=false; ngroups:=0;
   style_supplied := false; 
   for i:=1 to maxvoices do setVocal(i,false);
-  for i:=1 to maxstaves do
+  for i:=1 to maxstaves do stave_size[i]:=unspec;
+  for i:=0 to maxstaves do nspace[i]:=unspec;
   begin  nspace[i]:=unspec;  stave_size[i]:=unspec;  end;
   n_pages:=1; n_systems:=1;
   readStyles; old_known_styles := known_styles;
@@ -588,7 +601,7 @@ begin
 'F','b','6': clefno:=6;
 'C': clefno:=3;
     else
-    begin  warning('Unknown clef code - replaced by treble',print);
+    begin  warning('Unknown clef code "' + cl + '" - replaced by treble',print);
       clefno:=0;
     end;
   end
@@ -667,10 +680,14 @@ begin
       '\\mtxSetSize{'+toString(ninstr+1-j)+'}{'+sizecode(stave_size[j])+'}\');
   if part_line <> '' then
   begin putLine('Ti'); putLine(part_line); end;
-  if title_line <> '' then
-  begin putLine('Tt'); putLine('\mtxTitle'); end;
   if composer_line <> '' then
   begin putLine('Tc'); putLine('\mtxPoetComposer'); end;
+  if title_line <> '' then
+  begin write(outfile,'Tt'); 
+    if nspace[0] <> unspec then write(outfile,toString(nspace[0]));
+    writeln(outfile);
+    putLine('\mtxTitle'); 
+  end;
   if pmx_line <> '' then putLine(pmx_line);
   doTenorClefs;
   if cline[width] <> '' then putLine(cline[width]);

@@ -1,3 +1,8 @@
+From Bob Tennent (e-mail on 2015-12-30):
+  Dirk: I suggest you experiment to see whether the 1st argument is 
+  sufficient for your purposes with the new pmx and musixtex, or whether 
+  other modifications are needed.
+
 Lyrics lines when not from same paragraph don't join neatly.
 Problem has been discussed on mailing list and Rainer gave
 a solution. This still (TeXLive 2013) seems to be a little 
@@ -6,4 +11,7 @@ unsatisfactory.
 Rest in dot and comma shortcuts gives error at PMX stage.
 Not recently (2015-08-04) checked.
 
+-----
+
+Warning for unbalanced braces in the first line a lyrics paragraph.
 

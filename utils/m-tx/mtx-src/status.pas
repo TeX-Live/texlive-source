@@ -56,9 +56,9 @@ const
 '7c','7d','7e','7f','7g','7a','7b');
 
 type
-  line_status = record
-    pitch, chord_pitch, octave_adjust, beam_level, 
-      slur_level, after_slur: integer;
+  line_status = 
+  record
+    pitch, chord_pitch, octave_adjust, beam_level, slur_level, after_slur: integer;
     octave, lastnote, chord_lastnote, duration, slurID, tieID: char;
     beamnext, beamed, slurnext, slurred, no_beam_melisma: boolean;
     no_slur_melisma: array[1..12] of boolean; 
@@ -74,14 +74,16 @@ var current: array[voice_index] of line_status;
 meaningful, a and b (which come after g) are translated to h and i. }
 
 procedure checkRange(voice: integer; note: string);
+  var orig_note: string;
 begin 
   if voice_range[voice]='' then exit;
+  orig_note := note;
   if length(note)>2 { assume usual PMX form with octave } then 
     note := note[3]+note[1];
   if note[2]='a' then note[2]:='h'; 
   if note[2]='b' then note[2]:='i';
-  if (note<range_low[voice]) or (note>range_high[voice]) then
-    error3(voice,note+' is out of range, specified as '+voice_range[voice])
+  if (note<range_low[voice]) or (note>range_high[voice]) then error3(voice,
+   orig_note+' is out of range, specified as '+voice_range[voice])
 end;
 
 procedure defineRange(voice: integer; range: string);

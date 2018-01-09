@@ -83,7 +83,8 @@ var  voice_label: array[voice_index] of string;
      clef: array[stave_index] of char;
      instr, stave, first_on_stave, number_on_stave:
        array[stave_index] of voice_index0;
-     nspace, stave_size: array[stave_index] of integer;
+     stave_size: array[stave_index] of integer;
+     nspace: array[stave_index0] of integer;
      nvoices, nstaves, ninstr, bottom, top: voice_index0;
      one_beat, full_bar, line_no, short_note, musicsize,
        meternum, meterdenom, pmnum, pmdenom, paragraph_no,
@@ -94,9 +95,9 @@ var  voice_label: array[voice_index] of string;
      orig_line_no: line_nos;
      infile, outfile, stylefile: text;
      default_duration: char;
-     fracindent, this_version, this_version_date: string;
+     fracindent, this_version, this_version_date, multi_bar_rest: string;
      pmx_preamble_done, first_paragraph, final_paragraph, must_respace,
-       must_restyle, multi_bar_rest, some_vocal: boolean;
+       must_restyle, some_vocal: boolean;
 
 procedure error(message: string; printLine: boolean);
 procedure fatalerror(message: string);
@@ -150,7 +151,14 @@ end;
 procedure setSpace(line: string);
   var i: integer;
       word: string;
-  begin  i:=0;
+  begin 
+    i := pos1(';',line);   
+    if i>0 then
+    begin
+      getNum(substr(line,1,i-1),nspace[0]);      
+      predelete (line,i)
+    end;
+    i:=0;
     while i<ninstr do
     begin  word:=GetNextWord(line,blank,dummy);
       if word='' then exit;

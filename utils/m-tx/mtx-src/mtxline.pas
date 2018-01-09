@@ -377,7 +377,7 @@ procedure GetNextMusWord (var buf, note: string; var nscan: music_word);
 ')':    if pos1('(',note)=0 then nscan:=rparen else nscan:=rlparen;
 '}':    if pos1('{',note)=0 then nscan:=rparen else nscan:=rlparen;
 '[':    nscan:=lbrac;
-']':    nscan:=rbrac;
+']':    if note='][' then nscan:=other else nscan:=rbrac;
 '@':    nscan:=atword;
 'm':    nscan:=mword;
 'r':    nscan:=rword;

@@ -5,14 +5,12 @@ uses control, strings, globals, preamble, lyrics, mtx, analyze,
 { CMO: addition/change by Christian Mondrup }
 
 {* M-Tx preprocessor to PMX     Dirk Laurie }
-const version = '0.62';
-      version_date = '<08 February 2016>';
+const version = '0.63';
+      version_date = '<7 January 2018>';
 
-{* See file "Corrections" for updates later than those listed below
-}
+{* See file "Corrections" for updates }
 
 {* To do next:
-   Take notice of recent improvements in musixtex, pmx and musixlyr
 {* Current bugs:
 {* Old bugs:
    Does not check PMX syntax
@@ -163,7 +161,7 @@ atword: lyricsAdjust(voice, note);
  var l: integer;
      in_group: boolean;
 
-  procedure processNote;
+  procedure processUsual;
   begin  
     begin if hasVerseNumber(voice) then pretex:=pretex+'\mtxVerse';
       l := pos1(multi_group,note);  
@@ -188,7 +186,7 @@ begin
   repeat note:=getMusicWord(voice);  if note='' then exit;
     { if debugMode then writeln(voice,' ',note); }
     case thisNote(voice) of
-  rword: begin if multi_bar_rest then
+  rword: begin if multi_bar_rest<>'' then
            begin if uptextOnRests then
                addUptext(voice, no_uptext, pretex);
            end
@@ -198,10 +196,11 @@ begin
              if nmulti>0 then begin in_group:=true; dec(nmulti);  end;
              if uptextOnRests then
                addUptext(voice, no_uptext, pretex);
-             if not isPause(note) then resetDuration(voice,durationCode(note));
+             if not (isPause(note) or in_group) {0.63: allow rests in xtuples}
+               then resetDuration(voice,durationCode(note));
            end
          end;
-  abcdefg: processNote;
+  abcdefg: processUsual;
   barword: begin
       if voice=nvoices then
       if endOfBar(voice,bar_no) then repeat_sign := note
@@ -287,13 +286,18 @@ procedure musicParagraph;
   end;
 
   procedure processMBR;
-  var bars_of_rest: integer;
+  var s, bars_of_rest: integer;
       mbr: string;
   begin  
-    mbr := P[1];
+    mbr := multi_bar_rest;  
     predelete(mbr,2); getNum(mbr,bars_of_rest);
     bar_no := bar_no + bars_of_rest;
-    putLine('rm' + toString(bars_of_rest) + ' /'); putLine('')
+    for s:=1 to nstaves do 
+    begin
+      if pickup>0 then put(rests(pickup,meterdenom,visible),nospace);
+      putLine('rm' + toString(bars_of_rest) + ' /')
+    end;
+    putLine('')
   end;
 
 begin
@@ -328,7 +332,7 @@ begin
   if must_respace then respace;
   if (meternum=0) then putMeter(meterChange(beatsPerLine,meterdenom,true));
   if nleft > 0 then inc(nbars);
-  if (nbars=0) and multi_bar_rest then 
+  if (nbars=0) and (multi_bar_rest<>'') then 
     processMBR
   else for bar_of_line:=1 to nbars do
     processOneBar;
