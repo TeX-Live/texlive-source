@@ -15,7 +15,7 @@
 // Copyright (C) 2007, 2011 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2010-2013, 2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
-// Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2012, 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -62,7 +62,7 @@ typedef void (*SplashICCTransform)(void *data, SplashBitmap *bitmap);
 //------------------------------------------------------------------------
 
 enum SplashPipeResultColorCtrl {
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   splashPipeResultColorNoAlphaBlendCMYK,
   splashPipeResultColorNoAlphaBlendDeviceN,
 #endif
@@ -70,13 +70,13 @@ enum SplashPipeResultColorCtrl {
   splashPipeResultColorNoAlphaBlendMono,
   splashPipeResultColorAlphaNoBlendMono,
   splashPipeResultColorAlphaNoBlendRGB,
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   splashPipeResultColorAlphaNoBlendCMYK,
   splashPipeResultColorAlphaNoBlendDeviceN,
 #endif
   splashPipeResultColorAlphaBlendMono,
   splashPipeResultColorAlphaBlendRGB
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   ,
   splashPipeResultColorAlphaBlendCMYK,
   splashPipeResultColorAlphaBlendDeviceN
@@ -298,7 +298,7 @@ private:
   void pipeRunSimpleRGB8(SplashPipe *pipe);
   void pipeRunSimpleXBGR8(SplashPipe *pipe);
   void pipeRunSimpleBGR8(SplashPipe *pipe);
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   void pipeRunSimpleCMYK8(SplashPipe *pipe);
   void pipeRunSimpleDeviceN8(SplashPipe *pipe);
 #endif
@@ -307,7 +307,7 @@ private:
   void pipeRunAARGB8(SplashPipe *pipe);
   void pipeRunAAXBGR8(SplashPipe *pipe);
   void pipeRunAABGR8(SplashPipe *pipe);
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   void pipeRunAACMYK8(SplashPipe *pipe);
   void pipeRunAADeviceN8(SplashPipe *pipe);
 #endif

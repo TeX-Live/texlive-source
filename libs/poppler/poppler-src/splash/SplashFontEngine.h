@@ -16,6 +16,7 @@
 // Copyright (C) 2009, 2011 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2011 Andreas Hartmetz <ahartmetz@gmail.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -54,14 +55,9 @@ public:
 
   // Create a font engine.
   SplashFontEngine(
-#if HAVE_T1LIB_H
-		   GBool enableT1lib,
-#endif
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
 		   GBool enableFreeType,
 		   GBool enableFreeTypeHinting,
 		   GBool enableSlightHinting,
-#endif
 		   GBool aa);
 
   ~SplashFontEngine();
@@ -90,21 +86,14 @@ public:
   // Note that the Splash y axis points downward.
   SplashFont *getFont(SplashFontFile *fontFile,
 		      SplashCoord *textMat, SplashCoord *ctm);
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
   GBool getAA();
   void setAA(GBool aa);
-#endif
 
 private:
 
   SplashFont *fontCache[splashFontCacheSize];
 
-#if HAVE_T1LIB_H
-  SplashT1FontEngine *t1Engine;
-#endif
-#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
   SplashFTFontEngine *ftEngine;
-#endif
 };
 
 #endif

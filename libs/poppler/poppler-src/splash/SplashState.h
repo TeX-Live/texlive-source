@@ -12,6 +12,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2011, 2012, 2015 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -124,7 +125,7 @@ private:
          rgbTransferG[256],
          rgbTransferB[256];
   Guchar grayTransfer[256];
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   Guchar cmykTransferC[256],
          cmykTransferM[256],
          cmykTransferY[256],

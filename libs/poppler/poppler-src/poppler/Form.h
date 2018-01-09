@@ -6,13 +6,15 @@
 //
 // Copyright 2006 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright 2007, 2008, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright 2007-2010, 2012, 2015, 2016 Albert Astals Cid <aacid@kde.org>
+// Copyright 2007-2010, 2012, 2015-2017 Albert Astals Cid <aacid@kde.org>
 // Copyright 2010 Mark Riedesel <mark@klowner.com>
 // Copyright 2011 Pino Toscano <pino@kde.org>
 // Copyright 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright 2015 André Guerreiro <aguerreiro1985@gmail.com>
 // Copyright 2015 André Esser <bepandre@hotmail.com>
+// Copyright 2017 Roland Hieber <r.hieber@pengutronix.de>
+// Copyright 2017 Hans-Ulrich Jüttner <huj@froreich-bioscientia.de>
 //
 //========================================================================
 
@@ -23,10 +25,12 @@
 #pragma interface
 #endif
 
+#include "goo/GooList.h"
 #include "Object.h"
 #include "Annot.h"
 
 #include <set>
+#include <vector>
 
 class GooString;
 class Array;
@@ -58,6 +62,12 @@ enum VariableTextQuadding {
   quaddingLeftJustified,
   quaddingCentered,
   quaddingRightJustified
+};
+
+enum FormSignatureType {
+  adbe_pkcs7_sha1,
+  adbe_pkcs7_detached,
+  ETSI_CAdES_detached
 };
 
 class Form;
@@ -165,7 +175,7 @@ public:
 
   char* getOnStr();
   void setAppearanceState(const char *state);
-  void updateWidgetAppearance();
+  void updateWidgetAppearance() override;
 
 protected:
   FormFieldButton *parent() const;
@@ -187,7 +197,7 @@ public:
   //except a UTF16BE string
   void setContent(GooString* new_content);
 
-  void updateWidgetAppearance();
+  void updateWidgetAppearance() override;
 
   bool isMultiline () const; 
   bool isPassword () const; 
@@ -197,6 +207,11 @@ public:
   bool isComb () const; 
   bool isRichText () const;
   int getMaxLen () const;
+  //return the font size of the field's text
+  double getTextFontSize();
+  //set the font size of the field's text (currently only integer values)
+  void setTextFontSize(int fontSize);
+
 protected:
   FormFieldText *parent() const;
 };
@@ -228,7 +243,7 @@ public:
 
   GooString* getEditChoice ();
 
-  void updateWidgetAppearance();
+  void updateWidgetAppearance() override;
   bool isSelected (int i);
 
   bool isCombo () const; 
@@ -249,9 +264,20 @@ protected:
 class FormWidgetSignature: public FormWidget {
 public:
   FormWidgetSignature(PDFDoc *docA, Object *dict, unsigned num, Ref ref, FormField *p);
-  void updateWidgetAppearance();
+  void updateWidgetAppearance() override;
 
-  SignatureInfo *validateSignature(bool doVerifyCert, bool forceRevalidation);
+  FormSignatureType signatureType();
+  // Use -1 for now as validationTime
+  SignatureInfo *validateSignature(bool doVerifyCert, bool forceRevalidation, time_t validationTime);
+
+  // returns a list with the boundaries of the signed ranges
+  // the elements of the list are of type Goffset
+  std::vector<Goffset> getSignedRangeBounds();
+
+  // checks the length encoding of the signature and returns the hex encoded signature
+  // if the check passed (and the checked file size as output parameter in checkedFileSize)
+  // otherwise a nullptr is returned
+  GooString* getCheckedSignature(Goffset *checkedFileSize);
 };
 
 //------------------------------------------------------------------------
@@ -350,7 +376,7 @@ public:
 
   char *getAppearanceState() { return appearanceState.isName() ? appearanceState.getName() : NULL; }
 
-  void fillChildrenSiblingsID ();
+  void fillChildrenSiblingsID () override;
   
   void setNumSiblings (int num);
   void setSibling (int i, FormFieldButton *id) { siblings[i] = id; }
@@ -363,7 +389,7 @@ public:
   void print(int indent = 0);
 #endif
 
-  virtual ~FormFieldButton();
+  ~FormFieldButton();
 protected:
   void updateState(char *state);
 
@@ -389,7 +415,7 @@ public:
   GooString* getContent () { return content; }
   GooString* getContentCopy ();
   void setContentCopy (GooString* new_content);
-  virtual ~FormFieldText();
+  ~FormFieldText();
 
   bool isMultiline () const { return multiline; }
   bool isPassword () const { return password; }
@@ -401,10 +427,20 @@ public:
 
   int getMaxLen () const { return maxLen; }
 
+  //return the font size of the field's text
+  double getTextFontSize();
+  //set the font size of the field's text (currently only integer values)
+  void setTextFontSize(int fontSize);
+
 #ifdef DEBUG_FORMS
   void print(int indent = 0);
 #endif
+
+  static int tokenizeDA(GooString* daString, GooList* daToks, const char* searchTok);
+
 protected:
+  int parseDA(GooList* daToks);
+
   GooString* content;
   bool multiline;
   bool password;
@@ -424,7 +460,7 @@ class FormFieldChoice: public FormField {
 public:
   FormFieldChoice(PDFDoc *docA, Object *aobj, const Ref& ref, FormField *parent, std::set<int> *usedParents);
 
-  virtual ~FormFieldChoice();
+  ~FormFieldChoice();
 
   int getNumChoices() { return numChoices; }
   GooString* getChoice(int i) { return choices ? choices[i].optionName : NULL; }
@@ -490,16 +526,22 @@ protected:
 //------------------------------------------------------------------------
 
 class FormFieldSignature: public FormField {
+  friend class FormWidgetSignature;
 public:
   FormFieldSignature(PDFDoc *docA, Object *dict, const Ref& ref, FormField *parent, std::set<int> *usedParents);
 
-  SignatureInfo *validateSignature(bool doVerifyCert, bool forceRevalidation);
+  // Use -1 for now as validationTime
+  SignatureInfo *validateSignature(bool doVerifyCert, bool forceRevalidation, time_t validationTime);
 
-  virtual ~FormFieldSignature();
+  ~FormFieldSignature();
+  Object* getByteRange() { return &byte_range; }
+  GooString* getSignature() { return signature; }
 
 private:
   void parseInfo();
   void hashSignedDataBlock(SignatureHandler *handler, Goffset block_len);
+
+  FormSignatureType signature_type;
   Object byte_range;
   GooString *signature;
   SignatureInfo *signature_info;
@@ -522,7 +564,7 @@ public:
   ~Form();
 
   // Look up an inheritable field dictionary entry.
-  static Object *fieldLookup(Dict *field, const char *key, Object *obj);
+  static Object fieldLookup(Dict *field, const char *key);
   
   /* Creates a new Field of the type specified in obj's dict.
      used in Form::Form and FormField::FormField */
@@ -540,6 +582,9 @@ public:
   FormWidget* findWidgetByRef (Ref aref);
 
   void postWidgetsLoad();
+
+  const std::vector<Ref> &getCalculateOrder() const { return calculateOrder; }
+
 private:
   FormField** rootFields;
   int numFields;
@@ -550,6 +595,7 @@ private:
   GBool needAppearances;
   GfxResources *defaultResources;
   Object resDict;
+  std::vector<Ref> calculateOrder;
 
   // Variable Text
   GooString *defaultAppearance;

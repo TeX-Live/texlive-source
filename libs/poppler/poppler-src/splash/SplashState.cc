@@ -12,6 +12,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2009, 2011, 2012, 2015 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -39,7 +40,7 @@
 // number of components in each color mode
 int splashColorModeNComps[] = {
   1, 1, 3, 3, 4
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   , 4, 4 + SPOT_NCOMPS
 #endif
 };
@@ -83,7 +84,7 @@ SplashState::SplashState(int width, int height, GBool vectorAntialias,
     rgbTransferG[i] = (Guchar)i;
     rgbTransferB[i] = (Guchar)i;
     grayTransfer[i] = (Guchar)i;
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
     cmykTransferC[i] = (Guchar)i;
     cmykTransferM[i] = (Guchar)i;
     cmykTransferY[i] = (Guchar)i;
@@ -136,7 +137,7 @@ SplashState::SplashState(int width, int height, GBool vectorAntialias,
     rgbTransferG[i] = (Guchar)i;
     rgbTransferB[i] = (Guchar)i;
     grayTransfer[i] = (Guchar)i;
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
     cmykTransferC[i] = (Guchar)i;
     cmykTransferM[i] = (Guchar)i;
     cmykTransferY[i] = (Guchar)i;
@@ -187,7 +188,7 @@ SplashState::SplashState(SplashState *state) {
   memcpy(rgbTransferG, state->rgbTransferG, 256);
   memcpy(rgbTransferB, state->rgbTransferB, 256);
   memcpy(grayTransfer, state->grayTransfer, 256);
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   memcpy(cmykTransferC, state->cmykTransferC, 256);
   memcpy(cmykTransferM, state->cmykTransferM, 256);
   memcpy(cmykTransferY, state->cmykTransferY, 256);
@@ -249,7 +250,7 @@ void SplashState::setSoftMask(SplashBitmap *softMaskA) {
 
 void SplashState::setTransfer(Guchar *red, Guchar *green, Guchar *blue,
 			      Guchar *gray) {
-#if SPLASH_CMYK
+#ifdef SPLASH_CMYK
   int i;
 
   for (i = 0; i < 256; ++i) {

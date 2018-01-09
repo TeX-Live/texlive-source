@@ -12,6 +12,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2009-2011 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -23,7 +24,7 @@
 
 #include "poppler-config.h"
 
-#if USE_FIXEDPOINT
+#ifdef USE_FIXEDPOINT
 #include "goo/FixedPoint.h"
 #else
 #include <math.h>
@@ -31,9 +32,9 @@
 #include "SplashTypes.h"
 
 static inline SplashCoord splashAbs(SplashCoord x) {
-#if USE_FIXEDPOINT
+#if defined(USE_FIXEDPOINT)
   return FixedPoint::abs(x);
-#elif USE_FLOAT
+#elif defined(USE_FLOAT)
   return fabsf(x);
 #else
   return fabs(x);
@@ -41,11 +42,11 @@ static inline SplashCoord splashAbs(SplashCoord x) {
 }
 
 static inline int splashFloor(SplashCoord x) {
-  #if USE_FIXEDPOINT
+#if defined(USE_FIXEDPOINT)
     return FixedPoint::floor(x);
-  #elif USE_FLOAT
+#elif defined(USE_FLOAT)
     return (int)floorf(x);
-  #elif __GNUC__ && __i386__
+#elif defined(__GNUC__) && defined(__i386__)
     // floor() and (int)() are implemented separately, which results
     // in changing the FPCW multiple times - so we optimize it with
     // some inline assembly
@@ -64,7 +65,7 @@ static inline int splashFloor(SplashCoord x) {
 		   : "=m" (oldCW), "=m" (newCW), "=m" (result), "=r" (t)
 		   : "m" (x));
     return result;
-  #elif defined(WIN32) && defined(_M_IX86)
+#elif defined(_WIN32) && defined(_M_IX86)
     // floor() and (int)() are implemented separately, which results
     // in changing the FPCW multiple times - so we optimize it with
     // some inline assembly
@@ -81,18 +82,18 @@ static inline int splashFloor(SplashCoord x) {
     __asm fistp DWORD PTR result
     __asm fldcw WORD PTR oldCW
     return result;
-  #else
+#else
     if (x > 0) return (int)x;
     else return (int)floor(x);
-  #endif
+#endif
 }
 
 static inline int splashCeil(SplashCoord x) {
-#if USE_FIXEDPOINT
+#if defined(USE_FIXEDPOINT)
   return FixedPoint::ceil(x);
-#elif USE_FLOAT
+#elif defined(USE_FLOAT)
   return (int)ceilf(x);
-#elif __GNUC__ && __i386__
+#elif defined(__GNUC__) && defined(__i386__)
   // ceil() and (int)() are implemented separately, which results
   // in changing the FPCW multiple times - so we optimize it with
   // some inline assembly
@@ -111,7 +112,7 @@ static inline int splashCeil(SplashCoord x) {
 		   : "=m" (oldCW), "=m" (newCW), "=m" (result), "=r" (t)
 		   : "m" (x));
   return result;
-#elif defined(WIN32) && defined(_M_IX86)
+#elif defined(_WIN32) && defined(_M_IX86)
   // ceil() and (int)() are implemented separately, which results
   // in changing the FPCW multiple times - so we optimize it with
   // some inline assembly
@@ -134,9 +135,9 @@ static inline int splashCeil(SplashCoord x) {
 }
 
 static inline int splashRound(SplashCoord x) {
-#if USE_FIXEDPOINT
+#if defined(USE_FIXEDPOINT)
   return FixedPoint::round(x);
-#elif __GNUC__ && __i386__
+#elif defined(__GNUC__) && defined(__i386__)
   // this could use round-to-nearest mode and avoid the "+0.5",
   // but that produces slightly different results (because i+0.5
   // sometimes rounds up and sometimes down using the even rule)
@@ -156,7 +157,7 @@ static inline int splashRound(SplashCoord x) {
 		   : "=m" (oldCW), "=m" (newCW), "=m" (result), "=r" (t)
 		   : "m" (x));
   return result;
-#elif defined(WIN32) && defined(_M_IX86)
+#elif defined(_WIN32) && defined(_M_IX86)
   // this could use round-to-nearest mode and avoid the "+0.5",
   // but that produces slightly different results (because i+0.5
   // sometimes rounds up and sometimes down using the even rule)
@@ -180,7 +181,7 @@ static inline int splashRound(SplashCoord x) {
 }
 
 static inline SplashCoord splashAvg(SplashCoord x, SplashCoord y) {
-#if USE_FIXEDPOINT
+#ifdef USE_FIXEDPOINT
   return FixedPoint::avg(x, y);
 #else
   return 0.5 * (x + y);
@@ -188,9 +189,9 @@ static inline SplashCoord splashAvg(SplashCoord x, SplashCoord y) {
 }
  
 static inline SplashCoord splashSqrt(SplashCoord x) {
-#if USE_FIXEDPOINT
+#if defined(USE_FIXEDPOINT)
   return FixedPoint::sqrt(x);
-#elif USE_FLOAT
+#elif defined(USE_FLOAT)
   return sqrtf(x);
 #else
   return sqrt(x);
@@ -198,9 +199,9 @@ static inline SplashCoord splashSqrt(SplashCoord x) {
 }
 
 static inline SplashCoord splashPow(SplashCoord x, SplashCoord y) {
-#if USE_FIXEDPOINT
+#if defined(USE_FIXEDPOINT)
   return FixedPoint::pow(x, y);
-#elif USE_FLOAT
+#elif defined(USE_FLOAT)
   return powf(x, y);
 #else
   return pow(x, y);
@@ -212,7 +213,7 @@ static inline SplashCoord splashDist(SplashCoord x0, SplashCoord y0,
   SplashCoord dx, dy;
   dx = x1 - x0;
   dy = y1 - y0;
-#if USE_FIXEDPOINT
+#ifdef USE_FIXEDPOINT
   // this handles the situation where dx*dx or dy*dy is too large to
   // fit in the 16.16 fixed point format
   SplashCoord dxa, dya, d;
@@ -235,7 +236,7 @@ static inline SplashCoord splashDist(SplashCoord x0, SplashCoord y0,
 static inline GBool splashCheckDet(SplashCoord m11, SplashCoord m12,
 				   SplashCoord m21, SplashCoord m22,
 				   SplashCoord epsilon) {
-#if USE_FIXEDPOINT
+#ifdef USE_FIXEDPOINT
   return FixedPoint::checkDet(m11, m12, m21, m22, epsilon);
 #else
   return fabs(m11 * m22 - m12 * m21) >= epsilon;

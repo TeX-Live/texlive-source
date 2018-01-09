@@ -18,9 +18,9 @@
 // Copyright (C) 2006-2008, 2011-2013 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2006, 2007, 2013 Ed Catmur <ed@catmur.co.uk>
 // Copyright (C) 2006 Jeff Muizelaar <jeff@infidigm.net>
-// Copyright (C) 2007, 2008, 2012 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2007, 2008, 2012, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Koji Otani <sho@bbr.jp>
-// Copyright (C) 2008, 2010-2012, 2014-2016 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2010-2012, 2014-2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2008 Pino Toscano <pino@kde.org>
 // Copyright (C) 2008, 2010 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2009 Ross Moore <ross@maths.mq.edu.au>
@@ -30,7 +30,7 @@
 // Copyright (C) 2010 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 // Copyright (C) 2011 Sam Liao <phyomh@gmail.com>
 // Copyright (C) 2012 Horst Prote <prote@fmi.uni-stuttgart.de>
-// Copyright (C) 2012, 2013-2016 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2012, 2013-2017 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2012 Peter Breitenlohner <peb@mppmu.mpg.de>
 // Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -51,7 +51,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
-#include <math.h>
+#include <cmath>
 #include <float.h>
 #include <ctype.h>
 #include <algorithm>
@@ -306,7 +306,7 @@ TextFontInfo::TextFontInfo(GfxState *state) {
   gfxFont = state->getFont();
   if (gfxFont)
     gfxFont->incRefCnt();
-#if TEXTOUT_WORD_LIST
+#ifdef TEXTOUT_WORD_LIST
   fontName = (gfxFont && gfxFont->getName()) ? gfxFont->getName()->copy()
                                              : (GooString *)NULL;
   flags = gfxFont ? gfxFont->getFlags() : 0;
@@ -316,7 +316,7 @@ TextFontInfo::TextFontInfo(GfxState *state) {
 TextFontInfo::~TextFontInfo() {
   if (gfxFont)
     gfxFont->decRefCnt();
-#if TEXTOUT_WORD_LIST
+#ifdef TEXTOUT_WORD_LIST
   if (fontName) {
     delete fontName;
   }
@@ -360,7 +360,7 @@ TextWord::TextWord(GfxState *state, int rotA, double fontSizeA) {
   spaceAfter = gFalse;
   next = NULL;
 
-#if TEXTOUT_WORD_LIST
+#ifdef TEXTOUT_WORD_LIST
   GfxRGB rgb;
 
   if ((state->getRender() & 3) == 1) {
@@ -565,7 +565,7 @@ static struct CombiningTable combiningTable[] = {
 };
 
 // returning combining versions of characters
-Unicode getCombiningChar(Unicode u) {
+static Unicode getCombiningChar(Unicode u) {
   int len = sizeof(combiningTable) / sizeof(combiningTable[0]);
   for (int i = 0; i < len; ++i) {
     if (u == combiningTable[i].base)
@@ -790,7 +790,7 @@ int TextWord::cmpYX(const void *p1, const void *p2) {
   return cmp < 0 ? -1 : cmp > 0 ? 1 : 0;
 }
 
-#if TEXTOUT_WORD_LIST
+#ifdef TEXTOUT_WORD_LIST
 
 GooString *TextWord::getText() {
   GooString *s;
@@ -889,11 +889,12 @@ void TextPool::addWord(TextWord *word) {
   TextWord *w0, *w1;
 
   // expand the array if needed
-  if (unlikely((word->base / textPoolStep) > INT_MAX)) {
-      error(errSyntaxWarning, -1, "word->base / textPoolStep > INT_MAX");
+  wordBaseIdx = (int)(word->base / textPoolStep);
+  if (unlikely(wordBaseIdx <= INT_MIN + 128 || wordBaseIdx >= INT_MAX - 128)) {
+      error(errSyntaxWarning, -1, "wordBaseIdx out of range");
+      delete word;
       return;
   }
-  wordBaseIdx = (int)(word->base / textPoolStep);
   if (minBaseIdx > maxBaseIdx) {
     minBaseIdx = wordBaseIdx - 128;
     maxBaseIdx = wordBaseIdx + 128;
@@ -2251,7 +2252,7 @@ GBool TextFlow::blockFits(TextBlock *blk, TextBlock *prevBlk) {
   return fits;
 }
 
-#if TEXTOUT_WORD_LIST
+#ifdef TEXTOUT_WORD_LIST
 
 //------------------------------------------------------------------------
 // TextWordList
@@ -2598,8 +2599,7 @@ void TextPage::addChar(GfxState *state, double x, double y,
   }
 
   // check the tiny chars limit
-  if (!globalParams->getTextKeepTinyChars() &&
-      fabs(w1) < 3 && fabs(h1) < 3) {
+  if (fabs(w1) < 3 && fabs(h1) < 3) {
     if (++nTinyChars > 50000) {
       charPos += nBytes;
       return;
@@ -4327,20 +4327,20 @@ TextSelectionVisitor::TextSelectionVisitor (TextPage *page)
 class TextSelectionDumper : public TextSelectionVisitor {
 public:
   TextSelectionDumper(TextPage *page);
-  virtual ~TextSelectionDumper();
+  ~TextSelectionDumper();
 
-  virtual void visitBlock (TextBlock *block, 
+  void visitBlock (TextBlock *block, 
 			   TextLine *begin,
 			   TextLine *end,
-			   PDFRectangle *selection) { };
-  virtual void visitLine (TextLine *line,
+			   PDFRectangle *selection) override { };
+  void visitLine (TextLine *line,
 			  TextWord *begin,
 			  TextWord *end,
 			  int edge_begin,
 			  int edge_end,
-			  PDFRectangle *selection);
-  virtual void visitWord (TextWord *word, int begin, int end,
-			  PDFRectangle *selection);
+			  PDFRectangle *selection) override;
+  void visitWord (TextWord *word, int begin, int end,
+			  PDFRectangle *selection) override;
   void endPage();
 
   GooString *getText(void);
@@ -4498,18 +4498,18 @@ public:
   TextSelectionSizer(TextPage *page, double scale);
   ~TextSelectionSizer() { }
 
-  virtual void visitBlock (TextBlock *block,
+  void visitBlock (TextBlock *block,
 			   TextLine *begin,
 			   TextLine *end,
-			   PDFRectangle *selection) { };
-  virtual void visitLine (TextLine *line, 
+			   PDFRectangle *selection) override { };
+  void visitLine (TextLine *line, 
 			  TextWord *begin,
 			  TextWord *end,
 			  int edge_begin,
 			  int edge_end,
-			  PDFRectangle *selection);
-  virtual void visitWord (TextWord *word, int begin, int end,
-			  PDFRectangle *selection) { };
+			  PDFRectangle *selection) override;
+  void visitWord (TextWord *word, int begin, int end,
+			  PDFRectangle *selection) override { };
 
   GooList *getRegion () { return list; }
 
@@ -4559,18 +4559,18 @@ public:
 		       GfxColor *glyph_color);
   ~TextSelectionPainter();
 
-  virtual void visitBlock (TextBlock *block,
+  void visitBlock (TextBlock *block,
 			   TextLine *begin,
 			   TextLine *end,
-			   PDFRectangle *selection) { };
-  virtual void visitLine (TextLine *line, 
+			   PDFRectangle *selection) override { };
+  void visitLine (TextLine *line, 
 			  TextWord *begin,
 			  TextWord *end,
 			  int edge_begin,
 			  int edge_end,
-			  PDFRectangle *selection);
-  virtual void visitWord (TextWord *word, int begin, int end,
-			  PDFRectangle *selection);
+			  PDFRectangle *selection) override;
+  void visitWord (TextWord *word, int begin, int end,
+			  PDFRectangle *selection) override;
   void endPage();
 
 private:
@@ -5472,7 +5472,7 @@ int TextPage::dumpFragment(Unicode *text, int len, UnicodeMap *uMap,
   }
 }
 
-#if TEXTOUT_WORD_LIST
+#ifdef TEXTOUT_WORD_LIST
 TextWordList *TextPage::makeWordList(GBool physLayout) {
   return new TextWordList(this, physLayout);
 }
@@ -5858,7 +5858,7 @@ void TextOutputDev::setMergeCombining(GBool merge) {
   text->setMergeCombining(merge);
 }
 
-#if TEXTOUT_WORD_LIST
+#ifdef TEXTOUT_WORD_LIST
 TextWordList *TextOutputDev::makeWordList() {
   return text->makeWordList(physLayout);
 }

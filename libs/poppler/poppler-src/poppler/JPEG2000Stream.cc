@@ -4,7 +4,7 @@
 //
 // A JPX stream decoder using OpenJPEG
 //
-// Copyright 2008-2010, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright 2008-2010, 2012, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright 2011 Daniel Glöckner <daniel-gl@gmx.net>
 // Copyright 2014, 2016 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright 2013, 2014 Adrian Johnson <ajohnson@redneon.com>
@@ -24,7 +24,6 @@
 	+ ((minor) *   100)				\
 	+ ((micro) *     1))
 
-#ifdef USE_OPENJPEG2
 #ifdef OPJ_VERSION_MAJOR
 #define OPENJPEG_VERSION OPENJPEG_VERSION_ENCODE(OPJ_VERSION_MAJOR, OPJ_VERSION_MINOR, OPJ_VERSION_BUILD)
 #else
@@ -32,7 +31,6 @@
 // If the version macro is not found, set the version to 2.0.0 and
 // assume there will be no API changes in 2.0.x.
 #define OPENJPEG_VERSION OPENJPEG_VERSION_ENCODE(2, 0, 0)
-#endif
 #endif
 
 struct JPXStreamPrivate {
@@ -44,13 +42,7 @@ struct JPXStreamPrivate {
   GBool indexed;
   GBool inited;
   int smaskInData;
-#ifdef USE_OPENJPEG1
-  opj_dinfo_t *dinfo;
-  void init2(unsigned char *buf, int bufLen, OPJ_CODEC_FORMAT format, GBool indexed);
-#endif
-#ifdef USE_OPENJPEG2
   void init2(OPJ_CODEC_FORMAT format, unsigned char *data, int length, GBool indexed);
-#endif
 };
 
 static inline Guchar adjustComp(int r, int adjust, int depth, int sgndcorr, GBool indexed) {
@@ -90,9 +82,6 @@ JPXStream::JPXStream(Stream *strA) : FilterStream(strA) {
   priv->npixels = 0;
   priv->ncomps = 0;
   priv->indexed = gFalse;
-#ifdef USE_OPENJPEG1
-  priv->dinfo = NULL;
-#endif
 }
 
 JPXStream::~JPXStream() {
@@ -112,13 +101,6 @@ void JPXStream::close() {
     priv->image = NULL;
     priv->npixels = 0;
   }
-
-#ifdef USE_OPENJPEG1
-  if (priv->dinfo != NULL) {
-    opj_destroy_decompress(priv->dinfo);
-    priv->dinfo = NULL;
-  }
-#endif
 }
 
 Goffset JPXStream::getPos() {
@@ -162,13 +144,8 @@ void JPXStream::getImageParams(int *bitsPerComponent, StreamColorSpaceMode *csMo
   *bitsPerComponent = 8;
   int numComps = (priv->image) ? priv->image->numcomps : 1;
   if (priv->image) {
-#ifdef USE_OPENJPEG1
-    if (priv->image->color_space == CLRSPC_SRGB && numComps == 4) { numComps = 3; }
-    else if (priv->image->color_space == CLRSPC_SYCC && numComps == 4) { numComps = 3; }
-#else
     if (priv->image->color_space == OPJ_CLRSPC_SRGB && numComps == 4) { numComps = 3; }
     else if (priv->image->color_space == OPJ_CLRSPC_SYCC && numComps == 4) { numComps = 3; }
-#endif
     else if (numComps == 2) { numComps = 1; }
     else if (numComps > 4) { numComps = 4; }
   }
@@ -189,132 +166,6 @@ static void libopenjpeg_warning_callback(const char *msg, void * /*client_data*/
   error(errSyntaxWarning, -1, "{0:s}", msg);
 }
 
-#ifdef USE_OPENJPEG1
-
-#define BUFFER_INITIAL_SIZE 4096
-
-void JPXStream::init()
-{
-  Object oLen, cspace, smaskInData;
-  if (getDict()) getDict()->lookup("Length", &oLen);
-  if (getDict()) getDict()->lookup("ColorSpace", &cspace);
-  if (getDict()) getDict()->lookup("SMaskInData", &smaskInData);
-
-  int bufSize = BUFFER_INITIAL_SIZE;
-  if (oLen.isInt()) bufSize = oLen.getInt();
-  oLen.free();
-
-  if (cspace.isArray() && cspace.arrayGetLength() > 0) {
-    Object cstype;
-    cspace.arrayGet(0, &cstype);
-    if (cstype.isName("Indexed")) priv->indexed = gTrue;
-    cstype.free();
-  }
-  cspace.free();
-
-  priv->smaskInData = 0;
-  if (smaskInData.isInt()) priv->smaskInData = smaskInData.getInt();
-  smaskInData.free();
-
-  int length = 0;
-  unsigned char *buf = str->toUnsignedChars(&length, bufSize);
-  priv->init2(buf, length, CODEC_JP2, priv->indexed);
-  free(buf);
-
-  if (priv->image) {
-    int numComps = (priv->image) ? priv->image->numcomps : 1;
-    int alpha = 0;
-    if (priv->image) {
-      if (priv->image->color_space == CLRSPC_SRGB && numComps == 4) { numComps = 3; alpha = 1; }
-      else if (priv->image->color_space == CLRSPC_SYCC && numComps == 4) { numComps = 3; alpha = 1; }
-      else if (numComps == 2) { numComps = 1; alpha = 1; }
-      else if (numComps > 4) { numComps = 4; alpha = 1; }
-      else { alpha = 0; }
-    }
-    priv->npixels = priv->image->comps[0].w * priv->image->comps[0].h;
-    priv->ncomps = priv->image->numcomps;
-    if (alpha == 1 && priv->smaskInData == 0) priv->ncomps--;
-    for (int component = 0; component < priv->ncomps; component++) {
-      if (priv->image->comps[component].data == NULL) {
-        close();
-        break;
-      }
-      unsigned char *cdata = (unsigned char *)priv->image->comps[component].data;
-      int adjust = 0;
-      int depth = priv->image->comps[component].prec;
-      if (priv->image->comps[component].prec > 8)
-	adjust = priv->image->comps[component].prec - 8;
-      int sgndcorr = 0;
-      if (priv->image->comps[component].sgnd)
-	sgndcorr = 1 << (priv->image->comps[0].prec - 1);
-      for (int i = 0; i < priv->npixels; i++) {
-	int r = priv->image->comps[component].data[i];
-	*(cdata++) = adjustComp(r, adjust, depth, sgndcorr, priv->indexed);
-      }
-    }
-  } else
-    priv->npixels = 0;
-
-  priv->counter = 0;
-  priv->ccounter = 0;
-  priv->inited = gTrue;
-}
-
-void JPXStreamPrivate::init2(unsigned char *buf, int bufLen, OPJ_CODEC_FORMAT format, GBool indexed)
-{
-  opj_cio_t *cio = NULL;
-
-  /* Use default decompression parameters */
-  opj_dparameters_t parameters;
-  opj_set_default_decoder_parameters(&parameters);
-#ifdef WITH_OPENJPEG_IGNORE_PCLR_CMAP_CDEF_FLAG
-  if (indexed)
-    parameters.flags = OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
-#endif
-
-  /* Configure the event manager to receive errors and warnings */
-  opj_event_mgr_t event_mgr;
-  memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
-  event_mgr.error_handler = libopenjpeg_error_callback;
-  event_mgr.warning_handler = libopenjpeg_warning_callback;
-
-  /* Get the decoder handle of the format */
-  dinfo = opj_create_decompress(format);
-  if (dinfo == NULL) goto error;
-  /* Catch events using our callbacks */
-  opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, NULL);
-
-  /* Setup the decoder decoding parameters */
-  opj_setup_decoder(dinfo, &parameters);
-
-  /* Open a byte stream */
-  cio = opj_cio_open((opj_common_ptr)dinfo, buf, bufLen);
-  if (cio == NULL) goto error;
-
-  /* Decode the stream and fill the image structure */
-  image = opj_decode(dinfo, cio);
-
-  /* Close the byte stream */
-  opj_cio_close(cio);
-
-  if (image == NULL) goto error;
-  else return;
-
-error:
-  if (format == CODEC_JP2) {
-    error(errSyntaxWarning, -1, "Did not succeed opening JPX Stream as JP2, trying as J2K.");
-    init2(buf, bufLen, CODEC_J2K, indexed);
-  } else if (format == CODEC_J2K) {
-    error(errSyntaxWarning, -1, "Did not succeed opening JPX Stream as J2K, trying as JPT.");
-    init2(buf, bufLen, CODEC_JPT, indexed);
-  } else {
-    error(errSyntaxError, -1, "Did not succeed opening JPX Stream.");
-  }
-}
-#endif
-
-
-#ifdef USE_OPENJPEG2
 typedef struct JPXData_s
 {
   unsigned char *data;
@@ -363,25 +214,22 @@ static OPJ_BOOL jpxSeek_callback(OPJ_OFF_T seek_pos, void * p_user_data)
 void JPXStream::init()
 {
   Object oLen, cspace, smaskInData;
-  if (getDict()) getDict()->lookup("Length", &oLen);
-  if (getDict()) getDict()->lookup("ColorSpace", &cspace);
-  if (getDict()) getDict()->lookup("SMaskInData", &smaskInData);
+  if (getDict()) {
+    oLen = getDict()->lookup("Length");
+    cspace = getDict()->lookup("ColorSpace");
+    smaskInData = getDict()->lookup("SMaskInData");
+  }
 
   int bufSize = BUFFER_INITIAL_SIZE;
   if (oLen.isInt()) bufSize = oLen.getInt();
-  oLen.free();
 
   if (cspace.isArray() && cspace.arrayGetLength() > 0) {
-    Object cstype;
-    cspace.arrayGet(0, &cstype);
+    Object cstype = cspace.arrayGet(0);
     if (cstype.isName("Indexed")) priv->indexed = gTrue;
-    cstype.free();
   }
-  cspace.free();
 
   priv->smaskInData = 0;
   if (smaskInData.isInt()) priv->smaskInData = smaskInData.getInt();
-  smaskInData.free();
 
   int length = 0;
   unsigned char *buf = str->toUnsignedChars(&length, bufSize);
@@ -504,6 +352,7 @@ void JPXStreamPrivate::init2(OPJ_CODEC_FORMAT format, unsigned char *buf, int le
     return;
 
 error:
+  opj_stream_destroy(stream);
   opj_destroy_codec(decoder);
   if (format == OPJ_CODEC_JP2) {
     error(errSyntaxWarning, -1, "Did no succeed opening JPX Stream as JP2, trying as J2K.");
@@ -515,4 +364,3 @@ error:
     error(errSyntaxError, -1, "Did no succeed opening JPX Stream.");
   }
 }
-#endif

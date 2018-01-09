@@ -22,9 +22,10 @@
 // Copyright (C) 2009, 2012, 2014 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
 // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
-// Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Peter Breitenlohner <peb@mppmu.mpg.de>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2017 Christoph Cullmann <cullmann@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -72,7 +73,7 @@ GooString *getCurrentDir() {
 #if defined(__EMX__)
   if (_getcwd2(buf, sizeof(buf)))
 #elif defined(_WIN32)
-  if (GetCurrentDirectory(sizeof(buf), buf))
+  if (GetCurrentDirectoryA(sizeof(buf), buf))
 #elif defined(ACORN)
   if (strcpy(buf, "@"))
 #elif defined(MACOS)
@@ -134,7 +135,7 @@ GooString *appendToPath(GooString *path, const char *fileName) {
   tmp = new GooString(path);
   tmp->append('/');
   tmp->append(fileName);
-  GetFullPathName(tmp->getCString(), sizeof(buf), buf, &fp);
+  GetFullPathNameA(tmp->getCString(), sizeof(buf), buf, &fp);
   delete tmp;
   path->clear();
   path->append(buf);
@@ -398,7 +399,7 @@ GBool openTempFile(GooString **name, FILE **f, const char *mode) {
   char *s;
   int fd;
 
-#if HAVE_MKSTEMP
+#ifdef HAVE_MKSTEMP
   if ((s = getenv("TMPDIR"))) {
     *name = new GooString(s);
   } else {
@@ -422,7 +423,7 @@ GBool openTempFile(GooString **name, FILE **f, const char *mode) {
 #endif
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 GooString *fileNameToUTF8(char *path) {
   GooString *s;
   char *p;
@@ -461,7 +462,7 @@ GooString *fileNameToUTF8(wchar_t *path) {
 #endif
 
 FILE *openFile(const char *path, const char *mode) {
-#ifdef WIN32
+#ifdef _WIN32
   OSVERSIONINFO version;
   wchar_t wPath[_MAX_PATH + 1];
   char nPath[_MAX_PATH + 1];
@@ -553,13 +554,13 @@ char *getLine(char *buf, int size, FILE *f) {
 }
 
 int Gfseek(FILE *f, Goffset offset, int whence) {
-#if HAVE_FSEEKO
+#if defined(HAVE_FSEEKO)
   return fseeko(f, offset, whence);
-#elif HAVE_FSEEK64
+#elif defined(HAVE_FSEEK64)
   return fseek64(f, offset, whence);
 #elif defined(__MINGW32__)
   return fseeko64(f, offset, whence);
-#elif _WIN32
+#elif defined(_WIN32)
   return _fseeki64(f, offset, whence);
 #else
   return fseek(f, offset, whence);
@@ -567,13 +568,13 @@ int Gfseek(FILE *f, Goffset offset, int whence) {
 }
 
 Goffset Gftell(FILE *f) {
-#if HAVE_FSEEKO
+#if defined(HAVE_FSEEKO)
   return ftello(f);
-#elif HAVE_FSEEK64
+#elif defined(HAVE_FSEEK64)
   return ftell64(f);
 #elif defined(__MINGW32__)
   return ftello64(f);
-#elif _WIN32
+#elif defined(_WIN32)
   return _ftelli64(f);
 #else
   return ftell(f);
@@ -581,11 +582,11 @@ Goffset Gftell(FILE *f) {
 }
 
 Goffset GoffsetMax() {
-#if HAVE_FSEEKO
+#if defined(HAVE_FSEEKO)
   return (std::numeric_limits<off_t>::max)();
-#elif HAVE_FSEEK64 || defined(__MINGW32__)
+#elif defined(HAVE_FSEEK64) || defined(__MINGW32__)
   return (std::numeric_limits<off64_t>::max)();
-#elif _WIN32
+#elif defined(_WIN32)
   return (std::numeric_limits<__int64>::max)();
 #else
   return (std::numeric_limits<long>::max)();
@@ -620,7 +621,7 @@ Goffset GooFile::size() const {
 }
 
 GooFile* GooFile::open(const GooString *fileName) {
-  HANDLE handle = CreateFile(fileName->getCString(),
+  HANDLE handle = CreateFileA(fileName->getCString(),
                               GENERIC_READ,
                               FILE_SHARE_READ | FILE_SHARE_WRITE,
                               NULL,
@@ -697,7 +698,7 @@ GDirEntry::GDirEntry(char *dirPath, char *nameA, GBool doStat) {
 #elif defined(ACORN)
 #else
 #ifdef _WIN32
-    fa = GetFileAttributes(fullPath->getCString());
+    fa = GetFileAttributesA(fullPath->getCString());
     dir = (fa != 0xFFFFFFFF && (fa & FILE_ATTRIBUTE_DIRECTORY));
 #else
     if (stat(fullPath->getCString(), &st) == 0)
@@ -720,7 +721,7 @@ GDir::GDir(char *name, GBool doStatA) {
 
   tmp = path->copy();
   tmp->append("/*.*");
-  hnd = FindFirstFile(tmp->getCString(), &ffd);
+  hnd = FindFirstFileA(tmp->getCString(), &ffd);
   delete tmp;
 #elif defined(ACORN)
 #elif defined(MACOS)
@@ -753,7 +754,7 @@ GDirEntry *GDir::getNextEntry() {
 #if defined(_WIN32)
   if (hnd != INVALID_HANDLE_VALUE) {
     e = new GDirEntry(path->getCString(), ffd.cFileName, doStat);
-    if (!FindNextFile(hnd, &ffd)) {
+    if (!FindNextFileA(hnd, &ffd)) {
       FindClose(hnd);
       hnd = INVALID_HANDLE_VALUE;
     }
@@ -797,7 +798,7 @@ void GDir::rewind() {
     FindClose(hnd);
   tmp = path->copy();
   tmp->append("/*.*");
-  hnd = FindFirstFile(tmp->getCString(), &ffd);
+  hnd = FindFirstFileA(tmp->getCString(), &ffd);
   delete tmp;
 #elif defined(ACORN)
 #elif defined(MACOS)

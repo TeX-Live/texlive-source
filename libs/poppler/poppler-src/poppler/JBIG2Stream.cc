@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2006 Raj Kumar <rkumar@archive.org>
 // Copyright (C) 2006 Paul Walmsley <paul@booyaka.com>
-// Copyright (C) 2006-2010, 2012, 2014-2016 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2010, 2012, 2014-2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 David Benjamin <davidben@mit.edu>
 // Copyright (C) 2011 Edward Jiang <ejiang@google.com>
 // Copyright (C) 2012 William Bader <williambader@hotmail.com>
@@ -674,8 +674,8 @@ class JBIG2Bitmap: public JBIG2Segment {
 public:
 
   JBIG2Bitmap(Guint segNumA, int wA, int hA);
-  virtual ~JBIG2Bitmap();
-  virtual JBIG2SegmentType getType() { return jbig2SegBitmap; }
+  ~JBIG2Bitmap();
+  JBIG2SegmentType getType() override { return jbig2SegBitmap; }
   JBIG2Bitmap *copy() { return new JBIG2Bitmap(0, this); }
   JBIG2Bitmap *getSlice(Guint x, Guint y, Guint wA, Guint hA);
   void expand(int newH, Guint pixel);
@@ -759,6 +759,10 @@ JBIG2Bitmap::~JBIG2Bitmap() {
 JBIG2Bitmap *JBIG2Bitmap::getSlice(Guint x, Guint y, Guint wA, Guint hA) {
   JBIG2Bitmap *slice;
   Guint xx, yy;
+
+  if (!data) {
+      return nullptr;
+  }
 
   slice = new JBIG2Bitmap(0, wA, hA);
   if (slice->isOk()) {
@@ -892,7 +896,7 @@ void JBIG2Bitmap::combine(JBIG2Bitmap *bitmap, int x, int y,
   oneByte = x0 == ((x1 - 1) & ~7);
 
   for (yy = y0; yy < y1; ++yy) {
-    if (unlikely(y + yy) >= h)
+    if (unlikely((y + yy >= h) || (y + yy < 0)))
       continue;
 
     // one byte per line -- need to mask both left and right side
@@ -1046,8 +1050,8 @@ class JBIG2SymbolDict: public JBIG2Segment {
 public:
 
   JBIG2SymbolDict(Guint segNumA, Guint sizeA);
-  virtual ~JBIG2SymbolDict();
-  virtual JBIG2SegmentType getType() { return jbig2SegSymbolDict; }
+  ~JBIG2SymbolDict();
+  JBIG2SegmentType getType() override { return jbig2SegSymbolDict; }
   Guint getSize() { return size; }
   void setBitmap(Guint idx, JBIG2Bitmap *bitmap) { bitmaps[idx] = bitmap; }
   JBIG2Bitmap *getBitmap(Guint idx) { return bitmaps[idx]; }
@@ -1107,8 +1111,8 @@ class JBIG2PatternDict: public JBIG2Segment {
 public:
 
   JBIG2PatternDict(Guint segNumA, Guint sizeA);
-  virtual ~JBIG2PatternDict();
-  virtual JBIG2SegmentType getType() { return jbig2SegPatternDict; }
+  ~JBIG2PatternDict();
+  JBIG2SegmentType getType() override { return jbig2SegPatternDict; }
   Guint getSize() { return size; }
   void setBitmap(Guint idx, JBIG2Bitmap *bitmap) { if (likely(idx < size)) bitmaps[idx] = bitmap; }
   JBIG2Bitmap *getBitmap(Guint idx) { return (idx < size) ? bitmaps[idx] : NULL; }
@@ -1148,8 +1152,8 @@ class JBIG2CodeTable: public JBIG2Segment {
 public:
 
   JBIG2CodeTable(Guint segNumA, JBIG2HuffmanTable *tableA);
-  virtual ~JBIG2CodeTable();
-  virtual JBIG2SegmentType getType() { return jbig2SegCodeTable; }
+  ~JBIG2CodeTable();
+  JBIG2SegmentType getType() override { return jbig2SegCodeTable; }
   JBIG2HuffmanTable *getHuffTable() { return table; }
 
 private:
@@ -1197,7 +1201,7 @@ JBIG2Stream::JBIG2Stream(Stream *strA, Object *globalsStreamA, Object *globalsSt
   mmrDecoder = new JBIG2MMRDecoder();
 
   if (globalsStreamA->isStream()) {
-    globalsStreamA->copy(&globalsStream);
+    globalsStream = globalsStreamA->copy();
     if (globalsStreamRefA->isRef())
       globalsStreamRef = globalsStreamRefA->getRef();
   }
@@ -1209,7 +1213,6 @@ JBIG2Stream::JBIG2Stream(Stream *strA, Object *globalsStreamA, Object *globalsSt
 
 JBIG2Stream::~JBIG2Stream() {
   close();
-  globalsStream.free();
   delete arithDecoder;
   delete genericRegionStats;
   delete refinementRegionStats;
@@ -1304,7 +1307,7 @@ Goffset JBIG2Stream::getPos() {
 int JBIG2Stream::getChars(int nChars, Guchar *buffer) {
   int n, i;
 
-  if (nChars <= 0) {
+  if (nChars <= 0 || !dataPtr) {
     return 0;
   }
   if (dataEnd - dataPtr < nChars) {
@@ -2961,8 +2964,8 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
     mmrDecoder->reset();
     if (w > INT_MAX - 2) {
       error(errSyntaxError, curStr->getPos(), "Bad width in JBIG2 generic bitmap");
-      // force a call to gmalloc(-1), which will throw an exception
-      w = -3;
+      delete bitmap;
+      return NULL;
     }
     // 0 <= codingLine[0] < codingLine[1] < ... < codingLine[n] = w
     // ---> max codingLine size = w + 1
@@ -3826,6 +3829,10 @@ JBIG2Bitmap *JBIG2Stream::readGenericRefinementRegion(int w, int h,
   JBIG2BitmapPtr tpgrCXPtr1 = {0};
   JBIG2BitmapPtr tpgrCXPtr2 = {0};
   int x, y, pix;
+
+  if (!refBitmap) {
+      return nullptr;
+  }
 
   bitmap = new JBIG2Bitmap(0, w, h);
   if (!bitmap->isOk())

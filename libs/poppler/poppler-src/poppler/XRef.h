@@ -14,14 +14,14 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Brad Hards <bradh@frogmouth.net>
-// Copyright (C) 2006, 2008, 2010-2013 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2008, 2010-2013, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007-2008 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2007 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2010 Ilya Gorenbein <igorenbein@finjan.com>
 // Copyright (C) 2010 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2012, 2013, 2016 Thomas Freitag <Thomas.Freitag@kabelmail.de>
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
-// Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
@@ -141,18 +141,18 @@ public:
   int getPermFlags() { return permFlags; }
 
   // Get catalog object.
-  Object *getCatalog(Object *obj);
+  Object getCatalog();
 
   // Fetch an indirect reference.
-  Object *fetch(int num, int gen, Object *obj, int recursion = 0);
+  Object fetch(int num, int gen, int recursion = 0);
 
   // Return the document's Info dictionary (if any).
-  Object *getDocInfo(Object *obj);
-  Object *getDocInfoNF(Object *obj);
+  Object getDocInfo();
+  Object getDocInfoNF();
 
   // Create and return the document's Info dictionary if none exists.
   // Otherwise return the existing one.
-  Object *createDocInfoIfNoneExists(Object *obj);
+  Object createDocInfoIfNoneExists();
 
   // Remove the document's Info dictionary and update the trailer dictionary.
   void removeDocInfo();
@@ -235,7 +235,7 @@ private:
   Goffset mainXRefOffset;	// position of the main XRef table/stream
   GBool scannedSpecialFlags;	// true if scanSpecialFlags has been called
   GBool strOwner;     // true if str is owned by the instance
-#if MULTITHREADED
+#ifdef MULTITHREADED
   GooMutex mutex;
 #endif
 
@@ -262,8 +262,8 @@ private:
   class XRefTableWriter: public XRefWriter {
   public:
     XRefTableWriter(OutStream* outStrA);
-    void startSection(int first, int count);
-    void writeEntry(Goffset offset, int gen, XRefEntryType type);
+    void startSection(int first, int count) override;
+    void writeEntry(Goffset offset, int gen, XRefEntryType type) override;
   private:
     OutStream* outStr;
   };
@@ -271,11 +271,11 @@ private:
   // XRefWriter subclass that writes a XRef stream
   class XRefStreamWriter: public XRefWriter {
   public:
-    XRefStreamWriter(Object *index, GooString *stmBuf, int offsetSize);
-    void startSection(int first, int count);
-    void writeEntry(Goffset offset, int gen, XRefEntryType type);
+    XRefStreamWriter(Array *index, GooString *stmBuf, int offsetSize);
+    void startSection(int first, int count) override;
+    void writeEntry(Goffset offset, int gen, XRefEntryType type) override;
   private:
-    Object *index;
+    Array *index;
     GooString *stmBuf;
     int offsetSize;
   };
@@ -284,8 +284,8 @@ private:
   class XRefPreScanWriter: public XRefWriter {
   public:
     XRefPreScanWriter();
-    void startSection(int first, int count);
-    void writeEntry(Goffset offset, int gen, XRefEntryType type);
+    void startSection(int first, int count) override;
+    void writeEntry(Goffset offset, int gen, XRefEntryType type) override;
 
     GBool hasOffsetsBeyond4GB;
   };

@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2005, 2007, 2009-2011, 2013 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2007, 2009-2011, 2013, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
 // Copyright (C) 2005, 2006, 2008 Brad Hards <bradh@frogmouth.net>
 // Copyright (C) 2007 Julien Rebetez <julienr@svn.gnome.org>
@@ -23,7 +23,7 @@
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013 Adrian Perez de Castro <aperez@igalia.com>
-// Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
 // Copyright (C) 2016 Masamichi Hosoda <trueroad@trueroad.jp>
 //
@@ -69,10 +69,10 @@ public:
   NameTree();
   ~NameTree();
   void init(XRef *xref, Object *tree);
-  GBool lookup(GooString *name, Object *obj);
+  Object lookup(GooString *name);
   int numEntries() { return length; };
-  // iterator accessor, note it returns a shallow copy, do not free the object
-  Object getValue(int i);
+  // iterator accessor, note it returns a pointer to the internal object, do not free nor delete it
+  Object *getValue(int i);
   GooString *getName(int i);
 
 private:
@@ -86,7 +86,7 @@ private:
     static int cmp(const void *key, const void *entry);
   };
 
-  void parse(Object *tree);
+  void parse(Object *tree, std::set<int> &seen);
   void addEntry(Entry *entry);
 
   XRef *xref;
@@ -248,7 +248,7 @@ private:
   Page **pages;			// array of pages
   Ref *pageRefs;		// object ID for each page
   int lastCachedPage;
-  std::vector<Dict *> *pagesList;
+  std::vector<Object> *pagesList;
   std::vector<Ref> *pagesRefList;
   std::vector<PageAttrs *> *attrsList;
   std::vector<int> *kidsIdxList;
@@ -283,7 +283,7 @@ private:
   NameTree *getEmbeddedFileNameTree();
   NameTree *getJSNameTree();
   LinkDest *createLinkDest(Object *obj);
-#if MULTITHREADED
+#ifdef MULTITHREADED
   GooMutex mutex;
 #endif
 

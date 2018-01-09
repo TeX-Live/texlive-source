@@ -1,7 +1,7 @@
 ## $Id$
 ## Proxy Makefile.am to build poppler for TeX Live.
 ##
-##   Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+##   Copyright 2016-2018 Karl Berry <tex-live@tug.org>
 ##   Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
@@ -125,8 +125,7 @@ poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/UnicodeTypeTable.cc \
 	@POPPLER_TREE@/poppler/ViewerPreferences.cc \
 	@POPPLER_TREE@/poppler/XRef.cc \
-	@POPPLER_TREE@/poppler/XpdfPluginAPI.cc \
-	@POPPLER_TREE@/poppler/strtok_r.cpp
+	@POPPLER_TREE@/poppler/XpdfPluginAPI.cc
 
 $(libpoppler_a_OBJECTS): config.force
 

@@ -1,3 +1,210 @@
+Release 0.62.0
+        core:
+         * Stop supporting lcms1, you really want to use lcms2 :)
+         * Stop supporting openjpeg1, you really want to use openjpeg2 :)
+         * Open files that state 8 bits as third field of W. Bug #103469
+         * GfxLabColorSpace::parse: Fix crash in broken documents. Bug #103582
+         * Fix leak if parseDA fails
+         * Include glibc.h where needed
+         * Document the meaning of the 'type' integer of a shading
+         * Fix UTF test fail
+         * INSTALL: add debug options
+
+        qt5:
+         * Add API to let the rendering process callback to get a partial rendering. Bug #103372
+
+        qt4:
+         * Remove the Qt4 frontend
+
+        utils:
+         * Support unicode on windows console
+         * pdfsig: install man page
+         * sort encoding list
+
+        glib:
+         * demo: fix warning
+
+Release 0.61.1
+        core:
+         * CairoOutputDev: don't overflow y * stride when accessing image data
+
+        cpp:
+         * Fix for corrupted image files on Windows. Bug #102494
+
+        build system:
+         * Fix incorrect paths in .pc files. Bug #103578
+         * add the custom buildtests target only once. Bug #103003
+
+Release 0.61.0
+        core:
+         * Fix crashes in broken files
+         * Cleanup unused functions from GlobalParams
+         * Tweak LZWStream::processNextCode error handling. Bug #103174
+         * Warning fixes
+         * Remove t1lib code
+
+        qt5:
+         * Clean up the remaining Splash code in Arthur backend. Bug #103117
+         * ArthurOutputDev: Properly implement saveState/restoreState. Bug #103118
+         * Fix leak in ArthurOutputDev::updateFont. Bug #103508
+
+        build system:
+         * Use GNUInstallDirs. Bug #103211
+         * mingw: Install pkg-config files
+         * mingw: change library names to include the soversion. Bug #103157
+         * Fix installing a .cc file as header
+         * Use -pthread flag instead of -lpthread
+
+Release 0.60.1
+        qt5:
+         * ArthurOutputDev: Add missing 'return' in error paths
+
+        build system:
+         * FindLIBOPENJPEG.cmake: Add CheckCXXSourceCompiles
+
+Release 0.60.0
+        core:
+         * Enable libcurl support by default
+         * PSOutputDev: Fix wrong text generation. Bug #102760
+         * Added methods to get and set the font size of text fields. Bug #101692
+         * CairoOutputDev: Do not extend the pattern in drawImageMaskRegular
+         * CairoOutputDev: do not use the custom downscaling for rendering images when using cairo >= 1.14
+         * Fix build with old clang
+         * Fix various crashes in broken files
+         * Fix some warnings
+         * Add some constness to the basic classes
+         * Remove unused functions from GlobalParams
+
+        qt5:
+         * Added methods to get and set the font size of text fields. Bug #101692
+         * Add whether renderToImage shows annotations
+         * ArthurOutputDev: Replace Splash font rendering by Qt font rendering
+         * ArthurOutputDev: Implement the drawSoftMaskedImage method
+         * ArthurOutputDev: Fix several small bugs related to dash pattern handling
+         * Fix two minor typos
+
+        build system:
+         * cmake is now the default build system
+         * autotools based build system has been removed
+
+         utils:
+         * pdfinfo: don't truncate dest name
+
+Release 0.59.0
+        core:
+         * Fix infinite recursion in NameTree parsing in broken files
+
+        utils:
+         * pdfunite: Fix API porting error that caused abort in some cases
+         * pdfinfo: Fix crashes and memory leaks when using -dests
+         * pdfinfo: use GooString.append instead of sprintf/strcat
+         * pdfimages: Fix warning when compiling with cygwin
+
+        build system:
+         * Fix cygwin 32-bit compile
+         * cmake tweaks
+
+
+Release 0.58.0
+        core:
+         * CairoOutputDev: cairo 1.14 now has high quality downscaling
+         * Signature related improvements. Bug #99271
+         * Tweak which cmap we use. Bug #101855
+         * Memory leak fixes
+         * Substantial rework of the internals
+         * win32: call ANSI functions directly. Bug #100312
+         * Add some documentation
+
+        qt5:
+         * Expose signature information.
+         * ArthurOutputDev: initialize the image with the paper color. Bug #102129
+         * Fix copy'n'paste bugs: Qt4 -> Qt5
+         * ArthurOutputDev: Properly set the QPainter transformation
+         * ArthurOutputDev: Use Qt::SvgMiterJoin instead of Qt::MiterJoin. Bug #102356
+
+        utils:
+         * pdfinfo: add -dests option to print named destinations. Bug #97262
+         * pdftocairo: add -jpegopt for setting jpeg compression parameters. Bug #45727
+         * pdftoppm: add -jpegopt for setting jpeg compression parameters. Bug #45727
+         * pdfimages: support listing/extracting inline images. Bug #25625
+
+        build system:
+         * cmake: Various Windows fixes
+         * cmake: Use -std=c++11 instead of -std=gnu++11
+
+        cpp:
+         * Fix page.text() not taking page orientation into account. Bug #94517
+
+Release 0.57.0
+        core:
+         * Fix parsing of Type 1 fonts with newlines in encoding sequences. Bug #101728
+         * Fix crash in broken documents
+
+        utils:
+         * pdfunite: Fix crash with broken documents. Bug #101208
+         * pdftohtml: skip control characters Bug #101770
+         * pdfseparate: minor improvement to the documentation. Bug #101800
+
+        build system:
+         * cmake: Set RUNPATH for poppler shared libs. Bug #101945
+         * configure: fix --disable-FEATURE actually enabling the feature
+
+Release 0.56.0
+        core:
+         * FormFieldButton::setState() shouldn't check the field is readOnly
+         * Fix crashes on multiple broken files
+
+        utils:
+         * pdfunite: Fix crash with broken documents. Bugs #101153 #101149
+
+Release 0.55.0
+        core:
+         * Fix abort in files with broken Decode arrays. KDE bug #379835
+         * Fix memory leak (and probably logic bug) parsing broken XRef entries. Bug #100775
+         * Fix memory leak when reconstructing broken files. Bug #100776
+         * Minor optimization
+         * Fix regression in GfxIndexedColorSpace::mapColorToBase. Bug #100931
+         * Fix memory leak in error condition
+
+        cpp:
+         * Return nullptr if the page at index can't be fetched. Bug #100981
+
+        build system:
+         * Fail by default if libjpeg is not available
+         * Fail by default if libopenjpeg2/1 is not available
+
+Release 0.54.0
+        core:
+         * Make XRef reconstruction a bit better. Bug #100509
+
+        glib:
+         * Expose movie play mode. Bug #99625
+         * demo: Show play mode in movie properties view
+
+        qt5:
+         * Compile with -DQT_NO_CAST_FROM_BYTEARRAY. Bug #100311
+
+        utils:
+         * pdfimages: don't fail listing if inline image data contains 'EI'. Bug #100737
+
+Release 0.53.0
+        core:
+         * Form support improvements
+         * SplashOutputDev: Fix memory leak when rendering images with colormap and matte color
+         * Minor fix in GlobalParams documentation
+
+        qt5:
+         * Expose form calculate order
+         * Expose Form additional actions
+
+        utils:
+         * pdfimages: support 16bpc png and tiff images. Bug #99988
+         * pdftohtml: fix small memory leak when constructing some filenames
+         * pdfinfo: fix leak when printing JS
+
+        build sytem:
+         * Compile in C++11 mode
+
 Release 0.52.0
         core:
          * Fix assert on reading some OCGs. Bug #99768

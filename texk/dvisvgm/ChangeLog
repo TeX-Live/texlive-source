@@ -1,3 +1,7 @@
+2018-01-08  Karl Berry  <karl@freefriends.org>
+
+	* m4/ax_cxx_compile_stdcxx.m4: move to top-level source/m4/.
+
 2017-03-17  Paul Vojta  <vojta@math.berkeley.edu>
 
 	* configure.ac (LIBGS_INCLUDES, LIBGS_LIBS): always AC_SUBST.

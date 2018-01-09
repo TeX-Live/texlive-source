@@ -8,6 +8,20 @@
 //
 //========================================================================
 
+//========================================================================
+//
+// Modified under the Poppler project - http://poppler.freedesktop.org
+//
+// All changes made under the Poppler project to this file are licensed
+// under GPL version 2 or later
+//
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
+//
+// To see a description of the changes please see the Changelog file that
+// came with your tarball or type make ChangeLog if you are building from git
+//
+//========================================================================
+
 #ifndef UNICODEMAP_H
 #define UNICODEMAP_H
 
@@ -19,7 +33,7 @@
 #include "goo/gtypes.h"
 #include "CharTypes.h"
 
-#if MULTITHREADED
+#ifdef MULTITHREADED
 #include "goo/GooMutex.h"
 #endif
 
@@ -94,7 +108,7 @@ private:
   UnicodeMapExt *eMaps;		// (user)
   int eMapsLen;			// (user)
   int refCnt;
-#if MULTITHREADED
+#ifdef MULTITHREADED
   GooMutex mutex;
 #endif
 };

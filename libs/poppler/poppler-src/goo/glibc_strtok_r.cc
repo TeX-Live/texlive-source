@@ -49,13 +49,15 @@
 //
 // Copyright (C) 2012 Alexey Pavlov <alexpux@gmail.com>
 // Copyright (C) 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
 //
 //========================================================================
 
-#if defined(__MINGW32__) && !defined(__WINPTHREADS_VERSION)
+#ifndef HAVE_STRTOK_R
+
 #include <string.h>
 
 #define __rawmemchr strchr
@@ -89,4 +91,5 @@ char * strtok_r (char *s, const char *delim, char **save_ptr)
     }
   return token;
 }
+
 #endif

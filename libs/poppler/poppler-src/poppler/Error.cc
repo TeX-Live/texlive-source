@@ -17,7 +17,7 @@
 // Copyright (C) 2005 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2012 Marek Kasik <mkasik@redhat.com>
-// Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -25,6 +25,7 @@
 //========================================================================
 
 #include <config.h>
+#include <poppler-config.h>
 
 #ifdef USE_GCC_PRAGMAS
 #pragma implementation

@@ -6,7 +6,7 @@
 //
 // Copyright 2005 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright 2005 Martin Kretzschmar <martink@gnome.org>
-// Copyright 2005-2007, 2009-2011 Albert Astals Cid <aacid@kde.org>
+// Copyright 2005-2007, 2009-2011, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright 2011 Daiki Ueno <ueno@unixuser.org>
 // Copyright 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -64,20 +64,20 @@ struct str_error_mgr {
 class DCTStream: public FilterStream {
 public:
 
-  DCTStream(Stream *strA, int colorXformA, Object *dict, int recursion);
-  virtual ~DCTStream();
-  virtual StreamKind getKind() { return strDCT; }
-  virtual void reset();
-  virtual int getChar();
-  virtual int lookChar();
-  virtual GooString *getPSFilter(int psLevel, const char *indent);
-  virtual GBool isBinary(GBool last = gTrue);
+  DCTStream(Stream *strA, int colorXformA, Dict *dict, int recursion);
+  ~DCTStream();
+  StreamKind getKind() override { return strDCT; }
+  void reset() override;
+  int getChar() override;
+  int lookChar() override;
+  GooString *getPSFilter(int psLevel, const char *indent) override;
+  GBool isBinary(GBool last = gTrue) override;
 
 private:
   void init();
 
-  virtual GBool hasGetChars() { return true; }
-  virtual int getChars(int nChars, Guchar *buffer);
+  GBool hasGetChars() override { return true; }
+  int getChars(int nChars, Guchar *buffer) override;
 
   int colorXform;
   JSAMPLE *current;

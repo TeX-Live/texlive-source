@@ -1,3 +1,8 @@
+2018-01-08  Karl Berry  <karl@freefriends.org>
+
+	* ax_cxx_compile_stdcxx.m4: move from dvisvgm; original from
+	https://www.gnu.org/software/autoconf-archive/ax_cxx_compile_stdcxx.html#ax_cxx_compile_stdcxx
+
 2017-12-08  Norbert Preining  <preining@logic.at>
 
 	* kpse-icu-flags.m4 (KPSE_ICU_SYSTEM_FLAGS): also check for PKG_CONFIG.
