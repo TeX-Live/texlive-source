@@ -1,3 +1,10 @@
+2018-01-09  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac: use AX_CXX_COMPILE_STDCXX([11],,[optional])
+	since this is supposed to work with C++11.
+	(KPSE_COMPILER_VISIBILITY): call this instead of hardwiring
+	-fvisibility-inlines-hidden.
+
 2017-12-26  Karl Berry  <karl@tug.org>
 
 	* configure.ac (CXXFLAGS): add -D_GNU_SOURCE.
