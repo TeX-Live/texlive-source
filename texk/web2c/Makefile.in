@@ -2323,13 +2323,13 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafontloader/fontforge/VERSION \
 	$(dist_libluatex_sources) $(libluatex_web) luatexdir/ChangeLog \
 	luatexdir/NEWS luatexdir/font/subfont.txt $(luatex_sources) \
-	luatexdir/getluatexsvnversion.sh $(luatex_tests) \
-	$(luajittex_tests) luatexdir/tests/luaimage.tex tests/1-4.jpg \
-	tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png \
-	$(xetex_web_srcs) $(xetex_ch_srcs) xetexdir/xetex.defines \
-	xetexdir/ChangeLog xetexdir/COPYING xetexdir/NEWS \
-	xetexdir/image/README xetexdir/unicode-char-prep.pl \
-	xetexdir/xewebmac.tex $(xetex_tests) xetexdir/tests/bug73.log \
+	$(luatex_tests) $(luajittex_tests) \
+	luatexdir/tests/luaimage.tex tests/1-4.jpg tests/B.pdf \
+	tests/basic.tex tests/lily-ledger-broken.png $(xetex_web_srcs) \
+	$(xetex_ch_srcs) xetexdir/xetex.defines xetexdir/ChangeLog \
+	xetexdir/COPYING xetexdir/NEWS xetexdir/image/README \
+	xetexdir/unicode-char-prep.pl xetexdir/xewebmac.tex \
+	$(xetex_tests) xetexdir/tests/bug73.log \
 	xetexdir/tests/bug73.tex omegaware/README omegaware/ChangeLog \
 	$(odvicopy_sources) $(odvitype_sources) omegaware/ofm2opl.web \
 	omegaware/ofm2opl.up omegaware/ofm2opl.ch \
