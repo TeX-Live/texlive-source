@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT: 
@@ -188,7 +188,7 @@ static void MessageFormatTest( void )
         UMessageFormat formatter = umsg_open(testCasePatterns[0],patternLength,"en_US",NULL,&ec);
 
         if(U_FAILURE(ec)){
-            log_data_err("umsg_open() failed for testCasePattens[%d]. -> %s (Are you missing data?)\n",i, u_errorName(ec));
+            log_data_err("umsg_open() failed for testCasePattens[0]. -> %s (Are you missing data?)\n", u_errorName(ec));
             return;
         }
         for(i = 0;i<cnt_testCases; i++){
@@ -199,8 +199,9 @@ static void MessageFormatTest( void )
             UDate d2=0;
     
             result=NULL;
-            patternLength = u_strlen(testCasePatterns[i]);
-            
+            // Alternate between specifying the length and using NUL-termination.
+            patternLength = ((i & 1) == 0) ? u_strlen(testCasePatterns[i]) : -1;
+
             umsg_applyPattern(formatter,testCasePatterns[i],patternLength,&parseError,&ec);
             if(U_FAILURE(ec)){
                 log_err("umsg_applyPattern() failed for testCasePattens[%d].\n",i);
@@ -714,7 +715,7 @@ static void TestMsgFormatSelect(void)
         status=U_ZERO_ERROR;
         resultlength=resultLengthOut+1;
         result=(UChar*)malloc(sizeof(UChar) * resultlength);
-        u_formatMessage( "fr", pattern, u_strlen(pattern), result, resultlength, &status, str , str1);
+        u_formatMessage( "fr", pattern, u_strlen(pattern), result, resultlength, &status, str , str1, 6);
         if(u_strcmp(result, expected)==0)
             log_verbose("PASS: MessagFormat successful on Select test#2\n");
         else{

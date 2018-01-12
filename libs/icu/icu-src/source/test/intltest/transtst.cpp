@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 **********************************************************************
@@ -243,7 +243,8 @@ void TransliteratorTest::TestInstantiation() {
         if (t == 0) {
 #if UCONFIG_NO_BREAK_ITERATION
             // If UCONFIG_NO_BREAK_ITERATION is on, then only Thai should fail.
-            if (id.compare((UnicodeString)"Thai-Latin") != 0)
+            if (id.compare((UnicodeString)"Thai-Latn") != 0 &&
+                id.compare((UnicodeString)"Thai-Latin") != 0)
 #endif
                 dataerrln(UnicodeString("FAIL: Couldn't create ") + id +
                       /*", parse error " + parseError.code +*/
@@ -3577,11 +3578,13 @@ void TransliteratorTest::TestIncrementalProgress(void) {
                     // The following are forward-only, it is OK that creating an inverse will not work:
                     // 1. Devanagari-Arabic
                     // 2. Any-*/BGN
+                    // 2a. Any-*/BGN_1981
                     // 3. Any-*/UNGEGN
+                    // 4. Any-*/MNS
                     // If UCONFIG_NO_BREAK_ITERATION is on, Latin-Thai is also not expected to work.
                     if (    id.compare((UnicodeString)"Devanagari-Arabic/") != 0
                          && !(id.startsWith((UnicodeString)"Any-") &&
-                                (id.endsWith((UnicodeString)"/BGN") || id.endsWith((UnicodeString)"/UNGEGN") || id.endsWith((UnicodeString)"/MNS"))
+                                (id.endsWith((UnicodeString)"/BGN") || id.endsWith((UnicodeString)"/BGN_1981") || id.endsWith((UnicodeString)"/UNGEGN") || id.endsWith((UnicodeString)"/MNS"))
                              )
 #if UCONFIG_NO_BREAK_ITERATION
                          && id.compare((UnicodeString)"Latin-Thai/") != 0

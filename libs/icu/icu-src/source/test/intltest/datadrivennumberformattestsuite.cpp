@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT:
@@ -92,11 +92,20 @@ void DataDrivenNumberFormatTestSuite::run(const char *fileName, UBool runAllTest
                 showError("Invalid column values");
                 return;
             }
-            if (!breaksC() || runAllTests) {
+            if (runAllTests || !breaksC()) {
                 UnicodeString errorMessage;
-                if (!isPass(fTuple, errorMessage, status)) {
+                UBool shouldFail = (NFTT_GET_FIELD(fTuple, output, "") == "fail")
+                        ? !breaksC()
+                        : breaksC();
+                UBool actualSuccess = isPass(fTuple, errorMessage, status);
+                if (shouldFail && actualSuccess) {
+                    showFailure("Expected failure, but passed");
+                    break;
+                } else if (!shouldFail && !actualSuccess) {
                     showFailure(errorMessage);
+                    break;
                 }
+                status = U_ZERO_ERROR;
             }
         }
         fFileLine.remove();

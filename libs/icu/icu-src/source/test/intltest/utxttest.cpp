@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT:
@@ -16,6 +16,7 @@
 #include "unicode/utypes.h"
 #include "unicode/utext.h"
 #include "unicode/utf8.h"
+#include "unicode/utf16.h"
 #include "unicode/ustring.h"
 #include "unicode/uchriter.h"
 #include "cmemory.h"
@@ -50,25 +51,17 @@ UTextTest::~UTextTest() {
 void
 UTextTest::runIndexedTest(int32_t index, UBool exec,
                           const char* &name, char* /*par*/) {
-    switch (index) {
-        case 0: name = "TextTest";
-            if (exec) TextTest();    break;
-        case 1: name = "ErrorTest";
-            if (exec) ErrorTest();   break;
-        case 2: name = "FreezeTest";
-            if (exec) FreezeTest();  break;
-        case 3: name = "Ticket5560";
-            if (exec) Ticket5560();  break;
-        case 4: name = "Ticket6847";
-            if (exec) Ticket6847();  break;
-        case 5: name = "Ticket10562";
-            if (exec) Ticket10562();  break;
-        case 6: name = "Ticket10983";
-            if (exec) Ticket10983();  break;
-        case 7: name = "Ticket12130";
-            if (exec) Ticket12130(); break;
-        default: name = "";          break;
-    }
+    TESTCASE_AUTO_BEGIN;
+    TESTCASE_AUTO(TextTest);
+    TESTCASE_AUTO(ErrorTest);
+    TESTCASE_AUTO(FreezeTest);
+    TESTCASE_AUTO(Ticket5560);
+    TESTCASE_AUTO(Ticket6847);
+    TESTCASE_AUTO(Ticket10562);
+    TESTCASE_AUTO(Ticket10983);
+    TESTCASE_AUTO(Ticket12130);
+    TESTCASE_AUTO(Ticket13344);
+    TESTCASE_AUTO_END;
 }
 
 //
@@ -957,10 +950,14 @@ void UTextTest::ErrorTest()
         UChar buf[10];
         int n = utext_extract(ut, 0, 9, buf, 10, &status);
         TEST_SUCCESS(status);
-        TEST_ASSERT(n==5);
+        TEST_ASSERT(n==7);
+        TEST_ASSERT(buf[0] == 0x41);
         TEST_ASSERT(buf[1] == 0xfffd);
-        TEST_ASSERT(buf[3] == 0xfffd);
         TEST_ASSERT(buf[2] == 0x42);
+        TEST_ASSERT(buf[3] == 0xfffd);
+        TEST_ASSERT(buf[4] == 0xfffd);
+        TEST_ASSERT(buf[5] == 0xfffd);
+        TEST_ASSERT(buf[6] == 0x43);
         utext_close(ut);
     }
 
@@ -1583,3 +1580,28 @@ void UTextTest::Ticket12130() {
     }
     utext_close(&ut);
 }
+
+// Ticket 13344 The macro form of UTEXT_SETNATIVEINDEX failed when target was a trail surrogate
+//              of a supplementary character.
+
+void UTextTest::Ticket13344() {
+    UErrorCode status = U_ZERO_ERROR;
+    const char16_t *str = u"abc\U0010abcd xyz";
+    LocalUTextPointer ut(utext_openUChars(NULL, str, -1, &status));
+
+    assertSuccess("UTextTest::Ticket13344-status", status);
+    UTEXT_SETNATIVEINDEX(ut.getAlias(), 3);
+    assertEquals("UTextTest::Ticket13344-lead", (int64_t)3, utext_getNativeIndex(ut.getAlias()));
+    UTEXT_SETNATIVEINDEX(ut.getAlias(), 4);
+    assertEquals("UTextTest::Ticket13344-trail", (int64_t)3, utext_getNativeIndex(ut.getAlias()));
+    UTEXT_SETNATIVEINDEX(ut.getAlias(), 5);
+    assertEquals("UTextTest::Ticket13344-bmp", (int64_t)5, utext_getNativeIndex(ut.getAlias()));
+
+    utext_setNativeIndex(ut.getAlias(), 3);
+    assertEquals("UTextTest::Ticket13344-lead-2", (int64_t)3, utext_getNativeIndex(ut.getAlias()));
+    utext_setNativeIndex(ut.getAlias(), 4);
+    assertEquals("UTextTest::Ticket13344-trail-2", (int64_t)3, utext_getNativeIndex(ut.getAlias()));
+    utext_setNativeIndex(ut.getAlias(), 5);
+    assertEquals("UTextTest::Ticket13344-bmp-2", (int64_t)5, utext_getNativeIndex(ut.getAlias()));
+}
+

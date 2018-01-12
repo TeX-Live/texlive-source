@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT: 
@@ -29,6 +29,7 @@
 #include "unicode/uregex.h"
 #include "unicode/ustring.h"
 #include "unicode/utext.h"
+#include "unicode/utf8.h"
 #include "cintltst.h"
 #include "cmemory.h"
 

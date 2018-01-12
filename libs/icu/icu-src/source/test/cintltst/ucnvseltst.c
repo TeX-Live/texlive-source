@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * Copyright (c) 1997-2014, International Business Machines
@@ -22,6 +22,7 @@
 #include "unicode/utypes.h"
 #include "unicode/ucnvsel.h"
 #include "unicode/ustring.h"
+#include "unicode/utf8.h"
 #include "cmemory.h"
 #include "cstring.h"
 #include "propsvec.h"

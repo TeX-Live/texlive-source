@@ -1,49 +1,15 @@
 	tzset and mingw/cygwin.
 
-Index: source/common/putil.cpp
-===================================================================
---- source/common/putil.cpp	(revision 43491)
-+++ source/common/putil.cpp	(working copy)
-@@ -43,6 +43,20 @@
- // Must be before any other #includes.
- #include "uposixdefs.h"
+--- /tmp/putil.cpp	2017-10-31 12:04:49.000000000 -0700
++++ source/common/putil.cpp	2018-01-11 11:10:30.895806863 -0800
+@@ -46,8 +46,8 @@
+ // First, the platform type. Need this for U_PLATFORM.
+ #include "unicode/platform.h"
  
-+#if (U_PF_MINGW <= U_PLATFORM && U_PLATFORM <= U_PF_CYGWIN) && defined(__STRICT_ANSI__)
+-#if U_PLATFORM == U_PF_MINGW && defined __STRICT_ANSI__
+-/* tzset isn't defined in strict ANSI on MinGW. */
++#if (U_PF_CYGWIN <= U_PLATFORM && defined(__STRICT_ANSI__)
 +/* tzset isn't defined in strict ANSI on Cygwin and MinGW. */
-+#undef __STRICT_ANSI__
-+#endif
-+
-+/*
-+ * Cygwin with GCC requires inclusion of time.h after the above disabling strict asci mode statement.
-+ */
-+#include <time.h>
-+
-+#if !U_PLATFORM_USES_ONLY_WIN32_API
-+#include <sys/time.h>
-+#endif
-+
- /* include ICU headers */
- #include "unicode/utypes.h"
- #include "unicode/putil.h"
-@@ -104,21 +118,7 @@
- #   include <sys/neutrino.h>
+ #undef __STRICT_ANSI__
  #endif
  
--#if (U_PF_MINGW <= U_PLATFORM && U_PLATFORM <= U_PF_CYGWIN) && defined(__STRICT_ANSI__)
--/* tzset isn't defined in strict ANSI on Cygwin and MinGW. */
--#undef __STRICT_ANSI__
--#endif
--
- /*
-- * Cygwin with GCC requires inclusion of time.h after the above disabling strict asci mode statement.
-- */
--#include <time.h>
--
--#if !U_PLATFORM_USES_ONLY_WIN32_API
--#include <sys/time.h>
--#endif
--
--/*
-  * Only include langinfo.h if we have a way to get the codeset. If we later
-  * depend on more feature, we can test on U_HAVE_NL_LANGINFO.
-  *

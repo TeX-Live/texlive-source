@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
@@ -335,6 +335,7 @@ const NumberFormatTestTupleFieldData gFieldData[] = {
     FIELD_INIT(parseIntegerOnly, &gIntOps),
     FIELD_INIT(decimalPatternMatchRequired, &gIntOps),
     FIELD_INIT(parseNoExponent, &gIntOps),
+    FIELD_INIT(parseCaseSensitive, &gIntOps),
     FIELD_INIT(outputCurrency, &gStrOps)
 };
 

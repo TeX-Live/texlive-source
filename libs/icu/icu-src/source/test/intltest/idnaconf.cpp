@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
@@ -21,7 +21,7 @@
 #include "unicode/ucnv.h"
 #include "unicode/ustring.h"
 #include "unicode/uidna.h"
-
+#include "unicode/utf16.h"
 #include "idnaconf.h"
 
 static const UChar C_TAG[] = {0x3D, 0x3D, 0x3D, 0x3D, 0x3D, 0}; // =====

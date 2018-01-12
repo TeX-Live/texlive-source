@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
@@ -80,7 +80,7 @@ public:
             fSkeleton(other.fSkeleton) { }
     virtual ~DateFmtBestPatternKey();
     virtual int32_t hashCode() const {
-        return 37 * LocaleCacheKey<DateFmtBestPattern>::hashCode() + fSkeleton.hashCode();
+        return (int32_t)(37u * (uint32_t)LocaleCacheKey<DateFmtBestPattern>::hashCode() + (uint32_t)fSkeleton.hashCode());
     }
     virtual UBool operator==(const CacheKeyBase &other) const {
        // reflexive
@@ -586,6 +586,7 @@ DateFormat::adoptNumberFormat(NumberFormat* newNumberFormat)
     delete fNumberFormat;
     fNumberFormat = newNumberFormat;
     newNumberFormat->setParseIntegerOnly(TRUE);
+    newNumberFormat->setGroupingUsed(FALSE);
 }
 //----------------------------------------------------------------------
 
@@ -738,7 +739,7 @@ DateFormat::setBooleanAttribute(UDateFormatBooleanAttribute attr,
 UBool 
 DateFormat::getBooleanAttribute(UDateFormatBooleanAttribute attr, UErrorCode &/*status*/) const {
 
-    return fBoolFlags.get(attr);
+    return static_cast<UBool>(fBoolFlags.get(attr));
 }
 
 U_NAMESPACE_END

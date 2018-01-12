@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT: 
@@ -28,6 +28,7 @@ private:
      */
     void testSymbols(/*char *par*/);
     void testLastResortData();
+    void testNumberingSystem();
 
      /** helper functions**/
     void Verify(double value, const UnicodeString& pattern,

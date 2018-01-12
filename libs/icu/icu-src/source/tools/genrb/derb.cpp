@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
@@ -8,7 +8,7 @@
 *
 *******************************************************************************
 *   file name:  derb.cpp
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -206,7 +206,7 @@ main(int argc, char* argv[]) {
         UBool fromICUData = !uprv_strcmp(inputDir, "-");
         if (!fromICUData) {
             UBool absfilename = *arg == U_FILE_SEP_CHAR;
-#if U_PLATFORM_HAS_WIN32_API && U_PLATFORM != U_PF_CYGWIN
+#if U_PLATFORM_HAS_WIN32_API
             if (!absfilename) {
                 absfilename = (uprv_strlen(arg) > 2 && isalpha(arg[0])
                     && arg[1] == ':' && arg[2] == U_FILE_SEP_CHAR);

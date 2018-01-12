@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
@@ -8,7 +8,7 @@
 *
 *******************************************************************************
 *   file name:  convtest.cpp
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -37,6 +37,7 @@
 #include "unicode/uniset.h"
 #include "unicode/ustring.h"
 #include "unicode/ures.h"
+#include "unicode/utf16.h"
 #include "convtest.h"
 #include "cmemory.h"
 #include "unicode/tstdtmod.h"
@@ -67,21 +68,16 @@ ConversionTest::~ConversionTest() {
 void
 ConversionTest::runIndexedTest(int32_t index, UBool exec, const char *&name, char * /*par*/) {
     if (exec) logln("TestSuite ConversionTest: ");
-    switch (index) {
+    TESTCASE_AUTO_BEGIN;
 #if !UCONFIG_NO_FILE_IO
-        case 0: name="TestToUnicode"; if (exec) TestToUnicode(); break;
-        case 1: name="TestFromUnicode"; if (exec) TestFromUnicode(); break;
-        case 2: name="TestGetUnicodeSet"; if (exec) TestGetUnicodeSet(); break;
-        case 3: name="TestDefaultIgnorableCallback"; if (exec) TestDefaultIgnorableCallback(); break;
-#else
-        case 0:
-        case 1:
-        case 2:
-        case 3: name="skip"; break;
+    TESTCASE_AUTO(TestToUnicode);
+    TESTCASE_AUTO(TestFromUnicode);
+    TESTCASE_AUTO(TestGetUnicodeSet);
 #endif
-        case 4: name="TestGetUnicodeSet2"; if (exec) TestGetUnicodeSet2(); break;
-        default: name=""; break; //needed to end loop
-    }
+    TESTCASE_AUTO(TestGetUnicodeSet2);
+    TESTCASE_AUTO(TestDefaultIgnorableCallback);
+    TESTCASE_AUTO(TestUTF8ToUTF8Overflow);
+    TESTCASE_AUTO_END;
 }
 
 // test data interface ----------------------------------------------------- ***
@@ -722,6 +718,80 @@ ConversionTest::TestDefaultIgnorableCallback() {
     delete set_ignorable;
 }
 
+void
+ConversionTest::TestUTF8ToUTF8Overflow() {
+    IcuTestErrorCode errorCode(*this, "TestUTF8ToUTF8Overflow");
+    LocalUConverterPointer cnv1(ucnv_open("UTF-8", errorCode));
+    LocalUConverterPointer cnv2(ucnv_open("UTF-8", errorCode));
+    static const char *text = "aä";  // ä: 2 bytes
+    const char *source = text;
+    const char *sourceLimit = text + strlen(text);
+    char result[20];
+    char *target = result;
+    const char *targetLimit = result + sizeof(result);
+    UChar buffer16[20];
+    UChar *pivotSource = buffer16;
+    UChar *pivotTarget = buffer16;
+    const UChar *pivotLimit = buffer16 + UPRV_LENGTHOF(buffer16);
+
+    // Convert with insufficient target capacity.
+    result[2] = 5;
+    ucnv_convertEx(cnv2.getAlias(), cnv1.getAlias(),
+                   &target, result + 2, &source, sourceLimit,
+                   buffer16, &pivotSource, &pivotTarget, pivotLimit,
+                   FALSE, FALSE, errorCode);
+    assertEquals("overflow", U_BUFFER_OVERFLOW_ERROR, errorCode.reset());
+    int32_t length = (int32_t)(target - result);
+    assertEquals("number of bytes written", 2, length);
+    assertEquals("next byte not clobbered", 5, result[2]);
+
+    // Convert the rest and flush.
+    ucnv_convertEx(cnv2.getAlias(), cnv1.getAlias(),
+                   &target, targetLimit, &source, sourceLimit,
+                   buffer16, &pivotSource, &pivotTarget, pivotLimit,
+                   FALSE, TRUE, errorCode);
+
+    assertSuccess("UTF-8->UTF-8", errorCode);
+    length = (int32_t)(target - result);
+    assertEquals("3 bytes", 3, length);
+    if (length == 3) {
+        assertTrue("result same as input", memcmp(text, result, length) == 0);
+    }
+
+    ucnv_reset(cnv1.getAlias());
+    ucnv_reset(cnv2.getAlias());
+    memset(result, 0, sizeof(result));
+    static const char *text2 = "a🚲";  // U+1F6B2 bicycle: 4 bytes
+    source = text2;
+    sourceLimit = text2 + strlen(text2);
+    target = result;
+    pivotSource = pivotTarget = buffer16;
+
+    // Convert with insufficient target capacity.
+    result[3] = 5;
+    ucnv_convertEx(cnv2.getAlias(), cnv1.getAlias(),
+                   &target, result + 3, &source, sourceLimit,
+                   buffer16, &pivotSource, &pivotTarget, pivotLimit,
+                   FALSE, FALSE, errorCode);
+    assertEquals("text2 overflow", U_BUFFER_OVERFLOW_ERROR, errorCode.reset());
+    length = (int32_t)(target - result);
+    assertEquals("text2 number of bytes written", 3, length);
+    assertEquals("text2 next byte not clobbered", 5, result[3]);
+
+    // Convert the rest and flush.
+    ucnv_convertEx(cnv2.getAlias(), cnv1.getAlias(),
+                   &target, targetLimit, &source, sourceLimit,
+                   buffer16, &pivotSource, &pivotTarget, pivotLimit,
+                   FALSE, TRUE, errorCode);
+
+    assertSuccess("text2 UTF-8->UTF-8", errorCode);
+    length = (int32_t)(target - result);
+    assertEquals("text2 5 bytes", 5, length);
+    if (length == 5) {
+        assertTrue("text2 result same as input", memcmp(text2, result, length) == 0);
+    }
+}
+
 // open testdata or ICU data converter ------------------------------------- ***
 
 UConverter *
@@ -1023,6 +1093,7 @@ ConversionTest::ToUnicodeCase(ConversionCase &cc, UConverterToUCallback callback
     // open the converter
     IcuTestErrorCode errorCode(*this, "ToUnicodeCase");
     LocalUConverterPointer cnv(cnv_open(cc.charset, errorCode));
+    // with no data, the above crashes with "pointer being freed was not allocated" for charset "x11-compound-text", see #13078
     if(errorCode.isFailure()) {
         errcheckln(errorCode, "toUnicode[%d](%s cb=\"%s\" fb=%d flush=%d) ucnv_open() failed - %s",
                 cc.caseNr, cc.charset, cc.cbopt, cc.fallbacks, cc.finalFlush, errorCode.errorName());
