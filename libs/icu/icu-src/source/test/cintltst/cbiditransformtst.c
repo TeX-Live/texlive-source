@@ -1,9 +1,9 @@
 /********************************************************************
- * Copyright (C) 2016 and later: Unicode, Inc. and others.
+ * © 2016 and later: Unicode, Inc. and others.
  * License & terms of use: http://www.unicode.org/copyright.html
  ********************************************************************/
 /*   file name:  cbiditransformtst.c
- *   encoding:   US-ASCII
+ *   encoding:   UTF-8
  *   tab size:   8 (not used)
  *   indentation:4
  *
@@ -16,6 +16,7 @@
 #include "unicode/ubiditransform.h"
 #include "unicode/ushape.h"
 #include "unicode/ustring.h"
+#include "unicode/utf16.h"
 
 #ifdef __cplusplus
 extern "C" {

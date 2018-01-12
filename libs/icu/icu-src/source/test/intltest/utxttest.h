@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT: 
@@ -38,6 +38,7 @@ public:
     void Ticket10562();
     void Ticket10983();
     void Ticket12130();
+    void Ticket13344();
 
 private:
     struct m {                              // Map between native indices & code points.

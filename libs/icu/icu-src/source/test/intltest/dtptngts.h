@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT:
@@ -30,6 +30,7 @@ private:
     void testAllFieldPatterns(/* char* par */);
     void testStaticGetSkeleton(/* char* par */);
     void testC();
+    void testSkeletonsWithDayPeriods();
 };
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

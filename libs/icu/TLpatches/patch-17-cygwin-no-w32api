@@ -1,5 +1,8 @@
 	_HAS_ -> _USES_ONLY_ for WIN32_API and Cygwin.
 
+Not applied for icu-60.2, since it seems some (but not all) of changes
+have been installed upstream.
+
 Index: source/common/umutex.h
 ===================================================================
 --- source/common/umutex.h	(revision 43491)

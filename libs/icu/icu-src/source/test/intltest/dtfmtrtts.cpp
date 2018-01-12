@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /***********************************************************************
  * COPYRIGHT: 
@@ -249,7 +249,7 @@ void DateFormatRoundTripTest::test(const Locale& loc)
     
     for(style = DateFormat::FULL; style <= DateFormat::SHORT; ++style) {
         if (TEST_TABLE[itable++]) {
-          logln("Testing style " + UnicodeString(styleName((DateFormat::EStyle)style)));
+            logln("Testing style " + UnicodeString(styleName((DateFormat::EStyle)style)));
             DateFormat *df = DateFormat::createTimeInstance((DateFormat::EStyle)style, loc);
             if(df == NULL) {
               errln(UnicodeString("Could not DF::createTimeInstance ") + UnicodeString(styleName((DateFormat::EStyle)style)) + " Locale: " + loc.getDisplayName(temp));
@@ -534,13 +534,16 @@ UnicodeString& DateFormatRoundTripTest::escape(const UnicodeString& src, Unicode
 {
     dst.remove();
     for (int32_t i = 0; i < src.length(); ++i) {
-        UChar c = src[i];
-        if(c < 0x0080) 
+        UChar32 c = src.char32At(i);
+        if (c >= 0x10000) {
+            ++i;
+        }
+        if (c < 0x0080) {
             dst += c;
-        else {
+        } else {
             dst += UnicodeString("[");
-            char buf [8];
-            sprintf(buf, "%#x", c);
+            char buf [12];
+            sprintf(buf, "%#04x", c);
             dst += UnicodeString(buf);
             dst += UnicodeString("]");
         }

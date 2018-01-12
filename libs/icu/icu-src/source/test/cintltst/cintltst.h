@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT: 
@@ -24,11 +24,6 @@ The main root for C API tests
 #include "unicode/utypes.h"
 #include "unicode/putil.h"
 #include "unicode/ctest.h"
-
-#if U_NO_DEFAULT_INCLUDE_UTF_HEADERS
-/* deprecated  - make tests pass with U_NO_DEFAULT_INCLUDE_UTF_HEADERS */
-#include "unicode/utf_old.h" 
-#endif
 
 #include <stdlib.h>
 

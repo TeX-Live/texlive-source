@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 
 /********************************************************************
@@ -91,6 +91,8 @@ private:
     void TestStringSpan();
 
     void TestUCAUnsafeBackwards();
+    void TestIntOverflow();
+    void TestUnusedCcc();
 
 private:
 

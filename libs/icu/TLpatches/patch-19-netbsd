@@ -1,9 +1,9 @@
 	Per Marc Baudoin, tlbuild 17 Mar 2017 10:03:03.
 
-Index: digitlst.cpp
-===================================================================
---- digitlst.cpp	(revision 43522)
-+++ digitlst.cpp	(working copy)
+Not applied for icu-60.2, since they have a new U_HAVE_XLOCALE_H.
+
+--- source/i18n/digitlst.cpp	(revision 43522)
++++ source/i18n/digitlst.cpp	(working copy)
 @@ -61,7 +61,7 @@
  #endif
  

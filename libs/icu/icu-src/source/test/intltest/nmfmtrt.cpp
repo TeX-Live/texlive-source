@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /***********************************************************************
  * COPYRIGHT: 
@@ -16,6 +16,7 @@
 #include "unicode/decimfmt.h"
 #include "unicode/locid.h"
 #include "putilimp.h"
+#include "cstring.h"
 
 #include <float.h>
 #include <stdio.h>    // for sprintf
@@ -343,10 +344,13 @@ NumberFormatRoundTripTest::escape(UnicodeString& s)
     UnicodeString copy(s);
     s.remove();
     for(int i = 0; i < copy.length(); ++i) {
-        UChar c = copy[i];
-        if(c < 0x00FF) 
+        UChar32 c = copy.char32At(i);
+        if (c >= 0x10000) {
+            ++i;
+        }
+        if(c < 0x00FF) {
             s += c;
-        else {
+        } else {
             s += "+U";
             char temp[16];
             sprintf(temp, "%4X", c);        // might not work

@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT:
@@ -2604,6 +2604,10 @@ void DateFormatTest::TestDateFormatSymbolsClone(void)
     Locale loc("de_CH_LUCERNE");
     LocalPointer<DateFormat> fmt(
             DateFormat::createDateInstance(DateFormat::kDefault, loc));
+    if (fmt.isNull()) {
+        dataerrln("FAIL: DateFormat::createDateInstance failed for %s", loc.getName());
+        return;
+    }
     Locale valid1;
     Locale actual1;
     if (!getActualAndValidLocales(*fmt, valid1, actual1)) {
@@ -3120,24 +3124,24 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "bg", "Australia/ACT", "2004-01-15T00:00:00Z", "Z", "+1100", "+11:00" },
         { "bg", "Australia/ACT", "2004-01-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+11:00", "+11:00" },
         { "bg", "Australia/ACT", "2004-01-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+11", "+11:00" },
-        { "bg", "Australia/ACT", "2004-01-15T00:00:00Z", "zzzz", "\\u0410\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u044F \\u2013 \\u0438\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E \\u043B\\u044F\\u0442\\u043D\\u043E \\u0447\\u0430\\u0441\\u043E\\u0432\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "+11:00" },
+        { "bg", "Australia/ACT", "2004-01-15T00:00:00Z", "zzzz", "\\u0418\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E\\u0430\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u0439\\u0441\\u043A\\u043E \\u043B\\u044F\\u0442\\u043D\\u043E \\u0447\\u0430\\u0441\\u043E\\u0432\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "+11:00" },
         { "bg", "Australia/ACT", "2004-07-15T00:00:00Z", "Z", "+1000", "+10:00" },
         { "bg", "Australia/ACT", "2004-07-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+10:00", "+10:00" },
         { "bg", "Australia/ACT", "2004-07-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+10", "+10:00" },
-        { "bg", "Australia/ACT", "2004-07-15T00:00:00Z", "zzzz", "\\u0410\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u044F \\u2013 \\u0438\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E \\u0441\\u0442\\u0430\\u043D\\u0434\\u0430\\u0440\\u0442\\u043D\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "+10:00" },
+        { "bg", "Australia/ACT", "2004-07-15T00:00:00Z", "zzzz", "\\u0418\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E\\u0430\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u0439\\u0441\\u043A\\u043E \\u0441\\u0442\\u0430\\u043D\\u0434\\u0430\\u0440\\u0442\\u043D\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "+10:00" },
         { "bg", "Australia/ACT", "2004-07-15T00:00:00Z", "v", "\\u0421\\u0438\\u0434\\u043D\\u0438", "Australia/Sydney" },
-        { "bg", "Australia/ACT", "2004-07-15T00:00:00Z", "vvvv", "\\u0410\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u044F \\u2013 \\u0438\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "Australia/Sydney" },
+        { "bg", "Australia/ACT", "2004-07-15T00:00:00Z", "vvvv", "\\u0418\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E\\u0430\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u0439\\u0441\\u043A\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "Australia/Sydney" },
 
         { "bg", "Australia/Sydney", "2004-01-15T00:00:00Z", "Z", "+1100", "+11:00" },
         { "bg", "Australia/Sydney", "2004-01-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+11:00", "+11:00" },
         { "bg", "Australia/Sydney", "2004-01-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+11", "+11:00" },
-        { "bg", "Australia/Sydney", "2004-01-15T00:00:00Z", "zzzz", "\\u0410\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u044F \\u2013 \\u0438\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E \\u043B\\u044F\\u0442\\u043D\\u043E \\u0447\\u0430\\u0441\\u043E\\u0432\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "+11:00" },
+        { "bg", "Australia/Sydney", "2004-01-15T00:00:00Z", "zzzz", "\\u0418\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E\\u0430\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u0439\\u0441\\u043A\\u043E \\u043B\\u044F\\u0442\\u043D\\u043E \\u0447\\u0430\\u0441\\u043E\\u0432\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "+11:00" },
         { "bg", "Australia/Sydney", "2004-07-15T00:00:00Z", "Z", "+1000", "+10:00" },
         { "bg", "Australia/Sydney", "2004-07-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+10:00", "+10:00" },
         { "bg", "Australia/Sydney", "2004-07-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+10", "+10:00" },
-        { "bg", "Australia/Sydney", "2004-07-15T00:00:00Z", "zzzz", "\\u0410\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u044F \\u2013 \\u0438\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E \\u0441\\u0442\\u0430\\u043D\\u0434\\u0430\\u0440\\u0442\\u043D\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "+10:00" },
+        { "bg", "Australia/Sydney", "2004-07-15T00:00:00Z", "zzzz", "\\u0418\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E\\u0430\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u0439\\u0441\\u043A\\u043E \\u0441\\u0442\\u0430\\u043D\\u0434\\u0430\\u0440\\u0442\\u043D\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "+10:00" },
         { "bg", "Australia/Sydney", "2004-07-15T00:00:00Z", "v", "\\u0421\\u0438\\u0434\\u043D\\u0438", "Australia/Sydney" },
-        { "bg", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "\\u0410\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u044F \\u2013 \\u0438\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "Australia/Sydney" },
+        { "bg", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "\\u0418\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E\\u0430\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u0439\\u0441\\u043A\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "Australia/Sydney" },
 
         { "bg", "Europe/London", "2004-01-15T00:00:00Z", "Z", "+0000", "+0:00" },
         { "bg", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447", "+0:00" },
@@ -3165,13 +3169,13 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "bg", "Asia/Calcutta", "2004-01-15T00:00:00Z", "Z", "+0530", "+5:30" },
         { "bg", "Asia/Calcutta", "2004-01-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+05:30", "+5:30" },
         { "bg", "Asia/Calcutta", "2004-01-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+5:30", "+5:30" },
-        { "bg", "Asia/Calcutta", "2004-01-15T00:00:00Z", "zzzz", "\\u0418\\u043d\\u0434\\u0438\\u0439\\u0441\\u043a\\u043e \\u0441\\u0442\\u0430\\u043D\\u0434\\u0430\\u0440\\u0442\\u043D\\u043E \\u0432\\u0440\\u0435\\u043c\\u0435", "+5:30" },
+        { "bg", "Asia/Calcutta", "2004-01-15T00:00:00Z", "zzzz", "\\u0418\\u043D\\u0434\\u0438\\u0439\\u0441\\u043A\\u043E \\u0432\\u0440\\u0435\\u043c\\u0435", "+5:30" },
         { "bg", "Asia/Calcutta", "2004-07-15T00:00:00Z", "Z", "+0530", "+5:30" },
         { "bg", "Asia/Calcutta", "2004-07-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+05:30", "+5:30" },
         { "bg", "Asia/Calcutta", "2004-07-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+5:30", "+05:30" },
-        { "bg", "Asia/Calcutta", "2004-07-15T00:00:00Z", "zzzz", "\\u0418\\u043d\\u0434\\u0438\\u0439\\u0441\\u043a\\u043e \\u0441\\u0442\\u0430\\u043D\\u0434\\u0430\\u0440\\u0442\\u043D\\u043E \\u0432\\u0440\\u0435\\u043c\\u0435", "+5:30" },
+        { "bg", "Asia/Calcutta", "2004-07-15T00:00:00Z", "zzzz", "\\u0418\\u043D\\u0434\\u0438\\u0439\\u0441\\u043A\\u043E \\u0432\\u0440\\u0435\\u043c\\u0435", "+5:30" },
         { "bg", "Asia/Calcutta", "2004-07-15T00:00:00Z", "v", "\\u0418\\u043D\\u0434\\u0438\\u044F", "Asia/Calcutta" },
-        { "bg", "Asia/Calcutta", "2004-07-15T00:00:00Z", "vvvv", "\\u0418\\u043d\\u0434\\u0438\\u0439\\u0441\\u043a\\u043e \\u0441\\u0442\\u0430\\u043D\\u0434\\u0430\\u0440\\u0442\\u043D\\u043E \\u0432\\u0440\\u0435\\u043c\\u0435", "Asia/Calcutta" },
+        { "bg", "Asia/Calcutta", "2004-07-15T00:00:00Z", "vvvv", "\\u0418\\u043D\\u0434\\u0438\\u0439\\u0441\\u043A\\u043E \\u0432\\u0440\\u0435\\u043c\\u0435", "Asia/Calcutta" },
     // ==========
 
         { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "Z", "-0800", "-8:00" },
@@ -3322,8 +3326,8 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "ti", "America/Havana", "2004-07-15T00:00:00Z", "ZZZZ", "GMT-04:00", "-4:00" },
         { "ti", "America/Havana", "2004-07-15T00:00:00Z", "z", "GMT-4", "-4:00" },
         { "ti", "America/Havana", "2004-07-15T00:00:00Z", "zzzz", "GMT-04:00", "-4:00" },
-        { "ti", "America/Havana", "2004-07-15T00:00:00Z", "v", "CU", "America/Havana" },
-        { "ti", "America/Havana", "2004-07-15T00:00:00Z", "vvvv", "CU", "America/Havana" },
+        { "ti", "America/Havana", "2004-07-15T00:00:00Z", "v", "\\u12A9\\u1263", "America/Havana" },
+        { "ti", "America/Havana", "2004-07-15T00:00:00Z", "vvvv", "\\u12A9\\u1263", "America/Havana" },
 
         { "ti", "Australia/ACT", "2004-01-15T00:00:00Z", "Z", "+1100", "+11:00" },
         { "ti", "Australia/ACT", "2004-01-15T00:00:00Z", "ZZZZ", "GMT+11:00", "+11:00" },
@@ -3355,8 +3359,8 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "ti", "Europe/London", "2004-07-15T00:00:00Z", "ZZZZ", "GMT+01:00", "+1:00" },
         { "ti", "Europe/London", "2004-07-15T00:00:00Z", "z", "GMT+1", "+1:00" },
         { "ti", "Europe/London", "2004-07-15T00:00:00Z", "zzzz", "GMT+01:00", "+1:00" },
-        { "ti", "Europe/London", "2004-07-15T00:00:00Z", "v", "GB", "Europe/London" },
-        { "ti", "Europe/London", "2004-07-15T00:00:00Z", "vvvv", "GB", "Europe/London" },
+        { "ti", "Europe/London", "2004-07-15T00:00:00Z", "v", "\\u12A5\\u1295\\u130D\\u120A\\u12DD", "Europe/London" },
+        { "ti", "Europe/London", "2004-07-15T00:00:00Z", "vvvv", "\\u12A5\\u1295\\u130D\\u120A\\u12DD", "Europe/London" },
 
         { "ti", "Etc/GMT+3", "2004-01-15T00:00:00Z", "Z", "-0300", "-3:00" },
         { "ti", "Etc/GMT+3", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-03:00", "-3:00" },
@@ -3378,8 +3382,8 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "ti", "Asia/Calcutta", "2004-07-15T00:00:00Z", "ZZZZ", "GMT+05:30", "+5:30" },
         { "ti", "Asia/Calcutta", "2004-07-15T00:00:00Z", "z", "GMT+5:30", "+05:30" },
         { "ti", "Asia/Calcutta", "2004-07-15T00:00:00Z", "zzzz", "GMT+05:30", "+5:30" },
-        { "ti", "Asia/Calcutta", "2004-07-15T00:00:00Z", "v", "IN", "Alna/Calcutta" },
-        { "ti", "Asia/Calcutta", "2004-07-15T00:00:00Z", "vvvv", "IN", "Asia/Calcutta" },
+        { "ti", "Asia/Calcutta", "2004-07-15T00:00:00Z", "v", "\\u1205\\u1295\\u12F2", "Alna/Calcutta" },
+        { "ti", "Asia/Calcutta", "2004-07-15T00:00:00Z", "vvvv", "\\u1205\\u1295\\u12F2", "Asia/Calcutta" },
 
         // Ticket#8589 Partial location name to use country name if the zone is the golden
         // zone for the time zone's country.
@@ -5246,6 +5250,15 @@ void DateFormatTest::TestDayPeriodWithLocales() {
 
     sdf.applyPattern(UnicodeString("hh:mm:ss BBBB"));
     assertEquals("hh:mm:ss BBBB | 01:00:00 | es", "01:00:00 de la madrugada",
+        sdf.format(k010000, out.remove()));
+
+    // #13215: for locales with keywords, check hang in DayPeriodRules""getInstance(const Locale, ...),
+    // which is called in SimpleDateFormat::format for patterns that include 'B'.
+    sdf = SimpleDateFormat(UnicodeString(), Locale("en@calendar=buddhist"), errorCode);
+    sdf.setTimeZone(*tz);
+
+    sdf.applyPattern(UnicodeString("hh:mm:ss BBBB"));
+    assertEquals("hh:mm:ss BBBB | 01:00:00 | en@calendar=buddhist", "01:00:00 at night",
         sdf.format(k010000, out.remove()));
 }
 

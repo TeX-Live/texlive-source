@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
@@ -27,6 +27,8 @@ class TimeZoneFormatTest : public IntlTest {
     void TestISOFormat(void);
     void TestFormat(void);
     void TestFormatTZDBNames(void);
+    void TestFormatCustomZone(void);
+    void TestFormatTZDBNamesAllZoneCoverage(void);
 
     void RunTimeRoundTripTests(int32_t threadNumber);
 };

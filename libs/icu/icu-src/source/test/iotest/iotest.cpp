@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 **********************************************************************
@@ -6,7 +6,7 @@
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *   file name:  iotest.cpp
-*   encoding:   US-ASCII
+*   encoding:   UTF-8
 *   tab size:   8 (not used)
 *   indentation:4
 *
@@ -698,9 +698,7 @@ static void addAllTests(TestNode** root) {
     addTest(root, &DataDrivenPrintfPrecision, "datadriv/DataDrivenPrintfPrecision");
     addTest(root, &DataDrivenScanf, "datadriv/DataDrivenScanf");
 #endif
-#if U_IOSTREAM_SOURCE >= 199711
     addStreamTests(root);
-#endif
 }
 
 /* returns the path to icu/source/data/out */

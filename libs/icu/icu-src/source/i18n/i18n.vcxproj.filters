@@ -138,7 +138,7 @@
     <ClCompile Include="dcfmtsym.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
-    <ClCompile Include="decContext.c">
+    <ClCompile Include="decContext.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="decfmtst.cpp">
@@ -150,7 +150,7 @@
     <ClCompile Include="decimfmt.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
-    <ClCompile Include="decNumber.c">
+    <ClCompile Include="decNumber.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="digitlst.cpp">
@@ -321,7 +321,7 @@
     <ClCompile Include="ufieldpositer.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
-    <ClCompile Include="ulocdata.c">
+    <ClCompile Include="ulocdata.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="umsg.cpp">
@@ -336,7 +336,7 @@
     <ClCompile Include="upluralrules.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
-    <ClCompile Include="utmscale.c">
+    <ClCompile Include="utmscale.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="vtzone.cpp">
@@ -623,7 +623,6 @@
     <ClInclude Include="usrchimp.h">
       <Filter>collation</Filter>
     </ClInclude>
-
     <ClInclude Include="affixpatternparser.h">
       <Filter>formatting</Filter>
     </ClInclude>
@@ -666,7 +665,6 @@
     <ClInclude Include="visibledigits.h">
       <Filter>formatting</Filter>
     </ClInclude>
-
     <ClInclude Include="astro.h">
       <Filter>formatting</Filter>
     </ClInclude>
@@ -752,6 +750,48 @@
       <Filter>formatting</Filter>
     </ClInclude>
     <ClInclude Include="nfsubs.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_affixutils.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_compact.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_decimalquantity.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_decimfmtprops.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_formatimpl.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_longnames.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_modifiers.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_patternmodifier.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_patternstring.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_roundingutils.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_scientific.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_stringbuilder.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_types.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="number_utils.h">
       <Filter>formatting</Filter>
     </ClInclude>
     <ClInclude Include="olsontz.h">
@@ -1131,6 +1171,12 @@
       <Filter>formatting</Filter>
     </CustomBuild>
     <CustomBuild Include="unicode\msgfmt.h">
+      <Filter>formatting</Filter>
+    </CustomBuild>
+    <CustomBuild Include="unicode/nounit.h">
+      <Filter>formatting</Filter>
+    </CustomBuild>
+    <CustomBuild Include="/numberformatter.h">
       <Filter>formatting</Filter>
     </CustomBuild>
     <CustomBuild Include="unicode\numfmt.h">

@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /***********************************************************************
  * COPYRIGHT: 
@@ -35,6 +35,7 @@ public:
      * - displayable name in the desired locale
      */
     void TestProperty(/* char* par */);
+    void TestKeywordValues();
 
     /**
     * This tests the RuleBasedCollator
@@ -172,6 +173,7 @@ public:
     void TestCloneBinary();
     void TestIterNumeric();
     void TestBadKeywords();
+    void TestGapTooSmall();
 
 private:
     // If this is too small for the test data, just increase it.

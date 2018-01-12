@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*************************************************************************
  * Copyright (c) 2016, International Business Machines
@@ -194,6 +194,7 @@ class RBBIMonkeyImpl: public UObject {
     void testFollowing(UErrorCode &status);
     void testPreceding(UErrorCode &status);
     void testIsBoundary(UErrorCode &status);
+    void testIsBoundaryRandom(UErrorCode &status);
     void checkResults(const char *msg, CheckDirection dir, UErrorCode &status);
 
     class RBBIMonkeyThread: public SimpleThread {

@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT:
@@ -63,6 +63,8 @@ static void TestCurrencyUsage(void);
 static void TestCurrFmtNegSameAsPositive(void);
 static void TestVariousStylesAndAttributes(void);
 static void TestParseCurrPatternWithDecStyle(void);
+static void TestFormatForFields(void);
+static void TestRBNFRounding(void);
 
 #define TESTCASE(x) addTest(root, &x, "tsformat/cnumtst/" #x)
 
@@ -78,6 +80,7 @@ void addNumForTest(TestNode** root)
     TESTCASE(TestCurrencyRegression);
     TESTCASE(TestTextAttributeCrash);
     TESTCASE(TestRBNFFormat);
+    TESTCASE(TestRBNFRounding);
     TESTCASE(TestNBSPInPattern);
     TESTCASE(TestInt64Parse);
     TESTCASE(TestParseZero);
@@ -93,6 +96,7 @@ void addNumForTest(TestNode** root)
     TESTCASE(TestCurrFmtNegSameAsPositive);
     TESTCASE(TestVariousStylesAndAttributes);
     TESTCASE(TestParseCurrPatternWithDecStyle);
+    TESTCASE(TestFormatForFields);
 }
 
 /* test Parse int 64 */
@@ -1061,9 +1065,11 @@ static void TestParseCurrency()
         status = U_ZERO_ERROR;
         unum = unum_open(UNUM_CURRENCY, NULL, 0, itemPtr->locale, NULL, &status);
         if (U_SUCCESS(status)) {
+            const UChar * currStr = itemPtr->currStr;
+            int32_t currExpectPos = itemPtr->parsCurrExpectPos;
             status = U_ZERO_ERROR;
             parsePos = 0;
-            parseVal = unum_parseDouble(unum, itemPtr->currStr, -1, &parsePos, &status);
+            parseVal = unum_parseDouble(unum, currStr, -1, &parsePos, &status);
             if (status != itemPtr->parsDoubExpectErr || parsePos != itemPtr->parsDoubExpectPos || parseVal != itemPtr->parsDoubExpectVal) {
                 log_err("UNUM_CURRENCY parseDouble %s/%s, expect %s pos %d val %.1f, get %s pos %d val %.1f\n",
                         itemPtr->locale, itemPtr->descrip,
@@ -1073,13 +1079,13 @@ static void TestParseCurrency()
             status = U_ZERO_ERROR;
             parsePos = 0;
             parseCurr[0] = 0;
-            parseVal = unum_parseDoubleCurrency(unum, itemPtr->currStr, -1, &parsePos, parseCurr, &status);
+            parseVal = unum_parseDoubleCurrency(unum, currStr, -1, &parsePos, parseCurr, &status);
             u_austrncpy(parseCurrB, parseCurr, 4);
-            if (status != itemPtr->parsCurrExpectErr || parsePos != itemPtr->parsCurrExpectPos || parseVal != itemPtr->parsCurrExpectVal ||
+            if (status != itemPtr->parsCurrExpectErr || parsePos != currExpectPos || parseVal != itemPtr->parsCurrExpectVal ||
                     strncmp(parseCurrB, itemPtr->parsCurrExpectCurr, 4) != 0) {
                 log_err("UNUM_CURRENCY parseDoubleCurrency %s/%s, expect %s pos %d val %.1f cur %s, get %s pos %d val %.1f cur %s\n",
                         itemPtr->locale, itemPtr->descrip,
-                        u_errorName(itemPtr->parsCurrExpectErr), itemPtr->parsCurrExpectPos, itemPtr->parsCurrExpectVal, itemPtr->parsCurrExpectCurr,
+                        u_errorName(itemPtr->parsCurrExpectErr), currExpectPos, itemPtr->parsCurrExpectVal, itemPtr->parsCurrExpectCurr,
                         u_errorName(status), parsePos, parseVal, parseCurrB );
             }
             unum_close(unum);
@@ -1787,6 +1793,48 @@ static void TestRBNFFormat() {
     for (i = 0; i < COUNT; ++i) {
         unum_close(formats[i]);
     }
+}
+
+static void TestRBNFRounding() {
+    UChar fmtbuf[FORMAT_BUF_CAPACITY];
+    UChar expectedBuf[FORMAT_BUF_CAPACITY];
+    int32_t len;
+    UErrorCode status = U_ZERO_ERROR;
+    UNumberFormat* fmt = unum_open(UNUM_SPELLOUT, NULL, 0, "en_US", NULL, &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "unable to open spellout -> %s\n", u_errorName(status));
+        return;
+    }
+    len = unum_formatDouble(fmt, 10.123456789, fmtbuf, FORMAT_BUF_CAPACITY, NULL, &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "unum_formatDouble 10.123456789 failed with %s\n", u_errorName(status));
+    }
+    u_uastrcpy(expectedBuf, "ten point one two three four five six seven eight nine");
+    if (u_strcmp(expectedBuf, fmtbuf) != 0) {
+        log_err("Wrong result for unrounded value\n");
+    }
+    unum_setAttribute(fmt, UNUM_MAX_FRACTION_DIGITS, 3);
+    if (unum_getAttribute(fmt, UNUM_MAX_FRACTION_DIGITS) != 3) {
+        log_err("UNUM_MAX_FRACTION_DIGITS was incorrectly ignored -> %d\n", unum_getAttribute(fmt, UNUM_MAX_FRACTION_DIGITS));
+    }
+    if (unum_getAttribute(fmt, UNUM_ROUNDING_MODE) != UNUM_ROUND_UNNECESSARY) {
+        log_err("UNUM_ROUNDING_MODE was set -> %d\n", unum_getAttribute(fmt, UNUM_ROUNDING_MODE));
+    }
+    unum_setAttribute(fmt, UNUM_ROUNDING_MODE, UNUM_ROUND_HALFUP);
+    if (unum_getAttribute(fmt, UNUM_ROUNDING_MODE) != UNUM_ROUND_HALFUP) {
+        log_err("UNUM_ROUNDING_MODE was not set -> %d\n", unum_getAttribute(fmt, UNUM_ROUNDING_MODE));
+    }
+    len = unum_formatDouble(fmt, 10.123456789, fmtbuf, FORMAT_BUF_CAPACITY, NULL, &status);
+    if (U_FAILURE(status)) {
+        log_err_status(status, "unum_formatDouble 10.123456789 failed with %s\n", u_errorName(status));
+    }
+    u_uastrcpy(expectedBuf, "ten point one two three");
+    if (u_strcmp(expectedBuf, fmtbuf) != 0) {
+        char temp[512];
+        u_austrcpy(temp, fmtbuf);
+        log_err("Wrong result for rounded value. Got: %s\n", temp);
+    }
+    unum_close(fmt);
 }
 
 static void TestCurrencyRegression(void) {
@@ -2884,6 +2932,113 @@ static void TestParseCurrPatternWithDecStyle() {
             }
         }
         unum_close(unumfmt);
+    }
+}
+
+/*
+ * Ticket #12684
+ * Test unum_formatDoubleForFields (and UFieldPositionIterator)
+ */
+
+typedef struct {
+    int32_t field;
+    int32_t beginPos;
+    int32_t endPos;
+} FieldsData;
+
+typedef struct {
+    const char *       locale;
+    UNumberFormatStyle style;
+    double             value;
+    const FieldsData * expectedFields;
+} FormatForFieldsItem;
+
+static const UChar patNoFields[] = { 0x0027, 0x0078, 0x0027, 0 }; /* "'x'", for UNUM_PATTERN_DECIMAL */
+
+
+/* "en_US", UNUM_CURRENCY, 123456.0 : "¤#,##0.00" => "$123,456.00" */
+static const FieldsData fields_en_CURR[] = {
+    { UNUM_CURRENCY_FIELD /*7*/,            0, 1 },
+    { UNUM_GROUPING_SEPARATOR_FIELD /*6*/,  4, 5 },
+    { UNUM_INTEGER_FIELD /*0*/,             1, 8 },
+    { UNUM_DECIMAL_SEPARATOR_FIELD /*2*/,   8, 9 },
+    { UNUM_FRACTION_FIELD /*1*/,            9, 11 },
+    { -1, -1, -1 },
+};
+/* "en_US", UNUM_PERCENT, -34 : "#,##0%" => "-34%" */
+static const FieldsData fields_en_PRCT[] = {
+    { UNUM_SIGN_FIELD /*10*/,               0, 1 },
+    { UNUM_INTEGER_FIELD /*0*/,             1, 3 },
+    { UNUM_PERCENT_FIELD /*8*/,             3, 4 },
+    { -1, -1, -1 },
+};
+/* "fr_FR", UNUM_CURRENCY, 123456.0 : "#,##0.00 ¤" => "123,456.00 €" */
+static const FieldsData fields_fr_CURR[] = {
+    { UNUM_GROUPING_SEPARATOR_FIELD /*6*/,  3, 4 },
+    { UNUM_INTEGER_FIELD /*0*/,             0, 7 },
+    { UNUM_DECIMAL_SEPARATOR_FIELD /*2*/,   7, 8 },
+    { UNUM_FRACTION_FIELD /*1*/,            8, 10 },
+    { UNUM_CURRENCY_FIELD /*7*/,           11, 12 },
+    { -1, -1, -1 },
+};
+/* "en_US", UNUM_PATTERN_DECIMAL, 12.0 : "'x'" => "x12" */
+static const FieldsData fields_en_PATN[] = {
+    { UNUM_INTEGER_FIELD /*0*/,             1, 3 },
+    { -1, -1, -1 },
+};
+
+static const FormatForFieldsItem fffItems[] = {
+    { "en_US", UNUM_CURRENCY_STANDARD, 123456.0, fields_en_CURR },
+    { "en_US", UNUM_PERCENT,              -0.34, fields_en_PRCT },
+    { "fr_FR", UNUM_CURRENCY_STANDARD, 123456.0, fields_fr_CURR },
+    { "en_US", UNUM_PATTERN_DECIMAL,       12.0, fields_en_PATN },
+    { NULL, (UNumberFormatStyle)0, 0, NULL },
+};
+
+static void TestFormatForFields(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    UFieldPositionIterator* fpositer = ufieldpositer_open(&status);
+    if ( U_FAILURE(status) ) {
+        log_err("ufieldpositer_open fails, status %s\n", u_errorName(status));
+    } else {
+        const FormatForFieldsItem * itemPtr;
+        for (itemPtr = fffItems; itemPtr->locale != NULL; itemPtr++) {
+            UNumberFormat* unum;
+            status = U_ZERO_ERROR;
+            unum = (itemPtr->style == UNUM_PATTERN_DECIMAL)?
+                unum_open(itemPtr->style, patNoFields, -1, itemPtr->locale, NULL, &status):
+                unum_open(itemPtr->style, NULL, 0, itemPtr->locale, NULL, &status);
+            if ( U_FAILURE(status) ) {
+                log_data_err("unum_open fails for locale %s, style %d: status %s (Are you missing data?)\n", itemPtr->locale, itemPtr->style, u_errorName(status));
+            } else {
+                UChar ubuf[kUBufSize];
+                int32_t ulen = unum_formatDoubleForFields(unum, itemPtr->value, ubuf, kUBufSize, fpositer, &status);
+                if ( U_FAILURE(status) ) {
+                    log_err("unum_formatDoubleForFields fails for locale %s, style %d: status %s\n", itemPtr->locale, itemPtr->style, u_errorName(status));
+                } else {
+                    const FieldsData * fptr;
+                    int32_t field, beginPos, endPos;
+                    for (fptr = itemPtr->expectedFields; TRUE; fptr++) {
+                        field = ufieldpositer_next(fpositer, &beginPos, &endPos);
+                        if (field != fptr->field || (field >= 0 && (beginPos != fptr->beginPos || endPos != fptr->endPos))) {
+                            if (fptr->field >= 0) {
+                                log_err("unum_formatDoubleForFields for locale %s as \"%s\"; expect field %d range %d-%d, get field %d range %d-%d\n",
+                                    itemPtr->locale, aescstrdup(ubuf, ulen), fptr->field, fptr->beginPos, fptr->endPos, field, beginPos, endPos);
+                            } else {
+                                log_err("unum_formatDoubleForFields for locale %s as \"%s\"; expect field < 0, get field %d range %d-%d\n",
+                                    itemPtr->locale, aescstrdup(ubuf, ulen), field, beginPos, endPos);
+                            }
+                            break;
+                        }
+                        if (field < 0) {
+                            break;
+                        }
+                    }
+                }
+                unum_close(unum);
+            }
+        }
+        ufieldpositer_close(fpositer);
     }
 }
 

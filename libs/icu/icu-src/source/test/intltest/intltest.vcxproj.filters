@@ -151,9 +151,6 @@
     <ClCompile Include="simplethread.cpp">
       <Filter>configuration</Filter>
     </ClCompile>
-    <ClCompile Include="strtest.cpp">
-      <Filter>configuration</Filter>
-    </ClCompile>
     <ClCompile Include="tsmthred.cpp">
       <Filter>configuration</Filter>
     </ClCompile>
@@ -262,6 +259,27 @@
     <ClCompile Include="numberformat2test.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
+    <ClCompile Include="numbertest_affixutils.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_api.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_decimalquantity.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_modifiers.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_patternmodifier.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_patternstring.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_stringbuilder.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
     <ClCompile Include="numfmtst.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
@@ -355,7 +373,7 @@
     <ClCompile Include="nptrans.cpp">
       <Filter>idna</Filter>
     </ClCompile>
-    <ClCompile Include="punyref.c">
+    <ClCompile Include="punyref.cpp">
       <Filter>idna</Filter>
     </ClCompile>
     <ClCompile Include="testidn.cpp">
@@ -434,6 +452,9 @@
       <Filter>strings</Filter>
     </ClCompile>
     <ClCompile Include="strcase.cpp">
+      <Filter>strings</Filter>
+    </ClCompile>
+    <ClCompile Include="strtest.cpp">
       <Filter>strings</Filter>
     </ClCompile>
     <ClCompile Include="ustrtest.cpp">
@@ -585,9 +606,6 @@
     <ClInclude Include="simplethread.h">
       <Filter>configuration</Filter>
     </ClInclude>
-    <ClInclude Include="strtest.h">
-      <Filter>configuration</Filter>
-    </ClInclude>
     <ClInclude Include="tsmthred.h">
       <Filter>configuration</Filter>
     </ClInclude>
@@ -682,6 +700,9 @@
       <Filter>formatting</Filter>
     </ClInclude>
     <ClInclude Include="numberformattesttuple.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="numbertest.h">
       <Filter>formatting</Filter>
     </ClInclude>
     <ClInclude Include="numfmtst.h">
@@ -829,6 +850,9 @@
       <Filter>strings</Filter>
     </ClInclude>
     <ClInclude Include="sfwdchit.h">
+      <Filter>strings</Filter>
+    </ClInclude>
+    <ClInclude Include="strtest.h">
       <Filter>strings</Filter>
     </ClInclude>
     <ClInclude Include="ustrtest.h">

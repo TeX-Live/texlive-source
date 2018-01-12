@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 **********************************************************************
@@ -76,7 +76,7 @@ inline int32_t umtx_atomic_dec(u_atomic_int32_t *var) {
 }
 U_NAMESPACE_END
 
-#elif U_PLATFORM_USES_ONLY_WIN32_API
+#elif U_PLATFORM_HAS_WIN32_API
 
 // MSVC compiler. Reads and writes of volatile variables have
 //                acquire and release memory semantics, respectively.
@@ -86,7 +86,9 @@ U_NAMESPACE_END
 //                Original plan was to use gcc atomics for MinGW, but they
 //                aren't supported, so we fold MinGW into this path.
 
+#ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
+#endif
 # define VC_EXTRALEAN
 # define NOUSER
 # define NOSERVICE
@@ -331,7 +333,9 @@ U_NAMESPACE_END
  *         win32 APIs for Critical Sections.
  */
 
+#ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
+#endif
 # define VC_EXTRALEAN
 # define NOUSER
 # define NOSERVICE

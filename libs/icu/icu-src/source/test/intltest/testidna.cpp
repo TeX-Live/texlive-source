@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
@@ -8,7 +8,7 @@
  *
  *******************************************************************************
  *   file name:  testidna.cpp
- *   encoding:   US-ASCII
+ *   encoding:   UTF-8
  *   tab size:   8 (not used)
  *   indentation:4
  *
@@ -28,6 +28,7 @@
 #include "unicode/ustring.h"
 #include "unicode/usprep.h"
 #include "unicode/uniset.h"
+#include "unicode/utf16.h"
 #include "cmemory.h"
 #include "testidna.h"
 #include "idnaref.h"

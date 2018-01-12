@@ -1,4 +1,4 @@
-// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
@@ -18,6 +18,7 @@
 #include "unicode/tzrule.h"
 #include "unicode/calendar.h"
 #include "unicode/gregocal.h"
+#include "unicode/strenum.h"
 #include "unicode/ucal.h"
 #include "unicode/unistr.h"
 #include "unicode/ustring.h"
