@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-01-01'
+timestamp='2018-01-11'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -945,6 +945,9 @@ case $basic_machine in
 		;;
 	nsr-tandem)
 		basic_machine=nsr-tandem
+		;;
+	nsv-tandem)
+		basic_machine=nsv-tandem
 		;;
 	nsx-tandem)
 		basic_machine=nsx-tandem
