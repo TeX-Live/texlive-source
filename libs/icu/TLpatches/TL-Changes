@@ -38,9 +38,9 @@ cp -p $aux/config.guess $aux/config.sub $aux/install-sh source
 # Assuming all seems ok, reduce size of source/data/in/icudt*.dat
 # to decrease data segment size, e.g., for old BSD.  First, check
 # that we successfully built the full .dat:
-srcdat=$Build/source/libs/icu/icu-src/source/data/in/icudt58l.dat 
-cd $Work/libs/icu/icu-build/data/out/build/icudt58l
-indat=../../tmp/icudt58l.dat
+srcdat=$Build/source/libs/icu/icu-src/source/data/in/icudt60l.dat 
+cd $Work/libs/icu/icu-build/data/out/build/icudt60l
+indat=../../tmp/icudt60l.dat
 diff $srcdat $indat
 # should be identical, amazingly enough.
 
@@ -50,7 +50,7 @@ icupkg="env LD_LIBRARY_PATH=$gnu/lib ../../../../bin/icupkg"
 
 # then remove some elements unused by the icu clients in our tree, namely
 # bibtexu (in texk/bibtex-x), upmendex, and xetex (in texk/web2c/xetexdir).
-outdat=icudt58l.dat
+outdat=icudt60l.dat
 $icupkg -r 'curr/*' $indat $outdat && mv $outdat $indat
 $icupkg -r 'lang/*' $indat $outdat && mv $outdat $indat
 $icupkg -r 'region/*' $indat $outdat && mv $outdat $indat

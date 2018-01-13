@@ -1,3 +1,8 @@
+2018-01-12  Karl Berry  <karl@freefriends.org>
+
+	* patch-16-putil,
+	* patch-17-cygwin-no-w32api: no longer needed per kbrown.
+
 2017-03-17  Karl Berry  <karl@tug.org>
 
 	* patch-19-netbsd: add per Marc Baudoin, tlbuild 17 Mar 2017 10:03:03.
