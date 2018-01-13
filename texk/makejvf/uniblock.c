@@ -16,18 +16,24 @@ struct ublock {
 /*
  References:
  [1] http://www.unicode.org/Public/UNIDATA/Blocks.txt
-        Blocks-9.0.0.txt
-        Date: 2016-02-05, 23:48:00 GMT [KW]
+        Blocks-10.0.0.txt
+        Date: 2017-04-12, 17:30:00 GMT [KW]
  [2] CMap files
      https://github.com/adobe-type-tools/cmap-resources/
-     cmapresources_cns1-6/          Adobe-CNS1-6 materials
-        cid2code.txt (Version 12/04/2015)
-     cmapresources_gb1-5/           Adobe-GB1-5 materials
-        cid2code.txt (Version 10/29/2010)
-     cmapresources_japan1-6/        Adobe-Japan1-6 materials
-        cid2code.txt (Version 08/13/2012)
-     cmapresources_korean1-2/       Adobe-Korea1-2 materials
+     Adobe-CNS1-7/                  Adobe-CNS1-7 materials
+        cid2code.txt (Version 10/24/2017)
+     Adobe-GB1-5/                   Adobe-GB1-5 materials
+        cid2code.txt (Version 12/05/2017)
+     Adobe-Japan1-6/                Adobe-Japan1-6 materials
+        cid2code.txt (Version 10/24/2017)
+     Adobe-Korea1-2/                Adobe-Korea1-2 materials
         cid2code.txt (Version 01/31/2012)
+ Following code points are omitted from ENTRY_J:
+   block                      code point  name                      Adobe-Japan CID
+   Tibetan                    U+0FD6      Left-facing Svasti Sign   12182
+   Supplemental Puncutuation  U+2E40      Double Hyphen             15516
+   Latin Extended-D           U+A7B5      Latin Small Letter Beta   15909
+   Latin Extended-E           U+AB53      Latin Small Letter Chi    15911
 */
 
 static struct ublock ublock_data[] = {
@@ -50,6 +56,7 @@ static struct ublock ublock_data[] = {
   {0x07C0, 0x07FF, ENTRY_NO  , 0}, /* NKo */
   {0x0800, 0x083F, ENTRY_NO  , 0}, /* Samaritan */
   {0x0840, 0x085F, ENTRY_NO  , 0}, /* Mandaic */
+  {0x0860, 0x086F, ENTRY_NO  , 0}, /* Syriac Supplement */
   {0x08A0, 0x08FF, ENTRY_NO  , 0}, /* Arabic Extended-A */
   {0x0900, 0x097F, ENTRY_NO  , 0}, /* Devanagari */
   {0x0980, 0x09FF, ENTRY_NO  , 0}, /* Bengali */
@@ -252,9 +259,12 @@ static struct ublock ublock_data[] = {
   {0x11680, 0x116CF, ENTRY_NO  , 0}, /* Takri */
   {0x11700, 0x1173F, ENTRY_NO  , 0}, /* Ahom */
   {0x118A0, 0x118FF, ENTRY_NO  , 0}, /* Warang Citi */
+  {0x11A00, 0x11A4F, ENTRY_NO  , 0}, /* Zanabazar Square */
+  {0x11A50, 0x11AAF, ENTRY_NO  , 0}, /* Soyombo */
   {0x11AC0, 0x11AFF, ENTRY_NO  , 0}, /* Pau Cin Hau */
   {0x11C00, 0x11C6F, ENTRY_NO  , 0}, /* Bhaiksuki */
   {0x11C70, 0x11CBF, ENTRY_NO  , 0}, /* Marchen */
+  {0x11D00, 0x11D5F, ENTRY_NO  , 0}, /* Masaram Gondi */
   {0x12000, 0x123FF, ENTRY_NO  , 0}, /* Cuneiform */
   {0x12400, 0x1247F, ENTRY_NO  , 0}, /* Cuneiform Numbers and Punctuation */
   {0x12480, 0x1254F, ENTRY_NO  , 0}, /* Early Dynastic Cuneiform */
@@ -269,6 +279,8 @@ static struct ublock ublock_data[] = {
   {0x17000, 0x187FF, ENTRY_NO  , 0}, /* Tangut */
   {0x18800, 0x18AFF, ENTRY_NO  , 0}, /* Tangut Components */
   {0x1B000, 0x1B0FF, ENTRY_NO  , 0}, /* Kana Supplement */
+  {0x1B100, 0x1B12F, ENTRY_NO  , 0}, /* Kana Extended-A */
+  {0x1B170, 0x1B2FF, ENTRY_NO  , 0}, /* Nushu */
   {0x1BC00, 0x1BC9F, ENTRY_NO  , 0}, /* Duployan */
   {0x1BCA0, 0x1BCAF, ENTRY_NO  , 0}, /* Shorthand Format Controls */
   {0x1D000, 0x1D0FF, ENTRY_NO  , 0}, /* Byzantine Musical Symbols */
@@ -299,6 +311,7 @@ static struct ublock ublock_data[] = {
   {0x2A700, 0x2B73F, ENTRY_CJ  , 1}, /* CJK Unified Ideographs Extension C */
   {0x2B740, 0x2B81F, ENTRY_J   , 1}, /* CJK Unified Ideographs Extension D */
   {0x2B820, 0x2CEAF, ENTRY_C   , 1}, /* CJK Unified Ideographs Extension E */
+  {0x2CEB0, 0x2EBEF, ENTRY_CJ  , 1}, /* CJK Unified Ideographs Extension F */
   {0x2F800, 0x2FA1F, ENTRY_CJ  , 1}, /* CJK Compatibility Ideographs Supplement */
   {0xE0000, 0xE007F, ENTRY_NO  , 0}, /* Tags */
   {0xE0100, 0xE01EF, ENTRY_NO  , 0}, /* Variation Selectors Supplement */
