@@ -2,7 +2,7 @@
 # Attempt to guess a canonical system name.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-01-01'
+timestamp='2018-01-11'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -1331,6 +1331,9 @@ EOF
 	exit ;;
     NSR-*:NONSTOP_KERNEL:*:*)
 	echo nsr-tandem-nsk${UNAME_RELEASE}
+	exit ;;
+    NSV-*:NONSTOP_KERNEL:*:*)
+	echo nsv-tandem-nsk${UNAME_RELEASE}
 	exit ;;
     NSX-*:NONSTOP_KERNEL:*:*)
 	echo nsx-tandem-nsk${UNAME_RELEASE}
