@@ -48,12 +48,16 @@
 % This is the parent directory of our several trees, i.e.,
 % /usr/local/texlive/YYYY in the original TeX Live distribution.
 %
-% All trees must be organized according to the TeX Directory Structure
-% (http://tug.org/tds), or files may not be found.
+% The path definitions here assume the directories are organized
+% according to the TeX Directory Structure (http://tug.org/tds).
 %
 % Redistributors will probably want $SELFAUTODIR/share, i.e., /usr/share.
-% Kpathsea sets SELFAUTOLOC (the directory with the binary),
-% SELFAUTODIR (its parent), and SELFAUTOPARENT (its grandparent).
+% Kpathsea sets (in kpathsea/progname.c):
+% SELFAUTOLOC (directory of the binary=/usr/local/texlive/YYYY/bin/i386-linux),
+% SELFAUTODIR (its parent = /usr/local/texlive/YYYY/bin), 
+% SELFAUTOPARENT (its grandparent = /usr/local/texlive/YYYY), and
+% SELFAUTOGRANDPARENT (its great-grandparent = /usr/local/texlive).
+% Sorry for the off-by-one-generation names.
 TEXMFROOT = $SELFAUTOPARENT
 
 % The main tree of distributed packages and programs:
