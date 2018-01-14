@@ -1,3 +1,8 @@
+2018-01-14  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (-std=c89): reinstate check, now copying configure
+	block from upstream; reautoconf.
+
 2017-12-02  Karl Berry  <karl@freefriends.org>
 
 	Import ARM support from upstream to TL configure.
