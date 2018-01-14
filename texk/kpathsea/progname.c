@@ -1,6 +1,6 @@
 /* progname.c: the executable name we were invoked as; general initialization.
 
-   Copyright 1994, 1996, 1997, 2008-2013, 2016 Karl Berry.
+   Copyright 1994, 1996, 1997, 2008-2013, 2016-2018 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -156,7 +156,8 @@ CopyFirst (register char *a, char *b)
 /* Returns NULL on error.  Prints intermediate results if global
    `ll_verbose' is nonzero.  */
 
-#define EX(s)           (strlen (s) && strcmp (s, "/") ? "/" : "")
+#define EMPTY_STRING(s) (*(s) == 0)
+#define EX(s)           (!EMPTY_STRING (s) && strcmp (s, "/") ? "/" : "")
 #define EXPOS           EX(post)
 #define EXPRE           EX(pre)
 
@@ -189,7 +190,7 @@ expand_symlinks (kpathsea kpse, char *s)
   strcpy (post, s);
   strcpy (pre, "");
 
-  while (strlen (post) != 0) {
+  while (!EMPTY_STRING (post)) {
     CopyFirst (pre, post);
 
     if (lstat (pre, &st) != 0) {
@@ -209,7 +210,7 @@ expand_symlinks (kpathsea kpse, char *s)
       } else {
         a = pre[0];     /* handle links through the root */
         strcpy (tmp, StripLast (pre));
-        if (!strlen (pre) && a == '/')
+        if (EMPTY_STRING (pre) && a == '/')
           strcpy (pre, "/");
 
         if (kpse->ll_verbose) {
@@ -223,7 +224,7 @@ expand_symlinks (kpathsea kpse, char *s)
         a = pre[0];     /* handle links through the root */
         while (!strncmp (sym, "..", 2)
                && (sym[2] == 0 || sym[2] == '/')
-               && strlen (pre) != 0
+               && !EMPTY_STRING (pre)
                && strcmp (pre, ".")
                && strcmp (pre, "..")
                && (strlen (pre) < 3
@@ -241,11 +242,11 @@ expand_symlinks (kpathsea kpse, char *s)
           else
             printf ("%s == %s%s%s\n", before, pre, EXPOS, post);
         }
-        if (!strlen (pre) && a == '/')
+        if (EMPTY_STRING (pre) && a == '/')
           strcpy (pre, "/");
       }
 
-      if (strlen (post) != 0 && strlen (sym) != 0)
+      if (!EMPTY_STRING (post) && !EMPTY_STRING (sym))
         strcat (sym, "/");
 
       strcat (sym, post);

@@ -1,3 +1,9 @@
+2018-01-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* progname.c: Use a macro instead of a function strlen() to
+	check if a string is empty or not. Report from Douglas McKenna,
+	private mail 14 Jan 2018.
+
 2018-01-05  Karl Berry  <karl@freefriends.org>
 
 	* pathsearch.c (dir_list_search, dir_list_search_list): save the
