@@ -1,3 +1,7 @@
+2018-01-14  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf: doc fixes.
+
 2018-01-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* progname.c: Use a macro instead of a function strlen() to
