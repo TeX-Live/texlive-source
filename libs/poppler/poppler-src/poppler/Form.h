@@ -31,6 +31,7 @@
 
 #include <set>
 #include <vector>
+#include <ctime>
 
 class GooString;
 class Array;
