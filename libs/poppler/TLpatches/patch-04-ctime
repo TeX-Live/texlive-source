@@ -1,0 +1,13 @@
+	To make time_t work on FreeBSD 11.1, per Mojca.
+	http://tug.org/pipermail/tlbuild/2018q1/003931.html
+	
+--- Form.h	(revision 46316)
++++ Form.h	(working copy)
+@@ -31,6 +31,7 @@
+ 
+ #include <set>
+ #include <vector>
++#include <ctime>
+ 
+ class GooString;
+ class Array;
