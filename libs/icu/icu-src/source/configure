@@ -6033,11 +6033,12 @@ $as_echo "$as_me: Adding CXXFLAGS option -std=c++11" >&6;}
         else
             CXXFLAGS="$OLD_CXXFLAGS"
         fi
-        case "${host}" in
-        *-*-solaris*)
-            CXXFLAGS="$OLD_CXXFLAGS"
-            ;;
-        esac
+# TL: why? http://bugs.icu-project.org/trac/ticket/13543
+#        case "${host}" in
+#        *-*-solaris*)
+#            CXXFLAGS="$OLD_CXXFLAGS"
+#            ;;
+#        esac
     fi
 fi
 
