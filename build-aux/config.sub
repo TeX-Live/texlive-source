@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-01-11'
+timestamp='2018-01-13'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -1723,9 +1723,6 @@ case $basic_machine in
 		;;
 	i370-*)
 		os=-mvs
-		;;
-	*-next)
-		os=-nextstep3
 		;;
 	*-gould)
 		os=-sysv
