@@ -1,3 +1,7 @@
+2018-01-16  Karl Berry  <karl@tug.org>
+
+	* patch-02-configure-solaris: add.
+
 2018-01-12  Karl Berry  <karl@freefriends.org>
 
 	* patch-16-putil,
