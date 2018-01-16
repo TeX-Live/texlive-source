@@ -71,4 +71,8 @@
 #   define _STDC_C99
 #endif
 
+#if defined(__cplusplus) && defined(__NetBSD__)
+#define _ISOC99_SOURCE
+#endif
+
 #endif  /* __UPOSIXDEFS_H__ */

@@ -1,15 +1,15 @@
-	Per Marc Baudoin, tlbuild 17 Mar 2017 10:03:03.
+	Date: Sat, 13 Jan 2018 14:28:11 +0100
+	From: Marc Baudoin <babafou@babafou.eu.org>
+	tlbuild
 
-Not applied for icu-60.2, since they have a new U_HAVE_XLOCALE_H.
-
---- source/i18n/digitlst.cpp	(revision 43522)
-+++ source/i18n/digitlst.cpp	(working copy)
-@@ -61,7 +61,7 @@
+--- icu-src/source/common/uposixdefs.h	(revision 46329)
++++ icu-src/source/common/uposixdefs.h	(working copy)
+@@ -71,4 +71,8 @@
+ #   define _STDC_C99
  #endif
  
- #if U_USE_STRTOD_L
--# if U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_CYGWIN
-+# if U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_CYGWIN || defined(__NetBSD__)
- #   include <locale.h>
- # else
- #   include <xlocale.h>
++#if defined(__cplusplus) && defined(__NetBSD__)
++#define _ISOC99_SOURCE
++#endif
++
+ #endif  /* __UPOSIXDEFS_H__ */
