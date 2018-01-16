@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-01-13'
+timestamp='2018-01-14'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -296,7 +296,7 @@ case $basic_machine in
 	| nios | nios2 | nios2eb | nios2el \
 	| ns16k | ns32k \
 	| open8 | or1k | or1knd | or32 \
-	| pdp10 | pdp11 | pj | pjl \
+	| pdp10 | pj | pjl \
 	| powerpc | powerpc64 | powerpc64le | powerpcle \
 	| pru \
 	| pyramid \
@@ -333,7 +333,7 @@ case $basic_machine in
 		basic_machine=$basic_machine-unknown
 		os=-none
 		;;
-	m88110 | m680[12346]0 | m683?2 | m68360 | m5200 | v70 | w65 | z8k)
+	m88110 | m680[12346]0 | m683?2 | m68360 | m5200 | v70 | w65)
 		;;
 	ms1)
 		basic_machine=mt-unknown
@@ -457,7 +457,7 @@ case $basic_machine in
 	# Recognize the various machine names and aliases which stand
 	# for a CPU type and a company and sometimes even an OS.
 	386bsd)
-		basic_machine=i386-unknown
+		basic_machine=i386-pc
 		os=-bsd
 		;;
 	3b1 | 7300 | 7300-att | att-7300 | pc7300 | safari | unixpc)
@@ -740,9 +740,6 @@ case $basic_machine in
 	hp9k8[0-9][0-9] | hp8[0-9][0-9])
 		basic_machine=hppa1.0-hp
 		;;
-	hppa-next)
-		os=-nextstep3
-		;;
 	hppaosf)
 		basic_machine=hppa1.1-hp
 		os=-osf
@@ -774,7 +771,7 @@ case $basic_machine in
 		basic_machine=i386-mach
 		os=-mach
 		;;
-	i386-vsta | vsta)
+	vsta)
 		basic_machine=i386-unknown
 		os=-vsta
 		;;
@@ -802,9 +799,6 @@ case $basic_machine in
 	m68knommu-*)
 		basic_machine=m68k-`echo $basic_machine | sed 's/^[^-]*-//'`
 		os=-linux
-		;;
-	m88k-omron*)
-		basic_machine=m88k-omron
 		;;
 	magnum | m3230)
 		basic_machine=mips-mips
@@ -1104,17 +1098,10 @@ case $basic_machine in
 	sequent)
 		basic_machine=i386-sequent
 		;;
-	sh)
-		basic_machine=sh-hitachi
-		os=-hms
-		;;
 	sh5el)
 		basic_machine=sh5le-unknown
 		;;
-	sh64)
-		basic_machine=sh64-unknown
-		;;
-	sparclite-wrs | simso-wrs)
+	simso-wrs)
 		basic_machine=sparclite-wrs
 		os=-vxworks
 		;;
@@ -1247,9 +1234,6 @@ case $basic_machine in
 		basic_machine=a29k-wrs
 		os=-vxworks
 		;;
-	wasm32)
-		basic_machine=wasm32-unknown
-		;;
 	w65*)
 		basic_machine=w65-wdc
 		os=-none
@@ -1274,14 +1258,6 @@ case $basic_machine in
 	ymp)
 		basic_machine=ymp-cray
 		os=-unicos
-		;;
-	z8k-*-coff)
-		basic_machine=z8k-unknown
-		os=-sim
-		;;
-	z80-*-coff)
-		basic_machine=z80-unknown
-		os=-sim
 		;;
 	none)
 		basic_machine=none-none
@@ -1311,10 +1287,6 @@ case $basic_machine in
 	vax)
 		basic_machine=vax-dec
 		;;
-	pdp10)
-		# there are many clones, so DEC is not a safe bet
-		basic_machine=pdp10-unknown
-		;;
 	pdp11)
 		basic_machine=pdp11-dec
 		;;
@@ -1323,9 +1295,6 @@ case $basic_machine in
 		;;
 	sh[1234] | sh[24]a | sh[24]aeb | sh[34]eb | sh[1234]le | sh[23]ele)
 		basic_machine=sh-unknown
-		;;
-	sparc | sparcv8 | sparcv9 | sparcv9b | sparcv9v)
-		basic_machine=sparc-sun
 		;;
 	cydra)
 		basic_machine=cydra-cydrome
@@ -1380,14 +1349,15 @@ case $os in
 	-solaris)
 		os=-solaris2
 		;;
-	-svr4*)
-		os=-sysv4
-		;;
 	-unixware*)
 		os=-sysv4.2uw
 		;;
 	-gnu/linux*)
 		os=`echo $os | sed -e 's|gnu/linux|linux-gnu|'`
+		;;
+	# es1800 is here to avoid being matched by es* (a different OS)
+	-es1800*)
+		os=-ose
 		;;
 	# Now accept the basic system types.
 	# The portable systems comes first.
@@ -1401,7 +1371,7 @@ case $os in
 	      | -aos* | -aros* | -cloudabi* | -sortix* \
 	      | -nindy* | -vxsim* | -vxworks* | -ebmon* | -hms* | -mvs* \
 	      | -clix* | -riscos* | -uniplus* | -iris* | -rtu* | -xenix* \
-	      | -hiux* | -386bsd* | -knetbsd* | -mirbsd* | -netbsd* \
+	      | -hiux* | -knetbsd* | -mirbsd* | -netbsd* \
 	      | -bitrig* | -openbsd* | -solidbsd* | -libertybsd* \
 	      | -ekkobsd* | -kfreebsd* | -freebsd* | -riscix* | -lynxos* \
 	      | -bosx* | -nextstep* | -cxux* | -aout* | -elf* | -oabi* \
@@ -1412,11 +1382,11 @@ case $os in
 	      | -midipix* | -mingw32* | -mingw64* | -linux-gnu* | -linux-android* \
 	      | -linux-newlib* | -linux-musl* | -linux-uclibc* \
 	      | -uxpv* | -beos* | -mpeix* | -udk* | -moxiebox* \
-	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* \
 	      | -openstep* | -oskit* | -conix* | -pw32* | -nonstopux* \
 	      | -storm-chaos* | -tops10* | -tenex* | -tops20* | -its* \
 	      | -os2* | -vos* | -palmos* | -uclinux* | -nucleus* \
-	      | -morphos* | -superux* | -rtmk* | -rtmk-nova* | -windiss* \
+	      | -morphos* | -superux* | -rtmk* | -windiss* \
 	      | -powermax* | -dnix* | -nx6 | -nx7 | -sei* | -dragonfly* \
 	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* \
 	      | -onefs* | -tirtos* | -phoenix* | -fuchsia* | -redox* | -bme*)
@@ -1436,8 +1406,8 @@ case $os in
 	-nto*)
 		os=`echo $os | sed -e 's|nto|nto-qnx|'`
 		;;
-	-sim | -es1800* | -hms* | -xray | -os68k* | -none* | -v88r* \
-	      | -windows* | -osx | -abug | -netware* | -os9* | -beos* | -haiku* \
+	-sim | -xray | -os68k* | -v88r* \
+	      | -windows* | -osx | -abug | -netware* | -os9* \
 	      | -macos* | -mpw* | -magic* | -mmixware* | -mon960* | -lnews*)
 		;;
 	-mac*)
@@ -1463,12 +1433,6 @@ case $os in
 		;;
 	-wince*)
 		os=-wince
-		;;
-	-osfrose*)
-		os=-osfrose
-		;;
-	-osf*)
-		os=-osf
 		;;
 	-utek*)
 		os=-bsd
@@ -1516,7 +1480,7 @@ case $os in
 	-oss*)
 		os=-sysv3
 		;;
-	-svr4)
+	-svr4*)
 		os=-sysv4
 		;;
 	-svr3)
@@ -1531,17 +1495,8 @@ case $os in
 	-ose*)
 		os=-ose
 		;;
-	-es1800*)
-		os=-ose
-		;;
-	-xenix)
-		os=-xenix
-		;;
 	-*mint | -mint[0-9]* | -*MiNT | -MiNT[0-9]*)
 		os=-mint
-		;;
-	-aros*)
-		os=-aros
 		;;
 	-zvmoe)
 		os=-zvmoe
@@ -1666,9 +1621,6 @@ case $basic_machine in
 		;;
 	*-be)
 		os=-beos
-		;;
-	*-haiku)
-		os=-haiku
 		;;
 	*-ibm)
 		os=-aix
