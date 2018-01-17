@@ -7,6 +7,7 @@
 #include <kpathsea/variable.h>
 #include <kpathsea/readable.h>
 #include <kpathsea/c-limits.h>
+#include <kpathsea/c-pathmx.h>
 
 #include <ptexenc/c-auto.h>
 #include <ptexenc/ptexenc.h>
