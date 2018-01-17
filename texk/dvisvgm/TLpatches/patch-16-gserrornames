@@ -1,0 +1,10 @@
+diff -u2r dvisvgm-2.3.1/src/Ghostscript.cpp dvisvgm-src/src/Ghostscript.cpp
+--- dvisvgm-2.3.1/src/Ghostscript.cpp	2018-01-02 01:09:11.000000000 -0800
++++ dvisvgm-src/src/Ghostscript.cpp	2018-01-15 15:57:09.114619987 -0800
+@@ -347,5 +347,5 @@
+ 	return error_names[code-1];
+ #else
+-	if (auto error_names = LOAD_SYMBOL(gs_error_names))
++	if (auto error_names = loadSymbol<const char**>("gs_error_names"))
+ 		return error_names[code-1];
+ 	return nullptr;

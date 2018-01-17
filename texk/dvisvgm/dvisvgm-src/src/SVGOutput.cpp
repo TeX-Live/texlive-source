@@ -2,7 +2,7 @@
 ** SVGOutput.cpp                                                        **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -54,9 +54,9 @@ ostream& SVGOutput::getPageStream (int page, int numPages) const {
 
 	_page = page;
 	if (_zipLevel > 0)
-		_osptr.reset(new ZLibOutputStream(fname, _zipLevel));
+		_osptr = util::make_unique<ZLibOutputStream>(fname, _zipLevel);
 	else
-		_osptr.reset(new ofstream(fname.c_str()));
+		_osptr = util::make_unique<ofstream>(fname.c_str());
 	if (!_osptr)
 		throw MessageException("can't open file "+fname+" for writing");
 	return *_osptr;

@@ -93,7 +93,7 @@ bin_PROGRAMS = dvisvgm$(EXEEXT)
 @ENABLE_WOFF_TRUE@am__append_1 = \
 @ENABLE_WOFF_TRUE@	../libs/ff-woff/libfontforge.a \
 @ENABLE_WOFF_TRUE@	../libs/woff2/libwoff2.a \
-@ENABLE_WOFF_TRUE@	../libs/woff2/brotli/libbrotli.a
+@ENABLE_WOFF_TRUE@	../libs/brotli/libbrotli.a
 
 @ENABLE_WOFF_TRUE@am__append_2 = ffwrapper.c ffwrapper.h
 @ENABLE_WOFF_TRUE@am__append_3 = \
@@ -101,10 +101,12 @@ bin_PROGRAMS = dvisvgm$(EXEEXT)
 @ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
 
 @ENABLE_WOFF_TRUE@am__append_4 = \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/woff2/brotli/enc \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/woff2/src
+@ENABLE_WOFF_TRUE@	$(TTFAUTOHINT_CFLAGS) \
+@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/brotli/include \
+@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/woff2/include
 
-@WIN32_TRUE@am__append_5 = -DTEXLIVEWIN32
+@ENABLE_WOFF_TRUE@am__append_5 = $(TTFAUTOHINT_LIBS)
+@WIN32_TRUE@am__append_6 = -DTEXLIVEWIN32
 subdir = dvisvgm-src/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
@@ -145,7 +147,7 @@ am__libdvisvgm_a_SOURCES_DIST = AGLTable.hpp BasicDVIReader.cpp \
 	CLCommandLine.cpp CLCommandLine.hpp CLOption.hpp CMap.cpp \
 	CMap.hpp CMapManager.cpp CMapManager.hpp CMapReader.cpp \
 	CMapReader.hpp Color.cpp Color.hpp ColorSpecialHandler.cpp \
-	ColorSpecialHandler.hpp CommandLine.hpp CRC32.cpp CRC32.hpp \
+	ColorSpecialHandler.hpp CRC32.cpp CRC32.hpp \
 	DependencyGraph.hpp Directory.cpp Directory.hpp DLLoader.cpp \
 	DLLoader.hpp DVIActions.hpp DVIReader.cpp DVIReader.hpp \
 	DvisvgmSpecialHandler.cpp DvisvgmSpecialHandler.hpp \
@@ -161,7 +163,8 @@ am__libdvisvgm_a_SOURCES_DIST = AGLTable.hpp BasicDVIReader.cpp \
 	GFGlyphTracer.cpp GFGlyphTracer.hpp GFReader.cpp GFReader.hpp \
 	GFTracer.cpp GFTracer.hpp Ghostscript.cpp Ghostscript.hpp \
 	Glyph.hpp GlyphTracerMessages.hpp GraphicsPath.hpp \
-	HtmlSpecialHandler.cpp HtmlSpecialHandler.hpp InputBuffer.cpp \
+	HtmlSpecialHandler.cpp HtmlSpecialHandler.hpp \
+	HyperlinkManager.cpp HyperlinkManager.hpp InputBuffer.cpp \
 	InputBuffer.hpp InputReader.cpp InputReader.hpp JFM.cpp \
 	JFM.hpp Length.cpp Length.hpp macros.hpp MapLine.cpp \
 	MapLine.hpp Matrix.cpp Matrix.hpp Message.cpp Message.hpp \
@@ -170,32 +173,33 @@ am__libdvisvgm_a_SOURCES_DIST = AGLTable.hpp BasicDVIReader.cpp \
 	NumericRanges.hpp PageRanges.cpp PageRanges.hpp PageSize.cpp \
 	PageSize.hpp Pair.hpp PapersizeSpecialHandler.cpp \
 	PapersizeSpecialHandler.hpp PathClipper.cpp PathClipper.hpp \
-	PdfSpecialHandler.cpp PdfSpecialHandler.hpp \
-	PreScanDVIReader.cpp PreScanDVIReader.hpp Process.cpp \
-	Process.hpp psdefs.cpp PSFilter.hpp PSInterpreter.cpp \
-	PSInterpreter.hpp PSPattern.cpp PSPattern.hpp \
-	PSPreviewFilter.cpp PSPreviewFilter.hpp PsSpecialHandler.cpp \
-	PsSpecialHandler.hpp RangeMap.cpp RangeMap.hpp \
-	ShadingPatch.cpp ShadingPatch.hpp SignalHandler.cpp \
-	SignalHandler.hpp SpecialActions.hpp SpecialHandler.hpp \
-	SpecialManager.cpp SpecialManager.hpp StreamReader.cpp \
-	StreamReader.hpp StreamWriter.cpp StreamWriter.hpp Subfont.cpp \
-	Subfont.hpp SVGCharHandler.cpp SVGCharHandler.hpp \
-	SVGCharHandlerFactory.cpp SVGCharHandlerFactory.hpp \
-	SVGCharPathHandler.cpp SVGCharPathHandler.hpp \
-	SVGCharTspanTextHandler.cpp SVGCharTspanTextHandler.hpp \
-	SVGOutput.cpp SVGOutput.hpp SVGSingleCharTextHandler.cpp \
-	SVGSingleCharTextHandler.hpp SVGTree.cpp SVGTree.hpp \
-	System.cpp System.hpp TensorProductPatch.cpp \
-	TensorProductPatch.hpp Terminal.cpp Terminal.hpp TFM.cpp \
-	TFM.hpp ToUnicodeMap.cpp ToUnicodeMap.hpp \
+	PDFParser.cpp PDFParser.hpp PdfSpecialHandler.cpp \
+	PdfSpecialHandler.hpp PreScanDVIReader.cpp \
+	PreScanDVIReader.hpp Process.cpp Process.hpp psdefs.cpp \
+	PSFilter.hpp PSInterpreter.cpp PSInterpreter.hpp PSPattern.cpp \
+	PSPattern.hpp PSPreviewFilter.cpp PSPreviewFilter.hpp \
+	PsSpecialHandler.cpp PsSpecialHandler.hpp RangeMap.cpp \
+	RangeMap.hpp ShadingPatch.cpp ShadingPatch.hpp \
+	SignalHandler.cpp SignalHandler.hpp SpecialActions.hpp \
+	SpecialHandler.hpp SpecialManager.cpp SpecialManager.hpp \
+	StreamReader.cpp StreamReader.hpp StreamWriter.cpp \
+	StreamWriter.hpp Subfont.cpp Subfont.hpp SVGCharHandler.cpp \
+	SVGCharHandler.hpp SVGCharHandlerFactory.cpp \
+	SVGCharHandlerFactory.hpp SVGCharPathHandler.cpp \
+	SVGCharPathHandler.hpp SVGCharTspanTextHandler.cpp \
+	SVGCharTspanTextHandler.hpp SVGOutput.cpp SVGOutput.hpp \
+	SVGSingleCharTextHandler.cpp SVGSingleCharTextHandler.hpp \
+	SVGTree.cpp SVGTree.hpp System.cpp System.hpp \
+	TensorProductPatch.cpp TensorProductPatch.hpp Terminal.cpp \
+	Terminal.hpp TFM.cpp TFM.hpp ToUnicodeMap.cpp ToUnicodeMap.hpp \
 	TpicSpecialHandler.cpp TpicSpecialHandler.hpp \
-	TriangularPatch.cpp TriangularPatch.hpp Unicode.cpp \
+	TriangularPatch.cpp TriangularPatch.hpp TrueTypeFont.cpp \
+	TrueTypeFont.hpp TTFAutohint.cpp TTFAutohint.hpp Unicode.cpp \
 	Unicode.hpp utility.hpp utility.cpp VectorIterator.hpp \
 	VectorStream.hpp version.hpp VFActions.hpp VFReader.cpp \
-	VFReader.hpp XMLDocument.cpp XMLDocument.hpp XMLNode.cpp \
-	XMLNode.hpp XMLString.cpp XMLString.hpp ZLibOutputStream.hpp \
-	ffwrapper.c ffwrapper.h
+	VFReader.hpp windows.hpp XMLDocument.cpp XMLDocument.hpp \
+	XMLNode.cpp XMLNode.hpp XMLString.cpp XMLString.hpp \
+	ZLibOutputStream.hpp ffwrapper.c ffwrapper.h
 @ENABLE_WOFF_TRUE@am__objects_1 = ffwrapper.$(OBJEXT)
 am_libdvisvgm_a_OBJECTS = BasicDVIReader.$(OBJEXT) Bezier.$(OBJEXT) \
 	BgColorSpecialHandler.$(OBJEXT) Bitmap.$(OBJEXT) \
@@ -213,12 +217,13 @@ am_libdvisvgm_a_OBJECTS = BasicDVIReader.$(OBJEXT) Bezier.$(OBJEXT) \
 	FontMetrics.$(OBJEXT) FontWriter.$(OBJEXT) \
 	GFGlyphTracer.$(OBJEXT) GFReader.$(OBJEXT) GFTracer.$(OBJEXT) \
 	Ghostscript.$(OBJEXT) HtmlSpecialHandler.$(OBJEXT) \
-	InputBuffer.$(OBJEXT) InputReader.$(OBJEXT) JFM.$(OBJEXT) \
-	Length.$(OBJEXT) MapLine.$(OBJEXT) Matrix.$(OBJEXT) \
-	Message.$(OBJEXT) MetafontWrapper.$(OBJEXT) \
-	NoPsSpecialHandler.$(OBJEXT) PageRanges.$(OBJEXT) \
-	PageSize.$(OBJEXT) PapersizeSpecialHandler.$(OBJEXT) \
-	PathClipper.$(OBJEXT) PdfSpecialHandler.$(OBJEXT) \
+	HyperlinkManager.$(OBJEXT) InputBuffer.$(OBJEXT) \
+	InputReader.$(OBJEXT) JFM.$(OBJEXT) Length.$(OBJEXT) \
+	MapLine.$(OBJEXT) Matrix.$(OBJEXT) Message.$(OBJEXT) \
+	MetafontWrapper.$(OBJEXT) NoPsSpecialHandler.$(OBJEXT) \
+	PageRanges.$(OBJEXT) PageSize.$(OBJEXT) \
+	PapersizeSpecialHandler.$(OBJEXT) PathClipper.$(OBJEXT) \
+	PDFParser.$(OBJEXT) PdfSpecialHandler.$(OBJEXT) \
 	PreScanDVIReader.$(OBJEXT) Process.$(OBJEXT) psdefs.$(OBJEXT) \
 	PSInterpreter.$(OBJEXT) PSPattern.$(OBJEXT) \
 	PSPreviewFilter.$(OBJEXT) PsSpecialHandler.$(OBJEXT) \
@@ -232,9 +237,9 @@ am_libdvisvgm_a_OBJECTS = BasicDVIReader.$(OBJEXT) Bezier.$(OBJEXT) \
 	System.$(OBJEXT) TensorProductPatch.$(OBJEXT) \
 	Terminal.$(OBJEXT) TFM.$(OBJEXT) ToUnicodeMap.$(OBJEXT) \
 	TpicSpecialHandler.$(OBJEXT) TriangularPatch.$(OBJEXT) \
-	Unicode.$(OBJEXT) utility.$(OBJEXT) VFReader.$(OBJEXT) \
-	XMLDocument.$(OBJEXT) XMLNode.$(OBJEXT) XMLString.$(OBJEXT) \
-	$(am__objects_1)
+	TrueTypeFont.$(OBJEXT) TTFAutohint.$(OBJEXT) Unicode.$(OBJEXT) \
+	utility.$(OBJEXT) VFReader.$(OBJEXT) XMLDocument.$(OBJEXT) \
+	XMLNode.$(OBJEXT) XMLString.$(OBJEXT) $(am__objects_1)
 libdvisvgm_a_OBJECTS = $(am_libdvisvgm_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
@@ -470,7 +475,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 noinst_LIBRARIES = libdvisvgm.a
-dvisvgm_SOURCES = dvisvgm.cpp
+dvisvgm_SOURCES = \
+	CommandLine.hpp \
+	dvisvgm.cpp
+
 dvisvgm_LDADD = $(noinst_LIBRARIES) ../libs/clipper/libclipper.a \
 	../libs/xxHash/libxxhash.a $(am__append_1) $(KPATHSEA_LIBS) \
 	$(POTRACE_LIBS) $(FREETYPE2_LIBS) $(FONTFORGE_LIBS) \
@@ -485,7 +493,7 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
 	CLCommandLine.cpp CLCommandLine.hpp CLOption.hpp CMap.cpp \
 	CMap.hpp CMapManager.cpp CMapManager.hpp CMapReader.cpp \
 	CMapReader.hpp Color.cpp Color.hpp ColorSpecialHandler.cpp \
-	ColorSpecialHandler.hpp CommandLine.hpp CRC32.cpp CRC32.hpp \
+	ColorSpecialHandler.hpp CRC32.cpp CRC32.hpp \
 	DependencyGraph.hpp Directory.cpp Directory.hpp DLLoader.cpp \
 	DLLoader.hpp DVIActions.hpp DVIReader.cpp DVIReader.hpp \
 	DvisvgmSpecialHandler.cpp DvisvgmSpecialHandler.hpp \
@@ -501,7 +509,8 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
 	GFGlyphTracer.cpp GFGlyphTracer.hpp GFReader.cpp GFReader.hpp \
 	GFTracer.cpp GFTracer.hpp Ghostscript.cpp Ghostscript.hpp \
 	Glyph.hpp GlyphTracerMessages.hpp GraphicsPath.hpp \
-	HtmlSpecialHandler.cpp HtmlSpecialHandler.hpp InputBuffer.cpp \
+	HtmlSpecialHandler.cpp HtmlSpecialHandler.hpp \
+	HyperlinkManager.cpp HyperlinkManager.hpp InputBuffer.cpp \
 	InputBuffer.hpp InputReader.cpp InputReader.hpp JFM.cpp \
 	JFM.hpp Length.cpp Length.hpp macros.hpp MapLine.cpp \
 	MapLine.hpp Matrix.cpp Matrix.hpp Message.cpp Message.hpp \
@@ -510,43 +519,45 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
 	NumericRanges.hpp PageRanges.cpp PageRanges.hpp PageSize.cpp \
 	PageSize.hpp Pair.hpp PapersizeSpecialHandler.cpp \
 	PapersizeSpecialHandler.hpp PathClipper.cpp PathClipper.hpp \
-	PdfSpecialHandler.cpp PdfSpecialHandler.hpp \
-	PreScanDVIReader.cpp PreScanDVIReader.hpp Process.cpp \
-	Process.hpp psdefs.cpp PSFilter.hpp PSInterpreter.cpp \
-	PSInterpreter.hpp PSPattern.cpp PSPattern.hpp \
-	PSPreviewFilter.cpp PSPreviewFilter.hpp PsSpecialHandler.cpp \
-	PsSpecialHandler.hpp RangeMap.cpp RangeMap.hpp \
-	ShadingPatch.cpp ShadingPatch.hpp SignalHandler.cpp \
-	SignalHandler.hpp SpecialActions.hpp SpecialHandler.hpp \
-	SpecialManager.cpp SpecialManager.hpp StreamReader.cpp \
-	StreamReader.hpp StreamWriter.cpp StreamWriter.hpp Subfont.cpp \
-	Subfont.hpp SVGCharHandler.cpp SVGCharHandler.hpp \
-	SVGCharHandlerFactory.cpp SVGCharHandlerFactory.hpp \
-	SVGCharPathHandler.cpp SVGCharPathHandler.hpp \
-	SVGCharTspanTextHandler.cpp SVGCharTspanTextHandler.hpp \
-	SVGOutput.cpp SVGOutput.hpp SVGSingleCharTextHandler.cpp \
-	SVGSingleCharTextHandler.hpp SVGTree.cpp SVGTree.hpp \
-	System.cpp System.hpp TensorProductPatch.cpp \
-	TensorProductPatch.hpp Terminal.cpp Terminal.hpp TFM.cpp \
-	TFM.hpp ToUnicodeMap.cpp ToUnicodeMap.hpp \
+	PDFParser.cpp PDFParser.hpp PdfSpecialHandler.cpp \
+	PdfSpecialHandler.hpp PreScanDVIReader.cpp \
+	PreScanDVIReader.hpp Process.cpp Process.hpp psdefs.cpp \
+	PSFilter.hpp PSInterpreter.cpp PSInterpreter.hpp PSPattern.cpp \
+	PSPattern.hpp PSPreviewFilter.cpp PSPreviewFilter.hpp \
+	PsSpecialHandler.cpp PsSpecialHandler.hpp RangeMap.cpp \
+	RangeMap.hpp ShadingPatch.cpp ShadingPatch.hpp \
+	SignalHandler.cpp SignalHandler.hpp SpecialActions.hpp \
+	SpecialHandler.hpp SpecialManager.cpp SpecialManager.hpp \
+	StreamReader.cpp StreamReader.hpp StreamWriter.cpp \
+	StreamWriter.hpp Subfont.cpp Subfont.hpp SVGCharHandler.cpp \
+	SVGCharHandler.hpp SVGCharHandlerFactory.cpp \
+	SVGCharHandlerFactory.hpp SVGCharPathHandler.cpp \
+	SVGCharPathHandler.hpp SVGCharTspanTextHandler.cpp \
+	SVGCharTspanTextHandler.hpp SVGOutput.cpp SVGOutput.hpp \
+	SVGSingleCharTextHandler.cpp SVGSingleCharTextHandler.hpp \
+	SVGTree.cpp SVGTree.hpp System.cpp System.hpp \
+	TensorProductPatch.cpp TensorProductPatch.hpp Terminal.cpp \
+	Terminal.hpp TFM.cpp TFM.hpp ToUnicodeMap.cpp ToUnicodeMap.hpp \
 	TpicSpecialHandler.cpp TpicSpecialHandler.hpp \
-	TriangularPatch.cpp TriangularPatch.hpp Unicode.cpp \
+	TriangularPatch.cpp TriangularPatch.hpp TrueTypeFont.cpp \
+	TrueTypeFont.hpp TTFAutohint.cpp TTFAutohint.hpp Unicode.cpp \
 	Unicode.hpp utility.hpp utility.cpp VectorIterator.hpp \
 	VectorStream.hpp version.hpp VFActions.hpp VFReader.cpp \
-	VFReader.hpp XMLDocument.cpp XMLDocument.hpp XMLNode.cpp \
-	XMLNode.hpp XMLString.cpp XMLString.hpp ZLibOutputStream.hpp \
-	$(am__append_2)
+	VFReader.hpp windows.hpp XMLDocument.cpp XMLDocument.hpp \
+	XMLNode.cpp XMLNode.hpp XMLString.cpp XMLString.hpp \
+	ZLibOutputStream.hpp $(am__append_2)
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
 dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
 AM_CFLAGS = $(WARNING_CFLAGS) $(ZLIB_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
 	$(am__append_3)
 AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
 	-I$(dvisvgm_srcdir)/libs/clipper \
+	-I$(dvisvgm_srcdir)/libs/variant/include \
 	-I$(dvisvgm_srcdir)/libs/xxHash $(am__append_4) \
 	$(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES) \
 	$(ZLIB_INCLUDES) $(LIBGS_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
-	$(am__append_5)
-AM_LDFLAGS = $(CODE_COVERAGE_LDFLAGS)
+	$(am__append_6)
+AM_LDFLAGS = $(CODE_COVERAGE_LDFLAGS) $(am__append_5)
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
@@ -691,6 +702,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GFTracer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Ghostscript.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HtmlSpecialHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HyperlinkManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InputBuffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InputReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JFM.Po@am__quote@
@@ -700,6 +712,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Message.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MetafontWrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NoPsSpecialHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFParser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSInterpreter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPattern.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPreviewFilter.Po@am__quote@
@@ -727,11 +740,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Subfont.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/System.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TFM.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TTFAutohint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TensorProductPatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Terminal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ToUnicodeMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TpicSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TriangularPatch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrueTypeFont.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Unicode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLDocument.Po@am__quote@
@@ -1010,7 +1025,7 @@ uninstall-am: uninstall-binPROGRAMS
 # TL: do not try to rebuild these source files.
 # the command-line parser class is generated from options.xml by opt2cpp
 @TEXLIVE_BUILD_FALSE@$(srcdir)/CommandLine.hpp: options.xml
-@TEXLIVE_BUILD_FALSE@	rm -f $@ $*.hpp
+@TEXLIVE_BUILD_FALSE@	rm -f $@
 @TEXLIVE_BUILD_FALSE@	python $(srcdir)/opt2cpp.py $< >$@
 
 # Create a C string definition containing the PostScript routines psdefs.ps needed by class PSInterpreter

@@ -2,7 +2,7 @@
 ** FilePath.cpp                                                         **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,7 +18,6 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <config.h>
 #include <cctype>
 #include "FilePath.hpp"
 #include "FileSystem.hpp"
@@ -70,14 +69,12 @@ static char adapt_current_path (string &path, char target_drive) {
 
 
 bool FilePath::Directory::operator == (const Directory &dir) const {
-	string dirstr1 = _dirstr;
-	string dirstr2 = dir._dirstr;
 #ifdef _WIN32
 	// letter case is not significant on Windows systems
-	util::tolower(dirstr1);
-	util::tolower(dirstr2);
+	return util::tolower(_dirstr) == util::tolower(dir._dirstr);
+#else
+	return _dirstr == dir._dirstr;
 #endif
-	return dirstr1 == dirstr2;
 }
 
 
@@ -85,7 +82,7 @@ bool FilePath::Directory::operator == (const Directory &dir) const {
  *  relative to the current working directory.
  *  @param[in] path absolute or relative path to a file or directory */
 FilePath::FilePath (const string &path) {
-	init(path, !FileSystem::isDirectory(path.c_str()), FileSystem::getcwd());
+	init(path, !FileSystem::isDirectory(path), FileSystem::getcwd());
 }
 
 

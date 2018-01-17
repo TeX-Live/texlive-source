@@ -2,7 +2,7 @@
 ** CLCommandLine.hpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -40,7 +40,7 @@ class CommandLine {
 		const std::vector<std::string>& filenames () const {return _files;}
 
 	protected:
-		typedef std::pair<Option*,int> OptSectPair;
+		using OptSectPair = std::pair<Option*,int>;
 		void parseShortOption (std::istringstream &is, int argc, char **argv, int &argn);
 		void parseLongOption (std::istream &is);
 		virtual std::vector<OptSectPair>& options () const =0;

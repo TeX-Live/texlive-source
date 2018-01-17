@@ -2,7 +2,7 @@
 ** SignalHandler.hpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -22,14 +22,16 @@
 #define SIGNALHANDLER_HPP
 
 #include <exception>
+#include <memory>
 
 struct SignalException : public std::exception {
 };
 
 
-class SignalHandler
-{
+class SignalHandler {
 	public:
+		SignalHandler (const SignalHandler&) =delete;
+		SignalHandler (SignalHandler&&) =delete;
 		~SignalHandler ();
 		static SignalHandler& instance ();
 		bool start ();
@@ -39,12 +41,14 @@ class SignalHandler
 		bool active () const {return _active;}
 
 	protected:
-		SignalHandler () : _active(false) {}
+		SignalHandler ();
 		static void callback (int signal);
 
 	private:
 		bool _active;       ///< true if listening for signals
-		static bool _break; ///< true if signal has been caught
+		static volatile bool _break; ///< true if signal has been caught
+		class Impl;
+		std::unique_ptr<Impl> _impl; ///< system-specific data/functions
 };
 
 #endif

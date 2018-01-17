@@ -5,13 +5,28 @@ Changes applied to the original dvisvgm source as obtained from:
 
 Update version in ./version.ac.
 
-Removed common and generated files:
+mv dvisvgm-src dvisvm-prev
+tar xf dvisvgm-VER.tar.gz
+mv dvisvgm-VER dvisvgm-src
+cd dvisvgm-src
+
+# remove common and generated files:
 rm ar-lib compile config.guess config.sub depcomp install-sh
 rm ltmain.sh missing test-driver 
 rm aclocal.m4 configure # reduce chance of confusion?
+#
+# files to add:
+svn status | sed -n 's/^\?//p'
+svn add `!!`
+svn status | sed -n 's/^\?//p'  # rerun, should be empty now
+#
+# files to remove:
+svn status | sed -n 's/^\!//p'
+svn rm `!!`
+svn status | sed -n 's/^\!//p'  # rerun, should be empty now
+cd ..
 
 # patch to integrate into TL build:
 patch -d dvisvgm-src -p1 <TLpatches/patch-08-makefiles 
 
-# use same automake macro as upstream:
-cp dvisvgm-src/m4/ax_cxx_compile_stdcxx.m4 m4
+autoreconf

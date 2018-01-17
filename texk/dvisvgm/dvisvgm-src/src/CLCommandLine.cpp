@@ -2,7 +2,7 @@
 ** CLCommandLine.cpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -20,7 +20,7 @@
 
 #include <algorithm>
 #include <cstring>
-#include <map>
+#include <unordered_map>
 #include "CLCommandLine.hpp"
 #include "version.hpp"
 
@@ -192,7 +192,7 @@ void CommandLine::help (ostream &os, int mode) const {
 		os << '\n';
 
 	// compute width of first column of help output
-	map<Option*, pair<string,string>> linecols;
+	unordered_map<Option*, pair<string,string>> linecols;
 	size_t col1width=0;
 	for (const OptSectPair &ospair : options()) {
 		string line = ospair.first->helpline();

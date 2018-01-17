@@ -2,7 +2,7 @@
 ** MapLineTest.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -20,23 +20,13 @@
 
 #include <gtest/gtest.h>
 #include <sstream>
-#include "FileFinder.hpp"
 #include "MapLine.hpp"
 #include "Subfont.hpp"
+#include "testutil.hpp"
 
 using namespace std;
 
-
-class MapLineTest : public ::testing::Test
-{
-	protected:
-		void SetUp () override {
-			FileFinder::init("MapLineTest", "MapLineTest", false);
-		}
-};
-
-
-TEST_F(MapLineTest, psline1) {
+TEST(MapLineTest, psline1) {
 	istringstream iss("texname0 TEXNAME0 <texname.pfb <encname.enc");
 	MapLine mapline(iss);
 	EXPECT_EQ(mapline.texname(), "texname0");
@@ -48,7 +38,19 @@ TEST_F(MapLineTest, psline1) {
 	EXPECT_DOUBLE_EQ(mapline.bold(), 0);
 }
 
-TEST_F(MapLineTest, psline2) {
+TEST(MapLineTest, psline2) {
+	istringstream iss("texname0 TEXNAME0 <<texname.pfb <encname.enc");
+	MapLine mapline(iss);
+	EXPECT_EQ(mapline.texname(), "texname0");
+	EXPECT_EQ(mapline.psname(), "TEXNAME0");
+	EXPECT_EQ(mapline.fontfname(), "texname.pfb");
+	EXPECT_EQ(mapline.encname(), "encname");
+	EXPECT_DOUBLE_EQ(mapline.slant(), 0);
+	EXPECT_DOUBLE_EQ(mapline.extend(), 1);
+	EXPECT_DOUBLE_EQ(mapline.bold(), 0);
+}
+
+TEST(MapLineTest, psline3) {
 	istringstream iss("texname0 TEXNAME0 \".123 SlantFont .456 ExtendFont\" <encname.enc <[texname.ttf");
 	MapLine mapline(iss);
 	EXPECT_EQ(mapline.texname(), "texname0");
@@ -60,7 +62,7 @@ TEST_F(MapLineTest, psline2) {
 	EXPECT_DOUBLE_EQ(mapline.bold(), 0);
 }
 
-TEST_F(MapLineTest, psline3) {
+TEST(MapLineTest, psline4) {
 	istringstream iss("texname0 TEXNAME0 <encname.enc \".123 SlantFont IgnoreMe .456 ExtendFont\" <texname.ttf");
 	MapLine mapline(iss);
 	EXPECT_EQ(mapline.texname(), "texname0");
@@ -72,7 +74,7 @@ TEST_F(MapLineTest, psline3) {
 	EXPECT_DOUBLE_EQ(mapline.bold(), 0);
 }
 
-TEST_F(MapLineTest, pdfline1) {
+TEST(MapLineTest, pdfline1) {
 	istringstream iss("texname");
 	MapLine mapline(iss);
    EXPECT_EQ(mapline.texname(), "texname");
@@ -81,7 +83,7 @@ TEST_F(MapLineTest, pdfline1) {
    EXPECT_EQ(mapline.fontfname(), "");
 }
 
-TEST_F(MapLineTest, pdfline2) {
+TEST(MapLineTest, pdfline2) {
 	istringstream iss("gbk unicode simsun.ttc");
 	MapLine mapline(iss);
    EXPECT_EQ(mapline.texname(), "gbk");
@@ -95,7 +97,7 @@ TEST_F(MapLineTest, pdfline2) {
    EXPECT_DOUBLE_EQ(mapline.extend(), 1);
 }
 
-TEST_F(MapLineTest, pdfline3) {
+TEST(MapLineTest, pdfline3) {
 	istringstream iss("gbk@UGBK@10 unicode simsun.ttc -v 50 -r -s .123 -b 1 -e 0.456");
 	MapLine mapline(iss);
    EXPECT_EQ(mapline.texname(), "gbk10");
@@ -108,9 +110,11 @@ TEST_F(MapLineTest, pdfline3) {
 	EXPECT_DOUBLE_EQ(mapline.bold(), 1);
 	if (mapline.sfd() != 0)  // if UGBK.sfd is installed, check SFD name
 		EXPECT_EQ(mapline.sfd()->name(), "UGBK");
+	else
+		WARNING("UGBK.sfd not found");
 }
 
-TEST_F(MapLineTest, pdfline4) {
+TEST(MapLineTest, pdfline4) {
 	istringstream iss("gbk@UGBK@ default :1:!simsun.ttc/UCS,Bold -e.345");
 	MapLine mapline(iss);
    EXPECT_EQ(mapline.texname(), "gbk");
@@ -122,10 +126,12 @@ TEST_F(MapLineTest, pdfline4) {
 	EXPECT_DOUBLE_EQ(mapline.extend(), 0.345);
 	if (mapline.sfd() != 0)  // if UGBK.sfd is installed, check SFD name
 		EXPECT_EQ(mapline.sfd()->name(), "UGBK");
+	else
+		WARNING("UGBK.sfd not found");
 }
 
 
-TEST_F(MapLineTest, fail) {
+TEST(MapLineTest, fail) {
 	EXPECT_THROW(MapLine("texname -"), MapLineException);
 	EXPECT_THROW(MapLine("texname -s"), MapLineException);
 	EXPECT_THROW(MapLine("texname -e"), MapLineException);

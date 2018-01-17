@@ -2,7 +2,7 @@
 ** DependencyGraphTest.cpp                                              **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -21,6 +21,8 @@
 #include <gtest/gtest.h>
 #include "DependencyGraph.hpp"
 
+using namespace std;
+
 static void populate (DependencyGraph<int> &tree) {
 	tree.insert(1);
 	tree.insert(2);
@@ -32,11 +34,24 @@ static void populate (DependencyGraph<int> &tree) {
 }
 
 
+TEST(DependencyGraphTest, getKeys) {
+	DependencyGraph<int> graph;
+	populate(graph);
+	auto keys = graph.getKeys();
+	ASSERT_EQ(keys.size(), 7u);
+	int count=0;
+	for (int key : keys) {
+		ASSERT_EQ(keys[count++], key);
+	}
+}
+
+
 TEST(DependencyGraphTest, insert) {
 	DependencyGraph<int> graph;
 	populate(graph);
-	for (int i=1; i <= 7; i++)
+	for (int i=1; i <= 7; i++) {
 		ASSERT_TRUE(graph.contains(i));
+	}
 	ASSERT_FALSE(graph.contains(0));
 	ASSERT_FALSE(graph.contains(8));
 }

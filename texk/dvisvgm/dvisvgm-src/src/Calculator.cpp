@@ -2,7 +2,7 @@
 ** Calculator.cpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,7 +18,6 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <config.h>
 #include <cmath>
 #include <sstream>
 #include <stdexcept>
@@ -178,7 +177,7 @@ char Calculator::lex (istream &is) {
  *  @param[in] name name of variable
  *  @return assigned value */
 double Calculator::getVariable (const string &name) const {
-	map<string,double>::const_iterator it = _variables.find(name);
+	auto it = _variables.find(name);
 	if (it == _variables.end())
 		throw CalculatorException("undefined variable '" + name + "'");
 	return it->second;

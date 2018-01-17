@@ -1,8 +1,8 @@
 /*************************************************************************
-** ShadingPatch.cpp                                                     **
+** ShadingPatchTest.cpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -27,19 +27,14 @@ using namespace std;
 
 
 TEST(ShadingPatchTest, create) {
-	ShadingPatch *patch=0;
-	patch = ShadingPatch::create(4, Color::ColorSpace::RGB);
-	EXPECT_TRUE(dynamic_cast<TriangularPatch*>(patch));
-	delete patch;
+	auto patch = ShadingPatch::create(4, Color::ColorSpace::RGB);
+	EXPECT_TRUE(dynamic_cast<TriangularPatch*>(patch.get()));
 	patch = ShadingPatch::create(5, Color::ColorSpace::RGB);
-	EXPECT_TRUE(dynamic_cast<LatticeTriangularPatch*>(patch));
-	delete patch;
+	EXPECT_TRUE(dynamic_cast<LatticeTriangularPatch*>(patch.get()));
 	patch = ShadingPatch::create(6, Color::ColorSpace::RGB);
-	EXPECT_TRUE(dynamic_cast<CoonsPatch*>(patch));
-	delete patch;
+	EXPECT_TRUE(dynamic_cast<CoonsPatch*>(patch.get()));
 	patch = ShadingPatch::create(7, Color::ColorSpace::RGB);
-	EXPECT_TRUE(dynamic_cast<TensorProductPatch*>(patch));
-	delete patch;
+	EXPECT_TRUE(dynamic_cast<TensorProductPatch*>(patch.get()));
 }
 
 

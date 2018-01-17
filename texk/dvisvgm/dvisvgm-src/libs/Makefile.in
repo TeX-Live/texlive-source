@@ -87,7 +87,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@ENABLE_WOFF_TRUE@am__append_1 = ff-woff woff2
+@ENABLE_WOFF_TRUE@am__append_1 = brotli ff-woff woff2
 subdir = dvisvgm-src/libs
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
@@ -166,7 +166,7 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = clipper xxHash ff-woff woff2
+DIST_SUBDIRS = clipper variant xxHash brotli ff-woff woff2
 am__DIST_COMMON = $(srcdir)/Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
@@ -338,7 +338,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = clipper xxHash $(am__append_1)
+SUBDIRS = clipper variant xxHash $(am__append_1)
 all: all-recursive
 
 .SUFFIXES:

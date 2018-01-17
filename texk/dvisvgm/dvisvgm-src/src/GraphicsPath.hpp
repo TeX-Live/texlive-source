@@ -2,7 +2,7 @@
 ** GraphicsPath.hpp                                                     **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -22,8 +22,8 @@
 #define GRAPHICSPATH_HPP
 
 #include <cctype>
+#include <deque>
 #include <ostream>
-#include <vector>
 #include "BoundingBox.hpp"
 #include "Matrix.hpp"
 #include "Pair.hpp"
@@ -36,7 +36,7 @@ class GraphicsPath
 	friend class PathClipper;
 	public:
 		enum class WindingRule {EVEN_ODD, NON_ZERO};
-		typedef Pair<T> Point;
+		using Point = Pair<T>;
 
 		struct Command {
 			enum class Type {MOVETO, LINETO, CONICTO, CUBICTO, CLOSEPATH};
@@ -320,7 +320,7 @@ class GraphicsPath
 		void iterate (Actions &actions, bool optimize) const;
 
 	private:
-		std::vector<Command> _commands;
+		std::deque<Command> _commands;
 		WindingRule _windingRule;
 };
 

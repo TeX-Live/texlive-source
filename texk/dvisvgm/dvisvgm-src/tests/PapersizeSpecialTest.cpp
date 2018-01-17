@@ -2,7 +2,7 @@
 ** PapersizeSpecialTest.cpp                                             **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -25,9 +25,7 @@
 
 using namespace std;
 
-
-class PapersizeSpecialTest : public ::testing::Test
-{
+class PapersizeSpecialTest : public ::testing::Test {
 	protected:
 		class PapersizeSpecialActions : public EmptySpecialActions {
 			public:
@@ -80,8 +78,8 @@ class PapersizeSpecialTest : public ::testing::Test
 
 TEST_F(PapersizeSpecialTest, name) {
 	EXPECT_EQ(handler.name(), "papersize");
+	ASSERT_EQ(handler.prefixes().size(), 1u);
 	ASSERT_STREQ(handler.prefixes()[0], "papersize=");
-	ASSERT_EQ(handler.prefixes()[1], nullptr);
 }
 
 
@@ -151,10 +149,4 @@ TEST_F(PapersizeSpecialTest, multiPage2) {
 	preprocess("321bp,456bp");
 	endPage();
 	ASSERT_EQ(bboxString(), "-72 -72 321 456");
-}
-
-
-TEST_F(PapersizeSpecialTest, error) {
-	ASSERT_THROW(preprocess("abc"), UnitException);
-	ASSERT_THROW(preprocess("123bp,456x"), UnitException);
 }

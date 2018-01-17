@@ -659,7 +659,6 @@ uninstall-am:
 @CODE_COVERAGE_ENABLED_TRUE@lcov-report:
 @CODE_COVERAGE_ENABLED_TRUE@	@mkdir -p $(lcov_dir)
 @CODE_COVERAGE_ENABLED_TRUE@	lcov --capture --directory . --no-external -o $(lcov_file)
-@CODE_COVERAGE_ENABLED_TRUE@	lcov --remove $(lcov_file) "gzstream.*" -o $(lcov_file)
 @CODE_COVERAGE_ENABLED_TRUE@	genhtml --title "dvisvgm" --num-spaces 2 --legend -o $(lcov_dir) $(lcov_file)
 
 @CODE_COVERAGE_ENABLED_TRUE@lcov-clean:

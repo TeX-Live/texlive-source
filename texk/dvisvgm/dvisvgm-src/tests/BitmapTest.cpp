@@ -2,7 +2,7 @@
 ** BitmapTest.cpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -66,12 +66,12 @@ TEST(BitmapTest, copy) {
 	vector<uint16_t> target;
 	bitmap.setBits(4, 5, 5);
 	bitmap.copy(target, false);
-	EXPECT_EQ(target.size(), 8);
+	EXPECT_EQ(target.size(), 8u);
 	EXPECT_EQ(target[0], 0);
 	EXPECT_EQ(target[1], 124);
 	EXPECT_EQ(target[2], 0);
 	bitmap.copy(target, true);
-	EXPECT_EQ(target.size(), 8);
+	EXPECT_EQ(target.size(), 8u);
 	EXPECT_EQ(target[5], 0);
 	EXPECT_EQ(target[6], 124);
 	EXPECT_EQ(target[7], 0);

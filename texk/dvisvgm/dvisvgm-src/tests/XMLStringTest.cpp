@@ -2,7 +2,7 @@
 ** XMLStringTest.cpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -62,4 +62,7 @@ TEST(XMLStringTest, doublecast) {
 	EXPECT_EQ(XMLString(-1.2345), string("-1.2"));
 	XMLString::DECIMAL_PLACES = 0;
 	EXPECT_EQ(XMLString(-1.2345), string("-1.2345"));
+
+	EXPECT_EQ(XMLString(10.0), string("10"));
+	EXPECT_EQ(XMLString(-10.0), string("-10"));
 }

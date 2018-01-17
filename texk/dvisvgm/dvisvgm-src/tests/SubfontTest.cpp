@@ -2,7 +2,7 @@
 ** SubfontTest.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -19,22 +19,12 @@
 *************************************************************************/
 
 #include <gtest/gtest.h>
-#include "FileFinder.hpp"
 #include "Subfont.hpp"
+#include "testutil.hpp"
 
 using namespace std;
 
-
-class SubfontTest : public ::testing::Test
-{
-	protected:
-		void SetUp () override {
-			FileFinder::init("SubfontTest", "SubfontTest", false);
-		}
-};
-
-
-TEST_F(SubfontTest, collect_subfonts) {
+TEST(SubfontTest, collect_subfonts) {
 	try {
 		if (SubfontDefinition *sfd = SubfontDefinition::lookup("sample")) {
 			vector<Subfont*> subfonts;
@@ -52,12 +42,12 @@ TEST_F(SubfontTest, collect_subfonts) {
 }
 
 
-TEST_F(SubfontTest, read_table) {
+TEST(SubfontTest, read_table) {
 	try {
-		if (SubfontDefinition *sfd = SubfontDefinition::lookup("sample")) {
+		if (SubfontDefinition *sfd = SubfontDefinition::lookup("sampl")) {
 			// check scanning of single value entries
 			Subfont *subfont = sfd->subfont("02");
-			ASSERT_TRUE(subfont != 0);
+			ASSERT_NE(subfont, nullptr);
 			EXPECT_EQ(subfont->id(), "02");
 			EXPECT_EQ(subfont->decode(0), 0xff45);
 			EXPECT_EQ(subfont->decode(1), 0xff46);
@@ -68,7 +58,7 @@ TEST_F(SubfontTest, read_table) {
 
 			// check scanning of ranges
 			subfont = sfd->subfont("x1");
-			ASSERT_TRUE(subfont != 0);
+			ASSERT_NE(subfont, nullptr);
 			EXPECT_EQ(subfont->id(), "x1");
 			EXPECT_EQ(subfont->decode(0), 0x0010);
 			EXPECT_EQ(subfont->decode(1), 0x0011);
@@ -85,6 +75,8 @@ TEST_F(SubfontTest, read_table) {
 			EXPECT_EQ(subfont->decode(0xa1), 0x2000);
 			EXPECT_EQ(subfont->decode(0xa2), 0);
 		}
+		else
+			WARNING("sample.sfd not found");
 	}
 	catch (SubfontException &e) {
 		FAIL() << e.what() << " in line " << e.lineno();

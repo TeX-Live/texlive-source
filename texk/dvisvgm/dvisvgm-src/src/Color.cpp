@@ -2,7 +2,7 @@
 ** Color.cpp                                                            **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -73,7 +73,7 @@ bool Color::setPSName (string name, bool case_sensitive) {
 		const uint32_t rgb;
 	};
 	// converted color constants from color.pro
-	static const array<ColorConstant, 68> constants = {{
+	static const array<ColorConstant, 68> constants {{
 		{"Apricot",        0xFFAD7A},
 		{"Aquamarine",     0x2DFFB2},
 		{"Bittersweet",    0xC10200},
@@ -156,11 +156,9 @@ bool Color::setPSName (string name, bool case_sensitive) {
 		}
 	}
 	else {
-		util::tolower(name);
+		name = util::tolower(name);
 		auto it = find_if(constants.begin(), constants.end(), [&](const ColorConstant &cc) {
-			string cmpname = cc.name;
-			util::tolower(cmpname);
-			return name == cmpname;
+			return name == util::tolower(cc.name);
 		});
 		if (it != constants.end()) {
 			_rgb = it->rgb;
@@ -210,12 +208,16 @@ void Color::set (ColorSpace colorSpace, VectorIterator<double> &it) {
 
 
 Color Color::operator *= (double c) {
-	uint32_t rgb=0;
-	for (int i=0; i < 3; i++) {
-		rgb |= uint32_t(floor((_rgb & 0xff)*c+0.5)) << (8*i);
-		_rgb >>= 8;
+	if (abs(c) < 0.001)
+		_rgb &= 0xff000000;
+	else if (abs(c-trunc(c)) < 0.999) {
+		uint32_t rgb=0;
+		for (int i=0; i < 3; i++) {
+			rgb |= uint32_t((_rgb & 0xff)*c+0.5) << (8*i);
+			_rgb >>= 8;
+		}
+		_rgb = rgb;
 	}
-	_rgb = rgb;
 	return *this;
 }
 
@@ -241,7 +243,7 @@ string Color::svgColorString (bool rgbonly) const {
 			uint32_t rgb;
 			const char *name;
 		};
-		static const array<ColorName, 138> colornames = {{
+		static const array<ColorName, 138> colornames {{
 			{0x000000, "black"},
 			{0x000080, "navy"},
 			{0x00008b, "darkblue"},
@@ -552,7 +554,7 @@ void Color::getLab (std::valarray<double> &lab) const {
 }
 
 
-static inline double sqr (double x)  {return x*x;}
+// static inline double sqr (double x)  {return x*x;}
 static inline double cube (double x) {return x*x*x;}
 
 void Color::Lab2XYZ (const valarray<double> &lab, valarray<double> &xyz) {

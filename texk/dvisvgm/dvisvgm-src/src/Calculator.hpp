@@ -2,7 +2,7 @@
 ** Calculator.hpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -22,8 +22,8 @@
 #define CALCULATOR_HPP
 
 #include <istream>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include "MessageException.hpp"
 
 
@@ -49,7 +49,7 @@ class Calculator
 		char lookAhead (std::istream &is);
 
 	private:
-		std::map<std::string,double> _variables;
+		std::unordered_map<std::string,double> _variables;
 		double _numValue;
 		std::string _strValue;
 };

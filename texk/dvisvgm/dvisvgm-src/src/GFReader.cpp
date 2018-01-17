@@ -2,7 +2,7 @@
 ** GFReader.cpp                                                         **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -28,8 +28,7 @@
 using namespace std;
 
 
-struct GFCommand
-{
+struct GFCommand {
 	void (GFReader::*method)(int);
 	int numBytes;
 };
@@ -340,21 +339,21 @@ void GFReader::cmdNop (int) {
 /** Reads character locator (part of postamble) */
 void GFReader::cmdCharLoc0 (int) {
 	uint8_t c  = readUnsigned(1); // character code mod 256
-	uint8_t dm = readUnsigned(1); //
+	uint8_t dm = readUnsigned(1); // = dx/65536
 	int32_t w  = readSigned(4);   // (1<<24)*characterWidth/designSize
-	int32_t p   = readSigned(4);  // pointer to begin of (last) character data
-	int32_t dx  = 65536*dm;
-	int32_t dy  = 0;
-	_charInfoMap[c] = CharInfo(dx, dy, w, p);
+	int32_t p  = readSigned(4);   // pointer to begin of (last) character data
+	int32_t dx = 65536*dm;        // horizontal escapement
+	int32_t dy = 0;               // vertical escapement
+	_charInfoMap.emplace(c, CharInfo(dx, dy, w, p));
 }
 
 
 /** Reads character locator (part of postamble) */
 void GFReader::cmdCharLoc (int) {
-	uint32_t c = readUnsigned(1); // character code mod 256
+	uint8_t c  = readUnsigned(1); // character code mod 256
 	int32_t dx = readSigned(4);   // horizontal escapement (scaled pixel units)
 	int32_t dy = readSigned(4);   // vertical escapement (scaled pixel units)
 	int32_t w  = readSigned(4);   // (1<<24)*characterWidth/designSize
 	int32_t p  = readSigned(4);   // pointer to begin of (last) character data
-	_charInfoMap[c] = CharInfo(dx, dy, w, p);
+	_charInfoMap.emplace(c, CharInfo(dx, dy, w, p));
 }

@@ -2,7 +2,7 @@
 ** DVIToSVGActions.hpp                                                  **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -21,8 +21,8 @@
 #ifndef DVITOSVGACTIONS_HPP
 #define DVITOSVGACTIONS_HPP
 
-#include <map>
-#include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include "BoundingBox.hpp"
 #include "DVIActions.hpp"
 #include "Matrix.hpp"
@@ -36,15 +36,14 @@ class FileFinder;
 class Font;
 class XMLNode;
 
-class DVIToSVGActions : public DVIActions, public SpecialActions
-{
-	typedef std::map<const Font*, std::set<int>> CharMap;
-	typedef std::set<const Font*> FontSet;
-	typedef std::map<std::string,BoundingBox> BoxMap;
+class DVIToSVGActions : public DVIActions, public SpecialActions {
+	using CharMap = std::unordered_map<const Font*, std::set<int>>;
+	using FontSet = std::unordered_set<const Font*>;
+	using BoxMap = std::unordered_map<std::string,BoundingBox>;
 
 	public:
 		DVIToSVGActions (DVIToSVG &dvisvg, SVGTree &svg);
-		void reset ();
+		void reset () override;
 		void setChar (double x, double y, unsigned c, bool vertical, const Font &f) override;
 		void setRule (double x, double y, double height, double width) override;
 		void setBgColor (const Color &color) override;
@@ -55,10 +54,10 @@ class DVIToSVGActions : public DVIActions, public SpecialActions
 		Color getColor () const override                        {return _svg.getColor();}
 		int getDVIStackDepth() const override                   {return _dvireader->stackDepth();}
 		unsigned getCurrentPageNumber() const override          {return _dvireader->currentPageNumber();}
-		void appendToPage (XMLNode *node) override              {_svg.appendToPage(node);}
-		void appendToDefs (XMLNode *node) override              {_svg.appendToDefs(node);}
-		void prependToPage (XMLNode *node) override             {_svg.prependToPage(node);}
-		void pushContextElement (XMLElementNode *node) override {_svg.pushContextElement(node);}
+		void appendToPage(std::unique_ptr<XMLNode> &&node) override  {_svg.appendToPage(std::move(node));}
+		void appendToDefs(std::unique_ptr<XMLNode> &&node) override  {_svg.appendToDefs(std::move(node));}
+		void prependToPage(std::unique_ptr<XMLNode> &&node) override {_svg.prependToPage(std::move(node));}
+		void pushContextElement (std::unique_ptr<XMLElementNode> &&node) override {_svg.pushContextElement(std::move(node));}
 		void popContextElement () override                      {_svg.popContextElement();}
 		void setTextOrientation(bool vertical) override         {_svg.setVertical(vertical);}
 		void moveToX (double x) override;

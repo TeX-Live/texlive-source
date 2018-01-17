@@ -2,7 +2,7 @@
 ** UnicodeTest.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -42,9 +42,9 @@ TEST(UnicodeTest, charToCodepoint) {
 		EXPECT_EQ(Unicode::charToCodepoint(i), i) << "i=" << i;
 	for (uint32_t i=0x7f; i <= 0x9f; i++)
 		EXPECT_EQ(Unicode::charToCodepoint(i), 0xe021+i-0x7f) << "i=" << i;
-	EXPECT_EQ(Unicode::charToCodepoint(0x10fffd), 0x10fffd);
-	EXPECT_EQ(Unicode::charToCodepoint(0x10fffe), 0xe887);
-	EXPECT_EQ(Unicode::charToCodepoint(0x10ffff), 0xe888);
+	EXPECT_EQ(Unicode::charToCodepoint(0x10fffd), 0x10fffdu);
+	EXPECT_EQ(Unicode::charToCodepoint(0x10fffe), 0xe887u);
+	EXPECT_EQ(Unicode::charToCodepoint(0x10ffff), 0xe888u);
 }
 
 

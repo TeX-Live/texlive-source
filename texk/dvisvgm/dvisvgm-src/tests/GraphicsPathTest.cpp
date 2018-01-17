@@ -2,7 +2,7 @@
 ** GraphicsPathTest.cpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -31,7 +31,7 @@ TEST(GraphicsPathTest, svg) {
 	path.cubicto(20,20,30,30,40,40);
 	path.closepath();
 	EXPECT_FALSE(path.empty());
-	EXPECT_EQ(path.size(), 4);
+	EXPECT_EQ(path.size(), 4u);
 	ostringstream oss;
 	path.writeSVG(oss, false);
 	EXPECT_EQ(oss.str(), "M0 0L10 10C20 20 30 30 40 40Z");

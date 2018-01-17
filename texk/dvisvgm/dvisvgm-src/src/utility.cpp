@@ -2,7 +2,7 @@
 ** utility.cpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -20,7 +20,9 @@
 
 #include <algorithm>
 #include <cctype>
+#include <fstream>
 #include <functional>
+#include <iterator>
 #include "utility.hpp"
 
 using namespace std;
@@ -56,9 +58,54 @@ string util::normalize_space (string str, const char *ws) {
 }
 
 
-string& util::tolower (string &str) {
-	transform(str.begin(), str.end(), str.begin(), ::tolower);
+/** Replaces all occurences of a substring with another string.
+ *  @param[in] str string to search through
+ *  @param[in] find string to look for
+ *  @param[in] repl replacement for "find"
+ *  @return the resulting string */
+string util::replace (string str, const string &find, const string &repl) {
+	if (!find.empty() && !repl.empty()) {
+		size_t first = str.find(find);
+		while (first != string::npos) {
+			str.replace(first, find.length(), repl);
+			first = str.find(find, first+repl.length());
+		}
+	}
 	return str;
+}
+
+
+/** Splits a string at all occurences of a given separator string and
+ *  returns the substrings.
+ *  @param[in] str string to split
+ *  @param[in] sep separator to look for
+ *  @return the substrings between the separators */
+vector<string> util::split (const string &str, const string &sep) {
+	vector<string> parts;
+	if (str.empty() || sep.empty())
+		parts.emplace_back(str);
+	else {
+		size_t left=0;
+		while (left <= str.length()) {
+			size_t right = str.find(sep, left);
+			if (right == string::npos) {
+				parts.emplace_back(str.substr(left));
+				left = string::npos;
+			}
+			else {
+				parts.emplace_back(str.substr(left, right-left));
+				left = right+sep.length();
+			}
+		}
+	}
+	return parts;
+}
+
+
+string util::tolower (const string &str) {
+	string ret=str;
+	transform(str.begin(), str.end(), ret.begin(), ::tolower);
+	return ret;
 }
 
 
@@ -71,4 +118,22 @@ int util::ilog10 (int n) {
 		n /= 10;
 	}
 	return result;
+}
+
+
+/** Returns the contents of a file.
+ *  @param[in] fname name/path of the file */
+string util::read_file_contents (const string &fname) {
+	ifstream ifs(fname.c_str(), ios::binary);
+	return string(istreambuf_iterator<char>(ifs.rdbuf()), istreambuf_iterator<char>());
+}
+
+
+/** Writes a sequence of bytes given as a string to a file.
+ *  @param[in] name/path of the file to write
+ *  @param[in] start iterator pointing to the begin of the byte sequence
+ *  @param[in] end iterator pointing to the first byte after the byte sequence to write */
+void util::write_file_contents (const string &fname, string::iterator start, string::iterator end) {
+	ofstream ofs(fname.c_str(), ios::binary);
+	copy(start, end, ostream_iterator<char>(ofs));
 }

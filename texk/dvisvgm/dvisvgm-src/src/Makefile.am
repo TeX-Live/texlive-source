@@ -1,12 +1,14 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
-bin_PROGRAMS         = dvisvgm
-noinst_LIBRARIES     = libdvisvgm.a
+bin_PROGRAMS     = dvisvgm
+noinst_LIBRARIES = libdvisvgm.a
 
-dvisvgm_SOURCES      = dvisvgm.cpp
+dvisvgm_SOURCES = \
+	CommandLine.hpp \
+	dvisvgm.cpp
 
 dvisvgm_LDADD = \
 	$(noinst_LIBRARIES) \
@@ -17,7 +19,7 @@ if ENABLE_WOFF
 dvisvgm_LDADD += \
 	../libs/ff-woff/libfontforge.a \
 	../libs/woff2/libwoff2.a \
-	../libs/woff2/brotli/libbrotli.a
+	../libs/brotli/libbrotli.a
 endif
 
 dvisvgm_LDADD += \
@@ -61,7 +63,6 @@ libdvisvgm_a_SOURCES = \
 	Color.hpp \
 	ColorSpecialHandler.cpp \
 	ColorSpecialHandler.hpp \
-	CommandLine.hpp \
 	CRC32.cpp \
 	CRC32.hpp \
 	DependencyGraph.hpp \
@@ -123,6 +124,8 @@ libdvisvgm_a_SOURCES = \
 	GraphicsPath.hpp \
 	HtmlSpecialHandler.cpp \
 	HtmlSpecialHandler.hpp \
+	HyperlinkManager.cpp \
+	HyperlinkManager.hpp \
 	InputBuffer.cpp \
 	InputBuffer.hpp \
 	InputReader.cpp \
@@ -153,6 +156,8 @@ libdvisvgm_a_SOURCES = \
 	PapersizeSpecialHandler.hpp \
 	PathClipper.cpp \
 	PathClipper.hpp \
+	PDFParser.cpp \
+	PDFParser.hpp \
 	PdfSpecialHandler.cpp \
 	PdfSpecialHandler.hpp \
 	PreScanDVIReader.cpp \
@@ -213,6 +218,10 @@ libdvisvgm_a_SOURCES = \
 	TpicSpecialHandler.hpp \
 	TriangularPatch.cpp \
 	TriangularPatch.hpp \
+	TrueTypeFont.cpp \
+	TrueTypeFont.hpp \
+	TTFAutohint.cpp \
+	TTFAutohint.hpp \
 	Unicode.cpp \
 	Unicode.hpp \
 	utility.hpp \
@@ -223,6 +232,7 @@ libdvisvgm_a_SOURCES = \
 	VFActions.hpp \
 	VFReader.cpp \
 	VFReader.hpp \
+	windows.hpp \
 	XMLDocument.cpp \
 	XMLDocument.hpp \
 	XMLNode.cpp \
@@ -245,7 +255,11 @@ AM_CFLAGS = $(WARNING_CFLAGS) \
 
 AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
 	-I$(dvisvgm_srcdir)/libs/clipper \
+	-I$(dvisvgm_srcdir)/libs/variant/include \
 	-I$(dvisvgm_srcdir)/libs/xxHash
+
+AM_LDFLAGS = \
+	$(CODE_COVERAGE_LDFLAGS)
 
 if ENABLE_WOFF
 AM_CFLAGS +=  \
@@ -253,8 +267,11 @@ AM_CFLAGS +=  \
 	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
 
 AM_CXXFLAGS +=  \
-	-I$(dvisvgm_srcdir)/libs/woff2/brotli/enc \
-	-I$(dvisvgm_srcdir)/libs/woff2/src
+	$(TTFAUTOHINT_CFLAGS) \
+	-I$(dvisvgm_srcdir)/libs/brotli/include \
+	-I$(dvisvgm_srcdir)/libs/woff2/include
+
+AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
 endif
 
 AM_CXXFLAGS += \
@@ -269,13 +286,11 @@ if WIN32
 AM_CXXFLAGS += -DTEXLIVEWIN32
 endif WIN32
 
-AM_LDFLAGS = $(CODE_COVERAGE_LDFLAGS)
-
 if ! TEXLIVE_BUILD
 # TL: do not try to rebuild these source files.
 # the command-line parser class is generated from options.xml by opt2cpp
 $(srcdir)/CommandLine.hpp: options.xml
-	rm -f $@ $*.hpp
+	rm -f $@
 	python $(srcdir)/opt2cpp.py $< >$@
 
 # Create a C string definition containing the PostScript routines psdefs.ps needed by class PSInterpreter

@@ -2,7 +2,7 @@
 ** XMLNode.hpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -27,37 +27,37 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include "utility.hpp"
 
 
-class XMLNode
-{
+class XMLNode {
 	public:
 		virtual ~XMLNode () =default;
-		virtual XMLNode* clone () const =0;
+		virtual std::unique_ptr<XMLNode> clone () const =0;
 		virtual void clear () =0;
 		virtual std::ostream& write (std::ostream &os) const =0;
 };
 
 
-class XMLElementNode : public XMLNode
-{
+class XMLElementNode : public XMLNode {
 	public:
-		typedef std::map<std::string,std::string> AttribMap;
-		typedef std::list<std::unique_ptr<XMLNode>> ChildList;
+		using AttribMap = std::map<std::string,std::string>;
+		using ChildList = std::list<std::unique_ptr<XMLNode>>;
 
 	public:
 		XMLElementNode (const std::string &name);
 		XMLElementNode (const XMLElementNode &node);
-		XMLElementNode* clone () const override {return new XMLElementNode(*this);}
+		XMLElementNode (XMLElementNode &&node);
+		std::unique_ptr<XMLNode> clone () const override {return util::make_unique<XMLElementNode>(*this);}
 		void clear () override;
 		void addAttribute (const std::string &name, const std::string &value);
 		void addAttribute (const std::string &name, double value);
-		void append (XMLNode *child);
-		void append (const std::string &str);
-		void prepend (XMLNode *child);
+		XMLNode* append (std::unique_ptr<XMLNode> &&child);
+		XMLNode* append (const std::string &str);
+		XMLNode* prepend (std::unique_ptr<XMLNode> &&child);
 		void remove (const XMLNode *child);
-		bool insertAfter (XMLNode *child, XMLNode *sibling);
-		bool insertBefore (XMLNode *child, XMLNode *sibling);
+		bool insertAfter (std::unique_ptr<XMLNode> &&child, XMLNode *sibling);
+		bool insertBefore (std::unique_ptr<XMLNode> &&child, XMLNode *sibling);
 		bool hasAttribute (const std::string &name) const;
 		const char* getAttributeValue (const std::string &name) const;
 		bool getDescendants (const char *name, const char *attrName, std::vector<XMLElementNode*> &descendants) const;
@@ -74,17 +74,16 @@ class XMLElementNode : public XMLNode
 };
 
 
-class XMLTextNode : public XMLNode
-{
+class XMLTextNode : public XMLNode {
 	public:
 		XMLTextNode (const std::string &str) : _text(str) {}
 		XMLTextNode (std::string &&str) : _text(std::move(str)) {}
-		XMLTextNode* clone () const override {return new XMLTextNode(*this);}
+		std::unique_ptr<XMLNode> clone () const override {return util::make_unique<XMLTextNode>(*this);}
 		void clear () override {_text.clear();}
-		void append (XMLNode *node);
-		void append (XMLTextNode *node);
+		void append (std::unique_ptr<XMLNode> &&node);
+		void append (std::unique_ptr<XMLTextNode> &&node);
 		void append (const std::string &str);
-		void prepend (XMLNode *child);
+		void prepend (std::unique_ptr<XMLNode> &&node);
 		std::ostream& write (std::ostream &os) const override {return os << _text;}
 		const std::string& getText () const {return _text;}
 
@@ -93,12 +92,11 @@ class XMLTextNode : public XMLNode
 };
 
 
-class XMLCommentNode : public XMLNode
-{
+class XMLCommentNode : public XMLNode {
 	public:
 		XMLCommentNode (const std::string &str) : _text(str) {}
 		XMLCommentNode (std::string &&str) : _text(std::move(str)) {}
-		XMLCommentNode* clone () const override {return new XMLCommentNode(*this);}
+		std::unique_ptr<XMLNode> clone () const override {return util::make_unique<XMLCommentNode>(*this);}
 		void clear () override {_text.clear();}
 		std::ostream& write (std::ostream &os) const override {return os << "<!--" << _text << "-->";}
 
@@ -107,13 +105,12 @@ class XMLCommentNode : public XMLNode
 };
 
 
-class XMLCDataNode : public XMLNode
-{
+class XMLCDataNode : public XMLNode {
 	public:
-		XMLCDataNode () {}
+		XMLCDataNode () =default;
 		XMLCDataNode (const std::string &d) : _data(d) {}
 		XMLCDataNode (std::string &&d) : _data(std::move(d)) {}
-		XMLCDataNode* clone () const override {return new XMLCDataNode(*this);}
+		std::unique_ptr<XMLNode> clone () const override {return util::make_unique<XMLCDataNode>(*this);}
 		void clear () override                {_data.clear();}
 		void append (std::string &&str);
 		std::ostream& write (std::ostream &os) const override;

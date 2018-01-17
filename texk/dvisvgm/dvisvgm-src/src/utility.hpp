@@ -2,7 +2,7 @@
 ** utility.hpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -21,14 +21,18 @@
 #ifndef UTILITY_HPP
 #define UTILITY_HPP
 
+#include <iomanip>
+#include <memory>
+#include <sstream>
 #include <string>
+#include <vector>
 
 namespace math {
 
 constexpr const double PI      = 3.141592653589793238462643383279502884;
 constexpr const double HALF_PI = 1.570796326794896619231321691639751442;
 constexpr const double TWO_PI  = 6.283185307179586476925286766559005768;
-
+constexpr const double SQRT2   = 1.414213562373095048801688724209698079;
 
 inline double deg2rad (double deg) {return PI*deg/180.0;}
 
@@ -36,11 +40,22 @@ inline double deg2rad (double deg) {return PI*deg/180.0;}
 
 namespace util {
 
+template <typename T>
+std::string tohex (T val) {
+	std::ostringstream oss;
+	oss << std::hex << val;
+	return oss.str();
+}
+
 std::string trim (const std::string &str, const char *ws=" \t\n\r\f");
 std::string normalize_space (std::string str, const char *ws=" \t\n\r\f");
-std::string& tolower (std::string &str);
+std::string tolower (const std::string &str);
+std::string replace (std::string str, const std::string &find, const std::string &repl);
+std::vector<std::string> split (const std::string &str, const std::string &sep);
 int ilog10 (int n);
 
+std::string read_file_contents (const std::string &fname);
+void write_file_contents (const std::string &fname, std::string::iterator start, std::string::iterator end);
 
 /** Encodes the bytes in the half-open range [first,last) to Base64 and writes
  *  the result to the range starting at 'dest'.
@@ -70,6 +85,21 @@ void base64_copy (InputIterator first, InputIterator last, OutputIterator dest) 
 		while (padding--)
 			*dest++ = '=';
 	}
+}
+
+
+/** Simple implementation mimicking std::make_unique introduced in C++14.
+ *  Constructs an object of class T on the heap and returns a unique_ptr<T> to it.
+ *  @param[in] args arguments forwarded to an constructor of T */
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique (Args&&... args) {
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+
+
+template<typename T, typename U>
+std::unique_ptr<T> static_unique_ptr_cast (std::unique_ptr<U> &&old){
+    return std::unique_ptr<T>{static_cast<T*>(old.release())};
 }
 
 } // namespace util
