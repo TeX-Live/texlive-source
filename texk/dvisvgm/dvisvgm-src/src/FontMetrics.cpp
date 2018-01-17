@@ -2,7 +2,7 @@
 ** FontMetrics.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,23 +18,24 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <config.h>
 #include <fstream>
+#include <memory>
 #include "FileFinder.hpp"
 #include "FontMetrics.hpp"
 #include "JFM.hpp"
+#include "utility.hpp"
 
 using namespace std;
 
 
-FontMetrics* FontMetrics::read (const char *fontname) {
-	const char *path = FileFinder::instance().lookup(string(fontname) + ".tfm");
+unique_ptr<FontMetrics> FontMetrics::read (const string &fontname) {
+	const char *path = FileFinder::instance().lookup(fontname + ".tfm");
 	ifstream ifs(path, ios::binary);
 	if (!ifs)
-		return 0;
+		return unique_ptr<FontMetrics>();
 	uint16_t id = 256*ifs.get();
 	id += ifs.get();
 	if (id == 9 || id == 11)  // Japanese font metric file?
-		return new JFM(ifs);
-	return new TFM(ifs);
+		return util::make_unique<JFM>(ifs);
+	return util::make_unique<TFM>(ifs);
 }

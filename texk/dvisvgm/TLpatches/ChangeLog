@@ -1,3 +1,9 @@
+2018-01-15  Karl Berry  <karl@freefriends.org>
+
+	* Import 2.3.1.
+	* patch-08-makefiles: adapt.
+	* patch-16-gserrornames: new patch from Martin.
+
 2017-01-29  Karl Berry  <karl@freefriends.org>
 
 	* Import 2.1.

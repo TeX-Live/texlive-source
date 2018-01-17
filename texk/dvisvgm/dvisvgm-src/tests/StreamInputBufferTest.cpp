@@ -2,7 +2,7 @@
 ** StreamInputBufferTest.cpp                                            **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -19,15 +19,15 @@
 *************************************************************************/
 
 #include <gtest/gtest.h>
-#include <map>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include "InputBuffer.hpp"
 #include "InputReader.hpp"
 
 using std::istringstream;
-using std::map;
 using std::string;
+using std::unordered_map;
 
 TEST(StreamInputBufferTest, get) {
 	istringstream iss("abcdefghijklmnopqrstuvwxyz");
@@ -76,11 +76,9 @@ TEST(StreamInputBufferTest, skip) {
 	BufferInputReader in(buffer);
 	in.skip(3);
 	EXPECT_EQ(in.peek(), 'd');
-	in.skipUntil("ijk", false);
-	EXPECT_EQ(in.peek(), 'i');
-	in.skipUntil("ijk", true);
+	in.skipUntil("ijk");
 	EXPECT_EQ(in.peek(), 'l');
-	in.skipUntil("z", true);
+	in.skipUntil("z");
 	EXPECT_TRUE(in.eof());
 }
 
@@ -117,25 +115,25 @@ TEST(StreamInputBufferTest, parseUInt_base) {
 	BufferInputReader in(buffer);
 	unsigned n;
 	EXPECT_TRUE(in.parseUInt(10, n));
-	EXPECT_EQ(n, 1234);
+	EXPECT_EQ(n, 1234u);
 	EXPECT_EQ(in.get(), ',');
 
 	EXPECT_FALSE(in.parseUInt(10, n));
 	in.get();
 	EXPECT_TRUE(in.parseUInt(10, n));
-	EXPECT_EQ(n, 5);
+	EXPECT_EQ(n, 5u);
 	EXPECT_EQ(in.get(), ',');
 
 	EXPECT_TRUE(in.parseUInt(16, n));
-	EXPECT_EQ(n, 16);
+	EXPECT_EQ(n, 16u);
 	EXPECT_EQ(in.get(), ',');
 
 	EXPECT_TRUE(in.parseUInt(16, n));
-	EXPECT_EQ(n, 0x1abc);
+	EXPECT_EQ(n, 0x1ABCu);
 	EXPECT_EQ(in.get(), ',');
 
 	EXPECT_TRUE(in.parseUInt(8, n));
-	EXPECT_EQ(n, 01234);
+	EXPECT_EQ(n, 01234u);
 	EXPECT_EQ(in.get(), 'a');
 }
 
@@ -186,7 +184,7 @@ TEST(StreamInputBufferTest, attribs) {
 	istringstream iss("aaa=1 bbb=2 ccc=3 d e");
 	StreamInputBuffer buffer(iss, 10);
 	BufferInputReader in(buffer);
-	map<string,string> attr;
+	unordered_map<string,string> attr;
 	int s = in.parseAttributes(attr);
 	EXPECT_EQ(s, 3);
 	EXPECT_EQ(attr["aaa"], "1");

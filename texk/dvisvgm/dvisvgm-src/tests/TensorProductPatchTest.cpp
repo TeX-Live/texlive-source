@@ -2,7 +2,7 @@
 ** TensorProductPatchTest.cpp                                           **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -26,8 +26,29 @@
 using namespace std;
 
 
-class TensorProductPatchTest : public ::testing::Test
-{
+#define EXPECT_NEAR_PAIR(name, p1, p2, eps) \
+	{SCOPED_TRACE(name); expect_near_pair(p1, p2, eps);}
+
+#define EXPECT_EQUAL_PAIR(name, p1, p2) \
+	{SCOPED_TRACE(name); expect_equal_pair(p1, p2);}
+
+#define CHECK_BEZIER_POINTS(name, bezier, p1, p2, p3, p4) \
+	{SCOPED_TRACE(name); checkBezierPoints(bezier, p1, p2, p3, p4);}
+
+
+static void expect_near_pair (const DPair &p1, const DPair &p2, double eps) {
+	EXPECT_NEAR(p1.x(), p2.x(), eps);
+	EXPECT_NEAR(p1.y(), p2.y(), eps);
+}
+
+
+static void expect_equal_pair (const DPair &p1, const DPair &p2) {
+	EXPECT_DOUBLE_EQ(p1.x(), p2.x());
+	EXPECT_DOUBLE_EQ(p1.y(), p2.y());
+}
+
+
+class TensorProductPatchTest : public ::testing::Test {
 	protected:
 		void SetUp () override {
 			_points.resize(16);
@@ -64,15 +85,6 @@ class TensorProductPatchTest : public ::testing::Test
 			EXPECT_EQ(b.point(3), p4);
 		}
 
-		void expectNear (const DPair &p1, const DPair &p2, double eps) const {
-			EXPECT_NEAR(p1.x(), p2.x(), eps);
-			EXPECT_NEAR(p1.y(), p2.y(), eps);
-		}
-
-		void expectEqual (const DPair &p1, const DPair &p2) const {
-			EXPECT_DOUBLE_EQ(p1.x(), p2.x());
-			EXPECT_DOUBLE_EQ(p1.y(), p2.y());
-		}
 
 	protected:
 		vector<DPair> _points;
@@ -174,13 +186,13 @@ TEST_F(TensorProductPatchTest, vertices) {
 TEST_F(TensorProductPatchTest, curves) {
 	Bezier bezier;
 	_patch.horizontalCurve(0, bezier);
-	checkBezierPoints(bezier, DPair(10, 10), DPair(20, 0), DPair(50, 30), DPair(70, 20));
+	CHECK_BEZIER_POINTS("A", bezier, DPair(10, 10), DPair(20, 0), DPair(50, 30), DPair(70, 20));
 	_patch.horizontalCurve(1, bezier);
-	checkBezierPoints(bezier, DPair(10, 70), DPair(20, 100), DPair(70, 100), DPair(100, 70));
+	CHECK_BEZIER_POINTS("B", bezier, DPair(10, 70), DPair(20, 100), DPair(70, 100), DPair(100, 70));
 	_patch.verticalCurve(0, bezier);
-	checkBezierPoints(bezier, DPair(10, 10), DPair(0, 30), DPair(20, 40), DPair(10, 70));
+	CHECK_BEZIER_POINTS("C", bezier, DPair(10, 10), DPair(0, 30), DPair(20, 40), DPair(10, 70));
 	_patch.verticalCurve(1, bezier);
-	checkBezierPoints(bezier, DPair(70, 20), DPair(80, 50), DPair(90, 60), DPair(100, 70));
+	CHECK_BEZIER_POINTS("D", bezier, DPair(70, 20), DPair(80, 50), DPair(90, 60), DPair(100, 70));
 }
 
 
@@ -214,11 +226,11 @@ TEST_F(TensorProductPatchTest, blossom_inner) {
 
 
 TEST_F(TensorProductPatchTest, values) {
-	expectEqual(_patch.valueAt(0.25, 0.5), _patch.blossomValue(0.25, 0.25, 0.25, 0.5, 0.5, 0.5));
-	expectNear(_patch.valueAt(0.25, 0.5), DPair(26.1133, 48.457), 0.0001);
+	EXPECT_EQUAL_PAIR("A", _patch.valueAt(0.25, 0.5), _patch.blossomValue(0.25, 0.25, 0.25, 0.5, 0.5, 0.5));
+	EXPECT_NEAR_PAIR("B", _patch.valueAt(0.25, 0.5), DPair(26.1133, 48.457), 0.0001);
 
-	expectEqual(_patch.valueAt(0.8, 0.2), _patch.blossomValue(0.8, 0.8, 0.8, 0.2, 0.2, 0.2));
-	expectNear(_patch.valueAt(0.8, 0.2), DPair(59.5974, 35.4502), 0.0001);
+	EXPECT_EQUAL_PAIR("C", _patch.valueAt(0.8, 0.2), _patch.blossomValue(0.8, 0.8, 0.8, 0.2, 0.2, 0.2));
+	EXPECT_NEAR_PAIR("D", _patch.valueAt(0.8, 0.2), DPair(59.5974, 35.4502), 0.0001);
 }
 
 
@@ -238,7 +250,7 @@ TEST_F(TensorProductPatchTest, subpatch) {
 	tpp.getBoundaryPath(path);
 	ostringstream oss;
 	path.writeSVG(oss, false);
-	EXPECT_EQ(oss.str(), "M10 10C5 20 7.5 27.5 10 36.25C20.625 46.875 31.25 52.1875 43.2812 54.2188C40 40.9375 36.25 27.5 36.25 15C25 10 15 5 10 10Z");
+	EXPECT_EQ(oss.str(), "M10 10C5 20 7.5 27.5 10 36.25C20.625 46.875 31.25 52.1875 43.28125 54.21875C40 40.9375 36.25 27.5 36.25 15C25 10 15 5 10 10Z");
 	EXPECT_EQ(tpp.colorAt(0, 0).rgbString(), "#ff0000");
 	EXPECT_EQ(tpp.colorAt(0, 1).rgbString(), "#ff8000");
 	EXPECT_EQ(tpp.colorAt(1, 0).rgbString(), "#808000");
@@ -286,10 +298,10 @@ TEST_F(TensorProductPatchTest, approximate) {
 	_patch.approximate(2, false, 0.1, callback);
 	EXPECT_EQ(
 		callback.pathstr(),
-		"M10 10C15 5 25 10 36.25 15C36.25 27.5 40 40.9375 43.2812 54.2188C31.25 52.1875 20.625 46.875 10 36.25C7.5 27.5 5 20 10 10Z"
-		"M36.25 15C47.5 20 60 25 70 20C75 35 80 45 85 52.5C68.75 55 55.3125 56.25 43.2812 54.2188C40 40.9375 36.25 27.5 36.25 15Z"
-		"M10 36.25C20.625 46.875 31.25 52.1875 43.2812 54.2188C46.5625 67.5 49.375 80.625 47.5 92.5C30 92.5 15 85 10 70C15 55 12.5 45 10 36.25Z"
-		"M43.2812 54.2188C55.3125 56.25 68.75 55 85 52.5C90 60 95 65 100 70C85 85 65 92.5 47.5 92.5C49.375 80.625 46.5625 67.5 43.2812 54.2188Z");
+	   "M10 10C15 5 25 10 36.25 15C36.25 27.5 40 40.9375 43.28125 54.21875C31.25 52.1875 20.625 46.875 10 36.25C7.5 27.5 5 20 10 10Z"
+		"M36.25 15C47.5 20 60 25 70 20C75 35 80 45 85 52.5C68.75 55 55.3125 56.25 43.28125 54.21875C40 40.9375 36.25 27.5 36.25 15Z"
+		"M10 36.25C20.625 46.875 31.25 52.1875 43.28125 54.21875C46.5625 67.5 49.375 80.625 47.5 92.5C30 92.5 15 85 10 70C15 55 12.5 45 10 36.25Z"
+		"M43.28125 54.21875C55.3125 56.25 68.75 55 85 52.5C90 60 95 65 100 70C85 85 65 92.5 47.5 92.5C49.375 80.625 46.5625 67.5 43.28125 54.21875Z");
 	EXPECT_EQ(callback.colorstr(), "#cf6010#70a030#efa030#cf6090");
 }
 

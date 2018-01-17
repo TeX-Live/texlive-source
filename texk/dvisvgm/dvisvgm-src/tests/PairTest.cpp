@@ -2,7 +2,7 @@
 ** PairTest.cpp                                                         **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -93,6 +93,24 @@ TEST(PairTest, div) {
 	ASSERT_EQ(DPair(2,3)/1.0, DPair(2,3));
 	ASSERT_EQ(DPair(2,3)/2.0, DPair(1,1.5));
 	ASSERT_EQ(DPair(2,3)/(-2.0), DPair(-1,-1.5));
+}
+
+
+TEST(PairTest, neg) {
+	EXPECT_EQ(-DPair(0, 0), DPair(0, 0));
+	EXPECT_EQ(-DPair(1, 2), DPair(-1, -2));
+	EXPECT_EQ(-DPair(-1, -2), DPair(1, 2));
+	EXPECT_EQ(-DPair(-1, 2), DPair(1, -2));
+	EXPECT_EQ(-DPair(1, -2), DPair(-1, 2));
+}
+
+
+TEST(PairTest, abs) {
+	EXPECT_EQ(abs(DPair(0, 0)), DPair(0, 0));
+	EXPECT_EQ(abs(DPair(1, 2)), DPair(1, 2));
+	EXPECT_EQ(abs(DPair(-1, -2)), DPair(1, 2));
+	EXPECT_EQ(abs(DPair(-1, 2)), DPair(1, 2));
+	EXPECT_EQ(abs(DPair(1, -2)), DPair(1, 2));
 }
 
 

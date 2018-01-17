@@ -1,17 +1,17 @@
-diff -u2r '--exclude=config.h.in' '--exclude=aclocal.m4' '--exclude=Makefile.in' dvisvgm-2.1/Makefile.am new/Makefile.am
---- dvisvgm-2.1/Makefile.am	2017-01-06 09:21:42.000000000 -0800
-+++ new/Makefile.am	2017-01-30 10:54:21.383122973 -0800
+diff -u2r dvisvgm-2.3.1/Makefile.am dvisvgm-src/Makefile.am
+--- dvisvgm-2.3.1/Makefile.am	2018-01-02 01:09:10.000000000 -0800
++++ dvisvgm-src/Makefile.am	2018-01-15 15:21:16.671504747 -0800
 @@ -6,5 +6,5 @@
  AUTOMAKE_OPTIONS = foreign
  EXTRA_DIST = COPYING
 -SUBDIRS = libs src tests doc
-+SUBDIRS = libs src #TL: tests doc
++SUBDIRS = libs src #not for TL: tests doc
+ ACLOCAL_AMFLAGS = -I m4
  
- if CODE_COVERAGE_ENABLED
-diff -u2r '--exclude=config.h.in' '--exclude=aclocal.m4' '--exclude=Makefile.in' dvisvgm-2.1/src/Makefile.am new/src/Makefile.am
---- dvisvgm-2.1/src/Makefile.am	2017-01-19 07:10:14.000000000 -0800
-+++ new/src/Makefile.am	2017-01-31 09:30:46.062748355 -0800
-@@ -12,8 +12,5 @@
+diff -u2r dvisvgm-2.3.1/src/Makefile.am dvisvgm-src/src/Makefile.am
+--- dvisvgm-2.3.1/src/Makefile.am	2018-01-02 01:09:11.000000000 -0800
++++ dvisvgm-src/src/Makefile.am	2018-01-15 15:28:34.370204007 -0800
+@@ -14,8 +14,5 @@
  	$(noinst_LIBRARIES) \
  	../libs/clipper/libclipper.a \
 -	../libs/xxHash/libxxhash.a \
@@ -21,7 +21,7 @@ diff -u2r '--exclude=config.h.in' '--exclude=aclocal.m4' '--exclude=Makefile.in'
 +	../libs/xxHash/libxxhash.a
  
  if ENABLE_WOFF
-@@ -24,5 +21,14 @@
+@@ -26,5 +23,14 @@
  endif
  
 +dvisvgm_LDADD += \
@@ -36,7 +36,7 @@ diff -u2r '--exclude=config.h.in' '--exclude=aclocal.m4' '--exclude=Makefile.in'
 +dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
  
  libdvisvgm_a_SOURCES = \
-@@ -232,27 +238,40 @@
+@@ -242,35 +248,45 @@
  EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
  
 -AM_CFLAGS = -Wall \
@@ -44,9 +44,11 @@ diff -u2r '--exclude=config.h.in' '--exclude=aclocal.m4' '--exclude=Makefile.in'
 -	$(CODE_COVERAGE_CFLAGS)
 +dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
  
--AM_CXXFLAGS = -Wall -Wnon-virtual-dtor \
+-AM_CXXFLAGS = -Wall -Wnon-virtual-dtor -Wno-mismatched-tags \
 -	-I$(top_srcdir)/libs/clipper \
+-	-I$(top_srcdir)/libs/variant/include \
 -	-I$(top_srcdir)/libs/xxHash \
+-	$(KPSE_CFLAGS) \
 -	$(FREETYPE_CFLAGS) \
 -	$(ZLIB_CFLAGS) \
 +AM_CFLAGS = $(WARNING_CFLAGS) \
@@ -55,8 +57,13 @@ diff -u2r '--exclude=config.h.in' '--exclude=aclocal.m4' '--exclude=Makefile.in'
  
 +AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
 +	-I$(dvisvgm_srcdir)/libs/clipper \
++	-I$(dvisvgm_srcdir)/libs/variant/include \
 +	-I$(dvisvgm_srcdir)/libs/xxHash
 +
+ AM_LDFLAGS = \
+-	$(KPSE_LIBS) \
+ 	$(CODE_COVERAGE_LDFLAGS)
+ 
  if ENABLE_WOFF
  AM_CFLAGS +=  \
 -	-I$(top_srcdir)/libs/ff-woff/fontforge \
@@ -65,10 +72,13 @@ diff -u2r '--exclude=config.h.in' '--exclude=aclocal.m4' '--exclude=Makefile.in'
 +	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
  
  AM_CXXFLAGS +=  \
--	-I$(top_srcdir)/libs/woff2/brotli/enc \
--	-I$(top_srcdir)/libs/woff2/src
-+	-I$(dvisvgm_srcdir)/libs/woff2/brotli/enc \
-+	-I$(dvisvgm_srcdir)/libs/woff2/src
+ 	$(TTFAUTOHINT_CFLAGS) \
+-	-I$(top_srcdir)/libs/brotli/include \
+-	-I$(top_srcdir)/libs/woff2/include
++	-I$(dvisvgm_srcdir)/libs/brotli/include \
++	-I$(dvisvgm_srcdir)/libs/woff2/include
+ 
+ AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
  endif
  
 +AM_CXXFLAGS += \
@@ -82,14 +92,12 @@ diff -u2r '--exclude=config.h.in' '--exclude=aclocal.m4' '--exclude=Makefile.in'
 +if WIN32
 +AM_CXXFLAGS += -DTEXLIVEWIN32
 +endif WIN32
-+
- AM_LDFLAGS = $(CODE_COVERAGE_LDFLAGS)
  
 +if ! TEXLIVE_BUILD
 +# TL: do not try to rebuild these source files.
  # the command-line parser class is generated from options.xml by opt2cpp
  $(srcdir)/CommandLine.hpp: options.xml
-@@ -267,6 +286,16 @@
+@@ -285,6 +301,16 @@
  
  psdefs.ps: ;
 +endif ! TEXLIVE_BUILD

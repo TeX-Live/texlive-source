@@ -2,7 +2,7 @@
 ** FontMap.hpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -21,23 +21,20 @@
 #ifndef FONTMAP_HPP
 #define FONTMAP_HPP
 
-#include <map>
 #include <memory>
 #include <ostream>
 #include <string>
+#include <unordered_map>
 #include "FontStyle.hpp"
-
 
 struct FontEncoding;
 class MapLine;
 class Subfont;
 
-class FontMap
-{
+class FontMap {
 	public:
-		struct Entry
-		{
-			Entry (const MapLine &mapline, Subfont *subfont=0);
+		struct Entry {
+			Entry (const MapLine &mapline, Subfont *subfont=nullptr);
 			Entry (const Entry &entry) =delete;
 			Entry (Entry &&entry) =default;
 			Entry& operator = (Entry &&entry) =default;
@@ -71,7 +68,7 @@ class FontMap
 		FontMap () =default;
 
 	private:
-		std::map<std::string,std::unique_ptr<Entry>> _entries;
+		std::unordered_map<std::string,std::unique_ptr<Entry>> _entries;
 };
 
 #endif

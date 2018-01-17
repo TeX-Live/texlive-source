@@ -1,13 +1,13 @@
 '\" t
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
-.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 02/20/2017
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 01/12/2018
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 2.1.3
+.\"    Source: dvisvgm 2.3.1
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "02/20/2017" "dvisvgm 2\&.1\&.3" "dvisvgm Manual"
+.TH "DVISVGM" "1" "01/12/2018" "dvisvgm 2\&.3\&.1" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -44,10 +44,10 @@ SVG is a vector\-based graphics format and therefore dvisvgm tries to convert th
 .sp
 However, TeX\(cqs main source for font descriptions is Metafont, which produces bitmap output (GF files)\&. That\(cqs why not all obtainable TeX fonts are available in a scalable format\&. In these cases, dvisvgm tries to vectorize Metafont\(cqs output by tracing the glyph bitmaps\&. The results are not as perfect as most (manually optimized) PFB or OTF counterparts, but are nonetheless really nice in most cases\&.
 .sp
-When running dvisvgm without option \fB\-\-no\-fonts\fR, it creates \fIfont\fR elements (\fB<font>\fR\&...\fB</font>\fR) to embed the font data into the SVG files\&. Unfortunately, only few SVG renderes support these elements yet\&. Most web browsers and vector graphics applications don\(cqt evaluate them properly so that the text components of the resulting graphics might look strange\&. In order to create more compatible SVG files, command\-line option \fB\-\-no\-fonts\fR can be given to replace the font elements by plain graphics paths\&.
+When running dvisvgm without option \fB\-\-no\-fonts\fR, it creates \fIfont\fR elements (\fB<font>\fR\&...\fB</font>\fR) to embed the font data into the SVG files\&. Unfortunately, only few SVG renderers support these elements yet\&. Most web browsers and vector graphics applications don\(cqt evaluate them properly so that the text components of the resulting graphics might look strange\&. In order to create more compatible SVG files, command\-line option \fB\-\-no\-fonts\fR can be given to replace the font elements by plain graphics paths\&.
 .SH "OPTIONS"
 .sp
-dvisvgm provides a POSIX\-compliant command\-line interface with short and long option names\&. They may be given before and/or after the name of the file to be converted\&. Also, the order of specifying the options is not significant, i\&.e\&. you can add them in any order without changing dvisvgm\(cqs behavior\&. Certain options accept or require additional parameters which are directly appended to or separated by whitespace from a short option (e\&.g\&. \fB\-v0\fR or \fB\-v 0\fR)\&. Long options require an additional equals sign (\fB=\fR) between option name and argument but without any surrounding whitespace (e\&.g\&. \fB\-\-verbosity=0\fR)\&.
+dvisvgm provides a POSIX\-compliant command\-line interface with short and long option names\&. They may be given before and/or after the name of the file to be converted\&. Also, the order of specifying the options is not significant, i\&.e\&. you can add them in any order without changing dvisvgm\(cqs behavior\&. Certain options accept or require additional parameters which are directly appended to or separated by whitespace from a short option (e\&.g\&. \fB\-v0\fR or \fB\-v 0\fR)\&. Long options require an additional equals sign (\fB=\fR) between option name and argument but without any surrounding whitespace (e\&.g\&. \fB\-\-verbosity=0\fR)\&. Multiple short options that don\(cqt expect a further parameter can be combined after a single dash (e\&.g\&. \fB\-ejs\fR rather than \fB\-e \-j \-s\fR)\&.
 .PP
 \fB\-a, \-\-trace\-all\fR=[\fIretrace\fR]
 .RS 4
@@ -279,6 +279,7 @@ Loads and evaluates a single font map file or a sequence of font map files\&. Th
 \fB\-\-fontmap\fR
 is omitted, dvisvgm looks for the default map files
 \fIps2pk\&.map\fR,
+\fIpdftex\&.map\fR,
 \fIdvipdfm\&.map\fR, and
 \fIpsfonts\&.map\fR
 (in this order)\&. Otherwise, the files as option arguments are evaluated in the given order\&. Multiple filenames must be separated by commas without leading and/or trailing whitespace\&. By default, redefined mappings do not replace previous ones\&. However, each filename can be preceded by an optional mode specifier (\fB+\fR,
@@ -557,7 +558,7 @@ converts all pages starting with page 10\&. Please consider that the page values
 .RS 4
 Specifies the maximal number of decimal places applied to floating\-point attribute values\&. All attribute values written to the generated SVG file(s) are rounded accordingly\&. The parameter
 \fIdigits\fR
-allows integer values from 0 to 6, where 0 enables the automatic selection of significant decimal places\&. This is also the default value if dvisvgm is called without option
+accepts integer values from 0 to 6, where 0 enables the automatic selection of significant decimal places\&. This is also the default value if dvisvgm is called without option
 \fB\-\-precision\fR\&.
 .RE
 .PP
@@ -961,7 +962,8 @@ Creates an image element at the current graphic position referencing the given f
 \fIwidth\fR
 and
 \fIheight\fR
-must be given as plain floating point numbers in TeX point units (1in = 72\&.27pt)\&.
+can be given together with a unit specifier (see option
+\fB\-\-bbox\fR) or as plain floating point numbers\&. In the latter case, TeX point units are assumed (1in = 72\&.27pt)\&.
 .RE
 .PP
 \fBdvisvgm:bbox\fR n[ew] \fIname\fR
@@ -992,22 +994,22 @@ is specified, dvisvgm embeds a second rectangle (\fIx\fR,
 \fIy\fR,
 \fIwidth\fR, \-\fIdepth\fR)\&. The lengths
 \fIwidth\fR,
-\fIheight\fR
-and
+\fIheight\fR, and
 \fIdepth\fR
-must be given as plain floating point numbers in TeX point units (1in = 72\&.27pt)\&. Depending on size and position of the virtual rectangle, this command either enlarges the overall bounding box or leaves it as is\&. It\(cqs not possible to reduce its extent\&. This special should be used in conjunction with
+can be given together with a unit specifier (see option
+\fB\-\-bbox\fR) or as plain floating point numbers\&. In the latter case, TeX point units are assumed (1in = 72\&.27pt)\&. Depending on size and position of the virtual rectangle, this command either enlarges the overall bounding box or leaves it as is\&. It\(cqs not possible to reduce its extent\&. This special should be used together with
 \fBdvisvgm:raw\fR
 in order to update the viewport of the page properly\&.
 .RE
 .PP
 \fBdvisvgm:bbox\fR a[bs] \fIx1\fR \fIy1\fR \fIx2\fR \fIy2\fR
 .RS 4
-This variant of the bbox special updates the bounding box by embedding a virtual rectangle (\fIx1\fR,\fIy1\fR,\fIx2\fR,\fIy2\fR)\&. The points (\fIx1\fR,\fIy1\fR) and (\fIx2\fR,\fIy2\fR) denote two diagonal corners of the rectangle given in TeX point units\&.
+This variant of the bbox special updates the bounding box by embedding a virtual rectangle (\fIx1\fR,\fIy1\fR,\fIx2\fR,\fIy2\fR)\&. The points (\fIx1\fR,\fIy1\fR) and (\fIx2\fR,\fIy2\fR) denote the absolute coordinates of two diagonal corners of the rectangle\&.
 .RE
 .PP
 \fBdvisvgm:bbox\fR f[ix] \fIx1\fR \fIy1\fR \fIx2\fR \fIy2\fR
 .RS 4
-This variant of the bbox special assigns an absolute (final) bounding box to the resulting SVG\&. After executing this command, dvisvgm doesn\(cqt further alter the bounding box coordinates, except this special is called again later\&. The points (\fIx1\fR,\fIy1\fR) and (\fIx2\fR,\fIy2\fR) denote two diagonal corners of the rectangle given in TeX point units\&.
+This variant of the bbox special assigns an absolute (final) bounding box to the resulting SVG\&. After executing this command, dvisvgm doesn\(cqt further alter the bounding box coordinates, except this special is called again later\&. The points (\fIx1\fR,\fIy1\fR) and (\fIx2\fR,\fIy2\fR) denote the absolute coordinates of two diagonal corners of the rectangle\&.
 .sp
 The following TeX snippet adds two raw SVG elements to the output and updates the bounding box accordingly:
 .sp
@@ -1015,11 +1017,12 @@ The following TeX snippet adds two raw SVG elements to the output and updates th
 .RS 4
 .\}
 .nf
-\especial{dvisvgm:raw <circle cx=\*(Aq{?x}\*(Aq cy=\*(Aq{?y}\*(Aq r=\*(Aq10\*(Aq stroke=\*(Aqblack\*(Aq fill=\*(Aqred\*(Aq/>}
-\especial{dvisvgm:bbox 20 10 10}
+\especial{dvisvgm:raw <circle cx=\*(Aq{?x}\*(Aq cy=\*(Aq{?y}\*(Aq r=\*(Aq10\*(Aq stroke=\*(Aqblack\*(Aq fill=\*(Aqred\*(Aq/>}%
+\especial{dvisvgm:bbox 10bp 10bp 10bp}%
+\especial{dvisvgm:bbox \-10bp 10bp 10bp}
 
 \especial{dvisvgm:raw <path d=\*(AqM50 200 L10 250 H100 Z\*(Aq stroke=\*(Aqblack\*(Aq fill=\*(Aqblue\*(Aq/>}
-\especial{dvisvgm:bbox abs 10 200 100 250}
+\especial{dvisvgm:bbox abs 10bp 200bp 100bp 250bp}
 .fi
 .if n \{\
 .RE
@@ -1055,11 +1058,22 @@ on the command\-line\&. Otherwise, dvisvgm ignores them and computes tight bound
 .PP
 \fBpdf\fR
 .RS 4
-pdfTeX and dvipdfmx introduced several special commands related to the generation of PDF files\&. Currently, only two of them,
+pdfTeX and dvipdfmx introduced several special commands related to the generation of PDF files\&. Currently, only
+\fIpdf:mapfile\fR,
+\fIpdf:mapline\fR,
+\fIpdf:pagesize\fR, and PDF hyperlink specials are supported by dvisvgm\&. The latter are the PDF pendants to the HTML HyperTeX specials generated by the hyperref package in PDF mode\&.
+.sp
+\fIpdf:pagesize\fR
+is similar to the
+\fIpapersize\fR
+special (see above) which specifies the size of the current and all folowing pages\&. In order to actually apply the extents to the generated SVG files, option
+\fB\-\-bbox=papersize\fR
+must be given\&.
+.sp
 \fIpdf:mapfile\fR
 and
 \fIpdf:mapline\fR
-are supported by dvisvgm\&. These specials allow modifying the font map tree during the processing of DVI files\&. They are used by CTeX, for example\&. dvisvgm supports both, the dvips and dvipdfm font map format\&. For further information on the command syntax and semantics, see the documentation of
+allow modifying the font map tree while processing the DVI file\&. They are used by CTeX, for example\&. dvisvgm supports both, the dvips and dvipdfm font map format\&. For further information on the command syntax and semantics, see the documentation of
 \fB\epdfmapfile\fR
 in the
 pdfTeX user manual (\m[blue]http://www.ctan.org/pkg/pdftex\m[])\&.
@@ -1075,7 +1089,9 @@ Since PostScript is a rather complex language, dvisvgm does not implement its ow
 Ghostscript (\m[blue]http://ghostscript.com\m[])
 instead\&. If the Ghostscript library was not linked to the dvisvgm binary, it is looked up and loaded dynamically during runtime\&. In this case, dvisvgm looks for
 \fIlibgs\&.so\&.X\fR
-on Unix\-like systems (supported ABI versions: 7,8,9), and for
+on Unix\-like systems (supported ABI versions: 7,8,9), for
+\fIlibgs\&.X\&.dylib\fR
+on macOS, and for
 \fIgsdll32\&.dll\fR
 or
 \fIgsdll64\&.dll\fR
@@ -1092,9 +1108,11 @@ The PostScript handler also recognizes and evaluates bounding box data generated
 preview package (\m[blue]http://www.ctan.org/pkg/preview\m[])
 with option
 \fItightpage\fR\&. If such data is present in the DVI file and if dvisvgm is called with option
-\fB\-\-bbox=preview\fR, dvisvgm adapts the bounding box of the generated SVG file accordingly, and prints a message showing the width, height, and depth of the box in TeX point units\&. Especially, the depth value can be used to vertically align the SVG graphics with the baseline of surrounding text in HTML or XSL\-FO documents, for example\&. If you call dvisvgm with option
+\fB\-\-bbox=preview\fR, dvisvgm sets the width and total height of the SVG file to the values derived from the preview data\&. Additionally, it prints a message showing the width, height, and depth of the box in TeX point units to the console\&. Especially, the depth value can be read by a post\-processor to vertically align the SVG graphics with the baseline of surrounding text in HTML or XSL\-FO documents, for example\&. Please note that SVG bounding boxes are defined by a width and (total) height\&. In contrast to TeX, SVG provides no means to differentiate between height and depth, i\&.e\&. the vertical extents above and below the baseline, respectively\&. Therefore, it is generally not possible to retrieve the depth value from the SVG file itself\&.
+.sp
+If you call dvisvgm with option
 \fB\-\-bbox=min\fR
-(the default), the tight bounding box computed while processing the page is applied and not the one provided by the preview package\&. Thus, the height, depth and width values written to the console are adapted accordingly\&.
+(the default) and preview data is present in the DVI file, dvisvgm doesn\(cqt apply the preview extents but computes a bounding box that tightly encloses the page contents\&. The height, depth and width values written to console are adapted accordingly\&.
 .RE
 .PP
 \fBtpic\fR
@@ -1332,4 +1350,4 @@ Please report bugs using the bug tracker at GitHub (\m[blue]https://github.com/m
 Written by Martin Gieseking <\m[blue]\fBmartin\&.gieseking@uos\&.de\fR\m[]>
 .SH "COPYING"
 .sp
-Copyright \(co 2005\-2017 Martin Gieseking\&. Free use of this software is granted under the terms of the GNU General Public License (GPL) version 3 or, (at your option) any later version\&.
+Copyright \(co 2005\-2018 Martin Gieseking\&. Free use of this software is granted under the terms of the GNU General Public License (GPL) version 3 or, (at your option) any later version\&.

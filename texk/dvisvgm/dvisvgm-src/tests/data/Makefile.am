@@ -1,5 +1,5 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2016-2017 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2016-2018 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
@@ -16,5 +16,7 @@ EXTRA_DIST = \
 	sample-nf-cmp.svg \
 	sample.sfd \
 	sample-wf-cmp.svg \
+	sample_v2.dvi \
+	sample_v3.dvi \
 	ot1.cmap
 

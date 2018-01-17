@@ -2,7 +2,7 @@
 ** FontWriter.cpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,17 +18,17 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <config.h>
 #include <algorithm>
 #include <array>
 #include "FontWriter.hpp"
+#include "Message.hpp"
 #include "utility.hpp"
 
 using namespace std;
 
 bool FontWriter::AUTOHINT_FONTS = false;
 
-const array<FontWriter::FontFormatInfo, 4> FontWriter::_formatInfos = {{
+const array<FontWriter::FontFormatInfo, 4> FontWriter::_formatInfos {{
 	{FontWriter::FontFormat::SVG, "image/svg+xml", "svg", "svg"},
 	{FontWriter::FontFormat::TTF, "application/x-font-ttf", "ttf", "truetype"},
 	{FontWriter::FontFormat::WOFF, "application/x-font-woff", "woff", "woff"},
@@ -38,7 +38,7 @@ const array<FontWriter::FontFormatInfo, 4> FontWriter::_formatInfos = {{
 
 /** Returns the corresponding FontFormat for a given format name (e.g. "svg", "woff" etc.). */
 FontWriter::FontFormat FontWriter::toFontFormat (string formatstr) {
-	util::tolower(formatstr);
+	formatstr = util::tolower(formatstr);
 	for (const FontFormatInfo &info : _formatInfos) {
 		if (formatstr == info.formatstr_short)
 			return info.format;
@@ -66,6 +66,8 @@ vector<string> FontWriter::supportedFormats () {
 }
 
 
+#include <config.h>
+
 #ifdef DISABLE_WOFF
 // dummy functions used if WOFF support is disabled
 FontWriter::FontWriter (const PhysicalFont &font) : _font(font) {}
@@ -76,14 +78,14 @@ bool FontWriter::writeCSSFontFace (FontFormat format, const set<int> &charcodes,
 #include <fstream>
 #include <iomanip>
 #include <sstream>
-#include <woff2_enc.h>
-#include <file.h>
+#include <woff2/encode.h>
 #include "ffwrapper.h"
 #include "Bezier.hpp"
 #include "FileSystem.hpp"
 #include "Font.hpp"
 #include "Glyph.hpp"
-#include "utility.hpp"
+#include "TTFAutohint.hpp"
+#include "TrueTypeFont.hpp"
 
 
 FontWriter::FontWriter (const PhysicalFont &font) : _font(font) {
@@ -183,6 +185,32 @@ static void writeSFD (const string &sfdname, const PhysicalFont &font, const set
 }
 
 
+bool FontWriter::createTTFFile (const string &sfdname, const string &ttfname) const {
+	TTFAutohint autohinter;
+	if (!autohinter.available())
+		return ff_sfd_to_ttf(sfdname.c_str(), ttfname.c_str(), AUTOHINT_FONTS);
+
+	bool ok = ff_sfd_to_ttf(sfdname.c_str(), ttfname.c_str(), false);
+	if (ok && AUTOHINT_FONTS) {
+		string tmpname = ttfname+"-ah";
+		int errnum = autohinter.autohint(ttfname, tmpname, true);
+		if (errnum) {
+			Message::wstream(true) << "failed to autohint font '" << _font.name() << "'";
+			string msg = autohinter.lastErrorMessage();
+			if (!msg.empty())
+				Message::wstream() << " (" << msg << ")";
+			// keep the unhinted TTF
+			FileSystem::remove(tmpname);
+		}
+		else {
+			FileSystem::remove(ttfname);
+			FileSystem::rename(tmpname, ttfname);
+		}
+	}
+	return ok;
+}
+
+
 /** Creates a font file containing a given set of glyphs mapped to their Unicode points.
  * @param[in] format target font format
  * @param[in] charcodes character codes of the glyphs to be considered
@@ -190,37 +218,22 @@ static void writeSFD (const string &sfdname, const PhysicalFont &font, const set
  * @return name of the created font file */
 string FontWriter::createFontFile (FontFormat format, const set<int> &charcodes, GFGlyphTracer::Callback *cb) const {
 	string tmpdir = FileSystem::tmpdir();
-	string sfdname = tmpdir+_font.name()+"-tmp.sfd";
+	string basename = tmpdir+_font.name()+"-tmp";
+	string sfdname = basename+".sfd";
 	writeSFD(sfdname, _font, charcodes, cb);
-	bool ok = false;
-	string targetname = tmpdir+_font.name()+"-tmp."+fontFormatInfo(format)->formatstr_short;
-	switch (format) {
-		case FontFormat::TTF:
-			ok = ff_sfd_to_ttf(sfdname.c_str(), targetname.c_str(), AUTOHINT_FONTS);
-			break;
-		case FontFormat::WOFF:
-			ok = ff_sfd_to_woff(sfdname.c_str(), targetname.c_str(), AUTOHINT_FONTS);
-			break;
-		case FontFormat::WOFF2: {
-			string ttfname = tmpdir+_font.name()+".ttf";
-			if (ff_sfd_to_ttf(sfdname.c_str(), ttfname.c_str(), AUTOHINT_FONTS)) {
-				string input = woff2::GetFileContent(ttfname);
-				const uint8_t* input_data = reinterpret_cast<const uint8_t*>(input.data());
-				size_t output_size = woff2::MaxWOFF2CompressedSize(input_data, input.size());
-				string output(output_size, 0);
-				uint8_t* output_data = reinterpret_cast<uint8_t*>(&output[0]);
-				woff2::WOFF2Params params;
-				if (woff2::ConvertTTFToWOFF2(input_data, input.size(), output_data, &output_size, params)) {
-					output.resize(output_size);
-					woff2::SetFileContents(targetname, output.begin(), output.end());
-					ok = true;
-				}
-				if (!PhysicalFont::KEEP_TEMP_FILES)
-					FileSystem::remove(ttfname);
-			}
-			break;
+	string ttfname = basename+".ttf";
+	string targetname = basename+"."+fontFormatInfo(format)->formatstr_short;
+	bool ok = createTTFFile(sfdname, ttfname);
+	if (ok) {
+		if (format == FontFormat::WOFF || format == FontFormat::WOFF2) {
+			TrueTypeFont ttf(ttfname);
+			if (format == FontFormat::WOFF)
+				ttf.writeWOFF(targetname);
+			else
+				ok = ttf.writeWOFF2(targetname);
+			if (!PhysicalFont::KEEP_TEMP_FILES)
+				FileSystem::remove(ttfname);
 		}
-		default:;
 	}
 	if (!PhysicalFont::KEEP_TEMP_FILES)
 		FileSystem::remove(sfdname);

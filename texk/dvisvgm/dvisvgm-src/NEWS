@@ -1,3 +1,44 @@
+dvisvgm-2.3.1 (2018-01-12)
+- fixed the width of characters slanted by a mapfile entry (GH bug #82)
+- if ttfautohint fails for a font, dvisvgm now uses the unhinted font and
+  prints a corresponding warning message
+- some code cleanup
+
+dvisvgm-2.3 (2017-12-28)
+- added experimental support for ttfautohint
+- updated xxHash to version 0.6.4
+- added configuration option to set location of libkpathsea (GH bug #71)
+- some improvements of the build system
+
+dvisvgm-2.2.3 (2017-12-12)
+- updated the bundled brotli library to version 1.0.2
+- fixed a potential memory issue
+- some code and test improvements
+
+dvisvgm-2.2.2 (2017-11-17)
+- fixed memory issue regarding font maps (GH bug #79)
+- avoid scientific notation of floating point numbers
+- minor code improvements
+
+dvisvgm-2.2.1 (2017-11-13)
+- fixed portability issue when building the manpage (GH bug #72)
+- fixed incomplete computation of PS line width (GH bug #77)
+- further code refactorings
+
+dvisvgm-2.2 (2017-10-19)
+- added evaluation of pdf:pagesize specials
+- added evaluation of PDF hyperlink specials
+- try to load Ghostscript dylib on Mac systems (patch by Toby Fleming, GH bug #66)
+- improved TPIC special handler, added evaluation of 'tx' special
+- length values in dvisvgm specials now accept unit specifiers
+- added pdftex.map to default mapfiles
+- fixed potential infinite loop after starting subprocesses (GH bug #68)
+- files included with psfile are now also searched in the texmf tree if not
+  present in the current working directory (GH bug #69)
+- fixed transformation issue in computation of psfile position (GH bug #70)
+- updated bundled brotli, woff2, and xxhash libraries
+- several code refactorings and improvements
+
 dvisvgm-2.1.3 (2017-02-20)
 - fixed build failures of libfontforge on Solaris 10
 - increased code portablity

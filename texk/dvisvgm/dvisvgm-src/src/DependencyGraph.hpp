@@ -2,7 +2,7 @@
 ** DependencyGraph.hpp                                                  **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -22,73 +22,86 @@
 #define DEPENDENCYGRAPH_HPP
 
 #include <map>
+#include <memory>
+#include <set>
 #include <vector>
+#include "utility.hpp"
 
 template <typename T>
-class DependencyGraph
-{
+class DependencyGraph {
 	struct GraphNode {
-		typedef typename std::vector<GraphNode*> Dependees;
-
-		GraphNode (const T &k) : key(k), dependent(0) {}
+		GraphNode (const T &k) : key(k), dependent() {}
 
 		void addDependee (GraphNode *node) {
 			if (node) {
 				node->dependent = this;
-				dependees.push_back(node);
+				dependees.insert(node);
 			}
 		}
 
-		void deleteDependentsAndSelf () {
-			if (dependent)
-				dependent->deleteDependentsAndSelf();
-			for (typename Dependees::iterator it = dependees.begin(); it != dependees.end(); ++it)
-				(*it)->dependent = 0;
-			delete this;
+		void unlinkDependees () {
+			for (GraphNode *dependee : dependees)
+				dependee->dependent = nullptr;
+			dependees.clear();
+		}
+
+		void unlinkDependee (GraphNode *dependee) {
+			auto it = dependees.find(dependee);
+			if (it != dependees.end()) {
+				(*it)->dependent = nullptr;
+				dependees.erase(it);
+			}
 		}
 
 		T key;
 		GraphNode *dependent;
-		Dependees dependees;
+		std::set<GraphNode*> dependees;
 	};
 
-	typedef std::map<T, GraphNode*> NodeMap;
+	using NodeMap = std::map<T, std::unique_ptr<GraphNode>>;
 
 	public:
-		~DependencyGraph() {
-			for (typename NodeMap::iterator it=_nodeMap.begin(); it != _nodeMap.end(); ++it)
-				delete it->second;
-		}
-
+		/** Inserts a new isolated node into the dependency graph. */
 		void insert (const T &key) {
 			if (!contains(key))
-				_nodeMap[key] = new GraphNode(key);
+				_nodeMap.emplace(key, util::make_unique<GraphNode>(key));
 		}
 
-		void insert (const T &depKey, const T &key) {
-			if (contains(key))
-				return;
-			typename NodeMap::iterator it = _nodeMap.find(depKey);
-			if (it != _nodeMap.end()) {
-				GraphNode *node = new GraphNode(key);
-				it->second->addDependee(node);
-				_nodeMap[key] = node;
+		/** Inserts a new node to the graph and adds a dependency on an existing one to it.
+		 *  @param[in] key ID of new node to insert
+		 *  @param[in] dependantKey ID of node the new node should depend on */
+		void insert (const T &dependentKey, const T &key) {
+			if (!contains(key)) {
+				auto dependentIter = _nodeMap.find(dependentKey);
+				if (dependentIter != _nodeMap.end()) {
+					auto node = util::make_unique<GraphNode>(key);
+					dependentIter->second->addDependee(node.get());
+					_nodeMap.emplace(key, std::move(node));
+				}
 			}
 		}
 
+		/** Removes a node and all its dependents from the graph. */
 		void removeDependencyPath (const T &key) {
-			typename NodeMap::iterator it = _nodeMap.find(key);
+			auto it = _nodeMap.find(key);
 			if (it != _nodeMap.end()) {
-				GraphNode *startNode = it->second;
-				for (GraphNode *node=startNode; node; node=node->dependent)
+				for (GraphNode *node = it->second.get(); node;) {
+					GraphNode *dependent = node->dependent;
+					node->unlinkDependees();
+					if (dependent)
+						dependent->unlinkDependee(node);
 					_nodeMap.erase(node->key);
-				startNode->deleteDependentsAndSelf();
+					node = dependent;
+				}
 			}
 		}
 
-		void getKeys (std::vector<T> &keys) const {
-			for (typename NodeMap::const_iterator it=_nodeMap.begin(); it != _nodeMap.end(); ++it)
-				keys.push_back(it->first);
+		/** Returns the IDs of all nodes present in the graph. */
+		std::vector<T> getKeys () const {
+			std::vector<T> keys;
+			for (auto &entry : _nodeMap)
+				keys.emplace_back(entry.first);
+			return keys;
 		}
 
 		bool contains (const T &value) const {
@@ -102,7 +115,7 @@ class DependencyGraph
 #if 0
 		void writeDOT (std::ostream &os) const {
 			os << "digraph {\n";
-			for (typename NodeMap::const_iterator it=_nodeMap.begin(); it != _nodeMap.end(); ++it) {
+			for (auto it=_nodeMap.begin(); it != _nodeMap.end(); ++it) {
 				GraphNode *node = it->second;
 				if (node->dependent)
 					os << (node->key) << " -> " << (node->dependent->key) << ";\n";

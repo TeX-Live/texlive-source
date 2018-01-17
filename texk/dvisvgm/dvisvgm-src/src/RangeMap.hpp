@@ -2,7 +2,7 @@
 ** RangeMap.hpp                                                         **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -58,7 +58,7 @@ class RangeMap {
 			uint32_t _minval;
 	};
 
-	typedef std::vector<Range> Ranges;
+	using Ranges = std::vector<Range>;
 
 	public:
 		void addRange (uint32_t first, uint32_t last, uint32_t cid);

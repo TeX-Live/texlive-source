@@ -2,7 +2,7 @@
 ** EmSpecialHandler.cpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,7 +18,6 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <config.h>
 #include <sstream>
 #include "EmSpecialHandler.hpp"
 #include "InputBuffer.hpp"
@@ -79,11 +78,11 @@ static DPair cut_vector (char cuttype, const DPair &linedir, double linewidth) {
  * @param[in] lw line width in PS point units
  * @param[in] actions object providing the actions that can be performed by the SpecialHandler */
 static void create_line (const DPair &p1, const DPair &p2, char c1, char c2, double lw, SpecialActions &actions) {
-	XMLElementNode *node=0;
+	unique_ptr<XMLElementNode> node;
 	DPair dir = p2-p1;
 	if (dir.x() == 0 || dir.y() == 0 || (c1 == 'p' && c2 == 'p')) {
 		// draw regular line
-		node = new XMLElementNode("line");
+		node = util::make_unique<XMLElementNode>("line");
 		node->addAttribute("x1", p1.x());
 		node->addAttribute("y1", p1.y());
 		node->addAttribute("x2", p2.x());
@@ -108,7 +107,7 @@ static void create_line (const DPair &p1, const DPair &p2, char c1, char c2, dou
 			 << XMLString(q12.x()) << ',' << XMLString(q12.y()) << ' '
 			 << XMLString(q22.x()) << ',' << XMLString(q22.y()) << ' '
 			 << XMLString(q21.x()) << ',' << XMLString(q21.y());
-		node = new XMLElementNode("polygon");
+		node = util::make_unique<XMLElementNode>("polygon");
 		node->addAttribute("points", oss.str());
 		if (actions.getColor() != Color::BLACK)
 			node->addAttribute("fill", actions.getColor().svgColorString());
@@ -118,7 +117,7 @@ static void create_line (const DPair &p1, const DPair &p2, char c1, char c2, dou
 		actions.embed(q21);
 		actions.embed(q22);
 	}
-	actions.appendToPage(node);
+	actions.appendToPage(std::move(node));
 }
 
 
@@ -230,8 +229,8 @@ void EmSpecialHandler::line (InputReader &ir, SpecialActions& actions) {
 	double linewidth = _linewidth;
 	if (ir.getPunct() == ',')
 		linewidth = read_length(ir);
-	map<int,DPair>::iterator it1=_points.find(pointnum1);
-	map<int,DPair>::iterator it2=_points.find(pointnum2);
+	auto it1=_points.find(pointnum1);
+	auto it2=_points.find(pointnum2);
 	if (it1 != _points.end() && it2 != _points.end())
 		create_line(it1->second, it2->second, char(cut1), char(cut2), linewidth, actions);
 	else {
@@ -259,7 +258,7 @@ void EmSpecialHandler::dviEndPage (unsigned pageno, SpecialActions &actions) {
 }
 
 
-const char** EmSpecialHandler::prefixes () const {
-	static const char *pfx[] = {"em:", 0};
+const vector<const char*> EmSpecialHandler::prefixes () const {
+	const vector<const char*> pfx {"em:"};
 	return pfx;
 }

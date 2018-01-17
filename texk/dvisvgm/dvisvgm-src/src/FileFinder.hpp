@@ -2,7 +2,7 @@
 ** FileFinder.hpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -27,10 +27,9 @@
 
 class MiKTeXCom;
 
-class FileFinder
-{
+class FileFinder {
 	public:
-		static void init (const char *argv0, const char *progname, bool enable_mktexmf);
+		static void init (const std::string &argv0, const std::string &progname, bool enable_mktexmf);
 		static FileFinder& instance ();
 		std::string version () const;
 		void addLookupDir (const std::string &path);
@@ -44,7 +43,7 @@ class FileFinder
 		const char* mktex (const std::string &fname) const;
 
 	private:
-		static const char *_argv0;
+		static std::string _argv0;
 		static std::string _progname;
 		static bool _enableMktex;
 		std::set<std::string> _additionalDirs;

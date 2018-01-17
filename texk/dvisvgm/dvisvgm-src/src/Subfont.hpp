@@ -2,7 +2,7 @@
 ** Subfont.hpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -23,22 +23,20 @@
 
 #include <istream>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 #include "MessageException.hpp"
-
 
 class Subfont;
 
 
 /** Represents a collection of subfont mappings as defined in a .sfd file, and
  *  encapsulates the evaluation of these files. */
-class SubfontDefinition
-{
-	typedef std::map<std::string, Subfont*> Subfonts;
+class SubfontDefinition {
+	using Subfonts = std::map<std::string, std::unique_ptr<Subfont>>;
 	public:
-		~SubfontDefinition ();
 		static SubfontDefinition* lookup (const std::string &name);
 //		int getIDs (std::vector<std::string> &ids) const;
 		const std::string& name() const {return _sfname;}
@@ -49,7 +47,7 @@ class SubfontDefinition
 
 	protected:
 		SubfontDefinition (const std::string &name, const char *fpath);
-		SubfontDefinition (const SubfontDefinition &sfd) {}
+		SubfontDefinition (const SubfontDefinition &sfd) =delete;
 
 	private:
 		std::string _sfname; ///< name of subfont
@@ -58,38 +56,31 @@ class SubfontDefinition
 
 
 /** Represents a single subfont mapping defined in a SubfontDefinition (.sfd file). */
-class Subfont
-{
+class Subfont {
 	friend class SubfontDefinition;
 	public:
-		~Subfont();
 		const std::string& id () const {return _id;}
 		uint16_t decode (unsigned char c);
 
 	protected:
 		Subfont (SubfontDefinition &sfd, const std::string &id) : _sfd(sfd), _id(id), _mapping(0) {}
+		Subfont (const Subfont &sf) =delete;
 		bool read ();
 
 	private:
-		SubfontDefinition &_sfd;  ///< SubfontDefinition where this Subfont belongs to
-		const std::string &_id;   ///< id of this subfont as specified in the .sfd file
-		uint16_t *_mapping;       ///< the character mapping table with 256 entries
+		SubfontDefinition &_sfd;        ///< SubfontDefinition where this Subfont belongs to
+		const std::string &_id;         ///< id of this subfont as specified in the .sfd file
+		std::vector<uint16_t> _mapping; ///< the character mapping table with 256 entries
 };
 
 
-class SubfontException : public MessageException
-{
+class SubfontException : public MessageException {
 	public:
 		SubfontException (const std::string &msg, const std::string &fname, int lineno=0)
 			: MessageException(msg), _fname(fname), _lineno(lineno) {}
 
-		SubfontException (const std::ostream &oss, const std::string &fname, int lineno=0)
-			: MessageException(dynamic_cast<const std::ostringstream&>(oss).str()), _fname(fname), _lineno(lineno) {}
-
-		virtual ~SubfontException () throw() =default;
-
 		const char* filename () const {return _fname.c_str();}
-		int lineno () const {return _lineno;}
+		int lineno () const           {return _lineno;}
 
 	private:
 		std::string _fname;

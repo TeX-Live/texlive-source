@@ -1,8 +1,8 @@
 /*************************************************************************
-** CMapReaderTest.cpp                                                   **
+** CMapManagerTest.cpp                                                  **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -22,64 +22,49 @@
 #include <fstream>
 #include "CMap.hpp"
 #include "CMapManager.hpp"
-#include "FileFinder.hpp"
 #include "Message.hpp"
 
-#ifndef SRCDIR
-#define SRCDIR "."
-#endif
 
-
-class CMapManagerTest : public ::testing::Test
-{
-	protected:
-		void SetUp () override {
-			FileFinder::init("CMapManagerTest", "CMapManagerTest", false);
-			FileFinder::instance().addLookupDir(SRCDIR"/data");
-		}
-};
-
-
-TEST_F(CMapManagerTest, lookup_buildin) {
+TEST(CMapManagerTest, lookup_buildin) {
 	CMapManager &manager = CMapManager::instance();
 	CMap *cmap=0;
-	EXPECT_TRUE((cmap = manager.lookup("Identity-H")) != 0);
+	ASSERT_NE((cmap = manager.lookup("Identity-H")), nullptr);
 	EXPECT_STREQ(cmap->name(), "Identity-H");
 	EXPECT_EQ(cmap->getROString(), "Adobe-Identity");
 	EXPECT_TRUE(cmap->mapsToCID());
 
-	EXPECT_TRUE((cmap = manager.lookup("Identity-V")) != 0);
+	ASSERT_NE((cmap = manager.lookup("Identity-V")), nullptr);
 	EXPECT_STREQ(cmap->name(), "Identity-V");
 	EXPECT_EQ(cmap->getROString(), "Adobe-Identity");
 	EXPECT_TRUE(cmap->mapsToCID());
 
-	EXPECT_TRUE((cmap = manager.lookup("unicode")) != 0);
+	ASSERT_NE((cmap = manager.lookup("unicode")), nullptr);
 	EXPECT_STREQ(cmap->name(), "unicode");
 	EXPECT_EQ(cmap->getROString(), "");
 	EXPECT_FALSE(cmap->mapsToCID());
-	EXPECT_TRUE(cmap->path() == 0);
+	EXPECT_EQ(cmap->path(), nullptr);
 }
 
 
-TEST_F(CMapManagerTest, lookup_file) {
+TEST(CMapManagerTest, lookup_file) {
 	CMapManager &manager = CMapManager::instance();
 	CMap *cmap = manager.lookup("ot1.cmap");
-	EXPECT_TRUE(cmap != 0);
+	ASSERT_NE(cmap, nullptr);
 	EXPECT_STREQ(cmap->name(), "ot1.cmap");
 	EXPECT_EQ(cmap->getROString(), "");
 	EXPECT_FALSE(cmap->mapsToCID());
-	EXPECT_EQ(cmap->bfcode(0x00), 0x0393);
-	EXPECT_EQ(cmap->bfcode(0x01), 0x0394);
-	EXPECT_EQ(cmap->bfcode(0x02), 0x0398);
-	EXPECT_EQ(cmap->bfcode(0x7c), 0x2014);
-	EXPECT_EQ(cmap->bfcode(0x7d), 0x02dd);
-	EXPECT_EQ(cmap->bfcode(0x7f), 0x00a8);
-	EXPECT_EQ(cmap->bfcode(0x80), 0);
+	EXPECT_EQ(cmap->bfcode(0x00), 0x0393u);
+	EXPECT_EQ(cmap->bfcode(0x01), 0x0394u);
+	EXPECT_EQ(cmap->bfcode(0x02), 0x0398u);
+	EXPECT_EQ(cmap->bfcode(0x7c), 0x2014u);
+	EXPECT_EQ(cmap->bfcode(0x7d), 0x02ddu);
+	EXPECT_EQ(cmap->bfcode(0x7f), 0x00a8u);
+	EXPECT_EQ(cmap->bfcode(0x80), 0u);
 }
 
 
-TEST_F(CMapManagerTest, lookup_fail) {
+TEST(CMapManagerTest, lookup_fail) {
 	Message::LEVEL = 0;  // avoid warning messages
 	CMapManager &manager = CMapManager::instance();
-	EXPECT_TRUE(manager.lookup("does-not-exists") == 0);
+	EXPECT_EQ(manager.lookup("does-not-exists"), nullptr);
 }

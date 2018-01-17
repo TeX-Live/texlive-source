@@ -2,7 +2,7 @@
 ** ToUnicodeMapTest.cpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -25,35 +25,37 @@
 
 using namespace std;
 
-#define CHECK_RANGE(ucmap, min, max, minval) check_range(ucmap, min, max, minval, __LINE__)
+#define CHECK_RANGE(name, ucmap, min, max, minval) \
+	{SCOPED_TRACE(name); check_range(ucmap, min, max, minval);}
 
-static void check_range (const ToUnicodeMap &ucmap, uint32_t min, uint32_t max, uint32_t minval, int line) {
+
+static void check_range (const ToUnicodeMap &ucmap, uint32_t min, uint32_t max, uint32_t minval) {
 	for (uint32_t i=min; i <= max; i++)
-		ASSERT_EQ(ucmap.valueAt(i), minval+(i-min)) << __FILE__ << ":" << line << ": i=" << i;
+		ASSERT_EQ(ucmap.valueAt(i), minval+(i-min)) << "i=" << i;
 }
 
 
 TEST(ToUnicodeMapTest, addMissingMappings1) {
 	ToUnicodeMap ucmap;
 	ASSERT_TRUE(ucmap.addMissingMappings(20));
-	ASSERT_EQ(ucmap.size(), 1);
-	CHECK_RANGE(ucmap, 1, 20, 1);
+	ASSERT_EQ(ucmap.size(), 1u);
+	CHECK_RANGE("A", ucmap, 1, 20, 1);
 }
 
 
 TEST(ToUnicodeMapTest, addMissingMappings2) {
 	ToUnicodeMap ucmap;
 	ucmap.addRange(5, 8, 40);
-	ASSERT_EQ(ucmap.size(), 1);
-	CHECK_RANGE(ucmap, 5, 8, 40);
+	ASSERT_EQ(ucmap.size(), 1u);
+	CHECK_RANGE("A", ucmap, 5, 8, 40);
 
 	ucmap.addRange(10, 15, 50);
-	ASSERT_EQ(ucmap.size(), 2);
-	CHECK_RANGE(ucmap, 5, 8, 40);
-	CHECK_RANGE(ucmap, 10, 15, 50);
+	ASSERT_EQ(ucmap.size(), 2u);
+	CHECK_RANGE("B", ucmap, 5, 8, 40);
+	CHECK_RANGE("C", ucmap, 10, 15, 50);
 
 	ASSERT_TRUE(ucmap.addMissingMappings(20));
-	ASSERT_EQ(ucmap.size(), 2);
-	CHECK_RANGE(ucmap, 1, 9, 36);
-	CHECK_RANGE(ucmap, 10, 20, 50);
+	ASSERT_EQ(ucmap.size(), 2u);
+	CHECK_RANGE("D", ucmap, 1, 9, 36);
+	CHECK_RANGE("E", ucmap, 10, 20, 50);
 }

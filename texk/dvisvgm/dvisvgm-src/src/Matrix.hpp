@@ -2,7 +2,7 @@
 ** Matrix.hpp                                                           **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -57,7 +57,9 @@ class Matrix
 		Matrix& lmultiply (const Matrix &tm);
 		Matrix& rmultiply (const Matrix &tm);
 		Matrix& translate (double tx, double ty);
+		Matrix& translate (const DPair &p)   {return translate(p.x(), p.y());}
 		Matrix& scale (double sx, double sy);
+		Matrix& scale (const DPair &p)       {return scale(p.x(), p.y());}
 		Matrix& rotate (double deg);
 		Matrix& xskewByAngle (double deg);
 		Matrix& yskewByAngle (double deg);

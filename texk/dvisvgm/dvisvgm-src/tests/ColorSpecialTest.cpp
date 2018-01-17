@@ -2,7 +2,7 @@
 ** ColorSpecialTest.cpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -31,7 +31,7 @@ class ColorSpecialTest : public ::testing::Test
 		struct SetColor : EmptySpecialActions
 		{
 			SetColor () : color(0) {}
-			void setColor (const Color &c) {color = c;}
+			void setColor (const Color &c) {color = uint32_t(c);}
 			bool equals (uint32_t c) {return color == c;}
 			uint32_t color;
 		};
@@ -42,8 +42,8 @@ class ColorSpecialTest : public ::testing::Test
 
 TEST_F(ColorSpecialTest, info) {
 	EXPECT_EQ(handler.name(), "color");
+	EXPECT_EQ(handler.prefixes().size(), 1u);
 	EXPECT_STREQ(handler.prefixes()[0], "color");
-	EXPECT_EQ(handler.prefixes()[1], nullptr);
 	ASSERT_NE(handler.info(), nullptr);
 	EXPECT_FALSE(string(handler.info()).empty());
 }

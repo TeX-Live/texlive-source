@@ -1,3 +1,1161 @@
+2018-01-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * .appveyor.yml: 
+  AppVeyor: fixed download link of ttfautohint-dll 
+
+2018-01-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in: 
+  manpage: reworded info about option --bbox=preview (closes #83) 
+
+2018-01-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml, .travis.yml, CMakeLists.txt, configure.ac, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.3.1 
+
+2018-01-08  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml: 
+  updated FreeType to version 2.9 
+
+2018-01-03  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/CMapReader.cpp, src/Directory.cpp, src/Directory.hpp, 
+    src/DvisvgmSpecialHandler.cpp, src/FileFinder.cpp, src/FileFinder.hpp, 
+    src/FilePath.cpp, src/FilePath.hpp, src/FileSystem.cpp, 
+    src/FileSystem.hpp, src/Font.cpp, src/FontCache.cpp, src/FontCache.hpp, 
+    src/FontMap.cpp, src/FontMetrics.cpp, src/FontMetrics.hpp, 
+    src/MetafontWrapper.cpp: 
+  replaced some C string parameters with C++ strings 
+
+2018-01-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Font.cpp: 
+  fixed char width of fonts slanted by style option (closes #82) 
+
+  * src/dvisvgm.cpp: 
+  avoid potential dangling string pointer to --fontmap argument 
+
+  * Makefile.am, README, README.md, configure.ac, doc/Makefile.am, 
+    doc/conf-dblatex-man.xsl, doc/conf-dblatex-pdf.xsl, doc/db2html.xsl, 
+    doc/dvisvgm.txt.in, doc/tweak-db-article.xsl, doc/tweak-db-refentry.xsl, 
+    doc/tweak-dblatex-pdf.xsl, libs/Makefile.am, 
+    libs/ff-woff/fontforge/tmpfile2.cpp, src/AGLTable.hpp, 
+    src/BasicDVIReader.cpp, src/BasicDVIReader.hpp, src/Bezier.cpp, 
+    src/Bezier.hpp, src/BgColorSpecialHandler.cpp, 
+    src/BgColorSpecialHandler.hpp, src/Bitmap.cpp, src/Bitmap.hpp, 
+    src/BoundingBox.cpp, src/BoundingBox.hpp, src/CLCommandLine.cpp, 
+    src/CLCommandLine.hpp, src/CLOption.hpp, src/CMap.cpp, src/CMap.hpp, 
+    src/CMapManager.cpp, src/CMapManager.hpp, src/CMapReader.cpp, 
+    src/CMapReader.hpp, src/CRC32.cpp, src/CRC32.hpp, src/Calculator.cpp, 
+    src/Calculator.hpp, src/CharMapID.cpp, src/CharMapID.hpp, 
+    src/Character.hpp, src/Color.cpp, src/Color.hpp, 
+    src/ColorSpecialHandler.cpp, src/ColorSpecialHandler.hpp, 
+    src/CommandLine.hpp, src/DLLoader.cpp, src/DLLoader.hpp, 
+    src/DVIActions.hpp, src/DVIReader.cpp, src/DVIReader.hpp, 
+    src/DVIToSVG.cpp, src/DVIToSVG.hpp, src/DVIToSVGActions.cpp, 
+    src/DVIToSVGActions.hpp, src/DependencyGraph.hpp, src/Directory.cpp, 
+    src/Directory.hpp, src/DvisvgmSpecialHandler.cpp, 
+    src/DvisvgmSpecialHandler.hpp, src/EPSFile.cpp, src/EPSFile.hpp, 
+    src/EPSToSVG.cpp, src/EPSToSVG.hpp, src/EmSpecialHandler.cpp, 
+    src/EmSpecialHandler.hpp, src/EncFile.cpp, src/EncFile.hpp, 
+    src/FileFinder.cpp, src/FileFinder.hpp, src/FilePath.cpp, 
+    src/FilePath.hpp, src/FileSystem.cpp, src/FileSystem.hpp, 
+    src/FixWord.hpp, src/Font.cpp, src/Font.hpp, src/FontCache.cpp, 
+    src/FontCache.hpp, src/FontEncoding.cpp, src/FontEncoding.hpp, 
+    src/FontEngine.cpp, src/FontEngine.hpp, src/FontManager.cpp, 
+    src/FontManager.hpp, src/FontMap.cpp, src/FontMap.hpp, 
+    src/FontMetrics.cpp, src/FontMetrics.hpp, src/FontStyle.hpp, 
+    src/FontWriter.cpp, src/FontWriter.hpp, src/GFGlyphTracer.cpp, 
+    src/GFGlyphTracer.hpp, src/GFReader.cpp, src/GFReader.hpp, 
+    src/GFTracer.cpp, src/GFTracer.hpp, src/Ghostscript.cpp, 
+    src/Ghostscript.hpp, src/Glyph.hpp, src/GlyphTracerMessages.hpp, 
+    src/GraphicsPath.hpp, src/HtmlSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.hpp, src/HyperlinkManager.cpp, 
+    src/HyperlinkManager.hpp, src/InputBuffer.cpp, src/InputBuffer.hpp, 
+    src/InputReader.cpp, src/InputReader.hpp, src/JFM.cpp, src/JFM.hpp, 
+    src/Length.cpp, src/Length.hpp, src/Makefile.am, src/Makefile.old, 
+    src/MapLine.cpp, src/MapLine.hpp, src/Matrix.cpp, src/Matrix.hpp, 
+    src/Message.cpp, src/Message.hpp, src/MessageException.hpp, 
+    src/MetafontWrapper.cpp, src/MetafontWrapper.hpp, src/MiKTeXCom.cpp, 
+    src/MiKTeXCom.hpp, src/NoPsSpecialHandler.cpp, 
+    src/NoPsSpecialHandler.hpp, src/NumericRanges.hpp, src/PDFParser.cpp, 
+    src/PDFParser.hpp, src/PSFilter.hpp, src/PSInterpreter.cpp, 
+    src/PSInterpreter.hpp, src/PSPattern.cpp, src/PSPattern.hpp, 
+    src/PSPreviewFilter.cpp, src/PSPreviewFilter.hpp, src/PageRanges.cpp, 
+    src/PageRanges.hpp, src/PageSize.cpp, src/PageSize.hpp, src/Pair.hpp, 
+    src/PapersizeSpecialHandler.cpp, src/PapersizeSpecialHandler.hpp, 
+    src/PathClipper.cpp, src/PathClipper.hpp, src/PdfSpecialHandler.cpp, 
+    src/PdfSpecialHandler.hpp, src/PreScanDVIReader.cpp, 
+    src/PreScanDVIReader.hpp, src/Process.cpp, src/Process.hpp, 
+    src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp, src/RangeMap.cpp, 
+    src/RangeMap.hpp, src/SVGCharHandler.cpp, src/SVGCharHandler.hpp, 
+    src/SVGCharHandlerFactory.cpp, src/SVGCharHandlerFactory.hpp, 
+    src/SVGCharPathHandler.cpp, src/SVGCharPathHandler.hpp, 
+    src/SVGCharTspanTextHandler.cpp, src/SVGCharTspanTextHandler.hpp, 
+    src/SVGOutput.cpp, src/SVGOutput.hpp, src/SVGSingleCharTextHandler.cpp, 
+    src/SVGSingleCharTextHandler.hpp, src/SVGTree.cpp, src/SVGTree.hpp, 
+    src/SWFWriter.cpp, src/SWFWriter.hpp, src/ShadingPatch.cpp, 
+    src/ShadingPatch.hpp, src/SignalHandler.cpp, src/SignalHandler.hpp, 
+    src/SpecialActions.hpp, src/SpecialHandler.hpp, src/SpecialManager.cpp, 
+    src/SpecialManager.hpp, src/StreamReader.cpp, src/StreamReader.hpp, 
+    src/StreamWriter.cpp, src/StreamWriter.hpp, src/Subfont.cpp, 
+    src/Subfont.hpp, src/System.cpp, src/System.hpp, src/TFM.cpp, 
+    src/TFM.hpp, src/TTFAutohint.cpp, src/TTFAutohint.hpp, 
+    src/TensorProductPatch.cpp, src/TensorProductPatch.hpp, src/Terminal.cpp, 
+    src/Terminal.hpp, src/ToUnicodeMap.cpp, src/ToUnicodeMap.hpp, 
+    src/TpicSpecialHandler.cpp, src/TpicSpecialHandler.hpp, 
+    src/TriangularPatch.cpp, src/TriangularPatch.hpp, src/TrueTypeFont.cpp, 
+    src/TrueTypeFont.hpp, src/Unicode.cpp, src/Unicode.hpp, 
+    src/VFActions.hpp, src/VFReader.cpp, src/VFReader.hpp, 
+    src/VectorIterator.hpp, src/VectorStream.hpp, src/XMLDocument.cpp, 
+    src/XMLDocument.hpp, src/XMLNode.cpp, src/XMLNode.hpp, src/XMLString.cpp, 
+    src/XMLString.hpp, src/ZLibOutputStream.hpp, src/dvisvgm.cpp, 
+    src/ffwrapper.c, src/ffwrapper.h, src/genhashmap.py, src/gf2xml.cpp, 
+    src/macros.hpp, src/options.dtd, src/options.xml, src/psdefs.cpp, 
+    src/psdefs.ps, src/utility.cpp, src/utility.hpp, src/version.hpp, 
+    src/version.hpp.in, src/windows.hpp, tests/BezierTest.cpp, 
+    tests/BitmapTest.cpp, tests/BoundingBoxTest.cpp, 
+    tests/CMapManagerTest.cpp, tests/CMapReaderTest.cpp, tests/CMapTest.cpp, 
+    tests/CRC32Test.cpp, tests/CalculatorTest.cpp, 
+    tests/ColorSpecialTest.cpp, tests/ColorTest.cpp, 
+    tests/CommandLineTest.cpp, tests/DVIReaderTest.cpp, 
+    tests/DependencyGraphTest.cpp, tests/DirectoryTest.cpp, 
+    tests/DvisvgmSpecialTest.cpp, tests/EmSpecialTest.cpp, 
+    tests/FileFinderTest.cpp, tests/FilePathTest.cpp, 
+    tests/FileSystemTest.cpp, tests/FontCacheTest.cpp, 
+    tests/FontManagerTest.cpp, tests/FontMapTest.cpp, 
+    tests/GFGlyphTracerTest.cpp, tests/GFReaderTest.cpp, 
+    tests/GhostscriptTest.cpp, tests/GraphicsPathTest.cpp, 
+    tests/JFMReaderTest.cpp, tests/LengthTest.cpp, tests/Makefile.am, 
+    tests/MapLineTest.cpp, tests/MatrixTest.cpp, 
+    tests/MessageExceptionTest.cpp, tests/PDFParserTest.cpp, 
+    tests/PSInterpreterTest.cpp, tests/PageRagesTest.cpp, 
+    tests/PageSizeTest.cpp, tests/PairTest.cpp, 
+    tests/PapersizeSpecialTest.cpp, tests/RangeMapTest.cpp, 
+    tests/SVGOutputTest.cpp, tests/ShadingPatchTest.cpp, 
+    tests/SpecialManagerTest.cpp, tests/SplittedCharInputBufferTest.cpp, 
+    tests/StreamInputBufferTest.cpp, tests/StreamReaderTest.cpp, 
+    tests/StreamWriterTest.cpp, tests/StringMatcherTest.cpp, 
+    tests/SubfontTest.cpp, tests/TFMReaderTest.cpp, 
+    tests/TensorProductPatchTest.cpp, tests/ToUnicodeMapTest.cpp, 
+    tests/TpicSpecialTest.cpp, tests/TriangularPatchTest.cpp, 
+    tests/UnicodeTest.cpp, tests/UtilityTest.cpp, 
+    tests/VectorIteratorTest.cpp, tests/VectorStreamTest.cpp, 
+    tests/XMLNodeTest.cpp, tests/XMLStringTest.cpp, tests/check-conv, 
+    tests/create-makefile, tests/data/Makefile.am, tests/genhashcheck.py, 
+    tests/normalize.xsl, tests/testmain.cpp, update-copyright-year.sh: 
+  updated year in copyright statements to 2018 
+
+2017-12-31  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontWriter.cpp: 
+  keep unhinted TTF if autohinting failed 
+
+  * src/TTFAutohint.hpp: 
+  don't declare member variables of TTFAutohint if ttfautohint is not 
+  available 
+
+2017-12-28  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS, README, README.md: 
+  updated README and NEWS 
+
+  * .appveyor.yml, .travis.yml, CMakeLists.txt, configure.ac, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.3 
+
+  * .appveyor.yml: 
+  AppVeyor: download and install ttfautohint headers 
+
+2017-12-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DLLoader.cpp, src/DLLoader.hpp, src/Ghostscript.cpp, 
+    src/TTFAutohint.cpp: 
+  simplify function to load a symbol from a dynamic library 
+
+2017-12-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * cmake-config.h, cmake/FindTTFAutohint.cmake, configure.ac, 
+    src/CMakeLists.txt, src/DLLoader.cpp, src/DLLoader.hpp, 
+    src/FontWriter.cpp, src/Makefile.am, src/TTFAutohint.cpp, 
+    src/TTFAutohint.hpp, src/dvisvgm.cpp: 
+  added code to load libttfautohint dynamically at runtime 
+
+2017-12-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/xxHash/xxhash.c, libs/xxHash/xxhash.h, libs/xxHash/xxhsum.c: 
+  updated xxHash to version 0.6.4 
+
+2017-12-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/gtest/include/gtest/gtest-param-test.h, 
+    tests/gtest/include/gtest/gtest-printers.h, 
+    tests/gtest/include/gtest/gtest-spi.h, 
+    tests/gtest/include/gtest/gtest-typed-test.h, 
+    tests/gtest/include/gtest/gtest.h, 
+    tests/gtest/include/gtest/internal/custom/gtest-port.h, 
+    tests/gtest/include/gtest/internal/custom/gtest.h, 
+    tests/gtest/include/gtest/internal/gtest-internal.h, 
+    tests/gtest/include/gtest/internal/gtest-param-util-generated.h, 
+    tests/gtest/include/gtest/internal/gtest-param-util.h, 
+    tests/gtest/include/gtest/internal/gtest-port-arch.h, 
+    tests/gtest/include/gtest/internal/gtest-port.h, 
+    tests/gtest/src/gtest-death-test.cc, 
+    tests/gtest/src/gtest-internal-inl.h, tests/gtest/src/gtest-port.cc, 
+    tests/gtest/src/gtest-printers.cc, tests/gtest/src/gtest.cc: 
+  updated gtest 
+
+2017-12-19  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * configure.ac, src/Makefile.am: 
+  configure: added --with-kpathsea to set the path of the kpathsea devel 
+  files
+closes #71 
+
+  * configure.ac: 
+  configure: dropped check of outdated Ghostscript version 
+
+2017-12-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/psdefs.cpp: 
+  psdefs: replaced '6 array' with 'matrix' 
+
+2017-12-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * CMakeLists.txt, cmake-config.h, cmake/FindTTFAutohint.cmake, 
+    configure.ac, src/CMakeLists.txt, src/FontWriter.cpp, src/Makefile.am, 
+    src/dvisvgm.cpp, tests/CMakeLists.txt: 
+  added optional support for ttfautohint 
+
+  * libs/woff2/Makefile.am, libs/woff2/include/woff2/file.h, 
+    src/CMakeLists.txt, src/FontWriter.cpp, src/FontWriter.hpp, 
+    src/Makefile.am, src/StreamReader.hpp, src/StreamWriter.cpp, 
+    src/StreamWriter.hpp, src/TrueTypeFont.cpp, src/TrueTypeFont.hpp, 
+    src/ffwrapper.c, src/ffwrapper.h, src/utility.cpp, src/utility.hpp: 
+  replaced ff_sfd_to_woff() with TrueTypeFont::writeWOFF() 
+
+2017-12-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * configure.ac, libs/CMakeLists.txt, libs/Makefile.am, 
+    libs/brotli/CMakeLists.txt, libs/brotli/LICENSE, libs/brotli/Makefile.am, 
+    libs/brotli/common/constants.h, libs/brotli/common/dictionary.c, 
+    libs/brotli/common/dictionary.h, libs/brotli/common/version.h, 
+    libs/brotli/enc/backward_references.c, 
+    libs/brotli/enc/backward_references.h, 
+    libs/brotli/enc/backward_references_hq.c, 
+    libs/brotli/enc/backward_references_hq.h, 
+    libs/brotli/enc/backward_references_inc.h, libs/brotli/enc/bit_cost.c, 
+    libs/brotli/enc/bit_cost.h, libs/brotli/enc/bit_cost_inc.h, 
+    libs/brotli/enc/block_encoder_inc.h, libs/brotli/enc/block_splitter.c, 
+    libs/brotli/enc/block_splitter.h, libs/brotli/enc/block_splitter_inc.h, 
+    libs/brotli/enc/brotli_bit_stream.c, libs/brotli/enc/brotli_bit_stream.h, 
+    libs/brotli/enc/cluster.c, libs/brotli/enc/cluster.h, 
+    libs/brotli/enc/cluster_inc.h, libs/brotli/enc/command.h, 
+    libs/brotli/enc/compress_fragment.c, libs/brotli/enc/compress_fragment.h, 
+    libs/brotli/enc/compress_fragment_two_pass.c, 
+    libs/brotli/enc/compress_fragment_two_pass.h, libs/brotli/enc/context.h, 
+    libs/brotli/enc/dictionary_hash.c, libs/brotli/enc/dictionary_hash.h, 
+    libs/brotli/enc/encode.c, libs/brotli/enc/entropy_encode.c, 
+    libs/brotli/enc/entropy_encode.h, 
+    libs/brotli/enc/entropy_encode_static.h, libs/brotli/enc/fast_log.h, 
+    libs/brotli/enc/find_match_length.h, libs/brotli/enc/hash.h, 
+    libs/brotli/enc/hash_forgetful_chain_inc.h, 
+    libs/brotli/enc/hash_longest_match64_inc.h, 
+    libs/brotli/enc/hash_longest_match_inc.h, 
+    libs/brotli/enc/hash_longest_match_quickly_inc.h, 
+    libs/brotli/enc/hash_to_binary_tree_inc.h, libs/brotli/enc/histogram.c, 
+    libs/brotli/enc/histogram.h, libs/brotli/enc/histogram_inc.h, 
+    libs/brotli/enc/literal_cost.c, libs/brotli/enc/literal_cost.h, 
+    libs/brotli/enc/memory.c, libs/brotli/enc/memory.h, 
+    libs/brotli/enc/metablock.c, libs/brotli/enc/metablock.h, 
+    libs/brotli/enc/metablock_inc.h, libs/brotli/enc/port.h, 
+    libs/brotli/enc/prefix.h, libs/brotli/enc/quality.h, 
+    libs/brotli/enc/ringbuffer.h, libs/brotli/enc/static_dict.c, 
+    libs/brotli/enc/static_dict.h, libs/brotli/enc/static_dict_lut.h, 
+    libs/brotli/enc/utf8_util.c, libs/brotli/enc/utf8_util.h, 
+    libs/brotli/enc/write_bits.h, libs/brotli/include/brotli/decode.h, 
+    libs/brotli/include/brotli/encode.h, libs/brotli/include/brotli/port.h, 
+    libs/brotli/include/brotli/types.h, libs/woff2/CMakeLists.txt, 
+    libs/woff2/Makefile.am, libs/woff2/brotli/LICENSE, 
+    libs/woff2/brotli/Makefile.am, libs/woff2/brotli/common/constants.h, 
+    libs/woff2/brotli/common/dictionary.c, 
+    libs/woff2/brotli/common/dictionary.h, 
+    libs/woff2/brotli/common/version.h, 
+    libs/woff2/brotli/enc/backward_references.c, 
+    libs/woff2/brotli/enc/backward_references.h, 
+    libs/woff2/brotli/enc/backward_references_hq.c, 
+    libs/woff2/brotli/enc/backward_references_hq.h, 
+    libs/woff2/brotli/enc/backward_references_inc.h, 
+    libs/woff2/brotli/enc/bit_cost.c, libs/woff2/brotli/enc/bit_cost.h, 
+    libs/woff2/brotli/enc/bit_cost_inc.h, 
+    libs/woff2/brotli/enc/block_encoder_inc.h, 
+    libs/woff2/brotli/enc/block_splitter.c, 
+    libs/woff2/brotli/enc/block_splitter.h, 
+    libs/woff2/brotli/enc/block_splitter_inc.h, 
+    libs/woff2/brotli/enc/brotli_bit_stream.c, 
+    libs/woff2/brotli/enc/brotli_bit_stream.h, 
+    libs/woff2/brotli/enc/cluster.c, libs/woff2/brotli/enc/cluster.h, 
+    libs/woff2/brotli/enc/cluster_inc.h, libs/woff2/brotli/enc/command.h, 
+    libs/woff2/brotli/enc/compress_fragment.c, 
+    libs/woff2/brotli/enc/compress_fragment.h, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.c, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.h, 
+    libs/woff2/brotli/enc/context.h, libs/woff2/brotli/enc/dictionary_hash.c, 
+    libs/woff2/brotli/enc/dictionary_hash.h, libs/woff2/brotli/enc/encode.c, 
+    libs/woff2/brotli/enc/entropy_encode.c, 
+    libs/woff2/brotli/enc/entropy_encode.h, 
+    libs/woff2/brotli/enc/entropy_encode_static.h, 
+    libs/woff2/brotli/enc/fast_log.h, 
+    libs/woff2/brotli/enc/find_match_length.h, libs/woff2/brotli/enc/hash.h, 
+    libs/woff2/brotli/enc/hash_forgetful_chain_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match64_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match_quickly_inc.h, 
+    libs/woff2/brotli/enc/hash_to_binary_tree_inc.h, 
+    libs/woff2/brotli/enc/histogram.c, libs/woff2/brotli/enc/histogram.h, 
+    libs/woff2/brotli/enc/histogram_inc.h, 
+    libs/woff2/brotli/enc/literal_cost.c, 
+    libs/woff2/brotli/enc/literal_cost.h, libs/woff2/brotli/enc/memory.c, 
+    libs/woff2/brotli/enc/memory.h, libs/woff2/brotli/enc/metablock.c, 
+    libs/woff2/brotli/enc/metablock.h, libs/woff2/brotli/enc/metablock_inc.h, 
+    libs/woff2/brotli/enc/port.h, libs/woff2/brotli/enc/prefix.h, 
+    libs/woff2/brotli/enc/quality.h, libs/woff2/brotli/enc/ringbuffer.h, 
+    libs/woff2/brotli/enc/static_dict.c, libs/woff2/brotli/enc/static_dict.h, 
+    libs/woff2/brotli/enc/static_dict_lut.h, 
+    libs/woff2/brotli/enc/utf8_util.c, libs/woff2/brotli/enc/utf8_util.h, 
+    libs/woff2/brotli/enc/write_bits.h, 
+    libs/woff2/brotli/include/brotli/decode.h, 
+    libs/woff2/brotli/include/brotli/encode.h, 
+    libs/woff2/brotli/include/brotli/port.h, 
+    libs/woff2/brotli/include/brotli/types.h, src/CMakeLists.txt, 
+    src/Makefile.am, tests/Makefile.am, tests/create-makefile: 
+  moved brotli from woff2 to libs folder 
+
+2017-12-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/CMakeLists.txt: 
+  ctest: colorize test results and keep gtest colors 
+
+  * libs/variant/include/mpark/config.hpp, 
+    libs/variant/include/mpark/lib.hpp, 
+    libs/variant/include/mpark/variant.hpp: 
+  updated mpark::variant to 
+  https://github.com/mpark/variant/commit/382014b
+fixes a build error 
+  introduced with MSVC 19.12 
+
+2017-12-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * .appveyor.yml, .travis.yml, CMakeLists.txt, configure.ac, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.2.3 
+
+2017-11-29  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/woff2/brotli/common/dictionary.h, 
+    libs/woff2/brotli/common/version.h, 
+    libs/woff2/brotli/enc/backward_references_hq.c, 
+    libs/woff2/brotli/enc/backward_references_hq.h, 
+    libs/woff2/brotli/enc/port.h, libs/woff2/brotli/enc/quality.h, 
+    libs/woff2/brotli/include/brotli/decode.h, 
+    libs/woff2/brotli/include/brotli/encode.h: 
+  updated brotli to version 1.0.2 
+
+2017-11-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DependencyGraph.hpp: 
+  simplified DependencyGraph::GraphNode 
+
+  * src/BgColorSpecialHandler.cpp, src/BoundingBox.cpp, src/BoundingBox.hpp, 
+    src/Color.cpp, src/PathClipper.cpp, src/SVGTree.cpp, 
+    tests/BoundingBoxTest.cpp: 
+  minor code cleanup and improvements 
+
+2017-11-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Makefile.am, tests/Makefile.am, tests/create-makefile: 
+  suppress warnings regarding 'mismatched tags' 
+  (class/struct)
+https://gcc.gnu.org/wiki/FAQ#Why_GCC_does_not_warn_for_mismatch_between_struct_and_class_.28-Wmismatched-tags.29_.3F 
+
+  * src/DependencyGraph.hpp: 
+  fixed dangling pointer issue in DependencyGraph 
+
+  * tests/EmSpecialTest.cpp: 
+  added missing initializers in EmSpecialTest 
+
+  * tests/TpicSpecialTest.cpp: 
+  added missing initializers in TpicSpecialTest 
+
+2017-11-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIReader.hpp, tests/CMakeLists.txt, tests/DVIReaderTest.cpp, 
+    tests/Makefile.am, tests/data/Makefile.am, tests/data/cmr10.pfb, 
+    tests/data/sample_v2.dvi, tests/data/sample_v3.dvi: 
+  added test for DVIReader 
+
+  * src/Subfont.cpp, src/Subfont.hpp, tests/CMakeLists.txt, 
+    tests/CMapManagerTest.cpp, tests/FileFinderTest.cpp, 
+    tests/FontManagerTest.cpp, tests/Makefile.am, tests/MapLineTest.cpp, 
+    tests/SubfontTest.cpp, tests/create-makefile, tests/testmain.cpp, 
+    tests/testutil.hpp: 
+  tests: moved common initializations to testmain.cpp 
+
+  * src/PSPattern.cpp, src/SVGCharHandler.cpp, src/SVGTree.cpp, 
+    src/TpicSpecialHandler.cpp: 
+  removed redundant calls of std::move() 
+
+2017-11-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * Makefile.am: 
+  removed redundant lcov statement from Makefile 
+
+2017-11-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README.md: 
+  added donation badge to readme 
+
+  * tests/CMapTest.cpp, tests/GFReaderTest.cpp, tests/JFMReaderTest.cpp, 
+    tests/RangeMapTest.cpp, tests/TFMReaderTest.cpp, 
+    tests/TensorProductPatchTest.cpp, tests/ToUnicodeMapTest.cpp, 
+    tests/VectorStreamTest.cpp: 
+  tests: few code improvements 
+
+2017-11-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * .appveyor.yml, .travis.yml, CMakeLists.txt, configure.ac, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.2.2 
+
+  * src/XMLString.cpp, tests/TensorProductPatchTest.cpp, 
+    tests/XMLStringTest.cpp: 
+  avoid scientific notation when printing floats/doubles 
+
+  * src/CMapManager.cpp, src/FileFinder.cpp, src/Font.cpp, src/Font.hpp, 
+    src/FontEngine.cpp, src/FontManager.cpp, src/FontMap.cpp, 
+    src/FontMap.hpp, src/Ghostscript.cpp, src/MiKTeXCom.cpp, src/XMLNode.cpp: 
+  replaced null pointer constants with 'nullptr' 
+
+  * src/Font.cpp, src/Font.hpp: 
+  prevent dangling pointers to font map entries (closes #79) 
+
+2017-11-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * CMakeLists.txt: 
+  cmake: generate compile_commands.json by default 
+
+2017-11-13  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/variant/include/mpark/lib.hpp, 
+    libs/variant/include/mpark/variant.hpp: 
+  updated mpark::variant to commit 
+  ea542a0
+https://github.com/mpark/variant/commit/ea542a0fef86fb8c1696238b95bdaddb8ff2337c 
+
+  * NEWS, README.md: 
+  updated NEWS and README 
+
+  * .appveyor.yml, .travis.yml, CMakeLists.txt, configure.ac, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.2.1 
+
+2017-11-10  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README, README.md, doc/dvisvgm.txt.in: 
+  minor additions/fixes of manpage and README 
+
+2017-11-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/Makefile.am, doc/db2html.xsl, doc/tweak-db-refentry.xsl: 
+  manpage: avoid using 'stats' to improve portability (closes #72) 
+
+2017-10-31  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/InputReader.cpp, src/InputReader.hpp, src/PSInterpreter.cpp: 
+  simplified code to lookup PS operators 
+
+2017-10-30  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.hpp, src/psdefs.cpp, src/psdefs.ps, 
+    tests/PSInterpreterTest.cpp: 
+  call applyscalevals on every change of the CTM 
+
+  * src/CMakeLists.txt, src/PsSpecialHandler.hpp, src/psdefs.cpp, 
+    src/psdefs.ps, tests/PSInterpreterTest.cpp: 
+  properly apply CTM to linewidth (closes #77) 
+
+2017-10-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DependencyGraph.hpp, src/SVGTree.cpp, tests/DependencyGraphTest.cpp: 
+  manage heap memory in DependencyGraph with unique_ptrs 
+
+  * src/DVIToSVG.cpp, src/DVIToSVGActions.cpp, src/DVIToSVGActions.hpp, 
+    src/DvisvgmSpecialHandler.cpp, src/EPSToSVG.cpp, src/EPSToSVG.hpp, 
+    src/EmSpecialHandler.cpp, src/HyperlinkManager.cpp, src/PSPattern.cpp, 
+    src/PSPattern.hpp, src/PsSpecialHandler.cpp, src/SVGCharHandler.cpp, 
+    src/SVGCharHandler.hpp, src/SVGCharPathHandler.cpp, 
+    src/SVGCharTspanTextHandler.cpp, src/SVGSingleCharTextHandler.cpp, 
+    src/SVGTree.cpp, src/SVGTree.hpp, src/ShadingPatch.hpp, 
+    src/SpecialActions.hpp, src/TpicSpecialHandler.cpp, src/XMLDocument.cpp, 
+    src/XMLDocument.hpp, src/XMLNode.cpp, src/XMLNode.hpp, src/utility.hpp, 
+    tests/DvisvgmSpecialTest.cpp, tests/EmSpecialTest.cpp, 
+    tests/TpicSpecialTest.cpp, tests/XMLNodeTest.cpp: 
+  replaced raw XMLNode pointers with unique_ptrs
+which helps to ensure 
+  proper ownership and simplifies deleting the corresponding objects 
+
+2017-10-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/ff-woff/fontforge/macbinary.c: 
+  updated link to CTAN:/tools/macutils/crc 
+
+2017-10-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/woff2/include/woff2/version.h: 
+  replaced CRLF line endings 
+
+2017-10-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS, README, README.md: 
+  updated NEWS and README 
+
+  * .appveyor.yml, .travis.yml, CMakeLists.txt, configure.ac, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.2 
+
+  * src/Length.hpp, src/PageSize.cpp: 
+  added user-defined literals for some length units 
+
+  * src/dvisvgm.cpp: 
+  fixed output of option --version 
+
+  * src/CMapManager.cpp, src/CMapReader.cpp, src/CMapReader.hpp, 
+    src/DVIActions.hpp, src/DVIToSVG.cpp, src/DVIToSVG.hpp, 
+    src/DVIToSVGActions.hpp, src/FileFinder.cpp, src/Font.cpp, src/Font.hpp, 
+    src/FontEncoding.cpp, src/FontEncoding.hpp, src/FontEngine.cpp, 
+    src/FontEngine.hpp, src/FontManager.cpp, src/FontMetrics.cpp, 
+    src/FontMetrics.hpp, src/PSPattern.hpp, src/PsSpecialHandler.cpp, 
+    src/PsSpecialHandler.hpp, src/SVGCharHandlerFactory.cpp, 
+    src/SVGCharHandlerFactory.hpp, src/SVGOutput.cpp, 
+    src/SVGSingleCharTextHandler.hpp, src/SVGTree.cpp, src/ShadingPatch.cpp, 
+    src/ShadingPatch.hpp, src/SignalHandler.cpp, src/Subfont.cpp, 
+    src/Subfont.hpp, src/XMLNode.cpp, tests/CMapReaderTest.cpp, 
+    tests/ShadingPatchTest.cpp: 
+  replaced several bare new/delete statements with unique pointers 
+
+2017-10-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Subfont.cpp: 
+  don't access unique_ptr after it has been moved 
+
+  * src/Message.cpp: 
+  check for '\0' at end of DVISVGM_COLORS 
+
+  * src/FontWriter.cpp: 
+  added missing #include of config.h 
+
+2017-10-15  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PDFParser.cpp, src/PDFParser.hpp: 
+  replaced shared_ptr with unique_ptr in PDFParser 
+
+2017-10-13  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .travis.yml: 
+  Travis: use gcc 4.9 rather than 4.8 to compile mpark::variant correctly 
+
+  * AUTHORS, configure.ac, doc/dvisvgm.txt.in, libs/CMakeLists.txt, 
+    libs/Makefile.am, libs/variant/CMakeLists.txt, libs/variant/LICENSE.md, 
+    libs/variant/Makefile.am, libs/variant/include/mpark/config.hpp, 
+    libs/variant/include/mpark/in_place.hpp, 
+    libs/variant/include/mpark/lib.hpp, 
+    libs/variant/include/mpark/variant.hpp, src/CMakeLists.txt, 
+    src/HyperlinkManager.cpp, src/HyperlinkManager.hpp, src/InputReader.hpp, 
+    src/Makefile.am, src/PDFParser.cpp, src/PDFParser.hpp, 
+    src/PdfSpecialHandler.cpp, src/PdfSpecialHandler.hpp, 
+    tests/CMakeLists.txt, tests/Makefile.am, tests/PDFParserTest.cpp, 
+    tests/SpecialManagerTest.cpp, tests/create-makefile: 
+  added evaluation of PDF hyperlink specials (closes #74) 
+
+2017-10-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/CMakeLists.txt, src/HtmlSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.hpp, src/HyperlinkManager.cpp, 
+    src/HyperlinkManager.hpp, src/Makefile.am, src/dvisvgm.cpp: 
+  separated hyperlink functionality from HtmlSpecialHandler to 
+  HyperlinkManager 
+
+2017-10-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/woff2/src/font.cc, libs/woff2/src/normalize.cc, 
+    libs/woff2/src/woff2_enc.cc: 
+  woff2: removed unused variables to prevent compiler warnings 
+
+2017-10-08  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/woff2/CMakeLists.txt, libs/woff2/Makefile.am, 
+    libs/woff2/include/woff2/decode.h, libs/woff2/include/woff2/encode.h, 
+    libs/woff2/include/woff2/file.h, libs/woff2/include/woff2/output.h, 
+    libs/woff2/include/woff2/version.h, libs/woff2/src/buffer.h, 
+    libs/woff2/src/file.h, libs/woff2/src/font.cc, libs/woff2/src/font.h, 
+    libs/woff2/src/glyph.cc, libs/woff2/src/glyph.h, 
+    libs/woff2/src/normalize.cc, libs/woff2/src/normalize.h, 
+    libs/woff2/src/port.h, libs/woff2/src/round.h, 
+    libs/woff2/src/store_bytes.h, libs/woff2/src/table_tags.cc, 
+    libs/woff2/src/table_tags.h, libs/woff2/src/transform.cc, 
+    libs/woff2/src/transform.h, libs/woff2/src/variable_length.cc, 
+    libs/woff2/src/variable_length.h, libs/woff2/src/woff2_common.cc, 
+    libs/woff2/src/woff2_common.h, libs/woff2/src/woff2_dec.h, 
+    libs/woff2/src/woff2_enc.cc, libs/woff2/src/woff2_enc.h, 
+    libs/woff2/src/woff2_out.cc, libs/woff2/src/woff2_out.h, 
+    src/FontWriter.cpp, src/Makefile.am, src/dvisvgm.cpp: 
+  updated woff2 to version 1.0.1 
+
+2017-10-06  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Subfont.cpp, src/Subfont.hpp, src/utility.hpp: 
+  removed stream-based constructor of SubfontException 
+
+  * src/XMLNode.cpp, src/XMLNode.hpp: 
+  added move constructor to XMLElementNode 
+
+  * src/CRC32.hpp, src/SpecialManager.hpp, src/Subfont.hpp, src/XMLNode.hpp: 
+  use delete/default to remove/implement constructors 
+
+2017-09-29  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/PapersizeSpecialHandler.cpp, 
+    src/PapersizeSpecialHandler.hpp, src/PdfSpecialHandler.cpp, 
+    src/PdfSpecialHandler.hpp, src/SpecialManager.cpp, 
+    src/SpecialManager.hpp, tests/PapersizeSpecialTest.cpp: 
+  added evaluation of pdf:pagesize specials 
+
+2017-09-28  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BoundingBox.cpp, src/BoundingBox.hpp, src/DVIToSVG.cpp, 
+    src/utility.cpp, src/utility.hpp, tests/BoundingBoxTest.cpp, 
+    tests/UtilityTest.cpp: 
+  rewrite of BoundingBox::extractLengths() 
+
+  * src/DVIToSVG.cpp, src/Length.hpp, src/PageSize.cpp, src/PageSize.hpp, 
+    src/utility.hpp, tests/PageSizeTest.cpp: 
+  use class Length in PageSize rather than plain numbers 
+
+2017-09-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/woff2/brotli/common/constants.h, 
+    libs/woff2/brotli/common/dictionary.c, 
+    libs/woff2/brotli/common/dictionary.h, 
+    libs/woff2/brotli/common/version.h, 
+    libs/woff2/brotli/enc/backward_references.c, 
+    libs/woff2/brotli/enc/backward_references_hq.c, 
+    libs/woff2/brotli/enc/backward_references_hq.h, 
+    libs/woff2/brotli/enc/backward_references_inc.h, 
+    libs/woff2/brotli/enc/block_splitter.c, 
+    libs/woff2/brotli/enc/block_splitter_inc.h, 
+    libs/woff2/brotli/enc/brotli_bit_stream.c, 
+    libs/woff2/brotli/enc/brotli_bit_stream.h, 
+    libs/woff2/brotli/enc/cluster_inc.h, libs/woff2/brotli/enc/command.h, 
+    libs/woff2/brotli/enc/compress_fragment.c, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.c, 
+    libs/woff2/brotli/enc/encode.c, 
+    libs/woff2/brotli/enc/find_match_length.h, libs/woff2/brotli/enc/hash.h, 
+    libs/woff2/brotli/enc/hash_forgetful_chain_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match64_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match_quickly_inc.h, 
+    libs/woff2/brotli/enc/hash_to_binary_tree_inc.h, 
+    libs/woff2/brotli/enc/memory.h, libs/woff2/brotli/enc/port.h, 
+    libs/woff2/brotli/enc/write_bits.h, 
+    libs/woff2/brotli/include/brotli/decode.h, 
+    libs/woff2/brotli/include/brotli/encode.h: 
+  updated Brotli to version 1.0.1 
+
+  * src/InputReader.cpp, src/InputReader.hpp, tests/CMakeLists.txt, 
+    tests/Makefile.am, tests/SplittedCharInputBufferTest.cpp, 
+    tests/StreamInputBufferTest.cpp, tests/StringMatcherTest.cpp: 
+  use Knuth-Morris-Pratt algorithm to find a string in a stream 
+
+  * src/TpicSpecialHandler.cpp: 
+  use isxdigit() to check hex digits 
+
+2017-09-19  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * transfer-cs: 
+  updated makeskel and transfer-cs 
+
+2017-09-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml: 
+  updated FreeType to version 2.8.1 
+
+2017-09-15  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BgColorSpecialHandler.cpp, src/BgColorSpecialHandler.hpp, 
+    src/ColorSpecialHandler.cpp, src/ColorSpecialHandler.hpp, 
+    src/DvisvgmSpecialHandler.cpp, src/DvisvgmSpecialHandler.hpp, 
+    src/EmSpecialHandler.cpp, src/EmSpecialHandler.hpp, 
+    src/HtmlSpecialHandler.cpp, src/HtmlSpecialHandler.hpp, 
+    src/NoPsSpecialHandler.cpp, src/NoPsSpecialHandler.hpp, 
+    src/PapersizeSpecialHandler.cpp, src/PapersizeSpecialHandler.hpp, 
+    src/PdfSpecialHandler.cpp, src/PdfSpecialHandler.hpp, 
+    src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp, 
+    src/SpecialHandler.hpp, src/SpecialManager.cpp, 
+    src/TpicSpecialHandler.cpp, src/TpicSpecialHandler.hpp, 
+    tests/ColorSpecialTest.cpp, tests/PapersizeSpecialTest.cpp: 
+  changed return value of SpecialHandler::prefixes() to std::vector 
+
+  * src/DVIToSVG.cpp, src/SpecialManager.cpp, src/SpecialManager.hpp, 
+    src/utility.hpp, tests/CMakeLists.txt, tests/Makefile.am, 
+    tests/SpecialManagerTest.cpp: 
+  use smart pointers to allocate/deallocate SpecialHandlers 
+
+2017-09-13  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/CMakeLists.txt: 
+  make name of Python script part of custom command 
+
+  * tests/FileSystemTest.cpp: 
+  close streams before removing crresponding files 
+
+2017-09-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/CMakeLists.txt: 
+  made testmain a library to prevent separate builds for each test 
+
+2017-09-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/dvisvgm.cpp: 
+  fixed number of dashes printed by option -V1 
+
+2017-09-08  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/xxHash/xxhash.c, libs/xxHash/xxhash.h, libs/xxHash/xxhsum.c: 
+  updated xxhash to version 0.6.3 
+
+  * src/FileFinder.cpp, src/FileFinder.hpp, tests/CMapManagerTest.cpp, 
+    tests/FileFinderTest.cpp, tests/FontManagerTest.cpp, 
+    tests/MapLineTest.cpp, tests/SubfontTest.cpp: 
+  init libkpathsea correctly in tests to prevent assertion failures 
+
+  * tests/CMakeLists.txt, tests/Makefile.am, tests/create-makefile, 
+    tests/gtest/CMakeLists.txt, tests/testmain.cpp: 
+  define variable TEST_ARGV0 to make argv[0] of main() available in 
+  tests
+this is required to initialize kpathsea properly, for example 
+
+  * src/FileFinder.cpp, src/Makefile.am: 
+  added missing #include; added windows.hpp to Makefile.am 
+
+  * src/DependencyGraph.hpp, src/SVGTree.cpp, tests/DependencyGraphTest.cpp: 
+  DependencyGraph::getKeys(): return result, don't use reference parameter 
+
+2017-09-07  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/dvisvgm.cpp: 
+  added pdftex.map to default mapfiles 
+
+  * src/MapLine.cpp, tests/MapLineTest.cpp: 
+  treat prefix "<<" in a mapline as "<[" (skip second char) 
+
+  * src/GFReader.cpp: 
+  fixed incorrect integer type in GFReader; insert CharInfos with emplace 
+
+  * tests/CMakeLists.txt, tests/FontCacheTest.cpp, tests/Makefile.am, 
+    tests/create-makefile: 
+  fixed path issue in FontCacheTest 
+
+2017-09-06  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/CLCommandLine.cpp, src/CMapManager.cpp, src/CMapManager.hpp, 
+    src/Calculator.cpp, src/Calculator.hpp, src/DVIToSVG.cpp, 
+    src/DVIToSVGActions.hpp, src/DependencyGraph.hpp, 
+    src/DvisvgmSpecialHandler.cpp, src/DvisvgmSpecialHandler.hpp, 
+    src/EmSpecialHandler.cpp, src/EmSpecialHandler.hpp, src/FileFinder.cpp, 
+    src/Font.cpp, src/Font.hpp, src/FontCache.hpp, src/FontEncoding.cpp, 
+    src/FontManager.cpp, src/FontManager.hpp, src/FontMap.hpp, 
+    src/GFReader.hpp, src/HtmlSpecialHandler.cpp, src/HtmlSpecialHandler.hpp, 
+    src/InputReader.cpp, src/InputReader.hpp, src/Message.cpp, 
+    src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp, src/SVGTree.cpp, 
+    src/SVGTree.hpp, src/SpecialManager.hpp, src/Subfont.cpp, 
+    src/Subfont.hpp, tests/StreamInputBufferTest.cpp: 
+  replaced std::map with std::unordered_map where possible to increase 
+  performance 
+
+  * src/DLLoader.hpp, src/Directory.cpp, src/Directory.hpp, 
+    src/FileSystem.cpp, src/MiKTeXCom.hpp, src/Process.cpp, src/Terminal.cpp, 
+    src/windows.hpp: 
+  disable macros min/max defined in windows.h 
+
+  * src/BasicDVIReader.cpp, src/BgColorSpecialHandler.cpp, src/Bitmap.cpp, 
+    src/BoundingBox.cpp, src/CMap.cpp, src/CMapReader.cpp, src/CRC32.cpp, 
+    src/Calculator.cpp, src/ColorSpecialHandler.cpp, src/DLLoader.cpp, 
+    src/DVIReader.cpp, src/Directory.cpp, src/EPSFile.cpp, src/EPSToSVG.cpp, 
+    src/EmSpecialHandler.cpp, src/EncFile.cpp, src/FileFinder.cpp, 
+    src/FilePath.cpp, src/Font.cpp, src/FontCache.cpp, src/FontEncoding.cpp, 
+    src/FontEngine.cpp, src/FontManager.cpp, src/FontMap.cpp, 
+    src/FontMap.hpp, src/FontMetrics.cpp, src/FontWriter.cpp, 
+    src/GFGlyphTracer.cpp, src/GFTracer.cpp, src/HtmlSpecialHandler.cpp, 
+    src/InputBuffer.cpp, src/InputReader.cpp, src/JFM.cpp, src/MapLine.cpp, 
+    src/Message.cpp, src/MetafontWrapper.cpp, src/MiKTeXCom.cpp, 
+    src/NoPsSpecialHandler.cpp, src/PSInterpreter.cpp, src/PSPattern.cpp, 
+    src/PSPreviewFilter.cpp, src/PageRanges.cpp, src/PageSize.cpp, 
+    src/PathClipper.cpp, src/PdfSpecialHandler.cpp, src/SVGTree.cpp, 
+    src/SpecialManager.cpp, src/StreamWriter.cpp, src/TFM.cpp, 
+    src/VFReader.cpp, src/XMLDocument.cpp, src/XMLNode.cpp, 
+    src/XMLString.cpp, src/dvisvgm.cpp: 
+  removed redundant #includes of config.h 
+
+2017-09-05  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/DvisvgmSpecialHandler.cpp, 
+    tests/DvisvgmSpecialTest.cpp: 
+  allow all common length units in dvisvgm specials 
+
+  * tests/DvisvgmSpecialTest.cpp: 
+  replaced constexpr with const to make clang happy 
+
+2017-08-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/MapLineTest.cpp: 
+  added braces to prevent compiler warnings 
+
+  * src/AGLTable.hpp, src/CMakeLists.txt, src/CMapReader.cpp, src/Color.cpp, 
+    src/CommandLine.hpp, src/FontWriter.cpp, src/genhashmap.py, 
+    tests/genhashcheck.py: 
+  use list initialization on constant std::arrays 
+
+2017-08-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/CMapManager.cpp, src/DvisvgmSpecialHandler.cpp, src/Font.cpp, 
+    src/Ghostscript.cpp, src/PsSpecialHandler.cpp, src/dvisvgm.cpp, 
+    tests/DvisvgmSpecialTest.cpp: 
+  use range-based for to iterate over a fixed sequence of items 
+
+2017-08-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * m4/ax_code_coverage.m4: 
+  updated ax_code_coverage.m4 to version 25 
+
+2017-08-06  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml: 
+  updated potrace to version 1.15 
+
+2017-08-01  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/woff2/src/font.cc, libs/woff2/src/normalize.cc, 
+    libs/woff2/src/port.h, libs/woff2/src/store_bytes.h, 
+    libs/woff2/src/woff2_common.cc, libs/woff2/src/woff2_enc.cc: 
+  updated woff2 to https://github.com/google/woff2/commits/2e09253 
+
+2017-06-30  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/gf2xml.cpp, src/gf2xml.mak: 
+  added scripts to generate SVG files from GF glyphs 
+
+2017-06-29  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/gfprint.mak: 
+  updated gfprint utility 
+
+2017-06-26  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml: 
+  AppVeyor: changed build image to VS 2017 
+
+2017-06-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  psfile: fixed sign of y coordinates 
+
+2017-06-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.hpp: 
+  use bp units for line width and miter limit 
+
+2017-06-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/EPSToSVG.cpp: 
+  remove redundant clipPath elements also when converting EPS files 
+
+2017-05-30  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp: 
+  manage memory of ClippingStack with shared pointers
+- automatically 
+  deletes unreferenced path objects
+- avoids keeping popped (and no longer 
+  required) paths in the pool vector 
+
+  * src/GraphicsPath.hpp: 
+  replaced vector with deque in class GraphicsPath
+due to cheaper front 
+  insertions/deletions 
+
+2017-05-26  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FileFinder.cpp, src/PsSpecialHandler.cpp: 
+  lookup psfile in texmf tree if it's not present in cwd (fixes #69) 
+
+  * src/Matrix.hpp, src/PsSpecialHandler.cpp: 
+  respect transformation of PS state in computation of psfile position 
+  (fixes #70) 
+
+  * src/Pair.hpp, tests/PairTest.cpp: 
+  added abs() and negation operator to class Pair 
+
+2017-05-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/FontCacheTest.cpp, tests/Makefile.am, tests/create-makefile: 
+  FontCacheTest: write test output to $builddir/data
+$srcdir/data may be 
+  read-only so that the tests fail unintentionally 
+
+2017-05-15  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml: 
+  updated FreeType to version 2.8 
+
+  * libs/woff2/CMakeLists.txt, libs/woff2/brotli/LICENSE, 
+    libs/woff2/brotli/Makefile.am, libs/woff2/brotli/common/constants.h, 
+    libs/woff2/brotli/common/dictionary.c, 
+    libs/woff2/brotli/common/dictionary.h, 
+    libs/woff2/brotli/common/version.h, 
+    libs/woff2/brotli/enc/backward_references.c, 
+    libs/woff2/brotli/enc/backward_references.h, 
+    libs/woff2/brotli/enc/backward_references_hq.c, 
+    libs/woff2/brotli/enc/backward_references_hq.h, 
+    libs/woff2/brotli/enc/backward_references_inc.h, 
+    libs/woff2/brotli/enc/block_splitter_inc.h, 
+    libs/woff2/brotli/enc/command.h, 
+    libs/woff2/brotli/enc/compress_fragment.c, 
+    libs/woff2/brotli/enc/compress_fragment.h, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.c, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.h, 
+    libs/woff2/brotli/enc/context.h, libs/woff2/brotli/enc/dictionary_hash.c, 
+    libs/woff2/brotli/enc/dictionary_hash.h, libs/woff2/brotli/enc/encode.c, 
+    libs/woff2/brotli/enc/fast_log.h, libs/woff2/brotli/enc/hash.h, 
+    libs/woff2/brotli/enc/hash_forgetful_chain_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match64_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match_quickly_inc.h, 
+    libs/woff2/brotli/enc/hash_to_binary_tree_inc.h, 
+    libs/woff2/brotli/enc/histogram.c, libs/woff2/brotli/enc/literal_cost.c, 
+    libs/woff2/brotli/enc/memory.h, libs/woff2/brotli/enc/metablock.c, 
+    libs/woff2/brotli/enc/metablock.h, libs/woff2/brotli/enc/quality.h, 
+    libs/woff2/brotli/enc/static_dict.c, libs/woff2/brotli/enc/static_dict.h, 
+    libs/woff2/brotli/include/brotli/decode.h, 
+    libs/woff2/brotli/include/brotli/encode.h, 
+    libs/woff2/brotli/include/brotli/port.h, 
+    libs/woff2/brotli/include/brotli/types.h: 
+  updated brotli to version 0.6.0 
+
+2017-05-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Process.cpp: 
+  close pipe if fork() fails 
+
+2017-05-08  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Process.cpp, src/Process.hpp: 
+  refactored Process class
+- use separate class to encapsulate 
+  system-dependent stuff and to ensure
+  proper termination in case of 
+  signals or errors
+- prevent blocking if subprocess doesn't write anything 
+  to stdout/stderr 
+
+  * CMakeLists.txt, cmake-config.h, configure.ac, src/SignalHandler.cpp, 
+    src/SignalHandler.hpp: 
+  use sigaction() rather than signal() if possible 
+
+2017-04-28  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Process.cpp: 
+  quit Process::run() if child process terminated unexpectedly (fixes #68) 
+
+2017-04-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/Makefile.am, tests/create-makefile: 
+  added the FontWriter dependencies to the tests 
+
+2017-04-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/TpicSpecialHandler.cpp, tests/TpicSpecialTest.cpp: 
+  added evaluation of TPIC's 'tx' special command 
+
+  * src/TpicSpecialHandler.cpp, src/TpicSpecialHandler.hpp, 
+    tests/CMakeLists.txt, tests/Makefile.am, tests/TpicSpecialTest.cpp: 
+  improved the TPIC special handler and added tests for it 
+
+  * src/Color.cpp, src/Color.hpp, src/PSPattern.cpp, 
+    tests/ColorSpecialTest.cpp: 
+  avoid implicit conversion of Color object to RGB integer 
+
+2017-04-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .gitignore: 
+  updated .hgignore 
+
+2017-04-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Ghostscript.cpp: 
+  try to load libgs.X.dylib on Mac systems (closes #66) 
+
+  * src/DLLoader.cpp, src/DLLoader.hpp, src/Ghostscript.cpp: 
+  replaced c-string parameter of DLLoader() and loadLibrary() with string 
+
+  * src/DLLoader.cpp, src/DLLoader.hpp: 
+  added DLLoader::loadLibrary() to assign a different library 
+
+2017-03-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * m4/ax_code_coverage.m4, m4/ax_cxx_compile_stdcxx.m4: 
+  updated m4 scripts 
+
+2017-03-03  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/FilePathTest.cpp, tests/FontCacheTest.cpp, 
+    tests/SVGOutputTest.cpp: 
+  tests: minor path improvements 
+
+  * .gitignore, CMakeLists.txt, libs/ff-woff/CMakeLists.txt, 
+    src/CMakeLists.txt, tests/CMakeLists.txt: 
+  cmake: fixed build issues when using a separate build directory 
+
+  * src/FileFinder.cpp, tests/FileFinderTest.cpp: 
+  fixed handling of absolute additional directories in FileFinder 
+
+2017-03-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Color.cpp, src/FilePath.cpp, src/FontWriter.cpp, src/PageSize.cpp, 
+    src/dvisvgm.cpp, src/utility.cpp, src/utility.hpp, tests/UtilityTest.cpp: 
+  util::tolower() no longer modifies its string parameter 
+
+  * libs/woff2/CMakeLists.txt, src/Makefile.am, src/dvisvgm.cpp: 
+  improved generation of list showing the library versions 
+
+  * libs/woff2/src/normalize.cc, libs/woff2/src/woff2_enc.cc: 
+  woff2: removed unused variables 
+
+2017-03-01  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/woff2/CMakeLists.txt: 
+  adapted Makefiles to updated libwoff2 
+
+  * libs/woff2/Makefile.am, libs/woff2/brotli/Makefile.am, 
+    libs/woff2/brotli/common/constants.h, 
+    libs/woff2/brotli/common/dictionary.c, 
+    libs/woff2/brotli/common/dictionary.h, 
+    libs/woff2/brotli/common/version.h, 
+    libs/woff2/brotli/enc/backward_references.c, 
+    libs/woff2/brotli/enc/backward_references.cc, 
+    libs/woff2/brotli/enc/backward_references.h, 
+    libs/woff2/brotli/enc/backward_references_inc.h, 
+    libs/woff2/brotli/enc/bit_cost.c, libs/woff2/brotli/enc/bit_cost.h, 
+    libs/woff2/brotli/enc/bit_cost_inc.h, 
+    libs/woff2/brotli/enc/block_encoder_inc.h, 
+    libs/woff2/brotli/enc/block_splitter.c, 
+    libs/woff2/brotli/enc/block_splitter.cc, 
+    libs/woff2/brotli/enc/block_splitter.h, 
+    libs/woff2/brotli/enc/block_splitter_inc.h, 
+    libs/woff2/brotli/enc/brotli_bit_stream.c, 
+    libs/woff2/brotli/enc/brotli_bit_stream.cc, 
+    libs/woff2/brotli/enc/brotli_bit_stream.h, 
+    libs/woff2/brotli/enc/cluster.c, libs/woff2/brotli/enc/cluster.h, 
+    libs/woff2/brotli/enc/cluster_inc.h, libs/woff2/brotli/enc/command.h, 
+    libs/woff2/brotli/enc/compress_fragment.c, 
+    libs/woff2/brotli/enc/compress_fragment.cc, 
+    libs/woff2/brotli/enc/compress_fragment.h, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.c, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.cc, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.h, 
+    libs/woff2/brotli/enc/compressor.h, libs/woff2/brotli/enc/context.h, 
+    libs/woff2/brotli/enc/dictionary.cc, libs/woff2/brotli/enc/dictionary.h, 
+    libs/woff2/brotli/enc/dictionary_hash.h, libs/woff2/brotli/enc/encode.c, 
+    libs/woff2/brotli/enc/encode.cc, libs/woff2/brotli/enc/encode.h, 
+    libs/woff2/brotli/enc/encode_parallel.cc, 
+    libs/woff2/brotli/enc/encode_parallel.h, 
+    libs/woff2/brotli/enc/entropy_encode.c, 
+    libs/woff2/brotli/enc/entropy_encode.cc, 
+    libs/woff2/brotli/enc/entropy_encode.h, 
+    libs/woff2/brotli/enc/entropy_encode_static.h, 
+    libs/woff2/brotli/enc/fast_log.h, 
+    libs/woff2/brotli/enc/find_match_length.h, libs/woff2/brotli/enc/hash.h, 
+    libs/woff2/brotli/enc/hash_forgetful_chain_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match_inc.h, 
+    libs/woff2/brotli/enc/hash_longest_match_quickly_inc.h, 
+    libs/woff2/brotli/enc/histogram.c, libs/woff2/brotli/enc/histogram.cc, 
+    libs/woff2/brotli/enc/histogram.h, libs/woff2/brotli/enc/histogram_inc.h, 
+    libs/woff2/brotli/enc/literal_cost.c, 
+    libs/woff2/brotli/enc/literal_cost.cc, 
+    libs/woff2/brotli/enc/literal_cost.h, libs/woff2/brotli/enc/memory.c, 
+    libs/woff2/brotli/enc/memory.h, libs/woff2/brotli/enc/metablock.c, 
+    libs/woff2/brotli/enc/metablock.cc, libs/woff2/brotli/enc/metablock.h, 
+    libs/woff2/brotli/enc/metablock_inc.h, libs/woff2/brotli/enc/port.h, 
+    libs/woff2/brotli/enc/prefix.h, libs/woff2/brotli/enc/quality.h, 
+    libs/woff2/brotli/enc/ringbuffer.h, libs/woff2/brotli/enc/static_dict.c, 
+    libs/woff2/brotli/enc/static_dict.cc, 
+    libs/woff2/brotli/enc/static_dict.h, 
+    libs/woff2/brotli/enc/static_dict_lut.h, 
+    libs/woff2/brotli/enc/streams.cc, libs/woff2/brotli/enc/streams.h, 
+    libs/woff2/brotli/enc/transform.h, libs/woff2/brotli/enc/types.h, 
+    libs/woff2/brotli/enc/utf8_util.c, libs/woff2/brotli/enc/utf8_util.cc, 
+    libs/woff2/brotli/enc/utf8_util.h, libs/woff2/brotli/enc/write_bits.h, 
+    libs/woff2/brotli/include/brotli/decode.h, 
+    libs/woff2/brotli/include/brotli/encode.h, 
+    libs/woff2/brotli/include/brotli/port.h, 
+    libs/woff2/brotli/include/brotli/types.h, libs/woff2/src/buffer.h, 
+    libs/woff2/src/font.cc, libs/woff2/src/glyph.cc, 
+    libs/woff2/src/variable_length.cc, libs/woff2/src/woff2_dec.h, 
+    libs/woff2/src/woff2_enc.cc, src/Makefile.am: 
+  updated woff2 to https://github.com/google/woff2/commit/68e9ab5 
+
+  * libs/ff-woff/fontforge/nowakowskittfinstr.c: 
+  ff-woff: removed redundant variables 
+
+2017-02-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/BezierTest.cpp, tests/BitmapTest.cpp, tests/BoundingBoxTest.cpp, 
+    tests/CMapManagerTest.cpp, tests/CMapReaderTest.cpp, tests/CMapTest.cpp, 
+    tests/CRC32Test.cpp, tests/ColorTest.cpp, tests/CommandLineTest.cpp, 
+    tests/DirectoryTest.cpp, tests/FileSystemTest.cpp, 
+    tests/GraphicsPathTest.cpp, tests/JFMReaderTest.cpp, 
+    tests/MatrixTest.cpp, tests/PageRagesTest.cpp, tests/RangeMapTest.cpp, 
+    tests/SVGOutputTest.cpp, tests/SplittedCharInputBufferTest.cpp, 
+    tests/StreamInputBufferTest.cpp, tests/StreamReaderTest.cpp, 
+    tests/StreamWriterTest.cpp, tests/SubfontTest.cpp, 
+    tests/TFMReaderTest.cpp, tests/ToUnicodeMapTest.cpp, 
+    tests/UnicodeTest.cpp, tests/VectorIteratorTest.cpp, 
+    tests/XMLNodeTest.cpp: 
+  fixed signed/unsigned warnings in tests 
+
+2017-02-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * CMakeLists.txt, cmake-config.h, cmake/CodeCoverage.cmake, 
+    cmake/GetTriple.cmake, libs/CMakeLists.txt, libs/clipper/CMakeLists.txt, 
+    libs/ff-woff/CMakeLists.txt, libs/woff2/CMakeLists.txt, 
+    libs/xxHash/CMakeLists.txt, prepare-cmake.sh, src/CMakeLists.txt, 
+    tests/CMakeLists.txt, tests/gtest/CMakeLists.txt: 
+  improved cmake build environment (works with ninja) 
+
+  * libs/woff2/brotli/tools/bro.cc, libs/woff2/brotli/tools/rfc-format.py, 
+    libs/woff2/brotli/tools/version.h: 
+  removed redundant files 
+
 2017-02-20  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS: 
@@ -45,10 +1203,8 @@
     src/utility.hpp: 
   replaced non-standard constant M_PI with own definition 
 
-2017-02-12  Martin Gieseking  <martin.gieseking@uos.de>
-
-  * .appveyor.yml, .travis.yml, appveyor.yml: 
-  exclude branch 'tmp' from CI builds 
+  * src/MapLine.hpp: 
+  removed 'expicit' keyword from default constructor to make gcc 4.8 happy 
 
 2017-02-11  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -138,10 +1294,10 @@
   * src/XMLString.cpp, tests/EmSpecialTest.cpp, tests/GFGlyphTracerTest.cpp: 
   avoid negative zeros (-0) in SVG output 
 
-2017-02-07  Martin Gieseking  <martin.gieseking@uos.de>
+  * tests/CommandLineTest.cpp: 
+  removed redundant function 
 
-  * libs/clipper/License.txt: 
-  fixed line endings of clipper/License.txt 
+2017-02-07  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS: 
   updated NEWS 
@@ -1234,8 +2390,13 @@ exit()
 2016-05-26  Martin Gieseking  <martin.gieseking@uos.de>
 
   * README.md, doc/dvisvgm.txt.in, src/BasicDVIReader.cpp, 
-    src/BasicDVIReader.h, src/DVIReader.cpp, src/DVIToSVG.cpp: 
-  reworded 'DVI format' to 'DVI (format) version' 
+    src/BasicDVIReader.h, src/DVIReader.cpp: 
+  added support for XDV version 7 introduced by XeTeX 0.99995 
+
+2016-05-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/TFM.cpp: 
+  prevent reading more than 7 TFM param values (fixes #58) 
 
 2016-05-24  Martin Gieseking  <martin.gieseking@uos.de>
 

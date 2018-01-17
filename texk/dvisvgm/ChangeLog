@@ -1,3 +1,7 @@
+2018-01-15  Karl Berry  <karl@freefriends.org>
+
+	* Import 2.3.1 with Ghostscript.cpp patch from Martin.
+
 2018-01-08  Karl Berry  <karl@freefriends.org>
 
 	* m4/ax_cxx_compile_stdcxx.m4: move to top-level source/m4/.

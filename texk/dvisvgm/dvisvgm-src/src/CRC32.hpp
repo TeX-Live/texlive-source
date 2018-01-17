@@ -2,7 +2,7 @@
 ** CRC32.hpp                                                            **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -24,10 +24,10 @@
 #include <cstdlib>
 #include <istream>
 
-class CRC32
-{
+class CRC32 {
 	public:
 		CRC32 ();
+		CRC32 (const CRC32 &crc32) =delete;
 		void update (const uint8_t *bytes, size_t len);
 		void update (uint32_t n, int bytes=4);
 		void update (const char *str);
@@ -37,9 +37,6 @@ class CRC32
 		static uint32_t compute (const uint8_t *bytes, size_t len);
 		static uint32_t compute (const char *str);
 		static uint32_t compute (std::istream &is);
-
-	protected:
-		CRC32 (const CRC32 &crc32) {}
 
 	private:
 		uint32_t _crc32;

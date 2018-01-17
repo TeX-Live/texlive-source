@@ -2,7 +2,7 @@
 ** EmSpecialHandler.hpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -22,7 +22,7 @@
 #define EMSPECIALHANDLER_HPP
 
 #include <list>
-#include <map>
+#include <unordered_map>
 #include "Pair.hpp"
 #include "SpecialHandler.hpp"
 
@@ -42,7 +42,7 @@ class EmSpecialHandler : public SpecialHandler, public DVIEndPageListener
 		EmSpecialHandler ();
 		const char* name () const override {return "em";}
 		const char* info () const override {return "line drawing statements of the emTeX special set";}
-		const char** prefixes () const override;
+		const std::vector<const char*> prefixes () const override;
 		bool process (const char *prefix, std::istream &in, SpecialActions &actions) override;
 
 	protected:
@@ -54,10 +54,10 @@ class EmSpecialHandler : public SpecialHandler, public DVIEndPageListener
 		void point (InputReader &ir, SpecialActions &actions);
 
 	private:
-		std::map<int, DPair> _points; ///< points defined by special em:point
-		std::list<Line> _lines;       ///< list of lines with undefined end points
-		double _linewidth;            ///< global line width
-		DPair _pos;                   ///< current position of "graphic cursor"
+		std::unordered_map<int, DPair> _points; ///< points defined by special em:point
+		std::list<Line> _lines;  ///< list of lines with undefined end points
+		double _linewidth;       ///< global line width
+		DPair _pos;              ///< current position of "graphic cursor"
 };
 
 #endif

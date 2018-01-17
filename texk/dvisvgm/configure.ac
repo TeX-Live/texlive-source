@@ -2,7 +2,7 @@
 dnl Process this file with autoconf to produce a configure script
 dnl for dvisvgm in TeX Live.
 dnl
-dnl   Copyright 2015-2017 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2015-2018 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -10,14 +10,14 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl  Adapted for TeX Live from original dvisvgm configure.ac
-dnl  Copyright 2005-2017 Martin Gieseking
+dnl  Copyright 2005-2018 Martin Gieseking
 dnl
 m4_include([version.ac])[] dnl define dvisvgm_version
 AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
 AC_CONFIG_AUX_DIR([../../build-aux])
-AC_CONFIG_MACRO_DIRS([../../m4 m4])
+AC_CONFIG_MACRO_DIRS([../../m4])
 
 AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
 
@@ -59,9 +59,15 @@ if test "x$enable_native_texlive_build" = xyes; then
   # TL: always dlload libgs, must avoid shared lib ref in binary.
   HAVE_LIBGS=0
 else
-HAVE_LIBGS=1
+have_libgs=yes
 AC_CHECK_HEADER([ghostscript/iapi.h],
-	AC_CHECK_LIB(gs, gsapi_new_instance, , HAVE_LIBGS=0), HAVE_LIBGS=0)
+	[AC_CHECK_LIB(gs, gsapi_revision,, [have_libgs=no])],
+	[have_libgs=no])
+AS_IF([test "x$have_libgs" = "xno"],
+	# Ghostscript not found, check for dlopen
+	[AC_CHECK_LIB(dl, dlopen,,
+		[AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])]
+		[AC_MSG_WARN(PostScript support disabled)])])
 fi
 
 if test "$HAVE_LIBGS" -eq 0; then
@@ -189,10 +195,11 @@ AC_SUBST([DVISVGM_TREE], [dvisvgm-src])
 AC_CONFIG_FILES([Makefile
 	dvisvgm-src/Makefile
 	dvisvgm-src/libs/Makefile
+	dvisvgm-src/libs/brotli/Makefile
 	dvisvgm-src/libs/clipper/Makefile
 	dvisvgm-src/libs/ff-woff/Makefile
+	dvisvgm-src/libs/variant/Makefile
 	dvisvgm-src/libs/woff2/Makefile
-	dvisvgm-src/libs/woff2/brotli/Makefile
 	dvisvgm-src/libs/xxHash/Makefile
 	dvisvgm-src/src/Makefile
 	dvisvgm-src/src/version.hpp

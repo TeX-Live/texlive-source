@@ -2,7 +2,7 @@
 ** FontManagerTest.cpp                                                  **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -22,19 +22,10 @@
 #include <sstream>
 #include "Font.hpp"
 #include "FontManager.hpp"
-#include "FileFinder.hpp"
 
-#ifndef SRCDIR
-#define SRCDIR "."
-#endif
-
-
-class FontManagerTest : public ::testing::Test
-{
+class FontManagerTest : public ::testing::Test {
 	public:
 		FontManagerTest () : fm(FontManager::instance()) {
-			FileFinder::init("FontManagerTest", "FontManagerTest", false);
-			FileFinder::instance().addLookupDir(SRCDIR"/data");
 			fm.registerFont(10, "cmr10", 1274110073, 10, 10);
 			fm.registerFont(11, "cmr10", 1274110073, 10, 12);
 			fm.registerFont( 9, "cmr10", 1274110073, 10, 14);

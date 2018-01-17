@@ -2,7 +2,7 @@
 ** VectorIteratorTest.cpp                                               **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -32,7 +32,7 @@ TEST(VectorIteratorTest, inc) {
 	EXPECT_EQ(*it, 3);
 	EXPECT_EQ(*++it, 2);
 	EXPECT_TRUE(it.valid());
-	for (int i=2; it.valid(); i++) {
+	for (size_t i=2; it.valid(); i++) {
 		EXPECT_LT(i, vec.size()) << "i=" << i;
 		EXPECT_EQ(*it, vec[i]) << "*it=" << *it << ", vec[" << i << "]=" << vec[i];
 		++it;
@@ -59,7 +59,7 @@ TEST(VectorIteratorTest, dec) {
 	EXPECT_EQ(*it, 7);
 	EXPECT_EQ(*--it, 8);
 	EXPECT_TRUE(it.valid());
-	for (int i=4; it.valid(); i--) {
+	for (size_t i=4; it.valid(); i--) {
 		EXPECT_LT(i, vec.size()) << "i=" << i;
 		EXPECT_EQ(*it, vec[i]) << "*it=" << *it << ", vec[" << i << "]=" << vec[i];
 		--it;

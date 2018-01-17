@@ -2,7 +2,7 @@
 ** BoundingBoxTest.cpp                                                  **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -189,12 +189,21 @@ TEST(BoundingBoxTest, svgViewBox) {
 
 TEST(BoundingBoxTest, svgRectElement) {
 	BoundingBox bbox(4, 5, 6, 7);
-	XMLElementNode *rect = bbox.createSVGRect();
-	EXPECT_TRUE(rect != 0);
+	auto rect = bbox.createSVGRect();
+	ASSERT_NE(rect, nullptr);
 	EXPECT_EQ(rect->getName(), "rect");
 	EXPECT_EQ(string(rect->getAttributeValue("x")), "4");
 	EXPECT_EQ(string(rect->getAttributeValue("y")), "5");
 	EXPECT_EQ(string(rect->getAttributeValue("width")), "2");
 	EXPECT_EQ(string(rect->getAttributeValue("height")), "2");
-	delete rect;
+}
+
+
+TEST(BoundingBoxTest, extractLengths) {
+	vector<Length> lengths = BoundingBox::extractLengths(" 1cm,2mm  , 3pt   5in");
+	ASSERT_EQ(lengths.size(), 4u);
+	EXPECT_DOUBLE_EQ(lengths[0].cm(), 1);
+	EXPECT_DOUBLE_EQ(lengths[1].mm(), 2);
+	EXPECT_DOUBLE_EQ(lengths[2].pt(), 3);
+	EXPECT_DOUBLE_EQ(lengths[3].in(), 5);
 }

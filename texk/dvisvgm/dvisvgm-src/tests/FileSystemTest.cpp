@@ -2,7 +2,7 @@
 ** FileSystemTest.cpp                                                   **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -77,7 +77,7 @@ TEST(FileSystemTest, filesize) {
 	for (int i=0; i < 123; ++i)
 		ofs.put(i);
 	ofs.close();
-	EXPECT_EQ(FileSystem::filesize(tmpfile), 123);
+	EXPECT_EQ(FileSystem::filesize(tmpfile), 123u);
 	FileSystem::remove(tmpfile);
 }
 
@@ -96,6 +96,8 @@ TEST(FileSystemTest, copy) {
 		EXPECT_EQ(ifs1.get(), ifs2.get());
 	}
 	EXPECT_TRUE(ifs2.eof());
+	ifs1.close();
+	ifs2.close();
 	FileSystem::remove(tmpfile1);
 	FileSystem::remove(tmpfile2);
 }
@@ -117,5 +119,6 @@ TEST(FileSystemTest, move) {
 	}
 	ifs2.get();
 	EXPECT_TRUE(ifs2.eof());
+	ifs2.close();
 	FileSystem::remove(tmpfile2);
 }

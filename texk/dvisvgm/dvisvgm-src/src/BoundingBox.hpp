@@ -2,7 +2,7 @@
 ** BoundingBox.hpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -21,6 +21,7 @@
 #ifndef BOUNDINGBOX_HPP
 #define BOUNDINGBOX_HPP
 
+#include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -33,14 +34,12 @@ class Matrix;
 class XMLElementNode;
 
 
-struct BoundingBoxException : MessageException
-{
+struct BoundingBoxException : MessageException {
 	BoundingBoxException (const std::string &msg) : MessageException(msg) {}
 };
 
 
-class BoundingBox
-{
+class BoundingBox {
 	public:
 		BoundingBox ();
 		BoundingBox (double ulxx, double ulyy, double lrxx, double lryy);
@@ -54,7 +53,7 @@ class BoundingBox
 		void embed (const DPair &p) {embed(p.x(), p.y());}
 		void embed (const DPair &c, double r);
 
-		static void extractLengths (std::string boxstr, std::vector<Length> &lengths);
+		static std::vector<Length> extractLengths (std::string boxstr);
 
 		template <typename T>
 		void embed (const Pair<T> &p) {embed(p.x(), p.y());}
@@ -79,7 +78,7 @@ class BoundingBox
 		void transform (const Matrix &tm);
 		std::string toSVGViewBox () const;
 		std::ostream& write (std::ostream &os) const;
-		XMLElementNode* createSVGRect () const;
+		std::unique_ptr<XMLElementNode> createSVGRect () const;
 
 	private:
 		double _ulx, _uly; ///< coordinates of upper left vertex (in PS point units)

@@ -2,7 +2,7 @@
 ** NumericRanges.hpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -29,9 +29,9 @@ template <class T>
 class NumericRanges
 {
 	public:
-		typedef std::pair<T,T> Range;
-		typedef std::list<Range> Container;
-		typedef typename Container::const_iterator ConstIterator;
+		using Range = std::pair<T,T>;
+		using Container = std::list<Range>;
+		using ConstIterator = typename Container::const_iterator;
 
 	public:
 		void addRange (T value)          {addRange(value, value);}
@@ -98,7 +98,7 @@ void NumericRanges<T>::addRange (T first, T last) {
 
 template <class T>
 bool NumericRanges<T>::valueExists (T value) const {
-	ConstIterator it = std::lower_bound(_ranges.begin(), _ranges.end(), Range(value, 0),
+	auto it = std::lower_bound(_ranges.begin(), _ranges.end(), Range(value, 0),
 		[](const Range &r1, const Range &r2) {
 			return r1.first < r2.first;
 		});

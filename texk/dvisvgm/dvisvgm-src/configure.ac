@@ -1,11 +1,11 @@
 # This file is part of dvisvgm
-# Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>
+# Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>
 #
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[2.1.3],[martin.gieseking@uos.de])
-DATE="February 2017"
+AC_INIT([dvisvgm],[2.3.1],[martin.gieseking@uos.de])
+DATE="January 2018"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -30,9 +30,26 @@ AC_LANG(C)
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h xlocale.h])
 AC_HEADER_TIOCGWINSZ
 
-AC_CHECK_HEADER([kpathsea/kpathsea.h], ,
+CPPFLAGS_SAVE="$CPPFLAGS"
+CFLAGS_SAVE="$CFLAGS"
+LDFLAGS_SAVE="$LDFLAGS"
+
+# Check availability and usability of the kpathsea library
+AC_ARG_VAR(KPSE_CFLAGS, [C/C++ compiler flags for the kpathsea library])
+AC_ARG_VAR(KPSE_LIBS, [linker flags for the kpathsea library])
+AC_ARG_VAR(KPSE_LIBS, [])
+AC_ARG_WITH([kpathsea],
+	[AS_HELP_STRING([--with-kpathsea=prefix], [set location of kpathsea library])],
+	[with_kpathsea="$withval"],
+	[with_kpathsea=yes])
+
+AS_IF([test "x$with_kpathsea" != "xyes"],
+	[KPSE_CFLAGS="-I$with_kpathsea/include" KPSE_LIBS="-L$with_kpathsea/lib"]
+	[CPPFLAGS="$CPPFLAGS $KPSE_CFLAGS" CFLAGS="$CFLAGS $KPSE_CFLAGS" LDFLAGS="$LDFLAGS $KPSE_LIBS"])
+
+AC_CHECK_HEADER([kpathsea/kpathsea.h],,
 	[AC_MSG_ERROR([please install the kpathsea development package])])
-AC_CHECK_LIB(kpathsea, kpse_find_file, ,
+AC_CHECK_LIB([kpathsea], [kpse_find_file],,
 	[AC_MSG_ERROR([libkpathsea not found, please install the corresponding package first])])
 
 AC_MSG_CHECKING([kpathsea version])
@@ -49,58 +66,27 @@ AC_RUN_IFELSE([AC_LANG_SOURCE([#include <stdio.h>
 	[kpseversion=`cat kpseversion|sed 's/kpathsea version //'`], [kpseversion=], [kpseversion=unknown])
 AC_MSG_RESULT("$kpseversion")
 rm -f kpseversion
-if test -z "$kpseversion"; then
-	AC_MSG_ERROR([Could not compile a simple kpathsea program -- check your installation])
-fi
+AS_IF([test -z "$kpseversion"],
+	[AC_MSG_ERROR([Could not compile a simple kpathsea program -- check your installation])])
+AC_SUBST(KPSE_CFLAGS)
+AC_SUBST(KPSE_LIBS)
 
-
-# Check how to link potracelib
-HAVE_LIBPOTRACE=1
+# Check how to link potrace library
 AC_CHECK_HEADER([potracelib.h],
-	[AC_CHECK_LIB(m, sqrt) # required to pass potrace check
-	 AC_CHECK_LIB(potrace, potrace_trace, , HAVE_LIBPOTRACE=0)], HAVE_LIBPOTRACE=0)
-
-if test "$HAVE_LIBPOTRACE" -eq 0; then
-	AC_MSG_ERROR([potrace library not found])
-fi
-
+	[AC_CHECK_LIB(m, sqrt)] # required to pass potrace check
+	[AC_CHECK_LIB(potrace, potrace_trace,,
+		[AC_MSG_ERROR([potrace library not found])])])
 
 # Check how to link Ghostscript
-HAVE_LIBGS=1
+have_libgs=yes
 AC_CHECK_HEADER([ghostscript/iapi.h],
-	AC_CHECK_LIB(gs, gsapi_new_instance, , HAVE_LIBGS=0), HAVE_LIBGS=0)
-
-if test "$HAVE_LIBGS" -eq 0; then
-	AC_CHECK_LIB(dl, dlopen, ,
-		[AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support is to be disabled])
-		 AC_MSG_WARN(PostScript support disabled)])
-else
-	# query Ghostscript version
-	AC_MSG_CHECKING([Ghostscript version])
-	AC_RUN_IFELSE([AC_LANG_SOURCE([#include <stdio.h>
-		#include <ghostscript/iapi.h>
-		int main () {
-			gsapi_revision_t r;
-			if (gsapi_revision(&r, sizeof(gsapi_revision_t)) == 0) {
-				FILE *f;
-				f = fopen("gsversion", "w");
-				if (!f) exit(1);
-				fprintf(f, "%ld\n", r.revision);
-				fclose(f);
-				exit(0);
-			}
-		}])],
-		[gsversion=`cat gsversion`], [gsversion=], [gsversion=unknown])
-	AC_MSG_RESULT("$gsversion")
-	rm -f gsversion
-	if test "$gsversion" -lt 831; then
-		# current Ghostscript API was introduced in version 8.31
-		# older versions are not supported
-		LIBS=`echo $LIBS | sed "s/-lgs //" $LIBS`
-		AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])
-		AC_MSG_WARN([Ghostscript version < 8.31 found; PostScript support disabled])
-	fi
-fi
+	[AC_CHECK_LIB(gs, gsapi_revision,, [have_libgs=no])],
+	[have_libgs=no])
+AS_IF([test "x$have_libgs" = "xno"],
+	# Ghostscript not found, check for dlopen
+	[AC_CHECK_LIB(dl, dlopen,,
+		[AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])]
+		[AC_MSG_WARN(PostScript support disabled)])])
 
 # Check for pkg-config
 PKG_PROG_PKG_CONFIG
@@ -109,14 +95,34 @@ PKG_PROG_PKG_CONFIG
 PKG_CHECK_MODULES([FREETYPE], [freetype2])
 
 AC_ARG_ENABLE([woff],
-	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@no@:>@])],
+	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
 	[],
 	[enable_woff=yes])
 
+AC_ARG_WITH([ttfautohint],
+	[AS_HELP_STRING([--with-ttfautohint@<:@=prefix@:>@], [enable ttfautohint support (disabled by default)])],
+	[with_ttfautohint="$withval"],
+	[with_ttfautohint=no])
+
 AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
-if test "x$enable_woff" != "xyes" ; then
-	AC_DEFINE([DISABLE_WOFF], 1, [Define if WOFF support is disabled])
-fi
+AS_IF([test "x$enable_woff" != "xyes"],
+	[AC_DEFINE([DISABLE_WOFF], 1, [Define if WOFF support is disabled])],
+	[AS_IF([test "x$with_ttfautohint" != "xno"],
+		[AS_IF([test "x$with_ttfautohint" = "xyes"],
+			# --with-ttfautohint without path => check via pkg-config
+			[PKG_CHECK_MODULES([TTFAUTOHINT], [ttfautohint],,
+				[AC_MSG_ERROR([can't locate ttfautohint, use "--with-ttfautohint=path" to specify its location])])],
+			# --with-ttfautohint=/path/ttfautohint given
+			[TTFAUTOHINT_CFLAGS="-I$with_ttfautohint/include"]
+			[TTFAUTOHINT_LIBS="-L$with_ttfautohint/lib"])]
+		[CPPFLAGS="$CPPFLAGS $TTFAUTOHINT_CFLAGS" CFLAGS="$CFLAGS $TTFAUTOHINT_CFLAGS" LDFLAGS="$LDFLAGS $TTFAUTOHINT_LIBS"]
+		[AC_CHECK_HEADERS([ttfautohint.h],, [AC_MSG_WARN([ttfautohint.h not found])])]
+		[AC_CHECK_LIB([ttfautohint], [TTF_autohint],,
+			[AC_MSG_WARN([no working ttfautohint library found])]
+			[AC_CHECK_LIB(dl, dlopen,
+				[AC_MSG_NOTICE([enabled dynamic loading of ttfautohint])],
+				[AC_MSG_WARN([disabled ttfautohint support])])])]
+		[AC_SUBST(TTFAUTOHINT_CFLAGS) AC_SUBST(TTFAUTOHINT_LIBS)])])
 
 AC_CHECK_LIB(z, gzopen)
 
@@ -127,36 +133,24 @@ AC_CHECK_HEADERS([libintl.h stdlib.h string.h strings.h unistd.h])
 
 # Check for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
-AC_C_CONST
-AC_C_INLINE
 AC_TYPE_SIZE_T
 AC_STRUCT_TM
 
 # Check for library functions.
-AC_FUNC_CLOSEDIR_VOID
-AC_FUNC_ERROR_AT_LINE
-AC_FUNC_MALLOC
 AC_FUNC_STAT
-AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([ftime gettimeofday memset strcasecmp strtol uselocale])
+AC_CHECK_FUNCS([ftime gettimeofday sigaction uselocale])
 
 # add options for selection of "optional" library locations
 # currently these libraries are mandatory; the --with-foo options
 # are used to specify the locations explicitely
 
-AC_ARG_WITH(zlib,[  --with-zlib=DIR         location of the zlib library],
-	[if test "$withval" != no; then
-		if test "$withval" != yes; then
-			ZLIB_DIR=$withval
-		fi
-	fi])
-
-if test "$withval" != no; then
-	if test -n "$ZLIB_DIR"; then
-		ZLIB_CFLAGS="-I$ZLIB_DIR -I$ZLIB_DIR/include"
-		ZLIB_LIBS="-L$ZLIB_DIR/lib"
-	fi
-fi
+AC_ARG_WITH(zlib,
+	[AS_HELP_STRING([--with-zlib=DIR], [set location of the zlib library])],
+	[AS_IF([test "x$withval" != "xno"],
+		[AS_IF([test "x$withval" != "xyes"], [ZLIB_DIR=$withval])]
+		[AS_IF([test -n "$ZLIB_DIR"],
+			[ZLIB_CFLAGS="-I$ZLIB_DIR -I$ZLIB_DIR/include"]
+			[ZLIB_LIBS="-L$ZLIB_DIR/lib" -lz])])])
 
 AC_SUBST([ZLIB_CFLAGS])
 AC_SUBST([ZLIB_LIBS])
@@ -171,6 +165,10 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <kpathsea/kpathsea.h>]],
                 AC_DEFINE([KPSE_CXX_UNSAFE], 1,
                           [Define to 1 if the kpathsea headers are not C++ safe.])])
 AC_LANG_POP([C++])
+
+CPPFLAGS="$CPPFLAGS_SAVE"
+CFLAGS="$CFLAGS_SAVE"
+LDFLAGS="$LDFLAGS_SAVE"
 
 AX_CODE_COVERAGE
 AS_IF([ test "$enable_code_coverage" = "yes" ], [
@@ -187,10 +185,11 @@ AC_SUBST(AM_LDFLAGS)
 AC_CONFIG_FILES([
 	Makefile
 	libs/Makefile
+	libs/brotli/Makefile
 	libs/clipper/Makefile
 	libs/ff-woff/Makefile
+	libs/variant/Makefile
 	libs/woff2/Makefile
-	libs/woff2/brotli/Makefile
 	libs/xxHash/Makefile
 	src/Makefile
 	src/version.hpp

@@ -19,7 +19,7 @@ DEPENDENCIES
    font data in WOFF or TrueType format rather than as SVG. The FontForge
    library provides the required functions to create font files in these
    formats. A reduced version of the library is bundled with the dvisvgm
-   sources. It's also available at https://github.com/mgieseki/ff-woff.
+   sources.
 
  * FreeType 2 (http://www.freetype.org)
    This library is used to extract the glyph outlines from vector fonts
@@ -45,6 +45,13 @@ DEPENDENCIES
    Peter Selinger's bitmap tracing library is utilized to vectorize Metafont's
    bitmap output.
 
+ * ttfautohint (https://www.freetype.org/ttfautohint)
+   dvisvgm can optionally be built with ttfautohint support to replace the
+   autohinting functionality of FontForge. Since it's still an experimental
+   feature, ttfautohint support is disabled by default.
+   The development files required for Windows can be found at
+   https://github.com/mgieseki/ttfautohint-dll.
+
  * woff2 and brotli (https://github.com/google/woff2)
    These Google libraries are bundled with the dvisvgm sources. They are used
    to create WOFF2 from TrueType fonts.
@@ -56,10 +63,7 @@ DEPENDENCIES
    version of xxHash is bundled with the dvisvgm sources.
 
  * zlib (http://www.zlib.org)
-   Compressed SVG files are produced by using functions of this library and the
-   Gzstream wrapper classes (http://www.cs.unc.edu/Research/compgeom/gzstream)
-   which are licensed under LGPL version 2.1 (or optionally any later version)
-   and should be included with this package.
+   This library is required to create compressed SVGZ files.
 
  If you want to build and run the test suite located in the tests subdirectory,
  you also need the Google Test libraries (https://github.com/google/googletest).
@@ -68,7 +72,7 @@ DEPENDENCIES
 BUILDING DVISVGM FROM SOURCE
 
  dvisvgm is written in C++11 (ISO C++ standard 2011) and requires an appropriate
- compiler, like GCC 4.8.1, Clang 3.3, or any later version. The configure script
+ compiler, like GCC 4.9, Clang 3.3, or any later version. The configure script
  checks for the availability of C++11 support and adds the proper compiler
  options if necessary.
 
@@ -116,7 +120,7 @@ ADDITIONAL INFORMATION
 
 COPYRIGHT
 
- Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>
+ Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>
 
  This program is free software; you can redistribute it and/or modify it
  under the terms of the GNU General Public License as published by the

@@ -2,7 +2,7 @@
 ** StreamWriterTest.cpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -47,7 +47,7 @@ TEST(StreamWriterTest, writeStringCRC) {
 	string str = "dvisvgm converts DVI files to SVG.";
 	writer.writeString(str, crc);
 	EXPECT_EQ(oss.str(), str);
-	EXPECT_EQ(crc.get(), 0x7C4EF359);
+	EXPECT_EQ(crc.get(), 0x7C4EF359u);
 
 	oss.str("");
 	crc.reset();

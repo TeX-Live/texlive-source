@@ -1,3 +1,23 @@
+/*************************************************************************
+** UtilityTest.cpp                                                      **
+**                                                                      **
+** This file is part of dvisvgm -- a fast DVI to SVG converter          **
+** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
+**                                                                      **
+** This program is free software; you can redistribute it and/or        **
+** modify it under the terms of the GNU General Public License as       **
+** published by the Free Software Foundation; either version 3 of       **
+** the License, or (at your option) any later version.                  **
+**                                                                      **
+** This program is distributed in the hope that it will be useful, but  **
+** WITHOUT ANY WARRANTY; without even the implied warranty of           **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the         **
+** GNU General Public License for more details.                         **
+**                                                                      **
+** You should have received a copy of the GNU General Public License    **
+** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+*************************************************************************/
+
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
@@ -36,14 +56,51 @@ TEST(UtilityTest, normalize_space) {
 
 
 TEST(UtilityTest, tolower) {
-	string str;
-	ASSERT_EQ(str, "");
-	ASSERT_EQ(tolower(str), "");
-	ASSERT_EQ(tolower(str="abcdefg"), "abcdefg");
-	ASSERT_EQ(tolower(str="ABCDEFG"), "abcdefg");
-	ASSERT_EQ(tolower(str="123XyZ456"), "123xyz456");
-	ASSERT_EQ(tolower(str="123\nXyZ 456"), "123\nxyz 456");
-	ASSERT_EQ(str, "123\nxyz 456");
+	ASSERT_EQ(tolower(""), "");
+	ASSERT_EQ(tolower("abcdefg"), "abcdefg");
+	ASSERT_EQ(tolower("ABCDEFG"), "abcdefg");
+	ASSERT_EQ(tolower("123XyZ456"), "123xyz456");
+	ASSERT_EQ(tolower("123\nXyZ 456"), "123\nxyz 456");
+}
+
+
+TEST(UtilityTest, replace) {
+	ASSERT_EQ(replace("abcdebcxyb", "bc", ","), "a,de,xyb");
+	ASSERT_EQ(replace("abcdebcxyb", "bc", " : "), "a : de : xyb");
+	ASSERT_EQ(replace("abcdebcxyb", "", ","), "abcdebcxyb");
+	ASSERT_EQ(replace("abcdebcxyb", "bc", ""), "abcdebcxyb");
+	ASSERT_EQ(replace("abcdebcxyb", "b", " B "), "a B cde B cxy B ");
+	ASSERT_EQ(replace("", "b", " B "), "");
+	ASSERT_EQ(replace("a,b, c ,d , e", " ,", ","), "a,b, c,d, e");
+}
+
+
+TEST(UtilityTest, split) {
+	vector<string> parts = split("", ",");
+	ASSERT_EQ(parts.size(), 1u);
+	EXPECT_EQ(parts[0], "");
+
+	parts = split("abcde", "");
+	ASSERT_EQ(parts.size(), 1u);
+	EXPECT_EQ(parts[0], "abcde");
+
+	parts = split("abcde", ",");
+	ASSERT_EQ(parts.size(), 1u);
+	EXPECT_EQ(parts[0], "abcde");
+
+	parts = split("1,2 , 3, 4 ,,5", ",");
+	ASSERT_EQ(parts.size(), 6u);
+	size_t count=0;
+	for (const string &part : {"1", "2 ", " 3", " 4 ", "", "5"}) {
+		EXPECT_EQ(parts[count++], part);
+	}
+
+	parts = split("1 sep2sep3, sep", "sep");
+	ASSERT_EQ(parts.size(), 4u);
+	count=0;
+	for (const string &part : {"1 ", "2", "3, ", ""}) {
+		EXPECT_EQ(parts[count++], part);
+	}
 }
 
 

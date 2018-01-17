@@ -2,7 +2,7 @@
 # This file is part of the dvisvgm package and published under the
 # terms of the GNU General Public License version 3 or later.
 # See file COPYING for further details.
-# Copyright (C) 2016-2017 Martin Gieseking <martin.gieseking@uos.de>
+# Copyright (C) 2016-2018 Martin Gieseking <martin.gieseking@uos.de>
 
 import re
 import sys
@@ -12,7 +12,7 @@ def extract_hashes (fname):
         lines = f.readlines()
         found = False
         for line in lines:
-            if ' hash2unicode = {{\n' in line:
+            if ' hash2unicode {{\n' in line:
                 found = True
             elif found:
                 match = re.match(r'\s*{(0x[0-9a-f]{8}),\s*0x[0-9a-f]{4}}, //\s*(.+)\s*$', line)
