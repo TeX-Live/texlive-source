@@ -36,6 +36,7 @@ m4_define([kpse_tex_progs], [dnl
 [[aleph],     [yes], [],    [Aleph],      []],
 [[pdftex],    [yes], [yes], [pdfTeX],     [xpdf libpng]],
 [[luatex],    [yes], [],    [LuaTeX],     [poppler mpfr libpng zziplib lua52]],
+[[luatex53],  [yes], [],    [LuaTeX53],   [poppler mpfr libpng zziplib lua53]],
 [[luajittex], [yes], [],    [LuaJITTeX],  [poppler mpfr libpng zziplib luajit]],
 [[mp],        [yes], [],    [MetaPost],   [mpfr cairo libpng]],
 [[pmp],       [yes], [],    [pMetaPost],  [mpfr cairo libpng ptexenc]],

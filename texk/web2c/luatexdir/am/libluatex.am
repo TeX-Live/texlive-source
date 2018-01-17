@@ -9,11 +9,20 @@ LUA_INCLUDES = $(LUA52_INCLUDES) $(LUA52_DEFINES)
 LUA_LIBS = $(LUA52_LIBS)
 LUA_DEPEND = $(LUA52_DEPEND)
 
+## liblua53
+##
+LUA_LUA53_INCLUDES = $(LUA53_INCLUDES) $(LUA53_DEFINES)
+LUA_LUA53_LIBS = $(LUA53_LIBS)
+LUA_LUA53_DEPEND = $(LUA53_DEPEND)
+
+
+
 ## libluatex
 ##
-EXTRA_LIBRARIES += libluatex.a libluajittex.a
+EXTRA_LIBRARIES += libluatex.a liblua53tex.a libluajittex.a
 
 libluatex_a_DEPENDENCIES = libff.a libluamisc.a
+liblua53tex_a_DEPENDENCIES = libff.a liblua53misc.a
 libluajittex_a_DEPENDENCIES = libff.a libluajitmisc.a
 
 libluatex_a_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
@@ -25,15 +34,23 @@ libluatex_a_preflags += -DLUA_FF_LIB=1 -I$(srcdir)/luatexdir/luafontloader/fontf
 libluatex_a_preflags += -DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
 
 libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES)
+liblua53tex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_LUA53_INCLUDES)
 libluajittex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
 libluajittex_a_CPPFLAGS += -DLuajitTeX
 
 libluatex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
+liblua53tex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
 libluajittex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 dist_libluatex_a_SOURCES = \
 	luatexdir/lua/lstrlibext.c
 nodist_libluatex_a_SOURCES = \
+	helpers.c luastuff.c texluac.c \
+	$(dist_libluatex_sources) \
+	$(nodist_libluatex_sources)
+dist_liblua53tex_a_SOURCES = \
+	luatexdir/lua/lstrlibext.c
+nodist_liblua53tex_a_SOURCES = \
 	helpers.c luastuff.c texluac.c \
 	$(dist_libluatex_sources) \
 	$(nodist_libluatex_sources)
@@ -47,6 +64,7 @@ nodist_libluajittex_a_SOURCES = \
 
 ## mplib "stub" backends are in mplibstuff.c
 $(libluatex_a_OBJECTS): libff.a libmplibcore.a libluamisc.a $(POPPLER_DEPEND)
+$(liblua53tex_a_OBJECTS): libff.a libmplibcore.a liblua53misc.a $(POPPLER_DEPEND)
 $(libluajittex_a_OBJECTS): libff.a libmplibcore.a libluajitmisc.a $(POPPLER_DEPEND)
 
 
@@ -97,8 +115,6 @@ pkin.c: ctangle$(EXEEXT) luatexdir/font/pkin.w
 	$(luatex_font_ctangle) pkin.w
 sfnt.c: ctangle$(EXEEXT) luatexdir/font/sfnt.w
 	$(luatex_font_ctangle) sfnt.w
-subfont.c: ctangle$(EXEEXT) luatexdir/font/subfont.w
-	$(luatex_font_ctangle) subfont.w
 texfont.c: ctangle$(EXEEXT) luatexdir/font/texfont.w
 	$(luatex_font_ctangle) texfont.w
 tfmofm.c: ctangle$(EXEEXT) luatexdir/font/tfmofm.w
@@ -131,7 +147,7 @@ writetype2.c: ctangle$(EXEEXT) luatexdir/font/writetype2.w
 	$(luatex_font_ctangle) writetype2.w
 
 libluatex_web += luatexdir/font/dofont.w luatexdir/font/luafont.w luatexdir/font/mapfile.w
-libluatex_web += luatexdir/font/pkin.w luatexdir/font/sfnt.w luatexdir/font/subfont.w
+libluatex_web += luatexdir/font/pkin.w luatexdir/font/sfnt.w 
 libluatex_web += luatexdir/font/texfont.w luatexdir/font/tfmofm.w
 libluatex_web += luatexdir/font/tounicode.w luatexdir/font/tt_glyf.w
 libluatex_web += luatexdir/font/tt_table.w luatexdir/font/vfovf.w
@@ -141,7 +157,7 @@ libluatex_web += luatexdir/font/writet1.w luatexdir/font/writet3.w
 libluatex_web += luatexdir/font/writettf.w luatexdir/font/writetype0.w
 libluatex_web += luatexdir/font/writetype2.w
 
-nodist_libluatex_sources += dofont.c luafont.c mapfile.c pkin.c sfnt.c subfont.c
+nodist_libluatex_sources += dofont.c luafont.c mapfile.c pkin.c sfnt.c 
 nodist_libluatex_sources += texfont.c tfmofm.c tounicode.c tt_glyf.c tt_table.c vfovf.c vfpacket.c
 nodist_libluatex_sources += writecff.c writeenc.c writefont.c writet1.c writet3.c writettf.c
 nodist_libluatex_sources += writetype0.c writetype2.c
@@ -549,6 +565,8 @@ dist_libluatex_sources += \
 	synctexdir/synctex-luatex.h \
 	synctexdir/synctex.c \
 	synctexdir/synctex.h
+
+dist_liblua53tex_sources = $(dist_libluatex_sources)
 
 EXTRA_DIST += \
 	$(dist_libluatex_sources) \

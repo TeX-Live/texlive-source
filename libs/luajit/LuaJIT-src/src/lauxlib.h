@@ -180,8 +180,12 @@ LUALIB_API void (luaL_addstring) (luaL_Buffer *B, const char *s);
 LUALIB_API void (luaL_addvalue) (luaL_Buffer *B);
 LUALIB_API void (luaL_pushresult) (luaL_Buffer *B);
 
+/* -- Luajittex needs this one because it's faster than make it Lua  -- */
+LUA_API int (RESERVED_lua_dump) (lua_State *L, lua_Writer writer, void *data, int strip);
 /* Luajittex needs this one because it overloads loadfile */
 LUALIB_API int (RESERVED_load_aux_JIT) (lua_State *L, int status, int envarg);
+
+
 
 /* }====================================================== */
 

@@ -1,0 +1,7 @@
+## libs/lua53/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua53/
+dnl
+dnl Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## configure options and TL libraries required for lua53
+KPSE_WITH_LIB([lua53], , [tree])

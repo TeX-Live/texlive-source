@@ -3,13 +3,14 @@
 # see src/makefile for description of how to customize the build
 #
 # Targets:
-#   install       install system independent support
-#   install-unix  also install unix-only support
-#   install-both  install both lua5.1 and lua5.2 socket support
-#   print	  print the build settings
+#   install            install system independent support
+#   install-unix           also install unix-only support
+#   install-both       install for lua51 lua52 lua53
+#   install-both-unix      also install unix-only
+#   print	           print the build settings
 
 PLAT?= linux
-PLATS= macosx linux win32
+PLATS= macosx linux win32 mingw freebsd solaris
 
 all: $(PLAT)
 
@@ -23,12 +24,26 @@ test:
 	lua test/hello.lua
 
 install-both:
-	$(MAKE) clean 
+	$(MAKE) clean
+	@cd src; $(MAKE) $(PLAT) LUAV=5.1
+	@cd src; $(MAKE) install LUAV=5.1
+	$(MAKE) clean
+	@cd src; $(MAKE) $(PLAT) LUAV=5.2
+	@cd src; $(MAKE) install LUAV=5.2
+	$(MAKE) clean
+	@cd src; $(MAKE) $(PLAT) LUAV=5.3
+	@cd src; $(MAKE) install LUAV=5.3
+
+install-both-unix:
+	$(MAKE) clean
 	@cd src; $(MAKE) $(PLAT) LUAV=5.1
 	@cd src; $(MAKE) install-unix LUAV=5.1
-	$(MAKE) clean 
+	$(MAKE) clean
 	@cd src; $(MAKE) $(PLAT) LUAV=5.2
 	@cd src; $(MAKE) install-unix LUAV=5.2
+	$(MAKE) clean
+	@cd src; $(MAKE) $(PLAT) LUAV=5.3
+	@cd src; $(MAKE) install-unix LUAV=5.3
 
 .PHONY: test
 

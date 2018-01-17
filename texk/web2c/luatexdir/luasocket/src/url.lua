@@ -10,12 +10,15 @@
 local string = require("string")
 local base = _G
 local table = require("table")
-module("socket.url")
+local socket = socket or require("socket")
+
+socket.url = {}
+local _M = socket.url
 
 -----------------------------------------------------------------------------
 -- Module version
 -----------------------------------------------------------------------------
-_VERSION = "URL 1.0.2"
+_M._VERSION = "URL 1.0.3"
 
 -----------------------------------------------------------------------------
 -- Encodes a string into its escaped hexadecimal representation
@@ -24,7 +27,7 @@ _VERSION = "URL 1.0.2"
 -- Returns
 --   escaped representation of string binary
 -----------------------------------------------------------------------------
-function escape(s)
+function _M.escape(s)
     return (string.gsub(s, "([^A-Za-z0-9_])", function(c)
         return string.format("%%%02x", string.byte(c))
     end))
@@ -46,7 +49,7 @@ local function make_set(t)
     return s
 end
 
--- these are allowed withing a path segment, along with alphanum
+-- these are allowed within a path segment, along with alphanum
 -- other characters must be escaped
 local segment_set = make_set {
     "-", "_", ".", "!", "~", "*", "'", "(",
@@ -56,18 +59,18 @@ local segment_set = make_set {
 local function protect_segment(s)
     return string.gsub(s, "([^A-Za-z0-9_])", function (c)
         if segment_set[c] then return c
-        else return string.format("%%%02x", string.byte(c)) end
+        else return string.format("%%%02X", string.byte(c)) end
     end)
 end
 
 -----------------------------------------------------------------------------
--- Encodes a string into its escaped hexadecimal representation
+-- Unencodes a escaped hexadecimal string into its binary representation
 -- Input
---   s: binary string to be encoded
+--   s: escaped hexadecimal string to be unencoded
 -- Returns
---   escaped representation of string binary
+--   unescaped binary representation of escaped hexadecimal  binary
 -----------------------------------------------------------------------------
-function unescape(s)
+function _M.unescape(s)
     return (string.gsub(s, "%%(%x%x)", function(hex)
         return string.char(base.tonumber(hex, 16))
     end))
@@ -120,7 +123,7 @@ end
 -- Obs:
 --   the leading '/' in {/<path>} is considered part of <path>
 -----------------------------------------------------------------------------
-function parse(url, default)
+function _M.parse(url, default)
     -- initialize default parameters
     local parsed = {}
     for i,v in base.pairs(default or parsed) do parsed[i] = v end
@@ -179,9 +182,10 @@ end
 -- Returns
 --   a stringing with the corresponding URL
 -----------------------------------------------------------------------------
-function build(parsed)
-    local ppath = parse_path(parsed.path or "")
-    local url = build_path(ppath)
+function _M.build(parsed)
+    --local ppath = _M.parse_path(parsed.path or "")
+    --local url = _M.build_path(ppath)
+    local url = parsed.path or ""
     if parsed.params then url = url .. ";" .. parsed.params end
     if parsed.query then url = url .. "?" .. parsed.query end
     local authority = parsed.authority
@@ -190,7 +194,7 @@ function build(parsed)
         if string.find(authority, ":") then -- IPv6?
             authority = "[" .. authority .. "]"
         end
-        if parsed.port then authority = authority .. ":" .. parsed.port end
+        if parsed.port then authority = authority .. ":" .. base.tostring(parsed.port) end
         local userinfo = parsed.userinfo
         if parsed.user then
             userinfo = parsed.user
@@ -215,14 +219,15 @@ end
 -- Returns
 --   corresponding absolute url
 -----------------------------------------------------------------------------
-function absolute(base_url, relative_url)
+function _M.absolute(base_url, relative_url)
+    local base_parsed
     if base.type(base_url) == "table" then
         base_parsed = base_url
-        base_url = build(base_parsed)
+        base_url = _M.build(base_parsed)
     else
-        base_parsed = parse(base_url)
+        base_parsed = _M.parse(base_url)
     end
-    local relative_parsed = parse(relative_url)
+    local relative_parsed = _M.parse(relative_url)
     if not base_parsed then return relative_url
     elseif not relative_parsed then return base_url
     elseif relative_parsed.scheme then return relative_url
@@ -243,7 +248,7 @@ function absolute(base_url, relative_url)
                     relative_parsed.path)
             end
         end
-        return build(relative_parsed)
+        return _M.build(relative_parsed)
     end
 end
 
@@ -254,13 +259,13 @@ end
 -- Returns
 --   segment: a table with one entry per segment
 -----------------------------------------------------------------------------
-function parse_path(path)
+function _M.parse_path(path)
     local parsed = {}
     path = path or ""
     --path = string.gsub(path, "%s", "")
     string.gsub(path, "([^/]+)", function (s) table.insert(parsed, s) end)
     for i = 1, #parsed do
-        parsed[i] = unescape(parsed[i])
+        parsed[i] = _M.unescape(parsed[i])
     end
     if string.sub(path, 1, 1) == "/" then parsed.is_absolute = 1 end
     if string.sub(path, -1, -1) == "/" then parsed.is_directory = 1 end
@@ -275,7 +280,7 @@ end
 -- Returns
 --   path: corresponding path stringing
 -----------------------------------------------------------------------------
-function build_path(parsed, unsafe)
+function _M.build_path(parsed, unsafe)
     local path = ""
     local n = #parsed
     if unsafe then
@@ -300,3 +305,5 @@ function build_path(parsed, unsafe)
     if parsed.is_absolute then path = "/" .. path end
     return path
 end
+
+return _M
