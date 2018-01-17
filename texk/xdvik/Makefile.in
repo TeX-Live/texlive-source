@@ -171,8 +171,8 @@ nodist_libxdvi_a_OBJECTS = psheader.$(OBJEXT)
 libxdvi_a_OBJECTS = $(am_libxdvi_a_OBJECTS) \
 	$(nodist_libxdvi_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(pixmapdir)" \
-	"$(DESTDIR)$(xdvidir)"
+	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(desktopdir)" \
+	"$(DESTDIR)$(pixmapdir)" "$(DESTDIR)$(xdvidir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_xdvi_bin_OBJECTS = main.$(OBJEXT)
 xdvi_bin_OBJECTS = $(am_xdvi_bin_OBJECTS)
@@ -273,7 +273,8 @@ am__can_run_installinfo = \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(nodist_man1_MANS)
-DATA = $(dist_noinst_DATA) $(dist_pixmap_DATA) $(dist_xdvi_DATA)
+DATA = $(desktop_DATA) $(dist_noinst_DATA) $(dist_pixmap_DATA) \
+	$(dist_xdvi_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -581,6 +582,8 @@ pixmapdir = $(datarootdir)/texmf-dist/xdvi/pixmap
 dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
 dvipsconfdir = $(datarootdir)/texmf-dist/dvips/xdvi
 dist_noinst_DATA = texmf/config.xdvi
+desktopdir = $(datarootdir)/applications
+desktop_DATA = xdvi.desktop
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -943,6 +946,27 @@ uninstall-man1:
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
 	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
+install-desktopDATA: $(desktop_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(desktop_DATA)'; test -n "$(desktopdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(desktopdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(desktopdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(desktopdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(desktopdir)" || exit $$?; \
+	done
+
+uninstall-desktopDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(desktop_DATA)'; test -n "$(desktopdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(desktopdir)'; $(am__uninstall_files_from_dir)
 install-dist_pixmapDATA: $(dist_pixmap_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(dist_pixmap_DATA)'; test -n "$(pixmapdir)" || list=; \
@@ -1286,7 +1310,7 @@ all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(SCRIPTS) $(MANS) $(DATA) \
 		c-auto.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(pixmapdir)" "$(DESTDIR)$(xdvidir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(desktopdir)" "$(DESTDIR)$(pixmapdir)" "$(DESTDIR)$(xdvidir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -1347,8 +1371,8 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-dist_pixmapDATA install-dist_xdviDATA \
-	install-man
+install-data-am: install-desktopDATA install-dist_pixmapDATA \
+	install-dist_xdviDATA install-man
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-recursive
@@ -1398,8 +1422,8 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
-	uninstall-dist_pixmapDATA uninstall-dist_xdviDATA \
-	uninstall-man
+	uninstall-desktopDATA uninstall-dist_pixmapDATA \
+	uninstall-dist_xdviDATA uninstall-man
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
@@ -1417,7 +1441,7 @@ uninstall-man: uninstall-man1
 	distdir distuninstallcheck dvi dvi-am html html-am info \
 	info-am install install-am install-binPROGRAMS \
 	install-binSCRIPTS install-data install-data-am \
-	install-data-hook install-dist_pixmapDATA \
+	install-data-hook install-desktopDATA install-dist_pixmapDATA \
 	install-dist_xdviDATA install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
 	install-info-am install-man install-man1 install-pdf \
@@ -1427,8 +1451,9 @@ uninstall-man: uninstall-man1
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am tags tags-am uninstall uninstall-am \
 	uninstall-binPROGRAMS uninstall-binSCRIPTS \
-	uninstall-dist_pixmapDATA uninstall-dist_xdviDATA \
-	uninstall-hook uninstall-man uninstall-man1
+	uninstall-desktopDATA uninstall-dist_pixmapDATA \
+	uninstall-dist_xdviDATA uninstall-hook uninstall-man \
+	uninstall-man1
 
 .PRECIOUS: Makefile
 

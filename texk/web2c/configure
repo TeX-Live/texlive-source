@@ -713,6 +713,10 @@ LUA52_RULE
 LUA52_DEPEND
 LUA52_LIBS
 LUA52_INCLUDES
+LUA53_RULE
+LUA53_DEPEND
+LUA53_LIBS
+LUA53_INCLUDES
 ZLIB_RULE
 ZLIB_DEPEND
 ZLIB_LIBS
@@ -772,6 +776,8 @@ MP_FALSE
 MP_TRUE
 LUAJITTEX_FALSE
 LUAJITTEX_TRUE
+LUATEX53_FALSE
+LUATEX53_TRUE
 LUATEX_FALSE
 LUATEX_TRUE
 PDFTEX_SYNCTEX_FALSE
@@ -816,6 +822,7 @@ USE_DLOPEN_TRUE
 LUAJIT_LDEXTRA
 LUAJIT_DEFINES
 LUA52_DEFINES
+LUA53_DEFINES
 WIN32_CALL_FALSE
 WIN32_CALL_TRUE
 MINGW32_FALSE
@@ -1000,6 +1007,7 @@ enable_aleph
 enable_pdftex
 enable_pdftex_synctex
 enable_luatex
+enable_luatex53
 enable_luajittex
 enable_mp
 enable_pmp
@@ -1730,6 +1738,7 @@ Optional Features:
   --disable-pdftex        do not compile and install pdfTeX
   --disable-pdftex-synctex  build pdfTeX without SyncTeX support
   --disable-luatex        do not compile and install LuaTeX
+  --disable-luatex53      do not compile and install LuaTeX53
   --disable-luajittex     do not compile and install LuaJITTeX
   --disable-mp            do not compile and install MetaPost
   --disable-pmp           do not compile and install pMetaPost
@@ -18763,6 +18772,24 @@ test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_zziplib=yes
   need_lua52=yes
 }
+# Check whether --enable-luatex53 was given.
+if test "${enable_luatex53+set}" = set; then :
+  enableval=$enable_luatex53;
+fi
+case $enable_luatex53 in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_luatex53=yes ;;
+esac
+
+test "x$enable_web2c:$enable_luatex53" = xyes:yes && {
+  need_poppler=yes
+  need_mpfr=yes
+  need_libpng=yes
+  need_zziplib=yes
+  need_lua53=yes
+}
 # Check whether --enable-luajittex was given.
 if test "${enable_luajittex+set}" = set; then :
   enableval=$enable_luajittex;
@@ -20301,6 +20328,16 @@ fi
                        enable_luatex=no
 fi
 
+	       if test "x$enable_luatex53" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, no socket library: disabling luatex53" >&5
+$as_echo "$as_me: WARNING: Sorry, no socket library: disabling luatex53" >&2;}
+if test "x$enable_missing" = xno; then :
+  as_fn_error $? "terminating." "$LINENO" 5
+fi
+
+                       enable_luatex53=no
+fi
+
                if test "x$enable_ipc" = xyes; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, no socket library: disabling ipc" >&5
 $as_echo "$as_me: WARNING: Sorry, no socket library: disabling ipc" >&2;}
@@ -20326,6 +20363,77 @@ fi
 # and maybe -lresolv for inet_aton().
 lua_socketlibs=$socketlibs
 kpse_save_LIBS=$LIBS
+LUA53_DEFINES='-DLUA_COMPAT_MODULE -DLUA_COMPAT_5_2 -DLUAI_HASHLIMIT=6'
+
+if test "x$kpse_cv_have_win32" = xno; then
+  LUA53_DEFINES="$LUA53_DEFINES -DLUA_USE_POSIX"
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing dlopen" >&5
+$as_echo_n "checking for library containing dlopen... " >&6; }
+if ${ac_cv_search_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' dl; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_dlopen=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if ${ac_cv_search_dlopen+:} false; then :
+  break
+fi
+done
+if ${ac_cv_search_dlopen+:} false; then :
+
+else
+  ac_cv_search_dlopen=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_dlopen" >&5
+$as_echo "$ac_cv_search_dlopen" >&6; }
+ac_res=$ac_cv_search_dlopen
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
+
+  if test "x$ac_cv_search_dlopen" != xno; then
+    ac_fn_c_check_header_compile "$LINENO" "dlfcn.h" "ac_cv_header_dlfcn_h" "$ac_includes_default
+"
+if test "x$ac_cv_header_dlfcn_h" = xyes; then :
+  LUA53_DEFINES="$LUA53_DEFINES -DLUA_USE_DLOPEN"
+fi
+
+
+  fi
+fi
+
 LUA52_DEFINES='-DLUA_COMPAT_MODULE -DLUAI_HASHLIMIT=6'
 
 if test "x$kpse_cv_have_win32" = xno; then
@@ -20659,6 +20767,15 @@ fi
 
                        enable_luatex=no
 fi
+ if test "x$enable_luatex53" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, no hstrerror(): disabling luatex53" >&5
+$as_echo "$as_me: WARNING: Sorry, no hstrerror(): disabling luatex53" >&2;}
+if test "x$enable_missing" = xno; then :
+  as_fn_error $? "terminating." "$LINENO" 5
+fi
+
+                       enable_luatex53=no
+fi
  ;; #(
   *) :
     lua_socketlibs="$lua_socketlibs $ac_cv_search_hstrerror" ;;
@@ -20675,6 +20792,15 @@ if test "x$enable_missing" = xno; then :
 fi
 
                        enable_luatex=no
+fi
+ if test "x$enable_luatex53" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, no inet_aton(): disabling luatex53" >&5
+$as_echo "$as_me: WARNING: Sorry, no inet_aton(): disabling luatex53" >&2;}
+if test "x$enable_missing" = xno; then :
+  as_fn_error $? "terminating." "$LINENO" 5
+fi
+
+                       enable_luatex53=no
 fi
  ;; #(
   *) :
@@ -20693,6 +20819,15 @@ fi
 
                        enable_luatex=no
 fi
+ if test "x$enable_luatex53" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, no gethostbyname(): disabling luatex53" >&5
+$as_echo "$as_me: WARNING: Sorry, no gethostbyname(): disabling luatex53" >&2;}
+if test "x$enable_missing" = xno; then :
+  as_fn_error $? "terminating." "$LINENO" 5
+fi
+
+                       enable_luatex53=no
+fi
  ;; #(
   *) :
     lua_socketlibs="$lua_socketlibs $ac_cv_search_gethostbyname" ;;
@@ -20709,6 +20844,15 @@ if test "x$enable_missing" = xno; then :
 fi
 
                        enable_luatex=no
+fi
+ if test "x$enable_luatex53" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, no nanosleep(): disabling luatex53" >&5
+$as_echo "$as_me: WARNING: Sorry, no nanosleep(): disabling luatex53" >&2;}
+if test "x$enable_missing" = xno; then :
+  as_fn_error $? "terminating." "$LINENO" 5
+fi
+
+                       enable_luatex53=no
 fi
  ;; #(
   *) :
@@ -20756,6 +20900,15 @@ if test "x$enable_missing" = xno; then :
 fi
 
                        enable_luatex=no
+fi
+ if test "x$enable_luatex53" = xyes; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, no getaddrinfo(): disabling luatex53" >&5
+$as_echo "$as_me: WARNING: Sorry, no getaddrinfo(): disabling luatex53" >&2;}
+if test "x$enable_missing" = xno; then :
+  as_fn_error $? "terminating." "$LINENO" 5
+fi
+
+                       enable_luatex53=no
 fi
 
 fi
@@ -21190,6 +21343,13 @@ fi
 else
   LUATEX_TRUE='#'
   LUATEX_FALSE=
+fi
+ if test "x$enable_luatex53" = xyes; then
+  LUATEX53_TRUE=
+  LUATEX53_FALSE='#'
+else
+  LUATEX53_TRUE='#'
+  LUATEX53_FALSE=
 fi
  if test "x$enable_luajittex" = xyes; then
   LUAJITTEX_TRUE=
@@ -24820,6 +24980,16 @@ $as_echo "#define z_const /**/" >>confdefs.h
  ;;
 esac
 
+## _KPSE_LIB_FLAGS: Setup lua53 (-ltexlua53) flags
+  LUA53_INCLUDES="-I$kpse_BLD/libs/lua53/include"
+  LUA53_LIBS="$kpse_BLD/libs/lua53/libtexlua53.la"
+  LUA53_DEPEND='${top_builddir}/../../libs/lua53/libtexlua53.la'
+  LUA53_RULE='# Rebuild libtexlua53
+$(LUA53_DEPEND): ${top_builddir}/../../libs/lua53/include/lua.h
+	cd ${top_builddir}/../../libs/lua53 && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/lua53/include/lua.h:
+	cd ${top_builddir}/../../libs/lua53 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+
 ## _KPSE_LIB_FLAGS: Setup lua52 (-ltexlua52) flags
   LUA52_INCLUDES="-I$kpse_BLD/libs/lua52/include"
   LUA52_LIBS="$kpse_BLD/libs/lua52/libtexlua52.la"
@@ -26225,6 +26395,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${LUATEX_TRUE}" && test -z "${LUATEX_FALSE}"; then
   as_fn_error $? "conditional \"LUATEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${LUATEX53_TRUE}" && test -z "${LUATEX53_FALSE}"; then
+  as_fn_error $? "conditional \"LUATEX53\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${LUAJITTEX_TRUE}" && test -z "${LUAJITTEX_FALSE}"; then

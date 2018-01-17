@@ -21813,12 +21813,12 @@ if test "x$enable_native_texlive_build" = xyes; then
   # TL: always dlload libgs, must avoid shared lib ref in binary.
   HAVE_LIBGS=0
 else
-HAVE_LIBGS=1
+have_libgs=yes
 ac_fn_c_check_header_mongrel "$LINENO" "ghostscript/iapi.h" "ac_cv_header_ghostscript_iapi_h" "$ac_includes_default"
 if test "x$ac_cv_header_ghostscript_iapi_h" = xyes; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsapi_new_instance in -lgs" >&5
-$as_echo_n "checking for gsapi_new_instance in -lgs... " >&6; }
-if ${ac_cv_lib_gs_gsapi_new_instance+:} false; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsapi_revision in -lgs" >&5
+$as_echo_n "checking for gsapi_revision in -lgs... " >&6; }
+if ${ac_cv_lib_gs_gsapi_revision+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -21832,27 +21832,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char gsapi_new_instance ();
+char gsapi_revision ();
 int
 main ()
 {
-return gsapi_new_instance ();
+return gsapi_revision ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_gs_gsapi_new_instance=yes
+  ac_cv_lib_gs_gsapi_revision=yes
 else
-  ac_cv_lib_gs_gsapi_new_instance=no
+  ac_cv_lib_gs_gsapi_revision=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gs_gsapi_new_instance" >&5
-$as_echo "$ac_cv_lib_gs_gsapi_new_instance" >&6; }
-if test "x$ac_cv_lib_gs_gsapi_new_instance" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gs_gsapi_revision" >&5
+$as_echo "$ac_cv_lib_gs_gsapi_revision" >&6; }
+if test "x$ac_cv_lib_gs_gsapi_revision" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBGS 1
 _ACEOF
@@ -21860,14 +21860,68 @@ _ACEOF
   LIBS="-lgs $LIBS"
 
 else
-  HAVE_LIBGS=0
+  have_libgs=no
 fi
 
 else
-  HAVE_LIBGS=0
+  have_libgs=no
 fi
 
 
+if test "x$have_libgs" = "xno"; then :
+  # Ghostscript not found, check for dlopen
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+$as_echo_n "checking for dlopen in -ldl... " >&6; }
+if ${ac_cv_lib_dl_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_dl_dlopen=yes
+else
+  ac_cv_lib_dl_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBDL 1
+_ACEOF
+
+  LIBS="-ldl $LIBS"
+
+else
+
+$as_echo "#define DISABLE_GS 1" >>confdefs.h
+
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: PostScript support disabled" >&5
+$as_echo "$as_me: WARNING: PostScript support disabled" >&2;}
+fi
+
+fi
 fi
 
 if test "$HAVE_LIBGS" -eq 0; then
