@@ -42,7 +42,8 @@ static mf_resources_struct mf_x11_resources;
 
 
 /* Don't paint anything until we're mapped.  */
-static Boolean mf_mapped;
+static Boolean mf_mapped = False;
+static Boolean mf_awaiting_expose = True;
 
 #ifdef MF_XT_DEBUG
 static int mf_max_x, mf_max_y;
@@ -150,10 +151,8 @@ mf_x11_initscreen (void)
      sits in XTMainLoop, if the server supports backing store
      and save unders this will help keep the output looking
      nice.  */
-  xwa.backing_store = Always;
-  xwa.save_under = True;
-  XChangeWindowAttributes (mf_display, mf_window,
-			   CWBackingStore | CWSaveUnder, &xwa);
+  xwa.backing_store = WhenMapped;
+  XChangeWindowAttributes (mf_display, mf_window, CWBackingStore, &xwa);
 
   gcv.background = mf_x11_resources.mf_bg;
   gcv.foreground = mf_x11_resources.mf_fg;
@@ -174,7 +173,14 @@ mf_x11_initscreen (void)
 void
 mf_x11_updatescreen (void)
 {
+  XEvent event;
+
   mf_events ();
+  while (mf_awaiting_expose)
+    {
+      XtAppNextEvent (mf_app, &event);
+      XtDispatchEvent (&event);
+    }
   mf_redraw ();
 
 #ifdef MF_XT_DEBUG
@@ -327,6 +333,7 @@ mf_repaint(Widget w, XtPointer data, XEvent *ev)
 	continue;
 
       mf_redraw ();
+      mf_awaiting_expose = False;
     }
 }
 
