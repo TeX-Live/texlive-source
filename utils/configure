@@ -731,6 +731,7 @@ enable_aleph
 enable_pdftex
 enable_pdftex_synctex
 enable_luatex
+enable_luatex53
 enable_luajittex
 enable_mp
 enable_pmp
@@ -1517,6 +1518,7 @@ Optional Features:
   --disable-pdftex          do not compile and install pdfTeX
   --disable-pdftex-synctex    build pdfTeX without SyncTeX support
   --disable-luatex          do not compile and install LuaTeX
+  --disable-luatex53        do not compile and install LuaTeX53
   --disable-luajittex       do not compile and install LuaJITTeX
   --disable-mp              do not compile and install MetaPost
   --disable-pmp             do not compile and install pMetaPost
@@ -3840,6 +3842,24 @@ test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_zziplib=yes
   need_lua52=yes
 }
+# Check whether --enable-luatex53 was given.
+if test "${enable_luatex53+set}" = set; then :
+  enableval=$enable_luatex53;
+fi
+case $enable_luatex53 in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_luatex53=yes ;;
+esac
+
+test "x$enable_web2c:$enable_luatex53" = xyes:yes && {
+  need_poppler=yes
+  need_mpfr=yes
+  need_libpng=yes
+  need_zziplib=yes
+  need_lua53=yes
+}
 # Check whether --enable-luajittex was given.
 if test "${enable_luajittex+set}" = set; then :
   enableval=$enable_luajittex;
@@ -5378,6 +5398,9 @@ fi
 
 ## libs/lua52/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua52/
 ## configure options and TL libraries required for lua52
+
+## libs/lua53/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua53/
+## configure options and TL libraries required for lua53
 
 ## libs/zlib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/zlib/
 ## configure options and TL libraries required for zlib

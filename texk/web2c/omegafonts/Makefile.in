@@ -113,6 +113,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-lua52-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-lua53-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-luajit-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
 	$(top_srcdir)/../../m4/kpse-mpfr-flags.m4 \
@@ -542,6 +543,10 @@ LUA52_DEFINES = @LUA52_DEFINES@
 LUA52_DEPEND = @LUA52_DEPEND@
 LUA52_INCLUDES = @LUA52_INCLUDES@
 LUA52_LIBS = @LUA52_LIBS@
+LUA53_DEFINES = @LUA53_DEFINES@
+LUA53_DEPEND = @LUA53_DEPEND@
+LUA53_INCLUDES = @LUA53_INCLUDES@
+LUA53_LIBS = @LUA53_LIBS@
 LUAJIT_DEFINES = @LUAJIT_DEFINES@
 LUAJIT_DEPEND = @LUAJIT_DEPEND@
 LUAJIT_INCLUDES = @LUAJIT_INCLUDES@

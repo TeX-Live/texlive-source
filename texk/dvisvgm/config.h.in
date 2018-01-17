@@ -56,6 +56,9 @@
 /* Define to 1 if you have the <iostream> header file. */
 #undef HAVE_IOSTREAM
 
+/* Define to 1 if you have the `dl' library (-ldl). */
+#undef HAVE_LIBDL
+
 /* Define to 1 if you have the `freetype2' library (-lfreetype). */
 #undef HAVE_LIBFREETYPE
 
