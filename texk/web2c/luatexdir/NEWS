@@ -1,5 +1,41 @@
+==============================================================
+LuaTeX 1.07 2018-01-17
+==============================================================
 
-This file is in the public domain.
+(1) This release brings Lua 5.3 to LuaTeX. We have tested an experimental version
+for a few months and not encountered issues.
+
+(2) If you use Lua 5.3 you should be aware of a few changes in the language and
+its implementation. Numbers are now either integers or floats but are cast
+automatically.
+
+(3) In some cases (e.g. string.format) there is a more strict check. A float always
+has a decimal appended when serialized, so 1 becomes 1.0 as string.
+
+(4) We keep supporting the bit32 library on top of the new bit operators. Be aware
+of the fact that currently LuajitTeX does not have these operators.
+
+(5) Performance of LuaTeX with Lua 5.3 can be slightly better than with 5.2 but this
+really depends on your usage of Lua. In practice there should be no slowdown.
+
+(6) We are aware of possible substantial slowdown of string.format depending on the
+platform and compiler. This depends on Lua too and will be resolved in due time.
+
+(7) If you want to test with Lua 5.3 then have to build LuaTeX with --lua53. Because
+ConTeXt will switch to 5.3 after this release there will be binaries available at the
+ConTeXt garden.
+
+(8) The 2018 TeXlive distribution will ship with LuaTeX using Lua 5.2 but there will
+likely be an additional binary LuaTeX53 available.
+
+(9) From 2019 TeXlive will ship with LuaTeX and Lua 5.3 as default. We provide --lua52
+as build flag for a while. By then we might be looking at Lua 5.4 already.
+
+(10) There are the usual patches and cleanups and a few small additions (mentioned
+in the manual) but there have been no fundamental changes in the API (apart from
+removing depricated and undocumented functionality).
+
+
 
 ==============================================================
 LuaTeX Release 1.0.4  was released 2017033109

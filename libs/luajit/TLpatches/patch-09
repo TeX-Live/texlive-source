@@ -1,11 +1,20 @@
 diff -bur LuaJIT-2.1.0-beta3-orig/src/lj_load.c LuaJIT-2.1.0-beta3/src/lj_load.c
 --- LuaJIT-2.1.0-beta3-orig/src/lj_load.c	2017-05-01 21:05:00.000000000 +0200
 +++ LuaJIT-2.1.0-beta3/src/lj_load.c	2017-06-19 18:05:35.864190001 +0200
-@@ -166,3 +166,22 @@
+@@ -166,3 +166,31 @@
      return 1;
  }
  
-+
++/* -- Luajittex needs this one because it's faster than make it Lua  -- */
++LUA_API int RESERVED_lua_dump(lua_State *L, lua_Writer writer, void *data, int strip)
++{
++  cTValue *o = L->top-1;
++  api_check(L, L->top > L->base);
++  if (tvisfunc(o) && isluafunc(funcV(o)))
++    return lj_bcwrite(L, funcproto(funcV(o)), writer, data, strip);
++  else
++    return 1;
++}
 +
 +/* -- Luajittex needs this one because it overloads loadfile  -- */
 +LUALIB_API int RESERVED_load_aux_JIT(lua_State *L, int status, int envarg)

@@ -43,6 +43,7 @@ libpng
 libpaper
 luajit
 lua52
+lua53
 zlib
 ])[]dnl
 m4_define([kpse_texlibs_pkgs], [dnl

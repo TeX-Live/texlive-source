@@ -696,7 +696,7 @@ static const luaL_Reg siolib[] = {
 */
 
 int luaopen_fio(lua_State *L) {
-    luaL_register(L, "fio", fiolib);
-    luaL_register(L, "sio", siolib);
+    luaL_openlib(L, "fio", fiolib, 0);
+    luaL_openlib(L, "sio", siolib, 0);
     return 1;
 }

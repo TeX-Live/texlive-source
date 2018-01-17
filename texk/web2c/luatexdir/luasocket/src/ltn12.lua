@@ -9,17 +9,26 @@
 -----------------------------------------------------------------------------
 local string = require("string")
 local table = require("table")
+local unpack = unpack or table.unpack
 local base = _G
+local _M = {}
+if module then -- heuristic for exporting a global package table
+    ltn12 = _M
+end
 module("ltn12")
+local filter,source,sink,pump = {},{},{},{}
 
-filter = {}
-source = {}
-sink = {}
-pump = {}
+_M.filter = filter
+_M.source = source
+_M.sink = sink
+_M.pump = pump
+
+local unpack = unpack or table.unpack
+local select = base.select
 
 -- 2048 seems to be better in windows...
-BLOCKSIZE = 2048
-_VERSION = "LTN12 1.0.2"
+_M.BLOCKSIZE = 2048
+_M._VERSION = "LTN12 1.0.3"
 
 -----------------------------------------------------------------------------
 -- Filter stuff
@@ -38,7 +47,7 @@ end
 -- (thanks to Wim Couwenberg)
 function filter.chain(...)
     local arg = {...}
-    local n = #arg
+    local n = base.select('#',...)
     local top, index = 1, 1
     local retry = ""
     return function(chunk)
@@ -89,7 +98,7 @@ end
 function source.file(handle, io_err)
     if handle then
         return function()
-            local chunk = handle:read(BLOCKSIZE)
+            local chunk = handle:read(_M.BLOCKSIZE)
             if not chunk then handle:close() end
             return chunk
         end
@@ -112,8 +121,8 @@ function source.string(s)
     if s then
         local i = 1
         return function()
-            local chunk = string.sub(s, i, i+BLOCKSIZE-1)
-            i = i + BLOCKSIZE
+            local chunk = string.sub(s, i, i+_M.BLOCKSIZE-1)
+            i = i + _M.BLOCKSIZE
             if chunk ~= "" then return chunk
             else return nil end
         end
@@ -135,7 +144,9 @@ function source.rewind(src)
     end
 end
 
-function source.chain(src, f)
+-- chains a source with one or several filter(s)
+function source.chain(src, f, ...)
+    if ... then f=filter.chain(f, ...) end
     base.assert(src and f)
     local last_in, last_out = "", ""
     local state = "feeding"
@@ -250,8 +261,13 @@ function sink.error(err)
     end
 end
 
--- chains a sink with a filter
-function sink.chain(f, snk)
+-- chains a sink with one or several filter(s)
+function sink.chain(f, snk, ...)
+    if ... then
+        local args = { f, snk, ... }
+        snk = table.remove(args, #args)
+        f = filter.chain(unpack(args))
+    end
     base.assert(f and snk)
     return function(chunk, err)
         if chunk ~= "" then
@@ -291,3 +307,4 @@ function pump.all(src, snk, step)
     end
 end
 
+return _M

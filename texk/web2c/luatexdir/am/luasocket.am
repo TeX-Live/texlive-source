@@ -5,16 +5,22 @@
 
 ## luasocket
 ##
-EXTRA_LIBRARIES += libluasocket.a libluajitsocket.a
+EXTRA_LIBRARIES += libluasocket.a liblua53socket.a libluajitsocket.a
 
 libluasocket_a_DEPENDENCIES = $(ZLIB_DEPEND)
+liblua53socket_a_DEPENDENCIES = $(ZLIB_DEPEND)
 libluajitsocket_a_DEPENDENCIES = $(ZLIB_DEPEND)
 
 $(libluasocket_a_OBJECTS): $(LUA_DEPEND)
+$(liblua53socket_a_OBJECTS): $(LUA_DEPEND)
 $(libluajitsocket_a_OBJECTS): $(LUAJIT_DEPEND)
 
 libluasocket_a_CPPFLAGS = \
 	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_INCLUDES)
+
+liblua53socket_a_CPPFLAGS = \
+	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_LUA53_INCLUDES)
+
 libluajitsocket_a_CPPFLAGS = \
 	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUAJIT_INCLUDES)
 
@@ -22,38 +28,42 @@ libluasocket_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitsocket_a_CFLAGS = # $(WARNING_CFLAGS)
 
 nodist_libluasocket_a_SOURCES = $(libluasocket_sources)
+nodist_liblua53socket_a_SOURCES = $(libluasocket_sources)
 nodist_libluajitsocket_a_SOURCES = $(libluasocket_sources)
 
 libluasocket_sources = \
-	luatexdir/luasocket/src/auxiliar.c \
-	luatexdir/luasocket/src/auxiliar.h \
-	luatexdir/luasocket/src/buffer.c \
-	luatexdir/luasocket/src/buffer.h \
-	luatexdir/luasocket/src/except.c \
-	luatexdir/luasocket/src/except.h \
-	luatexdir/luasocket/src/inet.c \
-	luatexdir/luasocket/src/inet.h \
-	luatexdir/luasocket/src/io.c \
-	luatexdir/luasocket/src/io.h \
+        luatexdir/luasocket/src/auxiliar.c \
+        luatexdir/luasocket/src/auxiliar.h \
+        luatexdir/luasocket/src/buffer.c \
+        luatexdir/luasocket/src/buffer.h \
+        luatexdir/luasocket/src/compat.c \
+        luatexdir/luasocket/src/compat.h \
+        luatexdir/luasocket/src/except.c \
+        luatexdir/luasocket/src/except.h \
+        luatexdir/luasocket/src/inet.c \
+        luatexdir/luasocket/src/inet.h \
+        luatexdir/luasocket/src/io.c \
+        luatexdir/luasocket/src/io.h \
 	luatexdir/luasocket/src/lua_preload.c \
-	luatexdir/luasocket/src/luasocket.c \
-	luatexdir/luasocket/src/luasocket.h \
-	luatexdir/luasocket/src/mime.c \
-	luatexdir/luasocket/src/mime.h \
-	luatexdir/luasocket/src/options.c \
-	luatexdir/luasocket/src/options.h \
-	luatexdir/luasocket/src/select.c \
-	luatexdir/luasocket/src/select.h \
-	luatexdir/luasocket/src/serial.c \
-	luatexdir/luasocket/src/socket.c \
-	luatexdir/luasocket/src/socket.h \
-	luatexdir/luasocket/src/tcp.c \
-	luatexdir/luasocket/src/tcp.h \
-	luatexdir/luasocket/src/timeout.c \
-	luatexdir/luasocket/src/timeout.h \
-	luatexdir/luasocket/src/udp.c \
-	luatexdir/luasocket/src/udp.h \
-	luatexdir/luasocket/src/usocket.h
+        luatexdir/luasocket/src/luasocket.c \
+        luatexdir/luasocket/src/luasocket.h \
+        luatexdir/luasocket/src/mime.c \
+        luatexdir/luasocket/src/mime.h \
+        luatexdir/luasocket/src/options.c \
+        luatexdir/luasocket/src/options.h \
+        luatexdir/luasocket/src/select.c \
+        luatexdir/luasocket/src/select.h \
+        luatexdir/luasocket/src/serial.c \
+        luatexdir/luasocket/src/socket.h \
+        luatexdir/luasocket/src/socket.c \
+        luatexdir/luasocket/src/tcp.c \
+        luatexdir/luasocket/src/tcp.h \
+        luatexdir/luasocket/src/timeout.c \
+        luatexdir/luasocket/src/timeout.h \
+        luatexdir/luasocket/src/udp.c \
+        luatexdir/luasocket/src/udp.h \
+        luatexdir/luasocket/src/usocket.h 
+
 
 ## The files *_lua.c are included from lua_preload.c
 ##
@@ -68,35 +78,16 @@ EXTRA_DIST += \
 	luatexdir/luasocket/src/smtp_lua.c \
 	luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/tp_lua.c \
-	luatexdir/luasocket/src/url_lua.c
+	luatexdir/luasocket/src/url_lua.c 
 
 ## Not used
 ##
 EXTRA_DIST += \
-	luatexdir/luasocket/src/Makefile \
-	luatexdir/luasocket/src/unix.c \
-	luatexdir/luasocket/src/unix.h \
-	luatexdir/luasocket/src/usocket.c \
-	luatexdir/luasocket/src/wsocket.c \
-	luatexdir/luasocket/src/wsocket.h \
-	luatexdir/luasocket/src/ftp.lua \
-	luatexdir/luasocket/src/headers.lua \
-	luatexdir/luasocket/src/http.lua \
-	luatexdir/luasocket/src/smtp.lua \
-	luatexdir/luasocket/src/socket.lua \
-	luatexdir/luasocket/src/tp.lua \
-	luatexdir/luasocket/src/url.lua \
-	luatexdir/luasocket/src/ltn12.lua \
-	luatexdir/luasocket/src/mbox.lua \
-	luatexdir/luasocket/src/mime.lua \
 	luatexdir/luasocket/LICENSE \
+	luatexdir/luasocket/Lua51.props \
+	luatexdir/luasocket/Lua52.props \
 	luatexdir/luasocket/NEW \
 	luatexdir/luasocket/README \
-	luatexdir/luasocket/config \
-	luatexdir/luasocket/luasocket.sln \
-	luatexdir/luasocket/makefile \
-	luatexdir/luasocket/mime.vcproj \
-	luatexdir/luasocket/socket.vcproj \
 	luatexdir/luasocket/doc/dns.html \
 	luatexdir/luasocket/doc/ftp.html \
 	luatexdir/luasocket/doc/http.html \
@@ -104,6 +95,7 @@ EXTRA_DIST += \
 	luatexdir/luasocket/doc/installation.html \
 	luatexdir/luasocket/doc/introduction.html \
 	luatexdir/luasocket/doc/ltn12.html \
+	luatexdir/luasocket/doc/lua05.ppt \
 	luatexdir/luasocket/doc/luasocket.png \
 	luatexdir/luasocket/doc/mime.html \
 	luatexdir/luasocket/doc/reference.css \
@@ -117,14 +109,20 @@ EXTRA_DIST += \
 	luatexdir/luasocket/etc/b64.lua \
 	luatexdir/luasocket/etc/check-links.lua \
 	luatexdir/luasocket/etc/check-memory.lua \
+	luatexdir/luasocket/etc/cookie.lua \
 	luatexdir/luasocket/etc/dict.lua \
 	luatexdir/luasocket/etc/dispatch.lua \
 	luatexdir/luasocket/etc/eol.lua \
 	luatexdir/luasocket/etc/forward.lua \
 	luatexdir/luasocket/etc/get.lua \
+	luatexdir/luasocket/etc/links \
 	luatexdir/luasocket/etc/lp.lua \
 	luatexdir/luasocket/etc/qp.lua \
 	luatexdir/luasocket/etc/tftp.lua \
+	luatexdir/luasocket/luasocket.sln \
+	luatexdir/luasocket/makefile \
+	luatexdir/luasocket/mime.vcxproj \
+	luatexdir/luasocket/mime.vcxproj.filters \
 	luatexdir/luasocket/samples/README \
 	luatexdir/luasocket/samples/cddb.lua \
 	luatexdir/luasocket/samples/daytimeclnt.lua \
@@ -132,10 +130,76 @@ EXTRA_DIST += \
 	luatexdir/luasocket/samples/echosrvr.lua \
 	luatexdir/luasocket/samples/listener.lua \
 	luatexdir/luasocket/samples/lpr.lua \
+	luatexdir/luasocket/samples/mclisten.lua \
+	luatexdir/luasocket/samples/mcsend.lua \
 	luatexdir/luasocket/samples/talker.lua \
 	luatexdir/luasocket/samples/tinyirc.lua \
+	luatexdir/luasocket/socket.vcxproj \
+	luatexdir/luasocket/socket.vcxproj.filters \
+	luatexdir/luasocket/src/ftp.lua \
+	luatexdir/luasocket/src/headers.lua \
+	luatexdir/luasocket/src/http.lua \
+	luatexdir/luasocket/src/ltn12.lua \
+	luatexdir/luasocket/src/makefile \
+	luatexdir/luasocket/src/mbox.lua \
+	luatexdir/luasocket/src/mime.lua \
+	luatexdir/luasocket/src/pierror.h \
+	luatexdir/luasocket/src/serial.c \
+	luatexdir/luasocket/src/smtp.lua \
+	luatexdir/luasocket/src/socket.h \
+	luatexdir/luasocket/src/socket.lua \
+	luatexdir/luasocket/src/tp.lua \
+	luatexdir/luasocket/src/unix.c \
+	luatexdir/luasocket/src/unix.h \
+	luatexdir/luasocket/src/unixdgram.c \
+	luatexdir/luasocket/src/unixdgram.h \
+	luatexdir/luasocket/src/unixstream.c \
+	luatexdir/luasocket/src/unixstream.h \
+	luatexdir/luasocket/src/url.lua \
+        luatexdir/luasocket/src/usocket.c \
+	luatexdir/luasocket/src/wsocket.c \
+	luatexdir/luasocket/src/wsocket.h \
 	luatexdir/luasocket/test/README \
+	luatexdir/luasocket/test/auth/.htaccess \
+	luatexdir/luasocket/test/auth/.htpasswd \
+	luatexdir/luasocket/test/auth/index.html \
+	luatexdir/luasocket/test/cgi/cat \
+	luatexdir/luasocket/test/cgi/cat-index-html \
+	luatexdir/luasocket/test/cgi/env \
+	luatexdir/luasocket/test/cgi/query-string \
+	luatexdir/luasocket/test/cgi/redirect-loop \
+	luatexdir/luasocket/test/cgi/request-uri \
+	luatexdir/luasocket/test/dicttest.lua \
+	luatexdir/luasocket/test/excepttest.lua \
+	luatexdir/luasocket/test/find-connect-limit \
+	luatexdir/luasocket/test/ftptest.lua \
+	luatexdir/luasocket/test/hello.lua \
+	luatexdir/luasocket/test/httptest.lua \
+	luatexdir/luasocket/test/index.html \
+	luatexdir/luasocket/test/ltn12test.lua \
+	luatexdir/luasocket/test/luasocket.png \
+	luatexdir/luasocket/test/mimetest.lua \
+	luatexdir/luasocket/test/smtptest.lua \
+	luatexdir/luasocket/test/stufftest.lua \
+	luatexdir/luasocket/test/tcp-getoptions \
+	luatexdir/luasocket/test/test_bind.lua \
+	luatexdir/luasocket/test/test_getaddrinfo.lua \
+	luatexdir/luasocket/test/test_socket_error.lua \
 	luatexdir/luasocket/test/testclnt.lua \
+	luatexdir/luasocket/test/testmesg.lua \
 	luatexdir/luasocket/test/testsrvr.lua \
-	luatexdir/luasocket/test/testsupport.lua
+	luatexdir/luasocket/test/testsupport.lua \
+	luatexdir/luasocket/test/tftptest.lua \
+	luatexdir/luasocket/test/udp-zero-length-send \
+	luatexdir/luasocket/test/udp-zero-length-send-recv \
+	luatexdir/luasocket/test/udpconnectclnt.lua \
+	luatexdir/luasocket/test/udpconnectsrvr.lua \
+	luatexdir/luasocket/test/unixdgramclnt.lua \
+	luatexdir/luasocket/test/unixdgramsrvr.lua \
+	luatexdir/luasocket/test/unixstreamclnt.lua \
+	luatexdir/luasocket/test/unixstreamsrvr.lua \
+	luatexdir/luasocket/test/upload.html \
+	luatexdir/luasocket/test/urltest.lua \
+	luatexdir/luasocket/test/utestclnt.lua \
+	luatexdir/luasocket/test/utestsrvr.lua 
 
