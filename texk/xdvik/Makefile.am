@@ -207,6 +207,9 @@ dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
 dvipsconfdir = $(datarootdir)/texmf-dist/dvips/xdvi
 dist_noinst_DATA = texmf/config.xdvi
 
+desktopdir = $(datarootdir)/applications
+desktop_DATA = xdvi.desktop
+
 install-data-hook:
 	@echo " $(MKDIR_P) '$(DESTDIR)$(dvipsconfdir)'"; \
 	$(MKDIR_P) "$(DESTDIR)$(dvipsconfdir)" || exit 1; \
