@@ -1,3 +1,7 @@
+2018-01-16  Karl Berry  <karl@freefriends.org>
+
+	* dvihp: use mktemp instead of simple tmpdir, per Debian.
+
 2014-06-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi2xx.c: Use rungs.exe instead of gswin32c.exe.
