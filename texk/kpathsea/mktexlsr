@@ -73,7 +73,18 @@ if tty -s; then verbose=true; else verbose=false; fi
 dry_run=false
 trees=
 
-treefile="${TMPDIR-/tmp}/mktexlsrtrees$$.tmp"
+# initialize treefile by either mktemp or some random name
+# code taken from pdfjam and adjusted
+{
+  treefile=`
+    (umask 077 && mktemp "${TMPDIR-/tmp}/mktexlsrtrees.XXXXXXXXXX") 2>/dev/null
+  ` && test -n "$treefile" && test -f "$treefile"
+} || {
+  ##  We'll use awk to make random number, for portability
+  random=`awk 'END { srand(); printf ("%d\n", rand()*1000000); }' /dev/null`
+  treefile="${TMPDIR-/tmp}/mktexlsrtrees$$.$random"
+} || exit $?
+
 trap 'cd /; rm -f $treefile; test -z "$db_dir_tmp" || rm -rf "$db_dir_tmp"; 
       exit' 0 1 2 3 7 13 15
 
