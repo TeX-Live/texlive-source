@@ -1,4 +1,4 @@
-2018-01-17  Hironobu Yamashita <aminophen15@yahoo.co.jp>
+2018-01-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* am/xetex.am (OBJCXXFLAGS) [XETEX_MACOSX]: add -std=c++11.
 
