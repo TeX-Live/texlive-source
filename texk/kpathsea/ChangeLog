@@ -1,3 +1,7 @@
+2018-01-16  Karl Berry  <karl@freefriends.org>
+
+	* kpathsea.pc.in (Cflags): remove -I${libdir} per Debian.
+
 2018-01-14  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf: doc fixes.
