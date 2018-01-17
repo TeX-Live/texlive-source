@@ -1,3 +1,7 @@
+2018-01-17  Hironobu Yamashita <aminophen15@yahoo.co.jp>
+
+	* am/xetex.am (OBJCXXFLAGS) [XETEX_MACOSX]: add -std=c++11.
+
 2017-12-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* image/jpegimage.c: If j_info->xdpi and j_info->ydpi are not

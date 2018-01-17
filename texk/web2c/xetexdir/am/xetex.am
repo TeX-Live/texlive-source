@@ -58,6 +58,7 @@ if XETEX_MACOSX
 
 xetex_cppflags += -DXETEX_MAC
 xetex_LDFLAGS = -framework ApplicationServices -framework Cocoa
+OBJCXXFLAGS += -std=c++11
 
 else !XETEX_MACOSX
 
