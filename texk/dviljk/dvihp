@@ -6,14 +6,11 @@
 
 : ${DVILJ=dvilj4}       # the dvilj variant to run
 : ${SPOOL=lpr}          # used to print an LJ file
-: ${TMPDIR=${TEMP-${TMP-/tmp}}} # for the dvicopy output
 
-tmpdir="${TMPDIR}"/dvihp$$
-(umask 077; mkdir "$tmpdir") \
+tmpdir=`mktemp -d` \
   || { echo "cannot create directory \`$tmpdir'."; exit 1; }
 
 trap '
-  cd "${TMPDIR}"
   test -d "$tmpdir" && { rm -f "$tmpdir"/*; rmdir "$tmpdir"; }
   exit 0
 ' 0 1 2 3 6 7 13 15
