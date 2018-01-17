@@ -1,3 +1,8 @@
+2018-01-16  Paul Vojta  <vojta@math.berkeley.edu>
+
+	* x11-Xt.c: attempt to handle initial expose for mf.
+	http://tug.org/pipermail/tex-k/2017-May/002783.html
+
 2015-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mftalk.h (new): Moved to here from ../mftalk.h.
