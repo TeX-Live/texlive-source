@@ -3,7 +3,7 @@
 
  *
  Preprocessor for Devanagari for TeX package
- Copyright (C) 1991-2016  University of Groningen, The Netherlands
+ Copyright (C) 1991-2018  University of Groningen, The Netherlands
  *
  Author   : Frans J. Velthuis <velthuis@rc.rug.nl>
  Date     : 09 May 1991
@@ -2417,7 +2417,7 @@ void put_macro(short macro) {
 void err_ill(const char *str) {
    fprintf(stderr, "Error: illegal character(s) \"%s\" detected at line %d:\n",
 	  str, linenumber);
-   fprintf(stderr, inbuf);
+   fprintf(stderr, "%s", inbuf);
    exit(1);
 }
 

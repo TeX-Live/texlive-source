@@ -1,6 +1,14 @@
+2018-01-18  Karl Berry  <karl@tug.org>
+
+	* error_routines.c (yyerror, warning_0, fatal_error_0,
+	internal_error_0),
+	* out_routines.c (out): printf %s instead of direct string.
+	From Debian.
+
 2016-02-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* omfonts.c, help.test: Add an option -charcode-format for compatibility.
+	* omfonts.c, help.test: Add an option -charcode-format for
+	compatibility.
 
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

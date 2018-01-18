@@ -3,7 +3,7 @@
 This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
-Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright 1994--2018 John Plaice and Yannis Haralambous
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ void
 yyerror(const_string fmt)
 {
     fprintf(stderr, "line %d (parsing): ", line_number);
-    fprintf(stderr, fmt);
+    fprintf(stderr, "%s", fmt);
     fprintf(stderr, "\n");
     num_errors++;
 }
@@ -72,7 +72,7 @@ void
 warning_0(const_string fmt)
 {
     fprintf(stderr, "line %d (warning): ", line_number);
-    fprintf(stderr, fmt);
+    fprintf(stderr, "%s", fmt);
     fprintf(stderr, "\n");
 }
 
@@ -120,7 +120,7 @@ void
 fatal_error_0(const_string fmt)
 {
     fprintf(stderr, "line %d (fatal): ", line_number);
-    fprintf(stderr, fmt);
+    fprintf(stderr, "%s", fmt);
     fprintf(stderr, "\n");
     exit(1);
 }
@@ -156,7 +156,7 @@ void
 internal_error_0(const_string fmt)
 {
     fprintf(stderr, "line %d (internal): ", line_number);
-    fprintf(stderr, fmt);
+    fprintf(stderr, "%s", fmt);
     fprintf(stderr, "\n");
     exit(2);
 }

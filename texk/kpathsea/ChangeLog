@@ -1,6 +1,7 @@
 2018-01-17  Norbert Preining  <norbert@preining.info>
 
-	* mktexlsr (treefile): use mktemp with fallback option for temporary file.
+	* mktexlsr (treefile): use mktemp with fallback option for
+	temporary file.
 
 2018-01-16  Karl Berry  <karl@freefriends.org>
 

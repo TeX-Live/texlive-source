@@ -3,7 +3,7 @@
 This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
-Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright 1994--2018 John Plaice and Yannis Haralambous
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -368,5 +368,5 @@ out_digits(unsigned counter)
 void
 out(const_string sval)
 {
-	fprintf(file_output, sval);
+	fprintf(file_output, "%s", sval);
 }
