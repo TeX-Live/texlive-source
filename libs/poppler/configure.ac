@@ -36,6 +36,11 @@ fi
 
 AC_SUBST([NO_WARN_CXXFLAGS])  
 
+CXX_FLAGS_RELEASE='-O2 -DNDEBUG -fno-exceptions -fno-check-new -fno-common -D_DEFAULT_SOURCE'
+
+AC_SUBST([CXX_FLAGS_RELEASE])  
+
+
 dnl ##### Optional features.
 AC_ARG_ENABLE([opi],
               AS_HELP_STRING([--enable-opi],
