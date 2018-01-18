@@ -1,3 +1,7 @@
+2018-01-18  Karl Berry  <karl@freefriends.org>
+
+	* man5/synctex.5: spacing, typos, per Debian.
+
 2017-07-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex_parser_utils.c: mingw32 also may not have syslog.h.

@@ -1,4 +1,4 @@
-.TH MF 1 "16 June 2015" "Web2C @VERSION@"
+.TH MF 1 "17 January 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -54,7 +54,7 @@ file.  When called as
 it will use the
 .I plain
 base.  When called under any other name, \*(MF will use that name as
-the name of the base to use.   For example, when called as
+the name of the base to use.  For example, when called as
 .B mf
 the
 .I mf
@@ -90,7 +90,7 @@ keep \*(MF from thinking that you want to produce a font called
 .IR mode .
 (Or you can just say
 .I mf
-and give the other stuff on the next line, without quotes.) Other
+and give the other stuff on the next line, without quotes.)  Other
 control sequences, such as
 .I batchmode
 (for silent operation) can also appear.
@@ -115,7 +115,7 @@ example is shown generically as <printengine>, a symbolic term for which
 the name of an actual device or, most commonly, the name
 .I localfont
 (see below) must
-be substituted. If the mode is not specified or is not valid for your
+be substituted.  If the mode is not specified or is not valid for your
 site, \*(MF will default to
 .I proof
 mode which produces
@@ -367,15 +367,13 @@ files in it, if they cannot be put in the current directory.  Again, see
 .B MFINPUTS
 Search path for
 .I input
-and
-.I openin
 files.
 .TP
 .B MFEDIT
 Command template for switching to editor.
 .TP
 .B MFTERM
-Determines the online graphics display. If MFTERM is not set,
+Determines the online graphics display.  If MFTERM is not set,
 and DISPLAY is set, the Metafont window support for X is used.
 (DISPLAY must be set to a valid X server specification, as usual.)
 If neither MFTERM nor DISPLAY is set, TERM is used to guess the window
@@ -434,7 +432,7 @@ documentation for this version of \*(MF can be found in the info manual
 .\"=====================================================================
 .SH BUGS
 On January 4, 1986 the ``final'' bug in \*(MF was discovered
-and removed. If an error still lurks in the code, Donald E. Knuth promises to
+and removed.  If an error still lurks in the code, Donald E. Knuth promises to
 pay a finder's fee which doubles every year to the first person who finds
 it.  Happy hunting.
 .\"=====================================================================
@@ -472,6 +470,7 @@ you see everywhere, especially those of your own design.''
 .BR gftodvi (1),
 .BR gftype (1),
 .BR mft (1),
+.BR mpost (1),
 .BR pltotf (1),
 .BR tftopl (1).
 .\"=====================================================================

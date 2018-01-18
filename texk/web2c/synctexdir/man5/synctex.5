@@ -1,6 +1,6 @@
-.Dd Apr 22, 2017
+.Dd Jan 17, 2018
 .Dt SYNCTEX 5
-.Os "Independant"
+.Os "Independent"
 .\"
 .\"
 .Sh NAME
@@ -316,7 +316,7 @@ It allows to append some transformation (shift and magnify).
 Typically, one applies a dvi to pdf filter with offset options and magnification,
 then he appends the same options to the synctex file, for example
 .Bd -literal -offset indent
-	synctex update -o foo.pdf -m 0.486 -x 9472573sp -y 13.3dd source.dvi
+synctex update -o foo.pdf -m 0.486 -x 9472573sp -y 13.3dd source.dvi
 .Ed
 .Bl -item -offset indent
 .\"
@@ -366,9 +366,9 @@ with useful suggestions by some well known actors of the TeX world.
 This document has been updated on Sat Apr 22 09:57:20 UTC 2017 to include \\pdfxform support.
 .\" nroff -man synctex.5 | less
 .\"groff -man -Tascii synctex.5 | less
-.\"To convert a man page to plain pre-formatted text (e.g for spell checking) use:
+.\"To convert a man page to plain pre-formatted text (e.g. for spell checking) use:
 .\"nroff -man synctex.5 | col -b > synctex.5.txt
-.\"To convert it to Postscript (for printing or further conversion to pdf) use:
+.\"To convert it to PostScript (for printing or further conversion to pdf) use:
 .\"groff -man -Tps synctex.5 > synctex.5.ps
 .\"To convert the man page to html use:
 .\"man2html synctex.5

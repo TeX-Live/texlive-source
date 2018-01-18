@@ -1,4 +1,4 @@
-.\" Copyright (c) 1990-2013  Paul Vojta and others
+.\" Copyright 1990-2018 Paul Vojta and others
 .\"
 .\" This is Paul's license, included here only for reference, it does not apply
 .\" to all parts of the k version.
@@ -124,7 +124,7 @@ xdvi \- DVI Previewer for the X Window System
 [\fB\-mgs\fP[\fIn\fP] \fIsize\fP]
 [\fB\-mousemode\fP \fI0|1|2\fP]
 #ifcolor
-[\fB\-nocolor\fP] 
+[\fB\-nocolor\fP]
 #endif
 #ifdps
 [\fB\-nodps\fP]
@@ -166,7 +166,7 @@ xdvi \- DVI Previewer for the X Window System
 #ifps
 [\fB\-postscript\fP \fIflag\fP]
 #endif
-[\fB\-rulecolor\fP \fIcolor\fP] 
+[\fB\-rulecolor\fP \fIcolor\fP]
 [\fB\-rv\fP]
 [\fB\-S\fP \fIdensity\fP]
 [\fB\-s\fP \fIshrink\fP]
@@ -394,7 +394,7 @@ comma-separated list of strings.
 .br
 For the bitmask representation, multiple values can
 be specified by adding the numbers that represent the individual bits;
-e.g. to debug all all file searching and opening commands, use 4032
+e.g. to debug all file searching and opening commands, use 4032
 (= 2048 + 1024 + 512 + 256 + 128 + 64). Use -1 to turn on debugging
 of everything (this will produce huge output).
 .br
@@ -494,7 +494,7 @@ to determine the editor command:
 .BR XEDITOR ,
 .BR VISUAL ,
 and
-.B EDITOR 
+.B EDITOR
 (in this sequence). If the string is found as the value
 of the
 .SB VISUAL
@@ -839,7 +839,7 @@ should not move to the home position when moving to a new page.  See also the
 keystroke. This flag is honored by all page switching actions and by
 .B up-or-previous() /
 .BR down-or-next() ,
-although the latter only honor the horizontal postion, not the vertical one.
+although the latter only honor the horizontal position, not the vertical one.
 This allows for a "continuous" scrolling back an forth through a document with
 a display window narrower than a page width.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1020,7 +1020,7 @@ is no appropriate instance of
 already running.
 This argument makes it run in the foreground instead.  This is useful
 for debugging, or if your client application cannot deal well with
-a program self-backgrounding itself in this way -- e.g., the IPC functions
+a program self-backgrounding itself in this way -- e.g. the IPC functions
 in
 .B emacs
 are known to have problems with this.
@@ -1230,7 +1230,7 @@ As mentioned in the section
 .B DESCRIPTION
 above, xdvi will create a temporary copy of the DVI file so that it
 can be accessed without interruptions even while the file is being
-rewritten by 
+rewritten by
 .BR TeX .
 Since this introduces the overhead of copying the file every time
 it has changed, the
@@ -1457,7 +1457,7 @@ argument, and the PDF output file as second argument.
 .TP
 .BI \-rulecolor " color"
 .RB ( .ruleColor )
-Determines the color of the rules used for the the magnifier
+Determines the color of the rules used for the magnifier
 (default: foreground color).
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
@@ -1620,7 +1620,7 @@ should not be needed since the encoding is determined from the locale settings.
 .B \-thorough
 .RB ( .thorough )
 .B Xdvi
-will usually try to ensure that overstrike characters (e.g.,
+will usually try to ensure that overstrike characters (e.g.\&
 .BR \enotin )
 are printed correctly.  On monochrome displays, this is always possible
 with one logical operation, either
@@ -1797,7 +1797,7 @@ next page if a number is given).  Synonyms are
 and Line Feed.
 .TP
 .BR Backspace " key"
-.RB [ back-pagee() ]
+.RB [ back-page() ]
 Moves to the previous page (or back
 .I n
 pages).  Synonyms are
@@ -2074,7 +2074,7 @@ option.
 .sp
 If given a numeric argument that is not 0 or 1, greyscale anti-aliasing is
 turned on, and the gamma resource is set to the value divided by
-100. E.g.,
+100. E.g.\&
 .RB ` 150G '
 turns on greyscale and sets gamma to 1.5.
 #endif
@@ -2201,7 +2201,7 @@ Return, and Line Feed.
 .TP
 .B Ctrl-o
 .RB [ select-dvi-file() ]
-Read a new 
+Read a new
 .I dvi
 file. A file-selection widget is popped up for you to choose the DVI
 file from. If a prefix argument
@@ -2552,7 +2552,7 @@ the mouse button is released. Moving the mouse cursor while holding the button d
 magnifier.
 .br
 Different mouse buttons produce different sized
-windows, as indicated by the
+windows, as indicated by
 the argument of the
 .I magnifier()
 action. Its argument is either a string of the form
@@ -2621,7 +2621,7 @@ this is mostly for touchpads, trackpads, etc.
 .B text-selection()
 This action allows you to mark a rectangular region of text in the DVI file.
 The text is put into the X selection buffer and can be pasted into other
-applictions (e.g. text editors). This works similar to the Plain text option
+applications (e.g. text editors). This works similar to the Plain text option
 in the
 .B Save
 dialog; see the discussion there for more information on encoding issues.
@@ -2744,7 +2744,7 @@ indicating that the action should toggle regardless of the current prefix argume
 .PP
 Mouse actions should refer only to
 .B ButtonPress
-events (e.g.,
+events (e.g.\&
 .BR "<Btn1Down>:magnifier(*1)" ).
 The corresponding motion and release events will be handled internally.
 A key action may be bound to a mouse event, but not vice versa.
@@ -3036,7 +3036,7 @@ scanned text. Such text will usually cause multi-page matching to fail.
 This emphasizes the fact that searching in the
 formatted text (the DVI output) works differently from
 searching in the source text: Searching in the DVI file makes it easier to
-skip formatting instructions, and makes it possible to search for e.g.
+skip formatting instructions, and makes it possible to search for e.g.\&
 hyphenation and equation numbers; but sometimes the
 formatting results can also get in the way, e.g. in the case of
 footnotes. In these cases it's better to search in the \*(Te\& source
@@ -3243,7 +3243,7 @@ of the print dialog:
 .B dvipsPrinterString
 .TP
 .B dvipsOptionsString
-These can be used to provide default entries for the 
+These can be used to provide default entries for the
 .B Printer
 and the
 .B Dvips options
@@ -3252,7 +3252,7 @@ text fields, respectively. If no paper size is specified in the DVI file
 the input field is initialized with the current value of the
 command line option/X resource
 .BR paper .
-E.g., the option
+E.g. the option
 .I -paper a4r
 is translated into the dvips options
 .IR "-t a4 -t landscape" .
@@ -3296,7 +3296,7 @@ to convert the PostScript file to PDF).
 Plain text in ISO-8859-1 or UTF-8 encoding. The latter will preserve more
 of the special LaTeX characters e.g. from mathematical mode. Note however
 that e.g. only few of LaTeX's mathematical symbols can be rendered correctly
-as text; so this funcionality works best for plain text documents.
+as text; so this functionality works best for plain text documents.
 If a character cannot be displayed in the selected
 charset, it is replaced by `\e' followed by the hexadecimal character code.
 If a character is not recognized at all, it is replaced by `?'.
@@ -3483,7 +3483,7 @@ This means that each icon should be a square, and that the entire
 pixmap should have width
 \fIn\fR x \fIh\fR if \fIh\fR is the height of the pixmap.
 .PP
-The resource 
+The resource
 .B toolbarTranslations
 can be used to map icons/buttons to specific actions.
 The resource should contain a string separated by newline characters,
@@ -3777,7 +3777,7 @@ each page must be in one of the first two forms, since defaults are not
 inherited across pages.
 .sp
 You will need a \*(Te\& implementation that provides an appropriate
-switch (e.g.
+switch (e.g.\&
 .IR -src )
 or a macro package
 (such as
@@ -3853,12 +3853,12 @@ or
 If an asterisk
 .RB ( * )
 appears just before the width, then the measurements refer to the document
-dimensions (e.g.,
+dimensions (e.g.\&
 .B pt
 as opposed to
 .BR truept ).
 This allows a macro package to vary the page size according to elements
-of the document; e.g.,
+of the document; e.g.\&
 .RS 5
 .ft 3
 .nf
@@ -4134,14 +4134,14 @@ $HOME/.mailcap:/etc/mailcap:/usr/etc/mailcap:\e
 .fi
 .RE
 .br
-For security reasons, some special characters (i.e.: ( ) ` \e ;)
+For security reasons, some special characters (i.e. ( ) ` \e ;)
 are escaped in the argument before passing it to
 .BR system() .
 .RE
 .TP
 .SB BROWSER
-Determines the web browser used to open external links (i.e., all URLs that don't
-start with the
+Determines the web browser used to open external links (i.e. all URLs
+that don't start with the
 .RI ` file: '
 scheme and are not relative links in the local DVI file), and to open links
 for which no viewer has been specified in the
@@ -4368,4 +4368,3 @@ Please report all bugs to the SourceForge bug tracker:
 .nf
 .B http://sourceforge.net/tracker/?func=add&group_id=23164&atid=377580
 .PP
-
