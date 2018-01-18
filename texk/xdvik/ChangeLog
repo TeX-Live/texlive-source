@@ -1,3 +1,9 @@
+2018-01-17  Karl Berry  <karl@freefriends.org>
+
+	* xdvi.1.in: remove trailing whitespace to placate Debian.
+	Use \& instead of "," after end-of-line "e.g." for consistency.
+	Remove spurious doubled words.
+
 2018-01-17  Norbert Preining  <norbert@preining.info>
 
 	* add .desktop file

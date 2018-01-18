@@ -1,3 +1,7 @@
+2018-01-18  Karl Berry  <karl@freefriends.org>
+
+	* mf.man: spacing, no openin, per Debian.
+
 2017-01-13  Karl Berry  <karl@tug.org>
 
 	* ofm2opl.man,
