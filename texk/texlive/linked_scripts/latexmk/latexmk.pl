@@ -121,8 +121,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.54c';
-$version_details = "$My_name, John Collins, 12 Dec. 2017";
+$version_num = '4.55';
+$version_details = "$My_name, John Collins, 17 Jan. 2018";
 
 use Config;
 use File::Basename;
@@ -183,7 +183,7 @@ else {
    warn "Something wrong with the perl configuration: No signals?\n";
 }
 
-## Copyright John Collins 1998-2017
+## Copyright John Collins 1998-2018
 ##           (username jcc8 at node psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -221,107 +221,21 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##    17 Jan 2018   John Collins  Version number to 4.55.  Ready for release.
+##    15, 16 Jan 2018   John Collins  Correct bug in measuring filetime offset.
+##    14 Jan 2018   John Collins  Correct issue with possible filetime offset
+##                                  on remote file system.
+##                                Define defaults for configuration variables
+##                                  that didn't have defaults.
+##    12 Jan 2018   John Collins  Implement pvc timeout
+##    10 Jan 2018   John Collins  Ensure $search_path_separator is defined.
+##                                Set it to MS-Win value for msys.
 ##    12 Dec 2017   John Collins  Further correct bsd_glob fudge (to be in subroutine my_glob)
 ##     8 Dec 2017   John Collins  Correct bsd_glob fudge
 ##     2 Dec 2017   John Collins  Fudge on bsd_glob if it doesn't exist
 ##    20 Nov 2017   John Collins  Ver. 4.54
-##    18 Nov 2017   John Collins  Add item to @file_not_found for generic
-##                                  package warning about "No file", as produced
-##                                  by glossaries-extra.
-##                                In run_bibtex, make change in environment
-##                                  be local, not global.
-##     4 Sep 2017   John Collins  Restore default of $analyze_input_log_always 
-##                                  to 1.  This restores the default detection
-##                                  of certain constructs for dependencies for
-##                                  input files in the .log file. See the
-##                                  comments on this variable.  This corrects
-##                                  a problem caused by a change in the
-##                                  behavior of lualatex in TeXLive 2017.
-##     2 Sep 2017   John Collins  Remove insertion of name of deps file in
-##                                  list of targets in deps file.
-##                                Don't print deps info in deps mode (unless
-##                                  diagnostics on).
-##     1 Sep 2017   John Collins  Customized default previewers for MSys
-##    14 Jul 2017   John Collins  Correct collection of timing information so 
-##                                  that it works even in silent mode
-##    14 Jun 2017   John Collins  Extra value for $bibtex_use
-##    12 Jun 2017   John Collins  Change glob to bsd_glob, since
-##                                  File::Glob's glob is now deprecated.
-##                                Remove unused glob_list.
-##    16 May 2017   John Collins  Optimize away current directory string in
-##                                  $out_dir and $aux_dir.
-##    15 May 2017   John Collins  Fix incorrect deletion of non-generated
-##                                   aux files.
-##    13 May 2017   John Collins  Correct ordering of list of options given
-##                                  by -help
-##     6 Apr 2017   John Collins  In deps_list, correct bug in identifying
-##                                generated files.  Otherwise, generated files
-##                                may be identified as true source files.
-##    19 Jan 2017   John Collins  Make -jobname work with -pdfxe and -pdflua
-##    18 Jan 2017   John Collins  Update to v. 4.53.
-##    17 Jan 2017   John Collins  Update to v. 4.52b (official release).
-##                                Fix bbl file detection bug.
-##                                Bbl files were previously only identified
-##                                  from occurrence as input files in log
-##                                  file rather than from fls as well.
-##    16 Jan 2017   John Collins  Clean up
-##                                Add extra item to @file_not_found for
-##                                  xelatex's characteristic message.
-##    14 Jan 2017   John Collins  Fix some diagnostics.
-##                                Detect graphics candidates in log file from
-##                                  <...> constructs.
-##                                Don't look in log file for input files in the
-##                                  (...) and <...> constructs unless forced to
-##                                  by lack of up-to-date fls file.
-##    13 Jan 2017   John Collins  Kpsewhich diagnostics: also if not
-##                                  silent, or when $kpsewhich_show set.
-##                                Optimize calls to kpsewhich to find files
-##                                  given by lines put in log file by
-##                                  graphics package.
-##                                Work around LuaTeX line-wrapping bug.  (LuaTeX 0.95.0)
-##    12 Jan 2017   John Collins  Improve error reporting on failed run.
-##    11 Jan 2017   John Collins  With -diagnositcs, include invocation
-##                                  and results for kpsewhich.
-##     4, 10 Jan 2017  John Collins  Finish fix for read-after-write files
-##     29-31 Dec 2016  John Collins  V. 4.51
-##                                For biber and bibtex rules, included .blg
-##                                   file as extra generated file.
-##                                Similarly for makeindex rule
-##      3 Nov 2016  John Collins  Start to fix problem reported by jfbu
-##                                that with deleted aux file, latexmk
-##                                does too few runs.
-##                                Problems:
-##                                  1. latexmk doesn't create initial
-##                                     dummy aux or fdb when only one
-##                                     fails to exist, but only when
-##                                     both fail to exist.
-##                                  2. latexmk detects the aux file as
-##                                     only read after write, and
-##                                     hence not a true dependent.
-##                                     That is the initial attempt to
-##                                     read, giving a No file message,
-##                                     is not recorded in the fls
-##                                     file.
-##                                First fix: missing aux file => make
-##                                dummy.
-##                                Need better: if source file in fdb
-##                                doesn't exist initially, then it
-##                                should be counted as initially
-##                                read, so not read after write.
-##     18 Oct 2016  John Collins  xelatex support via xdv file for speed.
-##                                lualatex
-##      5 Sep 2016  John Collins  Add routines: rdb_list_source, rdb_set_source
-##     17 Aug 2016  John Collins  Add XDG Base Directory compatibility
-##                                   for per-user rc file
-##      1 May 2016  John Collins  Correct creation of output and aux directories
-##                                to correctly handle relative paths when -cd
-##                                is used.
-##     22 Apr 2016  John Collins  Fix problem of -C not always working correctly
-##                                when compilation was with -pdf and clear was default.
-##                                (Correctly default set of rules in rdb_make_rule_list.)
-##                                Ver. 4.45
 ##
-##   1998-2010, John Collins.  Many improvements and fixes.
+##   1998-2017, John Collins.  Many improvements and fixes.
 ##       See CHANGE-log.txt for full list, and CHANGES for summary
 ##
 ##   Modified by Evan McLean (no longer available for support)
@@ -664,9 +578,8 @@ $print_type = 'auto';   # When printing, print the postscript file.
 ## Current tex's treat extensions like UNIX teTeX:
 $extension_treatment = 'unix';
 
-## Substitute backslashes in file and directory names for
-##  MSWin command line
-$MSWin_back_slash = 1;
+# Viewers.  These are system dependent, so default to none:
+$pdf_previewer = $ps_previewer  = $ps_previewer_landscape  = $dvi_previewer  = $dvi_previewer_landscape = "NONE";
 
 $dvi_update_signal = undef;
 $ps_update_signal = undef;
@@ -681,6 +594,23 @@ $allow_subdir_creation = 1;
 $new_viewer_always = 0;     # If 1, always open a new viewer in pvc mode.
                             # If 0, only open a new viewer if no previous
                             #     viewer for the same file is detected.
+
+# Commands for printing are highly system dependent, so default to NONE:
+$lpr = 'NONE $lpr variable is not configured to allow printing of ps files';
+$lpr_dvi = 'NONE $lpr_dvi variable is not configured to allow printing of dvi files';
+$lpr_pdf = 'NONE $lpr_pdf variable is not configured to allow printing of pdf files';
+
+
+# The $pscmd below holds a **system-dependent** command to list running
+# processes.  It is used to find the process ID of the viewer looking at
+# the current output file.  The output of the command must include the
+# process number and the command line of the processes, since the
+# relevant process is identified by the name of file to be viewed.
+# Its use is not essential.
+$pscmd =  'NONE $pscmd variable is not configured to detect running processes';
+$pid_position = -1;     # offset of PID in output of pscmd.  
+                        # Negative means I cannot use ps
+
 
 $quote_filenames = 1;       # Quote filenames in external commands
 
@@ -728,6 +658,55 @@ $MSWin_fudge_break = 1; # Give special treatment to ctrl/C and ctrl/break
                         #   also stop latexmk.  Under tcsh, we get
                         #   back to a command prompt, while latexmk
                         #   keeps running in the background!
+
+## Substitute backslashes in file and directory names for
+##  MSWin command line
+$MSWin_back_slash = 1;
+
+## Separator of elements in search_path.  Default is unix value
+$search_path_separator = ':'; 
+
+
+# Directory for temporary files.  Default to current directory.
+$tmpdir = ".";
+
+
+# When the aux_dir is on a network share (or the like), its system
+# time may differ from the system time on which latexmk is running.
+# This complicates the tests of whether particular files have been
+# made in a current run of a program or are left over from a previous
+# run.  One test, which is needed under some situations, is that a
+# file was made on a previous run when the files modification time is
+# less than the system time when the program is started.  (See
+# subroutine test_gen_file; this is only needed in a couple of
+# situations.)  The comparison between file and system times must be
+# corrected if there is an offset between system times on the computer
+# running latexmk and the computer hosting the file system containing
+# aux_dir.  The offset is measured in subroutine get_filetime_offset
+# by writing a temporary file; the test only needs to be done once.
+#
+# The following variables are used.  Since the system-independent
+# values of system and file time are only accurate to a second (or 2
+# seconds for FAT file systems), the offset is also accurate only to a
+# second or two.  So thresholds are needed below which differences
+# are insignificant.
+#
+# Note that the making or not making of a file is controlled by the
+# state of the document being compiled and by latexmk's configuration.
+# So a file that is left over from a previous run and not overwritten
+# on the current run will have a file time at least many seconds less
+# than the current time, corresponding to the time scale for a human
+# run-edit-run cycle.
+#
+$filetime_offset_measured = 0;       # Measurement not yet done.
+$filetime_offset = 0;                # Filetime relative to system time.
+$filetime_causality_threshold = 5;   # Threshold for detection of left-over file.
+                                     # Should be non-negative always, and should
+                                     # be bigger than 2 secs if a remote
+                                     # filesystem or network share is used.
+$filetime_offset_report_threshold = 30; # Threshold beyond which filetime offsets
+                                     # are reported; large offsets indicate
+                                     # incorrect system time on at least one system.
 
 
 ################################################################
@@ -778,23 +757,6 @@ if ( $^O eq "MSWin32" ) {
     $dvi_update_method = 1;
     $ps_update_method = 1;
     $pdf_update_method = 3; # acroread locks the pdf file
-    # Use NONE as flag that I am not implementing some commands:
-    $lpr =
-        'NONE $lpr variable is not configured to allow printing of ps files';
-    $lpr_dvi =
-        'NONE $lpr_dvi variable is not configured to allow printing of dvi files';
-    $lpr_pdf =
-        'NONE $lpr_pdf variable is not configured to allow printing of pdf files';
-    # The $pscmd below holds a command to list running processes.  It
-    # is used to find the process ID of the viewer looking at the
-    # current output file.  The output of the command must include the
-    # process number and the command line of the processes, since the
-    # relevant process is identified by the name of file to be viewed.
-    # Its use is not essential.
-    $pscmd = 
-        'NONE $pscmd variable is not configured to detect running processes';
-    $pid_position = -1;     # offset of PID in output of pscmd.  
-                            # Negative means I cannot use ps
 }
 elsif ( $^O eq "cygwin" ) {
     # The problem is a mixed MSWin32 and UNIX environment. 
@@ -893,34 +855,11 @@ elsif ( $^O eq "cygwin" ) {
     $dvi_update_method = 1;
     $ps_update_method = 1;
     $pdf_update_method = 3; # acroread locks the pdf file
-    # Use NONE as flag that I am not implementing some commands:
-    $lpr =
-        'NONE $lpr variable is not configured to allow printing of ps files';
-    $lpr_dvi =
-        'NONE $lpr_dvi variable is not configured to allow printing of dvi files';
-    $lpr_pdf =
-        'NONE $lpr_pdf variable is not configured to allow printing of pdf files';
-    # The $pscmd below holds a command to list running processes.  It
-    # is used to find the process ID of the viewer looking at the
-    # current output file.  The output of the command must include the
-    # process number and the command line of the processes, since the
-    # relevant process is identified by the name of file to be viewed.
-    # Its use is not essential.
-    # When the OS is detected as cygwin, there are two possibilities:
-    #    a.  Latexmk was run from an NT prompt, but cygwin is in the
-    #        path. Then the cygwin ps command will not see commands
-    #        started from latexmk.  So we cannot use it.
-    #    b.  Latexmk was started within a cygwin environment.  Then
-    #        the ps command works as we need.
-    # Only the user, not latemk knows which, so we default to not
-    # using the ps command.  The user can override this in a
-    # configuration file. 
-    $pscmd = 
-        'NONE $pscmd variable is not configured to detect running processes';
-    $pid_position = -1;     # offset of PID in output of pscmd.  
-                            # Negative means I cannot use ps
 }
 elsif ( $^O eq "msys" ) {
+    $search_path_separator = ';';  # Separator of elements in search_path
+                                   # I think MS-Win value is OK, since
+                                   # msys is running under MS-Win
     $pdf_previewer = q[sh -c 'start %S'];
     $ps_previewer = q[sh -c 'start %S'];
     $dvi_previewer = q[sh -c 'start %S'];
@@ -929,9 +868,7 @@ elsif ( $^O eq "msys" ) {
 }
 else {
     # Assume anything else is UNIX or clone
-
-    ## Configuration parameters:
-
+    # Do special cases (e.g., linux, darwin (i.e., OS-X)) inside this block.
 
     ## Use first existing case for $tmpdir:
     $tmpdir = $ENV{TMPDIR} || '/tmp';
@@ -1226,6 +1163,10 @@ $go_mode = 0;           # =1 to force processing regardless of time-stamps
 $preview_mode = 0;
 $preview_continuous_mode  = 0;
 $printout_mode = 0;     # Don't print the file
+
+## Control pvc inactivity timeout:
+$pvc_timeout = 0;
+$pvc_timeout_mins = 30;
 
 $show_time = 0;
 @timings = ();
@@ -1726,6 +1667,9 @@ while ($_ = $ARGV[0])
                        $printout_mode = 0; 
                      }
   elsif (/^-pvc-$/)  { $preview_continuous_mode = 0; }
+  elsif (/^-pvctimeout$/) { $pvc_timeout = 1; }
+  elsif (/^-pvctimeout-$/) { $pvc_timeout = 0; }
+  elsif (/^-pvctimeoutmins=(.*)$/) { $pvc_timeout_mins = $1; }
   elsif (/^-recorder$/ ){ $recorder = 1; }
   elsif (/^-recorder-$/ ){ $recorder = 0; }
   elsif (/^-rules$/ ) { $rules_list = 1; }
@@ -2132,6 +2076,13 @@ if ( $banner ) { $requested_filerules{'dvips'} = 1; }
 if ( $pdf_mode == 2 ) {
     # We generate pdf from ps.  Make sure we have the correct kind of ps.
     add_option( "$dvips_pdf_switch", \$dvips );
+}
+
+# Restrict variables to allowed values:
+
+if ($filetime_causality_threshold < 0) {
+    warn "$My_name: Correcting negative value of \$filetime_causality_threshold to zero.\n";
+    $filetime_causality_threshold = 0;
 }
 
 # Note sleep has granularity of 1 second.
@@ -3143,6 +3094,8 @@ sub make_preview_continuous {
 
     # Loop forever, rebuilding .dvi and .ps as necessary.
     # Set $first_time to flag first run (to save unnecessary diagnostics)
+    my $last_action_time = time();
+    my $timed_out = 0;
 CHANGE:
     for (my $first_time = 1; 1; $first_time = 0 ) {
         my %rules_to_watch = %requested_filerules;
@@ -3258,6 +3211,7 @@ CHANGE:
 #          latexmk -pvc foo; cleanup;
         &catch_break;
         $have_break = 0;
+        $last_action_time = time();
   WAIT: while (1) {
            sleep( $sleep_time );
            if ($have_break) { last WAIT; }
@@ -3278,11 +3232,19 @@ CHANGE:
                last WAIT; 
            }
            if ($have_break) { last WAIT; }
+           if ($pvc_timeout && ( time() > $last_action_time+60*$pvc_timeout_mins ) ) {
+	       $timed_out = 1;
+	       last WAIT;
+           }
      } # end WAIT:
      &default_break;
      if ($have_break) { 
           print "$My_name: User typed ctrl/C or ctrl/break.  I'll finish.\n";
           return;
+     }
+     if ($timed_out) {
+         print "$My_name: More than $pvc_timeout_mins mins of inactivity.  I'll finish.\n";
+         return;
      }
      $waiting = 0; if ($diagnostics) { warn "NOT       WAITING\n"; }
   } #end infinite_loop CHANGE:
@@ -3585,6 +3547,9 @@ sub print_help
   "                on force mode, so errors do not cause $my_name to stop.)\n",
   "            (Side effect: turn off ordinary preview mode.)\n",
   "   -pvc-  - turn off -pvc\n",
+  "   -pvctimeout    - timeout in pvc mode after period of inactivity\n",
+  "   -pvctimeout-   - don't timeout in pvc mode after inactivity\n",
+  "   -pvctimeoutmins=<time> - set period of inactivity (minutes) for pvc timeout\n",
   "   -quiet    - silence progress messages from called programs\n",
   "   -r <file> - Read custom RC file\n",
   "               (N.B. This file could override options specified earlier\n",
@@ -5750,17 +5715,21 @@ NEW_SOURCE:
 sub test_gen_file {
     # Usage: test_gen_file( filename )
     # Tests whether the file was generated during a run of (pdf)latex.
-    # Used by rdb_set_latex_deps.
-    # Assumes context for primary rule, and that %generated_log is set.
-    # The generated_log test works with TeXLive's tex, because it puts
-    #   \openout lines in log file.
-    # But it doesn't work with MikTeX, which does NOT put \openout lines
-    #   in log file.
-    # So we have a back up test: bcf file exists and is at least as new as
-    #   the run time (so it should have been generated on the current run).
+    # Assumes context for primary rule.
+    # Two kinds of test are used:
+    # a. From %generated_log, which works after the log file has been parsed,
+    #    but only for certain files and for those TeX engines (not MiKTeX)
+    #    that put \openout lines in log file.
+    # b. By the file existing and being at least as new as the system
+    #    time at the start of the run. But we allow for a measured
+    #    offset between filetime and system time, which could be
+    #    nonzero if the file is on a different, remote system than the
+    #    one running latexmk. We must also allow a threshold in the
+    #    comparisons of filetimes to allow for the inaccuracy of the
+    #    offset measurement.
     my $file = shift;
     return exists $generated_log{$file}
-           || ( -e $file && ( get_mtime( $file ) >= $$Prun_time ));
+           || ( -e $file && ( get_mtime( $file ) >= $$Prun_time + $filetime_offset - $filetime_causality_threshold));
 }
 
 #************************************************************
@@ -6785,7 +6754,7 @@ sub rdb_run1 {
     # Source file data, by definition, correspond to the file state just
     # before the latest run, and the run_time to the time just before the run:
     &rdb_update_files;
-    $$Prun_time = time;
+    $$Prun_time = time();
     $$Pchanged = 0;       # No special changes in files
     $$Plast_result = 0;
     $$Plast_message = '';
@@ -6959,7 +6928,7 @@ sub rdb_dummy_run1 {
     # Source file data, by definition, correspond to the file state just before 
     # the latest run, and the run_time to the time just before the run:
     &rdb_update_files;
-    $$Prun_time = time;
+    $$Prun_time = time();
     $$Pchanged = 0;       # No special changes in files
     $$Plast_result = 0;
     $$Plast_message = '';
@@ -7055,6 +7024,17 @@ sub rdb_primary_run {
     # This routine carries out the run of the rule unconditionally,
     # and then parses log file etc.
     my $return = 0;
+
+    if ( ! $filetime_offset_measured ) {
+	$filetime_offset = get_filetime_offset( $aux_dir1."tmp" );
+	if ( (abs($filetime_offset) > $filetime_offset_report_threshold)
+             && ($diagnostics || ! $silent) )
+        {
+	    warn "$My_name: I am working around an offset relative to my system time by\n",
+                 "   $filetime_offset secs for file times in directory '$aux_dir1'.\n";
+	}
+	$filetime_offset_measured = 1;
+    }
 
     my $return_latex = &rdb_run1;
     if (-e $$Pdest) { $missing_dvi_pdf = '';}
@@ -7186,7 +7166,7 @@ sub rdb_flag_changes_here {
     local $ignore_run_time = $_[0];
     if ( ! defined $ignore_run_time ) { $ignore_run_time = 0; }
 
-    $$Pcheck_time = time;
+    $$Pcheck_time = time();
 
     local $dest_mtime = 0;
     $dest_mtime = get_mtime($$Pdest) if ($$Pdest);
@@ -8566,10 +8546,39 @@ sub split_search_path
 
 #################################
 
+sub get_filetime_offset {
+    # Usage: get_filetime_offset( prefix, [suffix] )
+    # Measures offset between filetime in a directory and system time
+    # Makes a temporary file of a unique name, and deletes in.
+    # Filename is of form concatenation of prefix, an integer, suffix.
+    # Prefix is normally of form dir/ or dir/tmp.
+    # Default default suffix ".tmp".
+    my $prefix = $_[0];
+    my $suffix = $_[1] || '.tmp';
+    my $tmp_file_count = 0;
+    while (1==1) {
+        # Find a new temporary file, and make it.
+        $tmp_file_count++;
+        my $tmp_file = "${prefix}${tmp_file_count}${suffix}";
+        if ( ! -e $tmp_file ) {
+            open( TMP, ">$tmp_file" ) 
+		or die "$My_name.get_filetime_offset: In measuring filetime offset, couldn't write to\n",
+ 		       "    temporary file '$tmp_file'\n";
+	    my $time = time();
+            close(TMP);
+	    my $offset = get_mtime($tmp_file) - $time;
+	    unlink $tmp_file;
+            return $offset;
+         }
+     }
+     die "$My_name.get_filetime_offset: BUG TO ARRIVE HERE\n";
+}
+
+#################################
 
 sub tempfile1 {
     # Makes a temporary file of a unique name.  I could use file::temp,
-    # but it is not present in all versions of perl
+    # but it is not present in all versions of perl.
     # Filename is of form $tmpdir/$_[0]nnn$suffix, where nnn is an integer
     my $tmp_file_count = 0;
     my $prefix = $_[0];
