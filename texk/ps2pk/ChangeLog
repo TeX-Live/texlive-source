@@ -1,3 +1,8 @@
+2018-01-18  Karl Berry  <karl@tug.org>
+
+	* objects.h (IfTrace0): printf %s instead of direct string
+	(from Debian).
+
 2017-03-27  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.

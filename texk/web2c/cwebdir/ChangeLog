@@ -1,3 +1,11 @@
+2018-01-18  Karl Berry  <karl@tug.org>
+
+	* cweave.w,
+	* common.w,
+	* common.c,
+	* ../cwebboot.cin: printf %s instead of direct string (from Debian).
+	(Also sent to DEK.)
+
 2017-01-29  Karl Berry  <karl@tug.org>
 
 	* ../cwebboot.cin,
