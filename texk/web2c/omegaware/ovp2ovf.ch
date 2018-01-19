@@ -200,6 +200,12 @@ endif('notdef')
 @d out(#)==putbyte(#,tfm_file)
 @z
 
+@x [???] Eliminate nonlocal goto, uexit with a bad exit code.
+  goto final_end;
+@y
+  uexit(1);
+@z
+
 @x [165] Fix output of reals.
 @p procedure out_scaled(x:fix_word); {outputs a scaled |fix_word|}
 var @!n:byte; {the first byte after the sign}

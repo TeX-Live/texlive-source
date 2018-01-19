@@ -94,6 +94,7 @@ the |output| file, so that all such output can be easily deflected.
 @d print_ln(#)==write_ln(#)
 
 @p program OVP2OVF(@!vpl_file,@!vf_file,@!tfm_file,@!output);
+label @<Labels in the outer block@>@/
 const @<Constants in the outer block@>@/
 type @<Types in the outer block@>@/
 var @<Globals in the outer block@>@/
@@ -102,6 +103,13 @@ procedure initialize; {this procedure gets things started properly}
   begin print_ln(banner);@/
   @<Set initial values@>@/
   end;
+
+@ If the program has to stop prematurely, it goes to the
+`|final_end|' (addition in OVP2OVF).
+
+@d final_end=9999 {label for the end of it all}
+
+@<Labels...@>=final_end;
 
 @ The following parameters can be changed at compile time to extend or
 reduce \.{VPtoVF}'s capacity.
@@ -3455,14 +3463,19 @@ will be~1.
 @<Compute the subfile sizes@>=
 lh:=header_ptr div 4;@/
 not_found:=true; bc:=0;
-if (ofm_level=-1) then ec:=255 @+ else ec:=max_char;
+if (ofm_level=-1) then ec:=255 @+ else ec:=max_char; {only temporary}
 while not_found do
   if (char_wd[bc]>0)or(bc=ec) then not_found:=false
   else incr(bc);
-not_found:=true;
+not_found:=true; ec:=max_char;
 while not_found do
   if (char_wd[ec]>0)or(ec=0) then not_found:=false
   else decr(ec);
+if (ofm_level=-1)and(ec>255) then begin
+  print('Char '); print_hex(ec);
+  print_ln(' too big for TFM (max "FF); use OFM file!');
+  goto final_end;
+  end;
 if bc>ec then bc:=1;
 incr(memory[width]); incr(memory[height]); incr(memory[depth]);
 incr(memory[italic]);@/
@@ -4039,6 +4052,7 @@ read_input; print_ln('.');@/
 corr_and_check;@/
 @<Do the font metric output@>;
 vf_output;
+final_end:
 end.
 
 @ @<Global...@>=
