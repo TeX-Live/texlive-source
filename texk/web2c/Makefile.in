@@ -2400,8 +2400,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	ptexdir/ppltotf.ch uptexdir/uppltotf.ch ptexdir/ptftopl.ch \
 	uptexdir/uptftopl.ch uptexdir/COPYRIGHT uptexdir/COPYRIGHT.jis \
 	uptexdir/ChangeLog $(uptex_tests) $(upweb_tests) \
-	uptexdir/tests/min10.pl uptexdir/tests/min10.tfm \
-	uptexdir/tests/tmin10.pl uptexdir/tests/tmin10.tfm \
+	uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm \
+	uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm \
 	uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf \
 	$(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines \
 	euptexdir/COPYRIGHT euptexdir/COPYRIGHT.jis \

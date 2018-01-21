@@ -1,3 +1,8 @@
+2018-01-21  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* yokotate.test, tests/{,u}[,t]min10.[pl,tfm], am/uptex.am:
+	More suitable tests.
+
 2018-01-21  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch: New primitives: \uptexversion and \uptexrevision.

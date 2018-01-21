@@ -194,8 +194,8 @@ DISTCLEANFILES += uptests/xcmr10.tfm
 ## uptexdir/uptftopl.test
 DISTCLEANFILES += uptests/xcmr10.pl
 ## uptexdir/yokotate.test
-EXTRA_DIST += uptexdir/tests/min10.pl uptexdir/tests/min10.tfm
-EXTRA_DIST += uptexdir/tests/tmin10.pl uptexdir/tests/tmin10.tfm
+EXTRA_DIST += uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm
+EXTRA_DIST += uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm
 DISTCLEANFILES += uptests/x*min10.*
 ## uptexdir/uptriptest
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
