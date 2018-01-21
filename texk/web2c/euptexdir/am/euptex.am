@@ -59,8 +59,8 @@ euptex_ch_srcs = \
 	uptexdir/uptex-m.ch \
 	euptexdir/euptex.ch0 \
 	eptexdir/eptex.ech \
-	euptexdir/euptex.ch1 \
 	eptexdir/etex.ch1 \
+	euptexdir/euptex.ch1 \
 	$(euptex_ch_synctex) \
 	eptexdir/fam256.ch \
 	euptexdir/pdfstrcmp-eup-pre.ch \

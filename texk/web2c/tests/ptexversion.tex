@@ -1,0 +1,44 @@
+\catcode`\@=11
+\def\R#1{%
+  \ifx#1\undefined\else
+  \immediate\write16{\meaning#1: \the#1\space}%
+  \fi}
+\def\S#1{%
+  \ifx#1\undefined\else
+  \immediate\write16{\meaning#1: "#1"\space}%
+  \fi}
+
+\ifx\eTeXversion\undefined\else
+  \R\eTeXversion
+  \S\eTeXrevision
+\fi
+
+\ifx\ptexversion\undefined\else
+  \R\ptexversion
+  \R\ptexminorversion
+  \S\ptexrevision
+  \R\epTeXversion
+  \R\uptexversion
+  \S\uptexrevision
+\fi
+
+\ifx\Omegaversion\undefined\else
+  \R\Omegaversion
+  \R\Omegaminorversion
+  \S\Omegarevision
+  \R\Alephversion
+  \R\Alephminorversion
+  \S\Alephrevision
+\fi
+
+\ifx\pdftexversion\undefined\else
+  \R\pdftexversion
+  \S\pdftexrevision
+\fi
+\ifx\luatexversion\undefined\else
+  \R\luatexversion
+  \S\luatexrevision
+\fi
+
+\end
+

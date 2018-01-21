@@ -1,3 +1,8 @@
+2018-01-21  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* euptex.ch0, euptex.ch1, pdfstrcmp-eup-post.ch, am/euptex.am:
+	Adapt to changes in ptexdir/, eptexdir, and uptexdir/.
+
 2017-11-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfstrcmp-eup-post.ch, tests/pdfprimitive-euptex.log: Adapt

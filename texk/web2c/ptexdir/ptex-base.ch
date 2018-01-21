@@ -57,6 +57,7 @@
 % (2016-06-06) AK  Hironori Kitagawa fixed a bug in check_box(box_p:pointer).
 %                  pTeX p3.7.1.
 % (2017-09-07) HK  pTeX p3.7.2 More restrictions on direction change commands.
+% (2018-01-21) HK  Added \ptexversion primitive and co. pTeX p3.8.
 %
 
 @x
@@ -70,7 +71,10 @@
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k
 @y
-@d pTeX_version_string=='-p3.7.2' {current \pTeX\ version}
+@d pTeX_version=3
+@d pTeX_minor_version=8
+@d pTeX_revision==".0"
+@d pTeX_version_string=='-p3.8.0' {current \pTeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.14159265',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
@@ -2067,6 +2071,34 @@ else { \.{\\delcode} }
   scanned_result(eqtb[m+cur_val].int)(int_val) end;
 @z
 
+@x pTeX: \ptexversion
+@d badness_code=glue_val+2 {code for \.{\\badness}}
+@y
+@d badness_code=glue_val+2 {code for \.{\\badness}}
+@d ptex_version_code=badness_code+1 {code for \.{\\ptexversion}}
+@d ptex_minor_version_code=ptex_version_code+1 {code for \.{\\ptexminorversion}}
+@z
+
+@x pTeX: \ptexversion
+primitive("badness",last_item,badness_code);
+@!@:badness_}{\.{\\badness} primitive@>
+@y
+primitive("badness",last_item,badness_code);
+@!@:badness_}{\.{\\badness} primitive@>
+primitive("ptexversion",last_item,ptex_version_code);
+@!@:ptexversion_}{\.{\\ptexversion} primitive@>
+primitive("ptexminorversion",last_item,ptex_minor_version_code);
+@!@:ptexminorversion_}{\.{\\ptexminorversion} primitive@>
+@z
+
+@x pTeX: \ptexversion
+  input_line_no_code: print_esc("inputlineno");
+@y
+  input_line_no_code: print_esc("inputlineno");
+  ptex_version_code: print_esc("ptexversion");
+  ptex_minor_version_code: print_esc("ptexminorversion");
+@z
+
 @x [26.420] l.8474 - pTeX: Fetch a box dimension: dir_node
 begin scan_eight_bit_int;
 if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
@@ -2117,6 +2149,18 @@ if not is_char_node(tx) then
 @d find_effective_tail==find_effective_tail_pTeX
 
 @<Fetch an item in the current node...@>=
+@z
+
+@x pTeX: \ptexversion 
+  begin if cur_chr=input_line_no_code then cur_val:=line
+  else cur_val:=last_badness; {|cur_chr=badness_code|}
+@y
+  begin case m of
+    input_line_no_code: cur_val:=line;
+    badness_code: cur_val:=last_badness;
+    ptex_version_code: cur_val:=pTeX_version;
+    ptex_minor_version_code: cur_val:=pTeX_minor_version;
+  end; {there and no other cases}
 @z
 
 @x [26.424] l.8516 - pTeX: Fetch an item ...: disp_node
@@ -2296,7 +2340,8 @@ help6("Dimensions can be in units of em, ex, zw, zh, in, pt, pc,")@/
 @d sjis_code=7 {command code for \.{\\sjis}}
 @d jis_code=8 {command code for \.{\\jis}}
 @d kuten_code=9 {command code for \.{\\kuten}}
-@d ptex_convert_codes=10 {end of \pTeX's command codes}
+@d ptex_revision_code=10 {command code for \.{\\ptexrevision}}
+@d ptex_convert_codes=11 {end of \pTeX's command codes}
 @d job_name_code=ptex_convert_codes {command code for \.{\\jobname}}
 @z
 
@@ -2316,6 +2361,8 @@ primitive("jis",convert,jis_code);
 @!@:jis_}{\.{\\jis} primitive@>
 primitive("kuten",convert,kuten_code);
 @!@:kuten_}{\.{\\kuten} primitive@>
+primitive("ptexrevision",convert,ptex_revision_code);
+@!@:ptexrevision_}{\.{\\ptexrevision} primitive@>
 @z
 
 @x [27.469] l.9558 - pTeX:
@@ -2327,6 +2374,7 @@ primitive("kuten",convert,kuten_code);
   sjis_code:print_esc("sjis");
   jis_code:print_esc("jis");
   kuten_code:print_esc("kuten");
+  ptex_revision_code:print_esc("ptexrevision");
 @z
 
 @x [27.470] l.9566 - pTeX: convert KANJI code continue
@@ -2351,6 +2399,7 @@ KANJI(cx):=0;
 case c of
 number_code,roman_numeral_code,
 kansuji_code,euc_code,sjis_code,jis_code,kuten_code: scan_int;
+ptex_revision_code: do_nothing;
 string_code, meaning_code: begin save_scanner_status:=scanner_status;
   scanner_status:=normal; get_token;
   if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {|wchar_token|}
@@ -2375,6 +2424,7 @@ jis_code:   print_int(fromJIS(cur_val));
 euc_code:   print_int(fromEUC(cur_val));
 sjis_code:  print_int(fromSJIS(cur_val));
 kuten_code: print_int(fromKUTEN(cur_val));
+ptex_revision_code: print(pTeX_revision);
 kansuji_code: print_kansuji(cur_val);
 string_code:if cur_cs<>0 then sprint_cs(cur_cs)
   else if KANJI(cx)=0 then print_char(cur_chr)

@@ -1,3 +1,8 @@
+2018-01-21  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech, etex.ch0, etex.ch1, pdfutils.ch: New primitive \epTeXversion.
+	* eptex.ech, eptex_version.h: e-pTeX version 180121.
+
 2017-12-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* fam256.ch: \delcode defaults to -1, not -4097, to be compatible
