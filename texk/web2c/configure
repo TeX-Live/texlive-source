@@ -19007,8 +19007,8 @@ if test "x$enable_xetex" = xyes \
    || test "x$enable_luatex" = xyes \
    || test "x$enable_luajittex" = xyes \
    || test "x$enable_luatex53" = xyes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: LuaTeX enabled" >&5
-$as_echo "$as_me: LuaTeX enabled" >&requiring C++11 support;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: LuaTeX enabled, requiring C++11 support" >&5
+$as_echo "$as_me: LuaTeX enabled, requiring C++11 support" >&6;}
     ax_cxx_compile_alternatives="11 0x"    ax_cxx_compile_cxx11_required=true
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
