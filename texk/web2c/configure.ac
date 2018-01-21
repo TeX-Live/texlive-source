@@ -51,7 +51,7 @@ if test "x$enable_xetex" = xyes \
    || test "x$enable_luatex" = xyes \
    || test "x$enable_luajittex" = xyes \
    || test "x$enable_luatex53" = xyes; then
-  AC_MSG_NOTICE(LuaTeX enabled, requiring C++11 support)
+  AC_MSG_NOTICE([LuaTeX enabled, requiring C++11 support])
   AX_CXX_COMPILE_STDCXX([11])
 fi
 

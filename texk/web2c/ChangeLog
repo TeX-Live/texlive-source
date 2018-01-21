@@ -1,3 +1,8 @@
+2018-01-21  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac <luatex>: quote [notice] so not misparsed at comma,
+	ending up with "bad fd number".
+
 2017-09-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* pltotf.ch: web2c extends the range of 'lf' from 0..32767
