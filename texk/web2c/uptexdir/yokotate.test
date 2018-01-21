@@ -9,8 +9,8 @@ test -d uptests || mkdir -p uptests
 # Test inputs
 testdir=$srcdir/uptexdir/tests
 
-# Testing pPLtoTF/pTFtoPL for min10 (yoko=horiz) and tmin10 (tate=vert).
-for font in min10 tmin10; do
+# Testing upPLtoTF/upTFtoPL for umin10 (yoko=horiz) and utmin10 (tate=vert).
+for font in umin10 utmin10; do
 
   ./uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
     cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 1
