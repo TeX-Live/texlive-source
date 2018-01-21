@@ -561,6 +561,37 @@ char_given,math_given: scanned_result(cur_chr)(int_val);
 @z
 
 @x
+@d ptex_minor_version_code=ptex_version_code+1 {code for \.{\\ptexminorversion}}
+@y
+@d ptex_minor_version_code=ptex_version_code+1 {code for \.{\\ptexminorversion}}
+@d uptex_version_code=ptex_minor_version_code+1 {code for \.{\\uptexversion}}
+@z
+
+@x
+primitive("ptexversion",last_item,ptex_version_code);
+@!@:ptexversion_}{\.{\\ptexversion} primitive@>
+@y
+primitive("ptexversion",last_item,ptex_version_code);
+@!@:ptexversion_}{\.{\\ptexversion} primitive@>
+primitive("uptexversion",last_item,uptex_version_code);
+@!@:uptexversion_}{\.{\\uptexversion} primitive@>
+@z
+
+@x
+  ptex_version_code: print_esc("ptexversion");
+@y
+  ptex_version_code: print_esc("ptexversion");
+  uptex_version_code: print_esc("uptexversion");
+@z
+
+@x
+    ptex_version_code: cur_val:=pTeX_version;
+@y
+    ptex_version_code: cur_val:=pTeX_version;
+    uptex_version_code: cur_val:=upTeX_version;
+@z
+
+@x
   if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {|wchar_token|}
 @y
   if (cur_cmd>=kanji)and(cur_cmd<=hangul) then {|wchar_token|}
@@ -600,10 +631,14 @@ while k<pool_ptr do
 @z
 
 @x
-@d ptex_convert_codes=10 {end of \pTeX's command codes}
+
+@d ptex_revision_code=10 {command code for \.{\\ptexrevision}}
+@d ptex_convert_codes=11 {end of \pTeX's command codes}
 @y
 @d ucs_code=10 {command code for \.{\\ucs}}
-@d ptex_convert_codes=11 {end of \pTeX's command codes}
+@d ptex_revision_code=11 {command code for \.{\\ptexrevision}}
+@d uptex_revision_code=12 {command code for \.{\\uptexrevision}}
+@d ptex_convert_codes=13 {end of \pTeX's command codes}
 @z
 
 @x
@@ -615,6 +650,16 @@ primitive("ucs",convert,ucs_code);
 @z
 
 @x
+primitive("ptexrevision",convert,ptex_revision_code);
+@!@:ptexrevision_}{\.{\\ptexrevision} primitive@>
+@y
+primitive("ptexrevision",convert,ptex_revision_code);
+@!@:ptexrevision_}{\.{\\ptexrevision} primitive@>
+primitive("uptexrevision",convert,uptex_revision_code);
+@!@:uptexrevision_}{\.{\\uptexrevision} primitive@>
+@z
+
+@x
   kuten_code:print_esc("kuten");
 @y
   kuten_code:print_esc("kuten");
@@ -622,12 +667,21 @@ primitive("ucs",convert,ucs_code);
 @z
 
 @x
+  ptex_revision_code:print_esc("ptexrevision");
+@y
+  ptex_revision_code:print_esc("ptexrevision");
+  uptex_revision_code:print_esc("uptexrevision");
+@z
+
+@x
 kansuji_code,euc_code,sjis_code,jis_code,kuten_code: scan_int;
+ptex_revision_code: do_nothing;
 string_code, meaning_code: begin save_scanner_status:=scanner_status;
   scanner_status:=normal; get_token;
   if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {|wchar_token|}
 @y
 kansuji_code,euc_code,sjis_code,jis_code,kuten_code,ucs_code: scan_int;
+ptex_revision_code, uptex_revision_code: do_nothing;
 string_code, meaning_code: begin save_scanner_status:=scanner_status;
   scanner_status:=normal; get_token;
   if (cur_cmd>=kanji)and(cur_cmd<=hangul) then {|wchar_token|}
@@ -638,6 +692,13 @@ kuten_code: print_int(fromKUTEN(cur_val));
 @y
 kuten_code: print_int(fromKUTEN(cur_val));
 ucs_code:   print_int(fromUCS(cur_val));
+@z
+
+@x
+ptex_revision_code: print(pTeX_revision);
+@y
+ptex_revision_code: print(pTeX_revision);
+uptex_revision_code: print(upTeX_revision);
 @z
 
 @x

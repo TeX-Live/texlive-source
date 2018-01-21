@@ -19,7 +19,8 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-170924'
+@d epTeX_version_string=='-180121'
+@d epTeX_version_number==180121
 @z
 
 @x e-pTeX: banner
@@ -71,10 +72,37 @@ var m:halfword; {|chr_code| part of the operand token}
 
 @x
 @d input_line_no_code=glue_val+2 {code for \.{\\inputlineno}}
+@d badness_code=glue_val+2 {code for \.{\\badness}}
 @y
 @d last_node_char_code=glue_val+2 {code for \.{\\lastnodechar}}
 @d input_line_no_code=glue_val+3 {code for \.{\\inputlineno}}
+@d badness_code=glue_val+4 {code for \.{\\badness}}
 @z
+
+@x
+@d ptex_minor_version_code=ptex_version_code+1 {code for \.{\\ptexminorversion}}
+@y
+@d ptex_minor_version_code=ptex_version_code+1 {code for \.{\\ptexminorversion}}
+@d eptex_version_code=ptex_minor_version_code+1 {code for \.{\\epTeXversion}}
+@z
+
+@x
+primitive("ptexversion",last_item,ptex_version_code);
+@!@:ptexversion_}{\.{\\ptexversion} primitive@>
+@y
+primitive("ptexversion",last_item,ptex_version_code);
+@!@:ptexversion_}{\.{\\ptexversion} primitive@>
+primitive("epTeXversion",last_item,eptex_version_code);
+@!@:epTeXversion_}{\.{\\epTeXversion} primitive@>
+@z
+
+@x
+  ptex_version_code: print_esc("ptexversion");
+@y
+  ptex_version_code: print_esc("ptexversion");
+  eptex_version_code: print_esc("epTeXversion");
+@z
+
 
 @x [26.420] l.8474 - pTeX: Fetch a box dimension: dir_node
 begin scan_eight_bit_int; q:=box(cur_val);
@@ -137,6 +165,13 @@ if not is_char_node(tx) then
   end
 else find_last_char;
 end
+@z
+
+@x
+    ptex_version_code: cur_val:=pTeX_version;
+@y
+    ptex_version_code: cur_val:=pTeX_version;
+    eptex_version_code: cur_val:=epTeX_version_number;
 @z
 
 @x [26.424] e-pTeX: node char

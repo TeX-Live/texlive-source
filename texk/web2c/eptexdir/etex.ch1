@@ -16,6 +16,38 @@
 @d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
 @z
 
+@x
+@d eTeX_int=badness_code+1 {first of \eTeX\ codes for integers}
+@y
+@d eTeX_int=ptex_minor_version_code+1 {first of \eTeX\ codes for integers}
+@z
+
+@x
+  begin case m of
+    input_line_no_code: cur_val:=line;
+    badness_code: cur_val:=last_badness;
+    ptex_version_code: cur_val:=pTeX_version;
+    eptex_version_code: cur_val:=epTeX_version_number;
+    ptex_minor_version_code: cur_val:=pTeX_minor_version;
+  end; {there and no other cases}
+@y
+ if m>=eTeX_glue then @<Process an expression and |return|@>@;
+ else if m>=eTeX_dim then
+  begin case m of
+  @/@<Cases for fetching a dimension value@>@/
+  end; {there are no other cases}
+  cur_val_level:=dimen_val;
+  end
+ else begin case m of
+  input_line_no_code: cur_val:=line;
+  badness_code: cur_val:=last_badness;
+  ptex_version_code: cur_val:=pTeX_version;
+  eptex_version_code: cur_val:=epTeX_version_number;
+  ptex_minor_version_code: cur_val:=pTeX_minor_version;
+  @/@<Cases for fetching an integer value@>@/
+  end; {there are no other cases}
+@z
+
 @x [27.468]
 @d job_name_code=ptex_convert_codes {command code for \.{\\jobname}}
 @y

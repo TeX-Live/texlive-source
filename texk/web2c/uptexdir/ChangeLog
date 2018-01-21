@@ -1,3 +1,7 @@
+2018-01-21  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex-m.ch: New primitives: \uptexversion and \uptexrevision.
+
 2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch: Adapt to changes in ptexdir/ptex-base.ch (p\TeX -> \pTeX).

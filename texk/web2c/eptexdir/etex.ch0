@@ -33,6 +33,12 @@ exit:end;
 end;
 @z
 
+@x
+@d badness_code=input_line_no_code+1 {code for \.{\\badness}}
+@y
+@d badness_code=glue_val+2 {code for \.{\\badness}}
+@z
+
 @x [26.420]
 begin scan_register_num; fetch_box(q);
 if q=null then cur_val:=0 @+else cur_val:=mem[q+m].sc;
@@ -52,6 +58,24 @@ legal in similar contexts.
 @d find_effective_tail==find_effective_tail_eTeX
 
 @y
+@z
+
+@x
+ if m>=eTeX_glue then @<Process an expression and |return|@>@;
+ else if m>=eTeX_dim then
+  begin case m of
+  @/@<Cases for fetching a dimension value@>@/
+  end; {there are no other cases}
+  cur_val_level:=dimen_val;
+  end
+ else begin case m of
+  input_line_no_code: cur_val:=line;
+  badness_code: cur_val:=last_badness;
+  @/@<Cases for fetching an integer value@>@/
+  end; {there are no other cases}
+@y
+  begin if cur_chr=input_line_no_code then cur_val:=line
+  else cur_val:=last_badness; {|cur_chr=badness_code|}
 @z
 
 @x [26.424]

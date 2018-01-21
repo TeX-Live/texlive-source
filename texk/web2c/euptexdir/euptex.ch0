@@ -35,3 +35,14 @@
 @y
 @d protected_token=@"E01 {$2^8\cdot|end_match|+1$}
 @z
+
+@x
+  uptex_version_code: print_esc("uptexversion");
+@y
+@z
+
+@x
+    uptex_version_code: cur_val:=upTeX_version;
+@y
+@z
+

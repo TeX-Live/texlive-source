@@ -7,9 +7,29 @@
 @z
 
 @x
+@d uptex_version_code=ptex_minor_version_code+1 {code for \.{\\uptexversion}}
+@y
+@d uptex_version_code=ptex_minor_version_code+2 {code for \.{\\uptexversion}}
+@z
+
+@x
+  eptex_version_code: print_esc("epTeXversion");
+@y
+  eptex_version_code: print_esc("epTeXversion");
+  uptex_version_code: print_esc("uptexversion");
+@z
+
+@x
 if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx)))
 @y
 if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx))) mod max_cjk_val
+@z
+
+@x
+  eptex_version_code: cur_val:=epTeX_version_number;
+@y
+  eptex_version_code: cur_val:=epTeX_version_number;
+  uptex_version_code: cur_val:=upTeX_version;
 @z
 
 @x e-pTeX: ifcsname l.28620
