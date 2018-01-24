@@ -1,0 +1,24 @@
+# .travis.yml for texlive-source CI building
+# Norbert Preining
+# Public Domain
+#
+# This file controls CI testing on Travis-CI 
+# https://travis-ci.org/TeX-Live/texlive-source/
+# via a git-svn checkout of the TeX Live source directory
+# which is pushed to Github
+# https://github.com/TeX-Live/texlive-source
+# The cron job that does the git svn up and git push is
+# running on texlive.info
+#
+
+language: c
+
+before_script:
+  - find . -name \*.info -exec touch '{}' \;
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev
+
+script: ./Build
+
