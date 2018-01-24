@@ -23,9 +23,9 @@ matrix:
             - libx11-dev
             - libxmu-dev
             - libxaw7-dev
-        before_script: find . -name \*.info -exec touch '{}' \;
-        script: ./Build
+      before_script: find . -name \*.info -exec touch '{}' \;
+      script: ./Build
     - os: linux
       services: docker
-      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.7 sh -c "apk update; apk add --no-progress bash find gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; cd texlive; find . -name \*.info -exec touch '{}' \; ; ./Build"
+      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.7 sh -c "apk update; apk add --no-progress bash findutils gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; cd texlive; find . -name \*.info -exec touch '{}' \; ; ./Build"
 
