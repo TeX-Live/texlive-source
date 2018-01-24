@@ -23,9 +23,11 @@ matrix:
             - libx11-dev
             - libxmu-dev
             - libxaw7-dev
-      before_script: find . -name \*.info -exec touch '{}' \;
+      before_script: 
+        - find . -name \*.info -exec touch '{}' \;
+        - touch $(eval echo $(find . -name \*.y -or -name \*.l | sed -e 's/\.[ly]$/.*/') ) | grep '(\.c\|\.h\|\.cc\|\.tab\.cc\|\.tab\.h)$'
       script: ./Build
     - os: linux
       services: docker
-      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.7 sh -c "apk update; apk add --no-progress bash findutils gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; cd texlive; find . -name \*.info -exec touch '{}' \; ; ./Build"
+      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.7 sh -c "apk update; apk add --no-progress bash findutils gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; cd texlive; find . -name \*.info -exec touch '{}' \; ; touch $(eval echo $(find . -name \*.y -or -name \*.l | sed -e 's/\.[ly]$/.*/') ) | grep '(\.c\|\.h\|\.cc\|\.tab\.cc\|\.tab\.h)$' ; ./Build"
 
