@@ -1,5 +1,6 @@
 # .travis.yml for texlive-source CI building
 # Norbert Preining
+# Henri Menke
 # Public Domain
 #
 # This file controls CI testing on Travis-CI 
@@ -13,6 +14,27 @@
 
 language: c
 
+before_script:
+  - find . -name \*.info -exec touch '{}' \;
+  - touch ./texk/detex/detex-src/detex.c
+  - touch ./texk/detex/detex-src/detex.h
+  - touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.c
+  - touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.h
+  - touch ./texk/gregorio/gregorio-src/src/vowel/vowel-rules.h
+  - touch ./texk/web2c/omegafonts/pl-lexer.c
+  - touch ./texk/web2c/omegafonts/pl-parser.c
+  - touch ./texk/web2c/omegafonts/pl-parser.h
+  - touch ./texk/web2c/otps/otp-lexer.c
+  - touch ./texk/web2c/otps/otp-parser.c
+  - touch ./texk/web2c/otps/otp-parser.h
+  - touch ./texk/web2c/web2c/web2c-lexer.c
+  - touch ./texk/web2c/web2c/web2c-parser.c
+  - touch ./texk/web2c/web2c/web2c-parser.h
+  - touch ./utils/asymptote/camp.tab.cc
+  - touch ./utils/asymptote/camp.tab.h
+  - touch ./utils/lacheck/lacheck.c
+  - touch ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
+
 matrix:
   include:
     - os: linux
@@ -23,11 +45,8 @@ matrix:
             - libx11-dev
             - libxmu-dev
             - libxaw7-dev
-      before_script: 
-        - find . -name \*.info -exec touch '{}' \;
-        - touch ./texk/detex/detex-src/detex.c ./texk/detex/detex-src/detex.h ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.c ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.h ./texk/gregorio/gregorio-src/src/vowel/vowel-rules.h ./texk/web2c/omegafonts/pl-lexer.c ./texk/web2c/omegafonts/pl-parser.c ./texk/web2c/omegafonts/pl-parser.h ./texk/web2c/otps/otp-lexer.c ./texk/web2c/otps/otp-parser.c ./texk/web2c/otps/otp-parser.h ./texk/web2c/web2c/web2c-lexer.c ./texk/web2c/web2c/web2c-parser.c ./texk/web2c/web2c/web2c-parser.h ./utils/asymptote/camp.tab.cc ./utils/asymptote/camp.tab.h ./utils/lacheck/lacheck.c ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
       script: ./Build
     - os: linux
       services: docker
-      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.7 sh -c "apk update; apk add --no-progress bash findutils gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; cd texlive; find . -name \*.info -exec touch '{}' \; ; touch ./texk/detex/detex-src/detex.c ./texk/detex/detex-src/detex.h ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.c ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.h ./texk/gregorio/gregorio-src/src/vowel/vowel-rules.h ./texk/web2c/omegafonts/pl-lexer.c ./texk/web2c/omegafonts/pl-parser.c ./texk/web2c/omegafonts/pl-parser.h ./texk/web2c/otps/otp-lexer.c ./texk/web2c/otps/otp-parser.c ./texk/web2c/otps/otp-parser.h ./texk/web2c/web2c/web2c-lexer.c ./texk/web2c/web2c/web2c-parser.c ./texk/web2c/web2c/web2c-parser.h ./utils/asymptote/camp.tab.cc ./utils/asymptote/camp.tab.h ./utils/lacheck/lacheck.c ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c ; ./Build"
+      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.7 sh -c "apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; ./Build"
 
