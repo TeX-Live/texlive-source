@@ -1,3 +1,14 @@
+2018-01-25  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+        and Karl Berry  <karl@freefriends.org>
+
+	* writefont.c (font_is_used): import LuaTeX's font_has_subset
+	with different name.
+	(dopdffont): call it, to avoid failed assertion. (tests/09-fontobjnum)
+	Original report from Enrico Gregorio,
+	  tug.org/pipermail/tex-live/2018-January/040966.html
+	followup with patch at
+	  mailman.ntg.nl/pipermail/ntg-pdftex/2018-January/004209.html
+
 2018-01-06  Karl Berry  <karl@freefriends.org>
 
 	* pdftex.web (literal): if a non-PDF special is ignored,
