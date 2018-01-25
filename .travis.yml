@@ -35,6 +35,10 @@ before_script:
   - touch ./utils/lacheck/lacheck.c
   - touch ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
 
+env:
+  global:
+    - TL_MAKE_FLAGS="-j 2"
+
 matrix:
   include:
     - os: linux
