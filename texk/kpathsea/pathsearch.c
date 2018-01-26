@@ -46,7 +46,8 @@
    which calls kpse_all_path_search to find all the texmf.cnf's.  We
    need to do various special things in this case, since we obviously
    don't yet have the configuration files when we're searching for the
-   configuration files.  */
+   configuration files.  Therefore we have a followup_search member in
+   kpathsea_instance to distinguish the first search from all others.  */
 
 
 
@@ -57,7 +58,6 @@
 static void
 log_search (kpathsea kpse, str_list_type filenames)
 {
-
   if (kpse->log_opened == false) {
     /* Get name from either envvar or config file.  */
       string log_name = kpathsea_var_value (kpse, "TEXMFLOG");
@@ -83,9 +83,10 @@ log_search (kpathsea kpse, str_list_type filenames)
       string filename = STR_LIST_ELT (filenames, e);
 
       /* Only record absolute filenames, for privacy.  */
-      if (kpse->log_file && kpathsea_absolute_p (kpse, filename, false))
+      if (kpse->log_file && kpathsea_absolute_p (kpse, filename, false)) {
         fprintf (kpse->log_file, "%lu %s\n", (long unsigned) time (NULL),
                  filename);
+      }
 
 #ifdef KPSE_DEBUG
       /* And show them online, if debugging.  We've already started
@@ -121,44 +122,41 @@ dir_list_search (kpathsea kpse, str_llist_type *dirs,  const_string name,
   str_list_type ret;
   unsigned name_len = strlen (name);
   unsigned allocated = INIT_ALLOC;
-  string potential = (string)xmalloc (allocated);
+  string potential = (string) xmalloc (allocated);
 
   ret = str_list_init ();
 
-  for (elt = *dirs; elt; elt = next_elt)
-    {
-      const_string dir = STR_LLIST (*elt);
-      unsigned dir_len = strlen (dir);
+  for (elt = *dirs; elt; elt = next_elt) {
+    const_string dir = STR_LLIST (*elt);
+    unsigned dir_len = strlen (dir);
 
-      next_elt = STR_LLIST_NEXT (*elt); /* in case elt floats */
+    next_elt = STR_LLIST_NEXT (*elt); /* in case elt floats */
 
-      while (dir_len + name_len + 1 > allocated)
-        {
-          allocated += allocated;
-          XRETALLOC (potential, allocated, char);
-        }
-
-      strcpy (potential, dir);
-      strcat (potential, name);
-
-      if (kpathsea_readable_file (kpse, potential))
-        {
-          str_list_add (&ret, potential);
-
-          /* Move this element towards the top of the list.  */
-          str_llist_float (dirs, elt);
-
-          /* If caller only wanted one file returned, no need to
-             terminate the list with NULL; the caller knows to only look
-             at the first element.  */
-          if (!search_all)
-            return ret;
-
-          /* Start new filename.  */
-          allocated = INIT_ALLOC;
-          potential = (string)xmalloc (allocated);
-        }
+    while (dir_len + name_len + 1 > allocated) {
+      allocated += allocated;
+      XRETALLOC (potential, allocated, char);
     }
+
+    strcpy (potential, dir);
+    strcat (potential, name);
+
+    if (kpathsea_readable_file (kpse, potential)) {
+      str_list_add (&ret, potential);
+
+      /* Move this element towards the top of the list.  */
+      str_llist_float (dirs, elt);
+
+      /* If caller only wanted one file returned, no need to
+         terminate the list with NULL; the caller knows to only look
+         at the first element.  */
+      if (!search_all)
+        return ret;
+
+      /* Start new filename.  */
+      allocated = INIT_ALLOC;
+      potential = (string) xmalloc (allocated);
+    }
+  }
 
   /* If we get here, either we didn't find any files, or we were finding
      all the files.  But we're done with the last filename, anyway.  */
@@ -177,52 +175,52 @@ dir_list_search_list (kpathsea kpse, str_llist_type *dirs, string* names,
   str_llist_elt_type *next_elt;
   str_list_type ret;
   unsigned allocated = INIT_ALLOC;
-  string potential = XTALLOC(allocated, char);
+  string potential = XTALLOC (allocated, char);
 
   ret = str_list_init ();
 
   for (elt = *dirs; elt; elt = next_elt) {
-      const_string dir = STR_LLIST (*elt);
-      unsigned dir_len = strlen (dir);
-      int i;
+    const_string dir = STR_LLIST (*elt);
+    unsigned dir_len = strlen (dir);
+    int i;
 
-      next_elt = STR_LLIST_NEXT (*elt); /* in case elt floats */
+    next_elt = STR_LLIST_NEXT (*elt); /* in case elt floats */
 
-      for (i = 0; names[i]; i++) {
-          const_string name = names[i];
-          unsigned name_len;
+    for (i = 0; names[i]; i++) {
+      const_string name = names[i];
+      unsigned name_len;
 
-          /* Don't bother with absolute & explicit relative. */
-          if (kpathsea_absolute_p(kpse, name, true))
-              continue;
+      /* Don't bother with absolute & explicit relative. */
+      if (kpathsea_absolute_p (kpse, name, true))
+        continue;
 
-          name_len = strlen(name);
+      name_len = strlen (name);
 
-          while (dir_len + name_len + 1 > allocated) {
-              allocated += allocated;
-              XRETALLOC (potential, allocated, char);
-          }
-
-          strcpy (potential, dir);
-          strcat (potential+dir_len, name);
-
-          if (kpathsea_readable_file (kpse, potential)) {
-              str_list_add (&ret, potential);
-
-              /* Move this element towards the top of the list.  */
-              str_llist_float (dirs, elt);
-
-              /* If caller only wanted one file returned, no need to
-                 terminate the list with NULL; the caller knows to only look
-                 at the first element.  */
-              if (!search_all)
-                  return ret;
-
-              /* Start new filename. */
-              allocated = INIT_ALLOC;
-              potential = XTALLOC(allocated, char);
-          }
+      while (dir_len + name_len + 1 > allocated) {
+        allocated += allocated;
+        XRETALLOC (potential, allocated, char);
       }
+
+      strcpy (potential, dir);
+      strcat (potential+dir_len, name);
+
+      if (kpathsea_readable_file (kpse, potential)) {
+        str_list_add (&ret, potential);
+
+        /* Move this element towards the top of the list.  */
+        str_llist_float (dirs, elt);
+
+        /* If caller only wanted one file returned, no need to
+           terminate the list with NULL; the caller knows to only look
+           at the first element.  */
+        if (!search_all)
+          return ret;
+
+        /* Start new filename. */
+        allocated = INIT_ALLOC;
+        potential = XTALLOC (allocated, char);
+      }
+    }
   }
 
   /* If we get here, either we didn't find any files, or we were finding
@@ -280,7 +278,7 @@ path_search (kpathsea kpse, const_string path,  string name,
     }
 
     /* See elt-dirs.c for side effects of this function */
-    kpathsea_normalize_path(kpse, elt);
+    kpathsea_normalize_path (kpse, elt);
 
     /* Try ls-R, unless we're searching for texmf.cnf.  Our caller
        (search), also tests first_search, and does the resetting.  */
@@ -297,17 +295,18 @@ path_search (kpathsea kpse, const_string path,  string name,
     if (allow_disk_search && (!found || (must_exist && !STR_LIST (*found)))) {
         str_llist_type *dirs = kpathsea_element_dirs (kpse, elt);
       if (dirs && *dirs) {
-        if (!found)
+        if (!found) {
           found = XTALLOC1 (str_list_type);
+        }
         *found = dir_list_search (kpse, dirs, name, all);
       }
     }
 
     /* Did we find anything anywhere?  */
     if (found && STR_LIST (*found)) {
-      if (all)
+      if (all) {
         str_list_concat (&ret_list, *found);
-      else {
+      } else {
         str_list_add (&ret_list, STR_LIST_ELT (*found, 0));
         done = true;
       }
@@ -342,7 +341,6 @@ search (kpathsea kpse, const_string path,  const_string original_name,
   str_list_type ret_list;
   string name;
   boolean absolute_p;
-
 #ifdef __DJGPP__
   /* We will use `stat' heavily, so let's request for
      the fastest possible version of `stat', by telling
@@ -415,10 +413,8 @@ search (kpathsea kpse, const_string path,  const_string original_name,
   return STR_LIST (ret_list);
 }
 
-/* Search PATH for NAMES.
-
-   Always return a list; if no files are found, the list will
-   contain just NULL.  If ALL is true, the list will be
+/* Search PATH for NAMES. Always return a list; if no files are found,
+   the list will contain just NULL.  If ALL is true, the list will be
    terminated with NULL.  */
 
 string *
@@ -431,53 +427,41 @@ kpathsea_path_search_list_generic (kpathsea kpse,
   string elt;
   boolean done = false;
   boolean all_absolute = true;
-
 #ifdef __DJGPP__
-  /* We will use `stat' heavily, so let's request for
-     the fastest possible version of `stat', by telling
-     it what members of struct stat do we really need.
-
-     We need to set this on each call because this is a
-     library function; the caller might need other options
-     from `stat'.  Thus save the flags and restore them
-     before exit.
-
-     This call tells `stat' that we do NOT need to recognize
-     executable files (neither by an extension nor by a magic
-     signature); that we do NOT need time stamp of root directories;
-     and that we do NOT need the write access bit in st_mode.
-
-     Note that `kpse_set_program_name' needs the EXEC bits,
-     but it was already called by the time we get here.  */
+  /* See DJGPP comments above.  */
   unsigned short save_djgpp_flags  = _djstat_flags;
 
   _djstat_flags = _STAT_EXEC_MAGIC | _STAT_EXEC_EXT
                   | _STAT_ROOT_TIME | _STAT_WRITEBIT;
 #endif
 
-  ret_list = str_list_init();
+  ret_list = str_list_init ();
 
 #ifdef KPSE_DEBUG
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH)) {
     DEBUGF1  ("start search(files=[%s", *names);
     for (namep = names+1; *namep != NULL; namep++) {
-      fputc(' ', stderr);
-      fputs(*namep, stderr);
+      fputc (' ', stderr);
+      fputs (*namep, stderr);
     }
     fprintf (stderr, "], must_exist=%d, find_all=%d, path=%s).\n",
              must_exist, all, path);
   }
 #endif /* KPSE_DEBUG */
 
-  /* FIXME: is this really true?  No need to do any expansion on names.  */
+  /* kpathsea_find_file_generic in tex-file.c does the variable and
+     tilde expansion, so don't redo that here. Maybe we should have done
+     it differently originally, but we certainly don't want to create an
+     incompatibility now.  */
 
   /* First catch any absolute or explicit relative names. */
   for (namep = names; *namep; namep++) {
     if (kpathsea_absolute_p (kpse, *namep, true)) {
       if (kpathsea_readable_file (kpse, *namep)) {
-        str_list_add (&ret_list, xstrdup(*namep));
-        if (!all)
+        str_list_add (&ret_list, xstrdup (*namep));
+        if (!all) {
           goto out;
+        }
       }
     } else {
       all_absolute = false;
@@ -486,13 +470,13 @@ kpathsea_path_search_list_generic (kpathsea kpse,
   /* Shortcut: if we were only given absolute/explicit relative names,
      we can skip the rest.  Typically, if one name is absolute, they
      all are, because our caller derived them from each other. */
-  if (all_absolute)
-      goto out;
+  if (all_absolute) {
+    goto out;
+  }
 
   /* Look at each path element in turn. */
   for (elt = kpathsea_path_element (kpse, path); !done && elt;
-       elt = kpathsea_path_element (kpse, NULL))
-  {
+       elt = kpathsea_path_element (kpse, NULL)) {
     str_list_type *found;
     boolean allow_disk_search = true;
     if (elt[0] == '!' && elt[1] == '!') {
@@ -515,11 +499,12 @@ kpathsea_path_search_list_generic (kpathsea kpse,
          (3) MUST_EXIST && NAME was not in the db.
        In (2*), `found' will be NULL.
        In (3),  `found' will be an empty list. */
-    if (allow_disk_search && (!found || (must_exist && !STR_LIST(*found)))) {
+    if (allow_disk_search && (!found || (must_exist && !STR_LIST (*found)))) {
         str_llist_type *dirs = kpathsea_element_dirs (kpse, elt);
       if (dirs && *dirs) {
-        if (!found)
+        if (!found) {
           found = XTALLOC1 (str_list_type);
+        }
         *found = dir_list_search_list (kpse, dirs, names, all);
       }
     }
@@ -598,7 +583,6 @@ kpathsea_all_path_search (kpathsea kpse, const_string path, const_string name)
 }
 
 #if defined (KPSE_COMPAT_API)
-
 string
 kpse_path_search (const_string path,  const_string name, boolean must_exist)
 {
@@ -610,7 +594,7 @@ kpse_all_path_search (const_string path,  const_string name)
 {
     return kpathsea_all_path_search (kpse_def,  path, name);
 }
-#endif
+#endif /* KPSE_COMPAT_API */
 
 
 #ifdef TEST
@@ -641,7 +625,7 @@ test_path_search (const_string path, const_string file)
 int
 main (int argc, char **argv)
 {
-  kpse_set_program_name(argv[0], NULL);
+  kpse_set_program_name (argv[0], NULL);
   /* All lists end with NULL.  */
   test_path_search (".", "nonexistent");
   test_path_search (".", "/nonexistent");
