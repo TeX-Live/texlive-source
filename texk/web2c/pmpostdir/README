@@ -1,0 +1,19 @@
+(This file is public domain.)
+
+This directory contains pMetaPost and upMetaPost, a Japanese version
+of MetaPost. They were originally published/maintained as jMetaPost
+by Michio Matsuyama and Hideyuki Suzuki.
+
+A few years later, the changes files were translated from WEB to
+CWEB by Akira Kakuto for W32TeX distribution. The project name
+was changed to pMetaPost around 2009, to be consistent with pTeX
+and upTeX. The command names are currently pmpost and upmpost.
+
+Old information and development history (around 1999) can be obtained
+from Web archives:
+
+* http://web.archive.org/web/20040414071904/http://village.infoweb.ne.jp:80/~fwhw5892/jweb/jmpost.htm
+
+* http://web.archive.org/web/20110723233250/http://www.sat.t.u-tokyo.ac.jp:80/~hideyuki/metapost/
+
+Japanese TeX Development Community

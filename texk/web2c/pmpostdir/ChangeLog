@@ -1,3 +1,11 @@
+2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* README.old.ja, Changes.old.ja: Import README.jis and
+	Changes.jis from old upstream jmpost-0.04.tar.gz,
+	renamed and converted to UTF-8.
+	* README: Added.
+	* am/pmpost.am: Adjusted.
+
 2017-07-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ppsout.ch, pmpost.ch: Force a space between " and ".
