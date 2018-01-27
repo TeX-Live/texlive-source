@@ -133,8 +133,8 @@ lh:=b2*256+b3;
 for k:=1 to nt do
   begin
     read_tfm_word;
-    jfm_char_code[jfm_char_type_count]:=b0*256+b1;
-    jfm_char_type[jfm_char_type_count]:=b2*256+b3;
+    jfm_char_code[jfm_char_type_count]:=b0*256+b1+b2*65536;
+    jfm_char_type[jfm_char_type_count]:=b3;
     jfm_char_font[jfm_char_type_count]:=nf;
     jfm_h:= { hash value }
       (jfm_char_code[jfm_char_type_count]+nf) mod jfm_hash_size;

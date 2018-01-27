@@ -1,9 +1,9 @@
 @x
 @d my_name=='ptftopl'
-@d banner=='This is pTFtoPL, Version 3.3-p1.7'
+@d banner=='This is pTFtoPL, Version 3.3-p2.0'
 @y
 @d my_name=='uptftopl'
-@d banner=='This is upTFtoPL, Version 3.3-p1.7-u1.22'
+@d banner=='This is upTFtoPL, Version 3.3-p2.0-u1.22'
 @z
 
 @x
@@ -15,15 +15,35 @@
 @x
 @d max_kanji=7237 {number of the kanji characters - 1}
 @y
-@d max_kanji=65535 {number of the kanji characters - 1}
+@d max_kanji=1114111 {number of the kanji characters - 1}
 @z
 
 @x procedure out_kanji
+i:0..3; {index of array}
+@y
+i:0..5; {index of array}
+@z
+@x
   begin cx:=jis_code; out('J '); {specify jiscode format}
+  dig[0]:=Hi(cx) div 16; dig[1]:=Hi(cx) mod 16;
+  dig[2]:=Lo(cx) div 16; dig[3]:=Lo(cx) mod 16;
+  for i:=0 to 3 do
 @y
   begin cx:=jis_code;
   if (isinternalUPTEX) then out('U ')
   else out('J '); {specify jiscode format}
+  dig[0]:=(cx div 65536) div 16; dig[1]:=(cx div 65536) mod 16;
+  dig[2]:=(cx div 4096) mod 16; dig[3]:=(cx div 256) mod 16;
+  dig[4]:=(cx div 16) mod 16; dig[5]:=cx mod 16;
+  for i:=0 to 1 do
+    if (dig[i]<>0)or(dig[0]<>0) then begin { if dig[0]<>0, dig[1] should be always printed }
+      if dig[i]<10 then out(dig[i]) else
+      case dig[i] of
+         10: out('A'); 11: out('B'); 12: out('C');
+         13: out('D'); 14: out('E'); 15: out('F');
+      end;
+    end;
+  for i:=2 to 5 do
 @z
 
 @x
@@ -45,7 +65,7 @@ if (first_byte<@"21)
 if (second_byte<@"21)or(second_byte>@"7E) then valid_jis_code:=false;
 @y
 begin valid_jis_code:=true;
-if (cx>@"FFFF)or(not is_char_kanji(fromDVI(cx)))
+if (cx>@"10FFFF)or(not is_char_kanji(fromDVI(cx)))
   or(toDVI(fromDVI(cx))<>cx) then valid_jis_code:=false;
 @z
 

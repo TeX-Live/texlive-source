@@ -163,12 +163,14 @@ upweb_tests = \
 	uptexdir/updvitype.test \
 	uptexdir/uppltotf.test \
 	uptexdir/uptftopl.test \
-	uptexdir/yokotate.test
+	uptexdir/yokotate.test \
+	uptexdir/newjfm.test
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
 uptexdir/uptftopl.log: uptftopl$(EXEEXT)
 uptexdir/yokotate.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
+uptexdir/newjfm.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
 
 EXTRA_DIST += $(uptex_tests) $(upweb_tests)
 DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \
@@ -196,7 +198,8 @@ DISTCLEANFILES += uptests/xcmr10.pl
 ## uptexdir/yokotate.test
 EXTRA_DIST += uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm
 EXTRA_DIST += uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm
-DISTCLEANFILES += uptests/x*min10.*
+EXTRA_DIST += uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm
+DISTCLEANFILES += uptests/x*min10.* uptests/xtestnewu.*
 ## uptexdir/uptriptest
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
 uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)

@@ -2402,6 +2402,7 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	uptexdir/ChangeLog $(uptex_tests) $(upweb_tests) \
 	uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm \
 	uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm \
+	uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm \
 	uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf \
 	$(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines \
 	euptexdir/COPYRIGHT euptexdir/COPYRIGHT.jis \
@@ -2692,13 +2693,13 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	$(upweb_programs:=.web) uptests/xexampl.aux \
 	uptests/xexampl.bbl uptests/xexampl.blg uptests/xstory.dvityp \
 	uptests/xpagenum.typ uptests/xcmr10.tfm uptests/xcmr10.pl \
-	uptests/x*min10.* uptrip.diffs $(nodist_euptex_SOURCES) \
-	euptex.web euptex.ch euptex-web2c euptex.p euptex.pool \
-	euptex-tangle euptrip.diffs pdfprimitive-euptex.* \
-	$(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c pdftex.p \
-	pdftex.pool pdftex-tangle pwprob.log pwprob.tex pdfimage.fmt \
-	pdfimage.log pdfimage.pdf postV3.afm postV7.afm test-13.pdf \
-	test-13.xref test-15.pdf test-15.xref \
+	uptests/x*min10.* uptests/xtestnewu.* uptrip.diffs \
+	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
+	euptex.p euptex.pool euptex-tangle euptrip.diffs \
+	pdfprimitive-euptex.* $(nodist_pdftex_SOURCES) pdftex.ch \
+	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
+	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf postV3.afm \
+	postV7.afm test-13.pdf test-13.xref test-15.pdf test-15.xref \
 	$(nodist_libluatex_sources) luaimage.* luajitimage.* \
 	$(nodist_xetex_SOURCES) xetex.web xetex.ch xetex-web2c xetex.p \
 	xetex.pool xetex-tangle bug73.fmt bug73.log bug73.out \
@@ -3248,7 +3249,8 @@ upweb_tests = \
 	uptexdir/updvitype.test \
 	uptexdir/uppltotf.test \
 	uptexdir/uptftopl.test \
-	uptexdir/yokotate.test
+	uptexdir/yokotate.test \
+	uptexdir/newjfm.test
 
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) \
 	-I$(srcdir)/libmd5 $(am__append_139)
@@ -17551,6 +17553,7 @@ uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
 uptexdir/uptftopl.log: uptftopl$(EXEEXT)
 uptexdir/yokotate.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
+uptexdir/newjfm.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
 uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: uptrip-clean
