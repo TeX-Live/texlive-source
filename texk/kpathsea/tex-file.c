@@ -843,54 +843,56 @@ kpathsea_init_format_return_varlist(kpathsea kpse,kpse_file_format_type format)
 #define MAYBE(member) (FMT_INFO.member ? FMT_INFO.member : "(none)")
 
   /* Describe the monster we've created.  */
-  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_PATHS))
-    {
-      DEBUGF2 ("Search path for %s files (from %s)\n",
-              FMT_INFO.type, FMT_INFO.path_source);
-      DEBUGF1 ("  = %s\n", FMT_INFO.path);
-      DEBUGF1 ("  before expansion = %s\n", FMT_INFO.raw_path);
-      DEBUGF1 ("  application override path = %s\n", MAYBE (override_path));
-      DEBUGF1 ("  application config file path = %s\n", MAYBE (client_path));
-      DEBUGF1 ("  texmf.cnf path = %s\n", MAYBE (cnf_path));
-      DEBUGF1 ("  compile-time path = %s\n", MAYBE (default_path));
-      DEBUGF1 ("  environment variables = %s\n", envvar_list);
-      DEBUGF  ("  default suffixes =");
-      if (FMT_INFO.suffix) {
-        const_string *ext;
-        for (ext = FMT_INFO.suffix; ext && *ext; ext++) {
-          fprintf (stderr, " %s", *ext);
-        }
-        putc ('\n', stderr);
-      } else {
-        fputs (" (none)\n", stderr);
+  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_PATHS)) {
+    if (format == kpse_cnf_format)
+      fputs ("\n", stderr); /* always mid-search, so break log output */
+
+    DEBUGF2 ("Search path for %s files (from %s)\n",
+            FMT_INFO.type, FMT_INFO.path_source);
+    DEBUGF1 ("  = %s\n", FMT_INFO.path);
+    DEBUGF1 ("  before expansion = %s\n", FMT_INFO.raw_path);
+    DEBUGF1 ("  application override path = %s\n", MAYBE (override_path));
+    DEBUGF1 ("  application config file path = %s\n", MAYBE (client_path));
+    DEBUGF1 ("  texmf.cnf path = %s\n", MAYBE (cnf_path));
+    DEBUGF1 ("  compile-time path = %s\n", MAYBE (default_path));
+    DEBUGF1 ("  environment variables = %s\n", envvar_list);
+    DEBUGF  ("  default suffixes =");
+    if (FMT_INFO.suffix) {
+      const_string *ext;
+      for (ext = FMT_INFO.suffix; ext && *ext; ext++) {
+        fprintf (stderr, " %s", *ext);
       }
-      DEBUGF  ("  other suffixes =");
-      if (FMT_INFO.alt_suffix) {
-        const_string *alt;
-        for (alt = FMT_INFO.alt_suffix; alt && *alt; alt++) {
-          fprintf (stderr, " %s", *alt);
-        }
-        putc ('\n', stderr);
-      } else {
-        fputs (" (none)\n", stderr);
-      }
-      DEBUGF1 ("  search only with suffix = %d\n",FMT_INFO.suffix_search_only);
-      DEBUGF1 ("  runtime generation program = %s\n", MAYBE (program));
-      DEBUGF  ("  runtime generation command =");
-      if (FMT_INFO.argv) {
-        const_string *arg;
-        for (arg = FMT_INFO.argv; *arg; arg++) {
-          fprintf (stderr, " %s", *arg);
-        }
-        putc ('\n', stderr);
-      } else {
-          fputs(" (none)\n", stderr);
-      }
-      DEBUGF1 ("  program enabled = %d\n", FMT_INFO.program_enabled_p);
-      DEBUGF1 ("  program enable level = %d\n", FMT_INFO.program_enable_level);
-      DEBUGF1 ("  open files in binary mode = %d\n", FMT_INFO.binmode);
-      DEBUGF1 ("  numeric format value = %d\n", format);
+      putc ('\n', stderr);
+    } else {
+      fputs (" (none)\n", stderr);
     }
+    DEBUGF  ("  other suffixes =");
+    if (FMT_INFO.alt_suffix) {
+      const_string *alt;
+      for (alt = FMT_INFO.alt_suffix; alt && *alt; alt++) {
+        fprintf (stderr, " %s", *alt);
+      }
+      putc ('\n', stderr);
+    } else {
+      fputs (" (none)\n", stderr);
+    }
+    DEBUGF1 ("  search only with suffix = %d\n",FMT_INFO.suffix_search_only);
+    DEBUGF1 ("  runtime generation program = %s\n", MAYBE (program));
+    DEBUGF  ("  runtime generation command =");
+    if (FMT_INFO.argv) {
+      const_string *arg;
+      for (arg = FMT_INFO.argv; *arg; arg++) {
+        fprintf (stderr, " %s", *arg);
+      }
+      putc ('\n', stderr);
+    } else {
+        fputs(" (none)\n", stderr);
+    }
+    DEBUGF1 ("  program enabled = %d\n", FMT_INFO.program_enabled_p);
+    DEBUGF1 ("  program enable level = %d\n", FMT_INFO.program_enable_level);
+    DEBUGF1 ("  open files in binary mode = %d\n", FMT_INFO.binmode);
+    DEBUGF1 ("  numeric format value = %d\n", format);
+}
 #endif /* KPSE_DEBUG */
 
   return envvar_list;
@@ -1045,8 +1047,6 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
   /* Do variable and tilde expansion. */
   name = kpathsea_expand (kpse, const_name);
 
-  try_std_extension_first
-    = kpathsea_var_value (kpse, "try_std_extension_first");
   has_any_suffix = strrchr (name, '.');
   if (has_any_suffix) {
     string p = strchr (has_any_suffix, DIR_SEP);
@@ -1076,8 +1076,10 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
      try_std_extension_first.  */
   count = 0;
   target = XTALLOC1 (string);
+  try_std_extension_first
+    = kpathsea_var_value (kpse, "try_std_extension_first");
 
-  if (has_any_suffix
+  if (has_any_suffix /* xxx && ! KPSE_CNF_VALUE_P (try_std_extension_first)*/
       && (try_std_extension_first == NULL || *try_std_extension_first == 'f'
           || *try_std_extension_first == '0')) {
     target_asis_name (kpse, &target, &count, format, name, use_fontmaps,
