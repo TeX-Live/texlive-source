@@ -33,6 +33,7 @@
 #define tfm_unsigned_pair()   get_unsigned_pair(tfm_file)
 #define tfm_signed_pair()     get_signed_pair(tfm_file)
 #define tfm_unsigned_triple() get_unsigned_triple(tfm_file)
+#define tfm_unsigned_triple_kanji() get_unsigned_triple_kanji(tfm_file)
 #define tfm_signed_triple()   get_signed_triple(tfm_file)
 #define tfm_unsigned_quad()   get_unsigned_quad(tfm_file)
 #define tfm_signed_quad()     get_signed_quad(tfm_file)
@@ -66,7 +67,7 @@ struct a_tfm {
   SIGNED_QUAD *height;
   SIGNED_QUAD *depth;
   char *tex_name;
-  UNSIGNED_PAIR *chartypes;
+  UNSIGNED_TRIPLE *chartypes;
   fixword *unpacked_widths;
   fixword *unpacked_heights;
   fixword *unpacked_depths;
@@ -282,11 +283,11 @@ static void do_char_type_array(struct a_tfm *a_tfm)
   UNSIGNED_PAIR chartype;
   register int i;
 
-  a_tfm -> chartypes = (UNSIGNED_PAIR *)calloc(65536, sizeof(UNSIGNED_PAIR));
-  for (i = 0; i < 65536; i++) (a_tfm->chartypes)[i] = 0;
+  a_tfm -> chartypes = (UNSIGNED_TRIPLE *)calloc(1114112, sizeof(UNSIGNED_TRIPLE));
+  for (i = 0; i < 1114112; i++) (a_tfm->chartypes)[i] = 0;
   for (i = 0; i < a_tfm->nt; i++) {
-    charcode = tfm_unsigned_pair();
-    chartype = tfm_unsigned_pair();
+    charcode = tfm_unsigned_triple_kanji();
+    chartype = tfm_unsigned_byte();
     (a_tfm->chartypes)[charcode] = chartype;
   }
 }

@@ -40,6 +40,7 @@ extern SIGNED_BYTE get_signed_byte (FILE *fp);
 extern UNSIGNED_PAIR get_unsigned_pair (FILE *fp);
 extern SIGNED_PAIR get_signed_pair (FILE *fp);
 extern UNSIGNED_TRIPLE get_unsigned_triple (FILE *fp);
+extern UNSIGNED_TRIPLE get_unsigned_triple_kanji (FILE *fp);
 extern SIGNED_TRIPLE get_signed_triple (FILE *fp);
 extern UNSIGNED_QUAD get_unsigned_quad (FILE *fp);
 extern SIGNED_QUAD get_signed_quad (FILE *fp);

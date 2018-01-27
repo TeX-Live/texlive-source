@@ -1,3 +1,8 @@
+2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* tfm.c, utils.[ch]: Support new JFM spec (3-byte characters
+	in TYPE > 0). This also avoids a segmentation fault.
+
 2015-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* c-auto.in (removed): Unused, replaced ...

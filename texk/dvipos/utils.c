@@ -59,6 +59,15 @@ UNSIGNED_TRIPLE get_unsigned_triple (FILE *fp)
   return triple;
 }
 
+UNSIGNED_TRIPLE get_unsigned_triple_kanji (FILE *fp)
+{
+  /* yy zz XX -> XXyyzz */
+  UNSIGNED_TRIPLE triple = get_unsigned_byte(fp);
+  triple = triple << 8; triple += get_unsigned_byte(fp);
+  triple += get_unsigned_byte(fp) << 16;
+  return triple;
+}
+
 SIGNED_TRIPLE get_signed_triple (FILE *fp)
 {
   UNSIGNED_TRIPLE triple;
