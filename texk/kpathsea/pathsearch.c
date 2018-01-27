@@ -307,7 +307,7 @@ path_search (kpathsea kpse, const_string path,  string name,
       if (all) {
         str_list_concat (&ret_list, *found);
       } else {
-        str_list_add (&ret_list, STR_LIST_ELT (*found, 0));
+        str_list_add (&ret_list, STR_LIST_FIRST_ELT (*found));
         done = true;
       }
     }
@@ -383,7 +383,7 @@ search (kpathsea kpse, const_string path,  const_string original_name,
 
   /* Append NULL terminator if we didn't find anything at all, or we're
      supposed to find ALL and the list doesn't end in NULL now.  */
-  if (STR_LIST_LENGTH (ret_list) == 0
+  if (STR_LIST_EMPTY (ret_list)
       || (all && STR_LIST_LAST_ELT (ret_list) != NULL))
     str_list_add (&ret_list, NULL);
 
@@ -514,7 +514,7 @@ kpathsea_path_search_list_generic (kpathsea kpse,
       if (all) {
         str_list_concat (&ret_list, *found);
       } else {
-        str_list_add (&ret_list, STR_LIST_ELT (*found, 0));
+        str_list_add (&ret_list, STR_LIST_FIRST_ELT (*found));
         done = true;
       }
     }
@@ -526,7 +526,7 @@ kpathsea_path_search_list_generic (kpathsea kpse,
   str_list_uniqify (&ret_list);
 
   /* Add NULL if we will be returning multiple elements.  */
-  if (STR_LIST_LENGTH (ret_list) == 0
+  if (STR_LIST_EMPTY (ret_list)
       || (all && STR_LIST_LAST_ELT (ret_list) != NULL))
     str_list_add (&ret_list, NULL);
 
