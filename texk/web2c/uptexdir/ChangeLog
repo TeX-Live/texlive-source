@@ -1,6 +1,8 @@
 2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* uppltotf.ch, uptftopl.ch, uptex-m.ch: Adapt to the new JFM spec.
+	* am/uptex.am: Add new tests.
+	* newjfm.test, tests/testnewu.{pl,tfm}: New test files.
 
 2018-01-21  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 

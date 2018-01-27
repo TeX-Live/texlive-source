@@ -1,6 +1,6 @@
 .if t .ds TX T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
 .if t .ds LX L\\h'-0.36m'\\v'-0.15v'\\s-2A\\s+2\\h'-0.15m'\\v'0.15v'T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
-.TH MENDEX L
+.TH MENDEX 1
 .SH 名称
 mendex \- 索引整形ツール
 .SH 使用法
@@ -498,5 +498,5 @@ indファイル			index sort
 複数のページ記法を使用する場合、ページ順に.idxファイルを与えないとページ番号を誤認することがあります。
 .PP
 .SH 参照
-tex(l), latex(l), makeindex(l)
+tex(1), latex(1), makeindex(1)
 .RE

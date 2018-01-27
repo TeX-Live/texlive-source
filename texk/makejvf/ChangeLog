@@ -2,6 +2,9 @@
 
 	* tfmread.c: Support new JFM spec (3-byte characters in TYPE > 0).
 	* version.h: Bump version.
+	* tests/testnewu.{tfm,vf}, tests/uni10.cnf: New test files.
+	* Makefile.am, makejvf.test: Add new tests.
+	* makejvf.1 (.TH): use 1 instead of L, per Debian.
 
 2018-01-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
