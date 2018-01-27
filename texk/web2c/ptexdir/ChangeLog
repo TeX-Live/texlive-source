@@ -1,3 +1,10 @@
+2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ppltotf.ch, ptftopl.ch: Introduce a new JFM spec, to allow
+	3-byte characters in TYPE > 0 for upTeX. The new spec is
+	effectively upper compatible with the original one.
+	* ptex-base.ch, pdvitype.ch: Adapt to the new JFM spec.
+
 2018-01-21  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: New primitives: \ptexversion, \ptexminorversion

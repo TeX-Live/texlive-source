@@ -1,3 +1,7 @@
+2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* uppltotf.ch, uptftopl.ch, uptex-m.ch: Adapt to the new JFM spec.
+
 2018-01-21  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* yokotate.test, tests/{,u}[,t]min10.[pl,tfm], am/uptex.am:

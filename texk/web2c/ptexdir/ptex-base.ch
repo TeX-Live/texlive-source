@@ -2720,6 +2720,22 @@ var k:font_index; {index into |font_info|}
 @!cx:KANJI_code; {kanji code}
 @z
 
+@x
+@d read_sixteen(#)==begin #:=fbyte;
+  if #>127 then abort;
+  fget; #:=#*@'400+fbyte;
+  end
+@y
+@d read_sixteen(#)==begin #:=fbyte;
+  if #>127 then abort;
+  fget; #:=#*@'400+fbyte;
+  end
+@d read_twentyfourx(#)==begin #:=fbyte;
+  fget; #:=#*@"100+fbyte;
+  fget; #:=#+fbyte*@"10000;
+  end
+@z
+
 @x [30.565] l.11548 - pTeX: read tfm size
 @ @<Read the {\.{TFM}} size fields@>=
 begin read_sixteen(lf);
@@ -2830,8 +2846,8 @@ for k:=fmem_ptr to width_base[f]-1 do
 if jfm_flag<>dir_default then
   for k:=ctype_base[f] to ctype_base[f]+nt-1 do
     begin
-    fget; read_sixteen(cx); font_info[k].hh.rh:=tokanji(cx); {|kchar_code|}
-    fget; read_sixteen(cx); font_info[k].hh.lhfield:=tonum(cx); {|kchar_type|}
+    fget; read_twentyfourx(cx); font_info[k].hh.rh:=tokanji(cx); {|kchar_code|}
+    fget; cx:=fbyte; font_info[k].hh.lhfield:=tonum(cx); {|kchar_type|}
     end;
 for k:=char_base[f]+bc to width_base[f]-1 do
   begin store_four_quarters(font_info[k].qqqq);
