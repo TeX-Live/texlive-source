@@ -53,50 +53,54 @@ str_list_concat (str_list_type *target,  str_list_type more)
   STR_LIST_LENGTH (*target) += STR_LIST_LENGTH (more);
   XRETALLOC (STR_LIST (*target), STR_LIST_LENGTH (*target), string);
 
-  for (e = 0; e < STR_LIST_LENGTH (more); e++)
+  for (e = 0; e < STR_LIST_LENGTH (more); e++) {
     STR_LIST_ELT (*target, prev_len + e) = STR_LIST_ELT (more, e);
+  }
 }
 
 
-/* Concatenate the elements of more to each element of target.  This
-   _must_ be done with the first index varying fastest. */
-/* Note that we free the old elements of target as well. */
+/* Concatenate the elements of MORE to each element of TARGET.  This
+   _must_ be done with the first index varying fastest.
+   We free the old elements of TARGET.  */
 
 void
 str_list_concat_elements (str_list_type *target,  str_list_type more)
 {
-    if (STR_LIST_EMPTY (more)) {
-        return;
-    } else if (STR_LIST_EMPTY (*target)) {
-        unsigned int i;
-        STR_LIST_LENGTH(*target) = STR_LIST_LENGTH(more);
-        STR_LIST(*target) =
-                (string*)xmalloc(STR_LIST_LENGTH(more)*sizeof(char*));
-        for (i=0;i!=STR_LIST_LENGTH(more);++i) {
-            STR_LIST_ELT(*target,i)=xstrdup(STR_LIST_ELT(more,i));
-        }
-        return;
-    } else {
-        unsigned new_len;
-        char ** new_list;
-        unsigned int i,j;
-        new_list = (string*)xmalloc(STR_LIST_LENGTH (*target)
-                                    * STR_LIST_LENGTH (more) * sizeof(char*));
+  if (STR_LIST_EMPTY (more)) {
+    return;
 
-        new_len = 0;
-        for (j = 0; j != STR_LIST_LENGTH(more); ++j) {
-            for (i = 0; i != STR_LIST_LENGTH(*target); ++i) {
-                new_list[new_len] = concat(STR_LIST_ELT(*target,i),
-                                           STR_LIST_ELT(more,j));
-                ++new_len;
-            }
-        }
-        for (i = 0; i != STR_LIST_LENGTH(*target); ++i)
-            free(STR_LIST_ELT(*target, i));
-        free(STR_LIST(*target));
-        STR_LIST_LENGTH(*target) = new_len;
-        STR_LIST(*target) = new_list;
+  } else if (STR_LIST_EMPTY (*target)) {
+    unsigned i;
+    STR_LIST_LENGTH (*target) = STR_LIST_LENGTH (more);
+    STR_LIST (*target) = (string *) xmalloc (STR_LIST_LENGTH (more)
+                                             * sizeof (char *));
+    for (i = 0; i != STR_LIST_LENGTH (more); ++i) {
+      STR_LIST_ELT (*target, i) = xstrdup (STR_LIST_ELT (more, i));
     }
+    return;
+
+  } else {
+    unsigned new_len;
+    char **new_list;
+    unsigned i, j;
+    new_list = (string *) xmalloc (STR_LIST_LENGTH (*target)
+                                   * STR_LIST_LENGTH (more)
+                                   * sizeof (char *));
+    new_len = 0;
+    for (j = 0; j != STR_LIST_LENGTH (more); ++j) {
+      for (i = 0; i != STR_LIST_LENGTH (*target); ++i) {
+        new_list[new_len] = concat (STR_LIST_ELT (*target, i),
+                                    STR_LIST_ELT (more, j));
+        ++new_len;
+      }
+    }
+    for (i = 0; i != STR_LIST_LENGTH(*target); ++i) {
+      free (STR_LIST_ELT (*target, i));
+    }
+    free (STR_LIST (*target));
+    STR_LIST_LENGTH (*target) = new_len;
+    STR_LIST (*target) = new_list;
+  }
 }
 
 
@@ -105,11 +109,10 @@ str_list_concat_elements (str_list_type *target,  str_list_type more)
 void
 str_list_free (str_list_type *l)
 {
-  if (STR_LIST (*l))
-    {
-      free (STR_LIST (*l));
-      STR_LIST (*l) = NULL;
-    }
+  if (STR_LIST (*l)) {
+    free (STR_LIST (*l));
+    STR_LIST (*l) = NULL;
+  }
 }
 
 
