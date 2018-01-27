@@ -14,8 +14,9 @@ int jfmread(int kcode)
 	int i,ctype=0,w_ind,w,ll=0,rr=0,tag,gk_ind,gk2_ind;
 
 	for (i = 0 ; i < nt ; i++) {
-		if (upair(&char_type[i*4]) == kcode) {
-			ctype = upair(&char_type[i*4+2]);
+		/* support new JFM spec by texjporg */
+		if (upair(&char_type[i*4])+char_type[i*4+2]*65536 == kcode) {
+			ctype = char_type[i*4+3];
 			break;
 		}
 	}

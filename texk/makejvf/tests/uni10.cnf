@@ -1,0 +1,61 @@
+% makejvf settings for upjpn* in uptex-fonts
+% based on Blocks-10.0.0.txt (Date: 2017-04-12, 17:30:00 GMT [KW])
+% and Adobe-Japan1-6/cid2code.txt (Version 10/24/2017)
+%
+% Following code points are omitted:
+%   U+0FD6, U+2E40, U+A7B5, U+AB53
+
+CHARSET	0000..007F,% Basic Latin
++	0080..00FF,% Latin-1 Supplement
++	0100..017F,% Latin Extended-A
++	0180..024F,% Latin Extended-B
++	0250..02AF,% IPA Extensions
++	02B0..02FF,% Spacing Modifier Letters
++	0300..036F,% Combining Diacritical Marks
++	0370..03FF,% Greek and Coptic
++	0400..04FF,% Cyrillic
++	1E00..1EFF,% Latin Extended Additional
++	1F00..1FFF,% Greek Extended
++	2000..206F,% General Punctuation
++	2070..209F,% Superscripts and Subscripts
++	20A0..20CF,% Currency Symbols
++	20D0..20FF,% Combining Diacritical Marks for Symbols
++	2100..214F,% Letterlike Symbols
++	2150..218F,% Number Forms
++	2190..21FF,% Arrows
++	2200..22FF,% Mathematical Operators
++	2300..23FF,% Miscellaneous Technical
++	2400..243F,% Control Pictures
++	2460..24FF,% Enclosed Alphanumerics
++	2500..257F,% Box Drawing
++	2580..259F,% Block Elements
++	25A0..25FF,% Geometric Shapes
++	2600..26FF,% Miscellaneous Symbols
++	2700..27BF,% Dingbats
++	2900..297F,% Supplemental Arrows-B
++	2980..29FF,% Miscellaneous Mathematical Symbols-B
++	2B00..2BFF,% Miscellaneous Symbols and Arrows
++	2E80..2EFF,% CJK Radicals Supplement
++	2F00..2FDF,% Kangxi Radicals
++	3000..303F,% CJK Symbols and Punctuation
++	3040..309F,% Hiragana
++	30A0..30FF,% Katakana
++	3190..319F,% Kanbun
++	31F0..31FF,% Katakana Phonetic Extensions
++	3200..32FF,% Enclosed CJK Letters and Months
++	3300..33FF,% CJK Compatibility
++	3400..4DBF,% CJK Unified Ideographs Extension A
++	4E00..9FFF,% CJK Unified Ideographs
++	E000..F8FF,% Private Use Area
++	F900..FAFF,% CJK Compatibility Ideographs
++	FB00..FB4F,% Alphabetic Presentation Forms
++	FE10..FE1F,% Vertical Forms
++	FE30..FE4F,% CJK Compatibility Forms
++	FF00..FFEF,% Halfwidth and Fullwidth Forms
++	1F100..1F1FF,% Enclosed Alphanumeric Supplement
++	1F200..1F2FF,% Enclosed Ideographic Supplement
++	20000..2A6DF,% CJK Unified Ideographs Extension B
++	2A700..2B73F,% CJK Unified Ideographs Extension C
++	2B740..2B81F,% CJK Unified Ideographs Extension D
++	2CEB0..2EBEF,% CJK Unified Ideographs Extension F
++	2F800..2FA1F,% CJK Compatibility Ideographs Supplement
