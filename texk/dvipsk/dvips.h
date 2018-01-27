@@ -91,8 +91,10 @@ extern char *sprintf();
  */
 #if (defined(MSDOS) && !defined(DJGPP)) || (defined(OS2) && defined(_MSC_VER)) || defined(ATARIST)
 typedef long integer;
+typedef unsigned long uinteger;
 #else
 typedef int integer;
+typedef unsigned int uinteger;
 #endif
 #ifndef KPATHSEA
 typedef char boolean;
