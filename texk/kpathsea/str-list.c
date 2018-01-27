@@ -1,6 +1,6 @@
 /* str-list.c: define routines for string lists.
 
-    Copyright 1993, 2008, 2012 Karl Berry.
+    Copyright 1993, 2008, 2012, 2018 Karl Berry.
     Copyright 2001, 2005 Olaf Weber.
 
     This library is free software; you can redistribute it and/or
@@ -65,9 +65,9 @@ str_list_concat (str_list_type *target,  str_list_type more)
 void
 str_list_concat_elements (str_list_type *target,  str_list_type more)
 {
-    if (STR_LIST_LENGTH(more) == 0) {
+    if (STR_LIST_EMPTY (more)) {
         return;
-    } else if (STR_LIST_LENGTH(*target) == 0) {
+    } else if (STR_LIST_EMPTY (*target)) {
         unsigned int i;
         STR_LIST_LENGTH(*target) = STR_LIST_LENGTH(more);
         STR_LIST(*target) =

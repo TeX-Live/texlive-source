@@ -1,6 +1,6 @@
 /* str-list.h: declarations for string lists.
 
-   Copyright 1993, 1994, 2007, 2008, 2010, 2012 Karl Berry.
+   Copyright 1993, 1994, 2007, 2008, 2010, 2012, 2018 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -42,9 +42,12 @@ typedef struct
 } cstr_list_type;
 
 #define STR_LIST_LENGTH(l) ((l).length)
+#define STR_LIST_EMPTY(l) (STR_LIST_LENGTH (l) == 0)
+
 #define STR_LIST(l) ((l).list)
-#define STR_LIST_ELT(l, n) STR_LIST (l)[n]
-#define STR_LIST_LAST_ELT(l) STR_LIST_ELT (l, STR_LIST_LENGTH (l) - 1)
+#define STR_LIST_ELT(l, n) (STR_LIST (l)[n])
+#define STR_LIST_FIRST_ELT(l) STR_LIST_ELT ((l), 0)
+#define STR_LIST_LAST_ELT(l) STR_LIST_ELT ((l), STR_LIST_LENGTH (l) - 1)
 
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 

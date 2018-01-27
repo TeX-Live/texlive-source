@@ -1,7 +1,7 @@
 /* kpsewhich -- standalone path lookup and variable expansion for Kpathsea.
    Ideas from Thomas Esser, Pierre MacKay, and many others.
 
-   Copyright 1995-2017 Karl Berry & Olaf Weber.
+   Copyright 1995-2018 Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -425,7 +425,7 @@ lookup (kpathsea kpse, string name)
   }
 
   /* Filter by subdirectories, if specified.  */
-  if (STR_LIST_LENGTH (subdir_paths) > 0) {
+  if (!STR_LIST_EMPTY (subdir_paths)) {
 #if defined(WIN32)
     string *new_list = kpathsea_subdir_match (kpse, subdir_paths, ret_list);
 #else
@@ -845,7 +845,7 @@ main (int argc,  string *argv)
 
   /* --subdir must imply --all, since we filter here after doing the
      search, rather than inside the search itself.  */
-  if (STR_LIST_LENGTH (subdir_paths) > 0) {
+  if (!STR_LIST_EMPTY (subdir_paths)) {
     show_all = 1;
   }
 

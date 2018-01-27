@@ -1,3 +1,10 @@
+2018-01-27  Karl Berry  <karl@freefriends.org>
+
+	* str-list.h (STR_LIST_EMPTY, STR_LIST_FIRST_ELT): new macros.
+	* kpsewhich.c,
+	* pathsearch.c,
+	* str-list.c (str_list_concat_elements): use them.
+
 2018-01-26  Karl Berry  <karl@freefriends.org>
 
 	* tex-file.c (kpathsea_init_format_return_varlist): log a newline
