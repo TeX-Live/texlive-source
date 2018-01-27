@@ -1,0 +1,20 @@
+2000-03-20 (version 0.04)
+   * pTeX-2.1.9 対応
+
+2000-01-14 (version 0.03)
+   * ソースコードの整理 (機能に変化なし)
+
+1999-09-29 (version 0.02)
+   * デフォルトで pmakempx をインストール
+   * SJIS 版で JIS 漢字コードのサポート
+
+1999-09-26 (version 0.01)
+   * 鈴木秀幸 <hideyuki@sat.t.u-tokyo.ac.jp> による機能拡張パッチをマージ。
+      - btex etex なしでも日本語対応 (jmpost: JFM support)
+      - prologues:=0 のときに日本語対応 (jmpost: %*Font: 出力)
+      - 日本語の多書体対応 (配列サイズの拡大)
+      - 縦書き対応 (jmpost: bbox 計算, pdvitomp: dir 対応)
+
+1999-07-24 (version 0.00)
+   * 松山道夫さん <fwhw5892@mb.infoweb.ne.jp> による日本語MetaPost初公開。
+     http://village.infoweb.ne.jp/~fwhw5892/jweb/jmpost.htm

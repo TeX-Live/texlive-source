@@ -1,0 +1,87 @@
+===========================================================================
+  日本語 MetaPost
+
+  $Id: README.jis,v 1.7 2000/03/20 02:52:52 hideyuki Exp $
+===========================================================================
+
+
+◎ はじめに
+
+John Hobby によって作成された MetaPost の日本語化です。
+
+オリジナルと比べて，以下の機能が拡張されます。
+
+ ・ 文字列に日本語を入れられる
+ ・ btex etex 内に日本語を書ける
+ ・ 日本語フォント(横書き・縦書き)を指定できる
+
+ドキュメントが整備されていませんが，詳細な情報は以下の URL から得られます。
+
+ ・ http://www.sat.t.u-tokyo.ac.jp/~hideyuki/metapost/
+
+
+◎ インストール
+
+必要なファイル
+
+日本語MetaPostのインストールには他に以下のファイルが必要です。どれもpTeXの
+インストールに必要なものです。
+   
+ ・ ptex-src-2.1.9.tar.gz
+ ・ ptex-texmf-1.5.tar.gz
+ ・ teTeX-src-1.0.7.tar.gz
+
+TeX, pTeX のインストール
+
+ソースとライブラリを展開して，TeX, pTeX を make してください。詳細はpTeXに
+付属のドキュメントを参照してください。実際にはインストールまでする必要はあ
+りません。
+% cd /.../teTeX-1.0
+% ./configure
+% make all
+# make install strip
+% cd texk/web2c/ptex-src-2.1.9
+% ./configure (JIS|EUC|SJIS)
+% make
+# make install  
+
+日本語MetaPostのインストール
+
+pTeXを展開したディレクトリの中で，日本語MetaPostの配布を展開して， jmpdir
+に移動，configure, make, make install します。
+% tar xvzf /.../jmpost-0.XX.tar.gz
+% cd jmpost-0.XX
+% ./configure
+% make
+# make install
+
+環境設定
+
+ ・ 環境変数TEXに ptex, platex などを設定。
+ ・ 環境変数DVITOMPに pdvitomp を設定。
+
+これで日本語MetaPostが jmpost コマンドで使えるようになります。 DVITOMPを設
+定するかわりに，$TEXMF/web2c/texmf.cnf に
+
+% What MetaPost runs to make MPX files.  This is passed an option -troff
+% if MP is in troff mode.  Set to `0' to disable this feature.
+MPXCOMMAND.jmpost = pmakempx
+MPXCOMMAND = makempx
+
+と書いてもいいでしょう。
+
+
+◎ 参考
+
+MetaPost の日本語化を初めて手掛けられたのは松山道夫さん
+(fwhw5892@mb.infoweb.ne.jp)です。松山さんの日本語 MetaPost の
+ページは以下の URL にあります。
+http://village.infoweb.ne.jp/~fwhw5892/jweb/jmpost.htm
+
+現在，日本語 MetaPost に関する最新の情報・詳細な情報は以下の
+URL から得られます。
+http://www.sat.t.u-tokyo.ac.jp/~hideyuki/metapost/
+
+-- 
+鈴木 秀幸 (Hideyuki Suzuki)
+hideyuki@sat.t.u-tokyo.ac.jp

@@ -182,6 +182,7 @@ TESTS += $(upmpost_tests)
 endif UPMP
 
 EXTRA_DIST += pmpostdir/tests/psample.mp
+EXTRA_DIST += README README.old.ja Changes.old.ja
 ## pmpostdir/pmpsamp.test
 DISTCLEANFILES += pmpsamp.*
 ## pmpostdir/upmpsamp.test
