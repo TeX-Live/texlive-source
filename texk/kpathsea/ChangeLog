@@ -1,5 +1,9 @@
 2018-01-27  Karl Berry  <karl@freefriends.org>
 
+	* readable.h: doc fixes.
+	* readable.c (READABLE): take (ignored) kpse arg in macro, so:
+	(kpathsea_readable_file): we can avoid #ifdefs in body.
+
 	* str-list.c (str_list_concat_elements): reformat for consistency.
 
 	* str-list.h (STR_LIST_EMPTY, STR_LIST_FIRST_ELT): new macros.

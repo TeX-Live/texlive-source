@@ -1,6 +1,6 @@
 /* readable.h: is a file readable?
 
-   Copyright 1993, 2008, 2009 Karl Berry.
+   Copyright 1993, 2008, 2009, 2018 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -26,10 +26,10 @@
 extern "C" {
 #endif
 
-/* If NAME is readable and is a regular file, return it.  If the error is
-   ENAMETOOLONG, truncate any too-long path components, and if the
-   result is a readable file, return that.  Otherwise return NULL.  */
-
+/* If NAME is readable and is a regular file, return it (as is).  If the
+   error is ENAMETOOLONG, truncate any too-long path components, and if
+   the result is a readable file, return that (in the same memory, since
+   it only got shorter).  Otherwise return NULL.  */
 extern KPSEDLL string kpathsea_readable_file (kpathsea kpse, string name);
 
 #if defined (KPSE_COMPAT_API)
