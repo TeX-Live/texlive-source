@@ -43,28 +43,28 @@ READABLE(kpathsea kpse, const_string fn, unsigned int st)
   wchar_t *fnw;
   fnw = get_wstring_from_mbstring(kpse->File_system_codepage, fn, fnw=NULL);
   if ((st = GetFileAttributesW(fnw)) != 0xFFFFFFFF) {
-      /* succeeded */
-      errno = 0;
+    /* succeeded */
+    errno = 0;
   } else {
-      switch(GetLastError()) {
-      case ERROR_BUFFER_OVERFLOW:
-          errno = ENAMETOOLONG;
-          break;
-      case ERROR_ACCESS_DENIED:
-          errno = EACCES;
-          break;
-      default :
-          errno = EIO;          /* meaningless, will make ret=NULL later */
-          break;
-      }
+    switch(GetLastError()) {
+    case ERROR_BUFFER_OVERFLOW:
+      errno = ENAMETOOLONG;
+      break;
+    case ERROR_ACCESS_DENIED:
+      errno = EACCES;
+      break;
+    default :
+      errno = EIO;          /* meaningless, will make ret=NULL later */
+      break;
+    }
   }
-  if(fnw) free(fnw);
-  return ((st != 0xFFFFFFFF) &&
-                  !(st & FILE_ATTRIBUTE_DIRECTORY));
+  if (fnw)
+    free (fnw);
+  return ((st != 0xFFFFFFFF) && !(st & FILE_ATTRIBUTE_DIRECTORY));
 }
-#else
+#else /* not __DJGPP__ and not WIN32 */
 #define READABLE(kpse, fn, st) \
- (access ((fn), R_OK) == 0 && stat (fn, &(st)) == 0 && !S_ISDIR ((st).st_mode))
+ (access((fn), R_OK) == 0 && stat((fn), &(st)) == 0 && !S_ISDIR ((st).st_mode))
 #endif
 
 
@@ -83,52 +83,55 @@ kpathsea_readable_file (kpathsea kpse, string name)
 
   kpathsea_normalize_path (kpse, name);
   if (READABLE (kpse, name, st)) {
-      return name;
+    return name;
 
 #ifdef ENAMETOOLONG
   } else if (errno == ENAMETOOLONG) {
-      /* Truncate any too-long components in NAME.  */
-      unsigned c_len = 0;        /* Length of current component.  */
-      char *s = name;            /* Position in current component.  */
-      char *t = name;            /* End of allowed length.  */
-      
-      for (; *s; s++) {
-          if (c_len <= NAME_MAX)
-              t = s;
-#if defined(WIN32)
-          if (kpathsea_IS_KANJI (kpse, s)) {
-              s++;
-              c_len += 2;
-              continue;
-          }
-#endif /* WIN32 */
-          if (IS_DIR_SEP (*s) || IS_DEVICE_SEP (*s)) {
-              if (c_len > NAME_MAX) {
-                  /* Truncate if past the max for a component.  */
-                  memmove (t, s, strlen (s) + 1);
-                  s = t;
-              }
-              /* At a directory delimiter, reset component length.  */
-              c_len = 0;
-          } else
-              c_len++;
-      }
-      if (c_len > NAME_MAX)
-          /* Truncate if past the max for last component.  */
-          *t = 0;
+    /* Truncate any too-long components in NAME.  */
+    unsigned c_len = 0;        /* Length of current component.  */
+    char *s = name;            /* Position in current component.  */
+    char *t = name;            /* End of allowed length.  */
 
-      /* Perhaps some other error will occur with the truncated name, so
-         let's call access again.  */
-      if (READABLE (kpse, name, st)) /* Success.  */
-          return name;
+    for (; *s; s++) {
+      if (c_len <= NAME_MAX) {
+        t = s;
+      }
+#if defined(WIN32)
+      if (kpathsea_IS_KANJI (kpse, s)) {
+        s++;
+        c_len += 2;
+        continue;
+      }
+#endif /* WIN32 */
+      if (IS_DIR_SEP (*s) || IS_DEVICE_SEP (*s)) {
+        if (c_len > NAME_MAX) {
+          /* Truncate if past the max for a component.  */
+          memmove (t, s, strlen (s) + 1);
+          s = t;
+        }
+        /* At a directory delimiter, reset component length.  */
+        c_len = 0;
+      } else {
+        c_len++;
+      }
+    }
+    if (c_len > NAME_MAX) {
+      /* Truncate if past the max for last component.  */
+      *t = 0;
+    }
+
+    /* Perhaps some other error will occur with the truncated name, so
+       let's call access again.  */
+    if (READABLE (kpse, name, st)) /* Success.  */
+      return name;
 #endif /* ENAMETOOLONG */
 
   } else { /* Some other error.  */
-      if (errno == EACCES) { /* Maybe warn them if permissions are bad.  */
-          if (!kpathsea_tex_hush (kpse, "readable")) {
-              perror (name);
-          }
+    if (errno == EACCES) { /* Maybe warn them if permissions are bad.  */
+      if (!kpathsea_tex_hush (kpse, "readable")) {
+        perror (name);
       }
+    }
   }
 
   return NULL;
@@ -139,6 +142,6 @@ kpathsea_readable_file (kpathsea kpse, string name)
 string
 kpse_readable_file (string name)
 {
-    return kpathsea_readable_file (kpse_def, name);
+  return kpathsea_readable_file (kpse_def, name);
 }
 #endif
