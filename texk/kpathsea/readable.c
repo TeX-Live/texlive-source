@@ -1,6 +1,6 @@
 /* readable.c: check if a filename is a readable non-directory file.
 
-   Copyright 1993, 1995, 1996, 2008, 2011, 2012, 2016 Karl Berry.
+   Copyright 1993, 1995, 1996, 2008, 2011, 2012, 2016, 2018 Karl Berry.
    Copyright 1998, 1999, 2000, 2001, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -33,8 +33,8 @@
 
 #ifdef __DJGPP__
 /* `stat' is way too expensive for such a simple job.  */
-#define READABLE(fn, st) \
-  (access (fn, R_OK) == 0 && access (fn, D_OK) == -1)
+#define READABLE(kpse, fn, st) \
+  (access ((fn), R_OK) == 0 && access ((fn), D_OK) == -1)
 #elif defined (WIN32)
 /* st must be an unsigned int under Windows */
 static boolean
@@ -63,14 +63,14 @@ READABLE(kpathsea kpse, const_string fn, unsigned int st)
                   !(st & FILE_ATTRIBUTE_DIRECTORY));
 }
 #else
-#define READABLE(fn, st) \
-  (access (fn, R_OK) == 0 && stat (fn, &(st)) == 0 && !S_ISDIR (st.st_mode))
+#define READABLE(kpse, fn, st) \
+ (access ((fn), R_OK) == 0 && stat (fn, &(st)) == 0 && !S_ISDIR ((st).st_mode))
 #endif
 
-
+
 /* POSIX invented the brain-damage of not necessarily truncating
    filename components; the system's behavior is defined by the value of
-   the symbol _POSIX_NO_TRUNC, but you can't change it dynamically!  */
+   the symbol _POSIX_NO_TRUNC, but it can't be changed.  */
 
 string
 kpathsea_readable_file (kpathsea kpse, string name)
@@ -82,12 +82,9 @@ kpathsea_readable_file (kpathsea kpse, string name)
 #endif
 
   kpathsea_normalize_path (kpse, name);
-#ifdef WIN32
   if (READABLE (kpse, name, st)) {
-#else
-  if (READABLE (name, st)) {
-#endif
       return name;
+
 #ifdef ENAMETOOLONG
   } else if (errno == ENAMETOOLONG) {
       /* Truncate any too-long components in NAME.  */
@@ -104,7 +101,7 @@ kpathsea_readable_file (kpathsea kpse, string name)
               c_len += 2;
               continue;
           }
-#endif
+#endif /* WIN32 */
           if (IS_DIR_SEP (*s) || IS_DEVICE_SEP (*s)) {
               if (c_len > NAME_MAX) {
                   /* Truncate if past the max for a component.  */
@@ -122,13 +119,10 @@ kpathsea_readable_file (kpathsea kpse, string name)
 
       /* Perhaps some other error will occur with the truncated name, so
          let's call access again.  */
-#ifdef WIN32
       if (READABLE (kpse, name, st)) /* Success.  */
-#else
-      if (READABLE (name, st)) /* Success.  */
-#endif
           return name;
 #endif /* ENAMETOOLONG */
+
   } else { /* Some other error.  */
       if (errno == EACCES) { /* Maybe warn them if permissions are bad.  */
           if (!kpathsea_tex_hush (kpse, "readable")) {
@@ -136,9 +130,11 @@ kpathsea_readable_file (kpathsea kpse, string name)
           }
       }
   }
+
   return NULL;
 }
 
+
 #if defined (KPSE_COMPAT_API)
 string
 kpse_readable_file (string name)
