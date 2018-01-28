@@ -2,7 +2,7 @@
 # Attempt to guess a canonical system name.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-01-16'
+timestamp='2018-01-26'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -150,6 +150,13 @@ Linux|GNU|GNU/*)
 	#endif
 	EOF
 	eval "`$CC_FOR_BUILD -E "$dummy.c" 2>/dev/null | grep '^LIBC' | sed 's, ,,g'`"
+
+	# If ldd exists, use it to detect musl libc.
+	if command -v ldd >/dev/null && \
+		ldd --version 2>&1 | grep -q ^musl
+	then
+	    LIBC=musl
+	fi
 	;;
 esac
 
