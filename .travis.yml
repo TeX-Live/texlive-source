@@ -53,16 +53,18 @@ matrix:
     - os: linux
       services: docker
       env:
+      - tldir=x86_64-linuxmusl
       - package=texlive-bin-x86_64-musl.tar.gz
       script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.1 sh -c "apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; ./Build"
     - os: linux
       services: docker
       env:
+      - tldir=i386-linuxmusl
       - package=texlive-bin-i386-musl.tar.gz
       script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t i386/alpine:3.1 sh -c "apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; ./Build"
 
 before_deploy:
-  - if [ -n "$package" ]; then tar czvf ${package} -C inst/bin/ .; fi
+  - if [ -n "$package" ]; then mv inst/bin/x86_64-pc-linux-gnu inst/bin/$tldir ; tar czvf ${package} -C inst/bin .; fi
 
 deploy:
   provider: releases
