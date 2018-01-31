@@ -1177,12 +1177,8 @@ begin if is_char_node(link(p)) then
 @z
 
 @x
-    begin fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
-    link(tail):=main_p; tail:=main_p; last_jchr:=tail;
     fast_get_avail(main_p); info(main_p):=KANJI(cur_chr);
 @y
-    begin fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
-    link(tail):=main_p; tail:=main_p; last_jchr:=tail;
     fast_get_avail(main_p); info(main_p):=KANJI(cur_chr)+cur_cmd*max_cjk_val;
 @z
 

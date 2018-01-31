@@ -1,0 +1,23 @@
+%% plain pTeX
+\tracingonline1
+\showboxdepth10000
+\showboxbreadth10000
+
+\def\ADJUST{\ybaselineshift3pt\relax}
+
+% disp_node should not create JFM glue
+\setbox0=\vbox{%
+\ADJUST
+\noindent 「あA\par
+\noindent 「あA」\par
+\noindent 「あA\par
+\noindent いEお（）\par
+\noindent ・えE\par
+\noindent ・うE}\showbox0 \box0
+
+% disp_node should not create JFM glue
+\ybaselineshift2pt
+\xkanjiskip2pt
+\setbox6=\vbox{あA\hbox{（あ）}A\par}\showbox6 \box6
+
+\end
