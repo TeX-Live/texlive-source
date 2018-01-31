@@ -1,3 +1,3001 @@
+commit f0b700db394ccdff30ff83961a3e2ea9ff4ea472
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 30 11:16:51 2018 -0800
+
+    1.7.5
+
+ NEWS         | 9 +++++++++
+ configure.ac | 2 +-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+commit 585b5760987e1ddd31e11fc55a2ce55ddb5b1663
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 30 11:51:56 2018 -0800
+
+    Fix distcheck
+
+ test/shaping/data/in-house/Makefile.am             | 2 +-
+ test/shaping/data/text-rendering-tests/Makefile.am | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit e89df6e1aee9cb6fe1268643ce19816808baf0c4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 30 10:58:44 2018 -0800
+
+    [aat] Limit number of DontAdvance transitions
+
+    Remove the faulty loop-detection logic. Use max-ops for breaking
+    out of infinite loops or heavy work.
+
+    https://twitter.com/behdadesfahbod/status/958065026262183936
+
+ src/hb-aat-layout-common-private.hh | 33
+ ++-------------------------------
+ 1 file changed, 2 insertions(+), 31 deletions(-)
+
+commit e00743b47d25a2487b7f232a514a042e2962a089
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 29 10:07:05 2018 -0800
+
+    [test/text-rendering-tests] Update from upstream
+
+ test/shaping/data/text-rendering-tests/DISABLED          |   7 +++++++
+ test/shaping/data/text-rendering-tests/Makefile.sources  |   7 +++++++
+ .../data/text-rendering-tests/fonts/TestMORXEighteen.ttf | Bin 0 ->
+ 3256 bytes
+ .../text-rendering-tests/fonts/TestMORXSeventeen.ttf     | Bin 0 ->
+ 1788 bytes
+ .../data/text-rendering-tests/fonts/TestMORXSixteen.ttf  | Bin 0 ->
+ 1812 bytes
+ .../data/text-rendering-tests/fonts/TestMORXTwenty.ttf   | Bin 0 ->
+ 3232 bytes
+ .../text-rendering-tests/fonts/TestMORXTwentyone.ttf     | Bin 0 ->
+ 3244 bytes
+ .../text-rendering-tests/fonts/TestMORXTwentytwo.ttf     | Bin 0 ->
+ 3256 bytes
+ .../data/text-rendering-tests/tests/MORX-14.tests        |   1 +
+ .../data/text-rendering-tests/tests/MORX-16.tests        |   1 +
+ .../data/text-rendering-tests/tests/MORX-17.tests        |   1 +
+ .../data/text-rendering-tests/tests/MORX-18.tests        |   4 ++++
+ .../data/text-rendering-tests/tests/MORX-19.tests        |   2 ++
+ .../data/text-rendering-tests/tests/MORX-20.tests        |   7 +++++++
+ .../data/text-rendering-tests/tests/MORX-21.tests        |   1 +
+ .../data/text-rendering-tests/tests/MORX-22.tests        |   1 +
+ 16 files changed, 32 insertions(+)
+
+commit 29d901286e632fa4de5ea198cc455cae56bc09a8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jan 30 10:01:46 2018 +0330
+
+    [cmake] Build src/ executables (#733)
+
+ CMakeLists.txt | 40 ++++++++++++++++++++++++++--------------
+ 1 file changed, 26 insertions(+), 14 deletions(-)
+
+commit 55cae0d72eecb5116008815b598481dd1404fc6a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jan 29 18:05:24 2018 +0330
+
+    [test] Use 'otool -L' where ldd doesn't exist (macOS) (#732)
+
+ src/check-libstdc++.sh | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+commit 2ec7dd1f6cb78ee6a0621aa98f18500d3318c90c
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Sun Jan 28 17:48:28 2018 -0500
+
+    Fix Travis build on macOS (#731)
+
+ .travis.yml       | 2 +-
+ src/check-defs.sh | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 12757b692905062fe0fc266a6230238b3492abfd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 26 18:14:05 2018 -0800
+
+    Misc warning fixes
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/712
+
+ src/hb-ot-layout-gsubgpos-private.hh | 9 ++++-----
+ src/hb-ot-map-private.hh             | 1 -
+ src/hb-ot-map.cc                     | 5 ++---
+ 3 files changed, 6 insertions(+), 9 deletions(-)
+
+commit 85be365ed9238caf0283346ab4e5c5127096fc8a
+Author: bungeman <bungeman@chromium.org>
+Date:   Fri Jan 26 13:38:06 2018 -0500
+
+    Use KernSubTableFormat2::rightClassTable
+
+    Issue originally reported at http://cppfiles.com/chromium.txt .
+
+    This fixes what appears to be a copy - paste issue which causes both
+    KernSubTableFormat2::rightClassTable and the 'right' argument to
+    KernSubTableFormat2::get_kerning to go unused.
+
+ src/hb-ot-kern-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c41b7fc10588323b5d8c0007befa701994115f7b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jan 25 09:53:32 2018 +0330
+
+    [cmake] Use -fvisibility-inlines-hidden instead (#726)
+
+ CMakeLists.txt | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+commit 3d615766060e34a6e716c8737f651b6d6871ae85
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jan 22 21:23:19 2018 +0330
+
+    [cmake] fix symbol exporting issue on newer gcc (#724)
+
+ CMakeLists.txt | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+commit 8b60e7c2c301a24906d591c80c42fd5e506072d2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jan 22 18:37:26 2018 +0330
+
+    [ci] minor, less hacks (#722)
+
+ .circleci/config.yml | 20 ++++++--------------
+ .travis.yml          |  8 ++++----
+ CMakeLists.txt       | 11 +++++++----
+ 3 files changed, 17 insertions(+), 22 deletions(-)
+
+commit aaf934de3b9e3447897b4da566655d6d0494e87b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jan 22 13:16:54 2018 +0330
+
+    [ci] minor (#721)
+
+ .circleci/config.yml | 4 ++--
+ .travis.yml          | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit bd752db733e3d8c2c8773d831aebdd8a5cbb5e04
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jan 22 13:08:35 2018 +0330
+
+    [ci] unbreak bots with outdated freetype version (#718)
+
+ .circleci/config.yml | 10 +++++++++-
+ .travis.yml          | 10 +++++++++-
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+commit 19a93fcf1946ad29f07306a0b6c65377bdaa49f0
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Sun Jan 21 20:40:34 2018 +0700
+
+    Fix typos.
+
+ src/hb-blob.h   | 2 +-
+ src/hb-buffer.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 51ce3828e67a8ca7e4ea4b69e88c395e243bf01f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 19 18:36:39 2018 -0800
+
+    [aat] Fix Ligature matching
+
+    I hope... Makes "ffi" work with Zapfino. I'm not sure if doing it
+    correctly though...
+
+ src/hb-aat-layout-morx-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit bef509855c7a2c4400a947d2527d1dc048da1284
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 19 18:24:00 2018 -0800
+
+    [aat] Add TODO
+
+ src/hb-aat-layout-morx-table.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit e6f283ed7db6f8e2f8016dcbf07e589c40976aa6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 19 18:08:56 2018 -0800
+
+    [aat] Implement LigatureSubtable
+
+    We form the Zapfino ligature now. Yay! No further testing done.
+
+ src/hb-aat-layout-common-private.hh |  25 ++++++---
+ src/hb-aat-layout-morx-table.hh     | 108
+ +++++++++++++++++++++++++++++++++---
+ 2 files changed, 115 insertions(+), 18 deletions(-)
+
+commit f07ce661a2056965c573c99bdb721c065563ea7b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 19 16:52:01 2018 -0800
+
+    [aat] Embed a sanitizer context in hb_aat_apply_context_t
+
+    For run-time checking.
+
+ src/hb-aat-layout-common-private.hh | 22 ++++++++++++++++------
+ src/hb-aat-layout.cc                | 16 ++++++++--------
+ 2 files changed, 24 insertions(+), 14 deletions(-)
+
+commit 046690a4df0fdc93e3490210ef105f26057b1462
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 17 16:59:55 2018 -0800
+
+    [aat] Add hb_aat_apply_context_t
+
+ src/hb-aat-layout-common-private.hh | 23 +++++++++++++++++++++++
+ src/hb-aat-layout-morx-table.hh     | 27 +++++++++++++--------------
+ src/hb-aat-layout-private.hh        |  2 +-
+ src/hb-aat-layout.cc                |  8 +++++---
+ src/hb-ot-shape.cc                  |  3 +--
+ 5 files changed, 43 insertions(+), 20 deletions(-)
+
+commit fd034490942c06e31cfb42f32023c78734f8aeeb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 17 16:46:51 2018 -0800
+
+    Rename hb_apply_context_t to hb_ot_apply_context_t
+
+ src/hb-aat-layout-morx-table.hh            | 16 ++++-----
+ src/hb-aat-layout-private.hh               |  2 +-
+ src/hb-aat-layout.cc                       |  2 +-
+ src/hb-ot-layout-gpos-table.hh             | 48 ++++++++++++-------------
+ src/hb-ot-layout-gsub-table.hh             | 24 ++++++-------
+ src/hb-ot-layout-gsubgpos-private.hh       | 58
+ +++++++++++++++---------------
+ src/hb-ot-layout-private.hh                |  4 +--
+ src/hb-ot-layout.cc                        | 16 ++++-----
+ src/hb-ot-shape-complex-arabic-fallback.hh |  2 +-
+ src/hb-ot-shape-fallback.cc                |  4 +--
+ src/hb-ot-shape.cc                         |  2 +-
+ 11 files changed, 89 insertions(+), 89 deletions(-)
+
+commit 94b49beee972fec98cbb80658df3d8491b45485d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 17 12:46:08 2018 -0800
+
+    Whitespace
+
+ src/hb-ot-head-table.hh | 20 +++++++++-----------
+ src/hb-ot-post-table.hh | 10 +++++-----
+ 2 files changed, 14 insertions(+), 16 deletions(-)
+
+commit e849b8a85bb66219db4d797d86ddd60ed7c26a2e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jan 19 16:12:24 2018 +0330
+
+    [cmake] Always put test/api/CMakeLists.txt on distributions
+
+ test/api/Makefile.am | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit c8f2a4f5b99d3be3079286817386b4185d35a545
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Thu Jan 18 22:49:40 2018 +0100
+
+    hb-common.cc: Hatran script is right-to-left (#714)
+
+    "Hatran is written from right to left horizontally"
+
+    http://www.unicode.org/L2/L2012/12312-n4324-hatran.pdf
+
+    This ancient script was added with Unicode 8.0.
+
+    Also this spreadsheet (referenced in an inline comment in the
+    source code) has it as RTL: http://goo.gl/x9ilM
+
+ src/hb-common.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 00806149b9b591e4ec15996d3d56bdbd60687821
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jan 19 01:12:31 2018 +0330
+
+    Improve avoiding C++ linkage, definition creation and cmake tests
+    (#710)
+
+ .circleci/config.yml |  4 ++--
+ CMakeLists.txt       | 46 ++++++++++++++++++++++++++--------------------
+ configure.ac         |  3 +++
+ src/Makefile.am      | 11 ++---------
+ src/check-defs.sh    | 37 +++++++++++++++++++++++--------------
+ src/gen-def.py       | 16 ++++++++++++++++
+ 6 files changed, 72 insertions(+), 45 deletions(-)
+
+commit 9b693212a834a96252f4ebe0b006b85e9f35fc91
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Thu Jan 18 16:34:13 2018 -0500
+
+    Update record-test.sh to the new directory layout (#716)
+
+ test/shaping/README.md      | 11 ++++++-----
+ test/shaping/record-test.sh | 17 +++++++++++++----
+ 2 files changed, 19 insertions(+), 9 deletions(-)
+
+commit 461a605fdec3361a038d3715adf615353c4f91fa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 17 10:02:48 2018 -0800
+
+    [aat] Allocate set dynamically
+
+ src/hb-aat-layout-common-private.hh | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+commit 4c4a9fc8617fed9bc1a7805c9aed294b4f6b66ea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 17 09:47:50 2018 -0800
+
+    Typo
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/711
+
+ util/options.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 90f01bad637c8b1214f46d4df6d9552a6a728e29
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jan 16 22:00:21 2018 +0330
+
+    [cmake] don't link to libstdc++ (#707)
+
+ CMakeLists.txt | 38 +++++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
+
+commit 5e14e5f65d3dd1ed471ed73fab7e3207ae04e8fb
+Author: rdb <rdb@users.noreply.github.com>
+Date:   Tue Jan 16 17:04:33 2018 +0100
+
+    [cmake] Fix for CMake 3.0 and below (#706)
+
+ CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit c97a7eca7f7b6fc1c50a4ac7fccf3fa2d777430e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jan 16 14:18:09 2018 +0330
+
+    [cmake] Fix symbols visibility and enable check-symbols.sh test (#705)
+
+ .circleci/config.yml |  2 +-
+ CMakeLists.txt       | 22 ++++++++++++++--------
+ 2 files changed, 15 insertions(+), 9 deletions(-)
+
+commit 60f84ef014f9280da24d5eb9ce833a7f37210242
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 15 20:46:58 2018 -0500
+
+    Disable MORX-13/14
+
+    Really, need better way to catch these :(.
+
+ test/shaping/data/text-rendering-tests/DISABLED         | 2 ++
+ test/shaping/data/text-rendering-tests/Makefile.sources | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+commit 949f6af2897b8982c81a059ea98e1c29bbce4772
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 15 20:44:10 2018 -0500
+
+    Disallow sanitize recursing into Extension subtables multiple times
+
+    Fixes https://oss-fuzz.com/v2/testcase-detail/5216838347653120
+    which is a stack overflow, not by way of infinite recursion, just
+    being deep.  That's disallowed anyway, so catch it as it happens,
+    not afterwards.
+
+ src/hb-ot-layout-gsub-table.hh       | 5 ++---
+ src/hb-ot-layout-gsubgpos-private.hh | 4 +++-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+commit bcb6f1ae0a08e5c7af88a7affaad42a67c5adac5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 15 20:34:05 2018 -0500
+
+    Whitespace
+
+ src/hb-ot-layout-gsubgpos-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 12fffce10eb6ffebdedd655d0b1f10a99adf1808
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 15 15:41:51 2018 -0500
+
+    [aat] Sanitize classTable in StateTable
+
+ src/hb-aat-layout-common-private.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit e6263c7142ca22efd9a3c93353a513f475c1c48d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 15 15:37:55 2018 -0500
+
+    [aat] Wire up table length to apply()
+
+ src/hb-aat-layout-morx-table.hh | 17 +++++++++--------
+ src/hb-aat-layout.cc            | 20 +++++++++++++++-----
+ src/hb-open-type-private.hh     |  6 +++---
+ 3 files changed, 27 insertions(+), 16 deletions(-)
+
+commit 679ae744d07db7746a983ece54c22635a9dc3cff
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 14 15:03:31 2018 -0500
+
+    [aat] Towards implementing LigatureSubtable
+
+ src/hb-aat-layout-morx-table.hh | 61
+ +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 58 insertions(+), 3 deletions(-)
+
+commit c9e12a2b9b34d73d37def2261a5c1a7ef20b8349
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 13 17:05:12 2018 +0000
+
+    Fix set initializer
+
+ src/hb-set-private.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 54a1e250a839f030b43dbeba66cadc50ab5f90f6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 13 14:44:39 2018 +0000
+
+    [test/text-rendering-tests] Update from upstream
+
+ test/shaping/data/text-rendering-tests/Makefile.sources  |   2 ++
+ .../data/text-rendering-tests/fonts/TestMORXFourteen.ttf | Bin 0 ->
+ 1816 bytes
+ .../data/text-rendering-tests/fonts/TestMORXThirteen.ttf | Bin 0 ->
+ 1820 bytes
+ .../data/text-rendering-tests/tests/MORX-13.tests        |   1 +
+ .../data/text-rendering-tests/tests/MORX-14.tests        |   1 +
+ 5 files changed, 4 insertions(+)
+
+commit 9009b341c46caaa81deae8ea55e6f7dd98565f59
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 12:04:53 2018 +0100
+
+    [aat] Fix some struct sizes
+
+    I hate it that with my compiler at least, it doesn't catch totally
+    uncompilable
+    statements in templates if they are not used...
+
+ src/hb-aat-layout-common-private.hh | 2 +-
+ src/hb-aat-layout-morx-table.hh     | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 57051b4f672d7d9dd10c45cc95b1e50e32cd42a9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 11:42:25 2018 +0100
+
+    [aat] Flush rest of buffer if state machine failed
+
+ src/hb-aat-layout-common-private.hh | 12 +++++++++---
+ src/hb-aat-layout-morx-table.hh     |  2 ++
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+commit 369dfab0f8b7f22338bbd7a58a27e2e02e1efc29
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 11:37:01 2018 +0100
+
+    Minor
+
+ docs/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 25364c4f0020a66bd6f4bce1656ea47f1093396d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 11:31:20 2018 +0100
+
+    [aat] Fix symbol visibility
+
+    Not sure why only one of the bots sees this as visible...
+
+ src/hb-aat-layout-morx-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ee16b9d8d35af1e74369edf7b733886c4b743a68
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 11:28:09 2018 +0100
+
+    Revert accidental morx enablement
+
+ src/hb-ot-shape.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 44f0ee346f53c51ec4abccc81cc24abf6f018e85
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 11:27:51 2018 +0100
+
+    Fix docs
+
+ docs/harfbuzz-sections.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit cdfa801ff4fe301d7bd41c9eee57cae75001ce4b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 11:12:20 2018 +0100
+
+    [aat] Tweak previous commit
+
+ src/hb-aat-layout-common-private.hh | 2 ++
+ src/hb-ot-shape.cc                  | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+commit f7600228a4b37e6f6b65394aceeeb14bf4133c23
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 11:09:21 2018 +0100
+
+    [aat] Detect infinite-loops in state machine
+
+ src/hb-aat-layout-common-private.hh | 36
+ +++++++++++++++++++++++++++++-------
+ 1 file changed, 29 insertions(+), 7 deletions(-)
+
+commit d514f1480cffb81850ef212155c66ee9e0383350
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 10:55:44 2018 +0100
+
+    [circleci] cat test logs on failure on autotools-based builds
+
+ .circleci/config.yml | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 1facef337862a0ceee9a8ac1d4dc94ff94fcb3b3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 10:53:52 2018 +0100
+
+    [travis] On test failure, cat all .log files
+
+ .travis.yml | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit cdd86bf3a28961e85a8918d77937587df313d47b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 10:51:51 2018 +0100
+
+    [travis] Update cat'ing test-suite.log files
+
+ .travis.yml | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 22d8c765e7b556601173a3e70f5bc9f310263a98
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 09:46:38 2018 +0100
+
+    Disable C++11
+
+    To better catch errors locally.
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit dd38db523a1001178bf4cae3721c098466534736
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 09:45:42 2018 +0100
+
+    [aat] Fix more builds
+
+    Maybe I should disable C++11 detection such that my compiler also
+    catches
+    these.  Doesn't look like we can switch to it for a while anyway...
+
+ src/hb-aat-layout-common-private.hh |  2 +-
+ src/hb-aat-layout-morx-table.hh     | 18 +++++++++---------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 72cb2b1f57ba79938c74e0406fc7457fce287f69
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 09:38:55 2018 +0100
+
+    [aat] Fix builds
+
+ src/hb-aat-layout-morx-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit e3a15d0c6d088963e61f7fbebe25e1096d8e2903
+Author: Ting-Wei Lan <lantw@src.gnome.org>
+Date:   Fri Jan 12 15:33:16 2018 +0800
+
+    Update _POSIX_C_SOURCE to the latest version
+
+    Defining _POSIX_C_SOURCE to an old version on FreeBSD can cause C99 to
+    be disabled in libc.
+
+ src/hb-blob.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c70d58f97da7dcbdd7ea72a44f39130a75a279f7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 00:08:22 2018 +0100
+
+    [aat] Port RearrangementSubtable to StateTableDriver
+
+ src/hb-aat-layout-morx-table.hh | 91
+ ++++++++++++++++++++---------------------
+ 1 file changed, 44 insertions(+), 47 deletions(-)
+
+commit 117cfe7bb7cef682eb151b94f1eb12363ba3af67
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 12 00:01:36 2018 +0100
+
+    [aat] Add StateTableDriver and convert ContextualSubtable to it
+
+ src/hb-aat-layout-common-private.hh | 51 ++++++++++++++++++++
+ src/hb-aat-layout-morx-table.hh     | 93
+ ++++++++++++++++++-------------------
+ 2 files changed, 95 insertions(+), 49 deletions(-)
+
+commit 0d39ac224c680b1f0134b58e78391497fbe47370
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 22:47:08 2018 +0100
+
+    [test/text-rendering-tests] Update README
+
+ test/shaping/data/text-rendering-tests/README | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 17a66f133c7e523403b6c90b011fcf0acb6356c6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 22:46:19 2018 +0100
+
+    [test] Disable MORX-12
+
+    Ouch. I need a better workflow for this.
+
+ test/shaping/data/text-rendering-tests/Makefile.sources | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 1f1c85a54aad8a25a67041cbb9c4277d28c1c761
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 22:43:57 2018 +0100
+
+    [aat] Remove 'mort' support
+
+    It's dead, Jim!
+
+ src/hb-aat-layout-common-private.hh |  55 +++++-----------
+ src/hb-aat-layout-morx-table.hh     | 122
+ ++++++++++--------------------------
+ 2 files changed, 46 insertions(+), 131 deletions(-)
+
+commit 7e2fed6d73f89986e5777028cdcd24e3baf2f86c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 19:25:21 2018 +0100
+
+    [aat] Allow DontAdvance
+
+    Apparently CoreText does allow these.  To be done: detect infinite
+    loops.
+
+    Fixes MORX-12 test.
+
+ src/hb-aat-layout-morx-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 1387fe8f9c474e88f86828733d4c01bd56f44432
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 19:22:37 2018 +0100
+
+    [test/text-rendering-tests] Update from upstream
+
+ test/shaping/data/text-rendering-tests/DISABLED          |   1 +
+ test/shaping/data/text-rendering-tests/Makefile.sources  |   2 ++
+ .../data/text-rendering-tests/fonts/TestMORXTwelve.ttf   | Bin 0 ->
+ 2200 bytes
+ .../data/text-rendering-tests/tests/MORX-12.tests        |   3 +++
+ 4 files changed, 6 insertions(+)
+
+commit 17f01aff910b3871d0a6c45fd4305304b7f68ab5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 18:54:49 2018 +0100
+
+    [aat] Sanitize ContextualSubtable
+
+ src/hb-aat-layout-common-private.hh | 23 +++++++++++++++++++----
+ src/hb-aat-layout-morx-table.hh     | 34
+ ++++++++++++++++++++++++----------
+ 2 files changed, 43 insertions(+), 14 deletions(-)
+
+commit 9b82aa19d812e70b7fade4b7669a9ce27855951e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 18:19:42 2018 +0100
+
+    More warning fixes
+
+ src/hb-open-type-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 680cbc2eb325edc6b8562f39485b146aa56b3872
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 18:15:53 2018 +0100
+
+    [aat] Sanitize StateTable
+
+ src/hb-aat-layout-common-private.hh | 43
+ ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 40 insertions(+), 3 deletions(-)
+
+commit 0e3b3379a04a67a22e44e17d6bf849359f4fca68
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 18:01:10 2018 +0100
+
+    [aat] Actually fix d887f931485b715775e922516a4b0de5bb92c34f
+
+ src/hb-aat-layout-morx-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1eb98c9916c6cb447f999170840b7f37de4b282d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 17:59:03 2018 +0100
+
+    [test/text-rendering-tests] Actually disable MORX-11
+
+ test/shaping/data/text-rendering-tests/Makefile.sources | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3f291ffd5a9480ac0f528eaedd43c7e9af738ee2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 17:57:46 2018 +0100
+
+    [buffer] Fix compiler warnings
+
+    line 323: Warning: info hides hb_buffer_t::info
+    ...
+
+ src/hb-buffer-private.hh | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+commit d887f931485b715775e922516a4b0de5bb92c34f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 17:41:34 2018 +0100
+
+    [aat] Make bots happy
+
+    Don't know why this is not caught by my compiler.  Looks like clang
+    catches it
+    while gcc doesn't.
+
+    In file included from ../src/hb-aat-layout-morx-table.hh:31:
+    ../src/hb-aat-layout-common-private.hh:523:30: error: no member named
+    'static_size' in 'AAT::ContextualSubtable<AAT::MorxTypes>::EntryData'
+      DEFINE_SIZE_STATIC (4 + T::static_size);
+                                ~~~^
+
+ src/hb-aat-layout-morx-table.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit f6be730994434e706cc27d68b796492d876e82b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 15:23:24 2018 +0100
+
+    [aat] In NoncontextualSubtable, handle MarkLast with end-of-line
+    transition
+
+    Fixes MORX-11 test.
+
+ src/hb-aat-layout-morx-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 1d20d109a07bf9c775ab91dfbbb55f7bd80fd9d6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 15:18:22 2018 +0100
+
+    [test/text-rendering-tests] Update from upstream
+
+ test/shaping/data/text-rendering-tests/DISABLED          |   3 ++-
+ test/shaping/data/text-rendering-tests/Makefile.sources  |   3 ++-
+ .../data/text-rendering-tests/fonts/TestMORXEleven.ttf   | Bin 0 ->
+ 1624 bytes
+ .../data/text-rendering-tests/tests/MORX-11.tests        |   1 +
+ 4 files changed, 5 insertions(+), 2 deletions(-)
+
+commit f9be673814aeb2c8abab52a672598576c6ed20c2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 15:15:07 2018 +0100
+
+    [aat] Implement ContextualSubtable
+
+    Tested with Zapfino and text "2nd". Sascha will create tests later.
+
+ src/hb-aat-layout-morx-table.hh | 70
+ ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 66 insertions(+), 4 deletions(-)
+
+commit 335a9c1fe489db53549801b4996dd0f6f5eded62
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 14:50:47 2018 +0100
+
+    [aat] Towards implementing ContextualSubtable
+
+ src/hb-aat-layout-common-private.hh | 58 ++++++++++++++++++++++--
+ src/hb-aat-layout-morx-table.hh     | 88
+ ++++++++++++++++++++++++++-----------
+ 2 files changed, 117 insertions(+), 29 deletions(-)
+
+commit 62348f647f7b1604e008dbed46a54eff245fc106
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 12:00:28 2018 +0100
+
+    [aat] Implement end-of-text in state machine
+
+    Passes MORX-10 test now.
+
+ src/hb-aat-layout-morx-table.hh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit fc405b7ca77088135cb7de11cb32c254b85272fd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 11:55:29 2018 +0100
+
+    [test/text-rendering-tests] Update from upstream
+
+ test/shaping/data/text-rendering-tests/DISABLED          |   1 +
+ test/shaping/data/text-rendering-tests/Makefile.sources  |  11
+ ++++++-----
+ .../data/text-rendering-tests/fonts/TestMORXTen.ttf      | Bin 0 ->
+ 1620 bytes
+ .../data/text-rendering-tests/tests/MORX-10.tests        |   1 +
+ 4 files changed, 8 insertions(+), 5 deletions(-)
+
+commit 9adbd938fafe1de4e279489fc37ae33c900e22f0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 11:55:10 2018 +0100
+
+    Minor
+
+ src/hb-aat-layout-morx-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 4177f646aa60180f094e064a53e54c5402fe53c6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jan 11 15:43:23 2018 +0330
+
+    [cmake] Update and unbreak (#700)
+
+ test/shaping/CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 94644d7ea4cf217e4d6c6ff57d65e1e20866ea6d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 11:49:07 2018 +0100
+
+    [aat] Generate finegrained unsafe-to-break in state-machine!
+
+    Neato.
+
+ src/hb-aat-layout-morx-table.hh | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+commit 994eb7744c530bbaa5d6d8b8e07ca936e81aade8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 11:37:12 2018 +0100
+
+    [buffer] Fix crash
+
+ src/hb-buffer-serialize.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit d6076747ac6706b4d8361714d46aced9683c44a8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 10:51:46 2018 +0100
+
+    [test/text-rendering-tests] Add DISABLED list
+
+ test/shaping/data/text-rendering-tests/DISABLED | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+commit de02b5093c42a527ae67084b30943369ed59efe6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 10:48:42 2018 +0100
+
+    [test/in-house] Add Makefile.sources
+
+ test/shaping/data/in-house/Makefile.am      | 46
+ ++---------------------------
+ test/shaping/data/in-house/Makefile.sources | 46
+ +++++++++++++++++++++++++++++
+ 2 files changed, 48 insertions(+), 44 deletions(-)
+
+commit 7c32e01d04deaab511d41f5dec0dfd9fc0469f39
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 10:47:31 2018 +0100
+
+    Minor
+
+ src/Makefile.am                                  | 1 +
+ src/Makefile.sources                             | 2 --
+ test/shaping/data/text-rendering-tests/update.sh | 2 --
+ util/Makefile.am                                 | 1 +
+ util/Makefile.sources                            | 2 --
+ 5 files changed, 2 insertions(+), 6 deletions(-)
+
+commit a5adc5aa84c03184fd1c8a486be80ff0af1f448c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 10:30:22 2018 +0100
+
+    [test/text-rendering-tests] Update from upstream
+
+    Also adds an update.sh script that does this automatically.
+
+ test/shaping/data/text-rendering-tests/Makefile.am |  52
+ +++------------------
+ .../data/text-rendering-tests/Makefile.sources     |  51
+ ++++++++++++++++++++
+ .../text-rendering-tests/fonts/TestMORXEight.ttf   | Bin 0 -> 2184 bytes
+ .../text-rendering-tests/fonts/TestMORXNine.ttf    | Bin 0 -> 1624 bytes
+ .../data/text-rendering-tests/tests/MORX-5.tests   |  25 ++++++++++
+ .../data/text-rendering-tests/tests/MORX-6.tests   |   1 +
+ .../data/text-rendering-tests/tests/MORX-7.tests   |   1 +
+ .../data/text-rendering-tests/tests/MORX-8.tests   |   3 ++
+ .../data/text-rendering-tests/tests/MORX-9.tests   |   1 +
+ test/shaping/data/text-rendering-tests/update.sh   |  48
+ +++++++++++++++++++
+ 10 files changed, 136 insertions(+), 46 deletions(-)
+
+commit c861daacc4255d41d2358868b917277422949dc9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 10:11:01 2018 +0100
+
+    [test/text-rendering-tests] Add README and COPYING
+
+ test/shaping/data/text-rendering-tests/COPYING     | 13 +++++++++++++
+ test/shaping/data/text-rendering-tests/Makefile.am |  2 ++
+ test/shaping/data/text-rendering-tests/README      |  4 ++++
+ 3 files changed, 19 insertions(+)
+
+commit 14b4d84eef18bd54287c10ce44eaef4f642f6238
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 10:08:25 2018 +0100
+
+    [aat] Fix RearrangementSubtable action
+
+ src/hb-aat-layout-morx-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ea3e86c6401d41cf54d82692eccbf44c87be2fd5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 09:58:42 2018 +0100
+
+    Minor
+
+ test/shaping/data/Makefile.am                      | 4 ++++
+ test/shaping/data/in-house/Makefile.am             | 4 ++++
+ test/shaping/data/text-rendering-tests/Makefile.am | 4 ++++
+ 3 files changed, 12 insertions(+)
+
+commit 800e4ae80232f022404be155afd497b0421a6a64
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 09:57:55 2018 +0100
+
+    [aat] Mark state-machine-based lookup as completely unsafe-to-break
+
+    To be improved later.
+
+ src/hb-aat-layout-morx-table.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit ca42d961293a9e4dfd0817c1a02d454008583282
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 11 09:15:34 2018 +0100
+
+    [aat] Implement RearrangementSubtable
+
+ src/hb-aat-layout-common-private.hh |  89 ++++++++++++++++-
+ src/hb-aat-layout-morx-table.hh     | 192
+ +++++++++++++++++++++++++++++++-----
+ src/hb-open-type-private.hh         |   2 -
+ src/hb-private.hh                   |   7 +-
+ 4 files changed, 254 insertions(+), 36 deletions(-)
+
+commit 5dbbd0fdb9a343554112a846b392803f11c13197
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jan 11 12:33:22 2018 +0330
+
+    Move the #define of _GNU_SOURCE to the top of hb-private.hh (#697)
+
+    This fixes the build on Cygwin.
+
+ src/hb-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 90e3c9e69e93e05d9fb534fd43b5c99cf58a7cb4
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jan 11 12:31:05 2018 +0330
+
+    [cmake] Fix hb-blob test (#699)
+
+ CMakeLists.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 1461965c2220cd957c26b3fe5835200e426bc715
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jan 11 08:48:22 2018 +0330
+
+    [test] Better tests output by converting stderr to stdout (#696)
+
+    https://gitlab.kitware.com/cmake/cmake/issues/17630
+
+ test/shaping/run-tests.py | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+commit ebb9b7d6335536804b50002fb83dd30da42a8ad5
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jan 11 08:15:06 2018 +0330
+
+    [test] Print shaping output on CI fails (#695)
+
+ .circleci/config.yml      | 4 ++--
+ test/shaping/run-tests.py | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+commit e24bea8e91ba9f447f1f7f252bdefacef1f83593
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jan 10 23:51:56 2018 +0330
+
+    [cmake] Another try on making sure feature testing is working (#691)
+
+ .circleci/config.yml | 131
+ ++++++++++++++++++++++++++++-----------------------
+ CMakeLists.txt       |  17 ++++---
+ 2 files changed, 79 insertions(+), 69 deletions(-)
+
+commit 746a37d5bdd2e965aa316e95ba5a7bad809d76a7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 16:47:47 2018 +0100
+
+    [util] Replace setlinebuf
+
+ util/options.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit ff2083c53eecc67c011b96b0b9a58331043e53cf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 13:54:36 2018 +0100
+
+    [util] Set stdio files to line buffering
+
+    So we can stream lines to hb-shape and read output.
+
+ util/options.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 80fd5743200cbe221ae3adf057fe0e5ef54a894c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 11:09:53 2018 +0100
+
+    [aat] Add Class subtable thingy
+
+    From old 'mort' table.
+
+ src/hb-aat-layout-common-private.hh | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+commit 71e0ed9cbad8438239dcedf1bcfa8e19b9dfdc89
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jan 10 15:45:12 2018 +0330
+
+    [cmake] Add header existence tests (#685)
+
+ .circleci/config.yml        |  4 ++--
+ CMakeLists.txt              | 53
+ ++++++++++++++++++++++++++++++---------------
+ test/shaping/CMakeLists.txt |  1 -
+ 3 files changed, 37 insertions(+), 21 deletions(-)
+
+commit a073621b5dc2865a014821307128a8fdd1d7d992
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jan 10 12:13:28 2018 +0330
+
+    [cmake] Fix tests against latest changes (#690)
+
+ test/shaping/CMakeLists.txt | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+commit 0b22da954142ad7a1e949a56448cee4e836fff75
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Jan 10 07:12:07 2018 +0200
+
+    Improve HB_BUFFER_SERIALIZE_FLAG_NO_ADVANCES docs
+
+    Add the note about absolute glyph positions from the commit message.
+
+ src/hb-buffer.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 6db0b17c4ce56bd7477941e7a2fc85997c04588e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 05:40:43 2018 +0100
+
+    [test] Move test handling to sundirectories
+
+ configure.ac                                       |  3 +
+ test/shaping/Makefile.am                           | 98
+ +---------------------
+ test/shaping/data/Makefile.am                      |  9 ++
+ test/shaping/data/in-house/Makefile.am             | 58 +++++++++++++
+ test/shaping/data/text-rendering-tests/Makefile.am | 60 +++++++++++++
+ 5 files changed, 131 insertions(+), 97 deletions(-)
+
+commit 4c982b4867707fcd2259b344b06e5bba8dd0c1e3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 05:26:55 2018 +0100
+
+    [test] Whitelist one more passing test
+
+ test/shaping/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 188ee6e5eeef3c63c332cfa30795d37da1bc1682
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 05:13:47 2018 +0100
+
+    Calculate anchor positions in float, then round
+
+    Hoping to reduce rounding error, to make tests happier...
+    No luck.
+
+ src/hb-font-private.hh         |  6 ++++++
+ src/hb-ot-layout-gpos-table.hh | 44
+ +++++++++++++++++++++---------------------
+ 2 files changed, 28 insertions(+), 22 deletions(-)
+
+commit 0b28e1199d62765db4e855756b96022e423dcc17
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 05:02:42 2018 +0100
+
+    [test] Whitelist one more passing test
+
+ test/shaping/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7cdd6ab068500aa18de9a856bfbe730d0aac9a27
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 04:33:08 2018 +0100
+
+    Round, instead of floor, when applying variations
+
+    Hoping this would fix remaining text-rendering-tests failures,
+    but so far no luck.
+
+ src/hb-font-private.hh         | 2 +-
+ src/hb-ot-layout-gpos-table.hh | 2 +-
+ src/hb-private.hh              | 1 +
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+
+commit 6dc6f0c9f844a006b4518ce789e319fcef6e9680
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 04:12:35 2018 +0100
+
+    [test] Whitelist one passing test
+
+ test/shaping/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ec939761e4d1b2f825db715290d70e18b1c9dd12
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:56:43 2018 +0100
+
+    Minor
+
+ test/shaping/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit c4eac531dfad55f691557a684b3a6bde83c4bcea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:51:09 2018 +0100
+
+    Minor
+
+ test/shaping/Makefile.am | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 285a0bd799426c544d896f8fbcc27f4613a28e9a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:49:32 2018 +0100
+
+    [test] Another try
+
+    Making cmake happy this time.
+
+ test/shaping/Makefile.am | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 95b32b00557d6afcfc469f8dcc51d8bfa8243a00
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:48:09 2018 +0100
+
+    [test] Fix text disabling
+
+    Ouch, make!
+
+ test/shaping/Makefile.am | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
+
+commit a938d105b8d6e2d654079ea7d89e2e3ef5e0aed4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:41:55 2018 +0100
+
+    [test/text-rendering-tests] Disable failing tests
+
+ test/shaping/Makefile.am | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit ed95d5e374a10770eb305dfa43a9f5b39933aac7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:38:52 2018 +0100
+
+    [test/text-rendering-tests] Disable failing tests
+
+ test/shaping/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3b1e97f364e5ffdc08b52f889e3fea80a7e83e99
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:35:20 2018 +0100
+
+    Add HB_BUFFER_FLAG_REMOVE_DEFAULT_IGNORABLES
+
+    New API:
+    HB_BUFFER_FLAG_REMOVE_DEFAULT_IGNORABLES
+    hb-shape / hb-view --remove-default-ignorables
+
+    One more text-rendering-tests test passing.  Eleven failing.
+
+ src/hb-buffer.h                                    | 17 ++++--
+ src/hb-ot-shape.cc                                 |  6 +-
+ .../data/text-rendering-tests/extract-tests.py     |  2 +-
+ .../data/text-rendering-tests/tests/AVAR-1.tests   | 34 +++++------
+ .../data/text-rendering-tests/tests/CFF-1.tests    | 26 ++++-----
+ .../data/text-rendering-tests/tests/CFF-2.tests    | 26 ++++-----
+ .../data/text-rendering-tests/tests/CFF2-1.tests   | 18 +++---
+ .../data/text-rendering-tests/tests/CMAP-1.tests   |  8 +--
+ .../data/text-rendering-tests/tests/CMAP-2.tests   |  4 +-
+ .../data/text-rendering-tests/tests/CMAP-3.tests   | 40 ++++++-------
+ .../data/text-rendering-tests/tests/CVAR-1.tests   |  6 +-
+ .../data/text-rendering-tests/tests/CVAR-2.tests   |  6 +-
+ .../data/text-rendering-tests/tests/GLYF-1.tests   |  2 +-
+ .../data/text-rendering-tests/tests/GPOS-1.tests   | 38 ++++++------
+ .../data/text-rendering-tests/tests/GPOS-2.tests   |  6 +-
+ .../data/text-rendering-tests/tests/GPOS-3.tests   |  8 +--
+ .../data/text-rendering-tests/tests/GPOS-4.tests   |  8 +--
+ .../data/text-rendering-tests/tests/GPOS-5.tests   | 10 ++--
+ .../data/text-rendering-tests/tests/GSUB-1.tests   |  2 +-
+ .../data/text-rendering-tests/tests/GSUB-2.tests   | 22 +++----
+ .../data/text-rendering-tests/tests/GVAR-1.tests   | 18 +++---
+ .../data/text-rendering-tests/tests/GVAR-2.tests   | 18 +++---
+ .../data/text-rendering-tests/tests/GVAR-3.tests   | 18 +++---
+ .../data/text-rendering-tests/tests/GVAR-4.tests   | 22 +++----
+ .../data/text-rendering-tests/tests/GVAR-5.tests   | 22 +++----
+ .../data/text-rendering-tests/tests/GVAR-6.tests   | 22 +++----
+ .../data/text-rendering-tests/tests/GVAR-7.tests   | 14 ++---
+ .../data/text-rendering-tests/tests/GVAR-8.tests   | 12 ++--
+ .../data/text-rendering-tests/tests/GVAR-9.tests   | 20 +++----
+ .../data/text-rendering-tests/tests/HVAR-1.tests   | 12 ++--
+ .../data/text-rendering-tests/tests/HVAR-2.tests   | 12 ++--
+ .../data/text-rendering-tests/tests/KERN-1.tests   |  2 +-
+ .../data/text-rendering-tests/tests/KERN-2.tests   |  2 +-
+ .../data/text-rendering-tests/tests/MORX-1.tests   |  2 +-
+ .../data/text-rendering-tests/tests/MORX-2.tests   | 32 +++++-----
+ .../data/text-rendering-tests/tests/MORX-3.tests   | 32 +++++-----
+ .../data/text-rendering-tests/tests/MORX-4.tests   | 30 +++++-----
+ .../data/text-rendering-tests/tests/SHARAN-1.tests | 12 ++--
+ .../data/text-rendering-tests/tests/SHBALI-1.tests | 44 +++++++-------
+ .../data/text-rendering-tests/tests/SHBALI-2.tests | 24 ++++----
+ .../data/text-rendering-tests/tests/SHBALI-3.tests | 18 +++---
+ .../data/text-rendering-tests/tests/SHKNDA-1.tests | 68
+ +++++++++++-----------
+ .../data/text-rendering-tests/tests/SHKNDA-2.tests | 32 +++++-----
+ .../data/text-rendering-tests/tests/SHKNDA-3.tests | 62
+ ++++++++++----------
+ util/options.cc                                    |  1 +
+ util/options.hh                                    | 14 +++--
+ 46 files changed, 435 insertions(+), 419 deletions(-)
+
+commit 46e4ed552fb1205eb6cbc16450bb231998fc7347
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:22:08 2018 +0100
+
+    [test/text-rendering-tests] Hook up font variations
+
+    Six more passing. Twelve failing now.
+
+ .../data/text-rendering-tests/extract-tests.py     |  6 +++-
+ .../data/text-rendering-tests/tests/AVAR-1.tests   | 34
+ +++++++++++-----------
+ .../data/text-rendering-tests/tests/CFF2-1.tests   | 18 ++++++------
+ .../data/text-rendering-tests/tests/CVAR-1.tests   |  6 ++--
+ .../data/text-rendering-tests/tests/CVAR-2.tests   |  6 ++--
+ .../data/text-rendering-tests/tests/GPOS-5.tests   | 10 +++----
+ .../data/text-rendering-tests/tests/GVAR-1.tests   | 18 ++++++------
+ .../data/text-rendering-tests/tests/GVAR-2.tests   | 18 ++++++------
+ .../data/text-rendering-tests/tests/GVAR-3.tests   | 18 ++++++------
+ .../data/text-rendering-tests/tests/GVAR-4.tests   | 22 +++++++-------
+ .../data/text-rendering-tests/tests/GVAR-5.tests   | 22 +++++++-------
+ .../data/text-rendering-tests/tests/GVAR-6.tests   | 22 +++++++-------
+ .../data/text-rendering-tests/tests/GVAR-7.tests   | 14 ++++-----
+ .../data/text-rendering-tests/tests/GVAR-8.tests   | 12 ++++----
+ .../data/text-rendering-tests/tests/GVAR-9.tests   | 20 ++++++-------
+ .../data/text-rendering-tests/tests/HVAR-1.tests   | 12 ++++----
+ .../data/text-rendering-tests/tests/HVAR-2.tests   | 12 ++++----
+ 17 files changed, 137 insertions(+), 133 deletions(-)
+
+commit 2b3f62fc4de8f10c2168f212b1368478312e6dec
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:16:56 2018 +0100
+
+    [test] Add tests from text-rendering-tests repo
+
+    https://github.com/unicode-org/text-rendering-tests
+
+ test/shaping/Makefile.am                           |  44 ++++++++++++++-
+ .../fonts/AdobeVFPrototype-Subset.otf              | Bin 0 -> 7096 bytes
+ .../text-rendering-tests/fonts/FDArrayTest257.otf  | Bin 0 -> 145212
+ bytes
+ .../fonts/FDArrayTest65535.otf                     | Bin 0 -> 492740
+ bytes
+ .../fonts/NotoSansBalinese-Regular.ttf             | Bin 0 -> 32304 bytes
+ .../fonts/NotoSansKannada-Regular.ttf              | Bin 0 -> 83868 bytes
+ .../fonts/NotoSerifKannada-Regular.ttf             | Bin 0 -> 96936 bytes
+ .../text-rendering-tests/fonts/Selawik-README.md   |  60
+ +++++++++++++++++++++
+ .../fonts/Selawik-variable.ttf                     | Bin 0 -> 481504
+ bytes
+ .../data/text-rendering-tests/fonts/TestAVAR.ttf   | Bin 0 -> 1608 bytes
+ .../data/text-rendering-tests/fonts/TestCMAP14.otf | Bin 0 -> 1628 bytes
+ .../fonts/TestCMAPMacTurkish.ttf                   | Bin 0 -> 19644 bytes
+ .../text-rendering-tests/fonts/TestCVARGVAROne.ttf | Bin 0 -> 12336 bytes
+ .../text-rendering-tests/fonts/TestCVARGVARTwo.ttf | Bin 0 -> 12256 bytes
+ .../text-rendering-tests/fonts/TestGLYFOne.ttf     | Bin 0 -> 1516 bytes
+ .../text-rendering-tests/fonts/TestGPOSFour.ttf    | Bin 0 -> 315020
+ bytes
+ .../text-rendering-tests/fonts/TestGPOSOne.ttf     | Bin 0 -> 10384 bytes
+ .../text-rendering-tests/fonts/TestGPOSThree.ttf   | Bin 0 -> 3500 bytes
+ .../text-rendering-tests/fonts/TestGPOSTwo.otf     | Bin 0 -> 1680 bytes
+ .../text-rendering-tests/fonts/TestGSUBOne.otf     | Bin 0 -> 1788 bytes
+ .../text-rendering-tests/fonts/TestGVAREight.ttf   | Bin 0 -> 4692 bytes
+ .../text-rendering-tests/fonts/TestGVARFour.ttf    | Bin 0 -> 3204 bytes
+ .../text-rendering-tests/fonts/TestGVARNine.ttf    | Bin 0 -> 2168 bytes
+ .../text-rendering-tests/fonts/TestGVAROne.ttf     | Bin 0 -> 14312 bytes
+ .../text-rendering-tests/fonts/TestGVARThree.ttf   | Bin 0 -> 14336 bytes
+ .../text-rendering-tests/fonts/TestGVARTwo.ttf     | Bin 0 -> 15668 bytes
+ .../text-rendering-tests/fonts/TestHVAROne.otf     | Bin 0 -> 3984 bytes
+ .../text-rendering-tests/fonts/TestHVARTwo.ttf     | Bin 0 -> 4004 bytes
+ .../text-rendering-tests/fonts/TestKERNOne.otf     | Bin 0 -> 1380 bytes
+ .../text-rendering-tests/fonts/TestMORXFour.ttf    | Bin 0 -> 4764 bytes
+ .../text-rendering-tests/fonts/TestMORXOne.ttf     | Bin 0 -> 2404 bytes
+ .../text-rendering-tests/fonts/TestMORXThree.ttf   | Bin 0 -> 4104 bytes
+ .../text-rendering-tests/fonts/TestMORXTwo.ttf     | Bin 0 -> 4960 bytes
+ .../text-rendering-tests/fonts/TestShapeAran.ttf   | Bin 0 -> 116044
+ bytes
+ .../text-rendering-tests/fonts/TestShapeEthi.ttf   | Bin 0 -> 5292 bytes
+ .../data/text-rendering-tests/fonts/Zycon.ttf      | Bin 0 -> 21036 bytes
+ .../data/text-rendering-tests/tests/AVAR-1.tests   |  17 ++++++
+ .../data/text-rendering-tests/tests/CFF-1.tests    |  13 +++++
+ .../data/text-rendering-tests/tests/CFF-2.tests    |  13 +++++
+ .../data/text-rendering-tests/tests/CFF2-1.tests   |   9 ++++
+ .../data/text-rendering-tests/tests/CMAP-1.tests   |   4 ++
+ .../data/text-rendering-tests/tests/CMAP-2.tests   |   2 +
+ .../data/text-rendering-tests/tests/CMAP-3.tests   |  20 +++++++
+ .../data/text-rendering-tests/tests/CVAR-1.tests   |   3 ++
+ .../data/text-rendering-tests/tests/CVAR-2.tests   |   3 ++
+ .../data/text-rendering-tests/tests/GLYF-1.tests   |   1 +
+ .../data/text-rendering-tests/tests/GPOS-1.tests   |  19 +++++++
+ .../data/text-rendering-tests/tests/GPOS-2.tests   |   3 ++
+ .../data/text-rendering-tests/tests/GPOS-3.tests   |   4 ++
+ .../data/text-rendering-tests/tests/GPOS-4.tests   |   4 ++
+ .../data/text-rendering-tests/tests/GPOS-5.tests   |   5 ++
+ .../data/text-rendering-tests/tests/GSUB-1.tests   |   1 +
+ .../data/text-rendering-tests/tests/GSUB-2.tests   |  11 ++++
+ .../data/text-rendering-tests/tests/GVAR-1.tests   |   9 ++++
+ .../data/text-rendering-tests/tests/GVAR-2.tests   |   9 ++++
+ .../data/text-rendering-tests/tests/GVAR-3.tests   |   9 ++++
+ .../data/text-rendering-tests/tests/GVAR-4.tests   |  11 ++++
+ .../data/text-rendering-tests/tests/GVAR-5.tests   |  11 ++++
+ .../data/text-rendering-tests/tests/GVAR-6.tests   |  11 ++++
+ .../data/text-rendering-tests/tests/GVAR-7.tests   |   7 +++
+ .../data/text-rendering-tests/tests/GVAR-8.tests   |   6 +++
+ .../data/text-rendering-tests/tests/GVAR-9.tests   |  10 ++++
+ .../data/text-rendering-tests/tests/HVAR-1.tests   |   6 +++
+ .../data/text-rendering-tests/tests/HVAR-2.tests   |   6 +++
+ .../data/text-rendering-tests/tests/KERN-1.tests   |   1 +
+ .../data/text-rendering-tests/tests/KERN-2.tests   |   1 +
+ .../data/text-rendering-tests/tests/MORX-1.tests   |   1 +
+ .../data/text-rendering-tests/tests/MORX-2.tests   |  16 ++++++
+ .../data/text-rendering-tests/tests/MORX-3.tests   |  16 ++++++
+ .../data/text-rendering-tests/tests/MORX-4.tests   |  15 ++++++
+ .../data/text-rendering-tests/tests/SHARAN-1.tests |   6 +++
+ .../data/text-rendering-tests/tests/SHBALI-1.tests |  22 ++++++++
+ .../data/text-rendering-tests/tests/SHBALI-2.tests |  12 +++++
+ .../data/text-rendering-tests/tests/SHBALI-3.tests |   9 ++++
+ .../data/text-rendering-tests/tests/SHKNDA-1.tests |  34 ++++++++++++
+ .../data/text-rendering-tests/tests/SHKNDA-2.tests |  16 ++++++
+ .../data/text-rendering-tests/tests/SHKNDA-3.tests |  31 +++++++++++
+ 77 files changed, 510 insertions(+), 1 deletion(-)
+
+commit 6b19178ee35fec3b2115d6a06a86db36dc838b38
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 03:07:30 2018 +0100
+
+    Prefix int types with HB
+
+    Such a headache that Windows defines UINT8, ...; Just prefix it.
+
+ src/hb-aat-layout-common-private.hh  |  29 +++---
+ src/hb-aat-layout-morx-table.hh      |  65 +++++++------
+ src/hb-open-file-private.hh          |   6 +-
+ src/hb-open-type-private.hh          |  70 +++++++-------
+ src/hb-ot-cbdt-table.hh              |  78 ++++++++--------
+ src/hb-ot-cmap-table.hh              |  90 +++++++++---------
+ src/hb-ot-glyf-table.hh              |  10 +-
+ src/hb-ot-head-table.hh              |  28 +++---
+ src/hb-ot-hhea-table.hh              |  18 ++--
+ src/hb-ot-kern-table.hh              |  36 ++++----
+ src/hb-ot-layout-common-private.hh   | 120 ++++++++++++------------
+ src/hb-ot-layout-gdef-table.hh       |  22 ++---
+ src/hb-ot-layout-gpos-table.hh       |  94 +++++++++----------
+ src/hb-ot-layout-gsub-table.hh       |  30 +++---
+ src/hb-ot-layout-gsubgpos-private.hh | 172
+ +++++++++++++++++------------------
+ src/hb-ot-math-table.hh              |  26 +++---
+ src/hb-ot-maxp-table.hh              |   2 +-
+ src/hb-ot-name-table.hh              |  16 ++--
+ src/hb-ot-os2-table.hh               |  70 +++++++-------
+ src/hb-ot-post-table.hh              |  16 ++--
+ src/hb-ot-var-avar-table.hh          |   4 +-
+ src/hb-ot-var-fvar-table.hh          |  20 ++--
+ src/hb-ot-var-hvar-table.hh          |   8 +-
+ src/hb-ot-var-mvar-table.hh          |  10 +-
+ 24 files changed, 517 insertions(+), 523 deletions(-)
+
+commit 81e321c802afcc43186737e6900f8d7e2f9d4fd3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 02:56:29 2018 +0100
+
+    [aat] Try fixing VC bots
+
+    c:\projects\harfbuzz\src\hb-aat-layout-common-private.hh(51):
+    error C2872: 'UINT16': ambiguous symbol
+    [C:\projects\harfbuzz\build\harfbuzz.vcxproj]
+    C:\Program Files (x86)\Windows
+    Kits\10\Include\10.0.14393.0\shared\basetsd.h(80): note: could be
+    'unsigned short UINT16'
+    c:\projects\harfbuzz\src\hb-open-type-private.hh(648): note: or
+    'OT::UINT16'
+
+ src/hb-aat-layout-common-private.hh | 3 +++
+ src/hb-aat-layout-morx-table.hh     | 3 +++
+ 2 files changed, 6 insertions(+)
+
+commit 0ed69c946247feb5bbb5be06d5314c5e0c0fec67
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 02:49:36 2018 +0100
+
+    Disable processing of morx table in ot shaper
+
+    So I can merge this to master...
+
+ src/hb-ot-shape.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 3f29ea91441b2e8c86cf379b4803f638a2e8dcfc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 02:48:04 2018 +0100
+
+    [util] Add hb-shape --ned
+
+    For not displaying extra data: no clusters, no advance. Just data
+    pertaining
+    to where glyphs end up on the screen.
+
+ test/shaping/data/text-rendering-tests/extract-tests.py |  2 +-
+ util/options.cc                                         | 13
+ +++++++++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+commit 7020130665316365c288d0960fc288faa8f5bdf7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 02:37:39 2018 +0100
+
+    [test] Minor
+
+ test/shaping/run-tests.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5f94b4cc39f2f61b38c954ddac1aae6a052845bd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 02:35:59 2018 +0100
+
+    [kern] Mark unsafe-to-break
+
+ src/hb-ot-shape-fallback.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 71fd6325b6cba2586709022dd33530c61141bf8f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 02:20:14 2018 +0100
+
+    Add option to buffer serialization to not output glyph advances
+
+    When advances are not printed, glyph offsets reflect absolute glyph
+    positions.
+
+    New API:
+    HB_BUFFER_SERIALIZE_FLAG_NO_ADVANCES
+    hb-shape --no-advances
+
+ src/hb-buffer-serialize.cc | 38 ++++++++++++++++++++++++++++----------
+ src/hb-buffer.h            |  5 ++++-
+ util/hb-shape.cc           |  2 ++
+ util/options.cc            |  2 ++
+ util/options.hh            |  2 ++
+ 5 files changed, 38 insertions(+), 11 deletions(-)
+
+commit 316a28f8f8a9c459936ce9f2786d4d64a8f4e2c0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 01:54:12 2018 +0100
+
+    [test] Add script for extracting tests from text-rendering-tests
+
+    Work in progress...
+
+    https://github.com/unicode-org/text-rendering-tests
+
+ .../data/text-rendering-tests/extract-tests.py     | 45
+ ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+commit 6b4d63f295f419f55983a8fc72f582802f55b09f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 10 01:13:36 2018 +0100
+
+    [test] Minor
+
+ test/shaping/run-tests.py | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+commit 504f913654d5904604e6abdbf7d0653f40db51fc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 23:15:54 2018 +0100
+
+    [test] Simplify test runner
+
+    Always pass hb-shape as first argument to run-tests.py.
+
+    Also require automake 1.13.
+
+ configure.ac              |  3 +--
+ test/shaping/Makefile.am  | 18 ++----------------
+ test/shaping/run-tests.py | 22 +++++-----------------
+ 3 files changed, 8 insertions(+), 35 deletions(-)
+
+commit 141db8b7a3abf2adbf0caa0659d9239396f6a2db
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 23:11:00 2018 +0100
+
+    [test] Minor
+
+ test/shaping/Makefile.am  | 4 ----
+ test/shaping/run-tests.py | 4 ++--
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+commit 44c65eee28e2de5c54028cb0ef144f56da16ef58
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 21:58:57 2018 +0100
+
+    [test] Reorganize test suite
+
+    In anticipation of importing more test suites.
+
+ test/fuzzing/run-fuzzer-tests.py                   |   2 +-
+ test/shaping/Makefile.am                           |  86
+ +++++++++---------
+ test/shaping/{fonts => data/in-house}/COPYING      |   7 +-
+ .../0509e80afb379d16560e9e47bdd7d888bebdebc6.ttf   | Bin
+ .../051d92f8bc6ff724511b296c27623f824de256e9.ttf   | Bin
+ .../074a5ae6b19de8f29772fdd5df2d3d833f81f5e6.ttf   | Bin
+ .../07f054357ff8638bac3711b422a1e31180bba863.ttf   | Bin
+ .../15dfc433a135a658b9f4b1a861b5cdd9658ccbb9.ttf   | Bin
+ .../1735326da89f0818cd8c51a0600e9789812c0f94.ttf   | Bin
+ .../191826b9643e3f124d865d617ae609db6a2ce203.ttf   | Bin
+ .../1a3d8f381387dd29be1e897e4b5100ac8b4829e1.ttf   | Bin
+ .../1a6f1687b7a221f9f2c834b0b360d3c8463b6daf.ttf   | Bin
+ .../1c04a16f32a39c26c851b7fc014d2e8d298ba2b8.ttf   | Bin
+ .../1c2c3fc37b2d4c3cb2ef726c6cdaaabd4b7f3eb9.ttf   | Bin
+ .../1c2fb74c1b2aa173262734c1f616148f1648cfd6.ttf   | Bin
+ .../205edd09bd3d141cc9580f650109556cc28b22cb.ttf   | Bin
+ .../217a934cfe15c548b572c203dceb2befdf026462.ttf   | Bin
+ .../21b7fb9c1eeae260473809fbc1fe330f66a507cd.ttf   | Bin
+ .../226bc2deab3846f1a682085f70c67d0421014144.ttf   | Bin
+ .../243798dd281c1c77c065958e1ff467420faa9bde.ttf   | Bin
+ .../24b8d24d00ae86f49791b746da4c9d3f717a51a8.ttf   | Bin
+ .../270b89df543a7e48e206a2d830c0e10e5265c630.ttf   | Bin
+ .../298c9e1d955f10f6f72c6915c3c6ff9bf9695cec.ttf   | Bin
+ .../2de1ab4907ab688c0cfc236b0bf51151db38bf2e.ttf   | Bin
+ .../341421e629668b1a1242245d39238ca48432d35d.ttf   | Bin
+ .../3493e92eaded2661cadde752a39f9d58b11f0326.ttf   | Bin
+ .../3511ff5c1647150595846ac414c595cccac34f18.ttf   | Bin
+ .../37033cc5cf37bb223d7355153016b6ccece93b28.ttf   | Bin
+ .../373e67bf41ca264e260a9716162b71a23549e885.ttf   | Bin
+ .../375d6ae32a3cbe52fbf81a4e5777e3377675d5a3.ttf   | Bin
+ .../3cae6bfe5b57c07ba81ddbd54c02fe4f3a1e3bf6.ttf   | Bin
+ .../3d0b77a2360aa6faa1385aaa510509ab70dfbeff.ttf   | Bin
+ .../43979b90b2dd929723cf4fe1715990bcb9c9a56b.ttf   | Bin
+ .../43ef465752be9af900745f72fe29cb853a1401a5.ttf   | Bin
+ .../45855bc8d46332b39c4ab9e2ee1a26b1f896da6b.ttf   | Bin
+ .../49c9f7485c1392fa09a1b801bc2ffea79275f22e.ttf   | Bin
+ .../4cce528e99f600ed9c25a2b69e32eb94a03b4ae8.ttf   | Bin
+ .../4fac3929fc3332834e93673780ec0fe94342d193.ttf   | Bin
+ .../5028afb650b1bb718ed2131e872fbcce57828fff.ttf   | Bin
+ .../53374c7ca3657be37efde7ed02ae34229a56ae1f.ttf   | Bin
+ .../54674a3111d209fb6be0ed31745314b7a8d2c244.ttf   | Bin
+ .../558661aa659912f4d30ecd27bd09835171a8e2b0.ttf   | Bin
+ .../55c88ebbe938680b08f92c3de20713183e0c7481.ttf   | Bin
+ .../56cfd0e18d07f41c38e9598545a6d369127fc6f9.ttf   | Bin
+ .../57a9d9f83020155cbb1d2be1f43d82388cbecc88.ttf   | Bin
+ .../59a585a63b3df608fbeef00956c8c108deec7de6.ttf   | Bin
+ .../5a5daf5eb5a4db77a2baa3ad9c7a6ed6e0655fa8.ttf   | Bin
+ .../5dfad7735c6a67085f1b90d4d497e32907db4c78.ttf   | Bin
+ .../641bd9db850193064d17575053ae2bf8ec149ddc.ttf   | Bin
+ .../663aef6b019dbf45ffd74089e2b5f2496ceceb18.ttf   | Bin
+ .../6991b13ce889466be6de3f66e891de2bc0f117ee.ttf   | Bin
+ .../6ff0fbead4462d9f229167b4e6839eceb8465058.ttf   | Bin
+ .../706c5d7b625f207bc0d874c67237aad6f1e9cd6f.ttf   | Bin
+ .../757ebd573617a24aa9dfbf0b885c54875c6fe06b.ttf   | Bin
+ .../7a37dc4d5bf018456aea291cee06daf004c0221c.ttf   | Bin
+ .../7e14e7883ed152baa158b80e207b66114c823a8b.ttf   | Bin
+ .../8099955657a54e9ee38a6ba1d6f950ce58e3cc25.ttf   | Bin
+ .../813c2f8e5512187fd982417a7fb4286728e6f4a8.ttf   | Bin
+ .../81c368a33816fb20e9f647e8f24e2180f4720263.ttf   | Bin
+ .../8228d035fcd65d62ec9728fb34f42c63be93a5d3.ttf   | Bin
+ .../8240789f6d12d4cfc4b5e8e6f246c3701bcf861f.ttf   | Bin
+ .../82f4f3b57bb55344e72e70231380202a52af5805.ttf   | Bin
+ .../8454d22037f892e76614e1645d066689a0200e61.ttf   | Bin
+ .../85414f2552b654585b7a8d13dcc3e8fd9f7970a3.ttf   | Bin
+ .../856ff9562451293cbeff6f396d4e3877c4f0a436.ttf   | Bin
+ .../85fe0be440c64ac77699e21c2f1bd933a919167e.ttf   | Bin
+ .../87f85d17d26f1fe9ad28d7365101958edaefb967.ttf   | Bin
+ .../8a9fea2a7384f2116e5b84a9b31f83be7850ce21.ttf   | Bin
+ .../94a5d6fb15a27521fba9ea4aee9cb39b2d03322a.ttf   | Bin
+ .../96490dd2ff81233b335a650e7eb660e0e7b2eeea.ttf   | Bin
+ .../98b7887cff91f722b92a8ff800120954606354f9.ttf   | Bin
+ .../9d8a94a67932a3ab75a596fc8b5c6d0392ca9e49.ttf   | Bin
+ .../a014549f766436cf55b2ceb40e462038938ee899.ttf   | Bin
+ .../a02a7f0ad42c2922cb37ad1358c9df4eb81f1bca.ttf   | Bin
+ .../a34a7b00f22ffb5fd7eef6933b81c7e71bc2cdfb.ttf   | Bin
+ .../a34a9191d9376bda419836effeef7e75c1386016.ttf   | Bin
+ .../a69118c2c2ada48ff803d9149daa54c9ebdae30e.ttf   | Bin
+ .../a6c76d1bafde4a0b1026ebcc932d2e5c6fd02442.ttf   | Bin
+ .../a919b33197965846f21074b24e30250d67277bce.ttf   | Bin
+ .../a98e908e2ed21b22228ea59ebcc0f05034c86f2e.ttf   | Bin
+ .../b151cfcdaa77585d77f17a42158e0873fc8e2633.ttf   | Bin
+ .../b6acef662e0beb8d5fcf5b61c6b0ca69537b7402.ttf   | Bin
+ .../b9e2aaa0d75fcef6971ec3a96d806ba4a6b31fe2.ttf   | Bin
+ .../bb0c53752e85c3d28973ebc913287b8987d3dfe8.ttf   | Bin
+ .../bb29ce50df2bdba2d10726427c6b7609bf460e04.ttf   | Bin
+ .../bb9473d2403488714043bcfb946c9f78b86ad627.ttf   | Bin
+ .../bbf4a308c402f0678c3e82844892a4da2ebe598f.ttf   | Bin
+ .../bf39b0e91ef9807f15a9e283a21a14a209fd2cfc.ttf   | Bin
+ .../bf962d3202883a820aed019d9b5c1838c2ff69c6.ttf   | Bin
+ .../c4e48b0886ef460f532fb49f00047ec92c432ec0.ttf   | Bin
+ .../cc5f3d2d717fb6bd4dfae1c16d48a2cb8e12233b.ttf   | Bin
+ .../d23d76ea0909c14972796937ba072b5a40c1e257.ttf   | Bin
+ .../d629e7fedc0b350222d7987345fe61613fa3929a.ttf   | Bin
+ .../d9b8bc10985f24796826c29f7ccba3d0ae11ec02.ttf   | Bin
+ .../dd9f0c7c7c36f75a18be0cab1cddf8f3ab0f366b.ttf   | Bin
+ .../df768b9c257e0c9c35786c47cae15c46571d56be.ttf   | Bin
+ .../e207635780b42f898d58654b65098763e340f5c7.ttf   | Bin
+ .../e68a88939e0f06e34d2bc911f09b70890289c8fd.ttf   | Bin
+ .../e88c339237f52d21e01c55f01b9c1b4cc14a0467.ttf   | Bin
+ .../ee39587d13b2afa5499cc79e45780aa79293bbd4.ttf   | Bin
+ .../ef2511f215aa3ca847cbfffbf861793b42170875.ttf   | Bin
+ .../ef86fe710cfea877bbe0dbb6946a1f88d0661031.ttf   | Bin
+ .../f22416c692720a7d46fadf4af99f4c9e094f00b9.ttf   | Bin
+ .../f443753e8ffe8e8aae606cfba158e00334b6efb1.ttf   | Bin
+ .../f499fbc23865022234775c43503bba2e63978fe1.ttf   | Bin
+ .../f518eb6f6b5eec2946c9fbbbde44e45d46f5e2ac.ttf   | Bin
+ .../f9b1dd4dcb515e757789a22cb4241107746fd3d0.ttf   | Bin
+ .../fab39d60d758cb586db5a504f218442cd1395725.ttf   | Bin
+ .../fbb6c84c9e1fe0c39e152fbe845e51fd81f6748e.ttf   | Bin
+ .../fcdcffbdf1c4c97c05308d7600e4c283eb47dbca.ttf   | Bin
+ .../ffa0f5d2d9025486d8469d8b1fdd983e7632499b.ttf   | Bin
+ .../in-house/tests/arabic-fallback-shaping.tests   |   1 +
+ .../data/in-house/tests/arabic-feature-order.tests |   4 +
+ .../data/in-house/tests/arabic-like-joining.tests  |   1 +
+ .../data/in-house/tests/arabic-mark-order.tests    |   6 ++
+ test/shaping/data/in-house/tests/arabic-stch.tests |   1 +
+ .../data/in-house/tests/automatic-fractions.tests  |   3 +
+ test/shaping/data/in-house/tests/cluster.tests     |   2 +
+ test/shaping/data/in-house/tests/color-fonts.tests |   1 +
+ .../data/in-house/tests/context-matching.tests     |   3 +
+ .../data/in-house/tests/cursive-positioning.tests  |   4 +
+ .../data/in-house/tests/default-ignorables.tests   |   2 +
+ .../data/in-house/tests/emoji-flag-tags.tests      |   2 +
+ .../data/in-house/tests/fallback-positioning.tests |   2 +
+ test/shaping/data/in-house/tests/fuzzed.tests      |  22 +++++
+ test/shaping/data/in-house/tests/hangul-jamo.tests |   2 +
+ test/shaping/data/in-house/tests/hyphens.tests     |   2 +
+ .../tests/indic-consonant-with-stacker.tests       |   4 +
+ test/shaping/data/in-house/tests/indic-init.tests  |   1 +
+ .../in-house/tests/indic-joiner-candrabindu.tests  |   2 +
+ .../data/in-house/tests/indic-joiners.tests        |   2 +
+ .../data/in-house/tests/indic-old-spec.tests       |   2 +
+ .../data/in-house/tests/indic-pref-blocking.tests  |   2 +
+ .../in-house/tests/indic-script-extensions.tests   |   2 +
+ .../data/in-house/tests/indic-special-cases.tests  |   3 +
+ .../data/in-house/tests/indic-syllable.tests       |   8 ++
+ .../data/in-house/tests/language-tags.tests        |  12 +++
+ test/shaping/data/in-house/tests/ligature-id.tests |  36 ++++++++
+ .../data/in-house/tests/mark-attachment.tests      |   1 +
+ .../data/in-house/tests/mark-filtering-sets.tests  |   5 ++
+ .../tests/mongolian-variation-selector.tests       |   4 +
+ test/shaping/data/in-house/tests/simple.tests      |   2 +
+ test/shaping/data/in-house/tests/spaces.tests      |  17 ++++
+ .../in-house/tests/tibetan-contractions-1.tests    |  60 +++++++++++++
+ .../in-house/tests/tibetan-contractions-2.tests    |  53 +++++++++++
+ .../data/in-house/tests/tibetan-vowels.tests       |  11 +++
+ test/shaping/data/in-house/tests/use-marchen.tests |  35 ++++++++
+ .../shaping/data/in-house/tests/use-syllable.tests |   7 ++
+ test/shaping/data/in-house/tests/use.tests         |   4 +
+ .../data/in-house/tests/variations-rvrn.tests      | 100
+ +++++++++++++++++++++
+ test/shaping/data/in-house/tests/vertical.tests    |   3 +
+ .../data/in-house/tests/zero-width-marks.tests     |  11 +++
+ test/shaping/run-tests.py                          |  48 ++++------
+ .../tests/misc/arabic-fallback-shaping.tests       |   1 -
+ test/shaping/tests/misc/arabic-feature-order.tests |   4 -
+ test/shaping/tests/misc/arabic-like-joining.tests  |   1 -
+ test/shaping/tests/misc/arabic-mark-order.tests    |   6 --
+ test/shaping/tests/misc/arabic-stch.tests          |   1 -
+ test/shaping/tests/misc/automatic-fractions.tests  |   3 -
+ test/shaping/tests/misc/cluster.tests              |   2 -
+ test/shaping/tests/misc/color-fonts.tests          |   1 -
+ test/shaping/tests/misc/context-matching.tests     |   3 -
+ test/shaping/tests/misc/cursive-positioning.tests  |   4 -
+ test/shaping/tests/misc/default-ignorables.tests   |   2 -
+ test/shaping/tests/misc/emoji-flag-tags.tests      |   2 -
+ test/shaping/tests/misc/fallback-positioning.tests |   2 -
+ test/shaping/tests/misc/fuzzed.tests               |  22 -----
+ test/shaping/tests/misc/hangul-jamo.tests          |   2 -
+ test/shaping/tests/misc/hyphens.tests              |   2 -
+ .../tests/misc/indic-consonant-with-stacker.tests  |   4 -
+ test/shaping/tests/misc/indic-init.tests           |   1 -
+ .../tests/misc/indic-joiner-candrabindu.tests      |   2 -
+ test/shaping/tests/misc/indic-joiners.tests        |   2 -
+ test/shaping/tests/misc/indic-old-spec.tests       |   2 -
+ test/shaping/tests/misc/indic-pref-blocking.tests  |   2 -
+ .../tests/misc/indic-script-extensions.tests       |   2 -
+ test/shaping/tests/misc/indic-special-cases.tests  |   3 -
+ test/shaping/tests/misc/indic-syllable.tests       |   8 --
+ test/shaping/tests/misc/language-tags.tests        |  12 ---
+ test/shaping/tests/misc/ligature-id.tests          |  36 --------
+ test/shaping/tests/misc/mark-attachment.tests      |   1 -
+ test/shaping/tests/misc/mark-filtering-sets.tests  |   5 --
+ .../tests/misc/mongolian-variation-selector.tests  |   4 -
+ test/shaping/tests/misc/simple.tests               |   2 -
+ test/shaping/tests/misc/spaces.tests               |  17 ----
+ .../tests/misc/tibetan-contractions-1.tests        |  60 -------------
+ .../tests/misc/tibetan-contractions-2.tests        |  53 -----------
+ test/shaping/tests/misc/tibetan-vowels.tests       |  11 ---
+ test/shaping/tests/misc/use-marchen.tests          |  35 --------
+ test/shaping/tests/misc/use-syllable.tests         |   7 --
+ test/shaping/tests/misc/use.tests                  |   4 -
+ test/shaping/tests/misc/variations-rvrn.tests      | 100
+ ---------------------
+ test/shaping/tests/misc/vertical.tests             |   3 -
+ test/shaping/tests/misc/zero-width-marks.tests     |  11 ---
+ .../script-arabic/language-persian/mehran.txt      |  14 +--
+ .../language-urdu/crulp/ligatures/2grams.txt       |   0
+ .../language-urdu/crulp/ligatures/3grams.txt       |   0
+ .../language-urdu/crulp/ligatures/4grams.txt       |   0
+ .../language-urdu/crulp/ligatures/5grams.txt       |   0
+ .../language-urdu/crulp/ligatures/6grams.txt       |   0
+ .../language-urdu/crulp/ligatures/7grams.txt       |   0
+ .../language-urdu/crulp/ligatures/8grams.txt       |   0
+ .../language-urdu/crulp/ligatures/LICENSE          |   0
+ .../language-urdu/crulp/ligatures/README           |   0
+ .../language-urdu/crulp/ligatures/SOURCES          |   0
+ .../script-arabic/misc/diacritics/lam-alef.txt     |   0
+ .../misc/diacritics/language-arabic.txt            |   0
+ .../misc/diacritics/language-persian.txt           |   0
+ .../misc/diacritics/language-urdu.txt              |   0
+ .../misc/diacritics/ligature-components.txt        |   0
+ .../misc/diacritics/ligature-diacritics.txt        |   0
+ .../misc/diacritics/mark-skipping.txt              |   0
+ .../shaper-arabic/script-mongolian/misc/misc.txt   |   0
+ .../script-mongolian/misc/non-joining.txt          |   0
+ .../shaper-arabic/script-mongolian/misc/poem.txt   |   0
+ .../script-mongolian/misc/variation-selectors.txt  |   0
+ .../shaper-arabic/script-nko/misc/misc.txt         |   0
+ .../shaper-arabic/script-phags-pa/misc/misc.txt    |   0
+ .../script-syriac/misc/abbreviation-mark.txt       |  11 +++
+ .../shaper-arabic/script-syriac/misc/alaph.txt     |   0
+ .../shaper-default/script-ethiopic/misc/misc.txt   |   0
+ .../shaper-default/script-han/misc/cjk-compat.txt  |   0
+ .../script-hiragana/misc/kazuraki-liga-lines.txt   |   0
+ .../script-hiragana/misc/kazuraki-liga.txt         |   0
+ .../shaper-default/script-linear-b/misc/misc.txt   |   0
+ .../shaper-default/script-tifinagh/misc/misc.txt   |   1 -
+ .../shaper-hangul/script-hangul/misc/misc.txt      |   0
+ .../script-hebrew/misc/diacritics.txt              |   0
+ .../indic/script-assamese/utrrs/LICENSE            |   0
+ .../indic/script-assamese/utrrs/README             |   0
+ .../indic/script-assamese/utrrs/SOURCES            |   0
+ .../IndicFontFeatureCodepoint-AdditionalVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Reserved.txt         |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../indic/script-bengali/misc/misc.txt             |   0
+ .../indic/script-bengali/misc/reph.txt             |   0
+ .../indic/script-bengali/utrrs/LICENSE             |   0
+ .../shaper-indic/indic/script-bengali/utrrs/README |   0
+ .../indic/script-bengali/utrrs/SOURCES             |   0
+ .../IndicFontFeatureCodepoint-AdditionalVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Reserved.txt         |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../indic/script-devanagari/misc/dottedcircle.txt  |   0
+ .../indic/script-devanagari/misc/eyelash.txt       |   0
+ .../indic/script-devanagari/misc/joiners.txt       |   0
+ .../indic/script-devanagari/misc/misc.txt          |   0
+ .../script-devanagari/misc/spec-deviations.txt     |   0
+ .../script-devanagari/misc/tricky-reordering.txt   |   0
+ .../indic/script-devanagari/utrrs/LICENSE          |   0
+ .../indic/script-devanagari/utrrs/README           |   0
+ .../indic/script-devanagari/utrrs/SOURCES          |   0
+ ...icFontFeatureCodepoint-AdditionalConsonants.txt |   0
+ .../IndicFontFeatureCodepoint-AdditionalVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ ...tFeatureCodepoint-DevnagariSpecificAddition.txt |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ ...ndicFontFeatureCodepoint-GenericPunctuation.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../indic/script-gujarati/utrrs/LICENSE            |   0
+ .../indic/script-gujarati/utrrs/README             |   0
+ .../indic/script-gujarati/utrrs/SOURCES            |   0
+ .../IndicFontFeatureCodepoint-AdditionalVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Reserved.txt         |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../indic/script-gurmukhi/misc/misc.txt            |   0
+ .../indic/script-gurmukhi/utrrs/LICENSE            |   0
+ .../indic/script-gurmukhi/utrrs/README             |   0
+ .../indic/script-gurmukhi/utrrs/SOURCES            |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ .../IndicFontFeatureCodepoint-GurmukhiSpecific.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Reserved.txt         |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../indic/script-kannada/misc/misc.txt             |   0
+ .../indic/script-kannada/misc/right-matras.txt     |   0
+ .../indic/script-kannada/utrrs/LICENSE             |   0
+ .../shaper-indic/indic/script-kannada/utrrs/README |   0
+ .../indic/script-kannada/utrrs/SOURCES             |   0
+ ...icFontFeatureCodepoint-AdditionalConsonants.txt |   0
+ .../IndicFontFeatureCodepoint-AdditionalVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Reserved.txt         |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../indic/script-malayalam/misc/cibu.txt           |   0
+ .../indic/script-malayalam/misc/dot-reph.txt       |   0
+ .../indic/script-malayalam/misc/misc.txt           |   0
+ .../indic/script-malayalam/utrrs/LICENSE           |   0
+ .../indic/script-malayalam/utrrs/README            |   0
+ .../indic/script-malayalam/utrrs/SOURCES           |   0
+ .../IndicFontFeatureCodepoint-AdditionalVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Reserved.txt         |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../shaper-indic/indic/script-oriya/misc/bindu.txt |   0
+ .../shaper-indic/indic/script-oriya/misc/misc.txt  |   0
+ .../shaper-indic/indic/script-oriya/utrrs/LICENSE  |   0
+ .../shaper-indic/indic/script-oriya/utrrs/README   |   0
+ .../shaper-indic/indic/script-oriya/utrrs/SOURCES  |   0
+ ...icFontFeatureCodepoint-AdditionalConsonants.txt |   0
+ .../IndicFontFeatureCodepoint-AdditionalVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-OriyaSpecific.txt    |   0
+ .../IndicFontFeatureCodepoint-Reserved.txt         |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../indic/script-sinhala/misc/extensive.txt        |   0
+ .../indic/script-sinhala/misc/misc.txt             |   0
+ .../indic/script-sinhala/misc/reph.txt             |   0
+ .../indic/script-sinhala/misc/split-matras.txt     |   0
+ .../indic/script-sinhala/utrrs/LICENSE             |   0
+ .../shaper-indic/indic/script-sinhala/utrrs/README |   0
+ .../indic/script-sinhala/utrrs/SOURCES             |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Punctuation.txt      |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS.txt            |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB-Conjunct.txt   |   0
+ .../gsub/IndicFontFeatureGSUB-Rakaaraansaya.txt    |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB-Repaya.txt     |   0
+ .../gsub/IndicFontFeatureGSUB-Special-Cases.txt    |   0
+ .../gsub/IndicFontFeatureGSUB-TouchingLetters.txt  |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB-Yansaya.txt    |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../shaper-indic/indic/script-tamil/misc/misc.txt  |   0
+ .../shaper-indic/indic/script-tamil/utrrs/LICENSE  |   0
+ .../shaper-indic/indic/script-tamil/utrrs/README   |   0
+ .../shaper-indic/indic/script-tamil/utrrs/SOURCES  |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-CurrencySymbols.txt  |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Numerics.txt         |   0
+ .../IndicFontFeatureCodepoint-Reserved.txt         |   0
+ .../IndicFontFeatureCodepoint-Symbols.txt          |   0
+ .../IndicFontFeatureCodepoint-TamilSymbol.txt      |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../shaper-indic/indic/script-telugu/misc/misc.txt |   0
+ .../shaper-indic/indic/script-telugu/utrrs/LICENSE |   0
+ .../shaper-indic/indic/script-telugu/utrrs/README  |   0
+ .../shaper-indic/indic/script-telugu/utrrs/SOURCES |   0
+ .../IndicFontFeatureCodepoint-AdditionalVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Consonants.txt       |   0
+ .../IndicFontFeatureCodepoint-DependentVowels.txt  |   0
+ .../codepoint/IndicFontFeatureCodepoint-Digits.txt |   0
+ ...IndicFontFeatureCodepoint-IndependentVowels.txt |   0
+ .../IndicFontFeatureCodepoint-Reserved.txt         |   0
+ .../IndicFontFeatureCodepoint-VariousSigns.txt     |   0
+ .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |   0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt            |   0
+ .../south-east-asian/script-javanese/misc.txt      |   0
+ .../south-east-asian/script-khmer/misc/misc.txt    |   0
+ .../script-khmer/misc/other-marks-invalid.txt      |   0
+ .../script-khmer/misc/other-marks.txt              |   0
+ .../shaper-myanmar/script-myanmar/misc/misc.txt    |   0
+ .../shaper-myanmar/script-myanmar/misc/otspec.txt  |   1 -
+ .../shaper-myanmar/script-myanmar/misc/utn11.txt   |   0
+ .../shaper-thai/script-lao/misc/sara-am.txt        |   0
+ .../shaper-thai/script-thai/misc/misc.txt          |   0
+ .../shaper-thai/script-thai/misc/phinthu.txt       |   0
+ .../shaper-thai/script-thai/misc/pua-shaping.txt   |   0
+ .../shaper-thai/script-thai/misc/sara-am.txt       |   0
+ .../script-tibetan/misc/contractions.txt           |   0
+ .../shaper-tibetan/script-tibetan/misc/misc.txt    |   0
+ .../shaper-use/script-batak/misc.txt               |   0
+ .../shaper-use/script-buginese/misc.txt            |  92
+ +++++++++----------
+ .../shaper-use/script-cham/misc.txt                |   0
+ .../shaper-use/script-kaithi/misc.txt              |   0
+ .../shaper-use/script-kharoshti/misc.txt           |   0
+ .../shaper-use/script-tai-tham/misc.txt            |   0
+ .../shaper-use/script-tai-tham/torture.txt         |   0
+ .../script-syriac/misc/abbreviation-mark.txt       |  11 ---
+ 420 files changed, 573 insertions(+), 590 deletions(-)
+
+commit 9a3ad307ea91794712531dfc688700c11a1ff263
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 21:35:21 2018 +0100
+
+    [test] Remove unused hb-diff-ngrams
+
+ test/shaping/Makefile.am      |  1 -
+ test/shaping/hb-diff-ngrams   |  5 -----
+ test/shaping/hb_test_tools.py | 26 --------------------------
+ 3 files changed, 32 deletions(-)
+
+commit b6b460024d29362914c72cc5f8fbaec215db5b16
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 21:33:38 2018 +0100
+
+    [test] Remove unused manifest stuff
+
+ test/shaping/Makefile.am        | 7 -------
+ test/shaping/hb-manifest-read   | 5 -----
+ test/shaping/hb-manifest-update | 5 -----
+ 3 files changed, 17 deletions(-)
+
+commit ebbee7c2475db789b622250addbf549695da2890
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 18:23:19 2018 +0100
+
+    [test] Move test files around
+
+ test/fuzzing/run-fuzzer-tests.py                   |  2 +-
+ test/shaping/Makefile.am                           | 82
+ +++++++++++-----------
+ .../tests/{ => misc}/arabic-fallback-shaping.tests |  0
+ .../tests/{ => misc}/arabic-feature-order.tests    |  0
+ .../tests/{ => misc}/arabic-like-joining.tests     |  0
+ .../tests/{ => misc}/arabic-mark-order.tests       |  0
+ test/shaping/tests/{ => misc}/arabic-stch.tests    |  0
+ .../tests/{ => misc}/automatic-fractions.tests     |  0
+ test/shaping/tests/{ => misc}/cluster.tests        |  0
+ test/shaping/tests/{ => misc}/color-fonts.tests    |  0
+ .../tests/{ => misc}/context-matching.tests        |  0
+ .../tests/{ => misc}/cursive-positioning.tests     |  0
+ .../tests/{ => misc}/default-ignorables.tests      |  0
+ .../shaping/tests/{ => misc}/emoji-flag-tags.tests |  0
+ .../tests/{ => misc}/fallback-positioning.tests    |  0
+ test/shaping/tests/{ => misc}/fuzzed.tests         |  0
+ test/shaping/tests/{ => misc}/hangul-jamo.tests    |  0
+ test/shaping/tests/{ => misc}/hyphens.tests        |  0
+ .../{ => misc}/indic-consonant-with-stacker.tests  |  0
+ test/shaping/tests/{ => misc}/indic-init.tests     |  0
+ .../{ => misc}/indic-joiner-candrabindu.tests      |  0
+ test/shaping/tests/{ => misc}/indic-joiners.tests  |  0
+ test/shaping/tests/{ => misc}/indic-old-spec.tests |  0
+ .../tests/{ => misc}/indic-pref-blocking.tests     |  0
+ .../tests/{ => misc}/indic-script-extensions.tests |  0
+ .../tests/{ => misc}/indic-special-cases.tests     |  0
+ test/shaping/tests/{ => misc}/indic-syllable.tests |  0
+ test/shaping/tests/{ => misc}/language-tags.tests  |  0
+ test/shaping/tests/{ => misc}/ligature-id.tests    |  0
+ .../shaping/tests/{ => misc}/mark-attachment.tests |  0
+ .../tests/{ => misc}/mark-filtering-sets.tests     |  0
+ .../{ => misc}/mongolian-variation-selector.tests  |  0
+ test/shaping/tests/{ => misc}/simple.tests         |  0
+ test/shaping/tests/{ => misc}/spaces.tests         |  0
+ .../tests/{ => misc}/tibetan-contractions-1.tests  |  0
+ .../tests/{ => misc}/tibetan-contractions-2.tests  |  0
+ test/shaping/tests/{ => misc}/tibetan-vowels.tests |  0
+ test/shaping/tests/{ => misc}/use-marchen.tests    |  0
+ test/shaping/tests/{ => misc}/use-syllable.tests   |  0
+ test/shaping/tests/{ => misc}/use.tests            |  0
+ .../shaping/tests/{ => misc}/variations-rvrn.tests |  0
+ test/shaping/tests/{ => misc}/vertical.tests       |  0
+ .../tests/{ => misc}/zero-width-marks.tests        |  0
+ 43 files changed, 42 insertions(+), 42 deletions(-)
+
+commit 748b989a1fa931b011d6a4e3db39dfdc632946b2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 17:55:17 2018 +0100
+
+    [aat/morx] Implement NoncontextualSubtables
+
+    Also makes hb-ot-shape call morx for now instead of GSUB... Just
+    for testing.
+
+ src/hb-aat-layout-common-private.hh | 34 +++++++--------
+ src/hb-aat-layout-morx-table.hh     | 82
+ ++++++++++++++++++++++++++++++++++---
+ src/hb-aat-layout-private.hh        |  3 ++
+ src/hb-aat-layout.cc                | 13 +++++-
+ src/hb-ot-shape.cc                  |  6 +++
+ 5 files changed, 111 insertions(+), 27 deletions(-)
+
+commit 4cf3ab1d8192862f8d3c52fdcaec567735916116
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 16:32:58 2018 +0100
+
+    Minor
+
+ src/hb-ot-shape.cc | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 470fe5b603b409bef136fdd4e9b33d2704dc77b7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 15:48:51 2018 +0100
+
+    [aat] Implement Lookup table
+
+    Untested, but compiles.
+
+ src/hb-aat-layout-common-private.hh | 308
+ +++++++++++++++++++++++++++++++++++-
+ src/hb-aat-layout-morx-table.hh     |   9 +-
+ src/hb-aat-layout.cc                |  14 ++
+ src/hb-face.cc                      |   6 +-
+ src/hb-open-type-private.hh         |  16 +-
+ src/hb-ot-cbdt-table.hh             |   4 +-
+ src/hb-ot-cmap-table.hh             |   2 +-
+ src/hb-ot-glyf-table.hh             |   6 +-
+ src/hb-ot-hmtx-table.hh             |   8 +-
+ src/hb-ot-kern-table.hh             |   2 +-
+ src/hb-ot-layout.cc                 |   6 +-
+ src/hb-ot-post-table.hh             |   2 +-
+ src/hb-uniscribe.cc                 |   2 +-
+ 13 files changed, 355 insertions(+), 30 deletions(-)
+
+commit 4646a80a873fa164b9cf09128bc6b6fe2fc5cce2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 9 12:06:38 2018 +0100
+
+    Minor
+
+ src/hb-ot-layout-common-private.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 7c7cb42d8125d7e598bfa70f93053cafe38b325a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 8 14:32:55 2018 +0000
+
+    [aat] Update previous commits for rebase on master
+
+ src/hb-aat-layout-common-private.hh | 14 +++++++-------
+ src/hb-aat-layout-morx-table.hh     | 28 ++++++++++++++--------------
+ src/hb-open-type-private.hh         |  5 -----
+ 3 files changed, 21 insertions(+), 26 deletions(-)
+
+commit a0175e75bc40b5496d7fd37afd434cb2000e5b9b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 17 16:55:54 2017 -0700
+
+    [aat] Start implementing common table formats
+
+ src/Makefile.sources                |   2 +
+ src/hb-aat-layout-common-private.hh | 134
+ ++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout-morx-table.hh     |   1 +
+ src/hb-aat-layout-private.hh        |  37 ++++++++++
+ src/hb-aat-layout.cc                |   1 +
+ 5 files changed, 175 insertions(+)
+
+commit c71b55a223d14f8bb7fa355efc586e824b7d4d8f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 14 17:24:36 2017 -0700
+
+    [aat] Start implementing Apple AAT morx table
+
+ src/Makefile.sources            |   2 +
+ src/hb-aat-layout-morx-table.hh | 275
+ ++++++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout.cc            |  42 ++++++
+ src/hb-open-type-private.hh     |   5 +
+ src/hb-ot-layout-private.hh     |   5 +
+ src/hb-ot-layout.cc             |   2 +
+ 6 files changed, 331 insertions(+)
+
+commit 3c7aeb5c6437b26ad638ab993b724e28376d3ff8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jan 9 01:39:42 2018 +0330
+
+    [cmake] Add autotools like feature testing (#683)
+
+ CMakeLists.txt | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
+commit 0473d95e276ae5df722bc7d371733d8202bdbc3c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 8 10:07:46 2018 +0000
+
+    [ft] Use FT_Done_MM_Var() if available
+
+ configure.ac | 1 +
+ src/hb-ft.cc | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+commit 66d7beff96d622599e1ee8895f2aa84fe2299f1a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 18:09:29 2018 +0000
+
+    [khmer] Relax!
+
+    Apparently we don't use OT_A either.
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit db0207baff358b20fbe9c3498275ba33f69caf87
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 18:06:00 2018 +0000
+
+    [khmer] Drop another joiner
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 90affe831f08fabcb2dd5ac837c7b0cfbd14e554
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 18:04:56 2018 +0000
+
+    [khmer] Shuffle
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 65795e3ca246bf65b3cb53e3fe65eca312774e3e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 18:03:00 2018 +0000
+
+    [khmer] Simplify grammar some more
+
+    Numbers down (from 38):
+
+    KHMER: 299090 out of 299124 tests passed. 34 failed (0.0113665%)
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e13ee937310a7aadd83fd266dae382da40dce4f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 18:01:01 2018 +0000
+
+    [khmer] Clean
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a71c7eb2ca9f8ba90117e1a0c4ce890f0a1640f4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:59:43 2018 +0000
+
+    [khmer] Limit number of joiners
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 574e42e1cf6679c8df065d6bb3e8d21bc82395c1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:57:39 2018 +0000
+
+    [khmer] Relax number of consonants / matras allowed
+
+    New numbers (down from 39):
+
+    KHMER: 299086 out of 299124 tests passed. 38 failed (0.0127038%)
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 80c870bcda2f421e80f5579e71fe17fe8db991b8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:52:24 2018 +0000
+
+    [khmer] Allow Independent Vowels where stacked consonants are allowed
+
+    New numbers (down from 44):
+
+    KHMER: 299085 out of 299124 tests passed. 39 failed (0.0130381%)
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 4 ++--
+ src/hb-ot-shape-complex-khmer.cc         | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 9bd486c480b8fd3125ef6b6cc0442a566f669cb8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:47:35 2018 +0000
+
+    [khmer] Drop some more joiners
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5278265853c36400ffc284fd517cc7b7c42ed0e7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:46:49 2018 +0000
+
+    [khmer] Drop some more
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit efefd87f3354d0ae6f599ea30672cb0b74dfcd80
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:45:48 2018 +0000
+
+    [khmer] Drop some more grammar
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 82e6bf8e0c27d2fd16a908eed0c73e95b1a2c0f5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:44:18 2018 +0000
+
+    [khmer] Drop some more from grammar
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 957e8ea8a9f981775ecde7dd1e2bf4023cf79dba
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:43:31 2018 +0000
+
+    [khmer] Drop final_halant_group
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit bbfdbbdc5eca96e8c527147e5a78cd185b9f243d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:34:26 2018 +0000
+
+    Minor
+
+ src/hb-ot-shape-complex-indic-machine.rl | 1 -
+ src/hb-ot-shape-complex-khmer-machine.rl | 1 -
+ 2 files changed, 2 deletions(-)
+
+commit f6df2515210e9d828fc40173696b185efa5083e3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:27:48 2018 +0000
+
+    [indic] Remove unused OT_VD category
+
+ src/hb-ot-shape-complex-indic-machine.rl | 3 +--
+ src/hb-ot-shape-complex-indic-private.hh | 2 +-
+ src/hb-ot-shape-complex-indic.cc         | 2 +-
+ 3 files changed, 3 insertions(+), 4 deletions(-)
+
+commit e6618f3bdf79a51f6fb270b468b653dc9cea5b57
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:21:55 2018 +0000
+
+    [khmer] Shave off some more from the grammar
+
+ src/hb-ot-shape-complex-khmer-machine.rl |  9 ++-------
+ src/hb-ot-shape-complex-khmer.cc         | 34
+ ++------------------------------
+ 2 files changed, 4 insertions(+), 39 deletions(-)
+
+commit 014494d5c0469fe6b3112db3fdb3f2f262673ba1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:17:02 2018 +0000
+
+    [khmer] Remove unused symbol clusters
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit bbac984b9390a66c6ae5ee931b278b607f2f2a50
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:15:31 2018 +0000
+
+    Minor
+
+ src/hb-ot-shape-complex-indic-machine.rl | 1 -
+ src/hb-ot-shape-complex-khmer-machine.rl | 1 -
+ 2 files changed, 2 deletions(-)
+
+commit 185b68946ad67443e8725e77d724128802de5572
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:14:27 2018 +0000
+
+    [khmer] Remove medials from grammar
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+commit c265dffdf6c4930e271292226d38a8e515b6b0f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:06:29 2018 +0000
+
+    [khmer] Better fix for dangling final Coeng
+
+    This is how 1471cfee3bb2734dc44c58471362851ad27e8bd8 should have
+    been done.
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit e3fdf1fc2f399e6b79ea022501526a422d372e64
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:05:53 2018 +0000
+
+    [khmer] Remove reph/repha support from grammar
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+commit 0d3a274de1ff8e6a21c7c9857730e2eda402e310
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 17:01:37 2018 +0000
+
+    [khmer] Remove forced_rakar from grammar
+
+    Used by Sinhala only.
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 3 +--
+ src/hb-ot-shape-complex-khmer.cc         | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+commit 1471cfee3bb2734dc44c58471362851ad27e8bd8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 16:34:20 2018 +0000
+
+    [khmer] Allow a dangling final Coeng after matras
+
+    Uniscribe seems to allow that.  New numbers:
+
+    KHMER: 299080 out of 299124 tests passed. 44 failed (0.0147096%)
+
+ src/hb-ot-shape-complex-khmer-machine.rl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9eaf077ded0306d492de96b223133431f1a6d42b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 16:28:00 2018 +0000
+
+    [khmer] Remove some more unused code
+
+ src/hb-ot-shape-complex-khmer.cc | 49
+ ++--------------------------------------
+ 1 file changed, 2 insertions(+), 47 deletions(-)
+
+commit bfad6ab897a38aedc82de694ee1a17132f90b25e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 16:13:09 2018 +0000
+
+    [khmer] Remove features not used by Khmer
+
+ src/hb-ot-shape-complex-khmer.cc | 60
+ ++++------------------------------------
+ 1 file changed, 5 insertions(+), 55 deletions(-)
+
+commit 92a99ce084b19dff32d434de446144f0c4796803
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 16:08:44 2018 +0000
+
+    [khmer] Remove rphf feature
+
+ src/hb-ot-shape-complex-khmer.cc | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 238b90e77c12674edfd2e03160b8ba2a0298b79d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 16:06:53 2018 +0000
+
+    [khmer] Remove non-Khmer matra positioning code
+
+ src/hb-ot-shape-complex-khmer.cc | 76
+ +++++++---------------------------------
+ 1 file changed, 12 insertions(+), 64 deletions(-)
+
+commit f8553c898a414298403c335f8d2ed6c588a1189f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 16:04:02 2018 +0000
+
+    [khmer] Remove indic_config_t
+
+ src/hb-ot-shape-complex-khmer.cc | 28 ----------------------------
+ 1 file changed, 28 deletions(-)
+
+commit a119a8bce57abc440ae4c8b9a1342d428a7c9b6a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 16:02:27 2018 +0000
+
+    [khmer] Remove indic_config->reph_mode
+
+ src/hb-ot-shape-complex-khmer.cc | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+commit c135324af107d3e33420cd0dca4d5bb12fd3f4a1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 16:01:17 2018 +0000
+
+    [khmer] Remove indic_config->reph_pos
+
+ src/hb-ot-shape-complex-khmer.cc | 333
+ ++-------------------------------------
+ 1 file changed, 10 insertions(+), 323 deletions(-)
+
+commit ffcd6c7efd21bf89b41ddbf148b05672a42ecadd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 15:50:05 2018 +0000
+
+    [khmer] Remove indic_config->base_pos
+
+ src/hb-ot-shape-complex-khmer.cc | 229
+ ++-------------------------------------
+ 1 file changed, 7 insertions(+), 222 deletions(-)
+
+commit 0c91638d48d6fb86d1e30fb94c15785707395b42
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 15:45:30 2018 +0000
+
+    [khmer] Remove other scripts
+
+ src/hb-ot-shape-complex-khmer.cc | 131
+ ++++++++++-----------------------------
+ 1 file changed, 34 insertions(+), 97 deletions(-)
+
+commit 4c0199c573f79be5f40e7d4f8433ef6a1c9c24b2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 15:43:48 2018 +0000
+
+    [khmer] Remove indic_config->script
+
+ src/hb-ot-shape-complex-khmer.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 9b135d9524e51cc1e1f35479e015c746ccd8ca5f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 15:43:11 2018 +0000
+
+    [khmer] Remove indic_config->virama
+
+ src/hb-ot-shape-complex-khmer.cc | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit 7eb3ac29d388432c311981b20b1aa75f47249bfc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 15:41:31 2018 +0000
+
+    [khmer] Remove indic_config->has_old_spec
+
+ src/hb-ot-shape-complex-khmer.cc | 157
+ ++++++---------------------------------
+ 1 file changed, 21 insertions(+), 136 deletions(-)
+
+commit 961ebf85f1e7d417e056c3927ee73857f6f4cde6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 15:36:53 2018 +0000
+
+    [khmer] Remove Halant from Khmer shaper
+
+ src/hb-ot-shape-complex-indic-private.hh |  1 -
+ src/hb-ot-shape-complex-khmer-machine.rl |  7 +++----
+ src/hb-ot-shape-complex-khmer.cc         | 32
+ ++++++++++++++++----------------
+ 3 files changed, 19 insertions(+), 21 deletions(-)
+
+commit 9761f9d78214323b9ad58dd0b8ba41851c9e2d54
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 15:33:11 2018 +0000
+
+    [indic] Remove more Khmer-specific stuff from Indic shaper
+
+    No numbers changed.
+
+ src/hb-ot-shape-complex-indic-machine.rl |  8 ++---
+ src/hb-ot-shape-complex-indic.cc         | 57
+ ++++++++++++--------------------
+ 2 files changed, 25 insertions(+), 40 deletions(-)
+
+commit 075895364435ee88936696bcb5457283c4bb1a29
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 15:08:28 2018 +0000
+
+    [indic] Remove main Khmer stuff
+
+ src/hb-ot-shape-complex-indic.cc | 73
+ ++--------------------------------------
+ 1 file changed, 2 insertions(+), 71 deletions(-)
+
+commit dcf4d95fea45e19fbb3b39f0211b2aa96a907473
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 14:54:31 2018 +0000
+
+    [khmer] Split off Khmer shaper from Indic
+
+    Towards fixing https://github.com/harfbuzz/harfbuzz/issues/667
+    The Khmer spec is different enough from other Indic ones to require
+    its own grammar.
+
+    No change in functionality.  Test numbers are:
+
+    BENGALI: 353725 out of 354188 tests passed. 463 failed (0.130722%)
+    DEVANAGARI: 707307 out of 707394 tests passed. 87 failed (0.0122987%)
+    GUJARATI: 366355 out of 366457 tests passed. 102 failed (0.0278341%)
+    GURMUKHI: 60729 out of 60747 tests passed. 18 failed (0.0296311%)
+    KANNADA: 951300 out of 951913 tests passed. 613 failed (0.0643966%)
+    KHMER: 299071 out of 299124 tests passed. 53 failed (0.0177184%)
+    MALAYALAM: 1048136 out of 1048334 tests passed. 198 failed
+    (0.0188871%)
+    ORIYA: 42320 out of 42329 tests passed. 9 failed (0.021262%)
+    SINHALA: 271662 out of 271847 tests passed. 185 failed (0.068053%)
+    TAMIL: 1091754 out of 1091754 tests passed. 0 failed (0%)
+    TELUGU: 970555 out of 970573 tests passed. 18 failed (0.00185457%)
+
+ src/Makefile.sources                     |    3 +
+ src/hb-ot-shape-complex-khmer-machine.rl |  130 +++
+ src/hb-ot-shape-complex-khmer.cc         | 1867
+ ++++++++++++++++++++++++++++++
+ src/hb-ot-shape-complex-private.hh       |    5 +-
+ 4 files changed, 2003 insertions(+), 2 deletions(-)
+
+commit 1e05ea79d057fbae5f680589d4ee7d3c6a971689
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 14:01:37 2018 +0000
+
+    [ot] Short-circuit base instance advance variation
+
+ src/hb-ot-hmtx-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 54b2b93722c9f067199cd7145dfd065d5b6b2f0c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 13:20:21 2018 +0000
+
+    [ot] Fix VariationStore evaluation algorithm
+
+    Ouch!  Missing coords should still be evaluated as coord=0, which
+    most of the time results in a factor of 0.  We were skipping these,
+    which was equivalent to a factor of 1.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/652
+
+ src/hb-ot-layout-common-private.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit a3afdd1e080bb181ddec126b6233d52438882a13
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 13:17:02 2018 +0000
+
+    Minor
+
+ src/hb-ot-layout-common-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit cb43bdbc2f3a16061c33596b15b29eb7f9713871
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 13:06:25 2018 +0000
+
+    [ft] If there's no variations set, don't set them on hb-font
+
+ src/hb-ft.cc | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+commit ed2f458b143327d07e67fdb976ead9d7ff2863f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 12:55:39 2018 +0000
+
+    Add test font for previous commit
+
+ .../sha1sum/21b7fb9c1eeae260473809fbc1fe330f66a507cd.ttf | Bin 0 ->
+ 4816 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 127bcc6ece4da64e807f652dd84a17c6a8c5e300
+Merge: 72bec1cd 8c0d1916
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 12:50:22 2018 +0000
+
+    Merge remote-tracking branch 'fdo/master'
+
+commit 8c0d1916a41f0fb32340ce5257de780acf598353
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 5 12:46:12 2018 +0000
+
+    Improve CGJ skipping logic
+
+    Previously we made CGJ unskippable.  Now, if CGJ did NOT prevent
+    any reordering, allow skipping over it.  To make this work we
+    had to make changes to the Arabic mark reordering algorithm
+    implementation to renumber moved MCM marks.  See comments.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/554
+
+ src/hb-buffer-private.hh                   |  1 +
+ src/hb-ot-layout-private.hh                | 11 ++++++++-
+ src/hb-ot-shape-complex-arabic.cc          | 37
+ ++++++++++++++++++++++--------
+ src/hb-ot-shape-normalize.cc               | 30 +++++++++++++-----------
+ test/shaping/tests/arabic-mark-order.tests |  4 ++++
+ 5 files changed, 58 insertions(+), 25 deletions(-)
+
+commit 72bec1cd09f919f3826345db4832752ec96ff5c5
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jan 5 12:42:20 2018 +0330
+
+    Improve tests (#679)
+
+ .circleci/config.yml        |  2 +-
+ CMakeLists.txt              | 52
+ +++++++++++++++++++++++++++++++++++----------
+ autogen.sh                  |  6 ++++--
+ src/Makefile.am             |  3 +--
+ src/check-defs.sh           |  2 +-
+ src/check-header-guards.sh  |  2 +-
+ src/check-libstdc++.sh      |  2 +-
+ src/check-static-inits.sh   |  2 +-
+ src/check-symbols.sh        |  2 +-
+ test/fuzzing/CMakeLists.txt | 11 +++++++++-
+ 10 files changed, 62 insertions(+), 22 deletions(-)
+
+commit 293e443529d0621b9f94ea15d1425104394f6b9e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 4 16:06:25 2018 +0000
+
+    Minor
+
+ src/check-c-linkage-decls.sh | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 8a0952db7e521320cd4d8b67b287f7d33c21b6e0
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Thu Jan 4 18:40:10 2018 +0700
+
+    atomics: Favor compiler primitives over macOS APIs. (#676)
+
+    In macOS 10.12, the `OSMemoryBarrier` and related APIs were deprecated
+    in favor of using `std::atomic`. On the way to supporting
+    `std::atomic`,
+    we can favor using the "Intel primitives" which are also available on
+    macOS.
+
+ src/hb-atomic-private.hh | 46
+ +++++++++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
+
+commit 4f80078eb035054db0f6e33cf4f7345c6c85cb12
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Thu Jan 4 18:37:35 2018 +0700
+
+    [cmake] Colorize output when using cmake + ninja. (#674)
+
+    Due to how ninja runs clang and gcc, it doesn't colorize the output
+    like make does. This forces color output in this situation.
+
+ CMakeLists.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+commit 5ed26fc5bdfdab0ff41a8861b54395c0bbbad248
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jan 4 10:11:34 2018 +0330
+
+    [cmake] Run src/ tests (#675)
+
+ .circleci/config.yml      |  9 ++++-----
+ CMakeLists.txt            | 35 ++++++++++++++++++++++++++++++++---
+ src/Makefile.am           |  1 +
+ src/check-defs.sh         |  3 ++-
+ src/check-libstdc++.sh    |  3 ++-
+ src/check-static-inits.sh |  3 ++-
+ src/check-symbols.sh      |  3 ++-
+ 7 files changed, 45 insertions(+), 12 deletions(-)
+
+commit f8daeef4c4451084a781db3a8a04807c0f0051ef
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 3 14:27:34 2018 +0000
+
+    [use] Simplify more
+
+ src/gen-use-table.py                 | 11 +------
+ src/hb-ot-shape-complex-use-table.cc | 62
+ +++++++++++++++++++++---------------
+ 2 files changed, 38 insertions(+), 35 deletions(-)
+
+commit 877d15e73c24159b26bb7cc6d2f62045d445d0fc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 3 14:24:44 2018 +0000
+
+    [use] Simplify
+
+    Fixes https://github.com/harfbuzz/harfbuzz/pull/661
+
+ src/gen-use-table.py                 | 2 +-
+ src/hb-ot-shape-complex-use-table.cc | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+commit 308f419215716460479fbde482d66d1687176102
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 3 14:22:07 2018 +0000
+
+    [use] Fix Brahmi Number Joiner 1107F
+
+    Fixes https://github.com/harfbuzz/harfbuzz/pull/660
+
+ src/gen-indic-table.py                 | 6 +++---
+ src/gen-use-table.py                   | 6 +++---
+ src/hb-ot-shape-complex-indic-table.cc | 4 ++--
+ src/hb-ot-shape-complex-use-table.cc   | 6 +++---
+ 4 files changed, 11 insertions(+), 11 deletions(-)
+
+commit 7b837e20d2b4b6cd7be0b181ac5cdfeb467bd146
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 3 12:46:29 2018 +0000
+
+    [util] Add TODO item
+
+ util/options.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 70807ad274be39d58a5b43e12d4585325cb314c4
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jan 2 23:52:12 2018 +0330
+
+    Fix make check issue on out-of-tree builds and test it (#672)
+
+ .circleci/config.yml             |  8 ++++----
+ test/fuzzing/Makefile.am         | 18 +-----------------
+ test/fuzzing/run-fuzzer-tests.py |  8 +++++---
+ test/shaping/run-tests.py        |  5 +++++
+ 4 files changed, 15 insertions(+), 24 deletions(-)
+
+commit 85ec6d34439194a88c7dfdd8303369311e08e031
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Wed Jan 3 01:23:23 2018 +0700
+
+    Fix typos.
+
+ docs/usermanual-clusters.xml         | 4 ++--
+ docs/usermanual-install-harfbuzz.xml | 2 +-
+ src/hb-font.h                        | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 4f6754ac0190f04b5f27306b087827b8f2e13046
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Wed Jan 3 00:15:18 2018 +0700
+
+    Improve Markdown usage in BUILD.md.
+
+ BUILD.md | 36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
+
+commit 3db1d34264d9405c7356668aa3c8ed3ab103da3c
+Author: Romain Ouabdelkader <rouabdelkader@gopro.com>
+Date:   Thu Dec 21 14:39:34 2017 +0100
+
+    link with CoreFoundation when using CoreText
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 4e3cf91af29ff654eca91e43c0af1c1a7171b9fa
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jan 1 11:17:51 2018 +0330
+
+    [cmake] Run rest of the tests on Windows (#668)
+
+ appveyor.yml                     |  6 +++---
+ test/CMakeLists.txt              |  5 +----
+ test/fuzzing/CMakeLists.txt      | 12 ++++++------
+ test/fuzzing/Makefile.am         |  5 +----
+ test/fuzzing/run-fuzzer-tests.py | 12 +++++++++---
+ test/shaping/CMakeLists.txt      |  9 ++++-----
+ test/shaping/run-tests.py        | 10 +++++++++-
+ 7 files changed, 33 insertions(+), 26 deletions(-)
+
+commit 2dbdeb14214487acd0ff011386c49263ce800813
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Dec 29 23:13:29 2017 +0330
+
+    [cmake] Run fuzzing and shaping tests (#666)
+
+ .circleci/config.yml             |  2 +-
+ CMakeLists.txt                   | 59
+ ++++++++++++++++++++++++----------------
+ appveyor.yml                     |  4 +--
+ test/CMakeLists.txt              |  5 ++++
+ test/api/CMakeLists.txt          | 48 +++++++++++++-------------------
+ test/fuzzing/CMakeLists.txt      |  9 ++++++
+ test/fuzzing/Makefile.am         | 18 ++++++++++++
+ test/fuzzing/run-fuzzer-tests.py | 28 +++++++++++++++++++
+ test/shaping/CMakeLists.txt      | 11 ++++++++
+ test/shaping/Makefile.am         |  3 +-
+ test/shaping/run-tests.py        |  3 +-
+ 11 files changed, 132 insertions(+), 58 deletions(-)
+
+commit 24b30faa2a285c6e4e46a18c346def2183fc2793
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Dec 25 22:01:28 2017 +0330
+
+    [cmake] Use GNUInstallDirs values (#665)
+
+ CMakeLists.txt | 170
+ ++++++++++++++++++++++++++++-----------------------------
+ 1 file changed, 85 insertions(+), 85 deletions(-)
+
+commit 7d397c5d5ca684fae824a61dabf5bc422d0a516b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 24 17:53:32 2017 -0500
+
+    Add Coverity badge
+
+ README | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 50163976d2a5fb34e0b4c011408d581b33aaa255
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Dec 25 01:55:48 2017 +0330
+
+    [cmake] Enable cmake tests on distribution and test it (#664)
+
+ .circleci/config.yml | 3 ++-
+ test/Makefile.am     | 6 ++++++
+ test/api/Makefile.am | 1 +
+ 3 files changed, 9 insertions(+), 1 deletion(-)
+
+commit 7bfdf1a94192dd83ab55202d259703f36ed060e5
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Wed Nov 22 16:32:52 2017 -0500
+
+    Forbid Batak killers after vowel signs
+
+ src/gen-use-table.py                                     |   3 +++
+ src/hb-ot-shape-complex-use-table.cc                     |   2 +-
+ .../sha1sum/59a585a63b3df608fbeef00956c8c108deec7de6.ttf | Bin 0 ->
+ 1164 bytes
+ test/shaping/tests/use-syllable.tests                    |   1 +
+ 4 files changed, 5 insertions(+), 1 deletion(-)
+
+commit 9890782736b9ce708c1fedd1cbb3db45cfef4c69
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Dec 25 01:32:46 2017 +0330
+
+    [ci] Add -Wno-attributes to djgpp, add alpine, format (#663)
+
+ .circleci/config.yml | 40 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
+
+commit 72ecaae0ad4c9f1685f7d524990e92a26fcd5611
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 24 16:05:07 2017 -0500
+
+    [use] Allow ZWJ before/after Halant
+
+    https://github.com/harfbuzz/harfbuzz/issues/542#issuecomment-353169729
+
+ src/hb-ot-shape-complex-use-machine.rl | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit bc92245b681098f0bfa712217851a5ba3dabeaf3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 20 13:19:33 2017 -0500
+
+    Minor
+
+ src/main.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 81dfc29d2dbc755301e702ea5427829d02abc693
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Dec 21 20:15:37 2017 +0330
+
+    [ci] Add a DOS/djgpp compiler (#659)
+
+ .circleci/config.yml | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit 007a2a4317227b8fb4c764c590203c85fc3da5fd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 20 12:09:00 2017 -0500
+
+    1.7.4
+
+ NEWS         | 7 +++++++
+ configure.ac | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
 commit a9432bde7e61894056a42ea24d56fd7fd908a1ce
 Author: Volker H. Simonis <volker.simonis@gmail.com>
 Date:   Tue Dec 19 11:33:25 2017 +0100

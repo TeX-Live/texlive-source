@@ -1,3 +1,8 @@
+2018-01-31  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import harfbuzz-1.7.5.
+	* Makefile.am, version.ac: Adjusted.
+
 2018-01-09  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac: use AX_CXX_COMPILE_STDCXX([11],,[optional])
