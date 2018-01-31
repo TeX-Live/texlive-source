@@ -998,6 +998,7 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
   @!dir_field,@!adj_dir_field: -dir_yoko..dir_yoko;
   @!pdisp_field: scaled;
   @!head_field,@!tail_field,@!pnode_field,@!last_jchr_field: pointer;
+  @!disp_called_field: boolean;
 @z
 
 @x [16.213] l.4445 - pTeX: last_jchr, direction, adjust_dir, prev_{node,disp}
@@ -1011,6 +1012,7 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
 @d prev_node==cur_list.pnode_field {previous to last |disp_node|}
 @d prev_disp==cur_list.pdisp_field {displacemant at |prev_node|}
 @d last_jchr==cur_list.last_jchr_field {final jchar node on current list}
+@d disp_called==cur_list.disp_called_field {is a |disp_node| present in the current list?}
 @z
 
 @x [16.214] l.4464 - pTeX: prev_append: disp_node
@@ -1029,13 +1031,14 @@ mode:=vmode; head:=contrib_head; tail:=contrib_head;
 @y
 mode:=vmode; head:=contrib_head; tail:=contrib_head; prev_node:=tail;
 direction:=dir_yoko; adjust_dir:=direction; prev_disp:=0; last_jchr:=null;
+disp_called:=false;
 @z
 
 @x [16.216] l.4496 - pTeX: last_jchr, displacement.
 incr(nest_ptr); head:=get_avail; tail:=head; prev_graf:=0; mode_line:=line;
 @y
 incr(nest_ptr); head:=new_null_box; tail:=head; prev_node:=tail;
-prev_graf:=0; prev_disp:=0; last_jchr:=null; mode_line:=line;
+prev_graf:=0; prev_disp:=0; disp_called:=false; last_jchr:=null; mode_line:=line;
 @z
 
 @x [16.217] l.4504 - pTeX: pop_nest last_jchr
@@ -4447,7 +4450,7 @@ r:=link(q); link(q):=null; q:=link(temp_head); link(temp_head):=r;
 if last_disp<>0 then begin
   r:=get_node(small_node_size);
   type(r):=disp_node; disp_dimen(r):=last_disp;
-  link(r):=q; q:=r;
+  link(r):=q; q:=r; disp_called:=true;
   end;
 @z
 
@@ -7127,7 +7130,11 @@ goto main_loop_j+3;
 @#
 main_loop_j+1: space_factor:=1000;
   if main_f<>null_font then
-    begin fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
+    begin if not disp_called then
+      begin prev_node:=tail; tail_append(get_node(small_node_size));
+      type(tail):=disp_node; disp_dimen(tail):=0; disp_called:=true
+	  end;
+	fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
     link(tail):=main_p; tail:=main_p; last_jchr:=tail;
     fast_get_avail(main_p); info(main_p):=KANJI(cur_chr);
     link(tail):=main_p; tail:=main_p;
@@ -7190,9 +7197,10 @@ begin if not is_char_node(tail)and(type(tail)=disp_node) then
   else disp_dimen(tail):=disp;
   end
 else
-  if disp<>0 then
+  if disp<>0 or not disp_called then
     begin prev_node:=tail; tail_append(get_node(small_node_size));
     type(tail):=disp_node; disp_dimen(tail):=disp; prev_disp:=disp;
+	disp_called:=true
     end;
 end;
 
@@ -7204,13 +7212,16 @@ begin if not is_char_node(tail)and(type(tail)=disp_node) then
 else
   begin prev_node:=tail; tail_append(get_node(small_node_size));
   type(tail):=disp_node; disp_dimen(tail):=0; prev_disp:=disp;
+  disp_called:=true
   end;
 end;
 
 @ @<Look ahead for glue or kerning@>=
 cur_q:=tail;
 if inhibit_glue_flag<>true then
-  begin if char_tag(main_i)=gk_tag then
+  begin if (tail=link(head))and(not is_char_node(tail))and(type(tail)=disp_node) then
+    goto skip_loop
+  else begin if char_tag(main_i)=gk_tag then
     begin main_k:=glue_kern_start(main_f)(main_i);
     repeat main_j:=font_info[main_k].qqqq;
     if next_char(main_j)=cur_l then
@@ -7244,6 +7255,7 @@ if inhibit_glue_flag<>true then
     end;
   incr(main_k);
   until skip_byte(main_j)>=stop_flag;
+  end;
   end;
 end;
 skip_loop: inhibit_glue_flag:=false;

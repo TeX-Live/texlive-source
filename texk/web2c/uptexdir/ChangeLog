@@ -1,3 +1,7 @@
+2018-01-31  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex-m.ch: Adapt to changes in ptexdir/ptex-base.ch (disp_node).
+
 2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* uppltotf.ch, uptftopl.ch, uptex-m.ch: Adapt to the new JFM spec.
