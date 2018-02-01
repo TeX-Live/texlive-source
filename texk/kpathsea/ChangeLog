@@ -1,3 +1,9 @@
+2018-02-01  Karl Berry  <karl@freefriends.org>
+
+	* lib.h (KPSE_CNF_P): new macro.
+	* tex-file.c (kpathsea_find_file_generic): use it,
+	for try_std_extension_first.
+
 2018-01-27  Karl Berry  <karl@freefriends.org>
 
 	* readable.h: doc fixes.
