@@ -122,6 +122,12 @@ extern "C" {
 /* If the environment variable TEST is set, return it; otherwise,
    DEFAULT.  This is useful for paths that use more than one envvar.  */
 #define ENVVAR(test, default) (getenv (test) ? (test) : (default))
+
+/* Return whether a kpse configuration is (some sort of) true.  Check
+   for negation values, so a value like "2" will be true, just in case.  */
+#define KPSE_CNF_P(val) \
+  ((val) && *(val) && *(val) != 'f' && *(val) != '0')
+
 
 /* Return a fresh copy of S1 followed by S2, et al.  */
 extern KPSEDLL string concat (const_string s1, const_string s2);
