@@ -35,7 +35,7 @@ int jfmread(int kcode)
 				gk_ind = upair(&glue_kern[gk_ind*4+2]);
 			for (i = 0 ; i < nl-gk_ind ; i++) {
 				/* if rearrangement already handled ... */
-				if (glue_kern[gk_ind*4] > 128) break; /* ... skip loop */
+				if (glue_kern[(gk_ind+i)*4] > 128) break; /* ... skip loop */
 				if (glue_kern[(gk_ind+i)*4+1] == ctype) {
 					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
 						gk2_ind = glue_kern[(gk_ind+i)*4+3];
@@ -61,7 +61,7 @@ int jfmread(int kcode)
 				gk_ind = upair(&glue_kern[gk_ind*4+2]);
 			for (i = 0 ; i < nl-gk_ind ; i++) {
 				/* if rearrangement already handled ... */
-				if (glue_kern[gk_ind*4] > 128) break; /* ... skip loop */
+				if (glue_kern[(gk_ind+i)*4] > 128) break; /* ... skip loop */
 				if (glue_kern[(gk_ind+i)*4+1] == 0) {
 					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
 						gk2_ind = glue_kern[(gk_ind+i)*4+3];
