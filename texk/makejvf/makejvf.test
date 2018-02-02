@@ -12,9 +12,18 @@
   cmp $srcdir/tests/tmin10.vf tmin10.vf && \
   cmp $srcdir/tests/rmlv.tfm rmlv.tfm || exit 1
 
-./makejvf -e -i -u custom -t $srcdir/tests/uni10.cnf -m $srcdir/tests/testnewu urml && \
+# followings are supported in texjporg version
+./makejvf -e -i -u custom -t $srcdir/tests/uni10.cnf $srcdir/tests/testnewu urml && \
   cmp $srcdir/tests/testnewu.vf testnewu.vf && \
   cmp $srcdir/tests/rml.tfm urml.tfm || exit 1
+
+./makejvf -e -i -u custom -t $srcdir/tests/uni10.cnf $srcdir/tests/gkhugeok urml && \
+  cmp $srcdir/tests/gkhugeok.vf gkhugeok.vf && \
+  cmp $srcdir/tests/rml.tfm urml.tfm || exit 1
+
+./makejvf -e $srcdir/tests/skipjfmp rml && \
+  cmp $srcdir/tests/skipjfmp.vf skipjfmp.vf && \
+  cmp $srcdir/tests/rml.tfm rml.tfm || exit 1
 
 TEXMFCNF=$srcdir/../kpathsea \
 	./makejvf -k0 -a abc && exit 1

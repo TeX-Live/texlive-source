@@ -556,11 +556,14 @@ LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS)
 EXTRA_DIST = COPYRIGHT COPYRIGHT.jis Changes.txt README.txt \
 	tests/min10.tfm tests/min10.vf tests/rml.tfm tests/rmlv.tfm \
 	tests/tmin10.tfm tests/tmin10.vf tests/testnewu.tfm \
-	tests/testnewu.vf
+	tests/testnewu.vf tests/gkhugeok.tfm tests/gkhugeok.vf \
+	tests/skipjfmp.tfm tests/skipjfmp.vf
 dist_check_SCRIPTS = makejvf.test
 TESTS = makejvf.test
 dist_man1_MANS = makejvf.1
-DISTCLEANFILES = min10.vf rml.tfm rmlv.tfm tmin10.vf testnewu.vf urml.tfm
+DISTCLEANFILES = min10.vf rml.tfm rmlv.tfm tmin10.vf testnewu.vf \
+	gkhugeok.vf skipjfmp.vf urml.tfm
+
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

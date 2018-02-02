@@ -28,12 +28,14 @@ int jfmread(int kcode)
 	rightamount = 0;
 	if (w != zw && ctype > 0) {
 		/* get natural length of JFM glue between <type0> and <type of kcode> */
-		tag = char_info[ctype*4+2] % 4;
+		tag = char_info[0*4+2] % 4;
 		if (tag == 1) {
 			gk_ind = char_info[0*4+3]; /* remainder for <type0> */
-			if (glue_kern[gk_ind*4] == 254) /* support for large gluekern table */
+			if (glue_kern[gk_ind*4] > 128) /* huge gluekern table rearranged */
 				gk_ind = upair(&glue_kern[gk_ind*4+2]);
 			for (i = 0 ; i < nl-gk_ind ; i++) {
+				/* if rearrangement already handled ... */
+				if (glue_kern[gk_ind*4] > 128) break; /* ... skip loop */
 				if (glue_kern[(gk_ind+i)*4+1] == ctype) {
 					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
 						gk2_ind = glue_kern[(gk_ind+i)*4+3];
@@ -45,17 +47,21 @@ int jfmread(int kcode)
 					}
 					break;
 				}
-				if (glue_kern[(gk_ind+i)*4] >= 128)
+				if (glue_kern[(gk_ind+i)*4] >= 128) /* end of program */
 					break;
+				else /* SKIP */
+					i += glue_kern[(gk_ind+i)*4];
 			}
 		}
 		/* get natural length of JFM glue between <type of kcode> and <type0> */
 		tag = char_info[ctype*4+2] % 4;
 		if (tag == 1) {
 			gk_ind = char_info[ctype*4+3]; /* remainder for <type of kcode> */
-			if (glue_kern[gk_ind*4] == 254) /* support for large gluekern table */
+			if (glue_kern[gk_ind*4] > 128) /* huge gluekern table rearranged */
 				gk_ind = upair(&glue_kern[gk_ind*4+2]);
 			for (i = 0 ; i < nl-gk_ind ; i++) {
+				/* if rearrangement already handled ... */
+				if (glue_kern[gk_ind*4] > 128) break; /* ... skip loop */
 				if (glue_kern[(gk_ind+i)*4+1] == 0) {
 					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
 						gk2_ind = glue_kern[(gk_ind+i)*4+3];
@@ -67,8 +73,10 @@ int jfmread(int kcode)
 					}
 					break;
 				}
-				if (glue_kern[(gk_ind+i)*4] >= 128)
+				if (glue_kern[(gk_ind+i)*4] >= 128) /* end of program */
 					break;
+				else /* SKIP */
+					i += glue_kern[(gk_ind+i)*4];
 			}
 		}
 		if (abs(zw - ll - w - rr) <= 1) /* allow round-off error */

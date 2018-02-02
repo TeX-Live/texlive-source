@@ -38,7 +38,12 @@ EXTRA_DIST += \
 	tests/tmin10.tfm \
 	tests/tmin10.vf \
 	tests/testnewu.tfm \
-	tests/testnewu.vf
+	tests/testnewu.vf \
+	tests/gkhugeok.tfm \
+	tests/gkhugeok.vf \
+	tests/skipjfmp.tfm \
+	tests/skipjfmp.vf
 
-DISTCLEANFILES = min10.vf rml.tfm rmlv.tfm tmin10.vf testnewu.vf urml.tfm
+DISTCLEANFILES = min10.vf rml.tfm rmlv.tfm tmin10.vf testnewu.vf \
+	gkhugeok.vf skipjfmp.vf urml.tfm
 
