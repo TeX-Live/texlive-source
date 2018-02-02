@@ -13,9 +13,11 @@
 @z
 
 @x
-max_kanji=7237; { maximam number of 2byte characters }
+max_kanji=7237; { maximum number of 2byte characters }
+max_kanji_code=@"7E7E; { maximum jis code }
 @y
 max_kanji=1114111; { maximam number of 2byte characters }
+max_kanji_code=@"10FFFF; { maximum ucs code }
 @z
 
 @x function get_next_raw
@@ -91,27 +93,10 @@ else if multistrlen(ustringcast(buffer), loc+2, loc)=2 then
   incr(loc); cur_char:=" ";
 @y
 else if (ch='U')or(ch='u') then
-  begin repeat ch:=get_next_raw; until ch<>' ';
-  cx:=todig(xord[ch])*@"1000;
-  incr(loc); ch:=xord[buffer[loc]]; cx:=cx+todig(ch)*@"100;
-  incr(loc); ch:=xord[buffer[loc]]; cx:=cx+todig(ch)*@"10;
-  incr(loc); ch:=xord[buffer[loc]]; cx:=cx+todig(ch);
-  { Uxxxx done, following code supports Uxxxxx and Uxxxxxx }
-  incr(loc); ch:=xord[buffer[loc]];
-  if (ch<>' ') then begin {5th digit found, proceed}
-    cx:=cx*@"10+todig(ch);
-    incr(loc); ch:=xord[buffer[loc]];
-    if (ch<>' ') then {6th digit found, proceed}
-      cx:=cx*@"10+todig(ch)
-    else begin {6th digit not found, recover}
-      decr(loc); ch:=xord[buffer[loc]];
-      end
-    end
-  else begin {5th digit not found, recover}
-    decr(loc); ch:=xord[buffer[loc]];
-    end;
-  jis_code:=toDVI(fromUCS(cx));
-  cur_char:=ch;
+  begin repeat ch:=get_next_raw;
+  until ch<>' '; {skip the blanks after the type code}
+  @<Scan a Kanji hexadecimal code@>;
+  jis_code:=toDVI(fromUCS(cx)); cur_char:=ch;
   if not valid_jis_code(jis_code) then
     err_print('jis code ', jis_code:1, ' is invalid');
   end

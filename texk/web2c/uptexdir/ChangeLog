@@ -1,3 +1,10 @@
+2018-02-02  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* uppltotf.ch: Adapt to changes in ptexdir/ppltotf.ch.
+	* am/uptex.am: Add new tests.
+	* gkhuge.test, tests/gkhuge.tex, tests/gkhuge{ok,ng}.tfm,
+	  uparse.test, tests/uparse.{pl,tfm} : New test files.
+
 2018-01-31  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch: Adapt to changes in ptexdir/ptex-base.ch (disp_node).

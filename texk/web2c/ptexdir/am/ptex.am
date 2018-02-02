@@ -1,5 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
+## Copyright (C) 2016-2018 Karl Berry <tex-live@tug.org>
 ## Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -177,12 +178,14 @@ pweb_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
 pweb_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
 pweb_tests += ptexdir/sample.test
 pweb_tests += ptexdir/yokotate.test
+pweb_tests += ptexdir/skipjfmp.test
 ptexdir/pbibtex.log ptexdir/pbibtex-openout-test.log ptexdir/pbibtex-longline-test.log \
 	ptexdir/pbibtex-mem.log ptexdir/nissya.log: pbibtex$(EXEEXT)
 ptexdir/pdvitype.log ptexdir/sample.log: pdvitype$(EXEEXT)
 ptexdir/ppltotf.log: ppltotf$(EXEEXT)
 ptexdir/ptftopl.log: ptftopl$(EXEEXT)
 ptexdir/yokotate.log: ppltotf$(EXEEXT) ptftopl$(EXEEXT)
+ptexdir/skipjfmp.log: ppltotf$(EXEEXT) ptftopl$(EXEEXT)
 
 EXTRA_DIST += $(ptex_tests) $(pweb_tests)
 DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
@@ -220,6 +223,9 @@ DISTCLEANFILES += ptests/xsample.typ
 EXTRA_DIST += ptexdir/tests/min10.pl ptexdir/tests/min10.tfm
 EXTRA_DIST += ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm
 DISTCLEANFILES += ptests/x*min10.*
+## ptexdir/skipjfmp.test
+EXTRA_DIST += ptexdir/tests/skipjfmp.pl ptexdir/tests/skipjfmp.tfm
+DISTCLEANFILES += ptests/xskipjfmp.*
 ## ptexdir/ptriptest
 EXTRA_DIST += ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf
 ptrip.diffs: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)

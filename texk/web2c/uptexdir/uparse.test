@@ -1,0 +1,31 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2018 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d uptests || mkdir -p uptests
+
+# Test inputs
+testdir=$srcdir/uptexdir/tests
+
+# Testing upPLtoTF/upTFtoPL for JPL parsing
+# and direct charcter printing (without -charcode-format octal).
+for font in uparse; do
+
+  # allow hex kanji code with arbitary digits,
+  # no error for no trailing spaces.
+  ./uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
+    cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 1
+
+  # upTFtoPL should always print ASCII characters in charcode format,
+  # even when -charcode-format octal is disabled; otherwise
+  # upPLtoTF cannot accept the resulting JPL file correctly.
+  # This test is constructed as a cycle, so that there is no
+  # non-ASCII character inside test case distribution.
+  TEXMFCNF=$srcdir/../kpathsea \
+    ./uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl && \
+    ./uppltotf -verbose uptests/y$font.pl uptests/y$font.tfm && \
+    cmp $testdir/$font.tfm uptests/y$font.tfm && echo || exit 1
+
+done
+
