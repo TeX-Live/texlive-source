@@ -1,3 +1,12 @@
+2018-02-02  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* tfmread.c: Support SKIP property in GLUEKERN table.
+	* write.c: Remove warning message on enhanced mode (hoping
+	  well-tested).
+	* version.h: Bump version.
+	* tests/{gkhugeok,skipjfmp}.{tfm,vf}: New test files.
+	* Makefile.am, makejvf.test: Add new tests.
+
 2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tfmread.c: Support new JFM spec (3-byte characters in TYPE > 0).
