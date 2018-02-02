@@ -1,0 +1,33 @@
+\prebreakpenalty`…=0
+\postbreakpenalty`「=0
+\postbreakpenalty`【=0
+\postbreakpenalty`（=0
+\postbreakpenalty`：=0
+\postbreakpenalty`；=0
+
+\tracingonline1
+\showboxdepth10000
+\showboxbreadth10000
+
+\font\x=jis\x
+\setbox0=\hbox{あ…あ「あ【あ（あ：あ；あ}\showbox0
+\box0
+
+\font\y=skipjfmp at 9.62216pt\y
+\setbox2=\hbox{あ…あ「あ【あ（あ：あ；あ}\showbox2
+\box2
+
+\newfam\mx
+\newfam\my
+\textfont\mx=\x \scriptfont\mx=\x \scriptscriptfont\mx=\x
+\textfont\my=\y \scriptfont\my=\y \scriptscriptfont\my=\y
+
+\jfam\mx
+\setbox4=\hbox{$あ…あ「あ【あ（あ：あ；あ$}\showbox4
+\box4
+
+\jfam\my
+\setbox6=\hbox{$あ…あ「あ【あ（あ：あ；あ$}\showbox6
+\box6
+
+\bye

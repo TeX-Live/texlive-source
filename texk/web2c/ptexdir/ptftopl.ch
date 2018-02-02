@@ -495,7 +495,7 @@ procedure out_kanji(jis_code:integer); { prints a kanji character }
 var @!cx:integer; {KANJI code}
 i:0..3; {index of array}
 begin@/
-if charcode_format=charcode_octal then
+if (charcode_format=charcode_octal)or(jis_code<128) then
   begin cx:=jis_code; out('J '); {specify jiscode format}
   dig[0]:=Hi(cx) div 16; dig[1]:=Hi(cx) mod 16;
   dig[2]:=Lo(cx) div 16; dig[3]:=Lo(cx) mod 16;

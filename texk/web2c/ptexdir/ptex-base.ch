@@ -2708,10 +2708,15 @@ in the |glue_kern| array. And a \.{JFM} does not use |tag=2| and |tag=3|.
 
 @x [30.557] l.11413 - pTeX: glue_kern_start
 @d lig_kern_start(#)==lig_kern_base[#]+rem_byte {beginning of lig/kern program}
+@d lig_kern_restart_end(#)==256*op_byte(#)+rem_byte(#)+32768-kern_base_offset
+@d lig_kern_restart(#)==lig_kern_base[#]+lig_kern_restart_end
 @y
 @d lig_kern_start(#)==lig_kern_base[#]+rem_byte {beginning of lig/kern program}
-@d glue_kern_start(#)==lig_kern_base[#]+rem_byte
-  {beginning of glue/kern program}
+@d lig_kern_restart_end(#)==256*op_byte(#)+rem_byte(#)+32768-kern_base_offset
+@d lig_kern_restart(#)==lig_kern_base[#]+lig_kern_restart_end
+@d glue_kern_start(#)==lig_kern_base[#]+rem_byte {beginning of glue/kern program}
+@d glue_kern_restart_end(#)==256*op_byte(#)+rem_byte(#)+32768-kern_base_offset
+@d glue_kern_restart(#)==lig_kern_base[#]+glue_kern_restart_end
 @z
 
 @x [30.560] l.11457 - pTeX: jfm_flag, jfm_id, nt, cx
@@ -3928,9 +3933,13 @@ if (math_type(subscr(q))=empty)and(math_type(supscr(q))=empty)and@|
         begin cur_c:=a; a:=glue_kern_start(cur_f)(cur_i);
         {|cur_c|:=qi(|get_jfm_pos|(|math_kcode|(p),
                    |fam_fnt|(fam(nucleus(p))+|cur_size|)));}
-        repeat
          cur_i:=font_info[a].qqqq;
-         if next_char(cur_i)=cur_c then
+         if skip_byte(cur_i)>stop_flag then {huge glue/kern table rearranged}
+           begin a:=glue_kern_restart(cur_f)(cur_i);
+           cur_i:=font_info[a].qqqq;
+           end;
+       loop@+ begin
+         if next_char(cur_i)=cur_c then if skip_byte(cur_i)<=stop_flag then
          if op_byte(cur_i)<kern_flag then
            begin gp:=font_glue[cur_f]; rr:=rem_byte(cur_i);
            if gp<>null then begin
@@ -3953,8 +3962,10 @@ if (math_type(subscr(q))=empty)and(math_type(supscr(q))=empty)and@|
          else begin p:=new_kern(char_kern(cur_f)(cur_i));
            link(p):=link(q); link(q):=p; return;
            end;
-         incr(a);
-        until skip_byte(cur_i)>=stop_flag;
+         if skip_byte(cur_i)>=stop_flag then return;
+         a:=a+qo(skip_byte(cur_i))+1; {SKIP property}
+         cur_i:=font_info[a].qqqq;
+         end;
         end;
       end;
   end;
@@ -7223,8 +7234,12 @@ if inhibit_glue_flag<>true then
     goto skip_loop
   else begin if char_tag(main_i)=gk_tag then
     begin main_k:=glue_kern_start(main_f)(main_i);
-    repeat main_j:=font_info[main_k].qqqq;
-    if next_char(main_j)=cur_l then
+    main_j:=font_info[main_k].qqqq;
+    if skip_byte(main_j)>stop_flag then {huge glue/kern table rearranged}
+      begin main_k:=glue_kern_restart(main_f)(main_j);
+        main_j:=font_info[main_k].qqqq;
+        end;
+    loop@+begin if next_char(main_j)=cur_l then if skip_byte(main_j)<=stop_flag then
       begin if op_byte(main_j)<kern_flag then
         begin gp:=font_glue[main_f]; cur_r:=rem_byte(main_j);
         if gp<>null then
@@ -7253,8 +7268,10 @@ if inhibit_glue_flag<>true then
         goto skip_loop;
         end;
     end;
-  incr(main_k);
-  until skip_byte(main_j)>=stop_flag;
+    if skip_byte(main_j)>=stop_flag then goto skip_loop;
+    main_k:=main_k+qo(skip_byte(main_j))+1; {SKIP property}
+    main_j:=font_info[main_k].qqqq;
+    end;
   end;
   end;
 end;

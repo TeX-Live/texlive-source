@@ -375,7 +375,8 @@ incr(current_option);
 We need to include some routines for handling kanji characters.
 
 @<Constants...@>=
-max_kanji=7237; { maximam number of 2byte characters }
+max_kanji=7237; { maximum number of 2byte characters }
+max_kanji_code=@"7E7E; { maximum jis code }
 yoko_id_number=11; { is identifier for YOKO-kumi font}
 tate_id_number=9; { is identifier for TATE-kumi font}
 
@@ -439,6 +440,7 @@ if cur_code=comment_code then skip_to_end_of_item
 else  begin case cur_code of
   label_code:@<Read a glue label step@>;
   stop_code:@<Read a stop step@>;
+  skip_code:@<Read a skip step@>;
   krn_code:@<Read a (glue) kerning step@>;
   glue_code:@<Read a glue step@>;
   others:
@@ -683,11 +685,9 @@ if ch=')' then
   begin decr(loc); jis_code:=0;
   end
 else if (ch='J')or(ch='j') then
-  begin repeat ch:=get_next_raw; until ch<>' ';
-  cx:=todig(xord[ch])*@"1000;
-  incr(loc); ch:=xord[buffer[loc]]; cx:=cx+todig(ch)*@"100;
-  incr(loc); ch:=xord[buffer[loc]]; cx:=cx+todig(ch)*@"10;
-  incr(loc); ch:=xord[buffer[loc]]; cx:=cx+todig(ch);
+  begin repeat ch:=get_next_raw;
+  until ch<>' '; {skip the blanks after the type code}
+  @<Scan a Kanji hexadecimal code@>;
   jis_code:=toDVI(fromJIS(cx)); cur_char:=ch;
   if not valid_jis_code(jis_code) then
     err_print('jis code ', jis_code:1, ' is invalid');
@@ -701,6 +701,20 @@ else if multistrlen(ustringcast(buffer), loc+2, loc)=2 then
 else jis_code:=-1;
 get_kanji:=jis_code;
 end;
+
+@ @<Scan a Kanji hex...@>=
+begin cx:=todig(xord[ch]);
+  incr(loc); ch:=xord[buffer[loc]];
+  while ((ch>="0")and(ch<="9"))or((ch>="A")and(ch<="F")) do
+    begin cx:=cx*16+todig(ch); {overflow might happen, but rare...}
+    incr(loc); ch:=xord[buffer[loc]];
+    end;
+  decr(loc); ch:=xord[buffer[loc]];
+  if cx>max_kanji_code then
+    begin skip_error('This value shouldn''t exceed jis code');
+    cx:=0; ch:=" ";
+    end;
+end
 
 @* Index.
 @z

@@ -1,0 +1,36 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2018 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d uptests || mkdir -p uptests
+
+# Test inputs
+testdir=$srcdir/uptexdir/tests
+
+# Testing upPLtoTF/upTFtoPL for huge GLUEKERN table
+# with rearrangement.
+for font in gkhugeok; do
+
+  # This test is constructed as a cycle, since JPL source
+  # of gkhugeok.tfm is so large.
+  TEXMFCNF=$srcdir/../kpathsea \
+    ./uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl && \
+    ./uppltotf -verbose uptests/y$font.pl uptests/y$font.tfm && \
+    cmp $testdir/$font.tfm uptests/y$font.tfm && echo || exit 1
+
+done
+
+for font in gkhugeng; do
+
+  # Fifth byte of the JFM (= lf; length of the whole file)
+  # must not exceed 2^{15}-1; check that and exit with an
+  # error message, instead of trying to allocate too much.
+  # The invalid gkhugeng.tfm was erroneously created before
+  # web2c/pltotf.ch change 2017-09-10, due to overflow
+  TEXMFCNF=$srcdir/../kpathsea \
+    ./uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl \
+      && exit 1 || echo
+
+done
+
