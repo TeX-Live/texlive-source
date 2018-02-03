@@ -12,6 +12,12 @@
 	native fonts. Fixes #145.
 	* XeTeX_ext.[ch]: Patch from Hironobu Yamashita to properly
 	close input pipes. Fixes 147.
+	* xetex.web: Leave text as UTF-16 in trick_buf for better
+	error context printing. (Mostly) fixes #146.
+	It's still possible that error context could include half of
+	a supplementary-plane character (i.e. an unpaired surrogate).
+	Should be a lot less likely, and less troublesome than broken
+	UTF-8, however.
 	* XeTeXFontMgr.cpp, XeTeXFontMgr.h: Convert optical size info
 	in OpenType 'size' feature from PostScript to TeX points.
 	Note that this will change behavior for existing documents
