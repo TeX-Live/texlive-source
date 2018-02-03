@@ -1,3 +1,18 @@
+2018-02-03  Jonathan Kew <jfkthame@gmail.com>
+
+	* Bump version number to 0.99999, aiming for the TL'18 release.
+	Fix issues reported on https://sourceforge.net/p/xetex/bugs
+	* xetex.web, xetex.ch: Patch from Hironori Kitagawa to
+	integrate prim_eqtb into eqtb. Fixes issue where
+	\primitive\vrule\q incorrectly swallows the \q instead of
+	giving an error. Fixes #143.
+	* xetex.web: Patch from Hironobu Yamashita for \strcmp and
+	\mdfivesum errors. Fixes #144.
+	* xetex.web: Patch from Hironobu Yamashita for \uchyph with
+	native fonts. Fixes #145.
+	* XeTeX_ext.[ch]: Patch from Hironobu Yamashita to properly
+	close input pipes. Fixes 147.
+
 2018-01-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* am/xetex.am (OBJCXXFLAGS) [XETEX_MACOSX]: add -std=c++11.

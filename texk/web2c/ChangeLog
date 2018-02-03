@@ -1,3 +1,8 @@
+2018-02-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* lib/texmfmp.c, texmfmp.h: XeTeX properly close input pipes.
+	Fixes https://sourceforge.net/p/xetex/bugs/147
+
 2018-01-21  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac <luatex>: quote [notice] so not misparsed at comma,

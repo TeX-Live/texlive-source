@@ -20839,7 +20839,8 @@ loop@+  begin if is_char_node(s) then
           if lc_code(c) <> 0 then begin
             hf:=native_font(s);
             prev_s:=s;
-            goto done2;
+            if (lc_code(c)=c)or(uc_hyph>0) then goto done2
+            else goto done1;
           end;
           if c>=@"10000 then incr(l);
         end
