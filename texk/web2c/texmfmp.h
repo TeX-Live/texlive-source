@@ -274,9 +274,12 @@ extern void topenin (void);
 #ifdef XeTeX
 #if ENABLE_PIPES
 extern boolean u_open_in_or_pipe(unicodefile* f, integer filefmt, const_string fopen_mode, integer mode, integer encodingData);
+extern void u_close_file_or_pipe(unicodefile* f);
 #define uopenin(f,p,m,d) u_open_in_or_pipe(&(f), p, FOPEN_RBIN_MODE, m, d)
+#define uclose(f) u_close_file_or_pipe(&(f))
 #else
 #define uopenin(f,p,m,d) u_open_in(&(f), p, FOPEN_RBIN_MODE, m, d)
+#define uclose(f) u_close_inout(&(f))
 #endif
 #endif
 

@@ -315,8 +315,8 @@ known as `\eTeX'.
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
 @d XeTeX_version=0 { \.{\\XeTeXversion} }
-@d XeTeX_revision==".99998" { \.{\\XeTeXrevision} }
-@d XeTeX_version_string=='-0.99998' {current \XeTeX\ version}
+@d XeTeX_revision==".99999" { \.{\\XeTeXrevision} }
+@d XeTeX_version_string=='-0.99999' {current \XeTeX\ version}
 @#
 @d XeTeX_banner=='This is XeTeX, Version 3.14159265',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
@@ -5017,8 +5017,12 @@ locations for control sequences that are perpetually defined
 @d end_write=frozen_control_sequence+8 {permanent `\.{\\endwrite}'}
 @d frozen_dont_expand=frozen_control_sequence+9
   {permanent `\.{\\notexpanded:}'}
+@d prim_size=500 {maximum number of primitives }
 @d frozen_null_font=frozen_control_sequence+10
   {permanent `\.{\\nullfont}'}
+@d frozen_primitive=frozen_control_sequence+11
+  {permanent `\.{\\pdfprimitive}'}
+@d prim_eqtb_base=frozen_primitive+1
 @d font_id_base=frozen_null_font-font_base
   {begins table of 257 permanent font identifiers}
 @d undefined_control_sequence=frozen_null_font+257 {dummy location}
@@ -6070,7 +6074,6 @@ A global boolean variable called |no_new_control_sequence| is set to
 
 @ Primitive support needs a few extra variables and definitions
 
-@d prim_size=500 {maximum number of primitives }
 @d prim_prime=431 {about 85\pct! of |primitive_size|}
 @d prim_base=1
 @d prim_next(#) == prim[#].lh {link for coalesced lists}
@@ -6079,24 +6082,19 @@ A global boolean variable called |no_new_control_sequence| is set to
 @d prim_eq_level_field(#)==#.hh.b1
 @d prim_eq_type_field(#)==#.hh.b0
 @d prim_equiv_field(#)==#.hh.rh
-@d prim_eq_level(#)==prim_eq_level_field(prim_eqtb[#]) {level of definition}
-@d prim_eq_type(#)==prim_eq_type_field(prim_eqtb[#]) {command code for equivalent}
-@d prim_equiv(#)==prim_equiv_field(prim_eqtb[#]) {equivalent value}
+@d prim_eq_level(#)==prim_eq_level_field(eqtb[prim_eqtb_base+#]) {level of definition}
+@d prim_eq_type(#)==prim_eq_type_field(eqtb[prim_eqtb_base+#]) {command code for equivalent}
+@d prim_equiv(#)==prim_equiv_field(eqtb[prim_eqtb_base+#]) {equivalent value}
 @d undefined_primitive=0
 
 @<Glob...@>=
 @!prim: array [0..prim_size] of two_halves;  {the primitives table}
 @!prim_used:pointer; {allocation pointer for |prim|}
-@!prim_eqtb:array[0..prim_size] of memory_word;
 
 @ @<Set init...@>=
 no_new_control_sequence:=true; {new identifiers are usually forbidden}
 prim_next(0):=0; prim_text(0):=0;
 for k:=1 to prim_size do prim[k]:=prim[0];
-prim_eq_level(0):=level_zero;
-prim_eq_type(0):=undefined_cs;
-prim_equiv(0):=null;
-for k:=1 to prim_size do prim_eqtb[k]:=prim_eqtb[0];
 next(hash_base):=0; text(hash_base):=0;
 for k:=hash_base+1 to undefined_control_sequence-1 do hash[k]:=hash[hash_base];
 
@@ -6264,7 +6262,9 @@ begin if p<hash_base then {single character}
 else if p>=undefined_control_sequence then print_esc("IMPOSSIBLE.")
 else if (text(p)<0)or(text(p)>=str_ptr) then print_esc("NONEXISTENT.")
 @.NONEXISTENT@>
-else  begin print_esc(text(p));
+else  begin
+  if (p>=prim_eqtb_base)and(p<frozen_null_font) then
+    print_esc(prim_text(p-prim_eqtb_base)-1) else print_esc(text(p));
   print_char(" ");
   end;
 end;
@@ -6279,6 +6279,8 @@ begin if p<hash_base then
   else  if p<null_cs then print_esc(p-single_base)
     else  begin print_esc("csname"); print_esc("endcsname");
       end
+else if (p>=prim_eqtb_base)and(p<frozen_null_font) then
+    print_esc(prim_text(p-prim_eqtb_base)-1)
 else print_esc(text(p));
 end;
 
@@ -8656,6 +8658,36 @@ if cur_cs<>undefined_primitive then begin
   end;
 end
 
+@ This block deals with unexpandable \.{\\primitive} appearing at a spot where
+an integer or an internal values should have been found. It fetches the
+next token then resets |cur_cmd|, |cur_cs|, and |cur_tok|, based on the
+primitive value of that token. No expansion takes place, because the
+next token may be all sorts of things. This could trigger further
+expansion creating new errors.
+
+@<Reset |cur_tok| for unexpandable primitives, goto restart @>=
+begin
+get_token;
+if cur_cs < hash_base then
+  cur_cs := prim_lookup(cur_cs-single_base)
+else
+  cur_cs  := prim_lookup(text(cur_cs));
+if cur_cs<>undefined_primitive then begin
+  cur_cmd := prim_eq_type(cur_cs);
+  cur_chr := prim_equiv(cur_cs);
+  cur_cs  := prim_eqtb_base+cur_cs;
+  cur_tok := cs_token_flag+cur_cs;
+  end
+else begin
+  cur_cmd := relax;
+  cur_chr := 0;
+  cur_tok := cs_token_flag+frozen_relax;
+  cur_cs  := frozen_relax;
+  end;
+goto restart;
+end
+@z
+
 @ @<Complain about an undefined macro@>=
 begin print_err("Undefined control sequence");
 @.Undefined control sequence@>
@@ -9191,6 +9223,7 @@ label exit;
 var p:pointer; {tail of the backup list}
 @!q:pointer; {new node being added to the token list via |store_new_token|}
 @!k:pool_pointer; {index into |str_pool|}
+@!save_cur_cs:pointer; {to save |cur_cs|}
 begin p:=backup_head; link(p):=null;
 if s<too_big_char then begin
   while true do
@@ -9209,6 +9242,7 @@ if s<too_big_char then begin
     end;
   end;
 k:=str_start_macro(s);
+save_cur_cs:=cur_cs;
 while k<str_start_macro(s+1) do
   begin get_x_token; {recursion is possible here}
 @^recursion@>
@@ -9219,6 +9253,7 @@ while k<str_start_macro(s+1) do
   else if (cur_cmd<>spacer)or(p<>backup_head) then
     begin back_input;
     if p<>backup_head then back_list(link(backup_head));
+    cur_cs:=save_cur_cs;
     scan_keyword:=false; return;
     end;
   end;
@@ -9325,14 +9360,14 @@ the internal quantity to be scanned; an error will be signalled if
 
 @p procedure scan_something_internal(@!level:small_number;@!negative:boolean);
   {fetch an internal parameter}
-label exit;
+label exit, restart;
 var m:halfword; {|chr_code| part of the operand token}
     n, k, kk: integer; {accumulators}
 @!q,@!r:pointer; {general purpose indices}
 @!tx:pointer; {effective tail node}
 @!i:four_quarters; {character info}
 @!p:0..nest_size; {index into |nest|}
-begin m:=cur_chr;
+begin restart: m:=cur_chr;
 case cur_cmd of
 def_code: @<Fetch a character code from some table@>;
 XeTeX_def_code:
@@ -9376,6 +9411,8 @@ assign_font_dimen: @<Fetch a font dimension@>;
 assign_font_int: @<Fetch a font integer@>;
 register: @<Fetch a register@>;
 last_item: @<Fetch an item in the current node, if appropriate@>;
+ignore_spaces: {trap unexpandable primitives}
+  if cur_chr=1 then @<Reset |cur_tok| for unexpandable primitives, goto restart@>;
 othercases @<Complain that \.{\\the} can't do this; give zero result@>
 endcases;@/
 while cur_val_level>level do @<Convert \(c)|cur_val| to a lower level@>;
@@ -9964,7 +10001,7 @@ after the integer part of such a fraction has been scanned by |scan_int|,
 and that the decimal point has been backed up to be scanned again.
 
 @p procedure scan_int; {sets |cur_val| to an integer}
-label done;
+label done, restart;
 var negative:boolean; {should the answer be negated?}
 @!m:integer; {|@t$2^{31}$@> div radix|, the threshold of danger}
 @!d:small_number; {the digit just scanned}
@@ -9972,7 +10009,10 @@ var negative:boolean; {should the answer be negated?}
 @!OK_so_far:boolean; {has an error message been issued?}
 begin radix:=0; OK_so_far:=true;@/
 @<Get the next non-blank non-sign token; set |negative| appropriately@>;
+restart:
 if cur_tok=alpha_token then @<Scan an alphabetic character code into |cur_val|@>
+else if cur_tok=cs_token_flag+frozen_primitive then
+  @<Reset |cur_tok| for unexpandable primitives, goto restart@>
 else if (cur_cmd>=min_internal)and(cur_cmd<=max_internal) then
   scan_something_internal(int_val,false)
 else @<Scan a numeric constant@>;
@@ -24078,6 +24118,7 @@ any_mode(ignore_spaces): begin
     if cur_cs<>undefined_primitive then begin
       cur_cmd:=prim_eq_type(cur_cs);
       cur_chr:=prim_equiv(cur_cs);
+      cur_tok := cs_token_flag+prim_eqtb_base+cur_cs;
       goto reswitch;
       end;
     end;
@@ -28201,7 +28242,6 @@ for |p>=hash_used|, so the remaining entries are output in a~block.
 
 @<Dump the hash table@>=
 for p:=0 to prim_size do dump_hh(prim[p]);
-for p:=0 to prim_size do dump_wd(prim_eqtb[p]);
 dump_int(hash_used); cs_count:=frozen_control_sequence-1-hash_used;
 for p:=hash_base to hash_used do if text(p)<>0 then
   begin dump_int(p); dump_hh(hash[p]); incr(cs_count);
@@ -28212,7 +28252,6 @@ print_ln; print_int(cs_count); print(" multiletter control sequences")
 
 @ @<Undump the hash table@>=
 for p:=0 to prim_size do undump_hh(prim[p]);
-for p:=0 to prim_size do undump_wd(prim_eqtb[p]);
 undump(hash_base)(frozen_control_sequence)(hash_used); p:=hash_base-1;
 repeat undump(p+1)(hash_used)(p); undump_hh(hash[p]);
 until p=hash_used;
@@ -28961,11 +29000,12 @@ procedure compare_strings; {to implement \.{\\strcmp}}
 label done;
 var s1, s2: str_number;
   i1, i2, j1, j2: pool_pointer;
+  save_cur_cs: pointer;
 begin
-  call_func(scan_toks(false, true));
+  save_cur_cs:=cur_cs; call_func(scan_toks(false, true));
   s1:=tokens_to_string(def_ref);
   delete_token_ref(def_ref);
-  call_func(scan_toks(false, true));
+  cur_cs:=save_cur_cs; call_func(scan_toks(false, true));
   s2:=tokens_to_string(def_ref);
   delete_token_ref(def_ref);
   i1:=str_start_macro(s1);
