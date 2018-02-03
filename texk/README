@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006-2017 TeX Users Group.
+Copyright 2006-2018 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -20,12 +20,12 @@ Anyone -- please research and update any of this information.
 
 
 afm2pl - maintained here
-  http://tex.aanhet.net/afm2pl/
+  old info: http://tex.aanhet.net/afm2pl/
 
 bibtex-x - maintained here, contains
   bibtex8
   bibtexu
-    http://omega.enstb.org/yannis/bibtexu/
+    old info: http://omega.enstb.org/yannis/bibtexu/
 
 chktex 1.7.6 - checked 15sep16
   http://mirror.ctan.org/support/chktex/
@@ -42,19 +42,20 @@ dtl - ?
 dvi2tty 6.0.0 - checked 05mar16
   https://github.com/t-tk/dvi2tty
 
-dvidvi - maintained here.
+dvidvi - maintained here
 
 dviljk - maintained here, by Joachim Schrod
 
 dvipdfm-x - maintained here, by us, contains
   dvipdfmx
   xdvipdfmx
+    old info: http://project.ktug.org/dvipdfmx/
 
 dvipng 1.15 - checked 3mar15
   http://mirror.ctan.org/dviware/dvipng/ (but maybe stale)
   http://savannah.nongnu.org/files/?group=dvipng
 
-dvipos - ?
+dvipos - maintained here, by us
 
 dvipsk - maintained here, by us
 
@@ -73,7 +74,8 @@ lcdf-typetools 2.106 - checked 22jun16
 
 makeindexk - maintained here, by us
 
-makejvf - maintained here, mainly by Takuji Tanaka
+makejvf - by Japanese TeX Development Community (Takuji, Hironobu et al.)
+  https://github.com/texjporg/tex-jp-build
 
 mendexk - maintained here, by us (Takuji, Akira et al.)
 
@@ -85,9 +87,10 @@ ps2pk - maintained here, by us
 psutils 1.23 - checked 16jan14
   https://github.com/rrthomas/psutils/archive/v1.23.tar.gz
 
-ptexenc - maintained here, by us (akira et al.)
+ptexenc - maintained here, by us (Akira et al.)
+  but also: https://github.com/texjporg/tex-jp-build
 
-seetexk - ?
+seetexk - maintained here, by us (Takuji, Hironobu et al.)
 
 tex4htk - checked 25apr11
   http://tug.org/tex4ht/
@@ -107,19 +110,20 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
   updated here by their respective maintainers.  More info:
        aleph - maintained here
         ctie - CTAN
-        cweb - knuth, ftp://ftp.cs.stanford.edu/pub/cweb/
-       eptex - https://osdn.jp/projects/eptex,https://texwiki.texjp.org/?e-pTeX
+        cweb - Knuth, ftp://ftp.cs.stanford.edu/pub/cweb/
+       eptex - https://github.com/texjporg/tex-jp-build
+               also: https://osdn.jp/projects/eptex
         etex - maintained here
-      euptex - https://texwiki.texjp.org/?upTeX%2CupLaTeX
+      euptex - http://www.t-lab.opal.ne.jp/tex/uptex_en.html
   mflua[jit] - https://foundry.supelec.fr/projects/mflua/
     mplibdir - http://tug.org/metapost
       luatex - http://luatex.org
       pdftex - http://pdftex.org
-      pmpost - none
-        ptex - nothing current, old info: http://ascii.asciimw.jp/pb/ptex/
+   [u]pmpost - nothing current, see README for old info
+        ptex - https://github.com/texjporg/tex-jp-build
+               old info: http://ascii.asciimw.jp/pb/ptex/
      synctex - maintained here, but also https://github.com/jlaurens/synctex
-     upmpost - ? (Kitagawa-san)
-       uptex - https://texwiki.texjp.org/?upTeX%2CupLaTeX
+       uptex - http://www.t-lab.opal.ne.jp/tex/uptex_en.html
        xetex - http://tug.org/xetex/
    
 xdvik 22.87.03 - checked 6apr16
