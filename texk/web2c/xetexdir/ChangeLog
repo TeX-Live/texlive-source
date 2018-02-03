@@ -12,6 +12,13 @@
 	native fonts. Fixes #145.
 	* XeTeX_ext.[ch]: Patch from Hironobu Yamashita to properly
 	close input pipes. Fixes 147.
+	* XeTeXFontMgr.cpp, XeTeXFontMgr.h: Convert optical size info
+	in OpenType 'size' feature from PostScript to TeX points.
+	Note that this will change behavior for existing documents
+	that use OpenType fonts from optically-sized families, and
+	depend on XeTeX choosing the appropriate face for a given
+	size: the boundaries at which face selection changes will be
+	slightly shifted (corrected) from how earlier versions behaved.
 
 2018-01-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
