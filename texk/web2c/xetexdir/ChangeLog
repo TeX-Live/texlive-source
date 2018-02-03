@@ -25,6 +25,16 @@
 	depend on XeTeX choosing the appropriate face for a given
 	size: the boundaries at which face selection changes will be
 	slightly shifted (corrected) from how earlier versions behaved.
+	* xetex.web: Avoid prematurely merging following text with the
+	no-break text of a \discretionary. We don't want to combine
+	text after \discretionary{A}{B}{C} into the same node as the
+	(trailing node of the) no-break parameter {C}, because this
+	would result in following text being lost in the case where
+	the discretionary break is taken. When this happens, its
+	no-break text (recorded as a count of nodes) is supposed
+	to be skipped over, but if we've combined following characters
+	with the trailing node, they will also be (incorrectly)
+	skipped. Fixes #137.
 
 2018-01-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
