@@ -2175,6 +2175,36 @@ close_file_or_pipe (FILE *f)
   }
   close_file(f);
 }
+
+#ifdef XeTeX
+
+#include <unicode/ucnv.h>
+
+void
+u_close_file_or_pipe (unicodefile* f)
+{
+  int i; /* iterator */
+
+  if (shellenabledp) {
+    /* if this file was a pipe, pclose() it and return */
+    for (i=0; i<NUM_PIPES; i++) {
+      if (pipes[i] == (*f)->f) {
+        if ((*f)->f) {
+          pclose ((*f)->f);
+          if (((*f)->encodingMode == ICUMAPPING) && ((*f)->conversionData != NULL))
+              ucnv_close((*f)->conversionData);
+          free(*f);
+        }
+        pipes[i] = NULL;
+        return;
+      }
+    }
+  }
+  close_file((*f)->f);
+}
+
+#endif
+
 #endif /* ENABLE_PIPES */
 
 /* All our interrupt handler has to do is set TeX's or Metafont's global
