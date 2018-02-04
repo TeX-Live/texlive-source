@@ -3,7 +3,7 @@ kpathsea.texi.
 
 This file documents the Kpathsea library for path searching.
 
-   Copyright (C) 1996-2017 Karl Berry & Olaf Weber.
+   Copyright (C) 1996-2018 Karl Berry & Olaf Weber.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -37,7 +37,7 @@ Kpathsea library
 ****************
 
 This manual documents the Kpathsea library for path searching.  It
-corresponds to version 6.2.4, released in June 2017.
+corresponds to version 6.3.0, released in February 2018.
 
 * Menu:
 
@@ -61,8 +61,8 @@ File: kpathsea.info,  Node: Introduction,  Next: unixtex.ftp,  Prev: Top,  Up: T
 1 Introduction
 **************
 
-This manual corresponds to version 6.2.4 of the Kpathsea library,
-released in June 2017.
+This manual corresponds to version 6.3.0 of the Kpathsea library,
+released in February 2018.
 
    The library's fundamental purpose is to return a filename from a list
 of directories specified by the user, similar to what shells do when
@@ -80,27 +80,29 @@ this library:
 Other software that we do not maintain also uses it.
 
    Kpathsea is now maintained as part of the TeX Live distribution
-(<http://tug.org/texlive>).  For information on configuration, building,
-installing, and more, *note (tlbuild)::.
+(<http://tug.org/texlive>), which includes several more Kpathsea-using
+programs.  For information on configuration, building, installing, and
+more, *note (tlbuild)::.
 
    The library is still actively maintained.  If you have comments or
 suggestions, please send along (*note Reporting bugs::).
 
    The Kpathsea library is distributed under the GNU Library General
-Public License (LGPL). In short, this means if you write a program using
-the library, you must (offer to) distribute the source to the library,
-along with any changes you have made, and allow anyone to modify the
-library source and distribute their modifications.  It does not mean you
-have to distribute the source to your program, although we hope you
-will.  See accompanying files for the text of the GNU licenses, or
-<http://www.gnu.org/licenses>.
+Public License (LGPL), version 2.1 or (at your option) any later
+version.  In short, this means if you write a program using the library,
+you must (offer to) distribute the source to the library, along with any
+changes you have made, and allow anyone to modify the library source and
+distribute their modifications.  It does not mean you have to distribute
+the source to your program using the library, although we hope you will.
+See accompanying files for the text of the GNU licenses, or
+<http2://www.gnu.org/licenses>.
 
    If you know enough about TeX to be reading this manual, then you (or
 your institution) should consider joining the TeX Users Group (if you're
 already a member, thanks!).  TUG produces the periodical 'TUGboat',
 sponsors an annual meeting and publishes the proceedings, and arranges
 courses on TeX for all levels of users throughout the world.  See
-<http://tug.org> for information.
+<https://tug.org> for information.
 
 * Menu:
 
@@ -185,14 +187,13 @@ continues.  Karl had been looking for some time for someone to take up
 part of the burden, and I volunteered.
 
    [Karl writes again.]  Indeed, time goes on.  As of 2006 or so, Olaf's
-available time for Kpathsea became rather reduced, and I started taking
-overall care of it again, although I did not do any significant new
-development.  In 2009, Taco Hoekwater made a major rearrangement to make
-the library suitable for use within the MetaPost library (*note
-Programming overview::).  Also, for some years now, Peter Breitenlohner
-has made many improvements to the infrastructure and kept up-to-date
-with respect to the overall TeX Live build, where Kpathsea is now
-maintained.
+available time for Kpathsea was reduced, and I started taking overall
+care of it again, although I did not do any significant new development.
+In 2009, Taco Hoekwater implemented a major rearrangement to make the
+library suitable for use within the MetaPost library (*note Programming
+overview::).  Also, for some years now, Peter Breitenlohner has made
+many improvements to the infrastructure and kept it up-to-date with
+respect to the overall TeX Live build, where Kpathsea is now maintained.
 
 
 File: kpathsea.info,  Node: unixtex.ftp,  Next: Security,  Prev: Introduction,  Up: Top
@@ -378,6 +379,7 @@ provides.  For information about searching for particular file types
 * Searching overview::          Basic scheme for searching.
 * Path sources::                Where search paths can be defined.
 * Path expansion::              Special constructs in search paths.
+* Casefolding search::          Fallback to case-insensitive search.
 * Filename database::           Using an externally-built list to search.
 * Invoking kpsewhich::          Standalone path lookup.
 
@@ -419,10 +421,16 @@ the disk for them.  Therefore, if you fail to update 'ls-R' when you
 install a new VF file, it will not be found.
 
    Each path element is checked in turn: first the database, then the
-disk.  If a match is found, the search stops and the result is returned.
-This avoids possibly-expensive processing of path specifications that
-are never needed on a particular run.  (Unless the search explicitly
-requested all matches.)
+disk.  If a match is found, the search stops and the result is returned
+(unless the search explicitly requested all matches).  This avoids
+possibly-expensive processing of path specifications that are never
+needed on a particular run.
+
+   On Unix-like systems, if no match is found by any of the above, and
+the path element allows checking the filesystem (per the above), a final
+check is made for a case-insensitive match.  Thus, looking for a name
+like './FooBar.TeX' will match a file './foobar.tex', and vice versa.
+This is not done on Windows.  *Note Casefolding search::.
 
    Although the simplest and most common path element is a directory
 name, Kpathsea supports additional features in search paths: layered
@@ -435,7 +443,8 @@ order as the sections.
 
    Exception to all of the above: If the filename being searched for is
 absolute or explicitly relative, i.e., starts with '/' or './' or '../',
-Kpathsea simply checks if that file exists.
+Kpathsea simply checks if that file exists, with a fallback to a
+casefolding match if needed and enabled, as described above.
 
    Ordinarily, if Kpathsea tries to access a file or directory that
 cannot be read, it gives a warning.  This is so you will be alerted to
@@ -455,8 +464,8 @@ File: kpathsea.info,  Node: Path sources,  Next: Path expansion,  Prev: Searchin
 5.2 Path sources
 ================
 
-A search path can come from many sources.  In the order in which
-Kpathsea uses them:
+A search path or other configuration value can come from many sources.
+In the order in which Kpathsea looks for them:
 
   1. A user-set environment variable, e.g., 'TEXINPUTS'.  Environment
      variables with an underscore and the program name appended
@@ -570,7 +579,7 @@ anyway, since the 'sh' process couldn't affect its parent's environment.
    The implementation of all this is in 'kpathsea/cnf.c'.
 
 
-File: kpathsea.info,  Node: Path expansion,  Next: Filename database,  Prev: Path sources,  Up: Path searching
+File: kpathsea.info,  Node: Path expansion,  Next: Casefolding search,  Prev: Path sources,  Up: Path searching
 
 5.3 Path expansion
 ==================
@@ -579,7 +588,9 @@ Kpathsea recognizes certain special characters and constructions in
 search paths, similar to that in shells.  As a general example:
 '~$USER/{foo,bar}//baz' expands to all subdirectories under directories
 'foo' and 'bar' in $USER's home directory that contain a directory or
-file 'baz'.  These expansions are explained in the sections below.
+file 'baz'.
+
+   These expansions are explained in the sections below.
 
 * Menu:
 
@@ -796,9 +807,156 @@ And if you can find a way to _solve_ the problem, please let me know.
 'kpathsea/elt-dirs.c'.
 
 
-File: kpathsea.info,  Node: Filename database,  Next: Invoking kpsewhich,  Prev: Path expansion,  Up: Path searching
+File: kpathsea.info,  Node: Casefolding search,  Next: Filename database,  Prev: Path expansion,  Up: Path searching
 
-5.4 Filename database ('ls-R')
+5.4 Casefolding search
+======================
+
+In Kpathsea version 6.3.0 (released with TeX Live 2018), a new fallback
+search was implemented on Unix-like systems, including Macs: for each
+path element in turn, if no match is found by the normal search, and the
+path element allows for checking the filesystem, a second check is made
+for a case-insensitive match.
+
+   This is enabled at compile-time on Unix systems, and enabled at
+runtime by setting the configuration variable 'texmf_casefold_search',
+to a true value, e.g., '1'; this is done by default in TeX Live.
+
+* Menu:
+
+* Rationale: Casefolding rationale.
+* Examples: Casefolding examples.
+
+
+File: kpathsea.info,  Node: Casefolding rationale,  Next: Casefolding examples,  Up: Casefolding search
+
+5.4.1 Casefolding rationale
+---------------------------
+
+The purpose of the fallback casefolding search is to ease moving complex
+documents between case-insensitive (file)systems and case-sensitive
+ones.  In particular, Apple decided to make the default filesystem on
+Macs be case-insensitive some years ago, and this has exacerbated a
+problem of people creating documents that use, say, an image under the
+name 'foo.jpg', while the actual file is named 'foo.JPG' or 'Foo.jpg'.
+It works on the Mac but if the document is transferred and run on a
+standard case-sensitive Unix (file)system, the file can't be found, due
+only to differences in case.
+
+   This same problematic scenario has always existed on Windows, but for
+whatever reason, it has become much more common since Apple also went to
+a case-insensitive filesystem.  Hence the move to change the Kpathsea
+behavior now.
+
+   The fallback case-insensitive search is omitted at compile-time on
+Windows, where (for practical purposes) all file names are
+case-insensitive at the kernel level, and so the normal search will
+already have definitively matched or not.  Therefore, search results in
+unusual cases can be different on Windows and Unix--but this has always
+been true.
+
+
+File: kpathsea.info,  Node: Casefolding examples,  Prev: Casefolding rationale,  Up: Casefolding search
+
+5.4.2 Casefolding examples
+--------------------------
+
+The casefolding implementation prefers exact matches to casefolded
+matches within a given path element, so as to retain most compatibility.
+Backward compatibility is not perfect, however, as a casefolded match
+may be found in an earlier path element than an exact match was
+previously found (see example #4 below).  Still, preferring the match in
+the earlier element seemed potentially less confusing than otherwise,
+and is in fact consistent with past behavior on Windows.  Since case
+mismatches are rare to begin with, and name collisions with respect only
+to case thus even more rare, the hope is that it will not cause
+difficulties in practice.
+
+   If it's desirable in a given situation to have the exact same search
+behavior as previously, that can be accomplished by setting the
+configuration variable 'texmf_casefold_search' to '0' (*note Path
+sources::).
+
+   Some examples to illustrate the new behavior follow.
+
+   Example #1: suppose the file './foobar.tex' exists.  Now, searching
+for './FooBar.TeX' (or any other case variation) will succeed, returning
+'./foobar.tex'--the name as stored on disk.  In previous releases, or if
+'texmf_casefold_search' is false, the search would fail.
+
+   Example #2: suppose we are using a case-sensitive (file)system, and
+the search path is '.:/somedir', and the files './foobar.tex' and
+'/somedir/FooBar.TeX' both exist.  Both now and previously, searching
+for 'foobar.tex' returns './foobar.tex'.  However, searching for
+'FooBar.TeX' now returns './foobar.tex' instead of
+'/somedir/FooBar.TeX'; this is the incompatibility mentioned above.
+Also (as expected), searching for 'FOOBAR.TEX' (or whatever variation)
+will now return './foobar.tex', whereas before it would fail.  Searching
+for all ('kpsewhich --all') 'foobar.tex' will return both matches.
+
+   Example #3: same as example #2, but on a case-insensitive
+(file)system: both now and previously, searching for 'FooBar.TeX'
+returns './foobar.tex', since the system considers that a match.  The
+Kpathsea casefolding never comes into play.
+
+   Example #4: if we have (on a case-sensitive system) both
+'./foobar.tex' and './FOOBAR.TEX', searching with the exact case returns
+that exact match, now and previously.  Searching for 'FooBar.tex' will
+now return one or the other (chosen arbitrarily), rather than failing.
+Perhaps unexpectedly, searching for all 'foobar.tex' or 'FooBar.tex'
+will also return only one or the other, not both (see more below).
+
+   Example #5: the font file 'STIX-Regular.otf' is included in TeX Live
+in the system directory 'texmf-dist/fonts/opentype/public/stix'.
+Because Kpathsea never searches the disk in the big system directory,
+the casefolding is not done, and a search for 'stix-regular.otf' will
+fail (on case-sensitive systems), as it always has.
+
+   The caveat about not searching the disk amounts to saying that
+casefolding does not happen in the trees specified with '!!' (*note
+ls-R::), that is, where only database ('ls-R') searching is done.  In
+TeX Live, that is the 'texmf-local' and 'texmf-dist' trees (also
+'$TEXMFSYSCONFIG' and '$TEXMFSYSVAR', but those are rarely noticed).
+The rationale for this is that in practice, case mangling happens with
+user-created files, not with packages distributed as part of the TeX
+system.
+
+   One more caveat: the purpose of 'kpsewhich' is to exercise the path
+searching in Kpathsea as it is actually done.  Therefore, as shown
+above, 'kpsewhich --all' will not return all matches regardless of case
+within a given path element.  If you want to find all matches in all
+directories, 'find' is the best tool, although the setup takes a couple
+steps:
+
+     kpsewhich -show-path=tex >/tmp/texpath      # search path specification
+     kpsewhich -expand-path="`cat /tmp/texpath`" >/tmp/texdirs  # all dirs
+     tr ':' '\n' </tmp/texdirs >/tmp/texdirlist  # colons to newlines
+     find `cat /tmp/texdirlist` -iname somefile.tex -print </tmp/texdirlist
+
+   Sorry that it's annoyingly lengthy, but implementing this inside
+Kpathsea would be a lot of error-prone trouble for something that is
+only useful for debugging.  If your 'find' does not support '-iname',
+you can get GNU Find from <https://www.gnu.org/software/findutils>.
+
+   The casefolding search is implemented in the source file
+'kpathsea/pathsearch.c'.  Two implementation points:
+
+   * Kpathsea never tries to check if a given directory resides on a
+     case-insensitive filesystem, because there is no efficient and
+     portable way to do so.  All it does is try to see if a potential
+     file name is a readable normal file (with, usually, the 'access'
+     system call).
+
+   * Kpathsea does not do any case-insensitive matching of the
+     directories along the path.  It's not going to find
+     '/Some/Random/file.tex' when looking for '/some/random/file.tex'.
+     The casefolding only happens with the elements of the leaf
+     directory.
+
+
+File: kpathsea.info,  Node: Filename database,  Next: Invoking kpsewhich,  Prev: Casefolding search,  Up: Path searching
+
+5.5 Filename database ('ls-R')
 ==============================
 
 Kpathsea goes to some lengths to minimize disk accesses for searches
@@ -826,7 +984,7 @@ filename conventions in source files.
 
 File: kpathsea.info,  Node: ls-R,  Next: Filename aliases,  Up: Filename database
 
-5.4.1 'ls-R'
+5.5.1 'ls-R'
 ------------
 
 As mentioned above, you must name the main filename database 'ls-R'.
@@ -886,7 +1044,7 @@ paths.
 
 File: kpathsea.info,  Node: Filename aliases,  Next: Database format,  Prev: ls-R,  Up: Filename database
 
-5.4.2 Filename aliases
+5.5.2 Filename aliases
 ----------------------
 
 In some circumstances, you may wish to find a file under several names.
@@ -914,7 +1072,7 @@ aliases.
 
 File: kpathsea.info,  Node: Database format,  Prev: Filename aliases,  Up: Filename database
 
-5.4.3 Database format
+5.5.3 Database format
 ---------------------
 
 The "database" read by Kpathsea is a line-oriented file of plain text.
@@ -957,7 +1115,7 @@ the '-R' option, as follows.
 
 File: kpathsea.info,  Node: Invoking kpsewhich,  Prev: Filename database,  Up: Path searching
 
-5.5 'kpsewhich': Standalone path searching
+5.6 'kpsewhich': Standalone path searching
 ==========================================
 
 The Kpsewhich program exercises the path searching functionality
@@ -984,7 +1142,7 @@ accepted.
 
 File: kpathsea.info,  Node: Path searching options,  Next: Specially-recognized files,  Up: Invoking kpsewhich
 
-5.5.1 Path searching options
+5.6.1 Path searching options
 ----------------------------
 
 Kpsewhich looks up each non-option argument on the command line as a
@@ -996,6 +1154,13 @@ filename, and returns the first file found.
      Report all matches found, one per line.  By default, if there is
      more than one match, just one will be reported (chosen effectively
      at random).
+
+'--casefold-search'
+'--no-casefold-search'
+     Explicitly enable or disable the fallback to a case-insensitive
+     search on Unix platforms (*note Casefolding search::); no effect on
+     Windows.  The default is the same as the system setup, which is (by
+     default) enabled.
 
 '--dpi=NUM'
      Set the resolution to NUM; this only affects 'gf' and 'pk' lookups.
@@ -1197,7 +1362,7 @@ filename, and returns the first file found.
 
 File: kpathsea.info,  Node: Specially-recognized files,  Next: Auxiliary tasks,  Prev: Path searching options,  Up: Invoking kpsewhich
 
-5.5.2 Specially-recognized files for 'kpsewhich'
+5.6.2 Specially-recognized files for 'kpsewhich'
 ------------------------------------------------
 
 'kpsewhich' recognizes a few special filenames on the command line and
@@ -1247,7 +1412,7 @@ about the above configuration files (among others).
 
 File: kpathsea.info,  Node: Auxiliary tasks,  Next: Standard options,  Prev: Specially-recognized files,  Up: Invoking kpsewhich
 
-5.5.3 Auxiliary tasks
+5.6.3 Auxiliary tasks
 ---------------------
 
 Kpsewhich provides some features in addition to path lookup as such:
@@ -1309,7 +1474,7 @@ Kpsewhich provides some features in addition to path lookup as such:
 
 File: kpathsea.info,  Node: Standard options,  Prev: Auxiliary tasks,  Up: Invoking kpsewhich
 
-5.5.4 Standard options
+5.6.4 Standard options
 ----------------------
 
 Kpsewhich accepts the standard GNU options:
@@ -1327,21 +1492,21 @@ File: kpathsea.info,  Node: TeX support,  Next: Programming,  Prev: Path searchi
 *************
 
 Although the basic features in Kpathsea can be used for any type of path
-searching, it came about (like all libraries) with a specific
-application in mind: I wrote Kpathsea specifically for TeX system
-programs.  I had been struggling with the programs I was using (Dvips,
-Xdvi, and TeX itself) having slightly different notions of how to
-specify paths; and debugging was painful, since no code was shared.
+searching, it came about, as usual, with a specific application in mind:
+I wrote Kpathsea specifically for TeX system programs.  I had been
+struggling with the programs I was using (Dvips, Xdvi, and TeX itself)
+having slightly different notions of how to specify paths; and debugging
+was painful, since no code was shared.
 
    Therefore, Kpathsea provides some TeX-specific formats and features.
-Indeed, many of the supposedly generic path searching features were
+Indeed, many of the purportedly generic path searching features were
 provided because they seemed useful in that conTeXt (font lookup,
 particularly).
 
    Kpathsea provides a standard way to search for files of any of the
 supported file types; glyph fonts are a bit different than all the rest.
-Searches are based solely on filenames, not file contents--if a GF file
-is named 'cmr10.600pk', it will be found as a PK file.
+Searches are based solely on names of files, not their contents--if a GF
+file is (mis)named 'cmr10.600pk', it will be found as a PK file.
 
 * Menu:
 
@@ -2072,7 +2237,8 @@ File: kpathsea.info,  Node: Programming,  Next: Reporting bugs,  Prev: TeX suppo
 *************
 
 This chapter is for programmers who wish to use Kpathsea.  *Note
-Introduction::, for the conditions under which you may do so.
+Introduction::, for the conditions under which you may do so (in short,
+it is released under LGPLv2.1 or later).
 
 * Menu:
 
@@ -2088,22 +2254,24 @@ File: kpathsea.info,  Node: Programming overview,  Next: Calling sequence,  Up: 
 ========================
 
 Aside from this manual, your best source of information is the source to
-the programs that use Kpathsea (*note Introduction::).  Of those, Dviljk
-is probably the simplest, and hence a good place to start.  Xdvik adds
-VF support and the complication of X resources.  Dvipsk adds the
-complication of its own config files.  Web2c is source code I also
-maintain, so it uses Kpathsea rather straightforwardly, but is of course
-complicated by the Web to C translation.  Finally, Kpsewhich is a small
-utility program whose sole purpose is to exercise the main
-path-searching functionality.
+the programs that use Kpathsea (*note Introduction::).  First, Kpsewhich
+is a small utility program whose sole purpose is to exercise the main
+path-searching functionality.  Of the drivers, Dviljk is probably the
+simplest full application program.  Xdvik adds VF support and the
+complication of X resources.  Dvipsk adds the complication of its own
+config files.  Web2c is source code I also maintain, so it uses Kpathsea
+rather straightforwardly, but is of course complicated by the Web to C
+translation.
 
    When looking at these program sources, you should know that previous
-versions of the library had a different programming interface, to
-support re-entrancy.  In that interface the library function names were
-prefixed with 'kpse_' instead of 'kpathsea_', and they did not need an
-instance variable as first argument.  This change was made in 2009.
-Some of the programs mentioned above may still be using the previous
-interface.
+versions of the library had a different programming interface; the
+current interface supports re-entrancy.  Historically, the library
+function names were prefixed with 'kpse_' instead of 'kpathsea_', and
+they did not need an instance variable as first argument.  This change
+was made in 2009.  The old functions will never disappear, and can
+reliably continue to be used when they suffice, as they do for the
+programs above.  The main application using the re-entrant API is the
+MetaPost library used by MetaPost and LuaTeX.
 
    Beyond these examples, the '.h' files in the Kpathsea source describe
 the interfaces and functionality (and of course the '.c' files define
@@ -2770,38 +2938,42 @@ Index
 * $ expansion:                           Variable expansion.  (line   6)
 * --all:                                 Path searching options.
                                                               (line  12)
+* --casefold-search:                     Path searching options.
+                                                              (line  18)
 * --color=tty:                           ls-R.                (line  21)
 * --debug=NUM:                           Auxiliary tasks.     (line   9)
 * --dpi=NUM:                             Path searching options.
-                                                              (line  17)
+                                                              (line  24)
 * --engine=NAME:                         Path searching options.
-                                                              (line  21)
+                                                              (line  28)
 * --expand-braces=STRING:                Auxiliary tasks.     (line  12)
 * --expand-path=STRING:                  Auxiliary tasks.     (line  16)
 * --expand-var=STRING:                   Auxiliary tasks.     (line  34)
 * --format=NAME:                         Path searching options.
-                                                              (line  37)
+                                                              (line  44)
 * --help:                                Standard options.    (line   8)
 * --help-formats:                        Auxiliary tasks.     (line  39)
 * --interactive:                         Path searching options.
-                                                              (line 119)
+                                                              (line 126)
 * --mktex=FILETYPE:                      Path searching options.
-                                                              (line 124)
+                                                              (line 131)
 * --mode=STRING:                         Path searching options.
-                                                              (line 130)
+                                                              (line 137)
 * --must-exist:                          Path searching options.
-                                                              (line 135)
+                                                              (line 142)
+* --no-casefold-search:                  Path searching options.
+                                                              (line  18)
 * --no-mktex=FILETYPE:                   Path searching options.
-                                                              (line 124)
+                                                              (line 131)
 * --path=STRING:                         Path searching options.
-                                                              (line 140)
+                                                              (line 147)
 * --progname=NAME:                       Path searching options.
-                                                              (line 148)
+                                                              (line 155)
 * --safe-in-name=NAME:                   Auxiliary tasks.     (line  45)
 * --safe-out-name=NAME:                  Auxiliary tasks.     (line  45)
 * --show-path=NAME:                      Auxiliary tasks.     (line  51)
 * --subdir=STRING:                       Path searching options.
-                                                              (line 153)
+                                                              (line 160)
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  57)
 * --version:                             Standard options.    (line  11)
 * --with-mktextex-default:               mktex configuration. (line  12)
@@ -2814,7 +2986,9 @@ Index
 * -1 debugging value:                    Debugging.           (line  23)
 * -A option to ls:                       ls-R.                (line  33)
 * -D NUM:                                Path searching options.
-                                                              (line  17)
+                                                              (line  24)
+* -iname, find predicate:                Casefolding examples.
+                                                              (line  78)
 * -L option to ls:                       ls-R.                (line  38)
 * . directories, ignored:                ls-R.                (line  33)
 * . files:                               ls-R.                (line  33)
@@ -2935,8 +3109,10 @@ Index
                                                               (line  31)
 * { expansion:                           Brace expansion.     (line   6)
 * ~ expansion:                           Tilde expansion.     (line   6)
-* absolute filenames:                    Searching overview.  (line  52)
-* access warnings:                       Searching overview.  (line  56)
+* absolute filenames:                    Searching overview.  (line  58)
+* access system call:                    Casefolding examples.
+                                                              (line  86)
+* access warnings:                       Searching overview.  (line  63)
 * AFMFONTS:                              Supported file formats.
                                                               (line  22)
 * aliases for fonts:                     Fontmap.             (line   6)
@@ -2952,6 +3128,8 @@ Index
                                                               (line  16)
 * append-only directories and mktexpk:   Security.            (line  36)
 * appendonlydir:                         mktex configuration. (line  60)
+* Apple filesystem, case-insensitive:    Casefolding rationale.
+                                                              (line   6)
 * arguments to mktex:                    mktex script arguments.
                                                               (line   6)
 * argv[0]:                               Calling sequence.    (line  14)
@@ -2981,9 +3159,14 @@ Index
 * bugs, reporting:                       Reporting bugs.      (line   6)
 * c-*.h:                                 Calling sequence.    (line 117)
 * c-auto.h:                              Programming overview.
-                                                              (line  33)
+                                                              (line  35)
 * cache of fonts, local:                 Security.            (line  22)
 * calling sequence:                      Calling sequence.    (line   6)
+* casefolding examples:                  Casefolding examples.
+                                                              (line   6)
+* casefolding fallback rationale:        Casefolding rationale.
+                                                              (line   6)
+* casefolding search:                    Casefolding search.  (line   6)
 * ChangeLog entry:                       Bug checklist.       (line  52)
 * checklist for bug reports:             Bug checklist.       (line   6)
 * checksum:                              Suppressing warnings.
@@ -3001,7 +3184,7 @@ Index
                                                               (line  23)
 * comments, in fontmap files:            Fontmap.             (line  27)
 * comments, in texmf.cnf:                Config files.        (line  27)
-* comments, making:                      Introduction.        (line  28)
+* comments, making:                      Introduction.        (line  29)
 * common features in glyph lookup:       Basic glyph lookup.  (line   6)
 * common problems:                       Common problems.     (line   6)
 * compilation value, source for path:    Path sources.        (line  20)
@@ -3009,14 +3192,14 @@ Index
                                                               (line   6)
 * compiler bugs, finding:                TeX or Metafont failing.
                                                               (line  24)
-* conditions for use:                    Introduction.        (line  31)
+* conditions for use:                    Introduction.        (line  32)
 * config files:                          Config files.        (line   6)
 * config files, for Kpathsea-using programs: Calling sequence.
                                                               (line  47)
 * config files, programming with:        Programming with config files.
                                                               (line   6)
 * config.h:                              Programming overview.
-                                                              (line  33)
+                                                              (line  35)
 * config.log:                            Bug checklist.       (line  24)
 * config.ps:                             Specially-recognized files.
                                                               (line  16)
@@ -3082,7 +3265,7 @@ Index
 * ENCFONTS:                              Supported file formats.
                                                               (line  61)
 * engine name:                           Path searching options.
-                                                              (line  21)
+                                                              (line  28)
 * environment variable, source for path: Path sources.        (line   9)
 * environment variables for TeX:         Supported file formats.
                                                               (line   6)
@@ -3091,17 +3274,19 @@ Index
                                                               (line  14)
 * epoch, seconds since:                  Logging.             (line  15)
 * error message macros:                  Calling sequence.    (line  22)
+* examples, of casefolding searches:     Casefolding examples.
+                                                              (line   6)
 * excessive startup time:                Slow path searching. (line   6)
 * expand.c:                              Brace expansion.     (line  26)
 * expanding symlinks:                    Calling sequence.    (line  31)
 * expansion, default:                    Default expansion.   (line   6)
-* expansion, path element:               Searching overview.  (line  43)
+* expansion, path element:               Searching overview.  (line  49)
 * expansion, search path:                Path expansion.      (line   6)
 * expansion, subdirectory:               Subdirectory expansion.
                                                               (line   6)
 * expansion, tilde:                      Tilde expansion.     (line   6)
 * expansion, variable:                   Variable expansion.  (line   6)
-* explicitly relative filenames:         Searching overview.  (line  52)
+* explicitly relative filenames:         Searching overview.  (line  58)
 * extensions, filename:                  File lookup.         (line  24)
 * externally-built filename database:    Filename database.   (line   6)
 * extra colons:                          Default expansion.   (line   6)
@@ -3116,14 +3301,18 @@ Index
 * file lookup:                           File lookup.         (line   6)
 * file permissions:                      Security.            (line  47)
 * file types, registering new:           Programming overview.
-                                                              (line  39)
+                                                              (line  41)
 * filename aliases:                      Filename aliases.    (line   6)
 * filename database:                     Filename database.   (line   6)
 * filenames, absolute or explicitly relative: Searching overview.
-                                                              (line  52)
+                                                              (line  58)
 * files, unable to find:                 Unable to find files.
                                                               (line   6)
 * filesystem search:                     Searching overview.  (line  22)
+* filesystem, case-(in)sensitive:        Casefolding rationale.
+                                                              (line   6)
+* Findutils, GNU package:                Casefolding examples.
+                                                              (line  78)
 * floating directories:                  Searching overview.  (line  22)
 * fmtutil:                               mktex script names.  (line  10)
 * fmtutil.cnf:                           Specially-recognized files.
@@ -3168,7 +3357,7 @@ Index
                                                               (line  25)
 * GNU C compiler bugs:                   TeX or Metafont failing.
                                                               (line  19)
-* GNU General Public License:            Introduction.        (line  31)
+* GNU General Public License:            Introduction.        (line  32)
 * group-writable directories:            Security.            (line  40)
 * GSFTOPK_DEBUG (128):                   Debugging.           (line  88)
 * hash table buckets, printing:          Debugging.           (line 105)
@@ -3184,8 +3373,8 @@ Index
                                                               (line  84)
 * input lines, reading:                  Calling sequence.    (line 110)
 * interactive query:                     Path searching options.
-                                                              (line 119)
-* interface, not frozen:                 Introduction.        (line  28)
+                                                              (line 126)
+* interface, not frozen:                 Introduction.        (line  29)
 * introduction:                          Introduction.        (line   6)
 * kdebug::                               Debugging.           (line 105)
 * kdefault.c:                            Default expansion.   (line  48)
@@ -3193,7 +3382,7 @@ Index
 * Knuth, Donald E., archive of programs by: unixtex.ftp.      (line  19)
 * Kpathsea config file, source for path: Path sources.        (line  17)
 * kpathsea.h:                            Programming overview.
-                                                              (line  24)
+                                                              (line  26)
 * kpathsea_cnf_get:                      Programming with config files.
                                                               (line  23)
 * KPATHSEA_DEBUG:                        Calling sequence.    (line  28)
@@ -3238,7 +3427,7 @@ Index
                                                               (line  21)
 * leaf directory trick:                  Subdirectory expansion.
                                                               (line  22)
-* license for using the library:         Introduction.        (line  31)
+* license for using the library:         Introduction.        (line  32)
 * LIGFONTS:                              Supported file formats.
                                                               (line  88)
 * lines, reading arbitrary-length:       Calling sequence.    (line 110)
@@ -3246,13 +3435,15 @@ Index
 * local cache of fonts:                  Security.            (line  22)
 * log file:                              Logging.             (line   6)
 * logging successful searches:           Logging.             (line   6)
-* lost+found directory:                  Searching overview.  (line  56)
+* lost+found directory:                  Searching overview.  (line  63)
 * lostchar:                              Suppressing warnings.
                                                               (line  19)
 * ls-R:                                  Supported file formats.
                                                               (line  91)
 * ls-R database file:                    ls-R.                (line   6)
 * ls-R, simplest build:                  ls-R.                (line  18)
+* Mac filesystem, case-insensitive:      Casefolding rationale.
+                                                              (line   6)
 * MacKenzie, David:                      History.             (line  44)
 * MacKenzie, David <1>:                  Subdirectory expansion.
                                                               (line  22)
@@ -3359,7 +3550,7 @@ Index
 * path searching, standalone:            Invoking kpsewhich.  (line   6)
 * path sources:                          Path sources.        (line   6)
 * pathsearch.h:                          Programming overview.
-                                                              (line  24)
+                                                              (line  26)
 * pc Pascal compiler:                    History.             (line  12)
 * pdfglyphlist.txt:                      Specially-recognized files.
                                                               (line  31)
@@ -3369,7 +3560,7 @@ Index
                                                               (line 161)
 * pdftexconfig.tex:                      Specially-recognized files.
                                                               (line  34)
-* permission denied:                     Searching overview.  (line  56)
+* permission denied:                     Searching overview.  (line  63)
 * permissions, directory:                Security.            (line  51)
 * permissions, file:                     Security.            (line  47)
 * PKFONTS:                               Supported file formats.
@@ -3393,17 +3584,19 @@ Index
                                                               (line 169)
 * pxp Pascal preprocessor:               History.             (line  12)
 * quoting variable values:               Variable expansion.  (line  17)
+* rationale for casefolding fallback:    Casefolding rationale.
+                                                              (line   6)
 * re-entrant API:                        Programming overview.
                                                               (line  16)
 * readable:                              Suppressing warnings.
                                                               (line  26)
 * reading arbitrary-length lines:        Calling sequence.    (line 110)
 * recording successful searches:         Logging.             (line   6)
-* relative filenames:                    Searching overview.  (line  52)
+* relative filenames:                    Searching overview.  (line  58)
 * reporting bugs:                        Reporting bugs.      (line   6)
 * resident.c:                            Calling sequence.    (line  47)
 * resolution, setting:                   Path searching options.
-                                                              (line  17)
+                                                              (line  24)
 * resolutions, last-resort:              Fallback font.       (line   6)
 * retrieving TeX:                        unixtex.ftp.         (line   6)
 * right-hand side of variable assignments: Config files.      (line  56)
@@ -3416,6 +3609,7 @@ Index
 * Sauter fonts, and dynamic source creation: mktex scripts.   (line   6)
 * scripts for file creation:             mktex scripts.       (line   6)
 * search path, defined:                  Searching overview.  (line   6)
+* search, case-insensitive:              Casefolding search.  (line   6)
 * searching for files:                   File lookup.         (line   6)
 * searching for glyphs:                  Glyph lookup.        (line   6)
 * searching overview:                    Searching overview.  (line   6)
@@ -3458,7 +3652,7 @@ Index
 * subdirectory searching:                Subdirectory expansion.
                                                               (line   6)
 * suffixes, filename:                    File lookup.         (line  24)
-* suggestions, making:                   Introduction.        (line  28)
+* suggestions, making:                   Introduction.        (line  29)
 * Sun 2:                                 History.             (line  12)
 * supplier directory, omitting:          mktex configuration. (line 102)
 * supplier directory, omitting <1>:      mktex configuration. (line 108)
@@ -3472,6 +3666,8 @@ Index
 * symlinks, resolving:                   Calling sequence.    (line  31)
 * system C compiler bugs:                TeX or Metafont failing.
                                                               (line  19)
+* system-dependent casefolding behavior: Casefolding rationale.
+                                                              (line   6)
 * T1FONTS:                               Supported file formats.
                                                               (line 211)
 * T1INPUTS:                              Supported file formats.
@@ -3491,13 +3687,13 @@ Index
 * TeX file lookup:                       File lookup.         (line   6)
 * TeX glyph lookup:                      Glyph lookup.        (line   6)
 * TeX support:                           TeX support.         (line   6)
-* TeX Users Group:                       Introduction.        (line  40)
+* TeX Users Group:                       Introduction.        (line  43)
 * tex-file.c:                            File lookup.         (line  38)
 * tex-file.h:                            Programming overview.
-                                                              (line  24)
+                                                              (line  26)
 * tex-glyph.c:                           Glyph lookup.        (line  26)
 * tex-glyph.h:                           Programming overview.
-                                                              (line  24)
+                                                              (line  26)
 * tex-k@tug.org:                         Mailing lists.       (line   6)
 * tex-k@tug.org (bug address):           Reporting bugs.      (line   6)
 * tex.web:                               unixtex.ftp.         (line  19)
@@ -3554,6 +3750,7 @@ Index
                                                               (line 191)
 * texmfvar:                              mktex configuration. (line 122)
 * TEXMFVAR:                              mktex configuration. (line 123)
+* texmf_casefold_search:                 Casefolding search.  (line  12)
 * TEXPICTS:                              Supported file formats.
                                                               (line  79)
 * TEXPKS:                                Supported file formats.
@@ -3567,7 +3764,7 @@ Index
 * TEXSIZES:                              Fallback font.       (line   6)
 * TEXSOURCES:                            Supported file formats.
                                                               (line 188)
-* TEX_HUSH:                              Searching overview.  (line  56)
+* TEX_HUSH:                              Searching overview.  (line  63)
 * TEX_HUSH <1>:                          Suppressing warnings.
                                                               (line   6)
 * TFMFONTS:                              Supported file formats.
@@ -3599,7 +3796,7 @@ Index
                                                               (line  31)
 * unreadable file warnings:              Suppressing warnings.
                                                               (line  27)
-* unreadable files:                      Searching overview.  (line  56)
+* unreadable files:                      Searching overview.  (line  63)
 * unusable ls-R warning:                 ls-R.                (line  45)
 * usage patterns, finding:               Logging.             (line   6)
 * USERPROFILE, as ~ expansion:           Tilde expansion.     (line   6)
@@ -3620,7 +3817,7 @@ Index
 * Walsh, Norman:                         History.             (line  56)
 * warning about unusable ls-R:           ls-R.                (line  45)
 * warning, about missing texmf.cnf:      Config files.        (line  18)
-* warnings, file access:                 Searching overview.  (line  56)
+* warnings, file access:                 Searching overview.  (line  63)
 * warnings, suppressing:                 Suppressing warnings.
                                                               (line   6)
 * WEB2C:                                 Supported file formats.
@@ -3631,6 +3828,8 @@ Index
 * whitespace, in fontmap files:          Fontmap.             (line  31)
 * whitespace, not ignored on continuation lines: Config files.
                                                               (line  37)
+* Windows and casefolding:               Casefolding rationale.
+                                                              (line  21)
 * www.tug.org:                           unixtex.ftp.         (line   6)
 * XDvi:                                  Specially-recognized files.
                                                               (line  41)
@@ -3644,58 +3843,61 @@ Index
 
 Tag Table:
 Node: Top1480
-Node: Introduction2259
-Node: History4204
-Node: unixtex.ftp8801
-Node: Security10226
-Node: TeX directory structure12730
-Node: Path searching16778
-Node: Searching overview17436
-Node: Path sources20831
-Node: Config files21889
-Node: Path expansion25816
-Node: Default expansion26765
-Node: Variable expansion28835
-Node: Tilde expansion30236
-Node: Brace expansion31216
-Node: KPSE_DOT expansion32141
-Node: Subdirectory expansion32654
-Node: Filename database35008
-Node: ls-R36062
-Node: Filename aliases38957
-Node: Database format40135
-Node: Invoking kpsewhich41148
-Node: Path searching options42103
-Node: Specially-recognized files50023
-Node: Auxiliary tasks51378
-Node: Standard options53717
-Node: TeX support54073
-Node: Supported file formats55425
-Node: File lookup63090
-Node: Glyph lookup64839
-Node: Basic glyph lookup65963
-Node: Fontmap66843
-Node: Fallback font69372
-Node: Suppressing warnings70284
-Node: mktex scripts71411
-Node: mktex configuration72626
-Node: mktex script names78429
-Node: mktex script arguments79815
-Node: Programming80694
-Node: Programming overview81216
-Node: Calling sequence83913
-Node: Program-specific files90445
-Node: Programming with config files91468
-Node: Reporting bugs92780
-Node: Bug checklist93458
-Node: Mailing lists96930
-Node: Debugging97605
-Node: Logging102682
-Node: Common problems104549
-Node: Unable to find files105026
-Node: Slow path searching107436
-Node: Unable to generate fonts108811
-Node: TeX or Metafont failing111282
-Node: Index112635
+Node: Introduction2263
+Node: History4336
+Node: unixtex.ftp8932
+Node: Security10357
+Node: TeX directory structure12861
+Node: Path searching16909
+Node: Searching overview17636
+Node: Path sources21455
+Node: Config files22546
+Node: Path expansion26473
+Node: Default expansion27426
+Node: Variable expansion29496
+Node: Tilde expansion30897
+Node: Brace expansion31877
+Node: KPSE_DOT expansion32802
+Node: Subdirectory expansion33315
+Node: Casefolding search35669
+Node: Casefolding rationale36438
+Node: Casefolding examples37777
+Node: Filename database42827
+Node: ls-R43885
+Node: Filename aliases46780
+Node: Database format47958
+Node: Invoking kpsewhich48971
+Node: Path searching options49926
+Node: Specially-recognized files58128
+Node: Auxiliary tasks59483
+Node: Standard options61822
+Node: TeX support62178
+Node: Supported file formats63532
+Node: File lookup71197
+Node: Glyph lookup72946
+Node: Basic glyph lookup74070
+Node: Fontmap74950
+Node: Fallback font77479
+Node: Suppressing warnings78391
+Node: mktex scripts79518
+Node: mktex configuration80733
+Node: mktex script names86536
+Node: mktex script arguments87922
+Node: Programming88801
+Node: Programming overview89374
+Node: Calling sequence92235
+Node: Program-specific files98767
+Node: Programming with config files99790
+Node: Reporting bugs101102
+Node: Bug checklist101780
+Node: Mailing lists105252
+Node: Debugging105927
+Node: Logging111004
+Node: Common problems112871
+Node: Unable to find files113348
+Node: Slow path searching115758
+Node: Unable to generate fonts117133
+Node: TeX or Metafont failing119604
+Node: Index120957
 
 End Tag Table
