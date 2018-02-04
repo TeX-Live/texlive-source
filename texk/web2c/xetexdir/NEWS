@@ -1,3 +1,29 @@
+XeTeX 0.99999 (February 2018, for TeX Live 2018)
+
+* Fix bug that could cause text after a \discretionary{...}{...}{...}
+  line-break to be dropped.
+* Avoid risk of generating broken UTF-8 in error context messages.
+* Interpret optical size info in OpenType 'size' feature as "big
+  points" units, rather than TeX points.
+* Set a non-zero exit code if the pipe to the output driver returns
+  an error.
+* Correction for longstanding input_ln bug (stripping trailing tabs).
+  (Karl Berry)
+* Guard against out-of-range result from UTF-8 decoding, and return
+  U+FFFD Replacement Character instead. (Akira Kakuto)
+* Fix bugs involving \strcmp and \mdfivesum primitives. (Hironobu
+  Yamashita)
+* Fixes issue where \primitive\vrule\q incorrectly swallows the \q
+  instead of giving an error. (Hironori Kitagawa)
+* Properly close input pipes used in \input or \openin. (Hironobu
+  Yamashita)
+* Make \uchyph work with native fonts. (Hironobu Yamashita)
+* Fixed bug in \ifprimitive. (Hironori Kitagawa)
+* Support /Rotate in PDF image inclusion. (Akira Kakuto)
+* If DPI info is missing in JPEG files, assume 72.0 to avoid
+  division by zero. (Akira Kakuto)
+
+==============================================================
 XeTeX 0.99998 (April 22, 2016)
 
 * Fixed long-standing bug that made \ifcat\span...\fi (and similar
