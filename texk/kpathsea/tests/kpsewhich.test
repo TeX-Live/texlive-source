@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2018 Karl Berry <tex-live@tug.org>
 # Copyright 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -8,10 +8,20 @@ TEXMFCNF=$srcdir
 export TEXMFCNF
 
 ./kpsewhich --var-value=TEXMFCNF || exit 1  # environment variable
-
 ./kpsewhich --var-value=TEXMFMAIN || exit 1
-
 ./kpsewhich --expand-var=\$TEXMFMAIN || exit 1
+
+# It turns out --all and no --all go through rather different code
+# in pathsearch.c, so try them both.
+TEXINPUTS=$srcdir/../tests/texmf \
+  ./kpsewhich --casefold-search --all Plain.TeX || exit 1
+TEXINPUTS=$srcdir/../tests/texmf \
+  ./kpsewhich --casefold-search Plain.TeX || exit 1
+#
+TEXINPUTS=$srcdir/../tests/texmf \
+  ./kpsewhich --no-casefold-search --all Plain.TeX && exit 1
+TEXINPUTS=$srcdir/../tests/texmf \
+  ./kpsewhich --no-casefold-search Plain.TeX && exit 1
 
 TEXINPUTS=$srcdir/../tests/texmf \
   ./kpsewhich --all plain || exit 1

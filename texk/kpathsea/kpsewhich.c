@@ -355,7 +355,9 @@ subdir_match (str_list_type subdirs,  string *matches)
 #endif /* WIN32 */
 
 
-/* Look up a single filename NAME.  Return 0 if success, 1 if failure.  */
+/* Look up a single filename NAME, filtering by given subdirectories if
+   -subdir was specified.  Print all matches if global `show_all' is
+   true, else just the first match.  Return 0 if success, 1 if failure.  */
 
 static unsigned
 lookup (kpathsea kpse, string name)
@@ -463,6 +465,7 @@ to also use -engine, or nothing will be returned; in particular,\n\
 -engine=/ will return matching format files for any engine.\n\
 \n\
 -all                   output all matches, one per line.\n\
+[-no]-casefold-search  fall back to case-insensitive search if no exact match.\n\
 -debug=NUM             set debugging flags.\n\
 -D, -dpi=NUM           use a base resolution of NUM; default 600.\n\
 -engine=STRING         set engine name to STRING.\n\
@@ -480,7 +483,7 @@ to also use -engine, or nothing will be returned; in particular,\n\
 -progname=STRING       set program name to STRING.\n\
 -safe-in-name=STRING   check if STRING is ok to open for input.\n\
 -safe-out-name=STRING  check if STRING is ok to open for output.\n\
--show-path=NAME        output search path for file type NAME\n\
+-show-path=TYPE        output search path for file type TYPE\n\
                          (list shown by -help-formats).\n\
 -subdir=STRING         only output matches whose directory ends with STRING.\n\
 -var-value=STRING      output the value of variable $STRING.\n\
@@ -494,7 +497,7 @@ help_message (kpathsea kpse, string *argv)
   fputs (USAGE, stdout);
   putchar ('\n');
   fputs (kpathsea_bug_address, stdout);
-  fputs ("Kpathsea home page: http://tug.org/kpathsea/\n", stdout);
+  fputs ("Kpathsea home page: https://tug.org/kpathsea/\n", stdout);
   exit (0);
 }
 
@@ -575,6 +578,7 @@ help_formats (kpathsea kpse, string *argv)
 static struct option long_options[]
   = { { "D",                    1, 0, 0 },
       { "all",                  0, (int *) &show_all, 1 },
+      { "casefold-search",      0, 0, 0 },
       { "debug",                1, 0, 0 },
       { "dpi",                  1, 0, 0 },
       { "engine",               1, 0, 0 },
@@ -589,6 +593,7 @@ static struct option long_options[]
       { "mode",                 1, 0, 0 },
       { "must-exist",           0, (int *) &must_exist, 1 },
       { "path",                 1, 0, 0 },
+      { "no-casefold-search",   0, 0, 0 },
       { "no-mktex",             1, 0, 0 },
       { "progname",             1, 0, 0 },
       { "safe-in-name",         1, 0, 0 },
@@ -616,7 +621,13 @@ read_command_line (kpathsea kpse, int argc, string *argv)
 
     assert (g == 0); /* We have no short option names.  */
 
-    if (ARGUMENT_IS ("debug")) {
+    if (ARGUMENT_IS ("casefold-search")) {
+      /* We can't just a boolean for casefold-search because we want to
+         distinguish it being set with an option vs. leaving the default
+         (by default).  */
+      xputenv ("texmf_casefold_search", "1");      
+
+    } else if (ARGUMENT_IS ("debug")) {
       kpse->debug |= atoi (optarg);
 
     } else if (ARGUMENT_IS ("dpi") || ARGUMENT_IS ("D")) {
@@ -650,6 +661,9 @@ read_command_line (kpathsea kpse, int argc, string *argv)
     } else if (ARGUMENT_IS ("mode")) {
       mode = optarg;
 
+    } else if (ARGUMENT_IS ("no-casefold-search")) {
+      xputenv ("texmf_casefold_search", "0");      
+
     } else if (ARGUMENT_IS ("no-mktex")) {
       kpathsea_maketex_option (kpse, optarg, false);
       must_exist = 0;
@@ -678,8 +692,8 @@ read_command_line (kpathsea kpse, int argc, string *argv)
 
     } else if (ARGUMENT_IS ("version")) {
       puts (kpathsea_version_string);
-      puts ("Copyright 2017 Karl Berry & Olaf Weber.\n\
-License LGPLv2.1+: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n\
+      puts ("Copyright 2018 Karl Berry & Olaf Weber.\n\
+License LGPLv2.1+: GNU Lesser GPL version 2.1 or later <https://gnu.org/licenses/lgpl.html>\n\
 This is free software: you are free to change and redistribute it.\n\
 There is NO WARRANTY, to the extent permitted by law.\n");
       exit (0);

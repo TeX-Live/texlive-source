@@ -1,4 +1,10 @@
+$Id$
 This file records noteworthy changes.  (Public domain.)
+
+6.3.0 (for TeX Live 2018)
+* New configuration value texmf_casefold_search to fall back to
+  case-insensitive search in non-system directories if there is no exact
+  match; only relevant on Unix.
 
 6.2.3 (for TeX Live 2017, 19 May 2017)
 * .OTF treated like .otf.

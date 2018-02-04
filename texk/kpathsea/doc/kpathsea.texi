@@ -2,13 +2,13 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 6.2.4
-@set month-year June 2017
+@set version 6.3.0
+@set month-year February 2018
 
 @copying
 This file documents the Kpathsea library for path searching.
 
-Copyright @copyright{} 1996--2017 Karl Berry & Olaf Weber.
+Copyright @copyright{} 1996--2018 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -129,12 +129,12 @@ this library:
 @item Xdvik (see the @samp{xdvi} man page)
 @end itemize
 
-@noindent Other software that we do not maintain also uses it.  
+@noindent Other software that we do not maintain also uses it.
 
 Kpathsea is now maintained as part of the @TeX{} Live distribution
-(@url{http://tug.org/texlive}).  For information on configuration,
-building, installing, and more, @pxref{,,,tlbuild, Building @TeX{}
-Live}.
+(@url{http://tug.org/texlive}), which includes several more
+Kpathsea-using programs.  For information on configuration, building,
+installing, and more, @pxref{,,,tlbuild, Building @TeX{} Live}.
 
 @cindex interface, not frozen
 @cindex comments, making
@@ -146,13 +146,14 @@ suggestions, please send along (@pxref{Reporting bugs}).
 @cindex license for using the library
 @cindex GNU General Public License
 The Kpathsea library is distributed under the GNU Library General
-Public License (LGPL).  In short, this means if you write a program
-using the library, you must (offer to) distribute the source to the
-library, along with any changes you have made, and allow anyone to
-modify the library source and distribute their modifications.  It does
-not mean you have to distribute the source to your program, although
-we hope you will.  See accompanying files for the text of the GNU
-licenses, or @url{http://www.gnu.org/licenses}.
+Public License (LGPL), version@tie{}2.1 or (at your option) any later
+version.  In short, this means if you write a program using the
+library, you must (offer to) distribute the source to the library,
+along with any changes you have made, and allow anyone to modify the
+library source and distribute their modifications.  It does not mean
+you have to distribute the source to your program using the library,
+although we hope you will.  See accompanying files for the text of the
+GNU licenses, or @url{http2://www.gnu.org/licenses}.
 
 @cindex @TeX{} Users Group
 If you know enough about @TeX{} to be reading this manual, then you (or
@@ -160,7 +161,7 @@ your institution) should consider joining the @TeX{} Users Group (if
 you're already a member, thanks!).  TUG produces the periodical
 @cite{TUGboat}, sponsors an annual meeting and publishes the
 proceedings, and arranges courses on @TeX{} for all levels of users
-throughout the world.  See @url{http://tug.org} for information.
+throughout the world.  See @url{https://tug.org} for information.
 
 @menu
 * History::
@@ -261,14 +262,14 @@ part of the burden, and I volunteered.
 @cindex Hoekwater, Taco
 @cindex Breitenlohner, Peter
 [Karl writes again.]  Indeed, time goes on.  As of 2006 or so, Olaf's
-available time for Kpathsea became rather reduced, and I started
-taking overall care of it again, although I did not do any significant
-new development.  In 2009, Taco Hoekwater made a major rearrangement
-to make the library suitable for use within the MetaPost library
-(@pxref{Programming overview}).  Also, for some years now, Peter
-Breitenlohner has made many improvements to the infrastructure and
-kept up-to-date with respect to the overall @TeX{} Live build, where
-Kpathsea is now maintained.
+available time for Kpathsea was reduced, and I started taking overall
+care of it again, although I did not do any significant new
+development.  In 2009, Taco Hoekwater implemented a major
+rearrangement to make the library suitable for use within the MetaPost
+library (@pxref{Programming overview}).  Also, for some years now,
+Peter Breitenlohner has made many improvements to the infrastructure
+and kept it up-to-date with respect to the overall @TeX{} Live build,
+where Kpathsea is now maintained.
 
 
 @c emacs-page  separate file so we can easily generate unixtex.ftp.
@@ -448,6 +449,7 @@ provides.  For information about searching for particular file types
 * Searching overview::          Basic scheme for searching.
 * Path sources::                Where search paths can be defined.
 * Path expansion::              Special constructs in search paths.
+* Casefolding search::          Fallback to case-insensitive search.
 * Filename database::           Using an externally-built list to search.
 * Invoking kpsewhich::          Standalone path lookup.
 @end menu
@@ -506,11 +508,18 @@ be wrong to search the disk for them.  Therefore, if you fail to
 update @file{ls-R} when you install a new VF file, it will not be
 found.
 
-Each path element is checked in turn: first the database, then the disk.
-If a match is found, the search stops and the result is returned.  This
+Each path element is checked in turn: first the database, then the
+disk.  If a match is found, the search stops and the result is
+returned (unless the search explicitly requested all matches).  This
 avoids possibly-expensive processing of path specifications that are
-never needed on a particular run.  (Unless the search explicitly
-requested all matches.)
+never needed on a particular run.
+
+On Unix-like systems, if no match is found by any of the above, and
+the path element allows checking the filesystem (per the above), a
+final check is made for a case-insensitive match. Thus, looking for a
+name like @samp{./FooBar.TeX} will match a file @samp{./foobar.tex},
+and vice versa.  This is not done on Windows.  @xref{Casefolding
+search}.
 
 @cindex expansion, path element
 Although the simplest and most common path element is a directory name,
@@ -528,7 +537,8 @@ order as the sections.
 @cindex filenames, absolute or explicitly relative
 Exception to all of the above: If the filename being searched for is
 absolute or explicitly relative, i.e., starts with @samp{/} or @samp{./}
-or @samp{../}, Kpathsea simply checks if that file exists.
+or @samp{../}, Kpathsea simply checks if that file exists, with a
+fallback to a casefolding match if needed and enabled, as described above.
 
 @cindex permission denied
 @cindex unreadable files
@@ -555,8 +565,8 @@ lookup}, and @ref{Glyph lookup}).
 @cindex path sources
 @cindex sources for search paths
 
-A search path can come from many sources.  In the order in which
-Kpathsea uses them:
+A search path or other configuration value can come from many sources.
+In the order in which Kpathsea looks for them:
 
 @enumerate
 @item
@@ -726,8 +736,9 @@ Kpathsea recognizes certain special characters and constructions in
 search paths, similar to that in shells.  As a general example:
 @samp{~$USER/@{foo,bar@}//baz} expands to all subdirectories under
 directories @file{foo} and @file{bar} in @t{$USER}'s home directory that
-contain a directory or file @file{baz}.  These expansions are explained
-in the sections below.
+contain a directory or file @file{baz}.
+
+These expansions are explained in the sections below.
 
 @menu
 * Default expansion::           a: or :a or a::b expands to a default.
@@ -1007,6 +1018,178 @@ Subdirectory expansion is implemented in the source file
 @file{kpathsea/elt-dirs.c}.
 
 
+@node Casefolding search
+@section Casefolding search
+
+@cindex casefolding search
+@cindex search, case-insensitive
+
+In Kpathsea version 6.3.0 (released with @TeX{} Live 2018), a new
+fallback search was implemented on Unix-like systems, including Macs:
+for each path element in turn, if no match is found by the normal
+search, and the path element allows for checking the filesystem, a
+second check is made for a case-insensitive match.
+
+@vindex texmf_casefold_search
+This is enabled at compile-time on Unix systems, and enabled at
+runtime by setting the configuration variable
+@code{texmf_casefold_search}, to a true value, e.g., @samp{1}; this is
+done by default in @TeX{} Live.
+
+@menu
+* Rationale: Casefolding rationale.
+* Examples: Casefolding examples.
+@end menu
+
+@node Casefolding rationale
+@subsection Casefolding rationale
+
+@cindex casefolding fallback rationale
+@cindex rationale for casefolding fallback
+@cindex system-dependent casefolding behavior
+
+@cindex filesystem, case-(in)sensitive
+@cindex Apple filesystem, case-insensitive
+@cindex Mac filesystem, case-insensitive
+The purpose of the fallback casefolding search is to ease moving
+complex documents between case-insensitive (file)systems and
+case-sensitive ones.  In particular, Apple decided to make the default
+filesystem on Macs be case-insensitive some years ago, and this has
+exacerbated a problem of people creating documents that use, say, an
+image under the name @file{foo.jpg}, while the actual file is named
+@file{foo.JPG} or @file{Foo.jpg}. It works on the Mac but if the
+document is transferred and run on a standard case-sensitive Unix
+(file)system, the file can't be found, due only to differences in
+case.
+
+This same problematic scenario has always existed on Windows, but for
+whatever reason, it has become much more common since Apple also went
+to a case-insensitive filesystem.  Hence the move to change the
+Kpathsea behavior now.
+
+@cindex Windows and casefolding
+The fallback case-insensitive search is omitted at compile-time on
+Windows, where (for practical purposes) all file names are
+case-insensitive at the kernel level, and so the normal search will
+already have definitively matched or not.  Therefore, search results
+in unusual cases can be different on Windows and Unix---but this has
+always been true.
+
+
+@node Casefolding examples
+@subsection Casefolding examples
+
+@cindex casefolding examples
+@cindex examples, of casefolding searches
+
+The casefolding implementation prefers exact matches to casefolded
+matches within a given path element, so as to retain most
+compatibility.  Backward compatibility is not perfect, however, as a
+casefolded match may be found in an earlier path element than an exact
+match was previously found (see example #4 below).  Still, preferring
+the match in the earlier element seemed potentially less confusing
+than otherwise, and is in fact consistent with past behavior on
+Windows.  Since case mismatches are rare to begin with, and name
+collisions with respect only to case thus even more rare, the hope is
+that it will not cause difficulties in practice.
+
+If it's desirable in a given situation to have the exact same search
+behavior as previously, that can be accomplished by setting the
+configuration variable @code{texmf_casefold_search} to @samp{0}
+(@pxref{Path sources}).
+
+Some examples to illustrate the new behavior follow.
+
+Example #1: suppose the file @file{./foobar.tex} exists. Now,
+searching for @file{./FooBar.TeX} (or any other case variation) will
+succeed, returning @file{./foobar.tex}---the name as stored on disk.
+In previous releases, or if @code{texmf_casefold_search} is false, the
+search would fail.
+
+Example #2: suppose we are using a case-sensitive (file)system, and
+the search path is @samp{.:/somedir}, and the files
+@file{./foobar.tex} and @file{/somedir/FooBar.TeX} both exist.  Both
+now and previously, searching for @file{foobar.tex} returns
+@file{./foobar.tex}.  However, searching for @file{FooBar.TeX} now
+returns @file{./foobar.tex} instead of @file{/somedir/FooBar.TeX};
+this is the incompatibility mentioned above.  Also (as expected),
+searching for @file{FOOBAR.TEX} (or whatever variation) will now
+return @file{./foobar.tex}, whereas before it would fail.  Searching
+for all (@samp{kpsewhich --all}) @file{foobar.tex} will return both
+matches.
+
+Example #3: same as example #2, but on a case-insensitive
+(file)system: both now and previously, searching for @file{FooBar.TeX}
+returns @file{./foobar.tex}, since the system considers that a match.
+The Kpathsea casefolding never comes into play.
+
+Example #4: if we have (on a case-sensitive system) both
+@file{./foobar.tex} and @file{./FOOBAR.TEX}, searching with the exact
+case returns that exact match, now and previously.  Searching for
+@file{FooBar.tex} will now return one or the other (chosen
+arbitrarily), rather than failing.  Perhaps unexpectedly, searching
+for all @file{foobar.tex} or @file{FooBar.tex} will also return only
+one or the other, not both (see more below).
+
+Example #5: the font file @file{STIX-Regular.otf} is included in
+@TeX{} Live in the system directory
+@file{texmf-dist/fonts/opentype/public/stix}.  Because Kpathsea never
+searches the disk in the big system directory, the casefolding is not
+done, and a search for @samp{stix-regular.otf} will fail (on
+case-sensitive systems), as it always has.
+
+The caveat about not searching the disk amounts to saying that
+casefolding does not happen in the trees specified with @samp{!!}
+(@pxref{ls-R}), that is, where only database (@file{ls-R}) searching
+is done.  In @TeX{} Live, that is the @samp{texmf-local} and
+@samp{texmf-dist} trees (also @code{$TEXMFSYSCONFIG} and
+@code{$TEXMFSYSVAR}, but those are rarely noticed).  The rationale for
+this is that in practice, case mangling happens with user-created
+files, not with packages distributed as part of the @TeX{} system.
+
+One more caveat: the purpose of @code{kpsewhich} is to exercise the
+path searching in Kpathsea as it is actually done.  Therefore, as
+shown above, @samp{kpsewhich --all} will not return all matches
+regardless of case within a given path element.  If you want to find
+all matches in all directories, @code{find} is the best tool, although
+the setup takes a couple steps:
+
+@example
+kpsewhich -show-path=tex >/tmp/texpath      # search path specification
+kpsewhich -expand-path="`cat /tmp/texpath`" >/tmp/texdirs  # all dirs
+tr ':' '\n' </tmp/texdirs >/tmp/texdirlist  # colons to newlines
+find `cat /tmp/texdirlist` -iname somefile.tex -print </tmp/texdirlist
+@end example
+
+@cindex Findutils, GNU package
+@opindex -iname@r{, find predicate}
+Sorry that it's annoyingly lengthy, but implementing this inside
+Kpathsea would be a lot of error-prone trouble for something that is
+only useful for debugging.  If your @code{find} does not support
+@code{-iname}, you can get GNU Find from
+@url{https://www.gnu.org/software/findutils}.
+
+The casefolding search is implemented in the source file
+@file{kpathsea/pathsearch.c}.  Two implementation points:
+
+@itemize
+@findex access @r{system call}
+@item
+Kpathsea never tries to check if a given directory resides on a
+case-insensitive filesystem, because there is no efficient and
+portable way to do so.  All it does is try to see if a potential file
+name is a readable normal file (with, usually, the @code{access}
+system call).
+
+@item
+Kpathsea does not do any case-insensitive matching of the directories
+along the path.  It's not going to find @file{/Some/Random/file.tex}
+when looking for @file{/some/random/file.tex}.  The casefolding only
+happens with the elements of the leaf directory.
+
+@end itemize
+
+
 @node Filename database
 @section Filename database (@code{ls-R})
 
@@ -1254,6 +1437,14 @@ Various options alter the path searching behavior:
 @cindex all matches, finding
 Report all matches found, one per line.  By default, if there is more
 than one match, just one will be reported (chosen effectively at random).
+
+@item --casefold-search
+@itemx --no-casefold-search
+@opindex --casefold-search
+@opindex --no-casefold-search
+Explicitly enable or disable the fallback to a case-insensitive search
+on Unix platforms (@pxref{Casefolding search}); no effect on Windows.
+The default is the same as the system setup, which is (by default) enabled.
 
 @item --dpi=@var{num}
 @opindex --dpi=@var{num}
@@ -1659,22 +1850,23 @@ successfully.
 
 @cindex @TeX{} support
 
-Although the basic features in Kpathsea can be used for any type of path
-searching, it came about (like all libraries) with a specific
-application in mind: I wrote Kpathsea specifically for @TeX{} system
-programs.  I had been struggling with the programs I was using (Dvips,
-Xdvi, and @TeX{} itself) having slightly different notions of how to
-specify paths; and debugging was painful, since no code was shared.
+Although the basic features in Kpathsea can be used for any type of
+path searching, it came about, as usual, with a specific application
+in mind: I wrote Kpathsea specifically for @TeX{} system programs.  I
+had been struggling with the programs I was using (Dvips, Xdvi, and
+@TeX{} itself) having slightly different notions of how to specify
+paths; and debugging was painful, since no code was shared.
 
-Therefore, Kpathsea provides some @TeX{}-specific formats and features.
-Indeed, many of the supposedly generic path searching features were
-provided because they seemed useful in that con@TeX{}t (font lookup,
-particularly).
+Therefore, Kpathsea provides some @TeX{}-specific formats and
+features.  Indeed, many of the purportedly generic path searching
+features were provided because they seemed useful in that con@TeX{}t
+(font lookup, particularly).
 
 Kpathsea provides a standard way to search for files of any of the
-supported file types; glyph fonts are a bit different than all the rest.
-Searches are based solely on filenames, not file contents---if a GF
-file is named @file{cmr10.600pk}, it will be found as a PK file.
+supported file types; glyph fonts are a bit different than all the
+rest.  Searches are based solely on names of files, not their
+contents---if a GF file is (mis)named @file{cmr10.600pk}, it will be
+found as a PK file.
 
 @menu
 * Supported file formats::      File types Kpathsea knows about.
@@ -2756,12 +2948,12 @@ script.
 @end table
 
 
-
 @node Programming
 @chapter Programming
 
 This chapter is for programmers who wish to use Kpathsea.
-@xref{Introduction}, for the conditions under which you may do so.
+@xref{Introduction}, for the conditions under which you may do so (in
+short, it is released under LGPLv2.1 or later).
 
 @menu
 * Overview: Programming overview.         Introduction.
@@ -2778,24 +2970,26 @@ This chapter is for programmers who wish to use Kpathsea.
 @cindex overview of programming with Kpathsea
 
 Aside from this manual, your best source of information is the source
-to the programs that use Kpathsea (@pxref{Introduction}).  Of those,
-Dviljk is probably the simplest, and hence a good place to start.
-Xdvik adds VF support and the complication of X resources.  Dvipsk
-adds the complication of its own config files.  Web2c is source code I
-also maintain, so it uses Kpathsea rather straightforwardly, but is of
-course complicated by the Web to C translation.  Finally, Kpsewhich is
-a small utility program whose sole purpose is to exercise the main
-path-searching functionality.
+to the programs that use Kpathsea (@pxref{Introduction}).  First,
+Kpsewhich is a small utility program whose sole purpose is to exercise
+the main path-searching functionality.  Of the drivers, Dviljk is
+probably the simplest full application program.  Xdvik adds VF support
+and the complication of X resources.  Dvipsk adds the complication of
+its own config files.  Web2c is source code I also maintain, so it
+uses Kpathsea rather straightforwardly, but is of course complicated
+by the Web to C translation.
 
 @cindex re-entrant API
 @cindex API, re-entrant
 When looking at these program sources, you should know that previous
-versions of the library had a different programming interface, to
-support re-entrancy.  In that interface the library function names
-were prefixed with @code{kpse_} instead of @code{kpathsea_}, and they
-did not need an instance variable as first argument.  This change was
-made in 2009.  Some of the programs mentioned above may still be using
-the previous interface.
+versions of the library had a different programming interface; the
+current interface supports re-entrancy.  Historically, the library
+function names were prefixed with @code{kpse_} instead of
+@code{kpathsea_}, and they did not need an instance variable as first
+argument.  This change was made in 2009.  The old functions will never
+disappear, and can reliably continue to be used when they suffice, as
+they do for the programs above.  The main application using the
+re-entrant API is the MetaPost library used by MetaPost and Lua@TeX{}.
 
 @flindex pathsearch.h
 @flindex tex-file.h

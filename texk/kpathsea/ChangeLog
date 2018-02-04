@@ -1,3 +1,53 @@
+2018-02-04  Karl Berry  <karl@freefriends.org>
+
+	* texmf.cnf (texmf_casefold_search): new configuration value
+	for Unix, default 1. Latest thread about this longstanding issue:
+	http://tug.org/pipermail/tex-live/2017-September/040619.html
+
+	* version.ac: move to 6.3.0 since I guess this is a new
+	(compatible [enough]) interface.
+	* NEWS: mention it.
+	* doc/kpathsea.texi: document it.
+	(Casefolding search),
+	(Casefolding rationale),
+	(Casefolding examples): new nodes.
+	(Path searching options): new option [-no]-casefold-search
+	for kpsewhich.
+
+	* pathsearch.c (KPSE_CASEFOLDING_SEARCH): new compile-time macro
+	to support case-insensitive searches on case-sensitive operating
+	systems, that is, not Windows. Most other changes here are
+	conditional on it.
+
+	(print_space_list): helper fn for debugging output.
+	(readable_file_fn_type): new typedef for casefold_readable_file
+	and kpathsea_readable_file.
+	(casefold_readable_file): new fn to check for a file ignoring case.
+	(dir_list_search),
+	(dir_list_search_list): take an additional function pointer argument
+	and call it, instead of only kpathsea_readable_file. Return
+	the matched name instead of the original name. (This would have
+	caused failure before with the ENAMETOOLONG kludge; guess that
+	never actually happens.)
+	(absolute_search),
+	(path_search): also do casefolded search if enabled and requested.
+	Also free passed name in callers.
+	(kpathsea_path_search_list_generic): call absolute_search
+	instead of kpathsea_readable_file; merge returned lists;
+	also do casefolded search if enabled and requested.
+	
+        (print_tab_list) [TEST]: another helper fn to print test results.
+        (test_path_search_list_generic) [TEST]: new test fn for some
+	minimal casefolding tests.
+	(main): call it, and rearrange tests.
+	(standalone-compile-command): current to current (TeX Live) reality.
+
+	* kpsewhich.c (long_options): new options [-no]-casefold-search
+	to override the default for casefolded searches.
+	(read_command_line): handle them with xputenv on texmf_casefold_search.
+	
+	* tests/kpsewhich.test: do a few casefolding tests.
+	
 2018-02-01  Karl Berry  <karl@freefriends.org>
 
 	* lib.h (KPSE_CNF_P): new macro.

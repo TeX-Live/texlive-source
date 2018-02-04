@@ -685,6 +685,13 @@ TEX.pmpost = eptex
 % given as command line option or environment variable.
 BIBTEX_CSFILE = 88591lat.csf
 
+% This variable is specific to Unix, to fall back to case-insensitive
+% search in non-system directories if there is no exact match. It is
+% enabled by default in texmf.cnf, but not enabled by default at
+% compile-time.
+%
+texmf_casefold_search = 1
+
 % This variable is specific to Windows.  It must be set to 0 or 1.  The
 % default is 0.  Setting it to 1 tells the Windows script wrappers to
 % use an already installed Perl interpreter if one is found on the
