@@ -3957,7 +3957,8 @@ if (math_type(subscr(q))=empty)and(math_type(supscr(q))=empty)and@|
              add_glue_ref(gq); link(gp):=get_node(small_node_size);
              gp:=link(gp); glue_ptr(gp):=null; link(gp):=null;
              end;
-           p:=new_glue(gq); link(p):=link(q); link(q):=p; return;
+           p:=new_glue(gq); subtype(p):=jfm_skip+1;
+           link(p):=link(q); link(q):=p; return;
            end
          else begin p:=new_kern(char_kern(cur_f)(cur_i));
            link(p):=link(q); link(q):=p; return;
