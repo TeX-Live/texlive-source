@@ -14206,6 +14206,10 @@ elif grep 'LJ_TARGET_ARM64 ' conftest.i >/dev/null 2>&1; then :
          if test "x$LJHOST" = xiOS; then :
   LUAJIT_CFLAGS='-fno-omit-frame-pointer'
 fi
+         if grep '__AARCH64EB__' conftest.i >/dev/null 2>&1; then :
+  echo '-D__AARCH64EB__=1' >>native_flags
+fi
+
 elif grep 'LJ_TARGET_PPC ' conftest.i >/dev/null 2>&1; then :
   LJARCH=ppc
          if grep 'LJ_LE 1' conftest.i >/dev/null 2>&1; then :
@@ -14231,6 +14235,11 @@ if grep 'LJ_NO_UNWIND 1' conftest.i >/dev/null 2>&1; then :
          echo '-DLUAJIT_NO_UNWIND' >>native_flags
 fi
 echo "-DLUAJIT_TARGET=LUAJIT_ARCH_$LJARCH" >>native_flags
+if grep 'LJ_LE' conftest.i >/dev/null 2>&1; then :
+  echo '-D ENDIAN_LE' >>dynasm_flags
+else
+  echo '-D ENDIAN_BE' >>dynasm_flags
+fi
 if grep 'LJ_ARCH_BITS 64' conftest.i >/dev/null 2>&1; then :
   echo '-D P64' >>dynasm_flags
          if test "x$LJHOST" = xLinux; then :
