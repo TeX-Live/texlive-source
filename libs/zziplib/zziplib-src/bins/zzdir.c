@@ -7,10 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-
 static const char usage[] = 
 {
     "zzdir <dir>.. \n"
@@ -59,13 +55,13 @@ main (int argc, char ** argv)
 	    /* orignalsize / compression-type / compression-ratio / filename */
             if (d->st_size > 999999)
             {
-                printf ("%5dK %-9s %2d%% %s \n", 
+                printf ("%5dK %-9s %2d%% %s\n", 
 			d->st_size>>10, 
 			zzip_compr_str(d->d_compr), 
 			100 - (d->d_csize|1)/((d->st_size/100)|1),
 			d->d_name);
             }else{
-                printf ("%6d %-9s %2d%% %s \n", 
+                printf ("%6d %-9s %2d%% %s\n", 
 			d->st_size, 
 			zzip_compr_str(d->d_compr), 
 			100 - (d->d_csize|1)*100/(d->st_size|1),

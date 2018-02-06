@@ -11,7 +11,7 @@ dnl which will form a -version-info in a @VERSION_INFO@ ac_subst while
 dnl the rest is going to the -release name in a @RELEASE_INFO@
 dnl ac_subst.
 dnl
-dnl you should keep these two seperate - the release-name may contain
+dnl you should keep these two separate - the release-name may contain
 dnl alpha-characters and can be modified later with extra release-hints
 dnl e.g. RELEASE_INFO="$RELEASE_INFO-debug" for a debug version of your
 dnl lib. The $VERSION_INFO however should not be touched.

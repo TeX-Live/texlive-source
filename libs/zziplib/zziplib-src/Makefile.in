@@ -951,6 +951,8 @@ check-test0 check-test1 check-zzdir check-zzcat \
 check-zzxor check-zzxordir check-zzxorcat \
 check-sfx check-readme check-tests tests: 
 	(cd test && $(MAKE) `basename $@`)
+
+test_%: ; cd test && $(MAKE) `basename $@`
 # ------------------------------------------------------------------------
 
 test-comp:

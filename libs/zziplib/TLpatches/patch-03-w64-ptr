@@ -1,7 +1,7 @@
-diff -ur zziplib-0.13.66.orig/zzip/zip.c zziplib-0.13.66/zzip/zip.c
---- zziplib-0.13.66.orig/zzip/zip.c	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/zzip/zip.c	Wed May 24 21:14:48 2017
-@@ -369,15 +369,19 @@
+diff -ur zziplib-0.13.68.orig/zzip/zip.c zziplib-0.13.68/zzip/zip.c
+--- zziplib-0.13.68.orig/zzip/zip.c	Tue Feb 06 05:00:56 2018
++++ zziplib-0.13.68/zzip/zip.c	Tue Feb 06 08:29:37 2018
+@@ -381,15 +381,19 @@
   * making pointer alignments to values that can be handled as structures
   * is tricky. We assume here that an align(4) is sufficient even for
   * 64 bit machines. Note that binary operations are not usually allowed

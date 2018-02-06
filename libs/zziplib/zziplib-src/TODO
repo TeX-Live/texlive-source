@@ -45,7 +45,7 @@ libtool package, the libtool 1.4 is dated 2001/04/24
 
 There are reports of misaligned access to some zip fields that
 I would guess to be on little-endian non-x86 platforms. The current
-bytewise access of multibyte fields is targetted towards the
+bytewise access of multibyte fields is targeted towards the
 bigendian unix machines. The fix would need to go to fetch.h but
 so far no response came about as that one could test a solution.
 

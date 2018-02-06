@@ -11,16 +11,13 @@
 #include <zzip/write.h>
 #include <stdio.h>
 #include <string.h>
+#include "zzipmake-zip.h"
 
 #ifdef ZZIP_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef ZZIP_HAVE_IO_H
 #include <io.h>
-#endif
-
-#ifndef O_BINARY
-#define O_BINARY 0
 #endif
 
 static const char usage[] = 
@@ -51,48 +48,7 @@ main (int argc, char ** argv)
 	return 0;
     }
 
-    dir = zzip_dir_creat(argv[1], 0755);
-    if (! dir)
-    {
-	fprintf (stderr, "did not creat %s: \n", argv[1]);
-	perror(argv[1]);
-	if (1)
-	    return 1;
-	else
-	    fprintf (stderr, "(ignored)\n");
-    }
-    
-    for (argn=2; argn < argc; argn++)
-    {
-	int input = open (argv[argn], O_RDONLY);
-	if (input == -1)
-	{
-	    perror (argv[argn]);
-	    continue;
-	}
-	else
-	{
-	    char buf[17]; zzip_ssize_t n;
-	    ZZIP_FILE* output = zzip_file_creat (dir, argv[argn], 0755);
-	    if (! output)
-	    {
-		fprintf (stderr, "|did not open %s: \n", argv[argn]);
-		fprintf (stderr, "|%s: %s\n", argv[argn], 
-			 zzip_strerror_of(dir));
-		continue;
-	    }
-
-	    while ((n = read (input, buf, 16)))
-	    {
-		zzip_write (output, buf, n);
-	    }
-	    zzip_close (output);
-        }
-	close (input);
-    }
-    zzip_closedir(dir);
-    
-    return exitcode;
+    return rezzip_make(argc, argv);
 } 
 
 /* 

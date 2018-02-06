@@ -7,7 +7,7 @@ dnl projects. In general, you can include in your configure.ac
 dnl some line like
 dnl PKG_CHECK_ZZIPLIB([ZZIP],[0.10.75])
 dnl in order to get the two autoconf/automake subst variables
-dnl named ZZIP_CFLAGS and ZZIP_LIBS respectivly.
+dnl named ZZIP_CFLAGS and ZZIP_LIBS respectively.
 
 dnl PKG_CHECK_ZZIPLIB(ZZIP, minversion, action-if, action-not)
 dnl defines ZZIP_LIBS, ZZIP_CFLAGS, see pkg-config man page

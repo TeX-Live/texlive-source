@@ -85,7 +85,7 @@ Step 4: Customization
      or just ignore the value when no messages are there
   -> Project -> Settings -> Tab: Link
              -> Category: General -> "Output Filename"
-     e.g. "zzip-1.dll" intead of "zzip.dll" for this first generation
+     e.g. "zzip-1.dll" instead of "zzip.dll" for this first generation
      (needs also to rename dll dependencies from "zzip.lib" to "zzip-1.lib")
 - there are a few defines that trigger extra code in zziplib, e.g.
    ZZIP_HARDEN - extra sanity check for obfuscated zip files

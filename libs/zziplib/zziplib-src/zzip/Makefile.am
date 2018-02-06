@@ -8,7 +8,7 @@ zzipdir = ${includedir}/zzip
 zzip_HEADERS = $(libzzip_la_headers) \
                $(libzzipmmapped_la_headers) \
                $(libzzipfseeko_la_headers)
-noinst_HEADERS = __debug.h __hints.h __mmap.h __dirent.h __fnmatch.h
+noinst_HEADERS = __debug.h __hints.h __mmap.h __dirent.h __fnmatch.h __string.h __mkdir.h __errno.h
 #
 VERSION_INFO=@VERSION_INFO@
 RELEASE_INFO=@RELEASE_INFO@

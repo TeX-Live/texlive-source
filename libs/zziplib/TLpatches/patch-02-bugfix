@@ -1,6 +1,24 @@
-diff -ur zziplib-0.13.66.orig/zzip/__mmap.h zziplib-0.13.66/zzip/__mmap.h
---- zziplib-0.13.66.orig/zzip/__mmap.h	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/zzip/__mmap.h	Wed May 24 21:14:48 2017
+diff -ur zziplib-0.13.68.orig/zzip/__fnmatch.h zziplib-0.13.68/zzip/__fnmatch.h
+--- zziplib-0.13.68.orig/zzip/__fnmatch.h	Tue Feb 06 05:00:56 2018
++++ zziplib-0.13.68/zzip/__fnmatch.h	Tue Feb 06 10:35:33 2018
+@@ -20,13 +20,7 @@
+ #else
+ # define _zzip_FNM_CASEFOLD 0
+ /* if your system does not have fnmatch, we fall back to strcmp: */
+-static int _zzip_fnmatch(char* pattern, char* string, int flags)
+-{ 
+-#   ifdef DBG2
+-    DBG1("<zzip:mmapped:strcmp>");
+-#   endif
+-    return strcmp (pattern, string); 
+-}
++#define _zzip_fnmatch(x,y,z) strcmp ((x),(y))
+ #endif
+ 
+ #endif
+diff -ur zziplib-0.13.68.orig/zzip/__mmap.h zziplib-0.13.68/zzip/__mmap.h
+--- zziplib-0.13.68.orig/zzip/__mmap.h	Tue Feb 06 05:00:56 2018
++++ zziplib-0.13.68/zzip/__mmap.h	Tue Feb 06 08:37:50 2018
 @@ -45,43 +45,61 @@
  #define MAP_FAILED 0
  #endif
@@ -67,9 +85,9 @@ diff -ur zziplib-0.13.66.orig/zzip/__mmap.h zziplib-0.13.66/zzip/__mmap.h
  #else   /* disable */
  #define USE_MMAP 0
  /* USE_MAP is intentional: we expect the compiler to do some "code removal"
-diff -ur zziplib-0.13.66.orig/zzip/mmapped.h zziplib-0.13.66/zzip/mmapped.h
---- zziplib-0.13.66.orig/zzip/mmapped.h	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/zzip/mmapped.h	Wed May 24 21:14:48 2017
+diff -ur zziplib-0.13.68.orig/zzip/mmapped.h zziplib-0.13.68/zzip/mmapped.h
+--- zziplib-0.13.68.orig/zzip/mmapped.h	Tue Feb 06 05:00:56 2018
++++ zziplib-0.13.68/zzip/mmapped.h	Tue Feb 06 08:39:00 2018
 @@ -37,7 +37,11 @@
      void* reserved;    /* - for later extensions (might be renamed) */
      void* user;        /* - free for applications (use this!) */
@@ -82,9 +100,9 @@ diff -ur zziplib-0.13.66.orig/zzip/mmapped.h zziplib-0.13.66/zzip/mmapped.h
      long  unused;      /* - for later extensions (might be renamed) */
      long  code;        /* - free for applications (use this!) */
  };
-diff -ur zziplib-0.13.66.orig/zzip/plugin.c zziplib-0.13.66/zzip/plugin.c
---- zziplib-0.13.66.orig/zzip/plugin.c	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/zzip/plugin.c	Wed May 24 21:14:48 2017
+diff -ur zziplib-0.13.68.orig/zzip/plugin.c zziplib-0.13.68/zzip/plugin.c
+--- zziplib-0.13.68.orig/zzip/plugin.c	Tue Feb 06 05:00:56 2018
++++ zziplib-0.13.68/zzip/plugin.c	Tue Feb 06 08:40:30 2018
 @@ -38,7 +38,7 @@
      return st.st_size;
  }
@@ -94,9 +112,9 @@ diff -ur zziplib-0.13.66.orig/zzip/plugin.c zziplib-0.13.66/zzip/plugin.c
      &open,
      &close,
      &_zzip_read,
-diff -ur zziplib-0.13.66.orig/zzip/plugin.h zziplib-0.13.66/zzip/plugin.h
---- zziplib-0.13.66.orig/zzip/plugin.h	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/zzip/plugin.h	Wed May 24 21:14:48 2017
+diff -ur zziplib-0.13.68.orig/zzip/plugin.h zziplib-0.13.68/zzip/plugin.h
+--- zziplib-0.13.68.orig/zzip/plugin.h	Tue Feb 06 05:00:56 2018
++++ zziplib-0.13.68/zzip/plugin.h	Tue Feb 06 08:41:43 2018
 @@ -42,7 +42,11 @@
      zzip_ssize_t (*read)(int fd, void* buf, zzip_size_t len);
      zzip_off_t   (*seeks)(int fd, zzip_off_t offset, int whence);

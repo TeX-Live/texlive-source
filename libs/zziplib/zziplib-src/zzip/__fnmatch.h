@@ -13,18 +13,14 @@
 #ifdef ZZIP_HAVE_FNMATCH_H
 #define _zzip_fnmatch fnmatch
 # ifdef FNM_CASEFOLD
-# define _zzip_fnmatch_CASEFOLD FNM_CASEFOLD
+# define _zzip_FNM_CASEFOLD FNM_CASEFOLD
 # else
-# define _zzip_fnmatch_CASEFOLD 0
+# define _zzip_FNM_CASEFOLD 0
 # endif
 #else
-# define _zzip_fnmatch_CASEFOLD 0
+# define _zzip_FNM_CASEFOLD 0
 /* if your system does not have fnmatch, we fall back to strcmp: */
-static int _zzip_fnmatch(char* pattern, char* string, int flags)
-{ 
-    fprintf (stderr, "<zzip:mmapped:strcmp>");
-    return strcmp (pattern, string); 
-}
+#define _zzip_fnmatch(x,y,z) strcmp ((x),(y))
 #endif
 
 #endif

@@ -16,16 +16,19 @@ THREAD_SAFE=@THREAD_SAFE@
 
 WCC10_CLEAN = *.obj *.lk1 *.mk1 *.mk *.sym *.tgt
 
-EXTRA_DIST = $(aclocal_DATA) unzzip.h
+noinst_HEADERS = unzzipdir-zip.h unzzipcat-zip.h unzzip-states.h zzipmake-zip.h
+EXTRA_DIST = $(aclocal_DATA) $(noinst_HEADERS)
 CLEANFILES = $(WCC10_CLEAN)
 
-zzip_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zziptest_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzcat_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzdir_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzxorcat_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzxordir_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzobfuscated_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
+
+zzip_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
+zzip_SOURCES = zzip.c zzipmake-zip.c
 
 unzzip_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 unzzip_SOURCES = unzzip.c unzzipcat-zip.c unzzipdir-zip.c

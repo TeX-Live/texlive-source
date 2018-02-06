@@ -84,8 +84,8 @@ NOTE
   and zziplib will take one of them (depending on the modes when calling 
   zziplib).
 
-  But this didnt work for all of my original files, so I suggest using zipped
-  files only (and remove the original unzipped files, so zziplib doesnt try to
+  But this didn't work for all of my original files, so I suggest using zipped
+  files only (and remove the original unzipped files, so zziplib doesn't try to
   open the original version).
 
 

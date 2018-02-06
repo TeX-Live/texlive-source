@@ -15,6 +15,7 @@
 @SET_MAKE@
 
 
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -88,7 +89,8 @@ noinst_PROGRAMS = zziptest$(EXEEXT) zzobfuscated$(EXEEXT) \
 	zzip$(EXEEXT)
 subdir = bins
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/uses/mkinstalldirs $(top_srcdir)/uses/depcomp
+	$(top_srcdir)/uses/mkinstalldirs $(top_srcdir)/uses/depcomp \
+	$(noinst_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_compile_check_sizeof.m4 \
 	$(top_srcdir)/m4/ac_set_default_paths_system.m4 \
@@ -156,8 +158,8 @@ zzcat_DEPENDENCIES = ../zzip/libzzip.la
 zzdir_SOURCES = zzdir.c
 zzdir_OBJECTS = zzdir.$(OBJEXT)
 zzdir_DEPENDENCIES = ../zzip/libzzip.la
-zzip_SOURCES = zzip.c
-zzip_OBJECTS = zzip.$(OBJEXT)
+am_zzip_OBJECTS = zzip.$(OBJEXT) zzipmake-zip.$(OBJEXT)
+zzip_OBJECTS = $(am_zzip_OBJECTS)
 zzip_DEPENDENCIES = ../zzip/libzzip.la
 zziptest_SOURCES = zziptest.c
 zziptest_OBJECTS = zziptest.$(OBJEXT)
@@ -209,12 +211,12 @@ am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = unzip-mem.c $(unzzip_SOURCES) $(unzzip_big_SOURCES) \
 	$(unzzip_mem_SOURCES) $(unzzip_mix_SOURCES) zzcat.c zzdir.c \
-	zzip.c zziptest.c zzobfuscated.c zzxorcat.c zzxorcopy.c \
-	zzxordir.c
+	$(zzip_SOURCES) zziptest.c zzobfuscated.c zzxorcat.c \
+	zzxorcopy.c zzxordir.c
 DIST_SOURCES = unzip-mem.c $(unzzip_SOURCES) $(unzzip_big_SOURCES) \
 	$(unzzip_mem_SOURCES) $(unzzip_mix_SOURCES) zzcat.c zzdir.c \
-	zzip.c zziptest.c zzobfuscated.c zzxorcat.c zzxorcopy.c \
-	zzxordir.c
+	$(zzip_SOURCES) zziptest.c zzobfuscated.c zzxorcat.c \
+	zzxorcopy.c zzxordir.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -248,6 +250,7 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 DATA = $(aclocal_DATA)
+HEADERS = $(noinst_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -423,15 +426,17 @@ DEFAULT_INCLUDES = # nothing - no default of -I. -I$(srcdir)
 aclocal_DATA = zziplib.m4
 #
 WCC10_CLEAN = *.obj *.lk1 *.mk1 *.mk *.sym *.tgt
-EXTRA_DIST = $(aclocal_DATA) unzzip.h
+noinst_HEADERS = unzzipdir-zip.h unzzipcat-zip.h unzzip-states.h zzipmake-zip.h
+EXTRA_DIST = $(aclocal_DATA) $(noinst_HEADERS)
 CLEANFILES = $(WCC10_CLEAN)
-zzip_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zziptest_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzcat_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzdir_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzxorcat_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzxordir_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 zzobfuscated_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
+zzip_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
+zzip_SOURCES = zzip.c zzipmake-zip.c
 unzzip_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
 unzzip_SOURCES = unzzip.c unzzipcat-zip.c unzzipdir-zip.c
 unzzip_mix_LDADD = ../zzip/libzzip.la @RESOLVES@ -lz
@@ -605,6 +610,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zzcat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zzdir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zzip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zzipmake-zip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zziptest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zzobfuscated.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zzxorcat.Po@am__quote@
@@ -743,7 +749,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(DATA)
+all-am: Makefile $(PROGRAMS) $(DATA) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(aclocaldir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \

@@ -39,7 +39,10 @@ check-local: check-readme $(sfxtests) $(newtests)
 check-tests: tests
 tests:
 	@ test -f zziptests.py || cp -s -v $(srcdir)/zziptests.py .
-	python zziptests.py -v
+	python zziptests.py     --exeext "$(EXEEXT)" --topsrcdir "$(top_srcdir)"
+test_%: 
+	@ test -f zziptests.py || cp -s -v $(srcdir)/zziptests.py .
+	python zziptests.py $@ -vvvv    --exeext "$(EXEEXT)" --topsrcdir "$(top_srcdir)"
 
 check-readme : $(zzcat)  test.zip
 	@ test -f test.zip || $(MAKE) tmp/../test.zip 
@@ -76,3 +79,4 @@ check-sfx : zzshowme$(EXEEXT)
 	; if test -s readme.out ; then diff readme.out $(README) \
         ; else grep "libzzip-" readme.err || echo "readme.out is empty!" ; fi
 	rm readme.out readme.err
+
