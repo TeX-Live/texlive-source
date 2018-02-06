@@ -5,6 +5,7 @@
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
+
 # _LJ_ARCH
 # --------
 # Internal subroutine.
@@ -22,9 +23,12 @@ AS_IF([grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1],
       [grep 'LJ_TARGET_ARM ' conftest.i >/dev/null 2>&1],
         [LJARCH=arm],
       [grep 'LJ_TARGET_ARM64 ' conftest.i >/dev/null 2>&1],
-        [LJARCH=arm64
+        [LJARCH=arm64 
          AS_IF([test "x$LJHOST" = xiOS],
-               [LUAJIT_CFLAGS='-fno-omit-frame-pointer'])],
+               [LUAJIT_CFLAGS='-fno-omit-frame-pointer'])
+         AS_IF([grep '__AARCH64EB__' conftest.i >/dev/null 2>&1],
+                 [echo '-D__AARCH64EB__=1' >>native_flags])
+        ],
       [grep 'LJ_TARGET_PPC ' conftest.i >/dev/null 2>&1],
         [LJARCH=ppc
          AS_IF([grep 'LJ_LE 1' conftest.i >/dev/null 2>&1],
@@ -43,6 +47,9 @@ AS_IF([grep 'LJ_NO_UNWIND 1' conftest.i >/dev/null 2>&1],
         [echo '-D NO_UNWIND' >>dynasm_flags
          echo '-DLUAJIT_NO_UNWIND' >>native_flags])
 echo "-DLUAJIT_TARGET=LUAJIT_ARCH_$LJARCH" >>native_flags
+AS_IF([grep 'LJ_LE' conftest.i >/dev/null 2>&1],
+       [echo '-D ENDIAN_LE' >>dynasm_flags],
+       [echo '-D ENDIAN_BE' >>dynasm_flags])
 AS_IF([grep 'LJ_ARCH_BITS 64' conftest.i >/dev/null 2>&1],
         [echo '-D P64' >>dynasm_flags
          AS_IF([test "x$LJHOST" = xLinux],
