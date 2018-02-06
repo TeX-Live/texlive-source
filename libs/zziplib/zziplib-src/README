@@ -24,11 +24,12 @@ LICENSING
   special (paid) licenses can be negotiated with the copyright holder.
 
 HOMEPAGE
-  The zziplib project is hosted at SourceForge, the complete
-  documentation can be found at http://zziplib.sf.net - the
-  SourceForge servers are also used to distribute the sources
-  of the zziplib project. Releases are announced via the
-  freshmeat services on http://freshmeat.net/projects/zziplib
+  The zziplib project has moved to GitHub where you can find the 
+  last release tags now => https://github.com/gdraheim/zziplib
+  The zziplib project was originally hosted at SourceForge with
+  the documentation at http://zziplib.sf.net - this is a bit
+  outdated but the API has not changed much since then. To get
+  the latest release announcements, watch the GitHub project.
 
 INSTALLATION
   The zziplib sources are built with gnu autotools and they should
@@ -39,7 +40,7 @@ INSTALLATION
   VisualC series of compilers. There should be no problem either
   when crosscompiling the zziplib for a third host platform.
 
-MAINTAINANCE
+MAINTENANCE
   The zziplib library is intentionally a lightweight interface to
   zip files. The author take patches but please consider to put 
   complex extensions into separate modules rather than implanting them

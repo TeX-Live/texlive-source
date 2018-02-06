@@ -77,6 +77,8 @@ check-zzxor check-zzxordir check-zzxorcat \
 check-sfx check-readme check-tests tests: 
 	(cd test && $(MAKE) `basename $@`)
 
+test_%: ; cd test && $(MAKE) `basename $@`
+
 MSVC8 =   msvc8/README.TXT msvc8/zip.exe msvc8/test1.zip msvc8/test.zip \
 msvc8/zzdir.vcproj    msvc8/zzipself.vcproj     msvc8/zzip.vcproj \
 msvc8/zziplib.sln     msvc8/zzipsetstub.sln     msvc8/zzobfuscated.sln \

@@ -31,7 +31,7 @@ dnl currently in the making. The whole stuff of impgen exe and
 dnl compiling it on-the-fly, well, it is superflouos then.
 dnl
 dnl Since mingw crosscompilers tend to be quite a fresh development it
-dnl was agreed to remove the impgen stuff completly from libtool
+dnl was agreed to remove the impgen stuff completely from libtool
 dnl sources. Still however, this macro does not hurt since it does not
 dnl patch impgen cmds but it just adds HOST_CC which might be useful in
 dnl other cross-compiling cases as well. Therefore, you can leave it in

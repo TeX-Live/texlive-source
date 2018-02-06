@@ -1,4 +1,4 @@
-	Building zziplib-0.13.66 as part of the TL tree
+	Building zziplib-0.13.68 as part of the TL tree
 	===============================================
 
 This directory libs/zziplib/ uses a proxy Makefile.am to build the zziplib
@@ -14,4 +14,4 @@ copied to libs/zziplib/configure.ac.
 =============================
 
 2010-01-30	Peter Breitenlohner <peb@mppmu.mpg.de>
-2017-??-??	Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+2018-02-06	Akira Kakuto <kakuto@fuk.kindai.ac.jp>

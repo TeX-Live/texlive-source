@@ -13,7 +13,7 @@ I had unpacked them to $(zziplibdir)/zlib inside the
 toplevel of the zziplib source tree. That SDK does ship
 with a "zlib1.dll" runtime and "zdll.lib" import library.
 
-The new Visual Studio has depracated most of the Win32 API
+The new Visual Studio has deprecated most of the Win32 API
 just as well as most of the Posix API. That provokes a lot
 of warning message in surplus of the many warning message
 that occur on every implicit conversion between signed and

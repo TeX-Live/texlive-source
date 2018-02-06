@@ -36,7 +36,7 @@ dnl lines like '#### $host |$builddir' to recognize the place where to
 dnl recurse into. Usually, the last one is the only one used. However,
 dnl almost all targets have an additional "*-all" rule which makes the
 dnl script to recurse into _all_ variants of the current HOST (!!)
-dnl setting. The "-all" suffix can be overriden for the macro as well.
+dnl setting. The "-all" suffix can be overridden for the macro as well.
 dnl
 dnl a special rule is only given for things like "dist" that will copy
 dnl the tarball from the builddir to the sourcedir (or $(PUB)) for

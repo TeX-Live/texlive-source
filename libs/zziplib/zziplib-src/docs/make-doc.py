@@ -692,7 +692,7 @@ class RefPage:
                 return copyright # !!!
         return ""
     def seealso_text(page):
-        """ the last section on a manpage is called 'SEE ALSO' usally and
+        """ the last section on a manpage is called 'SEE ALSO' usually and
             contains a comma-separated list of references. Some manpage
             viewers can parse these and convert them into hyperlinks """
         if page.seealso:

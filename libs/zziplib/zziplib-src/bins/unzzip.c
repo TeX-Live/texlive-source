@@ -8,11 +8,9 @@
 #include <zzip/zzip.h>
 #include <stdio.h>
 #include <string.h>
-#include "unzzip.h"
-
-extern int unzzip_list(int argc, char** argv);
-extern int unzzip_print(int argc, char** argv);
-extern int unzzip_extract(int argc, char** argv);
+#include "unzzipcat-zip.h"
+#include "unzzipdir-zip.h"
+#include "unzzip-states.h"
 
 static const char usage[] = 
 {
@@ -52,14 +50,14 @@ main (int argc, char ** argv)
     if (! strcmp (argv[1], "-l") || ! strcmp(argv[1], "--list"))
     {
         argc -= 1; argv += 1;
-        return unzzip_list(argc, argv);
+        return unzzip_show_list(argc, argv);
     }
     if (! strcmp (argv[1], "-v") || ! strcmp(argv[1], "--versions"))
     {
         if (argc == 2)
             return unzzip_version(); /* compatible with info-zip */
         argc -= 1; argv += 1;
-        return unzzip_list(argc, argv); /* short format here */
+        return unzzip_long_list(argc, argv);
     }
     if (! strcmp (argv[1], "-p") || ! strcmp(argv[1], "--pipe"))
     {
@@ -70,7 +68,7 @@ main (int argc, char ** argv)
     if (! strcmp (argv[1], "-"))
     {
         fprintf(stderr, "unknown option %s", argv[1]);
-        return -1;
+        return EXIT_INVALID_OPTION;
     }
  
     return unzzip_extract(argc, argv);

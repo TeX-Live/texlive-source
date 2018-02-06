@@ -8,7 +8,7 @@ dnl
 dnl This macro builds on top of AC_SYS_LARGEFILE to detect whether
 dnl special options are neede to make the code use 64bit off_t - in
 dnl many setups this will also make the code use 64bit off_t
-dnl immediatly.
+dnl immediately.
 dnl
 dnl The common use of a LARGEFILE_SENSITIVE config.h-define is to
 dnl rename exported functions, usually adding a 64 to the original

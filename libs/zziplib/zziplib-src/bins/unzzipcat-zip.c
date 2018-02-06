@@ -9,7 +9,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "unzzip.h"
+#include <sys/stat.h>
+#include <zzip/__mkdir.h>
+#include <zzip/__string.h>
+#include <zzip/__fnmatch.h>
+#include <zzip/__debug.h>
+#include "unzzipcat-zip.h"
+#include "unzzip-states.h"
 
 #ifdef ZZIP_HAVE_UNISTD_H
 #include <unistd.h>
@@ -18,15 +24,35 @@
 #include <io.h>
 #endif
 
-#ifdef ZZIP_HAVE_FNMATCH_H
-#include <fnmatch.h>
-#else
-#define fnmatch(x,y,z) strcmp(x,y)
-#endif
-
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
+static int exitcode(int e)
+{
+    switch (e)
+    {
+        case ZZIP_NO_ERROR:
+            return EXIT_OK;
+        case ZZIP_OUTOFMEM: /* out of memory */
+            return EXIT_ENOMEM;
+        case ZZIP_DIR_OPEN: /* failed to open zipfile, see errno for details */
+            return EXIT_ZIP_NOT_FOUND;
+        case ZZIP_DIR_STAT: /* failed to fstat zipfile, see errno for details */
+        case ZZIP_DIR_SEEK: /* failed to lseek zipfile, see errno for details */
+        case ZZIP_DIR_READ: /* failed to read zipfile, see errno for details */
+        case ZZIP_DIR_TOO_SHORT:
+        case ZZIP_DIR_EDH_MISSING:
+            return EXIT_FILEFORMAT;
+        case ZZIP_DIRSIZE:
+            return EXIT_EARLY_END_OF_FILE;
+        case ZZIP_ENOENT:
+            return EXIT_FILE_NOT_FOUND;
+        case ZZIP_UNSUPP_COMPR:
+            return EXIT_UNSUPPORTED_COMPRESSION;
+        case ZZIP_CORRUPTED:
+        case ZZIP_UNDEF:
+        case ZZIP_DIR_LARGEFILE:
+            return EXIT_FILEFORMAT;
+    }
+    return EXIT_ERRORS;
+}
 
 static void unzzip_cat_file(ZZIP_DIR* disk, char* name, FILE* out)
 {
@@ -43,21 +69,20 @@ static void unzzip_cat_file(ZZIP_DIR* disk, char* name, FILE* out)
     }
 }
 
-#if !defined(ZZIP_HAVE_STRNDUP)
-static char *
-strndup(char *p, size_t maxlen)
+static void makedirs(const char* name)
 {
-    char *r;
-    if (!p)
-	return NULL;
-    r = malloc(maxlen + 1);
-    if (!r)
-	return NULL;
-    strncpy(r, p, maxlen);
-    r[maxlen] = '\0';
-    return r;
+      char* p = strrchr(name, '/');
+      if (p) {
+          char* dir_name = _zzip_strndup(name, p-name);
+          makedirs(dir_name);
+          free (dir_name);
+      } 
+      if (_zzip_mkdir(name, 0775) == -1 && errno != EEXIST)
+      {
+          DBG3("while mkdir %s : %s", name, strerror(errno));
+      }
+      errno = 0;
 }
-#endif
 
 static FILE* create_fopen(char* name, char* mode, int subdirs)
 {
@@ -65,17 +90,17 @@ static FILE* create_fopen(char* name, char* mode, int subdirs)
    {
       char* p = strrchr(name, '/');
       if (p) {
-          char* dir_name = strndup(name, p-name);
-          // makedirs(dir_name); // TODO
+          char* dir_name = _zzip_strndup(name, p-name);
+          makedirs(dir_name); 
           free (dir_name);
       }
    }
-   return fopen(name, mode);      
+   return fopen(name, mode);
 }
-
 
 static int unzzip_cat (int argc, char ** argv, int extract)
 {
+    int done = 0;
     int argn;
     ZZIP_DIR* disk;
     zzip_error_t error;
@@ -83,13 +108,13 @@ static int unzzip_cat (int argc, char ** argv, int extract)
     if (argc == 1)
     {
         printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
-        return -1; /* better provide an archive argument */
+        return EXIT_OK; /* better provide an archive argument */
     }
     
     disk = zzip_dir_open (argv[1], &error);
     if (! disk) {
-	perror(argv[1]);
-	return -1;
+	fprintf(stderr, "%s: %s\n", argv[1], zzip_strerror(error));
+	return exitcode(error);
     }
 
     if (argc == 2)
@@ -100,6 +125,11 @@ static int unzzip_cat (int argc, char ** argv, int extract)
 	    char* name = entry.d_name;
 	    FILE* out = stdout;
 	    if (extract) out = create_fopen(name, "wb", 1);
+	    if (! out) {
+		DBG3("fopen' %s : %s", name, strerror(errno));
+	        if (errno != EISDIR) done = EXIT_ERRORS;
+	        continue;
+	    }
 	    unzzip_cat_file (disk, name, out);
 	    if (extract) fclose(out);
 	}
@@ -112,20 +142,25 @@ static int unzzip_cat (int argc, char ** argv, int extract)
 	    char* name = entry.d_name;
 	    for (argn=1; argn < argc; argn++)
 	    {
-		if (! fnmatch (argv[argn], name, 
-			       FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD))
+		if (! _zzip_fnmatch (argv[argn], name, 
+		    FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD))
 	        {
-	             FILE* out = stdout;
-	             if (extract) out = create_fopen(name, "wb", 1);
-		     unzzip_cat_file (disk, name, out);
-		     if (extract) fclose(out);
-		     break; /* match loop */
+	            FILE* out = stdout;
+	            if (extract) out = create_fopen(name, "wb", 1);
+		    if (! out) {
+			DBG3("fopen. %s : %s", name, strerror(errno));
+		        if (errno != EISDIR) done = EXIT_ERRORS;
+		        continue;
+		    }
+	            unzzip_cat_file (disk, name, out);
+	            if (extract) fclose(out);
+		    break; /* match loop */
 	        }
 	    }
 	}
     }
     zzip_dir_close(disk);
-    return 0;
+    return done;
 } 
 
 int unzzip_print (int argc, char ** argv)

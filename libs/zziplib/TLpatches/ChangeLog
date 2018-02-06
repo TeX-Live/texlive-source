@@ -1,3 +1,8 @@
+2018-02-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import zziplib-0.13.68.
+	* patch-01-binary, patch-02-bugfix, patch-03-w64-ptr: Adapted.
+
 2017-06-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Import zziplib-0.13.66.

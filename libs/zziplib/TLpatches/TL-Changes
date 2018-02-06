@@ -1,4 +1,4 @@
-Changes applied to the zziplib-0.13.66/ tree as obtained from:
+Changes applied to the zziplib-0.13.68/ tree as obtained from:
 	http://zziplib.sourceforge.net/
 
 Copied:
@@ -6,13 +6,10 @@ Copied:
 	m4/ac_sys_largefile_sensitive.m4 -> ../m4/
 
 Removed:
-	.cdtproject
-	.gitignore
-	.pydevproject
 	aclocal.m4
-	msvc/
 	uses/
 	zzip/_msvc.h
+	zzip/_config.h
 
 Converted Dos/Win line ends to native:
 	docs/README.MSVC6

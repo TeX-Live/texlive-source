@@ -5,7 +5,6 @@
  *      This file is used as an example to clarify zzip api usage.
  */
 
-extern int unzzip_list(int argc, char** argv);
-extern int unzzip_print(int argc, char** argv);
-extern int unzzip_extract(int argc, char** argv);
+extern int unzzip_show_list(int argc, char** argv);
+extern int unzzip_long_list(int argc, char** argv);
 

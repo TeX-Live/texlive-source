@@ -1,11 +1,11 @@
 # norootforbuild
 Summary:      ZZipLib - libZ-based ZIP-access Library with an Easy-to-Use API
 Name:         zziplib
-Version:      0.13.65
+Version:      0.13.68
 Release:      1
 License:      LGPLv2.1+
 Group:        System/Libraries
-URL:          http://zziplib.sf.net
+URL:          https://github.com/gdraheim/zziplib
 Vendor:       Guido Draheim <guidod@gmx.de>
 Source0:      https://github.com/gdraheim/zziplib/archive/v%{version}.tar.gz
 BuildRoot:    /var/tmp/%{name}-%{version}-%{release}

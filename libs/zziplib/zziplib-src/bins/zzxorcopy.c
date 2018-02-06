@@ -15,10 +15,6 @@
 
 #include <zzip/_config.h> /* for ZZIP_VERSION */
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-
 #if __STDC_VERSION__+0 < 199901
 #define _ssize_t int
 #define _size_t unsigned

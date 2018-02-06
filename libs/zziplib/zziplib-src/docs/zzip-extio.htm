@@ -40,7 +40,7 @@
   Other wishes on <a href="zziplib.html">zziplib</a> circulated around
   <a href="zzip-xor.html">obfuscation</a> or access to zip-files wrapped 
   in other data areas including encrpyted resources from other applications. 
-  This has been adressed with the IO-handlers that you can explicitly 
+  This has been addressed with the IO-handlers that you can explicitly
   submit to the *_ext_io functions - the default will be posix-IO 
   open/read/write and seek/tell. An application using 
   <a href="zziplib.html">zziplib</a> can divert these to its own set of
@@ -81,7 +81,7 @@
      static zzip_strings_t my_ext[] = { ".zip", ".ZIP", "", 0 };
   </pre>
 </P><P>
-  And last not least, people want to tell the libary to not try to
+  And last not least, people want to tell the library to not try to
   open a real file that lives side by side with the same path as the
   file path that can be matched by the zziplib. Actually, the magic
   wrappers were never meant to be used like - the developer should
@@ -90,7 +90,7 @@
   the magic-wrappers look rather more familiar, and so you will find
   now a bit-option ZZIP_ONLYZIP that can be passed down to the _ext_io
   variants of the magic-wrapper calls, and a real-file will never get
-  tested for existance. Actually, I would rather recommend that for
+  tested for existence. Actually, I would rather recommend that for
   application data the option ZZIP_PREFERZIP, so that one can enter
   debugging mode by unpacking the zip-file as a real directory tree
   in the place of the original zip.
@@ -176,8 +176,8 @@
    structure for usage within the <code>zzip_read</code> calls.
 </P><P>
    This adds just a few bytes to the libs and just consumes additional 
-   cpu cycles that can be rightfully called to be negligable (unlike
-   most commerical vendors will tell you when they indeed want to
+   cpu cycles that can be rightfully called to be negligible (unlike
+   most commercial vendors will tell you when they indeed want to
    tell you that for soooo many new features you have to pay a price).
    It makes for greater variability without adding fatness to the
    core in the default case, this is truly efficient I'd say. Well,
