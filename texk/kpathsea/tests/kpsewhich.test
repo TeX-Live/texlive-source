@@ -18,10 +18,12 @@ TEXINPUTS=$srcdir/../tests/texmf \
 TEXINPUTS=$srcdir/../tests/texmf \
   ./kpsewhich --casefold-search Plain.TeX || exit 1
 #
-TEXINPUTS=$srcdir/../tests/texmf \
-  ./kpsewhich --no-casefold-search --all Plain.TeX && exit 1
-TEXINPUTS=$srcdir/../tests/texmf \
-  ./kpsewhich --no-casefold-search Plain.TeX && exit 1
+# These runs will succeed on case-insensitive (file)systems, so don't
+# run them.
+#TEXINPUTS=$srcdir/../tests/texmf \
+#  ./kpsewhich --no-casefold-search --all Plain.TeX && exit 1
+#TEXINPUTS=$srcdir/../tests/texmf \
+#  ./kpsewhich --no-casefold-search Plain.TeX && exit 1
 
 TEXINPUTS=$srcdir/../tests/texmf \
   ./kpsewhich --all plain || exit 1
