@@ -1379,7 +1379,6 @@ int mfluarunscript(halfword j, halfword first, halfword limit)
   /* end of a C string */ 
   strpool[j+limit-first] = '\0';
   str = (const char *)(strpool+j) ;
-  /*fprintf(stderr,"\n! str=%s\n",str);*/
   /* do the call (0 arguments, 1 result) */
   error = (luaL_loadstring(L, str) || lua_pcall(L, 0, 1, 0)) ; 
   strpool[j+limit-first] = last_char;

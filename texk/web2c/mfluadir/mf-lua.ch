@@ -2,7 +2,7 @@
 % This program is copyright (C) 1984 by D. E. Knuth; all rights are reserved.
 @y
 % This program is MFLua, strictly based on the METAFONT 2.7182818 source code.
-% What follow are the original comments of METAFONT 2.7182818. 
+% What follow are the original comments of METAFONT 2.7182818.
 
 % This program is copyright (C) 1984 by D. E. Knuth; all rights are reserved.
 @z
@@ -19,7 +19,7 @@
 @y
 @d METAFONT_banner=='This is METAFONT, Version 2.7182818' {printed when \MF\ starts}
 @#
-@d MFLua_version_string=='-0.8'
+@d MFLua_version_string=='-0.9'
 @#
 @d MFLua_banner=='This is MFLua, Version 2.7182818', MFLua_version_string
   {printed when MFLua starts}
@@ -496,17 +496,6 @@ end
 @ @<As for scantokens, pretend we're reading a new one-line file@>=
 begin {begin\_file\_reading;} name:=2; {should be name:=3 but for the moment we keep 2}
 k:=first+length(cur_exp);
-{print("  k=");print\_int(k);print\_ln;}
-{print("  first=");print\_int(first);print\_ln;}
-{print("  length(cur\_exp)=");print\_int(length(cur\_exp));print\_ln;}
-{ Will be removed as soon as we have tested that it's ok}
-{if k>=max\_buf\_stack then}
-{  begin if k>=buf\_size then}
-{    begin max\_buf\_stack:=buf\_size;}
-{    overflow("buffer size",buf\_size);}
-{    end;}
-{  max\_buf\_stack:=k+1;}
-{  end;}
 j:=str_start[cur_exp]; limit:=k;
 mflua_runscript(j,first,limit);
 lua_cur_exp:=make_string; 
@@ -515,12 +504,6 @@ begin
  begin_file_reading;
  add_str_ref(lua_cur_exp);
  j:=str_start[lua_cur_exp]; k:=first+length(lua_cur_exp);limit:=k;
-{ Will be removed as soon as we have tested that it's ok}
-{print("=============BEGIN TEST===============");print\_ln;}
-{print("  k=");print\_int(k);print\_ln;}
-{print("  first=");print\_int(first);print\_ln;}
-{print("  limit=");print\_int(limit);print\_ln;}
-{print("  length(lua\_cur\_exp)=");print\_int(length(lua\_cur\_exp));print\_ln;}
  if k>=max_buf_stack then
  begin if k>=buf_size then
    begin max_buf_stack:=buf_size;
@@ -535,9 +518,9 @@ begin
    buffer[first]:=so(str_pool[j]); {print(so(str\_pool[j]));} incr(j); incr(first);
   end;
   buffer[limit]:="%"; first:=limit+1; loc:=start; 
-  {print("=============END TEST=================");print\_ln;}
-  delete_str_ref(lua_cur_exp);
+  {delete_str_ref(lua_cur_exp);}
 end;
+delete_str_ref(lua_cur_exp);
 flush_cur_exp(0);
 end
 @* \[51] System-dependent changes.
