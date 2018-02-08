@@ -1,3 +1,10 @@
+2018-02-08 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* MFLua 0.9.
+	* Fixed a bug on clean up string in runscript.
+
+
+
 2017-04-16 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* MFLua 0.8. New primitive runscript, cleanup of the Lua code.
