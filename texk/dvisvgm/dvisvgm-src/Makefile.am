@@ -5,7 +5,7 @@
 
 AUTOMAKE_OPTIONS = foreign
 EXTRA_DIST = COPYING
-SUBDIRS = libs src #TL: tests doc
+SUBDIRS = libs src #not for TL: tests doc
 ACLOCAL_AMFLAGS = -I m4
 
 if CODE_COVERAGE_ENABLED
