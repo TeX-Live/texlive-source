@@ -1,3 +1,9 @@
+2018-02-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import 2.3.2.
+	* patch-08-makefiles: adapt.
+	* patch-16-gserrornames: Remove.
+
 2018-01-15  Karl Berry  <karl@freefriends.org>
 
 	* Import 2.3.1.
