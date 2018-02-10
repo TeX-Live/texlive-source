@@ -1,3 +1,9 @@
+2018-02-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Imported mpfr-4.0.1 source tree from:
+	  http://ftp.gnu.org/gnu/mpfr/
+	* patch-01-TL: Adapted.
+
 2017-12-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Imported mpfr-4.0.0 source tree from:

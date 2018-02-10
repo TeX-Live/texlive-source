@@ -1,4 +1,916 @@
 ------------------------------------------------------------------------
+r12200 | vlefevre | 2018-02-07 12:50:31 +0000 (Wed, 07 Feb 2018) | 1 line
+Changed paths:
+   M /branches/4.0/VERSION
+   M /branches/4.0/configure.ac
+   M /branches/4.0/doc/mpfr.texi
+   M /branches/4.0/src/mpfr.h
+   M /branches/4.0/src/version.c
+
+Updated version to 4.0.1.
+------------------------------------------------------------------------
+r12199 | vlefevre | 2018-02-07 12:02:41 +0000 (Wed, 07 Feb 2018) | 3 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/doc/README.dev
+   M /branches/4.0/tools/announce-text
+
+[doc/README.dev] "To make a release": moved a sentence.
+[tools/announce-text] For releases, check the VERSION file of the tag.
+(merged changesets r12197-12198 from the trunk)
+------------------------------------------------------------------------
+r12195 | vlefevre | 2018-02-02 13:17:33 +0000 (Fri, 02 Feb 2018) | 4 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tdiv_ui.c
+
+[tests/tdiv_ui.c] Forcibly disable value coverage checking if
+mp_limb_t > unsigned long (e.g. on mips64 with the n32 ABI).
+Corrected comments.
+(merged changesets r12193-12194 from the trunk)
+------------------------------------------------------------------------
+r12192 | vlefevre | 2018-02-02 12:34:56 +0000 (Fri, 02 Feb 2018) | 1 line
+Changed paths:
+   M /branches/4.0/ChangeLog
+
+ChangeLog update with "TZ=UTC svn log -rHEAD:0 -v" (in UTF-8 locales).
+------------------------------------------------------------------------
+r12191 | vlefevre | 2018-02-02 12:32:02 +0000 (Fri, 02 Feb 2018) | 6 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/terandom.c
+   M /branches/4.0/tests/terandom_chisq.c
+   M /branches/4.0/tests/tgrandom.c
+   M /branches/4.0/tests/tnrandom.c
+   M /branches/4.0/tests/tnrandom_chisq.c
+   M /branches/4.0/tests/trandom.c
+   M /branches/4.0/tests/trandom_deviate.c
+   M /branches/4.0/tests/tset_ld.c
+   M /branches/4.0/tests/tsub_d.c
+   M /branches/4.0/tests/turandom.c
+
+[tests]
+  * Replaced calloc + free by tests_allocate + tests_free as usual.
+  * Replaced some fprintf with stderr by printf.
+  * Do bitwise operations in unsigned arithmetic.
+  * Formatting.
+(merged changesets r12188-12190 from the trunk)
+------------------------------------------------------------------------
+r12187 | vlefevre | 2018-02-02 10:57:17 +0000 (Fri, 02 Feb 2018) | 16 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tests.c
+   M /branches/4.0/tests/tremquo.c
+   M /branches/4.0/tests/tset_float128.c
+   M /branches/4.0/tests/tset_ld.c
+
+[tests] Fixed the cases where tests_start_mpfr was called too late,
+i.e. after potential output (to stdout).
+  * tremquo.c: moved the call to tests_start_mpfr to the beginning.
+  * tset_float128.c, tset_ld.c: removed the optional, obsolete code
+    setting the FPU control word; MPFR_FPU_PREC can be used instead
+    (see tests.c).
+
+[tests/tests.c] Make stderr unbuffered again.
+Note for the history: both stdout and stderr were made unbuffered in
+r2361, then all stderr were changed to stdout (and the corresponding
+setbuf on stderr removed) in r2449 for consistency, but stderr was
+used later for specific cases (e.g. memory allocation errors or when
+stdout is already used for something else), and it is also used for
+assertion failures. Thus the setbuf on stderr is still needed.
+
+(merged changesets r12185-12186 from the trunk)
+------------------------------------------------------------------------
+r12184 | vlefevre | 2018-02-02 10:14:04 +0000 (Fri, 02 Feb 2018) | 3 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tabort_defalloc1.c
+   M /branches/4.0/tests/tabort_defalloc2.c
+   M /branches/4.0/tests/tabort_prec_max.c
+
+Reverse-merged r12182 since tests_start_mpfr disables stdout buffering,
+so that the fflush() are unnecessary.
+(merged changeset r12183 from the trunk)
+------------------------------------------------------------------------
+r12182 | vlefevre | 2018-02-02 09:55:12 +0000 (Fri, 02 Feb 2018) | 4 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tabort_defalloc1.c
+   M /branches/4.0/tests/tabort_defalloc2.c
+   M /branches/4.0/tests/tabort_prec_max.c
+
+[tests/tabort_*.c] Flush stdout after a printf(), as an abort() is
+expected. This is needed on platforms where abort() does not flush
+the stdio streams, such as with the GNU C Library (glibc) 2.27.
+(merged changeset r12181 from the trunk)
+------------------------------------------------------------------------
+r12180 | vlefevre | 2018-02-01 14:31:06 +0000 (Thu, 01 Feb 2018) | 1 line
+Changed paths:
+   M /branches/4.0/ChangeLog
+
+ChangeLog update with "TZ=UTC svn log -rHEAD:0 -v" (in UTF-8 locales).
+------------------------------------------------------------------------
+r12179 | vlefevre | 2018-02-01 14:28:02 +0000 (Thu, 01 Feb 2018) | 1 line
+Changed paths:
+   M /branches/4.0/NEWS
+
+[NEWS] Mention "make check-exported-symbols" (experimental).
+------------------------------------------------------------------------
+r12177 | vlefevre | 2018-02-01 14:22:32 +0000 (Thu, 01 Feb 2018) | 1 line
+Changed paths:
+   M /branches/4.0/VERSION
+   M /branches/4.0/configure.ac
+   M /branches/4.0/doc/mpfr.texi
+   M /branches/4.0/src/mpfr.h
+   M /branches/4.0/src/version.c
+
+Updated version to 4.0.1-rc2.
+------------------------------------------------------------------------
+r12176 | vlefevre | 2018-02-01 14:21:13 +0000 (Thu, 01 Feb 2018) | 1 line
+Changed paths:
+   M /branches/4.0/doc/mpfr.texi
+
+[doc/mpfr.texi] Updated the month.
+------------------------------------------------------------------------
+r12175 | vlefevre | 2018-02-01 13:47:27 +0000 (Thu, 01 Feb 2018) | 1 line
+Changed paths:
+   M /branches/4.0/NEWS
+
+[NEWS] Mention the mpfr_div_ui bug.
+------------------------------------------------------------------------
+r12170 | vlefevre | 2018-01-31 16:21:15 +0000 (Wed, 31 Jan 2018) | 3 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/src/div_ui.c
+   M /branches/4.0/src/mpfr-impl.h
+   M /branches/4.0/tests/tdiv_ui.c
+
+Added value coverage for tdiv_ui (combinations of rb and sb in the
+different cases of the mpfr_div_ui code) and other tests.
+(merged changesets r12164-12169 from the trunk)
+------------------------------------------------------------------------
+r12164 | vlefevre | 2018-01-31 09:57:51 +0000 (Wed, 31 Jan 2018) | 5 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/src/div_ui.c
+   M /branches/4.0/tests/tdiv.c
+   M /branches/4.0/tests/tdiv_ui.c
+   M /branches/4.0/tools/mpfrlint
+
+[src/div_ui.c] Major rewrite to fix a mpfr_div_ui bug.
+[tests/tdiv.c] Updated comment for bug20180126.
+[tests/tdiv_ui.c] Added tests triggering the bug just fixed.
+[tools/mpfrlint] Improved a regexp (avoiding false positives).
+(merged the remaining changesets starting at r12123 from the trunk)
+------------------------------------------------------------------------
+r12138 | vlefevre | 2018-01-27 03:52:35 +0000 (Sat, 27 Jan 2018) | 2 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tdiv.c
+
+[tests/tdiv.c] mpfr_div bug bug20180126: also test negative values.
+(merged changeset r12137 from the trunk)
+------------------------------------------------------------------------
+r12135 | vlefevre | 2018-01-27 03:21:15 +0000 (Sat, 27 Jan 2018) | 2 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tdiv.c
+
+[tests/tdiv.c] mpfr_div bug bug20180126 was introduced by r9086.
+(merged changeset r12134 from the trunk)
+------------------------------------------------------------------------
+r12133 | vlefevre | 2018-01-26 17:04:38 +0000 (Fri, 26 Jan 2018) | 2 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tdiv.c
+
+[tests/tdiv.c] Completed r12128 test with new comments and an assert.
+(merged changeset r12132 from the trunk)
+------------------------------------------------------------------------
+r12130 | vlefevre | 2018-01-26 15:29:25 +0000 (Fri, 26 Jan 2018) | 1 line
+Changed paths:
+   M /branches/4.0/VERSION
+   M /branches/4.0/configure.ac
+   M /branches/4.0/doc/mpfr.texi
+   M /branches/4.0/src/mpfr.h
+   M /branches/4.0/src/version.c
+
+Updated version to 4.0.1-dev.
+------------------------------------------------------------------------
+r12129 | vlefevre | 2018-01-26 15:28:39 +0000 (Fri, 26 Jan 2018) | 2 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tdiv.c
+
+[tests/tdiv.c] Added test case for a mpfr_div bug of MPFR 4.
+(merged changeset r12128 from the trunk)
+------------------------------------------------------------------------
+r12127 | vlefevre | 2018-01-25 15:19:15 +0000 (Thu, 25 Jan 2018) | 2 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/doc/README.dev
+
+[doc/README.dev] Added information about symbol checking.
+(merged changeset r12126 from the trunk)
+------------------------------------------------------------------------
+r12125 | vlefevre | 2018-01-25 14:46:21 +0000 (Thu, 25 Jan 2018) | 8 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/Makefile.am
+   M /branches/4.0/doc/README.dev
+   M /branches/4.0/src/Makefile.am
+
+* Added check-exported-symbols make rule to check that MPFR does not
+  define symbols with a GMP reserved prefix.
+* For the check-gmp-symbols and check-exported-symbols make rules, if
+  the library is not $(top_builddir)/src/.libs/libmpfr.so, these rules
+  do nothing instead of potentially failing.
+* doc/README.dev, "To make a release": mention "make check-gmp-symbols"
+  and "make check-exported-symbols".
+(merged changesets r12111-12114 from the trunk)
+------------------------------------------------------------------------
+r12123 | vlefevre | 2018-01-23 09:41:27 +0000 (Tue, 23 Jan 2018) | 4 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tests.c
+
+[tests/tests.c] Mention a libtool 2.4.6 bug concerning Solaris, yielding
+potential failures if a compatible MPFR version is already installed:
+this MPFR library is tested instead of the one that has just been built.
+(merged changeset r12122 from the trunk)
+------------------------------------------------------------------------
+r12121 | vlefevre | 2018-01-22 13:58:27 +0000 (Mon, 22 Jan 2018) | 1 line
+Changed paths:
+   M /branches/4.0/ChangeLog
+
+ChangeLog update with "TZ=UTC svn log -rHEAD:0 -v" (in UTF-8 locales).
+------------------------------------------------------------------------
+r12120 | vlefevre | 2018-01-22 13:56:18 +0000 (Mon, 22 Jan 2018) | 1 line
+Changed paths:
+   M /branches/4.0/src/Makefile.am
+
+[src/Makefile.am] Updated libmpfr_la_LDFLAGS for MPFR 4.0.1.
+------------------------------------------------------------------------
+r12119 | vlefevre | 2018-01-22 13:53:01 +0000 (Mon, 22 Jan 2018) | 1 line
+Changed paths:
+   M /branches/4.0/VERSION
+   M /branches/4.0/configure.ac
+   M /branches/4.0/doc/mpfr.texi
+   M /branches/4.0/src/mpfr.h
+   M /branches/4.0/src/version.c
+
+Updated version to 4.0.1-rc1.
+------------------------------------------------------------------------
+r12118 | vlefevre | 2018-01-22 12:21:10 +0000 (Mon, 22 Jan 2018) | 1 line
+Changed paths:
+   M /branches/4.0/NEWS
+
+[NEWS] + Improved __GMP_CC and __GMP_CFLAGS retrieval.
+------------------------------------------------------------------------
+r12116 | vlefevre | 2018-01-22 01:51:10 +0000 (Mon, 22 Jan 2018) | 4 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/configure.ac
+
+[configure.ac] In the CC and CFLAGS setup from gmp.h, added to the
+cpp list: "clang -E"; "cl -E" and "icl -E" for Windows ICC and MSVC
+(suggested by Alexander).
+(merged changeset r12115 from the trunk)
+------------------------------------------------------------------------
+r12110 | vlefevre | 2018-01-19 11:36:10 +0000 (Fri, 19 Jan 2018) | 1 line
+Changed paths:
+   M /branches/4.0/NEWS
+
+[NEWS] Mention the bug fix r12109.
+------------------------------------------------------------------------
+r12109 | vlefevre | 2018-01-19 00:27:24 +0000 (Fri, 19 Jan 2018) | 6 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/src/mp_clz_tab.c
+   M /branches/4.0/src/mpfr-gmp.h
+
+Correct fix for the use of __clz_tab when the GMP build is used.
+  * src/mpfr-gmp.h: reverse-merged r11969, which is incorrect and
+    yields a build failure under some conditions.
+  * src/mp_clz_tab.c: fixed the condition that tests whether the
+    GMP build is used.
+(merged changesets r12107-12108 from the trunk)
+------------------------------------------------------------------------
+r12106 | vlefevre | 2018-01-18 10:52:25 +0000 (Thu, 18 Jan 2018) | 1 line
+Changed paths:
+   M /branches/4.0/NEWS
+
+[NEWS] Update for GNU MPFR 4.0.1.
+------------------------------------------------------------------------
+r12096 | vlefevre | 2018-01-10 17:03:36 +0000 (Wed, 10 Jan 2018) | 1 line
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/src/check.c
+
+Typo in a comment (cherry-picked everything from r12073 of the trunk).
+------------------------------------------------------------------------
+r12095 | vlefevre | 2018-01-10 16:58:10 +0000 (Wed, 10 Jan 2018) | 4 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/src/lngamma.c
+   M /branches/4.0/tests/tlgamma.c
+
+[src/lngamma.c] Fixed handling of reduced exponent range in mpfr_lgamma
+  (also removed a useless cast).
+[tests/tlgamma.c] Added a corresponding test case.
+(merged changesets r12089-12092 from the trunk)
+------------------------------------------------------------------------
+r12094 | vlefevre | 2018-01-10 16:48:57 +0000 (Wed, 10 Jan 2018) | 4 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/src/ai.c
+   M /branches/4.0/tests/tai.c
+
+[src/ai.c] Fixed handling of reduced exponent range.
+[tests/tai.c] Added corresponding test cases (in addition to what
+  has been done in tgeneric.c).
+(merged changesets r12070-12072,12074-12075 from the trunk)
+------------------------------------------------------------------------
+r12093 | vlefevre | 2018-01-10 16:38:44 +0000 (Wed, 10 Jan 2018) | 8 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tgeneric.c
+
+[tests/tgeneric.c] Tests in a reduced exponent range:
+  * Do several overflow/underflow tests instead of 1, and this for each
+    precision. This allows one to detect 2 bugs (fixed in the trunk)
+    that did not handle reduced exponent ranges correctly:
+    - in mpfr_ai, making tai fail;
+    - in mpfr_lgamma, making tlgamma hang with a 32-bit ABI.
+  * Added some comments.
+(merged changesets r12087-12088 from the trunk)
+------------------------------------------------------------------------
+r12086 | vlefevre | 2018-01-10 10:15:30 +0000 (Wed, 10 Jan 2018) | 4 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/tests/tsprintf.c
+
+[tests/tsprintf.c] Fixed/simplified code with incorrect strncpy
+usage (bug detected by gcc-snapshot 20180107-1 under Debian with
+-Werror=stringop-truncation).
+(merged changesets r12084-12085 from the trunk)
+------------------------------------------------------------------------
+r12083 | vlefevre | 2018-01-09 15:17:48 +0000 (Tue, 09 Jan 2018) | 6 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/doc/mpfr.texi
+
+[doc/mpfr.texi] Misc improvements and corrections affecting the
+description of the following functions:
+  * mpfr_ai: fixed font encoding issue for PDF/DVI/PS (—x— → |x|).
+  * mpfr_custom_init_set: fixed typography; improved text.
+  * mpfr_custom_get_exp: improved text.
+(merged changesets r12077-12082 from the trunk)
+------------------------------------------------------------------------
+r12078 | vlefevre | 2018-01-09 12:34:03 +0000 (Tue, 09 Jan 2018) | 5 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/doc/mpfr.texi
+   M /branches/4.0/doc/texinfo.tex
+
+[doc]
+  * texinfo.tex: update to the latest version 2018-01-09.11, which
+    supports @var with script font size without any drawback.
+  * mpfr.texi: replaced the now useless @svar by @var.
+(merged changeset r12076 from the trunk)
+------------------------------------------------------------------------
+r12077 | vlefevre | 2018-01-09 12:30:58 +0000 (Tue, 09 Jan 2018) | 6 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/BUGS
+   M /branches/4.0/INSTALL
+   M /branches/4.0/Makefile.am
+   M /branches/4.0/NEWS
+   M /branches/4.0/README
+   M /branches/4.0/TODO
+   M /branches/4.0/acinclude.m4
+   M /branches/4.0/configure.ac
+   M /branches/4.0/doc/FAQ.html
+   M /branches/4.0/doc/Makefile.am
+   M /branches/4.0/doc/README.dev
+   M /branches/4.0/doc/check-typography
+   M /branches/4.0/doc/faq.xsl
+   M /branches/4.0/doc/mpfr.texi
+   M /branches/4.0/examples/can_round.c
+   M /branches/4.0/examples/divworst.c
+   M /branches/4.0/examples/rndo-add.c
+   M /branches/4.0/examples/sample.c
+   M /branches/4.0/examples/version.c
+   M /branches/4.0/src/Makefile.am
+   M /branches/4.0/src/abort_prec_max.c
+   M /branches/4.0/src/acos.c
+   M /branches/4.0/src/acosh.c
+   M /branches/4.0/src/add.c
+   M /branches/4.0/src/add1.c
+   M /branches/4.0/src/add1sp.c
+   M /branches/4.0/src/add_d.c
+   M /branches/4.0/src/add_ui.c
+   M /branches/4.0/src/agm.c
+   M /branches/4.0/src/ai.c
+   M /branches/4.0/src/amd/amdfam10/mparam.h
+   M /branches/4.0/src/amd/athlon/mparam.h
+   M /branches/4.0/src/amd/k8/mparam.h
+   M /branches/4.0/src/arm/mparam.h
+   M /branches/4.0/src/asin.c
+   M /branches/4.0/src/asinh.c
+   M /branches/4.0/src/atan.c
+   M /branches/4.0/src/atan2.c
+   M /branches/4.0/src/atanh.c
+   M /branches/4.0/src/bernoulli.c
+   M /branches/4.0/src/beta.c
+   M /branches/4.0/src/buildopt.c
+   M /branches/4.0/src/cache.c
+   M /branches/4.0/src/cbrt.c
+   M /branches/4.0/src/check.c
+   M /branches/4.0/src/clear.c
+   M /branches/4.0/src/clears.c
+   M /branches/4.0/src/cmp.c
+   M /branches/4.0/src/cmp2.c
+   M /branches/4.0/src/cmp_abs.c
+   M /branches/4.0/src/cmp_d.c
+   M /branches/4.0/src/cmp_ld.c
+   M /branches/4.0/src/cmp_si.c
+   M /branches/4.0/src/cmp_ui.c
+   M /branches/4.0/src/comparisons.c
+   M /branches/4.0/src/const_catalan.c
+   M /branches/4.0/src/const_euler.c
+   M /branches/4.0/src/const_log2.c
+   M /branches/4.0/src/const_pi.c
+   M /branches/4.0/src/constant.c
+   M /branches/4.0/src/copysign.c
+   M /branches/4.0/src/cos.c
+   M /branches/4.0/src/cosh.c
+   M /branches/4.0/src/cot.c
+   M /branches/4.0/src/coth.c
+   M /branches/4.0/src/csc.c
+   M /branches/4.0/src/csch.c
+   M /branches/4.0/src/d_div.c
+   M /branches/4.0/src/d_sub.c
+   M /branches/4.0/src/digamma.c
+   M /branches/4.0/src/dim.c
+   M /branches/4.0/src/div.c
+   M /branches/4.0/src/div_2exp.c
+   M /branches/4.0/src/div_2si.c
+   M /branches/4.0/src/div_2ui.c
+   M /branches/4.0/src/div_d.c
+   M /branches/4.0/src/div_ui.c
+   M /branches/4.0/src/dump.c
+   M /branches/4.0/src/eint.c
+   M /branches/4.0/src/eq.c
+   M /branches/4.0/src/erandom.c
+   M /branches/4.0/src/erf.c
+   M /branches/4.0/src/erfc.c
+   M /branches/4.0/src/exceptions.c
+   M /branches/4.0/src/exp.c
+   M /branches/4.0/src/exp10.c
+   M /branches/4.0/src/exp2.c
+   M /branches/4.0/src/exp3.c
+   M /branches/4.0/src/exp_2.c
+   M /branches/4.0/src/expm1.c
+   M /branches/4.0/src/extract.c
+   M /branches/4.0/src/factorial.c
+   M /branches/4.0/src/fits_intmax.c
+   M /branches/4.0/src/fits_s.h
+   M /branches/4.0/src/fits_sint.c
+   M /branches/4.0/src/fits_slong.c
+   M /branches/4.0/src/fits_sshort.c
+   M /branches/4.0/src/fits_u.h
+   M /branches/4.0/src/fits_uint.c
+   M /branches/4.0/src/fits_uintmax.c
+   M /branches/4.0/src/fits_ulong.c
+   M /branches/4.0/src/fits_ushort.c
+   M /branches/4.0/src/fma.c
+   M /branches/4.0/src/fmma.c
+   M /branches/4.0/src/fms.c
+   M /branches/4.0/src/fpif.c
+   M /branches/4.0/src/frac.c
+   M /branches/4.0/src/free_cache.c
+   M /branches/4.0/src/frexp.c
+   M /branches/4.0/src/gamma.c
+   M /branches/4.0/src/gamma_inc.c
+   M /branches/4.0/src/gammaonethird.c
+   M /branches/4.0/src/gen_inverse.h
+   M /branches/4.0/src/generic/coverage/mparam.h
+   M /branches/4.0/src/generic/mparam.h
+   M /branches/4.0/src/get_d.c
+   M /branches/4.0/src/get_d64.c
+   M /branches/4.0/src/get_exp.c
+   M /branches/4.0/src/get_f.c
+   M /branches/4.0/src/get_float128.c
+   M /branches/4.0/src/get_flt.c
+   M /branches/4.0/src/get_ld.c
+   M /branches/4.0/src/get_q.c
+   M /branches/4.0/src/get_si.c
+   M /branches/4.0/src/get_sj.c
+   M /branches/4.0/src/get_str.c
+   M /branches/4.0/src/get_ui.c
+   M /branches/4.0/src/get_uj.c
+   M /branches/4.0/src/get_z.c
+   M /branches/4.0/src/get_z_exp.c
+   M /branches/4.0/src/gmp_op.c
+   M /branches/4.0/src/grandom.c
+   M /branches/4.0/src/hppa/mparam.h
+   M /branches/4.0/src/hypot.c
+   M /branches/4.0/src/ia64/mparam.h
+   M /branches/4.0/src/ieee_floats.h
+   M /branches/4.0/src/init.c
+   M /branches/4.0/src/init2.c
+   M /branches/4.0/src/inits.c
+   M /branches/4.0/src/inits2.c
+   M /branches/4.0/src/inp_str.c
+   M /branches/4.0/src/int_ceil_log2.c
+   M /branches/4.0/src/invert_limb.h
+   M /branches/4.0/src/invsqrt_limb.h
+   M /branches/4.0/src/isinf.c
+   M /branches/4.0/src/isinteger.c
+   M /branches/4.0/src/isnan.c
+   M /branches/4.0/src/isnum.c
+   M /branches/4.0/src/isqrt.c
+   M /branches/4.0/src/isregular.c
+   M /branches/4.0/src/iszero.c
+   M /branches/4.0/src/jn.c
+   M /branches/4.0/src/jyn_asympt.c
+   M /branches/4.0/src/li2.c
+   M /branches/4.0/src/lngamma.c
+   M /branches/4.0/src/log.c
+   M /branches/4.0/src/log10.c
+   M /branches/4.0/src/log1p.c
+   M /branches/4.0/src/log2.c
+   M /branches/4.0/src/log_ui.c
+   M /branches/4.0/src/logging.c
+   M /branches/4.0/src/min_prec.c
+   M /branches/4.0/src/minmax.c
+   M /branches/4.0/src/mips/mparam.h
+   M /branches/4.0/src/modf.c
+   M /branches/4.0/src/mp_clz_tab.c
+   M /branches/4.0/src/mparam_h.in
+   M /branches/4.0/src/mpf2mpfr.h
+   M /branches/4.0/src/mpfr-cvers.h
+   M /branches/4.0/src/mpfr-gmp.c
+   M /branches/4.0/src/mpfr-gmp.h
+   M /branches/4.0/src/mpfr-impl.h
+   M /branches/4.0/src/mpfr-intmax.h
+   M /branches/4.0/src/mpfr-longlong.h
+   M /branches/4.0/src/mpfr-mini-gmp.c
+   M /branches/4.0/src/mpfr-mini-gmp.h
+   M /branches/4.0/src/mpfr-sassert.h
+   M /branches/4.0/src/mpfr-thread.h
+   M /branches/4.0/src/mpfr.h
+   M /branches/4.0/src/mpn_exp.c
+   M /branches/4.0/src/mul.c
+   M /branches/4.0/src/mul_2exp.c
+   M /branches/4.0/src/mul_2si.c
+   M /branches/4.0/src/mul_2ui.c
+   M /branches/4.0/src/mul_d.c
+   M /branches/4.0/src/mul_ui.c
+   M /branches/4.0/src/mulders.c
+   M /branches/4.0/src/neg.c
+   M /branches/4.0/src/next.c
+   M /branches/4.0/src/nrandom.c
+   M /branches/4.0/src/odd_p.c
+   M /branches/4.0/src/out_str.c
+   M /branches/4.0/src/pool.c
+   M /branches/4.0/src/pow.c
+   M /branches/4.0/src/pow_si.c
+   M /branches/4.0/src/pow_ui.c
+   M /branches/4.0/src/pow_z.c
+   M /branches/4.0/src/powerof2.c
+   M /branches/4.0/src/powerpc32/mparam.h
+   M /branches/4.0/src/powerpc64/mparam.h
+   M /branches/4.0/src/print_raw.c
+   M /branches/4.0/src/print_rnd_mode.c
+   M /branches/4.0/src/printf.c
+   M /branches/4.0/src/random_deviate.c
+   M /branches/4.0/src/random_deviate.h
+   M /branches/4.0/src/rec_sqrt.c
+   M /branches/4.0/src/reldiff.c
+   M /branches/4.0/src/rem1.c
+   M /branches/4.0/src/rint.c
+   M /branches/4.0/src/rndna.c
+   M /branches/4.0/src/root.c
+   M /branches/4.0/src/round_near_x.c
+   M /branches/4.0/src/round_p.c
+   M /branches/4.0/src/round_prec.c
+   M /branches/4.0/src/round_raw_generic.c
+   M /branches/4.0/src/scale2.c
+   M /branches/4.0/src/sec.c
+   M /branches/4.0/src/sech.c
+   M /branches/4.0/src/set.c
+   M /branches/4.0/src/set_d.c
+   M /branches/4.0/src/set_d64.c
+   M /branches/4.0/src/set_dfl_prec.c
+   M /branches/4.0/src/set_exp.c
+   M /branches/4.0/src/set_f.c
+   M /branches/4.0/src/set_float128.c
+   M /branches/4.0/src/set_flt.c
+   M /branches/4.0/src/set_inf.c
+   M /branches/4.0/src/set_ld.c
+   M /branches/4.0/src/set_nan.c
+   M /branches/4.0/src/set_prc_raw.c
+   M /branches/4.0/src/set_prec.c
+   M /branches/4.0/src/set_q.c
+   M /branches/4.0/src/set_rnd.c
+   M /branches/4.0/src/set_si.c
+   M /branches/4.0/src/set_si_2exp.c
+   M /branches/4.0/src/set_sj.c
+   M /branches/4.0/src/set_str.c
+   M /branches/4.0/src/set_str_raw.c
+   M /branches/4.0/src/set_ui.c
+   M /branches/4.0/src/set_ui_2exp.c
+   M /branches/4.0/src/set_uj.c
+   M /branches/4.0/src/set_z.c
+   M /branches/4.0/src/set_z_exp.c
+   M /branches/4.0/src/set_zero.c
+   M /branches/4.0/src/setmax.c
+   M /branches/4.0/src/setmin.c
+   M /branches/4.0/src/setsign.c
+   M /branches/4.0/src/sgn.c
+   M /branches/4.0/src/si_op.c
+   M /branches/4.0/src/signbit.c
+   M /branches/4.0/src/sin.c
+   M /branches/4.0/src/sin_cos.c
+   M /branches/4.0/src/sinh.c
+   M /branches/4.0/src/sinh_cosh.c
+   M /branches/4.0/src/sparc64/mparam.h
+   M /branches/4.0/src/sqr.c
+   M /branches/4.0/src/sqrt.c
+   M /branches/4.0/src/sqrt_ui.c
+   M /branches/4.0/src/stack_interface.c
+   M /branches/4.0/src/strtofr.c
+   M /branches/4.0/src/sub.c
+   M /branches/4.0/src/sub1.c
+   M /branches/4.0/src/sub1sp.c
+   M /branches/4.0/src/sub_d.c
+   M /branches/4.0/src/sub_ui.c
+   M /branches/4.0/src/subnormal.c
+   M /branches/4.0/src/sum.c
+   M /branches/4.0/src/swap.c
+   M /branches/4.0/src/tan.c
+   M /branches/4.0/src/tanh.c
+   M /branches/4.0/src/ubf.c
+   M /branches/4.0/src/uceil_exp2.c
+   M /branches/4.0/src/uceil_log2.c
+   M /branches/4.0/src/ufloor_log2.c
+   M /branches/4.0/src/ui_div.c
+   M /branches/4.0/src/ui_pow.c
+   M /branches/4.0/src/ui_pow_ui.c
+   M /branches/4.0/src/ui_sub.c
+   M /branches/4.0/src/urandom.c
+   M /branches/4.0/src/urandomb.c
+   M /branches/4.0/src/vasprintf.c
+   M /branches/4.0/src/version.c
+   M /branches/4.0/src/volatile.c
+   M /branches/4.0/src/x86/core2/mparam.h
+   M /branches/4.0/src/x86/mparam.h
+   M /branches/4.0/src/x86_64/core2/mparam.h
+   M /branches/4.0/src/x86_64/corei5/mparam.h
+   M /branches/4.0/src/x86_64/pentium4/mparam.h
+   M /branches/4.0/src/yn.c
+   M /branches/4.0/src/zeta.c
+   M /branches/4.0/src/zeta_ui.c
+   M /branches/4.0/tests/Makefile.am
+   M /branches/4.0/tests/cmp_str.c
+   M /branches/4.0/tests/data/digamma
+   M /branches/4.0/tests/data/li2
+   M /branches/4.0/tests/memory.c
+   M /branches/4.0/tests/mpf_compat.c
+   M /branches/4.0/tests/mpf_compat.h
+   M /branches/4.0/tests/mpfr-test.h
+   M /branches/4.0/tests/mpfr_compat.c
+   M /branches/4.0/tests/random2.c
+   M /branches/4.0/tests/reuse.c
+   M /branches/4.0/tests/rnd_mode.c
+   M /branches/4.0/tests/tabort_defalloc1.c
+   M /branches/4.0/tests/tabort_defalloc2.c
+   M /branches/4.0/tests/tabort_prec_max.c
+   M /branches/4.0/tests/tabs.c
+   M /branches/4.0/tests/tacos.c
+   M /branches/4.0/tests/tacosh.c
+   M /branches/4.0/tests/tadd.c
+   M /branches/4.0/tests/tadd1sp.c
+   M /branches/4.0/tests/tadd_d.c
+   M /branches/4.0/tests/tadd_ui.c
+   M /branches/4.0/tests/tagm.c
+   M /branches/4.0/tests/tai.c
+   M /branches/4.0/tests/talloc-cache.c
+   M /branches/4.0/tests/talloc.c
+   M /branches/4.0/tests/tasin.c
+   M /branches/4.0/tests/tasinh.c
+   M /branches/4.0/tests/tassert.c
+   M /branches/4.0/tests/tatan.c
+   M /branches/4.0/tests/tatanh.c
+   M /branches/4.0/tests/taway.c
+   M /branches/4.0/tests/tbeta.c
+   M /branches/4.0/tests/tbuildopt.c
+   M /branches/4.0/tests/tcan_round.c
+   M /branches/4.0/tests/tcbrt.c
+   M /branches/4.0/tests/tcheck.c
+   M /branches/4.0/tests/tcmp.c
+   M /branches/4.0/tests/tcmp2.c
+   M /branches/4.0/tests/tcmp_d.c
+   M /branches/4.0/tests/tcmp_ld.c
+   M /branches/4.0/tests/tcmp_ui.c
+   M /branches/4.0/tests/tcmpabs.c
+   M /branches/4.0/tests/tcomparisons.c
+   M /branches/4.0/tests/tconst_catalan.c
+   M /branches/4.0/tests/tconst_euler.c
+   M /branches/4.0/tests/tconst_log2.c
+   M /branches/4.0/tests/tconst_pi.c
+   M /branches/4.0/tests/tcopysign.c
+   M /branches/4.0/tests/tcos.c
+   M /branches/4.0/tests/tcosh.c
+   M /branches/4.0/tests/tcot.c
+   M /branches/4.0/tests/tcoth.c
+   M /branches/4.0/tests/tcsc.c
+   M /branches/4.0/tests/tcsch.c
+   M /branches/4.0/tests/td_div.c
+   M /branches/4.0/tests/td_sub.c
+   M /branches/4.0/tests/tdigamma.c
+   M /branches/4.0/tests/tdim.c
+   M /branches/4.0/tests/tdiv.c
+   M /branches/4.0/tests/tdiv_d.c
+   M /branches/4.0/tests/tdiv_ui.c
+   M /branches/4.0/tests/teint.c
+   M /branches/4.0/tests/teq.c
+   M /branches/4.0/tests/terandom.c
+   M /branches/4.0/tests/terandom_chisq.c
+   M /branches/4.0/tests/terf.c
+   M /branches/4.0/tests/tests.c
+   M /branches/4.0/tests/texceptions.c
+   M /branches/4.0/tests/texp.c
+   M /branches/4.0/tests/texp10.c
+   M /branches/4.0/tests/texp2.c
+   M /branches/4.0/tests/texpm1.c
+   M /branches/4.0/tests/tfactorial.c
+   M /branches/4.0/tests/tfits.c
+   M /branches/4.0/tests/tfma.c
+   M /branches/4.0/tests/tfmma.c
+   M /branches/4.0/tests/tfmod.c
+   M /branches/4.0/tests/tfms.c
+   M /branches/4.0/tests/tfpif.c
+   M /branches/4.0/tests/tfprintf.c
+   M /branches/4.0/tests/tfrac.c
+   M /branches/4.0/tests/tfrexp.c
+   M /branches/4.0/tests/tgamma.c
+   M /branches/4.0/tests/tgamma_inc.c
+   M /branches/4.0/tests/tgeneric.c
+   M /branches/4.0/tests/tgeneric_ui.c
+   M /branches/4.0/tests/tget_d.c
+   M /branches/4.0/tests/tget_d_2exp.c
+   M /branches/4.0/tests/tget_f.c
+   M /branches/4.0/tests/tget_flt.c
+   M /branches/4.0/tests/tget_ld_2exp.c
+   M /branches/4.0/tests/tget_q.c
+   M /branches/4.0/tests/tget_set_d64.c
+   M /branches/4.0/tests/tget_sj.c
+   M /branches/4.0/tests/tget_str.c
+   M /branches/4.0/tests/tget_z.c
+   M /branches/4.0/tests/tgmpop.c
+   M /branches/4.0/tests/tgrandom.c
+   M /branches/4.0/tests/thyperbolic.c
+   M /branches/4.0/tests/thypot.c
+   M /branches/4.0/tests/tinits.c
+   M /branches/4.0/tests/tinp_str.c
+   M /branches/4.0/tests/tinternals.c
+   M /branches/4.0/tests/tisnan.c
+   M /branches/4.0/tests/tisqrt.c
+   M /branches/4.0/tests/tj0.c
+   M /branches/4.0/tests/tj1.c
+   M /branches/4.0/tests/tjn.c
+   M /branches/4.0/tests/tl2b.c
+   M /branches/4.0/tests/tlgamma.c
+   M /branches/4.0/tests/tli2.c
+   M /branches/4.0/tests/tlngamma.c
+   M /branches/4.0/tests/tlog.c
+   M /branches/4.0/tests/tlog10.c
+   M /branches/4.0/tests/tlog1p.c
+   M /branches/4.0/tests/tlog2.c
+   M /branches/4.0/tests/tlog_ui.c
+   M /branches/4.0/tests/tmin_prec.c
+   M /branches/4.0/tests/tminmax.c
+   M /branches/4.0/tests/tmodf.c
+   M /branches/4.0/tests/tmul.c
+   M /branches/4.0/tests/tmul_2exp.c
+   M /branches/4.0/tests/tmul_d.c
+   M /branches/4.0/tests/tmul_ui.c
+   M /branches/4.0/tests/tnext.c
+   M /branches/4.0/tests/tnrandom.c
+   M /branches/4.0/tests/tnrandom_chisq.c
+   M /branches/4.0/tests/tout_str.c
+   M /branches/4.0/tests/toutimpl.c
+   M /branches/4.0/tests/tpow.c
+   M /branches/4.0/tests/tpow3.c
+   M /branches/4.0/tests/tpow_all.c
+   M /branches/4.0/tests/tpow_z.c
+   M /branches/4.0/tests/tprintf.c
+   M /branches/4.0/tests/trandom.c
+   M /branches/4.0/tests/trandom_deviate.c
+   M /branches/4.0/tests/trec_sqrt.c
+   M /branches/4.0/tests/tremquo.c
+   M /branches/4.0/tests/trint.c
+   M /branches/4.0/tests/trndna.c
+   M /branches/4.0/tests/troot.c
+   M /branches/4.0/tests/trootn_ui.c
+   M /branches/4.0/tests/tround_prec.c
+   M /branches/4.0/tests/tsec.c
+   M /branches/4.0/tests/tsech.c
+   M /branches/4.0/tests/tset.c
+   M /branches/4.0/tests/tset_d.c
+   M /branches/4.0/tests/tset_exp.c
+   M /branches/4.0/tests/tset_f.c
+   M /branches/4.0/tests/tset_float128.c
+   M /branches/4.0/tests/tset_ld.c
+   M /branches/4.0/tests/tset_q.c
+   M /branches/4.0/tests/tset_si.c
+   M /branches/4.0/tests/tset_sj.c
+   M /branches/4.0/tests/tset_str.c
+   M /branches/4.0/tests/tset_z.c
+   M /branches/4.0/tests/tset_z_exp.c
+   M /branches/4.0/tests/tsgn.c
+   M /branches/4.0/tests/tsi_op.c
+   M /branches/4.0/tests/tsin.c
+   M /branches/4.0/tests/tsin_cos.c
+   M /branches/4.0/tests/tsinh.c
+   M /branches/4.0/tests/tsinh_cosh.c
+   M /branches/4.0/tests/tsprintf.c
+   M /branches/4.0/tests/tsqr.c
+   M /branches/4.0/tests/tsqrt.c
+   M /branches/4.0/tests/tsqrt_ui.c
+   M /branches/4.0/tests/tstckintc.c
+   M /branches/4.0/tests/tstdint.c
+   M /branches/4.0/tests/tstrtofr.c
+   M /branches/4.0/tests/tsub.c
+   M /branches/4.0/tests/tsub1sp.c
+   M /branches/4.0/tests/tsub_d.c
+   M /branches/4.0/tests/tsub_ui.c
+   M /branches/4.0/tests/tsubnormal.c
+   M /branches/4.0/tests/tsum.c
+   M /branches/4.0/tests/tswap.c
+   M /branches/4.0/tests/ttan.c
+   M /branches/4.0/tests/ttanh.c
+   M /branches/4.0/tests/ttrunc.c
+   M /branches/4.0/tests/tui_div.c
+   M /branches/4.0/tests/tui_pow.c
+   M /branches/4.0/tests/tui_sub.c
+   M /branches/4.0/tests/turandom.c
+   M /branches/4.0/tests/tvalist.c
+   M /branches/4.0/tests/tversion.c
+   M /branches/4.0/tests/ty0.c
+   M /branches/4.0/tests/ty1.c
+   M /branches/4.0/tests/tyn.c
+   M /branches/4.0/tests/tzeta.c
+   M /branches/4.0/tests/tzeta_ui.c
+   M /branches/4.0/tools/bench/Makefile.am
+   M /branches/4.0/tools/bench/benchtime.h
+   M /branches/4.0/tools/bench/mpfrbench.c
+   M /branches/4.0/tools/ck-clz_tab
+   M /branches/4.0/tools/ck-copyright-notice
+   M /branches/4.0/tools/ck-mparam
+   M /branches/4.0/tools/ck-news
+   M /branches/4.0/tools/ck-version-info
+   M /branches/4.0/tools/get_patches.sh
+   M /branches/4.0/tune/Makefile.am
+   M /branches/4.0/tune/bidimensional_sample.c
+   M /branches/4.0/tune/speed.c
+   M /branches/4.0/tune/tuneup.c
+
+Minor date-related changes as in the trunk:
+* Copyright notice update in most files: added 2018.
+* tools/ck-mparam: in the copyright notice, just keep the year 2011
+  since this file is not part of the tarball (just used by mpfrlint).
+* doc/mpfr.texi: updated the month.
+(merged changesets r12067-12069 from the trunk)
+------------------------------------------------------------------------
+r12060 | vlefevre | 2017-12-25 15:04:55 +0000 (Mon, 25 Dec 2017) | 1 line
+Changed paths:
+   M /branches/4.0/INSTALL
+   M /branches/4.0/VERSION
+   M /branches/4.0/configure.ac
+   M /branches/4.0/doc/mpfr.texi
+   M /branches/4.0/src/mpfr.h
+   M /branches/4.0/src/version.c
+
+Updated version to 4.0.1-dev.
+------------------------------------------------------------------------
+r12057 | vlefevre | 2017-12-25 11:17:31 +0000 (Mon, 25 Dec 2017) | 2 lines
+Changed paths:
+   M /branches/4.0
+   M /branches/4.0/NEWS
+
+[NEWS] Minor corrections for GNU MPFR 4.0.0.
+(merged changeset r12056 from the trunk)
+------------------------------------------------------------------------
+r12051 | vlefevre | 2017-12-23 10:19:32 +0000 (Sat, 23 Dec 2017) | 1 line
+Changed paths:
+   M /branches/4.0/ChangeLog
+
+ChangeLog update with "LC_ALL=en_US.UTF8 TZ=UTC svn log -rHEAD:0 -v".
+------------------------------------------------------------------------
 r12050 | vlefevre | 2017-12-23 10:17:50 +0000 (Sat, 23 Dec 2017) | 1 line
 Changed paths:
    M /branches/4.0/VERSION
@@ -25938,7 +26850,7 @@ r8070 | vlefevre | 2012-03-07 15:15:09 +0000 (Wed, 07 Mar 2012) | 1 line
 Changed paths:
    M /trunk/NEWS
 
-[NEWS] Prepare for new version.
+[NEWS] Prepare for new version 3.2.0 (will be 4.0.0).
 ------------------------------------------------------------------------
 r8068 | vlefevre | 2012-03-07 13:06:40 +0000 (Wed, 07 Mar 2012) | 1 line
 Changed paths:
@@ -33940,7 +34852,7 @@ r7069 | vlefevre | 2010-08-12 14:28:59 +0000 (Thu, 12 Aug 2010) | 1 line
 Changed paths:
    M /trunk/NEWS
 
-[NEWS] Prepare for new version.
+[NEWS] Prepare for new version 3.1.0.
 ------------------------------------------------------------------------
 r7067 | vlefevre | 2010-08-12 14:13:48 +0000 (Thu, 12 Aug 2010) | 1 line
 Changed paths:

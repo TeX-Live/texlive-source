@@ -1,4 +1,4 @@
-# Copyright 2000-2017 Free Software Foundation, Inc.
+# Copyright 2000-2018 Free Software Foundation, Inc.
 # This Makefile.am is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -49,9 +49,14 @@ dist-hook:
 	cd $(srcdir)/doc && ./check-typography
 
 # Check that MPFR does not use GMP internal symbols. Of course, do not run
-# this rule if you use --with-gmp-build or --enable-gmp-internals. This
-# test does nothing if --disable-shared has been used.
+# this rule if you use --with-gmp-build or --enable-gmp-internals.
+# This test does nothing if no libmpfr.so is generated.
 check-gmp-symbols:
 	cd src && $(MAKE) check-gmp-symbols
 
-.PHONY: check-gmp-symbols
+# Check that MPFR does not define symbols with a GMP reserved prefix.
+# This test does nothing if no libmpfr.so is generated.
+check-exported-symbols:
+	cd src && $(MAKE) check-exported-symbols
+
+.PHONY: check-gmp-symbols check-exported-symbols

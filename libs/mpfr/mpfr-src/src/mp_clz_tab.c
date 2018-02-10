@@ -3,7 +3,7 @@
    THE CONTENTS OF THIS FILE ARE FOR INTERNAL USE AND MAY CHANGE
    INCOMPATIBLY OR DISAPPEAR IN A FUTURE GNU MPFR RELEASE.
 
-Copyright 1991, 1993-1994, 1996-1997, 2000-2001, 2004, 2006-2017 Free Software Foundation, Inc.
+Copyright 1991, 1993-1994, 1996-1997, 2000-2001, 2004, 2006-2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MPFR Library.
 It has been copied and adapted from the GNU MP Library.
@@ -27,7 +27,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #include "mpfr-impl.h"
 
 /* Warning: up from version 5.1.0, __clz_tab has 129 elements. */
-#if defined(COUNT_LEADING_ZEROS_NEED_CLZ_TAB) && defined(__GMPFR_GMP_H__)
+#if defined(COUNT_LEADING_ZEROS_NEED_CLZ_TAB) && !defined(MPFR_HAVE_GMP_IMPL)
 const
 unsigned char __clz_tab[129] =
 {

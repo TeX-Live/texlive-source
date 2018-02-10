@@ -1,6 +1,6 @@
-diff -ur mpfr-4.0.0.orig/src/mparam_h.in mpfr-4.0.0/src/mparam_h.in
---- mpfr-4.0.0.orig/src/mparam_h.in	Sun Jan 01 10:34:35 2017
-+++ mpfr-4.0.0/src/mparam_h.in	Tue Dec 26 19:31:48 2017
+diff -ur mpfr-4.0.1/src/mparam_h.in mpfr-src/src/mparam_h.in
+--- mpfr-4.0.1/src/mparam_h.in	Tue Jan 09 21:30:58 2018
++++ mpfr-src/src/mparam_h.in	Sat Feb 10 15:24:58 2018
 @@ -32,6 +32,8 @@
     for example with gcc -dM -E -xc /dev/null
     As of gcc 4.2, you can also use: -march=native or -mtune=native */
