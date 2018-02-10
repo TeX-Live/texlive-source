@@ -1,3 +1,7 @@
+2018-02-09  Karl Berry  <karl@freefriends.org>
+
+	* axodraw2: new utility: package axodraw2, executable axohelp.
+
 2017-12-19  Karl Berry  <karl@tug.org>
 
 	* README (clisp): use libffcall-1.13, needed on aarch64 per

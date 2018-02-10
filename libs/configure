@@ -695,6 +695,7 @@ enable_multiplatform
 enable_cxx_runtime_hack
 enable_libtool_hack
 enable_autosp
+enable_axodraw2
 enable_devnag
 enable_lacheck
 enable_m_tx
@@ -1483,6 +1484,7 @@ Optional Features:
   --enable-cxx-runtime-hack  link C++ runtime statically
   --enable-libtool-hack   ignore libtool dependency_libs
   --disable-autosp        do not build the autosp package
+  --disable-axodraw2      do not build the axodraw2 package
   --disable-devnag        do not build the devnag package
   --disable-lacheck       do not build the lacheck package
   --disable-m-tx          do not build the m-tx package
@@ -3362,7 +3364,8 @@ esac ;;
 esac
 
 ## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
-## configure options and TL libraries required for vlna
+## $Id$
+## configure options and TL libraries required for autosp.
 # Check whether --enable-autosp was given.
 if test "${enable_autosp+set}" = set; then :
   enableval=$enable_autosp;
@@ -3376,6 +3379,25 @@ case $enable_autosp in #(
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-autosp=$enable_autosp'" >&5
 $as_echo "$as_me: Assuming \`--enable-autosp=$enable_autosp'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-autosp=$enable_autosp'"
+    ;;
+esac
+
+## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
+## $Id$
+## configure options and TL libraries for axodraw2.
+# Check whether --enable-axodraw2 was given.
+if test "${enable_axodraw2+set}" = set; then :
+  enableval=$enable_axodraw2;
+fi
+case $enable_axodraw2 in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_axodraw2=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-axodraw2=$enable_axodraw2'" >&5
+$as_echo "$as_me: Assuming \`--enable-axodraw2=$enable_axodraw2'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-axodraw2=$enable_axodraw2'"
     ;;
 esac
 

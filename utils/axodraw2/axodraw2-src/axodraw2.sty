@@ -1,0 +1,4728 @@
+%  This is axodraw2.sty
+%
+% (C) 1994-2016 by authors:
+%         John Collins (jcc8 at psu dot edu)
+%         Jos Vermaseren (t68 at nikhef dot nl) 
+%
+%
+%  Conditions of use:
+%
+%    axodraw is free software: you can redistribute it and/or modify it under 
+%    the terms of the GNU General Public License as published by the Free 
+%    Software Foundation, either version 3 of the License, or (at your option) 
+%    any later version.
+%
+%    axodraw is distributed in the hope that it will be useful, but WITHOUT ANY
+%    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+%    FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+%    details.
+%
+%    For the GNU General Public License see <http://www.gnu.org/licenses/>.
+%
+%  Code necessities:
+%
+%  1.  \ignorespaces at end of commands that draw things.  Often it won't
+%      matter, but occasionally a command in a picture environment
+%      will set material and a following uncommented end-of-line in
+%      the user's code will shift the insertion point.
+%  2.  Use end-of-line comments whereever TeX might use the end-of-line as
+%      a space to be typeset.
+%
+%  Conventions
+%
+%  1.  Any font and color changes that are supposed to be local should
+%      be made local, either by explicit TeX grouping or by being
+%      inside commands (e.g., box-making commands) that enforce groups.
+%      Braces work, but \begingroup and \endgroup are easier to see in
+%      multiline groups. 
+%  2.  Scaling:
+%           \unitlength is the unit for the canvas (as in picture environment).
+%           \axoscale is for the unit for coordinates, widths, etc
+%           \axotextscale is for all text objects, BUT only when
+%                PSText is NOT set to scale as graphics objects
+%           When PSText is set to scale as graphics objects, PSText
+%                scales by \axoscale, but TeX-text has unit scaling.
+%      Given a specification of a position (x,y) as in a call to \Line,
+%      the position of the point relative to the origin is
+%           x_act = (x + \axoxo ) \axoscale pt + \axoxoffset \unitlength
+%           y_act = (y + \axoyo ) \axoscale pt + \axoyoffset \unitlength
+%      Widths and the like for lines are in units of \axoscale pt
+%
+%		#[ About folds : (this line starts with one % and two tabs)
+%
+%   The internals of the file have been organized in folds.
+%   These are defined as a range of lines if which the first and last
+%   lines have a special format. Each starts with any three characters
+%   (may include tabs), then #[ for the start line and #] for the closing
+%   line, then both lines need identical name fields, closed by a colon.
+%   After the colon can be anything. When a fold is closed one should see
+%   only the first line but with the #[ replaced by ## as in
+%		## About folds : (this line starts with one % and two tabs)
+%   Folds can be nested.
+%   This fold concept comes originally from the occam compiler for the
+%   transputer in the second half of the 1980's although there it was
+%   implemented differently. It was taken over by the STedi editor in its
+%   current form. The sources of this editor are available from the form
+%   home site: http://www.nikhef.nl/~form
+%   Some people have managed to emulate these folds in editors like emacs
+%   and vim.
+%
+%		#] About folds : 
+%
+\ProvidesPackage{axodraw2}[2016/06/02 v2.1.0b]
+%
+%   axodraw.sty file, both for .tex -> .dvi -> .ps and for .tex -> .pdf
+%
+% 	#[ Common LaTeX code :
+%		#[ Variables :
+%
+%
+\RequirePackage{keyval}
+\RequirePackage{ifthen}
+\RequirePackage{graphicx}
+\RequirePackage{color}
+\RequirePackage{ifxetex}
+%
+%
+\DeclareOption{v1compatible}{
+    \def\B2Text{\BTwoText}
+    \def\G2Text{\GTwoText}
+    \def\C2Text{\CTwoText}
+}
+\DeclareOption{canvasScaleIs1pt}{\canvasScaleOnept}
+\DeclareOption{canvasScaleIsObjectScale}{\canvasScaleObjectScale}
+\DeclareOption{canvasScaleIsUnitLength}{\canvasScaleUnitLength}
+\DeclareOption{PSTextScalesIndependently}{\PSTextScalesLikeGraphicsfalse}
+\DeclareOption{PSTextScalesLikeGraphics}{\PSTextScalesLikeGraphicstrue}
+
+% N.B. Option processing is deferred to end of this file, so that all
+% definitions and initializations have been done first.
+
+% Settings for pdf v. dvi/ps output:
+% We need to be able to run under latex, pdflatex, lualatex, and
+% xelatex, and use (if possible) \pdfoutput and \pdfliteral
+%
+% latex:    Initially \pdfoutput is 0, and \pdfliteral is defined but
+%           not usable. 
+% pdflatex: Initially \pdfoutput is 1, and \pdfliteral is defined and
+%           usable. 
+% lualatex: same as pdflatex in versions up to 0.80
+%           But in versions from 0.85, pdfouput and pdfliteral aren't
+%           defined; instead \outputmode, \pdfextension literal{...}
+%           are available instead.
+% xelatex:  Both \pdfoutput and \pdfliteral are undefined
+%           but special{pdf:literal ...} gives same effect as
+%           \pdfliteral would, and we can assume pdf mode always.
+% When \pdfoutput is defined, the user can change its value to change
+% the type of output.  This must be done before the first page is
+% created.  But various packages (including graphics and ifpdf, as
+% well as axodraw) take actions when the package is loaded that depend
+% on current state of \pdfoutput (or its equivalent).  So it is
+% reasonable to require that \pdfoutput be set only before packages
+% are loaded and not set later.
+%
+% We define \axo@pdfoutput and \axo@pdfliteral for our uses to have
+% function of \pdfoutput and \pdfliteral, but to be defined always.
+% We initialize them to a default suitable for dvi mode, and override
+% these definitions to cover the situations listed above.  This needs
+% tests for whether \pdfoutput, \outputmode, etc are undefined of
+% defined.  We put these inside a group, to evade the side effect that 
+% \@ifundefined defines the object being tested.
+%
+% Default values:
+\newcount\axo@pdfoutput
+\axo@pdfoutput=0
+\def\axo@pdfliteral#1%
+     {\PackageWarning{axo}{Bug: pdfliteral accessed but not available}}
+\bgroup
+    \@ifundefined{pdfoutput}%
+        {}%
+        {\global\axo@pdfoutput=\pdfoutput}%
+    %
+    \@ifundefined{pdfliteral}%
+        {}%
+        {% Define \axo@pdfliteral to call \pdfliteral, so that if the
+         % definition of \pdfliteral were to be overridden, we get to
+         % use the changed definition
+         \gdef\axo@pdfliteral#1{\pdfliteral{#1}}}%
+    \@ifundefined{outputmode}%
+                 {}%
+                 {\global\axo@pdfoutput=\outputmode}
+    \@ifundefined{pdfextension}%
+                 {}%
+                 {\gdef\axo@pdfliteral#1{\pdfextension literal{#1}}}
+\egroup
+\ifxetex
+    \axo@pdfoutput=1
+    \def\axo@pdfliteral#1{\special{pdf:literal #1}}
+\fi
+
+%
+%  For communicating with axohelp with global file
+%
+\newif\ifaxo@axohelpRerun
+\axo@axohelpRerunfalse
+%
+\newcounter{axo@objectIndex}
+\setcounter{axo@objectIndex}{0}
+\newwrite\axo@spec
+\newread\axo@axohelpFile
+%
+\newcommand\axo@setObject[3]{
+    \expandafter\gdef\csname axo@input@#1\endcsname{#2}
+    \expandafter\gdef\csname axo@output@#1\endcsname{#3}
+}
+%
+\ifcase\axo@pdfoutput
+\else
+    \IfFileExists{\jobname.ax2}%
+        {{% For comparisons between current definition of object
+        % and previously processed definition, spaces must be preserved.
+            \obeyspaces
+            \openin\axo@axohelpFile=\jobname.ax2
+        }}%
+        {%
+            \PackageWarning{axo}{File `\jobname.ax2' not found.}
+        \axo@axohelpReruntrue
+        }
+    \AtBeginDocument{\immediate\openout\axo@spec\jobname.ax1}
+    \AtEndDocument{\immediate\closeout\axo@spec
+                  \ifaxo@axohelpRerun
+                    \PackageWarning{axodraw2}{Run `axohelp \jobname'
+                      and then rerun pdflatex.}
+                  \fi
+                 }
+\fi
+
+%  Commands to set parameters
+%
+%  Arrow scale:
+\newcommand{\AXO@DefaultArrowScale}{1}
+\newcommand\SetArrowScale[1]{%
+    \renewcommand\AXO@DefaultArrowScale{#1}%
+}
+% Alternative name
+\newcommand\DefaultArrowScale[1]{\SetArrowScale{#1}}
+\SetArrowScale{1}
+
+% Arrow inset:
+\newcommand\AXO@ArrowInset{0.2}
+%\renewcommand\AXO@ArrowInset{-1 }
+\newcommand\SetArrowInset[1]{%
+    \renewcommand\AXO@ArrowInset{#1}%
+}
+
+% Arrow aspect:
+\newcommand\AXO@DefaultArrowAspect{1.25}
+\newcommand\SetArrowAspect[1]{%
+    \renewcommand\AXO@DefaultArrowAspect{#1}%
+}
+
+% Arrow position (fractional position along line):
+\newcommand\AXO@ArrowPos{0.5}
+\newcommand\SetArrowPosition[1]{%
+    \renewcommand\AXO@ArrowPos{#1}%
+}
+
+% Arrow stroke width
+\newcommand{\AXO@DefaultArrowStroke}{0 }
+\newcommand\SetArrowStroke[1]{%
+    \renewcommand\AXO@DefaultArrowStroke{#1}%
+}
+
+\newlength{\axounitlength}
+% The next two are scratch registers
+\newlength\axo@x
+\newlength\axo@y
+% Initializations
+\axounitlength=\unitlength
+\def\axocanvas{1}     % How unitlength is set in axopicture environment
+                      % 0 => 1 pt
+                      % 1 => \axoscale pt
+                      % 2 => Don't set it
+\def\axominusone{-1}
+\def\axoone{1}
+\def\axozero{0}
+\def\axowidth{0.5}
+\def\axoscale{1.0}
+\def\axotextscale{1.0}
+\newif\ifPSTextScalesLikeGraphics
+\PSTextScalesLikeGraphicstrue
+\def\axoxoff{0}
+\def\axoyoff{0}
+\def\axoxo{0}
+\def\axoyo{0}
+\def\axoarrowsize{2}
+%
+%
+%       Now the user callable routines, and their immediate helpers
+%
+% Commands for setting parameters applicable to subsequent graphical objects:
+%
+\def\SetLineSep#1{\def\AXO@Sep{#1}\ignorespaces}\relax
+\let\SetSep=\SetLineSep\relax
+\def\SetDashSize#1{\def\AXO@DashSize{#1}\ignorespaces}\relax
+\def\SetWidth#1{\def\axowidth{#1}\ignorespaces}
+\def\SetArrowSize#1{\def\axoarrowsize{#1}}
+
+\def\SetObjectScale#1{\def\axoscale{#1}\ignorespaces}
+\def\SetCanvasScale#1{\unitlength = #1 pt\ignorespaces}
+\def\SetTextScale#1{\def\axotextscale{#1}\ignorespaces}
+\let\SetScale = \SetObjectScale
+
+\def\SetOffset(#1,#2){\def\axoxoff{#1}\def\axoyoff{#2}\ignorespaces}
+\def\SetScaledOffset(#1,#2){\def\axoxo{#1}\def\axoyo{#2}\ignorespaces}
+
+\def\canvasScaleOnept{\def\axocanvas{0}}
+\def\canvasScaleObjectScale{\def\axocanvas{1}}
+\def\canvasScaleUnitLength{\def\axocanvas{2}}
+
+%
+%
+%		#] Variables : 
+%		#[ Defining commands with optional arguments : 
+%
+\def\defWithOption#1#2#3{%
+    \@namedef{#1}%
+        {%
+            \@ifnextchar[%]
+                {\@nameuse{#1@A}}%
+                {\@nameuse{#1@A}[]}%
+        }%
+    \@namedef{#1@A}[##1]#2%
+         {#3}%
+}
+%
+%		#] Defining commands with optional arguments : 
+%		#[ axopicture :
+%
+%   Version of picture environment with unitlength set to 1pt
+%   as assumed by axodraw. We also store some variables and reset them
+%   afterwards. This makes the picture environment also local from the
+%   axodraw viewpoint. To change the global settings one should issue
+%   the corresponding command from outside the axopicture environment.
+%   Use: \begin{axopicture}(width,height)(xshift,yshift)
+%        \end{axopicture}
+%   The old use with the regular picture environment will still work,
+%   but it will have the old shortcomings connected to it.
+%   
+\let\OLDpicture=\picture
+\let\endOLDpicture=\endpicture
+\newenvironment{axopicture}
+{%
+    \ifcase \axocanvas  
+        \setlength{\unitlength}{1 pt}%
+    \or
+        \setlength{\unitlength}{\axoscale\space pt}%
+    \else
+        % Leave \unitlength as whatever the user set
+    \fi
+    \begin{OLDpicture}%
+}
+{%
+    \end{OLDpicture}%
+    \ignorespacesafterend
+}
+%
+%		#] axopicture : 
+%		#[ AXO@keys :
+%
+
+% Diagnostics for unimplemented features:
+\newif\ifAXONotImplemented
+\AXONotImplementedfalse
+\def\AXO@NOTIMPLEMENTED#1{%
+    \global\AXONotImplementedtrue
+    \PackageWarning{axodraw2}{#1}%
+}
+\AtEndDocument{%
+    \ifAXONotImplemented
+        \PackageWarningNoLine{axodraw2}{unimplemented features used
+          somewhere in document}%
+    \fi
+}
+
+% The next is used temporarily, it gives the result of parsing an
+% arrow-using command to give the Postscript code for setting the
+% arrow.
+%
+%  Keys for optional arguments:
+%  First the variables used, with some defaults.
+\newif\ifAXO@arrow
+\AXO@arrowfalse
+\newif\ifAXO@clock
+\AXO@clockfalse
+\newif\ifAXO@dash
+\AXO@dashfalse
+\newif\ifAXO@double
+\AXO@doublefalse
+\newif\ifAXO@flip       % Flip arrow orientation, as in JaxoDraw
+\AXO@flipfalse
+\newif\ifAXO@linecolor  % Option sets color for current line
+\AXO@linecolorfalse
+
+\def\AXO@Sep{2}        % Double line separation
+\def\AXO@DashSize{3}
+
+%  Then the definitions of the keys
+\define@key{axo}{arrowscale}{%
+    \def\AXO@CurrentArrowScale{#1}%
+}
+\define@key{axo}{arrowwidth}{%
+    \def\AXO@CurrentArrowWidth{#1}%
+}
+\define@key{axo}{arrowlength}{%
+    \def\AXO@CurrentArrowLength{#1}%
+}
+% Make arrowheight a synonym for arrowlength
+\let\KV@axo@arrowheight=\KV@axo@arrowlength
+%
+\define@key{axo}{arrowpos}{%
+    \def\AXO@CurrentArrowPos{#1 }
+}
+%
+\define@key{axo}{arrowaspect}{%
+    \def\AXO@CurrentArrowAspect{#1 }
+}
+%
+\define@key{axo}{arrowinset}{%
+    \def\AXO@CurrentArrowInset{#1 }
+}
+% Make inset a synonym for arrowinset
+\let\KV@axo@inset=\KV@axo@arrowinset
+%
+\define@key{axo}{arrowstroke}{%
+    \def\AXO@CurrentArrowStroke{#1 }
+}
+%
+\define@key{axo}{arrow}[true]{%
+    \AXO@boolkey{#1}{arrow}%
+}
+\define@key{axo}{clock}[true]{%
+    \AXO@boolkey{#1}{clock}%
+}
+\define@key{axo}{clockwise}[true]{%
+    \AXO@boolkey{#1}{clock}%
+}
+\define@key{axo}{color}{%
+    \def\AXO@CurrentColor{#1}%
+        \AXO@linecolortrue
+}
+% Make colour a synonym for color
+\let\KV@axo@colour=\KV@axo@color
+%
+\define@key{axo}{dash}[true]{%
+    \AXO@boolkey{#1}{dash}%
+}
+\define@key{axo}{dashsize}{%
+    \def\AXO@CurrentDashSize{#1 }
+}
+\define@key{axo}{dsize}{%
+    \def\AXO@CurrentDashSize{#1 }
+}
+\define@key{axo}{double}[true]{%
+    \AXO@boolkey{#1}{double}%
+}
+\define@key{axo}{flip}[true]{%
+    \AXO@boolkey{#1}{flip}%
+}
+\define@key{axo}{linesep}{%
+    \def\AXO@CurrentSep{#1}
+}
+\define@key{axo}{sep}{%
+    \def\AXO@CurrentSep{#1}
+}
+\define@key{axo}{width}{%
+    \def\AXO@CurrentWidth{#1}%
+}
+%
+%		#] AXO@keys : 
+%		#[ AXO@Parse :
+%
+%  Parsing of optional arguments, etc
+%
+\def\AXO@Parse#1#2{%
+    % Usage: \AXO@Parse#1#2 or \AXO@Parse#1#2[#3]
+    % #1 is a command for setting an object, that takes no optional argument
+    % #2 and the optional #3 are keyword settings.
+    % There then follow the compulsory arguments for the command in #1.
+    %
+    % E.g., \AXO@Parse{\AXO@Line}{double}(x1,y1)(x2,y2)
+    %      \AXO@Parse{\AXO@Line}{double}[arrow](x1,y1)(x2,y2)
+    %
+    % I will 
+    %   (a) Set standard initial settings (arrows, etc)
+    %   (b) Parse the keyword settings in #2 and #3, e.g., scale = 3,
+    %   (c) Call #1 to make the object
+    \AXO@arrowfalse
+    \AXO@clockfalse
+    \AXO@dashfalse
+    \AXO@doublefalse
+    \AXO@flipfalse
+    \AXO@linecolorfalse
+    \let\AXO@CurrentWidth\axowidth
+    \let\AXO@CurrentArrowPos\AXO@ArrowPos
+    \let\AXO@CurrentArrowWidth\relax
+    \let\AXO@CurrentArrowLength\relax
+    \let\AXO@CurrentArrowInset\AXO@ArrowInset
+    \let\AXO@CurrentArrowScale\AXO@DefaultArrowScale
+    \let\AXO@CurrentArrowStroke\AXO@DefaultArrowStroke
+    \let\AXO@CurrentArrowAspect\AXO@DefaultArrowAspect
+    \let\AXO@CurrentDashSize\AXO@DashSize
+    \let\AXO@CurrentSep=\AXO@Sep
+    \@ifnextchar[{\AXO@Options{#1}{#2}}%
+                 {\AXO@Options{#1}{#2}[]}%
+}
+%
+%		#] AXO@Parse : 
+%		#[ AXO@Options :
+%  
+\def\AXO@Options#1#2[#3]{%
+    % #1 is command to execute, #2 and #3 are options.
+    \setkeys{axo}{#2}%
+    \setkeys{axo}{#3}%
+    \ifx\AXO@CurrentArrowLength\relax
+        \def\AXO@CurrentArrowLength{0 }%
+    \fi
+    \ifx\AXO@CurrentArrowWidth\relax
+        \def\AXO@CurrentArrowWidth{0 }%
+    \fi
+    \ifAXO@arrow
+        \def\AXO@ArrowArg{
+            \AXO@CurrentArrowStroke \space %
+            \AXO@CurrentArrowWidth \space %
+            \AXO@CurrentArrowLength \space %
+            \AXO@CurrentArrowInset \space %
+            \AXO@CurrentArrowScale \space %
+            \AXO@CurrentArrowAspect \space %
+            \AXO@CurrentArrowPos \space %
+            \ifcase\axo@pdfoutput
+             true \space % Indicates that an arrow should be drawn.
+            \else
+             1 \space % Indicates that an arrow should be drawn.
+            \fi
+        }%
+    \else
+        \ifcase\axo@pdfoutput
+            \def\AXO@ArrowArg{ 0 0 0 0 0 0 0 false }%
+        \else
+            \def\AXO@ArrowArg{ 0 0 0 0 0 0 0 0 }%
+        \fi
+    \fi
+    #1%
+}
+%
+\def\AXO@useopts{%
+  % Override global settings by those from options
+  % HACK: The \@killglue solves problem that setting color
+  % causes a shift in horizontal position.
+  % Motivation: From definition of \put.
+  \@killglue
+  \ifAXO@linecolor \SetColor{\AXO@CurrentColor}\fi
+}
+%
+% Now ensure there is a setting for the current arrow
+\AXO@Parse{}{}
+%
+%		#] AXO@Options : 
+%		#[ AXO@varia :
+%
+% Now ensure there is a setting for the current arrow
+\AXO@Parse{}{}
+
+\def\AXO@PrependOption#1#2{%
+    % Run command #1, which has an optional argument, with #2 prepended
+    % to the command's optional arguments.  If there are no optional
+    % arguments, just run the command with #2 as the optional arguments
+    \@ifnextchar[{\AXO@TwoOption{#1}{#2}}%
+                 {#1[#2]}%
+}
+\def\AXO@TwoOption#1#2[#3]{%
+    #1[#2,#3]%
+}
+%
+% Copied from graphicx.sty, for use with boolean keys
+% Modified to do lower casing here
+\def\AXO@boolkey#1#2{%
+    \lowercase{\AXO@boolkeyA{#1}}{#2}%
+}
+\def\AXO@boolkeyA#1#2{%
+    \csname AXO@#2\ifx\relax#1\relax true\else#1\fi\endcsname
+}
+%
+%		#] AXO@varia : 
+%		#[ Colors :
+%
+%       Here we make an interface, compatible with both: color.sty,
+%       with the commands of axodraw v. 1, and with the commands of
+%       colordvi.sty (used by axodraw v. 1).
+%
+%       1. We make a set of named colors suitable for use with both
+%          axodraw's commands that take color arguments and with
+%          color.sty's \color command.
+%       2. We define a command \SetColor to set a named color as the
+%          current color.  It is now identical to \color.
+%       3. For each of the colors that we define here, we make 
+%          named color setting commands, e.g., \Red
+%          \textRed.  \Red sets its (one) argument in Red, \textRed
+%          is a "declaration" that changes the current color.
+%       All the commands for setting color apply to both regular LaTeX
+%       material and to axodraw objects. Their setting of color
+%       respects LaTeX environments and TeX groups. 
+%
+%       We also define
+%          a. Named-color commands like \textRed and \Red for named
+%             colors to give the same interface as the colordvi
+%             package (and hence axodraw v. 1).
+%          b. \SetColor command to set a named color. 
+
+
+\let\SetColor=\color
+
+% For v. 1 compatibility:
+\def\IfColor#1#2{#1}
+
+\newcommand\newcolor[2]{%
+    % Define a named color both in the color.sty style
+    % and in the colordvi.sty, with also a command giving the CMYK value.
+    % #1 is the color's name, #2 is its CMYK definition, space
+    % separated. 
+    % 
+    % Invoke color.sty's \definecolor after change of argument format:
+    \axo@new@color #1 #2\@%
+    % Define commands to use this color,
+    % E.g., if #1 is Red, then define \Red and \textRed:
+    \expandafter\def\csname #1\endcsname##1{{\SetColor{#1}##1}\ignorespaces}
+    \expandafter\def\csname text#1\endcsname{\SetColor{#1}\ignorespaces}
+    % The following to give the cmyk value of a color, e.g., \cmykRed,
+    % is no longer needed, since we no longer do color setting in
+    % postscript and pdf code:
+%%   \expandafter\def\csname cmyk#1\endcsname{#2}
+}
+
+% Command to invoke color.sty's \definecolor, which needs a translation
+% of our space-separated CMYK vector to a comma-separated vector:
+\def\axo@new@color #1 #2 #3 #4 #5\@{\definecolor{#1}{cmyk}{#2,#3,#4,#5}}
+
+
+%   For consistency we define our named colors here, rather than
+%   using color.sty's mechanisms.  The
+%   first 68 are standard colors, as defined by dvips, and
+%   implemented in both colordvi.ps, and in color.sty with its
+%   usenames and dvipsnames options (in the file dvipsnam.def
+%   provided by the LaTeX graphics package). 
+%
+%       We define an extra 5 colors at the end
+%
+% The 68 dvips-defined colors are:
+%
+\newcolor{GreenYellow}{0.15 0 0.69 0}
+\newcolor{Yellow}{0 0 1 0}
+\newcolor{Goldenrod}{0 0.10 0.84 0}
+\newcolor{Dandelion}{0 0.29 0.84 0}
+\newcolor{Apricot}{0 0.32 0.52 0}
+\newcolor{Peach}{0 0.50 0.70 0}
+\newcolor{Melon}{0 0.46 0.50 0}
+\newcolor{YellowOrange}{0 0.42 1 0}
+\newcolor{Orange}{0 0.61 0.87 0}
+\newcolor{BurntOrange}{0 0.51 1 0}
+\newcolor{Bittersweet}{0 0.75 1 0.24}
+\newcolor{RedOrange}{0 0.77 0.87 0}
+\newcolor{Mahogany}{0 0.85 0.87 0.35}
+\newcolor{Maroon}{0 0.87 0.68 0.32}
+\newcolor{BrickRed}{0 0.89 0.94 0.28}
+\newcolor{Red}{0 1 1 0}
+\newcolor{OrangeRed}{0 1 0.50 0}
+\newcolor{RubineRed}{0 1 0.13 0}
+\newcolor{WildStrawberry}{0 0.96 0.39 0}
+\newcolor{Salmon}{0 0.53 0.38 0}
+\newcolor{CarnationPink}{0 0.63 0 0}
+\newcolor{Magenta}{0 1 0 0}
+\newcolor{VioletRed}{0 0.81 0 0}
+\newcolor{Rhodamine}{0 0.82 0 0}
+\newcolor{Mulberry}{0.34 0.90 0 0.02}
+\newcolor{RedViolet}{0.07 0.90 0 0.34}
+\newcolor{Fuchsia}{0.47 0.91 0 0.08}
+\newcolor{Lavender}{0 0.48 0 0}
+\newcolor{Thistle}{0.12 0.59 0 0}
+\newcolor{Orchid}{0.32 0.64 0 0}
+\newcolor{DarkOrchid}{0.40 0.80 0.20 0}
+\newcolor{Purple}{0.45 0.86 0 0}
+\newcolor{Plum}{0.50 1 0 0}
+\newcolor{Violet}{0.79 0.88 0 0}
+\newcolor{RoyalPurple}{0.75 0.90 0 0}
+\newcolor{BlueViolet}{0.86 0.91 0 0.04}
+\newcolor{Periwinkle}{0.57 0.55 0 0}
+\newcolor{CadetBlue}{0.62 0.57 0.23 0}
+\newcolor{CornflowerBlue}{0.65 0.13 0 0}
+\newcolor{MidnightBlue}{0.98 0.13 0 0.43}
+\newcolor{NavyBlue}{0.94 0.54 0 0}
+\newcolor{RoyalBlue}{1 0.50 0 0}
+\newcolor{Blue}{1 1 0 0}
+\newcolor{Cerulean}{0.94 0.11 0 0}
+\newcolor{Cyan}{1 0 0 0}
+\newcolor{ProcessBlue}{0.96 0 0 0}
+\newcolor{SkyBlue}{0.62 0 0.12 0}
+\newcolor{Turquoise}{0.85 0 0.20 0}
+\newcolor{TealBlue}{0.86 0 0.34 0.02}
+\newcolor{Aquamarine}{0.82 0 0.30 0}
+\newcolor{BlueGreen}{0.85 0 0.33 0}
+\newcolor{Emerald}{1 0 0.50 0}
+\newcolor{JungleGreen}{0.99 0 0.52 0}
+\newcolor{SeaGreen}{0.69 0 0.50 0}
+\newcolor{Green}{1 0 1 0}
+\newcolor{ForestGreen}{0.91 0 0.88 0.12}
+\newcolor{PineGreen}{0.92 0 0.59 0.25}
+\newcolor{LimeGreen}{0.50 0 1 0}
+\newcolor{YellowGreen}{0.44 0 0.74 0}
+\newcolor{SpringGreen}{0.26 0 0.76 0}
+\newcolor{OliveGreen}{0.64 0 0.95 0.40}
+\newcolor{RawSienna}{0 0.72 1 0.45}
+\newcolor{Sepia}{0 0.83 1 0.70}
+\newcolor{Brown}{0 0.81 1 0.60}
+\newcolor{Tan}{0.14 0.42 0.56 0}
+\newcolor{Gray}{0 0 0 0.50}
+\newcolor{Black}{0 0 0 1}
+\newcolor{White}{0 0 0 0}
+%
+%   Our extra colors
+%
+\newcolor{LightYellow}{0 0 0.7 0}
+\newcolor{LightRed}{0 0.75 0.7 0}
+\newcolor{LightBlue}{0.7 0.5 0 0}
+\newcolor{LightGray}{0 0 0 0.1}
+\newcolor{VeryLightBlue}{0.15 0.07 0 0}
+%
+\SetColor{Black}
+%
+%		#] Colors : 
+% 	#] Common LaTeX code : 
+% 	#[ LaTeX primitives :
+%
+%    #[ Putting material
+%
+
+% Some utilities that remove extra space that creeps in, particularly
+% when extra groups are inserted before the use of \put.
+% Use the definition of \@killglue used in latex.ltx for \put,
+% but copy it here, since \@killglue is internal and not documented.
+\gdef\AXO@killglue{\unskip\@whiledim \lastskip >\z@\do{\unskip}}
+
+% Special purpose versions of \put and \special
+\long\gdef\putLen(#1,#2)#3{%
+  % Like LaTeX's \put, except that #1 and #2 are lengths instead of numbers
+  % giving lengths in units of \unitlength.
+  \AXO@killglue\raise#2\relax
+  \hbox to 0pt{\kern#1\relax #3\hss}%
+  \ignorespaces
+}
+%
+\def\AxoPut(#1,#2)#3{%
+  % Like \put, but shifted by axodraw's offsets.
+  % This provides a way of coding the offsets in one place.
+  % But we are only using it in a limited set of cases so far.
+  \AXO@killglue
+  \bgroup
+    \axounitlength = \axoscale pt
+    \axo@x = \axoxoff \unitlength
+    \advance\axo@x by \axoxo \axounitlength
+    \advance\axo@x by #1 \axounitlength
+    \axo@y = \axoyoff \unitlength
+    \advance\axo@y by \axoyo \axounitlength
+    \advance\axo@y by #2 \axounitlength
+    \putLen(\axo@x,\axo@y){%
+                           % If there are axodraw objects in #3, they should not also
+                           % apply shifts, that would be double
+                           % counting! Hence:
+                           \SetOffset(0,0)%
+                           \SetScaledOffset(0,0)%
+                           #3%
+                          }%
+  \egroup
+\ignorespaces
+}
+
+\def\AXOspecial#1{%
+  % Insertion of postscript code:
+  % Replacement for \special{" ...}, with the color initialized
+  % to the color befor the \special.  (Ordinary \special{"...}
+  % initializes color to black.)
+  % Definitions made by \special{!...} are in dictionary SDict
+  % (as stated in dvips documentation), and we save color there.
+  \special{ps:: SDict begin savecolor end }%
+  \special{" restorecolor #1 }%
+}
+
+\def\AXOputPS#1{%
+    % Insert postscript code after allowing for offsets.
+    \AxoPut(0,0){\AXOspecial{#1}}%
+}
+
+\def\AXOputPDF#1{
+    % Insert pdf code after allowing for offsets.
+    \AxoPut(0,0){\axo@pdfliteral{#1}}%
+}
+
+%
+%  Now variables and routines for setting material in boxes (used by
+%  the BText etc commands.
+%
+\newdimen\tmpX
+\newdimen\tmpY
+\newsavebox{\tmpBox}
+\newsavebox{\tmpBoxA}
+%
+\newcount\axo@tmp
+\newcount\axo@tmpA
+\newcount\axo@tmpB
+
+\newcount\bpinsp
+\bpinsp = 65782
+\newcount\ptinsp
+\ptinsp = 65536
+
+\def\AssignDecDiv#1#2#3{%
+    % Assign the variable of name #1 to the result of dividing integer
+    % #2 by integer #3, with result as a textual decimal.  Absolute
+    % accuracy: 0.001. 
+    % Typical use: conversion of lengths to points and big points.
+    %      \AssignDecDiv{cachedscale}{\unitlength}{65536}
+    %      \AssignDecDiv{cachedscale}{\unitlength}{\ptinsp}
+    % to get length in points.
+    % Notes on conversion
+    % 1 sp = 2^{-16} pt = (1/65536) pt
+    % 1 pt = (1/72.27) in
+    % 1 bp = (1/72) in
+    % 1 sp = (1/65781.76) bp
+    % Use \relax at end of lines setting count registers.
+    % This ensures that the code works both when the arguments are
+    % given as numbers, e.g., \AxoDecDiv{100}{3}, as well as when they are
+    % given as lengths, etc, e.g., \AxoDecDiv{\unitlength}{256}
+    % 
+    \axo@tmp = #2\relax
+    \axo@tmpA = \axo@tmp
+    \divide \axo@tmpA by #3\relax
+    \axo@tmpB=\axo@tmpA
+    \multiply \axo@tmpA by #3\relax
+    \advance \axo@tmp by -\axo@tmpA
+    \multiply \axo@tmp by 1000
+    \divide \axo@tmp by #3\relax
+    \expandafter\edef\csname #1\endcsname{\the\axo@tmpB.\the\axo@tmp}%
+}
+
+\def\SetTmpBox#1{%
+    % Sets the box \tmpBox to the contents of #1 set with current PS
+    % font and size. Sets \tmpX and \tmpY to the dimensions of the box
+    % plus some space around it, suitable for drawing an enclosing box.
+    %
+    % The vertical box setting numbers agree with those in axodraw's
+    % postscript code, but not (28 July 2014) with the axohelp pdf code.
+    % The reverse is true for the horizontal box settings.
+    % We can tweak them further.
+    % This is a standardized routine for use in all versions of postscript
+    % textbox routines.
+    % N.B. Use LaTeX's \sbox at first step, not TeX primitives to set
+    % box contents; it works properly with color.
+    \sbox{\tmpBox}{\UseCurrentPSFont #1}%
+    \tmpX = \axofontsize pt
+    \advance \tmpX by \wd\tmpBox
+    \tmpY = \axofontsize pt
+    \tmpY = 0.33333 \tmpY
+    \advance \tmpY by \ht\tmpBox
+    \advance \tmpY by \dp\tmpBox
+    \AssignDecDiv{tmpXT}{\tmpX}{\ptinsp}%
+    \AssignDecDiv{tmpYT}{\tmpY}{\ptinsp}%
+}
+
+\def\SetTmpBoxTwo#1#2{%
+    % Equivalent of \SetTmpBox for two line commands.
+    %
+    % N.B. Use LaTeX's \sbox at first step, not TeX primitives to set
+    % box contents; it works properly with color.
+    \sbox{\tmpBox}{\UseCurrentPSFont  #1}%
+    \sbox{\tmpBoxA}{\UseCurrentPSFont #2}%
+    \ifdim \wd\tmpBox > \wd\tmpBoxA 
+        \tmpX = \wd\tmpBox
+    \else
+        \tmpX = \wd\tmpBoxA
+    \fi 
+    \advance \tmpX by \axofontsize pt
+    \tmpY = \axofontsize pt
+    \setbox\tmpBox=%
+        \vbox{% 
+           \lineskip = 0.1 \tmpY
+           \baselineskip = 1.1 \tmpY
+           \vskip 0.3 \tmpY
+           \hbox{\makebox[0pt]{\box\tmpBox}}%
+           \hbox{\makebox[0pt]{\box\tmpBoxA}}%
+           \vskip 0.3 \tmpY
+        }%
+    \tmpY = \ht\tmpBox
+    \advance \tmpY by \dp\tmpBox
+    \AssignDecDiv{tmpXT}{\tmpX}{\ptinsp}%
+    \AssignDecDiv{tmpYT}{\tmpY}{\ptinsp}%
+}
+%
+%    #] Putting
+%	 #[ Point setting and using :
+%
+\def\SetPoint#1(#2,#3){%
+    % Define a named point in 2D
+    \@namedef{AXO@p.X@#1}{#2}%
+    \@namedef{AXO@p.Y@#1}{#3}%
+}
+\def\useX#1{%
+    % Use a named point
+    \@nameuse{AXO@p.X@#1}%
+}
+\def\useY#1{%
+    % Use a named point
+    \@nameuse{AXO@p.Y@#1}%
+}
+%
+%	 #] Point setting and using : 
+%	 #[ Particle routines :
+%		#[ Gluon :
+%
+\def\Gluon{%
+%
+%   Draws a gluon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \AXO@Parse{\AXO@Gluon}{}%
+}
+%
+%		#] Gluon : 
+%		#[ DoubleGluon :
+%
+\defWithOption{DoubleGluon}{(#2,#3)(#4,#5)#6#7#8}{%
+%
+%   Draws a gluon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \Gluon[double,sep=#8,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DoubleGluon : 
+%		#[ DashGluon :
+%
+\defWithOption{DashGluon}{(#2,#3)(#4,#5)#6#7#8}{%
+%
+%   Draws a gluon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \Gluon[dash,dashsize=#8,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DashGluon : 
+%		#[ DashDoubleGluon :
+%
+\defWithOption{DashDoubleGluon}{(#2,#3)(#4,#5)#6#7#8#9}{%
+%
+%   Draws a gluon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \Gluon[double,sep=#8,dash,dashsize=#9,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DashDoubleGluon : 
+%		#[ GluonCirc :
+%
+%   Draws a gluon on a circle. The center of the circle is at (#1,#2)
+%   The radius and the phase angle are (#3,#4), #5 is the
+%   amplitude of the gluon, and #6 is the number of windings.
+%
+\def\GluonCirc{%
+%
+%   Draws a gluon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \AXO@Parse{\AXO@GluonCirc}{}%
+}
+%
+%		#] GluonCirc : 
+%		#[ DoubleGluonCirc :
+%
+\defWithOption{DoubleGluonCirc}{(#2,#3)(#4,#5)#6#7#8}{%
+%
+%   Draws a gluon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \GluonCirc[double,sep=#8,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DoubleGluonCirc : 
+%		#[ DashGluonCirc :
+%
+\defWithOption{DashGluonCirc}{(#2,#3)(#4,#5)#6#7#8}{%
+%
+%   Draws a gluon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \GluonCirc[dash,dashsize=#8,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DashGluonCirc : 
+%		#[ DashDoubleGluonCirc :
+%
+\defWithOption{DashDoubleGluonCirc}{(#2,#3)(#4,#5)#6#7#8#9}{%
+%
+%   Draws a gluon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \GluonCirc[double,sep=#8,dash,dashsize=#9,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DashDoubleGluonCirc : 
+%		#[ GluonArc :
+%
+\def\GluonArc{%
+%   \GluonArc(x,y)(r,theta1,theta2){amplitude}{numwind}
+%   draws a gluon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \AXO@Parse{\AXO@GluonArc}{}%
+}
+%
+\let\GlueArc=\GluonArc  % For backward compatibility
+%
+%		#] GluonArc : 
+%		#[ DoubleGluonArc :
+%
+\defWithOption{DoubleGluonArc}{(#2)(#3)#4#5#6}{%
+%
+%   \DoubleGluonArc(x,y)(r,theta1,theta2){amplitude}{numwind}{sep}
+%   draws a gluon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \GluonArc[double,sep=#6,#1](#2)(#3){#4}{#5}%
+}
+%
+\let\DoubleGlueArc=\DoubleGluonArc  % For backward compatibility
+%
+%		#] DoubleGluonArc : 
+%		#[ DashGluonArc :
+%
+\defWithOption{DashGluonArc}{(#2)(#3)#4#5#6}{%
+%
+%   \DashGluonArc(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a gluon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \GluonArc[dash,dashsize=#6,#1](#2)(#3){#4}{#5}%
+}
+%
+\let\DashGlueArc=\DashGluonArc  % For backward compatibility
+%
+%		#] DashGluonArc : 
+%		#[ DashDoubleGluonArc :
+%
+\defWithOption{DashDoubleGluonArc}{(#2)(#3)#4#5#6#7}{%
+%
+%   \DashGluonArc(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a gluon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \GluonArc[double,sep=#6,dash,dashsize=#7,#1](#2)(#3){#4}{#5}%
+}
+%
+\let\DashDoubleGlueArc=\DashDoubleGluonArc  % For backward compatibility
+%
+%		#] DashDoubleGluonArc : 
+%		#[ GluonArcn :
+%
+\defWithOption{GluonArcn}{(#2)(#3)#4#5}{%
+%   \GluonArcn(x,y)(r,theta1,theta2){amplitude}{numwind}
+%   draws a gluon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings. The n stands for clockwise
+%
+    \GluonArc[clockwise,#1](#2)(#3){#4}{#5}%
+}
+%
+\let\GlueArcn=\GluonArcn  % For backward compatibility
+%
+%		#] GluonArcn : 
+%		#[ DoubleGluonArcn :
+%
+\defWithOption{DoubleGluonArcn}{(#2)(#3)#4#5#6}{%
+%
+%   \DoubleGluonArcn(x,y)(r,theta1,theta2){amplitude}{numwind}{sep}
+%   draws a gluon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings. Clockwise.
+%
+    \GluonArc[clockwise,double,sep=#6,#1](#2)(#3){#4}{#5}%
+}
+%
+\let\DoubleGlueArcn=\DoubleGluonArcn  % For backward compatibility
+%
+%		#] DoubleGluonArcn : 
+%		#[ DashGluonArcn :
+%
+\defWithOption{DashGluonArcn}{(#2)(#3)#4#5#6}{%
+%
+%   \DashGluonArc(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a gluon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings. Clockwise.
+%
+    \GluonArc[clockwise,dash,dashsize=#6,#1](#2)(#3){#4}{#5}%
+}
+%
+\let\DashGlueArcn=\DashGluonArcn  % For backward compatibility
+%
+%		#] DashGluonArcn : 
+%		#[ DashDoubleGluonArcn :
+%
+\defWithOption{DashDoubleGluonArcn}{(#2)(#3)#4#5#6#7}{%
+%
+%   \DashGluonArcn(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a gluon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings. Clockwise.
+%
+    \GluonArc[clockwise,double,sep=#6,dash,dashsize=#7,#1](#2)(#3){#4}{#5}%
+}
+%
+\let\DashDoubleGlueArcn=\DashDoubleGluonArcn  % For backward compatibility
+%
+%		#] DashDoubleGluonArcn : 
+%		#[ Photon :
+%
+\def\Photon{%
+%   \Photon[opt](x1,y1)(x2,y2){amplitude}{numwind}
+%   Draws a photon from (x1,y1) to (x2,y2) with given amplitude and
+%   number of windings 
+%   Supported options: double, sep, linesep
+%
+    \AXO@Parse{\AXO@Photon}{}%
+}
+%
+%		#] Photon : 
+%		#[ DoublePhoton :
+%
+\defWithOption{DoublePhoton}{(#2,#3)(#4,#5)#6#7#8}{%
+%
+%   Draws a photon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \Photon[double,sep=#8,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DoublePhoton : 
+%		#[ DashPhoton :
+%
+\defWithOption{DashPhoton}{(#2,#3)(#4,#5)#6#7#8}{%
+%
+%   Draws a photon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \Photon[dash,dashsize=#8,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DashPhoton : 
+%		#[ DashDoublePhoton :
+%
+\defWithOption{DashDoublePhoton}{(#2,#3)(#4,#5)#6#7#8#9}{%
+%
+%   Draws a photon from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \Photon[double,sep=#8,dash,dashsize=#9,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DashDoublePhoton : 
+%		#[ PhotonArc :
+%
+\def\PhotonArc{%
+%   \PhotonArc(x,y)(r,theta1,theta2){amplitude}{numwind}
+%   draws a photon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \AXO@Parse{\AXO@PhotonArc}{}%
+}
+%
+%		#] PhotonArc : 
+%		#[ DoublePhotonArc :
+%
+\defWithOption{DoublePhotonArc}{(#2,#3)(#4,#5,#6)#7#8#9}{%
+%
+%   \PhotonArc(x,y)(r,theta1,theta2){amplitude}{numwind}{sep}
+%   draws a photon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \PhotonArc[double,sep=#9,#1](#2,#3)(#4,#5,#6){#7}{#8}%
+}
+%
+%		#] DoublePhotonArc : 
+%		#[ DashPhotonArc :
+%
+\defWithOption{DashPhotonArc}{(#2,#3)(#4,#5,#6)#7#8#9}{%
+%
+%   \DashPhotonArc(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a photon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \PhotonArc[dash,dashsize=#9,#1](#2,#3)(#4,#5,#6){#7}{#8}%
+}
+%
+%
+%		#] DashPhotonArc : 
+%		#[ DashDoublePhotonArc :
+%
+\defWithOption{DashDoublePhotonArc}{(#2)(#3)#4#5#6#7}{%
+% Note that there are actually ten arguments with the optional #1,
+% which LaTeX/TeX can't handle.  I consolidate the comma separated
+% arguments into one, and then pass them to \PhotonArc
+%
+%   \DashPhotonArc(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a photon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \PhotonArc[double,sep=#6,dash,dashsize=#7,#1](#2)(#3){#4}{#5}%
+}
+%
+%
+%		#] DashDoublePhotonArc : 
+%		#[ PhotonArcn :
+%
+\defWithOption{PhotonArcn}{(#2,#3)(#4,#5,#6)#7#8}{%
+%   \PhotonArcn(x,y)(r,theta1,theta2){amplitude}{numwind}
+%   draws a photon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \PhotonArc[clockwise,#1](#2,#3)(#4,#5,#6){#7}{#8}%
+}
+%
+%		#] PhotonArcn : 
+%		#[ DoublePhotonArcn :
+%
+\defWithOption{DoublePhotonArcn}{(#2)(#3)#4#5#6}{%
+% I consolidate the comma separated arguments into one, and then pass
+% them to \PhotonArc 
+%
+%   \PhotonArcn(x,y)(r,theta1,theta2){amplitude}{numwind}{sep}
+%   draws a photon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \PhotonArc[clockwise,double,sep=#6,#1](#2)(#3){#4}{#5}%
+}
+%
+%		#] DoublePhotonArcn : 
+%		#[ DashPhotonArcn :
+%
+\defWithOption{DashPhotonArcn}{(#2)(#3)#4#5#6}{%
+% I consolidate the comma separated arguments into one, and then pass
+% them to \PhotonArc 
+%
+%   \DashPhotonArcn(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a photon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings.Clockwise.
+%
+    \PhotonArc[clockwise,dash,dashsize=#6,#1](#2)(#3){#4}{#5}%
+}
+%
+%
+%		#] DashPhotonArcn : 
+%		#[ DashDoublePhotonArcn :
+%
+\defWithOption{DashDoublePhotonArcn}{(#2)(#3)#4#5#6#7}{%
+% I consolidate the comma separated arguments into one, and then pass
+% them to \PhotonArc 
+%
+%   \DashPhotonArcn(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a photon on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings. Clockwise.
+%
+    \PhotonArc[clockwise,double,sep=#6,dash,dashsize=#7,#1](#2)(#3){#4}{#5}%
+}
+%
+%
+%		#] DashDoublePhotonArcn : 
+%		#[ ZigZag :
+%
+\def\ZigZag{%
+%   \ZigZag[opt](x1,y1)(x2,y2){amplitude}{numwind}
+%   Draws a zigzag from (x1,y1) to (x2,y2) with given amplitude and
+%   number of windings 
+%   Supported options: double, sep, linesep
+%
+    \AXO@Parse{\AXO@ZigZag}{}%
+}
+%
+%		#] ZigZag : 
+%		#[ DoubleZigZag :
+%
+\defWithOption{DoubleZigZag}{(#2,#3)(#4,#5)#6#7#8}{%
+%
+%   Draws a zigzag from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \ZigZag[double,sep=#8,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DoubleZigZag : 
+%		#[ DashZigZag :
+%
+\defWithOption{DashZigZag}{(#2,#3)(#4,#5)#6#7#8}{%
+%
+%   Draws a zigzag from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \ZigZag[dash,dashsize=#8,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DashZigZag : 
+%		#[ DashDoubleZigZag :
+%
+\defWithOption{DashDoubleZigZag}{(#2,#3)(#4,#5)#6#7#8#9}{%
+%
+%   Draws a zigzag from (x1,y1) to (x2,y2) with amplitude and number of windings
+%
+    \ZigZag[double,sep=#8,dash,dashsize=#9,#1](#2,#3)(#4,#5){#6}{#7}%
+}
+%
+%		#] DashDoubleZigZag : 
+%		#[ ZigZagArc :
+%
+\def\ZigZagArc{%
+%   \ZigZagArc(x,y)(r,theta1,theta2){amplitude}{numwind}
+%   draws a zigzag on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \AXO@Parse{\AXO@ZigZagArc}{}%
+}
+%
+%		#] ZigZagArc : 
+%		#[ DoubleZigZagArc :
+%
+\defWithOption{DoubleZigZagArc}{(#2,#3)(#4,#5,#6)#7#8#9}{%
+%
+%   \ZigZagArc(x,y)(r,theta1,theta2){amplitude}{numwind}{sep}
+%   draws a zigzag on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \ZigZagArc[double,sep=#9,#1](#2,#3)(#4,#5,#6){#7}{#8}%
+}
+%
+%		#] DoubleZigZagArc : 
+%		#[ DashZigZagArc :
+%
+\defWithOption{DashZigZagArc}{(#2)(#3)#4#5#6}{%
+%
+%   \DashZigZagArc(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a zigzag on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \ZigZagArc[dash,dashsize=#6,#1](#2)(#3){#4}{#5}%
+}
+%
+%
+%		#] DashZigZagArc : 
+%		#[ DashDoubleZigZagArc :
+%
+\defWithOption{DashDoubleZigZagArc}{(#2)(#3)#4#5#6#7}{%
+%
+%   \DashZigZagArc(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a zigzag on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \ZigZagArc[double,sep=#6,dash,dashsize=#7,#1](#2)(#3){#4}{#5}%
+}
+%
+%
+%		#] DashDoubleZigZagArc : 
+%		#[ ZigZagArcn :
+%
+\defWithOption{ZigZagArcn}{(#2)(#3)#4#5}{%
+%   \ZigZagArcn(x,y)(r,theta1,theta2){amplitude}{numwind}
+%   draws a zigzag on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \ZigZagArc[clockwise,#1](#2)(#3){#4}{#5}%
+}
+%
+%		#] ZigZagArcn : 
+%		#[ DoubleZigZagArcn :
+%
+\defWithOption{DoubleZigZagArcn}{(#2)(#3)#4#5#6}{%
+%
+%   \ZigZagArcn(x,y)(r,theta1,theta2){amplitude}{numwind}{sep}
+%   draws a zigzag on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings 
+%
+    \ZigZagArc[clockwise,double,sep=#6,#1](#2)(#3){#4}{#5}%
+}
+%
+%		#] DoubleZigZagArcn : 
+%		#[ DashZigZagArcn :
+%
+\defWithOption{DashZigZagArcn}{(#2)(#3)#4#5#6}{%
+%
+%   \DashZigZagArcn(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a zigzag on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings.Clockwise.
+%
+    \ZigZagArc[clockwise,dash,dashsize=#6,#1](#2)(#3){#4}{#5}%
+}
+%
+%
+%		#] DashZigZagArcn : 
+%		#[ DashDoubleZigZagArcn :
+%
+\defWithOption{DashDoubleZigZagArcn}{(#2)(#3)#4#5#6#7}{%
+%
+%   \DashZigZagArcn(x,y)(r,theta1,theta2){amplitude}{numwind}{dashsize}
+%   draws a zigzag on an arc centered at (x,y) of radius r, starting
+%   at theta1, and ending at theta2, with given amplitude and
+%   number of windings. Clockwise.
+%
+    \ZigZagArc[clockwise,double,sep=#6,dash,dashsize=#7,#1](#2)(#3){#4}{#5}%
+}
+%
+%		#] DashDoubleZigZagArcn : 
+%	 #] Particle routines : 
+%	 #[ Line routines :
+%		#[ Line :
+%
+\def\Line{%
+% \Line[opt](x1,y1)(x2,y2)
+% draws a line from (x1,y1) to (x2,y2).  NO arrow by default.
+% Supported options: all arrow settings, all double line settings,
+% all dash line settings.
+%
+    \AXO@Parse{\AXO@Line}{}%
+}
+%
+%		#] Line : 
+%		#[ DoubleLine :
+%
+\defWithOption{DoubleLine}{(#2,#3)(#4,#5)#6}{%
+%
+%   \DoubleLine[opt](x1,y1)(x2,y2){sep}
+%   Draws a double line, with NO arrow by default, from (x1,y1) to (x2,y2),
+%      with separation sep
+%
+    \Line[arrow=false,double,sep=#6,#1](#2,#3)(#4,#5)%
+}
+%
+%		#] DoubleLine : 
+%		#[ DashLine :
+%
+\defWithOption{DashLine}{(#2,#3)(#4,#5)#6}{%
+%   \DashLine[opt](x1,y1)(x2,y2){sep}
+%   Draws a line from (x1,y1) to (x2,y2) with a dash pattern of which the
+%   alternating black and white pieces are approximately sep points long
+%
+    \Line[dash,dashsize=#6,#1](#2,#3)(#4,#5)%
+}
+%
+%		#] DashLine : 
+%		#[ DashDoubleLine :
+%
+\defWithOption{DashDoubleLine}{(#2,#3)(#4,#5)#6#7}{%
+%   \DashDoubleLine[opt](x1,y1)(x2,y2){sep}{dashsize}
+%   Draws a double line from (x1,y1) to (x2,y2) with separation sep,
+%   and with a dash pattern of which the
+%   alternating black and white pieces are approximately sep points long
+%   Arrow off.
+    \Line[arrow=off,dash,dashsize=#7,double,sep=#6,#1](#2,#3)(#4,#5)%
+}
+%
+%		#] DashDoubleLine : 
+%		#[ ArrowLine :
+%
+\defWithOption{ArrowLine}{(#2,#3)(#4,#5)}{%
+% \ArrowLine[opt](x1,y1)(x2,y2)
+% draws a line from (x1,y1) to (x2,y2).  Arrow by default.
+%
+    \Line[arrow,#1](#2,#3)(#4,#5)%
+}
+%
+%		#] ArrowLine : 
+%		#[ ArrowDoubleLine :
+%
+\defWithOption{ArrowDoubleLine}{(#2,#3)(#4,#5)#6}{%
+%
+%   \ArrowDoubleLine[opt](x1,y1)(x2,y2){sep}
+%   Draws a double line, with arrow by default, from (x1,y1) to (x2,y2),
+%      with separation sep
+%
+    \Line[arrow,double,sep=#6,#1](#2,#3)(#4,#5)%
+}
+%
+%		#] ArrowDoubleLine : 
+%		#[ DashArrowLine :
+%
+\defWithOption{DashArrowLine}{(#2,#3)(#4,#5)#6}{%
+%   \DashArrowLine[opt](x1,y1)(x2,y2){sep}
+%   Draws a line from (x1,y1) to (x2,y2) with a dash pattern of which the
+%   alternating black and white pieces are approximately sep points
+%   long.   Arrow by default.
+%
+    \Line[arrow,dash,dashsize=#6,#1](#2,#3)(#4,#5)%
+}
+%
+\let\ArrowDashLine=\DashArrowLine%
+%
+%		#] DashArrowLine : 
+%		#[ DashArrowDoubleLine :
+%
+\defWithOption{DashArrowDoubleLine}{(#2,#3)(#4,#5)#6#7}{%
+%   \DashArrowDoubleLine[opt](x1,y1)(x2,y2){sep}{dashsize}
+%   Draws a double line from (x1,y1) to (x2,y2) with separation sep,
+%   and with a dash pattern of which the
+%   alternating black and white pieces are approximately sep points long
+%   Arrow on.
+%
+    \Line[arrow,dash,dashsize=#7,double,sep=#6,#1](#2,#3)(#4,#5)%
+}
+%
+\let\ArrowDashDoubleLine=\DashArrowDoubleLine%
+%
+%		#] DashArrowDoubleLine : 
+%		#[ LongArrow :
+%
+\defWithOption{LongArrow}{(#2,#3)(#4,#5)}{%
+    \Line[arrow,arrowpos=1,#1](#2,#3)(#4,#5)%
+}
+%
+%		#] LongArrow : 
+%		#[ DashLongArrowLine :
+%
+\defWithOption{DashLongArrowLine}{(#2,#3)(#4,#5)#6}{%
+%   \DashLongArrowLine[opt](x1,y1)(x2,y2){sep}
+%   Draws a line from (x1,y1) to (x2,y2) with a dash pattern of which the
+%   alternating black and white pieces are approximately sep points
+%   long.   Arrow by default.
+%
+%
+    \Line[arrow,arrowpos=1,dash,dashsize=#6,#1](#2,#3)(#4,#5)%
+}
+\let\DashLongArrow=\DashLongArrowLine
+\let\LongArrowDash=\DashLongArrowLine
+\let\LongArrowDashLine=\DashLongArrowLine
+%
+%		#] DashLongArrowLine : 
+%	 #] Line routines : 
+%	 #[ Arc routines :
+%		#[ Arc :
+%
+\def\Arc{%
+% \Arc[opt](x,y)(r,theta1,theta2)
+% draws an arc centered at (x,y) of radius r, starting at theta1,
+% and ending at theta2.  By default: no arrow, undashed, single,
+% anticlockwise. 
+% Supported options: all arrow settings, all double line settings,
+% all dash line settings, clock
+%
+    \AXO@Parse{\AXO@Arc}{}%
+}
+%
+%		#] Arc : 
+%		#[ CArc :
+%
+\let\CArc=\Arc
+%
+%		#] CArc : 
+%		#[ DoubleArc :
+%
+\defWithOption{DoubleArc}{(#2,#3)(#4,#5,#6)#7}{%
+%
+%   Draws a double lined arc segment. The center of the curve
+%   is at (1,2).
+%   The radius, start angle and target angle are (#3,#4,#5).
+%   The arc segment runs anticlockwise
+%   #6 is the separation of the lines.
+%
+    \Arc[double,sep=#7,#1](#2,#3)(#4,#5,#6)%
+}
+\let\DoubleCArc=\DoubleArc
+%
+%		#] DoubleArc : 
+%		#[ DashArc :
+%
+\defWithOption{DashArc}{(#2,#3)(#4,#5,#6)#7}{%
+%
+%   Draws a dashed arc segment. The center of the curve
+%   is at (1,2).
+%   The radius, start angle and target angle are (#3,#4,#5).
+%   The arc segment runs anticlockwise
+%   #6 is the dashsize. this is rounded to make things come
+%   out right.
+%
+    \Arc[dash,dsize=#7,#1](#2,#3)(#4,#5,#6)%
+}
+\let\DashCArc=\DashArc
+%
+%		#] DashArc : 
+%		#[ DashDoubleArc :
+%
+\defWithOption{DashDoubleArc}{(#2,#3)(#4,#5,#6)#7#8}{
+%
+%   Draws a dashed arc segment. The center of the curve
+%   is at (1,2).
+%   The radius, start angle and target angle are (#3,#4,#5).
+%   The arc segment runs anticlockwise
+%   #6 is the line separation.
+%   #7 is the dashsize. this is rounded to make things come
+%   out right.
+%
+    \Arc[double,sep=#7,dash,dsize=#8,#1](#2,#3)(#4,#5,#6)%
+}
+\let\DashDoubleCArc=\DashDoubleArc
+%
+%		#] DashDoubleArc : 
+%		#[ ArrowArc :
+%
+\def\ArrowArc{%
+    \AXO@PrependOption{\Arc}{arrow}%
+}
+\let\ArrowCArc=\ArrowArc
+%
+%		#] ArrowArc : 
+%		#[ ArrowDoubleArc :
+%
+\defWithOption{ArrowDoubleArc}{(#2,#3)(#4,#5,#6)#7}{%
+    \Arc[arrow,double,sep=#7,#1](#2,#3)(#4,#5,#6)%
+}
+\let\ArrowDoubleCArc=\ArrowDoubleArc
+%
+%		#] ArrowDoubleArc : 
+%		#[ ArrowDashArc :
+%
+\defWithOption{ArrowDashArc}{(#2,#3)(#4,#5,#6)#7}{%
+    \Arc[arrow,dash,dsize=#7,#1](#2,#3)(#4,#5,#6)%
+}
+\let\ArrowDashCArc=\ArrowDashArc
+\let\DashArrowCArc=\ArrowDashArc
+\let\DashArrowArc=\ArrowDashArc
+%
+%		#] ArrowDashArc : 
+%		#[ ArrowDashDoubleArc :
+%
+\defWithOption{ArrowDashDoubleArc}{(#2,#3)(#4,#5,#6)#7#8}{%
+    \Arc[arrow,double,sep=#7,dash,dsize=#8,#1](#2,#3)(#4,#5,#6)%
+}
+\let\ArrowDashDoubleCArc=\ArrowDashDoubleArc
+\let\DashArrowDoubleCArc=\ArrowDashDoubleArc
+\let\DashArrowDoubleArc=\ArrowDashDoubleArc
+%
+%
+%		#] ArrowDashDoubleArc : 
+%		#[ LongArrowArc :
+%
+\def\LongArrowArc{%
+    \AXO@PrependOption{\Arc}{arrow,arrowpos=1}%
+}
+%
+%		#] LongArrowArc : 
+%		#[ LongDashArrowArc :
+%
+\defWithOption{LongArrowDashArc}{(#2,#3)(#4,#5,#6)#7}{%
+    \Arc[arrow,arrowpos=1,dash,dsize=#7,#1](#2,#3)(#4,#5,#6)%
+}
+\let\LongArrowDashCArc=\LongArrowDashArc
+\let\LongDashArrowCArc=\LongArrowDashArc
+\let\LongDashArrowArc=\LongArrowDashArc
+%
+%
+%		#] LongDashArrowArc : 
+%		#[ ArrowArcn :
+%
+\def\ArrowArcn{%
+    \AXO@PrependOption{\Arc}{arrow,clock}%
+}
+%
+%		#] ArrowArcn : 
+%		#[ LongArrowArcn :
+%
+\def\LongArrowArcn{%
+    % \ArrowArcn, but with arrow at end by default
+    \AXO@PrependOption{\Arc}{arrow, clock, arrowpos=1}%
+}
+%
+%		#] LongArrowArcn : 
+%		#[ DashArrowArcn :
+%
+\defWithOption{DashArrowArcn}{(#2,#3)(#4,#5,#6)#7}{%
+%   (x,y)(radius,start,end){dashsize}
+%   Draws a dashed arc segment with an arrow in it. The center of the curve
+%   is at (x,y), with given radius, start angle, and end angle
+%   The arc segment runs anticlockwise
+    \Arc[clock,arrow,dash,dashsize=#7,#1](#2,#3)(#4,#5,#6)%
+}
+%
+\let\ArrowDashArcn=\DashArrowArcn%
+%
+%
+%		#] DashArrowArcn : 
+%	 #] Arc routines : 
+%	 #[ Bezier :
+%
+\def\Bezier{%
+%   \Bezier[opt](x1,y1)(x2,y2)(x3,y3)(x4,y4)
+%   Draws a Bezier cubic with the control points (x1,y1), (x2,y2), (x3,y3), (x4,y4)
+%   Supported options: dash, dashsize and dashsize
+    \AXO@Parse{\AXO@Bezier}{}%
+}
+%
+\defWithOption{DoubleBezier}{(#2,#3)(#4,#5)(#6,#7)(#8)#9}{%
+%
+%   Draws a Bezier cubic with control points (x1,y1), (x2,y2),
+%   (x3,y3), (x4,y4) in a double line
+%
+    \Bezier[double,sep=#9,#1](#2,#3)(#4,#5)(#6,#7)(#8)%
+}
+%
+\defWithOption{DashBezier}{(#2,#3)(#4,#5)(#6,#7)(#8)#9}{%
+%
+%   Draws a Bezier cubic with control points (x1,y1), (x2,y2),
+%   (x3,y3), (x4,y4) with a dash pattern of which the 
+%   alternating black and white pieces are approximately #9 points long
+%
+    \Bezier[dash,dashsize=#9,#1](#2,#3)(#4,#5)(#6,#7)(#8)%
+}
+%
+\defWithOption{DashDoubleBezier}{(#2,#3)(#4,#5)(#6)(#7)#8#9}{%
+%
+%   Draws a Bezier cubic with control points (x1,y1), (x2,y2),
+%   (x3,y3), (x4,y4) with a dash pattern of which the 
+%   alternating black and white pieces are approximately #9 points long
+%   The line is a double line
+%
+    \Bezier[double,sep=#8,dash,dashsize=#9,#1](#2,#3)(#4,#5)(#6)(#7)%
+}
+%
+%	 #] Bezier : 
+% 	#] LaTeX primitives : 
+% 	#[ Mixed routines :
+%
+%   Here we have routines that make different calls depending on the value
+%   of the variable \axo@pdfoutput
+%
+%	 #[ EBox :
+%
+\def\EBox(#1,#2)(#3,#4){%
+%
+%   Draws a transparent box with the left bottom at (x1,y1) andthe
+%   right top at (x2,y2).
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #2 \axoyo\space add
+    #3 \axoxo\space add #4 \axoyo\space add \axowidth\space \axoscale\space ebox }}
+\else
+    \getaxohelp{EBox}{#1 #2 #3 #4 \axowidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] EBox : 
+%	 #[ FBox :
+%
+\def\FBox(#1,#2)(#3,#4){%
+%
+%   Draws a filled box with the left bottom at (x1,y1) and the right top
+%   at (x2,y2).
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #2 \axoyo\space add
+    #3 \axoxo\space add #4 \axoyo\space add \axowidth\space \axoscale\space fbox }}
+\else
+    \getaxohelp{FBox}{#1 #2 #3 #4 \axowidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] FBox : 
+%	 #[ BBox : 
+%
+\def\BBox(#1,#2)(#3,#4){%
+%
+%   Draws a box with the left bottom at (x1,y1) and the right top
+%   at (x2,y2). The contents are blanked out.
+%
+    {%
+      \SetColor{White}%
+      \FBox(#1,#2)(#3,#4)%
+    }%
+    \EBox(#1,#2)(#3,#4)%
+}
+%
+%	 #] BBox : 
+%	 #[ GBox :
+%
+\def\GBox(#1,#2)(#3,#4)#5{%
+%
+%   Draws a box with the left bottom at (x1,y1) and the right top
+%   at (x2,y2). The contents are in Grayscale#5 (0=black,1=white).
+%
+    {%
+      \color[gray]{#5}%
+      \FBox(#1,#2)(#3,#4)%
+      \color[gray]{0}%
+      \EBox(#1,#2)(#3,#4)%
+    }%
+\ignorespaces
+}
+%
+%	 #] GBox : 
+%	 #[ CBox :
+%
+\def\CBox(#1,#2)(#3,#4)#5#6{%
+%
+%   Draws a box with the left bottom at (x1,y1) and the right top
+%   at (x2,y2). The outside is color#5 and the inside color #6.
+%
+    {%
+      \SetColor{#6}%
+      \FBox(#1,#2)(#3,#4)%
+      \SetColor{#5}%
+      \EBox(#1,#2)(#3,#4)%
+    }%
+\ignorespaces
+}
+%
+%	 #] CBox : 
+%	 #[ EBoxc :
+%
+\def\EBoxc(#1,#2)(#3,#4){%
+%
+%   Draws a centered box with the center at (x1,y1).
+%   The other parameters are the width and the height.
+%   Uses current color  
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #3 2 div sub #2 \axoyo\space add
+    #4 2 div sub #1 \axoxo\space add #3 2 div add #2
+    \axoyo\space add #4 2 div add \axowidth\space \axoscale\space ebox }}
+\else
+    \getaxohelp{Boxc}{#1 #2 #3 #4 \axowidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+\let\Boxc=\EBoxc
+%
+%	 #] EBoxc : 
+%	 #[ FBoxc :
+%
+\def\FBoxc(#1,#2)(#3,#4){%
+%
+%   Draws a filled centered box with the center at (x1,y1).
+%   The other parameters are the width and the height.
+%   Current color  
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #3 2 div sub #2 \axoyo\space add
+    #4 2 div sub #1 \axoxo\space add #3 2 div add #2 \axoyo\space add #4 2 div add
+    \axowidth\space \axoscale\space fbox }}
+\else
+    \getaxohelp{FBoxc}{#1 #2 #3 #4 \axowidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] FBoxc : 
+%	 #[ BBoxc :
+%
+\def\BBoxc(#1,#2)(#3,#4){%
+%
+%   Draws a centered box with the center at (x1,y1).
+%   The other parameters are the width and the height.
+%   The contents are blanked out.
+%
+\bgroup
+    \SetColor{White}%
+    \FBoxc(#1,#2)(#3,#4)%
+\egroup
+\EBoxc(#1,#2)(#3,#4)%
+}
+%
+%	 #] BBoxc : 
+%	 #[ GBoxc :
+%
+\def\GBoxc(#1,#2)(#3,#4)#5{%
+%
+%   Draws a centered box with the center at (x1,y1).
+%   The other parameters are the width and the height.
+%   The contents are in Grayscale#5 (0=black,1=white).
+%
+  {%
+    \color[gray]{#5}%
+    \FBoxc(#1,#2)(#3,#4)%
+    \color[gray]{0}%
+    \EBoxc(#1,#2)(#3,#4)%
+  }%
+\ignorespaces
+}
+%
+%	 #] GBoxc : 
+%	 #[ CBoxc :
+%
+\def\CBoxc(#1,#2)(#3,#4)#5#6{%
+%
+%   Draws a centered box with the center at (x1,y1).
+%   The other parameters are the width and the height.
+%   The outside is color#5 and the inside color #6.
+%
+  {%
+    \SetColor{#6}%
+    \FBoxc(#1,#2)(#3,#4)%
+    \SetColor{#5}%
+    \EBoxc(#1,#2)(#3,#4)%
+  }%
+\ignorespaces
+}
+%
+%	 #] CBoxc : 
+%	 #[ RotatedBox :
+%
+\def\RotatedBox(#1,#2)(#3,#4)#5#6{%
+%
+%   Draws a centered box with the center at (#1,#2)
+%   with width #3, height #4, anticlockwise rotated by #5, and in
+%   color #6.
+%
+    \AxoPut(#1,#2){%
+        {\SetColor{#6}%
+         \rotatebox{#5}{\EBoxc(0,0)(#3,#4)}%
+    }}%
+}
+%
+%	 #] RotatedBox : 
+%	 #[ FilledRotatedBox :
+%
+\def\FilledRotatedBox(#1,#2)(#3,#4)#5#6{%
+%
+%   Draws a filled centered box with the center at (#1,#2)
+%   with width #3, height #4, anticlockwise rotated by #5, and in
+%   color #6.
+%
+    \AxoPut(#1,#2){%
+        {\SetColor{#6}%
+         \rotatebox{#5}{\FBoxc(0,0)(#3,#4)}%
+    }}%
+}
+%
+%	 #] FilledRotatedBox : 
+%	 #[ ETri :
+%
+%   Draws a triangle. No filling.
+%   The corners are (x1,y1), (x2,y2), (x3,y3)
+%
+\def\ETri(#1,#2)(#3,#4)(#5,#6){%
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #2 \axoyo\space add
+    #3 \axoxo\space add #4 \axoyo\space add
+    #5 \axoxo\space add #6 \axoyo\space add
+    \axowidth\space \axoscale\space triangle }}
+\else
+    \getaxohelp{ETri}{#1 #2 #3 #4 #5 #6 \axowidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] ETri : 
+%	 #[ FTri :
+%
+%   Draws a filled triangle.
+%   The corners are (x1,y1), (x2,y2), (x3,y3)
+%
+\def\FTri(#1,#2)(#3,#4)(#5,#6){%
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #2 \axoyo\space add
+    #3 \axoxo\space add #4 \axoyo\space add
+    #5 \axoxo\space add #6 \axoyo\space add
+    \axowidth\space \axoscale\space ftriangle }}
+\else
+    \getaxohelp{FTri}{#1 #2 #3 #4 #5 #6 \axowidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] FTri : 
+%	 #[ BTri :
+%
+%   Draws a triangle. The contents are blanked out.
+%   The corners are (x1,y1), (x2,y2), (x3,y3)
+%
+\def\BTri(#1,#2)(#3,#4)(#5,#6){%
+    {%
+        \SetColor{White}%
+        \FTri(#1,#2)(#3,#4)(#5,#6)%
+    }%
+    \ETri(#1,#2)(#3,#4)(#5,#6)%
+}
+%
+%	 #] BTri : 
+%	 #[ GTri :
+%
+%   Draws a triangle. The contents are given in Grayscale #7 (0=black,1=white)
+%   The corners are (x1,y1), (x2,y2), (x3,y3)
+%
+\def\GTri(#1,#2)(#3,#4)(#5,#6)#7{%
+%
+    {%
+        \color[gray]{#7}%
+        \FTri(#1,#2)(#3,#4)(#5,#6)%
+        \color[gray]{0}%
+        \ETri(#1,#2)(#3,#4)(#5,#6)%
+    }%
+\ignorespaces
+}
+%
+%	 #] GTri : 
+%	 #[ CTri :
+%
+%   Draws a colored(#7) triangle. The contents are blanked out in color #8
+%   The corners are (x1,y1), (x2,y2), (x3,y3)
+%
+\def\CTri(#1,#2)(#3,#4)(#5,#6)#7#8{%
+    {%
+        \SetColor{#7}%
+        \FTri(#1,#2)(#3,#4)(#5,#6)%
+        \SetColor{#8}%
+        \ETri(#1,#2)(#3,#4)(#5,#6)%
+    }%
+\ignorespaces
+}
+%
+%	 #] CTri : 
+%	 #[ Vertex :
+%
+\def\Vertex(#1,#2)#3{%
+%
+%   Draws a fat dot at (1,2). The radius of the dot is given by 3.
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #2 \axoyo\space add #3
+    \axoscale\space vertex }}
+\else
+    \getaxohelp{Vertex}{#1 #2 #3 \axowidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] Vertex : 
+%	 #[ ECirc :
+%
+\def\ECirc(#1,#2)#3{%
+%
+%   Draws a circle at (1,2) and radius 3, with current color.
+%   Nothing is written inside.
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #2 \axoyo\space add #3
+    \axowidth\space \axoscale\space ecirc }}%
+\else
+    \getaxohelp{ECirc}{#1 #2 #3 \axowidth}%
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}%
+\fi
+}
+%
+%	 #] ECirc : 
+%	 #[ FCirc :
+%
+\let\FCirc=\Vertex
+%
+%	 #] FCirc : 
+%	 #[ BCirc :
+%
+\def\BCirc(#1,#2)#3{%
+%
+%   Draws a circle at (1,2) and radius 3 that is blanked out.
+    {%
+        \SetColor{White}%
+        \FCirc(#1,#2){#3}
+    }%
+    \ECirc(#1,#2){#3}%
+}
+%
+%	 #] BCirc : 
+%	 #[ GCirc :
+%
+\def\GCirc(#1,#2)#3#4{%
+%
+%   Draws a circle at (1,2) and radius 3 that is blanked out.
+%   Then it fills the circle with a gray scale 4 (0 = black, 1 is white)
+%
+    {%
+        \color[gray]{#4}%
+        \FCirc(#1,#2){#3}%
+        \color[gray]{0}%
+        \ECirc(#1,#2){#3}%
+    }%
+\ignorespaces
+}
+%
+%	 #] GCirc : 
+%	 #[ CCirc :
+%
+%   Draws a circle at (1,2) and radius 3 that is blanked out.
+%   #4 is the color of the circle, #5 the color of the contents
+%
+\def\CCirc(#1,#2)#3#4#5{%
+%
+%   Draws a circle at (1,2) and radius 3 that is blanked out.
+%   #4 is the color of the circle, #5 the color of the contents
+%
+{%
+    \SetColor{#5}%
+    \FCirc(#1,#2){#3}%
+    \SetColor{#4}%
+    \ECirc(#1,#2){#3}%
+}%
+\ignorespaces
+}
+%
+%	 #] CCirc : 
+%	 #[ GOval :
+%
+\def\GOval(#1,#2)(#3,#4)(#5)#6{%
+%
+%   Draws a gray oval that overwrites whatever was there.
+%   \GOval(x_center,y_center)(height,width)(rotation)(grayscale)
+%   The grayscale: (0 = black, 1 is white)
+%
+    {%
+        \color[gray]{#6}%
+        \FOval(#1,#2)(#3,#4)(#5)%
+        \color[gray]{0}%
+        \Oval(#1,#2)(#3,#4)(#5)%
+    }%
+    \ignorespaces
+}
+%
+%	 #] GOval : 
+%	 #[ COval :
+%
+\def\COval(#1,#2)(#3,#4)(#5)#6#7{%
+%
+%   Draws a colored oval that overwrites whatever was there.
+%   \COval(x_center,y_center)(height,width)(rotation){color1}{color2}
+%
+    {%
+        \SetColor{#7}%
+        \FOval(#1,#2)(#3,#4)(#5)%
+        \SetColor{#6}%
+        \Oval(#1,#2)(#3,#4)(#5)%
+    }%
+    \ignorespaces
+}
+%
+%	 #] COval : 
+%	 #[ FOval :
+%
+\def\FOval(#1,#2)(#3,#4)(#5){%
+%
+%   Draws a colored oval that overwrites whatever was there.
+%   \FOval(x_center,y_center)(height,width)(rotation)
+%   Uses current color  
+%
+    \ifcase\axo@pdfoutput
+        \put(\axoxoff,\axoyoff)%
+            {\AXOspecial{#1 \axoxo\space add #2 \axoyo\space add #3 #4 #5
+            \axowidth\space \axoscale\space foval 
+            }}%
+    \else
+        \getaxohelp{FOval}{#1 #2 #3 #4 #5 \axowidth}%
+        \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}%
+    \fi
+}
+%
+%	 #] FOval : 
+%	 #[ Oval :
+%
+\def\Oval(#1,#2)(#3,#4)(#5){%
+%
+%   Draws an oval that does not overwrite whatever was there.
+%   \Oval(x_center,y_center)(height,width)(rotation)
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff)%
+    {\AXOspecial{#1 \axoxo\space add #2 \axoyo\space add #3 #4 #5
+     \axowidth\space \axoscale\space oval 
+    }}%
+\else
+    \getaxohelp{Oval}{#1 #2 #3 #4 #5 \axowidth}%
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}%
+\fi
+}
+%
+%	 #] Oval : 
+%	 #[ Polygon :
+%
+%       Draws a curve through the points in argument 1.
+%       The points are given as coordinates (x1,y1)(x2,y2)(x3,y3).....
+%       The curve is continous and continuous in its first and second
+%       derivatives. The method is linear interpolation of
+%               quadratic curves.
+%               Color name is argument 2.
+%
+\def\Polygon#1#2{%
+    {%
+        \SetColor{#2}%
+        \ifcase\axo@pdfoutput
+            \put(\axoxoff,\axoyoff){\AXOspecial{%
+               [ \axoparray#1] \axowidth\space \axoscale\space polygon }}%
+        \else
+            \getaxohelp{Polygon}{"#1" \axowidth}%
+            \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}%
+        \fi
+    }%
+    \ignorespaces
+}
+%
+%	 #] Polygon : 
+%	 #[ FilledPolygon :
+%
+%       Draws a curve through the points in argument 1.
+%       The points are given as coordinates (x1,y1)(x2,y2)(x3,y3).....
+%       The curve is continous and continuous in its first and second
+%       derivatives. The method is linear interpolation of
+%               quadratic curves. 
+%               Color name is argument 2.
+%
+\def\FilledPolygon#1#2{%
+    {%
+        \SetColor{#2}%
+        \ifcase\axo@pdfoutput
+            \put(\axoxoff,\axoyoff){\AXOspecial{%
+              [ \axoparray#1] \axowidth\space \axoscale\space filledpolygon }}
+        \else
+            \getaxohelp{FilledPolygon}{"#1" \axowidth}%
+            \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}%
+        \fi
+    }%
+    \ignorespaces
+}
+%
+%	 #] FilledPolygon : 
+%	 #[ Curve :
+%
+%       Draws a curve through the points in argument 1.
+%       The points are given as coordinates (x1,y1)(x2,y2)(x3,y3).....
+%       The curve is continous and continuous in its first and second
+%       derivatives. The method is linear interpolation of quadratic curves.
+%
+\def\Curve#1{%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{[ \axoparray#1]
+    \axowidth\space \axoscale\space makecurve }}
+\else
+    \getaxohelp{Curve}{"#1" \axowidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] Curve : 
+%	 #[ DashCurve :
+%
+%       Draws a curve through the points in argument 1.
+%       The points are given as coordinates (x1,y1)(x2,y2)(x3,y3).....
+%       The curve is continous and continuous in its first and second
+%       derivatives. The method is linear interpolation of quadratic curves.
+%       Argument 2 gives a dash size.
+%
+\def\DashCurve#1#2{%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{[ \axoparray#1] #2
+    \axowidth\space \axoscale\space makedashcurve }}
+\else
+    \getaxohelp{DashCurve}{"#1" #2 \axowidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] DashCurve : 
+%	 #[ LinAxis :
+%
+\def\LinAxis(#1,#2)(#3,#4)(#5,#6,#7,#8,#9){%
+%
+%   Draws a line with linear hash marks along it.
+%   LinAxis(x1,y1)(x2,y2)(num_decs,per_dec,hashsize,offset,width)
+%   The line is from (x1,y1) to (x2,y2) and the marks are on the left side
+%   when hashsize is positive, and right when it is negative.
+%   num_decs is the number of accented marks, per_dec the number of
+%   divisions between them and offset is the number
+%   at which one starts at (x1,y1) (like if offset=2 we start at the second
+%   small mark) Width is the linewidth.
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+      #1 \axoxo\space add #2 \axoyo\space add
+      #3 \axoxo\space add #4 \axoyo\space add
+      #5 #6 #7 #8 #9 \axoscale\space linaxis }}
+\else
+    \getaxohelp{LinAxis}{#1 #2 #3 #4 #5 #6 #7 #8 #9}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] LinAxis : 
+%	 #[ LogAxis :
+%
+\def\LogAxis(#1,#2)(#3,#4)(#5,#6,#7,#8){%
+%
+%   Draws a line with logarithmic hash marks along it.
+%   LogAxis(x1,y1)(x2,y2)(num_logs,hashsize,offset,width)
+%   The line is from (x1,y1) to (x2,y2) and the marks are on the left side
+%   when hashsize is positive, and right when it is negative.
+%   num_logs is the number of orders of magnitude and offset is the number
+%   at which one starts at (x1,y1) (like if offset=2 we start at 2)
+%   When offset is 0 we start at 1. Width is the linewidth.
+%
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #2 \axoyo\space add
+    #3 \axoxo\space add #4 \axoyo\space add
+    #5 #6 #7 #8 \axoscale\space logaxis }}
+\else
+    \getaxohelp{LogAxis}{#1 #2 #3 #4 #5 #6 #7 #8}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+%	 #] LogAxis : 
+%	 #[ AxoGrid :
+%
+\def\AxoGrid(#1,#2)(#3,#4)(#5,#6)#7#8{%
+%
+%   Makes a grid with the left bottom at #1,#2
+%   The increments in x and y are #3,#4
+%   The number of steps in each direction are #5,#6 (there are n+1 lines)
+%   #7 is the color and #8 the linewidth
+%
+{\SetColor{#7}%
+    \ifcase\axo@pdfoutput
+        \put(\axoxoff,\axoyoff){%
+            \AXOspecial{%
+               #3 #4 #5 #6
+               #1 \axoxo\space add #2 \axoyo\space add 
+               #8 \axoscale\space axogrid
+        }}%
+    \else
+        \getaxohelp{Grid}{#1 #2 #3 #4 #5 #6 #8}%
+        \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}%
+    \fi   
+}%
+\ignorespaces
+}
+%
+%	 #] AxoGrid : 
+%	 #[ AXO@Arc :
+%
+%       Generic Arc segment with many options.
+%
+%
+\def\AXO@Arc(#1,#2)(#3,#4,#5){%
+%
+%   Draws arc centered at (#1,#2), radius #3, starting and ending
+%   angles #4, #5.
+%   Double, dashing, arrow, clockwise according to current settings
+%
+{\AXO@useopts
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){%
+        \AXOspecial{%
+        \AXO@ArrowArg \space
+        \ifAXO@flip true \else false \fi
+        \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \ifAXO@clock true \else false \fi
+        #3 #4 #5
+        #1 \axoxo\space add #2 \axoyo\space add 
+        \AXO@CurrentWidth\space \axoscale\space arc2
+    }}%
+\else
+    \getaxohelp{AxoArc}{#1 #2 #3 #4 #5
+        \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \AXO@ArrowArg \space
+        \ifAXO@flip 1 \else 0 \fi
+        \ifAXO@clock 1 \else 0 \fi
+        \AXO@CurrentWidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}\ignorespaces
+}
+%
+%	 #] AXO@Arc : 
+%	 #[ AXO@Bezier :
+%
+\def\AXO@Bezier(#1,#2)(#3,#4)(#5,#6)(#7,#8){%
+%
+%   Draws a Bezier cubic with the control points (x1,y1), (x2,y2),
+%   (x3,y3), (x4,y4)
+%   Assumes options have been set
+%
+{\AXO@useopts
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+        #1 \axoxo\space add #2 \axoyo\space add
+        #3 \axoxo\space add #4 \axoyo\space add
+        #5 \axoxo\space add #6 \axoyo\space add
+        #7 \axoxo\space add #8 \axoyo\space add
+           \AXO@ArrowArg \space 
+           \ifAXO@flip true \else false \fi
+    \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+    \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+    \AXO@CurrentWidth\space \axoscale\space dashdoublebezier 
+    }}%
+\else
+    \getaxohelp{AxoBezier}{#1 #2 #3 #4 #5 #6 #7 #8
+        \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \AXO@ArrowArg \space
+        \ifAXO@flip 1 \else 0 \fi
+        \AXO@CurrentWidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}\ignorespaces
+}
+%
+%	 #] AXO@Bezier : 
+%	 #[ AXO@GluonHelper :
+%
+\def\AXO@GluonHelper(#1,#2)(#3,#4)#5#6#7#8{%
+%
+%   Draws a single gluon from (x1,y1) to (x2,y2) with amplitude #5 and number
+%   of windings #6. Width #7 + #8
+%   Assumes options have been set.
+%   Used as helper from \AXO@Gluon
+  %
+\ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for gluon}\fi
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){%
+        \AXOspecial{%
+                  #1 \axoxo\space add #2 \axoyo\space add
+                  #3 \axoxo\space add #4 \axoyo\space add 
+                  #5 #6
+                  \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+                  #7 #8 add \axoscale \space dashgluon
+        }%
+    }%
+\else
+    \getaxohelp{AxoGluon}{#1 #2 #3 #4 #5 #6 
+             #7
+             \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+            #8}%
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%
+\def\AXO@GluonHelperNEW(#1,#2)(#3,#4)#5#6#7#8{%
+% IDEA: Showing cleaner code
+%
+%   Draws a single gluon from (x1,y1) to (x2,y2) with amplitude #5 and number
+%   of windings #6. Width #7 + #8
+%   Assumes options have been set.
+%   Used as helper from \AXO@Gluon
+%
+    \ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for gluon}\fi
+    \ifcase\axo@pdfoutput
+        \AXOputPS{%
+                  #1 #2 #3 #4 #5 #6
+                  \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+                  #7 #8 add \axoscale \space dashgluon
+        }%
+    \else
+        \getaxohelp{AxoGluon}{#1 #2 #3 #4 #5 #6 
+             #7
+             \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+            #8}%
+        \AXOputPDF{\contentspdfNoOffset}%
+    \fi
+}
+%
+%	 #] AXO@GluonHelper : 
+%	 #[ AXO@Gluon :
+%
+\def\AXO@Gluon(#1,#2)(#3,#4)#5#6{%
+%
+%   Draws a gluon from (x1,y1) to (x2,y2) with amplitude #5 and number
+%   of windings #6.
+%   Assumes options have been set
+%
+{\AXO@useopts
+    \ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for gluon}\fi
+    \AXO@arrowfalse  % To avoid repeated errors
+    \ifAXO@double
+        \AXO@GluonHelper(#1,#2)(#3,#4){#5}{#6}{\AXO@CurrentWidth}{\AXO@CurrentSep}%
+        \SetColor{White}%
+        \AXO@dashfalse
+        \AXO@GluonHelper(#1,#2)(#3,#4){#5}{#6}{-\AXO@CurrentWidth}{\AXO@CurrentSep}%
+    \else
+        \AXO@GluonHelper(#1,#2)(#3,#4){#5}{#6}{0}{\AXO@CurrentWidth}%
+    \fi
+  }%
+\ignorespaces
+}
+%	 #] AXO@Gluon : 
+%	 #[ AXO@GluonArcHelper :
+%
+\def\AXO@GluonArcHelper(#1,#2)(#3,#4,#5)#6#7#8#9{%
+%
+%   Draws a gluon on an arc segment. The center of the curve is at (1,2)
+%   The radius, start angle and target angle are (#3,#4,#5), #6 is the
+%   amplitude of the gluon, and #7 is the number of windings.
+%   Assumes options have been set
+%   Width #8 + #9
+%   Assumes options have been set.
+%   Used as helper from \AXO@GluonArc
+\ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for gluon arc}\fi
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{#6 #7 
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \ifAXO@clock true \else false \fi
+        #3 #4 #5
+        #1 \axoxo\space add #2 \axoyo\space add 
+        #8 #9 add \axoscale\space dashgluearc
+    }}%
+\else
+    \getaxohelp{AxoGluonArc}{#1 #2 #3 #4 #5 #6 #7 
+        #8
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \ifAXO@clock 1 \else 0 \fi
+        #9}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%	 #] AXO@GluonArcHelper : 
+%	 #[ AXO@GluonArc :
+%
+\def\AXO@GluonArc(#1,#2)(#3,#4,#5)#6#7{%
+%
+%   Draws a gluon on an arc segment. The center of the curve is at (1,2)
+%   The radius, start angle and target angle are (#3,#4,#5), #6 is the
+%   amplitude of the gluon, and #7 is the number of windings.
+%   Assumes options have been set
+%
+    {\AXO@useopts
+        \ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for gluon}\fi
+        \AXO@arrowfalse  % To avoid repeated errors
+        \ifAXO@double
+            \AXO@GluonArcHelper(#1,#2)(#3,#4,#5){#6}{#7}{\AXO@CurrentWidth}{\AXO@CurrentSep}%
+            \SetColor{White}%
+            \AXO@dashfalse
+            \AXO@GluonArcHelper(#1,#2)(#3,#4,#5){#6}{#7}{-\AXO@CurrentWidth}{\AXO@CurrentSep}%
+        \else
+            \AXO@GluonArcHelper(#1,#2)(#3,#4,#5){#6}{#7}{0}{\AXO@CurrentWidth}%
+        \fi
+    }%
+\ignorespaces
+}
+%	 #] AXO@GluonArc : 
+%	 #[ AXO@GluonCircHelper :
+%
+\def\AXO@GluonCircHelper(#1,#2)(#3,#4)#5#6#7#8{%
+%
+%   Draws a gluon on a circle. The center of the circle is at (1,2)
+%   The radius and the phase angle are (#3,#4), 5 is the
+%   amplitude of the gluon, and 6 is the number of windings.
+%   Width #7 + #8
+%   Assumes options have been set.
+%   Used as helper from \AXO@GluonCirc
+\ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for gluon arc}\fi
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+       #5 #6
+       \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+       #3 #4
+       #1 \axoxo\space add #2 \axoyo\space add 
+       #7 #8 add \axoscale\space dashgluoncirc
+    }}%
+\else
+    \getaxohelp{AxoGluonCirc}{#1 #2 #3 #4 #5 #6
+       #7
+       \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+       #8}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}
+%	 #] AXO@GluonCicHelper : 
+%	 #[ AXO@GluonCirc :
+%
+\def\AXO@GluonCirc(#1,#2)(#3,#4)#5#6{%
+%
+%   Draws a gluon on a circle. The center of the circle is at (1,2)
+%   The radius and the phase angle are (#3,#4), 5 is the
+%   amplitude of the gluon, and 6 is the number of windings.
+%
+    {\AXO@useopts
+        \ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for gluon}\fi
+        \AXO@arrowfalse  % To avoid repeated errors
+        \ifAXO@double
+            \AXO@GluonCircHelper(#1,#2)(#3,#4){#5}{#6}{\AXO@CurrentWidth}{\AXO@CurrentSep}%
+            \SetColor{White}%
+            \AXO@dashfalse
+            \AXO@GluonCircHelper(#1,#2)(#3,#4){#5}{#6}{-\AXO@CurrentWidth}{\AXO@CurrentSep}%
+        \else
+            \AXO@GluonCircHelper(#1,#2)(#3,#4){#5}{#6}{0}{\AXO@CurrentWidth}%
+        \fi
+    }%
+\ignorespaces
+}
+%
+% 	#] AXO@GluonCirc : 
+%	 #[ AXO@Line :
+%
+\def\AXO@Line(#1,#2)(#3,#4){%
+%
+%   Draws a line from (x1,y1) to (x2,y2)
+%   Double, dashing, arrow according to current settings
+%
+{\AXO@useopts
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){%
+        \AXOspecial{%
+            \AXO@ArrowArg \space
+            \ifAXO@flip true \else false \fi
+            \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+            \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+            #1 \axoxo\space add #2 \axoyo\space add
+            #3 \axoxo\space add #4 \axoyo\space add 
+            \AXO@CurrentWidth \space \axoscale \space
+            dasharrowdoubleline
+    }}%
+\else
+    \getaxohelp{AxoLine}{#1 #2 #3 #4 
+        \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \AXO@ArrowArg \space
+        \ifAXO@flip 1 \else 0 \fi
+        \AXO@CurrentWidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}%
+\fi
+}\ignorespaces
+}
+%
+%	 #] AXO@Line : 
+%	 #[ AXO@Photon :
+%
+\def\AXO@Photon(#1,#2)(#3,#4)#5#6{%
+%
+%   Draws a photon from (x1,y1) to (x2,y2) with amplitude #5 and number
+%   of windings #6.
+%   Assumes options have been set
+%
+{\AXO@useopts
+\ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for photon}\fi
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #2 \axoyo\space add
+    #3 \axoxo\space add #4 \axoyo\space add #5 #6 
+    \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+    \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+    \AXO@CurrentWidth\space \axoscale\space dashdoublephoton }}%
+\else
+    \getaxohelp{AxoPhoton}{#1 #2 #3 #4 #5 #6 
+        \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \AXO@CurrentWidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}\ignorespaces
+}
+%	 #] AXO@Photon : 
+%	 #[ AXO@PhotonArc :
+%
+\def\AXO@PhotonArc(#1,#2)(#3,#4,#5)#6#7{%
+%
+%   Draws a photon on an arc segment. The center of the curve is at (1,2)
+%   The radius, start angle and target angle are (#3,#4,#5), #6 is the
+%   amplitude of the gluon, and #7 is the number of wiggles.
+%   Assumes options have been set
+%
+{\AXO@useopts
+\ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for photon arc}\fi
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+        #6 #7 
+        \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \ifAXO@clock true \else false \fi
+        #3 #4 #5
+        #1 \axoxo\space add #2 \axoyo\space add 
+        \AXO@CurrentWidth\space \axoscale\space dashdoublephotonarc
+    }}%
+\else
+    \getaxohelp{AxoPhotonArc}{#1 #2 #3 #4 #5 #6 #7 
+        \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \ifAXO@clock 1 \else 0 \fi
+        \AXO@CurrentWidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}\ignorespaces
+}
+%
+%	 #] AXO@PhotonArc : 
+%	 #[ AXO@ZigZag :
+%
+\def\AXO@ZigZag(#1,#2)(#3,#4)#5#6{%
+%
+%   Draws a zigzag from (x1,y1) to (x2,y2) with amplitude #5 and number
+%   of windings #6.
+%   Assumes options have been set
+%
+{\AXO@useopts
+\ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for zigzag}\fi
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+    #1 \axoxo\space add #2 \axoyo\space add
+    #3 \axoxo\space add #4 \axoyo\space add #5 #6 
+    \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+    \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+    \AXO@CurrentWidth\space \axoscale\space dashdoublezigzag }}%
+\else
+    \getaxohelp{AxoZigZag}{#1 #2 #3 #4 #5 #6 
+         \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+         \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+         \AXO@CurrentWidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}%
+\fi
+}\ignorespaces
+}
+%	 #] AXO@ZigZag : 
+%	 #[ AXO@ZigZagArc :
+%
+\def\AXO@ZigZagArc(#1,#2)(#3,#4,#5)#6#7{%
+%
+%   Draws a zigzag on an arc segment. The center of the curve is at (1,2)
+%   The radius, start angle and target angle are (#3,#4,#5), #6 is the
+%   amplitude of the gluon, and #7 is the number of wiggles.
+%   Assumes options have been set
+%
+{\AXO@useopts
+\ifAXO@arrow\AXO@NOTIMPLEMENTED{arrow not implemented for zigzag arc}\fi
+\ifcase\axo@pdfoutput
+    \put(\axoxoff,\axoyoff){\AXOspecial{%
+        #6 #7 
+        \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \ifAXO@clock true \else false \fi
+        #3 #4 #5
+        #1 \axoxo\space add #2 \axoyo\space add 
+        \AXO@CurrentWidth\space \axoscale\space dashdoublezigzagarc
+    }}%
+\else
+    \getaxohelp{AxoZigZagArc}{#1 #2 #3 #4 #5 #6 #7 
+        \ifAXO@double \AXO@CurrentSep \space \else 0 \fi
+        \ifAXO@dash \AXO@CurrentDashSize \space \else 0 \fi
+        \ifAXO@clock 1 \else 0 \fi
+        \AXO@CurrentWidth}
+    \put(\axoxoff,\axoyoff){\axo@pdfliteral{\contentspdf}}
+\fi
+}\ignorespaces
+}
+%
+%	 #] AXO@ZigZagArc : 
+%	 #[ Text and boxes :
+%		#[ SetPFont :
+%
+%               To access fonts, from both latex and pdflatex, we need
+%               to define a mapping from the human-readable name to
+%               the name known to (pdf)latex.  Then we can define a
+%               user command for setting the font.  The human-readable
+%               name is the one used by postscript.
+%            Variables used:
+%           \pfontN = human name of current PS font (e.g., Helvetica).
+%           \pfontC = TeX code for the font (e.g., phvr).
+%           Both are \relax to use regular document font
+%           \axofontsize = size of font (text command with unit)
+
+
+\def\defineaxofont#1#2{%
+    % #1 is user visible name of font, #2 is LaTex name.
+    % Define a command of name #1 to return #2
+    \expandafter\def\csname #1\endcsname{#2}
+}
+
+\def\SetPFont#1#2{%
+    \ifthenelse{ \equal{#1}{} }%
+        {\let\pfontN=\relax  \let\pfontC=\relax}%
+        {\@ifundefined{#1}%
+            {\PackageWarning{axodraw2}{trying to set undefined font `#1'}}%
+            {\def\pfontN{#1}%             Human name (postscript)
+             \def\pfontC{\@nameuse{#1}}%  Code name
+            }%
+        }%
+    \ifthenelse{ \equal{#2}{} }%
+        {%   Use the value of LaTeX's fontsize when the font is used:
+            \def\axofontsize{\f@size}%
+        }%
+        {\def\axofontsize{#2}}%
+\ignorespaces
+}
+
+\def\UseCurrentPSFont{%
+    % Set regular size of regular font, so math has rational size
+    \fontsize{\axofontsize}{\axofontsize}%
+    \selectfont
+    \ifx\pfontC\relax
+    \else
+        \font\axofont = \pfontC \space at \axofontsize pt
+        \axofont
+    \fi
+}
+
+\defineaxofont{AvantGarde-Book}{pagk}
+\defineaxofont{AvantGarde-BookOblique}{pagko}
+\defineaxofont{AvantGarde-Demi}{pagd}
+\defineaxofont{AvantGarde-DemiOblique}{pagdo}
+\defineaxofont{Bookman-Demi}{pbkd}
+\defineaxofont{Bookman-DemiItalic}{pbkdi}
+\defineaxofont{Bookman-Light}{pbkl}
+\defineaxofont{Bookman-LightItalic}{pbkli}
+\defineaxofont{Courier-Bold}{pcrb}
+\defineaxofont{Courier-BoldOblique}{pcrbo}
+\defineaxofont{Courier}{pcrr}
+\defineaxofont{Courier-Oblique}{pcrro}
+\defineaxofont{Helvetica-Bold}{phvb}
+\defineaxofont{Helvetica-BoldOblique}{phvbo}
+\defineaxofont{Helvetica-NarrowBold}{phvbrn}
+\defineaxofont{Helvetica-NarrowBoldOblique}{phvbon}
+\defineaxofont{Helvetica}{phvr}
+\defineaxofont{Helvetica-Oblique}{phvro}
+\defineaxofont{Helvetica-Narrow}{phvrrn}
+\defineaxofont{Helvetica-NarrowOblique}{phvron}
+\defineaxofont{NewCenturySchlbk-Bold}{pncb}
+\defineaxofont{NewCenturySchlbk-BoldItalic}{pncbi}
+\defineaxofont{NewCenturySchlbk-Italic}{pncri}
+\defineaxofont{NewCenturySchlbk-Roman}{pncr}
+\defineaxofont{Palatino-Bold}{pplb}
+\defineaxofont{Palatino-BoldItalic}{pplbi}
+\defineaxofont{Palatino-Italic}{pplri}
+\defineaxofont{Palatino-Roman}{pplr}
+\defineaxofont{Symbol}{psyr}
+\defineaxofont{Times-Bold}{ptmb}
+\defineaxofont{Times-BoldItalic}{ptmbi}
+\defineaxofont{Times-Italic}{ptmri}
+\defineaxofont{Times-Roman}{ptmr}
+\defineaxofont{ZapfChancery-MediumItalic}{pzcmi}
+\defineaxofont{ZapfDingbats}{pzdr}
+
+% Now we can set the default:
+
+\SetPFont{Times-Roman}{10}
+
+%
+%		#] SetPFont : 
+%	 #[ Text :
+%
+% Aim:  \Text(#1,#2)(#3)[#4]#5, to set text #5 at position (#1,#2)
+%       with angle #3 and positioning #4.  
+%       But the presence of (#3) and [#3] is to be optional (with
+%       defaults being equivalent to (0) and []
+%
+\def\Text(#1,#2){%
+    \@ifnextchar(%  )
+        {\Text@A(#1,#2)}%
+        {\Text@A(#1,#2)(0)}%
+}
+%
+\def\Text@A(#1,#2)(#3){%
+    \@ifnextchar[%  ]
+        {\Text@Z(#1,#2)(#3)}%
+        {\Text@Z(#1,#2)(#3)[]}%
+}
+%
+\def\axoscaleTT{\ifPSTextScalesLikeGraphics 1\else \axotextscale \fi}
+\def\axoscalePT{\ifPSTextScalesLikeGraphics \axoscale\else \axotextscale \fi}
+%
+\def\Text@Z(#1,#2)(#3)[#4]#5{%
+    %
+    %   Draws text at (#1,#2). Argument #3 is combination of l, r, t, b to
+    %   indicate positioning instead of default (which is horizontally and
+    %   vertically centered --- these are same as \makebox 
+    %   the text is left adjusted, right adjusted or centered. Or b or t.
+    %   4 is of course the text.
+    %
+    \AxoPut(#1,#2){%
+        \scalebox{\axoscaleTT}%
+                 {\rotatebox{#3}{\makebox(0,0)[#4]{#5}}}%
+    }%
+    \ignorespaces
+}
+%
+%	 #] Text : 
+%		#[ PText : *+
+%
+\def\PText(#1,#2)(#3)[#4]#5{%
+%
+%   Draws a postscript text in a postscript font.
+%   Focal point is (1,2), rotation angle is 3, 4 is the mode (as in text)
+%   and 5 is the text.
+%
+    \begingroup
+        \UseCurrentPSFont
+        \AxoPut(#1,#2){%
+              \scalebox{\axoscalePT}%
+                       {\rotatebox{#3}{\makebox(0,0)[#4]{#5}}}%
+            }%
+    \endgroup
+    \ignorespaces
+}
+%
+%		#] PText : 
+%		#[ RText :
+%
+\def\RText(#1,#2)[#3](#4)#5{%
+%
+%   Draws rotated text at (1,2). Argument 3 is l,r or c indicating whether
+%   the text is left adjusted, right adjusted or centered.
+%   4 is the rotation angle and 5 is of course the text.
+%
+    \Text(#1,#2)(#4)[#3]{#5}%
+    \ignorespaces
+}
+%
+%		#] RText : 
+%		#[ rText : *
+%
+\def\rText(#1,#2)[#3][#4]#5{%
+%
+%   Draws rotated text at (1,2). Argument 3 is l,r or c indicating whether
+%   the text is left adjusted, right adjusted or centered.
+%   4 is the rotation angle (specified as l, r, u, or blank,
+%    and 5 is of course the text.
+%
+    \begingroup
+    \def\this@angle{0}%
+    \ifx#4l%
+        \def\this@angle{90}%
+    \else 
+        \ifx#4r%
+            \def\this@angle{-90}%
+        \else
+            \ifx#4u%
+                \def\this@angle{180}%
+            \fi
+        \fi
+    \fi
+    \Text(#1,#2)(\this@angle)[#3]{#5}%
+    \endgroup
+    \ignorespaces
+}
+%
+%		#] rText : 
+%		#[ BText :
+%
+\def\BText(#1,#2)#3{%
+%
+%   Draws a box with the center at (x1,y1) and postscript text #3 in it.
+%
+    \AxoPut(#1,#2){%
+        \edef\axoscale{\axoscalePT}%
+        \SetTmpBox{#3}%
+        \BBoxc(0,0)(\tmpXT,\tmpYT)%
+        \PText(0,0)(0)[]{\usebox{\tmpBox}}%
+    }%
+    \ignorespaces
+}
+%
+%		#] BText : 
+%		#[ GText :
+%
+\def\GText(#1,#2)#3#4{%
+%
+%   Draws a box with the center at (x1,y1) and postscript(#4) text in it.
+%   The grayness of the box is given by #3
+%
+    \AxoPut(#1,#2){%
+        \edef\axoscale{\axoscalePT}%
+        \SetTmpBox{#4}%
+        \GBoxc(0,0)(\tmpXT,\tmpYT){#3}%
+        \PText(0,0)(0)[]{\usebox{\tmpBox}}%
+    }%
+    \ignorespaces
+}
+%
+%		#] GText : 
+%		#[ CText :
+%
+\def\CText(#1,#2)#3#4#5{%
+%
+%   Draws a box with the center at (x1,y1) and postscript(#5) text in it.
+%   The color of box and text is in #3
+%   The color of the background is in #4
+%
+    \AxoPut(#1,#2){%
+        \edef\axoscale{\axoscalePT}%
+        \SetTmpBox{\SetColor{#3}{#5}}%
+        \CBoxc(0,0)(\tmpXT,\tmpYT){#3}{#4}%
+        \PText(0,0)(0)[]{\usebox{\tmpBox}}%
+    }%
+}
+%
+%		#] CText : 
+%		#[ BTwoText :
+%
+\def\BTwoText(#1,#2)#3#4{%
+%
+%   Draws a box with the center at (x1,y1) and two lines of postscript
+%   text in it.
+%
+    \AxoPut(#1,#2){%
+        \edef\axoscale{\axoscalePT}%
+        \SetTmpBoxTwo{#3}{#4}%
+        \BBoxc(0,0)(\tmpXT,\tmpYT)%
+        \PText(0,0)(0)[]{\usebox{\tmpBox}}%
+    }%
+    \ignorespaces
+}
+%
+%		#] BTwoText : 
+%		#[ GTwoText :
+%
+\def\GTwoText(#1,#2)#3#4#5{%
+%
+%   Draws a box with the center at (x1,y1) and two lines of postscript
+%   text (#4 and #5) in it.
+%   The grayness of the box is given by #3
+%
+    \AxoPut(#1,#2){%
+        \edef\axoscale{\axoscalePT}%
+        \SetTmpBoxTwo{#4}{#5}%
+        \GBoxc(0,0)(\tmpXT,\tmpYT){#3}%
+        \PText(0,0)(0)[]{\usebox{\tmpBox}}%
+    }%
+    \ignorespaces
+}
+%
+%		#] GTwoText : 
+%		#[ CTwoText :
+%
+\def\CTwoText(#1,#2)#3#4#5#6{%
+%
+%   Draws a box with the center at (x1,y1) and two lines of postscript
+%   text (#5 and #6) in it.
+%   The color of the box and the text is given by #3
+%   The background color is given by #4
+%
+    \AxoPut(#1,#2){%
+        \edef\axoscale{\axoscalePT}%
+        \SetTmpBoxTwo{\SetColor{#3}#5}{\SetColor{#3}#6}%
+        \CBoxc(0,0)(\tmpXT,\tmpYT){#3}{#4}%
+        \PText(0,0)(0)[]{\usebox{\tmpBox}}%
+    }%
+    \ignorespaces
+}
+%
+%		#] CTwoText : 
+%	 #] Text and boxes : 
+% 	#] Mixed routines : 
+% 	#[ Postscript specific :
+%
+%   The code here is used only when we need Postscript output. This concerns
+%   mainly the Postscript library.
+%
+\ifcase\axo@pdfoutput
+%
+%		#[ PostScript preamble :
+%
+\AtBeginDvi{
+%
+%    This forces the PostScript preamble commands to be put into the
+%       dvi file.  Without this, revtex4 can remove them by funny
+%       stuff with manipulating the first page.
+%
+%		#[ inventory :
+%
+%   The variables in here are:
+%   num,num1,ampi,ampi1,x1,y1,x2,y2,x3,y3,x4,y4,dx,dy,dr
+%   width, arrowpos, arrowspec, arrowwidth, arrowlength, arrowinset
+%   arcend, arcmid, arcstart, radius, linesep, angdsize, dsize,
+%   clockwise, dotsize, inc, pi, sign
+%   darc,const,amp1, amp2, amp3, amp4, amp5, amp6, amp7, amp8, amp1i
+%   gcolor,xx2
+%
+%   NOTE: blank lines are not allowed inside the postscript code!!!!!
+%   (LaTeX sneaks \par commands in and the postscript goes boink)
+%
+\special{color}  % Provoke dvips into including color.pro
+                 % Revtex4 in 2-column mode fails to force that
+%
+\special{!
+  /savecolor { %/cmyk [ currentcmykcolor ]  def 
+               /oldcolor [ [ currentcolor ] currentcolorspace ] def
+             } def
+  /restorecolor { oldcolor aload pop setcolorspace aload pop setcolor } def
+%  /savecolor { [ currentcmykcolor ] /cmyk ed } def
+%  /restorecolor { cmyk aload pop setcmykcolor } def
+%  % Do a save color now, to ensure default variables are defined:
+  savecolor
+}
+%
+\special{! 
+    /pi 3.141592 def
+    /ed{exch def}def 
+% Implement conversion of length unit from pt to bp by scaling
+    /gs{gsave 1.00375 div dup scale}def
+    /gsw{ gs
+          /width ed
+          width setlinewidth
+    }def
+    /p1{/y1 ed /x1 ed}def
+    /p2{/y2 ed /x2 ed}def
+    /p3{/y3 ed /x3 ed}def
+    /p4{/y4 ed /x4 ed}def
+    /pp1{/yy1 ed /xx1 ed}def
+    /pp2{/yy2 ed /xx2 ed}def
+    /pp3{/yy3 ed /xx3 ed}def
+    /setabs{
+        % Usage /var setabs
+        % Sets variable to its absolute value
+        dup load abs def
+    }def
+    %
+    /normalizearc {
+        % Usage: clockwise r angle1 angle2 x y normalizearc
+        % Adjusts coordinate system for anticlockwize arc from angle
+        % zero, centered at origin.
+        % Left on stack: r d_angle, with 0<d_angle <=360.
+        % Zero angle arc converted to loop
+        translate
+        exch dup rotate  % Origin of arc now at angle 0
+        sub              % Change angle2 to dangle
+        3 2 roll
+        { % Clockwise arc: obtain from anticlockwise arc
+          neg
+          1 -1 scale
+        } if
+        dup abs 360 ge 
+        {  %Outside 360 degrees, make exactly a loop
+           pop 360 
+        }
+        { % Convert to positive angle mod 360.  
+           dup
+           dup 0 lt { 360 sub } if
+           360 div truncate 360 mul sub
+           dup 0.1 lt { pop 360 } if
+        }ifelse
+    } def
+    %
+    /normalizeline {
+        % Usage: x1 y1 x2 y2 normalizeline
+        % Adjusts coordinate system for line from origin in x direction
+        % Left on stack: dr = length of line
+        3 index 3 index translate
+        2 index sub exch 3 index sub
+        2 copy atan rotate
+        dup mul exch dup mul add sqrt
+        3 1 roll pop pop
+    } def
+    %
+    /abox{
+        newpath 
+            x1 y1 moveto
+            x1 y2 lineto
+            x2 y2 lineto
+            x2 y1 lineto
+         closepath
+    }def
+    /atriangle{
+        newpath
+            x1 y1 moveto
+            x2 y2 lineto
+            x3 y3 lineto
+        closepath
+   }def
+   /abezier{
+       newpath
+           x1 y1 moveto
+           x2 y2 x3 y3 x4 y4 curveto
+   }def
+   /distance{
+      %   Usage: x1 y1 x2 y2 distance -> x1 y1 x2 y2 r
+      %   Pure stack based: computes distance between points.  Keeps points
+     dup
+     3 index sub dup mul 
+     2 index 5 index sub dup mul add sqrt
+   } def
+   /setbackgroundcolor{
+     0 0 0 0 setcmykcolor
+   } def
+}
+%
+%		#] inventory : 
+%		#[ Arrows :
+%
+% Define better arrows
+%
+\special{!
+% Arrow making routines
+%
+    /getarrow {
+        /witharrow ed
+        /arrowpos ed
+        /arrowaspect ed
+        /arrowscale ed
+        /arrowinset ed
+        /arrowlength ed
+        /arrowwidth ed
+        /arrowstroke ed
+    } def
+    /drawarrow {
+        gsave
+            [] 0 setdash
+            rotate
+            arrowwidth 0 eq {
+                arrowlength 0 eq {
+                    linewidth linesep 0.7 mul add 1 add 1.2 mul dup
+                    2.5 lt {
+                        pop
+                        2.5
+                    } if
+                    arrowscale mul
+                    /arrowwidth ed
+                    /arrowlength arrowwidth 2 mul arrowaspect mul def
+                } {
+                    /arrowlength arrowlength arrowscale mul def
+                    /arrowwidth arrowlength 2 div arrowaspect div def
+                } ifelse
+            } {
+                arrowlength 0 eq {
+                    /arrowwidth arrowwidth arrowscale mul def
+                    /arrowlength arrowwidth 2 mul arrowaspect mul def
+                } {
+                    /arrowwidth arrowwidth arrowscale mul def
+                    /arrowlength arrowlength arrowscale mul def
+                } ifelse
+            } ifelse
+            arrowstroke 0 ne {
+              arrowstroke setlinewidth
+              gsave
+              setbackgroundcolor
+              newpath
+                0           arrowlength -0.5 mul moveto         
+                arrowwidth  arrowlength          rlineto
+                arrowwidth -1  mul  arrowlength arrowinset mul -1 mul rlineto
+                arrowwidth -1  mul  arrowlength arrowinset mul rlineto
+              closepath fill
+              grestore
+              newpath
+                0           arrowlength -0.5 mul moveto         
+                arrowwidth  arrowlength          rlineto
+                arrowwidth -1  mul  arrowlength arrowinset mul -1 mul rlineto
+                arrowwidth -1  mul  arrowlength arrowinset mul rlineto
+              closepath stroke
+            } {
+              newpath
+                0           arrowlength -0.5 mul moveto         
+                arrowwidth  arrowlength          rlineto
+                arrowwidth -1  mul  arrowlength arrowinset mul -1 mul rlineto
+                arrowwidth -1  mul  arrowlength arrowinset mul rlineto
+              closepath fill
+            } ifelse
+        grestore
+    } def
+%
+}
+%
+%		#] Arrows : 
+%
+% Basic line drawing
+%		#[ fixdash :
+%
+\special{! /fixdash{
+%   Usage: r dashsize fixdash
+%   Sets renormalized dashsize, doing
+%      [rdsize rdsize] 0 setdash
+%   so that n+1/2 patterns fit in length r
+%   If dsize is too big or if dsize is zero, use continuous line
+%   Uses stack, no named variables.
+    2 copy gt 
+    1 index 0 ne 
+    and 
+    {
+       2 copy 
+       2 mul div 0.5 sub round 
+       dup 0 le { pop 0 } if
+       2 mul 1 add exch pop div
+       dup 2 array astore 0 setdash
+    } 
+    { pop pop [] 0 setdash }
+    ifelse
+} def }
+%
+%		#] fixdash : 
+%		#[ dashline :
+%
+\special{! /dashline{
+%   Draws a straight dashed line: x1,y1,x2,y2
+%   Assumes dsize already set
+%   The pattern is ideally [dsize dsize] 0 setdash
+%   but we want to have (2*n+1)/2 patterns, so dsize must be rounded
+%   If dsize is too large or zero, use a continuous line
+%   Pure stack operation. 
+    gsave
+    distance dsize fixdash   % Function distance leaves points on stack
+    newpath
+      moveto
+      lineto
+    stroke
+    grestore
+} def }
+%		#] dashline : 
+%		#[ dasharc :
+%
+\special{! /dasharc{
+%   Draws an arc segment anticlockwise:
+%   x_center, y_center, radius, start_angle, end_angle
+%   Assumes angdsize (radians) set elsewhere
+    gsave
+    3 copy sub abs
+    % Top of stack is copy of radius, start_angle, end_angle
+    pi mul 180 div mul 
+    % Top of stack is arc length
+    3 index angdsize mul fixdash
+    newpath  arc stroke
+    grestore
+} def }
+%
+%		#] dasharc : 
+%		#[ dashgluon :
+%
+\special{! /dashgluon{
+%
+%   Draw gluon, possibly dashed
+%   We have a 'head' and a 'tail' and in between the 'body'
+%   The head + tail is 2 windings. The body is num-1 windings.
+%
+    gsw
+    /dsize ed
+    /num ed /ampi ed 
+    normalizeline /dr ed
+    /num num 0.5 sub round def
+%
+    dsize 0 eq {
+    [] 0 setdash
+    } {
+        /amp8 ampi abs 0.9 mul def
+    /size amp8 neg 0 amp8 neg ampi 2 mul dup dr num 2 mul 2 add div exch
+    1 lengthofbezier def
+%
+    /ndash size dsize 2 mul div truncate def
+    ndash 0 eq { /ndash 1 def } if
+    size 2 dsize ndash mul mul sub abs
+    size 2 dsize ndash 1 add mul mul sub abs gt { /ndash ndash 1 add def } if
+    /dsize size 2 ndash mul div def
+    [ dsize dsize ] dsize 2 div setdash
+    } ifelse
+%
+    /inc dr num 2 mul 2 add div def         % increment per half winding
+    /amp8 ampi 0.9 mul def
+    amp8 0 lt {/amp8 amp8 neg def} if
+%
+    /x1 inc 2 mul def
+%
+    newpath
+    x1 ampi neg moveto
+        x1 amp8 add dup ampi neg exch ampi inc 1.4 mul ampi curveto
+        inc 0.5 mul ampi inc 0.1 mul ampi 0.5 mul 0 0 curveto
+    stroke
+    newpath
+    x1 ampi neg moveto
+        2 1 num {
+            pop
+            x1 amp8 sub dup ampi neg exch ampi dup x1 inc add exch curveto
+            /x1 x1 inc dup add add def
+            x1 amp8 add dup ampi exch ampi neg dup x1 exch curveto
+        } for
+%
+        x1 amp8 sub dup ampi neg exch ampi dup x1 inc 0.6 mul add exch curveto
+        x1 inc 1.5 mul add ampi dr inc 0.1 mul sub ampi 0.5 mul dr 0 curveto
+    stroke
+%
+    grestore
+} def }
+%
+%		#] dashgluon : 
+%		#[ dashdoublephoton :
+%
+\special{! /dashdoublephoton{
+%
+%   Draws a photon from x1,y1 to x2,y2 with amplitude A and n wiggles
+%   Possibly double
+%
+    gsw 
+    /dsize ed
+    /linesep ed
+    /num ed /ampi ed 
+    normalizeline /dr ed
+    /num num 2 mul 0.5 sub round def
+%
+    dsize 0 eq {
+        [] 0 setdash
+    } {
+%       Compute the dash size
+       /xdd dr num div def
+       /size 4 3 div xdd mul pi div dup neg xdd add
+             4 3 div ampi mul dup 3 1 roll xdd 0 1 lengthofbezier 2 div def
+       /ndash size dsize 2 mul div truncate def
+       ndash 0 eq { /ndash 1 def } if
+       size 2 dsize ndash mul mul sub abs
+       size 2 dsize ndash 1 add mul mul sub abs gt { /ndash ndash 1 add def } if
+       /dsize size 2 ndash mul div def
+       [ dsize dsize ] dsize 2 div setdash
+    } ifelse
+%
+    linesep 0 eq 
+       { 0 0 dr 0 ampi num photon1 }
+       {
+%         0 linesep 2 div  dup dr exch  ampi num photon1 
+%         0 linesep -2 div dup dr exch  ampi num photon1 
+%
+          linesep width add setlinewidth 0 0 dr 0 ampi num photon1
+          [] 0 setdash
+          0 0 0 0 setcmykcolor
+          linesep width sub setlinewidth 0 0 dr 0 ampi num photon1
+%
+       }
+    ifelse
+    grestore
+} def }
+%
+%		#] dashdoublephoton : 
+%		#[ photon1 :
+%
+\special{! /photon1{
+%
+%   Draws a single photon from x1,y1 to x2,y2 with amplitude A and n wiggles
+%
+    gsave
+    /num1 ed /ampi1 ed 
+    normalizeline /dr ed
+%
+    /x2 dr num1 div def
+    /sign 1 def
+    1 1 num1 {
+        pop
+        newpath
+        0 0 moveto
+        4 3 div x2 mul pi div dup neg x2 add
+        4 3 div ampi1 sign mul mul dup 3 1 roll
+        x2 0 curveto
+        stroke
+        /sign sign neg def
+        x2 0 translate
+    } for
+%
+    grestore
+} def }
+%
+%		#] photon1 : 
+%		#[ dashdoublezigzag :
+%
+\special{! /dashdoublezigzag{
+%
+%   Draws a zigzag from x1,y1 to x2,y2 with amplitude A and n wiggles
+%   Possibly double
+%
+    gsw 
+    /dsize ed
+    /linesep ed
+    /num ed /ampi ed 
+    normalizeline /dr ed
+    /num num 2 mul 0.5 sub round def
+%
+    dsize 0 eq {
+        [] 0 setdash
+    } {
+%       Compute the dash size
+       /size dr num 2 mul div dup mul ampi dup mul add sqrt def
+       /ndash size dsize 2 mul div truncate def
+       ndash 0 eq { /ndash 1 def } if
+       size 2 dsize ndash mul mul sub abs
+       size 2 dsize ndash 1 add mul mul sub abs gt { /ndash ndash 1 add def } if
+       /dsize size 2 ndash mul div def
+       [ dsize dsize ] dsize 2 div setdash
+    } ifelse
+%
+    linesep 0 eq 
+       { 0 0 dr 0 ampi num zigzag1 }
+       {
+%         0 linesep 2 div  dup dr exch  ampi num zigzag1 
+%         0 linesep -2 div dup dr exch  ampi num zigzag1 
+%
+          linesep width add setlinewidth 0 0 dr 0 ampi num zigzag1
+          [] 0 setdash
+          0 0 0 0 setcmykcolor
+          linesep width sub setlinewidth 0 0 dr 0 ampi num zigzag1
+%
+       }
+    ifelse
+    grestore
+} def }
+%
+%		#] dashdoublezigzag : 
+%		#[ zigzag1 :
+%
+\special{! /zigzag1{
+%
+%   Draws a single zigzag from x1,y1 to x2,y2 with amplitude A and n wiggles
+%
+    gsave
+    /num1 ed /ampi1 ed 
+    normalizeline /dr ed
+%
+    /x2 dr num1 div def
+    /sign 1 def
+    1 1 num1 {
+        pop
+        newpath
+        0 0 moveto
+        x2 2 div ampi1 sign mul lineto
+        x2 0 lineto
+        stroke
+        /sign sign neg def
+        x2 0 translate
+    } for
+%
+    grestore
+} def }
+%
+%		#] zigzag1 : 
+%		#[ dashgluearc :
+%
+\special{! /dashgluearc{
+%
+%   Draws a gluon on an arcsegment
+%   gluon_radius, num, linesep (0 for no-double), dsize (0 for no dashes)
+%   clock, radius, start_angle, end_angle, x_center, y_center
+%   in which num is the number of windings of the gluon.
+%
+%   Method for the gluon arc itself:
+%   1:  compute length of arc.
+%   2:  generate gluon in x and y as if the arc is a straight line
+%   3:  x' = (radius+y)*cos(x*const)
+%       y' = (radius+y)*sin(x*const)
+%
+    gsw 
+    normalizearc
+    /darc ed  /radius ed /dsize ed /num ed /ampi ed
+    /num num 0.5 sub round def
+%
+    dsize 0 eq {
+    [] 0 setdash
+    } {
+    /dr radius darc mul pi mul 180 div def  % length of segment.
+        /const darc dr div def                  % conversion constant
+        /inc dr num 2 mul 2 add div def    % increment per half winding
+        /amp8 ampi 0.9 mul def
+        /amp1 radius ampi add def
+    /amp2 radius ampi sub def
+    /amp4 amp1 inc amp8 add const mul cos div def
+    /amp5 amp2 amp8 const mul cos div def
+    amp8 0 lt {/amp8 amp8 neg def} if
+    /x1 inc 2 mul def
+    /x0 x1 const mul cos amp2 mul def
+    /y0 x1 const mul sin amp2 mul def
+    x1 amp8 sub const mul dup cos amp5 mul x0 sub exch sin amp5 mul y0 sub
+    x1 amp8 sub const mul dup cos amp4 mul x0 sub exch sin amp4 mul y0 sub
+    x1 inc add const mul dup cos amp1 mul x0 sub exch sin amp1 mul y0 sub
+    1 lengthofbezier
+    /size ed
+%
+    /ndash size dsize 2 mul div truncate def
+    ndash 0 eq { /ndash 1 def } if
+    size 2 dsize ndash mul mul sub abs
+    size 2 dsize ndash 1 add mul mul sub abs gt { /ndash ndash 1 add def } if
+    /dsize size 2 ndash mul div def
+    [ dsize dsize ] dsize 2 div setdash
+    } ifelse
+%
+    /dr radius darc mul pi mul 180 div def  % length of segment.
+    /const darc dr div def                  % conversion constant
+    /inc dr num 2 mul 2 add div def    % increment per half winding
+    /amp8 ampi 0.9 mul def
+    /amp1 radius ampi add def
+    /amp2 radius ampi sub def
+    /amp3 radius ampi 2 div add def
+    /amp4 amp1 inc amp8 add const mul cos div def
+    /amp5 amp2 amp8 const mul cos div def
+    /amp6 amp1 inc 0.6 mul amp8 add const mul cos div def
+    /amp7 amp1 inc 0.9 mul const mul cos div def
+    amp8 0 lt {/amp8 amp8 neg def} if
+%
+    newpath
+        /x1 inc 2 mul def
+        x1 const mul dup cos amp2 mul exch sin amp2 mul
+    moveto
+        x1 amp8 add const mul dup cos amp5 mul exch sin amp5 mul
+        x1 amp8 add const mul dup cos amp6 mul exch sin amp6 mul
+        inc 1.4 mul const mul dup cos amp1 mul exch sin amp1 mul
+    curveto
+        inc 0.5 mul const mul dup cos amp7 mul exch sin amp7 mul
+        inc 0.1 mul const mul dup cos amp3 mul exch sin amp3 mul
+        radius 0
+    curveto
+    stroke
+    newpath
+        x1 const mul dup cos amp2 mul exch sin amp2 mul moveto
+        2 1 num { pop
+            x1 amp8 sub const mul dup cos amp5 mul exch sin amp5 mul
+            x1 amp8 sub const mul dup cos amp4 mul exch sin amp4 mul
+            x1 inc add const mul dup cos amp1 mul exch sin amp1 mul
+                curveto
+            /x1 x1 inc dup add add def
+            x1 amp8 add const mul dup cos amp4 mul exch sin amp4 mul
+            x1 amp8 add const mul dup cos amp5 mul exch sin amp5 mul
+            x1 const mul dup cos amp2 mul exch sin amp2 mul
+                curveto
+        } for
+        x1 amp8 sub const mul dup cos amp5 mul exch sin amp5 mul
+        x1 amp8 sub const mul dup cos amp6 mul exch sin amp6 mul
+        x1 inc 0.6 mul add const mul dup cos amp1 mul exch sin amp1 mul
+        curveto
+        x1 inc 1.5 mul add const mul dup cos amp7 mul exch sin amp7 mul
+        dr inc 0.1 mul sub const mul dup cos amp3 mul exch sin amp3 mul
+        dr const mul dup cos radius mul exch sin radius mul
+        curveto
+    stroke
+%
+    grestore
+} def
+}
+%
+%		#] dashgluearc : 
+%		#[ dashdoublephotonarc :
+%
+\special{! /dashdoublephotonarc{
+%
+%   Draws a photon on an arcsegment
+%   photon_radius, num, linesep (0 for no-double), dsize (0 for no dashes),
+%   clock, radius, start_angle, end_angle, x_center, y_center
+%   in which num is the number of wiggles of the photon.
+%
+    gsw 
+    normalizearc
+    /darc ed  /radius ed /dsize ed /linesep ed /num ed /ampli ed
+%
+    /num num 2 mul round def    % number of half wiggles
+    /darc1 darc num div def
+    /cp darc1 cos def
+    /sp darc1 sin def
+    darc1 2 div dup
+    /cp2 exch cos def
+    /sp2 exch sin def
+%
+    dsize 0 eq {
+        [] 0 setdash
+    } {
+%
+%       Compute the length of the outer curve and the inner curve.
+%       There must be an integer number of patterns in half the sum.
+%       The we use half of the first to determine where in the pattern
+%       we should start.
+%
+        /ampli1 ampli def
+        /beta radius darc1 mul 180 ampli1 mul div def
+        /tt sp cp beta mul sub cp sp beta mul add div def
+        /amp1 radius ampli1 add 8 mul beta cp2 mul sp2 sub mul beta 4 cp add mul
+            tt cp mul 3 mul sp 4 mul sub add radius mul sub
+            beta tt sub 3 mul div def           % this is x2
+        radius ampli1 add 8 mul cp2 mul 1 cp add radius mul sub 3 div amp1 sub
+            dup radius sub exch radius sub beta mul             % x1,y1
+        amp1 radius sub amp1 radius cp mul sub tt mul radius sp mul add     % x2,y2
+        radius cp mul radius sub radius sp mul             % x3 y3
+                1 lengthofbezier
+        /len1 ed
+        /ampli1 ampli1 neg def
+        /beta radius darc1 mul 180 ampli1 mul div def
+        /tt sp cp beta mul sub cp sp beta mul add div def
+        /amp1 radius ampli1 add 8 mul beta cp2 mul sp2 sub mul beta 4 cp add mul
+            tt cp mul 3 mul sp 4 mul sub add radius mul sub
+            beta tt sub 3 mul div def           % this is x2
+        radius ampli1 add 8 mul cp2 mul 1 cp add radius mul sub 3 div amp1 sub
+            dup radius sub exch radius sub beta mul             % x1,y1
+        amp1 radius sub amp1 radius cp mul sub tt mul radius sp mul add     % x2,y2
+        radius cp mul radius sub radius sp mul             % x3 y3
+                1 lengthofbezier
+        /len2 ed
+        /size len1 len2 add 2 div def
+        /size2 len1 2 div def
+%
+        /ndash size dsize 2 mul div truncate def
+        ndash 0 eq { /ndash 1 def } if
+        size 2 dsize ndash mul mul sub abs
+        size 2 dsize ndash 1 add mul mul sub abs gt { /ndash ndash 1 add def } if
+        /dsize size 2 ndash mul div def
+        /numd size2 dsize 2 mul div truncate def
+        /dstart dsize 2 div size2 sub 2 numd dsize mul mul add def
+        dstart 0 lt { /dstart dstart dsize 2 mul add def } if
+        [ dsize dsize ] dstart setdash
+    } ifelse
+%
+    linesep 0 eq { 
+        radius photonarc1 
+    } {
+        linesep width add setlinewidth radius photonarc1
+        [] 0 setdash
+        0 0 0 0 setcmykcolor
+        linesep width sub setlinewidth radius photonarc1
+    } ifelse
+%
+    grestore
+} def }
+%
+%		#] dashdoublephotonarc : 
+%		#[ photonarc1 :
+%
+\special{! /photonarc1{
+%   Usage: radius photonarc1
+%   Draws a single photon on an arcsegment.
+%   Called from dashdoublephotonarc with coordinates centered on center,
+%   start on x-axis.  
+%   Assume the following are set: num, ampli, arcend phi, arcstart phi/2, cp,
+%      cp2, sp, sp2.
+%   Draws a photonarc center at x1,y1, radius arcstart,arcend, amplitude
+%       number of wiggles,  width, scale
+%
+    gsave
+    /radius1 ed
+    % Local copy of amplitude, since I change it
+    /ampli1 ampli def
+%
+    newpath
+    radius1 0 moveto
+    1 1 num { 1 sub /ii ed
+        /cpi darc1 ii mul cos def
+        /spi darc1 ii mul sin def
+        /beta radius1 darc1 mul 180 ampli1 mul div def
+        /tt sp cp beta mul sub cp sp beta mul add div def
+        /x2 radius1 ampli1 add 8 mul beta cp2 mul sp2 sub mul beta 4 cp add mul
+            tt cp mul 3 mul sp 4 mul sub add radius1 mul sub
+            beta tt sub 3 mul div def
+        /x1 radius1 ampli1 add 8 mul cp2 mul 1 cp add radius1 mul sub 3 div x2 sub def
+        /y1 x1 radius1 sub beta mul def
+        /y2 x2 radius1 cp mul sub tt mul radius1 sp mul add def
+        /x3 radius1 cp mul def
+        /y3 radius1 sp mul def
+        x1 cpi mul y1 spi mul sub y1 cpi mul x1 spi mul add
+        x2 cpi mul y2 spi mul sub y2 cpi mul x2 spi mul add
+        x3 cpi mul y3 spi mul sub y3 cpi mul x3 spi mul add
+                curveto
+        /ampli1 ampli1 neg def
+    } for
+    stroke
+%
+    grestore
+} def }
+%
+%		#] photonarc1 : 
+%		#[ dashdoublezigzagarc :
+%
+\special{! /dashdoublezigzagarc{
+%
+%   Draws a zigzag on an arcsegment
+%   zigzag_radius, num, linesep (0 for no-double), dsize (0 for no dashes),
+%   clock, radius, start_angle, end_angle, x_center, y_center
+%   in which num is the number of wiggles of the zigzag.
+%
+    gsw 
+    normalizearc
+    /darc ed  /radius ed /dsize ed /linesep ed /num ed /ampli ed
+%
+    /num num 2 mul round def    % number of half wiggles
+    /darc1 darc num div def
+    /cp darc1 cos def
+    /sp darc1 sin def
+    darc1 2 div dup
+    /cp2 exch cos def
+    /sp2 exch sin def
+%
+    dsize 0 eq {
+        [] 0 setdash
+    } {
+        /size ampli dup mul radius dup mul add radius dup mul ampli dup mul sub
+            cp mul sub 2 div sqrt def
+        /size2 ampli dup mul ampli radius add radius mul 2 mul 1 cp2 sub mul
+            add sqrt def
+%
+        /ndash size dsize 2 mul div truncate def
+        ndash 0 eq { /ndash 1 def } if
+        size 2 dsize ndash mul mul sub abs
+        size 2 dsize ndash 1 add mul mul sub abs gt { /ndash ndash 1 add def } if
+        /dsize size 2 ndash mul div def
+        /numd size2 dsize 2 mul div truncate def
+        /dstart dsize 2 div size2 sub 2 numd dsize mul mul add def
+        dstart 0 lt { /dstart dstart dsize 2 mul add def } if
+        [ dsize dsize ] dstart setdash
+    } ifelse
+%
+    linesep 0 eq { 
+          radius zigzagarc1 
+    } {
+        linesep width add setlinewidth radius zigzagarc1
+        [] 0 setdash
+        0 0 0 0 setcmykcolor
+        linesep width sub setlinewidth radius zigzagarc1
+    } ifelse
+%
+    grestore
+} def }
+%
+%		#] dashdoublezigzagarc : 
+%		#[ zigzagarc1 :
+%
+\special{! /zigzagarc1{
+%   Usage: radius zigzagarc1
+%   Draws a single zigzag on an arcsegment.
+%   Called from dashdoublezigzagarc with coordinates centered on center,
+%   start on x-axis.  
+%   Assume the following are set: num, ampli, arcend phi, arcstart phi/2, cp,
+%      cp2, sp, sp2.
+%   Draws a zigzagarc center at x1,y1, radius arcstart,arcend, amplitude
+%       number of wiggles,  width, scale
+%
+    gsave
+    /radius1 ed
+%   Local copy of amplitude, since I change it
+    /ampli1 ampli def
+%
+%   Num is the number of half wiggles. We like to start and end with
+%   quarter wiggles though.
+%
+    /darc2 darc1 2 div def
+    newpath
+    radius1 0 moveto
+    darc2 dup sin exch cos
+    radius1 ampli1 add mul exch radius1 ampli1 add mul lineto
+    /ampli1 ampli1 neg def
+    /num1 num 1 sub def
+    1 1 num1 {
+        darc1 mul darc2 add dup sin exch cos
+        radius1 ampli1 add mul exch radius1 ampli1 add mul lineto
+        /ampli1 ampli1 neg def
+    } for
+    num darc1 mul dup sin exch cos
+    radius1 mul exch radius1 mul lineto
+    stroke
+%
+    grestore
+} def }
+%
+%		#] zigzagarc1 : 
+%		#[ dashgluoncirc :
+%
+\special{! /dashgluoncirc{
+%
+%   Draws a gluon on a complete circle
+%   cmyk color setting
+%   gluon_ampl, num, linesep (0 for no-double), dsize (0 for no dashes)
+%   radius, phase_angle, x_center, y_center
+%   in which num is the number of windings of the gluon.
+%
+    gsw 
+    translate
+    /phase ed /radius ed /dsize ed /num ed /ampi ed
+    /num num 0.5 sub round def
+    /darc 180 num div def
+%
+%   We rotate in such a way that 0 angle becomes more accessible.
+%
+    darc phase add rotate
+%
+    dsize 0 eq {
+        [] 0 setdash
+    } {
+        /dr radius 2 mul pi mul def  % 2*pi*r
+        /inc dr 2 num mul div def    % 2*pi*r/(2*num)
+        /const 360 dr div def        % 360/(2*pi*r)
+        /amp8 ampi 0.9 mul def
+        /amp1 radius ampi add def
+        /amp2 radius ampi sub def
+        /amp4 amp1 inc amp8 add const mul cos div def
+        /amp5 amp2 amp8 const mul cos div def
+        amp8 0 lt {/amp8 amp8 neg def} if
+        /xx inc 2 mul def
+        /x0 amp1 inc const mul cos mul def
+        /y0 amp1 inc const mul sin mul def
+        amp4 xx amp8 add const mul cos mul x0 sub
+        amp4 xx amp8 add const mul sin mul y0 sub
+        amp5 xx amp8 add const mul cos mul x0 sub
+        amp5 xx amp8 add const mul sin mul y0 sub
+        amp2 xx const mul cos mul x0 sub
+        amp2 xx const mul sin mul y0 sub
+        1 lengthofbezier
+        /size ed
+%
+        /ndash size dsize 2 mul div truncate def
+        ndash 0 eq { /ndash 1 def } if
+        size 2 dsize ndash mul mul sub abs
+        size 2 dsize ndash 1 add mul mul sub abs gt { /ndash ndash 1 add def } if
+        /dsize size 2 ndash mul div def
+        [ dsize dsize ] dsize 2 div setdash
+    } ifelse
+%
+    /dr radius 2 mul pi mul def  % 2*pi*r
+    /inc dr 2 num mul div def    % 2*pi*r/(2*num)
+    /const 360 dr div def        % 360/(2*pi*r)
+    /amp8 ampi 0.9 mul def
+    /amp1 radius ampi add def
+    /amp2 radius ampi sub def
+    /amp4 amp1 inc amp8 add const mul cos div def
+    /amp5 amp2 amp8 const mul cos div def
+    amp8 0 lt {/amp8 amp8 neg def} if
+%
+    newpath
+%
+    /xx inc 2 mul def
+    amp1 inc const mul cos mul amp1 inc const mul sin mul moveto
+%
+    1 1 num { pop
+        amp4 xx amp8 add const mul cos mul
+        amp4 xx amp8 add const mul sin mul
+        amp5 xx amp8 add const mul cos mul
+        amp5 xx amp8 add const mul sin mul
+        amp2 xx const mul cos mul
+        amp2 xx const mul sin mul
+            curveto
+        amp5 xx amp8 sub const mul cos mul
+        amp5 xx amp8 sub const mul sin mul
+        amp4 xx amp8 sub const mul cos mul
+        amp4 xx amp8 sub const mul sin mul
+        amp1 xx inc add const mul cos mul
+        amp1 xx inc add const mul sin mul
+            curveto
+        /xx xx inc 2 mul add def
+    } for
+%
+    stroke
+%
+    grestore
+} def }
+%
+%		#] dashgluoncirc : 
+%		#[ arc2 :
+%
+\special{! /arc2{
+%   Draws an arc segment:
+%   arrowspec, arrowpos, flip, linesep, dsize,
+%       clock, radius, start_angle, end_angle, x_center, y_center, width, scale
+%   If linesep == 0, then single line, else double with separation linesep. 
+%
+    gsw
+    normalizearc
+    /darc ed /radius ed
+    /dsize ed /linesep ed 
+    /angdsize dsize radius div def
+    /flip ed
+    getarrow
+    /arcmid darc arrowpos mul def
+    /linewidth width def
+    dsize 0 eq 
+    { linesep 0 eq 
+         { 0 0 radius 0 darc dasharc }
+         {  gsave
+                linesep linewidth add setlinewidth
+                0 0 radius 0 darc dasharc
+                setbackgroundcolor
+                [] 0 setdash
+                linesep linewidth sub setlinewidth
+                0 0 radius 0 darc dasharc
+            grestore
+         } ifelse
+    }
+    { linesep 0 eq 
+         { 0 0 radius 0 arcmid dasharc 
+           0 0 radius arcmid darc dasharc
+         } {
+            gsave
+                linesep linewidth add setlinewidth
+                0 0 radius 0 arcmid dasharc
+                0 0 radius arcmid darc dasharc
+                setbackgroundcolor
+                [] 0 setdash
+                linesep linewidth sub setlinewidth
+                0 0 radius 0 darc dasharc
+            grestore
+         } ifelse
+    } ifelse
+    arcmid rotate 
+    radius 0 translate 
+    flip { 0 } { 180 } ifelse
+    witharrow { drawarrow } if
+    grestore
+} def }
+%
+%		#] arc2 : 
+%		#[ dasharrowdoubleline :
+%
+\special{! /dasharrowdoubleline{
+%
+%   arrowspec, arrowpos, flip, linesep, dsize,
+%       x1, y1, x2, y2, width, scale
+%   If linesep == 0, then single line, else double with separation linesep. 
+%   Draws a dashed double straight line with arrow. 
+%   If dsize==0, then continuous line.
+%   If linesep==0, then single line.
+    gsw 
+    normalizeline
+    /dr ed
+    /dsize ed 
+    /linesep ed
+    /flip ed
+    getarrow
+%
+    % If linesep is negative, that means the arrow is flipped.
+    % But the lineend coordinates are already flipped, so there is
+    % no need to make any adjustment; i.e., replace linesep by
+    % absolute value.
+    /linesep setabs
+    /linewidth width def
+    linesep 0 eq {
+        0 0 dr 0 dashline
+    } {
+        gsave
+            linesep linewidth add setlinewidth 0 0 dr 0 dashline
+            setbackgroundcolor
+            [] 0 setdash
+            linesep linewidth sub setlinewidth 0 0 dr 0 newpath moveto lineto stroke
+        grestore
+    } ifelse
+    dr arrowpos mul 0 translate
+    flip { -90 }{ 90 } ifelse
+    witharrow { drawarrow } if
+    grestore
+} def }
+%
+%		#] dasharrowdoubleline : 
+%		#[ vertex :
+%
+\special{! /vertex{
+%
+%   Puts a fat dot at x,y  size is the radius of the dot
+%
+    gs
+    /dotsize ed
+    translate
+    newpath
+        0 0 dotsize 0 360 arc
+    fill stroke
+    grestore
+} def }
+%
+%		#] vertex : 
+%		#[ ecirc :
+%
+\special{! /ecirc{
+%
+%   Draws an anti-clockwise circle :
+%   x_center, y_center, radius
+%   Transparent interior
+%
+    gsw /radius ed
+    translate                               % x and y are still on stack
+    newpath 0 0 radius 0 360 arc stroke
+    grestore
+} def }
+%
+%		#] ecirc : 
+%		#[ ebox :
+%
+\special{! /ebox{
+%
+%   Draws a transparent box x1,y1,x2,y2
+%
+    gsw p2 p1
+    abox stroke
+    grestore
+} def }
+%
+%		#] ebox : 
+%		#[ fbox :
+%
+\special{! /fbox{
+%
+%   Draws a filled box x1,y1,x2,y2
+%
+    gsw p2 p1
+    abox fill
+    grestore
+} def }
+%
+%		#] fbox : 
+%		#[ triangle :
+%
+\special{! /triangle{
+%
+%   Draws a triangle x1,y1,x2,y2,x3,y3
+%
+    gsw p3 p2 p1
+    atriangle stroke
+    grestore
+} def }
+%
+%		#] triangle : 
+%		#[ ftriangle :
+%
+\special{! /ftriangle{
+%
+%   Draws a triangle x1,y1,x2,y2,x3,y3
+%
+    gsw p3 p2 p1
+    atriangle fill
+    grestore
+} def }
+%
+%		#] ftriangle : 
+%		#[ ellipse:
+%
+\special{! /ellipse {
+    % Draw an ellipse
+    % RedGrittyBrick 20/10/2003
+    % From http://www.redgrittybrick.org/postscript/ellipse.html. 2011/03/22
+    % draw an ellipse using four bezier curves
+    %
+    /r2 exch def % 2nd parameter
+    /r1 exch def % 1st parameter
+    /kappa 0.5522847498 def
+    %
+    newpath
+    0 r2 moveto % start point of curve
+    %
+    % top clockwise
+    kappa r1 mul r2 % 1st Bezier control point
+    r1 kappa r2 mul % 2nd Bezier control point
+    r1 0 curveto % end point of curve
+    %
+    % right clockwise
+    r1 kappa r2 mul neg
+    kappa r1 mul r2 neg
+    0 r2 neg curveto
+    %
+    % bottom clockwise
+    kappa r1 mul neg r2 neg
+    r1 neg kappa r2 mul neg
+    r1 neg 0 curveto
+    %
+    % left clockwise
+    r1 neg kappa r2 mul
+    kappa r1 mul neg r2
+    0 r2 curveto
+    %
+    } def % ellipse
+}
+%
+%		#] ellipse: 
+%		#[ goval :
+%
+\special{! /goval{
+%
+%   Draws a gray oval that overwrites whatever was there.
+%   x_center y_center height width rotation color linewidth scale
+%
+    gsw /gcolor ed /angle ed /width ed /height ed
+%
+    translate                            % x and y are still on stack
+    angle rotate
+    1 setgray      width height ellipse fill
+    gcolor setgray width height ellipse fill
+    0 setgray      width height ellipse stroke
+    grestore
+} def }
+%
+%		#] goval : 
+%		#[ fcoval :
+%
+\special{! /foval{
+%
+%   Draws an oval that overwrites whatever was there.
+%   x_center y_center height width rotation linewidth scale
+%
+    gsw /angle ed /width ed /height ed
+%
+    translate                            % x and y are still on stack
+    angle rotate
+    width height ellipse fill
+    grestore
+} def }
+%
+%		#] foval :
+%		#[ oval :
+%
+\special{! /oval{
+%
+%   Draws an oval that does not overwrite whatever was there.
+%   x_center y_center height width rotation linewidth scale
+%
+    gsw /angle ed /width ed /height ed
+%
+    translate                         % x and y are still on stack
+    angle rotate
+    width height ellipse stroke
+    grestore
+} def }
+%
+%		#] oval : 
+%		#[ polygon :
+%
+%   Incoming stack:
+%   [array of x,y pairs] width scale
+%
+\special{! /polygon{
+    gsw /points ed
+    /ss points length 2 idiv 2 mul def
+    ss 4 gt {
+        newpath
+        points 0 get points 1 get moveto
+        0 2 ss 4 sub { /ii ed
+            /x1 points ii 2 add get def
+            /y1 points ii 3 add get def
+            x1 y1 lineto
+        } for
+        closepath
+        stroke
+    } if
+    grestore
+} def }
+%
+%		#] polygon : 
+%		#[ filledpolygon :
+%
+%   Incoming stack:
+%   [array of x,y pairs] width scale
+%
+\special{! /filledpolygon{
+    gsw /points ed
+    /ss points length 2 idiv 2 mul def
+    ss 4 gt {
+        newpath
+        points 0 get points 1 get moveto
+        0 2 ss 4 sub { /ii ed
+            /x1 points ii 2 add get def
+            /y1 points ii 3 add get def
+            x1 y1 lineto
+        } for
+        closepath
+        fill
+    } if
+    grestore
+} def }
+%
+%		#] filledpolygon : 
+%		#[ makecurve :
+%
+\special{! /docurve{
+    x1 2 mul x2 add 3 div
+        y1 y0 sub x1 x0 sub div x2 x0 sub mul
+        y2 y0 sub x2 x0 sub div x1 x0 sub mul add
+        y1 add y0 2 mul add 3 div
+    x1 x2 2 mul add 3 div
+        y2 y3 sub x2 x3 sub div x1 x3 sub mul
+        y1 y3 sub x1 x3 sub div x2 x3 sub mul add
+        y2 add y3 2 mul add 3 div
+    x2 y2 curveto
+} def }
+%
+\special{! /makecurve{
+%
+%   Incoming stack:
+%   [array of x,y pairs] width scale
+%
+    gsw /points ed
+    /ss points length 2 idiv 2 mul def
+    newpath
+    ss 4 gt {
+        /x1 points 0 get def
+        /y1 points 1 get def
+        /x2 points 2 get def
+        /y2 points 3 get def
+        /x3 points 4 get def
+        /y3 points 5 get def
+        /x0 x1 2 mul x2 sub def
+        /y0 y3 y2 sub x3 x2 sub div y2 y1 sub x2 x1 sub div sub 2 mul
+            x2 x1 sub dup mul x3 x1 sub div mul
+            y1 2 mul add y2 sub def
+        x1 y1 moveto
+        docurve
+        0 2 ss 8 sub { /ii ed
+            /x0 points ii       get def
+            /y0 points ii 1 add get def
+            /x1 points ii 2 add get def
+            /y1 points ii 3 add get def
+            /x2 points ii 4 add get def
+            /y2 points ii 5 add get def
+            /x3 points ii 6 add get def
+            /y3 points ii 7 add get def
+            docurve
+        } for
+        /x0 points ss 6 sub get def
+        /y0 points ss 5 sub get def
+        /x1 points ss 4 sub get def
+        /y1 points ss 3 sub get def
+        /x2 points ss 2 sub get def
+        /y2 points ss 1 sub get def
+        /x3 x2 2 mul x1 sub def
+        /y3 y2 y1 sub x2 x1 sub div y1 y0 sub x1 x0 sub div sub 2 mul
+            x2 x1 sub dup mul x2 x0 sub div mul
+            y2 2 mul add y1 sub def
+        docurve
+    } {
+        ss 4 eq {
+            points 0 get points 1 get moveto
+            points 2 get points 3 get lineto
+        } if
+    } ifelse
+    stroke
+    grestore
+} def }
+%
+%		#] makecurve : 
+%		#[ makedashcurve :
+%
+\special{! /makedashcurve{
+%
+%   Incoming stack:
+%   [array of x,y pairs] dashsize width scale
+%
+    gsw /dsize ed /points ed
+    /ss points length 2 idiv 2 mul def
+    newpath
+    ss 4 gt {
+        /x1 points 0 get def
+        /y1 points 1 get def
+        /x2 points 2 get def
+        /y2 points 3 get def
+        /x3 points 4 get def
+        /y3 points 5 get def
+        /x0 x1 2 mul x2 sub def
+        /y0 y3 y2 sub x3 x2 sub div y2 y1 sub x2 x1 sub div sub 2 mul
+            x2 x1 sub dup mul x3 x1 sub div mul
+            y1 2 mul add y2 sub def
+        x1 y1 moveto
+        docurve
+        0 2 ss 8 sub { /ii ed
+            /x0 points ii       get def
+            /y0 points ii 1 add get def
+            /x1 points ii 2 add get def
+            /y1 points ii 3 add get def
+            /x2 points ii 4 add get def
+            /y2 points ii 5 add get def
+            /x3 points ii 6 add get def
+            /y3 points ii 7 add get def
+            docurve
+        } for
+        /x0 points ss 6 sub get def
+        /y0 points ss 5 sub get def
+        /x1 points ss 4 sub get def
+        /y1 points ss 3 sub get def
+        /x2 points ss 2 sub get def
+        /y2 points ss 1 sub get def
+        /x3 x2 2 mul x1 sub def
+        /y3 y2 y1 sub x2 x1 sub div y1 y0 sub x1 x0 sub div sub 2 mul
+            x2 x1 sub dup mul x2 x0 sub div mul
+            y2 2 mul add y1 sub def
+        docurve
+    } {
+        ss 4 eq {
+            points 0 get points 1 get moveto
+            points 2 get points 3 get lineto
+        } if
+    } ifelse
+    centerdash
+    stroke
+    grestore
+} def }
+%
+\special{! /pathlength{
+    flattenpath
+    /dist 0 def
+    { /yfirst ed /xfirst ed /ymoveto yfirst def /xmoveto xfirst def }
+    { /ynext ed /xnext ed /dist dist ynext yfirst sub dup mul
+        xnext xfirst sub dup mul add sqrt add def
+        /yfirst ynext def /xfirst xnext def }
+    {}
+    {/ynext ymoveto def /xnext xmoveto def
+        /dist ynext yfirst sub dup mul
+              xnext xfirst sub dup mul add sqrt add def
+        /yfirst ynext def /xfirst xnext def }
+    pathforall
+    dist
+} def }
+%
+\special{! /centerdash{
+    /pathlen pathlength def
+    /jj pathlen dsize div 2.0 div cvi def
+    /ddsize pathlen jj 2.0 mul div def
+    [ddsize] ddsize 2 div setdash
+} def }
+%
+%		#] makedashcurve : 
+%		#[ logaxis :
+%
+\special{! /logaxis{
+%
+%   Draws an axis from x1,y1 to x2,y2 with nl log divisions
+%   size of the hashes hs, offset F
+%   and width W. The stack looks like
+%   x1,y1,x2,y2,nl,hs,F,W,scale
+%   After the rotation the hash marks are on top if nl is positive and
+%   on the bottom if nl is negative
+%
+    gsw /offset ed /hashsize ed /nlogs ed
+    normalizeline /rr ed
+    offset 0 ne { /offset offset ln 10 ln div def } if
+    /offset offset dup cvi sub def
+    newpath
+        0 0 moveto
+        rr 0 lineto
+    /lsize rr nlogs div def
+    0 1 nlogs { /x2 ed
+        x2 offset ge {
+            /y2 x2 offset sub lsize mul def
+            y2 rr le {
+                y2 0 moveto
+                y2 hashsize 1.2 mul lineto
+            } if
+        } if
+    } for
+    stroke
+    width 0.6 mul setlinewidth
+    newpath
+    0 1 nlogs { /x2 ed
+        2 1 9 {
+            ln 10 ln div x2 add
+            /xx2 ed
+            xx2 offset ge {
+                /y2 xx2 offset sub lsize mul def
+                y2 rr le {
+                    y2 0 moveto
+                    y2 hashsize 0.8 mul lineto
+                } if
+            } if
+        } for
+    } for
+    stroke
+    grestore
+} def }
+%
+%		#] logaxis : 
+%		#[ linaxis :
+%
+\special{! /linaxis{
+%
+%   x1,y1,x2,y2,num_decs,per_dec,hashsize,offset,width,scale
+%
+    gsw /offset ed /hashsize ed /perdec ed /numdec ed 
+    normalizeline
+    /rr ed
+    /perdec perdec round def
+    /offset offset
+    % Do real equivalent of offset perdec mod
+            dup cvi perdec idiv
+            sub
+            dup 0 lt {perdec add} if
+            dup perdec ge {perdec sub} if
+    def
+    newpath
+        0 0 moveto
+        rr 0 lineto
+    /x1 rr numdec perdec mul div def
+    /y1 rr numdec div def
+    offset 0 eq {0} {1} ifelse 1 numdec 
+       { y1 mul offset x1 mul sub
+         dup 0 moveto
+         hashsize 1.2 mul lineto
+    } for
+    stroke
+    width 0.6 mul setlinewidth
+    newpath
+    /offset offset dup cvi sub def
+    offset 0 eq {0} {1} ifelse  1 numdec perdec mul  {
+        offset sub x1 mul 
+        dup 0 ge {
+            dup rr le {
+                dup 0 moveto
+                hashsize 0.8 mul lineto
+            } if
+        } if 
+    } for
+    stroke
+    grestore
+} def }
+%
+%		#] linaxis : 
+%		#[ dashbezier :
+%
+\special{! /dashbezier{
+%
+%   Draws a dashed Bezier with control points x1,y1,x2,y2,x3,y3,x4,y4
+%
+    gsw /dsize ed p4 p3 p2 p1
+    dsize 0 ne {
+        /size x2 x1 sub y2 y1 sub x3 x1 sub y3 y1 sub x4 x1 sub y4 y1 sub
+            1 lengthofbezier def
+        /numdashes size dsize 2 mul div def
+        numdashes 0 eq { /numdashes 1 def } if
+        size dsize 2 mul numdashes mul sub abs
+        size dsize 2 mul numdashes 1 add mul sub abs
+            gt { /numdashes 1 add def } if
+        /dsize size numdashes 2 mul div def
+        [dsize dsize] dsize 2 div setdash
+    } if
+    abezier stroke
+    grestore
+} def }
+%
+%		#] dashbezier : 
+%		#[ dashdoublebezier :
+%
+\special{! /dashdoublebezier{
+%
+%   Draws a dashed Bezier with control points x1,y1,x2,y2,x3,y3,x4,y4
+%
+    gsw /dsize ed /linesep ed
+    /flip ed
+    getarrow
+    p4 p3 p2 p1
+    /linewidth width def
+    /bsize x2 x1 sub y2 y1 sub x3 x1 sub y3 y1 sub x4 x1 sub y4 y1 sub
+        1 lengthofbezier def
+    dsize 0 ne {
+        /numdashes bsize dsize 2 mul div def
+        numdashes 0 eq { /numdashes 1 def } if
+        bsize dsize 2 mul numdashes mul sub abs
+        bsize dsize 2 mul numdashes 1 add mul sub abs
+            gt { /numdashes 1 add def } if
+        /dsize bsize numdashes 2 mul div def
+        [dsize dsize] dsize 2 div setdash
+    } if
+    linesep 0 ne {
+        linesep linewidth add setlinewidth abezier stroke
+        gsave
+            0 0 0 0 setcmykcolor
+            linesep linewidth sub setlinewidth abezier stroke
+        grestore
+    } {
+        abezier stroke
+    } ifelse
+%
+    witharrow {
+        /tb arrowpos def
+        /tbmax 1 def /tbmin 0 def
+        {
+            /sizeb x2 x1 sub y2 y1 sub x3 x1 sub y3 y1 sub x4 x1 sub y4 y1 sub
+                tb lengthofbezier def
+            sizeb bsize div arrowpos sub abs 0.0001 le { exit } if
+            sizeb bsize div arrowpos gt
+                { /tbmax tb def /tb tb tbmin add 2 div def }
+                { /tbmin tb def /tb tb tbmax add 2 div def } ifelse
+        } loop
+        /ub 1 tb sub def
+        x1 ub ub ub mul mul mul tb x2 3 mul ub mul ub mul tb x3 3 mul ub mul
+            x4 tb mul add mul add mul add
+        y1 ub ub ub mul mul mul tb y2 3 mul ub mul ub mul tb y3 3 mul ub mul
+            y4 tb mul add mul add mul add translate
+        y4 tb dup mul mul y3 tb mul 2 3 tb mul sub mul add y2 ub mul 1 3 tb mul
+            sub mul add y1 ub dup mul mul sub 3 mul
+        x4 tb dup mul mul x3 tb mul 2 3 tb mul sub mul add x2 ub mul 1 3 tb mul
+            sub mul add x1 ub dup mul mul sub 3 mul
+        atan rotate
+        flip { -90 }{ 90 } ifelse
+        drawarrow
+    } if
+%
+    grestore
+} def }
+%
+%		#] dashdoublebezier : 
+%		#[ lengthofbezier :
+%
+%       Calculates the length of a Bezier curve assuming that we start
+%       in the point 0,0. We use a Gaussian quadrature with 16 points.
+%       If, at any time, more precision is needed we have the 32 points
+%       numbers in axohelp.c. (and there is more commentary in that file)
+%
+\special{!
+    /g16x1 { 0.095012509837637440185 } def
+    /g16x2 { 0.281603550779258913230 } def
+    /g16x3 { 0.458016777657227386342 } def
+    /g16x4 { 0.617876244402643748447 } def
+    /g16x5 { 0.755404408355003033895 } def
+    /g16x6 { 0.865631202387831743880 } def
+    /g16x7 { 0.944575023073232576078 } def
+    /g16x8 { 0.989400934991649932596 } def
+    /g16w1 { 0.189450610455068496285 } def
+    /g16w2 { 0.182603415044923588867 } def
+    /g16w3 { 0.169156519395002538189 } def
+    /g16w4 { 0.149595988816576732081 } def
+    /g16w5 { 0.124628971255533872052 } def
+    /g16w6 { 0.095158511682492784810 } def
+    /g16w7 { 0.062253523938647892863 } def
+    /g16w8 { 0.027152459411754094852 } def
+    /onepoint {
+         /gpt ed
+         /tpt 1 gpt add 2 div tmax mul def
+         xc tpt mul xb add tpt mul xa add dup mul
+         yc tpt mul yb add tpt mul ya add dup mul
+         add sqrt
+         /tpt 1 gpt sub 2 div tmax mul def
+         xc tpt mul xb add tpt mul xa add dup mul
+         yc tpt mul yb add tpt mul ya add dup mul
+         add sqrt add 2 div
+    } def
+    /lengthofbezier {
+         /tmax ed
+         pp3 pp2 pp1
+         /xa xx1 3 mul def /xb xx2 xx1 2 mul sub 6 mul def
+         /xc xx3 xx2 xx1 sub 3 mul sub 3 mul def
+         /ya yy1 3 mul def /yb yy2 yy1 2 mul sub 6 mul def
+         /yc yy3 yy2 yy1 sub 3 mul sub 3 mul def
+%
+         g16x1 onepoint g16w1 mul
+         g16x2 onepoint g16w2 mul add
+         g16x3 onepoint g16w3 mul add
+         g16x4 onepoint g16w4 mul add
+         g16x5 onepoint g16w5 mul add
+         g16x6 onepoint g16w6 mul add
+         g16x7 onepoint g16w7 mul add
+         g16x8 onepoint g16w8 mul add
+         tmax mul
+    } def
+}
+%		#] lengthofbezier : 
+%		#[ axogrid :
+%
+\special{! /axogrid{
+    gsw translate
+    /ny ed /nx ed /dy ed /dx ed
+    /maxx nx dx mul def
+    /maxy ny dy mul def
+    0 1 nx {
+        newpath dx mul dup 0 moveto maxy lineto stroke
+    } for
+    0 1 ny {
+        newpath maxx exch dy mul dup 0 exch moveto lineto stroke
+    } for
+} def }
+%
+%		#] axogrid : 
+} 
+%		#] PostScript preamble : 
+%		#[ axoparray : Puts an array of 2-dim points
+%
+%       Puts a sequence of points in the notation (x1,y1)(x2,y2)....
+%       on the Postscript stack. This is for Curve and DashCurve.
+%
+\let\eind=]
+%
+\def\axoparray(#1,#2)#3{#1 \axoxo\space add #2 \axoyo\space add \ifx #3\eind\else
+\expandafter\axoparray\fi#3}
+%
+%		#] axoparray : 
+%
+\fi
+% 	#] Postscript specific : 
+% 	#[ PDF specific :
+%
+%   Here are the routines that are used purely for the PDF output.
+%   The main concern here is the communication with the axohelp program.
+%
+\ifcase\axo@pdfoutput\else
+%
+%		#[ getaxohelp :
+%
+%       This is the command that makes the PDF work. Use as in
+%           getaxohelp{NameOfFunction}{parameters to be passed}
+%       The format is very precise. If axohelp is not happy there will
+%       be no output. The most common error is that the parameters are
+%       not separated by black spaces. Some \space might have to be inserted.
+%       The reason we do not separate the parameters by comma's is that
+%       both Postscript and PDF want their objects separated by blanks.
+%       Also a separation by blanks makes the parameters into separate
+%       arguments in the call to axohelp. Our colors need blanks....
+%
+%
+\def\getoneline#1#2{%
+    % Set the command of name #1 to the next line of the file
+    % for which the input stream number is #2.
+    \def\tmpfh{#2}%
+    \ifeof\tmpfh
+    \else
+       \read\tmpfh to \tmpline
+    \fi
+    \ifeof\tmpfh
+       \@namedef{#1}{}%
+    \else
+       \expandafter \let \csname #1\endcsname = \tmpline
+    \fi
+}
+%
+\def\getaxohelp#1#2{%
+    \def\axohelp{}%
+    \stepcounter{axo@objectIndex}%
+    \def\axo@currentInput{#1 #2;}%
+    \immediate\write\axo@spec{[\arabic{axo@objectIndex}]\space \axo@currentInput}%
+    \ifaxo@axohelpRerun%
+    \else%
+        \def\axo@currentInput{{#1 #2;}}%
+        \getoneline{axo@partOne}\axo@axohelpFile%
+        \catcode`\ =13%
+        \getoneline{axo@partTwo}\axo@axohelpFile%
+        \catcode`\ =10%
+        \getoneline{axo@partThree}\axo@axohelpFile%
+        \ifeof\axo@axohelpFile
+            \rlap{New object; rerun axohelp}%
+            \global\axo@axohelpReruntrue
+        \else
+            \ifthenelse{\equal{\axo@partTwo}{\axo@currentInput}}%
+             {%  Current definition is same as the one processed
+              %  by axohelp, so it is safe to use
+                 \expandafter\def\expandafter\axohelp\axo@partThree%
+             }%
+             {%
+                 \rlap{Changed object; rerun axohelp}%
+                 \global\axo@axohelpReruntrue
+             }%
+        \fi
+    \fi%
+}
+%
+%		#] getaxohelp : 
+%		#[ Use the axohelp output :
+%
+% Implement conversion of length unit from pt to bp by scaling
+\def\contentspdf{q \axoscale\space 0 0 \axoscale\space 0 0 cm 
+                   0.99626401 0 0 0.99626401 0 0 cm
+                   1 0 0 1 \axoxo\space \axoyo\space cm
+                   \axohelp\space
+                 Q}
+\def\contentspdfNoOffset{q \axoscale\space 0 0 \axoscale\space 0 0 cm
+                           0.99626401 0 0 0.99626401 0 0 cm
+                           \axohelp\space
+                         Q}
+%
+%		#] Use the axohelp output : 
+%
+\fi
+% 	#] PDF specific : 
+
+% Process options now, after all potentially necessary commands have
+% been defined.  Use starred form, so that the options are processed
+% in the order the user writes them.  Also set defaults here.
+\PSTextScalesLikeGraphicstrue
+\canvasScaleObjectScale
+\ProcessOptions*

@@ -1,8 +1,8 @@
 ## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
 ## $Id$
 dnl
-dnl Copyright 2016--2018 Karl Berry <tex-live@tug.org>
+dnl Copyright 2018 Karl Berry <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## configure options and TL libraries required for autosp.
-KPSE_ENABLE_PROG([autosp])
+## configure options and TL libraries for axodraw2.
+KPSE_ENABLE_PROG([axodraw2])

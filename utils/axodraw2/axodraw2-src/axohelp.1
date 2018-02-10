@@ -1,0 +1,48 @@
+.TH "axohelp" "1.1" "22 Jan 2018" ""
+.SH NAME
+axohelp - helper program for use of LaTeX package axodraw2 with
+pdflatex. 
+.SH SYNOPSIS
+.B axohelp [options] [filename]
+.SH DESCRIPTION
+Axohelp is a program used with the axodraw2, which is a LaTeX package
+for drawing Feynman graphs (and some other simple graphics) in LaTeX
+documents.
+
+When the axodraw2 package is used with pdflatex (or lualatex or
+xelatex) it creates a file with extension .ax1.  This contains
+specifications of the graphics elements.  Axohelp converts this to a
+file with extension ax2 that contains the necessary pdf code.
+The .ax2 file is read by pdflatex (etc) on its next run, and the
+contents of the .ax2 file are used in the final .pdf output file to
+draw the desired graphics.
+
+The files processed are specified as follows: When the filename on the
+command line is of the form file.ax1, then the input file is file.ax1
+and the output file is file.ax2. If the filename on the command line
+does not have extension .ax1, then this extension is appended.
+
+
+.SH OPTIONS
+Options can be introduced by single or double hyphen characters. The
+possible options are:
+
+.TP
+.B -h, --help
+Gives usage information
+
+.TP
+.B -v, --version
+Gives version information
+
+.TP
+.B -V
+NOT CURRENTLY IMPLEMENTED: Give information on each function used.
+
+.SH AUTHOR
+Current version, by John Collins (username jcc8 at node psu.edu) and
+Jos Vermaseren (username t68 at nikhef dot nl).
+
+The released version can be obtained from CTAN:
+<http://www.ctan.org/pkg/axodraw2/>, and an author's website
+<https://www.nikhef.nl/~form/maindir/others/axodraw2/axodraw2.html>.

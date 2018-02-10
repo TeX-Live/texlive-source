@@ -120,6 +120,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../m4/kpse-zziplib-flags.m4 \
 	$(top_srcdir)/../version.ac \
 	$(top_srcdir)/../utils/autosp/ac/withenable.ac \
+	$(top_srcdir)/../utils/axodraw2/ac/withenable.ac \
 	$(top_srcdir)/../utils/devnag/ac/withenable.ac \
 	$(top_srcdir)/../utils/lacheck/ac/withenable.ac \
 	$(top_srcdir)/../utils/m-tx/ac/withenable.ac \
