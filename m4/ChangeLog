@@ -1,3 +1,7 @@
+2018-02-09  Karl Berry  <karl@freefriends.org>
+
+	* kpse-pkgs.m4 (kpse_utils_pkgs): add axodraw2.
+
 2018-01-08  Karl Berry  <karl@freefriends.org>
 
 	* ax_cxx_compile_stdcxx.m4: move from dvisvgm; original from

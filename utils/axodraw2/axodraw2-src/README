@@ -1,0 +1,41 @@
+Axodraw2 is a package that defines macros for drawing Feynman graphs
+in LaTeX documents.
+
+It is an important update of the axodraw package, but since it is not
+completely backwards compatible, we have given the style file a
+changed name.
+
+Many new features have been added, with new types of line, and much
+more flexibility in their properties: For details see the
+documentation.
+
+In addition, it is now possible to use axodraw2 with pdflatex, as well
+as with the latex-dvips method. However with pdflatex (and also lualatex
+and xelatex), an external program, axohelp, is used to perform the
+geometrical calculations needed for the pdf code inserted in the
+output file.  The processing involves a run of pdflatex, a run of
+axohelp, and then another run of pdflatex.
+
+The files in the distribution are:
+
+     README           This file
+     axodraw2.sty     The main style file
+     axohelp.c        Source code of axohelp
+     axohelp.exe      MS-Windows executable for axohelp
+     axodraw2-man.pdf Documentation
+     axodraw2-man.tex Source for documentation
+     example.tex      Example latex file for use of axodraw2
+
+
+Authors, copyright, license
+---------------------------
+
+(C) 1994-2018 John Collins (jcc8 at psu dot edu) and Jos Vermaseren
+(t68 at nikhef dot nl) 
+
+Axodraw2 is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.  See the files axodraw2.sty or axohelp.c
+for more details.
+

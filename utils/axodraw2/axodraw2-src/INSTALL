@@ -1,0 +1,57 @@
+MANUAL INSTALLATION of axohelp v. 1.1 and axodraw2
+==================================================
+
+
+
+A. Fully Manual Installation
+----------------------------
+
+   Note: if you do not wish to use axodraw2 with pdflatex, xelatex, or
+         lualatex, but will only use it with latex, then only the
+         first step is needed.
+
+  1.  Copy axodraw2.sty to a suitable directory for LaTeX style files.
+
+  2.  Compile the axohelp program by a command line like
+
+          gcc -o axohelp -Wall -O3 axohelp.c
+
+      (The exact details of the command line depend on your operating
+      system and which compiler you have installed for the C
+      language.)
+
+  3.  Move axohelp to a suitable directory for executables.
+
+  4.  (Optional) Copy axodraw2-man.pdf to a suitable directory for
+                 LaTex package documentation.
+
+  5.  (Optional) Copy axohelp.1 to a suitable directory for man pages.
+  
+
+B. Using autoconf etc:
+---------------------
+
+   You can also make axohelp using the GNU utilities autoconf,
+   automake and autoreconf (if these are installed).  Doing this is
+   enormous overkill for a program like axohelp with a single source
+   file and with no need to make adjustments dependent on the
+   operating system etc. Even so, we provide the files necessary for
+   the use of autoconf and automake, since these are needed when the
+   axodraw2 package is incorporated into TeXLive (which has an
+   enormous automated build process).  So here are the instructions
+   for building with autoconf and automake.  For these, it is assumed
+   that the GNU utilities autoconf, automake and autoreconf are
+   installed:
+
+   As in Fully Manual Installation, but replace step 2 by
+
+  2'. Run
+
+      autoreconf --install
+     ./configure
+     make
+     make check
+
+     The last line runs a test to ensure axohelp is running
+     correctly.
+

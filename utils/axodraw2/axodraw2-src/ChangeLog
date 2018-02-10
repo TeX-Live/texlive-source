@@ -1,0 +1,17 @@
+2016/06/02
+	Release on CTAN:
+	axodraw2 [v. 2.1.0b 2016/06/02]
+	axohelp [v. 1.0 2016/05/23]
+
+2018/01/20
+	axohelp has standard options (-h, --help, -v, --version)
+	Change verbose option to -V instead of -v
+	Include files for autoconf and automake
+2018/01/31
+	Updated manual to include information on status of axodraw2 and
+ 	axohelp in MiKTeX.
+	Compiled axohelp on Windows 10 and updated axohelp.exe.
+	Checked package works with MiKTeX on Windows 10 by compiling
+	manual.
+2018/02/04
+	Minor corrections in manual.
