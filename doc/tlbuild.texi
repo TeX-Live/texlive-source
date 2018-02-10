@@ -1,21 +1,21 @@
 \input texinfo
 @setfilename tlbuild.info
 
-@set version 2017
-@set month-year April 2017
+@set version 2018
+@set month-year February 2018
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
 
 @macro TL
-@TeX{} Live
+@TeX{}@tie{}Live
 @end macro
 
 @copying
 This file documents the @TL{} build system and more.
 
 @noindent
-Copyright @copyright{} 2016--2017 Karl Berry.@*
+Copyright @copyright{} 2016--2018 Karl Berry.@*
 Copyright @copyright{} 2013--2015 Karl Berry & Peter Breitenlohner.
 
 Permission is granted to make and distribute verbatim copies of this
@@ -1372,8 +1372,8 @@ installed independently, but are included on the TL DVD together with
 their support files.
 
 
-@node Extending @TeX{} Live
-@section Extending @TeX{} Live
+@node Extending @TL{}
+@section Extending @TL{}
 
 @cindex extending @TL{}
 @cindex adding to @TL{}
@@ -1416,10 +1416,9 @@ its name @file{@var{prog}} to the M4 list @code{kpse_utils_pkgs} in
 
 @pindex withenable.ac@r{, for new modules}
 @findex KPSE_ENABLE_PROG
-In either case, apart from the program sources and build system
-(@file{configure.ac} and @file{Makefile.am}), the subdirectory
-@file{texk/@var{prog}} or @file{utils/@var{prog}} must provide a
-fragment @file{ac/withenable.ac} that contains the M4 macro
+In either case, the subdirectory @file{texk/@var{prog}} or
+@file{utils/@var{prog}} must provide a fragment
+@file{ac/withenable.ac} that contains the M4 macro
 @code{KPSE_ENABLE_PROG} defined in @file{m4/kpse-setup.m4} with
 @code{@var{prog}} as the mandatory first argument and three optional
 arguments:
@@ -1432,14 +1431,65 @@ built without the configure option @code{--enable-@var{prog}},
 @code{native} if cross compilation is not possible, @code{x} if the
 program requires X11 libraries);
 
-@item and a comment added to the help text for the @code{configure}
+@item a comment added to the help text for the @code{configure}
 option @code{--enable-@var{prog}} or @code{--disable-@var{prog}}.
 @end enumerate
 
 If the module requires specific configure options to be seen at the
-top-level, they should be defined in an additional fragment
+top level, they should be defined in an additional fragment
 @file{ac/@var{prog}.ac} included from @file{ac/withenable.ac} and
 @file{configure.ac}.
+
+Usually, the new program is maintained somewhere outside of @TL{}.  In
+that case, we put the upstream sources into a subdirectory
+@file{@var{prog}-src} (e.g., @file{utils/newprog/newprog-src}).  We do
+not run @code{configure} in this original @code{...-src} directory,
+only in our own directory, but we do compile using the source files in
+@code{...-src}.
+
+So, these are the files that we must generally create:
+
+@table @file
+@item ac/withenable.ac
+The @code{KPSE_ENABLE_PROG} call just explained.
+
+@item configure.ac
+@itemx Makefile.am
+By merging the contents of the original @file{configure.ac} (if
+provided) and a comparable program already in TL.  There is no magic
+recipe, it's necessary to think about needs to be done in the original
+vs.@: in @TL{}.
+
+@item TLpatches/TL-Changes
+Actions taken after getting the original source tree; typically
+removal of derived or unused common files.
+
+@item TLpatches/patch-...
+If any changes are needed to the original sources, record the patches
+here so they can be applied next time. And send them upstream so that
+perhaps they won't have to be.
+
+@item ChangeLog
+Record all TL-specific changes, now and in the future.
+
+@end table
+
+Then, run GNU @code{autoreconf} in the new directory (@pxref{Build
+system tools}).  After that works, @code{svn add} the necessary files,
+notably @file{Makefile.in aclocal.m4 configure}, and @code{svn:ignore}
+the Automake cache @file{autom4te.cache}.  (This is so people checking
+out the TL source tree do not have to run any autotools, but can
+simply run @code{configure}.)
+
+Then, run the TL tool @code{reautoconf} in the top-level TL
+@code{source/} directory, to incorporate the new program into the
+build tree.
+
+Then, run (and rerun) a build until the program compiles and tests
+successfully, probably involving rerunning autoreconf in the source
+directory, @code{make} in the build directory, etc.
+
+After final success, don't forget to commit.
 
 
 @node Adding a new generic library module

@@ -1,3 +1,9 @@
+2018-02-10  Karl Berry  <karl@freefriends.org>
+
+	* tlbuild.texi (Adding a new program module): more specifics
+	on our usual layout and new files.
+	(version): (February) 2018.
+
 2017-03-22  Karl Berry  <karl@tug.org>
 
 	* tlbuild.texi: we now default to gcc for ICU too.
