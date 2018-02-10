@@ -1,6 +1,6 @@
 /* Uniform Interface to GMP.
 
-Copyright 2004-2017 Free Software Foundation, Inc.
+Copyright 2004-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -80,10 +80,7 @@ extern "C" {
 # error "Can't compute log2(GMP_NUMB_BITS)"
 #endif
 
-/* Remap names of internal mpn functions (for longlong.h).
-   Note: this should be made both with and without gmp build. */
-#undef  __clz_tab
-#define __clz_tab               mpfr_clz_tab
+
 
 /******************************************************
  ************* Define GMP Internal Interface  *********
@@ -233,6 +230,10 @@ typedef unsigned long int UDItype;
 typedef mp_limb_t UWtype;
 typedef unsigned int UHWtype;
 #define W_TYPE_SIZE GMP_NUMB_BITS
+
+/* Remap names of internal mpn functions (for longlong.h).  */
+#undef  __clz_tab
+#define __clz_tab               mpfr_clz_tab
 
 /* Use (4.0 * ...) instead of (2.0 * ...) to work around buggy compilers
    that don't convert ulong->double correctly (eg. SunOS 4 native cc).  */

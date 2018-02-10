@@ -1,6 +1,6 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2017 Free Software Foundation, Inc.
+Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2018 Free Software Foundation, Inc.
 
 This file is part of the GNU MPFR Library and has been copied from
 GNU MP 6.1.0 (the FIXME's come from GNU MP), except the parts marked

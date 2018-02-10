@@ -1,3 +1,8 @@
+2018-02-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import mpfr-4.0.1.
+	* version.ac: Adjust.
+
 2017-12-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import mpfr-4.0.0.

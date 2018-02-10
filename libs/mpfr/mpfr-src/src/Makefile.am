@@ -1,4 +1,4 @@
-# Copyright 2000-2017 Free Software Foundation, Inc.
+# Copyright 2000-2018 Free Software Foundation, Inc.
 # This Makefile.am is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -81,7 +81,7 @@ libmpfr_la_LIBADD = @LIBOBJS@
 #        3.0.x    4:x:0
 #        3.1.x    5:x:1
 #        4.0.x    6:x:0
-libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 6:0:0
+libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 6:1:0
 
 # Important note: If for some reason, srcdir is read-only at build time
 # (and you use objdir != srcdir), then you need to rebuild get_patches.c
@@ -98,8 +98,14 @@ $(srcdir)/get_patches.c: $(top_srcdir)/PATCHES $(top_srcdir)/tools/get_patches.s
 # what has been changed by "patch".
 #CLEANFILES = get_patches.c
 
+# For check-gmp-symbols
 GMPC = $(top_builddir)/src/gmp.c
 GMPI = $(top_builddir)/src/gmp.i
+
+# For check-gmp-symbols and check-exported-symbols (if the library does
+# not have this name, e.g. on some platforms or when the shared library
+# is disabled, these rules do nothing).
+LIBMPFRSO = $(top_builddir)/src/.libs/libmpfr.so
 
 # Check that MPFR does not use GMP internal symbols. Of course, do not run
 # this rule if you use --with-gmp-build or --enable-gmp-internals. This
@@ -108,11 +114,10 @@ GMPI = $(top_builddir)/src/gmp.i
 # because the latter is not supported by all compilers (at least under
 # MS Windows).
 check-gmp-symbols: $(LTLIBRARIES)
-	printf "#include <%s.h>\n" stdarg stdio gmp > $(GMPC)
-	$(COMPILE) -E $(GMPC) > $(GMPI)
-	libmpfrso=$(top_builddir)/src/.libs/libmpfr.so; \
-	if [ -f "$$libmpfrso" ]; then \
-	  internals=`$(NM) -u "$$libmpfrso" | \
+	if [ -f "$(LIBMPFRSO)" ]; then \
+	  printf "#include <%s.h>\n" stdarg stdio gmp > $(GMPC) && \
+	  $(COMPILE) -E $(GMPC) > $(GMPI) || exit 1; \
+	  internals=`$(NM) -u "$(LIBMPFRSO)" | \
 	    $(SED) -n 's/^ *U \(__gmp.*\)/\1/p' | \
 	    while read s; \
 	    do \
@@ -122,9 +127,25 @@ check-gmp-symbols: $(LTLIBRARIES)
 	    echo "Internal GMP symbols:" $$internals; \
 	    exit 1; \
 	  fi; \
+	  rm $(GMPC) $(GMPI); \
 	fi
-	rm $(GMPC) $(GMPI)
+
+# Check that MPFR does not define symbols with a GMP reserved prefix.
+# For instance, with r11968, and
+#   ./configure --with-gmp-build=... CC=tcc
+# the symbol __gmpn_clz_tab is defined, which is wrong.
+# Note: the "grep -v '@plt$$'" below is for tcc.
+check-exported-symbols: $(LTLIBRARIES)
+	if [ -f "$(LIBMPFRSO)" ]; then \
+	  gsymbols=`$(NM) -gP "$(LIBMPFRSO)" | perl -ne \
+	    '/^(__gmp[a-z]?_[_0-9A-Za-z]*) +[A-TV-Z]/ and print " $$1"' | \
+	    grep -v '@plt$$'`; \
+	  if [ -n "$$gsymbols" ]; then \
+	    echo "MPFR defines symbols with a GMP reserved prefix:$$gsymbols"; \
+	    exit 1; \
+	  fi; \
+	fi
 
 CLEANFILES = $(GMPC) $(GMPI)
 
-.PHONY: check-gmp-symbols
+.PHONY: check-gmp-symbols check-exported-symbols

@@ -1,6 +1,6 @@
 /* mpfr_check -- Check if a floating-point number has not been corrupted.
 
-Copyright 2003-2004, 2006-2017 Free Software Foundation, Inc.
+Copyright 2003-2004, 2006-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #include "mpfr-impl.h"
 
 /*
- * Check if x is a valid mpfr_t initializes by mpfr_init
+ * Check if x is a valid mpfr_t initialized by mpfr_init
  * Returns 0 if isn't valid
  *
  * Note: Due to the MPFR_GET_ALLOC_SIZE test, this function must not

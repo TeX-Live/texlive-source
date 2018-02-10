@@ -1,6 +1,6 @@
 /* Utilities for MPFR developers, not exported.
 
-Copyright 1999-2017 Free Software Foundation, Inc.
+Copyright 1999-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -2339,6 +2339,7 @@ __MPFR_DECLSPEC int mpfr_vasnprintf_aux (char**, char*, size_t, const char*,
 extern "C" {
 #endif
 
+__MPFR_DECLSPEC extern int __gmpfr_cov_div_ui_sb[10][2];
 __MPFR_DECLSPEC extern int __gmpfr_cov_sum_tmd[MPFR_RND_MAX][2][2][3][2][2];
 
 #if defined (__cplusplus)
