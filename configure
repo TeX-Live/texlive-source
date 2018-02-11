@@ -4184,7 +4184,7 @@ esac ;;
 esac
 
 ## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
-## $Id$
+## $Id: withenable.ac 46590 2018-02-10 23:30:32Z karl $
 ## configure options and TL libraries required for autosp.
 # Check whether --enable-autosp was given.
 if test "${enable_autosp+set}" = set; then :
@@ -4203,7 +4203,7 @@ $as_echo "$as_me: Assuming \`--enable-autosp=$enable_autosp'" >&6;}
 esac
 
 ## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
-## $Id$
+## $Id: withenable.ac 46590 2018-02-10 23:30:32Z karl $
 ## configure options and TL libraries for axodraw2.
 # Check whether --enable-axodraw2 was given.
 if test "${enable_axodraw2+set}" = set; then :
