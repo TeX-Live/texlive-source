@@ -10,7 +10,7 @@ if test -z "$test_srcdir"; then
 fi
 
 echo Running axohelp on test document ...
-cp $test_srcdir/test* .
+cp "$test_srcdir"/test* .
 ./axohelp test \
     || { echo axohelp failed to run correctly ; exit 1; }
 
