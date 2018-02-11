@@ -1444,7 +1444,11 @@ than one match, just one will be reported (chosen effectively at random).
 @opindex --no-casefold-search
 Explicitly enable or disable the fallback to a case-insensitive search
 on Unix platforms (@pxref{Casefolding search}); no effect on Windows.
-The default is the same as the system setup, which is (by default) enabled.
+The default is enabled, set in @code{texmf.cnf}.  Disabling
+(@code{--no-casefold-search}) does not mean that searches magically
+become case-sensitive when the underlying (file)system is
+case-insensitive, it merely means that Kpathsea does not do any
+casefolding itself.
 
 @item --dpi=@var{num}
 @opindex --dpi=@var{num}
