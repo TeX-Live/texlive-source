@@ -23,8 +23,8 @@ use File::Spec;
 use File::Copy;
 use Getopt::Long;
 
-my $version = '0.31';
-my $versiondate = '2017-02-01';           #version %version
+my $version = '0.32';
+my $versiondate = '2018-02-12';           #version %version
 my $showversion;
 
 my $verbose;

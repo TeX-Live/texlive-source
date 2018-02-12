@@ -1,13 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 46207 2018-01-04 18:34:36Z karl $
+# $Id: tlmgr.pl 46591 2018-02-11 00:19:58Z karl $
 #
-# Copyright 2008-2017 Norbert Preining
+# Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
-#
 
-my $svnrev = '$Revision: 46207 $';
-my $datrev = '$Date: 2018-01-04 19:34:36 +0100 (Thu, 04 Jan 2018) $';
+my $svnrev = '$Revision: 46591 $';
+my $datrev = '$Date: 2018-02-11 01:19:58 +0100 (Sun, 11 Feb 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -6526,7 +6525,7 @@ sub handle_gpg_config_settings {
         tldie("$prefix, verification explicitly requested on command line, quitting.\n");
       }
       if ($config{'verify-downloads'}) {
-        # verification explicitely requested in config file, but not gpg, die
+        # verification explicitly requested in config file, but not gpg, die
         tldie("$prefix, verification explicitly requested in config file, quitting.\n");
       }
       # it was requested via the default setting, so just debug it
@@ -7424,9 +7423,11 @@ only useful in debugging.
 
 =item B<--no-require-verification>
 
-Instructs C<tlmgr> to only accept signed and verified remotes. In any
-other case C<tlmgr> will quit operation.
-See L<CRYPTOGRAPHIC VERIFICATION> below for details.
+Verify that all remote repositories to be correctly signed, or quit.
+With C<--no-require-verification>, all verification is omitted.  By
+default, verification is performed (but not required) if GnuPG and the
+relevant keys are available. See L<CRYPTOGRAPHIC VERIFICATION> below for
+details.
 
 =item B<--usermode>
 
@@ -7440,9 +7441,11 @@ Uses I<dir> for the tree in user mode; see L<USER MODE> below.
 
 =item B<--no-verify-downloads>
 
-Enables or disables cryptographic verification of downloaded database files.
-A working GnuPG (C<gpg>) binary needs to be present in the path, otherwise
-this option has no effect. See L<CRYPTOGRAPHIC VERIFICATION> below for details.
+Enables or disables cryptographic verification of all downloaded
+database files.  A working GnuPG (C<gpg>) binary needs to be present in
+the path, otherwise this option has no effect.  By default, the main
+repository is verified, while any other repositories are not verified.
+See L<CRYPTOGRAPHIC VERIFICATION> below for details.
 
 =back
 
@@ -8438,11 +8441,12 @@ Save the local TLPDB, presumably after other operations have changed it.
 
 Get the value of I<var>, or set it to I<val>.  Possible I<var> names:
 C<debug-translation>, C<machine-readable>, C<no-execute-actions>,
-C<require-verification>, C<verify-downloads>, C<repository>, and C<prompt>. All
-except C<repository> and C<prompt> are booleans, taking values 0 and 1, and behave
-like the corresponding command line option.  The C<repository> variable
-takes a string, and sets the remote repository location. The C<prompt> variable
-takes a string, and sets the current default prompt.
+C<require-verification>, C<verify-downloads>, C<repository>, and
+C<prompt>. All except C<repository> and C<prompt> are booleans, taking
+values 0 and 1, and behave like the corresponding command line option.
+The C<repository> variable takes a string, and sets the remote
+repository location. The C<prompt> variable takes a string, and sets the
+current default prompt.
 
 If I<var> or then I<val> is not specified, it is prompted for.
 
@@ -8723,11 +8727,8 @@ make sense to set this.
 
 The C<no-checksums> key needs more explanation.  By default, package
 checksums computed and stored on the server (in the TLPDB) are compared
-to checksums computed locally after downloading.  That is, for each
-C<texlive.tlpdb> loaded from a repository, the corresponding checksum
-file C<texlive.tlpdb.sha512> is also downloaded, and C<tlmgr> confirms
-whether the checksum of the downloaded TLPDB file agrees with the
-download data.  C<no-checksums> disables this process.
+to checksums computed locally after downloading.  C<no-checksums>
+disables this process.
 
 The checksum algorithm is SHA-512.  Your system must have one of (looked
 for in this order) the Perl C<Digest::SHA> module, the C<openssl>
@@ -8744,26 +8745,22 @@ context.)  C<no-checksums> avoids the warning.
 C<tlmgr> and C<install-tl> perform cryptographic verification if
 possible.  If verification is performed and successful, the programs
 report C<(verified)> after loading the TLPDB; otherwise, they report
-C<(not verified)>.  Either way, by default the installation and/or
+C<(not verified)>.  But either way, by default the installation and/or
 updates proceed normally.
 
-If a program named C<gpg> is available (that is, it is found in the
-C<PATH>), cryptographic signatures will be checked. In this case we
-require that the main repository is signed, but signing is not required
-for additional repositories. If C<gpg> is not available, signatures are
-not checked and no verification is carried out, but C<tlmgr> proceeds
-normally.
+If a program named C<gpg> is available (that is, found in C<PATH>),
+cryptographic signatures will be checked. In this case we require the
+main repository be signed, but not any additional repositories. If
+C<gpg> is not available, signatures are not checked and no verification
+is carried out, but C<tlmgr> proceeds normally.
 
-The attempted verification can be suppressed by specifying
-C<--no-verify-downloads> on the command line, or the entry
-C<verify-downloads=0> in a C<tlmgr> config file (described in
-L<CONFIGURATION FILE FOR TLMGR>).  On the other hand, you can
-I<require> verification by specifying C<--require-verification> on the
-command line, or C<require-verification=1> in a C<tlmgr> config file;
-in this case, if verification is not possible, the program quits.
-Note that as mentioned above, if C<gpg> is available, the main repository
-is always required to have a signature. Using the C<--require-verification>
-switch, C<tlmgr> also requires signatures from additional repositories.
+The attempted verification can be suppressed entirely by specifying
+C<--no-verify-downloads> on the command line, or a line
+C<verify-downloads=0> in a C<tlmgr> config file (see L<CONFIGURATION
+FILE FOR TLMGR>).  On the other hand, you can I<require> successful
+verification by specifying C<--require-verification> on the command
+line, or C<require-verification=1> in a C<tlmgr> config file; in this
+case, if verification is not possible, or fails, the program quits.
 
 Cryptographic verification requires checksum checking (described just
 above) to succeed, and a working GnuPG (C<gpg>) program (see below for
@@ -9350,7 +9347,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 46207 2018-01-04 18:34:36Z karl $
+$Id: tlmgr.pl 46591 2018-02-11 00:19:58Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
