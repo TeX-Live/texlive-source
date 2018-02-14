@@ -1,5 +1,5 @@
 This is the README for the autosp package, 
-version 2017-07-14.
+version 2018-02-14.
 
 autosp is a preprocessor that generates note-spacing
 commands for MusiXTeX scores. It simplifies the creation
@@ -119,13 +119,18 @@ comments of the form %barno appended to commands such as
 \bar, \alaligne, etc. replacing any existing comments.
 Bar-numbering in the MusiXTeX output is not affected
 
+Also included is the program tex2aspc which re-factors
+conventional MusiXTeX scores to aspc format suitable for
+autosp pre-processing by merging every conventional notes
+commands in a measure into a single \anotes command.
+
 To install the autosp package, unzip autosp.tds.zip
 at the root of a local or personal texmf tree and
 update the file-name database.  This will install
 documentation and examples.
 
-On Windows or MacOSX, install the relevant binaries on the
-PATH of executables. On Unix-like systems, unpack the
+On Windows or MacOSX, install the relevant binaries on
+the PATH of executables. On Unix-like systems, unpack the
 .tar.gz archive, and compile and install using the sequence
 
 ./configure && make && sudo make install

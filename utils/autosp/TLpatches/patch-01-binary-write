@@ -1,7 +1,7 @@
-diff -ur autosp-2017-12-26.orig/autosp.c autosp-2017-12-26/autosp.c
---- autosp-2017-12-26.orig/autosp.c	Fri Dec 22 23:28:50 2017
-+++ autosp-2017-12-26/autosp.c	Mon Jan 01 09:04:08 2018
-@@ -511,7 +511,7 @@
+diff -ur autosp-2018-02-14/autosp.c autosp-src/autosp.c
+--- autosp-2018-02-14/autosp.c	Thu Feb 15 00:06:24 2018
++++ autosp-src/autosp.c	Thu Feb 15 08:01:12 2018
+@@ -510,7 +510,7 @@
      update_global_skip (n);
        /* commas will be discarded by filter_output (i) */
      if (*s == '.' && new_beaming == 0 && !dottedbeamnotes) 
@@ -10,7 +10,7 @@ diff -ur autosp-2017-12-26.orig/autosp.c autosp-2017-12-26/autosp.c
      else if ( (*s == '^' || *s == '_' || *s == '=' || *s == '>') 
                && !vspacing_active[i]  /* is additional spacing needed? */
              )
-@@ -985,7 +985,7 @@
+@@ -984,7 +984,7 @@
     || prefix ("\\qbpp", s) 
     || prefix ("\\dspp", s) 
     || doubledotted  )
@@ -19,7 +19,7 @@ diff -ur autosp-2017-12-26.orig/autosp.c autosp-2017-12-26/autosp.c
    else 
    if (prefix ("\\whp", s)
     || prefix ("\\hup", s)
-@@ -1009,7 +1009,7 @@
+@@ -1008,7 +1008,7 @@
     || prefix ("\\qbp", s) 
     || prefix ("\\dsp", s) 
      || dotted  ) 
@@ -28,16 +28,16 @@ diff -ur autosp-2017-12-26.orig/autosp.c autosp-2017-12-26/autosp.c
  
    t = strpbrk (s+1, "{\\&|$"); /* collective coding?  */
    if (*t == '{')  /*  {...}  */
-@@ -2176,7 +2176,7 @@
-       printf ("\n");
-       error ("outfile same as infile.");
-     }
+@@ -2152,7 +2152,7 @@
+   }
+   else
+   {
 -    outfile = fopen (outfilename, "w");
 +    outfile = fopen (outfilename, "wb");
      if (outfile == NULL)
      { printf ("Can't open %s\n", outfilename);
        exit (EXIT_FAILURE);
-@@ -2194,7 +2194,7 @@
+@@ -2170,7 +2170,7 @@
    *logfilename_n = '\0';
    append (logfilename, &logfilename_n, "alog", sizeof (logfilename));
    if (debug)  
@@ -46,10 +46,9 @@ diff -ur autosp-2017-12-26.orig/autosp.c autosp-2017-12-26/autosp.c
      if (logfile == NULL)
      { printf ("Can't open %s\n", logfilename);
        exit (EXIT_FAILURE);
-Only in autosp-2017-12-26: config.h
-diff -ur autosp-2017-12-26.orig/rebar.c autosp-2017-12-26/rebar.c
---- autosp-2017-12-26.orig/rebar.c	Thu Jun 15 03:08:12 2017
-+++ autosp-2017-12-26/rebar.c	Mon Jan 01 09:04:08 2018
+diff -ur autosp-2018-02-14/rebar.c autosp-src/rebar.c
+--- autosp-2018-02-14/rebar.c	Thu Jun 15 03:08:12 2017
++++ autosp-src/rebar.c	Thu Feb 15 08:02:35 2018
 @@ -262,7 +262,7 @@
        else
          append (outfilename, &outfilename_n, ".aspc", sizeof (outfilename));
@@ -59,9 +58,9 @@ diff -ur autosp-2017-12-26.orig/rebar.c autosp-2017-12-26/rebar.c
      if (outfile == NULL)
      { fprintf (stderr,"Can't open %s\n", outfilename);
        exit (EXIT_FAILURE);
-diff -ur autosp-2017-12-26.orig/tex2aspc.c autosp-2017-12-26/tex2aspc.c
---- autosp-2017-12-26.orig/tex2aspc.c	Sat Dec 16 00:04:13 2017
-+++ autosp-2017-12-26/tex2aspc.c	Mon Jan 01 09:04:08 2018
+diff -ur autosp-2018-02-14/tex2aspc.c autosp-src/tex2aspc.c
+--- autosp-2018-02-14/tex2aspc.c	Sat Dec 16 00:04:13 2017
++++ autosp-src/tex2aspc.c	Thu Feb 15 08:03:01 2018
 @@ -337,7 +337,7 @@
      append (outfilename, &outfilename_n, ".aspc", sizeof (outfilename));
    }
