@@ -1,5 +1,10 @@
 AUTOSP
 
+2018-02-14
+ 
+  Allow for \end{...} in LaTeX-oriented inputs.
+  Processing of .tex files not supported; users can use tex2aspc.
+
 2017-12-21
 
   Allow for new commands \nqq, \nqqq, \hap and \happ.

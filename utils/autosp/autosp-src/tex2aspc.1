@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH TEX2ASPC 1 2017-12-13  "" ""
+.TH TEX2ASPC 1 2018-02-14  "" ""
 
 .SH NAME
 
@@ -18,13 +18,22 @@ for processing by
 
 This program re-factors (sequences of) conventional 
 note-spacing commands (\\notes \\Notes \\NOtes ...)
+in a measure 
 into
-\\anotes commands.
+a single \\anotes command.
 This is intended for "legacy" scores in order to take advantage of
 features 
 only provided by 
 .BR autosp (1),
-such as "global" skips.
+such as "global" skips and processing of \TransformNotes commands.
+
+.SH LIMITATIONS
+
+
+.B tex2aspc
+assumes that & and | (rather than \\nextinstrument and \\nextstaff) are used to separate instruments and staffs.
+
+User-defined macros are not processed or expanded.
 
 .SH SEE ALSO
 .BR autosp (1)

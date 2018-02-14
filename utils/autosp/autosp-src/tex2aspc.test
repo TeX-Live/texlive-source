@@ -13,7 +13,7 @@ echo && echo "*** tex2aspc  (missing infile)"
 ./tex2aspc  && exit 1
 
 echo && echo "*** tex2aspc quod2.tex quod4.aspc"
-cp tests/quod2.tex .
+cp tests/quod2.aspc .
 rm -f quod4.aspc
 ./tex2aspc quod2.tex quod4.aspc || exit 1
 

@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH AUTOSP 1 2017-12-19  "" ""
+.TH AUTOSP 1 2018-02-14  "" ""
 
 .SH NAME
 autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
@@ -13,12 +13,6 @@ autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
 .RB [ \-l\ |\ \-\-log ]
 .IR infile [\fR.aspc\fP]
 .RI [ outfile [ \fR.tex\fP ]]
-
-.B autosp
-.RB [ \-d\ |\ \-\-dotted ]
-.RB [ \-l\ |\ \-\-log ]
-.IR infile \fR.tex\fP\ 
-.IR outfile [ \fR.tex\fP ]
 
 
 This program makes it easier to create MusiXTeX scores by converting (non-standard) commands of the 
@@ -48,44 +42,27 @@ an
 \\anotes command generates several conventional
 note-spacing commands.
 
-If the
-.I infile
-argument
-has .tex extension, 
-.B autosp
-will process conventional note-spacing commands
-(but not \\vnotes or \\znotes) 
-similarly. 
-This is intended to 
-correct spacing in an extracted single-instrument part,
-but may not produce satisfactory output when applied to a conventional multi-instrument MusiXTeX score.
-
 If the 
 .I infile
 argument 
-has neither .aspc nor .tex extension, input is taken from 
+does not have an .aspc extension, input is taken from 
 .IR infile .aspc 
-if that file exists, or from 
-.IR infile .tex 
-otherwise.
+if that file exists.
+
 If the
-input is from a file
-.IR infile .aspc
-and no 
+.I outfile
+argument does not have a .tex extension, output is sent to
+.IR outfile .tex.
+If no 
 .I outfile 
 argument is provided, output will go to
 .IR infile .tex
 (or to
 .IR infile .ltx
 if a \\documentclass declaration is encountered).
-If the input is from a file
-.IR infile .tex,
-an 
-.I outfile
-argument must be provided.
 
 For
-\\anotes commands (and, for a .tex file, all conventional note-spacing commands), 
+\\anotes commands,
 line breaks and spaces may precede note segments, allowing more flexible source formatting; 
 the line breaks and spaces will be elided from the output. 
 
