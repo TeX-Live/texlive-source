@@ -11,7 +11,7 @@ AC_INIT([pmx], pmx_version, [rdt@cs.queensu.ca])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([pmxab.c])
 
-AM_INIT_AUTOMAKE(pmx, pmx_version)
+AM_INIT_AUTOMAKE
 
 dnl Check compiler and flags
 AC_PROG_CC

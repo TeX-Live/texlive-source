@@ -1,4 +1,4 @@
-This is PMX, Version 2.76 , 24 Nov 16
+This is PMX, Version 2.84 , 10 Feb 18
 Opening barsant.pmx                                    
  Starting first PMX pass
 

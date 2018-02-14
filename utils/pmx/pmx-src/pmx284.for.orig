@@ -63,6 +63,39 @@ c   Undotted chord notes with dotted main note.
 c   Forced line break without line number
 c   Fix dot moving when 2nds in chord get flipped
 c   To do: increase length on notexq in dodyn
+c 2.84
+c   Bug fix: dots in chordal seconds
+c   Bug fix: Initialize ihornb for non-beamed, down xtup
+c   Bug fix: When using "AT" with 2-note x3c rD. 
+c 2.83
+c   Fix problems when changing to or from octave treble clef.
+c   Fix beaming (or not) and number location for xtups with
+c     multiple rests. Still some problems with number height but
+c     can be band-aided with number height tweak option.
+c   Tweak error messages for options on "R" command.
+c   Allow forced beam height and slope tweaks with 2-note tremolos
+c   Allow chordal note with 2-note tremolos, adding dots as needed.
+c   Fix call to ncmid in beamstrt when setting start height for beam of 
+c     2-note trem, by changing arg from ivx to iv
+c 2.82
+c   bugfix: beams with rests, not confused with xtups.
+c   x option after slur index to allow slurs to go from one voice to another.
+c   x option also for ties
+c 2.81
+c   Allow string of rests to end xtup
+c   in chordal half-note 2-note tremolo, make chord notes open.
+c 2.80
+c   Add 2-note tremolos
+c 2.78
+c   Expand bufq to 131072 bytes
+c   Expand maxblks tp 9600
+c   Allow up to 75 pages
+c   Index postscript hairpins from 1 up instead of by voice #.
+c   Add option 'o' to forced beam for open notehead (\hb); set ipl(3)
+c   Add option T[n], n=1,2,3 for single stem tremolo
+c 2.77
+c   Enable AV+/-x+/-y to add vskip bigh before or after \eject
+c 2.76
 c 2.75
 c   Bugfix: unbeamed xtups with dots: in beamn1 and beamid allow dotted 16th, and
 c     2 or 3 flags on shortened note. 
@@ -717,9 +750,9 @@ c   Command line input
 c   Option Ao to optimize, otherwise normal processing
 c
 ccccccc
-      parameter (nks=125,nm=24,mv=24576,maxblks=4000)
+      parameter (nks=125,nm=24,mv=24576,maxblks=9600)
       character*128 lnholdq
-      character*65536 bufq
+      character*131072 bufq
       integer*2 lbuf(maxblks)
       common /comevent/ miditime,lasttime
       logical slmon,dbltie
@@ -769,8 +802,8 @@ c   nmidsec  section starts and stops based on PLAYING macros (not recording).
 c 
 ccccccccccccccccccccccccc
 c
-	data date /'24 Nov 16'/
-	data version /'2.76'/
+	data date /'10 Feb 18'/
+	data version /'2.84'/
 c
 ccccccccccccccccccccccccc
       data maxit,ncalls /200,0/
@@ -908,7 +941,7 @@ c
         else
           linewcom(1) = 1+ncomments
         end if
-        if (ipbuf+lbuf(ilbuf).gt.65536) then
+        if (ipbuf+lbuf(ilbuf).gt.131072) then
           print*,'Too many characters in file, stopping'
           call stop1()
         end if
@@ -1006,11 +1039,6 @@ c
 c  Check to see if (1) last line is "<blank><blank>/" and (2) next to last
 c    line is "/"
 c
-c      print*,'iplast:',iplast
-c      print*,'Last line:'
-c      print*,bufq(iplast+1-lbuf(nlbuf):iplast)
-c      print*,'Last char of next to last line:'
-c      print*,bufq(iplast-lbuf(nlbuf):iplast-lbuf(nlbuf))
       if (bufq(iplast+1-lbuf(nlbuf):iplast) .eq. '  /') then
         if (bufq(iplast-lbuf(nlbuf):iplast-lbuf(nlbuf)).eq.'/') then
           print*,'Removing last line of "<blank><blank>/"'
@@ -1109,9 +1137,6 @@ c
       write(15,'(5x,20i3)')(nbars0(isys),isys=1,nsyst)
       call pmxa(jobname,ljob4,.false.,nsyst,nbars0,optimize)
       call pmxb(.true.,poe0,ncalls,optimize)
-c      itend = mytime()
-c      print*,'Elapsed time in ms:',itend-itstart
-c      write(15,*)'Elapsed time in ms:',itend-itstart
       close(15)
       end
       subroutine accsym(nacc,acsymq,lacc)
@@ -1573,9 +1598,6 @@ c
         if (endrest) then
           return
         end if
-c
-c      print*,'Off, icm,imidi,ipsav,idur:',icm,imidi(icm),ipsav,time
-c
 8     continue
       naccbl(icm) = nusebl
       if (nusebl .gt. 0) then
@@ -1883,6 +1905,7 @@ c
       character*79 notexq
       ip = ipo(jn)
       multip = iand(mult(ivx,ip),15)-8
+      lnote = 0
       if (ixrest(ivx) .eq. 4) then
 c
 c  This is the LAST note in the xtup (i.e., all rests before).  Make single.
@@ -1901,10 +1924,79 @@ c
       else if (btest(nacc(ivx,ip),31)) then
         nole = nole + 1
       end if
+c
+c  Terminate indented beams for 2-note tremolo if needed
+c
+      if (btest(irest(ivx,ip-1),2) .and. 
+     *            igetbits(irest(ivx,ip-1),2,5) .gt. 0) then
+        nindent = igetbits(irest(ivx,ip-1),2,5)
+        if (ulq(ivx,ibmcnt(ivx)) .eq. 'u') then
+          addoff = -1-.5*nindent
+        else
+          addoff = 1+.5*nindent
+        endif
+c        addoff = addoff+(.595-.065*abs(islope(ivx)))*islope(ivx)
+        addoff = addoff+.0822*islope(ivx)
+        if (addoff .lt. -.05) then
+          write(tempq,'(f4.1)')addoff
+        else 
+          write(tempq,'(f4.2)')addoff
+        end if
+        notexq = sq//'raise'//tempq(1:4)//sq//'internote'//sq//'hbox{'
+     *        //sq//'loffset{.7}{'//sq//'tb'//ulq(ivx,ibmcnt(ivx))//
+     *        '0}}'
+        lnote = 46
+      end if
       if (.not.drawbm(ivx)) then
 c
 c  Xtuplet with no beam, just put in the right kind of note
 c
+        if (btest(irest(ivx,ip),0)) then
+c
+c Rest at end of unbeamed xtup
+c
+          lnote = 3
+          if (btest(islur(ivx,ip),29)) then
+            notexq = sq//'sk'
+c
+c  180106 There was a problem with nolev(ivx,ip) not being set to 0 for
+c  a blank rest ending xtup, but hopefully returning from here will handle it.
+c
+            return  
+          else if (multip .eq. 0) then
+            notexq = sq//'qp'
+          else if (multip .eq. -1) then
+            notexq = sq//'hp'
+          else if (multip .eq. 1) then
+            notexq = sq//'ds'
+          else if (multip .eq. 2) then
+            notexq = sq//'qs'
+          else
+            notexq = sq//'hs'
+          end if
+c
+c 180106 Deal with possible level tweak
+c
+          nole = mod(nolev(ivx,ip)+50,100)-50
+          if (nole .ne. 0) then
+            if (abs(nole) .lt. 10) then
+              noteq = chax(48+abs(nole))
+              lnoten = 1
+            else
+              write(noteq(1:2),'(i2)')abs(nole)
+              lnoten = 2
+            end if
+            if (nole .gt. 0) then
+              notexq = sq//'raise'//noteq(1:lnoten)//sq//'internote'
+     *                 //notexq(1:lnote)
+            else
+              notexq = sq//'lower'//noteq(1:lnoten)//sq//'internote'
+     *                 //notexq(1:lnote)
+            end if
+            lnote = 16+lnoten+lnote
+          end if            
+          return
+        end if
         if (btest(islur(ivx,ip),30)) then
 c
 c  Forced stem direction
@@ -1918,29 +2010,180 @@ c
         else
           call notefq(noteq,lnoten,nole,ncmid(iv,ip))
           if (lnoten .eq. 1) call addblank(noteq,lnoten)
-          lnote = lnoten+3
+c
+c  To reduce confusion due to this early update of lnote, do it
+c    below, separately in each case/
+c          lnote = lnoten+3
           if (.not.btest(nacc(ivx,ip-1),27)) then
 c
 c  Prior note is not regular-dotted
 c              
-
+            if (btest(irest(ivx,ip-1),2) .and. 
+     *         igetbits(irest(ivx,ip-1),2,5) .gt. 0) then
+c
+c  Unbeamed tremolo with indented beams. Put termination in right here
+c
+              nindent = igetbits(irest(ivx,ip-1),2,5)
+              if (ulq(ivx,ibmcnt(ivx)) .eq. 'u') then
+                addoff = -1-.5*nindent
+              else
+                addoff = 1+.5*nindent
+              endif
+c
+c  Is there an islope here, for unbeamed?
+c
+              if (addoff .lt. -.05) then
+                write(tempq,'(f4.1)')addoff
+              else 
+                write(tempq,'(f4.2)')addoff
+              end if
+              notexq = sq//'raise'//tempq(1:4)//sq//'internote'//sq//
+     *         'hbox{'
+     *         //sq//'loffset{.7}{'//sq//'tb'//ulq(ivx,ibmcnt(ivx))//
+     *         '0}}'
+              lnote = 46
+c              write(11,'(a)')notexq(1:lnote)
+            end if
             if (multip .eq. 0) then
-              notexq = sq//'q'//ulq(ivx,ibmcnt(ivx))//noteq
+c              if (btest(irest(ivx,ip-1),2)) then
+              if (btest(irest(ivx,ip-1),2) .and.
+     *                       nodur(ivx,ip).gt.24) then
+c
+c 2nd note of unbeamed half-note trem; make open
+c But it's not clear if unbeamed half-note tremolo is Kosher,
+c   so don't worry about stem lengths here now.
+c
+                if (lnote .eq. 0) then
+                  notexq = sq//'h'//ulq(ivx,ibmcnt(ivx))//noteq
+                else
+                  notexq = notexq(1:46)//
+     *                sq//'h'//ulq(ivx,ibmcnt(ivx))//noteq
+                  lnote = 46
+                end if
+              else
+                if (btest(irest(ivx,ip-1),2) .and.
+     *               nodur(ivx,ip).eq.24 .or. nodur(ivx,ip).eq.12) then
+c
+c Need a dot.
+c
+                  lnote = 46
+                  if (lnoten .eq. 1) then
+                    noteq = ' '//noteq(1:1)
+                    lnoten = 2
+                  end if
+                  notexq = notexq(1:lnote)//sq//'pt'//noteq(1:lnoten)
+                  lnote = lnote+3+lnoten
+                  call notefq(noteq,lnoten,nole,ncmid(iv,ip))
+                  if (lnoten .eq. 1) then
+                    noteq = ' '//noteq(1:1)
+                    lnoten = 2
+                  end if
+c
+c  Insert stemlength stuff here for unbeamed dotted tremolo. 
+c  May later combine with below to avoid repeat. But need to
+c    return to normal stem length after note is set.
+c
+                  nindent = igetbits(irest(ivx,ip-1),2,5)
+                  if (ulq(ivx,ibmcnt(ivx)) .eq. 'u') then
+                    slen = (4.5+nindent+nolev1(ivx)-nole
+     *                +1.3*(eskz(ivx,ip)-eskz(ivx,ip-1)-.7)
+     *                                    *islope(ivx)/slfac)*.6667
+                  else
+                    slen = (4.5+nindent-nolev1(ivx)+nole
+     *                -1.3*(eskz(ivx,ip)-eskz(ivx,ip-1)-.7)
+     *                                    *islope(ivx)/slfac)*.6667
+                  end if
+                  write(tempq,'(f4.1)')slen
+                  notexq = sq//'slx{'//tempq//'}'//notexq(1:lnote)
+                  lnote = lnote+10
+                end if               
+                if (lnote .eq. 0) then
+                  notexq = sq//'q'//ulq(ivx,ibmcnt(ivx))
+     *                     //noteq(1:lnoten)
+                else                  
+                  notexq = notexq(1:lnote)//sq//'q'
+     *              //ulq(ivx,ibmcnt(ivx))//noteq(1:lnoten)
+                end if
+                lnote = lnote+3+lnoten
+                if (btest(irest(ivx,ip-1),2) .and.
+     *               nodur(ivx,ip).eq.24 .or. nodur(ivx,ip).eq.12) then
+                  notexq = notexq(1:lnote)//sq//'slz'
+                  lnote=lnote+4
+                end if
+              end if
+            else if (btest(irest(ivx,ip-1),2)) then
+c
+c 2nd note of unbeamed quarter or 8th trem; make quarter note
+c Get stemlength change
+c
+              lnote = 46
+              nindent = igetbits(irest(ivx,ip-1),2,5)
+              if (ulq(ivx,ibmcnt(ivx)) .eq. 'u') then
+                slen = (4.5+nindent+nolev1(ivx)-nole
+     *                +1.3*(eskz(ivx,ip)-eskz(ivx,ip-1)-.7)
+     *                                    *islope(ivx)/slfac)*.6667
+              else
+                slen = (4.5+nindent-nolev1(ivx)+nole
+     *                -1.3*(eskz(ivx,ip)-eskz(ivx,ip-1)-.7)
+     *                                    *islope(ivx)/slfac)*.6667
+              end if
+              write(tempq,'(f4.1)')slen
+              notexq = notexq(1:46)//sq//'slx{'//tempq//'}'
+              lnote = lnote+10
+c              if (lnote .eq. 0) then
+c                notexq = sq//'h'//ulq(ivx,ibmcnt(ivx))//noteq
+c              else
+c                notexq = notexq(1:46)//
+c     *              sq//'h'//ulq(ivx,ibmcnt(ivx))//noteq
+c              end if
+c
+c
+c Check for dotted unbeamed tremolo
+c
+              if (abs(nodur(ivx,ip)/12.-nodur(ivx,ip)/12).lt..001) then
+c
+c Need a dot
+c
+                if (lnoten .eq. 1) then
+                  noteq = ' '//noteq(1:1)
+                  lnoten = 2
+                end if
+                if (lnote .eq. 0) then
+                  notexq = sq//'pt'//noteq(1:lnoten)
+                else
+                  notexq = notexq(1:lnote)//sq//'pt'//noteq(1:lnoten)
+                end if
+                lnote = lnote+3+lnoten
+                call notefq(noteq,lnoten,nole,ncmid(iv,ip))
+                if (lnoten .eq. 1) then
+                  noteq = ' '//noteq(1:1)
+                  lnoten = 2
+                end if
+              end if               
+              notexq = notexq(1:lnote)//
+     *                  sq//'q'//ulq(ivx,ibmcnt(ivx))//noteq(1:lnoten)
+c     *                  //sq//'stemcut'
+     *                  //sq//'slz'
+c              lnote=lnote+3+lnoten+8
+              lnote=lnote+3+lnoten+4
             else if (multip .eq. -1) then
-              notexq = sq//'h'//ulq(ivx,ibmcnt(ivx))//noteq
+              notexq = sq//'h'//ulq(ivx,ibmcnt(ivx))//noteq(1:lnoten)
+              lnote = lnoten+3
             else if (multip .eq. 1) then
-              notexq = sq//'c'//ulq(ivx,ibmcnt(ivx))//noteq
+              notexq = sq//'c'//ulq(ivx,ibmcnt(ivx))//noteq(1:lnoten)
+              lnote = lnoten+3
             else if (multip .eq. 2) then
-              notexq = sq//'cc'//ulq(ivx,ibmcnt(ivx))//noteq
-              lnote = lnote+1
+              notexq = sq//'cc'//ulq(ivx,ibmcnt(ivx))//noteq(1:lnoten)
+              lnote = lnoten+4
             else if (multip .eq. 3) then
-              notexq = sq//'ccc'//ulq(ivx,ibmcnt(ivx))//noteq
-              lnote = lnote+2
+              notexq = sq//'ccc'//ulq(ivx,ibmcnt(ivx))//noteq(1:lnoten)
+              lnote = lnoten+5
             else if (multip .eq. -2) then
-              notexq = sq//'wh'//noteq
+              notexq = sq//'wh'//noteq(1:lnoten)
+              lnote = lnoten+3
             else if (multip .eq. -3) then
-              notexq = sq//'breve'//noteq
-              lnote = lnote+3
+              notexq = sq//'breve'//noteq(1:lnoten)
+              lnote = lnoten+6
             else
               print*
               print*,'(Error in beamend, send source to Dr. Don)'
@@ -1957,17 +2200,27 @@ c
             else if (multip .eq. -2) then
               notexq = sq//'h'//ulq(ivx,ibmcnt(ivx))//noteq
             end if
+            lnote = lnoten+3
           end if
         end if
-        return
+      return
       end if
-      call notefq(noteq,lnoten,nole,ncmid(iv,ip))
-      lnote = 0
+c
+c End of block for unbeamed. Problem if beamed but ends w/ rest. Try just 
+c skipping the call in that case.
+c
+      if (.not.btest(irest(ivx,ip),0)) then
+        call notefq(noteq,lnoten,nole,ncmid(iv,ip))
+      end if
+c      call notefq(noteq,lnoten,nole,ncmid(iv,ip))
+c      lnote = 0
 c
 c New way, with flipend, which was computed in beamstrt.
 c
-      if (flipend(ivx) .and. btest(ipl(ivx,ip),30))
-     *  ulq(ivx,ibmcnt(ivx)) = chax(225-ichar(ulq(ivx,ibmcnt(ivx))))
+      if (flipend(ivx) .and. btest(ipl(ivx,ip),30)) then
+        ulq(ivx,ibmcnt(ivx)) = chax(225-ichar(ulq(ivx,ibmcnt(ivx))))
+        flipend(ivx) = .false.
+      end if
       if (ip .gt. ibm1(ivx,ibmcnt(ivx))) then
 c
 c This is not a one-noter from beam-jump.  Check if multiplicity has increased
@@ -2012,14 +2265,67 @@ c
       if (.not.btest(irest(ivx,ip),23)) then
 c
 c This is either a normal beamend or end of a sequence of jump-beam segments, 
+c (170409) or rest at end of xtup
 c so some sort of termination is required
 c
         ulqq = ulq(ivx,ibmcnt(ivx))
         if (.not.isbjmp .or. ivx.ne.ivbj2) then
+          if (btest(irest(ivx,ip),0)) then
+c
+c Xtup ends with rest
+c
+            if (multip .eq. 1) then
+              notexq = sq//'ds'
+              lnote = 3
+            else if (multip .eq. 2) then
+              notexq = sq//'qs'
+              lnote = 3
+            else if (multip .eq. 3) then
+              notexq = sq//'hs'
+              lnote = 3
+            end if
+c
+c  170801 Borrowed from main rest entry way down below to get level adjustment:
+c  BUT nole is like 102, not 2, so subtracted 100 for nole. Why different???
+c  "...  Now raise if necc."
+c
+            if (btest(islur(ivx,ip),29)) then
+c
+c  Blank rest
+c
+              notexq = sq//'sk'
+              lnote = 3
+            else if (nole .ne. 0) then
+c
+c  Bandaid. Odd case with rests in xtups + 2 voices where came thru here with
+c    nolev=-4 but expected 100+/-. Try to fix.
+c
+              if (abs(nole).lt.30) nole = 100+nole
+c
+              if (abs(nole-100) .lt. 10) then
+                noteq = chax(48+abs(nole-100))
+                lnoten = 1
+              else
+                write(noteq(1:2),'(i2)')abs(nole-100)
+                lnoten = 2
+              end if
+c  ???              if (nole .gt. 0) then
+              if (nole .gt. 100) then
+                notexq = sq//'raise'//noteq(1:lnoten)//sq//'internote'
+     *                 //notexq(1:lnote)
+              else
+                notexq = sq//'lower'//noteq(1:lnoten)//sq//'internote'
+     *                 //notexq(1:lnote)
+              end if
+              lnote = 16+lnoten+lnote
+            end if
+            return
+          else
 c
 c Normal termination
 c
-          call ntrbbb(1,'t',ulqq,mod(ivx,24),notexq,lnote)
+            call ntrbbb(1,'t',ulqq,mod(ivx,24),notexq,lnote)
+          end if
         else 
 c
 c Terminate a sequence of jump-beam segments.
@@ -2038,12 +2344,50 @@ c      if (isbjmp.and.ivx.eq.ivbj2
         return
       end if
 c
-c  And now the note
+c  And now the note, checking for open-head beamed tremolo
 c
-      if (lnote .gt. 0) then
-        notexq = notexq(1:lnote)//sq//'qb'
-      else
-        notexq = sq//'qb'
+      if (btest(irest(ivx,ip-1),2)) then
+c
+c Check for dotted tremolo
+c
+        if (abs(nodur(ivx,ip)/12.-nodur(ivx,ip)/12).lt..001) then
+c
+c Need a dot
+c
+          if (lnoten .eq. 1) then
+            noteq = ' '//noteq(1:1)
+            lnoten = 2
+          end if
+          if (lnote .eq. 0) then
+            notexq = sq//'pt'//noteq(1:lnoten)
+          else
+            notexq = notexq(1:lnote)//sq//'pt'//noteq(1:lnoten)
+          end if
+          lnote = lnote+3+lnoten
+          call notefq(noteq,lnoten,nole,ncmid(iv,ip)) ! Octave changes?
+        end if               
+        if (nodur(ivx,ip).eq.32 .or. nodur(ivx,ip).eq.48) then
+          if (lnote .gt. 0) then
+            notexq = notexq(1:lnote)//sq//'hb'
+          else
+            notexq = sq//'hb'
+          end if
+        else
+          if (lnote .gt. 0) then
+            notexq = notexq(1:lnote)//sq//'qb'
+          else
+            notexq = sq//'qb'
+          end if
+        end if
+      else      
+c
+c No tremolo
+c
+        if (lnote .gt. 0) then
+          notexq = notexq(1:lnote)//sq//'qb'
+        else
+          notexq = sq//'qb'
+        end if
       end if
       lnote = lnote+3
       isdotm = .false.
@@ -2063,10 +2407,8 @@ c  5/25/08 Allow >12
 c  5/9/10 Up to 24; replace 24 with 0
 c
       if (.not.(isbjmp.and.ivx.eq.ivbj2)) then
-c        call istring(mod(ivx,12),tempq,len)
         call istring(mod(ivx,24),tempq,len)
       else
-c        call istring(mod(ivbj1,12),tempq,len)
         call istring(mod(ivbj1,24),tempq,len)
       end if
       if (isbjmp .and. ivx.eq.ivbj2 
@@ -2263,7 +2605,6 @@ c
                 call putxtn(mprint,iflop,multip,iud,wheadpt,poenom,
      *            nolev1(ivx),islope(ivx),slfac,
      *            xnlmid,islur(ivx,ip),lnote,notexq,ncmid(iv,ip),nlnum,
-c     *            eloff(ivx,nxtinbm(ivx)),iup,irest(ivx,ip),.false.)
      *            eloff(ivx,nxtinbm(ivx)),iup,irest(ivx,ip),
      *            mult(ivx,ip),.false.)
                 end if
@@ -2287,10 +2628,43 @@ c
           call notefq(noteq,lnoten,nole,ncmid(iv,ip))
         end if
 c
+c Check for string of rests up to and including last note in xtup.
+c
+c Replace next 2 lines to keep from doing this block
+c   when in second part of staff-jumping chordal xtup. This fix could
+c   break some unaccounted non-chordal staff-jum xtup situations.
+c        if (vxtup(ivx) .and. btest(irest(ivx,ip+1),0) .and. 
+c     *           .not.btest(irest(ivx,ip),0)) then
+        if (vxtup(ivx) .and. btest(irest(ivx,ip+1),0) .and. 
+     *           .not.btest(irest(ivx,ip),0) .and.
+     *           .not.(isbjmp.and.ivx.eq.ivbj2)) then
+c
+c This note is not a rest but next is a rest. Do rests continue to
+c   end of xtup, where nodur>0
+c
+          do 3 ipnow = ip+1 , ip+24
+            if (nodur(ivx,ipnow).gt.0) go to 4  ! This is last of xtup
+            if (.not.btest(irest(ivx,ipnow+1),0)) go to 5  ! Next is not rest
+c
+c  If I don't go to 5, know next note IS a rest!
+c
+3         continue
+4         continue
+          call ntrbbb(1,'t',ulq(ivx,ibmcnt(ivx)),ivx,notexq,lnote)
+          notexq = notexq(1:lnote)//sq//'qb'
+          lnote = lnote+3
+          call istring(ivx,tempq,len)
+          notexq = notexq(1:lnote)//tempq(1:len)
+          lnote = lnote+len
+          notexq = notexq(1:lnote)//noteq(1:lnoten)
+          lnote = lnote+lnoten
+          return
+5         continue
+c
 c Check if multiplicity changes in a way requiring action,
 c unless (160211) it's blank rest on start of 2nd seg of joined beam
 c
-        if(.not.btest(irest(ivx,ip-1),24)
+        else if(.not.btest(irest(ivx,ip-1),24)
      *         .or..not.btest(islur(ivx,ip-1),29)) then
           ipleft = ip-1
           if (btest(irest(ivx,ipleft),0)) ipleft = ipleft-1
@@ -2432,11 +2806,10 @@ c          call istring(mod(ivbj1,12),tempq,len)
      *                 nssb(nm),issb(nm),lev1ssb(nm,20)
       common /comdraw/ drawbm(nm)
       common /commvl/ nvmx(nm),ivmx(nm,2),ivx
-      character*8 noteq
+      character*8 noteq,tempq
       character*79 notexq
       ip1 = ipo(jn)
       multip = iand(15,mult(ivx,ip1))-8
-c     if (multip.le.0 .and. btest(irest(ivx,ip1),0)) then
       if (.not.drawbm(ivx) .and. btest(irest(ivx,ip1),0)) then
         lnote = 0
 c
@@ -2471,8 +2844,93 @@ c
           call notefq(noteq,lnoten,nole,ncmid(iv,ip1))
           if (lnoten .eq. 1) call addblank(noteq,lnoten)
           lnote = 3
-          if (multip .eq. 0) then
-            notexq = sq//'q'//ulq(ivx,ibmcnt(ivx))
+          if (multip .le. 0) then
+c            if (btest(irest(ivx,ip1),2) .and.
+c     *                 nodur(ivx,ip1+1).ge.32) then
+            if ((btest(irest(ivx,ip1),2) .and.
+     *                 nodur(ivx,ip1+1).ge.32)
+     *                     .or. multip .eq. -1) then
+c
+c 1st note of unbeamed half-note trem; make open
+c
+              notexq = sq//'h'//ulq(ivx,ibmcnt(ivx))
+            else if (multip .eq. -2) then
+              notexq = sq//'wh'
+            else
+              notexq = sq//'q'//ulq(ivx,ibmcnt(ivx))
+            end if
+c
+c  Check for dot
+c
+            if (btest(irest(ivx,ip1),2) .and. 
+c     *        abs(nodur(ivx,ip)/12.-nodur(ivx,ip)/12).lt..001) then
+     *       abs(nodur(ivx,ip1+1)/12.-nodur(ivx,ip1+1)/12).lt..001) then
+c
+c Need a dot. already called addblank for noteq
+c
+              if (lnote .eq. 0) then
+                notexq = sq//'pt'//noteq(1:lnoten)
+              else
+                notexq = sq//'pt'//noteq(1:lnoten)//notexq(1:lnote)
+              end if
+              lnote = lnote+3+lnoten
+              call notefq(noteq,lnoten,nole,ncmid(iv,ip)) ! Octave changes?
+              if (lnoten .eq. 1) call addblank(noteq,lnoten)
+            end if
+c
+c  Insert the stemlength calcs here for dotted, unbeamed. 
+c  Later may combine with below to avoid repeat.
+c
+            if (btest(irest(ivx,ip1),2)) then
+              nindent = igetbits(irest(ivx,ip1),2,5)
+              if (ulq(ivx,ibmcnt(ivx)) .eq. 'u') then
+                slen = (4.5+nindent+nolev1(ivx)-nole
+     *               -.4*islope(ivx)/slfac)*.6667
+              else
+                slen = (4.5+nindent-nolev1(ivx)+nole
+     *               +.4*islope(ivx)/slfac)*.6667 
+              end if
+              write(tempq,'(f4.1)')slen
+              notexq = sq//'slx{'//tempq(1:4)//'}'//
+     *          notexq(1:lnote)
+              lnote = lnote+10        
+            end if
+          else if (btest(irest(ivx,ip1),2)) then
+c
+c 1st note of unbeamed quarter or 8th trem, make a quarter note
+c
+c Stem length calcs here. The .2 factor is empirical, but
+c   slfac accounts for musicsize. 
+c
+            nindent = igetbits(irest(ivx,ip1),2,5)
+            if (ulq(ivx,ibmcnt(ivx)) .eq. 'u') then
+              slen = (4.5+nindent+nolev1(ivx)-nole
+     *               -.4*islope(ivx)/slfac)*.6667
+            else
+              slen = (4.5+nindent-nolev1(ivx)+nole
+     *               +.4*islope(ivx)/slfac)*.6667 
+            end if
+            write(tempq,'(f4.1)')slen
+            notexq = sq//'slx{'//tempq(1:4)//'}'//
+     *          sq//'q'//ulq(ivx,ibmcnt(ivx))
+            lnote = 13        
+c
+c Check for dotted 2-note trem; prepend dot to notexq if needed
+c
+            if (nodur(ivx,ip1+1).eq.12 .or. 
+     *                nodur(ivx,ip1+1).eq.24) then
+              if (lnoten .eq. 1) then
+                noteq = ' '//noteq(1:1)
+                lnoten = 2
+              end if
+              notexq = sq//'pt'//noteq(1:lnoten)//notexq(1:lnote)
+              lnote = lnote+3+lnoten
+              call notefq(noteq,lnoten,nole,ncmid(iv,ip1))
+              if (lnoten .eq. 1) then
+                noteq = ' '//noteq(1:1)
+                lnoten = 2
+              end if
+            end if
           else if (multip .eq. -1) then
             notexq = sq//'h'//ulq(ivx,ibmcnt(ivx))
           else if (multip .eq. 1) then
@@ -2527,12 +2985,46 @@ c
         end if
       end if
 c
-c  Put in the note
+c  Check for beamed, dotted 2-note tremolo
 c
-      if (lnote .gt. 0) then
-        notexq = notexq(1:lnote)//sq//'qb'
+      if (btest(irest(ivx,ip1),2) .and. 
+     *      abs(nodur(ivx,ip1+1)/12.-nodur(ivx,ip1+1)/12).lt..001) then
+        call notefq(noteq,lnoten,nole,ncmid(iv,ip))
+        if (lnoten .eq. 1) then
+          noteq = ' '//noteq(1:1)
+          lnoten = 2
+        end if
+        if (lnoten .eq. 1) then
+          noteq = ' '//noteq(1:1)
+          lnoten = 2
+        end if
+        if (lnote .eq. 0) then
+          notexq = sq//'pt'//noteq(1:lnoten)
+        else
+          notexq = notexq(1:lnote)//sq//'pt'//noteq(1:lnoten)
+        end if
+        lnote = lnote+3+lnoten
+        call notefq(noteq,lnoten,nole,ncmid(iv,ip))
+        if (lnoten .eq. 1) then
+          noteq = ' '//noteq(1:1)
+          lnoten = 2
+        end if
+      end if
+c
+c  Put in the note, but check first for open-head beamed tremolo.
+c
+      if (btest(irest(ivx,ip1),2) .and. nodur(ivx,ip1+1).ge.32) then
+        if (lnote .gt. 0) then
+          notexq = notexq(1:lnote)//sq//'hb'
+        else
+          notexq = sq//'hb'
+        end if
       else
-        notexq = sq//'qb'
+        if (lnote .gt. 0) then
+          notexq = notexq(1:lnote)//sq//'qb'
+        else
+          notexq = sq//'qb'
+        end if
       end if
       lnote = lnote+3
 c
@@ -2651,12 +3143,86 @@ c
       ipb1 = ibm1(ivx,ibc)
       multb = iand(15,mult(ivx,ipb1))-8
       ip = ipo(jn)
+      lnote = 0
+      nvtrem = 0  ! Vertical adjustment beams for tremolo
 c
 c  Compute slopes and note offsets from start of beam.  Inside SetupB, for each
-c  xtup in the beam, set eloff,mtupv (in comxtup) for printed number.
+c  xtup in the beam, set eloff,mtupv (in comxtup) for printed number. Also
+c  gets islope(ivx), transferred in common.
 c
       if (ixrest(ivx).eq.0 .and. .not.btest(nacc(ivx,ip),21)) 
      *      call SetupB(xelsk,nnb,sumx,sumy,ipb,smed,ixrest(ivx))
+c
+c Will always come past here after entering beamstrt for 2-note tremolo, and
+c slope will have been computed, even for unbeamed. So start the indented 
+c beams here. The indented tremolo bars will be added to the notexq output
+c string, under the tacet assumption that there is no horizontal shift
+c enacted by the action just before and after the call to beamstrt.
+c
+      if (btest(irest(ivx,ipb1),2) .and. 
+     *            igetbits(irest(ivx,ipb1),2,5) .gt. 0) then
+        nindent = igetbits(irest(ivx,ipb1),2,5)
+        tempq = sq//'roffset{.7}{'//sq//'ib'
+        ltemp = 16
+        if (nindent .eq. 2) then
+          tempq = tempq(1:16)//'b'
+          ltemp = 17
+        else if (nindent .eq. 3) then
+          tempq = tempq(1:16)//'bb'
+          ltemp = 18
+        end if
+c
+c Use beam # 0 for indented beams
+c
+        tempq = tempq(1:ltemp)//ulq(ivx,ibc)//'0'
+        ltemp = ltemp+2
+c
+c Get adjustment to nolev1 for main beam based on nindent 
+c
+        if (ulq(ivx,ibc) .eq. 'u') then
+          nvtrem = nindent-1
+        else
+          nvtrem = 1-nindent
+        end if
+c	
+c Get numerical position of initiation for main beam. Will adjust height at
+c   closing to account for nindent
+c
+c        numinit = nolev1(ivx)-ncmid(ivx,ipb1)+4
+        numinit = nolev1(ivx)-ncmid(iv,ipb1)+4
+c
+c Get forced beam height tweak, apply here for indented beams
+c
+        iadj = igetbits(ipl(ivx,ipb1),6,11)-30
+        if (iadj .ne. -30) numinit = numinit+iadj
+        if (numinit.ge.0 .and. numinit.le.9) then
+          write(noteq,'(i1)') numinit
+          lnoten = 1
+        else
+          write(noteq,'(a1,i2,a1)')'{',numinit,'}'
+          lnoten = 4
+        end if
+        tempq = tempq(1:ltemp)//noteq(1:lnoten)
+        ltemp = ltemp+lnoten
+c
+c Now do the slope. 
+c 170408 Baseline is in islope(ivx). Apply slope tweak if present.
+c
+        numinit = islope(ivx)
+        iadj = igetbits(ipl(ivx,ipb1),6,17)-30
+        if (iadj .ne. -30) numinit = numinit+iadj
+        if (numinit.ge.0 .and. numinit.le.9) then
+          write(noteq,'(i1,a1)') numinit,'}'
+          lnoten = 2
+        else
+          write(noteq,'(a1,i2,a2)')'{',numinit,'}}'
+          lnoten = 5
+        end if
+        tempq = tempq(1:ltemp)//noteq(1:lnoten)
+        ltemp = ltemp+lnoten
+        notexq = tempq
+        lnote = ltemp
+      end if
       if (btest(nacc(ivx,ip),21)) then
 c
 c  This is start of later segment of single-slope beam group so use slope and 
@@ -2665,7 +3231,9 @@ c
         issb(ivx) = issb(ivx)+1  
         nolev1(ivx) = lev1ssb(ivx,issb(ivx))
       end if
-      lnote = 0
+c
+c  Move this up to before indented beams for tremolo
+c      lnote = 0
       drawbm(ivx) = .true.
       if (btest(irest(ivx,ipb1),28) .and. ixrest(ivx).ne.2) then
         vxtup(ivx) = .true.
@@ -2715,8 +3283,13 @@ c
           if (iud*iup .lt. 0) iflop = iup
         end if
 c
-c  Determine if a beam is to be drawn
+c  Determine if a beam is to be drawn.
+c    Had problem w/ half-note 2-note xtups always F, so add a test
 c
+        if (igetbits(irest(ivx,ipb1),2,3) .ne. 0) then
+          drawbm(ivx) = .true.
+          go to 6
+        end if
         do 5 ipp = ibm1(ivx,ibc),ibm2(ivx,ibc)
           if (iand(15,mult(ivx,ipp))-8 .le. 0) then
             drawbm(ivx) = .false.
@@ -2730,15 +3303,29 @@ c Are we using tuplet.tex?
 c
         usexnumt = cstuplet .and. .not.drawbm(ivx)
 c
+c Check for single note xtup 171217
+c
+        if (btest(irest(ivx,ipb1),28) .and. nnb.eq.1) then
+          drawbm(ivx) = .false.
+        end if
+c
 c  Place xtup number if needed
 c
         if (.not.btest(islur(ivx,ipb1),31) .or. multb.le.0) then 
           mprint = igetbits(nacc(ivx,ip),5,22)
           if (mprint.eq.0) mprint=mtupv(ivx,nxtinbm(ivx))
+c Stab in the dark! Note: tried setting unbeam flag islur18 but no go.
+          if (nnb .eq. 1) then
+            xnlmid = nolev1(ivx)
+            islope(ivx) = 0
+c
+c Move up, outside number check block, so all 1-note xtups ar unbeamed 
+c            drawbm(ivx) = .false.
+c
+          end if
           call putxtn(mprint,iflop,multb,iud,wheadpt,
      *      poenom,nolev1(ivx),islope(ivx),slfac,xnlmid,islur(ivx,ipb1),
      *      lnote,notexq,ncmid(iv,ipb1),nlnum,eloff(ivx,nxtinbm(ivx)),
-c     *      iup,irest(ivx,ipb1),usexnumt)
      *      iup,irest(ivx,ipb1),mult(ivx,ipb1),usexnumt)
         end if
         if (.not.drawbm(ivx)) then
@@ -2829,25 +3416,11 @@ c  beamstrt and beamn1 some non-spacing chars. are inserted.
 c
 c  130126 Deal with vertical shifts of rest starting xtuplet
 c
-c            if (multb .eq. 0) then
-c              notexq = notexq(1:lnote)//sq//'qp'
-c              lnote = lnote+3
-c            else if (.not.drawbm(ivx).and.multb.eq.1) then
-c              notexq = notexq(1:lnote)//sq//'ds'
-c              lnote = lnote+3
-c            else if (.not.drawbm(ivx).and.multb.eq.2) then
-c              notexq = notexq(1:lnote)//sq//'qs'
-c              lnote = lnote+3
-c            else if (.not.drawbm(ivx).and.multb.eq.3) then
-c              notexq = notexq(1:lnote)//sq//'hs'
-c              lnote = lnote+3
-c            else
-c              notexq = notexq(1:lnote)//sq//'hpause'
-c              lnote = lnote+7
-c            end if
-
             lrest = 3
-            if (multb .eq. 0) then
+            if (btest(islur(ivx,ip),29)) then
+              restq = sq//'sk'
+c            if (multb .eq. 0) then
+            else if (multb .eq. 0) then
               restq = sq//'qp'
             else if (.not.drawbm(ivx).and.multb.eq.1) then
               restq = sq//'ds'
@@ -2859,10 +3432,20 @@ c            end if
               restq = sq//'hpause'
               lrest = 7
             end if
-            nole = mod(nolev(ivx,ip)+20,100)-20
-            if (nole .eq. 0) then
+            if (btest(nacc(ivx,ipb1),18) .and.
+     *             btest(nacc(ivx,ipb1),19)) then
 c
-c Rest is not raised
+c  VERY special case of rest at start of F-tuplet, needs dot
+c
+              restq = sq//'pt4'//restq(1:lrest)
+              lrest = lrest+4
+            end if
+
+            nole = mod(nolev(ivx,ip)+20,100)-20
+c            if (nole .eq. 0) then
+            if (nole.eq.0 .or. btest(islur(ivx,ip),29)) then
+c
+c Rest blank or is not raised
 c
               notexq = notexq(1:lnote)//restq
               lnote = lnote+lrest
@@ -3016,14 +3599,23 @@ c
           flipend(ivx) = bmlev.gt.nolev(ivx,ibm2(ivx,ibc))
         end if
       end if
-      call ntrbbb(multb+iadj,'i',ulq(ivx,ibc),ivx,notexq,lnote)
+      multbb = multb+iadj
+c
+c Tremolo starting?
+c
+      if (btest(irest(ivx,ipb1),2)) multbb = 
+     *     igetbits(irest(ivx,ipb1),2,3)
+      call ntrbbb(multbb,'i',ulq(ivx,ibc),ivx,notexq,lnote)
 c
 c   Put in name of start level and slope, after correcting nolev1 if xtup
 c   started with a rest.
 c
       if (ixrest(ivx).eq.2) nolev1(ivx) = 
      *          nint(nolev1(ivx)+xelsk(1)*islope(ivx)/slfac)
-      call notefq(noteq,lnoten,nolev1(ivx),ncmid(iv,ipb1))
+c
+c  Add adjustment nvtrem to main beam to account for tremolo indented beams
+c
+      call notefq(noteq,lnoten,nolev1(ivx)+nvtrem,ncmid(iv,ipb1))
       if (islope(ivx) .lt. 0) then
         notexq = notexq(1:lnote)//noteq(1:lnoten)//'{'
         lnote = lnote+4+lnoten
@@ -3258,7 +3850,7 @@ c     *   2.0,1.5,1.0,0.5,1.3,1.3,0.4,0.8,1.2,0.8,1.2,1.6,
       data iTransAmt /nm*0/
       end
       subroutine catspace(space,squez,nnsk)
-      parameter (nkb=3999,maxblks=4000)
+      parameter (nkb=3999,maxblks=9600)
       common /c1omnotes/ nnodur,wminnh(nkb),nnpd(maxblks),durb(maxblks),
      *     iddot,nptr(nkb),ibarcnt,mbrest,ibarmbr,
 c     *     ibaroff,udsp(nkb),wheadpt,gotclef,sqzb(maxblks)
@@ -4391,8 +4983,9 @@ c
       end
       subroutine docrd(ivx,ip,nodu,ncm,iv,tnow,soutq,lsout,ulq,ibmcnt,
      *                 islur,nvmx,nv,beamon,nolevm,ihornb,nornb,stemlen,
-     *                 dotxtup,nacc)
+     *                 dotxtup,nacc,irest)
       parameter (nm=24,mv=24576)
+      integer*4 irest(nm,24)
       common /comarp/ narp,tar(8),ivar1(8),ipar1(8),levar1(8),ncmar1(8),
      *                xinsnow,lowdot
       common /comtrill/ ntrill,ivtrill(24),iptrill(24),xnsktr(24),
@@ -4427,10 +5020,10 @@ c
      *  instno(nm),nInstTrans,EarlyTransOn,LaterInstTrans
       logical EarlyTransOn,LaterInstTrans
       common /commidisig/ midisig
-c 130316
       common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
      *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
-c
+      common /comcc/ ncc(nm),tcc(nm,10),ncmidcc(nm,10),
+     *               maxdotmv(nm),ndotmv(nm),updot(nm,20),rtdot(nm,20)
 c
 c  This subr. once produced notexq for entire chord.  10/18/97 altered to write
 c    chord notes as we go.  10/22/97 find range of icrd first.
@@ -4453,10 +5046,86 @@ c
 c
 c  Check for special situations with 2nds (see precrd).
 c
-        if (btest(nacc,30)) then
-          if (nolev .eq. nolevm-1) nolev = nolevm
-        else if (btest(nacc,31)) then
-          if (nolev .eq. nolevm+1) nolev = nolevm
+        if (btest(nacc,30) .and. nolev.eq.nolevm-1) then
+c
+c Upstem, 2nd with upper as main, interchange pitches, 
+c   rt-shift upper (now chord note). Lower (orig chord, now main)
+c   if dotted, probably had shifted dot, dot parameters must be moved 
+c   from chord to main
+c 
+          nolev = nolevm
+          if (btest(icrdat(icrd),26)) then
+c
+c  Orig. chord note dot shift, must transfer to main.
+c
+            icrdotsav = icrdot(icrd)
+            icrdatsav = icrdat(icrd)
+            if (btest(irest(ivx,ip),19)) then
+c
+c Main note (upper) had a dot shift, must move it to chord
+c
+              call setbits(icrdat(icrd),1,26,1)
+              call setbits(icrdot(icrd),7,0,
+     *                    nint(updot(ivx,ndotmv(ivx)+1)*10)+64)
+              call setbits(icrdot(icrd),7,7,
+     *                    nint(rtdot(ivx,ndotmv(ivx)+1)*10)+64)
+c
+c May need to worry about other chord params (accid shefts etc) later
+c
+            else
+              icrdat(icrd) = ibclr(icrdat(icrd),26)
+            end if
+c
+c We are adding a main note dot shift, so push any later ones back
+c 
+
+            if (.not.btest(irest(ivx,ip),19)) then
+              maxdotmv(ivx) = maxdotmv(ivx)+1
+              do 1 indm = maxdotmv(ivx) , ndotmv(ivx)+2 , -1
+                updot(ivx,indm) = updot(ivx,indm-1)
+                rtdot(ivx,indm) = rtdot(ivx,indm-1)
+1             continue
+            end if
+            irest(ivx,ip) = ibset(irest(ivx,ip),19)
+            updot(ivx,ndotmv(ivx)+1) = 0.1*(iand(127,icrdotsav)-64)
+            rtdot(ivx,ndotmv(ivx)+1) = 
+     *                     0.1*(iand(127,ishft(icrdotsav,-7))-64)
+          end if   
+        else if (btest(nacc,31) .and. nolev.eq.nolevm+1) then
+c
+c Downstem, 2nd with lower as main, interchange pitches, 
+c   left-shift lower (now chord note). Lower (orig main, now chord)
+c   probably had shifted dot, dot parameters must be moved from 
+c   main to chord
+c
+          nolev = nolevm
+          if (btest(irest(ivx,ip),19)) then
+            icrdotsav = icrdot(icrd)
+            icrdatsav = icrdat(icrd)
+            icrdat(icrd) = ibset(icrdat(icrd),26)
+c bits in icrdot
+c     0-6   10*abs(vertical dot shift in \internote) + 64
+c     7-13  10*abs(horizontal dot shift in \internote) + 64
+c  Assuming >0 for now! 
+            call setbits(icrdot(icrd),7,0,
+     *                    nint(updot(ivx,ndotmv(ivx)+1)*10)+64)
+            call setbits(icrdot(icrd),7,7,
+     *                    nint(rtdot(ivx,ndotmv(ivx)+1)*10)+64)
+c
+c  Must also set dot shift for (now) main note (orig. chord note).
+c
+            if (btest(icrdatsav,26)) then
+              updot(ivx,ndotmv(ivx)+1) = 0.1*(iand(127,icrdotsav)-64)
+              rtdot(ivx,ndotmv(ivx)+1) = 
+     *                  0.1*(iand(127,ishft(icrdotsav,-7))-64)
+            else
+c
+c No dot move on original chord (now main) note, 
+c
+              updot(ivx,ndotmv(ivx)+1) = 0.
+              rtdot(ivx,ndotmv(ivx)+1) = 0.
+            end if
+          end if
         end if
 c
 c  Lower dot for lower-voice notes?.  Conditions are:
@@ -4467,43 +5136,38 @@ c   4. Not a rest (cannot be a rest in a chord!)
 c.  5. Flag (lowdot) is set to true
 c
         if (lowdot .and. nvmx.eq.2 .and. ivx.le.nv) then
-	    if (2**log2(nodu).ne.nodu .and. mod(nolev-ncm,2).eq.0) then
-	      if (btest(icrdat(icrd),26)) then
+	  if (2**log2(nodu).ne.nodu .and. mod(nolev-ncm,2).eq.0) then
+	    if (btest(icrdat(icrd),26)) then
 c
 c  Note already in movdot list.  Drop by 2.
 c
-	        call setbits(icrdot(icrd),7,0,
+	      call setbits(icrdot(icrd),7,0,
      *                      igetbits(icrdot(icrd),7,0)-20)
             else
 c
 c  Not in list so just move it right now
 c
-	        call dotmov(-2.,0.,soutq,lsout,igetbits(islur,1,3))
-	      end if
+	      call dotmov(-2.,0.,soutq,lsout,igetbits(islur,1,3))
 	    end if
-	  end if
-	  if (btest(icrdat(icrd),26)) then
+          end if
+        end if
+        if (btest(icrdat(icrd),26)) then
 c
-c  Move the dot.
+c  Move the dot. Basic call for chord notes, not main note.
 c
-	    updotc = 0.1*(iand(127,icrdot(icrd))-64)
-	    rtdotc = 0.1*(iand(127,ishft(icrdot(icrd),-7))-64)
-	    call dotmov(updotc,rtdotc,soutq,lsout,igetbits(islur,1,3))
-	  end if
-	  isleft = btest(icrdat(icrd),23)
-	  isright = btest(icrdat(icrd),24)
+          updotc = 0.1*(iand(127,icrdot(icrd))-64)
+          rtdotc = 0.1*(iand(127,ishft(icrdot(icrd),-7))-64)
+          call dotmov(updotc,rtdotc,soutq,lsout,igetbits(islur,1,3))
+        end if
+        isleft = btest(icrdat(icrd),23)
+        isright = btest(icrdat(icrd),24)
 c
 c  Check for ornament in chord.
 c
-	  if (icrdorn(icrd) .gt. 0) then
-	    call putorn(icrdorn(icrd),nolev,nolevm,nodu,nornb,ulq,
-     *         ibmcnt,ivx,ncm,islur,nvmx,nv,ihornb,stemlen,outq,lout,
-     *         ip,0,beamon,.true.)
-c
-c     subroutin putorn(iornq,nolev,nolevm,nodur,nornb,ulq,ibmcnt,ivx,
-c    *     ncm,islur,nvmx,nv,ihornb,stemlen,outq,lout,ip,islhgt,
-c    *     notcrd,beamon,iscrd)
-c
+        if (icrdorn(icrd) .gt. 0) then
+          call putorn(icrdorn(icrd),nolev,nolevm,nodu,nornb,ulq,
+     *       ibmcnt,ivx,ncm,islur,nvmx,nv,ihornb,stemlen,outq,lout,
+     *       ip,0,beamon,.true.)
           call addstr(outq,lout,soutq,lsout)
         end if
 c
@@ -4603,15 +5267,8 @@ c
 c
 c  Use original saved pitch level, unaltered by 2nds logic.
 c
-c 130316
-c          call addmidi(midchan(iv,kv),nolevo-iTransAmt(instno(iv)),
           call addmidi(midchan(iv,kv),nolevo+miditran(instno(iv)),
-c     *             igetbits(icrdat(icrd),3,20),isig,1.,.false.,.false.)
-c 130316
-c     *      igetbits(icrdat(icrd),3,20),midisig(instno(iv)),1.,
      *      igetbits(icrdat(icrd),3,20),midisig,1.,
-
-
      *      .false.,.false.)
         end if
 5     continue
@@ -4643,6 +5300,7 @@ c
       character*79 notexq
       character*80 soutq
       integer*4 ihornb(nm,24),nornb(nm),idynn(10)
+      common /comhair/ ihairuse,idhair(nm)
       data dyntablq /'ppppppp pp  p   mp  mf  f   fp  sfz ff  fff ffff'/
       numdyn = 0
 c
@@ -4650,7 +5308,6 @@ c  Find dynamics for (ivx,ip) in list.  May be as many as 4.  Store idyn values
 c      in idynn(1...4)
 c
       do 1 idyn = 1 , ndyn
-c        ivxtent = iand(idyndat(idyn),15)        
         ivxtent = iand(idyndat(idyn),15)
      *                 +16*igetbits(idynda2(idyn),1,10)
 	  if (ivxtent .eq. ivx) then
@@ -4664,8 +5321,6 @@ c  I don't think there are any more possible for this ivx,ip, so exit loop
 c
             go to 2
           end if
-c        else if (ivxtent .gt. ivx) then
-c          go to 2
         end if
 1     continue
 2     continue
@@ -4709,7 +5364,14 @@ c
           end if
         else
           hoffsd = -.5
-          lbot = ihornb(ivx,nornb(ivx))+1
+c
+c 171230 Desperation
+c          lbot = ihornb(ivx,nornb(ivx))+1
+          if (nornb(ivx).eq.0) then
+            lbot = 1
+          else
+            lbot = ihornb(ivx,nornb(ivx))+1
+          end if
           if (lbot .eq. 1) then
 c
 c Kluge for non-beamed, down xtup, for which ihorb was never set.
@@ -4761,7 +5423,7 @@ c
           lnote = 7
           if (idno .eq. 13) then
 c
-c  Start a hairpin
+c  Start a font-based hairpin
 c
             notexq = chax(92)//'hpstrt'
           else if (idno .eq. 14) then
@@ -4774,6 +5436,19 @@ c
 c  End decrescendo
 c
             notexq = chax(92)//'hpdend'
+          end if
+c
+c  Put in voice number as ID for font-based hairpin
+c
+          if (ivx .le. 9) then
+            notexq = notexq(1:lnote)//char(48+ivx)
+            lnote = lnote+1   
+          else if (ivx .le. 19) then
+            notexq = notexq(1:lnote)//'{1'//char(38+ivx)//'}'
+            lnote = lnote+4
+          else
+            notexq = notexq(1:lnote)//'{2'//char(28+ivx)//'}'
+            lnote = lnote+4
           end if
         else
 c
@@ -4788,19 +5463,37 @@ c
           else		         
             notexq = chax(92)//'Tcresc'
           end if
-        end if
-        if (idno .ge. 13) then
+          if (idno .le. 14) then
 c
-c  Put in voice number
+c  Get and record ID no for start of ps hairpin
+c  Find first unused ID
+c         
+            do 8 idh = 1 , 24
+              if (.not.btest(ihairuse,idh)) go to 9
+8           continue
+            call printl('Bad place in putdyn, call Dr. Don')
+            call stop1()
+9           continue
+            ihairuse = ibset(ihairuse,idh)    
+            idhair(ivx) = idh
+          else
 c
-          if (ivx .le. 9) then
-            notexq = notexq(1:lnote)//char(48+ivx)
+c  Unrecord ID no for end of ps hairpin
+c         
+            call setbits(ihairuse,1,idhair(ivx),0)
+          end if                     
+c
+c  Write ID # for start or end of ps hairpin
+c
+          idh = idhair(ivx)
+          if (idh .le. 9) then
+            notexq = notexq(1:lnote)//char(48+idh)
             lnote = lnote+1   
-          else if (ivx .le. 19) then
-            notexq = notexq(1:lnote)//'{1'//char(38+ivx)//'}'
+          else if (idh .le. 19) then
+            notexq = notexq(1:lnote)//'{1'//char(38+idh)//'}'
             lnote = lnote+4
           else
-            notexq = notexq(1:lnote)//'{2'//char(28+ivx)//'}'
+            notexq = notexq(1:lnote)//'{2'//char(28+idh)//'}'
             lnote = lnote+4
           end if
         end if
@@ -5095,14 +5788,14 @@ c
 c
 c  Construct string to search backwards for placeholder
 c
-          if (ivx .le. 9) then
-            tempq = 'cresc'//char(48+ivx)//'{   }'
+          if (idh .le. 9) then
+            tempq = 'cresc'//char(48+idh)//'{   }'
             ltemp = 11   
-          else if (ivx .le. 19) then
-            tempq = 'cresc'//'{1'//char(38+ivx)//'}{   }'
+          else if (idh .le. 19) then
+            tempq = 'cresc'//'{1'//char(38+idh)//'}{   }'
             ltemp = 14   
           else
-            tempq = 'cresc'//'{2'//char(28+ivx)//'}{   }'
+            tempq = 'cresc'//'{2'//char(28+idh)//'}{   }'
             ltemp = 14   
           end if
           write(11,'(a)')soutq(1:lsout)//'%'
@@ -5269,13 +5962,6 @@ c              notexq = notexq(1:lnote)//'{1'//chax(49-ndxslur)//'}'
             notexq = notexq(1:lnote)//'{2'//chax(51-ndxslur)//'}'
             lnote = 4
           end if
-c          if (11-ndxslur .lt. 10) then
-c            call addstr(chax(59-ndxslur)//noteq(1:lnoten),1+lnoten,
-c     *                 soutq,lsout)
-c          else
-c            call addstr('{1'//chax(49-ndxslur)//'}'//noteq(1:lnoten),
-c     *            4+lnoten,soutq,lsout)
-c          end if
           call addstr(notexq(1:lnote)//noteq(1:lnoten),
      *       lnote+lnoten,soutq,lsout)
 	    if (.not.fontslur) then
@@ -5363,12 +6049,10 @@ c
 c
 c  Terminate slur on single after-grace
 c
-c          ndxslur = igetbits(ipl,4,23)
           ndxslur = igetbits(ipl,5,23)
           call notefq(noteq,lnoten,nolevg(ngs),ncm)
           call addstr(sq//'tslur',6,soutq,lsout)
 c
-cc  Print 11-ndxslur
 c  Print 24-ndxslur
 c
 c          if (11-ndxslur .lt. 10) then
@@ -5391,8 +6075,6 @@ c            call addstr('{1'//chax(49-ndxslur)//'}'//noteq(1:lnoten),
 c
 c+++  Try to fix loss of octave with single gaft
 c
-c        if (isgaft) call addstr(sq//'zcharnote'//noteq(1:lnoten)//'{~}',
-c     *                          13+lnoten,soutq,lsout)
         if (isgaft) then
           itrans = 0
           do 1 i = 1 , lnotenGA
@@ -5505,7 +6187,7 @@ c
             end if
           end if
 c
-c  Print 11-ndxslur
+c  Print 23-ndxslur
 c
           if (23-ndxslur .lt. 10) then
             call addstr(chax(71-ndxslur)//noteq(1:lnoten),1+lnoten,
@@ -5689,11 +6371,13 @@ c  11       start/stop switch
 c  12       kv-1
 c  19-25    ichar(code$)
 c  26       force direction?
+
 c  27       forced dir'n = up if on, set in sslur; also
 c           final direction, set in doslur when beam is started, used on term.
 c  28-31    mod(ndxslur,16), set in doslur when slur is started, used on term.
 c  18       int(ndxslur/16), ditto. So this allows ndxslur>15.
 c  2        stem slur flag
+c  1        flag for "x" slur (voice-independent)
 c
 c  Bits in isdat2
 c  0        Chord switch.  Not set on main note.
@@ -5756,7 +6440,9 @@ c
         isdata = isdat1(isdat)
         if (iv .eq. igetbits(isdata,5,13) .and.
      *      ip .eq. igetbits(isdata,8,3) .and.
-     *            kv .eq. igetbits(isdata,1,12)+1) then
+c     *            kv .eq. igetbits(isdata,1,12)+1) then
+     *       (kv .eq. igetbits(isdata,1,12)+1 .or.
+     *        btest(isdata,1))) then
 c
 c  Since iv and kv match, ivx will be correct
 c
@@ -5869,13 +6555,10 @@ c
 c  Get index of next slur not in use, starting from 12 down
 c
             ndxslur = log2(16777215-listslur)
-c      write(*,'()')
-c      write(*,'(2i4,2x,B24)')ivx,ndxslur,listslur
 c
 c  Record slur index
 c
             listslur = ibset(listslur,ndxslur)
-c      write(*,'(10x,B24)')listslur
 c
 c  Save for use on termination
 c
@@ -5892,7 +6575,7 @@ c
               else
                 ihoff = ihoff+2
               end if
-	      end if
+	    end if
             if (iscrd) then
 c
 c  Additional horiz shifts for h-shifted noteheads?
@@ -5963,19 +6646,15 @@ c              notexq = chax(92)//'dotted'//noteq
             end if
 c
 c  Add slur index to string
-cc  Print 11-ndxslur
 c  Print 23-ndxslur
 c
-c            if (11-ndxslur .lt. 10) then
             if (23-ndxslur .lt. 10) then
 c
 c  5/25/08 Allow 24 slurs
 c
-c              notexq = notexq(1:lnote)//chax(59-ndxslur)
               notexq = notexq(1:lnote)//chax(71-ndxslur)
               lnote = lnote+1
             else if (23-ndxslur .lt. 20) then
-c              notexq = notexq(1:lnote)//'{1'//chax(49-ndxslur)//'}'
               notexq = notexq(1:lnote)//'{1'//chax(61-ndxslur)//'}'
               lnote = lnote+4
             else 
@@ -5985,7 +6664,6 @@ c              notexq = notexq(1:lnote)//'{1'//chax(49-ndxslur)//'}'
 c
 c  Add note name to string
 c
-c            call notefq(noteq,lnoten,nolevs+iupdn+ivoff,ncm)
             islhgt = nolevs+iupdn+ivoff
             call notefq(noteq,lnoten,islhgt,ncm)
             notexq = notexq(1:lnote)//noteq(1:lnoten)
@@ -6045,7 +6723,9 @@ c  Slur is ending.  Back thru list to find starting slur
 c
             do 3 j = isdat-1 , 1 , -1
               if (iv.eq.igetbits(isdat1(j),5,13) .and.
-     *            kv.eq.igetbits(isdat1(j),1,12)+1) then
+c     *            kv.eq.igetbits(isdat1(j),1,12)+1) then
+     *            (kv.eq.igetbits(isdat1(j),1,12)+1
+     *           .or. btest(isdat1(j),1))) then
                 if (idcode .eq. igetbits(isdat1(j),7,19)) then
                   ndxslur = igetbits(isdat1(j),4,28)
 c
@@ -6063,7 +6743,6 @@ c
 c
 c  Bugfix 070901 for slur ending on rest in 2-voice staff
 c
-c            if (nolevs.eq.0 .or. nolevs.gt.60) then
             if (nolevs.le.2 .or. nolevs.gt.60) then
 c
 c  Ending is on a rest, reset nolevs to default starting height
@@ -7432,7 +8111,7 @@ c
       return
       end
       subroutine findeonk(nptr1,nptr2,wovera,xelsk,dtmin,dtmax,eonk0)
-      parameter (nkb=3999,maxblks=4000)
+      parameter (nkb=3999,maxblks=9600)
 c
 c  Compute an exponent eonk for use in the "flattened" formula for elemskips
 c   vs time.  We must solve the eqution f = 0.  Initial quess is eonk0.
@@ -7531,7 +8210,7 @@ c          fnote = nodur(ivx,iip)/float(iip-ip1m1)
       print*,' '
       call printl
      *   ('Probable misplaced barline or incorrect meter, stopping')
-c      call printl('Program error in fnote, send source to Dr. Don')
+      print*,'ivx,ip:',ivx,ip
       call stop1()
       end
       subroutine g1etchar(lineq,iccount,charq)
@@ -7567,7 +8246,7 @@ c
       return
       end
       subroutine g1etnote(loop,ifig,optimize,fulltrans)
-      parameter (nm=24,nkb=3999,mv=24576,maxblks=4000)
+      parameter (nm=24,nkb=3999,mv=24576,maxblks=9600)
       character*1 chax
       common /a1ll/ iv,ivxo(600),ipo(600),to(600),tno(600),nnl(nm),
      *   nv,ibar,mtrnuml,nodur(nm,200),lenbar,iccount,
@@ -7604,7 +8283,7 @@ c     *     ibaroff,udsp(nkb),wheadpt,gotclef,sqzb(maxblks)
      *       restpend(0:nm),relacc,twoline(nm),ismidi,mmidi(0:nm,mv),
      *       debugmidi
       logical debugmidi
-      character*65536 bufq
+      character*131072 bufq
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
       logical novshrinktop,upslur,fontslur,ztrans,
@@ -7621,6 +8300,8 @@ c     *     ibaroff,udsp(nkb),wheadpt,gotclef,sqzb(maxblks)
       logical fulltrans
       common /comsize/ isize(nm)
       common /commidisig/ midisig
+      common /comis4bignv/ is4bignv,AIset
+      logical is4bignv,AIset
       data literq
      *   /'Literal TeX string cannot start with 4 backslashes!',
      *    'TeX string must have <129 char, end with backslash!',
@@ -7850,13 +8531,13 @@ c
           else
             call g1etchar(lineq,iccount,durq)
             call readnum(lineq,iccount,durq,dum)
+            if (lineq(iccount-1:iccount-1).eq.'.') iccount=iccount-1
             iccount = iccount-1
             go to 2
           end if
 c        else if (index('ulare',durq) .gt. 0) then
         else if (index('ularec',durq) .gt. 0) then
           go to 2
-c        else if (durq .eq. 'S') then
         else if (index('LS',durq) .gt. 0) then
 c
 c Stemlength change
@@ -7933,20 +8614,51 @@ c
 c  Will set all durations to 0 except last one.
 c
           call g1etchar(lineq,iccount,durq)
-          if (index('123456789',durq) .eq. 0) then
+          if (index('123456789T',durq) .eq. 0) then
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
-     *             'First char after "x" in xtuplet must be "1"-"9"!')
+     *        'First char after "x" in xtuplet must be "1"-"9" or "T"!')
             call stop1()
           end if
-          call readnum(lineq,iccount,durq,fnum)
-          if (fnum .gt. 99) then
-            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+          if (durq .eq. 'T') then
+c
+c  Check all x-tremolo inputs here; set fnum=2
+c
+            fnum = 2
+            call getchar(lineq,iccount,durq)
+            if (index('0123 ',durq).eq.0) then
+              call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+     *      'First char after "T" in xtuplet must be "0"-"3" or blank!')
+              call stop1()
+            else if (durq .ne. ' ') then
+              call getchar(lineq,iccount,durq)
+              if (index('0123 ',durq).eq.0) then
+                call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+     *          'This char must be "0"-"3" or blank!')
+                call stop1()
+              else if (durq .ne. ' ') then
+                call getchar(lineq,iccount,durq)
+c
+c  Probably blank unles other options entered
+c
+              end if
+            end if
+          else
+c
+c durq is digit, normal xtup
+c
+            call readnum(lineq,iccount,durq,fnum)
+c
+c Leaves durq at next char after number
+c
+            if (fnum .gt. 99) then
+              call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *             'Xtuplet cannot have more than 99 notes!')
-            call stop1()
-          else if (index(' DFnd',durq) .eq. 0) then
-            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
-     *             'Only legal characters here are " ","D","F","n"!')
-            call stop1()
+              call stop1()
+            else if (index(' DFnd',durq) .eq. 0) then
+              call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+     *               'Only legal characters here are " ","D","F","n"!')
+              call stop1()
+            end if
           end if
 c
 c  End of mandatory xtup inputs.  Check for options. Note D,F,d must precede n.
@@ -8262,6 +8974,8 @@ c
      *                  'Slur ID not allowed on non-postscript tie!')
                       call stop1()                   
                     end if 
+                    if (lineq(iccount+1:iccount+1).eq.'x')
+     *                  iccount = iccount+1
                     go to 15
                   end if
                   call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -8486,18 +9200,10 @@ c
               call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *         'In xtup, this character is not allowed!')
               call stop1()
-c            else if (durq.eq.'r' .and. itup.eq.ntup) then
-c              call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
-c     *         'Sorry, PMX cannot end an xtuplet with a rest!')
-c              call stop1()
-            else if (durq.eq.'r' .and. itup.eq.ntup .and.
-     *          index(lineq(iccount+1:iccount+2),'b').eq.0) then
-              call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
-     *       'Sorry, PMX cannot end an xtuplet with a non-blank rest!')
-              call stop1()
             end if
 7           call g1etchar(lineq,iccount,durq)
-            if (index('2345678ulcb',durq) .gt. 0) then
+c            if (index('2345678ulcb',durq) .gt. 0) then
+            if (index('12345678ulcb',durq) .gt. 0) then
               go to 7
             else if (index('sfn',durq) .gt. 0) then
 c
@@ -8640,7 +9346,14 @@ c
             iccount = iccount-1
           end if
           go to 2
-	  else if (durq .ne. ' ') then
+        else if (durq .eq. 'T') then
+c
+c  Single stem tremolo. Only option (optional) is 1,2,3, or 4.
+c
+          call getchar(lineq,iccount,durq)
+          if (index('1234',durq) .eq. 0) iccount = iccount-1
+          go to 2
+	else if (durq .ne. ' ') then
           call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *           'Illegal character!')
           print*,'ASCII code:',ichar(durq)
@@ -9079,6 +9792,8 @@ c
               call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *          'Slur ID not allowed on non-postscript tie!')
               call stop1()                   
+            else if (lineq(iccount+1:iccount+1).eq.'x') then
+              iccount = iccount+1
             end if
           end if
 c
@@ -9536,12 +10251,27 @@ c        gotclef = .true.
      *           'Repeats can only go in voice 1!')
           call stop1()
         end if
-10      call g1etchar(lineq,iccount,durq)
-        if (index('lrdDbz',durq) .gt. 0) go to 10
-        if (durq .ne. ' ') then
+c10      call g1etchar(lineq,iccount,durq)
+c        if (index('lrdDbz',durq) .gt. 0) go to 10
+c        if (durq .ne. ' ') then
+c          call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+c     *           'Illegal character after "R" (repeat/double bar)!')
+c          call stop1()
+c        end if
+        call g1etchar(lineq,iccount,durq)
+        call g1etchar(lineq,iccount,dumq)
+        if (index('l Xr Xd XD Xb Xz XlrXdlX',durq//dumq) .eq. 0) then
           call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
-     *           'Illegal character after "R" (repeat/double bar)!')
+     *           'Illegal character after "R*" (repeat/double bar)!')
           call stop1()
+        end if
+        if (dumq .ne. ' ') then
+          call g1etchar(lineq,iccount,durq)
+          if (durq .ne. ' ') then
+            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+     *           'Must have blank after "R**" (repeat/double bar)!')
+            call stop1()
+          end if
         end if
       else if (charq .eq. 'V') then
 c
@@ -9640,7 +10370,16 @@ c
         iccount = 128
       else if (charq .eq. 'A') then
 27      call g1etchar(lineq,iccount,durq)
-        if (index('rbsdeK',durq) .gt. 0) then
+c        if (index('rbsdeK',durq) .gt. 0) then
+        if (index('rbsdK',durq) .gt. 0) then
+          go to 27
+        else if (durq .eq. 'e') then
+c
+c Check for is4bignv. Must do here to catch first \internote, written in topfile
+c   before ever calling getnote. Initialize as .false. in pmxa. Make it true only 
+c   if nv>7, AI not set, Ai not set. 
+c
+          is4bignv = nv.gt.7 .and. .not.AIset
           go to 27
         else if (durq .eq. 'v') then
           if (ibarcnt .eq. 0) novshrinktop = .true.
@@ -9656,6 +10395,8 @@ c
           iccount = iccount-1
           go to 27
         else if (durq .eq. 'i') then
+          is4bignv = .false.
+          AIset = .true.
           call g1etchar(lineq,iccount,durq)
 c
 c  Local interstaff correction.  Set to -1. if not specifiec, or after use,
@@ -9669,6 +10410,8 @@ c
 c
 c  Global interstaff correction.  Use in place of fintstf if fintstf<0
 c
+          is4bignv = .false.
+          AIset = .true.
           call g1etchar(lineq,iccount,durq)
           call readnum(lineq,iccount,durq,gintstf)
           iccount = iccount-1
@@ -9771,10 +10514,38 @@ c
             voffpt = -24
           end if
           go to 27
+        else if (durq .eq. 'V') then
+          call g1etchar(lineq,iccount,durq)
+          if (index('+-',durq) .eq. 0) then
+            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+     *       'Only "+" or "-" is allowed here!')
+            call stop1()
+          end if
+          call g1etchar(lineq,iccount,durq)
+          if (index('0123456789.',durq) .eq. 0) then
+            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+     *       'A number for vert shift before \eject must start here!')
+            call stop1()
+          end if
+          call readnum(lineq,iccount,durq,fnum)
+          if (index('+-',durq) .eq. 0) then
+            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+     *       'Only "+" or "-" is allowed here!')
+            call stop1()
+          end if
+          call g1etchar(lineq,iccount,durq)
+          if (index('0123456789.',durq) .eq. 0) then
+            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+     *       'A number for vert shift after \eject must start here!')
+            call stop1()
+          end if
+          call readnum(lineq,iccount,durq,fnum)
+          iccount = iccount-1
+          go to 27
         else if (durq .ne. ' ') then
           call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
 c     *       'After "A" must follow one of the letters abcdeiINprRsST!')
-     *     'After "A" must follow one of the letters abcdeiILNprRsST!')
+     *     'After "A" must follow one of abcdeiILNprRsSTvV!')
           print*,'For AS, since ver. 2.7, must only have noinst args.'
           write(15,'(a)')
      *           'For AS, since ver. 2.7, must only have noinst args.'
@@ -9936,7 +10707,7 @@ c
         if (mod(itsofar(ivx),lenbar).ne.0) then
           call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *           'Block duration not divisible by lenbar!')
-          print*,'lenbar is ',lenbar
+          print*,'lenbar, timesofar are ',lenbar,itsofar(ivx)
           call stop1()
         else if (ivx.gt.1 .and. itsofar(ivx).ne.itsofar(1)) then
           print*
@@ -10326,8 +11097,8 @@ c
       end
       subroutine g1etset(nv,noinst,mtrnuml,mtrdenl,mtrnmp,mtrdnp,
      *    xmtrnum0,newkey,npages,nsyst,musize,bottreb)
-      parameter(nm=24,maxblks=4000)
-      character*65536 bufq
+      parameter(nm=24,maxblks=9600)
+      character*131072 bufq
       character*1 chax
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
@@ -10564,9 +11335,9 @@ c      mytime = 1000*(ts+60*(im+60*ih))
 c      return
 c      end  
       subroutine getbuf(lineq)
-      parameter (maxblks=4000)
+      parameter (maxblks=9600)
       character*(*) lineq
-      character*65536 bufq
+      character*131072 bufq
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
       lineq = bufq(ipbuf+1:ipbuf+lbuf(ilbuf))
@@ -11104,7 +11875,7 @@ c
       end if
       go to 1
       end
-      subroutine getmidi(noinstarg,lineq,iccount,ibarcnt,ibaroff,nbars,
+      subroutine getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,
      *                   lenbar,
 c      subroutine getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
      *                    mtrdenl,first)
@@ -11210,7 +11981,7 @@ cc  Instrument numbers or letters.  Expect nv of them.
 c  Instrument numbers or letters.  Expect noinst of them.
 c
 c        do 2 ivx = 1 , nv
-        do 2 ivx = 1 , noinstarg
+        do 2 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
           if (ichar(durq) .gt. 96) then
 c
@@ -11255,7 +12026,7 @@ c Get volumes for each instrument.  Expect nv of them.
 c    Follow same pattern as for insttrument numbers above.
 c 	
 c        do 7 ivx = 1 , nv
-        do 7 ivx = 1 , noinstarg
+        do 7 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
           if (index('123456789',durq) .eq. 0) then
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -11278,7 +12049,7 @@ c Get balance for each instrument.  Expect nv of them.
 c    Follow same pattern as for instrument numbers above.
 c 	
 c        do 8 ivx = 1 , nv
-        do 8 ivx = 1 , noinstarg
+        do 8 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
           if (index('123456789',durq) .eq. 0) then
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -11301,7 +12072,7 @@ c Get transposition for each instrument.  Expect nv of them.
 c    Follow similar pattern as above, but separator is +|-.
 c 	
 c        do 9 ivx = 1 , nv
-        do 9 ivx = 1 , noinstarg
+        do 9 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
           ipm = index('-+',durq)
           if (ipm .eq. 0) then
@@ -11552,7 +12323,7 @@ c
       common /comfig/ itfig(2,74),figq(2,74),ivupfig(2,74),nfigs(2),
      *                fullsize(nm),ivxfig2,ivvfig(2,74)
       common /comnotes/ nnodur,lastlev,ndlev(nm,2),shifton,setis,notcrd,
-     *       npreslur,was2(nm),ninow,nobar1,nsystp(40),ipage,
+     *       npreslur,was2(nm),ninow,nobar1,nsystp(75),ipage,
      *       OptLineBreakTies,HeaderSpecial
       common /comget/ lastchar,rptnd1,sluron(nm,2),fbon,ornrpt,stickyS,
      *       movbrk,movnmp,movdnp,movgap,parmov,fintstf,gintstf,
@@ -11574,7 +12345,7 @@ c
      *                kudorn(63),ornhshft(63),minlev,maxlev,icrd1,icrd2
       character*128 litq
       common /comcc/ ncc(nm),tcc(nm,10),ncmidcc(nm,10),
-     *               ndotmv(nm),updot(nm,20),rtdot(nm,20)
+     *               maxdotmv(nm),ndotmv(nm),updot(nm,20),rtdot(nm,20)
       common /combc/ bcspec
       common /comas3/ ask(2500),iask,topmods
 c
@@ -11634,8 +12405,11 @@ c
       common /commidisig/ midisig
       common /comlyr/ inputmlyr
       logical inputmlyr
-      data inputmlyr /.false./
+      common /combottop/ botamt,topamt,bottopgap
+      logical bottopgap
+      logical inxtup
       cdot = .false.
+      inxtup = .false.
 1     call getchar(lineq,iccount,charq)
       if (lastchar) return
       if (charq .eq. ' ') go to 1
@@ -11825,11 +12599,15 @@ c
 c
 c  Accidental
 c
-          if (nacc(ivx,nnl(ivx)) .eq. 0) then
+c          if (nacc(ivx,nnl(ivx)) .eq. 0) then
+c  171209 May have set bit 18 earlier if D or F preceded accidental
+          if (igetbits(nacc(ivx,nnl(ivx)),2,0) .eq. 0) then
 c
 c  No accidental has been set yet
 c
-            nacc(ivx,nnl(ivx)) = index('fsn',durq)
+c            nacc(ivx,nnl(ivx)) = index('fsn',durq)
+            nacc(ivx,nnl(ivx)) = 
+     *          ior(nacc(ivx,nnl(ivx)),index('fsn',durq))
           else
 c
 c  Repeated accid, so must be double
@@ -11878,8 +12656,8 @@ c
 c  Kluge in case there is a shortcut ".". It will have been sucked up by
 c  readnum.  (Same doesn't hold for ",")
 c
-               iccount = iccount-2
-               go to 2
+               iccount = iccount-1
+c               go to 2
             end if
             nolev(ivx,nnl(ivx)) = 100+ipm*nint(fnum)
 c
@@ -11898,16 +12676,85 @@ c
             ndoub = 0
           end if
 c
+c  Initialize counter for # of non-rests, so can later unbeam if = 1.
+c
+          inxtup = .true.
+          note1xtup = nnl(ivx)
+          nnb = 0
+          if (.not.btest(irest(ivx,nnl(ivx)),0)) nnb = 1
+c
 c  Will set all durations to 0 except last one.  Set flag on this note.
 c
           irest(ivx,nnl(ivx)) = ibset(irest(ivx,nnl(ivx)),28)
 c
-c  Next input will be digit
+c  Next input will be digit unless its a "T"
 c
           iccount = iccount+1
-          call readnum(lineq,iccount,durq,fnum)
-          ntup = nint(fnum)
+          if (lineq(iccount:iccount) .eq. 'T') then
+c
+c  Set up tremolo
+c
+            irest(ivx,nnl(ivx)) = ibset(irest(ivx,nnl(ivx)),2)
+            ntup = 2
+c
+c  Set default beaming, based on Wikipedia article
+c  May be a problem here is nnodur is inherited
+c
+            if (nnodur .eq. 4) then
+              nsolid = 0
+              nindent = 3
+            else if (nnodur .eq. 2) then
+              nsolid = 3
+              nindent = 0
+            else if (nnodur .eq. 8) then
+              nsolid = 1
+              nindent = 2
+            end if
+            call getchar(lineq,iccount,durq)
+            if (index('0123456789',durq) .gt. 0) then
+              nsolid = index('0123456789',durq)-1
+              if (nsolid.eq.0 .and. nnodur.eq.2) then
+                print*,''
+                print*,'Unbeamed half-note 2-note tremolo forbidden.'
+                call stop1()
+              end if   
+              call getchar(lineq,iccount,durq)
+              if (index('0123456789',durq) .gt. 0) then
+                nindent = index('0123456789',durq)-1
+              end if
+            end if 
+            call setbits(irest(ivx,nnl(ivx)),2,3,nsolid)
+            call setbits(irest(ivx,nnl(ivx)),2,5,nindent)
+            if (nsolid .eq. 0) then
+              islur(ivx,nnl(ivx)) =
+     *            ibset(islur(ivx,nnl(ivx)),18)
+            end if
+            islur(ivx,nnl(ivx)) = ibset(islur(ivx,nnl(ivx)),31)
+            islur(ivx,nnl(ivx)+1) = ibset(islur(ivx,nnl(ivx)+1),21)
+            call setbits(islur(ivx,nnl(ivx)+1),3,22,nsolid)
+c
+c  Set some force-beam parameters for the tremolo
+c
+c  Need to check if there's already a forced beam explicitly set here.
+c  If there was, shouldn't do any harm resetting parameters.
+c
+            if (nfb(ivx).eq.0 .or. t1fb(ivx,nfb(ivx)).ne.itsofar(ivx))
+     *           nfb(ivx) = nfb(ivx)+1
+            fbon = .true.
+            ulfbq(ivx,nfb(ivx)) = 'x'
+            t1fb(ivx,nfb(ivx)) = itsofar(ivx)
+            t2fb(ivx,nfb(ivx)) = itsofar(ivx) + ifnodur(nnodur,dotq)
+            nadj = 0
+c
+c Set open beamed notehead flag for half-note tremolo
+c   Just gave 2 quarters with or without flag set. Need to fix
+c
+          else
+            call readnum(lineq,iccount,durq,fnum)
+            ntup = nint(fnum)
+          end if
           if (index('DF',durq) .gt. 0) then
+c
 c
 c  Double xtup note to make an un= xtup. Here xtup number already set but may also
 c    have this command before.
@@ -12292,12 +13139,8 @@ c
 c  140218 Need to get time differently inside xtup, since itsofar doesn't get
 c  updated until after xtup is done
 c
-c              tcc(iv,ncc(iv)) = itsofar(iv)
               nodurt = ifnodur(nnodur,dotq)
               tcc(iv,ncc(iv)) = itsofar(iv)+int(1.*nodurt/ntup*(itup-1))
-c      print*,'itsofar,ncc,nodurt,ntup,itup,tcc:'
-c      print*,itsofar(iv),ncc(iv),nodurt,ntup,itup,tcc(iv,ncc(iv))
-c              isl = ibset(islur(iv,nnl(iv)+1),11)
               isl = ibset(islur(iv,nnl(iv)),11)
               call getchar(lineq,iccount,durq)
 c
@@ -12307,7 +13150,7 @@ c
               ncmidcc(iv,ncc(iv)) = ncmidf(durq)
               if (durq .eq. '8') then
                 ipl(iv,nnl(iv))=ibset(ipl(iv,nnl(iv)),2)
-                iTransAmt(instno(iv)) = 7
+                iTransAmt(instno(iv)) = 7+iTransAmt(instno(iv))
               end if
 c
 c  Set marker on note with lowest voice # starting at same time.
@@ -12379,6 +13222,12 @@ c
               else
                 nolev(ivx,nnl(ivx)) = 2
               end if
+c            end if
+            else
+c
+c Counter for non-rests
+c
+              nnb = nnb+1
             end if
             notcrd = .true.
 8           call getchar(lineq,iccount,durq)
@@ -12396,11 +13245,16 @@ c
                   end if
                 end if
               else if (index('fsn',durq) .gt. 0) then
-                if (nacc(ivx,nnl(ivx)) .eq. 0) then
+c
+c                if (nacc(ivx,nnl(ivx)) .eq. 0) then
+c  May have set other bits earlier 
+                if (igetbits(nacc(ivx,nnl(ivx)),2,0) .eq. 0) then
 c
 c  No accid set yet
 c
-                  nacc(ivx,nnl(ivx)) = index('fsn',durq)
+c                  nacc(ivx,nnl(ivx)) = index('fsn',durq)
+                  nacc(ivx,nnl(ivx)) = 
+     *                  ior(nacc(ivx,nnl(ivx)),index('fsn',durq))
                 else
 c
 c  Symbol must be repeated, so it's a double
@@ -12541,7 +13395,6 @@ c
           ipl(ivx,nnl(ivx)) = ibset(ipl(ivx,nnl(ivx)),8)
           irest(ivx,nnl(ivx)) = ibset(irest(ivx,nnl(ivx)),27)
           go to 2
-c        else if (durq .eq. 'S') then
         else if (index('LS',durq) .gt. 0) then
 c
 c  Stemlength change.  Get dstemlen in \internotes.  Allowable values are -4 to 27.5
@@ -12629,6 +13482,16 @@ c
             iccount = iccount-1
           end if            
           go to 2
+        else if (durq .eq. 'T') then
+          call getchar(lineq,iccount,durq)
+          multtrem = index('1234',durq)
+          if (multtrem .eq. 0) then
+            iccount = iccount-1
+            multtrem = 1
+          end if
+          ipl(ivx,nnl(ivx)) = ibset(ipl(ivx,nnl(ivx)),4)
+          call setbits(ipl(ivx,nnl(ivx)),2,5,multtrem-1)
+          go to 2
         else if (durq .ne. ' ') then
           print*,'Illegal character in note: ',durq,', ivx,nn:',
      *        ivx,nnl(ivx)
@@ -12652,6 +13515,17 @@ c  Set level for preslur on normal note, non-chord
 c
             call setbits(isdat2(nsdat-npreslur+1),7,19,lastlev)
 43        continue
+c
+c  Only matters if last note, non-rest of xtuplet
+c
+          nnb = nnb+1
+        end if
+c
+c  Set flag for unbeamed xtup if it just has 1 note
+c
+        if (inxtup .and. nnb.eq.1) then
+c  ???          islur(ivx,note1xtup) = ibset(islur(ivx,note1xtup),19)
+          islur(ivx,note1xtup) = ibset(islur(ivx,note1xtup),18)
         end if
         if (idotform .gt. 0) then
           if (idotform .eq. 1) then
@@ -13441,9 +14315,18 @@ c
         ncmidcc(iv,ncc(iv)) = ncmidf(durq)
         if (durq .eq. '8') then
           ipl(iv,nnl(iv)+1)=ibset(ipl(iv,nnl(iv)+1),2)
-          iTransAmt(instno(iv)) = 7
+          iTransAmt(instno(iv)) = 7+iTransAmt(instno(iv))
+          lastlev = lastlev+7
         else
-          if (iTransAmt(instno(iv)).eq.7)iTransAmt(instno(iv))=0
+c
+c  This won't work if you really had an octave transposition with some
+c  other clef. Need a check on whether prior clef was an octave clef.
+c
+          if (iTransAmt(instno(iv)).eq.7) then
+            iTransAmt(instno(iv))=iTransAmt(instno(iv))-7
+            lastlev = lastlev-7
+      print*,'Reset itransamt to ',iTransAmt(instno(iv))
+          end if
         end if
 c
 c  Set marker on note with lowest voice # starting at same time.
@@ -13825,6 +14708,20 @@ c
 c
 c Just eat the input; it was used in pmxa
 c
+          go to 27
+        else if (durq .eq. 'V') then
+          bottopgap = .true.
+          topamt = 0.
+          call getchar(lineq,iccount,durq)
+          pmfac = index('- +',durq)-2
+          call g1etchar(lineq,iccount,durq)
+          call readnum(lineq,iccount,durq,botamt)
+          botamt = botamt*pmfac
+          pmfac = index('- +',durq)-2
+          call g1etchar(lineq,iccount,durq)
+          call readnum(lineq,iccount,durq,topamt)
+          topamt = topamt*pmfac
+          iccount = iccount-1
           go to 27
         end if
         if (index('NR',durq) .gt. 0) then
@@ -14308,14 +15205,14 @@ c          to last character of most recent line sucked from buffer.
 c  ipbufmod = points to last character of most recent inserted line
 c             from pmx.mod
 c
-      parameter (maxblks=4000,nm=24)
+      parameter (maxblks=9600,nm=24)
       common /c1omget/ lastchar,fbon,issegno,ihead,isheadr,nline,isvolt,
      *     fracindent,nsperi(nm),linesinpmxmod,line1pmxmod,lenbuf0
       logical lastchar,fbon,issegno,isheadr,isvolt
       character*(*)includeq
       character*80 pmxmoddirq
       character*128 lnholdq
-      character*65536 bufq
+      character*131072 bufq
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
       logical fexist,global
@@ -15280,12 +16177,10 @@ c
 c
 c  Forced multiplicity
 c
-c          mult(ivx,iip) = igetbits(islur(ivx,nip1),3,22)
           call setbits(mult(ivx,iip),4,0,
      *                      igetbits(islur(ivx,nip1),3,22)+8)
         else if (.not.isxtup) then
           if (nodur(ivx,iip) .gt. 0) then
-c            mult(ivx,iip) = 4-log2(nodur(ivx,iip))
             call setbits(mult(ivx,iip),4,0,4-log2(nodur(ivx,iip))+8)
           else
 c
@@ -15305,7 +16200,6 @@ c
           multx = int(10.5+2.929+(0.952*alog(1.+iip-iip1+ndoub)-
      *                   alog(nodur(ivx,iip)/2.))/0.69315)-10
           do 74 iiip = iip1 , iip
-c            mult(ivx,iiip) = multx
             call setbits(mult(ivx,iiip),4,0,multx+8)
 c
 c  Note the following still works after making mult only the 1st 4 bits.
@@ -15367,13 +16261,13 @@ c
 c  This is called when (a) macro recording is just starting and
 c  (b) at the start of a new line, if recording is on
 c
-      parameter (maxblks=4000)
+      parameter (maxblks=9600)
       character*128 lineq,lnholdq
       common /commac/ macnum,mrecord,mplay,macuse,icchold,lnholdq,endmac
       common /c1ommac/ ip1mac(20),il1mac(20),ip2mac(20),il2mac(20),
      *                 ic1mac(20),ilmac,iplmac
       logical mrecord,mplay,endmac
-      character*65536 bufq
+      character*131072 bufq
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
 	lbuf(1) = lbuf(1)
@@ -15443,7 +16337,7 @@ c
       logical upg,slurg,slashg,autofbon
       character*128 litq
       common /comcc/ ncc(nm),tcc(nm,10),ncmidcc(nm,10),
-     *               ndotmv(nm),updot(nm,20),rtdot(nm,20)
+     *               maxdotmv(nm),ndotmv(nm),updot(nm,20),rtdot(nm,20)
       integer cnn(nm),istart(80),istop(80),nxtnow(nm),ifbnow(nm),
      *        numbms(nm),mapfb(16)
       real*4 xit(nm),t1xtup(20),tstart(80),squez(80)
@@ -15843,21 +16737,6 @@ c
         end if
 30    continue
 c
-c  Debug writes
-c
-c      print*
-c      write(*,'(16f5.1)')(eskz(ivxo(in),ipo(in)),in=1,ntot)
-c      print*,'PMXB has now got blocks'
-c      write(*,'(16i5)')(istart(ib),ib=1,nb)
-c      write(*,'(16i5)')(istop(ib),ib=1,nb)
-c      write(*,'(16f5.1)')(space(ib),ib=1,nb)
-c      write(*,'(16f5.1)')(squez(ib),ib=1,nb)
-c      write(*,'(16f5.1)')(fnote(nodur,ivxo(in),ipo(in),nacc),in=1,ntot)
-cc     write(*,'(26i3)')(iand(islur(ivxo(in),ipo(in)),30720)/2048,
-c    *                  in=1,ntot)
-c     write(*,'(1x,26a3)')(ornq(ivxo(in),ipo(in)),in=1,ntot)
-c
-c
 c  Analyze for beams.
 c
       do 20 iv = 1 , nv
@@ -16004,10 +16883,10 @@ c
       logical upg,slurg,slashg,issig,rpndot,autofbon
       character*128 litq
       common /comcc/ ncc(nm),tcc(nm,10),ncmidcc(nm,10),
-     *               ndotmv(nm),updot(nm,20),rtdot(nm,20)
+     *               maxdotmv(nm),ndotmv(nm),updot(nm,20),rtdot(nm,20)
       integer istart(80),istop(80),iaskb(nm),numbms(nm),
      *        nornb(nm),ihornb(nm,24),lcwr(nm),ibmcnt1(nm),ifig(2)
-      character*1 ulfbq,udqq,clefq(nm),slurudq
+      character*1 ulfbq,udqq,clefq(nm),slurudq,udq
       character*8 noteq
       character*79 cwrq(nm),notexq,inameq
       character*20 voltxtq
@@ -16157,10 +17036,10 @@ c
 c              if (clefq(ivxo(in)) .eq. '8') then
               if (btest(ipl(ivxo(in),ipo(in)),2)) then
                 if (iv .le. 9) then
-                  write(11,'(a20,i1,a)')sq//'settrebleclefsymbol',nv,
+                  write(11,'(a20,i1,a)')sq//'settrebleclefsymbol',iv,
      *              sq//'treblelowoct%'
                 else
-                  write(11,'(a20,i2,a)')sq//'settrebleclefsymbol',nv,
+                  write(11,'(a20,i2,a)')sq//'settrebleclefsymbol',iv,
      *              sq//'treblelowoct%'
                 end if
               end if
@@ -16545,8 +17424,12 @@ c
         if (isaccs .or. iscacc) then
           ptsneed = ptsneed+taccfac*wheadpt1
         end if
-        if (poenom*esk .lt. ptsneed) call addask(to(in),ptsneed,
+c        if (poenom*esk .lt. ptsneed) call addask(to(in),ptsneed,
+c     *              esk,fixednew,scaldold,0.,.false.)
+        if (poenom*esk .lt. ptsneed) then
+          call addask(to(in),ptsneed,
      *              esk,fixednew,scaldold,0.,.false.)
+        end if
 99      continue
         if (btest(iornq(ivx,ip),26)) then
 c
@@ -16758,7 +17641,6 @@ c
 c  Check for new clef here.
 c
             if (isclef .and. btest(islur(ivx,ip),11)) then
-c     print*,'At clef insertion, ptclef:',ptclef(iv)
               if (ptclef(iv) .gt. 0.) then
                 notexq = sq//'off{-'
                 if (ptclef(iv) .lt. 9.95) then
@@ -16771,7 +17653,6 @@ c     print*,'At clef insertion, ptclef:',ptclef(iv)
                 notexq = notexq(1:lnote)//'pt}'
                 lnote = lnote+3
                 call addstr(notexq,lnote,soutq,lsout)
-c     print*,'Just added: ',notexq(1:lnote)
               end if
               call clefsym(islur(iv,ip),notexq,lnote,nclef)
 c
@@ -17050,7 +17931,28 @@ c  Clumsy test, but vxtup is not set until main note is processed.
 c
               if (.not.(vxtup(ivx).or.btest(irest(ivx,ip),28))) then
                 nodu = nodur(ivx,ip)
-c              else if (mult(ivx,ip) .lt. 0) then
+cc              else if (iand(mult(ivx,ip),15)-8 .lt. 0) then
+c              else if (iand(mult(ivx,ip),15)-8 .lt. 0 .or.
+c     *         (btest(irest(ivx,ip),2).and.nodur(ivx,ip+1).eq.32) .or.
+c     *         (ip.gt.1.and.btest(irest(ivx,ip-1),2)
+c     *          .and.nodur(ivx,ip).eq.32)) then
+c                nodu = 32
+c              else
+c                nodu = 16
+c              end if
+              else if (btest(irest(ivx,ip),2) .or. 
+     *                 (ip.gt.1.and.btest(irest(ivx,ip-1),2))) then
+c
+c In a 2-note tremolo
+c               
+                if (btest(irest(ivx,ip),2)) then
+c
+c First note of tremolo, duration is on next note
+c
+                  nodu = nodur(ivx,ip+1)
+                else
+                  nodu = nodur(ivx,ip)
+                end if
               else if (iand(mult(ivx,ip),15)-8 .lt. 0) then
                 nodu = 32
               else
@@ -17059,7 +17961,8 @@ c              else if (mult(ivx,ip) .lt. 0) then
               call docrd(ivx,ip,nodu,ncmid(iv,ip),iv,tnow,soutq,lsout,
      *                   ulq,ibmcnt(ivx),islur(ivx,ip),nvmx(iv),nv,
      *                   beamon(ivx),nolev(ivx,ip),ihornb,nornb,stemlen,
-     *                   btest(nacc(ivx,ip),27),nacc(ivx,ip))
+     *                   btest(nacc(ivx,ip),27),nacc(ivx,ip),
+     *                   irest)
             end if
 c
 c  Now that chords are done, add stuff to midi file
@@ -17179,7 +18082,9 @@ c
               end if
             end if
 c
-c  Check for dotted notes with moved dots
+c  Check for dotted main notes with moved dots. Chord notes done elsewhere.
+c  Added check rules out special chordal 2nds, but later must check 
+c  substituted chord note for dot shift that now applies to main note.
 c
             if (btest(irest(ivx,ip),19)) then
               ndotmv(ivx) = ndotmv(ivx)+1
@@ -17290,106 +18195,58 @@ c  Conditions are 0. This is a non-blank rest
 c                 1. kbdrests = .true.
 c                 2. There are two voices on the staff
 c                 3. No user-def height adjustments have been applied (nolev<50)
-cc                 4. Not last note in bar 
-cc                 5. Followed by note (add better test later)
 c
               if (kbdrests .and. btest(irest(ivx,ip),0) .and.
      *            .not.btest(islur(ivx,ip),29).and. nvmx(iv).eq.2 .and. 
-c     *             nolev(ivx,ip).le.50 .and. ip.ne.nn(ivx) 
-c     *            .and. .not.(btest(irest(ivx,ip+1),0))) then
      *             nolev(ivx,ip).le.50) then
-c
-c  130127 Replaced following code with a subroutine
-c
-cc  Get reference level: next following note if no intervening blank rests, 
-cc    otherwise next prior note.
-cc
-cc               levnext = nolev(ivx,ip+1)-ncmid(iv,ip)+4   ! Relative to bottom line
-c                if (ip.ne.nn(ivx).and..not.btest(iornq(ivx,ip),30)) then
-cc
-cc  Not the last note and not "look-left" for level
-cc
-c                  do 8 kkp = ip+1 , nn(ivx)
-c                    if (btest(islur(ivx,kkp),29)) go to 4
-c                    if (.not.btest(irest(ivx,kkp),0)) then
-c                      levnext = nolev(ivx,kkp)-ncmid(iv,kkp)+4 ! Relative to bottom line
-c                      go to 9
-c                    end if
-c8                 continue
-c                end if
-c4               continue
-cc
-cc  If here, there were no following notes or came to a blank rest, or
-cc    "look-left" option set. So look before
-cc
-c                if (ip .eq. 1) go to 2 ! Get out if this is the first note.
-c                do 3 kkp = ip-1, 1, -1
-c                  if (.not.btest(irest(ivx,kkp),0)) then
-c                    levnext = nolev(ivx,kkp)-ncmid(iv,kkp)+4 ! Relative to bottom line
-c                    go to 9
-c                  end if
-c3               continue
-c                go to 2  ! Pretty odd, should never be here, but get out if so.
-c9               continue
-cc
-cc  Find note in other voice at same time
-cc
-c                iupdown = sign(1,ivx-nv-1)
-c                ivother = ivmx(iv,(3-iupdown)/2)
-c                tother = 0.
-c                do 5 kkp = 1 , nib(ivother,ibar)
-c                  if (abs(tother-tnow) .lt. tol) go to 6
-c                  tother = tother+nodur(ivother,kkp)
-c5               continue
-cc
-cc  If here, then no note starts in other voice at same time, so set default
-cc
-c                levother = -iupdown*50
-c                go to 7
-c6               continue
-cc
-cc  If here, have just identified a simultaneous note or rest in other voice
-cc
-c                if (.not.btest(irest(ivother,kkp),0)) then ! Not a rest, use it
-c                  levother = nolev(ivother,kkp)-ncmid(iv,ip)+4
-c                else
-c                  if (nodur(ivother,kkp) .eq. nodur(ivx,ip)) then
-cc
-cc  Rest in other voice has same duration, get out (so defualt spacing is used)
-cc
-c                    go to 2
-c                  end if
-c                  levother = -iupdown*50
-c                end if
-c7               continue
-c                indxr = log2(nodur(ivx,ip))+1
-c                if (iupdown .lt. 0) then
-c                  levtop = levtopr(indxr)
-c                  iraise1 = levother-levtop-3  ! Based on other note
-c                  iraise2 = levnext-levtop     ! Based on following note
-c                  if (indxr.eq.5 .and. levnext.lt.1) iraise2=iraise2+2
-c                  iraise = min(iraise1,iraise2)
-c                  if (mod(iraise+50,2).eq.1 .and. 
-c     *                iraise+levtop.gt.-1) iraise = iraise-1
-c                else
-c                  levbot = levbotr(indxr)
-c                  iraise1 = levother-levbot+3
-c                  iraise2 = levnext-levbot
-c                  if (indxr.eq.5 .and. levnext.gt.8) iraise2=iraise2-1
-c                  iraise = max(iraise1,iraise2)
-c                  if (mod(iraise+50,2).eq.1 .and. 
-c     *                iraise+levbot.le.9) iraise = iraise-1
-c                end if
-c                nolev(ivx,ip) = 100+iraise
-c
-c  The new subroutine call, to replace above code
-c
                 call chkkbdrests(ip,iv,ivx,nn,islur,irest,nolev,
      *            ivmx,nib,nv,ibar,tnow,tol,nodur,1,levtopr,levbotr,
      *                mult,ipl)
               end if
+              if (btest(ipl(ivx,ip),4)) then
 c
-c  Write a separate note or rest
+c  Deal with single stem tremolo
+c  Get up-downness, borrowed from notex
+c
+                if (udqq(nolev(ivx,ip),ncmid(iv,ip),islur(ivx,ip),
+     *               nvmx(iv),ivx,nv).eq.'u') then
+                  udq = 'u'
+                else
+                  udq = 'l'
+                end if
+                multtrem = igetbits(ipl(ivx,ip),2,5)+1
+                if (nodur(ivx,ip) .lt. 64) then
+                  notexq = sq//'tr'
+                else
+                  notexq = sq//'Tr'
+                end if
+                lnote = 3
+                if (multtrem .eq. 2) then
+                  notexq = notexq(1:3)//'r'
+                  lnote = 4
+                else if (multtrem .eq.3) then
+                  notexq = notexq(1:3)//'rr'
+                  lnote = 5
+                end if
+c
+c Get a numerical pitch argument
+c
+                lineno = nolev(ivx,ip)-ncmid(iv,ip)+4
+                if (lineno .lt.0 .or. lineno .gt.9) then
+                  write(noteq,'(a1,i2,a1)')'{',lineno,'}'
+                  lnoten = 4
+                else
+                  noteq = char(lineno+48)
+                  lnoten = 1
+                end if
+                notexq = notexq(1:lnote)//'m'//udq//noteq(1:lnoten)
+                lnote = lnote+2+lnoten
+                call addstr(notexq,lnote,soutq,lsout)
+              end if
+c
+c  Get code for a separate note or rest
+c  If nacc(ivx,ip)(30-31)=1 (dotted chordal 2nd including main note), 
+c    pitch will be shifted +/-1 inside notex.
 c
               call notex(notexq,lnote)
             end if
@@ -17401,8 +18258,9 @@ c
             else if (btest(ipl(ivx,ip),9)) then
               call addstr(sq//'roff{',6,soutq,lsout)
             end if
-            if (ixrest(ivx).eq.0 .and. lnote.gt. 0)
-     *                call addstr(notexq,lnote,soutq,lsout)
+            if (ixrest(ivx).eq.0 .and. lnote.gt. 0) then
+              call addstr(notexq,lnote,soutq,lsout)
+            end if
             if (btest(ipl(ivx,ip),8) .or.
      *          btest(ipl(ivx,ip),9)) call addstr('}',1,soutq,lsout)
 c
@@ -17815,7 +18673,7 @@ c             i.e., with squez=1.  Use after parsing into line to decide if
 c             spacing needs to be "flattened" among notes groups.   
 c
       common /comtol/ tol
-      parameter (nm=24,nkb=3999,maxblks=4000)
+      parameter (nm=24,nkb=3999,maxblks=9600)
       common /a1ll/ iv,ivxo(600),ipo(600),to(600),tno(600),nnl(nm),
      *   nv,ibar,mtrnuml,nodur(nm,200),lenbar,iccount,
      *   nbars,itsofar(nm),nib(nm,15),nn(nm),
@@ -18117,13 +18975,13 @@ c
 c  This is called when (a) macro recording is just starting and
 c  (b) at the start of a new line, if recording is on
 c
-      parameter (maxblks=4000)
+      parameter (maxblks=9600)
       character*128 lineq,lnholdq
       common /commac/ macnum,mrecord,mplay,macuse,icchold,lnholdq,endmac
       logical mrecord,mplay,endmac
       common /c1ommac/ ip1mac(20),il1mac(20),ip2mac(20),il2mac(20),
      *                 ic1mac(20),ilmac,iplmac
-      character*65536 bufq
+      character*131072 bufq
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
       if (.not.mrecord) then
@@ -18165,7 +19023,7 @@ c
       character*1 ulq,sepsymq,sq
       logical beamon,firstgulp,figbass,figchk,isfig
       common /comcc/ ncc(nm),tcc(nm,10),ncmidcc(nm,10),
-     *               ndotmv(nm),updot(nm,20),rtdot(nm,20)
+     *               maxdotmv(nm),ndotmv(nm),updot(nm,20),rtdot(nm,20)
       common /commvl/ nvmx(nm),ivmx(nm,2),ivx
 	common /comtol/ tol
         if (ncc(iv) .eq. 1) then
@@ -18187,23 +19045,6 @@ c
 c  Return middle line of a clef
 c
       character*1 clefq
-c      if (clefq.eq.'t' .or. clefq.eq.'0') then
-c        ncmidf = 35
-c      else if (clefq.eq.'s' .or. clefq.eq.'1') then
-c        ncmidf = 33
-c      else if (clefq.eq.'m' .or. clefq.eq.'2') then
-c        ncmidf = 31
-c      else if (clefq.eq.'a' .or. clefq.eq.'3') then
-c        ncmidf = 29
-c      else if (clefq.eq.'n' .or. clefq.eq.'4') then
-c        ncmidf = 27
-c      else if (clefq.eq.'r' .or. clefq.eq.'5') then
-c        ncmidf = 25
-c      else if (clefq.eq.'f' .or. clefq.eq.'7') then
-c        ncmidf = 37
-c      else
-c        ncmidf = 23
-c      end if
       if (clefq .eq. '8') then
 c
 c  treblelowoct; will treat as treble for this purpose
@@ -18232,7 +19073,7 @@ c
      *               tautofb,autofbon,t1autofb
       character*1 ulfbq,clefq
       common /comcc/ ncc(nm),tcc(nm,10),ncmidcc(nm,10),
-     *               ndotmv(nm),updot(nm,20),rtdot(nm,20)
+     *               maxdotmv(nm),ndotmv(nm),updot(nm,20),rtdot(nm,20)
       common /comudsp/udsp(50),tudsp(50),nudsp,udoff(nm,20),nudoff(nm)
       logical change,autofbon
       nvmx(jv) = 1
@@ -18480,20 +19321,14 @@ c
             restq =sq//'qqs'
             lrest = 4
           end if
-c          if (2**log2(nodu) .ne. nodu) then
-cc
-cc  One or two dots on rest
-cc
-c            restq = restq(1:3)//'p'
-c            lrest = 4
-c            if (2*nodu .gt. 3*2**log2(nodu)) then
-cc
-cc  Double dotted rest
-cc
-c              restq = restq(1:4)//'p'
-c              lrest = 5
-c            end if 
-c          end if
+c
+c  Special case for rest at start of F-tuplet inside a forced beam
+c
+          if (btest(nacc(ivx,ip),18) .and.
+     *             btest(nacc(ivx,ip),19)) then
+            restq = sq//'pt4'//restq(1:lrest)
+            lrest = lrest+4
+          end if
           notexq = restq
           lnote = lrest
 c
@@ -18513,19 +19348,8 @@ c
               notexq = sq//'lower'//noteq(1:lnoten)//sq//'internote'
             end if
             lnote = 16+lnoten
-c            if (2**log2(nodu) .ne. nodu) then
-cc
-cc  Have dot in raised rest.  must put in hbox!
-cc
-c              notexq = notexq(1:lnote)//sq//'hbox{'
-c              lnote = lnote+6
-c            end if
             notexq = notexq(1:lnote)//restq(1:lrest)
             lnote = lnote+lrest
-c            if (2**log2(nodu) .ne. nodu) then
-c              notexq = notexq(1:lnote)//'}'
-c              lnote = lnote+1
-c            end if
           end if
           if (2**log2(nodu) .ne. nodu) then
 c
@@ -18561,9 +19385,6 @@ c     *          (nole.lt.0.or.nole.gt.8)) then
      *                    sq//'hbox{'//restq(1:lrest)//'}'
               lrest = lrest+23
             end if
-
-
-
             notexq = restq(1:lrest)//notexq(1:lnote)
             lnote = lnote+lrest
           end if
@@ -18803,9 +19624,9 @@ cc  Correct fsyst to account for transposition and key changes.
 cc  Check for nbars > nsyst
 cc
 ccccccccccccccccccccccccccccccccccc
-      parameter (nm=24,nkb=3999,nks=125,maxblks=4000)
+      parameter (nm=24,nkb=3999,nks=125,maxblks=9600)
       logical loop,usefig,isfirst,optimize
-      character*65536 bufq
+      character*131072 bufq
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
       integer nn(nm),nodur(nm,200),ivxo(600),ipo(600),
@@ -18854,8 +19675,12 @@ c      logical mrecord,mplay,endmac,gotclef,cstuplet
      *  instno(nm),nInstTrans,EarlyTransOn,LaterInstTrans
       logical EarlyTransOn,LaterInstTrans
       logical fulltrans
+      common /comis4bignv/ is4bignv,AIset
+      logical is4bignv,AIset
       data wtimesig,wclef,wkeysig
      *   / 0.72  , 0.8 ,  0.28 /
+      is4bignv = .false.
+      AIset = .false.
       whead20 = 0.3
       if (.not.optimize) then
         print*
@@ -19399,7 +20224,6 @@ c     *         'In system #',isyst,' cannot meet min. space rqmt'
 c
 c  Find eonk by Newton method
 c
-c            eonk = min(.9,(wminpt-elmin0)/(elmin1-elmin0))
             call findeonk(nptr(ibar1),nptr(ibar1+nbarss(isyst))-1,
      *         wsyspt/wminpt,fbar*nbarss(isyst)+xelsk,dtmin,dtmax,
      *         (wminpt-elmin0)/(elmin1-elmin0))
@@ -19556,7 +20380,7 @@ cc  Admit "RD" before "/" (search for "rptfq2:" )
 cc  In doslur, for multi-line staves, single notes, check forced stem dir'n
 cc    before setting stemup (used to set horiz offset).
 ccccccccccccccccccccccccccccccc
-      parameter (nm=24,nks=125,mv=24576,maxblks=4000)
+      parameter (nm=24,nks=125,mv=24576,maxblks=9600)
 c
 c  FYI /all/ differs in appearance in function ncmid
 c
@@ -19604,20 +20428,19 @@ c  31    If on, suppress printing number with xtuplet starting here
 ccccccccccccc
 cc  ipl    cc
 ccccccccccccc
-cc  0-7   Location in list [0,200]
-cc  0-7   Unused
 c  0     blank barline (must be iv=1) (would have used islur but no room)
 c  1     look left for K rests, moved here from iornq(30)
 c  2     treblelowoct
-cc  2-7   Unused
-c  3-7 unused
+c  3     Open notehead in forced beam xtup
+c  4     Set if single stem tremolo
+c  5-6   termulo multiplicity - 1
+c  7 unused
 c  8     left offset main note one headwidth
 c  9     right offset main note one headwidth
 c  10    chord present?
 c  11-16 Forced beam height adjustment (-30 to +30)
 c  17-22 Forced beam slope adjustment (-30 to +30)
 c  23-26 Slur index for Way-after grace.  Inserted when slur is started.
-cc  27      Unused? 
 c  27 5th bit for slur index for Way-after grace (100712)
 c  28    key change: only in voice 1
 c  29    Grace after main note. (Type A)
@@ -19655,8 +20478,9 @@ cc  irest  cc
 ccccccccccccc
 c  0        rest=1, no rest = 0
 c  1        There will be a vertical shift for number of this xtup
-c  Moved hgt shft to mult 16-22, so could span -64,64.
-cc  2-6      Height shift, 1 => -15, 31 => +15  Indicate by +/- [n] after 'n'
+c  2        Set if 2-note tremolo starts here
+c  3-4      nsolid, # of solid beams in 2-note tremolo
+c  5-6      nindent, # of indented beams in 2-note tremolo
 c  7        There is a horizontal shift for xtup number
 c  9-13     Horiz shift, 1=>-1.5, ... , 31=>+1.5
 c  14       Flip up/down-ness of xtup number
@@ -19782,7 +20606,7 @@ c
 c  Bits in icrdorn are same as in iornq, even tho most orns won't go in crds.
 c
 cccccccccccccccccccccccccccccccc
-      character*65536 bufq
+      character*131072 bufq
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
       character*10 figq
@@ -19794,7 +20618,7 @@ cccccccccccccccccccccccccccccccc
       logical loop,lastchar,slint,svolta,evolta,onvolt,
      *        cwrest(nm),islast,inlast,optimize
       integer istop(80),numbms(nm),istart(80)
-      real*4 xnsttop(40),xintstaff(40),hesk(23),hpts(23),poevec(nks),
+      real*4 xnsttop(75),xintstaff(75),hesk(23),hpts(23),poevec(nks),
      *        tstart(80),squez(80)
       character*1  clefq(nm),ulfbq,rptfq1,rptfq2,charq
       character*79 notexq,inameq
@@ -19821,7 +20645,7 @@ cccccccccccccccccccccccccccccccc
      *       rptprev,equalize,rptfq1,rptfq2
       common /combeam/ ibmtyp
       common /comnotes/ nnodur,lastlev,ndlev(nm,2),shifton,setis,notcrd,
-     *       npreslur,was2(nm),ninow,nobar1,nsystp(40),ipage,
+     *       npreslur,was2(nm),ninow,nobar1,nsystp(75),ipage,
      *       OptLineBreakTies,HeaderSpecial
       common /comtop / itopfacteur,ibotfacteur,interfacteur,isig0,
      *   isig,lastisig,fracindent,widthpt,height,hoffpt,voffpt,idsig,
@@ -19851,7 +20675,7 @@ cccccccccccccccccccccccccccccccc
      *   ispoi,bcspec,topmods,headlog,clchb,clchv(nm),flgndb,
      *   btest,sluron,setis,nobar1
       common /comcc/ ncc(nm),tcc(nm,10),ncmidcc(nm,10),
-     *               ndotmv(nm),updot(nm,20),rtdot(nm,20)
+     *               maxdotmv(nm),ndotmv(nm),updot(nm,20),rtdot(nm,20)
       common /compoi/ ispoi
       common /combc/ bcspec
       common /comeon/ eonk,ewmxk
@@ -19900,7 +20724,14 @@ cccccccccccccccccccccccccccccccc
       common /comclefrests/ centrests
       logical newclef, centrests
       common /comlyr/ inputmlyr
-      logical inputmlyr 
+      logical inputmlyr /.false./
+      common /combottop/ botamt,topamt,bottopgap
+      logical bottopgap
+      common /comis4bignv/ is4bignv,AIset
+      logical is4bignv,AIset
+      common /comhair/ idhairuse,idhair(nm)
+      bottopgap = .false.
+      idhairuse = 0
       if (.not.optimize) then
         print*
         print*,'Starting second PMX pass'
@@ -20191,6 +21022,7 @@ c
       nvolt = 0
       do 28 iv = 1 , nm
         nudoff(iv) = 0
+        maxdotmv(iv) = ndotmv(iv)
         ndotmv(iv) = 0
 28    continue
 c
@@ -20387,10 +21219,10 @@ c
 c              if (clefq(iv) .eq. '8') then
               if (btest(ipl(iv,ioff+1),2)) then
                 if (iv .le. 9) then
-                  write(11,'(a20,i1,a)')sq//'settrebleclefsymbol',nv,
+                  write(11,'(a20,i1,a)')sq//'settrebleclefsymbol',iv,
      *              sq//'treblelowoct%'
                 else
-                  write(11,'(a20,i2,a)')sq//'settrebleclefsymbol',nv,
+                  write(11,'(a20,i2,a)')sq//'settrebleclefsymbol',iv,
      *              sq//'treblelowoct%'
                 end if
               else
@@ -20843,6 +21675,21 @@ c  second pass, vshrink at top of page one is dealt with in topfile, which is ca
 c  *before* any reading in any "Av" at the top of the first input block.
 c
               if (.not.vshrink) then
+                if (islast .and. bottopgap) then
+                  if (abs(botamt) .gt. 1.e-6) then
+                    if (botamt .gt. 9.95) then
+                      fmtq = '(a,f4.1,a)'
+                    else if (botamt .gt. 0.) then 
+                      fmtq = '(a,f3.1,a)'
+                    else if (botamt .gt. -9.95) then 
+                      fmtq = '(a,f4.1,a)'
+                    else
+                      fmtq = '(a,f5.1,a)'
+                    end if
+                    write(11,fmtq)sq//'null'//sq//'vskip',botamt,
+     *                         sq//'Internote%'                                    
+                  end if
+                end if
                 xnstbot = xnsttop(ipage)*etabot/etatop
                 if (xnstbot .lt. 9.95) then
                   fmtq = '(a,f3.1,a)'
@@ -20851,6 +21698,22 @@ c
                 end if
                 if (islast) write(11,fmtq)sq//'vskip',xnstbot,
      *              sq//'Interligne'//sq//'eject%'
+                if (islast .and. bottopgap) then
+                  if (abs(topamt) .gt. 1.e-6) then
+                    if (topamt .gt. 9.95) then
+                      fmtq = '(a,f4.1,a)'
+                    else if (topamt .gt. 0.) then 
+                      fmtq = '(a,f3.1,a)'
+                    else if (topamt .gt. -9.95) then 
+                      fmtq = '(a,f4.1,a)'
+                    else
+                      fmtq = '(a,f5.1,a)'
+                    end if
+                    write(11,fmtq)sq//'null'//sq//'vskip',topamt,
+     *                       sq//'Internote%'                                    
+                  end if
+                  bottopgap = .false.
+                end if
               else
                 if (islast) write(11,'(a)') sq//'vfill'//sq//'eject%'
               end if
@@ -20878,6 +21741,7 @@ c
 c
 c  Vertical spacing parameters, then restart
 c
+              if (is4bignv) xinsnow = .95*xinsnow
               if (islast) write(11,fmtq)sq//'interstaff{',xinsnow,
      *            '}'//sq//'contpiece'
 c
@@ -21162,8 +22026,6 @@ c
               ipl(ivx,ip) = ipl(ivx,ip+ioff)
               iornq(ivx,ip) = iornq(ivx,ip+ioff)
               mult(ivx,ip) = mult(ivx,ip+ioff)
-c              if (ivx.le.2 .and. figbass) 
-c     *                isfig(ivx,ip) = isfig(ivx,ip+ioff)
               if (figbass .and. ivx.eq.1 .or. ivx.eq.ivxfig2) then
                 if (ivx.eq.1) then
                   isfig(1,ip) = isfig(1,ip+ioff)
@@ -21204,7 +22066,6 @@ c
      *                    iptrill(it)+nib(ivtrill(it),ibar-2)
 22        continue
           do 27 icrd = 1 , ncrd
-c            ivx = iand(15,ishft(icrdat(icrd),-8))
             ivx = iand(15,ishft(icrdat(icrd),-8))
      *               +16*igetbits(icrdat(icrd),1,28)
             ipnew = iand(255,icrdat(icrd))-nib(ivx,ibar-1)
@@ -21213,7 +22074,6 @@ c            ivx = iand(15,ishft(icrdat(icrd),-8))
             icrdat(icrd) = ior(max(0,ipnew),icrdat(icrd))
 27        continue
           do 29 iudorn = 1 , nudorn
-c            ivx = iand(15,ishft(kudorn(iudorn),-8))
             ivx = ivxudorn(iudorn)
             ipnew = iand(255,kudorn(iudorn))-nib(ivx,ibar-1)
             if (ibar .gt. 2) ipnew = ipnew+nib(ivx,ibar-2)
@@ -21222,7 +22082,6 @@ c            ivx = iand(15,ishft(kudorn(iudorn),-8))
 29        continue
           do 42 idyn = 1 , ndyn
             idynd = idyndat(idyn)
-c            ivx = iand(15,idynd)
             ivx = iand(15,idynd)+16*igetbits(idynda2(idyn),1,10)
             ipnew = igetbits(idynd,8,4)-nib(ivx,ibar-1)
 c
@@ -21237,9 +22096,7 @@ c
 42        continue
           do 43 itxtdyn = 1 , ntxtdyn
             idynd = ivxiptxt(itxtdyn)
-c            ivx = iand(15,idynd)
             ivx = iand(31,idynd)
-c            ipnew = igetbits(idynd,8,4)-nib(ivx,ibar-1)
             ipnew = igetbits(idynd,8,5)-nib(ivx,ibar-1)
             if (ibar .gt. 2) then
               ipnew = ipnew+nib(ivx,ibar-2)
@@ -21261,7 +22118,6 @@ c            call setbits(idynd,8,4,ipnew)
             isdat1(isdat) = isdata
 41        continue
           do 44 ibc = 1 , nbc
-c            ivx = iand(15,ibcdata(ibc))
             ivx = iand(15,ibcdata(ibc))+16*igetbits(ibcdata(ibc),1,28)
             ipnew = igetbits(ibcdata(ibc),8,4)-nib(ivx,ibar-1)
             if (ibar .gt. 2) then
@@ -21397,7 +22253,6 @@ c
         else if (rptfq2 .eq. 'z') then
           if (islast) write(11,'(a)')sq//'setzalaligne'//sq//'Endpiece'
         else
-c        else if (rptfq2 .ne. 'D') then
           print*
           print*,'R? , ? not "d","r",or"b","z"; rptfq2:',rptfq2
           write(15,*)'R? , ? not "d","r",or"b","z"; rptfq2:',rptfq2
@@ -21407,6 +22262,21 @@ c        else if (rptfq2 .ne. 'D') then
         if (islast) write(11,'(a)')sq//'Endpiece'
       end if
       if (.not.vshrink) then
+        if (islast .and. bottopgap) then
+          if (abs(botamt) .gt. 1.e-6) then
+            if (botamt .gt. 9.95) then
+              fmtq = '(a,f4.1,a)'
+            else if (botamt .gt. 0.) then 
+              fmtq = '(a,f3.1,a)'
+            else if (botamt .gt. -9.95) then 
+              fmtq = '(a,f4.1,a)'
+            else
+              fmtq = '(a,f5.1,a)'
+            end if
+            write(11,fmtq)sq//'null'//sq//'vskip',botamt,
+     *                         sq//'Internote%'                                    
+          end if
+        end if
         xnstbot = xnsttop(ipage)*etabot/etatop
         if (xnstbot .lt. 9.95) then
           fmtq = '(a,f3.1,a)'
@@ -21763,9 +22633,6 @@ c
 c        levbot = -nint(2*xinsnow)+3+levar1(iarp)-ncmar1(iarp)
         levbot = nstaffshift+3+levar1(iarp)-ncmar1(iarp)
         invert = -levbot+4+nolev-ncm
-c      print*,'xinsnow,levar1,ncmar1,levbot,nolev,ncm:'
-c      write(*,'(f5.1,5i5)')xinsnow,levar1(iarp),ncmar1(iarp),
-c     *levbot,nolev,ncm
       end if
 c
 c  isym will be (1,2) if invert is (even,odd).  If even, raise .5\internote
@@ -22631,11 +23498,10 @@ c
 c
 c  Only print number when wanted.  First check vert, horiz offset
 c
-c        if (btest(irest,1)) nlnum = nlnum+iand(31,ishft(irest,-2))-16
         if (btest(irest,1)) nlnum = nlnum+igetbits(mult,8,16)-64
         if (btest(irest,7)) eloff = eloff+
      *          (.1*iand(31,ishft(irest,-9))-1.6)*wheadpt/poenom
-        if (.not.usexnumt) then 
+        if (.not.usexnumt) then
           notexq = chax(92)//'xnum{'
           lnote = 10
           istrtn = 7
@@ -22668,8 +23534,8 @@ c        if (btest(irest,1)) nlnum = nlnum+iand(31,ishft(irest,-2))-16
       return
       end
       subroutine read10(string,lastchar)
-      parameter (maxblks=4000)
-      character*65536 bufq
+      parameter (maxblks=9600)
+      character*131072 bufq
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
       character*(*) string
@@ -22869,11 +23735,6 @@ c
 c  Sets iwidbits of isdata, shifted by ishift, to ivalue
 c
       ibase = 2**iwidbit-1
-      if (ivalue.gt.ibase) then
-        print*
-        print*,'WARNING in setbits: ivalue > ibase'
-        write(15,'(/,a)')'WARNING in setbits: ivalue > ibase'
-      end if  
       isdata = iand(not(ishft(ibase,ishift)),isdata)
       isdata = ior(isdata,ishft(ivalue,ishift))
       return
@@ -22976,9 +23837,6 @@ c
             call errmsg(lineq,iccount-1,ibarcnt-ibaroff+nbars+1,
      *           'Macro number not in range 1-20!')
             call stop1()
-c          else if (btest(macuse,macnum)) then
-c            print*
-c            print*,'WARNING: Redefining macro # ',macnum
           end if
           macuse = ibset(macuse,macnum)
           if (charq .eq. 'R') then
@@ -23038,6 +23896,12 @@ c
         else
           ibmrep = 2*mtrnuml/mtrdenl
         end if
+      else if (mtrdenl.eq.8 .and. (mtrnuml.eq.8.or.mtrnuml.eq.4)) then
+c
+c  Added 170726
+c
+        ibmtyp = 1
+        ibmrep = mtrnuml/4
       else
 c
 c  Assumes mtrdenl=8 and 3/8, 6/8, 9/8, or 12/8
@@ -23168,11 +24032,12 @@ c  Reset nxtinbm for use as counter as #'s are posted by putxtn(..)
 c
       nxtinbm(ivx) = 0
       smed = 0.
-      if (.not.btest(islur(ivx,ipb(1)),2)) then
+c      if (.not.btest(islur(ivx,ipb(1)),2)) then
+      if (.not.btest(islur(ivx,ipb(1)),2) .and. nnb.gt.1) then
 c
 c No forced 0 slope
 c
-        if (nnb .eq. 1) go to 6
+c        if (nnb .eq. 1) go to 6
         nsc = 0
         do 5 inb = 1 , nnb-1
         do 5 jnb = inb+1 , nnb
@@ -23245,12 +24110,10 @@ c
       if (ulq(ivx,ibc) .eq. 'u') iul = 1
       ssq = 0.
       syb = 0.
-c      yb1 = nolev1(ivx)+iul*(stemlen+bmhgt*(mult(ivx,ipb(1))-1))
       yb1 = nolev1(ivx)
      *       +iul*(stemlen+bmhgt*(iand(15,mult(ivx,ipb(1)))-8-1))
       do 4 inb = 1 , nnb
         ybeam = yb1+islope(ivx)*xelsk(inb)/slfac
-c     *              -iul*bmhgt*(mult(ivx,ipb(inb))-1)
      *              -iul*bmhgt*(iand(15,mult(ivx,ipb(inb)))-8-1)
         syb = syb+ybeam
         ynote = nolev(ivx,ipb(inb))
@@ -23275,7 +24138,9 @@ c     *              -iul*bmhgt*(mult(ivx,ipb(inb))-1)
       ssq = ssq+2*dnolev*(syb-sumy)+dnolev**2
       if (.not.vxtup(ivx) .and. sqrt(ssq/nnb) .gt. stemmax .and.
      *    (abs(off1).lt.stemmax .or. abs(off2).lt.stemmax)
-     *    .and. .not.btest(islur(ivx,ipb(1)),2)) then
+c     *    .and. .not.btest(islur(ivx,ipb(1)),2)) then
+     *    .and. .not.btest(islur(ivx,ipb(1)),2)
+     *    .and. nnb.ne.1) then
 c
 c  The first check is to save trouble of putting xtup's in setbm2.
 c  The penultimate check is that first and last stems aren't both excessive.
@@ -23286,7 +24151,6 @@ c
 c
 c  Check if beam starts or ends too high or low.
 c
-c      xboff = bmhgt*(mult(ivx,ipb(1))-1)
       xboff = bmhgt*(iand(15,mult(ivx,ipb(1)))-8-1)
       l1ng = iul*(nolev1(ivx)-ncmid(iv,ipb(1)))+xboff+7 .lt. 0.
       xnolev2 = nolev1(ivx)+islope(ivx)/slfac*xelsk(nnb)
@@ -23304,7 +24168,8 @@ c
 c
 c  Since one or the other end has changed, need to change slope
 c
-        if (.not.btest(islur(ivx,ipb(1)),2))
+c        if (.not.btest(islur(ivx,ipb(1)),2))
+        if (.not.btest(islur(ivx,ipb(1)),2) .and. nnb.ne.1)
      *       islope(ivx) = nint(slfac*(xnolev2-nolev1(ivx))/xelsk(nnb))
       end if
       if (nssb(ivx) .gt. 0) then
@@ -23407,6 +24272,13 @@ c  Make t[ID] look like s[ID]t
 c
           isdat2(nsdat) = ibset(isdat2(nsdat),3)  
         end if
+        if (lineq(iccount+1:iccount+1).eq.'x') then
+c
+c  Flag for 2-voice, indexed slurs
+c
+          iccount = iccount+1
+          call setbits(isdat1(nsdat),1,1,1)
+        end if
       end if
       call setbits(isdat1(nsdat),7,19,idcode)
 c
@@ -23415,7 +24287,9 @@ c
       do 2 isdat = nsdat-1 , 1 , -1
         if (idcode .eq. igetbits(isdat1(isdat),7,19) .and.
      *      iv .eq. igetbits(isdat1(isdat),5,13) .and.
-     *      kv-1 .eq. igetbits(isdat1(isdat),1,12)) then
+c     *      kv-1 .eq. igetbits(isdat1(isdat),1,12)) then
+     *      (kv-1 .eq. igetbits(isdat1(isdat),1,12)
+     *       .or. btest(isdat1(isdat),1)))             then
 c
 c  Matched idcode & ivx.  On/off?.  If on, new is turnoff, leave bit 11 at 0.
 c
@@ -23829,6 +24703,8 @@ c
      *  instno(nm),nInstTrans,EarlyTransOn,LaterInstTrans
       logical EarlyTransOn,LaterInstTrans
       common /comsize/ isize(nm)
+      common /comis4bignv/ is4bignv,AIset
+      logical is4bignv,AIset
       sq = chax(92)
       vshrink = xinstf1.gt.20. .and. .not.novshrinktop 
       if (vshrink) then
@@ -23948,7 +24824,7 @@ c
         clefqiv = clefq(iv)
         if (clefqiv.eq.'8') then
           clefqiv='t'
-          iTransAmt(instno(iv)) = 7
+          iTransAmt(instno(iv)) = 7+iTransAmt(instno(iv))
         end if
         if (nstaves .eq. 1) then
           fmtq = chax(48+numclef(clefq(iv)))
@@ -24011,8 +24887,10 @@ c
         else
           fmtq = '(a,f4.1,a)'
         end if
+        facis = 1.
+        if (is4bignv) facis = .95
         write(11,fmtq)sq//'stafftopmarg0pt'//sq//'staffbotmarg0pt'
-     *       //sq//'interstaff{',xinstf1,'}'//sq//'relax'
+     *       //sq//'interstaff{',xinstf1*facis,'}'//sq//'relax'
       else 
         write(11,'(a)')sq//'stafftopmarg0pt'//
      *         sq//'staffbotmarg5'//sq//'Interligne'//sq//
@@ -24104,7 +24982,7 @@ c
           upcaseq = chq
           print*,'Warning, upcaseq was called with improper argument: '
      *            //chq
-      stop
+          stop
         end if
       return
       end
@@ -24266,25 +25144,6 @@ c
         kv = 1
       end if
 c
-c Moved to pmxab to allow midivel, bal, tran as functions of instrument
-c   rather than staff (iv)
-cc
-cc  Count up staves(iv,nv) vs instruments.  Store instr# for iv in iinsiv(iv)
-cc
-c      nstaves = 0
-c      ivt = 0
-c      do 12 iinst = 1 , nm
-c        nstaves = nstaves+nsperi(iinst)
-c        do 13 ivtt = 1 , nsperi(iinst)
-c          ivt = ivt+1
-c          iinsiv(ivt) = iinst
-c13      continue
-c        if (nstaves .eq. nv) go to 14
-c12    continue
-c      print*,'Screwup!'
-c      call stop1()
-c14    continue
-c
       do 5 icm = 0 , numchan-1
 c
 c  Get the number of bytes in the data stream
@@ -24294,10 +25153,8 @@ c
           ndata = ndata+1+msecend(icm,isec)-msecstrt(icm,isec)
 11      continue
 c
-cc  Add 3 (for instrum) plus 4 (for closing) to byte count, 
 c  Add 3 for instrum, 4 for bal,  plus 4 (for closing) to byte count, 
 c
-c        ndata = ndata+7
         ndata = ndata+11
 c
 c  Add 4+lnam(iinsiv(iv)) if lnam>0 ,
@@ -24542,8 +25399,7 @@ c   with \pmxlyr{...}\, but also look for ~ in lyrics and replace with '\ll ',
 c   (unless preceded with '\'), check length
 c
       character*128 lineq,lineqt
-      character*1 sq 
-      data sq /'\'/
+      character*1 sq /'\'/
       iend = lenstr(lineq,128)
 c
 c      i2nd = iccount+index(lineq(iccount+1:128),'"')
