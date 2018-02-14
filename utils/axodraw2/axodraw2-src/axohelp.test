@@ -9,14 +9,17 @@ if test -z "$test_srcdir"; then
   test "$test_srcdir" = "$0" && test_srcdir=.       # in case subst failed
 fi
 
+echo Copying source files if necessary
+"$test_srcdir" = . || cp "$test_srcdir"/test* . || exit 1
+
 echo Running axohelp on test document ...
-cp "$test_srcdir"/test* .
 ./axohelp test \
     || { echo axohelp failed to run correctly ; exit 1; }
 
-echo Checking result ...
-diff test.ax2-std test.ax2 \
+echo Checking result file test.ax2 ...
+tr -d '\r' < test.ax2 | diff test.ax2-std - \
     || { echo The .ax2 file created by axohelp was incorrect; exit 1; }
 
 echo Success, so I will remove generated file test.ax2
 rm test.ax2
+
