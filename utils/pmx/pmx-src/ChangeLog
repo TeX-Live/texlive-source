@@ -1,231 +1,686 @@
-Changes from PMX 2.5 to 2.621, 28 January 2013
-
-2.501 (Note: new scor2prt)
-
-Bugfix: initialize index in PMX subroutine putorn to eliminate subscript
-error detected in some compilers Bugfix in scor2prt: Ignore special
-treatment of special symbols if they appear between double quotes.
-Tweak: move end of first part of line­break ties slightly to the right.
-
-2.502 (Note: new pmx.tex)
-
-The height of a figured bass vertical stack can now be adjusted upward by
-an integral number of \internote by appending "+" and the number. Recall
-that it can already be moved downward 4\internote by prepending "_"
-(underscore). The two options can be combined to provide full control
-over the vertical position.  Ties can now be represented with braces
-"{" before a note and "}" after. Both are equivalent to "t" after the
-note. (Thanks to Dirk Laurie).  In pmx.tex all the commands of the form
-\font\...=\fontid sy1000 have been changed to \font\...=cmsy10 (Thanks
-to Olivier Vogel).
-
-2.503
-
-Enable arpeggio left shift with ?­[x] Allow musicsize of 24 and 29.
-Bugfix: Fix bug introduced in 2.415 which caused error in printing
-replacement number in xtup.
-
-2.504
-
-Gap between normal grace and main note: X[x] as option to the G command,
-where x is the gap size in notehead widths.  Bugfix: og (segno) now
-works OK when nv .ne. noinst.
-
-2.505
-
-A new global option AK activates special rules for vertical positioning of
-rests in two­voice staves.  By way of background, without the new option,
-rests in two­voice staves have default positions based on a simple rule
-that is not context­sensitive: those in the lower voice (the one before
-"//") are 4\internote below their single­voice default positions,
-and those in the upper line are 2\internote above the single­voice
-default. The new option invokes a set of context­sensitive rules to
-set the default position. The baseline rule is to align the rest in
-a horizontal line with the next following note in the same bar. If
-there is no following note in the bar, then it is aligned with the next
-prior note. If there are simulataneous rests in both voices, the old
-rule is applied. When the AK option is in force, it only affects places
-where there are two voices in a staff. It may be toggled on and off at
-the beginning of any input block, using just AK. When the option is in
-effect, any user­defined tweaks on the height of a rest will supersede
-the option for that particular rest, i.e., the tweak will be applied
-relative to the single­voice default position.
-
-2.506
-
-Fixes a bug in AK. Simultaneous, equal­duration rests will be positioned
-according to the default rules.
-
-2.507
-
-Enhancement to global option AK for vertical positioning of rests in
-two­voice staves (see version 2.505): The option L ("look left") in a rest
-will cause the vertical position of that rest to be based on the preceding
-note, rather than the following one as is the default when AK has been
-issued Partial bugfix: In unbeamed xtuplets, the length of the bracket
-and position of the number are now adjusted to account for any inserted
-hardspaces.  Bugfix: unbeamed xtups with two flags are now allowed.
-
-2.508
-
-Allow grace notes in xtuplets.
-
-2.509
-
-Correct small bug in arpeggio left­shifting (it got confused when there
-was more than one voice on a staff).
-
-2.510
-
-Bugfix: Correct omission of character variable declarations in new
-subroutine getgrace introduced in 2.508.
-
-2.511 (Note: new scor2prt named s2p2511.exe)
-
-Bugfix: Correct error in horizontal spacing introduced in 2.507.
-Experiment: Remove prohibition against tempo changes in MIDI macros.
-Bugfix in scor2prt: Make it work right when "R" command occurs at end
-of input block and "/" is on next line (as produced by M­Tx).
-
-2.512
-
-Enable multiplicity down­up "][" within xtuplet
-
-2.513
-
-Bugfix: If there is more than one rest at start of a beamed xtuplet marked
-as a forced beam, beam height and slope tweaks are now properly handled.
-Bugfix: If an xtuplet with multiplicity 2 or 3 starts with a rest, the
-rest is now printed correctly.  Bugfix: Unbeamed xtuplets (with option
-'a' on first note) with multiplicity 2 or 3 are now printed correctly.
-
-2.514
-
-Bugfix: Correct horizontal spacing when after­grace is immediately
-followed by normal grace.  Bugfix: Correct transpose register when it
-has been changed in a single after­grace.
-
-2.515
-
-Bugfix: Correct error in automatic forced beams. Before the fix, if the
-beam did not start an integral number of beam durations from the start
-of the bar, incorrect results would occur.  Bugfix: Properly center
-fermata over centered whole­bar rest.
-
-2.516 (Note: new pmx.tex)
-
-Allow figures in voice #2.
-
-2.517
-
-Allow figures in two voices, voice 1 and any other one.
-
-2.518
-
-Bug fixes in 2­voice figures.
-
-2.519
-
-Fix bug that prevented \sk from being output, misaligning some voices.
-
-2.520
-
-New feature: special characters 2+, 4+, 5+, 6+, 9+ for figured bass. In
-the PMX string for any figure, follow the number by 's'. This uses the
-font cmrj from the new package figbas. You must install this font in
-your TeX setup for this to work.
-
-2.521
-
-Bugfix: Font definition syntax corrected so no extra space is introduced.
-
-2.602 (Note: new pmx.tex; requires eTeX)
-
-Allow 24 voices, beams, slurs. Require etex.  Include comment about
-doubling size of internal buffer to 131072, requiring gfortran for
-Windows to compile.  Correct slur indexing in linebreakslurs.  Account for
-comment lines in line count for error messages
-
-2.603 (Note: new scor2prt)
-
-In getpmxmod.for, decrease nline by 2 to fix locating errors following
-reading in an include file.  Add some error messages in g1etset.for
-setup data
-
-2.610
-
-Instrument-wise transposition: Ki[instrument #][+/-][trans
-amt.][+/-][new key]. For more than one instrument, may immediately
-repeat everything after "K". Must either be at start of score (right
-after setup), or if later, must be preceded by normal (full score) key
-change command K+0[+/-][new key]. Must be used with relative accidentals
-("Ar"). Part(s) to be transposed must be entered in concert key, and
-will appear transposed in the score. MIDI behavior not yet tested.
-Has not yet been integrated into scor2prt, so for now if you want to
-make parts, only use Ki... as score-only (on line after "%%") and/or
-instrument only (on same line after %[Instrument #]).
-
-2.613
-
-Set error trap if "D" is entered before any notes.
-
-Enhance "AS" to allow spacing adjustments tailored for either smallsize
-or tinysize. As before, "AS" must be followed by nv characters, but now
-they may be "0" for normal, "-" or "s" for small, or "t" for tiny. Still
-must set sizes of instruments with inline TeX. 
-
-Bugfix: Fixed broken "K-..." in 2.610.
-
-2.614
-
-Bugfix: revise raised dotted rests by separately raising rest and dot. 
-
-2.615 *(Note: new scor2prt)*
-
-Command "AS", described above under 2.163, now also causes staff sizes
-to change (in score only, not parts), so inline TeX is no longer needed
-to change sizes of selected staves. 
-
-Scor2prt transfers partwise transposition commands Ki... (see 2.610
-above) into parts.
-
-2.616
-
-"Feature" added: Hairpin dynamics now may span input blocks.
-
-2.617
-
-Repaired several obscure bugs related to platform and compiler
-dependencies; see pmxab.f for details.
-
-2.618
-
-For letter and a4 paper respectively, commands "Acl" and "Ac4" set
-horizontal and vertical sizes and offsets that center the page with no
-further adjustments required in dvips.
-
-2.619
-
-Several changes at movement breaks to improve compatibility with M-Tx 
-and musixlyr.
-
-2.621 
-
-Bugfix: Made keyboard rest positioning ("AK" command) work properly
-when there are rests are within xtuplets. Also fine-tune default
-positioning of number and bracket in unbeamed xtuplets containing
-rests. Position of both can still be overridden with options on
-first note command for xtuplet.
-
+2.84
+  Bug fix: dots in chordal seconds
+  Bug fix: Initialize ihornb for non-beamed, down xtup
+  Bug fix: When using "AT" with 2-note x3c rD. 
+2.83
+  Fix problems when changing to or from octave treble clef.
+  Fix beaming (or not) and number location for xtups with
+    multiple rests. Still some problems with number height but
+    can be band-aided with number height tweak option.
+  Tweak error messages for options on "R" command.
+  Allow forced beam height and slope tweaks with 2-note tremolos
+  Allow chordal note with 2-note tremolos, adding dots as needed.
+  Fix call to ncmid in beamstrt when setting start height for beam of 
+    2-note trem, by changing arg from ivx to iv
+2.82
+  bugfix: beams with rests, not confused with xtups.
+  x option after slur index to allow slurs to go from one voice to another.
+  x option also for ties
+2.81
+  Allow string of rests to end xtup
+  in chordal half-note 2-note tremolo, make chord notes open.
+2.80
+  Add 2-note tremolos
+2.78
+  Expand bufq to 131072 bytes
+  Expand maxblks tp 9600
+  Allow up to 75 pages
+  Index postscript hairpins from 1 up instead of by voice #.
+  Add option 'o' to forced beam for open notehead (\hb); set ipl(3)
+  Add option T[n], n=1,2,3 for single stem tremolo
+2.77
+  Enable AV+/-x+/-y to add vskip bigh before or after \eject
+2.76
+2.75
+  Bugfix: unbeamed xtups with dots: in beamn1 and beamid allow dotted 16th, and
+    2 or 3 flags on shortened note. 
+2.74
+  Bugfix: allow "0" as argument of @ command on lyrics string.
+  Check for and allow "\ in centered page headings with P command.
+  Check for and allow "\ in text dynamics with D command.
+  For lyrics string starting in xtuplet, insert check for inputting musixlyr.
+  For staff-crossing beamed xtuplet chords, if 2nd segment of a joined beam
+    starts with a blank rest, put '\sk' into the TeX. 
+    To enable high-to-both beamed etup staff-crossing chord, for blank
+    rest at start of forced beam, shift \sk's from before to after \ib..;
+    so \ib is at start and note in upper voice has a beam to connect to.
+  Expand range of vertical xtup number shift, now stored in mult(16-22) 
+  Check for and allow \" within lyrics strings, for umlauts.
+2.73 (160121)
+  Dirk's "..." command, to convert "text" into \pmxlyr{text}\ and insert as
+    inline TeX. Replace all '~' inside "..." and not preceded with '\', by 
+    '\lk '. Right after 2nd ", replace @[a,b][+,-]n with \at{[a,b][+,-]n}\
+    Include definitions of \ly and \at in pmx.tex (2 Feb 16). After first ",
+    add (as type 2 string) '\\input musixlyr \'
+  After inputting pathname, change any '\' to '/', for Linux compatibility.
+2.72 (160110)
+  Really finalize \mbrest...go back to 3 args to deal with clef changes.
+  Fine tune centered whole bar rests to deal with clef changes
+  Fix bug in wsclef when >1 staff per instrument, since \setclef
+    needs to know instrument and specify clefs on all staves for that
+    instrument. Ones that were not changed by user will not be printed,
+    and will be kept the same as before.
+  Fix bug with arpegii from one voice to another in same staff.
+2.71 (151226)
+  Finalize mbrest mods
+2.705
+  Fix error message
+2.704 (140614) 
+  Octave treble clef
+  Make horizontal ornament shift (ornhshft) floating
+2.703 (140323)
+  Option v[-]n at end of any figure will alter figdrop for rest of system
+2.702
+  Stem slurs. Only for ps, assume no other pos'n adjustments. Option "v"
+2.701
+  oC = coda (\code{10})
+    Move iornq(29) (blank barline) to ipl(0) (changes in pmxb, getnote)
+  oG = new seqno
+  To do: fix grace note spacing problem (partially done)
 2.622
-
-New option in "K" command: "Kn..." inserts \ignorenats before signature
-change, supressing naturals in new signature.
-
-Many small fixes in transposition and key changes with "K", "Ki",
-and "IT" to make MIDI come out OK. Basic function of "K" and
-"Ki" unchanged. "IT[+/- n1][+/- n2]..." now transposes MIDI by
-\internotes, not half steps as before. E.g. to transpose MIDI of
-2nd instrument out of 3 up by one octave, use "IT+0+7+0". May also
-use to untranspose a transposing instrument that has been entered
-transposed, to make MIDI come out right.
+  Redefine midtc(..) and miditran(..); clean up all transpositions/key changes
+  Kn[+/-...] \ignorenats at signature changes
+  Fix tie checks in doslur() and dopsslur() to subtract iTransAmt from nolevs
+    before checking and setting pitch levels levson() and levsoff()
+  Define midisig separately from isig. Put in common commidisig.
+    Use for explicit midi signature and for accid corrections to midi piches
+    in addmidi.
+2.621
+  Make keyboard rest option work in xtuplets. Created subroutine
+    chkkbdrests, modified make2bar to include calls to chkkbdrests as rqd.
+2.620
+  Allow user-defined rest height tweaks at start of beam.
+2.619
+  At movement break, change \nbinstruments in \newmovement macro; add
+    3rd arg to \newmovement in pmx.tex; modify pmxb.for and getnote.for
+    to remove call to newnoi and change call to \newmovement
+2.618
+  Add option Ac[l,4] to set vert and horiz size and offsets to properly
+    center page for letter or a4 paper.
+2.617
+  In g1etnote, change if-check for note to use index(...) instead
+    of ichar(charq) since it was messing up gfortran optimizer
+  After pmxa, search for and remove penultimate line <blank><blank>/
+    because it was screwing up linux-compiled versions
+  Bugfix: Increase dimension of kicrd from 7 to 10 in crdaccs(...)
+2.616 (111110)
+  Allow hairpins to span multiple notes groups (gulps).
+2.615+ (110810)
+  Fix midi when some instruments are transposed, by subtracting
+    iTransAmt(instno(iv)) from pitch values sent to via addmidi in
+    make2bar.for (for main notes) and docrd (for chord notes)
+2.615 (110725)
+  Fig bug with size-setting (in topfile) when instrument has >1 staves 
+2.615 (110724)
+  Make AS[0|-|s|t]... really set sizes
+2.614
+  Mod notex.for to fix Terry's bug with raised dotted rests (caused 
+    by double-hboxing). 
+2.613
+  Bugfix: In pmxa, change "do while" limit to keep from overwriting instno.
+2.612
+  Enhance AS to allow s or t for smallsize or tinysize
+2.611
+  Error trap for "D" before any notes in a block.
+2.610
+  Instrument-wise key changes and transposition (incomplete)
+2.603
+  101211 In getpmxmod.for, decreased nline by 2 to fix locating errors 
+    following reading in an include file.
+  101121 Added some error messages in g1etset.for setup data 
+2.602
+  Correct slur indexing in linebreakslurs. 
+  Account for comment lines in line count for error messages
+2.601
+  Bug fix: allow 24 slurs with graces
+2.60 Changes made make it really big
+  increase mv (size of midi) ? Note: MIDI can't have >16 voices w/o 
+    major reprogramming, and 16 may also be a problem (icmm)
+  nm=24 (voices) done
+  24 slurs done
+  24 simultaneous beams (Replace index 24 by 0, so get 0-23)
+  bufq*131072 (gfortran only)
+  getarg syntax (gfortran only)
+2.523+
+  Fix voice numbering for normal dynamics and text dynamics
+2.523
+  Version of bigpmx first posted to Hiroaki's web site.
+2.522
+  5/26/10 Replace ipl bits 0-7 with ipl2, add new common for it.
+  With 2.521+ as starting version, incorporate bigpmx mods to allow 24 voices.
+  5/13/10 Fix log2 function
+  5/15/10 Fix bitwise storage for dynamics, fix segnoo string length. 
+2.521+
+  091025 Enable dotting 2nd part of linebreak slur or tie.
+  To adjust barno height due to linebreak slur, use \bnrs instead of
+    explicitly redefining \raisebarno (pmxb) 
+2.521
+  Bugfix
+2.520
+  090519 Enable ligfonts (special figured bass characters)
+2.519
+  Fix another bug which kept \sk from being output so misaligned some notes.
+2.518
+  Fix bugs: referencing fig data, char declaration for member of 
+     common/comfig/
+2.517
+  Allow figures in voice 1 + any one other.
+2.516
+  Allow figures in voice #2
+2.515+ to do: Change manual and activate rule against clef change in voice #2.
+2.515
+  071222 Changes in getnote to allow auto forced beams to start anywhere.
+  071206 In make2bar, shift fermataup7 to left over centered pause.
+  070901 In doslur, check for nolev <=2 in case slur ends on rest in 2-line
+      staff (it was screwing up vertical justification).
+  n34 for tweaks to midi durations of quarter note septuplets.
+  To do: In ref250.tex, the tables where 's,t,)' is explained, the line
+      [+,- i]   ... Vertical adjustment of the start of second segment
+    should it be replaced by
+      [s +,- i]   ... Vertical adjustment of the start of second segment
+2.514
+  Changes in make2bar to get horizontal spacing right when normal grace
+    follows after grace
+  Changes in dograce to get octaves right for any material entered inside
+    \gaft, which shields transpose register changes from the outside world.
+2.513
+  In make1bar, near end, for forced beams starting with a rest, copy hgt and
+    slope tweaks to ALL notes after first, not just the second one, so if
+    there's more than one rest at start the tweaks are still observed.
+  In beamid and beamend, add stand-alone triply-flagged notes for xtups.
+2.512
+  Near end of pmxb, fix error trap to allow redundant 'RD'
+  Enable multiplicity down-up '][' within xtup.
+2.511
+  Introduce eskz2 for xtup #'s and bracket lengths, to remove bug caused by 
+    adjusteskz as in bar 7 of barsant.
+2.510a
+  Test: remove restriction on tempo changes in MIDI macros
+    Send to CM for beta testing.
+2.509+
+  To do: Correct manual on AS. "-" is for smaller staves.
+2.510
+  Forgot to declare litq, voltxtq as character in subroutine getgrace
+2.509
+  Corrected small bug in arpeggio shifting (ivx <= iv in call putarp)
+2.508
+  Allow graces in xtups. New subroutine getgrace. 
+2.507
+  To do: Raise/lower figures.
+  To do: Add 24, 29 to list of musicsizes in manual
+  New sub adjusteskz to account for ask's when computing lengths of
+    brackets for unbeamed xtups, slopes and horizontal posn's of number 
+  Bug fix: in beamn1, beamid, and beamend, allow unbeamed xtups w/ 2 flags
+  Add look-left option for keyboard rests, "L" in rest command, set iornq(30)
+2.506
+  Fix bug with AK, when simultaneous rests have same duration, use defaults.
+2.505
+  Keyboard rests AK
+2.504
+  Space after normal grace: option X[n]
+  Fixed og when nv .ne. noinst, by using sepsymq instead of '&'
+  (To do) length of xtup bracket when there is added non-collision space.
+  Trap musicsize if .ne. 16,20,24,29.
+2.503
+  Enable arpeggio left shift with ?-x
+  To do: In manual, arpeggio over 2 staves.
+  Allow musicsize of 24 and 29. Had to define meter font size explicitly,
+    also change font size for text dynamics, but not much else so far.
+  Bugfix in beamstrt, introduced in 2415, ip was changed before putxtn
+    was called, causing error in printing replacement number.
+2.502
+  Incorporate Dirk Laurie's patch to use { , } , for ties.
+  Figure height adjustment: append +[n]
+  Change ec font stuff in pmx.tex per Olivier Vogel's comment (CM email?)
+2.501
+  Readjust horizontal offset back to .8 in LineBreakTies
+  Fix zero-subscript (iudorn) in putorn
+2.50
+  Increase number of text-dynamics (dimension of txtdynq) per block 
+    from 12 to 41.
+  Slur option n to override altered default curvature.
+  Allow default ps slur curvature tweaks with Ap+/-c
+2.416
+  Increase length of textdynq from 24 to 128
+  (Todo) Add comment in manual about blank lines at end.
+  Configuration file: Define subroutine getpmxmod, check path in environment
+    variable pmxmoddir, check existence, read lines into bufq after setup. 
+  Increase dimension on idynn in dodyn from 4 to 10 for max number 
+    of marks in a bar
+  Increase allowable # of lines from 2000 to 4000.
+  (To do) Replace definition of \liftpausc per Olivier.
+  (To do) Fix extraneous error message if RD is placed at very end.
+2.415
+  Fix "AT" option: replace putxtn,topfile,beamstrt,beamid to use \xnumt
+    instead of redefining \xnum. Change font used to \smallfont (as for
+    normal xtups,
+  Allow slur to start on rest.
+2.414
+  Correct bug in crdacc when adding accidental to boundary causes number of
+    segments to decrease
+  Special rule for 3-accidental chords: If no 2nds, place them in order
+    top, bottom, middle.
+2.413
+  Correct bugs in chordal accidentals, related to left-shifted noteheads
+    (a) Special problems with downstem when main note needs shifting
+    (b) Assign 0 rank to boundary segs due to left-shifted noteheads
+2.412
+  Change default horiz shift of start of seg 2 of linebreak slurs:
+    -.7 for slurs, -1.2 for ties,
+  Use height of start of seg 1 slur itself for end of 1 and start of 2.
+2.411
+  "Apl" activates special treatment of linebreak slur/tie's; breaks all in 2.
+  "s" option in start of slur/tie as precursor to vert/horiz tweaks for end
+     of seg 1. of linebreak slur/tie, 2nd "s" for start of seg2.
+  With "Apl", curvature adjustments on starting slur command apply to seg 1, 
+     those on ending command to seg 2.
+2.410
+  "AT" to allow Col. S.'s tuplet option. Simply input tuplet.tex and redefine
+     \xnum, \unbkt, \ovbkt. 
+  "s" option in main xtup input after "x": slope tweak for bracket. mult(4) is
+     flag, mult(5-9) is tweak value+16
+2.409
+  Bugfix in docrd for MIDI: Use original pitch in case main/chord were
+    switched due to 2nds.
+  Remove "o" from error message for "A" command.
+  New syntax: optional instrument number separator ":" in movement 
+    break command to precede a 2-digit instrument. 
+  Conditional output formats for \setname at movement break to allow 
+    instrument numbers >9.
+  Bugfix in coding to raise barno due to slur over line break (pmxb)
+  Move date/version data statement in pmxab to a better place.
+2.408
+  Allow pnotes{x} when x>9.995 (mod is only to format stmt in make2bar).
+  Bug fix in \liftPAusep in notex.for and in pmx.tex
+  Character variables for version and date
+  For up-stem single graces slurred to down-stem, shift slur start left by 
+    0.8 so slur doesn't get too short.
+  Initialize and slide mult, same as other full-program variables in /all/.
+2.407
+  Allow AN[n]"[partname]" to be parsed by scor2prt as filename for part n,
+2.406
+  Alter PMX: put \dnstrut into \znotes in \starteq (for system spacing
+    equalization).
+  Put dimensions of double sharps and flats in crdacc (for chords).
+  Bugfix: Use sepsymq in LineBreakTies(..) instead of '&'
+  Use only first 4 bits of mult for multiplicity+8, so rest can be used
+    for other stuff.
+  Move stemlength stuff in nacc(27-30) to mult(27-30) to remove conflict.
+2.405: Not published but saved for safety.
+  Option Aph to write \special{header=psslurs.pro} top of each page, so
+    dviselec will work OK.
+2.404
+  Allow slur to end on rest, but not start on a rest.  Efaults height 
+    of ending is default height of start (before any automatic or user-
+    defined djustments). User may adjust height as normal from default.
+2.403
+  Bugfix: turn off repeated beaming patterns.at end of non-last voice.
+2.402
+  Automatic repeated forced beams.  Start with "[:"  End with next explicit 
+    forced beam or end of input block.
+  Increase # of forced beams per line of music per input block from 20 to 40
+2.401
+  Optional K-Postscript Linebreak Ties, Apl. New subroutine LineBreakTies.
+    Makes 1st part normal shape, and starts 2nd part a little further left.
+  Enable arpeggios in xtuplets.  Had to make time itar(narp) a real.
+2.40
+  Set up WrotePsslurDefaults (logical) so only write defaults on 1st Ap.
+  Fix non-ps-slur input to \midslur (third signed integer). Do not reverse
+    sign for down-slurs.
+2.359
+  Add error exit subroutine stop1 to make exit status g77-compatible..
+  Absolute octave on xtup chord note was 2 octave too high, fixed in getnote
+  Fermata on vertically shifted rest: special trap in putorn() to set height.
+  Correct multiple grace note spacing for small staves (in dograce, 
+       define wheadpt1 depending on staff size)
+2.358
+  Allow curvature corrections at start of postscript slur, in dopsslur()
+  Local slur options p[+|-][s|t] for [nos|s]luradjust,[not|t]ieadjust
+  Options for [Nos|S]luradjust,[Not|T]ieadjust,[noh|h]alfties: Ap[+|-][s|t|h]
+  Make t[ID] act like s[ID]t, most mods in spsslur().
+  Add spsslur() to read in data for ps slurs, call from getnote.
+  In beamstrt, save args for SetupB in common comipb to save them for 
+     2nd call when xtup starts with rest
+  Add spacing for ornament ")" as if it were accidental, in make2bar().
+  Horiz shift start and end of ps ties, dep. on stem dir'n, in dopsslur()
+  Horiz. shift start of ps grace slur, 2 places in dograce().
+  Horiz shift end of grace slur in endslur()
+  Make st slurs into postscript ties.  Separate subroutine dopsslur(),    
+  Non-beamed xtup: "a" in 1st note or rest, before "x" (sets drawbm=.false.)
+  Allow two D"x" on same note. Introduced jtxtdyn1 in dodyn.
+2.357a
+  Fix missing "end" in backfill.com, too-long lines in g1etnote, getnote
+2.357
+  Increase dimension for # of lit TeX strings from 52 to 83.
+  Allow blank rest in middle of xtuplet. Only mods in g*etnote().
+2.356
+  Increased some dimensions from 30 to 40 to allow up to 40 pages.
+  In unbeamed xtups, "n" did not suppress bracket.  Fixed in beamstrt().
+  Fix parsing of "f,h,H,HH" in sslur.
+  Fix bug with cdot, note-level for slur termination (in getnote)
+2.355
+  Midi transposition:  IT[+|-][n1][+|-][n2]...[+|-][n(noinst)], 
+     n=# of half-steps.  Restrict to mult. of 12 now, to avoid key-sig issues
+  Make midi recognize ps ties in doslur.
+  Correct ttieforsl so that it eats 2nd argument properly, using \zcharnote 
+     to get octave right.
+2.354
+  With postscript slurs, make t-slurs real ties by inserting replacement 
+    macros \tieforisu, etc, defined in pmx.tex
+  Check for open cresc or decresc at end of input block, using list[de]cresc
+  Hairpin syntax conditional on postscript slurs. Backup to fill in start 
+    level, using new backfill(...).  Separate height tweaks for 
+    start and finish.
+2.353
+  K-0+n to transpose by half step (rather than just change key)
+  Allow "rm[n]" when nv>1.  Require it in all parts. Just write a stack of 
+    \mbrest's
+  Enable "Rz"; define \setzalaligne in pmx.tex. Special treatment at end
+    of input block before movement break, and at start of block after 
+    movement break, using \newmovement rather than \setzalaligne, since
+    former already redefines \stoppiece. In second case, set rptfg2='z'.
+  Make clefq(nm) common between pmxb and getnote; change references in 
+    getnote at 'M' to array elements, setting all new clefs as you go.
+2.352
+  Remove \parskip redefinition from pmx.tex; write it into TeX file when
+    "Ae" is invoked.
+  Ap to activate postscript slurs. Add macro \psforts to pmx.tex to redefine 
+    \tslur in case \midslur was used.  Allow slur inputs 'f','h','H','HH',
+    translate them thru mapping to (1,4,5,6) as \midslur params, then let
+    \psforts translate them back to ps slur macors.
+2.351
+  Number slurs from 0 up instead of 11 down, anticipating postscript slurs.
+  Write "\eightrm" instead of "\cmr8" for \figfont with small baseline size.
+  Increase length of basenameq to 44 characters everywhere.
+  Increase dimension of mcpitch (midi-chord-pitch) to 20.
+  Set default systems per page to 1 if nv>7
+  In pmxb, move place where isystpg is reset to 0, so that \eject gets
+    written when there is just one system per page.
+2.35
+  Cautionary accidentals with 'c' anywhere in note symbol.
+  NEW pmx.tex with \resetsize to set size to normal or small depending on 
+    current \internote.  Used with new coding in dograce() to get right
+    new size in case user has \setsize'ed some lines to \smallvalue. For
+    \smallvalue-sized staves, redefine \tinynotesize to give 11-pt font. 
+    Affects pmx.tex.
+  Continuation figure with fractional length. May now mix with other figures.
+    If another figure follow Cont-fig, separate with colon.   
+2.342
+  Bugfix in getnote to recognize relative octave shift in grace at start of  
+    input block.
+  In make2bar, initialize islhgt=0 earlier than before (possible solution
+    to Suse g77 compile problem that I could not reproduce)..
+  Bugfix in beamstrt & beamn1 for r2x6 c4D d d d
+2.341
+  Syntax check: Forced page break page number must be > than previous.
+  Bugfix: Define ivx when "sliding down" breath/caesure data in pmxb.
+2.34
+  New pmx.tex with redefined liftpausc
+  Bug fix with dotted, non-beamed xtups.
+2.332
+  Fix bugs in horizonal shifts, spacing, for accid's, graces, noteheads.
+  Allow arbitrary pos. input to W in g1etnote and getnote.
+2.331
+  Bug-fix in dodyn(..): typo on length of arg of txtdyn
+2.33
+  Caesura (oc), breath (ob).  Set iornq(28), store rest of data in ibcdata()
+2.321
+  Rescale accidental shifts. Still use 7 bits but now map (0,127) 
+     onto (-1.,5.35)
+  Fix ihornb bug in dodyn, seen with dynamics on lower-voice non-beamed xtups
+2.32 (Noticed after posting)
+  Prohibit "/" as figure.
+2.32 (Posted)
+  Tidied up accidentals in chords, do spacing.
+  Still to do: 
+      check for "(" on chord notes in spacing algo
+      small accids
+      double accids
+      autoshift slurs
+2.310
+  Extra call to precrd ahead of spacing chk, and single-note crd/acc
+     shifts seem OK, but not multiple.  crd/acc shifts not recorded 1st time. 
+2.309
+  Alternate algo for accid shifts in chords.
+2.308
+  Auto horiz. notehead shifting added to precrd. 
+2.307
+  Auto shifting of multiple accidentals in chords.
+  "Ao" in main chord note to keep accidentals in order. Set nacc(28).
+  If there are any manual main or chord note shifts, then
+     If any manual shift is preceded by "A" then
+        1. Auto-shifting proceeds
+        2. "A"-shifts add to autoshifts
+        3. non-"A" shifts are ignored!
+     Else (>0 man shifts, none has "A")
+        No auto-ordering, No autoshifts, 
+     End if
+  End if 
+2.306
+  Initialize legacy note level to middle C in case user forgets to set 
+    octave.
+  Shift xtup note?
+  Shift in elemskips rather than noteheads?
+2.305
+  Stop pmxb from multiple endvolta's at start of new page.
+2.304
+  "Sx" in a note means shorten stemlength by x \internotes.  "Sx:" turn on
+      for multiple notes in the voice, "S:" last shortened note.
+2.303
+  vshrink stuff all OK? Description is in pmxb.  
+2.302
+  Toggle vshrink with "Av". vshrink normally kicks in when \interstaff 
+    hits 20. This still needs work.
+  Add " /" to last line if last char is not % or /.
+2.301
+  Check in beamn1 for single note before multiplicity down-up.
+  allow '.PMX' as well as '.pmx'
+2.299
+  Correct typo in pmxb involving PMXbarnotrue.
+  Replacement printed number for xtup: Unsigned integer after 'n' after 'x'
+  Minor upgrade parsing xtuplet options 'x...'
+  Correct dimension of nxtinbm in make2bar.
+2.298
+  Account for doubled xtup notes in subroutine getx (user-defined spaces), 
+    by adding ndoub as an argument..
+2.297
+  Created and solved compiler problem.  Put drawbm(NM) in its own common.
+  Add new def'ns [\a|PA]usc, \lift[pa|PA]usc to pmx.tex, use them in make2bar
+    when \centerbar is used.
+  Modify \mbrest & \CenterBar in pmx.tex to use \volta@endcor etc.  Have PMX
+    use right 2nd and 3rd args for \mbrest when key, meter, or clef changes.
+2.296
+  Correct printed numbers for forced beams with multiple xtups. For each beam
+    make list in setupb by voice of eloff (h-offset) and mtupv (printed #)
+  Increase lengths of jobname and infileq by 20 characters
+  Enable whole notes and breves as 1st or last note of xtup in beamn1 and
+    beamend, and wholes in beamid.
+2.295
+  Midi balance Ib[n1]:[n2]:...[nn]
+  Single-slope beam groups [...]-[...]
+  Trap "i" unless after accidental (main notes, xtups, chord notes)
+2.294
+  Unequal xtups with "D" to double a note in an xtup.
+  As above, "F" will (a) increase multiplicity by 1 for marked note and next
+    one and (b) add a dot to the first one. 
+  Fix bug with e.g. c84 [ .d e.f ] by checking whether forced beam is on 
+    when "." is encountered, then correcting beam start time.(end of getnote)
+  MIDI velocity (volume) set: Iv[n1]:[n2]:[n3]...
+2.293
+  Check for single notes spanning bar lines.
+  Correct various bugs with staff-jumping beams. (1) for 2nd segment, vxtup 
+    must be set in make2bar since beamstrt is not called, fixing problem with
+    dot at end. (2) add ivjb2 to flag which voice has 2nd segment and fix 
+    problem when >2 staves.
+  Add nodur to args of dodyn, so can check if stemless and avoid height tweak
+  Correct bug in getdyn setting flag in idynda2(0) for manual horiz. tweak
+2.292a
+  Undo syntax check for Type 2 or 3 TeX string starting in column 1. 
+    Meanwhile, Werner's problem with a mid-line Type 3 string has gone away?! 
+2.292
+  Allow comments in xtuplets
+  Enable multiple octave jumps in grace notes.
+  Allow dynamics in xtuplets.
+  Fix bug in getdyn searching for end of text string (correct length of lineq
+    to 128)
+  Fix bug in dodyn, must ignore horiz. interaction tweak for 
+    user-text (idno = 0)
+  Syntax check for Type 2 or 3 TeX string starting in column 1 
+    (NOTE: later undone!)
+  Syntax check for page number > npages at forced line break.
+2.291
+  Fix error in AS command (accid spacing for small systems), making only
+    one spec per staff, nv total.
+  Stop using MIDI channel 10
+2.29
+  Fix error in console output format for # of bytes used in MIDI file.
+  Fix bug in dograce so no space is added between grace and main note when
+      there is a MIDI-only accidental.
+  Fix bug so oes?+4 works.  It was too ugly to explain. 
+    ...Different ways of storing accidental specs on input and output.
+  No longer zap \writezbarno in special situations.
+  Fix bug in dyntxt level on rest
+  Line spacing equalization.  Add macros \starteq, \endeq, \spread, etc.
+    Activate with Ae.  (Maybe later could input alternate values for
+    \upamt, \dnamt, \parskip).  Put \starteq on 1st note in voice 1 
+    in the page, and \endeq on 1st note of next-to-last line in page.
+2.28
+  Flip direction of forced beam "[f..."
+  Fix beam numbering for staff jumping beams. Uses irest(23,24,29,30) 
+  Fix bug in sliding ip's for txtdyn's
+  In dyn's allow vert. offsets +/-64, horiz +/-25.6 (store in idnyda2(1-99)
+2.27
+  Comment out lines in dodyn checking number of dynamic marks found.  Voice
+    order may not be monotonic if two lines on a staff.
+  Literal dynamic: D"[text]"
+2.26
+  Allow hairpin start-stop on same note by disabling auto-tweaks in dodyn,
+    increasing dimension of idynn to 4 to allow 4 symbols on same note.
+  Increase voltxtq length from 10 to 20.
+  AS[-/0][-/0]...  to inform PMX that "-" voices are small, and rough 
+     accounting for ast's is done by defining effective headwidth 
+     whead1 in makebar2 to be 0.8*whead.  
+2.25
+  Fix logic bug with sepsym's when # of instruments changes.
+  Slight increases in default offsets for hairpin starts after "p"
+2.24
+  Hairpins D< or D> as toggle.
+  Many automatic position tweaks for letter-group dynamics and hairpins.
+2.23
+  Continued rhythmic shortcuts: space followed by "." or ","
+2.22
+  In call to doslur, change tno(...) to tnote(...).  This was only
+    used when checking to slurs per stem directions, and should have been
+    the note duration all along.
+  MIDI-only accidental, bit 17 in nacc, or 27 in icrdat. 
+      Use "i" anywhere in note symbol.
+2.21
+  Increase from 20 to 30 dimensions for movement breaks and midi sections.
+  Fix out-of-order declarations per mutex comments
+  Add "Bad error" and "Kluging" messages to log file.
+2.197
+  add /comips/ to save tie-check midi variables
+  For spacing of clef changes at start of input block, changed integer time
+    lastnodur to prevtn, so it works with xtups. Possible incompatibility!
+2.196
+  Fix Ickbug with time check in ncmid()
+  Interchange \fermataup7 and \pausec to get proper alignment
+  Enable French violin clef "f",  number 7 in PMX, but 9 in MusiXTeX.
+  Add defn's of \hsp, \hspp to pmx.tex 
+  Fix pre-slurs on xtup chord notes.
+  Fixed raised PAuse, define \liftPAuse
+  Replace \zbreve\sk with \breve.
+  Made "1" work as mtrdenl by doubling it and mtrnuml.  BUT WAIT...what 
+    about "o" and 1 as shorthand for 16???? Search for "Kluge"
+  Added "vo" (voice) as MIDI instrument 55 
+  Allow 3-digit page numbers (search for "toppageno")
+  Fix bug caused by prior fix (cancelling accid after bar line was ignored).
+  Fix double accids in chords
+2.194
+  Fix bug with accid/tie/barline/chord in addmidi by restructuring accid if 
+    block.
+  Add meter to MIDI file with every pause
+  Purify FORTRAN?
+2.193
+  Increased # of in-line TeX strings from 36 to 52.
+  Fix entry of # of bytes in header of tempo/meter/key track to allow >255.
+2.191
+  Event track: Tempos, meters, keys all together.  Data in comevent
+2.15
+  Pretty good midi capability.  Still no attention to slurs on chord notes.
+2.11
+  11 Dec 99 c   rm1
+  11 Dec 99 "oes?", "oe?"
+  11 Dec 99 Cancel slur horizontal tweaks with non-stemmed notes
+  11 Dec 99 Error message for shifted, repeated ornaments.
+2.10 (Version 2.1)
+  Fix bug with lowdot and xtuplets
+2.09
+  Fix bug with multiple ornament heights over beams, when one is . or _
+  Error message from pmxa if rest on last note of xtup.
+  Enable 12 slurs.
+  Reinstate multiple rests at start of xtup.
+2.07
+  Combine consecutive type-1 TeX strings.
+  \midslur and \curve as 3rd signed digit in slur termination, + 2 opt.int's.
+  Fixed breve chord notes in docrd
+  Check irest(28) as well as vxtup when setting nodur for chord notes, since
+    vxtup isn't set until 1st *main* note in xtup
+  Vectorize nolev1, slope, ixrest.  Klug fix for xtups with variable spacing.
+2.06+
+  Make deterministic the beam slope calculation when there are an even # of
+    slopes in list and middle two are equal magnitude but opposite sign.
+  pmxa Trap for "o:" before 1st note in block
+  Partial bug fix for 64th notes in xtuplets.
+  Make ixrest a vector, since with new time scheme may not finish xtup in
+    same notes block.
+  Increase max # of pages from 20 to 30 (dimensions of nsystp,..., in pmxb)
+2.06
+  Account for changes in nv when computing \interstaff. Add a counter 
+    nistaff(iflb) = # of interstaff spaces per system = nv-1.  Set whenever
+    setting isysflb(iflb). Note nv can only change at a forced line break.  
+    Note also, iflb starts at 0!
+2.05
+  Automatic start of new notes group with part 2 of staff-jump beam
+    In make1bar, set irest bit 29 of lowest-voice note at same time,
+    use as flag when making notes groups.
+  For now, remove dummy blank line at end...it zaps terminal repeats.
+2.02
+  Fixed slur-counting bug for multiple, slurred, aftergraces.
+2.01
+ Increase to ask(1400)
+ Increase max forced page breaks to 18
+ Define pausc for centered pause
+2.0a
+ Insert dummy blank line at very end to handle input files w/o terminal CR-LF
+pmx03r
+  Option m[n] in S symbol to change musicsize (for parts)
+  Double dotted rests now work.
+  Write file name to log file
+  Check existence of input file
+  Allow 24-char jobname, may end with ".pmx"
+  Comment out time stuff
+  Replace 3-argument getarg with 2-argument + iargc
+  Fix bug with negative noinst due to nint<=int replacement
+  move lovation of iv in isdat1 to allow iv>7.
+  Set nm=12 
+pmx03q
+  replace int(x+.001) with nint(x)
+  Write TeX file name to screen and to pml.
+  Replace char(...) with chax(...) to sovle msdev bug.
+  Bug fix: macro terminations when M is on a line by itself.
+  Bug fix: don't accumulate space for XS in pmxa.
+  Streamline Macros: use pointers to bufq instead of scratch files
+pmx03p
+  Store input file in single character array bufq. 
+    lbuf(i)*2 is length of line i
+    ipbuf is position just before next line to be read.
+pmx03
+  Optimize read/writes
+pmx02
+  Fix line count (for errors) when there are saved macros
+pmx01
+  In optimize mode, open/close macros (Watch out for residual zz files!)
+  Command line input
+  Option Ao to optimize, otherwise normal processing
+c
