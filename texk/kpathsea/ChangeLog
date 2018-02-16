@@ -1,3 +1,8 @@
+2018-02-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* texmf.cnf ({TEXINPUTS,BIBINPUTS,max_strings}.upbibtex):
+	add defns for upbibtex.
+
 2018-02-10  Karl Berry  <karl@freefriends.org>
 
 	* doc/kpathsea.texi (Path searching options): clarify that

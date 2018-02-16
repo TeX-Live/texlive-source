@@ -248,6 +248,10 @@ TEX.upmpost = euptex
 BIBINPUTS.pbibtex       = .;$TEXMF/{pbibtex,bibtex}/bib//
 BSTINPUTS.pbibtex       = .;$TEXMF/{pbibtex,bibtex}/bst//
 
+% upBibTeX bibliographies and style files.
+BIBINPUTS.upbibtex      = .;$TEXMF/{upbibtex,pbibtex,bibtex}/bib//
+BSTINPUTS.upbibtex      = .;$TEXMF/{upbibtex,pbibtex,bibtex}/bst//
+
 % ConTeXt.
 TEXINPUTS.context       = .;$TEXMF/tex/{context,plain,generic,}//
 
@@ -807,6 +811,7 @@ max_strings.bibtex  = 100000
 max_strings.bibtex8 = 100000
 max_strings.bibtexu = 100000
 max_strings.pbibtex = 100000
+max_strings.upbibtex = 100000
 
 % GFtype only.
 line_length.gftype = 500
