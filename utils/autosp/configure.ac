@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright 2016 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2016-2018 Karl Berry <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -30,7 +30,7 @@ AC_TYPE_SIZE_T
 
 # Checks for library functions.
 AC_CHECK_FUNCS([strstr])
-# End of checks frmo autosp-src/configure.ac.
+# End of checks from autosp-src/configure.ac.
 
 # trailing tl stuff.
 AC_PROG_MAKE_SET

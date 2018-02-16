@@ -5249,7 +5249,7 @@ _ACEOF
 fi
 done
 
-# End of checks frmo autosp-src/configure.ac.
+# End of checks from autosp-src/configure.ac.
 
 # trailing tl stuff.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${MAKE-make} sets \$(MAKE)" >&5

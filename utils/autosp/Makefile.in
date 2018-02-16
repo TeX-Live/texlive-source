@@ -86,7 +86,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = autosp$(EXEEXT)
+bin_PROGRAMS = autosp$(EXEEXT) tex2aspc$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -109,6 +109,10 @@ am_autosp_OBJECTS = @AUTOSP_TREE@/autosp.$(OBJEXT) \
 	@AUTOSP_TREE@/utils.$(OBJEXT)
 autosp_OBJECTS = $(am_autosp_OBJECTS)
 autosp_LDADD = $(LDADD)
+am_tex2aspc_OBJECTS = @AUTOSP_TREE@/tex2aspc.$(OBJEXT) \
+	@AUTOSP_TREE@/utils.$(OBJEXT)
+tex2aspc_OBJECTS = $(am_tex2aspc_OBJECTS)
+tex2aspc_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -137,8 +141,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(autosp_SOURCES)
-DIST_SOURCES = $(autosp_SOURCES)
+SOURCES = $(autosp_SOURCES) $(tex2aspc_SOURCES)
+DIST_SOURCES = $(autosp_SOURCES) $(tex2aspc_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -503,12 +507,17 @@ autosp_SOURCES = \
 	@AUTOSP_TREE@/autosp.c \
 	@AUTOSP_TREE@/utils.c
 
+tex2aspc_SOURCES = \
+	@AUTOSP_TREE@/tex2aspc.c \
+	@AUTOSP_TREE@/utils.c
+
 man1_MANS = \
-	$(AUTOSP_TREE)/autosp.1
+	$(AUTOSP_TREE)/autosp.1 \
+	$(AUTOSP_TREE)/tex2aspc.1
 
 AM_TESTS_ENVIRONMENT = AUTOSP_TREE=$(AUTOSP_TREE); export AUTOSP_TREE;
 #
-TESTS = $(AUTOSP_TREE)/autosp.test
+TESTS = $(AUTOSP_TREE)/autosp.test $(AUTOSP_TREE)/tex2aspc.test
 all: all-am
 
 .SUFFIXES:
@@ -603,6 +612,12 @@ clean-binPROGRAMS:
 autosp$(EXEEXT): $(autosp_OBJECTS) $(autosp_DEPENDENCIES) $(EXTRA_autosp_DEPENDENCIES) 
 	@rm -f autosp$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(autosp_OBJECTS) $(autosp_LDADD) $(LIBS)
+@AUTOSP_TREE@/tex2aspc.$(OBJEXT): @AUTOSP_TREE@/$(am__dirstamp) \
+	@AUTOSP_TREE@/$(DEPDIR)/$(am__dirstamp)
+
+tex2aspc$(EXEEXT): $(tex2aspc_OBJECTS) $(tex2aspc_DEPENDENCIES) $(EXTRA_tex2aspc_DEPENDENCIES) 
+	@rm -f tex2aspc$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tex2aspc_OBJECTS) $(tex2aspc_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -612,6 +627,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/autosp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/tex2aspc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/utils.Po@am__quote@
 
 .c.o:
@@ -1194,6 +1210,7 @@ uninstall-man: uninstall-man1
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 autosp.log: autosp$(EXEEXT)
+tex2aspc.log: tex2aspc$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

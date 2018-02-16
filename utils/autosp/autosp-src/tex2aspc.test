@@ -1,7 +1,14 @@
 #! /bin/sh -vx
 
-# Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
+
+if test -z "$test_srcdir"; then
+  # If not set, then we are not running from `make check'.
+  test_srcdir=`echo "$0" | sed -e 's,/[^\\/]*$,,'`  # == dirname $0
+  test "$test_srcdir" = "$0" && test_srcdir=.       # in case subst failed
+fi
+echo "test_srcdir=$test_srcdir"
 
 echo && echo "*** tex2aspc --help"
 ./tex2aspc --help || exit 1
@@ -13,9 +20,9 @@ echo && echo "*** tex2aspc  (missing infile)"
 ./tex2aspc  && exit 1
 
 echo && echo "*** tex2aspc quod2.tex quod4.aspc"
-cp tests/quod2.aspc .
+cp "$test_srcdir"/tests/quod2.aspc .
 rm -f quod4.aspc
 ./tex2aspc quod2.tex quod4.aspc || exit 1
 
 echo && echo "*** diff quod4.aspc tests/quod4.aspc"
-diff quod4.aspc tests/quod4.aspc || exit 1
+diff quod4.aspc "$test_srcdir"/tests/quod4.aspc || exit 1
