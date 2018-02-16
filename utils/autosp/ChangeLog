@@ -1,3 +1,12 @@
+2018-02-16  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (bin_PROGRAMS),
+	(tex2aspc_SOURCES),
+	(man1_MANS),
+	(TESTS),
+	(tex2aspc.log): add new program tex2aspc.
+	* configure.ac: copyright.
+
 2018-02-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Import autosp-2018-02-14
