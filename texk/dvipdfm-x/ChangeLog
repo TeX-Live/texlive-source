@@ -1,3 +1,14 @@
+2018-02-17  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cid.c, dpxfile.[ch], dvipdfmx.c, epdf.c, jp2image.c,
+	jpegimage.c, pdfcolor.c, pdfencoding.c, pdfencrypt.c,
+	pdflimits.h, pdfobj.[ch], pdfximage.c, pngimage.c,
+	spc_dvips.c, spc_pdfm.c, spc_tpic.c, type0.c, xbb.c:
+	Accept PDF version tag 2.0.
+	* numbers.[ch], tfm.c: Remove format specific number
+	representation from numbers.[ch].
+	* configure.ac: Version 20180217.
+
 2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tfm.c, number.[ch]: Support new JFM spec (3-byte characters
