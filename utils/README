@@ -80,7 +80,7 @@ ln -s lib $clisp_toolsdir/lib64
 # if you can't build libsigsegv, pass --ignore-absence-of-libsigsegv
 # when running configure for clisp.
 
-ffcall_ver=libffcall-1.13
+ffcall_ver=libffcall-2.1
 cd $clisp_basedir
 $wget https://ftp.gnu.org/gnu/libsigsegv/$ffcall_ver.tar.gz
 gzip -dc $ffcall_ver.tar.gz | tar xf -
