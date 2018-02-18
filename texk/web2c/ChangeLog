@@ -1,3 +1,9 @@
+2018-02-18  Karl Berry  <karl@tug.org>
+
+	* bibtex.ch (str_ends_with): new fn.
+	(print_bib_name, log_pr_bib_name): don't print foo.bib.bib
+	when given \bibdata{foo.bib}.
+
 2018-02-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* lib/texmfmp.c, texmfmp.h: XeTeX properly close input pipes.

@@ -831,7 +831,7 @@ end;
 @!bib_number = integer;        {gives the |bib_list| range}
 @z
 
-@x [122] Add log_pr_bib_name.
+@x [122] Don't print extension twice; add log_pr_bib_name function.
 procedure print_bib_name;
 begin
 print_pool_str (cur_bib_str);
@@ -839,17 +839,45 @@ print_pool_str (s_bib_extension);
 print_newline;
 end;
 @y
+{Return true if the |ext| string is at the end of the |s| string.  There
+ are surely far more clever ways to do this, but it doesn't matter.}
+function str_ends_with (@!s:str_number; @!ext:str_number) : boolean;
+var i : integer;
+    str_idx,ext_idx   : integer;
+    str_char,ext_char : ASCII_code;
+begin
+  str_ends_with := false;
+  if (length (ext) > length (s)) then
+    return; {if extension is longer, they don't match}
+  str_idx := length (s) - 1;
+  ext_idx := length (ext) - 1;
+  while (ext_idx >= 0) do begin {|>=| so we check the |'.'| char.}
+    str_char := str_pool[str_start[s]+str_idx];
+    ext_char := str_pool[str_start[ext]+ext_idx];
+    if (str_char <> ext_char) then
+      return;
+    decr (str_idx);
+    decr (ext_idx);
+  end;
+  str_ends_with := true;
+exit: end;
+
+{The above is needed because the file name specified in the
+ \.{\\bibdata} command may or may not have the \.{.bib} extension. If it
+ does, we don't want to print \.{.bib} twice.}
 procedure print_bib_name;
 begin
 print_pool_str (cur_bib_str);
-print_pool_str (s_bib_extension);
+if not str_ends_with (cur_bib_str, s_bib_extension) then
+  print_pool_str (s_bib_extension);
 print_newline;
 end;
 @#
 procedure log_pr_bib_name;
 begin
 log_pr_pool_str (cur_bib_str);
-log_pr_pool_str (s_bib_extension);
+if not str_ends_with (cur_bib_str, s_bib_extension) then
+  log_pr_pool_str (s_bib_extension);
 log_pr_newline;
 end;
 @z
