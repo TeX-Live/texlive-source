@@ -1,3 +1,8 @@
+2018-02-19  Luigi Scarso  <luigi.scarso@gmail.com>
+	* Small cleanup of the code
+	* Bump to version 2.0rc2: the current version is 2.00
+	* Added the envelope primitives to mpman
+
 2017-03-31  Luigi Scarso  <luigi.scarso@gmail.com>
 	* fixed the value header_last to be sure 
 	  to store always the latest  position.
