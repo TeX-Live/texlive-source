@@ -2505,8 +2505,8 @@ demand.
 TODO what should we do here with the author index file? It contains a
 mapping from subversion names to name/email as shown in git.
 
-The initial checkout was done by invocing
-@code{git svn --authors-file usermap clone svn://USER@tug.org/texlive/trunk/Build/source}
+The initial checkout was done by invoking
+@code{git svn --authors-file usermap clone svn://USER@@tug.org/texlive/trunk/Build/source}
 where the @code{usermap} file maps subversion user names to name and
 emails of the authors. 
 
@@ -2522,7 +2522,7 @@ On Github (@url{https://github.com/}) a new git repository named
 @code{texlive-source} was created by @emph{admin} within the
 @code{TeX-Live} organization (@url{https://github.com/TeX-Live/}), the
 remote added to the checkout with
-@code{git remote add origin git@github.com:TeX-Live/texlive-source.git}.
+@code{git remote add origin git@@github.com:TeX-Live/texlive-source.git}.
 
 To automate the update on Github, a new ssh key was generated and added
 to the @code{texlive-source} repository on Github as deployment
