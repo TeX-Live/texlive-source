@@ -2490,41 +2490,45 @@ cause the modification of quantities supposed to be constant.
 @cindex continuous integration
 @cindex Travis-CI
 
-The sources of @TL{} are subjected to continuous integration testing on
-Travis-CI (@url{https://travis-ci.org/TeX-Live/texlive-source}) via a
-git-svn mirror of the sources that is pushed to Github
+Overview: the sources of @TL{} are subjected to continuous integration
+testing on Travis-CI
+(@url{https://travis-ci.org/TeX-Live/texlive-source}) via a git-svn
+mirror of the sources that is pushed to Github
 (@url{https://github.com/TeX-Live/texlive-source}). The git-svn mirror
-is updated (currently) at a 30min interval and only the last commit
-pushed is tested on Travis-CI.
+is updated (currently) at 30 minute intervals, and only the last
+commit pushed is tested on Travis-CI.
 
 @subheading Transfer from Subversion to Github
 
-Git-svn (@url{https://git-scm.com/docs/git-svn}) is used to check out
-the subtree @code{Build/source} of the Subversion repository. The author
-index file used is not maintained in Git or Subversion but provided on
-demand. 
+git-svn (@url{https://git-scm.com/docs/git-svn}) is used to check out
+the subtree @code{Build/source} of the Subversion repository. The
+author index file used is not maintained in either Git or Subversion
+but can be provided on request.
 
-TODO what should we do here with the author index file? It contains a
-mapping from subversion names to name/email as shown in git.
+@c TODO what should we do here with the author index file? It contains a
+@c mapping from subversion names to name/email as shown in git.
 
 The initial checkout was done by invoking
-@code{git svn --authors-file usermap clone svn://USER@@tug.org/texlive/trunk/Build/source}
-where the @code{usermap} file maps subversion user names to name and
-emails of the authors. 
+@example
+git svn --authors-file usermap clone svn://USER@@tug.org/texlive/trunk/Build/source
+@end example
 
-TODO should we use anonymous checkout here? Should be possible!
+@noindent where the @code{usermap} file maps Subversion user names to
+name and emails of the authors.
 
-In the following we will refer with @emph{admin} to a user who has
-read/write access to the @TL{} subversion repository, and an
+@c TODO should we use anonymous checkout here? Should be possible!
+
+In the following, we will use @emph{admin} to refer to a user who has
+read/write access to the @TL{} subversion repository, and is also an
 administrator of the @code{TeX-Live} Team on Github. The above initial
 checkout has been carried out by @emph{admin} on the server
-@code{texlive.info}. 
+@code{texlive.info}.
 
-On Github (@url{https://github.com/}) a new git repository named
+On Github (@url{https://github.com}), a new git repository named
 @code{texlive-source} was created by @emph{admin} within the
-@code{TeX-Live} organization (@url{https://github.com/TeX-Live/}), the
-remote added to the checkout with
-@code{git remote add origin git@@github.com:TeX-Live/texlive-source.git}.
+@code{TeX-Live} ``organization'' (@url{https://github.com/TeX-Live}).
+The remote was added to the checkout with @code{git remote add origin
+git@@github.com:TeX-Live/texlive-source.git}.
 
 To automate the update on Github, a new ssh key was generated and added
 to the @code{texlive-source} repository on Github as deployment
@@ -2537,33 +2541,33 @@ mirror facility, we have decided to further restrict the @code{master}
 branch of the @code{texlive-source} repository on Github to changes by
 @emph{admin}.
 
-This setup allows other developers to branch of @code{master} and
+This setup allows other developers to branch off @code{master} and
 push their branches to the Github repository, but all updates need to
-from the local @code{master} (not the one on Github) to Subversion and
-back to @code{master} on @code{texlive.info} and from there to Github.
-See below for setup for developers.
+come from the local @code{master} (not the one on Github) to
+Subversion, back to @code{master} on @code{texlive.info}, and from
+there to Github.
 
 @subheading Automatic update of the Git mirror
 
 @emph{admin} has installed a cron job on @code{texlive.info} running
-every 30min which basically runs @code{git svn rebase} and @code{git
-push} in the @code{master} branch of the checkout. The first command
-fetches the changes from the Subversion repository and updates the
-@code{master} branch with them, the second one pushes changes (if
-available) to Github. 
+every 30 minute which essentially runs @code{git svn rebase} and
+@code{git push} in the @code{master} branch of the checkout. The first
+command fetches the changes from the Subversion repository and updates
+the @code{master} branch with them, the second one pushes changes (if
+available) to Github.
 
 @subheading CI testing on Travis-CI
 
-The @code{source} tree of @TL{} contains a file @code{.travis.yml}
-which controls the automatic testing on Travis-CI. @emph{admin} has
-registered to Travis-CI and allowed access to the Github's
-@code{TeX-Live} organization's @code{texlive-source} repository. The
-default settings are to build the last commit of each push. No further
-action is necessary on Travis-CI.
+@pindex .travis.yml
+The @code{source} tree of @TL{} contains a top-level file
+@code{.travis.yml} which controls the automatic testing on
+Travis-CI. @emph{admin} has registered to Travis-CI and allowed access
+to the Github's @code{TeX-Live} organization's @code{texlive-source}
+repository. The default settings are to build the last commit of each
+push. No further action is necessary on Travis-CI.
 
-In case changes have been pushed during the cron job mentioned above,
-Travis-CI will automatically checkout the last pushed commit and try
-building it.
+If changes have been pushed via the cron job above, Travis-CI will
+automatically checkout the last pushed commit and try building it.
 
 @comment
 @comment The following needs improvement
