@@ -1,3 +1,11 @@
+2018-02-20  Karl Berry  <karl@freefriends.org>
+
+	* progname.c (expand_symlinks): make error message on unresolvable
+	symlinks less verbose.
+	(kpathsea_selfdir): exit(1) if name cannot be resolved,
+	instead of failing an assertion. Report from Enrico Gregorio,
+	http://tug.org/pipermail/tex-live/2018-February/041052.html
+
 2018-02-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* texmf.cnf ({TEXINPUTS,BIBINPUTS,max_strings}.upbibtex):
