@@ -1,3 +1,8 @@
+2018-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* lib.h: Fix a bug in LIB_START_FATAL().
+	Private report from Douglas McKenna, 2018/02/21.
+
 2018-02-20  Karl Berry  <karl@freefriends.org>
 
 	* progname.c (expand_symlinks): make error message on unresolvable
