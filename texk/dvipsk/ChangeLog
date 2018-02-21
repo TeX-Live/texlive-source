@@ -1,3 +1,12 @@
+2018-02-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* color.c (colorpage),
+	* dospecial.c (bangspecial),
+	* dvips.h (header_list):	
+	don't use ersatz array as last struct member; change usage.
+	Reported (implicitly, as part of)
+	https://trac.macports.org/ticket/53974
+
 2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tfmload.c, dvips.h: Support new JFM spec (3-byte characters

@@ -1,5 +1,5 @@
 /*   $Id$
- *   Copyright 1986-2016 Tomas Rokicki.
+ *   Copyright 1986-2018 Tomas Rokicki.
  *   This is dvips, a freely redistributable PostScript driver
  *   for dvi files. You may freely use, modify and/or distribute this
  *   program or any portion thereof.
@@ -251,7 +251,7 @@ struct header_list {
    const char *Hname;
    char *precode;
    char *postcode;
-   char name[1];
+   char *name;
 };
 /*
  *   Some machines define putlong in their library.
