@@ -1,25 +1,34 @@
 #!/bin/sh -vx
 
-# Copyright (C) 2018 John Collins (jcc8@psu.edu)
+# Copyright (C) 2018 John Collins (jcc8 at psu dot edu)
 # You may freely use, modify and/or distribute this file.
+#
+# This test is a rudimentary test of axohelp in a form suitable for
+# use in TeXLive builds.
 
 if test -z "$test_srcdir"; then
   # If not set, then we are not running from `make check'.
   test_srcdir=`echo "$0" | sed -e 's,/[^\\/]*$,,'`  # == dirname $0
   test "$test_srcdir" = "$0" && test_srcdir=.       # in case subst failed
 fi
+echo ==================\"$test_srcdir\"=====================
 
 echo Copying source files if necessary
-"$test_srcdir" = . || cp "$test_srcdir"/test* . || exit 1
+test "$test_srcdir" = . \
+    || cp "$test_srcdir"/test.ax1 "$test_srcdir"/test.ax2-std . \
+    || exit 1
 
 echo Running axohelp on test document ...
 ./axohelp test \
     || { echo axohelp failed to run correctly ; exit 1; }
 
-echo Checking result file test.ax2 ...
-tr -d '\r' < test.ax2 | diff test.ax2-std - \
+echo Checking result file test.ax2, after converting line-endings
+tr -d '\r' < test.ax2 > tmp.ax2
+tr -d '\r' < test.ax2-std > tmp.ax2-std
+
+diff tmp.ax2-std tmp.ax2 \
     || { echo The .ax2 file created by axohelp was incorrect; exit 1; }
 
-echo Success, so I will remove generated file test.ax2
-rm test.ax2
+echo Success, so I will remove generated files test.ax2 and temporaries
+rm test.ax2 tmp.ax2 tmp.ax2-std
 
