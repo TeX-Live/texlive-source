@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 02/08/2018
+.\"      Date: 02/20/2018
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 2.3.2
+.\"    Source: dvisvgm 2.3.3
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "02/08/2018" "dvisvgm 2\&.3\&.2" "dvisvgm Manual"
+.TH "DVISVGM" "1" "02/20/2018" "dvisvgm 2\&.3\&.3" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -415,10 +415,11 @@ creates yellow filled rectangles with blue frames\&.
 .PP
 \fB\-l, \-\-list\-specials\fR
 .RS 4
-Prints a list of registered special handlers and exits\&. Each handler processes a set of special statements belonging to the same category\&. In most cases, the categories are identified by the prefix of the special statements\&. It\(cqs usually a leading word separated from the rest of the statement by a colon or a blank, e\&.g\&.
+Prints a list of registered special handlers and exits\&. Each handler processes a set of special statements belonging to the same category\&. In most cases, the categories are identified by the prefix of the special statements\&. It\(cqs usually a leading string followed by a colon or a blank, e\&.g\&.
 \fIcolor\fR
 or
-\fIps\fR\&.
+\fIps\fR\&. The listed handler names, however, don\(cqt need to match these prefixes, e\&.g\&. if there is no common prefix or if functionality is split into separate handlers in order to allow to disable them separately with option
+\fB\-\-no\-specials\fR\&. All special statements not covered by one of the special handlers are silently ignored\&.
 .RE
 .PP
 \fB\-M, \-\-mag\fR=\fIfactor\fR
@@ -482,9 +483,8 @@ and vertically by
 .RS 4
 Disable processing of special commands embedded in the DVI file\&. If no further parameter is given, all specials are ignored\&. To disable a selected set of specials, an optional comma\-separated list of names can be appended to this option\&. A
 \fIname\fR
-is the unique identifier referencing the intended special handler\&. Option
-\fB\-\-list\-specials\fR
-lists all handlers currently available together with their names\&. All unsupported special statements are silently ignored\&.
+is the unique identifier referencing the intended special handler as listed by option
+\fB\-\-list\-specials\fR\&.
 .RE
 .PP
 \fB\-\-no\-styles\fR
@@ -1073,7 +1073,7 @@ must be given\&.
 \fIpdf:mapfile\fR
 and
 \fIpdf:mapline\fR
-allow modifying the font map tree while processing the DVI file\&. They are used by CTeX, for example\&. dvisvgm supports both, the dvips and dvipdfm font map format\&. For further information on the command syntax and semantics, see the documentation of
+allow for modifying the font map tree while processing the DVI file\&. They are used by CTeX, for example\&. dvisvgm supports both, the dvips and dvipdfm font map format\&. For further information on the command syntax and semantics, see the documentation of
 \fB\epdfmapfile\fR
 in the
 pdfTeX user manual (\m[blue]http://www.ctan.org/pkg/pdftex\m[])\&.
