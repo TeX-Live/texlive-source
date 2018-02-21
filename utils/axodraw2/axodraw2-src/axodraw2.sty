@@ -1,6 +1,6 @@
 %  This is axodraw2.sty
 %
-% (C) 1994-2016 by authors:
+% (C) 1994-2018 by authors:
 %         John Collins (jcc8 at psu dot edu)
 %         Jos Vermaseren (t68 at nikhef dot nl) 
 %
@@ -69,7 +69,7 @@
 %
 %		#] About folds : 
 %
-\ProvidesPackage{axodraw2}[2016/06/02 v2.1.0b]
+\ProvidesPackage{axodraw2}[2018/02/15 v2.1.1]
 %
 %   axodraw.sty file, both for .tex -> .dvi -> .ps and for .tex -> .pdf
 %
@@ -4382,37 +4382,43 @@
 %   After the rotation the hash marks are on top if nl is positive and
 %   on the bottom if nl is negative
 %
+%   Offset 0 or negative: replace by 1.
+%   Adjust by factors of 10 to be in range 1 to 10.    
+%
     gsw /offset ed /hashsize ed /nlogs ed
     normalizeline /rr ed
-    offset 0 ne { /offset offset ln 10 ln div def } if
-    /offset offset dup cvi sub def
-    newpath
-        0 0 moveto
-        rr 0 lineto
+    offset 0 le { /offset 1 def } if
+    /offset
+      offset ln 10 ln div
+      dup cvi sub
+      dup 0 lt { 1 add } if
+    def
     /lsize rr nlogs div def
-    0 1 nlogs { /x2 ed
-        x2 offset ge {
-            /y2 x2 offset sub lsize mul def
-            y2 rr le {
-                y2 0 moveto
-                y2 hashsize 1.2 mul lineto
-            } if
+    newpath
+    0 0 moveto
+    rr 0 lineto
+    0 1 nlogs 1 add {
+      offset sub lsize mul
+      dup -0.001 gt {
+        dup rr 0.001 add le {
+          dup 0 moveto
+          hashsize 1.2 mul lineto
         } if
+      } if
     } for
     stroke
     width 0.6 mul setlinewidth
     newpath
     0 1 nlogs { /x2 ed
         2 1 9 {
-            ln 10 ln div x2 add
-            /xx2 ed
-            xx2 offset ge {
-                /y2 xx2 offset sub lsize mul def
-                y2 rr le {
-                    y2 0 moveto
-                    y2 hashsize 0.8 mul lineto
-                } if
+          ln 10 ln div x2 add
+          offset sub lsize mul
+          dup -0.001 gt {
+            dup rr 0.001 add le {
+              dup 0 moveto
+              hashsize 0.8 mul lineto
             } if
+          } if
         } for
     } for
     stroke
@@ -4425,36 +4431,44 @@
 \special{! /linaxis{
 %
 %   x1,y1,x2,y2,num_decs,per_dec,hashsize,offset,width,scale
+%   Bad offset <= 0: change to 1.     
 %
     gsw /offset ed /hashsize ed /perdec ed /numdec ed 
     normalizeline
     /rr ed
-    /perdec perdec round def
+    /perdec
+      perdec round
+      dup 0 le { pop 1 } if
+    def
     /offset offset
     % Do real equivalent of offset perdec mod
-            dup cvi perdec idiv
-            sub
-            dup 0 lt {perdec add} if
-            dup perdec ge {perdec sub} if
+       dup cvi perdec idiv perdec mul
+       sub
+       dup 0 lt {perdec add} if
+       dup perdec ge {perdec sub} if
     def
     newpath
-        0 0 moveto
-        rr 0 lineto
+       0 0 moveto
+       rr 0 lineto
     /x1 rr numdec perdec mul div def
     /y1 rr numdec div def
-    offset 0 eq {0} {1} ifelse 1 numdec 
+    0 1 numdec 1 add
        { y1 mul offset x1 mul sub
-         dup 0 moveto
-         hashsize 1.2 mul lineto
+         dup -0.001 gt {
+            dup rr 0.001 add lt {
+               dup 0 moveto
+               hashsize 1.2 mul lineto
+            } if
+         } if
     } for
     stroke
     width 0.6 mul setlinewidth
     newpath
     /offset offset dup cvi sub def
-    offset 0 eq {0} {1} ifelse  1 numdec perdec mul  {
+    0 1 numdec perdec mul  {
         offset sub x1 mul 
-        dup 0 ge {
-            dup rr le {
+        dup -0.001 ge {
+            dup rr 0.001 add le {
                 dup 0 moveto
                 hashsize 0.8 mul lineto
             } if

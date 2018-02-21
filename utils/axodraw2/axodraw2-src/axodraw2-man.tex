@@ -76,7 +76,7 @@ University Park, Pennsylvania 16802, USA} \\
 Science Park 105, 1098 XG Amsterdam, The Netherlands} \\
 \texttt{t68 at nikhef dot nl} \\
 \vspace{1.0cm}
-(31 January 2018)
+(15 February 2018)
 \end{center}
 \vspace{5mm}
 
@@ -434,7 +434,7 @@ it in an appropriate directory.  Documentation can also be installed
 if you want.
 
 %--
-\subsubsection{Style file \protect\file{axodraw2.sty}}
+\subsubsection{Style file \texorpdfstring{\protect\file{axodraw2.sty}}{axodraw2.sty}}
 
 If you merely want to try out axodraw2, just put the file
 \file{axodraw2.sty} in the same directory as the \file{.tex}
@@ -1988,7 +1988,7 @@ dash segments.
 %--#] DashDoubleZigZagArc :
 %--#[ Vertex :
 
-\subsubsection{Vertices,  circles, ovals}
+\subsubsection{Vertices, circles, ovals; other graphics}
 \label{sec:other.graphics}
 
 The commands in this section are for graphical elements other
@@ -2552,8 +2552,8 @@ the name of the color of the interior.
 \label{linaxis}
 \verb:\LinAxis(10,30)(90,30)(4,5,5,0,1):\\
 \verb:\LinAxis(10,10)(100,10)(4,5,5,2,1): \\
-\verb+\LinAxis+($x_1$,$y_1$)($x_2$,$y_2$)($N_D$,$d$,hashsize,offset,width)
-    draws a line to be used as an axis in a graph. Along the axis 
+\verb+\LinAxis+($x_1$,$y_1$)($x_2$,$y_2$)($N_D$,$d$,hashsize,offset,width) \hfill \\
+    This draws a line to be used as an axis in a graph. Along the axis 
     are hash marks. Going from the first coordinate to the second, the 
     hash marks are on the left side if `hashsize', which is the size of the 
     hash marks, is positive and on the right side if it is negative. 
@@ -2563,12 +2563,14 @@ the name of the color of the interior.
     corresponds. When it is zero, this coordinate corresponds to a fat 
     mark of a decade. Because axes have their own width, this is 
     indicated with the last parameter.
-%Draws a line with subdivisions that can be used as the axis on a histogram 
-%or other figure. The first four arguments are the endpoints of the axis. 
-%Then we have the number of decades, the number of divisions inside each 
-%decade, the size of the hash marks, the offset in divisions at which we 
-%start and the linewidth. The hashmarks will be on the left side when going 
-%from point 1 to point 2.
+
+    When arguments are outside the natural range, which is a positive
+    integer for the number of subdivisions $d$, and a real value
+    between 0 and $N_D$ for the offset, corrected values are used as
+    follows: For $d$, it is first rounded to the nearest integer, and
+    if it is zero or less, $d$ is replaced by 1. The offset is used
+    modulo the number of subdivisions. 
+
 \end{minipage}\vspace{4mm}
 
 %--#] LinAxis :
@@ -2586,24 +2588,25 @@ the name of the color of the interior.
 \label{logaxis}
 \verb:\LogAxis(0,30)(100,30)(4,3,0,1): \hfill \\
 \verb:\LogAxis(0,10)(100,10)(4,3,3,1): \hfill \\
-\verb+\LogAxis+($x_1$,$y_1$)($x_2$,$y_2$)($N_L$,hashsize
-    ,offset,width) \hfill \\
+\verb+\LogAxis+($x_1$,$y_1$)($x_2$,$y_2$)($N_L$,hashsize,offset,width) \hfill \\
     This draws a line to be used as a logarithmic axis in a graph. Along 
     the axis are hash marks. Going from the first coordinate to the second, 
     the hash marks are on the left side if `hashsize', which is the size of 
     the hash marks, is positive and on the right side if it is negative. 
     $N_L$ is the number of orders of magnitude, indicated by fat hash 
-    marks. The offset parameter tells to which integer subdivision the 
+    marks. The offset parameter tells to which subdivision the 
     first coordinate corresponds. When it is zero, this coordinate 
     corresponds to a fat mark, which is identical to when the value would 
     have been 1. Because axes have their own width, this is indicated with 
     the last parameter.
-%Draws a line with subdivisions that can be used as the axis on a histogram 
-%or other figure. The first four arguments are the endpoints of the axis. 
-%Then we have the number of orders of magnitude, 
-%the size of the hash marks, the offset inside a logarithm at which we 
-%start and the linewidth. The hashmarks will be on the left side when going 
-%from point 1 to point 2.
+
+    When the offset is outside its natural range, which is a real
+    value between 1 and 10, a corrected value is used as
+    follows: If the offset is zero or less, it is replaced by 1.  Then
+    it is multiplied by an integer power of 10 to bring it into the
+    range 1 to 10 (or equivalently, the offset's logarithm to base 10
+    is used modulo 1).
+
 \end{minipage}\vspace{4mm}
 
 %--#] LogAxis :

@@ -2,7 +2,6 @@
 	Release on CTAN:
 	axodraw2 [v. 2.1.0b 2016/06/02]
 	axohelp [v. 1.0 2016/05/23]
-
 2018/01/20
 	axohelp has standard options (-h, --help, -v, --version)
 	Change verbose option to -V instead of -v
@@ -15,3 +14,19 @@
 	manual.
 2018/02/04
 	Minor corrections in manual.
+2018/02/04
+	Update package version number and date.  Version numbers:
+	axodraw2 package [v. 2.1.0b 2018/02/05]
+	axodraw2.sty [v. 2.1.0b 2016/06/02]
+	axohelp [v. 1.1 2018/01/23]
+2018/02/20
+	Correct LinAxis in axohelp to have LH thick tickmark when offset=1
+	Correct LinAxis and LogAxis to deal better with out-of-range
+	arguments, and to be immune to rounding errors previously causing
+	tickmarks at ends of axis being sometimes not drawn.
+	Correct and simplify axohelp.test to work for TeXLive build.
+	Update documentation.
+	This version for release on CTAN.
+	axodraw2 package [v. 2.1.1 2018/02/20]
+	axodraw2.sty [v. 2.1.1 2018/02/15]
+	axohelp [v. 1.2 2018/02/20]
