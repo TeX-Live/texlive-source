@@ -2514,9 +2514,11 @@ git svn --authors-file usermap clone svn://USER@@tug.org/texlive/trunk/Build/sou
 @end example
 
 @noindent where the @code{usermap} file maps Subversion user names to
-name and emails of the authors.
-
-@c TODO should we use anonymous checkout here? Should be possible!
+name and emails of the authors. If no user account at @url{tug.org} is
+available, anonymous checkout is possible, too:
+@example
+git svn --authors-file usermap clone svn://tug.org/texlive/trunk/Build/source
+@end example
 
 In the following, we will use @emph{admin} to refer to a user who has
 read/write access to the @TL{} subversion repository, and is also an
