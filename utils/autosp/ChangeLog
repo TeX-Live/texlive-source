@@ -1,3 +1,8 @@
+2018-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex2aspc.test: Fix a bug.
+	Reported by Johannes Hielscher in tlbuild ML, 2018-02-21.
+
 2018-02-16  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (bin_PROGRAMS),
