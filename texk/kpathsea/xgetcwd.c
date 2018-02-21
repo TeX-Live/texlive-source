@@ -117,7 +117,7 @@ xgetcwd (void)
             }
         }
         if (!found)
-            LIB_FATAL2("No inode %d/device %d in parent directory",
+            FATAL2("No inode %d/device %d in parent directory",
                    cwd_stat.st_ino, cwd_stat.st_dev);
 
         xclosedir(parent_dir);
