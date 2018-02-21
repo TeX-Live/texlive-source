@@ -1,6 +1,6 @@
-diff -u2r dvisvgm-2.3.2/Makefile.am dvisvgm-src/Makefile.am
---- dvisvgm-2.3.2/Makefile.am	Tue Jan 02 18:32:38 2018
-+++ dvisvgm-src/Makefile.am	Fri Feb 09 13:20:34 2018
+diff -u2r dvisvgm-2.3.3/Makefile.am dvisvgm-src/Makefile.am
+--- dvisvgm-2.3.3/Makefile.am	Tue Jan 02 18:32:38 2018
++++ dvisvgm-src/Makefile.am	Thu Feb 22 07:02:50 2018
 @@ -6,5 +6,5 @@
  AUTOMAKE_OPTIONS = foreign
  EXTRA_DIST = COPYING
@@ -8,9 +8,9 @@ diff -u2r dvisvgm-2.3.2/Makefile.am dvisvgm-src/Makefile.am
 +SUBDIRS = libs src #not for TL: tests doc
  ACLOCAL_AMFLAGS = -I m4
  
-diff -u2r dvisvgm-2.3.2/src/Makefile.am dvisvgm-src/src/Makefile.am
---- dvisvgm-2.3.2/src/Makefile.am	Tue Jan 02 18:32:38 2018
-+++ dvisvgm-src/src/Makefile.am	Fri Feb 09 13:29:22 2018
+diff -u2r dvisvgm-2.3.3/src/Makefile.am dvisvgm-src/src/Makefile.am
+--- dvisvgm-2.3.3/src/Makefile.am	Tue Jan 02 18:32:38 2018
++++ dvisvgm-src/src/Makefile.am	Thu Feb 22 07:09:47 2018
 @@ -14,8 +14,5 @@
  	$(noinst_LIBRARIES) \
  	../libs/clipper/libclipper.a \

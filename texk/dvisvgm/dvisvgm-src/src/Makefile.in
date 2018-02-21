@@ -89,6 +89,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+target_triplet = @target@
 bin_PROGRAMS = dvisvgm$(EXEEXT)
 @ENABLE_WOFF_TRUE@am__append_1 = \
 @ENABLE_WOFF_TRUE@	../libs/ff-woff/libfontforge.a \
@@ -97,33 +98,22 @@ bin_PROGRAMS = dvisvgm$(EXEEXT)
 
 @ENABLE_WOFF_TRUE@am__append_2 = ffwrapper.c ffwrapper.h
 @ENABLE_WOFF_TRUE@am__append_3 = \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
+@ENABLE_WOFF_TRUE@	-I$(top_srcdir)/libs/ff-woff/fontforge \
+@ENABLE_WOFF_TRUE@	-I$(top_srcdir)/libs/ff-woff/inc
 
 @ENABLE_WOFF_TRUE@am__append_4 = \
 @ENABLE_WOFF_TRUE@	$(TTFAUTOHINT_CFLAGS) \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/brotli/include \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/woff2/include
+@ENABLE_WOFF_TRUE@	-I$(top_srcdir)/libs/brotli/include \
+@ENABLE_WOFF_TRUE@	-I$(top_srcdir)/libs/woff2/include
 
 @ENABLE_WOFF_TRUE@am__append_5 = $(TTFAUTOHINT_LIBS)
-@WIN32_TRUE@am__append_6 = -DTEXLIVEWIN32
-subdir = dvisvgm-src/src
+subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
-	$(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
-	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-potrace-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/../../m4/kpse-win32.m4 \
-	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
-	$(top_srcdir)/../../m4/libtool.m4 \
-	$(top_srcdir)/../../m4/ltoptions.m4 \
-	$(top_srcdir)/../../m4/ltsugar.m4 \
-	$(top_srcdir)/../../m4/ltversion.m4 \
-	$(top_srcdir)/../../m4/lt~obsolete.m4 $(top_srcdir)/version.ac \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_code_coverage.m4 \
+	$(top_srcdir)/m4/ax_cxx_compile_stdcxx.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -263,7 +253,7 @@ am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
-depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
+depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -294,6 +284,7 @@ AM_V_CXX = $(am__v_CXX_@AM_V@)
 am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
 am__v_CXX_0 = @echo "  CXX     " $@;
 am__v_CXX_1 = 
+CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -328,13 +319,14 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/version.hpp.in \
-	$(top_srcdir)/../../build-aux/depcomp
+	$(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AM_LDFLAGS = $(KPSE_LIBS) $(CODE_COVERAGE_LDFLAGS) $(am__append_5)
 AR = @AR@
-AS = @AS@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -342,31 +334,35 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
-CODE_COVERAGE_RULES = @CODE_COVERAGE_RULES@
+CODE_COVERAGE_CFLAGS = @CODE_COVERAGE_CFLAGS@
+CODE_COVERAGE_CPPFLAGS = @CODE_COVERAGE_CPPFLAGS@
+CODE_COVERAGE_CXXFLAGS = @CODE_COVERAGE_CXXFLAGS@
+CODE_COVERAGE_ENABLED = @CODE_COVERAGE_ENABLED@
+CODE_COVERAGE_LDFLAGS = @CODE_COVERAGE_LDFLAGS@
+CODE_COVERAGE_LIBS = @CODE_COVERAGE_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
-CXXLD = @CXXLD@
 CYGPATH_W = @CYGPATH_W@
+DATE = @DATE@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DVISVGM_TREE = @DVISVGM_TREE@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
-FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
-FREETYPE2_LIBS = @FREETYPE2_LIBS@
-FT2_CONFIG = @FT2_CONFIG@
+FREETYPE_CFLAGS = @FREETYPE_CFLAGS@
+FREETYPE_LIBS = @FREETYPE_LIBS@
+GCOV = @GCOV@
+GENHTML = @GENHTML@
 GREP = @GREP@
 HAVE_CXX11 = @HAVE_CXX11@
 INSTALL = @INSTALL@
@@ -374,13 +370,11 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
-KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
-KPATHSEA_LIBS = @KPATHSEA_LIBS@
+KPSE_CFLAGS = @KPSE_CFLAGS@
+KPSE_LIBS = @KPSE_LIBS@
+LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LIBGS_INCLUDES = @LIBGS_INCLUDES@
-LIBGS_LIBS = @LIBGS_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -388,7 +382,6 @@ LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
-MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
@@ -407,19 +400,17 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
-POTRACE_DEPEND = @POTRACE_DEPEND@
-POTRACE_INCLUDES = @POTRACE_INCLUDES@
-POTRACE_LIBS = @POTRACE_LIBS@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TTFAUTOHINT_CFLAGS = @TTFAUTOHINT_CFLAGS@
+TTFAUTOHINT_LIBS = @TTFAUTOHINT_LIBS@
 VERSION = @VERSION@
-WARNING_CFLAGS = @WARNING_CFLAGS@
-WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
-ZLIB_DEPEND = @ZLIB_DEPEND@
-ZLIB_INCLUDES = @ZLIB_INCLUDES@
+ZLIB_CFLAGS = @ZLIB_CFLAGS@
 ZLIB_LIBS = @ZLIB_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -470,7 +461,11 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
+target = @target@
 target_alias = @target_alias@
+target_cpu = @target_cpu@
+target_os = @target_os@
+target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
@@ -480,11 +475,9 @@ dvisvgm_SOURCES = \
 	dvisvgm.cpp
 
 dvisvgm_LDADD = $(noinst_LIBRARIES) ../libs/clipper/libclipper.a \
-	../libs/xxHash/libxxhash.a $(am__append_1) $(KPATHSEA_LIBS) \
-	$(POTRACE_LIBS) $(FREETYPE2_LIBS) $(FONTFORGE_LIBS) \
-	$(ZLIB_LIBS) $(LIBGS_LIBS)
-dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES) $(KPATHSEA_DEPEND) \
-	$(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
+	../libs/xxHash/libxxhash.a $(FREETYPE_LIBS) $(FONTFORGE_LIBS) \
+	$(ZLIB_LIBS) $(am__append_1)
+dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES)
 libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
 	BasicDVIReader.hpp Bezier.cpp Bezier.hpp \
 	BgColorSpecialHandler.cpp BgColorSpecialHandler.hpp Bitmap.cpp \
@@ -547,23 +540,19 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
 	XMLNode.cpp XMLNode.hpp XMLString.cpp XMLString.hpp \
 	ZLibOutputStream.hpp $(am__append_2)
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
-dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
-AM_CFLAGS = $(WARNING_CFLAGS) $(ZLIB_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
+AM_CFLAGS = -Wall $(ZLIB_CFLAGS) $(CODE_COVERAGE_CFLAGS) \
 	$(am__append_3)
-AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
-	-I$(dvisvgm_srcdir)/libs/clipper \
-	-I$(dvisvgm_srcdir)/libs/variant/include \
-	-I$(dvisvgm_srcdir)/libs/xxHash $(am__append_4) \
-	$(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES) \
-	$(ZLIB_INCLUDES) $(LIBGS_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
-	$(am__append_6)
-AM_LDFLAGS = $(CODE_COVERAGE_LDFLAGS) $(am__append_5)
+AM_CXXFLAGS = -Wall -Wnon-virtual-dtor -Wno-mismatched-tags \
+	-I$(top_srcdir)/libs/clipper \
+	-I$(top_srcdir)/libs/variant/include \
+	-I$(top_srcdir)/libs/xxHash $(KPSE_CFLAGS) $(FREETYPE_CFLAGS) \
+	$(ZLIB_CFLAGS) $(CODE_COVERAGE_CFLAGS) $(am__append_4)
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .cpp .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -572,9 +561,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign dvisvgm-src/src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign dvisvgm-src/src/Makefile
+	  $(AUTOMAKE) --foreign src/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -587,9 +576,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
+$(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
+$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 version.hpp: $(top_builddir)/config.status $(srcdir)/version.hpp.in
@@ -1022,26 +1011,20 @@ uninstall-am: uninstall-binPROGRAMS
 .PRECIOUS: Makefile
 
 
-# TL: do not try to rebuild these source files.
 # the command-line parser class is generated from options.xml by opt2cpp
-@TEXLIVE_BUILD_FALSE@$(srcdir)/CommandLine.hpp: options.xml
-@TEXLIVE_BUILD_FALSE@	rm -f $@
-@TEXLIVE_BUILD_FALSE@	python $(srcdir)/opt2cpp.py $< >$@
+$(srcdir)/CommandLine.hpp: options.xml
+	rm -f $@
+	python $(srcdir)/opt2cpp.py $< >$@
 
 # Create a C string definition containing the PostScript routines psdefs.ps needed by class PSInterpreter
-@TEXLIVE_BUILD_FALSE@$(srcdir)/psdefs.cpp: psdefs.ps
-@TEXLIVE_BUILD_FALSE@	if test -f $<; then \
-@TEXLIVE_BUILD_FALSE@		ps2c PSInterpreter::PSDEFS $< >$@; \
-@TEXLIVE_BUILD_FALSE@	fi
+$(srcdir)/psdefs.cpp: psdefs.ps
+	if test -f $<; then \
+		ps2c PSInterpreter::PSDEFS $< >$@; \
+	fi
 
-@TEXLIVE_BUILD_FALSE@psdefs.ps: ;
+psdefs.ps: ;
 
 @CODE_COVERAGE_RULES@
-
-@KPATHSEA_RULE@
-@POTRACE_RULE@
-@FREETYPE2_RULE@
-@ZLIB_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
