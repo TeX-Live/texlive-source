@@ -3,8 +3,8 @@
 # File          : makedtx
 # Author        : Nicola L. C. Talbot
 # Date          : 29 Oct 2004
-# Last Modified : 19 Aug 2007
-# Version       : 0.94b
+# Last Modified : 2017-04-08
+# Version       : 1.2
 
 # usage : makedtx [options] -src <expr>=><expr> -doc <filename> <basename>
 #
@@ -16,35 +16,49 @@
 
 use Getopt::Long;
 
-$version = "0.94b";
+$version = "1.2";
 
 # process command line options
 
  %optctl = ();
 
+# v1.1 added section switch
 &GetOptions(\%optctl, "h", "help", "v", "src=s@", "doc=s",
 "dir=s", "op=s", "askforoverwrite!", "ins!",
-"preamble=s", "postamble=s", "setambles=s@", "macrocode=s@",
+"preamble=s", "postamble=s", "setambles=s@", "testmode", "macrocode=s@",
 "author=s", "date=s", "stopeventually=s",
 "prefinale=s", "codetitle=s", "comment=s@",
-"version", "license=s") or &syntaxerror();
+"version", "license=s", "section=s") or &syntaxerror();
 
 $srcdir          = ".";
 $patternop       = "=";
 $verbose         = 0;
 $noins           = 0;
+$testmode        = 0;
 $askforoverwrite = 0;
 $preamble        = "";
 $postamble       = "";
-$author          = (getpwuid($<))[6] || 'Unknown';
+my $author;
+if ($^O =~ m/MSWin/)
+{
+    $author          = $ENV{"USERNAME"};
+    if ($author eq ""){ $author = 'Unknown';}
+}
+else
+{
+    $author          = (getpwuid($<))[6] || 'Unknown';
+}
 $stopeventually  = "";
 $prefinale       = "";
 $codetitle       = "The Code";
+$section         = "section";
 $license         = "lppl";
 
 ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime(time);
 
 $year = $year + 1900;
+$copyright_date = $year;
+$creation_date = "$year/" . ($mon+1) . "/$mday $hour:" . ($min<10?"0$min" : $min);
 
 foreach $setting (keys %optctl)
 {
@@ -54,7 +68,8 @@ foreach $setting (keys %optctl)
    }
    elsif ($setting eq "version")
    {
-      die "makedtx version $version\n";
+      print "makedtx version $version\n";
+      exit 0;
    }
    elsif ($setting eq "doc")
    {
@@ -106,7 +121,7 @@ foreach $setting (keys %optctl)
    }
    elsif ($setting eq "date")
    {
-      $year = $optctl{$setting};
+      $copyright_date = $optctl{$setting};
    }
    elsif ($setting eq "stopeventually")
    {
@@ -119,6 +134,20 @@ foreach $setting (keys %optctl)
    elsif ($setting eq "codetitle")
    {
       $codetitle = $optctl{$setting};
+   }
+   elsif ($setting eq "section")
+   {
+      $section = $optctl{$setting};
+   }
+   elsif ($setting eq "testmode")
+   {
+      $testmode = $optctl{$setting};
+      if($testmode)
+      {
+         $version = "x.y";
+         $copyright_date = "YYYY";
+         $creation_date = "YYYY/MM/DD hh:mm";
+      }
    }
    elsif ($setting eq "comment")
    {
@@ -150,7 +179,7 @@ if ($#source == -1)
    &syntaxerror();
 }
 
-open DTX, ">$basename.dtx" or die "Can't open '$basename.dtx'\n";
+open DTX, ">:unix","$basename.dtx" or die "Can't open '$basename.dtx'\n";
 
 if ($verbose)
 {
@@ -213,14 +242,15 @@ if ($preamble eq "")
 {
    if ($license eq "lppl")
    {
-     $preamble = <<_END_LICENSE
+# v1.2 fixed typo in preamble
+      $preamble = <<_END_LICENSE;
 
  $basename.dtx
- Copyright $year $author
+ Copyright $copyright_date $author
 
  This work may be distributed and/or modified under the
  conditions of the LaTeX Project Public License, either version 1.3
- of this license of (at your option) any later version.
+ of this license or (at your option) any later version.
  The latest version of this license is in
    http://www.latex-project.org/lppl.txt
  and version 1.3 or later is part of all distributions of LaTeX
@@ -234,10 +264,10 @@ _END_LICENSE
    }
    elsif ($license eq 'bsd')
    {
-     $preamble = <<_END_LICENSE
+      $preamble = <<_END_LICENSE;
 
  $basename.dtx
- Copyright (c) $year $author
+ Copyright (c) $copyright_date $author
  All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -266,10 +296,10 @@ _END_LICENSE
    }
    elsif ($license eq 'gpl')
    {
-     $preamble = <<_END_LICENSE
+      $preamble = <<_END_LICENSE;
 
  $basename.dtx
- Copyright (c) $year $author
+ Copyright (c) $copyright_date $author
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -299,53 +329,60 @@ _END_LICENSE
              . " " . join(', ', @outputfiles) . ".\n";
 }
 
-open DOC, $docsrc or die "Can't open '$docsrc'\n";
+open DOC, '<:crlf',$docsrc or die "Can't open '$docsrc'\n";
 
 print DTX "\%\\iffalse\n";
 print DTX "\% $basename.dtx generated using makedtx version $version (c) Nicola Talbot\n";
 print DTX "\% Command line args:\n";
 
+@cmdline_args = ();
 foreach $setting (keys %optctl)
 {
    if ($setting eq "src")
    {
       foreach $source (@source)
       {
-         print DTX "\%   -src \"$source\"\n";
+ push @cmdline_args ,"-src \"$source\"";
       }
    }
    elsif ($setting eq "setambles")
    {
       foreach $setamble (@setambles)
       {
-         print DTX "\%   -setambles \"$setamble\"\n";
+ push @cmdline_args ,"-setambles \"$setamble\"";
       }
    }
    elsif ($setting eq "macrocode")
    {
       foreach $macrocode (@macrocode)
       {
-         print DTX "\%   -macrocode \"$macrocode\"\n";
+ push @cmdline_args ,"-macrocode \"$macrocode\"";
       }
    }
    elsif ($setting eq "comment")
    {
       foreach $comment (@comment)
       {
-         print DTX "\%   -comment \"$comment\"\n";
+ push @cmdline_args ,"-comment \"$comment\"";
       }
    }
    else
    {
       $val = $optctl{$setting};
       $val=~s/\\/\\\\/g;
-      print DTX "\%   -", $setting, " \"",  $val, "\"\n";
+      push @cmdline_args ,("-" . $setting . " \"" .  $val . "\"");
    }
+}
+if($testmode){
+   @cmdline_args = sort @cmdline_args;
+}
+foreach $arg (@cmdline_args){
+   print DTX "\%   ", $arg , "\n";
 }
 
 print DTX "\%   $basename\n";
 
-print DTX "\% Created on $year/", $mon+1, "/$mday $hour:", $min<10?"0$min" : $min,"\n";
+print DTX "\% Created on $creation_date\n";
 print DTX "\%\\fi\n";
 print DTX "\%\\iffalse\n";
 print DTX "\%<*package>\n";
@@ -369,7 +406,7 @@ print DTX "\%\\fi\n";
 
 print DTX "\% \\iffalse\n";
 print DTX "\% Doc-Source file to use with LaTeX2e\n";
-print DTX "\% Copyright (C) $year $author, all rights reserved.\n";
+print DTX "\% Copyright (C) $copyright_date $author, all rights reserved.\n";
 print DTX "\% \\fi\n";
 
 # driver
@@ -381,7 +418,7 @@ $indoc=0;
 
 while (<DOC>)
 {
-   s/\\usepackage{creatdtx}//;
+   s/\\usepackage\{creatdtx}//;
 
    $restofline = $_;
 
@@ -441,7 +478,7 @@ while (<DOC>)
 
    print DTX $line;
 
-   if ($line=~/\\begin{document}/)
+   if ($line=~/\\begin\{document}/)
    {
       $indoc = 1;
 
@@ -461,12 +498,12 @@ print DTX "\%";
 
 while (<DOC>)
 {
-   if (/\\begin{verbatim}/)
+   if (/\\begin\{verbatim}/)
    {
       $inverb=1;
    }
 
-   if (/\\end{verbatim}/)
+   if (/\\end\{verbatim}/)
    {
       $inverb=0;
    }
@@ -532,11 +569,11 @@ while (<DOC>)
 
    $line = $beginline . $restofline;
 
-   if (($line=~/\\end{document}/) and not $inverb)
+   if (($line=~/\\end\{document}/) and not $inverb)
    {
       $indoc=0;
 
-      $line=~s/\\end{document}//;
+      $line=~s/\\end\{document}//;
    }
 
    $line=~s/\n/\n\%/mg;
@@ -553,7 +590,12 @@ if ($stopfound==0)
    print DTX "\%\\StopEventually{$stopeventually}\n";
 }
 
-print DTX "\%\\section{$codetitle}\n";
+# v1.0 added check
+if ($codetitle)
+{
+  # v1.1 added section
+  print DTX "\%\\$section\{$codetitle\}\n";
+}
 
 for (my $idx = 0; $idx <= $#derivedfiles; $idx++)
 {
@@ -565,7 +607,7 @@ for (my $idx = 0; $idx <= $#derivedfiles; $idx++)
          print "$srcdirfile -> $_ \n";
    }
 
-   open SRC, $thisinfile or die "Can't open $thisinfile\n";
+   open SRC, "<:crlf", $thisinfile or die "Can't open $thisinfile\n";
 
    print DTX "\%\\iffalse\n";
    print DTX "\%    \\begin{macrocode}\n";
@@ -628,9 +670,9 @@ close DTX;
 
 if (!$noins)
 {
-   open INS, ">$basename.ins" or die "Can't open '$basename.ins'\n";
+   open INS, ">:unix","$basename.ins" or die "Can't open '$basename.ins'\n";
 
-   print INS "\% $basename.ins generated using makedtx version $version $year/",$mon+1,"/$mday $hour:", $min<10?"0$min":$min,"\n";
+   print INS "\% $basename.ins generated using makedtx version $version $creation_date\n";
 
    print INS "\\input docstrip\n\n";
    print INS "\\preamble\n";
@@ -763,6 +805,7 @@ sub help
    print "-macrocode <expr>  : surround any file which matches <expr> in a macrocode environment\n";
    print "-comment <expr>    : surround any file which matches <expr> with \\iffalse \\fi pair\n";
    print "-codetitle <text>  : The title for the documented code section (default: The Code)\n";
+   print "-section <cs>  : The sectioning command to use for the documented code section (default: 'section')\n";
    print "-license <license> : use the given license for the preamble.\n";
    print "                     Known licenses: lppl (default), bsd, gpl.\n";
    print "-h                 : help message\n";
