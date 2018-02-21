@@ -1,7 +1,7 @@
 /* lib.h: declarations for common, low-level routines in kpathsea.
 
    Copyright 1992, 1993, 1994, 1995, 1996, 2008, 2009, 2010, 2011,
-             2012, 2015 Karl Berry.
+             2012, 2015, 2018 Karl Berry.
    Copyright 1999, 2000, 2003, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -87,8 +87,13 @@ extern "C" {
 #define WARNING4(str, e1, e2, e3, e4)                                   \
   START_WARNING (); fprintf (stderr, str, e1, e2, e3, e4); END_WARNING ()
 
+#if defined (KPSE_COMPAT_API)
 #define LIB_START_FATAL() do { \
-  fprintf (stderr, "%s: fatal: ", kpse->invocation_name);
+  fprintf (stderr, "%s: fatal: ", kpse_def->invocation_name);
+#else
+#define LIB_START_FATAL() do { \
+  fprintf (stderr, "fatal: ");
+#endif
 
 #define LIB_FATAL(str)                                                  \
   LIB_START_FATAL (); fputs (str, stderr); END_FATAL ()
