@@ -1,6 +1,6 @@
 /* otfinfo.cc -- driver for reporting information about OpenType fonts
  *
- * Copyright (c) 2003-2016 Eddie Kohler
+ * Copyright (c) 2003-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -528,7 +528,7 @@ do_query_unicode(const OpenType::Font& otf, ErrorHandler* errh, ErrorHandler* re
                 sprintf(name, "uni%04X", it->first);
             else
                 sprintf(name, "u%X", it->first);
-            if ((size_t) it->second < glyph_names.size())
+            if (it->second < glyph_names.size())
                 result_errh->message("%s %d %s\n", name, it->second, glyph_names[it->second].c_str());
             else
                 result_errh->message("%s %d\n", name, it->second);
@@ -645,7 +645,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("otfinfo (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2003-2016 Eddie Kohler\n\
+	    printf("Copyright (C) 2003-2018 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

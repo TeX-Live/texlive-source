@@ -2,7 +2,7 @@
 
 /* t1rw.{cc,hh} -- Type 1 font reading and writing
  *
- * Copyright (c) 1998-2016 Eddie Kohler
+ * Copyright (c) 1998-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -117,7 +117,7 @@ inline int
 Type1Reader::eexec(int c)
 {
     unsigned char answer = (unsigned char)(c ^ (_r >> 8));
-    _r = (((unsigned char)c + _r) * t1C1 + t1C2) & 0xFFFF;
+    _r = (((unsigned char)c + _r) * (uint32_t) t1C1 + t1C2) & 0xFFFF;
     return answer;
 }
 
@@ -439,7 +439,7 @@ inline unsigned char
 Type1Writer::eexec(int p)
 {
     unsigned char c = ((unsigned char)p ^ (_r >> 8)) & 0xFF;
-    _r = ((c + _r) * t1C1 + t1C2) & 0xFFFF;
+    _r = ((c + _r) * (uint32_t) t1C1 + t1C2) & 0xFFFF;
     return c;
 }
 

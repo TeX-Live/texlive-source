@@ -25,15 +25,15 @@ class Os2 { public:
                    O_LOWEROPTICALPOINTSIZE = 96, O_UPPEROPTICALPOINTSIZE = 98 };
     enum { HEADER_SIZE = 2 };
 
-    inline int16_t typo_ascender() const throw (Bounds);
-    inline int16_t typo_descender() const throw (Bounds);
-    inline int16_t typo_line_gap() const throw (Bounds);
-    inline int16_t x_height() const throw (Bounds);
-    inline int16_t cap_height() const throw (Bounds);
-    inline double lower_optical_point_size() const throw (Bounds);
-    inline double upper_optical_point_size() const throw (Bounds);
-    inline bool has_optical_point_size() const throw ();
-    inline String vendor_id() const throw ();
+    inline int16_t typo_ascender() const;
+    inline int16_t typo_descender() const;
+    inline int16_t typo_line_gap() const;
+    inline int16_t x_height() const;
+    inline int16_t cap_height() const;
+    inline double lower_optical_point_size() const;
+    inline double upper_optical_point_size() const;
+    inline bool has_optical_point_size() const noexcept;
+    inline String vendor_id() const noexcept;
 
   private:
 
@@ -45,47 +45,47 @@ class Os2 { public:
 };
 
 
-inline int16_t Os2::typo_ascender() const throw (Bounds)
+inline int16_t Os2::typo_ascender() const
 {
     return _data.s16(O_TYPOASCENDER);
 }
 
-inline int16_t Os2::typo_descender() const throw (Bounds)
+inline int16_t Os2::typo_descender() const
 {
     return _data.s16(O_TYPODESCENDER);
 }
 
-inline int16_t Os2::typo_line_gap() const throw (Bounds)
+inline int16_t Os2::typo_line_gap() const
 {
     return _data.s16(O_TYPOLINEGAP);
 }
 
-inline int16_t Os2::x_height() const throw (Bounds)
+inline int16_t Os2::x_height() const
 {
     return _data.s16(O_XHEIGHT);
 }
 
-inline int16_t Os2::cap_height() const throw (Bounds)
+inline int16_t Os2::cap_height() const
 {
     return _data.s16(O_CAPHEIGHT);
 }
 
-inline double Os2::lower_optical_point_size() const throw (Bounds)
+inline double Os2::lower_optical_point_size() const
 {
     return _data.u16(O_LOWEROPTICALPOINTSIZE) / 20.;
 }
 
-inline double Os2::upper_optical_point_size() const throw (Bounds)
+inline double Os2::upper_optical_point_size() const
 {
     return _data.u16(O_UPPEROPTICALPOINTSIZE) / 20.;
 }
 
-inline bool Os2::has_optical_point_size() const throw ()
+inline bool Os2::has_optical_point_size() const noexcept
 {
     return _data.length() >= O_UPPEROPTICALPOINTSIZE + 2;
 }
 
-inline String Os2::vendor_id() const throw ()
+inline String Os2::vendor_id() const noexcept
 {
     return _data.substring(O_VENDORID, 4).string();
 }

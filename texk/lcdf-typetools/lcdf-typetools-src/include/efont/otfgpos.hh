@@ -9,7 +9,7 @@ class Positioning;
 
 class Gpos { public:
 
-    Gpos(const Data &, ErrorHandler * = 0) throw (Error);
+    Gpos(const Data &, ErrorHandler * = 0);
     // default destructor
 
     const ScriptList &script_list() const { return _script_list; }
@@ -29,7 +29,7 @@ class Gpos { public:
 };
 
 class GposLookup { public:
-    GposLookup(const Data &) throw (Error);
+    GposLookup(const Data &);
     int type() const                    { return _type; }
     uint16_t flags() const              { return _d.u16(2); }
     bool unparse_automatics(Vector<Positioning> &, ErrorHandler * = 0) const;
@@ -66,9 +66,9 @@ class GposValue { public:
 };
 
 class GposSingle { public:
-    GposSingle(const Data &) throw (Error);
+    GposSingle(const Data &);
     // default destructor
-    Coverage coverage() const throw ();
+    Coverage coverage() const noexcept;
     void unparse(Vector<Positioning> &) const;
     enum { F2_HEADERSIZE = 8 };
   private:
@@ -76,9 +76,9 @@ class GposSingle { public:
 };
 
 class GposPair { public:
-    GposPair(const Data &) throw (Error);
+    GposPair(const Data &);
     // default destructor
-    Coverage coverage() const throw ();
+    Coverage coverage() const noexcept;
     void unparse(Vector<Positioning> &) const;
     enum { F1_HEADERSIZE = 10, F1_RECSIZE = 2,
            PAIRSET_HEADERSIZE = 2, PAIRVALUE_HEADERSIZE = 2,

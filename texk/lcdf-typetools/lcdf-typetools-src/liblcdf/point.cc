@@ -2,7 +2,7 @@
 
 /* point.{cc,hh} -- 2D points
  *
- * Copyright (c) 1998-2016 Eddie Kohler
+ * Copyright (c) 1998-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -19,7 +19,7 @@
 #include <lcdf/point.hh>
 
 Point
-Point::rotated(double rotation) const throw ()
+Point::rotated(double rotation) const noexcept
 {
     double r = length();
     double theta = angle() + rotation;
@@ -27,13 +27,13 @@ Point::rotated(double rotation) const throw ()
 }
 
 Point
-Point::midpoint(const Point &a, const Point &b) throw ()
+Point::midpoint(const Point &a, const Point &b) noexcept
 {
     return Point((a.x + b.x)/2, (a.y + b.y)/2);
 }
 
 bool
-Point::on_line(const Point &a, const Point &b, double tolerance) const throw ()
+Point::on_line(const Point &a, const Point &b, double tolerance) const noexcept
 {
     Point c = b - a;
     double d = c.x * (y - a.y) - c.y * (x - a.x);
@@ -41,7 +41,7 @@ Point::on_line(const Point &a, const Point &b, double tolerance) const throw ()
 }
 
 bool
-Point::on_segment(const Point &a, const Point &b, double t) const throw ()
+Point::on_segment(const Point &a, const Point &b, double t) const noexcept
 {
     double tt;
     Point c = b - a;

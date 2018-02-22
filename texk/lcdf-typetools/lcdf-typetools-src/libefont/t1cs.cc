@@ -2,7 +2,7 @@
 
 /* t1cs.{cc,hh} -- Type 1/2 charstrings
  *
- * Copyright (c) 1998-2016 Eddie Kohler
+ * Copyright (c) 1998-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -115,7 +115,7 @@ Type1Charstring::Type1Charstring(int lenIV, const String &s)
         const unsigned char *d = reinterpret_cast<const unsigned char*>(s.data());
         _key = t1R_cs;
         for (int i = 0; i < lenIV; i++, d++)
-            _key = ((*d + _key) * t1C1 + t1C2) & 0xFFFF;
+            _key = ((*d + _key) * (uint32_t) t1C1 + t1C2) & 0xFFFF;
         _s = s.substring(lenIV);
     }
 }
@@ -139,7 +139,7 @@ Type1Charstring::decrypt() const
         for (int i = 0; i < _s.length(); i++, d++) {
             uint8_t encrypted = *d;
             *d = encrypted ^ (r >> 8);
-            r = ((encrypted + r) * t1C1 + t1C2) & 0xFFFF;
+            r = ((encrypted + r) * (uint32_t) t1C1 + t1C2) & 0xFFFF;
         }
         _key = -1;
     }
@@ -193,7 +193,7 @@ Type1Charstring::process(CharstringInterp &interp) const
         } else {                                        // 255: push huge number
             if (left < 5)
                 goto runoff_error;
-            int32_t val = (data[1] << 24) | (data[2] << 16) | (data[3] << 8) | data[4];
+            int32_t val = ((uint32_t) data[1] << 24) | (data[2] << 16) | (data[3] << 8) | data[4];
             more = interp.number(val);
             ahead = 5;
         }

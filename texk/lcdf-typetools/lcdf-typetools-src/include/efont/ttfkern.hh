@@ -6,7 +6,7 @@ namespace Efont { namespace OpenType {
 
 class KernTable { public:
 
-    KernTable(const Data &, ErrorHandler * = 0) throw (Error);
+    KernTable(const Data &, ErrorHandler * = 0);
     // default destructor
 
     bool ok() const                     { return _error >= 0; }
@@ -34,7 +34,7 @@ class KernTable { public:
     inline uint32_t first_offset() const {
         return _version == 0 ? 4 : 8;
     }
-    inline Data subtable(uint32_t &off) const throw (Error);
+    inline Data subtable(uint32_t &off) const;
 
 };
 

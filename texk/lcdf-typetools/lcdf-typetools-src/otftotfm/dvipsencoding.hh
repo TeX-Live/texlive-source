@@ -13,27 +13,27 @@ class DvipsEncoding { public:
 
     static void add_glyphlist(String);
 
-    operator bool() const			{ return _e.size() > 0; }
-    const String &name() const			{ return _name; }
-    const String &filename() const		{ return _filename; }
-    int boundary_char() const			{ return _boundary_char; }
-    const String &coding_scheme() const		{ return _coding_scheme; }
-    void set_coding_scheme(const String &s)	{ _coding_scheme = s; }
-    void set_warn_missing(bool wm)		{ _warn_missing = wm; }
+    operator bool() const                       { return _e.size() > 0; }
+    const String &name() const                  { return _name; }
+    const String &filename() const              { return _filename; }
+    int boundary_char() const                   { return _boundary_char; }
+    const String &coding_scheme() const         { return _coding_scheme; }
+    void set_coding_scheme(const String &s)     { _coding_scheme = s; }
+    void set_warn_missing(bool wm)              { _warn_missing = wm; }
 
     void encode(int, PermString);
     inline int encoding_of(PermString) const;
     int encoding_of(PermString, bool encode);
     inline bool encoded(int e) const;
     inline PermString encoding(int e) const;
-    int encoding_size() const			{ return _e.size(); }
+    int encoding_size() const                   { return _e.size(); }
 
     int parse(String filename, bool ignore_ligkern, bool ignore_other, ErrorHandler *);
     int parse_ligkern(const String &ligkern_text, int override, ErrorHandler *);
     int parse_position(const String &ligkern_text, int override, ErrorHandler *);
     int parse_unicoding(const String &unicoding_text, int override, ErrorHandler *);
 
-    bool file_had_ligkern() const		{ return _file_had_ligkern; }
+    bool file_had_ligkern() const               { return _file_had_ligkern; }
 
     // also modifies 'this':
     void make_metrics(Metrics &, const FontInfo &, Secondary *, bool literal, ErrorHandler *);
@@ -44,17 +44,17 @@ class DvipsEncoding { public:
     void apply_position(Metrics &, ErrorHandler *) const;
 
     enum { JT_KERN = 32, JT_LIG = 64, JT_ADDLIG = 128, JT_LIGALL = 199,
-	   JL_LIG = JT_LIG | JT_ADDLIG, JL_CLIG = JL_LIG | 1,
-	   JL_CLIG_S = JL_LIG | 2, JL_LIGC = JL_LIG | 3,
-	   JL_LIGC_S = JL_LIG | 4, JL_CLIGC = JL_LIG | 5,
-	   JL_CLIGC_S = JL_LIG | 6, JL_CLIGC_SS = JL_LIG | 7,
-	   JT_NOLIGKERN = JT_KERN | JT_LIG,
-	   J_ALL = 0x7FFFFFFF }; // also see nokern_names in dvipsencoding.cc
+           JL_LIG = JT_LIG | JT_ADDLIG, JL_CLIG = JL_LIG | 1,
+           JL_CLIG_S = JL_LIG | 2, JL_LIGC = JL_LIG | 3,
+           JL_LIGC_S = JL_LIG | 4, JL_CLIGC = JL_LIG | 5,
+           JL_CLIGC_S = JL_LIG | 6, JL_CLIGC_SS = JL_LIG | 7,
+           JT_NOLIGKERN = JT_KERN | JT_LIG,
+           J_ALL = 0x7FFFFFFF }; // also see nokern_names in dvipsencoding.cc
 
   private:
 
     struct Ligature {
-	int c1, c2, join, k, d;
+        int c1, c2, join, k, d;
     };
 
     Vector<PermString> _e;
@@ -79,8 +79,8 @@ class DvipsEncoding { public:
     bool _warn_missing;
 
     struct WordType {
-	const char *name;
-	int (DvipsEncoding::*parsefunc)(Vector<String>&, int, ErrorHandler*);
+        const char *name;
+        int (DvipsEncoding::*parsefunc)(Vector<String>&, int, ErrorHandler*);
     };
     static const WordType word_types[];
     enum { WT_LIGKERN = 0, WT_POSITION, WT_UNICODING };
@@ -114,9 +114,9 @@ inline PermString
 DvipsEncoding::encoding(int e) const
 {
     if (encoded(e))
-	return _e[e];
+        return _e[e];
     else
-	return PermString();
+        return PermString();
 }
 
 inline int

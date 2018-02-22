@@ -1,3 +1,8 @@
+2018-02-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import lcdf-typetools-2.107.
+	* version.ac: Adapted.
+
 2017-03-27  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.

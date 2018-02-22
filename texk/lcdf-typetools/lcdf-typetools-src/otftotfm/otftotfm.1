@@ -1,5 +1,5 @@
 '\"t
-.ds V 2.106
+.ds V 2.107
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
@@ -868,15 +868,19 @@ Do not generate a font map line for the font.
 .BI \-\-truetype\-directory= dir
 .TP 5
 .BI \-\-type42\-directory= dir
+.TP 5
+.BI \-\-directory= dir
 Set the directory used for various output types.  Each directory may be set
 by an environment variable, and defaults to a TDS directory in automatic
 mode, or to "." otherwise.  Environment variable names and default TDS
-locations are described in the Automatic Mode section above.
+locations are described in the Automatic Mode section above.  The
+.B \-\-directory
+option sets the default directory for all output types.
 '
 .Sp
 .TP 5
 .BI \-\-map\-file= filename
-Set file in which 
+Set file in which
 .B otftotfm
 will write a font map
 line for the font.  The default is the standard output in manual mode, and
@@ -956,7 +960,7 @@ have the following format:
 This tells
 .B otftotfm
 that the glyph named
-.I glyph 
+.I glyph
 translates into the first Unicode value in the
 .I choice
 list that has a character in the font.  \fIGlyph\fR and the
@@ -1042,7 +1046,7 @@ and
 .IR glyph2 .
 "{LK}" and "{KL}" inhibit both ligatures and kerns.
 .PP
-You can set the 
+You can set the
 .B \-\-boundary\-char
 and
 .B \-\-altselector\-char
@@ -1060,7 +1064,7 @@ has a default set of eight ligatures, namely:
     space l =: lslash ; space L =: Lslash ;
     question quoteleft =: questiondown ; exclam quoteleft =: exclamdown ;
     hyphen hyphen =: endash ; endash hyphen =: emdash ;
-    quoteleft quoteleft =: quotedblleft ; 
+    quoteleft quoteleft =: quotedblleft ;
     quoteright quoteright =: quotedblright
 .fi
 LIGKERN commands in the encoding file and

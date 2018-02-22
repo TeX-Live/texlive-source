@@ -6,9 +6,9 @@ class Metrics;
 
 class GlyphFilter { public:
 
-    GlyphFilter()			: _sorted(true) { }
+    GlyphFilter()                       : _sorted(true) { }
 
-    operator bool() const		{ return _patterns.size() != 0; }
+    operator bool() const               { return _patterns.size() != 0; }
 
     inline bool allow_substitution(Efont::OpenType::Glyph glyph, const Vector<PermString>& glyph_names, uint32_t unicode) const;
     inline bool allow_alternate(Efont::OpenType::Glyph glyph, const Vector<PermString>& glyph_names, uint32_t unicode) const;
@@ -17,34 +17,34 @@ class GlyphFilter { public:
     void add_alternate_filter(const String&, bool is_exclude, ErrorHandler*);
 
     friend bool operator==(const GlyphFilter&, const GlyphFilter&);
-    inline bool check_eq(GlyphFilter&);	// may alter both GlyphFilters
+    inline bool check_eq(GlyphFilter&); // may alter both GlyphFilters
 
     GlyphFilter& operator+=(const GlyphFilter&);
 
     void unparse(StringAccum&) const;
 
     struct Pattern {
-	uint16_t type;
-	uint16_t data;
-	union {
-	    struct {
-		int mask;
-		int value;
-	    } uniprop;
-	    struct {
-		uint32_t low;
-		uint32_t high;
-	    } unirange;
-	} u;
-	String pattern;
-	Pattern(uint16_t type);
-	static int compare(const Pattern&, const Pattern&);
+        uint16_t type;
+        uint16_t data;
+        union {
+            struct {
+                int mask;
+                int value;
+            } uniprop;
+            struct {
+                uint32_t low;
+                uint32_t high;
+            } unirange;
+        } u;
+        String pattern;
+        Pattern(uint16_t type);
+        static int compare(const Pattern&, const Pattern&);
     };
 
   private:
 
     enum { T_EXCLUDE = 1, T_NEGATE = 2, T_TYPEMASK = 3,
-	   T_SRC = 0, T_DST = 4 };
+           T_SRC = 0, T_DST = 4 };
     enum { D_NAME, D_UNIPROP, D_UNIRANGE };
 
     Vector<Pattern> _patterns;

@@ -2,7 +2,7 @@
 
 /* otfcmap.{cc,hh} -- OpenType cmap table
  *
- * Copyright (c) 2002-2016 Eddie Kohler
+ * Copyright (c) 2002-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -184,25 +184,27 @@ Cmap::check_table(int t, ErrorHandler *errh) const
               || (searchRange>>1) > segCountX2/2
               || 1 << (entrySelector + 1) != searchRange
               || rangeShift != segCountX2 - searchRange)
-              return errh->error("bad table %d segment counts (format 4)", t);
+              return errh->error("bad table %d segment counts (format %d)", format);
           uint32_t segCount = segCountX2 >> 1;
           if (length < 16 + 8 * segCount)
-              return errh->error("bad table %d length (format %d)", t, format);
+              return errh->error("bad table %d length (format %d, length %u, need %u)", t, format, length, 16 + 8 * segCount);
           const uint8_t *endCodes = data + 14;
           const uint8_t *startCodes = endCodes + 2 + segCountX2;
           const uint8_t *idDeltas = startCodes + segCountX2;
           const uint8_t *idRangeOffsets = idDeltas + segCountX2;
+          uint32_t idRangeOffsetsPos = idRangeOffsets - data;
           int last_end = 0;
           for (int i = 0; i < segCountX2; i += 2) {
               int endCode = USHORT_AT(endCodes + i);
               int startCode = USHORT_AT(startCodes + i);
-              /* int idDelta = SHORT_AT(idDeltas + i); // no need to check */
+              /* int idDelta = SHORT_AT(idDeltas + i); // not needed */
               int idRangeOffset = USHORT_AT(idRangeOffsets + i);
               if (endCode < startCode || startCode < last_end)
                   return errh->error("bad table %d overlapping range %d (format %d)", t, i/2, format);
               if (idRangeOffset
-                  && idRangeOffsets + i + idRangeOffset + (endCode - startCode)*2 + 2 > data + length)
-                  return errh->error("bad table %d range %d length (format 4)", t, i/2);
+                  && idRangeOffset != 65535
+                  && idRangeOffsetsPos + i + idRangeOffset + (endCode - startCode)*2 + 2 > length)
+                  return errh->error("bad table %d range %d length (format %d, range %d-%d, idRangeOffset %d, length %u)", t, i/2, format, startCode, endCode, idRangeOffset, length);
               last_end = endCode + 1;
           }
           if (USHORT_AT(endCodes + segCountX2 - 2) != 0xFFFF)
@@ -308,6 +310,8 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
                 int idRangeOffset = USHORT_AT(idRangeOffsets + (m << 1));
                 if (idRangeOffset == 0)
                     return (idDelta + uni) & 65535;
+                else if (idRangeOffset == 65535)
+                    return 0;
                 int g = USHORT_AT(idRangeOffsets + (m << 1) + idRangeOffset + ((uni - startCount) << 1));
                 if (g == 0)
                     return 0;

@@ -119,8 +119,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am__otftotfm_SOURCES_DIST = automatic.cc automatic.hh dvipsencoding.cc \
 	dvipsencoding.hh glyphfilter.cc glyphfilter.hh metrics.cc \
 	metrics.hh otftotfm.cc otftotfm.hh secondary.cc secondary.hh \
-	uniprop.cc uniprop.hh util.cc util.hh kpseinterface.c \
-	kpseinterface.h
+	setting.hh uniprop.cc uniprop.hh util.cc util.hh \
+	kpseinterface.c kpseinterface.h
 @have_kpathsea_TRUE@am__objects_1 = kpseinterface.$(OBJEXT)
 am_otftotfm_OBJECTS = automatic.$(OBJEXT) dvipsencoding.$(OBJEXT) \
 	glyphfilter.$(OBJEXT) metrics.$(OBJEXT) otftotfm.$(OBJEXT) \
@@ -383,7 +383,8 @@ man_MANS = otftotfm.1
 otftotfm_SOURCES = automatic.cc automatic.hh dvipsencoding.cc \
 	dvipsencoding.hh glyphfilter.cc glyphfilter.hh metrics.cc \
 	metrics.hh otftotfm.cc otftotfm.hh secondary.cc secondary.hh \
-	uniprop.cc uniprop.hh util.cc util.hh $(am__append_1)
+	setting.hh uniprop.cc uniprop.hh util.cc util.hh \
+	$(am__append_1)
 EXTRA_otftotfm_SOURCES = kpseinterface.c kpseinterface.h
 otftotfm_LDADD = ../libefont/libefont.a ../liblcdf/liblcdf.a \
 	$(am__append_3)

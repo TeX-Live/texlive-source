@@ -2,7 +2,7 @@
 
 /* otfdata.{cc,hh} -- OpenType bounds-checked string type
  *
- * Copyright (c) 2003-2016 Eddie Kohler
+ * Copyright (c) 2003-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,7 +21,7 @@
 namespace Efont { namespace OpenType {
 
 Data
-Data::subtable(unsigned offset) const throw (Bounds)
+Data::subtable(unsigned offset) const
 {
     if (offset > (unsigned) _str.length())
         throw Bounds();
@@ -29,7 +29,7 @@ Data::subtable(unsigned offset) const throw (Bounds)
 }
 
 Data
-Data::offset_subtable(unsigned offset_offset) const throw (Bounds)
+Data::offset_subtable(unsigned offset_offset) const
 {
     int offset = u16(offset_offset);
     if (offset > _str.length())

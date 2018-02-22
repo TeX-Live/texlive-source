@@ -11,6 +11,7 @@ otftotfm_SOURCES = \
 	metrics.cc metrics.hh \
 	otftotfm.cc otftotfm.hh \
 	secondary.cc secondary.hh \
+	setting.hh \
 	uniprop.cc uniprop.hh \
 	util.cc util.hh
 EXTRA_otftotfm_SOURCES = kpseinterface.c kpseinterface.h

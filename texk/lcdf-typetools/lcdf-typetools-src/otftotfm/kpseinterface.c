@@ -1,6 +1,6 @@
 /* kpseinterface.{c,h} -- interface with the kpathsea library
  *
- * Copyright (c) 2003-2016 Eddie Kohler
+ * Copyright (c) 2003-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -94,6 +94,6 @@ kpsei_set_debug_flags(unsigned flags)
 char*
 kpsei_var_value(const char *name)
 {
-  return kpse_var_value(name);
+    return kpse_var_value(name);
 }
 #endif

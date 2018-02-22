@@ -2,7 +2,7 @@
 
 /* ttfkern.{cc,hh} -- TrueType kern table
  *
- * Copyright (c) 2009-2016 Eddie Kohler
+ * Copyright (c) 2009-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -27,7 +27,7 @@
 namespace Efont { namespace OpenType {
 
 inline Data
-KernTable::subtable(uint32_t &off_in_out) const throw (Error)
+KernTable::subtable(uint32_t &off_in_out) const
 {
     uint32_t off = off_in_out, len;
     if (_version == 0) {
@@ -42,7 +42,7 @@ KernTable::subtable(uint32_t &off_in_out) const throw (Error)
     return _d.substring(off, len);
 }
 
-KernTable::KernTable(const Data &d, ErrorHandler *) throw (Error)
+KernTable::KernTable(const Data &d, ErrorHandler *)
     : _d(d), _error(-1)
 {
     // USHORT   Version
