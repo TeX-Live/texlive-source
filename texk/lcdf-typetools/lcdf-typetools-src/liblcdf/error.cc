@@ -4,7 +4,7 @@
  * Eddie Kohler
  *
  * Copyright (c) 1999-2000 Massachusetts Institute of Technology
- * Copyright (c) 2001-2016 Eddie Kohler
+ * Copyright (c) 2001-2018 Eddie Kohler
  * Copyright (c) 2008 Meraki, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -595,7 +595,7 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 
 	    s2 = numbuf + NUMBUF_SIZE;
 
-	    unsigned long num;
+	    do_number_t num;
 	    switch (width_flag) {
 	    case 'H':
 	    case -8:
@@ -651,13 +651,12 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 	    default:
 		goto error;
 	    }
-	    s1 = do_number(num, (char *)s2, base, flags);
+	    s1 = do_number(num, (char*) s2, base, flags);
 
 #if HAVE_INT64_TYPES
 	got_number:
 #endif
-	    s1 = do_number_flags((char *)s1, (char *)s2, base, flags,
-				 precision, field_width);
+	    s1 = do_number_flags((char*)s1, (char*) s2, base, flags, precision, field_width);
 	    break;
 	}
 
@@ -681,7 +680,7 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 	    }
 	    void* v = va_arg(val, void*);
 	    s2 = numbuf + NUMBUF_SIZE;
-	    s1 = do_number((unsigned long) v, (char*) s2, 16, flags);
+	    s1 = do_number((do_number_t) v, (char*) s2, 16, flags);
 	    s1 = do_number_flags((char*) s1, (char*) s2, 16, flags | cf_alternate_form, precision, field_width);
 	    break;
 	}
@@ -828,7 +827,7 @@ ErrorHandler::fatal(const char *fmt, ...)
 {
     va_list val;
     va_start(val, fmt);
-    int r = xmessage(String::make_stable(e_fatal, 4), fmt, val);
+    (void) xmessage(String::make_stable(e_fatal, 4), fmt, val);
     va_end(val);
     abort();
 }
@@ -881,7 +880,7 @@ ErrorHandler::lfatal(const String &landmark, const char *fmt, ...)
     va_list val;
     va_start(val, fmt);
     String l = make_landmark_anno(landmark);
-    int r = xmessage(String::make_stable(e_fatal, 4) + l, fmt, val);
+    (void) xmessage(String::make_stable(e_fatal, 4) + l, fmt, val);
     va_end(val);
     abort();
 }
@@ -1091,7 +1090,7 @@ ErrorVeneer::account(int level)
 ContextErrorHandler::ContextErrorHandler(ErrorHandler *errh, const char *fmt,
 					 ...)
     : ErrorVeneer(errh), _indent(String::make_stable("  ", 2)),
-      _context_printed(false), _context_landmark("{l:}")
+      _context_landmark("{l:}"), _context_printed(false)
 {
     va_list val;
     va_start(val, fmt);

@@ -2,7 +2,7 @@
 
 /* otf.{cc,hh} -- OpenType font basics
  *
- * Copyright (c) 2002-2016 Eddie Kohler
+ * Copyright (c) 2002-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -747,11 +747,11 @@ FeatureList::lookups(const ScriptList &script_list, Tag script, Tag langsys, con
  *                        *
  **************************/
 
-Coverage::Coverage() throw ()
+Coverage::Coverage() noexcept
 {
 }
 
-Coverage::Coverage(Glyph first, Glyph last) throw ()
+Coverage::Coverage(Glyph first, Glyph last) noexcept
 {
     if (first <= last) {
         _str = String("\000\002\000\001\000\000\000\000\000\000", 10);
@@ -764,7 +764,7 @@ Coverage::Coverage(Glyph first, Glyph last) throw ()
     }
 }
 
-Coverage::Coverage(const Vector<bool> &gmap) throw ()
+Coverage::Coverage(const Vector<bool> &gmap) noexcept
 {
     int end = gmap.size();
     while (end > 0 && !gmap[end - 1])
@@ -790,7 +790,7 @@ Coverage::Coverage(const Vector<bool> &gmap) throw ()
     }
 }
 
-Coverage::Coverage(const String &str, ErrorHandler *errh, bool do_check) throw ()
+Coverage::Coverage(const String &str, ErrorHandler *errh, bool do_check) noexcept
     : _str(str)
 {
     _str.align(2);
@@ -844,7 +844,7 @@ Coverage::check(ErrorHandler *errh)
 }
 
 int
-Coverage::size() const throw ()
+Coverage::size() const noexcept
 {
     if (_str.length() == 0)
         return -1;
@@ -861,7 +861,7 @@ Coverage::size() const throw ()
 }
 
 int
-Coverage::coverage_index(Glyph g) const throw ()
+Coverage::coverage_index(Glyph g) const noexcept
 {
     if (_str.length() == 0)
         return -1;
@@ -906,7 +906,7 @@ Coverage::coverage_index(Glyph g) const throw ()
 }
 
 Glyph
-Coverage::operator[](int cindex) const throw ()
+Coverage::operator[](int cindex) const noexcept
 {
     if (_str.length() == 0 || cindex < 0)
         return 0;
@@ -935,7 +935,7 @@ Coverage::operator[](int cindex) const throw ()
 }
 
 void
-Coverage::unparse(StringAccum &sa) const throw ()
+Coverage::unparse(StringAccum &sa) const noexcept
 {
     const uint8_t *data = _str.udata();
     if (_str.length() == 0)
@@ -958,7 +958,7 @@ Coverage::unparse(StringAccum &sa) const throw ()
 }
 
 String
-Coverage::unparse() const throw ()
+Coverage::unparse() const noexcept
 {
     StringAccum sa;
     unparse(sa);
@@ -1237,7 +1237,7 @@ GlyphSet::operator=(const GlyphSet &o)
  *                        *
  **************************/
 
-ClassDef::ClassDef(const String &str, ErrorHandler *errh) throw ()
+ClassDef::ClassDef(const String &str, ErrorHandler *errh) noexcept
     : _str(str)
 {
     _str.align(2);
@@ -1277,7 +1277,7 @@ ClassDef::check(ErrorHandler *errh)
 }
 
 int
-ClassDef::lookup(Glyph g) const throw ()
+ClassDef::lookup(Glyph g) const noexcept
 {
     if (_str.length() == 0)
         return -1;
@@ -1311,7 +1311,7 @@ ClassDef::lookup(Glyph g) const throw ()
 }
 
 void
-ClassDef::unparse(StringAccum &sa) const throw ()
+ClassDef::unparse(StringAccum &sa) const noexcept
 {
     const uint8_t *data = _str.udata();
     if (_str.length() == 0)
@@ -1336,7 +1336,7 @@ ClassDef::unparse(StringAccum &sa) const throw ()
 }
 
 String
-ClassDef::unparse() const throw ()
+ClassDef::unparse() const noexcept
 {
     StringAccum sa;
     unparse(sa);

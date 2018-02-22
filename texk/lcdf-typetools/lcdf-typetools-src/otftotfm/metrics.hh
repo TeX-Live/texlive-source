@@ -2,22 +2,10 @@
 #define OTFTOTFM_METRICS_HH
 #include <efont/otfgsub.hh>
 #include <efont/otfgpos.hh>
+#include "setting.hh"
 namespace Efont { class CharstringProgram; }
 class DvipsEncoding;
 class GlyphFilter;
-
-struct Setting {
-    enum { NONE, FONT, SHOW, KERN, KERNX, MOVE, RULE, PUSH, POP,
-	   SPECIAL, DEAD };
-    int op;
-    int x;
-    int y;
-    String s;
-    Setting(int op_in, int x_in = 0, int y_in = 0)
-	: op(op_in), x(x_in), y(y_in) { }
-    Setting(int op_in, const String &s_in) : op(op_in), s(s_in) { }
-    bool valid_op() const		{ return op >= FONT && op <= SPECIAL; }
-};
 
 class Metrics { public:
 
@@ -33,22 +21,22 @@ class Metrics { public:
 
     void check() const;
 
-    Glyph boundary_glyph() const	{ return _boundary_glyph; }
-    Glyph emptyslot_glyph() const	{ return _emptyslot_glyph; }
+    Glyph boundary_glyph() const        { return _boundary_glyph; }
+    Glyph emptyslot_glyph() const       { return _emptyslot_glyph; }
 
-    String coding_scheme() const		{ return _coding_scheme; }
-    void set_coding_scheme(const String &s)	{ _coding_scheme = s; }
+    String coding_scheme() const                { return _coding_scheme; }
+    void set_coding_scheme(const String &s)     { _coding_scheme = s; }
 
-    int design_units() const			{ return _design_units; }
-    int units_per_em() const			{ return _units_per_em; }
-    void set_design_units(int du)		{ _design_units = du; }
+    int design_units() const                    { return _design_units; }
+    int units_per_em() const                    { return _units_per_em; }
+    void set_design_units(int du)               { _design_units = du; }
 
-    int n_mapped_fonts() const			{ return _mapped_fonts.size();}
+    int n_mapped_fonts() const                  { return _mapped_fonts.size();}
     const Efont::CharstringProgram *mapped_font(int i) const { return _mapped_fonts[i]; }
     const String &mapped_font_name(int i) const { return _mapped_font_names[i]; }
     int add_mapped_font(const Efont::CharstringProgram *, const String &);
 
-    inline int encoding_size() const		{ return _encoding.size(); }
+    inline int encoding_size() const            { return _encoding.size(); }
     inline bool valid_code(Code) const;
     inline bool nonvirtual_code(Code) const;
     PermString code_name(Code) const;
@@ -63,7 +51,7 @@ class Metrics { public:
     void encode_virtual(Code, PermString, uint32_t uni, const Vector<Setting> &, bool base_char);
 
     void add_altselector_code(Code, int altselector_type);
-    bool altselectors() const		{ return _altselectors.size() > 0; }
+    bool altselectors() const           { return _altselectors.size() > 0; }
 
     inline bool was_base_glyph(Code) const;
     inline Code base_code(Code) const;
@@ -101,57 +89,57 @@ class Metrics { public:
     void unparse() const;
 
     struct Ligature {
-	Code in2;
-	Code out;
-	Ligature(Code in2_, Code out_) : in2(in2_), out(out_) { }
+        Code in2;
+        Code out;
+        Ligature(Code in2_, Code out_) : in2(in2_), out(out_) { }
     };
 
     struct Kern {
-	Code in2;
-	int kern;
-	Kern(Code in2_, int kern_) : in2(in2_), kern(kern_) { }
+        Code in2;
+        int kern;
+        Kern(Code in2_, int kern_) : in2(in2_), kern(kern_) { }
     };
 
     struct VirtualChar {
-	PermString name;
-	Vector<Setting> setting;
+        PermString name;
+        Vector<Setting> setting;
     };
 
     struct Ligature3 {
-	Code in1;
-	Code in2;
-	Code out;
-	Ligature3(Code in1_, Code in2_, Code out_) : in1(in1_), in2(in2_), out(out_) { }
+        Code in1;
+        Code in2;
+        Code out;
+        Ligature3(Code in1_, Code in2_, Code out_) : in1(in1_), in2(in2_), out(out_) { }
         String unparse(const Metrics& m) const;
     };
 
   private:
 
     struct Char {
-	Glyph glyph;
-	Code base_code;
-	uint32_t unicode;
-	Vector<Ligature> ligatures;
-	Vector<Kern> kerns;
-	VirtualChar *virtual_char;
-	int pdx;
-	int pdy;
-	int adx;
-	Code built_in1;
-	Code built_in2;
-	int lookup_source;
-	enum { BUILT = 1, INTERMEDIATE = 2, CONTEXT_ONLY = 4, LIVE = 8,
-	       BASE_LIVE = 16, BASE_REP = 32, IS_FF = 64 };
-	int flags;
+        Glyph glyph;
+        Code base_code;
+        uint32_t unicode;
+        Vector<Ligature> ligatures;
+        Vector<Kern> kerns;
+        VirtualChar *virtual_char;
+        int pdx;
+        int pdy;
+        int adx;
+        Code built_in1;
+        Code built_in2;
+        int lookup_source;
+        enum { BUILT = 1, INTERMEDIATE = 2, CONTEXT_ONLY = 4, LIVE = 8,
+               BASE_LIVE = 16, BASE_REP = 32, IS_FF = 64 };
+        int flags;
 
-	Char()				: virtual_char(0) { clear(); }
-	void clear();
-	void swap(Char &);
-	bool visible() const		{ return glyph != 0; }
-	bool visible_base() const	{ return glyph != 0 && glyph != VIRTUAL_GLYPH; }
-	bool flag(int f) const		{ return (flags & f) != 0; }
-	inline bool base_glyph() const;
-	bool context_setting(Code in1, Code in2) const;
+        Char()                          : virtual_char(0) { clear(); }
+        void clear();
+        void swap(Char &);
+        bool visible() const            { return glyph != 0; }
+        bool visible_base() const       { return glyph != 0 && glyph != VIRTUAL_GLYPH; }
+        bool flag(int f) const          { return (flags & f) != 0; }
+        inline bool base_glyph() const;
+        bool context_setting(Code in1, Code in2) const;
     };
 
     Vector<Char> _encoding;
@@ -171,7 +159,7 @@ class Metrics { public:
     Vector<const Efont::CharstringProgram *> _mapped_fonts;
     Vector<String> _mapped_font_names;
 
-    Metrics(const Metrics &);	// does not exist
+    Metrics(const Metrics &);   // does not exist
     Metrics &operator=(const Metrics &); // does not exist
 
     inline void assign_emap(Glyph, Code);
@@ -191,17 +179,17 @@ class Metrics { public:
     class ChangedContext;
     void apply_ligature(const Vector<Code> &, const Substitution *, int lookup);
     void apply_single(Code cin, const Substitution *s, int lookup,
-		ChangedContext &ctx, const GlyphFilter &glyph_filter,
-		const Vector<PermString> &glyph_names);
+                ChangedContext &ctx, const GlyphFilter &glyph_filter,
+                const Vector<PermString> &glyph_names);
     void apply_simple_context_ligature(const Vector<Code> &codes,
-		const Substitution *s, int lookup, ChangedContext &ctx);
+                const Substitution *s, int lookup, ChangedContext &ctx);
     void apply_alternates_single(Code cin, const Substitution *s, int lookup,
-		const GlyphFilter &glyph_filter,
-		const Vector<PermString> &glyph_names);
+                const GlyphFilter &glyph_filter,
+                const Vector<PermString> &glyph_names);
     void apply_alternates_ligature(const Vector<Code> &codes,
-		const Substitution *s, int lookup,
-		const GlyphFilter &glyph_filter,
-		const Vector<PermString> &glyph_names);
+                const Substitution *s, int lookup,
+                const GlyphFilter &glyph_filter,
+                const Vector<PermString> &glyph_names);
 
     void unparse(const Char *) const;
 
@@ -224,36 +212,36 @@ inline Metrics::Glyph
 Metrics::glyph(Code code) const
 {
     if (code < 0 || code >= _encoding.size())
-	return 0;
+        return 0;
     else
-	return _encoding[code].glyph;
+        return _encoding[code].glyph;
 }
 
 inline uint32_t
 Metrics::unicode(Code code) const
 {
     if (code < 0 || code >= _encoding.size())
-	return 0;
+        return 0;
     else
-	return _encoding[code].unicode;
+        return _encoding[code].unicode;
 }
 
 inline Metrics::Glyph
 Metrics::base_glyph(Code code) const
 {
     if (code < 0 || code >= _encoding.size() || _encoding[code].base_code < 0)
-	return 0;
+        return 0;
     else
-	return _encoding[code].glyph;
+        return _encoding[code].glyph;
 }
 
 inline Metrics::Code
 Metrics::base_code(Code code) const
 {
     if (code < 0 || code >= _encoding.size())
-	return 0;
+        return 0;
     else
-	return _encoding[code].base_code;
+        return _encoding[code].base_code;
 }
 
 inline Metrics::Code
@@ -261,16 +249,16 @@ Metrics::encoding(Glyph g, Code after) const
 {
     Code c;
     if (g >= 0 && g < _emap.size() && (c = _emap.at_u(g)) >= -1)
-	return c < 0 || c >= after ? c : -1;
+        return c < 0 || c >= after ? c : -1;
     else
-	return hard_encoding(g, after);
+        return hard_encoding(g, after);
 }
 
 inline void
 Metrics::assign_emap(Glyph g, Code code)
 {
     if (g >= _emap.size())
-	_emap.resize(g + 1, -1);
+        _emap.resize(g + 1, -1);
     _emap[g] = (_emap[g] == -1 || _emap[g] == code ? code : -2);
 }
 
@@ -290,9 +278,9 @@ inline bool
 Metrics::was_base_glyph(Code code) const
 {
     if (code < 0 || code >= _encoding.size())
-	return 0;
+        return 0;
     else
-	return _encoding[code].base_glyph();
+        return _encoding[code].base_glyph();
 }
 
 #endif

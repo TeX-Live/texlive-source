@@ -1,11 +1,11 @@
-diff -ur lcdf-typetools-2.106.orig/include/config.h lcdf-typetools-2.106/include/config.h
---- lcdf-typetools-2.106.orig/include/config.h	Wed Aug 14 05:12:16 2013
-+++ lcdf-typetools-2.106/include/config.h	Wed Jun 22 13:18:49 2016
-@@ -6,6 +6,7 @@
- /* Allow compilation on Windows (thanks, Fabrice Popineau). */
+diff -ur lcdf-typetools-2.107/include/config.h lcdf-typetools-src/include/config.h
+--- lcdf-typetools-2.107/include/config.h	Thu Feb 22 22:51:55 2018
++++ lcdf-typetools-src/include/config.h	Fri Feb 23 06:24:45 2018
+@@ -7,6 +7,7 @@
  #ifdef WIN32
  # ifdef __MINGW32__
-+#  include <winsock2.h>
- #  include <windows.h>
+ #  include <winsock2.h>
++#  include <windows.h>
  # else
  #  include <win32lib.h>
+ # endif

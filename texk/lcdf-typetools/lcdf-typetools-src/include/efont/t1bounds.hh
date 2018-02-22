@@ -31,8 +31,9 @@ class CharstringBounds : public CharstringInterp { public:
     bool char_bounds(const CharstringContext&, bool shift = true);
     void translate(double dx, double dy);
     inline Point transform(const Point& p) const;
-    bool output(double bb[4], double& width, bool use_cur_width = false) const;
 
+    // output: [left, bottom, right, top]
+    bool output(double bb[4], double& width, bool use_cur_width = false) const;
     static bool bounds(const CharstringContext&,
                        double bounds[4], double& width);
     static bool bounds(const Transform&, const CharstringContext&,

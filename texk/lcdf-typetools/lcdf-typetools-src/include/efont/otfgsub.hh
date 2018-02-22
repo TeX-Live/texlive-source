@@ -9,7 +9,7 @@ class Substitution;
 
 class Gsub { public:
 
-    Gsub(const Data &, const Font *, ErrorHandler * = 0) throw (Error);
+    Gsub(const Data &, const Font *, ErrorHandler * = 0);
     // default destructor
 
     const ScriptList &script_list() const { return _script_list; }
@@ -31,7 +31,7 @@ class Gsub { public:
 };
 
 class GsubLookup { public:
-    GsubLookup(const Data &) throw (Error);
+    GsubLookup(const Data &);
     int type() const                    { return _type; }
     uint16_t flags() const              { return _d.u16(2); }
     void mark_out_glyphs(const Gsub &gsub, Vector<bool> &gmap) const;
@@ -49,9 +49,9 @@ class GsubLookup { public:
 };
 
 class GsubSingle { public:
-    GsubSingle(const Data &) throw (Error);
+    GsubSingle(const Data &);
     // default destructor
-    Coverage coverage() const throw ();
+    Coverage coverage() const noexcept;
     Glyph map(Glyph) const;
     void mark_out_glyphs(Vector<bool> &gmap) const;
     void unparse(Vector<Substitution> &subs, const Coverage &limit) const;
@@ -62,9 +62,9 @@ class GsubSingle { public:
 };
 
 class GsubMultiple { public:
-    GsubMultiple(const Data &) throw (Error);
+    GsubMultiple(const Data &);
     // default destructor
-    Coverage coverage() const throw ();
+    Coverage coverage() const noexcept;
     bool map(Glyph, Vector<Glyph> &) const;
     void mark_out_glyphs(Vector<bool> &gmap) const;
     void unparse(Vector<Substitution> &, bool alternate = false) const;
@@ -76,9 +76,9 @@ class GsubMultiple { public:
 };
 
 class GsubLigature { public:
-    GsubLigature(const Data &) throw (Error);
+    GsubLigature(const Data &);
     // default destructor
-    Coverage coverage() const throw ();
+    Coverage coverage() const noexcept;
     bool map(const Vector<Glyph> &, Glyph &, int &) const;
     void mark_out_glyphs(Vector<bool> &gmap) const;
     void unparse(Vector<Substitution> &) const;
@@ -91,9 +91,9 @@ class GsubLigature { public:
 };
 
 class GsubContext { public:
-    GsubContext(const Data &) throw (Error);
+    GsubContext(const Data &);
     // default destructor
-    Coverage coverage() const throw ();
+    Coverage coverage() const noexcept;
     void mark_out_glyphs(const Gsub &gsub, Vector<bool> &gmap) const;
     bool unparse(const Gsub &gsub, Vector<Substitution> &out_subs, const Coverage &limit) const;
     enum { F3_HSIZE = 6, SUBRECSIZE = 4 };
@@ -113,9 +113,9 @@ class GsubContext { public:
 };
 
 class GsubChainContext { public:
-    GsubChainContext(const Data &) throw (Error);
+    GsubChainContext(const Data &);
     // default destructor
-    Coverage coverage() const throw ();
+    Coverage coverage() const noexcept;
     void mark_out_glyphs(const Gsub &gsub, Vector<bool> &gmap) const;
     bool unparse(const Gsub &gsub, Vector<Substitution> &subs, const Coverage &limit) const;
     enum { F1_HEADERSIZE = 6, F1_RECSIZE = 2,
@@ -199,7 +199,7 @@ class Substitution { public:
     void add_outer_left(Glyph);
     void remove_outer_left();
     Substitution in_out_append_glyph(Glyph) const;
-    bool out_alter(const Substitution &, int) throw ();
+    bool out_alter(const Substitution &, int) noexcept;
     void add_outer_right(Glyph);
     void remove_outer_right();
 
@@ -238,14 +238,14 @@ class Substitution { public:
     static bool substitute_in(const Substitute &, uint8_t, const Coverage &);
     static bool substitute_in(const Substitute &, uint8_t, const GlyphSet &);
 
-    static Glyph extract_glyph(const Substitute &, uint8_t) throw ();
-    static Glyph extract_glyph(const Substitute &, int which, uint8_t) throw ();
-    static bool extract_glyphs(const Substitute &, uint8_t, Vector<Glyph> &, bool coverage_ok) throw ();
-    static Glyph *extract_glyphptr(const Substitute &, uint8_t) throw ();
-    static int extract_nglyphs(const Substitute &, uint8_t, bool coverage_ok) throw ();
-    static bool matches(const Substitute &, uint8_t, int pos, Glyph) throw ();
+    static Glyph extract_glyph(const Substitute &, uint8_t) noexcept;
+    static Glyph extract_glyph(const Substitute &, int which, uint8_t) noexcept;
+    static bool extract_glyphs(const Substitute &, uint8_t, Vector<Glyph> &, bool coverage_ok) noexcept;
+    static Glyph *extract_glyphptr(const Substitute &, uint8_t) noexcept;
+    static int extract_nglyphs(const Substitute &, uint8_t, bool coverage_ok) noexcept;
+    static bool matches(const Substitute &, uint8_t, int pos, Glyph) noexcept;
 
-    static void unparse_glyphids(StringAccum &, const Substitute &, uint8_t, const Vector<PermString> *) throw ();
+    static void unparse_glyphids(StringAccum &, const Substitute &, uint8_t, const Vector<PermString> *) noexcept;
 
 };
 

@@ -142,23 +142,23 @@ class FeatureList {
 
 class Coverage {
   public:
-    Coverage() throw ();                // empty coverage
-    Coverage(Glyph first, Glyph last) throw (); // range coverage
-    Coverage(const Vector<bool> &gmap) throw (); // used-bytemap coverage
-    Coverage(const String &str, ErrorHandler *errh = 0, bool check = true) throw ();
+    Coverage() noexcept;                // empty coverage
+    Coverage(Glyph first, Glyph last) noexcept; // range coverage
+    Coverage(const Vector<bool> &gmap) noexcept; // used-bytemap coverage
+    Coverage(const String &str, ErrorHandler *errh = 0, bool check = true) noexcept;
     // default destructor
 
-    bool ok() const throw ()            { return _str.length() > 0; }
-    int size() const throw ();
-    bool has_fast_covers() const throw () {
+    bool ok() const noexcept            { return _str.length() > 0; }
+    int size() const noexcept;
+    bool has_fast_covers() const noexcept {
         return _str.length() > 0 && _str.data()[1] == T_X_BYTEMAP;
     }
 
-    int coverage_index(Glyph) const throw ();
-    bool covers(Glyph g) const throw () { return coverage_index(g) >= 0; }
+    int coverage_index(Glyph) const noexcept;
+    bool covers(Glyph g) const noexcept { return coverage_index(g) >= 0; }
 
-    void unparse(StringAccum&) const throw ();
-    String unparse() const throw ();
+    void unparse(StringAccum&) const noexcept;
+    String unparse() const noexcept;
 
     class iterator { public:
         iterator()                      : _pos(0), _value(0) { }
@@ -194,7 +194,7 @@ class Coverage {
 
     iterator begin() const              { return iterator(_str, false); }
     iterator end() const                { return iterator(_str, true); }
-    Glyph operator[](int) const throw ();
+    Glyph operator[](int) const noexcept;
 
     enum { T_LIST = 1, T_RANGES = 2, T_X_BYTEMAP = 3,
            HEADERSIZE = 4, LIST_RECSIZE = 2, RANGES_RECSIZE = 6 };
@@ -238,17 +238,17 @@ class GlyphSet {
 
 class ClassDef {
   public:
-    ClassDef(const String&, ErrorHandler* = 0) throw ();
+    ClassDef(const String&, ErrorHandler* = 0) noexcept;
     // default destructor
 
     bool ok() const                     { return _str.length() > 0; }
-    int nclass() const throw ();
+    int nclass() const noexcept;
 
-    int lookup(Glyph) const throw ();
-    int operator[](Glyph g) const throw () { return lookup(g); }
+    int lookup(Glyph) const noexcept;
+    int operator[](Glyph g) const noexcept { return lookup(g); }
 
-    void unparse(StringAccum&) const throw ();
-    String unparse() const throw ();
+    void unparse(StringAccum&) const noexcept;
+    String unparse() const noexcept;
 
     class class_iterator {
       public:

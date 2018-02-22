@@ -36,11 +36,11 @@ Vector<void*> &
 Vector<void*>::operator=(const Vector<void*> &o)
 {
     if (&o != this) {
-	_n = 0;
-	if (reserve(o._n)) {
-	    _n = o._n;
-	    memcpy(_l, o._l, sizeof(void *) * _n);
-	}
+        _n = 0;
+        if (reserve(o._n)) {
+            _n = o._n;
+            memcpy(_l, o._l, sizeof(void *) * _n);
+        }
     }
     return *this;
 }
@@ -57,15 +57,17 @@ bool
 Vector<void*>::reserve(int want)
 {
     if (want < 0)
-	want = (_capacity > 0 ? _capacity * 2 : 4);
+        want = (_capacity > 0 ? _capacity * 2 : 4);
     if (want <= _capacity)
-	return true;
+        return true;
 
     void **new_l = new void*[want];
     if (!new_l)
-	return false;
+        return false;
 
-    memcpy(new_l, _l, sizeof(void*) * _n);
+    if (_n) {
+        memcpy(new_l, _l, sizeof(void*) * _n);
+    }
     delete[] _l;
 
     _l = new_l;
@@ -77,21 +79,21 @@ Vector<void*>::iterator
 Vector<void*>::erase(iterator a, iterator b)
 {
     if (b > a) {
-	assert(a >= begin() && b <= end());
-	memmove(a, b, (end() - b) * sizeof(void*));
-	_n -= b - a;
-	return a;
+        assert(a >= begin() && b <= end());
+        memmove(a, b, (end() - b) * sizeof(void*));
+        _n -= b - a;
+        return a;
     } else
-	return b;
+        return b;
 }
 
 void
 Vector<void*>::resize(int nn, void *e)
 {
     if (nn <= _capacity || reserve(nn)) {
-	for (int i = _n; i < nn; i++)
-	    _l[i] = e;
-	_n = nn;
+        for (int i = _n; i < nn; i++)
+            _l[i] = e;
+        _n = nn;
     }
 }
 

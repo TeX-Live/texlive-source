@@ -1,6 +1,15 @@
 LCDF Typetools NEWS
 ===================
 
+## Version 2.107 – 22.Feb.2018
+
+* Some corrections to output of `--math-spacing`.
+
+* Reduce undefined behavior.
+
+* Handle some incorrect fonts more gracefully.
+
+
 ## Version 2.106 – 21.Jun.2016
 
 * Minor updates, mostly involving licensing of Adobe code and data.

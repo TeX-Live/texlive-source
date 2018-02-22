@@ -2,7 +2,7 @@
 
 /* bezier.{cc,hh} -- cubic Bezier curves
  *
- * Copyright (c) 1998-2016 Eddie Kohler
+ * Copyright (c) 1998-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -23,7 +23,7 @@
 //
 
 void
-Bezier::make_bb() const throw ()
+Bezier::make_bb() const noexcept
 {
     _bb = 0;
     for (int i = 1; i < 4; i++) {
@@ -44,7 +44,7 @@ Bezier::make_bb() const throw ()
 //
 
 bool
-Bezier::is_flat(double t) const throw ()
+Bezier::is_flat(double t) const noexcept
 {
     return (_p[2].on_segment(_p[0], _p[3], t)
 	    && _p[1].on_segment(_p[0], _p[3], t));
@@ -66,7 +66,7 @@ eval_bezier(Point *b_in, int degree, double u)
 }
 
 Point
-Bezier::eval(double u) const throw ()
+Bezier::eval(double u) const noexcept
 {
     Bezier b = *this;
     double m = 1.0 - u;
@@ -82,7 +82,7 @@ Bezier::eval(double u) const throw ()
 //
 
 void
-Bezier::halve(Bezier &l, Bezier &r) const throw ()
+Bezier::halve(Bezier &l, Bezier &r) const noexcept
 {
     Point half = Point::midpoint(_p[1], _p[2]);
     l._p[0] = _p[0];
@@ -100,7 +100,7 @@ Bezier::halve(Bezier &l, Bezier &r) const throw ()
 //
 
 bool
-Bezier::in_bb(const Point &p, double tolerance) const throw ()
+Bezier::in_bb(const Point &p, double tolerance) const noexcept
 {
     ensure_bb();
     if (bb_right() + tolerance < p.x
@@ -114,7 +114,7 @@ Bezier::in_bb(const Point &p, double tolerance) const throw ()
 
 double
 Bezier::hit_recurse(const Point &p, double tolerance, double leftd,
-		    double rightd, double leftt, double rightt) const throw ()
+		    double rightd, double leftt, double rightt) const noexcept
 {
     Bezier left, right;
     double middled, resultt;
@@ -146,7 +146,7 @@ Bezier::hit_recurse(const Point &p, double tolerance, double leftd,
 }
 
 bool
-Bezier::hit(const Point &p, double tolerance) const throw ()
+Bezier::hit(const Point &p, double tolerance) const noexcept
 {
     double leftd = (_p[0] - p).squared_length();
     double rightd = (_p[3] - p).squared_length();

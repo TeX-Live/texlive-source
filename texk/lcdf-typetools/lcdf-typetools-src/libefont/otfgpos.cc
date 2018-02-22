@@ -2,7 +2,7 @@
 
 /* otfgpos.{cc,hh} -- OpenType GPOS table
  *
- * Copyright (c) 2003-2016 Eddie Kohler
+ * Copyright (c) 2003-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -32,7 +32,7 @@ namespace Efont { namespace OpenType {
  *                        *
  **************************/
 
-Gpos::Gpos(const Data &d, ErrorHandler *errh) throw (Error)
+Gpos::Gpos(const Data &d, ErrorHandler *errh)
 {
     // Fixed    Version
     // Offset   ScriptList
@@ -79,7 +79,7 @@ const int GposValue::nibble_bitcount_x2[] = { 0, 2, 2, 4, 2, 4, 4, 6,
  *                        *
  **************************/
 
-GposLookup::GposLookup(const Data &d) throw (Error)
+GposLookup::GposLookup(const Data &d)
     : _d(d)
 {
     if (_d.length() < 6)
@@ -143,7 +143,7 @@ GposLookup::unparse_automatics(Vector<Positioning> &v, ErrorHandler *errh) const
  *                        *
  **************************/
 
-GposSingle::GposSingle(const Data &d) throw (Error)
+GposSingle::GposSingle(const Data &d)
     : _d(d)
 {
     if (_d[0] != 0
@@ -156,7 +156,7 @@ GposSingle::GposSingle(const Data &d) throw (Error)
 }
 
 Coverage
-GposSingle::coverage() const throw ()
+GposSingle::coverage() const noexcept
 {
     return Coverage(_d.offset_subtable(2), 0, false);
 }
@@ -183,7 +183,7 @@ GposSingle::unparse(Vector<Positioning> &v) const
  *                        *
  **************************/
 
-GposPair::GposPair(const Data &d) throw (Error)
+GposPair::GposPair(const Data &d)
     : _d(d)
 {
     if (_d[0] != 0
@@ -196,7 +196,7 @@ GposPair::GposPair(const Data &d) throw (Error)
 }
 
 Coverage
-GposPair::coverage() const throw ()
+GposPair::coverage() const noexcept
 {
     return Coverage(_d.offset_subtable(2), 0, false);
 }

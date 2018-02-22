@@ -39,6 +39,11 @@ double good_strtod(const char *s, char **endptr);
 }
 /* Get rid of a possible inline macro under C++. */
 # define inline inline
+
+/* Ignore `noexcept` if compiler is too old. */
+#if __cplusplus < 201103L
+#define noexcept
+#endif
 #endif
 
 #endif /* LCDF_TYPETOOLS_CONFIG_H */

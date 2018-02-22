@@ -2,7 +2,7 @@
 
 /* otfgsub.{cc,hh} -- OpenType GSUB table
  *
- * Copyright (c) 2003-2016 Eddie Kohler
+ * Copyright (c) 2003-2018 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -255,13 +255,13 @@ Substitution::context_in(const GlyphSet &gs) const
 }
 
 Glyph
-Substitution::extract_glyph(const Substitute &s, uint8_t t) throw ()
+Substitution::extract_glyph(const Substitute &s, uint8_t t) noexcept
 {
     return (t == T_GLYPH ? s.gid : 0);
 }
 
 Glyph
-Substitution::extract_glyph(const Substitute &s, int which, uint8_t t) throw ()
+Substitution::extract_glyph(const Substitute &s, int which, uint8_t t) noexcept
 {
     switch (t) {
       case T_GLYPH:
@@ -279,7 +279,7 @@ Substitution::extract_glyph(const Substitute &s, int which, uint8_t t) throw ()
 }
 
 bool
-Substitution::extract_glyphs(const Substitute &s, uint8_t t, Vector<Glyph> &v, bool coverage_ok) throw ()
+Substitution::extract_glyphs(const Substitute &s, uint8_t t, Vector<Glyph> &v, bool coverage_ok) noexcept
 {
     switch (t) {
       case T_GLYPH:
@@ -302,7 +302,7 @@ Substitution::extract_glyphs(const Substitute &s, uint8_t t, Vector<Glyph> &v, b
 }
 
 Glyph *
-Substitution::extract_glyphptr(const Substitute &s, uint8_t t) throw ()
+Substitution::extract_glyphptr(const Substitute &s, uint8_t t) noexcept
 {
     switch (t) {
       case T_GLYPH:
@@ -315,7 +315,7 @@ Substitution::extract_glyphptr(const Substitute &s, uint8_t t) throw ()
 }
 
 int
-Substitution::extract_nglyphs(const Substitute &s, uint8_t t, bool coverage_ok) throw ()
+Substitution::extract_nglyphs(const Substitute &s, uint8_t t, bool coverage_ok) noexcept
 {
     switch (t) {
       case T_GLYPH:
@@ -330,7 +330,7 @@ Substitution::extract_nglyphs(const Substitute &s, uint8_t t, bool coverage_ok) 
 }
 
 bool
-Substitution::matches(const Substitute &s, uint8_t t, int pos, Glyph g) throw ()
+Substitution::matches(const Substitute &s, uint8_t t, int pos, Glyph g) noexcept
 {
     switch (t) {
       case T_GLYPH:
@@ -461,7 +461,7 @@ Substitution::remove_outer_right()
 }
 
 bool
-Substitution::out_alter(const Substitution &o, int pos) throw ()
+Substitution::out_alter(const Substitution &o, int pos) noexcept
 {
     const Glyph *g = out_glyphptr();
     int ng = out_nglyphs();
@@ -490,7 +490,7 @@ Substitution::out_alter(const Substitution &o, int pos) throw ()
 }
 
 static void
-unparse_glyphid(StringAccum &sa, Glyph gid, const Vector<PermString> *gns) throw ()
+unparse_glyphid(StringAccum &sa, Glyph gid, const Vector<PermString> *gns) noexcept
 {
     if (gid > 0 && gns && gns->size() > gid && (*gns)[gid])
         sa << (*gns)[gid];
@@ -499,7 +499,7 @@ unparse_glyphid(StringAccum &sa, Glyph gid, const Vector<PermString> *gns) throw
 }
 
 void
-Substitution::unparse_glyphids(StringAccum &sa, const Substitute &s, uint8_t t, const Vector<PermString> *gns) throw ()
+Substitution::unparse_glyphids(StringAccum &sa, const Substitute &s, uint8_t t, const Vector<PermString> *gns) noexcept
 {
     if (t == T_GLYPH)
         unparse_glyphid(sa, s.gid, gns);
@@ -565,7 +565,7 @@ Substitution::unparse(const Vector<PermString> *gns) const
  *                        *
  **************************/
 
-Gsub::Gsub(const Data &d, const Font *otf, ErrorHandler *errh) throw (Error)
+Gsub::Gsub(const Data &d, const Font *otf, ErrorHandler *errh)
     : _chaincontext_reverse_backtrack(false)
 {
     // Fixed    Version
@@ -615,7 +615,7 @@ Gsub::lookup(unsigned i) const
  *                        *
  **************************/
 
-GsubLookup::GsubLookup(const Data &d) throw (Error)
+GsubLookup::GsubLookup(const Data &d)
     : _d(d)
 {
     if (_d.length() < 6)
@@ -779,7 +779,7 @@ GsubLookup::apply(const Glyph *g, int pos, int n, Substitution &s) const
  *                        *
  **************************/
 
-GsubSingle::GsubSingle(const Data &d) throw (Error)
+GsubSingle::GsubSingle(const Data &d)
     : _d(d)
 {
     if (_d[0] != 0
@@ -792,7 +792,7 @@ GsubSingle::GsubSingle(const Data &d) throw (Error)
 }
 
 Coverage
-GsubSingle::coverage() const throw ()
+GsubSingle::coverage() const noexcept
 {
     return Coverage(_d.offset_subtable(2), 0, false);
 }
@@ -857,7 +857,7 @@ GsubSingle::apply(const Glyph *g, int pos, int n, Substitution &s) const
  *                        *
  **************************/
 
-GsubMultiple::GsubMultiple(const Data &d) throw (Error)
+GsubMultiple::GsubMultiple(const Data &d)
     : _d(d)
 {
     if (_d[0] != 0 || _d[1] != 1)
@@ -869,7 +869,7 @@ GsubMultiple::GsubMultiple(const Data &d) throw (Error)
 }
 
 Coverage
-GsubMultiple::coverage() const throw ()
+GsubMultiple::coverage() const noexcept
 {
     return Coverage(_d.offset_subtable(2), 0, false);
 }
@@ -934,7 +934,7 @@ GsubMultiple::apply(const Glyph *g, int pos, int n, Substitution &s, bool is_alt
  *                        *
  **************************/
 
-GsubLigature::GsubLigature(const Data &d) throw (Error)
+GsubLigature::GsubLigature(const Data &d)
     : _d(d)
 {
     if (_d[0] != 0
@@ -947,7 +947,7 @@ GsubLigature::GsubLigature(const Data &d) throw (Error)
 }
 
 Coverage
-GsubLigature::coverage() const throw ()
+GsubLigature::coverage() const noexcept
 {
     return Coverage(_d.offset_subtable(2), 0, false);
 }
@@ -1040,7 +1040,7 @@ GsubLigature::apply(const Glyph *g, int pos, int n, Substitution &s) const
  *                        *
  **************************/
 
-GsubContext::GsubContext(const Data &d) throw (Error)
+GsubContext::GsubContext(const Data &d)
     : _d(d)
 {
     switch (_d.u16(0)) {
@@ -1062,7 +1062,7 @@ GsubContext::GsubContext(const Data &d) throw (Error)
 }
 
 Coverage
-GsubContext::coverage() const throw ()
+GsubContext::coverage() const noexcept
 {
     if (_d[1] == 3)
         return Coverage(_d.offset_subtable(F3_HSIZE), 0, false);
@@ -1171,7 +1171,7 @@ GsubContext::unparse(const Gsub &gsub, Vector<Substitution> &v, const Coverage &
  *                        *
  **************************/
 
-GsubChainContext::GsubChainContext(const Data &d) throw (Error)
+GsubChainContext::GsubChainContext(const Data &d)
     : _d(d)
 {
     switch (_d.u16(0)) {
@@ -1201,7 +1201,7 @@ GsubChainContext::GsubChainContext(const Data &d) throw (Error)
 }
 
 Coverage
-GsubChainContext::coverage() const throw ()
+GsubChainContext::coverage() const noexcept
 {
     switch (_d.u16(0)) {
     case 1:
@@ -1279,7 +1279,6 @@ GsubChainContext::f1_unparse(const Gsub &gsub, Vector<Substitution> &v, const Co
             int subtab_offset = subst_offset + 2;
 
             Substitution s(nbacktrack, ninput, ninput, nlookahead);
-            Glyph* left_begin = s.left_glyphptr();
             if (gsub.chaincontext_reverse_backtrack()) {
                 for (int i = 0; i != nbacktrack; ++i)
                     s.left_glyphptr()[i] = _d.u16(sr_offset + 2 + i*2);

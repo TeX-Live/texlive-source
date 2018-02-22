@@ -8,30 +8,30 @@
 class Bezier { public:
 
     Bezier()				: _bb(-1) { }
-    inline Bezier(Point p[4]) throw ();
-    inline Bezier(const Point &, const Point &, const Point &, const Point &) throw ();
+    inline Bezier(Point p[4]) noexcept;
+    inline Bezier(const Point &, const Point &, const Point &, const Point &) noexcept;
 
     const Point *points() const		{ return _p; }
     const Point &point(int i) const	{ assert(i>=0&&i<4); return _p[i]; }
     Point &mpoint(int i)		{ assert(i>=0&&i<4); _bb = -1; return _p[i]; }
     void set_point(int i, const Point &p) { mpoint(i) = p; }
 
-    Point eval(double) const throw ();
-    bool is_flat(double) const throw ();
-    bool in_bb(const Point &, double) const throw ();
-    bool hit(const Point &, double) const throw ();
+    Point eval(double) const noexcept;
+    bool is_flat(double) const noexcept;
+    bool in_bb(const Point &, double) const noexcept;
+    bool hit(const Point &, double) const noexcept;
 
-    inline double bb_left() const throw ();
-    inline double bb_right() const throw ();
-    inline double bb_top() const throw ();
-    inline double bb_bottom() const throw ();
+    inline double bb_left() const noexcept;
+    inline double bb_right() const noexcept;
+    inline double bb_top() const noexcept;
+    inline double bb_bottom() const noexcept;
 
-    inline double bb_left_x() const throw ();
-    inline double bb_right_x() const throw ();
-    inline double bb_top_x() const throw ();
-    inline double bb_bottom_x() const throw ();
+    inline double bb_left_x() const noexcept;
+    inline double bb_right_x() const noexcept;
+    inline double bb_top_x() const noexcept;
+    inline double bb_bottom_x() const noexcept;
 
-    void halve(Bezier &, Bezier &) const throw ();
+    void halve(Bezier &, Bezier &) const noexcept;
 
     inline void segmentize(Vector<Point> &) const;
     void segmentize(Vector<Point> &, bool) const;
@@ -43,23 +43,23 @@ class Bezier { public:
     Point _p[4];
     mutable int _bb;
 
-    void make_bb() const throw ();
-    inline void ensure_bb() const throw ();
+    void make_bb() const noexcept;
+    inline void ensure_bb() const noexcept;
 
-    double hit_recurse(const Point &, double, double, double, double, double) const throw ();
+    double hit_recurse(const Point &, double, double, double, double, double) const noexcept;
 
 };
 
 
 inline
-Bezier::Bezier(Point p[4]) throw ()
+Bezier::Bezier(Point p[4]) noexcept
     : _bb(-1)
 {
     memcpy(_p, p, sizeof(Point) * 4);
 }
 
 inline
-Bezier::Bezier(const Point &p0, const Point &p1, const Point &p2, const Point &p3) throw ()
+Bezier::Bezier(const Point &p0, const Point &p1, const Point &p2, const Point &p3) noexcept
 {
     _p[0] = p0;
     _p[1] = p1;
@@ -69,59 +69,59 @@ Bezier::Bezier(const Point &p0, const Point &p1, const Point &p2, const Point &p
 }
 
 inline void
-Bezier::ensure_bb() const throw ()
+Bezier::ensure_bb() const noexcept
 {
     if (_bb < 0)
 	make_bb();
 }
 
 inline double
-Bezier::bb_top_x() const throw ()
+Bezier::bb_top_x() const noexcept
 {
     return _p[(_bb >> 4) & 3].y;
 }
 
 inline double
-Bezier::bb_left_x() const throw ()
+Bezier::bb_left_x() const noexcept
 {
     return _p[(_bb >> 2) & 3].x;
 }
 
 inline double
-Bezier::bb_bottom_x() const throw ()
+Bezier::bb_bottom_x() const noexcept
 {
     return _p[(_bb >> 6) & 3].y;
 }
 
 inline double
-Bezier::bb_right_x() const throw ()
+Bezier::bb_right_x() const noexcept
 {
     return _p[(_bb >> 0) & 3].x;
 }
 
 inline double
-Bezier::bb_top() const throw ()
+Bezier::bb_top() const noexcept
 {
     ensure_bb();
     return bb_top_x();
 }
 
 inline double
-Bezier::bb_left() const throw ()
+Bezier::bb_left() const noexcept
 {
     ensure_bb();
     return bb_left_x();
 }
 
 inline double
-Bezier::bb_bottom() const throw ()
+Bezier::bb_bottom() const noexcept
 {
     ensure_bb();
     return bb_bottom_x();
 }
 
 inline double
-Bezier::bb_right() const throw ()
+Bezier::bb_right() const noexcept
 {
     ensure_bb();
     return bb_right_x();
