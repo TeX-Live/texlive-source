@@ -1,5 +1,6 @@
 2018-02-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
+	* main.c, makejvf.1: Improve help message and manual.
 	* usrtable.c: Initialize CHARSET flag at other commands or an
 	empty line. Make an error message more clear.
 	* version.h: Bump version.
