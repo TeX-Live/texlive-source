@@ -1,5 +1,10 @@
 AUTOSP
 
+2018-02-23
+
+  Avoid aborting for \endvolta... 
+  Fix version output.
+
 2018-02-14
  
   Allow for \end{...} in LaTeX-oriented inputs.
