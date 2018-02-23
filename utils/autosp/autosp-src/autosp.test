@@ -19,7 +19,7 @@ echo && echo "*** autosp --version"
 echo && echo "*** autosp -dd (missing infile)"
 ./autosp -dd && exit 1
 
-echo && echo "*** autosp tests/quod2.aspc quod2.aspc"
+echo && echo "*** autosp tests/quod2.aspc quod2.tex"
 cp $test_srcdir/tests/quod2.aspc .
 rm -f quod2.tex
 ./autosp quod2.aspc || exit 1

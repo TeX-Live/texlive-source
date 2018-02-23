@@ -1,5 +1,7 @@
 #! /bin/sh -vx
 
+#! /bin/sh -vx
+
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -26,3 +28,4 @@ rm -f quod4.aspc
 
 echo && echo "*** diff quod4.aspc tests/quod4.aspc"
 diff quod4.aspc "$test_srcdir"/tests/quod4.aspc || exit 1
+

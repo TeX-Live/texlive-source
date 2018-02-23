@@ -1,5 +1,5 @@
 This is the README for the autosp package, 
-version 2018-02-14.
+version 2018-02-23.
 
 autosp is a preprocessor that generates note-spacing
 commands for MusiXTeX scores. It simplifies the creation
@@ -24,13 +24,6 @@ notes commands, except that line breaks and spaces may
 precede note segments, allowing more flexible source
 formatting; the line breaks and spaces will be elided from
 the output.
-
-If applied to a file with .tex extension, autosp will
-process conventional note-spacing commands (but not \vnotes
-or \znotes) similarly. This is intended to correct spacing
-in an extracted single-instrument part, but may not
-produce satisfactory output when applied to a conventional
-multi-instrument MusiXTeX score.
 
 If there is a single staff, consecutive whole-bar rest bars
 are merged into a multi-bar rest. Bar-centered rests can be
