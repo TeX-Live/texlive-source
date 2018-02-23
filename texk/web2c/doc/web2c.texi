@@ -2699,9 +2699,14 @@ entry @var{e} via their @code{crossref} field, include @var{e} in the
 @t{.bbl} file, even if it was not explicitly referenced in the @t{.aux}
 file. For example, @var{e} might be a conference proceedings as a whole,
 with the cross-referencing entries being individual articles published
-in the proceedings.  In some circumstances, you may want to avoid these
-automatic inclusions altogether; to do this, make @var{n} a sufficiently
-large number.
+in the proceedings.
+
+If you want to avoid these automatic inclusions altogether, make
+@var{n} a sufficiently large number, and be sure to remove any
+previous @t{.aux} and @t{.bbl} files.  Otherwise the option may
+appear to have no effect, since Bib@TeX{} will have added the citation
+for @var{e} to the @t{.aux}, and nothing will remove it.
+
 @end table
 
 See also:

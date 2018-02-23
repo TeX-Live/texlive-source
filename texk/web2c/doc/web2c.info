@@ -1,4 +1,4 @@
-This is web2c.info, produced by makeinfo version 6.3 from web2c.texi.
+This is web2c.info, produced by makeinfo version 6.5 from web2c.texi.
 
 This file documents the installation and use of the programs in Web2c,
 an implementation of Donald Knuth's TeX system.
@@ -2227,9 +2227,13 @@ macros.  BibTeX searches for '.bib' files using the 'BIBINPUTS' and
      even if it was not explicitly referenced in the .aux file.  For
      example, E might be a conference proceedings as a whole, with the
      cross-referencing entries being individual articles published in
-     the proceedings.  In some circumstances, you may want to avoid
-     these automatic inclusions altogether; to do this, make N a
-     sufficiently large number.
+     the proceedings.
+
+     If you want to avoid these automatic inclusions altogether, make N
+     a sufficiently large number, and be sure to remove any previous
+     .aux and .bbl files.  Otherwise the option may appear to have no
+     effect, since BibTeX will have added the citation for E to the
+     .aux, and nothing will remove it.
 
    See also:
 'btxdoc.tex'
@@ -2318,9 +2322,9 @@ available in many other places, of course).
 
 * Menu:
 
-* tangle invocation::           
-* weave invocation::            
-* pooltype invocation::         
+* tangle invocation::
+* weave invocation::
+* pooltype invocation::
 
 
 File: web2c.info,  Node: tangle invocation,  Next: weave invocation,  Up: WEB
@@ -2559,7 +2563,7 @@ program.
 
 * Menu:
 
-* dvitype output example::      
+* dvitype output example::
 
 
 File: web2c.info,  Node: dvitype output example,  Up: dvitype invocation
@@ -3635,7 +3639,7 @@ Index
 * bibliography items, cross-referenced:  bibtex invocation.   (line  31)
 * bibtex:                                bibtex invocation.   (line   6)
 * BibTeX:                                BibTeX.              (line   6)
-* BibTeX collection:                     bibtex invocation.   (line  54)
+* BibTeX collection:                     bibtex invocation.   (line  58)
 * BibTeX style files:                    Basic BibTeX style files.
                                                               (line   6)
 * BigEndian machines:                    Hardware and memory dumps.
@@ -3647,9 +3651,9 @@ Index
 * Breitenlohner, Peter:                  Introduction.        (line   9)
 * BSTINPUTS, search path for bst files:  bibtex invocation.   (line  18)
 * btex for MetaPost labels:              mpost invocation.    (line  48)
-* btxdoc.bib:                            bibtex invocation.   (line  48)
-* btxdoc.tex:                            bibtex invocation.   (line  42)
-* btxhak.tex:                            bibtex invocation.   (line  45)
+* btxdoc.bib:                            bibtex invocation.   (line  52)
+* btxdoc.tex:                            bibtex invocation.   (line  46)
+* btxhak.tex:                            bibtex invocation.   (line  49)
 * byte position:                         pktype invocation.   (line  40)
 * byte position <1>:                     gftype invocation.   (line  76)
 * byte swapping:                         Hardware and memory dumps.
@@ -3830,7 +3834,7 @@ Index
                                                               (line  21)
 * Free Software Foundation documentation system: Formats.     (line  47)
 * freedom of Web2c:                      Introduction.        (line  23)
-* ftp.math.utah.edu:                     bibtex invocation.   (line  54)
+* ftp.math.utah.edu:                     bibtex invocation.   (line  58)
 * generating source specials:            tex invocation.      (line 133)
 * geometric designs:                     Metafont.            (line   6)
 * geometric font scaling:                Font file formats.   (line  21)
@@ -4212,7 +4216,7 @@ Index
 * string numbers, displaying:            pooltype invocation. (line   6)
 * string pool, writing:                  tangle invocation.   (line  16)
 * string representation:                 pooltype invocation. (line  30)
-* style design, for BibTeX:              bibtex invocation.   (line  45)
+* style design, for BibTeX:              bibtex invocation.   (line  49)
 * style files:                           mft invocation.      (line  67)
 * substitutions of font glyphs:          MLTeX.               (line   6)
 * sun:                                   Online Metafont graphics.
@@ -4245,7 +4249,7 @@ Index
 * terminator for filenames:              \input filenames.    (line  10)
 * terse output:                          bibtex invocation.   (line  28)
 * tex:                                   tex invocation.      (line   6)
-* TeX, bibliographies for:               bibtex invocation.   (line  54)
+* TeX, bibliographies for:               bibtex invocation.   (line  58)
 * TeX, creating from Metafont:           mft invocation.      (line   6)
 * TeX, creating from WEB:                weave invocation.    (line   6)
 * TeX, description of:                   TeX.                 (line   6)
@@ -4297,7 +4301,7 @@ Index
 * Troff, and MetaPost:                   mpost invocation.    (line  65)
 * Troff, WEB for:                        WEB.                 (line  12)
 * Trojan horses and TeX programs:        tex invocation.      (line  48)
-* TUGboat bibliography:                  bibtex invocation.   (line  54)
+* TUGboat bibliography:                  bibtex invocation.   (line  58)
 * Type 1 conversion:                     Font utilities available elsewhere.
                                                               (line  39)
 * type design, personal:                 Initial Metafont.    (line  31)
@@ -4362,7 +4366,7 @@ Index
                                                               (line  69)
 * X toolkits and Metafont:               Online Metafont graphics.
                                                               (line  59)
-* xampl.bib:                             bibtex invocation.   (line  51)
+* xampl.bib:                             bibtex invocation.   (line  55)
 * xbfe, bitmap font editor:              Font utilities available elsewhere.
                                                               (line  23)
 * XeTeX:                                 TeX extensions.      (line  31)
@@ -4432,28 +4436,28 @@ Node: Initial MetaPost90194
 Node: dvitomp invocation91116
 Node: BibTeX91781
 Node: bibtex invocation92142
-Node: Basic BibTeX style files94440
-Node: WEB95770
-Node: tangle invocation97011
-Node: weave invocation99134
-Node: pooltype invocation100541
-Node: DVI utilities101671
-Node: dvicopy invocation102603
-Node: dvitype invocation103886
-Node: dvitype output example106221
-Node: Font utilities109272
-Node: Font file formats110452
-Node: gftopk invocation113721
-Node: pktogf invocation114912
-Node: pktype invocation116078
-Node: gftype invocation118901
-Node: tftopl invocation123404
-Node: pltotf invocation127997
-Node: vftovp invocation129048
-Node: vptovf invocation131283
-Node: Font utilities available elsewhere132310
-Node: Legalisms134690
-Node: References136844
-Node: Index141411
+Node: Basic BibTeX style files94616
+Node: WEB95946
+Node: tangle invocation97155
+Node: weave invocation99278
+Node: pooltype invocation100685
+Node: DVI utilities101815
+Node: dvicopy invocation102747
+Node: dvitype invocation104030
+Node: dvitype output example106359
+Node: Font utilities109410
+Node: Font file formats110590
+Node: gftopk invocation113859
+Node: pktogf invocation115050
+Node: pktype invocation116216
+Node: gftype invocation119039
+Node: tftopl invocation123542
+Node: pltotf invocation128135
+Node: vftovp invocation129186
+Node: vptovf invocation131421
+Node: Font utilities available elsewhere132448
+Node: Legalisms134828
+Node: References136982
+Node: Index141549
 
 End Tag Table

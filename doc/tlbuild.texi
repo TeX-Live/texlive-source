@@ -119,13 +119,13 @@ information for different systems, along with
 For information on acquiring the TL sources, see
 @url{http://tug.org/texlive/svn}.
 
-This manual does not duplicate the (primarily user-level) information
-found in other TL documentation resources, such as:
+This manual does not duplicate the information found in other TL
+documentation resources, such as:
 
 @itemize
 @item The @TL{} web pages: @url{http://tug.org/texlive}.
 
-@item The web page with an overview of how to build the binaries which 
+@item The web page describing how to build the binaries which 
 are distributed with @TL{}: @url{http://tug.org/texlive/build.html}.
 
 @item The @TL{} user manual: @url{http://tug.org/texlive/doc.html}, or
@@ -2570,64 +2570,6 @@ push. No further action is necessary on Travis-CI.
 
 If changes have been pushed via the cron job above, Travis-CI will
 automatically checkout the last pushed commit and try building it.
-
-@comment
-@comment The following needs improvement
-@comment
-@comment @subheading Developer setup for Git/Subversion
-@comment 
-@comment In case a developer of code in the @TL{} source code wants to use the CI
-@comment testing facility, the following steps are necessary for initialization:
-@comment 
-@comment @itemize @bullet
-@comment @item
-@comment Initial @code{git-svn} checkout as laid out above, replacing
-@comment @code{USER} with the Subversion user name. This initial checkout might
-@comment take quite some time as the whole history has to be parsed. In case the
-@comment checkout is interrupted, change into the already created folder and call
-@comment @code{git svn fetch} to continue pulling from the remote until all
-@comment changes have been fetched.
-@comment 
-@comment @item
-@comment Adding the Git remote as laid out above. After that it is also necessary
-@comment to set the upstream for the @code{master} branch with
-@comment @code{git branch --set-upstream-to=origin/master master} followed by a
-@comment @code{git pull}. The last command will probably not fetch anything since
-@comment but update the local information about availability.
-@comment 
-@comment @end itemize
-@comment 
-@comment After this development can be done as follows:
-@comment 
-@comment @itemize @bullet
-@comment @item
-@comment Create a new branch based on @code{master}: @code{git checkout -b feature}
-@comment and develop the new features in this branch.
-@comment 
-@comment @item
-@comment Pushing the branch to Github will kick of automatic CI testing on this
-@comment branch, too.
-@comment 
-@comment @item
-@comment When the feature is ready, first the branch @code{feature} needs to be
-@comment rebased onto current @code{master} with @code{git rebase master}, then
-@comment merged into @code{master}, followed by a submission to the Subversion
-@comment repository via @code{git svn dcommit}. Don't push to master on Github
-@comment (it is anyway protected), your changes will come in in due time via a
-@comment pull on master.
-@comment 
-@comment @item
-@comment After the branch is included in master, optionally delete the local and
-@comment rmeote branch @code{feature}.
-@comment 
-@comment @end itemize
-@comment 
-@comment The above method is the standards and safest method, but there is an
-@comment alternative way by first pulling from Github, and then tricking git-svn
-@comment into believing that everything has been fetched from Subversion
-@comment already. This alternative method is explained XXXXXXXXX (my BLOG?)
-@comment 
-@comment 
 
 @c made from pod doc.
 @include tlbuild-incl/install-tl.texi
