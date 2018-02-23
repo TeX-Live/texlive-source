@@ -1,3 +1,9 @@
+2018-02-23  Karl Berry  <karl@freefriends.org>
+
+	* bibtex.man: mention need to remove aux file from previous run
+	for -min-crossrefs to be effective.
+	https://tex.stackexchange.com/questions/123740
+
 2018-01-18  Karl Berry  <karl@freefriends.org>
 
 	* mf.man: spacing, no openin, per Debian.

@@ -75,14 +75,15 @@ cd $libsigsegv_ver
 #
 # you may need this hack on 64-bit systems
 # if clisp's configure does not find libsigsegv.  Harmless to do in any case.
-ln -s lib $clisp_toolsdir/lib64
+ln -s lib $clisp_toolsdir/lib64 # for GNU/Linux 64-bit
+ln -s . $clisp_toolsdir/lib/64  # for Solaris 64-bit
 #
 # if you can't build libsigsegv, pass --ignore-absence-of-libsigsegv
 # when running configure for clisp.
 
 ffcall_ver=libffcall-2.1
 cd $clisp_basedir
-$wget https://ftp.gnu.org/gnu/libsigsegv/$ffcall_ver.tar.gz
+$wget https://ftp.gnu.org/gnu/libffcall/$ffcall_ver.tar.gz
 gzip -dc $ffcall_ver.tar.gz | tar xf -
 cd $ffcall_ver
 ./configure -C --prefix=$clisp_toolsdir --disable-shared --enable-static \
@@ -104,7 +105,7 @@ cd $libiconv_ver
 # foil wrong attempts at dynamic linking, etc.
 (cd $clisp_basedir/clisp-tools/lib && rm -f *.dylib *.la)
 
-clisp_ver=clisp-2.49.50
+clisp_ver=clisp-2.49.92
 cd $clisp_basedir
 $wget https://haible.de/bruno/gnu/clisp-2.49.50.tar.bz2
 bunzip2 -dc $clisp_ver.tar.bz2 | tar xf -
@@ -118,9 +119,13 @@ cd $clisp_ver
 #
 ./configure CPPFLAGS=-DUNIX_BINARY_DISTRIB --prefix=$clisp_toolsdir \
   --without-readline --without-dynamic-modules --without-termcap-ncurses \
-  --disable-nls --enable-portability \
+  --disable-nls \
   --with-libsigsegv-prefix=$clisp_toolsdir \
   --with-libffcall-prefix=$clisp_toolsdir \
   --with-libiconv-prefix=$clisp_toolsdir \
   $clisp_builddir \
 && (cd $clisp_builddir && make)
+
+There may be clisp test failures relating to sockets on some
+systems. Since xindy doesn't use sockets, we can ignore those for TL.
+

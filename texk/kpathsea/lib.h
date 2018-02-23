@@ -87,6 +87,7 @@ extern "C" {
 #define WARNING4(str, e1, e2, e3, e4)                                   \
   START_WARNING (); fprintf (stderr, str, e1, e2, e3, e4); END_WARNING ()
 
+/* This requires an identifier `kpse' to be set up correctly.  Sorry.  */
 #define LIB_START_FATAL() do { \
   fprintf (stderr, "%s: fatal: ", kpse->invocation_name);
 

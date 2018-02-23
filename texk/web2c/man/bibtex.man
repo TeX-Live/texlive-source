@@ -1,4 +1,4 @@
-.TH BIBTEX 1 "16 June 2015" "bibtex 0.99d" "Web2C @VERSION@"
+.TH BIBTEX 1 "23 February 2018" "bibtex 0.99d" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -63,8 +63,20 @@ The
 .B \-min-crossrefs
 option defines the minimum number of
 .B crossref
-required for automatic inclusion of the crossref'd entry on the citation
+required for automatic inclusion of the crossref base entry in the citation
 list; the default is two. 
+To avoid these automatic inclusions altogether, give this option
+a sufficiently large number, and be sure to remove any
+previous
+.B .aux 
+and
+.B .bbl
+files.  Otherwise the option may
+appear to have no effect, since \*(BX will have added the citation
+for the base entry to the
+.B .aux
+file, and nothing will remove it.
+.PP
 With the
 .B \-terse
 option, \*(BX operates silently.  Without it, a banner and progress
