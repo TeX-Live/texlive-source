@@ -30,9 +30,13 @@ void get_usertable(char *name)
 	}
 	for (l = 0; fgets(buf, BUF_SIZE, fp) != NULL; l++) {
 		if ((endptr=strchr(buf, '%')) != NULL) strcpy(endptr,"\n");  /* ignore after '%'  */
-		if (!strncmp(buf, "\n", 1)) continue;                        /* ignore empty line */
+		if (!strncmp(buf, "\n", 1)) { /* empty line */
+			charset_mode = 0;
+			continue;
+		}
 		tok = strtok(buf, "\t");
 		if (!strcmp(tok, "REPLACE")) {
+			charset_mode = 0;
 			if (usertable_replace_max >= MAX_TABLE) goto buferr;
 			usertable_replace[usertable_replace_max].codepoint = strtol(strtok(NULL, "\t\n"), &endptr, 16);
 			if (*endptr != '\0') goto taberr;
@@ -43,6 +47,7 @@ void get_usertable(char *name)
 			continue;
 		}
 		if (!strcmp(tok, "MOVE")) {
+			charset_mode = 0;
 			if (usertable_move_max >= MAX_TABLE) goto buferr;
 			usertable_move[usertable_move_max].codepoint = strtol(strtok(NULL, "\t\n"), &endptr, 16);
 			if (*endptr != '\0') goto taberr;
@@ -62,13 +67,13 @@ void get_usertable(char *name)
 					if (sscanf(tok,     "%7s",str0) != 1) goto taberr;
 					if (sscanf(endptr+2,"%7s",str1) != 1) goto taberr;
 					ch0 = strtol(str0, &endptr, 16);
-					if (*endptr != '\0' || ch0<=char_max) goto taberr;
+					if (*endptr != '\0' || ch0<=char_max) goto codeerr;
 					ch1 = strtol(str1, &endptr, 16);
-					if (*endptr != '\0' || ch1<=ch0) goto taberr;
+					if (*endptr != '\0' || ch1<=ch0) goto codeerr;
 				} else {
 					if (sscanf(tok,"%7s",str0) != 1) goto taberr;
 					ch0 = strtol(str0, &endptr, 16);
-					if (*endptr != '\0' || ch0<=char_max) goto taberr;
+					if (*endptr != '\0' || ch0<=char_max) goto codeerr;
 					ch1 = ch0;
 				}
 				if (char_max==ch0-1) {
@@ -93,6 +98,9 @@ taberr:
 	exit(1);
 buferr:
 	fprintf(stderr, "User-defined table in %s is too large!\n", name);
+	exit(1);
+codeerr:
+	fprintf(stderr, "Character codes must be given in ascending order (line %d)!\n", l+1);
 	exit(1);
 }
 
