@@ -1,3 +1,9 @@
+2018-02-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* usrtable.c: Initialize CHARSET flag at other commands or an
+	empty line. Make an error message more clear.
+	* version.h: Bump version.
+
 2018-02-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* write.c: Add U+301E.
