@@ -4,7 +4,7 @@
 .SH NAME
 makejvf \- Make Japanese VF file from Japanese \*(TX TFM file
 .SH SYNOPSIS
-\fBmakejvf\fR [\fI<options>\fR] \fI<\*(TX TFM file>\fR \fI<TFM name of PS font>\fR
+\fBmakejvf\fR [<\fIoptions\fR>] <\fI\*(TX TFM file\fR> <\fIPS font TFM\fR>
 .SH DESCRIPTION
 \fBmakejvf\fR is a tool to generate Japanese VF file from Japanese \*(TX TFM
 (JFM) file for use with dvips.
@@ -22,19 +22,25 @@ For this reason, when dvips processes the resulting DVI, these characters \
 have to be shifted to the left by the amount of glue/kerns inserted.
 .TP 5
 To achieve this, Virtual fonts (VF) and PS TFM files are required; \
-VF should include the commands of shifting characters, and PS TFM should \
-have the exact character widths of PS fonts. \
-The program \fBmakejvf\fR can be used for this purpose.
+When VF contains the commands of shifting characters, PS font TFM can \
+have the exact character widths of PS fonts.
+.TP 5
+The program \fBmakejvf\fR can be used for this purpose. \
+It inputs a p\*(TX JFM file (refered to as <\fI\*(TX TFM file\fR> in \
+\fBSYNOPSIS\fR above), and outputs a corresponding VF file \
+(with the same basename as <\fI\*(TX TFM file\fR>) and \
+a JFM file for a PS font JFM file (<\fIPS font TFM\fR> above).
 .SH OPTIONS
 .PP
 .TP 10
 \fB-C\fR
 Condensed ("Cho-tai") mode.
 .TP 10
-\fB-K\fI <TFMfile>\fR
-Name of the PS font TFM for Kana (more exactly, non-Kanji) characters.
+\fB-K\fR <\fIPS-TFM\fR>
+Map Kana (more exactly, non-Kanji) characters to another PS font JFM
+named <\fIPS-TFM\fR>.
 .TP 10
-\fB-b\fI <integer>\fR
+\fB-b\fR <\fIinteger\fR>
 Base line shift amount; the \fIinteger\fR represents a relative value,
 using the character height as a base of 1000.
 When a positive integer is specified, the characters are lowered.
@@ -48,40 +54,19 @@ double prime (JIS 0x216C and 0x216D; Unicode U+2032 and U+2033),
 \fInot\fR by putting actual glyphs designed for quotation marks
 (Unicode U+301D and U+301E/U+301F).
 .TP 10
-\fB-a\fI <AFMfile>\fR
-Name of the AFM file. Used for Kana-tsume mode.
+\fB-a\fR <\fIAFMfile\fR>
+Name of the input AFM file used for Kana-tsume mode.
 This option is unsupported.
 .TP 10
-\fB-k\fI <integer>\fR
+\fB-k\fR <\fIinteger\fR>
 Kana-tsume (narrower spaces between Kana characters) margin amount;
 the \fIinteger\fR represents a relative value, using the character width
 as a base of 1000. This option should be accompanied with \fB-a\fR option.
 This option is unsupported.
 .TP 10
-\fB-u\fI <Charset>\fR
-UCS mode. Available charsets are: gb (GB = Simplified Chinese),
-cns (CNS = Traditional Chinese), ks (KS = Korean),
-jis (JIS = Japanese), jisq (JIS quote only),
-custom (see configuration file format section).
-.TP 10
-\fB-J\fI <TFMfile>\fR
-JIS encoded PS font TFM name for quote, double quote (with UCS mode).
-.TP 10
-\fB-U\fI <TFMfile>\fR
-UCS encoded PS font TFM name for quote, double quote (with UCS mode).
-.TP 10
-\fB-3\fR
-Use set3, that is, enable non-BMP characters support (with UCS mode).
-By default \fBmakejvf\fR does not output >=U+10000, to reduce file
-size and to avoid problems with old DVI drivers. Recent versions of
-dvipdfmx and others can handle VF with >=U+10000 (= set3 in DVI
-language), therefore \fB-3\fR might be helpful.
-.TP 10
-\fB-H\fR
-Use half-width Katakana (with UCS mode)
-.TP 10
 \fB-i\fR
-Start font ID from No. 0.
+Start mapped font ID from No. 0 in output VF
+(by default, makejvf defaults to No. 1).
 .TP 10
 \fB-e\fR
 Enhanced mode; the horizontal shift amount is determined from the
@@ -100,8 +85,33 @@ uptchrm-h.tfm), the output VF from enhanced mode will be better. \
 For min10.tfm and its derivatives, enhanced mode should \fInever\fR be \
 enabled, since the characterization in min10.tfm is non-standard.
 .TP 10
-\fB-t\fI <CNFfile>\fR
-Use \fI<CNFfile>\fR as a configuration file.
+\fB-t\fR <\fICNFfile\fR>
+Use <\fICNFfile\fR> as a configuration file.
+.TP 10
+\fB-u\fR <\fICharset\fR>
+UCS mode. Available charsets are: gb (GB = Simplified Chinese),
+cns (CNS = Traditional Chinese), ks (KS = Korean),
+jis (JIS = Japanese), jisq (JIS quote only),
+custom (user-defined CHARSET from <CNFfile>;
+see \fBCONFIGURATION FILE FORMAT\fR section).
+.TP 10
+Options below are effective only in UCS mode:
+.TP 10
+\fB-J\fR <\fIPS-TFM\fR>
+Map single/double quote to another JIS-encoded PSfont TFM.
+.TP 10
+\fB-U\fR <\fIPS-TFM\fR>
+Map single/double quote to another UCS-encoded PSfont TFM
+.TP 10
+\fB-3\fR
+Use set3, that is, enable non-BMP characters support (with UCS mode).
+By default \fBmakejvf\fR does not output >=U+10000, to reduce file
+size and to avoid problems with old DVI drivers. Recent versions of
+dvipdfmx and others can handle VF with >=U+10000 (= set3 in DVI
+language), therefore \fB-3\fR might be helpful.
+.TP 10
+\fB-H\fR
+Use half-width Katakana.
 .SH EXAMPLE
 .TP 5
 If you want to use min10 as Ryumin-Light-H, run
@@ -127,9 +137,9 @@ Each line should begin with a command, and should be TAB-separated. \
 Line starting with % is a comment, and empty lines are ignored.
 .TP 5
 The \fBMOVE\fR command specifies horizontal/vertical shift amount \
-for the individual character \fI<code>\fR. \
-The \fBREPLACE\fR command replaces the character \fI<code>\fR with \
-\fI<new code>\fR. \
+for the individual character <\fIcode\fR>. \
+The \fBREPLACE\fR command replaces the character <\fIcode\fR> with \
+<\fInew code\fR>. \
 The \fBCHARSET\fR command sets the custom character set of output VF; \
 the + character continues from the previous line.
 .TP 5
@@ -141,8 +151,8 @@ More detailed description of \fBmakejvf\fR in Japanese is available at
      $TEXMFDIST/doc/fonts/ptex-fonts/README_makejvf
 .SH AUTHOR
 This manual page was written by Japanese \*(TX Development Community \
-<https://texjp.org>. For more information, see GitHub repository
-     <https://github.com/texjporg/ptex-fonts>.
+<https://texjp.org>. For more information, see GitHub repository \
+<https://github.com/texjporg/ptex-fonts>.
 .TP 5
 Many thanks to Atsuhito KOHDA <kohda@debian.org>, \
 for providing another manpage in Debian GNU/Linux system.
