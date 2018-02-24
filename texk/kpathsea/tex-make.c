@@ -1,6 +1,6 @@
 /* tex-make.c: run external programs to make TeX-related files.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008-2013 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008-2013, 2018 Karl Berry.
    Copyright 1997, 1998, 2001-05 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -437,7 +437,7 @@ kpathsea_make_tex (kpathsea kpse, kpse_file_format_type format,
      * No doubt some possibilities were overlooked.
      */
     if (base[0] == '-' /* || IS_DIR_SEP(base[0])  */) {
-      fprintf(stderr, "kpathsea:make_tex: Invalid fontname `%s', starts with '%c'\n",
+      fprintf(stderr, "kpathsea:make_tex: Invalid filename `%s', starts with '%c'\n",
               base, base[0]);
       return NULL;
     }
@@ -449,7 +449,7 @@ kpathsea_make_tex (kpathsea kpse, kpse_file_format_type format,
           && base[i] != '.'
           && !IS_DIR_SEP(base[i]))
       {
-        fprintf(stderr, "kpathsea:make_tex: Invalid fontname `%s', contains '%c'\n",
+        fprintf(stderr, "kpathsea:make_tex: Invalid filename `%s', contains '%c'\n",
                 base, base[i]);
         return NULL;
       }
