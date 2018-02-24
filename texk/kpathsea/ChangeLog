@@ -1,3 +1,11 @@
+2018-02-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+	* tex-make.c (kpathsea_make_tex): Change an error message
+	"Invalid fontname" to "Invalid filename", since
+	  $ tex -fmt=-a x
+	causes
+	  kpathsea:make_tex: Invalid fontname `-a.fmt', starts with '-'
+	but it is a format file.
+
 2018-02-23  Karl Berry  <karl@freefriends.org>
 
 	* lib.h (LIB_START_FATAL): mention that the identifier `kpse'
