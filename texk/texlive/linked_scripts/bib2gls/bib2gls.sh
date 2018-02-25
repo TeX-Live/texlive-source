@@ -8,5 +8,5 @@ else
  jarpath=`kpsewhich --progname=bib2gls --format=texmfscripts bib2gls.jar`
 fi
 
-java -Djava.locale.providers=CLDR,JRE -jar "$jarpath" "$@"
+java -Djava.locale.providers=CLDR,JRE,SPI -jar "$jarpath" "$@"
 
