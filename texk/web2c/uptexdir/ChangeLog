@@ -1,3 +1,15 @@
+2018-02-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch, kanji.c:
+	Update reference of Unicode blocks to
+	"Blocks-10.0.0.txt Date: 2017-04-12, 17:30:00 GMT [KW]".
+	Exclude Latin-1 letters from "Latin-1 Supplement" block.
+	Set kcatcode of "Latin-1 letters", "Latin Extended-A" 15 (not_cjk).
+	* uptex-m.ch, upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch,
+	uptex_version.h: upTeX version u1.23.
+	* COPYRIGHT, COPYRIGHT.ja:
+	Update copyright year.
+
 2018-02-02  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* uppltotf.ch: Adapt to changes in ptexdir/ppltotf.ch.
