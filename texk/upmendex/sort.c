@@ -398,7 +398,7 @@ int is_hanzi(UChar *c)
 
 	if (is_surrogate_pair(c)) {
 		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
-		if ((c32>=0x20000) &&         /* CJK Unified Ideographs Extension B,C,D,E */
+		if ((c32>=0x20000) &&         /* CJK Unified Ideographs Extension B,C,D,E,F */
 		    (c32<=0x2FA1F)) return 2; /* CJK Compatibility Ideographs Supplement */
 	}
 	return 0;

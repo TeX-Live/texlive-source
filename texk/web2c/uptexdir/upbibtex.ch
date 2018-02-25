@@ -3,7 +3,7 @@
 @d banner=='This is pBibTeX, Version 0.99d-j0.33'
 @y
 @d my_name=='upbibtex'
-@d banner=='This is upBibTeX, Version 0.99d-j0.33-u1.22'
+@d banner=='This is upBibTeX, Version 0.99d-j0.33-u1.23'
 @z
 
 @x
