@@ -1,11 +1,12 @@
+# $Id: TLUtils.pm 46421 2018-01-24 03:55:35Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007-2017 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2018 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 46045 $';
+my $svnrev = '$Revision: 46421 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -361,6 +362,7 @@ sub platform_desc {
   my ($platform) = @_;
 
   my %platform_name = (
+    'aarch64-linux'    => 'GNU/Linux on ARM64',
     'alpha-linux'      => 'GNU/Linux on DEC Alpha',
     'amd64-freebsd'    => 'FreeBSD on x86_64',
     'amd64-kfreebsd'   => 'GNU/kFreeBSD on x86_64',
@@ -2062,6 +2064,11 @@ not agree. If a check argument is not given, that check is not performed.
 
 sub check_file {
   my ($xzfile, $checksum, $checksize) = @_;
+  debug("check_file $xzfile, $checksum, $checksize\n");
+  if (!$checksum && !$checksize) {
+    tlwarn("TLUtils::check_file: neither checksum nor checksize available for $xzfile, cannot check integrity!\n");
+    return;
+  }
   # only run checksum tests if we can actually compute the checksum
   if ($checksum && $::checksum_method) {
     my $tlchecksum = TeXLive::TLCrypto::tlchecksum($xzfile);
@@ -2069,6 +2076,10 @@ sub check_file {
       tlwarn("TLUtils::check_file: removing $xzfile, checksums differ:\n");
       tlwarn("TLUtils::check_file:   TL=$tlchecksum, arg=$checksum\n");
       unlink($xzfile);
+      return;
+    } else {
+      debug("TLUtils::check_file: checksums for $xzfile agree\n");
+      # if we have checked the checksum, we don't need to check the size, too
       return;
     }
   }
