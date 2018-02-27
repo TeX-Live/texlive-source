@@ -19,8 +19,8 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-180121'
-@d epTeX_version_number==180121
+@d epTeX_version_string=='-180226'
+@d epTeX_version_number==180226
 @z
 
 @x e-pTeX: banner
@@ -75,8 +75,9 @@ var m:halfword; {|chr_code| part of the operand token}
 @d badness_code=glue_val+2 {code for \.{\\badness}}
 @y
 @d last_node_char_code=glue_val+2 {code for \.{\\lastnodechar}}
-@d input_line_no_code=glue_val+3 {code for \.{\\inputlineno}}
-@d badness_code=glue_val+4 {code for \.{\\badness}}
+@d last_node_subtype_code=glue_val+3 {code for \.{\\lastnodesubtype}}
+@d input_line_no_code=glue_val+4 {code for \.{\\inputlineno}}
+@d badness_code=glue_val+5 {code for \.{\\badness}}
 @z
 
 @x
@@ -181,7 +182,7 @@ end
     end
   else cur_val_level:=cur_chr;
 @y
-  if cur_chr=last_node_type_code then
+  if (cur_chr=last_node_type_code)or(cur_chr=last_node_subtype_code) then
     begin cur_val_level:=int_val;
     if (tx=head)or(mode=0) then cur_val:=-1;
     end
@@ -209,7 +210,15 @@ end
         else if cur_val>disp_node then cur_val:=cur_val-1;
         end
       else cur_val:=unset_node; {\epTeX's |unset_node| is \eTeX's |unset_node+2|}
+    last_node_subtype_code: cur_val:=subtype(tx);
     last_node_char_code: ignore_font_kerning;
+@z
+
+@x
+    last_node_type_code: cur_val:=last_node_type;
+@y
+    last_node_type_code: cur_val:=last_node_type;
+    last_node_subtype_code: cur_val:=last_node_subtype;
 @z
 
 @x e-pTeX: if primitives - leave room for three e-TeX codes
@@ -228,6 +237,19 @@ end
 @d set_box_lr_end(#) == qi(16*(#))
 @z
 
+@x
+@!last_node_type:integer; {used to implement \.{\\lastnodetype}}
+@y
+@!last_node_type:integer; {used to implement \.{\\lastnodetype}}
+@!last_node_subtype:integer; {used to implement \.{\\lastnodesubtype}}
+@z
+
+@x
+last_node_type:=-1;
+@y
+last_node_type:=-1; last_node_subtype:=-1;
+@z
+
 @x [45.996] l.19420
 last_node_type:=type(p)+1;
 @y
@@ -235,6 +257,7 @@ if type(p)<dir_node then last_node_type:=type(p)+1
 else if type(p)=dir_node then last_node_type:=type(list_ptr(p))+1
 else if type(p)<disp_node then last_node_type:=type(p)
 else last_node_type:=type(p)-1; {no |disp_node| in a vertical list}
+last_node_subtype:=subtype(p);
 @z
 
 @x [47.1079] l.20920
@@ -431,6 +454,8 @@ primitive("lastnodetype",last_item,last_node_type_code);
 @!@:last_node_type_}{\.{\\lastnodetype} primitive@>
 primitive("lastnodechar",last_item,last_node_char_code);
 @!@:last_node_char_}{\.{\\lastnodechar} primitive@>
+primitive("lastnodesubtype",last_item,last_node_subtype_code);
+@!@:last_node_subtype_}{\.{\\lastnodesubtype} primitive@>
 @z
 
 @x
@@ -438,7 +463,9 @@ last_node_type_code: print_esc("lastnodetype");
 @y
 last_node_type_code: print_esc("lastnodetype");
 last_node_char_code: print_esc("lastnodechar");
+last_node_subtype_code: print_esc("lastnodesubtype");
 @z
+
 @x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306
   if (font_bc[q]<=cur_val)and(font_ec[q]>=cur_val) then
     begin i:=char_info(q)(qi(cur_val));
