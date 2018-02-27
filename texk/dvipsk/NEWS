@@ -1,4 +1,8 @@
+$Id$
 This file records noteworthy changes.  (Public domain.)
+
+dvips 5.998 (TeX Live 2018):
+  New JFM (Japanese font metrics) spec supported; compiler portability fixes.
 
 dvips 5.997 (TeX Live 2017):
   Make the last papersize special win, to match dvipdfmx; the -L0 option

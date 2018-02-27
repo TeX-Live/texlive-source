@@ -1,3 +1,7 @@
+2018-02-26  Karl Berry  <karl@freefriends.org>
+
+	* texmf.cnf (TEXMFVAR, TEXMFCONFIG, doc): 2018.
+
 2018-02-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 	* tex-make.c (kpathsea_make_tex): Change an error message
 	"Invalid fontname" to "Invalid filename", since
