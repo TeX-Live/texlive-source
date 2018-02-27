@@ -1,3 +1,11 @@
+2018-02-26  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech, eptex_version.h: e-pTeX version 180226.
+
+2018-02-25  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech: New primitive \lastnodesubtype.
+
 2018-01-21  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.ech, etex.ch0, etex.ch1, pdfutils.ch: New primitive \epTeXversion.
