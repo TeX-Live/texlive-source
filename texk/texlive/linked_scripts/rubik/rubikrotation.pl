@@ -4,71 +4,119 @@
  use Fatal;
  use warnings;
  ##
- our $version = "v4.0 (03 March 2017)"; 
+ our $version = "v5.0   (25 February 2018)"; 
  ##
  ##  rubikrotation.pl 
- ##  VERSION 4.0
+ ##  VERSION 5.0
  ##
- ##  Copyright 03 March 2017,  
+ ##  Copyright February 2018,  
  ##  RWD Nickalls  (dick@nickalls.org) 
  ##  A Syropoulos  (asyropoulos@yahoo.com)
  ##
+ ##  HISTORY
+ ##-------------------------------   
+ ##  v5.0 (25 February 2018)
  ##-------------------------------
- ## changes in v3.6 (January 2017)
- ## (1) included Jaap Rm and Rc notation 
- ## (2) new sub for improved expansion of mod-4 multiples of rotations (Oct 2016)
- ## (3) restructured to facilitate processing arrays through the rotation sub
- ## (4) included option for an <info> block 
- ## (5) included Randelshofer superset ENG 3x3 notation
- ## (6) implemented an `inverse' mode
- ## (7) improved syntax checking 
- ## (8) used perltidy to polish the program layout 
- ##        (but only when making  the pdf documentation-- see file rubikrotationPL.pdf)
- ## (9) included a lot of new subroutines
+ ##
+ ##  4.2h  (07 February 2018)
+ ##       --- adjusted the no of leading dots for the gprint command 
+ ##           when writing the up, down,.. colour state to the log file
+ ##           so as to make the array form a square block (ie easier to read) 
+ ##           (in MAIN)   
+ ##
+ ##  4.2g 
+ ##      --- 29 October 2017  added syntax checking for (( )) /inside/ squarebrackets
+ ##                  (in SUB checksyntax)
+ ##      --- 24 October 2017  changed {};--> (), in SequenceNameNew (in SUB writestate)
+ ##                  this repairs these chars back to their original state.
+ ##      --- 22 October 2017  minor adjustments to syntax checking (in SUB checksyntax) 
+ ##               to allow some extra chars in the [name] and <info> blocks.
+ ##               Ideally, we want to be able to use /any/ chars inside these infoblocks.
+ ##
+ ##  4.2f 
+ ##      --- 05 Oct 2017 bugfix: added a ShowSequence [\space] bug fix in SUB checksyntax 
+ ##      --- 04 Oct 2017 adjusted brackets < > error messages (lines 2643--2659)
+ ##        
+ ##  4.2e: (29 Sept 2017)
+ ##      --- added a ``Western'' notation filter (provisional \& works)
+ ##
+ ##  4.2d: (10 August 2017) 
+ ##      --- placed  a checkstate() command inside the rotation keyword
+ ##          and stopped TEX writing the keyword checkstate to the rubikstate.dat file
+ ##
+ ##  4.2c: (2 August 2017) 
+ ##      --- added new rubikkeyword "cubesize" to hold cube size (three or two)
+ ##          so we can tell which sort of cube  is being processed
+ ##          We can use this to detect when using the TwoRotation command 
+ ##          (for the TWOcube) vs when using the RubikRotation command 
+ ##          (for the THREEcube); for eample with regard to random rotations 
+ ##          (see random SUB; see RubikTwoCube.sty)
+ ##
+ ##  4.2b: (1 Aug 2017)
+ ##      --- Removed the random,0 option --> n=50 (random SUB)
+ ##          a zero or missing integer now generates an error message.
+ ##
+ ##  4.2a: (28 July 2017)
+ ##      --- bugfix: error if spaces in RubikRotation{random,n} string from LaTeX.
+ ##          Fixed to accommodate spaces, and uppercase random (lines 366 -- 388 approx)  
+ ##
+ ##-------------------------------   
+ ##  v4.0 (3 March 2017)
+ ##-------------------------------
+ ##  changes in v3.6 (January 2017)
+ ##   --- included Jaap Rm and Rc notation 
+ ##   --- new sub for improved expansion of mod-4 multiples of rotations (Oct 2016)
+ ##   --- restructured to facilitate processing arrays through the rotation sub
+ ##   --- included option for an <info> block 
+ ##   --- included Randelshofer superset ENG 3x3 notation
+ ##   --- implemented an `inverse' mode
+ ##   --- improved syntax checking 
+ ##   --- used perltidy to polish the program layout 
+ ##       (but only when making  the pdf documentation-- see file rubikrotationPL.pdf)
+ ##   --- included a lot of new subroutines
  ##--------------------------------
- ## changes in v3.2:
- ## 1) changed program, prog --> script 
- ## 2) added leading ... to the comments written by the <writestate> sub
- ##   (the ... code indicates that comments are written by the Perl script)
+ ##  changes in v3.2:
+ ##  v3.2h: (2 Oct 2016)
+ ##          improved the mod 4 routine using  SUB rubikmod()
+ ##          improved comments to log file re: rotation processing
  ##
- ## 3) v3.2a added a \RubikSeqNEW{...}  output line in the output file
- ##    to facilitate typesetting the rotation sequence (works OK just now)
- ##
- ## 4) v3.2c: added new commands: 
- ##           \RotationSequenceName{}
- ##           \RotationSequenceClean{}
- ##
- ## 5) v3.2d: changed the returned command names (removed the Rotation part to keep it simple)
- ##           \Sequence{}  = orig seq  + NO NAME
- ##           \SequenceName{} = NAME only
- ##           \SequenceClean{} = clean seq + NO NAME
- ##
- ## 6) v3.2e:(25 Sept 2016)
+ ##  v3.2e:(25 Sept 2016)
  ##           changed some command names: use short & long for the Rubik R2 --> R,R code 
  ##           (more intuitive than Clean)
  ##           \Sequence{} -->      SecquenceShort{}
  ##           \SequenceClean{} --> SecquenceLong{}
  ##           removed the [ and ] around [name] variable
  ##
- ## 7) v3.2h: (2 Oct 2016)
- ##          improved the mod 4 routine using  SUB rubikmod()
- ##          improved comments to log file re: rotation processing
+ ##  v3.2d: changed the returned command names (removed the Rotation part to keep it simple)
+ ##           \Sequence{}  = orig seq  + NO NAME
+ ##           \SequenceName{} = NAME only
+ ##           \SequenceClean{} = clean seq + NO NAME
  ##
+ ##  v3.2c: added new commands: 
+ ##           \RotationSequenceName{}
+ ##           \RotationSequenceClean{}
+ ##
+ ##  v3.2a: added a \RubikSeqNEW{...}  output line in the output file
+ ##        to facilitate typesetting the rotation sequence (works OK just now)
+ ##
+ ##  v3.2:  --- added leading ... to the comments written by the <writestate> sub
+ ##        (the ... code indicates that comments are written by the Perl script)
+ ##        --- changed the word program, prog --> script 
  ##--------------------------------
- ## changes in v3.0:
- ## 1) accepts command-line arguments for input (mandatory) and output (optional) filenames
- ##    default output filename is: rubikOUT.txt
- ## 2) included the symbols [ and ] to denote a rotation-name label (ie as well as *)
- ## 3) fixed some of the variable definitions (as highlighted by <use strict> pragma)
+ ##  changes in v3.0:
+ ##   --- accepts command-line arguments for input (mandatory) and output (optional) filenames
+ ##       default output filename is: rubikOUT.txt
+ ##   --- included the symbols [ and ] to denote a rotation-name label (ie as well as *)
+ ##   --- fixed some of the variable definitions (as highlighted by <use strict> pragma)
  ##--------------------------------
- ## changes in v2.3:
- ## 1) accepts a single  commandline argument (datafilename)
- ## 2) uses the standard modules Carp and Fatal (give extra  line info on error)
+ ##  changes in v2.3:
+ ##   --- accepts a single  commandline argument (datafilename)
+ ##   --- uses the standard modules Carp and Fatal (give extra  line info on error)
  ##--------------------------------
- ## changes in v2.2:
- ## 1) changed licence --> LatexPP
- ## 2) included random n errors in ERROR messages (lines 492--495)
- ## 3) included version number in error message
+ ##  changes in v2.2:
+ ##   --- changed licence --> LatexPP
+ ##   --- included random n errors in ERROR messages (lines 492--495)
+ ##   --- included version number in error message
  ##------------------------------
  #
  # This file is part of the LaTeX  rubikrotation package, and 
@@ -98,16 +146,16 @@
  ## three associated with each XYZ axis.
  ##----------------------------------------------------------------------
 
- ##------------------ MAIN --------------------------
-
+ ##==MAIN== 
+ ##
  ## This main module opens three files, and 
  ##      sets up an array for collecting all errors (%error), and sets an error flag to "",
- ##      reads in the rubik state data file =rubikstate.dat (output by TeXfile),
+ ##      reads in the rubik state data file =rubikstate.dat (written by rubikrotation.sty),
  ##      and calls subs to write the TeX_OUT_FILE,
  ##      and finally closes all files.
- ## Each line of the input file consists of a comma separated list of arguments.
- ## The first argument in each line of the file rubikstate.dat is the rubikkeyword.
- ## Program is documented in the rubikrotation.pdf (see section ``Overview'')
+ ## Each line of the input file (rubikstate.dat) is a comma separated list of arguments.
+ ## The first argument in each line of the file rubikstate.dat is a rubikkeyword.
+ ##
  ##---------------
  ## set autoflush for outputs
  ## $|=1;
@@ -198,11 +246,12 @@
  our $erroralert  = ""; # error flag
  our $errornumber = 0;  #set number of errors to zero
 
- gprint ("...reading the current rubik state (from File: $source_file)");
+ gprint ("...reading the current cube state (from File: $source_file)");
 
  our $dataline = "";
  our $newdataline ="";
  our $rubikkeyword = "";
+ our $cubesize = "";  ##  to hold the size, as three (Rubik) or two (twocube) 
  our $rotationcommand = "";
  our @data=();
 
@@ -214,6 +263,10 @@
  our $SequenceShort="";
  our $SequenceLong="";
  our $SequenceInfo="";
+
+
+ our $jrcode = 0;  ## We initialise a loop counter for use in the rotation sub
+                   ## (see line 624)
 
   #---------inverse mode------------
   # a keyword INVERSE or inverse in an infoblock <..>
@@ -238,9 +291,10 @@
           $dataline = $_; # grab the whole line as a string
           chomp $dataline;  # remove the line-ending character
 
-          ## now we can clean whitespace
+          ## clean leading and trailing whitespace
           $dataline = cleanstring($dataline); 
-          
+
+
           #check syntax of the string
           $rotationcommand=$dataline; ## needed for error messages
           CheckSyntax($dataline);
@@ -252,24 +306,47 @@
           #-------------------------
 
           ## we have 10 fields (0--9)
-          ## check for rubikkeyword= up,down,left,right,front,back,checkstate,rotation:
+          ## check for rubikkeyword= cubesize, up,down,left,right,front,back,checkstate,rotation:
           $rubikkeyword=$data[0]; 
 
-          if ($rubikkeyword eq 'up') { gprint ("...$dataline");
+          ##--------------------------------
+          ## RWDN 2 August 2017
+          ## introduced keyword cubesize so prog can distinguish
+          ##    between a TWOcube and an THREEcube.
+          ## Here we check for the rubikkeyword `cubesize'  
+          ## cubesize is currently only being used to change the array size in random SUB
+          if ($rubikkeyword eq 'cubesize') {
+                                        gprint ("...");
+                                        $rotationcommand=$dataline; ## used in output message
+                                        gprint ("...command = $rotationcommand");
+                                        $cubesize = RemoveAllSpaces($data[1]);
+                                        if ($cubesize eq "two") {gprint ("...cube = TWOcube")};
+                                        if ($cubesize eq "three") {gprint ("...cube = THREEcube")};
+                                        gprint ("...");
+                                        next LINE ;
+                                       }; 
+          ## ------------------------------------
+
+          ## RWDN 7 February 2018
+          ## we vary the number of leading dots for the gprint command 
+          ##    so as to make the array of colour codes (X,W,Y, etc) form
+          ##    a nice square when printed to the log file (the standard no is 3 dots)
+
+          if ($rubikkeyword eq 'up') { gprint ("......$dataline");
                                 $Ult[0]=$data[1], $Umt[0]=$data[2],$Urt[0]=$data[3],
                                 $Ulm[0]=$data[4], $Umm[0]=$data[5],$Urm[0]=$data[6],
                                 $Ulb[0]=$data[7], $Umb[0]=$data[8],$Urb[0]=$data[9];
                                 next LINE;
                                 };
 
-          if ($rubikkeyword eq 'down') { gprint ("...$dataline");
+          if ($rubikkeyword eq 'down') { gprint ("....$dataline");
                                 $Dlt[0]=$data[1], $Dmt[0]=$data[2],$Drt[0]=$data[3],
                                 $Dlm[0]=$data[4], $Dmm[0]=$data[5],$Drm[0]=$data[6],
                                 $Dlb[0]=$data[7], $Dmb[0]=$data[8],$Drb[0]=$data[9];
                                 next LINE;
                                 };
                                 
-          if ($rubikkeyword eq 'left') { gprint ("...$dataline");
+          if ($rubikkeyword eq 'left') { gprint ("....$dataline");
                                 $Llt[0]=$data[1], $Lmt[0]=$data[2],$Lrt[0]=$data[3],
                                 $Llm[0]=$data[4], $Lmm[0]=$data[5],$Lrm[0]=$data[6],
                                 $Llb[0]=$data[7], $Lmb[0]=$data[8],$Lrb[0]=$data[9];
@@ -290,7 +367,7 @@
                                 next LINE;
                                 };
                                 
-          if ($rubikkeyword eq 'back') { gprint ("...$dataline");
+          if ($rubikkeyword eq 'back') { gprint ("....$dataline");
                                 $Blt[0]=$data[1], $Bmt[0]=$data[2],$Brt[0]=$data[3],
                                 $Blm[0]=$data[4], $Bmm[0]=$data[5],$Brm[0]=$data[6],
                                 $Blb[0]=$data[7], $Bmb[0]=$data[8],$Brb[0]=$data[9];
@@ -302,7 +379,7 @@
           if ($rubikkeyword eq 'checkstate') {
                                         gprint ("...");
                                         $rotationcommand=$dataline; ## used in output message
-                                        gprint ("...command=$rotationcommand");
+                                        gprint ("...command = $rotationcommand");
                                         checkstate();
                                         next LINE ;
                                        }; 
@@ -314,18 +391,26 @@
           ## ELSE   it  must be a rotation sequence  --> send elements to rotation sub.
 
 
-          #------------------------
-           if ($rubikkeyword eq 'rotation') 
-                {
-                     gprint ("..."); 
+      if  ($rubikkeyword eq 'rotation')  
+
+           {  ## this IF runs down to near end of MAIN
+
+  ##RWDN 10 Aug 2017
+  ## moved checkstate  to be inside rotation (so a next LINE will terminate prog)
+  gprint ("...");
+  gprint ("...rotation keyword");
+  checkstate();
+
+
+                     gprint ("..."); ## logfile marker for begining of `rotation/random' process
 
                      # we now grab a copy of the dataline, and we shall use this
                      # in the ErrorMessage SUB  to indicate which command
                      # an error is in.
                      $rotationcommand=$dataline; ## used in output message
-                     gprint ("...command=$rotationcommand");
+                     gprint ("...command = $rotationcommand");
 
-
+ 
                      # need to check that a second argument exists (else --> ErrorMessage).
                      #  ---should be either `random', 
                      #  ---or a macroname for a rotation sequence,
@@ -341,30 +426,72 @@
 
                  
                    
-                   ##-----random-----------------
-                   ## if second argument = random, 
+                   ##---------keyword = random-----------------
+                   ##  (command used for scrambling the cube)                    
+                   ## if second argument in $dataline = random 
                    ##   THEN we also need to check if third argument is an integer; 
-                   ## if so -->random sub.
-                   ## if the 3rd argument is NOT an integer then reject line & get next input line
-                   if ($data[1] eq 'random') 
-                         {
-                            if ($data[2] =~/\D/) {  
-                                ## if true then cannot be a number (D matches for word elements)
-                                ErrorMessage("[$data[2]] is not an integer");
-                                ##  we reject the command (as bad syntax) and get next line
+                   ## if so  send integer --> random sub.
+                   
+                   ##----------------------------
+                   ## (28 July 2017: RWDN) : bugfix:
+                   ##  better syntax checking required for the <random,n> command
+                   ##  as spaces  before or after commas  caused errors.
+                   ##-----------------------------
+ 
+      
+                      ## allow upper and lowercase keyword random
+                      if ( lc( $data[1] ) =~  m/random/ ) 
+                          {
+                           ## the string contains the keyword  random
+
+                           ## now check for missing comma after the keyword
+                           if ( lc( RemoveAllSpaces($data[1]) ) ne "random" )
+                                        {## error, ? missing comma
+                                         ErrorMessage("[$data[1]] --- missing comma after `random' ");
+                                         next LINE;
+                                        }; 
+
+                           ## now check for the trailing integer
+
+                           if ( ( lc( RemoveAllSpaces($data[1]) ) eq "random") and ($data[2] eq "")  ) 
+                              {
+                               ## missing integer
+                               ErrorMessage("[$data[2]] --- missing integer after `random,'");
+                               next LINE;
+                              };
+
+                           
+                           if (RemoveAllSpaces($data[2]) =~ /\D/) 
+                              {
+                                ##  Note that the \D  operator sees ,  23,  as a word not an integer.  
+                                ## so if true then cannot be a number (D matches word and space elements)
+                                ErrorMessage("[$data[2]] --- this is not an integer");
                                 next LINE;
-                            }
-                            else{ 
-                                ## the next argument is an integer (n), so we do n random rotations 
-                                random($data[2]);
-                                next LINE; 
-                            };
-                         } ## end of IF
-                         #---------------
+                              }
+                               else {## string consists of one or more integers 
+                                     ## check to see if more than one integer exists
+                                     ## by seeing if the string changes if we remove all the spaces
+                                     ## (note we have to use a string with the m operator)
+                                     my $RAS = RemoveAllSpaces($data[2]);
+                                     if ($data[2] =~  m/$RAS/ ) 
+                                       {
+                                       ## OK so this must be a single integer
+                                       ## so we can now do n random rotations
+                                       ## by sending the integer to the random SUB 
+                                       random($data[2]);
+                                       next LINE;
+                                       }
+                                       else {## there must be spaces separating several integers;
+                                            ErrorMessage("[$data[2]] --- only one integer allowed");
+                                            next LINE;
+                                            };
+                                    }; ## end of else
+                          } ## end of IF
+                   ##-----------------------------------------------------------
                          
                    else {
-                         # -----rotation sequence---------
-                         # the line must be a rotation sequence line, so send the sequence 
+                         ## -----rotation sequence---------
+                         ## the line must be a rotation sequence line, so send the sequence 
                          # to the rotation sub;  
 
                          # Note that a copy of the rotation command is already held in the 
@@ -372,17 +499,36 @@
                          # ErrorMessage SUB.
 
                            
-           #-------------------------------
-
-           # Process and remove any infoblocks if they exist
-           #  infoblocks  are text delimited by <...>  
-           # The SUB cutinfoblock  returns the name of the new revised string = newdataline,
-           #   and also the contents of the infoblock = $SequenceInfo
-           # RubikRotation command uses infoblocks to cary keywords, eg INVERSE or inverse
+           #----<infoblocks>---------------------------
+           
+           # infoblocks are strings bounded by angle brackets <..>
+           # and are designed for holding metadata.
+           #
+           # Multiple comma separated infoblocks are allowed (but NOT nested). 
+           # All infoblocks are eventually concaternated into a colon separated string, and 
+           # returned into the OUT file (= rubikstateNEW.dat) as the macro \SequenceInfo.
+           #
+           # We process and then remove any infoblocks which exist.
+           #  infoblocks  are chars delimited by <...>  
+           #
+           # The SUB infoblockcolon replaces any commas with a colon (so as to 
+           #   facilitate  string manipulation, and allows us to distinguish between 
+           #   a string and a data array), and  returns a new string (= $newdataline).
+           #
+           # The RubikRotation argument  allows <infoblocks>   for carrying  special 
+           #    keywords, eg <inverse> which can be used to influence the process.
            # If several infoblocks exist, then we collect the contents into  
            #   variable SequenceInfo, and separate them with a colon;
+           #
+           # The SUB cutinfoblock  returns TWO strings: 
+           #  (1) the name of the new revised string = newdataline, (with infoblocks removed)
+           #  (2) the contents of the infoblock = $SequenceInfo
+
 
               infoblockcolon($dataline);
+
+             ## rename the returned newdataline string  to dataline
+             ## and reinitialise the string  newdataline so it can be used again.
               $dataline=$newdataline;
               $newdataline="";  ## reset the variable
 
@@ -393,28 +539,42 @@
            ## now pass the string to cutinfoblock
            local  @seq=();
 
+
            while ( (index $dataline, '<') !=-1 ){
 
-               cutinfoblock($dataline);
-             # best to use the whole word <inverse> to avoid errors
-             if ($SequenceInfo =~ m/(inverse|INVERSE)/) {$directionflag=$inverse;
+                 cutinfoblock($dataline);
+                 # best to use the whole word <inverse> to avoid errors
+                 # best to force lowercase so users can type the word as they want
+ 
+                if ( lc($SequenceInfo) =~ m/(inverse)/) {
+                              ## set a FLAG
+                              $directionflag=$inverse;
                               print " FLAG set to = $inverse\n";
                              };
-               # append each infoblock to an array
-               push  @seq, $SequenceInfo;
-               $dataline = $newdataline;   
+                # append each infoblock to an array
+                push  @seq, $SequenceInfo;
+                $dataline = $newdataline;   
             };
            
            # finally, we join the seqInfo array into a string so we can print it
           $SequenceInfo = join ("; ", @seq);
 
-       
-          #----------------------------------
-          ## there are now no more infoblocks, so we now look for repeat-blocks.
 
-           ## reformulate any repeat blocks (,) --> {;} if they exist
+       
+          #--------repeat blocks--------------------------
+
+          ## there are now no more infoblocks, so we now look for repeat-blocks.
+          ## these are embedded inside the rotation sequence
+
+           ## we first reformulate any repeat blocks (,) --> {;} if they exist
            ## this is to allow us to process any repeat blocks as separate elements
-           # this sub returns the name of the new revised string.
+           ## so we look for curved brackets ie indicating a repeat block, and 
+           ## if we find a ( we then send the dataline to the SUB fixrepeatelement()
+           ## the  SUB fixrepeatelement() then  returns the new revised  dataline string 
+           ## containing the FIRST repeat block which has been expanded.
+           ## If there is another ( then we repeat the procedure until all
+           ## repeat blocks have been expanded, and incorporated into the mail rotation string.
+           
            while ( (index $dataline, '(') !=-1 ){
               fixrepeatelement ($dataline);
               $dataline=$newdataline;
@@ -422,7 +582,8 @@
            };
      
           ## rename remaining dataline string as SequenceShortBrace
-          ## since if there are any repeat blocks, they are now reformulated with braces 
+          ## since if there are any repeat blocks, they are now reformulated with braces and semicolons
+          ## ie (,) --> {;} etc 
           $SequenceShortBrace=$dataline;
  
            
@@ -450,16 +611,18 @@
                 
                  #-----create SequenceShort, so we can output it later----
                  
-                 #   since the `rotating' keyword has been removed, we can 
-                 #   replace any braces around repeat strings (if exist) and 
-                 #   rename it as SequenceShort which we will output  at the end.
+                 #   since the `rotating' keyword has been removed from the string,  
+                 #   we can replace (repair to original state) any braces  or or semicolons  
+                 #   around repeat strings (if exist) and then rename it as SequenceShort 
+                 #   which we will output at the end (in SUB writestate).
+
                  if ( (index $SequenceShortBrace, '{') !=-1 )
                       {
-                       print " repairing braces--> ()\n";
+                       print " repairing braces and semicolon--> ()\n";
                        ## swap: BBook p 138--139
-                       $SequenceShortBrace =~ tr/\{/(/;  # swap , --> ; 
-                       $SequenceShortBrace =~ tr/\}/)/;  # swap ( --> {
-                       $SequenceShortBrace =~ tr/;/,/;   # swap ) --> }
+                       $SequenceShortBrace =~ tr/\{/(/;  # swap { --> ( 
+                       $SequenceShortBrace =~ tr/\}/)/;  # swap } --> )
+                       $SequenceShortBrace =~ tr/;/,/;   # swap ; --> ,
                       };
                  
                   #rename to SequenceShort
@@ -474,12 +637,8 @@
                          my $n = 0;   ##total no of array elements in "data"
                          $n = ($#data +1);
                          print " processing rotation arguments: = @data (n= $n)\n";     
-                         
-                                          
-                         # setup a loop counter (for use in the rotation sub)
-                         # this is used to identify the first element (rcode) 
-                         # and used to grab [name] --> SequenceName.
-                         our $jrcode=0;  
+                       
+                                         
 
           ## --------check for state of  direction flag---------------------- 
           ##  FLAG defined in line 224.
@@ -511,7 +670,7 @@
                                     };
                                             
                    }  # end of else
-          };  # end of IF (rotation keyword)
+          };  # end of IF ( re: rotation keyword)
                    
  #----------------------------------------------
  ## place any new keywords for processing here
@@ -574,19 +733,27 @@ print " SUB rotation\n";
      
         ## grab a copy of the element (char) for use if  m Mod4=0
         $originalrcode=$rcode;
-        
-        ## increment the loop counter (initialised in MAIN)
+
+              
+        ## increment the LOOP counter 
+        ## (initialised  using <our> in MAIN = line 226)
+        ## for use in the rotation SUB.
+        ## This counter is used to identify the first element (rcode) 
+        ## and used to grab [name] --> SequenceName.
         $jrcode=$jrcode+1;  ## increment rotation element (char) counter 
         
     
-    ## ----------------------------------
+    ## -----check for [nameblocks]-----------------------------
+    ##
     ## We look at the first character of each element in the sequence
     ## if an element has a leading [  then it is a label (not a rotation) 
-    ## should really be matched, but this is not checked for at present.
-    ## If this is the case, then  jump to next element in the array
+    ## If this is the case, then jump to next element in the array
 
-    ## BUT  if trailing comma is missing, then  next rotation is included as part of the label 
-    ## so need to trap this and test: is first AND last char a sq bracket?
+    ## BUT if trailing comma is missing, then (error as  next rotation will be included
+    ##    as part of the label) so need to trap this and
+    ## make the test: is first AND last char a sq bracket?
+    ## (strictly only need to look at /first/ char, as the early syntax check will have
+    ##     detected any unbalanced brackets already)
     
     if ( (substr ($rcode,0,1)  =~  /\[/) and (substr ($rcode,-1) ) =~  /\]/) { 
 
@@ -594,24 +761,28 @@ print " SUB rotation\n";
                 
                 if ($directionflag eq $inverse) {
                      # do nothing
-                    }
+                  }
                
                   else{
-                      ## if this `label' is also the FIRST element, then label = name
+                      ## if this `label' is also the FIRST element, then label = nameblock
                       if ($jrcode ==1)  {$SequenceName=$rcode};
                       }; # end of IF
 
-                ## now get next rotation element
-                next;   
-                }; ## end of if      
+           ## now get next rotation element
+           next;   
+        }; ## end of if      
 
      ##--------------
 
+
  ## the rcode must therefore be either a rotation code or a repeat-block. 
   
- ##---------------------------------------- 
- ## we have already replaced any repeat (,) with {;} 
- ## so we now check for  elements with leading { and then expand  them.
+ ##-------check for (repeatblocks)--------------------------------- 
+ ##
+ ## we have already replaced any repeat chars (,) with {;} 
+ ## so we now check for  elements with leading { and then expand  them
+ ##   the appropriate number of times.
+ ## Note that the actual expansion is done by SUB repeat()
  
  ## Note that if there is NO comma before the {} of a {repeat block}, then
  ## the true repeat block  will not be recognised by the 
@@ -741,6 +912,32 @@ print " SUB rotation\n";
       ## if more than one trailing digit
       ##     then the error is trapped at the end (as frontstring will not be recognised
       ##     ie will not be  in the following list, and hence will be trapped as an error, eg R3)
+
+
+
+##-----------------------
+## RWDN Sept29 2017 testing to fix  WESTERN notation problem
+##  arrange for user to be able to include <western> in metadata etc
+##  -- as this will mean that one can store these algorithms as a macro
+ 
+   if ( lc($SequenceInfo)  =~  m/(western)/ )  {
+
+       if ($rcode eq "l")  {$rcode = "Lw";  gprint ("...WESTERN NOTATION: rotation l  --> Lw,    OK") };
+       if ($rcode eq "lp") {$rcode = "Lwp"; gprint ("...WESTERN NOTATION: rotation lp --> Lwp,   OK") };
+       if ($rcode eq "r")  {$rcode = "Rw";  gprint ("...WESTERN NOTATION: rotation r  --> Rw,    OK") };
+       if ($rcode eq "rp") {$rcode = "Rwp"; gprint ("...WESTERN NOTATION: rotation rp --> Rwp,   OK") };
+       if ($rcode eq "f")  {$rcode = "Fw";  gprint ("...WESTERN NOTATION: rotation f  --> Fw,    OK") };
+       if ($rcode eq "fp") {$rcode = "Fwp"; gprint ("...WESTERN NOTATION: rotation fp --> Fwp,   OK") };
+       if ($rcode eq "b")  {$rcode = "Bw";  gprint ("...WESTERN NOTATION: rotation b  --> Bw,    OK") };
+       if ($rcode eq "bp") {$rcode = "Bwp"; gprint ("...WESTERN NOTATION: rotation bp --> Bwp,   OK") };
+       if ($rcode eq "u")  {$rcode = "Uw";  gprint ("...WESTERN NOTATION: rotation u  --> Uw,    OK") };
+       if ($rcode eq "up") {$rcode = "Uwp"; gprint ("...WESTERN NOTATION: rotation up --> Uwp,   OK") };
+       if ($rcode eq "d")  {$rcode = "Dw";  gprint ("...WESTERN NOTATION: rotation d  --> Dw,    OK") };
+       if ($rcode eq "dp") {$rcode = "Dwp"; gprint ("...WESTERN NOTATION: rotation dp --> Dwp,   OK") };
+
+       };
+##-----------------------
+
 
 
        if ($rcode eq "L")   {for($j=1;$j<=$m;$j++) {gprint ("...rotation L,   OK (= Lp3)"); &rrL}}
@@ -889,17 +1086,17 @@ print " SUB rotation\n";
 
     ## whole cube rotations
     ## need to include x,y,z (upper and lowercase) and also u,d,l,r,f,b (lowercase only) equivalents
-    elsif ($rcode eq "X" or $rcode eq "x" or $rcode eq "r")  
+    elsif ($rcode eq "X" or $rcode eq "x" or $rcode eq "r"  or $rcode eq "lp")  
                {for($j=1;$j<=$m;$j++) {gprint ("...rotation $rcode, OK (= x = R + Sr + Lp)"); &rrR;&rrSr;&rrLp}}
-    elsif ($rcode eq "Xp" or $rcode eq "xp" or $rcode eq "l")  
+    elsif ($rcode eq "Xp" or $rcode eq "xp" or $rcode eq "l"  or $rcode eq "rp")  
                {for($j=1;$j<=$m;$j++) {gprint ("...rotation $rcode, OK (= xp = Rp + Srp + L)");&rrRp;&rrSrp;&rrL}}
-    elsif ($rcode eq "Y" or $rcode eq "y" or $rcode eq "u")   
+    elsif ($rcode eq "Y" or $rcode eq "y" or $rcode eq "u" or $rcode eq "dp")   
                {for($j=1;$j<=$m;$j++) {gprint ("...rotation $rcode, OK (= y = U + Su + Dp)"); &rrU;&rrSu;&rrDp}}
-    elsif ($rcode eq "Yp" or $rcode eq "yp" or $rcode eq "d")  
+    elsif ($rcode eq "Yp" or $rcode eq "yp" or $rcode eq "d" or $rcode eq "up")  
                {for($j=1;$j<=$m;$j++) {gprint ("...rotation $rcode, OK (= yp = Up + Sup + D)");&rrUp;&rrSup;&rrD}}
-    elsif ($rcode eq "Z" or $rcode eq "z" or $rcode eq "f")   
+    elsif ($rcode eq "Z" or $rcode eq "z" or $rcode eq "f" or $rcode eq "bp")   
                {for($j=1;$j<=$m;$j++) {gprint ("...rotation $rcode, OK (= z = F + Sf + Bp)"); &rrF;&rrSf;&rrBp}}
-    elsif ($rcode eq "Zp" or $rcode eq "zp" or $rcode eq "b")  
+    elsif ($rcode eq "Zp" or $rcode eq "zp" or $rcode eq "b" or $rcode eq "fp")  
                {for($j=1;$j<=$m;$j++) {gprint ("...rotation $rcode, OK (= zp = Fp + Sfp + B)");&rrFp;&rrSfp;&rrB}} 
 
     ## more whole cube notation
@@ -955,16 +1152,14 @@ print " SUB rotation\n";
             if  ( $rcode =~  m/(\(|\)|\[|\])/) {
                 gprint ("..*rotation $rcode ERROR -- code not known ? missing comma or nested brackets");  
                 ErrorMessage("$originalrcode  -- code not known ? missing comma or nested brackets");
+                ## DO NOT  --> (next LINE;) here as need to check /all/ the rotation codes in the string.
                    }
              else{
                   gprint ("..*rotation $rcode ERROR -- code not known ? typo or missing comma");  
                   ErrorMessage("$originalrcode  -- code not known ? typo or missing comma");
+                  ## DO NOT  --> (next LINE;) here as need to check /all/ the rotation codes in the string.
                 };
 
-          # missing comma after random is a common error
-          if  ($originalrcode =~  m/random/i ) {
-                            ErrorMessage("$originalrcode  -- ? missing comma after random");
-                            }; 
      #-----------------------------
      next;
      }; #end of else
@@ -980,6 +1175,7 @@ print " SUB rotation\n";
 
 print " SUB random\n"; 
 
+
 ## scramble  randomly using n rotations
 ## example command = RubikRotation{random,74}
 ## if no n given (second argument  = ""), then use default n=50
@@ -988,22 +1184,48 @@ print " SUB random\n";
 ## assign numbers to the minimal set of rotations to be used using a hash array list
 ## (perl 5 book page 68)
 ## ? maybe we should only use the 18 rotations mentioned in Rokicki 2013 paper?
-## but here I have included all the S ones too.
+## but here I have included all the slice (Xm) ones as well.
 
 
-my @rrlist= ("U", "Up", "Um", "Ump",
-             "D", "Dp", "Dm", "Dmp",
-             "L", "Lp", "Lm", "Lmp",
-             "R", "Rp", "Rm", "Rmp",
-             "F", "Fp", "Fm", "Fmp",
-             "B", "Bp", "Bm", "Bmp");
+  ## initialise the array for the random rotations
+  my @rrlist = ();
+
+
+  ## (RWDN 2 Aug 2017): 
+  ## now check to see if TWOcube or Rubikcube being used
+  ## use cubesize as the filter
+
+  if ($cubesize eq 'two')
+     {
+     ## using the TwoRotation command (from RubikTwoCube.sty)
+     ## no slice rotations 
+     ##
+      @rrlist = ("U", "Up", 
+                 "D", "Dp", 
+                 "L", "Lp", 
+                 "R", "Rp", 
+                 "F", "Fp", 
+                 "B", "Bp");
+     }
+
+   else {
+         ## using the RubikRotation command (from RubikRotation.sty)
+         @rrlist = ("U", "Up", "Um", "Ump",
+                    "D", "Dp", "Dm", "Dmp",
+                    "L", "Lp", "Lm", "Lmp",
+                    "R", "Rp", "Rm", "Rmp",
+                    "F", "Fp", "Fm", "Fmp",
+                    "B", "Bp", "Bm", "Bmp");
+        };
+
 
 my $rrlistnumber=$#rrlist;
 print " rrlistnumber = $rrlistnumber\n";
+    gprint  ("...random SUB: rrlistnumber (array size) =  $rrlistnumber");
 # these are numbered 0--$rrlistnumber,
 
 ## let default no of random rotations for scrambling = 50  
-my $defaultn = 50;
+my $defaultn = 50;  ## RWDN (1 Aug 2017): not being used any more
 my $maxn     = 200;
 
   ##  grab the integer passed  from the random() command in main
@@ -1011,16 +1233,18 @@ my $maxn     = 200;
 
   if ($s >= $maxn) {$s = $maxn;
                      gprint ("..*WARNING: maximum n = 200");
-                     ErrorMessage ("random: max n =200 (n=200 was used)")}
-     elsif ($s == 0) {$s = $defaultn;
-                     gprint ("..*WARNING: integer = 0 or missing: using default value 50");
-                     ErrorMessage ("warning: integer n missing or invalid (n=50 was used)")};
+                     ErrorMessage ("random: max n = 200 (n=200 was used)")}
+     elsif ($s == 0) {## $s = $defaultn;
+                     gprint ("..*ERR: integer n = 0 (invalid)");
+                     ErrorMessage (" --- integer n = 0 (invalid)");
+                     next LINE;
+                     };
 
   my @rr; ## array to hold all the random rotations
   print " randomising the available rotations\n";
 
 
- ## set the seed for the randomisation (BlackBook p 235)
+ ## set the seed for the randomisation (Perl BlackBook p 235)
  srand;
 
 ## now select s numbers at random (with replacement) from range 0--listnumber+1
@@ -1040,7 +1264,7 @@ for ($j = 1; $j <=$s; $j=$j+1)
     };
   
   ## we assume the user is starting from a solved cube (ie use the state given by user) 
-  gprint ("...scrambling Rubik cube using $s random rotations");
+  gprint ("...scrambling cube using $s random rotations");
   
   ## now send the array off to the rotation sub
 
@@ -1061,7 +1285,7 @@ print " SUB writestate\n";
 
 print (TeX_OUT_FILE    "\%\% ...output datafile=$out_file\n");
 print (TeX_OUT_FILE    "\%\% ...PERL script=rubikrotation.pl version $version\n");
-print (TeX_OUT_FILE    "\\typeout{...writing new Rubik state to file $out_file}\%\n");
+print (TeX_OUT_FILE    "\\typeout{...writing new cube state to file $out_file}\%\n");
 print (TeX_OUT_FILE    "\\RubikFaceUp\{$Ult[0]\}\{$Umt[0]\}\{$Urt[0]\}\{$Ulm[0]\}\{$Umm[0]\}\{$Urm[0]\}\{$Ulb[0]\}\{$Umb[0]\}\{$Urb[0]\}\%\n");
 print (TeX_OUT_FILE    "\\RubikFaceDown\{$Dlt[0]\}\{$Dmt[0]\}\{$Drt[0]\}\{$Dlm[0]\}\{$Dmm[0]\}\{$Drm[0]\}\{$Dlb[0]\}\{$Dmb[0]\}\{$Drb[0]\}\%\n");
 print (TeX_OUT_FILE    "\\RubikFaceLeft\{$Llt[0]\}\{$Lmt[0]\}\{$Lrt[0]\}\{$Llm[0]\}\{$Lmm[0]\}\{$Lrm[0]\}\{$Llb[0]\}\{$Lmb[0]\}\{$Lrb[0]\}\%\n");
@@ -1109,7 +1333,16 @@ if ($numberofcharsinstring <= 2)
   $SequenceNameNew = substr($SequenceName,1,$nmiddlecharsinstring); 
    };
    
-   
+  ## RWDN  24 October 2017 
+  ## swap char changes back before writing output string
+  ## only swap the brackets 
+  ## (do NOT swap ; --> , as ONLY use commas /outside/ infoblocks and  between rotation sequences)
+  ## swap: BBook p 138--139
+  
+  $SequenceNameNew =~ tr/\{/(/;  # swap { --> ( 
+  $SequenceNameNew =~ tr/\}/)/;  # swap } --> )
+
+ 
 print (TeX_OUT_FILE    "\\renewcommand\\SequenceName\{$SequenceNameNew\}\%\n");
 
 print (TeX_OUT_FILE    "\\typeout{...SequenceName = $SequenceNameNew}\%\n");
@@ -1118,9 +1351,9 @@ print (TeX_OUT_FILE    "\\typeout{...SequenceName = $SequenceNameNew}\%\n");
 
  
 #----------SequenceInfo----------------
-## we need to  preserve any {} structures in the  info string, 
-## so change { } --> [ ] since 
-## otherwise they will disappear or cause error when printed in LaTeX 
+## we need to  preserve any {} structures in the  info string (as used by Kociemba), 
+## so we have to change { } --> [ ] since otherwise they will disappear 
+## or cause an error when printed in LaTeX 
 
  $SequenceInfo=~ tr/\{/\[/;  ## swap { --> [
  $SequenceInfo=~ tr/\}/\]/;  ## swap } --> ]
@@ -1142,7 +1375,7 @@ print (TeX_OUT_FILE    "\\renewcommand\\SequenceShort\{$SequenceShort\}\%\n");
 print (TeX_OUT_FILE    "\\typeout{...SequenceShort = $SequenceShort}\%\n");
 ##-----------------------
 
-
+##-----------SequenceLong-------------------
 ## now prepare the new LONG rotation sequence for output =(LONG sequence + NO NAME)
 ## BUT before outputting the string, we need to remove the terminal comma
 
@@ -1274,27 +1507,34 @@ print " SUB checkstate\n";
          
  if ($R >9){
        ErrorMessage("red cubies > 9 (=$R)");
-       gprint   ("..*red cubies > 9 (=$R)") };
+       gprint   ("..*red cubies > 9 (=$R)");
+       };
        
  if ($O >9){
        ErrorMessage("orange cubies > 9 (=$O)");
-       gprint   ("..*orange cubies > 9 (=$O)") };
+       gprint   ("..*orange cubies > 9 (=$O)");
+       };
                 
  if ($Y >9){
        ErrorMessage("yellow cubies > 9 (=$Y)");
-       gprint   ("..*yellow cubies > 9 (=$Y)") };
+       gprint   ("..*yellow cubies > 9 (=$Y)");
+     #  next LINE 
+       };
          
  if ($G >9){
        ErrorMessage("green cubies > 9 (=$G)");
-       gprint   ("..*green cubies > 9 (=$G)") };
+       gprint   ("..*green cubies > 9 (=$G)");
+       };
         
  if ($B >9){
        ErrorMessage("blue cubies > 9 (=$B)");
-       gprint   ("..*blue cubies > 9 (=$B)") };
+       gprint   ("..*blue cubies > 9 (=$B)");
+       };
         
  if ($W >9){ 
        ErrorMessage("white cubies > 9 (=$W)");
-       gprint   ("..*white cubies > 9 (=$W)") };
+       gprint   ("..*white cubies > 9 (=$W)");
+       };
         
  if ($X == 54){ 
        ErrorMessage("no colours allocated  (X=54)");
@@ -1979,6 +2219,7 @@ print " SUB rubikmod\n";
     sub cleanstring {
  
     # to clean leading and trailing whitespace from a string
+    # from Black Book page 147
  
     my $line="";
 
@@ -2150,11 +2391,19 @@ print " SUB rubikmod\n";
 
   sub repeat {
   
- # to expand the repeating elements
+  print " SUB repeat\n"; 
 
-print " SUB repeat\n"; 
+ ## this SUB expand the repeating elements
+ ## this SUB receives a repeat string in the form  {L,R, }3
+ ## The original () were converted (above) into {} so we can distinguish the brackets.
+ ## we than extract the code sequence and the terminal repeat number
+ ## Then we join n copies of the code string to form a long cs string.
+ ## then we insert this new long string into the main rotation sequence without the {}
+ ## Ultimately the fully expanded rotation sequence is fed into  SUB rotation for processing.
+
+
  
- ## pass the whole repeatstring = {...}n
+ ## grab the whole repeatstring = {...}n
  my $repeatstring = $_[0];
 
  # the string ={code}n
@@ -2184,6 +2433,8 @@ print " SUB repeat\n";
               print " p = $p\n";
               print " q = $q\n";
               
+        ##-----------------------
+        ## now get the repeat number
               
            if ($lenrepeatcode == ($lenrepeatstring-2)) {
                           print " there is no trailing number --> 1\n";
@@ -2206,9 +2457,10 @@ print " SUB repeat\n";
                        };
 
                }; #end of else
-                            
+            ##-------------------                
             
-            ## make n copies of repeatcode
+            ## now make n copies of repeatcode and name the string = $insert 
+            ## (which is then used by another part of the prog) 
             ## we need commas only between elements (not at end)
             
             $insert="";  ## $insert = global
@@ -2390,7 +2642,7 @@ print " SUB repeat\n";
   sub RemoveAllSpaces {
 
   # remove all spaces in a string
-  # Black book page 143
+  # from Black book page 143
 
  my $string=$_[0];
 
@@ -2404,22 +2656,24 @@ print " SUB repeat\n";
 
 sub CheckSyntax   {
 
- ## checks that all () {} <>  are matched (if any exist)
- ## checks for other syntax problems, eg  missing commas
- ## if any brackets are not balanced, then we SET an errorflag, and terminate the program
+ ## this check is used at an early stage in the program, so we can terminate early 
+ ## if necessary. We check that all () {} <>  are matched (if any exist),
+ ##    missing commas, illegal combinations of chars etc.
+ ## if any serious errors (eg  brackets not balanced), then we SET an errorflag, 
+ ##    and terminate the program.
 
  print " SUB CheckSyntax\n";   
  
  my $dataline = $_[0];
 
- # first clean out all spaces so we can look for specific strings
+ ## first clean out all spaces in a string 
+ ##   so we can then look for specific combinations of characters
  $dataline=RemoveAllSpaces($dataline);
 
  print " dataline = $dataline\n";
 
-
-
- 
+ ##-------------------------------------
+ ## first we check for unbalanced brackets 
  ## count brackets; Angle, Square, Curved 
  my ($nleftA, $nrightA) = 0;
  my ($nleftS, $nrightS) = 0;
@@ -2440,77 +2694,124 @@ sub CheckSyntax   {
  print " left and right [] = $nleftS, $nrightS\n";
  print " left and right () = $nleftC, $nrightC\n";
 
-  
  $leftsum = $nleftA + $nleftS + $nleftC;
  $rightsum =$nrightA + $nrightS + $nrightC;
  
  print " leftsum, rightsum = $leftsum, $rightsum\n";
 
- # define the current rotation command before any ErrorMessages are issued
- # $rotationcommand=$dataline; ## used in  writestate sub
- 
+  
  my $errorflag = "";
 
  if ($leftsum != $rightsum) 
        {
       
        if ( $nleftS != $nrightS ) 
+           ## Square brackets
            {
-           gprint ("..*brackets ERROR [ ] Left [$nleftS  not equal to Right $nrightS]");
-           ErrorMessage ("brackets [ ]: Left [$nleftS  not equal to Right $nrightS]");
+           gprint ("..*brackets ERROR [ ] Left [$nleftS not equal to Right ]$nrightS");
+             ErrorMessage ("brackets [ ]: Left [$nleftS not equal to Right ]$nrightS");
            $errorflag="SET";
            }
        
        if ( $nleftC != $nrightC ) 
+            ## Curved brackets
             {
-            gprint ("..*brackets ERROR ( ) Left ($nleftC  not equal to Right $nrightC)");
-            ErrorMessage ("brackets ( ): Left ($nleftC  not equal to Right $nrightC)");
+            gprint ("..*brackets ERROR ( ) Left ($nleftC not equal to Right )$nrightC");
+              ErrorMessage ("brackets ( ): Left ($nleftC not equal to Right )$nrightC");
             $errorflag="SET";
             }
       
        if ( $nleftA != $nrightA ) 
+           ## Angle brackets
            {
-            gprint ("..*brackets ERROR < > Left <$nleftA  not equal to Right $nrightA>");
-            ErrorMessage ("brackets < >: Left <$nleftA  not equal to Right $nrightA>");
+            gprint ("..*brackets ERROR < > Left <$nleftA not equal to Right >$nrightA");
+              ErrorMessage ("brackets < >: Left <$nleftA not equal to Right >$nrightA");
             $errorflag="SET";
            }
       
        };
 
- #--------------------------
+ ##--------------------------
 
 
 
- # check for other bad syntax
- # BB p136 
+ ## check for other bad syntax, eg illegal pairings of characters
+ ## BlackBook p136 
 
    my ($char1, $char2, $charpair) = "";
    my ($j, $lenstring) = 0;
    $lenstring= length $dataline;
-   print "lenstring = $lenstring\n";
+   print " lenstring = $lenstring\n";
 
-   # set initial state of inout-flag
-   my $angleflag = "outside";
-   my $squareflag = "outside";
-   my $curvedflag = "outside";
 
-   # look at each char 
+   ## we set up a system which allows us to know whether or not we are 
+   ## inside a set of brackets. To do this we increment / decrement counters
+   ## each time we pass through a bracket. 
+   ## If sum NOT equal to zero, then we are inside etc.
+
+   ## first initialise each left and right variable.
+   ## seems important that these initialisations are done separately.
+
+   my $angleNumLeft   = 0;
+   my $angleNumRight  = 0;
+   my $angleNumSum    = 0;
+
+   my $squareNumLeft  = 0;
+   my $squareNumRight = 0;
+   my $squareNumSum   = 0;
+
+   my $curvedNumLeft  = 0;
+   my $curvedNumRight = 0;
+   my $curvedNumSum   = 0;
+
+
+   ## look at each char, and each pair of chars 
+   ## with brackets, we increment (right) and decrement (left) the count 
+   ## so we can tell if we are inside or outside a set of nested brackets.
+   ## (we need to detect errors in the rotation sequence itself 
+   ##  and also inside squarebrackets] since these can occur anywhere,
+   ##  but not in the angle infoblocks <..> where we want to be able to write anything)
+
    for ($j=0; $j<= $lenstring; $j=$j+1) {
       $charpair = substr ($dataline,$j,2);
       $char1 = substr ($dataline,$j,1);
       $char2 = substr ($dataline,$j+1,1);
 
-      ## at top of for loop
-      if ($char1 eq '<'){$angleflag = "inside"};
-      if ($char1 eq '>'){$angleflag = "outside"};
-      if ($char1 eq '['){$squareflag = "inside"};
-      if ($char1 eq ']'){$squareflag = "outside"};
-      if ($char1 eq '('){$curvedflag = "inside"};
-      if ($char1 eq ')'){$curvedflag = "outside"};
+      ## at top of FOR loop
+      if ($char1 eq '<'){ $angleNumLeft  = $angleNumLeft+1};
+      if ($char1 eq '>'){$angleNumRight  = $angleNumRight-1};
 
+      if ($char1 eq '['){$squareNumLeft  = $squareNumLeft+1};
+      if ($char1 eq ']'){$squareNumRight = $squareNumRight-1};
+
+      if ($char1 eq '('){$curvedNumLeft  = $curvedNumLeft+1};
+      if ($char1 eq ')'){$curvedNumRight = $curvedNumRight-1};
+
+
+     $angleNumSum =  $angleNumLeft + $angleNumRight;
+    $squareNumSum = $squareNumLeft + $squareNumRight;
+    $curvedNumSum = $curvedNumLeft + $curvedNumRight;
        
-      if ($angleflag eq "outside"){
-                                                     
+ ##RWDN 22 Oct 2017 
+    
+     ##------------
+     ##  need to trap nested (( )) inside squarebrackets
+
+     if  ($squareNumSum != 0)  {
+          if  ( $charpair =~  m/(\(\(|\)\))/  ) 
+               { # nested curved brackets inside  sq brackets
+                       gprint ("..*syntax error: $charpair -- nested ((..)) in [ ]");
+                       ErrorMessage("$charpair  -- syntax error: nested ((..)) not allowed in [ ]");
+                       $errorflag="SET";
+               };
+         };
+     ##--------------
+
+     ##  if outside angle brackets AND outside square brackets
+     ##  then we are checking ONLY the rotation sequence codes 
+
+     if ( ($angleNumSum == 0) and ($squareNumSum == 0) )  { 
+ 
           ##  A-Za-z<    A-Za-z[    A-Za-z(   )A-Za-z    >A-Za-z    ]A-Za-z  
           ##   ]<   ][   ](   ])   ]<   )<   )[   )(  ><  >[   >(   d(   d[   d<  
 
@@ -2522,32 +2823,25 @@ sub CheckSyntax   {
                next;
                };
           
-          # trap nested curved brackets 
-          if ( ($char2 eq "(" ) and ($curvedflag eq "inside" ) ) {
+          # trap nested curved brackets        (= inside)
+          if ( ($char2 eq "(" ) and ($curvedNumSum != 0) ) {
                                 ## nested curved brackets
                        gprint ("..*syntax error: $charpair -- nested ((..))");
                        ErrorMessage("$charpair  -- syntax error: nested ((..)) not allowed");
                        $errorflag="SET";
                        };
     
-          # trap nested square brackets 
-          if ( ($char2 eq "[" ) and ($squareflag eq "inside" ) ) {
-                                ## nested square brackets
-                       gprint ("..*syntax error: $charpair -- nested [[..]]");
-                       ErrorMessage("$charpair  -- syntax error: nested [[..]] not allowed");
-                       $errorflag="SET";
-                       };
-    
-  
-          if ($squareflag eq "inside"){ 
-                          if ($char1 eq ",") {
-                              gprint ("..*syntax error: $charpair -- comma not allowed in [ ]");
-                              ErrorMessage("$charpair  -- syntax error: comma not allowed in [ ]");
-                              $errorflag="SET";
-                              next;
-                           };      
-             }; # end of if
-
+  #-----remove--------------------------------------  
+           # trap comma inside [ ]       ( eq inside)
+  #        if ($squareNumSum != 0){ 
+  #                        if ($char1 eq ",") {
+  #                            gprint ("..*syntax error: $charpair -- comma not allowed in [ ]");
+  #                            ErrorMessage("$charpair  -- syntax error: comma not allowed in [ ]");
+  #                            $errorflag="SET";
+  #                            next;
+  #                         };      
+  #           }; # end of if
+  #-------------------------------------------------
 
          ## detect end of string
          if ($j == $lenstring -1) {last};
@@ -2565,6 +2859,35 @@ sub CheckSyntax   {
             gprint ("..*Quiting Perl program -- syntax error");
             ErrorMessage ("QUITTING PERL PROGRAM -- syntax error");
       
+            ##------bug fix-----------------------
+            ## RWDN 5 October 2017
+            ## problem = since we are here checking syntax (ie before processing any 
+            ##   output SequenceXX strings) all four SequenceXX strings will be empty just now.
+            ##   This then causes an error if the Rubik user code includes a ShowSequence command,
+            ##   since the ForEachX macro used by ShowSequence macro cannot handle an empty string
+            ##   when dealing with SequenceShort and SequenceLong.
+            ##   So we heve to force these two strings to be just a [\space] before they are output
+            ##   by the SUB writestate. 
+            ##   ie we set  SequenceShort and  SequenceLong strings to \space  here before 
+            ##   CALLing the SUB quitprogram().
+            ##  (to avoid a Rubikcube ShowSequence{}{}{} error if argument is empty 
+            ##    or is an expandable macro)
+            ## This problem arises because the ShowSequence macro uses the ForEachX macro
+            ##   to process each cs element in a string.
+            ## Also need to add at least one empty char or comma at end of SequenceLong string, 
+            ##    as final char (comma) is removed when writing to the out file in SUB writestate
+            ##   (CALLed by SUB quitprogram) just prior to closing down.
+            ##   NB: if there is no extra terminal char for SequenceLong string, 
+            ##   then \space --> \spac --> TEX error message
+            ##
+            ## This issue does not seem to be a problem for SequenceInfo and SequenceName,
+            ##    as they  are not returned as cs strings.
+
+            $SequenceShort="\\space";
+            $SequenceLong= "\\space,";
+
+            ##---------------------------
+
             print " closing down -- writing state........... OK\n";
        
             quitprogram();
@@ -2599,4 +2922,5 @@ return $newE;
 } 
  
 ##======================
+##EOF
 
