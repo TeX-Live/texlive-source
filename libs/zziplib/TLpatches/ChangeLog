@@ -1,6 +1,6 @@
-2018-02-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2018-03-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* patch-04-solaris-strnlen: Add to support old solaris.
+	* patch-04-strnlen: Add for platforms without strnlen.
 
 2018-02-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

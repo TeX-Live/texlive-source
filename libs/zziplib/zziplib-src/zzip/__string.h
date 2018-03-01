@@ -18,7 +18,6 @@
 #define _zzip_strndup strndup
 #else
 
-#if defined(sun) || defined(__sun)
 static size_t  my_strnlen(const char*  str, size_t  maxlen)
 {
     char *p = memchr(str, 0, maxlen);
@@ -28,7 +27,6 @@ static size_t  my_strnlen(const char*  str, size_t  maxlen)
        return (p - str);
 }
 #define strnlen(x,y) my_strnlen((x),(y))
-#endif /* sun || __sun */
 
 /* if your system does not have strndup: */
 zzip__new__ static char *
