@@ -3786,8 +3786,9 @@ pdf_open (const char *ident, FILE *file)
       WARN("Unrecognized PDF version specified for input PDF file: %d.%d",
         pdf_version/10, pdf_version%10);
     else if (version > pdf_version) {
-      WARN("Trying to inlucde PDF file with version newer than current " \
-        "output PDF setting: %d.%d", version/10, version%10);
+      WARN("Trying to include PDF file with version (%d.%d), which is " \
+           "newer than current output PDF setting (%d.%d).",
+        version/10, version%10, pdf_version/10, pdf_version%10);
     }
 
     pf = pdf_file_new(file);
