@@ -3745,13 +3745,6 @@ pdf_file_get_version (pdf_file *pf)
   return pf->version;
 }
 
-int
-pdf_file_check_version (pdf_file *pf, int version)
-{
-  ASSERT(pf);
-  return (pf->version >= version ? 0 : -1);
-}
-
 pdf_obj *
 pdf_file_get_trailer (pdf_file *pf)
 {
@@ -3873,8 +3866,6 @@ check_for_pdf (FILE *file)
   if (version <= pdf_version)
     return 1;
 
-  WARN("Version of PDF file (%d.%d) is newer than version limit specification.",
-       version/10, version%10);
   return 1;
 }
 

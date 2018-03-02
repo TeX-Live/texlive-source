@@ -1,3 +1,7 @@
+2018-03-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* epdf.c, pdfobj.c, pdfobj.h: Remove multiple warnings.
+
 2018-03-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* pdfobj.c: Fix typo and improve a warning (incomplete fix).
