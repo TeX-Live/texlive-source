@@ -107,7 +107,7 @@ cd $libiconv_ver
 
 clisp_ver=clisp-2.49.92
 cd $clisp_basedir
-$wget https://haible.de/bruno/gnu/clisp-2.49.50.tar.bz2
+$wget https://haible.de/bruno/gnu/$clisp_ver.tar.bz2
 bunzip2 -dc $clisp_ver.tar.bz2 | tar xf -
 cd $clisp_ver
 
