@@ -1,3 +1,8 @@
+2018-03-01  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (HAVE_LIBGS, gsversion): don't assume numeric values.
+	Report from Mojca, tlbuild 1 Mar 2018 00:51:37.
+
 2018-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Import 2.3.3.

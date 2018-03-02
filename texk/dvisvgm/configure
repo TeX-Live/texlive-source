@@ -21924,7 +21924,9 @@ fi
 fi
 fi
 
-if test "$HAVE_LIBGS" -eq 0; then
+if test -z "$HAVE_LIBGS" || test "$HAVE_LIBGS" -eq 0; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: not linking to libgs, trying to arrange for dynamic loading" >&5
+$as_echo "$as_me: not linking to libgs, trying to arrange for dynamic loading" >&6;}
   # Windows (native or MinGW32) has neither <dlfcn.h> nor dlopen().
   if test "x$kpse_cv_have_win32" = xno; then
     # FreeBSD neither has nor requires libdl.
@@ -22043,7 +22045,7 @@ fi
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: \"$gsversion\"" >&5
 $as_echo "\"$gsversion\"" >&6; }
 	rm -f gsversion
-	if test "$gsversion" -lt 831; then
+	if test -z "$gsversion" || "$gsversion" -lt 831; then
 		# current Ghostscript API was introduced in version 8.31
 		# older versions are not supported
 
