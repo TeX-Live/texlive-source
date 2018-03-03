@@ -420,6 +420,8 @@ texmf_other_scripts = \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
+	tlcockpit/tlcockpit.sh \
+	tlshell/tlshell.tcl \
 	ulqda/ulqda.pl \
 	urlbst/urlbst \
 	vpe/vpe.pl \
@@ -440,9 +442,9 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_context_scripts)
 
 bin_links = \
-	texdef:latexdef \
 	epstopdf:repstopdf \
-	pdfcrop:rpdfcrop
+	pdfcrop:rpdfcrop \
+	texdef:latexdef
 
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe

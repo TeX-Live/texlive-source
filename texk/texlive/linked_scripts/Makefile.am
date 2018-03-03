@@ -206,6 +206,8 @@ texmf_other_scripts = \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
+	tlcockpit/tlcockpit.sh \
+	tlshell/tlshell.tcl \
 	ulqda/ulqda.pl \
 	urlbst/urlbst \
 	vpe/vpe.pl \
@@ -230,9 +232,9 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 
 ## Symlinks within $(bindir): FILE:LINK here means "ln -s FILE LINK" is done.
 bin_links = \
-	texdef:latexdef \
 	epstopdf:repstopdf \
-	pdfcrop:rpdfcrop
+	pdfcrop:rpdfcrop \
+	texdef:latexdef
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
 # have bin/arch/foo be a symlink to, say,
