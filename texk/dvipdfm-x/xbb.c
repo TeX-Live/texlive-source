@@ -500,6 +500,8 @@ static void do_aptex_pdf (FILE *fp, char *filename, pdf_rect * box)
   int page_no = Include_Page;
   int count;
   pdf_rect bbox;
+  pdf_tmatrix matrix;
+  pdf_coord   p1, p2, p3, p4;
 
   pf = pdf_open(filename, fp);
   if (!pf) {
@@ -507,7 +509,7 @@ static void do_aptex_pdf (FILE *fp, char *filename, pdf_rect * box)
     return;
   }
   count = pdf_doc_get_page_count(pf);
-  page  = pdf_doc_get_page(pf, page_no, PageBox, &bbox, NULL);
+  page  = pdf_doc_get_page(pf, page_no, PageBox, &bbox, &matrix, NULL);
 
   pdf_close(pf);
 
@@ -516,10 +518,22 @@ static void do_aptex_pdf (FILE *fp, char *filename, pdf_rect * box)
 
   pdf_release_obj(page);
 
-  box->llx = bbox.llx;
-  box->lly = bbox.lly;
-  box->urx = bbox.urx;
-  box->ury = bbox.ury;
+  /* Image's attribute "bbox" here is affected by /Rotate entry of included
+   * PDF page.
+   */
+  p1.x = bbox.llx; p1.y = bbox.lly;
+  pdf_dev_transform(&p1, &matrix);
+  p2.x = bbox.urx; p2.y = bbox.lly;
+  pdf_dev_transform(&p2, &matrix);
+  p3.x = bbox.urx; p3.y = bbox.ury;
+  pdf_dev_transform(&p3, &matrix);
+  p4.x = bbox.llx; p4.y = bbox.ury;
+  pdf_dev_transform(&p4, &matrix);
+
+  box->llx = min4(p1.x, p2.x, p3.x, p4.x);
+  box->lly = min4(p1.y, p2.y, p3.y, p4.y);
+  box->urx = max4(p1.x, p2.x, p3.x, p4.x);
+  box->ury = max4(p1.y, p2.y, p3.y, p4.y);
 }
 
 void aptex_extractbb (char * pict, uint32_t page, uint32_t rect, pdf_rect * bbox)
