@@ -500,6 +500,11 @@ void writevfu(int code, FILE *fp)
 	case 0x3016: /* JIS X 0213  1-02-58 始めすみ付き括弧(白) */
 	case 0x00AB: /* JIS X 0213  1-09-08 始め二重山括弧引用記号/始めギュメ */
 	case 0x301D: /* JIS X 0213  1-13-64 始めダブルミニュート */
+	case 0x2329: /* LEFT-POINTING ANGLE BRACKET */
+	case 0x301A: /* LEFT WHITE SQUARE BRACKET */
+	case 0xFE59: /* SMALL LEFT PARENTHESIS */
+	case 0xFE5B: /* SMALL LEFT CURLY BRACKET */
+	case 0xFE5D: /* SMALL LEFT TORTOISE SHELL BRACKET */
 		if (ucs != ENTRY_JQ)
 			skip = -(zw-w);
 		break;
@@ -624,6 +629,11 @@ void writevfu(int code, FILE *fp)
 	case 0x00BB: /* JIS X 0213  1-09-18 終わり二重山括弧引用記号/終わりギュメ */
 	case 0x301F: /* JIS X 0213  1-13-65 終わりダブルミニュート */
 	case 0x301E: /* --- - ----  ------- 上付き終わりダブルミニュート */
+	case 0x232A: /* RIGHT-POINTING ANGLE BRACKET */
+	case 0x301B: /* RIGHT WHITE SQUARE BRACKET */
+	case 0xFE5A: /* SMALL RIGHT PARENTHESIS */
+	case 0xFE5C: /* SMALL RIGHT CURLY BRACKET */
+	case 0xFE5E: /* SMALL RIGHT TORTOISE SHELL BRACKET */
 	case 0x00B0: /* ° */
 	case 0x2032: /* ′ */
 	case 0x2033: /* ″ */
