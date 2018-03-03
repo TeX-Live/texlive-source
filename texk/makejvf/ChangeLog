@@ -1,3 +1,8 @@
+2018-03-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* write.c: Add U+2329, U+232A, U+301A, U+301B, U+FE59..FE5E.
+	* version.h: Bump version.
+
 2018-02-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* main.c, makejvf.1: Improve help message and manual.
