@@ -1,6 +1,6 @@
 2018-03-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* xbb.c: Support libdpx.
+	* xbb.c: Remove unused lines.
 
 2018-03-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
