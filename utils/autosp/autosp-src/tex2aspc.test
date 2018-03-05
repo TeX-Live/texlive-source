@@ -20,9 +20,9 @@ echo && echo "*** tex2aspc  (missing infile)"
 ./tex2aspc  && exit 1
 
 echo && echo "*** tex2aspc quod2.tex quod4.aspc"
-cp "$test_srcdir"/tests/quod2.tex .
+cp "$test_srcdir"/tests/quod2.tex quod4.tex
 rm -f quod4.aspc
-./tex2aspc quod2.tex quod4.aspc || exit 1
+./tex2aspc quod4.tex quod4.aspc || exit 1
 
 echo && echo "*** diff quod4.aspc tests/quod4.aspc"
 diff quod4.aspc "$test_srcdir"/tests/quod4.aspc || exit 1
