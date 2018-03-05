@@ -2,7 +2,7 @@
 
 	* MFLua 0.9.
 	* Fixed a bug on clean up string in runscript.
-	* Added generic font parser to mflua.lua
+	* Added a parser for generic font to mflua.lua 
 
 
 2017-04-16 Luigi Scarso <luigi.scarso@gmail.com>
