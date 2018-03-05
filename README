@@ -43,6 +43,9 @@ i386-freebsd, amd64-freebsd:
 
 i386-linux: Debian 7.
 
+i386-linuxmusl:
+  Alpine 3.1 Docker image with musl libc 1.1.5
+
 i386-openbsd, amd64-openbsd:
   e.g., see CONFIGURE_ARGS in the Makefile in
   http://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/print/texlive/base/
@@ -76,3 +79,7 @@ x86_64-darwinlegacy, i386-darwin, powerpc-darwin:
   PPC binaries made with gcc-4.2 and Intel binaries with clang-3.7.
 
 x86_64-linux: Debian 6.0 (Squeeze), Feb 2009.
+
+x86_64-linuxmusl:
+  Alpine 3.1 Docker image with musl libc 1.1.5
+
