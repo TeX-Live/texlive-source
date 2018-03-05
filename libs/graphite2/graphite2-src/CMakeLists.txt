@@ -8,6 +8,8 @@ if (NOT CMAKE_BUILD_TYPE)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY VALUE Release)
 endif (NOT CMAKE_BUILD_TYPE)
 
+option(BUILD_SHARED_LIBS "Make library a shared library instead of static" ON)
+
 enable_language(CXX C)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
@@ -23,12 +25,15 @@ option(GRAPHITE2_ASAN "Enable Address Sanitizing")
 
 
 message(STATUS "Build: " ${CMAKE_BUILD_TYPE})
+string(REPLACE "ON"  "shared"  _LIB_OBJECT_TYPE ${BUILD_SHARED_LIBS})
+string(REPLACE "OFF" "static"  _LIB_OBJECT_TYPE ${_LIB_OBJECT_TYPE})
 string(REPLACE "ON" "disabled" _SEGCACHE_SUPPORT ${GRAPHITE2_NSEGCACHE})
 string(REPLACE "OFF" "enabled" _SEGCACHE_SUPPORT ${_SEGCACHE_SUPPORT})
 string(REPLACE "ON" "disabled" _FILEFACE_SUPPORT ${GRAPHITE2_NFILEFACE})
 string(REPLACE "OFF" "enabled" _FILEFACE_SUPPORT ${_FILEFACE_SUPPORT})
 string(REPLACE "ON" "disabled" _TRACING_SUPPORT ${GRAPHITE2_NTRACING})
 string(REPLACE "OFF" "enabled" _TRACING_SUPPORT ${_TRACING_SUPPORT})
+message(STATUS "Building library: " ${_LIB_OBJECT_TYPE})
 message(STATUS "Segment Cache support: " ${_SEGCACHE_SUPPORT})
 message(STATUS "File Face support: " ${_FILEFACE_SUPPORT})
 message(STATUS "Tracing support: " ${_TRACING_SUPPORT})
