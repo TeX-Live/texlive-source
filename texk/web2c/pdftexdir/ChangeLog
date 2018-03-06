@@ -1,3 +1,8 @@
+2018-03-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftex.web: pdftex_revision=="19".
+	Reported by Uwe Siart, 2018-03-06.
+
 2018-01-25  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
         and Karl Berry  <karl@freefriends.org>
 
