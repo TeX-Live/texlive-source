@@ -2,11 +2,16 @@
 #
 # cjk-gs-integrate - setup Ghostscript for CID/TTF CJK fonts
 #
-# Copyright 2015-2017 by Norbert Preining
-# Copyright 2016-2017 by Japanese TeX Development Community
+# Copyright 2015-2018 by Norbert Preining
+# Copyright 2016-2018 by Japanese TeX Development Community
 #
-# Based on research and work by Yusuke Kuroki, Bruno Voisin, Munehiro Yamamoto
-# and the TeX Q&A wiki page
+# This work is based on research and work by (in alphabetical order)
+#   Yusuke Kuroki
+#   Yusuke Terada
+#   Bruno Voisin
+#   Munehiro Yamamoto
+#   Hironobu Yamashita
+# and the Japanese TeX Q&A wiki page
 #
 # This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
@@ -14,8 +19,14 @@
 # For development see
 #  https://github.com/texjporg/cjk-gs-support
 #
+# LIMITATIONS:
+# - Running the script (with default mode = actual setup/removing operations)
+#   always overwrites "cidfmap.local" and "cidfmap.aliases" without asking,
+#   whose file names might be common enough. If you choose to run the script,
+#   leave these files untouched. (Do NOT edit these files by yourself!)
+#   (This note also applies to MacTeX pre-shipped configuration files.)
+#
 # TODO:
-# - how to deal with MacTeX pre-shipped configuration files?
 # - interoperability with kanji-config-updmap
 #
 # Note that symlink names should be consistent with ptex-fontmaps!
@@ -28,7 +39,7 @@ use Cwd 'abs_path';
 use strict;
 
 (my $prg = basename($0)) =~ s/\.pl$//;
-my $version = '20170624.0';
+my $version = '20180306.0';
 
 if (win32()) {
   # conversion between internal (utf-8) and console (cp932):
@@ -46,6 +57,16 @@ if (win32()) {
   print_warning("Sorry, we have only partial support for Windows!\n");
 }
 
+# The followings are installed by ptex-fontmaps (texjporg):
+#   * 2004-H
+#   * 2004-V
+# The followings are created by Adobe but not considered official
+# (see https://forums.adobe.com/thread/537415)
+#   * GB-RKSJ-H
+#   * GBT-RKSJ-H
+#   * KSC-RKSJ-H
+# All others are provided in the latest Adobe CMap Resources:
+#   https://github.com/adobe-type-tools/cmap-resources
 my %encode_list = (
   Japan => [ qw/
     2004-H
@@ -117,7 +138,8 @@ my %encode_list = (
     UniJISX02132004-UTF32-H
     UniJISX02132004-UTF32-V
     V
-    WP-Symbol/ ],
+    WP-Symbol
+    / ],
   GB => [ qw/
     Adobe-GB1-0
     Adobe-GB1-1
@@ -154,7 +176,8 @@ my %encode_list = (
     UniGB-UTF32-H
     UniGB-UTF32-V
     UniGB-UTF8-H
-    UniGB-UTF8-V/ ],
+    UniGB-UTF8-V
+    / ],
   CNS => [ qw/
     Adobe-CNS1-0
     Adobe-CNS1-1
@@ -163,6 +186,7 @@ my %encode_list = (
     Adobe-CNS1-4
     Adobe-CNS1-5
     Adobe-CNS1-6
+    Adobe-CNS1-7
     B5-H
     B5-V
     B5pc-H
@@ -200,7 +224,8 @@ my %encode_list = (
     UniCNS-UTF32-H
     UniCNS-UTF32-V
     UniCNS-UTF8-H
-    UniCNS-UTF8-V/ ],
+    UniCNS-UTF8-V
+    / ],
   Korea => [ qw/
     Adobe-Korea1-0
     Adobe-Korea1-1
@@ -227,7 +252,8 @@ my %encode_list = (
     UniKS-UTF32-H
     UniKS-UTF32-V
     UniKS-UTF8-H
-    UniKS-UTF8-V/ ] );
+    UniKS-UTF8-V
+    / ] );
 
 #
 # location where links to fonts in texmf are created, relative to TEXMF
@@ -254,6 +280,7 @@ my $dump_datafile = "$prg-data.dat";
 
 my $opt_output;
 my $opt_fontdef;
+my @opt_fontdef_add;
 my @opt_aliases;
 my $opt_filelist;
 my $opt_texmflink;
@@ -279,6 +306,7 @@ my $opt_markdown = 0;
 if (! GetOptions(
         "o|output=s"       => \$opt_output,
         "f|fontdef=s"      => \$opt_fontdef,
+        "fontdef-add=s"    => \@opt_fontdef_add,
         "a|alias=s"        => \@opt_aliases,
         "filelist=s"       => \$opt_filelist,
         "link-texmf:s"     => \$opt_texmflink,
@@ -314,12 +342,44 @@ my %user_aliases;
 
 if ($opt_help || $opt_markdown) {
   Usage();
-  exit 0;
+  exit(0);
 }
 
-if ($opt_debug) {
+if ($opt_debug >= 2) {
   require Data::Dumper;
   $Data::Dumper::Indent = 1;
+}
+
+my $otfinfo_available;
+chomp(my $otfinfo_help = `otfinfo --help 2>$nul`);
+if ($?) {
+  print_warning("The program 'otfinfo' not found in PATH.\n");
+  print_warning("Sorry, we can't be safe enough to distinguish\n");
+  print_warning("uppercase / lowercase file names.\n");
+  $otfinfo_available = 0;
+} else {
+  $otfinfo_available = 1;
+}
+
+if (macosx()) {
+  # due to frequent incompatible changes in font file names by Apple,
+  # our built-in database doesn't support OS X 10.11 El Capitan or
+  # later versions
+  my $macos_ver = `sw_vers -productVersion`;
+  my $macos_ver_major = $macos_ver;
+  $macos_ver_major =~ s/^(\d+)\.(\d+).*/$1/;
+  my $macos_ver_minor = $macos_ver;
+  $macos_ver_minor =~ s/^(\d+)\.(\d+).*/$2/;
+  if ($macos_ver_major==10 && $macos_ver_minor>=8) {
+    if (!$opt_cleanup && !$opt_fontdef && !@opt_fontdef_add) { # if built-in only
+      print_warning("Our built-in database does not support recent\n");
+      print_warning("versions of Mac OS (10.8 Mountain Lion or later)!\n");
+      print_warning("If you want to use Hiragino fonts bundled with\n");
+      print_warning("your OS, obtain external database file and\n");
+      print_warning("specify it with --fontdef-add option!\n");
+      print_warning("I'll continue with my built-in database ...\n");
+    }
+  }
 }
 
 if (defined($opt_texmflink)) {
@@ -327,7 +387,7 @@ if (defined($opt_texmflink)) {
   if ($opt_texmflink eq '') {
     # option was passed but didn't receive a value
     #  -> use TEXMFLOCAL
-    chomp( $foo = `kpsewhich -var-value=TEXMFLOCAL`);
+    chomp($foo = `kpsewhich -var-value=TEXMFLOCAL`);
   } else {
     # option was passed with an argument
     #  -> use it
@@ -342,7 +402,7 @@ if (defined($opt_akotfps)) {
     if (defined($opt_texmflink)) {
       $foo = $opt_texmflink;
     } else {
-      chomp( $foo = `kpsewhich -var-value=TEXMFLOCAL`);
+      chomp($foo = `kpsewhich -var-value=TEXMFLOCAL`);
     }
   } else {
     $foo = $opt_akotfps;
@@ -382,10 +442,6 @@ if (defined($opt_dump_data)) {
 } else {
   $opt_dump_data = 0;
 }
-if ($opt_dump_data && $opt_fontdef) {
-  print_warning("-f/--fontdef option ignored due to --dump-data\n");
-  $opt_fontdef = 0;
-}
 
 if ($opt_cleanup) {
   $opt_remove = 1;
@@ -395,8 +451,22 @@ if ($opt_info) {
   $opt_listfonts = 1;
   $opt_listaliases = 1;
 }
+
+# check exclusive options; unsafe due to make_all_available()
+if ($opt_listallaliases && $opt_listaliases) {
+  print_error("Both --list-all-aliases and --list-aliases!? I'm confused!\n");
+  exit(1);
+}
 if ($opt_listallaliases && $opt_listfonts) {
   print_error("Options --list-all-aliases and --list-fonts cannot be used at the same time!\n");
+  exit(1);
+}
+if ($opt_cleanup && $opt_listfonts) {
+  print_error("Options --cleanup and --list-fonts cannot be used at the same time!\n");
+  exit(1);
+}
+if ($opt_cleanup && $opt_listaliases) {
+  print_error("Options --cleanup and --list-aliases cannot be used at the same time!\n");
   exit(1);
 }
 
@@ -407,10 +477,11 @@ main(@ARGV);
 #
 sub main {
   # first, read font database to obtain %fontdb
-  # if $opt_dump_data is given, exit after dumping <DATA> to $dump_datafile
   print_info("reading font database ...\n");
   read_font_database();
   if ($opt_dump_data) {
+    # with --dump-data, dump only effective database and exit
+    dump_font_database();
     if (-f $dump_datafile) {
       print_info("*** Data dumped to $dump_datafile ***\n");
       exit(0);
@@ -464,8 +535,8 @@ sub main {
     }
   }
   if (! -d $opt_output) {
-    $dry_run || mkdir($opt_output) || 
-      die ("Cannot create directory $opt_output: $!");
+    $dry_run || mkdir($opt_output) ||
+      die("Cannot create directory $opt_output: $!");
   }
   if ($opt_cleanup) {
     print_info("going to clean up $opt_output\n");
@@ -592,7 +663,7 @@ sub do_nonotf_fonts {
     if ($fontdb{$k}{'available'} && $fontdb{$k}{'type'} eq 'TTF') {
       generate_font_snippet($fontdest,
         $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
-      $outp .= generate_cidfmap_entry($k, $fontdb{$k}{'class'}, $fontdb{$k}{'ttfname'}, $fontdb{$k}{'subfont'});
+      $outp .= generate_cidfmap_entry($k, $fontdb{$k}{'class'}, $fontdb{$k}{'ttfname'}, -1);
       link_font($fontdb{$k}{'target'}, $cidfsubst, $fontdb{$k}{'ttfname'});
       link_font($fontdb{$k}{'target'}, "$opt_texmflink/$ttf_pathpart", $fontdb{$k}{'ttfname'})
         if $opt_texmflink;
@@ -620,8 +691,8 @@ sub do_nonotf_fonts {
       mkdir("$opt_output/Init") ||
         die("Cannot create directory $opt_output/Init: $!");
     }
-    open(FOO, ">$opt_output/$cidfmap_local_pathpart") || 
-      die "Cannot open $opt_output/$cidfmap_local_pathpart: $!";
+    open(FOO, ">$opt_output/$cidfmap_local_pathpart") ||
+      die("Cannot open $opt_output/$cidfmap_local_pathpart: $!");
     print FOO $outp;
     close(FOO);
   }
@@ -630,20 +701,16 @@ sub do_nonotf_fonts {
 
 sub do_aliases {
   my $fontdest = "$opt_output/Font";
+  my $ciddest  = "$opt_output/CIDFont"; # required for Heisei* check only
   my $cidfsubst = "$opt_output/CIDFSubst";
   my $outp = '';
   #
   # alias handling
-  # we use two levels of aliases, one is for the default names that
-  # are not actual fonts:
-  # Ryumin-Light, GothicBBB-Medium, FutoMinA101-Bold, FutoGoB101-Bold, 
-  # Jun101-Light which are the original Morisawa names.
-  #
-  # the second level of aliases is for Morisawa OTF font names:
-  # RyuminPro-Light, GothicBBBPro-Medium,
-  # FutoMinA101Pro-Bold, FutoGoB101Pro-Bold
-  # Jun101Pro-Light
-  #
+  # we use two levels of aliases
+  #  * one is for the default generic names (these are not actual fonts)
+  #      Ryumin-Light, GothicBBB-Medium, ... etc.
+  #  * the second level of aliases is for Morisawa OTF font names
+  #      RyuminPro-Light, GothicBBBPro-Medium, ... etc.
   # the order of fonts selected is
   # defined in the Provides(Priority): Name in the font definiton
   #
@@ -667,7 +734,10 @@ sub do_aliases {
       }
     }
     if (!$class) {
-      print_warning("Alias candidate for $al is empty!\n") if (!%{$aliases{$al}});
+      if (!%{$aliases{$al}}) {
+        print_warning("Alias candidate for $al is empty, skipping!\n");
+        next;
+      }
       # search lowest number
       my @ks = keys(%{$aliases{$al}});
       my $first = (sort { $a <=> $b} @ks)[0];
@@ -689,6 +759,11 @@ sub do_aliases {
       print STDERR "unknown class $class for $al\n";
     }
   }
+  # special case for native CID fonts in ancient days
+  # if not readable, add aliases for substitution
+  push @jal, "/HeiseiMin-W3 /Ryumin-Light ;" if (! -r "$ciddest/HeiseiMin-W3");
+  push @jal, "/HeiseiKakuGo-W5 /GothicBBB-Medium ;" if (! -r "$ciddest/HeiseiKakuGo-W5");
+  #
   $outp .= "\n% Japanese fonts\n" . join("\n", @jal) . "\n" if @jal;
   $outp .= "\n% Korean fonts\n" . join("\n", @kal) . "\n" if @kal;
   $outp .= "\n% Traditional Chinese fonts\n" . join("\n", @tal) . "\n" if @tal;
@@ -700,8 +775,8 @@ sub do_aliases {
       mkdir("$opt_output/Init") ||
         die("Cannot create directory $opt_output/Init: $!");
     }
-    open(FOO, ">$opt_output/$cidfmap_aliases_pathpart") || 
-      die "Cannot open $opt_output/$cidfmap_aliases_pathpart: $!";
+    open(FOO, ">$opt_output/$cidfmap_aliases_pathpart") ||
+      die("Cannot open $opt_output/$cidfmap_aliases_pathpart: $!");
     print FOO $outp;
     close(FOO);
   }
@@ -713,46 +788,70 @@ sub do_aliases {
 }
 
 sub update_master_cidfmap {
+  # what we have to do is:
+  #   in add mode:
+  #     * add an entry for the given argument
+  #     * for tlgs.win32 pre-shipped cidfmap, prepend '%' to override
+  #       the default of "(cidfmap.TeXLive) .runlibfile",
+  #   in remove mode:
+  #     * remove an entry for the given argument
+  #     * for tlgs.win32 pre-shipped cidfmap, remove '%' to restore the default
   my $add = shift;
   my $cidfmap_master = "$opt_output/$cidfmap_pathpart";
-  print_info(sprintf("%s $add %s cidfmap file ...\n", 
+  print_info(sprintf("%s $add %s cidfmap file ...\n",
     ($opt_remove ? "removing" : "adding"), ($opt_remove ? "from" : "to")));
   if (-r $cidfmap_master) {
     open(FOO, "<", $cidfmap_master) ||
-      die ("Cannot open $cidfmap_master for reading: $!");
+      die("Cannot open $cidfmap_master for reading: $!");
     my $found = 0;
+    my $found_tl = 0;
     my $newmaster = "";
     # in add mode: just search for the entry and set $found
     # in remove mode: collect all lines that do not match
+    # also, we handle "cidfmap.TeXLive" now
     while(<FOO>) {
       if (m/^\s*\(\Q$add\E\)\s\s*\.runlibfile\s*$/) {
         $found = 1;
+      } elsif (m/^\s*\(cidfmap\.TeXLive\)\s\s*\.runlibfile\s*$/) {
+        # if found, it has to be disabled in add mode in a way in which it can
+        # be detected in the (future) remove mode
+        next if ($found_tl); # skip it as duplicate (though unlikely to happen)
+        $found_tl = 1;
+        $newmaster .= "\%" if (!$opt_remove); # in add mode, disable it
+        $newmaster .= $_; # pass it as-is
+      } elsif (m/^\s*\%\%*\s*\(cidfmap\.TeXLive\)\s\s*\.runlibfile\s*$/) {
+        # if found, it should be the one disabled by myself in the previous run;
+        # restore it in remove mode
+        next if ($found_tl); # skip it as duplicate (though unlikely to happen)
+        $found_tl = 1;
+        $_ =~ s/\%//g if ($opt_remove); # in remove mode, enable it
+        $newmaster .= $_; # pass it
       } else {
         $newmaster .= $_;
       }
     }
     close(FOO);
-    # if the master cidfmap has a new line at end of file,
+    # if the original master cidfmap has a new line at end of file,
     # then $newmaster should end with "\n".
     # otherwise we add a new line, since there is a possibility of %EOF comment
     # without trailing new line (e.g. TL before r44039)
-    $newmaster =~ s/\n$//g;
-    $newmaster =~ s/$/\n/g;
+    $newmaster =~ s/\n$//;
+    $newmaster =~ s/$/\n/;
     if ($opt_remove) {
-      if ($found) {
+      if ($found || $found_tl) {
         return if $dry_run;
         open(FOO, ">", $cidfmap_master) ||
-          die ("Cannot clean up $cidfmap_master: $!");
+          die("Cannot clean up $cidfmap_master: $!");
         print FOO $newmaster;
         close FOO;
       }
     } else {
-      if ($found) {
+      if ($found && !$found_tl) {
         print_info("$add already loaded in $cidfmap_master, no changes\n");
       } else {
         return if $dry_run;
         open(FOO, ">", $cidfmap_master) ||
-          die ("Cannot open $cidfmap_master for appending: $!");
+          die("Cannot open $cidfmap_master for appending: $!");
         print FOO $newmaster;
         print FOO "($add) .runlibfile\n";
         close(FOO);
@@ -762,7 +861,7 @@ sub update_master_cidfmap {
     return if $dry_run;
     return if $opt_remove;
     open(FOO, ">", $cidfmap_master) ||
-      die ("Cannot open $cidfmap_master for writing: $!");
+      die("Cannot open $cidfmap_master for writing: $!");
     print FOO "($add) .runlibfile\n";
     close(FOO);
   }
@@ -776,9 +875,11 @@ sub generate_cidfmap_entry {
   # extract subfont
   my $s = "/$n << /FileType /TrueType 
   /Path pssystemparams /GenericResourceDir get 
-  (CIDFSubst/$f) concatstrings
-  /SubfontID $sf
-  /CSI [($c";
+  (CIDFSubst/$f) concatstrings\n";
+  if ($sf >= 0) { # in this script, $sf < 0 represents TTF
+    $s .= "  /SubfontID $sf\n";
+  }
+  $s .= "  /CSI [($c";
   if ($c eq "Japan") {
     $s .= "1) 6]";
   } elsif ($c eq "GB") {
@@ -807,7 +908,7 @@ sub generate_font_snippet {
       unlink "$fd/$n-$enc" if (-f "$fd/$n-$enc");
       next;
     }
-    open(FOO, ">$fd/$n-$enc") || 
+    open(FOO, ">$fd/$n-$enc") ||
       die("cannot open $fd/$n-$enc for writing: $!");
     print FOO "%!PS-Adobe-3.0 Resource-Font
 %%DocumentNeededResources: $enc (CMap)
@@ -835,7 +936,7 @@ sub add_akotfps_data {
 
 #
 # link_font operation
-# $opt_force is *not* treated first to warn only 
+# $opt_force is *not* treated first to warn only
 # at really critical cases
 # case 1:
 #   exists, is link, link targets agree
@@ -861,7 +962,7 @@ sub add_akotfps_data {
 #   not exists
 #     $opt_force is ignored
 #     do nothing or add according to $opt_remove
-#     
+#
 sub link_font {
   my ($f, $cd, $n) = @_;
   return if $dry_run;
@@ -927,7 +1028,7 @@ sub make_dir {
   if (-r $d) {
     if (! -d $d) {
       print_error("$d is not a directory, $w\n");
-      exit 1;
+      exit(1);
     }
   } else {
     $dry_run || make_path($d);
@@ -1015,7 +1116,7 @@ sub maybe_unlink {
 # write batch file (windows only)
 sub write_winbatch {
   return if $dry_run;
-  open(FOO, ">$winbatch") || 
+  open(FOO, ">$winbatch") ||
     die("cannot open $winbatch for writing: $!");
   # $winbatch_content may contain multibyte characters, and they
   # should be encoded in cp932 in batch file
@@ -1032,7 +1133,7 @@ sub write_akotfps_datafile {
   return if $dry_run;
   make_dir("$opt_akotfps/$akotfps_pathpart",
          "cannot create $akotfps_datafilename in it!");
-  open(FOO, ">$opt_akotfps/$akotfps_pathpart/$akotfps_datafilename") || 
+  open(FOO, ">$opt_akotfps/$akotfps_pathpart/$akotfps_datafilename") ||
     die("cannot open $opt_akotfps/$akotfps_pathpart/$akotfps_datafilename for writing: $!");
   print FOO "% psnames-for-otf
 %
@@ -1158,7 +1259,7 @@ sub make_all_available {
 sub check_for_files {
   my @foundfiles;
   if ($opt_filelist) {
-    open(FOO, "<", $opt_filelist) || die "Cannot open $opt_filelist: $!";
+    open(FOO, "<", $opt_filelist) || die("Cannot open $opt_filelist: $!");
     @foundfiles = <FOO>;
     close(FOO) || warn "Cannot close $opt_filelist: $!";
   } else {
@@ -1166,7 +1267,7 @@ sub check_for_files {
     my @fn;
     for my $k (keys %fontdb) {
       for my $f (keys %{$fontdb{$k}{'files'}}) {
-        # check for subfont extension 
+        # check for subfont extension
         if ($f =~ m/^(.*)\(\d*\)$/) {
           push @fn, $1;
         } else {
@@ -1181,11 +1282,20 @@ sub check_for_files {
       push @extradirs, "c:/windows/fonts//";
     } else {
       # other dirs to check, for normal unix?
-      for my $d (qw!/Library/Fonts /System/Library/Fonts /System/Library/Assets /Network/Library/Fonts /usr/share/fonts!) {
+      for my $d (qw!/Library/Fonts /System/Library/Fonts /System/Library/Assets
+                    /Network/Library/Fonts /usr/share/fonts!) {
         push @extradirs, "$d//" if (-d $d); # recursive search
       }
-      # macosx specific; the path contains white space, so hack required
-      for my $d (qw!/Applications/Microsoft__Word.app /Applications/Microsoft__Excel.app /Applications/Microsoft__PowerPoint.app!) {
+      # the path contains white space, so hack required
+      for my $d (qw!/Library/Application__Support/Apple/Fonts!) {
+        my $sd = $d;
+        $sd =~ s/__/ /;
+        push @extradirs, "$sd//" if (-d "$sd"); # recursive search
+      }
+      # office for mac 2016
+      for my $d (qw!/Applications/Microsoft__Word.app
+                    /Applications/Microsoft__Excel.app
+                    /Applications/Microsoft__PowerPoint.app!) {
         my $sd = $d;
         $sd =~ s/__/ /;
         push @extradirs, "$sd/Contents/Resources/Fonts/" if (-d "$sd/Contents/Resources/Fonts");
@@ -1267,30 +1377,66 @@ sub check_for_files {
     }
     my $bn = basename($f);
     # kpsewhich -all might return multiple files with the same basename;
-    # choose the first one among them
-    $bntofn{$bn} = $realf if (!$bntofn{$bn});
+    # collect all of them
+    $bntofn{$bn}{$realf} = 1;
   }
 
   # show the %fontdb before file check
-  if ($opt_debug > 0) {
-    print_debug("dumping font database before file check:\n");
-    print_debug(Data::Dumper::Dumper(\%fontdb));
+  if ($opt_debug >= 2) {
+    print_ddebug("dumping font database before file check:\n");
+    print_ddebug(Data::Dumper::Dumper(\%fontdb));
   }
-  if ($opt_debug > 1) {
-    print_ddebug("dumping basename to filename list:\n");
-    print_ddebug(Data::Dumper::Dumper(\%bntofn));
+  if ($opt_debug >= 3) {
+    print_dddebug("dumping basename to filename list:\n");
+    print_dddebug(Data::Dumper::Dumper(\%bntofn));
   }
 
   # update the %fontdb with the found files
   for my $k (keys %fontdb) {
     $fontdb{$k}{'available'} = 0;
     for my $f (keys %{$fontdb{$k}{'files'}}) {
-      # check for subfont extension 
+      # check for subfont extension
       my $realfile = $f;
       $realfile =~ s/^(.*)\(\d*\)$/$1/;
-      if ($bntofn{$realfile}) {
+      # check for casefolding
+      # we might catch different names (batang/Batang) and identify them wrongly on
+      #  * case-insensitive file systems (like HFS on MacOS)
+      #  * kpathsea 6.3.0 or later, with casefolding fallback search (TL2018)
+      # check the actual psname using otfinfo utility, only when we "know"
+      # both uppercase/lowercase font files are possible and they are different
+      my $actualpsname;
+      my $bname;
+      for my $b (keys %{$bntofn{$realfile}}) {
+        if ($fontdb{$k}{'casefold'} && $otfinfo_available &&
+            ($fontdb{$k}{'files'}{$f}{'type'} eq 'OTF' || $fontdb{$k}{'files'}{$f}{'type'} eq 'TTF')) {
+          print_debug("We need to test whether\n");
+          print_debug("  $b\n");
+          print_debug("is the correct one. Invoking otfinfo ...\n");
+          chomp($actualpsname = `otfinfo -p "$b"`);
+          if ($?) {
+            # something is wrong with the font file, or otfinfo does not support it;
+            # still there is a chance that Ghostscript supports, so don't discard it
+            print_debug("... command exited with $?!\n");
+            print_debug("OK, I'll take this, but it may not work properly.\n");
+            $bname = $b;
+            last;
+          }
+          if ($actualpsname ne $k) {
+            print_debug("... PSName returned by otfinfo ($actualpsname) is\n");
+            print_debug("different from our database ($k), discarding!\n");
+          } else {
+            print_debug("... test passed.\n");
+            $bname = $b;
+            last;
+          }
+        } else {
+          $bname = $b;
+          last;
+        }
+      }
+      if ($bname) {
         # we found a representative, make it available
-        $fontdb{$k}{'files'}{$f}{'target'} = $bntofn{$realfile};
+        $fontdb{$k}{'files'}{$f}{'target'} = $bname;
         $fontdb{$k}{'available'} = 1;
       } else {
         # delete the entry for convenience
@@ -1313,14 +1459,14 @@ sub check_for_files {
       if ($mf =~ m/^(.*)\((\d*)\)$/) { $sf = $2; }
       $fontdb{$k}{'target'} = $fontdb{$k}{'files'}{$mf}{'target'};
       $fontdb{$k}{'type'} = $fontdb{$k}{'files'}{$mf}{'type'};
-      $fontdb{$k}{'subfont'} = $sf if ($fontdb{$k}{'type'} eq 'TTF' || $fontdb{$k}{'type'} eq 'TTC' || $fontdb{$k}{'type'} eq 'OTC');
+      $fontdb{$k}{'subfont'} = $sf if ($fontdb{$k}{'type'} eq 'TTC' || $fontdb{$k}{'type'} eq 'OTC');
     }
     # not needed anymore
     # delete $fontdb{$k}{'files'};
   }
-  if ($opt_debug > 0) {
-    print_debug("dumping font database:\n");
-    print_debug(Data::Dumper::Dumper(\%fontdb));
+  if ($opt_debug >= 2) {
+    print_ddebug("dumping font database:\n");
+    print_ddebug(Data::Dumper::Dumper(\%fontdb));
   }
 }
 
@@ -1374,9 +1520,9 @@ sub compute_aliases {
       $user_aliases{$ll} = $rr;
     }
   }
-  if ($opt_debug > 0) {
-    print_debug("dumping aliases:\n");
-    print_debug(Data::Dumper::Dumper(\%aliases));
+  if ($opt_debug >= 2) {
+    print_ddebug("dumping aliases:\n");
+    print_ddebug(Data::Dumper::Dumper(\%aliases));
   }
 }
 
@@ -1431,56 +1577,73 @@ sub determine_nonotf_link_name {
 
 sub read_font_database {
   my @dbl;
+  # if --fontdef=foo is given, disregard built-in database and
+  # use "foo" as a substitute; otherwise, use built-in database
   if ($opt_fontdef) {
-    open (FDB, "<$opt_fontdef") ||
-      die "Cannot find $opt_fontdef: $!";
+    my $foo = kpse_miscfont($opt_fontdef);
+    open(FDB, "<$foo") ||
+      die("Cannot find $opt_fontdef: $!");
     @dbl = <FDB>;
     close(FDB);
   } else {
     @dbl = <DATA>;
   }
-  chomp(@dbl);
-  # add a "final empty line" to easy parsing
-  push @dbl, "";
-
-  if ($opt_dump_data) {
-    open(FOO, ">$dump_datafile") || 
-      die("cannot open $dump_datafile for writing: $!");
+  read_each_font_database(@dbl);
+  # if --fontdef-add=bar is given, use "bar" as an addition
+  # to the current database; if the same Name entry appears,
+  # overwrite existing one (that is, the addition wins)
+  for (@opt_fontdef_add) {
+    my $foo = kpse_miscfont($_);
+    open(FDB, "<$foo") ||
+      die("Cannot find $_: $!");
+    @dbl = <FDB>;
+    close(FDB);
+    read_each_font_database(@dbl);
   }
+}
 
+sub read_each_font_database {
+  my (@curdbl) = @_;
   my $fontname = "";
   my $fontclass = "";
   my %fontprovides = ();
+  my $fontcasefold = "";
   my %fontfiles;
   my $psname = "";
   my $lineno = 0;
-  for my $l (@dbl) {
-    if ($opt_dump_data) {
-      print FOO "$l\n";
-      next;
-    }
-
+  chomp(@curdbl);
+  push @curdbl, ""; # add a "final empty line" to easy parsing
+  for my $l (@curdbl) {
     $lineno++;
-    next if ($l =~ m/^\s*#/);
-    if ($l =~ m/^\s*$/) {
+    next if ($l =~ m/^\s*#/); # skip comment line
+    $l =~ s/\s*#.*$//; # skip comment after '#'
+    if ($l =~ m/^\s*$/) { # empty line is a separator between entries
       if ($fontname || $fontclass || keys(%fontfiles)) {
         if ($fontname && $fontclass && keys(%fontfiles)) {
           my $realfontname = ($psname ? $psname : $fontname);
+          if ($fontdb{$realfontname}{'origname'}) {
+            # needed for --fontdef-add, which allows overwriting with external database given by user
+            print_debug("$fontdb{$realfontname}{'origname'} is already registered in database,\n");
+            print_debug("overwriting with the new one ...\n");
+          }
           $fontdb{$realfontname}{'origname'} = $fontname;
           $fontdb{$realfontname}{'class'} = $fontclass;
+          $fontdb{$realfontname}{'casefold'} = $fontcasefold;
           $fontdb{$realfontname}{'files'} = { %fontfiles };
           $fontdb{$realfontname}{'provides'} = { %fontprovides };
-          if ($opt_debug > 1) {
-            print_ddebug("Dumping fontfiles for $realfontname: " . Data::Dumper::Dumper(\%fontfiles));
+          if ($opt_debug >= 3) {
+            print_dddebug("Dumping fontfiles for $realfontname: " . Data::Dumper::Dumper(\%fontfiles));
           }
           # reset to start
           $fontname = $fontclass = $psname = "";
+          $fontcasefold = "";
           %fontfiles = ();
           %fontprovides = ();
         } else {
           print_warning("incomplete entry above line $lineno for $fontname/$fontclass, skipping!\n");
           # reset to start
           $fontname = $fontclass = $psname = "";
+          $fontcasefold = "";
           %fontfiles = ();
           %fontprovides = ();
         }
@@ -1489,9 +1652,38 @@ sub read_font_database {
       }
       next;
     }
+    if ($l =~ m/^!INCLUDE\s*(.*)$/) { # for remove-only database
+      next if (!$opt_cleanup);
+      my @dbl;
+      my $foo = kpse_miscfont($1);
+      if (!open(FDB, "<$foo")) {
+        print_warning("Cannot find $1, skipping!\n");
+        next;
+      }
+      @dbl = <FDB>;
+      close(FDB);
+      print_debug("Reading database file $1...\n");
+      read_each_font_database(@dbl);
+      next;
+    }
+    if ($l =~ m/^INCLUDE\s*(.*)$/) {
+      my @dbl;
+      my $foo = kpse_miscfont($1);
+      if (!open(FDB, "<$foo")) {
+        print_warning("Cannot find $1, skipping!\n");
+        next;
+      }
+      @dbl = <FDB>;
+      close(FDB);
+      print_debug("Reading database file $1...\n");
+      read_each_font_database(@dbl);
+      next;
+    }
     if ($l =~ m/^Name:\s*(.*)$/) { $fontname = $1; next; }
     if ($l =~ m/^PSName:\s*(.*)$/) { $psname = $1; next; }
     if ($l =~ m/^Class:\s*(.*)$/) { $fontclass = $1 ; next ; }
+    if ($l =~ m/^Provides\((\d+)\):\s*(.*)$/) { $fontprovides{$2} = $1; next; }
+    if ($l =~ m/^Casefold:\s*(.*)$/) { $fontcasefold = $1 ; next ; }
     # new code: distinguish 4 types (otf, otc, ttf, ttc)
     if ($l =~ m/^OTFname(\((\d+)\))?:\s*(.*)$/) {
       my $fn = $3;
@@ -1501,8 +1693,8 @@ sub read_font_database {
       if (win32()) {
         $encoded_fn = encode_utftocp($fn);
       }
-      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
-      print_ddebug("type: otf\n");
+      print_dddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
+      print_dddebug("type: otf\n");
       $fontfiles{$fn}{'type'} = 'OTF';
       next;
     }
@@ -1514,8 +1706,8 @@ sub read_font_database {
       if (win32()) {
         $encoded_fn = encode_utftocp($fn);
       }
-      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
-      print_ddebug("type: otc\n");
+      print_dddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
+      print_dddebug("type: otc\n");
       $fontfiles{$fn}{'type'} = 'OTC';
       next;
     }
@@ -1527,8 +1719,8 @@ sub read_font_database {
       if (win32()) {
         $encoded_fn = encode_utftocp($fn);
       }
-      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
-      print_ddebug("type: ttf\n");
+      print_dddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
+      print_dddebug("type: ttf\n");
       $fontfiles{$fn}{'type'} = 'TTF';
       next;
     }
@@ -1540,8 +1732,8 @@ sub read_font_database {
       if (win32()) {
         $encoded_fn = encode_utftocp($fn);
       }
-      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
-      print_ddebug("type: ttc\n");
+      print_dddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
+      print_dddebug("type: ttc\n");
       $fontfiles{$fn}{'type'} = 'TTC';
       next;
     }
@@ -1554,18 +1746,18 @@ sub read_font_database {
       if (win32()) {
         $encoded_fn = encode_utftocp($fn);
       }
-      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
+      print_dddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
       if ($fn =~ m/\.otf$/i) {
-        print_ddebug("type: otf\n");
+        print_dddebug("type: otf\n");
         $fontfiles{$fn}{'type'} = 'OTF';
       } elsif ($fn =~ m/\.otc(\(\d+\))?$/i) {
-        print_ddebug("type: otc\n");
+        print_dddebug("type: otc\n");
         $fontfiles{$fn}{'type'} = 'OTC';
       } elsif ($fn =~ m/\.ttf$/i) {
-        print_ddebug("type: ttf\n");
+        print_dddebug("type: ttf\n");
         $fontfiles{$fn}{'type'} = 'TTF';
       } elsif ($fn =~ m/\.ttc(\(\d+\))?$/i) {
-        print_ddebug("type: ttc\n");
+        print_dddebug("type: ttc\n");
         $fontfiles{$fn}{'type'} = 'TTC';
       } else {
         print_warning("cannot determine font type of $fn at line $lineno, skipping!\n");
@@ -1573,24 +1765,57 @@ sub read_font_database {
       }
       next;
     }
-    if ($l =~ m/^Provides\((\d+)\):\s*(.*)$/) { $fontprovides{$2} = $1; next; }
+    # only for removing
+    if ($l =~ m/^RMVname(\((\d+)\))?:\s*(.*)$/) {
+      my $fn = $3;
+      $fontfiles{$fn}{'priority'} = ($2 ? $2 : 10);
+      # cp932 for win32 console
+      my $encoded_fn;
+      if (win32()) {
+        $encoded_fn = encode_utftocp($fn);
+      }
+      print_dddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
+      print_dddebug("type: remove\n");
+      $fontfiles{$fn}{'type'} = 'RMV';
+      next;
+    }
     # we are still here??
-    print_error("Cannot parse this file at line $lineno, exiting. Strange line: >>>$l<<<\n");
-    exit (1);
+    print_error("Cannot parse this file at line $lineno, exiting.
+                 Strange line: >>>$l<<<\n");
+    exit(1);
   }
+}
 
-  if ($opt_dump_data) {
-    close(FOO);
+sub dump_font_database {
+  open(FOO, ">$dump_datafile") ||
+    die("cannot open $dump_datafile for writing: $!");
+  for my $k (sort keys %fontdb) {
+    print FOO "Name: $fontdb{$k}{'origname'}\n";
+    print FOO "PSName: $k\n" if ($fontdb{$k}{'origname'} ne $k);
+    print FOO "Class: $fontdb{$k}{'class'}\n";
+    for my $p (sort keys %{$fontdb{$k}{'provides'}}) {
+      print FOO "Provides($fontdb{$k}{'provides'}{$p}): $p\n";
+    }
+    print FOO "Casefold: $fontdb{$k}{'casefold'}\n" if ($fontdb{$k}{'casefold'});
+    for my $f (sort { $fontdb{$k}{'files'}{$a}{'priority'}
+                      <=>
+                      $fontdb{$k}{'files'}{$b}{'priority'} }
+                    keys %{$fontdb{$k}{'files'}}) {
+      print FOO "$fontdb{$k}{'files'}{$f}{'type'}name($fontdb{$k}{'files'}{$f}{'priority'}): $f\n";
+    }
+    print FOO "\n"; # empty line is a separator between entries
   }
+  close(FOO);
 }
 
 sub find_gs_resource {
   my $foundres = '';
   if (win32()) {
     # determine tlgs or native gs
-    chomp( my $foo = `kpsewhich -var-value=SELFAUTOPARENT`);
+    chomp(my $foo = `kpsewhich -var-value=SELFAUTOPARENT`);
     if ( -d "$foo/tlpkg/tlgs" ) {
       # should be texlive with tlgs
+      print_debug("Assuming tlgs win32 ...\n");
       $foundres = "$foo/tlpkg/tlgs/Resource";
       # for TL2016, tlgs binary has built-in Resource,
       # so we cannot set up CJK fonts correctly.
@@ -1605,25 +1830,54 @@ sub find_gs_resource {
       $cidfmap_local_pathpart = "../lib/cidfmap.local";
       $cidfmap_aliases_pathpart = "../lib/cidfmap.aliases";
     } else {
-      # TODO: we assume gswin32c is in the path
-      # paths other than c:/gs/gs$gsver/Resource are not considered
-      chomp( my $gsver = `gswin32c --version 2>$nul` );
-      $foundres = "c:/gs/gs$gsver/Resource";
-      if ( ! -d $foundres ) {
-        $foundres = '';
+      # we assume gswin32c is in the path
+      # TODO: what should we do for gswin64c?
+      chomp($foundres = `where gswin32c 2>$nul`); # assume 'where' is available
+      if ($?) {
+        print_error("Cannot run where gswin32c ...\n");
+      } else {
+        # trial 1: assume the relative path
+        # when C:\path\to\bin\gswin32c.exe is found, then there should be
+        # C:\path\to\Resource (note that 'where' returns backslash-ed path)
+        print_debug("Finding gs resource by assuming relative path ...\n");
+        $foundres = encode_cptoutf($foundres); # 99.99% unnecessary
+        $foundres =~ s!\\!/!g;
+        $foundres =~ s!/bin/gswin32c\.exe$!/Resource!;
+        if ( ! -d $foundres ) {
+          $foundres = '';
+        }
+        if (!$foundres) {
+          print_debug("Found gs but no resource, try another routine ...\n");
+        }
+      }
+      if (!$foundres) {
+        chomp(my $gsver = `gswin32c --version 2>$nul`);
+        if ($?) {
+          print_error("Cannot run gswin32c --version ...\n");
+        } else {
+          # trial 2: assume the fixed path, c:/gs/gs$gsver/Resource
+          print_debug("Finding gs resource by assuming fixed path ...\n");
+          $foundres = "c:/gs/gs$gsver/Resource";
+          if ( ! -d $foundres ) {
+            $foundres = '';
+          }
+          if (!$foundres) {
+            print_error("Found gs but no resource???\n");
+          }
+        }
       }
     }
   } else {
     # we assume that gs is in the path
-    chomp( my $gsver = `gs --version 2>$nul` );
+    chomp(my $gsver = `gs --version 2>$nul`);
     if ($?) {
-      print_error("Cannot get gs version ...\n");
+      print_error("Cannot run gs --version ...\n");
     } else {
       # trial 1: assume the relative path
       # when /path/to/bin/gs is found, then there should be
       # /path/to/share/ghostscript/$(gs --version)/Resource
       print_debug("Finding gs resource by assuming relative path ...\n");
-      chomp( $foundres = `which gs` );
+      chomp($foundres = `which gs`);
       $foundres =~ s!/bin/gs$!/share/ghostscript/$gsver/Resource!;
       if ( ! -d $foundres ) {
         $foundres = '';
@@ -1633,7 +1887,7 @@ sub find_gs_resource {
       }
     }
     if (!$foundres) {
-      chomp( my @ret = `gs --help 2>$nul` );
+      chomp(my @ret = `gs --help 2>$nul`);
       if ($?) {
         print_error("Cannot run gs --help ...\n");
       } else {
@@ -1657,6 +1911,16 @@ sub find_gs_resource {
     }
   }
   return $foundres;
+}
+
+sub kpse_miscfont {
+  my ($file) = @_;
+  chomp(my $foo = `kpsewhich -format=miscfont $file`);
+  # for GitHub repository diretory structure
+  if ($foo eq "") {
+    $foo = "database/$file" if (-f "database/$file");
+  }
+  return $foo;
 }
 
 sub encode_utftocp {
@@ -1687,6 +1951,9 @@ sub Usage {
                       is searched and used.
 -f, --fontdef FILE    specify alternate set of font definitions, if not
                       given, the built-in set is used
+--fontdef-add FILE    specify additional set of font definitions, to
+                      overwrite subset of built-in definitions;
+                      can be given multiple times
 -a, --alias LL=RR     defines an alias, or overrides a given alias;
                       illegal if LL is provided by a real font, or
                       RR is neither available as real font or alias;
@@ -1722,9 +1989,10 @@ sub Usage {
 ";
 
   my $commandoptions = "
---dump-data [FILE]    dump the built-in set of font definitions; you can
-                      easily modify it, and tell me with -f (or --fontdef)
-                      the data file name defaults to $dump_datafile
+--dump-data [FILE]    dump the set of font definitions which is currently
+                      effective, where FILE (the dump output) defaults to
+                      $dump_datafile; you can easily modify it,
+                      and tell me with -f (or --fontdef) option
 --only-aliases        regenerate only cidfmap.aliases file, instead of all
 --list-aliases        lists the available aliases and their options, with the
                       selected option on top
@@ -1765,7 +2033,7 @@ The `<Resource>` dir is either given by `-o`/`--output`, or otherwise searched
 from an installed Ghostscript (binary name is assumed to be 'gs' on unix,
 'gswin32c' on win32).
 
-Aliases are added to 
+Aliases are added to
 
     <Resource>/Init/cidfmap.aliases
       -- if you are using tlgs win32, tlpkg/tlgs/lib/cidfmap.aliases instead
@@ -1819,7 +2087,8 @@ are added:
 
 Japanese:
 
-    Ryumin-Light GothicBBB-Medium FutoMinA101-Bold FutoGoB101-Bold Jun101-Light
+    Ryumin-Light GothicBBB-Medium FutoMinA101-Bold FutoGoB101-Bold
+    MidashiMin-MA31 MidashiGo-MB31 Jun101-Light
 
 Korean:
 
@@ -1835,20 +2104,23 @@ Traditional Chinese:
     MSung-Light MSung-Medium MHei-Medium MKai-Medium
 
 In addition, we also include provide entries for the OTF Morisawa names:
-    RyuminPro-Light GothicBBBPro-Medium FutoMinA101Pro-Bold
-    FutoGoB101Pro-Bold Jun101Pro-Light
 
-The order is determined by the Provides setting in the font database,
-and for the Japanese fonts it is currently:
-    Morisawa Pr6N, Morisawa, Hiragino ProN, Hiragino,
-    Kozuka Pr6N, Kozuka ProVI, Kozuka, Yu OSX, Yu Win,
-    MS, Moga-Mobo-ex, Moga-Mobo, IPAex, IPA, Ume
+    RyuminPro-Light GothicBBBPro-Medium
+    FutoMinA101Pro-Bold FutoGoB101Pro-Bold
+    MidashiMinPro-MA31 MidashiGoPro-MB31 Jun101Pro-Light
 
+The order is determined by the `Provides` setting in the font database.
 That is, the first font found in this order will be used to provide the
 alias if necessary.
 
+For the Japanese fonts:
+    Morisawa Pr6N, Morisawa, Hiragino ProN, Hiragino,
+    Kozuka Pr6N, Kozuka ProVI, Kozuka Pro, Kozuka Std,
+    Yu OS X, Yu Win, MS,
+    Moga-Mobo-ex, Moga-Mobo, IPAex, IPA, Ume
+
 For the Korean fonts:
-    (Hanyang,) Adobe, Solaris-hanyang, MS, Unfonts, Baekmuk
+    (Hanyang,) Adobe, Solaris, MS, Unfonts, Baekmuk
 
 For the Simplified Chinese:
     Adobe, Fandol, Hiragino, Founder, MS, CJKUnifonts, Arphic, CJKUnifonts-ttf
@@ -1867,8 +2139,11 @@ requirements of `LL` and `RR` must be fulfilled:
 
   my $authors = "
 The script and its documentation was written by Norbert Preining, based
-on research and work by Yusuke Kuroki, Bruno Voisin, Hironobu Yamashita,
-Munehiro Yamamoto and the TeX Q&A wiki page.
+on research and work by Yusuke Kuroki, Yusuke Terada, Bruno Voisin,
+Hironobu Yamashita, Munehiro Yamamoto and the TeX Q&A wiki page.
+
+Maintained by Japanese TeX Development Community. For development, see
+  https://github.com/texjporg/cjk-gs-support
 
 The script is licensed under GNU General Public License Version 3 or later.
 The contained font data is not copyrightable.
@@ -1916,12 +2191,12 @@ The contained font data is not copyrightable.
     print_for_out($authors, "  ");
     print "\n";
   }
-  exit 0;
+  exit(0);
 }
 
 sub print_for_out {
   my ($what, $indent) = @_;
-  for (split /\n/, $what) { 
+  for (split /\n/, $what) {
     next if m/`````/;
     s/\s*####\s*//g;
     if ($_ eq '') {
@@ -1941,7 +2216,7 @@ sub print_verbose {
   print STDOUT "$prg: ", @_;
 }
 sub print_warning {
-  print STDERR "$prg [WARNING]: ", @_ if (!$opt_quiet) 
+  print STDERR "$prg [WARNING]: ", @_ if (!$opt_quiet)
 }
 sub print_error {
   print STDERR "$prg [ERROR]: ", @_;
@@ -1951,6 +2226,9 @@ sub print_debug {
 }
 sub print_ddebug {
   print STDERR "$prg [DEBUG]: ", @_ if ($opt_debug >= 2);
+}
+sub print_dddebug {
+  print STDERR "$prg [DEBUG]: ", @_ if ($opt_debug >= 3);
 }
 
 
@@ -1963,616 +2241,42 @@ __DATA__
 # JAPANESE FONTS
 #
 
-# Morisawa
+# Morisawa -- Provides level 10(Pr6N), 15(Pr6), 18(Pr5), 20(Pro)
+INCLUDE cjkgs-morisawa.dat
+INCLUDE cjkgs-morisawa-extra.dat
 
-Name: A-OTF-RyuminPr6N-Light
-PSName: RyuminPr6N-Light
-Class: Japan
-Provides(10): Ryumin-Light
-Provides(10): RyuminPro-Light
-Provides(10): HiraMinProN-W3
-Provides(10): HiraMinPro-W3
-OTFname: A-OTF-RyuminPr6N-Light.otf
+# Hiragino -- Provides level 30(ProN), 40(Pro)
+INCLUDE cjkgs-hiragino.dat
 
-Name: A-OTF-RyuminPro-Light
-PSName: RyuminPro-Light
-Class: Japan
-Provides(20): Ryumin-Light
-Provides(20): HiraMinPro-W3
-OTFname: A-OTF-RyuminPro-Light.otf
+# Kozuka -- Provides level 50(Pr6N), 55(ProVI), 60(Pro), 65(Std)
+INCLUDE cjkgs-kozuka.dat
+INCLUDE cjkgs-ryokana.dat
 
-Name: A-OTF-FutoMinA101Pr6N-Bold
-PSName: FutoMinA101Pr6N-Bold
-Class: Japan
-Provides(10): FutoMinA101-Bold
-Provides(10): FutoMinA101Pro-Bold
-Provides(10): HiraMinProN-W6
-Provides(10): HiraMinPro-W6
-OTFname: A-OTF-FutoMinA101Pr6N-Bold.otf
+# Yu-fonts MacOS version -- Provides level 80
+INCLUDE cjkgs-yu-osx.dat
 
-Name: A-OTF-FutoMinA101Pro-Bold
-PSName: FutoMinA101Pro-Bold
-Class: Japan
-Provides(20): FutoMinA101-Bold
-Provides(20): HiraMinPro-W6
-OTFname: A-OTF-FutoMinA101Pro-Bold.otf
+# Yu-fonts Windows/MSOffice version -- Provides level 90
+INCLUDE cjkgs-yu-win.dat
 
-Name: A-OTF-GothicBBBPr6N-Medium
-PSName: GothicBBBPr6N-Medium
-Class: Japan
-Provides(10): GothicBBB-Medium
-Provides(10): GothicBBBPro-Medium
-Provides(10): HiraKakuProN-W3
-Provides(10): HiraKakuPro-W3
-OTFname: A-OTF-GothicBBBPr6N-Medium.otf
+# MS -- Provides level 95
+INCLUDE cjkgs-microsoft.dat
 
-Name: A-OTF-GothicBBBPro-Medium
-PSName: GothicBBBPro-Medium
-Class: Japan
-Provides(20): GothicBBB-Medium
-Provides(20): HiraKakuPro-W3
-OTFname: A-OTF-GothicBBBPro-Medium.otf
+# TypeBank
+INCLUDE cjkgs-typebank.dat
 
-Name: A-OTF-FutoGoB101Pr6N-Bold
-PSName: FutoGoB101Pr6N-Bold
-Class: Japan
-Provides(10): FutoGoB101-Bold
-Provides(10): FutoGoB101Pro-Bold
-Provides(10): HiraKakuProN-W6
-Provides(10): HiraKakuPro-W6
-OTFname: A-OTF-FutoGoB101Pr6N-Bold.otf
+# Fontworks
+INCLUDE cjkgs-fontworks.dat
 
-Name: A-OTF-FutoGoB101Pro-Bold
-PSName: FutoGoB101Pro-Bold
-Class: Japan
-Provides(20): FutoGoB101-Bold
-Provides(20): HiraKakuPro-W6
-OTFname: A-OTF-FutoGoB101Pro-Bold.otf
+# Toppan
+INCLUDE cjkgs-toppan.dat
 
-Name: A-OTF-MidashiGoPr6N-MB31
-PSName: MidashiGoPr6N-MB31
-Class: Japan
-Provides(10): MidashiGo-MB31
-Provides(10): MidashiGoPro-MB31
-Provides(10): HiraKakuStdN-W8
-Provides(10): HiraKakuStd-W8
-OTFname: A-OTF-MidashiGoPr6N-MB31.otf
+# Moga-Mobo from Y.Oz Vox (free) -- Provides level 100(Ex), 110(none)
+INCLUDE cjkgs-mogamobo.dat
 
-Name: A-OTF-MidashiGoPro-MB31
-PSName: MidashiGoPro-MB31
-Class: Japan
-Provides(20): MidashiGo-MB31
-Provides(20): HiraKakuStd-W8
-OTFname: A-OTF-MidashiGoPro-MB31.otf
+# Ume-font (free) -- Provides level 140
+INCLUDE cjkgs-ume.dat
 
-# A-OTF-Jun101Pr6N-Light has been replaced by A-OTF-ShinMGoPr6N-Light
-# in otf-(up-)morisawa-pr6n.map since jfontmaps 20140301.0
-# now unnecessary, but reserved for backward compatibility
-Name: A-OTF-Jun101Pr6N-Light
-PSName: Jun101Pr6N-Light
-Class: Japan
-Provides(11): Jun101-Light
-Provides(11): Jun101Pro-Light
-Provides(11): HiraMaruProN-W4
-Provides(11): HiraMaruPro-W4
-OTFname: A-OTF-Jun101Pr6N-Light.otf
-
-Name: A-OTF-Jun101Pro-Light
-PSName: Jun101Pro-Light
-Class: Japan
-Provides(20): Jun101-Light
-Provides(20): HiraMaruPro-W4
-OTFname: A-OTF-Jun101Pro-Light.otf
-
-Name: A-OTF-ShinMGoPr6N-Light
-PSName: ShinMGoPr6N-Light
-Class: Japan
-Provides(10): Jun101-Light
-Provides(10): Jun101Pro-Light
-Provides(10): HiraMaruProN-W4
-Provides(10): HiraMaruPro-W4
-OTFname: A-OTF-ShinMGoPr6N-Light.otf
-
-# Morisawa others (for moriprop);
-# A-OTF-Jun101Pro-Light.otf and A-OTF-RyuminPro-Light.otf already added
-
-Name: A-OTF-Jun201Pro-Regular
-PSName: Jun201Pro-Regular
-Class: Japan
-Provides(20): Jun201-Regular
-OTFname: A-OTF-Jun201Pro-Regular.otf
-
-Name: A-OTF-Jun34Pro-Medium
-PSName: Jun34Pro-Medium
-Class: Japan
-Provides(20): Jun34-Medium
-OTFname: A-OTF-Jun34Pro-Medium.otf
-
-Name: A-OTF-Jun501Pro-Bold
-PSName: Jun501Pro-Bold
-Class: Japan
-Provides(20): Jun501-Bold
-OTFname: A-OTF-Jun501Pro-Bold.otf
-
-Name: A-OTF-RyuminPro-Regular
-PSName: RyuminPro-Regular
-Class: Japan
-Provides(20): Ryumin-Regular
-OTFname: A-OTF-RyuminPro-Regular.otf
-
-Name: A-OTF-RyuminPro-Medium
-PSName: RyuminPro-Medium
-Class: Japan
-Provides(20): Ryumin-Medium
-OTFname: A-OTF-RyuminPro-Medium.otf
-
-Name: A-OTF-RyuminPro-Bold
-PSName: RyuminPro-Bold
-Class: Japan
-Provides(20): Ryumin-Bold
-OTFname: A-OTF-RyuminPro-Bold.otf
-
-Name: A-OTF-RyuminPro-Heavy
-PSName: RyuminPro-Heavy
-Class: Japan
-Provides(20): Ryumin-Heavy
-OTFname: A-OTF-RyuminPro-Heavy.otf
-
-Name: A-OTF-RyuminPro-Ultra
-PSName: RyuminPro-Ultra
-Class: Japan
-Provides(20): Ryumin-Ultra
-OTFname: A-OTF-RyuminPro-Ultra.otf
-
-Name: A-OTF-ShinGoPro-Light
-PSName: ShinGoPro-Light
-Class: Japan
-Provides(20): ShinGo-Light
-OTFname: A-OTF-ShinGoPro-Light.otf
-
-Name: A-OTF-ShinGoPro-Regular
-PSName: ShinGoPro-Regular
-Class: Japan
-Provides(20): ShinGo-Regular
-OTFname: A-OTF-ShinGoPro-Regular.otf
-
-Name: A-OTF-ShinGoPro-Medium
-PSName: ShinGoPro-Medium
-Class: Japan
-Provides(20): ShinGo-Medium
-OTFname: A-OTF-ShinGoPro-Medium.otf
-
-Name: A-OTF-ShinGoPro-Bold
-PSName: ShinGoPro-Bold
-Class: Japan
-Provides(20): ShinGo-Bold
-OTFname: A-OTF-ShinGoPro-Bold.otf
-
-Name: A-OTF-ShinGoPro-Heavy
-PSName: ShinGoPro-Heavy
-Class: Japan
-Provides(20): ShinGo-Heavy
-OTFname: A-OTF-ShinGoPro-Heavy.otf
-
-Name: A-OTF-ShinGoPro-Ultra
-PSName: ShinGoPro-Ultra
-Class: Japan
-Provides(20): ShinGo-Ultra
-OTFname: A-OTF-ShinGoPro-Ultra.otf
-
-# Hiragino (OS X)
-
-# Note about Mac OS X:
-#   ヒラギノ角ゴ {Pro,ProN} {W3,W6}.otf
-#   ヒラギノ角ゴ {Std,StdN} W8.otf
-#   ヒラギノ丸ゴ {Pro,ProN} W4.otf
-#   ヒラギノ明朝 {Pro,ProN} {W3,W6}.otf
-# are bundled with OS X 10.10.5 Yosemite or earlier versions.
-#   ヒラギノ角ゴシック {W0,...W9}.ttc
-#   ヒラギノ丸ゴ ProN W4.ttc
-#   ヒラギノ明朝 ProN {W3,W6}.ttc
-# are bundled with OS X 10.11 El Capitan or later versions.
-
-Name: HiraKakuPro-W3
-Class: Japan
-Provides(40): GothicBBB-Medium
-Provides(40): GothicBBBPro-Medium
-# the following two are *not* the same
-# one is in decomposed form (for Mac), one is in composed form (for the rest)
-OTFname(20): ヒラギノ角ゴ Pro W3.otf
-OTFname(19): ヒラギノ角ゴ Pro W3.otf
-OTFname(10): HiraKakuPro-W3.otf
-OTCname(30): ヒラギノ角ゴシック W3.ttc(3)
-OTCname(29): ヒラギノ角ゴシック W3.ttc(3)
-OTCname(28): HiraginoSans-W3.ttc(3)
-
-Name: HiraKakuPro-W6
-Class: Japan
-Provides(40): FutoGoB101-Bold
-Provides(40): FutoGoB101Pro-Bold
-OTFname(20): ヒラギノ角ゴ Pro W6.otf
-OTFname(19): ヒラギノ角ゴ Pro W6.otf
-OTFname(10): HiraKakuPro-W6.otf
-OTCname(30): ヒラギノ角ゴシック W6.ttc(3)
-OTCname(29): ヒラギノ角ゴシック W6.ttc(3)
-OTCname(28): HiraginoSans-W6.ttc(3)
-
-Name: HiraKakuProN-W3
-Class: Japan
-Provides(30): GothicBBB-Medium
-Provides(30): GothicBBBPro-Medium
-OTFname(20): ヒラギノ角ゴ ProN W3.otf
-OTFname(19): ヒラギノ角ゴ ProN W3.otf
-OTFname(10): HiraKakuProN-W3.otf
-OTCname(30): ヒラギノ角ゴシック W3.ttc(2)
-OTCname(29): ヒラギノ角ゴシック W3.ttc(2)
-OTCname(28): HiraginoSans-W3.ttc(2)
-
-Name: HiraKakuProN-W6
-Class: Japan
-Provides(30): FutoGoB101-Bold
-Provides(30): FutoGoB101Pro-Bold
-OTFname(20): ヒラギノ角ゴ ProN W6.otf
-OTFname(19): ヒラギノ角ゴ ProN W6.otf
-OTFname(10): HiraKakuProN-W6.otf
-OTCname(30): ヒラギノ角ゴシック W6.ttc(2)
-OTCname(29): ヒラギノ角ゴシック W6.ttc(2)
-OTCname(28): HiraginoSans-W6.ttc(2)
-
-Name: HiraKakuStd-W8
-Class: Japan
-Provides(40): MidashiGo-MB31
-Provides(40): MidashiGoPro-MB31
-OTFname(20): ヒラギノ角ゴ Std W8.otf
-OTFname(19): ヒラギノ角ゴ Std W8.otf
-OTFname(10): HiraKakuStd-W8.otf
-OTCname(30): ヒラギノ角ゴシック W8.ttc(2)
-OTCname(29): ヒラギノ角ゴシック W8.ttc(2)
-OTCname(28): HiraginoSans-W8.ttc(2)
-
-Name: HiraKakuStdN-W8
-Class: Japan
-Provides(30): MidashiGo-MB31
-Provides(30): MidashiGoPro-MB31
-OTFname(20): ヒラギノ角ゴ StdN W8.otf
-OTFname(19): ヒラギノ角ゴ StdN W8.otf
-OTFname(10): HiraKakuStdN-W8.otf
-OTCname(30): ヒラギノ角ゴシック W8.ttc(3)
-OTCname(29): ヒラギノ角ゴシック W8.ttc(3)
-OTCname(28): HiraginoSans-W8.ttc(3)
-
-Name: HiraginoSans-W0
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W0.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W0.ttc(0)
-OTCname(28): HiraginoSans-W0.ttc(0)
-
-Name: HiraginoSans-W1
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W1.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W1.ttc(0)
-OTCname(28): HiraginoSans-W1.ttc(0)
-
-Name: HiraginoSans-W2
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W2.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W2.ttc(0)
-OTCname(28): HiraginoSans-W2.ttc(0)
-
-Name: HiraginoSans-W3
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W3.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W3.ttc(0)
-OTCname(28): HiraginoSans-W3.ttc(0)
-
-Name: HiraginoSans-W4
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W4.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W4.ttc(0)
-OTCname(28): HiraginoSans-W4.ttc(0)
-
-Name: HiraginoSans-W5
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W5.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W5.ttc(0)
-OTCname(28): HiraginoSans-W5.ttc(0)
-
-Name: HiraginoSans-W6
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W6.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W6.ttc(0)
-OTCname(28): HiraginoSans-W6.ttc(0)
-
-Name: HiraginoSans-W7
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W7.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W7.ttc(0)
-OTCname(28): HiraginoSans-W7.ttc(0)
-
-Name: HiraginoSans-W8
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W8.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W8.ttc(0)
-OTCname(28): HiraginoSans-W8.ttc(0)
-
-Name: HiraginoSans-W9
-Class: Japan
-OTCname(30): ヒラギノ角ゴシック W9.ttc(0)
-OTCname(29): ヒラギノ角ゴシック W9.ttc(0)
-OTCname(28): HiraginoSans-W9.ttc(0)
-
-Name: HiraMaruPro-W4
-Class: Japan
-Provides(40): Jun101-Light
-Provides(40): Jun101Pro-Light
-OTFname(20): ヒラギノ丸ゴ Pro W4.otf
-OTFname(19): ヒラギノ丸ゴ Pro W4.otf
-OTFname(10): HiraMaruPro-W4.otf
-OTCname(30): ヒラギノ丸ゴ ProN W4.ttc(0)
-OTCname(29): ヒラギノ丸ゴ ProN W4.ttc(0)
-OTCname(28): HiraginoSansR-W4.ttc(0)
-
-Name: HiraMaruProN-W4
-Class: Japan
-Provides(30): Jun101-Light
-Provides(30): Jun101Pro-Light
-OTFname(20): ヒラギノ丸ゴ ProN W4.otf
-OTFname(19): ヒラギノ丸ゴ ProN W4.otf
-OTFname(10): HiraMaruProN-W4.otf
-OTCname(30): ヒラギノ丸ゴ ProN W4.ttc(1)
-OTCname(29): ヒラギノ丸ゴ ProN W4.ttc(1)
-OTCname(28): HiraginoSansR-W4.ttc(1)
-
-Name: HiraMinPro-W3
-Class: Japan
-Provides(40): Ryumin-Light
-Provides(40): RyuminPro-Light
-OTFname(20): ヒラギノ明朝 Pro W3.otf
-OTFname(19): ヒラギノ明朝 Pro W3.otf
-OTFname(10): HiraMinPro-W3.otf
-OTCname(30): ヒラギノ明朝 ProN W3.ttc(1)
-OTCname(29): ヒラギノ明朝 ProN W3.ttc(1)
-OTCname(28): HiraginoSerif-W3.ttc(1)
-
-Name: HiraMinPro-W6
-Class: Japan
-Provides(40): FutoMinA101-Bold
-Provides(40): FutoMinA101Pro-Bold
-OTFname(20): ヒラギノ明朝 Pro W6.otf
-OTFname(19): ヒラギノ明朝 Pro W6.otf
-OTFname(10): HiraMinPro-W6.otf
-OTCname(30): ヒラギノ明朝 ProN W6.ttc(1)
-OTCname(29): ヒラギノ明朝 ProN W6.ttc(1)
-OTCname(28): HiraginoSerif-W6.ttc(1)
-
-Name: HiraMinProN-W3
-Class: Japan
-Provides(30): Ryumin-Light
-Provides(30): RyuminPro-Light
-OTFname(20): ヒラギノ明朝 ProN W3.otf
-OTFname(19): ヒラギノ明朝 ProN W3.otf
-OTFname(10): HiraMinProN-W3.otf
-OTCname(30): ヒラギノ明朝 ProN W3.ttc(0)
-OTCname(29): ヒラギノ明朝 ProN W3.ttc(0)
-OTCname(28): HiraginoSerif-W3.ttc(0)
-
-Name: HiraMinProN-W6
-Class: Japan
-Provides(30): FutoMinA101-Bold
-Provides(30): FutoMinA101Pro-Bold
-OTFname(20): ヒラギノ明朝 ProN W6.otf
-OTFname(19): ヒラギノ明朝 ProN W6.otf
-OTFname(10): HiraMinProN-W6.otf
-OTCname(30): ヒラギノ明朝 ProN W6.ttc(0)
-OTCname(29): ヒラギノ明朝 ProN W6.ttc(0)
-OTCname(28): HiraginoSerif-W6.ttc(0)
-
-# Following Hiragino fonts are not bundled with OS X,
-# but used in ptex-fontmaps
-
-Name: HiraMinPro-W2
-Class: Japan
-OTFname(20): ヒラギノ明朝 Pro W2.otf
-OTFname(19): ヒラギノ明朝 Pro W2.otf
-OTFname(10): HiraMinPro-W2.otf
-
-Name: HiraMinProN-W2
-Class: Japan
-OTFname(20): ヒラギノ明朝 ProN W2.otf
-OTFname(19): ヒラギノ明朝 ProN W2.otf
-OTFname(10): HiraMinProN-W2.otf
-
-# Yu-fonts MacOS version
-
-# Note about Mac OS X:
-#   Yu Gothic Medium.otf
-#   Yu Gothic Bold.otf
-# are bundled with OS X 10.9 Mavericks or later versions.
-#   Yu Mincho Medium.otf
-#   Yu Mincho Demibold.otf
-# are bundled with OS X 10.9 Mavericks -- 10.10.5 Yosemite.
-#   YuMincho.ttc
-#     index 0: YuMin-Medium
-#     index 1: YuMin-Demibold
-#     index 2: YuMin_36pKn-Medium
-#     index 3: YuMin_36pKn-Demibold
-# is bundled with OS X 10.11 -- 10.11.6 El Capitan.
-#   YuMincho.ttc
-#     index 0: YuMin-Medium
-#     index 1: YuMin-Demibold
-#     index 2: YuMin-Extrabold
-#     index 3: YuMin_36pKn-Medium
-#     index 4: YuMin_36pKn-Demibold
-#     index 5: YuMin_36pKn-Extrabold
-# is bundled with macOS 10.12.0 Sierra or later versions.
-
-Name: YuGo-Medium
-Class: Japan
-Provides(80): GothicBBB-Medium
-Provides(80): GothicBBBPro-Medium
-OTFname(20): Yu Gothic Medium.otf
-OTFname(10): YuGo-Medium.otf
-
-Name: YuGo-Bold
-Class: Japan
-Provides(80): FutoGoB101-Bold
-Provides(80): FutoGoB101Pro-Bold
-Provides(80): Jun101-Light
-Provides(80): Jun101Pro-Light
-Provides(80): MidashiGo-MB31
-Provides(80): MidashiGoPro-MB31
-OTFname(20): Yu Gothic Bold.otf
-OTFname(10): YuGo-Bold.otf
-
-Name: YuMin-Medium
-Class: Japan
-Provides(80): Ryumin-Light
-Provides(80): RyuminPro-Light
-OTFname(20): Yu Mincho Medium.otf
-OTFname(10): YuMin-Medium.otf
-OTCname(30): YuMincho.ttc(0)
-
-Name: YuMin-Demibold
-Class: Japan
-Provides(80): FutoMinA101-Bold
-Provides(80): FutoMinA101Pro-Bold
-OTFname(20): Yu Mincho Demibold.otf
-OTFname(10): YuMin-Demibold.otf
-OTCname(30): YuMincho.ttc(1)
-
-# Following four entries are for macOS 10.12 Sierra
-# The index for OS X 10.11.x El Capitan is different!
-
-Name: YuMin-Extrabold
-Class: Japan
-OTCname(30): YuMincho.ttc(2)
-
-Name: YuMin_36pKn-Medium
-Class: Japan
-OTCname(30): YuMincho.ttc(3)
-
-Name: YuMin_36pKn-Demibold
-Class: Japan
-OTCname(30): YuMincho.ttc(4)
-
-Name: YuMin_36pKn-Extrabold
-Class: Japan
-OTCname(30): YuMincho.ttc(5)
-
-# Yu-fonts Windows version
-
-# Note about Windows:
-#   yugothi{b,c,l}.ttf
-#   yumin.ttf, yumin{db,l}.ttf
-# are bundled with Windows 8.1.
-#   YuGoth{B,L,M,R}.ttc
-#   yumin.ttf, yumin{db,l}.ttf
-# are bundled with Windows 10.
-#   YUGOTH{B,L,M,R}.TTC
-#   YUMIN.TTF, YUMIN{DB,L}.TTF
-# are bundled with Yu Font Pack for MSOffice 2010/2013.
-#   YuGothic.ttf
-#   YuGothic-Bold.ttf
-# are bundled with VS2013 or later versions.
-#   YuGoth{B,L,M,R}.ttf
-#   yumin.ttf, yumin{db,l}.ttf
-# are bundled with Office for Mac 2016.
-
-# In the following database, Yu Font Pack entries do not appear
-# as separate lines, but they are implied by Windows 10 entries
-# since win32 is case-insensitive.
-# Currently we don't add VS2013 YuGothic.ttf (YuGothic) and
-# YuGothic-Bold.ttf (YuGothic-Bold) on purpose, because these files
-# are smaller than Windows 8.1 yugothic.ttf and yugothib.ttf
-
-Name: YuMincho-Regular
-Class: Japan
-Provides(90): Ryumin-Light
-Provides(90): RyuminPro-Light
-Provides(90): HiraMinProN-W3
-Provides(90): HiraMinPro-W3
-TTFname(20): yumin.ttf
-#TTFname(50): YuMincho-Regular.ttf # never existed
-
-Name: YuMincho-Light
-Class: Japan
-TTFname(20): yuminl.ttf
-#TTFname(50): YuMincho-Light.ttf # never existed
-
-Name: YuMincho-DemiBold
-Class: Japan
-Provides(90): FutoMinA101-Bold
-Provides(90): FutoMinA101Pro-Bold
-Provides(90): HiraMinProN-W6
-Provides(90): HiraMinPro-W6
-TTFname(20): yumindb.ttf
-#TTFname(50): YuMincho-DemiBold.ttf # never existed
-
-Name: YuGothic-Regular
-Class: Japan
-Provides(90): GothicBBB-Medium
-Provides(90): GothicBBBPro-Medium
-Provides(90): HiraKakuProN-W3
-Provides(90): HiraKakuPro-W3
-TTFname(25): yugothic.ttf
-TTCname(20): YuGothR.ttc(0)
-TTFname(40): YuGothR.ttf
-#TTFname(50): YuGothic-Regular.ttf # never existed
-
-Name: YuGothic-Medium
-Class: Japan
-TTCname(20): YuGothM.ttc(0)
-TTFname(40): YuGothM.ttf
-
-Name: YuGothic-Light
-Class: Japan
-TTFname(25): yugothil.ttf
-TTCname(20): YuGothL.ttc(0)
-TTFname(40): YuGothL.ttf
-#TTFname(50): YuGothic-Light.ttf # never existed
-
-Name: YuGothic-Bold
-Class: Japan
-Provides(90): FutoGoB101-Bold
-Provides(90): FutoGoB101Pro-Bold
-Provides(90): HiraKakuProN-W6
-Provides(90): HiraKakuPro-W6
-Provides(90): Jun101-Light
-Provides(90): Jun101Pro-Light
-Provides(90): HiraMaruProN-W4
-Provides(90): HiraMaruPro-W4
-Provides(90): MidashiGo-MB31
-Provides(90): MidashiGoPro-MB31
-Provides(90): HiraKakuStdN-W8
-Provides(90): HiraKakuStd-W8
-TTFname(25): yugothib.ttf
-TTCname(20): YuGothB.ttc(0)
-TTFname(40): YuGothB.ttf
-#TTFname(50): YuGothic-Bold.ttf
-
-# Yu-UI-fonts (Windows only)
-
-Name: YuGothicUI-Semilight
-Class: Japan
-TTCname(20): YuGothR.ttc(1)
-
-Name: YuGothicUI-Regular
-Class: Japan
-TTCname(20): YuGothM.ttc(1)
-
-Name: YuGothicUI-Light
-Class: Japan
-TTCname(20): YuGothL.ttc(1)
-
-Name: YuGothicUI-Bold
-Class: Japan
-TTCname(20): YuGothB.ttc(1)
-
-Name: YuGothicUI-Semibold
-Class: Japan
-TTCname(20): YuGothB.ttc(2)
-
-# IPA (free)
+# IPA (free) -- Provides level 120(Ex), 130(none)
 
 Name: IPAMincho
 Class: Japan
@@ -2584,6 +2288,8 @@ Provides(130): FutoMinA101-Bold
 Provides(130): FutoMinA101Pro-Bold
 Provides(130): HiraMinProN-W6
 Provides(130): HiraMinPro-W6
+Provides(130): MidashiMin-MA31
+Provides(130): MidashiMinPro-MA31
 TTFname(20): ipam.ttf
 #TTFname(21): IPAMincho.ttf
 
@@ -2597,14 +2303,14 @@ Provides(130): FutoGoB101-Bold
 Provides(130): FutoGoB101Pro-Bold
 Provides(130): HiraKakuProN-W6
 Provides(130): HiraKakuPro-W6
-Provides(130): Jun101-Light
-Provides(130): Jun101Pro-Light
-Provides(130): HiraMaruProN-W4
-Provides(130): HiraMaruPro-W4
 Provides(130): MidashiGo-MB31
 Provides(130): MidashiGoPro-MB31
 Provides(130): HiraKakuStdN-W8
 Provides(130): HiraKakuStd-W8
+Provides(130): Jun101-Light
+Provides(130): Jun101Pro-Light
+Provides(130): HiraMaruProN-W4
+Provides(130): HiraMaruPro-W4
 TTFname(20): ipag.ttf
 #TTFname(21): IPAGothic.ttf
 
@@ -2618,6 +2324,8 @@ Provides(120): FutoMinA101-Bold
 Provides(120): FutoMinA101Pro-Bold
 Provides(120): HiraMinProN-W6
 Provides(120): HiraMinPro-W6
+Provides(120): MidashiMin-MA31
+Provides(120): MidashiMinPro-MA31
 TTFname(20): ipaexm.ttf
 #TTFname(21): IPAexMincho.ttf
 
@@ -2631,14 +2339,14 @@ Provides(120): FutoGoB101-Bold
 Provides(120): FutoGoB101Pro-Bold
 Provides(120): HiraKakuProN-W6
 Provides(120): HiraKakuPro-W6
-Provides(120): Jun101-Light
-Provides(120): Jun101Pro-Light
-Provides(120): HiraMaruProN-W4
-Provides(120): HiraMaruPro-W4
 Provides(120): MidashiGo-MB31
 Provides(120): MidashiGoPro-MB31
 Provides(120): HiraKakuStdN-W8
 Provides(120): HiraKakuStd-W8
+Provides(120): Jun101-Light
+Provides(120): Jun101Pro-Light
+Provides(120): HiraMaruProN-W4
+Provides(120): HiraMaruPro-W4
 TTFname(20): ipaexg.ttf
 #TTFname(21): IPAexGothic.ttf
 
@@ -2654,299 +2362,11 @@ Class: Japan
 TTFname(20): ipagp.ttf
 #TTFname(21): IPAPGothic.ttf
 
-# Moga-Mobo from Y.Oz Vox (free)
+# IPA MJ (free)
 
-Name: MogaMincho-Regular
+Name: IPAmjMincho
 Class: Japan
-Provides(110): Ryumin-Light
-Provides(110): RyuminPro-Light
-Provides(110): HiraMinProN-W3
-Provides(110): HiraMinPro-W3
-TTCname: mogam.ttc(0)
-
-Name: MogaExMincho-Regular
-Class: Japan
-Provides(100): Ryumin-Light
-Provides(100): RyuminPro-Light
-Provides(100): HiraMinProN-W3
-Provides(100): HiraMinPro-W3
-TTCname: mogam.ttc(1)
-
-Name: MogaExMincho-Italic
-Class: Japan
-TTCname: mogam.ttc(2)
-
-Name: Moga90Mincho-Regular
-Class: Japan
-TTCname: mogam.ttc(3)
-
-Name: MogaEx90Mincho-Regular
-Class: Japan
-TTCname: mogam.ttc(4)
-
-Name: MogaEx90Mincho-Italic
-Class: Japan
-TTCname: mogam.ttc(5)
-
-Name: MogaMincho-Bold
-Class: Japan
-Provides(110): FutoMinA101-Bold
-Provides(110): FutoMinA101Pro-Bold
-Provides(110): HiraMinProN-W6
-Provides(110): HiraMinPro-W6
-TTCname: mogamb.ttc(0)
-
-Name: MogaExMincho-Bold
-Class: Japan
-Provides(100): FutoMinA101-Bold
-Provides(100): FutoMinA101Pro-Bold
-Provides(100): HiraMinProN-W6
-Provides(100): HiraMinPro-W6
-TTCname: mogamb.ttc(1)
-
-Name: Moga90Mincho-Bold
-Class: Japan
-TTCname: mogamb.ttc(2)
-
-Name: MogaEx90Mincho-Bold
-Class: Japan
-TTCname: mogamb.ttc(3)
-
-Name: MogaHMincho-Regular
-Class: Japan
-TTCname: mogahm.ttc(0)
-
-Name: MogaExHMincho-Regular
-Class: Japan
-TTCname: mogahm.ttc(1)
-
-Name: MogaExHMincho-Italic
-Class: Japan
-TTCname: mogahm.ttc(2)
-
-Name: Moga90HMincho-Regular
-Class: Japan
-TTCname: mogahm.ttc(3)
-
-Name: MogaEx90HMincho-Regular
-Class: Japan
-TTCname: mogahm.ttc(4)
-
-Name: MogaEx90HMincho-Italic
-Class: Japan
-TTCname: mogahm.ttc(5)
-
-Name: MogaHMincho-Bold
-Class: Japan
-TTCname: mogahmb.ttc(0)
-
-Name: MogaExHMincho-Bold
-Class: Japan
-TTCname: mogahmb.ttc(1)
-
-Name: Moga90HMincho-Bold
-Class: Japan
-TTCname: mogahmb.ttc(2)
-
-Name: MogaEx90HMincho-Bold
-Class: Japan
-TTCname: mogahmb.ttc(3)
-
-Name: MogaGothic-Regular
-Class: Japan
-Provides(110): GothicBBB-Medium
-Provides(110): GothicBBBPro-Medium
-Provides(110): HiraKakuProN-W3
-Provides(110): HiraKakuPro-W3
-TTCname: mogag.ttc(0)
-
-Name: MogaExGothic-Regular
-Class: Japan
-Provides(100): GothicBBB-Medium
-Provides(100): GothicBBBPro-Medium
-Provides(100): HiraKakuProN-W3
-Provides(100): HiraKakuPro-W3
-TTCname: mogag.ttc(1)
-
-Name: Moga90Gothic-Regular
-Class: Japan
-TTCname: mogag.ttc(2)
-
-Name: MogaEx90Gothic-Regular
-Class: Japan
-TTCname: mogag.ttc(3)
-
-Name: MogaGothic-Bold
-Class: Japan
-Provides(110): FutoGoB101-Bold
-Provides(110): FutoGoB101Pro-Bold
-Provides(110): HiraKakuProN-W6
-Provides(110): HiraKakuPro-W6
-Provides(110): MidashiGo-MB31
-Provides(110): MidashiGoPro-MB31
-Provides(110): HiraKakuStdN-W8
-Provides(110): HiraKakuStd-W8
-TTCname: mogagb.ttc(0)
-
-Name: MogaExGothic-Bold
-Class: Japan
-Provides(100): FutoGoB101-Bold
-Provides(100): FutoGoB101Pro-Bold
-Provides(100): HiraKakuProN-W6
-Provides(100): HiraKakuPro-W6
-Provides(100): MidashiGo-MB31
-Provides(100): MidashiGoPro-MB31
-Provides(100): HiraKakuStdN-W8
-Provides(100): HiraKakuStd-W8
-TTCname: mogagb.ttc(1)
-
-Name: Moga90Gothic-Bold
-Class: Japan
-TTCname: mogagb.ttc(2)
-
-Name: MogaEx90Gothic-Bold
-Class: Japan
-TTCname: mogagb.ttc(3)
-
-Name: MoboGothic-Regular
-Class: Japan
-Provides(110): Jun101-Light
-Provides(110): Jun101Pro-Light
-Provides(110): HiraMaruProN-W4
-Provides(110): HiraMaruPro-W4
-TTCname: mobog.ttc(0)
-
-Name: MoboExGothic-Regular
-Class: Japan
-Provides(100): Jun101-Light
-Provides(100): Jun101Pro-Light
-Provides(100): HiraMaruProN-W4
-Provides(100): HiraMaruPro-W4
-TTCname: mobog.ttc(1)
-
-Name: Mobo90Gothic-Regular
-Class: Japan
-TTCname: mobog.ttc(2)
-
-Name: MoboEx90Gothic-Regular
-Class: Japan
-TTCname: mobog.ttc(3)
-
-Name: MoboGothic-Bold
-Class: Japan
-TTCname: mobogb.ttc(0)
-
-Name: MoboExGothic-Bold
-Class: Japan
-TTCname: mobogb.ttc(1)
-
-Name: Mobo90Gothic-Bold
-Class: Japan
-TTCname: mobogb.ttc(2)
-
-Name: MoboEx90Gothic-Bold
-Class: Japan
-TTCname: mobogb.ttc(3)
-
-# Ume-font (free)
-# note: in the current release (2016-09-03 umefont_660.7z),
-# ume-tms.ttf and ume-pms.ttf ("studybook" family) share the same PSName
-# as ume-tmo.ttf and ume-pmo.ttf; we don't add these database
-# intentionally -- HY (2017/01/17)
-
-Name: Ume-Mincho
-Class: Japan
-Provides(140): Ryumin-Light
-Provides(140): RyuminPro-Light
-Provides(140): HiraMinProN-W3
-Provides(140): HiraMinPro-W3
-Provides(140): FutoMinA101-Bold
-Provides(140): FutoMinA101Pro-Bold
-Provides(140): HiraMinProN-W6
-Provides(140): HiraMinPro-W6
-TTFname(10): ume-tmo3.ttf
-#TTFname(11): ume-tms3.ttf
-
-Name: Ume-Gothic
-Class: Japan
-Provides(140): GothicBBB-Medium
-Provides(140): GothicBBBPro-Medium
-Provides(140): HiraKakuProN-W3
-Provides(140): HiraKakuPro-W3
-Provides(140): FutoGoB101-Bold
-Provides(140): FutoGoB101Pro-Bold
-Provides(140): HiraKakuProN-W6
-Provides(140): HiraKakuPro-W6
-Provides(140): Jun101-Light
-Provides(140): Jun101Pro-Light
-Provides(140): HiraMaruProN-W4
-Provides(140): HiraMaruPro-W4
-Provides(140): MidashiGo-MB31
-Provides(140): MidashiGoPro-MB31
-Provides(140): HiraKakuStdN-W8
-Provides(140): HiraKakuStd-W8
-TTFname(10): ume-tgo4.ttf
-
-Name: Ume-Gothic-O5
-Class: Japan
-TTFname(10): ume-tgo5.ttf
-
-Name: Ume-Gothic-C4
-Class: Japan
-TTFname(10): ume-tgc4.ttf
-
-Name: Ume-Gothic-C5
-Class: Japan
-TTFname(10): ume-tgc5.ttf
-
-Name: Ume-Gothic-S4
-Class: Japan
-TTFname(10): ume-tgs4.ttf
-
-Name: Ume-Gothic-S5
-Class: Japan
-TTFname(10): ume-tgs5.ttf
-
-Name: Ume-P-Mincho
-Class: Japan
-TTFname(10): ume-pmo3.ttf
-#TTFname(11): ume-pms3.ttf
-
-Name: Ume-P-Gothic
-Class: Japan
-TTFname(10): ume-pgo4.ttf
-
-Name: Ume-P-Gothic-O5
-Class: Japan
-TTFname(10): ume-pgo5.ttf
-
-Name: Ume-P-Gothic-C4
-Class: Japan
-TTFname(10): ume-pgc4.ttf
-
-Name: Ume-P-Gothic-C5
-Class: Japan
-TTFname(10): ume-pgc5.ttf
-
-Name: Ume-P-Gothic-S4
-Class: Japan
-TTFname(10): ume-pgs4.ttf
-
-Name: Ume-P-Gothic-S5
-Class: Japan
-TTFname(10): ume-pgs5.ttf
-
-Name: Ume-UI-Gothic
-Class: Japan
-TTFname(10): ume-ugo4.ttf
-
-Name: Ume-UI-Gothic-O5
-Class: Japan
-TTFname(10): ume-ugo5.ttf
-
-Name: Ume-Hy-Gothic
-Class: Japan
-TTFname(10): ume-hgo4.ttf
+TTFname: ipamjm.ttf
 
 # Sazanami (free)
 
@@ -2968,740 +2388,24 @@ Name: Osaka-Mono
 Class: Japan
 TTFname: OsakaMono.ttf
 
-# Kozuka (Adobe)
-
-Name: KozGoPr6N-Bold
-Class: Japan
-Provides(50): FutoGoB101-Bold
-Provides(50): FutoGoB101Pro-Bold
-Provides(50): HiraKakuProN-W6
-Provides(50): HiraKakuPro-W6
-OTFname: KozGoPr6N-Bold.otf
-
-Name: KozGoPr6N-Heavy
-Class: Japan
-Provides(50): Jun101-Light
-Provides(50): Jun101Pro-Light
-Provides(50): HiraMaruProN-W4
-Provides(50): HiraMaruPro-W4
-Provides(50): MidashiGo-MB31
-Provides(50): MidashiGoPro-MB31
-Provides(50): HiraKakuStdN-W8
-Provides(50): HiraKakuStd-W8
-OTFname: KozGoPr6N-Heavy.otf
-
-Name: KozGoPr6N-Medium
-Class: Japan
-Provides(50): GothicBBB-Medium
-Provides(50): GothicBBBPro-Medium
-Provides(50): HiraKakuProN-W3
-Provides(50): HiraKakuPro-W3
-OTFname: KozGoPr6N-Medium.otf
-
-Name: KozGoPr6N-Regular
-Class: Japan
-OTFname: KozGoPr6N-Regular.otf
-
-Name: KozGoPr6N-ExtraLight
-Class: Japan
-OTFname: KozGoPr6N-ExtraLight.otf
-
-Name: KozGoPr6N-Light
-Class: Japan
-OTFname: KozGoPr6N-Light.otf
-
-Name: KozGoPro-Bold
-Class: Japan
-Provides(70): FutoGoB101-Bold
-Provides(70): FutoGoB101Pro-Bold
-Provides(70): HiraKakuProN-W6
-Provides(70): HiraKakuPro-W6
-OTFname: KozGoPro-Bold.otf
-
-Name: KozGoPro-Heavy
-Class: Japan
-Provides(70): Jun101-Light
-Provides(70): Jun101Pro-Light
-Provides(70): HiraMaruProN-W4
-Provides(70): HiraMaruPro-W4
-Provides(70): MidashiGo-MB31
-Provides(70): MidashiGoPro-MB31
-Provides(70): HiraKakuStdN-W8
-Provides(70): HiraKakuStd-W8
-OTFname: KozGoPro-Heavy.otf
-
-Name: KozGoPro-Medium
-Class: Japan
-Provides(70): GothicBBB-Medium
-Provides(70): GothicBBBPro-Medium
-Provides(70): HiraKakuProN-W3
-Provides(70): HiraKakuPro-W3
-OTFname: KozGoPro-Medium.otf
-
-Name: KozGoPro-Regular
-Class: Japan
-OTFname: KozGoPro-Regular.otf
-
-Name: KozGoPro-ExtraLight
-Class: Japan
-OTFname: KozGoPro-ExtraLight.otf
-
-Name: KozGoPro-Light
-Class: Japan
-OTFname: KozGoPro-Light.otf
-
-Name: KozGoProVI-Bold
-Class: Japan
-Provides(60): FutoGoB101-Bold
-Provides(60): FutoGoB101Pro-Bold
-Provides(60): HiraKakuProN-W6
-Provides(60): HiraKakuPro-W6
-OTFname: KozGoProVI-Bold.otf
-
-Name: KozGoProVI-Heavy
-Class: Japan
-Provides(60): Jun101-Light
-Provides(60): Jun101Pro-Light
-Provides(60): HiraMaruProN-W4
-Provides(60): HiraMaruPro-W4
-Provides(60): MidashiGo-MB31
-Provides(60): MidashiGoPro-MB31
-Provides(60): HiraKakuStdN-W8
-Provides(60): HiraKakuStd-W8
-OTFname: KozGoProVI-Heavy.otf
-
-Name: KozGoProVI-Medium
-Class: Japan
-Provides(60): GothicBBB-Medium
-Provides(60): GothicBBBPro-Medium
-Provides(60): HiraKakuProN-W3
-Provides(60): HiraKakuPro-W3
-OTFname: KozGoProVI-Medium.otf
-
-Name: KozGoProVI-Regular
-Class: Japan
-OTFname: KozGoProVI-Regular.otf
-
-Name: KozMinPr6N-Bold
-Class: Japan
-Provides(50): FutoMinA101-Bold
-Provides(50): FutoMinA101Pro-Bold
-Provides(50): HiraMinProN-W6
-Provides(50): HiraMinPro-W6
-OTFname: KozMinPr6N-Bold.otf
-
-Name: KozMinPr6N-Heavy
-Class: Japan
-OTFname: KozMinPr6N-Heavy.otf
-
-Name: KozMinPr6N-Medium
-Class: Japan
-OTFname: KozMinPr6N-Medium.otf
-
-Name: KozMinPr6N-Regular
-Class: Japan
-Provides(50): Ryumin-Light
-Provides(50): RyuminPro-Light
-Provides(50): HiraMinProN-W3
-Provides(50): HiraMinPro-W3
-OTFname: KozMinPr6N-Regular.otf
-
-Name: KozMinPr6N-ExtraLight
-Class: Japan
-OTFname: KozMinPr6N-ExtraLight.otf
-
-Name: KozMinPr6N-Light
-Class: Japan
-OTFname: KozMinPr6N-Light.otf
-
-Name: KozMinPro-Bold
-Class: Japan
-Provides(70): FutoMinA101-Bold
-Provides(70): FutoMinA101Pro-Bold
-Provides(70): HiraMinProN-W6
-Provides(70): HiraMinPro-W6
-OTFname: KozMinPro-Bold.otf
-
-Name: KozMinPro-Heavy
-Class: Japan
-OTFname: KozMinPro-Heavy.otf
-
-Name: KozMinPro-Medium
-Class: Japan
-OTFname: KozMinPro-Medium.otf
-
-Name: KozMinPro-Regular
-Class: Japan
-Provides(70): Ryumin-Light
-Provides(70): RyuminPro-Light
-Provides(70): HiraMinProN-W3
-Provides(70): HiraMinPro-W3
-OTFname: KozMinPro-Regular.otf
-
-Name: KozMinPro-ExtraLight
-Class: Japan
-OTFname: KozMinPro-ExtraLight.otf
-
-Name: KozMinPro-Light
-Class: Japan
-OTFname: KozMinPro-Light.otf
-
-Name: KozMinProVI-Bold
-Class: Japan
-Provides(60): FutoMinA101-Bold
-Provides(60): FutoMinA101Pro-Bold
-Provides(60): HiraMinProN-W6
-Provides(60): HiraMinPro-W6
-OTFname: KozMinProVI-Bold.otf
-
-Name: KozMinProVI-Regular
-Class: Japan
-Provides(60): Ryumin-Light
-Provides(60): RyuminPro-Light
-Provides(60): HiraMinProN-W3
-Provides(60): HiraMinPro-W3
-OTFname: KozMinProVI-Regular.otf
-
-Name: KozMinProVI-Light
-Class: Japan
-OTFname: KozMinProVI-Light.otf
-
-# other Mac OS X fonts
-
-# Note about Mac OS X:
-#   Klee.ttc
-#   Tsukushi{A,B}MaruGothic.ttc
-# are bundled with OS X 10.11 El Capitan or later versions.
-#   Kyokasho.ttc
-#   ToppanBunkyuMincho-Regular.otf
-#   ToppanBunkyuGothic.ttc
-#   ToppanBunkyuMidashiMincho-ExtraBold.otf
-#   ToppanBunkyuMidashiGothic-ExtraBold.otf
-# are bundled with macOS 10.12 Sierra or later versions.
-
-Name: TsukuARdGothic-Regular
-Class: Japan
-OTCname: TsukushiAMaruGothic.ttc(0)
-
-Name: TsukuARdGothic-Bold
-Class: Japan
-OTCname: TsukushiAMaruGothic.ttc(1)
-
-Name: TsukuBRdGothic-Regular
-Class: Japan
-OTCname: TsukushiBMaruGothic.ttc(0)
-
-Name: TsukuBRdGothic-Bold
-Class: Japan
-OTCname: TsukushiBMaruGothic.ttc(1)
-
-Name: Klee-Medium
-Class: Japan
-OTCname: Klee.ttc(1)
-
-Name: Klee-Demibold
-Class: Japan
-OTCname: Klee.ttc(0)
-
-Name: YuKyo_Yoko-Medium
-Class: Japan
-OTCname: Kyokasho.ttc(0)
-
-Name: YuKyo_Yoko-Bold
-Class: Japan
-OTCname: Kyokasho.ttc(1)
-
-Name: YuKyo-Medium
-Class: Japan
-OTCname: Kyokasho.ttc(2)
-
-Name: YuKyo-Bold
-Class: Japan
-OTCname: Kyokasho.ttc(3)
-
-Name: ToppanBunkyuMincho-Regular
-PSName: ToppanBunkyuMinchoPr6N-Regular
-Class: Japan
-OTFname: ToppanBunkyuMincho-Regular.otf
-
-Name: ToppanBunkyuGothicPr6N-DB
-Class: Japan
-OTCname: ToppanBunkyuGothic.ttc(0)
-
-Name: ToppanBunkyuGothicPr6N-Regular
-Class: Japan
-OTCname: ToppanBunkyuGothic.ttc(1)
-
-Name: ToppanBunkyuMidashiMincho-ExtraBold
-PSName: ToppanBunkyuMidashiMinchoStdN-ExtraBold
-Class: Japan
-OTFname: ToppanBunkyuMidashiMincho-ExtraBold.otf
-
-Name: ToppanBunkyuMidashiGothic-ExtraBold
-PSName: ToppanBunkyuMidashiGothicStdN-ExtraBold
-Class: Japan
-OTFname: ToppanBunkyuMidashiGothic-ExtraBold.otf
-
 #
 # CHINESE FONTS
 #
 
-# Hiragino chinese (OS X)
+# Adobe -- Provides level 30
+INCLUDE cjkgs-adobe.dat
 
-Name: HiraginoSansGB-W3
-Class: GB
-Provides(50): STHeiti-Light
-OTFname(20): Hiragino Sans GB W3.otf
-OTFname(10): HiraginoSansGB-W3.otf
-OTCname(30): Hiragino Sans GB W3.ttc(0)
-OTCname(28): HiraginoSansGB-W3.ttc(0)
+# Hiragino -- Provides level 50
+# (already included in JAPANESE section)
 
-Name: HiraginoSansGB-W6
-Class: GB
-Provides(50): STHeiti-Regular
-OTFname(20): Hiragino Sans GB W6.otf
-OTFname(10): HiraginoSansGB-W6.otf
-OTCname(30): Hiragino Sans GB W6.ttc(0)
-OTCname(28): HiraginoSansGB-W6.ttc(0)
+# Beijing Founder Electronics -- Provides level 55
+INCLUDE cjkgs-founder.dat
 
-Name: HiraginoSansCNS-W3
-Class: CNS
-OTCname(30): Hiragino Sans CNS.ttc(0)
-OTCname(28): HiraginoSansCNS.ttc(0)
+# DynaComware -- Provides level ??
+INCLUDE cjkgs-dynacomware.dat
 
-Name: HiraginoSansCNS-W6
-Class: CNS
-OTCname(30): Hiragino Sans CNS.ttc(1)
-OTCname(28): HiraginoSansCNS.ttc(1)
-
-# DynaComware (OS X)
-
-Name: LiHeiPro
-Class: CNS
-#Provides(??): MHei-Medium # fails
-TTFname(20): 儷黑 Pro.ttf
-TTFname(10): LiHeiPro.ttf
-
-Name: LiSongPro
-Class: CNS
-#Provides(??): MSung-Medium # fails
-#Provides(??): MSung-Light # fails
-TTFname(20): 儷宋 Pro.ttf
-TTFname(10): LiSongPro.ttf
-
-Name: PingFangTC-Regular
-Class: CNS
-OTCname: PingFang.ttc(1)
-
-Name: PingFangSC-Regular
-Class: GB
-OTCname: PingFang.ttc(2)
-
-Name: PingFangTC-Medium
-Class: CNS
-OTCname: PingFang.ttc(4)
-
-Name: PingFangSC-Medium
-Class: GB
-OTCname: PingFang.ttc(5)
-
-Name: PingFangTC-Semibold
-Class: CNS
-OTCname: PingFang.ttc(7)
-
-Name: PingFangSC-Semibold
-Class: GB
-OTCname: PingFang.ttc(8)
-
-Name: PingFangTC-Light
-Class: CNS
-OTCname: PingFang.ttc(10)
-
-Name: PingFangSC-Light
-Class: GB
-OTCname: PingFang.ttc(11)
-
-Name: PingFangTC-Thin
-Class: CNS
-OTCname: PingFang.ttc(13)
-
-Name: PingFangSC-Thin
-Class: GB
-OTCname: PingFang.ttc(14)
-
-Name: PingFangTC-Ultralight
-Class: CNS
-OTCname: PingFang.ttc(16)
-
-Name: PingFangSC-Ultralight
-Class: GB
-OTCname: PingFang.ttc(17)
-
-# Changzhou SinoType (OS X)
-
-Name: STXihei
-Class: GB
-#Provides(??): STHeiti-Light # fails
-TTFname(20): 华文细黑.ttf
-TTFname(10): STXihei.ttf
-
-Name: STHeiti
-Class: GB
-#Provides(??): STHeiti-Regular # fails
-TTFname(20): 华文黑体.ttf
-TTFname(10): STHeiti.ttf
-
-Name: STHeitiSC-Light
-Class: GB
-#Provides(??): STHeiti-Light # fails
-TTCname(10): STHeiti-Light.ttc(1)
-TTCname(20): STHeiti Light.ttc(1)
-#TTFname(30): STHeitiSC-Light.ttf
-
-Name: STHeitiSC-Medium
-Class: GB
-#Provides(??): STHeiti-Regular # fails
-TTCname(10): STHeiti-Medium.ttc(1)
-TTCname(20): STHeiti Medium.ttc(1)
-#TTFname(30): STHeitiSC-Medium.ttf
-
-Name: STHeitiTC-Light
-Class: CNS
-TTCname(10): STHeiti-Light.ttc(0)
-TTCname(20): STHeiti Light.ttc(0)
-#TTFname(30): STHeitiTC-Light.ttf
-
-Name: STHeitiTC-Medium
-Class: CNS
-#Provides(??): MHei-Medium # fails
-TTCname(10): STHeiti-Medium.ttc(0)
-TTCname(20): STHeiti Medium.ttc(0)
-#TTFname(30): STHeitiTC-Medium.ttf
-
-Name: STFangsong
-Class: GB
-#Provides(??): STFangsong-Light # fails
-#Provides(??): STFangsong-Regular # fails
-TTFname(20): 华文仿宋.ttf
-TTFname(10): STFangsong.ttf
-
-# TTC entry for Mountain Lion (10.8) or later
-# TTF entry for Lion (10.7) or earlier
-Name: STSong
-Class: GB
-#Provides(??): STSong-Light # fails
-#Provides(??): STSong-Regular # fails
-TTCname(10): Songti.ttc(4)
-TTCname(20): 宋体.ttc(3)
-TTFname(30): STSong.ttf
-TTFname(40): 华文宋体.ttf
-
-Name: STSongti-SC-Light
-Class: GB
-#Provides(??): STSong-Light # fails
-#Provides(??): STSong-Regular # fails
-TTCname(10): Songti.ttc(3)
-TTCname(20): 宋体.ttc(2)
-#TTFname(30): STSongti-SC-Light.ttf
-
-Name: STSongti-SC-Regular
-Class: GB
-TTCname(10): Songti.ttc(6)
-TTCname(20): 宋体.ttc(4)
-#TTFname(30): STSongti-SC-Regular.ttf
-
-Name: STSongti-SC-Bold
-Class: GB
-TTCname(10): Songti.ttc(1)
-TTCname(20): 宋体.ttc(1)
-#TTFname(30): STSongti-SC-Bold.ttf
-
-Name: STSongti-SC-Black
-Class: GB
-TTCname(10): Songti.ttc(0)
-TTCname(20): 宋体.ttc(0)
-#TTFname(30): STSongti-SC-Black.ttf
-
-Name: STSongti-TC-Light
-Class: CNS
-#Provides(??): MSung-Light # fails
-TTCname(10): Songti.ttc(5)
-#TTFname(20): STSongti-TC-Light.ttf
-
-Name: STSongti-TC-Regular
-Class: CNS
-#Provides(??): MSung-Medium # fails
-TTCname(10): Songti.ttc(7)
-#TTFname(20): STSongti-TC-Regular.ttf
-
-Name: STSongti-TC-Bold
-Class: CNS
-TTCname(10): Songti.ttc(2)
-#TTFname(20): STSongti-TC-Bold.ttf
-
-# Note about Mac OS X:
-#   Kaiti.ttc
-# contained 6 fonts before OS X 10.11.6 El Capitan.
-# After macOS 10.12 Sierra, it contains 7 fonts and
-# the order of ttc index has completely changed.
-
-# TTF entry for Lion (10.7) or earlier
-# TTC entry for Mountain Lion (10.8) or later
-Name: STKaiti
-Class: GB
-#Provides(??): STKaiti-Regular # fails
-## for Sierra (10.12) or later
-TTCname(10): Kaiti.ttc(1)
-## for El Capitan (10.11.6) or earlier
-#TTCname(10): Kaiti.ttc(4)
-TTCname(20): 楷体.ttc(3)
-TTFname(30): STKaiti.ttf
-TTFname(40): 华文楷体.ttf
-
-# TTF entry for Lion (10.7) or earlier
-# TTC entry for Mountain Lion (10.8) or later
-Name: STKaiti-Adobe-CNS1
-Class: CNS
-#Provides(??): MKai-Medium # fails
-## for Sierra (10.12) or later
-TTCname(10): Kaiti.ttc(1)
-## for El Capitan (10.11.6) or earlier
-#TTCname(10): Kaiti.ttc(4)
-TTCname(20): 楷体.ttc(3)
-TTFname(30): STKaiti.ttf
-TTFname(40): 华文楷体.ttf
-
-# for El Capitan (10.11.6) or earlier
-Name: STKaiti-SC-Regular
-Class: GB
-#Provides(??): STKaiti-Regular # fails
-TTCname(10): Kaiti.ttc(3)
-TTCname(20): 楷体.ttc(2)
-#TTFname(30): STKaiti-SC-Regular.ttf
-
-# for Sierra (10.12) or later
-Name: STKaitiSC-Regular
-Class: GB
-#Provides(??): STKaiti-Regular # fails
-TTCname(10): Kaiti.ttc(0)
-
-# for El Capitan (10.11.6) or earlier
-Name: STKaiti-SC-Bold
-Class: GB
-TTCname(10): Kaiti.ttc(1)
-TTCname(20): 楷体.ttc(1)
-#TTFname(30): STKaiti-SC-Bold.ttf
-
-# for Sierra (10.12) or later
-Name: STKaitiSC-Bold
-Class: GB
-TTCname(10): Kaiti.ttc(3)
-
-# for El Capitan (10.11.6) or earlier
-Name: STKaiti-SC-Black
-Class: GB
-TTCname(10): Kaiti.ttc(0)
-TTCname(20): 楷体.ttc(0)
-#TTFname(30): STKaiti-SC-Black.ttf
-
-# for Sierra (10.12) or later
-Name: STKaitiSC-Black
-Class: GB
-TTCname(10): Kaiti.ttc(5)
-
-# for El Capitan (10.11.6) or earlier
-Name: STKaiTi-TC-Regular
-Class: CNS
-#Provides(??): MKai-Medium # fails
-TTCname(10): Kaiti.ttc(5)
-#TTFname(20): STKaiTi-TC-Regular.ttf
-
-# for Sierra (10.12) or later
-Name: STKaitiTC-Regular
-Class: CNS
-#Provides(??): MKai-Medium # fails
-TTCname(10): Kaiti.ttc(2)
-
-# for El Capitan (10.11.6) or earlier
-Name: STKaiTi-TC-Bold
-Class: CNS
-TTCname(10): Kaiti.ttc(2)
-#TTFname(20): STKaiTi-TC-Bold.ttf
-
-# for Sierra (10.12) or later
-Name: STKaitiTC-Bold
-Class: CNS
-TTCname(10): Kaiti.ttc(4)
-
-# for Sierra (10.12) or later (New!)
-Name: STKaitiTC-Black
-Class: CNS
-TTCname(10): Kaiti.ttc(6)
-
-Name: STBaoliSC-Regular
-Class: GB
-TTCname: Baoli.ttc(0)
-
-Name: STBaoliTC-Regular
-Class: CNS
-TTCname: Baoli.ttc(1)
-
-Name: STLibianSC-Regular
-Class: GB
-TTCname: Libian.ttc(0)
-
-Name: STLibianTC-Regular
-Class: CNS
-TTCname: Libian.ttc(1)
-
-Name: STXingkaiSC-Bold
-Class: GB
-TTCname: Xingkai.ttc(0)
-
-Name: STXingkaiTC-Bold
-Class: CNS
-TTCname: Xingkai.ttc(1)
-
-Name: STXingkaiSC-Light
-Class: GB
-TTCname: Xingkai.ttc(2)
-
-Name: STXingkaiTC-Light
-Class: CNS
-TTCname: Xingkai.ttc(3)
-
-Name: STYuanti-SC-Regular
-Class: GB
-TTCname: Yuanti.ttc(0)
-
-Name: STYuanti-TC-Regular
-Class: CNS
-TTCname: Yuanti.ttc(1)
-
-Name: STYuanti-SC-Bold
-Class: GB
-TTCname: Yuanti.ttc(2)
-
-Name: STYuanti-TC-Bold
-Class: CNS
-TTCname: Yuanti.ttc(3)
-
-Name: STYuanti-SC-Light
-Class: GB
-TTCname: Yuanti.ttc(4)
-
-Name: STYuanti-TC-Light
-Class: CNS
-TTCname: Yuanti.ttc(5)
-
-# Beijing Founder Electronics
-# note:
-#   FZ****.TTF (13 files)
-# are bundled with with WPS Office (formerly Kingsoft Office) Linux.
-#   Lantinghei.ttc
-# is bundled with OS X 10.9 Mavericks or later versions.
-
-# FZShuSong-Z01
-Name: FZSSK--GBK1-0
-Class: GB
-Provides(55): STSong-Light
-TTFname: FZSSK.TTF
-
-# FZXiaoBiaoSong-B05
-Name: FZXBSK--GBK1-0
-Class: GB
-Provides(55): STSong-Regular
-TTFname: FZXBSK.TTF
-
-# FZXiHeiI-Z08
-Name: FZXH1K--GBK1-0
-Class: GB
-Provides(55): STHeiti-Light
-TTFname: FZXH1K.TTF
-
-# FZHei-B01
-Name: FZHTK--GBK1-0
-Class: GB
-Provides(55): STHeiti-Regular
-TTFname: FZHTK.TTF
-
-# FZKai-Z03
-Name: FZKTK--GBK1-0
-Class: GB
-Provides(55): STKaiti-Regular
-TTFname: FZKTK.TTF
-
-# FZFangSong-Z02
-Name: FZFSK--GBK1-0
-Class: GB
-Provides(55): STFangsong-Light
-Provides(55): STFangsong-Regular
-TTFname: FZFSK.TTF
-
-# FZXingKai-S04
-Name: FZXKK--GBK1-0
-Class: GB
-TTFname: FZXKK.TTF
-
-# FZWeiBei-S03
-Name: FZWBK--GBK1-0
-Class: GB
-TTFname: FZWBK.TTF
-
-# FZChaoCuHei-M10
-Name: FZCCHK--GBK1-0
-Class: GB
-TTFname: FZCCHK.TTF
-
-# FZLiShu-S01
-Name: FZLSK--GBK1-0
-Class: GB
-TTFname: FZLSK.TTF
-
-# FZYaoTi-M06
-Name: FZYTK--GBK1-0
-Class: GB
-TTFname: FZYTK.TTF
-
-# FZSongS-Extended
-Name: FZSONGS--GB1-5
-Class: GB
-TTFname: FZSongS_20100603.TTF
-
-# FZSongS-Extended(SIP)
-Name: FZSONGS_SIP--GB1-5
-Class: GB
-TTFname: FZSongS(SIP)_2010603.TTF
-
-# Lantinghei SC Demibold
-Name: FZLTZHK--GBK1-0
-Class: GB
-TTCname: Lantinghei.ttc(0)
-
-# Lantinghei SC Extralight
-Name: FZLTXHK--GBK1-0
-Class: GB
-TTCname: Lantinghei.ttc(1)
-
-# Lantinghei SC Heavy
-Name: FZLTTHK--GBK1-0
-Class: GB
-TTCname: Lantinghei.ttc(2)
-
-# Lantinghei TC Demibold
-Name: FZLTZHB--B51-0
-Class: CNS
-TTCname: Lantinghei.ttc(3)
-
-# Lantinghei TC Extralight
-Name: FZLTXHB--B51-0
-Class: CNS
-TTCname: Lantinghei.ttc(4)
-
-# Lantinghei TC Heavy
-Name: FZLTTHB--B51-0
-Class: CNS
-TTCname: Lantinghei.ttc(5)
+# Changzhou SinoType -- Provides level ??
+INCLUDE cjkgs-sinotype.dat
 
 # Arphic Font Design Team (OS X)
 
@@ -3802,47 +2506,6 @@ Name: LiGothicMed
 Class: CNS
 TTFname(20): Apple LiGothic Medium.ttf
 TTFname(10): LiGothicMed.ttf
-
-# Adobe chinese fonts
-
-# simplified chinese
-
-Name: AdobeSongStd-Light
-Class: GB
-Provides(30): STSong-Light
-Provides(30): STSong-Regular
-OTFname(10): AdobeSongStd-Light.otf
-
-Name: AdobeHeitiStd-Regular
-Class: GB
-Provides(30): STHeiti-Regular
-Provides(30): STHeiti-Light
-OTFname(20): AdobeHeitiStd-Regular.otf
-
-Name: AdobeKaitiStd-Regular
-Class: GB
-Provides(30): STKaiti-Regular
-OTFname(20): AdobeKaitiStd-Regular.otf
-
-Name: AdobeFangsongStd-Regular
-Class: GB
-Provides(30): STFangsong-Light
-Provides(30): STFangsong-Regular
-OTFname(20): AdobeFangsongStd-Regular.otf
-
-# traditional chinese
-
-Name: AdobeMingStd-Light
-Class: CNS
-Provides(30): MSung-Light
-Provides(30): MSung-Medium
-OTFname(20): AdobeMingStd-Light.otf
-
-Name: AdobeFanHeitiStd-Bold
-Class: CNS
-Provides(30): MHei-Medium
-Provides(30): MKai-Medium
-OTFname(20): AdobeFanHeitiStd-Bold.otf
 
 # Fandol (free)
 
@@ -4048,34 +2711,11 @@ TTFname: cwfs.ttf
 # KOREAN FONTS
 #
 
-# Solaris-hanyang (Solaris 10, 11)
+# Adobe -- Provides level 30
+# (already included in CHINESE section)
 
-Name: Myeongjo
-Class: Korea
-Provides(40): HYSMyeongJo-Medium
-TTFname: h2mjsm.ttf
-
-Name: Gothic
-Class: Korea
-Provides(40): HYGoThic-Medium
-TTFname: h2gtrm.ttf
-
-Name: RoundedGothic
-Class: Korea
-Provides(40): HYRGoThic-Medium
-TTFname: h2drrm.ttf
-
-Name: Haeseo
-Class: Korea
-TTFname: h2hsrm.ttf
-
-Name: SunDotum
-Class: Korea
-TTFname: sundotump.ttf
-
-Name: SunDotumChe
-Class: Korea
-TTFname: sundotumf.ttf
+# Solaris -- Provides level 40
+INCLUDE cjkgs-solaris.dat
 
 # Baekmuk (free)
 # This is a special case, because "batang.ttf" in baekmuk and
@@ -4086,6 +2726,7 @@ TTFname: sundotumf.ttf
 Name: Baekmuk-Batang
 Class: Korea
 Provides(70): HYSMyeongJo-Medium
+Casefold: true
 TTFname(20): batang.ttf
 TTFname(10): Baekmuk-Batang.ttf
 
@@ -4098,6 +2739,7 @@ TTFname(10): Baekmuk-Dotum.ttf
 Name: Baekmuk-Gulim
 Class: Korea
 Provides(70): HYRGoThic-Medium
+Casefold: true
 TTFname(20): gulim.ttf
 TTFname(10): Baekmuk-Gulim.ttf
 
@@ -4402,23 +3044,6 @@ Name: JCHEadA
 Class: Korea
 TTFname: HeadlineA.ttf
 
-# Adobe korean fonts
-
-Name: AdobeMyungjoStd-Medium
-Class: Korea
-Provides(30): HYSMyeongJo-Medium
-OTFname: AdobeMyungjoStd-Medium.otf
-
-Name: AdobeGothicStd-Bold
-Class: Korea
-Provides(30): HYGoThic-Medium
-Provides(80): HYRGoThic-Medium
-OTFname: AdobeGothicStd-Bold.otf
-
-Name: AdobeGothicStd-Light
-Class: Korea
-OTFname: AdobeGothicStd-Light.otf
-
 #
 # Microsoft Windows, Windows/Mac Office fonts
 #
@@ -4427,6 +3052,7 @@ OTFname: AdobeGothicStd-Light.otf
 
 Name: Batang
 Class: Korea
+Casefold: true
 TTFname(50): Batang.ttf
 TTCname(20): batang.ttc(0)
 
@@ -4446,6 +3072,7 @@ TTCname(20): gulim.ttc(3)
 
 Name: Gulim
 Class: Korea
+Casefold: true
 TTFname(50): Gulim.ttf
 TTCname(20): gulim.ttc(0)
 
@@ -4489,6 +3116,7 @@ Class: GB
 Provides(60): STSong-Light
 Provides(60): STSong-Regular
 TTFname(50): SimSun.ttf
+TTFname(21): simsun.ttf
 TTCname(20): simsun.ttc(0)
 
 Name: NSimSun
@@ -4507,6 +3135,16 @@ Provides(60): STFangsong-Light
 Provides(60): STFangsong-Regular
 TTFname(40): Fangsong.ttf
 TTFname(20): simfang.ttf
+
+Name: LiSu
+Class: GB
+TTCname(20): SIMLI.TTF
+TTCname(19): simli.ttf
+
+Name: YouYuan
+Class: GB
+TTCname(20): SIMYOU.TTF
+TTCname(19): simyou.ttf
 
 Name: MicrosoftYaHei
 Class: GB
@@ -4534,26 +3172,6 @@ TTFname: Dengb.ttf
 Name: DengXian-Light
 Class: GB
 TTFname: Dengl.ttf
-
-Name: STZhongsong
-Class: GB
-TTFname: STZHONGS.ttf
-
-Name: STXinwei
-Class: GB
-TTFname: STXINWEI.ttf
-
-Name: STXingkai
-Class: GB
-TTFname: STXINGKA.ttf
-
-Name: STLiti
-Class: GB
-TTFname: STLITI.ttf
-
-Name: STHupo
-Class: GB
-TTFname: STHUPO.ttf
 
 # traditional chinese
 
@@ -4601,227 +3219,10 @@ Name: MicrosoftMHei-Bold
 Class: CNS
 TTFname(10): MSMHei-Bold.ttf
 
-# japanese
-
-Name: MS-Gothic
-Class: Japan
-Provides(95): GothicBBB-Medium
-Provides(95): GothicBBBPro-Medium
-Provides(95): HiraKakuProN-W3
-Provides(95): HiraKakuPro-W3
-Provides(95): FutoGoB101-Bold
-Provides(95): FutoGoB101Pro-Bold
-Provides(95): HiraKakuProN-W6
-Provides(95): HiraKakuPro-W6
-Provides(95): MidashiGo-MB31
-Provides(95): MidashiGoPro-MB31
-Provides(95): HiraKakuStdN-W8
-Provides(95): HiraKakuStd-W8
-Provides(95): Jun101-Light
-Provides(95): Jun101Pro-Light
-Provides(95): HiraMaruProN-W4
-Provides(95): HiraMaruPro-W4
-TTFname(50): MS Gothic.ttf
-TTFname(30): MS-Gothic.ttf
-TTCname(20): msgothic.ttc(0)
-
-Name: MS-Mincho
-Class: Japan
-Provides(95): Ryumin-Light
-Provides(95): RyuminPro-Light
-Provides(95): HiraMinProN-W3
-Provides(95): HiraMinPro-W3
-Provides(95): FutoMinA101-Bold
-Provides(95): FutoMinA101Pro-Bold
-Provides(95): HiraMinProN-W6
-Provides(95): HiraMinPro-W6
-TTFname(50): MS Mincho.ttf
-TTFname(30): MS-Mincho.ttf
-TTCname(20): msmincho.ttc(0)
-
-Name: MS-PGothic
-Class: Japan
-TTFname(50): MS PGothic.ttf
-TTFname(30): MS-PGothic.ttf
-TTCname(20): msgothic.ttc(1)
-
-Name: MS-PMincho
-Class: Japan
-TTFname(50): MS PMincho.ttf
-TTFname(30): MS-PMincho.ttf
-TTCname(20): msmincho.ttc(1)
-
-Name: MS-UIGothic
-Class: Japan
-TTCname(20): msgothic.ttc(2)
-
-Name: Meiryo
-Class: Japan
-TTFname(50): Meiryo.ttf
-TTCname(20): meiryo.ttc(0)
-
-Name: Meiryo-Bold
-Class: Japan
-TTFname(50): Meiryo Bold.ttf
-TTFname(40): MeiryoBold.ttf
-TTFname(30): Meiryo-Bold.ttf
-TTCname(20): meiryob.ttc(0)
-
-Name: Meiryo-BoldItalic
-Class: Japan
-TTFname(50): Meiryo Bold Italic.ttf
-TTFname(40): MeiryoBoldItalic.ttf
-TTFname(30): Meiryo-BoldItalic.ttf
-TTCname(20): meiryob.ttc(1)
-
-Name: Meiryo-Italic
-Class: Japan
-TTFname(50): Meiryo Italic.ttf
-TTFname(40): MeiryoItalic.ttf
-TTFname(30): Meiryo-Italic.ttf
-TTCname(20): meiryo.ttc(1)
-
-Name: MeiryoUI
-Class: Japan
-TTCname(20): meiryo.ttc(2)
-
-Name: MeiryoUI-Bold
-Class: Japan
-TTCname(20): meiryob.ttc(2)
-
-Name: MeiryoUI-BoldItalic
-Class: Japan
-TTCname(20): meiryob.ttc(3)
-
-Name: MeiryoUI-Italic
-Class: Japan
-TTCname(20): meiryo.ttc(3)
-
-Name: HGGothicE
-Class: Japan
-TTCname(50): HGRGE.ttc(0)
-TTCname(20): HGRGE.TTC(0)
-
-Name: HGPGothicE
-Class: Japan
-TTCname(50): HGRGE.ttc(1)
-TTCname(20): HGRGE.TTC(1)
-
-Name: HGSGothicE
-Class: Japan
-TTCname(50): HGRGE.ttc(2)
-TTCname(20): HGRGE.TTC(2)
-
-Name: HGGothicM
-Class: Japan
-TTCname(20): HGRGM.TTC(0)
-
-Name: HGPGothicM
-Class: Japan
-TTCname(20): HGRGM.TTC(1)
-
-Name: HGSGothicM
-Class: Japan
-TTCname(20): HGRGM.TTC(2)
-
-Name: HGMinchoE
-Class: Japan
-TTCname(50): HGRME.ttc(0)
-TTCname(20): HGRME.TTC(0)
-
-Name: HGPMinchoE
-Class: Japan
-TTCname(50): HGRME.ttc(1)
-TTCname(20): HGRME.TTC(2)
-
-Name: HGSMinchoE
-Class: Japan
-TTCname(50): HGRME.ttc(2)
-TTCname(20): HGRME.TTC(2)
-
-Name: HGMinchoB
-Class: Japan
-TTCname(20): HGRMB.TTC(0)
-
-Name: HGPMinchoB
-Class: Japan
-TTCname(20): HGRMB.TTC(1)
-
-Name: HGPMinchoB
-Class: Japan
-TTCname(20): HGRMB.TTC(2)
-
-Name: HGSoeiKakugothicUB
-Class: Japan
-TTCname(50): HGRSGU.ttc(0)
-TTCname(20): HGRSGU.TTC(0)
-
-Name: HGPSoeiKakugothicUB
-Class: Japan
-TTCname(50): HGRSGU.ttc(1)
-TTCname(20): HGRSGU.TTC(1)
-
-Name: HGSSoeiKakugothicUB
-Class: Japan
-TTCname(50): HGRSGU.ttc(2)
-TTCname(20): HGRSGU.TTC(2)
-
-Name: HGSoeiKakupoptai
-Class: Japan
-TTCname(20): HGRPP1.TTC(0)
-
-Name: HGPSoeiKakupoptai
-Class: Japan
-TTCname(20): HGRPP1.TTC(1)
-
-Name: HGSSoeiKakupoptai
-Class: Japan
-TTCname(20): HGRPP1.TTC(2)
-
-Name: HGSoeiPresenceEB
-Class: Japan
-TTCname(20): HGRPRE.TTC(0)
-
-Name: HGPSoeiPresenceEB
-Class: Japan
-TTCname(20): HGRPRE.TTC(1)
-
-Name: HGSSoeiPresenceEB
-Class: Japan
-TTCname(20): HGRPRE.TTC(2)
-
-Name: HGKyokashotai
-Class: Japan
-TTCname(20): HGRKK.TTC(0)
-
-Name: HGPKyokashotai
-Class: Japan
-TTCname(20): HGRKK.TTC(1)
-
-Name: HGSKyokashotai
-Class: Japan
-TTCname(20): HGRKK.TTC(2)
-
-Name: HGGyoshotai
-Class: Japan
-TTCname(20): HGRGY.TTC(0)
-
-Name: HGPGyoshotai
-Class: Japan
-TTCname(20): HGRGY.TTC(1)
-
-Name: HGSGyoshotai
-Class: Japan
-TTCname(20): HGRGY.TTC(2)
-
-Name: HGMaruGothicMPRO
-Class: Japan
-TTFname(40): HGRSMP.ttf
-TTFname(20): HGRSMP.TTF
-
-Name: HGSeikaishotaiPRO
-Class: Japan
-TTFname(20): HGRSKP.TTF
+# Remove-only database (should begin with !INCLUDE)
+# that is, entries which contain at least one 'RMVname' line
+# note that this line should come at the _end_ of all INCLUDE files
+!INCLUDE cjkgs-macos-removeonly.dat
 
 
 ### Local Variables:
