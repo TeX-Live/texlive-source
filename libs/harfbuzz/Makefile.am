@@ -31,10 +31,6 @@ AM_CPPFLAGS = -DHB_NO_MT -DHB_NO_UNICODE_FUNCS -DHAVE_FALLBACK=1 \
 	-I$(top_srcdir)/$(HARFBUZZ_SRC)
 libharfbuzz_dependencies =
 libharfbuzz_a_SOURCES =  \
-	@HARFBUZZ_TREE@/src/dump-indic-data.cc \
-	@HARFBUZZ_TREE@/src/dump-khmer-data.cc \
-	@HARFBUZZ_TREE@/src/dump-myanmar-data.cc \
-	@HARFBUZZ_TREE@/src/dump-use-data.cc \
 	@HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-blob.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-json.hh \
@@ -57,7 +53,6 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-ot-color-cbdt-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-color-colr-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-color-cpal-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-color.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-hdmx-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-head-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-hhea-table.hh \
