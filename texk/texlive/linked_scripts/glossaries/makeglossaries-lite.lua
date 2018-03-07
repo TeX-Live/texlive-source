@@ -26,6 +26,9 @@
    This work has the LPPL maintenance status `maintained'.
   
    History:
+   * 4.36:
+     - fixed check for double-quotes (from \jobname when the file name 
+       contains spaces).
    * 4.35:
      - no change.
    * 4.34:
@@ -41,7 +44,7 @@
      - changed first line from lua to texlua
 --]]
 
-thisversion = "4.35 2017-11-14"
+thisversion = "4.36 2018-03-07"
 
 quiet = false
 dryrun = false
@@ -133,6 +136,11 @@ function dorun(name, glg, gls, glo, language, codepage)
 end
 
 function doxindy(name, glg, gls, glo, language, codepage)
+
+  if codepage == nil
+  then
+     codepage = "utf8"
+  end
 
   cmd = string.format('"%s" -I xindy -L %s -C %s -M "%s" -t "%s" -o "%s"',
     xindyexec, language, codepage, styfile, glg, gls)
@@ -342,7 +350,11 @@ end
 
 if styfile == nil
 then
-  styfile = string.match(aux, "\\@istfilename{\"?([^}]*%.?%a*)\"?}")
+
+-- v4.36: corrected check for double-quotes
+
+  styfile = string.match(aux, "\\@istfilename{([^}]*)}")
+  styfile = string.gsub(styfile, "\"", "");
 
   if styfile == nil
   then
