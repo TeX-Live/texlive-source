@@ -91,6 +91,7 @@ add_definitions(-DHAVE_OT)
 add_definitions(-DHAVE_FALLBACK)
 
 
+## Functions and headers
 include (CheckFunctionExists)
 include (CheckIncludeFile)
 macro (check_funcs) # Similar to AC_CHECK_FUNCS of autotools
@@ -102,16 +103,15 @@ macro (check_funcs) # Similar to AC_CHECK_FUNCS of autotools
     endif ()
   endforeach ()
 endmacro ()
-check_funcs(atexit mprotect sysconf mmap strtod_l) #TODO: getpagesize newlocale isatty
-
-check_include_file(unistd.h HAVE_UNIST_H)
-if (${HAVE_UNIST_H})
-  add_definitions(-DHAVE_UNIST_H)
+check_funcs(atexit mprotect sysconf getpagesize mmap isatty newlocale strtod_l)
+check_include_file(unistd.h HAVE_UNISTD_H)
+if (${HAVE_UNISTD_H})
+  add_definitions(-DHAVE_UNISTD_H)
 endif ()
-#check_include_file(sys/mman.h HAVE_SYS_MMAN_H)
-#if (${HAVE_SYS_MMAN_H})
-#  add_definitions(-DHAVE_SYS_MMAN_H)
-#endif ()
+check_include_file(sys/mman.h HAVE_SYS_MMAN_H)
+if (${HAVE_SYS_MMAN_H})
+  add_definitions(-DHAVE_SYS_MMAN_H)
+endif ()
 check_include_file(xlocale.h HAVE_XLOCALE_H)
 if (${HAVE_XLOCALE_H})
   add_definitions(-DHAVE_XLOCALE_H)
@@ -132,12 +132,11 @@ endif ()
 
 
 ## Detect if we are running inside a distribution or regular repository folder
-set (IN_HB_DIST FALSE)
-if (EXISTS "${PROJECT_SOURCE_DIR}/ChangeLog")
-  # perhaps we are on dist directory
-  set (IN_HB_DIST TRUE)
-  set (HB_VERSION_H "${PROJECT_SOURCE_DIR}/src/hb-version.h")
-endif ()
+# if (EXISTS "${PROJECT_SOURCE_DIR}/ChangeLog")
+#   # perhaps we are on dist directory
+#   set (IN_HB_DIST TRUE)
+#   #set (HB_VERSION_H "${PROJECT_SOURCE_DIR}/src/hb-version.h")
+# endif ()
 
 
 ## Extract variables from Makefile files
@@ -171,20 +170,28 @@ add_prefix_to_list(HB_OT_sources "${PROJECT_SOURCE_DIR}/src/")
 extract_make_variable(HB_OT_headers ${SRCSOURCES})
 add_prefix_to_list(HB_OT_headers "${PROJECT_SOURCE_DIR}/src/")
 
+extract_make_variable(HB_SUBSET_sources ${SRCSOURCES})
+add_prefix_to_list(HB_SUBSET_sources "${PROJECT_SOURCE_DIR}/src/")
+
+extract_make_variable(HB_SUBSET_headers ${SRCSOURCES})
+add_prefix_to_list(HB_SUBSET_headers "${PROJECT_SOURCE_DIR}/src/")
+
 extract_make_variable(HB_BASE_RAGEL_GENERATED_sources ${SRCSOURCES})
 extract_make_variable(HB_OT_RAGEL_GENERATED_sources ${SRCSOURCES})
-if (IN_HB_DIST)
+#if (IN_HB_DIST)
   add_prefix_to_list(HB_BASE_RAGEL_GENERATED_sources "${PROJECT_SOURCE_DIR}/src/")
   add_prefix_to_list(HB_OT_RAGEL_GENERATED_sources "${PROJECT_SOURCE_DIR}/src/")
-else ()
-  add_prefix_to_list(HB_BASE_RAGEL_GENERATED_sources "${PROJECT_BINARY_DIR}/src/")
-  add_prefix_to_list(HB_OT_RAGEL_GENERATED_sources "${PROJECT_BINARY_DIR}/src/")
-endif ()
+#else ()
+#  add_prefix_to_list(HB_BASE_RAGEL_GENERATED_sources "${PROJECT_BINARY_DIR}/src/")
+#  add_prefix_to_list(HB_OT_RAGEL_GENERATED_sources "${PROJECT_BINARY_DIR}/src/")
+#endif ()
 
 extract_make_variable(HB_VIEW_sources ${UTILSOURCES})
 add_prefix_to_list(HB_VIEW_sources "${PROJECT_SOURCE_DIR}/util/")
 extract_make_variable(HB_SHAPE_sources ${UTILSOURCES})
 add_prefix_to_list(HB_SHAPE_sources "${PROJECT_SOURCE_DIR}/util/")
+extract_make_variable(HB_SUBSET_CLI_sources ${UTILSOURCES})
+add_prefix_to_list(HB_SUBSET_CLI_sources "${PROJECT_SOURCE_DIR}/util/")
 extract_make_variable(HB_OT_SHAPE_CLOSURE_sources ${UTILSOURCES})
 add_prefix_to_list(HB_OT_SHAPE_CLOSURE_sources "${PROJECT_SOURCE_DIR}/util/")
 
@@ -201,41 +208,33 @@ set (HB_VERSION_MICRO ${CMAKE_MATCH_4})
 
 
 ## Define ragel tasks
-if (NOT IN_HB_DIST)
-  find_program(RAGEL "ragel" CMAKE_FIND_ROOT_PATH_BOTH)
+# if (NOT IN_HB_DIST)
+#  foreach (ragel_output IN ITEMS ${HB_BASE_RAGEL_GENERATED_sources} ${HB_OT_RAGEL_GENERATED_sources})
+#    string(REGEX MATCH "([^/]+)\\.hh" temp ${ragel_output})
+#    set (target_name ${CMAKE_MATCH_1})
+#    add_custom_command(OUTPUT ${ragel_output}
+#      COMMAND ${RAGEL} -G2 -o ${ragel_output} ${PROJECT_SOURCE_DIR}/src/${target_name}.rl -I ${PROJECT_SOURCE_DIR} ${ARGN}
+#      DEPENDS ${PROJECT_SOURCE_DIR}/src/${target_name}.rl
+#    )
+#    add_custom_target(harfbuzz_${target_name} DEPENDS ${PROJECT_BINARY_DIR}/src/${target_name})
+#  endforeach ()
 
-  if (RAGEL)
-    message(STATUS "ragel found at: ${RAGEL}")
-  else ()
-    message(FATAL_ERROR "ragel not found, get it here -- http://www.complang.org/ragel/ or, use harfbuzz releases https://github.com/harfbuzz/harfbuzz/releases")
-  endif ()
-
-  foreach (ragel_output IN ITEMS ${HB_BASE_RAGEL_GENERATED_sources} ${HB_OT_RAGEL_GENERATED_sources})
-    string(REGEX MATCH "([^/]+)\\.hh" temp ${ragel_output})
-    set (target_name ${CMAKE_MATCH_1})
-    add_custom_command(OUTPUT ${ragel_output}
-      COMMAND ${RAGEL} -G2 -o ${ragel_output} ${PROJECT_SOURCE_DIR}/src/${target_name}.rl -I ${PROJECT_SOURCE_DIR} ${ARGN}
-      DEPENDS ${PROJECT_SOURCE_DIR}/src/${target_name}.rl
-    )
-    add_custom_target(harfbuzz_${target_name} DEPENDS ${PROJECT_BINARY_DIR}/src/${target_name})
-  endforeach ()
-
-  mark_as_advanced(RAGEL)
-endif ()
+#  mark_as_advanced(RAGEL)
+# endif ()
 
 
 ## Generate hb-version.h
-if (NOT IN_HB_DIST)
-  set (HB_VERSION_H_IN "${PROJECT_SOURCE_DIR}/src/hb-version.h.in")
-  set (HB_VERSION_H "${PROJECT_BINARY_DIR}/src/hb-version.h")
-  set_source_files_properties("${HB_VERSION_H}" PROPERTIES GENERATED true)
-  configure_file("${HB_VERSION_H_IN}" "${HB_VERSION_H}.tmp" @ONLY)
-  execute_process(COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-    "${HB_VERSION_H}.tmp"
-    "${HB_VERSION_H}"
-  )
-  file(REMOVE "${HB_VERSION_H}.tmp")
-endif ()
+# if (NOT IN_HB_DIST)
+#  set (HB_VERSION_H_IN "${PROJECT_SOURCE_DIR}/src/hb-version.h.in")
+#  set (HB_VERSION_H "${PROJECT_BINARY_DIR}/src/hb-version.h")
+#  set_source_files_properties("${HB_VERSION_H}" PROPERTIES GENERATED true)
+#  configure_file("${HB_VERSION_H_IN}" "${HB_VERSION_H}.tmp" @ONLY)
+#  execute_process(COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+#    "${HB_VERSION_H}.tmp"
+#    "${HB_VERSION_H}"
+#  )
+#  file(REMOVE "${HB_VERSION_H}.tmp")
+# endif ()
 
 
 ## Define sources and headers of the project
@@ -248,13 +247,21 @@ set (project_sources
   ${HB_OT_RAGEL_GENERATED_sources}
 )
 
+set (subset_project_sources
+  ${HB_SUBSET_sources}
+)
+
 set (project_extra_sources)
 
 set (project_headers
-  ${HB_VERSION_H}
+  #${HB_VERSION_H}
 
   ${HB_BASE_headers}
   ${HB_OT_headers}
+)
+
+set (subset_project_headers
+  ${HB_SUBSET_headers}
 )
 
 
@@ -519,24 +526,27 @@ endif ()
 add_library(harfbuzz ${project_sources} ${project_extra_sources} ${project_headers})
 target_link_libraries(harfbuzz ${THIRD_PARTY_LIBS})
 
+## Define harfbuzz-subset library
+add_library(harfbuzz-subset ${subset_project_sources} ${subset_project_headers})
+add_dependencies(harfbuzz-subset harfbuzz)
+target_link_libraries(harfbuzz-subset harfbuzz ${THIRD_PARTY_LIBS})
+
 if (UNIX OR MINGW)
   # Make symbols link locally
   link_libraries(-Bsymbolic-functions)
 
-  # Make sure we don't link to libstdc++
   if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # Make sure we don't link to libstdc++
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
     set (CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "m") # libm
     set (CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "")
     set_target_properties(harfbuzz PROPERTIES LINKER_LANGUAGE C)
-  endif ()
+    set_target_properties(harfbuzz-subset PROPERTIES LINKER_LANGUAGE C)
 
-  # No threadsafe statics as we do it ourselves
-  if (BUILD_SHARED_LIBS)
+    # No threadsafe statics as we do it ourselves
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-threadsafe-statics")
   endif ()
 endif ()
-
 
 ## Define harfbuzz-gobject library
 if (HB_HAVE_GOBJECT)
@@ -708,6 +718,9 @@ if (HB_BUILD_UTILS)
   add_executable(hb-shape ${HB_SHAPE_sources})
   target_link_libraries(hb-shape harfbuzz)
 
+  add_executable(hb-subset ${HB_SUBSET_CLI_sources})
+  target_link_libraries(hb-subset harfbuzz harfbuzz-subset)
+
   add_executable(hb-ot-shape-closure ${HB_OT_SHAPE_CLOSURE_sources})
   target_link_libraries(hb-ot-shape-closure harfbuzz)
 
@@ -785,7 +798,7 @@ endif ()
 
 
 ## src/ executables
-foreach (prog main test test-would-substitute test-size-params test-buffer-serialize hb-ot-tag)
+foreach (prog main test test-would-substitute test-size-params test-buffer-serialize hb-ot-tag test-unicode-ranges)
   set (prog_name ${prog})
   if (${prog_name} STREQUAL "test")
     # test can not be used as a valid executable name on cmake, lets special case it
@@ -795,7 +808,6 @@ foreach (prog main test test-would-substitute test-size-params test-buffer-seria
   target_link_libraries(${prog_name} harfbuzz ${THIRD_PARTY_LIBS})
 endforeach ()
 set_target_properties(hb-ot-tag PROPERTIES COMPILE_FLAGS "-DMAIN")
-
 
 ## Tests
 if (UNIX OR MINGW)
@@ -812,10 +824,12 @@ if (UNIX OR MINGW)
     )
     add_test(NAME check-libstdc++.sh COMMAND ${PROJECT_SOURCE_DIR}/src/check-libstdc++.sh)
     add_test(NAME check-symbols.sh COMMAND ${PROJECT_SOURCE_DIR}/src/check-symbols.sh)
-    add_test(NAME check-defs.sh COMMAND ${PROJECT_SOURCE_DIR}/src/check-defs.sh)
 
-    set_tests_properties(check-static-inits.sh check-libstdc++.sh check-symbols.sh check-defs.sh
-      PROPERTIES ENVIRONMENT "libs=.;srcdir=${PROJECT_SOURCE_DIR}/src")
+    set_tests_properties(
+      check-static-inits.sh check-libstdc++.sh check-symbols.sh
+      PROPERTIES
+        ENVIRONMENT "libs=.;srcdir=${PROJECT_SOURCE_DIR}/src"
+        SKIP_RETURN_CODE 77)
   endif ()
 
   add_test(NAME check-c-linkage-decls.sh COMMAND ./check-c-linkage-decls.sh)
@@ -824,7 +838,9 @@ if (UNIX OR MINGW)
   add_test(NAME check-includes.sh COMMAND ./check-includes.sh)
   set_tests_properties(
     check-c-linkage-decls.sh check-header-guards.sh check-externs.sh check-includes.sh
-    PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
+    PROPERTIES
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/src
+      SKIP_RETURN_CODE 77)
 endif ()
 
 # Needs to come last so that variables defined above are passed to
