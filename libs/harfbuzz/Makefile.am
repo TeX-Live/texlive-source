@@ -87,7 +87,6 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-subset-plan.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-plan.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-private.hh \
-	@HARFBUZZ_TREE@/src/hb-subset.cc \
 	@HARFBUZZ_TREE@/src/hb-subset.h \
 	@HARFBUZZ_TREE@/src/hb-unicode-private.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode.cc \
