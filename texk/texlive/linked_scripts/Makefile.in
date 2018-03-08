@@ -347,6 +347,7 @@ texmf_other_scripts = \
 	kotex-utils/jamo-normalize.pl \
 	kotex-utils/komkindex.pl \
 	kotex-utils/ttf2kotexfont.pl \
+	l3build/l3build.lua \
 	latex-git-log/latex-git-log \
 	latex-papersize/latex-papersize.py \
 	latex2man/latex2man \
