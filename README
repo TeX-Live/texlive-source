@@ -80,7 +80,7 @@ x86_64-darwinlegacy, i386-darwin, powerpc-darwin:
     but will only be used for < 10.10 since x86_64-darwin covers newer.
   PPC binaries made with gcc-4.2 and Intel binaries with clang-3.7.
 
-x86_64-linux: Debian 6.0 (Squeeze), Feb 2009.
+x86_64-linux: Debian 8.0 (Jessie), Apr 2015.
 
 x86_64-linuxmusl:
   Alpine 3.1 Docker image with musl libc 1.1.5
