@@ -135,7 +135,6 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-glyf.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-input.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-plan.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-subset.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-warning.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-font.$(OBJEXT) \
@@ -708,7 +707,6 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-plan.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-plan.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-private.hh \
-	@HARFBUZZ_TREE@/src/hb-subset.cc \
 	@HARFBUZZ_TREE@/src/hb-subset.h \
 	@HARFBUZZ_TREE@/src/hb-unicode-private.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode.cc \
@@ -890,9 +888,6 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-subset-plan.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@HARFBUZZ_TREE@/src/hb-subset.$(OBJEXT):  \
-	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1024,7 +1019,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-glyf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-input.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po@am__quote@
 
