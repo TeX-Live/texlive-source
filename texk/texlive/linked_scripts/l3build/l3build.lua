@@ -1,3 +1,5 @@
+#!/usr/bin/env texlua 
+
 --[[
 
 File l3build.lua Copyright (C) 2014-2017 The LaTeX3 Project
@@ -23,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2018-03-09"
+release_date = "2018-03-10"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -77,7 +79,7 @@ build_require("stdmain")
 main = main or stdmain
 
 -- Load configuration file if running as a script
-if match(arg[0], "l3build(%.lua)$") then
+if match(arg[0], "l3build$") or match(arg[0], "l3build%.lua$") then
   -- Look for some configuration details
   if fileexists("build.lua") then
     dofile("build.lua")
