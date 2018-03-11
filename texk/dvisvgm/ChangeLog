@@ -1,3 +1,8 @@
+2018-03-11  Karl Berry  <karl@tug.org>
+
+	* configure.ac (HAVE_LIBGS): find libgs for non-native-tl builds.
+	From Ken Moffat, tlbuild 10 Mar 2018 01:19:23.
+
 2018-03-01  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (HAVE_LIBGS, gsversion): don't assume numeric values.

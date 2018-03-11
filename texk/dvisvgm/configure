@@ -21868,6 +21868,9 @@ else
 fi
 
 
+if test "x$have_libgs" = xyes; then
+  HAVE_LIBGS=1
+fi
 if test "x$have_libgs" = "xno"; then :
   # Ghostscript not found, check for dlopen
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
@@ -22045,7 +22048,7 @@ fi
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: \"$gsversion\"" >&5
 $as_echo "\"$gsversion\"" >&6; }
 	rm -f gsversion
-	if test -z "$gsversion" || "$gsversion" -lt 831; then
+	if test -z "$gsversion" || test "$gsversion" -lt 831; then
 		# current Ghostscript API was introduced in version 8.31
 		# older versions are not supported
 
