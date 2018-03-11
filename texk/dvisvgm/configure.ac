@@ -63,6 +63,9 @@ have_libgs=yes
 AC_CHECK_HEADER([ghostscript/iapi.h],
 	[AC_CHECK_LIB(gs, gsapi_revision,, [have_libgs=no])],
 	[have_libgs=no])
+if test "x$have_libgs" = xyes; then
+  HAVE_LIBGS=1
+fi
 AS_IF([test "x$have_libgs" = "xno"],
 	# Ghostscript not found, check for dlopen
 	[AC_CHECK_LIB(dl, dlopen,,
@@ -106,7 +109,7 @@ else
 		[gsversion=`cat gsversion`], [gsversion=], [gsversion=unknown])
 	AC_MSG_RESULT("$gsversion")
 	rm -f gsversion
-	if test -z "$gsversion" || "$gsversion" -lt 831; then
+	if test -z "$gsversion" || test "$gsversion" -lt 831; then
 		# current Ghostscript API was introduced in version 8.31
 		# older versions are not supported
 		AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])
