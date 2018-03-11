@@ -1,11 +1,12 @@
+# $Id: TLConfig.pm 46841 2018-03-05 16:31:19Z karl $
 # TeXLive::TLConfig.pm - module exporting configuration values
-# Copyright 2007-2017 Norbert Preining
+# Copyright 2007-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 45617 $';
+my $svnrev = '$Revision: 46841 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -51,7 +52,7 @@ BEGIN {
 
 # the year of our release, will be used in the location of the
 # network packages, and in menu names, and other places.
-$ReleaseYear = 2017;
+$ReleaseYear = 2018;
 
 # users can upgrade from this year to the current year; might be the
 # same as the release year, or any number of releases earlier.
@@ -107,7 +108,9 @@ our $DefaultContainerFormat = "xz";
 our $DefaultContainerExtension = "tar.$DefaultContainerFormat";
 
 # archive (not user) settings.
-# these can be overriden by putting them into 00texlive.config.tlpsrc
+# these can be overridden by putting them into 00texlive.config.tlpsrc
+# in the format
+#   depend key/value
 our %TLPDBConfigs = (
   "container_split_src_files" => 1,
   "container_split_doc_files" => 1,
