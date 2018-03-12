@@ -23,7 +23,7 @@ under Windows).
 After that you can insert a render frame using Gregorio, and simply
 typing gabc (`right-click->edit sources`).
 
-For more details see [the website](http://home.gna.org/gregorio/scribus).
+For more details see [the website](http://gregorio-project.github.io/introduction-scribus.html).
 
 ## Syllabation checker
 

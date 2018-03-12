@@ -1104,6 +1104,9 @@ static void gregorio_free_one_syllable(gregorio_syllable **syllable,
     }
     free((*syllable)->abovelinestext);
     next = (*syllable)->next_syllable;
+    if (next) {
+        next->previous_syllable = NULL;
+    }
     free((*syllable)->elements);
     free(*syllable);
     *syllable = next;

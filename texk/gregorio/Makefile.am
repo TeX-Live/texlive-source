@@ -60,4 +60,4 @@ TESTS = gregorio.test
 gregorio.log: gregorio$(EXEEXT)
 
 EXTRA_DIST += $(TESTS)
-DISTCLEANFILES = factus.gtex veni.gtex
+DISTCLEANFILES =

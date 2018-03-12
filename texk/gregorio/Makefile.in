@@ -601,7 +601,7 @@ gregorio_SOURCES = \
 LDADD = $(KPATHSEA_LIBS)
 AM_TESTS_ENVIRONMENT = GREGORIO_TREE='$(GREGORIO_TREE)'; export GREGORIO_TREE;
 TESTS = gregorio.test
-DISTCLEANFILES = factus.gtex veni.gtex
+DISTCLEANFILES = 
 all: config_.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
