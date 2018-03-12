@@ -2007,7 +2007,7 @@ void process_command (char **ln)
          || prefix ("\\end%", *ln) 
          || prefix ("\\end{document}", *ln) )
   {
-    fprintf (outfile, *ln);
+    fprintf (outfile, "%s", *ln);
     exit(0);
   }
 
@@ -2054,7 +2054,8 @@ void process_score ()
   while ( c != EOF )
   {
     ungetc (c, infile);
-    fgets(line, LINE_LEN, infile); 
+    if (fgets(line, LINE_LEN, infile) == NULL)
+      error ("Unexpected EOF.");
     lineno++;
     process_line ();
     c = getc (infile);

@@ -1,3 +1,8 @@
+2018-03-12  Norbert Preining  <norbert@preining.info>
+
+	* autosp.c: Fix a potential bug in the usage of fprintf().
+	Avoid a compiler warning.
+
 2018-03-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* autosp-src/tex2aspc.test: Make robust.
