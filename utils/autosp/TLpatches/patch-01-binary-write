@@ -1,6 +1,6 @@
 diff -ur autosp-2018-02-23/autosp.c autosp-src/autosp.c
 --- autosp-2018-02-23/autosp.c	Fri Feb 23 23:55:07 2018
-+++ autosp-src/autosp.c	Sat Feb 24 08:07:57 2018
++++ autosp-src/autosp.c	Mon Mar 12 17:58:18 2018
 @@ -510,7 +510,7 @@
      update_global_skip (n);
        /* commas will be discarded by filter_output (i) */
@@ -28,7 +28,26 @@ diff -ur autosp-2018-02-23/autosp.c autosp-src/autosp.c
  
    t = strpbrk (s+1, "{\\&|$"); /* collective coding?  */
    if (*t == '{')  /*  {...}  */
-@@ -2153,7 +2153,7 @@
+@@ -2007,7 +2007,7 @@
+          || prefix ("\\end%", *ln) 
+          || prefix ("\\end{document}", *ln) )
+   {
+-    fprintf (outfile, *ln);
++    fprintf (outfile, "%s", *ln);
+     exit(0);
+   }
+ 
+@@ -2054,7 +2054,8 @@
+   while ( c != EOF )
+   {
+     ungetc (c, infile);
+-    fgets(line, LINE_LEN, infile); 
++    if (fgets(line, LINE_LEN, infile) == NULL)
++      error ("Unexpected EOF.");
+     lineno++;
+     process_line ();
+     c = getc (infile);
+@@ -2153,7 +2154,7 @@
    }
    else
    {
@@ -37,7 +56,7 @@ diff -ur autosp-2018-02-23/autosp.c autosp-src/autosp.c
      if (outfile == NULL)
      { printf ("Can't open %s\n", outfilename);
        exit (EXIT_FAILURE);
-@@ -2171,7 +2171,7 @@
+@@ -2171,7 +2172,7 @@
    *logfilename_n = '\0';
    append (logfilename, &logfilename_n, "alog", sizeof (logfilename));
    if (debug)  
@@ -48,7 +67,7 @@ diff -ur autosp-2018-02-23/autosp.c autosp-src/autosp.c
        exit (EXIT_FAILURE);
 diff -ur autosp-2018-02-23/rebar.c autosp-src/rebar.c
 --- autosp-2018-02-23/rebar.c	Thu Jun 15 03:08:12 2017
-+++ autosp-src/rebar.c	Sat Feb 24 08:08:27 2018
++++ autosp-src/rebar.c	Sat Feb 24 08:08:28 2018
 @@ -262,7 +262,7 @@
        else
          append (outfilename, &outfilename_n, ".aspc", sizeof (outfilename));
@@ -60,7 +79,7 @@ diff -ur autosp-2018-02-23/rebar.c autosp-src/rebar.c
        exit (EXIT_FAILURE);
 diff -ur autosp-2018-02-23/tex2aspc.c autosp-src/tex2aspc.c
 --- autosp-2018-02-23/tex2aspc.c	Sat Dec 16 00:04:13 2017
-+++ autosp-src/tex2aspc.c	Sat Feb 24 08:08:55 2018
++++ autosp-src/tex2aspc.c	Sat Feb 24 08:08:56 2018
 @@ -337,7 +337,7 @@
      append (outfilename, &outfilename_n, ".aspc", sizeof (outfilename));
    }
