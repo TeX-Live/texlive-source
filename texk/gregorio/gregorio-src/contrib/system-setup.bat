@@ -237,7 +237,7 @@ echo.
 echo system-setup.log created and saved in a temporary location.
 echo Upon exiting this script, the log will be opened in Notepad for you.
 echo Please save the file to a convenient location and email it to
-echo gregorio-users@gna.org as part of your bug report.
+echo gregorio-users@googlegroups.com as part of your bug report.
 echo.
 echo You can also create an issue at
 echo http://github.org/gregorio-project/gregorio/issues

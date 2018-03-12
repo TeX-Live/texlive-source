@@ -16,12 +16,6 @@ You can also try it online [here](http://dev.illuminarepublications.com/gregorio
 
 You need a recent and working [TeXLive](https://www.tug.org/texlive/), on top of which you just need to install latest [Gregorio release](https://github.com/gregorio-project/gregorio/releases). See [the website](http://gregorio-project.github.io/installation.html) for more details.
 
-**Note:** Due to a bug in the v2.7-fix-3 release of `luaotfload` the documentation cannot be built against TeXLive 2016 if you have that version of `luaotfload` (see [#1188](https://github.com/gregorio-project/gregorio/issues/1188)).  The result is that users should do one of the following:
-
-- Install from the distribution tar ball where the documentation is already built (recommended for those installing a stable release).
-- Switch to TeXLive 2015 (which uses an earlier version of `luaotfload`) to build the docs.
-- Upgrade your `luaotfload` to a more recent version (v2.8 or later).
-
 ## Building for inclusion in TeXLive
 
 When building gregorio for inclusion in TeXLive, the gregorio executable must not have the version number suffix that is used for other builds.  To make this happen, run `configure` with the `--disable-version-in-exe` option, and the generated Makefile will create a gregorio executable without the version number suffix (i.e., the executable will simply be named `gregorio`).

@@ -1,5 +1,5 @@
-Changes applied to the gregorio-5.0.2 tree as obtained from:
-	https://github.com/gregorio-project/gregorio/releases/download/v5.0.2
+Changes applied to the gregorio-5.1.0 tree as obtained from:
+	CTAN/support/gregoriotex/gregorio-5.1.0.zip
 
 Remove:
 	Makefile.in
@@ -8,9 +8,5 @@ Remove:
 	configure
 	contrib/Makefile.in
 	contrib/TeXShop/Makefile.in
-	doc/Makefile.in
-	examples/Makefile.in
-	fonts/
 	src/Makefile.in
 	src/config_.h.in
-	tex/

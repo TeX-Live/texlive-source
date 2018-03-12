@@ -6,7 +6,7 @@ You can report a bug and request a new feature on the [bug tracker](https://gith
 
 Please search for existing issues before reporting a new one.
 
-Please do not use the issue tracker for personal support requests, instead use the mailing-list (https://gna.org/mail/?group=gregorio) or IRC: #gregorio on freenode.
+Please do not use the issue tracker for personal support requests, instead use the mailing-list (https://groups.google.com/forum/#!forum/gregorio-users) or IRC: #gregorio on freenode.
 
 ### Report a bug
 
