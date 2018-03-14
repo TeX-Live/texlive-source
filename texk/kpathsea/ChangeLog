@@ -1,3 +1,9 @@
+2018-03-14  Karl Berry  <karl@tug.org>
+
+	* tex-glyph.c (kpathsea_find_glyph, try_size): disentangle
+	successful searches and filling in return information.
+	Private report from Doug McKenna, 14 Mar 2018 11:51:29.
+
 2018-02-26  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (TEXMFVAR, TEXMFCONFIG, doc): 2018.

@@ -101,18 +101,18 @@ try_size (kpathsea kpse, const_string fontname,  unsigned dpi,
   ret = try_pk ? try_format (kpse, kpse_pk_format) : NULL;
   format_found = kpse_pk_format;
 
-  if (ret == NULL && try_gf)
-    {
-      ret = try_format (kpse, kpse_gf_format);
-      format_found = kpse_gf_format;
-    }
+  if (ret == NULL && try_gf) {
+    ret = try_format (kpse, kpse_gf_format);
+    format_found = kpse_gf_format;
+  }
 
-  if (ret != NULL && glyph_file)
-    { /* Success.  Fill in the return info.  */
+  if (ret != NULL) {  /* Success.  */
+    if (glyph_file) { /* Fill in the return info.  */
       glyph_file->name = fontname;
       glyph_file->dpi = dpi;
       glyph_file->format = format_found;
     }
+  }
 
   return ret;
 }
@@ -290,15 +290,16 @@ kpathsea_find_glyph (kpathsea kpse,
     /* If mktex... succeeded, set return struct.  Doesn't make sense for
        `kpse_make_tex' to set it, since it can only succeed or fail,
        unlike the other routines.  */
-    if (ret && glyph_file) {
-      KPSE_GLYPH_FILE_DPI (*glyph_file) = dpi;
-      KPSE_GLYPH_FILE_NAME (*glyph_file) = fontname;
-    }
+    if (ret) {
+      if (glyph_file) {
+        KPSE_GLYPH_FILE_DPI (*glyph_file) = dpi;
+        KPSE_GLYPH_FILE_NAME (*glyph_file) = fontname;
+      }
 
     /* If mktex... failed, try any fallback resolutions.  */
-    else {
+    } else {
       if (kpse->fallback_resolutions)
-        ret = try_fallback_resolutions (kpse, fontname, dpi, format, glyph_file);
+        ret = try_fallback_resolutions (kpse, fontname, dpi,format,glyph_file);
 
       /* We're down to the font of last resort.  */
       if (!ret && kpse->fallback_font) {
