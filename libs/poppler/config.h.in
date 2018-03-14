@@ -6,7 +6,7 @@
 /* define if the compiler supports basic C++11 syntax */
 #undef HAVE_CXX11
 
-/* Do we have any DCT decoder?. */
+/* Do we have any DCT decoder? */
 #undef HAVE_DCT_DECODER
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
@@ -28,7 +28,7 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Do we have any JPX decoder?. */
+/* Do we have any JPX decoder? */
 #undef HAVE_JPX_DECODER
 
 /* Define to 1 if you have the `localtime_r' function. */

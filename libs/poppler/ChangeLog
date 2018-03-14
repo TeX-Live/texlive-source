@@ -1,3 +1,10 @@
+2018-03-14  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* configure.ac (HAVE_DCT_DECODER, HAVE_JPX_DECODER): hardwire to 1,
+	instead of requiring --enable.
+	Original report from Jose Manuel,
+	http://tug.org/pipermail/tex-live/2018-March/041158.html
+
 2018-01-08  Karl Berry  <karl@freefriends.org>
 
 	Import poppler-0.62.0.
