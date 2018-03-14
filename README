@@ -29,24 +29,19 @@ Build information for some of the platforms.
 aarch64-linux:
   aarch64 Debian GNU/Linux 9 (stretch)
   gcc (Debian 6.3.0-18) 6.3.0 20170516
-  ./Build --enable-xindy --without-x --enable-arm-neon=check
-    with the libpng-1.6.34 source directory copied over from SVN -r45971
-    (where it has been reconfigured to expose --enable-arm-neon)
+  ./Build --enable-arm-neon=check
 
 amd64-netbsd:
   gcc version 4.5.3 (NetBSD nb2 20110806)
   NetBSD/amd64 6.1.3
-  TL_MAKE=gmake LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' ./Build
+  TL_MAKE=gmake CC=gcc CXX=g++ CFLAGS=-D_NETBSD_SOURCE \
+  LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' \
+  ./Build --enable-xindy CLISP=/usr/local/bin/clisp
   
 i386-freebsd, amd64-freebsd:
   --disable-dvisvgm; upmendex for i386 built with -DU_IS_BIG_ENDIAN=0.
 
 i386-linux: Debian 7.
-
-i386-linuxmusl:
-  Alpine 3.1 Docker image with musl libc 1.1.5
-  Binaries are taken from the CI testing on travis-ci, see the
-  source/.travis.yaml file for details on how to build.
 
 i386-openbsd, amd64-openbsd:
   e.g., see CONFIGURE_ARGS in the Makefile in

@@ -1,3 +1,8 @@
+2018-03-15  Karl Berry  <karl@tug.org>
+
+	* README: best guess is that xindy's use of clisp does not need
+	ffcall (with current clisp beta release).
+
 2018-02-09  Karl Berry  <karl@freefriends.org>
 
 	* axodraw2: new utility: package axodraw2, executable axohelp.
