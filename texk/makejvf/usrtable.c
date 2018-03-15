@@ -29,14 +29,11 @@ void get_usertable(char *name)
 		exit(1);
 	}
 	for (l = 0; fgets(buf, BUF_SIZE, fp) != NULL; l++) {
+		if (strncmp(buf, "+", 1) && strncmp(buf, "%", 1)) charset_mode = 0;
 		if ((endptr=strchr(buf, '%')) != NULL) strcpy(endptr,"\n");  /* ignore after '%'  */
-		if (!strncmp(buf, "\n", 1)) { /* empty line */
-			charset_mode = 0;
-			continue;
-		}
+		if (!strncmp(buf, "\n", 1)) continue;                        /* ignore empty line */
 		tok = strtok(buf, "\t");
 		if (!strcmp(tok, "REPLACE")) {
-			charset_mode = 0;
 			if (usertable_replace_max >= MAX_TABLE) goto buferr;
 			usertable_replace[usertable_replace_max].codepoint = strtol(strtok(NULL, "\t\n"), &endptr, 16);
 			if (*endptr != '\0') goto taberr;
@@ -47,7 +44,6 @@ void get_usertable(char *name)
 			continue;
 		}
 		if (!strcmp(tok, "MOVE")) {
-			charset_mode = 0;
 			if (usertable_move_max >= MAX_TABLE) goto buferr;
 			usertable_move[usertable_move_max].codepoint = strtol(strtok(NULL, "\t\n"), &endptr, 16);
 			if (*endptr != '\0') goto taberr;
