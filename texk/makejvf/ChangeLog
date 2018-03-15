@@ -1,3 +1,9 @@
+2018-03-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* usrtable.c: Do not initialize CHARSET flag at
+	continuous lines of a CHARSET entry.
+	* version.h: Bump version.
+
 2018-03-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* write.c: Add U+2329, U+232A, U+301A, U+301B, U+FE59..FE5E.
