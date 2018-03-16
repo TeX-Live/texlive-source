@@ -848,7 +848,7 @@ maininit (int ac, string *av)
         if (!is_absolute) {
           strptr = strrchr (name, '/');
           if (strptr) {
-            if (name[0] == '"'
+            if (name[0] == '"')
               *strptr = '"';
             else
               strptr++;
