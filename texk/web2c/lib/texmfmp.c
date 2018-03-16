@@ -807,8 +807,8 @@ maininit (int ac, string *av)
             *pp = '/';
         }
       }
+      is_absolute = kpse_absolute_p(argv[argc-1], false);
       name = normalize_quotes(argv[argc-1], "argument");
-      is_absolute = kpse_absolute_p(name, false);
 #ifdef XeTeX
       main_input_file = kpse_find_file(argv[argc-1], INPUT_FORMAT, false);
       if (!srcspecialsp) {
@@ -818,7 +818,10 @@ maininit (int ac, string *av)
         if (!is_absolute) {
           strptr = strrchr (name, '/');
           if (strptr) {
-            strptr++;
+            if (name[0] == '"')
+              *strptr = '"';
+            else
+              strptr++;
             name = strptr;
           }
         }
@@ -845,7 +848,10 @@ maininit (int ac, string *av)
         if (!is_absolute) {
           strptr = strrchr (name, '/');
           if (strptr) {
-            strptr++;
+            if (name[0] == '"'
+              *strptr = '"';
+            else
+              strptr++;
             name = strptr;
           }
         }
@@ -1592,12 +1598,9 @@ get_input_file_name (void)
           pp++;
       }
     }
+    is_absolute = kpse_absolute_p(argv[optind], false);
 #endif
-
     name = normalize_quotes(argv[optind], "argument");
-#ifdef WIN32
-    is_absolute = kpse_absolute_p(name, false);
-#endif
 #ifdef XeTeX
     input_file_name = kpse_find_file(argv[optind], INPUT_FORMAT, false);
 #ifdef WIN32
@@ -1629,7 +1632,10 @@ get_input_file_name (void)
       if (!is_absolute) {
         strptr = strrchr (name, '/');
         if (strptr) {
-          strptr++;
+          if (name[0] == '"')
+            *strptr = '"';
+          else
+            strptr++;
           name = strptr;
         }
       }
