@@ -128,10 +128,10 @@ am_libbrotli_a_OBJECTS = common/dictionary.$(OBJEXT) \
 	enc/cluster.$(OBJEXT) enc/compress_fragment.$(OBJEXT) \
 	enc/compress_fragment_two_pass.$(OBJEXT) \
 	enc/dictionary_hash.$(OBJEXT) enc/encode.$(OBJEXT) \
-	enc/entropy_encode.$(OBJEXT) enc/histogram.$(OBJEXT) \
-	enc/literal_cost.$(OBJEXT) enc/memory.$(OBJEXT) \
-	enc/metablock.$(OBJEXT) enc/static_dict.$(OBJEXT) \
-	enc/utf8_util.$(OBJEXT)
+	enc/encoder_dict.$(OBJEXT) enc/entropy_encode.$(OBJEXT) \
+	enc/histogram.$(OBJEXT) enc/literal_cost.$(OBJEXT) \
+	enc/memory.$(OBJEXT) enc/metablock.$(OBJEXT) \
+	enc/static_dict.$(OBJEXT) enc/utf8_util.$(OBJEXT)
 libbrotli_a_OBJECTS = $(am_libbrotli_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -347,8 +347,11 @@ top_srcdir = @top_srcdir@
 noinst_LIBRARIES = libbrotli.a
 libbrotli_a_SOURCES = \
 	common/constants.h \
+	common/context.h \
 	common/dictionary.c \
 	common/dictionary.h \
+	common/platform.h \
+	common/transform.h \
 	common/version.h \
 	enc/backward_references.c \
 	enc/backward_references.h \
@@ -376,6 +379,8 @@ libbrotli_a_SOURCES = \
 	enc/dictionary_hash.c \
 	enc/dictionary_hash.h \
 	enc/encode.c \
+	enc/encoder_dict.c \
+	enc/encoder_dict.h \
 	enc/entropy_encode.c \
 	enc/entropy_encode.h \
 	enc/entropy_encode_static.h \
@@ -397,6 +402,7 @@ libbrotli_a_SOURCES = \
 	enc/metablock.c \
 	enc/metablock.h \
 	enc/metablock_inc.h \
+	enc/params.h \
 	enc/port.h \
 	enc/prefix.h \
 	enc/quality.h \
@@ -485,6 +491,8 @@ enc/dictionary_hash.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 enc/encode.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
+enc/encoder_dict.$(OBJEXT): enc/$(am__dirstamp) \
+	enc/$(DEPDIR)/$(am__dirstamp)
 enc/entropy_encode.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 enc/histogram.$(OBJEXT): enc/$(am__dirstamp) \
@@ -524,6 +532,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/compress_fragment_two_pass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/dictionary_hash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/encode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/encoder_dict.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/entropy_encode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/histogram.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/literal_cost.Po@am__quote@

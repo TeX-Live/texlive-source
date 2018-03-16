@@ -1,3 +1,7 @@
+2018-03-16  Karl Berry  <karl@freefriends.org>
+
+	* Import 2.3.4.
+
 2018-03-11  Karl Berry  <karl@tug.org>
 
 	* configure.ac (HAVE_LIBGS): find libgs for non-native-tl builds.
