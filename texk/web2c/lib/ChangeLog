@@ -1,6 +1,6 @@
 2018-03-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* texmfmp.c: Improve the support of short 8.3 names (w32 only).
+	* texmfmp.c: Remove support of short 8.3 names (w32 only).
 
 2018-01-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
