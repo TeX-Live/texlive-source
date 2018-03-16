@@ -1,6 +1,6 @@
 /* tex-glyph.h: look for a TeX glyph font (GF or PK).
 
-   Copyright 1993, 2008, 2009, 2011 Karl Berry.
+   Copyright 1993, 2008, 2009, 2011, 2018 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -26,13 +26,14 @@
 extern "C" {
 #endif
 
-/* This type describes the origination of a glyph font.  */
+/* This type describes the origin of a glyph font.  */
 
 typedef enum
 {
   kpse_glyph_source_normal,  /* the searched-for font: already existed */
   kpse_glyph_source_alias,   /* : was an alias for an existing file */
   kpse_glyph_source_maketex, /* : was created on the fly */
+  kpse_glyph_source_fallback_res, /* : found at fallback resolutions */
   kpse_glyph_source_fallback /* : wasn't found, but the fallback font was */
 } kpse_glyph_source_type;
 

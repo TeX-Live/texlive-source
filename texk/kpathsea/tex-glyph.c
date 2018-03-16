@@ -1,6 +1,6 @@
 /* tex-glyph.c: search for GF/PK files.
 
-   Copyright 1993, 1994, 1995, 1996, 2008, 2009, 2011, 2017 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 2008, 2009, 2011, 2017, 2018 Karl Berry.
    Copyright 1997, 1998, 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -298,8 +298,10 @@ kpathsea_find_glyph (kpathsea kpse,
 
     /* If mktex... failed, try any fallback resolutions.  */
     } else {
-      if (kpse->fallback_resolutions)
+      if (kpse->fallback_resolutions) {
+        source = kpse_glyph_source_fallback_res;
         ret = try_fallback_resolutions (kpse, fontname, dpi,format,glyph_file);
+      }
 
       /* We're down to the font of last resort.  */
       if (!ret && kpse->fallback_font) {
@@ -311,8 +313,9 @@ kpathsea_find_glyph (kpathsea kpse,
         ret = try_resolution (kpse, name, dpi, format, glyph_file);
 
         /* The fallback font at the fallback resolutions.  */
-        if (!ret && kpse->fallback_resolutions)
+        if (!ret && kpse->fallback_resolutions) {
           ret = try_fallback_resolutions (kpse, name, dpi, format, glyph_file);
+        }
       }
     }
   }
@@ -337,8 +340,8 @@ kpse_find_glyph (const_string passed_fontname,  unsigned dpi,
                  kpse_file_format_type format,
                  kpse_glyph_file_type *glyph_file)
 {
-    return kpathsea_find_glyph (kpse_def, passed_fontname, dpi, format,
-                                glyph_file);
+  return kpathsea_find_glyph (kpse_def, passed_fontname, dpi, format,
+                              glyph_file);
 }
 #endif
 

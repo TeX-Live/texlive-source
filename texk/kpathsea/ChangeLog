@@ -1,3 +1,10 @@
+2018-03-16  Karl Berry  <karl@freefriends.org>
+
+	* tex-glyph.h (kpse_glyph_source_fallback_res): new enum value
+	in kpse_glyph_source_type.
+	* tex-glyph.c (kpathsea_find_glyph): use it for `source'.
+	Private report from Doug McKenna, 14 Mar 2018 19:26:12.
+
 2018-03-14  Karl Berry  <karl@tug.org>
 
 	* tex-glyph.c (kpathsea_find_glyph, try_size): disentangle
@@ -9,6 +16,7 @@
 	* texmf.cnf (TEXMFVAR, TEXMFCONFIG, doc): 2018.
 
 2018-02-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
 	* tex-make.c (kpathsea_make_tex): Change an error message
 	"Invalid fontname" to "Invalid filename", since
 	  $ tex -fmt=-a x
