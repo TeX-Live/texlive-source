@@ -665,24 +665,6 @@ const char *ptexbanner = BANNER;
 /* forward declaration */
 static string
 normalize_quotes (const_string name, const_string mesg);
-#ifndef TeX
-int srcspecialsp = 0;
-#endif
-/* Support of 8.3-name convention. If *buffer == NULL, nothing is done. */
-static void change_to_long_name (char **buffer)
-{
-  if (*buffer) {
-    char inbuf[260];
-    char outbuf[260];
-
-    memset (outbuf, 0, 260);
-    strcpy (inbuf, *buffer);
-    if (GetLongPathName (inbuf, outbuf, 260)) {
-      *buffer = (char *)realloc(*buffer, strlen(outbuf) + 1);
-      strcpy (*buffer, outbuf);
-    }
-  }
-}
 #endif /* WIN32 */
 
 /* The entry point: set up for reading the command line, which will
@@ -788,9 +770,6 @@ maininit (int ac, string *av)
 #ifdef WIN32
   if (main_input_file == NULL) {
     string name;
-    boolean is_absolute;
-    char *strptr;
-
 #ifndef XeTeX
     boolean quoted;
 #endif
@@ -807,25 +786,9 @@ maininit (int ac, string *av)
             *pp = '/';
         }
       }
-      is_absolute = kpse_absolute_p(argv[argc-1], false);
       name = normalize_quotes(argv[argc-1], "argument");
 #ifdef XeTeX
       main_input_file = kpse_find_file(argv[argc-1], INPUT_FORMAT, false);
-      if (!srcspecialsp) {
-        change_to_long_name (&main_input_file);
-        if (main_input_file)
-          name = normalize_quotes(main_input_file, "argument");
-        if (!is_absolute) {
-          strptr = strrchr (name, '/');
-          if (strptr) {
-            if (name[0] == '"')
-              *strptr = '"';
-            else
-              strptr++;
-            name = strptr;
-          }
-        }
-      }
       argv[argc-1] = name;
 #else
       quoted = (name[0] == '"');
@@ -835,26 +798,10 @@ maininit (int ac, string *av)
         name++;
       }
       main_input_file = kpse_find_file(name, INPUT_FORMAT, false);
-      if (!srcspecialsp)
-        change_to_long_name (&main_input_file);
       if (quoted) {
         /* Undo modifications */
         name[strlen(name)] = '"';
         name--;
-      }
-      if (!srcspecialsp) {
-        if (main_input_file)
-          name = normalize_quotes(main_input_file, "argument");
-        if (!is_absolute) {
-          strptr = strrchr (name, '/');
-          if (strptr) {
-            if (name[0] == '"')
-              *strptr = '"';
-            else
-              strptr++;
-            name = strptr;
-          }
-        }
       }
       argv[argc-1] = name;
 #endif
@@ -1574,10 +1521,6 @@ normalize_quotes (const_string name, const_string mesg)
 string
 get_input_file_name (void)
 {
-#ifdef WIN32
-  boolean is_absolute;
-  char *strptr;
-#endif
   string input_file_name = NULL;
 
   if (argv[optind] && argv[optind][0] != '&' && argv[optind][0] != '\\') {
@@ -1598,15 +1541,10 @@ get_input_file_name (void)
           pp++;
       }
     }
-    is_absolute = kpse_absolute_p(argv[optind], false);
 #endif
     name = normalize_quotes(argv[optind], "argument");
 #ifdef XeTeX
     input_file_name = kpse_find_file(argv[optind], INPUT_FORMAT, false);
-#ifdef WIN32
-    if (!srcspecialsp)
-      change_to_long_name (&input_file_name);
-#endif
 #else
     quoted = (name[0] == '"');
     if (quoted) {
@@ -1615,30 +1553,10 @@ get_input_file_name (void)
         name++;
     }
     input_file_name = kpse_find_file(name, INPUT_FORMAT, false);
-#ifdef WIN32
-    if (!srcspecialsp)
-      change_to_long_name (&input_file_name);
-#endif
     if (quoted) {
         /* Undo modifications */
         name[strlen(name)] = '"';
         name--;
-    }
-#endif
-#ifdef WIN32
-    if (!srcspecialsp) {
-      if (input_file_name)
-        name = normalize_quotes (input_file_name, "argument");
-      if (!is_absolute) {
-        strptr = strrchr (name, '/');
-        if (strptr) {
-          if (name[0] == '"')
-            *strptr = '"';
-          else
-            strptr++;
-          name = strptr;
-        }
-      }
     }
 #endif
     argv[optind] = name;
