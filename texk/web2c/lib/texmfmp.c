@@ -788,6 +788,9 @@ maininit (int ac, string *av)
 #ifdef WIN32
   if (main_input_file == NULL) {
     string name;
+    boolean is_absolute;
+    char *strptr;
+
 #ifndef XeTeX
     boolean quoted;
 #endif
@@ -804,17 +807,24 @@ maininit (int ac, string *av)
             *pp = '/';
         }
       }
-#ifdef XeTeX
       name = normalize_quotes(argv[argc-1], "argument");
+      is_absolute = kpse_absolute_p(name, false);
+#ifdef XeTeX
       main_input_file = kpse_find_file(argv[argc-1], INPUT_FORMAT, false);
       if (!srcspecialsp) {
         change_to_long_name (&main_input_file);
         if (main_input_file)
           name = normalize_quotes(main_input_file, "argument");
+        if (!is_absolute) {
+          strptr = strrchr (name, '/');
+          if (strptr) {
+            strptr++;
+            name = strptr;
+          }
+        }
       }
       argv[argc-1] = name;
 #else
-      name = normalize_quotes(argv[argc-1], "argument");
       quoted = (name[0] == '"');
       if (quoted) {
         /* Overwrite last quote and skip first quote. */
@@ -832,6 +842,13 @@ maininit (int ac, string *av)
       if (!srcspecialsp) {
         if (main_input_file)
           name = normalize_quotes(main_input_file, "argument");
+        if (!is_absolute) {
+          strptr = strrchr (name, '/');
+          if (strptr) {
+            strptr++;
+            name = strptr;
+          }
+        }
       }
       argv[argc-1] = name;
 #endif
@@ -1551,6 +1568,10 @@ normalize_quotes (const_string name, const_string mesg)
 string
 get_input_file_name (void)
 {
+#ifdef WIN32
+  boolean is_absolute;
+  char *strptr;
+#endif
   string input_file_name = NULL;
 
   if (argv[optind] && argv[optind][0] != '&' && argv[optind][0] != '\\') {
@@ -1574,6 +1595,9 @@ get_input_file_name (void)
 #endif
 
     name = normalize_quotes(argv[optind], "argument");
+#ifdef WIN32
+    is_absolute = kpse_absolute_p(name, false);
+#endif
 #ifdef XeTeX
     input_file_name = kpse_find_file(argv[optind], INPUT_FORMAT, false);
 #ifdef WIN32
@@ -1602,6 +1626,13 @@ get_input_file_name (void)
     if (!srcspecialsp) {
       if (input_file_name)
         name = normalize_quotes (input_file_name, "argument");
+      if (!is_absolute) {
+        strptr = strrchr (name, '/');
+        if (strptr) {
+          strptr++;
+          name = strptr;
+        }
+      }
     }
 #endif
     argv[optind] = name;
