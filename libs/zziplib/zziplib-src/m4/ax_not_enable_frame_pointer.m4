@@ -8,7 +8,7 @@ dnl default is "--disable-frame-pointer"
 dnl
 dnl @category C
 dnl @author Guido U. Draheim <guidod@gmx.de>
-dnl @version 2005-01-22
+dnl @version 2018-02-22
 dnl @license GPLWithACException
 
 AC_DEFUN([AX_NOT_ENABLE_FRAME_POINTER],[dnl
@@ -16,6 +16,10 @@ AS_VAR_PUSHDEF([VAR],[enable_frame_pointer])dnl
 AC_MSG_CHECKING([m4_ifval($1,$1,CFLAGS) frame-pointer])
 AC_ARG_ENABLE([frame-pointer], AC_HELP_STRING(
   [--enable-frame-pointer],[enable callframe generation for debugging]))
+if test ".$VAR" = "."; then
+  case ".$enable_debug" in .|.no|.no,*) : ;; *) VAR="$enable_debug" ;; esac
+  case ".$with_debug" in .|.no|.no,*) : ;; *) VAR="$with_debug" ;; esac
+fi
 case ".$VAR" in
   .|.no|.no,*) test ".$VAR" = "." && VAR="no"
      m4_ifval($1,$1,CFLAGS)=`echo dnl

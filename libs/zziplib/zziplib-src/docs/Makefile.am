@@ -25,8 +25,8 @@ EXTRA_DIST = make-doc.py $(doc_FILES) $(htm_FILES) $(SDL_RWOPS) \
              $(zzipdoc_FILES) sdocbook.css \
              zziplib-manpages.dbk zziplib-master.dbk \
              zziplib-manpages.tar
-CLEANFILES = *.pc *.omf
-DISTCLEANFILES = zziplib.spec manpages.tar htmpages.tar *.html *.xml
+CLEANFILES = *.pc *.omf *.tar *.html *.xml
+DISTCLEANFILES = zziplib.spec 
 
 zzipdoc_FILES = makedocs.py               zzipdoc/__init__.py \
 	zzipdoc/commentmarkup.py          zzipdoc/match.py    \
@@ -143,6 +143,25 @@ manpages.tar : zziplib.xml zzipmmapped.xml zzipfseeko.xml
 	;       $(XMLTO) -o man3 man zzipmmapped.xml  \
 	; echo '$(XMLTO) -o man3 man zzipfseeko.xml' \
 	;       $(XMLTO) -o man3 man zzipfseeko.xml  \
+	; if test -d man3/man3; then mv man3 man3_ \
+	;   mv man3_/man3 man3; rm -r man3_; fi \
+	; echo 'chmod 664 man3/*.3' \
+	;       chmod 664 man3/*.3  \
+	; echo '$(PAX_TAR_CREATE) "$@" man3/' \
+	;       $(PAX_TAR_CREATE) "$@" man3/  \
+	; echo '$(DELETE); rm man3/*.3 ; rmdir man3' \
+	;       $(DELETE); rm man3/*.3 ; rmdir man3  \
+	; fi ; true
+	@ if test "$(XMLTO)" = ":" \
+	; then echo going to regenerate "$@" in subdir "'"man"'" \
+	; echo 'test ! -d man3 || rm man3/* ; test -d man3 || mkdir man3' \
+	;       test ! -d man3 || rm man3/* ; test -d man3 || mkdir man3  \
+	; echo     '$(srcdir)/dbk2man.py -d man3 zziplib.xml' \
+	; $(PYTHON) $(srcdir)/dbk2man.py -d man3 zziplib.xml  \
+	; echo     '$(srcdir)/dbk2man.py -d man3 zzipmmapped.xml' \
+	; $(PYTHON) $(srcdir)/dbk2man.py -d man3 zzipmmapped.xml  \
+	; echo     '$(srcdir)/dbk2man.py -d man3 zzipfseeko.xml' \
+	; $(PYTHON) $(srcdir)/dbk2man.py -d man3 zzipfseeko.xml  \
 	; if test -d man3/man3; then mv man3 man3_ \
 	;   mv man3_/man3 man3; rm -r man3_; fi \
 	; echo 'chmod 664 man3/*.3' \

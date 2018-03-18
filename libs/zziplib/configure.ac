@@ -64,7 +64,7 @@ AC_C_BIGENDIAN
 ZZIPLIB_CHECK_ALIGNED_ACCESS
 
 # Checks for library functions.
-AC_CHECK_FUNCS([strcasecmp strndup])
+AC_CHECK_FUNCS([strcasecmp strnlen strndup])
 
 KPSE_ZLIB_FLAGS
 

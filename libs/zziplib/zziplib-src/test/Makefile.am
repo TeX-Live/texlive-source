@@ -3,8 +3,8 @@ AUTOTOOL_VERSION=autoconf-2.52 automake-1.5 libtool-1.4.2
 DEFAULT_INCLUDES = # nothing - no default of -I. -I$(srcdir)
 DEFS = @DEFS@ -I$(top_builddir) -I$(top_srcdir) # also for automake 1.4
 
-EXTRA_DIST = test.zip test1.zip zziptests.py
-DISTCLEANFILES = test*.dat test2.zip test3.zip
+EXTRA_DIST = test.zip zziptests.py
+DISTCLEANFILES = test*.dat test0.zip test1.zip test2.zip test3.zip
 
 zzcat     = ../bins/zzcat$(EXEEXT)
 zzdir     = ../bins/zzdir$(EXEEXT)
@@ -24,9 +24,16 @@ testdatadir = $(top_builddir)/testdata.d
 
 testzip testzips : test.zip test1.zip test2.zip test3.zip 
 
-test.zip tmp/../test.zip : $(README)
+test0.zip: $(README)
 	- test -d tmp || mkdir tmp
-	- $(MAKE) test0.zip && mv test0.zip $@
+	- cp $(README) tmp/README
+	- rm -f $@
+	- cd tmp && $(MKZIP) ../test0.zip README
+	- rm -r tmp
+	test -s test0.zip && cp -v test0.zip $(srcdir)/test.zip
+	
+test.zip: $(README)
+	- $(MAKE) test0.zip
 	- test -s $@ || cp $(srcdir)/test.zip $@
 
 # -------------------------------------------------------------------
@@ -38,15 +45,15 @@ check-local: check-readme $(sfxtests) $(newtests)
 
 check-tests: tests
 tests:
-	@ test -f zziptests.py || cp -s -v $(srcdir)/zziptests.py .
-	python zziptests.py     --exeext "$(EXEEXT)" --topsrcdir "$(top_srcdir)"
-test_%: 
-	@ test -f zziptests.py || cp -s -v $(srcdir)/zziptests.py .
-	python zziptests.py $@ -vvvv    --exeext "$(EXEEXT)" --topsrcdir "$(top_srcdir)"
+	@ test -f zziptests.py || ln -s -v $(srcdir)/zziptests.py . || cp -v $(srcdir)/zziptests.py .
+	$(PYTHON) zziptests.py     --exeext "$(EXEEXT)" --topsrcdir "$(top_srcdir)"
+test_%:
+	@ test -f zziptests.py || ln -s -v $(srcdir)/zziptests.py . || cp -v $(srcdir)/zziptests.py .
+	$(PYTHON) zziptests.py $@ -vvvv    --exeext "$(EXEEXT)" --topsrcdir "$(top_srcdir)"
 
 check-readme : $(zzcat)  test.zip
-	@ test -f test.zip || $(MAKE) tmp/../test.zip 
-	test -s test.zip
+	@ test -f test.zip || $(MAKE) test0.zip 
+	test -s test.zip || cp $(srcdir)/test.zip test.zip
 	@ echo :$@: checking $(zzcat) test/README 
 	@ $(zzcat) test/README >test.out
 	@ if diff test.out $(README) >$(NULL) \

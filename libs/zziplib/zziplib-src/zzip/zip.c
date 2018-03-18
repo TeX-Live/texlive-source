@@ -1,4 +1,3 @@
-
 /*
  * Author:
  *      Guido Draheim <guidod@gmx.de>
@@ -91,7 +90,7 @@ _zzip_inline static char *__zzip_aligned4(char *p);
 
 #ifdef ZZIP_HARDEN
 
-/*
+/* internal.
  * check for inconsistent values in trailer and prefer lower seek value
  * - we fix values assuming the root directory was written at the end
  * and it is just before the zip trailer. Therefore, ...
@@ -168,7 +167,7 @@ __debug_dir_hdr(struct zzip_dir_hdr *hdr)
 /* #define ZZIP_BUFSIZ 64  / * for testing */
 #endif
 
-/**
+/** internal.
  * This function is used by => zzip_file_open. It tries to find
  * the zip's central directory info that is usually a few
  * bytes off the end of the file.
@@ -318,6 +317,8 @@ __zzip_fetch_disk_trailer(int fd, zzip_off_t filesize,
                     trailer->zz_rootseek = zzip_disk_trailer_rootseek(orig);
                     trailer->zz_rootsize = zzip_disk_trailer_rootsize(orig);
 #                  endif
+                    if (trailer->zz_rootseek < 0 || trailer->zz_rootsize < 0)
+                       return(ZZIP_CORRUPTED); // forged value
 
                     __fixup_rootseek(offset + tail - mapped, trailer);
 		    /*
@@ -344,6 +345,8 @@ __zzip_fetch_disk_trailer(int fd, zzip_off_t filesize,
                         zzip_disk64_trailer_finalentries(orig);
                     trailer->zz_rootseek = zzip_disk64_trailer_rootseek(orig);
                     trailer->zz_rootsize = zzip_disk64_trailer_rootsize(orig);
+                    if (trailer->zz_rootseek < 0 || trailer->zz_rootsize < 0)
+                       return(ZZIP_CORRUPTED); // forged value
 		    /*
 		     * "extract data from files archived in a single zip file."
 		     * So the file offsets must be within the current ZIP archive!
@@ -381,23 +384,19 @@ __zzip_fetch_disk_trailer(int fd, zzip_off_t filesize,
  * making pointer alignments to values that can be handled as structures
  * is tricky. We assume here that an align(4) is sufficient even for
  * 64 bit machines. Note that binary operations are not usually allowed
- * to pointer types but we can cast the value to a suitably sized integer.
+ * to pointer types but we do need only the lower bits in this implementation,
+ * so we can just cast the value to a long value.
  */
 _zzip_inline static char *
 __zzip_aligned4(char *p)
 {
 #define aligned4   __zzip_aligned4
-#ifdef _WIN64
-    p += ((__int64) p) & 1;
-    p += ((__int64) p) & 2;
-#else
-    p += ((long) p) & 1;
-    p += ((long) p) & 2;
-#endif
+    p += ((intptr_t) p) & 1;
+    p += ((intptr_t) p) & 2;
     return p;
 }
 
-/**
+/** internal.
  * This function is used by => zzip_file_open, it is usually called after
  * => __zzip_find_disk_trailer. It will parse the zip's central directory
  * information and create a zziplib private directory table in
@@ -421,6 +420,9 @@ __zzip_parse_root_directory(int fd,
     zzip_off64_t zz_rootsize = _disk_trailer_rootsize(trailer);
     zzip_off64_t zz_rootseek = _disk_trailer_rootseek(trailer);
     __correct_rootseek(zz_rootseek, zz_rootsize, trailer);
+
+    if (zz_entries < 0 || zz_rootseek < 0 || zz_rootsize < 0)
+        return ZZIP_CORRUPTED;
 
     hdr0 = (struct zzip_dir_hdr *) malloc(zz_rootsize);
     if (! hdr0)
@@ -465,8 +467,9 @@ __zzip_parse_root_directory(int fd,
 #     endif
 
         if (fd_map)
-            { d = (void*)(fd_map+zz_fd_gap+zz_offset); } /* fd_map+fd_gap==u_rootseek */
-        else
+        {
+            d = (void*)(fd_map+zz_fd_gap+zz_offset); /* fd_map+fd_gap==u_rootseek */
+        } else
         {
             if (io->fd.seeks(fd, zz_rootseek + zz_offset, SEEK_SET) < 0)
                 return ZZIP_DIR_SEEK;
@@ -602,8 +605,8 @@ zzip_get_default_ext(void)
     return ext;
 }
 
-/**
- * allocate a new ZZIP_DIR handle and do basic
+/** start usage. also: zzip_dir_free
+ * This function allocates a new ZZIP_DIR handle and do basic
  * initializations before usage by => zzip_dir_fdopen
  * => zzip_dir_open => zzip_file_open or through
  * => zzip_open
@@ -624,7 +627,7 @@ zzip_dir_alloc_ext_io(zzip_strings_t * ext, const zzip_plugin_io_t io)
 }
 
 /** => zzip_dir_alloc_ext_io
- * this function is obsolete - it was generally used for implementation
+ * This function is obsolete - it was generally used for implementation
  * and exported to let other code build on it. It is now advised to
  * use => zzip_dir_alloc_ext_io now on explicitly, just set that second
  * argument to zero to achieve the same functionality as the old style.
@@ -635,8 +638,8 @@ zzip_dir_alloc(zzip_strings_t * fileext)
     return zzip_dir_alloc_ext_io(fileext, 0);
 }
 
-/**
- * will free the zzip_dir handle unless there are still
+/** => zzip_dir_alloc_ext_io
+ * This function will free the zzip_dir handle unless there are still
  * zzip_files attached (that may use its cache buffer).
  * This is the inverse of => zzip_dir_alloc , and both
  * are helper functions used implicitly in other zzipcalls
@@ -677,9 +680,9 @@ zzip_dir_close(ZZIP_DIR * dir)
     return zzip_dir_free(dir);
 }
 
-/**
- * used by the => zzip_dir_open and zzip_opendir(2) call. Opens the
- * zip-archive as specified with the fd which points to an
+/** fd reopen.
+ * This function is used by the => zzip_dir_open and zzip_opendir(2) call. 
+ * Opens the zip-archive as specified with the fd which points to an
  * already openend file. This function then search and parse
  * the zip's central directory.
  *
@@ -758,7 +761,7 @@ __zzip_dir_parse(ZZIP_DIR * dir)
     return rv;
 }
 
-/**
+/** internal.
  * This function will attach any of the .zip extensions then
  * trying to open it the with => open(2). This is a helper
  * function for => zzip_dir_open, => zzip_opendir and => zzip_open.
@@ -794,9 +797,9 @@ __zzip_try_open(zzip_char_t * filename, int filemode,
     return -1;
 }
 
-/**
- * Opens the zip-archive (if available).
- * the two ext_io arguments will default to use posix io and
+/** open zip-archive.
+ * This function opens the given zip-archive (if available).
+ * The two ext_io arguments will default to use posix io and
  * a set of default fileext that can atleast add .zip ext itself.
  */
 ZZIP_DIR *

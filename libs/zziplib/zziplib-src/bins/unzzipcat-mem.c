@@ -89,7 +89,7 @@ static FILE* create_fopen(char* name, char* mode, int subdirs)
 
 static int unzzip_cat (int argc, char ** argv, int extract)
 {
-    int done;
+    int done = 0;
     int argn;
     ZZIP_MEM_DISK* disk;
 
@@ -116,47 +116,50 @@ static int unzzip_cat (int argc, char ** argv, int extract)
 	    FILE* out = stdout;
 	    if (extract) out = create_fopen(name, "wb", 1);
 	    if (! out) {
-	        if (errno != EISDIR) done = EXIT_ERRORS;
+	        if (errno != EISDIR) {
+	             DBG3("can not open output file %i %s", errno, strerror(errno));
+	             done = EXIT_ERRORS;
+	        }
 	        continue;
 	    }
 	    unzzip_mem_disk_cat_file (disk, name, out);
 	    if (extract) fclose(out);
 	}
-	return done;
-    }
-
-    if (argc == 3 && !extract)
+    } 
+    else if (argc == 3 && !extract)
     {  /* list from one spec */
 	ZZIP_MEM_ENTRY* entry = 0;
 	while ((entry = zzip_mem_disk_findmatch(disk, argv[2], entry, 0, 0)))
 	{
 	     unzzip_mem_entry_fprint (disk, entry, stdout);
 	}
-
-	return 0;
-    }
-
-    for (argn=1; argn < argc; argn++)
-    {   /* list only the matching entries - each in order of commandline */
-	ZZIP_MEM_ENTRY* entry = zzip_mem_disk_findfirst(disk);
-	for (; entry ; entry = zzip_mem_disk_findnext(disk, entry))
-	{
-	    char* name = zzip_mem_entry_to_name (entry);
-	    if (! _zzip_fnmatch (argv[argn], name, 
-		FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD))
+    } else {
+	for (argn=1; argn < argc; argn++)
+	{   /* list only the matching entries - each in order of commandline */
+	    ZZIP_MEM_ENTRY* entry = zzip_mem_disk_findfirst(disk);
+	    for (; entry ; entry = zzip_mem_disk_findnext(disk, entry))
 	    {
-	        FILE* out = stdout;
-	        if (extract) out = create_fopen(name, "wb", 1);
-	        if (! out) {
-	            if (errno != EISDIR) done = EXIT_ERRORS;
-	            continue;
-	        }
-		unzzip_mem_disk_cat_file (disk, name, out);
-		if (extract) fclose(out);
-		break; /* match loop */
+	        char* name = zzip_mem_entry_to_name (entry);
+	        if (! _zzip_fnmatch (argv[argn], name, 
+		    _zzip_FNM_NOESCAPE|_zzip_FNM_PATHNAME|_zzip_FNM_PERIOD))
+	        {
+	            FILE* out = stdout;
+	            if (extract) out = create_fopen(name, "wb", 1);
+		    if (! out) {
+		        if (errno != EISDIR) {
+		            DBG3("can not open output file %i %s", errno, strerror(errno));
+		            done = EXIT_ERRORS;
+		        }
+		        continue;
+		    }
+		    unzzip_mem_disk_cat_file (disk, name, out);
+		    if (extract) fclose(out);
+		    break; /* match loop */
+		}
 	    }
 	}
     }
+    zzip_mem_disk_close(disk);
     return done;
 } 
 

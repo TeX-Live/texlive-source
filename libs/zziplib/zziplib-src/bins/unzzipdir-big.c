@@ -9,16 +9,11 @@
 
 #include <zzip/fseeko.h>
 #include <zzip/fetch.h>
+#include <zzip/__fnmatch.h>
 #include <stdlib.h>
 #include <string.h>
 #include "unzzipdir-zip.h"
 #include "unzzip-states.h"
-
-#ifdef ZZIP_HAVE_FNMATCH_H
-#include <fnmatch.h>
-#else
-#define fnmatch(x,y,z) strcmp(x,y)
-#endif
 
 static const char* comprlevel[] = {
     "stored",   "shrunk",   "redu:1",   "redu:2",   "redu:3",   "redu:4",
