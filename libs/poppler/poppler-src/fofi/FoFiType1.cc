@@ -54,7 +54,7 @@ FoFiType1 *FoFiType1::load(char *fileName) {
   int lenA;
 
   if (!(fileA = FoFiBase::readFile(fileName, &lenA))) {
-    return NULL;
+    return nullptr;
   }
   return new FoFiType1(fileA, lenA, gTrue);
 }
@@ -62,8 +62,8 @@ FoFiType1 *FoFiType1::load(char *fileName) {
 FoFiType1::FoFiType1(char *fileA, int lenA, GBool freeFileDataA):
   FoFiBase(fileA, lenA, freeFileDataA)
 {
-  name = NULL;
-  encoding = NULL;
+  name = nullptr;
+  encoding = nullptr;
   fontMatrix[0] = 0.001;
   fontMatrix[1] = 0;
   fontMatrix[2] = 0;
@@ -150,7 +150,7 @@ void FoFiType1::writeEncoded(const char **newEncoding,
     // skip "/Encoding" + one whitespace char,
     // then look for 'def' preceded by PostScript whitespace
     p = line + 10;
-    line = NULL;
+    line = nullptr;
     for (; p < (char *)file + len; ++p) {
       if ((*p == ' ' || *p == '\t' || *p == '\x0a' ||
 	   *p == '\x0d' || *p == '\x0c' || *p == '\0') &&
@@ -176,7 +176,7 @@ void FoFiType1::writeEncoded(const char **newEncoding,
 	// skip "/Encoding" + one whitespace char,
 	// then look for 'def' preceded by PostScript whitespace
 	p = line2 + 10;
-	line = NULL;
+	line = nullptr;
 	for (; p < (char *)file + len; ++p) {
 	  if ((*p == ' ' || *p == '\t' || *p == '\x0a' ||
 	       *p == '\x0d' || *p == '\x0c' || *p == '\0') &&
@@ -207,7 +207,7 @@ char *FoFiType1::getNextLine(char *line) {
     ++line;
   }
   if (line >= (char *)file + len) {
-    return NULL;
+    return nullptr;
   }
   return line;
 }
@@ -243,7 +243,7 @@ void FoFiType1::parse() {
 	       !strncmp(line, "/Encoding 256 array", 19)) {
       encoding = (char **)gmallocn(256, sizeof(char *));
       for (j = 0; j < 256; ++j) {
-	encoding[j] = NULL;
+	encoding[j] = nullptr;
       }
       continueLine = gFalse;
       for (j = 0, line = getNextLine(line);
@@ -324,7 +324,7 @@ void FoFiType1::parse() {
 	  }
 	} else {
 	  if (strtok_r(buf, " \t", &tokptr) &&
-	      (p = strtok_r(NULL, " \t\n\r", &tokptr)) && !strcmp(p, "def")) {
+	      (p = strtok_r(nullptr, " \t\n\r", &tokptr)) && !strcmp(p, "def")) {
 	    break;
 	  }
 	}
@@ -339,7 +339,7 @@ void FoFiType1::parse() {
 	if ((p2 = strchr(p, ']'))) {
 	  *p2 = '\0';
 	  for (j = 0; j < 6; ++j) {
-	    if ((p = strtok(j == 0 ? p : (char *)NULL, " \t\n\r"))) {
+	    if ((p = strtok(j == 0 ? p : (char *)nullptr, " \t\n\r"))) {
 	      fontMatrix[j] = atof(p);
 	    } else {
 	      break;

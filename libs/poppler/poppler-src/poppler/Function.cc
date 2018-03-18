@@ -76,7 +76,7 @@ Function *Function::parse(Object *funcObj, std::set<int> *usedParents) {
     return new IdentityFunction();
   } else {
     error(errSyntaxError, -1, "Expected function dictionary or stream");
-    return NULL;
+    return nullptr;
   }
 
   Object obj1 = dict->lookup("FunctionType");
@@ -96,11 +96,11 @@ Function *Function::parse(Object *funcObj, std::set<int> *usedParents) {
     func = new PostScriptFunction(funcObj, dict);
   } else {
     error(errSyntaxError, -1, "Unimplemented function type ({0:d})", funcType);
-    return NULL;
+    return nullptr;
   }
   if (!func->isOk()) {
     delete func;
-    return NULL;
+    return nullptr;
   }
 
   return func;
@@ -222,9 +222,9 @@ SampledFunction::SampledFunction(Object *funcObj, Dict *dict) {
   double in[funcMaxInputs];
   int i, j, t, bit, idx;
 
-  idxOffset = NULL;
-  samples = NULL;
-  sBuf = NULL;
+  idxOffset = nullptr;
+  samples = nullptr;
+  sBuf = nullptr;
   ok = gFalse;
 
   //----- initialize the generic stuff
@@ -651,10 +651,10 @@ StitchingFunction::StitchingFunction(Object *funcObj, Dict *dict, std::set<int> 
   int i;
 
   ok = gFalse;
-  funcs = NULL;
-  bounds = NULL;
-  encode = NULL;
-  scale = NULL;
+  funcs = nullptr;
+  bounds = nullptr;
+  encode = nullptr;
+  scale = nullptr;
 
   //----- initialize the generic stuff
   if (!init(dict)) {
@@ -677,7 +677,7 @@ StitchingFunction::StitchingFunction(Object *funcObj, Dict *dict, std::set<int> 
   encode = (double *)gmallocn(2 * k, sizeof(double));
   scale = (double *)gmallocn(k, sizeof(double));
   for (i = 0; i < k; ++i) {
-    funcs[i] = NULL;
+    funcs[i] = nullptr;
   }
   for (i = 0; i < k; ++i) {
     std::set<int> usedParentsAux = *usedParents;
@@ -1131,8 +1131,8 @@ PostScriptFunction::PostScriptFunction(Object *funcObj, Dict *dict) {
   double in[funcMaxInputs];
   int i;
 
-  code = NULL;
-  codeString = NULL;
+  code = nullptr;
+  codeString = nullptr;
   codeSize = 0;
   ok = gFalse;
 

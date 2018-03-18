@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Brad Hards <bradh@frogmouth.net>
-// Copyright (C) 2006, 2008, 2010-2013, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2008, 2010-2013, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007-2008 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2007 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2010 Ilya Gorenbein <igorenbein@finjan.com>
@@ -103,6 +103,9 @@ public:
 
   // Destructor.
   ~XRef();
+
+  XRef(const XRef &) = delete;
+  XRef& operator=(const XRef &) = delete;
 
   // Copy xref but with new base stream!
   XRef *copy();
@@ -253,9 +256,13 @@ private:
 
   class XRefWriter {
   public:
+    XRefWriter() = default;
     virtual void startSection(int first, int count) = 0;
     virtual void writeEntry(Goffset offset, int gen, XRefEntryType type) = 0;
     virtual ~XRefWriter() {};
+
+    XRefWriter(const XRefWriter &) = delete;
+    XRefWriter& operator=(const XRefWriter &other) = delete;
   };
 
   // XRefWriter subclass that writes a XRef table

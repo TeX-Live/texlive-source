@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2005, 2007, 2009-2011, 2013, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2007, 2009-2011, 2013, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
 // Copyright (C) 2005, 2006, 2008 Brad Hards <bradh@frogmouth.net>
 // Copyright (C) 2007 Julien Rebetez <julienr@svn.gnome.org>
@@ -68,6 +68,10 @@ class NameTree {
 public:
   NameTree();
   ~NameTree();
+
+  NameTree(const NameTree &) = delete;
+  NameTree& operator=(const NameTree &) = delete;
+
   void init(XRef *xref, Object *tree);
   Object lookup(GooString *name);
   int numEntries() { return length; };
@@ -109,6 +113,9 @@ public:
 
   // Destructor.
   ~Catalog();
+
+  Catalog(const Catalog &) = delete;
+  Catalog& operator=(const Catalog &) = delete;
 
   // Is catalog valid?
   GBool isOk() { return ok; }

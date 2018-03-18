@@ -433,7 +433,7 @@ private:
   void writePSFmt(const char *fmt, ...);
   void writePSString(GooString *s);
   void writePSName(const char *s);
-  GooString *filterPSLabel(GooString *label, GBool *needParens=0);
+  GooString *filterPSLabel(GooString *label, GBool *needParens=nullptr);
   void writePSTextLine(GooString *s);
 
   PSLevel level;		// PostScript level (1, 2, separation)

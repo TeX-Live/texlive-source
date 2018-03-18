@@ -17,7 +17,7 @@
 // Copyright (C) 2006, 2007 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2006 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009 Koji Otani <sho@bbr.jp>
-// Copyright (C) 2009-2011, 2013, 2016, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009-2011, 2013, 2016-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2011 Andrea Canciani <ranma42@gmail.com>
 // Copyright (C) 2011-2014, 2016 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -196,6 +196,8 @@ public:
   // transformA should be a cmsHTRANSFORM
   GfxColorTransform(void *transformA, int cmsIntent, unsigned int inputPixelType, unsigned int transformPixelType);
   ~GfxColorTransform();
+  GfxColorTransform(const GfxColorTransform &) = delete;
+  GfxColorTransform& operator=(const GfxColorTransform &) = delete;
   int getIntent() { return cmsIntent; }
   int getInputPixelType() { return inputPixelType; }
   int getTransformPixelType() { return transformPixelType; }
@@ -215,6 +217,10 @@ public:
 
   GfxColorSpace();
   virtual ~GfxColorSpace();
+
+  GfxColorSpace(const GfxColorSpace &) = delete;
+  GfxColorSpace& operator=(const GfxColorSpace &other) = delete;
+
   virtual GfxColorSpace *copy() = 0;
   virtual GfxColorSpaceMode getMode() = 0;
 
@@ -766,6 +772,9 @@ public:
   GfxPattern(int typeA, int patternRefNumA);
   virtual ~GfxPattern();
 
+  GfxPattern(const GfxPattern &) = delete;
+  GfxPattern& operator=(const GfxPattern &other) = delete;
+
   static GfxPattern *parse(GfxResources *res, Object *obj, OutputDev *out, GfxState *state, int patternRefNum);
 
   virtual GfxPattern *copy() = 0;
@@ -851,6 +860,9 @@ public:
   GfxShading(int typeA);
   GfxShading(GfxShading *shading);
   virtual ~GfxShading();
+
+  GfxShading(const GfxShading &) = delete;
+  GfxShading& operator=(const GfxShading &other) = delete;
 
   static GfxShading *parse(GfxResources *res, Object *obj, OutputDev *out, GfxState *state);
 
@@ -1175,6 +1187,9 @@ public:
   // Destructor.
   ~GfxImageColorMap();
 
+  GfxImageColorMap(const GfxImageColorMap &) = delete;
+  GfxImageColorMap& operator=(const GfxImageColorMap &) = delete;
+
   // Return a copy of this color map.
   GfxImageColorMap *copy() { return new GfxImageColorMap(this); }
 
@@ -1248,6 +1263,9 @@ public:
   // Destructor.
   ~GfxSubpath();
 
+  GfxSubpath(const GfxSubpath &) = delete;
+  GfxSubpath& operator=(const GfxSubpath &) = delete;
+
   // Copy.
   GfxSubpath *copy() { return new GfxSubpath(this); }
 
@@ -1298,6 +1316,9 @@ public:
 
   // Destructor.
   ~GfxPath();
+
+  GfxPath(const GfxPath &) = delete;
+  GfxPath& operator=(const GfxPath &) = delete;
 
   // Copy.
   GfxPath *copy()
@@ -1418,6 +1439,9 @@ public:
 
   // Destructor.
   ~GfxState();
+
+  GfxState(const GfxState &) = delete;
+  GfxState& operator=(const GfxState &) = delete;
 
   // Copy.
   GfxState *copy(GBool copyPath = gFalse)

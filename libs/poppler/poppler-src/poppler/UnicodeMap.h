@@ -16,6 +16,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2018 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -76,6 +77,9 @@ public:
 
   ~UnicodeMap();
 
+  UnicodeMap(const UnicodeMap &) = delete;
+  UnicodeMap& operator=(const UnicodeMap &) = delete;
+
   void incRefCnt();
   void decRefCnt();
 
@@ -122,6 +126,9 @@ public:
 
   UnicodeMapCache();
   ~UnicodeMapCache();
+
+  UnicodeMapCache(const UnicodeMapCache &) = delete;
+  UnicodeMapCache& operator=(const UnicodeMapCache &) = delete;
 
   // Get the UnicodeMap for <encodingName>.  Increments its reference
   // count; there will be one reference for the cache plus one for the

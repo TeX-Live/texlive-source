@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2012, 2018 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -47,6 +47,9 @@ public:
 
   SecurityHandler(PDFDoc *docA);
   virtual ~SecurityHandler();
+
+  SecurityHandler(const SecurityHandler &) = delete;
+  SecurityHandler& operator=(const SecurityHandler &) = delete;
 
   // Returns true if the file is actually unencrypted.
   virtual GBool isUnencrypted() { return gFalse; }

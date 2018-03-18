@@ -32,7 +32,7 @@ GooTimer::GooTimer() {
 
 void GooTimer::start() {
 #ifdef HAVE_GETTIMEOFDAY
-  gettimeofday(&start_time, NULL);
+  gettimeofday(&start_time, nullptr);
 #elif defined(_WIN32)
   QueryPerformanceCounter(&start_time);
 #endif
@@ -41,7 +41,7 @@ void GooTimer::start() {
 
 void GooTimer::stop() {
 #ifdef HAVE_GETTIMEOFDAY
-  gettimeofday(&end_time, NULL);
+  gettimeofday(&end_time, nullptr);
 #elif defined(_WIN32)
   QueryPerformanceCounter(&end_time);
 #endif
@@ -55,7 +55,7 @@ double GooTimer::getElapsed()
   struct timeval elapsed;
 
   if (active)
-    gettimeofday(&end_time, NULL);
+    gettimeofday(&end_time, nullptr);
 
   if (start_time.tv_usec > end_time.tv_usec) {
       end_time.tv_usec += USEC_PER_SEC;

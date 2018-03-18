@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2005 Martin Kretzschmar <martink@gnome.org>
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2005, 2007-2010, 2012, 2015, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2007-2010, 2012, 2015, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
 // Copyright (C) 2006, 2007 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2006 Takashi Iwai <tiwai@suse.de>
@@ -127,7 +127,7 @@ extern XpdfPluginVecTable xpdfPluginVecTable;
 
 //------------------------------------------------------------------------
 
-GlobalParams *globalParams = NULL;
+GlobalParams *globalParams = nullptr;
 
 #if defined(ENABLE_RELOCATABLE) && defined(_WIN32)
 
@@ -210,6 +210,8 @@ public:
   SysFontInfo(GooString *nameA, GBool boldA, GBool italicA, GBool obliqueA, GBool fixedWidthA,
 	      GooString *pathA, SysFontType typeA, int fontNumA, GooString *substituteNameA);
   ~SysFontInfo();
+  SysFontInfo(const SysFontInfo &) = delete;
+  SysFontInfo& operator=(const SysFontInfo&) = delete;
   GBool match(SysFontInfo *fi);
   GBool match(GooString *nameA, GBool boldA, GBool italicA, GBool obliqueA, GBool fixedWidthA);
   GBool match(GooString *nameA, GBool boldA, GBool italicA);
@@ -258,6 +260,8 @@ public:
 
   SysFontList();
   ~SysFontList();
+  SysFontList(const SysFontList &) = delete;
+  SysFontList& operator=(const SysFontList &) = delete;
   SysFontInfo *find(GooString *name, GBool isFixedWidth, GBool exact);
 
 #ifdef _WIN32
@@ -363,13 +367,13 @@ SysFontInfo *SysFontList::find(GooString *name, GBool fixedWidth, GBool exact) {
   }
 
   // search for the font
-  fi = NULL;
+  fi = nullptr;
   for (i = 0; i < fonts->getLength(); ++i) {
     fi = (SysFontInfo *)fonts->get(i);
     if (fi->match(name2, bold, italic, oblique, fixedWidth)) {
       break;
     }
-    fi = NULL;
+    fi = nullptr;
   }
   if (!fi && !exact && bold) {
     // try ignoring the bold flag
@@ -378,7 +382,7 @@ SysFontInfo *SysFontList::find(GooString *name, GBool fixedWidth, GBool exact) {
       if (fi->match(name2, gFalse, italic)) {
 	break;
       }
-      fi = NULL;
+      fi = nullptr;
     }
   }
   if (!fi && !exact && (bold || italic)) {
@@ -388,7 +392,7 @@ SysFontInfo *SysFontList::find(GooString *name, GBool fixedWidth, GBool exact) {
       if (fi->match(name2, gFalse, gFalse)) {
 	break;
       }
-      fi = NULL;
+      fi = nullptr;
     }
   }
 
@@ -648,7 +652,7 @@ void GlobalParams::scanEncodingDirs() {
   
   snprintf(dataPathBuffer, bufSize, "%s/nameToUnicode", dataRoot);
   dir = new GDir(dataPathBuffer, gTrue);
-  while (entry = dir->getNextEntry(), entry != NULL) {
+  while (entry = dir->getNextEntry(), entry != nullptr) {
     if (!entry->isDir()) {
       parseNameToUnicode(entry->getFullPath());
     }
@@ -658,7 +662,7 @@ void GlobalParams::scanEncodingDirs() {
 
   snprintf(dataPathBuffer, bufSize, "%s/cidToUnicode", dataRoot);
   dir = new GDir(dataPathBuffer, gFalse);
-  while (entry = dir->getNextEntry(), entry != NULL) {
+  while (entry = dir->getNextEntry(), entry != nullptr) {
     addCIDToUnicode(entry->getName(), entry->getFullPath());
     delete entry;
   }
@@ -666,7 +670,7 @@ void GlobalParams::scanEncodingDirs() {
 
   snprintf(dataPathBuffer, bufSize, "%s/unicodeMap", dataRoot);
   dir = new GDir(dataPathBuffer, gFalse);
-  while (entry = dir->getNextEntry(), entry != NULL) {
+  while (entry = dir->getNextEntry(), entry != nullptr) {
     addUnicodeMap(entry->getName(), entry->getFullPath());
     delete entry;
   }
@@ -674,7 +678,7 @@ void GlobalParams::scanEncodingDirs() {
 
   snprintf(dataPathBuffer, bufSize, "%s/cMap", dataRoot);
   dir = new GDir(dataPathBuffer, gFalse);
-  while (entry = dir->getNextEntry(), entry != NULL) {
+  while (entry = dir->getNextEntry(), entry != nullptr) {
     addCMapDir(entry->getName(), entry->getFullPath());
     toUnicodeDirs->append(entry->getFullPath()->copy());
     delete entry;
@@ -700,7 +704,7 @@ void GlobalParams::parseNameToUnicode(GooString *name) {
   line = 1;
   while (getLine(buf, sizeof(buf), f)) {
     tok1 = strtok_r(buf, " \t\r\n", &tokptr);
-    tok2 = strtok_r(NULL, " \t\r\n", &tokptr);
+    tok2 = strtok_r(nullptr, " \t\r\n", &tokptr);
     if (tok1 && tok2) {
       sscanf(tok1, "%x", &u);
       nameToUnicodeText->add(tok2, u);
@@ -842,7 +846,7 @@ FILE *GlobalParams::getUnicodeMapFile(GooString *encodingName) {
   if ((fileName = (GooString *)unicodeMaps->lookup(encodingName))) {
     f = openFile(fileName->getCString(), "r");
   } else {
-    f = NULL;
+    f = nullptr;
   }
   unlockGlobalParams;
   return f;
@@ -858,7 +862,7 @@ FILE *GlobalParams::findCMapFile(GooString *collection, GooString *cMapName) {
   lockGlobalParams;
   if (!(list = (GooList *)cMapDirs->lookup(collection))) {
     unlockGlobalParams;
-    return NULL;
+    return nullptr;
   }
   for (i = 0; i < list->getLength(); ++i) {
     dir = (GooString *)list->get(i);
@@ -871,7 +875,7 @@ FILE *GlobalParams::findCMapFile(GooString *collection, GooString *cMapName) {
     }
   }
   unlockGlobalParams;
-  return NULL;
+  return nullptr;
 }
 
 FILE *GlobalParams::findToUnicodeFile(GooString *name) {
@@ -891,7 +895,7 @@ FILE *GlobalParams::findToUnicodeFile(GooString *name) {
     }
   }
   unlockGlobalParams;
-  return NULL;
+  return nullptr;
 }
 
 #ifdef WITH_FONTCONFIGURATION_FONTCONFIG
@@ -899,12 +903,12 @@ static GBool findModifier(const char *name, const char *modifier, const char **s
 {
   const char *match;
 
-  if (name == NULL)
+  if (name == nullptr)
     return gFalse;
 
   match = strstr(name, modifier);
   if (match) {
-    if (*start == NULL || match < *start)
+    if (*start == nullptr || match < *start)
       *start = match;
     return gTrue;
   }
@@ -961,10 +965,10 @@ static FcPattern *buildFcPattern(GfxFont *font, GooString *base14Name)
   FcPattern *p;
 
   // this is all heuristics will be overwritten if font had proper info
-  name = (base14Name == NULL) ? font->getName()->getCString() : base14Name->getCString();
+  name = (base14Name == nullptr) ? font->getName()->getCString() : base14Name->getCString();
   
   modifiers = strchr (name, ',');
-  if (modifiers == NULL)
+  if (modifiers == nullptr)
     modifiers = strchr (name, '-');
   
   // remove the - from the names, for some reason, Fontconfig does not
@@ -973,7 +977,7 @@ static FcPattern *buildFcPattern(GfxFont *font, GooString *base14Name)
   for (int i = 0; i < len; i++)
     name[i] = (name[i] == '-' ? ' ' : name[i]);
 
-  start = NULL;
+  start = nullptr;
   findModifier(modifiers, "Regular", &start);
   findModifier(modifiers, "Roman", &start);
   
@@ -1052,7 +1056,7 @@ static FcPattern *buildFcPattern(GfxFont *font, GooString *base14Name)
   
   const char *lang = getFontLang(font);
   
-  p = FcPatternBuild(NULL,
+  p = FcPatternBuild(nullptr,
                     FC_FAMILY, FcTypeString, family,
                     FC_LANG, FcTypeString, lang,
                     NULL);
@@ -1070,7 +1074,7 @@ static FcPattern *buildFcPattern(GfxFont *font, GooString *base14Name)
 GooString *GlobalParams::findFontFile(GooString *fontName) {
   GooString *path;
 
-  setupBaseFonts(NULL);
+  setupBaseFonts(nullptr);
   lockGlobalParams;
   if ((path = (GooString *)fontFiles->lookup(fontName))) {
     path = path->copy();
@@ -1078,7 +1082,7 @@ GooString *GlobalParams::findFontFile(GooString *fontName) {
     return path;
   }
   unlockGlobalParams;
-  return NULL;
+  return nullptr;
 }
 
 /* if you can't or don't want to use Fontconfig, you need to implement
@@ -1093,18 +1097,18 @@ GooString *GlobalParams::findBase14FontFile(GooString *base14Name, GfxFont *font
   SysFontType type;
   int fontNum;
   
-  return findSystemFontFile(font, &type, &fontNum, NULL, base14Name);
+  return findSystemFontFile(font, &type, &fontNum, nullptr, base14Name);
 }
 
 GooString *GlobalParams::findSystemFontFile(GfxFont *font,
 					  SysFontType *type,
 					  int *fontNum, GooString *substituteFontName, GooString *base14Name) {
-  SysFontInfo *fi = NULL;
-  FcPattern *p=0;
-  GooString *path = NULL;
+  SysFontInfo *fi = nullptr;
+  FcPattern *p=nullptr;
+  GooString *path = nullptr;
   GooString *fontName = font->getName();
   GooString substituteName;
-  if (!fontName) return NULL;
+  if (!fontName) return nullptr;
   lockGlobalParams;
 
   if ((fi = sysFonts->find(fontName, font->isFixedWidth(), gTrue))) {
@@ -1118,14 +1122,14 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
     FcResult res;
     FcFontSet *set;
     int i;
-    FcLangSet *lb = NULL;
+    FcLangSet *lb = nullptr;
     p = buildFcPattern(font, base14Name);
 
     if (!p)
       goto fin;
-    FcConfigSubstitute(NULL, p, FcMatchPattern);
+    FcConfigSubstitute(nullptr, p, FcMatchPattern);
     FcDefaultSubstitute(p);
-    set = FcFontSort(NULL, p, FcFalse, NULL, &res);
+    set = FcFontSort(nullptr, p, FcFalse, nullptr, &res);
     if (!set)
       goto fin;
 
@@ -1141,14 +1145,14 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
       first: fonts support the language
       second: all fonts (fall back)
     */
-    while (fi == NULL)
+    while (fi == nullptr)
     {
       for (i = 0; i < set->nfont; ++i)
       {
 	res = FcPatternGetString(set->fonts[i], FC_FILE, 0, &s);
 	if (res != FcResultMatch || !s)
 	  continue;
-	if (lb != NULL) {
+	if (lb != nullptr) {
 	  FcLangSet *l;
 	  res = FcPatternGetLangSet(set->fonts[i], FC_LANG, 0, &l);
 	  if (res != FcResultMatch || !FcLangSetContains(l,lb)) {
@@ -1233,9 +1237,9 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
 	  continue;
 	break;
       }
-      if (lb != NULL) {
+      if (lb != nullptr) {
         FcLangSetDestroy(lb);
-        lb = NULL;
+        lb = nullptr;
       } else {
         /* scan all fonts of the list */
         break;
@@ -1243,7 +1247,7 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
     }
     FcFontSetDestroy(set);
   }
-  if (path == NULL && (fi = sysFonts->find(fontName, font->isFixedWidth(), gFalse))) {
+  if (path == nullptr && (fi = sysFonts->find(fontName, font->isFixedWidth(), gFalse))) {
     path = fi->path->copy();
     *type = fi->type;
     *fontNum = fi->fontNum;
@@ -1467,7 +1471,7 @@ CharCodeToUnicode *GlobalParams::getUnicodeToUnicode(GooString *fontName) {
   lockGlobalParams;
   GooHashIter *iter;
   unicodeToUnicodes->startIter(&iter);
-  GooString *fileName = NULL;
+  GooString *fileName = nullptr;
   GooString *fontPattern;
   void *val;
   while (!fileName && unicodeToUnicodes->getNext(&iter, &fontPattern, &val)) {
@@ -1476,7 +1480,7 @@ CharCodeToUnicode *GlobalParams::getUnicodeToUnicode(GooString *fontName) {
       fileName = (GooString*)val;
     }
   }
-  CharCodeToUnicode *ctu = NULL;
+  CharCodeToUnicode *ctu = nullptr;
   if (fileName) {
     ctu = unicodeToUnicodeCache->getCharCodeToUnicode(fileName);
     if (!ctu) {
@@ -1666,7 +1670,7 @@ XpdfSecurityHandler *GlobalParams::getSecurityHandler(char *name) {
   (void)name;
 #endif
 
-  return NULL;
+  return nullptr;
 }
 
 #ifdef ENABLE_PLUGINS

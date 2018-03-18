@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2006, 2007, 2010, 2013, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2007, 2010, 2013, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -54,6 +54,9 @@ public:
 
   // Destructor.
   ~Lexer();
+
+  Lexer(const Lexer &) = delete;
+  Lexer& operator=(const Lexer &) = delete;
 
   // Get the next object from the input stream.
   Object getObj(int objNum = -1);

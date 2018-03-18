@@ -173,7 +173,7 @@ void MovieActivationParameters::parseMovieActivation(Object* aDict) {
 }
 
 void Movie::parseMovie (Object *movieDict) {
-  fileName = NULL;
+  fileName = nullptr;
   rotationAngle = 0;
   width = -1;
   height = -1;

@@ -114,7 +114,7 @@ static const char *formatStrings[] = {
   "s",
   "t",
   "w",
-  NULL
+  nullptr
 };
 
 //------------------------------------------------------------------------
@@ -185,9 +185,9 @@ GooString* GooString::Set(const char *newStr, int newLen)
 }
 
 GooString::GooString() {
-  s = NULL;
+  s = nullptr;
   length = 0;
-  Set(NULL);
+  Set(nullptr);
 
 #if __cplusplus >= 201103L
   static_assert(sizeof(GooString) == GooString::STR_FINAL_SIZE, "You should check memory alignment or STR_STATIC_SIZE calculation.");
@@ -195,32 +195,32 @@ GooString::GooString() {
 }
 
 GooString::GooString(const char *sA) {
-  s = NULL;
+  s = nullptr;
   length = 0;
   Set(sA, CALC_STRING_LEN);
 }
 
 GooString::GooString(const char *sA, int lengthA) {
-  s = NULL;
+  s = nullptr;
   length = 0;
   Set(sA, lengthA);
 }
 
 GooString::GooString(GooString *str, int idx, int lengthA) {
-  s = NULL;
+  s = nullptr;
   length = 0;
   assert(idx + lengthA <= str->length);
   Set(str->getCString() + idx, lengthA);
 }
 
 GooString::GooString(const GooString *str) {
-  s = NULL;
+  s = nullptr;
   length = 0;
   Set(str->getCString(), str->length);
 }
 
 GooString::GooString(GooString *str1, GooString *str2) {
-  s = NULL;
+  s = nullptr;
   length = 0;
   resize(str1->length + str2->length);
   memcpy(s, str1->getCString(), str1->length);

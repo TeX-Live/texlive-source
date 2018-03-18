@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2005, 2007-2010, 2012, 2015, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2007-2010, 2012, 2015, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
 // Copyright (C) 2006 Takashi Iwai <tiwai@suse.de>
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
@@ -107,6 +107,9 @@ public:
   GlobalParams(const char *customPopplerDataDir = NULL);
 
   ~GlobalParams();
+
+  GlobalParams(const GlobalParams &) = delete;
+  GlobalParams& operator=(const GlobalParams &) = delete;
 
   void setupBaseFonts(char *dir);
 

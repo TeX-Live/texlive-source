@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------------
 // Hugo Mercier <hmercier31[at]gmail.com> (c) 2008
 // Carlos Garcia Campos <carlosgc@gnome.org> (c) 2010
-// Albert Astals Cid <aacid@kde.org> (c) 2017
+// Albert Astals Cid <aacid@kde.org> (c) 2017, 2018
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@ class Movie {
   Movie(Object *objMovie);
   Movie(const Movie &movie);
   ~Movie();
+  Movie& operator=(const Movie &) = delete;
 
   GBool isOk() { return ok; }
   MovieActivationParameters* getActivationParameters() { return &MA; }

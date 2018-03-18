@@ -5,7 +5,7 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright 2010 Hib Eris <hib@hiberis.nl>
-// Copyright 2010, 2013, 2016 Albert Astals Cid <aacid@kde.org>
+// Copyright 2010, 2013, 2016, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2013 Adrian Johnson <ajohnson@redneon.com>
 //
 //========================================================================
@@ -32,6 +32,9 @@ public:
 
   Hints(BaseStream *str, Linearization *linearization, XRef *xref, SecurityHandler *secHdlr);
   ~Hints();
+
+  Hints(const Hints &) = delete;
+  Hints& operator=(const Hints &) = delete;
 
   GBool isOk() const;
 

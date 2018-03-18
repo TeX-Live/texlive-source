@@ -21,7 +21,7 @@
 // Copyright (C) 2008 Hugo Mercier <hmercier31@gmail.com>
 // Copyright (C) 2008 Pino Toscano <pino@kde.org>
 // Copyright (C) 2008 Tomas Are Haavet <tomasare@gmail.com>
-// Copyright (C) 2009-2011, 2013, 2016, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009-2011, 2013, 2016-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012, 2015 Tobias Koenig <tokoe@kdab.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -105,6 +105,9 @@ public:
   AnnotPath(AnnotCoord **coords, int coordLength);
   ~AnnotPath();
 
+  AnnotPath(const AnnotPath &) = delete;
+  AnnotPath& operator=(const AnnotPath &other) = delete;
+
   double getX(int coord) const;
   double getY(int coord) const;
   AnnotCoord *getCoord(int coord) const;
@@ -125,6 +128,9 @@ public:
 
   AnnotCalloutLine(double x1, double y1, double x2, double y2);
   virtual ~AnnotCalloutLine() { }
+
+  AnnotCalloutLine(const AnnotCalloutLine &) = delete;
+  AnnotCalloutLine& operator=(const AnnotCalloutLine &other) = delete;
 
   double getX1() const { return coord1.getX(); }
   double getY1() const { return coord1.getY(); }
@@ -195,6 +201,9 @@ public:
   AnnotQuadrilaterals(AnnotQuadrilateral **quads, int quadsLength);
   ~AnnotQuadrilaterals();
 
+  AnnotQuadrilaterals(const AnnotQuadrilaterals &) = delete;
+  AnnotQuadrilaterals& operator=(const AnnotQuadrilaterals &other) = delete;
+
   double getX1(int quadrilateral);
   double getY1(int quadrilateral);
   double getX2(int quadrilateral);
@@ -230,6 +239,9 @@ public:
   };
 
   virtual ~AnnotBorder();
+
+  AnnotBorder(const AnnotBorder &) = delete;
+  AnnotBorder& operator=(const AnnotBorder &other) = delete;
 
   virtual void setWidth(double new_width) { width = new_width; }
 
@@ -428,6 +440,9 @@ public:
 
   AnnotAppearanceCharacs(Dict *dict);
   ~AnnotAppearanceCharacs();
+
+  AnnotAppearanceCharacs(const AnnotAppearanceCharacs &) = delete;
+  AnnotAppearanceCharacs& operator=(const AnnotAppearanceCharacs &) = delete;
 
   int getRotation() { return rotation; }
   AnnotColor *getBorderColor() { return borderColor; }
@@ -1420,6 +1435,9 @@ public:
     Params(Dict *dict);
     ~Params();
 
+    Params(const Params &) = delete;
+    Params& operator=(const Params &) = delete;
+
     GooString* getFlashVars() const;
 
   private:
@@ -1438,6 +1456,9 @@ public:
 
     Instance(Dict *dict);
     ~Instance();
+
+    Instance(const Instance &) = delete;
+    Instance& operator=(const Instance &) = delete;
 
     Type getType() const;
     Params* getParams() const;
@@ -1460,6 +1481,9 @@ public:
     Configuration(Dict *dict);
     ~Configuration();
 
+    Configuration(const Configuration &) = delete;
+    Configuration& operator=(const Configuration &) = delete;
+
     Type getType() const;
     GooString* getName() const;
     int getInstancesCount() const;
@@ -1480,6 +1504,9 @@ public:
     Asset();
     ~Asset();
 
+    Asset(const Asset &) = delete;
+    Asset& operator=(const Asset &) = delete;
+
     GooString* getName() const;
     Object* getFileSpec() const;
 
@@ -1494,6 +1521,9 @@ public:
   public:
     Content(Dict *dict);
     ~Content();
+
+    Content(const Content &) = delete;
+    Content& operator=(const Content &) = delete;
 
     int getConfigurationsCount() const;
     Configuration* getConfiguration(int index) const;
@@ -1549,6 +1579,9 @@ public:
     Settings(Dict *dict);
     ~Settings();
 
+    Settings(const Settings &) = delete;
+    Settings& operator=(const Settings &) = delete;
+
     Activation* getActivation() const;
     Deactivation* getDeactivation() const;
 
@@ -1588,6 +1621,9 @@ public:
   Annots(PDFDoc *docA, int page, Object *annotsObj);
 
   ~Annots();
+
+  Annots(const Annots &) = delete;
+  Annots& operator=(const Annots &) = delete;
 
   // Iterate through list of annotations.
   int getNumAnnots() { return nAnnots; }

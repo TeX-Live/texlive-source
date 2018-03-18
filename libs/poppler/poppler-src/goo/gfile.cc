@@ -19,12 +19,12 @@
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2008 Adam Batkin <adam@batkin.net>
 // Copyright (C) 2008, 2010, 2012, 2013 Hib Eris <hib@hiberis.nl>
-// Copyright (C) 2009, 2012, 2014 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009, 2012, 2014, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
-// Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
+// Copyright (C) 2013, 2018 Adam Reichold <adamreichold@myopera.com>
 // Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Peter Breitenlohner <peb@mppmu.mpg.de>
-// Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2013, 2017 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2017 Christoph Cullmann <cullmann@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
@@ -64,6 +64,40 @@
 #ifndef PATH_MAX
 #define PATH_MAX 1024
 #endif
+
+namespace {
+
+template< typename... >
+struct void_type
+{
+  using type = void;
+};
+
+template< typename... Args >
+using void_t = typename void_type< Args... >::type;
+
+template< typename Stat, typename = void_t<> >
+struct StatMtim
+{
+  static const struct timespec& value(const Stat& stbuf) {
+    return stbuf.st_mtim;
+  }
+};
+
+// Mac OS X uses a different field name than POSIX and this detects it.
+template< typename Stat >
+struct StatMtim< Stat, void_t< decltype ( Stat::st_mtimespec ) > >
+{
+  static const struct timespec& value(const Stat& stbuf) {
+    return stbuf.st_mtimespec;
+  }
+};
+
+inline const struct timespec& mtim(const struct stat& stbuf) {
+  return StatMtim< struct stat >::value(stbuf);
+}
+
+}
 
 //------------------------------------------------------------------------
 
@@ -357,7 +391,7 @@ GBool openTempFile(GooString **name, FILE **f, const char *mode) {
   }
   s->appendf("x_{0:d}_{1:d}_",
 	     (int)GetCurrentProcessId(), (int)GetCurrentThreadId());
-  t = (int)time(NULL);
+  t = (int)time(nullptr);
   for (i = 0; i < 1000; ++i) {
     s2 = s->copy()->appendf("{0:d}", t + i);
     if (!(f2 = fopen(s2->getCString(), "r"))) {
@@ -416,7 +450,7 @@ GBool openTempFile(GooString **name, FILE **f, const char *mode) {
 #endif // HAVE_MKSTEMP
   if (fd < 0 || !(*f = fdopen(fd, mode))) {
     delete *name;
-    *name = NULL;
+    *name = nullptr;
     return gFalse;
   }
   return gTrue;
@@ -548,7 +582,7 @@ char *getLine(char *buf, int size, FILE *f) {
   }
   buf[i] = '\0';
   if (i == 0) {
-    return NULL;
+    return nullptr;
   }
   return buf;
 }
@@ -599,13 +633,17 @@ Goffset GoffsetMax() {
 
 #ifdef _WIN32
 
+GooFile::GooFile(HANDLE handleA) : handle(handleA) {
+  GetFileTime(handleA, nullptr, nullptr, &modifiedTimeOnOpen);
+}
+
 int GooFile::read(char *buf, int n, Goffset offset) const {
   DWORD m;
   
-  LARGE_INTEGER largeInteger = {0};
+  LARGE_INTEGER largeInteger = {};
   largeInteger.QuadPart = offset;
   
-  OVERLAPPED overlapped = {0};
+  OVERLAPPED overlapped = {};
   overlapped.Offset = largeInteger.LowPart;
   overlapped.OffsetHigh = largeInteger.HighPart;
 
@@ -624,22 +662,30 @@ GooFile* GooFile::open(const GooString *fileName) {
   HANDLE handle = CreateFileA(fileName->getCString(),
                               GENERIC_READ,
                               FILE_SHARE_READ | FILE_SHARE_WRITE,
-                              NULL,
+                              nullptr,
                               OPEN_EXISTING,
-                              FILE_ATTRIBUTE_NORMAL, NULL);
+                              FILE_ATTRIBUTE_NORMAL, nullptr);
   
-  return handle == INVALID_HANDLE_VALUE ? NULL : new GooFile(handle);
+  return handle == INVALID_HANDLE_VALUE ? nullptr : new GooFile(handle);
 }
 
 GooFile* GooFile::open(const wchar_t *fileName) {
   HANDLE handle = CreateFileW(fileName,
                               GENERIC_READ,
                               FILE_SHARE_READ | FILE_SHARE_WRITE,
-                              NULL,
+                              nullptr,
                               OPEN_EXISTING,
-                              FILE_ATTRIBUTE_NORMAL, NULL);
+                              FILE_ATTRIBUTE_NORMAL, nullptr);
   
-  return handle == INVALID_HANDLE_VALUE ? NULL : new GooFile(handle);
+  return handle == INVALID_HANDLE_VALUE ? nullptr : new GooFile(handle);
+}
+
+bool GooFile::modificationTimeChangedSinceOpen() const
+{
+  struct _FILETIME lastModified;
+  GetFileTime(handle, nullptr, nullptr, &lastModified);
+
+  return modifiedTimeOnOpen.dwHighDateTime != lastModified.dwHighDateTime || modifiedTimeOnOpen.dwLowDateTime != lastModified.dwLowDateTime;
 }
 
 #else
@@ -667,7 +713,23 @@ GooFile* GooFile::open(const GooString *fileName) {
   int fd = ::open(fileName->getCString(), O_RDONLY);
 #endif
   
-  return fd < 0 ? NULL : new GooFile(fd);
+  return fd < 0 ? nullptr : new GooFile(fd);
+}
+
+GooFile::GooFile(int fdA)
+ : fd(fdA)
+{
+    struct stat statbuf;
+    fstat(fd, &statbuf);
+    modifiedTimeOnOpen = mtim(statbuf);
+}
+
+bool GooFile::modificationTimeChangedSinceOpen() const
+{
+    struct stat statbuf;
+    fstat(fd, &statbuf);
+
+    return modifiedTimeOnOpen.tv_sec != mtim(statbuf).tv_sec || modifiedTimeOnOpen.tv_nsec != mtim(statbuf).tv_nsec;
 }
 
 #endif // _WIN32
@@ -749,7 +811,7 @@ GDir::~GDir() {
 }
 
 GDirEntry *GDir::getNextEntry() {
-  GDirEntry *e = NULL;
+  GDirEntry *e = nullptr;
 
 #if defined(_WIN32)
   if (hnd != INVALID_HANDLE_VALUE) {

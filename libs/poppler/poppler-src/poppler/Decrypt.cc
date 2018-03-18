@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2008 Julien Rebetez <julien@fhtagn.net>
-// Copyright (C) 2008, 2010, 2016, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2010, 2016-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Matthias Franz <matthias@ktug.or.kr>
 // Copyright (C) 2009 David Benjamin <davidben@mit.edu>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
@@ -143,7 +143,7 @@ GBool Decrypt::makeFileKey(int encVersion, int encRevision, int keyLength,
       if(encRevision == 6) {
 	// test contains the initial SHA-256 hash input K.
 	// user key is not used in checking user password.
-	revision6Hash(userPassword, test, NULL);
+	revision6Hash(userPassword, test, nullptr);
       }
       if (!memcmp(test, userKey->getCString(), 32)) {
 
@@ -154,7 +154,7 @@ GBool Decrypt::makeFileKey(int encVersion, int encRevision, int keyLength,
 	if(encRevision == 6) {
 	  //test contains the initial SHA-256 hash input K.
 	  //user key is not used in computing intermediate user key.
-	  revision6Hash(userPassword, test, NULL);
+	  revision6Hash(userPassword, test, nullptr);
 	}
 	aes256KeyExpansion(&state, test, 32, gTrue);
 	for (i = 0; i < 16; ++i) {
@@ -1454,7 +1454,7 @@ static void sha256(Guchar *msg, int msgLen, Guchar *hash) {
 // SHA-512 hash (see FIPS 180-4)
 //------------------------------------------------------------------------
 // SHA 384 and SHA 512 use the same sequence of eighty constant 64 bit words.
-static const uint64_t K[80] = {
+static const uint64_t shaK[80] = {
   0x428a2f98d728ae22ull, 0x7137449123ef65cdull, 0xb5c0fbcfec4d3b2full, 0xe9b5dba58189dbbcull, 0x3956c25bf348b538ull,
   0x59f111f1b605d019ull, 0x923f82a4af194f9bull, 0xab1c5ed5da6d8118ull, 0xd807aa98a3030242ull, 0x12835b0145706fbeull,
   0x243185be4ee4b28cull, 0x550c7dc3d5ffb4e2ull, 0x72be5d74f27b896full, 0x80deb1fe3b1696b1ull, 0x9bdc06a725c71235ull,
@@ -1531,7 +1531,7 @@ static void sha512HashBlock(Guchar *blk, uint64_t *H) {
 
   // 3.
   for (t = 0; t < 80; ++t) {
-    T1 = h + sha512Sigma1(e) + sha512Ch(e,f,g) + K[t] + W[t];
+    T1 = h + sha512Sigma1(e) + sha512Ch(e,f,g) + shaK[t] + W[t];
     T2 = sha512Sigma0(a) + sha512Maj(a,b,c);
     h = g;
     g = f;

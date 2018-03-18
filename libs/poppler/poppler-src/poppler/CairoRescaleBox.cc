@@ -271,9 +271,9 @@ GBool CairoRescaleBox::downScaleImage(unsigned orig_width, unsigned orig_height,
   int dest_y;
   int src_y = 0;
   uint32_t *scanline;
-  int *x_coverage = NULL;
-  int *y_coverage = NULL;
-  uint32_t *temp_buf = NULL;
+  int *x_coverage = nullptr;
+  int *y_coverage = nullptr;
+  uint32_t *temp_buf = nullptr;
   GBool retval = gFalse;
   unsigned int *dest;
   int dst_stride;

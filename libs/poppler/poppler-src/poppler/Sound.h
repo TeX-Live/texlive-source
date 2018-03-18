@@ -1,6 +1,6 @@
 /* Sound.h - an object that holds the sound structure
  * Copyright (C) 2006-2007, Pino Toscano <pino@kde.org>
- * Copyright (C) 2017, Albert Astals Cid <aacid@kde.org>
+ * Copyright (C) 2017, 2018, Albert Astals Cid <aacid@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,9 @@ public:
 
   // Destructor
   ~Sound();
+
+  Sound(const Sound &) = delete;
+  Sound& operator=(const Sound &) = delete;
 
   Object *getObject() { return &streamObj; }
   Stream *getStream();

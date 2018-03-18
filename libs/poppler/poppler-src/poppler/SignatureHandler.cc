@@ -42,7 +42,7 @@ unsigned int SignatureHandler::digestLength(SECOidTag digestAlgId)
 char *SignatureHandler::getSignerName()
 {
   if (!CMSSignerInfo)
-      return NULL;
+      return nullptr;
 
   CERTCertificate *cert = NSS_CMSSignerInfo_GetSigningCertificate(CMSSignerInfo, CERT_GetDefaultCertDB());
   return CERT_GetCommonName(&cert->subject);
@@ -81,31 +81,31 @@ time_t SignatureHandler::getSigningTime()
 
 GooString *SignatureHandler::getDefaultFirefoxCertDB_Linux()
 {
-  GooString * finalPath = NULL;
+  GooString * finalPath = nullptr;
   DIR *toSearchIn;
   struct dirent *subFolder;
 
   GooString * homePath = new GooString(getenv("HOME"));
   homePath = homePath->append("/.mozilla/firefox/");
 
-  if ((toSearchIn = opendir(homePath->getCString())) == NULL) {
+  if ((toSearchIn = opendir(homePath->getCString())) == nullptr) {
     error(errInternal, 0, "couldn't find default Firefox Folder");
     delete homePath;
-    return NULL;
+    return nullptr;
   }
   do {
-    if ((subFolder = readdir(toSearchIn)) != NULL) {
-      if (strstr(subFolder->d_name, "default") != NULL) {
+    if ((subFolder = readdir(toSearchIn)) != nullptr) {
+      if (strstr(subFolder->d_name, "default") != nullptr) {
 	finalPath = homePath->append(subFolder->d_name);
 	closedir(toSearchIn);
 	return finalPath;
       }
     }
-  } while (subFolder != NULL);
+  } while (subFolder != nullptr);
 
   closedir(toSearchIn);
   delete homePath;
-  return NULL;
+  return nullptr;
 }
 
 /**
@@ -114,7 +114,7 @@ GooString *SignatureHandler::getDefaultFirefoxCertDB_Linux()
 void SignatureHandler::init_nss() 
 {
   GooString *certDBPath = getDefaultFirefoxCertDB_Linux();
-  if (certDBPath == NULL) {
+  if (certDBPath == nullptr) {
     NSS_Init("sql:/etc/pki/nssdb");
   } else {
     NSS_Init(certDBPath->getCString());
@@ -127,11 +127,11 @@ void SignatureHandler::init_nss()
 
 
 SignatureHandler::SignatureHandler(unsigned char *p7, int p7_length)
- : hash_context(NULL),
-   CMSMessage(NULL),
-   CMSSignedData(NULL),
-   CMSSignerInfo(NULL),
-   temp_certs(NULL)
+ : hash_context(nullptr),
+   CMSMessage(nullptr),
+   CMSSignedData(nullptr),
+   CMSSignerInfo(nullptr),
+   temp_certs(nullptr)
 {
   init_nss();
   CMSitem.data = p7;
@@ -183,11 +183,11 @@ SignatureHandler::~SignatureHandler()
 NSSCMSMessage *SignatureHandler::CMS_MessageCreate(SECItem * cms_item)
 {
   if (cms_item->data){
-    return NSS_CMSMessage_CreateFromDER(cms_item, NULL, NULL /* Content callback */
-                        , NULL, NULL /*Password callback*/
-                        , NULL, NULL /*Decrypt callback*/);
+    return NSS_CMSMessage_CreateFromDER(cms_item, nullptr, nullptr /* Content callback */
+                        , nullptr, nullptr /*Password callback*/
+                        , nullptr, nullptr /*Decrypt callback*/);
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -195,19 +195,19 @@ NSSCMSSignedData *SignatureHandler::CMS_SignedDataCreate(NSSCMSMessage * cms_msg
 {
   if (!NSS_CMSMessage_IsSigned(cms_msg)) {
     error(errInternal, 0, "Input couldn't be parsed as a CMS signature");
-    return NULL;
+    return nullptr;
   }
 
   NSSCMSContentInfo *cinfo = NSS_CMSMessage_ContentLevel(cms_msg, 0);
   if (!cinfo) {
     error(errInternal, 0, "Error in NSS_CMSMessage_ContentLevel");
-    return NULL;
+    return nullptr;
   }
 
   NSSCMSSignedData *signedData = (NSSCMSSignedData*) NSS_CMSContentInfo_GetContent(cinfo);
   if (!signedData) {
     error(errInternal, 0, "CError in NSS_CMSContentInfo_GetContent()");
-    return NULL;
+    return nullptr;
   }
 
   if (signedData->rawCerts)
@@ -220,12 +220,12 @@ NSSCMSSignedData *SignatureHandler::CMS_SignedDataCreate(NSSCMSMessage * cms_msg
     memset(signedData->tempCerts, 0, (i+1) * sizeof(CERTCertificate *));
     // store the adresses of these temporary certificates for future release
     for (i = 0; signedData->rawCerts[i]; ++i)
-      signedData->tempCerts[i] = CERT_NewTempCertificate(CERT_GetDefaultCertDB(), signedData->rawCerts[i], NULL, 0, 0);
+      signedData->tempCerts[i] = CERT_NewTempCertificate(CERT_GetDefaultCertDB(), signedData->rawCerts[i], nullptr, 0, 0);
 
     temp_certs = signedData->tempCerts;
     return signedData;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -234,7 +234,7 @@ NSSCMSSignerInfo *SignatureHandler::CMS_SignerInfoCreate(NSSCMSSignedData * cms_
   NSSCMSSignerInfo *signerInfo = NSS_CMSSignedData_GetSignerInfo(cms_sig_data, 0);
   if (!signerInfo) {
     printf("Error in NSS_CMSSignedData_GetSignerInfo()\n");
-    return NULL;
+    return nullptr;
   } else {
     return signerInfo;
   }
@@ -242,7 +242,7 @@ NSSCMSSignerInfo *SignatureHandler::CMS_SignerInfoCreate(NSSCMSSignedData * cms_
 
 NSSCMSVerificationStatus SignatureHandler::validateSignature()
 {
-  unsigned char *digest_buffer = NULL;
+  unsigned char *digest_buffer = nullptr;
 
   if (!CMSSignedData)
     return NSSCMSVS_MalformedSignature;
@@ -256,11 +256,11 @@ NSSCMSVerificationStatus SignatureHandler::validateSignature()
   digest.data = digest_buffer;
   digest.len = hash_length;
 
-  if ((NSS_CMSSignerInfo_GetSigningCertificate(CMSSignerInfo, CERT_GetDefaultCertDB())) == NULL)
+  if ((NSS_CMSSignerInfo_GetSigningCertificate(CMSSignerInfo, CERT_GetDefaultCertDB())) == nullptr)
     CMSSignerInfo->verificationStatus = NSSCMSVS_SigningCertNotFound;
 
   SECItem * content_info_data = CMSSignedData->contentInfo.content.data;
-  if (content_info_data != NULL && content_info_data->data != NULL)
+  if (content_info_data != nullptr && content_info_data->data != nullptr)
   {
     /*
       This means it's not a detached type signature
@@ -279,7 +279,7 @@ NSSCMSVerificationStatus SignatureHandler::validateSignature()
     }
 
   }
-  else if (NSS_CMSSignerInfo_Verify(CMSSignerInfo, &digest, NULL) != SECSuccess)
+  else if (NSS_CMSSignerInfo_Verify(CMSSignerInfo, &digest, nullptr) != SECSuccess)
   {
 
     PORT_Free(digest_buffer);
@@ -300,7 +300,7 @@ SECErrorCodes SignatureHandler::validateCertificate(time_t validation_time)
   if (!CMSSignerInfo)
     return (SECErrorCodes) -1; //error code to avoid matching error codes defined in SECErrorCodes
 
-  if ((cert = NSS_CMSSignerInfo_GetSigningCertificate(CMSSignerInfo, CERT_GetDefaultCertDB())) == NULL)
+  if ((cert = NSS_CMSSignerInfo_GetSigningCertificate(CMSSignerInfo, CERT_GetDefaultCertDB())) == nullptr)
     CMSSignerInfo->verificationStatus = NSSCMSVS_SigningCertNotFound;
 
   PRTime vTime = 0; // time in microseconds since the epoch, special value 0 means now
@@ -313,7 +313,7 @@ SECErrorCodes SignatureHandler::validateCertificate(time_t validation_time)
   inParams[1].value.scalar.time = vTime;
   inParams[2].type = cert_pi_end;
 
-  CERT_PKIXVerifyCert(cert, certificateUsageEmailSigner, inParams, NULL,
+  CERT_PKIXVerifyCert(cert, certificateUsageEmailSigner, inParams, nullptr,
                 CMSSignerInfo->cmsg->pwfn_arg);
 
   retVal = (SECErrorCodes) PORT_GetError();

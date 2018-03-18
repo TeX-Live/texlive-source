@@ -34,7 +34,7 @@
   
 double gatof(const char *nptr)
 {
-  return gstrtod(nptr, NULL);
+  return gstrtod(nptr, nullptr);
 }
 
 double gstrtod(const char *nptr, char **endptr)
@@ -45,17 +45,17 @@ double gstrtod(const char *nptr, char **endptr)
   const char *decimal_point;
   int decimal_point_len;
   const char *p, *decimal_point_pos;
-  const char *end = NULL; /* Silence gcc */
+  const char *end = nullptr; /* Silence gcc */
   int strtod_errno;
 
-  fail_pos = NULL;
+  fail_pos = nullptr;
 
   locale_data = localeconv ();
   decimal_point = locale_data->decimal_point;
   decimal_point_len = strlen (decimal_point);
 
-  decimal_point_pos = NULL;
-  end = NULL;
+  decimal_point_pos = nullptr;
+  end = nullptr;
 
   if (decimal_point[0] != '.' || decimal_point[1] != 0) {
     p = nptr;

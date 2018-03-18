@@ -20,7 +20,7 @@
 // Copyright (C) 2007 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2008 Iñigo Martínez <inigomartinez@gmail.com>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
-// Copyright (C) 2012, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2012, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
 //
@@ -147,6 +147,9 @@ public:
 
   // Destructor.
   ~Page();
+
+  Page(const Page &) = delete;
+  Page& operator=(const Page &) = delete;
 
   // Is page valid?
   GBool isOk() { return ok; }

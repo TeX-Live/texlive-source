@@ -57,7 +57,7 @@ LinkAction *LinkAction::parseDest(Object *obj) {
   action = new LinkGoTo(obj);
   if (!action->isOk()) {
     delete action;
-    return NULL;
+    return nullptr;
   }
   return action;
 }
@@ -68,7 +68,7 @@ LinkAction *LinkAction::parseAction(Object *obj, GooString *baseURI) {
   if (!obj->isDict()) {
       error(errSyntaxWarning, -1, "parseAction: Bad annotation action for URI '{0:s}'",
             baseURI ? baseURI->getCString() : "NULL");
-      return NULL;
+      return nullptr;
   }
 
   Object obj2 = obj->dictLookup("S");
@@ -127,12 +127,12 @@ LinkAction *LinkAction::parseAction(Object *obj, GooString *baseURI) {
   } else {
     error(errSyntaxWarning, -1, "parseAction: Unknown annotation action object: URI = '{0:s}'",
           baseURI ? baseURI->getCString() : "NULL");
-    action = NULL;
+    action = nullptr;
   }
 
   if (action && !action->isOk()) {
     delete action;
-    return NULL;
+    return nullptr;
   }
   return action;
 }
@@ -362,8 +362,8 @@ LinkDest::LinkDest(LinkDest *dest) {
 //------------------------------------------------------------------------
 
 LinkGoTo::LinkGoTo(Object *destObj) {
-  dest = NULL;
-  namedDest = NULL;
+  dest = nullptr;
+  namedDest = nullptr;
 
   // named destination
   if (destObj->isName()) {
@@ -376,7 +376,7 @@ LinkGoTo::LinkGoTo(Object *destObj) {
     dest = new LinkDest(destObj->getArray());
     if (!dest->isOk()) {
       delete dest;
-      dest = NULL;
+      dest = nullptr;
     }
 
   // error
@@ -397,9 +397,9 @@ LinkGoTo::~LinkGoTo() {
 //------------------------------------------------------------------------
 
 LinkGoToR::LinkGoToR(Object *fileSpecObj, Object *destObj) {
-  fileName = NULL;
-  dest = NULL;
-  namedDest = NULL;
+  fileName = nullptr;
+  dest = nullptr;
+  namedDest = nullptr;
 
   // get file name
   Object obj1 = getFileSpecNameForPlatform (fileSpecObj);
@@ -418,7 +418,7 @@ LinkGoToR::LinkGoToR(Object *fileSpecObj, Object *destObj) {
     dest = new LinkDest(destObj->getArray());
     if (!dest->isOk()) {
       delete dest;
-      dest = NULL;
+      dest = nullptr;
     }
 
   // error
@@ -443,8 +443,8 @@ LinkGoToR::~LinkGoToR() {
 
 LinkLaunch::LinkLaunch(Object *actionObj) {
 
-  fileName = NULL;
-  params = NULL;
+  fileName = nullptr;
+  params = nullptr;
 
   if (actionObj->isDict()) {
     Object obj1 = actionObj->dictLookup("F");
@@ -494,7 +494,7 @@ LinkURI::LinkURI(Object *uriObj, GooString *baseURI) {
   int n;
   char c;
 
-  uri = NULL;
+  uri = nullptr;
   if (uriObj->isString()) {
     uri2 = uriObj->getString();
     n = (int)strcspn(uri2->getCString(), "/:");
@@ -539,7 +539,7 @@ LinkURI::~LinkURI() {
 //------------------------------------------------------------------------
 
 LinkNamed::LinkNamed(Object *nameObj) {
-  name = NULL;
+  name = nullptr;
   if (nameObj->isName()) {
     name = new GooString(nameObj->getName());
   }
@@ -557,7 +557,7 @@ LinkNamed::~LinkNamed() {
 
 LinkMovie::LinkMovie(Object *obj) {
   annotRef.num = -1;
-  annotTitle = NULL;
+  annotTitle = nullptr;
 
   Object tmp = obj->dictLookupNF("Annotation");
   if (tmp.isRef()) {
@@ -569,7 +569,7 @@ LinkMovie::LinkMovie(Object *obj) {
     annotTitle = tmp.getString()->copy();
   }
 
-  if ((annotTitle == NULL) && (annotRef.num == -1)) {
+  if ((annotTitle == nullptr) && (annotRef.num == -1)) {
     error(errSyntaxError, -1,
 	  "Movie action is missing both the Annot and T keys");
   }
@@ -608,7 +608,7 @@ LinkSound::LinkSound(Object *soundObj) {
   sync = gFalse;
   repeat = gFalse;
   mix = gFalse;
-  sound = NULL;
+  sound = nullptr;
   if (soundObj->isDict())
   {
     // volume
@@ -647,8 +647,8 @@ LinkSound::~LinkSound() {
 
 LinkRendition::LinkRendition(Object *obj) {
   operation = NoRendition;
-  media = NULL;
-  js = NULL;
+  media = nullptr;
+  js = nullptr;
   int operationCode = -1;
 
   if (obj->isDict()) {
@@ -671,8 +671,6 @@ LinkRendition::LinkRendition(Object *obj) {
       if (!js && (operationCode < 0 || operationCode > 4)) {
         error(errSyntaxWarning, -1, "Invalid Rendition Action: unrecognized operation valued: {0:d}", operationCode);
       } else {
-        Object obj1;
-
         // retrieve rendition object
         renditionObj = obj->dictLookup("R");
         if (renditionObj.isDict()) {
@@ -723,7 +721,7 @@ LinkRendition::~LinkRendition() {
 //------------------------------------------------------------------------
 
 LinkJavaScript::LinkJavaScript(Object *jsObj) {
-  js = NULL;
+  js = nullptr;
 
   if (jsObj->isString()) {
     js = new GooString(jsObj->getString());
@@ -750,7 +748,7 @@ LinkOCGState::LinkOCGState(Object *obj) {
 
   Object obj1 = obj->dictLookup("State");
   if (obj1.isArray()) {
-    StateList *stList = NULL;
+    StateList *stList = nullptr;
 
     for (int i = 0; i < obj1.arrayGetLength(); ++i) {
       Object obj2 = obj1.arrayGetNF(i);
@@ -770,7 +768,7 @@ LinkOCGState::LinkOCGState(Object *obj) {
 	} else {
 	  error(errSyntaxWarning, -1, "Invalid name '{0:s}' in OCG Action state array", name);
 	  delete stList;
-	  stList = NULL;
+	  stList = nullptr;
 	}
       } else if (obj2.isRef()) {
         if (stList) {
@@ -792,7 +790,7 @@ LinkOCGState::LinkOCGState(Object *obj) {
   } else {
     error(errSyntaxWarning, -1, "Invalid OCGState action");
     delete stateList;
-    stateList = NULL;
+    stateList = nullptr;
   }
 
   obj1 = obj->dictLookup("PreserveRB");
@@ -831,7 +829,7 @@ Links::Links(Annots *annots) {
   int size;
   int i;
 
-  links = NULL;
+  links = nullptr;
   size = 0;
   numLinks = 0;
 
@@ -870,7 +868,7 @@ LinkAction *Links::find(double x, double y) const {
       return links[i]->getAction();
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 GBool Links::onLink(double x, double y) const {

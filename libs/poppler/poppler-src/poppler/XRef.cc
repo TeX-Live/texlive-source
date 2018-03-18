@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2005 Dan Sheridan <dan.sheridan@postman.org.uk>
 // Copyright (C) 2005 Brad Hards <bradh@frogmouth.net>
-// Copyright (C) 2006, 2008, 2010, 2012-2014, 2016, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2008, 2010, 2012-2014, 2016-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007-2008 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2007 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009, 2010 Ilya Gorenbein <igorenbein@finjan.com>
@@ -95,6 +95,9 @@ public:
 
   ~ObjectStream();
 
+  ObjectStream(const ObjectStream &) = delete;
+  ObjectStream& operator=(const ObjectStream &) = delete;
+
   // Return the object number of this object stream.
   int getObjStrNum() { return objStrNum; }
 
@@ -152,8 +155,8 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA, int recursion) {
 
   objStrNum = objStrNumA;
   nObjects = 0;
-  objs = NULL;
-  objNums = NULL;
+  objs = nullptr;
+  objNums = nullptr;
   ok = gFalse;
 
   objStr = xref->fetch(objStrNum, 0, recursion);
@@ -267,11 +270,11 @@ void XRef::init() {
 #endif
   ok = gTrue;
   errCode = errNone;
-  entries = NULL;
+  entries = nullptr;
   capacity = 0;
   size = 0;
   modified = gFalse;
-  streamEnds = NULL;
+  streamEnds = nullptr;
   streamEndsLen = 0;
   objStrs = new PopplerCache(5);
   mainXRefEntriesOffset = 0;
@@ -326,7 +329,7 @@ XRef::XRef(BaseStream *strA, Goffset pos, Goffset mainXRefEntriesOffsetA, GBool 
     // read the xref table
     } else {
       std::vector<Goffset> followedXRefStm;
-      readXRef(&prevXRefOffset, &followedXRefStm, NULL);
+      readXRef(&prevXRefOffset, &followedXRefStm, nullptr);
 
       // if there was a problem with the xref table,
       // try to reconstruct it
@@ -418,7 +421,7 @@ XRef *XRef::copy() {
   if (xref->reserve(size) == 0) {
     error(errSyntaxError, -1, "unable to allocate {0:d} entries", size);
     delete xref;
-    return NULL;
+    return nullptr;
   }
   xref->size = size;
   for (int i = 0; i < size; ++i) {
@@ -452,7 +455,7 @@ int XRef::reserve(int newSize)
     }
 
     void *p = greallocn_checkoverflow(entries, realNewSize, sizeof(XRefEntry));
-    if (p == NULL) {
+    if (p == nullptr) {
       return 0;
     }
 
@@ -507,8 +510,8 @@ GBool XRef::readXRef(Goffset *pos, std::vector<Goffset> *followedXRefStm, std::v
   GBool more;
 
   // start up a parser, parse one token
-  parser = new Parser(NULL,
-	     new Lexer(NULL,
+  parser = new Parser(nullptr,
+	     new Lexer(nullptr,
 	       str->makeSubStream(start + *pos, gFalse, 0, Object(objNull))),
 	     gTrue);
   obj = parser->getObj(gTrue);
@@ -555,7 +558,7 @@ GBool XRef::readXRefTable(Parser *parser, Goffset *pos, std::vector<Goffset> *fo
   GBool more;
   Object obj, obj2;
   Goffset pos2;
-  int first, n, i;
+  int first, n;
 
   while (1) {
     obj = parser->getObj(gTrue);
@@ -580,7 +583,7 @@ GBool XRef::readXRefTable(Parser *parser, Goffset *pos, std::vector<Goffset> *fo
         goto err0;
       }
     }
-    for (i = first; i < first + n; ++i) {
+    for (int i = first; i < first + n; ++i) {
       obj = parser->getObj(gTrue);
       if (obj.isInt()) {
 	entry.offset = obj.getInt();
@@ -624,6 +627,7 @@ GBool XRef::readXRefTable(Parser *parser, Goffset *pos, std::vector<Goffset> *fo
 	  entries[0].obj = std::move(entries[1].obj);
 
 	  entries[1].offset = -1;
+	  entries[1].obj.setToNull();
 	}
       }
     }
@@ -866,7 +870,7 @@ GBool XRef::constructXRef(GBool *wasReconstructed, GBool needCatalogDict) {
   int streamEndsSize;
   char *p;
   GBool gotRoot;
-  char* token = NULL;
+  char* token = nullptr;
   bool oneCycle = true;
   int offset = 0;
 
@@ -874,7 +878,7 @@ GBool XRef::constructXRef(GBool *wasReconstructed, GBool needCatalogDict) {
   gfree(entries);
   capacity = 0;
   size = 0;
-  entries = NULL;
+  entries = nullptr;
 
   gotRoot = gFalse;
   streamEndsLen = streamEndsSize = 0;
@@ -909,8 +913,8 @@ GBool XRef::constructXRef(GBool *wasReconstructed, GBool needCatalogDict) {
 
       // got trailer dictionary
       if (!strncmp(p, "trailer", 7)) {
-        parser = new Parser(NULL,
-		 new Lexer(NULL,
+        parser = new Parser(nullptr,
+		 new Lexer(nullptr,
 		   str->makeSubStream(pos + 7, gFalse, 0, Object(objNull))),
 		 gFalse);
         Object newTrailerDict = parser->getObj();
@@ -1047,7 +1051,7 @@ void XRef::getEncryptionParameters(Guchar **fileKeyA, CryptAlgorithm *encAlgorit
     *keyLengthA = keyLength;
   } else {
     // null encryption parameters
-    *fileKeyA = NULL;
+    *fileKeyA = nullptr;
     *encAlgorithmA = cryptRC4;
     *keyLengthA = 0;
   }
@@ -1167,7 +1171,7 @@ Object XRef::fetch(int num, int gen, int recursion) {
       delete parser;
       goto err;
     }
-    Object obj = parser->getObj(gFalse, (encrypted && !e->getFlag(XRefEntry::Unencrypted)) ? fileKey : NULL,
+    Object obj = parser->getObj(gFalse, (encrypted && !e->getFlag(XRefEntry::Unencrypted)) ? fileKey : nullptr,
 		   encAlgorithm, keyLength, num, gen, recursion);
     delete parser;
     return obj;
@@ -1186,7 +1190,7 @@ Object XRef::fetch(int num, int gen, int recursion) {
       goto err;
     }
 
-    ObjectStream *objStr = NULL;
+    ObjectStream *objStr = nullptr;
     ObjectStreamKey key(e->offset);
     PopplerCacheItem *item = objStrs->lookup(key);
     if (item) {
@@ -1198,7 +1202,7 @@ Object XRef::fetch(int num, int gen, int recursion) {
       objStr = new ObjectStream(this, e->offset, recursion + 1);
       if (!objStr->isOk()) {
 	delete objStr;
-	objStr = NULL;
+	objStr = nullptr;
 	goto err;
       } else {
 	// XRef could be reconstructed in constructor of ObjectStream:
@@ -1534,7 +1538,7 @@ GBool XRef::parseEntry(Goffset offset, XRefEntry *entry)
   if (unlikely(entry == nullptr))
     return gFalse;
 
-  Parser parser(NULL, new Lexer(NULL,
+  Parser parser(nullptr, new Lexer(nullptr,
      str->makeSubStream(offset, gFalse, 20, Object(objNull))), gTrue);
 
   Object obj1, obj2, obj3;
@@ -1575,7 +1579,7 @@ void XRef::readXRefUntil(int untilEntryNum, std::vector<int> *xrefStreamObjsNum)
     }
     if (followed) {
       error(errSyntaxError, -1, "Circular XRef");
-      if (!(ok = constructXRef(NULL))) {
+      if (!(ok = constructXRef(nullptr))) {
         errCode = errDamaged;
       }
       break;
@@ -1718,7 +1722,6 @@ void XRef::scanSpecialFlags() {
   }
 
   // Mark objects referred from the Encrypt dict as Unencrypted
-  Object obj = trailerDict.dictLookupNF("Encrypt");
   markUnencrypted();
 }
 

@@ -17,7 +17,7 @@
 //
 // Copyright (C) 2007 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2007 Koji Otani <sho@bbr.jp>
-// Copyright (C) 2008, 2011, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2011, 2012, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
@@ -78,6 +78,9 @@ public:
 
   ~CharCodeToUnicode();
 
+  CharCodeToUnicode(const CharCodeToUnicode &) = delete;
+  CharCodeToUnicode& operator=(const CharCodeToUnicode &) = delete;
+
   void incRefCnt();
   void decRefCnt();
 
@@ -129,6 +132,9 @@ public:
 
   CharCodeToUnicodeCache(int sizeA);
   ~CharCodeToUnicodeCache();
+
+  CharCodeToUnicodeCache(const CharCodeToUnicodeCache &) = delete;
+  CharCodeToUnicodeCache& operator=(const CharCodeToUnicodeCache &) = delete;
 
   // Get the CharCodeToUnicode object for <tag>.  Increments its
   // reference count; there will be one reference for the cache plus

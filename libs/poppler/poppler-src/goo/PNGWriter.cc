@@ -41,9 +41,9 @@ PNGWriter::PNGWriter(Format formatA)
 {
   priv = new PNGWriterPrivate;
   priv->format = formatA;
-  priv->icc_data = NULL;
+  priv->icc_data = nullptr;
   priv->icc_data_size = 0;
-  priv->icc_name = NULL;
+  priv->icc_name = nullptr;
   priv->sRGB_profile = false;
 }
 
@@ -82,7 +82,7 @@ bool PNGWriter::init(FILE *f, int width, int height, int hDPI, int vDPI)
 #endif
 
   /* initialize stuff */
-  priv->png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  priv->png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
   if (!priv->png_ptr) {
     error(errInternal, -1, "png_create_write_struct failed");
     return false;

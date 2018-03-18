@@ -22,7 +22,7 @@ static unsigned int seed;
 
 static void initialize() {
   if (!initialized) {
-    seed = time(NULL);
+    seed = time(nullptr);
     initialized = gTrue;
   }
 }
@@ -49,7 +49,7 @@ static GBool initialized = gFalse;
 
 static void initialize() {
   if (!initialized) {
-    srand(time(NULL));
+    srand(time(nullptr));
     initialized = gTrue;
   }
 }

@@ -15,6 +15,7 @@
 //
 // Copyright (C) 2006 Scott Turner <scotty1024@mac.com>
 // Copyright (C) 2008 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2017 Vincent Le Garrec <legarrec.vincent@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -84,7 +85,7 @@ GBool PSTokenizer::getToken(char *buf, int size, int *length) {
       }
     } else if (c == '%') {
       comment = gTrue;
-    } else if (specialChars[c] != 1) {
+    } else if (specialChars[static_cast<unsigned char>(c)] != 1) {
       break;
     }
   }
@@ -113,7 +114,7 @@ GBool PSTokenizer::getToken(char *buf, int size, int *length) {
   } else if (c == '<') {
     while ((c = lookChar()) != EOF) {
       consumeChar();
-      if (i < size && specialChars[c] != 1) {
+      if (i < size && specialChars[static_cast<unsigned char>(c)] != 1) {
 	buf[i++] = c;
       }
       if (c == '>') {
@@ -121,7 +122,7 @@ GBool PSTokenizer::getToken(char *buf, int size, int *length) {
       }
     }
   } else if (c != '[' && c != ']') {
-    while ((c = lookChar()) != EOF && !specialChars[c]) {
+    while ((c = lookChar()) != EOF && !specialChars[static_cast<unsigned char>(c)]) {
       consumeChar();
       if (i < size) {
 	buf[i++] = c;

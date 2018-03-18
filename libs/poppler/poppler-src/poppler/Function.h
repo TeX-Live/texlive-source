@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2009, 2010 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009, 2010, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2011 Andrea Canciani <ranma42@gmail.com>
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -55,6 +55,9 @@ public:
   Function();
 
   virtual ~Function();
+
+  Function(const Function &) = delete;
+  Function& operator=(const Function &other) = delete;
 
   // Construct a function.  Returns NULL if unsuccessful.
   static Function *parse(Object *funcObj);

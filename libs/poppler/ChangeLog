@@ -1,3 +1,8 @@
+2018-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import poppler-0.63.0.
+	* Makefile.am, version.ac: Adjust.
+
 2018-03-14  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* configure.ac (HAVE_DCT_DECODER, HAVE_JPX_DECODER): hardwire to 1,

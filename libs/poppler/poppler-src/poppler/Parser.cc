@@ -60,7 +60,7 @@ Parser::~Parser() {
 
 Object Parser::getObj(int recursion)
 {
-  return getObj(gFalse, NULL, cryptRC4, 0, 0, 0, recursion);
+  return getObj(gFalse, nullptr, cryptRC4, 0, 0, 0, recursion);
 }
 
 Object Parser::getObj(GBool simpleOnly,
@@ -89,10 +89,11 @@ Object Parser::getObj(GBool simpleOnly,
   if (!simpleOnly && buf1.isCmd("[")) {
     shift();
     obj = Object(new Array(xref));
-    while (!buf1.isCmd("]") && !buf1.isEOF()) {
+    while (!buf1.isCmd("]") && !buf1.isEOF() && recursion + 1 < recursionLimit) {
       Object obj2 = getObj(gFalse, fileKey, encAlgorithm, keyLength, objNum, objGen, recursion + 1);
       obj.arrayAdd(std::move(obj2));
     }
+    if (recursion + 1 >= recursionLimit && strict) goto err;
     if (buf1.isEOF()) {
       error(errSyntaxError, getPos(), "End of file inside array");
       if (strict) goto err;
@@ -198,7 +199,7 @@ Stream *Parser::makeStream(Object &&dict, Guchar *fileKey,
   // get stream start position
   lexer->skipToNextLine();
   if (!(str = lexer->getStream())) {
-    return NULL;
+    return nullptr;
   }
   pos = str->getPos();
 
@@ -210,7 +211,7 @@ Stream *Parser::makeStream(Object &&dict, Guchar *fileKey,
     length = obj.getInt64();
   } else {
     error(errSyntaxError, getPos(), "Bad 'Length' attribute in stream");
-    if (strict) return NULL;
+    if (strict) return nullptr;
     length = 0;
   }
 
@@ -222,7 +223,7 @@ Stream *Parser::makeStream(Object &&dict, Guchar *fileKey,
   // in badly damaged PDF files, we can run off the end of the input
   // stream immediately after the "stream" token
   if (!lexer->getStream()) {
-    return NULL;
+    return nullptr;
   }
   baseStr = lexer->getStream()->getBaseStream();
 
@@ -241,7 +242,7 @@ Stream *Parser::makeStream(Object &&dict, Guchar *fileKey,
     shift();
   } else {
     error(errSyntaxError, getPos(), "Missing 'endstream' or incorrect stream length");
-    if (strict) return NULL;
+    if (strict) return nullptr;
     if (xref && lexer->getStream()) {
       // shift until we find the proper endstream or we change to another object or reach eof
       length = lexer->getPos() - pos;

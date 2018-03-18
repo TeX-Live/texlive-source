@@ -80,26 +80,26 @@ Catalog::Catalog(PDFDoc *docA) {
   ok = gTrue;
   doc = docA;
   xref = doc->getXRef();
-  pages = NULL;
-  pageRefs = NULL;
+  pages = nullptr;
+  pageRefs = nullptr;
   numPages = -1;
   pagesSize = 0;
-  baseURI = NULL;
-  pageLabelInfo = NULL;
-  form = NULL;
-  optContent = NULL;
+  baseURI = nullptr;
+  pageLabelInfo = nullptr;
+  form = nullptr;
+  optContent = nullptr;
   pageMode = pageModeNull;
   pageLayout = pageLayoutNull;
-  destNameTree = NULL;
-  embeddedFileNameTree = NULL;
-  jsNameTree = NULL;
-  viewerPrefs = NULL;
-  structTreeRoot = NULL;
+  destNameTree = nullptr;
+  embeddedFileNameTree = nullptr;
+  jsNameTree = nullptr;
+  viewerPrefs = nullptr;
+  structTreeRoot = nullptr;
 
-  pagesList = NULL;
-  pagesRefList = NULL;
-  attrsList = NULL;
-  kidsIdxList = NULL;
+  pagesList = nullptr;
+  pagesRefList = nullptr;
+  attrsList = nullptr;
+  kidsIdxList = nullptr;
   lastCachedPage = 0;
   markInfo = markInfoNull;
 
@@ -127,7 +127,7 @@ Catalog::Catalog(PDFDoc *docA) {
     optContent = new OCGs(&optContentProps, xref);
     if (!optContent->isOk ()) {
       delete optContent;
-      optContent = NULL;
+      optContent = nullptr;
     }
   }
 
@@ -202,13 +202,13 @@ GooString *Catalog::readMetadata() {
 
 Page *Catalog::getPage(int i)
 {
-  if (i < 1) return NULL;
+  if (i < 1) return nullptr;
 
   catalogLocker();
   if (i > lastCachedPage) {
      GBool cached = cachePageTree(i);
      if ( cached == gFalse) {
-       return NULL;
+       return nullptr;
      }
   }
   return pages[i-1];
@@ -216,13 +216,13 @@ Page *Catalog::getPage(int i)
 
 Ref *Catalog::getPageRef(int i)
 {
-  if (i < 1) return NULL;
+  if (i < 1) return nullptr;
 
   catalogLocker();
   if (i > lastCachedPage) {
      GBool cached = cachePageTree(i);
      if ( cached == gFalse) {
-       return NULL;
+       return nullptr;
      }
   }
   return &pageRefs[i-1];
@@ -230,7 +230,7 @@ Ref *Catalog::getPageRef(int i)
 
 GBool Catalog::cachePageTree(int page)
 {
-  if (pagesList == NULL) {
+  if (pagesList == nullptr) {
 
     Ref pagesRef;
 
@@ -262,19 +262,19 @@ GBool Catalog::cachePageTree(int page)
     pagesSize = getNumPages();
     pages = (Page **)gmallocn_checkoverflow(pagesSize, sizeof(Page *));
     pageRefs = (Ref *)gmallocn_checkoverflow(pagesSize, sizeof(Ref));
-    if (pages == NULL || pageRefs == NULL ) {
+    if (pages == nullptr || pageRefs == nullptr ) {
       error(errSyntaxError, -1, "Cannot allocate page cache");
       pagesSize = 0;
       return gFalse;
     }
     for (int i = 0; i < pagesSize; ++i) {
-      pages[i] = NULL;
+      pages[i] = nullptr;
       pageRefs[i].num = -1;
       pageRefs[i].gen = -1;
     }
 
     attrsList = new std::vector<PageAttrs *>();
-    attrsList->push_back(new PageAttrs(NULL, obj.getDict()));
+    attrsList->push_back(new PageAttrs(nullptr, obj.getDict()));
     pagesList = new std::vector<Object>();
     pagesList->push_back(std::move(obj));
     pagesRefList = new std::vector<Ref>();
@@ -343,6 +343,7 @@ GBool Catalog::cachePageTree(int page)
 
       if (lastCachedPage >= numPages) {
         error(errSyntaxError, -1, "Page count in top-level pages object is incorrect");
+        delete p;
         return gFalse;
       }
 
@@ -375,7 +376,7 @@ int Catalog::findPage(int num, int gen) {
 
   for (i = 0; i < getNumPages(); ++i) {
     Ref *ref = getPageRef(i+1);
-    if (ref != NULL && ref->num == num && ref->gen == gen)
+    if (ref != nullptr && ref->num == num && ref->gen == gen)
       return i + 1;
   }
   return 0;
@@ -409,7 +410,7 @@ LinkDest *Catalog::createLinkDest(Object *obj)
   }
   if (dest && !dest->isOk()) {
     delete dest;
-    dest = NULL;
+    dest = nullptr;
   }
 
   return dest;
@@ -432,7 +433,7 @@ char *Catalog::getDestsName(int i)
 
   obj= getDests();
   if (!obj->isDict()) {
-    return NULL;
+    return nullptr;
   }
   return obj->dictGetKey(i);
 }
@@ -441,7 +442,7 @@ LinkDest *Catalog::getDestsDest(int i)
 {
   Object *obj = getDests();
   if (!obj->isDict()) {
-    return NULL;
+    return nullptr;
   }
   Object obj1 = obj->dictGetVal(i);
   return createLinkDest(&obj1);
@@ -461,10 +462,9 @@ LinkDest *Catalog::getDestNameTreeDest(int i)
 
 FileSpec *Catalog::embeddedFile(int i)
 {
-    Object efDict;
     catalogLocker();
     Object *obj = getEmbeddedFileNameTree()->getValue(i);
-    FileSpec *embeddedFile = 0;
+    FileSpec *embeddedFile = nullptr;
     if (obj->isRef()) {
       Object fsDict = obj->fetch(xref);
       embeddedFile = new FileSpec(&fsDict);
@@ -580,7 +580,7 @@ NameTree::NameTree()
 {
   size = 0;
   length = 0;
-  entries = NULL;
+  entries = nullptr;
 }
 
 NameTree::~NameTree()
@@ -690,7 +690,7 @@ Object NameTree::lookup(GooString *name)
 
   entry = (Entry **) bsearch(name, entries,
 			     length, sizeof(Entry *), Entry::cmp);
-  if (entry != NULL) {
+  if (entry != nullptr) {
     return (*entry)->value.fetch(xref);
   } else {
     error(errSyntaxError, -1, "failed to look up ({0:s})", name->getCString());
@@ -712,7 +712,7 @@ GooString *NameTree::getName(int index)
     if (index < length) {
 	return &entries[index]->name;
     } else {
-	return NULL;
+	return nullptr;
     }
 }
 
@@ -721,7 +721,7 @@ GBool Catalog::labelToIndex(GooString *label, int *index)
   char *end;
 
   PageLabelInfo *pli = getPageLabelInfo();
-  if (pli != NULL) {
+  if (pli != nullptr) {
     if (!pli->labelToIndex(label, index))
       return gFalse;
   } else {
@@ -744,7 +744,7 @@ GBool Catalog::indexToLabel(int index, GooString *label)
     return gFalse;
 
   PageLabelInfo *pli = getPageLabelInfo();
-  if (pli != NULL) {
+  if (pli != nullptr) {
     return pli->indexToLabel(index, label);
   } else {
     snprintf(buffer, sizeof (buffer), "%d", index + 1);
@@ -784,7 +784,7 @@ int Catalog::getNumPages()
 	Dict *pageDict = pagesDict.getDict();
 	if (pageRootRef.isRef()) {
 	  const Ref pageRef = pageRootRef.getRef();
-	  Page *p = new Page(doc, 1, &pagesDict, pageRef, new PageAttrs(NULL, pageDict), form);
+	  Page *p = new Page(doc, 1, &pagesDict, pageRef, new PageAttrs(nullptr, pageDict), form);
 	  if (p->isOk()) {
 	    pages = (Page **)gmallocn(1, sizeof(Page *));
 	    pageRefs = (Ref *)gmallocn(1, sizeof(Ref));
@@ -853,7 +853,7 @@ StructTreeRoot *Catalog::getStructTreeRoot()
     Object catalog = xref->getCatalog();
     if (!catalog.isDict()) {
       error(errSyntaxError, -1, "Catalog object is wrong type ({0:s})", catalog.getTypeName());
-      return NULL;
+      return nullptr;
     }
 
     Object root = catalog.dictLookup("StructTreeRoot");
@@ -1051,7 +1051,7 @@ LinkAction* Catalog::getAdditionalAction(DocumentAdditionalActionsType type) {
                        type == actionSaveDocumentStart ?   "WS" :
                        type == actionSaveDocumentFinish ?  "DS" :
                        type == actionPrintDocumentStart ?  "WP" :
-                       type == actionPrintDocumentFinish ? "DP" : NULL);
+                       type == actionPrintDocumentFinish ? "DP" : nullptr);
 
     Object actionObject = additionalActionsObject.dictLookup(key);
     if (actionObject.isDict())

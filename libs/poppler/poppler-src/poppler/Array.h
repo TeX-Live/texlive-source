@@ -16,7 +16,7 @@
 // Copyright (C) 2005 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
-// Copyright (C) 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
@@ -49,6 +49,9 @@ public:
 
   // Destructor.
   ~Array();
+
+  Array(const Array &) = delete;
+  Array& operator=(const Array &) = delete;
 
   // Get number of elements.
   int getLength() const { return length; }

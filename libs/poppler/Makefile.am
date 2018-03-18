@@ -122,6 +122,7 @@ poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/StructTreeRoot.cc \
 	@POPPLER_TREE@/poppler/UTF.cc \
 	@POPPLER_TREE@/poppler/UnicodeMap.cc \
+	@POPPLER_TREE@/poppler/UnicodeMapFuncs.cc \
 	@POPPLER_TREE@/poppler/UnicodeTypeTable.cc \
 	@POPPLER_TREE@/poppler/ViewerPreferences.cc \
 	@POPPLER_TREE@/poppler/XRef.cc \

@@ -18,11 +18,12 @@
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2005 Nickolay V. Shmyrev <nshmyrev@yandex.ru>
 // Copyright (C) 2006-2011, 2013 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright (C) 2008, 2009, 2011-2016 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2008, 2009, 2011-2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2010-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2015 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 // Copyright (C) 2016 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2018 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -62,6 +63,9 @@ public:
 
   // Destructor.
   ~CairoImage ();
+
+  CairoImage(const CairoImage &) = delete;
+  CairoImage& operator=(const CairoImage &) = delete;
 
   // Set the image cairo surface
   void setImage (cairo_surface_t *image);
@@ -265,10 +269,10 @@ public:
   
   void setCairo (cairo_t *cr);
   void setTextPage (TextPage *text);
-  void setPrinting (GBool printing) { this->printing = printing; needFontUpdate = gTrue; }
+  void setPrinting (GBool printingA) { printing = printingA; needFontUpdate = gTrue; }
   void setAntialias(cairo_antialias_t antialias);
 
-  void setInType3Char(GBool inType3Char) { this->inType3Char = inType3Char; }
+  void setInType3Char(GBool inType3CharA) { inType3Char = inType3CharA; }
   void getType3GlyphWidth (double *wx, double *wy) { *wx = t3_glyph_wx; *wy = t3_glyph_wy; }
   GBool hasType3GlyphBBox () { return t3_glyph_has_bbox; }
   double *getType3GlyphBBox () { return t3_glyph_bbox; }
@@ -283,11 +287,14 @@ protected:
 				     GBool interpolate);
   GBool getStreamData (Stream *str, char **buffer, int *length);
   void setMimeData(GfxState *state, Stream *str, Object *ref,
-		   GfxImageColorMap *colorMap, cairo_surface_t *image);
+		   GfxImageColorMap *colorMap, cairo_surface_t *image, int height);
   void fillToStrokePathClip(GfxState *state);
   void alignStrokeCoords(GfxSubpath *subpath, int i, double *x, double *y);
 #if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
   GBool setMimeDataForJBIG2Globals (Stream *str, cairo_surface_t *image);
+#endif
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 15, 10)
+  GBool setMimeDataForCCITTParams(Stream  *str, cairo_surface_t *image, int height);
 #endif
   static void setContextAntialias(cairo_t *cr, cairo_antialias_t antialias);
 
@@ -328,7 +335,6 @@ protected:
   GBool printing;
   GBool use_show_text_glyphs;
   GBool text_matrix_valid;
-  cairo_surface_t *surface;
   cairo_glyph_t *glyphs;
   int glyphCount;
   cairo_text_cluster_t *clusters;
@@ -352,7 +358,6 @@ protected:
   cairo_pattern_t *shape;
   cairo_pattern_t *mask;
   cairo_matrix_t mask_matrix;
-  cairo_surface_t *cairo_shape_surface;
   cairo_t *cairo_shape;
   int knockoutCount;
   struct ColorSpaceStack {

@@ -1,8 +1,11 @@
-Changes applied to the poppler-0.62.0 tree as obtained from:
+Changes applied to the poppler-0.63.0 tree as obtained from:
 	http://poppler.freedesktop.org/
 
 Removed unused dirs:
-	cmake cpp glib m4 qt4 qt5 test utils
+	cmake cpp glib qt5 test utils
+
+Removed unused files in splash:
+	only SplashTypes.h is used
 
 General idea:
 update version.ac

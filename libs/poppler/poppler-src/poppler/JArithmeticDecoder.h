@@ -8,6 +8,20 @@
 //
 //========================================================================
 
+//========================================================================
+//
+// Modified under the Poppler project - http://poppler.freedesktop.org
+//
+// All changes made under the Poppler project to this file are licensed
+// under GPL version 2 or later
+//
+// Copyright (C) 2018 Albert Astals Cid <aacid@kde.org>
+//
+// To see a description of the changes please see the Changelog file that
+// came with your tarball or type make ChangeLog if you are building from git
+//
+//========================================================================
+
 #ifndef JARITHMETICDECODER_H
 #define JARITHMETICDECODER_H
 
@@ -28,6 +42,8 @@ public:
 
   JArithmeticDecoderStats(int contextSizeA);
   ~JArithmeticDecoderStats();
+  JArithmeticDecoderStats(const JArithmeticDecoderStats &) = delete;
+  JArithmeticDecoderStats& operator=(const JArithmeticDecoderStats &) = delete;
   JArithmeticDecoderStats *copy();
   void reset();
   int getContextSize() { return contextSize; }
@@ -51,6 +67,8 @@ public:
 
   JArithmeticDecoder();
   ~JArithmeticDecoder();
+  JArithmeticDecoder(const JArithmeticDecoder &) = delete;
+  JArithmeticDecoder& operator=(const JArithmeticDecoder &) = delete;
 
   void setStream(Stream *strA)
     { str = strA; dataLen = 0; limitStream = gFalse; }

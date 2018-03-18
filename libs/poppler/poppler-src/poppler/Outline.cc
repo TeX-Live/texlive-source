@@ -47,7 +47,7 @@ Outline::Outline(Object *outlineObj, XRef *xref) {
     return;
   }
   Object first = outlineObj->dictLookupNF("First");
-  items = OutlineItem::readItemList(&first, xref);
+  items = OutlineItem::readItemList(nullptr, &first, xref);
 }
 
 Outline::~Outline() {
@@ -58,13 +58,15 @@ Outline::~Outline() {
 
 //------------------------------------------------------------------------
 
-OutlineItem::OutlineItem(Dict *dict, XRef *xrefA) {
+OutlineItem::OutlineItem(Dict *dict, int refNumA, OutlineItem *parentA, XRef *xrefA) {
   Object obj1;
 
+  refNum = refNumA;
+  parent = parentA;
   xref = xrefA;
-  title = NULL;
-  action = NULL;
-  kids = NULL;
+  title = nullptr;
+  action = nullptr;
+  kids = nullptr;
 
 
   obj1 = dict->lookup("Title");
@@ -108,28 +110,29 @@ OutlineItem::~OutlineItem() {
   }
 }
 
-GooList *OutlineItem::readItemList(Object *firstItemRef, XRef *xrefA) {
-  GooList *items;
-  char* alreadyRead;
-  OutlineItem *item;
-  Object *p;
+GooList *OutlineItem::readItemList(OutlineItem *parent, Object *firstItemRef, XRef *xrefA) {
+  GooList *items = new GooList();
 
-  items = new GooList();
-
-  alreadyRead = (char *)gmalloc(xrefA->getNumObjects());
+  char* alreadyRead = (char *)gmalloc(xrefA->getNumObjects());
   memset(alreadyRead, 0, xrefA->getNumObjects());
 
-  p = firstItemRef;
+  OutlineItem *parentO = parent;
+  while (parentO) {
+    alreadyRead[parentO->refNum] = 1;
+    parentO = parentO->parent;
+  }
+
+  Object *p = firstItemRef;
   while (p->isRef() && 
 	 (p->getRefNum() >= 0) && 
-         (p->getRefNum() < xrefA->getNumObjects()) && 
+         (p->getRefNum() < xrefA->getNumObjects()) &&
          !alreadyRead[p->getRefNum()]) {
     Object obj = p->fetch(xrefA);
     if (!obj.isDict()) {
       break;
     }
     alreadyRead[p->getRefNum()] = 1;
-    item = new OutlineItem(obj.getDict(), xrefA);
+    OutlineItem *item = new OutlineItem(obj.getDict(), p->getRefNum(), parent, xrefA);
     items->append(item);
     p = &item->nextRef;
   }
@@ -138,7 +141,7 @@ GooList *OutlineItem::readItemList(Object *firstItemRef, XRef *xrefA) {
 
   if (!items->getLength()) {
     delete items;
-    items = NULL;
+    items = nullptr;
   }
 
   return items;
@@ -146,13 +149,13 @@ GooList *OutlineItem::readItemList(Object *firstItemRef, XRef *xrefA) {
 
 void OutlineItem::open() {
   if (!kids) {
-    kids = readItemList(&firstRef, xref);
+    kids = readItemList(this, &firstRef, xref);
   }
 }
 
 void OutlineItem::close() {
   if (kids) {
     deleteGooList(kids, OutlineItem);
-    kids = NULL;
+    kids = nullptr;
   }
 }

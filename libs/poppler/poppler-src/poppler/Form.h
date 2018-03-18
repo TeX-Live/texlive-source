@@ -6,7 +6,7 @@
 //
 // Copyright 2006 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright 2007, 2008, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright 2007-2010, 2012, 2015-2017 Albert Astals Cid <aacid@kde.org>
+// Copyright 2007-2010, 2012, 2015-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2010 Mark Riedesel <mark@klowner.com>
 // Copyright 2011 Pino Toscano <pino@kde.org>
 // Copyright 2012 Fabio D'Urso <fabiodurso@hotmail.it>
@@ -28,6 +28,8 @@
 #include "goo/GooList.h"
 #include "Object.h"
 #include "Annot.h"
+
+#include <time.h>
 
 #include <set>
 #include <vector>
@@ -564,6 +566,9 @@ public:
 
   ~Form();
 
+  Form(const Form &) = delete;
+  Form& operator=(const Form &) = delete;
+
   // Look up an inheritable field dictionary entry.
   static Object fieldLookup(Dict *field, const char *key);
   
@@ -612,6 +617,9 @@ public:
   FormPageWidgets (Annots* annots, unsigned int page, Form *form);
   ~FormPageWidgets();
   
+  FormPageWidgets(const FormPageWidgets &) = delete;
+  FormPageWidgets& operator=(const FormPageWidgets &) = delete;
+
   int getNumWidgets() const { return numWidgets; }
   FormWidget* getWidget(int i) const { return widgets[i]; }
 

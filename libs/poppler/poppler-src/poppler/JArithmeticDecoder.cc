@@ -88,7 +88,7 @@ int JArithmeticDecoder::switchTab[47] = {
 };
 
 JArithmeticDecoder::JArithmeticDecoder() {
-  str = NULL;
+  str = nullptr;
   dataLen = 0;
   limitStream = gFalse;
   nBytesRead = 0;

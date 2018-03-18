@@ -6,7 +6,7 @@
 //
 // Copyright 2009 Stefan Thomas <thomas@eload24.com>
 // Copyright 2010, 2011 Hib Eris <hib@hiberis.nl>
-// Copyright 2010 Albert Astals Cid <aacid@kde.org>
+// Copyright 2010, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2013 Julien Nabet <serval2412@yahoo.fr>
 //
 //========================================================================
@@ -172,12 +172,12 @@ size_t CachedFile::read(void *ptr, size_t unitsize, size_t count)
   return bytes;
 }
 
-int CachedFile::cache(size_t offset, size_t length)
+int CachedFile::cache(size_t rangeOffset, size_t rangeLength)
 {
   std::vector<ByteRange> r;
   ByteRange range;
-  range.offset = offset;
-  range.length = length;
+  range.offset = rangeOffset;
+  range.length = rangeLength;
   r.push_back(range);
   return cache(r);
 }

@@ -5,7 +5,7 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright (C) 2009 Stefan Thomas <thomas@eload24.com>
-// Copyright (C) 2009, 2011 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009, 2011, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2010 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2010 Brian Cameron <brian.cameron@oracle.com>
 // Copyright (C) 2011 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -20,6 +20,10 @@
 class ImgWriter
 {
 public:
+  ImgWriter() = default;
+  ImgWriter(const ImgWriter &) = delete;
+  ImgWriter& operator=(const ImgWriter &other) = delete;
+
   virtual ~ImgWriter();
   virtual bool init(FILE *f, int width, int height, int hDPI, int vDPI) = 0;
 

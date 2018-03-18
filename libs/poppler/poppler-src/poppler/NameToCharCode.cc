@@ -32,7 +32,7 @@ NameToCharCode::NameToCharCode() {
   len = 0;
   tab = (NameToCharCodeEntry *)gmallocn(size, sizeof(NameToCharCodeEntry));
   for (i = 0; i < size; ++i) {
-    tab[i].name = NULL;
+    tab[i].name = nullptr;
   }
 }
 
@@ -58,7 +58,7 @@ void NameToCharCode::add(const char *name, CharCode c) {
     size = 2*size + 1;
     tab = (NameToCharCodeEntry *)gmallocn(size, sizeof(NameToCharCodeEntry));
     for (h = 0; h < size; ++h) {
-      tab[h].name = NULL;
+      tab[h].name = nullptr;
     }
     for (i = 0; i < oldSize; ++i) {
       if (oldTab[i].name) {
