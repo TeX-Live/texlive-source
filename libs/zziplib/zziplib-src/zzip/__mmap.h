@@ -44,62 +44,42 @@
 #ifndef MAP_FAILED
 #define MAP_FAILED 0
 #endif
-/* we (ab)use the "*user" variable to store the FileMapping handle */
-                 /* and make sure (sizeof(*user) == sizeof(HANDLE)) */
+/* we had used the plugin->sys variable for (user) but not anymore */
 
 static size_t win32_getpagesize (void)
 { 
     SYSTEM_INFO si; GetSystemInfo (&si); 
     return si.dwAllocationGranularity; 
 }
-#ifdef _WIN64
-static void*  win32_mmap (__int64* user, int fd, zzip_off_t offs, size_t len)
-#else
 static void*  win32_mmap (long* user, int fd, zzip_off_t offs, size_t len)
-#endif
 {
     if (! user || *user != 1) /* || offs % getpagesize() */
 	return 0;
   {
     HANDLE hFile = (HANDLE)_get_osfhandle(fd);
+    HANDLE fileMapping = NULL;
     if (hFile)
-#ifdef _WIN64
-	*user = (__int64) CreateFileMapping (hFile, 0, PAGE_READONLY, 0, 0, NULL);
-#else
-	*user = (long) CreateFileMapping (hFile, 0, PAGE_READONLY, 0, 0, NULL);
-#endif
-    if (*user)
+	fileMapping = CreateFileMapping (hFile, 0, PAGE_READONLY, 0, 0, NULL);
+    if (fileMapping != NULL)
     {
-	char* p = 0;
-	p = MapViewOfFile(*(HANDLE*)user, FILE_MAP_READ, 0, offs, len);
+	char* p = MapViewOfFile(fileMapping, FILE_MAP_READ, 0, offs, len);
+	CloseHandle (fileMapping); *user = 1;
 	if (p) return p;
-	CloseHandle (*(HANDLE*)user); *user = 1;
     } 
     return MAP_FAILED;
   }
 }
-#ifdef _WIN64
-static void win32_munmap (__int64* user, char* fd_map, size_t len)
-#else
 static void win32_munmap (long* user, char* fd_map, size_t len)
-#endif
 {
     UnmapViewOfFile (fd_map);
-    CloseHandle (*(HANDLE*)user); *user = 1;
 }
 
-#ifdef _WIN64
-#define _zzip_mmap(user, fd, offs, len) \
-        win32_mmap ((__int64*) &(user), fd, offs, len)
-#define _zzip_munmap(user, ptr, len) \
-        win32_munmap ((__int64*) &(user), ptr, len)
-#else
 #define _zzip_mmap(user, fd, offs, len) \
         win32_mmap ((long*) &(user), fd, offs, len)
 #define _zzip_munmap(user, ptr, len) \
         win32_munmap ((long*) &(user), ptr, len)
-#endif
 #define _zzip_getpagesize(user) win32_getpagesize()
+
 #else   /* disable */
 #define USE_MMAP 0
 /* USE_MAP is intentional: we expect the compiler to do some "code removal"

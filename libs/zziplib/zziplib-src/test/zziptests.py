@@ -19,6 +19,7 @@ readme = "README"
 mkzip = "zip"
 unzip = "unzip"
 exeext = ""
+bindir = os.path.join("..", "bins")
 
 def shell_string(command):
    return " ".join(["'%s'" % arg.replace("'","\\'") for arg in command])
@@ -39,9 +40,17 @@ def shell(command, shell=True, calls=False, cwd=None, env=None, lang=None, retur
                 env[name] = lang
         env["LANG"] = lang # defines message format
         env["LC_ALL"] = lang # other locale formats
-    build_libs = os.path.dirname(os.path.dirname(os.path.realpath(command[0])))+"/zzip/.libs"
-    if os.path.isdir(build_libs):
-        env["LD_LIBRARY_PATH"] = build_libs
+    zzip_libs = "/zzip/.libs"
+    zzip_cmds = command[0].split(" ")[0]
+    build_lib1 = os.path.dirname(os.path.realpath(zzip_cmds))
+    build_lib2 = os.path.dirname(build_lib1)
+    build_lib3 = os.path.dirname(build_lib2)
+    if os.path.isdir(build_lib1 + zzip_libs):
+        env["LD_LIBRARY_PATH"] = build_lib1 + zzip_libs
+    elif os.path.isdir(build_lib2 + zzip_libs):
+        env["LD_LIBRARY_PATH"] = build_lib2 + zzip_libs
+    elif os.path.isdir(build_lib3 + zzip_libs):
+        env["LD_LIBRARY_PATH"] = build_lib3 + zzip_libs
     try:
         output, errors = "", ""
         if calls:
@@ -102,6 +111,11 @@ def download(base_url, filename, into, style = ""):
     if not os.path.isdir(subdir):
         os.makedirs(subdir)
     subfile = os.path.join(subdir, filename)
+    if not os.path.exists(subfile) and "---" in base_url:
+       my_downloads = os.path.expanduser("~/Downloads")
+       srcfile = os.path.join(my_downloads, filename)
+       if os.path.exists(srcfile):
+          shutil.copy(srcfile, subfile)
     if not os.path.exists(subfile):
        logg.info("need %s", subfile)
        d = urllib.urlopen(base_url + "/" + filename + style)
@@ -111,7 +125,9 @@ def download(base_url, filename, into, style = ""):
     #
     if not os.path.isdir(into):
         os.makedirs(into)
-    shutil.copy(subfile, into)
+    intofile = os.path.join(into, filename)
+    shutil.copy(subfile, intofile)
+    logg.debug("copied %s -> %s", subfile, intofile)
     return filename
 
 def output(cmd, shell=True):
@@ -166,7 +182,13 @@ class ZZipTest(unittest.TestCase):
   def bins(self, name):
     if name == "unzip": return unzip
     if name == "mkzip": return mkzip
-    exe = os.path.join("..", "bins", name)
+    exe = os.path.join(bindir, name)
+    if exeext: exe += exeext
+    return exe
+  def gdb_bins(self, name):
+    if name == "unzip": return unzip
+    if name == "mkzip": return mkzip
+    exe = os.path.join(bindir, ".libs", name)
     if exeext: exe += exeext
     return exe
   def gentext(self, size):
@@ -1332,7 +1354,7 @@ class ZZipTest(unittest.TestCase):
     self.assertIn(" 3 test", run.output)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
     self.rm_testdir()
@@ -1438,15 +1460,15 @@ class ZZipTest(unittest.TestCase):
         returncodes = [0])
     self.assertLess(len(run.output), 1)
     self.assertLess(len(errors(run.errors)), 180)
-    self.assertIn("zzip_mem_disk_load : unable to load entry", run.errors)
+    # self.assertIn("zzip_mem_disk_load : unable to load entry", run.errors)
     self.assertIn("zzip_mem_disk_open : unable to load disk", run.errors)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 300)
     if grep("DEBUG:", run.errors):
-        self.assertIn("findfirst (nil)", run.errors)
+        self.assertIn("zzip_mem_disk_open : unable to load disk", run.errors)
     self.assertFalse(os.path.exists(tmpdir+"/test"))
     # self.assertEqual(os.path.getsize(tmpdir+"/test"), 0)
     self.rm_testdir()
@@ -1556,7 +1578,7 @@ class ZZipTest(unittest.TestCase):
     self.assertIn(" 3 a", run.output)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertEqual(os.path.getsize(tmpdir+"/a"), 3)
     self.rm_testdir()
@@ -1665,7 +1687,7 @@ class ZZipTest(unittest.TestCase):
     self.assertIn(" 3 test", run.output)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
     self.rm_testdir()
@@ -1777,11 +1799,11 @@ class ZZipTest(unittest.TestCase):
     self.assertIn("zzip_mem_disk_open : unable to load disk", run.errors)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 200)
     if grep("DEBUG:", run.errors):
-        self.assertIn("findfirst (nil)", run.errors)
+        self.assertIn("no header in entry", run.errors)
     self.assertFalse(os.path.exists(tmpdir+"/test"))
     self.rm_testdir()
   def test_59753_zzipdir_mix_CVE_2017_5975(self):
@@ -1894,7 +1916,7 @@ class ZZipTest(unittest.TestCase):
     self.assertIn("3 test", run.output)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 30) # TODO
     self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
@@ -1999,16 +2021,15 @@ class ZZipTest(unittest.TestCase):
     filename = self.zip_CVE_2017_5980
     file_url = self.url_CVE_2017_5980
     download_raw(file_url, filename, tmpdir)
-    exe = self.bins("unzzipdir-mem")
-    run = shell("{exe} {tmpdir}/{filename} ".format(**locals()),
-        returncodes = [0,127,-11])
+    exe = self.bins("unzzip-mem")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0])
     self.assertLess(len(run.output), 1)
     self.assertLess(len(errors(run.errors)), 180)
-    # self.assertTrue(greps(run.errors, "unable to load disk"))
+    self.assertTrue(greps(run.errors, "unable to load disk"))
     #
-    exe = self.bins("unzzipcat-mem")
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 200)
     self.assertFalse(os.path.exists(tmpdir+"/test"))
@@ -2121,7 +2142,7 @@ class ZZipTest(unittest.TestCase):
     self.assertLess(len(errors(run.errors)), 1)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 10)
     # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
@@ -2231,7 +2252,7 @@ class ZZipTest(unittest.TestCase):
     self.assertLess(len(errors(run.errors)), 1)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 10)
     # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
@@ -2353,7 +2374,7 @@ class ZZipTest(unittest.TestCase):
     self.assertLess(len(errors(run.errors)), 1)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 10)
     # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
@@ -2462,11 +2483,12 @@ class ZZipTest(unittest.TestCase):
     exe = self.bins("unzzip-mem")
     run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
         returncodes = [0])
-    self.assertLess(len(run.output), 1)
+    self.assertIn("2 aUT", run.output) # filename contains a control-character
+    self.assertGreater(len(run.output), 20)
     self.assertLess(len(errors(run.errors)), 1)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 10)
     # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
@@ -2519,7 +2541,7 @@ class ZZipTest(unittest.TestCase):
     download_raw(file_url, filename, tmpdir)
     shell("ls -l {tmpdir}/{filename}".format(**locals()))
     size = os.path.getsize(os.path.join(tmpdir, filename))
-    self.assertEqual(size, 152)
+    self.assertEqual(size, 141)
 
   url_CVE_2018_14 = "https://github.com/ProbeFuzzer/poc/blob/master/zziplib"
   zip_CVE_2018_14 = "zziplib_0-13-67_zzdir_memory-alignment-errors___zzip_fetch_disk_trailer.zip"
@@ -2576,7 +2598,7 @@ class ZZipTest(unittest.TestCase):
     self.assertLess(len(run.output), 1)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 10)
     # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
@@ -2699,7 +2721,7 @@ class ZZipTest(unittest.TestCase):
     self.assertLess(len(errors(run.errors)), 1)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 10)
     # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
@@ -2809,7 +2831,7 @@ class ZZipTest(unittest.TestCase):
     self.assertLess(len(errors(run.errors)), 1)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 10)
     # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
@@ -2923,14 +2945,14 @@ class ZZipTest(unittest.TestCase):
     self.assertLess(len(errors(run.errors)), 1)
     #
     run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     self.assertLess(len(run.output), 30)
     self.assertLess(len(errors(run.errors)), 10)
     # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
     self.assertFalse(os.path.exists(tmpdir+"/test"))
     #
     run = shell("cd {tmpdir} && ../{exe} -p {filename} ".format(**locals()),
-        returncodes = [2])
+        returncodes = [0])
     # self.rm_testdir()
   def test_65423(self):
     """ unzzip-mix -l $(CVE).zip  """
@@ -2981,6 +3003,406 @@ class ZZipTest(unittest.TestCase):
     size = os.path.getsize(os.path.join(tmpdir, filename))
     self.assertEqual(size, 360)
 
+
+  url_CVE_2018_42 = "https://github.com/fantasy7082/image_test/blob/master"
+  zip_CVE_2018_42 = "c006-unknown-add-main"
+  def test_65430(self):
+    """ info unzip -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_42
+    file_url = self.url_CVE_2018_42
+    download_raw(file_url, filename, tmpdir)
+    exe = self.bins("unzip")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0, 80])
+    self.assertIn("missing 18 bytes in zipfile", run.errors)
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 800)
+    #
+    run = shell("cd {tmpdir} && {exe} -o {filename}".format(**locals()),
+        returncodes = [3])
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 800)
+    self.assertIn("missing 18 bytes in zipfile", run.errors)
+    self.assertIn('expected central file header signature not found', run.errors)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65431(self):
+    """ zzdir $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_42
+    file_url = self.url_CVE_2018_42
+    download_raw(file_url, filename, tmpdir)
+    exe = self.bins("zzdir")
+    run = shell("{exe} {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0])
+    logg.info("OUT %s", run.output)
+    logg.info("ERR %s", run.errors)
+    self.assertIn(" zipped ", run.output)
+    self.rm_testdir()
+
+  url_CVE_2018_43 = "https://github.com/fantasy7082/image_test/blob/master"
+  zip_CVE_2018_43 = "c008-main-unknown-de"
+  def test_65440(self):
+    """ info unzip -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_43
+    file_url = self.url_CVE_2018_43
+    download_raw(file_url, filename, tmpdir)
+    exe = self.bins("unzip")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0, 80])
+    self.assertIn("missing 18 bytes in zipfile", run.errors)
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 800)
+    #
+    run = shell("cd {tmpdir} && {exe} -o {filename}".format(**locals()),
+        returncodes = [3])
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 800)
+    self.assertIn("missing 18 bytes in zipfile", run.errors)
+    self.assertIn('expected central file header signature not found', run.errors)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65441(self):
+    """ zzdir $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_43
+    file_url = self.url_CVE_2018_43
+    download_raw(file_url, filename, tmpdir)
+    exe = self.bins("zzdir")
+    run = shell("{exe} {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0])
+    logg.info("OUT %s", run.output)
+    logg.info("ERR %s", run.errors)
+    self.assertIn(" zipped ", run.output)
+    self.rm_testdir()
+
+  url_CVE_2018_27 = "https://github.com/ret2libc/---provided-by-email---"
+  zip_CVE_2018_27 = "poc_bypass_fix2.zip"
+  def test_65450(self):
+    """ info unzip -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_27
+    file_url = self.url_CVE_2018_27
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzip")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0, 9])
+    self.assertIn("End-of-central-directory signature not found", run.errors)
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 800)
+    #
+    run = shell("cd {tmpdir} && {exe} -o {filename}".format(**locals()),
+        returncodes = [9])
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 800)
+    self.assertIn('End-of-central-directory signature not found', run.errors)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65451(self):
+    """ unzzip-big -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_27
+    file_url = self.url_CVE_2018_27
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzzip-big")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 1)
+    #
+    run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 30)
+    self.assertLess(len(errors(run.errors)), 1)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65452(self):
+    """ unzzip-mem -l $(CVE).zip """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_27
+    file_url = self.url_CVE_2018_27
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzzip-mem")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 50)
+    self.assertLess(len(errors(run.errors)), 1)
+    #
+    run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 30)
+    self.assertLess(len(errors(run.errors)), 10)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    #
+    run = shell("cd {tmpdir} && ../{exe} -p {filename} ".format(**locals()),
+        returncodes = [0])
+    # self.rm_testdir()
+  def test_65453(self):
+    """ unzzip-mix -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_27
+    file_url = self.url_CVE_2018_27
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzzip-mix")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0,2])
+    self.assertLess(len(run.output), 1)
+    self.assertTrue(greps(run.errors, "Invalid or"))
+    #
+    run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
+        returncodes = [0,2])
+    self.assertLess(len(run.output), 30)
+    self.assertTrue(greps(run.errors, "Invalid or"))
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65454(self):
+    """ unzzip-zap -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_27
+    file_url = self.url_CVE_2018_27
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzzip")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0, 3])
+    self.assertLess(len(run.output), 1)
+    self.assertLess(len(errors(run.errors)), 200)
+    self.assertIn(": Success", run.errors)
+    #
+    run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
+        returncodes = [0,3])
+    self.assertLess(len(run.output), 30)
+    self.assertTrue(greps(run.errors, "Zipfile corrupted"))
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65459(self):
+    """ check $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_27
+    file_url = self.url_CVE_2018_27
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    shell("ls -l {tmpdir}/{filename}".format(**locals()))
+    size = os.path.getsize(os.path.join(tmpdir, filename))
+    self.assertEqual(size, 56)
+
+  url_CVE_2018_41 = "https://github.com/fantasy7082/image_test/blob/master"
+  zip_CVE_2018_41 = "c005-bus-zzip_parse_root_directory" # CVE-2018-7726.
+  def test_65460(self):
+    """ info unzip -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_41
+    file_url = self.url_CVE_2018_41
+    download_raw(file_url, filename, tmpdir)
+    exe = self.bins("unzip")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0, 3])
+    self.assertIn("missing 20 bytes in zipfile", run.errors)
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 800)
+    #
+    run = shell("cd {tmpdir} && {exe} -o {filename}".format(**locals()),
+        returncodes = [3])
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 800)
+    self.assertIn("missing 20 bytes in zipfile", run.errors)
+    self.assertIn('attempt to seek before beginning of zipfile', run.errors)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65461(self):
+    """ zzdir $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_41
+    file_url = self.url_CVE_2018_41
+    download_raw(file_url, filename, tmpdir)
+    exe = self.bins("zzdir")
+    run = shell("{exe} {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [1])
+    logg.info("OUT %s", run.output)
+    logg.info("ERR %s", run.errors)
+    ####### self.assertIn(" zipped ", run.output)
+    self.rm_testdir()
+
+  url_CVE_2018_39 = "https://github.com/fantasy7082/image_test/blob/master"
+  zip_CVE_2018_39 = "003-unknow-def-zip"
+  def test_65470(self):
+    """ info unzip -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_39
+    file_url = self.url_CVE_2018_39
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzip")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [3])
+    self.assertIn("missing 5123 bytes in zipfile", run.errors)
+    self.assertIn("expected central file header signature not found", run.errors)
+    self.assertLess(len(run.output), 400)
+    self.assertLess(len(errors(run.errors)), 800)
+    #
+    run = shell("cd {tmpdir} && {exe} -o {filename}".format(**locals()),
+        returncodes = [3])
+    self.assertLess(len(run.output), 400)
+    self.assertLess(len(errors(run.errors)), 800)
+    self.assertIn("missing 5123 bytes in zipfile", run.errors)
+    self.assertIn("expected central file header signature not found", run.errors)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65471(self):
+    """ unzzip-big -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_39
+    file_url = self.url_CVE_2018_39
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzzip-big")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 1)
+    #
+    run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 30)
+    self.assertLess(len(errors(run.errors)), 1)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65472(self):
+    """ unzzip-mem -l $(CVE).zip """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_39
+    file_url = self.url_CVE_2018_39
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzzip-mem")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 1)
+    #
+    run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 200)
+    self.assertLess(len(errors(run.errors)), 10)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    #
+    run = shell("cd {tmpdir} && ../{exe} -p {filename} ".format(**locals()),
+        returncodes = [0])
+    # self.rm_testdir()
+  def test_65473(self):
+    """ unzzip-mix -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_39
+    file_url = self.url_CVE_2018_39
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzzip-mix")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0,2])
+    self.assertLess(len(run.output), 1)
+    self.assertTrue(greps(run.errors, "Invalid or"))
+    #
+    run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
+        returncodes = [0,2])
+    self.assertLess(len(run.output), 30)
+    self.assertTrue(greps(run.errors, "Invalid or"))
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65474(self):
+    """ unzzip-zap -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_39
+    file_url = self.url_CVE_2018_39
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzzip")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0, 3])
+    self.assertLess(len(run.output), 1)
+    self.assertLess(len(errors(run.errors)), 200)
+    self.assertIn(": Success", run.errors)
+    #
+    run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
+        returncodes = [0,3])
+    self.assertLess(len(run.output), 30)
+    self.assertTrue(greps(run.errors, "Zipfile corrupted"))
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65479(self):
+    """ check $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_39
+    file_url = self.url_CVE_2018_39
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    shell("ls -l {tmpdir}/{filename}".format(**locals()))
+    size = os.path.getsize(os.path.join(tmpdir, filename))
+    self.assertEqual(size, 82347)
+
+  url_CVE_2018_40 = "https://github.com/fantasy7082/image_test/blob/master"
+  zip_CVE_2018_40 = "002-mem-leaks-zip"
+  def test_65480(self):
+    """ info unzip -l $(CVE).zip  """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_40
+    file_url = self.url_CVE_2018_40
+    download_raw(file_url, filename, tmpdir)
+    exe = self.bins("unzip")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0, 80])
+    self.assertIn("missing 21 bytes in zipfile", run.errors)
+    self.assertLess(len(run.output), 500)
+    self.assertLess(len(errors(run.errors)), 800)
+    #
+    run = shell("cd {tmpdir} && {exe} -o {filename}".format(**locals()),
+        returncodes = [3])
+    self.assertLess(len(run.output), 500)
+    self.assertLess(len(errors(run.errors)), 800)
+    self.assertIn("missing 21 bytes in zipfile", run.errors)
+    self.assertIn('expected central file header signature not found', run.errors)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    self.rm_testdir()
+  def test_65482(self):
+    """ unzzip-mem -l $(CVE).zip """
+    tmpdir = self.testdir()
+    filename = self.zip_CVE_2018_40
+    file_url = self.url_CVE_2018_40
+    download_raw(file_url, filename, tmpdir)
+    if not os.path.isfile(os.path.join(tmpdir, filename)): self.skipTest("missing " + filename)
+    exe = self.bins("unzzip-mem")
+    run = shell("{exe} -l {tmpdir}/{filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 1500)
+    self.assertLess(len(errors(run.errors)), 1)
+    #
+    run = shell("cd {tmpdir} && ../{exe} {filename} ".format(**locals()),
+        returncodes = [0])
+    self.assertLess(len(run.output), 1500)
+    self.assertLess(len(errors(run.errors)), 10)
+    # self.assertEqual(os.path.getsize(tmpdir+"/test"), 3)
+    self.assertFalse(os.path.exists(tmpdir+"/test"))
+    #
+    run = shell("cd {tmpdir} && ../{exe} -p {filename} ".format(**locals()),
+        returncodes = [0])
+    self.rm_testdir()
 
   def test_91000_zzshowme_check_sfx(self):
     """ create an *.exe that can extract its own zip content """
@@ -3034,7 +3456,9 @@ class ZZipTest(unittest.TestCase):
 if __name__ == "__main__":
   import optparse
   _o = optparse.OptionParser("%prog [options] test_xxx")
-  _o.add_option("-b", "--topsrcdir", metavar="DIR", default=topsrcdir,
+  _o.add_option("-b", "--bindir", metavar="DIR", default=bindir,
+    help="path to the bindir to use [%default]")
+  _o.add_option("-s", "--topsrcdir", metavar="DIR", default=topsrcdir,
     help="path to the top srcdir / unpack directory [%default]")
   _o.add_option("-t", "--testdatadir", metavar="DIR", default=testdatadir,
     help="path where temporary testdata is created [%default]")

@@ -64,6 +64,7 @@ AC_SUBST(ZLIB_LDIR)
 # -----------------------------------------------------------------------
 AX_SPEC_DEFAULTS
 AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
+AX_CHECK_ENABLE_DEBUG()
 dnl test ".$CFLAGS" = "." && CFLAGS=""
 AC_PROG_CC
 dnl test ".$CFLAGS" = "." && test "$GCC" = "yes" && CFLAGS="-O3"
@@ -100,7 +101,7 @@ AC_CHECK_HEADERS(stdint.h unistd.h windows.h winnt.h winbase.h sys/int_types.h)
 AC_CHECK_HEADERS(sys/types.h sys/mman.h sys/stat.h sys/param.h) dnl posix'ish
 AC_CHECK_HEADERS(io.h direct.h zlib.h byteswap.h)
 AC_CHECK_HEADERS(fnmatch.h)
-AC_CHECK_FUNCS( strcasecmp strndup )
+AC_CHECK_FUNCS( strcasecmp strnlen strndup )
 
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
@@ -108,9 +109,12 @@ dnl AC_TYPE_SSIZE_T
 AC_CHECK_TYPE(ssize_t,int)
 AC_CHECK_TYPE(off64_t,_zzip_off_t)
 AC_CHECK_TYPE(__int64,long long)
-AC_COMPILE_CHECK_SIZEOF(short)
-AC_COMPILE_CHECK_SIZEOF(int)
-AC_COMPILE_CHECK_SIZEOF(long)
+if test "xno" = "x$ac_cv_header_stdint_h" ; then
+  AC_COMPILE_CHECK_SIZEOF([short])
+  AC_COMPILE_CHECK_SIZEOF([int])
+  AC_COMPILE_CHECK_SIZEOF([long])
+  AC_COMPILE_CHECK_SIZEOF([int *])
+fi
 AC_C_BIGENDIAN
 AX_CHECK_ALIGNED_ACCESS_REQUIRED
 dnl -------------------------------------------------------------
@@ -279,6 +283,25 @@ else
 fi
 AC_SUBST([SDL])
 AC_SUBST([SDL_GENERATE])
+
+# ----------------------------------------------------------------
+AC_MSG_CHECKING(whether using address sanitizer)
+AC_ARG_WITH(asan, AC_HELP_STRING(
+    [--with-asan],[compile with adress sanitizer])
+    , [case "${withval}" in
+		yes|no) with_asan="$withval" ;;
+		*) AC_MSG_RESULT(oops)
+                   AC_MSG_ERROR(bad value ${withval} for --with-asan) ;;
+       esac], [with_asan="no"])
+ASAN_LIBS=""
+ASAN_CFLAGS=""
+if test ".$with_asan" = ".yes" ; then
+    ASAN_LIBS="-lasan"
+    ASAN_CFLAGS="-fsanitize=address"
+fi
+AC_MSG_RESULT([$with_asan, $ASAN_CFLAGS])
+AC_SUBST([ASAN_LIBS])
+AC_SUBST([ASAN_CFLAGS])
 # ---------------------------------------------------------------
 AC_MSG_CHECKING(running extra tests on make check)
 if test "MKZIP" != ":" ; then

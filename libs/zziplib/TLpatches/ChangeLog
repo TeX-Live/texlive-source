@@ -1,3 +1,11 @@
+2018-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import zziplib-0.13.69.
+	* patch-01-binary, patch-02-bugfix, patch-03-w64-ptr,
+	patch-04-strnlen: Removed.
+	* patch-05-no-const: Added because a crash occurs on
+	Windows for -D_USE_MMAP=1.
+
 2018-03-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* patch-04-strnlen: Add for platforms without strnlen.

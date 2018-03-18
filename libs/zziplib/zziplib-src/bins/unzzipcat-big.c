@@ -136,7 +136,7 @@ static int unzzip_cat (int argc, char ** argv, int extract)
 	    char* name = zzip_entry_strdup_name (entry);
 	    DBG3(".. check '%s' to zip '%s'", argv[argn], name);
 	    if (! _zzip_fnmatch (argv[argn], name, 
-		FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD))
+		_zzip_FNM_NOESCAPE|_zzip_FNM_PATHNAME|_zzip_FNM_PERIOD))
 	    {
 	        FILE* out = stdout;
 	        if (extract) out = create_fopen(name, "wb", 1);

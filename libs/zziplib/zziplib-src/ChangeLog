@@ -1,3 +1,19 @@
+2018-03-15  guidod  <guidod@gmx.de>
+    * fix a number of CVEs reported with special *.zip PoC files
+    * man-pages are generated with new dbk2man.py - docbook xmlto is optional now
+    * completing some doc strings while checking the new man-pages to look good
+    * allow the zziptests.py testsuite to run with an installed /bin path
+    * try to fix some issues on testing with non-installed binaries on non-linux platfors
+    * update autotools to allow compiling on some newer Mac / Win machines
+    * a zip-program is still required for testing, but some errors are gone when not there
+    * complete the approximation of fnmatch for the test binaries (on platforms without)
+    * allow windows __mmap.h to be simpler, helping with some problems on MingW
+    * integrate 'fopen("wb")' from TexLive to be more portable across
+    * more portability as well for helpers like strnlen being used in the sources
+    * update doc refs to point to github instead of sf.net
+    * update the sf.net pages to have a prominent hint on newer github.com location
+    * release v0.13.69
+
 2018-02-02  guidod  <guidod@gmx.de>
     * fix a number of CVEs reported with special *.zip files
     * the testsuite has been expanded to cover all the CVEs
