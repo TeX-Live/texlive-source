@@ -78,7 +78,7 @@ static inline int doGetChar(JPXStreamPrivate* priv) {
 JPXStream::JPXStream(Stream *strA) : FilterStream(strA) {
   priv = new JPXStreamPrivate;
   priv->inited = gFalse;
-  priv->image = NULL;
+  priv->image = nullptr;
   priv->npixels = 0;
   priv->ncomps = 0;
   priv->indexed = gFalse;
@@ -96,9 +96,9 @@ void JPXStream::reset() {
 }
 
 void JPXStream::close() {
-  if (priv->image != NULL) {
+  if (priv->image != nullptr) {
     opj_image_destroy(priv->image);
-    priv->image = NULL;
+    priv->image = nullptr;
     priv->npixels = 0;
   }
 }
@@ -131,7 +131,7 @@ int JPXStream::lookChar() {
 }
 
 GooString *JPXStream::getPSFilter(int psLevel, const char *indent) {
-  return NULL;
+  return nullptr;
 }
 
 GBool JPXStream::isBinary(GBool last) {
@@ -250,7 +250,7 @@ void JPXStream::init()
     priv->ncomps = priv->image->numcomps;
     if (alpha == 1 && priv->smaskInData == 0) priv->ncomps--;
     for (int component = 0; component < priv->ncomps; component++) {
-      if (priv->image->comps[component].data == NULL) {
+      if (priv->image->comps[component].data == nullptr) {
         close();
         break;
       }
@@ -289,7 +289,7 @@ void JPXStreamPrivate::init2(OPJ_CODEC_FORMAT format, unsigned char *buf, int le
   stream = opj_stream_default_create(OPJ_TRUE);
 
 #if OPENJPEG_VERSION >= OPENJPEG_VERSION_ENCODE(2, 1, 0)
-  opj_stream_set_user_data (stream, &jpxData, NULL);
+  opj_stream_set_user_data (stream, &jpxData, nullptr);
 #else
   opj_stream_set_user_data (stream, &jpxData);
 #endif
@@ -310,14 +310,14 @@ void JPXStreamPrivate::init2(OPJ_CODEC_FORMAT format, unsigned char *buf, int le
 
   /* Get the decoder handle of the format */
   decoder = opj_create_decompress(format);
-  if (decoder == NULL) {
+  if (decoder == nullptr) {
     error(errSyntaxWarning, -1, "Unable to create decoder");
     goto error;
   }
 
   /* Catch events using our callbacks */
-  opj_set_warning_handler(decoder, libopenjpeg_warning_callback, NULL);
-  opj_set_error_handler(decoder, libopenjpeg_error_callback, NULL);
+  opj_set_warning_handler(decoder, libopenjpeg_warning_callback, nullptr);
+  opj_set_error_handler(decoder, libopenjpeg_error_callback, nullptr);
 
   /* Setup the decoder decoding parameters */
   if (!opj_setup_decoder(decoder, &parameters)) {
@@ -326,7 +326,7 @@ void JPXStreamPrivate::init2(OPJ_CODEC_FORMAT format, unsigned char *buf, int le
   }
 
   /* Decode the stream and fill the image structure */
-  image = NULL;
+  image = nullptr;
   if (!opj_read_header(stream, decoder, &image)) {
     error(errSyntaxWarning, -1, "Unable to read header");
     goto error;
@@ -348,7 +348,7 @@ void JPXStreamPrivate::init2(OPJ_CODEC_FORMAT format, unsigned char *buf, int le
   opj_destroy_codec(decoder);
   opj_stream_destroy(stream);
 
-  if (image != NULL)
+  if (image != nullptr)
     return;
 
 error:

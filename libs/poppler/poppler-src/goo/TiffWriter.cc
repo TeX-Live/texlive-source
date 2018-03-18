@@ -42,10 +42,10 @@ TiffWriter::~TiffWriter()
 TiffWriter::TiffWriter(Format formatA)
 {
   priv = new TiffWriterPrivate;
-  priv->f = NULL;
+  priv->f = nullptr;
   priv->numRows = 0;
   priv->curRow = 0;
-  priv->compressionString = NULL;
+  priv->compressionString = nullptr;
   priv->format = formatA;
 }
 
@@ -87,12 +87,12 @@ bool TiffWriter::init(FILE *openedFile, int width, int height, int hDPI, int vDP
     { "dcs",	COMPRESSION_DCS,	"Kodak DCS encoding" },
     { "jbig",	COMPRESSION_JBIG,	"ISO JBIG" },
     { "jp2000",	COMPRESSION_JP2000,	"Leadtools JPEG2000" },
-    { NULL,	0,			NULL }
+    { nullptr,	0,			nullptr }
   };
 
   // Initialize
 
-  priv->f = NULL;
+  priv->f = nullptr;
   priv->curRow = 0;
 
   // Store the number of rows
@@ -103,20 +103,20 @@ bool TiffWriter::init(FILE *openedFile, int width, int height, int hDPI, int vDP
 
   compression = COMPRESSION_NONE;
 
-  if (priv->compressionString == NULL || strcmp(priv->compressionString, "") == 0) {
+  if (priv->compressionString == nullptr || strcmp(priv->compressionString, "") == 0) {
     compression = COMPRESSION_NONE;
   } else {
     int i;
-    for (i = 0; compressionList[i].compressionName != NULL; i++) {
+    for (i = 0; compressionList[i].compressionName != nullptr; i++) {
       if (strcmp(priv->compressionString, compressionList[i].compressionName) == 0) {
 	compression = compressionList[i].compressionCode;
 	break;
       }
     }
-    if (compressionList[i].compressionName == NULL) {
+    if (compressionList[i].compressionName == nullptr) {
       fprintf(stderr, "TiffWriter: Unknown compression type '%.10s', using 'none'.\n", priv->compressionString);
       fprintf(stderr, "Known compression types (the tiff library might not support every type)\n");
-      for (i = 0; compressionList[i].compressionName != NULL; i++) {
+      for (i = 0; compressionList[i].compressionName != nullptr; i++) {
 	fprintf(stderr, "%10s %s\n", compressionList[i].compressionName, compressionList[i].compressionDescription);
       }
     }
@@ -157,7 +157,7 @@ bool TiffWriter::init(FILE *openedFile, int width, int height, int hDPI, int vDP
 
   // Open the file
 
-  if (openedFile == NULL) {
+  if (openedFile == nullptr) {
     fprintf(stderr, "TiffWriter: No output file given.\n");
     return false;
   }

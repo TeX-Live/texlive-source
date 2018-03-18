@@ -19,7 +19,7 @@
 // Copyright (C) 2009 Jakub Wilk <jwilk@jwilk.net>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
-// Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2013, 2017, 2018 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Adrian Perez de Castro <aperez@igalia.com>
 // Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
 //
@@ -86,6 +86,14 @@ struct Ref {
   int gen;			// generation number
 };
 
+struct RefCompare {
+  bool operator() (const Ref& lhs, const Ref& rhs) const {
+    if (lhs.num != rhs.num)
+      return lhs.num < rhs.num;
+    return lhs.gen < rhs.gen;
+  }
+};
+
 //------------------------------------------------------------------------
 // object types
 //------------------------------------------------------------------------
@@ -137,7 +145,7 @@ enum ObjType {
 class Object {
 public:
   // clear the anonymous union as best we can -- clear at least a pointer
-  void zeroUnion() { this->cString = NULL; }
+  void zeroUnion() { this->cString = nullptr; }
 
   // Default constructor.
   Object():
@@ -232,7 +240,7 @@ public:
   // After takeString() the only method that should be called for the object is free()
   // because the object it's not expected to have a NULL string.
   GooString *takeString() {
-    OBJECT_TYPE_CHECK(objString); GooString *s = string; string = NULL; return s; }
+    OBJECT_TYPE_CHECK(objString); GooString *s = string; string = nullptr; return s; }
   char *getName() const { OBJECT_TYPE_CHECK(objName); return cString; }
   Array *getArray() const { OBJECT_TYPE_CHECK(objArray); return array; }
   Dict *getDict() const { OBJECT_TYPE_CHECK(objDict); return dict; }

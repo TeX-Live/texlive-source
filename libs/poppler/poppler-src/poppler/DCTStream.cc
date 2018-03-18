@@ -64,7 +64,7 @@ static void str_term_source(j_decompress_ptr cinfo)
 DCTStream::DCTStream(Stream *strA, int colorXformA, Dict *dict, int recursion) :
   FilterStream(strA) {
   colorXform = colorXformA;
-  if (dict != NULL) {
+  if (dict != nullptr) {
     Object obj = dict->lookup("Width", recursion);
     err.width = (obj.isInt() && obj.getInt() <= JPEG_MAX_DIMENSION) ? obj.getInt() : 0;
     obj = dict->lookup("Height", recursion);
@@ -100,18 +100,18 @@ void DCTStream::init()
   src.pub.resync_to_restart = jpeg_resync_to_restart;
   src.pub.term_source = str_term_source;
   src.pub.bytes_in_buffer = 0;
-  src.pub.next_input_byte = NULL;
+  src.pub.next_input_byte = nullptr;
   src.str = str;
   src.index = 0;
-  current = NULL;
-  limit = NULL;
+  current = nullptr;
+  limit = nullptr;
   
   cinfo.err = &err.pub;
   if (!setjmp(err.setjmp_buffer)) {
     jpeg_create_decompress(&cinfo);
     cinfo.src = (jpeg_source_mgr *)&src;
   }
-  row_buffer = NULL;
+  row_buffer = nullptr;
 }
 
 void DCTStream::reset() {
@@ -241,7 +241,7 @@ int DCTStream::getChars(int nChars, Guchar *buffer) {
 }
 
 int DCTStream::lookChar() {
-  if (unlikely(current == NULL)) {
+  if (unlikely(current == nullptr)) {
     return EOF;
   }
   return *current;
@@ -251,10 +251,10 @@ GooString *DCTStream::getPSFilter(int psLevel, const char *indent) {
   GooString *s;
 
   if (psLevel < 2) {
-    return NULL;
+    return nullptr;
   }
   if (!(s = str->getPSFilter(psLevel, indent))) {
-    return NULL;
+    return nullptr;
   }
   s->append(indent)->append("<< >> /DCTDecode filter\n");
   return s;

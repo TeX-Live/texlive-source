@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2006-2010, 2012-2014, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2010, 2012-2014, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2012, 2013 Adrian Johnson <ajohnson@redneon.com>
@@ -86,7 +86,6 @@ Lexer::Lexer(XRef *xrefA, Object *obj) {
   xref = xrefA;
 
   if (obj->isStream()) {
-    Object obj2;
     streams = new Array(xref);
     freeArray = gTrue;
     streams->add(obj->copy());
@@ -97,12 +96,14 @@ Lexer::Lexer(XRef *xrefA, Object *obj) {
   strPtr = 0;
   if (streams->getLength() > 0) {
     curStr = streams->get(strPtr);
-    curStr.streamReset();
+    if (curStr.isStream()) {
+      curStr.streamReset();
+    }
   }
 }
 
 Lexer::~Lexer() {
-  if (!curStr.isNone()) {
+  if (curStr.isStream()) {
     curStr.streamClose();
   }
   if (freeArray) {
@@ -120,7 +121,7 @@ int Lexer::getChar(GBool comesFromLook) {
   }
 
   c = EOF;
-  while (!curStr.isNone() && (c = curStr.streamGetChar()) == EOF) {
+  while (curStr.isStream() && (c = curStr.streamGetChar()) == EOF) {
     if (comesFromLook == gTrue) {
       return EOF;
     } else {
@@ -128,8 +129,10 @@ int Lexer::getChar(GBool comesFromLook) {
       curStr = Object();
       ++strPtr;
       if (strPtr < streams->getLength()) {
-        curStr = streams->get(strPtr);
-        curStr.streamReset();
+	curStr = streams->get(strPtr);
+	if (curStr.isStream()) {
+	  curStr.streamReset();
+	}
       }
     }
   }
@@ -279,7 +282,7 @@ Object Lexer::getObj(int objNum) {
     n = 0;
     numParen = 1;
     done = gFalse;
-    s = NULL;
+    s = nullptr;
     do {
       c2 = EOF;
       switch (c = getChar()) {
@@ -376,7 +379,7 @@ Object Lexer::getObj(int objNum) {
 	  n = 0;
 	  
 	  // we are growing see if the document is not malformed and we are growing too much
-	  if (objNum > 0 && xref != NULL)
+	  if (objNum > 0 && xref != nullptr)
 	  {
 	    int newObjNum = xref->getNumEntry(curStr.streamGetPos());
 	    if (newObjNum != objNum)
@@ -407,7 +410,7 @@ Object Lexer::getObj(int objNum) {
   case '/':
     p = tokBuf;
     n = 0;
-    s = NULL;
+    s = nullptr;
     while ((c = lookChar()) != EOF && !specialChars[c]) {
       getChar();
       if (c == '#') {
@@ -483,7 +486,7 @@ Object Lexer::getObj(int objNum) {
       p = tokBuf;
       m = n = 0;
       c2 = 0;
-      s = NULL;
+      s = nullptr;
       while (1) {
 	c = getChar();
 	if (c == '>') {

@@ -78,7 +78,7 @@ static int binarySearch(const char *key, DictEntry *entries, int length)
 
 Dict::Dict(XRef *xrefA) {
   xref = xrefA;
-  entries = NULL;
+  entries = nullptr;
   size = length = 0;
   ref = 1;
   sorted = gFalse;
@@ -185,11 +185,11 @@ inline DictEntry *Dict::find(const char *key) const {
         return &entries[i];
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 GBool Dict::hasKey(const char *key) const {
-  return find(key) != NULL;
+  return find(key) != nullptr;
 }
 
 void Dict::remove(const char *key) {
@@ -270,7 +270,7 @@ GBool Dict::lookupInt(const char *key, const char *alt_key, int *value) const
 {
   GBool success = gFalse;
   Object obj1 = lookup ((char *) key);
-  if (obj1.isNull () && alt_key != NULL) {
+  if (obj1.isNull () && alt_key != nullptr) {
     obj1.free ();
     obj1 = lookup ((char *) alt_key);
   }

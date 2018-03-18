@@ -6,7 +6,7 @@
 //
 // Copyright 2013, 2014 Igalia S.L.
 // Copyright 2014 Luigi Scarso <luigi.scarso@gmail.com>
-// Copyright 2014 Albert Astals Cid <aacid@kde.org>
+// Copyright 2014, 2018 Albert Astals Cid <aacid@kde.org>
 //
 //========================================================================
 
@@ -169,8 +169,8 @@ public:
   StructTreeRoot *getStructTreeRoot() { return treeRoot; }
 
   // Optional element identifier.
-  const GooString *getID() const { return isContent() ? NULL : s->id; }
-  GooString *getID() { return isContent() ? NULL : s->id; }
+  const GooString *getID() const { return isContent() ? nullptr : s->id; }
+  GooString *getID() { return isContent() ? nullptr : s->id; }
 
   // Optional ISO language name, e.g. en_US
   GooString *getLanguage() {
@@ -187,16 +187,16 @@ public:
   void setRevision(Guint revision) { if (isContent()) s->revision = revision; }
 
   // Optional element title, in human-readable form.
-  const GooString *getTitle() const { return isContent() ? NULL : s->title; }
-  GooString *getTitle() { return isContent() ? NULL : s->title; }
+  const GooString *getTitle() const { return isContent() ? nullptr : s->title; }
+  GooString *getTitle() { return isContent() ? nullptr : s->title; }
 
   // Optional element expanded abbreviation text.
-  const GooString *getExpandedAbbr() const { return isContent() ? NULL : s->expandedAbbr; }
-  GooString *getExpandedAbbr() { return isContent() ? NULL : s->expandedAbbr; }
+  const GooString *getExpandedAbbr() const { return isContent() ? nullptr : s->expandedAbbr; }
+  GooString *getExpandedAbbr() { return isContent() ? nullptr : s->expandedAbbr; }
 
   unsigned getNumChildren() const { return isContent() ? 0 : s->elements.size(); }
-  const StructElement *getChild(int i) const { return isContent() ? NULL : s->elements.at(i); }
-  StructElement *getChild(int i) { return isContent() ? NULL : s->elements.at(i); }
+  const StructElement *getChild(int i) const { return isContent() ? nullptr : s->elements.at(i); }
+  StructElement *getChild(int i) { return isContent() ? nullptr : s->elements.at(i); }
 
   void appendChild(StructElement *element) {
     if (!isContent() && element && element->isOk()) {
@@ -205,8 +205,8 @@ public:
   }
 
   unsigned getNumAttributes() const { return isContent() ? 0 : s->attributes.size(); }
-  const Attribute *getAttribute(int i) const { return isContent() ? NULL : s->attributes.at(i); }
-  Attribute *getAttribute(int i) { return isContent() ? NULL : s->attributes.at(i); }
+  const Attribute *getAttribute(int i) const { return isContent() ? nullptr : s->attributes.at(i); }
+  Attribute *getAttribute(int i) { return isContent() ? nullptr : s->attributes.at(i); }
 
   void appendAttribute(Attribute *attribute) {
     if (!isContent() && attribute) {
@@ -217,11 +217,11 @@ public:
   const Attribute* findAttribute(Attribute::Type attributeType, GBool inherit = gFalse,
                                  Attribute::Owner owner = Attribute::UnknownOwner) const;
 
-  const GooString *getAltText() const { return isContent() ? NULL : s->altText; }
-  GooString *getAltText() { return isContent() ? NULL : s->altText; }
+  const GooString *getAltText() const { return isContent() ? nullptr : s->altText; }
+  GooString *getAltText() { return isContent() ? nullptr : s->altText; }
 
-  const GooString *getActualText() const { return isContent() ? NULL : s->actualText; }
-  GooString *getActualText() { return isContent() ? NULL : s->actualText; }
+  const GooString *getActualText() const { return isContent() ? nullptr : s->actualText; }
+  GooString *getActualText() { return isContent() ? nullptr : s->actualText; }
 
   // Content text referenced by the element:
   //
@@ -237,7 +237,7 @@ public:
   // A new string is returned, and the ownership passed to the caller.
   //
   GooString *getText(GBool recursive = gTrue) const {
-    return appendSubTreeText(NULL, recursive);
+    return appendSubTreeText(nullptr, recursive);
   }
 
   const TextSpanArray getTextSpans() const {
@@ -270,6 +270,9 @@ private:
 
     StructData();
     ~StructData();
+
+    StructData(const StructData &) = delete;
+    StructData& operator=(const StructData &) = delete;
   };
 
   // Data in content elements (MCID, MCR)

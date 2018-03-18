@@ -4,7 +4,7 @@
 //
 // Copyright 2007 Brad Hards <bradh@kde.org>
 // Copyright 2008 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright 2013 Albert Astals Cid <aacid@kde.org>
+// Copyright 2013, 2018 Albert Astals Cid <aacid@kde.org>
 //
 // Released under the GPL (version 2, or later, at your option)
 //
@@ -34,6 +34,9 @@ public:
 
   OCGs(Object *ocgObject, XRef *xref);
   ~OCGs();
+
+  OCGs(const OCGs &) = delete;
+  OCGs& operator=(const OCGs &) = delete;
 
   // Is OCGS valid?
   GBool isOk() { return ok; }
@@ -90,6 +93,9 @@ public:
 
   ~OptionalContentGroup();
 
+  OptionalContentGroup(const OptionalContentGroup &) = delete;
+  OptionalContentGroup& operator=(const OptionalContentGroup &) = delete;
+
   GooString* getName() const;
 
   Ref getRef() const;
@@ -117,6 +123,9 @@ public:
   static OCDisplayNode *parse(Object *obj, OCGs *oc, XRef *xref, int recursion = 0);
   OCDisplayNode();
   ~OCDisplayNode();
+
+  OCDisplayNode(const OCDisplayNode &) = delete;
+  OCDisplayNode& operator=(const OCDisplayNode &) = delete;
 
   GooString *getName() { return name; }
   OptionalContentGroup *getOCG() { return ocg; }

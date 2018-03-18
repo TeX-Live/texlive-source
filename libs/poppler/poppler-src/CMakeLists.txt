@@ -30,7 +30,7 @@ if (ECM_FOUND)
 endif()
 
 set(POPPLER_MAJOR_VERSION "0")
-set(POPPLER_MINOR_VERSION "62")
+set(POPPLER_MINOR_VERSION "63")
 set(POPPLER_MICRO_VERSION "0")
 set(POPPLER_VERSION "${POPPLER_MAJOR_VERSION}.${POPPLER_MINOR_VERSION}.${POPPLER_MICRO_VERSION}")
 
@@ -378,6 +378,7 @@ set(poppler_SRCS
   poppler/StructTreeRoot.cc
   poppler/StructElement.cc
   poppler/UnicodeMap.cc
+  poppler/UnicodeMapFuncs.cc
   poppler/UnicodeTypeTable.cc
   poppler/UTF.cc
   poppler/XRef.cc
@@ -482,7 +483,7 @@ add_library(poppler STATIC ${poppler_SRCS})
 else()
 add_library(poppler ${poppler_SRCS})
 endif()
-set_target_properties(poppler PROPERTIES VERSION 73.0.0 SOVERSION 73)
+set_target_properties(poppler PROPERTIES VERSION 74.0.0 SOVERSION 74)
 if(MINGW)
     get_target_property(POPPLER_SOVERSION poppler SOVERSION)
     set_target_properties(poppler PROPERTIES SUFFIX "-${POPPLER_SOVERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}")
@@ -755,7 +756,7 @@ add_custom_target(dist
     COMMAND
         COMMAND git log --stat | fmt --split-only > ${CMAKE_BINARY_DIR}/ChangeLog
         COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar
-        COMMAND tar -C ${CMAKE_BINARY_DIR} -rf ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar ChangeLog --transform='s,,${ARCHIVE_NAME}/,'
-        COMMAND tar -C ${CMAKE_BINARY_DIR} -rf ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar glib/reference/html --transform='s,,${ARCHIVE_NAME}/,'
+        COMMAND tar -C ${CMAKE_BINARY_DIR} -rf ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar ChangeLog --transform='s,,${ARCHIVE_NAME}/,' --owner root:0 --group root:0
+        COMMAND tar -C ${CMAKE_BINARY_DIR} -rf ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar glib/reference/html --transform='s,,${ARCHIVE_NAME}/,' --owner root:0 --group root:0
         COMMAND xz -9 ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

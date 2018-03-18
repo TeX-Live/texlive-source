@@ -50,8 +50,8 @@ static const char *errorCategoryNames[] = {
 };
 
 static void (*errorCbk)(void *data, ErrorCategory category,
-			Goffset pos, char *msg) = NULL;
-static void *errorCbkData = NULL;
+			Goffset pos, char *msg) = nullptr;
+static void *errorCbkData = nullptr;
 
 void setErrorCallback(void (*cbk)(void *data, ErrorCategory category,
 				  Goffset pos, char *msg),

@@ -141,11 +141,11 @@ Hints::Hints(BaseStream *str, Linearization *linearization, XRef *xref, Security
   memset(numSharedObject, 0, nPages * sizeof(Guint));
   memset(pageObjectNum, 0, nPages * sizeof(int));
 
-  groupLength = NULL;
-  groupOffset = NULL;
-  groupHasSignature = NULL;
-  groupNumObjects = NULL;
-  groupXRefOffset = NULL;
+  groupLength = nullptr;
+  groupOffset = nullptr;
+  groupHasSignature = nullptr;
+  groupNumObjects = nullptr;
+  groupXRefOffset = nullptr;
 
   ok = gTrue;
   readTables(str, linearization, xref, secHdlr);
@@ -209,7 +209,7 @@ void Hints::readTables(BaseStream *str, Linearization *linearization, XRef *xref
      (num = obj.getInt(), obj = parser->getObj(), obj.isInt()) &&
      (gen = obj.getInt(), obj = parser->getObj(), obj.isCmd("obj")) &&
      (obj = parser->getObj(gFalse,
-         secHdlr ? secHdlr->getFileKey() : (Guchar *)NULL,
+         secHdlr ? secHdlr->getFileKey() : (Guchar *)nullptr,
          secHdlr ? secHdlr->getEncAlgorithm() : cryptRC4,
          secHdlr ? secHdlr->getFileKeyLength() : 0,
          num, gen, 0, gTrue), obj.isStream())) {
@@ -217,7 +217,7 @@ void Hints::readTables(BaseStream *str, Linearization *linearization, XRef *xref
     Dict *hintsDict = obj.streamGetDict();
 
     int sharedStreamOffset = 0;
-    if (hintsDict->lookupInt("S", NULL, &sharedStreamOffset) &&
+    if (hintsDict->lookupInt("S", nullptr, &sharedStreamOffset) &&
         sharedStreamOffset > 0) {
 
         hintsStream->reset();
@@ -307,7 +307,7 @@ GBool Hints::readPageOffsetTable(Stream *str)
   sbr.resetInputBits(); // reset on byte boundary. Not in specs!
   numSharedObject[0] = sbr.readBits(nBitsNumShared);
   numSharedObject[0] = 0; // Do not trust the read value to be 0.
-  sharedObjectId[0] = NULL;
+  sharedObjectId[0] = nullptr;
   for (int i = 1; i < nPages && !sbr.atEOF(); i++) {
     numSharedObject[i] = sbr.readBits(nBitsNumShared);
     if (numSharedObject[i] >= INT_MAX / (int)sizeof(Guint)) {
@@ -457,7 +457,7 @@ Goffset Hints::getPageOffset(int page)
 
 std::vector<ByteRange>* Hints::getPageRanges(int page)
 {
-  if ((page < 1) || (page > nPages)) return NULL;
+  if ((page < 1) || (page > nPages)) return nullptr;
 
   int idx;
   if (page-1 > pageFirst)

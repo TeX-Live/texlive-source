@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2005, 2008, 2015, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2008, 2015, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Takashi Iwai <tiwai@suse.de>
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2007 Julien Rebetez <julienr@svn.gnome.org>
@@ -21,7 +21,7 @@
 // Copyright (C) 2007 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2011 Axel Strübing <axel.struebing@freenet.de>
 // Copyright (C) 2011, 2012, 2014 Adrian Johnson <ajohnson@redneon.com>
-// Copyright (C) 2015 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2015, 2018 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
@@ -48,6 +48,7 @@ class FoFiTrueType;
 class PSOutputDev;
 struct GfxFontCIDWidths;
 struct Base14FontMapEntry;
+class FNVHash;
 
 //------------------------------------------------------------------------
 // GfxFontType
@@ -114,6 +115,9 @@ public:
   GfxFontLoc();
   ~GfxFontLoc();
 
+  GfxFontLoc(const GfxFontLoc &) = delete;
+  GfxFontLoc& operator=(const GfxFontLoc &) = delete;
+
   GfxFontLocType locType;
   GfxFontType fontType;
   Ref embFontID;		// embedded stream obj ID
@@ -175,6 +179,9 @@ public:
 
   GfxFont(const char *tagA, Ref idA, GooString *nameA,
 	  GfxFontType typeA, Ref embFontIDA);
+
+  GfxFont(const GfxFont &) = delete;
+  GfxFont& operator=(const GfxFont &other) = delete;
 
   GBool isOk() { return ok; }
 
@@ -440,6 +447,9 @@ public:
   // Destructor.
   ~GfxFontDict();
 
+  GfxFontDict(const GfxFontDict &) = delete;
+  GfxFontDict& operator=(const GfxFontDict &) = delete;
+
   // Get the specified font.
   GfxFont *lookup(char *tag);
 
@@ -448,6 +458,9 @@ public:
   GfxFont *getFont(int i) { return fonts[i]; }
 
 private:
+
+  int hashFontObject(Object *obj);
+  void hashFontObject1(Object *obj, FNVHash *h);
 
   GfxFont **fonts;		// list of fonts
   int numFonts;			// number of fonts

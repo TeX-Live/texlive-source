@@ -257,7 +257,7 @@ Page::Page(PDFDoc *docA, int numA, Object *pageDict, Ref pageRefA, PageAttrs *at
   xref = doc->getXRef();
   num = numA;
   duration = -1;
-  annots = NULL;
+  annots = nullptr;
 
   pageObj = pageDict->copy();
   pageRef = pageRefA;
@@ -345,7 +345,7 @@ Object *Page::getResourceDictObject()
 Dict *Page::getResourceDictCopy(XRef *xrefA) { 
   pageLocker();
   Dict *dict = attrs->getResourceDict();
-  return dict ? dict->copy(xrefA) : NULL;
+  return dict ? dict->copy(xrefA) : nullptr;
 }
 
 void Page::replaceXRef(XRef *xrefA) {
@@ -517,7 +517,7 @@ Gfx *Page::createGfx(OutputDev *out, double hDPI, double vDPI,
     crop = (box == *cropBox) && out->needClipToCropBox();
   }
   gfx = new Gfx(doc, out, num, attrs->getResourceDict(),
-		hDPI, vDPI, &box, crop ? cropBox : (PDFRectangle *)NULL,
+		hDPI, vDPI, &box, crop ? cropBox : (PDFRectangle *)nullptr,
 		rotate, abortCheckCbk, abortCheckCbkData, xrefA);
 
   return gfx;
@@ -641,7 +641,7 @@ GBool Page::loadThumb(unsigned char **data_out,
   if (obj1.isNull ()) {
     obj1 = dict->lookup ("CS");
   }
-  colorSpace = GfxColorSpace::parse(NULL, &obj1, NULL, NULL);
+  colorSpace = GfxColorSpace::parse(nullptr, &obj1, nullptr, nullptr);
   if (!colorSpace) {
     fprintf (stderr, "Error: Cannot parse color space\n");
     goto fail1;
@@ -794,7 +794,7 @@ LinkAction* Page::getAdditionalAction(PageAdditionalActionsType type) {
   Object additionalActionsObject = actions.fetch(doc->getXRef());
   if (additionalActionsObject.isDict()) {
     const char *key = (type == actionOpenPage ?  "O" :
-                       type == actionClosePage ? "C" : NULL);
+                       type == actionClosePage ? "C" : nullptr);
 
     Object actionObject = additionalActionsObject.dictLookup(key);
     if (actionObject.isDict())

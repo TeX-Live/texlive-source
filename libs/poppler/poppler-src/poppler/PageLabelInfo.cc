@@ -166,7 +166,7 @@ GBool PageLabelInfo::indexToLabel(int index, GooString *label)
   GooString number_string;
 
   base = 0;
-  interval = NULL;
+  interval = nullptr;
   for (i = 0; i < intervals.getLength(); i++) {
     interval = (Interval *) intervals.get(i);
     if (base <= index && index < base + interval->length)

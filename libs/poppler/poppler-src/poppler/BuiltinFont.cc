@@ -26,7 +26,7 @@ BuiltinFontWidths::BuiltinFontWidths(BuiltinFontWidth *widths, int sizeA) {
   size = sizeA;
   tab = (BuiltinFontWidth **)gmallocn(size, sizeof(BuiltinFontWidth *));
   for (i = 0; i < size; ++i) {
-    tab[i] = NULL;
+    tab[i] = nullptr;
   }
   for (i = 0; i < sizeA; ++i) {
     h = hash(widths[i].name);

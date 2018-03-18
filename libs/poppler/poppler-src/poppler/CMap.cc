@@ -77,12 +77,12 @@ CMap *CMap::parse(CMapCache *cache, GooString *collectionA, Object *obj) {
     }
     delete cMapNameA;
   } else if (obj->isStream()) {
-    if (!(cMap = CMap::parse(NULL, collectionA, obj->getStream()))) {
+    if (!(cMap = CMap::parse(nullptr, collectionA, obj->getStream()))) {
       error(errSyntaxError, -1, "Invalid CMap in Type 0 font");
     }
   } else {
     error(errSyntaxError, -1, "Invalid Encoding in Type 0 font");
-    return NULL;
+    return nullptr;
   }
   return cMap;
 }
@@ -105,7 +105,7 @@ CMap *CMap::parse(CMapCache *cache, GooString *collectionA,
     error(errSyntaxError, -1,
 	  "Couldn't find '{0:t}' CMap file for '{1:t}' collection",
 	  cMapNameA, collectionA);
-    return NULL;
+    return nullptr;
   }
 
   cMap = new CMap(collectionA->copy(), cMapNameA->copy());
@@ -117,7 +117,7 @@ CMap *CMap::parse(CMapCache *cache, GooString *collectionA,
 }
 
 CMap *CMap::parse(CMapCache *cache, GooString *collectionA, Stream *str) {
-  CMap *cMap = new CMap(collectionA->copy(), NULL);
+  CMap *cMap = new CMap(collectionA->copy(), nullptr);
   Object obj1 = str->getDict()->lookup("UseCMap");
   if (!obj1.isNull()) {
     cMap->useCMap(cache, &obj1);
@@ -131,7 +131,7 @@ CMap *CMap::parse(CMapCache *cache, GooString *collectionA, Stream *str) {
 
 CMap *CMap::parse(CMapCache *cache, GooString *collectionA,
 		  GooString *cMapNameA, Stream *stream) {
-  FILE *f = NULL;
+  FILE *f = nullptr;
   CMap *cmap;
   PSTokenizer *pst;
   char tok1[256], tok2[256], tok3[256];
@@ -154,7 +154,7 @@ CMap *CMap::parse(CMapCache *cache, GooString *collectionA,
 
       error(errSyntaxError, -1, "Couldn't find '{0:t}' CMap file for '{1:t}' collection",
 	    cMapNameA, collectionA);
-      return NULL;
+      return nullptr;
     }
     pst = new PSTokenizer(&getCharFromFile, f);
   }
@@ -323,7 +323,7 @@ CMap::CMap(GooString *collectionA, GooString *cMapNameA, int wModeA) {
   cMapName = cMapNameA;
   isIdent = gTrue;
   wMode = wModeA;
-  vector = NULL;
+  vector = nullptr;
   refCnt = 1;
 #ifdef MULTITHREADED
   gInitMutex(&mutex);
@@ -340,7 +340,7 @@ void CMap::useCMap(CMapCache *cache, char *useName) {
   // GlobalParams::getCMap() in order to acqure the lock need to use
   // GlobalParams::getCMap
   if (cache) {
-    subCMap = cache->getCMap(collection, useNameStr, NULL);
+    subCMap = cache->getCMap(collection, useNameStr, nullptr);
   } else {
     subCMap = globalParams->getCMap(collection, useNameStr);
   }
@@ -511,7 +511,7 @@ void CMap::setReverseMapVector(Guint startCode, CMapVectorEntry *vec,
  Guint *rmap, Guint rmapSize, Guint ncand) {
   int i;
 
-  if (vec == 0) return;
+  if (vec == nullptr) return;
   for (i = 0;i < 256;i++) {
     if (vec[i].isVector) {
       setReverseMapVector((startCode+i) << 8,
@@ -547,7 +547,7 @@ CMapCache::CMapCache() {
   int i;
 
   for (i = 0; i < cMapCacheSize; ++i) {
-    cache[i] = NULL;
+    cache[i] = nullptr;
   }
 }
 
@@ -591,5 +591,5 @@ CMap *CMapCache::getCMap(GooString *collection, GooString *cMapName, Stream *str
     cmap->incRefCnt();
     return cmap;
   }
-  return NULL;
+  return nullptr;
 }

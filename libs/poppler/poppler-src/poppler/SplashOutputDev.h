@@ -20,7 +20,7 @@
 // Copyright (C) 2011 Andreas Hartmetz <ahartmetz@gmail.com>
 // Copyright (C) 2011 Andrea Canciani <ranma42@gmail.com>
 // Copyright (C) 2011, 2017 Adrian Johnson <ajohnson@redneon.com>
-// Copyright (C) 2012, 2015 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2012, 2015, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2015, 2016 William Bader <williambader@hotmail.com>
 //
 // To see a description of the changes please see the Changelog file that
@@ -135,9 +135,9 @@ private:
 class SplashGouraudPattern: public SplashGouraudColor {
 public:
 
-  SplashGouraudPattern(GBool bDirectColorTranslation, GfxState *state, GfxGouraudTriangleShading *shading, SplashColorMode mode);
+  SplashGouraudPattern(GBool bDirectColorTranslation, GfxState *state, GfxGouraudTriangleShading *shading);
 
-  SplashPattern *copy() override { return new SplashGouraudPattern(bDirectColorTranslation, state, shading, mode); }
+  SplashPattern *copy() override { return new SplashGouraudPattern(bDirectColorTranslation, state, shading); }
 
   ~SplashGouraudPattern();
 
@@ -154,7 +154,7 @@ public:
    void getTriangle(int i, double *x0, double *y0, double *color0,
                             double *x1, double *y1, double *color1,
                             double *x2, double *y2, double *color2) override
-  { return shading->getTriangle(i, x0, y0, color0, x1, y1, color1, x2, y2, color2); }
+  { shading->getTriangle(i, x0, y0, color0, x1, y1, color1, x2, y2, color2); }
 
   void getParameterizedColor(double t, SplashColorMode mode, SplashColorPtr c) override;
 
@@ -162,7 +162,6 @@ private:
   GfxGouraudTriangleShading *shading;
   GfxState *state;
   GBool bDirectColorTranslation;
-  SplashColorMode mode;
   GfxColorSpaceMode gfxMode;
 };
 
@@ -466,7 +465,6 @@ private:
 
   SplashTransparencyGroup *	// transparency group stack
     transpGroupStack;
-  SplashBitmap *maskBitmap; // for image masks in pattern colorspace
   int nestCount;
 };
 

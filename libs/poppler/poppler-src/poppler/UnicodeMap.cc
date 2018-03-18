@@ -67,7 +67,7 @@ UnicodeMap *UnicodeMap::parse(GooString *encodingNameA) {
     error(errSyntaxError, -1,
 	  "Couldn't find unicodeMap file for the '{0:t}' encoding",
 	  encodingNameA);
-    return NULL;
+    return nullptr;
   }
 
   map = new UnicodeMap(encodingNameA->copy());
@@ -79,8 +79,8 @@ UnicodeMap *UnicodeMap::parse(GooString *encodingNameA) {
   line = 1;
   while (getLine(buf, sizeof(buf), f)) {
     if ((tok1 = strtok_r(buf, " \t\r\n", &tokptr)) &&
-	(tok2 = strtok_r(NULL, " \t\r\n", &tokptr))) {
-      if (!(tok3 = strtok_r(NULL, " \t\r\n", &tokptr))) {
+	(tok2 = strtok_r(nullptr, " \t\r\n", &tokptr))) {
+      if (!(tok3 = strtok_r(nullptr, " \t\r\n", &tokptr))) {
 	tok3 = tok2;
 	tok2 = tok1;
       }
@@ -134,9 +134,9 @@ UnicodeMap::UnicodeMap(GooString *encodingNameA) {
   encodingName = encodingNameA;
   unicodeOut = gFalse;
   kind = unicodeMapUser;
-  ranges = NULL;
+  ranges = nullptr;
   len = 0;
-  eMaps = NULL;
+  eMaps = nullptr;
   eMapsLen = 0;
   refCnt = 1;
 #ifdef MULTITHREADED
@@ -151,7 +151,7 @@ UnicodeMap::UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
   kind = unicodeMapResident;
   ranges = rangesA;
   len = lenA;
-  eMaps = NULL;
+  eMaps = nullptr;
   eMapsLen = 0;
   refCnt = 1;
 #ifdef MULTITHREADED
@@ -165,7 +165,7 @@ UnicodeMap::UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
   unicodeOut = unicodeOutA;
   kind = unicodeMapFunc;
   func = funcA;
-  eMaps = NULL;
+  eMaps = nullptr;
   eMapsLen = 0;
   refCnt = 1;
 #ifdef MULTITHREADED
@@ -268,7 +268,7 @@ UnicodeMapCache::UnicodeMapCache() {
   int i;
 
   for (i = 0; i < unicodeMapCacheSize; ++i) {
-    cache[i] = NULL;
+    cache[i] = nullptr;
   }
 }
 
@@ -312,5 +312,5 @@ UnicodeMap *UnicodeMapCache::getUnicodeMap(GooString *encodingName) {
     map->incRefCnt();
     return map;
   }
-  return NULL;
+  return nullptr;
 }

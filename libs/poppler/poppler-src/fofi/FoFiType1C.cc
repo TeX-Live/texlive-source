@@ -51,7 +51,7 @@ FoFiType1C *FoFiType1C::make(char *fileA, int lenA) {
   ff = new FoFiType1C(fileA, lenA, gFalse);
   if (!ff->parse()) {
     delete ff;
-    return NULL;
+    return nullptr;
   }
   return ff;
 }
@@ -62,12 +62,12 @@ FoFiType1C *FoFiType1C::load(char *fileName) {
   int lenA;
 
   if (!(fileA = FoFiBase::readFile(fileName, &lenA))) {
-    return NULL;
+    return nullptr;
   }
   ff = new FoFiType1C(fileA, lenA, gTrue);
   if (!ff->parse()) {
     delete ff;
-    return NULL;
+    return nullptr;
   }
   return ff;
 }
@@ -75,11 +75,11 @@ FoFiType1C *FoFiType1C::load(char *fileName) {
 FoFiType1C::FoFiType1C(char *fileA, int lenA, GBool freeFileDataA):
   FoFiBase(fileA, lenA, freeFileDataA)
 {
-  name = NULL;
-  encoding = NULL;
-  privateDicts = NULL;
-  fdSelect = NULL;
-  charset = NULL;
+  name = nullptr;
+  encoding = nullptr;
+  privateDicts = nullptr;
+  fdSelect = nullptr;
+  charset = nullptr;
   charsetLength = 0;
 }
 
@@ -112,7 +112,7 @@ FoFiType1C::~FoFiType1C() {
 }
 
 char *FoFiType1C::getName() {
-  return name ? name->getCString() : (char *)NULL;
+  return name ? name->getCString() : (char *)nullptr;
 }
 
 char **FoFiType1C::getEncoding() {
@@ -125,10 +125,10 @@ GooString *FoFiType1C::getGlyphName(int gid) {
 
   ok = gTrue;
   if (gid < 0 || gid >= charsetLength)
-    return NULL;
+    return nullptr;
   getString(charset[gid], buf, &ok);
   if (!ok) {
-    return NULL;
+    return nullptr;
   }
   return new GooString(buf);
 }
@@ -140,7 +140,7 @@ int *FoFiType1C::getCIDToGIDMap(int *nCIDs) {
   // a CID font's top dict has ROS as the first operator
   if (topDict.firstOp != 0x0c1e) {
     *nCIDs = 0;
-    return NULL;
+    return nullptr;
   }
 
   // in a CID font, the charset data is the GID-to-CID mapping, so all
@@ -2412,7 +2412,7 @@ void FoFiType1C::buildEncoding() {
   } else {
     encoding = (char **)gmallocn(256, sizeof(char *));
     for (i = 0; i < 256; ++i) {
-      encoding[i] = NULL;
+      encoding[i] = nullptr;
     }
     pos = topDict.encodingOffset;
     encFormat = getU8(pos++, &parsedOk);
@@ -2545,7 +2545,7 @@ GBool FoFiType1C::readCharset() {
     }
     if (!parsedOk) {
       gfree(charset);
-      charset = NULL;
+      charset = nullptr;
       charsetLength = 0;
       return gFalse;
     }

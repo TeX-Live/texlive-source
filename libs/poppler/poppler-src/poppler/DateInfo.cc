@@ -32,7 +32,7 @@
 /* See PDF Reference 1.3, Section 3.8.2 for PDF Date representation */
 GBool parseDateString(const char *dateString, int *year, int *month, int *day, int *hour, int *minute, int *second, char *tz, int *tzHour, int *tzMinute)
 {
-    if ( dateString == NULL ) return gFalse;
+    if ( dateString == nullptr ) return gFalse;
     if ( strlen(dateString) < 2 ) return gFalse;
 
     if ( dateString[0] == 'D' && dateString[1] == ':' )
@@ -82,7 +82,7 @@ GooString *timeToDateString(time_t *timet) {
   char s[5];
   struct tm *gt;
   size_t len;
-  time_t timep = timet ? *timet : time(NULL);
+  time_t timep = timet ? *timet : time(nullptr);
   struct tm t;
 
   gt = gmtime_r (&timep, &t);

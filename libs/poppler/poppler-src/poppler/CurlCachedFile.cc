@@ -20,9 +20,9 @@
 
 CurlCachedFileLoader::CurlCachedFileLoader()
 {
-  url = NULL;
-  cachedFile = NULL;
-  curl = NULL;
+  url = nullptr;
+  cachedFile = nullptr;
+  curl = nullptr;
 }
 
 CurlCachedFileLoader::~CurlCachedFileLoader() {

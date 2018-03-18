@@ -5,7 +5,7 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright 2010 Hib Eris <hib@hiberis.nl>
-// Copyright 2010 Albert Astals Cid <aacid@kde.org>
+// Copyright 2010, 2018 Albert Astals Cid <aacid@kde.org>
 //
 //========================================================================
 
@@ -36,6 +36,9 @@ public:
 
   PDFDocFactory(GooList *pdfDocBuilders = NULL);
   ~PDFDocFactory();
+
+  PDFDocFactory(const PDFDocFactory &) = delete;
+  PDFDocFactory& operator=(const PDFDocFactory &) = delete;
 
   // Create a PDFDoc. Returns a PDFDoc. You should check this PDFDoc
   // with PDFDoc::isOk() for failures.

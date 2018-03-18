@@ -41,7 +41,7 @@ OCGs::OCGs(Object *ocgObject, XRef *xref) :
   // we need to parse the dictionary here, and build optionalContentGroups
   ok = gTrue;
   optionalContentGroups = new GooList();
-  display = NULL;
+  display = nullptr;
 
   Object ocgList = ocgObject->dictLookup("OCGs");
   if (!ocgList.isArray()) {
@@ -141,7 +141,7 @@ bool OCGs::hasOCGs()
 OptionalContentGroup* OCGs::findOcgByRef( const Ref &ref)
 {
   //TODO: make this more efficient
-  OptionalContentGroup *ocg = NULL;
+  OptionalContentGroup *ocg = nullptr;
   for (int i=0; i < optionalContentGroups->getLength(); ++i) {
     ocg = (OptionalContentGroup*)optionalContentGroups->get(i);
     if ( (ocg->getRef().num == ref.num) && (ocg->getRef().gen == ref.gen) ) {
@@ -150,7 +150,7 @@ OptionalContentGroup* OCGs::findOcgByRef( const Ref &ref)
   }
 
   // not found
-  return NULL;
+  return nullptr;
 }
 
 OCDisplayNode *OCGs::getDisplayRoot()
@@ -331,7 +331,7 @@ bool OCGs::anyOff( Array *ocgArray )
 
 //------------------------------------------------------------------------
 
-OptionalContentGroup::OptionalContentGroup(Dict *ocgDict) : m_name(NULL)
+OptionalContentGroup::OptionalContentGroup(Dict *ocgDict) : m_name(nullptr)
 {
   Object ocgName = ocgDict->lookup("Name");
   if (!ocgName.isString()) {
@@ -404,7 +404,7 @@ OCDisplayNode *OCDisplayNode::parse(Object *obj, OCGs *oc,
 
   if (recursion > displayNodeRecursionLimit) {
     error(errSyntaxError, -1, "Loop detected in optional content order");
-    return NULL;
+    return nullptr;
   }
   if (obj->isRef()) {
     if ((ocgA = oc->findOcgByRef(obj->getRef()))) {
@@ -413,7 +413,7 @@ OCDisplayNode *OCDisplayNode::parse(Object *obj, OCGs *oc,
   }
   Object obj2 = obj->fetch(xref);
   if (!obj2.isArray()) {
-    return NULL;
+    return nullptr;
   }
   i = 0;
   if (obj2.arrayGetLength() >= 1) {
@@ -442,21 +442,21 @@ OCDisplayNode *OCDisplayNode::parse(Object *obj, OCGs *oc,
 }
 
 OCDisplayNode::OCDisplayNode() {
-  name = NULL;
-  ocg = NULL;
-  children = NULL;
+  name = nullptr;
+  ocg = nullptr;
+  children = nullptr;
 }
 
 OCDisplayNode::OCDisplayNode(GooString *nameA) {
   name = new GooString(nameA);
-  ocg = NULL;
-  children = NULL;
+  ocg = nullptr;
+  children = nullptr;
 }
 
 OCDisplayNode::OCDisplayNode(OptionalContentGroup *ocgA) {
-  name = (ocgA->getName()) ? ocgA->getName()->copy() : NULL;
+  name = (ocgA->getName()) ? ocgA->getName()->copy() : nullptr;
   ocg = ocgA;
-  children = NULL;
+  children = nullptr;
 }
 
 void OCDisplayNode::addChild(OCDisplayNode *child) {
@@ -478,7 +478,7 @@ GooList *OCDisplayNode::takeChildren() {
   GooList *childrenA;
 
   childrenA = children;
-  children = NULL;
+  children = nullptr;
   return childrenA;
 }
 

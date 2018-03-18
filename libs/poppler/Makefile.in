@@ -190,6 +190,7 @@ am__objects_3 = @POPPLER_TREE@/poppler/Annot.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/StructTreeRoot.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/UTF.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/UnicodeMap.$(OBJEXT) \
+	@POPPLER_TREE@/poppler/UnicodeMapFuncs.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/UnicodeTypeTable.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/ViewerPreferences.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/XRef.$(OBJEXT) \
@@ -531,6 +532,7 @@ poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/StructTreeRoot.cc \
 	@POPPLER_TREE@/poppler/UTF.cc \
 	@POPPLER_TREE@/poppler/UnicodeMap.cc \
+	@POPPLER_TREE@/poppler/UnicodeMapFuncs.cc \
 	@POPPLER_TREE@/poppler/UnicodeTypeTable.cc \
 	@POPPLER_TREE@/poppler/ViewerPreferences.cc \
 	@POPPLER_TREE@/poppler/XRef.cc \
@@ -852,6 +854,9 @@ clean-noinstLIBRARIES:
 @POPPLER_TREE@/poppler/UnicodeMap.$(OBJEXT):  \
 	@POPPLER_TREE@/poppler/$(am__dirstamp) \
 	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
+@POPPLER_TREE@/poppler/UnicodeMapFuncs.$(OBJEXT):  \
+	@POPPLER_TREE@/poppler/$(am__dirstamp) \
+	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/poppler/UnicodeTypeTable.$(OBJEXT):  \
 	@POPPLER_TREE@/poppler/$(am__dirstamp) \
 	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
@@ -954,6 +959,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/StructTreeRoot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/UTF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/UnicodeMap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/UnicodeMapFuncs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/UnicodeTypeTable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/ViewerPreferences.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/XRef.Po@am__quote@

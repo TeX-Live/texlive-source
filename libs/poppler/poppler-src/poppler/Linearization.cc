@@ -23,8 +23,8 @@ Linearization::Linearization (BaseStream *str)
   Parser *parser;
 
   str->reset();
-  parser = new Parser(NULL,
-      new Lexer(NULL, str->makeSubStream(str->getStart(), gFalse, 0, Object(objNull))),
+  parser = new Parser(nullptr,
+      new Lexer(nullptr, str->makeSubStream(str->getStart(), gFalse, 0, Object(objNull))),
       gFalse);
   Object obj1 = parser->getObj();
   Object obj2 = parser->getObj();
@@ -48,7 +48,7 @@ Guint Linearization::getLength()
   if (!linDict.isDict()) return 0;
 
   int length;
-  if (linDict.getDict()->lookupInt("L", NULL, &length) &&
+  if (linDict.getDict()->lookupInt("L", nullptr, &length) &&
       length > 0) {
     return length;
   } else {
@@ -139,7 +139,7 @@ int Linearization::getObjectNumberFirst()
 {
   int objectNumberFirst = 0;
   if (linDict.isDict() &&
-      linDict.getDict()->lookupInt("O", NULL, &objectNumberFirst) &&
+      linDict.getDict()->lookupInt("O", nullptr, &objectNumberFirst) &&
       objectNumberFirst > 0) {
     return objectNumberFirst;
   } else {
@@ -152,7 +152,7 @@ Guint Linearization::getEndFirst()
 {
   int pageEndFirst = 0;
   if (linDict.isDict() &&
-      linDict.getDict()->lookupInt("E", NULL, &pageEndFirst) &&
+      linDict.getDict()->lookupInt("E", nullptr, &pageEndFirst) &&
       pageEndFirst > 0) {
     return pageEndFirst;
   } else {
@@ -165,7 +165,7 @@ int Linearization::getNumPages()
 {
   int numPages = 0;
   if (linDict.isDict() &&
-      linDict.getDict()->lookupInt("N", NULL, &numPages) &&
+      linDict.getDict()->lookupInt("N", nullptr, &numPages) &&
       numPages > 0) {
     return numPages;
   } else {
@@ -178,7 +178,7 @@ Guint Linearization::getMainXRefEntriesOffset()
 {
   int mainXRefEntriesOffset = 0;
   if (linDict.isDict() &&
-      linDict.getDict()->lookupInt("T", NULL, &mainXRefEntriesOffset) &&
+      linDict.getDict()->lookupInt("T", nullptr, &mainXRefEntriesOffset) &&
       mainXRefEntriesOffset > 0) {
     return mainXRefEntriesOffset;
   } else {
@@ -192,7 +192,7 @@ int Linearization::getPageFirst()
   int pageFirst = 0; // Optional, defaults to 0.
 
   if (linDict.isDict()) {
-    linDict.getDict()->lookupInt("P", NULL, &pageFirst);
+    linDict.getDict()->lookupInt("P", nullptr, &pageFirst);
   }
 
   if ((pageFirst < 0) || (pageFirst >= getNumPages())) {

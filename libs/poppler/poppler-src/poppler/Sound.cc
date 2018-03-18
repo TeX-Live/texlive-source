@@ -27,17 +27,17 @@ Sound *Sound::parseSound(Object *obj)
 {
   // let's try to see if this Object is a Sound, according to the PDF specs
   // (section 9.2)
-  Stream *str = NULL;
+  Stream *str = nullptr;
   // the Object must be a Stream
   if (obj->isStream()) {
     str = obj->getStream();
   } else {
-    return NULL;
+    return nullptr;
   }
   // the Stream must have a Dict
   Dict *dict = str->getDict();
-  if (dict == NULL)
-    return NULL;
+  if (dict == nullptr)
+    return nullptr;
   // the Dict must have the 'R' key of type num
   Object tmp = dict->lookup("R");
   if (tmp.isNum()) {
@@ -51,7 +51,7 @@ Sound::Sound(Object *obj, bool readAttrs)
 {
   streamObj = obj->copy();
 
-  fileName = NULL;
+  fileName = nullptr;
   samplingRate = 0.0;
   channels = 1;
   bitsPerSample = 8;

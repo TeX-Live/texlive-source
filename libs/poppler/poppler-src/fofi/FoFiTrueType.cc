@@ -277,7 +277,7 @@ FoFiTrueType *FoFiTrueType::make(char *fileA, int lenA, int faceIndexA) {
   ff = new FoFiTrueType(fileA, lenA, gFalse, faceIndexA);
   if (!ff->parsedOk) {
     delete ff;
-    return NULL;
+    return nullptr;
   }
   return ff;
 }
@@ -288,12 +288,12 @@ FoFiTrueType *FoFiTrueType::load(char *fileName, int faceIndexA) {
   int lenA;
 
   if (!(fileA = FoFiBase::readFile(fileName, &lenA))) {
-    return NULL;
+    return nullptr;
   }
   ff = new FoFiTrueType(fileA, lenA, gTrue, faceIndexA);
   if (!ff->parsedOk) {
     delete ff;
-    return NULL;
+    return nullptr;
   }
   return ff;
 }
@@ -301,11 +301,11 @@ FoFiTrueType *FoFiTrueType::load(char *fileName, int faceIndexA) {
 FoFiTrueType::FoFiTrueType(char *fileA, int lenA, GBool freeFileDataA, int faceIndexA):
   FoFiBase(fileA, lenA, freeFileDataA)
 {
-  tables = NULL;
+  tables = nullptr;
   nTables = 0;
-  cmaps = NULL;
+  cmaps = nullptr;
   nCmaps = 0;
-  nameToGID = NULL;
+  nameToGID = nullptr;
   parsedOk = gFalse;
   faceIndex = faceIndexA;
   gsubFeatureTable = 0;
@@ -472,10 +472,10 @@ int *FoFiTrueType::getCIDToGIDMap(int *nCIDs) {
 
   *nCIDs = 0;
   if (!getCFFBlock(&start, &length)) {
-    return NULL;
+    return nullptr;
   }
   if (!(ff = FoFiType1C::make(start, length))) {
-    return NULL;
+    return nullptr;
   }
   map = ff->getCIDToGIDMap(nCIDs);
   delete ff;
@@ -556,7 +556,7 @@ void FoFiTrueType::convertToType42(char *psName, char **encoding,
   // write the guts of the dictionary
   cvtEncoding(encoding, outputFunc, outputStream);
   cvtCharStrings(encoding, codeToGID, outputFunc, outputStream);
-  cvtSfnts(outputFunc, outputStream, NULL, gFalse, &maxUsedGlyph);
+  cvtSfnts(outputFunc, outputStream, nullptr, gFalse, &maxUsedGlyph);
 
   // end the dictionary and define the font
   (*outputFunc)(outputStream, "FontName currentdict end definefont pop\n", 40);
@@ -701,7 +701,7 @@ void FoFiTrueType::convertToCIDType2(char *psName,
   (*outputFunc)(outputStream, "  end readonly def\n", 19);
 
   // write the guts of the dictionary
-  cvtSfnts(outputFunc, outputStream, NULL, needVerticalMetrics, &maxUsedGlyph);
+  cvtSfnts(outputFunc, outputStream, nullptr, needVerticalMetrics, &maxUsedGlyph);
 
   // end the dictionary and define the font
   (*outputFunc)(outputStream,
@@ -1061,7 +1061,7 @@ void FoFiTrueType::cvtSfnts(FoFiOutputFunc outputFunc,
       ++nNewTables;
     }
   }
-  vmtxTab = NULL; // make gcc happy
+  vmtxTab = nullptr; // make gcc happy
   vmtxTabLength = 0;
   advance = 0; // make gcc happy
   if (needVerticalMetrics) {
@@ -1387,7 +1387,7 @@ void FoFiTrueType::parse() {
     nTables = j;
     tables = (TrueTypeTable *)greallocn_checkoverflow(tables, nTables, sizeof(TrueTypeTable));
   }
-  if (!parsedOk || tables == NULL) {
+  if (!parsedOk || tables == nullptr) {
     return;
   }
 
@@ -1451,7 +1451,7 @@ void FoFiTrueType::parse() {
 
 void FoFiTrueType::readPostTable() {
   GooString *name;
-  int tablePos, postFmt, stringIdx, stringPos, savedStringIdx;
+  int tablePos, postFmt, stringIdx, stringPos;
   GBool ok;
   int i, j, n, m;
 
@@ -1481,38 +1481,30 @@ void FoFiTrueType::readPostTable() {
     stringIdx = 0;
     stringPos = tablePos + 34 + 2*n;
     for (i = 0; i < n; ++i) {
+      ok = gTrue;
       j = getU16BE(tablePos + 34 + 2*i, &ok);
       if (j < 258) {
 	nameToGID->removeInt(macGlyphNames[j]);
 	nameToGID->add(new GooString(macGlyphNames[j]), i);
       } else {
-	savedStringIdx = stringIdx;
 	j -= 258;
 	if (j != stringIdx) {
 	  for (stringIdx = 0, stringPos = tablePos + 34 + 2*n;
 	       stringIdx < j;
 	       ++stringIdx, stringPos += 1 + getU8(stringPos, &ok)) ;
 	  if (!ok) {
-	    goto err;
+	    continue;
 	  }
 	}
 	m = getU8(stringPos, &ok);
 	if (!ok || !checkRegion(stringPos + 1, m)) {
-	  stringIdx = savedStringIdx;
-	  if (j < 258) {
-	    ok = gTrue;
-	    nameToGID->removeInt(macGlyphNames[j]);
-	    nameToGID->add(new GooString(macGlyphNames[0]), i);
-	  } else {
-	    goto err;
-	  }
-	} else {
-	  name = new GooString((char *)&file[stringPos + 1], m);
-	  nameToGID->removeInt(name);
-	  nameToGID->add(name, i);
-	  ++stringIdx;
-	  stringPos += 1 + m;
-        }
+	  continue;
+	}
+	name = new GooString((char *)&file[stringPos + 1], m);
+	nameToGID->removeInt(name);
+	nameToGID->add(name, i);
+	++stringIdx;
+	stringPos += 1 + m;
       }
     }
   } else if (postFmt == 0x00028000) {
@@ -1520,7 +1512,7 @@ void FoFiTrueType::readPostTable() {
     for (i = 0; i < nGlyphs; ++i) {
       j = getU8(tablePos + 32 + i, &ok);
       if (!ok) {
-	goto err;
+	continue;
       }
       if (j < 258) {
 	nameToGID->removeInt(macGlyphNames[j]);
@@ -1534,7 +1526,7 @@ void FoFiTrueType::readPostTable() {
  err:
   if (nameToGID) {
     delete nameToGID;
-    nameToGID = NULL;
+    nameToGID = nullptr;
   }
 }
 
@@ -1578,7 +1570,7 @@ Guint FoFiTrueType::charToTag(const char *tagName)
 */
 int FoFiTrueType::setupGSUB(const char *scriptName)
 {
-  return setupGSUB(scriptName, NULL);
+  return setupGSUB(scriptName, nullptr);
 }
 
 /*
@@ -1603,7 +1595,7 @@ int FoFiTrueType::setupGSUB(const char *scriptName,
   int x;
   Guint pos;
 
-  if (scriptName == 0) {
+  if (scriptName == nullptr) {
     gsubFeatureTable = 0;
     return 0;
   }

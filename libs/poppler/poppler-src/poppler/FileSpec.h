@@ -6,7 +6,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2008 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright (C) 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2017, 2018 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -26,6 +26,9 @@ class EmbFile {
 public:
   EmbFile(Object *efStream);
   ~EmbFile();
+
+  EmbFile(const EmbFile &) = delete;
+  EmbFile& operator=(const EmbFile &) = delete;
 
   int size() { return m_size; }
   GooString *modDate() { return m_modDate; }
@@ -52,6 +55,9 @@ class FileSpec {
 public:
   FileSpec(Object *fileSpec);
   ~FileSpec();
+
+  FileSpec(const FileSpec &) = delete;
+  FileSpec& operator=(const FileSpec &) = delete;
 
   GBool isOk() { return ok; }
 

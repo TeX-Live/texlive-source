@@ -8,7 +8,7 @@
 //
 // Copyright 2009 Stefan Thomas <thomas@eload24.com>
 // Copyright 2010 Hib Eris <hib@hiberis.nl>
-// Copyright 2010 Albert Astals Cid <aacid@kde.org>
+// Copyright 2010, 2018 Albert Astals Cid <aacid@kde.org>
 //
 //========================================================================
 
@@ -46,6 +46,9 @@ friend class CachedFileWriter;
 public:
 
   CachedFile(CachedFileLoader *cacheLoader, GooString *uri);
+
+  CachedFile(const CachedFile &) = delete;
+  CachedFile& operator=(const CachedFile &) = delete;
 
   Guint getLength() { return length; }
   long int tell();
@@ -127,7 +130,11 @@ class CachedFileLoader {
 
 public:
 
+  CachedFileLoader() = default;
   virtual ~CachedFileLoader() {};
+
+  CachedFileLoader(const CachedFileLoader &) = delete;
+  CachedFileLoader& operator=(const CachedFileLoader &) = delete;
 
   // Initializes the file load.
   // Returns the length of the file.

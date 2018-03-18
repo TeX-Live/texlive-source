@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2006, 2010, 2013, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2010, 2013, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -44,6 +44,9 @@ public:
 
   // Destructor.
   ~Parser();
+
+  Parser(const Parser &) = delete;
+  Parser& operator=(const Parser &) = delete;
 
   // Get the next object from the input stream.  If <simpleOnly> is
   // true, do not parse compound objects (arrays, dictionaries, or

@@ -137,7 +137,7 @@ CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(GooString *fileName,
   if (!(f = openFile(fileName->getCString(), "r"))) {
     error(errIO, -1, "Couldn't open cidToUnicode file '{0:t}'",
 	  fileName);
-    return NULL;
+    return nullptr;
   }
 
   size = 32768;
@@ -161,7 +161,7 @@ CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(GooString *fileName,
   fclose(f);
 
   ctu = new CharCodeToUnicode(collection->copy(), mapA, mapLenA, gTrue,
-			      NULL, 0, 0);
+			      nullptr, 0, 0);
   gfree(mapA);
   return ctu;
 }
@@ -185,14 +185,14 @@ CharCodeToUnicode *CharCodeToUnicode::parseUnicodeToUnicode(
     gfree(uBuf);
     error(errIO, -1, "Couldn't open unicodeToUnicode file '{0:t}'",
 	  fileName);
-    return NULL;
+    return nullptr;
   }
 
   size = 4096;
   mapA = (Unicode *)gmallocn(size, sizeof(Unicode));
   memset(mapA, 0, size * sizeof(Unicode));
   len = 0;
-  sMapA = NULL;
+  sMapA = nullptr;
   sMapSizeA = sMapLenA = 0;
 
   line = 0;
@@ -205,7 +205,7 @@ CharCodeToUnicode *CharCodeToUnicode::parseUnicodeToUnicode(
       continue;
     }
     n = 0;
-    while ((tok = strtok_r(NULL, " \t\r\n", &tokptr))) {
+    while ((tok = strtok_r(nullptr, " \t\r\n", &tokptr))) {
       if (n >= uBufSize)
       {
         uBufSize += 8;
@@ -262,14 +262,14 @@ CharCodeToUnicode *CharCodeToUnicode::parseUnicodeToUnicode(
 }
 
 CharCodeToUnicode *CharCodeToUnicode::make8BitToUnicode(Unicode *toUnicode) {
-  return new CharCodeToUnicode(NULL, toUnicode, 256, gTrue, NULL, 0, 0);
+  return new CharCodeToUnicode(nullptr, toUnicode, 256, gTrue, nullptr, 0, 0);
 }
 
 CharCodeToUnicode *CharCodeToUnicode::parseCMap(GooString *buf, int nBits) {
   CharCodeToUnicode *ctu;
   char *p;
 
-  ctu = new CharCodeToUnicode(NULL);
+  ctu = new CharCodeToUnicode(nullptr);
   p = buf->getCString();
   ctu->parseCMap1(&getCharFromString, &p, nBits);
   return ctu;
@@ -280,7 +280,7 @@ CharCodeToUnicode *CharCodeToUnicode::parseCMapFromFile(GooString *fileName,
   CharCodeToUnicode *ctu;
   FILE *f;
 
-  ctu = new CharCodeToUnicode(NULL);
+  ctu = new CharCodeToUnicode(nullptr);
   if ((f = globalParams->findToUnicodeFile(fileName))) {
     ctu->parseCMap1(&getCharFromFile, f, nBits);
     fclose(f);
@@ -479,10 +479,10 @@ void CharCodeToUnicode::addMapping(CharCode code, char *uStr, int n,
 }
 
 CharCodeToUnicode::CharCodeToUnicode() {
-  tag = NULL;
-  map = NULL;
+  tag = nullptr;
+  map = nullptr;
   mapLen = 0;
-  sMap = NULL;
+  sMap = nullptr;
   sMapLen = sMapSize = 0;
   refCnt = 1;
   isIdentity = gFalse;
@@ -500,7 +500,7 @@ CharCodeToUnicode::CharCodeToUnicode(GooString *tagA) {
   for (i = 0; i < mapLen; ++i) {
     map[i] = 0;
   }
-  sMap = NULL;
+  sMap = nullptr;
   sMapLen = sMapSize = 0;
   refCnt = 1;
   isIdentity = gFalse;
@@ -681,7 +681,7 @@ CharCodeToUnicodeCache::CharCodeToUnicodeCache(int sizeA) {
   size = sizeA;
   cache = (CharCodeToUnicode **)gmallocn(size, sizeof(CharCodeToUnicode *));
   for (i = 0; i < size; ++i) {
-    cache[i] = NULL;
+    cache[i] = nullptr;
   }
 }
 
@@ -715,7 +715,7 @@ CharCodeToUnicode *CharCodeToUnicodeCache::getCharCodeToUnicode(GooString *tag) 
       return ctu;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 void CharCodeToUnicodeCache::add(CharCodeToUnicode *ctu) {

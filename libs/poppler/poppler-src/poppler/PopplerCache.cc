@@ -43,7 +43,7 @@ PopplerCache::~PopplerCache()
 PopplerCacheItem *PopplerCache::lookup(const PopplerCacheKey &key)
 {
   if (lastValidCacheIndex < 0)
-    return 0;
+    return nullptr;
 
   if (*keys[0] == key) {
     return items[0];
@@ -63,7 +63,7 @@ PopplerCacheItem *PopplerCache::lookup(const PopplerCacheKey &key)
       return itemHit;
     }
   }
-  return 0;
+  return nullptr;
 }
 
 void PopplerCache::put(PopplerCacheKey *key, PopplerCacheItem *item)

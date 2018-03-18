@@ -4274,7 +4274,7 @@ static struct NameToUnicodeTab nameToUnicodeTextTab[] = {
   {0x007c, "|"},
   {0x007d, "}"},
   {0x007e, "~"},
-  { 0, NULL }
+  { 0, nullptr }
 };
 
 // map ZapfDingbats names to Unicode
@@ -4480,5 +4480,5 @@ static struct NameToUnicodeTab nameToUnicodeZapfDingbatsTab[] = {
   {0x275c, "a98"},
   {0x275d, "a99"},
   {0x2720, "a9"},
-  { 0, NULL }
+  { 0, nullptr }
 };

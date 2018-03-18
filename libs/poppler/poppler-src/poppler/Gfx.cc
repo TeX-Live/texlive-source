@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
-// Copyright (C) 2005-2013, 2015-2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005-2013, 2015-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Thorkild Stray <thorkild@ifi.uio.no>
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006-2011 Carlos Garcia Campos <carlosgc@gnome.org>
@@ -38,6 +38,7 @@
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Lu Wang <coolwanglu@gmail.com>
 // Copyright (C) 2014 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2017 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -326,7 +327,7 @@ GfxResources::GfxResources(XRef *xref, Dict *resDictA, GfxResources *nextA) :
 
     // build font dictionary
     Dict *resDict = resDictA->copy(xref);
-    fonts = NULL;
+    fonts = nullptr;
     obj1 = resDict->lookupNF("Font");
     if (obj1.isRef()) {
       obj2 = obj1.fetch(xref);
@@ -335,7 +336,7 @@ GfxResources::GfxResources(XRef *xref, Dict *resDictA, GfxResources *nextA) :
 	fonts = new GfxFontDict(xref, &r, obj2.getDict());
       }
     } else if (obj1.isDict()) {
-      fonts = new GfxFontDict(xref, NULL, obj1.getDict());
+      fonts = new GfxFontDict(xref, nullptr, obj1.getDict());
     }
 
     // get XObject dictionary
@@ -358,7 +359,7 @@ GfxResources::GfxResources(XRef *xref, Dict *resDictA, GfxResources *nextA) :
 
     delete resDict;
   } else {
-    fonts = NULL;
+    fonts = nullptr;
     xObjDict.setToNull();
     colorSpaceDict.setToNull();
     patternDict.setToNull();
@@ -385,7 +386,7 @@ GfxFont *GfxResources::lookupFont(char *name) {
     }
   }
   error(errSyntaxError, -1, "Unknown font tag '{0:s}'", name);
-  return NULL;
+  return nullptr;
 }
 
 Object GfxResources::lookupXObject(char *name) {
@@ -464,7 +465,7 @@ GfxPattern *GfxResources::lookupPattern(char *name, OutputDev *out, GfxState *st
     }
   }
   error(errSyntaxError, -1, "Unknown pattern '{0:s}'", name);
-  return NULL;
+  return nullptr;
 }
 
 GfxShading *GfxResources::lookupShading(char *name, OutputDev *out, GfxState *state) {
@@ -481,7 +482,7 @@ GfxShading *GfxResources::lookupShading(char *name, OutputDev *out, GfxState *st
     }
   }
   error(errSyntaxError, -1, "ExtGState '{0:s}' is unknown", name);
-  return NULL;
+  return nullptr;
 }
 
 Object GfxResources::lookupGState(char *name) {
@@ -529,16 +530,16 @@ Gfx::Gfx(PDFDoc *docA, OutputDev *outA, int pageNum, Dict *resDict,
   int i;
 
   doc = docA;
-  xref = (xrefA == NULL) ? doc->getXRef() : xrefA;
+  xref = (xrefA == nullptr) ? doc->getXRef() : xrefA;
   catalog = doc->getCatalog();
   subPage = gFalse;
   printCommands = globalParams->getPrintCommands();
   profileCommands = globalParams->getProfileCommands();
-  mcStack = NULL;
-  parser = NULL;
+  mcStack = nullptr;
+  parser = nullptr;
 
   // start the resource stack
-  res = new GfxResources(xref, resDict, NULL);
+  res = new GfxResources(xref, resDict, nullptr);
 
   // initialize
   out = outA;
@@ -556,7 +557,7 @@ Gfx::Gfx(PDFDoc *docA, OutputDev *outA, int pageNum, Dict *resDict,
   }
   formDepth = 0;
   ocState = gTrue;
-  parser = NULL;
+  parser = nullptr;
   abortCheckCbk = abortCheckCbkA;
   abortCheckCbkData = abortCheckCbkDataA;
 
@@ -584,16 +585,16 @@ Gfx::Gfx(PDFDoc *docA, OutputDev *outA, Dict *resDict,
   int i;
 
   doc = docA;
-  xref = (xrefA == NULL) ? doc->getXRef() : xrefA;
+  xref = (xrefA == nullptr) ? doc->getXRef() : xrefA;
   catalog = doc->getCatalog();
   subPage = gTrue;
   printCommands = globalParams->getPrintCommands();
   profileCommands = globalParams->getProfileCommands();
-  mcStack = NULL;
-  parser = NULL;
+  mcStack = nullptr;
+  parser = nullptr;
 
   // start the resource stack
-  res = new GfxResources(xref, resDict, NULL);
+  res = new GfxResources(xref, resDict, nullptr);
 
   // initialize
   out = outA;
@@ -608,7 +609,7 @@ Gfx::Gfx(PDFDoc *docA, OutputDev *outA, Dict *resDict,
   }
   formDepth = 0;
   ocState = gTrue;
-  parser = NULL;
+  parser = nullptr;
   abortCheckCbk = abortCheckCbkA;
   abortCheckCbkData = abortCheckCbkDataA;
 
@@ -645,7 +646,7 @@ void Gfx::initDisplayProfile() {
                 int length = 0;
                 Guchar *profBuf = iccStream->toUnsignedChars(&length, 65536, 65536);
                 cmsHPROFILE hp = cmsOpenProfileFromMem(profBuf,length);
-                if (hp == 0) {
+                if (hp == nullptr) {
                   error(errSyntaxWarning, -1, "read ICCBased color space profile error");
                 } else {
                   state->setDisplayProfile(hp);
@@ -698,7 +699,7 @@ void Gfx::display(Object *obj, GBool topLevel) {
   parser = new Parser(xref, new Lexer(xref, obj), gFalse);
   go(topLevel);
   delete parser;
-  parser = NULL;
+  parser = nullptr;
 }
 
 void Gfx::go(GBool topLevel) {
@@ -747,7 +748,7 @@ void Gfx::go(GBool topLevel) {
 
 	  cmd_g = new GooString (obj.getCmd());
 	  data_p = (ProfileData *)hash->lookup (cmd_g);
-	  if (data_p == NULL) {
+	  if (data_p == nullptr) {
 	    data_p = new ProfileData();
 	    hash->add (cmd_g, data_p);
 	  }
@@ -764,6 +765,7 @@ void Gfx::go(GBool topLevel) {
       if (++updateLevel >= 20000) {
 	out->dump();
 	updateLevel = 0;
+	lastAbortCheck = 0;
       }
 
       // did the command throw an exception
@@ -891,7 +893,7 @@ Operator *Gfx::findOp(char *name) {
       a = b = m;
   }
   if (cmp != 0)
-    return NULL;
+    return nullptr;
   return &opTab[a];
 }
 
@@ -945,7 +947,7 @@ void Gfx::opSetDash(Object args[], int numArgs) {
   a = args[0].getArray();
   length = a->getLength();
   if (length == 0) {
-    dash = NULL;
+    dash = nullptr;
   } else {
     dash = (double *)gmallocn(length, sizeof(double));
     for (i = 0; i < length; ++i) {
@@ -1113,7 +1115,7 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
   }
   if (obj2.isName("Default") ||
       obj2.isName("Identity")) {
-    funcs[0] = funcs[1] = funcs[2] = funcs[3] = NULL;
+    funcs[0] = funcs[1] = funcs[2] = funcs[3] = nullptr;
     state->setTransfer(funcs);
     out->updateTransfer(state);
   } else if (obj2.isArray() && obj2.arrayGetLength() == 4) {
@@ -1130,7 +1132,7 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
     }
   } else if (obj2.isName() || obj2.isDict() || obj2.isStream()) {
     if ((funcs[0] = Function::parse(&obj2))) {
-      funcs[1] = funcs[2] = funcs[3] = NULL;
+      funcs[1] = funcs[2] = funcs[3] = nullptr;
       state->setTransfer(funcs);
       out->updateTransfer(state);
     }
@@ -1164,21 +1166,21 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
       } else { // "Luminosity"
 	alpha = gFalse;
       }
-      funcs[0] = NULL;
+      funcs[0] = nullptr;
       obj3 = obj2.dictLookup("TR");
       if (!obj3.isNull()) {
 	if (obj3.isName("Default") ||
 	    obj3.isName("Identity")) {
-	  funcs[0] = NULL;
+	  funcs[0] = nullptr;
 	} else {
 	  funcs[0] = Function::parse(&obj3);
-	  if (funcs[0] == NULL ||
+	  if (funcs[0] == nullptr ||
 	    funcs[0]->getInputSize() != 1 ||
 	    funcs[0]->getOutputSize() != 1) {
 	      error(errSyntaxError, getPos(),
 		  "Invalid transfer function in soft mask in ExtGState");
 	      delete funcs[0];
-	      funcs[0] = NULL;
+	      funcs[0] = nullptr;
 	  }
 	}
       }
@@ -1198,7 +1200,7 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
       if (obj3.isStream()) {
 	Object obj4 = obj3.streamGetDict()->lookup("Group");
 	if (obj4.isDict()) {
-	  blendingColorSpace = NULL;
+	  blendingColorSpace = nullptr;
 	  isolated = knockout = gFalse;
 	  Object obj5 = obj4.dictLookup("CS");
 	  if (!obj5.isNull()) {
@@ -1350,7 +1352,7 @@ void Gfx::doSoftMask(Object *str, GBool alpha,
 
   // get resources
   obj1 = dict->lookup("Resources");
-  resDict = obj1.isDict() ? obj1.getDict() : (Dict *)NULL;
+  resDict = obj1.isDict() ? obj1.getDict() : (Dict *)nullptr;
 
   // draw it
   ++formDepth;
@@ -1374,14 +1376,14 @@ void Gfx::opSetRenderingIntent(Object args[], int numArgs) {
 
 void Gfx::opSetFillGray(Object args[], int numArgs) {
   GfxColor color;
-  GfxColorSpace *colorSpace = NULL;
+  GfxColorSpace *colorSpace = nullptr;
 
-  state->setFillPattern(NULL);
+  state->setFillPattern(nullptr);
   Object obj = res->lookupColorSpace("DefaultGray");
   if (!obj.isNull()) {
     colorSpace = GfxColorSpace::parse(res, &obj, out, state);
   }
-  if (colorSpace == NULL) {
+  if (colorSpace == nullptr) {
     colorSpace = new GfxDeviceGrayColorSpace();
   }
   state->setFillColorSpace(colorSpace);
@@ -1393,14 +1395,14 @@ void Gfx::opSetFillGray(Object args[], int numArgs) {
 
 void Gfx::opSetStrokeGray(Object args[], int numArgs) {
   GfxColor color;
-  GfxColorSpace *colorSpace = NULL;
+  GfxColorSpace *colorSpace = nullptr;
 
-  state->setStrokePattern(NULL);
+  state->setStrokePattern(nullptr);
   Object obj = res->lookupColorSpace("DefaultGray");
   if (!obj.isNull()) {
     colorSpace = GfxColorSpace::parse(res, &obj, out, state);
   }
-  if (colorSpace == NULL) {
+  if (colorSpace == nullptr) {
     colorSpace = new GfxDeviceGrayColorSpace();
   }
   state->setStrokeColorSpace(colorSpace);
@@ -1412,17 +1414,17 @@ void Gfx::opSetStrokeGray(Object args[], int numArgs) {
 
 void Gfx::opSetFillCMYKColor(Object args[], int numArgs) {
   GfxColor color;
-  GfxColorSpace *colorSpace = NULL;
+  GfxColorSpace *colorSpace = nullptr;
   int i;
 
   Object obj = res->lookupColorSpace("DefaultCMYK");
   if (!obj.isNull()) {
     colorSpace = GfxColorSpace::parse(res, &obj, out, state);
   }
-  if (colorSpace == NULL) {
+  if (colorSpace == nullptr) {
     colorSpace = new GfxDeviceCMYKColorSpace();
   }
-  state->setFillPattern(NULL);
+  state->setFillPattern(nullptr);
   state->setFillColorSpace(colorSpace);
   out->updateFillColorSpace(state);
   for (i = 0; i < 4; ++i) {
@@ -1434,15 +1436,15 @@ void Gfx::opSetFillCMYKColor(Object args[], int numArgs) {
 
 void Gfx::opSetStrokeCMYKColor(Object args[], int numArgs) {
   GfxColor color;
-  GfxColorSpace *colorSpace = NULL;
+  GfxColorSpace *colorSpace = nullptr;
   int i;
 
-  state->setStrokePattern(NULL);
+  state->setStrokePattern(nullptr);
   Object obj = res->lookupColorSpace("DefaultCMYK");
   if (!obj.isNull()) {
     colorSpace = GfxColorSpace::parse(res, &obj, out, state);
   }
-  if (colorSpace == NULL) {
+  if (colorSpace == nullptr) {
     colorSpace = new GfxDeviceCMYKColorSpace();
   }
   state->setStrokeColorSpace(colorSpace);
@@ -1455,16 +1457,16 @@ void Gfx::opSetStrokeCMYKColor(Object args[], int numArgs) {
 }
 
 void Gfx::opSetFillRGBColor(Object args[], int numArgs) {
-  GfxColorSpace *colorSpace = NULL;
+  GfxColorSpace *colorSpace = nullptr;
   GfxColor color;
   int i;
 
-  state->setFillPattern(NULL);
+  state->setFillPattern(nullptr);
   Object obj = res->lookupColorSpace("DefaultRGB");
   if (!obj.isNull()) {
     colorSpace = GfxColorSpace::parse(res, &obj, out, state);
   }
-  if (colorSpace == NULL) {
+  if (colorSpace == nullptr) {
     colorSpace = new GfxDeviceRGBColorSpace();
   }
   state->setFillColorSpace(colorSpace);
@@ -1477,16 +1479,16 @@ void Gfx::opSetFillRGBColor(Object args[], int numArgs) {
 }
 
 void Gfx::opSetStrokeRGBColor(Object args[], int numArgs) {
-  GfxColorSpace *colorSpace = NULL;
+  GfxColorSpace *colorSpace = nullptr;
   GfxColor color;
   int i;
 
-  state->setStrokePattern(NULL);
+  state->setStrokePattern(nullptr);
   Object obj = res->lookupColorSpace("DefaultRGB");
   if (!obj.isNull()) {
     colorSpace = GfxColorSpace::parse(res, &obj, out, state);
   }
-  if (colorSpace == NULL) {
+  if (colorSpace == nullptr) {
     colorSpace = new GfxDeviceRGBColorSpace();
   }
   state->setStrokeColorSpace(colorSpace);
@@ -1509,7 +1511,7 @@ void Gfx::opSetFillColorSpace(Object args[], int numArgs) {
     colorSpace = GfxColorSpace::parse(res, &obj, out, state);
   }
   if (colorSpace) {
-    state->setFillPattern(NULL);
+    state->setFillPattern(nullptr);
     state->setFillColorSpace(colorSpace);
     out->updateFillColorSpace(state);
     colorSpace->getDefaultColor(&color);
@@ -1524,7 +1526,7 @@ void Gfx::opSetStrokeColorSpace(Object args[], int numArgs) {
   GfxColorSpace *colorSpace;
   GfxColor color;
 
-  state->setStrokePattern(NULL);
+  state->setStrokePattern(nullptr);
   Object obj = res->lookupColorSpace(args[0].getName());
   if (obj.isNull()) {
     colorSpace = GfxColorSpace::parse(res, &args[0], out, state);
@@ -1550,7 +1552,7 @@ void Gfx::opSetFillColor(Object args[], int numArgs) {
     error(errSyntaxError, getPos(), "Incorrect number of arguments in 'sc' command");
     return;
   }
-  state->setFillPattern(NULL);
+  state->setFillPattern(nullptr);
   for (i = 0; i < numArgs; ++i) {
     color.c[i] = dblToCol(args[i].getNum());
   }
@@ -1566,7 +1568,7 @@ void Gfx::opSetStrokeColor(Object args[], int numArgs) {
     error(errSyntaxError, getPos(), "Incorrect number of arguments in 'SC' command");
     return;
   }
-  state->setStrokePattern(NULL);
+  state->setStrokePattern(nullptr);
   for (i = 0; i < numArgs; ++i) {
     color.c[i] = dblToCol(args[i].getNum());
   }
@@ -1609,7 +1611,7 @@ void Gfx::opSetFillColorN(Object args[], int numArgs) {
       error(errSyntaxError, getPos(), "Incorrect number of arguments in 'scn' command");
       return;
     }
-    state->setFillPattern(NULL);
+    state->setFillPattern(nullptr);
     for (i = 0; i < numArgs && i < gfxColorMaxComps; ++i) {
       if (args[i].isNum()) {
 	color.c[i] = dblToCol(args[i].getNum());
@@ -1660,7 +1662,7 @@ void Gfx::opSetStrokeColorN(Object args[], int numArgs) {
       error(errSyntaxError, getPos(), "Incorrect number of arguments in 'SCN' command");
       return;
     }
-    state->setStrokePattern(NULL);
+    state->setStrokePattern(nullptr);
     for (i = 0; i < numArgs && i < gfxColorMaxComps; ++i) {
       if (args[i].isNum()) {
 	color.c[i] = dblToCol(args[i].getNum());
@@ -2097,8 +2099,8 @@ void Gfx::doTilingPatternFill(GfxTilingPattern *tPat,
   // set underlying color space (for uncolored tiling patterns); set
   // various other parameters (stroke color, line width) to match
   // Adobe's behavior
-  state->setFillPattern(NULL);
-  state->setStrokePattern(NULL);
+  state->setFillPattern(nullptr);
+  state->setStrokePattern(nullptr);
   if (tPat->getPaintType() == 2 && (cs = patCS->getUnder())) {
     state->setFillColorSpace(cs->copy());
     out->updateFillColorSpace(state);
@@ -3663,7 +3665,7 @@ void Gfx::opSetFont(Object args[], int numArgs) {
   if (!(font = res->lookupFont(args[0].getName()))) {
     // unsetting the font (drawing no text) is better than using the
     // previous one and drawing random glyphs from it
-    state->setFont(NULL, args[1].getNum());
+    state->setFont(nullptr, args[1].getNum());
     fontChanged = gTrue;
     return;
   }
@@ -3873,7 +3875,7 @@ void Gfx::doShowText(GooString *s) {
   int wMode;
   double riseX, riseY;
   CharCode code;
-  Unicode *u = NULL;
+  Unicode *u = nullptr;
   double x, y, dx, dy, dx2, dy2, curX, curY, tdx, tdy, ddx, ddy;
   double originX, originY, tOriginX, tOriginY;
   double x0, y0, x1, y1;
@@ -4184,7 +4186,7 @@ void Gfx::opXObject(Object args[], int numArgs) {
   } else if (obj2.isName("PS")) {
     Object obj3 = obj1.streamGetDict()->lookup("Level1");
     out->psXObject(obj1.getStream(),
-		   obj3.isStream() ? obj3.getStream() : (Stream *)NULL);
+		   obj3.isStream() ? obj3.getStream() : (Stream *)nullptr);
   } else if (obj2.isName()) {
     error(errSyntaxError, getPos(), "Unknown XObject subtype '{0:s}'", obj2.getName());
   } else {
@@ -4349,11 +4351,11 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
       }
     }
     if (!obj1.isNull()) {
-      char *tempIntent = NULL;
+      char *tempIntent = nullptr;
       Object objIntent = dict->lookup("Intent");
       if (objIntent.isName()) {
         tempIntent = state->getRenderingIntent();
-        if (tempIntent != NULL) {
+        if (tempIntent != nullptr) {
           tempIntent = strdup(tempIntent);
         }
         state->setRenderingIntent(objIntent.getName());
@@ -4385,7 +4387,7 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
         colorSpace = GfxColorSpace::parse(res, &objCS, out, state);
       }
     } else {
-      colorSpace = NULL;
+      colorSpace = nullptr;
     }
     if (!colorSpace) {
       goto err1;
@@ -4401,7 +4403,7 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
 
     // get the mask
     haveColorKeyMask = haveExplicitMask = haveSoftMask = gFalse;
-    maskStr = NULL; // make gcc happy
+    maskStr = nullptr; // make gcc happy
     maskWidth = maskHeight = 0; // make gcc happy
     maskInvert = gFalse; // make gcc happy
     std::unique_ptr<GfxImageColorMap> maskColorMap;
@@ -4456,7 +4458,7 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
 	  obj1 = std::move(obj2);
 	}
       }
-      maskColorSpace = GfxColorSpace::parse(NULL, &obj1, out, state);
+      maskColorSpace = GfxColorSpace::parse(nullptr, &obj1, out, state);
       if (!maskColorSpace || maskColorSpace->getMode() != csDeviceGray) {
 	goto err1;
       }
@@ -4587,7 +4589,7 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
 			     maskStr, maskWidth, maskHeight, maskInvert, maskInterpolate);
       } else {
 	out->drawImage(state, ref, str, width, height, &colorMap, interpolate,
-		       haveColorKeyMask ? maskColors : (int *)NULL, inlineImg);
+		       haveColorKeyMask ? maskColors : (int *)nullptr, inlineImg);
       }
     }
   }
@@ -4609,7 +4611,7 @@ GBool Gfx::checkTransparencyGroup(Dict *resDict) {
   GBool transpGroup = gFalse;
   double opac;
 
-  if (resDict == NULL)
+  if (resDict == nullptr)
     return gFalse;
   pushResources(resDict);
   Object extGStates = resDict->lookup("ExtGState");
@@ -4730,11 +4732,11 @@ void Gfx::doForm(Object *str) {
 
   // get resources
   Object resObj = dict->lookup("Resources");
-  resDict = resObj.isDict() ? resObj.getDict() : (Dict *)NULL;
+  resDict = resObj.isDict() ? resObj.getDict() : (Dict *)nullptr;
 
   // check for a transparency group
   transpGroup = isolated = knockout = gFalse;
-  blendingColorSpace = NULL;
+  blendingColorSpace = nullptr;
   obj1 = dict->lookup("Group");
   if (obj1.isDict()) {
     Object obj2 = obj1.dictLookup("S");
@@ -4890,7 +4892,7 @@ void Gfx::opBeginImage(Object args[], int numArgs) {
 
   // display the image
   if (str) {
-    doImage(NULL, str, gTrue);
+    doImage(nullptr, str, gTrue);
   
     // skip 'EI' tag
     c1 = str->getUndecodedStream()->getChar();
@@ -4926,7 +4928,7 @@ Stream *Gfx::buildImageStream() {
   }
   if (obj.isEOF()) {
     error(errSyntaxError, getPos(), "End of file in inline image");
-    return NULL;
+    return nullptr;
   }
 
   // make stream
@@ -4934,7 +4936,7 @@ Stream *Gfx::buildImageStream() {
     str = new EmbedStream(parser->getStream(), std::move(dict), gFalse, 0, gTrue);
     str = str->addFilters(str->getDict());
   } else {
-    str = NULL;
+    str = nullptr;
   }
 
   return str;
@@ -5023,18 +5025,19 @@ void Gfx::opBeginMarkedContent(Object args[], int numArgs) {
   char* name0 = args[0].getName();
   if ( strncmp( name0, "OC", 2) == 0 && contentConfig) {
     if ( numArgs >= 2 ) {
-      if (!args[1].isName()) {
-	error(errSyntaxError, getPos(), "Unexpected MC Type: {0:d}", args[1].getType());
-      }
-      char* name1 = args[1].getName();
-      MarkedContentStack *mc = mcStack;
-      mc->kind = gfxMCOptionalContent;
-      Object markedContent = res->lookupMarkedContentNF( name1 );
-      if (!markedContent.isNull()) {
-        bool visible = contentConfig->optContentIsVisible(&markedContent);
-        mc->ocSuppressed = !(visible);
+      if (args[1].isName()) {
+        char* name1 = args[1].getName();
+        MarkedContentStack *mc = mcStack;
+        mc->kind = gfxMCOptionalContent;
+        Object markedContent = res->lookupMarkedContentNF( name1 );
+        if (!markedContent.isNull()) {
+          bool visible = contentConfig->optContentIsVisible(&markedContent);
+          mc->ocSuppressed = !(visible);
+        } else {
+          error(errSyntaxError, getPos(), "DID NOT find {0:s}", name1);
+        }
       } else {
-	error(errSyntaxError, getPos(), "DID NOT find {0:s}", name1);
+	error(errSyntaxError, getPos(), "Unexpected MC Type: {0:d}", args[1].getType());
       }
     } else {
       error(errSyntaxError, getPos(), "insufficient arguments for Marked Content");
@@ -5060,7 +5063,7 @@ void Gfx::opBeginMarkedContent(Object args[], int numArgs) {
   if (numArgs == 2 && args[1].isDict()) {
     out->beginMarkedContent(args[0].getName(), args[1].getDict());
   } else if(numArgs == 1) {
-    out->beginMarkedContent(args[0].getName(), NULL);
+    out->beginMarkedContent(args[0].getName(), nullptr);
   }
 }
 
@@ -5105,13 +5108,16 @@ void Gfx::opMarkPoint(Object args[], int numArgs) {
 //------------------------------------------------------------------------
 
 struct GfxStackStateSaver {
-  GfxStackStateSaver(Gfx *gfx) : gfx(gfx) {
+  GfxStackStateSaver(Gfx *gfxA) : gfx(gfxA) {
     gfx->saveState();
   }
 
   ~GfxStackStateSaver() {
     gfx->restoreState();
   }
+
+  GfxStackStateSaver(const GfxStackStateSaver &) = delete;
+  GfxStackStateSaver& operator=(const GfxStackStateSaver &) = delete;
 
   Gfx * const gfx;
 };
@@ -5271,7 +5277,7 @@ void Gfx::drawAnnot(Object *str, AnnotBorder *border, AnnotColor *aColor,
 
     // get the resources
     Object resObj = dict->lookup("Resources");
-    resDict = resObj.isDict() ? resObj.getDict() : (Dict *)NULL;
+    resDict = resObj.isDict() ? resObj.getDict() : (Dict *)nullptr;
 
     // draw it
     drawForm(str, resDict, m, bbox);
@@ -5280,7 +5286,7 @@ void Gfx::drawAnnot(Object *str, AnnotBorder *border, AnnotColor *aColor,
   // draw the border
   if (border && border->getWidth() > 0) {
     if (state->getStrokeColorSpace()->getMode() != csDeviceRGB) {
-      state->setStrokePattern(NULL);
+      state->setStrokePattern(nullptr);
       state->setStrokeColorSpace(new GfxDeviceRGBColorSpace());
       out->updateStrokeColorSpace(state);
     }

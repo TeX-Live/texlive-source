@@ -254,8 +254,8 @@ MediaRendition::MediaRendition(Object* obj) {
   GBool hasClip = gFalse;
 
   ok = gTrue;
-  fileName = NULL;
-  contentType = NULL;
+  fileName = nullptr;
+  contentType = nullptr;
   isEmbedded = gFalse;
 
   //

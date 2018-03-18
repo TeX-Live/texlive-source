@@ -1,3 +1,63 @@
+Release 0.63.0
+        core:
+         * CairoOutputDev: support embedding CCITT image data. Bug #103399
+         * CairoOutputDev: limit image size when printing. Bug #103399
+         * CairoOutputDev: use GOOD instead of BEST as the default cairo filter for scaling. Bug #103136
+         * Error out on save if file has changed since we opened it. Bug #103793
+         * PDFDoc: use %c instead of \x to output binary. Bug #103873
+         * Fix index out of bounds undefined behaviour in PSTokenizer. Bug #103583
+         * Fix opening files with OutlineItem loops. Bug #102914
+         * Fix some bugs in StructTreeRoot parsing of parent tree. Bug #103912
+         * Remove error for wrong child type for tagged pdf. Bug #103587
+         * FoFiTrueType::readPostTable() from xpdf 4.00. Bug #102880
+         * GfxFontDict: merge reference generation from xpdf 4.00. Bug #104565
+         * Reset lastAbortCheck on updateLevel reset
+         * PDFDoc::setup: Fail early if base stream length is 0. Bug #103552
+         * Check curStr is actually a Stream before doing Stream operations. Bug #104518
+         * Fix new Object API porting bug. Bug #104517
+         * Check return code of getChar(), abort reading on error. Bug #104502
+         * TextPage: Add horizontal scaling to font matrix. Bug #105259
+         * Fix EmbedStream replay. Bug #103446
+         * Fix memory leak on error condition
+         * Fix assert on malformed documents. Bug #104354
+         * Fix abort in Gfx::opBeginMarkedContent if args[1] is not a name. Bug #104468
+         * GfxGouraudTriangleShading::parse: Don't abort on malformed documents. Bug #104567
+         * GfxFunctionShading::parse: Fix abort in malformed document. Bug #104581
+         * Remove the extern C from glib.h. Bug #103621
+         * Don't let ArthurOutputDev be friend of SplashPath anymore
+         * Fix undefined sanitizer warning about qsort
+         * Form.h: include time.h for time_t
+         * Various code improvements
+
+        qt5:
+         * Add cancellation support to renderToImage and textList
+         * Do not assume all Screen annotation actions are Renditions. KDE bug #388175
+         * qt5: Implement operator= for PageTransition
+         * ArthurOutputDev: 'clip' should intersect new and old clipping path
+         * ArthurOutputDev: Implement updateBlendMode
+         * ArthurOutputDev: Replace the QPainter by a stack of QPainters
+         * ArthurOutputDev: Rudimentary support for transparency groups
+         * Remove stale libcms1 code. Bug #104358
+         * demo: don't crash if page is malformed
+         * Fix warnings due to the use of deprecated overloads of Poppler::Page::Search in tests.
+
+        utils:
+         * pdfimages: Fix for files with flate encoded inline images. Bug #103446
+         * pdftocairo: Remove stale libcms1 code. Bug #104358
+         * pdfimages: Fix build without libtiff and libpng
+         * pdfseparate: Fix buffer size warning due to missing space for null terminator
+
+        build system:
+         * Enable building all libs as static libs
+         * Enable no-missing-field-initializers
+         * Remove unused FindLIBOPENJPEG.cmake
+         * add "--owner root:0 --group root:0" options to tar command in dist target. Bug #104398
+         * Add python3 support to gtkdoc.py
+         * gtkdoc.py: Make it work with newer gtk-doc. Bug #105075
+
+        cpp:
+         * Add page::text_list
+
 Release 0.62.0
         core:
          * Stop supporting lcms1, you really want to use lcms2 :)

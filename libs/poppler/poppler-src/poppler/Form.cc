@@ -94,7 +94,7 @@ FormWidget::FormWidget(PDFDoc *docA, Object *aobj, unsigned num, Ref aref, FormF
   obj = aobj->copy();
   type = formUndef;
   field = fieldA;
-  widget = NULL;
+  widget = nullptr;
 }
 
 FormWidget::~FormWidget()
@@ -168,18 +168,18 @@ GooString *FormWidget::getFullyQualifiedName() {
 }
 
 LinkAction *FormWidget::getActivationAction() {
-  return widget ? widget->getAction() : NULL;
+  return widget ? widget->getAction() : nullptr;
 }
 
 LinkAction *FormWidget::getAdditionalAction(Annot::FormAdditionalActionsType type) {
-  return widget ? widget->getFormAdditionalAction(type) : NULL;
+  return widget ? widget->getFormAdditionalAction(type) : nullptr;
 }
 
 FormWidgetButton::FormWidgetButton (PDFDoc *docA, Object *aobj, unsigned num, Ref ref, FormField *p) :
 	FormWidget(docA, aobj, num, ref, p)
 {
   type = formButton;
-  onStr = NULL;
+  onStr = nullptr;
 
   // Find the name of the ON state in the AP dictionnary
   // The reference say the Off state, if it existe, _must_ be stored in the AP dict under the name /Off
@@ -205,7 +205,7 @@ char *FormWidgetButton::getOnStr() {
 
   // 12.7.4.2.3 Check Boxes
   //  Yes should be used as the name for the on state
-  return parent()->getButtonType() == formButtonCheck ? (char *)"Yes" : NULL;
+  return parent()->getButtonType() == formButtonCheck ? (char *)"Yes" : nullptr;
 }
 
 FormWidgetButton::~FormWidgetButton ()
@@ -376,7 +376,7 @@ GooString* FormWidgetChoice::getEditChoice ()
 {
   if (!hasEdit()) {
     error(errInternal, -1, "FormFieldChoice::getEditChoice called on a non-editable choice\n");
-    return NULL;
+    return nullptr;
   }
   return parent()->getEditChoice();
 }
@@ -618,12 +618,12 @@ FormField::FormField(PDFDoc *docA, Object *aobj, const Ref& aref, FormField *par
   type = ty;
   parent = parentA;
   numChildren = 0;
-  children = NULL;
+  children = nullptr;
   terminal = false;
-  widgets = NULL;
+  widgets = nullptr;
   readOnly = false;
-  defaultAppearance = NULL;
-  fullyQualifiedName = NULL;
+  defaultAppearance = nullptr;
+  fullyQualifiedName = nullptr;
   quadding = quaddingLeftJustified;
   hasQuadding = gFalse;
 
@@ -715,21 +715,21 @@ FormField::FormField(PDFDoc *docA, Object *aobj, const Ref& aref, FormField *par
   if (obj1.isString()) {
     partialName = obj1.getString()->copy();
   } else {
-    partialName = NULL;
+    partialName = nullptr;
   }
 
   obj1 = dict->lookup("TU");
   if (obj1.isString()) {
     alternateUiName = obj1.getString()->copy();
   } else {
-    alternateUiName = NULL;
+    alternateUiName = nullptr;
   }
 
   obj1 = dict->lookup("TM");
   if(obj1.isString()) {
     mappingName = obj1.getString()->copy();
   } else {
-    mappingName = NULL;
+    mappingName = nullptr;
   }
 }
 
@@ -841,7 +841,7 @@ FormWidget* FormField::findWidgetByRef (Ref aref)
       if(result) return result;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 GooString* FormField::getFullyQualifiedName() {
@@ -948,7 +948,7 @@ FormFieldButton::FormFieldButton(PDFDoc *docA, Object *aobj, const Ref& ref, For
   Dict* dict = obj.getDict();
   active_child = -1;
   noAllOff = false;
-  siblings = NULL;
+  siblings = nullptr;
   numSiblings = 0;
   appearanceState.setToNull();
 
@@ -1011,7 +1011,7 @@ void FormFieldButton::fillChildrenSiblingsID()
   if (!terminal) {
     for(int i=0; i<numChildren; i++) {
       FormFieldButton *child = dynamic_cast<FormFieldButton*>(children[i]);
-      if (child != NULL) {
+      if (child != nullptr) {
         // Fill the siblings of this node childs
         child->setNumSiblings(numChildren-1);
         for(int j=0, counter=0; j<numChildren; j++) {
@@ -1116,7 +1116,7 @@ FormFieldText::FormFieldText(PDFDoc *docA, Object *aobj, const Ref& ref, FormFie
 {
   Dict* dict = obj.getDict();
   Object obj1;
-  content = NULL;
+  content = nullptr;
   multiline = password = fileSelect = doNotSpellCheck = doNotScroll = comb = richText = false;
   maxLen = 0;
 
@@ -1169,14 +1169,14 @@ void FormFieldText::print(int indent)
 
 GooString* FormFieldText::getContentCopy ()
 {
-  if (!content) return NULL;
+  if (!content) return nullptr;
   return new GooString(content);
 }
 
 void FormFieldText::setContentCopy (GooString* new_content)
 {
   delete content;
-  content = NULL;
+  content = nullptr;
 
   if (new_content) {
     content = new_content->copy();
@@ -1286,8 +1286,8 @@ FormFieldChoice::FormFieldChoice(PDFDoc *docA, Object *aobj, const Ref& ref, For
   : FormField(docA, aobj, ref, parent, usedParents, formChoice)
 {
   numChoices = 0;
-  choices = NULL;
-  editedChoice = NULL;
+  choices = nullptr;
+  editedChoice = nullptr;
   topIdx = 0;
 
   Dict* dict = obj.getDict();
@@ -1433,7 +1433,7 @@ void FormFieldChoice::print(int indent)
 #endif
 
 void FormFieldChoice::updateSelection() {
-  Object objV, obj1;
+  Object objV;
   Object objI(objNull);
 
   if (edit && editedChoice) {
@@ -1501,7 +1501,7 @@ void FormFieldChoice::unselectAll ()
 
 void FormFieldChoice::deselectAll () {
   delete editedChoice;
-  editedChoice = NULL;
+  editedChoice = nullptr;
 
   unselectAll();
   updateSelection();
@@ -1510,7 +1510,7 @@ void FormFieldChoice::deselectAll () {
 void FormFieldChoice::toggle (int i)
 {
   delete editedChoice;
-  editedChoice = NULL;
+  editedChoice = nullptr;
 
   choices[i].selected = !choices[i].selected;
   updateSelection();
@@ -1519,7 +1519,7 @@ void FormFieldChoice::toggle (int i)
 void FormFieldChoice::select (int i)
 {
   delete editedChoice;
-  editedChoice = NULL;
+  editedChoice = nullptr;
 
   if (!multiselect)
     unselectAll();
@@ -1531,7 +1531,7 @@ void FormFieldChoice::select (int i)
 void FormFieldChoice::setEditChoice (GooString* new_content)
 {
   delete editedChoice;
-  editedChoice = NULL;
+  editedChoice = nullptr;
 
   unselectAll();
 
@@ -1570,7 +1570,7 @@ GooString *FormFieldChoice::getSelectedChoice() {
       return choices[i].optionName;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------
@@ -1581,7 +1581,7 @@ FormFieldSignature::FormFieldSignature(PDFDoc *docA, Object *dict, const Ref& re
     signature_type(adbe_pkcs7_detached),
     signature(nullptr), signature_info(nullptr)
 {
-  signature = NULL;
+  signature = nullptr;
 
   signature_info = new SignatureInfo();
   parseInfo();
@@ -1677,7 +1677,7 @@ SignatureInfo *FormFieldSignature::validateSignature(bool doVerifyCert, bool for
     return signature_info;
   }
 
-  if (signature == NULL) {
+  if (signature == nullptr) {
     error(errSyntaxError, 0, "Invalid or missing Signature string");
     return signature_info;
   }
@@ -1766,10 +1766,10 @@ Form::Form(PDFDoc *docA, Object* acroFormA)
   
   size = 0;
   numFields = 0;
-  rootFields = NULL;
+  rootFields = nullptr;
   quadding = quaddingLeftJustified;
-  defaultAppearance = NULL;
-  defaultResources = NULL;
+  defaultAppearance = nullptr;
+  defaultResources = nullptr;
 
   obj1 = acroForm->dictLookup("NeedAppearances");
   needAppearances = (obj1.isBool() && obj1.getBool());
@@ -1787,7 +1787,7 @@ Form::Form(PDFDoc *docA, Object* acroFormA)
     // At a minimum, this dictionary shall contain a Font entry
     obj1 = resDict.dictLookup("Font");
     if (obj1.isDict())
-      defaultResources = new GfxResources(xref, resDict.getDict(), NULL);
+      defaultResources = new GfxResources(xref, resDict.getDict(), nullptr);
   }
   if (!defaultResources) {
     resDict.setToNull();
@@ -1815,7 +1815,7 @@ Form::Form(PDFDoc *docA, Object* acroFormA)
       }
 
       std::set<int> usedParents;
-      rootFields[numFields++] = createFieldFromDict (&obj2, doc, oref.getRef(), NULL, &usedParents);
+      rootFields[numFields++] = createFieldFromDict (&obj2, doc, oref.getRef(), nullptr, &usedParents);
 
     }
   } else {
@@ -1918,7 +1918,7 @@ FormWidget* Form::findWidgetByRef (Ref aref)
     FormWidget *result = rootFields[i]->findWidgetByRef(aref);
     if(result) return result;
   }
-  return NULL;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------
@@ -1928,7 +1928,7 @@ FormWidget* Form::findWidgetByRef (Ref aref)
 FormPageWidgets::FormPageWidgets (Annots *annots, unsigned int page, Form *form)
 {
   numWidgets = 0;
-  widgets = NULL;
+  widgets = nullptr;
 
   if (annots && annots->getNumAnnots() > 0 && form) {
     size = annots->getNumAnnots();

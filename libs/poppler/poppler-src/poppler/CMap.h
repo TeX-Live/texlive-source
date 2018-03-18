@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2008 Koji Otani <sho@bbr.jp>
-// Copyright (C) 2009 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012, 2017 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
@@ -70,6 +70,9 @@ public:
 		     GooString *cMapNameA, Stream *stream);
 
   ~CMap();
+
+  CMap(const CMap &) = delete;
+  CMap& operator=(const CMap &) = delete;
 
   void incRefCnt();
   void decRefCnt();
@@ -128,6 +131,9 @@ public:
 
   CMapCache();
   ~CMapCache();
+
+  CMapCache(const CMapCache &) = delete;
+  CMapCache& operator=(const CMapCache &) = delete;
 
   // Get the <cMapName> CMap for the specified character collection.
   // Increments its reference count; there will be one reference for

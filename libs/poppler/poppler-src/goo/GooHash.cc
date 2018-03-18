@@ -56,7 +56,7 @@ GooHash::GooHash(GBool deleteKeysA) {
   size = 7;
   tab = (GooHashBucket **)gmallocn(size, sizeof(GooHashBucket *));
   for (h = 0; h < size; ++h) {
-    tab[h] = NULL;
+    tab[h] = nullptr;
   }
   len = 0;
 }
@@ -149,7 +149,7 @@ void *GooHash::lookup(GooString *key) {
   int h;
 
   if (!(p = find(key, &h))) {
-    return NULL;
+    return nullptr;
   }
   return p->val.p;
 }
@@ -169,7 +169,7 @@ void *GooHash::lookup(const char *key) {
   int h;
 
   if (!(p = find(key, &h))) {
-    return NULL;
+    return nullptr;
   }
   return p->val.p;
 }
@@ -191,7 +191,7 @@ void *GooHash::remove(GooString *key) {
   int h;
 
   if (!(p = find(key, &h))) {
-    return NULL;
+    return nullptr;
   }
   q = &tab[h];
   while (*q != p) {
@@ -237,7 +237,7 @@ void *GooHash::remove(const char *key) {
   int h;
 
   if (!(p = find(key, &h))) {
-    return NULL;
+    return nullptr;
   }
   q = &tab[h];
   while (*q != p) {
@@ -279,7 +279,7 @@ int GooHash::removeInt(const char *key) {
 void GooHash::startIter(GooHashIter **iter) {
   *iter = new GooHashIter;
   (*iter)->h = -1;
-  (*iter)->p = NULL;
+  (*iter)->p = nullptr;
 }
 
 GBool GooHash::getNext(GooHashIter **iter, GooString **key, void **val) {
@@ -292,7 +292,7 @@ GBool GooHash::getNext(GooHashIter **iter, GooString **key, void **val) {
   while (!(*iter)->p) {
     if (++(*iter)->h == size) {
       delete *iter;
-      *iter = NULL;
+      *iter = nullptr;
       return gFalse;
     }
     (*iter)->p = tab[(*iter)->h];
@@ -312,7 +312,7 @@ GBool GooHash::getNext(GooHashIter **iter, GooString **key, int *val) {
   while (!(*iter)->p) {
     if (++(*iter)->h == size) {
       delete *iter;
-      *iter = NULL;
+      *iter = nullptr;
       return gFalse;
     }
     (*iter)->p = tab[(*iter)->h];
@@ -324,7 +324,7 @@ GBool GooHash::getNext(GooHashIter **iter, GooString **key, int *val) {
 
 void GooHash::killIter(GooHashIter **iter) {
   delete *iter;
-  *iter = NULL;
+  *iter = nullptr;
 }
 
 void GooHash::expand() {
@@ -337,7 +337,7 @@ void GooHash::expand() {
   size = 2*size + 1;
   tab = (GooHashBucket **)gmallocn(size, sizeof(GooHashBucket *));
   for (h = 0; h < size; ++h) {
-    tab[h] = NULL;
+    tab[h] = nullptr;
   }
   for (i = 0; i < oldSize; ++i) {
     while (oldTab[i]) {
@@ -363,7 +363,7 @@ GooHashBucket *GooHash::find(GooString *key, int *h) {
       return p;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 GooHashBucket *GooHash::find(const char *key, int *h) {
@@ -375,7 +375,7 @@ GooHashBucket *GooHash::find(const char *key, int *h) {
       return p;
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 int GooHash::hash(GooString *key) {

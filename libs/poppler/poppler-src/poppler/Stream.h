@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2005 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2008 Julien Rebetez <julien@fhtagn.net>
-// Copyright (C) 2008, 2010, 2011, 2016, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2010, 2011, 2016-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009 Stefan Thomas <thomas@eload24.com>
 // Copyright (C) 2010 Hib Eris <hib@hiberis.nl>
@@ -104,6 +104,9 @@ public:
 
   // Destructor.
   virtual ~Stream();
+
+  Stream(const Stream &) = delete;
+  Stream& operator=(const Stream &other) = delete;
 
   // Get kind of stream.
   virtual StreamKind getKind() = 0;
@@ -257,6 +260,9 @@ public:
   // Desctructor.
   virtual ~OutStream ();
 
+  OutStream(const OutStream &) = delete;
+  OutStream& operator=(const OutStream &other) = delete;
+
   // Close the stream
   virtual void close() = 0;
 
@@ -368,6 +374,9 @@ public:
 
   ~ImageStream();
 
+  ImageStream(const ImageStream &) = delete;
+  ImageStream& operator=(const ImageStream &other) = delete;
+
   // Reset the stream.
   void reset();
 
@@ -411,6 +420,9 @@ public:
 		  int widthA, int nCompsA, int nBitsA);
 
   ~StreamPredictor();
+
+  StreamPredictor(const StreamPredictor &) = delete;
+  StreamPredictor& operator=(const StreamPredictor &) = delete;
 
   GBool isOk() { return ok; }
 
@@ -794,7 +806,7 @@ public:
 
   CCITTFaxStream(Stream *strA, int encodingA, GBool endOfLineA,
 		 GBool byteAlignA, int columnsA, int rowsA,
-		 GBool endOfBlockA, GBool blackA);
+		 GBool endOfBlockA, GBool blackA, int damagedRowsBeforeErrorA);
   ~CCITTFaxStream();
   StreamKind getKind() override { return strCCITTFax; }
   void reset() override;
@@ -808,8 +820,11 @@ public:
 
   int getEncoding() { return encoding; }
   GBool getEndOfLine() { return endOfLine; }
+  GBool getEncodedByteAlign() { return byteAlign; }
+  GBool getEndOfBlock() { return endOfBlock; }
   int getColumns() { return columns; }
   GBool getBlackIs1() { return black; }
+  int getDamagedRowsBeforeError() { return damagedRowsBeforeError; }
 
 private:
 
@@ -821,6 +836,7 @@ private:
   int rows;			// 'Rows' parameter
   GBool endOfBlock;		// 'EndOfBlock' parameter
   GBool black;			// 'BlackIs1' parameter
+  int damagedRowsBeforeError;   // 'DamagedRowsBeforeError' parameter
   GBool eof;			// true if at eof
   GBool nextLine2D;		// true if next line uses 2D encoding
   int row;			// current row

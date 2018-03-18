@@ -17,7 +17,7 @@
 //
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
-// Copyright (C) 2013 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2013, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
 // Copyright (C) 2014 Bogdan Cristea <cristeab@gmail.com>
 // Copyright (C) 2014 Peter Breitenlohner <peb@mppmu.mpg.de>
@@ -80,6 +80,9 @@ class MutexLocker {
 public:
   MutexLocker(GooMutex *mutexA) : mutex(mutexA) { gLockMutex(mutex); }
   ~MutexLocker() { gUnlockMutex(mutex); }
+
+  MutexLocker(const MutexLocker &) = delete;
+  MutexLocker& operator=(const MutexLocker &other) = delete;
 
 private:
   GooMutex *mutex;

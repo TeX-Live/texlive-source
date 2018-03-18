@@ -18,12 +18,12 @@
 
 
 MarkedContentOutputDev::MarkedContentOutputDev(int mcidA):
-  currentFont(NULL),
-  currentText(NULL),
+  currentFont(nullptr),
+  currentText(nullptr),
   mcid(mcidA),
   pageWidth(0.0),
   pageHeight(0.0),
-  unicodeMap(NULL)
+  unicodeMap(nullptr)
 {
   currentColor.r = currentColor.g = currentColor.b = 0;
 }
@@ -48,7 +48,7 @@ void MarkedContentOutputDev::endSpan()
                                  currentFont,
                                  currentColor));
   }
-  currentText = NULL;
+  currentText = nullptr;
 }
 
 
@@ -73,7 +73,7 @@ void MarkedContentOutputDev::beginMarkedContent(char *name, Dict *properties)
 {
   int id = -1;
   if (properties)
-    properties->lookupInt("MCID", NULL, &id);
+    properties->lookupInt("MCID", nullptr, &id);
 
   if (id == -1)
     return;
@@ -102,9 +102,9 @@ bool MarkedContentOutputDev::needFontChange(GfxFont* font) const
     return gFalse;
 
   if (!currentFont)
-    return font != NULL && font->isOk();
+    return font != nullptr && font->isOk();
 
-  if (font == NULL)
+  if (font == nullptr)
     return gTrue;
 
   // Two non-null valid fonts are the same if they point to the same Ref
@@ -154,11 +154,11 @@ void MarkedContentOutputDev::drawChar(GfxState *state,
     currentColor = color;
 
   if (fontChange) {
-    if (currentFont != NULL) {
+    if (currentFont != nullptr) {
       currentFont->decRefCnt();
-      currentFont = NULL;
+      currentFont = nullptr;
     }
-    if (state->getFont() != NULL) {
+    if (state->getFont() != nullptr) {
       currentFont = state->getFont();
       currentFont->incRefCnt();
     }
@@ -197,7 +197,7 @@ void MarkedContentOutputDev::drawChar(GfxState *state,
       char buf[8];
       int n = unicodeMap->mapUnicode(u[i], buf, sizeof(buf));
       if (n > 0) {
-        if (currentText == NULL)
+        if (currentText == nullptr)
           currentText = new GooString();
         currentText->append(buf, n);
       }

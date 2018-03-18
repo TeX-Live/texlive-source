@@ -143,7 +143,7 @@ void OutputDev::drawMaskedImage(GfxState *state, Object *ref, Stream *str,
 				int maskWidth, int maskHeight,
 				GBool maskInvert,
 				GBool maskInterpolate) {
-  drawImage(state, ref, str, width, height, colorMap, interpolate, NULL, gFalse);
+  drawImage(state, ref, str, width, height, colorMap, interpolate, nullptr, gFalse);
 }
 
 void OutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *str,
@@ -154,7 +154,7 @@ void OutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *str,
 				    int maskWidth, int maskHeight,
 				    GfxImageColorMap *maskColorMap,
 				    GBool maskInterpolate) {
-  drawImage(state, ref, str, width, height, colorMap, interpolate, NULL, gFalse);
+  drawImage(state, ref, str, width, height, colorMap, interpolate, nullptr, gFalse);
 }
 
 void OutputDev::endMarkedContent(GfxState *state) {
@@ -188,7 +188,7 @@ void OutputDev::startProfile() {
 GooHash *OutputDev::endProfile() {
   GooHash *profile = profileHash;
 
-  profileHash = NULL;
+  profileHash = nullptr;
 
   return profile;
 }

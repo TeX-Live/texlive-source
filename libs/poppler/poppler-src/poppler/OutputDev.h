@@ -79,7 +79,7 @@ public:
  : iccColorSpaceCache(5)
 #endif
   {
-      profileHash = NULL;
+      profileHash = nullptr;
   }
 
   // Destructor.

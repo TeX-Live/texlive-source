@@ -14,6 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2013 Christoph Duelli <duelli@melosgmbh.de>
+// Copyright (C) 2018 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -36,6 +37,9 @@ namespace { // do not pollute global namespace
 
 class Reader {
 public:
+  Reader() = default;
+  Reader(const Reader &) = delete;
+  Reader& operator=(const Reader &other) = delete;
 
   virtual ~Reader() {}
 
@@ -186,7 +190,7 @@ FileReader *FileReader::make(char *fileName) {
   FILE *fA;
 
   if (!(fA = fopen(fileName, "rb"))) {
-    return NULL;
+    return nullptr;
   }
   return new FileReader(fA);
 }

@@ -30,10 +30,10 @@
 EmbFile::EmbFile(Object *efStream)
 {
   m_size = -1;
-  m_createDate = NULL;
-  m_modDate = NULL;
-  m_checksum = NULL;
-  m_mimetype = NULL;
+  m_createDate = nullptr;
+  m_modDate = nullptr;
+  m_checksum = nullptr;
+  m_mimetype = nullptr;
 
   m_objStr = efStream->copy();
 
@@ -102,10 +102,10 @@ GBool EmbFile::save2(FILE *f) {
 FileSpec::FileSpec(Object *fileSpecA)
 {
   ok = gTrue;
-  fileName = NULL;
-  platformFileName = NULL;
-  embFile = NULL;
-  desc = NULL;
+  fileName = nullptr;
+  platformFileName = nullptr;
+  embFile = nullptr;
+  desc = nullptr;
   fileSpec = fileSpecA->copy();
 
   Object obj1 = getFileSpecName(fileSpecA);
@@ -146,7 +146,7 @@ FileSpec::~FileSpec()
 EmbFile *FileSpec::getEmbeddedFile()
 {
   if(!ok)
-    return NULL;
+    return nullptr;
 
   if (embFile)
     return embFile;

@@ -1,9 +1,10 @@
 	To make time_t work on FreeBSD 11.1, per Mojca.
 	http://tug.org/pipermail/tlbuild/2018q1/003931.html
-	
---- Form.h	(revision 46316)
-+++ Form.h	(working copy)
-@@ -31,6 +31,7 @@
+
+diff -ur poppler-0.63.0/poppler/Form.h poppler-src/poppler/Form.h
+--- poppler-0.63.0/poppler/Form.h	Mon Mar 19 03:23:49 2018
++++ poppler-src/poppler/Form.h	Mon Mar 19 06:18:51 2018
+@@ -33,6 +33,7 @@
  
  #include <set>
  #include <vector>

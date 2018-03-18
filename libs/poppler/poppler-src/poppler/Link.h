@@ -17,6 +17,7 @@
 // Copyright (C) 2008 Hugo Mercier <hmercier31@gmail.com>
 // Copyright (C) 2010, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2012 Tobias Koening <tobias.koenig@kdab.com>
+// Copyright (C) 2018 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -61,6 +62,10 @@ enum LinkActionKind {
 
 class LinkAction {
 public:
+
+  LinkAction() = default;
+  LinkAction(const LinkAction &) = delete;
+  LinkAction& operator=(const LinkAction &other) = delete;
 
   // Destructor.
   virtual ~LinkAction() {}
@@ -429,8 +434,10 @@ public:
 
   enum State { On, Off, Toggle};
   struct StateList {
-    StateList() { list = NULL; }
+    StateList() { list = nullptr; }
     ~StateList();
+    StateList(const StateList &) = delete;
+    StateList& operator=(const StateList &) = delete;
     State st;
     GooList *list;
   };
@@ -480,6 +487,9 @@ public:
 
   // Destructor.
   ~Links();
+
+  Links(const Links &) = delete;
+  Links& operator=(const Links &) = delete;
 
   // Iterate through list of links.
   int getNumLinks() const { return numLinks; }
