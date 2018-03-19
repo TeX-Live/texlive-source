@@ -61,7 +61,7 @@ matrix:
       env:
       - tldir=x86_64-linux
       - package=texlive-bin-x86_64-linux.tar.gz
-      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t debian/jessie sh -c "apt-get update; apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential ; ./Build -C"
+      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t debian:jessie sh -c "apt-get update; apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential ; ./Build -C"
 
 before_deploy:
   - if [ -n "$package" ]; then mv inst/bin/x86_64-pc-linux-gnu inst/bin/$tldir ; tar czvf ${package} -C inst/bin .; fi
