@@ -39,29 +39,32 @@ env:
   global:
     - TL_MAKE_FLAGS="-j 2"
 
+# disable direct build, we don't need to build x86=64-linux two times
+#
+#    - os: linux
+#      addons:
+#        apt:
+#          packages:
+#            - libfontconfig-dev
+#            - libx11-dev
+#            - libxmu-dev
+#            - libxaw7-dev
+#      script: ./Build -C
+
 matrix:
   include:
-    - os: linux
-      addons:
-        apt:
-          packages:
-            - libfontconfig-dev
-            - libx11-dev
-            - libxmu-dev
-            - libxaw7-dev
-      script: ./Build -C
-    - os: linux
-      services: docker
-      env:
-      - tldir=x86_64-linuxmusl
-      - package=texlive-bin-x86_64-musl.tar.gz
-      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.1 sh -c "apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; ./Build -C"
     - os: linux
       services: docker
       env:
       - tldir=x86_64-linux
       - package=texlive-bin-x86_64-linux.tar.gz
       script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t debian:jessie sh -c "apt-get update; apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential ; ./Build -C"
+    - os: linux
+      services: docker
+      env:
+      - tldir=x86_64-linuxmusl
+      - package=texlive-bin-x86_64-musl.tar.gz
+      script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.1 sh -c "apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; ./Build -C"
 
 before_deploy:
   - if [ -n "$package" ]; then mv inst/bin/x86_64-pc-linux-gnu inst/bin/$tldir ; tar czvf ${package} -C inst/bin .; fi
