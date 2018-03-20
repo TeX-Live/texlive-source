@@ -1,3 +1,10 @@
+2018-03-20  Hans Hagen  <pragma@wxs.nl>
+
+	* pdftex.web (Glob...): defined saved_pdf_cur_form.
+	(Write out pending forms): save and restore the form.
+	Original report from Alexander Grahn,
+	http://tug.org/pipermail/tex-live/2018-March/041210.html.
+
 2018-03-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftex.web: pdftex_revision=="19".
