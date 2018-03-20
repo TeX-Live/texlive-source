@@ -99,6 +99,10 @@ AC_HEADER_DIRENT
 dnl Checks for library functions (from goo/glibc.h and more).
 AC_CHECK_FUNCS([gettimeofday gmtime_r localtime_r mkstemp popen rand_r \
                 timegm strtok_r])
+
+dnl Check for struct stat needed by goo/gfile.c
+AC_CHECK_MEMBERS([struct stat.st_mtim])
+
 AC_SYS_LARGEFILE
 AC_FUNC_FSEEKO
 AC_CHECK_FUNC([ftell64], [AC_CHECK_FUNCS([fseek64])])
