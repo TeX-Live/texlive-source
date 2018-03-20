@@ -65,7 +65,6 @@
 #define PATH_MAX 1024
 #endif
 
-#if !defined(_WIN32)
 namespace {
 
 template< typename... >
@@ -81,7 +80,14 @@ template< typename Stat, typename = void_t<> >
 struct StatMtim
 {
   static const struct timespec& value(const Stat& stbuf) {
+#if defined(_WIN32)
+    static struct timespec t_spec;
+    t_spec.tv_sec=stbuf.st_mtime;
+    t_spec.tv_nsec=0;
+    return t_spec;
+#else
     return stbuf.st_mtim;
+#endif
   }
 };
 
@@ -100,7 +106,6 @@ inline const struct timespec& mtim(const struct stat& stbuf) {
 
 }
 
-#endif /* !_WIN32 */
 //------------------------------------------------------------------------
 
 GooString *getCurrentDir() {
