@@ -1,6 +1,7 @@
 ## texk/web2c/luatexdir/am/luatex.am: Makefile fragment for luaTeX.
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2018 LuaTeX team
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## LuaTeX and LuaJITTeX
@@ -23,7 +24,7 @@ noinst_PROGRAMS += call_luatex53
 install_exe_links += install-luatex53-links
 uninstall_exe_links += uninstall-luatex53-links
 else !WIN32
-bin_links += luatex53$(EXEEXT):texlua53 luatex53$(EXEEXT):texlua53c
+bin_links += luatex53$(EXEEXT):texlua53
 endif !WIN32
 endif LUATEX53
 
