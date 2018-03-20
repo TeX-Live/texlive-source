@@ -1,19 +1,18 @@
 diff -ur poppler-0.63.0/goo/gfile.cc poppler-src/goo/gfile.cc
 --- poppler-0.63.0/goo/gfile.cc	Mon Mar 19 03:23:49 2018
-+++ poppler-src/goo/gfile.cc	Wed Mar 21 05:50:42 2018
-@@ -65,6 +65,7 @@
- #define PATH_MAX 1024
- #endif
++++ poppler-src/goo/gfile.cc	Wed Mar 21 06:24:52 2018
+@@ -80,7 +80,14 @@
+ struct StatMtim
+ {
+   static const struct timespec& value(const Stat& stbuf) {
++#if defined(_WIN32)
++    static struct timespec t_spec;
++    t_spec.tv_sec=stbuf.st_mtime;
++    t_spec.tv_nsec=0;
++    return t_spec;
++#else
+     return stbuf.st_mtim;
++#endif
+   }
+ };
  
-+#if !defined(_WIN32)
- namespace {
- 
- template< typename... >
-@@ -99,6 +100,7 @@
- 
- }
- 
-+#endif /* !_WIN32 */
- //------------------------------------------------------------------------
- 
- GooString *getCurrentDir() {
