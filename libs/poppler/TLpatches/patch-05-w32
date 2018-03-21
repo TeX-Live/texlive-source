@@ -1,18 +1,22 @@
-diff -ur poppler-0.63.0/goo/gfile.cc poppler-src/goo/gfile.cc
---- poppler-0.63.0/goo/gfile.cc	Mon Mar 19 03:23:49 2018
-+++ poppler-src/goo/gfile.cc	Wed Mar 21 06:47:42 2018
-@@ -80,7 +80,14 @@
- struct StatMtim
- {
-   static const struct timespec& value(const Stat& stbuf) {
-+#ifdef  HAVE_STRUCT_STAT_ST_MTIM
-     return stbuf.st_mtim;
-+#else
-+    static struct timespec t ;
-+    t.tv_sec=stbuf.st_mtime;
-+    t.tv_nsec=0;
-+    return t;
-+#endif
-   }
- };
+$ diff -u gfile.cc.orig gfile.cc 
+--- gfile.cc.orig	2018-03-21 13:21:12.635648536 +0100
++++ gfile.cc	2018-03-21 12:16:05.000000000 +0100
+@@ -65,6 +65,8 @@
+ #define PATH_MAX 1024
+ #endif
  
++#ifndef _WIN32
++
+ namespace {
+ 
+ template< typename... >
+@@ -99,6 +101,8 @@
+ 
+ }
+ 
++#endif
++
+ //------------------------------------------------------------------------
+ 
+ GooString *getCurrentDir() {
+
