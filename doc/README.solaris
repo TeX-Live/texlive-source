@@ -41,10 +41,10 @@ You can check the libc version with
 Building for 64-bit
 ===================
 
-All binaries have been compiled with gcc-5.2.
+All binaries have been compiled with gcc-5.5.
 The only thing that is needed to build for 64-bit is to define
-    export CC="/path/to/gcc-5.2 -m64"
-    export CXX="/path/to/g++-5.2 -m64"
+    export CC="/path/to/gcc-5.5 -m64"
+    export CXX="/path/to/g++-5.5 -m64"
 
 Building wget
 =============
@@ -121,8 +121,8 @@ Building asymptote
 
 Asymptote has been built with the following flags:
 
-export CC=/opt/csw/bin/gcc-5.2
-export CXX=/opt/csw/bin/g++-5.2
+export CC=/opt/csw/bin/gcc-5.5
+export CXX=/opt/csw/bin/g++-5.5
 ./configure --prefix=/tmp/asyinst --enable-texlive-build \
     --disable-fftw --disable-offscreen --disable-sigsegv \
     --disable-gl --disable-gsl --disable-readline
@@ -170,7 +170,7 @@ The resulting binary depends on:
 Building texlive
 ================
 
-Additional settings were needed to compile TeX Live with gcc 5.2:
+Additional settings were needed to compile TeX Live with gcc 5.5:
   * ./Build --without-iconv
 
 The '--without-iconv' makes sure to avoid linking against libiconv
