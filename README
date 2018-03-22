@@ -37,7 +37,7 @@ i386-netbsd, amd64-netbsd:
   TL_MAKE=gmake CC=gcc CXX=g++ CFLAGS=-D_NETBSD_SOURCE \
   LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' \
   ./Build --enable-xindy CLISP=/usr/local/bin/clisp
-  
+
 i386-freebsd, amd64-freebsd:
   --disable-dvisvgm; upmendex for i386 built with -DU_IS_BIG_ENDIAN=0.
 
@@ -60,20 +60,14 @@ powerpc-linux (Debian Squeeze):
   (only the kernel is 64bit, the entire userland is 32bit)
 
 x86_64-darwin:
+  OS X 10.10
   See Master/source/mactexdoc.tar.xz.
 
-x86_64-darwinlegacy, i386-darwin, powerpc-darwin:
+x86_64-darwinlegacy:
+  Mac OS X 10.6, clang 5.0, libc++ required
   https://github.com/TeXLive-M/texlive-buildbot
   http://build.contextgarden.net/waterfall?tag=c/texlive
   (These links have info on all platforms built by Mojca.)
-  
-  32-bit binaries built on 10.6/x86_64 with backward compatibility to 10.5.
-  ppc binaries only work on <= 10.5, so 10.5/ppc will be the only OS for them.
-  i386 binaries only work on <= 10.6. While they theoretically work
-    "everywhere", they would only be used on 10.5 and 10.6/i386.
-  x86_64 binaries only work on >= 10.6 (and should work on any >= 10.6 machine)
-    but will only be used for < 10.10 since x86_64-darwin covers newer.
-  PPC binaries made with gcc-4.2 and Intel binaries with clang-3.7.
 
 x86_64-linuxmusl:
   Alpine 3.1 Docker image with musl libc 1.1.5
