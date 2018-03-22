@@ -51,6 +51,8 @@ extern "C" {
 #elif defined(ACORN)
 #elif defined(MACOS)
 #  include <ctime.h>
+#elif defined(__NetBSD__)
+#include <time.h>
 #else
 #  include <unistd.h>
 #  include <sys/types.h>
