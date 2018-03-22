@@ -1,0 +1,12 @@
+$ diff -u gfile.h.orig gfile.h 
+--- gfile.h.orig	2018-03-22 15:08:01.913911597 +0100
++++ gfile.h	2018-03-22 15:00:59.106829862 +0100
+@@ -51,6 +51,8 @@
+ #elif defined(ACORN)
+ #elif defined(MACOS)
+ #  include <ctime.h>
++#elif defined(__NetBSD__)
++#include <time.h>
+ #else
+ #  include <unistd.h>
+ #  include <sys/types.h>
