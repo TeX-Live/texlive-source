@@ -1,3 +1,8 @@
+2018-03-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import 2.3.5.
+	* patch-08-makefiles: adapt.
+
 2018-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Import 2.3.3.
