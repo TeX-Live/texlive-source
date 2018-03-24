@@ -1,6 +1,13 @@
 % still more web2c stuff for the e-TeX part of Aleph
 % this will be merged into the others soon
 
+@x [16.215] - e-TeX last_node_type
+last_glue:=max_halfword; last_penalty:=0; last_kern:=0;
+@y
+last_glue:=max_halfword; last_penalty:=0; last_kern:=0;
+last_node_type:=-1;
+@z
+
 @x [51.1332] l.24203 (ca.) texarray
   line_stack:=xmalloc_array (integer, max_in_open);
 @y
