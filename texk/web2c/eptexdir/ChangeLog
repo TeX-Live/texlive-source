@@ -1,3 +1,10 @@
+2018-03-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+            Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+
+	* etex.ch1: Recover the right \lastnodesubtype initialization
+	value ignored by tex.ch.
+	* eptex.ech: Describe \lastnodesubtype.
+
 2018-02-26  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.ech, eptex_version.h: e-pTeX version 180226.

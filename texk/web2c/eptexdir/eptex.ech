@@ -5,6 +5,9 @@
 %%
 %% \lastnodechar: the (internal) character code of the last node
 %%   -1: non-character or null
+%% \lastnodesubtype: the (internal) subtype of the last node
+%%   -1: null
+%%   fallback to 0 if not explicitly set
 
 
 @x e-pTeX: logo
