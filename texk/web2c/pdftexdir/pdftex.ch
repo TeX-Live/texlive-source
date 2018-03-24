@@ -37,6 +37,13 @@
 @d banner_k==pdfTeX_banner
 @z
 
+@x [16.215] - e-TeX last_node_type
+last_glue:=max_halfword; last_penalty:=0; last_kern:=0;
+@y
+last_glue:=max_halfword; last_penalty:=0; last_kern:=0;
+last_node_type:=-1;
+@z
+
 @x
 @d frozen_null_font=frozen_control_sequence+11
   {permanent `\.{\\nullfont}'}

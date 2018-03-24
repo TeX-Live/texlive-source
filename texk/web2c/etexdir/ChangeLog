@@ -1,3 +1,9 @@
+2018-03-24  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+            Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* tex.ech: Recover the right \lastnodetype initialization
+	value ignored by tex.ch.
+
 2016-04-06  Karl Berry  <karl@tug.org>
 
 	* etexextra.h (COPYRIGHT_HOLDER): add et al. since
