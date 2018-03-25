@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 46683 2018-02-20 05:44:02Z preining $
+# $Id: tlmgr.pl 47092 2018-03-23 22:22:46Z preining $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 46683 $';
-my $datrev = '$Date: 2018-02-20 06:44:02 +0100 (Tue, 20 Feb 2018) $';
+my $svnrev = '$Revision: 47092 $';
+my $datrev = '$Date: 2018-03-23 23:22:46 +0100 (Fri, 23 Mar 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -281,6 +281,7 @@ my %action_specification = (
   },
   "remove" => { 
     "options"  => {
+      "all" => 1,
       "backup" => 1,
       "backupdir" => "=s",
       "dry-run|n" => 1,
@@ -318,11 +319,6 @@ my %action_specification = (
   },
   "shell" => {
     "function" => \&action_shell
-  },
-  "uninstall" => {
-    "options"  => { "force" => 1 },
-    "run-post" => 0,
-    "function" => \&action_uninstall
   },
   "update" => {
     "options"  => {
@@ -477,6 +473,10 @@ sub main {
   # backward compatibility with action "show" and "list" from before
   if (defined $action && $action =~ /^(show|list)$/) {
     $action = "info";
+  }
+  # merge actions remove and uninstall
+  if (defined $action && $action eq "uninstall") {
+    $action = "remove";
   }
 
   # now $action should be part of %actionoptions, otherwise this is
@@ -1083,6 +1083,14 @@ sub backup_and_remove_package {
 }
 
 sub action_remove {
+  # if --all is given, pass on to uninstall_texlive
+  if ($opts{'all'}) {
+    if (@ARGV) {
+      tlwarn("$prg: No additional arguments allowed with --all\n");
+      return($F_ERROR);
+    }
+    exit(uninstall_texlive());
+  }
   # we do the following:
   # - (not implemented) order collections such that those depending on
   #   other collections are first removed, and then those which only
@@ -5049,7 +5057,7 @@ Error message from creating MainWindow:
 
 #  UNINSTALL
 #
-sub action_uninstall {
+sub uninstall_texlive {
   if (win32()) {
     printf STDERR "Please use \"Add/Remove Programs\" from the Control Panel to removing TeX Live!\n";
     return ($F_ERROR);
@@ -8223,6 +8231,10 @@ package, dependencies are never removed.  Options:
 
 =over 4
 
+=item B<--all>
+
+Uninstalls all of TeX Live.
+
 =item B<--backup>
 
 =item B<--backupdir> I<directory>
@@ -8459,15 +8471,7 @@ If I<var> or then I<val> is not specified, it is prompted for.
 
 =head2 uninstall
 
-Uninstalls the entire TeX Live installation.  Options:
-
-=over 4
-
-=item B<--force>
-
-Do not ask for confirmation, remove immediately.
-
-=back
+Synonym for C<remove>.
 
 =head2 update [I<option>]... [I<pkg>]...
 
@@ -9352,7 +9356,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 46683 2018-02-20 05:44:02Z preining $
+$Id: tlmgr.pl 47092 2018-03-23 22:22:46Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
