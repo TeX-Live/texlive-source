@@ -1,6 +1,10 @@
 # Upgrade Manual
 
-This file contains instructions to upgrade to a new release of Gregorio.
+This file contains instructions to upgrade to a new release of Gregorio.  These instructions are cumulative; meaning that you should apply the instructions from all versions between the one you are upgrading from and the current version.
+
+## 5.1
+
+No additional steps are needed to upgrade from 5.0 to 5.1.
 
 ## 5.0
 
@@ -18,7 +22,7 @@ To install the new versions of Gregorio (the font) and Grana Padano, unzip `supp
  * `system`: the appropriate font folder in `$TEXMFLOCAL`
  * `user`: the appropriate font folder in `$TEXMFHOME`
  * `<dir>`: the name of an alternate texmf root directory you want to use
- 
+
 Additionally, if you are building the fonts yourself from a git clone, `install-gtex.sh` and `install_supp_fonts.lua` will install all the fonts you have built, not just the ones they are normally distributed with.
 
 **Note:** All the above methods assume you only need to access the fonts from within a TeX document (and thus are designed to put them into the correct folder in a texmf tree).  If you want to use the fonts in other programs, then you will need to consult the documentation appropriate to your platform and/or the program and manually move, copy, or link the fonts to the necessary location.
@@ -27,7 +31,7 @@ Additionally, if you are building the fonts yourself from a git clone, `install-
 
 As of version 5.0, ledger lines are extended through notes on either side of a ledger line that crosses a stem, as long as the notes are within the same element.
 
-The algorithm for this is simple so it can be predictable, and it cannot take into account spacing adjustments made it TeX.  This means it may not produce the exactly desired results.  In order to get the results you want, you can override the automatic behavior in gabc:
+The algorithm for this is simple so it can be predictable, and it cannot take into account spacing adjustments made in TeX.  This means it may not produce the exactly desired results.  In order to get the results you want, you can override the automatic behavior in gabc:
 
 - `[oll:1]` will force an over-the-staff ledger line on a note.
 - `[oll:0]` will suppress an over-the-staff ledger line on a note.
@@ -113,7 +117,7 @@ Prior to version 4.2, Gregorio inconsistenly indicated style errors.  Now, error
 
 ### Changes to texmf tree
 
-To better comply with the TeXLive directory structure, the location of `gregoriotex.sty` and `gregoriosyms.sty` have changed.
+To better comply with the TeX Live directory structure, the location of `gregoriotex.sty` and `gregoriosyms.sty` have changed.
 
 *Linux and other users installing from source:* `install-gtex.sh` should remove the old versions before installing the new one.
 
@@ -136,7 +140,7 @@ High notes are now taken into account in vertical spacings. If you would like to
 
 ### Last line of score behavior
 
-`\grelooseness` is now `-1` by default. This should prevent orphaned syllable at end of score. If you prefer the old behavior, use `\def\grelooseness{\looseness}` befor including your scores.
+`\grelooseness` is now `-1` by default. This should prevent orphaned syllable at end of score. If you prefer the old behavior, use `\def\grelooseness{\looseness}` before including your scores.
 
 ## 4.1
 

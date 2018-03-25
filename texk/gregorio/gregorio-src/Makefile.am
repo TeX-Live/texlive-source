@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2017 The Gregorio Project (see CONTRIBUTORS.md)
+# Copyright (C) 2006-2018 The Gregorio Project (see CONTRIBUTORS.md)
 #
 # This file is part of Gregorio.
 #
@@ -22,6 +22,8 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = README.md CHANGELOG.md CONTRIBUTING.md CONTRIBUTORS.md \
 			 UPGRADE.md COPYING.md .gregorio-version VersionManager.py \
 			 build.sh install.sh install-gtex.sh
+
+MAINTAINERCLEANFILES = gregoriotex.ctan.zip
 
 export TOP_LEVEL_MAKE = true
 

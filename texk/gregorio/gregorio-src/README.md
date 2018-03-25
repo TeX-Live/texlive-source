@@ -14,11 +14,11 @@ You can also try it online [here](http://dev.illuminarepublications.com/gregorio
 
 ## Installation
 
-You need a recent and working [TeXLive](https://www.tug.org/texlive/), on top of which you just need to install latest [Gregorio release](https://github.com/gregorio-project/gregorio/releases). See [the website](http://gregorio-project.github.io/installation.html) for more details.
+You need a recent and working [TeX Live](https://www.tug.org/texlive/), on top of which you just need to install latest [Gregorio release](https://github.com/gregorio-project/gregorio/releases). See [the website](http://gregorio-project.github.io/installation.html) for more details.
 
-## Building for inclusion in TeXLive
+## Building for inclusion in TeX Live
 
-When building gregorio for inclusion in TeXLive, the gregorio executable must not have the version number suffix that is used for other builds.  To make this happen, run `configure` with the `--disable-version-in-exe` option, and the generated Makefile will create a gregorio executable without the version number suffix (i.e., the executable will simply be named `gregorio`).
+When building gregorio for inclusion in TeX Live, the gregorio executable must not have the version number suffix that is used for other builds.  To make this happen, run `configure` with the `--disable-version-in-exe` option, and the generated Makefile will create a gregorio executable without the version number suffix (i.e., the executable will simply be named `gregorio`).
 
 ## Documentation
 

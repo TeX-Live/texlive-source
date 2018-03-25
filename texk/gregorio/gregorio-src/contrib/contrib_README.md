@@ -1,6 +1,6 @@
 # Third party scripts
 
-This repository contains various small scripts or modules for third-party softwares to use Gregorio.
+This folder contains various small scripts or modules for third-party softwares to use Gregorio.
 
 ## Scribus
 
