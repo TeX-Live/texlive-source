@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
 
+## [5.1.1] - 2018-03-25
+### Fixed
+- Various issues with the documentation.
+
 ## [5.1.0] - 2018-03-11
 ### Added
 - Added support for virgula (gabc: `` `0``) and divisio minima (gabc: `,0`) on the ledger line above the staff (see [#1370](https://github.com/gregorio-project/gregorio/issues/1370)).
@@ -21,7 +25,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 
 ## [5.0.1] - 2017-04-16
 ### Fixed
-- Fixed a bug in the TeXLive compatibility code for Windows users.  Thanks to Akira Kakuto for the catch.
+- Fixed a bug in the TeX Live compatibility code for Windows users.  Thanks to Akira Kakuto for the catch.
 
 ## [5.0.0] - 2017-04-15
 ### Fixed
@@ -79,7 +83,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 
 ## [4.2.1][Unreleased]
 ### Fixed
-- Debian build scripts now use directories compatible with the TeXLive 2016 packaging of Gregorio (see [#1241](https://github.com/gregorio-project/gregorio/issues/1241)).
+- Debian build scripts now use directories compatible with the TeX Live 2016 packaging of Gregorio (see [#1241](https://github.com/gregorio-project/gregorio/issues/1241)).
 
 
 ## [4.2.0] - 2016-09-23
@@ -173,7 +177,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [4.1.2] - 2016-05-08
 ### Changed
 - The parmesan font is now called granapadano.  If you were using `\gresetgregoriofont{parmesan}`, you should now use `\gresetgregoriofont{granapadano}`.  See [#1075](https://github.com/gregorio-project/gregorio/issues/1075).
-- GregorioTeX is now compatible with TeXLive 2016
+- GregorioTeX is now compatible with TeX Live 2016
 
 
 ## [4.1.1] - 2016-03-10
@@ -214,7 +218,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - Command line output (help message, version message, error handling) has been improved, see [#891](https://github.com/gregorio-project/gregorio/issues/891)
 - Windows installer no longer copies the executable into the TeX bin directory.  Instead it has the option to add its own bin directory to PATH.
 - `system-setup.sh` has become `system-setup.command` so that it is double click executable on Mac.
-- Post install options for Windows installer have been simplified.  There are no longer separate options for MiKTeX and TeXLive.  Instead the installer will determine which you have itself and act accordingly.
+- Post install options for Windows installer have been simplified.  There are no longer separate options for MiKTeX and TeX Live.  Instead the installer will determine which you have itself and act accordingly.
 - Windows installer will check more locations for old installations to remove.
 - Height of the porrectus have been altered (first note moved up, second also moved up when second ambitus is more than one) so that they are more coherent with the punctum height. The porrectus stroke drawings have also been slightly altered to be slightly thinner and sharper around the bottom note (see [#858](https://github.com/gregorio-project/gregorio/issues/858)).
 - When a syllable is preceeded by a punctum mora, gregorio now ignores the punctum mora in the spacing of the syllables by default, and also adds a custom space (defaulting to 0). You can change this behavior with `\gresetshiftaftermora{}`, see GregorioRef for its arguments. To balance the output, space before a punctum mora has been made slightly thinner, more in line with old Solesmes books. (For the change requests, see [#795](https://github.com/gregorio-project/gregorio/issues/795) and [#871](https://github.com/gregorio-project/gregorio/issues/871)).
@@ -258,7 +262,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - New headers for typesetting text after `mode` above the initial: `mode` will be typeset first, using the `modeline` style, then `mode-modifier`, using the `modemodifier` style, then `mode-differentia`, using the `modedifferentia` style.  See GregorioRef for details (for the change request, see [#756](https://github.com/gregorio-project/gregorio/issues/756)).
 - Automatic line breaks before a `<eu>` block may be made ragged by using `\gresetbreakbeforeeuouae{ragged}`.  See GregorioRef for details (for the change request, see [#764](https://github.com/gregorio-project/gregorio/issues/764)).
 - The ability to typeset simple slurs.  See GregorioRef for details (for the change request, see [#776](https://github.com/gregorio-project/gregorio/issues/776)).
-- More control over the alignment of the annotation.  You can now set either the first line or the last line of the annotation as the controling line with `\gresetannotationby{firstline}` and `\gresetannotationby{lastline}` respectively.  Additionaly, within the line you can specify the top, baseline, or bottom of the line as the alignment point with `\gresetannotationvalign{top}`, `\gresetannotation{baseline}`, and `\gresetannotationvalgin{bottom}` respectively.  Default behavior is baseline of the top line (as it was before).  These alignment controls are applied before `annotationraise` is taken into account.  See [#768](https://github.com/gregorio-project/gregorio/issues/768) for details.
+- More control over the alignment of the annotation.  You can now set either the first line or the last line of the annotation as the controling line with `\gresetannotationby{firstline}` and `\gresetannotationby{lastline}` respectively.  Additionaly, within the line you can specify the top, baseline, or bottom of the line as the alignment point with `\gresetannotationvalign{top}`, `\gresetannotationvalign{baseline}`, and `\gresetannotationvalign{bottom}` respectively.  Default behavior is baseline of the top line (as it was before).  These alignment controls are applied before `annotationraise` is taken into account.  See [#768](https://github.com/gregorio-project/gregorio/issues/768) for details.
 - More control over the placement of the commentary.  You can now set the amount of space between the lines of a multi-line commentary with `commentaryseparation` and the distance from the top line of the staff to the baseline of the bottom line of the commentary with `commentaryraise`.  See [#662](https://github.com/gregorio-project/gregorio/issues/662) for original request.
 - Styles for the annotation and the commentary.  `annotation` has no default styling.  `commentary` defaults to footnote sized italics.
 - `\grecommentary` now takes an optional argument which will add extra space between the commentary and the score for just the next score.
@@ -361,7 +365,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - The spacing of manual in-line custos (`(f+)` in gabc) is now consistent with the spacing of automatic in-line custos (`(z0)` in gabc).  See [#642](https://github.com/gregorio-project/gregorio/issues/642).
 - Signs on the climacus praepunctis deminutus `(ghgf~)` neume are now positioned correctly.  See [#650](https://github.com/gregorio-project/gregorio/issues/650)
 - Mac installer has been made SIP compliant (i.e. it now works on El Capitan).
-- Mac installer can now detect installations of TeXLive done with MacPorts or the command-line tool provided by TUG.
+- Mac installer can now detect installations of TeX Live done with MacPorts or the command-line tool provided by TUG.
 - Windows executable has file version information attached correctly so that the installer can properly recognize and replace the binary during an upgrade process.
 - Spacing was too large when alteration begins a syllable, see [#663](https://github.com/gregorio-project/gregorio/issues/663).
 
@@ -422,7 +426,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
   - `\gredefsymbol` for (re-)defining an arbitrary non-score glyph that scales with the text
   - `\gredefsizedsymbol` for (re-)defining an arbitary non-score glyph that requires a point-size to be specified.
 See GregorioRef.pdf for full details.
-- Added `--with-kpathsea` option to configure script, to check input and output file against `openout_any` and `openin_any` settings of texmf.cnf (TeXLive only). Necessary to be included in `shell_escape_commands` in TeXLive.
+- Added `--with-kpathsea` option to configure script, to check input and output file against `openout_any` and `openin_any` settings of texmf.cnf (TeX Live only). Necessary to be included in `shell_escape_commands` in TeX Live.
 - Support for `lualatex -recorder`.  Autocompiled gabc and gtex files will now be properly recorded so that programs like `latexmk -recorder` can detect the need to rebuild the PDF when a gabc file changes.
 - A vertical episema may now be forced to appear above or below a note.  In gabc, use `'0` for the vertical episema to appear below and `'1` for the vertical episema to appear above (see [#385](https://github.com/gregorio-project/gregorio/issues/385)).
 - The first word, first syllable, and first letter of the first syllable that is *not* interpreted as the initial of the score can now be styled from TeX.  Use `\grechangestyle` to modify the `firstsyllableinitial`, `firstsyllable`, and `firstword` as desired.

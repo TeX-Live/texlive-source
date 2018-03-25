@@ -11664,7 +11664,7 @@ char *yytext;
  * Gregorio is a program that translates gabc files to GregorioTeX
  * This file implements the note parser.
  *
- * Copyright (C) 2006-2017 The Gregorio Project (see CONTRIBUTORS.md)
+ * Copyright (C) 2006-2018 The Gregorio Project (see CONTRIBUTORS.md)
  *
  * This file is part of Gregorio.
  *

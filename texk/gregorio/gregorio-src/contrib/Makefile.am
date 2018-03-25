@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2017 The Gregorio Project (see CONTRIBUTORS.md)
+# Copyright (C) 2006-2018 The Gregorio Project (see CONTRIBUTORS.md)
 #
 # This file is part of Gregorio.
 #
@@ -17,4 +17,4 @@
 
 SUBDIRS = TeXShop
 
-EXTRA_DIST = gprocess gabc.xml gabc.lang gabc.vim 900_gregorio.xml gregorio.png gabc-syntax.plist README.md system-setup.command system-setup.bat config-texworks.command checkSyllabation.py
+EXTRA_DIST = gprocess gabc.xml gabc.lang gabc.vim 900_gregorio.xml gregorio.png gabc-syntax.plist contrib_README.md system-setup.command system-setup.bat config-texworks.command checkSyllabation.py
