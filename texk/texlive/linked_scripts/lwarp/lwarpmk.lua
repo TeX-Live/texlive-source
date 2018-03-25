@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.50"
+printversion = "v0.51"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -368,11 +368,11 @@ cmdgroupopenname ..
     "lateximages" .. dirslash .."lateximagetemp-%d" .. ".pdf" ..
     seqname ..
 -- Crop the image:
-"pdfcrop  lateximages" .. dirslash .. "lateximagetemp-" .. lwimgpage .. ".pdf " ..
+"pdfcrop  --hires  lateximages" .. dirslash .. "lateximagetemp-" .. lwimgpage .. ".pdf " ..
     "lateximages" .. dirslash .. lwimgname .. ".pdf" ..
     seqname ..
 -- Convert the image to svg:
-"pdftocairo -svg lateximages" .. dirslash .. lwimgname .. ".pdf " ..
+"pdftocairo -svg  -noshrink  lateximages" .. dirslash .. lwimgname .. ".pdf " ..
     "lateximages" .. dirslash .. lwimgname ..".svg" ..
     seqname ..
 -- Remove the temporary files:
