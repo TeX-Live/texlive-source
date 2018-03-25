@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 46914 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2018-03-10 04:48:22 +0100 (Sat, 10 Mar 2018) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 46945 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2018-03-13 14:42:02 +0900 (火, 13 3 2018) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -262,6 +262,8 @@ local docstr = [[
     2017/05/06
         - introduce sys_user_progs, make checks for updmap/fmtutil
           use sys_user_progs instead, add kanji-config-updmap
+    2018/03/12
+        - introduce a new function gettexmfdist() for security.
 ]]
 
 -- HELPER SUBROUTINES --
@@ -386,6 +388,44 @@ local function mkdir_plus(dir)
   end
 end
 
+--
+-- return the TEXMFDIST directory in TeX Live
+--
+local function gettexmfdist()
+  local ffi = require("ffi")
+  ffi.cdef[[
+  typedef void*  HANDLE;
+  typedef char*  LPCSTR;
+  int GetModuleFileNameA(HANDLE h, LPCSTR l, int i);
+  HANDLE GetModuleHandleA(const char *a);
+  ]]
+  local buffer = ffi.new("char[?]", 512)
+  local runscripthandle = ffi.C.GetModuleHandleA("runscript.dll")
+  if runscripthandle == nil then
+    return nil
+  end
+  local err = ffi.C.GetModuleFileNameA(runscripthandle, buffer, 256)
+  if err == 0 then
+    return nil
+  end
+  local str = ffi.string(buffer)
+  str = string.gsub(str, "\\","/")
+  str = string.reverse(str)
+  local a, b
+-- remove /runscript.dll
+  a, b = string.find(str, '/', 1, true)
+  str = string.sub(str,a+1)
+-- remove /win32
+  a, b = string.find(str, '/', 1, true)
+  str = string.sub(str,a+1)
+-- remove /bin
+  a, b = string.find(str, '/', 1, true)
+  str = string.sub(str,a+1)
+  str = string.reverse(str)
+  str = str .. '/texmf-dist'
+  return str
+end
+
 -- MAIN_CHUNK -- encapsulated in a function for more robust execution with pcall
 
 local function MAIN_CHUNK()
@@ -472,7 +512,12 @@ kpse.set_program_name(lua_binary, progname)
 
 -- various dir-vars
 local TEXDIR = kpse.var_value('SELFAUTOPARENT')
-local TEXMFDIST = kpse.var_value('TEXMFDIST')
+-- local TEXMFDIST = kpse.var_value('TEXMFDIST')
+-- use a new function to obtain TEXMFDIST
+local TEXMFDIST = gettexmfdist()
+if TEXMFDIST == nil then
+  TEXMFDIST = kpse.var_value('TEXMFDIST')
+end
 local BINDIR = kpse.var_value('SELFAUTOLOC')
 local PATH = os.getenv('PATH') or ''
 
