@@ -30,6 +30,7 @@ if ($scriptname =~ /^(.*)def$/) {
     $TEX = $1;
 }
 my $TEXOPTIONS = " -interaction nonstopmode ";
+my $USERTEXOPTIONS = "";
 
 ## Variables for options and settings
 my $CLASS      = undef;
@@ -115,14 +116,14 @@ my $ISCONTEXT = 0;
 my $BEGINENVSTR = '%s';
 my $ENDENVSTR   = '%s';
 
-my $VERSION = 'Version 1.7c -- 2017/12/09';
+my $VERSION = 'Version 1.8 -- 2018/03/25';
 sub usage {
     my $option = shift;
     my $ret    = ($option) ? 0 : 1;
 print << 'EOT';
 texdef -- Show definitions of TeX commands
-Version 1.7c -- 2017/12/09
-Copyright (C) 2011-2017  Martin Scharrer <martin@scharrer-online.de>
+Version 1.8 -- 2019/03/25
+Copyright (C) 2011-2018  Martin Scharrer <martin@scharrer-online.de>
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
 
@@ -136,6 +137,7 @@ Options:
   --tex <format>, -t <format>   : Use given format of TeX: 'tex', 'latex', 'context'.
                                   Variations of 'tex' and 'latex', like 'luatex', 'lualatex', 'xetex', 'xelatex' are supported.
                                   The default is given by the used program name: 'texdef' -> 'tex', 'latexdef' -> 'latex', etc.
+  --texoptions <options>        : Call (La)TeX with the given options.
   --source, -s                  : Try to show the original source code of the command definition (L).
   --value, -v                   : Show value of command instead (i.e. \the\command).
   --Environment, -E             : Every command name is taken as an environment name. This will show the definition of
@@ -146,7 +148,7 @@ Options:
                                   or 'context' is used. For LaTeX the <pkg> can start with `[<options>]` and end 
                                   with `<pkgname>` or `{<pkgname>}`.
   --class <class>, -c <class>   : (LaTeX only) Load given class instead of default ('article').
-                                  The <class> can start with `[<classs options>]` and end 
+                                  The <class> can start with `[<class options>]` and end 
                                   with `<classname>` or `{<classname>}`.
   --environment <env>, -e <env> : (M) Show definition inside the given environment <env>.
   --othercode <code>, -o <code> : (M) Add other code into the preamble before the definition is shown.
@@ -247,6 +249,7 @@ GetOptions (
    'before|b=s' => \&envcode,
    'after|a=s' => \&envcode,
    'tex|t=s' => \$TEX,
+   'texoptions=s' => \$USERTEXOPTIONS,
    'help|h' => \&usage,
    'pgf-keys|k' => \$PGFKEYS,
    'pgf-Keys|K' => \$PGFKEYSPLAIN,
@@ -319,9 +322,14 @@ elsif ($TEX =~ /context$/) {
   $ENDENVSTR   = '\stop%s'  . "\n";
 }
 
+if ($TEX =~ /^dvi((la)?tex)$/) {
+  $TEX = $1;
+  $TEXOPTIONS .= ' -output-format=dvi '
+}
+
 $USERCLASS = $CLASS;
 $CLASS = 'article' if not $CLASS;
-$CLASS =~ /^(?:\[(.*)\])?{?(.*?)}?$/;
+$CLASS =~ /^(?:\[(.*)\])?\{?(.*?)\}?$/;
 $CLASS = $2;
 my $CLASSOPTIONS = $1 || '';
 
@@ -503,7 +511,7 @@ if ($ISLATEX) {
         }
 
         foreach my $pkg (@PACKAGES) {
-            $pkg =~ /^(?:\[(.*)\])?{?(.*?)}?$/;
+            $pkg =~ /^(?:\[(.*)\])?\{?(.*?)\}?$/;
             my ($pkgname,$pkgoptions) = ($2, $1 || '');
             print "\\usepackage[$pkgoptions]{$pkgname}\n";
         }
@@ -623,7 +631,7 @@ select STDOUT;
 sub remove_invalid_braces {
     $_[0] =~ s/\\[\\%]//g; # remove \\ and \%
     $_[0] =~ s/%.*$//;     # remove line comments
-    $_[0] =~ s/\\[{}]//g;  # remove \{ and \}
+    $_[0] =~ s/\\[\{\}]//g;  # remove \{ and \}
 }
 
 sub env_braces {
@@ -766,7 +774,7 @@ sub print_orig_def {
     return $found;
 }
 
-open (my $texpipe, '-|', "$TEX $TEXOPTIONS \"$TMPFILE\" ");
+open (my $texpipe, '-|', "$TEX $TEXOPTIONS $USERTEXOPTIONS \"$TMPFILE\" ");
 
 my $name = '';
 my $definition = '';
