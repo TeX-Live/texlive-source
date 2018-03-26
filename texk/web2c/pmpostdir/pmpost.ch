@@ -267,7 +267,7 @@ else
 #else
   enable_UPTEX (false);
 #if defined(WIN32)
-  set_enc_string("sjis", "sjis");
+  set_enc_string("utf8", "sjis");
 #else
   set_enc_string("utf8", "euc");
 #endif

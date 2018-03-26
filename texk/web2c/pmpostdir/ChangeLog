@@ -1,3 +1,8 @@
+2018-03-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pmpost.ch: Use UTF-8 as a default encoding also on
+	Windows.
+
 2018-02-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pmp.ch: Adapt to the new mp.w.
