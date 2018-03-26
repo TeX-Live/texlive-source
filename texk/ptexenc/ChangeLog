@@ -1,3 +1,8 @@
+2018-03-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptexenc.c: Change default_kanji_enc from ENC_SJIS to ENC_UTF8
+	(Windows only).
+
 2018-01-17  Karl Berry  <karl@freefriends.org>
 
 	* ptexenc.c: #include <kpathsea/c-pathmx.h>, per Debian.
