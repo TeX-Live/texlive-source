@@ -45,6 +45,7 @@ class NumberFormatterApiTest : public IntlTest {
     void notationScientific();
     void notationCompact();
     void unitMeasure();
+    void unitCompoundMeasure();
     void unitCurrency();
     void unitPercent();
     void roundingFraction();
@@ -62,6 +63,7 @@ class NumberFormatterApiTest : public IntlTest {
     void locale();
     void formatTypes();
     void errors();
+    void validRanges();
 
     void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par = 0);
 
@@ -70,11 +72,19 @@ class NumberFormatterApiTest : public IntlTest {
     CurrencyUnit GBP;
     CurrencyUnit CZK;
     CurrencyUnit CAD;
+    CurrencyUnit ESP;
+    CurrencyUnit PTE;
 
     MeasureUnit METER;
     MeasureUnit DAY;
     MeasureUnit SQUARE_METER;
     MeasureUnit FAHRENHEIT;
+    MeasureUnit SECOND;
+    MeasureUnit POUND;
+    MeasureUnit SQUARE_MILE;
+    MeasureUnit JOULE;
+    MeasureUnit FURLONG;
+    MeasureUnit KELVIN;
 
     NumberingSystem MATHSANB;
     NumberingSystem LATN;
@@ -100,6 +110,7 @@ class DecimalQuantityTest : public IntlTest {
     void testAppend();
     void testConvertToAccurateDouble();
     void testUseApproximateDoubleWhenAble();
+    void testHardDoubleConversion();
 
     void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par = 0);
 
@@ -108,6 +119,13 @@ class DecimalQuantityTest : public IntlTest {
     void assertHealth(const DecimalQuantity &fq);
     void assertToStringAndHealth(const DecimalQuantity &fq, const UnicodeString &expected);
     void checkDoubleBehavior(double d, bool explicitRequired);
+};
+
+class DoubleConversionTest : public IntlTest {
+  public:
+    void testDoubleConversionApi();
+
+    void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par = 0);
 };
 
 class ModifiersTest : public IntlTest {
@@ -132,6 +150,7 @@ class ModifiersTest : public IntlTest {
 class PatternModifierTest : public IntlTest {
   public:
     void testBasic();
+    void testPatternWithNoPlaceholder();
     void testMutableEqualsImmutable();
 
     void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par = 0);
@@ -155,6 +174,7 @@ class PatternStringTest : public IntlTest {
 class NumberStringBuilderTest : public IntlTest {
   public:
     void testInsertAppendUnicodeString();
+    void testSplice();
     void testInsertAppendCodePoint();
     void testCopy();
     void testFields();
@@ -195,6 +215,7 @@ class NumberTest : public IntlTest {
         TESTCLASS(4, PatternModifierTest);
         TESTCLASS(5, PatternStringTest);
         TESTCLASS(6, NumberStringBuilderTest);
+        TESTCLASS(7, DoubleConversionTest);
         default: name = ""; break; // needed to end loop
         }
     }

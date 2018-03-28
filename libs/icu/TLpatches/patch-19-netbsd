@@ -2,10 +2,9 @@
 	From: Marc Baudoin <babafou@babafou.eu.org>
 	tlbuild
 
---- icu-src/source/common/uposixdefs.h	(revision 46329)
-+++ icu-src/source/common/uposixdefs.h	(working copy)
-@@ -71,4 +71,8 @@
- #   define _STDC_C99
+--- source/common/uposixdefs.h.ORIG1	2018-03-28 15:39:29.245884244 -0700
++++ source/common/uposixdefs.h	2018-03-28 15:40:40.027978901 -0700
+@@ -72,3 +72,7 @@
  #endif
  
 +#if defined(__cplusplus) && defined(__NetBSD__)

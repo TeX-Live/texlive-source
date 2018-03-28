@@ -1,10 +1,9 @@
 	Do not define _XOPEN_SOURCE_EXTENDED on Solaris,
 	notwithstanding comments in icu source.
 
---- /tmp/up	2018-01-11 11:05:06.218484133 -0800
-+++ source/common/uposixdefs.h	2018-01-11 11:07:11.006686446 -0800
-@@ -51,10 +51,13 @@
-  * Make sure things like readlink and such functions work.
+--- source/common/uposixdefs.h.ORIG	2018-03-26 06:38:30.000000000 -0700
++++ source/common/uposixdefs.h	2018-03-28 15:39:29.245884244 -0700
+@@ -52,8 +52,11 @@
   * Poorly upgraded Solaris machines can't have this defined.
   * Cleanly installed Solaris can use this #define.
 + * [Experience with TeX Live is that it always causes failure.
@@ -17,4 +16,3 @@
 +#if !defined(_XOPEN_SOURCE_EXTENDED) && defined(__TOS_MVS__) && !defined(sun)
  #   define _XOPEN_SOURCE_EXTENDED 1
  #endif
- 

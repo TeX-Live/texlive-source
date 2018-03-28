@@ -509,11 +509,12 @@ if [[ "$GXX" = yes ]]; then
         else
             CXXFLAGS="$OLD_CXXFLAGS"
         fi
-        case "${host}" in
-        *-*-solaris*)
-            CXXFLAGS="$OLD_CXXFLAGS"
-            ;;
-        esac
+# TL: why? http://bugs.icu-project.org/trac/ticket/13543
+#        case "${host}" in
+#        *-*-solaris*)
+#            CXXFLAGS="$OLD_CXXFLAGS"
+#            ;;
+#        esac
     fi
 fi
 

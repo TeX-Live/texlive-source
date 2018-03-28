@@ -5,34 +5,25 @@
 	http://tug.org/pipermail/tlbuild/2016q1/003438.html
 	(and starting at http://tug.org/pipermail/tlbuild/2016q1/003433.html)
 
-Index: source/i18n/dayperiodrules.h
-===================================================================
---- source/i18n/dayperiodrules.h	(revision 43491)
-+++ source/i18n/dayperiodrules.h	(working copy)
-@@ -55,7 +55,7 @@
-     // Returns the center of dayPeriod. Half hours are indicated with a .5 .
+--- source/i18n/dayperiodrules.h.ORIG	2018-03-26 06:38:30.000000000 -0700
++++ source/i18n/dayperiodrules.h	2018-03-28 15:41:21.288451156 -0700
+@@ -56,5 +56,5 @@
      double getMidPointForDayPeriod(DayPeriod dayPeriod, UErrorCode &errorCode) const;
  
 -private:
 +/* nothing private to placate old compilers --karl/koch private: */
      DayPeriodRules();
  
-     // Translates "morning1" to DAYPERIOD_MORNING1, for example.
-Index: source/i18n/unicode/dtitvinf.h
-===================================================================
---- source/i18n/unicode/dtitvinf.h	(revision 43491)
-+++ source/i18n/unicode/dtitvinf.h	(working copy)
-@@ -330,7 +330,7 @@
-     static UClassID U_EXPORT2 getStaticClassID();
+--- source/i18n/unicode/dtitvinf.h.ORIG	2018-03-26 06:38:30.000000000 -0700
++++ source/i18n/unicode/dtitvinf.h	2018-03-28 15:41:21.288451156 -0700
+@@ -329,5 +329,5 @@
  
  
 -private:
 +/* nothing private to placate old compilers --karl/koch private: */
      /**
       * DateIntervalFormat will need access to
-      * getBestSkeleton(), parseSkeleton(), enum IntervalPatternIndex,
-@@ -364,7 +364,8 @@
-         kIPI_MAX_INDEX
+@@ -363,5 +363,6 @@
      };
  public:
 -#ifndef U_HIDE_INTERNAL_API
@@ -40,9 +31,7 @@ Index: source/i18n/unicode/dtitvinf.h
 +/* ifndef U_HIDE_INTERNAL_API */
      /**
       * Max index for stored interval patterns
-      * @internal ICU 4.4
-@@ -372,8 +373,8 @@
-      enum {
+@@ -371,6 +372,6 @@
           kMaxIntervalPatternIndex = kIPI_MAX_INDEX
       };
 -#endif  /* U_HIDE_INTERNAL_API */
@@ -51,4 +40,3 @@ Index: source/i18n/unicode/dtitvinf.h
 +/* nothing private to placate old compilers --karl/koch private: */
  
  
-     /**

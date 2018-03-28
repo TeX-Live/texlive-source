@@ -1,11 +1,8 @@
 	We don't want this for TeX Live cross compilation.
 
-Index: source/config/mh-mingw
-===================================================================
---- source/config/mh-mingw	(revision 43491)
-+++ source/config/mh-mingw	(working copy)
-@@ -61,27 +61,9 @@
- ## Non-shared intermediate object suffix
+--- source/config/mh-mingw.ORIG	2018-03-26 06:38:44.000000000 -0700
++++ source/config/mh-mingw	2018-03-28 15:37:03.292751066 -0700
+@@ -66,25 +66,7 @@
  STATIC_O = ao
  
 -ifeq ($(ENABLE_SHARED),YES)
@@ -31,4 +28,3 @@ Index: source/config/mh-mingw
 -
  #SH### copied from Makefile.inc
  #SH## for icu-config to test with
- #SH#ICULIBS_COMMON_LIB_NAME="${LIBICU}${COMMON_STUBNAME}${ICULIBSUFFIX}${ICULIBSUFFIX_VERSION}.${SO}"

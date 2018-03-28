@@ -46,8 +46,8 @@
 // First, the platform type. Need this for U_PLATFORM.
 #include "unicode/platform.h"
 
-#if (U_PF_CYGWIN <= U_PLATFORM) && defined(__STRICT_ANSI__)
-/* tzset isn't defined in strict ANSI on Cygwin and MinGW. */
+#if U_PLATFORM == U_PF_MINGW && defined __STRICT_ANSI__
+/* tzset isn't defined in strict ANSI on MinGW. */
 #undef __STRICT_ANSI__
 #endif
 
