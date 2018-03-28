@@ -3,9 +3,9 @@
 
 Index: source/configure
 ===================================================================
---- source/configure	(revision 43491)
+--- source/configure	(revision 47155)
 +++ source/configure	(working copy)
-@@ -2830,7 +2830,7 @@
+@@ -2842,7 +2842,7 @@
  ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
  ac_compiler_gnu=$ac_cv_c_compiler_gnu
  if test -n "$ac_tool_prefix"; then
@@ -14,7 +14,7 @@ Index: source/configure
    do
      # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
  set dummy $ac_tool_prefix$ac_prog; ac_word=$2
-@@ -2874,7 +2874,7 @@
+@@ -2886,7 +2886,7 @@
  fi
  if test -z "$CC"; then
    ac_ct_CC=$CC
@@ -23,7 +23,7 @@ Index: source/configure
  do
    # Extract the first word of "$ac_prog", so it can be a program name with args.
  set dummy $ac_prog; ac_word=$2
-@@ -3433,7 +3433,7 @@
+@@ -3445,7 +3445,7 @@
      CXX=$CCC
    else
      if test -n "$ac_tool_prefix"; then
@@ -32,7 +32,7 @@ Index: source/configure
    do
      # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
  set dummy $ac_tool_prefix$ac_prog; ac_word=$2
-@@ -3477,7 +3477,7 @@
+@@ -3489,7 +3489,7 @@
  fi
  if test -z "$CXX"; then
    ac_ct_CXX=$CXX
@@ -43,7 +43,7 @@ Index: source/configure
  set dummy $ac_prog; ac_word=$2
 Index: source/configure.ac
 ===================================================================
---- source/configure.ac	(revision 43491)
+--- source/configure.ac	(revision 47155)
 +++ source/configure.ac	(working copy)
 @@ -133,10 +133,10 @@
  : ${CXXFLAGS=""}

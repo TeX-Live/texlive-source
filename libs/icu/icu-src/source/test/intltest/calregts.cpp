@@ -17,6 +17,7 @@
 #include "unicode/simpletz.h"
 #include "unicode/smpdtfmt.h"
 #include "unicode/strenum.h"
+#include "unicode/localpointer.h"
 #include "cmemory.h"
 #include "caltest.h"
 #include "unicode/localpointer.h"
@@ -93,6 +94,8 @@ CalendarRegressionTest::runIndexedTest( int32_t index, UBool exec, const char* &
         CASE(50,TestT9452);
         CASE(51,TestT11632);
         CASE(52,TestPersianCalOverflow);
+        CASE(53,TestIslamicCalOverflow);
+        CASE(54,TestWeekOfYear13548);
     default: name = ""; break;
     }
 }
@@ -3009,13 +3012,60 @@ void CalendarRegressionTest::TestPersianCalOverflow(void) {
             month = cal->get(UCAL_MONTH, status);
             dayOfMonth = cal->get(UCAL_DATE, status);
             if ( U_FAILURE(status) ) {
-                errln("FAIL: Calendar->get MONTH/DATE for localeID %s, julianDay %d, status %s\n", localeID, jd, u_errorName(status)); 
+                errln("FAIL: Calendar->get MONTH/DATE for localeID %s, julianDay %d, status %s", localeID, jd, u_errorName(status)); 
             } else if (month > maxMonth || dayOfMonth > maxDayOfMonth) {
-                errln("FAIL: localeID %s, julianDay %d; maxMonth %d, got month %d; maxDayOfMonth %d, got dayOfMonth %d\n",
+                errln("FAIL: localeID %s, julianDay %d; maxMonth %d, got month %d; maxDayOfMonth %d, got dayOfMonth %d",
                         localeID, jd, maxMonth, month, maxDayOfMonth, dayOfMonth); 
             }
         }
         delete cal;
+    }
+}
+
+/**
+ * @bug tickets 12661, 13538
+ */
+void CalendarRegressionTest::TestIslamicCalOverflow(void) {
+    const char* localeID = "ar@calendar=islamic-civil";
+    UErrorCode status = U_ZERO_ERROR;
+    Calendar* cal = Calendar::createInstance(Locale(localeID), status);
+    if(U_FAILURE(status)) {
+        dataerrln("FAIL: Calendar::createInstance for localeID %s: %s", localeID, u_errorName(status));
+    } else {
+        int32_t maxMonth = cal->getMaximum(UCAL_MONTH);
+        int32_t maxDayOfMonth = cal->getMaximum(UCAL_DATE);
+        int32_t jd, year, month, dayOfMonth;
+        for (jd = 73530872; jd <= 73530876; jd++) { // year 202002, int32_t overflow if jd >= 73530874
+            status = U_ZERO_ERROR;
+            cal->clear();
+            cal->set(UCAL_JULIAN_DAY, jd);
+            year = cal->get(UCAL_YEAR, status);
+            month = cal->get(UCAL_MONTH, status);
+            dayOfMonth = cal->get(UCAL_DATE, status);
+            if ( U_FAILURE(status) ) {
+                errln("FAIL: Calendar->get YEAR/MONTH/DATE for localeID %s, julianDay %d, status %s", localeID, jd, u_errorName(status)); 
+            } else if (month > maxMonth || dayOfMonth > maxDayOfMonth) {
+                errln("FAIL: localeID %s, julianDay %d; got year %d; maxMonth %d, got month %d; maxDayOfMonth %d, got dayOfMonth %d",
+                        localeID, jd, year, maxMonth, month, maxDayOfMonth, dayOfMonth); 
+            }
+        }
+        delete cal;
+    }
+}
+
+void CalendarRegressionTest::TestWeekOfYear13548(void) {
+    int32_t year = 2000;
+    UErrorCode status = U_ZERO_ERROR;
+    LocalPointer<Calendar> cal(Calendar::createInstance(status));
+    failure(status, "Calendar::createInstance(status)");
+
+    cal->set(UCAL_YEAR, year);
+    cal->set(UCAL_WEEK_OF_YEAR, 4);
+
+    int32_t resultYear = cal->get(UCAL_YEAR, status);
+    failure(status, "get(UCAL_YEAR, status)");
+    if (year != resultYear) {
+        errln((UnicodeString)"Fail: Expected year=" + year + ", actual=" + resultYear);
     }
 }
 
