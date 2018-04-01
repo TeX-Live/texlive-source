@@ -72,8 +72,11 @@ matrix:
       - package=texlive-bin-x86_64-musl.tar.gz
       script: docker run -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.1 sh -c "apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; ./Build -C"
 
+# somehow all binaries are always put into x86_64-pc-linux-gnu, probably because
+# this is the architecture travis-ci is running on.
+# Rename to the currently built architecture
 before_deploy:
-  - if [ -n "$package" ]; then mv inst/bin/* inst/bin/$tldir ; tar czvf ${package} -C inst/bin .; fi
+  - if [ -n "$package" ]; then mv inst/bin/x86_64-pc-linux-gnu inst/bin/$tldir ; tar czvf ${package} -C inst/bin .; fi
 
 deploy:
   provider: releases
