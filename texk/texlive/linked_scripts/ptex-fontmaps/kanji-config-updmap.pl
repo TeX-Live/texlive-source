@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20180306.0
+# Version 20180328.0
 #
 # formerly known as updmap-setup-kanji
 #
@@ -22,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20180306.0';
+my $version = '20180328.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -132,10 +132,28 @@ if ($opt_help) {
 #
 my %representatives;
 my @databaselist = "ptex-fontmaps-data.dat";
-push @databaselist, "ptex-fontmaps-macos-data.dat";
+push @databaselist, "ptex-fontmaps-macos-data.dat" if (macosx_new());
 
 
 main(@ARGV);
+
+sub macosx { return ($^O=~/^darwin$/i); }
+
+sub macosx_new {
+  if (macosx()) {
+    my $macos_ver = `sw_vers -productVersion`;
+    my $macos_ver_major = $macos_ver;
+    $macos_ver_major =~ s/^(\d+)\.(\d+).*/$1/;
+    my $macos_ver_minor = $macos_ver;
+    $macos_ver_minor =~ s/^(\d+)\.(\d+).*/$2/;
+    if ($macos_ver_major==10) {
+      if ($macos_ver_minor>=11) {
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
 
 sub version {
   my $ret = sprintf "%s version %s\n", $prg, $version;

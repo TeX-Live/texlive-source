@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.51"
+printversion = "v0.52"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -95,7 +95,7 @@ function loadconf ()
 -- Default configuration filename:
 local conffile = "lwarpmk.conf"
 -- Optional configuration filename:
-if arg[2] ~= nil then conffile = arg[2]..".lwarpmkconf" end
+if ( arg[2] ~= nil ) then conffile = arg[2]..".lwarpmkconf" end
 -- Default language:
 language = "english"
 -- Default xdyfile:
@@ -105,7 +105,9 @@ if (lfs.attributes(conffile,"mode")==nil) then
     -- file not exists
     print ("lwarpmk: ===")
     print ("lwarpmk: " .. conffile .." does not exist.")
-    print ("lwarpmk: " .. arg[2] .. " does not appear to be a project name.\n")
+    if ( arg[2] ~= nil ) then
+        print ("lwarpmk: " .. arg[2] .. " does not appear to be a project name.\n")
+    end
     print ("lwarpmk: ===")
     printhelp () ;
     os.exit(1) -- exit the entire lwarpmk script
@@ -286,10 +288,9 @@ splitfile (homehtmlfilename .. ".html" , sourcename .. "_html.html")
 end
 
 -- Remove auxiliary files:
-
+-- All aux files are removed since there may be many bbl*.aux files.
 function removeaux ()
-os.execute ( rmname .. " " ..
-    sourcename ..".aux " .. sourcename .. "_html.aux " ..
+os.execute ( rmname .. " *.aux " ..
     sourcename ..".toc " .. sourcename .. "_html.toc " ..
     sourcename ..".lof " .. sourcename .. "_html.lof " ..
     sourcename ..".lot " .. sourcename .. "_html.lot " ..
@@ -297,7 +298,7 @@ os.execute ( rmname .. " " ..
     sourcename ..".ind " .. sourcename .. "_html.ind " ..
     sourcename ..".log " .. sourcename .. "_html.log " ..
     sourcename ..".gl* " .. sourcename .. "_html.gl* " ..
-    "*_html_inc.*"
+    " *_html_inc.* "
     )
 end
 
@@ -332,6 +333,8 @@ if opsystem=="Windows" then
         os.exit(1) ;
     end
 end -- create lwarp_one_limage.cmd
+-- Track the number of parallel processes
+numimageprocesses = 0
 -- Scan lateximages.txt
 for line in limagesfile:lines() do
 -- lwimgpage is the page number in the PDF which has the image
@@ -340,6 +343,8 @@ for line in limagesfile:lines() do
 i,j,lwimgpage,lwimghash,lwimgname = string.find (line,"|(.*)|(.*)|(.*)|")
 -- For each entry:
 if ( (i~=nil) ) then
+-- Skip if the page number is 0:
+if ( lwimgpage ~= "0" ) then
 -- Skip is this image is hashed and already exists:
 local lwimgfullname = "lateximages" .. dirslash .. lwimgname .. ".svg"
 if (
@@ -361,7 +366,6 @@ end
 if opsystem=="Unix" then
 -- For Unix / Linux / Mac OS:
 err = os.execute(
--- print (
 cmdgroupopenname ..
 "pdfseparate -f " .. lwimgpage .. " -l " .. lwimgpage .. " " ..
     sourcename .."_html.pdf " ..
@@ -380,10 +384,29 @@ rmname .. " lateximages" .. dirslash .. lwimgname .. ".pdf" .. seqname ..
 rmname .. " lateximages" .. dirslash .. "lateximagetemp-" .. lwimgpage .. ".pdf" ..
 cmdgroupclosename .. " >/dev/null " .. bgname
 )
+-- Every 32 images, wait for completion at below normal priority,
+--  allowing other image tasks to catch up.
+numimageprocesses = numimageprocesses + 1
+if ( numimageprocesses > 32 ) then
+    numimageprocesses = 0
+    print ( "lwarpmk: waiting" )
+    err = os.execute ( "wait" )
+end
 elseif opsystem=="Windows" then
 -- For Windows
+-- Every 32 images, wait for completion at below normal priority,
+--  allowing other image tasks to catch up.
+numimageprocesses = numimageprocesses + 1
+if ( numimageprocesses > 32 ) then
+    numimageprocesses = 0
+    thiswaitcommand = "/WAIT /BELOWNORMAL"
+    print ( "lwarpmk: waiting" )
+else
+    thiswaitcommand = ""
+end
+-- Execute the image generation command
 err = os.execute (
-    "start /b \"\" lwarp_one_limage " ..
+    "start /B " .. thiswaitcommand .. " \"\" lwarp_one_limage " ..
     lwimgpage .. " " ..
     lwimghash .. " " ..
     lwimgname .. " " ..
@@ -397,6 +420,7 @@ if ( err ~= 0 ) then
     os.exit(1)
 end
 end -- not hashed or not exists
+end -- not page 0
 end -- not nil
 end -- do
 io.close(limagesfile)
@@ -575,16 +599,12 @@ print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
 -- lwarpmk limages:
--- Scan the lateximages.txt file to create lateximages,
--- then touch the source to trigger a recompile.
+-- Scan the lateximages.txt file to create lateximages.
 
 elseif arg[1] == "limages" then
 loadconf ()
 print ("lwarpmk: Processing images.")
 createlateximages ()
-print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-refreshdate ()
-print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
 -- lwarpmk again:

@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47092 2018-03-23 22:22:46Z preining $
+# $Id: tlmgr.pl 47132 2018-03-26 17:19:25Z karl $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47092 $';
-my $datrev = '$Date: 2018-03-23 23:22:46 +0100 (Fri, 23 Mar 2018) $';
+my $svnrev = '$Revision: 47132 $';
+my $datrev = '$Date: 2018-03-26 19:19:25 +0200 (Mon, 26 Mar 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1086,7 +1086,7 @@ sub action_remove {
   # if --all is given, pass on to uninstall_texlive
   if ($opts{'all'}) {
     if (@ARGV) {
-      tlwarn("$prg: No additional arguments allowed with --all\n");
+      tlwarn("$prg: No additional arguments allowed with --all: @ARGV\n");
       return($F_ERROR);
     }
     exit(uninstall_texlive());
@@ -7951,6 +7951,10 @@ C<tlpkg/gpg/repository-keys.gpg>.
 The C<remove> argument requires a key id and removes the requested id
 from the local keyring.
 
+=head2 list
+
+Synonym for L<info>.
+
 =head2 option
 
 =over 4
@@ -8233,7 +8237,8 @@ package, dependencies are never removed.  Options:
 
 =item B<--all>
 
-Uninstalls all of TeX Live.
+Uninstalls all of TeX Live, asking for confirmation unless C<--force> is
+also specified.
 
 =item B<--backup>
 
@@ -8469,9 +8474,268 @@ If I<var> or then I<val> is not specified, it is prompted for.
 
 =back
 
+ym.
+
+=head2 print-platform-info
+
+Print the TeX Live platform identifier, TL platform long name, and
+original output from guess.
+
+=head2 remove [I<option>]... I<pkg>...
+
+Remove each I<pkg> specified.  Removing a collection removes all package
+dependencies (unless C<--no-depends> is specified), but not any
+collection dependencies of that collection.  However, when removing a
+package, dependencies are never removed.  Options:
+
+=over 4
+
+=item B<--all>
+
+Uninstalls all of TeX Live, asking for confirmation unless C<--force> is
+also specified.
+
+=item B<--backup>
+
+=item B<--backupdir> I<directory>
+
+These options behave just as with the L</update> action (q.v.), except
+they apply to making backups of packages before they are removed.  The
+default is to make such a backup, that is, to save a copy of packages
+before removal.
+
+See L</update> action for more.
+
+neither option is given, no backup will be made. If C<--backupdir> is
+given and specifies a writable directory then a backup will be made in
+that location. If only C<--backup> is given, then a backup will be made
+to the directory previously set via the C<option> action (see below). If
+both are given then a backup will be made to the specified I<directory>.
+
+You can set options via the C<option> action to automatically make
+backups for all packages, and/or keep only a certain number of backups.
+Please see the C<option> action for details. The default is to make one
+backup.
+
+The C<restore> action explains how to restore from a backup.
+
+=item B<--no-depends>
+
+Do not remove dependent packages.
+
+=item B<--no-depends-at-all>
+
+See above under B<install> (and beware).
+
+=item B<--force>
+
+By default, removal of a package or collection that is a dependency of
+another collection or scheme is not allowed.  With this option, the
+package will be removed unconditionally.  Use with care.
+
+A package that has been removed using the C<--force> option because it
+is still listed in an installed collection or scheme will not be
+updated, and will be mentioned as B<forcibly removed> in the output of
+B<tlmgr update --list>.
+
+=item B<--dry-run>
+
+Nothing is actually removed; instead, the actions to be performed are
+written to the terminal.
+
+=back
+
+=head2 repository
+
+=over 4
+
+=item B<repository list>
+
+=item B<repository list I<path|tag>>
+
+=item B<repository add I<path> [I<tag>]>
+
+=item B<repository remove I<path|tag>>
+
+=item B<repository set I<path>[#I<tag>] [I<path>[#I<tag>] ...]>
+
+This action manages the list of repositories.  See L</MULTIPLE
+REPOSITORIES> below for detailed explanations.
+
+The first form (C<list>) lists all configured repositories and the
+respective tags if set. If a path, url, or tag is given after the
+C<list> keyword, it is interpreted as source from where to 
+initialize a TeX Live Database and lists the contained packages.
+This can also be an up-to-now not used repository, both locally
+and remote. If one pass in addition C<--with-platforms>, for each
+package the available platforms (if any) are listed, too.
+
+The third form (C<add>) adds a repository
+(optionally attaching a tag) to the list of repositories.  The forth
+form (C<remove>) removes a repository, either by full path/url, or by
+tag.  The last form (C<set>) sets the list of repositories to the items
+given on the command line, not keeping previous settings
+
+In all cases, one of the repositories must be tagged as C<main>;
+otherwise, all operations will fail!
+
+=back
+
+=head2 restore [--json] [--backupdir I<dir>] [--all | I<pkg> [I<rev>]]
+
+Restore a package from a previously-made backup.
+
+If C<--all> is given, try to restore the latest revision of all 
+package backups found in the backup directory.
+
+Otherwise, if neither I<pkg> nor I<rev> are given, list the available
+backup revisions for all packages.  With I<pkg> given but no I<rev>,
+list all available backup revisions of I<pkg>.
+
+When listing available packages, C<tlmgr> shows the revision, and in
+parenthesis the creation time if available (in format yyyy-mm-dd hh:mm).
+
+If (and only if) both I<pkg> and a valid revision number I<rev> are
+specified, try to restore the package from the specified backup.
+
+Options:
+
+=over 4
+
+=item B<--all>
+
+Try to restore the latest revision of all package backups found in the
+backup directory. Additional non-option arguments (like I<pkg>) are not
+allowed.
+
+=item B<--backupdir> I<directory>
+
+Specify the directory where the backups are to be found. If not given it
+will be taken from the configuration setting in the TLPDB.
+
+=item B<--dry-run>
+
+Nothing is actually restored; instead, the actions to be performed are
+written to the terminal.
+
+=item B<--force>
+
+Don't ask questions.
+
+=item B<--json>
+
+When listing backups, the option C<--json> turn on JSON output.
+The format is an array of JSON objects (C<name>, C<rev>, C<date>).
+For details see C<tlpkg/doc/JSON-formats.txt>, format definition: C<TLBACKUPS>.
+If both C<--json> and C<--data> are given, C<--json> takes precedence.
+
+=back
+
+=head2 search [I<option>...] I<what>
+
+=head3 search [I<option>...] --file I<what>
+
+=head3 search [I<option>...] --all I<what>
+
+By default, search the names, short descriptions, and long descriptions
+of all locally installed packages for the argument I<what>, interpreted
+as a (Perl) regular expression.
+
+Options:
+
+=over 4
+
+=item B<--file>
+
+List all filenames containing I<what>.
+
+=item B<--all>
+
+Search everything: package names, descriptions and filenames.
+
+=item B<--global>
+
+Search the TeX Live Database of the installation medium, instead of the
+local installation.
+
+=item B<--word>
+
+Restrict the search of package names and descriptions (but not
+filenames) to match only full words.  For example, searching for
+C<table> with this option will not output packages containing the word
+C<tables> (unless they also contain the word C<table> on its own).
+
+=back
+
+=head2 shell
+
+Starts an interactive mode, where tlmgr prompts for commands. This can
+be used directly, or for scripting. The first line of output is
+C<protocol> I<n>, where I<n> is an unsigned number identifying the
+protocol version (currently 1).
+
+In general, tlmgr actions that can be given on the command line
+translate to commands in this shell mode.  For example, you can say
+C<update --list> to see what would be updated. The TLPDB is loaded the
+first time it is needed (not at the beginning), and used for the rest of
+the session.
+
+Besides these actions, a few commands are specific to shell mode:
+
+=over 4
+
+=item protocol
+
+Print C<protocol I<n>>, the current protocol version.
+
+=item help
+
+Print pointers to this documentation.
+
+=item version
+
+Print tlmgr version information.
+
+=item quit, end, bye, byebye, EOF
+
+Exit.
+
+=item restart
+
+Restart C<tlmgr shell> with the original command line; most useful when
+developing C<tlmgr>.
+
+=item load [local|remote]
+
+Explicitly load the local or remote, respectively, TLPDB.
+
+=item save
+
+Save the local TLPDB, presumably after other operations have changed it.
+
+=item get [I<var>]
+=item set [I<var> [I<val>]]
+
+Get the value of I<var>, or set it to I<val>.  Possible I<var> names:
+C<debug-translation>, C<machine-readable>, C<no-execute-actions>,
+C<require-verification>, C<verify-downloads>, C<repository>, and
+C<prompt>. All except C<repository> and C<prompt> are booleans, taking
+values 0 and 1, and behave like the corresponding command line option.
+The C<repository> variable takes a string, and sets the remote
+repository location. The C<prompt> variable takes a string, and sets the
+current default prompt.
+
+If I<var> or then I<val> is not specified, it is prompted for.
+
+=back
+
+=head2 show
+
+Synonym for L<info>.
+
 =head2 uninstall
 
-Synonym for C<remove>.
+Synonym for L<remove>.
 
 =head2 update [I<option>]... [I<pkg>]...
 
@@ -9356,7 +9620,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47092 2018-03-23 22:22:46Z preining $
+$Id: tlmgr.pl 47132 2018-03-26 17:19:25Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
