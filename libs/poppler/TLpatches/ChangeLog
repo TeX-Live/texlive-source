@@ -1,3 +1,8 @@
+2018-04-01  Mojca Miklavec <mojca.miklavec.lists@gmail.com>
+
+	* patch-03-time: Adapted.
+	* patch-04-ctime: Removed.
+
 2018-03-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* patch-05-w32: Added to compile gfile.cc on Windows.

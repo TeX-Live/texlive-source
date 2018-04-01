@@ -1,13 +1,55 @@
-$ diff -u gfile.h.orig gfile.h 
---- gfile.h.orig	2018-03-26 11:43:40.479917632 +0200
-+++ gfile.h	2018-03-26 11:41:51.965590455 +0200
-@@ -52,6 +52,9 @@
- #elif defined(MACOS)
- #  include <ctime.h>
+https://bugs.freedesktop.org/show_bug.cgi?id=105766
+
+diff -ur poppler-0.63.0/goo/gfile.cc poppler-src/goo/gfile.cc
+--- poppler-0.63.0/goo/gfile.cc
++++ poppler-src/goo/gfile.cc
+@@ -34,9 +34,7 @@
+ 
+ #include <config.h>
+ 
+-#ifdef _WIN32
+-#  include <time.h>
+-#else
++#ifndef _WIN32
+ #  if defined(MACOS)
+ #    include <sys/stat.h>
+ #  elif !defined(ACORN)
+@@ -44,7 +42,6 @@
+ #    include <sys/stat.h>
+ #    include <fcntl.h>
+ #  endif
+-#  include <time.h>
+ #  include <limits.h>
+ #  include <string.h>
+ #  if !defined(VMS) && !defined(ACORN) && !defined(MACOS)
+diff -ur poppler-0.63.0/goo/gfile.h poppler-src/goo/gfile.h
+--- poppler-0.63.0/goo/gfile.h
++++ poppler-src/goo/gfile.h
+@@ -37,6 +37,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stddef.h>
++#include <time.h>
+ extern "C" {
+ #if defined(_WIN32)
+ #  include <sys/stat.h>
+@@ -49,8 +50,6 @@
+ #    include <windows.h>
+ #  endif
+ #elif defined(ACORN)
+-#elif defined(MACOS)
+-#  include <ctime.h>
  #else
-+#  if defined(__NetBSD__)
-+#   include <time.h>
-+#  endif
  #  include <unistd.h>
  #  include <sys/types.h>
- #  if defined(VMS)
+diff -ur poppler-0.63.0/poppler/Form.h poppler-src/poppler/Form.h
+--- poppler-0.63.0/poppler/Form.h
++++ poppler-src/poppler/Form.h
+@@ -33,6 +33,7 @@
+ 
+ #include <set>
+ #include <vector>
++#include <ctime>
+ 
+ class GooString;
+ class Array;
