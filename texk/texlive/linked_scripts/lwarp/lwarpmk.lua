@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.52"
+printversion = "v0.53"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -25,10 +25,11 @@ lwarpmk again [project]: Touch the source code to trigger recompiles.
 lwarpmk limages [project]: Process the "lateximages" created by lwarp.sty.
 lwarpmk pdftohtml [project]:
     For use with latexmk or a Makefile:
-    Convert project_html.pdf to project_html.html and
-    individual HTML files.
+    Converts project_html.pdf to project_html.html and individual HTML files.
+    Finishes the HTML conversion even if there was a compile error.
 lwarpmk clean [project]: Remove .aux, .toc, .lof/t, .idx, .ind, .log, *_html_inc.*, .gl*
 lwarpmk cleanall [project]: Remove auxiliary files and also project.pdf, *.html
+lwarpmk cleanlimages: Removes all images from the "lateximages" directory.
 lwarpmk -h: Print this help message.
 lwarpmk --help: Print this help message.
 
@@ -335,6 +336,8 @@ if opsystem=="Windows" then
 end -- create lwarp_one_limage.cmd
 -- Track the number of parallel processes
 numimageprocesses = 0
+-- Track warning to recompile if find a page 0
+pagezerowarning = false
 -- Scan lateximages.txt
 for line in limagesfile:lines() do
 -- lwimgpage is the page number in the PDF which has the image
@@ -344,7 +347,9 @@ i,j,lwimgpage,lwimghash,lwimgname = string.find (line,"|(.*)|(.*)|(.*)|")
 -- For each entry:
 if ( (i~=nil) ) then
 -- Skip if the page number is 0:
-if ( lwimgpage ~= "0" ) then
+if ( lwimgpage == "0" ) then
+    pagezerowarning = true
+else
 -- Skip is this image is hashed and already exists:
 local lwimgfullname = "lateximages" .. dirslash .. lwimgname .. ".svg"
 if (
@@ -425,6 +430,12 @@ end -- not nil
 end -- do
 io.close(limagesfile)
 print ( "lwarpmk limages: done" )
+if ( pagezerowarning == true ) then
+    print ( "lwarpmk limages: WARNING: Images will be incorrect." )
+    print ( "lwarpmk limages:   Enter \"lwarpmk cleanlimages\", then" )
+    print ( "lwarpmk limages:   recompile the document one more time, then" )
+    print ( "lwarpmk limages:   repeat \"lwarpmk images\" again." )
+end -- pagezerowarning
 end -- function
 
 -- Use latexmk to compile source and index:
@@ -636,6 +647,14 @@ os.execute ( rmname .. " " ..
     sourcename .. ".pdf " .. sourcename .. "_html.pdf " ..
     "*.html"
     )
+print ("lwarpmk: Done.")
+
+-- lwarpmk cleanlimages
+-- Remove images from the lateximages directory.
+
+elseif arg[1] == "cleanlimages" then
+loadconf ()
+os.execute ( rmname .. " lateximages/*" )
 print ("lwarpmk: Done.")
 
 -- lwarpmk with no argument :
