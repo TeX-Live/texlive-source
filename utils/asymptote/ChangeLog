@@ -1,3 +1,360 @@
+commit 4d0f6ba1b9c6ea2609b145f42ec9a39023e60706
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 3 00:12:12 2018 -0600
+
+    Revert to centroid depth sorting of transparent triangles until splitting code is complete.
+
+commit 355b585791bba490a8c0847dc104ef3504180353
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 23:44:04 2018 -0600
+
+    Revert to nativeformat EPS for MSWindows.
+
+commit ab9623e7777ff1e85f72f326b6ad9771f84290af
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 23:37:05 2018 -0600
+
+    Fix ode integrator output.
+
+commit 440a4e23f492556b6671ad713c92507c4da91d94
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 23:31:44 2018 -0600
+
+    Add implementation of rational arithmetic.
+
+commit fb83e1d71bad988d081d308dc9a9d1f385871bdc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 23:20:23 2018 -0600
+
+    Improve missing texi2vi workaround.
+
+commit f10affaa88f9680576f541ff351a3996e502a135
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 22:49:03 2018 -0600
+
+    Specify current directory.
+
+commit d8d976aee0234524ab5794a75d61f9ea9c9e6d72
+Merge: dc276c11 67b844ae
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 21:42:51 2018 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit dc276c116e40ef1e485fa456d75d26411d6ac1f4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 21:36:48 2018 -0600
+
+    Check for feenableexcept.
+
+commit 67b844aecc03a4b08ff8e9a8152d7cf324b4db22
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 21:36:48 2018 -0600
+
+    Check for feenableexcept.
+
+commit 13d9a1ec1cf6f6f1478cc4f590f728b0f0561725
+Merge: edf06016 bed300cc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 21:14:51 2018 -0600
+
+    Merge pull request #54 from ivankokan/perpendicularmark
+    
+    Properly implemented "square + pen" semantics within perpendicularmark
+
+commit edf060165f9014d9aeb23673bf214b5e7b983049
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 20:54:44 2018 -0600
+
+    Fix transparent depth test.
+
+commit d75d007c08b19787bc59b3efad1337f18b8a1bde
+Merge: e0dba9d6 6ce2d6f6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 13:31:16 2018 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit e0dba9d6b5b00154d08c4eec793ab7cffba96cce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 2 13:30:59 2018 -0600
+
+    Fix missing 3D underline.
+
+commit 6ce2d6f6c07e0492a222ec22a78bf7c60f75fd96
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 28 17:46:50 2018 -0600
+
+    Fix issue #62 (invalid string acces).
+
+commit afd2d56d1a74a9fbd27c93f79a48947fe33bfd94
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 24 17:05:23 2018 -0600
+
+    Force make clean to clear symbols.
+
+commit fc0cc036f6b3733fba8b43bf5068b009fddb6bdc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 16 12:33:25 2018 -0700
+
+    Improve diagnostic.
+
+commit 63b2310edefaef37192f596a2b6cfd97d5ce60d1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 19 20:18:17 2018 -0700
+
+    Inline call to intbits().
+
+commit 5f5a678fcb4d40fe312c511eb32189c410269a73
+Merge: c2ca99da e9906f89
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 19 01:06:50 2018 -0700
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit c2ca99da1f5587e077cd0e7c367b49d5eae7a172
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 19 01:05:11 2018 -0700
+
+    Fix asymmetry in angle(transform t), so that angle(yscale(-1))=0.
+
+commit 9bdc5755535489b81c6fea146aa60463de9cbcc3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 12 15:56:37 2018 -0700
+
+    Fix path.
+
+commit e9906f89fe021471c9f7d7bd375c823ee0ea45d9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 12 15:56:37 2018 -0700
+
+    Fix path.
+
+commit f9cd516793b5d98aba083f2ef79891ccb2319adf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 12 15:43:28 2018 -0700
+
+    Rename directory.
+
+commit b0ba7e598eae625ec5d57a214682fe41907c2500
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 12 15:40:58 2018 -0700
+
+    Fix typo.
+
+commit a8b346777b7404c480c7f9aa144239ef11288164
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 12 15:39:04 2018 -0700
+
+    Fix HOWTO-MSWindows maintainer documentation.
+
+commit bb3eb235fd4da44f56f1eb563ff6c65f48a22606
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 12 15:38:15 2018 -0700
+
+    Update HOWTO-MSWindows maintainer documentation.
+
+commit d069591eb886db59bf1bf764b3916e6b907cafd4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 12 15:22:10 2018 -0700
+
+    Add maintainer build scripts.
+
+commit 1e1e6cbbcfe65b58ead8e04d5e2b302ed011acd8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 11 14:00:22 2018 -0700
+
+    Fix integer division bug (due to overflow).
+
+commit 0d172a96ebb5d0c11679dd98af0fa542ff2211b3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 9 09:51:04 2018 -0700
+
+    Make nativeformat PDF under MSWindows.
+
+commit 127affbfc8938f5a7ac835d8f7fb59797b852cb0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 9 09:28:25 2018 -0700
+
+    Build 64-bit MSWindows binaries.
+
+commit eff28605bf5844b3570f43ad4264446c75b1e78c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 5 15:27:07 2018 -0700
+
+    Workaround broken CYGWIN xdr headers.
+
+commit bed300ccb079c06c66eee8ff4dd38d4e522bf027
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Fri Jan 5 18:55:49 2018 +0100
+
+    perpendicularmark: properly implemented "square + pen" semantics
+
+commit 952dec232e3ea77e820297f38f338fab360186fd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 5 09:02:49 2018 -0700
+
+    Update Boehm garbage collector.
+
+commit 715c523b3019a59259c48a0b7f9852ce17b6128a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 4 22:30:21 2018 -0700
+
+    Update CYGWIN port for 64-bit build.
+
+commit 005aef0a8c45c8625910363e1159fedcd9fa31b6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Dec 18 14:51:43 2017 -0700
+
+    Fix segmentation fault.
+
+commit f791e93a9d258f03d4cf218f19772c91df4b8b35
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Dec 8 00:07:19 2017 -0700
+
+    Make Bitreverse array static.
+
+commit 2f76e4922df68ca7f5c625637cde3d8b6de00801
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Dec 5 00:30:03 2017 -0700
+
+    Update documentation.
+
+commit 4d8d83abb664f21e941ded491fe9c99ed605d4a8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Dec 4 21:47:35 2017 -0700
+
+    Make CLZ(0) return width of int type.
+
+commit 732551d1071b8e660fd44974002b5c0fb4dde574
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Dec 3 11:21:39 2017 -0700
+
+    Extend bitreverse and CLZ to long long integers.
+
+commit 6dfcb97eb80d384371cbba095ce5e0289ff649f5
+Merge: 5709f8fc 1e314cf9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Nov 23 15:33:58 2017 -0700
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 5709f8fc6f1800de36d50e636332355a71d924ba
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Nov 23 15:21:55 2017 -0700
+
+    Add forcemath option to format for typesetting within an existing math mode.
+
+commit 1e314cf9b58e60b3a4b0fa930d5fe69e3e78653d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 18 11:13:21 2017 -0700
+
+    Remove extraneous declaration.
+
+commit 07604b6d32201acbb236b254240f66da167e1a49
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Nov 16 20:32:08 2017 -0700
+
+    Port to latest CYGWIN.
+
+commit bdb0c70c984316552298396d0ec75f7b1c40a971
+Merge: 9db9467d 51ababda
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Nov 3 13:33:10 2017 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 9db9467d4cc2c7cc2b1b09b2f9bda4ae85a7b188
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Nov 3 13:25:07 2017 -0600
+
+    Implement 32-bit bit reverse.
+
+commit 51ababdae0bb1b3b94e87bd4a005af6f4d417b59
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 26 09:09:57 2017 -0600
+
+    Fix offscreen rendering initialization.
+
+commit 4e391ced23627e0ba9a318485f20c58d99545f27
+Author: prramazi <p.ramazi@gmail.com>
+Date:   Fri Oct 13 17:08:45 2017 -0600
+
+    Fix int type.
+
+commit febfdec12079aa673d8f0c66580529c208f3cedb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 11 11:20:53 2017 -0600
+
+    Fix gitignore.
+
+commit 41e6e15d4313c7ba02d947ff33d74238304c7033
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 29 14:00:58 2017 -0600
+
+    Correct comment.
+
+commit fa3de734be166afe63d0d47cdf546932f7531a5a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 29 11:39:07 2017 -0600
+
+    Implement string[] array(string s) and string operator +(...string[] a).
+
+commit 41d41c503c4119638baf7480c189149f6c244628
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 27 16:47:24 2017 -0600
+
+    Add operator <>.
+
+commit 21f5e431ff233c8af387e305301f12cfd235c636
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 25 17:14:37 2017 -0600
+
+    Implement int popcount(int) and use it to build a 64-bit int CTZ(int).
+
+commit 66fc685efa9a161b70e67c9f319d9030b2d2eea9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 22 15:20:17 2017 -0600
+
+    Implement findall.
+
+commit f7231be3e560fa40f43e298e4b69b5c03ca0a141
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 18 14:31:44 2017 -0600
+
+    Remove redundant vbox.
+
+commit 84f4ea3ff0a564698282af8eeb1afae14907e2fe
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 4 15:33:03 2017 -0600
+
+    Improve equation support in module slide.
+
+commit 1b9692fae4a4f7bd58ea09f37178f7ed598f277d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 13 15:40:12 2017 -0600
+
+    Simplify example.
+
+commit 467e7c47c96da5c28aca1713b02bcecf75e7e166
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 13 15:38:54 2017 -0600
+
+    Remove broken empty flag.
+
+commit 5ec14a9d6f1f507b616db450896a7f275dd7ff3c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 6 11:01:23 2017 -0600
+
+    Work around quote mangling bug when viewing asymptote.pdf in certain PDF
+    readers.
+
+commit 45f532f7b10565f05ff82c6f7b6833ef33a20712
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 22 02:29:15 2017 -0600
+
+    Increment version to 2.42.
+
 commit 40f27e1424f6c63aa362f16f3c65b9f3d1d6e723
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Mar 22 01:56:17 2017 -0600
@@ -31,7 +388,7 @@ Date:   Mon Mar 20 23:05:31 2017 -0600
     Remove temporary pbsdat file.
 
 commit dacbf47554b36d0571394b3c4d747405e53f2708
-Merge: f34a52d c2e4bd5
+Merge: f34a52df c2e4bd59
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Mar 17 01:48:29 2017 -0600
 
@@ -380,7 +737,7 @@ Date:   Sat Jan 21 16:59:00 2017 -0700
     Reinstate patch outline mode.
 
 commit a96ffbbfba55fc69b27b1c6052545bbf99ee23f8
-Merge: 0be6f55 16ae9ee
+Merge: 0be6f556 16ae9ee4
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Jan 21 15:45:27 2017 -0700
 
@@ -635,7 +992,7 @@ Date:   Sat Jun 4 20:00:48 2016 -0600
     Fix typo.
 
 commit 7ecaf8f43931d728eaf4154092cefaa4d0d0c201
-Merge: 692051a 154c47b
+Merge: 692051a2 154c47b6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jun 2 23:11:58 2016 -0600
 
@@ -781,7 +1138,7 @@ Date:   Fri May 6 20:49:46 2016 -0600
     Pass CC and CXX to gc configure.
 
 commit a40b6c087091bdc15ffe44d00c51ca15cb1d4877
-Merge: 656cf97 0f1f6d1
+Merge: 656cf976 0f1f6d1c
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri May 6 09:45:34 2016 -0600
 
@@ -858,7 +1215,7 @@ Date:   Sat Mar 12 21:26:01 2016 -0700
     Add progress function.
 
 commit bcbf941fdd0fa9db5c3b77d7a3477fa358a291ac
-Merge: 97f3b6c ae0af70
+Merge: 97f3b6c3 ae0af708
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Mar 6 22:33:57 2016 -0700
 
@@ -877,7 +1234,7 @@ Date:   Sun Mar 6 21:12:26 2016 -0700
     Look for kpsewhich first in the same directory as the asy executable.
 
 commit ae0af708d12981318936697c7c289fe71723dabe
-Merge: 815b738 6fc23e0
+Merge: 815b7381 6fc23e01
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sun Mar 6 20:07:38 2016 -0800
 
@@ -909,14 +1266,14 @@ Date:   Sun Mar 6 14:20:31 2016 -0700
     Add EPSWRITE compiler flag to support ghostscript versions older than 9.14.
 
 commit cbb7e37c1a8ed7168bdfb61b5c48ef775b9dd668
-Merge: 9004183 6c1ad05
+Merge: 90041839 6c1ad05b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Mar 6 10:04:21 2016 -0700
 
     Merge branch 'trianglewithnormals'
 
 commit 900418390224e6f56ed33a5df55c0b47e418e1f0
-Merge: ce19f61 9a36fe8
+Merge: ce19f613 9a36fe85
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Mar 6 09:45:19 2016 -0700
 
@@ -977,7 +1334,7 @@ Date:   Sun Feb 28 19:27:19 2016 -0800
     Change adaptive rendering constant for bezier triangles.
 
 commit fc81a2ed70019cca10eed52b2caa3bff713d0d7f
-Merge: cd9f875 e78de7f
+Merge: cd9f8755 e78de7f9
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sun Feb 28 19:23:17 2016 -0800
 
@@ -1015,7 +1372,7 @@ Date:   Tue Feb 23 19:00:20 2016 -0700
     Fix bug #219 Asymptote forks in an uncontrolled way.
 
 commit cd9f8755715b8ce7e5b239ecd77fdff4d336411a
-Merge: e6454cb 344698e
+Merge: e6454cb2 344698e2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Feb 16 17:41:59 2016 -0700
 
@@ -1028,7 +1385,7 @@ Date:   Tue Feb 16 17:41:21 2016 -0700
     Fix epsilon.
 
 commit e6454cb2370e412699d467f451519ab89efd3f40
-Merge: e5394af 75ce996
+Merge: e5394afc 75ce9969
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Feb 16 17:29:10 2016 -0700
 
@@ -1169,14 +1526,14 @@ Date:   Fri Feb 5 17:47:36 2016 -0700
     Simplify code.
 
 commit b2d975013dfec4c2163b66286eacb8e6b9a71b56
-Merge: a2dc301 ce719eb
+Merge: a2dc3010 ce719ebe
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Fri Feb 5 08:34:14 2016 -0800
 
     Merge branch 'trianglewithnormals' of github.com:vectorgraphics/asymptote into trianglewithnormals
 
 commit ce719ebe712ae40a4fd31dc5e59b6c1f382cdfca
-Merge: 30d63a3 9b9e8f5
+Merge: 30d63a35 9b9e8f57
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Feb 4 23:18:11 2016 -0700
 
@@ -1189,7 +1546,7 @@ Date:   Thu Feb 4 23:05:28 2016 -0700
     Simplify code.
 
 commit ab2042f994b6dd71c204ddaa59124b7f3644ee58
-Merge: 5d97e7d a873617
+Merge: 5d97e7d7 a873617b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Feb 4 23:03:06 2016 -0700
 
@@ -1208,7 +1565,7 @@ Date:   Thu Feb 4 21:31:58 2016 -0800
     Amend one comment.
 
 commit 8ec9865cc3fd4bc2cbded6e754ad4670e1920730
-Merge: 6ca1083 a873617
+Merge: 6ca10836 a873617b
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Thu Feb 4 21:20:20 2016 -0800
 
@@ -1239,7 +1596,7 @@ Date:   Thu Feb 4 13:24:27 2016 -0700
     Fix planar Bezier triangles under render=0.
 
 commit 64e1d1ad3777e898febba132ac0aae152882c52d
-Merge: 03a2310 29806bc
+Merge: 03a2310b 29806bc7
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Feb 4 01:37:46 2016 -0700
 
@@ -1538,7 +1895,7 @@ Date:   Fri Jan 29 01:24:36 2016 -0700
     Fix bug in rest argument signature equivalence.
 
 commit e59d44b1f641743f7eea53b18286f8ae71f7ad42
-Merge: 3fcb882 d70ce12
+Merge: 3fcb8827 d70ce121
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jan 29 00:58:56 2016 -0700
 
@@ -1551,7 +1908,7 @@ Date:   Fri Jan 29 00:57:41 2016 -0700
     Implement Bezier triangle vertex shading; simplify notation.
 
 commit d70ce12140bcee8f60cf4b14d86345ea1a597d24
-Merge: 9a85929 4cca8cb
+Merge: 9a859296 4cca8cba
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 28 19:45:53 2016 -0700
 
@@ -1560,7 +1917,7 @@ Date:   Thu Jan 28 19:45:53 2016 -0700
     Fix package format
 
 commit 9a85929623975d23856c6462efaf66c1b645337e
-Merge: fec79bd daa7b97
+Merge: fec79bd9 daa7b97d
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 28 19:45:10 2016 -0700
 
@@ -1577,7 +1934,7 @@ Date:   Fri Jan 29 14:21:18 2016 +1300
     Using the work "Emacs" is redundant here. Better to describe this as what it is: a major mode.
 
 commit fec79bd94f87e1532ab8f90c46ebeffa8ef68a34
-Merge: af459e8 799d62d
+Merge: af459e8a 799d62d7
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 28 18:06:22 2016 -0700
 
@@ -1611,7 +1968,7 @@ Date:   Wed Jan 27 08:22:51 2016 -0700
     Rename NaN to more standard nan, consistent with inf.
 
 commit 40222e2f183510bbc3e7642ab58abaae107837d7
-Merge: 6d148e9 e6a9c8c
+Merge: 6d148e9d e6a9c8c3
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:44:30 2016 -0700
 
@@ -1620,14 +1977,14 @@ Date:   Wed Jan 27 01:44:30 2016 -0700
     Fix asy-mode.el headers for use with package.el
 
 commit 6d148e9d4cb76e7a62b38cd7917f13f7e6b14241
-Merge: 120804c b4f5fd7
+Merge: 120804c1 b4f5fd7f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:32:44 2016 -0700
 
     Merge branch 'tpatch'
 
 commit 120804c135338ad70ed74c37f6391cf2bd31143b
-Merge: eeb634e dda2736
+Merge: eeb634e5 dda2736d
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:32:37 2016 -0700
 
@@ -1640,21 +1997,21 @@ Date:   Wed Jan 27 01:32:11 2016 -0700
     Remove obsolete comment.
 
 commit dda2736d7adc54b42fb063ad04d9818c4dac1cad
-Merge: e86faf9 37a3036
+Merge: e86faf9a 37a30365
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:28:31 2016 -0700
 
     Merge branch 'master' of github.com:vectorgraphics/asymptote
 
 commit e86faf9a90abe8546db543ba1decb3db4709a7af
-Merge: 4243c5a bb9a29b
+Merge: 4243c5af bb9a29b0
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:28:01 2016 -0700
 
     Merge branch 'NaNconstant'
 
 commit 4abd683e6bcf1c03254a05d0f80dac2da49b796e
-Merge: 62f540f eeb634e
+Merge: 62f540f3 eeb634e5
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 00:53:10 2016 -0700
 
@@ -1766,7 +2123,7 @@ Date:   Mon Dec 7 00:42:20 2015 -0700
     Define PERL.
 
 commit 2292b4e20cec169b8e49ffd90c266fe0c481280c
-Merge: 83d8788 2f0e11d
+Merge: 83d8788e 2f0e11d1
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Dec 5 11:59:38 2015 -0700
 
@@ -1815,7 +2172,7 @@ Date:   Mon Nov 16 00:00:44 2015 -0700
     Fix Bezier triangle bounds calculation.
 
 commit 78c5a4dc967871262371bc09a752c4f7c3a0982e
-Merge: 3bdb0da 71ff9e7
+Merge: 3bdb0da5 71ff9e76
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Nov 15 11:47:01 2015 -0700
 
@@ -1828,7 +2185,7 @@ Date:   Sat Nov 14 01:25:56 2015 -0700
     Support GSL 2.0.
 
 commit 3bdb0da5d7762bdc3509cbbd3aadfea392065729
-Merge: 342bd39 d7d0920
+Merge: 342bd39a d7d0920c
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Nov 13 15:22:31 2015 -0700
 
@@ -1906,7 +2263,7 @@ Date:   Thu Aug 27 14:49:08 2015 -0600
       aligns better with the symmetry and (seems to) avoid degeneracies.
 
 commit 9607b89ce3b1dd6f41905b3ca7225304a78a4236
-Merge: b186e65 e660681
+Merge: b186e65a e660681e
 Author: Jesse Frohlich <jesse.frohlich@ualberta.ca>
 Date:   Tue Aug 18 10:56:13 2015 -0600
 
@@ -1990,7 +2347,7 @@ Date:   Thu Aug 6 18:03:19 2015 -0600
     Condense code.
 
 commit afc9bb50d32bc30a60e8ec14130f459ee3d07324
-Merge: 8311561 6d64099
+Merge: 83115611 6d640996
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Aug 6 16:59:34 2015 -0600
 
@@ -2019,14 +2376,14 @@ Date:   Thu Aug 6 15:40:24 2015 -0600
     Simplify code.
 
 commit 9a719d5a367ea6bb04ccc7d43d1b9d9ef8461ccf
-Merge: 10b58e6 6d64099
+Merge: 10b58e6f 6d640996
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Aug 6 15:03:39 2015 -0600
 
     Merge branch 'master' into tpatch.
     
     Conflicts:
-    	configure.ac
+            configure.ac
 
 commit 10b58e6fb9c66b725c78afa5b18c356deeaa5d70
 Author: Jesse Frohlich <jesse.frohlich@ualberta.ca>
@@ -2073,7 +2430,7 @@ Date:   Wed Aug 5 12:39:15 2015 -0600
     Update to latest beziertriangle.cc.
 
 commit f27143b2c09b588397d2a357b6663f9872ab1526
-Merge: ce5d022 8f3274d
+Merge: ce5d022f 8f3274d4
 Author: Jesse Frohlich <jesse.frohlich@ualberta.ca>
 Date:   Wed Aug 5 12:35:30 2015 -0600
 
@@ -2088,7 +2445,7 @@ Date:   Wed Aug 5 12:27:33 2015 -0600
     The implementation for Bezier triangles now compiles.
 
 commit 8f3274d4b9fea2c5afbce309019779c71874f387
-Merge: 6510a21 b1041ff
+Merge: 6510a213 b1041ff1
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Aug 5 12:20:34 2015 -0600
 
@@ -2107,14 +2464,14 @@ Date:   Wed Aug 5 12:18:11 2015 -0600
     Add example.
 
 commit 0c9443bed41f84d8c38deac9df0be0c62474ebf4
-Merge: 6510a21 421cd19
+Merge: 6510a213 421cd19d
 Author: Jesse Frohlich <jesse.frohlich@ualberta.ca>
 Date:   Wed Aug 5 10:28:02 2015 -0600
 
     Merge changes in master branch to tpatch.
 
 commit 421cd19d01577dab0f3b92d89eaf1e1edf6487c2
-Merge: ecae5ee 94fb5fb
+Merge: ecae5ee6 94fb5fb6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Aug 4 18:01:02 2015 -0600
 
@@ -2133,7 +2490,7 @@ Date:   Tue Aug 4 17:54:37 2015 -0600
     Update INSTALL.
 
 commit 94fb5fb6792662366f0d0d9587bb2504a71c77bd
-Merge: 2cb41a4 86920eb
+Merge: 2cb41a4e 86920ebf
 Author: johncbowman <bowman@ualberta.ca>
 Date:   Tue Aug 4 17:14:19 2015 -0600
 
@@ -2170,7 +2527,7 @@ Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Aug 1 20:35:58 2015 -0600
 
     Update documentation for git.
-     #	doc/png/LaTeX-usage.html
+     #      doc/png/LaTeX-usage.html
 
 commit ce373e1267e1980aca6aefd86822c7daf92cc6d8
 Author: Jesse Frohlich <jesse.frohlich@ualberta.ca>
@@ -32280,7 +32637,7 @@ Date:   Mon Nov 7 23:26:21 2005 -0600
     Remaining import updates.
 
 commit 14735e983987b664738f9bbab29953a6cdeafd7d
-Merge: 0b62f70 9710028
+Merge: 0b62f703 9710028a
 Author: Andy Hammerlindl <ahammerlindl@gmail.com>
 Date:   Mon Nov 7 10:57:39 2005 -0600
 
