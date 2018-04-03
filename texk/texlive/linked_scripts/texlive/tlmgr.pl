@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47220 2018-04-01 03:20:33Z preining $
+# $Id: tlmgr.pl 47254 2018-04-02 23:13:43Z karl $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47220 $';
-my $datrev = '$Date: 2018-04-01 05:20:33 +0200 (Sun, 01 Apr 2018) $';
+my $svnrev = '$Revision: 47254 $';
+my $datrev = '$Date: 2018-04-03 01:13:43 +0200 (Tue, 03 Apr 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -488,14 +488,17 @@ sub main {
     tldie("$prg: unknown value for --verify-repo: $opts{'verify-repo'}\n");
   }
   # convert command line crypto options
-  $opts{"verify-repo"} = convert_crypto_options($opts{"verify-downloads"}, $opts{"require-verification"}, $opts{"verify-repo"});
-  if (defined($opts{"verify-downloads"}) || defined($opts{"require-verification"})) {
+  $opts{"verify-repo"}
+    = convert_crypto_options($opts{"verify-downloads"},
+                             $opts{"require-verification"},
+                             $opts{"verify-repo"});
+  if (defined($opts{"verify-downloads"})
+      || defined($opts{"require-verification"})) {
     tlwarn("$prg: please use -verify-repo options instead of verify-downloads/require-verification\n" .
-           "$prg: adjusting --verify-repo=$opts{'verify-repo'}\n");
+           "$prg: adjusting to --verify-repo=$opts{'verify-repo'}\n");
   }
   delete $opts{"require-verification"};
   delete $opts{"verify-downloads"};
-
 
   # now $action should be part of %actionoptions, otherwise this is
   # an error
@@ -6568,7 +6571,7 @@ sub handle_gpg_config_settings {
       # it was requested via the default setting, so just debug it
       # the list of repositories will contain verified/not verified statements
       debug ("$prefix, verification implicitly requested, "
-            . "continuing without verification\n");
+             . "continuing without verification\n");
     }
   } else {
     # we do not setup gpg: when explicitly requested, be silent, otherwise info
@@ -6585,7 +6588,6 @@ sub handle_gpg_config_settings {
     }
   }
 }
-
 
 # initialize the global $remotetlpdb object, or die.
 # uses the global $location.
@@ -7002,8 +7004,8 @@ sub load_config_file {
   $config{"auto-remove"} = 1;
   $config{"persistent-downloads"} = 1;
   $config{"verify-repo"} = "main";
-  # do NOT set this here, we distinguish between explicitly set in the config file
-  # or implicitly true
+  # do NOT set this here, we distinguish between explicitly set in the
+  # config file or implicitly true:
   # $config{"verify-downloads"} = 1;
 
   # loads system config file, this cannot be changes with tlmgr
@@ -7018,7 +7020,10 @@ sub load_config_file {
   $tlmgr_config_file = TeXLive::TLConfFile->new($fn, "#", "=");
   load_options_from_config($tlmgr_config_file) if $tlmgr_config_file;
 
-  $config{"verify-repo"} = convert_crypto_options($config{"verify-downloads"}, $config{"require-verification"}, $config{"verify-repo"});
+  $config{"verify-repo"}
+    = convert_crypto_options($config{"verify-downloads"},
+                             $config{"require-verification"},
+                             $config{"verify-repo"});
   delete $config{"require-verification"};
   delete $config{"verify-downloads"};
 
@@ -7160,8 +7165,8 @@ sub convert_crypto_options {
   if ((defined($verify_downloads) || defined($require_verification)) &&
       defined($verify_repo)) {
     # we cannot have all three, warn and bail out
-    tldie("$prg: The options verify-downloads and require-verification have been\n" .
-          "$prg: superseeded by verify-repo, please use only the later on!\n");
+    tldie("$prg: The options verify-downloads and require-verification have\n"
+        . "$prg: been superseded by verify-repo, please use only the latter!\n");
   }
   # return immediately if verify_repo is already set
   return($verify_repo) if (defined($verify_repo));
@@ -7181,7 +7186,8 @@ sub convert_crypto_options {
       # explicit --no-verify-downloads was given
       if ($require_verification) {
         # --require-verification was given
-        tldie("You cannot ask for no verification and require it at the same time!\n");
+        tldie("You cannot ask for --no-verify-downloads and"
+              . " --require-verification  at the same time!\n");
       } else {
         $ret = "none";
       }
@@ -7192,7 +7198,7 @@ sub convert_crypto_options {
     if ($require_verification) {
       $ret = "all";
     } else {
-      # dont set anything, as nothing has been passed in
+      # don't set anything, as nothing has been passed in
     }
   }
   return($ret);
@@ -7481,7 +7487,7 @@ what remains to be done.
 
 Instead of the normal output intended for human consumption, write (to
 standard output) a fixed format more suitable for machine parsing.  See
-the L</MACHINE-READABLE OUTPUT> section below.
+the L<MACHINE-READABLE OUTPUT> section below.
 
 =item B<--no-execute-actions>
 
@@ -7530,12 +7536,12 @@ Uses I<dir> for the tree in user mode; see L<USER MODE> below.
 
 =item B<--verify-repo=[none|main|all]>
 
-Defines the level of verification done: If C<none> is passed, no
-verification whatsoever is done. If C<main> and a working GnuPG (C<gpg>)
-binary is available, all repositories are checked, but only the main 
-repository is required to be signed. If C<all> then all repositories
-need to be signed.
-See L<CRYPTOGRAPHIC VERIFICATION> below for details.
+Defines the level of verification done: If C<none> is specified, no
+verification whatsoever is done. If C<main> is given and a working GnuPG
+(C<gpg>) binary is available, all repositories are checked, but only the
+main repository is required to be signed. If C<all> is given, then all
+repositories need to be signed.  See L<CRYPTOGRAPHIC VERIFICATION> below
+for details.
 
 =back
 
@@ -7618,7 +7624,7 @@ performed are written to the terminal.
 =item B<candidates I<pkg>>
 
 Shows the available candidate repositories for package I<pkg>.
-See L</MULTIPLE REPOSITORIES> below.
+See L<MULTIPLE REPOSITORIES> below.
 
 =back
 
@@ -8030,7 +8036,7 @@ from the local keyring.
 
 =head2 list
 
-Synonym for L<info>.
+Synonym for L<info|/info [I<option>...] [collections|schemes|I<pkg>...]>.
 
 =head2 option
 
@@ -8199,7 +8205,7 @@ is changed, while if the setting I<w32_multi_user> is on, a warning is
 issued that the caller does not have enough privileges.
 
 If the user does not have admin rights, and the option C<--w32mode>
-is given, it must be B<user> and the user path will be adjusted. If a
+is given, it must be C<user> and the user path will be adjusted. If a
 user without admin rights uses the option C<--w32mode admin> a warning
 is issued that the caller does not have enough privileges.
 
@@ -8321,25 +8327,13 @@ also specified.
 
 =item B<--backupdir> I<directory>
 
-These options behave just as with the L</update> action (q.v.), except
-they apply to making backups of packages before they are removed.  The
-default is to make such a backup, that is, to save a copy of packages
-before removal.
+These options behave just as with the L<update|/update
+[I<option>]... [I<pkg>]...> action (q.v.), except they apply to making
+backups of packages before they are removed.  The default is to make
+such a backup, that is, to save a copy of packages before removal.
 
-See L</update> action for more.
-
-neither option is given, no backup will be made. If C<--backupdir> is
-given and specifies a writable directory then a backup will be made in
-that location. If only C<--backup> is given, then a backup will be made
-to the directory previously set via the C<option> action (see below). If
-both are given then a backup will be made to the specified I<directory>.
-
-You can set options via the C<option> action to automatically make
-backups for all packages, and/or keep only a certain number of backups.
-Please see the C<option> action for details. The default is to make one
-backup.
-
-The C<restore> action explains how to restore from a backup.
+The L<restore|/restore [--json] [--backupdir I<dir>] [--all | I<pkg>
+[I<rev>]]> action explains how to restore from a backup.
 
 =item B<--no-depends>
 
@@ -8347,7 +8341,7 @@ Do not remove dependent packages.
 
 =item B<--no-depends-at-all>
 
-See above under B<install> (and beware).
+See above under L<install|/install [I<option>]... I<pkg>...> (and beware).
 
 =item B<--force>
 
@@ -8357,8 +8351,8 @@ package will be removed unconditionally.  Use with care.
 
 A package that has been removed using the C<--force> option because it
 is still listed in an installed collection or scheme will not be
-updated, and will be mentioned as B<forcibly removed> in the output of
-B<tlmgr update --list>.
+updated, and will be mentioned as C<forcibly removed> in the output of
+C<tlmgr update --list>.
 
 =item B<--dry-run>
 
@@ -8381,262 +8375,7 @@ written to the terminal.
 
 =item B<repository set I<path>[#I<tag>] [I<path>[#I<tag>] ...]>
 
-This action manages the list of repositories.  See L</MULTIPLE
-REPOSITORIES> below for detailed explanations.
-
-The first form (C<list>) lists all configured repositories and the
-respective tags if set. If a path, url, or tag is given after the
-C<list> keyword, it is interpreted as source from where to 
-initialize a TeX Live Database and lists the contained packages.
-This can also be an up-to-now not used repository, both locally
-and remote. If one pass in addition C<--with-platforms>, for each
-package the available platforms (if any) are listed, too.
-
-The third form (C<add>) adds a repository
-(optionally attaching a tag) to the list of repositories.  The forth
-form (C<remove>) removes a repository, either by full path/url, or by
-tag.  The last form (C<set>) sets the list of repositories to the items
-given on the command line, not keeping previous settings
-
-In all cases, one of the repositories must be tagged as C<main>;
-otherwise, all operations will fail!
-
-=back
-
-=head2 restore [--json] [--backupdir I<dir>] [--all | I<pkg> [I<rev>]]
-
-Restore a package from a previously-made backup.
-
-If C<--all> is given, try to restore the latest revision of all 
-package backups found in the backup directory.
-
-Otherwise, if neither I<pkg> nor I<rev> are given, list the available
-backup revisions for all packages.  With I<pkg> given but no I<rev>,
-list all available backup revisions of I<pkg>.
-
-When listing available packages, C<tlmgr> shows the revision, and in
-parenthesis the creation time if available (in format yyyy-mm-dd hh:mm).
-
-If (and only if) both I<pkg> and a valid revision number I<rev> are
-specified, try to restore the package from the specified backup.
-
-Options:
-
-=over 4
-
-=item B<--all>
-
-Try to restore the latest revision of all package backups found in the
-backup directory. Additional non-option arguments (like I<pkg>) are not
-allowed.
-
-=item B<--backupdir> I<directory>
-
-Specify the directory where the backups are to be found. If not given it
-will be taken from the configuration setting in the TLPDB.
-
-=item B<--dry-run>
-
-Nothing is actually restored; instead, the actions to be performed are
-written to the terminal.
-
-=item B<--force>
-
-Don't ask questions.
-
-=item B<--json>
-
-When listing backups, the option C<--json> turn on JSON output.
-The format is an array of JSON objects (C<name>, C<rev>, C<date>).
-For details see C<tlpkg/doc/JSON-formats.txt>, format definition: C<TLBACKUPS>.
-If both C<--json> and C<--data> are given, C<--json> takes precedence.
-
-=back
-
-=head2 search [I<option>...] I<what>
-
-=head3 search [I<option>...] --file I<what>
-
-=head3 search [I<option>...] --all I<what>
-
-By default, search the names, short descriptions, and long descriptions
-of all locally installed packages for the argument I<what>, interpreted
-as a (Perl) regular expression.
-
-Options:
-
-=over 4
-
-=item B<--file>
-
-List all filenames containing I<what>.
-
-=item B<--all>
-
-Search everything: package names, descriptions and filenames.
-
-=item B<--global>
-
-Search the TeX Live Database of the installation medium, instead of the
-local installation.
-
-=item B<--word>
-
-Restrict the search of package names and descriptions (but not
-filenames) to match only full words.  For example, searching for
-C<table> with this option will not output packages containing the word
-C<tables> (unless they also contain the word C<table> on its own).
-
-=back
-
-=head2 shell
-
-Starts an interactive mode, where tlmgr prompts for commands. This can
-be used directly, or for scripting. The first line of output is
-C<protocol> I<n>, where I<n> is an unsigned number identifying the
-protocol version (currently 1).
-
-In general, tlmgr actions that can be given on the command line
-translate to commands in this shell mode.  For example, you can say
-C<update --list> to see what would be updated. The TLPDB is loaded the
-first time it is needed (not at the beginning), and used for the rest of
-the session.
-
-Besides these actions, a few commands are specific to shell mode:
-
-=over 4
-
-=item protocol
-
-Print C<protocol I<n>>, the current protocol version.
-
-=item help
-
-Print pointers to this documentation.
-
-=item version
-
-Print tlmgr version information.
-
-=item quit, end, bye, byebye, EOF
-
-Exit.
-
-=item restart
-
-Restart C<tlmgr shell> with the original command line; most useful when
-developing C<tlmgr>.
-
-=item load [local|remote]
-
-Explicitly load the local or remote, respectively, TLPDB.
-
-=item save
-
-Save the local TLPDB, presumably after other operations have changed it.
-
-=item get [I<var>]
-=item set [I<var> [I<val>]]
-
-Get the value of I<var>, or set it to I<val>.  Possible I<var> names:
-C<debug-translation>, C<machine-readable>, C<no-execute-actions>,
-C<require-verification>, C<verify-downloads>, C<repository>, and
-C<prompt>. All except C<repository> and C<prompt> are booleans, taking
-values 0 and 1, and behave like the corresponding command line option.
-The C<repository> variable takes a string, and sets the remote
-repository location. The C<prompt> variable takes a string, and sets the
-current default prompt.
-
-If I<var> or then I<val> is not specified, it is prompted for.
-
-=back
-
-ym.
-
-=head2 print-platform-info
-
-Print the TeX Live platform identifier, TL platform long name, and
-original output from guess.
-
-=head2 remove [I<option>]... I<pkg>...
-
-Remove each I<pkg> specified.  Removing a collection removes all package
-dependencies (unless C<--no-depends> is specified), but not any
-collection dependencies of that collection.  However, when removing a
-package, dependencies are never removed.  Options:
-
-=over 4
-
-=item B<--all>
-
-Uninstalls all of TeX Live, asking for confirmation unless C<--force> is
-also specified.
-
-=item B<--backup>
-
-=item B<--backupdir> I<directory>
-
-These options behave just as with the L</update> action (q.v.), except
-they apply to making backups of packages before they are removed.  The
-default is to make such a backup, that is, to save a copy of packages
-before removal.
-
-See L</update> action for more.
-
-neither option is given, no backup will be made. If C<--backupdir> is
-given and specifies a writable directory then a backup will be made in
-that location. If only C<--backup> is given, then a backup will be made
-to the directory previously set via the C<option> action (see below). If
-both are given then a backup will be made to the specified I<directory>.
-
-You can set options via the C<option> action to automatically make
-backups for all packages, and/or keep only a certain number of backups.
-Please see the C<option> action for details. The default is to make one
-backup.
-
-The C<restore> action explains how to restore from a backup.
-
-=item B<--no-depends>
-
-Do not remove dependent packages.
-
-=item B<--no-depends-at-all>
-
-See above under B<install> (and beware).
-
-=item B<--force>
-
-By default, removal of a package or collection that is a dependency of
-another collection or scheme is not allowed.  With this option, the
-package will be removed unconditionally.  Use with care.
-
-A package that has been removed using the C<--force> option because it
-is still listed in an installed collection or scheme will not be
-updated, and will be mentioned as B<forcibly removed> in the output of
-B<tlmgr update --list>.
-
-=item B<--dry-run>
-
-Nothing is actually removed; instead, the actions to be performed are
-written to the terminal.
-
-=back
-
-=head2 repository
-
-=over 4
-
-=item B<repository list>
-
-=item B<repository list I<path|tag>>
-
-=item B<repository add I<path> [I<tag>]>
-
-=item B<repository remove I<path|tag>>
-
-=item B<repository set I<path>[#I<tag>] [I<path>[#I<tag>] ...]>
-
-This action manages the list of repositories.  See L</MULTIPLE
+This action manages the list of repositories.  See L<MULTIPLE
 REPOSITORIES> below for detailed explanations.
 
 The first form (C<list>) lists all configured repositories and the
@@ -8808,11 +8547,11 @@ If I<var> or then I<val> is not specified, it is prompted for.
 
 =head2 show
 
-Synonym for L<info>.
+Synonym for L<info|/info [I<option>...] [collections|schemes|I<pkg>...]>.
 
 =head2 uninstall
 
-Synonym for L<remove>.
+Synonym for L<remove|/remove [I<option>]... I<pkg>...>.
 
 =head2 update [I<option>]... [I<pkg>]...
 
@@ -8956,18 +8695,18 @@ installation with the server's idea of what is available:
 
 =item B<--backup>
 
-=item  B<--backupdir> I<directory>
+=item B<--backupdir> I<directory>
 
 These two options control the creation of backups of packages I<before>
 updating; that is, backup of packages as currently installed.  If
-neither options is given, no backup will made saved. If C<--backupdir>
-is given and specifies a writable directory then a backup will be made
-in that location. If only C<--backup> is given, then a backup will be
-made to the directory previously set via the L</option> action (see
+neither options is given, no backup will made. If C<--backupdir> is
+given and specifies a writable directory then a backup will be made in
+that location. If only C<--backup> is given, then a backup will be made
+to the directory previously set via the L</option> action (see
 below). If both are given then a backup will be made to the specified
 I<directory>.
 
-You can also set options via the C</option> action to automatically make
+You can also set options via the L</option> action to automatically make
 backups for all packages, and/or keep only a certain number of backups.
 
 C<tlmgr> always makes a temporary backup when updating packages, in case
@@ -8976,7 +8715,8 @@ of this C<--backup> option is to save a persistent backup in case the
 actual I<content> of the update causes problems, e.g., introduces an TeX
 incompatibility.
 
-The L</restore> action explains how to restore from a backup.
+The L<restore|/restore [--json] [--backupdir I<dir>] [--all | I<pkg>
+[I<rev>]]> action explains how to restore from a backup.
 
 =item B<--no-depends>
 
@@ -8986,7 +8726,7 @@ suppresses this behavior.
 
 =item B<--no-depends-at-all>
 
-See above under B<install> (and beware).
+See above under L<install|/install [I<option>]... I<pkg>...> (and beware).
 
 =item B<--force>
 
@@ -9098,22 +8838,22 @@ report C<(verified)> after loading the TLPDB; otherwise, they report
 C<(not verified)>.  But either way, by default the installation and/or
 updates proceed normally.
 
-If a program named C<gpg> is available (that is, found in C<PATH>),
-cryptographic signatures will be checked. In this case we require the
-main repository be signed, but not any additional repositories. If
-C<gpg> is not available, signatures are not checked and no verification
-is carried out, but C<tlmgr> proceeds normally.
+If a program named C<gpg> is available (that is, found in C<PATH>), by
+default cryptographic signatures will be checked: we require the main
+repository be signed, but not any additional repositories. If C<gpg> is
+not available, by default signatures are not checked and no verification
+is carried out, but C<tlmgr> still proceeds normally.
 
-The behaviour of the verification can be controlled by the command line 
+The behavior of the verification can be controlled by the command line
 and config file option C<verify-repo> which takes one of the following
-values: C<none>, C<main>, or C<all>. In case of C<none>, no verification
-whatsoever is attempted, similar to the case when not GnuPG can be found.
-In case of C<main> (the default) verification is required only for
-the main repository, but attempted for all. Missing signatures of
-subsidiary repositories will not result in an error.
-Finally, in the case of C<all>, all repositories need to be signed.
+values: C<none>, C<main>, or C<all>. With C<none>, no verification
+whatsoever is attempted.  With C<main> (the default) verification is
+required only for the main repository, and only if C<gpg> is available;
+though attempted for all, missing signatures of subsidiary repositories
+will not result in an error.  Finally, in the case of C<all>, C<gpg>
+must be available and all repositories need to be signed.
 
-In all cases when a signature is checked and fails to verify, an error
+In all cases, if a signature is checked and fails to verify, an error
 is raised.
 
 Cryptographic verification requires checksum checking (described just
@@ -9701,7 +9441,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47220 2018-04-01 03:20:33Z preining $
+$Id: tlmgr.pl 47254 2018-04-02 23:13:43Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
