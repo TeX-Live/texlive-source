@@ -376,16 +376,17 @@ void gen_runstring11(stack *Stack)
 }
 
 #line 259 "runstring.in"
-// string format(string *format, string separator, real x,              string locale=emptystring);
+// string format(string *format, bool forcemath=false, string separator, real x,              string locale=emptystring);
 void gen_runstring12(stack *Stack)
 {
   string locale=vm::pop<string>(Stack,emptystring);
   real x=vm::pop<real>(Stack);
   string separator=vm::pop<string>(Stack);
+  bool forcemath=vm::pop<bool>(Stack,false);
   string * format=vm::pop<string *>(Stack);
 #line 261 "runstring.in"
   bool tex=getSetting<string>("tex") != "none";
-  bool texify=false;
+  bool texify=forcemath;
   ostringstream out;
   
   const char *p0=format->c_str();
@@ -637,7 +638,7 @@ void gen_runstring_venv(venv &ve)
 #line 205 "runstring.in"
   addFunc(ve, run::gen_runstring11, primString() , SYM(format), formal(primString(), SYM(format), false, false), formal(primInt(), SYM(x), false, false), formal(primString() , SYM(locale), true, false));
 #line 259 "runstring.in"
-  addFunc(ve, run::gen_runstring12, primString() , SYM(format), formal(primString(), SYM(format), false, false), formal(primString() , SYM(separator), false, false), formal(primReal(), SYM(x), false, false), formal(primString() , SYM(locale), true, false));
+  addFunc(ve, run::gen_runstring12, primString() , SYM(format), formal(primString(), SYM(format), false, false), formal(primBoolean(), SYM(forcemath), true, false), formal(primString() , SYM(separator), false, false), formal(primReal(), SYM(x), false, false), formal(primString() , SYM(locale), true, false));
 #line 386 "runstring.in"
   addFunc(ve, run::gen_runstring13, primInt(), SYM(hex), formal(primString() , SYM(s), false, false));
 #line 397 "runstring.in"

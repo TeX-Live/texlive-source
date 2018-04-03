@@ -18,6 +18,9 @@
 /* Define to 1 if you have the `dup2' function. */
 #undef HAVE_DUP2
 
+/* Define to 1 if you have the `feenableexcept' function. */
+#undef HAVE_FEENABLEEXCEPT
+
 /* Define to 1 if you have the <fenv.h> header file. */
 #undef HAVE_FENV_H
 
