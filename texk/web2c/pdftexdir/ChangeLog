@@ -1,4 +1,8 @@
-2018-03-24  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+2018-04-04  Jerry James  <loganjerry@gmail.com>
+
+	* pdftoepdf-newpoppler.cc: Do not copy a Dict, get a reference instead.
+
+2018-03-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
             Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdftex.ch: Recover the right \lastnodetype initialization
@@ -16,7 +20,7 @@
 	* pdftex.web: pdftex_revision=="19".
 	Reported by Uwe Siart, 2018-03-06.
 
-2018-01-25  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+2018-01-25  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
         and Karl Berry  <karl@freefriends.org>
 
 	* writefont.c (font_is_used): import LuaTeX's font_has_subset
@@ -34,7 +38,7 @@
 	(slow_print_substr): new procedure, although surely there's
 	already a way to print a substring of a pool string.
 
-2018-01-01  Pali Roh\'ar <pali.rohar@gmail.com>
+2018-01-01  Pali Roh\'ar  <pali.rohar@gmail.com>
 
 	Patch 1: explicitly detect bitmap PK font in fm_scan_line,
 	instead of the implicit check of ps_name and ff_name being NULL.
