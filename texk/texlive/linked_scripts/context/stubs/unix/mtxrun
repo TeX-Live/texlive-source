@@ -6101,7 +6101,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-str"] = package.loaded["util-str"] or true
 
--- original size: 38699, stripped down to: 22142
+-- original size: 38734, stripped down to: 22142
 
 if not modules then modules={} end modules ['util-str']={
   version=1.001,
@@ -6913,7 +6913,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-tab"] = package.loaded["util-tab"] or true
 
--- original size: 27665, stripped down to: 17051
+-- original size: 27741, stripped down to: 17085
 
 if not modules then modules={} end modules ['util-tab']={
   version=1.001,
@@ -7051,15 +7051,16 @@ function table.tocsv(t,specification)
       fields=sortedkeys(t[1])
     end
     local separator=specification.separator or ","
+    local noffields=#fields
     if specification.preamble==true then
-      for f=1,#fields do
+      for f=1,noffields do
         r[f]=lpegmatch(escape,tostring(fields[f]))
       end
       result[1]=concat(r,separator)
     end
     for i=1,#t do
       local ti=t[i]
-      for f=1,#fields do
+      for f=1,noffields do
         local field=ti[fields[f]]
         if type(field)=="string" then
           r[f]=lpegmatch(escape,field)
@@ -7076,30 +7077,31 @@ function table.tocsv(t,specification)
 end
 local nspaces=utilities.strings.newrepeater(" ")
 local function toxml(t,d,result,step)
+  local r=#result
   for k,v in sortedpairs(t) do
     local s=nspaces[d] 
     local tk=type(k)
     local tv=type(v)
     if tv=="table" then
       if tk=="number" then
-        result[#result+1]=formatters["%s<entry n='%s'>"](s,k)
+        r=r+1 result[r]=formatters["%s<entry n='%s'>"](s,k)
         toxml(v,d+step,result,step)
-        result[#result+1]=formatters["%s</entry>"](s,k)
+        r=r+1 result[r]=formatters["%s</entry>"](s,k)
       else
-        result[#result+1]=formatters["%s<%s>"](s,k)
+        r=r+1 result[r]=formatters["%s<%s>"](s,k)
         toxml(v,d+step,result,step)
-        result[#result+1]=formatters["%s</%s>"](s,k)
+        r=r+1 result[r]=formatters["%s</%s>"](s,k)
       end
     elseif tv=="string" then
       if tk=="number" then
-        result[#result+1]=formatters["%s<entry n='%s'>%!xml!</entry>"](s,k,v,k)
+        r=r+1 result[r]=formatters["%s<entry n='%s'>%!xml!</entry>"](s,k,v,k)
       else
-        result[#result+1]=formatters["%s<%s>%!xml!</%s>"](s,k,v,k)
+        r=r+1 result[r]=formatters["%s<%s>%!xml!</%s>"](s,k,v,k)
       end
     elseif tk=="number" then
-      result[#result+1]=formatters["%s<entry n='%s'>%S</entry>"](s,k,v,k)
+      r=r+1 result[r]=formatters["%s<entry n='%s'>%S</entry>"](s,k,v,k)
     else
-      result[#result+1]=formatters["%s<%s>%S</%s>"](s,k,v,k)
+      r=r+1 result[r]=formatters["%s<%s>%S</%s>"](s,k,v,k)
     end
   end
 end
@@ -12113,7 +12115,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["lxml-tab"] = package.loaded["lxml-tab"] or true
 
--- original size: 59638, stripped down to: 37936
+-- original size: 60383, stripped down to: 38562
 
 if not modules then modules={} end modules ['lxml-tab']={
   version=1.001,
@@ -12122,7 +12124,7 @@ if not modules then modules={} end modules ['lxml-tab']={
   copyright="PRAGMA ADE / ConTeXt Development Team",
   license="see context related readme files"
 }
-local trace_entities=false trackers .register("xml.entities",function(v) trace_entities=v end)
+local trace_entities=false trackers.register("xml.entities",function(v) trace_entities=v end)
 local report_xml=logs and logs.reporter("xml","core") or function(...) print(string.format(...)) end
 if lpeg.setmaxstack then lpeg.setmaxstack(1000) end 
 xml=xml or {}
@@ -12870,6 +12872,25 @@ local function publicentity(k,v,n)
   end
   entities[k]=v
 end
+local function entityfile(pattern,k,v,n)
+  if n then
+    local okay,data
+    if resolvers then
+      okay,data=resolvers.loadbinfile(n)
+    else
+      data=io.loaddata(n)
+      okay=data and data~=""
+    end
+    if okay then
+      if trace_entities then
+        report_xml("loading public entities %a as %a from %a",k,v,n)
+      end
+      lpegmatch(pattern,data)
+      return
+    end
+  end
+  report_xml("ignoring public entities %a as %a from %a",k,v,n)
+end
 local function install(spacenewline,spacing,anything)
   local anyentitycontent=(1-open-semicolon-space-close-ampersand)^0
   local hexentitycontent=R("AF","af","09")^1
@@ -12921,6 +12942,9 @@ local function install(spacenewline,spacing,anything)
   local publicentitytype=(doctypename*somespace*P("PUBLIC")*somespace*value)/publicentity
   local systementitytype=(doctypename*somespace*P("SYSTEM")*somespace*value*somespace*P("NDATA")*somespace*doctypename)/systementity
   local entitydoctype=optionalspace*P("<!ENTITY")*somespace*(systementitytype+publicentitytype+normalentitytype+weirdentitytype)*optionalspace*close
+  local publicentityfile=(doctypename*somespace*P("PUBLIC")*somespace*value*(somespace*value)^0)/function(...)
+    entityfile(entitydoctype,...)
+  end
   local function weirdresolve(s)
     lpegmatch(entitydoctype,parameters[s])
   end
@@ -12934,7 +12958,8 @@ local function install(spacenewline,spacing,anything)
   local publicdoctype=doctypename*somespace*P("PUBLIC")*somespace*value*somespace*value*somespace*doctypeset
   local systemdoctype=doctypename*somespace*P("SYSTEM")*somespace*value*somespace*doctypeset
   local simpledoctype=(anything-close)^1 
-  local somedoctype=C((somespace*(publicdoctype+systemdoctype+definitiondoctype+simpledoctype)*optionalspace)^0)
+  local somedoctype=C((somespace*(
+publicentityfile+publicdoctype+systemdoctype+definitiondoctype+simpledoctype)*optionalspace)^0)
   local instruction=(spacing*begininstruction*someinstruction*endinstruction)/function(...) add_special("@pi@",...) end
   local comment=(spacing*begincomment*somecomment*endcomment  )/function(...) add_special("@cm@",...) end
   local cdata=(spacing*begincdata*somecdata*endcdata   )/function(...) add_special("@cd@",...) end
@@ -21321,8 +21346,8 @@ end -- of closure
 
 -- used libraries    : l-lua.lua l-macro.lua l-sandbox.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-fil.lua util-sac.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-tpl.lua util-sbx.lua util-mrg.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 877106
--- stripped bytes    : 317575
+-- original bytes    : 877962
+-- stripped bytes    : 317771
 
 -- end library merge
 
