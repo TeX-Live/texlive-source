@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47254 2018-04-02 23:13:43Z karl $
+# $Id: tlmgr.pl 47273 2018-04-03 22:14:30Z karl $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47254 $';
-my $datrev = '$Date: 2018-04-03 01:13:43 +0200 (Tue, 03 Apr 2018) $';
+my $svnrev = '$Revision: 47273 $';
+my $datrev = '$Date: 2018-04-04 00:14:30 +0200 (Wed, 04 Apr 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -6560,11 +6560,11 @@ sub handle_gpg_config_settings {
       debug("will verify cryptographic signatures\n")
     } else {
       my $prefix = "$prg: No gpg found"; # just to shorten the strings
-      if ($opts{'verify-repo'} eq "all") {
-        # verification was requested on the command line, but did not succeed, die
+      if (defined($opts{'verify-repo'}) && $opts{'verify-repo'} eq "all") {
+        # verification requested on the command line, but did not succeed: die
         tldie("$prefix, verification explicitly requested on command line, quitting.\n");
       }
-      if ($config{'verify-repo'} eq "all") {
+      if (defined($config{'verify-repo'}) && $config{'verify-repo'} eq "all") {
         # verification explicitly requested in config file, but not gpg, die
         tldie("$prefix, verification explicitly requested in config file, quitting.\n");
       }
@@ -9441,7 +9441,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47254 2018-04-02 23:13:43Z karl $
+$Id: tlmgr.pl 47273 2018-04-03 22:14:30Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
