@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47273 2018-04-03 22:14:30Z karl $
+# $Id: tlmgr.pl 47303 2018-04-05 17:52:22Z karl $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47273 $';
-my $datrev = '$Date: 2018-04-04 00:14:30 +0200 (Wed, 04 Apr 2018) $';
+my $svnrev = '$Revision: 47303 $';
+my $datrev = '$Date: 2018-04-05 19:52:22 +0200 (Thu, 05 Apr 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7364,7 +7364,7 @@ tlmgr - the native TeX Live Manager
 
 =head1 SYNOPSIS
 
-tlmgr [I<option>]... I<action> [I<option>]... [I<operand>]...
+tlmgr [I<option>...] I<action> [I<option>...] [I<operand>...]
 
 =head1 DESCRIPTION
 
@@ -7571,7 +7571,13 @@ Gives version information (same as C<--version>).
 
 If C<-v> has been given the revisions of the used modules are reported, too.
 
-=head2 backup [--clean[=I<N>]] [--backupdir I<dir>] [--all | I<pkg>]...
+=head2 backup
+
+=over 4
+
+=item B<backup [I<option>...] --all>
+
+=item B<backup [I<option>...] I<pkg>...>
 
 If the C<--clean> option is not specified, this action makes a backup of
 the given packages, or all packages given C<--all>. These backups are
@@ -7617,18 +7623,14 @@ performed are written to the terminal.
 
 =back
 
+=back
+
 =head2 candidates I<pkg>
-
-=over 4
-
-=item B<candidates I<pkg>>
 
 Shows the available candidate repositories for package I<pkg>.
 See L<MULTIPLE REPOSITORIES> below.
 
-=back
-
-=head2 check [I<option>]... [files|depends|executes|runfiles|all]
+=head2 check [I<option>...] [files|depends|executes|runfiles|all]
 
 Executes one (or all) check(s) on the consistency of the installation.
 
@@ -7671,9 +7673,13 @@ checking the TL development repository.
 
 =back
 
-=head2 conf [texmf|tlmgr|updmap [--conffile I<file>] [--delete] [I<key> [I<value>]]]
+=head2 conf
 
-=head2 conf auxtrees [--conffile I<file>] [show|add|delete] [I<value>]
+=over 4
+
+=item  B<conf [texmf|tlmgr|updmap [--conffile I<file>] [--delete] [I<key> [I<value>]]]>
+
+=item B<conf auxtrees [--conffile I<file>] [show|add|delete] [I<value>]>
 
 With only C<conf>, show general configuration information for TeX Live,
 including active configuration files, path settings, and more.  This is
@@ -7722,7 +7728,9 @@ but tinkering with settings in this way is strongly discouraged.  Again,
 no error checking on either keys or values is done, so any sort of
 breakage is possible.
 
-=head2 dump-tlpdb [--local|--remote] [--json]
+=back
+
+=head2 dump-tlpdb [I<option>...] [--json]
 
 Dump complete local or remote TLPDB to standard output, as-is.  The
 output is analogous to the C<--machine-readable> output; see
@@ -7760,17 +7768,17 @@ I<location> is the file or url to the repository.
 
 Line endings may be either LF or CRLF depending on the current platform.
 
-=head2 generate [I<option>]... I<what>
+=head2 generate
 
 =over 4
 
-=item B<generate language>
+=item B<generate [I<option>...] language>
 
-=item B<generate language.dat>
+=item B<generate [I<option>...] language.dat>
 
-=item B<generate language.def>
+=item B<generate [I<option>...] language.def>
 
-=item B<generate language.dat.lua>
+=item B<generate [I<option>...] language.dat.lua>
 
 =back
 
@@ -7877,7 +7885,15 @@ The respective locations are as follows:
 
 Start the graphical user interface. See B<GUI> below.
 
-=head2 info [I<option>...] [collections|schemes|I<pkg>...]
+=head2 info
+
+=over 4
+
+=item B<info [I<option>...] I<pkg>...>
+
+=item B<info [I<option>...] collections>
+
+=item B<info [I<option>...] schemes>
 
 With no argument, lists all packages available at the package
 repository, prefixing those already installed with C<i>.
@@ -7946,13 +7962,15 @@ If both C<--json> and C<--data> are given, C<--json> takes precedence.
 
 =back
 
+=back
+
 =head2 init-usertree
 
 Sets up a texmf tree for so-called user mode management, either the
 default user tree (C<TEXMFHOME>), or one specified on the command line
 with C<--usertree>.  See L<USER MODE> below.
 
-=head2 install [I<option>]... I<pkg>...
+=head2 install [I<option>...] I<pkg>...
 
 Install each I<pkg> given on the command line, if it is not already
 installed.  (It does not touch existing packages; see the C<update>
@@ -8018,7 +8036,15 @@ C<--reinstall>, as in (using the C<fontspec> package as the example):
 
 =back
 
-=head2 key list|add I<file>|remove I<keyid>
+=head2 key
+
+=over 4
+
+=item B<key list>
+
+=item B<key add I<file>>
+
+=item B<key remove I<keyid>>
 
 The action C<key> allows listing, adding and removing additional GPG
 keys to the set of trusted keys, that is, those that are used to verify
@@ -8034,9 +8060,11 @@ C<tlpkg/gpg/repository-keys.gpg>.
 The C<remove> argument requires a key id and removes the requested id
 from the local keyring.
 
+=back
+
 =head2 list
 
-Synonym for L<info|/info [I<option>...] [collections|schemes|I<pkg>...]>.
+Synonym for L</info>.
 
 =head2 option
 
@@ -8182,7 +8210,13 @@ C<texconfig> script, which supports other configuration settings for
 some programs, notably C<dvips>.  C<tlmgr> does not support those extra
 settings.
 
-=head2 path [--w32mode=user|admin] [add|remove]
+=head2 path
+
+=over 4
+
+=item B<path [--w32mode=user|admin] add>
+
+=item B<path [--w32mode=user|admin] remove>
 
 On Unix, merely adds or removes symlinks for binaries, man pages, and
 info pages in the system directories specified by the respective options
@@ -8208,6 +8242,8 @@ If the user does not have admin rights, and the option C<--w32mode>
 is given, it must be C<user> and the user path will be adjusted. If a
 user without admin rights uses the option C<--w32mode admin> a warning
 is issued that the caller does not have enough privileges.
+
+=back
 
 =head2 pinning 
 
@@ -8235,11 +8271,15 @@ Remove all pinning data for repository I<repo>.
 
 =back
 
-=head2 platform list|add|remove I<platform>...
+=head2 platform
 
-=head2 platform set I<platform>
+=over 4
 
-=head2 platform set auto
+=item B<platform list|add|remove I<platform>...>
+
+=item B<platform set I<platform>>
+
+=item B<platform set auto>
 
 C<platform list> lists the TeX Live names of all the platforms
 (a.k.a. architectures), (C<i386-linux>, ...) available at the package
@@ -8273,6 +8313,8 @@ written to the terminal.
 
 =back
 
+=back
+
 =cut
 
 # keep the following on *ONE* line otherwise Losedows perldoc does
@@ -8280,12 +8322,24 @@ written to the terminal.
 
 =pod
 
-=head2 postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all] [install|remove] [shortcut|fileassoc|script] [I<pkg>]...
+=head2 postaction
+
+=over 4
+
+=item B<postaction [I<option>...] install [shortcut|fileassoc|script] [I<pkg>...]>
+
+=item B<postaction [I<option>...] remove [shortcut|fileassoc|script] [I<pkg>...]>
 
 Carry out the postaction C<shortcut>, C<fileassoc>, or C<script> given
 as the second required argument in install or remove mode (which is the
 first required argument), for either the packages given on the command
 line, or for all if C<--all> is given.
+
+Options:
+
+=over 4
+
+=item B<--w32mode=[user|admin]>
 
 If the option C<--w32mode> is given the value C<user>, all actions will
 only be carried out in the user-accessible parts of the
@@ -8293,10 +8347,20 @@ registry/filesystem, while the value C<admin> selects the system-wide
 parts of the registry for the file associations.  If you do not have
 enough permissions, using C<--w32mode=admin> will not succeed.
 
+=item B<--fileassocmode=[1|2]>
+
 C<--fileassocmode> specifies the action for file associations.  If it is
 set to 1 (the default), only new associations are added; if it is set to
 2, all associations are set to the TeX Live programs.  (See also
 C<option fileassocs>.)
+
+=item B<--all>
+
+Carry out the postactions for all packages
+
+=back
+
+=back
 
 =head2 print-platform
 
@@ -8309,7 +8373,7 @@ C<--print-arch> is a synonym.
 Print the TeX Live platform identifier, TL platform long name, and
 original output from guess.
 
-=head2 remove [I<option>]... I<pkg>...
+=head2 remove [I<option>...] I<pkg>...
 
 Remove each I<pkg> specified.  Removing a collection removes all package
 dependencies (unless C<--no-depends> is specified), but not any
@@ -8328,12 +8392,11 @@ also specified.
 =item B<--backupdir> I<directory>
 
 These options behave just as with the L<update|/update
-[I<option>]... [I<pkg>]...> action (q.v.), except they apply to making
+[I<option>...] [I<pkg>...]> action (q.v.), except they apply to making
 backups of packages before they are removed.  The default is to make
 such a backup, that is, to save a copy of packages before removal.
 
-The L<restore|/restore [--json] [--backupdir I<dir>] [--all | I<pkg>
-[I<rev>]]> action explains how to restore from a backup.
+The L</restore> action explains how to restore from a backup.
 
 =item B<--no-depends>
 
@@ -8341,7 +8404,7 @@ Do not remove dependent packages.
 
 =item B<--no-depends-at-all>
 
-See above under L<install|/install [I<option>]... I<pkg>...> (and beware).
+See above under L<install|/install [I<option>...] I<pkg>...> (and beware).
 
 =item B<--force>
 
@@ -8397,7 +8460,13 @@ otherwise, all operations will fail!
 
 =back
 
-=head2 restore [--json] [--backupdir I<dir>] [--all | I<pkg> [I<rev>]]
+=head2 restore
+
+=over 4
+
+=item B<restore [I<option>...] I<pkg> [I<rev>]>
+
+=item B<restore [I<option>...] --all>
 
 Restore a package from a previously-made backup.
 
@@ -8447,11 +8516,17 @@ If both C<--json> and C<--data> are given, C<--json> takes precedence.
 
 =back
 
-=head2 search [I<option>...] I<what>
+=back
 
-=head3 search [I<option>...] --file I<what>
+=head2 search
 
-=head3 search [I<option>...] --all I<what>
+=over 4
+
+=item B<search [I<option>...] I<what>>
+
+=item B<search [I<option>...] --file I<what>>
+
+=item B<search [I<option>...] --all I<what>>
 
 By default, search the names, short descriptions, and long descriptions
 of all locally installed packages for the argument I<what>, interpreted
@@ -8480,6 +8555,8 @@ Restrict the search of package names and descriptions (but not
 filenames) to match only full words.  For example, searching for
 C<table> with this option will not output packages containing the word
 C<tables> (unless they also contain the word C<table> on its own).
+
+=back
 
 =back
 
@@ -8547,13 +8624,13 @@ If I<var> or then I<val> is not specified, it is prompted for.
 
 =head2 show
 
-Synonym for L<info|/info [I<option>...] [collections|schemes|I<pkg>...]>.
+Synonym for L</info>.
 
 =head2 uninstall
 
-Synonym for L<remove|/remove [I<option>]... I<pkg>...>.
+Synonym for L<remove|/remove [I<option>...] I<pkg>...>.
 
-=head2 update [I<option>]... [I<pkg>]...
+=head2 update [I<option>...] [I<pkg>...]
 
 Updates the packages given as arguments to the latest version available
 at the installation source.  Either C<--all> or at least one I<pkg> name
@@ -8652,7 +8729,7 @@ This option can also be set permanently in the tlmgr config file with
 the key C<update-exclude>.
 
 
-=item B<--no-auto-remove> [I<pkg>]...
+=item B<--no-auto-remove> [I<pkg>...]
 
 By default, C<tlmgr> tries to remove packages which have disappeared on
 the server, as described above under C<--all>.  This option prevents
@@ -8661,7 +8738,7 @@ given I<pkg> names.  This can lead to an inconsistent TeX installation,
 since packages are not infrequently renamed or replaced by their
 authors.  Therefore this is not recommend.
 
-=item B<--no-auto-install> [I<pkg>]...
+=item B<--no-auto-install> [I<pkg>...]
 
 Under normal circumstances C<tlmgr> will install packages which are new
 on the server, as described above under C<--all>.  This option prevents
@@ -8715,8 +8792,7 @@ of this C<--backup> option is to save a persistent backup in case the
 actual I<content> of the update causes problems, e.g., introduces an TeX
 incompatibility.
 
-The L<restore|/restore [--json] [--backupdir I<dir>] [--all | I<pkg>
-[I<rev>]]> action explains how to restore from a backup.
+The L</restore> action explains how to restore from a backup.
 
 =item B<--no-depends>
 
@@ -8726,7 +8802,7 @@ suppresses this behavior.
 
 =item B<--no-depends-at-all>
 
-See above under L<install|/install [I<option>]... I<pkg>...> (and beware).
+See above under L<install|/install [I<option>...] I<pkg>...> (and beware).
 
 =item B<--force>
 
@@ -9298,9 +9374,9 @@ written to stdout).  The idea is that a program can get all the
 information it needs by reading stdout.
 
 Currently this option only applies to the 
-L<update|/update [I<option>]... [I<pkg>]...>,
-L<install|/install [I<option>]... I<pkg>...>, and
-L</option> actions.  
+L<update|/update [I<option>...] [I<pkg>...]>,
+L<install|/install [I<option>...] I<pkg>...>, and
+L</option> actions.
 
 =head2 Machine-readable C<update> and C<install> output
 
@@ -9441,7 +9517,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47273 2018-04-03 22:14:30Z karl $
+$Id: tlmgr.pl 47303 2018-04-05 17:52:22Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
