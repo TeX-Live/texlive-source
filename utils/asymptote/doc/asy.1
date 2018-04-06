@@ -1,0 +1,300 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.TH ASY 1 "1 Dec 2004"
+.SH NAME
+asy \- Asymptote: a script-based vector graphics language
+.SH SYNOPSIS
+.B asy
+.RI [ options ]
+.RI [ file \ ...]
+.SH DESCRIPTION
+\fBAsymptote\fP is a powerful descriptive vector graphics language for
+technical drawings, inspired by MetaPost but with an improved C++-like syntax.
+Asymptote provides for figures the same high-quality level of typesetting that
+LaTeX does for scientific text.
+.SH OPTIONS
+If no arguments are given, Asymptote runs in interactive mode.
+.PP
+If "\-" is given as the file argument, Asymptote reads from standard input.
+.PP
+A summary of options is included below. The effect of most options
+can be negated by prepending 
+.B no
+to the option name. 
+Default values for most options may also be entered in the 
+file 
+.B .asy/config.asy
+in the user's home directory using the long form:
+.PP
+     import settings;
+     batchView=true;
+.PP
+For a complete
+description, see the Info files.
+.TP
+.B \-V,\-View             
+View output; command-line only.
+.TP
+.B \-a,\-align C|B|T|Z    
+Center, Bottom, Top, or Zero page alignment [C].
+.TP
+.B \-aligndir pair       
+Directional page alignment (overrides align) [(0,0)].
+.TP
+.B \-antialias n         
+Antialiasing width for rasterized output [2].
+.TP
+.B \-arcballradius pixels
+Arcball radius [750].
+.TP
+.B \-auto3D              
+Automatically activate 3D scene [true].
+.TP
+.B \-autobillboard       
+3D labels always face viewer by default [true].
+.TP
+.B \-autoimport string   
+Module to automatically import.
+.TP
+.B \-autoplain           
+Enable automatic importing of plain [true].
+.TP
+.B \-autoplay            
+Autoplay 3D animations [false].
+.TP
+.B \-autorotate          
+Enable automatic PDF page rotation [false].
+.TP
+.B \-axes3               
+Show 3D axes in PDF output [true].
+.TP
+.B \-batchMask           
+Mask fpu exceptions in batch mode [false].
+.TP
+.B \-batchView           
+View output in batch mode [false].
+.TP
+.B \-bw                  
+Convert all colors to black and white [false].
+.TP
+.B \-cd directory        
+Set current directory; command-line only.
+.TP
+.B \-cmyk                
+Convert rgb colors to cmyk [false].
+.TP
+.B \-c,\-command string   
+Command to autoexecute.
+.TP
+.B \-compact             
+Conserve memory at the expense of speed [false].
+.TP
+.B \-d,\-debug            
+Enable debugging messages [false].
+.TP
+.B \-divisor n           
+Garbage collect using purge(divisor=n) [2].
+.TP
+.B \-doubleclick ms      
+Emulated double-click timeout [200].
+.TP
+.B \-embed               
+Embed rendered preview image [true].
+.TP
+.B \-exitonEOF           
+Exit interactive mode on EOF [true].
+.TP
+.B \-fitscreen           
+Fit rendered image to screen [true].
+.TP
+.B \-framedelay ms       
+Additional frame delay [0].
+.TP
+.B \-framerate frames/s  
+Animation speed [30].
+.TP
+.B \-globalwrite         
+Allow write to other directory [false].
+.TP
+.B \-gray                
+Convert all colors to grayscale [false].
+.TP
+.B \-h,\-help             
+Show summary of options; command-line only.
+.TP
+.B \-historylines n      
+Retain n lines of history [1000].
+.TP
+.B \-iconify             
+Iconify rendering window [false].
+.TP
+.B \-inlineimage         
+Generate inline embedded image [false].
+.TP
+.B \-inlinetex           
+Generate inline TeX code [false].
+.TP
+.B \-interactiveMask     
+Mask fpu exceptions in interactive mode [true].
+.TP
+.B \-interactiveView     
+View output in interactive mode [true].
+.TP
+.B \-interactiveWrite    
+Write expressions entered at the prompt to stdout [true].
+.TP
+.B \-k,\-keep             
+Keep intermediate files [false].
+.TP
+.B \-keepaux             
+Keep intermediate LaTeX .aux files [false].
+.TP
+.B \-level n             
+Postscript level [3].
+.TP
+.B \-l,\-listvariables    
+List available global functions and variables [false].
+.TP
+.B \-localhistory        
+Use a local interactive history file [false].
+.TP
+.B \-loop                
+Loop 3D animations [false].
+.TP
+.B \-m,\-mask             
+Mask fpu exceptions; command-line only.
+.TP
+.B \-maxtile pair        
+Maximum rendering tile size [(1024,768)].
+.TP
+.B \-maxviewport pair    
+Maximum viewport size [(2048,2048)].
+.TP
+.B \-multiline           
+Input code over multiple lines at the prompt [false].
+.TP
+.B \-multipleView        
+View output from multiple batch-mode files [false].
+.TP
+.B \-multisample n       
+Multisampling width for screen images [4].
+.TP
+.B \-offscreen           
+Use offscreen rendering [false].
+.TP
+.B \-O,\-offset pair      
+PostScript offset [(0,0)].
+.TP
+.B \-f,\-outformat format 
+Convert each output file to specified format.
+.TP
+.B \-o,\-outname name     
+Alternative output directory/filename.
+.TP
+.B \-p,\-parseonly        
+Parse file [false].
+.TP
+.B \-pdfreload           
+Automatically reload document in pdfviewer [false].
+.TP
+.B \-pdfreloaddelay usec 
+Delay before attempting initial pdf reload [750000].
+.TP
+.B \-position pair       
+Initial 3D rendering screen position [(0,0)].
+.TP
+.B \-prc                 
+Embed 3D PRC graphics in PDF output [true].
+.TP
+.B \-prompt string       
+Prompt [> ].
+.TP
+.B \-prompt2 string      
+Continuation prompt for multiline input  [..].
+.TP
+.B \-q,\-quiet            
+Suppress welcome text and noninteractive stdout [false].
+.TP
+.B \-render n            
+Render 3D graphics using n pixels per bp (-1=auto) [-1].
+.TP
+.B \-resizestep step     
+Resize step [1.2].
+.TP
+.B \-reverse             
+reverse 3D animations [false].
+.TP
+.B \-rgb                 
+Convert cmyk colors to rgb [false].
+.TP
+.B \-safe                
+Disable system call [true].
+.TP
+.B \-scroll n            
+Scroll standard output n lines at a time [0].
+.TP
+.B \-spinstep deg/s      
+Spin speed [60].
+.TP
+.B \-svgemulation        
+Emulate unimplemented SVG shading [false].
+.TP
+.B \-tabcompletion       
+Interactive prompt auto-completion [true].
+.TP
+.B \-tex engine          
+latex|pdflatex|xelatex|lualatex|tex|pdftex|luatex|context|none [latex].
+.TP
+.B \-thick               
+Render thick 3D lines [true].
+.TP
+.B \-thin                
+Render thin 3D lines [true].
+.TP
+.B \-threads             
+Use POSIX threads for 3D rendering [true].
+.TP
+.B \-toolbar             
+Show 3D toolbar in PDF output [true].
+.TP
+.B \-s,\-translate        
+Show translated virtual machine code [false].
+.TP
+.B \-twice               
+Run LaTeX twice (to resolve references) [false].
+.TP
+.B \-twosided            
+Use two-sided 3D lighting model for rendering [true].
+.TP
+.B \-u,\-user string      
+General purpose user string.
+.TP
+.B \-v,\-verbose          
+Increase verbosity level (can specify multiple times) [0].
+.TP
+.B \-version             
+Show version; command-line only.
+.TP
+.B \-wait                
+Wait for child processes to finish before exiting [false].
+.TP
+.B \-warn string         
+Enable warning; command-line only.
+.TP
+.B \-where               
+Show where listed variables are declared [false].
+.TP
+.B \-zoomfactor factor   
+Zoom step factor [1.05].
+.TP
+.B \-zoomstep step       
+Mouse motion zoom step [0.1].
+
+.SH SEE ALSO
+Asymptote is documented fully in the asymptote Info page.
+The manual can also be accessed in interactive mode with the "help" command.
+
+.SH AUTHOR
+Asymptote was written by Andy Hammerlindl, John Bowman, and Tom Prince.
+.PP
+This manual page was written by Hubert Chan for the Debian project (but may
+be used by others).
