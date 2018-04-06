@@ -2505,7 +2505,7 @@ VERSION=$PACKAGE_VERSION
 
 
 
-test "$CXXFLAGS" || CXXFLAGS="-std=c++11"
+test "$CXXFLAGS" || CXXFLAGS=""
 
 test "$CFLAGS" || CFLAGS="-g -O3"
 
