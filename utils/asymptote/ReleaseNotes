@@ -1,3 +1,9 @@
+Release Notes for Version 2.43
+
+The real modulo operator was fixed. Vector SVG output is now supported for
+PDF tex engines. Compilation under MacOS X was fixed. Both 32- and 64-bit
+MSWindows binaries are now available.
+
 Release Notes for Version 2.42
 
 Bitreverse and popcount functions were added. An overflow in the modulo
