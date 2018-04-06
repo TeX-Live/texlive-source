@@ -1,3 +1,87 @@
+commit f91ccd81f6f33f927f88724e23afb75988c56692
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 21:21:39 2018 -0600
+
+    Replace symbolic link; update copyright.
+
+commit 69c6d33934672d86f94469325327e7e0862e4c72
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 20:29:03 2018 -0600
+
+    Fix MSWindows build script.
+
+commit 1ad3fcca0a38fdf6020ba9a00d9a09a12a0dea31
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 18:49:09 2018 -0600
+
+    Update build scripts.
+
+commit 66327ad373064731bcbda74a2873353a77f6eaf7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 16:48:54 2018 -0600
+
+    Fix configure.ac.
+
+commit a4331d136126548b86d84ac59617f2a1374d9cc7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 16:31:15 2018 -0600
+
+    Update build scripts.
+
+commit e1507613166785005f6f0c59ccc23df1340b9c2b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 08:55:50 2018 -0600
+
+    Update config.sub and config.guess.
+
+commit 92056e30dd6222eee72088de94c16cce22080104
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 08:55:48 2018 -0600
+
+    Update config.sub and config.guess.
+
+commit 42faee86b22ba0e051aba4d3df08da670dbe02d8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 08:53:51 2018 -0600
+
+    Rename 64-bit linux binary.
+
+commit fcbfb4633bb13103fcf9cf1b399dc917c7a70763
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Apr 4 16:37:24 2018 -0600
+
+    Revert to Boehm GC 7.6.0 due to map compilation issues under MacOS X.
+
+commit 125fadda71d2ff4be2c5533a22a18e1f72c336a9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Apr 4 09:44:07 2018 -0600
+
+    Update to latest Boehm garbage collector.
+
+commit d412f0e76cee49975f77849997707399a5719fb1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Apr 4 00:59:24 2018 -0600
+
+    Support vector svg output for PDF tex engines.
+
+commit 986b329d6e3628c768646f2217fa444f4be08ed8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 3 21:50:48 2018 -0600
+
+    Implement temporary workaround for github Issue #29.
+
+commit ce6d0daa38fb334ff23f190b74ba10d0aa241acd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 3 19:47:40 2018 -0600
+
+    Fix real modulo operator.
+
+commit 3cdb10262d48640b9ce217896c3da595dd9ab805
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 3 02:16:30 2018 -0600
+
+    Increment version to 2.43.
+
 commit 4d0f6ba1b9c6ea2609b145f42ec9a39023e60706
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Apr 3 00:12:12 2018 -0600
