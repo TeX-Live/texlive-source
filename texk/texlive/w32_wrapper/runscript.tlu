@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 46945 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2018-03-13 14:42:02 +0900 (火, 13 3 2018) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 47327 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2018-04-07 06:07:13 +0900 (土, 07 4 2018) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -264,6 +264,9 @@ local docstr = [[
           use sys_user_progs instead, add kanji-config-updmap
     2018/03/12
         - introduce a new function gettexmfdist() for security.
+    2018/04/06
+        - introduce a new function is_64bit_windows_os() to
+          check Windows OS.
 ]]
 
 -- HELPER SUBROUTINES --
@@ -424,6 +427,28 @@ local function gettexmfdist()
   str = string.reverse(str)
   str = str .. '/texmf-dist'
   return str
+end
+
+--
+-- Is the Windows OS 64bit?
+--
+local function is_64bit_windows_os()
+  local return_val = false
+  -- 32 bit binaries always work, thus the default is false
+  local architecture = os.getenv('PROCESSOR_ARCHITECTURE')
+  if architecture ~= nil then
+    if architecture == 'x86' then
+      local is_wow64 = os.getenv('PROCESSOR_ARCHITEW6432')
+      if is_wow64 == nil then
+        return_val = false
+      else
+        return_val = true
+      end
+    else
+      return_val = true
+    end
+  end
+  return return_val
 end
 
 -- MAIN_CHUNK -- encapsulated in a function for more robust execution with pcall
@@ -671,7 +696,11 @@ elseif contains(sys_user_progs, progname) then
 elseif progname == 'asy' then
   os.setenv('ASYMPTOTE_GS', GSEXE)
   os.setenv('CYGWIN', 'nodosfilewarning')
-  ARGV = {[0]=TEXDIR..'/tlpkg/asymptote/asy.exe', 'asy'}
+  if is_64bit_windows_os() then
+    ARGV = {[0]=TEXDIR..'/tlpkg/asymptote64/asy.exe', 'asy'}
+  else
+    ARGV = {[0]=TEXDIR..'/tlpkg/asymptote/asy.exe', 'asy'}
+  end
 elseif progname == 'dviout' then
   local fontsdir = kpse.var_value('TEXMFVAR') .. '/fonts'
   if (lfs.attributes(fontsdir, 'mode') ~= 'directory') then 
