@@ -26,6 +26,8 @@
    This work has the LPPL maintenance status `maintained'.
   
    History:
+   * 4.37:
+     - no change.
    * 4.36:
      - fixed check for double-quotes (from \jobname when the file name 
        contains spaces).
@@ -44,7 +46,7 @@
      - changed first line from lua to texlua
 --]]
 
-thisversion = "4.36 2018-03-07"
+thisversion = "4.37 2018-04-07"
 
 quiet = false
 dryrun = false
