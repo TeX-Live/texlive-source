@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.43],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.44],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
@@ -123,11 +123,6 @@ AC_CHECK_HEADER(unordered_map,AC_DEFINE(HAVE_UNORDERED_MAP,1,
         [AC_CHECK_HEADER(tr1/unordered_map,AC_DEFINE(HAVE_TR1_UNORDERED_MAP,1,
 			      [Define to 1 if you have tr1/unordered_map]),
 	[AC_CHECK_HEADER(ext/hash_map,,OPTIONS=$OPTIONS"-DNOHASH ")])])
-
-case $host in
-  *mac*) HELLO_SYSTEM='hello-linux.$(OBJEXT)' ;;
-  *)       HELLO_SYSTEM='hello-generic.$(OBJEXT)' ;;
-esac
 
 case "${host_os}" in
     darwin*)

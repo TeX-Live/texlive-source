@@ -1,3 +1,51 @@
+commit 878f944b9ee540c77c83f2cc61d6a97c22298553
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 7 20:56:45 2018 -0600
+
+    Fix portability issues.
+
+commit 1879deff46664834bad1a6bce926ce9d58baabbb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 7 20:49:47 2018 -0600
+
+    Fix CLZ bug on CYGWIN.
+
+commit 2c70c1d965fb0b9fa92f97db2484d3ba4c184f40
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 7 20:23:08 2018 -0600
+
+    Disable trapping of floating point exceptions under CYGWIN due to strtod bug with real x=121645100408832000.0."
+
+commit 994052a59795255dc87882a3d71f4104dd041f70
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 6 17:19:45 2018 -0600
+
+    Improve usleep declaration.
+
+commit 6b974b3df56cd81b2960774441dd2e647bdf52da
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 6 17:18:50 2018 -0600
+
+    Make POSIX definition conditional to CYGWIN.
+
+commit e81df002635e1391bb540fd751cd019041e8e314
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 6 16:53:21 2018 -0600
+
+    Disable unused code. Redirect "make test".
+
+commit 633813249c393938f2a8ca6d3715638f83710d74
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 22:32:04 2018 -0600
+
+    Remove unused code.
+
+commit 052fd69055b077537a0701711387d4005ef6cd3b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 5 22:27:48 2018 -0600
+
+    Increment version to 2.44.
+
 commit f91ccd81f6f33f927f88724e23afb75988c56692
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Apr 5 21:21:39 2018 -0600
