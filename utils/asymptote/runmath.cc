@@ -90,7 +90,7 @@ extern uint32_t CLZ(uint32_t a);
 inline unsigned intbits() {
   static unsigned count=0;
   if(count > 0) return count;
-  while((1UL << count) < Int_MAX)
+  while((1ULL << count) < Int_MAX)
     ++count;
   ++count;
   return count;
@@ -641,7 +641,7 @@ void gen_runmath37(stack *Stack)
 {
   Int a=vm::pop<Int>(Stack);
 #line 414 "runmath.in"
-  if((unsignedInt) a > 0xFFFFFFFF)
+  if((unsigned long long) a > 0xFFFFFFFF)
     {Stack->push<Int>(CLZ((uint32_t) (a >> 32))); return;}
   else {
     int bits=intbits();

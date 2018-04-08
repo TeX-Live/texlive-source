@@ -1,3 +1,8 @@
+Release Notes for Version 2.44
+
+Floating point exceptions are masked again under CYGWIN, pending strtod bug fix
+(issue #65). Various portability issues were also addressed.
+
 Release Notes for Version 2.43
 
 The real modulo operator was fixed. Vector SVG output is now supported for
