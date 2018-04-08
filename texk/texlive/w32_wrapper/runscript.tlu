@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 47327 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2018-04-07 06:07:13 +0900 (土, 07 4 2018) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 47389 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2018-04-09 08:11:53 +0900 (月, 09 4 2018) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -693,6 +693,9 @@ elseif contains(sys_user_progs, progname) then
   elseif userprog then
     argline = ' --user ' .. argline
   end
+  -- do not guess input encoding in format creation for ptex
+  -- and friends since guessing is not complete
+  os.setenv('GUESS_INPUT_KANJI_ENCODING', '0')
 elseif progname == 'asy' then
   os.setenv('ASYMPTOTE_GS', GSEXE)
   os.setenv('CYGWIN', 'nodosfilewarning')
