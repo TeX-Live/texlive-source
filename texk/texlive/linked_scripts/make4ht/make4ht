@@ -9,6 +9,7 @@ local make4ht = require("make4ht-lib")
 local lapp    = require("lapp-mk4")
 local mkutils = require("mkutils")
 local mkparams = require("mkparams")
+local mk_config = require("make4ht-config")
 -- args string is here just as sample, we dont pass it it to 
 -- mkparams.get_args() so default args string is used
 local args    =  [[
@@ -26,7 +27,7 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 
 -- set version number. the template should be replaced by the
 -- actual version number by the build script
-local version = "v0.1c"
+local version = "v0.2"
 mkparams.version_number = version
 
 local args = mkparams.get_args()
@@ -36,6 +37,35 @@ local parameters = mkparams.process_args(args)
 local mode = parameters.mode
 local build_file = parameters.build_file 
 
+-- handle output formats
+local allowed_output_formats = {xhtml = true, html5=true, odt = true}
+-- formatter is Lua library which must provide at least prepare_parameters
+-- and process_build_sequence functions
+local formatter
+local output_format = parameters.output_format
+if allowed_output_formats[ output_format ] then
+  formatter = mkutils.load_output_format(output_format)
+else
+  -- load html5 as default output format
+  if output_format then 
+    print("Cannot load output format: ".. output_format)
+  end
+  formatter = mkutils.load_output_format("html5")
+end
+-- find make4ht configuration file
+local configname = "make4ht"
+local conffile = mk_config.find_config(configname) or mk_config.find_xdg_config(configname)
+if conffile then
+  print("Using configuration file: " .. conffile)
+  mkutils.load_config(parameters, conffile)
+end
+local extensions = formatter.prepare_extensions(parameters.extensions)
+extensions = mkutils.load_extensions(extensions, output_format)
+
+
+
+-- run extensions with prepare_parameters function
+parameters = formatter.prepare_parameters(parameters,extensions)
 local make = mkutils.load_config(parameters, build_file)["Make"]
 make.params = parameters
 if make:length() < 1 then
@@ -58,6 +88,10 @@ if #make.image_patterns > 0 then
   make.params.t4ht_par = make.params.t4ht_par .. " -p"
 end
 make:t4ht {ext = ext}
+-- run extensions which modify the build sequence
+if #extensions > 0 then
+  make = mkutils.extensions_modify_build(extensions, make)
+end
 make:match("tmp$", function() return false,"tmp file" end)
 make:match(".*",function(filename,par)
 	local outdir =  '' --par["outdir"] and par["outdir"] .."/" or ''
@@ -67,4 +101,5 @@ make:match(".*",function(filename,par)
 	mkutils.copy(filename,outfilename)
 	return true
 end)
+
 make:run()
