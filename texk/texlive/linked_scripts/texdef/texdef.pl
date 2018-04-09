@@ -116,13 +116,13 @@ my $ISCONTEXT = 0;
 my $BEGINENVSTR = '%s';
 my $ENDENVSTR   = '%s';
 
-my $VERSION = 'Version 1.8 -- 2018/03/25';
+my $VERSION = 'Version 1.8a -- 2018/03/28';
 sub usage {
     my $option = shift;
     my $ret    = ($option) ? 0 : 1;
 print << 'EOT';
 texdef -- Show definitions of TeX commands
-Version 1.8 -- 2019/03/25
+Version 1.8a -- 2019/03/28
 Copyright (C) 2011-2018  Martin Scharrer <martin@scharrer-online.de>
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
@@ -679,17 +679,17 @@ sub print_orig_def {
     my $rmacrodef  = qr/
         ^                                                        # Begin of line (no whitespaces!)
         (
-        (?:(?:\\global|\\long|\\protected|\\outer)\s*)*       # Prefixes (maybe with whitespace between them)
+        (?:(?:\\global|\\long|\\protected|\\outer)\s*)*          # Prefixes (maybe with whitespace between them)
         )
         \\(
               (?:[gex]?def) \s* \\                               # TeX definitions
-            | (?:new|renew|provide)command\s* \*? \s* {? \s* \\  # LaTeX definitions
-            | (?:new|renew|provide)robustcmd\s* \*? \s* {? \s* \\  # etoolbox definitions
+            | (?:new|renew|provide)command\s* \*? \s* \{? \s* \\ # LaTeX definitions
+            | (?:new|renew|provide)robustcmd\s* \*? \s* \{? \s* \\ # etoolbox definitions
             | (?:new(?:box|count|dimen|if|insert|read|skip|muskip|toks|write)) \s* \\ # TeX registers etc.
             | (?:char|count|dimen|mathchar|skip|toks)def \s* \\  # TeX chardefs etc.
-            | \@namedef{?                                        # Definition by name only
-            | Declare[a-zA-z]+ \s* \*? \s* {? \s* \\             # Declare... definitions
-            | declare[a-zA-z]+ \s* \*? \s* {? \s* \\             # declare... definitions
+            | \@namedef\{?                                       # Definition by name only
+            | Declare[a-zA-z]+ \s* \*? \s* \{? \s* \\            # Declare... definitions
+            | declare[a-zA-z]+ \s* \*? \s* \{? \s* \\            # declare... definitions
         )
         $rmacroname                                              # Macro name without backslash
         [^a-zA-Z@]
@@ -705,7 +705,7 @@ sub print_orig_def {
     my $renvdef = qr/
         ^                                                        # Begin of line (no whitespaces!)
         \\(
-            (?:new|renew|provide)environment\s* { \s*            # LaTeX definitions
+            (?:new|renew|provide)environment\s* \{ \s*           # LaTeX definitions
         )
         ($rmacroname)                                            # Environment names follow same rules as macro names
         \s* }                                                    # closing brace
