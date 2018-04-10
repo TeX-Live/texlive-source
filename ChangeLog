@@ -1,3 +1,7 @@
+2018-04-10  Karl Berry  <karl@tug.org>
+
+	* README.*: update from new tlbuild.
+
 2017-11-15  Karl Berry  <karl@tug.org>
 
 	* *.test: use #!/bin/sh -vx. Add 

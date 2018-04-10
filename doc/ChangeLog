@@ -1,3 +1,12 @@
+2018-04-10  Karl Berry  <karl@tug.org>
+
+	* tlbuild.texi (Cross compilation): move to under Building.
+	(Continuous integration): restrucuture.
+	
+	* Makefile.am (*_node_{good,bad}): update for current pod doc.
+	($(mydoc)-incl.texi): hint to symlink scripts for pod2texi.
+	
+
 2018-02-20  Karl Berry  <karl@freefriends.org>
 
 	* tlbuild.texi (Continuous integration): Texinfo syntax, wording.

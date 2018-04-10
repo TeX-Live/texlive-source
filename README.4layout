@@ -28,12 +28,12 @@ many extra hassles, so don't do that, tempting as it may be.
    Currently the versions we use are:
 
      autoconf (GNU Autoconf) 2.69
-     automake (GNU automake) 1.15
+     automake (GNU automake) 1.15.1
      bison (GNU Bison) 3.0.4
      flex 2.6.0
      ltmain.sh (GNU libtool) 2.4.6
      m4 (GNU M4) 1.4.18
-     makeinfo (GNU texinfo) 6.1
+     makeinfo (GNU texinfo) 6.5
 
    These versions should be used to update the generated files (e.g.,
 'configure' or 'Makefile.in') in all or parts of the TL tree after their
@@ -468,11 +468,10 @@ M4 list 'kpse_texk_pkgs' defined in 'm4/kpse-pkgs.m4'.
 the TeX-specific libraries and is included by adding its name 'PROG' to
 the M4 list 'kpse_utils_pkgs' in 'm4/kpse-pkgs.m4'.
 
-   In either case, apart from the program sources and build system
-('configure.ac' and 'Makefile.am'), the subdirectory 'texk/PROG' or
-'utils/PROG' must provide a fragment 'ac/withenable.ac' that contains
-the M4 macro 'KPSE_ENABLE_PROG' defined in 'm4/kpse-setup.m4' with
-'PROG' as the mandatory first argument and three optional arguments:
+   In either case, the subdirectory 'texk/PROG' or 'utils/PROG' must
+provide a fragment 'ac/withenable.ac' that contains the M4 macro
+'KPSE_ENABLE_PROG' defined in 'm4/kpse-setup.m4' with 'PROG' as the
+mandatory first argument and three optional arguments:
 
   1. a list of required libraries from the TL tree;
 
@@ -481,12 +480,57 @@ the M4 macro 'KPSE_ENABLE_PROG' defined in 'm4/kpse-setup.m4' with
      compilation is not possible, 'x' if the program requires X11
      libraries);
 
-  3. and a comment added to the help text for the 'configure' option
+  3. a comment added to the help text for the 'configure' option
      '--enable-PROG' or '--disable-PROG'.
 
    If the module requires specific configure options to be seen at the
-top-level, they should be defined in an additional fragment 'ac/PROG.ac'
+top level, they should be defined in an additional fragment 'ac/PROG.ac'
 included from 'ac/withenable.ac' and 'configure.ac'.
+
+   Usually, the new program is maintained somewhere outside of TeX Live.
+In that case, we put the upstream sources into a subdirectory 'PROG-src'
+(e.g., 'utils/newprog/newprog-src').  We do not run 'configure' in this
+original '...-src' directory, only in our own directory, but we do
+compile using the source files in '...-src'.
+
+   So, these are the files that we must generally create:
+
+'ac/withenable.ac'
+     The 'KPSE_ENABLE_PROG' call just explained.
+
+'configure.ac'
+'Makefile.am'
+     By merging the contents of the original 'configure.ac' (if
+     provided) and a comparable program already in TL. There is no magic
+     recipe, it's necessary to think about needs to be done in the
+     original vs. in TeX Live.
+
+'TLpatches/TL-Changes'
+     Actions taken after getting the original source tree; typically
+     removal of derived or unused common files.
+
+'TLpatches/patch-...'
+     If any changes are needed to the original sources, record the
+     patches here so they can be applied next time.  And send them
+     upstream so that perhaps they won't have to be.
+
+'ChangeLog'
+     Record all TL-specific changes, now and in the future.
+
+   Then, run GNU 'autoreconf' in the new directory (*note Build system
+tools::).  After that works, 'svn add' the necessary files, notably
+'Makefile.in aclocal.m4 configure', and 'svn:ignore' the Automake cache
+'autom4te.cache'.  (This is so people checking out the TL source tree do
+not have to run any autotools, but can simply run 'configure'.)
+
+   Then, run the TL tool 'reautoconf' in the top-level TL 'source/'
+directory, to incorporate the new program into the build tree.
+
+   Then, run (and rerun) a build until the program compiles and tests
+successfully, probably involving rerunning autoreconf in the source
+directory, 'make' in the build directory, etc.
+
+   After final success, don't forget to commit.
 
 6.6.2 Adding a new generic library module
 -----------------------------------------

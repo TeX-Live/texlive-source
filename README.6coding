@@ -2,7 +2,7 @@
 (Released under the old-style GNU documentation license;
  see sources or other output files for full text.)
 
-9 Coding conventions
+8 Coding conventions
 ********************
 
 Ideally, building all of TeX Live with '--enable-compiler-warnings=max'
@@ -14,7 +14,7 @@ rules about declarations of functions or variables and the use of
 the exception being code that is maintained independently and whose
 maintainers don't want to accept patches.
 
-9.1 Declarations and definitions
+8.1 Declarations and definitions
 ================================
 
 C standards
@@ -69,7 +69,7 @@ The declaration of global variables follows analogous rules: they are
 either declared 'static' if used in only one file or declared 'extern'
 in exactly one header and instantiated in exactly one file.
 
-9.2 Const
+8.2 Const
 =========
 
 The 'const' feature of C is valuable, but easy to mis-use.
