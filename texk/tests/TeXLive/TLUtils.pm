@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 46834 2018-03-05 15:34:41Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2018 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 46834 $';
+my $svnrev = '$Revision: 47220 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -308,20 +307,17 @@ sub platform_name {
   }
   
   if ($OS eq "darwin") {
-    # We have a variety of Mac binary sets.
-    # 10.10/Yosemite and newer:
+    # We have two versions of Mac binary sets.
+    # 10.10/Yosemite and newer (Yosemite specially left over):
     #   -> x86_64-darwin [MacTeX]
-    # 10.6/Snow Leopard through 10.9/Mavericks:
+    # 10.6/Snow Leopard through 10.10/Yosemite:
     #   -> x86_64-darwinlegacy if 64-bit
-    #   -> i386-darwin         otherwise
-    # 10.5/Leopard:
-    #   -> i386-darwin    if x86
-    #   -> powerpc-darwin if ppc
     #
-    # (BTW, uname -r numbers are larger by 4 than the minor version.
+    # (BTW, uname -r numbers are larger by 4 than the Mac minor version.
     # We don't use uname numbers here.)
     #
-    my $mactex_darwin = 10;  # the minor 10; this will change in the future.
+    # this changes each year, per above:
+    my $mactex_darwin = 10;  # lowest minor rev supported by x86_64-darwin.
     #
     # Most robust approach is apparently to check sw_vers (os version,
     # returns "10.x" values), and sysctl (processor hardware).
@@ -397,8 +393,8 @@ sub platform_desc {
     'universal-darwin' => 'MacOSX universal binaries',
     'win32'            => 'Windows',
     'x86_64-cygwin'    => 'Cygwin on x86_64',
-    'x86_64-darwin'    => 'MacOSX current on x86_64',
-    'x86_64-darwinlegacy' => 'MacOSX legacy (10.6-10.9) on x86_64',
+    'x86_64-darwin'       => 'MacOSX current (10.10-) on x86_64',
+    'x86_64-darwinlegacy' => 'MacOSX legacy (10.6-10.10) on x86_64',
     'x86_64-linux'     => 'GNU/Linux on x86_64',
     'x86_64-linuxmusl' => 'GNU/Linux on x86_64 with musl',
     'x86_64-solaris'   => 'Solaris on x86_64',
@@ -2080,7 +2076,7 @@ sub check_file {
     return;
   }
   # only run checksum tests if we can actually compute the checksum
-  if ($checksum && $::checksum_method) {
+  if ($checksum && ($checksum ne "-1") && $::checksum_method) {
     my $tlchecksum = TeXLive::TLCrypto::tlchecksum($xzfile);
     if ($tlchecksum ne $checksum) {
       tlwarn("TLUtils::check_file: removing $xzfile, checksums differ:\n");
@@ -2093,7 +2089,7 @@ sub check_file {
       return;
     }
   }
-  if ($checksize) {
+  if ($checksize && ($checksize ne "-1")) {
     my $filesize = (stat $xzfile)[7];
     if ($filesize != $checksize) {
       tlwarn("TLUtils::check_file: removing $xzfile, sizes differ:\n");
@@ -2118,6 +2114,9 @@ C<size> (check downloaded file against this size),
 C<remove> (remove temporary files after operation).
 Returns a pair of values: in case of error return 0 and an additional
 explanation, in case of success return 1 and the name of the package.
+
+If C<checksum> or C<size> is C<-1>, no warnings about missing checksum/size
+is printed. This is used during restore and unwinding of failed updates.
 
 =cut
 
