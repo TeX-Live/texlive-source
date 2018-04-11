@@ -402,7 +402,7 @@
 	* opl2ofm.web: Use top_width as maximum number as character
 	widths, not max_width; same for depth, height, and italic.
 
-	Reported by Lars Hellström <Lars.Hellstrom@residenset.net>
+	Reported by Lars Hellstr\"om <Lars.Hellstrom@residenset.net>
 
 2009-09-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

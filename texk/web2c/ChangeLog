@@ -2040,7 +2040,7 @@
 	* doc/web2c.texi (gftodvi invocation): talk a bit more about slant
 	fonts, pursuant to DEK's message to tex-k of 10 Jul 2005 18:38:11.
 
-2007-12-19  Martin Schrer <martin@oneiros.de>
+2007-12-19  Martin Schr\"oder <martin@oneiros.de>
 
 	* tex.ch (ssup_max_strings): increase to 2097151
 		 (sup_main_memory): increase to 256000000
@@ -2966,7 +2966,7 @@
 
 	* tex.ch: Initialize source_filename_stack[0],
 	full_source_filename_stack[0] -- these can be read under some
-	circumstances.  Found by Krank Kter <frank@kuesterei.ch>.
+	circumstances.  Found by Frank K\"uester <frank@kuesterei.ch>.
 
 	* tex.ch: Correct printing of |src_specials| when weaving.
 
@@ -3821,7 +3821,7 @@
 
 	* dvitomp.ch: A checksum failure should result in a warning, but
 	not in a non-zero return code.  This was done correctly in one
-	location, wrong in another.  Reported by Berthold Hlmann.
+	location, wrong in another.  Reported by Berthold H\"olmann.
 
 1999-05-30  Olaf Weber  <olaf@infovore.xs4all.nl>
 

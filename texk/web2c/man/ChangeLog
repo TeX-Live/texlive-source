@@ -167,8 +167,7 @@
 
 2009-06-26  Han The Thanh <hanthethanh@gmail.com>
 
-	* pdftex.man: bugfix from Török Edwin <edwintorok@gmail.com>
-
+	* pdftex.man: bugfix from T\"or\"ok Edwin <edwintorok@gmail.com>
 
 2009-04-05  Karl Berry  <karl@tug.org>
 
@@ -213,7 +212,7 @@
 	be converted before being included.  Credit Peter Breitenlohner in
 	AUTHORS for eTeX contributions.
 
-2007-01-08  Martin Schröder <martin@pdftex.org>
+2007-01-08  Martin Schr\"oder <martin@pdftex.org>
 
 	* pdfetex.man, pdftex.man: Document -etex and -draftmode switches.
 
