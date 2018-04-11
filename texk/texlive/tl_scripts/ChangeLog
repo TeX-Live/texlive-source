@@ -483,7 +483,7 @@
 	* fmtutil (--edit): disable.
 	(help): document this, other tweaks.
 
-2010-05-31  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+2010-05-31  Manuel P\'egouri\'e-Gonnard <mpg@elzevir.fr>
 
 	* fmtutil: allow more than one language file per format.
 
@@ -498,7 +498,7 @@
 
 	* Makefile.am (run_texlinks, run_texlinks): Respect DESTDIR.
 
-2010-04-28  Manuel Pégourié-Gonnard  <mpg@elzevir.fr>
+2010-04-28  Manuel P\'egouri\'e-Gonnard  <mpg@elzevir.fr>
 
 	* texlinks: Append exeext to engine names.
 	* Makefile.am (run_texlinks): Invoke texlinks with explicit dir.
