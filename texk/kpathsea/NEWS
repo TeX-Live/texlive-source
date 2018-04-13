@@ -1,7 +1,7 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
-6.3.0 (for TeX Live 2018)
+6.3.0 (for TeX Live 2018, 14 April 2018)
 * New configuration value texmf_casefold_search to fall back to
   case-insensitive search in non-system directories if there is no exact
   match; only relevant on Unix.

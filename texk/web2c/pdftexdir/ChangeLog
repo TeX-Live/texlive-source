@@ -1,3 +1,7 @@
+2018-04-14  Karl Berry  <karl@tug.org>
+
+	* TeX Live 2018 release, pdftex 1.40.19.
+
 2018-04-04  Jerry James  <loganjerry@gmail.com>
 
 	* pdftoepdf-newpoppler.cc: Do not copy a Dict, get a reference instead.
