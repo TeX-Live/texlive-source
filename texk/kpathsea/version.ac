@@ -20,4 +20,4 @@ dnl     append "dev", to distinguish binaries built between releases.
 dnl --------------------------------------------------------
 dnl
 dnl  this file is m4-included from configure.ac
-m4_define([kpse_version], [6.3.0/dev])
+m4_define([kpse_version], [6.3.1/dev])
