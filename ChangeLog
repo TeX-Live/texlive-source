@@ -1,3 +1,7 @@
+2018-04-28  Karl Berry  <karl@tug.org>
+
+	* version.ac: 2019/dev.
+
 2018-04-10  Karl Berry  <karl@tug.org>
 
 	* README.*: update from new tlbuild.
