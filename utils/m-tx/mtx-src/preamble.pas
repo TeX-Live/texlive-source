@@ -501,7 +501,8 @@ begin
   for i:=1 to maxvoices do setVocal(i,false);
   for i:=1 to maxstaves do stave_size[i]:=unspec;
   for i:=0 to maxstaves do nspace[i]:=unspec;
-  begin  nspace[i]:=unspec;  stave_size[i]:=unspec;  end;
+  { next line seems to be spurious.  0.63a RDT }
+  { begin  nspace[i]:=unspec;  stave_size[i]:=unspec;  end; }  
   n_pages:=1; n_systems:=1;
   readStyles; old_known_styles := known_styles;
   for i:=1 to lines_in_paragraph do omit_line[i]:=false;

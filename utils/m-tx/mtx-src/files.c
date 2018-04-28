@@ -289,9 +289,9 @@ void OpenFiles(void)
   pushFile(infilename);
   strcpy(outfile_NAME, outfilename);
   if (outfile != NULL)
-    outfile = freopen(outfile_NAME, "w", outfile);
+    outfile = freopen(outfile_NAME, "wb", outfile);
   else
-    outfile = fopen(outfile_NAME, "w");
+    outfile = fopen(outfile_NAME, "wb");
   _SETIO(outfile != NULL, FileNotFound);
   strcpy(stylefile_NAME, stylefilename);
   if (stylefile != NULL)
