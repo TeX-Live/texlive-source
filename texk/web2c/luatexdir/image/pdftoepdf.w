@@ -472,10 +472,10 @@ static void copyObject(PDF pdf, PdfDocument * pdf_doc, Object * obj)
         break;
     */
     case objString:
-        copyString(pdf, obj->getString());
+        copyString(pdf, (GooString *)obj->getString());
         break;
     case objName:
-        copyName(pdf, obj->getName());
+        copyName(pdf, (char *)obj->getName());
         break;
     case objNull:
         pdf_add_null(pdf);
