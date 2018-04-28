@@ -674,7 +674,7 @@ static int m_##in##_##function(lua_State * L)                  \
     uin = (udstruct *) luaL_checkudata(L, 1, M_##in);          \
     if (uin->pd != NULL && uin->pd->pc != uin->pc)             \
         pdfdoc_changed_error(L);                               \
-    gs = ((in *) uin->d)->function();                          \
+    gs = (GooString *)((in *) uin->d)->function();             \
     if (gs != NULL)                                            \
         lua_pushlstring(L, gs->getCString(), gs->getLength()); \
     else                                                       \
@@ -1813,7 +1813,7 @@ static int m_Object_getString(lua_State * L)
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
     if (((Object *) uin->d)->isString()) {
-        gs = ((Object *) uin->d)->getString();
+        gs = (GooString *)((Object *) uin->d)->getString();
         lua_pushlstring(L, gs->getCString(), gs->getLength());
     } else
         lua_pushnil(L);

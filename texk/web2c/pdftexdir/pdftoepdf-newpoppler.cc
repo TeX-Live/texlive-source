@@ -290,7 +290,7 @@ static void copyName(char *s)
 static void copyDictEntry(Object * obj, int i)
 {
     Object obj1;
-    copyName(obj->dictGetKey(i));
+    copyName((char *)obj->dictGetKey(i));
     pdf_puts(" ");
     obj1 = obj->dictGetValNF(i);
     copyObject(&obj1);
@@ -355,7 +355,7 @@ static void copyProcSet(Object * obj)
         if (!procset.isName())
             pdftex_fail("PDF inclusion: invalid ProcSet entry type <%s>",
                         procset.getTypeName());
-        copyName(procset.getName());
+        copyName((char *)procset.getName());
         pdf_puts(" ");
     }
     pdf_puts("]\n");
@@ -418,7 +418,7 @@ static void copyFont(char *tag, Object * fontRef)
         && fontdescRef.isRef()
         && fontdesc.isDict()
         && embeddableFont(&fontdesc)
-        && (fontmap = lookup_fontmap(basefont.getName())) != NULL) {
+        && (fontmap = lookup_fontmap((char *)basefont.getName())) != NULL) {
         // round /StemV value, since the PDF input is a float
         // (see Font Descriptors in PDF reference), but we only store an
         // integer, since we don't want to change the struct.
@@ -427,7 +427,7 @@ static void copyFont(char *tag, Object * fontRef)
         charset = fontdesc.dictLookup("CharSet");
         if (!charset.isNull() &&
             charset.isString() && is_subsetable(fontmap))
-            epdf_mark_glyphs(fd, charset.getString()->getCString());
+            epdf_mark_glyphs(fd, (char *)charset.getString()->getCString());
         else
             embed_whole_font(fd);
         addFontDesc(fontdescRef.getRef(), fd);
@@ -456,7 +456,7 @@ static void copyFontResources(Object * obj)
         if (fontRef.isRef())
             copyFont(obj->dictGetKey(i), &fontRef);
         else if (fontRef.isDict()) {   // some programs generate pdf with embedded font object
-            copyName(obj->dictGetKey(i));
+            copyName((char *)obj->dictGetKey(i));
             pdf_puts(" ");
             copyObject(&fontRef);
         }
@@ -565,7 +565,7 @@ static void copyObject(Object * obj)
     } else if (obj->isNum()) {
         pdf_printf("%s", convertNumToPDF(obj->getNum()));
     } else if (obj->isString()) {
-        s = obj->getString();
+        s = (GooString *)obj->getString();
         p = s->getCString();
         l = s->getLength();
         if (strlen(p) == (unsigned int) l) {
@@ -589,7 +589,7 @@ static void copyObject(Object * obj)
             pdf_puts(">");
         }
     } else if (obj->isName()) {
-        copyName(obj->getName());
+        copyName((char *)obj->getName());
     } else if (obj->isNull()) {
         pdf_puts("null");
     } else if (obj->isArray()) {

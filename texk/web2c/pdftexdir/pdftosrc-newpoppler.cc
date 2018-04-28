@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
             fprintf(stderr, "No SourceName found\n");
             exit(1);
         }
-        outname = srcName.getString()->getCString();
+        outname = (char *)srcName.getString()->getCString();
         // We cannot free srcName, as objname shares its string.
         // srcName.free();
     } else if (objnum > 0) {
