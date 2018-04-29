@@ -2,7 +2,7 @@
 //
 // DateInfo.h
 //
-// Copyright (C) 2008 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2015 André Guerreiro <aguerreiro1985@gmail.com>
 // Copyright (C) 2015 André Esser <bepandre@hotmail.com>
@@ -38,6 +38,6 @@ GooString *timeToDateString(time_t *timet);
 /* Convert PDF date string to time.
  * Returns -1 if conversion fails.
  */
-time_t dateStringToTime(GooString *dateString);
+time_t dateStringToTime(const GooString *dateString);
 
 #endif

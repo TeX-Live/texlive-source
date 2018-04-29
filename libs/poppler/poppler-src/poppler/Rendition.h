@@ -123,21 +123,21 @@ class MediaRendition {
   ~MediaRendition();
   MediaRendition& operator=(const MediaRendition &) = delete;
 
-  GBool isOk () { return ok; }
+  GBool isOk () const { return ok; }
 
-  MediaParameters* getMHParameters() { return &MH; }
-  MediaParameters* getBEParameters() { return &BE; }
+  const MediaParameters* getMHParameters() const { return &MH; }
+  const MediaParameters* getBEParameters() const { return &BE; }
 
-  GooString* getContentType() { return contentType; }
-  GooString* getFileName() { return fileName; }
+  const GooString* getContentType() const { return contentType; }
+  const GooString* getFileName() const { return fileName; }
 
-  GBool getIsEmbedded() { return isEmbedded; }
-  Stream* getEmbbededStream() { return isEmbedded ? embeddedStreamObject.getStream() : nullptr; }
-  Object* getEmbbededStreamObject() { return isEmbedded ? &embeddedStreamObject : nullptr; }
+  GBool getIsEmbedded() const { return isEmbedded; }
+  Stream* getEmbbededStream() const { return isEmbedded ? embeddedStreamObject.getStream() : nullptr; }
+  const Object* getEmbbededStreamObject() const { return isEmbedded ? &embeddedStreamObject : nullptr; }
   // write embedded stream to file
   void outputToFile(FILE*);
 
-  MediaRendition* copy();
+  MediaRendition* copy() const;
 
  private:
   GBool ok;

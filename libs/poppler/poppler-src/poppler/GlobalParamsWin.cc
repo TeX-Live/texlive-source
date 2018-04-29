@@ -10,6 +10,7 @@
    // Copyright (C) 2013 Dmytro Morgun <lztoad@gmail.com>
    // Copyright (C) 2017 Christoph Cullmann <cullmann@kde.org>
    // Copyright (C) 2017, 2018 Albert Astals Cid <aacid@kde.org>
+   // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 
 TODO: instead of a fixed mapping defined in displayFontTab, it could
 scan the whole fonts directory, parse TTF files and build font
@@ -553,7 +554,7 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
                                           GooString *base14Name) {
   SysFontInfo *fi;
   GooString *path = nullptr;
-  GooString *fontName = font->getName();
+  const GooString *fontName = font->getName();
   if (!fontName) return nullptr;
   lockGlobalParams;
   setupBaseFonts(nullptr);

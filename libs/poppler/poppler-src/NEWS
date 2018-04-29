@@ -1,3 +1,36 @@
+Release 0.64.0
+        core:
+         * Workaround form field text not being drawn on broken files. Bug #103245
+         * Add read only setter for form fields
+         * Add support for Link Hide action
+         * Add support for Next actions in Links
+         * Fix parsing of Annot focus out actions
+         * Fix PDFDoc::checkHeader() for PDFs smaller than 1 KiB. Bug #105674
+         * Add const to several classes and members
+         * gfile: Fix build on some platforms
+         * Fix issues with on malformed documents. Bug #105972, #105969, #106059, #106061
+         * Several small code improvements
+
+        qt5:
+         * Allow setting of Form visibility status
+         * Allow setting of Form read only status
+         * Add support for Link Hide action
+         * Add support for Next actions in Links
+         * ArthurOutputDev: Implement axialShadedFill
+         * ArthurOutputDev: Implement drawImageMask. Bug #105531
+         * ArthurOutputDev: Implement Type3 font support
+
+        utils:
+         * pdfsig: Add -dump which writes signatures to disk. Bug #104881
+
+        glib:
+         * less deprecated calls
+
+        build system:
+         * bring back the option to disable GObject introspection
+         * Add iconv include dir when compiling
+         * Make it possible to build poppler without fontconfig. Default for Android
+
 Release 0.63.0
         core:
          * CairoOutputDev: support embedding CCITT image data. Bug #103399

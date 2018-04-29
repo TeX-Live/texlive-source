@@ -14,6 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -154,7 +155,7 @@ void *GooHash::lookup(GooString *key) {
   return p->val.p;
 }
 
-int GooHash::lookupInt(GooString *key) {
+int GooHash::lookupInt(const GooString *key) {
   GooHashBucket *p;
   int h;
 
@@ -351,7 +352,7 @@ void GooHash::expand() {
   gfree(oldTab);
 }
 
-GooHashBucket *GooHash::find(GooString *key, int *h) {
+GooHashBucket *GooHash::find(const GooString *key, int *h) {
   GooHashBucket *p;
 
   if (unlikely(!key))
@@ -378,7 +379,7 @@ GooHashBucket *GooHash::find(const char *key, int *h) {
   return nullptr;
 }
 
-int GooHash::hash(GooString *key) {
+int GooHash::hash(const GooString *key) {
   const char *p;
   unsigned int h;
   int i;

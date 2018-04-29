@@ -16,10 +16,12 @@
 // Copyright (C) 2006, 2008 Pino Toscano <pino@kde.org>
 // Copyright (C) 2007, 2010, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2008 Hugo Mercier <hmercier31@gmail.com>
-// Copyright (C) 2008-2010, 2012-2014, 2016, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008-2010, 2012-2014, 2016-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
 // Copyright (C) 2009 Ilya Gorenbein <igorenbein@finjan.com>
 // Copyright (C) 2012 Tobias Koening <tobias.koenig@kdab.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Intevation GmbH <intevation@intevation.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -50,8 +52,14 @@
 //------------------------------------------------------------------------
 // LinkAction
 //------------------------------------------------------------------------
+LinkAction::LinkAction() : nextActionList(nullptr) {
+}
 
-LinkAction *LinkAction::parseDest(Object *obj) {
+LinkAction::~LinkAction() {
+  delete nextActionList;
+}
+
+LinkAction *LinkAction::parseDest(const Object *obj) {
   LinkAction *action;
 
   action = new LinkGoTo(obj);
@@ -62,7 +70,14 @@ LinkAction *LinkAction::parseDest(Object *obj) {
   return action;
 }
 
-LinkAction *LinkAction::parseAction(Object *obj, GooString *baseURI) {
+LinkAction *LinkAction::parseAction(const Object *obj, const GooString *baseURI)
+{
+    std::set<int> seenNextActions;
+    return parseAction(obj, baseURI, &seenNextActions);
+}
+
+LinkAction *LinkAction::parseAction(const Object *obj, const GooString *baseURI,
+                                    std::set<int> *seenNextActions) {
   LinkAction *action;
 
   if (!obj->isDict()) {
@@ -119,6 +134,10 @@ LinkAction *LinkAction::parseAction(Object *obj, GooString *baseURI) {
   } else if (obj2.isName("SetOCGState")) {
     action = new LinkOCGState(obj);
 
+  // Hide action
+  } else if (obj2.isName("Hide")) {
+    action = new LinkHide(obj);
+
   // unknown action
   } else if (obj2.isName()) {
     action = new LinkUnknown(obj2.getName());
@@ -134,14 +153,73 @@ LinkAction *LinkAction::parseAction(Object *obj, GooString *baseURI) {
     delete action;
     return nullptr;
   }
+
+  if (!action) {
+    return nullptr;
+  }
+
+  // parse the next actions
+  const Object nextObj = obj->dictLookup("Next");
+  GooList *actionList = nullptr;
+  if (nextObj.isDict()) {
+
+    // Prevent circles in the tree by checking the ref against used refs in
+    // our current tree branch.
+    const Object nextRefObj = obj->dictLookupNF("Next");
+    if (nextRefObj.isRef()) {
+        const Ref ref = nextRefObj.getRef();
+        if (!seenNextActions->insert(ref.num).second) {
+            error(errSyntaxWarning, -1, "parseAction: Circular next actions detected.");
+            return action;
+        }
+    }
+
+    actionList = new GooList(1);
+    actionList->append(parseAction(&nextObj, nullptr, seenNextActions));
+  } else if (nextObj.isArray()) {
+    const Array *a = nextObj.getArray();
+    const int n = a->getLength();
+    actionList = new GooList(n);
+    for (int i = 0; i < n; ++i) {
+      const Object obj3 = a->get(i);
+      if (!obj3.isDict()) {
+        error(errSyntaxWarning, -1, "parseAction: Next array does not contain only dicts");
+        continue;
+      }
+
+      // Similar circle check as above.
+      const Object obj3Ref = a->getNF(i);
+      if (obj3Ref.isRef()) {
+          const Ref ref = obj3Ref.getRef();
+          if (!seenNextActions->insert(ref.num).second) {
+              error(errSyntaxWarning, -1, "parseAction: Circular next actions detected in array.");
+              return action;
+          }
+      }
+
+      actionList->append(parseAction(&obj3, nullptr, seenNextActions));
+    }
+  }
+
+  action->setNextActions(actionList);
+
   return action;
+}
+
+const GooList *LinkAction::nextActions() const {
+  return nextActionList;
+}
+
+void LinkAction::setNextActions(GooList *actions) {
+  delete nextActionList;
+  nextActionList = actions;
 }
 
 //------------------------------------------------------------------------
 // LinkDest
 //------------------------------------------------------------------------
 
-LinkDest::LinkDest(Array *a) {
+LinkDest::LinkDest(const Array *a) {
   // initialize fields
   left = bottom = right = top = zoom = 0;
   changeLeft = changeTop = changeZoom = gFalse;
@@ -339,7 +417,7 @@ LinkDest::LinkDest(Array *a) {
   return;
 }
 
-LinkDest::LinkDest(LinkDest *dest) {
+LinkDest::LinkDest(const LinkDest *dest) {
   kind = dest->kind;
   pageIsRef = dest->pageIsRef;
   if (pageIsRef)
@@ -361,7 +439,7 @@ LinkDest::LinkDest(LinkDest *dest) {
 // LinkGoTo
 //------------------------------------------------------------------------
 
-LinkGoTo::LinkGoTo(Object *destObj) {
+LinkGoTo::LinkGoTo(const Object *destObj) {
   dest = nullptr;
   namedDest = nullptr;
 
@@ -441,7 +519,7 @@ LinkGoToR::~LinkGoToR() {
 // LinkLaunch
 //------------------------------------------------------------------------
 
-LinkLaunch::LinkLaunch(Object *actionObj) {
+LinkLaunch::LinkLaunch(const Object *actionObj) {
 
   fileName = nullptr;
   params = nullptr;
@@ -489,8 +567,8 @@ LinkLaunch::~LinkLaunch() {
 // LinkURI
 //------------------------------------------------------------------------
 
-LinkURI::LinkURI(Object *uriObj, GooString *baseURI) {
-  GooString *uri2;
+LinkURI::LinkURI(const Object *uriObj, const GooString *baseURI) {
+  const GooString *uri2;
   int n;
   char c;
 
@@ -538,7 +616,7 @@ LinkURI::~LinkURI() {
 // LinkNamed
 //------------------------------------------------------------------------
 
-LinkNamed::LinkNamed(Object *nameObj) {
+LinkNamed::LinkNamed(const Object *nameObj) {
   name = nullptr;
   if (nameObj->isName()) {
     name = new GooString(nameObj->getName());
@@ -555,7 +633,7 @@ LinkNamed::~LinkNamed() {
 // LinkMovie
 //------------------------------------------------------------------------
 
-LinkMovie::LinkMovie(Object *obj) {
+LinkMovie::LinkMovie(const Object *obj) {
   annotRef.num = -1;
   annotTitle = nullptr;
 
@@ -576,7 +654,7 @@ LinkMovie::LinkMovie(Object *obj) {
 
   tmp = obj->dictLookup("Operation");
   if (tmp.isName()) {
-    char *name = tmp.getName();
+    const char *name = tmp.getName();
     
     if (!strcmp(name, "Play")) {
       operation = operationTypePlay;
@@ -603,7 +681,7 @@ LinkMovie::~LinkMovie() {
 // LinkSound
 //------------------------------------------------------------------------
 
-LinkSound::LinkSound(Object *soundObj) {
+LinkSound::LinkSound(const Object *soundObj) {
   volume = 1.0;
   sync = gFalse;
   repeat = gFalse;
@@ -645,7 +723,7 @@ LinkSound::~LinkSound() {
 // LinkRendition
 //------------------------------------------------------------------------
 
-LinkRendition::LinkRendition(Object *obj) {
+LinkRendition::LinkRendition(const Object *obj) {
   operation = NoRendition;
   media = nullptr;
   js = nullptr;
@@ -742,7 +820,7 @@ LinkJavaScript::~LinkJavaScript() {
 //------------------------------------------------------------------------
 // LinkOCGState
 //------------------------------------------------------------------------
-LinkOCGState::LinkOCGState(Object *obj) {
+LinkOCGState::LinkOCGState(const Object *obj) {
   stateList = new GooList();
   preserveRB = gTrue;
 
@@ -756,7 +834,7 @@ LinkOCGState::LinkOCGState(Object *obj) {
         if (stList)
 	  stateList->append(stList);
 
-	char *name = obj2.getName();
+	const char *name = obj2.getName();
 	stList = new StateList();
 	stList->list = new GooList();
 	if (!strcmp (name, "ON")) {
@@ -810,10 +888,34 @@ LinkOCGState::StateList::~StateList() {
 }
 
 //------------------------------------------------------------------------
+// LinkHide
+//------------------------------------------------------------------------
+
+LinkHide::LinkHide(const Object *hideObj) {
+  targetName = nullptr;
+  show = false; // Default
+
+  if (hideObj->isDict()) {
+      const Object targetObj = hideObj->dictLookup("T");
+      if (targetObj.isString()) {
+	targetName = targetObj.getString()->copy();
+      }
+      const Object shouldHide = hideObj->dictLookup("H");
+      if (shouldHide.isBool()) {
+	show = !shouldHide.getBool();
+      }
+  }
+}
+
+LinkHide::~LinkHide() {
+  delete targetName;
+}
+
+//------------------------------------------------------------------------
 // LinkUnknown
 //------------------------------------------------------------------------
 
-LinkUnknown::LinkUnknown(char *actionA) {
+LinkUnknown::LinkUnknown(const char *actionA) {
   action = new GooString(actionA);
 }
 

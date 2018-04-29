@@ -14,6 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -45,7 +46,7 @@ public:
   void replace(GooString *key, void *val);
   void replace(GooString *key, int val);
   void *lookup(GooString *key);
-  int lookupInt(GooString *key);
+  int lookupInt(const GooString *key);
   void *lookup(const char *key);
   int lookupInt(const char *key);
   void *remove(GooString *key);
@@ -63,9 +64,9 @@ private:
   GooHash& operator=(const GooHash &other);
 
   void expand();
-  GooHashBucket *find(GooString *key, int *h);
+  GooHashBucket *find(const GooString *key, int *h);
   GooHashBucket *find(const char *key, int *h);
-  int hash(GooString *key);
+  int hash(const GooString *key);
   int hash(const char *key);
 
   GBool deleteKeys;		// set if key strings should be deleted

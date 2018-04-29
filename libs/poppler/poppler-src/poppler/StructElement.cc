@@ -9,6 +9,7 @@
 // Copyright 2014, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2015 Dmytro Morgun <lztoad@gmail.com>
 // Copyright 2018 Adrian Johnson <ajohnson@redneon.com>
+// Copyright 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 //========================================================================
 
@@ -777,7 +778,7 @@ Attribute *Attribute::parseUserProperty(Dict *property)
 
   obj = property->lookup("N");
   if (obj.isString()) {
-    GooString *s = obj.getString();
+    const GooString *s = obj.getString();
     name = s->getCString();
     nameLen = s->getLength();
   } else if (obj.isName())

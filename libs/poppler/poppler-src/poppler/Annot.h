@@ -26,6 +26,7 @@
 // Copyright (C) 2012, 2015 Tobias Koenig <tokoe@kdab.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -51,6 +52,8 @@ class PDFDoc;
 class Form;
 class FormWidget;
 class FormField;
+class FormFieldButton;
+class FormFieldText;
 class FormFieldChoice;
 class PDFRectangle;
 class Movie;
@@ -444,14 +447,14 @@ public:
   AnnotAppearanceCharacs(const AnnotAppearanceCharacs &) = delete;
   AnnotAppearanceCharacs& operator=(const AnnotAppearanceCharacs &) = delete;
 
-  int getRotation() { return rotation; }
-  AnnotColor *getBorderColor() { return borderColor; }
-  AnnotColor *getBackColor() { return backColor; }
-  GooString *getNormalCaption() { return normalCaption; }
-  GooString *getRolloverCaption() { return rolloverCaption; }
-  GooString *getAlternateCaption() { return alternateCaption; }
-  AnnotIconFit *getIconFit() { return iconFit; }
-  AnnotAppearanceCharacsTextPos getPosition() { return position; }
+  int getRotation() const { return rotation; }
+  const AnnotColor *getBorderColor() const { return borderColor; }
+  const AnnotColor *getBackColor() const { return backColor; }
+  const GooString *getNormalCaption() const { return normalCaption; }
+  const GooString *getRolloverCaption() const { return rolloverCaption; }
+  const GooString *getAlternateCaption() const { return alternateCaption; }
+  const AnnotIconFit *getIconFit() const { return iconFit; }
+  AnnotAppearanceCharacsTextPos getPosition() const { return position; }
 
 protected:
 
@@ -492,6 +495,49 @@ public:
 private:
   double origX, origY, borderWidth;
   double minX, minY, maxX, maxY;
+};
+
+//------------------------------------------------------------------------
+// AnnotAppearanceBuilder
+//------------------------------------------------------------------------
+
+class AnnotAppearanceBuilder {
+public:
+  AnnotAppearanceBuilder();
+  ~AnnotAppearanceBuilder();
+
+  AnnotAppearanceBuilder(const AnnotAppearanceBuilder &) = delete;
+  AnnotAppearanceBuilder& operator=(const AnnotAppearanceBuilder &) = delete;
+
+  void setDrawColor(const AnnotColor *color, GBool fill);
+  void setLineStyleForBorder(const AnnotBorder *border);
+  void drawCircle(double cx, double cy, double r, GBool fill);
+  void drawCircleTopLeft(double cx, double cy, double r);
+  void drawCircleBottomRight(double cx, double cy, double r);
+  void drawFieldBorder(const FormField *field, const AnnotBorder *border, const AnnotAppearanceCharacs *appearCharacs, const PDFRectangle *rect);
+  bool drawFormField(const FormField *field, const Form *form, const GfxResources *resources, const GooString *da, const AnnotBorder *border, const AnnotAppearanceCharacs *appearCharacs, const PDFRectangle *rect, const GooString *appearState, XRef *xref, bool *addedDingbatsResource);
+
+  void writeString(const GooString &str);
+
+  void append(const char *text);
+  void appendf(const char *fmt, ...) GOOSTRING_FORMAT;
+
+  const GooString *buffer() const;
+
+private:
+  bool drawListBox(const FormFieldChoice *fieldChoice, const AnnotBorder *border, const PDFRectangle *rect,
+		   const GooString *da, const GfxResources *resources, int quadding);
+  bool drawFormFieldButton(const FormFieldButton *field, const GfxResources *resources, const GooString *da, const AnnotBorder *border, const AnnotAppearanceCharacs *appearCharacs, const PDFRectangle *rect, const GooString *appearState, XRef *xref, bool *addedDingbatsResource);
+  bool drawFormFieldText(const FormFieldText *fieldText, const Form *form, const GfxResources *resources, const GooString *da, const AnnotBorder *border, const AnnotAppearanceCharacs *appearCharacs, const PDFRectangle *rect);
+  bool drawFormFieldChoice(const FormFieldChoice *fieldChoice, const Form *form, const GfxResources *resources, const GooString *da, const AnnotBorder *border, const AnnotAppearanceCharacs *appearCharacs, const PDFRectangle *rect);
+  bool drawText(const GooString *text, const GooString *da, const GfxResources *resources,
+		const AnnotBorder *border, const AnnotAppearanceCharacs *appearCharacs, const PDFRectangle *rect,
+		GBool multiline, int comb, int quadding,
+		GBool txField, GBool forceZapfDingbats,
+		XRef *xref, bool *addedDingbatsResource, // xref and addedDingbatsResource both must not be null if forceZapfDingbats is passed
+		GBool password);
+
+  GooString *appearBuf;
 };
 
 //------------------------------------------------------------------------
@@ -617,13 +663,13 @@ public:
   AnnotSubtype getType() const { return type; }
   PDFRectangle *getRect() const { return rect; }
   void getRect(double *x1, double *y1, double *x2, double *y2) const;
-  GooString *getContents() const { return contents; }
+  const GooString *getContents() const { return contents; }
   int getPageNum() const { return page; }
-  GooString *getName() const { return name; }
-  GooString *getModified() const { return modified; }
+  const GooString *getName() const { return name; }
+  const GooString *getModified() const { return modified; }
   Guint getFlags() const { return flags; }
   AnnotAppearance *getAppearStreams() const { return appearStreams; }
-  GooString *getAppearState() const { return appearState; }
+  const GooString *getAppearState() const { return appearState; }
   AnnotBorder *getBorder() const { return border; }
   AnnotColor *getColor() const { return color; }
   int getTreeKey() const { return treeKey; }
@@ -632,6 +678,10 @@ public:
 
   // Check if point is inside the annot rectangle.
   GBool inRect(double x, double y) const;
+
+  static void layoutText(const GooString *text, GooString *outBuf, int *i, const GfxFont *font,
+		  double *width, double widthLimit, int *charCount,
+		  GBool noReencode);
 
 private:
   void readArrayNum(Object *pdfArray, int key, double *value);
@@ -644,16 +694,7 @@ private:
 protected:
   virtual ~Annot();
   virtual void removeReferencedObjects(); // Called by Page::removeAnnot
-  void setColor(AnnotColor *color, GBool fill);
-  void setLineStyleForBorder(AnnotBorder *border);
-  void drawCircle(double cx, double cy, double r, GBool fill);
-  void drawCircleTopLeft(double cx, double cy, double r);
-  void drawCircleBottomRight(double cx, double cy, double r);
-  void layoutText(GooString *text, GooString *outBuf, int *i, GfxFont *font,
-		  double *width, double widthLimit, int *charCount,
-		  GBool noReencode);
-  void writeString(GooString *str, GooString *appearBuf);
-  Object createForm(double *bbox, GBool transparencyGroup, Dict *resDict);
+  Object createForm(const GooString *appearBuf, double *bbox, GBool transparencyGroup, Dict *resDict);
   Dict *createResourcesDict(const char *formName, Object &&formStream, const char *stateName,
 			   double opacity, const char *blendMode);
   GBool isVisible(GBool printing);
@@ -691,7 +732,6 @@ protected:
   PDFDoc *doc;
   XRef *xref;			// the xref table for this PDF file
   Ref ref;                      // object ref identifying this annotation
-  GooString *appearBuf;
   AnnotBorder *border;          // Border, BS
   AnnotColor *color;            // C
   double fontSize; 
@@ -742,13 +782,13 @@ public:
   ~AnnotMarkup();
 
   // getters
-  GooString *getLabel() const { return label; }
+  const GooString *getLabel() const { return label; }
   AnnotPopup *getPopup() const { return popup; }
   double getOpacity() const { return opacity; }
   // getRC
-  GooString *getDate() const { return date; }
+  const GooString *getDate() const { return date; }
   int getInReplyToID() const { return inReplyTo.num; }
-  GooString *getSubject() const { return subject; }
+  const GooString *getSubject() const { return subject; }
   AnnotMarkupReplyType getReplyTo() const { return replyTo; }
   AnnotExternalDataType getExData() const { return exData; }
 
@@ -805,7 +845,7 @@ public:
 
   // getters
   GBool getOpen() const { return open; }
-  GooString *getIcon() const { return icon; }
+  const GooString *getIcon() const { return icon; }
   AnnotTextState getState() const { return state; }
 
   void setOpen(GBool openA);
@@ -836,7 +876,7 @@ class AnnotMovie: public Annot {
 
   void draw(Gfx *gfx, GBool printing) override;
 
-  GooString* getTitle() { return title; }
+  const GooString* getTitle() const { return title; }
   Movie* getMovie() { return movie; }
 
  private:
@@ -858,7 +898,7 @@ class AnnotScreen: public Annot {
   AnnotScreen(PDFDoc *docA, Object *dictObject, Object *obj);
   ~AnnotScreen();
 
-  GooString* getTitle() { return title; }
+  const GooString* getTitle() const { return title; }
 
   AnnotAppearanceCharacs *getAppearCharacs() { return appearCharacs; }
   LinkAction* getAction() { return action; } // The caller should now delete the result
@@ -947,10 +987,10 @@ public:
   void setIntent(AnnotFreeTextIntent new_intent);
 
   // getters
-  GooString *getAppearanceString() const { return appearanceString; }
+  const GooString *getAppearanceString() const { return appearanceString; }
   AnnotFreeTextQuadding getQuadding() const { return quadding; }
   // return rc
-  GooString *getStyleString() const { return styleString; }
+  const GooString *getStyleString() const { return styleString; }
   AnnotCalloutLine *getCalloutLine() const {  return calloutLine; }
   AnnotFreeTextIntent getIntent() const { return intent; }
   AnnotBorderEffect *getBorderEffect() const { return borderEffect; }
@@ -1096,7 +1136,7 @@ public:
   void setIcon(GooString *new_icon);
 
   // getters
-  GooString *getIcon() const { return icon; }
+  const GooString *getIcon() const { return icon; }
 
 private:
 
@@ -1266,7 +1306,7 @@ public:
 
   // getters
   Object *getFile() { return &file; }
-  GooString *getName() const { return name; }
+  const GooString *getName() const { return name; }
 
 private:
 
@@ -1294,7 +1334,7 @@ public:
 
   // getters
   Sound *getSound() { return sound; }
-  GooString *getName() const { return name; }
+  const GooString *getName() const { return name; }
 
 private:
 
@@ -1327,11 +1367,7 @@ public:
 
   void draw(Gfx *gfx, GBool printing) override;
 
-  void drawBorder();
-  void drawFormFieldButton(GfxResources *resources, GooString *da);
-  void drawFormFieldText(GfxResources *resources, GooString *da);
-  void drawFormFieldChoice(GfxResources *resources, GooString *da);
-  void generateFieldAppearance ();
+  void generateFieldAppearance (bool *addDingbatsResource);
   void updateAppearanceStream ();
 
   AnnotWidgetHighlightMode getMode() { return mode; }
@@ -1345,13 +1381,6 @@ private:
 
   void initialize(PDFDoc *docA, Dict *dict);
 
-  void drawText(GooString *text, GooString *da, GfxResources *resources,
-		GBool multiline, int comb, int quadding,
-		GBool txField, GBool forceZapfDingbats,
-		GBool password=false);
-  void drawListBox(FormFieldChoice *fieldChoice,
-		   GooString *da, GfxResources *resources, int quadding);
-
   Form *form;
   FormField *field;                       // FormField object for this annotation
   AnnotWidgetHighlightMode mode;          // H  (Default I)
@@ -1361,7 +1390,6 @@ private:
   // inherited  from Annot
   // AnnotBorderBS border;                // BS
   Dict *parent;                           // Parent
-  GBool addDingbatsResource;
   Ref updatedAppearanceStream; // {-1,-1} if updateAppearanceStream has never been called
 };
 
@@ -1438,7 +1466,7 @@ public:
     Params(const Params &) = delete;
     Params& operator=(const Params &) = delete;
 
-    GooString* getFlashVars() const;
+    const GooString* getFlashVars() const;
 
   private:
     // optional
@@ -1485,7 +1513,7 @@ public:
     Configuration& operator=(const Configuration &) = delete;
 
     Type getType() const;
-    GooString* getName() const;
+    const GooString* getName() const;
     int getInstancesCount() const;
     Instance* getInstance(int index) const;
 
@@ -1507,7 +1535,7 @@ public:
     Asset(const Asset &) = delete;
     Asset& operator=(const Asset &) = delete;
 
-    GooString* getName() const;
+    const GooString* getName() const;
     Object* getFileSpec() const;
 
   private:

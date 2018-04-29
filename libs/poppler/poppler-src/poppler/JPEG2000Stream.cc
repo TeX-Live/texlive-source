@@ -4,7 +4,7 @@
 //
 // A JPX stream decoder using OpenJPEG
 //
-// Copyright 2008-2010, 2012, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright 2008-2010, 2012, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2011 Daniel Glöckner <daniel-gl@gmx.net>
 // Copyright 2014, 2016 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright 2013, 2014 Adrian Johnson <ajohnson@redneon.com>
@@ -39,7 +39,6 @@ struct JPXStreamPrivate {
   int ccounter;
   int npixels;
   int ncomps;
-  GBool indexed;
   GBool inited;
   int smaskInData;
   void init2(OPJ_CODEC_FORMAT format, unsigned char *data, int length, GBool indexed);
@@ -81,7 +80,6 @@ JPXStream::JPXStream(Stream *strA) : FilterStream(strA) {
   priv->image = nullptr;
   priv->npixels = 0;
   priv->ncomps = 0;
-  priv->indexed = gFalse;
 }
 
 JPXStream::~JPXStream() {
@@ -223,9 +221,10 @@ void JPXStream::init()
   int bufSize = BUFFER_INITIAL_SIZE;
   if (oLen.isInt()) bufSize = oLen.getInt();
 
+  GBool indexed = gFalse;
   if (cspace.isArray() && cspace.arrayGetLength() > 0) {
-    Object cstype = cspace.arrayGet(0);
-    if (cstype.isName("Indexed")) priv->indexed = gTrue;
+    const Object cstype = cspace.arrayGet(0);
+    if (cstype.isName("Indexed")) indexed = gTrue;
   }
 
   priv->smaskInData = 0;
@@ -233,7 +232,7 @@ void JPXStream::init()
 
   int length = 0;
   unsigned char *buf = str->toUnsignedChars(&length, bufSize);
-  priv->init2(OPJ_CODEC_JP2, buf, length, priv->indexed);
+  priv->init2(OPJ_CODEC_JP2, buf, length, indexed);
   gfree(buf);
 
   if (priv->image) {
@@ -264,7 +263,7 @@ void JPXStream::init()
 	sgndcorr = 1 << (priv->image->comps[0].prec - 1);
       for (int i = 0; i < priv->npixels; i++) {
 	int r = priv->image->comps[component].data[i];
-	*(cdata++) = adjustComp(r, adjust, depth, sgndcorr, priv->indexed);
+	*(cdata++) = adjustComp(r, adjust, depth, sgndcorr, indexed);
       }
     }
   } else {

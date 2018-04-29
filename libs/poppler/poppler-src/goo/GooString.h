@@ -23,6 +23,7 @@
 // Copyright (C) 2015 Adam Reichold <adam.reichold@t-online.de>
 // Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -64,7 +65,7 @@ public:
   GooString(const char *sA, int lengthA);
 
   // Create a string from <lengthA> chars at <idx> in <str>.
-  GooString(GooString *str, int idx, int lengthA);
+  GooString(const GooString *str, int idx, int lengthA);
 
   // Set content of a string to <newStr>. If <newLen> is CALC_STRING_LEN, then
   // length of the string will be calculated with strlen(). Otherwise we assume
@@ -132,7 +133,7 @@ public:
 
   // Append a character or string.
   GooString *append(char c);
-  GooString *append(GooString *str);
+  GooString *append(const GooString *str);
   GooString *append(const char *str, int lengthA=CALC_STRING_LEN);
 
   // Append a formatted string.
@@ -141,7 +142,7 @@ public:
 
   // Insert a character or string.
   GooString *insert(int i, char c);
-  GooString *insert(int i, GooString *str);
+  GooString *insert(int i, const GooString *str);
   GooString *insert(int i, const char *str, int lengthA=CALC_STRING_LEN);
 
   // Delete a character or range of characters.
@@ -152,7 +153,7 @@ public:
   GooString *lowerCase();
 
   // Compare two strings:  -1:<  0:=  +1:>
-  int cmp(GooString *str) const;
+  int cmp(const GooString *str) const;
   int cmpN(GooString *str, int n) const;
   int cmp(const char *sA) const;
   int cmpN(const char *sA, int n) const;

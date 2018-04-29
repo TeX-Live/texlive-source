@@ -407,7 +407,7 @@ private:
   SplashPattern *getColor(GfxCMYK *cmyk);
   SplashPattern *getColor(GfxColor *deviceN);
 #endif
-  void getMatteColor( SplashColorMode colorMode, GfxImageColorMap *colorMap, GfxColor * matteColor, SplashColor splashMatteColor);
+  static void getMatteColor( SplashColorMode colorMode, GfxImageColorMap *colorMap, GfxColor * matteColor, SplashColor splashMatteColor);
   void setOverprintMask(GfxColorSpace *colorSpace, GBool overprintFlag,
 			int overprintMode, GfxColor *singleColor, GBool grayIndexed = gFalse);
   SplashPath *convertPath(GfxState *state, GfxPath *path,

@@ -38,6 +38,7 @@
 // Copyright (C) 2015 Kenji Uno <ku@digitaldolphins.jp>
 // Copyright (C) 2016 Takahiro Hashimoto <kenya888.en@gmail.com>
 // Copyright (C) 2017 Even Rouault <even.rouault@spatialys.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1196,7 +1197,7 @@ static const SplashBlendFunc splashOutBlendFuncs[] = {
 class SplashOutFontFileID: public SplashFontFileID {
 public:
 
-  SplashOutFontFileID(Ref *rA) { r = *rA; }
+  SplashOutFontFileID(const Ref *rA) { r = *rA; }
 
   ~SplashOutFontFileID() {}
 
@@ -1222,14 +1223,14 @@ struct T3FontCacheTag {
 class T3FontCache {
 public:
 
-  T3FontCache(Ref *fontID, double m11A, double m12A,
+  T3FontCache(const Ref *fontID, double m11A, double m12A,
 	      double m21A, double m22A,
 	      int glyphXA, int glyphYA, int glyphWA, int glyphHA,
 	      GBool aa, GBool validBBoxA);
   ~T3FontCache();
   T3FontCache(const T3FontCache &) = delete;
   T3FontCache& operator=(const T3FontCache &) = delete;
-  GBool matches(Ref *idA, double m11A, double m12A,
+  GBool matches(const Ref *idA, double m11A, double m12A,
 		double m21A, double m22A)
     { return fontID.num == idA->num && fontID.gen == idA->gen &&
 	     m11 == m11A && m12 == m12A && m21 == m21A && m22 == m22A; }
@@ -1246,7 +1247,7 @@ public:
   T3FontCacheTag *cacheTags;	// cache tags, i.e., char codes
 };
 
-T3FontCache::T3FontCache(Ref *fontIDA, double m11A, double m12A,
+T3FontCache::T3FontCache(const Ref *fontIDA, double m11A, double m12A,
 			 double m21A, double m22A,
 			 int glyphXA, int glyphYA, int glyphWA, int glyphHA,
 			 GBool validBBoxA, GBool aa) {
@@ -2501,7 +2502,7 @@ GBool SplashOutputDev::beginType3Char(GfxState *state, double x, double y,
 				      double dx, double dy,
 				      CharCode code, Unicode *u, int uLen) {
   GfxFont *gfxFont;
-  Ref *fontID;
+  const Ref *fontID;
   double *ctm, *bbox;
   T3FontCache *t3Font;
   T3GlyphStack *t3gs;
@@ -3978,8 +3979,7 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
     maskStr->reset();
     maskStr->doGetChars(maskWidth * maskHeight, data);
     maskStr->close();
-    maskStr = new MemStream((char *)data, 0, maskWidth * maskHeight, maskStr->getDictObject()->copy());
-    ((MemStream *) maskStr)->setNeedFree(gTrue);
+    maskStr = new AutoFreeMemStream((char *)data, 0, maskWidth * maskHeight, maskStr->getDictObject()->copy());
   }
   imgMaskData.imgStr = new ImageStream(maskStr, maskWidth,
 				       maskColorMap->getNumPixelComps(),

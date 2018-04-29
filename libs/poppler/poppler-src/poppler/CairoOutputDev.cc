@@ -29,6 +29,7 @@
 // Copyright (C) 2012 Patrick Pfeifer <p2000@mailinator.com>
 // Copyright (C) 2012, 2015, 2016 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2015 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1379,7 +1380,7 @@ void CairoOutputDev::fillToStrokePathClip(GfxState *state) {
   cairo_restore (cairo);
 }
 
-void CairoOutputDev::beginString(GfxState *state, GooString *s)
+void CairoOutputDev::beginString(GfxState *state, const GooString *s)
 {
   int len = s->getLength();
 
@@ -1588,7 +1589,7 @@ void CairoOutputDev::endTextObject(GfxState *state) {
   }
 }
 
-void CairoOutputDev::beginActualText(GfxState *state, GooString *text)
+void CairoOutputDev::beginActualText(GfxState *state, const GooString *text)
 {
   if (this->text)
     actualText->begin(state, text);

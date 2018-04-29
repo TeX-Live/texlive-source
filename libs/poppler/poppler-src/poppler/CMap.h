@@ -89,7 +89,7 @@ public:
   // Return the CID corresponding to the character code starting at
   // <s>, which contains <len> bytes.  Sets *<c> to the char code, and
   // *<nUsed> to the number of bytes used by the char code.
-  CID getCID(char *s, int len, CharCode *c, int *nUsed);
+  CID getCID(const char *s, int len, CharCode *c, int *nUsed);
 
   // Return the writing mode (0=horizontal, 1=vertical).
   int getWMode() { return wMode; }

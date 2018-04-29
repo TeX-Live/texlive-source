@@ -26,6 +26,7 @@
 // Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
 // Copyright (C) 2016 Masamichi Hosoda <trueroad@trueroad.jp>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -73,7 +74,7 @@ public:
   NameTree& operator=(const NameTree &) = delete;
 
   void init(XRef *xref, Object *tree);
-  Object lookup(GooString *name);
+  Object lookup(const GooString *name);
   int numEntries() { return length; };
   // iterator accessor, note it returns a pointer to the internal object, do not free nor delete it
   Object *getValue(int i);
@@ -154,7 +155,7 @@ public:
 
   // Find a named destination.  Returns the link destination, or
   // NULL if <name> is not a destination.
-  LinkDest *findDest(GooString *name);
+  LinkDest *findDest(const GooString *name);
 
   Object *getDests();
 

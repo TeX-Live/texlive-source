@@ -6,7 +6,7 @@
 // Hugo Mercier <hmercier31[at]gmail.com> (c) 2008
 // Pino Toscano <pino@kde.org> (c) 2008
 // Carlos Garcia Campos <carlosgc@gnome.org> (c) 2010
-// Albert Astals Cid <aacid@kde.org> (c) 2010, 2017
+// Albert Astals Cid <aacid@kde.org> (c) 2010, 2017, 2018
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ MovieActivationParameters::MovieActivationParameters() {
 MovieActivationParameters::~MovieActivationParameters() {
 }
 
-void MovieActivationParameters::parseMovieActivation(Object* aDict) {
+void MovieActivationParameters::parseMovieActivation(const Object* aDict) {
   Object obj1 = aDict->dictLookup("Start");
   if (obj1.isNull()) {
     if (obj1.isInt()) {
@@ -125,7 +125,7 @@ void MovieActivationParameters::parseMovieActivation(Object* aDict) {
 
   obj1 = aDict->dictLookup("Mode");
   if (obj1.isName()) {
-    char* name = obj1.getName();
+    const char* name = obj1.getName();
     if (!strcmp(name, "Once")) {
       repeatMode = repeatModeOnce;
     } else if (!strcmp(name, "Open")) {
@@ -172,7 +172,7 @@ void MovieActivationParameters::parseMovieActivation(Object* aDict) {
   }
 }
 
-void Movie::parseMovie (Object *movieDict) {
+void Movie::parseMovie (const Object *movieDict) {
   fileName = nullptr;
   rotationAngle = 0;
   width = -1;
@@ -230,7 +230,7 @@ Movie::~Movie() {
   delete fileName;
 }
 
-Movie::Movie(Object *movieDict) {
+Movie::Movie(const Object *movieDict) {
   ok = gTrue;
 
   if (movieDict->isDict())
@@ -239,7 +239,7 @@ Movie::Movie(Object *movieDict) {
     ok = gFalse;
 }
 
-Movie::Movie(Object *movieDict, Object *aDict) {
+Movie::Movie(const Object *movieDict, const Object *aDict) {
   ok = gTrue;
 
   if (movieDict->isDict()) {
@@ -274,6 +274,6 @@ void Movie::getFloatingWindowSize(int *widthA, int *heightA)
   *heightA = int(height * double(MA.znum) / MA.zdenum);
 }
 
-Movie* Movie::copy() {
+Movie* Movie::copy() const {
   return new Movie(*this);
 }

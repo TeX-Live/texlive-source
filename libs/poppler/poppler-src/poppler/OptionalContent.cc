@@ -5,7 +5,7 @@
 // Copyright 2007 Brad Hards <bradh@kde.org>
 // Copyright 2008 Pino Toscano <pino@kde.org>
 // Copyright 2008, 2010 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright 2008, 2010, 2011, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright 2008, 2010, 2011, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2008 Mark Kaplan <mkaplan@finjan.com>
 //
 // Released under the GPL (version 2, or later, at your option)
@@ -133,7 +133,7 @@ OCGs::~OCGs()
 }
 
 
-bool OCGs::hasOCGs()
+bool OCGs::hasOCGs() const
 {
   return ( optionalContentGroups->getLength() > 0 );
 }
@@ -374,7 +374,7 @@ OptionalContentGroup::OptionalContentGroup(GooString *label)
   m_state = On;
 }
 
-GooString* OptionalContentGroup::getName() const
+const GooString* OptionalContentGroup::getName() const
 {
   return m_name;
 }
@@ -447,7 +447,7 @@ OCDisplayNode::OCDisplayNode() {
   children = nullptr;
 }
 
-OCDisplayNode::OCDisplayNode(GooString *nameA) {
+OCDisplayNode::OCDisplayNode(const GooString *nameA) {
   name = new GooString(nameA);
   ocg = nullptr;
   children = nullptr;
@@ -489,13 +489,13 @@ OCDisplayNode::~OCDisplayNode() {
   }
 }
 
-int OCDisplayNode::getNumChildren() {
+int OCDisplayNode::getNumChildren() const {
   if (!children) {
     return 0;
   }
   return children->getLength();
 }
 
-OCDisplayNode *OCDisplayNode::getChild(int idx) {
+OCDisplayNode *OCDisplayNode::getChild(int idx) const {
   return (OCDisplayNode *)children->get(idx);
 }

@@ -19,6 +19,7 @@
 // Copyright (C) 2007 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2008, 2011, 2012, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -96,7 +97,7 @@ public:
   int mapToUnicode(CharCode c, Unicode **u);
 
   // Map a Unicode to CharCode.
-  int mapToCharCode(Unicode* u, CharCode *c, int usize);
+  int mapToCharCode(Unicode* u, CharCode *c, int usize) const;
 
   // Return the mapping's length, i.e., one more than the max char
   // code supported by the mapping.

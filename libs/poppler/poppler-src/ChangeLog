@@ -1,3 +1,930 @@
+commit 4d851d16aa6a2a9f00b60091a2ef810be1a571ea
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Apr 17 20:04:26 2018 +0200
+
+    poppler 0.64.0
+
+ CMakeLists.txt         |  4 ++--
+ NEWS                   | 33 +++++++++++++++++++++++++++++++++
+ cpp/Doxyfile           |  2 +-
+ qt5/src/CMakeLists.txt |  2 +-
+ qt5/src/Doxyfile       |  2 +-
+ 5 files changed, 38 insertions(+), 5 deletions(-)
+
+commit 1dcf335a8e212fdfd18bad1f56a743504f653cf5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Apr 17 16:21:33 2018 +0200
+
+    qt5: Don't need this friend declaration
+
+ qt5/src/poppler-link.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 281d5cbd33521c823f1602f3d0c1e2ad9a4ab1d2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 6 15:34:57 2018 +0200
+
+    Object::getName return const char instead of char
+
+ poppler/Form.cc                   |  2 +-
+ poppler/Form.h                    |  2 +-
+ poppler/Gfx.cc                    | 20 ++++++++++----------
+ poppler/Gfx.h                     | 14 +++++++-------
+ poppler/GfxFont.cc                |  4 ++--
+ poppler/Link.cc                   |  6 +++---
+ poppler/Link.h                    |  2 +-
+ poppler/MarkedContentOutputDev.cc |  2 +-
+ poppler/MarkedContentOutputDev.h  |  2 +-
+ poppler/Movie.cc                  |  2 +-
+ poppler/Object.h                  |  2 +-
+ poppler/OutputDev.cc              |  6 +++---
+ poppler/OutputDev.h               |  6 +++---
+ poppler/Rendition.cc              |  2 +-
+ poppler/Stream.cc                 |  2 +-
+ poppler/Stream.h                  |  2 +-
+ 16 files changed, 38 insertions(+), 38 deletions(-)
+
+commit 8fe1a5b96e5ad7dac60dd0f198b3c8b18fb3c5bb
+Author: Andre Heinecke <aheinecke@intevation.de>
+Date:   Tue Apr 17 10:02:40 2018 +0200
+
+    Fix parsing of focus out actions
+
+    The key is uppercase B with lowercase L. Not I.
+
+ poppler/Annot.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 3636ccbaece6706ef86dfab9303c3f164e68ffe2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Apr 17 10:57:06 2018 +0200
+
+    pdfsig: Don't use fixed buffer size for path
+
+ utils/pdfsig.cc | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+commit 17c7e3b0e1801a8643712013eb3b106c802e0faa
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Apr 17 11:02:29 2018 +0200
+
+    utils: Move numberOfCharacters to shared file
+
+ utils/numberofcharacters.h | 26 ++++++++++++++++++++++++++
+ utils/pdftocairo.cc        | 13 +------------
+ utils/pdftoppm.cc          | 13 +------------
+ 3 files changed, 28 insertions(+), 24 deletions(-)
+
+commit 73ab9930810ae83998467ec859f3ee3984548cbd
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Apr 17 10:46:46 2018 +0200
+
+    pdfsig: Add -dump to manpage
+
+ utils/pdfsig.1 | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit bdece3bb0c115576d23e76dc29ee43f04aafdee0
+Author: Chinmoy Ranjan Pradhan <chinmoyrp65@protonmail.com>
+Date:   Tue Apr 17 10:45:15 2018 +0200
+
+    pdfsig: Add -dump which writes signatures to disk
+
+    Bug #104881
+
+ poppler/Form.cc |  8 +++++++-
+ poppler/Form.h  |  7 +++++--
+ utils/pdfsig.cc | 33 +++++++++++++++++++++++++++++++--
+ 3 files changed, 43 insertions(+), 5 deletions(-)
+
+commit 97aa11bf135421c1f87f2a46e2f597626f503f10
+Author: Oliver Sander <oliver.sander@tu-dresden.de>
+Date:   Fri Mar 23 22:04:11 2018 +0100
+
+    Document method drawImageMask
+
+ poppler/OutputDev.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit ae4349620863a42ae569f1ce05461bb27340c4ea
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Apr 16 22:49:54 2018 +0200
+
+    Make the second parseAction variant private
+
+ poppler/Link.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 444d9d8de5d4f8d627084405e1583b6d6d3900c7
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Apr 16 22:28:18 2018 +0200
+
+    Simplify LinkAction::parseAction a bit
+
+    After the discussion on the mailing list, also using unique_ptr was
+    wrong
+
+ poppler/Link.cc | 22 +++++++++++-----------
+ poppler/Link.h  |  5 +++--
+ 2 files changed, 14 insertions(+), 13 deletions(-)
+
+commit 88c99f1f6f4faf31faabccd35d9d094958020ebc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Apr 16 17:59:35 2018 +0200
+
+    Fix crash on malformed documents
+
+    In GfxGouraudTriangleShading::parse
+
+    Bug #106061
+
+ poppler/GfxState.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit df8a4ee51e18a39f85568c4122e5edd8c03d61df
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Apr 16 17:46:10 2018 +0200
+
+    Make it so we copy seenNextActions a bit less
+
+ poppler/Link.cc | 20 +++++++++++---------
+ poppler/Link.h  |  3 ++-
+ 2 files changed, 13 insertions(+), 10 deletions(-)
+
+commit bd9fb431941916174e1c3b2201bf5f422bcf61bd
+Author: Aleix Pol <aleixpol@kde.org>
+Date:   Mon Apr 16 16:38:09 2018 +0200
+
+    Make it possible to build poppler on Android without fontconfig
+
+    Didn't manage to make fontconfig build, still nice to have poppler
+    available.
+
+ CMakeLists.txt | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 34a44e5b95230b1ed03bb030e9963d0187b01951
+Author: Aleix Pol <aleixpol@kde.org>
+Date:   Mon Apr 16 16:35:47 2018 +0200
+
+    Do not assume that iconv is in /usr/include
+
+    We find it explicitly because it may be elsewhere.
+
+ cpp/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit bdd8db389c7b09cd9042267f36214f809e4c5f60
+Author: Andre Heinecke <aheinecke@intevation.de>
+Date:   Mon Apr 16 17:13:05 2018 +0200
+
+    Add support for Next actions following an action
+
+    Next actions are action dictionaries or an array
+    of action dictonaries. "Next" is an entry in the
+    general action dictionary.
+
+    These actions are supposed to be performed after each other.
+    So that a single button press can for example
+    both trigger a Hide action and a JavaScript action.
+
+ poppler/Link.cc                | 72
+ +++++++++++++++++++++++++++++++++++++++++-
+ poppler/Link.h                 | 18 +++++++++--
+ qt5/src/poppler-link-private.h |  9 ++++++
+ qt5/src/poppler-link.cc        |  7 +++-
+ qt5/src/poppler-link.h         | 11 ++++++-
+ qt5/src/poppler-page.cc        | 14 ++++++++
+ 6 files changed, 125 insertions(+), 6 deletions(-)
+
+commit ab72205dd14efe9c5c8d12e6b1ae538208bce168
+Author: Andre Heinecke <aheinecke@intevation.de>
+Date:   Mon Apr 16 16:31:38 2018 +0200
+
+    Add support for hide action
+
+    The hide action can be used to show / hide fields.
+
+ poppler/Link.cc                | 29 +++++++++++++++++++++++++++++
+ poppler/Link.h                 | 35 +++++++++++++++++++++++++++++++++++
+ qt5/src/poppler-annotation.cc  |  6 ++++++
+ qt5/src/poppler-link-private.h | 17 +++++++++++++++++
+ qt5/src/poppler-link.cc        | 28 ++++++++++++++++++++++++++++
+ qt5/src/poppler-link.h         | 39
+ ++++++++++++++++++++++++++++++++++++++-
+ qt5/src/poppler-page.cc        | 11 +++++++++++
+ 7 files changed, 164 insertions(+), 1 deletion(-)
+
+commit 022ccd4e1c61f4e89c7ffad83d9a5a896f65dc40
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Apr 16 16:22:55 2018 +0200
+
+    GfxGouraudTriangleShading::parse: Fix memory leak on malformed files
+
+    Bug #106059
+
+ poppler/GfxState.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 776257d0c20d4e3ae8d66683ab0f087bf6fc7b0f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Apr 11 00:44:41 2018 +0200
+
+    Fix leaks in GfxPatchMeshShading::parse with malformed documents
+
+    Bug #105969
+
+ poppler/GfxState.cc | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+commit d80e7aac3366f93865581a783751abb528c120b3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Apr 11 00:32:35 2018 +0200
+
+    Make GfxGouraudTriangleShading::parse more accepting of malformed
+    documents
+
+    Bug #105972
+
+ poppler/GfxState.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit fee13e935e4c9eaadff434436eaceeb13afcfc13
+Author: Oliver Sander <oliver.sander@tu-dresden.de>
+Date:   Fri Mar 23 22:24:42 2018 +0100
+
+    Implement Type3 font support for ArthurOutputDev
+
+ qt5/src/ArthurOutputDev.cc | 177
+ ++++++++++++++++++++++++++++++++++++++++-----
+ qt5/src/ArthurOutputDev.h  |  16 ++--
+ qt5/src/poppler-page.cc    |   4 +-
+ 3 files changed, 170 insertions(+), 27 deletions(-)
+
+commit 79c588912f41aa6ee81ea058e7e649199a252f90
+Author: Oliver Sander <oliver.sander@tu-dresden.de>
+Date:   Sun Mar 25 21:38:27 2018 +0200
+
+    Do not make ArthurOutputDev::startPage fill the page with white
+
+ qt5/src/ArthurOutputDev.cc | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
+
+commit 8c8c0034ae88c06616ace5e5ead71318f04311cf
+Author: Oliver Sander <oliver.sander@tu-dresden.de>
+Date:   Sat Apr 7 23:45:50 2018 +0200
+
+    Implement ArthurOutputDev::drawImageMask
+
+    Bug #105531
+
+    Also temporarily disable type3 fonts since it seems they're not
+    properly
+    supported
+
+ qt5/src/ArthurOutputDev.cc | 91
+ +++++++++++++++-------------------------------
+ qt5/src/ArthurOutputDev.h  |  2 +-
+ 2 files changed, 30 insertions(+), 63 deletions(-)
+
+commit 3e0408966ccdd713de7795ce7992888b3896b49c
+Author: Andre Heinecke <aheinecke@intevation.de>
+Date:   Thu Mar 22 14:53:19 2018 +0100
+
+    Qt5: Allow setting of visibility
+
+    Extends Qt5 API to allow setting visibility flags
+
+ qt5/src/poppler-form.cc | 11 +++++++++++
+ qt5/src/poppler-form.h  |  6 ++++++
+ 2 files changed, 17 insertions(+)
+
+commit b4127fb1c45fe5dcabe3751f0b40029405224f49
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 6 23:08:15 2018 +0200
+
+    Add some more const
+
+    const is always good :)
+
+ cpp/poppler-embedded-file.cpp   |  13 ++--
+ cpp/poppler-private.cpp         |   4 +-
+ cpp/poppler-private.h           |   3 +-
+ cpp/poppler-toc-private.h       |   4 +-
+ cpp/poppler-toc.cpp             |   9 +--
+ glib/poppler-action.cc          |  50 +++++++--------
+ glib/poppler-document.cc        |   8 +--
+ glib/poppler-layer.cc           |   2 +-
+ glib/poppler-media.cc           |   4 +-
+ glib/poppler-movie.cc           |   2 +-
+ glib/poppler-private.h          |   6 +-
+ goo/GooList.cc                  |  16 ++++-
+ goo/GooList.h                   |   8 +--
+ poppler/FileSpec.cc             |  10 +--
+ poppler/FileSpec.h              |  26 ++++----
+ poppler/Function.h              |   2 +-
+ poppler/Link.cc                 |  26 ++++----
+ poppler/Link.h                  | 138
+ ++++++++++++++++++++--------------------
+ poppler/Movie.cc                |  12 ++--
+ poppler/Movie.h                 |  26 ++++----
+ poppler/OptionalContent.cc      |   8 +--
+ poppler/OptionalContent.h       |  14 ++--
+ poppler/Outline.cc              |  10 +--
+ poppler/Outline.h               |  20 +++---
+ poppler/Rendition.cc            |   4 +-
+ poppler/Rendition.h             |  18 +++---
+ poppler/Sound.cc                |   6 +-
+ poppler/Sound.h                 |  18 +++---
+ qt5/src/poppler-document.cc     |   4 +-
+ qt5/src/poppler-embeddedfile.cc |  10 +--
+ qt5/src/poppler-link.cc         |   4 +-
+ qt5/src/poppler-media.cc        |   2 +-
+ qt5/src/poppler-movie.cc        |   4 +-
+ qt5/src/poppler-optcontent.cc   |   4 +-
+ qt5/src/poppler-private.cc      |  24 +++----
+ qt5/src/poppler-private.h       |   8 +--
+ qt5/src/poppler-sound.cc        |   2 +-
+ utils/HtmlFonts.cc              |   4 +-
+ utils/HtmlFonts.h               |   2 +-
+ utils/HtmlOutputDev.cc          |  12 ++--
+ utils/HtmlOutputDev.h           |   4 +-
+ utils/pdfdetach.cc              |   2 +-
+ 42 files changed, 285 insertions(+), 268 deletions(-)
+
+commit a8e93f46df9feb7f7241826307af51befdb25d9e
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Fri Apr 6 09:02:28 2018 +0200
+
+    Make Object return const GooString pointer
+
+    This helps making sure noone is changing strings that belong to
+    objects without us realizing.
+
+    In fact noone was doing except an ifdef for windows, fixed it to
+    not modify the dict contents anymore
+
+ glib/poppler-action.cc             | 2 +-
+ poppler/Annot.cc                   | 6 +++---
+ poppler/FileSpec.cc                | 4 +++-
+ poppler/Form.cc                    | 6 +++---
+ poppler/GfxFont.cc                 | 4 ++--
+ poppler/GfxState.cc                | 3 ++-
+ poppler/Link.cc                    | 3 ++-
+ poppler/Object.h                   | 3 ++-
+ poppler/Outline.cc                 | 3 ++-
+ poppler/PDFDoc.cc                  | 3 ++-
+ poppler/Parser.cc                  | 4 +++-
+ poppler/Stream.cc                  | 2 +-
+ poppler/StructElement.cc           | 3 ++-
+ qt5/src/poppler-document.cc        | 6 +++---
+ qt5/src/poppler-embeddedfile.cc    | 5 +++--
+ qt5/src/poppler-optcontent.cc      | 3 ++-
+ qt5/src/poppler-qt5.h              | 2 +-
+ qt5/tests/check_dateConversion.cpp | 4 ++--
+ test/pdf-fullrewrite.cc            | 4 ++--
+ utils/pdfinfo.cc                   | 7 ++++---
+ utils/pdftohtml.cc                 | 5 +++--
+ utils/pdftotext.cc                 | 5 +++--
+ utils/pdfunite.cc                  | 5 +++--
+ 23 files changed, 54 insertions(+), 38 deletions(-)
+
+commit 07180b86786cce95df4e2433a7cf3e006749a0f5
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Fri Apr 6 13:03:16 2018 +0200
+
+    Gfx: Make two functions take const GooString *
+
+ poppler/Gfx.cc | 8 ++++----
+ poppler/Gfx.h  | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+commit c4af5981ab2a5f42a9a1194bb5929c2151fc2674
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Fri Apr 6 13:00:12 2018 +0200
+
+    OutputDev: change functions taking GooString * to make it const
+
+    People that use poppler core, beware of the signature change!
+
+ poppler/CairoOutputDev.cc | 5 +++--
+ poppler/CairoOutputDev.h  | 5 +++--
+ poppler/OutputDev.h       | 7 ++++---
+ poppler/PSOutputDev.cc    | 4 ++--
+ poppler/PSOutputDev.h     | 2 +-
+ poppler/TextOutputDev.cc  | 7 ++++---
+ poppler/TextOutputDev.h   | 7 ++++---
+ utils/HtmlOutputDev.cc    | 5 +++--
+ utils/HtmlOutputDev.h     | 5 +++--
+ 9 files changed, 27 insertions(+), 20 deletions(-)
+
+commit 5fc6d9fcb41966b85dc67117531c81ec89f42f20
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 6 12:50:18 2018 +0200
+
+    PageAttrs and Page getLastModified return const GooString *
+
+ poppler/Page.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit a801b46e1e792b5d0a34f97de870c485e0ef312a
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Fri Apr 6 12:48:18 2018 +0200
+
+    PSOuputDev writePSString and writePSTextLine take const
+
+ poppler/PSOutputDev.cc | 4 ++--
+ poppler/PSOutputDev.h  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit eb6de58de5ef8c2ddeeed386e0b8b498b945797f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 6 12:47:12 2018 +0200
+
+    PDFDoc::writeString take const GooString pointer
+
+ poppler/PDFDoc.cc | 2 +-
+ poppler/PDFDoc.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 853b2251d4e11f14cd891bf1b6095ee36683d161
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 6 12:46:06 2018 +0200
+
+    OCDisplayNode take const GooString pointer
+
+ poppler/OptionalContent.cc | 4 ++--
+ poppler/OptionalContent.h  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 0a8311929ba599d7b0a35e83b1f5dec4a3c9da06
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Fri Apr 6 12:44:43 2018 +0200
+
+    GfxFont::getNextChar take const char pointer
+
+ poppler/GfxFont.cc | 4 ++--
+ poppler/GfxFont.h  | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 0e35441513bdce2471113b937bccb8928c7c9d9f
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Fri Apr 6 12:42:29 2018 +0200
+
+    FormFieldText::tokenizeDA take const GooString
+
+ poppler/Form.cc | 2 +-
+ poppler/Form.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit ba91b95f6e504cce08825e83a567a554ac846e39
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 6 12:41:44 2018 +0200
+
+    dateStringToTime take const GooString
+
+ poppler/DateInfo.cc | 4 ++--
+ poppler/DateInfo.h  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 9bfe4b43216bce4e702d7d8f61fc7cb9acdbb8f6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 6 12:40:53 2018 +0200
+
+    CMap::getCID take const char
+
+ poppler/CMap.cc | 4 ++--
+ poppler/CMap.h  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 690ea9e5c900268556431df71bdac38f5e74dc36
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Fri Apr 6 12:39:35 2018 +0200
+
+    GooString::insert make pointer const
+
+ goo/GooString.cc | 2 +-
+ goo/GooString.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit f3551055dab57eb0bc544070b15c6a7435585003
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 6 12:19:54 2018 +0200
+
+    Introduce AutoFreeMemStream
+
+    This is done by turning the old MemStream implementation to a new
+    template implementation in BaseMemStream
+    and inheriting from it MemStream for const char * and
+    AutoFreeMemStream for char *.
+
+    This way we make clear one frees the data and the other does not,
+    while also removing the ugly setNeedsFree in MemStream
+
+ poppler/Annot.cc           | 16 ++++++---------
+ poppler/SplashOutputDev.cc |  3 +--
+ poppler/Stream.h           | 51
+ +++++++++++++++++++++++++++-------------------
+ 3 files changed, 37 insertions(+), 33 deletions(-)
+
+commit 4cc89c79f58cb416aae8396190a788e1398113ff
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 6 12:11:55 2018 +0200
+
+    Move MemStream implementation to header
+
+    Will be useful in next step where we turn it into a template
+
+ poppler/Stream.cc | 83 --------------------------------------------------
+ poppler/Stream.h  | 91
+ +++++++++++++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 81 insertions(+), 93 deletions(-)
+
+commit 8821c04f36cb737776cd9077a46f1a9f86ca54e7
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Wed Apr 4 10:20:52 2018 +0200
+
+    Workaround form field text not being drawn on broken files
+
+    Try drawing with the form appearance instead of the field apparance
+    if drawing with the field appearance fails
+
+    Bug #103245
+
+ poppler/Annot.cc | 88
+ +++++++++++++++++++++++++++++++++++---------------------
+ poppler/Annot.h  | 24 +++++++++-------
+ 2 files changed, 68 insertions(+), 44 deletions(-)
+
+commit afb053d652cc1f670465d471f671652b112dbf51
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 11:48:11 2018 +0200
+
+    Annot: Move appearBuf construction to a new class
+
+    Previously we had appearBuf construction functions in Annot itself
+    which was a bit
+    confusing. Some functions like writeString took appearBuf as
+    parameter, some
+    other did not. By moving it out to a new class and making all the
+    input parameters const
+    pointers we make it clear the construction of appearBuf doesn't have
+    any other side
+    effect on Annot itself or any other class
+
+    I'm leaving the functions in their old place to minimize the diff
+    so it's easier to read.
+    I'll move them in a follow up commit
+
+ poppler/Annot.cc | 528
+ ++++++++++++++++++++++++++++---------------------------
+ poppler/Annot.h  |  73 +++++---
+ 2 files changed, 321 insertions(+), 280 deletions(-)
+
+commit 0a79dc3036111e86a11bd290057da6674da3b311
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 18:15:33 2018 +0200
+
+    Add some more const
+
+ glib/poppler-action.cc        | 14 +++++------
+ glib/poppler-annot.cc         | 18 +++++++--------
+ glib/poppler-document.cc      |  2 +-
+ glib/poppler-form-field.cc    |  4 ++--
+ glib/poppler-private.h        |  2 +-
+ poppler/Annot.cc              | 16 ++++++-------
+ poppler/Annot.h               | 54
+ +++++++++++++++++++++----------------------
+ poppler/Catalog.cc            |  5 ++--
+ poppler/Catalog.h             |  5 ++--
+ poppler/Form.cc               |  6 ++---
+ poppler/Form.h                |  6 ++---
+ poppler/Link.h                | 23 +++++++++---------
+ poppler/PDFDoc.h              |  3 ++-
+ poppler/UTF.cc                |  3 ++-
+ poppler/UTF.h                 |  3 ++-
+ qt5/src/poppler-annotation.cc |  5 ++--
+ qt5/src/poppler-document.cc   |  9 +++++++-
+ qt5/src/poppler-form.cc       |  4 ++--
+ qt5/src/poppler-page.cc       |  2 +-
+ qt5/src/poppler-private.cc    |  4 ++--
+ qt5/src/poppler-private.h     |  4 ++--
+ qt5/src/poppler-qt5.h         |  7 ++++++
+ utils/JSInfo.cc               |  7 +++---
+ utils/JSInfo.h                |  3 ++-
+ 24 files changed, 116 insertions(+), 93 deletions(-)
+
+commit b60de1700d95d022ec0d1676886b0442cb763473
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 16:03:54 2018 +0200
+
+    Introduce a const version of GfxResources::lookupFont
+
+ poppler/Gfx.cc     | 13 +++++++++++--
+ poppler/Gfx.h      |  5 ++++-
+ poppler/GfxFont.cc |  2 +-
+ poppler/GfxFont.h  |  2 +-
+ 4 files changed, 17 insertions(+), 5 deletions(-)
+
+commit 6bb508acd9a79671e5e9defc7b92a943fb880cda
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 14:19:51 2018 +0200
+
+    More const in GfxFont methods
+
+ poppler/GfxFont.h          | 10 +++++-----
+ poppler/PSOutputDev.cc     |  2 +-
+ poppler/PSOutputDev.h      |  2 +-
+ poppler/SplashOutputDev.cc | 11 ++++++-----
+ qt5/src/ArthurOutputDev.cc |  3 ++-
+ 5 files changed, 15 insertions(+), 13 deletions(-)
+
+commit 390109044bdef1ba67c2339bffaf11b38261854d
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 13:00:59 2018 +0200
+
+    Fix windows build
+
+ poppler/GlobalParamsWin.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit f75c0f5c3f9d63334cc21e0ab68f1af45d0037cc
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 12:58:34 2018 +0200
+
+    Make GfxFont::getName const
+
+ glib/poppler-structure-element.cc | 2 +-
+ poppler/FontInfo.cc               | 3 ++-
+ poppler/GfxFont.h                 | 2 +-
+ poppler/GlobalParams.cc           | 6 +++---
+ poppler/PSOutputDev.cc            | 6 ++++--
+ poppler/PSOutputDev.h             | 3 ++-
+ utils/HtmlFonts.cc                | 3 ++-
+ 7 files changed, 15 insertions(+), 10 deletions(-)
+
+commit a669ad5cfb28cdfcfe38bbce39fbf8c6fc3102d9
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 12:55:39 2018 +0200
+
+    buildFcPattern: Don't modify the actual name of the font
+
+    When doing the '-' to ' ' replacement to build the fc pattern
+
+ poppler/GlobalParams.cc | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit 4f9b3d8d8d17863873a8a399ff3fe212d247b236
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 12:37:40 2018 +0200
+
+    Make some GfxFont methods const
+
+ poppler/GfxFont.cc |  8 ++++----
+ poppler/GfxFont.h  | 16 ++++++++--------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+commit 2bf6f2275c49f94e84f935653d6c42f6b5f9b364
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 12:21:38 2018 +0200
+
+    Make some Form methods const
+
+ glib/poppler-form-field.cc |  6 +++---
+ poppler/Annot.cc           |  4 ++--
+ poppler/Form.cc            | 18 +++++++++---------
+ poppler/Form.h             | 32 ++++++++++++++++----------------
+ qt5/src/poppler-form.cc    |  3 ++-
+ 5 files changed, 32 insertions(+), 31 deletions(-)
+
+commit 6f2bc64e09b7f5e5be6962840ede40369b78fd5e
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 12:25:17 2018 +0200
+
+    Make AnnotWidget::drawText and Annot::layoutText input GooString const
+
+ poppler/Annot.cc | 9 +++++----
+ poppler/Annot.h  | 5 +++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+commit 5e7931c4c9fdaba8b3343d04eda6e9eb2a2e3dcd
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 12:23:21 2018 +0200
+
+    Make _poppler_goo_string_to_utf8 input param const
+
+ glib/poppler-document.cc | 2 +-
+ glib/poppler-private.h   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 3fdb7ea7b6a1ed4add2fbc6dca7a38b27fc79f45
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 12:21:11 2018 +0200
+
+    Make UnicodeParsedString input const
+
+ qt5/src/poppler-private.cc | 5 +++--
+ qt5/src/poppler-private.h  | 3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+commit 4b96c8399102a36e542c9da3b34650c26ccdda3c
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 12:19:07 2018 +0200
+
+    Make pdfDocEncodingToUTF16 input param const
+
+ poppler/Form.cc          | 5 +++--
+ poppler/Form.h           | 1 +
+ poppler/PDFDocEncoding.h | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+commit 5804259f22d4d42ed7c37c9efb613910248cd1d4
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 11:58:50 2018 +0200
+
+    GfxFont::getToUnicode -> const
+
+    And we don't need to do the inc/dec ref dance in Annot
+    since the GfxFont is still alive while we use it and there's
+    no other users to getToUnicode that may keep the CharCodeToUnicode
+    for longer time than the GfxFont live
+
+ poppler/Annot.cc   |  5 ++---
+ poppler/GfxFont.cc | 12 ++++--------
+ poppler/GfxFont.h  |  7 ++++---
+ 3 files changed, 10 insertions(+), 14 deletions(-)
+
+commit 1eb06156855758e4b1da2adc0334d84d3f857fb1
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 11:56:57 2018 +0200
+
+    CharCodeToUnicode::mapToCharCode -> const
+
+ poppler/CharCodeToUnicode.cc | 3 ++-
+ poppler/CharCodeToUnicode.h  | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+commit 2a49511517678b7e05660bb9a35a614c83229b66
+Author: Albert Astals Cid <albert.astals.cid@kdab.com>
+Date:   Thu Apr 5 11:50:23 2018 +0200
+
+    Add some const to GooHash and GooString
+
+ goo/GooHash.cc   | 7 ++++---
+ goo/GooHash.h    | 7 ++++---
+ goo/GooString.cc | 7 ++++---
+ goo/GooString.h  | 7 ++++---
+ 4 files changed, 16 insertions(+), 12 deletions(-)
+
+commit e491e935ea355d48519cf0a14e4b060655850675
+Author: Evangelos Foutras <evangelos@foutrelis.com>
+Date:   Mon Apr 2 16:09:34 2018 +0300
+
+    Fix PDFDoc::checkHeader() for PDFs smaller than 1 KiB
+
+    The fix for bug 104502 made it so PDFDoc::checkHeader() would print a
+    warning and return immediatelly if it encounters an EOF while reading
+    the first 1024 bytes.
+
+    Some PDF files can be smaller than 1024 bytes, for example those used
+    by pdf2djvu's test suite. The latter would fail due to the unexpected
+    warnings.
+
+    Change the behavior of PDFDoc::checkHeader() when encountering an EOF
+    so it processes the data it has read so far instead of aborting early.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=105674
+
+ poppler/PDFDoc.cc | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
+
+commit c19469f2a80ebc09bef3fbd603034e43c4a707cd
+Author: Mojca Miklavec <mojca@macports.org>
+Date:   Mon Apr 2 12:52:35 2018 +0200
+
+    Fix build on some platforms
+
+    We need to include time.h in gfile.h
+
+    Bug #105766
+
+ goo/gfile.cc | 6 ++----
+ goo/gfile.h  | 2 ++
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit c7a317635cfc6934e975e846335e37a68d6b3876
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Mar 26 16:10:05 2018 +0200
+
+    glib: less deprecated calls
+
+    And increate gdk pixbuf requirement to the version i think we
+    actually require
+
+ cmake/modules/FindGTK.cmake | 2 +-
+ glib/demo/annots.c          | 2 +-
+ glib/demo/selections.c      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 7a708ffd374cd18e9e4bfe8a8e95c02184a074ba
+Author: Oliver Sander <oliver.sander@tu-dresden.de>
+Date:   Wed Mar 28 00:00:35 2018 +0200
+
+    Implement ArthurOutputDev::axialShadedFill
+
+ qt5/src/ArthurOutputDev.cc | 128
+ ++++++++++++++++++++++++++++++++++++++++++++-
+ qt5/src/ArthurOutputDev.h  |   9 +++-
+ 2 files changed, 135 insertions(+), 2 deletions(-)
+
+commit 5e7aef9df36a07c82b0ab40f80fd8464840f6424
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 23 15:34:56 2018 +0100
+
+    PSOutputDev: move i declaration to the for
+
+ poppler/PSOutputDev.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 79789ed3d2798fb34f1c82d950e03a4d41e197de
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 23 19:58:16 2018 +0100
+
+    Annot: setColor -> setDrawColor
+
+    to differentiate from the setColor that actually changes the annot
+    color
+
+ poppler/Annot.cc | 60
+ ++++++++++++++++++++++++++++----------------------------
+ poppler/Annot.h  |  2 +-
+ 2 files changed, 31 insertions(+), 31 deletions(-)
+
+commit e34e187934e3654989b6af5177f345032623dd9b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 23 19:57:39 2018 +0100
+
+    SplashOutputDev: make getMatteColor static
+
+ poppler/SplashOutputDev.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c14dfa44a70ce32bbe1268ddff6106cab3f33bc2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 23 19:56:12 2018 +0100
+
+    HtmlOutputDev: don't pass catalog around to not use it
+
+ utils/HtmlOutputDev.cc | 13 ++++++-------
+ utils/HtmlOutputDev.h  |  4 ++--
+ 2 files changed, 8 insertions(+), 9 deletions(-)
+
+commit 92c51751a87b31c4bafa7b0146f745b3008ec9fc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 23 19:55:42 2018 +0100
+
+    JPEG2000Stream.cc: no need to store indexed
+
+    we only use it in one function
+
+ poppler/JPEG2000Stream.cc | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+commit 46543272dbe7655821e1c794ca3cc22e8cb4cef9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Mar 20 23:44:23 2018 +0100
+
+    gfile: Fix windows build
+
+ goo/gfile.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 327c342a932d8df731ec02a6b22792004206c2db
+Author: Andre Heinecke <aheinecke@intevation.de>
+Date:   Tue Mar 20 23:07:15 2018 +0100
+
+    Add read only setter for form fields
+
+    Read only is modifiable from AcroForm scripts.
+
+ poppler/Form.cc         | 32 ++++++++++++++++++++++++++++++++
+ poppler/Form.h          |  4 +++-
+ qt5/src/poppler-form.cc |  6 ++++++
+ qt5/src/poppler-form.h  |  7 +++++++
+ 4 files changed, 48 insertions(+), 1 deletion(-)
+
+commit 4798ef5298bcfcfadf8e1d66f9200e3c9eee2248
+Author: Carlos Garcia Campos <cgarcia@igalia.com>
+Date:   Mon Mar 19 11:16:03 2018 +0100
+
+    build: bring back the option to disable GObject introspection
+
+    It was available with autotools, but we lost it when switching
+    to cmake.
+
+ CMakeLists.txt | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
 commit f26285f361478219ea9d3c6de1529ecd5ff96ac9
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Sun Mar 18 19:23:49 2018 +0100

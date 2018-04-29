@@ -7,8 +7,9 @@
 //
 // Copyright (C) 2008-2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
-// Copyright (C) 2012, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2012, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012 Hib Eris <hib@hiberis.nl>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -27,7 +28,7 @@
 
 #include "FileSpec.h"
 
-EmbFile::EmbFile(Object *efStream)
+EmbFile::EmbFile(const Object *efStream)
 {
   m_size = -1;
   m_createDate = nullptr;
@@ -99,7 +100,7 @@ GBool EmbFile::save2(FILE *f) {
   return gTrue;
 }
 
-FileSpec::FileSpec(Object *fileSpecA)
+FileSpec::FileSpec(const Object *fileSpecA)
 {
   ok = gTrue;
   fileName = nullptr;
@@ -171,7 +172,7 @@ GooString *FileSpec::getFileNameForPlatform()
   return platformFileName;
 }
 
-Object getFileSpecName (Object *fileSpec)
+Object getFileSpecName (const Object *fileSpec)
 {
   if (fileSpec->isString()) {
     return fileSpec->copy();
@@ -202,7 +203,7 @@ Object getFileSpecName (Object *fileSpec)
   return Object();
 }
 
-Object getFileSpecNameForPlatform (Object *fileSpec)
+Object getFileSpecNameForPlatform (const Object *fileSpec)
 {
   if (fileSpec->isString()) {
     return fileSpec->copy();
@@ -234,7 +235,7 @@ Object getFileSpecNameForPlatform (Object *fileSpec)
   // system-dependent path manipulation
 #ifdef _WIN32
   int i, j;
-  GooString *name = fileName.getString();
+  GooString *name = fileName.getString()->copy();
   // "//...."             --> "\...."
   // "/x/...."            --> "x:\...."
   // "/server/share/...." --> "\\server\share\...."
@@ -274,6 +275,7 @@ Object getFileSpecNameForPlatform (Object *fileSpec)
       name->del(i);
     }
   }
+  fileName = Object(name);
 #endif /* _WIN32 */
 
   return fileName;

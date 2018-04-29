@@ -238,7 +238,7 @@ private:
   virtual GBool hasGetChars() { return false; }
   virtual int getChars(int nChars, Guchar *buffer);
 
-  Stream *makeFilter(char *name, Stream *str, Object *params, int recursion = 0, Dict *dict = nullptr);
+  Stream *makeFilter(const char *name, Stream *str, Object *params, int recursion = 0, Dict *dict = nullptr);
 
   int ref;			// reference count
 #ifdef MULTITHREADED
@@ -567,44 +567,124 @@ private:
 // MemStream
 //------------------------------------------------------------------------
 
-class MemStream: public BaseStream {
+template<typename T>
+class BaseMemStream: public BaseStream {
 public:
 
-  MemStream(char *bufA, Goffset startA, Goffset lengthA, Object &&dictA);
-  ~MemStream();
-  BaseStream *copy() override;
-  Stream *makeSubStream(Goffset start, GBool limited,
-				Goffset lengthA, Object &&dictA) override;
+  BaseMemStream(T *bufA, Goffset startA, Goffset lengthA, Object &&dictA) : BaseStream(std::move(dictA), lengthA) {
+    buf = bufA;
+    start = startA;
+    length = lengthA;
+    bufEnd = buf + start + length;
+    bufPtr = buf + start;
+  }
+
+  BaseStream *copy() override {
+    return new BaseMemStream(buf, start, length, dict.copy());
+  }
+
+  Stream *makeSubStream(Goffset startA, GBool limited, Goffset lengthA, Object &&dictA) override {
+    Goffset newLength;
+
+    if (!limited || startA + lengthA > start + length) {
+      newLength = start + length - startA;
+    } else {
+      newLength = lengthA;
+    }
+    return new BaseMemStream(buf, startA, newLength, std::move(dictA));
+  }
+
   StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  void close() override;
+
+  void reset() override {
+    bufPtr = buf + start;
+  }
+
+  void close() override { }
+
   int getChar() override
     { return (bufPtr < bufEnd) ? (*bufPtr++ & 0xff) : EOF; }
+
   int lookChar() override
     { return (bufPtr < bufEnd) ? (*bufPtr & 0xff) : EOF; }
-  Goffset getPos() override { return (int)(bufPtr - buf); }
-  void setPos(Goffset pos, int dir = 0) override;
-  Goffset getStart() override { return start; }
-  void moveStart(Goffset delta) override;
 
-  //if needFree = true, the stream will delete buf when it is destroyed
-  //otherwise it will not touch it. Default value is false
-  virtual void setNeedFree (GBool val) { needFree = val; }
+  Goffset getPos() override { return (int)(bufPtr - buf); }
+
+  void setPos(Goffset pos, int dir = 0) override {
+    Guint i;
+
+    if (dir >= 0) {
+      i = pos;
+    } else {
+      i = start + length - pos;
+    }
+    if (i < start) {
+      i = start;
+    } else if (i > start + length) {
+      i = start + length;
+    }
+    bufPtr = buf + i;
+  }
+
+  Goffset getStart() override { return start; }
+
+  void moveStart(Goffset delta) override {
+    start += delta;
+    length -= delta;
+    bufPtr = buf + start;
+  }
 
   int getUnfilteredChar () override { return getChar(); }
+
   void unfilteredReset () override { reset (); } 
+
+protected:
+  T *buf;
 
 private:
 
   GBool hasGetChars() override { return true; }
-  int getChars(int nChars, Guchar *buffer) override;
 
-  char *buf;
+  int getChars(int nChars, Guchar *buffer) override {
+    int n;
+
+    if (nChars <= 0) {
+      return 0;
+    }
+    if (bufEnd - bufPtr < nChars) {
+      n = (int)(bufEnd - bufPtr);
+    } else {
+      n = nChars;
+    }
+    memcpy(buffer, bufPtr, n);
+    bufPtr += n;
+    return n;
+  }
+
   Goffset start;
-  char *bufEnd;
-  char *bufPtr;
-  GBool needFree;
+  T *bufEnd;
+  T *bufPtr;
 };
+
+class MemStream : public BaseMemStream<const char>
+{
+public:
+  MemStream(const char *bufA, Goffset startA, Goffset lengthA, Object &&dictA)
+   : BaseMemStream(bufA, startA, lengthA, std::move(dictA))
+   { }
+};
+
+class AutoFreeMemStream : public BaseMemStream<char>
+{
+public:
+  AutoFreeMemStream(char *bufA, Goffset startA, Goffset lengthA, Object &&dictA)
+   : BaseMemStream(bufA, startA, lengthA, std::move(dictA))
+   { }
+
+  ~AutoFreeMemStream()
+    { gfree(buf); }
+};
+
 
 //------------------------------------------------------------------------
 // EmbedStream

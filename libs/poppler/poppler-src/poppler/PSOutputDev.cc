@@ -31,6 +31,7 @@
 // Copyright (C) 2014 Till Kamppeter <till.kamppeter@gmail.com>
 // Copyright (C) 2015 Marek Kasik <mkasik@redhat.com>
 // Copyright (C) 2016 Caolán McNamara <caolanm@redhat.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1535,7 +1536,6 @@ void PSOutputDev::writeHeader(const std::vector<int> &pages,
 			      int pageRotate, char *psTitle) {
   PSOutPaperSize *size;
   double x1, y1, x2, y2;
-  int i;
 
   switch (mode) {
   case psModePS:
@@ -1581,7 +1581,7 @@ void PSOutputDev::writeHeader(const std::vector<int> &pages,
 
   switch (mode) {
   case psModePS:
-    for (i = 0; i < paperSizes->getLength(); ++i) {
+    for (int i = 0; i < paperSizes->getLength(); ++i) {
       size = (PSOutPaperSize *)paperSizes->get(i);
       writePSFmt("%%{0:s} {1:t} {2:d} {3:d} 0 () ()\n",
                  i==0 ? "DocumentMedia:" : "+", size->name, size->w, size->h);
@@ -2866,8 +2866,9 @@ void PSOutputDev::setupType3Font(GfxFont *font, GooString *psName,
 
 // Make a unique PS font name, based on the names given in the PDF
 // font object, and an object ID (font file object for 
-GooString *PSOutputDev::makePSFontName(GfxFont *font, Ref *id) {
-  GooString *psName, *s;
+GooString *PSOutputDev::makePSFontName(GfxFont *font, const Ref *id) {
+  GooString *psName;
+  const GooString *s;
 
   if ((s = font->getEmbeddedFontName())) {
     psName = filterPSName(s);
@@ -5007,13 +5008,13 @@ void PSOutputDev::doPath(GfxPath *path) {
   }
 }
 
-void PSOutputDev::drawString(GfxState *state, GooString *s) {
+void PSOutputDev::drawString(GfxState *state, const GooString *s) {
   GfxFont *font;
   int wMode;
   int *codeToGID;
   GooString *s2;
   double dx, dy, originX, originY;
-  char *p;
+  const char *p;
   UnicodeMap *uMap;
   CharCode code;
   Unicode *u;
@@ -7433,7 +7434,7 @@ void PSOutputDev::writePSFmt(const char *fmt, ...) {
   va_end(args);
 }
 
-void PSOutputDev::writePSString(GooString *s) {
+void PSOutputDev::writePSString(const GooString *s) {
   Guchar *p;
   int n, line;
   char buf[8];
@@ -7479,7 +7480,7 @@ void PSOutputDev::writePSName(const char *s) {
   }
 }
 
-GooString *PSOutputDev::filterPSName(GooString *name) {
+GooString *PSOutputDev::filterPSName(const GooString *name) {
   GooString *name2;
   char buf[8];
   int i;
@@ -7578,7 +7579,7 @@ GooString* PSOutputDev::filterPSLabel(GooString *label, GBool *needParens) {
 }
 
 // Write a DSC-compliant <textline>.
-void PSOutputDev::writePSTextLine(GooString *s) {
+void PSOutputDev::writePSTextLine(const GooString *s) {
   int i, j, step;
   int c;
 

@@ -19,6 +19,9 @@
 // Copyright 2015 André Esser <bepandre@hotmail.com>
 // Copyright 2017 Hans-Ulrich Jüttner <huj@froreich-bioscientia.de>
 // Copyright 2017 Bernd Kuhls <berndkuhls@hotmail.com>
+// Copyright 2018 Andre Heinecke <aheinecke@intevation.de>
+// Copyright 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright 2018 Chinmoy Ranjan Pradhan <chinmoyrp65@protonmail.com>
 //
 //========================================================================
 
@@ -55,12 +58,12 @@
 #include "Lexer.h"
 
 //return a newly allocated char* containing an UTF16BE string of size length
-char* pdfDocEncodingToUTF16 (GooString* orig, int* length)
+char* pdfDocEncodingToUTF16 (const GooString* orig, int* length)
 {
   //double size, a unicode char takes 2 char, add 2 for the unicode marker
   *length = 2+2*orig->getLength();
   char *result = new char[(*length)];
-  char *cstring = orig->getCString();
+  const char *cstring = orig->getCString();
   //unicode marker
   result[0] = (char)0xfe;
   result[1] = (char)0xff;
@@ -135,6 +138,11 @@ bool FormWidget::isReadOnly() const
   return field->isReadOnly();
 }
 
+void FormWidget::setReadOnly(bool value)
+{
+  return field->setReadOnly(value);
+}
+
 int FormWidget::encodeID (unsigned pageNum, unsigned fieldNum)
 {
   return (pageNum << 4*sizeof(unsigned)) + fieldNum;
@@ -146,7 +154,7 @@ void FormWidget::decodeID (unsigned id, unsigned* pageNum, unsigned* fieldNum)
   *fieldNum = (id << 4*sizeof(unsigned)) >> 4*sizeof(unsigned);
 }
 
-GooString *FormWidget::getPartialName() const {
+const GooString *FormWidget::getPartialName() const {
   return field->getPartialName();
 }
 
@@ -155,11 +163,11 @@ void FormWidget::setPartialName(const GooString &name)
   field->setPartialName(name);
 }
 
-GooString *FormWidget::getAlternateUiName() const {
+const GooString *FormWidget::getAlternateUiName() const {
   return field->getAlternateUiName();
 }
 
-GooString *FormWidget::getMappingName() const {
+const GooString *FormWidget::getMappingName() const {
   return field->getMappingName();
 }
 
@@ -260,7 +268,7 @@ FormWidgetText::FormWidgetText (PDFDoc *docA, Object *aobj, unsigned num, Ref re
   type = formText;
 }
 
-GooString* FormWidgetText::getContent ()
+const GooString* FormWidgetText::getContent () const
 {
   return parent()->getContent();
 }
@@ -346,7 +354,7 @@ FormWidgetChoice::~FormWidgetChoice()
 {
 }
 
-bool FormWidgetChoice::_checkRange (int i)
+bool FormWidgetChoice::_checkRange (int i) const
 {
   if (i < 0 || i >= parent()->getNumChoices()) {
     error(errInternal, -1, "FormWidgetChoice::_checkRange i out of range : {0:d}", i);
@@ -372,7 +380,7 @@ void FormWidgetChoice::deselectAll ()
   parent()->deselectAll();
 }
 
-GooString* FormWidgetChoice::getEditChoice ()
+const GooString* FormWidgetChoice::getEditChoice () const
 {
   if (!hasEdit()) {
     error(errInternal, -1, "FormFieldChoice::getEditChoice called on a non-editable choice\n");
@@ -387,7 +395,7 @@ void FormWidgetChoice::updateWidgetAppearance()
     widget->updateAppearanceStream();
 }
 
-bool FormWidgetChoice::isSelected (int i)
+bool FormWidgetChoice::isSelected (int i) const
 {
   if (!_checkRange(i)) return false;
   return parent()->isSelected(i);
@@ -403,12 +411,12 @@ void FormWidgetChoice::setEditChoice (GooString* new_content)
   parent()->setEditChoice(new_content);
 }
 
-int FormWidgetChoice::getNumChoices() 
+int FormWidgetChoice::getNumChoices() const
 { 
   return parent()->getNumChoices();
 }
 
-GooString* FormWidgetChoice::getChoice(int i) 
+const GooString* FormWidgetChoice::getChoice(int i) const
 { 
   return parent()->getChoice(i);
 }
@@ -452,6 +460,11 @@ FormWidgetSignature::FormWidgetSignature(PDFDoc *docA, Object *aobj, unsigned nu
 	FormWidget(docA, aobj, num, ref, p)
 {
   type = formSignature;
+}
+
+const GooString *FormWidgetSignature::getSignature() const
+{
+    return static_cast<FormFieldSignature*>(field)->getSignature();
 }
 
 SignatureInfo *FormWidgetSignature::validateSignature(bool doVerifyCert, bool forceRevalidation, time_t validationTime)
@@ -847,7 +860,7 @@ FormWidget* FormField::findWidgetByRef (Ref aref)
 GooString* FormField::getFullyQualifiedName() {
   Object obj1;
   Object parent;
-  GooString *parent_name;
+  const GooString *parent_name;
   GooString *full_name;
   GBool unicode_encoded = gFalse;
 
@@ -937,6 +950,32 @@ void FormField::updateChildrenAppearance()
     for (int i = 0; i < numChildren; i++)
       children[i]->updateChildrenAppearance();
   }
+}
+
+void FormField::setReadOnly (bool value)
+{
+  if (value == readOnly) {
+    return;
+  }
+
+  readOnly = value;
+
+  Dict* dict = obj.getDict();
+
+  const Object obj1 = Form::fieldLookup(dict, "Ff");
+  int flags = 0;
+  if (obj1.isInt()) {
+    flags = obj1.getInt();
+  }
+  if (value) {
+    flags |= 1;
+  } else {
+    flags &= ~1;
+  }
+
+  dict->set("Ff", Object(flags));
+  xref->setModifiedObject(&obj, ref);
+  updateChildrenAppearance();
 }
 
 //------------------------------------------------------------------------
@@ -1050,7 +1089,7 @@ GBool FormFieldButton::setState(char *state)
   if (!isOn && noAllOff)
     return gFalse; // Don't allow to set all radio to off
 
-  char *current = getAppearanceState();
+  const char *current = getAppearanceState();
   GBool currentFound = gFalse, newFound = gFalse;
 
   for (int i = 0; i < numChildren; i++) {
@@ -1089,7 +1128,7 @@ GBool FormFieldButton::setState(char *state)
   return gTrue;
 }
 
-GBool FormFieldButton::getState(char *state) {
+GBool FormFieldButton::getState(const char *state) const {
   if (appearanceState.isName(state))
     return gTrue;
 
@@ -1241,7 +1280,7 @@ void FormFieldText::setTextFontSize(int fontSize)
   }
 }
 
-int FormFieldText::tokenizeDA(GooString* da, GooList* daToks, const char* searchTok)
+int FormFieldText::tokenizeDA(const GooString* da, GooList* daToks, const char* searchTok)
 {
   int idx = -1;
   if(da && daToks) {
@@ -1271,7 +1310,7 @@ int FormFieldText::parseDA(GooList* daToks)
   if (obj.isDict()) {
     Object objDA(obj.dictLookup("DA"));
     if (objDA.isString()) {
-      GooString* da = objDA.getString();
+      const GooString* da = objDA.getString();
       idx = tokenizeDA(da, daToks, "Tf") - 1;
     }
   }
@@ -1546,7 +1585,7 @@ void FormFieldChoice::setEditChoice (GooString* new_content)
   updateSelection();
 }
 
-GooString* FormFieldChoice::getEditChoice ()
+const GooString* FormFieldChoice::getEditChoice () const
 {
   return editedChoice;
 }
@@ -1561,7 +1600,7 @@ int FormFieldChoice::getNumSelected ()
   return cnt;
 }
 
-GooString *FormFieldChoice::getSelectedChoice() {
+const GooString *FormFieldChoice::getSelectedChoice() const {
   if (edit && editedChoice)
     return editedChoice;
 
@@ -1614,7 +1653,7 @@ void FormFieldSignature::parseInfo()
   // retrieve SigningTime
   Object time_of_signing = sig_dict.dictLookup("M");
   if (time_of_signing.isString()) {
-    GooString *time_str = time_of_signing.getString();
+    const GooString *time_str = time_of_signing.getString();
     signature_info->setSigningTime(dateStringToTime(time_str)); // Put this information directly in SignatureInfo object
   }
 

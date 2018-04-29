@@ -38,6 +38,8 @@
 // Copyright (C) 2017 Jean Ghali <jghali@libertysurf.fr>
 // Copyright (C) 2017 Fredrik Fornwall <fredrik@fornwall.net>
 // Copyright (C) 2018 Ben Timby <btimby@gmail.com>
+// Copyright (C) 2018 Evangelos Foutras <evangelos@foutrelis.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -409,24 +411,30 @@ void PDFDoc::checkHeader() {
   char *p;
   char *tokptr;
   int i;
-  int c;
+  int bytesRead;
 
   pdfMajorVersion = 0;
   pdfMinorVersion = 0;
+
+  // read up to headerSearchSize bytes from the beginning of the document
   for (i = 0; i < headerSearchSize; ++i) {
-    if ((c = str->getChar()) == EOF) {
-      error(errSyntaxWarning, -1, "EOF while reading header (continuing anyway)");
-      return;
-    }
+    const int c = str->getChar();
+    if (c == EOF)
+      break;
     hdrBuf[i] = c;
   }
-  hdrBuf[headerSearchSize] = '\0';
-  for (i = 0; i < headerSearchSize - 5; ++i) {
+  bytesRead = i;
+  hdrBuf[bytesRead] = '\0';
+
+  // find the start of the PDF header if it exists and parse the version
+  bool headerFound = false;
+  for (i = 0; i < bytesRead - 5; ++i) {
     if (!strncmp(&hdrBuf[i], "%PDF-", 5)) {
+      headerFound = true;
       break;
     }
   }
-  if (i >= headerSearchSize - 5) {
+  if (!headerFound) {
     error(errSyntaxWarning, -1, "May not be a PDF file (continuing anyway)");
     return;
   }
@@ -676,7 +684,7 @@ GooString *PDFDoc::getDocInfoStringEntry(const char *key) {
 }
 
 static GBool
-get_id (GooString *encodedidstring, GooString *id) {
+get_id (const GooString *encodedidstring, GooString *id) {
   const char *encodedid = encodedidstring->getCString();
   char pdfid[pdfIdLength + 1];
   int n;
@@ -1178,7 +1186,7 @@ void PDFDoc::writeRawStream (Stream* str, OutStream* outStr)
   outStr->printf("\r\nendstream\r\n");
 }
 
-void PDFDoc::writeString (GooString* s, OutStream* outStr, Guchar *fileKey,
+void PDFDoc::writeString (const GooString* s, OutStream* outStr, Guchar *fileKey,
                           CryptAlgorithm encAlgorithm, int keyLength, int objNum, int objGen)
 {
   // Encrypt string if encryption is enabled

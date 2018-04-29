@@ -19,6 +19,7 @@
 // Copyright (C) 2012 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -71,7 +72,8 @@ Object Parser::getObj(GBool simpleOnly,
   Object obj;
   Stream *str;
   DecryptStream *decrypt;
-  GooString *s, *s2;
+  const GooString *s;
+  GooString *s2;
   int c;
 
   // refill buffer after inline image data

@@ -23,6 +23,7 @@
 // Copyright (C) 2011, 2012, 2014 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2015, 2018 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2015 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -189,30 +190,30 @@ public:
   void decRefCnt();
 
   // Get font tag.
-  GooString *getTag() { return tag; }
+  const GooString *getTag() const { return tag; }
 
   // Get font dictionary ID.
-  Ref *getID() { return &id; }
+  const Ref *getID() const { return &id; }
 
   // Does this font match the tag?
-  GBool matches(char *tagA) { return !tag->cmp(tagA); }
+  GBool matches(const char *tagA) const { return !tag->cmp(tagA); }
 
   // Get font family name.
   GooString *getFamily() { return family; }
   
   // Get font stretch.
-  Stretch getStretch() { return stretch; }
+  Stretch getStretch() const { return stretch; }
   
   // Get font weight.
-  Weight getWeight() { return weight; }
+  Weight getWeight() const { return weight; }
 
   // Get the original font name (ignornig any munging that might have
   // been done to map to a canonical Base-14 font name).
-  GooString *getName() { return name; }
+  const GooString *getName() const { return name; }
 
   // Get font type.
-  GfxFontType getType() { return type; }
-  virtual GBool isCIDFont() { return gFalse; }
+  GfxFontType getType() const { return type; }
+  virtual GBool isCIDFont() const { return gFalse; }
 
   // Get embedded font ID, i.e., a ref for the font file stream.
   // Returns false if there is no embedded font.
@@ -242,7 +243,7 @@ public:
   GBool isBold() { return flags & fontBold; }
 
   // Return the Unicode map.
-  virtual CharCodeToUnicode *getToUnicode() = 0;
+  virtual const CharCodeToUnicode *getToUnicode() const = 0;
 
   // Return the font matrix.
   double *getFontMatrix() { return fontMat; }
@@ -273,9 +274,9 @@ public:
   // is the number of entries available in <u>, and <uLen> is set to
   // the number actually used.  Returns the number of bytes used by
   // the char code.
-  virtual int getNextChar(char *s, int len, CharCode *code,
+  virtual int getNextChar(const char *s, int len, CharCode *code,
 			  Unicode **u, int *uLen,
-			  double *dx, double *dy, double *ox, double *oy) = 0;
+			  double *dx, double *dy, double *ox, double *oy) const = 0;
 
   // Does this font have a toUnicode map?
   GBool hasToUnicodeCMap() { return hasToUnicode; }
@@ -329,15 +330,15 @@ public:
   Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GooString *nameA,
 	      GfxFontType typeA, Ref embFontIDA, Dict *fontDict);
 
-  int getNextChar(char *s, int len, CharCode *code,
+  int getNextChar(const char *s, int len, CharCode *code,
 			  Unicode **u, int *uLen,
-			  double *dx, double *dy, double *ox, double *oy) override;
+			  double *dx, double *dy, double *ox, double *oy) const override;
 
   // Return the encoding.
   char **getEncoding() { return enc; }
 
   // Return the Unicode map.
-  CharCodeToUnicode *getToUnicode() override;
+  const CharCodeToUnicode *getToUnicode() const override;
 
   // Return the character name associated with <code>.
   char *getCharName(int code) { return enc[code]; }
@@ -392,17 +393,17 @@ public:
   GfxCIDFont(XRef *xref, const char *tagA, Ref idA, GooString *nameA,
 	     GfxFontType typeA, Ref embFontIDA, Dict *fontDict);
 
-  GBool isCIDFont() override { return gTrue; }
+  GBool isCIDFont() const override { return gTrue; }
 
-  int getNextChar(char *s, int len, CharCode *code,
+  int getNextChar(const char *s, int len, CharCode *code,
 			  Unicode **u, int *uLen,
-			  double *dx, double *dy, double *ox, double *oy) override;
+			  double *dx, double *dy, double *ox, double *oy) const override;
 
   // Return the writing mode (0=horizontal, 1=vertical).
   int getWMode() override;
 
   // Return the Unicode map.
-  CharCodeToUnicode *getToUnicode() override;
+  const CharCodeToUnicode *getToUnicode() const override;
 
   // Get the collection name (<registry>-<ordering>).
   GooString *getCollection();
@@ -414,14 +415,14 @@ public:
 
   int *getCodeToGIDMap(FoFiTrueType *ff, int *length);
 
-  double getWidth(char* s, int len);
+  double getWidth(char* s, int len) const;
 
 private:
   ~GfxCIDFont();
 
   int mapCodeToGID(FoFiTrueType *ff, int cmapi,
     Unicode unicode, GBool wmode);
-  double getWidth(CID cid);	// Get width of a character.
+  double getWidth(CID cid) const;	// Get width of a character.
 
   GooString *collection;		// collection name
   CMap *cMap;			// char code --> CID
@@ -451,7 +452,7 @@ public:
   GfxFontDict& operator=(const GfxFontDict &) = delete;
 
   // Get the specified font.
-  GfxFont *lookup(char *tag);
+  GfxFont *lookup(const char *tag);
 
   // Iterative access.
   int getNumFonts() { return numFonts; }
