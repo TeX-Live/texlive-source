@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Jeff Muizelaar <jeff@infidigm.net>
-// Copyright (C) 2006-2010, 2012-2014, 2016, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2010, 2012-2014, 2016, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2008 Julien Rebetez <julien@fhtagn.net>
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
@@ -208,7 +208,7 @@ Stream *Stream::addFilters(Dict *dict, int recursion) {
   return str;
 }
 
-Stream *Stream::makeFilter(char *name, Stream *str, Object *params, int recursion, Dict *dict) {
+Stream *Stream::makeFilter(const char *name, Stream *str, Object *params, int recursion, Dict *dict) {
   int pred;			// parameters
   int colors;
   int bits;
@@ -948,89 +948,6 @@ void CachedFileStream::moveStart(Goffset delta)
   start += delta;
   bufPtr = bufEnd = buf;
   bufPos = start;
-}
-
-//------------------------------------------------------------------------
-// MemStream
-//------------------------------------------------------------------------
-
-MemStream::MemStream(char *bufA, Goffset startA, Goffset lengthA, Object &&dictA):
-    BaseStream(std::move(dictA), lengthA) {
-  buf = bufA;
-  start = startA;
-  length = lengthA;
-  bufEnd = buf + start + length;
-  bufPtr = buf + start;
-  needFree = gFalse;
-}
-
-MemStream::~MemStream() {
-  if (needFree) {
-    gfree(buf);
-  }
-}
-
-BaseStream *MemStream::copy() {
-  return new MemStream(buf, start, length, dict.copy());
-}
-
-Stream *MemStream::makeSubStream(Goffset startA, GBool limited,
-				 Goffset lengthA, Object &&dictA) {
-  MemStream *subStr;
-  Goffset newLength;
-
-  if (!limited || startA + lengthA > start + length) {
-    newLength = start + length - startA;
-  } else {
-    newLength = lengthA;
-  }
-  subStr = new MemStream(buf, startA, newLength, std::move(dictA));
-  return subStr;
-}
-
-void MemStream::reset() {
-  bufPtr = buf + start;
-}
-
-void MemStream::close() {
-}
-
-int MemStream::getChars(int nChars, Guchar *buffer) {
-  int n;
-
-  if (nChars <= 0) {
-    return 0;
-  }
-  if (bufEnd - bufPtr < nChars) {
-    n = (int)(bufEnd - bufPtr);
-  } else {
-    n = nChars;
-  }
-  memcpy(buffer, bufPtr, n);
-  bufPtr += n;
-  return n;
-}
-
-void MemStream::setPos(Goffset pos, int dir) {
-  Guint i;
-
-  if (dir >= 0) {
-    i = pos;
-  } else {
-    i = start + length - pos;
-  }
-  if (i < start) {
-    i = start;
-  } else if (i > start + length) {
-    i = start + length;
-  }
-  bufPtr = buf + i;
-}
-
-void MemStream::moveStart(Goffset delta) {
-  start += delta;
-  length -= delta;
-  bufPtr = buf + start;
 }
 
 //------------------------------------------------------------------------

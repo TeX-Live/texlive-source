@@ -240,7 +240,7 @@ public:
   void transform(double *in, double *out) override;
   GBool isOk() override { return ok; }
 
-  GooString *getCodeString() { return codeString; }
+  const GooString *getCodeString() const { return codeString; }
 
 private:
 

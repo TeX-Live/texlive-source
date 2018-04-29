@@ -22,6 +22,7 @@
 // Copyright (C) 2010 David Benjamin <davidben@mit.edu>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2013 Fabio D'Urso <fabiodurso@hotmail.it>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -115,19 +116,21 @@ public:
   GfxResources(const GfxResources &) = delete;
   GfxResources& operator=(const GfxResources &other) = delete;
 
-  GfxFont *lookupFont(char *name);
-  Object lookupXObject(char *name);
-  Object lookupXObjectNF(char *name);
-  Object lookupMarkedContentNF(char *name);
+  GfxFont *lookupFont(const char *name);
+  const GfxFont *lookupFont(const char *name) const;
+  Object lookupXObject(const char *name);
+  Object lookupXObjectNF(const char *name);
+  Object lookupMarkedContentNF(const char *name);
   Object lookupColorSpace(const char *name);
-  GfxPattern *lookupPattern(char *name, OutputDev *out, GfxState *state);
-  GfxShading *lookupShading(char *name, OutputDev *out, GfxState *state);
-  Object lookupGState(char *name);
-  Object lookupGStateNF(char *name);
+  GfxPattern *lookupPattern(const char *name, OutputDev *out, GfxState *state);
+  GfxShading *lookupShading(const char *name, OutputDev *out, GfxState *state);
+  Object lookupGState(const char *name);
+  Object lookupGStateNF(const char *name);
 
   GfxResources *getNext() { return next; }
 
 private:
+  GfxFont *doLookupFont(const char *name) const;
 
   GfxFontDict *fonts;
   Object xObjDict;
@@ -358,8 +361,8 @@ private:
   void opMoveShowText(Object args[], int numArgs);
   void opMoveSetShowText(Object args[], int numArgs);
   void opShowSpaceText(Object args[], int numArgs);
-  void doShowText(GooString *s);
-  void doIncCharCount(GooString *s);
+  void doShowText(const GooString *s);
+  void doIncCharCount(const GooString *s);
 
   // XObject operators
   void opXObject(Object args[], int numArgs);

@@ -1,39 +1,7 @@
-https://bugs.freedesktop.org/show_bug.cgi?id=105766
-
-diff -ur poppler-0.63.0/goo/gfile.cc poppler-src/goo/gfile.cc
---- poppler-0.63.0/goo/gfile.cc
-+++ poppler-src/goo/gfile.cc
-@@ -34,9 +34,7 @@
- 
- #include <config.h>
- 
--#ifdef _WIN32
--#  include <time.h>
--#else
-+#ifndef _WIN32
- #  if defined(MACOS)
- #    include <sys/stat.h>
- #  elif !defined(ACORN)
-@@ -44,7 +42,6 @@
- #    include <sys/stat.h>
- #    include <fcntl.h>
- #  endif
--#  include <time.h>
- #  include <limits.h>
- #  include <string.h>
- #  if !defined(VMS) && !defined(ACORN) && !defined(MACOS)
-diff -ur poppler-0.63.0/goo/gfile.h poppler-src/goo/gfile.h
---- poppler-0.63.0/goo/gfile.h
-+++ poppler-src/goo/gfile.h
-@@ -37,6 +37,7 @@
- #include <stdio.h>
- #include <stdlib.h>
- #include <stddef.h>
-+#include <time.h>
- extern "C" {
- #if defined(_WIN32)
- #  include <sys/stat.h>
-@@ -49,8 +50,6 @@
+diff -ur poppler-0.64.0/goo/gfile.h poppler-src/goo/gfile.h
+--- poppler-0.64.0/goo/gfile.h	Wed Apr 18 03:04:26 2018
++++ poppler-src/goo/gfile.h	Thu Apr 26 11:27:12 2018
+@@ -51,8 +51,6 @@
  #    include <windows.h>
  #  endif
  #elif defined(ACORN)
@@ -42,10 +10,10 @@ diff -ur poppler-0.63.0/goo/gfile.h poppler-src/goo/gfile.h
  #else
  #  include <unistd.h>
  #  include <sys/types.h>
-diff -ur poppler-0.63.0/poppler/Form.h poppler-src/poppler/Form.h
---- poppler-0.63.0/poppler/Form.h
-+++ poppler-src/poppler/Form.h
-@@ -33,6 +33,7 @@
+diff -ur poppler-0.64.0/poppler/Form.h poppler-src/poppler/Form.h
+--- poppler-0.64.0/poppler/Form.h	Wed Apr 18 03:04:26 2018
++++ poppler-src/poppler/Form.h	Wed Apr 25 18:40:18 2018
+@@ -36,6 +36,7 @@
  
  #include <set>
  #include <vector>

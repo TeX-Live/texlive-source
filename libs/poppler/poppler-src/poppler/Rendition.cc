@@ -7,7 +7,7 @@
 // Pino Toscano <pino@kde.org> (c) 2008
 // Carlos Garcia Campos <carlosgc@gnome.org> (c) 2010
 // Tobias Koenig <tobias.koenig@kdab.com> (c) 2012
-// Albert Astals Cid <aacid@kde.org> (C) 2017
+// Albert Astals Cid <aacid@kde.org> (C) 2017, 2018
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ void MediaParameters::parseMediaPlayParameters(Object* obj) {
   if (tmp.isDict()) {
     Object oname = tmp.dictLookup("S");
     if (oname.isName()) {
-      char* name = oname.getName();
+      const char* name = oname.getName();
       if (!strcmp(name, "F"))
 	duration = -1; // infinity
       else if (!strcmp(name, "T")) {
@@ -371,7 +371,7 @@ void MediaRendition::outputToFile(FILE* fp) {
   
 }
 
-MediaRendition* MediaRendition::copy()
+MediaRendition* MediaRendition::copy() const
 {
   return new MediaRendition(*this);
 }

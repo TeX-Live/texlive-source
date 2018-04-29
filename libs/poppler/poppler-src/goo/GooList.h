@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2012, 2018 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -48,16 +48,16 @@ public:
   //----- general
 
   // Get the number of elements.
-  int getLength() { return length; }
+  int getLength() const { return length; }
 
   // Returns a (shallow) copy of this list.
-  GooList *copy();
+  GooList *copy() const;
 
   //----- ordered list support
 
   // Return the <i>th element.
   // Assumes 0 <= i < length.
-  void *get(int i) { return data[i]; }
+  void *get(int i) const { return data[i]; }
 
   // Replace the <i>th element.
   // Assumes 0 <= i < length.

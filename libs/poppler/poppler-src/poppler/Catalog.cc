@@ -33,6 +33,7 @@
 // Copyright (C) 2014 Ed Porras <ed@moto-research.com>
 // Copyright (C) 2015 Even Rouault <even.rouault@spatialys.com>
 // Copyright (C) 2016 Masamichi Hosoda <trueroad@trueroad.jp>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -382,7 +383,7 @@ int Catalog::findPage(int num, int gen) {
   return 0;
 }
 
-LinkDest *Catalog::findDest(GooString *name) {
+LinkDest *Catalog::findDest(const GooString *name) {
   // try named destination dictionary then name tree
   if (getDests()->isDict()) {
     Object obj1 = getDests()->dictLookup(name->getCString());
@@ -684,7 +685,7 @@ int NameTree::Entry::cmp(const void *voidKey, const void *voidEntry)
   return key->cmp(&entry->name);
 }
 
-Object NameTree::lookup(GooString *name)
+Object NameTree::lookup(const GooString *name)
 {
   Entry **entry;
 

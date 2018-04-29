@@ -21,6 +21,7 @@
 // Copyright (C) 2010 Brian Ewins <brian.ewins@gmail.com>
 // Copyright (C) 2012, 2013, 2015, 2016 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -732,7 +733,7 @@ public:
   void addChar(GfxState *state, double x, double y,
 	       double dx, double dy,
 	       CharCode c, int nBytes, Unicode *u, int uLen);
-  void begin(GfxState *state, GooString *text);
+  void begin(GfxState *state, const GooString *text);
   void end(GfxState *state);
 
 private:
@@ -812,14 +813,14 @@ public:
   void updateFont(GfxState *state) override;
 
   //----- text drawing
-  void beginString(GfxState *state, GooString *s) override;
+  void beginString(GfxState *state, const GooString *s) override;
   void endString(GfxState *state) override;
   void drawChar(GfxState *state, double x, double y,
 		double dx, double dy,
 		double originX, double originY,
 		CharCode c, int nBytes, Unicode *u, int uLen) override;
   void incCharCount(int nChars) override;
-  void beginActualText(GfxState *state, GooString *text) override;
+  void beginActualText(GfxState *state, const GooString *text) override;
   void endActualText(GfxState *state) override;
 
   //----- path painting

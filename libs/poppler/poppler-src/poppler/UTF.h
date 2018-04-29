@@ -6,6 +6,7 @@
 //
 // Copyright (C) 2012, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2016 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 //========================================================================
 
@@ -34,7 +35,7 @@ int UTF16toUCS4(const Unicode *utf16, int utf16_len, Unicode **ucs4_out);
 //   ucs4       - if the number of UCS-4 characters is > 0, allocates and
 //                returns UCS-4 string. Free with gfree.
 //   returns number of UCS-4 characters
-int TextStringToUCS4(GooString *textStr, Unicode **ucs4);
+int TextStringToUCS4(const GooString *textStr, Unicode **ucs4);
 
 // check if UCS-4 character is valid
 bool UnicodeIsValid(Unicode ucs4);

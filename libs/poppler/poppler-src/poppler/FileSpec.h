@@ -24,20 +24,20 @@
 
 class EmbFile {
 public:
-  EmbFile(Object *efStream);
+  EmbFile(const Object *efStream);
   ~EmbFile();
 
   EmbFile(const EmbFile &) = delete;
   EmbFile& operator=(const EmbFile &) = delete;
 
-  int size() { return m_size; }
-  GooString *modDate() { return m_modDate; }
-  GooString *createDate() { return m_createDate; }
-  GooString *checksum() { return m_checksum; }
-  GooString *mimeType() { return m_mimetype; }
+  int size() const { return m_size; }
+  const GooString *modDate() const { return m_modDate; }
+  const GooString *createDate() const { return m_createDate; }
+  const GooString *checksum() const { return m_checksum; }
+  const GooString *mimeType() const { return m_mimetype; }
   Object *streamObject() { return &m_objStr; }
   Stream *stream() { return isOk() ? m_objStr.getStream() : NULL; }
-  GBool isOk() { return m_objStr.isStream(); }
+  GBool isOk() const { return m_objStr.isStream(); }
   GBool save(const char *path);
 
 private:
@@ -53,17 +53,17 @@ private:
 
 class FileSpec {
 public:
-  FileSpec(Object *fileSpec);
+  FileSpec(const Object *fileSpec);
   ~FileSpec();
 
   FileSpec(const FileSpec &) = delete;
   FileSpec& operator=(const FileSpec &) = delete;
 
-  GBool isOk() { return ok; }
+  GBool isOk() const { return ok; }
 
-  GooString *getFileName() const { return fileName; }
+  const GooString *getFileName() const { return fileName; }
   GooString *getFileNameForPlatform();
-  GooString *getDescription() const { return desc; }
+  const GooString *getDescription() const { return desc; }
   EmbFile *getEmbeddedFile();
 
 private:
@@ -78,7 +78,7 @@ private:
   GooString *desc;             // Desc
 };
 
-Object getFileSpecName (Object *fileSpec);
-Object getFileSpecNameForPlatform (Object *fileSpec);
+Object getFileSpecName (const Object *fileSpec);
+Object getFileSpecNameForPlatform (const Object *fileSpec);
 
 #endif /* FILE_SPEC_H */

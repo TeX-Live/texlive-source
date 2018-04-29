@@ -18,6 +18,8 @@
 // Copyright (C) 2010, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2012 Tobias Koening <tobias.koenig@kdab.com>
 // Copyright (C) 2018 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Intevation GmbH <intevation@intevation.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -32,6 +34,8 @@
 #endif
 
 #include "Object.h"
+#include <memory>
+#include <set>
 
 class GooString;
 class GooList;
@@ -57,30 +61,43 @@ enum LinkActionKind {
   actionSound,			// sound action
   actionJavaScript,		// JavaScript action
   actionOCGState,               // Set-OCG-State action
+  actionHide,			// Hide action
   actionUnknown			// anything else
 };
 
 class LinkAction {
 public:
 
-  LinkAction() = default;
+  LinkAction();
   LinkAction(const LinkAction &) = delete;
   LinkAction& operator=(const LinkAction &other) = delete;
 
   // Destructor.
-  virtual ~LinkAction() {}
+  virtual ~LinkAction();
 
   // Was the LinkAction created successfully?
-  virtual GBool isOk() = 0;
+  virtual GBool isOk() const = 0;
 
   // Check link action type.
-  virtual LinkActionKind getKind() = 0;
+  virtual LinkActionKind getKind() const = 0;
 
   // Parse a destination (old-style action) name, string, or array.
-  static LinkAction *parseDest(Object *obj);
+  static LinkAction *parseDest(const Object *obj);
 
   // Parse an action dictionary.
-  static LinkAction *parseAction(Object *obj, GooString *baseURI = NULL);
+  static LinkAction *parseAction(const Object *obj, const GooString *baseURI = nullptr);
+
+  // A List of the next actions to execute in order.
+  // The list contains pointer to LinkAction objects.
+  const GooList *nextActions() const;
+
+  // Sets the next action list. Takes ownership of the actions.
+  void setNextActions(GooList *actions);
+
+private:
+  static LinkAction *parseAction(const Object *obj, const GooString *baseURI, std::set<int> *seenNextActions);
+
+  GooList *nextActionList;
 };
 
 //------------------------------------------------------------------------
@@ -102,27 +119,27 @@ class LinkDest {
 public:
 
   // Build a LinkDest from the array.
-  LinkDest(Array *a);
+  LinkDest(const Array *a);
 
   // Copy a LinkDest.
-  LinkDest *copy() { return new LinkDest(this); }
+  LinkDest *copy() const { return new LinkDest(this); }
 
   // Was the LinkDest created successfully?
-  GBool isOk() { return ok; }
+  GBool isOk() const { return ok; }
 
   // Accessors.
-  LinkDestKind getKind() { return kind; }
-  GBool isPageRef() { return pageIsRef; }
-  int getPageNum() { return pageNum; }
-  Ref getPageRef() { return pageRef; }
-  double getLeft() { return left; }
-  double getBottom() { return bottom; }
-  double getRight() { return right; }
-  double getTop() { return top; }
-  double getZoom() { return zoom; }
-  GBool getChangeLeft() { return changeLeft; }
-  GBool getChangeTop() { return changeTop; }
-  GBool getChangeZoom() { return changeZoom; }
+  LinkDestKind getKind() const { return kind; }
+  GBool isPageRef() const { return pageIsRef; }
+  int getPageNum() const { return pageNum; }
+  Ref getPageRef() const { return pageRef; }
+  double getLeft() const { return left; }
+  double getBottom() const { return bottom; }
+  double getRight() const { return right; }
+  double getTop() const { return top; }
+  double getZoom() const { return zoom; }
+  GBool getChangeLeft() const { return changeLeft; }
+  GBool getChangeTop() const { return changeTop; }
+  GBool getChangeZoom() const { return changeZoom; }
 
 private:
 
@@ -141,7 +158,7 @@ private:
 				//   destFitV/BV use changeLeft
   GBool ok;			// set if created successfully
 
-  LinkDest(LinkDest *dest);
+  LinkDest(const LinkDest *dest);
 };
 
 //------------------------------------------------------------------------
@@ -152,18 +169,18 @@ class LinkGoTo: public LinkAction {
 public:
 
   // Build a LinkGoTo from a destination (dictionary, name, or string).
-  LinkGoTo(Object *destObj);
+  LinkGoTo(const Object *destObj);
 
   // Destructor.
   ~LinkGoTo();
 
   // Was the LinkGoTo created successfully?
-  GBool isOk() override { return dest || namedDest; }
+  GBool isOk() const override { return dest || namedDest; }
 
   // Accessors.
-  LinkActionKind getKind() override { return actionGoTo; }
-  LinkDest *getDest() { return dest; }
-  GooString *getNamedDest() { return namedDest; }
+  LinkActionKind getKind() const override { return actionGoTo; }
+  const LinkDest *getDest() const { return dest; }
+  const GooString *getNamedDest() const { return namedDest; }
 
 private:
 
@@ -188,13 +205,13 @@ public:
   ~LinkGoToR();
 
   // Was the LinkGoToR created successfully?
-  GBool isOk() override { return fileName && (dest || namedDest); }
+  GBool isOk() const override { return fileName && (dest || namedDest); }
 
   // Accessors.
-  LinkActionKind getKind() override { return actionGoToR; }
-  GooString *getFileName() { return fileName; }
-  LinkDest *getDest() { return dest; }
-  GooString *getNamedDest() { return namedDest; }
+  LinkActionKind getKind() const override { return actionGoToR; }
+  const GooString *getFileName() const { return fileName; }
+  const LinkDest *getDest() const { return dest; }
+  const GooString *getNamedDest() const { return namedDest; }
 
 private:
 
@@ -213,18 +230,18 @@ class LinkLaunch: public LinkAction {
 public:
 
   // Build a LinkLaunch from an action dictionary.
-  LinkLaunch(Object *actionObj);
+  LinkLaunch(const Object *actionObj);
 
   // Destructor.
   ~LinkLaunch();
 
   // Was the LinkLaunch created successfully?
-  GBool isOk() override { return fileName != NULL; }
+  GBool isOk() const override { return fileName != NULL; }
 
   // Accessors.
-  LinkActionKind getKind() override { return actionLaunch; }
-  GooString *getFileName() { return fileName; }
-  GooString *getParams() { return params; }
+  LinkActionKind getKind() const override { return actionLaunch; }
+  const GooString *getFileName() const { return fileName; }
+  const GooString *getParams() const { return params; }
 
 private:
 
@@ -240,17 +257,17 @@ class LinkURI: public LinkAction {
 public:
 
   // Build a LinkURI given the URI (string) and base URI.
-  LinkURI(Object *uriObj, GooString *baseURI);
+  LinkURI(const Object *uriObj, const GooString *baseURI);
 
   // Destructor.
   ~LinkURI();
 
   // Was the LinkURI created successfully?
-  GBool isOk() override { return uri != NULL; }
+  GBool isOk() const override { return uri != NULL; }
 
   // Accessors.
-  LinkActionKind getKind() override { return actionURI; }
-  GooString *getURI() { return uri; }
+  LinkActionKind getKind() const override { return actionURI; }
+  const GooString *getURI() const { return uri; }
 
 private:
 
@@ -265,14 +282,14 @@ class LinkNamed: public LinkAction {
 public:
 
   // Build a LinkNamed given the action name.
-  LinkNamed(Object *nameObj);
+  LinkNamed(const Object *nameObj);
 
   ~LinkNamed();
 
-  GBool isOk() override { return name != NULL; }
+  GBool isOk() const override { return name != NULL; }
 
-  LinkActionKind getKind() override { return actionNamed; }
-  GooString *getName() { return name; }
+  LinkActionKind getKind() const override { return actionNamed; }
+  const GooString *getName() const { return name; }
 
 private:
 
@@ -294,21 +311,21 @@ public:
     operationTypeStop
   };
 
-  LinkMovie(Object *obj);
+  LinkMovie(const Object *obj);
   ~LinkMovie();
 
-  GBool isOk() override { return annotRef.num >= 0 || annotTitle != NULL; }
-  LinkActionKind getKind() override { return actionMovie; }
+  GBool isOk() const override { return annotRef.num >= 0 || annotTitle != NULL; }
+  LinkActionKind getKind() const override { return actionMovie; }
 
   // a movie action stores either an indirect reference to a movie annotation
   // or the movie annotation title
 
-  GBool hasAnnotRef() { return annotRef.num >= 0; }
-  GBool hasAnnotTitle() { return annotTitle != NULL; }
-  Ref *getAnnotRef() { return &annotRef; }
-  GooString *getAnnotTitle() { return annotTitle; }
+  GBool hasAnnotRef() const { return annotRef.num >= 0; }
+  GBool hasAnnotTitle() const { return annotTitle != NULL; }
+  const Ref *getAnnotRef() const { return &annotRef; }
+  const GooString *getAnnotTitle() const { return annotTitle; }
 
-  OperationType getOperation() { return operation; }
+  OperationType getOperation() const { return operation; }
 
 private:
 
@@ -336,25 +353,25 @@ public:
     ResumeRendition
   };
 
-  LinkRendition(Object *Obj);
+  LinkRendition(const Object *Obj);
 
   ~LinkRendition();
 
-  GBool isOk() override { return true; }
+  GBool isOk() const override { return true; }
 
-  LinkActionKind getKind() override { return actionRendition; }
+  LinkActionKind getKind() const override { return actionRendition; }
 
-  GBool hasRenditionObject() { return renditionObj.isDict(); }
-  Object* getRenditionObject() { return &renditionObj; }
+  GBool hasRenditionObject() const { return renditionObj.isDict(); }
+  const Object* getRenditionObject() const { return &renditionObj; }
 
-  GBool hasScreenAnnot() { return screenRef.isRef(); }
-  Ref getScreenAnnot() { return screenRef.getRef(); }
+  GBool hasScreenAnnot() const { return screenRef.isRef(); }
+  Ref getScreenAnnot() const { return screenRef.getRef(); }
 
-  RenditionOperation getOperation() { return operation; }
+  RenditionOperation getOperation() const { return operation; }
 
-  MediaRendition* getMedia() { return media; }
+  const MediaRendition* getMedia() const { return media; }
 
-  GooString *getScript() { return js; }
+  const GooString *getScript() const { return js; }
 
 private:
 
@@ -374,19 +391,19 @@ private:
 class LinkSound: public LinkAction {
 public:
 
-  LinkSound(Object *soundObj);
+  LinkSound(const Object *soundObj);
 
   ~LinkSound();
 
-  GBool isOk() override { return sound != NULL; }
+  GBool isOk() const override { return sound != NULL; }
 
-  LinkActionKind getKind() override { return actionSound; }
+  LinkActionKind getKind() const override { return actionSound; }
 
-  double getVolume() { return volume; }
-  GBool getSynchronous() { return sync; }
-  GBool getRepeat() { return repeat; }
-  GBool getMix() { return mix; }
-  Sound *getSound() { return sound; }
+  double getVolume() const { return volume; }
+  GBool getSynchronous() const { return sync; }
+  GBool getRepeat() const { return repeat; }
+  GBool getMix() const { return mix; }
+  Sound *getSound() const { return sound; }
 
 private:
 
@@ -409,10 +426,10 @@ public:
 
   ~LinkJavaScript();
 
-  GBool isOk() override { return js != NULL; }
+  GBool isOk() const override { return js != NULL; }
 
-  LinkActionKind getKind() override { return actionJavaScript; }
-  GooString *getScript() { return js; }
+  LinkActionKind getKind() const override { return actionJavaScript; }
+  const GooString *getScript() const { return js; }
 
 private:
 
@@ -424,13 +441,13 @@ private:
 //------------------------------------------------------------------------
 class LinkOCGState: public LinkAction {
 public:
-  LinkOCGState(Object *obj);
+  LinkOCGState(const Object *obj);
 
   ~LinkOCGState();
 
-  GBool isOk() override { return stateList != NULL; }
+  GBool isOk() const override { return stateList != NULL; }
 
-  LinkActionKind getKind() override { return actionOCGState; }
+  LinkActionKind getKind() const override { return actionOCGState; }
 
   enum State { On, Off, Toggle};
   struct StateList {
@@ -442,12 +459,45 @@ public:
     GooList *list;
   };
 
-  GooList *getStateList() { return stateList; }
-  GBool getPreserveRB() { return preserveRB; }
+  const GooList *getStateList() const { return stateList; }
+  GBool getPreserveRB() const { return preserveRB; }
 
 private:
   GooList *stateList;
   GBool preserveRB;
+};
+
+//------------------------------------------------------------------------
+// LinkHide
+//------------------------------------------------------------------------
+
+class LinkHide: public LinkAction {
+public:
+  LinkHide(const Object *hideObj);
+
+  ~LinkHide();
+
+  GBool isOk() const override { return targetName != nullptr; }
+  LinkActionKind getKind() const override { return actionHide; }
+
+  // According to spec the target can be either:
+  // a) A text string containing the fully qualified name of the target
+  //    field.
+  // b) An indirect reference to an annotation dictionary.
+  // c) An array of "such dictionaries or text strings".
+  //
+  // While b / c appear to be very uncommon and can't easily be
+  // created with Adobe Acrobat DC. So only support hide
+  // actions with named targets (yet).
+  GBool hasTargetName() const { return targetName != nullptr; }
+  const GooString *getTargetName() const { return targetName; }
+
+  // Should this action show or hide.
+  GBool isShowAction() const { return show; }
+
+private:
+  GooString *targetName;
+  GBool show;
 };
 
 //------------------------------------------------------------------------
@@ -458,17 +508,17 @@ class LinkUnknown: public LinkAction {
 public:
 
   // Build a LinkUnknown with the specified action type.
-  LinkUnknown(char *actionA);
+  LinkUnknown(const char *actionA);
 
   // Destructor.
   ~LinkUnknown();
 
   // Was the LinkUnknown create successfully?
-  GBool isOk() override { return action != NULL; }
+  GBool isOk() const override { return action != NULL; }
 
   // Accessors.
-  LinkActionKind getKind() override { return actionUnknown; }
-  GooString *getAction() { return action; }
+  LinkActionKind getKind() const override { return actionUnknown; }
+  const GooString *getAction() const { return action; }
 
 private:
 

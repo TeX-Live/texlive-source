@@ -36,6 +36,7 @@
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013 Ed Catmur <ed@catmur.co.uk>
 // Copyright (C) 2016 Khaled Hosny <khaledhosny@eglug.org>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -5518,7 +5519,7 @@ void ActualText::addChar(GfxState *state, double x, double y,
   actualTextNBytes += nBytes;
 }
 
-void ActualText::begin(GfxState *state, GooString *text) {
+void ActualText::begin(GfxState *state, const GooString *text) {
   if (actualText)
     delete actualText;
   actualText = new GooString(text);
@@ -5641,7 +5642,7 @@ void TextOutputDev::updateFont(GfxState *state) {
   text->updateFont(state);
 }
 
-void TextOutputDev::beginString(GfxState *state, GooString *s) {
+void TextOutputDev::beginString(GfxState *state, const GooString *s) {
 }
 
 void TextOutputDev::endString(GfxState *state) {
@@ -5658,7 +5659,7 @@ void TextOutputDev::incCharCount(int nChars) {
   text->incCharCount(nChars);
 }
 
-void TextOutputDev::beginActualText(GfxState *state, GooString *text)
+void TextOutputDev::beginActualText(GfxState *state, const GooString *text)
 {
   actualText->begin(state, text);
 }

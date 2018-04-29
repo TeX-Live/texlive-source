@@ -33,7 +33,7 @@ struct MovieActivationParameters {
   ~MovieActivationParameters();
 
   // parse from a "Movie Activation" dictionary
-  void parseMovieActivation(Object* actObj);
+  void parseMovieActivation(const Object* actObj);
 
   enum MovieRepeatMode {
     repeatModeOnce,
@@ -70,30 +70,30 @@ struct MovieActivationParameters {
 
 class Movie {
  public:
-  Movie(Object *objMovie, Object *objAct);
-  Movie(Object *objMovie);
+  Movie(const Object *objMovie, const Object *objAct);
+  Movie(const Object *objMovie);
   Movie(const Movie &movie);
   ~Movie();
   Movie& operator=(const Movie &) = delete;
 
-  GBool isOk() { return ok; }
-  MovieActivationParameters* getActivationParameters() { return &MA; }
+  GBool isOk() const { return ok; }
+  const MovieActivationParameters* getActivationParameters() const { return &MA; }
 
-  GooString* getFileName() { return fileName; }
+  const GooString* getFileName() const { return fileName; }
 
-  Gushort getRotationAngle() { return rotationAngle; }
-  void getAspect (int *widthA, int *heightA) { *widthA = width; *heightA = height; }
+  Gushort getRotationAngle() const { return rotationAngle; }
+  void getAspect (int *widthA, int *heightA) const { *widthA = width; *heightA = height; }
 
-  Object getPoster() { return poster.copy(); }
-  GBool getShowPoster() { return showPoster; }
+  Object getPoster() const { return poster.copy(); }
+  GBool getShowPoster() const { return showPoster; }
 
-  GBool getUseFloatingWindow() { return MA.floatingWindow; }
+  GBool getUseFloatingWindow() const { return MA.floatingWindow; }
   void  getFloatingWindowSize(int *width, int *height);
 
-  Movie* copy();
+  Movie* copy() const ;
 
  private:
-  void parseMovie (Object *movieDict);
+  void parseMovie (const Object *movieDict);
 
   GBool ok;
 

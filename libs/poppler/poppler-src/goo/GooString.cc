@@ -26,6 +26,7 @@
 // Copyright (C) 2013 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2015 William Bader <williambader@hotmail.com>
 // Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -206,7 +207,7 @@ GooString::GooString(const char *sA, int lengthA) {
   Set(sA, lengthA);
 }
 
-GooString::GooString(GooString *str, int idx, int lengthA) {
+GooString::GooString(const GooString *str, int idx, int lengthA) {
   s = nullptr;
   length = 0;
   assert(idx + lengthA <= str->length);
@@ -268,7 +269,7 @@ GooString *GooString::append(char c) {
   return append((const char*)&c, 1);
 }
 
-GooString *GooString::append(GooString *str) {
+GooString *GooString::append(const GooString *str) {
   return append(str->getCString(), str->getLength());
 }
 
@@ -739,7 +740,7 @@ GooString *GooString::insert(int i, char c) {
   return insert(i, (const char*)&c, 1);
 }
 
-GooString *GooString::insert(int i, GooString *str) {
+GooString *GooString::insert(int i, const GooString *str) {
   return insert(i, str->getCString(), str->getLength());
 }
 
@@ -789,7 +790,7 @@ GooString *GooString::lowerCase() {
   return this;
 }
 
-int GooString::cmp(GooString *str) const {
+int GooString::cmp(const GooString *str) const {
   int n1, n2, i, x;
   char *p1, *p2;
 

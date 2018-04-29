@@ -109,7 +109,7 @@ public:
                         CharCode c, int nBytes,
                         Unicode *u, int uLen) override;
 
-  void beginMarkedContent(char *name, Dict *properties) override;
+  void beginMarkedContent(const char *name, Dict *properties) override;
   void endMarkedContent(GfxState *state) override;
 
   const TextSpanArray& getTextSpans() const;

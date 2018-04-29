@@ -1,6 +1,6 @@
 /* Sound.cc - an object that holds the sound structure
  * Copyright (C) 2006-2007, Pino Toscano <pino@kde.org>
- * Copyright (C) 2009, 2017, Albert Astals Cid <aacid@kde.org>
+ * Copyright (C) 2009, 2017, 2018, Albert Astals Cid <aacid@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ Sound *Sound::parseSound(Object *obj)
   }
 }
 
-Sound::Sound(Object *obj, bool readAttrs)
+Sound::Sound(const Object *obj, bool readAttrs)
 {
   streamObj = obj->copy();
 
@@ -116,7 +116,7 @@ Stream *Sound::getStream()
   return streamObj.getStream();
 }
 
-Sound *Sound::copy()
+Sound *Sound::copy() const
 {
   Sound *newsound = new Sound(&streamObj, false);
 

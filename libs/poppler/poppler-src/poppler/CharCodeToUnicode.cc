@@ -25,6 +25,7 @@
 // Copyright (C) 2014 Jiri Slaby <jirislaby@gmail.com>
 // Copyright (C) 2015 Marek Kasik <mkasik@redhat.com>
 // Copyright (C) 2017 Jean Ghali <jghali@libertysurf.fr>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -635,7 +636,7 @@ int CharCodeToUnicode::mapToUnicode(CharCode c, Unicode **u) {
   return 0;
 }
 
-int CharCodeToUnicode::mapToCharCode(Unicode* u, CharCode *c, int usize) {
+int CharCodeToUnicode::mapToCharCode(Unicode* u, CharCode *c, int usize) const {
   //look for charcode in map
   if (usize == 1 || (usize > 1 && !(*u & ~0xff))) {
     if (isIdentity) {

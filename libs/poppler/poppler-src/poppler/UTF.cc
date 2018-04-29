@@ -18,6 +18,7 @@
 // Copyright (C) 2012 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2016, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2016 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -85,7 +86,7 @@ int UTF16toUCS4(const Unicode *utf16, int utf16Len, Unicode **ucs4)
   return len;
 }
 
-int TextStringToUCS4(GooString *textStr, Unicode **ucs4)
+int TextStringToUCS4(const GooString *textStr, Unicode **ucs4)
 {
   int i, len;
   const char *s;

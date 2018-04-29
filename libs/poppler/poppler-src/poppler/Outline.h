@@ -41,13 +41,13 @@ class LinkAction;
 class Outline {
 public:
 
-  Outline(Object *outlineObj, XRef *xref);
+  Outline(const Object *outlineObj, XRef *xref);
   ~Outline();
 
   Outline(const Outline &) = delete;
   Outline& operator=(const Outline &) = delete;
 
-  GooList *getItems() { return items; }
+  const GooList *getItems() const { return items; }
 
 private:
 
@@ -60,23 +60,23 @@ private:
 class OutlineItem {
 public:
 
-  OutlineItem(Dict *dict, int refNumA, OutlineItem *parentA, XRef *xrefA);
+  OutlineItem(const Dict *dict, int refNumA, OutlineItem *parentA, XRef *xrefA);
   ~OutlineItem();
 
   OutlineItem(const OutlineItem &) = delete;
   OutlineItem& operator=(const OutlineItem &) = delete;
 
-  static GooList *readItemList(OutlineItem *parent, Object *firstItemRef, XRef *xrefA);
+  static GooList *readItemList(OutlineItem *parent, const Object *firstItemRef, XRef *xrefA);
 
   void open();
   void close();
 
-  Unicode *getTitle() { return title; }
-  int getTitleLength() { return titleLen; }
-  LinkAction *getAction() { return action; }
-  GBool isOpen() { return startsOpen; }
-  GBool hasKids() { return firstRef.isRef(); }
-  GooList *getKids() { return kids; }
+  const Unicode *getTitle() const { return title; }
+  int getTitleLength() const { return titleLen; }
+  const LinkAction *getAction() const { return action; }
+  GBool isOpen() const { return startsOpen; }
+  GBool hasKids() const { return firstRef.isRef(); }
+  const GooList *getKids() const { return kids; }
 
 private:
 

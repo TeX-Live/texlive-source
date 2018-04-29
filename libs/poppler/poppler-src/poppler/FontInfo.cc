@@ -12,6 +12,7 @@
 // Copyright (C) 2010, 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2011 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -153,7 +154,7 @@ void FontInfoScanner::scanFonts(XRef *xrefA, Dict *resDict, GooList *fontsList) 
 }
 
 FontInfo::FontInfo(GfxFont *font, XRef *xref) {
-  GooString *origName;
+  const GooString *origName;
 
   fontRef = *font->getID();
 

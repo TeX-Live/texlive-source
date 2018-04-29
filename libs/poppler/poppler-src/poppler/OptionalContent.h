@@ -39,9 +39,9 @@ public:
   OCGs& operator=(const OCGs &) = delete;
 
   // Is OCGS valid?
-  GBool isOk() { return ok; }
+  GBool isOk() const { return ok; }
   
-  bool hasOCGs();
+  bool hasOCGs() const;
   GooList *getOCGs() const { return optionalContentGroups; }
 
   OptionalContentGroup* findOcgByRef( const Ref &ref);
@@ -96,7 +96,7 @@ public:
   OptionalContentGroup(const OptionalContentGroup &) = delete;
   OptionalContentGroup& operator=(const OptionalContentGroup &) = delete;
 
-  GooString* getName() const;
+  const GooString* getName() const;
 
   Ref getRef() const;
   void setRef(const Ref ref);
@@ -127,14 +127,14 @@ public:
   OCDisplayNode(const OCDisplayNode &) = delete;
   OCDisplayNode& operator=(const OCDisplayNode &) = delete;
 
-  GooString *getName() { return name; }
-  OptionalContentGroup *getOCG() { return ocg; }
-  int getNumChildren();
-  OCDisplayNode *getChild(int idx);
+  const GooString *getName() const { return name; }
+  const OptionalContentGroup *getOCG() const { return ocg; }
+  int getNumChildren() const;
+  OCDisplayNode *getChild(int idx) const;
 
 private:
 
-  OCDisplayNode(GooString *nameA);
+  OCDisplayNode(const GooString *nameA);
   OCDisplayNode(OptionalContentGroup *ocgA);
   void addChild(OCDisplayNode *child);
   void addChildren(GooList *childrenA);

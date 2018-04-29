@@ -69,7 +69,7 @@ void MarkedContentOutputDev::endPage()
 }
 
 
-void MarkedContentOutputDev::beginMarkedContent(char *name, Dict *properties)
+void MarkedContentOutputDev::beginMarkedContent(const char *name, Dict *properties)
 {
   int id = -1;
   if (properties)

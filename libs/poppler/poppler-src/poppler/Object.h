@@ -22,6 +22,7 @@
 // Copyright (C) 2013, 2017, 2018 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Adrian Perez de Castro <aperez@igalia.com>
 // Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -236,12 +237,12 @@ public:
     }
     return type == objInt ? (double)intg : type == objInt64 ? (double)int64g : real;
   }
-  GooString *getString() const { OBJECT_TYPE_CHECK(objString); return string; }
+  const GooString *getString() const { OBJECT_TYPE_CHECK(objString); return string; }
   // After takeString() the only method that should be called for the object is free()
   // because the object it's not expected to have a NULL string.
   GooString *takeString() {
     OBJECT_TYPE_CHECK(objString); GooString *s = string; string = nullptr; return s; }
-  char *getName() const { OBJECT_TYPE_CHECK(objName); return cString; }
+  const char *getName() const { OBJECT_TYPE_CHECK(objName); return cString; }
   Array *getArray() const { OBJECT_TYPE_CHECK(objArray); return array; }
   Dict *getDict() const { OBJECT_TYPE_CHECK(objDict); return dict; }
   Stream *getStream() const { OBJECT_TYPE_CHECK(objStream); return stream; }

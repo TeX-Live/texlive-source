@@ -14,10 +14,11 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Marco Pesenti Gritti <mpg@redhat.com>
-// Copyright (C) 2008, 2016, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2016-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Nick Jones <nick.jones@network-box.com>
 // Copyright (C) 2016 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -41,7 +42,7 @@
 
 //------------------------------------------------------------------------
 
-Outline::Outline(Object *outlineObj, XRef *xref) {
+Outline::Outline(const Object *outlineObj, XRef *xref) {
   items = nullptr;
   if (!outlineObj->isDict()) {
     return;
@@ -58,7 +59,7 @@ Outline::~Outline() {
 
 //------------------------------------------------------------------------
 
-OutlineItem::OutlineItem(Dict *dict, int refNumA, OutlineItem *parentA, XRef *xrefA) {
+OutlineItem::OutlineItem(const Dict *dict, int refNumA, OutlineItem *parentA, XRef *xrefA) {
   Object obj1;
 
   refNum = refNumA;
@@ -71,7 +72,7 @@ OutlineItem::OutlineItem(Dict *dict, int refNumA, OutlineItem *parentA, XRef *xr
 
   obj1 = dict->lookup("Title");
   if (obj1.isString()) {
-    GooString *s = obj1.getString();
+    const GooString *s = obj1.getString();
     titleLen = TextStringToUCS4(s, &title);
   } else {
     titleLen = 0;
@@ -110,7 +111,7 @@ OutlineItem::~OutlineItem() {
   }
 }
 
-GooList *OutlineItem::readItemList(OutlineItem *parent, Object *firstItemRef, XRef *xrefA) {
+GooList *OutlineItem::readItemList(OutlineItem *parent, const Object *firstItemRef, XRef *xrefA) {
   GooList *items = new GooList();
 
   char* alreadyRead = (char *)gmalloc(xrefA->getNumObjects());
@@ -122,7 +123,7 @@ GooList *OutlineItem::readItemList(OutlineItem *parent, Object *firstItemRef, XR
     parentO = parentO->parent;
   }
 
-  Object *p = firstItemRef;
+  const Object *p = firstItemRef;
   while (p->isRef() && 
 	 (p->getRefNum() >= 0) && 
          (p->getRefNum() < xrefA->getNumObjects()) &&

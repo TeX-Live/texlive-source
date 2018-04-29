@@ -160,13 +160,13 @@ void OutputDev::drawSoftMaskedImage(GfxState *state, Object *ref, Stream *str,
 void OutputDev::endMarkedContent(GfxState *state) {
 }
 
-void OutputDev::beginMarkedContent(char *name, Dict *properties) {
+void OutputDev::beginMarkedContent(const char *name, Dict *properties) {
 }
 
-void OutputDev::markPoint(char *name) {
+void OutputDev::markPoint(const char *name) {
 }
 
-void OutputDev::markPoint(char *name, Dict *properties) {
+void OutputDev::markPoint(const char *name, Dict *properties) {
 }
 
 
