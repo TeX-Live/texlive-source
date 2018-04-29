@@ -1,3 +1,10 @@
+2018-04-30  Karl Berry  <karl@tug.org>
+
+	* latex.man: update latexrefman url to
+	https://ctan.org/pkg/latex2e-help-texinfo.
+	tldoc report from Antoon, 27 Apr 2018 22:15:39.
+	Also add more *latex program names as aliases.
+
 2018-02-23  Karl Berry  <karl@freefriends.org>
 
 	* bibtex.man: mention need to remove aux file from previous run
