@@ -1,4 +1,4 @@
-2018-04-28  Stefun Br\"uns  <stefan.bruens@rwth-aachen.de>
+2018-04-28  Stefan Br\"uns  <stefan.bruens@rwth-aachen.de>
 
 	* pngimage.c: Fix a bug which causes a segfault with 1/2/4-bit
 	transparent indexed PNGs.
