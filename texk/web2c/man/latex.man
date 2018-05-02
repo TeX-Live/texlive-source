@@ -40,10 +40,12 @@ referenced below.
 .BR lualatex ,
 .BR pdflatex ,
 .BR pdfcslatex ,
-.BR platex ,
-.BR uplatex ,
 .B xelatex
 are \*(LX formats based on the respective engines.  All output PDF by default.
+.br
+.BR platex ,
+.B uplatex
+are Japanese \*(LX formats based on e-pTeX and e-upTeX (DVI output).
 .br
 .B lamed
 is the Aleph-based \*(LX format (DVI output).
