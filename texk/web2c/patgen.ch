@@ -78,8 +78,8 @@ begin
  |trie_size| and greater than the number of occurrences of any pattern in
  the dictionary}
 @y
-@!trie_size=550000; {space for pattern trie}
-@!triec_size=260000; {space for pattern count trie, must be less than
+@!trie_size =5500000; {space for pattern trie}
+@!triec_size=2600000; {space for pattern count trie, must be less than
  |trie_size| and greater than the number of occurrences of any pattern in
  the dictionary}
 @z
