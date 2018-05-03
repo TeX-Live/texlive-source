@@ -1,8 +1,8 @@
 2018-05-03  Karl Berry  <karl@freefriends.org>
 
-	* patgen.ch (trie_size, triec_size): increase one order of
-	magnitude, to 5500000 and 2600000. Request/patch from Werner Lemberg,
-	27 Apr 2018 07:51:29.
+	* patgen.ch (trie_size, triec_size): increase greatly.
+	Request/patch from Werner Lemberg, 27 Apr 2018 07:51:29,
+	03 May 2018 13:49:02.
 
 2018-04-14  Karl Berry  <karl@tug.org>
 
