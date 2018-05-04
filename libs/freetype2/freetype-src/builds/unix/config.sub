@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-05-01'
+timestamp='2018-04-24'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -114,29 +114,24 @@ esac
 # Here we must recognize all the valid KERNEL-OS combinations.
 maybe_os=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\2/'`
 case $maybe_os in
-    nto-qnx* | linux-gnu* | linux-android* | linux-dietlibc | linux-newlib* | \
-	linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
-	knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
-	kopensolaris*-gnu* | cloudabi*-eabi* | \
-	storm-chaos* | os2-emx* | rtmk-nova*)
-	os=-$maybe_os
-	basic_machine=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
-	;;
-    android-linux)
-	os=-linux-android
-	basic_machine=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`-unknown
-	;;
-    *)
-	basic_machine=`echo "$1" | sed 's/-[^-]*$//'`
-	case $1 in
-	    *-*)
-		os=`echo "$1" | sed 's/.*-/-/'`
-		;;
-	    *)
-		os=
-		;;
-	esac
-	;;
+  nto-qnx* | linux-gnu* | linux-android* | linux-dietlibc | linux-newlib* | \
+  linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
+  knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
+  kopensolaris*-gnu* | cloudabi*-eabi* | \
+  storm-chaos* | os2-emx* | rtmk-nova*)
+    os=-$maybe_os
+    basic_machine=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
+    ;;
+  android-linux)
+    os=-linux-android
+    basic_machine=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`-unknown
+    ;;
+  *)
+    basic_machine=`echo "$1" | sed 's/-[^-]*$//'`
+    if [ "$basic_machine" != "$1" ]
+    then os=`echo "$1" | sed 's/.*-/-/'`
+    else os=; fi
+    ;;
 esac
 
 ### Let's recognize common machines as not being operating systems so
@@ -298,7 +293,6 @@ case $basic_machine in
 	| mt \
 	| msp430 \
 	| nds32 | nds32le | nds32be \
-	| nfp \
 	| nios | nios2 | nios2eb | nios2el \
 	| ns16k | ns32k \
 	| open8 | or1k | or1knd | or32 \
@@ -429,7 +423,6 @@ case $basic_machine in
 	| mt-* \
 	| msp430-* \
 	| nds32-* | nds32le-* | nds32be-* \
-	| nfp-* \
 	| nios-* | nios2-* | nios2eb-* | nios2el-* \
 	| none-* | np1-* | ns16k-* | ns32k-* \
 	| open8-* \
