@@ -47,10 +47,12 @@ class PSTestActions : public PSActions {
 		void setpagedevice (vector<double> &p) override   {print("setpagedevice", p);}
 		void newpath (vector<double> &p) override         {print("newpath", p);}
 		void querypos (vector<double> &p) override        {print("querypos", p);}
+		void pdfpagebox (std::vector<double> &p) override {print("pdfpagebox", p);}
 		void restore(std::vector<double> &p) override     {print("restore", p);}
 		void rotate (vector<double> &p) override          {print("rotate", p);}
 		void save(std::vector<double> &p) override        {print("save", p);}
 		void scale (vector<double> &p) override           {print("scale", p);}
+		void setblendmode (vector<double> &p) override    {print("setblendmode", p);}
 		void setcmykcolor (vector<double> &p) override    {print("setcmykcolor", p);}
 		void setdash (vector<double> &p) override         {print("setdash", p);}
 		void setgray (vector<double> &p) override         {print("setgray", p);}
@@ -61,6 +63,7 @@ class PSTestActions : public PSActions {
 		void setmatrix (vector<double> &p) override       {print("setmatrix", p);}
 		void setmiterlimit (vector<double> &p) override   {print("setmiterlimit", p);}
 		void setopacityalpha (vector<double> &p) override {print("setopacityalpha", p);}
+		void setshapealpha (vector<double> &p) override   {print("setshapealpha", p);}
 		void setrgbcolor (vector<double> &p) override     {print("setrgbcolor", p);}
 		void shfill (vector<double> &p) override          {print("shfill", p);}
 		void stroke (vector<double> &p) override          {print("stroke", p);}
@@ -115,11 +118,11 @@ TEST(PSInterpreterTest, stroke_fill) {
 	PSTestActions actions;
 	PSInterpreter psi(&actions);
 	psi.execute("0 0 moveto 10 10 lineto 0 10 lineto closepath stroke ");
-	EXPECT_EQ(actions.result(), "newpath 1;moveto 0 0;lineto 10 10;lineto 0 10;closepath;stroke;");
+	EXPECT_EQ(actions.result(), "setrgbcolor 0 0 0;newpath 1;moveto 0 0;lineto 10 10;lineto 0 10;closepath;stroke;");
 	actions.clear();
 
 	psi.execute("0 0 moveto 10 10 lineto 0 10 lineto closepath fill ");
-	EXPECT_EQ(actions.result(), "newpath 1;moveto 0 0;lineto 10 10;lineto 0 10;closepath;fill;");
+	EXPECT_EQ(actions.result(), "setrgbcolor 0 0 0;newpath 1;moveto 0 0;lineto 10 10;lineto 0 10;closepath;fill;");
 }
 
 
