@@ -85,7 +85,6 @@ libdvisvgm_a_SOURCES = \
 	EncFile.hpp \
 	EPSFile.cpp \
 	EPSFile.hpp \
-	EPSToSVG.cpp \
 	EPSToSVG.hpp \
 	FileFinder.cpp \
 	FileFinder.hpp \
@@ -126,6 +125,8 @@ libdvisvgm_a_SOURCES = \
 	HtmlSpecialHandler.hpp \
 	HyperlinkManager.cpp \
 	HyperlinkManager.hpp \
+	ImageToSVG.cpp \
+	ImageToSVG.hpp \
 	InputBuffer.cpp \
 	InputBuffer.hpp \
 	InputReader.cpp \
@@ -158,6 +159,7 @@ libdvisvgm_a_SOURCES = \
 	PathClipper.hpp \
 	PDFParser.cpp \
 	PDFParser.hpp \
+	PDFToSVG.hpp \
 	PdfSpecialHandler.cpp \
 	PdfSpecialHandler.hpp \
 	PreScanDVIReader.cpp \
@@ -180,6 +182,8 @@ libdvisvgm_a_SOURCES = \
 	ShadingPatch.hpp \
 	SignalHandler.cpp \
 	SignalHandler.hpp \
+	SourceInput.cpp \
+	SourceInput.hpp \
 	SpecialActions.hpp \
 	SpecialHandler.hpp \
 	SpecialManager.cpp \

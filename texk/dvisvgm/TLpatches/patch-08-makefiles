@@ -1,6 +1,6 @@
-diff -u2r dvisvgm-2.3.5/Makefile.am dvisvgm-src/Makefile.am
---- dvisvgm-2.3.5/Makefile.am	Mon Feb 05 19:10:22 2018
-+++ dvisvgm-src/Makefile.am	Sat Mar 24 15:28:20 2018
+diff -u2r dvisvgm-2.4/Makefile.am dvisvgm-src/Makefile.am
+--- dvisvgm-2.4/Makefile.am	Tue Jan 02 18:32:38 2018
++++ dvisvgm-src/Makefile.am	Fri May 04 13:03:43 2018
 @@ -6,5 +6,5 @@
  AUTOMAKE_OPTIONS = foreign
  EXTRA_DIST = COPYING
@@ -8,9 +8,9 @@ diff -u2r dvisvgm-2.3.5/Makefile.am dvisvgm-src/Makefile.am
 +SUBDIRS = libs src #not for TL: tests doc
  ACLOCAL_AMFLAGS = -I m4
  
-diff -u2r dvisvgm-2.3.5/src/Makefile.am dvisvgm-src/src/Makefile.am
---- dvisvgm-2.3.5/src/Makefile.am	Thu Mar 22 18:24:00 2018
-+++ dvisvgm-src/src/Makefile.am	Sat Mar 24 15:28:48 2018
+diff -u2r dvisvgm-2.4/src/Makefile.am dvisvgm-src/src/Makefile.am
+--- dvisvgm-2.4/src/Makefile.am	Thu May 03 17:27:18 2018
++++ dvisvgm-src/src/Makefile.am	Fri May 04 13:12:50 2018
 @@ -14,8 +14,5 @@
  	$(noinst_LIBRARIES) \
  	../libs/clipper/libclipper.a \
@@ -36,7 +36,7 @@ diff -u2r dvisvgm-2.3.5/src/Makefile.am dvisvgm-src/src/Makefile.am
 +dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
  
  libdvisvgm_a_SOURCES = \
-@@ -242,35 +248,45 @@
+@@ -246,35 +252,45 @@
  EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
  
 -AM_CFLAGS = -Wall \
@@ -97,7 +97,7 @@ diff -u2r dvisvgm-2.3.5/src/Makefile.am dvisvgm-src/src/Makefile.am
 +# TL: do not try to rebuild these source files.
  # the command-line parser class is generated from options.xml by opt2cpp
  $(srcdir)/CommandLine.hpp: options.xml
-@@ -285,6 +301,16 @@
+@@ -289,6 +305,16 @@
  
  psdefs.ps: ;
 +endif ! TEXLIVE_BUILD

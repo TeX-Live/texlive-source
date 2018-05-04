@@ -153,45 +153,47 @@ am__libdvisvgm_a_SOURCES_DIST = AGLTable.hpp BasicDVIReader.cpp \
 	DvisvgmSpecialHandler.cpp DvisvgmSpecialHandler.hpp \
 	DVIToSVG.cpp DVIToSVG.hpp DVIToSVGActions.cpp \
 	DVIToSVGActions.hpp EmSpecialHandler.cpp EmSpecialHandler.hpp \
-	EncFile.cpp EncFile.hpp EPSFile.cpp EPSFile.hpp EPSToSVG.cpp \
-	EPSToSVG.hpp FileFinder.cpp FileFinder.hpp FilePath.cpp \
-	FilePath.hpp FileSystem.cpp FileSystem.hpp FixWord.hpp \
-	Font.cpp Font.hpp FontCache.cpp FontCache.hpp FontEncoding.cpp \
-	FontEncoding.hpp FontEngine.cpp FontEngine.hpp FontManager.cpp \
-	FontManager.hpp FontMap.cpp FontMap.hpp FontMetrics.cpp \
-	FontMetrics.hpp FontStyle.hpp FontWriter.cpp FontWriter.hpp \
-	GFGlyphTracer.cpp GFGlyphTracer.hpp GFReader.cpp GFReader.hpp \
-	GFTracer.cpp GFTracer.hpp Ghostscript.cpp Ghostscript.hpp \
-	Glyph.hpp GlyphTracerMessages.hpp GraphicsPath.hpp \
+	EncFile.cpp EncFile.hpp EPSFile.cpp EPSFile.hpp EPSToSVG.hpp \
+	FileFinder.cpp FileFinder.hpp FilePath.cpp FilePath.hpp \
+	FileSystem.cpp FileSystem.hpp FixWord.hpp Font.cpp Font.hpp \
+	FontCache.cpp FontCache.hpp FontEncoding.cpp FontEncoding.hpp \
+	FontEngine.cpp FontEngine.hpp FontManager.cpp FontManager.hpp \
+	FontMap.cpp FontMap.hpp FontMetrics.cpp FontMetrics.hpp \
+	FontStyle.hpp FontWriter.cpp FontWriter.hpp GFGlyphTracer.cpp \
+	GFGlyphTracer.hpp GFReader.cpp GFReader.hpp GFTracer.cpp \
+	GFTracer.hpp Ghostscript.cpp Ghostscript.hpp Glyph.hpp \
+	GlyphTracerMessages.hpp GraphicsPath.hpp \
 	HtmlSpecialHandler.cpp HtmlSpecialHandler.hpp \
-	HyperlinkManager.cpp HyperlinkManager.hpp InputBuffer.cpp \
-	InputBuffer.hpp InputReader.cpp InputReader.hpp JFM.cpp \
-	JFM.hpp Length.cpp Length.hpp macros.hpp MapLine.cpp \
-	MapLine.hpp Matrix.cpp Matrix.hpp Message.cpp Message.hpp \
-	MessageException.hpp MetafontWrapper.cpp MetafontWrapper.hpp \
-	NoPsSpecialHandler.cpp NoPsSpecialHandler.hpp \
-	NumericRanges.hpp PageRanges.cpp PageRanges.hpp PageSize.cpp \
-	PageSize.hpp Pair.hpp PapersizeSpecialHandler.cpp \
-	PapersizeSpecialHandler.hpp PathClipper.cpp PathClipper.hpp \
-	PDFParser.cpp PDFParser.hpp PdfSpecialHandler.cpp \
-	PdfSpecialHandler.hpp PreScanDVIReader.cpp \
-	PreScanDVIReader.hpp Process.cpp Process.hpp psdefs.cpp \
-	PSFilter.hpp PSInterpreter.cpp PSInterpreter.hpp PSPattern.cpp \
-	PSPattern.hpp PSPreviewFilter.cpp PSPreviewFilter.hpp \
-	PsSpecialHandler.cpp PsSpecialHandler.hpp RangeMap.cpp \
-	RangeMap.hpp ShadingPatch.cpp ShadingPatch.hpp \
-	SignalHandler.cpp SignalHandler.hpp SpecialActions.hpp \
-	SpecialHandler.hpp SpecialManager.cpp SpecialManager.hpp \
-	StreamReader.cpp StreamReader.hpp StreamWriter.cpp \
-	StreamWriter.hpp Subfont.cpp Subfont.hpp SVGCharHandler.cpp \
-	SVGCharHandler.hpp SVGCharHandlerFactory.cpp \
-	SVGCharHandlerFactory.hpp SVGCharPathHandler.cpp \
-	SVGCharPathHandler.hpp SVGCharTspanTextHandler.cpp \
-	SVGCharTspanTextHandler.hpp SVGOutput.cpp SVGOutput.hpp \
-	SVGSingleCharTextHandler.cpp SVGSingleCharTextHandler.hpp \
-	SVGTree.cpp SVGTree.hpp System.cpp System.hpp \
-	TensorProductPatch.cpp TensorProductPatch.hpp Terminal.cpp \
-	Terminal.hpp TFM.cpp TFM.hpp ToUnicodeMap.cpp ToUnicodeMap.hpp \
+	HyperlinkManager.cpp HyperlinkManager.hpp ImageToSVG.cpp \
+	ImageToSVG.hpp InputBuffer.cpp InputBuffer.hpp InputReader.cpp \
+	InputReader.hpp JFM.cpp JFM.hpp Length.cpp Length.hpp \
+	macros.hpp MapLine.cpp MapLine.hpp Matrix.cpp Matrix.hpp \
+	Message.cpp Message.hpp MessageException.hpp \
+	MetafontWrapper.cpp MetafontWrapper.hpp NoPsSpecialHandler.cpp \
+	NoPsSpecialHandler.hpp NumericRanges.hpp PageRanges.cpp \
+	PageRanges.hpp PageSize.cpp PageSize.hpp Pair.hpp \
+	PapersizeSpecialHandler.cpp PapersizeSpecialHandler.hpp \
+	PathClipper.cpp PathClipper.hpp PDFParser.cpp PDFParser.hpp \
+	PDFToSVG.hpp PdfSpecialHandler.cpp PdfSpecialHandler.hpp \
+	PreScanDVIReader.cpp PreScanDVIReader.hpp Process.cpp \
+	Process.hpp psdefs.cpp PSFilter.hpp PSInterpreter.cpp \
+	PSInterpreter.hpp PSPattern.cpp PSPattern.hpp \
+	PSPreviewFilter.cpp PSPreviewFilter.hpp PsSpecialHandler.cpp \
+	PsSpecialHandler.hpp RangeMap.cpp RangeMap.hpp \
+	ShadingPatch.cpp ShadingPatch.hpp SignalHandler.cpp \
+	SignalHandler.hpp SourceInput.cpp SourceInput.hpp \
+	SpecialActions.hpp SpecialHandler.hpp SpecialManager.cpp \
+	SpecialManager.hpp StreamReader.cpp StreamReader.hpp \
+	StreamWriter.cpp StreamWriter.hpp Subfont.cpp Subfont.hpp \
+	SVGCharHandler.cpp SVGCharHandler.hpp \
+	SVGCharHandlerFactory.cpp SVGCharHandlerFactory.hpp \
+	SVGCharPathHandler.cpp SVGCharPathHandler.hpp \
+	SVGCharTspanTextHandler.cpp SVGCharTspanTextHandler.hpp \
+	SVGOutput.cpp SVGOutput.hpp SVGSingleCharTextHandler.cpp \
+	SVGSingleCharTextHandler.hpp SVGTree.cpp SVGTree.hpp \
+	System.cpp System.hpp TensorProductPatch.cpp \
+	TensorProductPatch.hpp Terminal.cpp Terminal.hpp TFM.cpp \
+	TFM.hpp ToUnicodeMap.cpp ToUnicodeMap.hpp \
 	TpicSpecialHandler.cpp TpicSpecialHandler.hpp \
 	TriangularPatch.cpp TriangularPatch.hpp TrueTypeFont.cpp \
 	TrueTypeFont.hpp TTFAutohint.cpp TTFAutohint.hpp Unicode.cpp \
@@ -210,25 +212,26 @@ am_libdvisvgm_a_OBJECTS = BasicDVIReader.$(OBJEXT) Bezier.$(OBJEXT) \
 	Directory.$(OBJEXT) DLLoader.$(OBJEXT) DVIReader.$(OBJEXT) \
 	DvisvgmSpecialHandler.$(OBJEXT) DVIToSVG.$(OBJEXT) \
 	DVIToSVGActions.$(OBJEXT) EmSpecialHandler.$(OBJEXT) \
-	EncFile.$(OBJEXT) EPSFile.$(OBJEXT) EPSToSVG.$(OBJEXT) \
-	FileFinder.$(OBJEXT) FilePath.$(OBJEXT) FileSystem.$(OBJEXT) \
-	Font.$(OBJEXT) FontCache.$(OBJEXT) FontEncoding.$(OBJEXT) \
+	EncFile.$(OBJEXT) EPSFile.$(OBJEXT) FileFinder.$(OBJEXT) \
+	FilePath.$(OBJEXT) FileSystem.$(OBJEXT) Font.$(OBJEXT) \
+	FontCache.$(OBJEXT) FontEncoding.$(OBJEXT) \
 	FontEngine.$(OBJEXT) FontManager.$(OBJEXT) FontMap.$(OBJEXT) \
 	FontMetrics.$(OBJEXT) FontWriter.$(OBJEXT) \
 	GFGlyphTracer.$(OBJEXT) GFReader.$(OBJEXT) GFTracer.$(OBJEXT) \
 	Ghostscript.$(OBJEXT) HtmlSpecialHandler.$(OBJEXT) \
-	HyperlinkManager.$(OBJEXT) InputBuffer.$(OBJEXT) \
-	InputReader.$(OBJEXT) JFM.$(OBJEXT) Length.$(OBJEXT) \
-	MapLine.$(OBJEXT) Matrix.$(OBJEXT) Message.$(OBJEXT) \
-	MetafontWrapper.$(OBJEXT) NoPsSpecialHandler.$(OBJEXT) \
-	PageRanges.$(OBJEXT) PageSize.$(OBJEXT) \
-	PapersizeSpecialHandler.$(OBJEXT) PathClipper.$(OBJEXT) \
-	PDFParser.$(OBJEXT) PdfSpecialHandler.$(OBJEXT) \
-	PreScanDVIReader.$(OBJEXT) Process.$(OBJEXT) psdefs.$(OBJEXT) \
-	PSInterpreter.$(OBJEXT) PSPattern.$(OBJEXT) \
-	PSPreviewFilter.$(OBJEXT) PsSpecialHandler.$(OBJEXT) \
-	RangeMap.$(OBJEXT) ShadingPatch.$(OBJEXT) \
-	SignalHandler.$(OBJEXT) SpecialManager.$(OBJEXT) \
+	HyperlinkManager.$(OBJEXT) ImageToSVG.$(OBJEXT) \
+	InputBuffer.$(OBJEXT) InputReader.$(OBJEXT) JFM.$(OBJEXT) \
+	Length.$(OBJEXT) MapLine.$(OBJEXT) Matrix.$(OBJEXT) \
+	Message.$(OBJEXT) MetafontWrapper.$(OBJEXT) \
+	NoPsSpecialHandler.$(OBJEXT) PageRanges.$(OBJEXT) \
+	PageSize.$(OBJEXT) PapersizeSpecialHandler.$(OBJEXT) \
+	PathClipper.$(OBJEXT) PDFParser.$(OBJEXT) \
+	PdfSpecialHandler.$(OBJEXT) PreScanDVIReader.$(OBJEXT) \
+	Process.$(OBJEXT) psdefs.$(OBJEXT) PSInterpreter.$(OBJEXT) \
+	PSPattern.$(OBJEXT) PSPreviewFilter.$(OBJEXT) \
+	PsSpecialHandler.$(OBJEXT) RangeMap.$(OBJEXT) \
+	ShadingPatch.$(OBJEXT) SignalHandler.$(OBJEXT) \
+	SourceInput.$(OBJEXT) SpecialManager.$(OBJEXT) \
 	StreamReader.$(OBJEXT) StreamWriter.$(OBJEXT) \
 	Subfont.$(OBJEXT) SVGCharHandler.$(OBJEXT) \
 	SVGCharHandlerFactory.$(OBJEXT) SVGCharPathHandler.$(OBJEXT) \
@@ -499,45 +502,47 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
 	DvisvgmSpecialHandler.cpp DvisvgmSpecialHandler.hpp \
 	DVIToSVG.cpp DVIToSVG.hpp DVIToSVGActions.cpp \
 	DVIToSVGActions.hpp EmSpecialHandler.cpp EmSpecialHandler.hpp \
-	EncFile.cpp EncFile.hpp EPSFile.cpp EPSFile.hpp EPSToSVG.cpp \
-	EPSToSVG.hpp FileFinder.cpp FileFinder.hpp FilePath.cpp \
-	FilePath.hpp FileSystem.cpp FileSystem.hpp FixWord.hpp \
-	Font.cpp Font.hpp FontCache.cpp FontCache.hpp FontEncoding.cpp \
-	FontEncoding.hpp FontEngine.cpp FontEngine.hpp FontManager.cpp \
-	FontManager.hpp FontMap.cpp FontMap.hpp FontMetrics.cpp \
-	FontMetrics.hpp FontStyle.hpp FontWriter.cpp FontWriter.hpp \
-	GFGlyphTracer.cpp GFGlyphTracer.hpp GFReader.cpp GFReader.hpp \
-	GFTracer.cpp GFTracer.hpp Ghostscript.cpp Ghostscript.hpp \
-	Glyph.hpp GlyphTracerMessages.hpp GraphicsPath.hpp \
+	EncFile.cpp EncFile.hpp EPSFile.cpp EPSFile.hpp EPSToSVG.hpp \
+	FileFinder.cpp FileFinder.hpp FilePath.cpp FilePath.hpp \
+	FileSystem.cpp FileSystem.hpp FixWord.hpp Font.cpp Font.hpp \
+	FontCache.cpp FontCache.hpp FontEncoding.cpp FontEncoding.hpp \
+	FontEngine.cpp FontEngine.hpp FontManager.cpp FontManager.hpp \
+	FontMap.cpp FontMap.hpp FontMetrics.cpp FontMetrics.hpp \
+	FontStyle.hpp FontWriter.cpp FontWriter.hpp GFGlyphTracer.cpp \
+	GFGlyphTracer.hpp GFReader.cpp GFReader.hpp GFTracer.cpp \
+	GFTracer.hpp Ghostscript.cpp Ghostscript.hpp Glyph.hpp \
+	GlyphTracerMessages.hpp GraphicsPath.hpp \
 	HtmlSpecialHandler.cpp HtmlSpecialHandler.hpp \
-	HyperlinkManager.cpp HyperlinkManager.hpp InputBuffer.cpp \
-	InputBuffer.hpp InputReader.cpp InputReader.hpp JFM.cpp \
-	JFM.hpp Length.cpp Length.hpp macros.hpp MapLine.cpp \
-	MapLine.hpp Matrix.cpp Matrix.hpp Message.cpp Message.hpp \
-	MessageException.hpp MetafontWrapper.cpp MetafontWrapper.hpp \
-	NoPsSpecialHandler.cpp NoPsSpecialHandler.hpp \
-	NumericRanges.hpp PageRanges.cpp PageRanges.hpp PageSize.cpp \
-	PageSize.hpp Pair.hpp PapersizeSpecialHandler.cpp \
-	PapersizeSpecialHandler.hpp PathClipper.cpp PathClipper.hpp \
-	PDFParser.cpp PDFParser.hpp PdfSpecialHandler.cpp \
-	PdfSpecialHandler.hpp PreScanDVIReader.cpp \
-	PreScanDVIReader.hpp Process.cpp Process.hpp psdefs.cpp \
-	PSFilter.hpp PSInterpreter.cpp PSInterpreter.hpp PSPattern.cpp \
-	PSPattern.hpp PSPreviewFilter.cpp PSPreviewFilter.hpp \
-	PsSpecialHandler.cpp PsSpecialHandler.hpp RangeMap.cpp \
-	RangeMap.hpp ShadingPatch.cpp ShadingPatch.hpp \
-	SignalHandler.cpp SignalHandler.hpp SpecialActions.hpp \
-	SpecialHandler.hpp SpecialManager.cpp SpecialManager.hpp \
-	StreamReader.cpp StreamReader.hpp StreamWriter.cpp \
-	StreamWriter.hpp Subfont.cpp Subfont.hpp SVGCharHandler.cpp \
-	SVGCharHandler.hpp SVGCharHandlerFactory.cpp \
-	SVGCharHandlerFactory.hpp SVGCharPathHandler.cpp \
-	SVGCharPathHandler.hpp SVGCharTspanTextHandler.cpp \
-	SVGCharTspanTextHandler.hpp SVGOutput.cpp SVGOutput.hpp \
-	SVGSingleCharTextHandler.cpp SVGSingleCharTextHandler.hpp \
-	SVGTree.cpp SVGTree.hpp System.cpp System.hpp \
-	TensorProductPatch.cpp TensorProductPatch.hpp Terminal.cpp \
-	Terminal.hpp TFM.cpp TFM.hpp ToUnicodeMap.cpp ToUnicodeMap.hpp \
+	HyperlinkManager.cpp HyperlinkManager.hpp ImageToSVG.cpp \
+	ImageToSVG.hpp InputBuffer.cpp InputBuffer.hpp InputReader.cpp \
+	InputReader.hpp JFM.cpp JFM.hpp Length.cpp Length.hpp \
+	macros.hpp MapLine.cpp MapLine.hpp Matrix.cpp Matrix.hpp \
+	Message.cpp Message.hpp MessageException.hpp \
+	MetafontWrapper.cpp MetafontWrapper.hpp NoPsSpecialHandler.cpp \
+	NoPsSpecialHandler.hpp NumericRanges.hpp PageRanges.cpp \
+	PageRanges.hpp PageSize.cpp PageSize.hpp Pair.hpp \
+	PapersizeSpecialHandler.cpp PapersizeSpecialHandler.hpp \
+	PathClipper.cpp PathClipper.hpp PDFParser.cpp PDFParser.hpp \
+	PDFToSVG.hpp PdfSpecialHandler.cpp PdfSpecialHandler.hpp \
+	PreScanDVIReader.cpp PreScanDVIReader.hpp Process.cpp \
+	Process.hpp psdefs.cpp PSFilter.hpp PSInterpreter.cpp \
+	PSInterpreter.hpp PSPattern.cpp PSPattern.hpp \
+	PSPreviewFilter.cpp PSPreviewFilter.hpp PsSpecialHandler.cpp \
+	PsSpecialHandler.hpp RangeMap.cpp RangeMap.hpp \
+	ShadingPatch.cpp ShadingPatch.hpp SignalHandler.cpp \
+	SignalHandler.hpp SourceInput.cpp SourceInput.hpp \
+	SpecialActions.hpp SpecialHandler.hpp SpecialManager.cpp \
+	SpecialManager.hpp StreamReader.cpp StreamReader.hpp \
+	StreamWriter.cpp StreamWriter.hpp Subfont.cpp Subfont.hpp \
+	SVGCharHandler.cpp SVGCharHandler.hpp \
+	SVGCharHandlerFactory.cpp SVGCharHandlerFactory.hpp \
+	SVGCharPathHandler.cpp SVGCharPathHandler.hpp \
+	SVGCharTspanTextHandler.cpp SVGCharTspanTextHandler.hpp \
+	SVGOutput.cpp SVGOutput.hpp SVGSingleCharTextHandler.cpp \
+	SVGSingleCharTextHandler.hpp SVGTree.cpp SVGTree.hpp \
+	System.cpp System.hpp TensorProductPatch.cpp \
+	TensorProductPatch.hpp Terminal.cpp Terminal.hpp TFM.cpp \
+	TFM.hpp ToUnicodeMap.cpp ToUnicodeMap.hpp \
 	TpicSpecialHandler.cpp TpicSpecialHandler.hpp \
 	TriangularPatch.cpp TriangularPatch.hpp TrueTypeFont.cpp \
 	TrueTypeFont.hpp TTFAutohint.cpp TTFAutohint.hpp Unicode.cpp \
@@ -683,7 +688,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Directory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DvisvgmSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EPSFile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EPSToSVG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EmSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EncFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileFinder.Po@am__quote@
@@ -703,6 +707,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Ghostscript.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HtmlSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HyperlinkManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ImageToSVG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InputBuffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InputReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JFM.Po@am__quote@
@@ -734,6 +739,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShadingPatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SignalHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SourceInput.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecialManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamWriter.Po@am__quote@
