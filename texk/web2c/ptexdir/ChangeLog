@@ -1,3 +1,7 @@
+2018-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* kanji.c: More strict check kanji token.
+
 2018-04-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Fix issue GitHub:texjporg/tex-jp-build#57
