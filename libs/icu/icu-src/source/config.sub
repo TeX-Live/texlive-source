@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-05-03'
+timestamp='2018-05-05'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -110,33 +110,48 @@ case $# in
     exit 1;;
 esac
 
-# Separate what the user gave into CPU-COMPANY and OS or KERNEL-OS (if any).
-# Here we must recognize all the valid KERNEL-OS combinations.
-maybe_os=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\2/'`
-case $maybe_os in
-	nto-qnx* | linux-gnu* | linux-android* | linux-dietlibc | linux-newlib* | \
-	linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
-	knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
-	kopensolaris*-gnu* | cloudabi*-eabi* | \
-	storm-chaos* | os2-emx* | rtmk-nova*)
-	os=-$maybe_os
-	basic_machine=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
-	;;
-    android-linux)
-	os=-linux-android
-	basic_machine=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`-unknown
-	;;
-    *)
-	basic_machine=`echo "$1" | sed 's/-[^-]*$//'`
-	case $1 in
-	    *-*)
-		os=`echo "$1" | sed 's/.*-/-/'`
+# Spilt fields of configuration type
+IFS="-" read field1 field2 field3 field4 <<EOF
+$1
+EOF
+
+# Separate into logical components for further validation
+case $1 in
+	*-*-*-*)
+		basic_machine=$field1-$field2
+		os=-$field3-$field4
 		;;
-	    *)
+	*-*-*)
+		# Ambiguous whether COMPANY is present, or skipped and KERNEL-OS is two
+		# parts
+		maybe_os=$field2-$field3
+		case $maybe_os in
+			nto-qnx* | linux-gnu* | linux-android* | linux-dietlibc \
+			| linux-newlib* | linux-musl* | linux-uclibc* | uclinux-uclibc* \
+			| uclinux-gnu* | kfreebsd*-gnu* | knetbsd*-gnu* | netbsd*-gnu* \
+			| netbsd*-eabi* | kopensolaris*-gnu* | cloudabi*-eabi* \
+			| storm-chaos* | os2-emx* | rtmk-nova*)
+				basic_machine=$field1
+				os=-$maybe_os
+				;;
+			android-linux)
+				basic_machine=$field1-unknown
+				os=-linux-android
+				;;
+			*)
+				basic_machine=$field1-$field2
+				os=-$field3
+				;;
+		esac
+		;;
+	*-*)
+		basic_machine=$field1
+		os=-$field2
+		;;
+	*)
+		basic_machine=$1
 		os=
 		;;
-	esac
-	;;
 esac
 
 ### Let's recognize common machines as not being operating systems so
