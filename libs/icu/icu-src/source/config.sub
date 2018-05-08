@@ -111,7 +111,7 @@ case $# in
 esac
 
 # Spilt fields of configuration type
-IFS="-" read field1 field2 field3 field4 <<EOF
+IFS="-" read -r field1 field2 field3 field4 <<EOF
 $1
 EOF
 
@@ -1360,7 +1360,7 @@ esac
 
 # Decode manufacturer-specific aliases for certain operating systems.
 
-if [ x"$os" != x"" ]
+if [ x$os != x ]
 then
 case $os in
 	# First match some system type aliases that might get confused
@@ -1549,6 +1549,12 @@ case $os in
 	-ios)
 		;;
 	-none)
+		;;
+	-*-eabi)
+		case $basic_machine in
+		    arm*)
+			;;
+		esac
 		;;
 	*)
 		# Get rid of the `-' at the beginning of $os.
