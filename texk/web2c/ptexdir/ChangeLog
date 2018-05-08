@@ -1,3 +1,16 @@
+2018-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* kanji.c: More strict check kanji token.
+
+2018-04-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Fix issue GitHub:texjporg/tex-jp-build#57
+	  that discontinuous KINSOKU/INHIBIT table cannot be
+	  searched properly.
+	  (regression caused by a commmit of 2017-09-11)
+	* tests/free_pena.tex, tests/free_ixsp.tex: Added.
+	* ptex_version.h: pTeX version p3.8.1.
+
 2018-02-05  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Set subtype for JFM glue in math list.

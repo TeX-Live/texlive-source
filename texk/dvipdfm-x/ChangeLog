@@ -1,3 +1,16 @@
+2018-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tt_cmap.c: Revert a part of changes in 2017-12-09,
+	which breaks to give tounicode entries for ligatures.
+	http://tug.org/pipermail/tex-live/2018-May/041608.html.
+	* configure.ac: Version 20180506.
+
+ 2018-04-28  Stefan Br\"uns  <stefan.bruens@rwth-aachen.de>
+
+	* pngimage.c: Fix a bug which causes a segfault with 1/2/4-bit
+	transparent indexed PNGs.
+	* configure.ac: Version 20180428.
+
 2018-03-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xbb.c: Remove unused lines.

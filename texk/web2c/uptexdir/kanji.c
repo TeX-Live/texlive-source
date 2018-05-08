@@ -18,7 +18,7 @@ int sjisterminal;
 /* TOKEN */
 boolean check_kanji (integer c)
 {
-    if (c > CS_TOKEN_FLAG) return false;
+    if (c >= CS_TOKEN_FLAG) return false;
     else if (!(XXHi(c)>=KCAT_KANJI && XXHi(c)<=KCAT_HANGUL)) return false;
     else return is_char_kanji(c);
 }

@@ -1,6 +1,21 @@
-diff -ur mtx-0.63.orig/globals.c mtx-0.63/globals.c
---- mtx-0.63.orig/globals.c	Tue Jan 09 01:39:42 2018
-+++ mtx-0.63/globals.c	Tue Jan 09 08:46:40 2018
+diff -ur mtx-0.63a/files.c mtx-src/files.c
+--- mtx-0.63a/files.c	Tue Jan 09 01:39:42 2018
++++ mtx-src/files.c	Wed Apr 25 18:07:12 2018
+@@ -289,9 +289,9 @@
+   pushFile(infilename);
+   strcpy(outfile_NAME, outfilename);
+   if (outfile != NULL)
+-    outfile = freopen(outfile_NAME, "w", outfile);
++    outfile = freopen(outfile_NAME, "wb", outfile);
+   else
+-    outfile = fopen(outfile_NAME, "w");
++    outfile = fopen(outfile_NAME, "wb");
+   _SETIO(outfile != NULL, FileNotFound);
+   strcpy(stylefile_NAME, stylefilename);
+   if (stylefile != NULL)
+diff -ur mtx-0.63a/globals.c mtx-src/globals.c
+--- mtx-0.63a/globals.c	Tue Jan 09 01:39:42 2018
++++ mtx-src/globals.c	Wed Apr 25 18:07:37 2018
 @@ -230,7 +230,7 @@
      if (outfile != NULL)
        fclose(outfile);

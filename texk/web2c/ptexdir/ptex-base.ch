@@ -58,6 +58,7 @@
 %                  pTeX p3.7.1.
 % (2017-09-07) HK  pTeX p3.7.2 More restrictions on direction change commands.
 % (2018-01-21) HK  Added \ptexversion primitive and co. pTeX p3.8.
+% (2018-04-14) HK  pTeX p3.8.1 Bug fix for discontinuous KINSOKU table.
 %
 
 @x
@@ -73,8 +74,8 @@
 @y
 @d pTeX_version=3
 @d pTeX_minor_version=8
-@d pTeX_revision==".0"
-@d pTeX_version_string=='-p3.8.0' {current \pTeX\ version}
+@d pTeX_revision==".1"
+@d pTeX_version_string=='-p3.8.1' {current \pTeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.14159265',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
@@ -6397,6 +6398,8 @@ inserting a space between 2byte-char and 1byte-char.
 @d inhibit_both=0     {disable to insert space before 2byte-char and after it}
 @d inhibit_previous=1 {disable to insert space before 2byte-char}
 @d inhibit_after=2    {disable to insert space after 2byte-char}
+@d inhibit_none=3     {enable to insert space before/after 2byte-char}
+@d inhibit_unused=4   {unused entry}
 @d no_entry=1000
 @d new_pos=0
 @d cur_pos=1
@@ -6427,14 +6430,15 @@ var p,s:pointer;
 begin s:=calc_pos(c); p:=s;
 if n=new_pos then
   begin repeat
-  if (inhibit_xsp_code(p)=0)or(inhibit_xsp_code(p)=c) then goto done;
+  if (inhibit_xsp_type(p)=inhibit_unused)or(inhibit_xsp_code(p)=0)
+    or(inhibit_xsp_code(p)=c) then goto done;
   incr(p); if p>255 then p:=0;
   until s=p; p:=no_entry;
   end
 else
   begin repeat
-  if inhibit_xsp_code(p)=0 then goto done1;
-  if inhibit_xsp_code(p)=c then goto done;
+  if inhibit_xsp_code(p)=0 then goto done1
+  else if (inhibit_xsp_type(p)<>inhibit_unused)and(inhibit_xsp_code(p)=c) then goto done;
   incr(p); if p>255 then p:=0;
   until s=p;
 done1: p:=no_entry;
@@ -6447,9 +6451,10 @@ assign_inhibit_xsp_code:
 begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
 if is_char_kanji(n) then
   begin j:=get_inhibit_pos(tokanji(n),new_pos);
-  if (j<>no_entry)and(cur_val>inhibit_after)and(global or cur_level=level_one) then
-    begin n:=0; cur_val:=0 end
-    { remove the entry from inhibit table }
+  if (j<>no_entry)and(cur_val>inhibit_after) then
+    begin if global or(cur_level=level_one) then cur_val:=inhibit_unused
+      { remove the entry from inhibit table }
+	else cur_val:=inhibit_none; end
   else if j=no_entry then
     begin print_err("Inhibit table is full!!");
     help1("I'm skipping this control sequences.");@/
@@ -6466,7 +6471,7 @@ end;
 
 @ @<Fetch inhibit type from some table@>=
 begin scan_int; q:=get_inhibit_pos(tokanji(cur_val),cur_pos);
-cur_val_level:=int_val; cur_val:=3;
+cur_val_level:=int_val; cur_val:=inhibit_none;
 if q<>no_entry then cur_val:=inhibit_xsp_type(q);
 end
 
@@ -6476,6 +6481,7 @@ The \.{\\postbreakpenalty} is inserted after the 2byte-char.
 
 @d pre_break_penalty_code=1
 @d post_break_penalty_code=2
+@d kinsoku_unused_code=3
 
 @<Put each...@>=
 primitive("prebreakpenalty",assign_kinsoku,pre_break_penalty_code);
@@ -6502,15 +6508,16 @@ if p+kinsoku_base<0 then
 gubed
 if n=new_pos then
   begin repeat
-  if (kinsoku_type(p)=0)or(kinsoku_code(p)=c) then goto done;
+  if (kinsoku_type(p)=0)or(kinsoku_type(p)=kinsoku_unused_code)
+    or(kinsoku_code(p)=c) then goto done;
   incr(p); if p>255 then p:=0;
   until s=p;
   p:=no_entry;
   end
 else
   begin repeat
-  if kinsoku_type(p)=0 then goto done1;
-  if kinsoku_code(p)=c then goto done;
+  if kinsoku_type(p)=0 then goto done1
+  else if (kinsoku_type(p)<>kinsoku_unused_code)and(kinsoku_code(p)=c) then goto done;
   incr(p); if p>255 then p:=0;
   until s=p;
 done1: p:=no_entry;
@@ -6523,8 +6530,8 @@ assign_kinsoku:
 begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
 if is_char_ascii(n) or is_char_kanji(n) then
   begin j:=get_kinsoku_pos(tokanji(n),new_pos);
-  if (j<>no_entry)and(cur_val=0)and(global or cur_level=level_one) then
-    define(kinsoku_base+j,0,0) { remove the entry from KINSOKU table }
+  if (j<>no_entry)and(cur_val=0)and(global or(cur_level=level_one)) then
+    define(kinsoku_base+j,kinsoku_unused_code,0) { remove the entry from KINSOKU table }
   else begin
     if j=no_entry then begin
       print_err("KINSOKU table is full!!");

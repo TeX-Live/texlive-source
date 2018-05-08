@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current mtx version
-m4_define([mtx_version], [0.63])
+m4_define([mtx_version], [0.63a])
