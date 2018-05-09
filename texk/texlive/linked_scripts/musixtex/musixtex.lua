@@ -124,9 +124,10 @@ function usage()
 Usage:  [texlua] musixtex.lua { option | basename[.mtx | .pmx | .aspc | .tex | .ltx] } ...
         When no extension is given, extensions are tried in the above order
         until a source file is found. Preprocessing goes mtx-pmx-tex or 
-        aspc-tex/ltx, with the entry point determined by the extension.
+        aspc-etex/ltx, with the entry point determined by the extension.
         The normal route after preprocessing goes tex-dvi-ps-pdf, but shorter 
-        routes are also available, see the options.
+        routes are also available, see the options. The default processing route
+        for .tex files is etex-musixflx-etex.
 Options: -v  version
          -h  help
          -l  latex source
