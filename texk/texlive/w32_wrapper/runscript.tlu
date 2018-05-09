@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 47644 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2018-05-09 13:00:39 +0900 (水, 09 5 2018) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 47648 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2018-05-09 16:09:31 +0900 (水, 09 5 2018) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -455,7 +455,7 @@ end
 
 local function MAIN_CHUNK()
 
--- set locale LC_CTYPE as the system default
+-- set the system-default value for LC_CTYPE
 -- http://tug.org/pipermail/tex-live/2018-May/041628.html
 os.setlocale("", "ctype")
 
