@@ -24,8 +24,20 @@
    version 2005/12/01 or later.
   
    This work has the LPPL maintenance status `maintained'.
+
+   This work consists of the files glossaries.dtx and glossaries.ins 
+   and the derived files glossaries.sty, glossaries-prefix.sty,
+   glossary-hypernav.sty, glossary-inline.sty, glossary-list.sty, 
+   glossary-long.sty, glossary-longbooktabs.sty, glossary-longragged.sty,
+   glossary-mcols.sty, glossary-super.sty, glossary-superragged.sty, 
+   glossary-tree.sty, glossaries-compatible-207.sty, 
+   glossaries-compatible-307.sty, glossaries-accsupp.sty, 
+   glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.perl.
+   Also makeglossaries and makeglossaries-lite.lua.
   
    History:
+   * 4.38:
+     - no change.
    * 4.37:
      - no change.
    * 4.36:

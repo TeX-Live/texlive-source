@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 4.37
+# Version : 4.38
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -22,14 +22,20 @@
 # The Current Maintainer of this work is Nicola Talbot.
 
 # This work consists of the files glossaries.dtx and glossaries.ins 
-# and the derived files glossaries.sty, mfirstuc.sty,
-# glossary-hypernav.sty, glossary-list.sty, glossary-long.sty,
-# glossary-super.sty, glossaries.perl.
+# and the derived files glossaries.sty, glossaries-prefix.sty,
+# glossary-hypernav.sty, glossary-inline.sty, glossary-list.sty, 
+# glossary-long.sty, glossary-longbooktabs.sty, glossary-longragged.sty,
+# glossary-mcols.sty, glossary-super.sty, glossary-superragged.sty, 
+# glossary-tree.sty, glossaries-compatible-207.sty, 
+# glossaries-compatible-307.sty, glossaries-accsupp.sty, 
+# glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="4.37 (2018-04-07)";
+my $version="4.38 (2018-05-10)";
 
 # History:
+# v4.38:
+#   * No change.
 # v4.37:
 #   * No change.
 # v4.36:
