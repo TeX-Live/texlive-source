@@ -1,3 +1,8 @@
+2018-05-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex.c: Allow non-ascii file names also for pdfTeX
+	(w32 only).
+
 2018-01-18  Karl Berry  <karl@freefriends.org>
 
 	* man5/synctex.5: spacing, typos, per Debian.

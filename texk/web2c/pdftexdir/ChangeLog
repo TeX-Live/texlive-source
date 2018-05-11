@@ -1,3 +1,7 @@
+2018-05-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptexlib.h: Allow non-ascii file names in pdfTeX (w32 only).
+
 2018-04-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftoepdf-newpoppler.cc, pdftosrc-newpoppler.cc:
