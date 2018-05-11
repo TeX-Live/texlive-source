@@ -76,6 +76,12 @@ countpdffilepages(void)
 	return full path in *path
 	return bounds (tex points) in *bounds
 */
+
+#ifdef _WIN32
+#undef fopen
+#define fopen fsyscp_fopen
+#endif
+
 int
 find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 {
