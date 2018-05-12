@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.55"
+printversion = "v0.56"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -27,6 +27,7 @@ lwarpmk pdftohtml [project]:
     For use with latexmk or a Makefile:
     Converts project_html.pdf to project_html.html and individual HTML files.
     Finishes the HTML conversion even if there was a compile error.
+lwarpmk pdftosvg <list of file names>: Converts each PDF file to SVG.
 lwarpmk clean [project]: Remove .aux, .toc, .lof/t, .idx, .ind, .log, *_html_inc.*, .gl*
 lwarpmk cleanall [project]: Remove auxiliary files and also project.pdf, *.html
 lwarpmk cleanlimages: Removes all images from the "lateximages" directory.
@@ -49,13 +50,14 @@ sourcename = "projectname"  (the source-code filename w/o .tex)
 homehtmlfilename = "index"  (or perhaps the project name)
 htmlfilename = ""  (or "projectname" - filename prefix)
 latexmk = "false"  (or "true" to use latexmk to build PDFs)
+shellescape = "false"
 xindylanguge = "english"  (use a language supported by xindy)
 xindycodepage = "utf8"  (use a codepage supported by xindy)
 xindystyle = "lwarp.xdy" (or a custom file based on lwarp.xdy)
 pdftotextenc = "UTF-8"  (use an encoding supported by pdftotext)
 --
 Filenames must contain only letters, numbers, underscore, or dash.
-Values must be in "quotes".
+Values must be in upright "quotes".
 
 ]] ) ;
 end
@@ -99,13 +101,13 @@ function loadconf ()
 local conffile = "lwarpmk.conf"
 -- Optional configuration filename:
 if ( arg[2] ~= nil ) then conffile = arg[2]..".lwarpmkconf" end
--- Default xindy language:
+-- Additional defaults:
+opsystem = "Unix"
+latexmk = "false"
+shellescape = "false"
 xindylanguage = "english"
--- Default xindy codepage:
 xindycodepage = "utf8"
--- Default xindystyle:
 xindystyle = "lwarp.xdy"
--- Default pdftotext encoding:
 pdftotextenc = "UTF-8"
 -- Verify the file exists:
 if (lfs.attributes(conffile,"mode")==nil) then
@@ -161,6 +163,7 @@ elseif ( cvarname == "sourcename" ) then sourcename = cvalue
 elseif ( cvarname == "homehtmlfilename" ) then homehtmlfilename = cvalue
 elseif ( cvarname == "htmlfilename" ) then htmlfilename = cvalue
 elseif ( cvarname == "latexmk" ) then latexmk = cvalue
+elseif ( cvarname == "shellescape" ) then shellescape = cvalue
 elseif ( cvarname == "xindylanguage" ) then xindylanguage = cvalue
 elseif ( cvarname == "xindycodepage" ) then xindycodepage = cvalue
 elseif ( cvarname == "xindystyle" ) then xindystyle = cvalue
@@ -254,7 +257,13 @@ end
 
 function onetime (fsuffix)
 print("lwarpmk: Compiling with " .. latexname .. " " .. sourcename..fsuffix)
-err = os.execute(latexname .. " " .. sourcename..fsuffix)
+local thisshellescape = " "
+if ( shellescape == "true" ) then
+    thisshellescape = " -shell-escape "
+else
+    thisshellescape = " "
+end
+err = os.execute(latexname .. thisshellescape .. sourcename..fsuffix)
 if ( err ~= 0 ) then
     print ("lwarpmk: ===")
     print ("lwarpmk: Compile error.")
@@ -519,6 +528,13 @@ end -- function
 -- Use latexmk to compile source and index:
 -- fsuffix is "" for print, or "_html" for HTML
 function compilelatexmk ( fsuffix )
+-- Maybe select the shell-escape option:
+local thisshellescape = " "
+if ( shellescape == "true" ) then
+    thisshellescape = " -shell-escape "
+else
+    thisshellescape = " "
+end
 -- The recorder option is required to detect changes in <project>.tex
 -- while we are loading <project>_html.tex.
 err=os.execute ( "latexmk -pdf -dvi- -ps- -recorder "
@@ -530,7 +546,7 @@ err=os.execute ( "latexmk -pdf -dvi- -ps- -recorder "
     .. "  -C " .. xindycodepage
     .. "  -L " .. xindylanguage .. " /"
     .. opquote
-    .. " -pdflatex=\"" .. latexname .." %O %S\" "
+    .. " -pdflatex=\"" .. latexname .. thisshellescape .." %O %S\" "
     .. sourcename..fsuffix ..".tex" ) ;
 if ( err ~= 0 ) then
     print ("lwarpmk: ===")
@@ -538,7 +554,21 @@ if ( err ~= 0 ) then
     print ("lwarpmk: ===")
     os.exit(1)
 end
-end
+end -- function
+
+-- Converts PDF files to SVG files.
+-- The filenames are arg[2] and up.
+-- arg[1] is the command "pdftosvg".
+function convertpdftosvg ()
+for i = 2 , #arg do
+    if (lfs.attributes(arg[i],"mode")==nil) then
+        print ("lwarpmk: File \"" .. arg[i] .. "\" does not exist.")
+    else
+        print ("lwarpmk: Converting \"" .. arg[i] .. "\"")
+        os.execute ( "pdftocairo -svg " .. arg[i] )
+    end -- if
+end -- do
+end --function
 
 -- lwarpmk --version :
 
@@ -742,6 +772,12 @@ print ("lwarpmk: Done.")
 elseif arg[1] == "cleanlimages" then
 loadconf ()
 os.execute ( rmname .. " lateximages/*" )
+print ("lwarpmk: Done.")
+
+-- lwarpmk pdftosvg <list of file names>
+-- Convert PDf files to SVG using pdftocairo
+elseif arg[1] == "pdftosvg" then
+convertpdftosvg ()
 print ("lwarpmk: Done.")
 
 -- lwarpmk with no argument :
