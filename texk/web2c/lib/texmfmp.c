@@ -1376,6 +1376,24 @@ tcx_get_num (int upb,
 
 /* FIXME: A new format ought to be introduced for these files. */
 
+#ifdef _WIN32
+#undef fopen
+#undef xfopen
+#define fopen fsyscp_fopen
+#define xfopen fsyscp_xfopen
+#include <wchar.h>
+int fsyscp_stat(const char *path, struct stat *buffer)
+{
+  wchar_t *wpath;
+  int     ret;
+  wpath = get_wstring_from_mbstring(kpse_def->File_system_codepage,
+          path, wpath = NULL);
+  ret = _wstat(wpath, buffer);
+  free(wpath);
+  return ret;
+}
+#endif /* WIN32 */
+
 void
 readtcxfile (void)
 {
@@ -3137,7 +3155,11 @@ void getfilemoddate(integer s)
 
     recorder_record_input(file_name);
     /* get file status */
+#ifdef _WIN32
+    if (fsyscp_stat(file_name, &file_data) == 0) {
+#else
     if (stat(file_name, &file_data) == 0) {
+#endif
         size_t len;
 
         makepdftime(file_data.st_mtime, time_str, /* utc= */false);
@@ -3167,7 +3189,11 @@ void getfilesize(integer s)
 
     recorder_record_input(file_name);
     /* get file status */
+#ifdef _WIN32
+    if (fsyscp_stat(file_name, &file_data) == 0) {
+#else
     if (stat(file_name, &file_data) == 0) {
+#endif
         size_t len;
         char buf[20];
 
