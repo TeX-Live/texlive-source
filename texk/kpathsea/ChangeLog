@@ -1,3 +1,8 @@
+2018-05-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* kpsewhich.c: Allow Unicode file name for pdftex in kpsewhich.
+	(Windows only)
+
 2018-04-14  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2018 release, kpathsea 6.3.0.
