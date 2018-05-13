@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-05-05'
+timestamp='2018-05-11'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ case $# in
     exit 1;;
 esac
 
-# Spilt fields of configuration type
+# Split fields of configuration type
 IFS="-" read -r field1 field2 field3 field4 <<EOF
 $1
 EOF
