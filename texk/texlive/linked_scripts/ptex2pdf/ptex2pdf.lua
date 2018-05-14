@@ -1,7 +1,7 @@
 #!/usr/bin/env texlua
 
 NAME = "ptex2pdf[.lua]"
-VERSION = "20170622.0"
+VERSION = "20180514.0"
 AUTHOR = "Norbert Preining"
 AUTHOREMAIL = "norbert@preining.info"
 SHORTDESC = "Convert Japanese TeX documents to pdf"
@@ -29,9 +29,9 @@ options: -v  version
 LICENSECOPYRIGHT = [[
 Originally based on musixtex.lua from Bob Tennent.
 
-(c) Copyright 2016-2017 Japanese TeX Development Community  
-(c) Copyright 2013-2017 Norbert Preining norbert@preining.info  
-(c) Copyright 2012      Bob Tennent rdt@cs.queensu.ca  
+(c) Copyright 2016-2018 Japanese TeX Development Community
+(c) Copyright 2013-2018 Norbert Preining norbert@preining.info
+(c) Copyright 2012      Bob Tennent rdt@cs.queensu.ca
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -174,6 +174,9 @@ CHANGELOG = [[
   first replace all backslash chars to slash chars  
 - version 20170622.0  
   pass all non-optional arguments before filename to TeX engine  
+- version 20180514.0
+  Windows: for uptex use command_line_encoding=utf8, for all other turn
+  it off (set to none)
 ]]
 
 
@@ -406,9 +409,11 @@ end
 
 -- we are still here, so we found a file
 -- make sure that on Windows/uptex we are using utf8 as command line encoding
-if use_uptex == 1 then
-  if os.type == 'windows' then
+if os.type == 'windows' then
+  if use_uptex == 1 then
     os.setenv('command_line_encoding', 'utf8')
+  else
+    os.setenv('command_line_encoding', 'none')
   end
 end
 if (outputdir ~= ".") then
