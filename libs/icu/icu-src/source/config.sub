@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-05-11'
+timestamp='2018-05-12'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -1551,10 +1551,6 @@ case $os in
 	-none)
 		;;
 	-*-eabi)
-		case $basic_machine in
-		    arm*)
-			;;
-		esac
 		;;
 	*)
 		# Get rid of the `-' at the beginning of $os.
