@@ -1,3 +1,12 @@
+2018-05-14  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvidvi.c: Adjust 'Bad option' error message.
+
+2018-05-09  Ken Brown  <kbrow1i@gmail.com>
+
+	* dvidvi.c: Avoid a gcc warning with -Wformat-security.
+	http://tug.org/pipermail/tlbuild/2018q2/004225.html
+
 2017-06-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure{,ac}, aclocal.m4:

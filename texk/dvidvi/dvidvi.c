@@ -138,7 +138,7 @@ const char *oname=NULL ;      /* output dvi file name */
 char *iname ;                 /* input dvi file name */
 char *strings ;               /* pointer of the string pool */
 
-char banner[] = BANNER ;      /* the startup message */
+const char banner[] = BANNER ;      /* the startup message */
 integer inlength ;      /* the length of the input dvi file */
 integer postloc ;       /* location of the postamble */
 integer mag ;           /* magnification factor */
@@ -772,7 +772,7 @@ case '?' :
             usage() ;
             break ;
 default:
-	    error("! Bad option, not one of filmnqrx?") ;
+	    error("! Bad option, not one of fijlmnpqrx?") ;
          }  /* switch c */
       } else {  /* this a file name */
          if (*iname == 0) { /* input file name */
