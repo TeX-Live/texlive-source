@@ -1,3 +1,8 @@
+2018-05-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfparse.c: Allow image file names including 0x5c for
+	(e)-pTeX in CP932-like system (Windows only).
+
 2018-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tt_cmap.c: Revert a part of changes in 2017-12-09,

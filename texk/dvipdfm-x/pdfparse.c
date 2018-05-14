@@ -503,6 +503,13 @@ parse_pdf_literal_string (const char **pp, const char *endptr)
 
   while (p < endptr) {
 
+#ifdef _WIN32
+    int check_kanji;
+    if (p > *pp && (IS_KANJI(p-1)))
+      check_kanji = 1;
+    else
+      check_kanji = 0;
+#endif
     ch = p[0];
 
     if (ch == ')' && op_count < 1)
@@ -532,10 +539,22 @@ parse_pdf_literal_string (const char **pp, const char *endptr)
 
     switch (ch) {
     case '\\':
+#ifdef _WIN32
+      if (check_kanji == 0) {
+        ch = ps_getescc(&p, endptr);
+        if (ch >= 0)
+          sbuf[len++] = (ch & 0xff);
+      } else {
+        sbuf[len++] = ch;
+        p++;
+      }
+      break;
+#else
       ch = ps_getescc(&p, endptr);
       if (ch >= 0)
 	sbuf[len++] = (ch & 0xff);
       break;
+#endif /* _WIN32 */
     case '\r':
       p++;
       if (p < endptr && p[0] == '\n')
