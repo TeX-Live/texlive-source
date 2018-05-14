@@ -96,7 +96,7 @@ cd $libiconv_ver
 # foil wrong attempts at dynamic linking, etc.
 (cd $clisp_basedir/clisp-tools/lib && rm -f *.dylib *.la)
 
-clisp_ver=clisp-2.49.92
+clisp_ver=
 cd $clisp_basedir
 $wget https://haible.de/bruno/gnu/$clisp_ver.tar.bz2
 bunzip2 -dc $clisp_ver.tar.bz2 | tar xf -
