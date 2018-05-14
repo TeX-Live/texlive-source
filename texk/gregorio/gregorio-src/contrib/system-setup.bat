@@ -240,7 +240,7 @@ echo Please save the file to a convenient location and email it to
 echo gregorio-users@googlegroups.com as part of your bug report.
 echo.
 echo You can also create an issue at
-echo http://github.org/gregorio-project/gregorio/issues
+echo http://github.com/gregorio-project/gregorio/issues
 echo and copy-paste the content of this file into the description.
 echo.
 pause
