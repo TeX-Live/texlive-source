@@ -1,3 +1,8 @@
+2018-05-15  Karl Berry  <karl@freefriends.org>
+
+	* dvidvi.c: report actual bad option letter,
+	and say to use -? instead of duplicating.
+
 2018-05-14  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvidvi.c: Adjust 'Bad option' error message.

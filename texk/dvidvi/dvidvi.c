@@ -34,7 +34,7 @@
 #define SEEK_CUR 1
 #define SEEK_END 2
 
-#define BANNER "\nThis is dvidvi 1.1, Copyright (C) 1988-91, Radical Eye Software\n" \
+#define BANNER "\nThis is dvidvi 1.1, Copyright 1988-1991 Radical Eye Software\n" \
                  "Improved from 1.0 to 1.1, 1994, Markus Kohm\n"
 #define STRINGSIZE (500L)  /* maximum number of strings in program */
 
@@ -772,7 +772,8 @@ case '?' :
             usage() ;
             break ;
 default:
-	    error("! Bad option, not one of fijlmnpqrx?") ;
+	    fprintf(stderr, "dvidvi: Bad option %c\n", c);
+            error("! Try -? for more information") ;
          }  /* switch c */
       } else {  /* this a file name */
          if (*iname == 0) { /* input file name */
