@@ -1,6 +1,6 @@
 preamble "\\documentclass{index}
 \\begin{document}\n
-\\chapter{º÷¡¡°ú}[index0001]\n
+\\chapter{ç´¢ã€€å¼•}[index0001]\n
 \\begin{theindex}\n\n"
 postamble "\n\n\\end{theindex}\n\n\\end{document}\n"
 

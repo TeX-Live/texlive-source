@@ -19,7 +19,7 @@ char *styfile,*idxfile[256],*indfile,*dicfile,*logfile;
 #endif
 KpathseaSupportInfo kp_ist,kp_dict;
 
-#define VERSION "version 2.6f [14-Aug-2009]"
+#define VERSION "version 3.0 [15-May-2018]"
 
 int main(int argc, char **argv)
 {
@@ -31,11 +31,9 @@ int main(int argc, char **argv)
 
 #ifdef WIN32
 	_setmaxstdio(2048);
-        set_enc_string("sjis", "euc");
-        sjisterminal = 0;
-#else
-        set_enc_string(NULL, "euc");
+	sjisterminal = 0;
 #endif
+	set_enc_string(NULL, "uptex");
 	kpse_set_program_name(argv[0], "mendex");
 
 	p = getenv ("PTEX_KANJI_ENC");
@@ -176,7 +174,7 @@ int main(int argc, char **argv)
 #endif
 
 			case 'U':
-				set_enc_string("UTF8", "uptex");
+				set_enc_string("UTF8", NULL);
 				break;
 
 

@@ -1,3 +1,12 @@
+2018-05-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* README, main.c, configure.ac, configure:
+	Version 3.0 [15-May-2018].
+	* main.c, mendex.1, mendex.doc, mendex.1.ja:
+	Set default encoding of internal buffer UTF-8.
+	* README, indexsty, kana.h, ktable.h:
+	Convert encoding from EUC-JP to UTF-8
+
 2018-01-17  Karl Berry  <karl@tug.org>
 
 	* mendex.1 (.TH): use 1 instead of L, per Debian (and all our

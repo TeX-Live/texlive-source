@@ -65,7 +65,7 @@ mendex \- 索引整形ツール
 .TP 10
 \fB-I\fI enc\fR
 内部バッファのコードを\fIenc\fR に指定します。\fIenc\fR には \fIeuc\fR (EUC-JP) または \fIutf8\fR (UTF-8)が指定可能です。
-このオプションが指定されていない場合のデフォルト値は \fIeuc\fR ですが、オプション \fB-U\fR が明示的に指定されている場合は \fIutf8\fR となります。
+このオプションが指定されていない場合のデフォルト値は \fIutf8\fR です。
 .TP 10
 \fB--help\fR
 オプションの要約を表示します。
