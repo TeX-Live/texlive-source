@@ -4,8 +4,10 @@
 	Version 3.0 [15-May-2018].
 	* main.c, mendex.1, mendex.doc, mendex.1.ja:
 	Set default encoding of internal buffer UTF-8.
-	* README, indexsty, kana.h, ktable.h:
-	Convert encoding from EUC-JP to UTF-8
+	* indexsty, kana.h, ktable.h:
+	Convert encoding from EUC-JP to UTF-8.
+	* README_asciimw: Rename from README and
+	convert encoding from EUC-JP to UTF-8.
 
 2018-01-17  Karl Berry  <karl@tug.org>
 
