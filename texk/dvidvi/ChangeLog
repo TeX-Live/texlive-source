@@ -1,3 +1,7 @@
+2018-05-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tests/palyout.2, tests/palyout.3: Adapt.
+
 2018-05-15  Karl Berry  <karl@freefriends.org>
 
 	* dvidvi.c: report actual bad option letter,
