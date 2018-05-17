@@ -1,5 +1,5 @@
 #! /bin/sh -vx
-# $Id$
+# $Id: pdftosrc.test 804 2018-05-17 22:29:15Z karl $
 # Copyright 2017 Karl Berry <tex-live@tug.org>
 # Copyright 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.

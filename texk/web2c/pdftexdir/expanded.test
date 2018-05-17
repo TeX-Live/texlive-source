@@ -1,5 +1,5 @@
 #! /bin/sh -vx
-# $Id$
+# $Id: expanded.test 804 2018-05-17 22:29:15Z karl $
 # Public domain
 # David Carlisle: version for \expanded based on existing test scripts
 # by Peter Breitenlohner and Karl Berry.
