@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
 ##
-## Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2018 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -92,10 +92,13 @@ EXTRA_DIST += \
 	pdftexdir/README \
 	pdftexdir/change-files.txt
 
-# pdfTeX Tests
+# pdfTeX tests
 #
-pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test pdftexdir/pdfimage.test
-pdftexdir/wprob.log pdftexdir/pdftex.log pdftexdir/pdfimage.log: pdftex$(EXEEXT)
+pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
+  pdftexdir/pdfimage.test pdftexdir/expanded.test
+
+pdftexdir/wprob.log pdftexdir/pdftex.log \
+  pdftexdir/pdfimage.log pdftexdir/expanded.log: pdftex$(EXEEXT)
 
 EXTRA_DIST += $(pdftex_tests)
 
@@ -112,3 +115,6 @@ EXTRA_DIST += pdftexdir/tests/pdfimage.tex \
 	tests/1-4.jpg tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png
 DISTCLEANFILES += pdfimage.fmt pdfimage.log pdfimage.pdf
 
+## expanded.test
+EXTRA_DIST += tests/expanded.tex
+DISTCLEANFILES += expanded.log

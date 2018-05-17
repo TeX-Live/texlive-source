@@ -3080,13 +3080,13 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	pdftexdir/NEWS pdftexdir/README pdftexdir/change-files.txt \
 	$(pdftex_tests) tests/wprob.tex pdftexdir/tests/pdfimage.tex \
 	tests/1-4.jpg tests/B.pdf tests/basic.tex \
-	tests/lily-ledger-broken.png $(ttf2afm_tests) \
-	pdftexdir/tests/postV3.afm pdftexdir/tests/postV3.ttf \
-	pdftexdir/tests/postV7.afm pdftexdir/tests/postV7.ttf \
-	$(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
-	pdftexdir/tests/test-13.xref pdftexdir/tests/test-15.pdf \
-	pdftexdir/tests/test-15.xref $(libluasocket_sources) \
-	luatexdir/luasocket/src/ftp_lua.c \
+	tests/lily-ledger-broken.png tests/expanded.tex \
+	$(ttf2afm_tests) pdftexdir/tests/postV3.afm \
+	pdftexdir/tests/postV3.ttf pdftexdir/tests/postV7.afm \
+	pdftexdir/tests/postV7.ttf $(pdftosrc_tests) \
+	pdftexdir/tests/test-13.pdf pdftexdir/tests/test-13.xref \
+	pdftexdir/tests/test-15.pdf pdftexdir/tests/test-15.xref \
+	$(libluasocket_sources) luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/headers_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/ltn12_lua.c \
@@ -3362,8 +3362,8 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	euptex-tangle euptrip.diffs pdfprimitive-euptex.* \
 	$(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c pdftex.p \
 	pdftex.pool pdftex-tangle pwprob.log pwprob.tex pdfimage.fmt \
-	pdfimage.log pdfimage.pdf postV3.afm postV7.afm test-13.pdf \
-	test-13.xref test-15.pdf test-15.xref \
+	pdfimage.log pdfimage.pdf expanded.log postV3.afm postV7.afm \
+	test-13.pdf test-13.xref test-15.pdf test-15.xref \
 	$(nodist_libluatex_sources) luaimage.* luajitimage.* \
 	$(nodist_xetex_SOURCES) xetex.web xetex.ch xetex-web2c xetex.p \
 	xetex.pool xetex-tangle bug73.fmt bug73.log bug73.out \
@@ -4016,9 +4016,11 @@ pdftex_ch_srcs = \
 	tex-binpool.ch
 
 
-# pdfTeX Tests
+# pdfTeX tests
 #
-pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test pdftexdir/pdfimage.test
+pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
+  pdftexdir/pdfimage.test pdftexdir/expanded.test
+
 ttf2afm_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/pdftexdir
 ttf2afm_SOURCES = pdftexdir/ttf2afm.c
 ttf2afm_DEPENDENCIES = $(default_dependencies)
@@ -19714,7 +19716,9 @@ pdftex.pdf: pdftex.tex
 	env MKTEXFMT=0 pdftex '\nonstopmode\input pdftex.tex'
 pdftex.tex: $(srcdir)/pdftexdir/pdftex.web
 	weave $(srcdir)/pdftexdir/pdftex.web
-pdftexdir/wprob.log pdftexdir/pdftex.log pdftexdir/pdfimage.log: pdftex$(EXEEXT)
+
+pdftexdir/wprob.log pdftexdir/pdftex.log \
+  pdftexdir/pdfimage.log pdftexdir/expanded.log: pdftex$(EXEEXT)
 pdftexdir/ttf2afm.log: ttf2afm$(EXEEXT)
 
 $(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND)

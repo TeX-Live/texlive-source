@@ -1,3 +1,6 @@
+- changes:
+  - new primitive \expanded (from unreleased pdftex 1.50 branch + luatex).
+
 pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
 - changes:
   - do not hash current directory into PDF ID, for more reproducible builds

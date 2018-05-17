@@ -1,3 +1,11 @@
+2018-05-13  Joseph Wright  <joseph.wright@morningstar2.co.uk>
+
+	* pdftex.web: New primitive \expanded based on original
+	  suggestion by Heiko Oberdiek, and with work by
+	  Bruno Le Floch and David Carlisle (on behalf of The LaTeX Project).
+        (expanded_code): new @d, new cases.
+        https://mailman.ntg.nl/pipermail/ntg-pdftex/2018-May/004233.html
+
 2018-05-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexlib.h: Allow non-ascii file names in pdfTeX (w32 only).
