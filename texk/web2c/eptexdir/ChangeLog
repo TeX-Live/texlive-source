@@ -1,3 +1,9 @@
+2018-05-18  Joseph Wright  <joseph.wright@morningstar2.co.uk>
+            Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex-base.ch, pdfutils.ch: New primitive \expanded
+	* eptex.ech, eptex_version.h: e-pTeX version 180518.
+
 2018-03-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
             Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 

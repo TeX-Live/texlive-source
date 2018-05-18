@@ -22,8 +22,7 @@
 %	+ eptexdir/eptex.ech		e-TeX+pTeX changes
 %	+ eptexdir/etex.ch1		glue
 %	+ eptexdir/fam256.ch		borrowed from Omega
-%	+ eptexdir/pdfstrcmp.ch		borrowed from pdfTeX
-%	+ eptexdir/pdfsavepos.ch	borrowed from pdfTeX
+%	+ eptexdir/pdfutils.ch		borrowed from pdfTeX
 %	+ tex-binpool.ch		compiled pool file
 %
 % where the three small files denoted as glue resolve incompatibilities
