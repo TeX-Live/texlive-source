@@ -125,7 +125,7 @@ static int UCS2toJISnative(int ucs2)
 
 
 /*
-  http://homepage3.nifty.com/ttk/comp/tex/jis_uni_variation_uptex.html
+  http://www.t-lab.opal.ne.jp/tex/jis_uni_variation_uptex.html
   http://hp.vector.co.jp/authors/VA010341/unicode/
   http://www.jca.apc.org/~earthian/aozora/0213/jisx0213code.zip
 */
