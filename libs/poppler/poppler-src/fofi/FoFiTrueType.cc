@@ -23,6 +23,7 @@
 // Copyright (C) 2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2015 Aleksei Volkov <Aleksei Volkov>
 // Copyright (C) 2015, 2016 William Bader <williambader@hotmail.com>
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -43,7 +44,6 @@
 #include "goo/gmem.h"
 #include "goo/GooLikely.h"
 #include "goo/GooString.h"
-#include "goo/GooHash.h"
 #include "FoFiType1C.h"
 #include "FoFiTrueType.h"
 #include "poppler/Error.h"
@@ -305,7 +305,6 @@ FoFiTrueType::FoFiTrueType(char *fileA, int lenA, GBool freeFileDataA, int faceI
   nTables = 0;
   cmaps = nullptr;
   nCmaps = 0;
-  nameToGID = nullptr;
   parsedOk = gFalse;
   faceIndex = faceIndexA;
   gsubFeatureTable = 0;
@@ -317,9 +316,6 @@ FoFiTrueType::FoFiTrueType(char *fileA, int lenA, GBool freeFileDataA, int faceI
 FoFiTrueType::~FoFiTrueType() {
   gfree(tables);
   gfree(cmaps);
-  if (nameToGID) {
-    delete nameToGID;
-  }
 }
 
 int FoFiTrueType::getNumCmaps() {
@@ -442,11 +438,12 @@ int FoFiTrueType::mapCodeToGID(int i, Guint c) {
   return gid;
 }
 
-int FoFiTrueType::mapNameToGID(char *name) {
-  if (!nameToGID) {
+int FoFiTrueType::mapNameToGID(char *name) const {
+  const auto gid = nameToGID.find(name);
+  if (gid == nameToGID.end()) {
     return 0;
   }
-  return nameToGID->lookupInt(name);
+  return gid->second;
 }
 
 GBool FoFiTrueType::getCFFBlock(char **start, int *length) {
@@ -1450,7 +1447,7 @@ void FoFiTrueType::parse() {
 }
 
 void FoFiTrueType::readPostTable() {
-  GooString *name;
+  std::string name;
   int tablePos, postFmt, stringIdx, stringPos;
   GBool ok;
   int i, j, n, m;
@@ -1465,12 +1462,12 @@ void FoFiTrueType::readPostTable() {
     goto err;
   }
   if (postFmt == 0x00010000) {
-    nameToGID = new GooHash(gTrue);
+    nameToGID.reserve(258);
     for (i = 0; i < 258; ++i) {
-      nameToGID->add(new GooString(macGlyphNames[i]), i);
+      nameToGID.emplace(macGlyphNames[i], i);
     }
   } else if (postFmt == 0x00020000) {
-    nameToGID = new GooHash(gTrue);
+    nameToGID.reserve(258);
     n = getU16BE(tablePos + 32, &ok);
     if (!ok) {
       goto err;
@@ -1484,8 +1481,7 @@ void FoFiTrueType::readPostTable() {
       ok = gTrue;
       j = getU16BE(tablePos + 34 + 2*i, &ok);
       if (j < 258) {
-	nameToGID->removeInt(macGlyphNames[j]);
-	nameToGID->add(new GooString(macGlyphNames[j]), i);
+	nameToGID[macGlyphNames[j]] = i;
       } else {
 	j -= 258;
 	if (j != stringIdx) {
@@ -1500,23 +1496,21 @@ void FoFiTrueType::readPostTable() {
 	if (!ok || !checkRegion(stringPos + 1, m)) {
 	  continue;
 	}
-	name = new GooString((char *)&file[stringPos + 1], m);
-	nameToGID->removeInt(name);
-	nameToGID->add(name, i);
+	name.assign((char *)&file[stringPos + 1], m);
+	nameToGID[name] = i;
 	++stringIdx;
 	stringPos += 1 + m;
       }
     }
   } else if (postFmt == 0x00028000) {
-    nameToGID = new GooHash(gTrue);
+    nameToGID.reserve(258);
     for (i = 0; i < nGlyphs; ++i) {
       j = getU8(tablePos + 32 + i, &ok);
       if (!ok) {
 	continue;
       }
       if (j < 258) {
-	nameToGID->removeInt(macGlyphNames[j]);
-	nameToGID->add(new GooString(macGlyphNames[j]), i);
+	nameToGID[macGlyphNames[j]] = i;
       }
     }
   }
@@ -1524,10 +1518,7 @@ void FoFiTrueType::readPostTable() {
   return;
 
  err:
-  if (nameToGID) {
-    delete nameToGID;
-    nameToGID = nullptr;
-  }
+  nameToGID.clear();
 }
 
 int FoFiTrueType::seekTable(const char *tag) {

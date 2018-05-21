@@ -1,3 +1,25 @@
+Release 0.65.0
+        core:
+         * SplashOutputDev: Add the invisible character check beginType3Char. Bug #106244
+         * XRef: Fix runtime undefined behaviour. Bug #105970
+         * Fix issues with malformed documents. Bug #104942, #103238
+         * Remove GooHash after replacing it by std::unordered_map
+         * Add conversion methods between GooString and std::string.
+
+        cpp:
+         * Add newline after error message
+         * Expose more image modes, add option to select mode in renderer. Bug #105558
+
+        build system:
+         * Fix compilation with libc++
+         * Small improvement to FindLIBOPENJPEG2.cmake
+
+        qt5:
+         * Add widget annot actions to FormFields
+
+        utils:
+         * pdffonts: Minor formatting changes in the man page. Bug #105194
+
 Release 0.64.0
         core:
          * Workaround form field text not being drawn on broken files. Bug #103245

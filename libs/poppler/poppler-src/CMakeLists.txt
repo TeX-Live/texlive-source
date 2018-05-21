@@ -30,7 +30,7 @@ if (ECM_FOUND)
 endif()
 
 set(POPPLER_MAJOR_VERSION "0")
-set(POPPLER_MINOR_VERSION "64")
+set(POPPLER_MINOR_VERSION "65")
 set(POPPLER_MICRO_VERSION "0")
 set(POPPLER_VERSION "${POPPLER_MAJOR_VERSION}.${POPPLER_MINOR_VERSION}.${POPPLER_MICRO_VERSION}")
 
@@ -316,7 +316,6 @@ configure_file(poppler/poppler-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/popple
 set(poppler_SRCS
   goo/gfile.cc
   goo/gmempp.cc
-  goo/GooHash.cc
   goo/GooList.cc
   goo/GooTimer.cc
   goo/GooString.cc
@@ -491,7 +490,7 @@ add_library(poppler STATIC ${poppler_SRCS})
 else()
 add_library(poppler ${poppler_SRCS})
 endif()
-set_target_properties(poppler PROPERTIES VERSION 75.0.0 SOVERSION 75)
+set_target_properties(poppler PROPERTIES VERSION 76.0.0 SOVERSION 76)
 if(MINGW)
     get_target_property(POPPLER_SOVERSION poppler SOVERSION)
     set_target_properties(poppler PROPERTIES SUFFIX "-${POPPLER_SOVERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}")
@@ -580,7 +579,6 @@ if(ENABLE_XPDF_HEADERS)
     ${CMAKE_CURRENT_BINARY_DIR}/poppler/poppler-config.h
     DESTINATION include/poppler)
   install(FILES
-    goo/GooHash.h
     goo/GooList.h
     goo/GooTimer.h
     goo/GooMutex.h

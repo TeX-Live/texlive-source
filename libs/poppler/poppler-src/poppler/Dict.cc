@@ -201,7 +201,7 @@ void Dict::remove(const char *key) {
       gfree(entries[pos].key);
       entries[pos].val.free();
       if (pos != length) {
-        memmove(&entries[pos], &entries[pos + 1], (length - pos) * sizeof(DictEntry));
+        memmove(static_cast<void*>(&entries[pos]), &entries[pos + 1], (length - pos) * sizeof(DictEntry));
       }
     }
   } else {

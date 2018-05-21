@@ -1203,7 +1203,6 @@ void Annot::initialize(PDFDoc *docA, Dict *dict) {
   appearStreams = nullptr;
   appearBBox = nullptr;
   appearState = nullptr;
-  fontSize = 0;
 
   appearance.setToNull();
 

@@ -20,7 +20,7 @@
 // Copyright (C) 2008-2010, 2012, 2014, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012-2014 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Jason Crain <jason@aquaticape.us>
-// Copyright (C) 2015 Adam Reichold <adam.reichold@t-online.de>
+// Copyright (C) 2015, 2018 Adam Reichold <adam.reichold@t-online.de>
 // Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
@@ -39,6 +39,7 @@
 
 #include <stdarg.h>
 #include <stdlib.h> // for NULL
+#include <string>
 #include "gtypes.h"
 
 #ifdef __clang__
@@ -170,6 +171,10 @@ public:
   // The postscript mode also has some more strict checks
   // The caller owns the return value
   GooString *sanitizedName(GBool psmode) const;
+
+  // Conversion from and to std::string
+  explicit GooString(const std::string& str) : GooString(str.data(), str.size()) {}
+  std::string toStr() const { return std::string(getCString(), getLength()); }
 
 private:
   GooString(const GooString &other);

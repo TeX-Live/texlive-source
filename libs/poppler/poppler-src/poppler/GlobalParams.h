@@ -26,6 +26,7 @@
 // Copyright (C) 2012, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -44,6 +45,9 @@
 #include <stdio.h>
 #include "goo/gtypes.h"
 #include "CharTypes.h"
+#include "UnicodeMap.h"
+#include <unordered_map>
+#include <string>
 
 #ifdef MULTITHREADED
 #include "goo/GooMutex.h"
@@ -51,11 +55,9 @@
 
 class GooString;
 class GooList;
-class GooHash;
 class NameToCharCode;
 class CharCodeToUnicode;
 class CharCodeToUnicodeCache;
-class UnicodeMap;
 class UnicodeMapCache;
 class CMap;
 class CMapCache;
@@ -147,7 +149,6 @@ public:
   GBool getErrQuiet();
 
   CharCodeToUnicode *getCIDToUnicode(GooString *collection);
-  CharCodeToUnicode *getUnicodeToUnicode(GooString *fontName);
   UnicodeMap *getUnicodeMap(GooString *encodingName);
   CMap *getCMap(GooString *collection, GooString *cMapName, Stream *stream = NULL);
   UnicodeMap *getTextEncoding();
@@ -199,24 +200,25 @@ private:
     nameToUnicodeZapfDingbats;
   NameToCharCode *		// mapping from char name to Unicode for text
     nameToUnicodeText;		// extraction
-  GooHash *cidToUnicodes;		// files for mappings from char collections
-				//   to Unicode, indexed by collection name
-				//   [GooString]
-  GooHash *unicodeToUnicodes;	// files for Unicode-to-Unicode mappings,
-				//   indexed by font name pattern [GooString]
-  GooHash *residentUnicodeMaps;	// mappings from Unicode to char codes,
-				//   indexed by encoding name [UnicodeMap]
-  GooHash *unicodeMaps;		// files for mappings from Unicode to char
-				//   codes, indexed by encoding name [GooString]
-  GooHash *cMapDirs;		// list of CMap dirs, indexed by collection
-				//   name [GooList[GooString]]
+  // files for mappings from char collections
+  // to Unicode, indexed by collection name
+  std::unordered_map<std::string, std::string> cidToUnicodes;
+  // mappings from Unicode to char codes,
+  // indexed by encoding name
+  std::unordered_map<std::string, UnicodeMap> residentUnicodeMaps;
+  // files for mappings from Unicode to char
+  // codes, indexed by encoding name
+  std::unordered_map<std::string, std::string> unicodeMaps;
+  // list of CMap dirs, indexed by collection
+  std::unordered_multimap<std::string, std::string> cMapDirs;
   GooList *toUnicodeDirs;		// list of ToUnicode CMap dirs [GooString]
   GBool baseFontsInitialized;
 #ifdef _WIN32
-  GooHash *substFiles;	// windows font substitutes (for CID fonts)
+  // windows font substitutes (for CID fonts)
+  std::unordered_map<std::string, std::string> substFiles;
 #endif
-  GooHash *fontFiles;		// font files: font name mapped to path
-				//   [GString]
+  // font files: font name mapped to path
+  std::unordered_map<std::string, std::string> fontFiles;
   SysFontList *sysFonts;	// system fonts
   GBool psExpandSmaller;	// expand smaller pages to fill paper
   GBool psShrinkLarger;		// shrink larger pages to fit paper

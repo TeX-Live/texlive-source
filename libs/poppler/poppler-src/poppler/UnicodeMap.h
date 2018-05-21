@@ -17,6 +17,7 @@
 //
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2018 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -33,10 +34,7 @@
 #include "poppler-config.h"
 #include "goo/gtypes.h"
 #include "CharTypes.h"
-
-#ifdef MULTITHREADED
-#include "goo/GooMutex.h"
-#endif
+#include <atomic>
 
 class GooString;
 
@@ -75,6 +73,11 @@ public:
   UnicodeMap(const char *encodingNameA, GBool unicodeOutA,
 	     UnicodeMapFunc funcA);
 
+  UnicodeMap(UnicodeMap &&other) noexcept;
+  UnicodeMap& operator=(UnicodeMap &&other) noexcept;
+
+  void swap(UnicodeMap& other) noexcept;
+
   ~UnicodeMap();
 
   UnicodeMap(const UnicodeMap &) = delete;
@@ -111,10 +114,7 @@ private:
   int len;			// (user, resident)
   UnicodeMapExt *eMaps;		// (user)
   int eMapsLen;			// (user)
-  int refCnt;
-#ifdef MULTITHREADED
-  GooMutex mutex;
-#endif
+  std::atomic_int refCnt;
 };
 
 //------------------------------------------------------------------------

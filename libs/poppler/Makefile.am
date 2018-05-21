@@ -48,7 +48,6 @@ goo_libGoo_a_sources = \
 	@POPPLER_TREE@/goo/grandom.cc \
 	@POPPLER_TREE@/goo/gstrtod.cc \
 	@POPPLER_TREE@/goo/FixedPoint.cc \
-	@POPPLER_TREE@/goo/GooHash.cc \
 	@POPPLER_TREE@/goo/GooList.cc \
 	@POPPLER_TREE@/goo/GooString.cc \
 	@POPPLER_TREE@/goo/GooTimer.cc

@@ -940,11 +940,11 @@ GBool XRef::constructXRef(GBool *wasReconstructed, GBool needCatalogDict) {
           if ((*p & 0xff) == 0) {
             //new line, continue with next line!
             str->getLine(buf, 256);
-            p = buf - 1;
-          }
-	  do {
+            p = buf;
+          } else {
 	    ++p;
-	  } while (*p && isspace(*p & 0xff));
+	  }
+	  while (*p && isspace(*p & 0xff)) ++p;
 	  if (isdigit(*p & 0xff)) {
 	    gen = atoi(p);
 	    do {
@@ -954,11 +954,11 @@ GBool XRef::constructXRef(GBool *wasReconstructed, GBool needCatalogDict) {
               if ((*p & 0xff) == 0) {
                 //new line, continue with next line!
                 str->getLine(buf, 256);
-                p = buf - 1;
-              }
-	      do {
+                p = buf;
+              } else {
 		++p;
-	      } while (*p && isspace(*p & 0xff));
+	      }
+	      while (*p && isspace(*p & 0xff)) ++p;
 	      if (!strncmp(p, "obj", 3)) {
 		if (num >= size) {
 		  newSize = (num + 1 + 255) & ~255;

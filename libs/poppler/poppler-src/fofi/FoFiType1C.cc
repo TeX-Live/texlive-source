@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2009, 2010, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2009, 2010, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
@@ -32,6 +32,7 @@
 #include <math.h>
 #include "goo/gmem.h"
 #include "goo/gstrtod.h"
+#include "goo/GooLikely.h"
 #include "goo/GooString.h"
 #include "poppler/Error.h"
 #include "FoFiEncodings.h"
@@ -1361,7 +1362,7 @@ void FoFiType1C::cvtGlyph(int offset, int nBytes, GooString *charBuf,
 	  --nOps;
 	  ok = gTrue;
 	  getIndexVal(subrIdx, k, &val, &ok);
-	  if (ok) {
+	  if (likely(ok && val.pos != offset)) {
 	    cvtGlyph(val.pos, val.len, charBuf, subrIdx, pDict, gFalse);
 	  }
 	} else {
@@ -1596,7 +1597,7 @@ void FoFiType1C::cvtGlyph(int offset, int nBytes, GooString *charBuf,
 	  --nOps;
 	  ok = gTrue;
 	  getIndexVal(&gsubrIdx, k, &val, &ok);
-	  if (ok) {
+	  if (likely(ok && val.pos != offset)) {
 	    cvtGlyph(val.pos, val.len, charBuf, subrIdx, pDict, gFalse);
 	  }
 	} else {

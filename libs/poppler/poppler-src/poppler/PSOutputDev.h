@@ -25,6 +25,7 @@
 // Copyright (C) 2011, 2014, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -47,8 +48,10 @@
 #include <set>
 #include <map>
 #include <vector>
+#include <unordered_set>
+#include <unordered_map>
+#include <string>
 
-class GHooash;
 class PDFDoc;
 class XRef;
 class Function;
@@ -475,8 +478,8 @@ private:
   int fontIDLen;		// number of entries in fontIDs array
   int fontIDSize;		// size of fontIDs array
   std::set<int> resourceIDs;	// list of object IDs of objects containing Resources we've already set up
-  GooHash *fontNames;		// all used font names
-  GooHash *fontMaxValidGlyph;	// max valid glyph of each font
+  std::unordered_set<std::string> fontNames; // all used font names
+  std::unordered_map<std::string, int> fontMaxValidGlyph; // max valid glyph of each font
   PST1FontName *t1FontNames;	// font names for Type 1/1C fonts
   int t1FontNameLen;		// number of entries in t1FontNames array
   int t1FontNameSize;		// size of t1FontNames array

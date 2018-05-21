@@ -635,8 +635,6 @@ public:
   double getXMax();
   double getYMax();
 
-  double getFontSize() { return fontSize; }
-
   void setRect(PDFRectangle *rect);
   void setRect(double x1, double y1, double x2, double y2);
 
@@ -734,7 +732,6 @@ protected:
   Ref ref;                      // object ref identifying this annotation
   AnnotBorder *border;          // Border, BS
   AnnotColor *color;            // C
-  double fontSize; 
   GBool ok;
 
   bool hasRef;

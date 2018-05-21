@@ -122,7 +122,6 @@ am__objects_1 = @POPPLER_TREE@/goo/gfile.$(OBJEXT) \
 	@POPPLER_TREE@/goo/grandom.$(OBJEXT) \
 	@POPPLER_TREE@/goo/gstrtod.$(OBJEXT) \
 	@POPPLER_TREE@/goo/FixedPoint.$(OBJEXT) \
-	@POPPLER_TREE@/goo/GooHash.$(OBJEXT) \
 	@POPPLER_TREE@/goo/GooList.$(OBJEXT) \
 	@POPPLER_TREE@/goo/GooString.$(OBJEXT) \
 	@POPPLER_TREE@/goo/GooTimer.$(OBJEXT)
@@ -220,7 +219,6 @@ am__depfiles_remade = @POPPLER_TREE@/fofi/$(DEPDIR)/FoFiBase.Po \
 	@POPPLER_TREE@/fofi/$(DEPDIR)/FoFiType1.Po \
 	@POPPLER_TREE@/fofi/$(DEPDIR)/FoFiType1C.Po \
 	@POPPLER_TREE@/goo/$(DEPDIR)/FixedPoint.Po \
-	@POPPLER_TREE@/goo/$(DEPDIR)/GooHash.Po \
 	@POPPLER_TREE@/goo/$(DEPDIR)/GooList.Po \
 	@POPPLER_TREE@/goo/$(DEPDIR)/GooString.Po \
 	@POPPLER_TREE@/goo/$(DEPDIR)/GooTimer.Po \
@@ -540,7 +538,6 @@ goo_libGoo_a_sources = \
 	@POPPLER_TREE@/goo/grandom.cc \
 	@POPPLER_TREE@/goo/gstrtod.cc \
 	@POPPLER_TREE@/goo/FixedPoint.cc \
-	@POPPLER_TREE@/goo/GooHash.cc \
 	@POPPLER_TREE@/goo/GooList.cc \
 	@POPPLER_TREE@/goo/GooString.cc \
 	@POPPLER_TREE@/goo/GooTimer.cc
@@ -716,9 +713,6 @@ clean-noinstLIBRARIES:
 	@POPPLER_TREE@/goo/$(am__dirstamp) \
 	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/goo/FixedPoint.$(OBJEXT):  \
-	@POPPLER_TREE@/goo/$(am__dirstamp) \
-	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
-@POPPLER_TREE@/goo/GooHash.$(OBJEXT):  \
 	@POPPLER_TREE@/goo/$(am__dirstamp) \
 	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/goo/GooList.$(OBJEXT):  \
@@ -971,7 +965,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/fofi/$(DEPDIR)/FoFiType1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/fofi/$(DEPDIR)/FoFiType1C.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/FixedPoint.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/GooHash.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/GooList.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/GooString.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/GooTimer.Po@am__quote@ # am--include-marker
@@ -1423,7 +1416,6 @@ distclean: distclean-recursive
 	-rm -f @POPPLER_TREE@/fofi/$(DEPDIR)/FoFiType1.Po
 	-rm -f @POPPLER_TREE@/fofi/$(DEPDIR)/FoFiType1C.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/FixedPoint.Po
-	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooHash.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooList.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooString.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooTimer.Po
@@ -1550,7 +1542,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @POPPLER_TREE@/fofi/$(DEPDIR)/FoFiType1.Po
 	-rm -f @POPPLER_TREE@/fofi/$(DEPDIR)/FoFiType1C.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/FixedPoint.Po
-	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooHash.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooList.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooString.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooTimer.Po

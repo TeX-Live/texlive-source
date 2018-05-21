@@ -18,6 +18,7 @@
 // Copyright (C) 2011, 2012 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 // Copyright (C) 2016 William Bader <williambader@hotmail.com>
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -32,11 +33,12 @@
 #endif
 
 #include "stddef.h"
+#include <unordered_map>
+#include <string>
 #include "goo/gtypes.h"
 #include "FoFiBase.h"
 
 class GooString;
-class GooHash;
 struct TrueTypeTable;
 struct TrueTypeCmap;
 
@@ -82,7 +84,7 @@ public:
   // Returns the GID corresponding to <name> according to the post
   // table.  Returns 0 if there is no mapping for <name> or if the
   // font does not have a post table.
-  int mapNameToGID(char *name);
+  int mapNameToGID(char *name) const;
 
   // Return the mapping from CIDs to GIDs, and return the number of
   // CIDs in *<nCIDs>.  This is only useful for CID fonts.  (Only
@@ -199,7 +201,7 @@ private:
   int nGlyphs;
   int locaFmt;
   int bbox[4];
-  GooHash *nameToGID;
+  std::unordered_map<std::string,int> nameToGID;
   GBool openTypeCFF;
 
   GBool parsedOk;

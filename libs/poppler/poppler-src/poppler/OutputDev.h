@@ -25,6 +25,7 @@
 // Copyright (C) 2012 William Bader <williambader@hotmail.com>
 // Copyright (C) 2017, 2018 Oliver Sander <oliver.sander@tu-dresden.de>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -43,10 +44,13 @@
 #include "CharTypes.h"
 #include "Object.h"
 #include "PopplerCache.h"
+#include "ProfileData.h"
+#include <memory>
+#include <unordered_map>
+#include <string>
 
 class Annot;
 class Dict;
-class GooHash;
 class GooString;
 class GfxState;
 class Gfx;
@@ -80,7 +84,6 @@ public:
  : iccColorSpaceCache(5)
 #endif
   {
-      profileHash = nullptr;
   }
 
   // Destructor.
@@ -333,9 +336,9 @@ public:
   virtual void psXObject(Stream * /*psStream*/, Stream * /*level1Stream*/) {}
 
   //----- Profiling
-  virtual void startProfile();
-  virtual GooHash *getProfileHash() {return profileHash; }
-  virtual GooHash *endProfile();
+  void startProfile();
+  std::unordered_map<std::string, ProfileData>* getProfileHash() const { return profileHash.get(); }
+  std::unique_ptr<std::unordered_map<std::string, ProfileData>> endProfile();
 
   //----- transparency groups and soft masks
   virtual GBool checkTransparencyGroup(GfxState * /*state*/, GBool /*knockout*/) { return gTrue; }
@@ -365,7 +368,7 @@ private:
 
   double defCTM[6];		// default coordinate transform matrix
   double defICTM[6];		// inverse of default CTM
-  GooHash *profileHash;
+  std::unique_ptr<std::unordered_map<std::string, ProfileData>> profileHash;
 
 #ifdef USE_CMS
   PopplerCache iccColorSpaceCache;

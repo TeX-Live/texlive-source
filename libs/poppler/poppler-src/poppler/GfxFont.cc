@@ -960,7 +960,6 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GooString *nameA
   GBool missing, hex;
   GBool numeric;
   Unicode toUnicode[256];
-  CharCodeToUnicode *utu, *ctu2;
   Unicode uBuf[8];
   double mul;
   int firstChar, lastChar;
@@ -1325,27 +1324,6 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GooString *nameA
   // precedence, but the other encoding info is allowed to fill in any
   // holes
   readToUnicodeCMap(fontDict, 16, ctu);
-
-  // look for a Unicode-to-Unicode mapping
-  if (name && (utu = globalParams->getUnicodeToUnicode(name))) {
-    Unicode *uAux;
-    for (i = 0; i < 256; ++i) {
-      toUnicode[i] = 0;
-    }
-    ctu2 = CharCodeToUnicode::make8BitToUnicode(toUnicode);
-    for (i = 0; i < 256; ++i) {
-      n = ctu->mapToUnicode((CharCode)i, &uAux);
-      if (n >= 1) {
-	n = utu->mapToUnicode((CharCode)uAux[0], &uAux);
-	if (n >= 1) {
-	  ctu2->setMapping((CharCode)i, uAux, n);
-	}
-      }
-    }
-    utu->decRefCnt();
-    delete ctu;
-    ctu = ctu2;
-  }
 
   //----- get the character widths -----
 
@@ -1744,11 +1722,8 @@ GfxCIDFont::GfxCIDFont(XRef *xref, const char *tagA, Ref idA, GooString *nameA,
   Dict *desFontDict;
   Object desFontDictObj;
   Object obj1, obj2, obj3, obj4, obj5, obj6;
-  CharCodeToUnicode *utu;
-  CharCode c;
-  Unicode *uBuf;
   int c1, c2;
-  int excepsSize, j, k, n;
+  int excepsSize, j, k;
 
   refCnt = 1;
   ascent = 0.95;
@@ -1835,24 +1810,6 @@ GfxCIDFont::GfxCIDFont(XRef *xref, const char *tagA, Ref idA, GooString *nameA,
 	// fall-through, assuming the Identity mapping -- this appears
 	// to match Adobe's behavior
       }
-    }
-  }
-
-  // look for a Unicode-to-Unicode mapping
-  if (name && (utu = globalParams->getUnicodeToUnicode(name))) {
-    if (ctu) {
-      for (c = 0; c < ctu->getLength(); ++c) {
-	n = ctu->mapToUnicode(c, &uBuf);
-	if (n >= 1) {
-	  n = utu->mapToUnicode((CharCode)uBuf[0], &uBuf);
-	  if (n >= 1) {
-	    ctu->setMapping(c, uBuf, n);
-	  }
-	}
-      }
-      utu->decRefCnt();
-    } else {
-      ctu = utu;
     }
   }
 

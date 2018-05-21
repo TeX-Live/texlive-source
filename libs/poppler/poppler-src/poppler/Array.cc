@@ -112,7 +112,7 @@ void Array::remove(int i) {
 #endif
   }
   --length;
-  memmove( elems + i, elems + i + 1, sizeof(elems[0]) * (length - i) );
+  memmove( static_cast<void*>(elems + i), elems + i + 1, sizeof(elems[0]) * (length - i) );
 }
 
 Object Array::get(int i, int recursion) const {

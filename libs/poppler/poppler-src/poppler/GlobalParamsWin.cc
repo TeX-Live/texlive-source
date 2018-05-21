@@ -6,7 +6,7 @@
    // Copyright (C) 2012 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
    // Copyright (C) 2012, 2017 Adrian Johnson <ajohnson@redneon.com>
    // Copyright (C) 2012 Mark Brand <mabrand@mabrand.nl>
-   // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
+   // Copyright (C) 2013, 2018 Adam Reichold <adamreichold@myopera.com>
    // Copyright (C) 2013 Dmytro Morgun <lztoad@gmail.com>
    // Copyright (C) 2017 Christoph Cullmann <cullmann@kde.org>
    // Copyright (C) 2017, 2018 Albert Astals Cid <aacid@kde.org>
@@ -38,7 +38,6 @@ description for all fonts available in Windows. That's how MuPDF works.
 #include "goo/gmem.h"
 #include "goo/GooString.h"
 #include "goo/GooList.h"
-#include "goo/GooHash.h"
 #include "goo/gfile.h"
 #include "Error.h"
 #include "NameToCharCode.h"
@@ -423,9 +422,10 @@ void GlobalParams::setupBaseFonts(char * dir)
     GetWindowsFontDir(winFontDir, sizeof(winFontDir));
 
     for (int i = 0; displayFontTab[i].name; ++i) {
-        GooString  *fontName = new GooString(displayFontTab[i].name);
-        if (fontFiles->lookup(fontName))
+        if (fontFiles.count(displayFontTab[i].name) > 0)
             continue;
+
+        GooString  *fontName = new GooString(displayFontTab[i].name);
 
         if (dir) {
             GooString *fontPath = appendToPath(new GooString(dir), displayFontTab[i].t1FileName);
@@ -480,7 +480,7 @@ void GlobalParams::setupBaseFonts(char * dir)
 	          addFontFile(new GooString(obj1.getName()), obj3.getString()->copy());
 	      // Aliases
 	      } else if (obj2.isName()) {
-	        substFiles->add(new GooString(obj1.getName()), new GooString(obj2.getName()));
+                substFiles.emplace(obj1.getName(), obj2.getName());
 	      }
 	    }
 	    obj1 = parser->getObj();
@@ -497,8 +497,8 @@ void GlobalParams::setupBaseFonts(char * dir)
     }
 }
 
-static const char *findSubstituteName(GfxFont *font, GooHash *fontFiles,
-                                      GooHash *substFiles,
+static const char *findSubstituteName(GfxFont *font, const std::unordered_map<std::string, std::string>& fontFiles,
+                                      const std::unordered_map<std::string, std::string>& substFiles,
                                       const char *origName)
 {
     assert(origName);
@@ -515,10 +515,10 @@ static const char *findSubstituteName(GfxFont *font, GooHash *fontFiles,
       name2->del(n - 11, 11);
       n -= 11;
     }
-    GooString *substName = (GooString *)substFiles->lookup(name2);
-    if (substName != nullptr) {
+    const auto substFile = substFiles.find(name2->getCString());
+    if (substFile != substFiles.end()) {
       delete name2;
-      return substName->getCString();
+      return substFile->second.c_str();
     }
 
     /* TODO: try to at least guess bold/italic/bolditalic from the name */
@@ -538,10 +538,10 @@ static const char *findSubstituteName(GfxFont *font, GooHash *fontFiles,
       else if ( !collection->cmp("Adobe-Korea1") )
         name3 = DEFAULT_CID_FONT_AK1_MSWIN;
 
-      if (name3 && fontFiles->lookup(name3))
+      if (name3 && fontFiles.count(name3) != 0)
         return name3;
 
-      if (fontFiles->lookup(DEFAULT_CID_FONT_MSWIN))
+      if (fontFiles.count(DEFAULT_CID_FONT_MSWIN) != 0)
         return DEFAULT_CID_FONT_MSWIN;
     } 
     return DEFAULT_SUBSTITUTE_FONT;
@@ -573,10 +573,10 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
     GooString *substFontName = new GooString(findSubstituteName(font, fontFiles,
                                                                 substFiles,
                                                                 fontName->getCString()));
-    GooString *path2 = nullptr;
     error(errSyntaxError, -1, "Couldn't find a font for '{0:t}', subst is '{1:t}'", fontName, substFontName);
-    if ((path2 = (GooString *)fontFiles->lookup(substFontName))) {
-      path = new GooString(path2);
+    const auto fontFile = fontFiles.find(substFontName->toStr());
+    if (fontFile != fontFiles.end()) {
+      path = new GooString(fontFile->second.c_str());
       if (substituteFontName)
 	substituteFontName->Set(path->getCString());
       if (!strcasecmp(path->getCString() + path->getLength() - 4, ".ttc")) {

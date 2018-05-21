@@ -1,3 +1,307 @@
+commit c9e2dc7ea7e098875e6b93566bdb1d14451c3673
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat May 19 17:05:25 2018 +0200
+
+    Poppler 0.65.0
+
+ CMakeLists.txt         |  4 ++--
+ NEWS                   | 22 ++++++++++++++++++++++
+ cpp/CMakeLists.txt     |  2 +-
+ cpp/Doxyfile           |  2 +-
+ qt5/src/CMakeLists.txt |  2 +-
+ qt5/src/Doxyfile       |  2 +-
+ 6 files changed, 28 insertions(+), 6 deletions(-)
+
+commit 921de21733816fc6cd66c70c7a4914fbfee924d6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 18 00:45:59 2018 +0200
+
+    qt5: remove duplicate code
+
+    Create new toPopplerAdditionalActionType private function
+
+ qt5/src/poppler-annotation.cc | 15 +--------------
+ qt5/src/poppler-form.cc       | 17 ++---------------
+ qt5/src/poppler-private.cc    | 18 ++++++++++++++++++
+ qt5/src/poppler-private.h     |  2 ++
+ 4 files changed, 23 insertions(+), 29 deletions(-)
+
+commit 083139775fd4ee8dd073347bb0e2835aab334444
+Author: Andre Heinecke <aheinecke@intevation.de>
+Date:   Wed May 2 16:20:40 2018 +0200
+
+    qt5: Add widget annot actions to FormFields
+
+    This adds API to access AnnotWidget actions which
+    are associated with a FormField.
+
+ qt5/src/poppler-form.cc | 31 +++++++++++++++++++++++++++++++
+ qt5/src/poppler-form.h  |  8 ++++++++
+ 2 files changed, 39 insertions(+)
+
+commit 784bf432bffadf654b213caa21ec95fafb963299
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 8 01:16:06 2018 +0200
+
+    Fix build with -DFONT_CONFIGURATION=generic
+
+ poppler/GlobalParams.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 07b8f838b3d8859a3ad34a3140bb24475bd6ac2c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon May 7 19:13:07 2018 +0200
+
+    cast to void * to bypass new gcc -Wclass-memaccess warning
+
+    Yes what we're doing there is a bit nasty but it works :D
+
+ poppler/Array.cc | 2 +-
+ poppler/Dict.cc  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 2e750862ed5cba42fba2c6dd953820445d9c64cb
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon May 7 19:02:40 2018 +0200
+
+    Remove useless memset
+
+    Parent already has a proper constructor that initializes stuff and on
+    top of that the sizeof was of the pointer and not of the class itself
+
+ poppler/StructTreeRoot.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 030c6123c42813818fbb94717d301d4723671545
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun May 6 17:25:39 2018 +0200
+
+    Fix windows build
+
+ poppler/GlobalParamsWin.cc | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit 62ed50c649670423136a49ae0fc39a6d314336a7
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun May 6 17:01:30 2018 +0200
+
+    Remove GlobalParams::getUnicodeToUnicode
+
+    As shown by Adam in f559cc94310c149a61eb246e1aff7c093f3406b5 it was a
+    noop since we were not filling the hash it tried to get info from
+
+ poppler/GfxFont.cc     | 45 +--------------------------------------------
+ poppler/GlobalParams.h |  1 -
+ 2 files changed, 1 insertion(+), 45 deletions(-)
+
+commit 18cc4c3006695bbebd1d99d953d555a0bb3a3a65
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Wed Feb 21 20:15:22 2018 +0100
+
+    Make UnicodeMap a move-only type to simplify the initialization of
+    residentUnicodeMaps s.t. it is closer to the GooHash-based version.
+
+ poppler/GlobalParams.cc |  35 ++++++----------
+ poppler/UnicodeMap.cc   | 106
+ +++++++++++++++++++++++++++++++++++-------------
+ poppler/UnicodeMap.h    |  16 ++++----
+ 3 files changed, 97 insertions(+), 60 deletions(-)
+
+commit 75cba9a1434c991534795d9185d7b755d9ed288c
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Sun Feb 18 16:12:19 2018 +0100
+
+    Remove GooHash after replacing it by std::unordered_map.
+
+ CMakeLists.txt |   2 -
+ goo/GooHash.cc | 403
+ ---------------------------------------------------------
+ goo/GooHash.h  |  93 -------------
+ 3 files changed, 498 deletions(-)
+
+commit ccf5fbf898a27b02085b7b0707e5f59bee443fb3
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Sun Feb 18 16:23:36 2018 +0100
+
+    Also replace the Win32-specific usage of GooHash by std::unordered_map
+    on a best-effort basis.
+
+ poppler/GlobalParams.cc    |  6 ------
+ poppler/GlobalParams.h     |  3 ++-
+ poppler/GlobalParamsWin.cc | 25 ++++++++++++-------------
+ 3 files changed, 14 insertions(+), 20 deletions(-)
+
+commit 85e43288159804c57b3168fa95f955c41040bd29
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Sun Feb 18 16:11:55 2018 +0100
+
+    Replace GooHash by std::unordered_map in PSOutputDev.
+
+ poppler/PSOutputDev.cc | 31 +++++++++++--------------------
+ poppler/PSOutputDev.h  |  8 +++++---
+ 2 files changed, 16 insertions(+), 23 deletions(-)
+
+commit d5701be9c7daaf097698c0db57e004c4782450ee
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Sun Feb 18 16:11:29 2018 +0100
+
+    Replace GooHash by std::unordered_map in OutputDev.
+
+ poppler/Gfx.cc         | 20 ++++----------------
+ poppler/OutputDev.cc   | 15 ++++-----------
+ poppler/OutputDev.h    | 15 +++++++++------
+ poppler/PSOutputDev.h  |  3 ++-
+ poppler/ProfileData.cc | 10 +---------
+ poppler/ProfileData.h  | 25 ++++++++++---------------
+ test/pdf-inspector.cc  | 17 +++++------------
+ 7 files changed, 35 insertions(+), 70 deletions(-)
+
+commit f559cc94310c149a61eb246e1aff7c093f3406b5
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Sun Feb 18 16:10:59 2018 +0100
+
+    Replace GooHash by std::unordered_map in GlobalParams.
+
+ poppler/CharCodeToUnicode.cc |   9 +-
+ poppler/CharCodeToUnicode.h  |   3 +-
+ poppler/GlobalParams.cc      | 218
+ ++++++++++++++-----------------------------
+ poppler/GlobalParams.h       |  34 +++----
+ 4 files changed, 97 insertions(+), 167 deletions(-)
+
+commit 41ad41d6eb726aabd3bff18db5c08422e0d18807
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Sun Feb 18 16:10:16 2018 +0100
+
+    Replace GooHash by std::unordered_map in FoFiTrueType.
+
+ fofi/FoFiTrueType.cc | 39 +++++++++++++++------------------------
+ fofi/FoFiTrueType.h  |  8 +++++---
+ 2 files changed, 20 insertions(+), 27 deletions(-)
+
+commit 55272138c3835dd9db8733850304ffe966e6478d
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Tue Feb 20 09:07:17 2018 +0100
+
+    Add conversion methods between GooString and std::string.
+
+ goo/GooString.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 08a4ac65d202742209bca6cf3806c4d111a5522c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 4 15:51:18 2018 +0200
+
+    FindLIBOPENJPEG2.cmake: Remove cache code
+
+    It wasn't working since the if mentioned LIBOPENJPEG2_INCLUDE_DIR
+    instead of LIBOPENJPEG2_INCLUDE_DIRS
+    and when fixing the typo it broke the build because we were not
+    defining USE_OPENJPEG2, so better just
+    remove the broken if code
+
+ cmake/modules/FindLIBOPENJPEG2.cmake | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
+
+commit 8f94bc8e6f65420a63411ead3a7e838a9542acbd
+Author: Bjarni Ingi Gislason <bjarniig@rhi.hi.is>
+Date:   Fri May 4 15:29:09 2018 +0200
+
+    pdffonts: Minor formatting changes in the man page
+
+    Bug #105194
+
+ utils/pdffonts.1 | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+commit 7bd0f774508f543616ebb2ad1f4558fdacfca5b7
+Author: Zsombor Hollay-Horvath <hollay.horvath@gmail.com>
+Date:   Fri May 4 15:23:21 2018 +0200
+
+    cpp: Expose more image modes, add option to select mode in renderer
+
+    Bug #105558
+
+ cpp/poppler-image.cpp         |  46 +++++++++++++++-
+ cpp/poppler-image.h           |   5 +-
+ cpp/poppler-page-renderer.cpp | 124
+ +++++++++++++++++++++++++++++++++++++++++-
+ cpp/poppler-page-renderer.h   |  13 +++++
+ 4 files changed, 184 insertions(+), 4 deletions(-)
+
+commit 60b4fe65bc9dc9b82bbadf0be2e3781be796a13d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 1 02:46:17 2018 +0200
+
+    FoFiType1C::cvtGlyph: Fix infinite recursion on malformed documents
+
+    Bugs #104942, #103238
+
+ fofi/FoFiType1C.cc | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit 8429a67536b7c2f6d752e4a522ee98e6f76a40f9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 1 02:44:37 2018 +0200
+
+    XRef: Fix runtime undefined behaviour
+
+    Going to the position -1 of an array is undefined behaviour, so
+    don't do
+    it
+
+    Bug #105970
+
+ poppler/XRef.cc | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit 9d42769705180d6df4ba8415849ef8790a0e9b1d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 1 02:43:21 2018 +0200
+
+    Add the invisible character check to SplashOutputDev::beginType3Char
+
+    Bug #106244
+
+ poppler/SplashOutputDev.cc | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+commit 15d6519933256ffd1746eb6c7988def34228952e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Apr 30 15:09:26 2018 +0200
+
+    cpp: add a newline after the error line
+
+ cpp/poppler-private.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6085b7b35b8ee6b0aab2d1b55064f79cb7e2c2fb
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Mar 23 16:46:09 2018 +0100
+
+    Make poppler_form_field_get_font_size return 0
+
+    It was doing that anyway but in a more complex way.
+
+    Added a note into the docu so that people can volunteer to come
+    and fix it if someone is using it
+
+ glib/poppler-form-field.cc | 5 ++++-
+ poppler/Annot.cc           | 1 -
+ poppler/Annot.h            | 3 ---
+ poppler/Form.cc            | 4 ----
+ poppler/Form.h             | 2 --
+ 5 files changed, 4 insertions(+), 11 deletions(-)
+
+commit a613cd32bcaabe67649536886637ad022685c402
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Apr 19 17:10:23 2018 +0200
+
+    Fix compilation with libc++
+
+ qt5/src/ArthurOutputDev.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
 commit 4d851d16aa6a2a9f00b60091a2ef810be1a571ea
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Tue Apr 17 20:04:26 2018 +0200

@@ -39,6 +39,7 @@
 // Copyright (C) 2012 Lu Wang <coolwanglu@gmail.com>
 // Copyright (C) 2014 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2017, 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -59,7 +60,6 @@
 #include <memory>
 #include "goo/gmem.h"
 #include "goo/GooTimer.h"
-#include "goo/GooHash.h"
 #include "GlobalParams.h"
 #include "CharTypes.h"
 #include "Object.h"
@@ -748,21 +748,9 @@ void Gfx::go(GBool topLevel) {
 
       // Update the profile information
       if (unlikely(profileCommands)) {
-	GooHash *hash;
-
-	hash = out->getProfileHash ();
-	if (hash) {
-	  GooString *cmd_g;
-	  ProfileData *data_p;
-
-	  cmd_g = new GooString (obj.getCmd());
-	  data_p = (ProfileData *)hash->lookup (cmd_g);
-	  if (data_p == nullptr) {
-	    data_p = new ProfileData();
-	    hash->add (cmd_g, data_p);
-	  }
-	  
-	  data_p->addElement(timer->getElapsed ());
+	if (auto* const hash = out->getProfileHash()) {
+	  auto& data = (*hash)[obj.getCmd()];
+	  data.addElement(timer->getElapsed());
 	}
 	delete timer;
       }

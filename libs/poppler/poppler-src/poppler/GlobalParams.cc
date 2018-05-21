@@ -38,6 +38,7 @@
 // Copyright (C) 2017 Christoph Cullmann <cullmann@kde.org>
 // Copyright (C) 2017 Jean Ghali <jghali@libertysurf.fr>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -66,7 +67,6 @@
 #include "goo/gmem.h"
 #include "goo/GooString.h"
 #include "goo/GooList.h"
-#include "goo/GooHash.h"
 #include "goo/gfile.h"
 #include "Error.h"
 #include "NameToCharCode.h"
@@ -549,9 +549,6 @@ Plugin::~Plugin() {
 GlobalParams::GlobalParams(const char *customPopplerDataDir)
   : popplerDataDir(customPopplerDataDir)
 {
-  UnicodeMap *map;
-  int i;
-
 #ifdef MULTITHREADED
   gInitMutex(&mutex);
   gInitMutex(&unicodeMapCacheMutex);
@@ -563,24 +560,15 @@ GlobalParams::GlobalParams(const char *customPopplerDataDir)
   // scan the encoding in reverse because we want the lowest-numbered
   // index for each char name ('space' is encoded twice)
   macRomanReverseMap = new NameToCharCode();
-  for (i = 255; i >= 0; --i) {
+  for (int i = 255; i >= 0; --i) {
     if (macRomanEncoding[i]) {
       macRomanReverseMap->add(macRomanEncoding[i], (CharCode)i);
     }
   }
 
-#ifdef _WIN32
-  substFiles = new GooHash(gTrue);
-#endif
   nameToUnicodeZapfDingbats = new NameToCharCode();
   nameToUnicodeText = new NameToCharCode();
-  cidToUnicodes = new GooHash(gTrue);
-  unicodeToUnicodes = new GooHash(gTrue);
-  residentUnicodeMaps = new GooHash();
-  unicodeMaps = new GooHash(gTrue);
-  cMapDirs = new GooHash(gTrue);
   toUnicodeDirs = new GooList();
-  fontFiles = new GooHash(gTrue);
   sysFonts = new SysFontList();
   psExpandSmaller = gFalse;
   psShrinkLarger = gTrue;
@@ -613,31 +601,28 @@ GlobalParams::GlobalParams(const char *customPopplerDataDir)
 #endif
 
   // set up the initial nameToUnicode tables
-  for (i = 0; nameToUnicodeZapfDingbatsTab[i].name; ++i) {
+  for (int i = 0; nameToUnicodeZapfDingbatsTab[i].name; ++i) {
     nameToUnicodeZapfDingbats->add(nameToUnicodeZapfDingbatsTab[i].name, nameToUnicodeZapfDingbatsTab[i].u);
   }
 
-  for (i = 0; nameToUnicodeTextTab[i].name; ++i) {
+  for (int i = 0; nameToUnicodeTextTab[i].name; ++i) {
     nameToUnicodeText->add(nameToUnicodeTextTab[i].name, nameToUnicodeTextTab[i].u);
   }
 
   // set up the residentUnicodeMaps table
-  map = new UnicodeMap("Latin1", gFalse,
-		       latin1UnicodeMapRanges, latin1UnicodeMapLen);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("ASCII7", gFalse,
-		       ascii7UnicodeMapRanges, ascii7UnicodeMapLen);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("Symbol", gFalse,
-		       symbolUnicodeMapRanges, symbolUnicodeMapLen);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("ZapfDingbats", gFalse, zapfDingbatsUnicodeMapRanges,
-		       zapfDingbatsUnicodeMapLen);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("UTF-8", gTrue, &mapUTF8);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("UTF-16", gTrue, &mapUTF16);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
+  residentUnicodeMaps.reserve(6);
+  UnicodeMap map = {"Latin1", gFalse, latin1UnicodeMapRanges, latin1UnicodeMapLen};
+  residentUnicodeMaps.emplace(map.getEncodingName()->toStr(), std::move(map));
+  map = {"ASCII7", gFalse, ascii7UnicodeMapRanges, ascii7UnicodeMapLen};
+  residentUnicodeMaps.emplace(map.getEncodingName()->toStr(), std::move(map));
+  map = {"Symbol", gFalse, symbolUnicodeMapRanges, symbolUnicodeMapLen};
+  residentUnicodeMaps.emplace(map.getEncodingName()->toStr(), std::move(map));
+  map = {"ZapfDingbats", gFalse, zapfDingbatsUnicodeMapRanges, zapfDingbatsUnicodeMapLen};
+  residentUnicodeMaps.emplace(map.getEncodingName()->toStr(), std::move(map));
+  map = {"UTF-8", gTrue, &mapUTF8};
+  residentUnicodeMaps.emplace(map.getEncodingName()->toStr(), std::move(map));
+  map = {"UTF-16", gTrue, &mapUTF16};
+  residentUnicodeMaps.emplace(map.getEncodingName()->toStr(), std::move(map));
 
   scanEncodingDirs();
 }
@@ -718,34 +703,16 @@ void GlobalParams::parseNameToUnicode(GooString *name) {
   fclose(f);
 }
 
-void GlobalParams::addCIDToUnicode(GooString *collection,
-				   GooString *fileName) {
-  GooString *old;
-
-  if ((old = (GooString *)cidToUnicodes->remove(collection))) {
-    delete old;
-  }
-  cidToUnicodes->add(collection->copy(), fileName->copy());
+void GlobalParams::addCIDToUnicode(GooString *collection, GooString *fileName) {
+  cidToUnicodes[collection->toStr()] = fileName->toStr();
 }
 
-void GlobalParams::addUnicodeMap(GooString *encodingName, GooString *fileName)
-{
-  GooString *old;
-
-  if ((old = (GooString *)unicodeMaps->remove(encodingName))) {
-    delete old;
-  }
-  unicodeMaps->add(encodingName->copy(), fileName->copy());
+void GlobalParams::addUnicodeMap(GooString *encodingName, GooString *fileName) {
+  unicodeMaps[encodingName->toStr()] = fileName->toStr();
 }
 
 void GlobalParams::addCMapDir(GooString *collection, GooString *dir) {
-  GooList *list;
-
-  if (!(list = (GooList *)cMapDirs->lookup(collection))) {
-    list = new GooList();
-    cMapDirs->add(collection->copy(), list);
-  }
-  list->append(dir->copy());
+  cMapDirs.emplace(collection->toStr(), dir->toStr());
 }
 
 GBool GlobalParams::parseYesNo2(const char *token, GBool *flag) {
@@ -766,27 +733,9 @@ GlobalParams::~GlobalParams() {
 
   delete nameToUnicodeZapfDingbats;
   delete nameToUnicodeText;
-  deleteGooHash(cidToUnicodes, GooString);
-  deleteGooHash(unicodeToUnicodes, GooString);
-  deleteGooHash(residentUnicodeMaps, UnicodeMap);
-  deleteGooHash(unicodeMaps, GooString);
   deleteGooList(toUnicodeDirs, GooString);
-  deleteGooHash(fontFiles, GooString);
-#ifdef _WIN32
-  deleteGooHash(substFiles, GooString);
-#endif
   delete sysFonts;
   delete textEncoding;
-
-  GooHashIter *iter;
-  GooString *key;
-  cMapDirs->startIter(&iter);
-  void *val;
-  while (cMapDirs->getNext(&iter, &key, &val)) {
-    GooList* list = (GooList*)val;
-    deleteGooList(list, GooString);
-  }
-  delete cMapDirs;
 
   delete cidToUnicodeCache;
   delete unicodeToUnicodeCache;
@@ -828,55 +777,48 @@ Unicode GlobalParams::mapNameToUnicodeText(const char *charName) {
 }
 
 UnicodeMap *GlobalParams::getResidentUnicodeMap(GooString *encodingName) {
-  UnicodeMap *map;
+  UnicodeMap *map = nullptr;
 
   lockGlobalParams;
-  map = (UnicodeMap *)residentUnicodeMaps->lookup(encodingName);
-  unlockGlobalParams;
-  if (map) {
+  const auto unicodeMap = residentUnicodeMaps.find(encodingName->toStr());
+  if (unicodeMap != residentUnicodeMaps.end()) {
+    map = &unicodeMap->second;
     map->incRefCnt();
   }
+  unlockGlobalParams;
+
   return map;
 }
 
 FILE *GlobalParams::getUnicodeMapFile(GooString *encodingName) {
-  GooString *fileName;
-  FILE *f;
+  FILE *file = nullptr;
 
   lockGlobalParams;
-  if ((fileName = (GooString *)unicodeMaps->lookup(encodingName))) {
-    f = openFile(fileName->getCString(), "r");
-  } else {
-    f = nullptr;
+  const auto unicodeMap = unicodeMaps.find(encodingName->toStr());
+  if (unicodeMap != unicodeMaps.end()) {
+    file = openFile(unicodeMap->second.c_str(), "r");
   }
   unlockGlobalParams;
-  return f;
+
+  return file;
 }
 
 FILE *GlobalParams::findCMapFile(GooString *collection, GooString *cMapName) {
-  GooList *list;
-  GooString *dir;
-  GooString *fileName;
-  FILE *f;
-  int i;
+  FILE *file = nullptr;
 
   lockGlobalParams;
-  if (!(list = (GooList *)cMapDirs->lookup(collection))) {
-    unlockGlobalParams;
-    return nullptr;
-  }
-  for (i = 0; i < list->getLength(); ++i) {
-    dir = (GooString *)list->get(i);
-    fileName = appendToPath(dir->copy(), cMapName->getCString());
-    f = openFile(fileName->getCString(), "r");
-    delete fileName;
-    if (f) {
-      unlockGlobalParams;
-      return f;
+  const auto cMapDirs = this->cMapDirs.equal_range(collection->toStr());
+  for (auto cMapDir = cMapDirs.first; cMapDir != cMapDirs.second; ++cMapDir) {
+    auto* const path = new GooString(cMapDir->second);
+    appendToPath(path, cMapName->getCString());
+    file = openFile(path->getCString(), "r");
+    delete path;
+    if (file) {
+      break;
     }
   }
   unlockGlobalParams;
-  return nullptr;
+  return file;
 }
 
 FILE *GlobalParams::findToUnicodeFile(GooString *name) {
@@ -1074,17 +1016,16 @@ static FcPattern *buildFcPattern(GfxFont *font, const GooString *base14Name)
 #endif
 
 GooString *GlobalParams::findFontFile(GooString *fontName) {
-  GooString *path;
+  GooString *path = nullptr;
 
   setupBaseFonts(nullptr);
   lockGlobalParams;
-  if ((path = (GooString *)fontFiles->lookup(fontName))) {
-    path = path->copy();
-    unlockGlobalParams;
-    return path;
+  const auto fontFile = fontFiles.find(fontName->toStr());
+  if (fontFile != fontFiles.end()) {
+    path = new GooString(fontFile->second);
   }
   unlockGlobalParams;
-  return nullptr;
+  return path;
 }
 
 /* if you can't or don't want to use Fontconfig, you need to implement
@@ -1092,7 +1033,7 @@ GooString *GlobalParams::findFontFile(GooString *fontName) {
 */
 #ifdef WITH_FONTCONFIGURATION_FONTCONFIG
 // not needed for fontconfig
-void GlobalParams::setupBaseFonts(char *dir) {
+void GlobalParams::setupBaseFonts(char *) {
 }
 
 GooString *GlobalParams::findBase14FontFile(GooString *base14Name, GfxFont *font) {
@@ -1313,7 +1254,7 @@ void GlobalParams::setupBaseFonts(char *dir) {
   int i, j;
 
   for (i = 0; displayFontTab[i].name; ++i) {
-    if (fontFiles->lookup(displayFontTab[i].name)) {
+    if (fontFiles.count(displayFontTab[i].name) > 0) {
       continue;
     }
     fontName = new GooString(displayFontTab[i].name);
@@ -1455,40 +1396,15 @@ GBool GlobalParams::getErrQuiet() {
 }
 
 CharCodeToUnicode *GlobalParams::getCIDToUnicode(GooString *collection) {
-  GooString *fileName;
   CharCodeToUnicode *ctu;
 
   lockGlobalParams;
   if (!(ctu = cidToUnicodeCache->getCharCodeToUnicode(collection))) {
-    if ((fileName = (GooString *)cidToUnicodes->lookup(collection)) &&
-	(ctu = CharCodeToUnicode::parseCIDToUnicode(fileName, collection))) {
-      cidToUnicodeCache->add(ctu);
-    }
-  }
-  unlockGlobalParams;
-  return ctu;
-}
-
-CharCodeToUnicode *GlobalParams::getUnicodeToUnicode(GooString *fontName) {
-  lockGlobalParams;
-  GooHashIter *iter;
-  unicodeToUnicodes->startIter(&iter);
-  GooString *fileName = nullptr;
-  GooString *fontPattern;
-  void *val;
-  while (!fileName && unicodeToUnicodes->getNext(&iter, &fontPattern, &val)) {
-    if (strstr(fontName->getCString(), fontPattern->getCString())) {
-      unicodeToUnicodes->killIter(&iter);
-      fileName = (GooString*)val;
-    }
-  }
-  CharCodeToUnicode *ctu = nullptr;
-  if (fileName) {
-    ctu = unicodeToUnicodeCache->getCharCodeToUnicode(fileName);
-    if (!ctu) {
-      ctu = CharCodeToUnicode::parseUnicodeToUnicode(fileName);
-      if (ctu)
-         unicodeToUnicodeCache->add(ctu);
+    const auto cidToUnicode = cidToUnicodes.find(collection->toStr());
+    if (cidToUnicode != cidToUnicodes.end()) {
+      if((ctu = CharCodeToUnicode::parseCIDToUnicode(cidToUnicode->second.c_str(), collection))) {
+        cidToUnicodeCache->add(ctu);
+      }
     }
   }
   unlockGlobalParams;
@@ -1525,20 +1441,13 @@ UnicodeMap *GlobalParams::getTextEncoding() {
 
 GooList *GlobalParams::getEncodingNames()
 {
-  GooList *result = new GooList;
-  GooHashIter *iter;
-  GooString *key;
-  void *val;
-  residentUnicodeMaps->startIter(&iter);
-  while (residentUnicodeMaps->getNext(&iter, &key, &val)) {
-    result->append(key);
+  auto* const result = new GooList;
+  for (const auto& unicodeMap : residentUnicodeMaps) {
+    result->append(new GooString(unicodeMap.first));
   }
-  residentUnicodeMaps->killIter(&iter);
-  unicodeMaps->startIter(&iter);
-  while (unicodeMaps->getNext(&iter, &key, &val)) {
-    result->append(key);
+  for (const auto& unicodeMap : unicodeMaps) {
+    result->append(new GooString(unicodeMap.first));
   }
-  unicodeMaps->killIter(&iter);
   return result;
 }
 
@@ -1548,7 +1457,7 @@ GooList *GlobalParams::getEncodingNames()
 
 void GlobalParams::addFontFile(GooString *fontName, GooString *path) {
   lockGlobalParams;
-  fontFiles->add(fontName, path);
+  fontFiles[fontName->toStr()] = path->toStr();
   unlockGlobalParams;
 }
 

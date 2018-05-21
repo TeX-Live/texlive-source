@@ -1,4 +1,4 @@
-Changes applied to the poppler-0.64.0 tree as obtained from:
+Changes applied to the poppler-0.65.0 tree as obtained from:
 	http://poppler.freedesktop.org/
 
 Removed unused dirs:
@@ -11,7 +11,7 @@ General idea:
 update version.ac
 mv poppler-src poppler-prev
 tar xf poppler-*.tar.gz
-mv poppler-0.64.0 poppler-src
+mv poppler-0.65.0 poppler-src
 cd poppler-src
 svn status >/tmp/s
 svn add # the ? lines

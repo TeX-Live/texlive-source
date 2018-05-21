@@ -26,6 +26,7 @@
 // Copyright (C) 2015 Marek Kasik <mkasik@redhat.com>
 // Copyright (C) 2017 Jean Ghali <jghali@libertysurf.fr>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -126,7 +127,7 @@ CharCodeToUnicode *CharCodeToUnicode::makeIdentityMapping() {
   return ctu;
 }
 
-CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(GooString *fileName,
+CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(const char *fileName,
 							GooString *collection) {
   FILE *f;
   Unicode *mapA;
@@ -135,8 +136,8 @@ CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(GooString *fileName,
   Unicode u;
   CharCodeToUnicode *ctu;
 
-  if (!(f = openFile(fileName->getCString(), "r"))) {
-    error(errIO, -1, "Couldn't open cidToUnicode file '{0:t}'",
+  if (!(f = openFile(fileName, "r"))) {
+    error(errIO, -1, "Couldn't open cidToUnicode file '{0:s}'",
 	  fileName);
     return nullptr;
   }
@@ -153,7 +154,7 @@ CharCodeToUnicode *CharCodeToUnicode::parseCIDToUnicode(GooString *fileName,
     if (sscanf(buf, "%x", &u) == 1) {
       mapA[mapLenA] = u;
     } else {
-      error(errSyntaxWarning, -1, "Bad line ({0:d}) in cidToUnicode file '{1:t}'",
+      error(errSyntaxWarning, -1, "Bad line ({0:d}) in cidToUnicode file '{1:s}'",
 	    (int)(mapLenA + 1), fileName);
       mapA[mapLenA] = 0;
     }

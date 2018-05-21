@@ -19,6 +19,7 @@
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009, 2012, 2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -36,7 +37,6 @@
 #include "Stream.h"
 #include "GfxState.h"
 #include "OutputDev.h"
-#include "goo/GooHash.h"
 
 //------------------------------------------------------------------------
 // OutputDev
@@ -179,18 +179,11 @@ void OutputDev::opiEnd(GfxState *state, Dict *opiDict) {
 #endif
 
 void OutputDev::startProfile() {
-  if (profileHash)
-    delete profileHash;
-
-  profileHash = new GooHash (true);
+  profileHash.reset(new std::unordered_map<std::string, ProfileData>);
 }
 
-GooHash *OutputDev::endProfile() {
-  GooHash *profile = profileHash;
-
-  profileHash = nullptr;
-
-  return profile;
+std::unique_ptr<std::unordered_map<std::string, ProfileData>> OutputDev::endProfile() {
+  return std::move(profileHash);
 }
 
 #ifdef USE_CMS

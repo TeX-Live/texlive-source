@@ -147,7 +147,6 @@ void StructTreeRoot::parseNumberTreeNode(Dict *node)
 	Object value = nums.arrayGet(i + 1);
 	if (value.isArray()) {
 	  vec.resize(value.arrayGetLength());
-	  memset(vec.data(), 0, vec.size()*sizeof(Parent*));
 	  for (int j = 0; j < value.arrayGetLength(); j++) {
 	    Object itemvalue = value.arrayGetNF(j);
 	    if (itemvalue.isRef()) {

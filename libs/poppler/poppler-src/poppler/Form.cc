@@ -129,10 +129,6 @@ void FormWidget::getRect(double *x1, double *y1, double *x2, double *y2) const {
     widget->getRect(x1, y1, x2, y2);
 }
 
-double FormWidget::getFontSize() const {
-  return widget ? widget->getFontSize() : 0.;
-}
-
 bool FormWidget::isReadOnly() const
 {
   return field->isReadOnly();

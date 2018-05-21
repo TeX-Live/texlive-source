@@ -111,8 +111,6 @@ public:
   void setChildNum (unsigned i) { childNum = i; }
   unsigned getChildNum () { return childNum; }
 
-  double getFontSize() const;
-
   const GooString *getPartialName() const;
   void setPartialName(const GooString &name);
   const GooString *getAlternateUiName() const;

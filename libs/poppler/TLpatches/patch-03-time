@@ -1,6 +1,6 @@
-diff -ur poppler-0.64.0/goo/gfile.h poppler-src/goo/gfile.h
---- poppler-0.64.0/goo/gfile.h	Wed Apr 18 03:04:26 2018
-+++ poppler-src/goo/gfile.h	Thu Apr 26 11:27:12 2018
+diff -ur poppler-0.65.0/goo/gfile.h poppler-src/goo/gfile.h
+--- poppler-0.65.0/goo/gfile.h	Sun May 20 00:05:25 2018
++++ poppler-src/goo/gfile.h	Mon May 21 13:30:39 2018
 @@ -51,8 +51,6 @@
  #    include <windows.h>
  #  endif
@@ -10,9 +10,9 @@ diff -ur poppler-0.64.0/goo/gfile.h poppler-src/goo/gfile.h
  #else
  #  include <unistd.h>
  #  include <sys/types.h>
-diff -ur poppler-0.64.0/poppler/Form.h poppler-src/poppler/Form.h
---- poppler-0.64.0/poppler/Form.h	Wed Apr 18 03:04:26 2018
-+++ poppler-src/poppler/Form.h	Wed Apr 25 18:40:18 2018
+diff -ur poppler-0.65.0/poppler/Form.h poppler-src/poppler/Form.h
+--- poppler-0.65.0/poppler/Form.h	Sun May 20 00:05:25 2018
++++ poppler-src/poppler/Form.h	Mon May 21 13:31:30 2018
 @@ -36,6 +36,7 @@
  
  #include <set>

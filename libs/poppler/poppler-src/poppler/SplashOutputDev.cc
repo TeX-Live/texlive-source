@@ -2512,6 +2512,13 @@ GBool SplashOutputDev::beginType3Char(GfxState *state, double x, double y,
   double x1, y1, xMin, yMin, xMax, yMax, xt, yt;
   int i, j;
 
+  // check for invisible text -- this is used by Acrobat Capture
+  if (state->getRender() == 3) {
+    // this is a bit of cheating, we say yes, font is already on cache
+    // so we actually skip the rendering of it
+    return gTrue;
+  }
+
   if (skipHorizText || skipRotatedText) {
     state->getFontTransMat(&m[0], &m[1], &m[2], &m[3]);
     horiz = m[0] > 0 && fabs(m[1]) < 0.001 &&
