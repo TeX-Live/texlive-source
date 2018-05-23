@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 --[[
-   File   : makeglossaries.lua
+   File   : makeglossaries-lite.lua
    Author : Nicola Talbot
    
    Lua alternative to the makeglossaries Perl script.
@@ -36,6 +36,8 @@
    Also makeglossaries and makeglossaries-lite.lua.
   
    History:
+   * 4.39:
+     - corrected script name in version and help messages
    * 4.38:
      - no change.
    * 4.37:
@@ -58,7 +60,7 @@
      - changed first line from lua to texlua
 --]]
 
-thisversion = "4.37 2018-04-07"
+thisversion = "4.39 (2018-05-23)"
 
 quiet = false
 dryrun = false
@@ -84,15 +86,18 @@ makeindex_extra = nil
 makeindex_m = "makeindex"
 
 function version()
-  print(string.format("makeglossaries.lua version %s", thisversion))
-  print("Copyright (C) 2015 Nicola L C Talbot")
+
+  verYear = string.match(thisversion, "%d%d%d%d");
+
+  print(string.format("makeglossaries-lite version %s", thisversion))
+  print(string.format("Copyright (C) 2015-%s Nicola L C Talbot", verYear))
   print("This material is subject to the LaTeX Project Public License.")
 end
 
 function help()
   version()
   print([[
-Syntax : makeglossaries.lua [options] <filename>
+Syntax : makeglossaries-lite [options] <filename>
 
 For use with the glossaries package to pass relevant
 files to makeindex or xindy.
@@ -136,6 +141,7 @@ Makeindex Options:
 This is a light-weight Lua alternative to the makeglossaries Perl script.
 If you want to use xindy, it's better to use the Perl makeglossaries version
 instead.
+
 ]])
 end
 

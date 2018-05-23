@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 4.38
+# Version : 4.39
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -31,9 +31,11 @@
 # glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="4.38 (2018-05-10)";
+my $version="4.39 (2018-05-23)";
 
 # History:
+# v4.39:
+#   * No change.
 # v4.38:
 #   * No change.
 # v4.37:
@@ -1521,8 +1523,16 @@ sub HELP_MESSAGE{
 }
 
 sub VERSION_MESSAGE{
+
+   my $verYear = '';
+
+   if ($version=~/(\d{4})-\d{2}-\d{2}/)
+   {
+      $verYear = "-$1";
+   }
+
    print "Makeglossaries Version $version\n";
-   print "Copyright (C) 2007 Nicola L C Talbot\n";
+   print "Copyright (C) 2007$verYear Nicola L C Talbot\n";
    print "This material is subject to the LaTeX Project Public License.\n";
 }
 

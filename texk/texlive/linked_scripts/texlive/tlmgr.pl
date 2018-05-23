@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47303 2018-04-05 17:52:22Z karl $
+# $Id: tlmgr.pl 47763 2018-05-18 23:47:18Z preining $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47303 $';
-my $datrev = '$Date: 2018-04-05 19:52:22 +0200 (Thu, 05 Apr 2018) $';
+my $svnrev = '$Revision: 47763 $';
+my $datrev = '$Date: 2018-05-19 01:47:18 +0200 (Sat, 19 May 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1091,7 +1091,8 @@ sub backup_and_remove_package {
     return($F_WARNING);
   }
   if ($opts{"backup"}) {
-    $tlp->make_container("xz", $localtlpdb->root,
+    my ($compressor, $compressorextension) = TeXLive::TLUtils::setup_compressor();
+    $tlp->make_container($compressor, $localtlpdb->root,
                          $opts{"backupdir"}, 
                          "${pkg}.r" . $tlp->revision,
                          $tlp->relocated);
@@ -1761,7 +1762,15 @@ sub get_available_backups {
   #
   for my $dirent (@dirents) {
     next if (-d $dirent);
-    next if ($dirent !~ m/^(.*)\.r([0-9]+)\.tar\.xz$/);
+    my $has_accepted_compressiontype = 0;
+    for my $comptype (@AcceptedCompressors) {
+      my $ext = $CompressorExtension{$comptype};
+      $has_accepted_compressiontype = 1 if ($dirent =~ m/\.tar\.$ext$/);
+    }
+    next if (!$has_accepted_compressiontype);
+    if ($dirent !~ m/^(.*)\.r([0-9]+)\.tar\.(.*)$/) {
+      next;
+    }
     if (!$do_stat) {
       $backups{$1}->{$2} = 1;
       next;
@@ -1796,9 +1805,13 @@ sub restore_one_package {
   my ($pkg, $rev, $bd) = @_;
   # first remove the package, then reinstall it
   # this way we get rid of useless files
-  my $restore_file = "$bd/${pkg}.r${rev}.tar.xz";
-  if (! -r $restore_file) {
-    tlwarn("$prg: Cannot read $restore_file, no action taken\n");
+  my $restore_file;
+  for my $comptype (@AcceptedCompressors) {
+    my $ext = $CompressorExtension{$comptype};
+    $restore_file = "$bd/${pkg}.r${rev}.tar.$ext" if (-r "$bd/${pkg}.r${rev}.tar.$ext");
+  }
+  if (!$restore_file) {
+    tlwarn("$prg: Cannot find restore file $bd/${pkg}.r${rev}.tar.*, no action taken\n");
     return ($F_ERROR);
   }
   $localtlpdb->remove_package($pkg);
@@ -1938,7 +1951,7 @@ sub action_restore {
     for my $p (sort keys %backups) {
       my @tmp = sort {$b <=> $a} (keys %{$backups{$p}});
       my $rev = $tmp[0];
-      print "Restoring $p, $rev from $opts{'backupdir'}/${p}.r${rev}.tar.xz\n";
+      print "Restoring $p, $rev from $opts{'backupdir'}/${p}.r${rev}.tar.*\n";
       if (!$opts{"dry-run"}) {
         # first remove the package, then reinstall it
         # this way we get rid of useless files
@@ -2128,11 +2141,13 @@ sub action_backup {
     if ($clean_mode) {
       clear_old_backups ($pkg, $opts{"backupdir"}, $opts{"clean"}, $opts{"dry-run"}, 1);
     } else {
+      # for now default to xz and allow overriding with env var
+      my ($compressor, $compressorextension) = TeXLive::TLUtils::setup_compressor();
       my $tlp = $localtlpdb->get_package($pkg);
       info("saving current status of $pkg to $opts{'backupdir'}/${pkg}.r" .
-        $tlp->revision . ".tar.xz\n");
+        $tlp->revision . ".tar.$compressorextension\n");
       if (!$opts{"dry-run"}) {
-        $tlp->make_container("xz", $localtlpdb->root,
+        $tlp->make_container($compressor, $localtlpdb->root,
                              $opts{"backupdir"}, "${pkg}.r" . $tlp->revision);
       }
     }
@@ -3163,11 +3178,12 @@ sub action_update {
       }
 
       if ($opts{"backup"} && !$opts{"dry-run"}) {
-        $tlp->make_container("xz", $root,
+        my ($compressor, $compressorextension) = TeXLive::TLUtils::setup_compressor();
+        $tlp->make_container($compressor, $root,
                              $opts{"backupdir"}, "${pkg}.r" . $tlp->revision,
                              $tlp->relocated);
         $unwind_package =
-            "$opts{'backupdir'}/${pkg}.r" . $tlp->revision . ".tar.xz";
+            "$opts{'backupdir'}/${pkg}.r" . $tlp->revision . ".tar.$compressorextension";
         
         if ($autobackup) {
           # in case we do auto backups we remove older backups
@@ -9517,7 +9533,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47303 2018-04-05 17:52:22Z karl $
+$Id: tlmgr.pl 47763 2018-05-18 23:47:18Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
