@@ -7,7 +7,7 @@
 
 ########################################################################
 # bundledoc                                                            #
-# Copyright (C) 2014 Scott Pakin                                       #
+# Copyright (C) 2018 Scott Pakin                                       #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -25,14 +25,14 @@
 ########################################################################
 
 use 5.006;             # Fail gracefully if we're not using Perl v5.6.0.
-our $VERSION = "3.2";  # Specify the version of bundledoc.
+our $VERSION = "3.3";  # Specify the version of bundledoc.
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions qw(abs2rel catfile devnull rel2abs rootdir updir);
 use File::Path;
+use File::Temp qw(tempdir);
 use Getopt::Long;
 use Pod::Usage;
-use POSIX;
 use warnings;
 use strict;
 
@@ -133,8 +133,8 @@ sub process_config_file ($)
 sub find_dependencies ()
 {
     open (DEPFILE, "<$depfile") || die "${progname}: $! ($depfile)\n";
-    my $braced = "{([^\}]*)}";   # Regular expression for a braced name
-    my @dependencies;            # List of fully-qualified filenames
+    my $braced = "\\{([^\\}]*)\\}";   # Regular expression for a braced name
+    my @dependencies;                 # List of fully-qualified filenames
     @dependencies = qualifyname $texfile;
     while (my $oneline=<DEPFILE>) {
         # Parse an input line into its component fields.
@@ -255,6 +255,7 @@ my $showhelp = "";
 $keepdirs = 0;
 $verbose = 0;
 $localonly = 0;
+Getopt::Long::Configure("bundling");
 GetOptions ('texfile=s' => \$texfile,
             'directory=s' => \$docdirname,
             'manifest:s' => \$manifest,
@@ -263,9 +264,9 @@ GetOptions ('texfile=s' => \$texfile,
             'exclude=s' => \@exclude_files,
             'include=s' => \@include_files,
             'config=s' => sub { process_config_file($_[1]) },
-            'verbose!' => \$verbose,
+            'v|verbose!' => \$verbose,
             'listdeps=s' => \@listdeps,
-            'version' => sub { print "bundledoc $VERSION\n"; exit -1 },
+            'V|version' => sub { print "bundledoc $VERSION\n"; exit -1 },
             'help' => \$showhelp) || pod2usage (-exitval => 1, -verbose => 0);
 pod2usage (-exitval => 0,
            -verbose => 1) if $showhelp && $verbose;
@@ -305,10 +306,9 @@ if ($keepdirs) {
 }
 else {
     # Copy each of the dependencies to a temporary directory and tar it up.
-    my $tempdir = tmpnam();
+    my $tempdir = tempdir("bundledoc-XXXXXX", TMPDIR => 1, CLEANUP => 1);
     my $tempdir2 = catfile $tempdir, $docdirname;
-    print "CREATING $tempdir\n" if $verbose;
-    mkdir ($tempdir, 0777)  || die "${progname}: $! ($tempdir)\n";
+    print "CREATING $tempdir\n" if $verbose;  # White lie: already created
     print "CREATING $tempdir2\n" if $verbose;
     mkdir ($tempdir2, 0777) || die "${progname}: $! ($tempdir2)\n";
     foreach my $dep (@dependencies) {
@@ -811,7 +811,7 @@ to run B<bundledoc> on a different system.
 I'd like B<bundledoc> to work on as wide a variety of TeX
 distributions as possible.  If your platform is significantly
 different from the ones listed in L<"Testing Status"> (e.g., if you're
-running Z<OS X>) and you need to create a substantially different
+running S<OS X>) and you need to create a substantially different
 configuration file from F<texlive-unix.cfg> and F<miktex.cfg>, please
 send it to me at the address listed in L<"AUTHOR"> so I can include it
 in a future version of B<bundledoc>.  (I make no promises, though).
