@@ -121,8 +121,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.55';
-$version_details = "$My_name, John Collins, 17 Jan. 2018";
+$version_num = '4.56';
+$version_details = "$My_name, John Collins, 25 May 2018";
 
 use Config;
 use File::Basename;
@@ -221,7 +221,38 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##    24,25 May 2018   John Collins  Fix problem of .bib files not found with msys.
+##                                Add use of environment variable LATEXMKRCSYS
+##    12 May 2018   John Collins  Simplify code in run_bibtex.
+##     3,9 May 2018   John Collins  Improved diagnostics on mismatch of output filenames
+##    28,30 Apr 2018   John Collins  Improve error messages for bib files not found
+##    26 Apr 2018   John Collins  In testing for different expected and actual
+##                                output of primary run, normalize $$Pdest, to
+##                                avoid spurious warnings.
+##     4 Apr 2018   John Collins  Version 4.56.
+##                                  Get TeX disribution in .log file
+##                                  Start on dealing with aux_dir and out_dir
+##                                    that didn't get used as intended.
+##                                  And on fls_file that didn't get made when expected.
+##                                  Need to finish: 
+##    15 Mar 2018   John Collins  Version 4.55d.
+##                                In test for non-existent file in fls, don't give
+##                                  warning.
+##                                Add corresponding test for files reported as
+##                                  output that no longer exist.
+##                                (See minted package for cases where reported
+##                                  input and output files don't exist at end of run.)
+##    15 Mar 2018   John Collins  Version 4.55c.
+##                                Move test for non-existent file in fls to calling routine.
+##    15 Mar 2018   John Collins  Deal with non-existent input files reported in
+##                                fls file.  (Needed to work around bug in lualatex
+##                                in TeXLive 2016, 2017 and pretest 2018 (as of the
+##                                version of 2018 Mar 4).
+##     2 Feb 2018   John Collins  Version 4.55b.  Correct parsing of biber's log file.
+##    25 Jan 2018   John Collins  Implement $warning_cmd
+##    24 Jan 2018   John Collins  Version number to 4.55a.  Implement warnings_as_errors option
 ##    17 Jan 2018   John Collins  Version number to 4.55.  Ready for release.
+##                                Release v. 4.55 on CTAN.
 ##    15, 16 Jan 2018   John Collins  Correct bug in measuring filetime offset.
 ##    14 Jan 2018   John Collins  Correct issue with possible filetime offset
 ##                                  on remote file system.
@@ -322,6 +353,12 @@ $log_wrap = 79;
 ## Most of these variables represents the external command needed to 
 ## perform a certain action.  Some represent switches.
 
+
+## Which TeX distribution is being used
+## E.g., "MiKTeX 2.9", "TeX Live 2018"
+## "" means not determined. Obtain from first line of .log file.
+$tex_distribution = '';
+
 ## Commands to invoke latex, pdflatex, etc
 $latex  = 'latex %O %S';
 $pdflatex = 'pdflatex %O %S';
@@ -353,6 +390,8 @@ add_input_ext( 'pdflatex', 'tex', 'jpg', 'pdf', 'png' );
 add_input_ext( 'lualatex', 'tex', 'jpg', 'pdf', 'png' );
 add_input_ext( 'xelatex', 'tex', 'jpg', 'pdf', 'png' );
 #show_input_ext( 'latex' ); show_input_ext( 'pdflatex' );
+
+%allowed_output_ext = ( ".dvi" => 1, ".xdv" => 1, ".pdf" => 1 );
 
 # Information about options to latex and pdflatex that latexmk will simply
 #   pass through to (pdf)latex
@@ -594,6 +633,10 @@ $allow_subdir_creation = 1;
 $new_viewer_always = 0;     # If 1, always open a new viewer in pvc mode.
                             # If 0, only open a new viewer if no previous
                             #     viewer for the same file is detected.
+
+# Commands for use in pvc mode for compiling, success, warnings, and failure;
+# they default to empty, i.e., not to use:
+$compiling_cmd = $success_cmd = $warning_cmd = $failure_cmd = "";
 
 # Commands for printing are highly system dependent, so default to NONE:
 $lpr = 'NONE $lpr variable is not configured to allow printing of ps files';
@@ -1064,6 +1107,7 @@ $aux_dir = '';          # Directory for aux files (log, aux, etc).
 ## default flag settings.
 $recorder = 1;          # Whether to use recorder option on latex/pdflatex
 $silent = 0;            # Silence latex's messages?
+$warnings_as_errors = 0;# Treat warnings as errors and exit with non-zero exit code
 $silence_logfile_warnings = 0; # Do list warnings in log file
 $kpsewhich_show = 0;    # Show calls to and results from kpsewhich
 $landscape_mode = 0;    # default to portrait mode
@@ -1149,10 +1193,11 @@ $cleanup_fdb  = 0;      # No removal of file for latexmk's file-database
 $cleanup_only = 0;      # When doing cleanup, do not go on to making files
 $cleanup_includes_generated = 0; 
                         # Determines whether cleanup deletes files generated by
-                        #    custom dependencies
+                        #    (pdf)latex (found from \openout lines in log file).
+                        # It's more than that.  BUG
 $cleanup_includes_cusdep_generated = 0;
                         # Determines whether cleanup deletes files generated by
-                        #    (pdf)latex (found from \openout lines in log file).
+                        #    custom dependencies
 $diagnostics = 0;
 $dvi_filter = '';       # DVI filter command
 $ps_filter = '';        # Postscript filter command
@@ -1188,11 +1233,13 @@ $updated = 0;           # Flags when something has been remade
 $waiting = 0;           # Flags whether we are in loop waiting for an event
                         # Used to avoid unnecessary repeated o/p in wait loop
 
-# Used for some results of parsing log file:
+# The following are used for some results of parsing log file
+# Global variables, so results can be reported in main program. 
 $reference_changed = 0;
 $mult_defined = 0;
 $bad_reference = 0;
 $bad_citation = 0;
+@primary_warning_summary = ();
 
 # Cache of expensive-to-compute state variables, e.g., cwd in form
 # fixed to deal with cygwin issues.
@@ -1522,7 +1569,20 @@ sub read_first_rc_file_in_list {
 # So test on $auto_rc_use in each case.
 if ( $auto_rc_use ) {
     # System rc file:
-    read_first_rc_file_in_list( @rc_system_files );
+    if (exists $ENV{LATEXMKRCSYS} ) {
+	push @rc_system_files, $ENV{LATEXMKRCSYS};
+	if ( !-e $ENV{LATEXMKRCSYS} ) {
+	    warn "$My_name: you've specified a system rc file `$ENV{LATEXMKRCSYS}`\n",
+		 "   in environment variable LATEXMKRCSYS, but the file doesn't exist.\n",
+		 "   I won't read any system rc file.\n";
+	}
+	else {
+           process_rc_file( $ENV{LATEXMKRCSYS} );
+	}
+    }
+    else {
+        read_first_rc_file_in_list( @rc_system_files );
+    }
 }
 if ( $auto_rc_use && ($HOME ne "" ) ) {
     # User rc file:
@@ -1708,6 +1768,7 @@ while ($_ = $ARGV[0])
   elsif (/^-view=none$/)    { $view = "none";}
   elsif (/^-view=ps$/)      { $view = "ps";}
   elsif (/^-view=pdf$/)     { $view = "pdf"; }
+  elsif (/^-Werror$/){ $warnings_as_errors = 1; }
   elsif (/^-lualatex$/)      { 
       $pdf_mode = 4;
       $dvi_mode = $postscript_mode = 0; 
@@ -1800,33 +1861,26 @@ if ( ($out_dir ne '') && ($aux_dir eq '') ){
     $aux_dir = $out_dir;
 }
 
-# Normalize versions terminating in directory/path separator
-# and versions referring to current directory
-$out_dir1 = $out_dir;
-$aux_dir1 = $aux_dir;
-foreach ( $aux_dir1, $out_dir1 ) {
-    if ( ($_ ne '')  && ! m([\\/\:]$) ) {
-       $_ .= '/';
-    }
-    while ( s[^\.\/][] ) {}
+# Save original values for use in diagnositics.
+# We may change $aux_dir and $out_dir after a detection
+#  of results of misconfiguration.
+$aux_dir_requested = $aux_dir;
+$out_dir_requested = $out_dir;
+# The following reports results of diagnostics on location of .log file
+#   after the first run of a latex engine, when actually used aux_dir
+#   may not be the expected one, due to a configuration error.
+# Values: -1 uninitialized (before first run)
+#          0 log file not found;
+#          1 log file in aux_dir;
+#          2 log file **not** in aux_dir but in out_dir;
+#          3 log file **not** in aux_dir or out_dir, but in cwd.
+$where_log = -1;  
+
+foreach ( 'BIBINPUTS', 'TEXINPUTS' ) {
+    if ( exists $ENV{$_} ) { $ENV_ORIG{$_} = $ENV{$_}; }
 }
 
-# At least one widely package (revtex4-1) generates a bib file
-# (which is used in revtex4-1 for putting footnotes in the reference
-# list), and bibtex must be run to use it.  But latexmk needs to
-# determine the existence of the bib file by use of kpsewhich, otherwise
-# there is an error.  So cope with this situation (and any analogous
-# cases by adding the aux_dir to the relevant path search environment
-# variables.  BIBINPUTS seems to be the only one currently affected.
-foreach ( 'BIBINPUTS' ) {
-    if ( exists $ENV{$_} ) {
-        $ENV{$_} = $aux_dir.$search_path_separator.$ENV{$_};
-    }
-    else {
-        $ENV{$_} = $aux_dir.$search_path_separator;
-    }
-}
-
+&set_dirs_etc;
 
 if ($bibtex_use > 1) {
     push @generated_exts, 'bbl';
@@ -2112,22 +2166,6 @@ foreach (@generated_exts ) {
     $generated_exts_all{$_} = 1;
 }
 
-if ($aux_dir) {
-    # Ensure $aux_dir is in TEXINPUTS search path.
-    # This is used by dvips for files generated by mpost.
-    if ( ! exists $ENV{TEXINPUTS} ) {
-        # Note the trailing ":" which ensures that the last item
-        # in the list of paths is the empty path, which actually
-        # means the default path, i.e., the following means that
-        # the TEXINPUTS search path is $aux_dir and the standard
-        # value.
-        $ENV{TEXINPUTS} = $aux_dir.$search_path_separator;
-    }
-    elsif ( $ENV{TEXINPUTS} !~ /$aux_dir$search_path_separator/ ) {
-        $ENV{TEXINPUTS} = $aux_dir.$search_path_separator.$ENV{TEXINPUTS};
-    }
-}
-
 $quell_uptodate_msgs = $silent; 
    # Whether to quell informational messages when files are uptodate
    # Will turn off in -pvc mode
@@ -2222,9 +2260,7 @@ foreach $filename ( @file_list )
         $root_filename = $jobname;
     }
 
-    $aux_main = "$aux_dir1$root_filename.aux";
-    $log_name = "$aux_dir1$root_filename.log";
-    $fdb_name = "$aux_dir1$root_filename.$fdb_ext";
+    &set_names;
 
     # Initialize basic dependency information:
 
@@ -2489,6 +2525,13 @@ foreach $filename ( @file_list )
     if ( ( $failure <= 0 ) || $force_mode ) {
       rdb_for_some( [keys %one_time], \&rdb_run1 );
     }
+    if ($#primary_warning_summary > -1) {
+	# N.B. $mult_defined, $bad_reference, $bad_citation also available here.
+        if ($warnings_as_errors) {
+            $failure = 1;
+	    $failure_msg = "Warning(s) from latex (or c.) for '$filename'; treated as error";
+        }
+    }
     if ($failure > 0) { next FILE; }
 } # end FILE
 continue {
@@ -2502,8 +2545,11 @@ continue {
         if ( $failure_msg ) {
             #Remove trailing space
             $failure_msg =~ s/\s*$//;
-            warn "$My_name: Did not finish processing file '$filename':\n",
+	    warn "----------------------\n";
+	    warn "This message may duplicate earlier message.\n";
+            warn "$My_name: Failure in processing file '$filename':\n",
                  "   $failure_msg\n";
+	    warn "----------------------\n";
             $failure = 1;
         }
     }
@@ -2542,14 +2588,66 @@ if ($failure_count > 0) {
     }
     if ( !$force_mode ) {
       warn "$My_name: Use the -f option to force complete processing,\n",
-           " unless error was exceeding maximum runs of latex/pdflatex.\n";
+           " unless error was exceeding maximum runs, or warnings treated as errors.\n";
     }
     exit 12;
+}
+
+if ( $where_log == 2 ) {
+    warn "$My_name: You requested aux_dir '$aux_dir_requested',\n".
+	 "  but '$aux_dir' was used by the (pdf)latex engine.\n".
+	 "  That indicates a configuration error.\n";
+    if ( ($tex_distribution !~ /^MiKTeX/i) && ($aux_dir_requested ne $out_dir_requested) ) {
+	warn "  Probably you set different aux and out directories,\n".
+	     "  but that is not supported by your TeX distribution.\n".
+ 	     "  The only current distribution supporting this is MiKTeX.\n";
+    }
 }
 
 
 
 # end MAIN PROGRAM
+#############################################################
+#############################################################
+
+sub set_dirs_etc {
+    # Normalize versions terminating in directory/path separator
+    # and versions referring to current directory
+    # These actions in a subroutine so they can be used elsewhere.
+    $out_dir1 = $out_dir;
+    $aux_dir1 = $aux_dir;
+    foreach ( $aux_dir1, $out_dir1 ) {
+        if ( ($_ ne '')  && ! m([\\/\:]$) ) {
+            $_ .= '/';
+        }
+        while ( s[^\.\/][] ) {}
+    }
+    if ($aux_dir) {
+	# Ensure $aux_dir is in BIBINPUTS and TEXINPUTS search paths.
+	# TEXINPUTS is used by dvips for files generated by mpost.
+	# For BIBINPUTS, 
+	# at least one widely package (revtex4-1) generates a bib file
+	# (which is used in revtex4-1 for putting footnotes in the reference
+	# list), and bibtex must be run to use it.  But latexmk needs to
+	# determine the existence of the bib file by use of kpsewhich, otherwise
+	# there is an error.  So cope with this situation (and any analogous
+	# cases by adding the aux_dir to the relevant path search environment
+	# variables.  BIBINPUTS seems to be the only one currently affected.
+	foreach ( 'BIBINPUTS', 'TEXINPUTS' ) {
+	    if ( exists $ENV_ORIG{$_} ) {
+		$ENV{$_} = $aux_dir.$search_path_separator.$ENV_ORIG{$_};
+	    }
+	    else {
+		# Note the trailing ":" or ";" which ensures that the last item
+		# in the list of paths is the empty path, which actually
+		# means the default path, i.e., the following means that
+		# the search path is $aux_dir and the standard value.
+		$ENV{$_} = $aux_dir.$search_path_separator;
+	    }
+	}
+    }
+}
+
 #############################################################
 
 sub fix_cmds {
@@ -3184,7 +3282,13 @@ CHANGE:
             }
         }
         else {
-            if ($success_cmd) {
+	    if ( ($#primary_warning_summary > -1) && $warning_cmd ) {
+                Run_subst( $warning_cmd );
+            }
+	    elsif ( ($#primary_warning_summary > -1) && $warnings_as_errors && $failure_cmd ) {
+                Run_subst( $failure_cmd );
+            }
+            elsif ($success_cmd) {
                 Run_subst( $success_cmd );
             }
         }
@@ -3574,6 +3678,7 @@ sub print_help
   "   -view=none    - no viewer is used\n",
   "   -view=ps      - viewer is for ps\n",
   "   -view=pdf     - viewer is for pdf\n",
+  "   -Werror   - treat warnings from called programs as errors\n",
   "   -xelatex      - use xelatex for processing files to pdf\n",
   "                   and turn dvi/ps modes off\n",
   "\n",
@@ -3706,7 +3811,6 @@ sub check_biber_log {
         elsif ( /> INFO - Found .* '([^']+)'\s*$/
                 || /> INFO - Found '([^']+)'\s*$/
                 || /> INFO - Reading '([^']+)'\s*$/
-                || /> INFO - Reading (.*)$/
                 || /> INFO - Processing .* file '([^']+)' .*$/
               ) {
             if ( defined $Pbiber_source ) {
@@ -3726,6 +3830,7 @@ sub check_biber_log {
     my @not_found = &find_file_list1( $Pbiber_source, $Pbiber_source,
                                       '', \@BIBINPUTS );
     @$Pbiber_source = uniqs( @$Pbiber_source );
+
     if ( ($#not_found < 0) && ($#$Pbiber_source >= 0) ) {
         warn "$My_name: Found biber source file(s) [@$Pbiber_source]\n"
         unless $silent;
@@ -3737,8 +3842,8 @@ sub check_biber_log {
         return 5;
     }
     else {
-        show_array( "$My_name: Failed to find one or more biber source files:",
-                    @not_found );
+        warn "$My_name: Failed to find one or more biber source files:\n";
+        foreach (@not_found) { warn "    '$_'\n"; }
         if ($force_mode) {
             warn "==== Force_mode is on, so I will continue.  ",
                  "But there may be problems ===\n";
@@ -3767,31 +3872,33 @@ sub run_bibtex {
     my $return = 999;
     # Prevent changes we make to environment becoming global:
     local %ENV = %ENV;
-    if ( $aux_dir ) {
-        # Use \Q and \E round directory name in regex to avoid interpretation
-        #   of metacharacters in directory name:
-        if ( $$Psource =~ /^\Q$aux_dir1\E/ ) {
-            # Run bibtex in $aux_dir, fixing input search path
-            # to allow for finding files in original directory
-            my ( $base, $path, $ext ) = fileparseA( $$Psource );
-            my $cwd = good_cwd();
-            foreach ( 'BIBINPUTS', 'BSTINPUTS' ) {
-                if ( exists $ENV{$_} ) {
-                    $ENV{$_} = $cwd.$search_path_separator.$ENV{$_};
-                }
-                else {
-                    $ENV{$_} = $cwd.$search_path_separator;
-                }
+    my ( $base, $path, $ext ) = fileparseA( $$Psource );
+    if ( $path ) {
+	# Since (e.g.,) 'bibtex output/main.aux' doesn't find subsidiary .aux
+        #   files, as from \@include{chap.aux}, we change directory to the
+	#   directory of the top-level .aux file to run bibtex.  But we have to
+	#   fix search paths for .bib and .bst, since they may be specified
+	#   relative to the document directory.
+        my $cwd = good_cwd();
+        foreach ( 'BIBINPUTS', 'BSTINPUTS' ) {
+            if ( exists $ENV{$_} ) {
+                $ENV{$_} = $cwd.$search_path_separator.$ENV{$_};
             }
-            pushd( $path );
-            $return = &Run_subst( undef, undef, '', $base.$ext, '', $base );
-            popd();
-        }
-        else {
-            warn "$My_name: Directory in file name '$$Psource' for bibtex\n",
-                 "   but it is not the output directory '$aux_dir'\n";
-            $return = Run_subst();
-        }
+            else {
+                $ENV{$_} = $cwd.$search_path_separator;
+            }
+	}
+        pushd( $path );
+	if (!$silent) {
+	    print "$My_name: changed directory to '$path'\n",
+		  "Set BIBINPUTS='$ENV{BIBINPUTS}'\n",
+  		  "Set BSTINPUTS='$ENV{BSTINPUTS}'\n";
+	}
+        $return = &Run_subst( undef, undef, '', $base.$ext, '', $base );
+        popd();
+	if (!$silent) {
+	    print "$My_name: changed directory back to '", cwd(), "'\n";
+	}
     }
     else {
         $return = Run_subst();
@@ -3884,10 +3991,18 @@ sub normalize_force_directory {
     return normalize_filename( $filename );
 } #END normalize force_directory
 
-# ------------------------------
+#**************************************************
+
+sub set_names {
+    # Set names of standard files:
+    $aux_main = "$aux_dir1$root_filename.aux";
+    $log_name = "$aux_dir1$root_filename.log";
+    $fdb_name = "$aux_dir1$root_filename.$fdb_ext";
+}
+
+#**************************************************
 
 sub parse_log {
-
 # Scan log file for: dependent files
 #    reference_changed, bad_reference, bad_citation
 # Return value: 1 if success, 0 if no log file.
@@ -4007,6 +4122,11 @@ sub parse_log {
 		$engine = $1;
 		print "=== TeX engine is '$engine'\n"
 		    if (!$silent);
+   	        if ( /^This is ([^,]+), [^\(]*\(([^\)]+)\)/ ) {
+		    $tex_distribution = $2;
+		    print "=== TeX distribution is '$tex_distribution'\n"
+		        if ($diagnostics);
+		}
 	    }
 	    else {
 		warn "$My_name: First line of .log file '$log_name' is not in standard format.\n";
@@ -4265,7 +4385,6 @@ LINE:
         foreach my $pattern (@file_not_found) {
             if ( /$pattern/ ) {
                 my $file = clean_filename($1);
-                warn "===========$My_name: Missing input file: '$file' from line\n  '$_'\n";
                 warn "$My_name: Missing input file: '$file' from line\n  '$_'\n"
                     unless $silent;
                 $dependents{normalize_filename($file, @pwd_log)} = 0;
@@ -4654,6 +4773,72 @@ CANDIDATE_PAIR:
 
 #************************************************************
 
+sub find_set_log {
+    # Locate the log file, if possible.  This allows for possible configuration
+    # errors, e.g., because the command for (*)latex was such that it did not 
+    # do the setting of -output-directory or -aux-directory that the user intended,
+    # or because the version used did not support one or other of these options.
+    # Put result in $where_log (see its initial declaration/definition for details).
+    # Change $aux_dir and/or $out_dir as appropriate, and make consequent changes.
+    #
+    # Probably further attention to location of output file (.dvi, .pdf, or .xdv)
+    # could be done, to get $out_dir and $$Pdest more accurately set.
+    #
+    # Typical configuration errors that lead to the need for this subroutine:
+    #        %O not used in command definition, so directory options don't getpassed
+    #           to (*)latex.
+    #        Use of $aux_dir different to $out_dir, when (*)latex doesn't support
+    #           the -aux-directory option (notably with TeXLive distribution).
+    if ($where_log >= 0) {
+	# .log file was found on previous run.  No need to repeat search, since
+	# if the location were to change from run to run, we'd have other
+	# serious difficulties that are to hard to deal with.
+	return;
+    }
+    if ( test_gen_file( "$aux_dir1$root_filename.log" ) ) {
+	# .log file is in expected place.
+	$where_log = 1;
+    }
+    elsif ( test_gen_file( "$out_dir1$root_filename.log" ) ) {
+	# .log file is in out_dir not in aux_dir.
+	# Presumably there is a configuration error
+	# that prevents aux_dir from being used by latex.
+	# So change $aux_dir to the actually used value.
+	$where_log = 2;
+	$aux_dir = $out_dir;
+    }
+    elsif ( test_gen_file( "$root_filename.log" ) ) {
+	# .log file is not in out_dir nor in aux_dir, but is in cwd.
+	# Presumably there is a configuration error
+	# that prevents the directories from being used by latex.
+	# So change $aux_dir to the actually used value.
+	$where_log = 3;
+	$aux_dir = "";
+    }
+    else {
+	# No .log file found
+	$failure = 1;
+	$$Plast_result = 2;
+	$where_log = 0;
+	$failure_msg 
+	    = "(Pdf)LaTeX didn't generate the expected log file '$log_name'\n";
+    }
+    if ($where_log > 1) {
+	warn "$My_name: Changed aux_dir from '$aux_dir_requested' to '$aux_dir'\n".
+	     "          to allow for probable configuration error\n";
+	# Allow for the changes associated with change of $aux_dir:
+	&set_dirs_etc;
+	&set_names;
+	warn "$My_name: Actual .log file is\n",
+             "     '$log_name'\n",
+             "  instead of the value\n",
+             "     '$aux_dir_requested/$root_filename.log'\n",
+             "   that seemed to be intended.\n";
+    }
+}
+
+#************************************************************
+
 sub parse_fls {
     my ($fls_name, $Pinputs, $Poutputs, $Pfirst_read_after_write, $Ppwd_latex ) = @_;
     %$Pinputs = %$Poutputs = %$Pfirst_read_after_write = ();
@@ -4833,21 +5018,26 @@ sub parse_aux {
     @$Pbib_files = uniqs( @$Pbib_files );
     &find_file_list1( $Pbst_files, $Pbst_files, '.bst' );
     @$Pbst_files = uniqs( @$Pbst_files );
+    my @bad_bib = ();
+    foreach ( @$Pbib_files ) {
+	if ( /\s/ ) { push @bad_bib, $_; }
+    }
+    if ($#bad_bib >= 0)  {
+	    warn "$My_name: White space in an argument list for \\bibliography.\n",
+                 "    which is not allowed by bibtex.  Bad arguments:\n";
+            foreach (@bad_bib ) { warn "    '$_'\n"; }
+	    return 3;
+    }
     if ( $#not_found < 0) {
         warn "$My_name: Found bibliography file(s) [@$Pbib_files]\n"
         unless $silent;
     }
     else {
-        show_array( "$My_name: Failed to find one or more bibliography files ",
-                    @not_found );
+        warn "$My_name: Failed to find one or more bibliography files:\n";
+        foreach (@not_found) { warn "    '$_'\n"; }
         if ($force_mode) {
             warn "==== Force_mode is on, so I will continue.  ",
                  "But there may be problems ===\n";
-        }
-        else {
-            #$failure = -1;
-            #$failure_msg = 'Failed to find one or more bib files';
-            #warn "$My_name: Failed to find one or more bib files\n";
         }
         return 3;
     }
@@ -5457,10 +5647,27 @@ sub rdb_set_latex_deps {
     # wasn't used/analyzed, so we don't need a test as to whether the fls file was
     # used.
     foreach (keys %source_fls) {
+        if (! -e ) {
+	    # File is listed in .fls file as read, but doesn't exist now.
+	    # Therefore it is not a true source file, surely.
+	    # Sometimes this is caused by a bug (e.g., lualatex in TeXLive 2016, 
+	    #   2017) when there is an incorrect line in .fls file.  (This
+	    #   would deserve a warning.)
+            # But sometimes (e.g., with minted package), the file could be
+	    #  created during a run, read, and then deleted.
+           next;
+        }
         $dependents{$_} = 4;
 	if ( /\.bbl$/ ) { push @bbl_files, $_; }
     }
     foreach (keys %generated_fls) {
+        if (! -e ) {
+	    # File is listed in .fls file as written, but doesn't exist now.
+	    # Therefore it is not a true externally visible generated file.
+	    # (Typically, e.g., with the minted package, it is a temporary
+	    #   file created during a run and then deleted during the run.)
+            next;
+        }
         rdb_add_generated( $_ );
         if ( exists($dependents{$_}) ) {
             $dependents{$_} = 6;
@@ -5503,14 +5710,45 @@ sub rdb_set_latex_deps {
     #         (i.e., dvi instead of pdf, or vv).  This could
     #         legitimately occur when the source file (or an invoked
     #         package or class) sets \pdfoutput. 
-    $missing_dvi_pdf = ''; 
+    $missing_dvi_pdf = '';
     if ($primary_out eq '')  {
         warn "$My_name: For rule '$rule', no output was made\n";
         $missing_dvi_pdf = $$Pdest;
     }
-    elsif ($primary_out ne $$Pdest) {
+    elsif ($primary_out ne normalize_filename($$Pdest) ) {
         warn "$My_name: ===For rule '$rule', actual output '$primary_out'\n",
-             "       ======appears not to match expected output '$$Pdest'\n";
+             "    ======appears not to match expected output '$$Pdest'.\n",
+	     "    Further diagnostics follow:\n";
+        my ($actual_base, $actual_path, $actual_ext) = fileparseA( $primary_out );
+        my ($intended_base, $intended_path, $intended_ext) = fileparseA( $$Pdest );
+	if ( $actual_base ne $intended_base ) {
+	    warn "   --The base names of the files are different. That is strange!!\n";
+	}
+	if ( $actual_path ne $intended_path ) {
+	    warn "   --The paths of the files are different. I may have misunderstood\n",
+		 "   different names for the same directory, which is innocuous,\n",
+		 "   or there may be a configuration error.\n";
+	}
+	if ( $actual_ext ne $intended_ext ) {
+	    warn "   --The extensions of the files are different, i.e., the\n",
+  		 "   intended and actual types of the output differ.\n";
+	    if ( ! exists $allowed_output_ext{$actual_ext} ) {
+		warn "   Actual output file has an extension '$actual_ext' that\n",
+		     "   is not one I know about\n";
+	    }
+	    if ( (($actual_ext eq '.pdf') && ($intended_ext eq '.dvi'))
+		 || (($actual_ext eq '.dvi') && ($intended_ext eq '.pdf'))
+               )
+            {
+		warn "   This could arise from use of \\pdfoutput in the source file,\n",
+ 		     "   or from a configuration error\n";
+	    }
+	    else {
+                warn "   This indicates a probable configuration error\n";
+	    }
+	    warn "   A future version of $my_name should be able to make dynamically\n",
+		 "   adjustments to deal with this problem\n";
+	}
     }
 
   IDX_FILE:
@@ -5766,10 +6004,10 @@ MISSING_FILE:
         if ( -e "$missing.tex" ) { 
             $new_includes{"$missing.tex"} = 1;
         }
-        if ( -e $missing ) { 
+        elsif ( -e $missing ) { 
             $new_includes{$missing} = 1;
         }
-        if ( $ext ne "" ) {
+        elsif ( $ext ne "" ) {
             foreach my $dep (@cus_dep_list){
                my ($fromext,$toext) = split('\s+',$dep);
                if ( ( "$ext" eq "$toext" )
@@ -6275,7 +6513,7 @@ sub rdb_make {
 
     local %pass = ();
     local $failure = 0;        # General accumulated error flag
-    local $missing_dvi_pdf = ''; # Did primary run fail to make its output file? 
+    local $missing_dvi_pdf = ''; # Did primary run fail to make its output file?
     local $runs = 0;
     local $too_many_passes = 0;
     local %rules_applied = ();
@@ -6358,6 +6596,11 @@ sub rdb_make {
     rdb_for_some( [@unusual_one_time], \&rdb_make1 );
     rdb_write( $fdb_name );
 
+    if ($#primary_warning_summary > -1) {
+	# N.B. $mult_defined, $bad_reference, $bad_citation also available here.
+        show_array( "$My_name: Summary of warnings from last run of (pdf)latex:", 
+                    @primary_warning_summary );
+    }
     if (! $silent) {
         if ($failure && $force_mode) {
             print "$My_name: Errors, in force_mode: so I tried finishing targets\n";
@@ -7037,16 +7280,14 @@ sub rdb_primary_run {
     }
 
     my $return_latex = &rdb_run1;
+
+    # Need to worry about changed directory, changed output extension
+    # Where else is $missing_dvi_pdf set?  Was it initialized?
     if (-e $$Pdest) { $missing_dvi_pdf = '';}
 
-    ######### Analyze results of run:
-    if ( ! -e $log_name ) {
-        $failure = 1;
-        $$Plast_result = 2;
-        $$Plast_message = $failure_msg 
-           = "(Pdf)LaTeX failed to generate the expected log file '$log_name'";
-        return -1;
-    }
+    # Handle case that log file is caused to be in an unexpected place,
+    #   from a configuration error:
+    &find_set_log;
 
     if ($recorder) {
         # Handle problem that some version of (pdf)latex give fls files
@@ -7076,7 +7317,7 @@ sub rdb_primary_run {
             }
         }
         if ( ! test_gen_file( $std_fls_file ) ) {
-            warn "$My_name: fls file doesn't appear to have been made\n";
+            warn "$My_name: fls file doesn't appear to have been made.\n";
         }
     }
 
@@ -7125,18 +7366,21 @@ sub rdb_primary_run {
        $return = 0;
     }
     # Summarize issues that may have escaped notice:
-    my @warnings = ();
+    @primary_warning_summary = ();
     if ($bad_reference) {
-        push @warnings, "Latex failed to resolve $bad_reference reference(s)";
+        push @primary_warning_summary,
+             "Latex failed to resolve $bad_reference reference(s)";
     }
     if ($mult_defined) {
-        push @warnings, "Latex found $mult_defined multiply defined reference(s)";
+        push @primary_warning_summary,
+             "Latex found $mult_defined multiply defined reference(s)";
     }
     if ($bad_citation) {
-        push @warnings, "Latex failed to resolve $bad_citation citation(s)";
+        push @primary_warning_summary,
+             "Latex failed to resolve $bad_citation citation(s)";
     }
-    if ($#warnings > -1) {
-        show_array( "$My_name: Summary of warnings:", @warnings );
+    if ( $diagnostics && ($#primary_warning_summary > -1) ) {
+       show_array( "$My_name: Summary of warnings:", @primary_warning_summary );
     }
     return $return;
 } #END rdb_primary_run
@@ -8506,7 +8750,7 @@ sub fileparseA {
         $path = ''; 
     }
     return ($base_name, $path, $ext);
- }
+}
 
 #************************************************************
 
@@ -8517,7 +8761,7 @@ sub fileparseB {
     if  ($#_ > 0 ) { $pattern = $_[1]; }
     my ($base_name, $path, $ext) = fileparse( $given, $pattern );
     return ($base_name, $path, $ext);
- }
+}
 
 #************************************************************
 
@@ -8846,9 +9090,10 @@ sub find_process_id {
 
 sub cache_good_cwd {
     # Set cached value of cwd to current cwd.
-    # Under cygwin, the cwd is converted to a native MSWin path so
+    # Under cygwin, the cached value is converted to a native MSWin path so
     # that the result can be used for input to MSWin programs as well
-    # as cygwin programs. 
+    # as cygwin programs.
+    # Similarly for msys.
     my $cwd = cwd();
     if ( $^O eq "cygwin" ) {
         my $cmd = "cygpath -w \"$cwd\"";
@@ -8866,14 +9111,18 @@ sub cache_good_cwd {
                  "     '$Win_cwd'\n";
         }
     }
+    elsif ( $^O eq "msys" ) {
+	$cwd =~ s[^/([a-z])/][\u$1:/];
+    }
     $cache{cwd} = $cwd;
 }  # END cache_good_cwd
 
 #============================================
 
 sub good_cwd {
-    # Return cwd, but under cygwin, convert to MSWin path.
-    # Use cached result
+    # Return cwd, but under cygwin (or ...), convert to MSWin path.
+    # Use cached result, to save a possible expensive computation (running 
+    #  of extenal program under cygwin).
     return $cache{cwd};
 }  # END good_cwd
 

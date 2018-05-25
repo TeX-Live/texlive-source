@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47763 2018-05-18 23:47:18Z preining $
+# $Id: tlmgr.pl 47823 2018-05-24 03:08:27Z preining $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47763 $';
-my $datrev = '$Date: 2018-05-19 01:47:18 +0200 (Sat, 19 May 2018) $';
+my $svnrev = '$Revision: 47823 $';
+my $datrev = '$Date: 2018-05-24 05:08:27 +0200 (Thu, 24 May 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1091,8 +1091,7 @@ sub backup_and_remove_package {
     return($F_WARNING);
   }
   if ($opts{"backup"}) {
-    my ($compressor, $compressorextension) = TeXLive::TLUtils::setup_compressor();
-    $tlp->make_container($compressor, $localtlpdb->root,
+    $tlp->make_container($::progs{'compressor'}, $localtlpdb->root,
                          $opts{"backupdir"}, 
                          "${pkg}.r" . $tlp->revision,
                          $tlp->relocated);
@@ -2142,12 +2141,12 @@ sub action_backup {
       clear_old_backups ($pkg, $opts{"backupdir"}, $opts{"clean"}, $opts{"dry-run"}, 1);
     } else {
       # for now default to xz and allow overriding with env var
-      my ($compressor, $compressorextension) = TeXLive::TLUtils::setup_compressor();
+      my $compressorextension = $CompressorExtension{$::progs{'compressor'}};
       my $tlp = $localtlpdb->get_package($pkg);
       info("saving current status of $pkg to $opts{'backupdir'}/${pkg}.r" .
         $tlp->revision . ".tar.$compressorextension\n");
       if (!$opts{"dry-run"}) {
-        $tlp->make_container($compressor, $localtlpdb->root,
+        $tlp->make_container($::progs{'compressor'}, $localtlpdb->root,
                              $opts{"backupdir"}, "${pkg}.r" . $tlp->revision);
       }
     }
@@ -2269,24 +2268,28 @@ sub write_w32_updater {
       tlwarn("$prg: Creation of backup container of $pkg failed.\n");
       return 1; # backup failed? abort
     }
+    my $decompressor = $::progs{$DecompressorProgram{$DefaultCompressorFormat}};
+    my $compressorextension = $CompressorExtension{$DefaultCompressorFormat};
+    my @decompressorArgs = @{$DecompressorArgs{$DefaultCompressorFormat}};
     foreach my $pkg_part (@pkg_parts) {
       if ($media eq 'local_compressed') {
-        copy("$repo/$pkg_part.tar.xz", "$temp");
+        copy("$repo/$pkg_part.tar.$compressorextension", "$temp");
       } else { # net
-        TeXLive::TLUtils::download_file("$repo/$pkg_part.tar.xz", "$temp/$pkg_part.tar.xz");
+        TeXLive::TLUtils::download_file("$repo/$pkg_part.tar.$compressorextension", 
+                                        "$temp/$pkg_part.tar.$compressorextension");
       }
       # now we should have the file present
-      if (!-r "$temp/$pkg_part.tar.xz") {
-        tlwarn("$prg: Couldn't get $pkg_part.tar.xz, that is bad\n");
+      if (!-r "$temp/$pkg_part.tar.$compressorextension") {
+        tlwarn("$prg: Couldn't get $pkg_part.tar.$compressorextension, that is bad\n");
         return 1; # abort
       }
       # unpack xz archive
-      my $sysret = system("$::progs{'xzdec'} < \"$temp/$pkg_part.tar.xz\" > \"$temp/$pkg_part.tar\"");
+      my $sysret = system("$decompressor @decompressorArgs < \"$temp/$pkg_part.tar.xz\" > \"$temp/$pkg_part.tar\"");
       if ($sysret) {
-        tlwarn("$prg: Couldn't unpack $pkg_part.tar.xz\n");
+        tlwarn("$prg: Couldn't unpack $pkg_part.tar.$compressorextension\n");
         return 1; # unpack failed? abort
       }
-      unlink("$temp/$pkg_part.tar.xz"); # we don't need that archive anymore
+      unlink("$temp/$pkg_part.tar.$compressorextension"); # we don't need that archive anymore
     }
   }
   
@@ -2824,7 +2827,7 @@ sub action_update {
       $mediatlp = $remotetlpdb->get_package($pkg);
     }
     if (!defined($mediatlp)) {
-      debug("$pkg cannot be found in $location\n");
+      ddebug("$pkg cannot be found in $location\n");
       next;
     }
     my $rctanvers = $mediatlp->cataloguedata->{'version'};
@@ -3178,8 +3181,8 @@ sub action_update {
       }
 
       if ($opts{"backup"} && !$opts{"dry-run"}) {
-        my ($compressor, $compressorextension) = TeXLive::TLUtils::setup_compressor();
-        $tlp->make_container($compressor, $root,
+        my $compressorextension = $CompressorExtension{$::progs{'compressor'}};
+        $tlp->make_container($::progs{'compressor'}, $root,
                              $opts{"backupdir"}, "${pkg}.r" . $tlp->revision,
                              $tlp->relocated);
         $unwind_package =
@@ -4431,9 +4434,9 @@ sub action_repository {
       return ($F_ERROR);
     }
     # check if it is either url or absolute path
-    if (($p !~ m!^(https?|ftp)://!i) && 
+    if (($p !~ m!^(https?|ftp)://!i) && ($p !~ m!$TeXLive::TLUtils::SshURIRegex!) && 
         !File::Spec->file_name_is_absolute($p)) {
-      tlwarn("$prg: neither https?/ftp URL nor absolute path, no action: $p\n");
+      tlwarn("$prg: neither https?/ftp/ssh/scp/file URI nor absolute path, no action: $p\n");
       return ($F_ERROR);
     }
     my $t = shift @ARGV;
@@ -6547,7 +6550,8 @@ sub init_local_db {
   # we normalize the path only if it is
   # - a url starting with neither http or ftp
   # - if we are on Windows, it does not start with Drive:[\/]
-  if (! ( $location =~ m!^(https?|ftp)://!i  ||
+  if (! ( $location =~ m!^(https?|ftp)://!i  || 
+          $location =~ m!$TeXLive::TLUtils::SshURIRegex!i ||
           (win32() && (!(-e $location) || ($location =~ m!^.:[\\/]!) ) ) ) ) {
     # seems to be a local path, try to normalize it
     my $testloc = abs_path($location);
@@ -8313,7 +8317,7 @@ platform instead of auto detection.
 
 C<platform set auto> switches TeX Live to auto detection mode for platform.
 
-Platform detection is needed to select the proper C<xz>, C<xzdec> and 
+Platform detection is needed to select the proper C<xz> and 
 C<wget> binaries that are shipped with TeX Live.
 
 C<arch> is a synonym for C<platform>.
@@ -9533,7 +9537,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47763 2018-05-18 23:47:18Z preining $
+$Id: tlmgr.pl 47823 2018-05-24 03:08:27Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
