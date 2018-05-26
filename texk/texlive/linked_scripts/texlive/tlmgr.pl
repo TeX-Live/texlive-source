@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47823 2018-05-24 03:08:27Z preining $
+# $Id: tlmgr.pl 47833 2018-05-25 02:27:29Z preining $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47823 $';
-my $datrev = '$Date: 2018-05-24 05:08:27 +0200 (Thu, 24 May 2018) $';
+my $svnrev = '$Revision: 47833 $';
+my $datrev = '$Date: 2018-05-25 04:27:29 +0200 (Fri, 25 May 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -6527,7 +6527,7 @@ sub init_local_db {
   if (!setup_programs("$Master/tlpkg/installer", $localtlpdb->platform)) {
     tlwarn("$prg: Couldn't set up the necessary programs.\nInstallation of packages is not supported.\nPlease report to texlive\@tug.org.\n");
     if (defined($should_i_die) && $should_i_die) {
-      return ($F_ERROR);
+      die("$prg: no way to continue!\n");
     } else {
       tlwarn("$prg: Continuing anyway ...\n");
       return ($F_WARNING);
@@ -9537,7 +9537,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47823 2018-05-24 03:08:27Z preining $
+$Id: tlmgr.pl 47833 2018-05-25 02:27:29Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

@@ -1,4 +1,4 @@
-# $Id: TLConfig.pm 46841 2018-03-05 16:31:19Z karl $
+# $Id: TLConfig.pm 47834 2018-05-25 03:40:14Z preining $
 # TeXLive::TLConfig.pm - module exporting configuration values
 # Copyright 2007-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 46841 $';
+my $svnrev = '$Revision: 47834 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -22,8 +22,19 @@ BEGIN {
     $MetaCategoriesRegexp
     $CategoriesRegexp
     $DefaultCategory
-    $DefaultContainerFormat
+    $DefaultFallbackDownloader
+    @AcceptedFallbackDownloaders
+    %FallbackDownloaderProgram
+    %FallbackDownloaderArgs
+    $DefaultCompressorFormat
     $DefaultContainerExtension
+    @AcceptedCompressors
+    $AcceptedCompressorsRegexp
+    %CompressorProgram
+    %DecompressorProgram
+    %CompressorArgs
+    %DecompressorArgs
+    %CompressorExtension
     $InfraLocation
     $DatabaseName
     $PackageBackupDir 
@@ -84,6 +95,9 @@ our $PackageBackupDir = "$InfraLocation/backups";
 
 our $BlockSize = 4096;
 
+# timeout for network connections (wget, LWP) in seconds
+our $NetworkTimeout = 30;
+
 our $Archive = "archive";
 our $TeXLiveServerURL = "http://mirror.ctan.org";
 # from 2009 on we try to put them all into tlnet directly without any
@@ -103,9 +117,25 @@ if ($^O =~ /^MSWin/i) {
   $CriticalPackagesRegexp = '^(texlive\.infra|tlperl\.win32$)';
 }
 
+#
+our $DefaultFallbackDownloader = "wget";
+our @AcceptedFallbackDownloaders = qw/wget curl/;
+our %FallbackDownloaderProgram = ( 'wget' => 'wget', 'curl' => 'curl');
+our %FallbackDownloaderArgs = (
+  'wget' => ['--user-agent=texlive/wget', '--tries=10', "--timeout=$NetworkTimeout", '-q', '-O'],
+  'curl' => ['--user-agent', 'texlive/curl', '--retry', '10', '--connect-timeout', "$NetworkTimeout", '--silent', '--output']
+);
 # the way we package things on the web
-our $DefaultContainerFormat = "xz";
-our $DefaultContainerExtension = "tar.$DefaultContainerFormat";
+our $DefaultCompressorFormat = "xz";
+our $DefaultContainerExtension = "tar.$DefaultCompressorFormat";
+# mind that the order here is important as gives also the preference!
+our @AcceptedCompressors = qw/lz4 gzip xz/;
+our $AcceptedCompressorsRegexp = "(xz|lz4|gzip)";
+our %CompressorProgram   = ( 'xz' => 'xz',     'gzip' => 'gzip',   'lz4' => 'lz4');
+our %CompressorExtension = ( 'xz' => 'xz',     'gzip' => 'gz',     'lz4' => 'lz4');
+our %CompressorArgs      = ( 'xz' => ['-zf'],  'gzip' => [ '-f' ], 'lz4' => ['-zf', '--rm', '-q']);
+our %DecompressorProgram = ( 'xz' => 'xz',     'gzip' => 'gzip',   'lz4' => 'lz4');
+our %DecompressorArgs    = ( 'xz' => ['-dcf'], 'gzip' => ['-dcf'], 'lz4' => ['-dcf']);
 
 # archive (not user) settings.
 # these can be overridden by putting them into 00texlive.config.tlpsrc
@@ -114,7 +144,7 @@ our $DefaultContainerExtension = "tar.$DefaultContainerFormat";
 our %TLPDBConfigs = (
   "container_split_src_files" => 1,
   "container_split_doc_files" => 1,
-  "container_format" => $DefaultContainerFormat,
+  "container_format" => $DefaultCompressorFormat,
   "minrelease" => $MinRelease,
   "release" => $ReleaseYear,
   "frozen" => 0,
@@ -193,9 +223,6 @@ our $WindowsMainMenuName = "TeX Live $ReleaseYear";
 
 # Comma-separated list of engines which do not exist on all platforms.
 our $PartialEngineSupport = "luajittex,mfluajit";
-
-# timeout for network connections (wget, LWP) in seconds
-our $NetworkTimeout = 30;
 
 # Flags for error handling across the scripts and modules
 # all fine
