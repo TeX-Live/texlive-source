@@ -1,4 +1,4 @@
-.TH ETEX 1 "16 June 2015" "Web2C @VERSION@"
+.TH ETEX 1 "27 May 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -53,7 +53,7 @@ respecting Knuth's wish that \*(TX should remain frozen.
 .PP
 e-\*(TX can be used in two different modes: in
 .I compatibility mode
-it is supposed to be completely interchangable with standard \*(TX.
+it is supposed to be completely interchangeable with standard \*(TX.
 In
 .I extended mode
 several new primitives are added that facilitate (among other things)
@@ -300,7 +300,7 @@ that user files are found before system files.  An empty path
 component will be replaced with the paths defined in the
 .I texmf.cnf
 file.  For example, set TEXINPUTS to ".:/home/user/tex:" to prepend the
-current direcory and ``/home/user/tex'' to the standard search path.
+current directory and ``/home/user/tex'' to the standard search path.
 .TP
 .B TEXFORMATS
 Search path for format files.

@@ -1,4 +1,4 @@
-.TH PTEX 1 "26 May 2018" "Web2C @VERSION@"
+.TH PTEX 1 "27 May 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -45,7 +45,7 @@ that of the other \*(TX programs in the
 implementation.
 .\"=====================================================================
 .SH OPTIONS
-Here we list only additions/deletions of command lind options which are
+Here we list only additions/deletions of command line options which are
 specific to (e-)(u)p\*(TX. For (u)p\*(TX, other options are similar to
 \*(TX. For e-(u)p\*(TX, other options are similar to e-\*(TX.
 .TP

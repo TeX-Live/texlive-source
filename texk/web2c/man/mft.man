@@ -1,4 +1,4 @@
-.TH MFT 1 "16 June 2015" "Web2C @VERSION@"
+.TH MFT 1 "27 May 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -91,7 +91,7 @@ has the extension
 .BI \-style= style_file_name \fR[\fP.mft\fR]\fP
 Use the style file
 .I style_file_name
-insted of
+instead of
 .B plain.mft
 (or
 .BR mplain.mft );

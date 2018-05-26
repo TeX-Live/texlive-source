@@ -1,4 +1,4 @@
-.TH ALEPH 1 "16 June 2015" "Web2C @VERSION@"
+.TH ALEPH 1 "27 May 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -201,7 +201,7 @@ that user files are found before system files.  An empty path
 component will be replaced with the paths defined in the
 .I texmf.cnf
 file.  For example, set TEXINPUTS to ".:/home/user/tex:" to prepend the
-current direcory and ``/home/user/tex'' to the standard search path.
+current directory and ``/home/user/tex'' to the standard search path.
 .TP
 .B TEXEDIT
 Command template for switching to editor.  The default, usually

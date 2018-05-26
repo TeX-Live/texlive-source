@@ -1,4 +1,4 @@
-.TH LUATEX 1 "16 June 2015" "Web2C @VERSION@"
+.TH LUATEX 1 "27 May 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -54,7 +54,7 @@ If called as \fBtexlua\fR it acts as lua interpreter.
 If called as \fBtexluac\fR it acts as lua bytecode compiler.
 
 Lua\*(TX is an extended version of pdf\*(TX with Unicode and OpenType
-font support, embeded \fBLua\fR scripting language, the \fBe-\*(TX\fR
+font support, embedded \fBLua\fR scripting language, the \fBe-\*(TX\fR
 and \fBOmega\fR extensions, as well as integrated MetaPost engine, that
 can create \fIPDF\fR files as well as \fIDVI\fR files.
 For more information about luatex, see http://www.luatex.org, you can
@@ -73,10 +73,10 @@ them to PDF using \fBepstopdf\fR (1).
 .\"=====================================================================
 .SH "OPTIONS"
 When the Lua\*(TX executable starts, it looks for the \fB\-\-lua\fR
-commandline option.
-If there is no \fB\-\-lua\fR option, the commandline is interpreted in a
+command-line option.
+If there is no \fB\-\-lua\fR option, the command line is interpreted in a
 similar fashion as in traditional pdf\*(TX and Aleph. But if the option
-is present, Lua\*(TX will enter an alternative mode of commandline parsing
+is present, Lua\*(TX will enter an alternative mode of command-line parsing
 in comparison to the standard web2c programs. The presence of \fB--lua\fR
 makes most of other options unreliable, because the lua initialization
 file can disable kpathsea and/or hook functions into various callbacks.
@@ -92,7 +92,7 @@ The following two options alter the executable behaviour:
 .B \-\-luaonly
 Start Lua\*(TX as a Lua interpreter. In this mode, it will set Lua's
 \fIarg[0]\fR to the found script name, pushing preceding options in
-negative values and the rest of the commandline in the positive values,
+negative values and the rest of the command line in the positive values,
 just like the Lua interpreter. Lua\*(TX will exit immediately after
 executing the specified Lua script.
 .TP
