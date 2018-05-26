@@ -68,6 +68,7 @@ should not be used for new texts.
 .BR amstex (1),
 .BR luatex (1),
 .BR pdftex (1),
+.BR ptex (1),
 .BR tex (1),
 .BR xetex (1).
 .PP

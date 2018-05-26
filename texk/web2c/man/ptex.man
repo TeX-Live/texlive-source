@@ -1,0 +1,93 @@
+.TH PTEX 1 "26 May 2018" "Web2C @VERSION@"
+.\"=====================================================================
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP\"
+.el .ds OX TeX\"
+.\" BX definition must follow TX so BX can use TX
+.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if n .ds BX BibTeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+.\"=====================================================================
+.SH NAME
+ptex, uptex, eptex, euptex \- Japanese "Publishing TeX"
+.SH SYNOPSIS
+.B ptex
+.RI [ options ]
+.RI [ \fB&\fPformat ]
+.RI [ file | \fB\e\fPcommands ]
+.\"=====================================================================
+.SH DESCRIPTION
+p\*(TX (\fBptex\fR)
+is a \*(TX engine with extensions for Japanese typesetting, including
+features related to line breaking rules, inter-character spacing and
+vertical writing. It was first developed by ASCII Corporation, in the
+aim of providing a Japanese \*(TX which can be used for commercial
+publishing. For p\*(TX, the character set available is limited to
+JIS X 0208, namely JIS level-1 and level-2.
+.PP
+up\*(TX (\fBuptex\fR)
+is a Unicode-enabled p\*(TX with extensions for better handling of
+CJK (Chinese, Japanese and Korean) multilingual documents.
+It has been developed by Takuji Tanaka since 2007.
+.PP
+e-p\*(TX (\fBeptex\fR) is a merge of e-\*(TX and p\*(TX.
+.PP
+e-up\*(TX (\fBeuptex\fR) is a merge of e-\*(TX and up\*(TX.
+.PP
+In the following sections, we refer to these engines as (e-)(u)p\*(TX.
+.PP
+(e-)(u)p\*(TX's handling of its command-line arguments is similar to
+that of the other \*(TX programs in the
+.I web2c
+implementation.
+.\"=====================================================================
+.SH OPTIONS
+Here we list only additions/deletions of command lind options which are
+specific to (e-)(u)p\*(TX. For (u)p\*(TX, other options are similar to
+\*(TX. For e-(u)p\*(TX, other options are similar to e-\*(TX.
+.TP
+Additions (supported by ptexenc library):
+.TP
+.BI -kanji \ string
+Sets the input Japanese \fIKanji\fR code.  The
+.I string
+can be either
+.IR euc \ (EUC-JP),
+.IR jis \ (ISO-2022-JP),
+.IR sjis \ (Shift_JIS),
+and
+.IR utf8 \ (UTF-8).
+For (e-)up\*(TX,
+.I uptex
+is also allowed.
+.TP
+.BI -kanji-internal \ string
+Sets the internal \fIKanji\fR code.  The string can be either
+.IR euc ,
+and
+.IR sjis .
+For (e-)up\*(TX,
+.I uptex
+is also allowed.
+.TP
+Deletions:
+.TP
+.B -enc
+In this version of (e-)(u)p\*(TX, enc\*(TX extensions are
+\fInot\fR available.
+.\"=====================================================================
+.SH "SEE ALSO"
+.BR tex (1),
+.BR etex (1).
+.\"=====================================================================
+.SH AUTHORS
+This version of (e-)(u)p\*(TX is maintained by
+Japanese \*(TX Development Community <https://texjp.org>.
+For bug reports, open an issue at
+GitHub repository <https://github.com/texjporg/tex-jp-build>,
+or send an e-mail to <issue@texjp.org>.
+.PP
+This manual page was written by Hironobu Yamashita.
