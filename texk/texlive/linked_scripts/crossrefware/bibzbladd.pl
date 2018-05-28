@@ -189,7 +189,7 @@ sub GetZbl {
 	$response->decoded_content, "\n";
     }
     
-    if ($response->decoded_content =~ /^\s*"zbl_id":\s*"(.*)",\s*$/m) {
+    if ($response->decoded_content =~ /^\s*"zbl_id":\s*"(.*)",?\s*$/m) {
 	if ($debug) {
 	    print STDERR "DEBUG:  got zbl: $1\n",
 	}

@@ -172,7 +172,7 @@ while (<$input>) {
 	/\\begin\{thebibliography\}/ || /\\end\{thebibliography\}/) {
 	next;
     }
-    if (/\\bibitem(\[[^\]]*\])?\{([^\}]*)\}/) {
+    if (/\\bibitem\s*(\[[^\]]*\])?\{([^\}]*)\}/) {
 	ProcessBibitem($bibitem);
 	$bibitem = undef;
 	$bibitem->{key}=$2;
@@ -266,6 +266,13 @@ sub SearchMref {
     }
     if ($response =~ /<pre>(.*)<\/pre>/s) {
 	my $bib= $1;
+	# Looks like Mathscinet sometimes fails to unaccent text.  
+	# For the time being we just delete the offending characters.
+	# Should probably write LaTeX::FromUnicode instead
+	$bib =~ s/[^\x00-\x7f]//g;
+	if ($debug) {
+	    print STDOUT "DEBUG: got $bib\n";
+	}
 	my $fh = new FileHandle;
 	open $fh, "<", \$bib;
 	my $parser = new BibTeX::Parser($fh);
@@ -273,6 +280,18 @@ sub SearchMref {
 	if (ref($entry) && $entry->parse_ok()) {
 	    $entry->key($bibitem->{key});
 	    return ($entry);
+	} else {
+	    if ($debug) {
+		if (!ref($entry)) {
+		    print STDERR "DEBUG: not a reference\n";
+		} else{
+		    print STDERR "DEBUG: parsing $entry->parse_ok\n";
+		}
+	    }
+	}
+    } else {
+	if ($debug) {
+	    print STDOUT "DEBUG: did not get an entry\n";
 	}
     }
 }
