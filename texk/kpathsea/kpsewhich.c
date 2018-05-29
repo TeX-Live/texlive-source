@@ -773,7 +773,6 @@ main (int argc,  string *argv)
 #ifdef WIN32
   if(strstr(kpse->program_name,"xetex") || strstr(kpse->program_name,"xelatex")
      || strstr(kpse->program_name,"uptex") || strstr(kpse->program_name,"uplatex")
-     || strstr(kpse->program_name,"pdftex")
      || strstr(kpse->program_name,"dvipdfm") || strstr(kpse->program_name,"extractbb")
      || strstr(kpse->program_name,"xbb") || strstr(kpse->program_name,"ebb")
      || strstr(kpse->program_name,"dvips") || strstr(kpse->program_name,"upmendex"))

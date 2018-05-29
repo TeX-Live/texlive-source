@@ -1,3 +1,8 @@
+2018-05-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* kpsewhich.c: Revert. Since "command_line_encoding=utf8" is
+	not so natural for pdfTeX.
+
 2018-05-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* kpsewhich.c: Allow Unicode file name for pdftex in kpsewhich.
