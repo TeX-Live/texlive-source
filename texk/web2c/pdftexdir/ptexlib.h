@@ -20,13 +20,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PDFTEXLIB
 #  define PDFTEXLIB
 
-#ifdef _WIN32
-#undef fopen
-#undef xfopen
-#define fopen fsyscp_fopen
-#define xfopen fsyscp_xfopen
-#endif
-
 /* WEB2C macros and prototypes */
 #  if !defined(PDFTEXCOERCE) && !defined(PDFETEXCOERCE)
 #    ifdef pdfTeX

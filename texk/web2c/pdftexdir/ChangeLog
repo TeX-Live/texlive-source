@@ -1,3 +1,9 @@
+2018-05-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptexlib.h: Discard the changes on 2018-05-11, since
+	'command_line_encoding=utf-8' is not so natural for
+	pdfTeX (w32 only).
+
 2018-05-13  Joseph Wright  <joseph.wright@morningstar2.co.uk>
 
 	* pdftex.web: New primitive \expanded based on original
