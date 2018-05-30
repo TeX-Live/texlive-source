@@ -1386,7 +1386,7 @@ int fsyscp_stat(const char *path, struct stat *buffer)
 {
   wchar_t *wpath;
   int     ret;
-  wpath = get_wstring_from_mbstring(kpse_def->File_system_codepage,
+  wpath = get_wstring_from_mbstring(file_system_codepage,
           path, wpath = NULL);
   ret = _wstat(wpath, buffer);
   free(wpath);
