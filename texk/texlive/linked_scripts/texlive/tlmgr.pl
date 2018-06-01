@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47833 2018-05-25 02:27:29Z preining $
+# $Id: tlmgr.pl 47874 2018-05-30 01:33:07Z preining $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47833 $';
-my $datrev = '$Date: 2018-05-25 04:27:29 +0200 (Fri, 25 May 2018) $';
+my $svnrev = '$Revision: 47874 $';
+my $datrev = '$Date: 2018-05-30 03:33:07 +0200 (Wed, 30 May 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7471,6 +7471,8 @@ L</option> action).
 For backward compatibility and convenience, C<--location> and C<--repo>
 are accepted as aliases for this option.
 
+See L</SUPPORTED URL SCHEMATA> for details on the supported schemata.
+
 =item B<--gui> [I<action>]
 
 C<tlmgr> has a graphical interface as well as the command line
@@ -8957,8 +8959,9 @@ above) to succeed, and a working GnuPG (C<gpg>) program (see below for
 search method).  Then, unless cryptographic verification has been
 disabled, a signature file (C<texlive.tlpdb.*.asc>) of the checksum file
 is downloaded and the signature verified. The signature is created by
-the TeX Live Distribution GPG key 0x06BAB6BC, which in turn is signed by
-Karl Berry's key 0x30D155AD and Norbert Preining's key 0x6CACA448.  All
+the TeX Live Distribution GPG key 0x0D5E5D9106BAB6BC, which in turn is
+signed by Karl Berry's key 0x0716748A30D155AD and
+Norbert Preining's key 0x6CACA448860CDC13.  All
 of these keys are obtainable from the standard key servers.
 
 Additional trusted keys can be added using the C<key> action.
@@ -9531,13 +9534,131 @@ If a value is not saved in the database the string C<(not set)> is shown.
 If you are developing a program that uses this output, and find that
 changes would be helpful, do not hesitate to write the mailing list.
 
+=head1 SUPPORTED URL SCHEMATA
+
+The following URL schemata are supported
+
+=over 4
+
+=item C<http://server/path/to/tlnet>
+
+Standard schema, is supported without any restrictions. If the (default)
+LWP method is used, this schema supports persistent connections.
+
+=item C<ftp://server/path/to/tlnet>
+
+If the (default) LWP method is used, this schema supports persistent connections.
+
+=item C<https://server/path/to/tlnet>
+
+If the (default) LWP method is used, this schema supports persistent connections.
+Some versions of C<wget> do not support this schema. Furthermore, even if
+C<wget> supports https, it might check the certificate. C<curl> generally
+supports https.
+
+=item C<user@machine:/path/to/tlnet>
+
+=item C<scp://user@machine/path/to/tlnet>
+
+=item C<ssh://user@machine/path/to/tlnet>
+
+These schemata use C<scp> to transfer files. The use of an C<ssh-agent>
+is highly recommended.
+
+=back
+
+
+=head1 ENVIRONMENT VARIABLES
+
+For ease in scripting and debugging, C<install-tl> will look for the
+following environment variables.  They are not of interest for normal
+user installations.
+
+=over 4
+
+=item C<TEXLIVE_COMPRESSOR>
+
+This option allows selecting a different compressor program for
+backups and intermediate rollback containers. The order of selection is:
+
+=over 8
+
+=item 1.
+
+If the environment variable C<TEXLIVE_COMPRESSOR> is
+defined, use it; abort if it doesn't work. Possible values:
+C<lz4>, C<gzip>, C<xz>.
+  
+
+=item 2.
+
+If lz4 is available (either from the system or TL) and working, use that.
+
+=item 3.
+
+If gzip is available (from the system) and working, use that.
+
+=item 4.
+
+If xz is available (either from the system or TL) and working, use that.
+  
+=back
+
+lz4 and gzip are much faster in creating tlmgr's local backups.
+The unconditional use of xz for the tlnet containers is unaffected,
+to minimize download sizes.
+
+=item C<TEXLIVE_DOWNLOADER>
+
+=item C<TL_DOWNLOAD_PROGRAM>
+
+=item C<TL_DOWNLOAD_ARGS>
+
+These options allow selecting different download programs then the ones
+automatically selected by the installer. The order of selection is:
+
+=over 8
+
+=item 1.
+
+If the environment variable C<TEXLIVE_DOWNLOADER> is
+defined, use it; abort if the specified program doesn't work.
+Possible values: C<curl>, C<wget>.
+
+=item 2.
+
+If the environment variable C<TL_DOWNLOAD_PROGRAM> is
+defined (can be any value), use it together with
+C<TL_DOWNLOAD_ARGS>; abort if it doesn't work.
+
+=item 3.
+
+If LWP is available and working, use that (by far the most
+efficient method, as it supports persistent downloads).
+
+=item 4.
+
+If curl is available (from the system) and working, use that.
+
+=item 5.
+
+If wget is available (either from the system or TL) and working, use that.
+
+=back
+
+TL still provides C<wget> binaries for some platforms, so
+some download method should always be available.
+
+=back
+
+
 =head1 AUTHORS AND COPYRIGHT
 
 This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47833 2018-05-25 02:27:29Z preining $
+$Id: tlmgr.pl 47874 2018-05-30 01:33:07Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
