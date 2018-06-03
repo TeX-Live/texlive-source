@@ -1,3 +1,7 @@
+2018-06-04  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (man_sources, man1_links) [PTEX]: add ptex.man.
+
 2018-05-27  Karl Berry  <karl@tug.org>
 
 	* aleph.man,
@@ -5,6 +9,10 @@
 	* luatex.man,
 	* mft.man,
 	* ptex.man: typos.
+
+2018-05-26  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex.man: new.
 
 2018-04-30  Karl Berry  <karl@tug.org>
 
@@ -879,3 +887,5 @@ Sat Jan 11 08:47:26 1992  Karl Berry  (karl at hayley)
 Tue Jan  7 16:04:29 1992  Karl Berry  (karl at hayley)
 
 	* Use `1 Jan 1992' date format.
+
+(This ChangeLog file public domain.)
