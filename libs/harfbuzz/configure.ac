@@ -38,7 +38,13 @@ KPSE_ICU_FLAGS
 
 # Functions and headers
 AC_CHECK_FUNCS(atexit mprotect sysconf getpagesize mmap isatty newlocale strtod_l)
-AC_CHECK_HEADERS(unistd.h sys/mman.h xlocale.h)
+
+save_libs="$LIBS"
+LIBS="$LIBS -lm"
+AC_CHECK_FUNCS([round], ,[AC_CHECK_DECLS([round], , ,[#include <math.h>])])
+LIBS="$save_libs"
+
+AC_CHECK_HEADERS(unistd.h sys/mman.h xlocale.h stdbool.h)
 
 # Compiler flags
 AC_CANONICAL_HOST
