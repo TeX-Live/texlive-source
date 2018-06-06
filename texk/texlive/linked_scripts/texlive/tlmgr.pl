@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47874 2018-05-30 01:33:07Z preining $
+# $Id: tlmgr.pl 47935 2018-06-05 22:36:22Z karl $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47874 $';
-my $datrev = '$Date: 2018-05-30 03:33:07 +0200 (Wed, 30 May 2018) $';
+my $svnrev = '$Revision: 47935 $';
+my $datrev = '$Date: 2018-06-06 00:36:22 +0200 (Wed, 06 Jun 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7457,21 +7457,88 @@ between an option name and its value.
 
 =item B<--repository> I<url|path>
 
-Specifies the package repository from which packages should be installed
-or updated, overriding the default package repository found in the
-installation's TeX Live Package Database (a.k.a. the TLPDB, defined
-entirely in the file C<tlpkg/texlive.tlpdb>).  The documentation for
-C<install-tl> has more details about this
-(L<http://tug.org/texlive/doc/install-tl.html>).
+Specify the package repository from which packages should be installed
+or updated, either a local directory or network location, as below. This
+overridesthe default package repository found in the installation's TeX
+Live Package Database (a.k.a. the TLPDB, which is given entirely in the
+file C<tlpkg/texlive.tlpdb>).
 
-C<--repository> changes the repository location only for the current
+This C<--repository> option changes the location only for the current
 run; to make a permanent change, use C<option repository> (see the
 L</option> action).
+
+As an example, you can choose a particular CTAN mirror with something
+like this:
+
+  -repository http://ctan.example.org/its/ctan/dir/systems/texlive/tlnet
+
+Of course a real hostname and its particular top-level CTAN directory
+have to be specified.  The list of CTAN mirrors is available at
+L<http://ctan.org/mirrors>.
+
+Here's an example of using a local directory:
+
+  -repository /local/TL/repository
 
 For backward compatibility and convenience, C<--location> and C<--repo>
 are accepted as aliases for this option.
 
-See L</SUPPORTED URL SCHEMATA> for details on the supported schemata.
+Locations can be specified as any of the following:
+
+=over 4
+
+=item C</some/local/dir>
+
+=item C<file:/some/local/dir>
+
+Equivalent ways of specifying a local directory.
+
+=item C<ctan>
+
+=item C<http://mirror.ctan.org/systems/texlive/tlnet>
+
+Pick a CTAN mirror automatically, trying for one that is both nearby and
+up-to-date. The chosen mirror is used for the entire download. The bare
+C<ctan> is merely an alias for the full url. (See L<http://ctan.org> for
+more about CTAN and its mirrors.)
+
+=item C<http://server/path/to/tlnet>
+
+Standard HTTP. If the (default) LWP method is used, persistent
+connections are supported. TL can also use C<curl> or C<wget> to do the
+downloads, or an arbitrary user-specified program, as described in the
+C<tlmgr> documentation
+(L<http://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES>).
+
+=item C<https://server/path/to/tlnet>
+
+Again, if the (default) LWP method is used, this supports persistent
+connections. Unfortunately, some versions of C<wget> and C<curl> do not
+support https, and even when C<wget> supports https, certificates may be
+rejected even when the certificate is fine, due to a lack of local
+certificate roots. The simplest workaround for this problem is to use
+http or ftp.
+
+=item C<ftp://server/path/to/tlnet>
+
+If the (default) LWP method is used, persistent connections are
+supported.
+
+=item C<user@machine:/path/to/tlnet>
+
+=item C<scp://user@machine/path/to/tlnet>
+
+=item C<ssh://user@machine/path/to/tlnet>
+
+These forms are equivalent; they all use C<scp> to transfer files. Using
+C<ssh-agent> is recommended. (Info:
+L<https://en.wikipedia.org/wiki/OpenSSH>,
+L<https://en.wikipedia.org/wiki/Ssh-agent>.)
+
+=back
+
+If the repository is on the network, trailing C</> characters and/or
+trailing C</tlpkg> and/or C</archive> components are ignored.  
 
 =item B<--gui> [I<action>]
 
@@ -9534,44 +9601,13 @@ If a value is not saved in the database the string C<(not set)> is shown.
 If you are developing a program that uses this output, and find that
 changes would be helpful, do not hesitate to write the mailing list.
 
-=head1 SUPPORTED URL SCHEMATA
-
-The following URL schemata are supported
-
-=over 4
-
-=item C<http://server/path/to/tlnet>
-
-Standard schema, is supported without any restrictions. If the (default)
-LWP method is used, this schema supports persistent connections.
-
-=item C<ftp://server/path/to/tlnet>
-
-If the (default) LWP method is used, this schema supports persistent connections.
-
-=item C<https://server/path/to/tlnet>
-
-If the (default) LWP method is used, this schema supports persistent connections.
-Some versions of C<wget> do not support this schema. Furthermore, even if
-C<wget> supports https, it might check the certificate. C<curl> generally
-supports https.
-
-=item C<user@machine:/path/to/tlnet>
-
-=item C<scp://user@machine/path/to/tlnet>
-
-=item C<ssh://user@machine/path/to/tlnet>
-
-These schemata use C<scp> to transfer files. The use of an C<ssh-agent>
-is highly recommended.
-
-=back
-
-
 =head1 ENVIRONMENT VARIABLES
 
-For ease in scripting and debugging, C<install-tl> will look for the
-following environment variables.  They are not of interest for normal
+C<tlmgr> uses many of the standard TeX environment variables, as
+reported by, e.g., C<tlmgr conf> (L</conf>).
+
+In addition, for ease in scripting and debugging, C<tlmgr> looks for the
+following environment variables. These are not of interest for normal
 user installations.
 
 =over 4
@@ -9587,8 +9623,7 @@ backups and intermediate rollback containers. The order of selection is:
 
 If the environment variable C<TEXLIVE_COMPRESSOR> is
 defined, use it; abort if it doesn't work. Possible values:
-C<lz4>, C<gzip>, C<xz>.
-  
+C<lz4>, C<gzip>, C<xz>. The necessary options are added internally.
 
 =item 2.
 
@@ -9623,7 +9658,8 @@ automatically selected by the installer. The order of selection is:
 
 If the environment variable C<TEXLIVE_DOWNLOADER> is
 defined, use it; abort if the specified program doesn't work.
-Possible values: C<curl>, C<wget>.
+Possible values: C<curl>, C<wget>. The necessary options are added
+internally.
 
 =item 2.
 
@@ -9658,10 +9694,10 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47874 2018-05-30 01:33:07Z preining $
+$Id: tlmgr.pl 47935 2018-06-05 22:36:22Z karl $
 =cut
 
-# to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
+# test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
 
 ### Local Variables:
 ### perl-indent-level: 2

@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 45872 2017-11-21 07:07:45Z preining $
+# $Id: fmtutil.pl 47929 2018-06-05 02:23:02Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2014-2017 Norbert Preining
+# Copyright 2014-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 45872 2017-11-21 07:07:45Z preining $';
-my $lastchdate = '$Date: 2017-11-21 08:07:45 +0100 (Tue, 21 Nov 2017) $';
+my $svnid = '$Id: fmtutil.pl 47929 2018-06-05 02:23:02Z preining $';
+my $lastchdate = '$Date: 2018-06-05 04:23:02 +0200 (Tue, 05 Jun 2018) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 45872 $';
+my $svnrev = '$Revision: 47929 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -628,7 +628,7 @@ sub rebuild_one_format {
     if ($poolfile && -f $poolfile) {
       print_verbose("attempting to create localized format "
                     . "using pool=$pool and tcx=$tcx.\n");
-      File::Copy($poolfile, "$eng.pool");
+      File::Copy::copy($poolfile, "$eng.pool");
       $tcxflag = "-translate-file=$tcx" if ($tcx);
       $localpool = 1;
     }
@@ -719,21 +719,25 @@ sub rebuild_one_format {
 
   TeXLive::TLUtils::mkdirhier($destdir);
   
-  if (!File::Copy::move( $logfile, "$destdir/$logfile")) {
-    print_deferred_error("Cannot move $logfile to $destdir.\n");
+  # here and in the following we use copy instead of move
+  # to make sure that in SElinux enabled cases the rules of
+  # the destination directory are applied.]
+  # See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=900580
+  if (!File::Copy::copy( $logfile, "$destdir/$logfile")) {
+    print_deferred_error("Cannot copy $logfile to $destdir.\n");
   }
   if ($opts{'recorder'}) {
     # the recorder output is used by check-fmttriggers to determine
     # package dependencies for each format.  Unfortunately omega-based
     # engines gratuitiously changed the extension from .fls to .ofl.
     my $recfile = $fmt . ($fmt =~ m/^(aleph|lamed)$/ ? ".ofl" : ".fls");
-    if (!File::Copy::move( $recfile, "$destdir/$recfile")) {
-      print_deferred_error("Cannot move $recfile to $destdir.\n");
+    if (!File::Copy::copy( $recfile, "$destdir/$recfile")) {
+      print_deferred_error("Cannot copy $recfile to $destdir.\n");
     }
   }
 
   my $destfile = "$destdir/$fmtfile";
-  if (File::Copy::move( $fmtfile, $destfile )) {
+  if (File::Copy::copy( $fmtfile, $destfile )) {
     print_info("$destfile installed.\n");
     #
     # original fmtutil.sh did some magic trick for mplib-luatex.mem
@@ -780,10 +784,10 @@ sub rebuild_one_format {
     return $FMT_SUCCESS;
 
   } else {
-    print_deferred_error("Cannot move $fmtfile to $destfile.\n");
+    print_deferred_error("Cannot copy $fmtfile to $destfile.\n");
     if (-f $destfile) {
       # remove the empty file possibly left over if near-full file system.
-      print_verbose("Removing partial file after move failure: $destfile\n");
+      print_verbose("Removing partial file after copy failure: $destfile\n");
       unlink($destfile)
         || print_deferred_error("unlink($destfile) failed: $!\n");
     }
