@@ -2,6 +2,10 @@
 
 -- texdoc.tlu: small wrapper around main.tlu
 -- (makes it easier to install a new version of texdoc in TEXMFHOME)
+--
+-- The TeX Live team, GPLv3, see texdoclib.tlu for details
 
 kpse.set_program_name(arg[-1], 'texdoc')
 require('texdoc.main')
+
+-- vim: ft=lua:
