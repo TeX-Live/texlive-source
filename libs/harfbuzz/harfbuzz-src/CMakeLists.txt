@@ -90,6 +90,8 @@ include_directories(AFTER
 add_definitions(-DHAVE_OT)
 add_definitions(-DHAVE_FALLBACK)
 
+# We need PYTHON_EXECUTABLE to be set for running the tests...
+include (FindPythonInterp)
 
 ## Functions and headers
 include (CheckFunctionExists)
@@ -103,7 +105,10 @@ macro (check_funcs) # Similar to AC_CHECK_FUNCS of autotools
     endif ()
   endforeach ()
 endmacro ()
-check_funcs(atexit mprotect sysconf getpagesize mmap isatty newlocale strtod_l)
+if (UNIX)
+  list(APPEND CMAKE_REQUIRED_LIBRARIES m)
+endif ()
+check_funcs(atexit mprotect sysconf getpagesize mmap isatty newlocale strtod_l round)
 check_include_file(unistd.h HAVE_UNISTD_H)
 if (${HAVE_UNISTD_H})
   add_definitions(-DHAVE_UNISTD_H)
@@ -116,18 +121,14 @@ check_include_file(xlocale.h HAVE_XLOCALE_H)
 if (${HAVE_XLOCALE_H})
   add_definitions(-DHAVE_XLOCALE_H)
 endif ()
+check_include_file(stdbool.h HAVE_STDBOOL_H)
+if (${HAVE_STDBOOL_H})
+  add_definitions(-DHAVE_STDBOOL_H)
+endif ()
 
 
 if (MSVC)
   add_definitions(-wd4244 -wd4267 -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
-endif ()
-
-if (BUILD_SHARED_LIBS)
-  if (WIN32 AND NOT MINGW)
-    add_definitions("-DHB_EXTERN=__declspec(dllexport) extern")
-  else ()
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden")
-  endif ()
 endif ()
 
 
@@ -385,7 +386,6 @@ if (WIN32 AND HB_HAVE_DIRECTWRITE)
 endif ()
 
 if (HB_HAVE_GOBJECT)
-  include (FindPythonInterp)
   include (FindPerl)
 
   # Use the hints from glib-2.0.pc to find glib-mkenums
@@ -531,9 +531,17 @@ add_library(harfbuzz-subset ${subset_project_sources} ${subset_project_headers})
 add_dependencies(harfbuzz-subset harfbuzz)
 target_link_libraries(harfbuzz-subset harfbuzz ${THIRD_PARTY_LIBS})
 
+if (BUILD_SHARED_LIBS)
+  set_target_properties(harfbuzz harfbuzz-subset PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
+endif ()
+
 if (UNIX OR MINGW)
   # Make symbols link locally
-  link_libraries(-Bsymbolic-functions)
+  include (CheckCXXCompilerFlag)
+  check_cxx_compiler_flag(-Bsymbolic-functions CXX_SUPPORTS_FLAG_BSYMB_FUNCS)
+  if (CXX_SUPPORTS_FLAG_BSYMB_FUNCS)
+    link_libraries(-Bsymbolic-functions)
+  endif ()
 
   if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Make sure we don't link to libstdc++
@@ -559,6 +567,14 @@ if (HB_HAVE_GOBJECT)
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/src)
   add_dependencies(harfbuzz-gobject harfbuzz)
   target_link_libraries(harfbuzz-gobject harfbuzz ${GOBJECT_LIBRARIES} ${THIRD_PARTY_LIBS})
+
+  if (BUILD_SHARED_LIBS)
+    set_target_properties(harfbuzz-gobject PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
+  endif ()
+endif ()
+
+if (BUILD_SHARED_LIBS AND WIN32 AND NOT MINGW)
+  add_definitions("-DHB_EXTERN=__declspec(dllexport) extern")
 endif ()
 
 # On Windows, g-ir-scanner requires a DLL build in order for it to work
@@ -638,6 +654,11 @@ if (HB_HAVE_INTROSPECTION)
     endif ()
   endforeach ()
 
+  file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/src/hb_gir_list)
+  foreach (s ${introspected_sources})
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/src/hb_gir_list "${s}\n")
+  endforeach ()
+
   # Finally, build the introspection files...
   add_custom_command(
     TARGET harfbuzz-gobject
@@ -667,9 +688,9 @@ if (HB_HAVE_INTROSPECTION)
       --library=harfbuzz
       -L${hb_libpath}
       ${extra_libs}
-      ${introspected_sources}
+      --filelist ${CMAKE_CURRENT_BINARY_DIR}/src/hb_gir_list
       -o ${hb_libpath}/HarfBuzz-0.0.gir
-    DEPENDS harfbuzz-gobject harfbuzz
+    DEPENDS harfbuzz-gobject harfbuzz ${CMAKE_CURRENT_BINARY_DIR}/src/hb_gir_list
   )
 
   add_custom_command(
@@ -749,7 +770,7 @@ if (NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
     install(TARGETS hb-view
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
-    install(TARGETS hb-view
+    install(TARGETS hb-subset
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 

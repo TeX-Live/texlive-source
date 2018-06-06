@@ -1,3 +1,3584 @@
+commit 9d3cd13c30d8df41a2f7ff6c4208a1b2d75ddd64
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 5 17:59:31 2018 -0700
+
+    [ucdn] Update to Unicode 11
+
+    https://github.com/grigorig/ucdn/issues/19
+
+ src/hb-ucdn.cc        |    7 +
+ src/hb-ucdn/ucdn_db.h | 2754
+ ++++++++++++++++++++++++++-----------------------
+ 2 files changed, 1479 insertions(+), 1282 deletions(-)
+
+commit 060e6b4a13a4224de885214d374b079610224123
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 5 17:31:46 2018 -0700
+
+    Update to Unicode 11.0.0
+
+    UCDN is not updated yet.
+
+ src/gen-use-table.py                    | 13 +++--
+ src/hb-common.cc                        |  5 ++
+ src/hb-common.h                         | 11 ++++
+ src/hb-ot-shape-complex-arabic-table.hh | 43 ++++++++++++---
+ src/hb-ot-shape-complex-indic-table.cc  | 77 ++++++++++++++-------------
+ src/hb-ot-shape-complex-private.hh      |  9 ++++
+ src/hb-ot-shape-complex-use-machine.rl  |  2 +-
+ src/hb-ot-shape-complex-use-table.cc    | 94
+ +++++++++++++++++++++------------
+ 8 files changed, 170 insertions(+), 84 deletions(-)
+
+commit 105a3b5e2d2ff228cdc1fbe8618f6c8fdfdabe9e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 5 15:31:04 2018 -0700
+
+    Minor
+
+ src/Makefile.am | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 60c516789bab499c5a423f80071638955b7b13fd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 5 15:20:23 2018 -0700
+
+    [RELEASING] Update
+
+ RELEASING.md | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit df01f3e560d21900e234c4a6616bcf9c98f5f567
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 5 15:17:39 2018 -0700
+
+    1.7.7
+
+ NEWS           | 37 +++++++++++++++++++++++++++++++++++++
+ RELEASING.md   |  5 +++--
+ configure.ac   |  2 +-
+ src/hb-blob.cc |  2 +-
+ src/hb-face.cc |  2 +-
+ src/hb-map.cc  | 28 ++++++++++++++--------------
+ src/hb-map.h   |  2 +-
+ 7 files changed, 58 insertions(+), 20 deletions(-)
+
+commit ba3b6d6c6512b58a3d0e5277fbbe4e69b085467d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 4 16:47:45 2018 -0700
+
+    [khmer] Fix Coeng vs Halant confusion
+
+    Test suite results are unchanged (34).
+
+ src/hb-ot-shape-complex-khmer.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 8220ef8a54bcc94f122d50804c0a5e829de81be1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jun 5 22:50:53 2018 +0430
+
+    Fix hb_face_count build issue
+
+    I should've rebased #1002 before the merge, my bad
+
+ src/hb-face.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 32da0c6bc4770568346f6c05fd6b374be2bbd2b2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jun 5 18:56:26 2018 +0430
+
+    Add hb_face_count, a new API (#1002)
+
+    Simply, it returns the number of faces on a font blob.
+
+    To be used on hb-sanitizer tool but other clients also
+    can benefit from it.
+
+ TODO                       |  2 -
+ docs/harfbuzz-sections.txt |  1 +
+ src/hb-face.cc             | 95
+ ++++++++++++++++++++++++++++------------------
+ src/hb-face.h              |  4 ++
+ 4 files changed, 64 insertions(+), 38 deletions(-)
+
+commit 4a115fe7fe71e381decb7c894208540663419f75
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 4 15:40:43 2018 -0700
+
+    [sinhala] Move reph to after post-consonants
+
+    Apparently this changed between Win 7 and Win 10.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/967
+
+    To be continued in https://github.com/harfbuzz/harfbuzz/issues/1044
+
+ src/hb-ot-shape-complex-indic.cc                         |   2 +-
+ test/shaping/data/in-house/Makefile.sources              |   1 +
+ .../fonts/5af5361ed4d1e8305780b100e1730cb09132f8d1.ttf   | Bin 0 ->
+ 3152 bytes
+ test/shaping/data/in-house/tests/sinhala.tests           |   1 +
+ 4 files changed, 3 insertions(+), 1 deletion(-)
+
+commit 3e494caae3dc096339a46d5a3fdeb5a718de6911
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 4 15:38:05 2018 -0700
+
+    [test] Fix record-test to use gids not glyph-names
+
+    as those might not match what FontTools think of the glyphs if font
+    does NOT have glyph names.
+
+ test/shaping/record-test.sh | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+commit 58400a2ad8b18aeb1da40d6c327135cd62312316
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jun 2 20:30:09 2018 -0700
+
+    Remove DISALLOW_* from vector, set, and map
+
+    Some of the build bots, still fail on this.  I suppose mine pass
+    because
+    I enable C++11...
+
+    Anyway, remove these again.
+
+ src/hb-map-private.hh | 3 ---
+ src/hb-private.hh     | 6 ------
+ src/hb-set-private.hh | 3 ---
+ src/hb-subset-plan.hh | 3 ++-
+ 4 files changed, 2 insertions(+), 13 deletions(-)
+
+commit f9abbf83b6404bc9eb0c0983f562c9dbba1ef57c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jun 2 15:30:59 2018 -0700
+
+    Fix fallout from 975bdd5ef562e37655067b703b2b9ca7481f4985
+
+    Ouch!
+
+ src/hb-ot-map-private.hh   | 40 ++++++++++++++++++++++------------------
+ src/hb-ot-map.cc           | 11 +++++++++++
+ src/hb-ot-post-table.hh    |  3 ++-
+ src/hb-ot-shape-private.hh | 10 ++++++++--
+ src/hb-ot-shape.cc         |  2 ++
+ src/hb-subset.cc           |  2 ++
+ 6 files changed, 47 insertions(+), 21 deletions(-)
+
+commit f7515769fd024faca888a47c58f87fb868b0e760
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 1 17:48:37 2018 -0700
+
+    [vector] Use Crap pool in push() as well
+
+ src/hb-coretext.cc      | 20 +++-----------------
+ src/hb-ot-cmap-table.hh |  3 ++-
+ src/hb-ot-layout.cc     |  3 +--
+ src/hb-ot-map.cc        | 17 ++++-------------
+ src/hb-ot-post-table.hh |  6 +-----
+ src/hb-private.hh       | 11 ++++-------
+ src/hb-subset-plan.cc   |  2 --
+ src/hb-subset.cc        |  2 --
+ src/hb-uniscribe.cc     | 28 ++++++++--------------------
+ 9 files changed, 23 insertions(+), 69 deletions(-)
+
+commit 975bdd5ef562e37655067b703b2b9ca7481f4985
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 1 17:37:13 2018 -0700
+
+    [vector] Keep success status
+
+ src/hb-private.hh | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+commit 1ab3c3ed1bbc404086aefffaef4b8261bb77caa7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 1 17:34:24 2018 -0700
+
+    [vector] Whitespace
+
+ src/hb-private.hh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit fb07d1a3ce896f8ebf8b5d5fef51dee91b6ead11
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 1 17:32:07 2018 -0700
+
+    Another attempt at making every compiler happy...
+
+    Sigh.
+
+ src/hb-private.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 4f76f956bb3a95b307322cdad4f8d3b97851678e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 1 17:28:47 2018 -0700
+
+    [map] Move prime_for to hb-static
+
+ src/hb-map-private.hh | 53
+ +--------------------------------------------------
+ src/hb-private.hh     |  2 ++
+ src/hb-static.cc      | 51
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+), 52 deletions(-)
+
+commit 33d6f46bbbb4fdee110f1cb024a37ed2e46e5e22
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 1 17:25:35 2018 -0700
+
+    [set] Shrink page-map size again
+
+ src/hb-set-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 4ca211bce192b01644c82f721251604df935b603
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 1 17:18:57 2018 -0700
+
+    Fix hb_vector_size_t
+
+ src/hb-private.hh     | 4 ++--
+ src/hb-set-private.hh | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+commit a070dfd333f411bf720120eb332f7da93077054f
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu May 31 16:47:39 2018 -0700
+
+    [subset] Have the subset fuzzer pull the text string to subset to
+    from the end of the fuzzer provided data.
+
+ test/fuzzing/hb-subset-fuzzer.cc | 54
+ +++++++++++++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 20 deletions(-)
+
+commit bb6f4adac70a161505953414aa85ba78cd993c65
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 1 16:30:38 2018 -0700
+
+    Add Codacy badge
+
+ README | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit a7dd90f519fb7ab046e92ea3b7101c21d5040bbc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 1 16:07:55 2018 -0700
+
+    Revert "Remove HB_DISALLOW_COPY_AND_ASSIGN"
+
+    This reverts commit ff92de766bf775bfdd3a01bda94de699180ff86a.
+
+    Revert that and remove ASSERT_POD. Let's see which bots are
+    unhappy with this configuration...
+
+ src/hb-map-private.hh      | 3 +--
+ src/hb-ot-shape-private.hh | 2 +-
+ src/hb-private.hh          | 6 +++++-
+ src/hb-set-private.hh      | 3 +--
+ 4 files changed, 8 insertions(+), 6 deletions(-)
+
+commit 7b50bf52f274f75f0b41008e0eab150124ae928a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 31 20:20:17 2018 -0700
+
+    Use NullPool for _hb_set_nil and _hb_map_nil
+
+ src/hb-map.cc     | 12 +-----------
+ src/hb-private.hh |  2 +-
+ src/hb-set.cc     |  8 +-------
+ 3 files changed, 3 insertions(+), 19 deletions(-)
+
+commit f040ca40ab3ebd4fdb85747477e0e656ab8b073e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 31 20:15:21 2018 -0700
+
+    [set] Minor
+
+ src/hb-set.cc | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 7185b273b3d92ee0ba0a589eb94387f25ea40b82
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 31 20:03:00 2018 -0700
+
+    Rename in_error to !successful
+
+    Towards possibly using Null pool for some nil objects.
+
+ src/hb-buffer-deserialize-json.hh    | 758
+ +++++++++++++++++------------------
+ src/hb-buffer-deserialize-json.rl    |   2 +-
+ src/hb-buffer-deserialize-text.hh    | 510 +++++++++++------------
+ src/hb-buffer-deserialize-text.rl    |   2 +-
+ src/hb-buffer-private.hh             |   2 +-
+ src/hb-buffer.cc                     |  24 +-
+ src/hb-map-private.hh                |  10 +-
+ src/hb-map.cc                        |   4 +-
+ src/hb-ot-layout-gsubgpos-private.hh |   4 +-
+ src/hb-ot-layout.cc                  |   2 +-
+ src/hb-ot-shape-complex-hangul.cc    |   8 +-
+ src/hb-ot-shape-complex-indic.cc     |   4 +-
+ src/hb-ot-shape-complex-khmer.cc     |   4 +-
+ src/hb-ot-shape-complex-myanmar.cc   |   2 +-
+ src/hb-ot-shape-complex-thai.cc      |   4 +-
+ src/hb-ot-shape-complex-use.cc       |   4 +-
+ src/hb-ot-shape-normalize.cc         |  12 +-
+ src/hb-ot-shape.cc                   |   2 +-
+ src/hb-set-private.hh                |  28 +-
+ src/hb-set.cc                        |   4 +-
+ 20 files changed, 696 insertions(+), 694 deletions(-)
+
+commit 353f4d2efc6c0ce32f5bee08bbdf5a268d720a6a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 31 19:52:16 2018 -0700
+
+    Fix a whitespace inconsistency
+
+    Null() and Crap() are only places that there's no space before '('...
+
+ src/dump-fon.cc   | 12 ++++++------
+ src/hb-private.hh |  2 +-
+ src/main.cc       |  2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+commit e36cd1dfd36ed336f63883098dc870c56a5fc10d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 31 19:31:39 2018 -0700
+
+    Remove trivial HB_ATOMIC_INT_INIT()
+
+ src/hb-atomic-private.hh | 9 +--------
+ src/hb-object-private.hh | 2 +-
+ 2 files changed, 2 insertions(+), 9 deletions(-)
+
+commit 550a70f8011c4c1cfd27d739469e79cb98bcdd6e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 31 19:28:04 2018 -0700
+
+    Use 0 as inert object reference value instead of -1
+
+    Towards using Null object for nil objects.
+
+ src/hb-object-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit dcd1b07eeaf2c28f0d20b9812749810d069041e3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 31 17:58:40 2018 -0700
+
+    Add const OffsetTo<> dereference
+
+    Unused, but now that we have CrapPool, implement it.
+
+ src/hb-open-type-private.hh | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 2baa357ac7fe2ae91029dff26a01b8ba1cc0b365
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu May 31 12:27:31 2018 +0430
+
+    Fix symbol export issue of prime_mod on Alpine bot
+
+    Apparently our gcc-6.4.0 on Alpine Linux distribution doesn't like
+    defining static const
+    inside a method, lets put that on outside the classes.
+
+ src/hb-map-private.hh | 89
+ ++++++++++++++++++++++++++-------------------------
+ 1 file changed, 45 insertions(+), 44 deletions(-)
+
+commit 54800f8322e8ab106d801fc332b7e813c58138ac
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 30 16:26:50 2018 -0700
+
+    [map] Mark prime_for HB_INTERNAL
+
+    Trying to see if it fixes gcc-4.2 bots.
+
+ src/hb-map-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d600e844aa4736b52fe71c1b2a9fa785be5cfecc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 30 16:25:46 2018 -0700
+
+    Add CrapOrNull
+
+ src/hb-private.hh | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+commit 251cc977e93a75cfdc34671760ef4241daebf60f
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed May 30 12:23:51 2018 -0700
+
+    [subset] Switch to using hb_map_t inside of hb_subset_plan_t.
+
+ src/hb-ot-cmap-table.hh |  20 +++---
+ src/hb-ot-glyf-table.hh |  12 ++--
+ src/hb-ot-hdmx-table.hh |  10 +--
+ src/hb-ot-hmtx-table.hh |   6 +-
+ src/hb-ot-maxp-table.hh |   4 +-
+ src/hb-ot-os2-table.hh  |  35 +++--------
+ src/hb-ot-post-table.hh |   2 +-
+ src/hb-subset-glyf.cc   |   9 ++-
+ src/hb-subset-plan.cc   | 159
+ ++++++++++++++++--------------------------------
+ src/hb-subset-plan.hh   |  68 +++++++++++++--------
+ src/hb-subset.cc        |   2 +-
+ 11 files changed, 139 insertions(+), 188 deletions(-)
+
+commit b3d45de6cff4501e6171ec9d9069af7de29584d4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 30 14:02:49 2018 -0700
+
+    [map] Fix size calculation
+
+    Don't know why I thought I should subtract one there...
+
+ src/hb-map-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ff92de766bf775bfdd3a01bda94de699180ff86a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 18:48:45 2018 -0700
+
+    Remove HB_DISALLOW_COPY_AND_ASSIGN
+
+    llvm-gcc-4.2 bot had this problem:
+    hb-private.hh:812: error: initializer specified for non-virtual method
+    'void hb_vector_t<Type, StaticSize>::operator=(const hb_vector_t<Type,
+    StaticSize>&) [with Type = hb_user_data_array_t::hb_user_data_item_t,
+    unsigned int StaticSize = 1u]'
+
+    Removing the delete didn't work with a constructor. So, remove
+    constructor.
+    Just disallow assignment.  Still better than nothing.
+
+ src/hb-map-private.hh      | 2 +-
+ src/hb-ot-shape-private.hh | 2 +-
+ src/hb-private.hh          | 6 +-----
+ src/hb-set-private.hh      | 2 +-
+ 4 files changed, 4 insertions(+), 8 deletions(-)
+
+commit a2444346220757e7743c972cbd24f925e72b419d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 18:32:57 2018 -0700
+
+    [map] Fix resize
+
+ src/hb-map-private.hh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit efbab6ba3f7434fca41be1b38e4a5281695f231c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 18:21:55 2018 -0700
+
+    Disable use of thread_local
+
+    Clang build was failing with:
+
+    /usr/bin/ld: .libs/libharfbuzz_la-hb-blob.o: relocation R_X86_64_PC32
+    against undefined hidden symbol `_ZTH12_hb_CrapPool' can not be used
+    when making a shared object
+
+    Instead of fighting it, just disable use of it.
+
+ src/hb-private.hh | 4 ++--
+ src/hb-static.cc  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 8c2c5d450817d4cb6f782d286da6ac6d9e5a5e95
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 18:15:52 2018 -0700
+
+    [map] Not going to implement is_equal which is complicated
+
+ src/hb-map.h | 7 -------
+ 1 file changed, 7 deletions(-)
+
+commit ccd01c65559122499b38a44e4449cd5a828d0b05
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 18:13:13 2018 -0700
+
+    [map] Move prime_mod to header to avoid linkage issues in subset.so
+
+ src/hb-map-private.hh | 53
+ +++++++++++++++++++++++++++++++++++++++++++++++++--
+ src/hb-map.cc         | 52
+ --------------------------------------------------
+ 2 files changed, 51 insertions(+), 54 deletions(-)
+
+commit 6baebc5d559e15c7903a81f21be08b45537e7903
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 17:58:46 2018 -0700
+
+    [map] Fix copyright year
+
+ src/hb-map-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b0158129d2b161665f8872deeb540ac73349c2de
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 17:52:37 2018 -0700
+
+    [map] Minor
+
+ src/hb-map-private.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 4099c66f70e1acf89013215ab3add42b11e31fea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 17:52:07 2018 -0700
+
+    [map] Don't return INVALID from get() just because in_error
+
+ src/hb-map-private.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 25783907737b561f7b8648b8e92dba601a439828
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 17:34:35 2018 -0700
+
+    [map] Fix bool use in C API
+
+ src/hb-map.cc | 2 +-
+ src/hb-map.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit a9fa39dca56d3a96dddcdbeb1c55a3d55a6537da
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 17:31:01 2018 -0700
+
+    [map] More minor
+
+ src/hb-map-private.hh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit f76c4a7708773eca7a2b8c7ff47f8b5ade5ca0d9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 17:27:25 2018 -0700
+
+    [map] Make initial resize actually work
+
+ src/hb-map-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 661e9ae4a55c198eb9fdb2c104979dd55a0fa1f1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 17:09:17 2018 -0700
+
+    [map] Add clear(), is_empty(), and get_population()
+
+ src/hb-map-private.hh | 22 ++++++++++++++++++----
+ src/hb-map.cc         | 43 +++++++++++++++++++++++++++++++++++++++++++
+ src/hb-map.h          | 17 +++++++++--------
+ 3 files changed, 70 insertions(+), 12 deletions(-)
+
+commit b6959c33e23b464ddbe5fe98fafc80bbb669189c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 17:02:22 2018 -0700
+
+    [map] Minor
+
+ src/hb-map-private.hh | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 686476a8ae0039f277eb55ab7bd69386d43a8dc7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 17:00:02 2018 -0700
+
+    [map] Track population and occupancy separately
+
+ src/hb-map-private.hh | 30 +++++++++++++++++++++---------
+ src/hb-map.cc         |  1 +
+ 2 files changed, 22 insertions(+), 9 deletions(-)
+
+commit 8a978790cb4dc66816c2cd7b617829f3e9d6e88e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 16:45:20 2018 -0700
+
+    [map] Minor
+
+ src/hb-map.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6f12ce47c0ed8c2c4bb251cd6e685459af104db8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 16:45:06 2018 -0700
+
+    Revert "[map] Return bool from set()"
+
+    This reverts commit face7cf55d4895ffca314c8448c0a749a26cc182.
+
+ src/hb-map-private.hh | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit fc51c45079feb7d77d25204c4c17a0733f1eca56
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 16:44:55 2018 -0700
+
+    Revert "[map] Make hb_map_set() return bool"
+
+    This reverts commit 7bf1980146cfc081b06264ac367b23ae9397adf1.
+
+ src/hb-map.cc | 4 ++--
+ src/hb-map.h  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 7bf1980146cfc081b06264ac367b23ae9397adf1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 16:42:44 2018 -0700
+
+    [map] Make hb_map_set() return bool
+
+ src/hb-map.cc | 4 ++--
+ src/hb-map.h  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit face7cf55d4895ffca314c8448c0a749a26cc182
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 16:39:03 2018 -0700
+
+    [map] Return bool from set()
+
+ src/hb-map-private.hh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit e94be200bd7976a26ea2d6df5050d9dab4de0f08
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 16:37:44 2018 -0700
+
+    [map] Implement operator[] for get()ting
+
+ src/hb-map-private.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 743fdd9c618c949d7f45324386bd0bb37435db46
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 29 16:28:48 2018 -0700
+
+    [map] First try at implementing an integer-to-integer hashmap
+
+    Fully untested.
+
+ src/Makefile.sources  |   3 +
+ src/hb-map-private.hh | 180 ++++++++++++++++++++++++++++++++
+ src/hb-map.cc         | 279
+ ++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-map.h          | 110 ++++++++++++++++++++
+ src/hb.h              |   1 +
+ 5 files changed, 573 insertions(+)
+
+commit 65c82179c9b3aafd90987485a49c09dbbb473c90
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat May 26 23:50:10 2018 +0430
+
+    [blob] Use MAP_NORESERVE if available (#1039)
+
+    MAP_NORESERVE is not available on macOS for example so set the flag
+    to zero if not defined on the headers.
+
+ src/hb-blob.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 1ce40d900a9c451d8d5814a9b30759d1e66f99c8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 25 16:34:08 2018 -0700
+
+    [set] Remove stale comment
+
+ src/hb-set.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 6c2227640bc14754c9472fead5cd04ff25f91b52
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 25 16:21:27 2018 -0700
+
+    Add HB_DISALLOW_COPY_AND_ASSIGN
+
+ src/hb-ot-map-private.hh   |  1 -
+ src/hb-ot-shape-private.hh |  4 +---
+ src/hb-ot-shape.cc         |  2 --
+ src/hb-private.hh          | 10 ++++++++++
+ src/hb-set-private.hh      |  3 +++
+ 5 files changed, 14 insertions(+), 6 deletions(-)
+
+commit fd3d0042319c33c923a60d435779bf7ed5a9a6f5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 24 15:58:26 2018 -0700
+
+    Move pool definitions to hb-static.cc
+
+ src/Makefile.sources |  1 +
+ src/dump-emoji.cc    |  8 +-------
+ src/dump-fon.cc      |  6 +-----
+ src/hb-ot-layout.cc  |  6 ------
+ src/hb-static.cc     | 32 ++++++++++++++++++++++++++++++++
+ src/hb-subset.cc     |  5 ++---
+ src/main.cc          |  6 +-----
+ 7 files changed, 38 insertions(+), 26 deletions(-)
+
+commit 7f7b1370d37b9187f688dea5e6fee5ea7c2b7290
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 24 14:09:04 2018 -0700
+
+    Fix Uniscribe build
+
+    If a pointer type was passed to Null(), reinterpret_cast<> was
+    complaining about qualifiers being removed. Turns out I need the
+    const on
+    the other side of "Type" to fix that.  Also remove unused const from
+    NullPool type.
+
+ src/dump-emoji.cc   | 2 +-
+ src/dump-fon.cc     | 2 +-
+ src/hb-ot-layout.cc | 2 +-
+ src/hb-private.hh   | 6 +++---
+ src/hb-subset.cc    | 2 +-
+ src/main.cc         | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+commit 31c4236d9643063e518289b28c3e17cedd8401e0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 24 13:38:46 2018 -0700
+
+    Underflow protection in hb_vector_t
+
+ src/hb-private.hh | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+commit f83e992c8b27111ab802fd7e5678592a0c717518
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 24 11:46:57 2018 -0700
+
+    Mark CrapPool thread_local
+
+    Not sure if I like to keep it. For now, aim for correctness.
+
+ src/dump-emoji.cc   |  2 +-
+ src/dump-fon.cc     |  2 +-
+ src/hb-ot-layout.cc |  2 +-
+ src/hb-private.hh   | 14 +++++++++++++-
+ src/hb-subset.cc    |  2 +-
+ src/main.cc         |  2 +-
+ 6 files changed, 18 insertions(+), 6 deletions(-)
+
+commit 5d80129891107c7f629c6950b5d257f2a867eee0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 24 11:33:15 2018 -0700
+
+    Add CrapPool
+
+    Common Regoin for Access Protection.  Like the NullPool, but writable.
+
+ src/dump-emoji.cc           |  1 +
+ src/dump-fon.cc             |  1 +
+ src/hb-open-type-private.hh | 11 +++++++++++
+ src/hb-ot-layout.cc         |  1 +
+ src/hb-private.hh           | 39 +++++++++++++++++++++++++++++++++++----
+ src/hb-subset.cc            |  1 +
+ src/main.cc                 |  1 +
+ 7 files changed, 51 insertions(+), 4 deletions(-)
+
+commit 673b764de050957b2d3b9972d9e55b3a2e5615f4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 23 20:12:23 2018 -0700
+
+    Move code around
+
+ src/hb-private.hh | 91
+ ++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 49 insertions(+), 42 deletions(-)
+
+commit 65aeabd62275b37c6bb6715f3341e45625f4ba6e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 23 16:15:28 2018 -0700
+
+    Add hb_vector_t::push(const Type &v)
+
+    Makes for cleaner code.
+
+ src/hb-coretext.cc      |  3 +--
+ src/hb-ot-post-table.hh |  3 +--
+ src/hb-private.hh       | 18 +++++++++++-------
+ src/hb-subset-plan.cc   | 12 +++++-------
+ src/hb-uniscribe.cc     |  8 ++------
+ 5 files changed, 20 insertions(+), 24 deletions(-)
+
+commit 38ae0add7001c4db506d3a2c18b9960a2cae7b5d
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed May 23 13:37:57 2018 +0430
+
+    [ci] Revive the SunCC bot
+
+    * Adds libnsl to the bot as it is now needed apparently
+    * Disables hb-icu, apparently the newer ICU itself is not compatible
+    with SunCC
+
+ .circleci/config.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 6c818c5516913f2c8192d58bd2724b1d3bb60d24
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 22 22:00:05 2018 -0700
+
+    Actually enable vectorized operations
+
+    Fixup for previous commit. Was accidentally turned off.
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f56a250b04f50f12c78d81d1a068187be3d95a8c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 22 21:36:07 2018 -0700
+
+    Another try at smart vectorization
+
+    Make clang happy. Also, don't use anonymous union.
+
+ src/hb-private.hh | 36 +++++++++++++++++++++++++-----------
+ 1 file changed, 25 insertions(+), 11 deletions(-)
+
+commit b995b501ef5cf113534c5aead6c85baea6cc423c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 22 21:06:22 2018 -0700
+
+    Try enabling vectorization smartly
+
+    We'll see if this sticks to the bots.
+
+ src/hb-private.hh     | 25 +++++++++++++++++--------
+ src/hb-set-private.hh |  7 -------
+ 2 files changed, 17 insertions(+), 15 deletions(-)
+
+commit dd22c29f951ceec98516d7cb378bf2aa7e21d89a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 22 20:57:19 2018 -0700
+
+    [set] Always check population before checking for equality
+
+ src/hb-set-private.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 2eb9bbd986f6930f1b2594b8971ac677e9647c93
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 22 18:28:13 2018 -0700
+
+    [test/text-rendering-tests] Update from upstream
+
+ test/shaping/data/text-rendering-tests/DISABLED         |   2 ++
+ test/shaping/data/text-rendering-tests/Makefile.sources |   2 ++
+ .../text-rendering-tests/fonts/TestMORXTwentyeight.ttf  | Bin 0 ->
+ 2660 bytes
+ .../text-rendering-tests/fonts/TestMORXTwentyseven.ttf  | Bin 0 ->
+ 2432 bytes
+ .../data/text-rendering-tests/fonts/TestShapeKndaV3.ttf | Bin 0 ->
+ 89400 bytes
+ .../data/text-rendering-tests/tests/MORX-27.tests       |   3 +++
+ .../data/text-rendering-tests/tests/MORX-28.tests       |   5 +++++
+ 7 files changed, 12 insertions(+)
+
+commit 8eb53b853dcc4b0cc8e240cff6bfc5acb92182b0
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri May 11 22:44:44 2018 +0430
+
+    Minor, make CreateFile compatible with the disabled writable flag
+
+    "writable" is not in use and probably we can go in the reverse
+    direction
+    and remove the flags that are useful for enabled writable, this
+    is just
+    for the sake of completeness however.
+
+ src/hb-blob.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 33eb1bd23b100a8e65a0e66621760368b5aecdaf
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri May 11 14:36:41 2018 +0430
+
+    Remove unnecessary headers and definitions of hb-blob (#1028)
+
+    It removes io.h and other polyfills which we no longer need as 7e76d74
+
+ src/hb-blob.cc | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
+
+commit 7e76d746e2555d5bba7f65d3958aa97a7f179d7b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri May 11 13:40:33 2018 +0430
+
+    Make hb_blob_create_from_file more portable (#1027)
+
+    This makes it compatible with ARMCC which I had access in
+    a collaboration with @imgtec, thanks!
+
+    Basically hb_blob_create_from_file features three code paths,
+    mmap, Win32 and fallback.
+
+    We had fallback implementation even before this but it was relied
+    to "open" which is not available on some environments. This change
+    improved the situtation by using only fopen and friends for
+    fallback path.
+
+    Interestingly we could use "open" on Windows but in fact it was
+    emulated by MSVCRT so I've completely split that from Unix path
+    now that we have a distinct path for fallback path also.
+
+ src/hb-blob.cc | 64
+ +++++++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 43 insertions(+), 21 deletions(-)
+
+commit e99d75ea9c4fe1f64d7f8408093741a682ed5243
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 9 15:28:30 2018 -0700
+
+    Fix warning
+
+ src/hb-ot-cmap-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 191c4edc5423017d9123d291462fbfa87a805218
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 9 15:27:17 2018 -0700
+
+    Reinstante DEFINE_NULL_DATA
+
+    Seems like I messed up; buffer overrun got reported.
+
+ src/hb-open-type-private.hh        |  2 ++
+ src/hb-ot-layout-common-private.hh | 13 +++----------
+ src/hb-private.hh                  | 13 +++++++++++++
+ 3 files changed, 18 insertions(+), 10 deletions(-)
+
+commit 93bdf9b2dfe18af0f1aa93b890f0be260f31d90e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed May 9 23:24:17 2018 +0430
+
+    Use arrayZ on hb-coretext and hb-uniscribe and fix macOS/Win bots
+    (#1024)
+
+    Following to 63f57f4
+
+ src/hb-coretext.cc  |  2 +-
+ src/hb-uniscribe.cc | 12 ++++++------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 63f57f4dab3d3179838d5d1cd03d116837a7e5c2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 16:56:11 2018 -0700
+
+    Mark more unsized array's as arrayZ
+
+ src/hb-aat-layout-common-private.hh  | 14 ++++----
+ src/hb-aat-layout-kerx-table.hh      |  2 +-
+ src/hb-aat-layout-morx-table.hh      |  6 ++--
+ src/hb-open-file-private.hh          |  6 ++--
+ src/hb-open-type-private.hh          | 40 +++++++++++-----------
+ src/hb-ot-cmap-table.hh              |  2 +-
+ src/hb-ot-color-cbdt-table.hh        | 10 +++---
+ src/hb-ot-layout-common-private.hh   | 12 +++----
+ src/hb-ot-layout-gsub-table.hh       | 16 ++++-----
+ src/hb-ot-layout-gsubgpos-private.hh | 64
+ ++++++++++++++++++------------------
+ src/hb-ot-post-table.hh              |  4 +--
+ src/hb-ot-var-avar-table.hh          | 26 +++++++--------
+ src/hb-private.hh                    | 54 +++++++++++++++---------------
+ src/hb-set-private.hh                |  4 +--
+ src/hb-subset.cc                     |  2 +-
+ 15 files changed, 131 insertions(+), 131 deletions(-)
+
+commit 091c17df5ac5f7ddc9b776481da845f4eda67570
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 16:42:45 2018 -0700
+
+    Use UnsizedArrayOf<> in one place where [VAR] was used
+
+    Trying to see how many can converted meaningfully.
+
+ src/hb-ot-layout-common-private.hh | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit 0644d92ef32b09e32d473c758d2a968f2d125628
+Merge: 2a2e28e7 3be050f0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 15:21:09 2018 -0700
+
+    Merge pull request #1018 from googlefonts/cmap4
+
+    [subset] Add cmap format 4 subsetting.
+
+commit 2a2e28e701319b4053a5c95f06c68f859e4ce99b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 03:00:21 2018 -0700
+
+    Don't keep instance in hb_table_lazy_loader_t
+
+ src/hb-open-type-private.hh | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+commit 57bac8f6995fabbb98eb9824d822f370f9449488
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 02:55:20 2018 -0700
+
+    Rename
+
+ src/hb-open-type-private.hh | 6 +++---
+ src/hb-ot-layout-private.hh | 8 ++++----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 2a46a020fd2fa2fe99886ab06188db5f0fa37ad1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 02:53:03 2018 -0700
+
+    Minor
+
+ src/hb-open-type-private.hh | 4 ++--
+ src/hb-ot-kern-table.hh     | 2 +-
+ src/hb-ot-layout.cc         | 6 +++---
+ src/hb-ot-post-table.hh     | 2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+commit eba1c16a604d1be774f22541bf3e417f27a27c68
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 02:47:42 2018 -0700
+
+    Always lock blob in sanitize. Remove blob->lock_as() in favor of
+    blob->lock()
+
+ src/dump-emoji.cc             | 4 ++--
+ src/dump-fon.cc               | 2 +-
+ src/hb-aat-layout.cc          | 4 ++--
+ src/hb-blob-private.hh        | 6 ------
+ src/hb-face.cc                | 8 ++++----
+ src/hb-open-type-private.hh   | 8 ++++++--
+ src/hb-ot-cmap-table.hh       | 2 +-
+ src/hb-ot-color-cbdt-table.hh | 4 ++--
+ src/hb-ot-color-sbix-table.hh | 2 +-
+ src/hb-ot-color-svg-table.hh  | 2 +-
+ src/hb-ot-glyf-table.hh       | 6 +++---
+ src/hb-ot-hmtx-table.hh       | 8 ++++----
+ src/hb-ot-kern-table.hh       | 2 +-
+ src/hb-ot-layout.cc           | 6 +++---
+ src/hb-ot-post-table.hh       | 2 +-
+ src/hb-subset.cc              | 2 +-
+ src/main.cc                   | 2 +-
+ 17 files changed, 34 insertions(+), 36 deletions(-)
+
+commit b4fa50501414b7471e840f2ee6b9dfe87080b078
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 02:45:08 2018 -0700
+
+    Move Sanitizer::lock_instance<>() to blob->lock_as<>().
+
+ src/dump-emoji.cc             |  4 ++--
+ src/dump-fon.cc               |  3 +--
+ src/hb-aat-layout.cc          |  4 ++--
+ src/hb-blob-private.hh        | 17 +++++++++++++++++
+ src/hb-face.cc                |  9 +++++----
+ src/hb-open-type-private.hh   |  9 ++-------
+ src/hb-ot-cmap-table.hh       |  2 +-
+ src/hb-ot-color-cbdt-table.hh |  4 ++--
+ src/hb-ot-color-sbix-table.hh |  2 +-
+ src/hb-ot-color-svg-table.hh  |  2 +-
+ src/hb-ot-glyf-table.hh       |  6 +++---
+ src/hb-ot-hmtx-table.hh       |  8 ++++----
+ src/hb-ot-kern-table.hh       |  2 +-
+ src/hb-ot-layout.cc           |  6 +++---
+ src/hb-ot-post-table.hh       |  2 +-
+ src/hb-subset.cc              |  2 +-
+ src/main.cc                   |  2 +-
+ 17 files changed, 48 insertions(+), 36 deletions(-)
+
+commit abc12f7b8157c3981216d82ead60627db31a6c14
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 02:23:36 2018 -0700
+
+    Move null pool to hb-private
+
+ src/dump-emoji.cc                  |  6 ++---
+ src/dump-fon.cc                    | 14 +++++------
+ src/hb-aat-layout.cc               |  8 +++----
+ src/hb-open-type-private.hh        | 48
+ +++-----------------------------------
+ src/hb-ot-cmap-table.hh            |  4 ++--
+ src/hb-ot-color.cc                 |  4 ++--
+ src/hb-ot-layout-common-private.hh | 13 ++++++++---
+ src/hb-ot-layout.cc                | 22 ++++++++---------
+ src/hb-ot-math.cc                  |  4 ++--
+ src/hb-ot-var.cc                   |  6 ++---
+ src/hb-private.hh                  | 29 +++++++++++++++++++++++
+ src/hb-subset.cc                   |  4 ++--
+ src/main.cc                        |  2 +-
+ 13 files changed, 79 insertions(+), 85 deletions(-)
+
+commit 08e280fd84384f73d395918646ee044a5bbfee45
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 01:57:27 2018 -0700
+
+    Rename hb_string_t to hb_bytes_t
+
+ src/hb-ot-post-table.hh | 16 ++++++++--------
+ src/hb-private.hh       | 12 ++++++------
+ src/hb-string-array.hh  |  6 +++---
+ 3 files changed, 17 insertions(+), 17 deletions(-)
+
+commit bd021a67203aa5b07c31c02d63e6154da0c05d31
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 01:50:30 2018 -0700
+
+    Minor
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 16e4ccf7b417f021948643012cbe7641ba02c039
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 01:47:05 2018 -0700
+
+    Allocate user-data-array on the heap
+
+    This saves each object allocation 72 bytes.  Now object overhead
+    is just
+    16 bytes (on x86) instead of 88 bytes. Neat.
+
+ src/hb-object-private.hh | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
+
+commit 61920b21ca0c632ba58aef95c7f65f409cc0fbd2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 8 01:28:19 2018 -0700
+
+    Oops
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1023
+
+ src/hb-blob-private.hh | 77
+ ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+
+commit f673cfbd64d0c9d97123500a7b851b9cfc09deb3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 7 13:58:32 2018 -0700
+
+    Support scripts that are written both LTR and RTL
+
+    Right now only Old Italic is marked as such.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1000
+
+ src/hb-buffer.cc                                         |   4 ++++
+ src/hb-common.cc                                         |   6 ++++++
+ src/hb-ot-shape.cc                                       |   7 +++++--
+ test/api/test-common.c                                   |   1 +
+ test/shaping/data/in-house/Makefile.sources              |   1 +
+ .../fonts/73e84dac2fc6a2d1bc9250d1414353661088937d.ttf   | Bin 0 ->
+ 1136 bytes
+ test/shaping/data/in-house/tests/none-directional.tests  |   3 +++
+ 7 files changed, 20 insertions(+), 2 deletions(-)
+
+commit 90869e6962caf0e55a480b5d7e777cc521596e8b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 7 14:04:01 2018 -0700
+
+    [ot] Apply langsys's required feature even if no other feature exists
+
+ src/hb-ot-map.cc | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit 90baf721978236f2e06dff89ad1cb0cace0753ea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 3 22:14:54 2018 -0400
+
+    Move some blob functions to methods
+
+ src/hb-blob.cc | 80
+ +++++++++++++++++++++++++---------------------------------
+ 1 file changed, 34 insertions(+), 46 deletions(-)
+
+commit 5c64d61475f15d7f8de8993a52639735b2bcf750
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 3 21:10:57 2018 -0400
+
+    Add hb-blob-private.hh
+
+    Towards making blob more memory-allocation-friendly
+
+ src/Makefile.sources |  1 +
+ src/hb-blob.cc       | 21 +++++----------------
+ 2 files changed, 6 insertions(+), 16 deletions(-)
+
+commit 203dc44ebc141af0ba8c54edec2dc0405664997a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 3 21:03:27 2018 -0400
+
+    [ot-layout] Remove unused members
+
+    We should hang those off somewhere else. For now, the unused ones
+    can go.
+
+ src/hb-aat-layout-common-private.hh |  2 +-
+ src/hb-aat-layout.cc                |  6 ++++++
+ src/hb-ot-layout-private.hh         |  6 ------
+ src/hb-ot-layout.cc                 | 29 ++++++++---------------------
+ 4 files changed, 15 insertions(+), 28 deletions(-)
+
+commit ac92ed7d6875374451246a2391859fb763329adb
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue May 8 01:05:15 2018 +0430
+
+    Set inline hidden flag only on shared library building
+
+    To avoid need of CMP0063 which is not available on older CMake
+    versions
+
+ CMakeLists.txt | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit 3be050f07572d8556726b188668d727e3e7ba643
+Author: Garret Rieger <grieger@google.com>
+Date:   Fri May 4 11:23:32 2018 -0700
+
+    [subset] entrySelectorZ -> entrySelector.
+
+ src/hb-ot-cmap-table.hh | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+commit 7c22f98da789f831e1afb9078085b2e33d864d25
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu May 3 13:14:28 2018 -0700
+
+    [subset] add missing template parameter.
+
+ src/hb-ot-cmap-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 95eb0f3bafb7ab0e2451e3e2f8afc5008e18e88e
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu May 3 13:00:19 2018 -0700
+
+    [subset] Switch to a non-log using implementation of caculating
+    searchRangeZ, entrySelectorZ, and rangeShiftZ in cmap4.
+
+ src/hb-ot-cmap-table.hh | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+commit b0d7971be0fa3c9393b04038b8d0a76398b0d8d7
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu May 3 11:22:51 2018 -0700
+
+    [subset] Updated expected files for japanese subset integration
+    tests to include cmap4.
+
+ ...gular.default.3042,3044,3046,3048,304A,304B.ttf | Bin 3032 ->
+ 3112 bytes
+ ...gular.default.3042,3044,3046,73E0,5EA6,8F38.ttf | Bin 3268 ->
+ 3356 bytes
+ .../Mplus1p-Regular.default.61,63,65,6B.ttf        | Bin 2584 ->
+ 2656 bytes
+ ...gular.default.660E,6975,73E0,5EA6,8F38,6E05.ttf | Bin 3564 ->
+ 3652 bytes
+ .../japanese/Mplus1p-Regular.default.660E.ttf      | Bin 2348 ->
+ 2396 bytes
+ ...ar.drop-hints.3042,3044,3046,3048,304A,304B.ttf | Bin 2304 ->
+ 2384 bytes
+ ...ar.drop-hints.3042,3044,3046,73E0,5EA6,8F38.ttf | Bin 2540 ->
+ 2628 bytes
+ .../Mplus1p-Regular.drop-hints.61,63,65,6B.ttf     | Bin 1856 ->
+ 1928 bytes
+ ...ar.drop-hints.660E,6975,73E0,5EA6,8F38,6E05.ttf | Bin 2836 ->
+ 2924 bytes
+ .../japanese/Mplus1p-Regular.drop-hints.660E.ttf   | Bin 1620 ->
+ 1668 bytes
+ test/subset/data/fonts/Mplus1p-Regular.ttf         | Bin 1758820 ->
+ 1757292 bytes
+ 11 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 79479273170275447042aa50912acee74bbacdf6
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu May 3 11:18:02 2018 -0700
+
+    [subset] Update expected files for subset integration tests to
+    include cmap4.
+
+ .../basics/Roboto-Regular.abc.default.61,62,63.ttf    | Bin 2120 ->
+ 2168 bytes
+ .../basics/Roboto-Regular.abc.default.61,63.ttf       | Bin 1932 ->
+ 1988 bytes
+ .../expected/basics/Roboto-Regular.abc.default.61.ttf | Bin 1744 ->
+ 1792 bytes
+ .../expected/basics/Roboto-Regular.abc.default.62.ttf | Bin 1692 ->
+ 1740 bytes
+ .../expected/basics/Roboto-Regular.abc.default.63.ttf | Bin 1668 ->
+ 1716 bytes
+ .../basics/Roboto-Regular.abc.drop-hints.61,62,63.ttf | Bin 876 ->
+ 924 bytes
+ .../basics/Roboto-Regular.abc.drop-hints.61,63.ttf    | Bin 792 ->
+ 848 bytes
+ .../basics/Roboto-Regular.abc.drop-hints.61.ttf       | Bin 684 ->
+ 732 bytes
+ .../basics/Roboto-Regular.abc.drop-hints.62.ttf       | Bin 652 ->
+ 700 bytes
+ .../basics/Roboto-Regular.abc.drop-hints.63.ttf       | Bin 656 ->
+ 704 bytes
+ .../Roboto-Regular.default.1FC,21,41,20,62,63.ttf     | Bin 3700 ->
+ 3772 bytes
+ .../full-font/Roboto-Regular.default.61,62,63.ttf     | Bin 3320 ->
+ 3368 bytes
+ .../Roboto-Regular.default.D7,D8,D9,DA,DE.ttf         | Bin 3668 ->
+ 3732 bytes
+ .../Roboto-Regular.drop-hints.1FC,21,41,20,62,63.ttf  | Bin 2152 ->
+ 2224 bytes
+ .../full-font/Roboto-Regular.drop-hints.61,62,63.ttf  | Bin 1968 ->
+ 2016 bytes
+ .../Roboto-Regular.drop-hints.D7,D8,D9,DA,DE.ttf      | Bin 2188 ->
+ 2252 bytes
+ 16 files changed, 0 insertions(+), 0 deletions(-)
+
+commit a8e7f9b958dcb4e00226f78d0ff83f031bc1323d
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu May 3 10:59:00 2018 -0700
+
+    [subset] Get cmap tests passing again.
+
+ test/api/fonts/Roboto-Regular.D7,D8,D9,DA,DE.ttf | Bin 2972 -> 2816 bytes
+ test/api/test-subset-cmap.c                      |   2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit c817992f495cba21bf468014f22afe349fbc799f
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu May 3 10:53:20 2018 -0700
+
+    [subset] Write out a format 4, plat 0 encoding record to match
+    fontTools.
+
+ src/hb-ot-cmap-table.hh     | 24 +++++++++++++++---------
+ test/api/test-subset-cmap.c |  2 +-
+ 2 files changed, 16 insertions(+), 10 deletions(-)
+
+commit 9ef55a4c1354028f4d5e81300cdaf8ce5e03b8e9
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed May 2 18:50:56 2018 -0700
+
+    [subset] A few bug fixes for cmap format 4 subsetting.
+
+ src/hb-ot-cmap-table.hh | 57
+ ++++++++++++++++++++++++++++---------------------
+ 1 file changed, 33 insertions(+), 24 deletions(-)
+
+commit 81ea75f5c860ef682184bd2c9d0ff8b48251e3ce
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed May 2 17:46:30 2018 -0700
+
+    [subset] Complete implementation of cmap4 subsetting.
+
+ src/hb-ot-cmap-table.hh | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
+
+commit 4195a52b041af749046b716dcac7d6560ae37611
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed May 2 17:11:18 2018 -0700
+
+    [subset] WIP implementation of serialize for cmap format 4.
+
+ src/hb-ot-cmap-table.hh | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
+
+commit cfa592d31ce2fd1ec2765a69ab31bf80161479dd
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed May 2 16:37:38 2018 -0700
+
+    [subset] Add an implement for cmap format 4 create_sub_table_plan.
+
+ src/hb-ot-cmap-table.hh | 43 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
+
+commit 295d67ea7d0ddac5666bd6aa4b647dd9cbf8e8f7
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed May 2 16:12:04 2018 -0700
+
+    [subset] WIP cmap format 4 subsetting.
+
+ src/hb-ot-cmap-table.hh | 104
+ ++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 88 insertions(+), 16 deletions(-)
+
+commit 0053d13283458996372f04bd501001d450523605
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed May 2 15:42:43 2018 -0700
+
+    [subset] Refactor cmap subsetting to make it possible to add support
+    for more sub tables.
+
+ src/hb-ot-cmap-table.hh | 161
+ ++++++++++++++++++++++++++++++------------------
+ 1 file changed, 102 insertions(+), 59 deletions(-)
+
+commit 03b27548123756dfd9988a8fc74bc78733fb2c44
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed May 2 15:42:08 2018 -0700
+
+    [subset] Add const to the hb_subset_plan_t input to a couple functions
+    in hb-subset-plan.
+
+ src/hb-subset-plan.cc |  4 ++--
+ src/hb-subset-plan.hh | 18 +++++++++---------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+commit 5b93f6916958e6096044372c1195501ea9f37436
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 2 14:59:14 2018 -0400
+
+    Rename some X-terminated members to Z-terminated
+
+    X-terminated means don't access this, it's not located correctly.
+    Z-terminated means this is a C array with no bound checking.
+
+ src/hb-aat-layout-morx-table.hh |  4 ++--
+ src/hb-open-type-private.hh     | 16 ++++++++--------
+ src/hb-ot-cmap-table.hh         | 28 ++++++++++++++--------------
+ src/hb-ot-glyf-table.hh         | 14 +++++++-------
+ src/hb-ot-var-avar-table.hh     |  6 +++---
+ 5 files changed, 34 insertions(+), 34 deletions(-)
+
+commit f1f6bc0a6f28a6611a247f37b8a83e6f782d7227
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed May 2 12:56:21 2018 -0400
+
+    [set] Fix init/fini of set on the stack to call object init/fini
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1017
+
+ src/hb-set-private.hh | 14 ++++++++++++--
+ src/hb-set.cc         |  4 ++--
+ 2 files changed, 14 insertions(+), 4 deletions(-)
+
+commit 37b95612d4ae8a9d75a1a5a5165bc073c709cf30
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 1 19:09:00 2018 -0400
+
+    Remove hb_auto_array_t
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1017
+
+ src/hb-coretext.cc      |  8 ++++----
+ src/hb-ot-cmap-table.hh |  2 +-
+ src/hb-ot-layout.cc     |  2 +-
+ src/hb-subset-plan.cc   |  2 +-
+ src/hb-uniscribe.cc     | 12 ++++++------
+ 5 files changed, 13 insertions(+), 13 deletions(-)
+
+commit 5c3112aec8b77d0fe39164f0f700e2a1aa810022
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 1 19:07:04 2018 -0400
+
+    s/hb_prealloced_array_t/hb_vector_t/g
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1017
+
+ src/hb-ot-cmap-table.hh  |  6 +++---
+ src/hb-ot-hmtx-table.hh  |  2 +-
+ src/hb-ot-map-private.hh | 10 +++++-----
+ src/hb-ot-os2-table.hh   |  4 ++--
+ src/hb-ot-post-table.hh  |  2 +-
+ src/hb-private.hh        |  6 +++---
+ src/hb-set-private.hh    |  4 ++--
+ src/hb-subset-glyf.cc    | 12 ++++++------
+ src/hb-subset-plan.cc    |  8 ++++----
+ src/hb-subset-plan.hh    |  6 +++---
+ src/hb-subset.cc         |  2 +-
+ 11 files changed, 31 insertions(+), 31 deletions(-)
+
+commit 4a01eb1234a72e6a91ed66d3ed60b5db378fe340
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 1 19:05:58 2018 -0400
+
+    Add hb_auto_t
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1017
+
+ src/hb-private.hh | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+commit a60ba7964ea196a3a02c48e813f2d9505d0cded2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 1 19:01:25 2018 -0400
+
+    s/finish/fini
+
+    For consistency.
+
+ src/hb-common.cc            |  8 ++++----
+ src/hb-mutex-private.hh     |  2 +-
+ src/hb-object-private.hh    | 10 +++++-----
+ src/hb-ot-layout-private.hh |  4 ++--
+ src/hb-ot-map-private.hh    | 14 +++++++-------
+ src/hb-ot-post-table.hh     |  2 +-
+ src/hb-ot-shape-private.hh  |  4 ++--
+ src/hb-ot-shape.cc          |  2 +-
+ src/hb-private.hh           | 16 ++++++++--------
+ src/hb-set-private.hh       |  6 +++---
+ src/hb-set.cc               |  2 +-
+ src/hb-subset-glyf.cc       |  6 +++---
+ src/hb-subset-plan.cc       |  6 +++---
+ src/hb-subset.cc            |  2 +-
+ 14 files changed, 42 insertions(+), 42 deletions(-)
+
+commit 17618ee2ecd02cb100ca911bd1907d108e9df475
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 1 18:39:25 2018 -0400
+
+    Add hb_object_fini()
+
+ src/hb-object-private.hh | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit bd5f918e2f86241d3e2cb706bf558de21c198860
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue May 1 18:27:41 2018 -0400
+
+    [set] Cache population
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1017
+
+ src/hb-set-private.hh | 24 +++++++++++++++++++++++-
+ src/hb-set.cc         |  1 +
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+
+commit 93b03119da8674a3eddb7879857e9f17fa16fd2a
+Author: violet-sippial <38817272+violet-sippial@users.noreply.github.com>
+Date:   Sat Apr 28 20:29:13 2018 +0200
+
+    [subset] Do not compare ttx progress output in the tests
+
+    Suppress progress messages of ttx. This avoids comparing this output
+    to the reference file which lets the test fail.
+
+ test/subset/run-tests.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit a57f5a1a185c333ae21a4ac1577387312895e107
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Apr 28 13:58:55 2018 +0430
+
+    [dwrite] Minor, enable the original code assertions
+
+ src/hb-directwrite.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 9925030f19851957381b78c197e6f50c77fde756
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Apr 13 12:43:29 2018 +0430
+
+    Don't decompose Bengali Rra and Rha
+
+    Fixes #779 and follow up to b01d9b3d90e892341ee4463f2eda4600850b97d8
+
+ src/hb-ot-shape-complex-indic.cc                        |   3 +++
+ test/shaping/data/in-house/Makefile.sources             |   1 +
+ .../fonts/932ad5132c2761297c74e9976fe25b08e5ffa10b.ttf  | Bin 0 ->
+ 22980 bytes
+ test/shaping/data/in-house/tests/indic-decompose.tests  |   1 +
+ 4 files changed, 5 insertions(+)
+
+commit 5ad87a93fefcb94ee5f28de8d75903b2550c8d94
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Apr 25 16:44:04 2018 +0430
+
+    Minor, improve file reading failing condition comment
+
+    https://bugzilla.gnome.org/show_bug.cgi?id=659212 for more context
+
+ src/hb-blob.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 2eaba80cbd3afb32363da93ebf6e60b11509d3f8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Apr 24 09:04:15 2018 +0430
+
+    Minor, re-add unused mark to some of ragel defined state machines
+    (#1005)
+
+ src/hb-ot-shape-complex-indic-machine.hh   | 2 +-
+ src/hb-ot-shape-complex-indic-machine.rl   | 2 +-
+ src/hb-ot-shape-complex-khmer-machine.hh   | 2 +-
+ src/hb-ot-shape-complex-khmer-machine.rl   | 2 +-
+ src/hb-ot-shape-complex-myanmar-machine.hh | 2 +-
+ src/hb-ot-shape-complex-myanmar-machine.rl | 2 +-
+ src/hb-ot-shape-complex-use-machine.hh     | 2 +-
+ src/hb-ot-shape-complex-use-machine.rl     | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
+
+commit 48f0204cfea616a788d75c5065ad4999c7685513
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Apr 24 08:11:13 2018 +0430
+
+    Minor, re-add unused mark for two TRACE_ macros
+
+    To revive Travis CI bot
+
+ src/hb-debug.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 816b8169a90e0454b82a83719fc9ec1c83934d6f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Apr 23 19:36:53 2018 +0430
+
+    Resolve some of clang's double-promotion warnings
+
+ src/hb-aat-layout-trak-table.hh    | 6 +++---
+ src/hb-open-type-private.hh        | 8 ++++----
+ src/hb-ot-layout-common-private.hh | 2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+commit 24b8b9b227f53b4f67a713c994cec04a5f774634
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Apr 23 19:03:57 2018 +0430
+
+    Resolve clang's used-but-marked-unused warnings
+
+ src/hb-debug.hh                            | 4 ++--
+ src/hb-font.cc                             | 4 ++--
+ src/hb-ft.cc                               | 8 ++++----
+ src/hb-open-type-private.hh                | 2 +-
+ src/hb-ot-font.cc                          | 6 +++---
+ src/hb-ot-shape-complex-indic-machine.hh   | 2 +-
+ src/hb-ot-shape-complex-indic-machine.rl   | 2 +-
+ src/hb-ot-shape-complex-khmer-machine.hh   | 2 +-
+ src/hb-ot-shape-complex-khmer-machine.rl   | 2 +-
+ src/hb-ot-shape-complex-myanmar-machine.hh | 2 +-
+ src/hb-ot-shape-complex-myanmar-machine.rl | 2 +-
+ src/hb-ot-shape-complex-use-machine.hh     | 2 +-
+ src/hb-ot-shape-complex-use-machine.rl     | 2 +-
+ src/hb-set.cc                              | 2 +-
+ src/hb-unicode.cc                          | 2 +-
+ 15 files changed, 22 insertions(+), 22 deletions(-)
+
+commit eaf649450a29115ca0b2aac2921cc40c17aa55ac
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Apr 23 18:39:40 2018 +0430
+
+    Resolve clang's conditional-uninitialize warnings
+
+ src/hb-ot-layout-gpos-table.hh | 2 +-
+ src/hb-ot-shape-normalize.cc   | 4 ++--
+ util/view-cairo.cc             | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 8b0d642e6610dd44f98a986580451eb562276897
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Apr 23 18:37:35 2018 +0430
+
+    Resolve some of clang's zero-as-null-pointer-constant warnings
+
+ src/hb-coretext.cc              | 4 ++--
+ src/hb-dsalgs.hh                | 2 +-
+ src/hb-ot-os2-unicode-ranges.hh | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 8100380d9e6fdd52eb7054f3300046028dcde8f9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Apr 22 10:58:37 2018 +0430
+
+    Minor, fix calloc call order
+
+ src/hb-blob.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2a4cdfad20fa8f0d2894383c2f10a6983f88b34b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Apr 20 21:12:58 2018 +0430
+
+    [aat/kerx] Minor (#1003)
+
+ src/hb-aat-layout-kerx-table.hh | 46
+ +++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
+
+commit ce17340b23d96f543cd88e400e631bdb5656331c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Apr 20 10:29:06 2018 +0430
+
+    Add hb_blob_create_from_file, a new API (#926)
+
+ TODO                         |   2 -
+ docs/harfbuzz-sections.txt   |   1 +
+ src/dump-emoji.cc            |  33 +----------
+ src/dump-fon.cc              |  11 +---
+ src/hb-blob.cc               | 131
+ ++++++++++++++++++++++++++++++++++++++++---
+ src/hb-blob.h                |   2 +
+ src/main.cc                  |  26 +--------
+ src/test-buffer-serialize.cc |  42 +-------------
+ src/test-size-params.cc      |  42 +-------------
+ src/test-would-substitute.cc |  42 +-------------
+ src/test.cc                  |  42 +-------------
+ test/api/hb-subset-test.h    |  54 +-----------------
+ test/api/hb-test.h           |  33 -----------
+ util/options.cc              |  88 +++++++----------------------
+ util/options.hh              |   6 --
+ util/view-cairo.hh           |   3 +-
+ 16 files changed, 159 insertions(+), 399 deletions(-)
+
+commit 4fa1c6705a1bc5299adb5a848ceaf6ac8f33c0ba
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Apr 19 15:30:35 2018 -0700
+
+    [subset] Check instruction offsets in glyph to ensure they are
+    in bounds.
+
+ src/hb-ot-glyf-table.hh                            |  18 ++++++++++--
+ .../oom-ccc61c92d589f895174cdef6ff2e3b20e9999a1a   | Bin 0 -> 63302 bytes
+ test/api/test-subset-glyf.c                        |  31
+ +++++++++++++++++++++
+ 3 files changed, 47 insertions(+), 2 deletions(-)
+
+commit 3c97614598ecd0bbccb2c90a8e0e99f010952b76
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Apr 19 13:39:57 2018 -0700
+
+    [subset] In subset fuzzer run through drop hints and keep hints
+    pathways.
+
+ test/fuzzing/hb-subset-fuzzer.cc | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+commit 6fdeeb2ae3059ac1bc5ff99fd1655b4e94576151
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Thu Apr 19 23:41:37 2018 +0300
+
+    [util] Check all specified shapers are known (#993)
+
+    A bit brute force and requires all shapers to be known, not just one.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/956
+
+ util/options.cc | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+commit 535fb23c0211c733d59f72c3431643d89dc16d16
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Apr 18 17:37:39 2018 -0700
+
+    [subset] Add integration tests for cmap breakge.
+
+ .../full-font/Roboto-Regular.default.D7,D8,D9,DA,DE.ttf  | Bin 0 ->
+ 3668 bytes
+ .../Roboto-Regular.drop-hints.D7,D8,D9,DA,DE.ttf         | Bin 0 ->
+ 2188 bytes
+ test/subset/data/tests/full-font.tests                   |   1 +
+ 3 files changed, 1 insertion(+)
+
+commit e29c8e33f3debf721e18306b896df7a3233386ac
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Apr 18 17:32:43 2018 -0700
+
+    [subset] Add a test for previous cmap breakage.
+
+ test/api/fonts/Roboto-Regular.D7,D8,D9,DA,DE.ttf | Bin 0 -> 2972 bytes
+ test/api/test-subset-cmap.c                      |  23
+ +++++++++++++++++++++++
+ 2 files changed, 23 insertions(+)
+
+commit 5e318e09ba590eef7b7ec047d7857f7f1eb7d787
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Apr 18 17:13:37 2018 -0700
+
+    [subset] Fix broken cmap creation.
+    It was ignoring the restriction that gids must be consecutive to be
+    placed into a single group.
+
+ src/hb-ot-cmap-table.hh | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
+
+commit a47070cd40cee51fe792cb838ff9f21e0ea482c6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Apr 18 12:09:37 2018 +0430
+
+    Minor, annotate the added tables with likely/unlikely (#997)
+
+ src/hb-aat-fmtx-table.hh        |  2 +-
+ src/hb-aat-gcid-table.hh        |  2 +-
+ src/hb-aat-layout-ankr-table.hh |  7 ++++---
+ src/hb-aat-layout-bsln-table.hh |  9 +++++----
+ src/hb-aat-layout-feat-table.hh | 10 +++++-----
+ src/hb-aat-layout-kerx-table.hh | 12 ++++++------
+ src/hb-aat-layout-trak-table.hh | 21 +++++++++++++--------
+ src/hb-aat-ltag-table.hh        |  2 +-
+ src/hb-ot-color-colr-table.hh   | 10 +++++-----
+ src/hb-ot-color-cpal-table.hh   | 18 ++++++++++--------
+ src/hb-ot-color-sbix-table.hh   |  2 +-
+ src/hb-ot-color-svg-table.hh    |  6 +++---
+ 12 files changed, 55 insertions(+), 46 deletions(-)
+
+commit 1a309dcd72f9f54672a7341788a9b2241c922793
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Apr 17 18:11:32 2018 -0700
+
+    [subset] Remove printf's from fuzzing targets.
+
+ test/fuzzing/hb-subset-fuzzer.cc                | 1 -
+ test/fuzzing/hb-subset-get-codepoints-fuzzer.cc | 1 -
+ 2 files changed, 2 deletions(-)
+
+commit c55aa147c33eb733ab552d404a88749cb6ff6d73
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Apr 18 00:01:20 2018 +0430
+
+    Do sanitization before the use on 'main' mini-program (#994)
+
+ src/main.cc | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
+
+commit c02b40e58f35ecd10c4945d2fa2b7074137c2c04
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Apr 17 08:21:22 2018 -0600
+
+    [subset] add a fuzzer target for subset_get_all_codepoints
+    method. (#987)
+
+ test/fuzzing/CMakeLists.txt                     |  7 ++++++-
+ test/fuzzing/Makefile.am                        | 16 ++++++++++++++++
+ test/fuzzing/hb-subset-get-codepoints-fuzzer.cc | 24
+ ++++++++++++++++++++++++
+ test/fuzzing/run-subset-fuzzer-tests.py         | 19 ++++++++++++++++++-
+ 4 files changed, 64 insertions(+), 2 deletions(-)
+
+commit 924803166e074c569ecfa7e598686f334777770f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Apr 17 15:32:02 2018 +0200
+
+    [colr] Check layer record access
+
+ src/hb-ot-color-colr-table.hh | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+commit 5dadbb0fa096574b6bccd75cced203baf615fedf
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Apr 17 07:00:23 2018 -0600
+
+    [subset] Add implementation of cmap format 12 codepoint
+    listing. (#988)
+
+ src/hb-ot-cmap-table.hh                        |  21 +++++++++++-
+ test/api/fonts/Roboto-Regular.abc.format12.ttf | Bin 0 -> 2412 bytes
+ test/api/test-subset-codepoints.c              |  44
+ +++++++++++++++++++++++++
+ 3 files changed, 64 insertions(+), 1 deletion(-)
+
+commit 6771e79bcc2166b5c03ca615d271c8508d692416
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Apr 17 09:36:52 2018 +0430
+
+    Add pre-opentype font pages detection code (#986)
+
+    As Khaled's finding on #981 this is the way Uniscribe detects those
+    fonts. This is its detection part.
+
+ src/hb-ot-os2-table.hh | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+commit 277e328986d5887fa93c72dc8b12d842d41db87f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Apr 17 09:13:35 2018 +0430
+
+    Make some of implicit header uses explicit (#989)
+
+    Splitted from #950 and #986 IIRC Chromium had a policy about this
+    encouraging it,
+    not sure about automated way to detect and add them but for now lets
+    have the needed
+    ones of them.
+
+ src/hb-aat-layout-morx-table.hh | 1 +
+ src/hb-aat-layout-trak-table.hh | 1 +
+ src/hb-ot-hdmx-table.hh         | 1 +
+ src/hb-ot-hmtx-table.hh         | 1 +
+ src/hb-ot-os2-table.hh          | 1 +
+ src/hb-ot-post-table.hh         | 1 +
+ 6 files changed, 6 insertions(+)
+
+commit f5811bad04be9dac8a4fca8e16904d6270e47777
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Apr 17 09:13:03 2018 +0430
+
+    Add round to F2DOT14 inner store setter (#990)
+
+    It uses floor implicitly without it but explicit use of round will
+    be more correct.
+
+ src/hb-open-type-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 39754fb65981fa8d11615e1dced852285ad09e4e
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Apr 16 15:09:27 2018 -0700
+
+    [subset] Don't assume the last segment in cmap 4 can be skipped,
+    actually check it.
+
+ src/hb-ot-cmap-table.hh | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit 21a181af2bf1582991c55de5f9281494733c5d12
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Apr 10 15:40:24 2018 -0700
+
+    [subset] sketch out support for a call that lists all codepoints
+    present in a font. Implement support for it in format 4 cmap sub
+    table.
+
+ src/hb-ot-cmap-table.hh                       |  37 ++++++++++++++--
+ src/hb-subset.cc                              |  14 ++++++
+ src/hb-subset.h                               |   5 ++-
+ test/api/Makefile.am                          |   2 +
+ test/api/fonts/Roboto-Regular.abc.format4.ttf | Bin 0 -> 2424 bytes
+ test/api/test-subset-codepoints.c             |  59
+ ++++++++++++++++++++++++++
+ 6 files changed, 113 insertions(+), 4 deletions(-)
+
+commit aef96e246cb695c4c83b8b6daed06a0d14fe1d32
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Apr 16 18:30:25 2018 +0430
+
+    Further improvements on dump-fon (#985)
+
+ src/dump-fon.cc | 153
+ +++++++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 123 insertions(+), 30 deletions(-)
+
+commit 67dfb1937b703b3f1dc45251f4f884abf35c8576
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Apr 16 14:25:45 2018 +0430
+
+    Add dump-fon, a prototype on how to work with .fon/.fnt files (#981)
+
+ src/Makefile.am |   4 +
+ src/dump-fon.cc | 475
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 479 insertions(+)
+
+commit ce99dd04de830c8426af14c11dbee45f8bcc9e60
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Apr 15 22:08:50 2018 +0430
+
+    Implement to_float and set_float of F2DOT14 (#984)
+
+ src/hb-open-type-private.hh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit 435b1878e710b67e21872572ad9fd5ed1369e97f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Apr 15 21:18:48 2018 +0430
+
+    Rename UINT24 to HBUINT24 for consistency (#983)
+
+ src/hb-open-type-private.hh        | 2 +-
+ src/hb-ot-cmap-table.hh            | 6 +++---
+ src/hb-ot-layout-common-private.hh | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 3737c652a5e0b6d73b6090dc6c3863008c9dc8fd
+Merge: 632713ba 8f4c1230
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Apr 13 23:19:19 2018 +0430
+
+    Merge pull request #979 from ebraminio/msvc05
+
+    Reinstate support for Visual Studio 2005
+
+commit 8f4c12308a8d9e61922fb352e913acae46b28a88
+Author: Tor Andersson <tor.andersson@artifex.com>
+Date:   Fri Apr 13 23:01:54 2018 +0430
+
+    Reinstate support for Visual Studio 2005
+
+ src/hb-common.h    | 10 ++++++++++
+ src/hb-private.hh  |  6 +++---
+ src/hb-ucdn/ucdn.h | 10 ++++++++++
+ 3 files changed, 23 insertions(+), 3 deletions(-)
+
+commit 632713babbc349920f71f73cc304c9a18078fd6b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Apr 12 14:17:03 2018 +0430
+
+    Always enable atexit on Android (#971)
+
+    Obviously one can use a newer NDK for building an updated HarfBuzz
+    instead that now pretty old version however I am concerned if that
+    version checking is working with clang that is used with the newer
+    NDK versions.
+
+ src/hb-private.hh | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+commit f24b0b9728f87d7599867a4ba6ec7d30da43b869
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Apr 12 13:40:45 2018 +0430
+
+    Update the links and revive the dead ones
+
+ src/hb-common.cc                           |  4 ++--
+ src/hb-common.h                            |  6 +++---
+ src/hb-coretext.cc                         |  6 +++---
+ src/hb-ft.cc                               |  2 +-
+ src/hb-ot-cmap-table.hh                    | 12 ++++++------
+ src/hb-ot-layout-common-private.hh         |  8 ++++----
+ src/hb-ot-layout-private.hh                |  2 +-
+ src/hb-ot-layout.h                         |  2 +-
+ src/hb-ot-shape-complex-arabic.cc          |  4 ++--
+ src/hb-ot-shape-complex-indic-private.hh   |  2 +-
+ src/hb-ot-shape-complex-indic.cc           |  4 ++--
+ src/hb-ot-shape-complex-khmer.cc           |  2 +-
+ src/hb-ot-shape-complex-myanmar-private.hh |  2 +-
+ src/hb-ot-shape-complex-myanmar.cc         |  2 +-
+ src/hb-ot-shape-complex-thai.cc            |  2 +-
+ src/hb-ot-shape-complex-use-private.hh     |  2 +-
+ src/hb-ot-shape-complex-use.cc             |  2 +-
+ src/hb-ot-shape-fallback.cc                |  2 +-
+ src/hb-ot-tag.cc                           |  9 ++++-----
+ src/hb-private.hh                          |  4 ++--
+ src/hb-string-array.hh                     |  2 +-
+ src/hb-unicode-private.hh                  | 18 +++++++++---------
+ test/api/test-buffer.c                     |  2 +-
+ test/api/test-ot-tag.c                     |  6 +++---
+ test/api/test-shape.c                      |  2 +-
+ 25 files changed, 54 insertions(+), 55 deletions(-)
+
+commit a02c3ee70f4ca9de1fd55f1d8d535f6bd0d32606
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Apr 12 13:38:19 2018 +0430
+
+    Add or update tables specifications links
+
+ src/hb-aat-fmtx-table.hh        |  9 ++++-----
+ src/hb-aat-gcid-table.hh        |  8 ++++----
+ src/hb-aat-layout-ankr-table.hh |  8 ++++----
+ src/hb-aat-layout-bsln-table.hh | 10 +++++-----
+ src/hb-aat-layout-feat-table.hh | 10 +++++-----
+ src/hb-aat-layout-kerx-table.hh |  4 ++++
+ src/hb-aat-layout-morx-table.hh |  4 ++++
+ src/hb-aat-layout-trak-table.hh |  4 ++++
+ src/hb-aat-ltag-table.hh        | 10 +++++-----
+ src/hb-ot-color-cbdt-table.hh   | 24 ++++++++++++------------
+ src/hb-ot-color-colr-table.hh   |  6 +++---
+ src/hb-ot-color-cpal-table.hh   |  6 +++---
+ src/hb-ot-color-sbix-table.hh   | 11 ++++++-----
+ src/hb-ot-color-svg-table.hh    |  3 ++-
+ src/hb-ot-glyf-table.hh         |  4 ++--
+ src/hb-ot-hdmx-table.hh         | 11 ++++++-----
+ src/hb-ot-head-table.hh         | 10 +++++-----
+ src/hb-ot-hhea-table.hh         | 15 ++++++++-------
+ src/hb-ot-hmtx-table.hh         | 14 +++++++-------
+ src/hb-ot-kern-table.hh         | 10 ++++++----
+ src/hb-ot-layout-base-table.hh  |  3 ++-
+ src/hb-ot-layout-gdef-table.hh  |  3 ++-
+ src/hb-ot-layout-gpos-table.hh  |  3 ++-
+ src/hb-ot-layout-gsub-table.hh  |  3 ++-
+ src/hb-ot-layout-jstf-table.hh  |  3 ++-
+ src/hb-ot-math-table.hh         |  3 ++-
+ src/hb-ot-maxp-table.hh         |  3 ++-
+ src/hb-ot-name-table.hh         |  4 ++--
+ src/hb-ot-os2-table.hh          |  3 +--
+ src/hb-ot-post-table.hh         |  8 ++++----
+ src/hb-ot-var-avar-table.hh     | 14 ++++++++------
+ src/hb-ot-var-fvar-table.hh     | 15 ++++++++-------
+ src/hb-ot-var-hvar-table.hh     |  7 ++++---
+ src/hb-ot-var-mvar-table.hh     |  4 ++--
+ 34 files changed, 142 insertions(+), 115 deletions(-)
+
+commit b799fc80777c1424e469a835f782b4e0f41c0043
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Apr 11 18:36:09 2018 +0430
+
+    minor, use LOffsetTo and LArrayOf whenever possible (#966)
+
+ src/hb-aat-layout-morx-table.hh | 10 ++++++----
+ src/hb-aat-ltag-table.hh        |  2 +-
+ src/hb-open-file-private.hh     |  2 +-
+ src/hb-ot-cmap-table.hh         |  4 ++--
+ 4 files changed, 10 insertions(+), 8 deletions(-)
+
+commit cb3fa70cd4c33e9f1c736f778cb3b606d15c0936
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Apr 11 18:00:13 2018 +0430
+
+    [dwrite] Cosmetic change (#963)
+
+ src/hb-directwrite.cc | 39 +++++++++++++++++++--------------------
+ src/hb-directwrite.h  |  5 +++--
+ 2 files changed, 22 insertions(+), 22 deletions(-)
+
+commit 09d5e5468858f4403ce91aca46749397b23825d9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Apr 11 17:41:48 2018 +0430
+
+    [graphite] Use tabs instead 8 spaces (#965)
+
+ src/hb-graphite2.cc | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit 211da5efdcaff203eafda2a5081cd81e3d6cc35b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Apr 11 17:41:24 2018 +0430
+
+    [aat] Cosmetic changes (#964)
+
+ src/hb-aat-gcid-table.hh            |  4 ++--
+ src/hb-aat-layout-ankr-table.hh     | 11 ++++++-----
+ src/hb-aat-layout-common-private.hh |  6 +++---
+ src/hb-aat-layout-kerx-table.hh     | 29 +++++++++++++++--------------
+ src/hb-aat-layout-morx-table.hh     |  6 +++---
+ src/hb-aat-layout-trak-table.hh     | 10 +++++-----
+ src/hb-aat-ltag-table.hh            |  8 ++++----
+ 7 files changed, 38 insertions(+), 36 deletions(-)
+
+commit f8bb582bcc2af6cae531d8255da002f0c514f1a9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Apr 11 17:13:20 2018 +0430
+
+    [ot-color] Cosmetic changes (#962)
+
+ src/hb-open-type-private.hh   |  1 -
+ src/hb-ot-color-cbdt-table.hh | 10 +++++-----
+ src/hb-ot-color-cpal-table.hh |  4 ++--
+ src/hb-ot-color-sbix-table.hh | 41
+ ++++++++++++++++++++---------------------
+ src/hb-ot-color-svg-table.hh  | 37 +++++++++++++++++++------------------
+ 5 files changed, 46 insertions(+), 47 deletions(-)
+
+commit 1e1e9086c09185a7bd6f65d1e391418642229616
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Apr 10 03:26:01 2018 +0430
+
+    minor
+
+ src/dump-emoji.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit a62554af89b8324c73c623e64f87ec822c757515
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Apr 10 00:53:50 2018 +0430
+
+    [colr/cpal] Improvements and add a sample renderer (#927)
+
+ src/Makefile.am               |  13 ++-
+ src/dump-emoji.cc             | 181
+ +++++++++++++++++++++++++++++++++++++++---
+ src/hb-ot-color-colr-table.hh |  43 +++++++++-
+ src/hb-ot-color-cpal-table.hh |  70 +++++++++-------
+ 4 files changed, 259 insertions(+), 48 deletions(-)
+
+commit f25731a3606ff0972505eeb934477480019ffcd3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Apr 10 00:51:57 2018 +0430
+
+    [ci] Don't fail on brew warnings
+
+    Not the best fix but it works and we don't care about brew warnings,
+    so
+
+ .travis.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 58e569e5f7143a12cadcd6c42434558f9981e00e
+Author: Ryan Schmidt <ryandesign@macports.org>
+Date:   Thu Apr 5 17:03:36 2018 -0500
+
+    Fix build with CoreText on OS X 10.7 and earlier (#952)
+
+ src/hb-coretext.cc | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+commit d3984b45b5d110f34febbb9e1d8a9c2203080a1b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Apr 1 12:16:42 2018 +0430
+
+    [aat] Further improvements on feat (#948)
+
+ src/Makefile.sources                               |  2 +-
+ ...t-feat-table.hh => hb-aat-layout-feat-table.hh} | 48
+ +++++++++++-----------
+ src/hb-aat-layout.cc                               |  2 +-
+ 3 files changed, 25 insertions(+), 27 deletions(-)
+
+commit 93dad9ade7078d28086b2e5c3b5e8dafa67617d2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Mar 31 17:06:17 2018 +0200
+
+    [hangul] Fix comment
+
+ src/hb-ot-shape-complex-hangul.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 44bf4320922d340d1357c4d42d093fa466c3610f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Mar 31 16:51:36 2018 +0430
+
+    [aat] Implement feat table parsing (#947)
+
+ src/Makefile.sources     |   3 +-
+ src/hb-aat-feat-table.hh | 122
+ +++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout.cc     |   1 +
+ 3 files changed, 125 insertions(+), 1 deletion(-)
+
+commit 08b8eb678a6cb74c118a32e75b880599e3ac4a7c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Mar 31 12:15:50 2018 +0200
+
+    Another try at fixing linker issue
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/880
+
+ configure.ac    | 11 +++++++++--
+ src/Makefile.am |  6 ------
+ 2 files changed, 9 insertions(+), 8 deletions(-)
+
+commit eff36cd8f06ee992218ed3f198f6a4ea19d7089c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 30 22:25:35 2018 +0430
+
+    Minor build related changes
+
+ .editorconfig  | 3 +++
+ CMakeLists.txt | 6 +++---
+ configure.ac   | 2 +-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
+
+commit 9d68f73d5cf3f3df6bc5516ada987d9019d3fe3d
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 30 21:57:10 2018 +0430
+
+    [aat] Implement gcid table parsing (#944)
+
+ src/Makefile.sources     |  1 +
+ src/hb-aat-gcid-table.hh | 73
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout.cc     |  1 +
+ 3 files changed, 75 insertions(+)
+
+commit 0e230a83ae8a2c5fbe40dc0e74e5e7ead106e45e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 30 19:36:00 2018 +0430
+
+    [aat] Implement bsln table parsing (#943)
+
+ src/Makefile.sources            |   1 +
+ src/hb-aat-layout-bsln-table.hh | 156
+ ++++++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout.cc            |   3 +-
+ 3 files changed, 159 insertions(+), 1 deletion(-)
+
+commit 70d36543aa929320ff82a9ce589786e58adb1836
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 30 05:00:28 2018 +0430
+
+    Make atexit callbacks threadsafe (#930)
+
+ src/hb-common.cc    | 60
+ +++++++++++++++++++++++++++++------------------------
+ src/hb-ft.cc        | 44 ++++++++++++++++++++++++---------------
+ src/hb-glib.cc      |  7 ++++++-
+ src/hb-icu.cc       |  7 ++++++-
+ src/hb-ot-font.cc   |  7 ++++++-
+ src/hb-shape.cc     |  7 ++++++-
+ src/hb-shaper.cc    |  9 ++++++--
+ src/hb-ucdn.cc      |  7 ++++++-
+ src/hb-uniscribe.cc |  8 +++++++
+ 9 files changed, 105 insertions(+), 51 deletions(-)
+
+commit d3a432a7b272917edb83f8fe8468120beb37206b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 30 04:58:47 2018 +0430
+
+    [graphite] Make get_table threadsafe (#931)
+
+ src/hb-graphite2.cc | 10 ++++++----
+ src/hb-graphite2.h  |  4 ++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+commit 80395f14e8873f30d2c9a49e42fc9febf5c87e45
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Mar 29 22:00:41 2018 +0430
+
+    Make gen-* scripts LC_ALL=C compatible (#942)
+
+ src/gen-arabic-table.py | 5 ++---
+ src/gen-indic-table.py  | 4 ++--
+ src/gen-use-table.py    | 4 ++--
+ 3 files changed, 6 insertions(+), 7 deletions(-)
+
+commit 26e0cbd834e7a8bab331b395257e9c21dde4c2b1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Mar 29 21:22:47 2018 +0430
+
+    Actual py3 compatibility making on gen-* scripts (#941)
+
+ src/gen-arabic-table.py       |  6 ++----
+ src/gen-indic-table.py        | 13 +++++--------
+ src/gen-use-table.py          | 12 +++++++++---
+ test/shaping/hb_test_tools.py |  4 ++--
+ 4 files changed, 18 insertions(+), 17 deletions(-)
+
+commit cab2c2c08c67e7d1606c03700df3e4e9c0dc59fd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Mar 29 12:48:47 2018 +0430
+
+    Make more gen-* scripts py3 compatible (#940)
+
+ src/Makefile.am                                    |   2 +-
+ src/gen-arabic-table.py                            | 163
+ +++++++++++----------
+ src/gen-def.py                                     |   2 +-
+ src/gen-indic-table.py                             | 120 +++++++--------
+ src/gen-unicode-ranges.py                          |   8 +-
+ src/gen-use-table.py                               |   3 +-
+ src/hb-ot-shape-complex-indic-table.cc             |   2 -
+ src/sample.py                                      |   5 +-
+ test/fuzzing/run-shape-fuzzer-tests.py             |   3 +-
+ test/fuzzing/run-subset-fuzzer-tests.py            |   3 +-
+ .../data/text-rendering-tests/extract-tests.py     |   3 +-
+ test/shaping/hb_test_tools.py                      |   3 +-
+ test/shaping/run-tests.py                          |   3 +-
+ test/subset/run-tests.py                           |   2 +-
+ 14 files changed, 166 insertions(+), 156 deletions(-)
+
+commit 5f7f0bfa1ecef6406cb9670b4eb057ea12c28730
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Mar 29 04:22:53 2018 +0430
+
+    Add README.wine.md and touch some other docs (#939)
+
+ Makefile.am                       |  3 ++-
+ README.python => README.python.md | 12 +++++++++---
+ README.wine.md                    | 40
+ +++++++++++++++++++++++++++++++++++++++
+ RELEASING.md                      | 25 +++++++++++++-----------
+ 4 files changed, 65 insertions(+), 15 deletions(-)
+
+commit 5aa2c6e194bc75637d3f4862a096c0e7100072e2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 28 15:33:51 2018 -0700
+
+    [atexit] Make hb_languate_item_t *langs freeing threadsafe
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/923
+
+ src/hb-common.cc | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+commit 8c9451107d46c87ed0e50e718977f0c286972f3b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 28 14:06:58 2018 -0700
+
+    Fix one UBSan warning
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/935
+
+ src/hb-font-private.hh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 48baf7e389faf8a57649ddc572da2ec8ec8829bb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 28 13:38:51 2018 -0700
+
+    [uniscribe] Fixup for previous commit
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/934
+
+ src/hb-uniscribe.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit b17e1a40885245df690a14c7528939b3881e1fe4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 28 10:44:52 2018 -0700
+
+    [uniscribe] Fix assertion fail in checksum calc
+
+    Program:
+    Z:\Users\ebrahim\Desktop\harfbuzz\winbuild\util\.libs\hb-shape.exe
+    File: ../../src/hb-open-type-private.hh, Line 769
+
+    Expression: 0 == (Length & 3)
+
+    abnormal program termination
+
+ src/hb-uniscribe.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a48dd6ef235d569d4b6f6f213ba93a54e142458d
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Mar 28 19:08:19 2018 +0430
+
+    Make gen-use-table.py py3 compatible (#932)
+
+ src/gen-use-table.py | 105
+ ++++++++++++++++++++++++++-------------------------
+ 1 file changed, 53 insertions(+), 52 deletions(-)
+
+commit 1c3372786c503f3f9108971dfa8956e4cb95f65d
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 27 10:42:19 2018 -0700
+
+    [subset] fix infinite loop bug in looping through tables for
+    subsetting.
+
+ src/hb-subset.cc                                   |   2 +-
+ ...ase-minimized-hb-subset-fuzzer-5521982557782016 | Bin 0 -> 1228 bytes
+ test/api/test-subset.c                             |  23
+ +++++++++++++++++++++
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+
+commit 8fd55422c3fa2279991d93875d912fca4ee89cf5
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Mar 27 16:57:09 2018 +0430
+
+    Implement an internal emojis dumper tool (#909)
+
+    Later to be expanded to a more general tool but for now it only
+    supports CBDT, SVG and CBDT.
+
+ CMakeLists.txt                |   2 +-
+ src/Makefile.am               |   4 ++
+ src/dump-emoji.cc             | 141
+ ++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-color-cbdt-table.hh |  71 +++++++++++++++++++++
+ src/hb-ot-color-sbix-table.hh |  79 ++++++++++++++---------
+ src/hb-ot-color-svg-table.hh  |  56 ++++++++++++-----
+ 6 files changed, 307 insertions(+), 46 deletions(-)
+
+commit 430f82817d048ac917f1956e07d9089b9fd7e695
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Mar 27 13:59:56 2018 +0430
+
+    [ci] Fix coverage build fail (#925)
+
+ src/Makefile.am | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+commit 07851aae9d28fed751663c543799f2b59369f892
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Mar 26 20:56:56 2018 -0600
+
+    [subset] Couple of fixes for fuzzer discovered issues. (#924)
+
+    * [subset] sanitize individual DeviceRecord's as part of hdmx
+    sanitization.
+
+    * [subset] Fix out of bounds read with non-two byte align glyphs.
+
+    * [subset] Just use size_device_record >= DeviceRecord::min_size.
+
+    * [subset] Add TODO.
+
+    * [subset] Re-order checks in hdmx sanitize.
+
+ src/hb-ot-hdmx-table.hh                            |   1 +
+ src/hb-subset-glyf.cc                              |   6 +++---
+ src/hb-subset.cc                                   |   6 +++++-
+ ...ase-minimized-hb-subset-fuzzer-5609911946838016 | Bin 0 -> 313 bytes
+ ...ase-minimized-hb-subset-fuzzer-6651660668502016 | Bin 0 -> 15229 bytes
+ test/api/test-subset-hdmx.c                        |  23
+ +++++++++++++++++++++
+ 6 files changed, 32 insertions(+), 4 deletions(-)
+
+commit 6f46883f5b74b206a3b77246891ab2ac57a27c4e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Mar 26 19:55:22 2018 -0700
+
+    [hdmx] Minor
+
+ src/hb-ot-hdmx-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c589681926e50834bdc614479efced7382dfbf61
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Mar 26 19:55:16 2018 -0700
+
+    Minor
+
+ src/check-symbols.sh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 19ec366fb12afe5fce23239bbeb61e67d732a169
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Mar 26 15:09:54 2018 -0700
+
+    Fix previous commit
+
+    Automake has this stupid behavior where if your Makefile.am has
+    syntactic error, it can get to a state that make succeeds but just
+    ignores broken Makefile.am.  Ouch.
+
+ src/Makefile.am | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 44b6c77c64d367eb3c9227cf1c0fbaff4ab294b2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Mar 26 14:26:45 2018 -0700
+
+    Try fixing linking again
+
+    Before 1.7.5, we were setting -fno-exceptions etc on CXXFLAGS. In
+    1.7.6
+    we set it as CPPFLAGS. Try fixing. Also, I'm fairly sure it's safe to
+    set these unconditionally.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/880 (or so I hope)
+
+ src/Makefile.am      | 19 +++++++------------
+ test/api/Makefile.am |  2 +-
+ 2 files changed, 8 insertions(+), 13 deletions(-)
+
+commit e4d1cbfb4fbc17d7dbe08133d1e5e181e1c9bbc5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Mar 26 14:09:29 2018 -0700
+
+    Add HB_SUBSET_BUILTIN
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/865
+
+ src/hb-subset.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c14b24fcd0052fc6100c32deea6ee1dcb0c98f85
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Mar 26 10:44:54 2018 -0700
+
+    Add HB_NO_ATEXIT
+
+ src/hb-private.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit aa53cb50ba3eea5c23458207faf879bd162d6599
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Mar 26 13:28:26 2018 +0430
+
+    [aat] Unprefix not essentially layout tables (#921)
+
+ src/Makefile.sources                                      | 4 ++--
+ src/{hb-aat-layout-fmtx-table.hh => hb-aat-fmtx-table.hh} | 7 ++++---
+ src/hb-aat-layout.cc                                      | 4 ++--
+ src/{hb-aat-layout-ltag-table.hh => hb-aat-ltag-table.hh} | 7 ++++---
+ 4 files changed, 12 insertions(+), 10 deletions(-)
+
+commit 8269791900cc765234915b29c974b34ed1f35519
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Sun Mar 25 20:50:41 2018 -0400
+
+    Allow trailing non-numeric chars in --unicodes
+
+ util/options.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit a289aaff477dfbda25b90ba5ffb1296518d68d21
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Mar 26 01:14:07 2018 -0700
+
+    [aat/ltag] Whitespace
+
+ src/hb-aat-layout-ltag-table.hh | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+commit 158f2810b2868c7398dc80cbb089b88a566ce99e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Mar 26 12:04:30 2018 +0430
+
+    [aat/ltag] Implement the table parsing (#911)
+
+ src/Makefile.sources            |  2 ++
+ src/hb-aat-layout-fmtx-table.hh |  6 ++--
+ src/hb-aat-layout-kerx-table.hh |  4 +--
+ src/hb-aat-layout-ltag-table.hh | 80
+ +++++++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout-morx-table.hh |  4 +--
+ src/hb-aat-layout-trak-table.hh |  4 +--
+ src/hb-aat-layout.cc            |  3 +-
+ 7 files changed, 93 insertions(+), 10 deletions(-)
+
+commit 9eee38a55cdcbfd34b530dcc8defff84057a9eb2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Mar 25 23:56:02 2018 +0430
+
+    [aat/fmtx] Implement the table parsing (#910)
+
+ src/hb-aat-layout-fmtx-table.hh | 67
+ +++++++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout-trak-table.hh |  4 +--
+ src/hb-aat-layout.cc            |  1 +
+ 3 files changed, 70 insertions(+), 2 deletions(-)
+
+commit 1d3f4f835175c658c63e96be12052b80d27cf6fa
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Mar 25 18:45:50 2018 +0430
+
+    [ci] Add a build only apple-gcc-4.2 i686 bot
+
+ .circleci/config.yml | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+commit fe18c471a4aee1f6eba62383b64f0a8969cbc6ea
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Mar 25 18:19:23 2018 +0430
+
+    [dwrite] minor
+
+ src/dev-run.sh        |   5 ++-
+ src/hb-directwrite.cc | 118
+ ++++++++++++++++++++------------------------------
+ 2 files changed, 50 insertions(+), 73 deletions(-)
+
+commit ebccd019749e24e6c045518ee1ffbfc947744204
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Mar 24 17:51:55 2018 -0700
+
+    More ULL fixes
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/901
+
+ src/hb-private.hh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 7ec3ba21f0dc43f9f8ea1fc4344d3ea4524841b1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Mar 24 14:12:12 2018 -0700
+
+    Define uint64_t constants with ULL suffix
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/901
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 19256bef9d264f96187261929992b96e61fa43fd
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Mon Mar 12 13:33:03 2018 +0800
+
+    hb-private.hh: Add fallback implementation for round()
+
+    For pre-C99 compilers that do not support round(), we need to have a
+    simplistic implementation for it, when it is not detected during build
+    configuration, either via CMake or autotools, by using floor() and
+    ceil(), which are provided in the pre-C99 compilers.
+
+    Please see discussion at commit 86a0ac2 for more details for re-adding
+    this patch.
+
+ src/hb-private.hh | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+commit 95f0458f44e9a7ec250f1bc7d9f060745dbabcf3
+Author: Nikolaus Waxweiler <madigens@gmail.com>
+Date:   Fri Mar 23 19:38:11 2018 +0000
+
+    Policy 0063 must be enabled to have hidden inline visibility... (#900)
+
+    ...on static builds.
+
+ CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 2a236063392c4f7c4d718be36d2dec2b8804b560
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 23 18:37:01 2018 +0430
+
+    Fix llvm-gcc-4.2 compile issue and add a macOS bot to test it (#899)
+
+ .circleci/config.yml        | 16 ++++++++++++++++
+ src/hb-open-file-private.hh | 12 +++++++-----
+ src/hb-ot-glyf-table.hh     | 40 ++++++++++++++++++++++------------------
+ src/hb-ot-kern-table.hh     |  2 +-
+ 4 files changed, 46 insertions(+), 24 deletions(-)
+
+commit 7919033ce8f6fd32b2dd980ad0aa59c7149a4827
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Mar 22 16:04:38 2018 +0430
+
+    [dwrite] Replace rest of 'malloc/free's with 'new/delete' (#897)
+
+ src/hb-directwrite.cc | 251
+ +++++++++++++++++++++++++-------------------------
+ 1 file changed, 127 insertions(+), 124 deletions(-)
+
+commit 3f55e0e74680c246819233a7250df612821698d7
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 20 17:36:52 2018 -0700
+
+    [subset] Check for the Null table and not nullptr to detect failure
+    to find a table in glyf accelerator.
+
+ src/hb-ot-glyf-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 45def99eae81e470be3c38d2962aafaaa85500b9
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 20 17:28:47 2018 -0700
+
+    [subset] Fix to debug message.
+
+ src/hb-subset-glyf.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 139661404006b8be039436a81cb6b1a73ec44042
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 20 16:55:42 2018 -0700
+
+    [subset] don't use pointers returned from push after array has
+    resized in hb-subset-glyf.cc
+
+ src/hb-subset-glyf.cc                                   |   9 +++++++--
+ .../crash-b577db318b30f2851828a4c9ef97cb30678b1b54      | Bin 0 ->
+ 22473 bytes
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+commit 3531efdb4c641ef543ea0686fef9289307d52096
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 20 16:31:21 2018 -0700
+
+    [subset] Fixed out of bounds read when subsetting hdmx.
+
+ src/hb-ot-hdmx-table.hh                            |  30
+ ++++++++++++++++-----
+ .../crash-ccc61c92d589f895174cdef6ff2e3b20e9999a1a | Bin 0 -> 63302 bytes
+ test/api/test-subset-hdmx.c                        |  23 ++++++++++++++++
+ 3 files changed, 47 insertions(+), 6 deletions(-)
+
+commit e597436b994c0a553e85e4c2dbd74aa037e69b60
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 20 13:00:49 2018 -0700
+
+    [subset] Disable glyf accelerator_t methods if it didn't successfully
+    init.
+
+ src/hb-ot-glyf-table.hh                            |   7 ++++++-
+ .../crash-4b60576767ee4d9fe1cc10959d89baf73d4e8249 | Bin 0 -> 3140 bytes
+ test/api/test-subset.c                             |  23
+ +++++++++++++++++++++
+ 3 files changed, 29 insertions(+), 1 deletion(-)
+
+commit 7251181b56af564e2a9444f002f8ac03f98c7ee3
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 20 11:21:06 2018 -0700
+
+    [subset] Fix infinite loop in there are more then 32 tables.
+
+ src/hb-subset.cc                                   |   1 +
+ test/api/Makefile.am                               |   1 +
+ .../oom-6ef8c96d3710262511bcc730dce9c00e722cb653   | Bin 0 -> 24233 bytes
+ test/api/test-subset.c                             |  62
+ +++++++++++++++++++++
+ 4 files changed, 64 insertions(+)
+
+commit 1a94804d35d533d39849d21a177039c4cbfade98
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Mar 19 18:39:22 2018 -0700
+
+    [subset] Add a fix for segfault in hmtx/vmtx subsetting code.
+
+ src/hb-ot-hmtx-table.hh     | 13 +++++++++++--
+ test/api/test-subset-hmtx.c |  3 ++-
+ 2 files changed, 13 insertions(+), 3 deletions(-)
+
+commit 31281d6a17a03a124456a4cab54e31b248b41267
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Mar 19 17:47:57 2018 -0700
+
+    [subset] Add a test demonstrating a seg fault while subsetting hmtx.
+
+ .../crash-e4e0bb1458a91b692eba492c907ae1f94e635480 | Bin 0 -> 63302 bytes
+ test/api/test-subset-hmtx.c                        |  22
+ +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
+
+commit b5c7d6cffc2098dafa06822b28a5fd4f6218b60c
+Author: Garret Rieger <grieger@google.com>
+Date:   Fri Mar 16 10:20:21 2018 -0700
+
+    [subset] Restore subset to hb-subset-fuzzer.
+
+ test/fuzzing/Makefile.am         | 2 +-
+ test/fuzzing/hb-subset-fuzzer.cc | 2 --
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+commit 957e7756634a4fdf1654041e20e883cf964ecac9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Mar 19 12:19:42 2018 +0330
+
+    [dwrite] Use new again and enable the build on msys2 bots (#890)
+
+ appveyor.yml          |  7 ++++---
+ src/hb-directwrite.cc | 19 ++++++++-----------
+ 2 files changed, 12 insertions(+), 14 deletions(-)
+
+commit 8d1b4082ae01b8fd87b2e83c89f670c1c7cfa0b1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Mar 17 01:05:03 2018 +0330
+
+    Appropriate fix for msys2 bot fail on gen-def.py (#894)
+
+ src/Makefile.am | 2 +-
+ src/gen-def.py  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 7b4333b090a3adf04519ec853456cafff07dedf0
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 16 22:45:09 2018 +0330
+
+    Do feature test before adding -Bsymbolic-functions, autotools part
+    (#892)
+
+ configure.ac             |  2 +-
+ m4/ax_check_link_flag.m4 | 74
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 75 insertions(+), 1 deletion(-)
+
+commit d68f00e4d8b061f56d3bd46d5ed1bc51406a4f1a
+Author: Joel Winarske <joel.winarske@gmail.com>
+Date:   Fri Mar 16 12:14:27 2018 -0700
+
+    Do feature test before adding -Bsymbolic-functions, cmake part (#889)
+
+ CMakeLists.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 42d3271cc39050c9df5f8c7345322ae90592158e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 16 22:39:58 2018 +0330
+
+    [cmake] Don't hide symbols by default (#891)
+
+    But keep use of cmake idiomatic way of making inlines hidden
+
+ CMakeLists.txt | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
+
+commit 584693e0cb3585a910b18d7916d7e554ecdf619a
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 15 18:27:01 2018 -0700
+
+    [subset] Test not linking libharfbuzz-subset-fuzzing into
+    hb-subset-fuzzer.
+
+ test/fuzzing/Makefile.am                | 2 +-
+ test/fuzzing/hb-subset-fuzzer.cc        | 2 ++
+ test/fuzzing/run-subset-fuzzer-tests.py | 2 +-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
+
+commit 3f9361fe7a68896d2a5a44709ec08fe510144215
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 15 18:06:15 2018 -0700
+
+    [subset] Test hb-shape-fuzzer in run-subset-fuzzer-tests.
+
+ test/fuzzing/run-subset-fuzzer-tests.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ce368e0d05147e70d8ad90383d748644b07f1d6f
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 15 18:04:54 2018 -0700
+
+    [subset] make libharfbuzz-subset-fuzzing.la depend on lib target.
+
+ test/fuzzing/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 85a57029cdad634f56aa3ccc768e72bcb03888e3
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 15 16:31:38 2018 -0700
+
+    [subset] %d -> %zu
+
+ test/fuzzing/hb-subset-fuzzer.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 318eea585329807477aab4eec173b561a08a46ca
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 15 16:14:01 2018 -0700
+
+    [subset] Add some more logging to hb-subset-fuzzer.
+
+ test/fuzzing/hb-subset-fuzzer.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 64bab8b3d009ed4327c2db9fa3425682de225810
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 15 16:12:00 2018 -0700
+
+    [subset] Fix run-shape-fuzzer-tests.py. It was generating incorrect
+    paths for input fonts.
+
+ test/fuzzing/run-shape-fuzzer-tests.py | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 6f9a584371ba4a9a63be3fa89f46474047a43ceb
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 15 15:41:08 2018 -0700
+
+    [subset] Add more verbose output for subset fuzzer test.
+
+ test/fuzzing/run-shape-fuzzer-tests.py  | 2 +-
+ test/fuzzing/run-subset-fuzzer-tests.py | 8 ++++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+commit 0ce0f8781213f8f01b9ebc8cfa31434784899952
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 15 13:04:31 2018 -0700
+
+    [subset] Rename hb-fuzzer -> hb-shape-fuzzer.
+
+ test/fuzzing/CMakeLists.txt                              | 16
+ ++++++++--------
+ test/fuzzing/Makefile.am                                 | 16
+ ++++++++--------
+ test/fuzzing/{hb-fuzzer.cc => hb-shape-fuzzer.cc}        |  0
+ .../{run-fuzzer-tests.py => run-shape-fuzzer-tests.py}   | 12
+ ++++++------
+ 4 files changed, 22 insertions(+), 22 deletions(-)
+
+commit 1e9bd6d5ff0af0189b6398c5e13cff11ee70762b
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Mar 14 19:58:15 2018 -0700
+
+    [subset] Add rub-subset-fuzzer-tests.py to dist files.
+
+ test/fuzzing/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 474afaafd908a9c8174e05d693ac214ef2cc2597
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Mar 14 19:15:33 2018 -0700
+
+    [subset] Add a test runner for hb-subset-fuzzer and cmake build
+    config.
+
+ test/fuzzing/CMakeLists.txt             |  9 +++++++++
+ test/fuzzing/Makefile.am                |  3 ++-
+ test/fuzzing/run-subset-fuzzer-tests.py | 31
+ +++++++++++++++++++++++++++++++
+ 3 files changed, 42 insertions(+), 1 deletion(-)
+
+commit aa9612d35f59f7f269fba4797c8da491844c56ec
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Mar 12 18:04:34 2018 -0700
+
+    [subset] Fix fuzzing build for hb-subset-fuzzer.
+
+ src/Makefile.am          | 19 +++----------------
+ test/fuzzing/Makefile.am |  1 +
+ 2 files changed, 4 insertions(+), 16 deletions(-)
+
+commit b674fc1f9fa36857214ddaba3d32877f03ffec8c
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Mar 12 16:33:47 2018 -0700
+
+    [subset] Add missing destroy of subsetting result in subset fuzzer.
+
+ test/fuzzing/hb-subset-fuzzer.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 1beb08862e9bd668599f0385d7ba59272fc24912
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Mar 12 16:08:16 2018 -0700
+
+    [subset] First pass at setting up a fuzzing program for hb-subset.
+
+ src/Makefile.am                  | 24 +++++++++++++++++++++++-
+ test/fuzzing/Makefile.am         | 15 +++++++++++++++
+ test/fuzzing/hb-subset-fuzzer.cc | 37
+ +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 75 insertions(+), 1 deletion(-)
+
+commit 127096e4748d6381339342fc2750dd540e815fa5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Mar 15 13:23:27 2018 -0700
+
+    [util] Remove line buffering
+
+    Something weird seems to be going on. Just kill it.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/888
+
+ configure.ac    |  2 +-
+ util/options.cc | 12 ------------
+ 2 files changed, 1 insertion(+), 13 deletions(-)
+
+commit e6e2ee2b923f8ab7c0694d4557375ba316e15dff
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Mar 15 09:05:22 2018 -0700
+
+    Remove extra stdbool includes
+
+    They are handled in our common header.
+
+ test/api/test-subset-post.c | 2 --
+ test/api/test-subset-vmtx.c | 2 --
+ 2 files changed, 4 deletions(-)
+
+commit a0dccb6188d7a9174643c7239041cb1a5300b957
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 14 16:31:53 2018 +0100
+
+    Add NameID
+
+ src/hb-aat-layout-trak-table.hh    |  8 ++++----
+ src/hb-open-type-private.hh        |  3 +++
+ src/hb-ot-layout-common-private.hh | 10 +++++-----
+ src/hb-ot-var-fvar-table.hh        |  6 +++---
+ 4 files changed, 15 insertions(+), 12 deletions(-)
+
+commit 56946d21c0696ed6a098434537979396171c9bfb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 14 16:26:33 2018 +0100
+
+    [color/COLR] Simplify
+
+ src/hb-ot-color-colr-table.hh | 48
+ +++----------------------------------------
+ 1 file changed, 3 insertions(+), 45 deletions(-)
+
+commit 6418ae4e8a3f4681cb4e7d54c589562930bc0678
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 14 16:18:42 2018 +0100
+
+    [color/COLR] Clean up
+
+ src/hb-aat-layout-common-private.hh | 84
+ -------------------------------------
+ src/hb-open-type-private.hh         | 84
+ +++++++++++++++++++++++++++++++++++++
+ src/hb-ot-color-colr-table.hh       | 30 ++++++-------
+ 3 files changed, 99 insertions(+), 99 deletions(-)
+
+commit 150c53ee969876c2831b6165cb71655e7ce2dbdb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 14 16:08:12 2018 +0100
+
+    [color/COLR] Fix bad sanitize
+
+    Bad bad bad bad code. Don't do that. If compiler's not happy,
+    understand why.
+
+ src/hb-ot-color-colr-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 399c800b93879186da2b7c892c7aa21468f062f2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 14 16:03:01 2018 +0100
+
+    [color/COLR] Clean up
+
+ src/hb-ot-color-colr-table.hh | 32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
+
+commit 9e337341d54c4ee12eec58e025a6831bb976d61f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 14 15:52:53 2018 +0100
+
+    [color/cbdt] Clean up
+
+ src/hb-ot-color-cbdt-table.hh | 112
+ ++++++++++++++++++++----------------------
+ 1 file changed, 54 insertions(+), 58 deletions(-)
+
+commit 86a0ac284fc4c2ce96354bfdf32878b6db5c77bd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 14 15:51:33 2018 +0100
+
+    Revert "hb-private.hh: Add fallback implementation for round()"
+
+    This reverts commit b9dcbb1f8312d8606b230f75594d40b7d4087004.
+
+    This is gross. Should be only done if a specific macro is defined. Not
+    the other way
+    around. This fails my build as autotools companions where not
+    added anyway.
+
+ src/hb-private.hh | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+commit 791d80a1d42ce0bd7c5f0a3d3d10c562a6161a82
+Merge: d4907e83 22de9bf5
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Mar 15 11:40:52 2018 +0330
+
+    Merge pull request #886 from madig/only-export-visible-symbols
+
+    CMake: hide symbols by default on non-MSVC, define export attribute
+
+commit 22de9bf56d80dbf6a13a06beafd21711bdab78af
+Author: Nikolaus Waxweiler <nikolaus.waxweiler@daltonmaag.com>
+Date:   Wed Mar 14 10:29:24 2018 +0000
+
+    Enable implicit symbol hiding for all libraries, static and shared
+
+    This covers all built libraries now and both static and shared builds.
+
+ CMakeLists.txt | 35 +++++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
+
+commit d4907e83ef8e0d03acb701957cc1ee9acacb0a19
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Mar 14 11:04:28 2018 +0330
+
+    [dwrite] GCC/mingw/msys2 compatibility (#884)
+
+ src/hb-directwrite.cc | 37 +++++++++++++++++++++----------------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
+
+commit 93f8f89dedd2f8cf5eb40165a20d009de24c5eda
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Mar 14 09:56:31 2018 +0330
+
+    [ci] Trying to fix gen-def issue on appveyor (#885)
+
+ src/gen-def.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ce975dce7ae8950b6e7b9a2d0c00ead9d45f73ff
+Author: Nikolaus Waxweiler <madigens@gmail.com>
+Date:   Wed Mar 14 00:50:32 2018 +0000
+
+    CMake: hide symbols by default on non-MSVC, define export attribute
+
+    This change makes sure that non-MSVC builds using CMake properly hide
+    non-exported functions.
+
+ CMakeLists.txt | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+commit a12dd6f75d85cf29ed78182ac97a12ebbcf77375
+Merge: 28f25f32 7c43adab
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Mar 14 02:54:07 2018 +0330
+
+    Merge pull request #877 from fanc999/master.msvc
+
+    Fix CMake builds on Windows, MSVC in particular
+
+commit 7c43adab6deb9302a24cc857c4aaa9b6b62215d2
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Mon Mar 12 16:43:53 2018 +0800
+
+    CMake: Fix utility program installation
+
+    Put in the utility program that was missed in installation by
+    replacing
+    the one that was duplicated.
+
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e9b8002a6024d7a9b6de204897345ae77bb50881
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Mon Mar 12 16:23:57 2018 +0800
+
+    CMake: Fix introspection on Windows
+
+    The list of source files to pass to g-ir-scanner is becoming too
+    long for Windows, as Windows imposes a 8192-character limit for
+    command
+    lines, so we need to first transform that list into a listings
+    file, and
+    then use the --filelist option for g-ir-scanner to build the
+    introspection files.
+
+ CMakeLists.txt | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+commit 831d4a2dab1f229811c3a90b791f2a19c88fc1b5
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Mon Mar 12 13:48:55 2018 +0800
+
+    test/api: Fix building subset tests
+
+    Include stdbool.h in hb-setset-test.h instead of in the individual
+    sources, if it is found; otherwise use a simplistic fallback for it if
+    it is not found.
+
+    Also declare variables at the top of the block, to build on pre-C99
+    compiliers.
+
+ test/api/hb-subset-test.h   | 17 +++++++++++++++--
+ test/api/test-subset-cmap.c |  8 ++++----
+ test/api/test-subset-glyf.c | 23 ++++++++++++++---------
+ test/api/test-subset-hdmx.c |  8 ++++----
+ test/api/test-subset-hmtx.c | 17 ++++++++++-------
+ test/api/test-subset-os2.c  |  4 ++--
+ 6 files changed, 49 insertions(+), 28 deletions(-)
+
+commit eda6a5ea807ba8a4e7fa20ad0273b394ed72d106
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Mon Mar 12 13:38:01 2018 +0800
+
+    CMake: Fix running tests on Windows
+
+    For the API tests, output the test programs at $(TOP_BUILDDIR) so that
+    the freshly-built DLLs will be available for the test programs.  For
+    those that are run through the Python wrapper scripts, use
+    ${PYTHON_EXECUTABLE} instead of plain 'python' in case the Python
+    interpreter is not in the PATH.
+
+ test/api/CMakeLists.txt     | 7 ++++++-
+ test/fuzzing/CMakeLists.txt | 2 +-
+ test/shaping/CMakeLists.txt | 4 ++--
+ test/subset/CMakeLists.txt  | 2 +-
+ 4 files changed, 10 insertions(+), 5 deletions(-)
+
+commit b9dcbb1f8312d8606b230f75594d40b7d4087004
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Mon Mar 12 13:33:03 2018 +0800
+
+    hb-private.hh: Add fallback implementation for round()
+
+    Add a simplistic round() implementation for our purposes, used
+    when the
+    compiler does not support round() directly.
+
+ src/hb-private.hh | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+commit 89dbabff65a39dfb0d9ad036516d5b96c37739de
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Mon Mar 12 13:27:38 2018 +0800
+
+    configure.ac/CMake: Check for round() and stdbool.h
+
+    Not all the compilers that HarfBuzz is buildable on supports round()
+    and
+    has the header stdbool.h, so we check for them and define HAVE_ROUND
+    and
+    HAVE_STDBOOL_H repsectively in our CFLAGS so that we include them only
+    when they are found, or use fallback implementations when necessary.
+
+    Also include FindPythonInterp earlier as we need PYTHON_EXECUTABLE
+    to be
+    set for running the tests.
+
+ CMakeLists.txt | 12 ++++++++++--
+ configure.ac   |  9 ++++++++-
+ 2 files changed, 18 insertions(+), 3 deletions(-)
+
+commit 28f25f32fc63c3e1ae0d04b6eb5ea6b729fb2228
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Mar 12 14:00:11 2018 +0330
+
+    [ot-color/SVG] Minor (#878)
+
+ src/hb-ot-color-svg-table.hh | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
+
+commit fb0f3e3767b488651f13978c1fd8651aefdd6b83
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Mar 11 20:38:40 2018 +0100
+
+    [sbix] Clean up
+
+ src/hb-ot-color-sbix-table.hh | 70
+ +++++++++++++++++++++++--------------------
+ 1 file changed, 37 insertions(+), 33 deletions(-)
+
+commit 218fa7166e9626f2036d08882854a86d753e4192
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Mar 10 11:13:52 2018 +0330
+
+    [ot-color] SVG table implementation (#874)
+
+ src/Makefile.sources         |   3 +-
+ src/hb-ot-color-svg-table.hh | 111
+ +++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-layout.cc          |   1 +
+ 3 files changed, 114 insertions(+), 1 deletion(-)
+
+commit 4c63c82383cba11f2c44c00cbc953863346e627c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Mar 10 11:07:56 2018 +0330
+
+    [ot-color] sbix table implementation (#870)
+
+ src/Makefile.sources          |   1 +
+ src/hb-ot-color-sbix-table.hh | 128
+ ++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-layout.cc           |   1 +
+ 3 files changed, 130 insertions(+)
+
+commit 62b3d8fb7034c53e0804689d58e2eb7330e04430
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Mar 10 00:44:36 2018 +0330
+
+    [dev-run] minor
+
+ src/dev-run.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 743ef317619a57ebf5a75935db0eecccade5d5b7
+Merge: 9206762b 39b2f69f
+Author: Garret Rieger <grieger@google.com>
+Date:   Fri Mar 9 12:06:52 2018 -0700
+
+    Merge pull request #872 from googlefonts/drop-tables
+
+    [subset] Drop the same tables by default as fontTools does.
+
+commit 9206762bbd4033e97d6d35ef1cce1b7940fbc935
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 9 15:43:03 2018 +0330
+
+    Make subset test runner compatible with py3
+
+    Fixes #873
+
+ test/subset/run-tests.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit dbadb871d1ca62eff10768564fc0a17b9aaa4d63
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Mar 9 15:25:59 2018 +0330
+
+    [ci] Enable subset tests on ArchLinux to test
+
+    This makes ArchLinux bots fail, a starting point to #873
+
+ .circleci/config.yml | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit 39b2f69fab3b8aec1296dcda111d358559d39f0b
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 8 16:30:36 2018 -0800
+
+    [subset] Drop the same tables by default as fontTools does.
+
+ src/hb-subset.cc | 49 ++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 15 deletions(-)
+
+commit dbe552770fa7cec91bba750e0e81aaeae96b3caf
+Merge: 2ebf4c69 8548fa15
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 8 15:50:25 2018 -0700
+
+    Merge pull request #871 from googlefonts/mplus
+
+    [subset] Add a Japanese font to the subset integration tests.
+
+commit 8548fa152241d6c5b020146f97aac15934ba0065
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Mar 7 12:37:03 2018 -0800
+
+    [subset] Drop cmap 12, platform 0 tables from Mplus1p expected files.
+
+ ...-Regular.default.3042,3044,3046,3048,304A,304B.ttf | Bin 3040 ->
+ 3032 bytes
+ ...-Regular.default.3042,3044,3046,73E0,5EA6,8F38.ttf | Bin 3276 ->
+ 3268 bytes
+ .../japanese/Mplus1p-Regular.default.61,63,65,6B.ttf  | Bin 2592 ->
+ 2584 bytes
+ ...-Regular.default.660E,6975,73E0,5EA6,8F38,6E05.ttf | Bin 3572 ->
+ 3564 bytes
+ .../japanese/Mplus1p-Regular.default.660E.ttf         | Bin 2356 ->
+ 2348 bytes
+ ...gular.drop-hints.3042,3044,3046,3048,304A,304B.ttf | Bin 2312 ->
+ 2304 bytes
+ ...gular.drop-hints.3042,3044,3046,73E0,5EA6,8F38.ttf | Bin 2548 ->
+ 2540 bytes
+ .../Mplus1p-Regular.drop-hints.61,63,65,6B.ttf        | Bin 1864 ->
+ 1856 bytes
+ ...gular.drop-hints.660E,6975,73E0,5EA6,8F38,6E05.ttf | Bin 2844 ->
+ 2836 bytes
+ .../japanese/Mplus1p-Regular.drop-hints.660E.ttf      | Bin 1628 ->
+ 1620 bytes
+ 10 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 9b00b9a10d5fdfd2d9deb1b0e847695797b7e09b
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 6 17:47:40 2018 -0800
+
+    [subset] Fix deadlock waiting for process output in subset test
+    runner.
+
+ test/subset/run-tests.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit bfec28a7db0631f42dd420a8c04638624e4602af
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 6 15:43:08 2018 -0800
+
+    [subset] add some extra logging to subset run-tests.py.
+
+ test/subset/run-tests.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit c7d814eaa8e9af6c447124ceeaa896eb5e17abd7
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 1 18:20:00 2018 -0800
+
+    [subset] Add japanese font file to subset integration tests.
+
+ test/subset/data/Makefile.am                          |   1 +
+ test/subset/data/Makefile.sources                     |   1 +
+ ...-Regular.default.3042,3044,3046,3048,304A,304B.ttf | Bin 0 ->
+ 3040 bytes
+ ...-Regular.default.3042,3044,3046,73E0,5EA6,8F38.ttf | Bin 0 ->
+ 3276 bytes
+ .../japanese/Mplus1p-Regular.default.61,63,65,6B.ttf  | Bin 0 ->
+ 2592 bytes
+ ...-Regular.default.660E,6975,73E0,5EA6,8F38,6E05.ttf | Bin 0 ->
+ 3572 bytes
+ .../japanese/Mplus1p-Regular.default.660E.ttf         | Bin 0 ->
+ 2356 bytes
+ ...gular.drop-hints.3042,3044,3046,3048,304A,304B.ttf | Bin 0 ->
+ 2312 bytes
+ ...gular.drop-hints.3042,3044,3046,73E0,5EA6,8F38.ttf | Bin 0 ->
+ 2548 bytes
+ .../Mplus1p-Regular.drop-hints.61,63,65,6B.ttf        | Bin 0 ->
+ 1864 bytes
+ ...gular.drop-hints.660E,6975,73E0,5EA6,8F38,6E05.ttf | Bin 0 ->
+ 2844 bytes
+ .../japanese/Mplus1p-Regular.drop-hints.660E.ttf      | Bin 0 ->
+ 1628 bytes
+ test/subset/data/fonts/Mplus1p-Regular.ttf            | Bin 0 ->
+ 1758820 bytes
+ test/subset/data/tests/japanese.tests                 |  16
+ ++++++++++++++++
+ 14 files changed, 18 insertions(+)
+
+commit 2ebf4c69b18452caa0c871aebec9785e80348166
+Merge: 1ab51480 869ccac5
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 8 14:41:59 2018 -0700
+
+    Merge pull request #868 from googlefonts/post
+
+    [subset] Drop glyph names from post when subsetting.
+
+commit 869ccac5ab69060f2db2893014b5538539fd4f45
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Mar 8 11:06:49 2018 -0800
+
+    [subset] use create_sub_blob instead of manually copying the post
+    table.
+
+ src/hb-ot-post-table.hh | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
+
+commit ec47cd95ba6c550314a1cbcc46fafd7946e52ece
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Mar 7 10:33:02 2018 -0800
+
+    [subset] Unit test to check that post subsetting drops glyph names.
+
+ test/api/Makefile.am                               |   2 +
+ ...lus1p-Regular.660E,6975,73E0,5EA6,8F38,6E05.ttf | Bin 3572 ->
+ 3724 bytes
+ test/api/test-subset-post.c                        |  61
+ +++++++++++++++++++++
+ 3 files changed, 63 insertions(+)
+
+commit dd107699938740e261948e4b525fa0ad501beb03
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 6 18:33:39 2018 -0800
+
+    [subset] drop all glyph names from the post table.
+
+ src/hb-ot-post-table.hh | 28 ++++++++++++++++++++++++++++
+ src/hb-subset.cc        |  4 ++++
+ 2 files changed, 32 insertions(+)
+
+commit 1ab514805ced190efdabc2103e4800d40b248300
+Merge: 70ad69f2 362f2824
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Mar 7 12:36:00 2018 -0700
+
+    Merge pull request #867 from googlefonts/vmtx
+
+    [subset] Add vmtx subsetting.
+
+commit 362f28240683fde395ff52f4fc1216fbc7131452
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Mar 7 11:08:55 2018 -0800
+
+    [subset] fix author.
+
+ test/api/test-subset-vmtx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 89465cb1c7b8ab61c0ef4887f51572ba91039f3e
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Mar 7 10:29:15 2018 -0800
+
+    [subset] s/hmetrics/vmetrics.
+
+ test/api/test-subset-vmtx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 91867cda6ae5ae063482b28b0a52ebc30718cb40
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Mar 7 10:17:06 2018 -0800
+
+    [subset] cleanup.
+
+ src/hb-subset.cc            | 2 +-
+ test/api/test-subset-vmtx.c | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+commit d9263f0230693d108249be0904bc5a3280560cb3
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 6 15:40:35 2018 -0800
+
+    [subset] add unit tests for vmtx subsetting.
+
+ test/api/Makefile.am                               |   2 +
+ ...lus1p-Regular.660E,6975,73E0,5EA6,8F38,6E05.ttf | Bin 0 -> 3572 bytes
+ test/api/fonts/Mplus1p-Regular.660E.ttf            | Bin 0 -> 2356 bytes
+ test/api/test-subset-vmtx.c                        | 100
+ +++++++++++++++++++++
+ 4 files changed, 102 insertions(+)
+
+commit 0e8f9430c83c076993a0c7a320713bb484051343
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Mar 6 13:08:20 2018 -0800
+
+    [subset] Skip subsetting vhea.
+
+ src/hb-subset.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 64cf53d6197a0e6c56aef744ceff2f8a0ff85654
+Author: Garret Rieger <grieger@google.com>
+Date:   Fri Mar 2 17:33:49 2018 -0800
+
+    [subset] Subset vmtx if present.
+
+ src/hb-ot-hmtx-table.hh | 2 +-
+ src/hb-subset.cc        | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+commit 70ad69f2449d754fcc5270ff3ca3848a77f4c7af
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 7 16:11:44 2018 +0100
+
+    [test] Fix build with older glib
+
+ test/api/hb-subset-test.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ff2f81432bb0484a019a678058595e10217df51d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 7 16:05:14 2018 +0100
+
+    1.7.6
+
+ NEWS             | 15 +++++++++++++++
+ configure.ac     |  2 +-
+ src/hb-version.h |  4 ++--
+ 3 files changed, 18 insertions(+), 3 deletions(-)
+
 commit ac2ece3e153167224c85cc384e2826ea9711a8b5
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Mar 7 15:52:42 2018 +0100

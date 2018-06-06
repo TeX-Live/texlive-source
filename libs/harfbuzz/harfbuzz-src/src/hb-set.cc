@@ -45,17 +45,10 @@ hb_set_create (void)
   if (!(set = hb_object_create<hb_set_t> ()))
     return hb_set_get_empty ();
 
-  set->init ();
+  set->init_shallow ();
 
   return set;
 }
-
-static const hb_set_t _hb_set_nil = {
-  HB_OBJECT_HEADER_STATIC,
-  true, /* in_error */
-
-  {0} /* elts */
-};
 
 /**
  * hb_set_get_empty:
@@ -67,7 +60,7 @@ static const hb_set_t _hb_set_nil = {
 hb_set_t *
 hb_set_get_empty (void)
 {
-  return const_cast<hb_set_t *> (&_hb_set_nil);
+  return const_cast<hb_set_t *> (&Null(hb_set_t));
 }
 
 /**
@@ -95,7 +88,7 @@ hb_set_destroy (hb_set_t *set)
 {
   if (!hb_object_destroy (set)) return;
 
-  set->finish ();
+  set->fini_shallow ();
 
   free (set);
 }
@@ -150,9 +143,9 @@ hb_set_get_user_data (hb_set_t           *set,
  * Since: 0.9.2
  **/
 hb_bool_t
-hb_set_allocation_successful (const hb_set_t  *set HB_UNUSED)
+hb_set_allocation_successful (const hb_set_t  *set)
 {
-  return !set->in_error;
+  return set->successful;
 }
 
 /**

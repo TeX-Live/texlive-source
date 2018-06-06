@@ -855,7 +855,7 @@ static inline bool ligate_input (hb_ot_apply_context_t *c,
 
   for (unsigned int i = 1; i < count; i++)
   {
-    while (buffer->idx < match_positions[i] && !buffer->in_error)
+    while (buffer->idx < match_positions[i] && buffer->successful)
     {
       if (!is_mark_ligature) {
         unsigned int this_comp = _hb_glyph_info_get_lig_comp (&buffer->cur());
@@ -990,7 +990,7 @@ static inline bool apply_lookup (hb_ot_apply_context_t *c,
       match_positions[j] += delta;
   }
 
-  for (unsigned int i = 0; i < lookupCount && !buffer->in_error; i++)
+  for (unsigned int i = 0; i < lookupCount && buffer->successful; i++)
   {
     unsigned int idx = lookupRecord[i].sequenceIndex;
     if (idx >= count)
@@ -1713,10 +1713,10 @@ struct ChainRule
     const ArrayOf<HBUINT16> &lookahead = StructAfter<ArrayOf<HBUINT16> > (input);
     const ArrayOf<LookupRecord> &lookup = StructAfter<ArrayOf<LookupRecord> > (lookahead);
     chain_context_closure_lookup (c,
-				  backtrack.len, backtrack.array,
-				  input.len, input.array,
-				  lookahead.len, lookahead.array,
-				  lookup.len, lookup.array,
+				  backtrack.len, backtrack.arrayZ,
+				  input.len, input.arrayZ,
+				  lookahead.len, lookahead.arrayZ,
+				  lookup.len, lookup.arrayZ,
 				  lookup_context);
   }
 
@@ -1727,10 +1727,10 @@ struct ChainRule
     const ArrayOf<HBUINT16> &lookahead = StructAfter<ArrayOf<HBUINT16> > (input);
     const ArrayOf<LookupRecord> &lookup = StructAfter<ArrayOf<LookupRecord> > (lookahead);
     chain_context_collect_glyphs_lookup (c,
-					 backtrack.len, backtrack.array,
-					 input.len, input.array,
-					 lookahead.len, lookahead.array,
-					 lookup.len, lookup.array,
+					 backtrack.len, backtrack.arrayZ,
+					 input.len, input.arrayZ,
+					 lookahead.len, lookahead.arrayZ,
+					 lookup.len, lookup.arrayZ,
 					 lookup_context);
   }
 
@@ -1741,10 +1741,10 @@ struct ChainRule
     const ArrayOf<HBUINT16> &lookahead = StructAfter<ArrayOf<HBUINT16> > (input);
     const ArrayOf<LookupRecord> &lookup = StructAfter<ArrayOf<LookupRecord> > (lookahead);
     return_trace (chain_context_would_apply_lookup (c,
-						    backtrack.len, backtrack.array,
-						    input.len, input.array,
-						    lookahead.len, lookahead.array, lookup.len,
-						    lookup.array, lookup_context));
+						    backtrack.len, backtrack.arrayZ,
+						    input.len, input.arrayZ,
+						    lookahead.len, lookahead.arrayZ, lookup.len,
+						    lookup.arrayZ, lookup_context));
   }
 
   inline bool apply (hb_ot_apply_context_t *c, ChainContextApplyLookupContext &lookup_context) const
@@ -1754,10 +1754,10 @@ struct ChainRule
     const ArrayOf<HBUINT16> &lookahead = StructAfter<ArrayOf<HBUINT16> > (input);
     const ArrayOf<LookupRecord> &lookup = StructAfter<ArrayOf<LookupRecord> > (lookahead);
     return_trace (chain_context_apply_lookup (c,
-					      backtrack.len, backtrack.array,
-					      input.len, input.array,
-					      lookahead.len, lookahead.array, lookup.len,
-					      lookup.array, lookup_context));
+					      backtrack.len, backtrack.arrayZ,
+					      input.len, input.arrayZ,
+					      lookahead.len, lookahead.arrayZ, lookup.len,
+					      lookup.arrayZ, lookup_context));
   }
 
   inline bool sanitize (hb_sanitize_context_t *c) const
@@ -2072,10 +2072,10 @@ struct ChainContextFormat3
       {this, this, this}
     };
     chain_context_closure_lookup (c,
-				  backtrack.len, (const HBUINT16 *) backtrack.array,
-				  input.len, (const HBUINT16 *) input.array + 1,
-				  lookahead.len, (const HBUINT16 *) lookahead.array,
-				  lookup.len, lookup.array,
+				  backtrack.len, (const HBUINT16 *) backtrack.arrayZ,
+				  input.len, (const HBUINT16 *) input.arrayZ + 1,
+				  lookahead.len, (const HBUINT16 *) lookahead.arrayZ,
+				  lookup.len, lookup.arrayZ,
 				  lookup_context);
   }
 
@@ -2093,10 +2093,10 @@ struct ChainContextFormat3
       {this, this, this}
     };
     chain_context_collect_glyphs_lookup (c,
-					 backtrack.len, (const HBUINT16 *) backtrack.array,
-					 input.len, (const HBUINT16 *) input.array + 1,
-					 lookahead.len, (const HBUINT16 *) lookahead.array,
-					 lookup.len, lookup.array,
+					 backtrack.len, (const HBUINT16 *) backtrack.arrayZ,
+					 input.len, (const HBUINT16 *) input.arrayZ + 1,
+					 lookahead.len, (const HBUINT16 *) lookahead.arrayZ,
+					 lookup.len, lookup.arrayZ,
 					 lookup_context);
   }
 
@@ -2112,10 +2112,10 @@ struct ChainContextFormat3
       {this, this, this}
     };
     return_trace (chain_context_would_apply_lookup (c,
-						    backtrack.len, (const HBUINT16 *) backtrack.array,
-						    input.len, (const HBUINT16 *) input.array + 1,
-						    lookahead.len, (const HBUINT16 *) lookahead.array,
-						    lookup.len, lookup.array, lookup_context));
+						    backtrack.len, (const HBUINT16 *) backtrack.arrayZ,
+						    input.len, (const HBUINT16 *) input.arrayZ + 1,
+						    lookahead.len, (const HBUINT16 *) lookahead.arrayZ,
+						    lookup.len, lookup.arrayZ, lookup_context));
   }
 
   inline const Coverage &get_coverage (void) const
@@ -2139,10 +2139,10 @@ struct ChainContextFormat3
       {this, this, this}
     };
     return_trace (chain_context_apply_lookup (c,
-					      backtrack.len, (const HBUINT16 *) backtrack.array,
-					      input.len, (const HBUINT16 *) input.array + 1,
-					      lookahead.len, (const HBUINT16 *) lookahead.array,
-					      lookup.len, lookup.array, lookup_context));
+					      backtrack.len, (const HBUINT16 *) backtrack.arrayZ,
+					      input.len, (const HBUINT16 *) input.arrayZ + 1,
+					      lookahead.len, (const HBUINT16 *) lookahead.arrayZ,
+					      lookup.len, lookup.arrayZ, lookup_context));
   }
 
   inline bool sanitize (hb_sanitize_context_t *c) const
