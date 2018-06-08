@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47935 2018-06-05 22:36:22Z karl $
+# $Id: tlmgr.pl 47951 2018-06-07 05:55:43Z preining $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47935 $';
-my $datrev = '$Date: 2018-06-06 00:36:22 +0200 (Wed, 06 Jun 2018) $';
+my $svnrev = '$Revision: 47951 $';
+my $datrev = '$Date: 2018-06-07 07:55:43 +0200 (Thu, 07 Jun 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7261,22 +7261,23 @@ sub clear_old_backups {
   my @dirents = readdir (DIR);
   closedir (DIR) || warn "closedir($backupdir) failed: $!";
   my @backups;
+  my $extre = "(" . join("|", map { $CompressorExtension{$_} } @AcceptedCompressors) . ")";
   for my $dirent (@dirents) {
     next if (-d $dirent);
-    next if ($dirent !~ m/^$pkg\.r([0-9]+)\.tar\.xz$/);
-    push @backups, $1;
+    next if ($dirent !~ m/^$pkg\.r([0-9]+)\.tar\.$extre$/);
+    push @backups, [ $1, $dirent ] ;
   }
   my $i = 1;
-  for my $e (reverse sort {$a <=> $b} @backups) {
+  for my $e (reverse sort {$a->[0] <=> $b->[0]} @backups) {
     if ($i > $autobackup) {
       # only echo out if explicitly asked for verbose which is done
       # in the backup --clean action
       if ($verb) {
-        info ("Removing backup $backupdir/$pkg.r$e.tar.xz\n");
+        info ("Removing backup $backupdir/$e->[1]\n");
       } else {
-        debug ("Removing backup $backupdir/$pkg.r$e.tar.xz\n");
+        debug ("Removing backup $backupdir/$e->[1]\n");
       }
-      unlink("$backupdir/$pkg.r$e.tar.xz") unless $dryrun;
+      unlink("$backupdir/$e->[1]") unless $dryrun;
     }
     $i++;
   }
@@ -9694,7 +9695,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47935 2018-06-05 22:36:22Z karl $
+$Id: tlmgr.pl 47951 2018-06-07 05:55:43Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
