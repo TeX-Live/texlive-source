@@ -935,4 +935,138 @@ int nkf_close(FILE *fp) {
     }
     return fclose(fp);
 }
+
+
+unsigned char *ptenc_from_utf8_string_to_internal_enc(const unsigned char *is)
+{
+    int i;
+    long u = 0, j, len;
+    int i1 = EOF, i2 = EOF, i3 = EOF, i4 = EOF;
+    unsigned char *buf, *buf_bak;
+    long first_bak, last_bak;
+
+    if (terminal_enc != ENC_UTF8 || is_internalUPTEX()) return NULL;
+    buf_bak = buffer;
+    first_bak = first;
+    last_bak = last;
+
+    len = strlen(is)+1;
+    buffer = buf = xmalloc(len);
+    first = last = 0;
+
+    for (i=0; i<strlen(is); i++) {
+        i1 = is[i];
+        switch (UTF8length(i1)) {
+        case 1:
+            buffer[last++] = i1; /* ASCII */
+            if (i1 == '\0') goto end;
+            continue;
+        case 2:
+            i2 = is[++i]; if (i2 == '\0') break;
+            u = UTF8BtoUCS(i1, i2);
+            break;
+        case 3:
+            i2 = is[++i]; if (i2 == '\0') break;
+            i3 = is[++i]; if (i3 == '\0') break;
+            u = UTF8CtoUCS(i1, i2, i3);
+            if (u == U_BOM) continue; /* just ignore */
+            if (u == U_VOICED      && combin_voiced_sound(false)) continue;
+            if (u == U_SEMI_VOICED && combin_voiced_sound(true))  continue;
+            break;
+        case 4:
+            i2 = is[++i]; if (i2 == '\0') break;
+            i3 = is[++i]; if (i3 == '\0') break;
+            i4 = is[++i]; if (i4 == '\0') break;
+            u = UTF8DtoUCS(i1, i2, i3, i4);
+            break;
+        default:
+            u = U_REPLACEMENT_CHARACTER;
+            break;
+        }
+
+        j = toBUFF(fromUCS(u));
+        if (j == 0) { /* can't represent in EUC/SJIS */
+            if (last+4>=len) buffer = xrealloc(buffer, len=last+64);
+            write_hex(i1);
+            if (i2 != '\0') write_hex(i2);
+            if (i3 != '\0') write_hex(i3);
+            if (i4 != '\0') write_hex(i4);
+        } else {
+            write_multibyte(j);
+        }
+        i2 = i3 = i4 = '\0';
+    }
+    buffer[last] = '\0';
+ end:
+    buffer = buf_bak;
+    first = first_bak;
+    last = last_bak;
+    return buf;
+}
+
+unsigned char *ptenc_from_internal_enc_string_to_utf8(const unsigned char *is)
+{
+    int i;
+    long u = 0, len;
+    int i1 = EOF, i2 = EOF;
+    unsigned char *buf, *buf_bak;
+    long first_bak, last_bak;
+
+    if (terminal_enc != ENC_UTF8 || is_internalUPTEX()) return NULL;
+    buf_bak = buffer;
+    first_bak = first;
+    last_bak = last;
+
+    len = strlen(is)+1;
+    buffer = buf = xmalloc(len*1.5);
+    first = last = 0;
+
+    for (i=0; i<strlen(is); i++) {
+        i1 = is[i];
+        switch (multibytelen(i1)) {
+        case 1:
+            buffer[last++] = i1; /* ASCII */
+            if (i1 == '\0') goto end;
+            continue;
+        case 2:
+            i2 = is[++i]; if (i2 == '\0') break;
+            u = JIStoUCS2(toJIS(HILO(i1,i2)));
+            break;
+        default:
+            u = U_REPLACEMENT_CHARACTER;
+            break;
+        }
+
+        write_multibyte(UCStoUTF8(u));
+    }
+    buffer[last] = '\0';
+ end:
+    buffer = buf_bak;
+    first = first_bak;
+    last = last_bak;
+    return buf;
+}
+
+int ptenc_get_command_line_args(int *p_ac, char ***p_av)
+{
+    int i, argc;
+    char **argv;
+
+    get_terminal_enc();
+    if (terminal_enc == ENC_UTF8 && !is_internalUPTEX()) {
+        argc = *p_ac;
+        argv = xmalloc(sizeof(char *)*(argc+1));
+        for (i=0; i<argc; i++) {
+            argv[i] = ptenc_from_utf8_string_to_internal_enc((*p_av)[i]);
+#ifdef DEBUG
+            fprintf(stderr, "Commandline arguments %d:(%s)\n", i, argv[i]);
+#endif /* DEBUG */
+        }
+        argv[argc] = NULL;
+        *p_av = argv;
+         return terminal_enc;
+    }
+    return 0;
+}
+
 #endif /* !WIN32 */

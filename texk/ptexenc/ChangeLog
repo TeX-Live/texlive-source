@@ -1,3 +1,11 @@
+2018-06-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptexenc.c, ptexenc/ptexenc.h: Add new functions
+	ptenc_from_utf8_string_to_internal_enc(),
+	ptenc_from_internal_enc_string_to_utf8() and
+	ptenc_get_command_line_args() to support UTF-8 file names
+	on UTF-8 locale in pTeX (Unix-like platform only).
+
 2018-03-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexenc.c: Change default_kanji_enc from ENC_SJIS to ENC_UTF8

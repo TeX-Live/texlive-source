@@ -1,3 +1,8 @@
+2018-06-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* texmfmp.c, openclose.c: Support UTF-8 file names
+	on UTF-8 locale in pTeX (Unix-like platform only).
+
 2018-05-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Discard the changes for pdfTeX on 2018-05-11,

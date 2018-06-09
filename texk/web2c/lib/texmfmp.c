@@ -710,11 +710,14 @@ maininit (int ac, string *av)
   enc = kpse_var_value("command_line_encoding");
   get_command_line_args_utf8(enc, &argc, &argv);
 #endif
+#if IS_pTeX && !IS_upTeX && !defined(WIN32)
+  ptenc_get_command_line_args(&argc, &argv);
+#endif
 
   /* If the user says --help or --version, we need to notice early.  And
      since we want the --ini option, have to do it before getting into
      the web (which would read the base file, etc.).  */
-#if (IS_upTeX || defined(XeTeX)) && defined(WIN32)
+#if ((IS_upTeX || defined(XeTeX)) && defined(WIN32)) || (IS_pTeX && !IS_upTeX && !defined(WIN32))
   parse_options (argc, argv);
 #else
   parse_options (ac, av);

@@ -150,6 +150,9 @@ boolean
 open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
 {
     string fname = NULL;
+#if defined(PTEX) && !defined(WIN32)
+    string fname0;
+#endif
 #ifdef FUNNY_CORE_DUMP
     /* This only applies if a preloaded TeX/Metafont is being made;
        it allows automatic creation of the core dump (typing ^\ loses
@@ -170,6 +173,17 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
        absolute.  This is because .aux and other such files will get
        written to the output directory, and we have to be able to read
        them from there.  We only look for the name as-is.  */
+
+#if defined(PTEX) && !defined(WIN32)
+    fname0 = ptenc_from_internal_enc_string_to_utf8(nameoffile + 1);
+    if (fname0) {
+        free (nameoffile);
+        namelength = strlen (fname0);
+        nameoffile = xmalloc (namelength + 2);
+        strcpy (nameoffile + 1, fname0);
+        free (fname0);
+    }
+#endif
     if (output_directory && !kpse_absolute_p (nameoffile+1, false)) {
         fname = concat3 (output_directory, DIR_SEP_STRING, nameoffile + 1);
         *f_ptr = fopen (fname, fopen_mode);
@@ -183,6 +197,13 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
         }
 #endif
         if (*f_ptr) {
+#if defined(PTEX) && !defined(WIN32)
+            fname0 = ptenc_from_utf8_string_to_internal_enc(fname);
+            if (fname0) {
+                free (fname);
+                fname = fname0;
+            }
+#endif
             free (nameoffile);
             namelength = strlen (fname);
             nameoffile = xmalloc (namelength + 2);
@@ -205,7 +226,8 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
                which we set `tex_input_type' to 0 in the change file.  */
             /* According to the pdfTeX people, pounding the disk for .vf files
                is overkill as well.  A more general solution would be nice. */
-            boolean must_exist = (filefmt != kpse_tex_format || texinputtype)
+            boolean must_exist;
+            must_exist = (filefmt != kpse_tex_format || texinputtype)
                     && (filefmt != kpse_vf_format);
             fname = kpse_find_file (nameoffile + 1,
                                     (kpse_file_format_type)filefmt,
@@ -229,21 +251,28 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
                     fname[i] = 0;
                 }
 
+                /* This fopen is not allowed to fail. */
+#if defined(PTEX) && !defined(WIN32)
+                if (filefmt == kpse_tex_format ||
+                    filefmt == kpse_bib_format) {
+                    *f_ptr = nkf_open (fname, fopen_mode);
+                } else
+#endif
+                *f_ptr = xfopen (fname, fopen_mode);
+
                 /* kpse_find_file always returns a new string. */
+#if defined(PTEX) && !defined(WIN32)
+                fname0 = ptenc_from_utf8_string_to_internal_enc(fname);
+                if (fname0) {
+                    free (fname);
+                    fname = fname0;
+                }
+#endif
                 free (nameoffile);
                 namelength = strlen (fname);
                 nameoffile = xmalloc (namelength + 2);
                 strcpy (nameoffile + 1, fname);
                 free (fname);
-
-                /* This fopen is not allowed to fail. */
-#if defined(PTEX) && !defined(WIN32)
-                if (filefmt == kpse_tex_format ||
-                    filefmt == kpse_bib_format) {
-                    *f_ptr = nkf_open (nameoffile + 1, fopen_mode);
-                } else
-#endif
-                *f_ptr = xfopen (nameoffile + 1, fopen_mode);
             }
         }
     }
@@ -281,6 +310,9 @@ boolean
 open_output (FILE **f_ptr, const_string fopen_mode)
 {
     string fname;
+#if defined(PTEX) && !defined(WIN32)
+    string fname0;
+#endif
     boolean absolute = kpse_absolute_p(nameoffile+1, false);
 
     /* If we have an explicit output directory, use it. */
@@ -289,6 +321,13 @@ open_output (FILE **f_ptr, const_string fopen_mode)
     } else {
         fname = nameoffile + 1;
     }
+#if defined(PTEX) && !defined(WIN32)
+    fname0 = ptenc_from_internal_enc_string_to_utf8(fname);
+    if (fname0) {
+        free(fname);
+        fname = fname0;
+    }
+#endif
 
     /* Is the filename openable as given?  */
     *f_ptr = fopen (fname, fopen_mode);
@@ -307,6 +346,13 @@ open_output (FILE **f_ptr, const_string fopen_mode)
     /* If this succeeded, change nameoffile accordingly.  */
     if (*f_ptr) {
         if (fname != nameoffile + 1) {
+#if defined(PTEX) && !defined(WIN32)
+            fname0 = ptenc_from_utf8_string_to_internal_enc(fname);
+            if (fname0) {
+                free(fname);
+                fname = fname0;
+            }
+#endif
             free (nameoffile);
             namelength = strlen (fname);
             nameoffile = xmalloc (namelength + 2);
