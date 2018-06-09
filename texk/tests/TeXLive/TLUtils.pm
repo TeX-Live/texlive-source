@@ -1,4 +1,4 @@
-# $Id: TLUtils.pm 47847 2018-05-26 16:05:46Z karl $
+# $Id: TLUtils.pm 47887 2018-05-31 16:50:47Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2018 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 47847 $';
+my $svnrev = '$Revision: 47887 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -2318,11 +2318,14 @@ sub read_file_ignore_cr {
 =item C<setup_programs($bindir, $platform)>
 
 Populate the global C<$::progs> hash containing the paths to the
-programs C<wget>, C<tar>, C<xz>. The C<$bindir> argument specifies
+programs C<lz4>, C<tar>, C<wget>, C<xz>. The C<$bindir> argument specifies
 the path to the location of the C<xz> binaries, the C<$platform>
 gives the TeX Live platform name, used as the extension on our
 executables.  If a program is not present in the TeX Live tree, we also
 check along PATH (without the platform extension.)
+
+Check many different downloads and compressors to determine what is
+working.
 
 Return 0 if failure, nonzero if success.
 
@@ -2408,13 +2411,14 @@ END_COMPRESSOR_BAD
     $::progs{'compressor'} = $ENV{'TEXLIVE_COMPRESSOR'};
   }
 
-  if ($::opt_verbosity >= 1) {
+  if ($::opt_verbosity >= 2) {
     require Data::Dumper;
     use vars qw($Data::Dumper::Indent $Data::Dumper::Sortkeys
                 $Data::Dumper::Purity); # -w pain
     $Data::Dumper::Indent = 1;
     $Data::Dumper::Sortkeys = 1;  # stable output
     $Data::Dumper::Purity = 1; # recursive structures must be safe
+    print STDERR "DD:dumping ";
     print STDERR Data::Dumper->Dump([\%::progs], [qw(::progs)]);
   }
   return $ok;
@@ -2444,7 +2448,7 @@ sub setup_windows_one {
       system("$prog $arg");
     }
   } else {
-    debug("Default progrma $def not readable?\n");
+    debug("Default program $def not readable?\n");
   }
   return($ready) if ($ready);
   # still here, try plain name without any specification
@@ -2573,13 +2577,14 @@ Try to download the file given in C<$relpath> from C<$TeXLiveURL>
 into C<$destination>, which can be either
 a filename of simply C<|>. In the latter case a file handle is returned.
 
-Downloading honors two environment variables: C<TL_DOWNLOAD_PROGRAM> and
-C<TL_DOWNLOAD_ARGS>. The former overrides the above specification
-devolving to C<wget>, and the latter overrides the default wget
-arguments.
+Downloading first checks for the environment variable C<TEXLIVE_DOWNLOADER>,
+which takes various built-in values. If not set, the next check is fr
+C<TL_DOWNLOAD_PROGRAM> and C<TL_DOWNLOAD_ARGS>. The former overrides the
+above specification devolving to C<wget>, and the latter overrides the
+default wget arguments.
 
 C<TL_DOWNLOAD_ARGS> must be defined so that the file the output goes to
-is the first argument after the C<TL_DOWNLOAD_ARGS>.  Thus, typically it
+is the first argument after the C<TL_DOWNLOAD_ARGS>.  Thus, for wget it
 would end in C<-O>.  Use with care.
 
 =cut
@@ -2618,7 +2623,7 @@ sub download_file {
     } else {
       $downdest = $dest;
     }
-    # massage ssh:// into the scp acceptable scp://
+    # massage ssh:// into the scp-acceptable scp://
     $relpath =~ s!^ssh://!scp://!;
     my $retval = system("scp", "-q", $relpath, $downdest);
     if ($retval != 0) {
@@ -4327,7 +4332,7 @@ sub repository_to_array {
   my $r = shift;
   my %r;
   die "internal error, repository_to_array passed nothing (caller="
-      . caller . ")";
+      . caller . ")" if (!$r);
   my @repos = split (' ', $r);
   if ($#repos == 0) {
     # only one repo, this is the main one!

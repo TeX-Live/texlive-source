@@ -1,4 +1,4 @@
-# $Id: TLConfig.pm 47834 2018-05-25 03:40:14Z preining $
+# $Id: TLConfig.pm 47938 2018-06-06 01:35:10Z preining $
 # TeXLive::TLConfig.pm - module exporting configuration values
 # Copyright 2007-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 47834 $';
+my $svnrev = '$Revision: 47938 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -119,11 +119,13 @@ if ($^O =~ /^MSWin/i) {
 
 #
 our $DefaultFallbackDownloader = "wget";
-our @AcceptedFallbackDownloaders = qw/wget curl/;
+our @AcceptedFallbackDownloaders = qw/curl wget/;
 our %FallbackDownloaderProgram = ( 'wget' => 'wget', 'curl' => 'curl');
 our %FallbackDownloaderArgs = (
-  'wget' => ['--user-agent=texlive/wget', '--tries=10', "--timeout=$NetworkTimeout", '-q', '-O'],
-  'curl' => ['--user-agent', 'texlive/curl', '--retry', '10', '--connect-timeout', "$NetworkTimeout", '--silent', '--output']
+  'curl' => ['--user-agent', 'texlive/curl', '--retry', '10',
+             '--connect-timeout', "$NetworkTimeout", '--silent', '--output'],
+  'wget' => ['--user-agent=texlive/wget', '--tries=10',
+             "--timeout=$NetworkTimeout", '-q', '-O'],
 );
 # the way we package things on the web
 our $DefaultCompressorFormat = "xz";
@@ -133,7 +135,7 @@ our @AcceptedCompressors = qw/lz4 gzip xz/;
 our $AcceptedCompressorsRegexp = "(xz|lz4|gzip)";
 our %CompressorProgram   = ( 'xz' => 'xz',     'gzip' => 'gzip',   'lz4' => 'lz4');
 our %CompressorExtension = ( 'xz' => 'xz',     'gzip' => 'gz',     'lz4' => 'lz4');
-our %CompressorArgs      = ( 'xz' => ['-zf'],  'gzip' => [ '-f' ], 'lz4' => ['-zf', '--rm', '-q']);
+our %CompressorArgs      = ( 'xz' => ['-zf'],  'gzip' => [ '-f' ], 'lz4' => ['-zfm', '--rm', '-q']);
 our %DecompressorProgram = ( 'xz' => 'xz',     'gzip' => 'gzip',   'lz4' => 'lz4');
 our %DecompressorArgs    = ( 'xz' => ['-dcf'], 'gzip' => ['-dcf'], 'lz4' => ['-dcf']);
 
