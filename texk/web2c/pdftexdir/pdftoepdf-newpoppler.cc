@@ -147,6 +147,15 @@ static XRef *xref = 0;
 static PdfDocument *find_add_document(char *file_name)
 {
     PdfDocument *p = pdfDocuments;
+#ifdef _WIN32
+    wchar_t *fnamew;
+    if (file_system_codepage == CP_UTF8 && win32_codepage != CP_UTF8) {
+        fnamew = get_wstring_from_mbstring(CP_UTF8, file_name, fnamew=NULL);
+        xfree(file_name);
+        file_name = get_mbstring_from_wstring(win32_codepage, fnamew, file_name=NULL);
+        xfree(fnamew);
+    }
+#endif
     while (p && strcmp(p->file_name, file_name) != 0)
         p = p->next;
     if (p) {

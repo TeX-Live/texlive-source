@@ -2497,13 +2497,13 @@ install-data-local: installdirs-am
 uninstall-local:
 @WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
 @WIN32_FALSE@	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1; then \
-@WIN32_FALSE@	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 @WIN32_FALSE@	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
 @WIN32_FALSE@	  else :; fi; \
 @WIN32_FALSE@	done
 	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1; then \
-	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \
+	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \
 	    rm -f "$(DESTDIR)$(web2cdir)/$$f"; \
 	  else :; fi; \
 	done

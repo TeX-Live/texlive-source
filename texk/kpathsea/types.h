@@ -294,7 +294,7 @@ typedef struct kpathsea_instance {
 #endif /* WIN32 && !__MINGW32__ */
 #if defined(WIN32)
     int Is_cp932_system;
-    int File_system_codepage;
+    int File_system_codepage, Win32_codepage;
     int getc_len;
     int getc_buff[4];
     wchar_t wcbuf;

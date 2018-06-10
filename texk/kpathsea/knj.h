@@ -46,6 +46,7 @@ extern KPSEDLL wchar_t *kpathsea_get_wstring_from_fsyscp(kpathsea kpse, const ch
 #if defined (KPSE_COMPAT_API)
 #define is_cp932_system kpse_def->Is_cp932_system
 #define file_system_codepage kpse_def->File_system_codepage
+#define win32_codepage kpse_def->Win32_codepage
 
 extern KPSEDLL int isknj(int c);
 extern KPSEDLL int isknj2(int c);

@@ -1,3 +1,8 @@
+2018-06-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* synctex.c: Allow non-ascii file names for pdfTeX
+	with UTF-8 source files (w32 only).
+
 2018-05-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex.c: Discard the changes on 2018-05-11, since
