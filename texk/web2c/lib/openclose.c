@@ -324,7 +324,7 @@ open_output (FILE **f_ptr, const_string fopen_mode)
 #if defined(PTEX) && !defined(WIN32)
     fname0 = ptenc_from_internal_enc_string_to_utf8(fname);
     if (fname0) {
-        free(fname);
+        if (fname != nameoffile + 1) free(fname);
         fname = fname0;
     }
 #endif
