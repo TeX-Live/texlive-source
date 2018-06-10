@@ -1,6 +1,7 @@
 ## texk/web2c/am/web.am: Makefile fragment for normal web programs (except tangle).
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2018 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 web_programs = bibtex dvicopy dvitype gftodvi gftopk gftype mft \
@@ -28,8 +29,10 @@ bibtex.p: tangle$(EXEEXT) bibtex.web bibtex.ch
 	$(tangle) bibtex bibtex
 web_tests += tests/bibtex-openout-test.pl tests/bibtex-longline-test.pl
 web_tests += tests/bibtex-mem.test
+web_tests += tests/bibtex-auxinclude.test
 bibtex.log tests/bibtex-openout-test.log tests/bibtex-longline-test.log \
-	tests/bibtex-mem.log: bibtex$(EXEEXT)
+	tests/bibtex-mem.log \
+	tests/bibtex-auxinclude.log: bibtex$(EXEEXT)
 
 nodist_dvicopy_SOURCES = dvicopy.c dvicopy.h
 dvicopy.c dvicopy.h: dvicopy-web2c
@@ -181,6 +184,9 @@ DISTCLEANFILES += longline.aux longline.bbl longline.bib longline.blg
 ## tests/bibtex-mem.test
 EXTRA_DIST += tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst
 DISTCLEANFILES += tests/memtest.bib tests/memtest?.*
+## tests/bibtex-auxinclinde.test
+EXTRA_DIST += tests/auxinclude.aux tests/auxinclude.bbl tests/auxinclude.bib
+EXTRA_DIST += tests/auxinclude.tex tests/auxinclude2.aux tests/auxinclude2.tex
 ## dvicopy.test
 DISTCLEANFILES += tests/xstory.dvi tests/xpplr.dvi
 ## dvitype.test
