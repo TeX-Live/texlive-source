@@ -1,3 +1,15 @@
+2018-06-08  Karl Berry  <karl@freefriends.org>
+
+	* bibtex.ch (142): also try opening subsidiary .aux files
+	via a_open_in_with_dirname.
+	(bib_makecstring): new fn.
+	* cpascal.h (aopeninwithdirname): new #define.
+	* lib/openclose.c (open_input_with_dirname): new fn.
+	* tests/bibtex-auxinclude.test: new test.
+	* tests/auxinclude*.*: files for test.
+	Suggestion from John Collins. See thread from
+	http://tug.org/pipermail/tex-live/2018-May/041624.html.
+
 2018-05-03  Karl Berry  <karl@freefriends.org>
 
 	* patgen.ch (trie_size, triec_size): increase greatly.

@@ -413,8 +413,24 @@ function a_open_out(var f:alpha_file):boolean;  {open a text file for output}
 begin rewrite(f,name_of_file,'/O'); a_open_out:=rewrite_OK(f);
 end;
 @y
-@ File opening will be done in C.
+@ File opening will be done in C. But we want an auxiliary function to
+change a \BibTeX\ string into a C string, to keep string pool stuff
+out of the C code in @.{lib/openclose.c}.
+
 @d no_file_path = -1
+
+@<Procedures and functions for all file...@>=
+function bib_makecstring(s:str_number):cstring;
+var cstr:cstring;
+    i:pool_pointer;
+begin
+  cstr := xmalloc_array (ASCII_code, length (s) + 1);
+  for i := 0 to length(s) - 1 do begin
+    cstr[i] := str_pool[str_start[s] + i];
+  end;
+  cstr[length(s)] := 0;
+  bib_makecstring := cstr;
+exit: end;
 @z
 
 @x [39] Do file closing in C.
@@ -1008,8 +1024,15 @@ if (last_cite = max_cites) then
         end;
 @z
 
-% [142] Don't pad with blanks.
-% Don't use a path to search for subsidiary aux files, either.
+% [142] Don't pad with blanks, terminate with null.
+% Don't use a path to search for subsidiary aux files,
+% but do check the directory of the main .aux file.
+% 
+% This last is useful, for example, when --output-dir is used and the
+% .aux file has an \@input directive resulting from a LaTeX \include;
+% see bibtex-auxinclude.test. It's necessary because BibTeX itself does
+% not have --output-directory. Maybe it would be (have been?) better to
+% add it, but seems too intrusive now? Different bbl location.
 @x
 while (name_ptr <= file_name_size) do   {pad with blanks}
     begin
@@ -1019,8 +1042,11 @@ while (name_ptr <= file_name_size) do   {pad with blanks}
 if (not a_open_in(cur_aux_file)) then
 @y
 name_of_file[name_ptr] := 0;
-if (not kpse_in_name_ok(stringcast(name_of_file+1)) or
-    not a_open_in(cur_aux_file, no_file_path)) then
+if (not kpse_in_name_ok(stringcast(name_of_file+1))
+    or (not a_open_in(cur_aux_file, no_file_path)
+        and not a_open_in_with_dirname(cur_aux_file, no_file_path,
+                                       bib_makecstring(top_lev_str)))
+    ) then
 @z
 
 % [152] This goto gets turned into a setjmp/longjmp by ./convert --

@@ -1,0 +1,13 @@
+% $Id$
+% Top-level test file for bibtex-auxinclude.test (q.v.).
+% Public domain. Originally written 2018, Karl Berry.
+% built with the usual: latex auxinclude && bibtex auxinclude &&
+%   latex auxinclude && latex auxinclude
+% (although we don't use the normal output, just the .aux/bib files).
+\documentclass{article}
+\begin{document}
+article-minimal from main file: \cite{article-minimal}. Including subfile:
+\include{auxinclude2}
+\bibliographystyle{apalike}% just because we already have it in web2c/tests
+\bibliography{xampl}
+\end{document}

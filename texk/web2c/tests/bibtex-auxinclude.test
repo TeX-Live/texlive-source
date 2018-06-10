@@ -1,0 +1,22 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2018 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+# in case we're invoked standalone instead of from make.
+test -z "$srcdir" && srcdir=`cd \`dirname $0\`/.. && pwd`
+
+cp $srcdir/tests/auxinclude.aux tests/xauxinclude.aux || exit 1
+cp $srcdir/tests/auxinclude2.aux tests/auxinclude2.aux || exit 1
+
+# [x]auxinclude.aux includes \@input{auxinclude2.aux}, to be found in
+# the ./tests/ (working) subdir, which should be automatically checked
+# since we invoke bibtex on tests/whatever.aux. See thread from
+# http://tug.org/pipermail/tex-live/2018-May/041624.html.
+# 
+TEXMFCNF=$srcdir/../kpathsea \
+  BSTINPUTS=$srcdir/tests \
+  BIBINPUTS=$srcdir/tests \
+  ./bibtex tests/xauxinclude || exit 1

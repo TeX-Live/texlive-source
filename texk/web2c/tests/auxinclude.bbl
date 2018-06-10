@@ -1,0 +1,16 @@
+\newcommand{\noopsort}[1]{} \newcommand{\printfirst}[2]{#1}
+  \newcommand{\singleletter}[1]{#1} \newcommand{\switchargs}[2]{#2#1}
+\begin{thebibliography}{}
+
+\bibitem[Aamport, 1986]{article-minimal}
+Aamport, L.~A. (1986).
+\newblock The gnats and gnus document preparation system.
+\newblock {\em \mbox{G-Animal's} Journal}.
+
+\bibitem[GAJ, 1986]{whole-journal}
+GAJ (1986).
+\newblock {\em \mbox{G-Animal's} Journal}, 41(7).
+\newblock The entire issue is devoted to gnats and gnus (this entry is a
+  cross-referenced ARTICLE (journal)).
+
+\end{thebibliography}

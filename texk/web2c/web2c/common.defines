@@ -97,6 +97,7 @@
 @define function abs ();
 @define function addressof ();
 @define function aopenin ();
+@define function aopeninwithdirname ();
 @define function aopenout ();
 @define function atof ();
 @define function atoi ();
