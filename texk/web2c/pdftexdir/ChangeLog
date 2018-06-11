@@ -1,3 +1,11 @@
+2018-06-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftoepdf.cc: Remove xfree(file_name) in order to avoid
+	to output garbage.
+	* pdftoepdf-newpoppler.cc: Remove _WIN32 changes, since
+	utf-8 names are transformed to Unicode and _wopened
+	in poppler.
+ 
 2018-06-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* ptexlib.h, pdftoepdf.cc, pdftoepdf-newpoppler.cc:
