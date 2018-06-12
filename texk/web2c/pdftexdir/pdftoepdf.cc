@@ -167,10 +167,12 @@ static PdfDocument *find_add_document(char *file_name)
 {
     PdfDocument *p = pdfDocuments;
 #ifdef _WIN32
+    int file_name_is_changed = 0;
     wchar_t *fnamew;
     if (file_system_codepage == CP_UTF8 && win32_codepage != CP_UTF8) {
         fnamew = get_wstring_from_mbstring(CP_UTF8, file_name, fnamew=NULL);
         file_name = get_mbstring_from_wstring(win32_codepage, fnamew, file_name=NULL);
+        file_name_is_changed = 1;
         xfree(fnamew);
     }
 #endif
@@ -193,6 +195,10 @@ static PdfDocument *find_add_document(char *file_name)
     p->inObjList = 0;
     p->next = pdfDocuments;
     pdfDocuments = p;
+#ifdef _WIN32
+    if (file_name_is_changed == 1)
+        xfree(file_name);
+#endif
     return p;
 }
 

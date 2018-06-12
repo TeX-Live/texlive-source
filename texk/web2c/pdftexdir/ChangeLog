@@ -1,3 +1,7 @@
+2018-06-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftoepdf.cc: Free unused memory (w32 only).
+ 
 2018-06-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftoepdf.cc: Remove xfree(file_name) in order to avoid
