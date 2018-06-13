@@ -23,8 +23,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef _WIN32
 #undef fopen
 #undef xfopen
+#undef fputs
+#undef putc
 #define fopen fsyscp_fopen
 #define xfopen fsyscp_xfopen
+#define fputs win32_fputs
+#define putc win32_putc
 #endif
 
 /* WEB2C macros and prototypes */

@@ -1,3 +1,7 @@
+2018-06-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptexlib.h: Output correct image file names (w32 only).
+
 2018-06-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftoepdf.cc: Free unused memory (w32 only).
