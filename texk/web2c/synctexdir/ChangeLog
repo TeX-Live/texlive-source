@@ -1,3 +1,8 @@
+2018-06-13  Karl Berry  <karl@tug.org>
+
+	* man1/synctex.1: man page list syntax.
+	Report/patch from esr, 12 Jun 2018 15:16:13.
+
 2018-06-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* synctex.c: Allow non-ascii file names for pdfTeX

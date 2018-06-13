@@ -1,8 +1,8 @@
-.Dd 04/23/2017     \" DATE
+.Dd 06/13/2018     \" DATE
 .Dt synctex 1      \" Program name and manual section number 
 .Sh NAME
 .Nm synctex
-.Nd command line client tool to support the Synchronize TeXnology available in recent TeX engines.
+.Nd command line client tool to support the Synchronize TeXnology available in most TeX engines.
 .Sh SYNOPSIS
 .Nm
 \fIcommand\fP [\fIoptions\fP] [\fIargs\fP]
@@ -14,18 +14,20 @@ and vice versa.
 .Pp
 Run `synctex help' to access the built-in tool documentation.
 .Sh TEX ENGINE OPTION -synctex=NUMBER
+.Bl -bullet
 .It
-.Li If NUMBER=0 or no option is given, no synctex file is created.
+If NUMBER=0 or no option is given, no synctex file is created.
 .It
-.Li If NUMBER<0, synctex files are text files.
+If NUMBER<0, synctex files are text files.
 .It
-.Li If NUMBER>0, synctex files are compressed with gz.
+If NUMBER>0, synctex files are compressed with gz.
 .It
-.Li If NUMBER&2, no .gz extension is used.
+If NUMBER&2, no .gz extension is used.
 .It
-.Li If NUMBER&4, activate form support, useful for pdftex.
+If NUMBER&4, activate form support, useful for pdftex.
 .It
-.Li If NUMBER&8, better file compression.
+If NUMBER&8, better file compression.
+.El
 .Pp
 Use for example `pdftex -synctex=15 foo.tex' to activate all the options.
 .Pp
