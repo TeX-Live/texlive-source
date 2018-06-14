@@ -213,9 +213,6 @@ int main(int argc, char **argv)
 				fprintf(stderr,"-E      EUC mode.\n");
 				fprintf(stderr,"-J      JIS mode.\n");
 				fprintf(stderr,"-S      ShiftJIS mode.\n");
-#ifdef WIN32
-				fprintf(stderr,"-T      ShiftJIS terminal.\n");
-#endif
 				fprintf(stderr,"-U      UTF-8 mode.\n");
 				fprintf(stderr,"-I enc  internal encoding for keywords (enc: euc or utf8).\n");
 				fprintf(stderr,"idx...  input files.\n");
