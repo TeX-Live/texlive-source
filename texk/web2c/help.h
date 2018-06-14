@@ -333,9 +333,6 @@ const_string PBIBTEXHELP[] = {
     "",
     "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8)",
     "-min-crossrefs=NUMBER  include item after NUMBER cross-refs; default 2",
-#if defined(WIN32)
-    "-sjis-terminal         always output to stdout and stderr by CP932",
-#endif
     "-terse                 do not print progress reports",
     "-help                  display this help and exit",
     "-version               output version information and exit",
@@ -357,9 +354,6 @@ const_string PDVITYPEHELP[] = {
     "-output-level=NUMBER   verbosity level, from 0 to 4; default 4",
     "-page-start=PAGE-SPEC  start at PAGE-SPEC, for example `2' or `5.*.-2'",
     "-show-opcodes          show numeric opcodes (in decimal)",
-#if defined(WIN32)
-    "-sjis-terminal         always output to stdout and stderr by CP932",
-#endif
     "-help                  display this help and exit",
     "-version               output version information and exit",
     NULL
@@ -423,9 +417,6 @@ const_string PPLTOTFHELP[] = {
     "  Default TFMFILE is basename of PLFILE extended with `.tfm'.",
     "",
     "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8)",
-#if defined(WIN32)
-    "-sjis-terminal         always output to stdout and stderr by CP932",
-#endif
     "-help                  print this message and exit.",
     "-verbose               output progress reports.",
     "-version               print version information and exit.",
@@ -444,9 +435,6 @@ const_string PTFTOPLHELP[] = {
     "                        either `octal' or `ascii'; default is ascii for",
     "                        letters and digits, octal for all else",
     "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8)",
-#if defined(WIN32)
-    "-sjis-terminal         always output to stdout and stderr by CP932",
-#endif
     "-help                  display this help and exit",
     "-verbose               display progress reports",
     "-version               output version information and exit",
@@ -504,9 +492,6 @@ const_string UPBIBTEXHELP[] = {
     "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
     "-kanji-internal=STRING set Japanese internal encoding (STRING=euc|uptex)",
     "-min-crossrefs=NUMBER  include item after NUMBER cross-refs; default 2",
-#if defined(WIN32)
-    "-sjis-terminal         always output to stdout and stderr by CP932",
-#endif
     "-terse                 do not print progress reports",
     "-help                  display this help and exit",
     "-version               output version information and exit",
@@ -528,9 +513,6 @@ const_string UPDVITYPEHELP[] = {
     "-output-level=NUMBER   verbosity level, from 0 to 4; default 4",
     "-page-start=PAGE-SPEC  start at PAGE-SPEC, for example `2' or `5.*.-2'",
     "-show-opcodes          show numeric opcodes (in decimal)",
-#if defined(WIN32)
-    "-sjis-terminal         always output to stdout and stderr by CP932",
-#endif
     "-help                  display this help and exit",
     "-version               output version information and exit",
     NULL
@@ -545,9 +527,6 @@ const_string UPPLTOTFHELP[] = {
     "  Default TFMFILE is basename of PLFILE extended with `.tfm'.",
     "",
     "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
-#if defined(WIN32)
-    "-sjis-terminal         always output to stdout and stderr by CP932",
-#endif
     "-help                  print this message and exit.",
     "-verbose               output progress reports.",
     "-version               print version information and exit.",
@@ -566,9 +545,6 @@ const_string UPTFTOPLHELP[] = {
     "                        either `octal' or `ascii'; default is ascii for",
     "                        letters and digits, octal for all else",
     "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
-#if defined(WIN32)
-    "-sjis-terminal         always output to stdout and stderr by CP932",
-#endif
     "-help                  display this help and exit",
     "-verbose               display progress reports",
     "-version               output version information and exit",

@@ -511,16 +511,6 @@ const n_options = 10; {Pascal won't count array lengths for us.}
 @x
 @ An element with all zeros always ends the list.
 @y
-@ Shift-JIS terminal (the flag is ignored except for WIN32).
-@.-sjis-terminal@>
-
-@<Define the option...@> =
-long_options[current_option].name := 'sjis-terminal';
-long_options[current_option].has_arg := 0;
-long_options[current_option].flag := address_of (sjis_terminal);
-long_options[current_option].val := 1;
-incr (current_option);
-
 @ Decide kanji encode
 @.-kanji@>
 

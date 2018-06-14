@@ -1,3 +1,7 @@
+2018-06-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* help.h, texmfmp-help.h: remove sjisterminal (w32 only).
+
 2018-06-08  Karl Berry  <karl@freefriends.org>
 
 	* bibtex.ch (142): also try opening subsidiary .aux files

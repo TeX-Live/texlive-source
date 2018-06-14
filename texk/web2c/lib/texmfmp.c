@@ -1663,7 +1663,6 @@ static struct option long_options[]
 #endif /* TeX or MF */
 #if IS_pTeX
 #ifdef WIN32
-      { "sjis-terminal",             0, &sjisterminal, 1 },
       { "guess-input-enc",           0, &infile_enc_auto, 1 },
       { "no-guess-input-enc",        0, &infile_enc_auto, 0 },
 #endif

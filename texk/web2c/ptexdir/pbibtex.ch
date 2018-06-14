@@ -550,16 +550,6 @@ long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
 incr (current_option);
 
-@ Shift-JIS terminal (the flag is ignored except for WIN32).
-@.-sjis-terminal@>
-
-@<Define the option...@> =
-long_options[current_option].name := 'sjis-terminal';
-long_options[current_option].has_arg := 0;
-long_options[current_option].flag := address_of (sjis_terminal);
-long_options[current_option].val := 1;
-incr (current_option);
-
 @ Kanji option.
 @.-kanji@>
 

@@ -23,7 +23,6 @@
 
 extern PTENCDLL const char *ptexenc_version_string;
 #if defined(WIN32)
-extern PTENCDLL int sjisterminal;
 extern PTENCDLL FILE *Poptr;
 extern PTENCDLL int infile_enc_auto;
 #endif

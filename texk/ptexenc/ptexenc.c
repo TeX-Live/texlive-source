@@ -39,7 +39,6 @@ static boolean prior_file_enc = false;
 
 const char *ptexenc_version_string = PTEXENCVERSION;
 #if defined(WIN32)
-int sjisterminal;
 FILE *Poptr;
 int infile_enc_auto;
 #else
@@ -419,44 +418,38 @@ static long toENC(long kcode, int enc)
 
 static int put_multibyte(long c, FILE *fp) {
 #ifdef WIN32
-    if (sjisterminal) {
-        const int fd = fileno(fp);
+    const int fd = fileno(fp);
 
-        if ((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)) {
-            HANDLE hStdout;
-            DWORD ret, wclen;
-            UINT cp;
-            wchar_t buff[2];
-            char str[4];
-            int mblen;
+    if ((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)) {
+       HANDLE hStdout;
+       DWORD ret, wclen;
+       UINT cp;
+       wchar_t buff[2];
+       char str[4];
+       int mblen;
 
-            if (fd == fileno(stdout))
-                hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-            else
-                hStdout = GetStdHandle(STD_ERROR_HANDLE);
+       if (fd == fileno(stdout))
+           hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+       else
+           hStdout = GetStdHandle(STD_ERROR_HANDLE);
 
-            mblen=0;
-            if (BYTE1(c) != 0) str[mblen++]=BYTE1(c);
-            if (BYTE2(c) != 0) str[mblen++]=BYTE2(c);
-            if (BYTE3(c) != 0) str[mblen++]=BYTE3(c);
-            /* always */       str[mblen++]=BYTE4(c);
+       mblen=0;
+       if (BYTE1(c) != 0) str[mblen++]=BYTE1(c);
+       if (BYTE2(c) != 0) str[mblen++]=BYTE2(c);
+       if (BYTE3(c) != 0) str[mblen++]=BYTE3(c);
+       /* always */       str[mblen++]=BYTE4(c);
 
-#define CP_932     932
 #define CP_UTF8    65001
 
-            if (is_internalUPTEX())
-                cp = CP_UTF8;
-            else
-                cp = CP_932;
-            if (MultiByteToWideChar(cp, 0, str, mblen, buff, 2) == 0)
-                return EOF;
+       cp = CP_UTF8;
+       if (MultiByteToWideChar(cp, 0, str, mblen, buff, 2) == 0)
+           return EOF;
 
-            wclen = mblen > 3 ? 2 : 1;
-            if (WriteConsoleW(hStdout, buff, wclen, &ret, NULL) == 0)
-                return EOF;
+       wclen = mblen > 3 ? 2 : 1;
+       if (WriteConsoleW(hStdout, buff, wclen, &ret, NULL) == 0)
+           return EOF;
 
-            return BYTE4(c);
-        }
+       return BYTE4(c);
     }
 #endif
 
@@ -491,20 +484,15 @@ int putc2(int c, FILE *fp)
 
 #ifdef WIN32
     if ((fp == stdout || fp == stderr) && (_isatty(fd) || !prior_file_enc)) {
-        if (sjisterminal) {
-            if (is_internalUPTEX())
-                output_enc = ENC_UTF8;
-            else
-                output_enc = ENC_SJIS;
-        } else
+        output_enc = ENC_UTF8;
+     } else
+        output_enc = get_file_enc();
 #else
     if ((fp == stdout || fp == stderr) && !prior_file_enc) {
-#endif
-
         output_enc = get_terminal_enc();
     } else
         output_enc = get_file_enc();
-
+#endif
     if (num[fd] > 0) {        /* multi-byte char */
         if (is_internalUPTEX() && iskanji1(c)) { /* error */
             ret = flush(store[fd], num[fd], fp);

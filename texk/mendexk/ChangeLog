@@ -1,3 +1,7 @@
+2018-06-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* main.c: remove sjisterminal (w32 only).
+
 2018-05-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* README, main.c, configure.ac, configure:

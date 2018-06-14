@@ -1,3 +1,8 @@
+2018-06-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch,
+	kanji.h, kanji.c, ptex.defines: remove sjisterminal (w32 only).
+
 2018-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* kanji.c: More strict check kanji token.

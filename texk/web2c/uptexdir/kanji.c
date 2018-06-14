@@ -11,10 +11,6 @@
 #define KCAT_KANJI     16
 #define KCAT_HANGUL    19
 
-#if !defined(WIN32)
-int sjisterminal;
-#endif
-
 /* TOKEN */
 boolean check_kanji (integer c)
 {

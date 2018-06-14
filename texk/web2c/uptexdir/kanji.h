@@ -19,10 +19,6 @@
 #define not_kanji_char_seq(a,b) (1)
 #define notkanjicharseq not_kanji_char_seq
 
-#if !defined(WIN32)
-extern int sjisterminal;
-#endif
-
 /* functions */
 #define XXHi(x) BYTE1(x)
 #define XHi(x) BYTE2(x)

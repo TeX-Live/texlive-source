@@ -124,9 +124,6 @@ const_string EPTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-#if defined(WIN32)
-    "-sjis-terminal          always output to stdout and stderr by CP932",
-#endif
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -254,9 +251,6 @@ const_string EUPTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-#if defined(WIN32)
-    "-sjis-terminal          always output to stdout and stderr by CP932",
-#endif
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -523,9 +517,6 @@ const_string PTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-#if defined(WIN32)
-    "-sjis-terminal          always output to stdout and stderr by CP932",
-#endif
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -651,9 +642,6 @@ const_string UPTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-#if defined(WIN32)
-    "-sjis-terminal          always output to stdout and stderr by CP932",
-#endif
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",

@@ -24,10 +24,6 @@
 #endif
 #define notkanjicharseq not_kanji_char_seq
 
-#if !defined(WIN32)
-extern int sjisterminal;
-#endif
-
 /* functions */
 #define Hi(x) (((x) >> 8) & 0xff)
 #define Lo(x) ((x) & 0xff)

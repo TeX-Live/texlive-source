@@ -6,10 +6,6 @@
 #include "kanji.h"
 #define CS_TOKEN_FLAG   0xFFFF
 
-#if !defined(WIN32)
-int sjisterminal;
-#endif
-
 /* TOKEN */
 boolean check_kanji(integer c)
 {

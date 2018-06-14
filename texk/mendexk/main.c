@@ -31,7 +31,6 @@ int main(int argc, char **argv)
 
 #ifdef WIN32
 	_setmaxstdio(2048);
-	sjisterminal = 0;
 #endif
 	set_enc_string(NULL, "uptex");
 	kpse_set_program_name(argv[0], "mendex");
@@ -166,12 +165,6 @@ int main(int argc, char **argv)
 			case 'S':
 				set_enc_string("SJIS", NULL);
 				break;
-
-#ifdef WIN32
-			case 'T':
-				sjisterminal = 1;
-				break;
-#endif
 
 			case 'U':
 				set_enc_string("UTF8", NULL);
