@@ -147,7 +147,7 @@ extern "C" void  hb_free_impl(void *ptr);
 #define HB_FUNC __func__
 #endif
 
-#ifdef __SUNPRO_CC
+#if defined(__SUNPRO_CC) && (__SUNPRO_CC < 0x5140)
 /* https://github.com/harfbuzz/harfbuzz/issues/630 */
 #define __restrict
 #endif
@@ -369,6 +369,7 @@ _hb_popcount (T v)
   }
 
   assert (0);
+  return 0; /* Shut up stupid compiler. */
 }
 
 /* Returns the number of bits needed to store number */
@@ -437,11 +438,12 @@ _hb_bit_storage (T v)
   if (sizeof (T) == 16)
   {
     unsigned int shift = 64;
-    return (v >> shift) ? _hb_bit_storage<uint64_t> ((uint64_t) v >> shift) + shift :
+    return (v >> shift) ? _hb_bit_storage<uint64_t> ((uint64_t) (v >> shift)) + shift :
 			  _hb_bit_storage<uint64_t> ((uint64_t) v);
   }
 
   assert (0);
+  return 0; /* Shut up stupid compiler. */
 }
 
 /* Returns the number of zero bits in the least significant side of v */
@@ -514,6 +516,7 @@ _hb_ctz (T v)
   }
 
   assert (0);
+  return 0; /* Shut up stupid compiler. */
 }
 
 static inline bool
@@ -712,6 +715,9 @@ struct hb_vector_t
     unsigned int size = size_ < 0 ? 0u : (unsigned int) size_;
     if (!alloc (size))
       return false;
+
+    if (size > len)
+      memset (arrayZ + len, 0, (size - len) * sizeof (*arrayZ));
 
     len = size;
     return true;
@@ -1230,9 +1236,6 @@ round (double x)
     return ceil (x - 0.5);
 }
 #endif
-
-
-HB_INTERNAL unsigned int _hb_prime_for (unsigned int shift);
 
 
 #endif /* HB_PRIVATE_HH */

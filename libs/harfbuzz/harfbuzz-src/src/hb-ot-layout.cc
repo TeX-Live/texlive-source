@@ -44,6 +44,7 @@
 #include "hb-ot-color-sbix-table.hh"
 #include "hb-ot-color-svg-table.hh"
 #include "hb-ot-name-table.hh"
+#include "hb-map-private.hh"
 
 
 hb_ot_layout_t *
@@ -943,11 +944,46 @@ hb_ot_layout_lookup_substitute_closure (hb_face_t    *face,
 				        unsigned int  lookup_index,
 				        hb_set_t     *glyphs)
 {
-  OT::hb_closure_context_t c (face, glyphs);
+  hb_auto_t<hb_map_t> done_lookups;
+  OT::hb_closure_context_t c (face, glyphs, &done_lookups);
 
   const OT::SubstLookup& l = _get_gsub (face).get_lookup (lookup_index);
 
-  l.closure (&c);
+  l.closure (&c, lookup_index);
+}
+
+/**
+ * hb_ot_layout_lookups_substitute_closure:
+ *
+ * Compute the transitive closure of glyphs needed for all of the
+ * provided lookups.
+ *
+ * Since: 1.8.1
+ **/
+void
+hb_ot_layout_lookups_substitute_closure (hb_face_t      *face,
+                                         const hb_set_t *lookups,
+                                         hb_set_t       *glyphs)
+{
+  hb_auto_t<hb_map_t> done_lookups;
+  OT::hb_closure_context_t c (face, glyphs, &done_lookups);
+  const OT::GSUB& gsub = _get_gsub (face);
+
+  unsigned int glyphs_length;
+  do
+  {
+    glyphs_length = glyphs->get_population ();
+    if (lookups != nullptr)
+    {
+      for (hb_codepoint_t lookup_index = HB_SET_VALUE_INVALID; hb_set_next (lookups, &lookup_index);)
+        gsub.get_lookup (lookup_index).closure (&c, lookup_index);
+    }
+    else
+    {
+      for (unsigned int i = 0; i < gsub.get_lookup_count (); i++)
+        gsub.get_lookup (i).closure (&c, i);
+    }
+  } while (glyphs_length != glyphs->get_population ());
 }
 
 /*

@@ -400,6 +400,19 @@ struct hb_set_t
     return true;
   }
 
+  inline bool is_subset (const hb_set_t *larger_set) const
+  {
+    if (get_population () > larger_set->get_population ())
+      return false;
+
+    hb_codepoint_t c = INVALID;
+    while (next (&c))
+      if (!larger_set->has (c))
+        return false;
+
+    return true;
+  }
+
   template <class Op>
   inline void process (const hb_set_t *other)
   {
@@ -411,7 +424,7 @@ struct hb_set_t
     unsigned int nb = other->pages.len;
     unsigned int next_page = na;
 
-    unsigned int count = 0;
+    unsigned int count = 0, newCount = 0;
     unsigned int a = 0, b = 0;
     for (; a < na && b < nb; )
     {
@@ -439,8 +452,10 @@ struct hb_set_t
     if (Op::passthru_right)
       count += nb - b;
 
-    if (!resize (count))
-      return;
+    if (count > pages.len)
+      if (!resize (count))
+        return;
+    newCount = count;
 
     /* Process in-place backward. */
     a = na;
@@ -493,6 +508,8 @@ struct hb_set_t
 	page_at (count).v = other->page_at (b).v;
       }
     assert (!count);
+    if (pages.len > newCount)
+      resize (newCount);
   }
 
   inline void union_ (const hb_set_t *other)

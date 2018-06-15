@@ -1,3 +1,309 @@
+commit f3e58ab8a957cdf36bddef793c473664744885a7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 12 19:32:04 2018 -0400
+
+    [docs] Enlist misc new symbols
+
+ RELEASING.md               |  3 ++-
+ docs/harfbuzz-sections.txt | 24 +++++++++++++++++++++++-
+ 2 files changed, 25 insertions(+), 2 deletions(-)
+
+commit f6893ef82c51a35dd075973b2041b1b19f81faff
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 12 19:20:20 2018 -0400
+
+    Move hb-version.h generation to Makefile
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/864
+
+    Unfortunately 1.7.7 and 1.8.0 went out with the wrong hb-version.h
+    contents.
+
+ configure.ac     |  1 -
+ src/Makefile.am  | 21 ++++++++++++++++-----
+ src/hb-version.h |  6 +++---
+ 3 files changed, 19 insertions(+), 9 deletions(-)
+
+commit cc0b04f48f261c1deb8f4142e7ae0222fbec67fb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 12 18:24:54 2018 -0400
+
+    [subset] Remove HB_SUBSET_BUILTIN
+
+    Just include hb-static.cc in libharfbuzz-subset.so source list as
+    well.  Those building it built-in will include hb-static.cc once
+    already.  No need for any gymnastics.
+
+ src/Makefile.sources | 1 +
+ src/hb-subset.cc     | 5 -----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+commit ba0ea56efab9caa942d59bf51c78e490969cab87
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 11 23:24:41 2018 -0400
+
+    [substitute-closure] Rename function for clarity
+
+ src/hb-ot-layout-gsub-table.hh       | 4 ++--
+ src/hb-ot-layout-gsubgpos-private.hh | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 7b5ce416383101cb9d72a775a32d0088984e6817
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 11 23:23:40 2018 -0400
+
+    Whitespace
+
+ src/hb-ot-layout-gsub-table.hh | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit c4d0d11c55f018026fc9c1db75fe7a4f8a38f81f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 11 22:11:45 2018 -0400
+
+    [vector] Always 0-fill new items
+
+ src/hb-private.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit a7e1b4a3b2d7b853ca244156571dd83321739bb1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 11 22:05:08 2018 -0400
+
+    Fix compiler warning re reordering of initializations
+
+ src/hb-ot-layout-gsubgpos-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit f56cd9df10824fbbef52172470d07ff673d460cc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 11 22:02:38 2018 -0400
+
+    Style
+
+ src/hb-ot-layout.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit a95cde15af4aa34e76c4394dfdf17e7d25164d5b
+Author: Jonathan Kew <jfkthame@gmail.com>
+Date:   Mon Jun 11 18:09:35 2018 -0700
+
+    [hb-set] Additional testcase for hb-set-intersect.
+
+ test/api/test-set.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 82484b05ca7a51dec6f3f9e9b0d7967823d7657f
+Author: Jonathan Kew <jfkthame@gmail.com>
+Date:   Mon Jun 11 20:55:14 2018 -0700
+
+    [hb-set] Don't shrink vectors until after processing their contents.
+
+    Fixes #1054.
+
+ src/hb-set-private.hh | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+commit eb585033cae33ca069bbcdaa21e4074678b6a6e9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 11 03:47:43 2018 +0430
+
+    Fetch the updated dwrite_1.h header from a better place
+
+    Following to
+    https://ci.appveyor.com/project/harfbuzz/harfbuzz/build/1.0.1693/job/mfkjdhcdykjuqdfc
+
+ appveyor.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b8e406f0c7c381d46e2d2bbe35a6107d560f2122
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jun 10 17:22:38 2018 -0400
+
+    More fixes for SunStudio 12.6 build
+
+    Followup to https://github.com/harfbuzz/harfbuzz/pull/1053
+
+ src/hb-ft.cc     | 8 ++++----
+ src/hb-subset.cc | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 498e4373dc2eb98fa9b18a0824c7912ed84a4c80
+Author: prrace <philip.race@oracle.com>
+Date:   Sat Jun 9 16:04:28 2018 -0700
+
+    Fix SunStudio 12.6 build (#1053)
+
+ src/hb-face.cc    | 2 +-
+ src/hb-private.hh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 46f7e7760f4c9b1b2886a27eff3c0fabdab45dbe
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Jun 7 15:55:45 2018 -0700
+
+    [subset] Use REPLACEME instead of version.
+
+ src/hb-subset-input.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fc246ec985890f8256f6e03cdf74c86b9b51ff2a
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Jun 7 15:54:19 2018 -0700
+
+    [subset] Move variable declaration out of loop.
+
+ test/api/test-subset-glyf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 197cb18b22ce11f32f5f2c68c13f7068fb5cc338
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Jun 7 15:32:52 2018 -0700
+
+    [subset] Add test cases for gsub closure in subsetting.
+
+ test/api/fonts/Roboto-Regular.gsub.fi.ttf   | Bin 0 -> 2652 bytes
+ test/api/fonts/Roboto-Regular.gsub.fil.ttf  | Bin 0 -> 3228 bytes
+ test/api/fonts/Roboto-Regular.nogsub.fi.ttf | Bin 0 -> 1856 bytes
+ test/api/test-subset-glyf.c                 |  52
+ ++++++++++++++++++++++++++++
+ 4 files changed, 52 insertions(+)
+
+commit 37eab27be3b88079614f66e484c700bb2d40af10
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Jun 7 14:39:03 2018 -0700
+
+    [subset] Add fuzzing of gsub closure to hb-subset-fuzzer.
+
+ test/fuzzing/hb-subset-fuzzer.cc | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
+
+commit feb23892a36a7c855306db6d21521d5e8362bdf7
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Jun 7 14:32:34 2018 -0700
+
+    [subset] Use gsub closure if ot layout is not being dropped.
+
+ src/hb-ot-layout.cc   | 10 ++++++++--
+ src/hb-subset-plan.cc | 20 ++++++++++++++++++--
+ 2 files changed, 26 insertions(+), 4 deletions(-)
+
+commit a5673da9be70f2ba0ff79aab4bd9a4480cb0223e
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Jun 7 14:23:03 2018 -0700
+
+    [subset] Add drop_ot_layout setting to subset input.
+
+ src/hb-subset-input.cc   | 17 +++++++++++++++++
+ src/hb-subset-plan.cc    |  1 +
+ src/hb-subset-plan.hh    |  1 +
+ src/hb-subset-private.hh |  1 +
+ src/hb-subset.cc         |  3 ++-
+ src/hb-subset.h          |  3 +++
+ 6 files changed, 25 insertions(+), 1 deletion(-)
+
+commit 57badadb769d0bcdbee00afce3af4972bc5c6bf1
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Jun 6 16:02:51 2018 -0700
+
+    [subset] add a new closure call to hb-ot-layout that can compute
+    the closure over multiple lookups.
+
+ src/hb-ot-layout.cc | 26 ++++++++++++++++++++++++++
+ src/hb-ot-layout.h  |  6 ++++++
+ src/hb-ot-shape.cc  | 10 +---------
+ 3 files changed, 33 insertions(+), 9 deletions(-)
+
+commit 11f1f4131b722f0e0338bee222a78110806f5a3d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 6 16:46:50 2018 -0700
+
+    [set] Add is_subset
+
+    New API:
+    +hb_set_is_subset()
+
+ src/hb-set-private.hh       | 13 +++++++++++++
+ src/hb-set.cc               | 22 ++++++++++++++++++++--
+ src/hb-set.h                |  4 ++++
+ test/api/test-set.c         |  4 ++++
+ test/api/test-subset-glyf.c | 11 +++++------
+ 5 files changed, 46 insertions(+), 8 deletions(-)
+
+commit 45186b9b8cbffa7b5c8509624fb431a0f79f5130
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Jun 5 17:14:42 2018 -0700
+
+    [subset] Add memoization of GSUB lookup closures.
+
+ src/hb-ot-layout-gsub-table.hh       | 15 +++++++++++++--
+ src/hb-ot-layout-gsubgpos-private.hh | 20 ++++++++++++++++++++
+ src/hb-ot-layout.cc                  |  6 ++++--
+ 3 files changed, 37 insertions(+), 4 deletions(-)
+
+commit 78d92e0f27e8b688efac014526ef5c4f1f53a58f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 6 15:24:43 2018 -0700
+
+    Minorish
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 676b19f0d1d21629b654e69f220bf53965735940
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 6 15:23:35 2018 -0700
+
+    Compiler gymnastics
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/630
+
+ src/hb-private.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 0a5952e8ddb3ec955496d582ef5a559a27684a0c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 6 14:55:30 2018 -0700
+
+    Move prime_for back into map
+
+    This was causing problem on systems without visibility when map
+    was used
+    from both libharfbuzz and libharfbuzz-subset. Sigh.
+
+    https://ci.appveyor.com/project/harfbuzz/harfbuzz/build/1.0.1669/job/dey47nmff0770vp3
+
+ src/hb-map-private.hh | 53
+ ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ src/hb-private.hh     |  3 ---
+ src/hb-static.cc      | 51
+ -------------------------------------------------
+ 3 files changed, 52 insertions(+), 55 deletions(-)
+
+commit a2a1484ef93d5b5c3748b15219eca669d866b0a9
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Wed Jun 6 12:57:28 2018 -0400
+
+    Convert Consonant_Initial_Postfixed to CONS_FINAL
+
+    Consonant_Initial_Postfixed was split off of
+    Consonant_Succeeding_Repha,
+    so it should correspond to the same USE class, CONS_FINAL.
+
+ src/gen-use-table.py                 | 5 +++--
+ src/hb-ot-shape-complex-use-table.cc | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+commit 37986aa9b7ac44b1c4c50ebba9902d06cc8a45e0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 5 18:04:40 2018 -0700
+
+    1.8.0
+
+ NEWS         | 5 +++++
+ configure.ac | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
 commit 9d3cd13c30d8df41a2f7ff6c4208a1b2d75ddd64
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Jun 5 17:59:31 2018 -0700
