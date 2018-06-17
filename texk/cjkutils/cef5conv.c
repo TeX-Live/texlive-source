@@ -2,7 +2,7 @@
 "cef5conv (CJK ver. 4.8.4)" \
 
 /*2:*/
-#line 108 "./cjkutils-4.8.4/CEFconv/cef5conv.w"
+#line 108 "./cjkutils-src/CEFconv/cef5conv.w"
 
 #include <ctype.h> 
 #include <stdio.h> 

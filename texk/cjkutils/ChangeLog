@@ -1,3 +1,7 @@
+2018-06-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* *.c: Adjust #line directive to the new convention.
+
 2016-02-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

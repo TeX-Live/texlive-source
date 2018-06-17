@@ -2,7 +2,7 @@
 "extconv (CJK ver. 4.8.4)" \
 
 /*2:*/
-#line 94 "./cjkutils-4.8.4/extconv/extconv.w"
+#line 94 "./cjkutils-src/extconv/extconv.w"
 
 #include <stdio.h> 
 #include <stdlib.h> 

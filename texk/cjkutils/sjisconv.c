@@ -2,7 +2,7 @@
 "sjisconv (CJK ver. 4.8.4)" \
 
 /*2:*/
-#line 96 "./cjkutils-4.8.4/SJISconv/sjisconv.w"
+#line 96 "./cjkutils-src/SJISconv/sjisconv.w"
 
 #include <stdio.h> 
 #include <stdlib.h> 

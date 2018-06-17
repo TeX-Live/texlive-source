@@ -2,7 +2,7 @@
 "bg5conv (CJK ver. 4.8.4)" \
 
 /*2:*/
-#line 94 "./cjkutils-4.8.4/Bg5conv/bg5conv.w"
+#line 94 "./cjkutils-src/Bg5conv/bg5conv.w"
 
 #include <stdio.h> 
 #include <stdlib.h> 
