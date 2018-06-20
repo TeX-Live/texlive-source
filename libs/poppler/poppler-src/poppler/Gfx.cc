@@ -947,11 +947,10 @@ void Gfx::opSetDash(Object args[], int numArgs) {
     dash = nullptr;
   } else {
     dash = (double *)gmallocn(length, sizeof(double));
+    bool dummyOk;
     for (i = 0; i < length; ++i) {
-      Object obj = a->get(i);
-      if (obj.isNum()) {
-	dash[i] = obj.getNum();
-      }
+      const Object obj = a->get(i);
+      dash[i] = obj.getNum(&dummyOk);
     }
   }
   state->setLineDash(dash, length, args[1].getNum());
@@ -990,7 +989,6 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
   Function *funcs[4];
   GfxColor backdropColor;
   GBool haveBackdropColor;
-  GfxColorSpace *blendingColorSpace;
   GBool alpha, isolated, knockout;
   double opac;
   int i;
@@ -1197,7 +1195,7 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
       if (obj3.isStream()) {
 	Object obj4 = obj3.streamGetDict()->lookup("Group");
 	if (obj4.isDict()) {
-	  blendingColorSpace = nullptr;
+	  GfxColorSpace *blendingColorSpace = nullptr;
 	  isolated = knockout = gFalse;
 	  Object obj5 = obj4.dictLookup("CS");
 	  if (!obj5.isNull()) {
@@ -1223,15 +1221,14 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
 	  }
 	  doSoftMask(&obj3, alpha, blendingColorSpace,
 		     isolated, knockout, funcs[0], &backdropColor);
-	  if (funcs[0]) {
-	    delete funcs[0];
-	  }
+	  delete blendingColorSpace;
 	} else {
 	  error(errSyntaxError, getPos(), "Invalid soft mask in ExtGState - missing group");
 	}
       } else {
 	error(errSyntaxError, getPos(), "Invalid soft mask in ExtGState - missing group");
       }
+      delete funcs[0];
     } else if (!obj2.isNull()) {
       error(errSyntaxError, getPos(), "Invalid soft mask in ExtGState");
     }
@@ -1357,10 +1354,6 @@ void Gfx::doSoftMask(Object *str, GBool alpha,
 	  blendingColorSpace, isolated, knockout,
 	  alpha, transferFunc, backdropColor);
   --formDepth;
-
-  if (blendingColorSpace) {
-    delete blendingColorSpace;
-  }
 }
 
 void Gfx::opSetRenderingIntent(Object args[], int numArgs) {
@@ -2610,7 +2603,7 @@ void Gfx::doAxialShFill(GfxAxialShading *shading) {
   double t0, t1, tt;
   double ta[axialMaxSplits + 1];
   int next[axialMaxSplits + 1];
-  GfxColor color0, color1;
+  GfxColor color0 = {}, color1 = {};
   int nComps;
   int i, j, k;
   GBool needExtend = gTrue;
@@ -2910,7 +2903,7 @@ void Gfx::doRadialShFill(GfxRadialShading *shading) {
   double xMin, yMin, xMax, yMax;
   double x0, y0, r0, x1, y1, r1, t0, t1;
   int nComps;
-  GfxColor colorA, colorB;
+  GfxColor colorA = {}, colorB = {}, colorC = {};
   double xa, ya, xb, yb, ra, rb;
   double ta, tb, sa, sb;
   double sz, xz, yz, sMin, sMax;
@@ -2941,7 +2934,12 @@ void Gfx::doRadialShFill(GfxRadialShading *shading) {
     xz = x0 + sz * (x1 - x0);
     yz = y0 + sz * (y1 - y0);
     enclosed = (xz - x0) * (xz - x0) + (yz - y0) * (yz - y0) <= r0 * r0;
-    theta = asin(r0 / sqrt((x0 - xz) * (x0 - xz) + (y0 - yz) * (y0 - yz)));
+    const double theta_aux = sqrt((x0 - xz) * (x0 - xz) + (y0 - yz) * (y0 - yz));
+    if (likely(theta_aux != 0)) {
+      theta = asin(r0 / theta_aux);
+    } else {
+      theta = 0;
+    }
     if (r0 > r1) {
       theta = -theta;
     }
@@ -3081,7 +3079,6 @@ void Gfx::doRadialShFill(GfxRadialShading *shading) {
         // same color does not mean all the areas in between have the same color too
         int ic = ia + 1;
         for (; ic <= ib; ic++) {
-          GfxColor colorC;
           const double sc = sMin + ((double)ic / (double)radialMaxSplits) * (sMax - sMin);
           const double tc = t0 + sc * (t1 - t0);
           getShadingColorRadialHelper(t0, t1, tc, shading, &colorC);
@@ -4457,6 +4454,7 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
       }
       maskColorSpace = GfxColorSpace::parse(nullptr, &obj1, out, state);
       if (!maskColorSpace || maskColorSpace->getMode() != csDeviceGray) {
+	delete maskColorSpace;
 	goto err1;
       }
       obj1 = maskDict->lookup("Decode");

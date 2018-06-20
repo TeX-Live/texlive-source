@@ -2126,6 +2126,9 @@ void FoFiType1C::readTopDict() {
   topDict.fdSelectOffset = 0;
 
   getIndexVal(&topDictIdx, 0, &topDictPtr, &parsedOk);
+  if (!parsedOk) {
+      return;
+  }
   pos = topDictPtr.pos;
   nOps = 0;
   while (pos < topDictPtr.pos + topDictPtr.len) {

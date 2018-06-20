@@ -206,7 +206,7 @@ Object Lexer::getObj(int objNum) {
 	  xf = xf * 10.0 + (c - '0');
 	} else if (unlikely (overflownInteger)) {
 	  if (unlikely(xll > LongLongSafeLimit) &&
-	      (xll > (LLONG_MAX - (c - '0')) / 10.0)) {
+	      (xll > (LLONG_MAX - (c - '0')) / 10)) {
 	    overflownLongLong = gTrue;
 	    xf = xll * 10.0 + (c - '0');
 	  } else {

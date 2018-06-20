@@ -311,22 +311,26 @@ BaseCryptStream::BaseCryptStream(Stream *strA, Guchar *fileKey, CryptAlgorithm a
 				 int keyLength, int objNum, int objGen):
   FilterStream(strA)
 {
-  int i;
-
   algo = algoA;
 
   // construct object key
-  for (i = 0; i < keyLength; ++i) {
+  for (int i = 0; i < keyLength; ++i) {
     objKey[i] = fileKey[i];
   }
+  for (std::size_t i = keyLength; i < sizeof(objKey); ++i) {
+    objKey[i] = 0;
+  }
+
   switch (algo) {
   case cryptRC4:
-    objKey[keyLength] = objNum & 0xff;
-    objKey[keyLength + 1] = (objNum >> 8) & 0xff;
-    objKey[keyLength + 2] = (objNum >> 16) & 0xff;
-    objKey[keyLength + 3] = objGen & 0xff;
-    objKey[keyLength + 4] = (objGen >> 8) & 0xff;
-    md5(objKey, keyLength + 5, objKey);
+    if (likely(keyLength < static_cast<int>(sizeof(objKey) - 4))) {
+      objKey[keyLength] = objNum & 0xff;
+      objKey[keyLength + 1] = (objNum >> 8) & 0xff;
+      objKey[keyLength + 2] = (objNum >> 16) & 0xff;
+      objKey[keyLength + 3] = objGen & 0xff;
+      objKey[keyLength + 4] = (objGen >> 8) & 0xff;
+      md5(objKey, keyLength + 5, objKey);
+    }
     if ((objKeyLength = keyLength + 5) > 16) {
       objKeyLength = 16;
     }
@@ -1148,7 +1152,7 @@ static inline Gulong md5Round4(Gulong a, Gulong b, Gulong c, Gulong d,
 }
 
 void md5(Guchar *msg, int msgLen, Guchar *digest) {
-  Gulong x[16];
+  Gulong x[16] = {};
   Gulong a, b, c, d, aa, bb, cc, dd;
   int n64;
   int i, j, k;

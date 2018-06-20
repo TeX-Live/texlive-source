@@ -1562,7 +1562,7 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
   JBIG2Bitmap *collBitmap, *refBitmap;
   Guint *symWidths;
   Guint symHeight, symWidth, totalWidth, x, symID;
-  int dh, dw, refAggNum, refDX, refDY, bmSize;
+  int dh = 0, dw, refAggNum, refDX = 0, refDY = 0, bmSize;
   GBool ex;
   int run, cnt, c;
   Guint i, j, k;
@@ -1896,6 +1896,7 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
 	}
 	for (k = 0; k < (Guint)bmSize; ++k) {
 	  if ((c = curStr->getChar()) == EOF) {
+	    memset(p, 0, bmSize - k);
 	    break;
 	  }
 	  *p++ = (Guchar)c;
@@ -1930,6 +1931,8 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
   // exported symbol list
   i = j = 0;
   ex = gFalse;
+  run = 0; // initialize it once in case the first decodeInt fails
+           // we do not want to use uninitialized memory
   while (i < numInputSyms + numNewSyms) {
     if (huff) {
       huffDecoder->decodeInt(&run, huffTableA);
@@ -2335,8 +2338,8 @@ JBIG2Bitmap *JBIG2Stream::readTextRegion(GBool huff, GBool refine,
   JBIG2Bitmap *bitmap;
   JBIG2Bitmap *symbolBitmap;
   Guint strips;
-  int t, dt, tt, s, ds, sFirst, j;
-  int rdw, rdh, rdx, rdy, ri, refDX, refDY, bmSize;
+  int t = 0, dt = 0, tt, s, ds = 0, sFirst, j;
+  int rdw, rdh, rdx, rdy, ri = 0, refDX, refDY, bmSize;
   Guint symID, inst, bw, bh;
 
   strips = 1 << logStrips;
@@ -4023,6 +4026,7 @@ void JBIG2Stream::readPageInfoSeg(Guint length) {
   } else {
     curPageH = pageH;
   }
+  delete pageBitmap;
   pageBitmap = new JBIG2Bitmap(0, pageW, curPageH);
 
   if (!pageBitmap->isOk()) {

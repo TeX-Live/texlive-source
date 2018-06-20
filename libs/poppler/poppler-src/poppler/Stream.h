@@ -24,7 +24,7 @@
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Peter Breitenlohner <peb@mppmu.mpg.de>
-// Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
+// Copyright (C) 2013, 2018 Adam Reichold <adamreichold@myopera.com>
 // Copyright (C) 2013 Pino Toscano <pino@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
@@ -823,7 +823,7 @@ private:
   StreamPredictor *pred;	// predictor
   int early;			// early parameter
   GBool eof;			// true if at eof
-  int inputBuf;			// input buffer
+  unsigned int inputBuf;	// input buffer
   int inputBits;		// number of bits in input buffer
   struct {			// decoding table
     int length;

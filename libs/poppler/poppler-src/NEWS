@@ -1,3 +1,10 @@
+Release 0.66.0
+        core:
+         * Fix lots of security/leak issues found by oss-fuzz
+         * Splash: Optimize some files, making them 20% faster
+         * Splash: Correctly manipulate spot colors if SPOT_NCOMPS != 4
+         * Fix compilation with some strict compilers
+
 Release 0.65.0
         core:
          * SplashOutputDev: Add the invisible character check beginType3Char. Bug #106244

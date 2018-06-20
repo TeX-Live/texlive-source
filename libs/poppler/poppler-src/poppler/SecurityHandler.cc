@@ -315,6 +315,9 @@ StandardSecurityHandler::~StandardSecurityHandler() {
 }
 
 GBool StandardSecurityHandler::isUnencrypted() {
+  if (!ok) {
+    return gTrue;
+  }
   return encVersion == -1 && encRevision == -1;
 }
 

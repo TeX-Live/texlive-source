@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2006, 2008-2010, 2013-2015, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006, 2008-2010, 2013-2015, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2011 Andrea Canciani <ranma42@gmail.com>
@@ -295,6 +295,10 @@ SampledFunction::SampledFunction(Object *funcObj, Dict *dict) {
     return;
   }
   sampleBits = obj1.getInt();
+  if (unlikely(sampleBits < 1 || sampleBits > 32)) {
+    error(errSyntaxError, -1, "Function invalid BitsPerSample");
+    return;
+  }
   sampleMul = 1.0 / (pow(2.0, (double)sampleBits) - 1);
 
   //----- Encode
@@ -321,6 +325,10 @@ SampledFunction::SampledFunction(Object *funcObj, Dict *dict) {
     }
   }
   for (i = 0; i < m; ++i) {
+    if (unlikely((domain[i][1] - domain[i][0]) == 0)) {
+      error(errSyntaxError, -1, "Illegal value in function domain array");
+      return;
+    }
     inputMul[i] = (encode[i][1] - encode[i][0]) /
                   (domain[i][1] - domain[i][0]);
   }
@@ -1295,6 +1303,7 @@ GBool PostScriptFunction::parseCode(Stream *str, int *codePtr) {
       if (!tok->cmp("{")) {
 	elsePtr = *codePtr;
 	if (!parseCode(str, codePtr)) {
+	  delete tok;
 	  return gFalse;
 	}
 	delete tok;

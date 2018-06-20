@@ -5,7 +5,7 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright 2010, 2012 Hib Eris <hib@hiberis.nl>
-// Copyright 2010, 2011, 2013, 2014, 2016, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright 2010, 2011, 2013, 2014, 2016-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2010, 2013 Pino Toscano <pino@kde.org>
 // Copyright 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright 2014 Fabio D'Urso <fabiodurso@hotmail.it>
@@ -258,6 +258,11 @@ GBool Hints::readPageOffsetTable(Stream *str)
   if (objectOffsetFirst >= hintsOffset) objectOffsetFirst += hintsLength;
 
   nBitsDiffObjects = sbr.readBits(16);
+  if (nBitsDiffObjects > 32) {
+    error(errSyntaxWarning, -1, "Invalid number of bits needed to represent the difference between the greatest and least number of objects in a page");
+    nPages = 0;
+    return gFalse;
+  }
 
   pageLengthLeast = sbr.readBits(32);
 

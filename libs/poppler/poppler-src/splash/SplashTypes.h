@@ -17,6 +17,7 @@
 // Copyright (C) 2009 Stefan Thomas <thomas@eload24.com>
 // Copyright (C) 2010 William Bader <williambader@hotmail.com>
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2018 Stefan Brüns <stefan.bruens@rwth-aachen.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -126,7 +127,7 @@ static inline void splashClearColor(SplashColorPtr dest) {
   dest[2] = 0;
 #ifdef SPLASH_CMYK
   dest[3] = 0;
-  for (int i = SPOT_NCOMPS; i < SPOT_NCOMPS + 4; i++)
+  for (int i = 4; i < SPOT_NCOMPS + 4; i++)
     dest[i] = 0;
 #endif
 }
@@ -137,7 +138,7 @@ static inline void splashColorCopy(SplashColorPtr dest, SplashColorPtr src) {
   dest[2] = src[2];
 #ifdef SPLASH_CMYK
   dest[3] = src[3];
-  for (int i = SPOT_NCOMPS; i < SPOT_NCOMPS + 4; i++)
+  for (int i = 4; i < SPOT_NCOMPS + 4; i++)
     dest[i] = src[i];
 #endif
 }
@@ -148,7 +149,7 @@ static inline void splashColorXor(SplashColorPtr dest, SplashColorPtr src) {
   dest[2] ^= src[2];
 #ifdef SPLASH_CMYK
   dest[3] ^= src[3];
-  for (int i = SPOT_NCOMPS; i < SPOT_NCOMPS + 4; i++)
+  for (int i = 4; i < SPOT_NCOMPS + 4; i++)
     dest[i] ^= src[i];
 #endif
 }

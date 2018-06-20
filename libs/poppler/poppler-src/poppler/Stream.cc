@@ -28,7 +28,7 @@
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Even Rouault <even.rouault@mines-paris.org>
 // Copyright (C) 2013, 2017, 2018 Adrian Johnson <ajohnson@redneon.com>
-// Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
+// Copyright (C) 2013, 2018 Adam Reichold <adamreichold@myopera.com>
 // Copyright (C) 2013 Pino Toscano <pino@kde.org>
 // Copyright (C) 2015 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 // Copyright (C) 2015 Jason Crain <jason@aquaticape.us>
@@ -572,8 +572,6 @@ StreamPredictor::StreamPredictor(Stream *strA, int predictorA,
   ok = gFalse;
 
   nVals = width * nComps;
-  pixBytes = (nComps * nBits + 7) >> 3;
-  rowBytes = ((nVals * nBits + 7) >> 3) + pixBytes;
   if (width <= 0 || nComps <= 0 || nBits <= 0 ||
       nComps > gfxColorMaxComps ||
       nBits > 16 ||
@@ -581,6 +579,8 @@ StreamPredictor::StreamPredictor(Stream *strA, int predictorA,
       nVals >= (INT_MAX - 7) / nBits) { // check for overflow in rowBytes
     return;
   }
+  pixBytes = (nComps * nBits + 7) >> 3;
+  rowBytes = ((nVals * nBits + 7) >> 3) + pixBytes;
   predLine = (Guchar *)gmalloc(rowBytes);
   memset(predLine, 0, rowBytes);
   predIdx = rowBytes;
@@ -1435,6 +1435,7 @@ void LZWStream::clearTable() {
   nextBits = 9;
   seqIndex = seqLength = 0;
   first = gTrue;
+  newChar = 0;
 }
 
 int LZWStream::getCode() {
@@ -1444,10 +1445,10 @@ int LZWStream::getCode() {
   while (inputBits < nextBits) {
     if ((c = str->getChar()) == EOF)
       return EOF;
-    inputBuf = (inputBuf << 8) | (c & 0xff);
+    inputBuf = (inputBuf << 8) | static_cast<unsigned>(c & 0xff);
     inputBits += 8;
   }
-  code = (inputBuf >> (inputBits - nextBits)) & ((1 << nextBits) - 1);
+  code = static_cast<signed>((inputBuf >> (inputBits - nextBits)) & ((1 << nextBits) - 1));
   inputBits -= nextBits;
   return code;
 }

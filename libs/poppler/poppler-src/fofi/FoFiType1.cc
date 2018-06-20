@@ -226,9 +226,13 @@ void FoFiType1::parse() {
        ++i) {
 
     // get font name
-    if (!name && !strncmp(line, "/FontName", 9)) {
-      strncpy(buf, line, 255);
-      buf[255] = '\0';
+    if (!name &&
+	(line + 9 <= (char*)file + len) &&
+	!strncmp(line, "/FontName", 9)) {
+      const auto availableFile = (char*)file + len - line;
+      const int lineLen = availableFile < 255 ? availableFile : 255;
+      strncpy(buf, line, lineLen);
+      buf[lineLen] = '\0';
       if ((p = strchr(buf+9, '/')) &&
 	  (p = strtok_r(p+1, " \t\n\r", &tokptr))) {
 	name = copyString(p);
@@ -237,9 +241,11 @@ void FoFiType1::parse() {
 
     // get encoding
     } else if (!encoding &&
+	       (line + 30 <= (char*)file + len) &&
 	       !strncmp(line, "/Encoding StandardEncoding def", 30)) {
       encoding = (char **)fofiType1StandardEncoding;
     } else if (!encoding &&
+	       (line + 19 <= (char*)file + len) &&
 	       !strncmp(line, "/Encoding 256 array", 19)) {
       encoding = (char **)gmallocn(256, sizeof(char *));
       for (j = 0; j < 256; ++j) {
@@ -331,9 +337,13 @@ void FoFiType1::parse() {
       }
       //~ check for getinterval/putinterval junk
 
-    } else if (!gotMatrix && !strncmp(line, "/FontMatrix", 11)) {
-      strncpy(buf, line + 11, 255);
-      buf[255] = '\0';
+    } else if (!gotMatrix &&
+	       (line + 11 <= (char*)file + len) &&
+	       !strncmp(line, "/FontMatrix", 11)) {
+      const auto availableFile = (char*)file + len - (line + 11);
+      const int bufLen = availableFile < 255 ? availableFile : 255;
+      strncpy(buf, line + 11, bufLen);
+      buf[bufLen] = '\0';
       if ((p = strchr(buf, '['))) {
 	++p;
 	if ((p2 = strchr(p, ']'))) {

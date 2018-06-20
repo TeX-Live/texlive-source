@@ -1,3 +1,990 @@
+commit 877dcec7e2357991d79508a2aefc39d1510bf235
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 19 23:16:47 2018 +0200
+
+    Poppler 0.66
+
+ CMakeLists.txt   | 4 ++--
+ NEWS             | 7 +++++++
+ cpp/Doxyfile     | 2 +-
+ qt5/src/Doxyfile | 2 +-
+ 4 files changed, 11 insertions(+), 4 deletions(-)
+
+commit 37d2aa88409429397a6c8801b34213f6eded8e1e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 19 17:42:16 2018 +0200
+
+    PostScriptFunction::parseCode: Fix memory leak on malformed files
+
+    Fixes oss-fuzz/8859
+
+ poppler/Function.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit e4f4cbddd11ae6386985879187007fa5add43624
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 12 09:32:57 2018 +0200
+
+    StreamPredictor: Move pixBytes calculation after checks
+
+    fixes oss-fuzz/8835
+
+ poppler/Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit adb7cac1b787b35c4f5d25e0441e459ab92d0469
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 12 09:00:33 2018 +0200
+
+    GfxImageColorMap: Initialize y to prevent uninit mem use
+
+    Fixes oss-fuzz/8839
+
+ poppler/GfxState.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6b37df791731e40837fa1eba86ae740650431438
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jun 6 17:56:27 2018 +0200
+
+    SampledFunction: Fix divide by zero
+
+    Actual valid values are 1, 2, 4, 8, 12, 16, 24, and 32 but this
+    check is easier
+
+    fixes oss-fuzz/8713
+
+ poppler/Function.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit d6a3dc3ebbc97fcdd3c45028b5741f4b99fc0279
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jun 6 17:46:17 2018 +0200
+
+    GfxAxialShading::parse: Fix memory leak on broken files
+
+    fixes oss-fuzz/8742
+
+ poppler/GfxState.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 599e28433268ceaa933cf2a2492c81da4418e207
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 5 20:11:19 2018 +0200
+
+    JBIG2Stream::readSymbolDictSeg: Fix potential uninitialized memory
+    read
+
+    fixes oss-fuzz/8748
+
+ poppler/JBIG2Stream.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit a231de883b438af1807726fab4265ecf4689cf50
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 5 20:00:03 2018 +0200
+
+    CMap::parse2: Initialize end
+
+    fixes oss-fuzz/8747
+
+ poppler/CMap.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2c629fefe2b2b1e2663521beeac432c808afe7c7
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 5 19:56:53 2018 +0200
+
+    JBIG2Stream::readSymbolDictSeg: Initialize dh
+
+    fixes oss-fuzz/8751
+
+ poppler/JBIG2Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0053966d3ec5b5c4eb6480417b2c8a8ccd910964
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 4 20:38:41 2018 +0200
+
+    JBIG2Stream::readSymbolDictSeg: Initialize refDX
+
+    fixes oss-fuzz/8696
+
+ poppler/JBIG2Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8dfe3fb37ec01e35eb22a0932fe708bc9b78cb4f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 30 17:09:16 2018 +0200
+
+    LONG_LONG_MAX -> LLONG_MAX
+
+    that's the name the standard uses
+
+ poppler/Parser.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit b4f0e2b27a0880801c7af0c82fe17894797511b2
+Author: Stefan Brüns <stefan.bruens@rwth-aachen.de>
+Date:   Sat May 26 19:51:20 2018 +0200
+
+    Splash: Reserve space for path segments upfront
+
+    Instead of iteratively growing the array reserve sufficient space
+    prior to populating the array.
+
+ poppler/SplashOutputDev.cc |  2 ++
+ splash/SplashPath.cc       | 18 ++++++++++++++++++
+ splash/SplashPath.h        |  4 ++++
+ 3 files changed, 24 insertions(+)
+
+commit 450a8a54e080b5bb80533b1777b3b670bea1f27a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 30 09:09:12 2018 +0200
+
+    JBIG2Stream::readSymbolDictSeg: Initialize refDY
+
+    fixes oss-fuzz/8621
+
+ poppler/JBIG2Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1750c0155762e75d0a80ab55b50d1bfd172c2430
+Author: Stefan Brüns <stefan.bruens@rwth-aachen.de>
+Date:   Tue May 29 23:49:05 2018 +0200
+
+    splash: Correctly manipulate spot colors if SPOT_NCOMPS != 4
+
+    The default number of spot colors is 4, in this case the change is
+    without effect, otherwise only the last 4 colors where handled.
+
+ splash/SplashTypes.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit fb4629eb4b1787332b88b330da16353e5ade7b4d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 29 20:32:23 2018 +0200
+
+    SplashFTFont: Early return if face->units_per_EM is 0
+
+    fixes oss-fuzz/8617
+
+ splash/SplashFTFont.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 943a465d7b76b26de83d2038226c72bcf619c29f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 29 20:23:51 2018 +0200
+
+    SplashFTFont: Initialize textScale
+
+    fixes oss-fuzz/8616
+
+ splash/SplashFTFont.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f821faa1795c1b25104d84e9f5a7e8ad218baa61
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 29 20:18:26 2018 +0200
+
+    CMap::parse2: Initialize start
+
+    fixes oss-fuzz/8611
+
+ poppler/CMap.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a76c8fbd50a3a5cbe0487158e9d2b325e596d2c6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 29 01:01:26 2018 +0200
+
+    GfxSeparationColorSpace::getRGB: ensure color2 doesn't have uninit
+    values
+
+    if alt->getNComps() is bigger than func->getOutputSize() (which
+    is most
+    likely a faulty file) we init those indexes of color2 with 0
+
+    fixes oss-fuzz/8586
+
+ poppler/GfxState.cc | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit e35fdb1448b7860d697b9c2ec8bda49c7a8a3ae5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 29 00:59:22 2018 +0200
+
+    JBIG2Stream::readTextRegion: Initialize ds
+
+    fixes oss-fuzz/8594
+
+ poppler/JBIG2Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit bb25c0d46f1f0e037805f0c6dde07f3ea9c9320c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 29 00:55:28 2018 +0200
+
+    Gfx::doRadialShFill: Initialize colorA, colorB and colorC
+
+    fixes oss-fuzz/8587
+
+ poppler/Gfx.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit b8cf8b04cbd1c0c5643cc77ed7b0b60525ecf080
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon May 28 23:51:32 2018 +0200
+
+    FoFiType1::parse: Don't copy to buf more than the available file
+
+    fixes oss-fuzz/8576
+
+ fofi/FoFiType1.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 10a3dc2a9c92349e498ea36bb342b821dcfc9d76
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon May 28 17:44:34 2018 +0200
+
+    GfxState.cc: Fix undefined behaviour when compBits is 31
+
+    it's a technical issue since according to spec biggest
+    valid value for compBits is 16, but this is simpler imho
+
+    fixes oss-fuzz/8582
+
+ poppler/GfxState.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 96e7bc19ffcaf46d4cb69660ed040c09d46815d6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun May 27 09:42:24 2018 +0200
+
+    JBIG2Stream::readTextRegion: Initialize a few variables
+
+    So if the stream is broken we don't use uninitialized variables
+
+    fixes oss-fuzz/8547
+
+ poppler/JBIG2Stream.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 9c0c538e8d1aa39cd136cfb8fe0fbfe1def5174d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun May 27 09:34:16 2018 +0200
+
+    Gfx::doAxialShFill: initialize color1
+
+    fixes oss-fuzz/8546
+
+ poppler/Gfx.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 18f376c0dff184851b3ee4c05c40b4ee2c21da8c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun May 27 09:29:49 2018 +0200
+
+    FoFiType1::parse: Fix reading past font length
+
+    fixes oss-fuzz/8545
+
+ fofi/FoFiType1.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 19d3993f3f40b5113141d5a55acea307c174f1d3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun May 27 09:10:05 2018 +0200
+
+    XRef::fetch: Don't try to fetch objects with negative offset
+
+    fixes oss-fuzz/8433
+
+ poppler/XRef.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9a8d33246601dbd2bea98bb3404596848f71162a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun May 27 08:47:19 2018 +0200
+
+    Splash::fillGlyph2: fix buffer overflow
+
+    Make sure xx / 8 + 1 is not out of bounds
+
+    fixes oss-fuzz/8422
+
+ splash/Splash.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 1bc71245fa88dc23dc355f926f50f04896739fff
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Sat May 26 11:54:41 2018 +0200
+
+    LZWStream: make inputBuf unsigned
+
+    since shifting negative numbers is undefined according to spec
+
+ poppler/Stream.cc | 6 +++---
+ poppler/Stream.h  | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 68c5977980a60b2fbac0a5938e697cf09f37b0a2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 23:06:53 2018 +0200
+
+    BaseCryptStream: Initialize all of objKey
+
+    fixes oss-fuzz/8493
+
+ poppler/Decrypt.cc | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit 14adecb9693345b7e3baa6dee05f5c88dde7952c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 22:57:29 2018 +0200
+
+    Decrypt::md5: initialize x
+
+    When msgLen is small enough x would had initialized values for some
+    parts of the md5 calculation
+
+    fixes oss-fuzz/8492
+
+ poppler/Decrypt.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 71bb82bdecccc235e15255635cab2c31cce58e0e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 22:52:31 2018 +0200
+
+    Gfx::doAxialShFill: initialize color0
+
+    fixes oss-fuzz/8470
+
+ poppler/Gfx.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b245154fdebc9a78db163bc95959c6c8f5b4126f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 22:46:22 2018 +0200
+
+    Parser::makeStream: Don't overflow length
+
+    fixes oss-fuzz/8499
+
+ poppler/Parser.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 86777478387577aee8242eb2f11932041e87eff5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 19:44:50 2018 +0200
+
+    Splash::fillWithPattern: initialize pipe
+
+    Makes sure if things fail we're not painting with uninitialized memory
+
+    fixes oss-fuzz/8538
+
+ splash/Splash.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 97caec070090d112d4fb5b63dc433a34e214c7e5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 19:38:19 2018 +0200
+
+    FoFiType1C::readTopDict: Return early if parsing fails
+
+    fixes oss-fuzz/8456
+
+ fofi/FoFiType1C.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 7e2189377bfaa0594e25eaba26aca47bea59f315
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 17:47:07 2018 +0200
+
+    GfxGouraudTriangleShading::parse: Add bounds check for compBits
+
+    The spec is much more strict on what is valid, but i'm only doing
+    a check so that the code doesn't break
+
+ poppler/GfxState.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit fef32ba463a225618a967c541d939fd69e02f2dd
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 17:42:22 2018 +0200
+
+    GfxPatchMeshShading::parse: Add bounds check for compBits
+
+    The spec is much more strict on what is valid, but i'm only doing
+    a check so that the code doesn't break
+
+    fixes oss-fuzz/8445
+
+ poppler/GfxState.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 3b9d8025dbdfcfac94ede20b05d86d177393cde7
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 17:26:37 2018 +0200
+
+    Splash: Fix another potential uninitialized memory use
+
+    fixes oss-fuzz/8466
+
+ splash/Splash.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 0e3b18a48c3907a49c51a0ceded6078a2fd790eb
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 17:06:13 2018 +0200
+
+    SplashUnivariatePattern::getColor: Fix potential uninitialized
+    memory read
+
+    If the GfxUnivariateShading doesn't provide enough bits of color
+    fill them with 0 as to not have random memory read
+
+    fixes oss-fuzz/8470
+
+ poppler/GfxState.cc        | 5 +++--
+ poppler/GfxState.h         | 4 +++-
+ poppler/SplashOutputDev.cc | 6 +++++-
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+commit c75500bf6b2af4b9a26467ce55d1f2879e916b79
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 16:41:36 2018 +0200
+
+    T3FontCache: change the order in which the overflow checks are done
+
+    fixes oss-fuzz/8479
+
+ poppler/SplashOutputDev.cc | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+commit 4ea7ac960d9ecb6a407d0e660312f5701d3dcd49
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 16:35:49 2018 +0200
+
+    SplashFTFont::getGlyphPath: early return if textScale == 0
+
+    fixes oss-fuzz/8529
+
+ splash/SplashFTFont.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit c1164653bd8d6bcb7da1d959634f63592a393235
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 16:26:44 2018 +0200
+
+    GfxGouraudTriangleShading::parse: Protect against coordBits <= 0
+
+    fixes oss-fuzz/8524
+
+ poppler/GfxState.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit a7154bcc6aba5429dc6cc024bd90dae2f1d2d0c1
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri May 25 16:21:45 2018 +0200
+
+    XRef::readXRefTable: Rewrite overflow check
+
+    In a way that it doesn't depend on undefined behaviour
+
+    fixes oss-fuzz/8528
+
+ poppler/XRef.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f966b9096d046aaee4891de11f74207218cc929b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 23:58:41 2018 +0200
+
+    SplashOutputDev::drawSoftMaskedImage: Fix uninitialized memory read
+
+    It can happen that maskStr->doGetChars doesn't give us the number
+    of chars we wanted, if that happens just set the remainder to zero
+
+ poppler/SplashOutputDev.cc | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+commit b228892adb01f978d5e6045e1e61741bca1950d2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 23:49:12 2018 +0200
+
+    Splash::blitImageClipped: initialize pixel
+
+    At least this way if the getPixels call we're not drawing random
+    memory
+    and thus we get a stable render which helps with regtests
+
+ splash/Splash.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 67be3708cc4dea9e03f5d0ce5b0214fff35748f2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 23:29:55 2018 +0200
+
+    SplashFTFont::makeGlyph: Fix use of uninitialized data
+
+    caused by the bugfix to not divide by zero
+
+ splash/SplashFTFont.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit c758fc980834882528eeae82568494e46d189cc5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 23:19:16 2018 +0200
+
+    FoFiType1::parse: Fix invalid memory access
+
+    Make sure there's enough line left before calling strncmp
+
+    fixes oss-fuzz/8425
+
+ fofi/FoFiType1.cc | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+commit 07318f3899248f67a58148b29a9555ff47a1b083
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 20:15:42 2018 +0200
+
+    StreamReader::cmp: Fix potential undefined behaviour
+
+    going outside an array range is technically undefined behaviour,
+    even if then after you go back in range with the next operation, so
+    we first calculate the diff and then add it to the array
+
+ fofi/FoFiIdentifier.cc | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 6b91d37a704fb2b6fa9529d859c366c331327ab9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 18:22:00 2018 +0200
+
+    SplashOutputDev: Fix memory leak on malformed files
+
+    i.e. SplashOutputDev::endTextObject is not called after
+    SplashOutputDev::drawChar
+
+    fixes oss-fuzz/8508
+
+ poppler/SplashOutputDev.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit c9650369c5dd74812db515d986ded898b9002ae4
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 18:20:12 2018 +0200
+
+    Splash::scaleMaskYuXu: Free internal bitmap data on error
+
+    this way we don't try to use it later, which will be an uninitialized
+    memory read
+
+    fixes oss-fuzz/8511
+
+ splash/Splash.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f279778fe0aca610cdecb70d0a714bbaa08b0d22
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 13:06:00 2018 +0200
+
+    JBIG2Stream::readSymbolDictSeg: Fix potential uninitialized memory use
+
+    fixes oss-fuzz/8468
+
+ poppler/JBIG2Stream.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit ea72a3f3dc1619482ab2502dc50fe628600f38b5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 12:42:54 2018 +0200
+
+    gmallocn: move the operation after the checks
+
+    fixes oss-fuzz/8423
+
+ goo/gmem.cc | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit aa39d079dc3b68b0a3512408706d053d664d557d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 12:40:38 2018 +0200
+
+    XRef::readXRefStreamSection: Add integer overflow check
+
+    fixes oss-fuzz/8444
+
+ poppler/XRef.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit db73587c566f8e50f03b24628e8948a558ee7039
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 11:56:39 2018 +0200
+
+    StreamPredictor: move rowBytes calculation after overflow check
+
+    fixes oss-fuzz/8498
+
+ poppler/Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 76820f5ab932a9ed18913bc7d1a452ddf060c133
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 24 01:12:07 2018 +0200
+
+    JBIG2Stream::readPageInfoSeg: Fix memory leak on malformed documents
+
+    fixes oss-fuzz/8463
+
+ poppler/JBIG2Stream.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit ffb0daefda688564c1456f4b8b3f5a715d228cdc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 19:06:51 2018 +0200
+
+    Apply previous optimization also to Splash::pipeRunAARGB8
+
+ splash/Splash.cc | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
+
+commit f47936af75088c55a19fe6b1a67128fcc3f57b08
+Author: Stefan Brüns <stefan.bruens@rwth-aachen.de>
+Date:   Wed May 23 19:05:50 2018 +0200
+
+    Small optimization for AAXRGB8 pipes
+
+    Skip some computations if both src and dest alpha are zero, or if
+    src is fully opaque. For common cases (majority of pixels fully
+    opaque) like in fdo#81211, this reduces execution time of
+    pipeRunAAXBGR8 by 50% (-20% total execution time).
+
+ splash/Splash.cc | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
+
+commit 60ec88b3ca5f109b3532dbf2f36df66aed2d7bbf
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 19:49:29 2018 +0200
+
+    greallocn: move the operation to after the checks
+
+    fixes oss-fuzz/8484
+
+ goo/gmem.cc | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit e0fb18040378659c98fedb4bdaff6a903ddd095b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 19:40:50 2018 +0200
+
+    Gfx::opSetExtGState: Fix memory leak on broken files
+
+    doSoftMask was called just once, from opSetExtGState, but was
+    given the duty to delete blendingColorSpace that given doSoftMask
+    has various early returns is hard to do right, so i've moved
+    the deletion to opSetExtGState itself
+
+    fixes oss-fuzz/8431
+
+ poppler/Gfx.cc | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+commit 86991adb172fd55decdc72ec6fc34d41b19beafa
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 19:35:27 2018 +0200
+
+    Gfx::doRadialShFill: Fix potential divide by zero
+
+    fixes oss-fuzz/8476
+
+ poppler/Gfx.cc | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 62c7a6a135aa8c70f638bac9b41a11c4e69c8452
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 19:29:39 2018 +0200
+
+    GfxImageColorMap::GfxImageColorMap: Bail out early if bits <= 0
+
+    fixes oss-fuzz/8478
+
+ poppler/GfxState.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 6e2de368f620d2e459a4cfe6533a8c29fae6d8c9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 19:21:30 2018 +0200
+
+    SplashFTFont::SplashFTFont: Early return if textScale is 0
+
+    fixes oss-fuzz/8482
+
+ splash/SplashFTFont.cc | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit 8d715bfc7c3610b823721dc26368728795baa2fe
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 15:44:05 2018 +0200
+
+    GfxPatchMeshShading::parse: Error out if BitsPerCoordinate <= 0
+
+ poppler/GfxState.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit f5fb32bd4b64040dc0f9b9e1555dabce804ba566
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 15:38:26 2018 +0200
+
+    Splash::scaleMaskYuXu: Also check for srcHeight <= 0
+
+ splash/Splash.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0318e1667c7b137493f22be61b835eb914f68fa9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 15:34:32 2018 +0200
+
+    GfxPatchMeshShading::parse: Fix memory leak on malformed documents
+
+    fixes oss-fuzz/8487
+
+ poppler/GfxState.cc | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 3ca2d43b7ddcca08bc026c6564f89ffbe0dde506
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 00:27:08 2018 +0200
+
+    warning--
+
+ poppler/Decrypt.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 58e056c4b15f262b7715f8061d6885eb80044d0d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 23 00:23:19 2018 +0200
+
+    Revert 31c3832b996acbf04ea833e304d7d21ac4533a57
+
+    So shifting left negative values is undefined behaviour according
+    to the
+    spec but if we don't do it we break, so we seem to be depending
+    on this
+    undefined behaviour, will try to figure out a better fix
+
+ poppler/Stream.cc | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit a6c2eb671f08beb682e086d5f6791fdb78906a7c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 22:12:03 2018 +0200
+
+    Make sure dash[i] is intialized
+
+    even if obj is not a number
+
+    fixes oss-fuzz/8462
+
+ poppler/Gfx.cc | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 083bfa59378be1c008cb6543f7e9bebde29a4079
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 22:01:35 2018 +0200
+
+    nBitsDiffObjects can only be 32 as per spec
+
+    fixes oss-fuzz/8464
+
+ poppler/Hints.cc | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 942a426f2844b66758b6b443234c3686d61420cc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 21:41:51 2018 +0200
+
+    Parser::makeStream: Make sure length is not negative
+
+    fixes oss-fuzz/8469
+
+ poppler/Parser.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit bf03344ad26b1227b5052420feabe062441c02ed
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 20:36:05 2018 +0200
+
+    StandardSecurityHandler::isUnencrypted: Fix uninitialized memory use
+
+    fixes oss-fuzz/8426
+
+ poppler/SecurityHandler.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 31c3832b996acbf04ea833e304d7d21ac4533a57
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 20:25:18 2018 +0200
+
+    LZWStream::getCode: Don't left shift negative values
+
+    it's undefined behaviour
+
+ poppler/Stream.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 2c0a0b07fdb2c76487ca4af7b2f50da9904c6c23
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 20:15:39 2018 +0200
+
+    Gfx::doImage: Fix memory leak on malformed documents
+
+    fixes oss-fuzz/8452
+
+ poppler/Gfx.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit ace7ca3e0dd1570ef6804c0f054742b2996b9b9f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 20:10:01 2018 +0200
+
+    SplashAxialPattern: fix potential divide by zero
+
+ poppler/SplashOutputDev.cc | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 3b8634e744aa5ba3b317fd3378ba07a438826827
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 20:07:50 2018 +0200
+
+    GfxAxialShading::getParameterRange: Fix potential divide by zero
+
+    fixes oss-fuzz/8436
+
+ poppler/GfxState.cc | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit 91079d4f482b35f190a4f2bbd9f4fb6a8ad7c2a2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 20:01:56 2018 +0200
+
+    SampledFunction: Fix potential divide by zero
+
+    fixes oss-fuzz/8455
+
+ poppler/Function.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 6169bfb1ecd289a8235be0b8884a550f5d1ad926
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 19:56:34 2018 +0200
+
+    GfxState.cc: Fix potential division by zero
+
+    fixes oss-fuzz/8465
+
+ poppler/GfxState.cc | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+commit 0868c499a9f5f37f8df5c9fef03c37496b40fc8a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 19:42:38 2018 +0200
+
+    Parser::makeStream: Fix potential integer overflow
+
+ poppler/Parser.cc | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit dbe330678766d1260d7f595d238e90aeae1194d6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 19:31:34 2018 +0200
+
+    XRef::constructXRef: Prevent overflow when calculating newSize
+
+    fixes oss-fuzz/8421
+
+ poppler/XRef.cc | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+commit 224dda4d292a097866f109a9d2cec4b3ba78eb97
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 19:17:20 2018 +0200
+
+    Fix out of bounds write in BaseCryptStream
+
+    fixes oss-fuzz/8420
+
+ poppler/Decrypt.cc | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+commit 0c0c368fed70c1db64ce04b135fd5b060a1f0653
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 18:26:29 2018 +0200
+
+    LZWStream::clearTable: init newChar to 0
+
+    it should not be needed because on well formed streams it will be
+    properly initialized in processNextCode but
+    this solves an uninitialized memory use on malformed documents
+
+    fixes oss-fuzz/8457
+
+ poppler/Stream.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit e7f59e39a0aca2a8a363fc0edcf25fb5aaada7a5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 18:22:29 2018 +0200
+
+    Splash::scaleMaskYuXu: Fix crash on malformed files
+
+    fixes oss-fuzz/8435
+    fixes oss-fuzz/8441
+
+ splash/Splash.cc | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 547f19cd420f2d579d921620545e6496adb6a9fb
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 18:17:58 2018 +0200
+
+    Fix crash in "generic" GlobalParams::findSystemFontFile
+
+    Not very important since we usually either use the fontconfig or
+    the windows one
+
+    fixes oss-fuzz/8427
+
+ poppler/GlobalParams.cc | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit d1d8dea64db53fb151fede27efd5fd3308820a51
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 18:13:19 2018 +0200
+
+    Fix memory leak on malformed files
+
+    fixes oss-fuzz/8430
+
+ poppler/Gfx.cc | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 127d0fe3a209b04fc9efb086d423bca4ba359dca
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 22 01:08:12 2018 +0200
+
+    Fix overflownLongLong check
+
+    We actually want integer math here since doubles lose the precision we
+    want at that high long long values
+
+ poppler/Lexer.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 commit c9e2dc7ea7e098875e6b93566bdb1d14451c3673
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Sat May 19 17:05:25 2018 +0200

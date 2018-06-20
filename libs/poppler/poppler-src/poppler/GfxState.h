@@ -915,7 +915,9 @@ public:
   GBool getExtend1() { return extend1; }
   int getNFuncs() { return nFuncs; }
   Function *getFunc(int i) { return funcs[i]; }
-  void getColor(double t, GfxColor *color);
+  // returns the nComps of the shading
+  // i.e. how many positions of color have been set
+  int getColor(double t, GfxColor *color);
 
   void setupCache(const Matrix *ctm,
 		  double xMin, double yMin,

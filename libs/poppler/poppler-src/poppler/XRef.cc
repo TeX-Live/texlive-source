@@ -574,7 +574,7 @@ GBool XRef::readXRefTable(Parser *parser, Goffset *pos, std::vector<Goffset> *fo
       goto err0;
     }
     n = obj.getInt();
-    if (first < 0 || n < 0 || first + n < 0) {
+    if (first < 0 || n < 0 || first > INT_MAX - n) {
       goto err0;
     }
     if (first + n > size) {
@@ -789,6 +789,9 @@ GBool XRef::readXRefStreamSection(Stream *xrefStr, int *w, int first, int n) {
   unsigned long long offset, gen;
   int type, c, i, j;
 
+  if (first > INT_MAX - n) {
+    return gFalse;
+  }
   if (first + n < 0) {
     return gFalse;
   }
@@ -866,7 +869,6 @@ GBool XRef::constructXRef(GBool *wasReconstructed, GBool needCatalogDict) {
   char buf[256];
   Goffset pos;
   int num, gen;
-  int newSize;
   int streamEndsSize;
   char *p;
   GBool gotRoot;
@@ -961,7 +963,11 @@ GBool XRef::constructXRef(GBool *wasReconstructed, GBool needCatalogDict) {
 	      while (*p && isspace(*p & 0xff)) ++p;
 	      if (!strncmp(p, "obj", 3)) {
 		if (num >= size) {
-		  newSize = (num + 1 + 255) & ~255;
+		  if (unlikely(num >= INT_MAX - 1 - 255)) {
+		    error(errSyntaxError, -1, "Bad object number");
+		    return gFalse;
+		  }
+		  const int newSize = (num + 1 + 255) & ~255;
 		  if (newSize < 0) {
 		    error(errSyntaxError, -1, "Bad object number");
 		    return gFalse;
@@ -1135,7 +1141,7 @@ Object XRef::fetch(int num, int gen, int recursion) {
 
   case xrefEntryUncompressed:
   {
-    if (e->gen != gen) {
+    if (e->gen != gen || e->offset < 0) {
       goto err;
     }
     parser = new Parser(this,
