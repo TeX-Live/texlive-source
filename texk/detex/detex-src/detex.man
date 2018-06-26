@@ -1,4 +1,4 @@
-.TH DETEX 1 "12 August 1993" "Purdue University"
+.TH DETEX 1L "12 August 1993" "Purdue University"
 .SH NAME
 detex \- a filter to strip \fITeX\fP commands from a .tex file.
 .SH SYNOPSIS
@@ -6,7 +6,7 @@ detex \- a filter to strip \fITeX\fP commands from a .tex file.
 [ \fB\-clnstw\fR ] [ \fB\-e\fI environment-list\fR ] [ \fIfilename\fR[.tex] ... ]
 .SH DESCRIPTION
 .I Detex
-(Version 2.6)
+(Version 2.8.3)
 reads each file in sequence, removes all comments and
 .I TeX
 control sequences
@@ -46,8 +46,8 @@ mode regardless of input content.
 .PP
 Text in various environment modes of
 .I LaTeX
-is ignored.  The default modes are array, eqnarray, equation, figure,
-mathmatica, picture, table and verbatim.  The
+is ignored.  The default modes are array, eqnarray, equation, longtable,
+picture, tabular and verbatim.  The
 .B \-e
 option can be used to specify a comma separated
 .I environment-list
@@ -70,6 +70,12 @@ allows white space between control sequences
 and magic characters like `{' when recognizing things like
 .I LaTeX
 environments.
+.PP
+The
+.B \-r
+option tries to naively replace $..$, $$..$$, \(..\) and \[..\]
+with nouns and verbs (in particular, "noun" and "verbs")
+in a way that keeps sentences readable.
 .PP
 If the
 .B \-w
@@ -110,7 +116,9 @@ exceed the system's limit on the number of simultaneously opened files.
 .I Detex
 ignores unrecognized option characters after printing a warning message.
 .SH AUTHOR
-Daniel Trinkle, Computer Science Department, Purdue University
+Originally written by Daniel Trinkle, Computer Science Department, Purdue University
+.PP
+Maintained by Piotr Kubowicz <https://github.com/pkubowicz/opendetex>.
 .SH BUGS
 .I Detex
 is not a complete

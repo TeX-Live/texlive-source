@@ -38,6 +38,8 @@
 #
 # Detex is a program to remove TeX and LaTeX constructs from text source.
 
+UNAME_S := $(shell uname -s)
+
 # Installation directory
 #
 DESTDIR	= /usr/local/bin
@@ -69,25 +71,27 @@ DEFS	=
 #
 #DEFS	+= ${DEFS} -DNO_MALLOC_DECL
 #
-CFLAGS	= -O ${DEFS}
+CFLAGS	= -O ${DEFS} -Wall
 
 # Use your favorite lexical scanner
 #
-LEX	= lex
-#LEX	= flex
+#LEX	= lex
+LEX	= flex
 
 #LFLAGS	= -8 -C
 
 # scanner library
 #
-LEXLIB	= -ll
-#LEXLIB	= -lfl
+LEXLIB	= -lfl
+ifeq ($(UNAME_S),Darwin)
+	LEXLIB	= -ll
+endif
 
 LPR	= lpr -p
 
 # Program names
 #
-PROGS	= detex
+PROGS	= detex delatex
 
 # Header files
 #
@@ -101,39 +105,56 @@ SRC	= detex.l
 #
 D_OBJ	= detex.o
 
+VERSION = 2.8.3
+
 all:	${PROGS}
 
 detex: ${D_OBJ}
 	${CC} ${CFLAGS} -o $@ ${D_OBJ} ${LEXLIB}
 
-detex.c:
-	sed -f states.sed detex.l > xxx.l
-	${LEX} ${LFLAGS} xxx.l
-	rm -f xxx.l
-	mv lex.yy.c detex.c
+delatex: detex
+	cp detex delatex
 
-lexout.c: detex.c
-	mv detex.c lexout.c
+detex.c: detex.l
+	${LEX} ${LFLAGS} detex.l
+	mv lex.yy.c detex.c
 
 man-page:
 	troff -man detex.1l
 
 # If you want detex available as delatex, uncomment the last two lines of
 # this target
-install: detex
+install: all
 	rm -f ${DESTDIR}/detex
-	install -c -m 775 -o binary -g staff -s detex ${DESTDIR}
+	install -c -m 775 -g staff -s detex ${DESTDIR}
+	install detex.1l /usr/local/share/man/man1
 #	rm -f ${DESTDIR}/delatex
 #	ln ${DESTDIR}/detex ${DESTDIR}/delatex
 
+uninstall:
+	rm -f ${DESTDIR}/detex
+	rm -f ${DESTDIR}/delatex
+	rm -f /usr/local/share/man/man1/detex.*
+
 clean:
 	-rm -f a.out core *.s *.o ERRS errs .,* .emacs_[0-9]*
-	-rm -f ${PROGS} xxx.l lex.yy.c
+	-rm -f ${PROGS} xxx.l lex.yy.c detex.c
+	-rm -f *.tar.bz2
 
 print:	${HDR} ${SRC}
 	${LPR} Makefile ${HDR} ${SRC}
+
+test: all
+	./test.pl
+
+run: delatex
+	./delatex in > out.txt
+
+package: clean detex.c
+	tar cjfv opendetex-${VERSION}.tar.bz2 ChangeLog COPYRIGHT detex.* INSTALL Makefile README
 
 # Dependencies
 #
 detex.c: detex.h
 detex.c: detex.l
+

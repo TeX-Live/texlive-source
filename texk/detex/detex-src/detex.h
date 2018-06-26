@@ -63,9 +63,9 @@
 
 #define	MAXINPUTPATHS	10
 
-#define	DEFAULTENV	"array,eqnarray,equation,figure,mathmatica,picture,table,verbatim"
+#define	DEFAULTENV	"algorithm,align,array,bmatrix,displaymath,eqnarray,equation,floatfig,floating,longtable,picture,pmatrix,psfrags,pspicture,smallmatrix,smallpmatrix,tabular,tikzpicture,verbatim,vmatrix,wrapfigure"
 #define	CHENVSEP	','
-#define	MAXENVS		10
+#define	MAXENVS		25
 #define	CCHMAXENV	100
 
 /******
@@ -80,5 +80,6 @@
 #define	CHSPACEOPT	's'
 #define	CHTEXOPT	't'
 #define	CHWORDOPT	'w'
+#define CHREPLACE   'r'
 
 #define	my_ERROR	-1

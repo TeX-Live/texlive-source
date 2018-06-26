@@ -1,5 +1,5 @@
-Changes applied to the detex-2.8 tree as obtained from:
-	http://www.cs.purdue.edu/homes/trinkle/detex/
+Changes applied to the opendetex-2.8.3 tree as obtained from:
+	https://github.com/pkubowicz/opendetex/releases
 
 Renamed:
 	detex.1l -> detex.man

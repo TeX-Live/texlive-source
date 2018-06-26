@@ -1,0 +1,13 @@
+To build the program, you need:
+* 'make' program
+* a C compiler (for example, Clang or GCC)
+* 'lex' implementation (for example, flex)
+
+Debian/Ubuntu users can install those by executing:
+   sudo apt-get install make gcc flex
+
+To compile the program, simply execute
+   make
+
+To install the program, execute
+   sudo make install

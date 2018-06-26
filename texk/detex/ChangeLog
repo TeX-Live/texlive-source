@@ -1,3 +1,8 @@
+2018-06-20  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* Import opendetex-2.8.3, TLpatches adapted.
+	* test.lout, test.tout: adjusted.
+
 2016-02-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

@@ -1,10 +1,6 @@
 %option never-interactive
 
 %top{
-#ifndef lint
-static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/03/01 20:22:01 trinkle Exp trinkle $";
-#endif
-
 /*
  * Copyright (c) 1986-2007 Purdue University
  * All rights reserved.
@@ -72,7 +68,6 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
 #include <string.h>
 #else
 #include <strings.h>
-#define	strchr  index
 #define	strrchr rindex
 #endif
 #ifndef MAXPATHLEN
@@ -96,6 +91,8 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
 
 #define	LaBEGIN		if (fLatex) BEGIN
 #define	IGNORE		if (fSpace && !fWord) putchar(' ')
+#define NOUN		if (fSpace && !fWord && !fReplace) putchar(' '); else {if (fReplace) printf("noun");}
+#define VERBNOUN		if (fReplace) printf(" verbs noun"); /* puts a verb and a noun to make grammar checking work */
 #define	SPACE		if (!fWord) putchar(' ')
 #define	NEWLINE		if (!fWord) putchar('\n')
 #define	LATEX		fLatex=!fForcetex
@@ -103,15 +100,18 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
 #define STRIPARGS(x)	cArgs=x; LaBEGIN LaMacro2
 #define	CITE(x)		if (fLatex && !fCite) KILLARGS(x)
 
+#define NO_MALLOC_DECL
+
 void AddInclude(char *sbFile);
 void ErrorExit(const char *sb1);
+void UsageExit(void);
 void IncludeFile(char *sbFile);
 void InputFile(char *sbFile);
 void SetEnvIgnore(const char *sbEnvList);
 #ifndef KPATHSEA
 void SetInputPaths(void);
 #endif
-void Warning(const char *sb1, const char *sb2); 
+void Warning(const char *sb1, const char *sb2);
 int BeginEnv(const char *sbEnv);
 int EndEnv(const char *sbEnv);
 int InList(char *sbFile);
@@ -132,7 +132,7 @@ void	OS2UsageExit(void);
 char	*rgsbEnvIgnore[MAXENVS];	/* list of environments ignored */
 char	*rgsbIncList[MAXINCLIST];	/* list of includeonly files */
 char	*rgsbInputPaths[MAXINPUTPATHS];	/* list of input paths in order */
-char	sbCurrentEnv[CCHMAXENV];	/* current environment being ignored */
+char	sbCurrentIgnoredEnv[CCHMAXENV];	/* current environment being ignored */
 char	*sbProgName;			/* name we were invoked with */
 #ifndef NOFILE /* might be defined in <sys/param.h> */
 #define NOFILE 256
@@ -150,6 +150,11 @@ int	fFollow = 1;			/* flag to follow input/include */
 int	fCite = 0;			/* flag to echo \cite and \ref args */
 int	fSpace = 0;			/* flag to replace \cs with space */
 int	fForcetex = 0;			/* flag to inhibit latex mode */
+int fShowPictures = 0;  /* flag to show picture names */
+int fReplace = 0;  /* flag to replace envirnments with "noun" */
+
+int currBracesLevel = 0;
+int footnoteLevel = -100;
 
 #ifdef FLEX_SCANNER
 /* flex has contexts for buffers that need to be switched when file changes
@@ -173,20 +178,21 @@ VU	{U}|ex
 VD	{S}(({N}{S}{VU})|(\\{W})){S}
 VG	{VD}(plus{VD})?(minus{VD})?
 Z	\*?
+VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\\neq|\\mapsto
 
 %Start Define Display IncludeOnly Input Math Normal Control
-%Start LaBegin LaDisplay LaEnd LaEnv LaFormula LaInclude
+%Start LaBegin LaDisplay LaEnd LaEnv LaFormula LaInclude LaSubfile
 %Start LaMacro LaOptArg LaMacro2 LaOptArg2 LaVerbatim 
 %start LaBreak LaPicture
 
 %%
 <Normal>"%".*		/* ignore comments */	;
 
-<Normal>"\\begin"{S}"{"{S}"document"{S}"}"	{LATEX; IGNORE;}
+<Normal>"\\begin"{S}"{"{S}"document"{S}"}""\n"*	{LATEX; IGNORE;}
 
 <Normal>"\\begin"     /* environment start */	{LaBEGIN LaBegin; IGNORE;}
 
-<LaBegin>{S}"{"{S}"verbatim"{S}"}"		{   if (BeginEnv("verbatim"))
+<LaBegin>{S}"{"{S}"verbatim"{S}"}"		{ if (BeginEnv("verbatim"))
 							BEGIN LaEnv;
 						    else
 							BEGIN LaVerbatim;
@@ -198,24 +204,40 @@ Z	\*?
 <LaVerbatim>.					ECHO;
 
 <LaBegin>{S}"{"{S}"minipage"{S}"}"		{ KILLARGS(1);
-						  if (BeginEnv("minpage"))
+						  if (BeginEnv("minipage"))
+							BEGIN LaEnv;
+						  else
+							BEGIN LaMacro; /* Normal; */
+						  IGNORE;
+						}
+
+<LaBegin>{S}"{"{S}"table"{S}"}"{S}"["{W}"]"		{
+						  if (BeginEnv("table"))
 							BEGIN LaEnv;
 						  else
 							BEGIN Normal;
 						  IGNORE;
 						}
 
-<LaBegin>{W}					{   if (BeginEnv(yytext))
+<LaBegin>{S}"{"{S}"figure"{S}"}"{S}"["{W}"]"		{
+						  if (BeginEnv("figure"))
+							BEGIN LaEnv;
+						  else
+							BEGIN Normal;
+						  IGNORE;
+						}
+						
+<LaBegin>{W}					{ if (BeginEnv(yytext))
 							BEGIN LaEnv;
 						    else
 							BEGIN Normal;
 						    IGNORE;
 						}
-<LaBegin>"\n"					NEWLINE;
+	/*<LaBegin>"\n"					NEWLINE;*/
 <LaBegin>.					;
 
 <LaEnv>"\\end"  /* absorb some environments */	{LaBEGIN LaEnd; IGNORE;}
-<LaEnv>"\n"					NEWLINE;
+<LaEnv>"\n"+					;/*NEWLINE;*/
 <LaEnv>.					;
 
 <LaEnd>{W}		 /* end environment */	{   if (EndEnv(yytext))
@@ -223,7 +245,7 @@ Z	\*?
 						    IGNORE;
 						}
 <LaEnd>"}"					{BEGIN LaEnv; IGNORE;}
-<LaEnd>"\n"					NEWLINE;
+	/*<LaEnd>"\n"					NEWLINE;*/
 <LaEnd>.					;
 
 <Normal>"\\kern"{HD}				;
@@ -232,6 +254,7 @@ Z	\*?
 <Normal>"\\hskip"{HG}				;
 <Normal>"\\hspace"{Z}{S}"{"{HG}"}"		;
 <Normal>"\\addvspace"{S}"{"{VG}"}"		;
+<Normal>"{"{N}"pt}"						; /* hack to fix \begin{minipage}{300pt} */
 
 <Normal>"\\newlength"				{ KILLARGS(1); }
 <Normal>"\\setlength"				{ KILLARGS(2); }
@@ -252,7 +275,8 @@ Z	\*?
 <Normal>"\\includegraphics"[^{]*		{ LaBEGIN LaPicture; }
 
 <LaPicture>"{"					;
-<LaPicture>[^{}]+				{ printf("<Picture %s>", yytext); }
+<LaPicture>[^{}]+				{ if(fShowPictures) { printf("<Picture %s>", yytext); } }
+<LaPicture>"\}"{S}"\n"+					BEGIN Normal;
 <LaPicture>"\}"					BEGIN Normal;
 
 <Normal>"\\definecolor"				{ KILLARGS(3); }
@@ -262,35 +286,53 @@ Z	\*?
 <Normal>"\\fcolorbox"				{ KILLARGS(3); }
 <Normal>"\\pagecolor"				{ KILLARGS(1); }
 <Normal>"\\foilhead"				{ STRIPARGS(1); }
+<Normal>"\\addfontfeature"			{ KILLARGS(1); }
+<Normal>"\\thispagestyle"			{ KILLARGS(1); }
+<Normal>"\\addcontentsline"			{ KILLARGS(3); }
 
-<Normal>"\\part"{Z}				;
-<Normal>"\\section"{Z}				;
-<Normal>"\\subsection"{Z}			;
-<Normal>"\\subsubsection"{Z}			;
-<Normal>"\\paragraph"{Z}			;
-<Normal>"\\sunparagraph"{Z}			;
+<Normal>"\\part"{Z}					;/*NEWLINE;*/
+<Normal>"\\chapter"{Z}				;/*NEWLINE;*/
+<Normal>"\\section"{Z}				;/*NEWLINE;*/
+<Normal>"\\subsection"{Z}			;/*NEWLINE;*/
+<Normal>"\\subsubsection"{Z}		;/*NEWLINE;*/
+<Normal>"\\paragraph"{Z}			;/*NEWLINE;*/
+<Normal>"\\subparagraph"{Z}			;/*NEWLINE;*/
 
 <Normal>"\\bibitem"	    /* ignore args  */	{KILLARGS(1); IGNORE;}
 <Normal>"\\bibliography"    /* of these \cs */	{KILLARGS(1); IGNORE;}
 <Normal>"\\bibstyle"				{KILLARGS(1); IGNORE;}
-<Normal>"\\cite"				{CITE(1); IGNORE;}
+<Normal>" "?"\\cite"				{KILLARGS(1);} /* kill space before */
 <Normal>"\\documentstyle"			{LATEX; KILLARGS(1); IGNORE;}
 <Normal>"\\documentclass"			{LATEX; KILLARGS(1); IGNORE;}
 <Normal>"\\usepackage"				{KILLARGS(1); IGNORE;}
 <Normal>"\\end"					{KILLARGS(1); IGNORE;}
-<Normal>"\\index"				{KILLARGS(1); SPACE;}
-<Normal>"\\footnote"				{KILLARGS(1); SPACE;}
+<Normal>"\\hypersetup"			{KILLARGS(1);}
+<Normal>"\\index"				{KILLARGS(1);}
+	/*<Normal>"\\footnote"				{KILLARGS(1); SPACE;}*/
 <Normal>"\\label"				{KILLARGS(1); IGNORE;}
+<Normal>"\\nameref"					{CITE(1); IGNORE;}
 <Normal>"\\pageref"				{CITE(1); IGNORE;}
 <Normal>"\\pagestyle"				{KILLARGS(1); IGNORE;}
 <Normal>"\\ref"					{CITE(1); IGNORE;}
-<Normal>"\\setcounter"				{KILLARGS(1); IGNORE;}
+<Normal>"\\setcounter"				{KILLARGS(2); IGNORE;}
+<Normal>"\\addtocounter"			{KILLARGS(2); IGNORE;}
+<Normal>"\\newcounter"				{ KILLARGS(1); }
+<Normal>"\\stepcounter"			{ KILLARGS(2); }
+
+<Normal>"\\fontspec"			{KILLARGS(1);}
+
+<Normal>"\\footnote"(\[([^\]])+\])?"{"		{
+							putchar('(');
+							footnoteLevel = currBracesLevel;
+							++currBracesLevel;
+							}
 <Normal>"\\verb" /* ignore \verb<ch>...<ch> */	{   if (fLatex) {
 						 	char verbchar, c;
 						 	verbchar = input();
 						 	while ((c = input()) != verbchar)
-							    if (c == '\n')
-								NEWLINE;
+							    /*if (c == '\n')
+								NEWLINE;*/
+								putchar(c);
 						    }
 						    IGNORE;
 						}
@@ -304,32 +346,36 @@ Z	\*?
 <Define>"\n"					NEWLINE;
 <Define>.					;
 
-<Normal>"\\("		/* formula mode */	{LaBEGIN LaFormula; IGNORE;}
+<Normal>"\\("		/* formula mode */	{LaBEGIN LaFormula; NOUN;}
 <LaFormula>"\\)"				BEGIN Normal;
 <LaFormula>"\n"					NEWLINE;
+<LaFormula>{VERBSYMBOL}			VERBNOUN;
 <LaFormula>.					;
 
-<Normal>"\\["		/* display mode */	{LaBEGIN LaDisplay; IGNORE;}
+<Normal>"\\["		/* display mode */	{LaBEGIN LaDisplay; NOUN;}
 <LaDisplay>"\\]"				BEGIN Normal;
 <LaDisplay>"\n"					NEWLINE;
+<LaDisplay>{VERBSYMBOL}			VERBNOUN;
 <LaDisplay>.					;
 
-<Normal>"$$"		/* display mode */	{BEGIN Display; IGNORE;}
+<Normal>"$$"		/* display mode */	{BEGIN Display; NOUN;}
 <Display>"$$"					BEGIN Normal;
 <Display>"\n"					NEWLINE;
+<Display>{VERBSYMBOL}			VERBNOUN;
 <Display>.					;
 
-<Normal>"$"		/* math mode */		{BEGIN Math; IGNORE;}
+<Normal>"$"		/* math mode */		{BEGIN Math; NOUN;}
 <Math>"$"					BEGIN Normal;
 <Math>"\n"					NEWLINE;
 <Math>"\\$"					;
+<Math>{VERBSYMBOL}			VERBNOUN;
 <Math>.						;
 
 <Normal>"\\include"	/* process files */	{LaBEGIN LaInclude; IGNORE;}
 <LaInclude>[^{ \t\n}]+				{   IncludeFile(yytext);
 						    BEGIN Normal;
 						}
-<LaInclude>"\n"					NEWLINE;
+<LaInclude>"\n"+					NEWLINE;
 <LaInclude>.					;
 
 <Normal>"\\includeonly"				{BEGIN IncludeOnly; IGNORE;}
@@ -338,51 +384,79 @@ Z	\*?
 							rgsbIncList[csbIncList++] = '\0';
 						    BEGIN Normal;
 						}
-<IncludeOnly>"\n"				NEWLINE;
+<IncludeOnly>"\n"+				NEWLINE;
 <IncludeOnly>.					;
+
+<Normal>"\\subfile"	/* process files */	{LaBEGIN LaSubfile; IGNORE;}
+<LaSubfile>[^{ \t\n}]+				{   IncludeFile(yytext);
+						    BEGIN Normal;
+						}
+<LaSubfile>"\n"+					NEWLINE;
+<LaSubfile>.					;
 
 <Normal>"\\input"				{BEGIN Input; IGNORE;}
 <Input>[^{ \t\n}]+				{   InputFile(yytext);
 						    BEGIN Normal;
 						}
-<Input>"\n"					NEWLINE;
+<Input>"\n"+					NEWLINE;
 <Input>.					;
+
+	/* escaping commands */
+<Normal>"\\slash"			putchar('/');
 
 <Normal>\\(aa|AA|ae|AE|oe|OE|ss)[ \t]*[ \t\n}] /* handle ligatures */	{(void)printf("%.2s", yytext+1);}
 <Normal>\\[OoijLl][ \t]*[ \t\n}]		{(void)printf("%.1s", yytext+1);}
-<Normal>"\\linebreak"				BEGIN LaBreak;
+<Normal>"\\linebreak"(\[[0-4]\])?			{NEWLINE;}	/*BEGIN LaBreak;*/
 
 <Normal>\\[a-zA-Z@]+	/* ignore other \cs */	{BEGIN Control; IGNORE;}
 <Normal>"\\ "					SPACE;
 <Normal>"\\\\"{Z}(\[[^\]]*\])?			NEWLINE;
 <Normal>\\.					IGNORE;
 <LaBreak>[0-4]?					{  if (yytext==NULL || strlen(yytext)==0
-							|| atoi(yytext)==4)
+							|| atoi(yytext)>=0)
 							NEWLINE;
 						BEGIN Normal;
 						}
 
 <Control>\\[a-zA-Z@]+				IGNORE;
 <Control>[a-zA-Z@0-9]*[-'=`][^ \t\n{]*		IGNORE;
-<Control>"\n"					{BEGIN Normal; NEWLINE;}
-<Control>[ \t]*[{]*				{BEGIN Normal; IGNORE;}
+<Control>"\n"+					{BEGIN Normal; /*NEWLINE;*/}
+<Control>[ \t]*[{]+				{++currBracesLevel;BEGIN Normal; IGNORE;}
+<Control>[ \t]*				{BEGIN Normal; IGNORE;}
 <Control>.					{yyless(0);BEGIN Normal;}
 
-<Normal>[{}\\|]	/* special characters */	IGNORE;
-<Normal>[!?]"`"					IGNORE;
+<Normal>[\\|]	/* special characters */	IGNORE;
+<Normal>[!?]"`"				IGNORE;
 <Normal>~					SPACE;
+<Normal>-{2,3}				putchar('-');
+<Normal>``					putchar('"');
+<Normal>`					putchar('\'');
+<Normal>''					putchar('"');
+<Normal>,,					putchar('"');
 
+	/* braces */
+<Normal>"{"					{ ++currBracesLevel;
+							}
+<Normal>"}"					{
+							--currBracesLevel;
+							if (currBracesLevel == footnoteLevel) {
+								putchar(')');
+								footnoteLevel = -100;
+							}
+							SPACE;}
 <Normal>{W}[']*{W}				{   if (fWord)
 							(void)printf("%s\n", yytext);
 						    else
 							ECHO;
 						}
 <Normal>[0-9]+					if (!fWord) ECHO;
-<Normal>(.|\n)					if (!fWord) ECHO;
+<Normal>.					if (!fWord) ECHO;
+<Normal>"\n"					if (!fWord) NEWLINE;
+<Normal>("\t")+					if (!fWord) putchar('\t');
 
 <LaMacro>"\["					{ BEGIN LaOptArg; }
 <LaMacro>"{"					{ cOpenBrace++; }
-<LaMacro>"}"					{   cOpenBrace--;
+<LaMacro>"}""\n"{0,1}					{   cOpenBrace--;
 						    if (cOpenBrace == 0)
 						    {
 							if (--cArgs==0)
@@ -409,6 +483,7 @@ Z	\*?
 <LaOptArg2>"\]"					BEGIN LaMacro2;	
 <LaOptArg2>.					;
 %%
+
 /******
 ** main --
 **	Set sbProgName to the base of arg 0.
@@ -488,14 +563,14 @@ main(int cArgs, char *rgsbArgs[])
 		    case CHWORDOPT:
 			fWord = 1;
 			break;
+			case CHREPLACE:
+			fReplace = 1;
+			break;
 		    default:
-#ifdef OS2
-			OS2UsageExit();
-#else
 			sbBadOpt[0] = *pch;
 			sbBadOpt[1] = '\0';
 			Warning("unknown option ignored -", sbBadOpt);
-#endif
+			UsageExit();
 		    }
 		iArgs++;
 	}
@@ -587,9 +662,10 @@ void
 SetEnvIgnore(const char *sbEnvList)
 {
 	char *sb;
-
 	sb = SafeMalloc(strlen(sbEnvList) + 1, "malloc for SetEnvIgnore failed");
 	(void) strcpy(sb, sbEnvList);
+
+	
 	csbEnvIgnore = SeparateList(sb, rgsbEnvIgnore, CHENVSEP, MAXENVS);
 	if (csbEnvIgnore == my_ERROR)
 	    ErrorExit("The environment list contains too many environments");
@@ -597,7 +673,7 @@ SetEnvIgnore(const char *sbEnvList)
 
 /******
 ** BeginEnv -- checks to see if sbEnv is in the list rgsbEnvIgnore.  If it
-**	is, sbCurrentEnv is set to sbEnv.
+**	is, sbCurrentIgnoredEnv is set to sbEnv.
 ******/
 
 int
@@ -606,10 +682,10 @@ BeginEnv(const char *sbEnv)
 	int	i;
 
 	if (!fLatex) return(0);
-	for (i = 0; i < csbEnvIgnore; i++)
+	for (i = 0; i < csbEnvIgnore; ++i)
 	    if (strcmp(sbEnv, rgsbEnvIgnore[i]) == 0) {
-		(void)strcpy(sbCurrentEnv, sbEnv);
-		return(1);
+			(void)strcpy(sbCurrentIgnoredEnv, sbEnv);
+			return(1);
 	    }
 	return(0);
 }
@@ -622,7 +698,7 @@ int
 EndEnv(const char *sbEnv)
 {
 	if (!fLatex) return(0);
-	if (strcmp(sbEnv, sbCurrentEnv) == 0)
+	if (strcmp(sbEnv, sbCurrentIgnoredEnv) == 0)
 	    return(1);
 	return(0);
 }
@@ -635,6 +711,8 @@ EndEnv(const char *sbEnv)
 void
 InputFile(char *sbFile)
 {
+	FILE	*TexOpen();
+
 	if (!fFollow)
 	    return;
 	rgfp[cfp++] = yyin;
@@ -657,6 +735,8 @@ InputFile(char *sbFile)
 void
 IncludeFile(char *sbFile)
 {
+	FILE	*TexOpen();
+
 	if (!fFollow)
 	    return;
 	if (!InList(sbFile))
@@ -772,8 +852,9 @@ SeparateList(char *sbList, char *rgsbList[], char chSep, int csbMax)
 
 	while (sbList && *sbList && csbList < csbMax) {
 	    rgsbList[csbList++] = sbList;
-	    if ((sbList = strchr(sbList, chSep)))
-		*sbList++ = '\0';
+	    if ((sbList = strchr(sbList, chSep))) {
+			*sbList++ = '\0';
+		}
 	}
 	return(sbList && *sbList ? my_ERROR : csbList);
 }
@@ -831,19 +912,23 @@ TexOpen(char *sbFile)
 	    /* character and it does not follow a '.' or a '/'      */
 	    if (pch != NULL && pch > &(sbFullPath[0])
                     && *(pch - 1) != '.' && *(pch - 1) != '/'
-		    && (fp = fopen(sbFullPath, "r")) != NULL)
-		return(fp);
+		    && (fp = fopen(sbFullPath, "r")) != NULL) {
+			return(fp);
+		}
 
 	    /* just base name, add .tex to the name */
 	    sbNew = SafeMalloc(strlen(sbFullPath) + 5, "malloc for TexOpen failed");
 	    (void)strcpy(sbNew, sbFullPath);
 	    (void)strcat(sbNew, ".tex");
-	    if ((fp = fopen(sbNew, "r")) != NULL)
-		return(fp);
+	    if ((fp = fopen(sbNew, "r")) != NULL) {
+			free(sbNew);
+			return(fp);
+		}
+		free(sbNew);
 
 	    /* try sbFile regardless */
 	    if ((fp = fopen(sbFullPath, "r")) != NULL)
-		return(fp);
+			return(fp);
 	}
 	return NULL;
 #else
@@ -892,24 +977,23 @@ ErrorExit(const char *sb1)
 	(void)fprintf(stderr, "%s: error: %s\n", sbProgName, sb1);
 	exit(1);
 }
-#ifdef OS2
 
 /******
-** OS2UsageExit -- print OS/2 usage message and exit.
+** UsageExit -- print OS/2 usage message and exit.
 ******/
 
 void
-OS2UsageExit(void)
+UsageExit(void)
 {
-	(void)printf("\n%s [ -clnstw ] [ -e environment-list ] [ filename[.tex] ... ]\n",
+	(void)printf("\n%s [ -clnrstw ] [ -e environment-list ] [ filename[.tex] ... ]\n",
 		sbProgName);
 	puts("  -c  echo LaTeX \\cite, \\ref, and \\pageref values\n  \
 -e  <env-list> list of LaTeX environments to ignore\n  \
 -l  force latex mode\n  \
--n  do not follow \\input and \\include\n  \
+-n  do not follow \\input, \\include and \\subfile\n  \
+-r  replace math with \"noun\" and \"noun verbs noun\" to preserve grammar\n  \
 -s  replace control sequences with space\n  \
 -t  force tex mode\n  \
 -w  word only output");
 	exit(0);
 }
-#endif

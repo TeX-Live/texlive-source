@@ -1,3 +1,13 @@
+2018-06-20  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	Adapt to opendetex-2.8.3.
+	* patch-04-kpathsea: update.
+	* patch-01-ANSI-C, patch-03-warnings, patch-05-kern-and-glue,
+	patch-06-never-interactive, patch-07-rename, patch-08-kpathsea,
+	patch-09-binary, patch-10-ANSI-strings, patch-11-c_auto_h,
+	patch-12-typo: removed.
+	* patch-13-typo-minipage (new): Fix a typo.
+
 2014-08-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-12-typo (new): Fix a typo.
