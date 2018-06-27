@@ -209,13 +209,13 @@ lethead_prefixと同じ。
 lethead_suffixと同じ。
 .RE
 .TP 30
-\fBlethead_flag\fR  <文字列>
+\fBlethead_flag\fR  <数値>
 0
 .RS
 頭文字の出力のフラグ。0のとき出力しない。0より大きいときは英字を大文字で、0より小さいときは小文字で出力する。
 .RE
 .TP 30
-\fBheading_flag\fR  <文字列>
+\fBheading_flag\fR  <数値>
 0
 .RS
 lethead_flagと同じ。

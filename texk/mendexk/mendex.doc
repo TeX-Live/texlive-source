@@ -171,12 +171,12 @@ mendex - 索引整形ツール
       ""
       lethead_suffixと同じ。
 
-   lethead_flag  <文字列>
+   lethead_flag  <数値>
       0
       頭文字の出力のフラグ。0のとき出力しない。0より大きいときは英字を大文字で、
       0より小さいときは小文字で出力する。
 
-   heading_flag  <文字列>
+   heading_flag  <数値>
       0
       lethead_flagと同じ。
 
