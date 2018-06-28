@@ -300,11 +300,12 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
 
 
 /* Open input file *F_PTR (of type FILEFMT), prepending the directory
-   part of the string FNAME. This is called from BibTeX, to open
-   subsidiary .aux files, with FNAME set to the top-level aux file. The
-   idea is that if invoked as bibtex somedir/foo.aux, and foo.aux has an
-   \@input{bar} statement, we should look for somedir/bar.aux too.
-   (See bibtex-auxinclude.test.)  */
+   part of the string FNAME to `nameoffile'+1, unless that is already
+   kpse_absolute_p. This is called from BibTeX, to open subsidiary .aux
+   files, with FNAME set to the top-level aux file. The idea is that if
+   we're invoked as bibtex somedir/foo.aux, and foo.aux has an
+   \@input{bar} statement, we should look for somedir/bar.aux too. (See
+   bibtex-auxinclude.test.) */
 
 boolean
 open_input_with_dirname (FILE **f_ptr, int filefmt, const char *fname)
@@ -312,7 +313,8 @@ open_input_with_dirname (FILE **f_ptr, int filefmt, const char *fname)
   boolean ret = false;
   char *top_dir = xdirname (fname);
 
-  if (top_dir && *top_dir && !STREQ (top_dir, ".")) {
+  if (top_dir && *top_dir && !STREQ (top_dir, ".")
+      && !kpse_absolute_p (nameoffile+1, true)) {
     char *newname = concat3 (top_dir, DIR_SEP_STRING, nameoffile+1);
     free (nameoffile);
     nameoffile = xmalloc (strlen (newname) + 2);

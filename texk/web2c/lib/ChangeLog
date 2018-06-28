@@ -1,3 +1,10 @@
+2018-06-28  Karl Berry  <karl@freefriends.org>
+
+	* openclose.c (open_input_with_dirname): do not prepend the
+	top-level directory name if the subsidiary aux file being searched
+	for is alrady absolute. Private report from John Collins
+	(22 Jun 2018 14:01:31).
+
 2018-06-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: remove sjisterminal (w32 only).
