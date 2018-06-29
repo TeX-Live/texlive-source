@@ -1,3 +1,9 @@
+2018-06-29  Karl Berry  <karl@freefriends.org>
+
+	* tex4ht.c (r416),
+	* t4ht (r185).c: sync with tex4ht repository for #line directives
+	and -hA to trace everything.
+
 2016-09-21  Karl Berry  <karl@tug.org>
 
 	* tex4ht.c (main): allow any id byte <= 10, for xetex.
