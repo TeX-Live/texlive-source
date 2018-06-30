@@ -1,7 +1,7 @@
 
 #line 231 "./tex4ht-c.tex"
 
-/* tex4ht.c (2018-06-29-11:18), generated from tex4ht-c.tex
+/* tex4ht.c (2018-06-30-15:36), generated from tex4ht-c.tex
    Copyright 2009-2018 TeX Users Group
    Copyright 1996-2009 Eitan M. Gurari
 
@@ -49,56 +49,56 @@
     (uncommented | command line)                *
 ----------------------------------------------- */
 
-#line 8842 "./tex4ht-c.tex"
+#line 8844 "./tex4ht-c.tex"
 
 #ifndef LGFNT
 #define LGFNT "Font(\"%s\",\"%s\",\"%d\",\"%d\")\n"
 #endif
 
 
-#line 10839 "./tex4ht-c.tex"
+#line 10841 "./tex4ht-c.tex"
 
 #ifndef LGCLS
 #define LGCLS "Font_Class(%d,\"%s\"): %s\n"
 #endif
 
 
-#line 11063 "./tex4ht-c.tex"
+#line 11065 "./tex4ht-c.tex"
 
 #ifndef LGPIC
 #define LGPIC "--- needs --- %%1.idv[%%2] ==> %%3 ---\n%"
 #endif
 
 
-#line 11100 "./tex4ht-c.tex"
+#line 11102 "./tex4ht-c.tex"
 
 #ifndef LGSEP
 #define LGSEP "--- characters ---\n"
 #endif
 
 
-#line 11128 "./tex4ht-c.tex"
+#line 11130 "./tex4ht-c.tex"
 
 #ifndef LGTYP
 #define LGTYP ".png"
 #endif
 
 
-#line 13168 "./tex4ht-c.tex"
+#line 13170 "./tex4ht-c.tex"
 
 #ifndef ENVFILE
 
 #endif
 
 
-#line 13550 "./tex4ht-c.tex"
+#line 13552 "./tex4ht-c.tex"
 
 #ifndef TFMDIR
 
 #endif
 
 
-#line 13922 "./tex4ht-c.tex"
+#line 13924 "./tex4ht-c.tex"
 
 #ifndef HTFDIR
 
@@ -158,7 +158,7 @@
 #endif
 #endif
 
-#line 15683 "./tex4ht-c.tex"
+#line 15685 "./tex4ht-c.tex"
 
 #ifdef DOS_WIN32
 #define STRUCT_DIRENT
@@ -218,7 +218,7 @@
 #include <signal.h>
 
 
-#line 13765 "./tex4ht-c.tex"
+#line 13767 "./tex4ht-c.tex"
 
 #ifndef F_OK
 #ifdef DOS_WIN32
@@ -240,7 +240,7 @@
 #endif
 
 
-#line 14870 "./tex4ht-c.tex"
+#line 14872 "./tex4ht-c.tex"
 
 
 #line 1231 "./tex4ht-c.tex"
@@ -265,24 +265,24 @@
 
 
 
-#line 15621 "./tex4ht-c.tex"
+#line 15623 "./tex4ht-c.tex"
 
 #ifdef DOS_WIN32
 #include <io.h>
 #endif
 
 
-#line 15672 "./tex4ht-c.tex"
+#line 15674 "./tex4ht-c.tex"
 
 #include <sys/stat.h>
 
 
 
-#line 15690 "./tex4ht-c.tex"
+#line 15692 "./tex4ht-c.tex"
 
 #ifdef HAVE_DIRENT_H
 
-#line 15705 "./tex4ht-c.tex"
+#line 15707 "./tex4ht-c.tex"
 
 #include <dirent.h>
 
@@ -292,7 +292,7 @@
 #define STRUCT_DIRECT
 #endif
 
-#line 15710 "./tex4ht-c.tex"
+#line 15712 "./tex4ht-c.tex"
 
 #ifdef HAVE_SYS_NDIR_H
 #include <sys/ndir.h>
@@ -309,7 +309,7 @@
 
 
 
-#line 10875 "./tex4ht-c.tex"
+#line 10877 "./tex4ht-c.tex"
 
 #ifdef DOS
 #define HTM
@@ -318,7 +318,7 @@
 
 
 
-#line 17265 "./tex4ht-c.tex"
+#line 17267 "./tex4ht-c.tex"
 
 #ifdef DOS
 #define PROTOTYP
@@ -377,7 +377,7 @@
 #define IGNORED void
 
 
-#line 4566 "./tex4ht-c.tex"
+#line 4568 "./tex4ht-c.tex"
 
 struct files_rec{
   FILE *file, *prev_file;
@@ -386,7 +386,7 @@ struct files_rec{
 };
 
 
-#line 4667 "./tex4ht-c.tex"
+#line 4669 "./tex4ht-c.tex"
 
 struct sys_call_rec{
   char* filter;
@@ -394,17 +394,17 @@ struct sys_call_rec{
 };
 
 
-#line 4848 "./tex4ht-c.tex"
+#line 4850 "./tex4ht-c.tex"
 
 #define HEIGHT 120
 
 
-#line 4890 "./tex4ht-c.tex"
+#line 4892 "./tex4ht-c.tex"
 
 #define NULL_MAP (struct map_line_type*) 0
 
 
-#line 4950 "./tex4ht-c.tex"
+#line 4952 "./tex4ht-c.tex"
 
 #define XRESOLUTION MARGINSP
 #ifdef LONG
@@ -414,17 +414,17 @@ struct sys_call_rec{
 #endif
 
 
-#line 5082 "./tex4ht-c.tex"
+#line 5084 "./tex4ht-c.tex"
 
 #define MAX_MAP_LINE 500
 
 
-#line 6036 "./tex4ht-c.tex"
+#line 6038 "./tex4ht-c.tex"
 
 #define idv_int(val)     int_to_dvi((long int) val,4)
 
 
-#line 6291 "./tex4ht-c.tex"
+#line 6293 "./tex4ht-c.tex"
 
 struct halign_rec{
   char * str;
@@ -432,17 +432,17 @@ struct halign_rec{
 };
 
 
-#line 8634 "./tex4ht-c.tex"
+#line 8636 "./tex4ht-c.tex"
 
 #define design_size_to_pt(n)    ((double)n / (double)(1L<<20))
 
 
-#line 8713 "./tex4ht-c.tex"
+#line 8715 "./tex4ht-c.tex"
 
 #define new_font   font_tbl[font_tbl_size]
 
 
-#line 9732 "./tex4ht-c.tex"
+#line 9734 "./tex4ht-c.tex"
 
 #ifdef LONG
 #define MARGINSP 344061L        
@@ -451,12 +451,12 @@ struct halign_rec{
 #endif
 
 
-#line 10122 "./tex4ht-c.tex"
+#line 10124 "./tex4ht-c.tex"
 
 #define  HTF_ALIAS 10000000
 
 
-#line 10625 "./tex4ht-c.tex"
+#line 10627 "./tex4ht-c.tex"
 
 #ifndef TRUE
 #define TRUE 1
@@ -469,26 +469,26 @@ struct halign_rec{
 #endif
 
 
-#line 10867 "./tex4ht-c.tex"
+#line 10869 "./tex4ht-c.tex"
 
 #define GIF_I      "-%x%s"
 #define GIF_II  "-%x-%x%s"
 #define GIF_VII       "%s"
 
 
-#line 10881 "./tex4ht-c.tex"
+#line 10883 "./tex4ht-c.tex"
 
 #ifdef HTM
 #define DOS_GIF_FILE
 #endif
 
 
-#line 11308 "./tex4ht-c.tex"
+#line 11310 "./tex4ht-c.tex"
 
 #define BASE  36
 
 
-#line 11328 "./tex4ht-c.tex"
+#line 11330 "./tex4ht-c.tex"
 
 #define store_bit_I(ch,i)  ch[(i)/8]|=(1<<((i)%8));
 #define store_bit_Z(ch,i)  ch[(i)/8]&=~(1<<((i)%8))
@@ -496,7 +496,7 @@ struct halign_rec{
 #define get_bit(ch,i)     ((ch[(i)/8] >> ((i)%8)) & 1)
 
 
-#line 11673 "./tex4ht-c.tex"
+#line 11675 "./tex4ht-c.tex"
 
 #define gif_open  span_open
 #define gif_alt   span_name
@@ -507,7 +507,7 @@ struct halign_rec{
 #define gif_end   end_span
 
 
-#line 13412 "./tex4ht-c.tex"
+#line 13414 "./tex4ht-c.tex"
 
 struct env_c_rec{
   char *option;
@@ -515,14 +515,14 @@ struct env_c_rec{
 };
 
 
-#line 13494 "./tex4ht-c.tex"
+#line 13496 "./tex4ht-c.tex"
 
 #ifndef MAXFDIRS
 #define MAXFDIRS 100
 #endif
 
 
-#line 15566 "./tex4ht-c.tex"
+#line 15568 "./tex4ht-c.tex"
 
 #if defined(__DJGPP__)
 #define dir_path_slash(str) (is_forward_slash(str)? '/' : '\\')
@@ -531,7 +531,7 @@ struct env_c_rec{
 #endif
 
 
-#line 15631 "./tex4ht-c.tex"
+#line 15633 "./tex4ht-c.tex"
 
 #ifndef  S_ISDIR
 #define S_ISDIR(M)  (((M) & _S_IFMT)==_S_IFDIR)   
@@ -546,7 +546,7 @@ struct env_c_rec{
 #endif
 
 
-#line 15661 "./tex4ht-c.tex"
+#line 15663 "./tex4ht-c.tex"
 
 #if defined(DOS_WIN32) || !defined(S_ISLNK)
 #define LSTAT stat
@@ -556,34 +556,34 @@ struct env_c_rec{
 #define STSTAT stat
 
 
-#line 15881 "./tex4ht-c.tex"
+#line 15883 "./tex4ht-c.tex"
 
 #define MAX_UNI_CODE 20
 
 
-#line 16074 "./tex4ht-c.tex"
+#line 16076 "./tex4ht-c.tex"
 
 #define BASE_A 55
 #define BASE_a 87
 
 
-#line 16735 "./tex4ht-c.tex"
+#line 16737 "./tex4ht-c.tex"
 
 #define get_unt(n)  fget_unt(dvi_file,n)
 
 
-#line 16759 "./tex4ht-c.tex"
+#line 16761 "./tex4ht-c.tex"
 
 #define get_int(n)  fget_int(dvi_file,n)
 
 
-#line 16825 "./tex4ht-c.tex"
+#line 16827 "./tex4ht-c.tex"
 
 #define eq_str(x,y) (!strcmp(x,y))
 #define gt_str(x,y) (strcmp(x,y)>0)
 
 
-#line 17005 "./tex4ht-c.tex"
+#line 17007 "./tex4ht-c.tex"
 
 #define bad_arg            err_i(0)
 #define bad_in_file(name)   err_i_str(1,name)
@@ -594,7 +594,7 @@ struct env_c_rec{
 #define bad_dvi             err_i(7)
 
 
-#line 17229 "./tex4ht-c.tex"
+#line 17231 "./tex4ht-c.tex"
 
 #if defined(DOS_WIN32) || defined(__MSDOS__)
 #define READ_BIN_FLAGS "rb"
@@ -613,7 +613,7 @@ struct env_c_rec{
 #endif
 
 
-#line 17277 "./tex4ht-c.tex"
+#line 17279 "./tex4ht-c.tex"
 
 #ifdef PROTOTYP
 #define MYVOID void
@@ -643,7 +643,7 @@ struct hcode_repl_typ { char                  *str;
                         struct hcode_repl_typ *next;  };
 
 
-#line 4736 "./tex4ht-c.tex"
+#line 4738 "./tex4ht-c.tex"
 
 struct count_rec{
    char* str;
@@ -653,7 +653,7 @@ struct count_rec{
 };
 
 
-#line 4828 "./tex4ht-c.tex"
+#line 4830 "./tex4ht-c.tex"
 
 struct ch_map_rec{
   char* line;
@@ -661,38 +661,38 @@ struct ch_map_rec{
 };
 
 
-#line 6667 "./tex4ht-c.tex"
+#line 6669 "./tex4ht-c.tex"
 
 struct stack_entry{
   long  int x_val, y_val;
   INTEGER dx_1, dx_2, dy_1, dy_2;
   BOOL text_on;
   BOOL 
-#line 12462 "./tex4ht-c.tex"
+#line 12464 "./tex4ht-c.tex"
 
 accented
 
 ;
   
-#line 6346 "./tex4ht-c.tex"
+#line 6348 "./tex4ht-c.tex"
 
 struct halign_rec *halign[8];
 BOOL halign_on, halign_info, row_no, col_no;
 
 
-#line 6695 "./tex4ht-c.tex"
+#line 6697 "./tex4ht-c.tex"
 
 int stack_id;
 struct group_info * begin;
 struct stack_end_entry * end;
 
 
-#line 7787 "./tex4ht-c.tex"
+#line 7789 "./tex4ht-c.tex"
 
 struct group_path * path_start, * path_end;
 
 
-#line 12870 "./tex4ht-c.tex"
+#line 12872 "./tex4ht-c.tex"
 
 char *class_open, *class_close,
      *temp_class_open, *temp_class_close;
@@ -703,7 +703,7 @@ BOOL temp_class_del, ignore_subclass_del, active_class_del,
 };
 
 
-#line 6702 "./tex4ht-c.tex"
+#line 6704 "./tex4ht-c.tex"
 
 struct group_info{
   int stack_id;
@@ -712,7 +712,7 @@ struct group_info{
 };
 
 
-#line 6760 "./tex4ht-c.tex"
+#line 6762 "./tex4ht-c.tex"
 
 struct stack_end_entry{
   struct stack_end_entry *next;
@@ -720,7 +720,7 @@ struct stack_end_entry{
 };
 
 
-#line 7442 "./tex4ht-c.tex"
+#line 7444 "./tex4ht-c.tex"
 
 struct del_stack_entry{
   struct del_stack_entry *next;
@@ -729,7 +729,7 @@ struct del_stack_entry{
 };
 
 
-#line 7528 "./tex4ht-c.tex"
+#line 7530 "./tex4ht-c.tex"
 
 struct send_back_entry{
   struct send_back_entry *next;
@@ -738,7 +738,7 @@ struct send_back_entry{
 };
 
 
-#line 7792 "./tex4ht-c.tex"
+#line 7794 "./tex4ht-c.tex"
 
 struct group_path{
   U_CHAR action;
@@ -748,26 +748,26 @@ struct group_path{
 };
 
 
-#line 8618 "./tex4ht-c.tex"
+#line 8620 "./tex4ht-c.tex"
 
 struct font_entry {
  INTEGER num;
  INTEGER scale;
  INTEGER design_sz;
  
-#line 8770 "./tex4ht-c.tex"
+#line 8772 "./tex4ht-c.tex"
 
 INTEGER mag;
 
 
  
-#line 8774 "./tex4ht-c.tex"
+#line 8776 "./tex4ht-c.tex"
 
 char *family_name, *font_size;
 
 
  
-#line 9444 "./tex4ht-c.tex"
+#line 9446 "./tex4ht-c.tex"
 
  INTEGER design_pt;     
  int char_f, char_l;    
@@ -785,26 +785,26 @@ char *family_name, *font_size;
 
 
  
-#line 9952 "./tex4ht-c.tex"
+#line 9954 "./tex4ht-c.tex"
 
 char *name, *gif_on, *ch_str, ch255;  
 unsigned U_CHAR **str, *ch, *gif1;
 
 
-#line 12071 "./tex4ht-c.tex"
+#line 12073 "./tex4ht-c.tex"
 
 unsigned U_CHAR *accent, *accented;
 unsigned int *accent_array, *accented_array, accent_N, accented_N;
 
 
  
-#line 12762 "./tex4ht-c.tex"
+#line 12764 "./tex4ht-c.tex"
 
 char *math, *math_closing;
 
 
  
-#line 8939 "./tex4ht-c.tex"
+#line 8941 "./tex4ht-c.tex"
 
 INTEGER layout_dir;
 unsigned long rgba_color;
@@ -813,13 +813,13 @@ unsigned long rgba_color;
 };
 
 
-#line 10272 "./tex4ht-c.tex"
+#line 10274 "./tex4ht-c.tex"
 
 struct html_font_rec{  char* name;
                        int   i;     };
 
 
-#line 11220 "./tex4ht-c.tex"
+#line 11222 "./tex4ht-c.tex"
 
 
 struct gif_file_rec{
@@ -829,25 +829,25 @@ struct gif_file_rec{
 
 
 
-#line 11861 "./tex4ht-c.tex"
+#line 11863 "./tex4ht-c.tex"
 
 struct css_ext_rec{  char* name;
                      struct css_ext_rec *next;     };
 
 
-#line 11971 "./tex4ht-c.tex"
+#line 11973 "./tex4ht-c.tex"
 
 struct visited_file_rec{  char *name;
        struct visited_file_rec *next;     };
 
 
-#line 13653 "./tex4ht-c.tex"
+#line 13655 "./tex4ht-c.tex"
 
 struct env_var_rec{  char* base;
                      struct env_var_rec *next;     };
 
 
-#line 13731 "./tex4ht-c.tex"
+#line 13733 "./tex4ht-c.tex"
 
 struct cache_font_rec{  char* dir;
                         struct cache_file_rec * cache_file;
@@ -856,19 +856,19 @@ struct cache_file_rec{  struct cache_file_rec* next;
                         U_CHAR *                 file;     };
 
 
-#line 13852 "./tex4ht-c.tex"
+#line 13854 "./tex4ht-c.tex"
 
 struct htf_com_rec{  char* name;
                      struct htf_com_rec* next;     };
 
 
-#line 16040 "./tex4ht-c.tex"
+#line 16042 "./tex4ht-c.tex"
 
 struct charset_rec{ int  ch;
                     char* str; };
 
 
-#line 16452 "./tex4ht-c.tex"
+#line 16454 "./tex4ht-c.tex"
 
 struct htf_4hf_rec { int   ch, type1, type2;
                      char* str; };
@@ -1035,123 +1035,123 @@ static U_CHAR  *next_str = (char *) 0;
 static BOOL keepChar = FALSE;
 
 
-#line 4561 "./tex4ht-c.tex"
+#line 4563 "./tex4ht-c.tex"
 
 static struct files_rec
    *opened_files = (struct files_rec *) 0, *p;
 
 
-#line 4675 "./tex4ht-c.tex"
+#line 4677 "./tex4ht-c.tex"
 
 static BOOL system_yes;
 static struct sys_call_rec *system_calls = (struct sys_call_rec *) 0;
 
 
-#line 4745 "./tex4ht-c.tex"
+#line 4747 "./tex4ht-c.tex"
 
 static struct count_rec *counter = (struct count_rec *) 0;
 
 
-#line 4836 "./tex4ht-c.tex"
+#line 4838 "./tex4ht-c.tex"
 
 static struct ch_map_rec  ch_map[HEIGHT];
 static   int max_map_line, min_map_line;
 
 
-#line 4882 "./tex4ht-c.tex"
+#line 4884 "./tex4ht-c.tex"
 
 static BOOL ch_map_flag = FALSE;
 
 
-#line 4937 "./tex4ht-c.tex"
+#line 4939 "./tex4ht-c.tex"
 
 static INTEGER xresolution, yresolution;
 
 
-#line 5037 "./tex4ht-c.tex"
+#line 5039 "./tex4ht-c.tex"
 
 static U_CHAR ok_map = TRUE;
 
 
-#line 5076 "./tex4ht-c.tex"
+#line 5078 "./tex4ht-c.tex"
 
 static int prevcol = -1, prevrow;
 static double prev_x;
 
 
-#line 5383 "./tex4ht-c.tex"
+#line 5385 "./tex4ht-c.tex"
 
 static BOOL  dvi_flag = FALSE, dvi_page = FALSE;
 static FILE *idv_file;
 
 
-#line 5424 "./tex4ht-c.tex"
+#line 5426 "./tex4ht-c.tex"
 
 static int errCode = 0;
 
 
-#line 5483 "./tex4ht-c.tex"
+#line 5485 "./tex4ht-c.tex"
 
 static int id_version = -1;
 
 
-#line 5962 "./tex4ht-c.tex"
+#line 5964 "./tex4ht-c.tex"
 
 static FILE*  log_file;
 
 
-#line 5971 "./tex4ht-c.tex"
+#line 5973 "./tex4ht-c.tex"
 
 static INTEGER mid_page_y, mid_page_x;
 
 
-#line 6104 "./tex4ht-c.tex"
+#line 6106 "./tex4ht-c.tex"
 
 static int page_n,  file_n;
 
 
-#line 6287 "./tex4ht-c.tex"
+#line 6289 "./tex4ht-c.tex"
 
 static struct halign_rec *halign[8];
 
 
-#line 6372 "./tex4ht-c.tex"
+#line 6374 "./tex4ht-c.tex"
 
 static BOOL new_halign = FALSE;
 
 
-#line 6598 "./tex4ht-c.tex"
+#line 6600 "./tex4ht-c.tex"
 
 static BOOL group_dvi = FALSE;
 
 
-#line 6662 "./tex4ht-c.tex"
+#line 6664 "./tex4ht-c.tex"
 
 static int stack_n = 0;
 static struct stack_entry* stack;
 
 
-#line 6796 "./tex4ht-c.tex"
+#line 6798 "./tex4ht-c.tex"
 
 static int ignore_end_group;
 
 
-#line 7433 "./tex4ht-c.tex"
+#line 7435 "./tex4ht-c.tex"
 
 static struct del_stack_entry  *del_stack;
 
 
-#line 7458 "./tex4ht-c.tex"
+#line 7460 "./tex4ht-c.tex"
 
 static int ch_id, sv_id, id_latex, back_id_off;
 
 
-#line 7537 "./tex4ht-c.tex"
+#line 7539 "./tex4ht-c.tex"
 
 static struct send_back_entry *back_token, *back_group;
 
 
-#line 8440 "./tex4ht-c.tex"
+#line 8442 "./tex4ht-c.tex"
 
 static BOOL pos_dvi = FALSE;
 static U_CHAR   *pos_body,     * pos_text,     * pos_line,
@@ -1162,94 +1162,94 @@ static long int base_pos_x, base_pos_y, min_pos_x,
 static short rect_pos;
 
 
-#line 8638 "./tex4ht-c.tex"
+#line 8640 "./tex4ht-c.tex"
 
 static struct font_entry*  font_tbl;
 static int font_tbl_size = 0;
 
 
-#line 8707 "./tex4ht-c.tex"
+#line 8709 "./tex4ht-c.tex"
 
 static char*  new_font_name;
 
 
-#line 8849 "./tex4ht-c.tex"
+#line 8851 "./tex4ht-c.tex"
 
 static U_CHAR *lg_font_fmt = NULL;
 
 
-#line 9740 "./tex4ht-c.tex"
+#line 9742 "./tex4ht-c.tex"
 
 static double word_sp   = 999999.0, margin_sp;
 
 
-#line 9974 "./tex4ht-c.tex"
+#line 9976 "./tex4ht-c.tex"
 
 static int ignore_ch = 0;
 
 
-#line 10018 "./tex4ht-c.tex"
+#line 10020 "./tex4ht-c.tex"
 
 static unsigned  U_CHAR  null_str = '\0';    
 
 
-#line 10484 "./tex4ht-c.tex"
+#line 10486 "./tex4ht-c.tex"
 
 static short dump_htf_files = 0;
 static BOOL dump_env_files = FALSE;
 
 
-#line 10534 "./tex4ht-c.tex"
+#line 10536 "./tex4ht-c.tex"
 
 static BOOL dumped_env = FALSE;
 
 
-#line 10691 "./tex4ht-c.tex"
+#line 10693 "./tex4ht-c.tex"
 
 static BOOL verb_ch = FALSE;
 
 
-#line 10846 "./tex4ht-c.tex"
+#line 10848 "./tex4ht-c.tex"
 
 static U_CHAR *class_fmt = NULL;
 
 
-#line 11070 "./tex4ht-c.tex"
+#line 11072 "./tex4ht-c.tex"
 
 static U_CHAR *font_gif = NULL;
 
 
-#line 11107 "./tex4ht-c.tex"
+#line 11109 "./tex4ht-c.tex"
 
 static U_CHAR *begin_char_gif = NULL;
 
 
-#line 11135 "./tex4ht-c.tex"
+#line 11137 "./tex4ht-c.tex"
 
 static U_CHAR *gif = NULL;
 
 
-#line 11233 "./tex4ht-c.tex"
+#line 11235 "./tex4ht-c.tex"
 
 
 static struct gif_file_rec *   gif_file = (struct gif_file_rec *) 0;
 
 
 
-#line 11312 "./tex4ht-c.tex"
+#line 11314 "./tex4ht-c.tex"
 
 
 static U_CHAR xeh[]="0123456789abcdefghijklmnopqrstuvxyz";
 
 
 
-#line 11384 "./tex4ht-c.tex"
+#line 11386 "./tex4ht-c.tex"
 
 static BOOL gif_ch = TRUE;
 static int design_ch = 0;
 
 
-#line 11434 "./tex4ht-c.tex"
+#line 11436 "./tex4ht-c.tex"
 
 static int    pause_style = 0, default_font = -1, base_font_size=6533;
 static BOOL
@@ -1257,12 +1257,12 @@ static BOOL
   span_on = FALSE;
 
 
-#line 11636 "./tex4ht-c.tex"
+#line 11638 "./tex4ht-c.tex"
 
 static BOOL not_notify = FALSE;
 
 
-#line 11652 "./tex4ht-c.tex"
+#line 11654 "./tex4ht-c.tex"
 
 static U_CHAR * span_name[256], * span_open[256], * span_size[256],
      * span_mag[256],  * span_ch[256],   * end_span[256],
@@ -1270,7 +1270,7 @@ static U_CHAR * span_name[256], * span_open[256], * span_size[256],
 static U_CHAR class_on[32];
 
 
-#line 12332 "./tex4ht-c.tex"
+#line 12334 "./tex4ht-c.tex"
 
 static BOOL needs_accent_sym = FALSE,  needs_end_accent = FALSE;
 static char  * t_accent_template = (char *) 0,
@@ -1281,7 +1281,7 @@ static char  * t_accent_template = (char *) 0,
              * m_accent_third, * m_accent_fourth, * m_accent_fifth;
 
 
-#line 12433 "./tex4ht-c.tex"
+#line 12435 "./tex4ht-c.tex"
 
 static BOOL  needs_accented_sym = 0;
 static char  * a_accent_template = (char *) 0,
@@ -1289,64 +1289,64 @@ static char  * a_accent_template = (char *) 0,
              * a_accent_third, * a_accent_fourth, * a_accent_fifth;
 
 
-#line 12449 "./tex4ht-c.tex"
+#line 12451 "./tex4ht-c.tex"
 
 static char  * i_accent_template = (char *) 0,
              * i_accent_first, * i_accent_second,
              * i_accent_third, * i_accent_fourth, * i_accent_fifth;
 
 
-#line 12551 "./tex4ht-c.tex"
+#line 12553 "./tex4ht-c.tex"
 
 static BOOL math_class_on = FALSE, show_class = FALSE;
 static int open_del = 256, math_class, pause_class, ignore_subclass_del;
 
 
-#line 12559 "./tex4ht-c.tex"
+#line 12561 "./tex4ht-c.tex"
 
 static int sv_group_dvi, sv_trace_dvi_C, sv_in_trace_char, sv_span_on,
     sv_in_span_ch;
 
 
-#line 12705 "./tex4ht-c.tex"
+#line 12707 "./tex4ht-c.tex"
 
 static U_CHAR *open_class[
-#line 12741 "./tex4ht-c.tex"
+#line 12743 "./tex4ht-c.tex"
 
 82   
 
 ],
      *close_class[
-#line 12741 "./tex4ht-c.tex"
+#line 12743 "./tex4ht-c.tex"
 
 82   
 
 ];
 
 
-#line 13056 "./tex4ht-c.tex"
+#line 13058 "./tex4ht-c.tex"
 
 static BOOL dump_env_search = FALSE;
 
 
-#line 13419 "./tex4ht-c.tex"
+#line 13421 "./tex4ht-c.tex"
 
 static struct env_c_rec *envChoice
        = (struct env_c_rec*) 0;
 
 
-#line 13487 "./tex4ht-c.tex"
+#line 13489 "./tex4ht-c.tex"
 
 static U_CHAR  *fontdir[MAXFDIRS];
 static int fontdir_count = 0;
 
 
-#line 13722 "./tex4ht-c.tex"
+#line 13724 "./tex4ht-c.tex"
 
 static struct cache_font_rec *cache_font,  *cur_cache_font;
 
 
-#line 14138 "./tex4ht-c.tex"
+#line 14140 "./tex4ht-c.tex"
 
 #ifndef KPATHSEA
 static BOOL tex4ht_fls = FALSE;
@@ -1354,19 +1354,19 @@ static char *tex4ht_fls_name = (char *) 0;
 #endif
 
 
-#line 14201 "./tex4ht-c.tex"
+#line 14203 "./tex4ht-c.tex"
 
 static U_CHAR *HOME_DIR;
 
 
-#line 14330 "./tex4ht-c.tex"
+#line 14332 "./tex4ht-c.tex"
 
 #ifndef KPATHSEA
 static FILE* cache_files;
 #endif
 
 
-#line 14654 "./tex4ht-c.tex"
+#line 14656 "./tex4ht-c.tex"
 
 
 #ifdef KPATHSEA
@@ -1374,12 +1374,12 @@ static char * export_str_chars = (char *) 0;
 #endif
 
 
-#line 15060 "./tex4ht-c.tex"
+#line 15062 "./tex4ht-c.tex"
 
 static BOOL dump_htf_search = FALSE;
 
 
-#line 15874 "./tex4ht-c.tex"
+#line 15876 "./tex4ht-c.tex"
 
 static FILE* put_4ht_file = (FILE *) 0;
 static int put_4ht_off = 1;
@@ -1387,37 +1387,37 @@ static char uni_code[MAX_UNI_CODE];
 static short uni_code_p = 0;
 
 
-#line 16045 "./tex4ht-c.tex"
+#line 16047 "./tex4ht-c.tex"
 
 static int charset_n = 0, max_charset_n;
 static struct charset_rec *charset;
 
 
-#line 16213 "./tex4ht-c.tex"
+#line 16215 "./tex4ht-c.tex"
 
 static BOOL u10 = FALSE;
 
 
-#line 16356 "./tex4ht-c.tex"
+#line 16358 "./tex4ht-c.tex"
 
 static BOOL utf8 = FALSE;
 
 
-#line 16457 "./tex4ht-c.tex"
+#line 16459 "./tex4ht-c.tex"
 
 static int htf_4hf_n = 0, max_htf_4hf_n;
 static struct htf_4hf_rec *htf_4hf;
 
 
-#line 16631 "./tex4ht-c.tex"
+#line 16633 "./tex4ht-c.tex"
 
 static BOOL special_on = FALSE;
 
 
-#line 16899 "./tex4ht-c.tex"
+#line 16901 "./tex4ht-c.tex"
 
 static const U_CHAR *warn_err_mssg[]={ 
-#line 16840 "./tex4ht-c.tex"
+#line 16842 "./tex4ht-c.tex"
 
 
 #line 1530 "./tex4ht-c.tex"
@@ -1509,17 +1509,17 @@ static const U_CHAR *warn_err_mssg[]={
  "" };
 
 
-#line 17130 "./tex4ht-c.tex"
+#line 17132 "./tex4ht-c.tex"
 
 static BOOL err_context = FALSE;
 
 
-#line 17147 "./tex4ht-c.tex"
+#line 17149 "./tex4ht-c.tex"
 
 static U_CHAR *err_mark = (char *) 0;
 
 
-#line 17167 "./tex4ht-c.tex"
+#line 17169 "./tex4ht-c.tex"
 
 static BOOL trace_special = FALSE;
 
@@ -1601,358 +1601,358 @@ static void rule_x( ARG_I(BOOL) );
 static BOOL tex4ht_special( ARG_II( int*, long int*) );
 
 
-#line 4960 "./tex4ht-c.tex"
+#line 4962 "./tex4ht-c.tex"
 
 static void init_ch_map( ARG_I(void) );
 
 
-#line 4997 "./tex4ht-c.tex"
+#line 4999 "./tex4ht-c.tex"
 
 static void insert_ch_map( ARG_II(char,BOOL) );
 
 
-#line 5287 "./tex4ht-c.tex"
+#line 5289 "./tex4ht-c.tex"
 
 static void dump_ch_map( ARG_I(void) );
 
 
-#line 5781 "./tex4ht-c.tex"
+#line 5783 "./tex4ht-c.tex"
 
 static void  set_loc( ARG_II(int, long int) );
 
 
-#line 6000 "./tex4ht-c.tex"
+#line 6002 "./tex4ht-c.tex"
 
 static void idv_char( ARG_I(int) );
 
 
-#line 6013 "./tex4ht-c.tex"
+#line 6015 "./tex4ht-c.tex"
 
 static void cond_idv_char( ARG_I(int) );
 
 
-#line 6028 "./tex4ht-c.tex"
+#line 6030 "./tex4ht-c.tex"
 
 static void idv_copy( ARG_I(void) );
 
 
-#line 6043 "./tex4ht-c.tex"
+#line 6045 "./tex4ht-c.tex"
 
 static void cond_idv_int( ARG_II(long int, int) );
 
 
-#line 6057 "./tex4ht-c.tex"
+#line 6059 "./tex4ht-c.tex"
 
 static void  int_to_dvi( ARG_II(long int, int) );
 
 
-#line 6079 "./tex4ht-c.tex"
+#line 6081 "./tex4ht-c.tex"
 
 static void cond_string( ARG_II(int, int) );
 
 
-#line 6109 "./tex4ht-c.tex"
+#line 6111 "./tex4ht-c.tex"
 
 static INTEGER advance_idv_page( ARG_II( INTEGER,char*) );
 
 
-#line 6152 "./tex4ht-c.tex"
+#line 6154 "./tex4ht-c.tex"
 
 static void store_mv( ARG_II( int, INTEGER) );
 
 
-#line 7235 "./tex4ht-c.tex"
+#line 7237 "./tex4ht-c.tex"
 
 static void push_stack( ARG_I(void) );
 
 
-#line 7282 "./tex4ht-c.tex"
+#line 7284 "./tex4ht-c.tex"
 
 static void pop_stack( ARG_I(void) );
 
 
-#line 7383 "./tex4ht-c.tex"
+#line 7385 "./tex4ht-c.tex"
 
 static struct del_stack_entry* push_del( ARG_II(char, int) );
 
 
-#line 7404 "./tex4ht-c.tex"
+#line 7406 "./tex4ht-c.tex"
 
 static struct del_stack_entry* pop_del( ARG_III(char,int,int) );
 
 
-#line 7616 "./tex4ht-c.tex"
+#line 7618 "./tex4ht-c.tex"
 
 static
 struct send_back_entry * rev_list( ARG_I(struct send_back_entry *) );
 
 
-#line 7670 "./tex4ht-c.tex"
+#line 7672 "./tex4ht-c.tex"
 
 static struct send_back_entry *
    back_insert( ARG_II(struct send_back_entry *, int) );
 
 
-#line 8544 "./tex4ht-c.tex"
+#line 8546 "./tex4ht-c.tex"
 
 static double pos_dbl( ARG_I(long int *) );
 
 
-#line 9264 "./tex4ht-c.tex"
+#line 9266 "./tex4ht-c.tex"
 
 static void doGlyphArray( ARG_I(BOOL) );
 
 
-#line 9312 "./tex4ht-c.tex"
+#line 9314 "./tex4ht-c.tex"
 
 static int search_font_tbl( ARG_I(int) );
 
 
-#line 10413 "./tex4ht-c.tex"
+#line 10415 "./tex4ht-c.tex"
 
 static int get_html_ch( ARG_I(FILE*) );
 
 
-#line 10434 "./tex4ht-c.tex"
+#line 10436 "./tex4ht-c.tex"
 
 static FILE* f_open( ARG_II(const char*,const char*) );
 
 
-#line 10458 "./tex4ht-c.tex"
+#line 10460 "./tex4ht-c.tex"
 
 static void dump_htf( ARG_I(FILE*) );
 
 
-#line 10510 "./tex4ht-c.tex"
+#line 10512 "./tex4ht-c.tex"
 
 static void dump_env( ARG_I(void) );
 
 
-#line 10543 "./tex4ht-c.tex"
+#line 10545 "./tex4ht-c.tex"
 
 static void htf_to_lg( ARG_IV(struct html_font_rec*,char*,int,FILE*));
 
 
-#line 10593 "./tex4ht-c.tex"
+#line 10595 "./tex4ht-c.tex"
 
 static INTEGER get_html_file_id( ARG_IV(FILE*, int, int, int) );
 
 
-#line 10727 "./tex4ht-c.tex"
+#line 10729 "./tex4ht-c.tex"
 
 static void notify_class_info( ARG_I(int) );
 
 
-#line 10951 "./tex4ht-c.tex"
+#line 10953 "./tex4ht-c.tex"
 
 static void script( ARG_IV(char *, U_CHAR *, int, U_CHAR *) );
 
 
-#line 11173 "./tex4ht-c.tex"
+#line 11175 "./tex4ht-c.tex"
 
 
 static void  dos_gif_file( ARG_III(char *, int, int) );
 
 
 
-#line 11342 "./tex4ht-c.tex"
+#line 11344 "./tex4ht-c.tex"
 
 static void put_alt_ch( ARG_II( int, BOOL) );
 
 
-#line 12345 "./tex4ht-c.tex"
+#line 12347 "./tex4ht-c.tex"
 
 static void get_open_accent(
     ARG_VII(char**, char**, char**, char**, char**, char**, long int*));
 
 
-#line 12587 "./tex4ht-c.tex"
+#line 12589 "./tex4ht-c.tex"
 
 static int scan_class( ARG_I(int) );
 
 
-#line 12627 "./tex4ht-c.tex"
+#line 12629 "./tex4ht-c.tex"
 
 static INTEGER set_ch_class( ARG_I(int) );
 
 
-#line 12682 "./tex4ht-c.tex"
+#line 12684 "./tex4ht-c.tex"
 
 static int math_class_of( ARG_II(int,int) );
 
 
-#line 13288 "./tex4ht-c.tex"
+#line 13290 "./tex4ht-c.tex"
 
 static char* get_script( ARG_III(char *, const U_CHAR *, int) );
 
 
-#line 13338 "./tex4ht-c.tex"
+#line 13340 "./tex4ht-c.tex"
 
 static BOOL search_dot_file( ARG_I( int) );
 
 
-#line 13578 "./tex4ht-c.tex"
+#line 13580 "./tex4ht-c.tex"
 
 static struct env_var_rec * get_env_var( ARG_I(const char *) );
 
 
-#line 13881 "./tex4ht-c.tex"
+#line 13883 "./tex4ht-c.tex"
 
 static void com_dir( ARG_I(char*) );
 
 
-#line 14572 "./tex4ht-c.tex"
+#line 14574 "./tex4ht-c.tex"
 
 #ifdef KPATHSEA
 static void export_htf( ARG_II(char**, char[]) );
 #endif
 
 
-#line 15302 "./tex4ht-c.tex"
+#line 15304 "./tex4ht-c.tex"
 
 static FILE*  search_in_dot_file( ARG_IV( int, const U_CHAR *, const U_CHAR *,
                                     struct env_var_rec *) );
 
 
-#line 15347 "./tex4ht-c.tex"
+#line 15349 "./tex4ht-c.tex"
 
 static FILE*  search_file_base( ARG_IV( const U_CHAR *, const U_CHAR *, const U_CHAR *,
                                     struct env_var_rec *) );
 
 
-#line 15379 "./tex4ht-c.tex"
+#line 15381 "./tex4ht-c.tex"
 
 static char *  abs_addr( ARG_II( const U_CHAR *, const U_CHAR *) );
 
 
-#line 15420 "./tex4ht-c.tex"
+#line 15422 "./tex4ht-c.tex"
 
 static FILE* search_file( ARG_III(const char *, const U_CHAR *, const U_CHAR *) );
 
 
-#line 15480 "./tex4ht-c.tex"
+#line 15482 "./tex4ht-c.tex"
 
 static void add_to_cache( ARG_III(const char*,const char*,int) );
 
 
-#line 15501 "./tex4ht-c.tex"
+#line 15503 "./tex4ht-c.tex"
 
 static FILE* search_file_ext( ARG_III(const char *, const U_CHAR *, const U_CHAR *) );
 
 
-#line 15576 "./tex4ht-c.tex"
+#line 15578 "./tex4ht-c.tex"
 
 #if defined(__DJGPP__)
    static BOOL is_forward_slash( ARG_I(const char*) );
 #endif
 
 
-#line 15800 "./tex4ht-c.tex"
+#line 15802 "./tex4ht-c.tex"
 
 static FILE* f_open_pathed_filename( ARG_II(const char*,const char*) );
 
 
-#line 15834 "./tex4ht-c.tex"
+#line 15836 "./tex4ht-c.tex"
 
 static INTEGER put_4ht_ch( ARG_II(int,FILE *) );
 
 
-#line 15908 "./tex4ht-c.tex"
+#line 15910 "./tex4ht-c.tex"
 
 static void flush_uni( ARG_I(void) );
 
 
-#line 16571 "./tex4ht-c.tex"
+#line 16573 "./tex4ht-c.tex"
 
 static INTEGER insert_ch( ARG_I(int) );
 
 
-#line 16609 "./tex4ht-c.tex"
+#line 16611 "./tex4ht-c.tex"
 
 static void put_char( ARG_I(int) );
 
 
-#line 16642 "./tex4ht-c.tex"
+#line 16644 "./tex4ht-c.tex"
 
 static void print_f( ARG_I(const char*) );
 
 
-#line 16662 "./tex4ht-c.tex"
+#line 16664 "./tex4ht-c.tex"
 
 static void print_f_4ht( ARG_I(const char*) );
 
 
-#line 16687 "./tex4ht-c.tex"
+#line 16689 "./tex4ht-c.tex"
 
 static int get_char( ARG_I(void) );
 
 
-#line 16699 "./tex4ht-c.tex"
+#line 16701 "./tex4ht-c.tex"
 
 static int get_noop( ARG_I(void) );
 
 
-#line 16715 "./tex4ht-c.tex"
+#line 16717 "./tex4ht-c.tex"
 
 static char* get_str( ARG_I(int) );
 
 
-#line 16739 "./tex4ht-c.tex"
+#line 16741 "./tex4ht-c.tex"
 
 static long fget_unt( ARG_II(FILE*, int) );
 
 
-#line 16763 "./tex4ht-c.tex"
+#line 16765 "./tex4ht-c.tex"
 
 static long fget_int( ARG_II(FILE *, int) );
 
 
-#line 16799 "./tex4ht-c.tex"
+#line 16801 "./tex4ht-c.tex"
 
 static long cond_int( ARG_I(register  INTEGER) );
 
 
-#line 16906 "./tex4ht-c.tex"
+#line 16908 "./tex4ht-c.tex"
 
 static void warn_i( ARG_I(int) );
 
 
-#line 16930 "./tex4ht-c.tex"
+#line 16932 "./tex4ht-c.tex"
 
 static void warn_i_int( ARG_II(int,int) );
 
 
-#line 16946 "./tex4ht-c.tex"
+#line 16948 "./tex4ht-c.tex"
 
 static void warn_i_int_2( ARG_III(int,int,int) );
 
 
-#line 16962 "./tex4ht-c.tex"
+#line 16964 "./tex4ht-c.tex"
 
 static void warn_i_str( ARG_II(int,const char *) );
 
 
-#line 16982 "./tex4ht-c.tex"
+#line 16984 "./tex4ht-c.tex"
 
 static void warn_i_str2( ARG_III(int,const char *,const char *) );
 
 
-#line 17016 "./tex4ht-c.tex"
+#line 17018 "./tex4ht-c.tex"
 
 static void err_i( ARG_I(int) );
 
 
-#line 17033 "./tex4ht-c.tex"
+#line 17035 "./tex4ht-c.tex"
 
 static void err_i_int( ARG_II(int,int) );
 
 
-#line 17049 "./tex4ht-c.tex"
+#line 17051 "./tex4ht-c.tex"
 
 static void err_i_str( ARG_II(int,char *) );
 
 
-#line 17096 "./tex4ht-c.tex"
+#line 17098 "./tex4ht-c.tex"
 
 static void show_err_context( ARG_I(void) );
 
@@ -2193,7 +2193,7 @@ static void try_new_line(MYVOID)
 #line 3016 "./tex4ht-c.tex"
 
 (
-#line 9903 "./tex4ht-c.tex"
+#line 9905 "./tex4ht-c.tex"
 
 design_size_to_pt( 1.7 * (double) font_tbl[cur_fnt].ex )
 * (double) font_tbl[cur_fnt].scale
@@ -2201,7 +2201,7 @@ design_size_to_pt( 1.7 * (double) font_tbl[cur_fnt].ex )
  < 0? -1 : 1)
 
  * 
-#line 9903 "./tex4ht-c.tex"
+#line 9905 "./tex4ht-c.tex"
 
 design_size_to_pt( 1.7 * (double) font_tbl[cur_fnt].ex )
 * (double) font_tbl[cur_fnt].scale
@@ -2215,7 +2215,7 @@ design_size_to_pt( 1.7 * (double) font_tbl[cur_fnt].ex )
 
 if( !no_root_file ){
   
-#line 12279 "./tex4ht-c.tex"
+#line 12281 "./tex4ht-c.tex"
 
 if( needs_end_accent && t_accent_template ){
    
@@ -2236,7 +2236,7 @@ if( no_root_file ){  open_o_file(); }
 
    (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
-#line 12422 "./tex4ht-c.tex"
+#line 12424 "./tex4ht-c.tex"
 
 needs_accented_sym--;
 
@@ -2261,7 +2261,7 @@ rule_ch_off
 
 if( !no_root_file ){
   
-#line 12279 "./tex4ht-c.tex"
+#line 12281 "./tex4ht-c.tex"
 
 if( needs_end_accent && t_accent_template ){
    
@@ -2282,7 +2282,7 @@ if( no_root_file ){  open_o_file(); }
 
    (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
-#line 12422 "./tex4ht-c.tex"
+#line 12424 "./tex4ht-c.tex"
 
 needs_accented_sym--;
 
@@ -2359,22 +2359,22 @@ while( !done ){
 #line 3764 "./tex4ht-c.tex"
 
 case 
-#line 17458 "./tex4ht-c.tex"
+#line 17460 "./tex4ht-c.tex"
 
 246 
 :   (void) get_char();
 case 
-#line 17455 "./tex4ht-c.tex"
+#line 17457 "./tex4ht-c.tex"
 
 245 
 :   (void) get_char();
 case 
-#line 17452 "./tex4ht-c.tex"
+#line 17454 "./tex4ht-c.tex"
 
 244 
 :   (void) get_char();
 case 
-#line 17449 "./tex4ht-c.tex"
+#line 17451 "./tex4ht-c.tex"
 
 243 
 : {
@@ -2385,22 +2385,22 @@ case
 
 
      case 
-#line 17324 "./tex4ht-c.tex"
+#line 17326 "./tex4ht-c.tex"
 
 141 
 :
      case 
-#line 17327 "./tex4ht-c.tex"
+#line 17329 "./tex4ht-c.tex"
 
 142 
 : { break; }
      default: {
         if( (ch < 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ) || (ch > 
-#line 17421 "./tex4ht-c.tex"
+#line 17423 "./tex4ht-c.tex"
 
 234  
 )   ){
@@ -2411,7 +2411,7 @@ case
 
          double word_sp;
 cr_fnt = ch - 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ;
@@ -2455,7 +2455,7 @@ if( trace_dvi_H && !ch_map_flag ){
  }
 if( !ignore_spaces ){
   
-#line 12279 "./tex4ht-c.tex"
+#line 12281 "./tex4ht-c.tex"
 
 if( needs_end_accent && t_accent_template ){
    
@@ -2476,7 +2476,7 @@ if( no_root_file ){  open_o_file(); }
 
    (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
-#line 12422 "./tex4ht-c.tex"
+#line 12424 "./tex4ht-c.tex"
 
 needs_accented_sym--;
 
@@ -2558,7 +2558,7 @@ static  void rule_x
    up = (INTEGER) get_int(4);
    right = (INTEGER) get_int(4);
    if( ch_map_flag ){ 
-#line 5244 "./tex4ht-c.tex"
+#line 5246 "./tex4ht-c.tex"
 
    long int  sv_x_val, sv_y_val, sv_right, sv;
    int  ch;
@@ -2570,15 +2570,15 @@ if( right < 0 ){ x_val += right;  right = -right; }
 if( up < 0 ){ y_val += up;  up = -up; }
 ch = ( (right > xresolution) &&  (up > yresolution) ) ?
        
-#line 4859 "./tex4ht-c.tex"
+#line 4861 "./tex4ht-c.tex"
 
 3
  :  ( ( right > up )? 
-#line 4853 "./tex4ht-c.tex"
+#line 4855 "./tex4ht-c.tex"
 
 1
  : 
-#line 4856 "./tex4ht-c.tex"
+#line 4858 "./tex4ht-c.tex"
 
 2
  );
@@ -2591,7 +2591,7 @@ x_val = sv_x_val;
 y_val = sv_y_val;
 if( sv_x_val + sv_right > max_x_val ) max_x_val = sv_x_val + sv_right;
 if( 
-#line 4992 "./tex4ht-c.tex"
+#line 4994 "./tex4ht-c.tex"
 
 tag
  ) x_val += sv_right;
@@ -2599,7 +2599,7 @@ tag
  }
    else if( pos_dvi ){
       
-#line 8349 "./tex4ht-c.tex"
+#line 8351 "./tex4ht-c.tex"
 
          long int d;
 if( (up > 0) && (right > 0) ){
@@ -2768,7 +2768,7 @@ static BOOL tex4ht_special
 #line 3930 "./tex4ht-c.tex"
 
 *special_n = (long int) (N = get_unt(*chr - 
-#line 17439 "./tex4ht-c.tex"
+#line 17441 "./tex4ht-c.tex"
 
 239 
  + 1));
@@ -2789,7 +2789,7 @@ tex4ht = tex4ht && ((special_hd[6] == 'h') || (special_hd[6] == 'H'));
 tex4ht = tex4ht && ((special_hd[7] == 't') || (special_hd[7] == 'T'));
 if( tex4ht && trace_special ){
    
-#line 17179 "./tex4ht-c.tex"
+#line 17181 "./tex4ht-c.tex"
 
 {                             long  curr_pos;
                               int n, i;
@@ -2827,7 +2827,7 @@ if( tex4ht && trace_special ){
 }
 
 
-#line 4964 "./tex4ht-c.tex"
+#line 4966 "./tex4ht-c.tex"
 
 static void init_ch_map(MYVOID)
 {   int i;
@@ -2838,7 +2838,7 @@ static void init_ch_map(MYVOID)
 }
 
 
-#line 5001 "./tex4ht-c.tex"
+#line 5003 "./tex4ht-c.tex"
 
 
 static void insert_ch_map
@@ -2847,7 +2847,7 @@ static void insert_ch_map
 (
        U_CHAR ch SEP 
        BOOL 
-#line 4992 "./tex4ht-c.tex"
+#line 4994 "./tex4ht-c.tex"
 
 tag
 
@@ -2857,13 +2857,13 @@ tag
 #else
 #define SEP ;
 ( ch, 
-#line 4992 "./tex4ht-c.tex"
+#line 4994 "./tex4ht-c.tex"
 
 tag
  )
        U_CHAR ch SEP 
        BOOL 
-#line 4992 "./tex4ht-c.tex"
+#line 4994 "./tex4ht-c.tex"
 
 tag
 
@@ -2873,7 +2873,7 @@ tag
 #endif
 {     int row, col;
    
-#line 5043 "./tex4ht-c.tex"
+#line 5045 "./tex4ht-c.tex"
 
 {          double x;
    row = (int) ( (y_val>0? y_val : 0.0) / (double) yresolution + 0.5);
@@ -2892,11 +2892,11 @@ tag
       }else  prevrow = -1;
       prev_x = x
              + (
-#line 9819 "./tex4ht-c.tex"
+#line 9821 "./tex4ht-c.tex"
 
 design_size_to_pt( *(font_tbl[cur_fnt].wtbl
                  +  (int) (
-#line 9826 "./tex4ht-c.tex"
+#line 9828 "./tex4ht-c.tex"
 
 *(font_tbl[cur_fnt].char_wi +  (int)
    ( (design_ch? design_ch : ch) - font_tbl[cur_fnt].char_f)% 256)
@@ -2920,22 +2920,22 @@ design_size_to_pt( *(font_tbl[cur_fnt].wtbl
          if( row < min_map_line ) min_map_line = row;
          if( row > max_map_line ) max_map_line = row;
          if( ch_map[row].max ){ 
-#line 5120 "./tex4ht-c.tex"
+#line 5122 "./tex4ht-c.tex"
 
     int   n;
     char* p;
 if( ch_map[row].chars > col ){
       
-#line 5171 "./tex4ht-c.tex"
+#line 5173 "./tex4ht-c.tex"
 
 if( 
-#line 4992 "./tex4ht-c.tex"
+#line 4994 "./tex4ht-c.tex"
 
 tag
  ){
    if(   *(ch_map[row].line + ch_map[row].max - 1)
       ||  (ch_map[row].chars - col == 1)  ){ 
-#line 5216 "./tex4ht-c.tex"
+#line 5218 "./tex4ht-c.tex"
 
 ch_map[row].max += 5;
 ch_map[row].line = (char *)
@@ -2950,7 +2950,7 @@ ch_map[row].chars += 5;
    p = ch_map[row].line + ch_map[row].max;
    while( col ){                     unsigned char temp_ch;
      if( ((unsigned char) (*p)) < 
-#line 4862 "./tex4ht-c.tex"
+#line 4864 "./tex4ht-c.tex"
 
 4
  ) col--;
@@ -2960,7 +2960,7 @@ ch_map[row].chars += 5;
    p = ch_map[row].line + ch_map[row].max;
    while( col ){
      if( ((unsigned char) (*p)) < 
-#line 4862 "./tex4ht-c.tex"
+#line 4864 "./tex4ht-c.tex"
 
 4
  ) col--;  p--;  }
@@ -2969,11 +2969,11 @@ ch_map[row].chars += 5;
 
  }
 else{ 
-#line 5134 "./tex4ht-c.tex"
+#line 5136 "./tex4ht-c.tex"
 
 n = (col - ch_map[row].chars + 8) / 5 * 5;
 ch_map[row].chars += n - 
-#line 4992 "./tex4ht-c.tex"
+#line 4994 "./tex4ht-c.tex"
 
 tag
 ;
@@ -2984,7 +2984,7 @@ ch_map[row].line = (char *)
 while( n-- )  *(ch_map[row].line + ch_map[row].max - n) = 0;
 *(ch_map[row].line + ch_map[row].max
          - (ch_map[row].chars - col) + !
-#line 4992 "./tex4ht-c.tex"
+#line 4994 "./tex4ht-c.tex"
 
 tag
  ) = ch;
@@ -2993,12 +2993,12 @@ tag
 
  }
          else { 
-#line 5089 "./tex4ht-c.tex"
+#line 5091 "./tex4ht-c.tex"
 
    int   n;
    char* p;
 ch_map[row].chars = (n = (col + 2 + 5) / 5 * 5) - 
-#line 4992 "./tex4ht-c.tex"
+#line 4994 "./tex4ht-c.tex"
 
 tag
 ;
@@ -3011,14 +3011,14 @@ while( n-- ){ *(p++) = 0; }
 }  }   }
 
 
-#line 5295 "./tex4ht-c.tex"
+#line 5297 "./tex4ht-c.tex"
 
 static void dump_ch_map(MYVOID)
 {     int   n, i, min, k, extra_sp;
       U_CHAR  *p;
       
   
-#line 5325 "./tex4ht-c.tex"
+#line 5327 "./tex4ht-c.tex"
 
 {    int   max;
    min = 100; max = 0;
@@ -3035,13 +3035,13 @@ static void dump_ch_map(MYVOID)
     if( ( n = ch_map[i].max) > 0 ){
       p = ch_map[i].line;  k = min;    extra_sp = 0;
       
-#line 5338 "./tex4ht-c.tex"
+#line 5340 "./tex4ht-c.tex"
 
 {     U_CHAR  *s;
    s = p + n;
    while( n && !(*s) && !(*(s-1)) ){  n--; s--; }
    if( n && !(*s) && (((unsigned char) *(s-1)) < 
-#line 4862 "./tex4ht-c.tex"
+#line 4864 "./tex4ht-c.tex"
 
 4
 ) ) n--;
@@ -3051,38 +3051,38 @@ static void dump_ch_map(MYVOID)
       while( 1 + n-- ){
         if( --k < 0 ){
           if( extra_sp && (((unsigned char) *p)     < 
-#line 4862 "./tex4ht-c.tex"
+#line 4864 "./tex4ht-c.tex"
 
 4
 )
                        && (((unsigned char) *(p+1)) < 
-#line 4862 "./tex4ht-c.tex"
+#line 4864 "./tex4ht-c.tex"
 
 4
 ) )
           {  extra_sp--;
           } else { switch( *p ){ 
-#line 5346 "./tex4ht-c.tex"
+#line 5348 "./tex4ht-c.tex"
 
            case 0: { put_char(' '); break; }
     case 
-#line 4853 "./tex4ht-c.tex"
+#line 4855 "./tex4ht-c.tex"
 
 1
 : { put_char('-'); break; }
     case 
-#line 4856 "./tex4ht-c.tex"
+#line 4858 "./tex4ht-c.tex"
 
 2
 : { put_char('|'); break; }
 case 
-#line 4859 "./tex4ht-c.tex"
+#line 4861 "./tex4ht-c.tex"
 
 3
 : { put_char('#'); break; }
          case ' ': { extra_sp++; }
           default: { 
-#line 5355 "./tex4ht-c.tex"
+#line 5357 "./tex4ht-c.tex"
 
     BOOL    tag;
     INTEGER count;
@@ -3092,7 +3092,7 @@ do{   if( *p == '<' )       tag   = FALSE;
             else           count += tag;
       put_char( *p ); n--;
 }while( ((unsigned char) *(++p)) >= 
-#line 4862 "./tex4ht-c.tex"
+#line 4864 "./tex4ht-c.tex"
 
 4
  );
@@ -3112,7 +3112,7 @@ if( !count ){ n++; p--; }
 }
 
 
-#line 5785 "./tex4ht-c.tex"
+#line 5787 "./tex4ht-c.tex"
 
 
 static void  set_loc
@@ -3138,7 +3138,7 @@ static void  set_loc
 }
 
 
-#line 6004 "./tex4ht-c.tex"
+#line 6006 "./tex4ht-c.tex"
 
 
 static void idv_char
@@ -3156,7 +3156,7 @@ static void idv_char
 { (IGNORED) putc( n, idv_file ); }
 
 
-#line 6017 "./tex4ht-c.tex"
+#line 6019 "./tex4ht-c.tex"
 
 
 static void cond_idv_char
@@ -3176,13 +3176,13 @@ static void cond_idv_char
 }
 
 
-#line 6032 "./tex4ht-c.tex"
+#line 6034 "./tex4ht-c.tex"
 
 static void idv_copy(  MYVOID )
 {  idv_char( get_char() );  file_n++;  }
 
 
-#line 6047 "./tex4ht-c.tex"
+#line 6049 "./tex4ht-c.tex"
 
 
 static void cond_idv_int
@@ -3204,7 +3204,7 @@ static void cond_idv_int
 }
 
 
-#line 6061 "./tex4ht-c.tex"
+#line 6063 "./tex4ht-c.tex"
 
 
 static void  int_to_dvi
@@ -3236,7 +3236,7 @@ static void  int_to_dvi
 }
 
 
-#line 6083 "./tex4ht-c.tex"
+#line 6085 "./tex4ht-c.tex"
 
 
 static void cond_string
@@ -3258,7 +3258,7 @@ static void cond_string
 }
 
 
-#line 6113 "./tex4ht-c.tex"
+#line 6115 "./tex4ht-c.tex"
 
 
 static INTEGER advance_idv_page
@@ -3282,24 +3282,24 @@ static INTEGER advance_idv_page
 {                                           int    i;
    if( page_n++ ){
      idv_char(
-#line 17327 "./tex4ht-c.tex"
+#line 17329 "./tex4ht-c.tex"
 
 142 
 );  file_n++;
      idv_char(
-#line 17321 "./tex4ht-c.tex"
+#line 17323 "./tex4ht-c.tex"
 
 140 
 );      file_n++;
      idv_char( 
-#line 17318 "./tex4ht-c.tex"
+#line 17320 "./tex4ht-c.tex"
 
 139 
  );
      idv_int( page_n );  for( i=36; i--; ) idv_char( 0);
      idv_int( bop_addr );  bop_addr = file_n;  file_n += 45;
      idv_char(
-#line 17324 "./tex4ht-c.tex"
+#line 17326 "./tex4ht-c.tex"
 
 141 
 );  file_n++;
@@ -3307,25 +3307,25 @@ static INTEGER advance_idv_page
         idv_char( cur_font[i] );   file_n++;
    } }
    
-#line 6145 "./tex4ht-c.tex"
+#line 6147 "./tex4ht-c.tex"
 
 store_mv(
-#line 17354 "./tex4ht-c.tex"
+#line 17356 "./tex4ht-c.tex"
 
 151 
 , dx_1);
 store_mv(
-#line 17369 "./tex4ht-c.tex"
+#line 17371 "./tex4ht-c.tex"
 
 156 
 , dx_2);
 store_mv(
-#line 17396 "./tex4ht-c.tex"
+#line 17398 "./tex4ht-c.tex"
 
 165 
 , dy_1);
 store_mv(
-#line 17411 "./tex4ht-c.tex"
+#line 17413 "./tex4ht-c.tex"
 
 170 
 , dy_2);
@@ -3335,7 +3335,7 @@ store_mv(
 }
 
 
-#line 6170 "./tex4ht-c.tex"
+#line 6172 "./tex4ht-c.tex"
 
 
 static void store_mv
@@ -3359,7 +3359,7 @@ static void store_mv
 }
 
 
-#line 7239 "./tex4ht-c.tex"
+#line 7241 "./tex4ht-c.tex"
 
 static void push_stack(MYVOID)
 {
@@ -3370,7 +3370,7 @@ static void push_stack(MYVOID)
    stack[stack_n].dy_1  = dy_1;
    stack[stack_n].dy_2  = dy_2;
    
-#line 7257 "./tex4ht-c.tex"
+#line 7259 "./tex4ht-c.tex"
 
 stack[stack_n+1].sv_no_left_del = stack[stack_n+1].no_left_del;
 stack[stack_n+1].no_left_del = stack[stack_n].no_left_del;
@@ -3378,7 +3378,7 @@ stack[stack_n+1].no_left_del = stack[stack_n].no_left_del;
 
    stack_n++;
 if( stack_n > 
-#line 6682 "./tex4ht-c.tex"
+#line 6684 "./tex4ht-c.tex"
 
 ((int) stack_len + 2)
 
@@ -3386,7 +3386,7 @@ if( stack_n >
   warn_i(40);
 }
    
-#line 12473 "./tex4ht-c.tex"
+#line 12475 "./tex4ht-c.tex"
 
 stack[stack_n].accented  = FALSE;
 
@@ -3394,16 +3394,16 @@ stack[stack_n].accented  = FALSE;
 }
 
 
-#line 7286 "./tex4ht-c.tex"
+#line 7288 "./tex4ht-c.tex"
 
 static void pop_stack(MYVOID)
 {
    
-#line 12466 "./tex4ht-c.tex"
+#line 12468 "./tex4ht-c.tex"
 
 if( stack[stack_n].accented ){
    
-#line 12417 "./tex4ht-c.tex"
+#line 12419 "./tex4ht-c.tex"
 
 needs_accented_sym--;
 
@@ -3413,7 +3413,7 @@ needs_accented_sym--;
 
 
    
-#line 7262 "./tex4ht-c.tex"
+#line 7264 "./tex4ht-c.tex"
 
 stack[stack_n].no_left_del = stack[stack_n].sv_no_left_del;
 
@@ -3428,7 +3428,7 @@ stack[stack_n].no_left_del = stack[stack_n].sv_no_left_del;
 }
 
 
-#line 7387 "./tex4ht-c.tex"
+#line 7389 "./tex4ht-c.tex"
 
 
 static  struct del_stack_entry* push_del
@@ -3455,7 +3455,7 @@ static  struct del_stack_entry* push_del
 }
 
 
-#line 7408 "./tex4ht-c.tex"
+#line 7410 "./tex4ht-c.tex"
 
 
 static  struct del_stack_entry* pop_del
@@ -3489,7 +3489,7 @@ static  struct del_stack_entry* pop_del
 }
 
 
-#line 7621 "./tex4ht-c.tex"
+#line 7623 "./tex4ht-c.tex"
 
 
 static struct send_back_entry *  rev_list
@@ -3517,7 +3517,7 @@ static struct send_back_entry *  rev_list
 }
 
 
-#line 7675 "./tex4ht-c.tex"
+#line 7677 "./tex4ht-c.tex"
 
 
 static struct send_back_entry *  back_insert
@@ -3548,7 +3548,7 @@ static struct send_back_entry *  back_insert
 }
 
 
-#line 8548 "./tex4ht-c.tex"
+#line 8550 "./tex4ht-c.tex"
 
 
 static double pos_dbl
@@ -3578,7 +3578,7 @@ static double pos_dbl
 }
 
 
-#line 9268 "./tex4ht-c.tex"
+#line 9270 "./tex4ht-c.tex"
 
 
 static void doGlyphArray
@@ -3608,7 +3608,7 @@ static void doGlyphArray
 }
 
 
-#line 9316 "./tex4ht-c.tex"
+#line 9318 "./tex4ht-c.tex"
 
 
 static int search_font_tbl
@@ -3634,7 +3634,7 @@ static int search_font_tbl
 }
 
 
-#line 10417 "./tex4ht-c.tex"
+#line 10419 "./tex4ht-c.tex"
 
 
 static int get_html_ch
@@ -3660,7 +3660,7 @@ static int get_html_ch
 }
 
 
-#line 10438 "./tex4ht-c.tex"
+#line 10440 "./tex4ht-c.tex"
 
 
 static FILE* f_open
@@ -3687,7 +3687,7 @@ static FILE* f_open
 }
 
 
-#line 10462 "./tex4ht-c.tex"
+#line 10464 "./tex4ht-c.tex"
 
 
 static void dump_htf
@@ -3720,7 +3720,7 @@ static void dump_htf
 } } }
 
 
-#line 10514 "./tex4ht-c.tex"
+#line 10516 "./tex4ht-c.tex"
 
 static void dump_env( MYVOID )
 {
@@ -3745,7 +3745,7 @@ static void dump_env( MYVOID )
 }  }
 
 
-#line 10547 "./tex4ht-c.tex"
+#line 10549 "./tex4ht-c.tex"
 
 
 static void htf_to_lg
@@ -3791,7 +3791,7 @@ static void htf_to_lg
 } }
 
 
-#line 10597 "./tex4ht-c.tex"
+#line 10599 "./tex4ht-c.tex"
 
 
 static  INTEGER get_html_file_id
@@ -3818,7 +3818,7 @@ static  INTEGER get_html_file_id
    name = new_font_name;
    while( *name == (ch = get_html_ch(file)) )  name++;
    
-#line 10114 "./tex4ht-c.tex"
+#line 10116 "./tex4ht-c.tex"
 
 if( ( name == new_font_name ) && (n == 19) && (ch=='.') ){
    return HTF_ALIAS;
@@ -3834,7 +3834,7 @@ if( ( name == new_font_name ) && (n == 19) && (ch=='.') ){
          i = i * 10 + ch - '0';  ch = get_html_ch(file);  }
       if( i != bound ){
          
-#line 16919 "./tex4ht-c.tex"
+#line 16921 "./tex4ht-c.tex"
 
 (IGNORED) fprintf(stderr,"--- warning --- ");
 (IGNORED) fprintf(stderr, warn_err_mssg[22]
@@ -3847,7 +3847,7 @@ if( ( name == new_font_name ) && (n == 19) && (ch=='.') ){
 }
 
 
-#line 10731 "./tex4ht-c.tex"
+#line 10733 "./tex4ht-c.tex"
 
 
 static void notify_class_info
@@ -3897,7 +3897,7 @@ static void notify_class_info
 }
 
 
-#line 10955 "./tex4ht-c.tex"
+#line 10957 "./tex4ht-c.tex"
 
 
 static void script
@@ -3929,14 +3929,14 @@ static void script
    while( TRUE ){
      if( *ch == '%' ){
        
-#line 10989 "./tex4ht-c.tex"
+#line 10991 "./tex4ht-c.tex"
 
 *ch = '\0';  (IGNORED) fprintf(log_file, "%s", p);
 *(ch++) = '%';
 
 
        
-#line 11000 "./tex4ht-c.tex"
+#line 11002 "./tex4ht-c.tex"
 
 p=fmt;  *(p++) = '%';
 if( *ch == '\0' ){ job[ (int) strlen((char *) job) ] ='.';  return; }
@@ -3960,7 +3960,7 @@ while( *ch != '%' ){  *(p++) = *(ch ++);  }
 } }
 
 
-#line 11183 "./tex4ht-c.tex"
+#line 11185 "./tex4ht-c.tex"
 
 
 
@@ -3990,7 +3990,7 @@ static void  dos_gif_file
   m = n = (int) strlen((char *) str);
   if( n > 4 ){
     
-#line 11243 "./tex4ht-c.tex"
+#line 11245 "./tex4ht-c.tex"
 
 if( (p = gif_file) != NULL ){
   while( TRUE ){
@@ -4000,11 +4000,11 @@ if( (p = gif_file) != NULL ){
 
 
     if( p == NULL ){ 
-#line 11256 "./tex4ht-c.tex"
+#line 11258 "./tex4ht-c.tex"
 
 p =  m_alloc(struct gif_file_rec, 1);
 
-#line 11276 "./tex4ht-c.tex"
+#line 11278 "./tex4ht-c.tex"
 
 for(i=str[n]; n; ){ i+=str[--n];  if( i > (INT_MAX / 8) ) i/=2; }
 if( (n=i % BASE) <10 ) n+= 10 + i%(BASE-20);
@@ -4015,7 +4015,7 @@ ch[3]          = n%BASE;
 
 
 
-#line 11290 "./tex4ht-c.tex"
+#line 11292 "./tex4ht-c.tex"
 
 if( gif_file ){
    q = gif_file->next;
@@ -4054,7 +4054,7 @@ if( gif_file ){  p->next = gif_file->next;   gif_file->next = p;  }
 
 
 
-#line 11346 "./tex4ht-c.tex"
+#line 11348 "./tex4ht-c.tex"
 
 
 static void  put_alt_ch
@@ -4076,7 +4076,7 @@ static void  put_alt_ch
 {
    if( !ch_str_flag ) put_char( chr );
    else if( chr > 0 ){ 
-#line 11363 "./tex4ht-c.tex"
+#line 11365 "./tex4ht-c.tex"
 
     unsigned U_CHAR * p;
 p = font_tbl[cur_fnt].str[chr-1];
@@ -4094,7 +4094,7 @@ else while( *p ){
 }
 
 
-#line 12350 "./tex4ht-c.tex"
+#line 12352 "./tex4ht-c.tex"
 
 
 static void get_open_accent
@@ -4146,7 +4146,7 @@ static void get_open_accent
 } }
 
 
-#line 12591 "./tex4ht-c.tex"
+#line 12593 "./tex4ht-c.tex"
 
 
 static int scan_class
@@ -4167,7 +4167,7 @@ static int scan_class
    math_class = get_char();
    if(   (math_class >= '0' )
       && (math_class < '0' + 
-#line 12717 "./tex4ht-c.tex"
+#line 12719 "./tex4ht-c.tex"
 
 79
 
@@ -4177,14 +4177,14 @@ static int scan_class
         if( flag== 1 ) {
            switch( math_class ){
              case '-': { math_class = 
-#line 12717 "./tex4ht-c.tex"
+#line 12719 "./tex4ht-c.tex"
 
 79
 
 ;
                          pause_class++;  break; }
              case '+': { math_class = 
-#line 12717 "./tex4ht-c.tex"
+#line 12719 "./tex4ht-c.tex"
 
 79
 
@@ -4194,16 +4194,16 @@ static int scan_class
         } } else if( flag== 2 ) {
            switch( math_class ){
              case 
-#line 12724 "./tex4ht-c.tex"
+#line 12726 "./tex4ht-c.tex"
 
 ')'
 
 : {
                 math_class = 
-#line 12732 "./tex4ht-c.tex"
+#line 12734 "./tex4ht-c.tex"
 
 (
-#line 12717 "./tex4ht-c.tex"
+#line 12719 "./tex4ht-c.tex"
 
 79
 
@@ -4211,16 +4211,16 @@ static int scan_class
 
 ;  break; }
              case 
-#line 12728 "./tex4ht-c.tex"
+#line 12730 "./tex4ht-c.tex"
 
 '('
 
 :
                 { math_class = 
-#line 12736 "./tex4ht-c.tex"
+#line 12738 "./tex4ht-c.tex"
 
 (
-#line 12717 "./tex4ht-c.tex"
+#line 12719 "./tex4ht-c.tex"
 
 79
 
@@ -4235,7 +4235,7 @@ static int scan_class
 }
 
 
-#line 12631 "./tex4ht-c.tex"
+#line 12633 "./tex4ht-c.tex"
 
 
 static  INTEGER set_ch_class
@@ -4253,7 +4253,7 @@ static  INTEGER set_ch_class
 {                              int r_ch;
    r_ch = ch - font_tbl[cur_fnt].char_f;
    if( math_class == 
-#line 7367 "./tex4ht-c.tex"
+#line 7369 "./tex4ht-c.tex"
 
 5
 
@@ -4266,21 +4266,21 @@ static  INTEGER set_ch_class
       *(font_tbl[cur_fnt].math + r_ch) = math_class;
    }
    open_del = ( math_class == 
-#line 7371 "./tex4ht-c.tex"
+#line 7373 "./tex4ht-c.tex"
 
 4
 
  )? ch : 256;
    
-#line 9798 "./tex4ht-c.tex"
+#line 9800 "./tex4ht-c.tex"
 
 return (INTEGER)(
     
-#line 9835 "./tex4ht-c.tex"
+#line 9837 "./tex4ht-c.tex"
 
 design_size_to_pt( *(font_tbl[cur_fnt].wtbl
                      +  (int) (
-#line 9843 "./tex4ht-c.tex"
+#line 9845 "./tex4ht-c.tex"
 
 *(font_tbl[cur_fnt].char_wi +  (int)
    ( ch - font_tbl[cur_fnt].char_f)% 256)
@@ -4296,7 +4296,7 @@ design_size_to_pt( *(font_tbl[cur_fnt].wtbl
 }
 
 
-#line 12686 "./tex4ht-c.tex"
+#line 12688 "./tex4ht-c.tex"
 
 
 static  int math_class_of
@@ -4315,7 +4315,7 @@ static  int math_class_of
    math_class = ch - font_tbl[cur_fnt].char_f;
    return ((get_bit( font_tbl[cur_fnt].math_closing, math_class))?
                 
-#line 7367 "./tex4ht-c.tex"
+#line 7369 "./tex4ht-c.tex"
 
 5
 
@@ -4324,11 +4324,11 @@ static  int math_class_of
 }
 
 
-#line 13223 "./tex4ht-c.tex"
+#line 13225 "./tex4ht-c.tex"
 
 #if defined(__MSDOS__)
 
-#line 13232 "./tex4ht-c.tex"
+#line 13234 "./tex4ht-c.tex"
 
 
 static char *get_env_dir
@@ -4365,7 +4365,7 @@ static char *get_env_dir
 #endif
 
 
-#line 13292 "./tex4ht-c.tex"
+#line 13294 "./tex4ht-c.tex"
 
 
 static char* get_script
@@ -4398,7 +4398,7 @@ static char* get_script
 );
       if( search_dot_file( x ) ){
            
-#line 13316 "./tex4ht-c.tex"
+#line 13318 "./tex4ht-c.tex"
 
 ch = str;  str[254] = '\0';
 do{                                       int int_ch;
@@ -4420,7 +4420,7 @@ do{                                       int int_ch;
 }
 
 
-#line 13342 "./tex4ht-c.tex"
+#line 13344 "./tex4ht-c.tex"
 
 
 static BOOL search_dot_file
@@ -4444,7 +4444,7 @@ static BOOL search_dot_file
     if( chr == ch ){ return TRUE; }
     if( chr == '<' ) {
       
-#line 13365 "./tex4ht-c.tex"
+#line 13367 "./tex4ht-c.tex"
 
                          U_CHAR match[256];
                          int i;
@@ -4460,7 +4460,7 @@ if( match[0] != '/' ){
        i++){}
   if( match[i] == '>' ){  match[i] = '\0'; }
   
-#line 13433 "./tex4ht-c.tex"
+#line 13435 "./tex4ht-c.tex"
 
 if( envChoice == (struct env_c_rec*) 0  ){
   env_skip = !eq_str(match, "default" );
@@ -4474,7 +4474,7 @@ if( envChoice == (struct env_c_rec*) 0  ){
 
   if( env_skip ){
      
-#line 13385 "./tex4ht-c.tex"
+#line 13387 "./tex4ht-c.tex"
 
                          U_CHAR cur_block[90];
                          BOOL status;
@@ -4510,7 +4510,7 @@ while( !status && (chr != EOF) ){
 } }
 
 
-#line 13582 "./tex4ht-c.tex"
+#line 13584 "./tex4ht-c.tex"
 
 
 static struct env_var_rec * get_env_var
@@ -4543,7 +4543,7 @@ static struct env_var_rec * get_env_var
               *from = '\0';
               base = from + 1;
              
-#line 13624 "./tex4ht-c.tex"
+#line 13626 "./tex4ht-c.tex"
 
 {                         U_CHAR *str;
   if( *(from+1) == '~' ){
@@ -4565,7 +4565,7 @@ static struct env_var_rec * get_env_var
 
              if( base ){
                
-#line 13616 "./tex4ht-c.tex"
+#line 13618 "./tex4ht-c.tex"
 
 p = m_alloc(struct env_var_rec, 1);
 p->next = tfm_dirs;
@@ -4581,7 +4581,7 @@ tfm_dirs = p;
 }
 
 
-#line 13885 "./tex4ht-c.tex"
+#line 13887 "./tex4ht-c.tex"
 
 
 static void com_dir
@@ -4605,7 +4605,7 @@ static void com_dir
 }
 
 
-#line 14578 "./tex4ht-c.tex"
+#line 14580 "./tex4ht-c.tex"
 
 #ifdef KPATHSEA
 
@@ -4660,7 +4660,7 @@ static void export_htf
 #endif
 
 
-#line 15307 "./tex4ht-c.tex"
+#line 15309 "./tex4ht-c.tex"
 
 
 static FILE*  search_in_dot_file
@@ -4690,7 +4690,7 @@ static FILE*  search_in_dot_file
 #ifndef KPATHSEA
    if( cache_files != (FILE *) 0 ){
       
-#line 14017 "./tex4ht-c.tex"
+#line 14019 "./tex4ht-c.tex"
 
                  U_CHAR cache_dir[256], dot_dir[256], *p, *q;
                  BOOL flag;
@@ -4703,14 +4703,14 @@ static FILE*  search_in_dot_file
 ch = (int) getc(cache_files);
 while ( ch != EOF ){
   if ( ch == ' ' ) { 
-#line 14034 "./tex4ht-c.tex"
+#line 14036 "./tex4ht-c.tex"
 
 q = cache_dir;
 do
   *(q++) = ch = (int) getc(cache_files);
 while( (ch !='\n') && (ch != EOF) );
 *(q-1 - (*(q-2) == 
-#line 15556 "./tex4ht-c.tex"
+#line 15558 "./tex4ht-c.tex"
 
 #if defined(__DJGPP__)
  '\\'
@@ -4726,7 +4726,7 @@ while( (ch !='\n') && (ch != EOF) );
 
  }
   else { 
-#line 14046 "./tex4ht-c.tex"
+#line 14048 "./tex4ht-c.tex"
 
 p = name;  flag = FALSE;
 while( *(p++) == ch ){
@@ -4740,7 +4740,7 @@ else{
 
     if( flag ){
        
-#line 14057 "./tex4ht-c.tex"
+#line 14059 "./tex4ht-c.tex"
 
 flag = FALSE;
 (IGNORED) fseek(dot_file, 0L, 
@@ -4757,7 +4757,7 @@ while( search_dot_file( typ ) && !flag ){        U_CHAR *q, save_ch;
   flag = *(q - 2) = '!';
   q -= (flag? 2 : 1);
   *(q - (*(q-1) == 
-#line 15556 "./tex4ht-c.tex"
+#line 15558 "./tex4ht-c.tex"
 
 #if defined(__DJGPP__)
  '\\'
@@ -4781,7 +4781,7 @@ while( search_dot_file( typ ) && !flag ){        U_CHAR *q, save_ch;
 
 
        if( flag ){ 
-#line 14083 "./tex4ht-c.tex"
+#line 14085 "./tex4ht-c.tex"
 
 n = (int) strlen((char *) cache_dir);
 cache_dir[n] = dir_path_slash(cache_dir);
@@ -4819,7 +4819,7 @@ cache_dir[n+1] = '\0';
 }
 
 
-#line 15352 "./tex4ht-c.tex"
+#line 15354 "./tex4ht-c.tex"
 
 
 static FILE*  search_file_base
@@ -4861,7 +4861,7 @@ static FILE*  search_file_base
 }
 
 
-#line 15383 "./tex4ht-c.tex"
+#line 15385 "./tex4ht-c.tex"
 
 
 static char *  abs_addr
@@ -4903,7 +4903,7 @@ static char *  abs_addr
 }
 
 
-#line 15424 "./tex4ht-c.tex"
+#line 15426 "./tex4ht-c.tex"
 
 
 static FILE* search_file
@@ -4931,7 +4931,7 @@ static FILE* search_file
      int i;
      BOOL subs;
   
-#line 15465 "./tex4ht-c.tex"
+#line 15467 "./tex4ht-c.tex"
 
 if( (file = f_open(name, flags)) != NULL ){
    return file; }
@@ -4942,7 +4942,7 @@ if( (file = f_open(name, flags)) != NULL ){
       subs = str[i] == '!';
       if( subs )  str[i] = '\0';  else i++;
       
-#line 15449 "./tex4ht-c.tex"
+#line 15451 "./tex4ht-c.tex"
 
 (IGNORED) strct(str,
 #if defined(__DJGPP__)
@@ -4957,7 +4957,7 @@ if( (file = f_open(name, flags)) != NULL ){
 
 
   
-#line 15470 "./tex4ht-c.tex"
+#line 15472 "./tex4ht-c.tex"
 
 (IGNORED) strct(str,name);
 if( (file = f_open(str, flags)) != NULL ){
@@ -4971,7 +4971,7 @@ if( (file = f_open(str, flags)) != NULL ){
 }
 
 
-#line 15484 "./tex4ht-c.tex"
+#line 15486 "./tex4ht-c.tex"
 
 
 static void add_to_cache
@@ -4994,7 +4994,7 @@ static void add_to_cache
                          struct cache_font_rec *cur_cache_font;
 
    
-#line 13679 "./tex4ht-c.tex"
+#line 13681 "./tex4ht-c.tex"
 
 {     int found;
    found = FALSE;
@@ -5006,7 +5006,7 @@ static void add_to_cache
    if( !found ){
       cur_cache_font = m_alloc(struct cache_font_rec, 1);
       
-#line 13942 "./tex4ht-c.tex"
+#line 13944 "./tex4ht-c.tex"
 
 cur_cache_font->cache_file = (struct cache_file_rec *) 0;
 
@@ -5032,7 +5032,7 @@ cur_cache_font->cache_file = (struct cache_file_rec *) 0;
 
 
    
-#line 13946 "./tex4ht-c.tex"
+#line 13948 "./tex4ht-c.tex"
 
 {
              struct cache_file_rec *file_rec, *prev_file_rec;
@@ -5052,7 +5052,7 @@ cur_cache_font->cache_file = (struct cache_file_rec *) 0;
     }
     if( flag ) {
       
-#line 13971 "./tex4ht-c.tex"
+#line 13973 "./tex4ht-c.tex"
 
 file_entry = m_alloc(struct cache_file_rec, 1);
 file_entry->file = m_alloc(char, strlen(name)+1);
@@ -5077,7 +5077,7 @@ if( ! cur_cache_font->cache_file ){
 }
 
 
-#line 15505 "./tex4ht-c.tex"
+#line 15507 "./tex4ht-c.tex"
 
 
 static FILE* search_file_ext
@@ -5118,7 +5118,7 @@ static FILE* search_file_ext
      return file;
   }
   if( (str[n] == 
-#line 15556 "./tex4ht-c.tex"
+#line 15558 "./tex4ht-c.tex"
 
 #if defined(__DJGPP__)
  '\\'
@@ -5172,11 +5172,11 @@ FindClose(hnd);
 
 #else
   
-#line 15596 "./tex4ht-c.tex"
+#line 15598 "./tex4ht-c.tex"
 
 {      DIR             *dp;
        
-#line 15725 "./tex4ht-c.tex"
+#line 15727 "./tex4ht-c.tex"
 
 
 #ifdef STRUCT_DIRECT
@@ -5192,7 +5192,7 @@ FindClose(hnd);
       if( !eq_str(dirp->d_name, ".")  &&
           !eq_str(dirp->d_name, "..") )
       { 
-#line 15611 "./tex4ht-c.tex"
+#line 15613 "./tex4ht-c.tex"
 
 (IGNORED) strcpy((char *)  str+n, (char *) dirp->d_name );
 str[n-1] = dir_path_slash(str);
@@ -5214,7 +5214,7 @@ if( LSTAT(str, &buf) >= 0 )
 }
 
 
-#line 15582 "./tex4ht-c.tex"
+#line 15584 "./tex4ht-c.tex"
 
 #if defined(__DJGPP__)
 
@@ -5239,7 +5239,7 @@ static BOOL is_forward_slash
 #endif
 
 
-#line 15804 "./tex4ht-c.tex"
+#line 15806 "./tex4ht-c.tex"
 
 
 static FILE* f_open_pathed_filename
@@ -5273,7 +5273,7 @@ static FILE* f_open_pathed_filename
 }
 
 
-#line 15838 "./tex4ht-c.tex"
+#line 15840 "./tex4ht-c.tex"
 
 
 static  INTEGER put_4ht_ch
@@ -5293,7 +5293,7 @@ static  INTEGER put_4ht_ch
   c = ch;
   if( ch=='&' ){
      
-#line 15904 "./tex4ht-c.tex"
+#line 15906 "./tex4ht-c.tex"
 
 flush_uni();
 
@@ -5308,11 +5308,11 @@ flush_uni();
   } else
   if( uni_code_p ){
     if( ch == ';' ){ 
-#line 16127 "./tex4ht-c.tex"
+#line 16129 "./tex4ht-c.tex"
 
 if( uni_code[1] != '#' ){
    
-#line 15904 "./tex4ht-c.tex"
+#line 15906 "./tex4ht-c.tex"
 
 flush_uni();
 
@@ -5335,7 +5335,7 @@ else{
     value = value*base + digit;
   }
   if( value<0 ){ 
-#line 15904 "./tex4ht-c.tex"
+#line 15906 "./tex4ht-c.tex"
 
 flush_uni();
 
@@ -5343,7 +5343,7 @@ flush_uni();
                  (IGNORED)  putc( ch, htFile );
   } else {
      
-#line 16154 "./tex4ht-c.tex"
+#line 16156 "./tex4ht-c.tex"
 
     int bottom, mid, top;
     BOOL found=FALSE;
@@ -5352,7 +5352,7 @@ while( !found ){
    mid = (bottom + top) / 2;
    if( value == charset[mid].ch ){
       
-#line 16180 "./tex4ht-c.tex"
+#line 16182 "./tex4ht-c.tex"
 
 {          U_CHAR *p;
    p = charset[mid].str;
@@ -5370,7 +5370,7 @@ while( !found ){
      else {
        (IGNORED) putc( *p, htFile );
        if ( (*p=='&') && u10 ){ 
-#line 16254 "./tex4ht-c.tex"
+#line 16256 "./tex4ht-c.tex"
 
 if ( *(p+1) == '#' ){
   p++;
@@ -5393,7 +5393,7 @@ if ( *(p+1) == '#' ){
        else {
          if( digit == ';' ){
            
-#line 16285 "./tex4ht-c.tex"
+#line 16287 "./tex4ht-c.tex"
 
               char   uni_10[MAX_UNI_CODE];
               int n;
@@ -5434,7 +5434,7 @@ while( n>0 ){
 }
 if( ! found ){
    if( u10 || utf8 ){ 
-#line 16223 "./tex4ht-c.tex"
+#line 16225 "./tex4ht-c.tex"
 
       short  n;
       long   dec;
@@ -5450,7 +5450,7 @@ if( (uni_code[2] == 'x') || (uni_code[2] == 'X') ) {
                        : (ch-'0'));
    }
    if( u10 ){ 
-#line 16243 "./tex4ht-c.tex"
+#line 16245 "./tex4ht-c.tex"
 
    if( dec == 0 ){
       uni_code_p = 3;  uni_code[2] = '0';
@@ -5463,10 +5463,10 @@ if( (uni_code[2] == 'x') || (uni_code[2] == 'X') ) {
 
  }
    else     { 
-#line 16364 "./tex4ht-c.tex"
+#line 16366 "./tex4ht-c.tex"
 
 
-#line 16314 "./tex4ht-c.tex"
+#line 16316 "./tex4ht-c.tex"
 
 if( dec < 0x80 ){
    uni_code_p = 1;  uni_code[0] = dec;
@@ -5520,7 +5520,7 @@ else {
 
  }
    
-#line 15904 "./tex4ht-c.tex"
+#line 15906 "./tex4ht-c.tex"
 
 flush_uni();
 
@@ -5543,7 +5543,7 @@ flush_uni();
                   )
             )
     { 
-#line 15904 "./tex4ht-c.tex"
+#line 15906 "./tex4ht-c.tex"
 
 flush_uni();
 
@@ -5555,7 +5555,7 @@ flush_uni();
 }
 
 
-#line 15912 "./tex4ht-c.tex"
+#line 15914 "./tex4ht-c.tex"
 
 static void flush_uni( MYVOID )
 {
@@ -5568,7 +5568,7 @@ static void flush_uni( MYVOID )
 }
 
 
-#line 16575 "./tex4ht-c.tex"
+#line 16577 "./tex4ht-c.tex"
 
 
 static  INTEGER insert_ch
@@ -5587,7 +5587,7 @@ static  INTEGER insert_ch
    if( !ignore_chs ){
         BOOL flag;
      
-#line 16597 "./tex4ht-c.tex"
+#line 16599 "./tex4ht-c.tex"
 
 flag = FALSE;
 if( 
@@ -5606,14 +5606,14 @@ next_str
      if( !flag ){
         try_new_line();
         
-#line 10647 "./tex4ht-c.tex"
+#line 10649 "./tex4ht-c.tex"
 
 
-#line 12296 "./tex4ht-c.tex"
+#line 12298 "./tex4ht-c.tex"
 
 if( x_val > needs_end_accent ){
   
-#line 12279 "./tex4ht-c.tex"
+#line 12281 "./tex4ht-c.tex"
 
 if( needs_end_accent && t_accent_template ){
    
@@ -5634,7 +5634,7 @@ if( no_root_file ){  open_o_file(); }
 
    (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
-#line 12422 "./tex4ht-c.tex"
+#line 12424 "./tex4ht-c.tex"
 
 needs_accented_sym--;
 
@@ -5699,12 +5699,12 @@ if( no_root_file ){  open_o_file(); }
 
 
 
-#line 12911 "./tex4ht-c.tex"
+#line 12913 "./tex4ht-c.tex"
 
 if( show_class  && !pause_class && !ignore_subclass_del){
    if( !stack[stack_n].no_left_del && stack[stack_n+1].active_class_del ){
       
-#line 12986 "./tex4ht-c.tex"
+#line 12988 "./tex4ht-c.tex"
 
 (IGNORED) print_f( (stack[stack_n+1].temp_class_del)?
                       stack[stack_n+1].temp_class_open
@@ -5713,7 +5713,7 @@ if( show_class  && !pause_class && !ignore_subclass_del){
 
       if( !stack[stack_n+1].ignore_subclass_del ){
          
-#line 12924 "./tex4ht-c.tex"
+#line 12926 "./tex4ht-c.tex"
 
 math_class = math_class_of( ch, cur_fnt );
 (IGNORED) print_f( open_class[math_class]);
@@ -5722,7 +5722,7 @@ math_class = math_class_of( ch, cur_fnt );
       }
    } else {
       
-#line 12924 "./tex4ht-c.tex"
+#line 12926 "./tex4ht-c.tex"
 
 math_class = math_class_of( ch, cur_fnt );
 (IGNORED) print_f( open_class[math_class]);
@@ -5731,7 +5731,7 @@ math_class = math_class_of( ch, cur_fnt );
 }  }
 
  
-#line 8192 "./tex4ht-c.tex"
+#line 8194 "./tex4ht-c.tex"
 
 if( pos_dvi ){       long int d;
   if( *pos_text ){
@@ -5747,14 +5747,14 @@ if( no_root_file ){  open_o_file(); }
   }
   if( x_val < min_pos_x )                       min_pos_x = x_val;
   if( (d = x_val + 
-#line 9849 "./tex4ht-c.tex"
+#line 9851 "./tex4ht-c.tex"
 
 (int)(
-#line 9835 "./tex4ht-c.tex"
+#line 9837 "./tex4ht-c.tex"
 
 design_size_to_pt( *(font_tbl[cur_fnt].wtbl
                      +  (int) (
-#line 9843 "./tex4ht-c.tex"
+#line 9845 "./tex4ht-c.tex"
 
 *(font_tbl[cur_fnt].char_wi +  (int)
    ( ch - font_tbl[cur_fnt].char_f)% 256)
@@ -5767,14 +5767,14 @@ design_size_to_pt( *(font_tbl[cur_fnt].wtbl
 
 )  > max_pos_x ) max_pos_x = d;
   if( (d = y_val - 
-#line 9873 "./tex4ht-c.tex"
+#line 9875 "./tex4ht-c.tex"
 
 (int)(
-#line 9858 "./tex4ht-c.tex"
+#line 9860 "./tex4ht-c.tex"
 
 design_size_to_pt( *(font_tbl[cur_fnt].htbl
                  +  (int) (
-#line 9865 "./tex4ht-c.tex"
+#line 9867 "./tex4ht-c.tex"
 
 ( *(font_tbl[cur_fnt].char_hidp +  (int)
    ( ch - font_tbl[cur_fnt].char_f)% 256)
@@ -5788,14 +5788,14 @@ design_size_to_pt( *(font_tbl[cur_fnt].htbl
 
 ) < min_pos_y ) min_pos_y = d;
   if( (d = y_val + 
-#line 9896 "./tex4ht-c.tex"
+#line 9898 "./tex4ht-c.tex"
 
 (int)(
-#line 9882 "./tex4ht-c.tex"
+#line 9884 "./tex4ht-c.tex"
 
 design_size_to_pt( *(font_tbl[cur_fnt].dtbl
                  +  (int) (
-#line 9889 "./tex4ht-c.tex"
+#line 9891 "./tex4ht-c.tex"
 
 ( *(font_tbl[cur_fnt].char_hidp +  (int)
    ( ch - font_tbl[cur_fnt].char_f)% 256)
@@ -5811,7 +5811,7 @@ design_size_to_pt( *(font_tbl[cur_fnt].dtbl
 
 
 
-#line 12390 "./tex4ht-c.tex"
+#line 12392 "./tex4ht-c.tex"
 
 if( a_accent_template && needs_accented_sym ){
   (IGNORED) fprintf(cur_o_file, "%s%s%s%d%s%d%s",
@@ -5860,7 +5860,7 @@ next_str
 if( keepChar ){
   keepChar=FALSE;
   { 
-#line 10676 "./tex4ht-c.tex"
+#line 10678 "./tex4ht-c.tex"
 
    int gif_flag, chr, r_ch;
     BOOL  ch_str_flag;
@@ -5871,7 +5871,7 @@ chr = ((r_ch == 255) && font_tbl[cur_fnt].ch255 )? 256 :
                          *(font_tbl[cur_fnt].ch + r_ch);
 if( (gif_flag % 2) || ch_str_flag ){      design_ch = ch;
              { 
-#line 10699 "./tex4ht-c.tex"
+#line 10701 "./tex4ht-c.tex"
 
       U_CHAR  str[256], *p;
       BOOL sv;
@@ -5886,7 +5886,7 @@ if( no_root_file ){  open_o_file(); }
 
    if( !gif_open[gif_flag] ){
      
-#line 10776 "./tex4ht-c.tex"
+#line 10778 "./tex4ht-c.tex"
 
 (IGNORED) sprintf(str,
    "configuration for htf class %d (char %d of %s.htf)",
@@ -5895,18 +5895,18 @@ if( no_root_file ){  open_o_file(); }
 warn_i_str(50,str);
 
 
-#line 10784 "./tex4ht-c.tex"
+#line 10786 "./tex4ht-c.tex"
 
 gif_open[gif_flag] = m_alloc(char,
    
-#line 10809 "./tex4ht-c.tex"
+#line 10811 "./tex4ht-c.tex"
 
 29
 
 );
 (IGNORED) strcpy((char *) gif_open[gif_flag],
            
-#line 10805 "./tex4ht-c.tex"
+#line 10807 "./tex4ht-c.tex"
 
 "<img src=\"+\" alt=\"+++++\" />+"
 
@@ -5932,7 +5932,7 @@ gif_id[gif_flag] = gif_open[gif_flag]+28;
       store_bit_I( class_on, gif_flag );
    }
    
-#line 11465 "./tex4ht-c.tex"
+#line 11467 "./tex4ht-c.tex"
 
 p= gif_open[gif_flag];
 if( p )
@@ -5941,7 +5941,7 @@ if( *p ){
    mag = (int) ((double) font_tbl[cur_fnt].scale /
                 font_tbl[cur_fnt].design_sz  * 10 );
    
-#line 10891 "./tex4ht-c.tex"
+#line 10893 "./tex4ht-c.tex"
 
 if( !dos_file_names ){
    print_f(font_tbl[cur_fnt].name);
@@ -5950,7 +5950,7 @@ if( !dos_file_names ){
 }
 
 
-#line 10912 "./tex4ht-c.tex"
+#line 10914 "./tex4ht-c.tex"
 
 
 if( dos_file_names ){
@@ -5967,7 +5967,7 @@ if( dos_file_names ){
 
 
    
-#line 11498 "./tex4ht-c.tex"
+#line 11500 "./tex4ht-c.tex"
 
 p = gif_alt[gif_flag];
 if( p )
@@ -5977,7 +5977,7 @@ if( p )
 
 
    
-#line 11512 "./tex4ht-c.tex"
+#line 11514 "./tex4ht-c.tex"
 
 p = gif_class[gif_flag];
 if( p )
@@ -5987,7 +5987,7 @@ if( p )
 
 
    
-#line 11536 "./tex4ht-c.tex"
+#line 11538 "./tex4ht-c.tex"
 
 p = gif_size[gif_flag];
 if( p )
@@ -5997,7 +5997,7 @@ if( p )
 
 
    
-#line 11553 "./tex4ht-c.tex"
+#line 11555 "./tex4ht-c.tex"
 
 p = gif_mag[gif_flag];
 if( p )
@@ -6007,7 +6007,7 @@ if( p )
 
 
    
-#line 11568 "./tex4ht-c.tex"
+#line 11570 "./tex4ht-c.tex"
 
 p = gif_ord[gif_flag];
 if( p )
@@ -6017,7 +6017,7 @@ if( p )
 
 
    
-#line 11585 "./tex4ht-c.tex"
+#line 11587 "./tex4ht-c.tex"
 
 p = gif_end[gif_flag];
 if( p )
@@ -6025,15 +6025,15 @@ if( p )
 
 
 } else  { 
-#line 10828 "./tex4ht-c.tex"
+#line 10830 "./tex4ht-c.tex"
 
 if( !gif_flag || (gif_flag % 2)  || ch_map_flag ) {
    put_alt_ch(chr,ch_str_flag);  }
 else{ 
-#line 11721 "./tex4ht-c.tex"
+#line 11723 "./tex4ht-c.tex"
 
 
-#line 11737 "./tex4ht-c.tex"
+#line 11739 "./tex4ht-c.tex"
 
 if( gif_flag && !get_bit( class_on, gif_flag ) ) {
   notify_class_info(gif_flag);
@@ -6043,7 +6043,7 @@ if( gif_flag && !get_bit( class_on, gif_flag ) ) {
 
 if( span_on ){
    
-#line 11747 "./tex4ht-c.tex"
+#line 11749 "./tex4ht-c.tex"
 
 if( span_open[gif_flag] )
   if( *span_open[gif_flag] ){
@@ -6052,7 +6052,7 @@ if( span_open[gif_flag] )
 
 
    
-#line 11771 "./tex4ht-c.tex"
+#line 11773 "./tex4ht-c.tex"
 
 if( span_name[gif_flag] )
   if( *span_name[gif_flag] ){
@@ -6062,7 +6062,7 @@ if( span_name[gif_flag] )
 
 
    
-#line 11781 "./tex4ht-c.tex"
+#line 11783 "./tex4ht-c.tex"
 
 if( span_size[gif_flag] )
   if( *span_size[gif_flag] ){
@@ -6072,7 +6072,7 @@ if( span_size[gif_flag] )
 
 
    
-#line 11790 "./tex4ht-c.tex"
+#line 11792 "./tex4ht-c.tex"
 
 if( span_mag[gif_flag] )
   if( *span_mag[gif_flag] ){
@@ -6082,7 +6082,7 @@ if( span_mag[gif_flag] )
 
 
    
-#line 11799 "./tex4ht-c.tex"
+#line 11801 "./tex4ht-c.tex"
 
 if( span_ord[gif_flag] )
   if( *span_ord[gif_flag] ){
@@ -6091,7 +6091,7 @@ if( span_ord[gif_flag] )
 
 
    
-#line 11763 "./tex4ht-c.tex"
+#line 11765 "./tex4ht-c.tex"
 
 if( span_ch[gif_flag] )
   if( *span_ch[gif_flag] ){
@@ -6103,7 +6103,7 @@ if( span_ch[gif_flag] )
 put_alt_ch(chr,ch_str_flag);
 if( span_on ){
    
-#line 11754 "./tex4ht-c.tex"
+#line 11756 "./tex4ht-c.tex"
 
 if( end_span[gif_flag] )
   if( *end_span[gif_flag] ){
@@ -6120,11 +6120,11 @@ special_on = sv;
 
  } design_ch = 0;    }
 else { 
-#line 10819 "./tex4ht-c.tex"
+#line 10821 "./tex4ht-c.tex"
 
 if( !gif_flag || (gif_flag % 2) || ch_map_flag ) {  put_char(chr);
 } else{ 
-#line 11702 "./tex4ht-c.tex"
+#line 11704 "./tex4ht-c.tex"
 
 
 #line 1715 "./tex4ht-c.tex"
@@ -6133,7 +6133,7 @@ if( no_root_file ){  open_o_file(); }
 
 
 
-#line 11737 "./tex4ht-c.tex"
+#line 11739 "./tex4ht-c.tex"
 
 if( gif_flag && !get_bit( class_on, gif_flag ) ) {
   notify_class_info(gif_flag);
@@ -6143,7 +6143,7 @@ if( gif_flag && !get_bit( class_on, gif_flag ) ) {
 
 if( span_on ){
    
-#line 11747 "./tex4ht-c.tex"
+#line 11749 "./tex4ht-c.tex"
 
 if( span_open[gif_flag] )
   if( *span_open[gif_flag] ){
@@ -6152,7 +6152,7 @@ if( span_open[gif_flag] )
 
 
    
-#line 11771 "./tex4ht-c.tex"
+#line 11773 "./tex4ht-c.tex"
 
 if( span_name[gif_flag] )
   if( *span_name[gif_flag] ){
@@ -6162,7 +6162,7 @@ if( span_name[gif_flag] )
 
 
    
-#line 11781 "./tex4ht-c.tex"
+#line 11783 "./tex4ht-c.tex"
 
 if( span_size[gif_flag] )
   if( *span_size[gif_flag] ){
@@ -6172,7 +6172,7 @@ if( span_size[gif_flag] )
 
 
    
-#line 11790 "./tex4ht-c.tex"
+#line 11792 "./tex4ht-c.tex"
 
 if( span_mag[gif_flag] )
   if( *span_mag[gif_flag] ){
@@ -6182,7 +6182,7 @@ if( span_mag[gif_flag] )
 
 
    
-#line 11799 "./tex4ht-c.tex"
+#line 11801 "./tex4ht-c.tex"
 
 if( span_ord[gif_flag] )
   if( *span_ord[gif_flag] ){
@@ -6191,7 +6191,7 @@ if( span_ord[gif_flag] )
 
 
    
-#line 11763 "./tex4ht-c.tex"
+#line 11765 "./tex4ht-c.tex"
 
 if( span_ch[gif_flag] )
   if( *span_ch[gif_flag] ){
@@ -6203,7 +6203,7 @@ if( span_ch[gif_flag] )
 put_char(chr);
 if( span_on ){
    
-#line 11754 "./tex4ht-c.tex"
+#line 11756 "./tex4ht-c.tex"
 
 if( end_span[gif_flag] )
   if( *end_span[gif_flag] ){
@@ -6233,7 +6233,7 @@ if( no_root_file ){  open_o_file(); }
 
       (IGNORED) put_4ht_ch( ch, cur_o_file );
    } else {  
-#line 10676 "./tex4ht-c.tex"
+#line 10678 "./tex4ht-c.tex"
 
    int gif_flag, chr, r_ch;
     BOOL  ch_str_flag;
@@ -6244,7 +6244,7 @@ chr = ((r_ch == 255) && font_tbl[cur_fnt].ch255 )? 256 :
                          *(font_tbl[cur_fnt].ch + r_ch);
 if( (gif_flag % 2) || ch_str_flag ){      design_ch = ch;
              { 
-#line 10699 "./tex4ht-c.tex"
+#line 10701 "./tex4ht-c.tex"
 
       U_CHAR  str[256], *p;
       BOOL sv;
@@ -6259,7 +6259,7 @@ if( no_root_file ){  open_o_file(); }
 
    if( !gif_open[gif_flag] ){
      
-#line 10776 "./tex4ht-c.tex"
+#line 10778 "./tex4ht-c.tex"
 
 (IGNORED) sprintf(str,
    "configuration for htf class %d (char %d of %s.htf)",
@@ -6268,18 +6268,18 @@ if( no_root_file ){  open_o_file(); }
 warn_i_str(50,str);
 
 
-#line 10784 "./tex4ht-c.tex"
+#line 10786 "./tex4ht-c.tex"
 
 gif_open[gif_flag] = m_alloc(char,
    
-#line 10809 "./tex4ht-c.tex"
+#line 10811 "./tex4ht-c.tex"
 
 29
 
 );
 (IGNORED) strcpy((char *) gif_open[gif_flag],
            
-#line 10805 "./tex4ht-c.tex"
+#line 10807 "./tex4ht-c.tex"
 
 "<img src=\"+\" alt=\"+++++\" />+"
 
@@ -6305,7 +6305,7 @@ gif_id[gif_flag] = gif_open[gif_flag]+28;
       store_bit_I( class_on, gif_flag );
    }
    
-#line 11465 "./tex4ht-c.tex"
+#line 11467 "./tex4ht-c.tex"
 
 p= gif_open[gif_flag];
 if( p )
@@ -6314,7 +6314,7 @@ if( *p ){
    mag = (int) ((double) font_tbl[cur_fnt].scale /
                 font_tbl[cur_fnt].design_sz  * 10 );
    
-#line 10891 "./tex4ht-c.tex"
+#line 10893 "./tex4ht-c.tex"
 
 if( !dos_file_names ){
    print_f(font_tbl[cur_fnt].name);
@@ -6323,7 +6323,7 @@ if( !dos_file_names ){
 }
 
 
-#line 10912 "./tex4ht-c.tex"
+#line 10914 "./tex4ht-c.tex"
 
 
 if( dos_file_names ){
@@ -6340,7 +6340,7 @@ if( dos_file_names ){
 
 
    
-#line 11498 "./tex4ht-c.tex"
+#line 11500 "./tex4ht-c.tex"
 
 p = gif_alt[gif_flag];
 if( p )
@@ -6350,7 +6350,7 @@ if( p )
 
 
    
-#line 11512 "./tex4ht-c.tex"
+#line 11514 "./tex4ht-c.tex"
 
 p = gif_class[gif_flag];
 if( p )
@@ -6360,7 +6360,7 @@ if( p )
 
 
    
-#line 11536 "./tex4ht-c.tex"
+#line 11538 "./tex4ht-c.tex"
 
 p = gif_size[gif_flag];
 if( p )
@@ -6370,7 +6370,7 @@ if( p )
 
 
    
-#line 11553 "./tex4ht-c.tex"
+#line 11555 "./tex4ht-c.tex"
 
 p = gif_mag[gif_flag];
 if( p )
@@ -6380,7 +6380,7 @@ if( p )
 
 
    
-#line 11568 "./tex4ht-c.tex"
+#line 11570 "./tex4ht-c.tex"
 
 p = gif_ord[gif_flag];
 if( p )
@@ -6390,7 +6390,7 @@ if( p )
 
 
    
-#line 11585 "./tex4ht-c.tex"
+#line 11587 "./tex4ht-c.tex"
 
 p = gif_end[gif_flag];
 if( p )
@@ -6398,15 +6398,15 @@ if( p )
 
 
 } else  { 
-#line 10828 "./tex4ht-c.tex"
+#line 10830 "./tex4ht-c.tex"
 
 if( !gif_flag || (gif_flag % 2)  || ch_map_flag ) {
    put_alt_ch(chr,ch_str_flag);  }
 else{ 
-#line 11721 "./tex4ht-c.tex"
+#line 11723 "./tex4ht-c.tex"
 
 
-#line 11737 "./tex4ht-c.tex"
+#line 11739 "./tex4ht-c.tex"
 
 if( gif_flag && !get_bit( class_on, gif_flag ) ) {
   notify_class_info(gif_flag);
@@ -6416,7 +6416,7 @@ if( gif_flag && !get_bit( class_on, gif_flag ) ) {
 
 if( span_on ){
    
-#line 11747 "./tex4ht-c.tex"
+#line 11749 "./tex4ht-c.tex"
 
 if( span_open[gif_flag] )
   if( *span_open[gif_flag] ){
@@ -6425,7 +6425,7 @@ if( span_open[gif_flag] )
 
 
    
-#line 11771 "./tex4ht-c.tex"
+#line 11773 "./tex4ht-c.tex"
 
 if( span_name[gif_flag] )
   if( *span_name[gif_flag] ){
@@ -6435,7 +6435,7 @@ if( span_name[gif_flag] )
 
 
    
-#line 11781 "./tex4ht-c.tex"
+#line 11783 "./tex4ht-c.tex"
 
 if( span_size[gif_flag] )
   if( *span_size[gif_flag] ){
@@ -6445,7 +6445,7 @@ if( span_size[gif_flag] )
 
 
    
-#line 11790 "./tex4ht-c.tex"
+#line 11792 "./tex4ht-c.tex"
 
 if( span_mag[gif_flag] )
   if( *span_mag[gif_flag] ){
@@ -6455,7 +6455,7 @@ if( span_mag[gif_flag] )
 
 
    
-#line 11799 "./tex4ht-c.tex"
+#line 11801 "./tex4ht-c.tex"
 
 if( span_ord[gif_flag] )
   if( *span_ord[gif_flag] ){
@@ -6464,7 +6464,7 @@ if( span_ord[gif_flag] )
 
 
    
-#line 11763 "./tex4ht-c.tex"
+#line 11765 "./tex4ht-c.tex"
 
 if( span_ch[gif_flag] )
   if( *span_ch[gif_flag] ){
@@ -6476,7 +6476,7 @@ if( span_ch[gif_flag] )
 put_alt_ch(chr,ch_str_flag);
 if( span_on ){
    
-#line 11754 "./tex4ht-c.tex"
+#line 11756 "./tex4ht-c.tex"
 
 if( end_span[gif_flag] )
   if( *end_span[gif_flag] ){
@@ -6493,11 +6493,11 @@ special_on = sv;
 
  } design_ch = 0;    }
 else { 
-#line 10819 "./tex4ht-c.tex"
+#line 10821 "./tex4ht-c.tex"
 
 if( !gif_flag || (gif_flag % 2) || ch_map_flag ) {  put_char(chr);
 } else{ 
-#line 11702 "./tex4ht-c.tex"
+#line 11704 "./tex4ht-c.tex"
 
 
 #line 1715 "./tex4ht-c.tex"
@@ -6506,7 +6506,7 @@ if( no_root_file ){  open_o_file(); }
 
 
 
-#line 11737 "./tex4ht-c.tex"
+#line 11739 "./tex4ht-c.tex"
 
 if( gif_flag && !get_bit( class_on, gif_flag ) ) {
   notify_class_info(gif_flag);
@@ -6516,7 +6516,7 @@ if( gif_flag && !get_bit( class_on, gif_flag ) ) {
 
 if( span_on ){
    
-#line 11747 "./tex4ht-c.tex"
+#line 11749 "./tex4ht-c.tex"
 
 if( span_open[gif_flag] )
   if( *span_open[gif_flag] ){
@@ -6525,7 +6525,7 @@ if( span_open[gif_flag] )
 
 
    
-#line 11771 "./tex4ht-c.tex"
+#line 11773 "./tex4ht-c.tex"
 
 if( span_name[gif_flag] )
   if( *span_name[gif_flag] ){
@@ -6535,7 +6535,7 @@ if( span_name[gif_flag] )
 
 
    
-#line 11781 "./tex4ht-c.tex"
+#line 11783 "./tex4ht-c.tex"
 
 if( span_size[gif_flag] )
   if( *span_size[gif_flag] ){
@@ -6545,7 +6545,7 @@ if( span_size[gif_flag] )
 
 
    
-#line 11790 "./tex4ht-c.tex"
+#line 11792 "./tex4ht-c.tex"
 
 if( span_mag[gif_flag] )
   if( *span_mag[gif_flag] ){
@@ -6555,7 +6555,7 @@ if( span_mag[gif_flag] )
 
 
    
-#line 11799 "./tex4ht-c.tex"
+#line 11801 "./tex4ht-c.tex"
 
 if( span_ord[gif_flag] )
   if( *span_ord[gif_flag] ){
@@ -6564,7 +6564,7 @@ if( span_ord[gif_flag] )
 
 
    
-#line 11763 "./tex4ht-c.tex"
+#line 11765 "./tex4ht-c.tex"
 
 if( span_ch[gif_flag] )
   if( *span_ch[gif_flag] ){
@@ -6576,7 +6576,7 @@ if( span_ch[gif_flag] )
 put_char(chr);
 if( span_on ){
    
-#line 11754 "./tex4ht-c.tex"
+#line 11756 "./tex4ht-c.tex"
 
 if( end_span[gif_flag] )
   if( *end_span[gif_flag] ){
@@ -6593,7 +6593,7 @@ if( end_span[gif_flag] )
  }
 }
 
-#line 12403 "./tex4ht-c.tex"
+#line 12405 "./tex4ht-c.tex"
 
 if( a_accent_template && needs_accented_sym ){
    (IGNORED) fprintf(cur_o_file, "%s", a_accent_fifth);
@@ -6601,27 +6601,27 @@ if( a_accent_template && needs_accented_sym ){
 
 
 
-#line 8211 "./tex4ht-c.tex"
+#line 8213 "./tex4ht-c.tex"
 
 if( pos_dvi ){
    print_f(end_pos_text);
 }
 
  
-#line 12945 "./tex4ht-c.tex"
+#line 12947 "./tex4ht-c.tex"
 
 if( show_class && !pause_class && !ignore_subclass_del ){
    if( !stack[stack_n].no_left_del && stack[stack_n+1].active_class_del ){
       if( !stack[stack_n+1].ignore_subclass_del ){
          
-#line 12960 "./tex4ht-c.tex"
+#line 12962 "./tex4ht-c.tex"
 
 (IGNORED) print_f( close_class[math_class]);
 
 
       }
       
-#line 12973 "./tex4ht-c.tex"
+#line 12975 "./tex4ht-c.tex"
 
 (IGNORED) print_f( (stack[stack_n+1].temp_class_del)?
                       stack[stack_n+1].temp_class_close
@@ -6631,7 +6631,7 @@ if( show_class && !pause_class && !ignore_subclass_del ){
       stack[stack_n+1].active_class_del = FALSE;
    } else {
       
-#line 12960 "./tex4ht-c.tex"
+#line 12962 "./tex4ht-c.tex"
 
 (IGNORED) print_f( close_class[math_class]);
 
@@ -6662,10 +6662,10 @@ if( no_root_file ){  open_o_file(); }
 
 
 
-#line 12305 "./tex4ht-c.tex"
+#line 12307 "./tex4ht-c.tex"
 
 
-#line 12279 "./tex4ht-c.tex"
+#line 12281 "./tex4ht-c.tex"
 
 if( needs_end_accent && t_accent_template ){
    
@@ -6686,7 +6686,7 @@ if( no_root_file ){  open_o_file(); }
 
    (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
-#line 12422 "./tex4ht-c.tex"
+#line 12424 "./tex4ht-c.tex"
 
 needs_accented_sym--;
 
@@ -6701,15 +6701,15 @@ needs_accented_sym--;
         text_on = TRUE;
    } }
    
-#line 9798 "./tex4ht-c.tex"
+#line 9800 "./tex4ht-c.tex"
 
 return (INTEGER)(
     
-#line 9835 "./tex4ht-c.tex"
+#line 9837 "./tex4ht-c.tex"
 
 design_size_to_pt( *(font_tbl[cur_fnt].wtbl
                      +  (int) (
-#line 9843 "./tex4ht-c.tex"
+#line 9845 "./tex4ht-c.tex"
 
 *(font_tbl[cur_fnt].char_wi +  (int)
    ( ch - font_tbl[cur_fnt].char_f)% 256)
@@ -6725,7 +6725,7 @@ design_size_to_pt( *(font_tbl[cur_fnt].wtbl
 }
 
 
-#line 16613 "./tex4ht-c.tex"
+#line 16615 "./tex4ht-c.tex"
 
 
 static void put_char
@@ -6753,7 +6753,7 @@ if( no_root_file ){  open_o_file(); }
      if( ch_map_flag ){
         if( special_on || ((ch != '\n') && (ch != ' ')) ){
             
-#line 4988 "./tex4ht-c.tex"
+#line 4990 "./tex4ht-c.tex"
 
 insert_ch_map((char) ch, TRUE);
 
@@ -6778,7 +6778,7 @@ else { (IGNORED) put_4ht_ch( ch, cur_o_file ); }
 } }  }
 
 
-#line 16646 "./tex4ht-c.tex"
+#line 16648 "./tex4ht-c.tex"
 
 
 static void print_f
@@ -6807,7 +6807,7 @@ if( no_root_file ){  open_o_file(); }
 } }
 
 
-#line 16666 "./tex4ht-c.tex"
+#line 16668 "./tex4ht-c.tex"
 
 
 static void print_f_4ht
@@ -6838,7 +6838,7 @@ if( no_root_file ){  open_o_file(); }
 } } }
 
 
-#line 16691 "./tex4ht-c.tex"
+#line 16693 "./tex4ht-c.tex"
 
 static int get_char(MYVOID)
 {
@@ -6846,12 +6846,12 @@ static int get_char(MYVOID)
 }
 
 
-#line 16703 "./tex4ht-c.tex"
+#line 16705 "./tex4ht-c.tex"
 
 static int get_noop(MYVOID)
 {      int ch;
   while(  (ch = get_char())  ==  
-#line 17315 "./tex4ht-c.tex"
+#line 17317 "./tex4ht-c.tex"
 
 138 
  ){;}
@@ -6859,7 +6859,7 @@ static int get_noop(MYVOID)
 }
 
 
-#line 16719 "./tex4ht-c.tex"
+#line 16721 "./tex4ht-c.tex"
 
 
 static char* get_str
@@ -6882,7 +6882,7 @@ static char* get_str
 }
 
 
-#line 16743 "./tex4ht-c.tex"
+#line 16745 "./tex4ht-c.tex"
 
 
 static long fget_unt
@@ -6909,7 +6909,7 @@ static long fget_unt
 }
 
 
-#line 16767 "./tex4ht-c.tex"
+#line 16769 "./tex4ht-c.tex"
 
 
 static long fget_int
@@ -6938,7 +6938,7 @@ static long fget_int
 }
 
 
-#line 16803 "./tex4ht-c.tex"
+#line 16805 "./tex4ht-c.tex"
 
 
 static long cond_int
@@ -6968,7 +6968,7 @@ static long cond_int
 }
 
 
-#line 16910 "./tex4ht-c.tex"
+#line 16912 "./tex4ht-c.tex"
 
 
 static  void warn_i
@@ -6989,7 +6989,7 @@ static  void warn_i
 }
 
 
-#line 16934 "./tex4ht-c.tex"
+#line 16936 "./tex4ht-c.tex"
 
 
 static void warn_i_int
@@ -7012,7 +7012,7 @@ static void warn_i_int
 }
 
 
-#line 16950 "./tex4ht-c.tex"
+#line 16952 "./tex4ht-c.tex"
 
 
 static void warn_i_int_2
@@ -7035,7 +7035,7 @@ static void warn_i_int_2
 }
 
 
-#line 16966 "./tex4ht-c.tex"
+#line 16968 "./tex4ht-c.tex"
 
 
 static void warn_i_str
@@ -7063,7 +7063,7 @@ static void warn_i_str
 }
 
 
-#line 16986 "./tex4ht-c.tex"
+#line 16988 "./tex4ht-c.tex"
 
 
 static void warn_i_str2
@@ -7092,7 +7092,7 @@ static void warn_i_str2
 }
 
 
-#line 17020 "./tex4ht-c.tex"
+#line 17022 "./tex4ht-c.tex"
 
 
 static void err_i
@@ -7116,7 +7116,7 @@ static void err_i
 }
 
 
-#line 17037 "./tex4ht-c.tex"
+#line 17039 "./tex4ht-c.tex"
 
 
 static void err_i_int
@@ -7140,7 +7140,7 @@ static void err_i_int
 }
 
 
-#line 17053 "./tex4ht-c.tex"
+#line 17055 "./tex4ht-c.tex"
 
 
 static void err_i_str
@@ -7168,7 +7168,7 @@ static void err_i_str
 }
 
 
-#line 17100 "./tex4ht-c.tex"
+#line 17102 "./tex4ht-c.tex"
 
 static void show_err_context(MYVOID)
 {                             long  curr_pos;
@@ -7229,35 +7229,35 @@ int  ch;
 int unread_pages;
 
 
-#line 5398 "./tex4ht-c.tex"
+#line 5400 "./tex4ht-c.tex"
 
 long int eof_op_n, begin_postamble;
 int dis_pages;
 
 
-#line 6602 "./tex4ht-c.tex"
+#line 6604 "./tex4ht-c.tex"
 
 int stack_id=0;
 
 
-#line 11856 "./tex4ht-c.tex"
+#line 11858 "./tex4ht-c.tex"
 
 static struct css_ext_rec * css_ext = (struct css_ext_rec *) 0;
 static char css_default[] = "4cs";
 
 
-#line 12257 "./tex4ht-c.tex"
+#line 12259 "./tex4ht-c.tex"
 
 BOOL in_accenting;
 
 
-#line 13032 "./tex4ht-c.tex"
+#line 13034 "./tex4ht-c.tex"
 
 char* tex4ht_env_file = (char *) 0;
 char* dos_env_file =
 #if defined(__MSDOS__)
   
-#line 13219 "./tex4ht-c.tex"
+#line 13221 "./tex4ht-c.tex"
 
 get_env_dir(argv[0])
 
@@ -7269,7 +7269,7 @@ get_env_dir(argv[0])
 
 
 
-#line 13857 "./tex4ht-c.tex"
+#line 13859 "./tex4ht-c.tex"
 
 struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
 
@@ -7357,15 +7357,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2018-06-29-11:18 %s)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2018-06-30-15:36 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2018-06-29-11:18)\n");
+   (IGNORED) printf("tex4ht.c (2018-06-30-15:36)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2018-06-29-11:18 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2018-06-30-15:36 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2018-06-29-11:18 kpathsea)\n");
+   (IGNORED) printf("tex4ht.c (2018-06-30-15:36 kpathsea)\n");
 #endif
 #endif
 for(i=0; i<argc; i++){
@@ -7394,14 +7394,14 @@ set_del( &trace_dvi_del_v, &end_trace_dvi_del_v);
 dvi_file = stdin;
 
 
-#line 4680 "./tex4ht-c.tex"
+#line 4682 "./tex4ht-c.tex"
 
 {                   U_CHAR   *yes = NULL;
   system_yes =  (system( yes ) != 0);
 }
 
 
-#line 6298 "./tex4ht-c.tex"
+#line 6300 "./tex4ht-c.tex"
 
 {                                         int i;
   for( i=8; i--; ){
@@ -7413,35 +7413,35 @@ dvi_file = stdin;
 }
 
 
-#line 7437 "./tex4ht-c.tex"
+#line 7439 "./tex4ht-c.tex"
 
 del_stack = (struct del_stack_entry  *) 0;
 
 
-#line 7462 "./tex4ht-c.tex"
+#line 7464 "./tex4ht-c.tex"
 
 back_id_off = 1;  id_latex = 0;
 
 
-#line 7541 "./tex4ht-c.tex"
+#line 7543 "./tex4ht-c.tex"
 
 back_token = back_group = m_alloc(struct send_back_entry,1);
 back_token->id = -1;
 
 
-#line 8458 "./tex4ht-c.tex"
+#line 8460 "./tex4ht-c.tex"
 
 pos_text = pos_line = end_pos_body = end_pos_text = pos_body =
                       m_alloc(char, (int) 1);
 (IGNORED) strcpy((char *) pos_text, "" );
 
 
-#line 9746 "./tex4ht-c.tex"
+#line 9748 "./tex4ht-c.tex"
 
 margin_sp = (double) MARGINSP;     
 
 
-#line 11660 "./tex4ht-c.tex"
+#line 11662 "./tex4ht-c.tex"
 
 {   int i;  i=256; while( i-- ) {
      span_name[i] = span_open[i] = span_size[i] =
@@ -7453,15 +7453,15 @@ margin_sp = (double) MARGINSP;
 }
 
 
-#line 12261 "./tex4ht-c.tex"
+#line 12263 "./tex4ht-c.tex"
 
 in_accenting = FALSE;
 
 
-#line 12751 "./tex4ht-c.tex"
+#line 12753 "./tex4ht-c.tex"
 
 for( math_class=0; math_class<
-#line 12717 "./tex4ht-c.tex"
+#line 12719 "./tex4ht-c.tex"
 
 79
 
@@ -7472,7 +7472,7 @@ for( math_class=0; math_class<
 }
 
 
-#line 14205 "./tex4ht-c.tex"
+#line 14207 "./tex4ht-c.tex"
 
 HOME_DIR = getenv("HOME");
 
@@ -7488,7 +7488,7 @@ HOME_DIR = getenv("HOME");
        U_CHAR *p;
        const U_CHAR *in_name = "", *out_name = "";
   
-#line 14876 "./tex4ht-c.tex"
+#line 14878 "./tex4ht-c.tex"
 
 
 #ifdef KPATHSEA
@@ -7514,13 +7514,13 @@ if( (int) strlen((char *)  argv[i] ) == 2 ){
 }
 switch( *(p+1) ){
   case 'b':{ 
-#line 11113 "./tex4ht-c.tex"
+#line 11115 "./tex4ht-c.tex"
 
 begin_char_gif = p+2;
 
      break; }
   case 'c':{ 
-#line 13425 "./tex4ht-c.tex"
+#line 13427 "./tex4ht-c.tex"
 
 struct env_c_rec *temp = (struct env_c_rec*)
                    m_alloc(struct env_c_rec, (int) 1);
@@ -7530,7 +7530,7 @@ envChoice = temp;
 
   break;}
   case 'e':{ 
-#line 13023 "./tex4ht-c.tex"
+#line 13025 "./tex4ht-c.tex"
 
 tex4ht_env_file = p+2;
 
@@ -7545,7 +7545,7 @@ in_name++;
 
 break; }
   case 'F':{ 
-#line 9961 "./tex4ht-c.tex"
+#line 9963 "./tex4ht-c.tex"
 
 char *digit = p+2;
 ignore_ch = 0;
@@ -7560,7 +7560,7 @@ while( *digit != '\0' ){
 
              break; }
   case 'g':{ 
-#line 11141 "./tex4ht-c.tex"
+#line 11143 "./tex4ht-c.tex"
 
 gif = p+2;
 
@@ -7571,25 +7571,25 @@ gif = p+2;
 {
   char trace = *(p+2);
   if (trace == 'A' || trace == 'e') { 
-#line 17134 "./tex4ht-c.tex"
+#line 17136 "./tex4ht-c.tex"
 
 err_context = TRUE;
 
  }
   if (trace == 'A' || trace == 'f') { 
-#line 10489 "./tex4ht-c.tex"
+#line 10491 "./tex4ht-c.tex"
 
 dump_htf_files = 1;
 
  }
   if (trace == 'A' || trace == 'F') { 
-#line 15064 "./tex4ht-c.tex"
+#line 15066 "./tex4ht-c.tex"
 
 dump_htf_search = TRUE;
 
  }
   if (trace == 'A' || trace == 's') { 
-#line 17163 "./tex4ht-c.tex"
+#line 17165 "./tex4ht-c.tex"
 
 trace_special = TRUE;
 
@@ -7622,13 +7622,13 @@ if( !(   *trace_dvi_del_P || *end_trace_dvi_del_P
 
  }
   if (trace == 'A' || trace == 'v') { 
-#line 10493 "./tex4ht-c.tex"
+#line 10495 "./tex4ht-c.tex"
 
 dump_env_files = TRUE;
 
  }
   if (trace == 'A' || trace == 'V') { 
-#line 13060 "./tex4ht-c.tex"
+#line 13062 "./tex4ht-c.tex"
 
 dump_env_search = TRUE;
 
@@ -7638,7 +7638,7 @@ dump_env_search = TRUE;
 
   break; }
   case 'i':{ 
-#line 13861 "./tex4ht-c.tex"
+#line 13863 "./tex4ht-c.tex"
 
    com_dir(p);
    {
@@ -7657,7 +7657,7 @@ dump_env_search = TRUE;
 
   break; }
   case 'l':{ 
-#line 14212 "./tex4ht-c.tex"
+#line 14214 "./tex4ht-c.tex"
 
 #ifndef KPATHSEA
 tex4ht_fls_name = p+2;
@@ -7665,7 +7665,7 @@ tex4ht_fls_name = p+2;
 
   break; }
   case 'P':{ 
-#line 4642 "./tex4ht-c.tex"
+#line 4644 "./tex4ht-c.tex"
 
 {     struct sys_call_rec *q;
   q = m_alloc(struct sys_call_rec, 1);
@@ -7676,13 +7676,13 @@ tex4ht_fls_name = p+2;
 
   break; }
   case 'S':{ 
-#line 11075 "./tex4ht-c.tex"
+#line 11077 "./tex4ht-c.tex"
 
 font_gif = p+2;
 
     break; }
   case 's':{ 
-#line 11840 "./tex4ht-c.tex"
+#line 11842 "./tex4ht-c.tex"
 
 struct css_ext_rec * css =  m_alloc(struct css_ext_rec, 1);;
 css->name = p + 2;
@@ -7691,17 +7691,17 @@ css_ext = css;
 
     break; }
   case 't':{ 
-#line 13479 "./tex4ht-c.tex"
+#line 13481 "./tex4ht-c.tex"
 
 com_dir(p);  fontdir[fontdir_count++] = p+2;
 
   break; }
   case 'u':{ 
-#line 16217 "./tex4ht-c.tex"
+#line 16219 "./tex4ht-c.tex"
 
 if( eq_str(p+2, "10") ){ u10 = TRUE; }
 
-#line 16360 "./tex4ht-c.tex"
+#line 16362 "./tex4ht-c.tex"
 
 else if( eq_str(p+2, "tf8") ){ utf8 = TRUE; }
 
@@ -7710,7 +7710,7 @@ else{ bad_arg;}
 
   break; }
   case 'v':{ 
-#line 5467 "./tex4ht-c.tex"
+#line 5469 "./tex4ht-c.tex"
 
 {          U_CHAR *q;
    q = p + 2;
@@ -7749,7 +7749,7 @@ ext = p+1;
     else in_name = argv[i];
   }
   
-#line 11847 "./tex4ht-c.tex"
+#line 11849 "./tex4ht-c.tex"
 
 if( css_ext == (struct css_ext_rec *) 0 ){
   struct css_ext_rec * css =  m_alloc(struct css_ext_rec, 1);;
@@ -7836,7 +7836,7 @@ if( (dvi_file = fopen(job_name, READ_BIN_FLAGS)) == NULL )
 
  }
 
-#line 5388 "./tex4ht-c.tex"
+#line 5390 "./tex4ht-c.tex"
 
 job_name[job_name_n-1] = 'v';
 job_name[job_name_n-2] = 'd';
@@ -7899,11 +7899,11 @@ no_root_file = name;
 
 
   
-#line 13064 "./tex4ht-c.tex"
+#line 13066 "./tex4ht-c.tex"
 
 {                              U_CHAR  str[PATH_MAX],  *TEX4HTENV;
    
-#line 13082 "./tex4ht-c.tex"
+#line 13084 "./tex4ht-c.tex"
 
 if( dump_env_search && tex4ht_env_file ){
    (IGNORED) printf("-e: %s?\n", tex4ht_env_file);
@@ -7913,7 +7913,7 @@ dot_file = tex4ht_env_file?
 
 
    
-#line 13127 "./tex4ht-c.tex"
+#line 13129 "./tex4ht-c.tex"
 
 if( !dot_file ){
    if( dump_env_search ){ (IGNORED) printf("%s?\n", "tex4ht.env"); }
@@ -7931,7 +7931,7 @@ if( !dot_file ){
 
    if( !dot_file ){
      
-#line 13156 "./tex4ht-c.tex"
+#line 13158 "./tex4ht-c.tex"
 
 TEX4HTENV = getenv("TEX4HTENV");
 if( TEX4HTENV ){
@@ -7946,12 +7946,12 @@ if( TEX4HTENV ){
 
    }
    
-#line 13094 "./tex4ht-c.tex"
+#line 13096 "./tex4ht-c.tex"
 
 if( !dot_file ){
    if( HOME_DIR ){
       (IGNORED) sprintf(str,
-#line 13175 "./tex4ht-c.tex"
+#line 13177 "./tex4ht-c.tex"
 
 #if defined(__DJGPP__)
   is_forward_slash(HOME_DIR)?  "%s/tex4ht.env" :  "%s\\tex4ht.env"
@@ -7980,7 +7980,7 @@ if( !dot_file ){
 
 
    
-#line 13143 "./tex4ht-c.tex"
+#line 13145 "./tex4ht-c.tex"
 
 #ifdef ENVFILE
    if( !dot_file ){
@@ -7995,7 +7995,7 @@ if( !dot_file ){
 
 
    
-#line 13120 "./tex4ht-c.tex"
+#line 13122 "./tex4ht-c.tex"
 
 if( !dot_file && dos_env_file){
    if( dump_env_search ){ (IGNORED) printf("%s?\n", dos_env_file); }
@@ -8004,14 +8004,14 @@ if( !dot_file && dos_env_file){
 
 
    
-#line 14885 "./tex4ht-c.tex"
+#line 14887 "./tex4ht-c.tex"
 
 
 #ifdef KPATHSEA
 if( !dot_file ) {                    U_CHAR * envfile;
                              char *arch, *p, str[256];
   
-#line 14937 "./tex4ht-c.tex"
+#line 14939 "./tex4ht-c.tex"
 
 p = arch = (char *) kpse_var_value( "SELFAUTOLOC" );
 while( *p != '\0' ){
@@ -8024,7 +8024,7 @@ while( *p != '\0' ){
 
   envfile = (char *) 0;
   
-#line 14948 "./tex4ht-c.tex"
+#line 14950 "./tex4ht-c.tex"
 
 if( arch ){
   (IGNORED) sprintf(str,"%s%ctex4ht.env", arch+1, *arch);
@@ -8036,7 +8036,7 @@ if( arch ){
 
 
   if ( !envfile ){ 
-#line 14959 "./tex4ht-c.tex"
+#line 14961 "./tex4ht-c.tex"
 
 if( dump_env_search ){
   (IGNORED) printf("kpse_open_file (\"tex4ht.env\", ...)?\n");
@@ -8045,7 +8045,7 @@ envfile= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
 
  }
   if ( !envfile ){ 
-#line 15010 "./tex4ht-c.tex"
+#line 15012 "./tex4ht-c.tex"
 
 #define KPSEWHICH_CMD "kpsewhich --progname=tex4ht --format=othertext tex4ht.env"
 if( dump_env_search ){
@@ -8053,7 +8053,7 @@ if( dump_env_search ){
 }
 if( system(KPSEWHICH_CMD ">tex4ht.tmp") == 0 ){
    
-#line 15040 "./tex4ht-c.tex"
+#line 15042 "./tex4ht-c.tex"
 
 char fileaddr [256];
 int loc = 0;
@@ -8089,7 +8089,7 @@ if( file ){
 
 
    if( !dot_file ) { bad_in_file(
-#line 13185 "./tex4ht-c.tex"
+#line 13187 "./tex4ht-c.tex"
 
 #ifdef  DOS_WIN32
    "tex4ht.env"
@@ -8102,7 +8102,7 @@ if( file ){
 
 
   
-#line 4624 "./tex4ht-c.tex"
+#line 4626 "./tex4ht-c.tex"
 
 (IGNORED) fseek(dot_file, 0L, 
 #line 2174 "./tex4ht-c.tex"
@@ -8125,21 +8125,21 @@ while ( search_dot_file( 'P' ) ){     struct sys_call_rec *q;
 }
 
 
-#line 8855 "./tex4ht-c.tex"
+#line 8857 "./tex4ht-c.tex"
 
 lg_font_fmt = (char *) get_script(lg_font_fmt,LGFNT,'f');
 
 
-#line 10852 "./tex4ht-c.tex"
+#line 10854 "./tex4ht-c.tex"
 
 class_fmt = (char *) get_script(class_fmt,LGCLS,'c');
 
 
-#line 11081 "./tex4ht-c.tex"
+#line 11083 "./tex4ht-c.tex"
 
 font_gif = (char *) get_script(font_gif,LGPIC,'s');
 
-#line 11087 "./tex4ht-c.tex"
+#line 11089 "./tex4ht-c.tex"
 
 {    int n;
   n = (int) strlen((char *) font_gif);
@@ -8149,12 +8149,12 @@ font_gif = (char *) get_script(font_gif,LGPIC,'s');
 
 
 
-#line 11119 "./tex4ht-c.tex"
+#line 11121 "./tex4ht-c.tex"
 
 begin_char_gif = (char *) get_script(begin_char_gif,LGSEP,'b');
 
 
-#line 11147 "./tex4ht-c.tex"
+#line 11149 "./tex4ht-c.tex"
 
 gif = (char *) get_script(gif,LGTYP,'g');
 {              int n;
@@ -8181,7 +8181,7 @@ gif = (char *) get_script(gif,LGTYP,'g');
 
 
   
-#line 5951 "./tex4ht-c.tex"
+#line 5953 "./tex4ht-c.tex"
 
 {      U_CHAR str[256];
    (IGNORED) strcpy((char *) str, (char *) job_name);
@@ -8194,14 +8194,14 @@ gif = (char *) get_script(gif,LGTYP,'g');
 
 
   
-#line 14435 "./tex4ht-c.tex"
+#line 14437 "./tex4ht-c.tex"
 
 #ifdef KPATHSEA
 {           char str [256], *export_str, *postfix;
    export_str = m_alloc(char, 1);
    *export_str = '\0';
    
-#line 14523 "./tex4ht-c.tex"
+#line 14525 "./tex4ht-c.tex"
 
 {
       struct htf_com_rec *q;
@@ -8232,7 +8232,7 @@ while ( search_dot_file( 'i' ) ){
     export_htf( &export_str, str );
 #endif
 
-#line 14553 "./tex4ht-c.tex"
+#line 14555 "./tex4ht-c.tex"
 
 {                    U_CHAR * q;
   q = (U_CHAR *) kpse_var_value( "TEX4HTFONTSET" );
@@ -8261,7 +8261,7 @@ while ( search_dot_file( 'i' ) ){
       } }
       if( (int) strlen((char *) export_str) != 0 ){
         
-#line 14466 "./tex4ht-c.tex"
+#line 14468 "./tex4ht-c.tex"
 
 {                       char *from_ch;
                         int i, n, m;
@@ -8280,12 +8280,12 @@ while ( search_dot_file( 'i' ) ){
 
 
         
-#line 14491 "./tex4ht-c.tex"
+#line 14493 "./tex4ht-c.tex"
 
 {                     U_CHAR * q;
   if( dump_htf_search ) {                       U_CHAR *p, *q;
      
-#line 14840 "./tex4ht-c.tex"
+#line 14842 "./tex4ht-c.tex"
 
 p = (U_CHAR *) kpse_var_value( "TEX4HTFONTSET" );
 if( p ){
@@ -8316,7 +8316,7 @@ if( !p && !q ){
       }
    }
    
-#line 14671 "./tex4ht-c.tex"
+#line 14673 "./tex4ht-c.tex"
 
 {                                  int n;
    n = (int) strlen((char *) export_str);
@@ -8328,12 +8328,12 @@ if( !p && !q ){
 
    free((void *) export_str);
    
-#line 14788 "./tex4ht-c.tex"
+#line 14790 "./tex4ht-c.tex"
 
 if( dump_htf_search || dump_env_search ) {
                                 U_CHAR *p, *q;
    
-#line 14818 "./tex4ht-c.tex"
+#line 14820 "./tex4ht-c.tex"
 
 p = kpse_find_file ( "texmf.cnf", kpse_cnf_format, 0);
 if( p ){
@@ -8371,7 +8371,7 @@ do{
 0
 );
 }   while( (ch=get_char()) == 
-#line 17418 "./tex4ht-c.tex"
+#line 17420 "./tex4ht-c.tex"
 
 223 
  );
@@ -8401,7 +8401,7 @@ file_len -= 5;
 0
 );
 if( get_char() != 
-#line 17467 "./tex4ht-c.tex"
+#line 17469 "./tex4ht-c.tex"
 
 249 
  )  bad_dvi;
@@ -8416,7 +8416,7 @@ eof_op_n -= begin_postamble = get_unt(4);
 #line 2197 "./tex4ht-c.tex"
 
 if( get_char() != 
-#line 17464 "./tex4ht-c.tex"
+#line 17466 "./tex4ht-c.tex"
 
 248 
  )  bad_dvi;
@@ -8426,7 +8426,7 @@ if( get_char() !=
 1
 );
 
-#line 5966 "./tex4ht-c.tex"
+#line 5968 "./tex4ht-c.tex"
 
 mid_page_y = (INTEGER) get_unt(4) / 2;
 mid_page_x = (INTEGER) get_unt(4) / 2;
@@ -8434,20 +8434,20 @@ mid_page_x = (INTEGER) get_unt(4) / 2;
 
 if( (stack_len = (int) get_unt(2)) < 1)     bad_dvi;
 
-#line 6677 "./tex4ht-c.tex"
+#line 6679 "./tex4ht-c.tex"
 
 stack = m_alloc(struct stack_entry,
-#line 6682 "./tex4ht-c.tex"
+#line 6684 "./tex4ht-c.tex"
 
 ((int) stack_len + 2)
 
 );
 
-#line 6716 "./tex4ht-c.tex"
+#line 6718 "./tex4ht-c.tex"
 
 {                   int i;
   for( i=
-#line 6682 "./tex4ht-c.tex"
+#line 6684 "./tex4ht-c.tex"
 
 ((int) stack_len + 2)
 
@@ -8456,19 +8456,19 @@ stack = m_alloc(struct stack_entry,
     stack[i].end   = (struct stack_end_entry *) 0;
     stack[i].stack_id = -1;
     
-#line 6352 "./tex4ht-c.tex"
+#line 6354 "./tex4ht-c.tex"
 
 stack[i].halign_info = FALSE;
 stack[i].halign_on = FALSE;
 
 
-#line 7802 "./tex4ht-c.tex"
+#line 7804 "./tex4ht-c.tex"
 
 stack[i].path_start = (struct group_path *) 0;
 stack[i].path_end   = (struct group_path *) 0;
 
 
-#line 12885 "./tex4ht-c.tex"
+#line 12887 "./tex4ht-c.tex"
 
 stack[i].class_open = stack[i].class_close
                     = (char *) 0;
@@ -8490,19 +8490,19 @@ unread_pages = (int) get_unt(2);
 #line 2222 "./tex4ht-c.tex"
 
 {      
-#line 10254 "./tex4ht-c.tex"
+#line 10256 "./tex4ht-c.tex"
 
 int fonts_n;
 struct html_font_rec *html_font=0;
 
 
-#line 11936 "./tex4ht-c.tex"
+#line 11938 "./tex4ht-c.tex"
 
 struct visited_file_rec * visited_file =
                        (struct visited_file_rec *) 0;
 
 
-#line 13646 "./tex4ht-c.tex"
+#line 13648 "./tex4ht-c.tex"
 
 #ifndef KPATHSEA
 struct env_var_rec *tfm_dirs;
@@ -8510,12 +8510,12 @@ struct env_var_rec *tfm_dirs;
 struct env_var_rec *htf_dirs;
 
 
-#line 14661 "./tex4ht-c.tex"
+#line 14663 "./tex4ht-c.tex"
 
 
 #ifdef KPATHSEA
 
-#line 14681 "./tex4ht-c.tex"
+#line 14683 "./tex4ht-c.tex"
 
 int cardinality=0;
 char ** fontset=0;
@@ -8527,13 +8527,13 @@ char ** fontset=0;
        BOOL missing_fonts;
 #ifndef KPATHSEA
        
-#line 14193 "./tex4ht-c.tex"
+#line 14195 "./tex4ht-c.tex"
 
 U_CHAR files_cache[PATH_MAX];
 
 
    
-#line 14153 "./tex4ht-c.tex"
+#line 14155 "./tex4ht-c.tex"
 
 {                    U_CHAR *p;
    if( !tex4ht_fls_name ){
@@ -8553,7 +8553,7 @@ U_CHAR files_cache[PATH_MAX];
       }
    }
    
-#line 14172 "./tex4ht-c.tex"
+#line 14174 "./tex4ht-c.tex"
 
 if( *tex4ht_fls_name == '~' ){
    tex4ht_fls_name = abs_addr(tex4ht_fls_name,getenv("TEX4HTWR"));
@@ -8564,19 +8564,19 @@ if( *tex4ht_fls_name == '~' ){
 
 
    
-#line 14336 "./tex4ht-c.tex"
+#line 14338 "./tex4ht-c.tex"
 
 cache_files = f_open(tex4ht_fls_name, READ_BIN_FLAGS);
 
 
 #endif
    
-#line 10259 "./tex4ht-c.tex"
+#line 10261 "./tex4ht-c.tex"
 
 fonts_n = 0;
 
 
-#line 13726 "./tex4ht-c.tex"
+#line 13728 "./tex4ht-c.tex"
 
 cache_font = (struct cache_font_rec *) 0;
 cur_cache_font = (struct cache_font_rec *) 0;
@@ -8584,7 +8584,7 @@ cur_cache_font = (struct cache_font_rec *) 0;
 
    missing_fonts = FALSE;
    
-#line 13566 "./tex4ht-c.tex"
+#line 13568 "./tex4ht-c.tex"
 
 #ifndef KPATHSEA
 tfm_dirs = get_env_var("TEX4HTTFM");
@@ -8593,13 +8593,13 @@ htf_dirs = get_env_var("TEX4HTHTF");
 
 
    
-#line 14686 "./tex4ht-c.tex"
+#line 14688 "./tex4ht-c.tex"
 
 
 #ifdef KPATHSEA
 if( export_str_chars ){
   
-#line 14707 "./tex4ht-c.tex"
+#line 14709 "./tex4ht-c.tex"
 
 {                   U_CHAR   *p;
                     int n;
@@ -8624,17 +8624,17 @@ if( export_str_chars ){
 
 
    
-#line 15933 "./tex4ht-c.tex"
+#line 15935 "./tex4ht-c.tex"
 
 {                              U_CHAR name[256];
                                FILE* file;
    (IGNORED) sprintf(name, "%s.4hf", "unicode");
    
-#line 13835 "./tex4ht-c.tex"
+#line 13837 "./tex4ht-c.tex"
 
    file = NULL;
    
-#line 13903 "./tex4ht-c.tex"
+#line 13905 "./tex4ht-c.tex"
 
 {
                                struct htf_com_rec *p;
@@ -8660,7 +8660,7 @@ if( export_str_chars ){
                                                READ_TEXT_FLAGS, htf_dirs);
 #endif
       
-#line 15071 "./tex4ht-c.tex"
+#line 15073 "./tex4ht-c.tex"
 
 
 #ifdef KPATHSEA
@@ -8668,12 +8668,12 @@ if( export_str_chars ){
      htfname= kpse_find_file (name, kpse_program_text_format, 0);
      if ( htfname ){
          
-#line 14727 "./tex4ht-c.tex"
+#line 14729 "./tex4ht-c.tex"
 
 {                    U_CHAR  * head, * tail, *p;
                      int n;
    
-#line 14737 "./tex4ht-c.tex"
+#line 14739 "./tex4ht-c.tex"
 
 n = (int) strlen((char *) htfname);
 tail = head = m_alloc(char, n+1);
@@ -8695,7 +8695,7 @@ while( n>11 ){
 
    htfname =  (U_CHAR *) 0;
    
-#line 14759 "./tex4ht-c.tex"
+#line 14761 "./tex4ht-c.tex"
 
 for( n = 0 ; (n < cardinality) && !htfname ; n++){
   p = tail;
@@ -8733,7 +8733,7 @@ for( n = 0 ; (n < cardinality) && !htfname ; n++){
 
    if( file ){
             
-#line 15948 "./tex4ht-c.tex"
+#line 15950 "./tex4ht-c.tex"
 
 int chr, delimiter, delimiter_n, line_no, digit, i, j;
 U_CHAR in[512], *in_p,  * start[4], *p;
@@ -8742,20 +8742,20 @@ int value;
 
 
       
-#line 16051 "./tex4ht-c.tex"
+#line 16053 "./tex4ht-c.tex"
 
 max_charset_n = 256;
 charset =   m_alloc(struct charset_rec, 256);
 
 
-#line 16463 "./tex4ht-c.tex"
+#line 16465 "./tex4ht-c.tex"
 
 max_htf_4hf_n = 256;
 htf_4hf = m_alloc(struct htf_4hf_rec, 256);
 
 
       
-#line 15956 "./tex4ht-c.tex"
+#line 15958 "./tex4ht-c.tex"
 
 err = FALSE;
 line_no = 0;
@@ -8765,7 +8765,7 @@ while( TRUE ){
   if( chr == EOF ){ break; }
   if( (chr>32) && (chr<127) ){
      
-#line 15992 "./tex4ht-c.tex"
+#line 15994 "./tex4ht-c.tex"
 
 delimiter   = chr;
 delimiter_n = 1;
@@ -8789,7 +8789,7 @@ while( TRUE ) {
      if( delimiter_n == 8 ){
         if( *in != '?' ) {
            if( 
-#line 15985 "./tex4ht-c.tex"
+#line 15987 "./tex4ht-c.tex"
 
    (*in             != '&')
 || (*(in+1)         != '#')
@@ -8799,7 +8799,7 @@ while( TRUE ) {
  ){ err = TRUE; }
            else {
               
-#line 16061 "./tex4ht-c.tex"
+#line 16063 "./tex4ht-c.tex"
 
 value = 0;
 for( p=in+3; *p!=';'; p++){
@@ -8814,10 +8814,10 @@ for( p=in+3; *p!=';'; p++){
 
               if( start[3] == (in_p-1) ){
                  if( !err ){ 
-#line 16080 "./tex4ht-c.tex"
+#line 16082 "./tex4ht-c.tex"
 
 
-#line 16110 "./tex4ht-c.tex"
+#line 16112 "./tex4ht-c.tex"
 
 if( (charset_n+1) == max_charset_n){
   max_charset_n += 10;
@@ -8852,10 +8852,10 @@ charset[i].ch  = value;
 
  }
               } else { 
-#line 16379 "./tex4ht-c.tex"
+#line 16381 "./tex4ht-c.tex"
 
 
-#line 16419 "./tex4ht-c.tex"
+#line 16421 "./tex4ht-c.tex"
 
 if( (htf_4hf_n+1) == max_htf_4hf_n){
   max_htf_4hf_n += 10;
@@ -8889,7 +8889,7 @@ if(i == htf_4hf_n){ htf_4hf_n++; }
 htf_4hf[i].str = p;
 htf_4hf[i].ch  = value;
 
-#line 16429 "./tex4ht-c.tex"
+#line 16431 "./tex4ht-c.tex"
 
 value = 0;
 p = start[1];
@@ -8901,7 +8901,7 @@ while( *p != '\0' ){
 htf_4hf[i].type1  =  value;
 
 
-#line 16440 "./tex4ht-c.tex"
+#line 16442 "./tex4ht-c.tex"
 
 value = 0;
 p = start[3];
@@ -8919,7 +8919,7 @@ htf_4hf[i].type2  =  value;
      }  } }
      else { err = TRUE; }
      
-#line 16018 "./tex4ht-c.tex"
+#line 16020 "./tex4ht-c.tex"
 
 if( err ){
    warn_i_int(48,line_no);
@@ -8946,12 +8946,12 @@ if( err ){
 
       put_4ht_off = 0;
    } else{ put_4ht_off = 1; 
-#line 16056 "./tex4ht-c.tex"
+#line 16058 "./tex4ht-c.tex"
 
 max_charset_n = 0;
 
 
-#line 16468 "./tex4ht-c.tex"
+#line 16470 "./tex4ht-c.tex"
 
 max_htf_4hf_n = 0;
 
@@ -8960,12 +8960,12 @@ max_htf_4hf_n = 0;
 
 
    while( (ch =  get_char()) != 
-#line 17467 "./tex4ht-c.tex"
+#line 17469 "./tex4ht-c.tex"
 
 249 
  ){
      
-#line 8661 "./tex4ht-c.tex"
+#line 8663 "./tex4ht-c.tex"
 
 #ifdef MAXFONTS
 if( (font_tbl_size + 1) < MAXFONTS )
@@ -8985,14 +8985,14 @@ if( (font_tbl_size + 1) < MAXFONTS )
 
 )
          &&  (ch == 
-#line 17488 "./tex4ht-c.tex"
+#line 17490 "./tex4ht-c.tex"
 
 252
 
 )
    ){
       
-#line 8884 "./tex4ht-c.tex"
+#line 8886 "./tex4ht-c.tex"
 
    unsigned short flags;
 new_font.num       = (INTEGER) get_unt(4);
@@ -9000,7 +9000,7 @@ new_font.scale     = (INTEGER) get_unt(4);
 new_font.design_sz = new_font.scale;
 flags = (INTEGER) get_unt(2);
 
-#line 8911 "./tex4ht-c.tex"
+#line 8913 "./tex4ht-c.tex"
 
 {    int  n, family_name_n, style_name_n;
      U_CHAR *ch;
@@ -9024,13 +9024,13 @@ flags = (INTEGER) get_unt(2);
 
 
 new_font.layout_dir = (flags & 
-#line 8949 "./tex4ht-c.tex"
+#line 8951 "./tex4ht-c.tex"
 
 0x0100
 
 ) ? 1 : 0;
 new_font.rgba_color = (flags & 
-#line 8953 "./tex4ht-c.tex"
+#line 8955 "./tex4ht-c.tex"
 
 0x0200
 
@@ -9039,7 +9039,7 @@ new_font.rgba_color = (flags &
                                    :
                                    0xffffffff;
 if( flags & 
-#line 8957 "./tex4ht-c.tex"
+#line 8959 "./tex4ht-c.tex"
 
 0x0800
 
@@ -9054,10 +9054,10 @@ if( flags &
 }  }
 (IGNORED) printf("(--- xdv font = %s (not implemented) ---)\n", new_font_name);
 
-#line 9075 "./tex4ht-c.tex"
+#line 9077 "./tex4ht-c.tex"
 
 
-#line 9296 "./tex4ht-c.tex"
+#line 9298 "./tex4ht-c.tex"
 
 {        int i;
    for( i=font_tbl_size-1; i>0;  i-- )
@@ -9065,7 +9065,7 @@ if( flags &
 
 
 
-#line 9096 "./tex4ht-c.tex"
+#line 9098 "./tex4ht-c.tex"
 
 {    
    
@@ -9078,11 +9078,11 @@ if( flags &
    } else {
 */
       
-#line 9117 "./tex4ht-c.tex"
+#line 9119 "./tex4ht-c.tex"
 
 {       
    
-#line 9164 "./tex4ht-c.tex"
+#line 9166 "./tex4ht-c.tex"
 
 new_font.char_f = 0;
 new_font.char_l = 255;
@@ -9093,7 +9093,7 @@ new_font.dtbl_n = 0;
 
    
    
-#line 9189 "./tex4ht-c.tex"
+#line 9191 "./tex4ht-c.tex"
 
 {      U_CHAR *ch, *hidp;
        int i;
@@ -9108,7 +9108,7 @@ new_font.dtbl_n = 0;
 
 
    
-#line 9203 "./tex4ht-c.tex"
+#line 9205 "./tex4ht-c.tex"
 
 {       INTEGER *p;         
             int  i;
@@ -9119,7 +9119,7 @@ new_font.dtbl_n = 0;
 
 
    
-#line 9214 "./tex4ht-c.tex"
+#line 9216 "./tex4ht-c.tex"
 
 {       INTEGER *p;         
             int  i;
@@ -9135,20 +9135,20 @@ new_font.dtbl_n = 0;
    
    
    
-#line 9138 "./tex4ht-c.tex"
+#line 9140 "./tex4ht-c.tex"
 
 
-#line 9149 "./tex4ht-c.tex"
+#line 9151 "./tex4ht-c.tex"
 
 new_font.it = 0;
 
              
 
-#line 9154 "./tex4ht-c.tex"
+#line 9156 "./tex4ht-c.tex"
 
 new_font.word_sp = 350000;
 
-#line 9750 "./tex4ht-c.tex"
+#line 9752 "./tex4ht-c.tex"
 
 if( new_font.word_sp == 0 ) {
         int i;
@@ -9185,7 +9185,7 @@ new_font_name[font_name_n] = '\0';
 new_font.name = m_alloc(char, font_name_n + 1);
 (IGNORED) strcpy((char *)  new_font.name, (char *) new_font_name );
 
-#line 8779 "./tex4ht-c.tex"
+#line 8781 "./tex4ht-c.tex"
 
 {    int n, i;
    for( n=0; n<font_name_n; n++ ){
@@ -9194,7 +9194,7 @@ new_font.name = m_alloc(char, font_name_n + 1);
      }
    }
    
-#line 8801 "./tex4ht-c.tex"
+#line 8803 "./tex4ht-c.tex"
 
 {                       int m;
    for( m=n; m<font_name_n; m++ ){
@@ -9218,7 +9218,7 @@ new_font.name = m_alloc(char, font_name_n + 1);
 
 
 
-#line 9086 "./tex4ht-c.tex"
+#line 9088 "./tex4ht-c.tex"
 
 new_font.mag = new_font.scale / (new_font.design_sz / 100);
 
@@ -9229,35 +9229,35 @@ new_font.mag = new_font.scale / (new_font.design_sz / 100);
 
    } else {
       
-#line 8695 "./tex4ht-c.tex"
+#line 8697 "./tex4ht-c.tex"
 
 
-#line 8721 "./tex4ht-c.tex"
+#line 8723 "./tex4ht-c.tex"
 
 switch( ch ){
   case 
-#line 17449 "./tex4ht-c.tex"
+#line 17451 "./tex4ht-c.tex"
 
 243 
 :
   case 
-#line 17452 "./tex4ht-c.tex"
+#line 17454 "./tex4ht-c.tex"
 
 244 
 :
   case 
-#line 17455 "./tex4ht-c.tex"
+#line 17457 "./tex4ht-c.tex"
 
 245 
 : {
      new_font.num = (INTEGER)
                       get_unt(ch - 
-#line 17449 "./tex4ht-c.tex"
+#line 17451 "./tex4ht-c.tex"
 
 243 
  + 1); break; }
   case 
-#line 17458 "./tex4ht-c.tex"
+#line 17460 "./tex4ht-c.tex"
 
 246 
 : {
@@ -9270,7 +9270,7 @@ new_font_checksum  = (INTEGER) get_int(4);
 new_font.scale     = (INTEGER) get_unt(4);
 new_font.design_sz = (INTEGER) get_unt(4);
 
-#line 8735 "./tex4ht-c.tex"
+#line 8737 "./tex4ht-c.tex"
 
 {    int  n, area_ln;
      U_CHAR *ch;
@@ -9284,10 +9284,10 @@ new_font.design_sz = (INTEGER) get_unt(4);
 
 
 
-#line 8751 "./tex4ht-c.tex"
+#line 8753 "./tex4ht-c.tex"
 
 
-#line 9296 "./tex4ht-c.tex"
+#line 9298 "./tex4ht-c.tex"
 
 {        int i;
    for( i=font_tbl_size-1; i>0;  i-- )
@@ -9295,25 +9295,25 @@ new_font.design_sz = (INTEGER) get_unt(4);
 
 
 
-#line 9342 "./tex4ht-c.tex"
+#line 9344 "./tex4ht-c.tex"
 
 {       FILE *font_file;
         U_CHAR  file_name[256];
    
-#line 13510 "./tex4ht-c.tex"
+#line 13512 "./tex4ht-c.tex"
 
 {                        
    font_file = NULL;
    (IGNORED) sprintf(file_name, "%s.tfm", new_font_name);
    
-#line 14969 "./tex4ht-c.tex"
+#line 14971 "./tex4ht-c.tex"
 
 #ifdef KPATHSEA
 {
      U_CHAR * tfmfile;
   tfmfile = kpse_find_file (file_name, kpse_tfm_format, 0);
   if( !tfmfile ){ 
-#line 15024 "./tex4ht-c.tex"
+#line 15026 "./tex4ht-c.tex"
 
 char s [256];
 (IGNORED) strcpy(s, "kpsewhich ");
@@ -9321,7 +9321,7 @@ char s [256];
 (IGNORED) strcat(s, " > tex4ht.tmp ");
 if( system(s) == 0 ){
    
-#line 15040 "./tex4ht-c.tex"
+#line 15042 "./tex4ht-c.tex"
 
 char fileaddr [256];
 int loc = 0;
@@ -9348,7 +9348,7 @@ if( file ){
 
 
       
-#line 13666 "./tex4ht-c.tex"
+#line 13668 "./tex4ht-c.tex"
 
 for( cur_cache_font = cache_font;
      cur_cache_font;
@@ -9370,7 +9370,7 @@ for( cur_cache_font = cache_font;
           font_file = search_in_dot_file( 't', file_name,
                         READ_BIN_FLAGS, tfm_dirs);
       
-#line 13542 "./tex4ht-c.tex"
+#line 13544 "./tex4ht-c.tex"
 
 #ifdef TFMDIR
    if( !font_file )
@@ -9380,7 +9380,7 @@ for( cur_cache_font = cache_font;
 
 
    
-#line 14986 "./tex4ht-c.tex"
+#line 14988 "./tex4ht-c.tex"
 
 #endif
 
@@ -9395,10 +9395,10 @@ for( cur_cache_font = cache_font;
       new_font.char_l = 1;
    } else {
       
-#line 9383 "./tex4ht-c.tex"
+#line 9385 "./tex4ht-c.tex"
 
 {       
-#line 9433 "./tex4ht-c.tex"
+#line 9435 "./tex4ht-c.tex"
 
  INTEGER  file_length;     
  int    header_length,
@@ -9410,7 +9410,7 @@ for( cur_cache_font = cache_font;
 
 
    
-#line 9405 "./tex4ht-c.tex"
+#line 9407 "./tex4ht-c.tex"
 
 file_length                    = (INTEGER) fget_int(font_file,2);
 header_length                  = (int) fget_int(font_file,2);
@@ -9434,10 +9434,10 @@ if( file_length != ( 6                + header_length
 
 
    
-#line 9478 "./tex4ht-c.tex"
+#line 9480 "./tex4ht-c.tex"
 
 
-#line 9487 "./tex4ht-c.tex"
+#line 9489 "./tex4ht-c.tex"
 
 {      INTEGER checksum;
    checksum = ( INTEGER) fget_int(font_file,4);
@@ -9450,7 +9450,7 @@ if( file_length != ( 6                + header_length
 
 
 
-#line 9507 "./tex4ht-c.tex"
+#line 9509 "./tex4ht-c.tex"
 
 new_font.design_pt = ( INTEGER) fget_int(font_file,4); 
 
@@ -9463,7 +9463,7 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
 
 
    
-#line 9519 "./tex4ht-c.tex"
+#line 9521 "./tex4ht-c.tex"
 
 {      U_CHAR *ch, *hidp;
        int i;
@@ -9483,7 +9483,7 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
 
 
    
-#line 9574 "./tex4ht-c.tex"
+#line 9576 "./tex4ht-c.tex"
 
 {       INTEGER *p;         
             int  i;
@@ -9494,7 +9494,7 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
 
 
    
-#line 9610 "./tex4ht-c.tex"
+#line 9612 "./tex4ht-c.tex"
 
 {       INTEGER *p;         
             int  i;
@@ -9504,7 +9504,7 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
 }  }
 
 
-#line 9634 "./tex4ht-c.tex"
+#line 9636 "./tex4ht-c.tex"
 
 {       INTEGER *p;         
             int  i;
@@ -9516,7 +9516,7 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
 
    
    
-#line 9657 "./tex4ht-c.tex"
+#line 9659 "./tex4ht-c.tex"
 
                                                    
 (IGNORED) fseek(font_file, (long) (it_correction_table_length * 4),
@@ -9528,7 +9528,7 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
 
 
    
-#line 9667 "./tex4ht-c.tex"
+#line 9669 "./tex4ht-c.tex"
 
 (IGNORED) fseek(font_file, (long) (lig_kern_table_length * 4),
              
@@ -9539,7 +9539,7 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
 
 
    
-#line 9676 "./tex4ht-c.tex"
+#line 9678 "./tex4ht-c.tex"
 
                           
 (IGNORED) fseek(font_file, (long) (kern_table_length * 4),
@@ -9551,7 +9551,7 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
 
 
    
-#line 9686 "./tex4ht-c.tex"
+#line 9688 "./tex4ht-c.tex"
 
 (IGNORED) fseek(font_file, (long) (extensible_char_table_length * 4),
              
@@ -9562,20 +9562,20 @@ new_font.design_pt = ( INTEGER) fget_int(font_file,4);
 
 
    
-#line 9701 "./tex4ht-c.tex"
+#line 9703 "./tex4ht-c.tex"
 
 
-#line 9716 "./tex4ht-c.tex"
+#line 9718 "./tex4ht-c.tex"
 
 new_font.it = ( INTEGER) fget_int(font_file,4);
 
              
 
-#line 9722 "./tex4ht-c.tex"
+#line 9724 "./tex4ht-c.tex"
 
 new_font.word_sp = ( INTEGER) fget_int(font_file,4);
 
-#line 9750 "./tex4ht-c.tex"
+#line 9752 "./tex4ht-c.tex"
 
 if( new_font.word_sp == 0 ) {
         int i;
@@ -9592,7 +9592,7 @@ if( new_font.word_sp == 0 )  new_font.word_sp = MARGINSP;
 
 
 
-#line 9766 "./tex4ht-c.tex"
+#line 9768 "./tex4ht-c.tex"
 
 (IGNORED) fseek(font_file, 4L, 
 #line 2177 "./tex4ht-c.tex"
@@ -9602,7 +9602,7 @@ if( new_font.word_sp == 0 )  new_font.word_sp = MARGINSP;
 
 
 
-#line 9770 "./tex4ht-c.tex"
+#line 9772 "./tex4ht-c.tex"
 
 (IGNORED) fseek(font_file, 4L, 
 #line 2177 "./tex4ht-c.tex"
@@ -9612,24 +9612,24 @@ if( new_font.word_sp == 0 )  new_font.word_sp = MARGINSP;
 
 
 
-#line 9159 "./tex4ht-c.tex"
+#line 9161 "./tex4ht-c.tex"
 
 new_font.ex = 450000;
 
 
-#line 9776 "./tex4ht-c.tex"
+#line 9778 "./tex4ht-c.tex"
 
 new_font.ex = (INTEGER) fget_int(font_file,4);
 
 
 
-#line 9782 "./tex4ht-c.tex"
+#line 9784 "./tex4ht-c.tex"
 
 
 
 
 
-#line 9788 "./tex4ht-c.tex"
+#line 9790 "./tex4ht-c.tex"
 
 
 
@@ -9647,7 +9647,7 @@ new_font_name[font_name_n] = '\0';
 new_font.name = m_alloc(char, font_name_n + 1);
 (IGNORED) strcpy((char *)  new_font.name, (char *) new_font_name );
 
-#line 8779 "./tex4ht-c.tex"
+#line 8781 "./tex4ht-c.tex"
 
 {    int n, i;
    for( n=0; n<font_name_n; n++ ){
@@ -9656,7 +9656,7 @@ new_font.name = m_alloc(char, font_name_n + 1);
      }
    }
    
-#line 8801 "./tex4ht-c.tex"
+#line 8803 "./tex4ht-c.tex"
 
 {                       int m;
    for( m=n; m<font_name_n; m++ ){
@@ -9680,7 +9680,7 @@ new_font.name = m_alloc(char, font_name_n + 1);
 
 
 
-#line 8766 "./tex4ht-c.tex"
+#line 8768 "./tex4ht-c.tex"
 
 new_font.mag = new_font.scale / (new_font.design_sz / 100);
 
@@ -9691,12 +9691,12 @@ new_font.mag = new_font.scale / (new_font.design_sz / 100);
 
    }
    
-#line 9992 "./tex4ht-c.tex"
+#line 9994 "./tex4ht-c.tex"
 
 {      U_CHAR str[256];
        int i, design_n, n_gif;
        
-#line 10087 "./tex4ht-c.tex"
+#line 10089 "./tex4ht-c.tex"
 
 int loopBound = 0;
 U_CHAR loopName[256];
@@ -9706,14 +9706,14 @@ loopName[0] = '\0';
    n_gif = new_font.char_l - new_font.char_f + 1;
    new_font.ch255 = 0;
    
-#line 10022 "./tex4ht-c.tex"
+#line 10024 "./tex4ht-c.tex"
 
 {     int n_gif_bytes;
    n_gif_bytes = (n_gif + 7) / 8;
    new_font.gif_on = m_alloc(char, n_gif_bytes );
    new_font.ch_str = m_alloc(char, n_gif_bytes );
    
-#line 12766 "./tex4ht-c.tex"
+#line 12768 "./tex4ht-c.tex"
 
 new_font.math_closing = m_alloc(char, n_gif_bytes );
 new_font.math = m_alloc(char, n_gif );
@@ -9721,7 +9721,7 @@ new_font.math = m_alloc(char, n_gif );
 
    for( i=n_gif_bytes; i--; ) {
      
-#line 12772 "./tex4ht-c.tex"
+#line 12774 "./tex4ht-c.tex"
 
 new_font.math_closing[i] =
 
@@ -9730,7 +9730,7 @@ new_font.math_closing[i] =
    new_font.gif1 = m_alloc(unsigned char, n_gif );
    for( i=n_gif; i--; ) {
        
-#line 12776 "./tex4ht-c.tex"
+#line 12778 "./tex4ht-c.tex"
 
 new_font.math[i] =
 
@@ -9739,7 +9739,7 @@ new_font.math[i] =
 
 
    
-#line 12076 "./tex4ht-c.tex"
+#line 12078 "./tex4ht-c.tex"
 
 new_font.accent = m_alloc(unsigned char, n_gif );
 new_font.accented = m_alloc(unsigned char, n_gif );
@@ -9753,7 +9753,7 @@ for( i=n_gif; i--; ) {
 
    new_font.ch = m_alloc(unsigned char, n_gif );
    
-#line 10037 "./tex4ht-c.tex"
+#line 10039 "./tex4ht-c.tex"
 
 for( i = new_font.char_f; i <= new_font.char_l ; i++ ){
   new_font.ch[i - new_font.char_f] =
@@ -9765,13 +9765,13 @@ for( i = new_font.char_f; i <= new_font.char_l ; i++ ){
    new_font.str[0] = &null_str;
    design_n = 0;
       
-#line 10051 "./tex4ht-c.tex"
+#line 10053 "./tex4ht-c.tex"
 
 {  char search_font_name [256];
   (IGNORED) strcpy((char *) search_font_name, (char *) new_font.name);
   while( 1 ){                         BOOL flag;
      
-#line 10093 "./tex4ht-c.tex"
+#line 10095 "./tex4ht-c.tex"
 
 if( eq_str( new_font_name, loopName) ){
      U_CHAR name[256];
@@ -9793,16 +9793,16 @@ if( loopBound > 10 ){
                                            int   char_f, char_l;
        new_font_name[font_name_n] = '\0';
        
-#line 13826 "./tex4ht-c.tex"
+#line 13828 "./tex4ht-c.tex"
 
 {                              U_CHAR name[256];
    (IGNORED) sprintf(name, "%s.htf", new_font_name);
    
-#line 13835 "./tex4ht-c.tex"
+#line 13837 "./tex4ht-c.tex"
 
    file = NULL;
    
-#line 13903 "./tex4ht-c.tex"
+#line 13905 "./tex4ht-c.tex"
 
 {
                                struct htf_com_rec *p;
@@ -9828,7 +9828,7 @@ if( loopBound > 10 ){
                                                READ_TEXT_FLAGS, htf_dirs);
 #endif
       
-#line 15071 "./tex4ht-c.tex"
+#line 15073 "./tex4ht-c.tex"
 
 
 #ifdef KPATHSEA
@@ -9836,12 +9836,12 @@ if( loopBound > 10 ){
      htfname= kpse_find_file (name, kpse_program_text_format, 0);
      if ( htfname ){
          
-#line 14727 "./tex4ht-c.tex"
+#line 14729 "./tex4ht-c.tex"
 
 {                    U_CHAR  * head, * tail, *p;
                      int n;
    
-#line 14737 "./tex4ht-c.tex"
+#line 14739 "./tex4ht-c.tex"
 
 n = (int) strlen((char *) htfname);
 tail = head = m_alloc(char, n+1);
@@ -9863,7 +9863,7 @@ while( n>11 ){
 
    htfname =  (U_CHAR *) 0;
    
-#line 14759 "./tex4ht-c.tex"
+#line 14761 "./tex4ht-c.tex"
 
 for( n = 0 ; (n < cardinality) && !htfname ; n++){
   p = tail;
@@ -9900,7 +9900,7 @@ for( n = 0 ; (n < cardinality) && !htfname ; n++){
 
 
    if( file ){ 
-#line 8825 "./tex4ht-c.tex"
+#line 8827 "./tex4ht-c.tex"
 
 if( (strlen((char *) new_font.family_name) +
      strlen((char *) new_font.font_size) + 4) == strlen((char *) name) ){
@@ -9917,7 +9917,7 @@ if( (strlen((char *) new_font.family_name) +
        if( file != NULL){
                                            INTEGER x_char_l;
          
-#line 10578 "./tex4ht-c.tex"
+#line 10580 "./tex4ht-c.tex"
 
 x_char_l =
       get_html_file_id(file, new_font.char_f, new_font.char_l, 19);
@@ -9930,7 +9930,7 @@ if( x_char_l != HTF_ALIAS) {
 
          if( x_char_l == HTF_ALIAS) {
            
-#line 10164 "./tex4ht-c.tex"
+#line 10166 "./tex4ht-c.tex"
 
 {                                 int chr;
   font_name_n=0;
@@ -9952,12 +9952,12 @@ if( x_char_l != HTF_ALIAS) {
            (IGNORED) fclose(file);  flag = FALSE; break;
          }
          
-#line 10281 "./tex4ht-c.tex"
+#line 10283 "./tex4ht-c.tex"
 
 if( char_f <= new_font.char_l ){      U_CHAR  del;
                                       int  j, n;
    
-#line 10295 "./tex4ht-c.tex"
+#line 10297 "./tex4ht-c.tex"
 
 while( char_f < new_font.char_f ){
   while( get_html_ch(file) != '\n' );
@@ -9968,14 +9968,14 @@ while( char_f < new_font.char_f ){
         - char_f + 1;
    for( i = char_f - new_font.char_f; i < n; i++ ){
       
-#line 10310 "./tex4ht-c.tex"
+#line 10312 "./tex4ht-c.tex"
 
 {      int indirect_ch, base=0, value=0, digit, ch1;
   indirect_ch = 0;
   del = get_html_ch(file);   j=0;
   while( (str[j++] = get_html_ch(file)) != del )
     { 
-#line 10344 "./tex4ht-c.tex"
+#line 10346 "./tex4ht-c.tex"
 
 if( (digit=str[j-1]) == '\\' )
   if( (indirect_ch = !indirect_ch) != 0) {
@@ -10013,7 +10013,7 @@ else if ( indirect_ch ){
      if( (ch < '0') || (ch > '9') ) break;
      ch1 = ch1 * 10 + ch - '0'; }
   
-#line 16478 "./tex4ht-c.tex"
+#line 16480 "./tex4ht-c.tex"
 
 if(
        (*str             == '&')
@@ -10034,7 +10034,7 @@ if(
     }
     if( !err ){
       
-#line 16516 "./tex4ht-c.tex"
+#line 16518 "./tex4ht-c.tex"
 
     int bottom, mid, top;
     BOOL found=FALSE;
@@ -10043,7 +10043,7 @@ while( !found ){
    mid = (bottom + top) / 2;
    if( value == htf_4hf[mid].ch ){
       
-#line 16502 "./tex4ht-c.tex"
+#line 16504 "./tex4ht-c.tex"
 
 if( htf_4hf[mid].type1 == ch1  ){
    ch1 = htf_4hf[mid].type2;
@@ -10072,7 +10072,7 @@ if( htf_4hf[mid].type1 == ch1  ){
   do{
     if( (ch = get_html_ch(file)) == del ){
       
-#line 12088 "./tex4ht-c.tex"
+#line 12090 "./tex4ht-c.tex"
 
 ch1 = 0;
 while( ((ch = (int) get_html_ch(file)) != del) ){
@@ -10092,7 +10092,7 @@ new_font.accent[i] = new_font.accent_N;
     do{
       if( (ch = get_html_ch(file)) == del ){
         
-#line 12102 "./tex4ht-c.tex"
+#line 12104 "./tex4ht-c.tex"
 
 ch1 = 0;
 while( ((ch = (int) get_html_ch(file)) != del) ){
@@ -10115,7 +10115,7 @@ new_font.accented[i] = new_font.accented_N;
 
 
       
-#line 10387 "./tex4ht-c.tex"
+#line 10389 "./tex4ht-c.tex"
 
 add_bit( new_font.ch_str, i, j!=2 );
 switch( j ){
@@ -10134,7 +10134,7 @@ switch( j ){
 
                      }
    
-#line 10301 "./tex4ht-c.tex"
+#line 10303 "./tex4ht-c.tex"
 
 while( char_l > new_font.char_l ){
   while( get_html_ch(file) != '\n' );
@@ -10145,14 +10145,14 @@ while( char_l > new_font.char_l ){
 
 
          
-#line 10589 "./tex4ht-c.tex"
+#line 10591 "./tex4ht-c.tex"
 
 (void) get_html_file_id(file, new_font.char_f, new_font.char_l, 18);
 
 
          htf_to_lg(html_font,  new_font_name, fonts_n, file);
          
-#line 10497 "./tex4ht-c.tex"
+#line 10499 "./tex4ht-c.tex"
 
 if( dump_htf_files ){
    dump_htf_files++;  dump_htf( file );  dump_htf_files--;
@@ -10170,7 +10170,7 @@ if( dump_htf_files ){
                "%d--%d)\n", new_font.char_f, new_font.char_l);
      dump_env();
   } else { 
-#line 10503 "./tex4ht-c.tex"
+#line 10505 "./tex4ht-c.tex"
 
 if( dump_env_files ){ dump_env(); }
 
@@ -10181,7 +10181,7 @@ if( dump_env_files ){ dump_env(); }
    new_font.str = (unsigned U_CHAR **) r_alloc((void *)   new_font.str,
                      (size_t) ( (design_n?design_n:1) * sizeof(char *)) );
    
-#line 10229 "./tex4ht-c.tex"
+#line 10231 "./tex4ht-c.tex"
 
 for( i = fonts_n; i--; )
   if( eq_str(html_font[i].name, new_font_name) ){       int k;
@@ -10192,7 +10192,7 @@ for( i = fonts_n; i--; )
      free((void *)  new_font.ch_str );
                                new_font.ch_str = font_tbl[ k ].ch_str;
      
-#line 12780 "./tex4ht-c.tex"
+#line 12782 "./tex4ht-c.tex"
 
 free((void *)  new_font.math_closing );
            new_font.math_closing = font_tbl[ k ].math_closing;
@@ -10202,7 +10202,7 @@ free((void *)  new_font.math );
 
      break;     }
 if( i < 0 ){ 
-#line 10244 "./tex4ht-c.tex"
+#line 10246 "./tex4ht-c.tex"
 
 html_font = fonts_n? (struct html_font_rec *) r_alloc((void *) html_font,
                  (size_t) ((fonts_n+1) * sizeof(struct html_font_rec) ))
@@ -10219,7 +10219,7 @@ fonts_n++;
 
 
    
-#line 11873 "./tex4ht-c.tex"
+#line 11875 "./tex4ht-c.tex"
 
 {    static struct css_ext_rec * search_css_ext;
   for( search_css_ext = css_ext;
@@ -10232,17 +10232,17 @@ fonts_n++;
                                                FILE* file;
        css_file_name[css_name_n] = '\0';
        
-#line 11890 "./tex4ht-c.tex"
+#line 11892 "./tex4ht-c.tex"
 
 {                              U_CHAR name[256];
    (IGNORED) sprintf(name, "%s.%s", css_file_name,
                                     search_css_ext->name);
    
-#line 13835 "./tex4ht-c.tex"
+#line 13837 "./tex4ht-c.tex"
 
    file = NULL;
    
-#line 13903 "./tex4ht-c.tex"
+#line 13905 "./tex4ht-c.tex"
 
 {
                                struct htf_com_rec *p;
@@ -10268,7 +10268,7 @@ fonts_n++;
                                                READ_TEXT_FLAGS, htf_dirs);
 #endif
       
-#line 15071 "./tex4ht-c.tex"
+#line 15073 "./tex4ht-c.tex"
 
 
 #ifdef KPATHSEA
@@ -10276,12 +10276,12 @@ fonts_n++;
      htfname= kpse_find_file (name, kpse_program_text_format, 0);
      if ( htfname ){
          
-#line 14727 "./tex4ht-c.tex"
+#line 14729 "./tex4ht-c.tex"
 
 {                    U_CHAR  * head, * tail, *p;
                      int n;
    
-#line 14737 "./tex4ht-c.tex"
+#line 14739 "./tex4ht-c.tex"
 
 n = (int) strlen((char *) htfname);
 tail = head = m_alloc(char, n+1);
@@ -10303,7 +10303,7 @@ while( n>11 ){
 
    htfname =  (U_CHAR *) 0;
    
-#line 14759 "./tex4ht-c.tex"
+#line 14761 "./tex4ht-c.tex"
 
 for( n = 0 ; (n < cardinality) && !htfname ; n++){
   p = tail;
@@ -10341,10 +10341,10 @@ for( n = 0 ; (n < cardinality) && !htfname ; n++){
 
     if( file != NULL ){
       
-#line 11911 "./tex4ht-c.tex"
+#line 11913 "./tex4ht-c.tex"
 
 
-#line 11959 "./tex4ht-c.tex"
+#line 11961 "./tex4ht-c.tex"
 
 BOOL is_visited = FALSE;
 struct visited_file_rec * v = visited_file;
@@ -10358,7 +10358,7 @@ while( v != (struct visited_file_rec *) 0 ){
 
 if( !is_visited ){
   
-#line 11951 "./tex4ht-c.tex"
+#line 11953 "./tex4ht-c.tex"
 
 struct visited_file_rec * v =  m_alloc(struct visited_file_rec, 1);
 v->name = m_alloc(char,  (int) strlen((char *)  name ) + 1 );
@@ -10401,7 +10401,7 @@ visited_file = v;
 
    }
    
-#line 11941 "./tex4ht-c.tex"
+#line 11943 "./tex4ht-c.tex"
 
 while( visited_file != (struct visited_file_rec *) 0 ){
   struct visited_file_rec * v = visited_file;
@@ -10411,7 +10411,7 @@ while( visited_file != (struct visited_file_rec *) 0 ){
 }
 
 
-#line 14696 "./tex4ht-c.tex"
+#line 14698 "./tex4ht-c.tex"
 
 
 #ifdef KPATHSEA
@@ -10422,7 +10422,7 @@ if( export_str_chars ){
 #endif
 
 
-#line 16409 "./tex4ht-c.tex"
+#line 16411 "./tex4ht-c.tex"
 
 for( i = 0; i<htf_4hf_n; i++){
    free((void *) htf_4hf[i].str);
@@ -10433,19 +10433,19 @@ free((void *) htf_4hf);
    if( missing_fonts ) err_i(14);
 #ifndef KPATHSEA
    
-#line 14340 "./tex4ht-c.tex"
+#line 14342 "./tex4ht-c.tex"
 
 if( cache_files != (FILE *) 0 ){  (IGNORED) fclose(cache_files); }
 
 
    
-#line 14103 "./tex4ht-c.tex"
+#line 14105 "./tex4ht-c.tex"
 
 if( tex4ht_fls ){
                FILE *in_file, *out_file;
                U_CHAR temp_file[256];
    
-#line 14124 "./tex4ht-c.tex"
+#line 14126 "./tex4ht-c.tex"
 
 (IGNORED) strcpy((char *) temp_file, (char *) job_name);
 temp_file[job_name_n] = '\0';
@@ -10455,7 +10455,7 @@ temp_file[job_name_n-3] = 't';
 
 
    
-#line 14220 "./tex4ht-c.tex"
+#line 14222 "./tex4ht-c.tex"
 
 if( (out_file = fopen(temp_file, WRITE_TEXT_FLAGS)) == NULL )
 {   bad_in_file(temp_file);
@@ -10476,7 +10476,7 @@ if( (out_file = fopen(temp_file, WRITE_TEXT_FLAGS)) == NULL )
    } else {
       if( (in_file = fopen(temp_file, READ_TEXT_FLAGS)) != NULL ){
         
-#line 14236 "./tex4ht-c.tex"
+#line 14238 "./tex4ht-c.tex"
 
               U_CHAR dir[255], prev_dir[255], file[255], *p;
               int ch;
@@ -10496,12 +10496,12 @@ while( ch != EOF ){
    *p = '\0';
    if( is_dir && (dir[0] != '\0') ){
       
-#line 14266 "./tex4ht-c.tex"
+#line 14268 "./tex4ht-c.tex"
 
 while( cur_cache_font != (struct cache_font_rec *)0 ){
  if( gt_str(dir,cur_cache_font->dir) ){
     
-#line 14276 "./tex4ht-c.tex"
+#line 14278 "./tex4ht-c.tex"
 
 file_rec = cur_cache_font->cache_file;
 if( file_rec ){
@@ -10528,7 +10528,7 @@ if( file_rec ){
       (IGNORED) strcpy((char *) prev_dir, (char *) dir);
    } else if( !is_dir && (file[0] != '\0') ){
       
-#line 14296 "./tex4ht-c.tex"
+#line 14298 "./tex4ht-c.tex"
 
 if( cur_cache_font != (struct cache_font_rec *)0 ){
  if( eq_str(dir,cur_cache_font->dir) ){
@@ -10551,11 +10551,11 @@ if( cur_cache_font != (struct cache_font_rec *)0 ){
    }
 }
 
-#line 14316 "./tex4ht-c.tex"
+#line 14318 "./tex4ht-c.tex"
 
 while( cur_cache_font != (struct cache_font_rec *)0 ){
    
-#line 14276 "./tex4ht-c.tex"
+#line 14278 "./tex4ht-c.tex"
 
 file_rec = cur_cache_font->cache_file;
 if( file_rec ){
@@ -10587,7 +10587,7 @@ if( file_rec ){
 
 #endif
    
-#line 10263 "./tex4ht-c.tex"
+#line 10265 "./tex4ht-c.tex"
 
 if( html_font ){
   while( fonts_n-- )  free((void *)  html_font[fonts_n].name);
@@ -10595,7 +10595,7 @@ if( html_font ){
 }
 
 
-#line 13714 "./tex4ht-c.tex"
+#line 13716 "./tex4ht-c.tex"
 
 while( (cur_cache_font = cache_font) != (struct cache_font_rec *)0 ){
    cache_font = cache_font->next;
@@ -10618,7 +10618,7 @@ while( (cur_cache_font = cache_font) != (struct cache_font_rec *)0 ){
 );
 ch = get_noop();
 if( ch != 
-#line 17473 "./tex4ht-c.tex"
+#line 17475 "./tex4ht-c.tex"
 
 247 
  )   bad_dvi;
@@ -10644,14 +10644,14 @@ y_val = max_y_val = prev_y_val = dy_1 = dy_2 = 0;
 
 
     if( get_noop() != 
-#line 17318 "./tex4ht-c.tex"
+#line 17320 "./tex4ht-c.tex"
 
 139 
  )  bad_dvi;
     for( i = 1; i<45; i++ )
       if( get_char() == EOF )   bad_dvi;
     while( (ch = get_char()) != 
-#line 17321 "./tex4ht-c.tex"
+#line 17323 "./tex4ht-c.tex"
 
 140 
  ){
@@ -10661,119 +10661,119 @@ y_val = max_y_val = prev_y_val = dy_1 = dy_2 = 0;
 {       register int ch_1;
    ch_1 = ch;
    
-#line 6460 "./tex4ht-c.tex"
+#line 6462 "./tex4ht-c.tex"
 
 if( stack[stack_n].halign_on )
 {
    switch( ch ){
        case                
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
 : { ; }
        case                
-#line 17375 "./tex4ht-c.tex"
+#line 17377 "./tex4ht-c.tex"
 
 158 
 : { ; }
        case                
-#line 17378 "./tex4ht-c.tex"
+#line 17380 "./tex4ht-c.tex"
 
 159 
 : { ; }
        case                
-#line 17381 "./tex4ht-c.tex"
+#line 17383 "./tex4ht-c.tex"
 
 160 
 : { ; }
        case             
-#line 17384 "./tex4ht-c.tex"
+#line 17386 "./tex4ht-c.tex"
 
 161 
 : { ; }
        case 
-#line 17387 "./tex4ht-c.tex"
+#line 17389 "./tex4ht-c.tex"
 
 162 
 : { ; }
        case 
-#line 17390 "./tex4ht-c.tex"
+#line 17392 "./tex4ht-c.tex"
 
 163  
 : { ; }
        case 
-#line 17393 "./tex4ht-c.tex"
+#line 17395 "./tex4ht-c.tex"
 
 164 
 : { ; }
        case 
-#line 17396 "./tex4ht-c.tex"
+#line 17398 "./tex4ht-c.tex"
 
 165 
 : { ; }
        case             
-#line 17399 "./tex4ht-c.tex"
+#line 17401 "./tex4ht-c.tex"
 
 166  
 : { ; }
        case 
-#line 17402 "./tex4ht-c.tex"
+#line 17404 "./tex4ht-c.tex"
 
 167 
 : { ; }
        case 
-#line 17405 "./tex4ht-c.tex"
+#line 17407 "./tex4ht-c.tex"
 
 168 
 : { ; }
        case 
-#line 17408 "./tex4ht-c.tex"
+#line 17410 "./tex4ht-c.tex"
 
 169 
 : { ; }
        case 
-#line 17411 "./tex4ht-c.tex"
+#line 17413 "./tex4ht-c.tex"
 
 170 
 : { ; }
        case        
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 : { ; }
        case      
-#line 17312 "./tex4ht-c.tex"
+#line 17314 "./tex4ht-c.tex"
 
 137 
 : { ; }
        case                  
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
 : { ; }
        case                 
-#line 17430 "./tex4ht-c.tex"
+#line 17432 "./tex4ht-c.tex"
 
 236  
 : { ; }
        case                 
-#line 17433 "./tex4ht-c.tex"
+#line 17435 "./tex4ht-c.tex"
 
 237  
 : { ; }
        case                     
-#line 17436 "./tex4ht-c.tex"
+#line 17438 "./tex4ht-c.tex"
 
 238  
 : { ; }
        case                    
-#line 17324 "./tex4ht-c.tex"
+#line 17326 "./tex4ht-c.tex"
 
 141 
 :
                                               { break; }
      default: { 
-#line 6496 "./tex4ht-c.tex"
+#line 6498 "./tex4ht-c.tex"
 
 print_f( stack[stack_n].halign[1]->str );
 stack[stack_n].halign_on = FALSE;
@@ -10786,7 +10786,7 @@ stack[stack_n].halign_on = FALSE;
 #line 3197 "./tex4ht-c.tex"
 
 if( (ch > 127) && (ch < 137) && (ch != 
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 ) ){
@@ -10795,12 +10795,12 @@ if( (ch > 127) && (ch < 137) && (ch !=
 
 
    
-#line 7653 "./tex4ht-c.tex"
+#line 7655 "./tex4ht-c.tex"
 
 if( group_dvi ){
   if( ( ch < 132 ) ||
       ( (ch > 127) && (ch < 137) && (ch != 
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
  ) )
@@ -10815,7 +10815,7 @@ if( group_dvi ){
 
 if( trace_dvi_C && !in_trace_char ){
    if( (ch < 137) && (ch != 
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 ) ){
@@ -10823,7 +10823,7 @@ if( trace_dvi_C && !in_trace_char ){
 } }
 else if ( in_trace_char ){
   if( !trace_dvi_C || (ch > 136) || (ch == 
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 ) ){
@@ -10837,7 +10837,7 @@ else if ( in_trace_char ){
 if( span_on && !in_span_ch  && !ignore_chs && !in_accenting
             && (default_font != font_tbl[cur_fnt].num) ){
   if(  (ch < 137) && (ch != 
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 ) ){
@@ -10846,17 +10846,17 @@ if( span_on && !in_span_ch  && !ignore_chs && !in_accenting
 else if ( in_span_ch ){
   if( !span_on ||
      (ch == 
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 ) ||
      ((136 < ch) && (ch < 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
 )) ||
      (ch > 
-#line 17369 "./tex4ht-c.tex"
+#line 17371 "./tex4ht-c.tex"
 
 156 
 )
@@ -10875,11 +10875,11 @@ if( no_root_file ){  open_o_file(); }
 
 
    
-#line 12210 "./tex4ht-c.tex"
+#line 12212 "./tex4ht-c.tex"
 
 if( in_accenting ){
   
-#line 12242 "./tex4ht-c.tex"
+#line 12244 "./tex4ht-c.tex"
 
                                                long int width;
 if( i_accent_template ){
@@ -10887,25 +10887,25 @@ if( i_accent_template ){
 needs_end_accent = (needs_accent_sym == 2 * TRUE);
 if( needs_end_accent && t_accent_template )
 {  
-#line 12199 "./tex4ht-c.tex"
+#line 12201 "./tex4ht-c.tex"
 
 needs_accented_sym++;
 
  }
 else if( m_accent_template )
 {  
-#line 12199 "./tex4ht-c.tex"
+#line 12201 "./tex4ht-c.tex"
 
 needs_accented_sym++;
 
   stack[stack_n-1].accented = TRUE; }
 needs_accent_sym = FALSE;
 width = (INTEGER)( 
-#line 9835 "./tex4ht-c.tex"
+#line 9837 "./tex4ht-c.tex"
 
 design_size_to_pt( *(font_tbl[cur_fnt].wtbl
                      +  (int) (
-#line 9843 "./tex4ht-c.tex"
+#line 9845 "./tex4ht-c.tex"
 
 *(font_tbl[cur_fnt].char_wi +  (int)
    ( ch - font_tbl[cur_fnt].char_f)% 256)
@@ -10920,7 +10920,7 @@ in_accenting = FALSE;
 
 
 } else if( 
-#line 12267 "./tex4ht-c.tex"
+#line 12269 "./tex4ht-c.tex"
 
 needs_accent_sym && (ch < 128)
 
@@ -10954,7 +10954,7 @@ needs_accent_sym && (ch < 128)
 
    if( ch < 132 )  {
       x_val += math_class_on? 
-#line 12649 "./tex4ht-c.tex"
+#line 12651 "./tex4ht-c.tex"
 
 set_ch_class(ch_1)
 
@@ -10965,7 +10965,7 @@ set_ch_class(ch_1)
       case 133: case 134: case 135: case 136: {
            INTEGER w;
          w = math_class_on?  
-#line 12649 "./tex4ht-c.tex"
+#line 12651 "./tex4ht-c.tex"
 
 set_ch_class(ch_1)
 
@@ -10977,28 +10977,28 @@ set_ch_class(ch_1)
 #line 3036 "./tex4ht-c.tex"
 
 case 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
 : {;}
 case 
-#line 17333 "./tex4ht-c.tex"
+#line 17335 "./tex4ht-c.tex"
 
 144 
 : {;}
 case 
-#line 17336 "./tex4ht-c.tex"
+#line 17338 "./tex4ht-c.tex"
 
 145 
 : {;}
 case 
-#line 17339 "./tex4ht-c.tex"
+#line 17341 "./tex4ht-c.tex"
 
 146 
 : {
    try_new_line();
    (void) move_x((INTEGER) get_int(ch - 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
  + 1 ));
@@ -11008,34 +11008,34 @@ case
 #line 3046 "./tex4ht-c.tex"
 
 case 
-#line 17342 "./tex4ht-c.tex"
+#line 17344 "./tex4ht-c.tex"
 
 147 
 : {
    (void) move_x( dx_1 ); break; }
 case 
-#line 17345 "./tex4ht-c.tex"
+#line 17347 "./tex4ht-c.tex"
 
 148 
 : {;}
 case 
-#line 17348 "./tex4ht-c.tex"
+#line 17350 "./tex4ht-c.tex"
 
 149 
 : {;}
 case 
-#line 17351 "./tex4ht-c.tex"
+#line 17353 "./tex4ht-c.tex"
 
 150 
 : {;}
 case 
-#line 17354 "./tex4ht-c.tex"
+#line 17356 "./tex4ht-c.tex"
 
 151 
 : {
    try_new_line();
    dx_1 = move_x((INTEGER) get_int(ch - 
-#line 17342 "./tex4ht-c.tex"
+#line 17344 "./tex4ht-c.tex"
 
 147 
  ));
@@ -11045,34 +11045,34 @@ case
 #line 3058 "./tex4ht-c.tex"
 
 case 
-#line 17357 "./tex4ht-c.tex"
+#line 17359 "./tex4ht-c.tex"
 
 152 
 : {
    (void) move_x( dx_2 ); break; }
 case 
-#line 17360 "./tex4ht-c.tex"
+#line 17362 "./tex4ht-c.tex"
 
 153  
 : {;}
 case 
-#line 17363 "./tex4ht-c.tex"
+#line 17365 "./tex4ht-c.tex"
 
 154  
 : {;}
 case 
-#line 17366 "./tex4ht-c.tex"
+#line 17368 "./tex4ht-c.tex"
 
 155 
 : {;}
 case 
-#line 17369 "./tex4ht-c.tex"
+#line 17371 "./tex4ht-c.tex"
 
 156 
 : {
    try_new_line();
    dx_2 = move_x((INTEGER) get_int(ch - 
-#line 17357 "./tex4ht-c.tex"
+#line 17359 "./tex4ht-c.tex"
 
 152 
  ));
@@ -11082,27 +11082,27 @@ case
 #line 3143 "./tex4ht-c.tex"
 
 case 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
 : {;}
 case 
-#line 17375 "./tex4ht-c.tex"
+#line 17377 "./tex4ht-c.tex"
 
 158 
 : {;}
 case 
-#line 17378 "./tex4ht-c.tex"
+#line 17380 "./tex4ht-c.tex"
 
 159 
 : {;}
 case 
-#line 17381 "./tex4ht-c.tex"
+#line 17383 "./tex4ht-c.tex"
 
 160 
 : {
   (void) move_y( (INTEGER) get_int(ch - 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
  + 1 ));
@@ -11112,32 +11112,32 @@ case
 #line 3152 "./tex4ht-c.tex"
 
 case 
-#line 17384 "./tex4ht-c.tex"
+#line 17386 "./tex4ht-c.tex"
 
 161 
 : { (void) move_y( dy_1 );   break; }
 case 
-#line 17387 "./tex4ht-c.tex"
+#line 17389 "./tex4ht-c.tex"
 
 162 
 : {;}
 case 
-#line 17390 "./tex4ht-c.tex"
+#line 17392 "./tex4ht-c.tex"
 
 163  
 : {;}
 case 
-#line 17393 "./tex4ht-c.tex"
+#line 17395 "./tex4ht-c.tex"
 
 164 
 : {;}
 case 
-#line 17396 "./tex4ht-c.tex"
+#line 17398 "./tex4ht-c.tex"
 
 165 
 : {
   dy_1 = move_y( (INTEGER) get_int(ch - 
-#line 17384 "./tex4ht-c.tex"
+#line 17386 "./tex4ht-c.tex"
 
 161 
  ));
@@ -11147,32 +11147,32 @@ case
 #line 3162 "./tex4ht-c.tex"
 
 case 
-#line 17399 "./tex4ht-c.tex"
+#line 17401 "./tex4ht-c.tex"
 
 166  
 : { (void) move_y( dy_2 );   break; }
 case 
-#line 17402 "./tex4ht-c.tex"
+#line 17404 "./tex4ht-c.tex"
 
 167 
 : {;}
 case 
-#line 17405 "./tex4ht-c.tex"
+#line 17407 "./tex4ht-c.tex"
 
 168 
 : {;}
 case 
-#line 17408 "./tex4ht-c.tex"
+#line 17410 "./tex4ht-c.tex"
 
 169 
 : {;}
 case 
-#line 17411 "./tex4ht-c.tex"
+#line 17413 "./tex4ht-c.tex"
 
 170 
 : {
   dy_2 = move_y( (INTEGER) get_int(ch - 
-#line 17399 "./tex4ht-c.tex"
+#line 17401 "./tex4ht-c.tex"
 
 166  
  ));
@@ -11182,14 +11182,14 @@ case
 #line 3586 "./tex4ht-c.tex"
 
 case 
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 : {
    (void) rule_x( TRUE );   break;
 }
 case 
-#line 17312 "./tex4ht-c.tex"
+#line 17314 "./tex4ht-c.tex"
 
 137 
 : {
@@ -11203,22 +11203,22 @@ case
 #line 3764 "./tex4ht-c.tex"
 
 case 
-#line 17458 "./tex4ht-c.tex"
+#line 17460 "./tex4ht-c.tex"
 
 246 
 :   (void) get_char();
 case 
-#line 17455 "./tex4ht-c.tex"
+#line 17457 "./tex4ht-c.tex"
 
 245 
 :   (void) get_char();
 case 
-#line 17452 "./tex4ht-c.tex"
+#line 17454 "./tex4ht-c.tex"
 
 244 
 :   (void) get_char();
 case 
-#line 17449 "./tex4ht-c.tex"
+#line 17451 "./tex4ht-c.tex"
 
 243 
 : {
@@ -11233,7 +11233,7 @@ case
 #line 3776 "./tex4ht-c.tex"
 
 case 
-#line 17488 "./tex4ht-c.tex"
+#line 17490 "./tex4ht-c.tex"
 
 252
 
@@ -11245,7 +11245,7 @@ case
 
  ){
      
-#line 9228 "./tex4ht-c.tex"
+#line 9230 "./tex4ht-c.tex"
 
         unsigned short flags;
 for( i=0; i<8; i++ ){ ch = get_char(); }
@@ -11256,13 +11256,13 @@ for( i = (INTEGER) get_unt(1)
     ; i>0
     ; i-- ){ ch = get_char(); }
 if( flags & 
-#line 8953 "./tex4ht-c.tex"
+#line 8955 "./tex4ht-c.tex"
 
 0x0200
 
  ){ (void) get_unt(4); }
 if( flags & 
-#line 8957 "./tex4ht-c.tex"
+#line 8959 "./tex4ht-c.tex"
 
 0x0800
 
@@ -11280,7 +11280,7 @@ if( flags &
       break;
    }
 case 
-#line 17494 "./tex4ht-c.tex"
+#line 17496 "./tex4ht-c.tex"
 
 253
 
@@ -11292,7 +11292,7 @@ case
 
  ){
      
-#line 9251 "./tex4ht-c.tex"
+#line 9253 "./tex4ht-c.tex"
 
 doGlyphArray(TRUE);
 
@@ -11300,7 +11300,7 @@ doGlyphArray(TRUE);
       break;
    }
 case 
-#line 17499 "./tex4ht-c.tex"
+#line 17501 "./tex4ht-c.tex"
 
 254
 
@@ -11312,7 +11312,7 @@ case
 
  ){
      
-#line 9256 "./tex4ht-c.tex"
+#line 9258 "./tex4ht-c.tex"
 
 doGlyphArray(FALSE);
 
@@ -11325,26 +11325,26 @@ doGlyphArray(FALSE);
 
 default: {
   if( (ch < 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ) || (ch > 
-#line 17421 "./tex4ht-c.tex"
+#line 17423 "./tex4ht-c.tex"
 
 234  
 ) ) {
      bad_char(ch);
   } else { cur_fnt = ch - 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ;
          
-#line 9307 "./tex4ht-c.tex"
+#line 9309 "./tex4ht-c.tex"
 
 cur_fnt = search_font_tbl( cur_fnt );
 word_sp = 
-#line 9909 "./tex4ht-c.tex"
+#line 9911 "./tex4ht-c.tex"
 
 design_size_to_pt( font_tbl[cur_fnt].word_sp )
                    * (double) font_tbl[cur_fnt].scale
@@ -11359,38 +11359,38 @@ design_size_to_pt( font_tbl[cur_fnt].word_sp )
 #line 3805 "./tex4ht-c.tex"
 
 case 
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
  :
 case 
-#line 17430 "./tex4ht-c.tex"
+#line 17432 "./tex4ht-c.tex"
 
 236  
 :
 case 
-#line 17433 "./tex4ht-c.tex"
+#line 17435 "./tex4ht-c.tex"
 
 237  
 :
 case 
-#line 17436 "./tex4ht-c.tex"
+#line 17438 "./tex4ht-c.tex"
 
 238  
     : {
         INTEGER n;
    n = ch - 
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
  + 1;
    cur_fnt = (int)  ((n==4)? get_int(4) : get_unt((int) n));
    
-#line 9307 "./tex4ht-c.tex"
+#line 9309 "./tex4ht-c.tex"
 
 cur_fnt = search_font_tbl( cur_fnt );
 word_sp = 
-#line 9909 "./tex4ht-c.tex"
+#line 9911 "./tex4ht-c.tex"
 
 design_size_to_pt( font_tbl[cur_fnt].word_sp )
                    * (double) font_tbl[cur_fnt].scale
@@ -11404,22 +11404,22 @@ design_size_to_pt( font_tbl[cur_fnt].word_sp )
 #line 3841 "./tex4ht-c.tex"
 
 case 
-#line 17439 "./tex4ht-c.tex"
+#line 17441 "./tex4ht-c.tex"
 
 239 
 : {;}
 case 
-#line 17441 "./tex4ht-c.tex"
+#line 17443 "./tex4ht-c.tex"
 
 240 
 : {;}
 case 
-#line 17443 "./tex4ht-c.tex"
+#line 17445 "./tex4ht-c.tex"
 
 241 
 : {;}
 case 
-#line 17445 "./tex4ht-c.tex"
+#line 17447 "./tex4ht-c.tex"
 
 242 
 : {  
@@ -11427,7 +11427,7 @@ case
 
 long int special_n;
   
-#line 12279 "./tex4ht-c.tex"
+#line 12281 "./tex4ht-c.tex"
 
 if( needs_end_accent && t_accent_template ){
    
@@ -11448,7 +11448,7 @@ if( no_root_file ){  open_o_file(); }
 
    (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
-#line 12422 "./tex4ht-c.tex"
+#line 12424 "./tex4ht-c.tex"
 
 needs_accented_sym--;
 
@@ -11463,13 +11463,13 @@ needs_accented_sym--;
 try_new_line();
 switch( ch ){
   case '*': { 
-#line 4583 "./tex4ht-c.tex"
+#line 4585 "./tex4ht-c.tex"
 
 if( special_n ){
   special_n--;
   switch ( get_char() ){
     case '<': { 
-#line 4687 "./tex4ht-c.tex"
+#line 4689 "./tex4ht-c.tex"
 
     U_CHAR name[256];
     int i=0;
@@ -11496,13 +11496,13 @@ if( no_root_file ){  open_o_file(); }
 
 if( special_n > 0 ){
   
-#line 4502 "./tex4ht-c.tex"
+#line 4504 "./tex4ht-c.tex"
 
         static struct files_rec *p, *q;
         U_CHAR name[256];
         int i;
 
-#line 4512 "./tex4ht-c.tex"
+#line 4514 "./tex4ht-c.tex"
 
 i = 0;
 name[(int) special_n] = '\0';
@@ -11514,7 +11514,7 @@ for( p = opened_files; p != (struct files_rec*) 0;  p = p->next ){
 
 if( p != (struct files_rec*) 0 ){
   
-#line 4523 "./tex4ht-c.tex"
+#line 4525 "./tex4ht-c.tex"
 
 for( q = p; q->next != (struct files_rec*) 0;  q = q->next ){ }
 if( q != p ){
@@ -11532,16 +11532,16 @@ if( q != p ){
 
 } else {
   
-#line 4468 "./tex4ht-c.tex"
+#line 4470 "./tex4ht-c.tex"
 
 
-#line 4472 "./tex4ht-c.tex"
+#line 4474 "./tex4ht-c.tex"
 
         static struct files_rec *p, *q;
 for( p = opened_files; p != (struct files_rec*) 0;  p = p->next ){
   if( (p->file == cur_o_file) && p->prev_file ){
     
-#line 4484 "./tex4ht-c.tex"
+#line 4486 "./tex4ht-c.tex"
 
 for( q = opened_files; q != (struct files_rec*) 0;  q = q->next ){
   if( q->file == p->prev_file ){
@@ -11567,7 +11567,7 @@ if( q == (struct files_rec*) 0 ){
 
     break; }
     case '!': { 
-#line 4606 "./tex4ht-c.tex"
+#line 4608 "./tex4ht-c.tex"
 
               U_CHAR name[256], ch;
               int i=0, n;
@@ -11577,7 +11577,7 @@ name[(int) special_n] = '\0';
 while(  special_n-- > 0 ){  name[i++] = get_char(); }
 (IGNORED) printf("System call: %s\n", name);
 
-#line 4652 "./tex4ht-c.tex"
+#line 4654 "./tex4ht-c.tex"
 
 flag = FALSE;
 p = system_calls;
@@ -11600,13 +11600,13 @@ if( flag ){
 
     break; }
     case '^': { 
-#line 12153 "./tex4ht-c.tex"
+#line 12155 "./tex4ht-c.tex"
 
 special_n--;
 switch ( get_char() ){
   case 't': { if( special_n ){
                 
-#line 12315 "./tex4ht-c.tex"
+#line 12317 "./tex4ht-c.tex"
 
 (IGNORED) get_open_accent(&t_accent_template,
             &t_accent_first, &t_accent_second,
@@ -11615,7 +11615,7 @@ switch ( get_char() ){
 
 
               } else { 
-#line 12191 "./tex4ht-c.tex"
+#line 12193 "./tex4ht-c.tex"
 
 needs_accent_sym = TRUE * 2;
 
@@ -11624,7 +11624,7 @@ needs_accent_sym = TRUE * 2;
             }
   case 'm': { if( special_n ){
                 
-#line 12322 "./tex4ht-c.tex"
+#line 12324 "./tex4ht-c.tex"
 
 (IGNORED) get_open_accent(&m_accent_template,
             &m_accent_first, &m_accent_second,
@@ -11633,7 +11633,7 @@ needs_accent_sym = TRUE * 2;
 
 
               } else { 
-#line 12195 "./tex4ht-c.tex"
+#line 12197 "./tex4ht-c.tex"
 
 needs_accent_sym = TRUE;
 
@@ -11641,7 +11641,7 @@ needs_accent_sym = TRUE;
               break;
             }
   case 'a': { 
-#line 12426 "./tex4ht-c.tex"
+#line 12428 "./tex4ht-c.tex"
 
 (IGNORED) get_open_accent(&a_accent_template,
             &a_accent_first, &a_accent_second,
@@ -11652,7 +11652,7 @@ needs_accent_sym = TRUE;
               break;
             }
   case 'i': { 
-#line 12442 "./tex4ht-c.tex"
+#line 12444 "./tex4ht-c.tex"
 
 (IGNORED) get_open_accent(&i_accent_template,
             &i_accent_first, &i_accent_second,
@@ -11663,7 +11663,7 @@ needs_accent_sym = TRUE;
               break;
             }
    default: { 
-#line 17086 "./tex4ht-c.tex"
+#line 17088 "./tex4ht-c.tex"
 
 while( special_n-- )  (void) get_char();
 
@@ -11672,7 +11672,7 @@ while( special_n-- )  (void) get_char();
 
     break; }
     case '@': { 
-#line 6237 "./tex4ht-c.tex"
+#line 6239 "./tex4ht-c.tex"
 
                                 int i;
 i = 0;
@@ -11686,7 +11686,7 @@ switch ( get_char() ){
   case '3': { i++; }
   case '2': { i++; }
   case '1': { 
-#line 6311 "./tex4ht-c.tex"
+#line 6313 "./tex4ht-c.tex"
 
 if( halign[i]->refs == 1 ){
    free((void *) halign[i]->str );
@@ -11701,17 +11701,17 @@ special_n=0;
  break; }
   case '/': { if( special_n ){
                 
-#line 17086 "./tex4ht-c.tex"
+#line 17088 "./tex4ht-c.tex"
 
 while( special_n-- )  (void) get_char();
 
 
               } else { 
-#line 6490 "./tex4ht-c.tex"
+#line 6492 "./tex4ht-c.tex"
 
 if( stack[stack_n].halign_on )
 {  
-#line 6496 "./tex4ht-c.tex"
+#line 6498 "./tex4ht-c.tex"
 
 print_f( stack[stack_n].halign[1]->str );
 stack[stack_n].halign_on = FALSE;
@@ -11725,14 +11725,14 @@ stack[stack_n].halign_on = FALSE;
   case '@': { i++;
               if( special_n ){
                 
-#line 17086 "./tex4ht-c.tex"
+#line 17088 "./tex4ht-c.tex"
 
 while( special_n-- )  (void) get_char();
 
 
               } else {
                 
-#line 6368 "./tex4ht-c.tex"
+#line 6370 "./tex4ht-c.tex"
 
 new_halign = i * TRUE;
 
@@ -11741,7 +11741,7 @@ new_halign = i * TRUE;
               break;
             }
    default: { 
-#line 17086 "./tex4ht-c.tex"
+#line 17088 "./tex4ht-c.tex"
 
 while( special_n-- )  (void) get_char();
 
@@ -11814,14 +11814,14 @@ while( hcode_repl != (struct hcode_repl_typ*) 0 ){
 
     break; }
      default: { 
-#line 17086 "./tex4ht-c.tex"
+#line 17088 "./tex4ht-c.tex"
 
 while( special_n-- )  (void) get_char();
 
  }
   }
 } else { 
-#line 17091 "./tex4ht-c.tex"
+#line 17093 "./tex4ht-c.tex"
 
 ;
 
@@ -11912,13 +11912,13 @@ free((void *)  qq);
 
  }
       else { 
-#line 17086 "./tex4ht-c.tex"
+#line 17088 "./tex4ht-c.tex"
 
 while( special_n-- )  (void) get_char();
 
  }
    } else { 
-#line 17086 "./tex4ht-c.tex"
+#line 17088 "./tex4ht-c.tex"
 
 while( special_n-- )  (void) get_char();
 
@@ -11942,13 +11942,13 @@ while( special_n-- )  (void) get_char();
     break; }
   case '@': { verb_ch = !verb_ch;  break; }
   case '/': { 
-#line 17174 "./tex4ht-c.tex"
+#line 17176 "./tex4ht-c.tex"
 
 trace_special = !trace_special;
 
   break; }
   case 'e': { 
-#line 17151 "./tex4ht-c.tex"
+#line 17153 "./tex4ht-c.tex"
 
 if( err_mark ){ free((void *)  err_mark); }
 if( special_n ){
@@ -12000,25 +12000,25 @@ while( unhskip ){
   if( (ch = get_char()) >= 128 ) {
   switch( ch ){
     
-#line 7078 "./tex4ht-c.tex"
+#line 7080 "./tex4ht-c.tex"
 
 case 
-#line 17458 "./tex4ht-c.tex"
+#line 17460 "./tex4ht-c.tex"
 
 246 
 : (void) get_char();
 case 
-#line 17455 "./tex4ht-c.tex"
+#line 17457 "./tex4ht-c.tex"
 
 245 
 : (void) get_char();
 case 
-#line 17452 "./tex4ht-c.tex"
+#line 17454 "./tex4ht-c.tex"
 
 244 
 : (void) get_char();
 case 
-#line 17449 "./tex4ht-c.tex"
+#line 17451 "./tex4ht-c.tex"
 
 243 
 : {    int i;
@@ -12033,15 +12033,15 @@ case
 
 
     
-#line 7149 "./tex4ht-c.tex"
+#line 7151 "./tex4ht-c.tex"
 
 case 
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 :
 case 
-#line 17312 "./tex4ht-c.tex"
+#line 17314 "./tex4ht-c.tex"
 
 137 
 :{
@@ -12054,10 +12054,10 @@ case
 }
 
 
-#line 7157 "./tex4ht-c.tex"
+#line 7159 "./tex4ht-c.tex"
 
 case   
-#line 17318 "./tex4ht-c.tex"
+#line 17320 "./tex4ht-c.tex"
 
 139 
 : {
@@ -12068,180 +12068,180 @@ case
 );  break; }
 
 
-#line 7162 "./tex4ht-c.tex"
+#line 7164 "./tex4ht-c.tex"
 
 case 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
 : case 
-#line 17333 "./tex4ht-c.tex"
+#line 17335 "./tex4ht-c.tex"
 
 144 
 :
 case 
-#line 17336 "./tex4ht-c.tex"
+#line 17338 "./tex4ht-c.tex"
 
 145 
 : case 
-#line 17339 "./tex4ht-c.tex"
+#line 17341 "./tex4ht-c.tex"
 
 146 
 : {
     (IGNORED) (get_int( ch - 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
  + 1 ));  break; }
 case 
-#line 17345 "./tex4ht-c.tex"
+#line 17347 "./tex4ht-c.tex"
 
 148 
 :
 case 
-#line 17348 "./tex4ht-c.tex"
+#line 17350 "./tex4ht-c.tex"
 
 149 
 :
 case 
-#line 17351 "./tex4ht-c.tex"
+#line 17353 "./tex4ht-c.tex"
 
 150 
 :
 case 
-#line 17354 "./tex4ht-c.tex"
+#line 17356 "./tex4ht-c.tex"
 
 151 
 : {
     (IGNORED) (get_int( ch - 
-#line 17345 "./tex4ht-c.tex"
+#line 17347 "./tex4ht-c.tex"
 
 148 
  + 1));
     break;  }
 case 
-#line 17360 "./tex4ht-c.tex"
+#line 17362 "./tex4ht-c.tex"
 
 153  
 :
 case 
-#line 17363 "./tex4ht-c.tex"
+#line 17365 "./tex4ht-c.tex"
 
 154  
 :
 case 
-#line 17366 "./tex4ht-c.tex"
+#line 17368 "./tex4ht-c.tex"
 
 155 
 :
 case 
-#line 17369 "./tex4ht-c.tex"
+#line 17371 "./tex4ht-c.tex"
 
 156 
 : {
     (IGNORED) (get_int( ch - 
-#line 17360 "./tex4ht-c.tex"
+#line 17362 "./tex4ht-c.tex"
 
 153  
  + 1));
     break;  }
 case 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
 : case 
-#line 17375 "./tex4ht-c.tex"
+#line 17377 "./tex4ht-c.tex"
 
 158 
 :
 case 
-#line 17378 "./tex4ht-c.tex"
+#line 17380 "./tex4ht-c.tex"
 
 159 
 : case 
-#line 17381 "./tex4ht-c.tex"
+#line 17383 "./tex4ht-c.tex"
 
 160 
 : {
     (IGNORED) (get_int( ch - 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
  + 1));
     break; }
 case 
-#line 17387 "./tex4ht-c.tex"
+#line 17389 "./tex4ht-c.tex"
 
 162 
 :
 case 
-#line 17390 "./tex4ht-c.tex"
+#line 17392 "./tex4ht-c.tex"
 
 163  
 :
 case 
-#line 17393 "./tex4ht-c.tex"
+#line 17395 "./tex4ht-c.tex"
 
 164 
 :
 case 
-#line 17396 "./tex4ht-c.tex"
+#line 17398 "./tex4ht-c.tex"
 
 165 
 : {
     (IGNORED) (get_int( ch - 
-#line 17387 "./tex4ht-c.tex"
+#line 17389 "./tex4ht-c.tex"
 
 162 
  + 1));
     break; }
 case 
-#line 17402 "./tex4ht-c.tex"
+#line 17404 "./tex4ht-c.tex"
 
 167 
 :
 case 
-#line 17405 "./tex4ht-c.tex"
+#line 17407 "./tex4ht-c.tex"
 
 168 
 :
 case 
-#line 17408 "./tex4ht-c.tex"
+#line 17410 "./tex4ht-c.tex"
 
 169 
 :
 case 
-#line 17411 "./tex4ht-c.tex"
+#line 17413 "./tex4ht-c.tex"
 
 170 
 : {
     (IGNORED) (get_int( ch - 
-#line 17402 "./tex4ht-c.tex"
+#line 17404 "./tex4ht-c.tex"
 
 167 
  + 1));
     break; }
 
 
-#line 7198 "./tex4ht-c.tex"
+#line 7200 "./tex4ht-c.tex"
 
 case 
-#line 17342 "./tex4ht-c.tex"
+#line 17344 "./tex4ht-c.tex"
 
 147 
 :
 case 
-#line 17357 "./tex4ht-c.tex"
+#line 17359 "./tex4ht-c.tex"
 
 152 
 :
 case 
-#line 17384 "./tex4ht-c.tex"
+#line 17386 "./tex4ht-c.tex"
 
 161 
 :
 case 
-#line 17399 "./tex4ht-c.tex"
+#line 17401 "./tex4ht-c.tex"
 
 166  
 :
@@ -12262,12 +12262,12 @@ case 134: case 135: case 136: {
 #line 3355 "./tex4ht-c.tex"
 
 case 
-#line 17324 "./tex4ht-c.tex"
+#line 17326 "./tex4ht-c.tex"
 
 141 
 :
 case 
-#line 17327 "./tex4ht-c.tex"
+#line 17329 "./tex4ht-c.tex"
 
 142 
 : {  break; }
@@ -12277,20 +12277,20 @@ case
 #line 3364 "./tex4ht-c.tex"
 
 case 
-#line 17439 "./tex4ht-c.tex"
+#line 17441 "./tex4ht-c.tex"
 
 239 
 :  case 
-#line 17441 "./tex4ht-c.tex"
+#line 17443 "./tex4ht-c.tex"
 
 240 
 :
 case 
-#line 17443 "./tex4ht-c.tex"
+#line 17445 "./tex4ht-c.tex"
 
 241 
 :  case 
-#line 17445 "./tex4ht-c.tex"
+#line 17447 "./tex4ht-c.tex"
 
 242 
 : {  long int i;
@@ -12307,7 +12307,7 @@ case
             default: { ; }
     }  }  }
   }else{ 
-#line 7014 "./tex4ht-c.tex"
+#line 7016 "./tex4ht-c.tex"
 
    U_CHAR *ch;
 ch = special_hd + 4;
@@ -12324,31 +12324,31 @@ while( *ch ){   ch++; }
 
 
     
-#line 7091 "./tex4ht-c.tex"
+#line 7093 "./tex4ht-c.tex"
 
 case  
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
 :
 case 
-#line 17430 "./tex4ht-c.tex"
+#line 17432 "./tex4ht-c.tex"
 
 236  
 :
 case 
-#line 17433 "./tex4ht-c.tex"
+#line 17435 "./tex4ht-c.tex"
 
 237  
 :
 case     
-#line 17436 "./tex4ht-c.tex"
+#line 17438 "./tex4ht-c.tex"
 
 238  
 : {
                               INTEGER n;
   n = ch - 
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
  + 1;
@@ -12357,22 +12357,22 @@ case
   break; }
 default: {
   if( (ch < 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ) || (ch > 
-#line 17421 "./tex4ht-c.tex"
+#line 17423 "./tex4ht-c.tex"
 
 234  
 ) ) {
      if( ch == 
-#line 17321 "./tex4ht-c.tex"
+#line 17323 "./tex4ht-c.tex"
 
 140 
  ) { warn_i(46); }
      else { warn_i_int(45,ch); }
   } else { cr_fnt = ch - 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ;
@@ -12393,20 +12393,20 @@ do{
   ch = get_char();
   if(
       ( ch==
-#line 17439 "./tex4ht-c.tex"
+#line 17441 "./tex4ht-c.tex"
 
 239 
 ) ||  ( ch==
-#line 17441 "./tex4ht-c.tex"
+#line 17443 "./tex4ht-c.tex"
 
 240 
 ) ||
       ( ch==
-#line 17443 "./tex4ht-c.tex"
+#line 17445 "./tex4ht-c.tex"
 
 241 
 ) ||  ( ch==
-#line 17445 "./tex4ht-c.tex"
+#line 17447 "./tex4ht-c.tex"
 
 242 
 )
@@ -12564,12 +12564,12 @@ for( p = opened_files; p != (struct files_rec*) 0;  p = p->next ){
 
  break; }
   case 'u': { 
-#line 15886 "./tex4ht-c.tex"
+#line 15888 "./tex4ht-c.tex"
 
 special_n--;
 switch ( code = get_char() ){
   case '+': { put_4ht_off++; 
-#line 15904 "./tex4ht-c.tex"
+#line 15906 "./tex4ht-c.tex"
 
 flush_uni();
 
@@ -12607,7 +12607,7 @@ next_str
 
   break; }
   case '+': { 
-#line 5438 "./tex4ht-c.tex"
+#line 5440 "./tex4ht-c.tex"
 
 while( special_n-- > 0 )  (void) get_char();
 
@@ -12639,7 +12639,7 @@ while( special_n-- > 0 ){
 #line 4383 "./tex4ht-c.tex"
 
 
-#line 4539 "./tex4ht-c.tex"
+#line 4541 "./tex4ht-c.tex"
 
    int  i=0;
    U_CHAR *name;
@@ -12655,7 +12655,7 @@ if( no_root_file ){  open_o_file(); }
 
 
 
-#line 4553 "./tex4ht-c.tex"
+#line 4555 "./tex4ht-c.tex"
 
 for( p = opened_files; p != (struct files_rec*) 0;  p = p->next )
   { if( eq_str(p->name, name) )  break; }
@@ -12689,8 +12689,9 @@ else           {
 #line 4431 "./tex4ht-c.tex"
 
 if( p == (struct files_rec *)  0 ) bad_special( name );
+else { /* if p is null, do nothing more */
 
-#line 4442 "./tex4ht-c.tex"
+#line 4444 "./tex4ht-c.tex"
 
 if( p->prev != (struct files_rec*) 0 ) (p->prev)->next = p->next;
 else                                   opened_files = p->next;
@@ -12702,6 +12703,7 @@ if( opened_files !=  (struct files_rec*) 0 )
 else out_file = (FILE *) 0;
 (IGNORED) fclose( p->file );   free((void *)  p->name );
 free((void *) p );
+}
 
  }
 cur_o_file = ( out_file == (FILE *) 0 )? root_file
@@ -12709,11 +12711,11 @@ cur_o_file = ( out_file == (FILE *) 0 )? root_file
 
   break; }
   case '!': { 
-#line 4814 "./tex4ht-c.tex"
+#line 4816 "./tex4ht-c.tex"
 
 ch_map_flag = !ch_map_flag;
 if( ch_map_flag ){ 
-#line 4904 "./tex4ht-c.tex"
+#line 4906 "./tex4ht-c.tex"
 
 init_ch_map();
 xresolution = yresolution = 0;
@@ -12724,11 +12726,11 @@ while( special_n-- > 0 ){
   else if( (ch == ',') && !xresolution && yresolution )
      { xresolution = yresolution;  yresolution = 0; }
   else { 
-#line 4928 "./tex4ht-c.tex"
+#line 4930 "./tex4ht-c.tex"
 
 xresolution = yresolution = 0;
 
-#line 17078 "./tex4ht-c.tex"
+#line 17080 "./tex4ht-c.tex"
 
 warn_i_int( 26, '!');
 (IGNORED) putc( ch, stderr);
@@ -12746,7 +12748,7 @@ else { xresolution = xresolution * (INTEGER) (XRESOLUTION / 100);
 
  }
 else             { 
-#line 5273 "./tex4ht-c.tex"
+#line 5275 "./tex4ht-c.tex"
 
 dump_ch_map();
 
@@ -12755,7 +12757,7 @@ dump_ch_map();
   break; }
   case '|': { gif_ch = !gif_ch;  break; }
   case ':': { 
-#line 4720 "./tex4ht-c.tex"
+#line 4722 "./tex4ht-c.tex"
 
 if( special_n-- ){
         int code, n;
@@ -12767,7 +12769,7 @@ if( special_n-- ){
   while( special_n-- ) { *(p++) = get_char(); }
   *p = '\0';
   
-#line 4749 "./tex4ht-c.tex"
+#line 4751 "./tex4ht-c.tex"
 
 q = counter;
 while( q ){
@@ -12784,13 +12786,13 @@ if( !q ){
 
 
   
-#line 4781 "./tex4ht-c.tex"
+#line 4783 "./tex4ht-c.tex"
 
 switch ( code ){
   case '+': {  (q->i)++; break; }
   case '-': {  (q->i)--; break; }
   case '>': {  
-#line 4764 "./tex4ht-c.tex"
+#line 4766 "./tex4ht-c.tex"
 
 if( q->depth == q->max ){
    q->max += 10;
@@ -12801,7 +12803,7 @@ q->stack[q->depth++] = q->i;
 
   break; }
   case '<': {  if( q->depth  ){ 
-#line 4773 "./tex4ht-c.tex"
+#line 4775 "./tex4ht-c.tex"
 
 q->depth--;
 if( q->max > q->depth + 20 ){ q->max -= 15;
@@ -12836,7 +12838,7 @@ if( no_root_file ){  open_o_file(); }
 
   break; }
   case ';': { 
-#line 11398 "./tex4ht-c.tex"
+#line 11400 "./tex4ht-c.tex"
 
         int n, code;
         U_CHAR *p, *q;
@@ -12854,7 +12856,7 @@ switch ( code ){
                break; }
   case '+': {  default_font = -1;                    break; }
   case '%': { 
-#line 11812 "./tex4ht-c.tex"
+#line 11814 "./tex4ht-c.tex"
 
    int f;
 f = 0; while( *p ){ f = 10*f + *(p++) - '0'; }
@@ -12870,7 +12872,7 @@ if( no_root_file ){  open_o_file(); }
 
   break; }
   case '=': { 
-#line 11821 "./tex4ht-c.tex"
+#line 11823 "./tex4ht-c.tex"
 
 
 #line 1715 "./tex4ht-c.tex"
@@ -12885,21 +12887,21 @@ if( font_tbl[cur_fnt].mag != 100 ){
 
   break; }
   case '|': { 
-#line 11597 "./tex4ht-c.tex"
+#line 11599 "./tex4ht-c.tex"
 
 {                 int bad_str, m;
                   U_CHAR ch, *t[
-#line 11641 "./tex4ht-c.tex"
+#line 11643 "./tex4ht-c.tex"
 
 8
 ], err_str[256];
 bad_str=
-#line 11643 "./tex4ht-c.tex"
+#line 11645 "./tex4ht-c.tex"
 
 7
 ;   (IGNORED) strcpy((char *) err_str, (char *) p);
 if( n>
-#line 11645 "./tex4ht-c.tex"
+#line 11647 "./tex4ht-c.tex"
 
 10
  ){
@@ -12909,7 +12911,7 @@ if( n>
       while( (*p = *(p+4)) != '\0' ){
         if( ch == *p ){ *p = '\0';
           if( bad_str-- > 0 ) t[
-#line 11643 "./tex4ht-c.tex"
+#line 11645 "./tex4ht-c.tex"
 
 7
  - bad_str] = p+1;
@@ -12918,7 +12920,7 @@ if( n>
    }  }
    if( !bad_str ){
       if( m==0 ){ span_name_on = n>
-#line 11647 "./tex4ht-c.tex"
+#line 11649 "./tex4ht-c.tex"
 
 11
 ; }
@@ -12938,7 +12940,7 @@ if( bad_str ){  warn_i_str(37,err_str); }
 
   break; }
   case ',': { 
-#line 11632 "./tex4ht-c.tex"
+#line 11634 "./tex4ht-c.tex"
 
 not_notify = TRUE;
 
@@ -12950,11 +12952,11 @@ if( q ) free((void *)  q);
 
   break; }
   case '"': { 
-#line 8394 "./tex4ht-c.tex"
+#line 8396 "./tex4ht-c.tex"
 
 if( special_n ){
    
-#line 8465 "./tex4ht-c.tex"
+#line 8467 "./tex4ht-c.tex"
 
 {                       U_CHAR * p, ch, i;
   ch = get_char();
@@ -12962,7 +12964,7 @@ if( special_n ){
     = end_pos_body = pos_body
     = (char *)  r_alloc((void *) pos_body,(size_t) special_n + 1);
   i = 0;  
-#line 8484 "./tex4ht-c.tex"
+#line 8486 "./tex4ht-c.tex"
 
 {                               BOOL after_star=0;
    while(  special_n-- > 0 ){
@@ -12982,7 +12984,7 @@ if( special_n ){
 
 
   
-#line 8504 "./tex4ht-c.tex"
+#line 8506 "./tex4ht-c.tex"
 
 {                     long int v=0;
                       double w[5];
@@ -12991,7 +12993,7 @@ if( special_n ){
                       BOOL done;
   for(j=0;j<5;j++){
     
-#line 8526 "./tex4ht-c.tex"
+#line 8528 "./tex4ht-c.tex"
 
 done = FALSE;  sign = 1;
 if( --special_n > 0 ){
@@ -13046,7 +13048,7 @@ if( no_root_file ){  open_o_file(); }
     dim_on = TRUE;
     switch( *p ){
        
-#line 8424 "./tex4ht-c.tex"
+#line 8426 "./tex4ht-c.tex"
 
 case 'X': {  dim = pos_x_A * (max_pos_x - base_pos_x) + pos_x_B;
              break; }
@@ -13073,16 +13075,16 @@ case 'D': {  dim = pos_y_C * (max_pos_y - min_pos_y) + pos_y_D;
 
  break; }
   case '~': { 
-#line 6579 "./tex4ht-c.tex"
+#line 6581 "./tex4ht-c.tex"
 
 if( special_n ){
   
-#line 6610 "./tex4ht-c.tex"
+#line 6612 "./tex4ht-c.tex"
 
               U_CHAR in_ch;
 if( (in_ch = get_char()) == '>' ) {
   
-#line 6732 "./tex4ht-c.tex"
+#line 6734 "./tex4ht-c.tex"
 
 if( special_n == 1 ){
    special_n--;
@@ -13090,7 +13092,7 @@ if( special_n == 1 ){
      case '[': { ignore_end_group++;  break; }
      case ']': { ignore_end_group--;  break; }
       default: { 
-#line 17091 "./tex4ht-c.tex"
+#line 17093 "./tex4ht-c.tex"
 
 ;
 
@@ -13114,14 +13116,14 @@ if( special_n == 1 ){
 
 } else if( in_ch == '!' ) {
   
-#line 7807 "./tex4ht-c.tex"
+#line 7809 "./tex4ht-c.tex"
 
                  struct group_path *p, *t;
                  U_CHAR            *q, str[256];
                  int               n;
 p = m_alloc(struct group_path,1);
 
-#line 7830 "./tex4ht-c.tex"
+#line 7832 "./tex4ht-c.tex"
 
 n = 0;
 while( --special_n ) {
@@ -13142,7 +13144,7 @@ p->path = m_alloc(char,n+1);
 
 
 
-#line 7849 "./tex4ht-c.tex"
+#line 7851 "./tex4ht-c.tex"
 
 q = p->info = m_alloc(char,special_n+1);
 while( --special_n ) *q++ = get_char();
@@ -13180,27 +13182,27 @@ if( p->action == '>' ){
                long  curr_pos;
                int   ch, sv_stack_n;
                
-#line 7112 "./tex4ht-c.tex"
+#line 7114 "./tex4ht-c.tex"
 
 int cr_fnt;
 
 
-#line 7472 "./tex4ht-c.tex"
+#line 7474 "./tex4ht-c.tex"
 
 BOOL  ch_token;
 int  id_hide;
 
 
   
-#line 7116 "./tex4ht-c.tex"
+#line 7118 "./tex4ht-c.tex"
 
 cr_fnt = cur_fnt;
 
 
-#line 7477 "./tex4ht-c.tex"
+#line 7479 "./tex4ht-c.tex"
 
 sv_id = 0;    
-#line 7468 "./tex4ht-c.tex"
+#line 7470 "./tex4ht-c.tex"
 
 ch_id = 0;
 
@@ -13215,36 +13217,36 @@ while( del_stack != (struct del_stack_entry*) 0 ){
   stack_id = 0;
   curr_pos = ftell(dvi_file);  sv_stack_n = stack_n;
   
-#line 6987 "./tex4ht-c.tex"
+#line 6989 "./tex4ht-c.tex"
 
 while( group_dvi ){
   
-#line 7124 "./tex4ht-c.tex"
+#line 7126 "./tex4ht-c.tex"
 
 if( (ch = get_char()) >= 128 ) {
   switch( ch ){
     
-#line 7140 "./tex4ht-c.tex"
+#line 7142 "./tex4ht-c.tex"
 
 case 128: case 129: case 130: case 131: case 133:
 case 134: case 135: case 136: {
   ch = (int) get_unt( (ch-(ch>132)) % 4 +1);
   
-#line 7352 "./tex4ht-c.tex"
+#line 7354 "./tex4ht-c.tex"
 
 ch_id++;
 if(!back_id_off ){
    if( !id_hide ){  ch_token = TRUE;  sv_id = ch_id; }
    switch( math_class_of( ch, cr_fnt ) ){
      case 
-#line 7371 "./tex4ht-c.tex"
+#line 7373 "./tex4ht-c.tex"
 
 4
 
 : { del_stack = push_del( (char) ch, cr_fnt);
                            break; }
      case 
-#line 7367 "./tex4ht-c.tex"
+#line 7369 "./tex4ht-c.tex"
 
 5
 
@@ -13259,25 +13261,25 @@ if(!back_id_off ){
 
 
     
-#line 7078 "./tex4ht-c.tex"
+#line 7080 "./tex4ht-c.tex"
 
 case 
-#line 17458 "./tex4ht-c.tex"
+#line 17460 "./tex4ht-c.tex"
 
 246 
 : (void) get_char();
 case 
-#line 17455 "./tex4ht-c.tex"
+#line 17457 "./tex4ht-c.tex"
 
 245 
 : (void) get_char();
 case 
-#line 17452 "./tex4ht-c.tex"
+#line 17454 "./tex4ht-c.tex"
 
 244 
 : (void) get_char();
 case 
-#line 17449 "./tex4ht-c.tex"
+#line 17451 "./tex4ht-c.tex"
 
 243 
 : {    int i;
@@ -13292,15 +13294,15 @@ case
 
 
     
-#line 7149 "./tex4ht-c.tex"
+#line 7151 "./tex4ht-c.tex"
 
 case 
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 :
 case 
-#line 17312 "./tex4ht-c.tex"
+#line 17314 "./tex4ht-c.tex"
 
 137 
 :{
@@ -13313,10 +13315,10 @@ case
 }
 
 
-#line 7157 "./tex4ht-c.tex"
+#line 7159 "./tex4ht-c.tex"
 
 case   
-#line 17318 "./tex4ht-c.tex"
+#line 17320 "./tex4ht-c.tex"
 
 139 
 : {
@@ -13327,180 +13329,180 @@ case
 );  break; }
 
 
-#line 7162 "./tex4ht-c.tex"
+#line 7164 "./tex4ht-c.tex"
 
 case 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
 : case 
-#line 17333 "./tex4ht-c.tex"
+#line 17335 "./tex4ht-c.tex"
 
 144 
 :
 case 
-#line 17336 "./tex4ht-c.tex"
+#line 17338 "./tex4ht-c.tex"
 
 145 
 : case 
-#line 17339 "./tex4ht-c.tex"
+#line 17341 "./tex4ht-c.tex"
 
 146 
 : {
     (IGNORED) (get_int( ch - 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
  + 1 ));  break; }
 case 
-#line 17345 "./tex4ht-c.tex"
+#line 17347 "./tex4ht-c.tex"
 
 148 
 :
 case 
-#line 17348 "./tex4ht-c.tex"
+#line 17350 "./tex4ht-c.tex"
 
 149 
 :
 case 
-#line 17351 "./tex4ht-c.tex"
+#line 17353 "./tex4ht-c.tex"
 
 150 
 :
 case 
-#line 17354 "./tex4ht-c.tex"
+#line 17356 "./tex4ht-c.tex"
 
 151 
 : {
     (IGNORED) (get_int( ch - 
-#line 17345 "./tex4ht-c.tex"
+#line 17347 "./tex4ht-c.tex"
 
 148 
  + 1));
     break;  }
 case 
-#line 17360 "./tex4ht-c.tex"
+#line 17362 "./tex4ht-c.tex"
 
 153  
 :
 case 
-#line 17363 "./tex4ht-c.tex"
+#line 17365 "./tex4ht-c.tex"
 
 154  
 :
 case 
-#line 17366 "./tex4ht-c.tex"
+#line 17368 "./tex4ht-c.tex"
 
 155 
 :
 case 
-#line 17369 "./tex4ht-c.tex"
+#line 17371 "./tex4ht-c.tex"
 
 156 
 : {
     (IGNORED) (get_int( ch - 
-#line 17360 "./tex4ht-c.tex"
+#line 17362 "./tex4ht-c.tex"
 
 153  
  + 1));
     break;  }
 case 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
 : case 
-#line 17375 "./tex4ht-c.tex"
+#line 17377 "./tex4ht-c.tex"
 
 158 
 :
 case 
-#line 17378 "./tex4ht-c.tex"
+#line 17380 "./tex4ht-c.tex"
 
 159 
 : case 
-#line 17381 "./tex4ht-c.tex"
+#line 17383 "./tex4ht-c.tex"
 
 160 
 : {
     (IGNORED) (get_int( ch - 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
  + 1));
     break; }
 case 
-#line 17387 "./tex4ht-c.tex"
+#line 17389 "./tex4ht-c.tex"
 
 162 
 :
 case 
-#line 17390 "./tex4ht-c.tex"
+#line 17392 "./tex4ht-c.tex"
 
 163  
 :
 case 
-#line 17393 "./tex4ht-c.tex"
+#line 17395 "./tex4ht-c.tex"
 
 164 
 :
 case 
-#line 17396 "./tex4ht-c.tex"
+#line 17398 "./tex4ht-c.tex"
 
 165 
 : {
     (IGNORED) (get_int( ch - 
-#line 17387 "./tex4ht-c.tex"
+#line 17389 "./tex4ht-c.tex"
 
 162 
  + 1));
     break; }
 case 
-#line 17402 "./tex4ht-c.tex"
+#line 17404 "./tex4ht-c.tex"
 
 167 
 :
 case 
-#line 17405 "./tex4ht-c.tex"
+#line 17407 "./tex4ht-c.tex"
 
 168 
 :
 case 
-#line 17408 "./tex4ht-c.tex"
+#line 17410 "./tex4ht-c.tex"
 
 169 
 :
 case 
-#line 17411 "./tex4ht-c.tex"
+#line 17413 "./tex4ht-c.tex"
 
 170 
 : {
     (IGNORED) (get_int( ch - 
-#line 17402 "./tex4ht-c.tex"
+#line 17404 "./tex4ht-c.tex"
 
 167 
  + 1));
     break; }
 
 
-#line 7198 "./tex4ht-c.tex"
+#line 7200 "./tex4ht-c.tex"
 
 case 
-#line 17342 "./tex4ht-c.tex"
+#line 17344 "./tex4ht-c.tex"
 
 147 
 :
 case 
-#line 17357 "./tex4ht-c.tex"
+#line 17359 "./tex4ht-c.tex"
 
 152 
 :
 case 
-#line 17384 "./tex4ht-c.tex"
+#line 17386 "./tex4ht-c.tex"
 
 161 
 :
 case 
-#line 17399 "./tex4ht-c.tex"
+#line 17401 "./tex4ht-c.tex"
 
 166  
 :
@@ -13508,21 +13510,21 @@ case
 
 
     
-#line 6869 "./tex4ht-c.tex"
+#line 6871 "./tex4ht-c.tex"
 
 case 
-#line 17324 "./tex4ht-c.tex"
+#line 17326 "./tex4ht-c.tex"
 
 141 
 : {
    
-#line 6889 "./tex4ht-c.tex"
+#line 6891 "./tex4ht-c.tex"
 
 {     struct group_info *p, *last;
   if( (last = p = stack[ stack_n ].begin) != (struct group_info *)0 )
     if( p->stack_id == -1 ){
       
-#line 6899 "./tex4ht-c.tex"
+#line 6901 "./tex4ht-c.tex"
 
 while( p ){
   if( p->stack_id != -1 ){ break; }
@@ -13533,7 +13535,7 @@ while( p ){
 
 
       
-#line 6909 "./tex4ht-c.tex"
+#line 6911 "./tex4ht-c.tex"
 
 while ( stack[ stack_n ].begin != last ){
   p = (stack[ stack_n ].begin) -> next;
@@ -13549,7 +13551,7 @@ while ( stack[ stack_n ].begin != last ){
 
    stack[stack_n].stack_id = stack_id++;
    
-#line 7337 "./tex4ht-c.tex"
+#line 7339 "./tex4ht-c.tex"
 
 if( !back_id_off )
 {                    struct del_stack_entry *p;
@@ -13561,7 +13563,7 @@ if( !back_id_off )
 
     stack_n++;
    if( stack_n > 
-#line 6682 "./tex4ht-c.tex"
+#line 6684 "./tex4ht-c.tex"
 
 ((int) stack_len + 2)
 
@@ -13569,12 +13571,12 @@ if( !back_id_off )
    break;
 }
 case 
-#line 17327 "./tex4ht-c.tex"
+#line 17329 "./tex4ht-c.tex"
 
 142 
 : {
    stack_n--;  
-#line 7323 "./tex4ht-c.tex"
+#line 7325 "./tex4ht-c.tex"
 
 if( !back_id_off ){
    if( !id_hide ){  ch_token = FALSE;
@@ -13595,30 +13597,30 @@ if( !back_id_off ){
 
 
     
-#line 7000 "./tex4ht-c.tex"
+#line 7002 "./tex4ht-c.tex"
 
 case 
-#line 17439 "./tex4ht-c.tex"
+#line 17441 "./tex4ht-c.tex"
 
 239 
 :  case 
-#line 17441 "./tex4ht-c.tex"
+#line 17443 "./tex4ht-c.tex"
 
 240 
 :
 case 
-#line 17443 "./tex4ht-c.tex"
+#line 17445 "./tex4ht-c.tex"
 
 241 
 :  case 
-#line 17445 "./tex4ht-c.tex"
+#line 17447 "./tex4ht-c.tex"
 
 242 
 : {  long int i;
   if( tex4ht_special( &ch, &i ) ){
      if( ch == '~' ){
         
-#line 7027 "./tex4ht-c.tex"
+#line 7029 "./tex4ht-c.tex"
 
 if( i==0 ){
   group_dvi = FALSE ;
@@ -13628,7 +13630,7 @@ if( i==0 ){
         if( i-- ){         U_CHAR ch;
            if( (ch = get_char()) == '*' )
              { 
-#line 7552 "./tex4ht-c.tex"
+#line 7554 "./tex4ht-c.tex"
 
               struct send_back_entry *p, *q, *t=0;
 if( back_id_off ){
@@ -13638,7 +13640,7 @@ if( back_id_off ){
    p->send = get_str( (int)( i - 1 ));
    if( ch_token ){
      
-#line 7593 "./tex4ht-c.tex"
+#line 7595 "./tex4ht-c.tex"
 
 p->id = sv_id;
 if( sv_id >  back_token->id ){
@@ -13665,7 +13667,7 @@ if( sv_id >  back_token->id ){
  }
            else if( (ch == '[') && (i==1) ){
              i--;  
-#line 7491 "./tex4ht-c.tex"
+#line 7493 "./tex4ht-c.tex"
 
 id_hide++;
 
@@ -13673,7 +13675,7 @@ id_hide++;
            }
            else if( (ch == ']') && (i==1) ){
              i--;  
-#line 7496 "./tex4ht-c.tex"
+#line 7498 "./tex4ht-c.tex"
 
 id_hide--;
 
@@ -13681,7 +13683,7 @@ id_hide--;
            }
            else if( (ch == '-') && (i==1) ){
              i--;  
-#line 7500 "./tex4ht-c.tex"
+#line 7502 "./tex4ht-c.tex"
 
 id_latex++;
 
@@ -13689,7 +13691,7 @@ id_latex++;
            }
            else if( (ch == '+') && (i==1) ){
              i--;  
-#line 7505 "./tex4ht-c.tex"
+#line 7507 "./tex4ht-c.tex"
 
 id_latex--;
 
@@ -13697,7 +13699,7 @@ id_latex--;
            }
            else if( (ch == '(') && (i==1) ){
              i--;  
-#line 7511 "./tex4ht-c.tex"
+#line 7513 "./tex4ht-c.tex"
 
 back_id_off++;
 
@@ -13705,14 +13707,14 @@ back_id_off++;
            }
            else if( (ch == ')') && (i==1) ){
              i--;  
-#line 7516 "./tex4ht-c.tex"
+#line 7518 "./tex4ht-c.tex"
 
 back_id_off--;
 
 
            }
            else { 
-#line 6844 "./tex4ht-c.tex"
+#line 6846 "./tex4ht-c.tex"
 
           struct group_info *p;
           U_CHAR *q;
@@ -13746,7 +13748,7 @@ while( --i ) *q++ = get_char();
 );
      }
   }else{ 
-#line 7014 "./tex4ht-c.tex"
+#line 7016 "./tex4ht-c.tex"
 
    U_CHAR *ch;
 ch = special_hd + 4;
@@ -13763,31 +13765,31 @@ while( *ch ){   ch++; }
 
 
     
-#line 7091 "./tex4ht-c.tex"
+#line 7093 "./tex4ht-c.tex"
 
 case  
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
 :
 case 
-#line 17430 "./tex4ht-c.tex"
+#line 17432 "./tex4ht-c.tex"
 
 236  
 :
 case 
-#line 17433 "./tex4ht-c.tex"
+#line 17435 "./tex4ht-c.tex"
 
 237  
 :
 case     
-#line 17436 "./tex4ht-c.tex"
+#line 17438 "./tex4ht-c.tex"
 
 238  
 : {
                               INTEGER n;
   n = ch - 
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
  + 1;
@@ -13796,22 +13798,22 @@ case
   break; }
 default: {
   if( (ch < 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ) || (ch > 
-#line 17421 "./tex4ht-c.tex"
+#line 17423 "./tex4ht-c.tex"
 
 234  
 ) ) {
      if( ch == 
-#line 17321 "./tex4ht-c.tex"
+#line 17323 "./tex4ht-c.tex"
 
 140 
  ) { warn_i(46); }
      else { warn_i_int(45,ch); }
   } else { cr_fnt = ch - 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ;
@@ -13823,21 +13825,21 @@ default: {
 
   }
 } else { 
-#line 7352 "./tex4ht-c.tex"
+#line 7354 "./tex4ht-c.tex"
 
 ch_id++;
 if(!back_id_off ){
    if( !id_hide ){  ch_token = TRUE;  sv_id = ch_id; }
    switch( math_class_of( ch, cr_fnt ) ){
      case 
-#line 7371 "./tex4ht-c.tex"
+#line 7373 "./tex4ht-c.tex"
 
 4
 
 : { del_stack = push_del( (char) ch, cr_fnt);
                            break; }
      case 
-#line 7367 "./tex4ht-c.tex"
+#line 7369 "./tex4ht-c.tex"
 
 5
 
@@ -13853,7 +13855,7 @@ if(!back_id_off ){
 
 
   
-#line 6952 "./tex4ht-c.tex"
+#line 6954 "./tex4ht-c.tex"
 
 {                  struct group_info  *first, *second, *temp;
                    int i;
@@ -13872,13 +13874,13 @@ for(i = stack_len; i >= 0; i--){
 } } }
 
 
-#line 7608 "./tex4ht-c.tex"
+#line 7610 "./tex4ht-c.tex"
 
 back_group = rev_list( back_group );
 back_token = rev_list( back_token );
 back_token = back_insert ( back_token, 0);
 
-#line 7468 "./tex4ht-c.tex"
+#line 7470 "./tex4ht-c.tex"
 
 ch_id = 0;
 
@@ -13892,22 +13894,22 @@ ch_id = 0;
 );
   group_dvi = TRUE;  stack_n = sv_stack_n;    stack_id = 0;
 } else { 
-#line 6811 "./tex4ht-c.tex"
+#line 6813 "./tex4ht-c.tex"
 
 {              int stack_n;
   for( stack_n=
-#line 6682 "./tex4ht-c.tex"
+#line 6684 "./tex4ht-c.tex"
 
 ((int) stack_len + 2)
 
 ;
        stack_n>0; stack_n--){
     group_dvi = TRUE;    
-#line 6790 "./tex4ht-c.tex"
+#line 6792 "./tex4ht-c.tex"
 
 while( stack[stack_n-1].end ){
   
-#line 6768 "./tex4ht-c.tex"
+#line 6770 "./tex4ht-c.tex"
 
           struct stack_end_entry *q, *p, *t;
 q = stack[ stack_n-1 ].end;
@@ -13927,7 +13929,7 @@ while( p ){
 
     group_dvi =FALSE;
     
-#line 6822 "./tex4ht-c.tex"
+#line 6824 "./tex4ht-c.tex"
 
 while( stack[stack_n-1].begin ){
                                struct group_info *p;
@@ -13967,13 +13969,13 @@ if( no_root_file ){
 
  break; }
   case '^': { 
-#line 12526 "./tex4ht-c.tex"
+#line 12528 "./tex4ht-c.tex"
 
 switch( special_n ){
   case 0:{ if( math_class_on ){
               open_del = 256;   pause_class = ignore_subclass_del = 0;
               math_class_on = FALSE;  
-#line 12573 "./tex4ht-c.tex"
+#line 12575 "./tex4ht-c.tex"
 
 group_dvi     = sv_group_dvi;
 trace_dvi_C   = sv_trace_dvi_C;
@@ -13986,7 +13988,7 @@ in_span_ch    = sv_in_span_ch;
            break;
          }
   case 1:{ 
-#line 12564 "./tex4ht-c.tex"
+#line 12566 "./tex4ht-c.tex"
 
 sv_group_dvi     = group_dvi;
 sv_trace_dvi_C   = trace_dvi_C;
@@ -13997,7 +13999,7 @@ sv_in_span_ch    = in_span_ch;
 
            special_n--;
            if( (math_class = scan_class(1)) == 
-#line 12717 "./tex4ht-c.tex"
+#line 12719 "./tex4ht-c.tex"
 
 79
 
@@ -14007,12 +14009,12 @@ sv_in_span_ch    = in_span_ch;
            break;
          }
   case 2:{  
-#line 12799 "./tex4ht-c.tex"
+#line 12801 "./tex4ht-c.tex"
 
 special_n -= 2;   math_class = scan_class(0);
 stack[stack_n+1].ignore_subclass_del =
    (
-#line 12724 "./tex4ht-c.tex"
+#line 12726 "./tex4ht-c.tex"
 
 ')'
 
@@ -14026,7 +14028,7 @@ stack[stack_n+1].class_close = close_class[math_class];
 
             break; }
  default:{ 
-#line 12655 "./tex4ht-c.tex"
+#line 12657 "./tex4ht-c.tex"
 
 {                                    U_CHAR str[256], *p, ch, **q;
    math_class = scan_class(2);  ch = get_char();
@@ -14036,12 +14038,12 @@ stack[stack_n+1].class_close = close_class[math_class];
    }
    *p = '\0';
    q = (math_class > 
-#line 12713 "./tex4ht-c.tex"
+#line 12715 "./tex4ht-c.tex"
 
 78
 
 )? &(
-#line 12831 "./tex4ht-c.tex"
+#line 12833 "./tex4ht-c.tex"
 
 stack[stack_n+1].temp_class_open
 
@@ -14051,12 +14053,12 @@ stack[stack_n+1].temp_class_open
                                  1 + (size_t) strlen((char *) str));
    (IGNORED) strcpy((char *) *q, (char *) str);
    q = (math_class > 
-#line 12713 "./tex4ht-c.tex"
+#line 12715 "./tex4ht-c.tex"
 
 78
 
 ) ? &(
-#line 12827 "./tex4ht-c.tex"
+#line 12829 "./tex4ht-c.tex"
 
 stack[stack_n+1].temp_class_close
 
@@ -14066,19 +14068,19 @@ stack[stack_n+1].temp_class_close
    while( special_n-- > 0 ){ *(p++) = get_char();  }
    *p = '\0';
    if( math_class > 
-#line 12713 "./tex4ht-c.tex"
+#line 12715 "./tex4ht-c.tex"
 
 78
 
 ){ 
-#line 12818 "./tex4ht-c.tex"
+#line 12820 "./tex4ht-c.tex"
 
 stack[stack_n+1].ignore_subclass_del =
   (math_class == 
-#line 12732 "./tex4ht-c.tex"
+#line 12734 "./tex4ht-c.tex"
 
 (
-#line 12717 "./tex4ht-c.tex"
+#line 12719 "./tex4ht-c.tex"
 
 79
 
@@ -14099,7 +14101,7 @@ stack[stack_n+1].active_class_del = TRUE;
 
   special_on = FALSE;
      
-#line 17071 "./tex4ht-c.tex"
+#line 17073 "./tex4ht-c.tex"
 
 if( special_n > 0 ){
    warn_i_int( 26, sv);
@@ -14117,21 +14119,21 @@ while( special_n-- )  (void) get_char();
   break;  }
 
 
-#line 7217 "./tex4ht-c.tex"
+#line 7219 "./tex4ht-c.tex"
 
 case     
-#line 17324 "./tex4ht-c.tex"
+#line 17326 "./tex4ht-c.tex"
 
 141 
 : { 
-#line 7225 "./tex4ht-c.tex"
+#line 7227 "./tex4ht-c.tex"
 
 
-#line 6412 "./tex4ht-c.tex"
+#line 6414 "./tex4ht-c.tex"
 
 if( new_halign ){
   
-#line 6379 "./tex4ht-c.tex"
+#line 6381 "./tex4ht-c.tex"
 
 stack[stack_n].halign_on = new_halign;
 if( stack[stack_n].halign_info )
@@ -14180,7 +14182,7 @@ if( stack_n ){
 
 
 
-#line 6920 "./tex4ht-c.tex"
+#line 6922 "./tex4ht-c.tex"
 
 {                        struct group_info *p;
   if( group_dvi &&
@@ -14200,7 +14202,7 @@ if( stack_n ){
 
 stack[stack_n].text_on = text_on;
 push_stack();  
-#line 7645 "./tex4ht-c.tex"
+#line 7647 "./tex4ht-c.tex"
 
 if( group_dvi ) {
    back_group = back_insert ( back_group, push_id);
@@ -14208,11 +14210,11 @@ if( group_dvi ) {
 
 
 
-#line 7859 "./tex4ht-c.tex"
+#line 7861 "./tex4ht-c.tex"
 
 {
            
-#line 7879 "./tex4ht-c.tex"
+#line 7881 "./tex4ht-c.tex"
 
 struct group_path *start_head, *start_tail,
                   *parent_start_head, *parent_start_tail,
@@ -14248,11 +14250,11 @@ rule_ch_off
     p = stack[stack_n - 2].path_start;
     if(  p !=  (struct group_path *) 0 ){
       
-#line 7900 "./tex4ht-c.tex"
+#line 7902 "./tex4ht-c.tex"
 
 while( p !=  (struct group_path *) 0 ){
    
-#line 8005 "./tex4ht-c.tex"
+#line 8007 "./tex4ht-c.tex"
 
 if( *(p->path ) == 'e' ) {
   (IGNORED) strcpy((char *) p->path, (char *) p->path+1);
@@ -14260,14 +14262,14 @@ if( *(p->path ) == 'e' ) {
      switch( p->action ){
        case '<':  print_f( p->info );
                   place = 
-#line 7976 "./tex4ht-c.tex"
+#line 7978 "./tex4ht-c.tex"
 
 4 
 ;
                   break;
        case '/':  ignore_chs++;
                   place = 
-#line 7970 "./tex4ht-c.tex"
+#line 7972 "./tex4ht-c.tex"
 
 2 
 ; break;
@@ -14284,14 +14286,14 @@ ignore_spaces++;
 
 
                   place = 
-#line 7976 "./tex4ht-c.tex"
+#line 7978 "./tex4ht-c.tex"
 
 4 
 ; break;
      }
   } else {
      place = 
-#line 7970 "./tex4ht-c.tex"
+#line 7972 "./tex4ht-c.tex"
 
 2 
 ;
@@ -14301,7 +14303,7 @@ ignore_spaces++;
      (IGNORED) strcpy((char *) p->path, (char *) p->path+1);
   }
   place = 
-#line 7964 "./tex4ht-c.tex"
+#line 7966 "./tex4ht-c.tex"
 
 0 
 ;
@@ -14312,11 +14314,11 @@ ignore_spaces++;
    p = p->next;
    q->next = (struct group_path *) 0;
    
-#line 7920 "./tex4ht-c.tex"
+#line 7922 "./tex4ht-c.tex"
 
 switch( place ){
  case 
-#line 7964 "./tex4ht-c.tex"
+#line 7966 "./tex4ht-c.tex"
 
 0 
 :
@@ -14327,7 +14329,7 @@ switch( place ){
    }
    break;
  case 
-#line 7970 "./tex4ht-c.tex"
+#line 7972 "./tex4ht-c.tex"
 
 2 
 :
@@ -14338,12 +14340,12 @@ switch( place ){
    }
    break;
  case 
-#line 7976 "./tex4ht-c.tex"
+#line 7978 "./tex4ht-c.tex"
 
 4 
 :
    
-#line 7979 "./tex4ht-c.tex"
+#line 7981 "./tex4ht-c.tex"
 
 free((void *)  q->path );
 free((void *)  q->info );
@@ -14361,16 +14363,16 @@ free((void *)  q );
     p = stack[stack_n - 2].path_end;
     if(  p !=  (struct group_path *) 0 ){
       
-#line 7910 "./tex4ht-c.tex"
+#line 7912 "./tex4ht-c.tex"
 
 while( p !=  (struct group_path *) 0 ){
    
-#line 8041 "./tex4ht-c.tex"
+#line 8043 "./tex4ht-c.tex"
 
 if( *(p->path ) == 'e' ) {
   (IGNORED) strcpy((char *) p->path, (char *) p->path+1);
   place = 
-#line 7973 "./tex4ht-c.tex"
+#line 7975 "./tex4ht-c.tex"
 
 3 
 ;
@@ -14379,7 +14381,7 @@ if( *(p->path ) == 'e' ) {
      (IGNORED) strcpy((char *) p->path, (char *) p->path+1);
   }
   place = 
-#line 7967 "./tex4ht-c.tex"
+#line 7969 "./tex4ht-c.tex"
 
 1 
 ;
@@ -14390,11 +14392,11 @@ if( *(p->path ) == 'e' ) {
    p = p->next;
    q->next = (struct group_path *) 0;
    
-#line 7942 "./tex4ht-c.tex"
+#line 7944 "./tex4ht-c.tex"
 
 switch( place ){
  case 
-#line 7967 "./tex4ht-c.tex"
+#line 7969 "./tex4ht-c.tex"
 
 1 
 :
@@ -14405,7 +14407,7 @@ switch( place ){
    }
    break;
  case 
-#line 7973 "./tex4ht-c.tex"
+#line 7975 "./tex4ht-c.tex"
 
 3 
 :
@@ -14416,12 +14418,12 @@ switch( place ){
    }
    break;
  case 
-#line 7976 "./tex4ht-c.tex"
+#line 7978 "./tex4ht-c.tex"
 
 4 
 :
    
-#line 7979 "./tex4ht-c.tex"
+#line 7981 "./tex4ht-c.tex"
 
 free((void *)  q->path );
 free((void *)  q->info );
@@ -14437,7 +14439,7 @@ free((void *)  q );
 
     }
     
-#line 7891 "./tex4ht-c.tex"
+#line 7893 "./tex4ht-c.tex"
 
   stack[stack_n - 1].path_start = start_head;
   stack[stack_n - 1].path_end   = end_head;
@@ -14470,12 +14472,12 @@ push_depth++;
 
 
 
-#line 12840 "./tex4ht-c.tex"
+#line 12842 "./tex4ht-c.tex"
 
 if( stack[stack_n].active_class_del ){
    if( show_class && !pause_class && !ignore_subclass_del ){
       
-#line 12980 "./tex4ht-c.tex"
+#line 12982 "./tex4ht-c.tex"
 
 (IGNORED) print_f( (stack[stack_n].temp_class_del)?
                       stack[stack_n].temp_class_open
@@ -14492,21 +14494,21 @@ if( stack[stack_n].active_class_del ){
 
    break; }
 case 
-#line 17327 "./tex4ht-c.tex"
+#line 17329 "./tex4ht-c.tex"
 
 142 
 : { 
-#line 7270 "./tex4ht-c.tex"
+#line 7272 "./tex4ht-c.tex"
 
 
-#line 12852 "./tex4ht-c.tex"
+#line 12854 "./tex4ht-c.tex"
 
 if( stack[stack_n].active_class_del ){
    ignore_subclass_del =  ignore_subclass_del
                         - stack[stack_n].ignore_subclass_del;
    if( show_class && !pause_class && !ignore_subclass_del ){
       
-#line 12967 "./tex4ht-c.tex"
+#line 12969 "./tex4ht-c.tex"
 
 (IGNORED) print_f( (stack[stack_n].temp_class_del)?
                       stack[stack_n].temp_class_close
@@ -14519,7 +14521,7 @@ if( stack[stack_n].active_class_del ){
 
 
 
-#line 8061 "./tex4ht-c.tex"
+#line 8063 "./tex4ht-c.tex"
 
 {
      struct group_path *p, *q;
@@ -14527,15 +14529,15 @@ if( stack[stack_n].active_class_del ){
     p = stack[stack_n - 1].path_start;
     if(  p !=  (struct group_path *) 0 ){
       
-#line 8076 "./tex4ht-c.tex"
+#line 8078 "./tex4ht-c.tex"
 
 while( p !=  (struct group_path *) 0 ){
    
-#line 8102 "./tex4ht-c.tex"
+#line 8104 "./tex4ht-c.tex"
 
 if( *(p->path) != '\0' ) {
    
-#line 8132 "./tex4ht-c.tex"
+#line 8134 "./tex4ht-c.tex"
 
             char str[256];
 (IGNORED) strcpy(str, "...."); *(str+3) = p->action;
@@ -14547,7 +14549,7 @@ if( *(p->path) != '\0' ) {
      case '/':  ignore_chs--;  break;
       default:  {
           
-#line 8132 "./tex4ht-c.tex"
+#line 8134 "./tex4ht-c.tex"
 
             char str[256];
 (IGNORED) strcpy(str, "...."); *(str+3) = p->action;
@@ -14561,7 +14563,7 @@ if( *(p->path) != '\0' ) {
    q = p;
    p = p->next;
    
-#line 7979 "./tex4ht-c.tex"
+#line 7981 "./tex4ht-c.tex"
 
 free((void *)  q->path );
 free((void *)  q->info );
@@ -14575,15 +14577,15 @@ free((void *)  q );
     p = stack[stack_n - 1].path_end;
     if(  p !=  (struct group_path *) 0 ){
       
-#line 8085 "./tex4ht-c.tex"
+#line 8087 "./tex4ht-c.tex"
 
 while( p !=  (struct group_path *) 0 ){
    
-#line 8118 "./tex4ht-c.tex"
+#line 8120 "./tex4ht-c.tex"
 
 if( *(p->path) != '\0' ) {
    
-#line 8132 "./tex4ht-c.tex"
+#line 8134 "./tex4ht-c.tex"
 
             char str[256];
 (IGNORED) strcpy(str, "...."); *(str+3) = p->action;
@@ -14595,7 +14597,7 @@ if( *(p->path) != '\0' ) {
      case '>':  print_f( p->info );  break;
       default:  {
           
-#line 8132 "./tex4ht-c.tex"
+#line 8134 "./tex4ht-c.tex"
 
             char str[256];
 (IGNORED) strcpy(str, "...."); *(str+3) = p->action;
@@ -14609,7 +14611,7 @@ if( *(p->path) != '\0' ) {
    q = p;
    p = p->next;
    
-#line 7979 "./tex4ht-c.tex"
+#line 7981 "./tex4ht-c.tex"
 
 free((void *)  q->path );
 free((void *)  q->info );
@@ -14623,11 +14625,11 @@ free((void *)  q );
 
 
 
-#line 6790 "./tex4ht-c.tex"
+#line 6792 "./tex4ht-c.tex"
 
 while( stack[stack_n-1].end ){
   
-#line 6768 "./tex4ht-c.tex"
+#line 6770 "./tex4ht-c.tex"
 
           struct stack_end_entry *q, *p, *t;
 q = stack[ stack_n-1 ].end;
@@ -14666,14 +14668,14 @@ if( no_root_file ){  open_o_file(); }
 
 
 
-#line 6441 "./tex4ht-c.tex"
+#line 6443 "./tex4ht-c.tex"
 
 
-#line 6490 "./tex4ht-c.tex"
+#line 6492 "./tex4ht-c.tex"
 
 if( stack[stack_n].halign_on )
 {  
-#line 6496 "./tex4ht-c.tex"
+#line 6498 "./tex4ht-c.tex"
 
 print_f( stack[stack_n].halign[1]->str );
 stack[stack_n].halign_on = FALSE;
@@ -14682,7 +14684,7 @@ stack[stack_n].halign_on = FALSE;
 
 
 
-#line 6503 "./tex4ht-c.tex"
+#line 6505 "./tex4ht-c.tex"
 
 if( stack_n ){
   if( stack[stack_n-1].halign_on )
@@ -14692,7 +14694,7 @@ if( stack_n ){
 
 
 
-#line 6512 "./tex4ht-c.tex"
+#line 6514 "./tex4ht-c.tex"
 
 if( stack_n-1 ){
   if( stack[stack_n-2].halign_on )
@@ -14725,7 +14727,7 @@ text_on = stack[stack_n].text_on;
 
     }
     
-#line 5280 "./tex4ht-c.tex"
+#line 5282 "./tex4ht-c.tex"
 
 if( ch_map_flag ){
    warn_i(27);    init_ch_map(); }
@@ -14738,7 +14740,7 @@ if( ch_map_flag ){
 
 put_char('\n');put_char('\n');
 
-#line 4454 "./tex4ht-c.tex"
+#line 4456 "./tex4ht-c.tex"
 
 while( opened_files != (struct files_rec*) 0 )
 {
@@ -14748,28 +14750,28 @@ while( opened_files != (struct files_rec*) 0 )
 
 
 {    
-#line 5776 "./tex4ht-c.tex"
+#line 5778 "./tex4ht-c.tex"
 
 INTEGER bop_addr;
 
 
-#line 5841 "./tex4ht-c.tex"
+#line 5843 "./tex4ht-c.tex"
 
 int stack_depth=0;
 
 
-#line 5898 "./tex4ht-c.tex"
+#line 5900 "./tex4ht-c.tex"
 
 char cur_font[6];
 BOOL visible_cnt=FALSE;
 
 
   
-#line 5404 "./tex4ht-c.tex"
+#line 5406 "./tex4ht-c.tex"
 
 job_name[job_name_n-3] = '\0';
 
-#line 5446 "./tex4ht-c.tex"
+#line 5448 "./tex4ht-c.tex"
 
 file_n = 14;
 (IGNORED) fseek(dvi_file, 0L, 
@@ -14781,12 +14783,12 @@ do{  ch = get_char();
      idv_char( ch );
      file_n++;
 }while( ch == 
-#line 17315 "./tex4ht-c.tex"
+#line 17317 "./tex4ht-c.tex"
 
 138 
  );
 
-#line 5460 "./tex4ht-c.tex"
+#line 5462 "./tex4ht-c.tex"
 
 ch = get_char();
 if( id_version != -1 ){ ch = id_version; }
@@ -14800,29 +14802,29 @@ idv_char( (int) i );  while( i-- ) idv_copy();
 
 page_n = 0;
 
-#line 6096 "./tex4ht-c.tex"
+#line 6098 "./tex4ht-c.tex"
 
 x_val = 0;   y_val = 0;   stack_n = 0;
 idv_char( 
-#line 17318 "./tex4ht-c.tex"
+#line 17320 "./tex4ht-c.tex"
 
 139 
  );
 idv_int( page_n + 1 );  for( i=36; i--; ) idv_char( 0);
 idv_int( -1 );  bop_addr = file_n;  file_n += 45;
 idv_char(
-#line 17324 "./tex4ht-c.tex"
+#line 17326 "./tex4ht-c.tex"
 
 141 
 );  file_n++;
 
 
 while( dis_pages ){ 
-#line 5524 "./tex4ht-c.tex"
+#line 5526 "./tex4ht-c.tex"
 
 if( (ch = get_char()) < 128 ) { visible_cnt = TRUE;  cond_idv_char( ch );}
 else switch( ch ){ 
-#line 5531 "./tex4ht-c.tex"
+#line 5533 "./tex4ht-c.tex"
 
 case 128: case 129: case 130: case 131: case 133:
 case 134: case 135: case 136: {
@@ -14831,10 +14833,10 @@ case 134: case 135: case 136: {
 }
 
 
-#line 5542 "./tex4ht-c.tex"
+#line 5544 "./tex4ht-c.tex"
 
 case   
-#line 17318 "./tex4ht-c.tex"
+#line 17320 "./tex4ht-c.tex"
 
 139 
 : {
@@ -14845,214 +14847,214 @@ case
 1
 );  break; }
 case     
-#line 17321 "./tex4ht-c.tex"
+#line 17323 "./tex4ht-c.tex"
 
 140 
 : { dis_pages--; }
 case           
-#line 17315 "./tex4ht-c.tex"
+#line 17317 "./tex4ht-c.tex"
 
 138 
 : { break; }
 
 
-#line 5551 "./tex4ht-c.tex"
+#line 5553 "./tex4ht-c.tex"
 
 case 
-#line 17342 "./tex4ht-c.tex"
+#line 17344 "./tex4ht-c.tex"
 
 147 
 : {
   cond_idv_char( ch );  x_val += dx_1;  break; }
 case 
-#line 17357 "./tex4ht-c.tex"
+#line 17359 "./tex4ht-c.tex"
 
 152 
 : {
   cond_idv_char( ch );  x_val += dx_2;  break; }
 case 
-#line 17384 "./tex4ht-c.tex"
+#line 17386 "./tex4ht-c.tex"
 
 161 
 : {
   cond_idv_char( ch );  y_val += dy_1;  break; }
 case 
-#line 17399 "./tex4ht-c.tex"
+#line 17401 "./tex4ht-c.tex"
 
 166  
 : {
   cond_idv_char( ch );  y_val += dy_2;  break; }
 
 
-#line 5563 "./tex4ht-c.tex"
+#line 5565 "./tex4ht-c.tex"
 
 case 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
 : case 
-#line 17333 "./tex4ht-c.tex"
+#line 17335 "./tex4ht-c.tex"
 
 144 
 :
 case 
-#line 17336 "./tex4ht-c.tex"
+#line 17338 "./tex4ht-c.tex"
 
 145 
 : case 
-#line 17339 "./tex4ht-c.tex"
+#line 17341 "./tex4ht-c.tex"
 
 146 
 : {
     cond_idv_char( ch );
     x_val += cond_int( ch - 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
  + 1 );  break; }
 case 
-#line 17345 "./tex4ht-c.tex"
+#line 17347 "./tex4ht-c.tex"
 
 148 
 :
 case 
-#line 17348 "./tex4ht-c.tex"
+#line 17350 "./tex4ht-c.tex"
 
 149 
 :
 case 
-#line 17351 "./tex4ht-c.tex"
+#line 17353 "./tex4ht-c.tex"
 
 150 
 :
 case 
-#line 17354 "./tex4ht-c.tex"
+#line 17356 "./tex4ht-c.tex"
 
 151 
 : {
     cond_idv_char( ch );
     dx_1 = (INTEGER) cond_int( ch - 
-#line 17345 "./tex4ht-c.tex"
+#line 17347 "./tex4ht-c.tex"
 
 148 
  + 1);
     x_val += dx_1;   break;  }
 case 
-#line 17360 "./tex4ht-c.tex"
+#line 17362 "./tex4ht-c.tex"
 
 153  
 :
 case 
-#line 17363 "./tex4ht-c.tex"
+#line 17365 "./tex4ht-c.tex"
 
 154  
 :
 case 
-#line 17366 "./tex4ht-c.tex"
+#line 17368 "./tex4ht-c.tex"
 
 155 
 :
 case 
-#line 17369 "./tex4ht-c.tex"
+#line 17371 "./tex4ht-c.tex"
 
 156 
 : {
     cond_idv_char( ch );
     dx_2 = (INTEGER) cond_int( ch - 
-#line 17360 "./tex4ht-c.tex"
+#line 17362 "./tex4ht-c.tex"
 
 153  
  + 1);
     x_val += dx_2;   break;  }
 
 
-#line 5584 "./tex4ht-c.tex"
+#line 5586 "./tex4ht-c.tex"
 
 case 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
 : case 
-#line 17375 "./tex4ht-c.tex"
+#line 17377 "./tex4ht-c.tex"
 
 158 
 :
 case 
-#line 17378 "./tex4ht-c.tex"
+#line 17380 "./tex4ht-c.tex"
 
 159 
 : case 
-#line 17381 "./tex4ht-c.tex"
+#line 17383 "./tex4ht-c.tex"
 
 160 
 : {
     cond_idv_char( ch );
     y_val += cond_int( ch - 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
  + 1);
     break; }
 case 
-#line 17387 "./tex4ht-c.tex"
+#line 17389 "./tex4ht-c.tex"
 
 162 
 :
 case 
-#line 17390 "./tex4ht-c.tex"
+#line 17392 "./tex4ht-c.tex"
 
 163  
 :
 case 
-#line 17393 "./tex4ht-c.tex"
+#line 17395 "./tex4ht-c.tex"
 
 164 
 :
 case 
-#line 17396 "./tex4ht-c.tex"
+#line 17398 "./tex4ht-c.tex"
 
 165 
 : {
     cond_idv_char( ch );
     dy_1 = (INTEGER) cond_int( ch - 
-#line 17387 "./tex4ht-c.tex"
+#line 17389 "./tex4ht-c.tex"
 
 162 
  + 1);
     y_val += dy_1;   break; }
 case 
-#line 17402 "./tex4ht-c.tex"
+#line 17404 "./tex4ht-c.tex"
 
 167 
 :
 case 
-#line 17405 "./tex4ht-c.tex"
+#line 17407 "./tex4ht-c.tex"
 
 168 
 :
 case 
-#line 17408 "./tex4ht-c.tex"
+#line 17410 "./tex4ht-c.tex"
 
 169 
 :
 case 
-#line 17411 "./tex4ht-c.tex"
+#line 17413 "./tex4ht-c.tex"
 
 170 
 : {
     cond_idv_char( ch );
     dy_2 = (INTEGER) cond_int( ch - 
-#line 17402 "./tex4ht-c.tex"
+#line 17404 "./tex4ht-c.tex"
 
 167 
  + 1);
     y_val += dy_2;   break; }
 
 
-#line 5611 "./tex4ht-c.tex"
+#line 5613 "./tex4ht-c.tex"
 
 case   
-#line 17307 "./tex4ht-c.tex"
+#line 17309 "./tex4ht-c.tex"
 
 132 
 :{
@@ -15060,7 +15062,7 @@ case
   break;
 }
 case 
-#line 17312 "./tex4ht-c.tex"
+#line 17314 "./tex4ht-c.tex"
 
 137 
 :{
@@ -15069,23 +15071,23 @@ case
 }
 
 
-#line 5644 "./tex4ht-c.tex"
+#line 5646 "./tex4ht-c.tex"
 
 case 
-#line 17439 "./tex4ht-c.tex"
+#line 17441 "./tex4ht-c.tex"
 
 239 
 :  case 
-#line 17441 "./tex4ht-c.tex"
+#line 17443 "./tex4ht-c.tex"
 
 240 
 :
 case 
-#line 17443 "./tex4ht-c.tex"
+#line 17445 "./tex4ht-c.tex"
 
 241 
 :  case 
-#line 17445 "./tex4ht-c.tex"
+#line 17447 "./tex4ht-c.tex"
 
 242 
 : {  long int i;
@@ -15094,10 +15096,10 @@ case
   if( tex4ht_special( &ch, &i ) ){
      if( ch == '+' ){
         
-#line 5699 "./tex4ht-c.tex"
+#line 5701 "./tex4ht-c.tex"
 
 if( i==0 ){ if( dvi_flag ){ dvi_flag = 0;  
-#line 5831 "./tex4ht-c.tex"
+#line 5833 "./tex4ht-c.tex"
 
 if( !visible_cnt ) {                            U_CHAR  str[256];
    (IGNORED) sprintf(str, "--- empty picture --- %sidv[%d] ---\n",
@@ -15105,7 +15107,7 @@ if( !visible_cnt ) {                            U_CHAR  str[256];
    (IGNORED) printf("%s", str);  (IGNORED) fprintf(log_file, "%s",str); }
 while( stack_depth-- > 0 ){
   idv_char(
-#line 17327 "./tex4ht-c.tex"
+#line 17329 "./tex4ht-c.tex"
 
 142 
 );  file_n++; }
@@ -15113,11 +15115,11 @@ while( stack_depth-- > 0 ){
  } }
 else{
   if( dvi_flag ){ 
-#line 5758 "./tex4ht-c.tex"
+#line 5760 "./tex4ht-c.tex"
 
 cond_idv_char( special_nr );
 cond_idv_int( i, special_nr - 
-#line 17439 "./tex4ht-c.tex"
+#line 17441 "./tex4ht-c.tex"
 
 239 
  + 1 );
@@ -15127,7 +15129,7 @@ visible_cnt = TRUE;
  }
   else switch( get_char() ){
      case '+': { 
-#line 5738 "./tex4ht-c.tex"
+#line 5740 "./tex4ht-c.tex"
 
 {    U_CHAR str[256], *ch;
    ch = str;   while( --i )  *(ch++) =  get_char();  *ch = '\0';
@@ -15137,25 +15139,25 @@ visible_cnt = TRUE;
 
                  dvi_flag = TRUE;  dvi_page = TRUE;
                  
-#line 5766 "./tex4ht-c.tex"
+#line 5768 "./tex4ht-c.tex"
 
 visible_cnt = FALSE;
 bop_addr = advance_idv_page( bop_addr, cur_font );
 stack_depth = 0;
 set_loc( 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
 , x_val );
 set_loc( 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
 , y_val );
 
   break; }
      case '@': { 
-#line 5714 "./tex4ht-c.tex"
+#line 5716 "./tex4ht-c.tex"
 
 while( --i ) (void)  putc( get_char(), log_file );
 (IGNORED) putc( '\n', log_file );
@@ -15167,17 +15169,17 @@ while( --i ) (void)  putc( get_char(), log_file );
  }
      else   while( i-- ) (void)  get_char();
   }else if( dvi_flag ){ 
-#line 5677 "./tex4ht-c.tex"
+#line 5679 "./tex4ht-c.tex"
 
 visible_cnt = TRUE;   
-#line 5682 "./tex4ht-c.tex"
+#line 5684 "./tex4ht-c.tex"
 
 {
       U_CHAR *ch;
       int j;
    ch = special_hd;
    (IGNORED) putc( (unsigned) 
-#line 17445 "./tex4ht-c.tex"
+#line 17447 "./tex4ht-c.tex"
 
 242 
 , idv_file );  file_n++;
@@ -15191,21 +15193,21 @@ visible_cnt = TRUE;
 
 
   }else { 
-#line 5662 "./tex4ht-c.tex"
+#line 5664 "./tex4ht-c.tex"
 
 if( dvi_page || !page_n ){ dvi_page = FALSE;  
-#line 5766 "./tex4ht-c.tex"
+#line 5768 "./tex4ht-c.tex"
 
 visible_cnt = FALSE;
 bop_addr = advance_idv_page( bop_addr, cur_font );
 stack_depth = 0;
 set_loc( 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
 , x_val );
 set_loc( 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
 , y_val );
@@ -15213,14 +15215,14 @@ set_loc(
   }
 dvi_flag = TRUE;
 
-#line 5682 "./tex4ht-c.tex"
+#line 5684 "./tex4ht-c.tex"
 
 {
       U_CHAR *ch;
       int j;
    ch = special_hd;
    (IGNORED) putc( (unsigned) 
-#line 17445 "./tex4ht-c.tex"
+#line 17447 "./tex4ht-c.tex"
 
 242 
 , idv_file );  file_n++;
@@ -15238,10 +15240,10 @@ dvi_flag = FALSE;
 }
 
 
-#line 5798 "./tex4ht-c.tex"
+#line 5800 "./tex4ht-c.tex"
 
 case 
-#line 17324 "./tex4ht-c.tex"
+#line 17326 "./tex4ht-c.tex"
 
 141 
 : {
@@ -15250,7 +15252,7 @@ case
    cond_idv_char( ch );
    break; }
 case 
-#line 17327 "./tex4ht-c.tex"
+#line 17329 "./tex4ht-c.tex"
 
 142 
 : {      INTEGER cur_x, cur_y;
@@ -15259,46 +15261,46 @@ case
    if( dvi_flag ){
       if( stack_depth<0 ){ warn_i_int( 24,  page_n );
                            
-#line 5815 "./tex4ht-c.tex"
+#line 5817 "./tex4ht-c.tex"
 
 cond_idv_char( 
-#line 17339 "./tex4ht-c.tex"
+#line 17341 "./tex4ht-c.tex"
 
 146 
  );
 idv_int( x_val - cur_x - dx_1 - dx_2 );
 cond_idv_char( 
-#line 17354 "./tex4ht-c.tex"
+#line 17356 "./tex4ht-c.tex"
 
 151 
  );
 idv_int( dx_1 );
 cond_idv_char( 
-#line 17369 "./tex4ht-c.tex"
+#line 17371 "./tex4ht-c.tex"
 
 156 
  );
 idv_int( dx_2 );
 cond_idv_char( 
-#line 17381 "./tex4ht-c.tex"
+#line 17383 "./tex4ht-c.tex"
 
 160 
  );
 idv_int( y_val - cur_y - dy_1 - dy_2 );
 cond_idv_char( 
-#line 17396 "./tex4ht-c.tex"
+#line 17398 "./tex4ht-c.tex"
 
 165 
  );
 idv_int( dy_1 );
 cond_idv_char( 
-#line 17411 "./tex4ht-c.tex"
+#line 17413 "./tex4ht-c.tex"
 
 170 
  );
 idv_int( dy_2 );
 cond_idv_char( 
-#line 17324 "./tex4ht-c.tex"
+#line 17326 "./tex4ht-c.tex"
 
 141 
  );  file_n += 24;
@@ -15309,25 +15311,25 @@ cond_idv_char(
    break; }
 
 
-#line 5852 "./tex4ht-c.tex"
+#line 5854 "./tex4ht-c.tex"
 
 case 
-#line 17458 "./tex4ht-c.tex"
+#line 17460 "./tex4ht-c.tex"
 
 246 
 :
 case 
-#line 17455 "./tex4ht-c.tex"
+#line 17457 "./tex4ht-c.tex"
 
 245 
 :
 case 
-#line 17452 "./tex4ht-c.tex"
+#line 17454 "./tex4ht-c.tex"
 
 244 
 :
 case 
-#line 17449 "./tex4ht-c.tex"
+#line 17451 "./tex4ht-c.tex"
 
 243 
 : {  idv_char( ch );             file_n++;
@@ -15337,31 +15339,31 @@ case
   break;  }
 
 
-#line 5871 "./tex4ht-c.tex"
+#line 5873 "./tex4ht-c.tex"
 
 case  
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
 :
 case 
-#line 17430 "./tex4ht-c.tex"
+#line 17432 "./tex4ht-c.tex"
 
 236  
 :
 case 
-#line 17433 "./tex4ht-c.tex"
+#line 17435 "./tex4ht-c.tex"
 
 237  
 :
 case     
-#line 17436 "./tex4ht-c.tex"
+#line 17438 "./tex4ht-c.tex"
 
 238  
 : {    int i;
    idv_char( ch );  file_n++;
    cur_font[0] = ch - 
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
  + 2;
@@ -15372,20 +15374,20 @@ case
    break;  }
 
 
-#line 5885 "./tex4ht-c.tex"
+#line 5887 "./tex4ht-c.tex"
 
 default: {
   if( (ch < 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ) || (ch > 
-#line 17421 "./tex4ht-c.tex"
+#line 17423 "./tex4ht-c.tex"
 
 234  
 )   ){
      if( 
-#line 8969 "./tex4ht-c.tex"
+#line 8971 "./tex4ht-c.tex"
 
 (version_id == 
 #line 2292 "./tex4ht-c.tex"
@@ -15396,28 +15398,28 @@ default: {
 &&
 (
   (ch == 
-#line 17482 "./tex4ht-c.tex"
+#line 17484 "./tex4ht-c.tex"
 
 251
 
 )
   ||
   (ch == 
-#line 17488 "./tex4ht-c.tex"
+#line 17490 "./tex4ht-c.tex"
 
 252
 
 )
   ||
   (ch == 
-#line 17494 "./tex4ht-c.tex"
+#line 17496 "./tex4ht-c.tex"
 
 253
 
 )
   ||
   (ch == 
-#line 17499 "./tex4ht-c.tex"
+#line 17501 "./tex4ht-c.tex"
 
 254
 
@@ -15426,17 +15428,17 @@ default: {
 
  ){
         
-#line 8991 "./tex4ht-c.tex"
+#line 8993 "./tex4ht-c.tex"
 
 switch( ch ){
   case 
-#line 17488 "./tex4ht-c.tex"
+#line 17490 "./tex4ht-c.tex"
 
 252
 
 :
      
-#line 9019 "./tex4ht-c.tex"
+#line 9021 "./tex4ht-c.tex"
 
 {      int i, flags;
 
@@ -15448,12 +15450,12 @@ switch( ch ){
 
 
 if ((flags & 
-#line 8983 "./tex4ht-c.tex"
+#line 8985 "./tex4ht-c.tex"
 
 0x0002
 
 ) || (flags & 
-#line 8987 "./tex4ht-c.tex"
+#line 8989 "./tex4ht-c.tex"
 
 0x0001
 
@@ -15474,7 +15476,7 @@ i--
 
 
         if( flags & 
-#line 8953 "./tex4ht-c.tex"
+#line 8955 "./tex4ht-c.tex"
 
 0x0200
 
@@ -15483,7 +15485,7 @@ i--
         }
 
 if( flags & 
-#line 8957 "./tex4ht-c.tex"
+#line 8959 "./tex4ht-c.tex"
 
 0x0800
 
@@ -15503,13 +15505,13 @@ if( flags &
 
      break;
   case 
-#line 17499 "./tex4ht-c.tex"
+#line 17501 "./tex4ht-c.tex"
 
 254
 
 :
      
-#line 9004 "./tex4ht-c.tex"
+#line 9006 "./tex4ht-c.tex"
 
 {
            int i, glyphCount;
@@ -15541,7 +15543,7 @@ if( flags &
 
  }
 
-#line 5418 "./tex4ht-c.tex"
+#line 5420 "./tex4ht-c.tex"
 
 if( errCode > 0 ){
    (IGNORED) fprintf(log_file, "tex4ht.c error: %d\n", errCode);
@@ -15549,7 +15551,7 @@ if( errCode > 0 ){
 
 
 
-#line 5911 "./tex4ht-c.tex"
+#line 5913 "./tex4ht-c.tex"
 
 {                                               int   ch, i, mag;
                                                 U_CHAR  str[256];
@@ -15557,7 +15559,7 @@ if( errCode > 0 ){
    dvi_flag = TRUE;
    for( cur_fnt = font_tbl_size; cur_fnt--; ){
       
-#line 8813 "./tex4ht-c.tex"
+#line 8815 "./tex4ht-c.tex"
 
 (IGNORED) fprintf(log_file, lg_font_fmt,
   font_tbl[cur_fnt].family_name,
@@ -15571,48 +15573,48 @@ if( errCode > 0 ){
          if( get_bit( font_tbl[cur_fnt].gif_on, i) ){
             bop_addr = advance_idv_page( bop_addr, cur_font );
             set_loc( 
-#line 17330 "./tex4ht-c.tex"
+#line 17332 "./tex4ht-c.tex"
 
 143 
 , (long int) mid_page_x );
             set_loc( 
-#line 17372 "./tex4ht-c.tex"
+#line 17374 "./tex4ht-c.tex"
 
 157 
 , (long int) mid_page_y );
             
-#line 5981 "./tex4ht-c.tex"
+#line 5983 "./tex4ht-c.tex"
 
 {           INTEGER num;
    num = font_tbl[cur_fnt].num;
    if( num <= 
-#line 17424 "./tex4ht-c.tex"
+#line 17426 "./tex4ht-c.tex"
 
 63 
  )
                                 cond_idv_char( (int) (num + 
-#line 17415 "./tex4ht-c.tex"
+#line 17417 "./tex4ht-c.tex"
 
 171  
 ) );
    else if( dvi_flag ){
      if( (num < 0) || (num > 16777215L) ) idv_int(
-#line 17436 "./tex4ht-c.tex"
+#line 17438 "./tex4ht-c.tex"
 
 238  
 );
      else if( num < 256 ) { idv_char(
-#line 17427 "./tex4ht-c.tex"
+#line 17429 "./tex4ht-c.tex"
 
 235  
 ); file_n++; }
      else if( num < 65536L ) int_to_dvi((long int) 
-#line 17430 "./tex4ht-c.tex"
+#line 17432 "./tex4ht-c.tex"
 
 236  
 ,2);
      else                   int_to_dvi((long int) 
-#line 17433 "./tex4ht-c.tex"
+#line 17435 "./tex4ht-c.tex"
 
 237  
 ,3);
@@ -15621,7 +15623,7 @@ if( errCode > 0 ){
 
 
             
-#line 5939 "./tex4ht-c.tex"
+#line 5941 "./tex4ht-c.tex"
 
 if( (ch = i + font_tbl[cur_fnt].char_f) > 127 )  {
   if( ch < 256 ) cond_idv_char(133);  else  warn_i(23);   }
@@ -15629,7 +15631,7 @@ cond_idv_char( ch );
 mag = (int) ((double) font_tbl[cur_fnt].scale /
              font_tbl[cur_fnt].design_sz  * 10 );
 
-#line 10899 "./tex4ht-c.tex"
+#line 10901 "./tex4ht-c.tex"
 
 if( !dos_file_names ){
    if( mag == 10 ) (IGNORED) sprintf(str, "%s-%x%s",
@@ -15639,7 +15641,7 @@ if( !dos_file_names ){
 }
 
 
-#line 10927 "./tex4ht-c.tex"
+#line 10929 "./tex4ht-c.tex"
 
 
 if( dos_file_names ){
@@ -15661,15 +15663,15 @@ script(font_gif, job_name ,page_n, str);
 
 
 
-#line 5492 "./tex4ht-c.tex"
+#line 5494 "./tex4ht-c.tex"
 
 idv_char(
-#line 17327 "./tex4ht-c.tex"
+#line 17329 "./tex4ht-c.tex"
 
 142 
 );  file_n += 2;
 idv_char( 
-#line 17321 "./tex4ht-c.tex"
+#line 17323 "./tex4ht-c.tex"
 
 140 
  );
@@ -15680,7 +15682,7 @@ idv_char(
 );
 begin_postamble  = file_n;
 idv_char( 
-#line 17464 "./tex4ht-c.tex"
+#line 17466 "./tex4ht-c.tex"
 
 248 
  );   file_n += 5;
@@ -15692,7 +15694,7 @@ idv_int( bop_addr );  (IGNORED) fseek(dvi_file, 5L,
 for( i = 20; i;  i-- ) idv_copy();
 
 
-#line 5502 "./tex4ht-c.tex"
+#line 5504 "./tex4ht-c.tex"
 
 i = (INTEGER) get_int(2) + 1;    idv_char( (int) i >> 8 );  
 idv_char( (int) i & 0xFF );  file_n += 2;
@@ -15705,7 +15707,7 @@ idv_char( (int) page_n & 0xFF );  file_n += 2;
 );
 
 
-#line 5510 "./tex4ht-c.tex"
+#line 5512 "./tex4ht-c.tex"
 
 eof_op_n -= 32;                                       
 while( --eof_op_n ) idv_copy();
@@ -15716,7 +15718,7 @@ idv_int(begin_postamble);
 1
 );  file_n += 4;
 
-#line 5460 "./tex4ht-c.tex"
+#line 5462 "./tex4ht-c.tex"
 
 ch = get_char();
 if( id_version != -1 ){ ch = id_version; }
@@ -15724,7 +15726,7 @@ idv_char( ch );
 
 
 for( i = 8 - file_n % 4;  i;  i-- ) idv_char( 
-#line 17418 "./tex4ht-c.tex"
+#line 17420 "./tex4ht-c.tex"
 
 223 
  );

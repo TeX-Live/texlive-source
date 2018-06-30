@@ -1,3 +1,10 @@
+2018-06-30  Karl Berry  <karl@freefriends.org>
+
+	* tex4ht-c.tex (close tex4ht file): don't try to dereference
+	null pointers if file is not open. (Why it's not open, I don't know.)
+	Report from Nasser Abbasi, tex4ht 25 May 2018 20:11:20 ff.
+	Synced from tex4ht r417.
+
 2018-06-29  Karl Berry  <karl@freefriends.org>
 
 	* tex4ht.c (r416),
