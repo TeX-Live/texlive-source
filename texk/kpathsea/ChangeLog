@@ -1,3 +1,10 @@
+2018-07-02  Karl Berry  <karl@freefriends.org>
+
+	* kpsewhich.c (lookup): warn that --all is ignored with bitmap fonts.
+	(USAGE): likewise.
+	* doc/kpathsea.texi (Path searching options) <--all>: likewise.
+	Report from Werner Lember, 07 Apr 2018 12:39:34.
+
 2018-06-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* progname.c, types.h, knj.h: Add a variable W32_codepage.

@@ -397,6 +397,13 @@ lookup (kpathsea kpse, string name)
           unsigned local_dpi = find_dpi (name);
           if (!local_dpi)
             local_dpi = dpi;
+          if (show_all) {
+            /* Because the whole glyph lookup thing is too complicated
+               to try all the alternatives (cmr10.600pk vs.
+               dpi600/cmr10.pk, just for starters).  Patches welcome :).  */
+            WARNING1 ("kpsewhich: Ignoring --all for bitmap font, sorry: %s",
+                      name);
+          }
           ret = kpathsea_find_glyph (kpse, temp,
                                      local_dpi, fmt, &glyph_ret);
           if (temp != name)
@@ -464,7 +471,7 @@ When looking up format (.fmt/.base/.mem) files, it is usually necessary\n\
 to also use -engine, or nothing will be returned; in particular,\n\
 -engine=/ will return matching format files for any engine.\n\
 \n\
--all                   output all matches, one per line.\n\
+-all                   output all matches, one per line (no effect with pk/gf).\n\
 [-no]-casefold-search  fall back to case-insensitive search if no exact match.\n\
 -debug=NUM             set debugging flags.\n\
 -D, -dpi=NUM           use a base resolution of NUM; default 600.\n\

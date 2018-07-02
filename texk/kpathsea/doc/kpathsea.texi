@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.0
-@set month-year February 2018
+@set month-year July 2018
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -1436,7 +1436,9 @@ Various options alter the path searching behavior:
 @opindex --all
 @cindex all matches, finding
 Report all matches found, one per line.  By default, if there is more
-than one match, just one will be reported (chosen effectively at random).
+than one match, just one will be reported (chosen effectively at
+random).  Exception: with the glyph formats (@code{pk}, @code{gf}),
+this option has no effect and only the first match is returned.
 
 @item --casefold-search
 @itemx --no-casefold-search
