@@ -1,3 +1,341 @@
+commit 29e7879bcf3fe955a0be3bb41e929e68f39ad01e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 3 12:38:21 2018 +0430
+
+    Disable .dfont code for now
+
+    The get_table imple was wrong, as table offsets in a dfont are
+    relative to the resource.  We were treating them as relative to
+    the big blob itself.  To be fixed.
+
+    Part of https://github.com/harfbuzz/harfbuzz/pull/1085
+
+ src/hb-open-file-private.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 32348a43c154eac6bfb21b9e8044b38ed763601e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jul 1 15:32:43 2018 +0430
+
+    Fix trak table apply logic
+
+    In collaboration with Behdad
+
+ src/hb-aat-layout-trak-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 225b92b7d4437360f8779850ee0aae85966679b5
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jul 1 14:32:00 2018 +0430
+
+    Support dfont font files (#949)
+
+ src/hb-open-file-private.hh | 196
+ ++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-open-type-private.hh |   1 +
+ src/main.cc                 |   3 +
+ 3 files changed, 200 insertions(+)
+
+commit 5d8cafcf6a47ce73afff06499f6be23c72ab6797
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jul 1 01:54:14 2018 +0430
+
+    Improve nommap naming and use C style comments on create_from_file
+    (#1084)
+
+ .circleci/config.yml |  2 +-
+ src/hb-blob.cc       | 16 ++++++++--------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+commit d3c0980ac234698627cb281e5526cc99139eed30
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jun 30 15:59:25 2018 +0430
+
+    Adjust MarkBasePos heuristic in presence of MultipleSubst
+
+    From the issue:
+    "In this font, the virama,ya first forms a ligature, then decomposes
+    back to
+    virama,ya. This causes those two to be marked parts of a MultipleSubst
+    sequence. When attaching the matra, we look for the first of the
+    MultipleSubst
+    sequence because that's where we attach to (because of eg #740). In
+    this case,
+    the first glyph in the MultipleSubst sequence is a mark, so we skip
+    it and
+    attach to the base char before it."
+
+    Font in question is Nirmala UI from Windows 10. Test sequence:
+
+      U+0926,U+094D,U+092F,U+0941
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1020
+
+ src/hb-ot-layout-gpos-table.hh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 8b9cbe3b24be2ae0166e682103e22ec916316ecf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jun 30 12:28:03 2018 +0430
+
+    [indic] Tweak for old-spec Bengali and halant-ya-halant
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1073
+
+ src/hb-ot-shape-complex-indic.cc | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+commit 9541c9dae10156fb61e4786545d1976cdcfb6bda
+Author: punchcutter <zarijoscha@gmail.com>
+Date:   Sun Jun 24 22:54:57 2018 -0700
+
+    Rebase and update USE overrides for Bhaiksuki Gap Fillers and
+    Grantha Anusvara
+
+ src/gen-use-table.py | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit 7b8dfac560abe89d48cfc2f6efb4a61820bd28bf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jun 30 09:16:54 2018 +0430
+
+    [khmer] Fix infinite-loop in cluster merging
+
+    Indic shaper already had this check.  We removed it when forking
+    Khmer shaper by mistake.
+
+    Fixes https://bugzilla.mozilla.org/show_bug.cgi?id=1464623
+
+ src/hb-ot-shape-complex-khmer.cc | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
+
+commit 25970a93aa6596d50ae538c6274625f95153572c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jun 28 14:32:36 2018 +0430
+
+    armcc compatibility, don't use EINTR if doesn't exist
+
+    Fixes #1081
+
+ src/hb-blob.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 8a51f91b7035bbfaf39af1b962faf1613d2ea3b7
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jun 28 13:22:21 2018 +0430
+
+    Minor on hb_blob_create_from_file, reuse ferror result
+
+    Oops
+
+ src/hb-blob.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 71971800ed1c0501a58e6ff7730e3cebec2ef2f8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jun 27 18:14:52 2018 +0430
+
+    [ci] Don't fail on apt update and revive clang-O3-O0
+
+ .circleci/config.yml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 7b4099f35f766d33d483a4b9d0805ef16020ea23
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jun 27 16:54:44 2018 +0430
+
+    Minor, rename blob to data on blob_from_file
+
+ src/hb-blob.cc | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+commit fa090ed4d47df12b2e611c9a667c398742f7e4ba
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jun 27 14:13:26 2018 +0430
+
+    Minor touches on hb_blob_create_from_file (#1079)
+
+    * Handle EINTR on fallback reader
+    * Increase fallback reader limitation size limitation to 2 << 28
+    * Ensure _O_BINARY does exist if MMAP is used on Windows
+      (maybe superfluous but makes me more confident)
+
+ src/hb-blob.cc | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+commit 01dff1ea1aa871fa19a92c2afd63c8cb5dd6e455
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 26 18:00:58 2018 -0400
+
+    Make round() fallback portable to systems that do have round()
+
+    Makes compiling without HAVE_ROUND on systems that do have it work.
+
+ src/hb-private.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 7db2e9ea38329b9393c9e8cc905b180735c9b0f4
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jun 26 10:46:10 2018 +0430
+
+    Minor on hb_blob_create_from_file
+
+    Add one more "unlikely" annotation and use explicit nullptr check
+    for more consistency.
+
+ src/hb-blob.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 4f8753464ae44dfb60bee81ede10448175db7b90
+Author: Garret Rieger <grieger@google.com>
+Date:   Fri Jun 22 15:29:34 2018 -0700
+
+    [subset] Add fuzzer test case that caused a timeout to the corpus.
+
+ ...testcase-minimized-hb-subset-fuzzer-5750092395970560 | Bin 0 ->
+ 72435 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 35ce8f31d37cf7c2a1f8265d36ba4c2c9a3efb2c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 25 22:23:43 2018 +0430
+
+    Unify our pipe reader with the fallback reader (#1068)
+
+    And assign one bot to use the path always using NOMMAPFILEREADER
+    token.
+
+    It's limited to 200mb so no more fun with using /dev/zero on hb-view!
+
+ .circleci/config.yml |   6 +-
+ src/hb-blob.cc       | 152
+ ++++++++++++++++++++++-----------------------------
+ 2 files changed, 68 insertions(+), 90 deletions(-)
+
+commit f57804a8a596e88843ddc8b88afac7526349b89b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 25 18:45:49 2018 +0430
+
+    Resolve ttx absolute path before use (#1075)
+
+ test/subset/run-tests.py | 101
+ ++++++++++++++++++++++++++---------------------
+ 1 file changed, 57 insertions(+), 44 deletions(-)
+
+commit 159ddb872986f121818e816d2ea75d271075ba1f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 24 23:09:16 2018 +0430
+
+    Treat - just as /dev/stdin and remove one extra file reader (#1065)
+
+ util/options.cc | 27 +++++++++------------------
+ 1 file changed, 9 insertions(+), 18 deletions(-)
+
+commit b2a187918757a0faaf0f564ec2b0766c09fa364c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jun 23 10:32:28 2018 -0400
+
+    In Coverage iterator, bail out if table smells
+
+    In particular, if CoverageFormat2 has unsorted ranges, bail out.
+    Otherwise, 64k ranges of each 64k glyphs can DoS closure() method.
+
+    We can do the same for CoverageFormat1, but that one does not expose
+    the quadratic behavior, so, fine.
+
+ src/hb-ot-layout-common-private.hh | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+commit 941f2b85489b344698bf036922c589483034a7f2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 18 20:35:40 2018 +0430
+
+    Support pipe and friends on hb_blob_create_from_file (#1061)
+
+    With this hb-view/hb-shape support pipes and possibly socket and
+    named pipe
+    also, anything fails just on mmap.
+
+    We can later do the same for Windows also.
+
+    This however reveals two issues, the fact most of our bots don't
+    have HAVE_MMAP and using
+    this instead the other fread/fopen reader can make failure on CI. I
+    should look at them separately
+    this change however is very low risk I believe.
+
+ src/hb-blob.cc | 44 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
+
+commit d0c2889dfc43da92c76d6eab5482b1298744dc9c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 18 19:59:33 2018 +0430
+
+    Revert file blob sanitization and index checking (#1062)
+
+    As
+    https://github.com/harfbuzz/harfbuzz/pull/1059#issuecomment-397912812
+    we
+    like to still work with blobs that harfbuzz itself can't handle
+    directly that are failing sanitization
+    currently apparently.
+
+ util/options.cc | 12 ++----------
+ util/options.hh |  2 +-
+ 2 files changed, 3 insertions(+), 11 deletions(-)
+
+commit c53697d3f2a3fae8b68ec4c5146c7000a07e0963
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 17 17:04:55 2018 +0430
+
+    Verbose fail when something is wrong with hb-shape/hb-view input
+    font file (#1059)
+
+    This checks if the blob isn't empty and uses `hb_face_count`
+    to see if the font file passes the simple font file sanitization
+    so can detect if the input is actually a font and checks also
+    whether input font-index is out of range.
+
+ util/options.cc | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+commit aa0c5df4199ef4e96df2b856c8f629e49fdd5120
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 17 16:49:34 2018 +0430
+
+    Fix reading fonts from stdin (#1060)
+
+    We were passing the font path directly to freetype so rendering
+    was broken when we are getting the font from stdin.
+
+    This fixes it by using FT_New_Memory_Face instead.
+
+    This fixes:
+    * build/util/hb-view /dev/stdin text < font.ttf
+    * build/util/hb-view - text < font.ttf
+    * cat font.ttf | build/util/hb-view - text
+
+    but doesn't work on
+    * cat font.ttf | build/util/hb-view /dev/stdin text
+
+    which I will try to fix separately.
+
+ util/helper-cairo.cc | 14 ++++++++++----
+ util/options.cc      |  5 ++---
+ util/options.hh      |  4 +++-
+ 3 files changed, 15 insertions(+), 8 deletions(-)
+
+commit 3654d9be6b017e66307fe0ffe635266938b14702
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 12 19:38:04 2018 -0400
+
+    1.8.1
+
+ NEWS             | 8 ++++++++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+
 commit f3e58ab8a957cdf36bddef793c473664744885a7
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Jun 12 19:32:04 2018 -0400
