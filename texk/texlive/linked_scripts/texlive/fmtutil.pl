@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 47929 2018-06-05 02:23:02Z preining $
+# $Id: fmtutil.pl 48129 2018-07-03 22:15:38Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 47929 2018-06-05 02:23:02Z preining $';
-my $lastchdate = '$Date: 2018-06-05 04:23:02 +0200 (Tue, 05 Jun 2018) $';
+my $svnid = '$Id: fmtutil.pl 48129 2018-07-03 22:15:38Z karl $';
+my $lastchdate = '$Date: 2018-07-04 00:15:38 +0200 (Wed, 04 Jul 2018) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 47929 $';
+my $svnrev = '$Revision: 48129 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -909,6 +909,8 @@ sub callback_list_cfg {
   @lines = map { $_->[1] } sort { $a->[0] cmp $b->[0] } @lines;
   print "List of all formats:\n";
   print @lines;
+  
+  return @lines == 0; # only return failure if no formats.
 }
 
 
@@ -950,27 +952,46 @@ sub read_fmtutil_file {
   my $fn = shift;
   open(FN, "<$fn") || die "Cannot read $fn: $!";
   #
-  # we count lines from 0 ..!!!!
+  # we count lines from 0 ..!!!!?
   my $i = -1;
+  my $printline = 0; # but not in error messages
   my @lines = <FN>;
   chomp(@lines);
   $alldata->{'fmtutil'}{$fn}{'lines'} = [ @lines ];
   close(FN) || warn("$prg: Cannot close $fn: $!");
   for (@lines) {
     $i++;
+    $printline++;
     chomp;
+    my $orig_line = $_;
     next if /^\s*#?\s*$/; # ignore empty and all-blank and just-# lines
     next if /^\s*#[^!]/;  # ignore whole-line comment that is not a disable
     s/#[^!].*//;          # remove within-line comment that is not a disable
     s/#$//;               # remove # at end of line
     my ($a,$b,$c,@rest) = split (' '); # special split rule, leading ws ign
+    if (! $b) { # as in: "somefmt"
+      print_warning("no engine specified for format $a, ignoring "
+                    . "(file $fn, line $printline)\n");
+      next;
+    }
+    if (! $c) { # as in: "somefmt someeng"
+      print_warning("no pattern argument specified for $a/$b, ignoring line: "
+                    . "$orig_line (file $fn, line $printline)\n");
+      next;
+    }
+    if (@rest == 0) { # as in: "somefmt someeng somepat"
+      print_warning("no inifile argument(s) specified for $a/$b, ignoring line: "
+                    . "$orig_line (file $fn, line $printline)\n");
+      next;
+    }
     my $disabled = 0;
     if ($a eq "#!") {
-      # we cannot determine whether a line is a proper fmtline or
-      # not, so we have to assume that it is
+      # we cannot feasibly determine whether a line is a proper fmtline or
+      # not, so we have to assume that it is as long as we have four args.
       my $d = shift @rest;
       if (!defined($d)) {
-        print_warning("apparently not a real disable line, ignored: $_\n");
+        print_warning("apparently not a real disable line, ignoring: "
+                      . "$orig_line (file $fn, line $printline)\n");
         next;
       } else {
         $disabled = 1;

@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 47648 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2018-05-09 09:09:31 +0200 (Wed, 09 May 2018) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 48059 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2018-06-20 05:55:23 +0200 (Wed, 20 Jun 2018) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -267,6 +267,9 @@ local docstr = [[
     2018/04/06
         - introduce a new function is_64bit_windows_os() to
           check Windows OS.
+    2018/06/20
+        - support also scripts in trees other than TEXMFDIST:
+          https://tug.org/pipermail/tex-live/2018-June/041922.html
 ]]
 
 -- HELPER SUBROUTINES --
@@ -767,8 +770,14 @@ if not ARGV then
   os.setenv('TEXMF', TEXMFDIST)
   local extlist = '.tlu;.texlua;.pl;.lua;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;\0'
   local progfullname = search_path(progname, BINDIR, '.tlu;.bat;.cmd') or
-                       assert(find_texmfscript(progname, extlist))
+                       find_texmfscript(progname, extlist)
   os.setenv('TEXMF', nil)
+  if progfullname == nil then
+-- scripts in $TEXMFLOCAL etc. can't be found without the following
+-- line !!
+    kpse.set_program_name('runscript')
+    progfullname = assert(find_texmfscript(progname, extlist))
+  end
   local ext = string.match(string.lower(progfullname), '%.[^\\/.]*$') or ''
   if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then -- lua script
     arg[0] = progfullname

@@ -474,7 +474,8 @@ make check
 @end example
 
 Then you modify source files in @file{mydir/texk/dvipdfm-x} and rerun
-@code{make} in @file{mydir/Work/texk/dvipdfm-x} to rebuild.
+@code{make} in @file{mydir/Work/texk/dvipdfm-x} to rebuild (that
+build directory is where the binaries end up).
 
 The second line of the @code{configure} invocation shows examples of
 extra things you likely want to specify if you intend to hack the
@@ -488,15 +489,15 @@ tweak as desired; check the output from @code{configure --help}.
 
 @cindex size of source tree
 Finally, the above retrieves the entire TL source tree (several
-hundred megabytes).  It is natural to ask if this is really necessary.
+hundred megabytes). It is natural to ask if this is really necessary.
 Strictly speaking, the answer is no, but it is vastly more convenient
-to do so.  If you cut down the source tree, you must also give
+to do so. If you cut down the source tree, you must also give
 additional @code{configure} flags to individually disable using system
 versions of libraries, or the intricacies of the dependencies (such as
 @code{teckit} requiring @code{zlib}) will have undesired side effects.
 For an example, see the @code{build-pdftex.sh} script in the
-@code{pdftex} development source (@url{http://pdftex.org}), which is
-indeed a cut-down TL source tree.
+@code{pdftex} development source (details at @url{http://pdftex.org}),
+which is indeed a cut-down TL source tree.
 
 @vindex --enable-missing @r{to ignore dependencies}
 Even with @code{--disable-all-pkgs}, dependencies will be checked.
@@ -675,7 +676,7 @@ source tree.
 @pindex plain.tex@r{, not in source tree}
 The main consideration is that @code{make install} is not enough to
 make a usable @TeX{} installation.  Beyond the compiled binaries,
-(thousands of) support files are needed; just as a first example
+(thousands of) support files are needed; just as a first example,
 @file{plain.tex} is not in the source tree.
 
 These support files are maintained completely independently and are

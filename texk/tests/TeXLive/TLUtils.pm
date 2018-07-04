@@ -1,4 +1,4 @@
-# $Id: TLUtils.pm 47887 2018-05-31 16:50:47Z karl $
+# $Id: TLUtils.pm 48130 2018-07-03 22:24:07Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2018 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 47887 $';
+my $svnrev = '$Revision: 48130 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -39,6 +39,7 @@ C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
   TeXLive::TLUtils::wsystem($msg,@args);
   TeXLive::TLUtils::xsystem(@args);
   TeXLive::TLUtils::run_cmd($cmd);
+  TeXLive::TLUtils::system_pipe($prog, $infile, $outfile, $removeIn, @extraargs);
 
 =head2 File utilities
 
@@ -177,6 +178,7 @@ BEGIN {
     &wsystem
     &xsystem
     &run_cmd
+    &system_pipe
     &announce_execute_actions
     &add_symlinks
     &remove_symlinks
@@ -202,7 +204,7 @@ BEGIN {
   );
   @EXPORT = qw(setup_programs download_file process_logging_options
                tldie tlwarn info log debug ddebug dddebug debug_hash
-               win32 xchdir xsystem run_cmd sort_archs);
+               win32 xchdir xsystem run_cmd system_pipe sort_archs);
 }
 
 use Cwd;
@@ -623,6 +625,37 @@ sub run_cmd {
   return ($output,$retval);
 }
 
+=item C<system_pipe($prog, $infile, $outfile, $removeIn, @extraargs)>
+
+Runs C<$prog> with C<@extraargs> redirecting stdin from C<$infile>, stdout to C<$outfile>.
+Removes C<$infile> if C<$removeIn> is true.
+
+=cut
+
+sub system_pipe {
+  my ($prog, $infile, $outfile, $removeIn, @extraargs) = @_;
+  
+  my $progQuote = quotify_path_with_spaces($prog);
+  if (win32()) {
+    $infile =~ s!/!\\!g;
+    $outfile =~ s!/!\\!g;
+  }
+  my $infileQuote = "\"$infile\"";
+  my $outfileQuote = "\"$outfile\"";
+  debug("TLUtils::system_pipe: calling $progQuote @extraargs < $infileQuote > $outfileQuote\n");
+  my $retval = system("$progQuote @extraargs < $infileQuote > $outfileQuote");
+  if ($retval != 0) {
+    $retval /= 256 if $retval > 0;
+    debug("TLUtils::system_pipe: system exit code = $retval\n");
+    return 0;
+  } else {
+    if ($removeIn) {
+      debug("TLUtils::system_pipe: removing $infile\n");
+      unlink($infile);
+    }
+    return 1;
+  }
+}
 
 =back
 
@@ -2136,31 +2169,23 @@ sub unpack {
     return (0, "nothing to unpack");
   }
 
-  my $type;
+  my $decompressorType;
   my $compressorextension;
-  for my $comptype (@AcceptedCompressors) {
-    my $ext = $CompressorExtension{$comptype};
-    if ($what =~  m/\.tar\.$ext$/) {
-      $type = $comptype;
-      $compressorextension = $ext;
-    }
+  if ($what =~ m/\.tar\.$CompressorExtRegexp$/) {
+    $compressorextension = $1;
+    $decompressorType = $1 eq "gz" ? "gzip" : $1;
   }
-  if (!$type) {
+  if (!$decompressorType) {
     return(0, "don't know how to unpack");
   }
   # make sure that the found uncompressor type is also available
-  if (!member($type, @{$::progs{'working_compressors'}})) {
-    return(0, "unsupported container format $type");
+  if (!member($decompressorType, @{$::progs{'working_compressors'}})) {
+    return(0, "unsupported container format $decompressorType");
   }
 
   # only check the necessary compressor program
-  my $decompressor = TeXLive::TLUtils::quotify_path_with_spaces(
-                                        $::progs{$DecompressorProgram{$type}});
-  my @decompressorArgs = @{$DecompressorArgs{$type}};
-  if (!defined($decompressor)) {
-    return (0, "programs not set up properly");
-  }
-
+  my $decompressor = $::progs{$decompressorType};
+  my @decompressorArgs = @{$Compressors{$decompressorType}{'decompress_args'}};
 
   my $fn = basename($what);
   my $pkg = $fn;
@@ -2169,17 +2194,6 @@ sub unpack {
   my $containerfile = "$tempdir/$fn";
   my $tarfile = "$tempdir/$fn"; 
   $tarfile =~ s/\.$compressorextension$//;
-  my $containerfile_quote;
-  my $tarfile_quote;
-  my $target_quote;
-  if (win32()) {
-    $containerfile =~ s!/!\\!g;
-    $tarfile =~ s!/!\\!g;
-    $target =~ s!/!\\!g;
-  }
-  $containerfile_quote = "\"$containerfile\"";
-  $tarfile_quote = "\"$tarfile\"";
-  $target_quote = "\"$target\"";
   if ($what =~ m,^(https?|ftp)://, || $what =~ m!$SshURIRegex!) {
     # we are installing from the NET
     # check for the presence of $what in $tempdir
@@ -2210,14 +2224,12 @@ sub unpack {
     # we can remove it afterwards
     $remove_containerfile = 1;
   }
-  debug("decompressing $containerfile to $tarfile\n");
-  debug("calling $decompressor @decompressorArgs < $containerfile_quote > $tarfile_quote\n");
-  system("$decompressor @decompressorArgs < $containerfile_quote > $tarfile_quote");
-  if (! -f $tarfile) {
+  if (!system_pipe($decompressor, $containerfile, $tarfile, $remove_container, @decompressorArgs)
+      ||
+      ! -f $tarfile) {
     unlink($tarfile, $containerfile);
     return(0, "Decompressing $containerfile failed");
   }
-  unlink($containerfile) if $remove_containerfile;
   if (untar($tarfile, $target, 1)) {
     return (1, "$pkg");
   } else {
@@ -2364,16 +2376,15 @@ sub setup_programs {
   }
   $::progs{'working_downloaders'} = [ @working_downloaders ];
   my @working_compressors;
-  for my $comptype (@AcceptedCompressors) {
-    my $defprog = $CompressorProgram{$comptype};
+  for my $defprog (sort {$Compressors{$a}{'priority'} <=> $Compressors{$b}{'priority'}} keys %Compressors) {
     # do not warn on errors
     if (setup_one(($isWin ? "w32" : "unix"), $defprog,
-                  "$bindir/$comptype/$defprog.$platform", "--version", 1)) {
-      push @working_compressors, $comptype;
+                  "$bindir/$defprog/$defprog.$platform", "--version", 1)) {
+      push @working_compressors, $defprog;
       # also set up $::{'compressor'} if not already done
       # this selects the first one, but we might reset this depending on
       # TEXLIVE_COMPRESSOR setting, see below
-      defined($::progs{'compressor'}) || ($::progs{'compressor'} = $comptype);
+      defined($::progs{'compressor'}) || ($::progs{'compressor'} = $defprog);
     }
   }
   $::progs{'working_compressors'} = [ @working_compressors ];
@@ -3897,7 +3908,8 @@ sub slurp_file {
 
 =item C<< download_to_temp_or_file($url) >>
 
-If C<$url> tries to download the file into a temporary file.
+If C<$url> is a url, tries to download the file into a temporary file.
+Otherwise assume that C<$url> is a local file.
 In both cases returns the local file.
 
 Returns the local file name if succeeded, otherwise undef.

@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 47951 2018-06-07 05:55:43Z preining $
+# $Id: tlmgr.pl 48030 2018-06-16 13:43:22Z preining $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 47951 $';
-my $datrev = '$Date: 2018-06-07 07:55:43 +0200 (Thu, 07 Jun 2018) $';
+my $svnrev = '$Revision: 48030 $';
+my $datrev = '$Date: 2018-06-16 15:43:22 +0200 (Sat, 16 Jun 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -215,7 +215,8 @@ my %action_specification = (
       "data" => "=s",
       "all" => 1,
       "list" => 1, 
-      "only-installed" => 1
+      "only-installed" => 1,
+      "only-remote" => 1
     },
     "run-post" => 0,
     "function" => \&action_info
@@ -1547,6 +1548,10 @@ sub action_dumptlpdb {
 #  INFO
 #
 sub action_info {
+  if ($opts{'only-installed'} && $opts{'only-remote'}) {
+    tlwarn("Are you joking? --only-installed and --only-remote cannot both be specified!\n");
+    return($F_ERROR);
+  }
   init_local_db();
   my ($what,@todo) = @ARGV;
   my $ret = $F_OK | $F_NOPOSTACTION;
@@ -1613,8 +1618,10 @@ sub action_info {
     } else {
       @whattolist = $tlm->list_packages;
     }
-    # add also the local packages
-    TeXLive::TLUtils::push_uniq(\@whattolist, $localtlpdb->list_packages);
+    if (!$opts{'only-remote'}) {
+      # add also the local packages
+      TeXLive::TLUtils::push_uniq(\@whattolist, $localtlpdb->list_packages);
+    }
   } else {
     @whattolist = ($what, @todo);
   }
@@ -1759,19 +1766,23 @@ sub get_available_backups {
   my $oldwsloppy = ${^WIN32_SLOPPY_STAT};
   ${^WIN32_SLOPPY_STAT} = 1;
   #
+  my $pkg;
+  my $rev;
+  my $ext;
   for my $dirent (@dirents) {
+    $pkg = "";
+    $rev = "";
+    $ext = "";
     next if (-d $dirent);
-    my $has_accepted_compressiontype = 0;
-    for my $comptype (@AcceptedCompressors) {
-      my $ext = $CompressorExtension{$comptype};
-      $has_accepted_compressiontype = 1 if ($dirent =~ m/\.tar\.$ext$/);
-    }
-    next if (!$has_accepted_compressiontype);
-    if ($dirent !~ m/^(.*)\.r([0-9]+)\.tar\.(.*)$/) {
+    if ($dirent =~ m/^(.*)\.r([0-9]+)\.tar\.$CompressorExtRegexp$/) {
+      $pkg = $1;
+      $rev = $2;
+      $ext = $3;
+    } else {
       next;
     }
     if (!$do_stat) {
-      $backups{$1}->{$2} = 1;
+      $backups{$pkg}->{$rev} = 1;
       next;
     }
     my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
@@ -1790,9 +1801,9 @@ sub get_available_backups {
     if (!$usedt) {
       # stat failed, set key to -1 as a sign that there is a backup
       # but we cannot stat it
-      $backups{$1}->{$2} = -1;
+      $backups{$pkg}->{$rev} = -1;
     } else {
-      $backups{$1}->{$2} = $usedt;
+      $backups{$pkg}->{$rev} = $usedt;
     }
   }
   # reset the original value of the w32 sloppy mode for stating files
@@ -1805,9 +1816,13 @@ sub restore_one_package {
   # first remove the package, then reinstall it
   # this way we get rid of useless files
   my $restore_file;
-  for my $comptype (@AcceptedCompressors) {
-    my $ext = $CompressorExtension{$comptype};
-    $restore_file = "$bd/${pkg}.r${rev}.tar.$ext" if (-r "$bd/${pkg}.r${rev}.tar.$ext");
+  for my $ext (map {$Compressors{$_}{'extension'}} 
+                 sort {$Compressors{$a}{'priority'} <=> $Compressors{$a}{'priority'}} 
+                   keys %Compressors) {
+    if (-r "$bd/${pkg}.r${rev}.tar.$ext") {
+      $restore_file = "$bd/${pkg}.r${rev}.tar.$ext";
+      last;
+    }
   }
   if (!$restore_file) {
     tlwarn("$prg: Cannot find restore file $bd/${pkg}.r${rev}.tar.*, no action taken\n");
@@ -2141,7 +2156,7 @@ sub action_backup {
       clear_old_backups ($pkg, $opts{"backupdir"}, $opts{"clean"}, $opts{"dry-run"}, 1);
     } else {
       # for now default to xz and allow overriding with env var
-      my $compressorextension = $CompressorExtension{$::progs{'compressor'}};
+      my $compressorextension = $Compressors{$::progs{'compressor'}}{'extension'};
       my $tlp = $localtlpdb->get_package($pkg);
       info("saving current status of $pkg to $opts{'backupdir'}/${pkg}.r" .
         $tlp->revision . ".tar.$compressorextension\n");
@@ -2268,28 +2283,28 @@ sub write_w32_updater {
       tlwarn("$prg: Creation of backup container of $pkg failed.\n");
       return 1; # backup failed? abort
     }
-    my $decompressor = $::progs{$DecompressorProgram{$DefaultCompressorFormat}};
-    my $compressorextension = $CompressorExtension{$DefaultCompressorFormat};
-    my @decompressorArgs = @{$DecompressorArgs{$DefaultCompressorFormat}};
+    my $decompressor = $::progs{$DefaultCompressorFormat};
+    my $compressorextension = $Compressors{$DefaultCompressorFormat}{'extension'};
+    my @decompressorArgs = @{$Compressors{$DefaultCompressorFormat}{'decompress_args'}};
     foreach my $pkg_part (@pkg_parts) {
+      my $dlcontainer = "$temp/$pkg_part.tar.$compressorextension";
       if ($media eq 'local_compressed') {
         copy("$repo/$pkg_part.tar.$compressorextension", "$temp");
       } else { # net
-        TeXLive::TLUtils::download_file("$repo/$pkg_part.tar.$compressorextension", 
-                                        "$temp/$pkg_part.tar.$compressorextension");
+        TeXLive::TLUtils::download_file("$repo/$pkg_part.tar.$compressorextension", $dlcontainer);
       }
       # now we should have the file present
-      if (!-r "$temp/$pkg_part.tar.$compressorextension") {
+      if (!-r $dlcontainer) {
         tlwarn("$prg: Couldn't get $pkg_part.tar.$compressorextension, that is bad\n");
         return 1; # abort
       }
       # unpack xz archive
-      my $sysret = system("$decompressor @decompressorArgs < \"$temp/$pkg_part.tar.xz\" > \"$temp/$pkg_part.tar\"");
+      my $sysret = system("$decompressor @decompressorArgs < \"$dlcontainer\" > \"$temp/$pkg_part.tar\"");
       if ($sysret) {
         tlwarn("$prg: Couldn't unpack $pkg_part.tar.$compressorextension\n");
         return 1; # unpack failed? abort
       }
-      unlink("$temp/$pkg_part.tar.$compressorextension"); # we don't need that archive anymore
+      unlink($dlcontainer); # we don't need that archive anymore
     }
   }
   
@@ -3181,7 +3196,7 @@ sub action_update {
       }
 
       if ($opts{"backup"} && !$opts{"dry-run"}) {
-        my $compressorextension = $CompressorExtension{$::progs{'compressor'}};
+        my $compressorextension = $Compressors{$::progs{'compressor'}}{'extension'};
         $tlp->make_container($::progs{'compressor'}, $root,
                              $opts{"backupdir"}, "${pkg}.r" . $tlp->revision,
                              $tlp->relocated);
@@ -3930,18 +3945,31 @@ sub show_one_package_csv {
 
 sub show_one_package_list {
   my ($p, @rest) = @_;
+  my @out;
+  my $loctlp = $localtlpdb->get_package($p);
+  my $remtlp = $remotetlpdb->get_package($p) unless ($opts{'only-installed'});
+  my $is_installed = (defined($loctlp) ? 1 : 0);
+  my $is_available = (defined($remtlp) ? 1 : 0);
+  if (!($is_installed || $is_available)) {
+    if ($opts{'only-installed'}) {
+      tlwarn("$prg: package $p not locally!\n");
+    } else {
+      tlwarn("$prg: package $p not found neither locally nor remote!\n");
+    }
+    return($F_WARNING);
+  }
+  my $tlp = ($is_installed ? $loctlp : $remtlp);
   my $tlm;
   if ($opts{"only-installed"}) {
     $tlm = $localtlpdb;
   } else {
     $tlm = $remotetlpdb;
   }
-  if (defined($localtlpdb->get_package($p))) {
+  if ($is_installed) {
     print "i ";
   } else {
     print "  ";
   }
-  my $tlp = $tlm->get_package($p);
   if (!$tlp) {
     if ($remotetlpdb->is_virtual) {
       # we might have the case that a package is present in a
@@ -7261,10 +7289,9 @@ sub clear_old_backups {
   my @dirents = readdir (DIR);
   closedir (DIR) || warn "closedir($backupdir) failed: $!";
   my @backups;
-  my $extre = "(" . join("|", map { $CompressorExtension{$_} } @AcceptedCompressors) . ")";
   for my $dirent (@dirents) {
     next if (-d $dirent);
-    next if ($dirent !~ m/^$pkg\.r([0-9]+)\.tar\.$extre$/);
+    next if ($dirent !~ m/^$pkg\.r([0-9]+)\.tar\.$CompressorExtRegexp$/);
     push @backups, [ $1, $dirent ] ;
   }
   my $i = 1;
@@ -8030,6 +8057,13 @@ dependencies in a similar way.
 
 If this option is given, the installation source will not be used; only
 locally installed packages, collections, or schemes are listed.
+
+=item B<--only-remote>
+
+Only list packages from the remote repository. Useful when checking what
+is available in a remote repository using
+C<tlmgr --repo ... --only-remote info>. Note that
+C<--only-installed> and C<--only-remote> cannot both be specified.
 
 =item B<--data C<item1,item2,...>>
 
@@ -9695,7 +9729,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47951 2018-06-07 05:55:43Z preining $
+$Id: tlmgr.pl 48030 2018-06-16 13:43:22Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
