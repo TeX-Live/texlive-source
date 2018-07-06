@@ -31,8 +31,6 @@ aarch64-linux:
   gcc (Debian 6.3.0-18) 6.3.0 20170516
   ./Build --enable-arm-neon=check
 
-armhf-linux:
-  
 i386-netbsd, amd64-netbsd:
   gcc version 4.5.3 (NetBSD nb2 20110806)
   NetBSD/amd64 6.1.3
@@ -41,10 +39,10 @@ i386-netbsd, amd64-netbsd:
   ./Build --enable-xindy CLISP=/usr/local/bin/clisp
 
 i386-freebsd, amd64-freebsd:
-  --disable-dvisvgm; upmendex for i386 built with -DU_IS_BIG_ENDIAN=0.
+  http://anthesphoria.net/FreeBSD/TeXLive-2018/
+  upmendex for i386 built with -DU_IS_BIG_ENDIAN=0.
 
-i386-linux, x86_64-linux:
-  Debian 8.0 (Jessie), Apr 2015.
+i386-linux: see travis below.
 
 i386-openbsd, amd64-openbsd:
   e.g., see CONFIGURE_ARGS in the Makefile in
@@ -56,9 +54,7 @@ i386-solaris, x86_64-solaris, sparc-solaris:
 i386-cygwin, x86_64-cygwin: gcc-4.8.2, cygwin-1.7.29.
   ./Build (with --enable-xindy for i386).
 
-x86_64-darwin:
-  OS X 10.10
-  See Master/source/mactexdoc.tar.xz.
+x86_64-darwin: See Master/source/mactexdoc.tar.xz.
 
 x86_64-darwinlegacy:
   Mac OS X 10.6, clang 5.0, libc++ required
@@ -66,7 +62,10 @@ x86_64-darwinlegacy:
   http://build.contextgarden.net/waterfall?tag=c/texlive
   (These links have info on all platforms built by Mojca.)
 
+i386-linux,
+x86_64-linux,
 x86_64-linuxmusl:
   Alpine 3.1 Docker image with musl libc 1.1.5
-  Binaries are taken from the CI testing on travis-ci, see the
-  source/.travis.yaml file for details on how to build.
+  Binaries are taken from the CI testing on travis-ci
+  see the source/.travis.yaml file for details on how to build,
+  and tlpkg/bin/tl-update-bindir for updating binaries (in general).
