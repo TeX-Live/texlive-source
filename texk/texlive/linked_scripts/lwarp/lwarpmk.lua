@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2018 Brian Dunn
 
-printversion = "v0.57"
+printversion = "v0.58"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -14,55 +14,61 @@ function printusage ()
 --
 print ( [[
 
-lwarpmk print [project]: Compile the print version if necessary.
-lwarpmk print1 [project]: Forced single compile of the print version.
-lwarpmk printindex [project]: Process the index for the print version.
-lwarpmk printglossary [project]: Process the glossary for the print version.
-lwarpmk html [project]: Compile the HTML version if necessary.
-lwarpmk html1 [project]: Forced single compile of the HTML version.
-lwarpmk htmlindex [project]: Process the index for the html version.
-lwarpmk htmlglossary [project]: Process the glossary for the html version.
-lwarpmk again [project]: Touch the source code to trigger recompiles.
-lwarpmk limages [project]: Process the "lateximages" created by lwarp.sty.
-lwarpmk pdftohtml [project]:
+lwarpmk print [-p project]: Compile the print version if necessary.
+lwarpmk print1 [-p project]: Forced single compile of the print version.
+lwarpmk printindex [-p project]: Process print indexes.
+lwarpmk printglossary [-p project]: Process the glossary for the print version.
+lwarpmk html [-p project]: Compile the HTML version if necessary.
+lwarpmk html1 [-p project]: Forced single compile of the HTML version.
+lwarpmk htmlindex [-p project]: Process HTML indexes.
+lwarpmk htmlglossary [-p project]: Process the glossary for the html version.
+lwarpmk again [-p project]: Touch the source code to trigger recompiles.
+lwarpmk limages [-p project]: Process the "lateximages" created by lwarp.sty.
+lwarpmk pdftohtml [-p project]:
     For use with latexmk or a Makefile:
     Converts project_html.pdf to project_html.html and individual HTML files.
     Finishes the HTML conversion even if there was a compile error.
 lwarpmk pdftosvg <list of file names>: Converts each PDF file to SVG.
-lwarpmk clean [project]: Remove .aux, .toc, .lof/t, .idx, .ind, .log, *_html_inc.*, .gl*
-lwarpmk cleanall [project]: Remove auxiliary files and also project.pdf, *.html
+lwarpmk clean [-p project]: Remove .aux, .toc, .lof/t, .idx, .ind, .log, *_html_inc.*, .gl*
+lwarpmk cleanall [-p project]: Remove auxiliary files and also project.pdf, *.html
 lwarpmk cleanlimages: Removes all images from the "lateximages" directory.
 lwarpmk -h: Print this help message.
 lwarpmk --help: Print this help message.
 
 ]] )
-printconf ()
+-- printconf ()
 end
 
-function printconf ()
+-- function printconf ()
+-- --
+-- -- Print the format of the configuration file lwarpmk.conf:
+-- --
+-- print ( [[
+-- An example lwarpmk.conf or <project>.lwarpmkconf project file:
+-- --
+-- opsystem = "Unix"   (or "Windows")
+-- latexname = "pdflatex"  (or "lualatex", or "xelatex")
+-- sourcename = "projectname"  (the source-code filename w/o .tex)
+-- homehtmlfilename = "index"  (or perhaps the project name)
+-- htmlfilename = ""  (or "projectname" - filename prefix)
+-- latexmk = "false"  (or "true" to use latexmk to build PDFs)
+-- shellescape = "false"
+-- printindexcmd = "makeindex -s lwarp.ist <name>.idx"
+-- HTMLindexcmd = "makeindex -s lwarp.ist <name>_html.idx"
+-- latexmkindexcmd = "makeindex -s lwarp.ist"
+-- -- indexprog = "makeindex" or "xindy"
+-- -- makeindexstyle = "lwarp.ist" (or a custom file based on lwarp.ist)
+-- -- xindylanguge = "english"  (use a language supported by xindy)
+-- -- xindycodepage = "utf8"  (use a codepage supported by xindy)
+-- -- xindystyle = "lwarp.xdy" (or a custom file based on lwarp.xdy)
+-- glossarycmd = "makeglossaries"
+-- pdftotextenc = "UTF-8"  (use an encoding supported by pdftotext)
+-- --
+-- Filenames must contain only letters, numbers, underscore, or dash.
+-- Values must be in upright "quotes".
 --
--- Print the format of the configuration file lwarpmk.conf:
---
-print ( [[
-An example lwarpmk.conf or <project>.lwarpmkconf project file:
---
-opsystem = "Unix"   (or "Windows")
-latexname = "pdflatex"  (or "lualatex", or "xelatex")
-sourcename = "projectname"  (the source-code filename w/o .tex)
-homehtmlfilename = "index"  (or perhaps the project name)
-htmlfilename = ""  (or "projectname" - filename prefix)
-latexmk = "false"  (or "true" to use latexmk to build PDFs)
-shellescape = "false"
-xindylanguge = "english"  (use a language supported by xindy)
-xindycodepage = "utf8"  (use a codepage supported by xindy)
-xindystyle = "lwarp.xdy" (or a custom file based on lwarp.xdy)
-pdftotextenc = "UTF-8"  (use an encoding supported by pdftotext)
---
-Filenames must contain only letters, numbers, underscore, or dash.
-Values must be in upright "quotes".
-
-]] ) ;
-end
+-- ]] ) ;
+-- end
 
 function splitfile (destfile,sourcefile)
 --
@@ -97,7 +103,7 @@ function cvalueerror ( line, linenum , cvalue )
         "\" in lwarpmk.conf.\n"
     ) ;
     print ("lwarpmk: ===")
-    printconf () ;
+--    printconf () ;
     os.exit(1) ;
 end
 
@@ -107,16 +113,31 @@ function loadconf ()
 --
 -- Default configuration filename:
 local conffile = "lwarpmk.conf"
+local confroot = "lwarpmk"
+-- Global argument index
+argindex = 2
 -- Optional configuration filename:
-if ( arg[2] ~= nil ) then conffile = arg[2]..".lwarpmkconf" end
+if ( arg[argindex] == "-p" ) then
+    argindex = argindex + 1
+    confroot = arg[argindex]
+    conffile = confroot..".lwarpmkconf"
+    argindex = argindex + 1
+end
 -- Additional defaults:
 opsystem = "Unix"
 latexmk = "false"
 shellescape = "false"
-xindylanguage = "english"
-xindycodepage = "utf8"
-xindystyle = "lwarp.xdy"
-pdftotextenc = "UTF-8"
+printindexcmd = ""
+HTMLindexcmd = ""
+latexmkindexcmd = ""
+-- to be removed:
+-- indexprog = "makeindex"
+-- makeindexstyle = "lwarp.ist"
+-- xindylanguage = "english"
+-- xindycodepage = "utf8"
+-- xindystyle = "lwarp.xdy"
+-- pdftotextenc = "UTF-8"
+glossarycmd = "makeglossaries"
 -- Verify the file exists:
 if (lfs.attributes(conffile,"mode")==nil) then
     -- file not exists
@@ -125,9 +146,9 @@ if (lfs.attributes(conffile,"mode")==nil) then
     print ("lwarpmk: Move to the project's source directory,")
     print ("lwarpmk: recompile using pdflatex, xelatex, or lualatex,")
     print ("lwarpmk: then try using lwarpmk again.")
-    if ( arg[2] ~= nil ) then
+    if ( arg[argindex] ~= nil ) then
         print (
-            "lwarpmk: (\"" .. arg[2] ..
+            "lwarpmk: (\"" .. confroot ..
             "\" does not appear to be a project name.)"
         )
     end
@@ -142,14 +163,14 @@ local cfile = io.open(conffile)
 local linenum = 0
 for line in cfile:lines() do -- scan lines
 linenum = linenum + 1
-i,j,cvarname,cvalue = string.find (line,"([%w-_]*)%s*=%s*\"([%w%-_%.]*)\"") ;
+i,j,cvarname,cvalue = string.find (line,"([%w-_]*)%s*=%s*\"([^\"]*)\"") ;
 -- Error if incorrect enclosing characters:
 if ( i == nil ) then
     print ("lwarpmk: ===")
     print ("lwarpmk: " ..  linenum .. " : " .. line ) ;
     print ("lwarpmk: Incorrect entry in " .. conffile ..".\n" ) ;
     print ("lwarpmk: ===")
-    printconf () ;
+--    printconf () ;
     os.exit(1) ;
 end -- nil
 if ( cvarname == "opsystem" ) then
@@ -175,9 +196,25 @@ elseif ( cvarname == "homehtmlfilename" ) then homehtmlfilename = cvalue
 elseif ( cvarname == "htmlfilename" ) then htmlfilename = cvalue
 elseif ( cvarname == "latexmk" ) then latexmk = cvalue
 elseif ( cvarname == "shellescape" ) then shellescape = cvalue
-elseif ( cvarname == "xindylanguage" ) then xindylanguage = cvalue
-elseif ( cvarname == "xindycodepage" ) then xindycodepage = cvalue
-elseif ( cvarname == "xindystyle" ) then xindystyle = cvalue
+elseif ( cvarname == "printindexcmd" ) then printindexcmd = cvalue
+elseif ( cvarname == "HTMLindexcmd" ) then HTMLindexcmd = cvalue
+elseif ( cvarname == "latexmkindexcmd" ) then latexmkindexcmd = cvalue
+elseif ( cvarname == "glossarycmd" ) then glossarycmd = cvalue
+-- to be removed:
+-- elseif ( cvarname == "indexprog" ) then
+--     -- Verify choice of indexing program:
+--     if (
+--         (cvalue == "makeindex") or
+--         (cvalue == "xindy")
+--     ) then
+--         indexprog = cvalue
+--     else
+--         cvalueerror ( line, linenum , cvalue )
+--     end
+-- elseif ( cvarname == "makeindexstyle" ) then makeindexstyle = cvalue
+-- elseif ( cvarname == "xindylanguage" ) then xindylanguage = cvalue
+-- elseif ( cvarname == "xindycodepage" ) then xindycodepage = cvalue
+-- elseif ( cvarname == "xindystyle" ) then xindystyle = cvalue
 elseif ( cvarname == "pdftotextenc" ) then pdftotextenc = cvalue
 else
     print ("lwarpmk: ===")
@@ -187,7 +224,7 @@ else
         conffile ..".\n"
     ) ;
     print ("lwarpmk: ===")
-    printconf () ;
+--    printconf () ;
 os.exit(1) ;
 end -- cvarname
 end -- do scan lines
@@ -234,15 +271,6 @@ elseif opsystem=="Windows" then -- For Windows
     bgname = ""
 else print ( "lwarpmk: Select Unix or Windows for opsystem" )
 end --- for Windows
-
--- set xindycmd, glossarycmd according to pdflatex vs xelatex/lualatex:
-if ( latexname == "pdflatex" ) then
-    xindycmd = "texindy  "
-    glossarycmd = "xindy  "
-else
-    xindycmd = "xindy  -M texindy  "
-    glossarycmd = "xindy "
-end
 
 end -- loadconf
 
@@ -348,8 +376,8 @@ os.execute ( rmname .. " *.aux " ..
     sourcename ..".toc " .. sourcename .. "_html.toc " ..
     sourcename ..".lof " .. sourcename .. "_html.lof " ..
     sourcename ..".lot " .. sourcename .. "_html.lot " ..
-    sourcename ..".idx " .. sourcename .. "_html.idx " ..
-    sourcename ..".ind " .. sourcename .. "_html.ind " ..
+    " *.idx " ..
+    " *.ind " ..
     sourcename ..".log " .. sourcename .. "_html.log " ..
     sourcename ..".gl* " .. sourcename .. "_html.gl* " ..
     " *_html_inc.* "
@@ -594,10 +622,8 @@ executecheckerror (
     .. "-e "
     .. opquote
     .. "$makeindex = q/" -- $
-    .. xindycmd
-    .. "  -M " .. xindystyle
-    .. "  -C " .. xindycodepage
-    .. "  -L " .. xindylanguage .. " /"
+    .. latexmkindexcmd
+    .. " /"
     .. opquote
     .. " -pdflatex=\"" .. latexname .. thisshellescape .." %O %S\" "
     .. sourcename..fsuffix ..".tex"
@@ -609,10 +635,10 @@ end -- function
 function convertpdftosvg ()
 --
 -- Converts PDF files to SVG files.
--- The filenames are arg[2] and up.
+-- The filenames are arg[argindex] and up.
 -- arg[1] is the command "pdftosvg".
 --
-for i = 2 , #arg do
+for i = argindex , #arg do
     if (lfs.attributes(arg[i],"mode")==nil) then
         print ("lwarpmk: File \"" .. arg[i] .. "\" does not exist.")
     else
@@ -621,6 +647,14 @@ for i = 2 , #arg do
     end -- if
 end -- do
 end --function
+
+-- Force an update and conclude processing:
+function updateanddone ()
+print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
+refreshdate ()
+print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
+print ("lwarpmk: Done.")
+end -- function
 
 -- Start of the main code: --
 
@@ -668,25 +702,17 @@ elseif arg[1] == "print1" then
     onetime("")
     print ("lwarpmk: Done.") ;
 
--- lwarp printindex:
+-- lwarpmk printindex:
 -- Compile the index then touch the source
 -- to trigger a recompile of the document:
 
 elseif arg[1] == "printindex" then
 loadconf ()
-print ("lwarpmk: Processing the index.")
-os.execute(
-    xindycmd
-    .. "  -M " .. xindystyle
-    .. "  -C " .. xindycodepage
-    .. "  -L " .. xindylanguage
-    .. " " .. sourcename .. ".idx")
-print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-refreshdate ()
-print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
-print ("lwarpmk: Done.")
+os.execute ( printindexcmd )
+print ("lwarpmk: -------")
+updateanddone ()
 
--- lwarp printglossary:
+-- lwarpmk printglossary:
 -- Compile the glossary then touch the source
 -- to trigger a recompile of the document:
 
@@ -694,16 +720,8 @@ elseif arg[1] == "printglossary" then
 loadconf ()
 print ("lwarpmk: Processing the glossary.")
 
-os.execute(glossarycmd ..
-    "  -L " .. xindylanguage ..
-    "  -C " .. xindycodepage ..
-    "  -I xindy -M " .. sourcename ..
-    " -t " .. sourcename .. ".glg -o " .. sourcename .. ".gls "
-    .. sourcename .. ".glo")
-print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-refreshdate ()
-print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
-print ("lwarpmk: Done.")
+os.execute(glossarycmd .. " " .. sourcename)
+updateanddone ()
 
 -- lwarpmk html:
 
@@ -752,38 +770,20 @@ elseif arg[1] == "pdftohtml" then
 
 elseif arg[1] == "htmlindex" then
 loadconf ()
-print ("lwarpmk: Processing the index.")
-os.execute(
-    xindycmd
-    .. "  -M " .. xindystyle
-    .. "  -L " .. xindylanguage
-    .. "  -C " .. xindycodepage
-    .. " " .. sourcename .. "_html.idx"
-)
-print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-refreshdate ()
-print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
-print ("lwarpmk: Done.")
+os.execute ( HTMLindexcmd )
+print ("lwarpmk: -------")
+updateanddone ()
 
 -- lwarpmk htmlglossary:
 -- Compile the glossary then touch the source
--- to trigger a recompile of the document:
+-- to trigger a recompile of the document.
+-- The <sourcename>.xdy file is created by the glossaries package.
 
 elseif arg[1] == "htmlglossary" then
 loadconf ()
 print ("lwarpmk: Processing the glossary.")
-
-os.execute(glossarycmd ..
-    "  -L " .. xindylanguage ..
-    "  -C " .. xindycodepage ..
-    "  -I xindy -M " ..sourcename ..
-    "_html -t " .. sourcename .. "_html.glg -o " ..sourcename ..
-    "_html.gls " ..sourcename .. "_html.glo")
-
-print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-refreshdate ()
-print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
-print ("lwarpmk: Done.")
+os.execute(glossarycmd .. " " .. sourcename .. "_html")
+updateanddone ()
 
 -- lwarpmk limages:
 -- Scan the lateximages.txt file to create lateximages.
@@ -799,13 +799,10 @@ print ("lwarpmk: Done.")
 
 elseif arg[1] == "again" then
 loadconf ()
-print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-refreshdate ()
-print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
-print ("lwarpmk: Done.")
+updateanddone ()
 
 -- lwarpmk clean:
--- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log, *_html_inc.*, .gl*
+-- Remove project.aux, .toc, .lof, .lot, .log, *.idx, *.ind, *_html_inc.*, .gl*
 
 elseif arg[1] == "clean" then
 loadconf ()
@@ -813,7 +810,7 @@ removeaux ()
 print ("lwarpmk: Done.")
 
 -- lwarpmk cleanall
--- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log, *_html_inc.*, .gl*
+-- Remove project.aux, .toc, .lof, .lot, .log, *.idx, *.ind, *_html_inc.*, .gl*
 --    and also project.pdf, *.html
 
 elseif arg[1] == "cleanall" then
