@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 05/03/2018
+.\"      Date: 07/07/2018
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 2.4
+.\"    Source: dvisvgm 2.4.1
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "05/03/2018" "dvisvgm 2\&.4" "dvisvgm Manual"
+.TH "DVISVGM" "1" "07/07/2018" "dvisvgm 2\&.4\&.1" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -50,37 +50,6 @@ When running dvisvgm without option \fB\-\-no\-fonts\fR, it creates \fIfont\fR e
 .SH "OPTIONS"
 .sp
 dvisvgm provides a POSIX\-compliant command\-line interface with short and long option names\&. They may be given before and/or after the name of the file to be converted\&. Also, the order of specifying the options is not significant, i\&.e\&. you can add them in any order without changing dvisvgm\(cqs behavior\&. Certain options accept or require additional parameters which are directly appended to or separated by whitespace from a short option (e\&.g\&. \fB\-v0\fR or \fB\-v 0\fR)\&. Long options require an additional equals sign (\fB=\fR) between option name and argument but without any surrounding whitespace (e\&.g\&. \fB\-\-verbosity=0\fR)\&. Multiple short options that don\(cqt expect a further parameter can be combined after a single dash (e\&.g\&. \fB\-ejs\fR rather than \fB\-e \-j \-s\fR)\&.
-.PP
-\fB\-a, \-\-trace\-all\fR=[\fIretrace\fR]
-.RS 4
-This option forces dvisvgm to vectorize not only the glyphs actually required to render the SVG file correctly \(en which is the default \(en, but processes all glyphs of all fonts referenced in the DVI file\&. Because dvisvgm stores the tracing results in a font cache, all following conversions of these fonts will speed up significantly\&. The boolean option
-\fIretrace\fR
-determines how to handle glyphs already stored in the cache\&. By default, these glyphs are skipped\&. Setting argument
-\fIretrace\fR
-to
-\fIyes\fR
-or
-\fItrue\fR
-forces dvisvgm to retrace the corresponding bitmaps again\&.
-.if n \{\
-.sp
-.\}
-.RS 4
-.it 1 an-trap
-.nr an-no-space-flag 1
-.nr an-break-flag 1
-.br
-.ps +1
-\fBNote\fR
-.ps -1
-.br
-This option only takes effect if font caching is active\&. Therefore,
-\fB\-\-trace\-all\fR
-cannot be combined with option
-\fB\-\-cache=none\fR\&.
-.sp .5v
-.RE
-.RE
 .PP
 \fB\-b, \-\-bbox\fR=\fIfmt\fR
 .RS 4
@@ -214,7 +183,7 @@ attribute\&.
 .PP
 \fB\-\-color\fR
 .RS 4
-Enables colorization of messages printed during the conversion process\&. The colors can be customized via the environment variable
+Enables colorization of messages printed during the conversion process\&. The colors can be customized via environment variable
 \fBDVISVGM_COLORS\fR\&. See the
 Environment section
 below for further information\&.
@@ -400,7 +369,7 @@ tells dvisvgm not to add any visible objects to hyperlinks\&. The lines and boxe
 \fIcolor specifier\fR
 is either a hexadecimal RGB value of the form
 \fI#RRGGBB\fR, or a
-dvips color name (\m[blue]http://en.wikibooks.org/wiki/LaTeX/Colors#The_68_standard_colors_known_to_dvips\m[])\&.
+dvips color name (\m[blue]https://en.wikibooks.org/wiki/LaTeX/Colors#The_68_standard_colors_known_to_dvips\m[])\&.
 .sp
 Moreover, argument
 \fIstyle\fR
@@ -621,6 +590,37 @@ allows to specify a different location if necessary for some reason\&. Please no
 If the optional parameter
 \fIpath\fR
 is omitted, dvisvgm prints the location of the system\(cqs temp folder and exits\&.
+.RE
+.PP
+\fB\-a, \-\-trace\-all\fR=[\fIretrace\fR]
+.RS 4
+This option forces dvisvgm to vectorize not only the glyphs actually required to render the SVG file correctly \(en which is the default \(en, but processes all glyphs of all fonts referenced in the DVI file\&. Because dvisvgm stores the tracing results in a font cache, all following conversions of these fonts will speed up significantly\&. The boolean option
+\fIretrace\fR
+determines how to handle glyphs already stored in the cache\&. By default, these glyphs are skipped\&. Setting argument
+\fIretrace\fR
+to
+\fIyes\fR
+or
+\fItrue\fR
+forces dvisvgm to retrace the corresponding bitmaps again\&.
+.if n \{\
+.sp
+.\}
+.RS 4
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBNote\fR
+.ps -1
+.br
+This option only takes effect if font caching is active\&. Therefore,
+\fB\-\-trace\-all\fR
+cannot be combined with option
+\fB\-\-cache=none\fR\&.
+.sp .5v
+.RE
 .RE
 .PP
 \fB\-T, \-\-transform\fR=\fIcommands\fR
@@ -859,9 +859,9 @@ Prints the version of dvisvgm and exits\&. If the optional argument is set to
 Creates a compressed SVG file with suffix \&.svgz\&. The optional argument specifies the compression level\&. Valid values are in the range of 1 to 9 (default value is 9)\&. Larger values cause better compression results but may take slightly more computation time\&.
 .RE
 .PP
-\fB\-Z, \-\-zoom\fR[=\fIfactor\fR]
+\fB\-Z, \-\-zoom\fR=\fIfactor\fR
 .RS 4
-Multiplies the
+Multiplies the values of the
 \fIwidth\fR
 and
 \fIheight\fR
@@ -1041,7 +1041,7 @@ The following TeX snippet adds two raw SVG elements to the output and updates th
 These specials were introduced with the
 \fIemTeX\fR
 distribution by Eberhard Mattes\&. They provide line drawing statements, instructions for embedding MSP, PCX, and BMP image files, as well as two PCL commands\&. dvisvgm supports only the line drawing statements and ignores all other em specials silently\&. A description of the command syntax can be found in the DVI driver documentation coming with
-emTeX (\m[blue]http://www.ctan.org/pkg/emtex\m[])\&.
+emTeX (\m[blue]https://ctan.org/pkg/emtex\m[])\&.
 .RE
 .PP
 \fBhtml\fR
@@ -1050,7 +1050,7 @@ The hyperref specification defines several variants on how to mark hyperlinked a
 \fIhypertex\fR\&. By default, all linked areas of the document are marked by a rectangle\&. Option
 \fB\-\-linkmark\fR
 allows to change this behavior\&. See above for further details\&. Information on syntax and semantics of the HyperTeX specials can be found in the
-hyperref manual (\m[blue]http://www.ctan.org/pkg/hyperref\m[])\&.
+hyperref manual (\m[blue]https://ctan.org/pkg/hyperref\m[])\&.
 .RE
 .PP
 \fBpapersize\fR
@@ -1082,7 +1082,7 @@ and
 allow for modifying the font map tree while processing the DVI file\&. They are used by CTeX, for example\&. dvisvgm supports both, the dvips and dvipdfm font map format\&. For further information on the command syntax and semantics, see the documentation of
 \fB\epdfmapfile\fR
 in the
-pdfTeX user manual (\m[blue]http://www.ctan.org/pkg/pdftex\m[])\&.
+pdfTeX user manual (\m[blue]https://ctan.org/pkg/pdftex\m[])\&.
 .RE
 .PP
 \fBps\fR
@@ -1092,7 +1092,7 @@ The famous DVI driver
 introduced its own set of specials in order to embed PostScript code into DVI files, which greatly improves the capabilities of DVI documents\&. One aim of dvisvgm is to completely evaluate all PostScript snippets and to convert as many of them as possible to SVG\&. In contrast to dvips, dvisvgm uses floating point arithmetics to compute the precise position of each graphic element, i\&.e\&. it doesn\(cqt round the coordinates\&. Therefore, the relative locations of the graphic elements may slightly differ from those computed by dvips\&.
 .sp
 Since PostScript is a rather complex language, dvisvgm does not implement its own PostScript interpreter but relies on
-Ghostscript (\m[blue]http://ghostscript.com\m[])
+Ghostscript (\m[blue]https://ghostscript.com\m[])
 instead\&. If the Ghostscript library was not linked to the dvisvgm binary, it is looked up and loaded dynamically during runtime\&. In this case, dvisvgm looks for
 \fIlibgs\&.so\&.X\fR
 on Unix\-like systems (supported ABI versions: 7,8,9), for
@@ -1111,7 +1111,7 @@ to check whether PostScript support is available, i\&.e\&. entry
 is present\&.
 .sp
 The PostScript handler also recognizes and evaluates bounding box data generated by the
-preview package (\m[blue]http://www.ctan.org/pkg/preview\m[])
+preview package (\m[blue]https://ctan.org/pkg/preview\m[])
 with option
 \fItightpage\fR\&. If such data is present in the DVI file and if dvisvgm is called with option
 \fB\-\-bbox=preview\fR, dvisvgm sets the width and total height of the SVG file to the values derived from the preview data\&. Additionally, it prints a message showing the width, height, and depth of the box in TeX point units to the console\&. Especially, the depth value can be read by a post\-processor to vertically align the SVG graphics with the baseline of surrounding text in HTML or XSL\-FO documents, for example\&. Please note that SVG bounding boxes are defined by a width and (total) height\&. In contrast to TeX, SVG provides no means to differentiate between height and depth, i\&.e\&. the vertical extents above and below the baseline, respectively\&. Therefore, it is generally not possible to retrieve the depth value from the SVG file itself\&.
@@ -1192,7 +1192,7 @@ dvisvgm uses the \fBkpathsea\fR library for locating the files that it opens\&. 
 .sp
 If dvisvgm was linked without the Ghostscript library, and if PostScript support has not been disabled, the shared Ghostscript library is looked up during runtime via dlopen()\&. The environment variable \fBLIBGS\fR can be used to specify path and file name of the library\&.
 .sp
-The pre\-compiled Windows versions of dvisvgm require a working installation of MiKTeX 2\&.9 or above\&. dvisvgm does not work together with the portable edition of MiKTeX because it relies on MiKTeX\(cqs COM interface that is only accessible in a local installation\&. To enable the evaluation of PostScript specials, the original Ghostscript DLL \fIgsdll32\&.dll\fR must be present and reachable through the search path\&. 64\-bit Windows builds require the 64\-bit Ghostscript DLL \fIgsdll64\&.dll\fR\&. Both DLLs come with the corresponding Ghostscript installers available from \m[blue]\fBhttp://ghostscript\&.com\fR\m[]\&.
+The pre\-compiled Windows versions of dvisvgm require a working installation of MiKTeX 2\&.9 or above\&. dvisvgm does not work together with the portable edition of MiKTeX because it relies on MiKTeX\(cqs COM interface that is only accessible in a local installation\&. To enable the evaluation of PostScript specials, the original Ghostscript DLL \fIgsdll32\&.dll\fR must be present and reachable through the search path\&. 64\-bit Windows builds require the 64\-bit Ghostscript DLL \fIgsdll64\&.dll\fR\&. Both DLLs come with the corresponding Ghostscript installers available from \m[blue]\fBhttps://ghostscript\&.com\fR\m[]\&.
 .sp
 The environment variable \fBDVISVGM_COLORS\fR specifies the colors used to highlight various parts of dvisvgm\(cqs message output\&. It is only evaluated if option \fB\-\-color\fR is given\&. The value of \fBDVISVGM_COLORS\fR is a list of colon\-separated entries of the form \fIgg\fR=\fIBF\fR, where \fIgg\fR denotes one of the color group indicators listed below, and \fIBF\fR are two hexadecimal digits specifying the background (first digit) and foreground/text color (second digit)\&. The color values are defined as follows: 0=black, 1=red, 2=green, 3=yellow, 4=blue, 5=magenta, 6=cyan, 7=gray, 8=bright red, 9=bright green, A=bright yellow, B=bright blue, C=bright magenta, D=bright cyan, E=bright gray, F=white\&. Depending on the terminal, the colors may differ\&. Rather than changing both the text and background color, it\(cqs also possible to change only one of them: An asterisk (*) in place of a hexadecimal digit indicates the default text or background color of the terminal\&.
 .sp
@@ -1353,7 +1353,7 @@ T}
 .PP
 Project home page
 .RS 4
-\m[blue]\fBhttp://dvisvgm\&.bplaced\&.net\fR\m[]
+\m[blue]\fBhttps://dvisvgm\&.de\fR\m[]
 .RE
 .PP
 Code repository
