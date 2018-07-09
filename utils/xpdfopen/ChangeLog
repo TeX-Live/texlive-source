@@ -1,3 +1,9 @@
+2018-07-09  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (LDADD): remove -lXmu, seems nothing it used from
+	that library. Let's hope that X libraries themselves don't either.
+	Report from Ulrich Mueller, 22 Mar 2018 08:55:50.
+
 2016-02-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

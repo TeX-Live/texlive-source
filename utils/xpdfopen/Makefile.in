@@ -337,7 +337,7 @@ NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
 NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 AM_CPPFLAGS = $(X_CFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
-LDADD = $(X_LIBS) -lX11 -lXmu $(X_EXTRA_LIBS)
+LDADD = $(X_LIBS) -lX11 $(X_EXTRA_LIBS)
 common_sources = \
 	@XPDFOPEN_TREE@/sendx.c \
 	@XPDFOPEN_TREE@/utils.c

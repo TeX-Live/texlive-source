@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory utils/xpdfopen/
 ##
-## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2018 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -17,7 +17,7 @@ NEVER_NAMES += $(NEVER_NAMES_SUB)
 AM_CPPFLAGS = $(X_CFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
-LDADD = $(X_LIBS) -lX11 -lXmu $(X_EXTRA_LIBS)
+LDADD = $(X_LIBS) -lX11 $(X_EXTRA_LIBS)
 
 bin_PROGRAMS = pdfopen pdfclose
 
