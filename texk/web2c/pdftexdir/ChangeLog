@@ -1,3 +1,7 @@
+2018-07-09  Karl Berry  <karl@freefriends.org>
+
+	* writefont.c (write_fontdescriptor) [ENABLE_PDF_CHARSET]:
+
 2018-06-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* ptexlib.h: Output correct Unicode strings on console
