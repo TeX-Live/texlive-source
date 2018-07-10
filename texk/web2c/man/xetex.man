@@ -1,0 +1,71 @@
+.TH PTEX 1 "10 July 2018" "Web2C @VERSION@"
+.\"=====================================================================
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+.\"=====================================================================
+.SH NAME
+xetex \- extended TeX with native support for Unicode, OpenType, system fonts
+.SH SYNOPSIS
+.B xetex
+.RI [ options ]
+.RI [ \fB&\fPformat ]
+.RI [ file | \fB\e\fPcommands ]
+.\"=====================================================================
+.SH DESCRIPTION
+Xe\*(TX (\fBxetex\fR) is a \*(TX engine with native support for Unicode,
+OpenType, and system-installed fonts, using third-party libraries (such
+as ICU, HarfBuzz, and Freetype). It was developed by Jonathan Kew for SIL.
+.PP
+Xe\*(TX includes the e-\*(TX extensions and many extensions from pdf\*(TX,
+sometimes with different primitive names.
+.PP
+Xe\*(TX is now released as part of \*(TX Live <https://tug.org/texlive>.
+.\"=====================================================================
+.SH OPTIONS
+Xe\*(TX's handling of its command-line arguments is similar to
+that of the other \*(TX programs in the Web2C implementation.
+Here we list only additions/deletions of command line options which are
+specific to Xe\*(TX; see etex(1) for common options. Additions:
+.TP
+.B -no-pdf
+Generate Xe\*(TX's extended DVI (.xdv) output instead of pdf.
+.TP
+.BI -output-driver \ cmd
+Run
+.I cmd
+instead of xdvipdfmx to translate xdv to pdf.
+.TP
+.BI -papersize \ string
+Set pdf media size to
+.IR string .
+.PP
+Removals:
+.BR -draftmode ,
+.BR -enc ,
+.BR -ipc ,
+.BR -ipc-start ,
+.BR -translate-file .
+.\"=====================================================================
+.SH "SEE ALSO"
+.BR tex (1),
+.BR etex (1),
+.BR latex (1).
+.br
+Home page: <https://tug.org/xetex>
+.br
+CTAN page: <https://ctan.org/pkg/xetex>
+.br
+Reference manual: <https://ctan.org/pkg/xetexref>
+.\"=====================================================================
+.SH AUTHORS
+Xe\*(TX is maintained by Jonathan Kew and others.
+.br
+Public discussion list: <http://lists.tug.org/xetex>
+.br
+Bug reports: <http://sourceforge.net/p/xetex/bugs/>
+.PP
+This manual page was written by Karl Berry. It is released to the public
+domain.

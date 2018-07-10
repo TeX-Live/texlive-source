@@ -101,7 +101,7 @@ host_triplet = @host@
 @PTEX_TRUE@am__append_12 = ptex:eptex ptex:euptex ptex:uptex
 @LUATEX_TRUE@am__append_13 = luatex.man
 @LUATEX_TRUE@am__append_14 = luatex:texlua luatex:texluac
-@XETEX_TRUE@am__append_15 = # xetex.man
+@XETEX_TRUE@am__append_15 = xetex.man
 @OTANGLE_TRUE@am__append_16 = $(otangle_man_sources)
 @OTANGLE_TRUE@am__append_17 = dvicopy:odvicopy dvitype:odvitype tangle:otangle
 @ALEPH_TRUE@am__append_18 = aleph.man
@@ -446,7 +446,7 @@ man_sources = $(bootstrap_man_sources) $(am__append_1) $(am__append_2) \
 	$(misc_man_sources)
 EXTRA_DIST = $(bootstrap_man_sources) $(web_man_sources) tex.man \
 	mf.man mpost.man etex.man $(pdftex_man_sources) ptex.man \
-	luatex.man $(otangle_man_sources) aleph.man \
+	luatex.man xetex.man $(otangle_man_sources) aleph.man \
 	$(misc_man_sources) spell.add
 bootstrap_man_sources = ctie.man cweb.man tangle.man tie.man
 

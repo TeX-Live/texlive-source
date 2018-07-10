@@ -1,3 +1,4 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/web2c/man/
 ## Copyright 2018 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
@@ -63,9 +64,9 @@ endif LUATEX
 EXTRA_DIST += luatex.man
 
 if XETEX
-man_sources += # xetex.man
+man_sources += xetex.man
 endif XETEX
-EXTRA_DIST += # xetex.man
+EXTRA_DIST += xetex.man
 
 if OTANGLE
 man_sources += $(otangle_man_sources)
