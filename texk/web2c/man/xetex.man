@@ -1,4 +1,4 @@
-.TH PTEX 1 "10 July 2018" "Web2C @VERSION@"
+.TH XETEX 1 "10 July 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
