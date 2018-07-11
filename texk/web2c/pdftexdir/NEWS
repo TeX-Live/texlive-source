@@ -1,5 +1,7 @@
 - changes:
   - new primitive \expanded (from unreleased pdftex 1.50 branch + luatex).
+  - the /CharSet string is now always omitted from the PDF output, since
+    it cannot feasibly be guaranteed correct, but the standard requires this.
 
 pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
 - changes:
@@ -14,6 +16,9 @@ pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
     non-primitive (pdftex r784).
   - \pdfprimitive does not swallow a following control sequence (pdftex r784).
   - \ifpdfprimitive now correctly returns true for "\ " (TL r45394).
+  - \pdfglyphtounicode now warns if the argument is outside the valid
+    range for Unicode; the implication is that multiple code points must
+    now be separated by spaces (as has always been documented).
 
 - source: support xpdf-4 by default, or xpdf-3.04, or poppler-0.57.0
   and older, via #defines. Provide new files, pdftoepdf-newpoppler.cc

@@ -1,6 +1,8 @@
 2018-07-09  Karl Berry  <karl@freefriends.org>
 
 	* writefont.c (write_fontdescriptor) [ENABLE_PDF_CHARSET]:
+	compile-time conditional for re-enabling output of PDF /CharSet,
+	which is now disabled by default.
 
 2018-06-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
