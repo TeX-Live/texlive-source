@@ -88,6 +88,9 @@
 /* Have native OpenType Layout backend */
 #undef HAVE_OT
 
+/* Define to 1 if you have the `posix_memalign' function. */
+#undef HAVE_POSIX_MEMALIGN
+
 /* Have POSIX threads */
 #undef HAVE_PTHREAD
 

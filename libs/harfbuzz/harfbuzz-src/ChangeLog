@@ -1,3 +1,426 @@
+commit 718dfd4189275b1e4233dc7c12ab457352fccfcb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 16:34:31 2018 +0200
+
+    Fix shift
+
+ src/hb-dsalgs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 25aa411ac524ed08624033da473a5e050ff41633
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 16:05:03 2018 +0200
+
+    Put back include dependencies
+
+ src/hb-object-private.hh | 2 ++
+ src/hb-private.hh        | 7 ++++---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+commit 491d93bf74dd0483715ecca430715b69664e1211
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 16:03:31 2018 +0200
+
+    Move more stuff from hb-private.hh to hb-dsalgs.hh
+
+ src/hb-debug.hh   |   1 +
+ src/hb-dsalgs.hh  | 237
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-private.hh | 246
+ +-----------------------------------------------------
+ 3 files changed, 240 insertions(+), 244 deletions(-)
+
+commit f477765661c196ac17b2c86731881a3da36a5ae6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 15:49:05 2018 +0200
+
+    Move more stuff to hb-dsalgs.hh
+
+ src/hb-dsalgs.hh  | 83
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-private.hh | 81
+ -----------------------------------------------------
+ 2 files changed, 83 insertions(+), 81 deletions(-)
+
+commit be7f664f723fb4e7bcf15c1c2b7c6bec46f90393
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 15:23:08 2018 +0200
+
+    Move hb_bytes_t to hb-dsalgs.hh
+
+ src/hb-dsalgs.hh  | 45 ++++++++++++++++++++++++++++++++++-----------
+ src/hb-private.hh | 26 --------------------------
+ 2 files changed, 34 insertions(+), 37 deletions(-)
+
+commit 7a00f7eb2e3859db4563071934e76142bfd13916
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 14:42:10 2018 +0200
+
+    Remove hb_auto_array_t
+
+ src/hb-dsalgs.hh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit be458eb05962dd5f5c60a25f54cf0b20e7d8b055
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 14:41:04 2018 +0200
+
+    Include more basic internal headers from hb-private.hh
+
+ src/hb-blob-private.hh               | 2 --
+ src/hb-blob.cc                       | 1 -
+ src/hb-buffer-private.hh             | 1 -
+ src/hb-common.cc                     | 2 --
+ src/hb-coretext.cc                   | 1 -
+ src/hb-directwrite.cc                | 1 -
+ src/hb-face-private.hh               | 1 -
+ src/hb-font-private.hh               | 1 -
+ src/hb-ft.cc                         | 1 -
+ src/hb-map-private.hh                | 1 -
+ src/hb-object-private.hh             | 4 ----
+ src/hb-open-type-private.hh          | 1 -
+ src/hb-ot-layout-common-private.hh   | 1 -
+ src/hb-ot-layout-gsubgpos-private.hh | 1 -
+ src/hb-ot-shape-complex-arabic.cc    | 1 -
+ src/hb-private.hh                    | 6 +++++-
+ src/hb-set-private.hh                | 1 -
+ src/hb-shape-plan-private.hh         | 1 -
+ src/hb-shape-plan.cc                 | 1 -
+ src/hb-subset-input.cc               | 1 -
+ src/hb-subset-plan.hh                | 1 -
+ src/hb-subset.cc                     | 1 -
+ src/hb-unicode-private.hh            | 1 -
+ src/hb-uniscribe.cc                  | 1 -
+ src/hb-warning.cc                    | 4 +---
+ 25 files changed, 6 insertions(+), 32 deletions(-)
+
+commit bddeb2b10ca2f4b4bee6f7eaaf5615875a67111d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 14:12:37 2018 +0200
+
+    Minor renamings of internal inline functions
+
+ src/hb-buffer.cc               |  4 ++--
+ src/hb-dsalgs.hh               |  2 +-
+ src/hb-map-private.hh          |  2 +-
+ src/hb-open-type-private.hh    |  4 ++--
+ src/hb-ot-cmap-table.hh        |  2 +-
+ src/hb-ot-hdmx-table.hh        |  2 +-
+ src/hb-ot-layout-gpos-table.hh |  4 ++--
+ src/hb-ot-layout-gsub-table.hh |  2 +-
+ src/hb-ot-map.cc               |  4 ++--
+ src/hb-ot-shape.cc             |  4 ++--
+ src/hb-private.hh              | 27 ++++++++++++++-------------
+ src/hb-set-private.hh          |  6 +++---
+ src/hb-subset.cc               |  2 +-
+ 13 files changed, 33 insertions(+), 32 deletions(-)
+
+commit d652ef299d123f28409e755ed2d2411295293f19
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 14:05:00 2018 +0200
+
+    Move hb_vector_t and hb_lockable_set_t to hb-dsalgs.hh
+
+ src/hb-dsalgs.hh  | 311
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-private.hh | 315
+ ------------------------------------------------------
+ 2 files changed, 311 insertions(+), 315 deletions(-)
+
+commit 9e53b083295ad910a87e778ebd16cbe69ebe2130
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 14:03:58 2018 +0200
+
+    Move hb_stable_sort to hb-dsalgs.hh
+
+    Also, include hb-dsalgs.hh from end of hb-pricate.hh
+
+ src/hb-dsalgs.hh                | 51
+ +++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-os2-unicode-ranges.hh |  1 -
+ src/hb-ot-post-table.hh         |  1 -
+ src/hb-private.hh               | 51
+ ++---------------------------------------
+ 4 files changed, 53 insertions(+), 51 deletions(-)
+
+commit 39f11d8e72c6b2568f3b70847c6c9d1f374cd49c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 14:01:39 2018 +0200
+
+    Minor
+
+ src/hb-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 763f878cc0595162255c58ffe7a82ac1ca51cb0b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 13:47:41 2018 +0200
+
+    Fix syntax
+
+    Oops.
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 83ea277178544cd7e417bdfb7b600ede94910e13
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 13:17:27 2018 +0200
+
+    Add posix_memalign() fallback
+
+ configure.ac      |  2 +-
+ src/hb-private.hh | 40 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+), 1 deletion(-)
+
+commit 292c100d6141eb2e981fa632602d73768f748727
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 13:16:52 2018 +0200
+
+    Always compile (but not use) alignof() and round() fallback codes
+
+    Catches compile-errors in them better.
+
+ src/hb-private.hh | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
+commit 27c5317d918971c2fb67c213621a19ac790440e4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 13:03:42 2018 +0200
+
+    Fix alignof impl
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit bca83618cda7ee4f683b4685d10db9e1bef4983c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 12:58:13 2018 +0200
+
+    Add fallback implementation for constexpr and alignof
+
+ src/hb-private.hh | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+commit 7cb47d0f3f202843ebc7fb8801bf388bb90ba3aa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 10 12:51:29 2018 +0200
+
+    Minor
+
+ src/hb-set-private.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit bf9e9676dda686f5b76826b4e3148f4a0b512e3c
+Merge: 46d8f0d5 53f73409
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Mon Jul 9 20:24:22 2018 +0200
+
+    Merge pull request #1091 from anthrotype/fix-gen-def-py
+
+    gen-def.py: pass headers as arguments so that msys2 can convert
+    posix paths
+
+commit 53f73409a91241765ae6a0cadf7600676988b6af
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Mon Jul 9 18:54:23 2018 +0100
+
+    CMakeLists.txt: don't pass header args as single space-separated
+    string
+
+    let python's parse command-line args as usual
+
+ CMakeLists.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 83d2233a5c47cf1feadcdece5bd4a6b498c6ee7a
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Mon Jul 9 18:48:20 2018 +0100
+
+    CMakeLists.txt: pass headers as arguments to gen-def.py; call using
+    PYTHON_EXECUTABLE
+
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ccdd15655480fe35226c0b757e28d3527fe2e6af
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Mon Jul 9 18:26:44 2018 +0100
+
+    src/Makefile.am: pass headers to gen-def.py as arguments, not env vars
+
+ src/Makefile.am | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit e3a931ef0b86419b5e4ba17de51535393471ed9d
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Mon Jul 9 18:11:29 2018 +0100
+
+    gen-def.py: pass headers as arguments so that msys2 can convert
+    posix paths
+
+    When one is not using the msys2 python, the header files that are
+    passed in as environment
+    variable cannot be found.
+
+    https://ci.appveyor.com/project/fonttools/ttfautohint-py/build/1.0.65/job/rkremny4jjid9nl2#L803
+
+    This is because msys2 shell and make use POSIX paths
+    (e.g. /c/Users/clupo/...)
+    whereas non-msys2 python.exe uses native Windows paths
+    (e.g. C:\Users\clupo\...).
+
+    Msys2 will automatically convert command line arguments (but not
+    environment variables) from
+    POSIX to Windows paths when calling a native win32 executable,
+    so we pass the header paths
+    as arguments instead of environment variables.
+
+    This way the gen-def.py script can support both mingw python running
+    in an MSYS2 shell, and
+    native win32 python.
+
+ src/gen-def.py | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+commit 46d8f0d5521c3dd0b10c78e66153faefdb9046db
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Fri Jul 6 15:47:03 2018 -0400
+
+    Do not enforce a native direction of LTR for Runic
+
+    Fixes #481
+
+ src/hb-common.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 936dadc6610666aa5781e8662b859f18f9baa636
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Sat Jul 7 11:08:17 2018 -0400
+
+    Regenerate the USE table for Grantha and Bhaiksuki (#1090)
+
+    Completes #1037 and fixes #1035.
+
+ src/hb-ot-shape-complex-use-table.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 1ebaa090d80bf0b59308d2c70f5e58dd8da47450
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 5 14:04:13 2018 +0430
+
+    Disable vectorization
+
+    Disable vectorization for now.  To correctly use them, we should
+    use posix_memalign() to allocate them.  Otherwise, can cause
+    misaligned access.
+
+    https://bugs.chromium.org/p/chromium/issues/detail?id=860184
+
+ src/hb-private.hh | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+commit 18a06f8a662ca7a9e63f74c6443e24a035c40655
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 5 14:03:48 2018 +0430
+
+    Fix warning
+
+    ../../src/hb-ot-layout-gsubgpos-private.hh:391:18: warning:
+    missed loop optimization, the loop counter may overflow
+    [-Wunsafe-loop-optimizations]
+
+ src/hb-ot-layout-gsubgpos-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 058708a665cdd9e796581dbcf60a5778d3f5e240
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 5 13:16:00 2018 +0430
+
+    Allow disabling vector_size use
+
+ src/hb-private.hh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit d8a7dedc83042c5a643195172830acf78f2e59ff
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jul 4 15:33:39 2018 +0430
+
+    Use CreateFileW explicitly and pass wchar_t to it (#1087)
+
+ src/hb-blob.cc | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+commit 9940504e933d6766f87dca7fccc3c2f889976a22
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 3 14:29:25 2018 +0430
+
+    [indic] Adjust left-matra repositioning and Halant,ZWJ sequence
+
+    From the new code (first paragraph is from the OT Devanagari spec.):
+
+      /*   o Reorder matras:
+       *
+       *     If a pre-base matra character had been reordered before
+       applying basic
+       *     features, the glyph can be moved closer to the main consonant
+       based on
+       *     whether half-forms had been formed. Actual position for
+       the matra is
+       *     defined as “after last standalone halant glyph, after
+       initial matra
+       *     position and before the main consonant”. If ZWJ or ZWNJ
+       follow this
+       *     halant, position is moved after it.
+       *
+       * IMPLEMENTATION NOTES:
+       *
+       * It looks like the last sentence is wrong.  Testing, with Windows
+       7 Uniscribe
+       * and Devanagari shows that the behavior is best described as:
+       *
+       * "If ZWJ follows this halant, matra is NOT repositioned after
+       this halant.
+       *  If ZWNJ follows this halant, position is moved after it."
+       *
+       * Test case, with Adobe Devanagari or Nirmala UI:
+       *
+       *   U+091F,U+094D,U+200C,U+092F,U+093F
+       *   (Matra moves to the middle, after ZWNJ.)
+       *
+       *   U+091F,U+094D,U+200D,U+092F,U+093F
+       *   (Matra does NOT move, stays to the left.)
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1070
+
+    Test case added with Adobe Devanagari.
+
+ src/hb-ot-shape-complex-indic.cc                   |  37
+ +++++++++++++++++++++
+ .../8116e5d8fedfbec74e45dc350d2416d810bed8c4.ttf   | Bin 0 -> 4364 bytes
+ .../data/in-house/tests/indic-joiners.tests        |   4 +++
+ 3 files changed, 41 insertions(+)
+
+commit 2cb075fe26201f3e370fccfff6c1bc242b5acc79
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 3 13:04:05 2018 +0430
+
+    Fix unused function '_hb_mapped_file_destroy' if no mmap
+
+ src/hb-blob.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 343e8c694b03eea625523229a9468fbb456e3aea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 3 12:43:59 2018 +0430
+
+    1.8.2
+
+ NEWS             | 8 ++++++++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+
 commit 29e7879bcf3fe955a0be3bb41e929e68f39ad01e
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Jul 3 12:38:21 2018 +0430
