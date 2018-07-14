@@ -1,3 +1,9 @@
+2018-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex.c: Fix a bug that Magnification is not correctly
+	recorded. Report by Karel Horak:
+	https://tug.org/pipermail/tex-live/2018-July/042063.html
+
 2018-06-13  Karl Berry  <karl@tug.org>
 
 	* man1/synctex.1: man page list syntax.

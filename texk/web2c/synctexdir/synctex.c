@@ -1047,17 +1047,17 @@ void synctexsheet(integer mag)
         }
         return;
     }
+    if (SYNCTEX_GET_TOTAL_PAGES() == 0) {
+        /*  Now it is time to properly set up the scale factor. */
+        if (mag > 0) {
+            synctex_ctxt.magnification = mag;
+        }
+    }
     if (NULL != synctex_prepare_content()) {
         /*  First possibility: the .synctex file is already open because SyncTeX was activated on the CLI
          *  or it was activated with the \synctex macro and the first page is already shipped out.
          *  Second possibility: tries to open the .synctex, useful if synchronization was enabled
          *  from the source file and not from the CLI. */
-        if (SYNCTEX_GET_TOTAL_PAGES() == 0) {
-            /*  Now it is time to properly set up the scale factor. */
-            if (mag > 0) {
-                synctex_ctxt.magnification = mag;
-            }
-        }
         synctex_record_sheet(SYNCTEX_GET_TOTAL_PAGES()+1);
     }
 #   if SYNCTEX_DEBUG
