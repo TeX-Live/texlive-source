@@ -671,7 +671,8 @@ static void *synctex_dot_open(void)
             if (SYNCTEX_FILE) {
                 if (SYNCTEX_NO_ERROR == synctex_record_preamble()) {
                     /*  Initialization of the context */
-                    synctex_ctxt.magnification = 1000;
+                    if (synctex_ctxt.magnification == 0)
+                        synctex_ctxt.magnification = 1000;
                     synctex_ctxt.unit = SYNCTEX_UNIT_FACTOR;
                     /*  synctex_ctxt.busy_name was NULL before, it now owns the_busy_name */
                     synctex_ctxt.busy_name = the_busy_name;
