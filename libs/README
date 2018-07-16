@@ -33,9 +33,8 @@ icu 61.1 - checked 29mar18
 libpaper 1.1.24+nmu2 - checked 24oct13
   ftp://ftp.de.debian.org/debian/pool/main/libp/libpaper/
 
-libpng 1.6.34 - checked 29Sep17
-  http://www.libpng.org/ - used by many
-  http://www.libpng.org/pub/png/pngcode.html
+libpng 1.6.35 - checked 17jul18
+  https://sourceforge.net/projects/libpng/files/ - used by many
 
 lua 5.2.3 - checked 11mar15
   http://www.lua.org/ftp/

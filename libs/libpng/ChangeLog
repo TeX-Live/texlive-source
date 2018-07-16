@@ -1,3 +1,8 @@
+2018-07-17 Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import libpng-1.6.35.
+	* version.ac: Adjust.
+
 2018-01-14  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (-std=c89): reinstate check, now copying configure
