@@ -2,7 +2,7 @@
 # Attempt to guess a canonical system name.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-07-12'
+timestamp='2018-07-13'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -95,11 +95,13 @@ fi
 # Portable tmp directory creation inspired by the Autoconf team.
 
 tmp=
+# shellcheck disable=SC2172
 trap 'test -z "$tmp" || rm -fr "$tmp"' 1 2 13 15
 trap 'exitcode=$?; test -z "$tmp" || rm -fr "$tmp"; exit $exitcode' 0
 
 set_cc_for_build() {
     : "${TMPDIR=/tmp}"
+    # shellcheck disable=SC2039
     { tmp=`(umask 077 && mktemp -d "$TMPDIR/cgXXXXXX") 2>/dev/null` && test -n "$tmp" && test -d "$tmp" ; } ||
 	{ test -n "$RANDOM" && tmp=$TMPDIR/cg$$-$RANDOM && (umask 077 && mkdir "$tmp" 2>/dev/null) ; } ||
 	{ tmp=$TMPDIR/cg-$$ && (umask 077 && mkdir "$tmp" 2>/dev/null) && echo "Warning: creating insecure temp directory" >&2 ; } ||
@@ -1359,6 +1361,7 @@ EOF
 	# "uname -m" is not consistent, so use $cputype instead. 386
 	# is converted to i386 for consistency with other x86
 	# operating systems.
+	# shellcheck disable=SC2154
 	if test "$cputype" = 386; then
 	    UNAME_MACHINE=i386
 	else
