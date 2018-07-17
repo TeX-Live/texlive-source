@@ -1,3 +1,8 @@
+2018-07-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import harfbuzz-1.8.4.
+	* version.ac: Adjusted.
+
 2018-07-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import harfbuzz-1.8.3.

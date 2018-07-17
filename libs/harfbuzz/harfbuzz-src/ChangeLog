@@ -1,3 +1,187 @@
+commit 04b7b81bcbf19cb85d06d930192d6591ba45ef72
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 17 10:57:01 2018 +0200
+
+    Reland "Implement C++11-style GCC builtin atomic ops"
+
+    Fixed the crasher in it.
+
+ src/hb-atomic-private.hh | 22 +++++++++++++++++++---
+ src/hb-object-private.hh |  2 +-
+ 2 files changed, 20 insertions(+), 4 deletions(-)
+
+commit 019d18e9ae643134bfc3861be65ac618a5892c92
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 17 10:59:19 2018 +0200
+
+    Minor
+
+ src/Makefile.am      | 1 +
+ test/api/Makefile.am | 2 ++
+ 2 files changed, 3 insertions(+)
+
+commit 3edef5a19b5c0f30381ae6fe01c3370ded37f6ca
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 17 10:50:01 2018 +0200
+
+    Revert "Implement C++11-style GCC builtin atomic ops"
+
+    This reverts commit 21fa170f0bfb0109c506ed17f5aff8b062564ffa.
+
+    Is crashing.  Oops.
+
+ src/hb-atomic-private.hh | 22 +++-------------------
+ src/hb-object-private.hh |  2 +-
+ 2 files changed, 4 insertions(+), 20 deletions(-)
+
+commit 21fa170f0bfb0109c506ed17f5aff8b062564ffa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 16 17:58:02 2018 +0200
+
+    Implement C++11-style GCC builtin atomic ops
+
+    Hopefully fixes bots.
+
+ src/hb-atomic-private.hh | 22 +++++++++++++++++++---
+ src/hb-object-private.hh |  2 +-
+ 2 files changed, 20 insertions(+), 4 deletions(-)
+
+commit 804b59cf4901d471253016e0cbf82cc1bbbc1d15
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 16 15:44:58 2018 +0200
+
+    Relax C++11 atomic ops memory order to acquire-release
+
+ src/hb-atomic-private.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit bda242409fc0cbb79a0ff00eba9856c4b0a9c7a1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 16 15:41:09 2018 +0200
+
+    Implement C++11 <atomic> operations
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/345
+
+ src/hb-atomic-private.hh          | 27 ++++++++++++++++++++++++---
+ src/hb-open-type-private.hh       |  2 +-
+ src/hb-ot-shape-complex-arabic.cc |  2 +-
+ 3 files changed, 26 insertions(+), 5 deletions(-)
+
+commit 524411224054b23bab4adad7343314df45c9c183
+Merge: 2aae617a 269eb456
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Mon Jul 16 14:42:43 2018 +0200
+
+    Merge pull request #1094 from anthrotype/fix-appveyor-msys2
+
+    appveyor.yml: try updating msys2 to fix failing mingw-w64-x86_64 build
+
+commit 269eb45650be66901627da7f1014339065a948a5
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Mon Jul 16 14:14:42 2018 +0200
+
+    appveyor.yml: try only updating msys2 core, not the rest of the
+    packages
+
+    maybe it'll get a bit faster
+
+ appveyor.yml | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 3ab52c6cb5c405366af804d278216e2d02a39ecb
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Mon Jul 16 12:57:27 2018 +0200
+
+    appveyor.yml: pass --needed option to pacman
+
+    so it won't attempt reinstalling packages which are already installed
+
+ appveyor.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5631d70d36aa7952d343ea794bd5169a730706ae
+Author: Cosimo Lupo <cosimo@anthrotype.com>
+Date:   Mon Jul 16 12:41:59 2018 +0200
+
+    appveyor.yml: try updating msys2 to fix failing mingw-w64-x86_64 build
+
+    https://github.com/harfbuzz/harfbuzz/pull/1093#issuecomment-405201903
+    https://ci.appveyor.com/project/harfbuzz/harfbuzz/build/job/ky7lao1ii1bi7ew4#L71
+
+ appveyor.yml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 2aae617a84f47836f10efd30df43e13e3a9447e1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 11 17:27:23 2018 +0200
+
+    Move _hb_alignof later again
+
+    It uses constexpr...
+
+ src/hb-private.hh | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+commit f3a74c16ecafdca135a647ebe85117c35c1ef585
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 11 17:23:53 2018 +0200
+
+    Make hb_vector_t 8 bytes smaller
+
+ src/hb-dsalgs.hh | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+commit 44999f8b758374015f5d48c83f9adcb464607c2f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 11 17:00:59 2018 +0200
+
+    Align NullPool and CrapPool to HB_VECTOR_SIZE
+
+ src/hb-dsalgs.hh  |  3 +--
+ src/hb-private.hh | 64
+ ++++++++++++++++++++++++++++++++-----------------------
+ src/hb-static.cc  |  4 ++--
+ 3 files changed, 40 insertions(+), 31 deletions(-)
+
+commit 20a318d06acaabdee0090339dfa621aab46f1441
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 11 17:00:13 2018 +0200
+
+    Fix return type of alignof() fallback
+
+ src/hb-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 58cb4d9f73f1292454e3673d5e7ae5a58a566522
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 11 16:44:21 2018 +0200
+
+    Minor
+
+ test/api/test-ot-math.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 7796857c93b779e3c93eedd1cceb217d691dfd81
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 11 15:27:37 2018 +0200
+
+    Minor
+
+ RELEASING.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2b76767bf572364d3d647cdd139f2044a7ad06b2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 11 15:27:13 2018 +0200
+
+    1.8.3
+
+ NEWS             | 8 ++++++++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+
 commit 718dfd4189275b1e4233dc7c12ab457352fccfcb
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Jul 10 16:34:31 2018 +0200
