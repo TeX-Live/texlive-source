@@ -1,9 +1,14 @@
+-----------------------------------------------------------------------------
+-- Canonic header field capitalization
+-- LuaSocket toolkit.
+-- Author: Diego Nehab
+-----------------------------------------------------------------------------
 if not(socket) then 
  local socket = require("socket")
 end
 socket.headers = {}
 local _M = socket.headers
-module("socket.headers")
+
 _M.canonic = {
     ["accept"] = "Accept",
     ["accept-charset"] = "Accept-Charset",
@@ -97,4 +102,5 @@ _M.canonic = {
     ["www-authenticate"] = "WWW-Authenticate",
     ["x-mailer"] = "X-Mailer",
 }
+
 return _M

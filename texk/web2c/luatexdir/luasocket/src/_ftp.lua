@@ -1,3 +1,12 @@
+-----------------------------------------------------------------------------
+-- FTP support for the Lua language
+-- LuaSocket toolkit.
+-- Author: Diego Nehab
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+-- Declare module and import dependencies
+-----------------------------------------------------------------------------
 local base = _G
 local table = require("table")
 local string = require("string")
@@ -8,12 +17,23 @@ local tp = socket.tp or require("socket.tp")
 local ltn12 = ltn12 or require("ltn12")
 socket.ftp = {}
 local _M = socket.ftp
-module("socket.ftp")
+-----------------------------------------------------------------------------
+-- Program constants
+-----------------------------------------------------------------------------
+-- timeout in seconds before the program gives up on a connection
 _M.TIMEOUT = 60
+-- default port for ftp service
 local PORT = 21
+-- this is the default anonymous password. used when no password is
+-- provided in url. should be changed to your e-mail.
 _M.USER = "ftp"
 _M.PASSWORD = "anonymous@anonymous.org"
+
+-----------------------------------------------------------------------------
+-- Low level FTP API
+-----------------------------------------------------------------------------
 local metat = { __index = {} }
+
 function _M.open(server, port, create)
     local tp = socket.try(tp.connect(server, port or PORT, _M.TIMEOUT, create))
     local f = base.setmetatable({ tp = tp }, metat)
@@ -21,16 +41,19 @@ function _M.open(server, port, create)
     f.try = socket.newtry(function() f:close() end)
     return f
 end
+
 function metat.__index:portconnect()
     self.try(self.server:settimeout(_M.TIMEOUT))
     self.data = self.try(self.server:accept())
     self.try(self.data:settimeout(_M.TIMEOUT))
 end
+
 function metat.__index:pasvconnect()
     self.data = self.try(socket.tcp())
     self.try(self.data:settimeout(_M.TIMEOUT))
     self.try(self.data:connect(self.pasvt.address, self.pasvt.port))
 end
+
 function metat.__index:login(user, password)
     self.try(self.tp:command("user", user or _M.USER))
     local code, reply = self.try(self.tp:check{"2..", 331})
@@ -40,6 +63,7 @@ function metat.__index:login(user, password)
     end
     return 1
 end
+
 function metat.__index:pasv()
     self.try(self.tp:command("pasv"))
     local code, reply = self.try(self.tp:check("2.."))
@@ -56,6 +80,7 @@ function metat.__index:pasv()
     end
     return self.pasvt.address, self.pasvt.port
 end
+
 function metat.__index:epsv()
     self.try(self.tp:command("epsv"))
     local code, reply = self.try(self.tp:check("229"))
@@ -72,6 +97,8 @@ function metat.__index:epsv()
     end
     return self.pasvt.address, self.pasvt.port
 end
+
+
 function metat.__index:port(address, port)
     self.pasvt = nil
     if not address then
@@ -87,6 +114,7 @@ function metat.__index:port(address, port)
     self.try(self.tp:check("2.."))
     return 1
 end
+
 function metat.__index:eprt(family, address, port)
     self.pasvt = nil
     if not address then
@@ -100,31 +128,45 @@ function metat.__index:eprt(family, address, port)
     self.try(self.tp:check("2.."))
     return 1
 end
+
+
 function metat.__index:send(sendt)
     self.try(self.pasvt or self.server, "need port or pasv first")
+    -- if there is a pasvt table, we already sent a PASV command
+    -- we just get the data connection into self.data
     if self.pasvt then self:pasvconnect() end
+    -- get the transfer argument and command
     local argument = sendt.argument or
         url.unescape(string.gsub(sendt.path or "", "^[/\\]", ""))
     if argument == "" then argument = nil end
     local command = sendt.command or "stor"
+    -- send the transfer command and check the reply
     self.try(self.tp:command(command, argument))
     local code, reply = self.try(self.tp:check{"2..", "1.."})
+    -- if there is not a pasvt table, then there is a server
+    -- and we already sent a PORT command
     if not self.pasvt then self:portconnect() end
+    -- get the sink, source and step for the transfer
     local step = sendt.step or ltn12.pump.step
     local readt = { self.tp }
     local checkstep = function(src, snk)
+        -- check status in control connection while downloading
         local readyt = socket.select(readt, nil, 0)
         if readyt[tp] then code = self.try(self.tp:check("2..")) end
         return step(src, snk)
     end
     local sink = socket.sink("close-when-done", self.data)
+    -- transfer all data and check error
     self.try(ltn12.pump.all(sendt.source, sink, checkstep))
     if string.find(code, "1..") then self.try(self.tp:check("2..")) end
+    -- done with data connection
     self.data:close()
+    -- find out how many bytes were sent
     local sent = socket.skip(1, self.data:getstats())
     self.data = nil
     return sent
 end
+
 function metat.__index:receive(recvt)
     self.try(self.pasvt or self.server, "need port or pasv first")
     if self.pasvt then self:pasvconnect() end
@@ -147,31 +189,40 @@ function metat.__index:receive(recvt)
     self.data = nil
     return 1
 end
+
 function metat.__index:cwd(dir)
     self.try(self.tp:command("cwd", dir))
     self.try(self.tp:check(250))
     return 1
 end
+
 function metat.__index:type(type)
     self.try(self.tp:command("type", type))
     self.try(self.tp:check(200))
     return 1
 end
+
 function metat.__index:greet()
     local code = self.try(self.tp:check{"1..", "2.."})
     if string.find(code, "1..") then self.try(self.tp:check("2..")) end
     return 1
 end
+
 function metat.__index:quit()
     self.try(self.tp:command("quit"))
     self.try(self.tp:check("2.."))
     return 1
 end
+
 function metat.__index:close()
     if self.data then self.data:close() end
     if self.server then self.server:close() end
     return self.tp:close()
 end
+
+-----------------------------------------------------------------------------
+-- High level FTP API
+-----------------------------------------------------------------------------
 local function override(t)
     if t.url then
         local u = url.parse(t.url)
@@ -181,6 +232,7 @@ local function override(t)
         return u
     else return t end
 end
+
 local function tput(putt)
     putt = override(putt)
     socket.try(putt.host, "missing hostname")
@@ -194,10 +246,12 @@ local function tput(putt)
     f:close()
     return sent
 end
+
 local default = {
     path = "/",
     scheme = "ftp"
 }
+
 local function genericform(u)
     local t = socket.try(url.parse(u, default))
     socket.try(t.scheme == "ftp", "wrong scheme '" .. t.scheme .. "'")
@@ -210,16 +264,20 @@ local function genericform(u)
     end
     return t
 end
+
 _M.genericform = genericform
+
 local function sput(u, body)
     local putt = genericform(u)
     putt.source = ltn12.source.string(body)
     return tput(putt)
 end
+
 _M.put = socket.protect(function(putt, body)
     if base.type(putt) == "string" then return sput(putt, body)
     else return tput(putt) end
 end)
+
 local function tget(gett)
     gett = override(gett)
     socket.try(gett.host, "missing hostname")
@@ -232,6 +290,7 @@ local function tget(gett)
     f:quit()
     return f:close()
 end
+
 local function sget(u)
     local gett = genericform(u)
     local t = {}
@@ -239,6 +298,7 @@ local function sget(u)
     tget(gett)
     return table.concat(t)
 end
+
 _M.command = socket.protect(function(cmdt)
     cmdt = override(cmdt)
     socket.try(cmdt.host, "missing hostname")
@@ -260,9 +320,10 @@ _M.command = socket.protect(function(cmdt)
     f:quit()
     return f:close()
 end)
+
 _M.get = socket.protect(function(gett)
     if base.type(gett) == "string" then return sget(gett)
     else return tget(gett) end
 end)
-socket.ftp = _M
+
 return _M
