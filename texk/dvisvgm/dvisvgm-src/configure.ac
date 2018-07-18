@@ -4,7 +4,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[2.4.1],[martin.gieseking@uos.de])
+AC_INIT([dvisvgm],[2.4.2],[martin.gieseking@uos.de])
 DATE="July 2018"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS([config.h])
@@ -169,6 +169,18 @@ AC_LANG_POP([C++])
 CPPFLAGS="$CPPFLAGS_SAVE"
 CFLAGS="$CFLAGS_SAVE"
 LDFLAGS="$LDFLAGS_SAVE"
+
+# Check for utilities required to build the manpage
+build_manpage="no"
+AC_CHECK_PROG(ASCIIDOC, asciidoc, yes)
+AS_IF([test "x$ASCIIDOC" = "xyes"], [
+	AC_CHECK_PROG(XMLTO, xmlto, yes)
+	AS_IF([test "x$XMLTO" = "xyes"], [
+		AC_CHECK_PROG(XSLTPROC, xsltproc, yes)
+		AS_IF([test "x$XSLTPROC" = "xyes"],[build_manpage="yes"])])])
+AS_IF([test "x$build_manpage" != "xyes"],
+	AC_MSG_NOTICE([generation of manual page has been disabled]))
+AM_CONDITIONAL([BUILD_MANPAGE], [test "x$build_manpage" = "xyes"])
 
 AX_CODE_COVERAGE
 AS_IF([ test "$enable_code_coverage" = "yes" ], [
