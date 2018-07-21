@@ -136,7 +136,7 @@ bool FormWidget::isReadOnly() const
 
 void FormWidget::setReadOnly(bool value)
 {
-  return field->setReadOnly(value);
+  field->setReadOnly(value);
 }
 
 int FormWidget::encodeID (unsigned pageNum, unsigned fieldNum)
@@ -269,11 +269,6 @@ const GooString* FormWidgetText::getContent () const
   return parent()->getContent();
 }
 
-GooString* FormWidgetText::getContentCopy ()
-{
-  return parent()->getContentCopy();
-}
-
 void FormWidgetText::updateWidgetAppearance()
 {
   if (widget)
@@ -330,7 +325,7 @@ void FormWidgetText::setTextFontSize(int fontSize)
   parent()->setTextFontSize(fontSize);
 }
 
-void FormWidgetText::setContent(GooString* new_content)
+void FormWidgetText::setContent(const GooString* new_content)
 {
   parent()->setContentCopy(new_content);
 }
@@ -397,7 +392,7 @@ bool FormWidgetChoice::isSelected (int i) const
   return parent()->isSelected(i);
 }
 
-void FormWidgetChoice::setEditChoice (GooString* new_content)
+void FormWidgetChoice::setEditChoice (const GooString* new_content)
 {
   if (!hasEdit()) {
     error(errInternal, -1, "FormFieldChoice::setEditChoice : trying to edit an non-editable choice\n");
@@ -1202,13 +1197,7 @@ void FormFieldText::print(int indent)
 }
 #endif
 
-GooString* FormFieldText::getContentCopy ()
-{
-  if (!content) return nullptr;
-  return new GooString(content);
-}
-
-void FormFieldText::setContentCopy (GooString* new_content)
+void FormFieldText::setContentCopy (const GooString* new_content)
 {
   delete content;
   content = nullptr;
@@ -1563,7 +1552,7 @@ void FormFieldChoice::select (int i)
   updateSelection();
 }
 
-void FormFieldChoice::setEditChoice (GooString* new_content)
+void FormFieldChoice::setEditChoice (const GooString* new_content)
 {
   delete editedChoice;
   editedChoice = nullptr;

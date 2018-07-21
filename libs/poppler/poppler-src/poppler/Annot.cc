@@ -522,16 +522,18 @@ AnnotBorder::AnnotBorder() {
 
 GBool AnnotBorder::parseDashArray(Object *dashObj) {
   GBool correct = gTrue;
-  int tempLength = dashObj->arrayGetLength();
+  const int tempLength = dashObj->arrayGetLength();
   double *tempDash = (double *) gmallocn (tempLength, sizeof (double));
 
   // TODO: check not all zero (Line Dash Pattern Page 217 PDF 8.1)
   for (int i = 0; i < tempLength && i < DASH_LIMIT && correct; i++) {
-    Object obj1 = dashObj->arrayGet(i);
+    const Object obj1 = dashObj->arrayGet(i);
     if (obj1.isNum()) {
       tempDash[i] = obj1.getNum();
 
       correct = tempDash[i] >= 0;
+    } else {
+      correct = gFalse;
     }
   }
 

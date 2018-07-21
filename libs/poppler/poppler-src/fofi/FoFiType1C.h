@@ -15,6 +15,7 @@
 //
 // Copyright (C) 2006 Takashi Iwai <tiwai@suse.de>
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2018 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -124,10 +125,10 @@ struct Type1CPrivateDict {
 };
 
 struct Type1COp {
-  GBool isNum;			// true -> number, false -> operator
-  GBool isFP;			// true -> floating point number, false -> int
+  GBool isNum = gTrue;			// true -> number, false -> operator
+  GBool isFP = gFalse;			// true -> floating point number, false -> int
   union {
-    double num;			// if num is true
+    double num = 0;			// if num is true
     int op;			// if num is false
   };
 };

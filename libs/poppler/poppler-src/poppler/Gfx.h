@@ -161,7 +161,7 @@ public:
   Gfx(PDFDoc *docA, OutputDev *outA, Dict *resDict,
       PDFRectangle *box, PDFRectangle *cropBox,
       GBool (*abortCheckCbkA)(void *data) = NULL,
-      void *abortCheckCbkDataA = NULL, XRef *xrefA = NULL);
+      void *abortCheckCbkDataA = NULL, Gfx *gfxA = NULL);
 #ifdef USE_CMS
   void initDisplayProfile();
 #endif
@@ -236,7 +236,7 @@ private:
 
   Parser *parser;		// parser for page content stream(s)
   
-  std::set<int> formsDrawing;	// the forms that are being drawn
+  std::set<int> formsDrawing;	// the forms/patterns that are being drawn
   std::set<int> charProcDrawing;	// the charProc that are being drawn
 
   GBool				// callback to check for an abort

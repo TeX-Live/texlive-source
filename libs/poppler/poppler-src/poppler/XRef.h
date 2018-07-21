@@ -76,7 +76,7 @@ struct XRefEntry {
     DontRewrite  // Entry must not be written back in case of full rewrite
   };
 
-  inline GBool getFlag(Flag flag) {
+  inline GBool getFlag(Flag flag) const {
     const int mask = (1 << (int)flag);
     return (flags & mask) != 0;
   }
@@ -97,7 +97,7 @@ public:
   // Constructor, create an empty XRef, used for PDF writing
   XRef();
   // Constructor, create an empty XRef but with info dict, used for PDF writing
-  XRef(Object *trailerDictA);
+  XRef(const Object *trailerDictA);
   // Constructor.  Read xref table from stream.
   XRef(BaseStream *strA, Goffset pos, Goffset mainXRefEntriesOffsetA = 0, GBool *wasReconstructed = NULL, GBool reconstruct = false);
 
@@ -108,20 +108,20 @@ public:
   XRef& operator=(const XRef &) = delete;
 
   // Copy xref but with new base stream!
-  XRef *copy();
+  XRef *copy() const;
 
   // Is xref table valid?
-  GBool isOk() { return ok; }
+  GBool isOk() const { return ok; }
 
   // Is the last XRef section a stream or a table?
-  GBool isXRefStream() { return xRefStream; }
+  GBool isXRefStream() const { return xRefStream; }
 
   // Get the error code (if isOk() returns false).
-  int getErrorCode() { return errCode; }
+  int getErrorCode() const { return errCode; }
 
   // Set the encryption parameters.
   void setEncryption(int permFlagsA, GBool ownerPasswordOkA,
-		     Guchar *fileKeyA, int keyLengthA,
+		     const Guchar *fileKeyA, int keyLengthA,
 		     int encVersionA, int encRevisionA,
 		     CryptAlgorithm encAlgorithmA);
   // Mark Encrypt entry as Unencrypted
@@ -130,18 +130,18 @@ public:
   void getEncryptionParameters(Guchar **fileKeyA, CryptAlgorithm *encAlgorithmA, int *keyLengthA);
 
   // Is the file encrypted?
-  GBool isEncrypted() { return encrypted; }
+  GBool isEncrypted() const { return encrypted; }
 
   // Check various permissions.
-  GBool okToPrint(GBool ignoreOwnerPW = gFalse);
-  GBool okToPrintHighRes(GBool ignoreOwnerPW = gFalse);
-  GBool okToChange(GBool ignoreOwnerPW = gFalse);
-  GBool okToCopy(GBool ignoreOwnerPW = gFalse);
-  GBool okToAddNotes(GBool ignoreOwnerPW = gFalse);
-  GBool okToFillForm(GBool ignoreOwnerPW = gFalse);
-  GBool okToAccessibility(GBool ignoreOwnerPW = gFalse);
-  GBool okToAssemble(GBool ignoreOwnerPW = gFalse);
-  int getPermFlags() { return permFlags; }
+  GBool okToPrint(GBool ignoreOwnerPW = gFalse) const;
+  GBool okToPrintHighRes(GBool ignoreOwnerPW = gFalse) const;
+  GBool okToChange(GBool ignoreOwnerPW = gFalse) const;
+  GBool okToCopy(GBool ignoreOwnerPW = gFalse) const;
+  GBool okToAddNotes(GBool ignoreOwnerPW = gFalse) const;
+  GBool okToFillForm(GBool ignoreOwnerPW = gFalse) const;
+  GBool okToAccessibility(GBool ignoreOwnerPW = gFalse) const;
+  GBool okToAssemble(GBool ignoreOwnerPW = gFalse) const;
+  int getPermFlags() const { return permFlags; }
 
   // Get catalog object.
   Object getCatalog();
@@ -161,11 +161,11 @@ public:
   void removeDocInfo();
 
   // Return the number of objects in the xref table.
-  int getNumObjects() { return size; }
+  int getNumObjects() const { return size; }
 
   // Return the catalog object reference.
-  int getRootNum() { return rootNum; }
-  int getRootGen() { return rootGen; }
+  int getRootNum() const { return rootNum; }
+  int getRootGen() const { return rootGen; }
 
   // Get end position for a stream in a damaged file.
   // Returns false if unknown or file is not damaged.
@@ -187,13 +187,13 @@ public:
   Object *getTrailerDict() { return &trailerDict; }
 
   // Was the XRef modified?
-  GBool isModified() { return modified; }
+  GBool isModified() const { return modified; }
   // Set the modification flag for XRef to true.
   void setModified() { modified = gTrue; }
 
   // Write access
-  void setModifiedObject(Object* o, Ref r);
-  Ref addIndirectObject (Object* o);
+  void setModifiedObject(const Object* o, Ref r);
+  Ref addIndirectObject (const Object* o);
   void removeIndirectObject(Ref r);
   void add(int num, int gen,  Goffset offs, GBool used);
 

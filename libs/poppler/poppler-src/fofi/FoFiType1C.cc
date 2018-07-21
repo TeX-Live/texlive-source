@@ -2564,8 +2564,6 @@ int FoFiType1C::getOp(int pos, GBool charstring, GBool *ok) {
   int b0, b1, nyb0, nyb1, x, i;
 
   b0 = getU8(pos++, ok);
-  op.isNum = gTrue;
-  op.isFP = gFalse;
 
   if (b0 == 28) {
     x = getU8(pos++, ok);

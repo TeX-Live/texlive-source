@@ -499,12 +499,6 @@ GBool ImageStream::getPixel(Guchar *pix) {
 }
 
 Guchar *ImageStream::getLine() {
-  Gulong buf, bitMask;
-  int bits;
-  int c;
-  int i;
-  Guchar *p;
-  
   if (unlikely(inputLine == nullptr)) {
       return nullptr;
   }
@@ -512,9 +506,9 @@ Guchar *ImageStream::getLine() {
   int readChars = str->doGetChars(inputLineSize, inputLine);
   for ( ; readChars < inputLineSize; readChars++) inputLine[readChars] = EOF;
   if (nBits == 1) {
-    p = inputLine;
-    for (i = 0; i < nVals; i += 8) {
-      c = *p++;
+    Guchar *p = inputLine;
+    for (int i = 0; i < nVals; i += 8) {
+      const int c = *p++;
       imgLine[i+0] = (Guchar)((c >> 7) & 1);
       imgLine[i+1] = (Guchar)((c >> 6) & 1);
       imgLine[i+2] = (Guchar)((c >> 5) & 1);
@@ -531,18 +525,18 @@ Guchar *ImageStream::getLine() {
     // we assume a component fits in 8 bits, with this hack
     // we treat 16 bit images as 8 bit ones until it's fixed correctly.
     // The hack has another part on GfxImageColorMap::GfxImageColorMap
-    p = inputLine;
-    for (i = 0; i < nVals; ++i) {
+    Guchar *p = inputLine;
+    for (int i = 0; i < nVals; ++i) {
       imgLine[i] = *p++;
       p++;
     }
   } else {
-    bitMask = (1 << nBits) - 1;
-    buf = 0;
-    bits = 0;
-    p = inputLine;
-    for (i = 0; i < nVals; ++i) {
-      if (bits < nBits) {
+    const Gulong bitMask = (1 << nBits) - 1;
+    Gulong buf = 0;
+    int bits = 0;
+    Guchar *p = inputLine;
+    for (int i = 0; i < nVals; ++i) {
+      while (bits < nBits) {
 	buf = (buf << 8) | (*p++ & 0xff);
 	bits += 8;
       }

@@ -1,3 +1,11 @@
+Release 0.67.0
+        core:
+         * Fix lots of security/leak issues found by oss-fuzz
+         * Splash: Optimize some files, making them 20% faster (now for AABGR8)
+
+        utils:
+         * pdfsig: Compile with libc != glibc. Bug #106783
+
 Release 0.66.0
         core:
          * Fix lots of security/leak issues found by oss-fuzz

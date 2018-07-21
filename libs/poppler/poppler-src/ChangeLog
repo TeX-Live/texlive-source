@@ -1,3 +1,267 @@
+commit 20d89699b35397f23352d0e60a3e19da2ce6b410
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jul 19 23:20:03 2018 +0200
+
+    poppler 0.67
+
+ CMakeLists.txt   | 4 ++--
+ NEWS             | 8 ++++++++
+ cpp/Doxyfile     | 2 +-
+ qt5/src/Doxyfile | 2 +-
+ 4 files changed, 12 insertions(+), 4 deletions(-)
+
+commit 8bc5acb1c18e77e912b7d9caa7f73e6969d1dede
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jul 19 17:55:13 2018 +0200
+
+    Splash::arbitraryTransformMask: Set clipRes to splashClipPartial in
+    some if branches
+
+    If xx or yy are not in the expected bounds something went wrong so
+    don't assume we're still inside the valid area for the destination
+    either
+
+    fixes oss-fuzz/9382
+
+ splash/Splash.cc | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+commit 004e3c10df0abda214f0c293f9e269fdd979c5ee
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jul 18 20:31:27 2018 +0200
+
+    Fix crash when Object has negative number
+
+    Spec says object number has to be > 0 and gen has to be >= 0
+
+    Reported by email
+
+ poppler/Parser.cc | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit 155897f3cb88db5050b9d16dc50bfd8b660077b6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jul 17 01:05:38 2018 +0200
+
+    JBIG2Stream::readTextRegion: Fix uninitialized memory read
+
+    fixes oss-fuzz/9381
+
+ poppler/JBIG2Stream.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit eb1291f86260124071e12226294631ce685eaad6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jul 11 00:26:01 2018 +0200
+
+    GfxPatchMeshShading::getParameterizedColor: Fix uninitialized
+    memory read
+
+    fixes oss-fuzz/9264
+
+ poppler/GfxState.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 729e212f465d015959e5a64662593e5e3f8e4924
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jul 6 17:29:46 2018 +0200
+
+    Add some easy const to XRef
+
+ poppler/XRef.cc | 26 +++++++++++++-------------
+ poppler/XRef.h  | 46 +++++++++++++++++++++++-----------------------
+ 2 files changed, 36 insertions(+), 36 deletions(-)
+
+commit e607d9c4a0057c390c59e306f6dc010aea2125ee
+Author: Stefan Brüns <stefan.bruens@rwth-aachen.de>
+Date:   Sun May 20 19:31:53 2018 +0200
+
+    Small optimization for AABGR8 pipes
+
+    Skip some computations if both src and dest alpha are zero, or if
+    src is fully opaque. Equivalent to Commit f47936af7508A
+    ("Small optimization for AAXRGB8 pipes").
+
+ splash/Splash.cc | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
+
+commit 1b5298ebb8d76b5eee11d9cccdfffcdceb5d064b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 2 21:46:10 2018 +0200
+
+    GfxUnivariateShading::getColor: Fix uninitialized memory read
+
+    fixes oss-fuzz/9165
+
+ poppler/GfxState.cc | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+commit d8346166d5150c1673379dcb3c658b9805f99764
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 2 20:10:25 2018 +0200
+
+    Gfx::doRadialShFill: Don't divide by zero
+
+    fixes oss-fuzz/9133
+
+ poppler/Gfx.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 0735821ee03f9d83a9817450b12f45a502f51834
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 26 17:09:52 2018 +0200
+
+    Form: Remove return in void function
+
+ poppler/Form.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b317ee3ecb939b91e1f8245177defaa59f8478b7
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 26 15:27:48 2018 +0200
+
+    Form: Remove unused getContentCopy
+
+    it's confusing to have getContent and getContentCopy that does 99%
+    the same
+
+ poppler/Form.cc | 11 -----------
+ poppler/Form.h  |  3 ---
+ 2 files changed, 14 deletions(-)
+
+commit 664d166194bc0832fd446b354630c4c7994ae4e3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jun 26 15:22:13 2018 +0200
+
+    Form: Add a few more const
+
+ poppler/Form.cc |  8 ++++----
+ poppler/Form.h  | 18 +++++++++---------
+ 2 files changed, 13 insertions(+), 13 deletions(-)
+
+commit 5ef6a845d8872f5dbc5698260ab5e12391f01f76
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 25 19:21:37 2018 +0200
+
+    Splash::arbitraryTransformImage: Fix uninitialized memory read
+
+    fixes oss-fuzz/9066
+
+ splash/Splash.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 267228bb071016621c80fc8514927905164aaeea
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jun 24 18:28:22 2018 +0200
+
+    pdfsig: Use posix basename() instead of GNU one
+
+    So it builds on non GNU systems too
+
+    Bug #106783
+
+ utils/pdfsig.cc | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 459f369145a9d8f638fe123425f0e2880487640e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jun 24 11:51:20 2018 +0200
+
+    Move variable declarations closer to where they are used
+
+    Allows for declaring two of them as const
+
+ poppler/Stream.cc | 26 ++++++++++----------------
+ 1 file changed, 10 insertions(+), 16 deletions(-)
+
+commit e8b82c4239da638ae77dfab07faaff33af4af1cc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jun 24 11:46:36 2018 +0200
+
+    ImageStream::getLine: Fix ubsan undefined shift
+
+    I'm not totally sure this is the "correct" fix, but doesn't regress
+    any file on my test suite so seems one of those cases only happens
+    on bad files, and this helps oss-fuzz progress in its testing
+
+    Fixes oss-fuzz/8432
+
+ poppler/Stream.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit c0e87eda688351b3caf222e5525f75a3190fd87c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jun 24 11:15:52 2018 +0200
+
+    AnnotBorder::parseDashArray: Fix correct calculation
+
+    obj not being a num also means not correct
+
+    fixes oss-fuzz/9056
+
+ poppler/Annot.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 322f8a453664fbad65c4b998034adf8df2ac0bea
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Jun 23 00:41:18 2018 +0200
+
+    GfxDeviceNColorSpace::parse: Fix leak on malformed files
+
+    Fixes oss-fuzz/9036
+
+ poppler/GfxState.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit af4d5f31705dcfd65319da430f87744b5c1f3616
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jun 22 23:55:09 2018 +0200
+
+    SplashFTFont::makeGlyph: Bail out if constructor returned early
+
+    fixes oss-fuzz/8811
+
+ splash/SplashFTFont.cc | 7 +++++--
+ splash/SplashFTFont.h  | 3 ++-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+commit 0281c02b9a1cd776c45ca1fd2f5eeea15f6827a6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jun 22 17:33:21 2018 +0200
+
+    (C) update from 2 commits ago
+
+ fofi/FoFiType1C.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 1b65f9eb1beef0d1a41a4d59c89e4acd193a1a3f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jun 22 17:29:26 2018 +0200
+
+    Gfx:Generalize protection against a pattern drawing itself
+
+    fixes oss-fuzz/8929
+
+ poppler/CairoOutputDev.cc  |  2 +-
+ poppler/Gfx.cc             | 53
+ ++++++++++++++++++++++++++--------------------
+ poppler/Gfx.h              |  4 ++--
+ poppler/PSOutputDev.cc     |  2 +-
+ poppler/SplashOutputDev.cc |  2 +-
+ 5 files changed, 35 insertions(+), 28 deletions(-)
+
+commit da349184c61034ac5818efe90d426de6af2c74d7
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jun 22 16:48:11 2018 +0200
+
+    FoFiType1C::readPrivateDict: Fix potential uninitialized memory read
+
+    fixes oss-fuzz/8864
+
+ fofi/FoFiType1C.cc | 2 --
+ fofi/FoFiType1C.h  | 6 +++---
+ 2 files changed, 3 insertions(+), 5 deletions(-)
+
 commit 877dcec7e2357991d79508a2aefc39d1510bf235
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Tue Jun 19 23:16:47 2018 +0200

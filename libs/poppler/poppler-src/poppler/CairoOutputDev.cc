@@ -960,7 +960,7 @@ GBool CairoOutputDev::tilingPatternFill(GfxState *state, Gfx *gfxA, Catalog *cat
   adjusted_stroke_width_tmp = adjusted_stroke_width;
   maskTmp = mask;
   mask = nullptr;
-  gfx = new Gfx(doc, this, resDict, &box, nullptr, nullptr, nullptr, gfxA->getXRef());
+  gfx = new Gfx(doc, this, resDict, &box, nullptr, nullptr, nullptr, gfxA);
   if (paintType == 2)
     inUncoloredPattern = gTrue;
   gfx->display(str);

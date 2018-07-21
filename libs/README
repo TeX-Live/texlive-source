@@ -48,7 +48,7 @@ mpfr 4.0.1 - checked 10feb18
 pixman 0.34.0 - checked 04feb16
   http://cairographics.org/releases/
 
-poppler 0.66.0 - checked 20jun18
+poppler 0.67.0 - checked 21jul18
   http://poppler.freedesktop.org/ - used by luatex and xetex
   (requires C++11)
 

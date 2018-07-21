@@ -154,6 +154,11 @@ Object Parser::getObj(GBool simpleOnly,
       const int gen = buf1.getInt();
       shift();
       shift();
+
+      if (unlikely(num <= 0 || gen < 0)) {
+          return Object();
+      }
+
       return Object(num, gen);
     } else {
       return Object(num);
