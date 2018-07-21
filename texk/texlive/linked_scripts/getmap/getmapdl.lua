@@ -8,9 +8,16 @@
 --
 -- License: LPPL
 --
-local http = require("socket.http");
+local http = require("socket.http")
 local ltn12 = require("ltn12")
-local url = require("socket.url")
+-- local url = require("socket.url")
+-- avoid bug in luatex v1.0.7
+-- copied socket.url's escape function into local function url_escape
+function url_escape(s)
+    return (string.gsub(s, "([^A-Za-z0-9_])", function(c)
+        return string.format("%%%02x", string.byte(c))
+    end))
+end
 
 local OSMURL = "http://open.mapquestapi.com/staticmap/v4/getplacemap"
 local GMURL = "http://maps.googleapis.com/maps/api/staticmap"
@@ -41,7 +48,7 @@ local KMLFILE = ""
 local BOUND = 0.1
 local OFILE = "getmap"
 local QUIET = "false"
-local VERSION = "v1.5 (07/10/2014)"
+local VERSION = "v1.5a (2018/07/18)"
 
 function pversion()
   print("getmapdl.lua " .. VERSION)
@@ -765,37 +772,37 @@ local UOFILE = ""
 local IMGURL = ""
 
 if MODE == "gm" then
-  ULOCATION = "center=" .. url.escape(LOCATION)
+  ULOCATION = "center=" .. url_escape(LOCATION)
   if MARKERS == "" then
-    UMARKERS = "&markers=size:mid|color:" .. COLOR .. "|label:" .. NUMBER .. "|" .. url.escape(LOCATION)
-    UZOOM = "&zoom=" .. url.escape(ZOOM)
+    UMARKERS = "&markers=size:mid|color:" .. COLOR .. "|label:" .. NUMBER .. "|" .. url_escape(LOCATION)
+    UZOOM = "&zoom=" .. url_escape(ZOOM)
   else
-    UMARKERS = "" .. url.escape(MARKERS)
+    UMARKERS = "" .. url_escape(MARKERS)
     -- correct cruft escaping of "&markers="
     UMARKERS = UMARKERS:gsub("%%26markers%%3d","&markers=")
     UZOMM = ""
     if CENTER == "" then
       ULOCATION = ""
     else
-      ULOCATION = "center=" .. url.escape(CENTER)
+      ULOCATION = "center=" .. url_escape(CENTER)
     end
   end
-  USIZE = "&size=" .. url.escape(SIZE)
-  USCALE = "&scale=" .. url.escape(SCALE)
-  UTYPE = "&maptype=" .. url.escape(TYPE)
-  UIMAGETYPE = "&format=" .. url.escape(IMAGETYPE)
+  USIZE = "&size=" .. url_escape(SIZE)
+  USCALE = "&scale=" .. url_escape(SCALE)
+  UTYPE = "&maptype=" .. url_escape(TYPE)
+  UIMAGETYPE = "&format=" .. url_escape(IMAGETYPE)
   if IMAGETYPE == "jpg-baseline" then
     IMAGETYPE = "jpg"
   end
   if VISIBLE == "" then
     UVISIBLE = ""
   else
-    UVISIBLE = "&visible=" .. url.escape(VISIBLE)
+    UVISIBLE = "&visible=" .. url_escape(VISIBLE)
   end
   if IPATH == "" then
     UIPATH = ""
   else
-    UIPATH = "" .. url.escape(IPATH)
+    UIPATH = "" .. url_escape(IPATH)
     -- correct cruft escaping of "&path="
     UIPATH = UIPATH:gsub("%%26path%%3d","&path=")
   end
@@ -805,7 +812,7 @@ if MODE == "gm" then
     EPLFILE = io.open(FPATH, "r")
     local contents = EPLFILE:read()
     EPLFILE:close()
-    UFPATH = "" .. url.escape(contents)
+    UFPATH = "" .. url_escape(contents)
     -- correct cruft escaping of "&path="
     UFPATH = UFPATH:gsub("%%26path%%3d","&path=")
   end
@@ -817,25 +824,25 @@ if MODE == "gm" then
   UOFILE = OFILE .. "." .. IMAGETYPE
   IMGURL = GMURL .. "?" .. ULOCATION .. USIZE .. UZOOM .. UMARKERS .. UTYPE .. USCALE .. UIMAGETYPE .. UVISIBLE .. UIPATH .. UFPATH .. ULANGUAGE .. "&sensor=false"
 elseif MODE == "gsv" then
-  ULOCATION = "location=" .. url.escape(LOCATION)
-  USIZE = "&size=" .. url.escape(SIZE)
-  UHEADING = "&heading=" .. url.escape(HEADING)
-  UFOV = "&fov=" .. url.escape(FOV)
-  UPITCH = "&pitch=" .. url.escape(PITCH)
+  ULOCATION = "location=" .. url_escape(LOCATION)
+  USIZE = "&size=" .. url_escape(SIZE)
+  UHEADING = "&heading=" .. url_escape(HEADING)
+  UFOV = "&fov=" .. url_escape(FOV)
+  UPITCH = "&pitch=" .. url_escape(PITCH)
   UOFILE = OFILE .. ".jpg"
   IMGURL = GSVURL .. "?" .. ULOCATION .. USIZE .. UHEADING .. UFOV .. UPITCH .. "&sensor=false"
 elseif MODE == "osm" then
-  UKEY = "?key=" .. url.escape(KEY)
-  ULOCATION = "&location=" .. url.escape(LOCATION)
-  USIZE = "&size=" .. url.escape(SIZE)
+  UKEY = "?key=" .. url_escape(KEY)
+  ULOCATION = "&location=" .. url_escape(LOCATION)
+  USIZE = "&size=" .. url_escape(SIZE)
   if ZOOM == "" then
-    USCALEZOOM = "&scale=" .. url.escape(SCALE)
+    USCALEZOOM = "&scale=" .. url_escape(SCALE)
   else
-    USCALEZOOM = "&zoom=" .. url.escape(ZOOM)
+    USCALEZOOM = "&zoom=" .. url_escape(ZOOM)
   end
-  UTYPE = "&type=" .. url.escape(TYPE)
-  UIMAGETYPE = "&imagetype=" .. url.escape(IMAGETYPE)
-  USHOWICON = "&showicon=" .. url.escape(COLOR) .. "-" .. url.escape(NUMBER)
+  UTYPE = "&type=" .. url_escape(TYPE)
+  UIMAGETYPE = "&imagetype=" .. url_escape(IMAGETYPE)
+  USHOWICON = "&showicon=" .. url_escape(COLOR) .. "-" .. url_escape(NUMBER)
   UOFILE = OFILE .. "." .. IMAGETYPE
   IMGURL = OSMURL .. UKEY .. ULOCATION .. USIZE .. USCALEZOOM .. UTYPE .. UIMAGETYPE .. USHOWICON
 end
