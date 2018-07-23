@@ -2420,7 +2420,7 @@ NROFF = nroff
 MANS = $(dist_man_MANS) $(nodist_man_MANS)
 DATA = $(pkgconfig_DATA)
 am__syncinclude_HEADERS_DIST = synctexdir/synctex_parser.h \
-	synctexdir/synctex_parser_utils.h
+	synctexdir/synctex_version.h synctexdir/synctex_parser_utils.h
 HEADERS = $(syncinclude_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -4687,6 +4687,7 @@ syncincludedir = ${includedir}/synctex
 pkgconfigdir = ${libdir}/pkgconfig
 @SYNCTEX_TRUE@syncinclude_HEADERS = \
 @SYNCTEX_TRUE@	synctexdir/synctex_parser.h \
+@SYNCTEX_TRUE@	synctexdir/synctex_version.h \
 @SYNCTEX_TRUE@	synctexdir/synctex_parser_utils.h
 
 @SYNCTEX_TRUE@pkgconfig_DATA = synctexdir/synctex.pc

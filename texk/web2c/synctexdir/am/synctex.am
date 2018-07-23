@@ -55,6 +55,7 @@ pkgconfigdir = ${libdir}/pkgconfig
 if SYNCTEX
 syncinclude_HEADERS = \
 	synctexdir/synctex_parser.h \
+	synctexdir/synctex_version.h \
 	synctexdir/synctex_parser_utils.h
 
 pkgconfig_DATA = synctexdir/synctex.pc

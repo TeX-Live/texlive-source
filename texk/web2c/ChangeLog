@@ -1,3 +1,9 @@
+2018-07-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctexdir/am/synctex.am: Add synctex_version.h.
+	Report by Johannes:
+	https://tug.org/pipermail/tex-live/2018-July/042089.html
+
 2018-07-17  Karl Berry  <karl@freefriends.org>
 
 	* dvicopy.web: typos.
