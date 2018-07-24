@@ -1,9 +1,9 @@
 	Remove the '#pragma's, they seem to cause problems for MSVC
 	and are certainly not needed otherwise.
 
-diff -ur teckit-2.5.7.orig/source/Engine.cpp teckit-2.5.7/source/Engine.cpp
---- teckit-2.5.7.orig/source/Engine.cpp	Tue Jun 27 05:50:43 2017
-+++ teckit-2.5.7/source/Engine.cpp	Tue Jun 27 17:40:37 2017
+diff -ur teckit-2.5.8/source/Engine.cpp teckit-src/source/Engine.cpp
+--- teckit-2.5.8/source/Engine.cpp	Tue Dec 05 07:20:20 2017
++++ teckit-src/source/Engine.cpp	Tue Jul 24 07:39:17 2018
 @@ -102,10 +96,6 @@
  #endif
  }

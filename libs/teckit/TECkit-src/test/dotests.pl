@@ -41,7 +41,9 @@ compare("${srcdir}SILGreek2004-04-27.uncompressed.tec.orig", "SILGreek.uncompres
 dotest("compiling Greek mapping (compressed)",
 	"${bindir}teckit_compile ${srcdir}SILGreek2004-04-27.map -o SILGreek.tec");
 
-compare("${srcdir}SILGreek2004-04-27.tec.orig", "SILGreek.tec");
+# Don't bother to check the compressed file as changes to the compression library can
+# slightly change the resulting image. The tests below which use the compressed file
+# should be sufficient to verify that it can be decompressed/used properly
 
 dotest("converting plain-text file to unicode",
 	"${bindir}txtconv -t SILGreek.tec -i ${srcdir}mrk.txt -o mrk.utf8.txt -nfc");

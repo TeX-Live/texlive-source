@@ -1,8 +1,8 @@
 	Avoid more compiler warnings.
 
-diff -ur teckit-2.5.7.orig/source/Compiler.cpp teckit-2.5.7/source/Compiler.cpp
---- teckit-2.5.7.orig/source/Compiler.cpp	Tue Jun 27 05:50:43 2017
-+++ teckit-2.5.7/source/Compiler.cpp	Tue Jun 27 17:25:31 2017
+diff -ur teckit-2.5.8/source/Compiler.cpp teckit-src/source/Compiler.cpp
+--- teckit-2.5.8/source/Compiler.cpp	Tue Dec 05 07:20:20 2017
++++ teckit-src/source/Compiler.cpp	Tue Jul 24 07:23:53 2018
 @@ -189,14 +189,14 @@
  		free(table);
  }
@@ -30,9 +30,9 @@ diff -ur teckit-2.5.7.orig/source/Compiler.cpp teckit-2.5.7/source/Compiler.cpp
  	++errorCount;
  }
 
-diff -ur teckit-2.5.7.orig/source/Engine.cpp teckit-2.5.7/source/Engine.cpp
---- teckit-2.5.7.orig/source/Engine.cpp	Tue Jun 27 05:50:43 2017
-+++ teckit-2.5.7/source/Engine.cpp	Tue Jun 27 17:40:37 2017
+diff -ur teckit-2.5.8/source/Engine.cpp teckit-src/source/Engine.cpp
+--- teckit-2.5.8/source/Engine.cpp	Tue Dec 05 07:20:20 2017
++++ teckit-src/source/Engine.cpp	Tue Jul 24 07:39:17 2018
 @@ -1093,7 +1075,7 @@
  			if (matchElems == 0 && allowInsertion == false)
  				continue;
@@ -52,9 +52,9 @@ diff -ur teckit-2.5.7.orig/source/Engine.cpp teckit-2.5.7/source/Engine.cpp
  					if (copyBytes > 0)
  						memcpy(nameBuffer, namePtr, copyBytes);
 
-diff -ur teckit-2.5.7.orig/source/Engine.h teckit-2.5.7/source/Engine.h
---- teckit-2.5.7.orig/source/Engine.h	Tue Jun 27 05:50:43 2017
-+++ teckit-2.5.7/source/Engine.h	Tue Jun 27 17:30:22 2017
+diff -ur teckit-2.5.8/source/Engine.h teckit-src/source/Engine.h
+--- teckit-2.5.8/source/Engine.h	Tue Dec 05 07:20:20 2017
++++ teckit-src/source/Engine.h	Tue Jul 24 07:29:14 2018
 @@ -117,7 +117,7 @@
  
  	UInt32				match(int index, int repeats, int textLoc);
@@ -65,9 +65,9 @@ diff -ur teckit-2.5.7.orig/source/Engine.h teckit-2.5.7/source/Engine.h
  	int					direction;
  	MatchInfo			info[256];
 
-diff -ur teckit-2.5.7.orig/source/Public-headers/TECkit_Compiler.h teckit-2.5.7/source/Public-headers/TECkit_Compiler.h
---- teckit-2.5.7.orig/source/Public-headers/TECkit_Compiler.h	Tue Jun 27 05:50:43 2017
-+++ teckit-2.5.7/source/Public-headers/TECkit_Compiler.h	Tue Jun 27 17:42:50 2017
+diff -ur teckit-2.5.8/source/Public-headers/TECkit_Compiler.h teckit-src/source/Public-headers/TECkit_Compiler.h
+--- teckit-2.5.8/source/Public-headers/TECkit_Compiler.h	Tue Dec 05 07:20:20 2017
++++ teckit-src/source/Public-headers/TECkit_Compiler.h	Tue Jul 24 07:41:00 2018
 @@ -56,7 +59,7 @@
  #define kCompilerOpts_Compress	0x00000010	/* generate compressed mapping table */
  #define kCompilerOpts_XML		0x00000020	/* instead of a compiled binary table, generate an XML representation of the mapping */
@@ -87,9 +87,10 @@ diff -ur teckit-2.5.7.orig/source/Public-headers/TECkit_Compiler.h teckit-2.5.7/
  TECkit_GetUnicodeName(UInt32 usv);
  	/* returns the Unicode name of usv, if available, else NULL */
 
-diff -ur teckit-2.5.7.orig/source/Sample-tools/TECkit_Compile.cpp teckit-2.5.7/source/Sample-tools/TECkit_Compile.cpp
---- teckit-2.5.7.orig/source/Sample-tools/TECkit_Compile.cpp	Tue Jun 27 05:50:43 2017
-+++ teckit-2.5.7/source/Sample-tools/TECkit_Compile.cpp	Tue Jun 27 17:36:27 2017
+
+diff -ur teckit-2.5.8/source/Sample-tools/TECkit_Compile.cpp teckit-src/source/Sample-tools/TECkit_Compile.cpp
+--- teckit-2.5.8/source/Sample-tools/TECkit_Compile.cpp	Tue Dec 05 07:20:20 2017
++++ teckit-src/source/Sample-tools/TECkit_Compile.cpp	Tue Jul 24 07:34:18 2018
 @@ -24,13 +24,13 @@
  #endif
  

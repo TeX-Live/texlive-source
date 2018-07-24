@@ -1,8 +1,9 @@
 	For TeX Live we build a static library and not a Dll.
 
-diff -ur teckit-2.5.7.orig/source/Engine.cpp teckit-2.5.7/source/Engine.cpp
---- teckit-2.5.7.orig/source/Engine.cpp	Tue Jun 27 05:50:43 2017
-+++ teckit-2.5.7/source/Engine.cpp	Tue Jun 27 17:40:37 2017
+
+diff -ur teckit-2.5.8/source/Engine.cpp teckit-src/source/Engine.cpp
+--- teckit-2.5.8/source/Engine.cpp	Tue Dec 05 07:20:20 2017
++++ teckit-src/source/Engine.cpp	Tue Jul 24 07:39:17 2018
 @@ -51,12 +51,6 @@
  #	define NOSERVICE
  #	define NOMCX
@@ -17,9 +18,9 @@ diff -ur teckit-2.5.7.orig/source/Engine.cpp teckit-2.5.7/source/Engine.cpp
  
  #include "Engine.h"
 
-diff -ur teckit-2.5.7.orig/source/Public-headers/TECkit_Compiler.h teckit-2.5.7/source/Public-headers/TECkit_Compiler.h
---- teckit-2.5.7.orig/source/Public-headers/TECkit_Compiler.h	Tue Jun 27 05:50:43 2017
-+++ teckit-2.5.7/source/Public-headers/TECkit_Compiler.h	Tue Jun 27 17:42:50 2017
+diff -ur teckit-2.5.8/source/Public-headers/TECkit_Compiler.h teckit-src/source/Public-headers/TECkit_Compiler.h
+--- teckit-2.5.8/source/Public-headers/TECkit_Compiler.h	Tue Dec 05 07:20:20 2017
++++ teckit-src/source/Public-headers/TECkit_Compiler.h	Tue Jul 24 07:41:00 2018
 @@ -30,6 +30,9 @@
  #ifdef _WIN32
  /* MS compiler has predefined _WIN32, so assume Windows target  */
@@ -31,9 +32,9 @@ diff -ur teckit-2.5.7.orig/source/Public-headers/TECkit_Compiler.h teckit-2.5.7/
  /* not the MS compiler, so try Metrowerks' platform macros */
  #ifndef __APPLE__
 
-diff -ur teckit-2.5.7.orig/source/Public-headers/TECkit_Engine.h teckit-2.5.7/source/Public-headers/TECkit_Engine.h
---- teckit-2.5.7.orig/source/Public-headers/TECkit_Engine.h	Tue Jun 27 05:50:43 2017
-+++ teckit-2.5.7/source/Public-headers/TECkit_Engine.h	Tue Jun 27 17:44:21 2017
+diff -ur teckit-2.5.8/source/Public-headers/TECkit_Engine.h teckit-src/source/Public-headers/TECkit_Engine.h
+--- teckit-2.5.8/source/Public-headers/TECkit_Engine.h	Tue Dec 05 07:20:20 2017
++++ teckit-src/source/Public-headers/TECkit_Engine.h	Tue Jul 24 07:42:14 2018
 @@ -80,6 +80,9 @@
  #ifdef _WIN32
  /* MS compiler has predefined _WIN32, so assume Windows target  */
@@ -44,4 +45,3 @@ diff -ur teckit-2.5.7.orig/source/Public-headers/TECkit_Engine.h teckit-2.5.7/so
  #else
  /* not the MS compiler, so try Metrowerks' platform macros */
  #ifndef __APPLE__
-
