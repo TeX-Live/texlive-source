@@ -130,7 +130,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/lt~obsolete.m4 \
 	$(top_srcdir)/../../version.ac $(top_srcdir)/ac/web2c.ac \
 	$(top_srcdir)/synctexdir/ac/synctex.ac \
-	$(top_srcdir)/synctexdir/synctex_parser_version.txt \
+	$(top_srcdir)/synctexdir/synctex_parser_api_level.txt \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)

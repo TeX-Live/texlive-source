@@ -26124,10 +26124,10 @@ ac_config_files="$ac_config_files silent-sh"
 
 ## texk/web2c/synctexdir/ac/synctex.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 
-SYNCTEXVERSION=1.21.0
+SYNCTEXVERSION=2.0.0
 
 
-SYNCTEX_LT_VERSINFO=22:0:21
+SYNCTEX_LT_VERSINFO=2:0:0
 
 
  if test "x$enable_synctex" != xno; then

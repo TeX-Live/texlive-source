@@ -1,3 +1,11 @@
+2018-07-27  Karl Berry  <karl@freefriends.org>
+
+	* synctex_parser_api_level.txt: new file (contents "2.0.0").
+	* ac/synctex.ac: use it instead of synctex_parser_version.txt.
+	Per Debian.
+	https://github.com/jlaurens/synctex/issues/23
+	https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=895980
+
 2018-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex.c: Fix a bug that Magnification is not correctly

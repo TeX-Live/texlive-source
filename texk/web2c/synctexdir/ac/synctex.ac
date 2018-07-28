@@ -1,11 +1,12 @@
 ## texk/web2c/synctexdir/ac/synctex.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
-dnl
-dnl Copyright (C) 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright 2018 Karl Berry <tex-live@tug.org>
+dnl Copyright 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 dnl Additional code for synctex
 dnl
-m4_define([synctex_version], m4_chomp(m4_include([synctexdir/synctex_parser_version.txt]))[.0])
+m4_define([synctex_version],
+          m4_chomp(m4_include([synctexdir/synctex_parser_api_level.txt])))
 AC_SUBST([SYNCTEXVERSION], [synctex_version])
 KPSE_LT_VERSION([synctex])
 
