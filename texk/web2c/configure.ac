@@ -42,16 +42,17 @@ AC_PROG_OBJCXX
 KPSE_CXX_HACK
 KPSE_LT_HACK
 
-dnl Include additional code for web2c.
+# Include additional code for web2c.
 KPSE_WEB2C_PREPARE
 m4_include([ac/web2c.ac])
 
-dnl LuaTeX requires C++11 because poppler does :(.
+# LuaTeX and XeTeX now require C++11 because poppler does :(.
+# XeTeX also requires C+11 because of ICU.
 if test "x$enable_xetex" = xyes \
    || test "x$enable_luatex" = xyes \
    || test "x$enable_luajittex" = xyes \
    || test "x$enable_luatex53" = xyes; then
-  AC_MSG_NOTICE([LuaTeX enabled, requiring C++11 support])
+  AC_MSG_NOTICE([checking for C++11, since LuaTeX and/or XeTeX enabled])
   AX_CXX_COMPILE_STDCXX([11])
 fi
 

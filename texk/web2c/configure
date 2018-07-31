@@ -18592,6 +18592,7 @@ fi
 
 
 
+# Include additional code for web2c.
 
 ## texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options for TeX and MF
@@ -19003,12 +19004,14 @@ fi
 
 
 
+# LuaTeX and XeTeX now require C++11 because poppler does :(.
+# XeTeX also requires C+11 because of ICU.
 if test "x$enable_xetex" = xyes \
    || test "x$enable_luatex" = xyes \
    || test "x$enable_luajittex" = xyes \
    || test "x$enable_luatex53" = xyes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: LuaTeX enabled, requiring C++11 support" >&5
-$as_echo "$as_me: LuaTeX enabled, requiring C++11 support" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for C++11, since LuaTeX and/or XeTeX enabled" >&5
+$as_echo "$as_me: checking for C++11, since LuaTeX and/or XeTeX enabled" >&6;}
     ax_cxx_compile_alternatives="11 0x"    ax_cxx_compile_cxx11_required=true
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'

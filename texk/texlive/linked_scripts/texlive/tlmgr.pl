@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 48030 2018-06-16 13:43:22Z preining $
+# $Id: tlmgr.pl 48271 2018-07-25 01:51:31Z preining $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 48030 $';
-my $datrev = '$Date: 2018-06-16 15:43:22 +0200 (Sat, 16 Jun 2018) $';
+my $svnrev = '$Revision: 48271 $';
+my $datrev = '$Date: 2018-07-25 03:51:31 +0200 (Wed, 25 Jul 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -8178,7 +8178,7 @@ With the C<list> argument, C<key> lists all keys.
 
 The C<add> argument requires another argument, either a filename or
 C<-> for stdin, from which the key is added. The key is added to the
-local keyring C<GNUPGHOME/repository-keys.gpg>, which is normally)
+local keyring C<GNUPGHOME/repository-keys.gpg>, which is normally
 C<tlpkg/gpg/repository-keys.gpg>.
 
 The C<remove> argument requires a key id and removes the requested id
@@ -9729,7 +9729,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 48030 2018-06-16 13:43:22Z preining $
+$Id: tlmgr.pl 48271 2018-07-25 01:51:31Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
