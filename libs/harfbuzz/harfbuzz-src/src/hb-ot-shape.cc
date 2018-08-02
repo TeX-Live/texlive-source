@@ -41,7 +41,7 @@
 #include "hb-set-private.hh"
 
 #include "hb-ot-layout-gsubgpos-private.hh"
-//#include "hb-aat-layout-private.hh"
+#include "hb-aat-layout-private.hh"
 
 static hb_tag_t common_features[] = {
   HB_TAG('c','c','m','p'),
@@ -194,7 +194,10 @@ _hb_ot_shaper_shape_plan_data_create (hb_shape_plan_t    *shape_plan,
   if (plan->shaper->data_create) {
     plan->data = plan->shaper->data_create (plan);
     if (unlikely (!plan->data))
+    {
+      free (plan);
       return nullptr;
+    }
   }
 
   return plan;
@@ -623,8 +626,8 @@ hb_ot_substitute_complex (hb_ot_shape_context_t *c)
 
   c->plan->substitute (c->font, buffer);
 
-  /* XXX Call morx instead. */
-  //hb_aat_layout_substitute (c->font, c->buffer);
+  if (0) /* XXX Call morx instead. */
+    hb_aat_layout_substitute (c->font, c->buffer);
 }
 
 static inline void

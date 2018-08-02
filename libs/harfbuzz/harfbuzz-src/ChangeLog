@@ -1,3 +1,1253 @@
+commit 13f4c137c686aed5c2888b5c47d9f16892be0d5e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 14:13:59 2018 -0700
+
+    [atomic] Fix Solaris ones to add proper barriers
+
+ src/hb-atomic-private.hh | 52
+ +++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 36 insertions(+), 16 deletions(-)
+
+commit 19dfaa351568887a74cee2c46d6acfcc3fa718ff
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 14:02:39 2018 -0700
+
+    [atomic] Remove volatile from IBM impl signature
+
+ src/hb-atomic-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 2093a3e0cbb98c2daa39f308d50a12f0a719bc81
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 14:00:46 2018 -0700
+
+    [atomic] Oops
+
+ src/hb-atomic-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 19b98348ffc660501e518bf48cd63d232f7585e7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 13:59:59 2018 -0700
+
+    [atomic] Use read-barrier for get()
+
+ src/hb-atomic-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 006d4f031a30dd04f5bb9c3d1daca187ef6b7f1e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 13:59:31 2018 -0700
+
+    [atomic] Some more minor tweaks
+
+ src/hb-atomic-private.hh | 31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
+
+commit 28d03a8afcc1f0ba6d9d0d88f669cc53bb030dd8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Aug 2 00:11:43 2018 +0430
+
+    [ci] Fix Appveyor bot (#1123)
+
+ appveyor.yml | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 1a7fed631880fff8a947ebec9c7427efff581916
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 1 12:15:44 2018 +0430
+
+    Revert "Add a new API, hb_ot_layout_get_feature_name_ids (#976)"
+    (#1121)
+
+    This reverts commit 0c1b287b72e91e0898d75acb5d5acf1c6b9a7498.
+
+ docs/harfbuzz-sections.txt         |  1 -
+ src/hb-ot-layout-common-private.hh | 14 -------
+ src/hb-ot-layout.cc                | 86
+ --------------------------------------
+ src/hb-ot-layout.h                 |  8 ----
+ 4 files changed, 109 deletions(-)
+
+commit dfc86e4b35ffdeb8f73e83511712e75413bbb7d9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 00:22:18 2018 -0700
+
+    [atomic] Fix cast to fallback ptr_get()
+
+ src/hb-atomic-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7a4d576e81c4de68ea66b2d5fe7712e29d715272
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 00:19:25 2018 -0700
+
+    [gobject] Fix copy/paste error
+
+ src/hb-gobject-structs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ad275627425c9b3c4fb1e69aa408067bd0bb77da
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 23:01:05 2018 -0700
+
+    [atomic] On IBM, use light-weight sync for everything
+
+    lwsync() is a full read/write-barrier.  That's all we need, never
+    need sync().  I'm not sure why an isync() was used in fetch_and_add,
+    but since that's a read-modify-write, I just changed it to have
+    lwsync() on both sides.
+
+ src/hb-atomic-private.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit fd638d215feb058c2294e447cc68f6f50e2b481d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 23:00:15 2018 -0700
+
+    [atomic] Add XXX items around Solaris ops
+
+    Since add_int and cas are both read-modify-write, I wonder if we
+    also need a barrier after them.
+
+ src/hb-atomic-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 896ff15ae60a4a4b94c62946e69196b877839bb5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 22:51:38 2018 -0700
+
+    [atomic] Fix get() impl
+
+    Originally, glib's atomic_get was implemented as "memory_barrier;
+    load".
+    I copied this into cairo, fontconfig, and harfbuzz.  However, that's
+    wrong.  Correct way is "load; memory_barrier".  The details are long
+    and hard to fully grasp.  Best to read:
+
+      https://www.kernel.org/doc/Documentation/memory-barriers.txt
+
+    Also see my report against GNOME:
+
+      https://gitlab.gnome.org/GNOME/glib/issues/1449
+
+    Note that this is irrelevant if C++11-like atomic ops are available.
+
+ src/hb-atomic-private.hh | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
+
+commit d7a15799d40dac1f9521674a82c3293a7cb42ee4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 22:28:28 2018 -0700
+
+    [gobject] Hook up hb_map_t
+
+ docs/harfbuzz-sections.txt | 2 ++
+ src/hb-gobject-structs.cc  | 1 +
+ src/hb-gobject-structs.h   | 4 ++++
+ src/hb-map.cc              | 6 ++----
+ 4 files changed, 9 insertions(+), 4 deletions(-)
+
+commit 63c74e8d1d85067cbeffe635eb5ed4e8aa130776
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 22:21:21 2018 -0700
+
+    [atomic] Fix fallback impl
+
+ src/hb-atomic-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 4bc16aca4760ac9ffd8c63bbaea24fc7d234f715
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 21:05:51 2018 -0700
+
+    [atomic] Add get_relaxed / set_relaxed
+
+    To help TSan and be more "correct".
+
+ src/hb-atomic-private.hh         | 37 ++++++++++++++++++++++-------------
+ src/hb-common.cc                 |  4 ++--
+ src/hb-debug.hh                  | 42
+ ++++++++++++++++++++++++++++++++++++++++
+ src/hb-object-private.hh         | 12 ++++++------
+ src/hb-ot-shape-complex-indic.cc | 22 +++++++++++----------
+ src/hb-private.hh                | 28 ---------------------------
+ 6 files changed, 86 insertions(+), 59 deletions(-)
+
+commit 3dd1b88765f6ce91bd0558a16cdd8cf0c1e15d1b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 19:33:37 2018 -0700
+
+    [atomic] Use CONSUME, not ACQUIRE, memory-order for get()
+
+    Although, all implementations just elevate that to ACQUIRE.
+    But requirement for us is just CONSUME.
+
+ src/hb-atomic-private.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 06b91d935da1a40ef9de6697717eb0af1015989e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 19:29:49 2018 -0700
+
+    Revert "[atomic] Make pointer get op relaxed instead of acquire"
+
+    This reverts commit b1e5650c67266dc158f22355fed206cd1c413f70.
+
+    After lots of head-scratching and finally finding the only truly
+    readable source to be the good old:
+
+      https://www.kernel.org/doc/Documentation/memory-barriers.txt
+
+    I've convinced myself that we need consume memory-ordering on get().
+    The location of memory-barrier in a load should be after, not before
+    the load.  That needs fixing.  I'll do that separately.
+
+ src/hb-atomic-private.hh | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
+
+commit 2bdd903c69eb3a34f3d3bf5e4f4c94cd66337117
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Jul 31 17:44:02 2018 -0700
+
+    [subset] limit the max codepoint value to the unicode limit.
+    When collecting all codepoints in the cmap avoid using large amount
+    of memory for fonts that declare coverage over all 32 bit integers.
+
+ src/hb-ot-cmap-table.hh                                   |   9 +++++++--
+ ...mized-hb-subset-get-codepoints-fuzzer-5973295416475648 | Bin 0 ->
+ 109 bytes
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+commit 7278d9df3093a87f99cec9b4cea38bd688c5d020
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Jul 31 17:59:19 2018 -0700
+
+    [subset] Add hb_ot_layout_collect_features to harfbuzz-sections.txt.
+    Add the fuzzer test case for feature collection timeout.
+
+ docs/harfbuzz-sections.txt                             |   1 +
+ ...estcase-minimized-hb-subset-fuzzer-5542653037903872 | Bin 0 ->
+ 160249 bytes
+ 2 files changed, 1 insertion(+)
+
+commit 89733755a48feef0a663e1ea7b8294949581ce7e
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Jul 30 18:10:43 2018 -0700
+
+    [subset] use add_array to populate feature_indexes.
+    This is much faster then calling a bunch of individual add()'s.
+
+ src/hb-ot-layout-common-private.hh |  7 +++++++
+ src/hb-ot-layout.cc                | 40
+ +++++++++++++++++++-------------------
+ 2 files changed, 27 insertions(+), 20 deletions(-)
+
+commit 7d92bef9c5afb319d125f60b0fce4763afeaa686
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Jul 30 17:17:43 2018 -0700
+
+    [subset] collect features first, then use those to collect lookups.
+
+ src/hb-ot-layout.cc | 148
+ +++++++++++++++++++++++++---------------------------
+ src/hb-ot-layout.h  |   7 +++
+ 2 files changed, 78 insertions(+), 77 deletions(-)
+
+commit af876cce3066833c7c34d213a578eec6b09dd5c9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 15:27:29 2018 -0700
+
+    [indic] Flip default logic for double-halants in old-school
+
+    Oriya went down from 9 to 2.
+
+    BENGALI: 353725 out of 354188 tests passed. 463 failed (0.130722%)
+    DEVANAGARI: 707311 out of 707394 tests passed. 83 failed (0.0117332%)
+    GUJARATI: 366355 out of 366457 tests passed. 102 failed (0.0278341%)
+    GURMUKHI: 60729 out of 60747 tests passed. 18 failed (0.0296311%)
+    KANNADA: 951300 out of 951913 tests passed. 613 failed (0.0643966%)
+    MALAYALAM: 1048136 out of 1048334 tests passed. 198 failed
+    (0.0188871%)
+    MYANMAR: 1115830 out of 1123883 tests passed. 8053 failed (0.716534%)
+    ORIYA: 42327 out of 42329 tests passed. 2 failed (0.00472489%)
+    SINHALA: 271596 out of 271847 tests passed. 251 failed (0.0923313%)
+    TAMIL: 1091754 out of 1091754 tests passed. 0 failed (0%)
+    TELUGU: 970555 out of 970573 tests passed. 18 failed (0.00185457%)
+
+ src/hb-ot-shape-complex-indic.cc | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+commit 92ba9905caa060466230f63b428ccee767696464
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 15:19:32 2018 -0700
+
+    [indic] Allow double-halant in old-spec Devanagari
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1071
+
+ src/hb-ot-shape-complex-indic.cc                      |  18
+ ++++++++++++------
+ .../b722a7d09e60421f3efbc706ad348ab47b88567b.ttf      | Bin 0 ->
+ 4672 bytes
+ test/shaping/data/in-house/tests/indic-old-spec.tests |   2 ++
+ 3 files changed, 14 insertions(+), 6 deletions(-)
+
+commit fe099a844b9b8fe05dd4eb187b5ca3769441f012
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 14:20:31 2018 -0700
+
+    [test] Add Khmer tests, with NotoSansKhmer-Regular.ttf
+
+    Note that there's minor positioning differences, and ONE reordering
+    difference between what we get for these and what Uniscribe gets.
+    Probably same as what's described in commit message for
+    1a96cc825dc9c8e3b6eef1403fe0864a1cfc0245
+
+ .../3998336402905b8be8301ef7f47cf7e050cbb1bd.ttf   | Bin 0 -> 24392 bytes
+ test/shaping/data/in-house/tests/khmer-misc.tests  |  89
+ +++++++++++++++++++++
+ 2 files changed, 89 insertions(+)
+
+commit 5772edc0ea8f697c6123e439c5d0c3e813ebeb45
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 14:10:31 2018 -0700
+
+    [khmer] Typo
+
+ src/hb-ot-shape-complex-khmer.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2d6edc9008182c1446951f2c5c04df20094597f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 13:56:55 2018 -0700
+
+    [test] Add Khmer test texts from recent bugs
+
+ test/shaping/texts/in-house/shaper-khmer/misc.txt | 66
+ +++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+
+commit df26a32c8fd22cbd486e2a1014d30b9f38f51cd1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 13:55:53 2018 -0700
+
+    [test] Move things around for shaper updates
+
+ .../texts/in-house/shaper-indic/{indic => }/script-assamese/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-assamese/utrrs/README
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-assamese/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../script-assamese/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../script-assamese/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt
+ | 0
+ .../script-assamese/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt
+ | 0
+ .../{indic => }/script-assamese/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-bengali/misc/misc.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-bengali/misc/reph.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-bengali/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-bengali/utrrs/README
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-bengali/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../script-bengali/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../script-bengali/utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../script-bengali/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt
+ | 0
+ .../script-bengali/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt
+ | 0
+ .../{indic => }/script-bengali/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../shaper-indic/{indic => }/script-devanagari/misc/dottedcircle.txt
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-devanagari/misc/eyelash.txt
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-devanagari/misc/joiners.txt
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-devanagari/misc/misc.txt
+ | 0
+ .../shaper-indic/{indic => }/script-devanagari/misc/spec-deviations.txt
+ | 0
+ .../shaper-indic/{indic => }/script-devanagari/misc/tricky-reordering.txt
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-devanagari/utrrs/LICENSE
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-devanagari/utrrs/README
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-devanagari/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalConsonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../codepoint/IndicFontFeatureCodepoint-DevnagariSpecificAddition.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-GenericPunctuation.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../script-devanagari/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt
+ | 0
+ .../script-devanagari/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt
+ | 0
+ .../{indic => }/script-devanagari/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-gujarati/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-gujarati/utrrs/README
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-gujarati/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../script-gujarati/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../script-gujarati/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt
+ | 0
+ .../script-gujarati/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt
+ | 0
+ .../{indic => }/script-gujarati/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-gurmukhi/misc/misc.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-gurmukhi/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-gurmukhi/utrrs/README
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-gurmukhi/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../script-gurmukhi/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-GurmukhiSpecific.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../script-gurmukhi/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt
+ | 0
+ .../script-gurmukhi/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt
+ | 0
+ .../{indic => }/script-gurmukhi/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-kannada/misc/misc.txt
+ | 0
+ .../shaper-indic/{indic => }/script-kannada/misc/right-matras.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-kannada/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-kannada/utrrs/README
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-kannada/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalConsonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../script-kannada/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../script-kannada/utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../script-kannada/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt
+ | 0
+ .../{indic => }/script-kannada/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-malayalam/misc/cibu.txt
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-malayalam/misc/dot-reph.txt
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-malayalam/misc/misc.txt
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-malayalam/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-malayalam/utrrs/README
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-malayalam/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../script-malayalam/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../{indic => }/script-malayalam/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-oriya/misc/bindu.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-oriya/misc/misc.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-oriya/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-oriya/utrrs/README
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-oriya/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalConsonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt
+ | 0
+ .../script-oriya/utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../script-oriya/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-OriyaSpecific.txt
+ | 0
+ .../script-oriya/utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../{indic => }/script-oriya/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../in-house/shaper-indic/{indic => }/script-sinhala/misc/extensive.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-sinhala/misc/misc.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-sinhala/misc/reph.txt
+ | 0
+ .../shaper-indic/{indic => }/script-sinhala/misc/split-matras.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-sinhala/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-sinhala/utrrs/README
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-sinhala/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Punctuation.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../{indic => }/script-sinhala/utrrs/gpos/IndicFontFeatureGPOS.txt
+ | 0
+ .../script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Conjunct.txt
+ | 0
+ .../script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Rakaaraansaya.txt
+ | 0
+ .../{indic => }/script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Repaya.txt
+ | 0
+ .../script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Special-Cases.txt
+ | 0
+ .../script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-TouchingLetters.txt
+ | 0
+ .../script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Yansaya.txt
+ | 0
+ .../{indic => }/script-sinhala/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-tamil/misc/misc.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-tamil/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-tamil/utrrs/README
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-tamil/utrrs/SOURCES
+ | 0
+ .../script-tamil/utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-CurrencySymbols.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../script-tamil/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../script-tamil/utrrs/codepoint/IndicFontFeatureCodepoint-Numerics.txt
+ | 0
+ .../script-tamil/utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt
+ | 0
+ .../script-tamil/utrrs/codepoint/IndicFontFeatureCodepoint-Symbols.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-TamilSymbol.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../script-tamil/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt
+ | 0
+ .../script-tamil/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt
+ | 0
+ .../{indic => }/script-tamil/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-telugu/misc/misc.txt
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-telugu/utrrs/LICENSE
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-telugu/utrrs/README
+ | 0
+ .../texts/in-house/shaper-indic/{indic => }/script-telugu/utrrs/SOURCES
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../script-telugu/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../script-telugu/utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../script-telugu/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt
+ | 0
+ .../{indic => }/script-telugu/utrrs/gsub/IndicFontFeatureGSUB.txt
+ | 0
+ .../south-east-asian/script-khmer/misc => shaper-khmer}/misc.txt
+ | 0
+ .../script-khmer/misc => shaper-khmer}/other-marks-invalid.txt
+ | 0
+ .../south-east-asian/script-khmer/misc => shaper-khmer}/other-marks.txt
+ | 0
+ .../south-east-asian => shaper-use}/script-javanese/misc.txt
+ | 0
+ 174 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 6ddd669e205cf2c1c3b0a362330b686386f68519
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 13:38:07 2018 -0700
+
+    [khmer] Clear syllables before presentation features
+
+    Probably not what Uniscribe does, but good idea?
+
+ src/hb-ot-shape-complex-khmer.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 8eef1964a708c3db52e5e7312689c4664afa9839
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 13:35:10 2018 -0700
+
+    [khmer] Revert previous change, and remove pauses
+
+    This makes test suite happy again (at 44) while fixing the sequences
+    we were fixing, which were the following with KhmerUI.ttf:
+
+      U+1789,U+17BC
+      U+1789,U+17D2,U+1789
+      U+1789,U+17D2,U+1789,U+17BC
+
+    Fixes rest of https://github.com/harfbuzz/harfbuzz/issues/974
+
+ src/hb-ot-shape-complex-khmer.cc | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
+
+commit 7c658ea2f20a77cac35e8988e54316425396198a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 12:49:02 2018 -0700
+
+    [khmer] Apply ccmp after basic features
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/974
+
+ src/hb-ot-shape-complex-khmer.cc | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+commit 1a96cc825dc9c8e3b6eef1403fe0864a1cfc0245
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 11:45:32 2018 -0700
+
+    [khmer] Rewrite most of shaper to better follow spec
+
+    Khmer spec has only one reordering phase, and only simple prebase
+    matra and Coeng-Ro reordering.  Implement that.  Specifically,
+    this was done to address recognizing different orders of the matra
+    and Coeng-Ro sequence.  That said, some combinations are now
+    reordered differently from Uniscribe.  Not clear if that's intended
+    or a bug in Uniscribe.  The following two sequences render the same
+    in Uniscribe whereas we reorder them differently:
+
+      U+17A0,U+17D2,U+179A,U+17C2
+      U+17A0,U+17C2,U+17D2,U+179A
+
+    For that reason, our test suite numbers regressed slightly.  Used
+    to be at 34 for fails, now at:
+
+    KHMER: 299080 out of 299124 tests passed. 44 failed (0.0147096%)
+
+    But generally a good change, and removed lots of code.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1026
+
+ src/hb-ot-shape-complex-indic-private.hh |   4 +-
+ src/hb-ot-shape-complex-khmer.cc         | 460
+ ++++---------------------------
+ src/hb-ot-shape-complex-private.hh       |  13 -
+ 3 files changed, 64 insertions(+), 413 deletions(-)
+
+commit f5152cea423947cd8a85332566443b4e2e091672
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 01:27:04 2018 -0700
+
+    [shaper] Move code around
+
+ src/hb-shaper-private.hh | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+commit 36d0fbbc52bdf2c71da022fb1fdc31eca17078ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 01:15:04 2018 -0700
+
+    [shaper] Remove a macro
+
+ src/hb-shaper-private.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit b1e5650c67266dc158f22355fed206cd1c413f70
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 31 01:02:31 2018 -0700
+
+    [atomic] Make pointer get op relaxed instead of acquire
+
+    We only use it before cmpexch, so relaxed is fine and faster for
+    common case.
+
+ src/hb-atomic-private.hh | 34 +++++++++-------------------------
+ 1 file changed, 9 insertions(+), 25 deletions(-)
+
+commit 66ccd8ac405c9c25b37de9eb467a7382880dda35
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 30 17:03:06 2018 -0700
+
+    [serialize] Increase stage count from 8 to 32
+
+    Indic shaper uses many stages.  Now we are provably not limiting
+    functionality whereas the previous limit of 8 was assuming real-world
+    practices.
+
+ src/hb-ot-layout-common-private.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit ee8cf919654cb191e955fe1f89b1ebfb2b8b32ee
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 30 16:59:41 2018 -0700
+
+    [serialize] Remove unused truncate() method
+
+ src/hb-machinery-private.hh | 6 ------
+ 1 file changed, 6 deletions(-)
+
+commit 5edf454aa64aad461c90bd991e7eaf27668b7e6b
+Author: Garret Rieger <grieger@google.com>
+Date:   Thu Jul 26 17:42:02 2018 -0700
+
+    [subset] During lookup collection remember the features we've
+    already processed.
+
+ src/hb-ot-layout.cc                                |  26
+ +++++++++++++++++----
+ ...ase-minimized-hb-subset-fuzzer-5670861909524480 | Bin 0 -> 1298 bytes
+ ...b-subset-get-codepoints-fuzzer-6136125075750912 | Bin 0 -> 65816 bytes
+ 3 files changed, 21 insertions(+), 5 deletions(-)
+
+commit 42c183f80355fe7cadac2931a23d389285c8b98c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 27 14:55:29 2018 -0700
+
+    Minor
+
+ src/hb-ft.cc       | 5 +++--
+ src/hb-ot-shape.cc | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+commit ecab6604e57ea2bb4e78250a7a400e15b3e86f7a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 25 17:37:38 2018 -0700
+
+    [serialize] Allocate for markFilteringSet
+
+ src/hb-ot-layout-common-private.hh | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit 7f08818c441517f73c5bea0a2a88f494dfc8fa58
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 25 17:22:05 2018 -0700
+
+    Minor
+
+ src/hb-iter-private.hh      | 8 +++++---
+ src/hb-machinery-private.hh | 1 -
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+commit 2e25d8f49181ab1d7fda520ae6587d293a982acf
+Author: prrace <philip.race@oracle.com>
+Date:   Fri Jul 27 13:58:27 2018 -0700
+
+    Fix unlikely leaks
+
+ src/hb-ft.cc       | 4 +++-
+ src/hb-ot-shape.cc | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+commit 3c2842cbcf8cded73d1e310379e1a4ca124a6fc2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 25 17:07:17 2018 -0700
+
+    Add hb-iter-private.hh
+
+    Unused so far.
+
+ src/Makefile.sources        |   1 +
+ src/hb-iter-private.hh      | 147
+ ++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-machinery-private.hh |   1 +
+ 3 files changed, 149 insertions(+)
+
+commit 92b1e025c639d006f55400bf68fc23bdeaa1c716
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 25 16:58:47 2018 -0700
+
+    Move some code from hb-open-type-private.hh to hb-machinery-private.hh
+
+ src/Makefile.sources        |   1 +
+ src/hb-machinery-private.hh | 702
+ ++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-open-type-private.hh | 669
+ +----------------------------------------
+ 3 files changed, 706 insertions(+), 666 deletions(-)
+
+commit 6b11fea99716e22522b563d919ef7c72fe9a3c45
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 25 16:01:37 2018 -0700
+
+    [closure] Allocate out set on the stack
+
+ src/hb-ot-layout-gsubgpos-private.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 74467b790154838e86c3ca8df0eaafe82e87f976
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jul 25 14:30:07 2018 -0700
+
+    Fix compile
+
+ src/hb-shaper-private.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit bf90f35302c319ec4699ccbcd1e28b15ef2ec423
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 24 18:00:14 2018 -0700
+
+    [coretext] Add note
+
+ src/hb-shaper-private.hh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit fb58cb4b5ca7043fa746b1a01790abf53bedfa86
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Jul 25 13:39:17 2018 -0700
+
+    [subset] Only used reachable lookups for gsub closure.
+
+ src/hb-subset-plan.cc | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+commit c38bd4025f3f6ff4c1a39cc106b8618361a0c62b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 24 09:43:27 2018 -0700
+
+    [closure] Separate in and out glyphs
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1107
+
+ src/hb-ot-layout-gsub-table.hh       | 26 ++++++++++++++++++--------
+ src/hb-ot-layout-gsubgpos-private.hh | 16 +++++++++++++++-
+ 2 files changed, 33 insertions(+), 9 deletions(-)
+
+commit 85646fdadb2f102333485e07425361795b4e0412
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Jul 23 15:37:18 2018 -0700
+
+    [subset] Limit the iterations of the closure algorithm.
+    Prevents O(n^2) run times.
+
+ src/hb-ot-layout-common-private.hh | 7 +++++++
+ src/hb-ot-layout.cc                | 5 ++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+commit 94759d4cf8986388399026ef5204ac55ee187180
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 23 15:01:39 2018 -0700
+
+    Fix visibility on mingw32
+
+    Should fix bots again.
+
+ src/hb-private.hh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 61eddbd8ef64dc66e3c42723533d53967e61c9af
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 23 14:44:10 2018 -0700
+
+    Fix infinite loop in loading num_glyphs within sanitizer
+
+ src/hb-open-type-private.hh | 13 ++++++++++---
+ src/hb-static.cc            |  4 +++-
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
+commit e22a48ac95a60fac5e1bca26eed7f5623d73a7be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 23 13:24:26 2018 -0700
+
+    One more visibility trick
+
+    Should fix Windows build again.
+
+ src/hb-common.cc  |  9 +++++++++
+ src/hb-private.hh | 20 ++------------------
+ src/hb-static.cc  |  4 +++-
+ 3 files changed, 14 insertions(+), 19 deletions(-)
+
+commit e57a638bdec378eed8e83513818c8add3ffae896
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 23 12:00:02 2018 -0700
+
+    One more
+
+ src/hb-ot-cmap-table.hh | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
+
+commit 36ed163fdd50419e4619c665a4a9dbf97f66c349
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 23 11:57:45 2018 -0700
+
+    Remove unnecessary OT:: namespace specifiers
+
+ src/hb-ot-cmap-table.hh       | 30 +++++++++++++++---------------
+ src/hb-ot-color-sbix-table.hh |  4 ++--
+ src/hb-ot-color-svg-table.hh  |  4 ++--
+ src/hb-ot-glyf-table.hh       |  4 ++--
+ src/hb-ot-hmtx-table.hh       |  2 +-
+ src/hb-ot-maxp-table.hh       |  6 +++---
+ src/hb-ot-os2-table.hh        |  4 ++--
+ src/hb-ot-post-table.hh       |  2 +-
+ 8 files changed, 28 insertions(+), 28 deletions(-)
+
+commit c6bc7c38314ea831418fdd1434bbe5afc0875f33
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 23 11:46:46 2018 -0700
+
+    Set num glyphs on sanitizer reference_table()
+
+    Move out-of-class definitions of two methods to hb-static so they
+    are accessible in libharfbuzz-subset.
+
+ src/hb-face.cc              | 20 --------------------
+ src/hb-open-type-private.hh |  1 +
+ src/hb-static.cc            | 22 ++++++++++++++++++++++
+ 3 files changed, 23 insertions(+), 20 deletions(-)
+
+commit 9401829d4e93f6f433957fa2d053f3b9d42da557
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jul 22 22:50:58 2018 -0700
+
+    Remove Sanitizer<>
+
+ src/hb-open-type-private.hh | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
+
+commit 8e3e41272b3896274459c5961aac813ef2666321
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jul 22 22:49:26 2018 -0700
+
+    Port rest of code away from Sanitizer<>
+
+ src/hb-face.cc | 4 ++--
+ src/main.cc    | 3 +--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+commit d6a8f64045ca3bf4c7d01520909fa0c7dfca4d64
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jul 22 22:47:19 2018 -0700
+
+    Port dump-emoji away from Sanitizer<>
+
+ src/dump-emoji.cc | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+commit 14f78d2b3bb1e1292efbd6a3e3f0d618179c171a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jul 22 22:45:26 2018 -0700
+
+    .
+
+ src/hb-aat-layout.cc | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 4547051f48ca6aa53309b81a768b5b44c4ab6e3b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jul 22 22:44:22 2018 -0700
+
+    Minor
+
+ src/hb-open-file-private.hh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 740ae27d5c0f5ff87e2ff489fb49d5db1a0c95be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jul 22 22:40:56 2018 -0700
+
+    Port sbix off of Sanitizer<>
+
+ src/hb-ot-color-sbix-table.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 9583e0077d0a3a043f8b5bd23925014e04da8d32
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jul 22 22:40:32 2018 -0700
+
+    Port more off of Sanitizer<>
+
+ src/hb-face.cc                |  4 ++--
+ src/hb-open-type-private.hh   |  2 +-
+ src/hb-ot-cmap-table.hh       |  2 +-
+ src/hb-ot-color-cbdt-table.hh |  4 ++--
+ src/hb-ot-color-svg-table.hh  |  4 +---
+ src/hb-ot-glyf-table.hh       |  8 ++++----
+ src/hb-ot-hmtx-table.hh       | 10 +++++-----
+ src/hb-ot-kern-table.hh       |  2 +-
+ src/hb-ot-layout.cc           |  6 +++---
+ src/hb-ot-maxp-table.hh       |  2 +-
+ src/hb-ot-os2-table.hh        |  2 +-
+ src/hb-ot-post-table.hh       |  2 +-
+ src/hb-subset.cc              |  4 +---
+ 13 files changed, 24 insertions(+), 28 deletions(-)
+
+commit e7737b41d793bfce9455d1797eb5e0af60794f23
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jul 22 22:24:31 2018 -0700
+
+    Add sanitizer reference_table, also fix clang build
+
+    Clang is being really peculiar.  Fix with:
+
+    -  inline hb_blob_t *sanitize (hb_blob_t *blob) { return
+    c->sanitize<Type> (blob); }
+    +  inline hb_blob_t *sanitize (hb_blob_t *blob) { return
+    c[0].template/*clang idiosyncrasy*/sanitize_blob<Type> (blob); }
+
+ src/hb-open-type-private.hh | 10 ++++++++--
+ src/hb-ot-post-table.hh     |  2 +-
+ src/hb-subset-glyf.cc       |  2 +-
+ src/hb-uniscribe.cc         |  2 +-
+ 4 files changed, 11 insertions(+), 5 deletions(-)
+
+commit 62fa7cd1ccff4d4448ef84f9cc146464672636aa
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Fri Apr 13 18:45:37 2018 -0400
+
+    Order Chakma split vowels in accordance with NFC
+
+    Fixes #1105.
+
+ src/gen-use-table.py                               |  10 ++++++++++
+ src/hb-ot-shape-complex-use-table.cc               |   4 ++--
+ src/hb-ot-shape-complex-use.cc                     |  21
+ +--------------------
+ .../2a670df15b73a5dc75a5cc491bde5ac93c5077dc.ttf   | Bin 0 -> 1344 bytes
+ test/shaping/data/in-house/tests/use.tests         |   5 +++++
+ 5 files changed, 18 insertions(+), 22 deletions(-)
+
+commit 0c1b287b72e91e0898d75acb5d5acf1c6b9a7498
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Jul 21 21:14:48 2018 +0430
+
+    Add a new API, hb_ot_layout_get_feature_name_ids (#976)
+
+    This new API returns cvXX and ssXX related NameId, things like
+    featUiLabelNameId, featUiTooltipTextNameId, sampleTextNameId,
+    ... of cvXX
+    and UINameId of ssXX, in a unified way.
+
+    However HarfBuzz currently doesn't expose an API for retrieving
+    the actual
+    information associated with NameId from the `name` table and that
+    should be
+    done separately.
+
+ docs/harfbuzz-sections.txt         |  1 +
+ src/hb-ot-layout-common-private.hh | 14 +++++++
+ src/hb-ot-layout.cc                | 86
+ ++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-layout.h                 |  8 ++++
+ 4 files changed, 109 insertions(+)
+
+commit 93b65d9fe331a217640069fad4159cb7c3ec35e6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jul 17 23:29:16 2018 +0430
+
+    Remove dump-fon (#1100)
+
+    It had interesting stuffs like EXE parsing and
+    big-endian parsers but added in an attempt to find
+    a solution for #681 which later found not related.
+
+ src/Makefile.am |   4 -
+ src/dump-fon.cc | 555
+ --------------------------------------------------------
+ 2 files changed, 559 deletions(-)
+
+commit d5cd47a69c40966b4d5b5aed87dd7ac6f070c37a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jul 17 22:32:37 2018 +0430
+
+    Remove AAT's gcid/fmtx (#1099)
+
+    We are not going to use them, at least in the foreseeable future
+
+ src/Makefile.sources     |  2 --
+ src/hb-aat-fmtx-table.hh | 67
+ --------------------------------------------
+ src/hb-aat-gcid-table.hh | 73
+ ------------------------------------------------
+ src/hb-aat-layout.cc     |  2 --
+ 4 files changed, 144 deletions(-)
+
+commit 1e9e344b2ba076a5fd6d57d1705e17a59c3875ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 17 19:17:59 2018 +0200
+
+    Fix hb_face_count() sanitize referencing
+
+ src/hb-face.cc | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+commit a8cc0b5907e61199334a3a886fe22efe9cc17149
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 17 19:09:03 2018 +0200
+
+    Remove TODO that is not gonna be done
+
+    Previously the idea was to cache sanitize results externally (think,
+    in Fontconfig) and avoid resanitizing every time.  That's, not a good
+    idea.
+
+ src/hb-open-type-private.hh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit be7073840097c873ce4954c6cffadab175a007d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 17 18:45:25 2018 +0200
+
+    Move sanitizer code around a bit
+
+ src/hb-aat-layout-common-private.hh |  4 +-
+ src/hb-open-type-private.hh         | 95
+ ++++++++++++++++++++-----------------
+ src/hb-ot-color-sbix-table.hh       | 12 ++---
+ src/hb-ot-layout-common-private.hh  |  3 --
+ 4 files changed, 58 insertions(+), 56 deletions(-)
+
+commit db5d430effce67db57ddea2545694b7275ee8b35
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 17 18:14:45 2018 +0200
+
+    [aat] Update for blob changes
+
+    Also, uncomment code again, just "if (0)" it out, so it doesn't get
+    stale again.
+
+ src/hb-aat-layout.cc        | 58
+ ++-------------------------------------------
+ src/hb-open-type-private.hh | 27 +++++++++++++--------
+ src/hb-ot-layout-private.hh |  1 +
+ src/hb-ot-layout.cc         |  2 ++
+ src/hb-ot-shape.cc          |  6 ++---
+ 5 files changed, 25 insertions(+), 69 deletions(-)
+
+commit 68310a65cba7eed20f8696f4c670bb195677f467
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jul 17 13:20:40 2018 +0200
+
+    1.8.4
+
+ NEWS             | 7 +++++++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 3 files changed, 10 insertions(+), 3 deletions(-)
+
 commit 04b7b81bcbf19cb85d06d930192d6591ba45ef72
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Jul 17 10:57:01 2018 +0200

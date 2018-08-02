@@ -161,7 +161,11 @@ struct _hb_alignof
 #ifndef HB_INTERNAL
 # if !defined(HB_NO_VISIBILITY) && !defined(__MINGW32__) && !defined(__CYGWIN__) && !defined(_MSC_VER) && !defined(__SUNPRO_CC)
 #  define HB_INTERNAL __attribute__((__visibility__("hidden")))
-# else
+# elif defined(__MINGW32__)
+   /* We use -export-symbols on mingw32, since it does not support visibility
+    * attribute. */
+#  define HB_INTERNAL
+#else
 #  define HB_INTERNAL
 #  define HB_NO_VISIBILITY 1
 # endif
@@ -375,16 +379,8 @@ typedef uint64_t hb_vector_size_impl_t;
 
 #define HB_NULL_POOL_SIZE 264
 
-#ifdef HB_NO_VISIBILITY
-static
-#else
 extern HB_INTERNAL
-#endif
-hb_vector_size_impl_t const _hb_NullPool[(HB_NULL_POOL_SIZE + sizeof (hb_vector_size_impl_t) - 1) / sizeof (hb_vector_size_impl_t)]
-#ifdef HB_NO_VISIBILITY
-= {}
-#endif
-;
+hb_vector_size_impl_t const _hb_NullPool[(HB_NULL_POOL_SIZE + sizeof (hb_vector_size_impl_t) - 1) / sizeof (hb_vector_size_impl_t)];
 
 /* Generic nul-content Null objects. */
 template <typename Type>
@@ -413,16 +409,8 @@ static_assert (Namespace::Type::min_size + 1 <= sizeof (_Null##Type), "Null pool
  * for correct operation. It only exist to catch and divert program logic bugs instead of
  * causing bad memory access. So, races there are not actually introducing incorrectness
  * in the code. Has ~12kb binary size overhead to have it, also clang build fails with it. */
-#ifdef HB_NO_VISIBILITY
-static
-#else
 extern HB_INTERNAL
-#endif
-/*thread_local*/ hb_vector_size_impl_t _hb_CrapPool[(HB_NULL_POOL_SIZE + sizeof (hb_vector_size_impl_t) - 1) / sizeof (hb_vector_size_impl_t)]
-#ifdef HB_NO_VISIBILITY
-= {}
-#endif
-;
+/*thread_local*/ hb_vector_size_impl_t _hb_CrapPool[(HB_NULL_POOL_SIZE + sizeof (hb_vector_size_impl_t) - 1) / sizeof (hb_vector_size_impl_t)];
 
 /* CRAP pool: Common Region for Access Protection. */
 template <typename Type>
@@ -536,34 +524,6 @@ hb_in_ranges (T u, T lo1, T hi1, T lo2, T hi2, T lo3, T hi3)
 #define FLAG_UNSAFE(x) ((unsigned int)(x) < 32 ? (1U << (unsigned int)(x)) : 0)
 #define FLAG_RANGE(x,y) (ASSERT_STATIC_EXPR_ZERO ((x) < (y)) + FLAG(y+1) - FLAG(x))
 
-
-/* Global runtime options. */
-
-struct hb_options_t
-{
-  unsigned int initialized : 1;
-  unsigned int uniscribe_bug_compatible : 1;
-};
-
-union hb_options_union_t {
-  unsigned int i;
-  hb_options_t opts;
-};
-static_assert ((sizeof (int) == sizeof (hb_options_union_t)), "");
-
-HB_INTERNAL void
-_hb_options_init (void);
-
-extern HB_INTERNAL hb_options_union_t _hb_options;
-
-static inline hb_options_t
-hb_options (void)
-{
-  if (unlikely (!_hb_options.i))
-    _hb_options_init ();
-
-  return _hb_options.opts;
-}
 
 /* Size signifying variable-sized array */
 #define VAR 1
