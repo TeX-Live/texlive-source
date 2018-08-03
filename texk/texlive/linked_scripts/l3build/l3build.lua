@@ -2,7 +2,7 @@
 
 --[[
 
-File l3build.lua Copyright (C) 2014-2017 The LaTeX3 Project
+File l3build.lua Copyright (C) 2014-2018 The LaTeX3 Project
 
 It may be distributed and/or modified under the conditions of the
 LaTeX Project Public License (LPPL), either version 1.3c of this
@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2018-05-10"
+release_date = "2018-08-02"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -44,7 +44,7 @@ local exit             = os.exit
 
 -- l3build setup and functions
 kpse.set_program_name("kpsewhich")
-build_kpse_path = string.match(lookup("l3build.lua"),"(.*[/])")
+build_kpse_path = match(lookup("l3build.lua"),"(.*[/])")
 local function build_require(s)
   require(lookup("l3build-"..s..".lua", { path = build_kpse_path } ) )
 end
@@ -52,15 +52,6 @@ end
 -- Minimal code to do basic checks
 build_require("arguments")
 build_require("help")
-
--- Filter out special cases early
-if options["target"] == "help" then
-  help()
-  exit(0)
-elseif options["target"] == "version" then
-  version()
-  exit(0)
-end
 
 build_require("file-functions")
 build_require("typesetting")
@@ -74,6 +65,16 @@ build_require("manifest")
 build_require("manifest-setup")
 build_require("tagging")
 build_require("stdmain")
+
+-- This has to come after stdmain(),
+-- and that has to come after the functions are defined
+if options["target"] == "help" then
+  help()
+  exit(0)
+elseif options["target"] == "version" then
+  version()
+  exit(0)
+end
 
 -- Allow main function to be disabled 'higher up'
 main = main or stdmain
