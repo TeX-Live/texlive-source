@@ -91,6 +91,16 @@ libharfbuzz_a_SOURCES =  \
 
 ## native OpenType Layout backend
 libharfbuzz_a_SOURCES += \
+	@HARFBUZZ_TREE@/src/hb-aat-layout.cc \
+	@HARFBUZZ_TREE@/src/aat-layout-common-private.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-ankr-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-bsln-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-feat-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-kerx-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-morx-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-trak-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-private.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-ltag-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-font.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-base-table.hh \

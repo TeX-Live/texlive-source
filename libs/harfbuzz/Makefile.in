@@ -136,6 +136,7 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-warning.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-fallback-shape.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-aat-layout.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-font.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-layout.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-color.$(OBJEXT) \
@@ -184,6 +185,7 @@ depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	./$(DEPDIR)/hbtest-hbtest.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-aat-layout.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-blob.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer-serialize.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer.Po \
@@ -749,6 +751,16 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-json.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-text.hh \
 	@HARFBUZZ_TREE@/src/hb-fallback-shape.cc \
+	@HARFBUZZ_TREE@/src/hb-aat-layout.cc \
+	@HARFBUZZ_TREE@/src/aat-layout-common-private.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-ankr-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-bsln-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-feat-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-kerx-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-morx-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-trak-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-private.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-ltag-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-font.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-base-table.hh \
@@ -939,6 +951,9 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-fallback-shape.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-aat-layout.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-font.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1027,6 +1042,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hbtest-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hbtest-hbtest.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-aat-layout.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-blob.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer-serialize.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer.Po@am__quote@ # am--include-marker
@@ -1659,6 +1675,7 @@ distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f ./$(DEPDIR)/hbtest-dummy.Po
 	-rm -f ./$(DEPDIR)/hbtest-hbtest.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-aat-layout.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-blob.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer-serialize.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer.Po
@@ -1747,6 +1764,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f ./$(DEPDIR)/hbtest-dummy.Po
 	-rm -f ./$(DEPDIR)/hbtest-hbtest.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-aat-layout.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-blob.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer-serialize.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer.Po
