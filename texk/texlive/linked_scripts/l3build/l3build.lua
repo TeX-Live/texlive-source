@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2018-08-02"
+release_date = "2018-08-04"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -34,6 +34,7 @@ local lfs = require("lfs")
 
 local assert           = assert
 local ipairs           = ipairs
+local insert           = table.insert
 local lookup           = kpse.lookup
 local match            = string.match
 local next             = next
@@ -123,13 +124,28 @@ if options["target"] == "check" then
   if #checkconfigs > 1 then
     local errorlevel = 0
     local opts = options
+    local failed = { }
     for i = 1, #checkconfigs do
       opts["config"] = {checkconfigs[i]}
       errorlevel = call({"."}, "check", opts)
-      if errorlevel ~= 0 then exit(1) end
+      if errorlevel ~= 0 then
+        if options["halt-on-error"] then
+          exit(1)
+        else
+          insert(failed,checkconfigs[i])
+        end
+      end
     end
-    -- Avoid running the 'main' set of tests twice
-    exit(0)
+    if next(failed) then
+      print("  Failed tests for configs:")
+      for _,config in ipairs(failed) do
+        print("  - " .. config)
+      end
+      exit(1)
+    else
+      -- Avoid running the 'main' set of tests twice
+      exit(0)
+    end
   end
 end
 if #checkconfigs == 1 and
