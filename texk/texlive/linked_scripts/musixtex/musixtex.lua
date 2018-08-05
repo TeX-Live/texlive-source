@@ -1,12 +1,12 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.19"
+VERSION = "0.21"
 
 --[[
      musixtex.lua: processes MusiXTeX files using prepmx and/or pmxab and/or 
      autosp as pre-processors (and deletes intermediate files)
 
-     (c) Copyright 2011-2017 Bob Tennent rdt@cs.queensu.ca
+     (c) Copyright 2011-2018 Bob Tennent rdt@cs.queensu.ca
                              and Dirk Laurie dirk.laurie@gmail.com
 
      This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,12 @@ VERSION = "0.19"
 --[[
 
   ChangeLog:
+
+     version 0.21  2018-07-27  RDT
+       add -P option.
+
+     version 0.20  2018-06-11  RDT
+       remove .mx1 file before tex processing
 
      version 0.19   2017-12-10 RDT
        Allow non-standard extensions.
@@ -135,6 +141,7 @@ Options: -v  version
          -F fmt  use fmt as the TeX processor
          -d  tex-dvi-pdf (using dvipdfm if -D not used)
          -D dvixx  use dvixx as the dvi processor
+         -P ps2pdfxx  use ps2pdfxx as the Postscript processor
          -c  preprocess pmx file using pmxchords
          -m  stop at pmx
          -M prepmxx use prepmxx as the mtx preprocessor
@@ -335,6 +342,9 @@ function process_option(this_arg)
     end
     if dvi == dvips then dvi = dvi .. " -q" end
     quiet = " >> " .. tempname
+  elseif this_arg == "-P" then
+    narg = narg+1
+    ps2pdf = arg[narg]
   else
     print("! Unknown option "..this_arg.." ignored")
   end
@@ -417,6 +427,7 @@ end
 
 function tex_process(tex,basename,extension)
   if not (extension == "tex" or extension == "ltx") or not tex then return end
+  remove(basename .. ".mx1")
   remove(basename .. ".mx2")
   local filename = basename .. "." ..extension
 -- .ltx extension re-selects engine only for the current file, and only 
