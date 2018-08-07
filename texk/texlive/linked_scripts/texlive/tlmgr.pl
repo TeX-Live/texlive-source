@@ -1,15 +1,16 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 48271 2018-07-25 01:51:31Z preining $
+# $Id: tlmgr.pl 48361 2018-08-06 21:44:39Z karl $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 48271 $';
-my $datrev = '$Date: 2018-07-25 03:51:31 +0200 (Wed, 25 Jul 2018) $';
+my $svnrev = '$Revision: 48361 $';
+my $datrev = '$Date: 2018-08-06 23:44:39 +0200 (Mon, 06 Aug 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
+my $bindir;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
 } else {
@@ -46,7 +47,7 @@ BEGIN {
   # Unix-specific problems with use as library will probably go undetected.
 
   # make subprograms (including kpsewhich) have the right path:
-  my ($bindir, $kpsewhichname);
+  my $kpsewhichname;
   if ($^O =~ /^MSWin/i) {
     # on w32 $0 and __FILE__ point directly to tlmgr.pl; they can be relative
     $Master = __FILE__;
@@ -848,7 +849,8 @@ sub handle_execute_actions {
 
   if ($::files_changed) {
     $errors += do_cmd_and_check("mktexlsr");
-    if (defined($localtlpdb->get_package('context'))) {
+    if (defined($localtlpdb->get_package('context'))
+	    && (-x "$bindir/texlua" || -x "$bindir/texlua.exe")) {
       $errors += do_cmd_and_check("mtxrun --generate");
     }
     $::files_changed = 0;
@@ -9729,7 +9731,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 48271 2018-07-25 01:51:31Z preining $
+$Id: tlmgr.pl 48361 2018-08-06 21:44:39Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
