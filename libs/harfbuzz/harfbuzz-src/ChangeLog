@@ -1,3 +1,573 @@
+commit b0ff79acd804e47a2a3db73746cf9c6dc986950a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 7 09:52:06 2018 -0700
+
+    Add +hb_font_get_glyph_advances_for_direction
+
+    New API:
+    +hb_font_get_glyph_advances_for_direction
+
+ docs/harfbuzz-sections.txt |  1 +
+ src/hb-font-private.hh     | 12 ++++++++++++
+ src/hb-font.cc             | 20 ++++++++++++++++++++
+ src/hb-font.h              |  8 ++++++++
+ 4 files changed, 41 insertions(+)
+
+commit 28e2f467e1c7dd5e82d105efa8c4580dbfc93960
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 7 09:47:00 2018 -0700
+
+    Actually add hb_font_get_glyph_[hv]_advances
+
+    New API:
+    +hb_font_get_glyph_h_advances
+    +hb_font_get_glyph_v_advances
+
+ src/hb-font.cc | 37 +++++++++++++++++++++++++++++++++++++
+ src/hb-font.h  | 15 +++++++++++++++
+ 2 files changed, 52 insertions(+)
+
+commit 996775191a3fdeeeaee80e3123ef2240e6390b3d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 7 09:44:01 2018 -0700
+
+    Minor
+
+ src/hb-font-private.hh | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+commit 3d7c555a19ca0725c386aa6da648ecf2ae50fc19
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 7 09:37:52 2018 -0700
+
+    Remove get_advances_nil and alias it to get_advances_default
+
+ src/hb-font.cc | 36 ++----------------------------------
+ 1 file changed, 2 insertions(+), 34 deletions(-)
+
+commit 66920a6bace7c54c8166c4ed938b6ffc5fabcf2b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 15:32:13 2018 -0700
+
+    [iter] Make operator bool explicit
+
+    We would need to write:
+
+      for (Iter<T> it (...); bool (t); t++)
+
+    instead of:
+
+      for (Iter<T> it (...); t; t++)
+
+    But I think it's an improvement in code readability in the long term.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1127
+
+ src/hb-iter-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 79e21984b13bdb879f3007ba9a97fde47df340d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 09:45:17 2018 -0700
+
+    Add batch advance width callback function
+
+    New API:
+    +hb_font_funcs_set_glyph_h_advances_func
+    +hb_font_funcs_set_glyph_v_advances_func
+    +hb_font_get_glyph_h_advances
+    +hb_font_get_glyph_h_advances_func_t
+    +hb_font_get_glyph_v_advances
+    +hb_font_get_glyph_v_advances_func_t
+
+ docs/harfbuzz-sections.txt |   6 +
+ src/hb-font-private.hh     |  41 +++++--
+ src/hb-font.cc             | 299
+ +++++++++++++++++++++++++++------------------
+ src/hb-font.h              |  53 ++++++--
+ src/hb-ot-shape.cc         |   3 +-
+ 5 files changed, 255 insertions(+), 147 deletions(-)
+
+commit 9533364cc3a8cccbae793de1873a727de73f64d5
+Author: Koji Ishii <kojii@chromium.org>
+Date:   Wed Aug 1 13:01:08 2018 +0900
+
+    batchwidth
+
+ src/hb-font-private.hh | 13 +++++++++++++
+ src/hb-font.cc         | 37 +++++++++++++++++++++++++++++++++++++
+ src/hb-font.h          | 15 +++++++++++++++
+ src/hb-ot-shape.cc     |  4 ++--
+ 4 files changed, 67 insertions(+), 2 deletions(-)
+
+commit b912fbea17c50e229977345012227810ed7641e9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 06:30:12 2018 -0700
+
+    Remove most uses of direct comparison to Null objects
+
+ src/hb-ot-glyf-table.hh                    | 6 +++---
+ src/hb-ot-head-table.hh                    | 4 ++--
+ src/hb-ot-layout-gdef-table.hh             | 1 +
+ src/hb-ot-layout-gsubgpos-private.hh       | 1 +
+ src/hb-ot-layout.cc                        | 6 +++---
+ src/hb-ot-math-table.hh                    | 2 ++
+ src/hb-ot-math.cc                          | 2 +-
+ src/hb-ot-shape-complex-arabic-fallback.hh | 3 ++-
+ src/hb-ot-var-fvar-table.hh                | 2 ++
+ src/hb-ot-var.cc                           | 2 +-
+ src/hb-subset.cc                           | 2 +-
+ src/main.cc                                | 2 +-
+ 12 files changed, 20 insertions(+), 13 deletions(-)
+
+commit 3506672ce9d8685ce4e113716b0d06adbc7981b7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 06:17:48 2018 -0700
+
+    Port _nil objects to Null() machinery
+
+    Finally, unified!
+
+ src/hb-blob-private.hh                     |  1 +
+ src/hb-blob.cc                             | 29 ++++++-------
+ src/hb-buffer-private.hh                   |  4 +-
+ src/hb-buffer.cc                           | 44 ++++++++++----------
+ src/hb-face-private.hh                     |  6 +--
+ src/hb-face.cc                             |  5 ++-
+ src/hb-font-private.hh                     | 10 +++--
+ src/hb-font.cc                             | 66
+ ++++++++++++++++--------------
+ src/hb-null.hh                             | 11 ++++-
+ src/hb-ot-shape-complex-arabic-fallback.hh | 11 +++--
+ src/hb-shape-plan-private.hh               |  1 +
+ src/hb-shape-plan.cc                       | 50 +++++++++++-----------
+ src/hb-unicode-private.hh                  |  7 ++--
+ src/hb-unicode.cc                          |  5 ++-
+ 14 files changed, 137 insertions(+), 113 deletions(-)
+
+commit 1abd427acfb7229b8607646bdde59f29306b86e1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 05:53:35 2018 -0700
+
+    [BASE] Rename horzi/vert to h/v
+
+ src/hb-ot-layout-base-table.hh | 68
+ +++++++++++++++++++++---------------------
+ 1 file changed, 34 insertions(+), 34 deletions(-)
+
+commit da48aca1be89efbb8b3ca4471f542aa54aff17c4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 05:52:12 2018 -0700
+
+    [BASE] Misc fixes
+
+    The code was badly broken.  In better shape now, but still, needs
+    a full review before ever working.
+
+ src/hb-ot-layout-base-table.hh | 163
+ +++++++++++++++++------------------------
+ 1 file changed, 68 insertions(+), 95 deletions(-)
+
+commit f9cfa5cb0e70203279e74fb6adb0cd4570238ff8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 05:29:15 2018 -0700
+
+    Change null-pool specialization to min_size again
+
+ src/hb-null.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 25147ff8086ab65995fe046cfdf8007604de6962
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 05:01:52 2018 -0700
+
+    Move Null system to hb-null.hh
+
+ src/Makefile.sources |  1 +
+ src/hb-null.hh       | 97
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-private.hh    | 65 +----------------------------------
+ 3 files changed, 99 insertions(+), 64 deletions(-)
+
+commit f800368df33e7ec15c3e77bdb9f4b464899322d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 04:58:34 2018 -0700
+
+    Remove unused macros
+
+ src/hb-object-private.hh | 1 -
+ src/hb-vector-private.hh | 1 -
+ 2 files changed, 2 deletions(-)
+
+commit 19e0091299f06856002c702792b448b06da637a8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 04:54:31 2018 -0700
+
+    Minor
+
+ src/hb-private.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 37be774af921812018f723521b90f2ab54f661c5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 04:51:38 2018 -0700
+
+    Minor
+
+ src/hb-private.hh | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit e1acff806b469e58f568bf5ad6ba578207821e87
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 04:42:46 2018 -0700
+
+    Move hb_vector_t to hb-vector-private.hh
+
+ src/Makefile.sources     |   1 +
+ src/hb-dsalgs.hh         | 297
+ -----------------------------------------------
+ src/hb-object-private.hh | 109 ++++++++++++++++-
+ src/hb-vector-private.hh | 239 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 346 insertions(+), 300 deletions(-)
+
+commit be336dadc07460a53de51be32dd5d1f218b398b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 6 04:32:51 2018 -0700
+
+    Move some more code around
+
+ src/hb-dsalgs.hh  | 43 +++++++++++++++++++++++++++++++++++++++++++
+ src/hb-private.hh | 51
+ +--------------------------------------------------
+ 2 files changed, 44 insertions(+), 50 deletions(-)
+
+commit 92806ee055c8efb68fcbe9e1750ce2532a1f8ab3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 5 21:41:52 2018 -0700
+
+    Move null data definitions to hb-static.cc
+
+    Also remove "    " null data for Tag.  Just use zeroes.
+
+ src/hb-open-type-private.hh        |  3 +--
+ src/hb-ot-layout-common-private.hh |  5 ++---
+ src/hb-private.hh                  | 12 +++++++-----
+ src/hb-static.cc                   | 10 +++++++++-
+ 4 files changed, 19 insertions(+), 11 deletions(-)
+
+commit 1b4d5a2402302e90867c178b6b2ad07541091a74
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 3 19:55:09 2018 -0700
+
+    Minor
+
+ src/hb-ot-layout-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 7df7963b46223f47e89a5a38c597c874aaa93141
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 3 19:54:33 2018 -0700
+
+    Make lazy loader deal with OOM
+
+ src/hb-machinery-private.hh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 30ff8ac865a266c8dca11eeac155c2cd3d1aa159
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 3 17:32:00 2018 -0700
+
+    Rename
+
+ src/hb-machinery-private.hh | 6 +++---
+ src/hb-ot-font.cc           | 8 ++++----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 85ba4a190f30da5147d3b2ddac4d58dda31181f1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 3 17:06:42 2018 -0700
+
+    [ot] Comment
+
+ src/hb-ot-layout-private.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 07afc1a213bde91fdfc44dd613f2e82ac1617c9f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 3 17:03:32 2018 -0700
+
+    [ot] Add misc tables to tables_t
+
+    Most unused.
+
+ src/hb-ot-layout-private.hh | 36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
+
+commit 74b4df2cdef68b74536d9c29426b242199a63a6f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 3 16:57:40 2018 -0700
+
+    [ot] Move GDEF into tables_t
+
+ src/hb-machinery-private.hh          |  6 ++++++
+ src/hb-ot-layout-gsub-table.hh       |  2 +-
+ src/hb-ot-layout-gsubgpos-private.hh |  2 +-
+ src/hb-ot-layout-private.hh          |  7 +------
+ src/hb-ot-layout.cc                  | 15 +++++----------
+ 5 files changed, 14 insertions(+), 18 deletions(-)
+
+commit 0271c7ab3b76dbf8a4e3e92eaf67d9d61b7a63dc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 3 16:45:57 2018 -0700
+
+    [ot] Move GSUB/GPOS into tables_t
+
+ src/hb-machinery-private.hh    |  6 ++----
+ src/hb-ot-layout-gpos-table.hh |  4 ++--
+ src/hb-ot-layout-gsub-table.hh |  4 ++--
+ src/hb-ot-layout-private.hh    |  7 ++----
+ src/hb-ot-layout.cc            | 49
+ +++++++++++++++++++-----------------------
+ 5 files changed, 30 insertions(+), 40 deletions(-)
+
+commit f73d2775cf649d148ace7c2593da9666d60fc1be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 3 16:34:25 2018 -0700
+
+    [ot] More shuffling
+
+    Misc. table loading now properly automated.
+
+ src/hb-ot-layout-private.hh | 67
+ +++++++++++++++++++++++++++++----------------
+ src/hb-ot-layout.cc         | 25 +++++++++++------
+ src/hb-ot-math.cc           |  2 +-
+ 3 files changed, 61 insertions(+), 33 deletions(-)
+
+commit 52fbd23d868a989d51b7df5be40be582890d13e5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 3 16:22:16 2018 -0700
+
+    [ot] Minor
+
+ src/hb-aat-layout.cc        |  4 ++--
+ src/hb-face-private.hh      |  7 ++-----
+ src/hb-machinery-private.hh |  1 +
+ src/hb-ot-layout-private.hh | 15 +++++++++------
+ src/hb-ot-layout.cc         | 20 ++++++++++----------
+ src/hb-ot-math.cc           |  2 +-
+ src/hb-ot-var.cc            |  4 ++--
+ 7 files changed, 27 insertions(+), 26 deletions(-)
+
+commit 6a0a298aabe777e2c1ed443f100fe6142c83e3b3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 23:13:19 2018 -0700
+
+    [ot] Move code around
+
+ src/hb-ot-layout.cc | 211
+ ++++++++++++++++++++++++++--------------------------
+ 1 file changed, 106 insertions(+), 105 deletions(-)
+
+commit 5e718a751efdda89511c9f30238b500125193499
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 23:04:42 2018 -0700
+
+    [ot] Use switch for checking for blacklisted GDEF tables
+
+    Faster / more compact code.
+
+ src/hb-ot-layout.cc | 107
+ +++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 59 insertions(+), 48 deletions(-)
+
+commit b5cdf5280d5b00df5356cc5c3236844ca0576bd0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 22:56:42 2018 -0700
+
+    [ot] In GDEF blacklisting logic, remove the glyph index check
+    for Times
+
+    Just blacklist based on table sizes like we do for other fonts.
+
+ src/hb-ot-layout.cc | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+commit c988b119994ef78d400bc7d3139785312da0be75
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 20:04:37 2018 -0700
+
+    Move code around
+
+ src/hb-ot-font.cc | 41 ++++++++++++++++++++++++++---------------
+ 1 file changed, 26 insertions(+), 15 deletions(-)
+
+commit 574b37e933f98e35c2bdae04458a95522bbfbb82
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 02:22:38 2018 -0700
+
+    Minor
+
+ src/hb-ot-font.cc           | 2 +-
+ src/hb-ot-layout-private.hh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit d4d1bf8177b127caa57b146c932f553dca1ad933
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 02:04:02 2018 -0700
+
+    Fix for recent rename
+
+ src/hb-graphite2.cc | 2 +-
+ src/hb-uniscribe.cc | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 91126aa11a5fa2bff72137df4768ad13fc9b7803
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 02:03:13 2018 -0700
+
+    [uniscribe] Update for recent changes
+
+ src/hb-uniscribe.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 66952ec47b5f09d88b83fb6a71b1cdb26c53668d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 01:44:20 2018 -0700
+
+    Remove unused table reference
+
+ src/hb-ot-layout-private.hh | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+commit 443de26fa56dd1ef149d3ce4206f4495eceec2eb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 01:41:19 2018 -0700
+
+    Minor
+
+ src/hb-face.cc              |  1 -
+ src/hb-ot-layout-private.hh | 12 ++++++------
+ 2 files changed, 6 insertions(+), 7 deletions(-)
+
+commit ee35af738b5c802ca62eb1c39b77f0bd992329df
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 01:37:57 2018 -0700
+
+    Make lazy-loader safe for nil objectification
+
+ src/hb-machinery-private.hh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 6404c49d0735d92779089ddef5c1d34aad1542d7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 01:36:08 2018 -0700
+
+    Minor
+
+ src/hb-machinery-private.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit ff7826e90bce46985651015059872d1d8559b6ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 01:27:40 2018 -0700
+
+    Reduce storage by sharing face amongst lazy_loaders
+
+ src/hb-machinery-private.hh | 113
+ ++++++++++++++++++++++++--------------------
+ src/hb-ot-font.cc           |  19 ++++----
+ src/hb-ot-layout-private.hh |  11 +++--
+ src/hb-ot-layout.cc         |   9 ++--
+ 4 files changed, 85 insertions(+), 67 deletions(-)
+
+commit bdd3c11a19d87999eeaff2c82f21c6938d1d9342
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 2 00:38:46 2018 -0700
+
+    Internal templatization of lazy-loaders
+
+ src/hb-machinery-private.hh | 74
+ ++++++++++++++++++++-------------------------
+ 1 file changed, 32 insertions(+), 42 deletions(-)
+
+commit ed7b2e58fc9afb547656cf28eb4a253d989de43c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 23:59:09 2018 -0700
+
+    Remove OT namespace from hb-machinery-private.hh
+
+ src/dump-emoji.cc                          |  4 ++--
+ src/hb-aat-layout.cc                       |  2 +-
+ src/hb-face.cc                             |  4 ++--
+ src/hb-machinery-private.hh                | 14 +++++---------
+ src/hb-ot-font.cc                          |  8 ++++----
+ src/hb-ot-layout-private.hh                | 10 +++++-----
+ src/hb-ot-layout.cc                        |  8 ++++----
+ src/hb-ot-shape-complex-arabic-fallback.hh | 18 +++++++++---------
+ src/hb-static.cc                           |  4 ++--
+ src/hb-subset-glyf.cc                      |  2 +-
+ src/hb-subset.cc                           |  8 ++++----
+ src/hb-uniscribe.cc                        |  2 +-
+ 12 files changed, 40 insertions(+), 44 deletions(-)
+
+commit cb1491f92e24649433988ff81a89347dccf07c8b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 22:50:45 2018 -0700
+
+    Minor
+
+ src/hb-blob-private.hh      |  5 -----
+ src/hb-machinery-private.hh | 10 ++++++----
+ 2 files changed, 6 insertions(+), 9 deletions(-)
+
+commit 16ccfafbbd48c7a9737ce1d12e75406a050b71a9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 22:50:06 2018 -0700
+
+    [face] Sprinkle const in the API
+
+ src/hb-face.cc | 17 +++++++++--------
+ src/hb-face.h  | 16 ++++++++--------
+ 2 files changed, 17 insertions(+), 16 deletions(-)
+
+commit 3d22aefedebb5277c5d79011e48e7be1a26a53c1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 18:03:32 2018 -0700
+
+    Rename
+
+ src/hb-coretext.cc       | 46
+ +++++++++++++++++++++++-----------------------
+ src/hb-directwrite.cc    | 28 ++++++++++++++--------------
+ src/hb-fallback-shape.cc | 24 ++++++++++++------------
+ src/hb-graphite2.cc      | 26 +++++++++++++-------------
+ src/hb-ot-shape.cc       | 20 ++++++++++----------
+ src/hb-shaper-private.hh |  2 +-
+ src/hb-uniscribe.cc      | 34 +++++++++++++++++-----------------
+ 7 files changed, 90 insertions(+), 90 deletions(-)
+
+commit 1a624c6e06763a8a61bc686d2d44272d4ef50d4a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 17:53:30 2018 -0700
+
+    Add comment re (our only) race condition
+
+ src/hb-shaper-private.hh | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit 44d1fb37efa20852cc466c0f0bba95dbd24ce288
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 1 14:51:51 2018 -0700
+
+    1.8.5
+
+ NEWS                | 8 ++++++++
+ configure.ac        | 2 +-
+ src/hb-ot-layout.cc | 2 +-
+ src/hb-version.h    | 4 ++--
+ 4 files changed, 12 insertions(+), 4 deletions(-)
+
 commit 13f4c137c686aed5c2888b5c47d9f16892be0d5e
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Aug 1 14:13:59 2018 -0700

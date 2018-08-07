@@ -49,6 +49,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-map.cc \
 	@HARFBUZZ_TREE@/src/hb-machinery-private.hh \
 	@HARFBUZZ_TREE@/src/hb-mutex-private.hh \
+	@HARFBUZZ_TREE@/src/hb-null.hh \
 	@HARFBUZZ_TREE@/src/hb-object-private.hh \
 	@HARFBUZZ_TREE@/src/hb-open-file-private.hh \
 	@HARFBUZZ_TREE@/src/hb-open-type-private.hh \
@@ -82,6 +83,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-string-array.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode-private.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode.cc \
+	@HARFBUZZ_TREE@/src/hb-vector-private.hh \
 	@HARFBUZZ_TREE@/src/hb-utf-private.hh \
 	@HARFBUZZ_TREE@/src/hb-warning.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-json.hh \
