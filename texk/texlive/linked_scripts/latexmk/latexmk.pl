@@ -121,12 +121,13 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.56';
-$version_details = "$My_name, John Collins, 25 May 2018";
+$version_num = '4.59';
+$version_details = "$My_name, John Collins, 7 August 2018";
 
 use Config;
 use File::Basename;
 use File::Copy;
+use File::Spec;
 
 # If possible, use better glob, which does not use space as item separator.
 # It's either File::Glob::bsd_glob or File::Glob::glob
@@ -219,58 +220,52 @@ else {
 ##
 ##   Modification log from 9 Dec 2011 onwards in detail
 ##
-##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
+## 12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
-##    24,25 May 2018   John Collins  Fix problem of .bib files not found with msys.
-##                                Add use of environment variable LATEXMKRCSYS
-##    12 May 2018   John Collins  Simplify code in run_bibtex.
-##     3,9 May 2018   John Collins  Improved diagnostics on mismatch of output filenames
-##    28,30 Apr 2018   John Collins  Improve error messages for bib files not found
-##    26 Apr 2018   John Collins  In testing for different expected and actual
-##                                output of primary run, normalize $$Pdest, to
-##                                avoid spurious warnings.
-##     4 Apr 2018   John Collins  Version 4.56.
-##                                  Get TeX disribution in .log file
-##                                  Start on dealing with aux_dir and out_dir
-##                                    that didn't get used as intended.
-##                                  And on fls_file that didn't get made when expected.
-##                                  Need to finish: 
-##    15 Mar 2018   John Collins  Version 4.55d.
-##                                In test for non-existent file in fls, don't give
-##                                  warning.
-##                                Add corresponding test for files reported as
-##                                  output that no longer exist.
-##                                (See minted package for cases where reported
-##                                  input and output files don't exist at end of run.)
-##    15 Mar 2018   John Collins  Version 4.55c.
-##                                Move test for non-existent file in fls to calling routine.
-##    15 Mar 2018   John Collins  Deal with non-existent input files reported in
-##                                fls file.  (Needed to work around bug in lualatex
-##                                in TeXLive 2016, 2017 and pretest 2018 (as of the
-##                                version of 2018 Mar 4).
-##     2 Feb 2018   John Collins  Version 4.55b.  Correct parsing of biber's log file.
-##    25 Jan 2018   John Collins  Implement $warning_cmd
-##    24 Jan 2018   John Collins  Version number to 4.55a.  Implement warnings_as_errors option
-##    17 Jan 2018   John Collins  Version number to 4.55.  Ready for release.
-##                                Release v. 4.55 on CTAN.
-##    15, 16 Jan 2018   John Collins  Correct bug in measuring filetime offset.
-##    14 Jan 2018   John Collins  Correct issue with possible filetime offset
-##                                  on remote file system.
-##                                Define defaults for configuration variables
-##                                  that didn't have defaults.
-##    12 Jan 2018   John Collins  Implement pvc timeout
-##    10 Jan 2018   John Collins  Ensure $search_path_separator is defined.
-##                                Set it to MS-Win value for msys.
-##    12 Dec 2017   John Collins  Further correct bsd_glob fudge (to be in subroutine my_glob)
-##     8 Dec 2017   John Collins  Correct bsd_glob fudge
-##     2 Dec 2017   John Collins  Fudge on bsd_glob if it doesn't exist
-##    20 Nov 2017   John Collins  Ver. 4.54
+##  7 Aug 2018 John Collins  V. 4.59
+##  1 Aug 2018 John Collins  Correct sub rdb_find_source_file.
+## 30 Jul 2018 John Collins  Change handling of warnings for a difference 
+##                             between actual and expected output filenames
+##                             for a run of a primary rule.  Only give a
+##                             warning if the extensions differ.
+##                           In all other cases, there were significant
+##                             numbers of false positives and no true positives.
+##                           Improve providing of -no-pdf option to xelatex, to
+##                             ensure it's used even after a user redefinition
+##                             of $xelatex.  Works if %O is in definition.
+## 25 Jul 2018 John Collins  Clean up of code.
+## 24 Jul 2018 John Collins  Fatal error when filename has initial '&'.  This
+##                             is not allowed for TeX file, since TeX et al
+##                             treat the initial '&' as specifying the format.
+## 20,21,23 Jul 2018 John Collins  Improve quoting in file-not-found messages
+##                                 On MS-Win change \ to / on files on command line
+## 18,19 Jul 2018 John Collins Complete TEXINPUTS stuff
+##                             Fix reading of file database file when
+##                               custom dependency no longer exists.
+## 13,17 Jul 2018 John Collins Deal with double quotes in specified filename,
+##                               and filenames not allowed by TeX.
+##                             Illegal characters and unbalanced quotes give fatal error.
+## 10 Jul 2018 John Collins  Use TEXINPUTS for finding source file for cus dep.
+##                              Version 4.58.
+## 21 Jun 2018 John Collins  Version 4.57.
+##                           In get_checksum_md5, open file with mode :bytes,
+##                             to avoid error about malformed utf8 characters
+##                             that can happen if PERL_UNICODE is set.
+## 15 Jun 2018 John Collins  Configuration to be able to turn off bibtex fudge.
+## 24,25 May 2018 John Collins  Fix problem of .bib files not found with msys.
+##                             Add use of environment variable LATEXMKRCSYS
+## 12 May 2018 John Collins  Simplify code in run_bibtex.
+##  3,9 May 2018 John Collins  Improved diagnostics on mismatch of output filenames
+## 28,30 Apr 2018 John Collins  Improve error messages for bib files not found
+## 26 Apr 2018 John Collins  In testing for different expected and actual
+##                             output of primary run, normalize $$Pdest, to
+##                             avoid spurious warnings.
 ##
-##   1998-2017, John Collins.  Many improvements and fixes.
-##       See CHANGE-log.txt for full list, and CHANGES for summary
+## 1998-2018, John Collins.  Many improvements and fixes.
+##   See CHANGE-log.txt for full list, and CHANGES for summary
 ##
-##   Modified by Evan McLean (no longer available for support)
-##   Original script (RCS version 2.3) called "go" written by David J. Musliner
+## Modified by Evan McLean (no longer available for support)
+## Original script (RCS version 2.3) called "go" written by David J. Musliner
 ##
 ##-----------------------------------------------------------------------
 
@@ -312,6 +307,15 @@ $log_wrap = 79;
     ': File (.*) not found:\s*$',
     '! Unable to load picture or PDF file \\\'([^\\\']+)\\\'.',
 );
+
+# Characters that we won't allow in the name of a TeX file.
+# Notes: Some are disallowed by TeX itself.
+#        '\' results in TeX macro expansion
+#        '$' results in possible variable substitution by kpsewhich called from tex.
+#        '"' gets special treatment.
+#        See subroutine test_fix_texnames and its call for their use.
+$illegal_in_texname = "\x00\t\f\n\r\$%\\~\x7F";
+
 
 ## Hash mapping file extension (w/o period, e.g., 'eps') to a single regexp,
 #  whose matching by a line in a file with that extension indicates that the 
@@ -363,14 +367,15 @@ $tex_distribution = '';
 $latex  = 'latex %O %S';
 $pdflatex = 'pdflatex %O %S';
 $lualatex = 'lualatex %O %S';
-# xelatex is used to give xdv file, not pdf file
+# Note that xelatex is used to give xdv file, not pdf file, hence the -no-pdf option.
+# See also setting of $xelatex_default_switches, which overcomes user mal-configuration
 $xelatex = 'xelatex -no-pdf %O %S';
 
 ## Default switches:
 $latex_default_switches = '';
 $pdflatex_default_switches = '';
 $lualatex_default_switches = '';
-$xelatex_default_switches = '';
+$xelatex_default_switches = '-no-pdf';
 
 ## Switch(es) to make them silent:
 $latex_silent_switch  = '-interaction=batchmode';
@@ -542,6 +547,8 @@ foreach (
 $biber  = 'biber %O %B';
 $bibtex  = 'bibtex %O %B';
 # Switch(es) to make biber & bibtex silent:
+$bibtex_fudge = 1; # Use hack to get bibtex working in old versions that
+                   #    don't handle output-directory.
 $biber_silent_switch  = '--onlylog';
 $bibtex_silent_switch  = '-terse';
 $bibtex_use = 1;   # Whether to actually run bibtex to update bbl files.
@@ -1876,10 +1883,6 @@ $out_dir_requested = $out_dir;
 #          3 log file **not** in aux_dir or out_dir, but in cwd.
 $where_log = -1;  
 
-foreach ( 'BIBINPUTS', 'TEXINPUTS' ) {
-    if ( exists $ENV{$_} ) { $ENV_ORIG{$_} = $ENV{$_}; }
-}
-
 &set_dirs_etc;
 
 if ($bibtex_use > 1) {
@@ -1999,20 +2002,19 @@ if ( ($jobname ne '') && ($num_files > 1) ) {
         );
 }
 
-
 # Normalize the commands, to have place-holders for source, dest etc:
 &fix_cmds;
 
 # Add common options
-add_option( $latex_default_switches, \$latex );
+add_option( $latex_default_switches,    \$latex );
 add_option( $pdflatex_default_switches, \$pdflatex );
 add_option( $lualatex_default_switches, \$lualatex );
-add_option( $xelatex_default_switches, \$xelatex );
+add_option( $xelatex_default_switches,  \$xelatex );
 
-foreach (@extra_latex_options) { add_option( $_, \$latex ); }
+foreach (@extra_latex_options)    { add_option( $_, \$latex ); }
 foreach (@extra_pdflatex_options) { add_option( $_, \$pdflatex ); }
 foreach (@extra_lualatex_options) { add_option( $_, \$lualatex ); }
-foreach (@extra_xelatex_options) { add_option( $_, \$xelatex ); }
+foreach (@extra_xelatex_options)  { add_option( $_, \$xelatex ); }
 
 
 # If landscape mode, change dvips processor, and the previewers:
@@ -2195,6 +2197,8 @@ if ( $dependents_list && ! $preview_continuous_mode ) {
 #   to avoid getting incorrect blank items when they are split.
 foreach ($clean_ext, $clean_full_ext) { s/^\s+//; s/\s+$//; s/\s+/ /g; }
 
+# Deal with illegal and problematic characters in filename:
+test_fix_texnames( @file_list );
 
 FILE:
 foreach $filename ( @file_list )
@@ -2248,11 +2252,11 @@ foreach $filename ( @file_list )
     if ( find_basename($filename, $root_filename, $texfile_name) )
     {
         if ( $force_mode ) {
-           warn "$My_name: Could not find file [$texfile_name]\n";
+           warn "$My_name: Could not find file '$texfile_name'\n";
         }
         else {
             &ifcd_popd;
-            &exit_msg1( "Could not find file [$texfile_name]",
+            &exit_msg1( "Could not find file '$texfile_name'",
                         11);
         }
     }
@@ -2610,6 +2614,75 @@ if ( $where_log == 2 ) {
 #############################################################
 #############################################################
 
+sub test_fix_texnames {
+    my $illegal_char = 0;
+    my $unbalanced_quote = 0;
+    my $balanced_quote = 0;
+    foreach (@_) {
+        if ( $^O eq "MSWin32" ) {
+            # On MS-Win, change directory separator '\' to '/', as needed
+	    # by the TeX engines, for which '\' introduces a macro name.
+	    # Remember that '/' is a valid directory separator in MS-Win.
+            s[\\][/]g;
+        }
+	if ( /[\Q$illegal_in_texname\E]/ ) {
+            $illegal_char++;
+	    warn "$My_name: Filename '$_' contains character not allowed for TeX file.\n";
+	}
+        my ($filename, $path) = fileparse( $_ );
+        if ( $do_cd && ($filename =~ /^&/) ) {
+            $illegal_char++;
+	    warn "$My_name: Filename part of '$_' contains initial '&', which is\n",
+		 "   not allowed for TeX file in my -cd mode.\n";
+        }
+        elsif ( /^&/ ) {
+            $illegal_char++;
+	    warn "$My_name: Filename '$_' contains initial '&', which is not allowed for TeX file.\n";
+        }
+        my $count_q = ($_ =~ tr/\"//);
+        if ( ($count_q % 2) != 0 ) {
+            warn "$My_name: Filename '$_' contains unbalanced quotes, not allowed.\n";
+	    $unbalanced_quote++;
+        }
+        elsif ( $count_q > 0 ) {
+            warn "$My_name: Removed (balanced quotes) from filename '$_',\n";
+            s/\"//g;
+            warn "   and obtained '$_'.\n";
+            $balanced_quote++;
+        }
+    }
+    if ($illegal_char || $unbalanced_quote) {
+	die "$My_name: Stopping because of bad filename(s).\n";
+    }
+}
+
+#############################################################
+
+sub ensure_path {
+    # Usage: ensure_path( $var, values ...)
+    # $ENV{$var} is an environment variable (e.g. $ENV{TEXINPUTS}.
+    # Ensure the values are in it, prepending them if not, and
+    # creating the environment variable if it doesn't already exist.
+    my $var = shift;
+    my %cmpts = ();
+    if ( exists $ENV{$var} ) {
+	foreach ( split $search_path_separator, $ENV{$var} ) {
+	    if ($_ ne '') { $cmpts{$_} = 1; }
+	}
+    }
+    foreach (@_) {
+        next if ( ($_ eq '') || (exists $cmpts{$_}) );
+	if (exists $ENV{$var}) {
+	    $ENV{$var} = $_ . $search_path_separator . $ENV{$var};
+	}
+	else {
+	    $ENV{$var} = $_ . $search_path_separator;
+	}
+    }
+}
+
+#############################################################
+
 sub set_dirs_etc {
     # Normalize versions terminating in directory/path separator
     # and versions referring to current directory
@@ -2634,16 +2707,7 @@ sub set_dirs_etc {
 	# cases by adding the aux_dir to the relevant path search environment
 	# variables.  BIBINPUTS seems to be the only one currently affected.
 	foreach ( 'BIBINPUTS', 'TEXINPUTS' ) {
-	    if ( exists $ENV_ORIG{$_} ) {
-		$ENV{$_} = $aux_dir.$search_path_separator.$ENV_ORIG{$_};
-	    }
-	    else {
-		# Note the trailing ":" or ";" which ensures that the last item
-		# in the list of paths is the empty path, which actually
-		# means the default path, i.e., the following means that
-		# the search path is $aux_dir and the standard value.
-		$ENV{$_} = $aux_dir.$search_path_separator;
-	    }
+	    ensure_path( $_, $aux_dir );
 	}
     }
 }
@@ -2652,7 +2716,7 @@ sub set_dirs_etc {
 
 sub fix_cmds {
    # If commands do not have placeholders for %S etc, put them in
-    foreach ($latex, $pdflatex, $lpr, $lpr_dvi, $lpr_pdf,
+    foreach ($latex, $lualatex, $pdflatex, $xelatex, $lpr, $lpr_dvi, $lpr_pdf,
              $pdf_previewer, $ps_previewer, $ps_previewer_landscape,
              $dvi_previewer, $dvi_previewer_landscape,
              $kpsewhich
@@ -3873,7 +3937,7 @@ sub run_bibtex {
     # Prevent changes we make to environment becoming global:
     local %ENV = %ENV;
     my ( $base, $path, $ext ) = fileparseA( $$Psource );
-    if ( $path ) {
+    if ( $path && $bibtex_fudge ) {
 	# Since (e.g.,) 'bibtex output/main.aux' doesn't find subsidiary .aux
         #   files, as from \@include{chap.aux}, we change directory to the
 	#   directory of the top-level .aux file to run bibtex.  But we have to
@@ -4871,6 +4935,10 @@ sub parse_fls {
         if (/^\s*PWD\s+(.*)$/) {
             $cwd = $1;
             $$Ppwd_latex = $cwd;
+    	    if ( $cwd =~ /\"/ ) {
+		warn "$My_name: The working directory has a '\"' character in its name:\n",
+                     "  '$cwd'\n  This can cause me trouble. Beware!\n";
+	    }
         }
         elsif (/^\s*INPUT\s+(.*)$/) {
             # Take precautions against aliasing of foo, ./foo and other possibilities for cwd.
@@ -4880,7 +4948,9 @@ sub parse_fls {
             #   us from coding issues if the PWD contains non-ASCII characters.  What
             #   coding scheme (UTF-8, code page, etc) is used depends on OS, TeX
             #   implementation, ...
-            $file =~ s(^\Q$$Ppwd_latex\E[\\/])();
+	    if ( defined $$Ppwd_latex ) { 
+                $file =~ s(^\Q$$Ppwd_latex\E[\\/])();
+	    }
             $file = normalize_filename( $file );
             if ( (exists $$Poutputs{$file}) && (! exists $$Pinputs{$file}) ) {
                 $$Pfirst_read_after_write{$file} = 1;
@@ -4891,7 +4961,8 @@ sub parse_fls {
             # Take precautions against aliasing of foo, ./foo and other possibilities for cwd.
             my $file = $1;
             $file =~ s(^\Q$$Ppwd_latex\E[\\/])();
-            $$Poutputs{ normalize_filename( $file )} = 1;
+            $file = normalize_filename( $file );
+            $$Poutputs{$file} = 1;
         }
     }
     close( $fls_file );
@@ -4962,20 +5033,6 @@ sub fix_pattern {
    $pattern =~ s/\[/\\\[/g;
    $pattern =~ s/\{/\\\{/g;
    return $pattern;
-}
-
-#************************************************************
-
-sub OS_preferred_filename {
-   # Usage: OS_preferred_filename(name)
-   # Returns filename with directory separator '/' converted
-   # to preferred conventions for current OS.
-   # Currently implemented: only '\' for MSWin32
-   my $file = $_[0];
-   if ( $^O eq 'MSWin32' ) {
-      $file =~ s(/)(\\)g;
-    }
-   return $file;
 }
 
 #************************************************************
@@ -5210,8 +5267,9 @@ sub rdb_read {
        or return ();
     my $errors = 0;
     my $state = -1;   # Values: -1: before start; 0: outside rule;
-                      # 1: in source section; 2: in generated file section;
-                      # 10: ignored rule
+                      # 1: in source section;
+                      # 2: in generated file section;
+                      # 10: ignored rule.
     my $rule = '';
     my $run_time = 0;
     my $source = '';
@@ -5275,19 +5333,29 @@ LINE:
                 my $toext = $2;
                 my $base = $3;
                 $source = "$base.$fromext";
-                $dest =   "$base.$toext";
-                my $PAnew_cmd = ['do_cusdep', ''];
+#                $dest =   "$base.$toext";
+                my $func_name = '';
                 foreach my $dep ( @cus_dep_list ) {
-                    my ($tryfromext,$trytoext,$must,$func_name) = split('\s+',$dep);
+                    my ($tryfromext,$trytoext,$must,$try_func_name) = split('\s+',$dep);
                     if ( ($tryfromext eq $fromext) && ($trytoext eq $toext) ) {
-                       $$PAnew_cmd[1] = $func_name;
+			$func_name = $try_func_name;
                     }
                 }
-                # Set source file as non-existent.  
-                # If it existed on last run, it will be in later 
-                #    lines of the fdb file
-                rdb_create_rule( $rule, 'cusdep', '', $PAnew_cmd, 1, 
-                                 $source, $dest, $base, 0, $run_time, $check_time, 1 );
+		if ($func_name) {
+		    my $PAnew_cmd = ['do_cusdep', $func_name];
+                    # Set source file as non-existent.  
+                    # If it existed on last run, it will be in later 
+                    #    lines of the fdb file
+                    rdb_create_rule( $rule, 'cusdep', '', $PAnew_cmd, 1, 
+                                     $source, $dest, $base, 0, $run_time, $check_time, 1 );
+		}
+		else {
+		    warn "$My_name: In file-database '$in_name', the custom-dependency rule\n",
+ 			 "  '$rule' is not available in this session.\n",
+			 "  Presumably it's no longer in your configuration for latexmk.\n";
+		    $state = 10;
+		    next LINE;
+		}
             }
             elsif ( $rule =~ /^(makeindex|bibtex|biber)\s*(.*)$/ ) {
                 my $PA_extra_gen = [];
@@ -5435,7 +5503,7 @@ sub rdb_write {
                 && ! exists( $current_primaries{$rule} )
               )
            { 
-               return; 
+               return;
            }
            print $out_handle "[\"$rule\"] $$Prun_time \"$$Psource\" \"$$Pdest\" \"$$Pbase\" $$Pcheck_time\n";
            rdb_do_files(
@@ -5560,7 +5628,6 @@ sub rdb_set_latex_deps {
              "for non-primary rule '$rule'\n\n";
         return;
     }
-
 
 #??    # We'll prune this by all files determined to be needed for source files.
 #??    my %unneeded_source = %$PHsource;
@@ -5716,22 +5783,12 @@ sub rdb_set_latex_deps {
         $missing_dvi_pdf = $$Pdest;
     }
     elsif ($primary_out ne normalize_filename($$Pdest) ) {
-        warn "$My_name: ===For rule '$rule', actual output '$primary_out'\n",
-             "    ======appears not to match expected output '$$Pdest'.\n",
-	     "    Further diagnostics follow:\n";
         my ($actual_base, $actual_path, $actual_ext) = fileparseA( $primary_out );
         my ($intended_base, $intended_path, $intended_ext) = fileparseA( $$Pdest );
-	if ( $actual_base ne $intended_base ) {
-	    warn "   --The base names of the files are different. That is strange!!\n";
-	}
-	if ( $actual_path ne $intended_path ) {
-	    warn "   --The paths of the files are different. I may have misunderstood\n",
-		 "   different names for the same directory, which is innocuous,\n",
-		 "   or there may be a configuration error.\n";
-	}
 	if ( $actual_ext ne $intended_ext ) {
-	    warn "   --The extensions of the files are different, i.e., the\n",
-  		 "   intended and actual types of the output differ.\n";
+            warn "$My_name: ===For rule '$rule', the extensions differ between the\n",
+                 "   actual output file '$primary_out',\n",
+                 "   and the expected output '$$Pdest'.\n";
 	    if ( ! exists $allowed_output_ext{$actual_ext} ) {
 		warn "   Actual output file has an extension '$actual_ext' that\n",
 		     "   is not one I know about\n";
@@ -5887,7 +5944,8 @@ NEW_SOURCE:
             # File was result of conversion by (pdf)latex.
             my $cnv_source = $conversions{$new_source};
             rdb_ensure_file( $rule, $new_source );
-            if ($cnv_source) {
+#            if ($cnv_source && ($cnv_source !~ /\"/ ) ) {
+             if ($cnv_source ) {
                 # Conversion from $cnv_source to $new_source
                 #   implies that effectively $cnv_source is a source
                 #   of the (pdf)latex run.
@@ -6058,6 +6116,7 @@ MISSING_FILE:
 
     my $found = 0;
     foreach my $file (keys %new_includes) {
+#	if ( $file =~ /\"/ ) {next; }
         my $stripped = $file;
         $stripped =~ s{^\./}{};
         if ( exists $PHsource{$file} ) {
@@ -6099,6 +6158,27 @@ sub rdb_set_dependents {
 
 #************************************************************
 
+sub rdb_find_source_file {
+    # Helper for searching dependencies in all paths inside the TEXINPUTS
+    # environment variable.
+    my $test = "$_[0].$_[1]";
+    if ( -e $test ) {
+        return $_[0];
+    }
+    if ( exists $ENV{TEXINPUTS} ) {
+	foreach my $searchpath (split $search_path_separator, $ENV{TEXINPUTS}) {
+	    my $file = File::Spec->catfile($searchpath,$_[0]);
+	    my $test = "$file.$_[1]";
+	    if ( -e $test ) {
+		return $file;
+	    }
+	}
+    }
+    return "$_[0]";
+}
+
+#************************************************************
+
 sub rdb_one_dep {
     # Helper for finding dependencies.  One case, $rule and $file given
     # Assume file (and rule) context for DESTINATION file.
@@ -6118,6 +6198,7 @@ DEP:
     foreach my $dep ( @cus_dep_list ) {
         my ($fromext,$proptoext,$must,$func_name) = split('\s+',$dep);
         if ( $toext eq $proptoext ) {
+            $base_name = rdb_find_source_file($base_name, $fromext);
             my $source = "$base_name.$fromext";
             # Found match of rule
             if ($diagnostics) {
@@ -6125,21 +6206,19 @@ DEP:
             }
             if ( -e $source ) {
                 $$Pfrom_rule = "cusdep $fromext $toext $base_name";
-#??             print "?? Ensuring rule for '$$Pfrom_rule'\n";
+		my $new_new_dest = "$base_name.$toext";
+		if ($new_new_dest ne $new_dest) {
+		    rdb_ensure_file( $rule, $new_new_dest );
+		    $new_dest = $new_new_dest;
+		}
                 local @PAnew_cmd = ( 'do_cusdep', $func_name );
                 if ( !-e $new_dest ) {
                     push @new_sources, $new_dest;
                 }
                 if (! rdb_rule_exists( $$Pfrom_rule ) ) {
-                    print "=== Creating rule for '$$Pfrom_rule'\n";
+                    print "$My_name: === Creating rule '$$Pfrom_rule'\n" if $diagnostics;
                     rdb_create_rule( $$Pfrom_rule, 'cusdep', '', \@PAnew_cmd, 3, 
                                      $source, $new_dest, $base_name, 0 );
-                }
-                else {
-                    rdb_one_rule( 
-                       $$Pfrom_rule, 
-                       sub{ @$PAint_cmd = @PAnew_cmd; $$Pdest = $new_dest;}
-                    );
                 }
                 return;
             }
@@ -6170,6 +6249,7 @@ DEP:
             #   This normally results from  \includegraphics{A}
             #    without graphics extension for file, when file does
             #    not exist.  So we will try to find something to make it.
+            $base_name = rdb_find_source_file($base_name, $fromext);
             my $source = "$base_name.$fromext";
             if ( -e $source ) {
                 $new_dest = "$base_name.$proptoext";
@@ -6179,14 +6259,9 @@ DEP:
                     if $diagnostics > -1;
                 local @PAnew_cmd = ( 'do_cusdep', $func_name );
                 if (! rdb_rule_exists( $from_rule ) ) {
+                    print "$My_name: === Creating rule '$$Pfrom_rule'\n" if $diagnostics;
                     rdb_create_rule( $from_rule, 'cusdep', '', \@PAnew_cmd, 3, 
                                      $source, $new_dest, $base_name, 0 );
-                }
-                else {
-                    rdb_one_rule( 
-                       $$Pfrom_rule, 
-                       sub{ @$PAint_cmd = @PAnew_cmd; $$Pdest = $new_dest;}
-                    );
                 }
                 rdb_ensure_file( $rule, $new_dest, $from_rule );
                 # We've now got a spurious file in our rule.  But don't mess
@@ -7031,6 +7106,7 @@ sub rdb_run1 {
         my @biber_source = ( );
         my $retcode = check_biber_log( $$Pbase, \@biber_source );
         foreach my $source ( @biber_source ) {
+#	    if ( $source =~ /\"/ ) {next; }
             print "  ===Source file '$source' for '$rule'\n"
                if ($diagnostics);
             rdb_ensure_file( $rule, $source );
@@ -7844,6 +7920,12 @@ sub rdb_create_rule {
               $set_file_not_exists ) {
         if (! defined $_) { $_ = ''; }
     }
+    if ( ($source =~ /\"/) || ($dest =~ /\"/) || ($base =~ /\"/) ) {
+	die "$My_name: Error. In rdb_create_rule there is a double quote in one of\n",
+	    "  source, destination or base parameters:\n",
+	    "    '$source', '$dest', '$base'\n",
+	    "  I cannot handle this.\n";
+    }
     foreach ( $needs_making, $run_time, $check_time, $test_kind ) {
         if (! defined $_) { $_ = 0; }
     }
@@ -7901,6 +7983,16 @@ sub rdb_add_generated {
 
 #************************************************************
 
+sub rdb_remove_generated {
+# Assume rule context.
+# Remove arguments from hash of generated files
+    foreach (@_) {
+        delete $$PHdest{$_};
+    }
+} #END rdb_remove_generated
+
+#************************************************************
+
 sub rdb_ensure_file {
     # rdb_ensure_file( rule, file[, fromrule[, set_not_exists]] )
     # Ensures the source file item exists in the given rule.
@@ -7916,10 +8008,16 @@ sub rdb_ensure_file {
     my $rule = shift;
     local ( $new_file, $new_from_rule, $set_not_exists ) = @_;
     if ( ! rdb_rule_exists( $rule ) ) {
-        die_trace( "$My_name: BUG in rdb_ensure_file: non-existent rule '$rule'" );
+        die_trace( "$My_name: BUG in call to rdb_ensure_file: non-existent rule '$rule'" );
     }
     if ( ! defined $new_file ) {
-        die_trace( "$My_name: BUG in rdb_ensure_file: undefined file for '$rule'" );
+        die_trace( "$My_name: BUG in call to rdb_ensure_file: undefined file for '$rule'" );
+    }
+    if ( $new_file =~ /\"/ ) {
+	warn "$My_name: in rdb_ensure_file for rule '$rule', there is a double quote in\n",
+	     "  the filename: '$new_file'.\n",
+ 	     "  I cannot handle this, will ignore this file.\n";
+	return;
     }
     if ( ! defined $set_not_exists ) { $set_not_exists = 0; }
     rdb_one_rule( $rule, 
@@ -7974,6 +8072,7 @@ sub rdb_set_source {
     if (!$rule) { return; }
     my %files = ();
     foreach (@_) {
+#	if ( /\"/ ) {next; }
 	rdb_ensure_file( $rule, $_ );
 	$files{$_} = 1;
     }
@@ -7982,6 +8081,36 @@ sub rdb_set_source {
     }    
     return;
 } #END rdb_list_source
+
+#************************************************************
+
+sub rdb_change_dest {
+   # Assumes rule context.
+   # Usage change_dest( new_dest [, flag] )
+   # Changes destination for this rule. Fixes from_rule links.
+   # If flag set, make the new_dest a source file in any rule
+   # for which the old destination is already set.
+   # No action if there's no change of destination.
+   local ($new_dest, $flag) = @_;
+   local $old_dest = $$Pdest;
+   if ($old_dest eq $new_dest) { return; }
+#   if ( $new_dest =~ /\"/ ) { return; }
+   rdb_remove_generated( $old_dest );
+   rdb_add_generated( $new_dest );
+   if ($flag) {
+      print "rdb_change_dest: fixing dependencies\n";
+      rdb_for_all( sub{ if ( rdb_file_exists( $rule, $old_dest ) ) {
+	                    rdb_ensure_file( $rule, $new_dest );
+	                    rdb_remove_files( $rule, $old_dest );
+                        }
+                      }
+		 );
+   }
+   $$Pdest = $new_dest;
+   # ??? Do I need to fix from_rule setting?
+   #&rdb_make_links;
+   return;
+} #END rdb_change_dest
 
 #************************************************************
 
@@ -8337,16 +8466,12 @@ sub get_checksum_md5 {
 
 #&traceback;
 #warn "======= GETTING MD5: $source\n";
-    if ( $source eq "" ) { 
-       # STDIN:
-       open( $input, '-' );
-    }
-    elsif ( -d $source ) {
+    if ( -d $source ) {
         # We won't use checksum for directory
         return 0;
     }
     else {
-        open( $input, '<', $source )
+        open( $input, '<:bytes', $source )
         or return 0;
         my ($base, $path, $ext) = fileparseA( $source );
         $ext =~ s/^\.//;
@@ -8354,7 +8479,6 @@ sub get_checksum_md5 {
             $ignore_pattern = $hash_calc_ignore_pattern{$ext};
         }
     }
-
     if ( defined $ignore_pattern ) {
         while (<$input>) {
             if ( ! /$ignore_pattern/ ){
