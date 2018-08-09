@@ -1,3 +1,48 @@
+commit b6fdcf4f8bd09e065c767939125861c9dc8ff18f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 8 21:54:08 2018 -0700
+
+    1.8.7
+
+ NEWS             | 6 ++++++
+ RELEASING.md     | 3 +++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 4 files changed, 12 insertions(+), 3 deletions(-)
+
+commit 51ffc3e65aacbece63995be99e2bc20538e3eb75
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 8 22:01:04 2018 -0700
+
+    Fix previous commit to use atomic operations
+
+ src/hb-machinery-private.hh | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+commit 883957688cc4aa4335e5131a60b3ac3b53290726
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 8 21:42:18 2018 -0700
+
+    Fix assertion failure
+
+    https://bugzilla.mozilla.org/show_bug.cgi?id=1476334
+
+ src/hb-machinery-private.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit e49a38b20e82e50bca96751470e945cbe0524880
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 7 09:55:42 2018 -0700
+
+    1.8.6
+
+ NEWS             | 15 +++++++++++++++
+ configure.ac     |  2 +-
+ src/hb-font.cc   |  6 +++---
+ src/hb-font.h    |  4 ++--
+ src/hb-version.h |  4 ++--
+ 5 files changed, 23 insertions(+), 8 deletions(-)
+
 commit b0ff79acd804e47a2a3db73746cf9c6dc986950a
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Aug 7 09:52:06 2018 -0700
