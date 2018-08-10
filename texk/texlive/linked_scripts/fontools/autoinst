@@ -522,7 +522,7 @@ sub cleanup {
         $item->{features} = [ sort keys %feature ];
 
         # add finishing touches to name and NFSS code of encoding
-        $item->{encoding}[0] =~ s/\A (ot1|t1|ly1) \z/fontools_$1/xms;
+        $item->{encoding}[0] =~ s/\A (ot1|t1|ly1|lgr|t2[abc]) \z/fontools_$1/xms;
         $item->{encoding}[1] = uc $item->{encoding}[1];
         
         $item->{cmdline} = make_cmdline($item);
@@ -666,10 +666,14 @@ sub make_commands {
 
 # The official names for various coding schemes
 my %SCHEME = (
-    fontools_ly1 => 'TEX TYPEWRITER AND WINDOWS ANSI',
-    fontools_t1  => 'EXTENDED TEX FONT ENCODING - LATIN',
     fontools_ot1 => 'TEX TEXT',
+    fontools_t1  => 'EXTENDED TEX FONT ENCODING - LATIN',
     fontools_ts1 => 'TEX TEXT COMPANION SYMBOLS 1---TS1',
+    fontools_ly1 => 'TEX TYPEWRITER AND WINDOWS ANSI',
+    fontools_lgr => 'GREEK FONT ENCODING - LGR',
+    fontools_t2a => 'TEX CYRILLIC FONT ENCODING - T2A',
+    fontools_t2b => 'TEX CYRILLIC FONT ENCODING - T2B',
+    fontools_t2c => 'TEX CYRILLIC FONT ENCODING - T2C',
 );
 
 #-----------------------------------------------------------------------
@@ -1916,11 +1920,11 @@ When I<both> weight and width are empty, the NFSS "series" attribute becomes "m"
 =item [2]
 
 Until release 2017-06-16, "Text" and "Book" were treated as synonyms for
-"Regular". As there are some fonts (IBM Plex, Fira Sans) that contain
-separate "Text" or "Book" in addition to "Regular" weights,
+"Regular". As there are some font families (IBM Plex, Fira Sans) that contain
+separate "Text" and "Book" weights in addition to "Regular" ones,
 I decided to give them their own codes.
 When there is no "Regular" weight, B<autoinst> will generate I<ssub> rules 
-to substitute either the "Text" or the "Book" font in its place.
+to substitute "Text" or "Book" (in that order) in its place.
 
 =item [3]
 
@@ -1972,7 +1976,7 @@ Generate the specified encoding(s) for the text fonts. The default is
 "OT1,T1,LY1".
 For each encoding, a file F<< <encoding>.enc >> (in all I<lowercase>!)
 should be somewhere where F<otftotfm> can find it. Suitable encoding files
-for OT1, T1/TS1 and LY1 come with B<autoinst>. (These files are
+for OT1, T1/TS1, LY1, LGR and T2A/B/C come with B<autoinst>. (These files are
 called F<fontools_ot1.enc> etc. to avoid name clashes with other packages;
 the "fontools_" prefix may be omitted.)
 
@@ -2207,6 +2211,11 @@ GNU General Public License for more details.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2018-08-10>
+
+Added encoding files for LGR and T2A/B/C to I<fontools>.
+
 
 =item I<2018-03-26>
 
