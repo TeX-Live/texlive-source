@@ -1,3 +1,426 @@
+commit c9a22fa124310c98c73b8d7b495ed354542a75de
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 13 17:02:21 2018 -0700
+
+    [icu] Pass normalizer instance down as user_data
+
+ src/hb-icu.cc | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
+
+commit f0ef096b8cab33aa9e26edba9b15696bf907e268
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 13 10:30:41 2018 -0700
+
+    Don't add reference in get_unicode_funcs() functions
+
+    Users don't expect a new reference returned from a get() function.
+    Indeed, all users of that API I foud where NOT destroying the
+    reference.
+    Just change the implementations to NOT return a reference.
+
+    This applies to the following APIs:
+    hb_unicode_funcs_get_default()
+    hb_glib_get_unicode_funcs()
+    hb_icu_get_unicode_funcs()
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1134
+
+ src/hb-buffer.cc | 3 +--
+ src/hb-glib.cc   | 2 +-
+ src/hb-icu.cc    | 2 +-
+ src/hb-ucdn.cc   | 2 +-
+ 4 files changed, 4 insertions(+), 5 deletions(-)
+
+commit 9bbd1cdf068635f4a737f1fc9ab54ba075601a5d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 18:20:53 2018 -0700
+
+    [uniscribe] Use lazy loader
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1129
+
+ src/hb-uniscribe.cc | 56
+ +++++++++++++++++++++++++++--------------------------
+ 1 file changed, 29 insertions(+), 27 deletions(-)
+
+commit 266368993625e0cfb6eef9188f8b9aa29fb97391
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 18:10:59 2018 -0700
+
+    Another clang bot fix
+
+ src/hb-shape.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 989e71a982658145f28f83f2111bdab9561f3db0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 17:47:59 2018 -0700
+
+    Silence clang
+
+ src/hb-machinery-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6750ec692cdd682bd33cb1c37b137cf3bb641d43
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 17:42:16 2018 -0700
+
+    [lazy] Use for C_locale
+
+ src/hb-common.cc | 60
+ ++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
+
+commit 747d2564e6bdcc15cf6a197e543fb732924159c5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 17:32:10 2018 -0700
+
+    [lazy] Port more
+
+ src/hb-machinery-private.hh |  1 -
+ src/hb-shaper.cc            | 78
+ ++++++++++++++++++++-------------------------
+ src/hb-uniscribe.cc         |  3 +-
+ 3 files changed, 37 insertions(+), 45 deletions(-)
+
+commit 7bd508a0c4ce426f474bfcc729cb39207dd1f7b4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 17:19:55 2018 -0700
+
+    [lazy] Rename free()
+
+ src/hb-ft.cc                | 4 ++--
+ src/hb-glib.cc              | 2 +-
+ src/hb-icu.cc               | 2 +-
+ src/hb-machinery-private.hh | 4 ++--
+ src/hb-ot-font.cc           | 2 +-
+ src/hb-shape.cc             | 6 +++---
+ src/hb-ucdn.cc              | 2 +-
+ 7 files changed, 11 insertions(+), 11 deletions(-)
+
+commit a3b97db910662e26bafe6e6bc1c36b437f4ed931
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 17:14:32 2018 -0700
+
+    [lazy] Port more to it
+
+ src/hb-shape.cc | 75
+ +++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 38 insertions(+), 37 deletions(-)
+
+commit 6901090945d7e16102f3a2b168465434032b9a09
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 16:57:06 2018 -0700
+
+    [lazy] Make hb_lazy_loader_t<> more usable
+
+ src/hb-ft.cc                |  7 +++---
+ src/hb-machinery-private.hh | 57
+ +++++++++++++++++++++++++++------------------
+ 2 files changed, 37 insertions(+), 27 deletions(-)
+
+commit bb905e9afcc3eb28a22ba78c09e661a814d04c1f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 16:40:08 2018 -0700
+
+    [lazy] Minor
+
+ src/hb-machinery-private.hh | 36 ++++++++++++++++++------------------
+ src/hb-ot-font.cc           |  8 ++++----
+ 2 files changed, 22 insertions(+), 22 deletions(-)
+
+commit 3945cd78a96bdd287e203a0261bac490df1314b0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 16:33:48 2018 -0700
+
+    Minor
+
+ src/hb-machinery-private.hh | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit c21a1b95dffedb6ed66b384f4adf07e6d05d4b9f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 16:30:39 2018 -0700
+
+    [icu] Use get_relaxed for normalizer access
+
+    We've had the proper barriers already.  No need for more with
+    every access.
+
+ src/hb-icu.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 125fefa2a6b23cf7eb4559904b23aff3731d5dba
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 16:29:41 2018 -0700
+
+    [icu] Fix for breakage after recent change
+
+ src/hb-icu.cc | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+commit 53442be1edc73993bdcaffc4b895c07f1ea03ba0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 16:20:11 2018 -0700
+
+    [lazy] Use for ft_library
+
+ src/hb-ft.cc                | 61
+ ++++++++++++++++++++++-----------------------
+ src/hb-glib.cc              |  2 +-
+ src/hb-icu.cc               |  2 +-
+ src/hb-machinery-private.hh |  2 +-
+ src/hb-ot-font.cc           |  2 +-
+ src/hb-ucdn.cc              |  2 +-
+ 6 files changed, 35 insertions(+), 36 deletions(-)
+
+commit 7a8d480378af4094645dfb1527a61a94b4786b54
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 16:00:13 2018 -0700
+
+    [lazy] Add .free()
+
+ src/hb-ft.cc                | 2 +-
+ src/hb-glib.cc              | 2 +-
+ src/hb-icu.cc               | 2 +-
+ src/hb-machinery-private.hh | 4 ++++
+ src/hb-ot-font.cc           | 2 +-
+ src/hb-ucdn.cc              | 2 +-
+ 6 files changed, 9 insertions(+), 5 deletions(-)
+
+commit c7ca30a5337cb660e650d51ddd17d389909357c2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 13:46:53 2018 -0700
+
+    [ot/ft] Port font_funcs statis to lazy-loader
+
+ src/hb-ft.cc                | 56
+ ++++++++++++++++++++++-----------------------
+ src/hb-machinery-private.hh | 14 ++++++++++++
+ src/hb-ot-font.cc           | 49 +++++++++++++++++----------------------
+ 3 files changed, 62 insertions(+), 57 deletions(-)
+
+commit cb3fc3685c03c8ed07bcf05188f5d6c582fd5aaa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 13:39:01 2018 -0700
+
+    [ucdn/glib/icu] Port unicode_funcs statics to lazy-loader
+
+ src/hb-glib.cc              | 50 ++++++++++++++++++--------------------
+ src/hb-icu.cc               | 59
+ ++++++++++++++++-----------------------------
+ src/hb-machinery-private.hh | 28 ++++++++++++++++-----
+ src/hb-ucdn.cc              | 51 +++++++++++++++++----------------------
+ 4 files changed, 88 insertions(+), 100 deletions(-)
+
+commit 1b6b481262465ae1865c66c4d499b4b2c8d297fb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 13:16:40 2018 -0700
+
+    [lazy] Allow calling fini() multiple times
+
+ src/hb-machinery-private.hh | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+commit 918ad9f5d9b85384f24157523272a4ffc1927d16
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 13:12:29 2018 -0700
+
+    [lazy] More
+
+ src/hb-machinery-private.hh | 45
+ +++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 37 insertions(+), 8 deletions(-)
+
+commit 5abdf5eebadf9a4fbd50c1a893c9654de74d22ac
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 12:40:24 2018 -0700
+
+    [lazy] More shuffle
+
+ src/hb-machinery-private.hh | 80
+ +++++++++++++++++++--------------------------
+ 1 file changed, 34 insertions(+), 46 deletions(-)
+
+commit 5d9863be6ecf873033cbab732207dd420f3866e7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 12:27:47 2018 -0700
+
+    Minor
+
+ src/hb-machinery-private.hh | 6 ++++--
+ src/hb-ot-layout-private.hh | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+commit f9a3eab81008c01a458d16f274b1a0eaaae00e7c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 12:21:56 2018 -0700
+
+    Add explicit_operator
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1127
+
+ src/hb-iter-private.hh |  2 +-
+ src/hb-private.hh      | 15 ++++++++++++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+commit 470acb6c322fc64556d59847d829d95caa2d51e6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 12 12:09:20 2018 -0700
+
+    Rename
+
+ src/hb-machinery-private.hh | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+commit 39607dc98e433ef577c1de0f309ce40fc40529be
+Author: Martin Hosken <martin_hosken@sil.org>
+Date:   Thu Aug 9 15:16:32 2018 +0700
+
+    Support _ in feature ids
+
+ src/hb-common.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 652cd45c650b1cdce2585dcee614e5a9cdda530c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 9 01:02:02 2018 -0700
+
+    [coretext] Another try
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3f3585ca1406edd74138f78739612c167ab57913
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 9 00:58:17 2018 -0700
+
+    Fix coretext build (hopefully)
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit aa3b6017ed71fc251522ff1bedcdae965b4c1c1c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 9 00:56:28 2018 -0700
+
+    Revert "[iter] Make operator bool explicit"
+
+    This reverts commit 66920a6bace7c54c8166c4ed938b6ffc5fabcf2b.
+
+    Some of our bots (Oracle Studio and Apple gcc 4.2) do not allow
+    explicit except for constructors.
+
+    https://github.com/harfbuzz/harfbuzz/issues/1127
+
+ src/hb-iter-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e1a2354220c369bd5a62d255acc42c60cd14c473
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 9 00:53:25 2018 -0700
+
+    [atomic] More
+
+ src/hb-atomic-private.hh | 2 --
+ src/hb-object-private.hh | 7 +++++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+commit f1f4b45ac3d228a6b11e33357725de065e2ba2be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 9 00:28:40 2018 -0700
+
+    Fix lazy_loader fini()
+
+    Was creating object even if wasn't there.
+
+ src/hb-machinery-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1f7380944df9aa81cd48a4764c763d692533c4a6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 9 00:22:37 2018 -0700
+
+    [atomic] Add hb_atomic_ptr_t<> and port all uses
+
+    Found and fixed a couple bugs.
+
+    Found a couple multithreading issues.  Marked them with "XXX-MT-bug".
+
+ src/hb-atomic-private.hh          | 34 +++++++++++++++++++++++++++++++---
+ src/hb-common.cc                  | 34 ++++++++++++++++++----------------
+ src/hb-face-private.hh            |  3 ++-
+ src/hb-face.cc                    |  6 +++---
+ src/hb-font.cc                    |  2 +-
+ src/hb-ft.cc                      | 22 ++++++++++++----------
+ src/hb-glib.cc                    | 11 ++++++-----
+ src/hb-graphite2.cc               | 16 +++++++++-------
+ src/hb-icu.cc                     | 22 ++++++++++++----------
+ src/hb-machinery-private.hh       | 17 +++++++++--------
+ src/hb-object-private.hh          | 29 +++++++++++++++--------------
+ src/hb-ot-font.cc                 | 11 ++++++-----
+ src/hb-ot-layout-private.hh       |  2 +-
+ src/hb-ot-post-table.hh           |  9 +++++----
+ src/hb-ot-shape-complex-arabic.cc |  9 +++++----
+ src/hb-shape-plan.cc              | 19 +++++++++++--------
+ src/hb-shape.cc                   | 11 ++++++-----
+ src/hb-shaper-impl-private.hh     |  2 +-
+ src/hb-shaper-private.hh          | 16 +++++++++-------
+ src/hb-shaper.cc                  | 18 ++++++++++--------
+ src/hb-ucdn.cc                    | 11 ++++++-----
+ src/hb-uniscribe.cc               | 14 +++++++-------
+ 22 files changed, 185 insertions(+), 133 deletions(-)
+
+commit 6e42f4c53ff52cc242051e80600e19513136f6d1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 8 22:51:35 2018 -0700
+
+    [atomic] Remove hb_atomic_int_impl_t now that it's always int
+
+ src/hb-atomic-private.hh | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+commit 1227a9e5a5befffa688c1cce141533fd80144d14
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 8 22:45:49 2018 -0700
+
+    [atomic] Unify typedef
+
+    Removes volatile from fallback implementation.  That was handwavy
+    anyway.
+
+ src/hb-atomic-private.hh | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
+
+commit 5cd1888c9dcb8b32bcfe08be38bdd13fd8a09b5e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 8 22:43:53 2018 -0700
+
+    [atomic] Change Mac atomic int type to int
+
+    If ever int is not 32bit, we'll fix this...
+
+ src/hb-atomic-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e1de86eac188e804c6737fcad66ae09cf25ef221
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 8 22:42:33 2018 -0700
+
+    [atomic] Change Windows atomic int type to int
+
+ src/hb-atomic-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit aee2d10b2bf09814b32bccdecd4c3fbebafc542e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 8 22:40:10 2018 -0700
+
+    [atomic] Change Solaris atomic int to signed
+
+ src/hb-atomic-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
 commit b6fdcf4f8bd09e065c767939125861c9dc8ff18f
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Aug 8 21:54:08 2018 -0700
