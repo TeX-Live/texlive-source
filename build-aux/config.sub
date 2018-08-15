@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-07-25'
+timestamp='2018-08-13'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -190,6 +190,14 @@ case $1 in
 				basic_machine=m68010-adobe
 				os=scout
 				;;
+			alliant)
+				basic_machine=fx80-alliant
+				os=
+				;;
+			altos | altos3068)
+				basic_machine=m68k-altos
+				os=
+				;;
 			am29k)
 				basic_machine=a29k-none
 				os=bsd
@@ -234,13 +242,33 @@ case $1 in
 				basic_machine=arm-unknown
 				os=cegcc
 				;;
+			convex-c1)
+				basic_machine=c1-convex
+				os=bsd
+				;;
+			convex-c2)
+				basic_machine=c2-convex
+				os=bsd
+				;;
+			convex-c32)
+				basic_machine=c32-convex
+				os=bsd
+				;;
+			convex-c34)
+				basic_machine=c34-convex
+				os=bsd
+				;;
+			convex-c38)
+				basic_machine=c38-convex
+				os=bsd
+				;;
 			cray)
 				basic_machine=j90-cray
 				os=unicos
 				;;
-			craynv)
-				basic_machine=craynv-cray
-				os=unicosmp
+			crds | unos)
+				basic_machine=m68k-crds
+				os=
 				;;
 			delta88)
 				basic_machine=m88k-motorola
@@ -458,9 +486,17 @@ case $1 in
 				basic_machine=m68k-bull
 				os=sysv2
 				;;
+			st2000)
+				basic_machine=m68k-tandem
+				os=
+				;;
 			stratus)
 				basic_machine=i860-stratus
 				os=sysv4
+				;;
+			sun2)
+				basic_machine=m68000-sun
+				os=
 				;;
 			sun2os3)
 				basic_machine=m68000-sun
@@ -470,6 +506,10 @@ case $1 in
 				basic_machine=m68000-sun
 				os=sunos4
 				;;
+			sun3)
+				basic_machine=m68k-sun
+				os=
+				;;
 			sun3os3)
 				basic_machine=m68k-sun
 				os=sunos3
@@ -477,6 +517,10 @@ case $1 in
 			sun3os4)
 				basic_machine=m68k-sun
 				os=sunos4
+				;;
+			sun4)
+				basic_machine=sparc-sun
+				os=
 				;;
 			sun4os3)
 				basic_machine=sparc-sun
@@ -489,6 +533,10 @@ case $1 in
 			sun4sol2)
 				basic_machine=sparc-sun
 				os=solaris2
+				;;
+			sun386 | sun386i | roadrunner)
+				basic_machine=i386-sun
+				os=
 				;;
 			sv1)
 				basic_machine=sv1-cray
@@ -564,6 +612,64 @@ esac
 
 # Decode aliases for certain CPU-COMPANY combinations.
 case $basic_machine in
+	# Here we handle the default manufacturer of certain CPU types.  It is in
+	# some cases the only manufacturer, in others, it is the most popular.
+	craynv)
+		basic_machine=craynv-cray
+		os=${os:-unicosmp}
+		;;
+	fx80)
+		basic_machine=fx80-alliant
+		;;
+	w89k)
+		basic_machine=hppa1.1-winbond
+		;;
+	op50n)
+		basic_machine=hppa1.1-oki
+		;;
+	op60c)
+		basic_machine=hppa1.1-oki
+		;;
+	romp)
+		basic_machine=romp-ibm
+		;;
+	mmix)
+		basic_machine=mmix-knuth
+		;;
+	rs6000)
+		basic_machine=rs6000-ibm
+		;;
+	vax)
+		basic_machine=vax-dec
+		;;
+	pdp11)
+		basic_machine=pdp11-dec
+		;;
+	we32k)
+		basic_machine=we32k-att
+		;;
+	cydra)
+		basic_machine=cydra-cydrome
+		;;
+	i370-ibm* | ibm*)
+		basic_machine=i370-ibm
+		;;
+	orion)
+		basic_machine=orion-highlevel
+		;;
+	orion105)
+		basic_machine=clipper-highlevel
+		;;
+	mac | mpw | mac-mpw)
+		basic_machine=m68k-apple
+		;;
+	pmac | pmac-mpw)
+		basic_machine=powerpc-apple
+		;;
+	xps | xps100)
+		basic_machine=xps100-honeywell
+		;;
+
 	# Recognize the basic CPU types without company name.
 	# Some are omitted here because they have special meanings below.
 	1750a | 580 \
@@ -592,6 +698,7 @@ case $basic_machine in
 	| le32 | le64 \
 	| lm32 \
 	| m32c | m32r | m32rle | m68000 | m68k | m88k \
+	| m6811 | m68hc11 | m6812 | m68hc12 | m68hcs12x | nvptx | picochip \
 	| maxq | mb | microblaze | microblazeel | mcore | mep | metag \
 	| mips | mipsbe | mipseb | mipsel | mipsle \
 	| mips16 \
@@ -640,7 +747,7 @@ case $basic_machine in
 	| v850 | v850e | v850e1 | v850e2 | v850es | v850e2v3 \
 	| visium \
 	| wasm32 \
-	| x86 | xc16x | xstormy16 | xtensa \
+	| x86 | xc16x | xstormy16 | xgate | xtensa \
 	| z8k | z80)
 		basic_machine=$basic_machine-unknown
 		;;
@@ -656,11 +763,6 @@ case $basic_machine in
 	leon|leon[3-9])
 		basic_machine=sparc-$basic_machine
 		;;
-	m6811-* | m68hc11-* | m6812-* | m68hc12-* | m68hcs12x-* | nvptx-* | picochip-*)
-		;;
-	m6811 | m68hc11 | m6812 | m68hc12 | m68hcs12x | nvptx | picochip)
-		basic_machine=$basic_machine-unknown
-		;;
 	m88110 | m680[12346]0 | m683?2 | m68360 | m5200 | v70 | w65)
 		;;
 	m9s12z | m68hcs12z | hcs12z | s12z)
@@ -674,11 +776,6 @@ case $basic_machine in
 		;;
 	strongarm | thumb | xscale)
 		basic_machine=arm-unknown
-		;;
-	xgate)
-		basic_machine=$basic_machine-unknown
-		;;
-	xgate-*)
 		;;
 	xscaleeb)
 		basic_machine=armeb-unknown
@@ -718,13 +815,14 @@ case $basic_machine in
 	| h8300-* | h8500-* \
 	| hppa-* | hppa1.[01]-* | hppa2.0-* | hppa2.0[nw]-* | hppa64-* \
 	| hexagon-* \
-	| i*86-* | i860-* | i960-* | ia16-* | ia64-* \
+	| i370-* | i*86-* | i860-* | i960-* | ia16-* | ia64-* \
 	| ip2k-* | iq2000-* \
 	| k1om-* \
 	| le32-* | le64-* \
 	| lm32-* \
 	| m32c-* | m32r-* | m32rle-* \
 	| m5200-* | m68000-* | m680[012346]0-* | m68360-* | m683?2-* | m68k-* | v70-* | w65-* \
+	| m6811-* | m68hc11-* | m6812-* | m68hc12-* | m68hcs12x-* | nvptx-* | picochip-* \
 	| m88110-* | m88k-* | maxq-* | mb-* | mcore-* | mep-* | metag-* \
 	| microblaze-* | microblazeel-* \
 	| mips-* | mipsbe-* | mipseb-* | mipsel-* | mipsle-* \
@@ -783,7 +881,7 @@ case $basic_machine in
 	| visium-* \
 	| wasm32-* \
 	| we32k-* \
-	| x86-* | x86_64-* | xc16x-* | xps100-* \
+	| x86-* | x86_64-* | xc16x-* | xgate-* | xps100-* \
 	| xstormy16-* | xtensa*-* \
 	| ymp-* \
 	| z8k-* | z80-*)
@@ -799,12 +897,6 @@ case $basic_machine in
 		;;
 	3b*)
 		basic_machine=we32k-att
-		;;
-	alliant | fx80)
-		basic_machine=fx80-alliant
-		;;
-	altos | altos3068)
-		basic_machine=m68k-altos
 		;;
 	amd64)
 		basic_machine=x86_64-pc
@@ -836,32 +928,9 @@ case $basic_machine in
 		basic_machine=c90-cray
 		os=${os:-unicos}
 		;;
-	convex-c1)
-		basic_machine=c1-convex
-		os=bsd
-		;;
-	convex-c2)
-		basic_machine=c2-convex
-		os=bsd
-		;;
-	convex-c32)
-		basic_machine=c32-convex
-		os=bsd
-		;;
-	convex-c34)
-		basic_machine=c34-convex
-		os=bsd
-		;;
-	convex-c38)
-		basic_machine=c38-convex
-		os=bsd
-		;;
 	cr16 | cr16-*)
 		basic_machine=cr16-unknown
 		os=${os:-elf}
-		;;
-	crds | unos)
-		basic_machine=m68k-crds
 		;;
 	crisv32 | crisv32-* | etraxfs*)
 		basic_machine=crisv32-axis
@@ -955,9 +1024,6 @@ case $basic_machine in
 		;;
 	hp9k8[0-9][0-9] | hp8[0-9][0-9])
 		basic_machine=hppa1.0-hp
-		;;
-	i370-ibm* | ibm*)
-		basic_machine=i370-ibm
 		;;
 	i*86v32)
 		basic_machine=`echo "$1" | sed -e 's/86.*/86-pc/'`
@@ -1171,23 +1237,8 @@ case $basic_machine in
 	spur)
 		basic_machine=spur-unknown
 		;;
-	st2000)
-		basic_machine=m68k-tandem
-		;;
 	strongarm-* | thumb-*)
 		basic_machine=arm-`echo "$basic_machine" | sed 's/^[^-]*-//'`
-		;;
-	sun2)
-		basic_machine=m68000-sun
-		;;
-	sun3 | sun3-*)
-		basic_machine=m68k-sun
-		;;
-	sun4)
-		basic_machine=sparc-sun
-		;;
-	sun386 | sun386i | roadrunner)
-		basic_machine=i386-sun
 		;;
 	tile*-*)
 		;;
@@ -1218,9 +1269,6 @@ case $basic_machine in
 	x64)
 		basic_machine=x86_64-pc
 		;;
-	xps | xps100)
-		basic_machine=xps100-honeywell
-		;;
 	xscale-* | xscalee[bl]-*)
 		basic_machine=`echo "$basic_machine" | sed 's/^xscale/arm/'`
 		;;
@@ -1228,50 +1276,6 @@ case $basic_machine in
 		basic_machine=none-none
 		;;
 
-# Here we handle the default manufacturer of certain CPU types.  It is in
-# some cases the only manufacturer, in others, it is the most popular.
-	w89k)
-		basic_machine=hppa1.1-winbond
-		;;
-	op50n)
-		basic_machine=hppa1.1-oki
-		;;
-	op60c)
-		basic_machine=hppa1.1-oki
-		;;
-	romp)
-		basic_machine=romp-ibm
-		;;
-	mmix)
-		basic_machine=mmix-knuth
-		;;
-	rs6000)
-		basic_machine=rs6000-ibm
-		;;
-	vax)
-		basic_machine=vax-dec
-		;;
-	pdp11)
-		basic_machine=pdp11-dec
-		;;
-	we32k)
-		basic_machine=we32k-att
-		;;
-	cydra)
-		basic_machine=cydra-cydrome
-		;;
-	orion)
-		basic_machine=orion-highlevel
-		;;
-	orion105)
-		basic_machine=clipper-highlevel
-		;;
-	mac | mpw | mac-mpw)
-		basic_machine=m68k-apple
-		;;
-	pmac | pmac-mpw)
-		basic_machine=powerpc-apple
-		;;
 	*)
 		echo Invalid configuration \`"$1"\': machine \`"$basic_machine"\' not recognized 1>&2
 		exit 1
