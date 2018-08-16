@@ -1,21 +1,21 @@
-article 
+article
 This is the first paragraph.
 
-First Section 
+First Section
 
 Preamble of Sect. 1.
 
-A Subsection 
+A Subsection
 
 Here some text, an inline formula , as well
 as a displayed equation
 
-equation 
-e^ix =x i x,
-equation 
+equation
+e^ix=x i x,
+equation
 
 and some more text.
 
 Now some verbatim text a b c.  That's all, folks.
 
-document 
+document
