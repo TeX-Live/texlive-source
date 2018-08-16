@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2016 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2018 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -371,7 +371,7 @@ static struct {
    spc_pdfm_at_begin_document,
    spc_pdfm_at_end_document,
    NULL,
-   NULL,
+   spc_pdfm_at_end_page,
    spc_pdfm_check_special,
    spc_pdfm_setup_handler
   },
@@ -595,4 +595,3 @@ spc_exec_special (const char *buffer, int32_t size,
 
   return error;
 }
-

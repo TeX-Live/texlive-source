@@ -72,6 +72,7 @@ static struct pdf_sec {
    struct {
      int use_aes;
      int encrypt_metadata;
+     int need_adobe_extension;
    } setting;
 
    struct {
@@ -106,6 +107,7 @@ pdf_enc_init (int use_aes, int encrypt_metadata)
   srand(current_time); /* For AES IV */
   p->setting.use_aes = use_aes;
   p->setting.encrypt_metadata = encrypt_metadata;
+  p->setting.need_adobe_extension = 0;
 }
 
 #define PRODUCER \
@@ -475,6 +477,9 @@ check_version (struct pdf_sec *p, int version)
          " (plus Adobe Extension Level 3).");
     p->V = 4;
   }
+  if (p->V == 5 && version < 20) {
+    p->setting.need_adobe_extension = 1;
+  }
 }
 
 /* Dummy routine for stringprep - NOT IMPLEMENTED YET
@@ -786,7 +791,7 @@ pdf_encrypt_obj (void)
   }
 
 #ifdef USE_ADOBE_EXTENSION
-  if (p->R > 5) {
+  if (p->R > 5 && p->setting.need_adobe_extension != 0) {
     pdf_obj *catalog = pdf_doc_catalog();
     pdf_obj *ext  = pdf_new_dict();
     pdf_obj *adbe = pdf_new_dict();

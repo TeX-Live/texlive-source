@@ -154,6 +154,7 @@ Type0Font_create_ToUnicode_stream(Type0Font *font) {
   CIDFont *cidfont = font->descendant;
   return otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
                                      CIDFont_get_opt_index(cidfont),
+                                     CIDFont_get_fontname(cidfont),
                                      Type0Font_get_usedchars(font),
                                      font->cmap_id);
 }

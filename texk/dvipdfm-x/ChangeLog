@@ -1,3 +1,15 @@
+2018-08-17  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cmap_write.c, tt_cmap.[ch], type0.c: Fixed a bug that
+	CMapName in CMap resource is not properly written.
+	Not correctly handles PostScript name and string objects.
+	Use CMapName constructed from font's BaseFont entry.
+	* spc_pdfm.c, spc_pdfm.h, specials.c: Added new special command
+	pdf:pageresources similar to pdfTeX \pdfpageresources
+	primitive.
+	* pdfencrypt.c: Adobe extension for AES 256-bit encryption is
+	not necessary for PDF version 2.0.
+
 2018-05-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi.c: First search for an input file with a suffix .xdv
