@@ -88,16 +88,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 @DIRECT_TYPE_TRUE@am__append_1 = @GRAPHITE2_TREE@/src/direct_machine.cpp
 @DIRECT_TYPE_FALSE@am__append_2 = @GRAPHITE2_TREE@/src/call_machine.cpp
-@WITH_SEGCACHE_TRUE@am__append_3 = \
-@WITH_SEGCACHE_TRUE@	@GRAPHITE2_TREE@/src/SegCache.cpp \
-@WITH_SEGCACHE_TRUE@	@GRAPHITE2_TREE@/src/SegCacheEntry.cpp \
-@WITH_SEGCACHE_TRUE@	@GRAPHITE2_TREE@/src/SegCacheStore.cpp
-
-@WITH_SEGCACHE_FALSE@am__append_4 = -DGRAPHITE2_NSEGCACHE
-@WITH_FILEFACE_TRUE@am__append_5 = @GRAPHITE2_TREE@/src/FileFace.cpp 
-@WITH_FILEFACE_FALSE@am__append_6 = -DGRAPHITE2_NFILEFACE
-@WITH_TRACING_TRUE@am__append_7 = @GRAPHITE2_TREE@/src/json.cpp
-@WITH_TRACING_FALSE@am__append_8 = -DGRAPHITE2_NTRACING
+@WITH_FILEFACE_TRUE@am__append_3 = @GRAPHITE2_TREE@/src/FileFace.cpp 
+@WITH_FILEFACE_FALSE@am__append_4 = -DGRAPHITE2_NFILEFACE
+@WITH_TRACING_TRUE@am__append_5 = @GRAPHITE2_TREE@/src/json.cpp
+@WITH_TRACING_FALSE@am__append_6 = -DGRAPHITE2_NTRACING
 @build_TRUE@check_PROGRAMS = gr2test$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -124,8 +118,7 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libgraphite2_a_AR = $(AR) $(ARFLAGS)
 libgraphite2_a_LIBADD =
-am__libgraphite2_a_SOURCES_DIST = @GRAPHITE2_TREE@/src/CachedFace.cpp \
-	@GRAPHITE2_TREE@/src/CmapCache.cpp \
+am__libgraphite2_a_SOURCES_DIST = @GRAPHITE2_TREE@/src/CmapCache.cpp \
 	@GRAPHITE2_TREE@/src/Code.cpp \
 	@GRAPHITE2_TREE@/src/Collider.cpp \
 	@GRAPHITE2_TREE@/src/Decompressor.cpp \
@@ -152,24 +145,16 @@ am__libgraphite2_a_SOURCES_DIST = @GRAPHITE2_TREE@/src/CachedFace.cpp \
 	@GRAPHITE2_TREE@/src/gr_slot.cpp \
 	@GRAPHITE2_TREE@/src/direct_machine.cpp \
 	@GRAPHITE2_TREE@/src/call_machine.cpp \
-	@GRAPHITE2_TREE@/src/SegCache.cpp \
-	@GRAPHITE2_TREE@/src/SegCacheEntry.cpp \
-	@GRAPHITE2_TREE@/src/SegCacheStore.cpp \
 	@GRAPHITE2_TREE@/src/FileFace.cpp \
 	@GRAPHITE2_TREE@/src/json.cpp
 am__dirstamp = $(am__leading_dot)dirstamp
 @DIRECT_TYPE_TRUE@am__objects_1 = @GRAPHITE2_TREE@/src/direct_machine.$(OBJEXT)
 @DIRECT_TYPE_FALSE@am__objects_2 = @GRAPHITE2_TREE@/src/call_machine.$(OBJEXT)
-@WITH_SEGCACHE_TRUE@am__objects_3 =  \
-@WITH_SEGCACHE_TRUE@	@GRAPHITE2_TREE@/src/SegCache.$(OBJEXT) \
-@WITH_SEGCACHE_TRUE@	@GRAPHITE2_TREE@/src/SegCacheEntry.$(OBJEXT) \
-@WITH_SEGCACHE_TRUE@	@GRAPHITE2_TREE@/src/SegCacheStore.$(OBJEXT)
-@WITH_FILEFACE_TRUE@am__objects_4 =  \
+@WITH_FILEFACE_TRUE@am__objects_3 =  \
 @WITH_FILEFACE_TRUE@	@GRAPHITE2_TREE@/src/FileFace.$(OBJEXT)
-@WITH_TRACING_TRUE@am__objects_5 =  \
+@WITH_TRACING_TRUE@am__objects_4 =  \
 @WITH_TRACING_TRUE@	@GRAPHITE2_TREE@/src/json.$(OBJEXT)
-am_libgraphite2_a_OBJECTS = @GRAPHITE2_TREE@/src/CachedFace.$(OBJEXT) \
-	@GRAPHITE2_TREE@/src/CmapCache.$(OBJEXT) \
+am_libgraphite2_a_OBJECTS = @GRAPHITE2_TREE@/src/CmapCache.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Code.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Collider.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Decompressor.$(OBJEXT) \
@@ -196,8 +181,7 @@ am_libgraphite2_a_OBJECTS = @GRAPHITE2_TREE@/src/CachedFace.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/gr_logging.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/gr_segment.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/gr_slot.$(OBJEXT) $(am__objects_1) \
-	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
-	$(am__objects_5)
+	$(am__objects_2) $(am__objects_3) $(am__objects_4)
 libgraphite2_a_OBJECTS = $(am_libgraphite2_a_OBJECTS)
 am_gr2test_OBJECTS = gr2test-gr2test.$(OBJEXT)
 gr2test_OBJECTS = $(am_gr2test_OBJECTS)
@@ -221,7 +205,6 @@ depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/gr2test-dummy.Po \
 	./$(DEPDIR)/gr2test-gr2test.Po \
-	@GRAPHITE2_TREE@/src/$(DEPDIR)/CachedFace.Po \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/CmapCache.Po \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/Code.Po \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/Collider.Po \
@@ -237,9 +220,6 @@ am__depfiles_remade = ./$(DEPDIR)/gr2test-dummy.Po \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/NameTable.Po \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/Pass.Po \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/Position.Po \
-	@GRAPHITE2_TREE@/src/$(DEPDIR)/SegCache.Po \
-	@GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheEntry.Po \
-	@GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheStore.Po \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/Segment.Po \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/Silf.Po \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/Slot.Po \
@@ -695,10 +675,9 @@ SUBDIRS = . include/graphite2
 noinst_LIBRARIES = libgraphite2.a
 AM_CPPFLAGS = -I$(top_srcdir)/$(GRAPHITE2_SRC) \
 	-I$(top_srcdir)/$(GRAPHITE2_INC) -DGRAPHITE2_STATIC \
-	-DGRAPHITE2_CUSTOM_HEADER='<config.h>' $(am__append_4) \
-	$(am__append_6) $(am__append_8)
-libgraphite2_a_SOURCES = @GRAPHITE2_TREE@/src/CachedFace.cpp \
-	@GRAPHITE2_TREE@/src/CmapCache.cpp \
+	-DGRAPHITE2_CUSTOM_HEADER='<config.h>' -DGRAPHITE2_NSEGCACHE \
+	$(am__append_4) $(am__append_6)
+libgraphite2_a_SOURCES = @GRAPHITE2_TREE@/src/CmapCache.cpp \
 	@GRAPHITE2_TREE@/src/Code.cpp \
 	@GRAPHITE2_TREE@/src/Collider.cpp \
 	@GRAPHITE2_TREE@/src/Decompressor.cpp \
@@ -723,8 +702,7 @@ libgraphite2_a_SOURCES = @GRAPHITE2_TREE@/src/CachedFace.cpp \
 	@GRAPHITE2_TREE@/src/gr_logging.cpp \
 	@GRAPHITE2_TREE@/src/gr_segment.cpp \
 	@GRAPHITE2_TREE@/src/gr_slot.cpp $(am__append_1) \
-	$(am__append_2) $(am__append_3) $(am__append_5) \
-	$(am__append_7)
+	$(am__append_2) $(am__append_3) $(am__append_5)
 @build_TRUE@dist_check_SCRIPTS = graphite2.test
 @build_TRUE@TESTS = graphite2.test
 gr2test_SOURCES = gr2test.c
@@ -804,9 +782,6 @@ clean-noinstLIBRARIES:
 @GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) @GRAPHITE2_TREE@/src/$(DEPDIR)
 	@: > @GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@GRAPHITE2_TREE@/src/CachedFace.$(OBJEXT):  \
-	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
-	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GRAPHITE2_TREE@/src/CmapCache.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -894,15 +869,6 @@ clean-noinstLIBRARIES:
 @GRAPHITE2_TREE@/src/call_machine.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@GRAPHITE2_TREE@/src/SegCache.$(OBJEXT):  \
-	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
-	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@GRAPHITE2_TREE@/src/SegCacheEntry.$(OBJEXT):  \
-	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
-	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@GRAPHITE2_TREE@/src/SegCacheStore.$(OBJEXT):  \
-	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
-	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GRAPHITE2_TREE@/src/FileFace.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -928,7 +894,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gr2test-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gr2test-gr2test.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/CachedFace.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/CmapCache.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Code.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Collider.Po@am__quote@ # am--include-marker
@@ -944,9 +909,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/NameTable.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Pass.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Position.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/SegCache.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheEntry.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheStore.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Segment.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Silf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Slot.Po@am__quote@ # am--include-marker
@@ -1555,7 +1517,6 @@ distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f ./$(DEPDIR)/gr2test-dummy.Po
 	-rm -f ./$(DEPDIR)/gr2test-gr2test.Po
-	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/CachedFace.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/CmapCache.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Code.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Collider.Po
@@ -1571,9 +1532,6 @@ distclean: distclean-recursive
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/NameTable.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Pass.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Position.Po
-	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/SegCache.Po
-	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheEntry.Po
-	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheStore.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Segment.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Silf.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Slot.Po
@@ -1639,7 +1597,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f ./$(DEPDIR)/gr2test-dummy.Po
 	-rm -f ./$(DEPDIR)/gr2test-gr2test.Po
-	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/CachedFace.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/CmapCache.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Code.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Collider.Po
@@ -1655,9 +1612,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/NameTable.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Pass.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Position.Po
-	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/SegCache.Po
-	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheEntry.Po
-	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheStore.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Segment.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Silf.Po
 	-rm -f @GRAPHITE2_TREE@/src/$(DEPDIR)/Slot.Po

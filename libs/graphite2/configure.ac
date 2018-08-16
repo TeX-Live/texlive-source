@@ -26,13 +26,6 @@ AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
 AM_CONDITIONAL([DIRECT_TYPE], [test "x$GCC" = xyes])
 
-enable_segcache=no
-AM_CONDITIONAL([WITH_SEGCACHE], [test "x$enable_segcache" != xno])
-if test "x$enable_segcache" = no; then
-  AC_DEFINE([GRAPHITE2_NSEGCACHE], 1,
-            [Define to 1 to disable segcache support.])
-fi
-
 enable_fileface=yes
 AM_CONDITIONAL([WITH_FILEFACE], [test "x$enable_fileface" != xno])
 if test "x$enable_fileface" = no; then

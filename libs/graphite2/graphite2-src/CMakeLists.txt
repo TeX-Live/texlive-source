@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0 FATAL_ERROR)
 cmake_policy(SET CMP0012 NEW)
 include(TestBigEndian)
+include(FindPythonInterp)
 
 project(graphite2)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
@@ -11,39 +12,40 @@ endif (NOT CMAKE_BUILD_TYPE)
 option(BUILD_SHARED_LIBS "Make library a shared library instead of static" ON)
 
 enable_language(CXX C)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED 11)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 enable_testing()
 
 set(GRAPHITE2_VM_TYPE auto CACHE STRING "Choose the type of vm machine: Auto, Direct or Call.")
-option(GRAPHITE2_NSEGCACHE "Compile out the gr_*_with_seg_cache APIs")
 option(GRAPHITE2_NFILEFACE "Compile out the gr_make_file_face* APIs")
-option(GRAPHITE2_NTRACING "Compile out log segment tracing capability")
+option(GRAPHITE2_NTRACING "Compile out log segment tracing capability" ON)
 option(GRAPHITE2_TELEMETRY "Add memory usage telemetry")
-option(GRAPHITE2_ASAN "Enable Address Sanitizing")
-
+set(GRAPHITE2_SANITIZERS "" CACHE STRING "Set compiler sanitizers passed to -fsanitize")
 
 message(STATUS "Build: " ${CMAKE_BUILD_TYPE})
 string(REPLACE "ON"  "shared"  _LIB_OBJECT_TYPE ${BUILD_SHARED_LIBS})
 string(REPLACE "OFF" "static"  _LIB_OBJECT_TYPE ${_LIB_OBJECT_TYPE})
-string(REPLACE "ON" "disabled" _SEGCACHE_SUPPORT ${GRAPHITE2_NSEGCACHE})
-string(REPLACE "OFF" "enabled" _SEGCACHE_SUPPORT ${_SEGCACHE_SUPPORT})
 string(REPLACE "ON" "disabled" _FILEFACE_SUPPORT ${GRAPHITE2_NFILEFACE})
 string(REPLACE "OFF" "enabled" _FILEFACE_SUPPORT ${_FILEFACE_SUPPORT})
 string(REPLACE "ON" "disabled" _TRACING_SUPPORT ${GRAPHITE2_NTRACING})
 string(REPLACE "OFF" "enabled" _TRACING_SUPPORT ${_TRACING_SUPPORT})
 message(STATUS "Building library: " ${_LIB_OBJECT_TYPE})
-message(STATUS "Segment Cache support: " ${_SEGCACHE_SUPPORT})
 message(STATUS "File Face support: " ${_FILEFACE_SUPPORT})
 message(STATUS "Tracing support: " ${_TRACING_SUPPORT})
 
-if (GRAPHITE2_ASAN)
-    add_definitions(-fsanitize=address -fno-omit-frame-pointer -g)
-    find_program(ASAN_SYMBOLIZER llvm-symbolizer
-            PATHS "/usr/lib" "/usr/local/lib"
-            PATH_SUFFIXES "llvm-3.5/bin" "llvm-3.4/bin" "llvm-3.3/bin")
-endif (GRAPHITE2_ASAN)
+if (GRAPHITE2_SANITIZERS)
+    string(STRIP ${GRAPHITE2_SANITIZERS} GRAPHITE2_SANITIZERS)
+    add_compile_options(-fsanitize=${GRAPHITE2_SANITIZERS} -fno-omit-frame-pointer -g -O1)
+    message(STATUS "Sanitizer support: " ${GRAPHITE2_SANITIZERS})
+    string(REGEX REPLACE "(,?fuzzer|fuzzer,?)" "" SANITIZERS_LINK  ${GRAPHITE2_SANITIZERS})
+    if (GRAPHITE2_SANITIZERS MATCHES "fuzzer")
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize-coverage=trace-pc-guard")
+    endif ()
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=${SANITIZERS_LINK}")
+endif ()
 
 string(TOLOWER ${GRAPHITE2_VM_TYPE} GRAPHITE2_VM_TYPE)
 if (NOT GRAPHITE2_VM_TYPE MATCHES "auto|direct|call")
@@ -62,12 +64,27 @@ if (GRAPHITE2_VM_TYPE STREQUAL "direct" AND NOT (CMAKE_COMPILER_IS_GNUCXX OR CMA
 endif (GRAPHITE2_VM_TYPE STREQUAL "direct" AND NOT (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang"))
 message(STATUS "Using vm machine type: ${GRAPHITE2_VM_TYPE}")
 
+if (BUILD_SHARED_LIBS)
+    if (PYTHONINTERP_FOUND)
+        EXEC_PROGRAM(${PYTHON_EXECUTABLE}
+            ARGS -c \"import ctypes\; print(ctypes.sizeof(ctypes.c_void_p)) \"
+            OUTPUT_VARIABLE PYTHON_SIZEOF_VOID_P)
+        if ((PYTHON_SIZEOF_VOID_P STREQUAL CMAKE_SIZEOF_VOID_P) AND (NOT GRAPHITE2_NFILEFACE) AND ((NOT GRAPHITE2_SANITIZERS MATCHES "address") OR CMAKE_COMPILER_IS_GNUCXX))
+            set(PYTHON_CTYPES_COMPATBILE TRUE)
+        else ()
+            if ((NOT GRAPHITE2_SANITIZERS MATCHES "address") OR CMAKE_COMPILER_IS_GNUCXX)
+                message(WARNING "Python ctypes is incompatible with built DLL. Disabling some tests.")
+            endif ()
+        endif ()
+    endif (PYTHONINTERP_FOUND)
+endif (BUILD_SHARED_LIBS)
+
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(doc)
-if (NOT (GRAPHITE2_NSEGCACHE OR GRAPHITE2_NFILEFACE))
+if (NOT GRAPHITE2_NFILEFACE)
     add_subdirectory(gr2fonttest)
-endif (NOT (GRAPHITE2_NSEGCACHE OR GRAPHITE2_NFILEFACE))
+endif (NOT GRAPHITE2_NFILEFACE)
 
 set(version 3.0.1)
 set(libdir ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX})
@@ -76,4 +93,3 @@ set(includedir ${CMAKE_INSTALL_PREFIX}/include)
 configure_file(graphite2.pc.in graphite2.pc)
 
 install(FILES ${PROJECT_BINARY_DIR}/graphite2.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig)
-

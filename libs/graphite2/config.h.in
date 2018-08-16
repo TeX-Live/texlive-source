@@ -3,9 +3,6 @@
 /* Define to 1 to disable fileface support. */
 #undef GRAPHITE2_NFILEFACE
 
-/* Define to 1 to disable segcache support. */
-#undef GRAPHITE2_NSEGCACHE
-
 /* Define to 1 to disable tracing support. */
 #undef GRAPHITE2_NTRACING
 
