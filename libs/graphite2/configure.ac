@@ -15,8 +15,10 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 KPSE_BASIC([graphite2])
 
+dnl ! C++11 required since graphite2 1.3.12 !
 AC_PROG_CC
 AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX([11])
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
