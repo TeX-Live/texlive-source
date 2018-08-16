@@ -1,4 +1,4 @@
-OpenDetex - Version 2.8.3
+OpenDetex - Version 2.8.4
 
 OpenDetex is a program to remove TeX constructs from a text file.  It recognizes
 the \input command.

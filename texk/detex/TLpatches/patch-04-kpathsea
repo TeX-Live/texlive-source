@@ -1,6 +1,6 @@
-diff -ur opendetex-2.8.3.orig/detex.l opendetex-2.8.3/detex.l
---- opendetex-2.8.3.orig/detex.l	2018-02-11 18:42:05.000000000 +0900
-+++ opendetex-2.8.3/detex.l	2018-06-20 23:12:37.000000000 +0900
+diff -ur opendetex-2.8.4.orig/detex.l opendetex-2.8.4/detex.l
+--- opendetex-2.8.4.orig/detex.l	2018-02-11 18:42:05.000000000 +0900
++++ opendetex-2.8.4/detex.l	2018-06-20 23:12:37.000000000 +0900
 @@ -73,6 +73,7 @@
  #ifndef MAXPATHLEN
  #include <sys/param.h>
