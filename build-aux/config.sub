@@ -149,29 +149,39 @@ case $1 in
 		esac
 		;;
 	*-*)
-		# Second component is usually, but not always the OS
-		case $field2 in
-			# Prevent following clause from handling this valid os
-			sun*os*)
-				basic_machine=$field1
-				os=$field2
-				;;
-			# Manufacturers
-			dec* | mips* | sequent* | encore* | pc532* | sgi* | sony* \
-			| att* | 7300* | 3300* | delta* | motorola* | sun[234]* \
-			| unicom* | ibm* | next | hp | isi* | apollo | altos* \
-			| convergent* | ncr* | news | 32* | 3600* | 3100* | hitachi* \
-			| c[123]* | convex* | sun | crds | omron* | dg | ultra | tti* \
-			| harris | dolphin | highlevel | gould | cbm | ns | masscomp \
-			| apple | axis | knuth | cray | microblaze* \
-			| sim | cisco | oki | wec | wrs | winbond)
-				basic_machine=$field1-$field2
+		# A lone config we happen to match not fitting any patern
+		case $field1-$field2 in
+			decstation-3100)
+				basic_machine=mips-dec
 				os=
 				;;
-			*)
-				basic_machine=$field1
-				os=$field2
-				;;
+			*-*)
+				# Second component is usually, but not always the OS
+				case $field2 in
+					# Prevent following clause from handling this valid os
+					sun*os*)
+						basic_machine=$field1
+						os=$field2
+						;;
+					# Manufacturers
+					dec* | mips* | sequent* | encore* | pc533* | sgi* | sony* \
+					| att* | 7300* | 3300* | delta* | motorola* | sun[234]* \
+					| unicom* | ibm* | next | hp | isi* | apollo | altos* \
+					| convergent* | ncr* | news | 32* | 3600* | 3100* \
+					| hitachi* | c[123]* | convex* | sun | crds | omron* | dg \
+					| ultra | tti* | harris | dolphin | highlevel | gould \
+					| cbm | ns | masscomp | apple | axis | knuth | cray \
+					| microblaze* | sim | cisco \
+					| oki | wec | wrs | winbond)
+						basic_machine=$field1-$field2
+						os=
+						;;
+					*)
+						basic_machine=$field1
+						os=$field2
+						;;
+				esac
+			;;
 		esac
 		;;
 	*)
@@ -205,6 +215,10 @@ case $1 in
 			amdahl)
 				basic_machine=580-amdahl
 				os=sysv
+				;;
+			amiga)
+				basic_machine=m68k-unknown
+				os=
 				;;
 			amigaos | amigados)
 				basic_machine=m68k-unknown
@@ -270,6 +284,14 @@ case $1 in
 				basic_machine=m68k-crds
 				os=
 				;;
+			da30)
+				basic_machine=m68k-da30
+				os=
+				;;
+			decstation | pmax | pmin | dec3100 | decstatn)
+				basic_machine=mips-dec
+				os=
+				;;
 			delta88)
 				basic_machine=m88k-motorola
 				os=sysv3
@@ -313,6 +335,9 @@ case $1 in
 			harris)
 				basic_machine=m88k-harris
 				os=sysv3
+				;;
+			hp300)
+				basic_machine=m68k-hp
 				;;
 			hp300bsd)
 				basic_machine=m68k-hp
@@ -481,6 +506,10 @@ case $1 in
 			sei)
 				basic_machine=mips-sei
 				os=seiux
+				;;
+			sequent)
+				basic_machine=i386-sequent
+				os=
 				;;
 			sps7)
 				basic_machine=m68k-bull
@@ -904,9 +933,6 @@ case $basic_machine in
 	amd64-*)
 		basic_machine=x86_64-`echo "$basic_machine" | sed 's/^[^-]*-//'`
 		;;
-	amiga | amiga-*)
-		basic_machine=m68k-unknown
-		;;
 	blackfin-*)
 		basic_machine=bfin-`echo "$basic_machine" | sed 's/^[^-]*-//'`
 		os=linux
@@ -941,12 +967,6 @@ case $basic_machine in
 	crx)
 		basic_machine=crx-unknown
 		os=${os:-elf}
-		;;
-	da30 | da30-*)
-		basic_machine=m68k-da30
-		;;
-	decstation | decstation-3100 | pmax | pmax-* | pmin | dec3100 | decstatn)
-		basic_machine=mips-dec
 		;;
 	decsystem10* | dec10*)
 		basic_machine=pdp10-dec
@@ -992,9 +1012,6 @@ case $basic_machine in
 	h3050r* | hiux*)
 		basic_machine=hppa1.1-hitachi
 		os=hiuxwe2
-		;;
-	hp300-*)
-		basic_machine=m68k-hp
 		;;
 	hp3k9[0-9][0-9] | hp9[0-9][0-9])
 		basic_machine=hppa1.0-hp
@@ -1220,9 +1237,6 @@ case $basic_machine in
 	sde)
 		basic_machine=mipsisa32-sde
 		os=${os:-elf}
-		;;
-	sequent)
-		basic_machine=i386-sequent
 		;;
 	sh5el)
 		basic_machine=sh5le-unknown
