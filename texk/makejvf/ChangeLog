@@ -1,3 +1,8 @@
+2018-08-18  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* tfmread.c: Do not check GLUEKERN table in non-enhanced mode.
+	* version.h: Bump version.
+
 2018-03-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* usrtable.c: Do not initialize CHARSET flag at

@@ -26,7 +26,7 @@ int jfmread(int kcode)
 	w = width[w_ind];
 
 	rightamount = 0;
-	if (w != zw && ctype > 0) {
+	if (enhanced && w != zw && ctype > 0) {
 		/* get natural length of JFM glue between <type0> and <type of kcode> */
 		tag = char_info[0*4+2] % 4;
 		if (tag == 1) {
