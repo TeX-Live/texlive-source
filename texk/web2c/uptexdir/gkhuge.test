@@ -29,8 +29,9 @@ for font in gkhugeng; do
   # The invalid gkhugeng.tfm was erroneously created before
   # web2c/pltotf.ch change 2017-09-10, due to overflow
   TEXMFCNF=$srcdir/../kpathsea \
-    ./uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl \
-      && exit 1 || echo
+    ./uptftopl $testdir/$font.tfm uptests/y$font.pl \
+      2>uptests/y$font.err && exit 1 || echo
+    cmp $testdir/$font.err uptests/y$font.err && echo || exit 1
 
 done
 

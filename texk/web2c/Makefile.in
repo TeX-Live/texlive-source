@@ -3070,10 +3070,11 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm \
 	uptexdir/tests/uparse.pl uptexdir/tests/uparse.tfm \
 	uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm \
-	uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf \
-	$(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines \
-	euptexdir/COPYRIGHT euptexdir/COPYRIGHT.jis \
-	euptexdir/ChangeLog euptexdir/EUPTEX.txt $(euptex_tests) \
+	uptexdir/tests/gkhugeng.err uptexdir/uptrip/uptrip.diffs \
+	uptexdir/uptrip/texmf.cnf $(euptex_web_srcs) $(euptex_ch_srcs) \
+	euptexdir/euptex.defines euptexdir/COPYRIGHT \
+	euptexdir/COPYRIGHT.jis euptexdir/ChangeLog \
+	euptexdir/EUPTEX.txt $(euptex_tests) \
 	eptexdir/eptrip/eptrip.log eptexdir/eptrip/eptrip.tex \
 	euptexdir/euptrip/euptrip.diffs euptexdir/euptrip/texmf.cnf \
 	euptexdir/pdfprimitive.test \

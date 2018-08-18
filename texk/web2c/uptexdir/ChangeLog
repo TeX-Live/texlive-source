@@ -1,3 +1,9 @@
+2018-08-18  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* gkhuge.test: More strict test.
+	* tests/gkhugeng.err: Added.
+	* am/uptex.am: Adjust.
+
 2018-06-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ksnji.h, kanji.c, uptex.defines:

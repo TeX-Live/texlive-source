@@ -211,7 +211,7 @@ DISTCLEANFILES += uptests/xtestnewu.*
 EXTRA_DIST += uptexdir/tests/uparse.pl uptexdir/tests/uparse.tfm
 DISTCLEANFILES += uptests/*uparse.*
 ## uptexdir/gkhuge.test
-EXTRA_DIST += uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm
+EXTRA_DIST += uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm uptexdir/tests/gkhugeng.err
 DISTCLEANFILES += uptests/*gkhuge*.*
 ## uptexdir/uptriptest
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
