@@ -209,10 +209,10 @@ EXTRA_DIST += uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm
 DISTCLEANFILES += uptests/xtestnewu.*
 ## uptexdir/uparse.test
 EXTRA_DIST += uptexdir/tests/uparse.pl uptexdir/tests/uparse.tfm
-DISTCLEANFILES += uptests/*uparse.*
+DISTCLEANFILES += uptests/xuparse.* uptests/yuparse.*
 ## uptexdir/gkhuge.test
 EXTRA_DIST += uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm uptexdir/tests/gkhugeng.err
-DISTCLEANFILES += uptests/*gkhuge*.*
+DISTCLEANFILES += uptests/ygkhuge*.*
 ## uptexdir/uptriptest
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
 uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
