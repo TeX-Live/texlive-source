@@ -1,3 +1,10 @@
+2018-08-16  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptfmin.ch: Support new JFM spec, which allows 3-byte
+	characters in TYPE > 0.
+	* tests/testnewu.{mp,tex,tfm}: Added. (File testnewu.tfm
+	is the same as uptexdir/tests.)
+
 2018-03-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pmpost.ch: Use UTF-8 as a default encoding also on
