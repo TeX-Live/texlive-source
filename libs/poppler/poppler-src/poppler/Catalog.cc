@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2005-2013, 2015, 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005-2013, 2015, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Jeff Muizelaar <jrmuizel@nit.ca>
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
 // Copyright (C) 2005 Marco Pesenti Gritti <mpg@redhat.com>
@@ -877,10 +877,13 @@ Guint Catalog::getMarkInfo()
       Object markInfoDict = catDict.dictLookup("MarkInfo");
       if (markInfoDict.isDict()) {
         Object value = markInfoDict.dictLookup("Marked");
-        if (value.isBool() && value.getBool())
-          markInfo |= markInfoMarked;
-        else if (!value.isNull())
+        if (value.isBool()) {
+          if (value.getBool()) {
+            markInfo |= markInfoMarked;
+          }
+        } else if (!value.isNull()) {
           error(errSyntaxError, -1, "Marked object is wrong type ({0:s})", value.getTypeName());
+        }
 
         value = markInfoDict.dictLookup("Suspects");
         if (value.isBool() && value.getBool())

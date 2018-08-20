@@ -6,7 +6,7 @@
 //
 // Copyright 2015, 2016 André Guerreiro <aguerreiro1985@gmail.com>
 // Copyright 2015 André Esser <bepandre@hotmail.com>
-// Copyright 2015, 2016 Albert Astals Cid <aacid@kde.org>
+// Copyright 2015, 2016, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2015 Markus Kilås <digital@markuspage.com>
 // Copyright 2017 Sebastian Rasmussen <sebras@gmail.com>
 // Copyright 2017 Hans-Ulrich Jüttner <huj@froreich-bioscientia.de>
@@ -164,10 +164,6 @@ void SignatureHandler::updateHash(unsigned char * data_block, int data_len)
 SignatureHandler::~SignatureHandler()
 {
   SECITEM_FreeItem(&CMSitem, PR_FALSE);
-  if (CMSSignerInfo)
-    NSS_CMSSignerInfo_Destroy(CMSSignerInfo);
-  if (CMSSignedData)
-    NSS_CMSSignedData_Destroy(CMSSignedData);
   if (CMSMessage)
     NSS_CMSMessage_Destroy(CMSMessage);
 
@@ -317,9 +313,6 @@ SECErrorCodes SignatureHandler::validateCertificate(time_t validation_time)
                 CMSSignerInfo->cmsg->pwfn_arg);
 
   retVal = (SECErrorCodes) PORT_GetError();
-
-  if (cert)
-    CERT_DestroyCertificate(cert);
 
   return retVal;
 }

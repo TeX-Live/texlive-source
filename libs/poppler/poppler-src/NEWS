@@ -1,3 +1,28 @@
+Release 0.68.0
+        core:
+         * Add Reason and Location to SignatureInfo. Bug #107299
+         * Fix memory misuse on signature handling
+         * Fix security issues found by oss-fuzz
+         * Don't give a warning when Marked value is false. Bug #107430
+
+        qt5:
+         * Add Reason and Location to SignatureInfo. Bug #107299
+
+        cpp:
+         * Add rotation() to text_box. Bug #106562
+         * Fix build with MSVC
+
+        utils:
+         * pdftoppm: Add -jpegopt optimize option support
+         * pdftocairo: Add -jpegopt optimize option support
+         * pdftohtml: Add option to not round coordinates
+         * pdftohtml: Fix possible crash. Bug #107316
+
+        build system:
+         * Use OpenJpeg cmake config file instead of pkgconfig
+         * Remove wchar_t- on MSVC
+
+
 Release 0.67.0
         core:
          * Fix lots of security/leak issues found by oss-fuzz

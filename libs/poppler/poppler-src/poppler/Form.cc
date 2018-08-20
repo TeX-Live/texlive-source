@@ -1635,6 +1635,16 @@ void FormFieldSignature::parseInfo()
 
   byte_range = sig_dict.dictLookup("ByteRange");
 
+  const Object location_obj = sig_dict.dictLookup("Location");
+  if (location_obj.isString()) {
+    signature_info->setLocation(location_obj.getString()->copy()->getCString());
+  }
+
+  const Object reason_obj = sig_dict.dictLookup("Reason");
+  if (reason_obj.isString()) {
+    signature_info->setReason(reason_obj.getString()->copy()->getCString());
+  }
+
   // retrieve SigningTime
   Object time_of_signing = sig_dict.dictLookup("M");
   if (time_of_signing.isString()) {

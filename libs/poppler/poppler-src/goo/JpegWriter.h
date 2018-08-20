@@ -11,6 +11,7 @@
 // Copyright (C) 2010 Brian Cameron <brian.cameron@oracle.com>
 // Copyright (C) 2011 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2011 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2018 Martin Packman <gzlist@googlemail.com>
 //
 //========================================================================
 
@@ -41,6 +42,7 @@ public:
 
   void setQuality(int quality);
   void setProgressive(bool progressive);
+  void setOptimize(bool optimize);
   bool init(FILE *f, int width, int height, int hDPI, int vDPI) override;
 
   bool writePointers(unsigned char **rowPointers, int rowCount) override;

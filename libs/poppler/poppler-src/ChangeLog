@@ -1,3 +1,261 @@
+commit c666833e4163a93451eab27c675af9ca82d11593
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Aug 19 23:37:51 2018 +0200
+
+    poppler 0.68
+
+ CMakeLists.txt   |  4 ++--
+ NEWS             | 25 +++++++++++++++++++++++++
+ cpp/Doxyfile     |  2 +-
+ qt5/src/Doxyfile |  2 +-
+ 4 files changed, 29 insertions(+), 4 deletions(-)
+
+commit 9492eeb6af75d691a2131fa8481556b1ac86795c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Aug 19 23:29:10 2018 +0200
+
+    Update (C)
+
+ utils/HtmlFonts.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 7a74c4071f001664c4383ea8e4e9d941bdb438b4
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Aug 19 19:52:56 2018 +0200
+
+    Don't give a warning when Marked value is false
+
+    Bug #107430
+
+ poppler/Catalog.cc | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+commit ce0f124ae2a50c51cae32b8c4e7559a9223ea3d5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Aug 18 23:58:40 2018 +0200
+
+    Make sure that the openjpeg we're getting is version 2
+
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 06106d930b18a34c18e32734b73c212b852161a5
+Author: Aleksey Nikolaev <nae202@gmail.com>
+Date:   Thu Aug 16 17:20:00 2018 +0200
+
+    Fix build with MSVC
+
+ cpp/poppler-page.cpp | 4 ++++
+ cpp/poppler-page.h   | 5 +++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+commit 04db8bd27db154e055a0d1715c0f81d4c37d6871
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Aug 16 16:06:50 2018 +0200
+
+    LONG_LONG_MAX -> LLONG_MAX
+
+ poppler/XRef.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1b0b9e14e25494dfc08bbb9fe7232c7fca0d7f32
+Author: Hannah von Reth <vonreth@kde.org>
+Date:   Thu Aug 16 15:39:28 2018 +0200
+
+    Remove wchar_t- on MSVC
+
+    Qt is built with wchar_t so if you try to build poppler without it,
+    there are conflicting types and everything fails
+
+ CMakeLists.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 12bf632489587df9da416ed8303fb8aefc26bdac
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Aug 16 11:18:21 2018 +0200
+
+    Use OpenJpeg cmake config file instead of pkgconfig
+
+ CMakeLists.txt                       | 16 ++++++++--------
+ cmake/modules/FindLIBOPENJPEG2.cmake | 22 ----------------------
+ 2 files changed, 8 insertions(+), 30 deletions(-)
+
+commit 0f35c2de35efa5689e4668b76a68c76de893fe7c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Aug 9 17:04:38 2018 +0200
+
+    Fix spacing
+
+ poppler/SignatureInfo.cc | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 90ace43c5bb52854b4fa1fdd224d0273b8fd6ff0
+Author: Chinmoy Ranjan Pradhan <chinmoyrp65@protonmail.com>
+Date:   Thu Aug 9 16:39:30 2018 +0200
+
+    [qt] Add Reason and Location to SignatureInfo
+
+    Small tweaks (spacing) by Albert Astals Cid
+
+    Bug #107299
+
+ qt5/src/poppler-form.cc | 17 +++++++++++++++++
+ qt5/src/poppler-form.h  | 13 +++++++++++++
+ 2 files changed, 30 insertions(+)
+
+commit c9bf96aa99059ce0216a75ae2868b79d6e21bc3d
+Author: Chinmoy Ranjan Pradhan <chinmoyrp65@protonmail.com>
+Date:   Thu Aug 9 16:35:14 2018 +0200
+
+    Add Reason and Location to SignatureInfo
+
+    Small tweaks (const, etc) by Albert Astals Cid
+
+    Bug #107299
+
+ poppler/Form.cc          | 10 ++++++++++
+ poppler/SignatureInfo.cc | 29 +++++++++++++++++++++++++++++
+ poppler/SignatureInfo.h  |  7 +++++++
+ 3 files changed, 46 insertions(+)
+
+commit 9f8fb7aae92268c9460434abd4d970f04a9af926
+Author: Steven Boswell <ulatekh@yahoo.com>
+Date:   Thu Aug 9 16:16:10 2018 +0200
+
+    HtmlFont: Fix possible uninitialized variable & dangling reference
+
+    Bug #107316
+
+ utils/HtmlFonts.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 1f8ab328f1440721fe7be7615a9d965a6e3d0439
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Aug 9 00:40:14 2018 +0200
+
+    XRef::readXRef: Fix possible integer overflow
+
+    fixes oss-fuzz/9777
+
+ poppler/XRef.cc | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit c1e90bb19003af9ddf7a1ea88399d9ce47db233f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 23 23:05:14 2018 +0200
+
+    Always initialize SplashPipe:cSrcVal
+
+    Fixes Use-of-uninitialized-value in oss-fuzz/9560
+
+ splash/Splash.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 71645d9e76f9bb075ae9b6599d281b8382e86e67
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 23 00:21:40 2018 +0200
+
+    Add (C) for the last commits
+
+ poppler/SignatureHandler.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f9c7d61e36bb1fb0c77681b993fe5f4c2b1cd37e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 23 00:19:17 2018 +0200
+
+    Don't free signeddata nor signerinfo
+
+    They get freed as part of freeing CMSMessage
+
+ poppler/SignatureHandler.cc | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit 54a75cb091b0994290e6b398b98e3113cd61355a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 23 00:18:50 2018 +0200
+
+    Don't destroy the cert, doesn't belong to us
+
+ poppler/SignatureHandler.cc | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit 36f317d488d8ce6efb69db89a2eca09a98553ab5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 22 23:48:03 2018 +0200
+
+    Copy subject dn instead of storing it
+
+    It comes deep from the cert memory so it's destroyed shorting
+    after and
+    thus is invalid if we don't copy it
+
+ poppler/SignatureInfo.cc | 6 ++++--
+ poppler/SignatureInfo.h  | 4 ++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+commit 6c4eaf5642439d87dafa03391441bb3e7f3a98c4
+Author: Zsombor Hollay-Horvath <hollay.horvath@gmail.com>
+Date:   Sat Jul 21 00:28:50 2018 +0200
+
+    cpp: Add rotation() to text_box
+
+    Bug #106562
+
+ cpp/poppler-page.cpp  | 7 +++++++
+ cpp/poppler-page.h    | 6 ++++++
+ cpp/poppler-private.h | 2 ++
+ 3 files changed, 15 insertions(+)
+
+commit bcd89bc0abb2cc05d3dc428074bb24b450ab7cf0
+Author: Thibaut Brard <thibaut.brard@gmail.com>
+Date:   Sat Jul 21 00:17:58 2018 +0200
+
+    pdftohtml: Add option to not round coordinates
+
+    when outputing as xml
+
+ utils/HtmlOutputDev.cc | 22 ++++++++++++++++++----
+ utils/pdftohtml.1      |  3 +++
+ utils/pdftohtml.cc     |  4 ++++
+ 3 files changed, 25 insertions(+), 4 deletions(-)
+
+commit 6ef17493c7d5344aba4278017724746e63659f7f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Jul 21 00:14:07 2018 +0200
+
+    JpegWriter: Use the C++11 cascading constructors
+
+ goo/JpegWriter.cc | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+commit 0b4ad184b479e24b13b0453b89859b75b699b131
+Author: Martin Packman <gzlist@googlemail.com>
+Date:   Fri Jul 20 23:34:37 2018 +0200
+
+    Add -jpegopt optimize option support to utils
+
+    New option 'optimize=y' for utils that take a -jpegopt param,
+    pdftocairo and pdftoppm. This corresponds to the cjpeg -optimize
+    flag, and slightly reduces the size of the output jpeg but uses
+    additional cpu and memory.
+
+    New jpegOptimize boolean in splash/SplashBitmap WriteImgParams.
+
+    New setOptimize method on goo/JpegWriter taking a boolean.
+
+    Update manpages for new option.
+
+ goo/JpegWriter.cc      | 12 ++++++++++++
+ goo/JpegWriter.h       |  2 ++
+ splash/SplashBitmap.cc |  2 ++
+ splash/SplashBitmap.h  |  2 ++
+ utils/pdftocairo.1     |  6 ++++++
+ utils/pdftocairo.cc    | 11 +++++++++++
+ utils/pdftoppm.1       |  6 ++++++
+ utils/pdftoppm.cc      | 11 +++++++++++
+ 8 files changed, 52 insertions(+)
+
 commit 20d89699b35397f23352d0e60a3e19da2ce6b410
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Thu Jul 19 23:20:03 2018 +0200

@@ -7,7 +7,8 @@
 // Copyright 2015 André Guerreiro <aguerreiro1985@gmail.com>
 // Copyright 2015 André Esser <bepandre@hotmail.com>
 // Copyright 2017 Hans-Ulrich Jüttner <huj@froreich-bioscientia.de>
-// Copyright 2017 Albert Astals Cid <aacid@kde.org>
+// Copyright 2017, 2018 Albert Astals Cid <aacid@kde.org>
+// Copyright 2018 Chinmoy Ranjan Pradhan <chinmoyrp65@protonmail.com>
 //
 //========================================================================
 
@@ -32,6 +33,8 @@ SignatureInfo::SignatureInfo()
   cert_status = CERTIFICATE_NOT_VERIFIED;
   signer_name = nullptr;
   subject_dn = nullptr;
+  location = nullptr;
+  reason = nullptr;
   hash_type = HASH_AlgNULL;
   signing_time = 0;
   sig_subfilter_supported = false;
@@ -43,6 +46,8 @@ SignatureInfo::SignatureInfo(SignatureValidationStatus sig_val_status, Certifica
   cert_status = cert_val_status;
   signer_name = nullptr;
   subject_dn = nullptr;
+  location = nullptr;
+  reason = nullptr;
   hash_type = HASH_AlgNULL;
   signing_time = 0;
   sig_subfilter_supported = false;
@@ -50,7 +55,10 @@ SignatureInfo::SignatureInfo(SignatureValidationStatus sig_val_status, Certifica
 
 SignatureInfo::~SignatureInfo()
 {
+  free(location);
+  free(reason);
   free(signer_name);
+  free(subject_dn);
 }
 
 /* GETTERS */
@@ -73,6 +81,16 @@ const char *SignatureInfo::getSignerName()
 const char *SignatureInfo::getSubjectDN()
 {
   return subject_dn;
+}
+
+const char *SignatureInfo::getLocation() const
+{
+  return location;
+}
+
+const char *SignatureInfo::getReason() const
+{
+  return reason;
 }
 
 int SignatureInfo::getHashAlgorithm()
@@ -105,7 +123,20 @@ void SignatureInfo::setSignerName(char *signerName)
 
 void SignatureInfo::setSubjectDN(const char *subjectDN)
 {
-  subject_dn = subjectDN;
+  free(subject_dn);
+  subject_dn = strdup(subjectDN);
+}
+
+void SignatureInfo::setLocation(char *loc)
+{
+  free(location);
+  location = loc;
+}
+
+void SignatureInfo::setReason(char *signingReason)
+{
+  free(reason);
+  reason = signingReason;
 }
 
 void SignatureInfo::setHashAlgorithm(int type)

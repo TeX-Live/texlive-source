@@ -509,6 +509,11 @@ GBool XRef::readXRef(Goffset *pos, std::vector<Goffset> *followedXRefStm, std::v
   Object obj;
   GBool more;
 
+  if (unlikely(start > (LLONG_MAX - *pos))) {
+    ok = gFalse;
+    return gFalse;
+  }
+
   // start up a parser, parse one token
   parser = new Parser(nullptr,
 	     new Lexer(nullptr,
