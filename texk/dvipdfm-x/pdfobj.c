@@ -3886,15 +3886,12 @@ import_dict (pdf_obj *key, pdf_obj *value, void *pdata)
   return 0;
 }
 
-static pdf_obj loop_marker = { PDF_OBJ_INVALID, 0, 0, 0, 0, NULL };
-
 static pdf_obj *
 pdf_import_indirect (pdf_obj *object)
 {
   pdf_file *pf = OBJ_FILE(object);
   unsigned int obj_num = OBJ_NUM(object);
   unsigned short obj_gen = OBJ_GEN(object);
-
   pdf_obj *ref;
 
   ASSERT(pf);
@@ -3905,11 +3902,9 @@ pdf_import_indirect (pdf_obj *object)
   }
 
   if ((ref = pf->xref_table[obj_num].indirect)) {
-    if (ref == &loop_marker)
-      ERROR("Loop in object hierarchy detected. Broken PDF file?");
     return  pdf_link_obj(ref);
   } else {
-    pdf_obj *obj, *tmp;
+    pdf_obj *obj, *reserved, *imported;
 
     obj = pdf_get_object(pf, obj_num, obj_gen);
     if (!obj) {
@@ -3917,14 +3912,36 @@ pdf_import_indirect (pdf_obj *object)
       return NULL;
     }
 
-    /* We mark the reference to be able to detect loops */
-    pf->xref_table[obj_num].indirect = &loop_marker;
-
-    tmp = pdf_import_object(obj);
-    
-    pf->xref_table[obj_num].indirect = ref = pdf_ref_obj(tmp);
-    
-    pdf_release_obj(tmp);
+    /* Fix for circular reference issue
+     *
+     * Older version of dvipdfmx disallowed the following case of
+     * circular reference:
+     *   obj #1 --> << /Kids [2 0 R] >>
+     *   obj #2 --> << /Parents [1 0 R] >>
+     * The problem is in that dvipdfmx gives new labels to objects after they
+     * are completely read.
+     * 
+     * Dirty hack though...
+     */
+    reserved = pdf_new_null(); /* for reservation of label */
+    pf->xref_table[obj_num].indirect = ref = pdf_new_ref(reserved);
+    imported = pdf_import_object(obj);
+    /* Substitute object here...
+     * We can't use pdf_transfer_label() here, since "reserved" object may
+     * have already be referenced by others and possibly be deref'ed later.
+     */
+    reserved->refcount = imported->refcount;
+    reserved->type     = imported->type;
+    reserved->flags    = imported->flags;
+    reserved->data     = imported->data;
+    /* Object returned by pdf_import_object(obj) might be simply a link to "obj".
+     * In that case we can't simply delete that object.
+     */
+    if (imported->refcount == 1) {
+      RELEASE(imported);
+      imported = NULL;
+    }
+    pdf_release_obj(reserved);
     pdf_release_obj(obj);
     
     return  pdf_link_obj(ref);

@@ -476,6 +476,7 @@ check_version (struct pdf_sec *p, int version)
     WARN("Current encryption setting requires PDF version >= 1.7" \
          " (plus Adobe Extension Level 3).");
     p->V = 4;
+    p->key_size = 16;
   }
   if (p->V == 5 && version < 20) {
     p->setting.need_adobe_extension = 1;

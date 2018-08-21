@@ -1,3 +1,11 @@
+2018-08-21  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfobj.c: Fix for "infinite loop" detection. Now handles the
+	case of circular reference properly.
+	* pdfencrypt.c: Fixed bug that key size is not adjusted
+	correctly.
+	* configure.ac: Version 20180821.
+
 2018-08-18  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cidtype2.c: Workaround for CIDSet issue. All glyphs
