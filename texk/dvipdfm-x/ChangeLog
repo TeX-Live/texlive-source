@@ -1,3 +1,9 @@
+2018-08-23  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* type1.c: Add glyph names of component glyphs used by seac
+	operator to CharSet string.
+	* configure.ac: Version 20180823.
+
 2018-08-21  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfobj.c: Fix for "infinite loop" detection. Now handles the
