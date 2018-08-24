@@ -27,7 +27,7 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 
 -- set version number. the template should be replaced by the
 -- actual version number by the build script
-local version = "v0.2b"
+local version = "v0.2c"
 mkparams.version_number = version
 
 local args = mkparams.get_args()
@@ -92,6 +92,11 @@ make:t4ht {ext = ext}
 if #extensions > 0 then
   make = mkutils.extensions_modify_build(extensions, make)
 end
+
+-- allow output formats to modify the build process at the end
+make = formatter.modify_build(make) or make
+
+
 make:match("tmp$", function() return false,"tmp file" end)
 make:match(".*",function(filename,par)
 	local outdir =  '' --par["outdir"] and par["outdir"] .."/" or ''
