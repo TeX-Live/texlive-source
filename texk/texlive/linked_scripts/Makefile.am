@@ -57,6 +57,7 @@ texmf_shell_scripts = \
 	adhocfilelist/adhocfilelist.sh \
 	bibexport/bibexport.sh \
 	checklistings/checklistings.sh \
+	ctanbib/ctanbib \
 	dtxgen/dtxgen \
 	installfont/installfont-tl \
 	latexfileversion/latexfileversion \
