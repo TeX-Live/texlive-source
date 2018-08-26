@@ -1,3 +1,13 @@
+2018-08-27  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* jpegimage.c: Do not write application specific markers which
+	are not necessary for displaying images.
+	* pdfencrypt.c: Set a compatibility flag bit for PDF 2.0.
+	* spc_pdfm.c: Fixed a bug that string objects are not handled
+	properly in pdf:stream special. Additional dictionay keys can
+	be specified for tounicode conversion.
+	* configure.ac: Version 20180827.
+
 2018-08-23  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* type1.c: Add glyph names of component glyphs used by seac

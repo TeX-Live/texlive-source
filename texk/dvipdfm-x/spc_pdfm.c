@@ -1484,8 +1484,7 @@ spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, in
     break;
   case STRING_STREAM:
     fstream = pdf_new_stream(STREAM_COMPRESS);
-    if (instring)
-      pdf_add_stream(fstream, instring, strlen(instring));
+    pdf_add_stream(fstream, pdf_string_value(tmp), pdf_string_length(tmp));
     break;
   default:
     pdf_release_obj(tmp);
@@ -1864,6 +1863,7 @@ spc_handler_pdfm_tounicode (struct spc_env *spe, struct spc_arg *args)
 {
   struct spc_pdf_ *sd = &_pdf_stat;
   char *cmap_name;
+  pdf_obj *taint_keys;
 
   /* First clear */
   sd->cd.cmap_id = -1;
@@ -1904,6 +1904,28 @@ spc_handler_pdfm_tounicode (struct spc_env *spe, struct spc_arg *args)
       sd->cd.unescape_backslash = 1;
   }
   RELEASE(cmap_name);
+
+  /* Additional "taint key" */
+  taint_keys = parse_pdf_object(&args->curptr, args->endptr, NULL);
+  if (taint_keys) {
+    if (PDF_OBJ_ARRAYTYPE(taint_keys)) {
+      int i;
+      for (i = 0; i < pdf_array_length(taint_keys); i++) {
+        pdf_obj *key;
+        
+        key = pdf_get_array(taint_keys, i);
+        if (PDF_OBJ_NAMETYPE(key))
+          pdf_add_array(sd->cd.taintkeys, pdf_link_obj(key));
+        else {
+          spc_warn(spe, "Invalid argument specified in pdf:tounicode special.");
+        }
+      }
+    } else {
+      spc_warn(spe, "Invalid argument specified in pdf:unicode special.");
+    }
+    pdf_release_obj(taint_keys);
+  }
+
   return 0;
 }
 

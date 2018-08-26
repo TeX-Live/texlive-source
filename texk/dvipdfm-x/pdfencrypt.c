@@ -579,6 +579,9 @@ pdf_enc_set_passwd (unsigned int bits, unsigned int perm,
   check_version(p, version);
 
   p->P = (int32_t) (perm | 0xC0U);
+  /* Bit position 10 shall be always set to 1 for PDF >= 2.0. */
+  if (version >= 20)
+    p->P |= (1 << 9);
   switch (p->V) {
   case 1:
     p->R = (p->P < 0x100L) ? 2 : 3;
