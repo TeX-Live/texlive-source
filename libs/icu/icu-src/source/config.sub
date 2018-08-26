@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-08-13'
+timestamp='2018-08-23'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -1079,6 +1079,40 @@ case $basic_machine in
 		basic_machine=none-none
 		;;
 
+	c54x)
+		basic_machine=tic54x-unknown
+		;;
+	c55x)
+		basic_machine=tic55x-unknown
+		;;
+	c6x)
+		basic_machine=tic6x-unknown
+		;;
+	leon | leon[3-9])
+		basic_machine=sparc-$basic_machine
+		;;
+	m88110 | m680[12346]0 | m683?2 | m68360 | m5200 | v70)
+		;;
+	m9s12z | m68hcs12z | hcs12z | s12z)
+		basic_machine=s12z-unknown
+		;;
+	m9s12z-* | m68hcs12z-* | hcs12z-* | s12z-*)
+		basic_machine=s12z-`echo "$basic_machine" | sed 's/^[^-]*-//'`
+		;;
+	ms1)
+		basic_machine=mt-unknown
+		;;
+	strongarm | thumb | xscale)
+		basic_machine=arm-unknown
+		;;
+	xscaleeb)
+		basic_machine=armeb-unknown
+		;;
+
+	xscaleel)
+		basic_machine=armel-unknown
+		;;
+
 	# Recognize the basic CPU types with company name.
 	1750a-* | 580-* \
 	| a29k-* \
@@ -1255,39 +1289,6 @@ case $basic_machine in
 	| x86 | xc16x | xstormy16 | xgate | xtensa* \
 	| z8k | z80)
 		basic_machine=$basic_machine-unknown
-		;;
-	c54x)
-		basic_machine=tic54x-unknown
-		;;
-	c55x)
-		basic_machine=tic55x-unknown
-		;;
-	c6x)
-		basic_machine=tic6x-unknown
-		;;
-	leon|leon[3-9])
-		basic_machine=sparc-$basic_machine
-		;;
-	m88110 | m680[12346]0 | m683?2 | m68360 | m5200 | v70)
-		;;
-	m9s12z | m68hcs12z | hcs12z | s12z)
-		basic_machine=s12z-unknown
-		;;
-	m9s12z-* | m68hcs12z-* | hcs12z-* | s12z-*)
-		basic_machine=s12z-`echo "$basic_machine" | sed 's/^[^-]*-//'`
-		;;
-	ms1)
-		basic_machine=mt-unknown
-		;;
-	strongarm | thumb | xscale)
-		basic_machine=arm-unknown
-		;;
-	xscaleeb)
-		basic_machine=armeb-unknown
-		;;
-
-	xscaleel)
-		basic_machine=armel-unknown
 		;;
 
 	*)
