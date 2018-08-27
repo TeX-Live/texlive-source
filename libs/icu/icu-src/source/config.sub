@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2018 Free Software Foundation, Inc.
 
-timestamp='2018-08-23'
+timestamp='2018-08-24'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -702,13 +702,6 @@ case $basic_machine in
 		basic_machine=xps100-honeywell
 		;;
 
-	# We use `pc' rather than `unknown'
-	# because (1) that's what they normally are, and
-	# (2) the word "unknown" tends to confuse beginning users.
-	i*86 | x86_64)
-	  basic_machine=$basic_machine-pc
-	  ;;
-
 	# Recognize the various machine names and aliases which stand
 	# for a CPU type and a company and sometimes even an OS.
 	3b1 | 7300 | 7300-att | att-7300 | pc7300 | safari | unixpc)
@@ -716,12 +709,6 @@ case $basic_machine in
 		;;
 	3b*)
 		basic_machine=we32k-att
-		;;
-	amd64)
-		basic_machine=x86_64-pc
-		;;
-	amd64-*)
-		basic_machine=x86_64-`echo "$basic_machine" | sed 's/^[^-]*-//'`
 		;;
 	blackfin-*)
 		basic_machine=bfin-`echo "$basic_machine" | sed 's/^[^-]*-//'`
@@ -743,23 +730,6 @@ case $basic_machine in
 	c90)
 		basic_machine=c90-cray
 		os=${os:-unicos}
-		;;
-	cr16 | cr16-*)
-		basic_machine=cr16-unknown
-		os=${os:-elf}
-		;;
-	crisv32 | crisv32-* | etraxfs*)
-		basic_machine=crisv32-axis
-		;;
-	cris | cris-* | etrax*)
-		basic_machine=cris-axis
-		;;
-	crx-*)
-		os=${os:-elf}
-		;;
-	crx)
-		basic_machine=crx-unknown
-		os=${os:-elf}
 		;;
 	decsystem10* | dec10*)
 		basic_machine=pdp10-dec
@@ -908,21 +878,6 @@ case $basic_machine in
 	np1)
 		basic_machine=np1-gould
 		;;
-	neo-tandem)
-		basic_machine=neo-tandem
-		;;
-	nse-tandem)
-		basic_machine=nse-tandem
-		;;
-	nsr-tandem)
-		basic_machine=nsr-tandem
-		;;
-	nsv-tandem)
-		basic_machine=nsv-tandem
-		;;
-	nsx-tandem)
-		basic_machine=nsx-tandem
-		;;
 	op50n-* | op60c-*)
 		basic_machine=hppa1.1-oki
 		os=proelf
@@ -946,9 +901,6 @@ case $basic_machine in
 		;;
 	pc532 | pc532-*)
 		basic_machine=ns32k-pc532
-		;;
-	pc98)
-		basic_machine=i386-pc
 		;;
 	pc98-*)
 		basic_machine=i386-`echo "$basic_machine" | sed 's/^[^-]*-//'`
@@ -1012,12 +964,6 @@ case $basic_machine in
 	rtpc | rtpc-*)
 		basic_machine=romp-ibm
 		;;
-	s390 | s390-*)
-		basic_machine=s390-ibm
-		;;
-	s390x | s390x-*)
-		basic_machine=s390x-ibm
-		;;
 	sb1)
 		basic_machine=mipsisa64sb1-unknown
 		;;
@@ -1044,12 +990,6 @@ case $basic_machine in
 	strongarm-* | thumb-*)
 		basic_machine=arm-`echo "$basic_machine" | sed 's/^[^-]*-//'`
 		;;
-	tile*-*)
-		;;
-	tile*)
-		basic_machine=$basic_machine-unknown
-		os=${os:-linux-gnu}
-		;;
 	tx39)
 		basic_machine=mipstx39-unknown
 		;;
@@ -1068,9 +1008,6 @@ case $basic_machine in
 	w89k-*)
 		basic_machine=hppa1.1-winbond
 		os=proelf
-		;;
-	x64)
-		basic_machine=x86_64-pc
 		;;
 	xscale-* | xscalee[bl]-*)
 		basic_machine=`echo "$basic_machine" | sed 's/^xscale/arm/'`
@@ -1093,12 +1030,6 @@ case $basic_machine in
 		;;
 	m88110 | m680[12346]0 | m683?2 | m68360 | m5200 | v70)
 		;;
-	m9s12z | m68hcs12z | hcs12z | s12z)
-		basic_machine=s12z-unknown
-		;;
-	m9s12z-* | m68hcs12z-* | hcs12z-* | s12z-*)
-		basic_machine=s12z-`echo "$basic_machine" | sed 's/^[^-]*-//'`
-		;;
 	ms1)
 		basic_machine=mt-unknown
 		;;
@@ -1113,7 +1044,83 @@ case $basic_machine in
 		basic_machine=armel-unknown
 		;;
 
-	# Recognize the basic CPU types with company name.
+	# We use `pc' rather than `unknown'
+	# because (1) that's what they normally are, and
+	# (2) the word "unknown" tends to confuse beginning users.
+	i*86 | x86_64)
+		basic_machine=$basic_machine-pc
+		;;
+	# These rules are duplicated from below for sake of the special case above;
+	# i.e. things that normalized to x86 arches should also default to "pc"
+	pc98)
+		basic_machine=i386-pc
+		;;
+	x64 | amd64)
+		basic_machine=x86_64-pc
+		;;
+
+	# Recognize the cannonical CPU Types that limit and/or modify the
+	# company names they are paired with.
+	amd64-*)
+		basic_machine=x86_64-`echo "$basic_machine" | sed 's/^[^-]*-//'`
+		;;
+	cr16)
+		basic_machine=cr16-unknown
+		os=${os:-elf}
+		;;
+	cr16-*)
+		os=${os:-elf}
+		;;
+	crisv32 | crisv32-* | etraxfs*)
+		basic_machine=crisv32-axis
+		;;
+	cris | cris-* | etrax*)
+		basic_machine=cris-axis
+		;;
+	crx-*)
+		os=${os:-elf}
+		;;
+	crx)
+		basic_machine=crx-unknown
+		os=${os:-elf}
+		;;
+	m9s12z | m68hcs12z | hcs12z | s12z)
+		basic_machine=s12z-unknown
+		;;
+	m9s12z-* | m68hcs12z-* | hcs12z-* | s12z-*)
+		basic_machine=s12z-`echo "$basic_machine" | sed 's/^[^-]*-//'`
+		;;
+	neo-tandem)
+		basic_machine=neo-tandem
+		;;
+	nse-tandem)
+		basic_machine=nse-tandem
+		;;
+	nsr-tandem)
+		basic_machine=nsr-tandem
+		;;
+	nsv-tandem)
+		basic_machine=nsv-tandem
+		;;
+	nsx-tandem)
+		basic_machine=nsx-tandem
+		;;
+	s390 | s390-*)
+		basic_machine=s390-ibm
+		;;
+	s390x | s390x-*)
+		basic_machine=s390x-ibm
+		;;
+	tile*-*)
+		os=${os:-linux-gnu}
+		;;
+	tile*)
+		basic_machine=$basic_machine-unknown
+		os=${os:-linux-gnu}
+		;;
+
+	# Recognize the cannonical CPU types that are allowed with any
+	# company name.
 	1750a-* | 580-* \
 	| a29k-* \
 	| aarch64-* | aarch64_be-* \
@@ -1182,7 +1189,7 @@ case $basic_machine in
 	| or32-* \
 	| orion-* \
 	| pdp10-* | pdp11-* | pj-* | pjl-* | pn-* | power-* \
-	| powerpc-* | powerpc64-* | powerpc64le-* | powerpcle-* \
+	| powerpc-* | powerpc64-* | powerpc64le-* | powerpcle-* | powerpcspe-* \
 	| pru-* \
 	| pyramid-* \
 	| riscv-* | riscv32-* | riscv64-* \
@@ -1270,7 +1277,7 @@ case $basic_machine in
 	| ns16k | ns32k \
 	| open8 | or1k | or1knd | or32 \
 	| pdp10 | pj | pjl \
-	| powerpc | powerpc64 | powerpc64le | powerpcle \
+	| powerpc | powerpc64 | powerpc64le | powerpcle | powerpcspe \
 	| pru \
 	| pyramid \
 	| riscv | riscv32 | riscv64 \
