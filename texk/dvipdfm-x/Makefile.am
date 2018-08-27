@@ -71,8 +71,6 @@ xdvipdfmx_SOURCES = \
 	mpost.h \
 	numbers.c \
 	numbers.h \
-	otl_conf.c \
-	otl_conf.h \
 	otl_opt.c \
 	otl_opt.h \
 	pdfcolor.c \

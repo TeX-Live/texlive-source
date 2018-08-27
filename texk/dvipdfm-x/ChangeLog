@@ -1,3 +1,9 @@
+2018-08-28  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* otl_conf.[ch]: Removed. This undocumented feature is no
+	longer used.
+	* Makefile.am: Update for otl_conf.[ch] removal.
+
 2018-08-27  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* jpegimage.c: Do not write application specific markers which
