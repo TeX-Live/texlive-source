@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2018
-@set month-year April 2018
+@set month-year August 2018
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -454,7 +454,7 @@ finish for working on @code{dvipdfm-x}.
 @example
 mkdir mydir && cd mydir  # new working directory
 
-# Get sources (@url{http://tug.org/texlive/svn})
+# Get sources (@url{http://tug.org/texlive/svn}), e.g.:
 rsync -a --delete --exclude=.svn --exclude=Work \
       tug.org::tldevsrc/Build/source/ .
 
@@ -504,12 +504,12 @@ Even with @code{--disable-all-pkgs}, dependencies will be checked.
 For instance, if a non-MacOSX system does not have @code{fontconfig},
 Xe@TeX{} cannot be built (@pxref{Prerequisites}) and @code{configure}
 will terminate.  To proceed without such dependencies, specify
-@code{--enable-missing} also.  (Arguably this should happen
-automatically.)
+@code{--enable-missing} also.
 
 @vindex CC=@var{c-compiler}
 @vindex CXX=@var{c++-compiler}
 @vindex OBJCXX=@var{objc-compiler}
+@pindex gcc@r{, default compilers}
 By default, the @code{gcc} compilers will be used if present;
 otherwise, individual packages may use something different.  You can
 explicitly specify the compilers to be used with the environment
