@@ -1,3 +1,7 @@
+2018-09-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* psnup.c: Enable -W and -H options.
+
 2016-02-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

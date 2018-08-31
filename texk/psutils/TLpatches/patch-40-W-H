@@ -1,0 +1,15 @@
+diff -ur psutils-1.23.orig/psnup.c psutils-1.23/psnup.c
+--- psutils-1.23.orig/psnup.c	Thu Jan 16 19:20:54 2014
++++ psutils-1.23/psnup.c	Sat Sep 01 08:17:34 2018
+@@ -195,9 +195,9 @@
+    scanpages(sizeheaders);
+ 
+    /* set default values of input height & width */
+-   if ( iwidth > 0 && width == -1 )
++   if ( iwidth > 0 )
+      width = iwidth ;
+-   if ( iheight > 0 && height == -1 )
++   if ( iheight > 0 )
+      height = iheight ;
+ 
+    /* Finding the best layout is an optimisation problem. We try all of the
