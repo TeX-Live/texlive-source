@@ -1,3 +1,7 @@
+2018-08-30  Karl Berry  <karl@freefriends.org>
+
+	* patch-08-makefiles: adapt to 2.5.
+
 2018-07-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Import 2.4.2.
@@ -185,4 +189,3 @@
 2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Import release 1.1.
-

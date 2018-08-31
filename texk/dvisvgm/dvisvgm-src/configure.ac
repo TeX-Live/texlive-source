@@ -4,8 +4,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[2.4.2],[martin.gieseking@uos.de])
-DATE="July 2018"
+AC_INIT([dvisvgm],[2.5],[martin.gieseking@uos.de])
+DATE="August 2018"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -98,13 +98,35 @@ AC_ARG_ENABLE([woff],
 	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
 	[],
 	[enable_woff=yes])
+AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
 
 AC_ARG_WITH([ttfautohint],
 	[AS_HELP_STRING([--with-ttfautohint@<:@=prefix@:>@], [enable ttfautohint support (disabled by default)])],
 	[with_ttfautohint="$withval"],
 	[with_ttfautohint=no])
 
-AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
+# Add option to enable linking of bundled libraries (brotli, woff2, xxhash).
+AC_ARG_ENABLE([bundled-libs],
+	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])],
+	[use_bundled_libs=yes])
+AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$use_bundled_libs" = "xyes"])
+
+# If option --enable-bundled-libs is not given, look for system libraries of brotli, woff2, and xxhash.
+AS_IF([test "x$use_bundled_libs" != "xyes"],
+	[AC_CHECK_HEADER([potracelib.h],
+		[AC_CHECK_LIB(potrace, potrace_trace,,
+			[AC_MSG_ERROR([system library 'libpotrace' not found])])],
+		[AC_MSG_ERROR([header file 'potracelib.h' for system library 'libpotrace' not found])])]
+	[AS_IF([test "x$enable_woff" = "xyes"],
+		[PKG_CHECK_MODULES([BROTLI], [libbrotlienc],,
+			[AC_MSG_ERROR([system library 'libbrotlienc' not found])])]
+		[PKG_CHECK_MODULES([WOFF2], [libwoff2enc],,
+			[AC_MSG_ERROR([system library 'libwoff2enc' not found])])])]
+	[AC_CHECK_HEADER([xxhash.h],
+		[AC_CHECK_LIB(xxhash, XXH32,,
+			[AC_MSG_ERROR([system library 'libxxhash' not found])])],
+		[AC_MSG_ERROR([header file 'xxhash.h' for system library 'libxxhash' not found])])])
+
 AS_IF([test "x$enable_woff" != "xyes"],
 	[AC_DEFINE([DISABLE_WOFF], 1, [Define if WOFF support is disabled])],
 	[AS_IF([test "x$with_ttfautohint" != "xno"],
@@ -138,7 +160,7 @@ AC_STRUCT_TM
 
 # Check for library functions.
 AC_FUNC_STAT
-AC_CHECK_FUNCS([ftime gettimeofday sigaction uselocale])
+AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
 
 # add options for selection of "optional" library locations
 # currently these libraries are mandatory; the --with-foo options
@@ -200,6 +222,7 @@ AC_CONFIG_FILES([
 	libs/brotli/Makefile
 	libs/clipper/Makefile
 	libs/ff-woff/Makefile
+	libs/potrace/Makefile
 	libs/variant/Makefile
 	libs/woff2/Makefile
 	libs/xxHash/Makefile

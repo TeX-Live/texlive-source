@@ -2,10 +2,11 @@
 
 Changes applied to the original dvisvgm source as obtained from:
 	https://dvisvgm.de/Downloads/
+	or (hopefully) https://ctan.org/pkg/dvisvgm
 
 Update version in ./version.ac.
 
-mv dvisvgm-src dvisvm-prev
+mv dvisvgm-src dvisvgm-prev
 tar xf dvisvgm-VER.tar.gz
 mv dvisvgm-VER dvisvgm-src
 cd dvisvgm-src
@@ -13,7 +14,7 @@ cd dvisvgm-src
 # remove common and generated files:
 rm ar-lib compile config.guess config.sub depcomp install-sh
 rm ltmain.sh missing test-driver 
-rm aclocal.m4 configure # reduce chance of confusion?
+rm -r m4 aclocal.m4 configure # reduce chance of confusion?
 #
 # files to add:
 svn status | sed -n 's/^\?//p'

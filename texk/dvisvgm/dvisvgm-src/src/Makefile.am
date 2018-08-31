@@ -12,19 +12,34 @@ dvisvgm_SOURCES = \
 
 dvisvgm_LDADD = \
 	$(noinst_LIBRARIES) \
-	../libs/clipper/libclipper.a \
+	../libs/clipper/libclipper.a
+
+if USE_BUNDLED_LIBS
+dvisvgm_LDADD += \
+	../libs/potrace/libpotrace.a \
 	../libs/xxHash/libxxhash.a
+else
+dvisvgm_LDADD += \
+	$(POTRACE_LIBS) \
+	$(XXHASH_LIBS)
+endif
 
 if ENABLE_WOFF
+if USE_BUNDLED_LIBS
 dvisvgm_LDADD += \
 	../libs/ff-woff/libfontforge.a \
 	../libs/woff2/libwoff2.a \
 	../libs/brotli/libbrotli.a
+else
+dvisvgm_LDADD += \
+	../libs/ff-woff/libfontforge.a \
+	$(WOFF2_LIBS) \
+	$(BROTLI_LIBS)
+endif
 endif
 
 dvisvgm_LDADD += \
 	$(KPATHSEA_LIBS) \
-	$(POTRACE_LIBS) \
 	$(FREETYPE2_LIBS) \
 	$(FONTFORGE_LIBS) \
 	$(ZLIB_LIBS) \
@@ -257,12 +272,22 @@ AM_CFLAGS = $(WARNING_CFLAGS) \
 	$(ZLIB_INCLUDES) \
 	$(CODE_COVERAGE_CFLAGS)
 
-AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
+AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor -Wno-mismatched-tags \
 	-I$(dvisvgm_srcdir)/libs/clipper \
-	-I$(dvisvgm_srcdir)/libs/variant/include \
+	-I$(dvisvgm_srcdir)/libs/variant/include
+
+if USE_BUNDLED_LIBS
+AM_CXXFLAGS +=  \
+	-I$(dvisvgm_srcdir)/libs/potrace \
 	-I$(dvisvgm_srcdir)/libs/xxHash
+else
+AM_CXXFLAGS += \
+	$(POTRACE_CFLAGS) \
+	$(XXHASH_CFLAGS)
+endif
 
 AM_LDFLAGS = \
+	$(KPSE_LIBS) \
 	$(CODE_COVERAGE_LDFLAGS)
 
 if ENABLE_WOFF
@@ -270,10 +295,17 @@ AM_CFLAGS +=  \
 	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
 	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
 
+AM_CXXFLAGS += $(TTFAUTOHINT_CFLAGS)
+
+if USE_BUNDLED_LIBS
 AM_CXXFLAGS +=  \
-	$(TTFAUTOHINT_CFLAGS) \
 	-I$(dvisvgm_srcdir)/libs/brotli/include \
 	-I$(dvisvgm_srcdir)/libs/woff2/include
+else
+AM_CXXFLAGS +=  \
+	$(BROTLI_CFLAGS) \
+	$(WOFF2_CFLAGS)
+endif
 
 AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
 endif
@@ -312,8 +344,6 @@ CLEANFILES = *.gcda *.gcno
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
-## Rebuild libpotrace
-@POTRACE_RULE@
 ## Rebuild libfreetype
 @FREETYPE2_RULE@
 ## Rebuild libz

@@ -95,7 +95,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-potrace-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
@@ -120,12 +119,25 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libwoff2_a_AR = $(AR) $(ARFLAGS)
 libwoff2_a_LIBADD =
+am__libwoff2_a_SOURCES_DIST = include/woff2/decode.h \
+	include/woff2/encode.h include/woff2/output.h \
+	include/woff2/version.h src/buffer.h src/font.cc src/font.h \
+	src/glyph.cc src/glyph.h src/normalize.cc src/normalize.h \
+	src/port.h src/round.h src/store_bytes.h src/table_tags.cc \
+	src/table_tags.h src/transform.cc src/transform.h \
+	src/variable_length.cc src/variable_length.h \
+	src/woff2_common.cc src/woff2_common.h src/woff2_enc.cc \
+	src/woff2_out.cc
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libwoff2_a_OBJECTS = src/font.$(OBJEXT) src/glyph.$(OBJEXT) \
-	src/normalize.$(OBJEXT) src/table_tags.$(OBJEXT) \
-	src/transform.$(OBJEXT) src/variable_length.$(OBJEXT) \
-	src/woff2_common.$(OBJEXT) src/woff2_enc.$(OBJEXT) \
-	src/woff2_out.$(OBJEXT)
+@USE_BUNDLED_LIBS_TRUE@am_libwoff2_a_OBJECTS = src/font.$(OBJEXT) \
+@USE_BUNDLED_LIBS_TRUE@	src/glyph.$(OBJEXT) \
+@USE_BUNDLED_LIBS_TRUE@	src/normalize.$(OBJEXT) \
+@USE_BUNDLED_LIBS_TRUE@	src/table_tags.$(OBJEXT) \
+@USE_BUNDLED_LIBS_TRUE@	src/transform.$(OBJEXT) \
+@USE_BUNDLED_LIBS_TRUE@	src/variable_length.$(OBJEXT) \
+@USE_BUNDLED_LIBS_TRUE@	src/woff2_common.$(OBJEXT) \
+@USE_BUNDLED_LIBS_TRUE@	src/woff2_enc.$(OBJEXT) \
+@USE_BUNDLED_LIBS_TRUE@	src/woff2_out.$(OBJEXT)
 libwoff2_a_OBJECTS = $(am_libwoff2_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -188,7 +200,7 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libwoff2_a_SOURCES)
-DIST_SOURCES = $(libwoff2_a_SOURCES)
+DIST_SOURCES = $(am__libwoff2_a_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -218,7 +230,9 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AM_LDFLAGS = @AM_LDFLAGS@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -237,6 +251,7 @@ CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CXXLD = @CXXLD@
 CYGPATH_W = @CYGPATH_W@
+DATE = @DATE@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
@@ -293,9 +308,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
-POTRACE_DEPEND = @POTRACE_DEPEND@
-POTRACE_INCLUDES = @POTRACE_INCLUDES@
-POTRACE_LIBS = @POTRACE_LIBS@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -360,35 +372,35 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_LIBRARIES = libwoff2.a
-libwoff2_a_SOURCES = \
-	include/woff2/decode.h \
-	include/woff2/encode.h \
-	include/woff2/output.h \
-	include/woff2/version.h \
-	src/buffer.h \
-	src/font.cc \
-	src/font.h \
-	src/glyph.cc \
-	src/glyph.h \
-	src/normalize.cc \
-	src/normalize.h \
-	src/port.h \
-	src/round.h \
-	src/store_bytes.h \
-	src/table_tags.cc \
-	src/table_tags.h \
-	src/transform.cc \
-	src/transform.h \
-	src/variable_length.cc \
-	src/variable_length.h \
-	src/woff2_common.cc \
-	src/woff2_common.h \
-	src/woff2_enc.cc \
-	src/woff2_out.cc
+@USE_BUNDLED_LIBS_TRUE@noinst_LIBRARIES = libwoff2.a
+@USE_BUNDLED_LIBS_TRUE@libwoff2_a_SOURCES = \
+@USE_BUNDLED_LIBS_TRUE@	include/woff2/decode.h \
+@USE_BUNDLED_LIBS_TRUE@	include/woff2/encode.h \
+@USE_BUNDLED_LIBS_TRUE@	include/woff2/output.h \
+@USE_BUNDLED_LIBS_TRUE@	include/woff2/version.h \
+@USE_BUNDLED_LIBS_TRUE@	src/buffer.h \
+@USE_BUNDLED_LIBS_TRUE@	src/font.cc \
+@USE_BUNDLED_LIBS_TRUE@	src/font.h \
+@USE_BUNDLED_LIBS_TRUE@	src/glyph.cc \
+@USE_BUNDLED_LIBS_TRUE@	src/glyph.h \
+@USE_BUNDLED_LIBS_TRUE@	src/normalize.cc \
+@USE_BUNDLED_LIBS_TRUE@	src/normalize.h \
+@USE_BUNDLED_LIBS_TRUE@	src/port.h \
+@USE_BUNDLED_LIBS_TRUE@	src/round.h \
+@USE_BUNDLED_LIBS_TRUE@	src/store_bytes.h \
+@USE_BUNDLED_LIBS_TRUE@	src/table_tags.cc \
+@USE_BUNDLED_LIBS_TRUE@	src/table_tags.h \
+@USE_BUNDLED_LIBS_TRUE@	src/transform.cc \
+@USE_BUNDLED_LIBS_TRUE@	src/transform.h \
+@USE_BUNDLED_LIBS_TRUE@	src/variable_length.cc \
+@USE_BUNDLED_LIBS_TRUE@	src/variable_length.h \
+@USE_BUNDLED_LIBS_TRUE@	src/woff2_common.cc \
+@USE_BUNDLED_LIBS_TRUE@	src/woff2_common.h \
+@USE_BUNDLED_LIBS_TRUE@	src/woff2_enc.cc \
+@USE_BUNDLED_LIBS_TRUE@	src/woff2_out.cc
 
+@USE_BUNDLED_LIBS_TRUE@AM_CXXFLAGS = -Wall -I$(srcdir)/include -I$(srcdir)/../brotli/include
 EXTRA_DIST = LICENSE
-AM_CXXFLAGS = -Wall -I$(srcdir)/include -I$(srcdir)/../brotli/include
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
@@ -735,7 +747,7 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-@CODE_COVERAGE_RULES@
+@USE_BUNDLED_LIBS_TRUE@@CODE_COVERAGE_RULES@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

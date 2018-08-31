@@ -95,7 +95,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-potrace-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
@@ -120,7 +119,8 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libxxhash_a_AR = $(AR) $(ARFLAGS)
 libxxhash_a_LIBADD =
-am_libxxhash_a_OBJECTS = xxhash.$(OBJEXT)
+am__libxxhash_a_SOURCES_DIST = xxhash.c xxhash.h
+@USE_BUNDLED_LIBS_TRUE@am_libxxhash_a_OBJECTS = xxhash.$(OBJEXT)
 libxxhash_a_OBJECTS = $(am_libxxhash_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -162,7 +162,7 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libxxhash_a_SOURCES)
-DIST_SOURCES = $(libxxhash_a_SOURCES)
+DIST_SOURCES = $(am__libxxhash_a_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -192,7 +192,9 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AM_LDFLAGS = @AM_LDFLAGS@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -211,6 +213,7 @@ CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CXXLD = @CXXLD@
 CYGPATH_W = @CYGPATH_W@
+DATE = @DATE@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
@@ -267,9 +270,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
-POTRACE_DEPEND = @POTRACE_DEPEND@
-POTRACE_INCLUDES = @POTRACE_INCLUDES@
-POTRACE_LIBS = @POTRACE_LIBS@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -334,9 +334,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_LIBRARIES = libxxhash.a
-libxxhash_a_SOURCES = xxhash.c xxhash.h
-AM_CXXFLAGS = -Wall
+@USE_BUNDLED_LIBS_TRUE@noinst_LIBRARIES = libxxhash.a
+@USE_BUNDLED_LIBS_TRUE@libxxhash_a_SOURCES = xxhash.c xxhash.h
+@USE_BUNDLED_LIBS_TRUE@AM_CXXFLAGS = -Wall
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
@@ -634,9 +634,9 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-xxhash.c: xxhash.h
+@USE_BUNDLED_LIBS_TRUE@xxhash.c: xxhash.h
 
-@CODE_COVERAGE_RULES@
+@USE_BUNDLED_LIBS_TRUE@@CODE_COVERAGE_RULES@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

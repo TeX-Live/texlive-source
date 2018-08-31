@@ -1,3 +1,12 @@
+2018-08-30  Karl Berry  <karl@freefriends.org>
+
+	* version.ac: now version 2.5.
+	* configure.ac: remove POTRACE_FLAGS, library now bundled.
+	Track upstream configure.ac somewhat more closely.
+	Implicitly specify (new) --enable-bundled-libs with
+	--enable-native-texlive-build.
+	* dvisvgm-src/Makefile.am: import TL-Changes.
+
 2018-07-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Import 2.4.2

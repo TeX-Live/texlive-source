@@ -1,32 +1,26 @@
-diff -u2r dvisvgm-2.4.2/Makefile.am dvisvgm-src/Makefile.am
---- dvisvgm-2.4.2/Makefile.am	Sat Jan 27 22:54:59 2018
-+++ dvisvgm-src/Makefile.am	Thu Jul 19 08:20:29 2018
-@@ -6,5 +6,5 @@
- AUTOMAKE_OPTIONS = foreign
+diff -u1r dvisvgm-2.5/Makefile.am dvisvgm-src/Makefile.am
+--- dvisvgm-2.5/Makefile.am	2018-07-31 07:51:05.000000000 -0700
++++ dvisvgm-src/Makefile.am	2018-08-27 09:10:41.553596312 -0700
+@@ -7,3 +7,3 @@
  EXTRA_DIST = COPYING
 -SUBDIRS = libs src tests doc
 +SUBDIRS = libs src #not for TL: tests doc
  ACLOCAL_AMFLAGS = -I m4
- 
-diff -u2r dvisvgm-2.4.2/src/Makefile.am dvisvgm-src/src/Makefile.am
---- dvisvgm-2.4.2/src/Makefile.am	Thu Jul 19 00:52:27 2018
-+++ dvisvgm-src/src/Makefile.am	Thu Jul 19 08:27:05 2018
-@@ -14,8 +14,5 @@
+diff -u1r dvisvgm-2.5/src/Makefile.am dvisvgm-src/src/Makefile.am
+--- dvisvgm-2.5/src/Makefile.am	2018-07-31 07:53:41.000000000 -0700
++++ dvisvgm-src/src/Makefile.am	2018-08-27 16:28:25.615599693 -0700
+@@ -14,6 +14,3 @@
  	$(noinst_LIBRARIES) \
- 	../libs/clipper/libclipper.a \
--	../libs/xxHash/libxxhash.a \
+-	../libs/clipper/libclipper.a \
 -	$(FREETYPE_LIBS) \
 -	$(FONTFORGE_LIBS) \
 -	$(ZLIB_LIBS)
-+	../libs/xxHash/libxxhash.a
++	../libs/clipper/libclipper.a
  
- if ENABLE_WOFF
-@@ -26,5 +23,14 @@
- endif
+@@ -43,3 +40,11 @@
  
 +dvisvgm_LDADD += \
 +	$(KPATHSEA_LIBS) \
-+	$(POTRACE_LIBS) \
 +	$(FREETYPE2_LIBS) \
 +	$(FONTFORGE_LIBS) \
 +	$(ZLIB_LIBS) \
@@ -35,9 +29,7 @@ diff -u2r dvisvgm-2.4.2/src/Makefile.am dvisvgm-src/src/Makefile.am
  dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES)
 +dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
  
- libdvisvgm_a_SOURCES = \
-@@ -246,35 +252,45 @@
- EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
+@@ -263,18 +268,16 @@
  
 -AM_CFLAGS = -Wall \
 -	$(ZLIB_CFLAGS) \
@@ -47,7 +39,6 @@ diff -u2r dvisvgm-2.4.2/src/Makefile.am dvisvgm-src/src/Makefile.am
 -AM_CXXFLAGS = -Wall -Wnon-virtual-dtor -Wno-mismatched-tags \
 -	-I$(top_srcdir)/libs/clipper \
 -	-I$(top_srcdir)/libs/variant/include \
--	-I$(top_srcdir)/libs/xxHash \
 -	$(KPSE_CFLAGS) \
 -	$(FREETYPE_CFLAGS) \
 -	$(ZLIB_CFLAGS) \
@@ -55,31 +46,32 @@ diff -u2r dvisvgm-2.4.2/src/Makefile.am dvisvgm-src/src/Makefile.am
 +	$(ZLIB_INCLUDES) \
  	$(CODE_COVERAGE_CFLAGS)
  
-+AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
++AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor -Wno-mismatched-tags \
 +	-I$(dvisvgm_srcdir)/libs/clipper \
-+	-I$(dvisvgm_srcdir)/libs/variant/include \
-+	-I$(dvisvgm_srcdir)/libs/xxHash
++	-I$(dvisvgm_srcdir)/libs/variant/include
 +
- AM_LDFLAGS = \
--	$(KPSE_LIBS) \
- 	$(CODE_COVERAGE_LDFLAGS)
- 
- if ENABLE_WOFF
+ if USE_BUNDLED_LIBS
+ AM_CXXFLAGS +=  \
+-	-I$(top_srcdir)/libs/potrace \
+-	-I$(top_srcdir)/libs/xxHash
++	-I$(dvisvgm_srcdir)/libs/potrace \
++	-I$(dvisvgm_srcdir)/libs/xxHash
+ else
+@@ -291,4 +294,4 @@
  AM_CFLAGS +=  \
 -	-I$(top_srcdir)/libs/ff-woff/fontforge \
 -	-I$(top_srcdir)/libs/ff-woff/inc
 +	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
 +	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
  
+@@ -298,4 +301,4 @@
  AM_CXXFLAGS +=  \
- 	$(TTFAUTOHINT_CFLAGS) \
 -	-I$(top_srcdir)/libs/brotli/include \
 -	-I$(top_srcdir)/libs/woff2/include
 +	-I$(dvisvgm_srcdir)/libs/brotli/include \
 +	-I$(dvisvgm_srcdir)/libs/woff2/include
- 
- AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
- endif
+ else
+@@ -309,3 +312,16 @@
  
 +AM_CXXFLAGS += \
 +	$(KPATHSEA_INCLUDES) \
@@ -88,28 +80,23 @@ diff -u2r dvisvgm-2.4.2/src/Makefile.am dvisvgm-src/src/Makefile.am
 +	$(ZLIB_INCLUDES) \
 +	$(LIBGS_INCLUDES) \
 +	$(CODE_COVERAGE_CFLAGS)
-+
+ 
 +if WIN32
 +AM_CXXFLAGS += -DTEXLIVEWIN32
 +endif WIN32
- 
++
 +if ! TEXLIVE_BUILD
 +# TL: do not try to rebuild these source files.
  # the command-line parser class is generated from options.xml by opt2cpp
- $(srcdir)/CommandLine.hpp: options.xml
-@@ -289,6 +305,16 @@
- 
+@@ -322,2 +338,3 @@
  psdefs.ps: ;
 +endif ! TEXLIVE_BUILD
  
- @CODE_COVERAGE_RULES@
- 
+@@ -326 +343,8 @@
  CLEANFILES = *.gcda *.gcno
 +
 +## Rebuild libkpathsea
 +@KPATHSEA_RULE@
-+## Rebuild libpotrace
-+@POTRACE_RULE@
 +## Rebuild libfreetype
 +@FREETYPE2_RULE@
 +## Rebuild libz

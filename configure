@@ -911,9 +911,6 @@ with_gmp_includes
 with_gmp_libdir
 with_system_cairo
 with_system_pixman
-with_system_potrace
-with_potrace_includes
-with_potrace_libdir
 with_system_gd
 with_gd_includes
 with_gd_libdir
@@ -1775,11 +1772,6 @@ Optional Packages:
                           pkg-config)
   --with-system-pixman    use installed pixman headers and library (requires
                           pkg-config)
-  --with-system-potrace   use installed potrace headers and library
-  --with-potrace-includes=DIR
-                          potrace headers installed in DIR
-  --with-potrace-libdir=DIR
-                          potrace library installed in DIR
   --with-system-gd        use installed gd headers and library
   --with-gd-includes=DIR  gd headers installed in DIR
   --with-gd-libdir=DIR    gd library installed in DIR
@@ -6161,46 +6153,6 @@ $as_echo "$as_me: Using \`pixman' headers and library from TL tree" >&6;}
   if test "x$with_system_pixman" != xno; then
     with_system_pixman=no
     ac_configure_args="$ac_configure_args '--without-system-pixman'"
-  fi
-fi
-
-## libs/potrace/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/potrace/
-## configure options and TL libraries required for potrace
-
-# Check whether --with-system-potrace was given.
-if test "${with_system_potrace+set}" = set; then :
-  withval=$with_system_potrace;
-fi
-
-# Check whether --with-potrace-includes was given.
-if test "${with_potrace_includes+set}" = set; then :
-  withval=$with_potrace_includes;
-fi
-
-# Check whether --with-potrace-libdir was given.
-if test "${with_potrace_libdir+set}" = set; then :
-  withval=$with_potrace_libdir;
-fi
-if test "x$with_system_potrace" = x; then
-  if test -f $srcdir/libs/potrace/configure; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`potrace' headers and library from TL tree" >&5
-$as_echo "$as_me: Assuming \`potrace' headers and library from TL tree" >&6;}
-    with_system_potrace=no
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`potrace' headers and library" >&5
-$as_echo "$as_me: Assuming installed \`potrace' headers and library" >&6;}
-    with_system_potrace=yes
-  fi
-  ac_configure_args="$ac_configure_args '--with-system-potrace=$with_system_potrace'"
-elif test "x$with_system_potrace" = xyes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`potrace' headers and library" >&5
-$as_echo "$as_me: Using installed \`potrace' headers and library" >&6;}
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`potrace' headers and library from TL tree" >&5
-$as_echo "$as_me: Using \`potrace' headers and library from TL tree" >&6;}
-  if test "x$with_system_potrace" != xno; then
-    with_system_potrace=no
-    ac_configure_args="$ac_configure_args '--without-system-potrace'"
   fi
 fi
 
@@ -21376,14 +21328,6 @@ if test "x$with_gd_libdir" != x && test "x$with_gd_libdir" != xyes; then
   GD_LIBS="-L$with_gd_libdir $GD_LIBS"
 fi
 
-if test "x$with_potrace_includes" != x && test "x$with_potrace_includes" != xyes; then
-  POTRACE_INCLUDES="-I$with_potrace_includes"
-fi
-POTRACE_LIBS="-lpotrace"
-if test "x$with_potrace_libdir" != x && test "x$with_potrace_libdir" != xyes; then
-  POTRACE_LIBS="-L$with_potrace_libdir $POTRACE_LIBS"
-fi
-
 if $PKG_CONFIG pixman-1 --atleast-version=0.18; then
   PIXMAN_INCLUDES=`$PKG_CONFIG pixman-1 --cflags`
   PIXMAN_LIBS=`$PKG_CONFIG pixman-1 --libs`
@@ -21855,37 +21799,6 @@ int
 main ()
 {
 gdImageCreate(1, 2);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  syslib_used=yes kpse_res=ok
-else
-  syslib_status=no kpse_res=failed
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
-$as_echo "$kpse_res" >&6; }
-fi
-
-## libs/potrace/ac/potrace.ac: configure.ac fragment for the TeX Live subdirectory libs/potrace/
-## basic check of system potrace
-if test "x$need_potrace:$with_system_potrace" = xyes:yes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`potrace' library" >&5
-$as_echo_n "checking requested system \`potrace' library... " >&6; }
-  CPPFLAGS="$POTRACE_INCLUDES $CPPFLAGS"
-  LIBS="$POTRACE_LIBS $LIBS"
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <potracelib.h>
-int
-main ()
-{
-potrace_state_t st;
-const char *version = potrace_version();
-potrace_state_free(&st);
   ;
   return 0;
 }

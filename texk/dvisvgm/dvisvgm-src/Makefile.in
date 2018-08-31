@@ -94,7 +94,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-potrace-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
@@ -166,8 +165,8 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = $(SUBDIRS)
-am__DIST_COMMON = $(srcdir)/Makefile.in AUTHORS COPYING ChangeLog \
-	INSTALL NEWS README
+am__DIST_COMMON = $(srcdir)/Makefile.in AUTHORS COPYING INSTALL NEWS \
+	README
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -196,7 +195,9 @@ am__relativize = \
   reldir="$$dir2"
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AM_LDFLAGS = @AM_LDFLAGS@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -215,6 +216,7 @@ CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CXXLD = @CXXLD@
 CYGPATH_W = @CYGPATH_W@
+DATE = @DATE@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
@@ -271,9 +273,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
-POTRACE_DEPEND = @POTRACE_DEPEND@
-POTRACE_INCLUDES = @POTRACE_INCLUDES@
-POTRACE_LIBS = @POTRACE_LIBS@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -342,6 +341,7 @@ AUTOMAKE_OPTIONS = foreign
 EXTRA_DIST = COPYING
 SUBDIRS = libs src #not for TL: tests doc
 ACLOCAL_AMFLAGS = -I m4
+@USE_BUNDLED_LIBS_TRUE@AM_DISTCHECK_CONFIGURE_FLAGS = --enable-bundled-libs
 @CODE_COVERAGE_ENABLED_TRUE@lcov_dir = $(top_builddir)/lcov
 @CODE_COVERAGE_ENABLED_TRUE@lcov_file = $(lcov_dir)/lcov.info
 all: all-recursive

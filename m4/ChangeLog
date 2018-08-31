@@ -1,3 +1,9 @@
+2018-08-27  Karl Berry  <karl@freefriends.org>
+
+	* kpse-potrace-flags.m4: remove file, again bundled with dvisvgm.
+	* kpse-pkgs.m4 (KPSE_ALL_SYSTEM_FLAGS),
+	(kpse_libs_pkgs): no more potrace.
+
 2018-02-09  Karl Berry  <karl@freefriends.org>
 
 	* kpse-pkgs.m4 (kpse_utils_pkgs): add axodraw2.

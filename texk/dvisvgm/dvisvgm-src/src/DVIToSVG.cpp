@@ -187,9 +187,8 @@ void DVIToSVG::leaveEndPage (unsigned) {
 	// set bounding box and apply page transformations
 	BoundingBox bbox = _actions->bbox();  // bounding box derived from the DVI commands executed
 	if (_bboxFormatString == "min" || _bboxFormatString == "preview" || _bboxFormatString == "papersize") {
-		Matrix matrix;
-		getPageTransformation(matrix);
-		bbox.transform(matrix);
+		bbox.unlock();
+		bbox.transform(getPageTransformation());
 	}
 	else if (_bboxFormatString == "dvi") {
 		// center page content
@@ -216,9 +215,7 @@ void DVIToSVG::leaveEndPage (unsigned) {
 				vector<Length> lengths = BoundingBox::extractLengths(_bboxFormatString);
 				if (lengths.size() == 1 || lengths.size() == 2) {  // relative box size?
 					// apply the page transformation and adjust the bbox afterwards
-					Matrix matrix;
-					getPageTransformation(matrix);
-					bbox.transform(matrix);
+					bbox.transform(getPageTransformation());
 				}
 				bbox.set(lengths);
 			}
@@ -242,25 +239,24 @@ void DVIToSVG::leaveEndPage (unsigned) {
 }
 
 
-void DVIToSVG::getPageTransformation(Matrix &matrix) const {
-	if (_transCmds.empty())
-		matrix.set(1);  // unity matrix
-	else {
+Matrix DVIToSVG::getPageTransformation () const {
+	Matrix matrix(1); // unity matrix
+	if (!_transCmds.empty()) {
 		Calculator calc;
 		if (_actions) {
-			const double bp2pt = 72.27/72;
+			const double bp2pt = (1_bp).pt();
 			BoundingBox &bbox = _actions->bbox();
 			calc.setVariable("ux", bbox.minX()*bp2pt);
 			calc.setVariable("uy", bbox.minY()*bp2pt);
 			calc.setVariable("w",  bbox.width()*bp2pt);
 			calc.setVariable("h",  bbox.height()*bp2pt);
 		}
-		calc.setVariable("pt", 1);
-		calc.setVariable("in", 72.27);
-		calc.setVariable("cm", 72.27/2.54);
-		calc.setVariable("mm", 72.27/25.4);
+		// add constants for length units to calculator
+		for (auto unit : Length::getUnits())
+			calc.setVariable(unit.first, Length(1, unit.second).pt());
 		matrix.set(_transCmds, calc);
 	}
+	return matrix;
 }
 
 

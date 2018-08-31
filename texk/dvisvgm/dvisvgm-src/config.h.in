@@ -49,6 +49,9 @@
 /* Define to 1 if you have the `ttfautohint' library (-lttfautohint). */
 #undef HAVE_LIBTTFAUTOHINT
 
+/* Define to 1 if you have the `xxhash' library (-lxxhash). */
+#undef HAVE_LIBXXHASH
+
 /* Define to 1 if you have the `z' library (-lz). */
 #undef HAVE_LIBZ
 
@@ -102,6 +105,9 @@
 
 /* Define to 1 if you have the <ttfautohint.h> header file. */
 #undef HAVE_TTFAUTOHINT_H
+
+/* Define to 1 if you have the `umask' function. */
+#undef HAVE_UMASK
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H

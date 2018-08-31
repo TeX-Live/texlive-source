@@ -90,23 +90,48 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dvisvgm$(EXEEXT)
-@ENABLE_WOFF_TRUE@am__append_1 = \
-@ENABLE_WOFF_TRUE@	../libs/ff-woff/libfontforge.a \
-@ENABLE_WOFF_TRUE@	../libs/woff2/libwoff2.a \
-@ENABLE_WOFF_TRUE@	../libs/brotli/libbrotli.a
+@USE_BUNDLED_LIBS_TRUE@am__append_1 = \
+@USE_BUNDLED_LIBS_TRUE@	../libs/potrace/libpotrace.a \
+@USE_BUNDLED_LIBS_TRUE@	../libs/xxHash/libxxhash.a
 
-@ENABLE_WOFF_TRUE@am__append_2 = ffwrapper.c ffwrapper.h
-@ENABLE_WOFF_TRUE@am__append_3 = \
+@USE_BUNDLED_LIBS_FALSE@am__append_2 = \
+@USE_BUNDLED_LIBS_FALSE@	$(POTRACE_LIBS) \
+@USE_BUNDLED_LIBS_FALSE@	$(XXHASH_LIBS)
+
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@am__append_3 = \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	../libs/ff-woff/libfontforge.a \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	../libs/woff2/libwoff2.a \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	../libs/brotli/libbrotli.a
+
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__append_4 = \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	../libs/ff-woff/libfontforge.a \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(WOFF2_LIBS) \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(BROTLI_LIBS)
+
+@ENABLE_WOFF_TRUE@am__append_5 = ffwrapper.c ffwrapper.h
+@USE_BUNDLED_LIBS_TRUE@am__append_6 = \
+@USE_BUNDLED_LIBS_TRUE@	-I$(dvisvgm_srcdir)/libs/potrace \
+@USE_BUNDLED_LIBS_TRUE@	-I$(dvisvgm_srcdir)/libs/xxHash
+
+@USE_BUNDLED_LIBS_FALSE@am__append_7 = \
+@USE_BUNDLED_LIBS_FALSE@	$(POTRACE_CFLAGS) \
+@USE_BUNDLED_LIBS_FALSE@	$(XXHASH_CFLAGS)
+
+@ENABLE_WOFF_TRUE@am__append_8 = \
 @ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
 @ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
 
-@ENABLE_WOFF_TRUE@am__append_4 = \
-@ENABLE_WOFF_TRUE@	$(TTFAUTOHINT_CFLAGS) \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/brotli/include \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/woff2/include
+@ENABLE_WOFF_TRUE@am__append_9 = $(TTFAUTOHINT_CFLAGS)
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@am__append_10 = \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	-I$(dvisvgm_srcdir)/libs/brotli/include \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	-I$(dvisvgm_srcdir)/libs/woff2/include
 
-@ENABLE_WOFF_TRUE@am__append_5 = $(TTFAUTOHINT_LIBS)
-@WIN32_TRUE@am__append_6 = -DTEXLIVEWIN32
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__append_11 = \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(BROTLI_CFLAGS) \
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(WOFF2_CFLAGS)
+
+@ENABLE_WOFF_TRUE@am__append_12 = $(TTFAUTOHINT_LIBS)
+@WIN32_TRUE@am__append_13 = -DTEXLIVEWIN32
 subdir = dvisvgm-src/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
@@ -114,7 +139,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-potrace-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
@@ -249,6 +273,7 @@ libdvisvgm_a_OBJECTS = $(am_libdvisvgm_a_OBJECTS)
 am_dvisvgm_OBJECTS = dvisvgm.$(OBJEXT)
 dvisvgm_OBJECTS = $(am_dvisvgm_OBJECTS)
 am__DEPENDENCIES_1 =
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__DEPENDENCIES_2 = ../libs/ff-woff/libfontforge.a
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -386,7 +411,9 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/version.hpp.in \
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AM_LDFLAGS = $(KPSE_LIBS) $(CODE_COVERAGE_LDFLAGS) $(am__append_12)
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -405,6 +432,7 @@ CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CXXLD = @CXXLD@
 CYGPATH_W = @CYGPATH_W@
+DATE = @DATE@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
@@ -461,9 +489,6 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
-POTRACE_DEPEND = @POTRACE_DEPEND@
-POTRACE_INCLUDES = @POTRACE_INCLUDES@
-POTRACE_LIBS = @POTRACE_LIBS@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -534,9 +559,9 @@ dvisvgm_SOURCES = \
 	dvisvgm.cpp
 
 dvisvgm_LDADD = $(noinst_LIBRARIES) ../libs/clipper/libclipper.a \
-	../libs/xxHash/libxxhash.a $(am__append_1) $(KPATHSEA_LIBS) \
-	$(POTRACE_LIBS) $(FREETYPE2_LIBS) $(FONTFORGE_LIBS) \
-	$(ZLIB_LIBS) $(LIBGS_LIBS)
+	$(am__append_1) $(am__append_2) $(am__append_3) \
+	$(am__append_4) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) \
+	$(FONTFORGE_LIBS) $(ZLIB_LIBS) $(LIBGS_LIBS)
 dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES) $(KPATHSEA_DEPEND) \
 	$(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
 libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
@@ -601,19 +626,18 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
 	VectorStream.hpp version.hpp VFActions.hpp VFReader.cpp \
 	VFReader.hpp windows.hpp XMLDocument.cpp XMLDocument.hpp \
 	XMLNode.cpp XMLNode.hpp XMLString.cpp XMLString.hpp \
-	ZLibOutputStream.hpp $(am__append_2)
+	ZLibOutputStream.hpp $(am__append_5)
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
 dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
 AM_CFLAGS = $(WARNING_CFLAGS) $(ZLIB_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
-	$(am__append_3)
+	$(am__append_8)
 AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
-	-I$(dvisvgm_srcdir)/libs/clipper \
-	-I$(dvisvgm_srcdir)/libs/variant/include \
-	-I$(dvisvgm_srcdir)/libs/xxHash $(am__append_4) \
-	$(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES) \
-	$(ZLIB_INCLUDES) $(LIBGS_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
-	$(am__append_6)
-AM_LDFLAGS = $(CODE_COVERAGE_LDFLAGS) $(am__append_5)
+	-Wno-mismatched-tags -I$(dvisvgm_srcdir)/libs/clipper \
+	-I$(dvisvgm_srcdir)/libs/variant/include $(am__append_6) \
+	$(am__append_7) $(am__append_9) $(am__append_10) \
+	$(am__append_11) $(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) \
+	$(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) $(LIBGS_INCLUDES) \
+	$(CODE_COVERAGE_CFLAGS) $(am__append_13)
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
@@ -1293,7 +1317,6 @@ uninstall-am: uninstall-binPROGRAMS
 @CODE_COVERAGE_RULES@
 
 @KPATHSEA_RULE@
-@POTRACE_RULE@
 @FREETYPE2_RULE@
 @ZLIB_RULE@
 
