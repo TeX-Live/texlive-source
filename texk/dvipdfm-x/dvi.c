@@ -46,6 +46,8 @@
 #include "pdfdoc.h"
 #include "pdfparse.h"
 #include "pdfencrypt.h"
+#include "pdfresource.h"
+#include "pdfdraw.h"
 
 #include "fontmap.h"
 
@@ -144,6 +146,7 @@ static struct loaded_font
   spt_t size;
   int   source;     /* Source is either DVI or VF */
   uint32_t rgba_color;
+  int      xgs_id;  /* Transparency ExtGState */
   struct tt_longMetrics *hvmt;
   int   ascent;
   int   descent;
@@ -1490,6 +1493,20 @@ do_fnt (int32_t tex_id)
                                 def_fonts[i].point_size);
     }
     loaded_fonts[font_id].rgba_color = def_fonts[i].rgba_color;
+    /* Opacity: 0xff is fully opaque. */
+    if ((loaded_fonts[font_id].rgba_color & 0xff) == 0xff) {
+      loaded_fonts[font_id].xgs_id = -1;
+    } else {
+      pdf_obj *xgs_dict;
+      int      a = loaded_fonts[font_id].rgba_color & 0xff;
+
+      /* Inefficient but don't care as transparency is not expected to be frequently used. */
+      xgs_dict = pdf_new_dict();
+      pdf_add_dict(xgs_dict, pdf_new_name("Type"), pdf_new_name("ExtGState"));
+      pdf_add_dict(xgs_dict, pdf_new_name("ca"), pdf_new_number(a/255.0));
+      pdf_add_dict(xgs_dict, pdf_new_name("CA"), pdf_new_number(a/255.0));
+      loaded_fonts[font_id].xgs_id = pdf_defineresource("ExtGState", NULL, xgs_dict, 0);
+    }
     loaded_fonts[font_id].source = DVI;
     def_fonts[i].used    = 1;
     def_fonts[i].font_id = font_id;
@@ -1707,6 +1724,23 @@ do_glyphs (int do_actual_text)
       (double)((unsigned char)(font->rgba_color >> 16) & 0xff) / 255,
       (double)((unsigned char)(font->rgba_color >>  8) & 0xff) / 255);
     pdf_color_push(&color, &color);
+    /* Opacity:
+     * Enter graphics_mode and then enclose with save/resotre
+     * since pdf_color_pop() may not restore graphics state.
+     */
+    if (font->xgs_id >= 0) {
+      pdf_obj *ref;
+      char     resname[16];
+      char     content[22];
+
+      sprintf(resname, "Xtx_Gs_%08x", current_font);
+      ref = pdf_get_resource_reference(font->xgs_id);
+      pdf_doc_add_page_resource("ExtGState", resname, ref);
+      graphics_mode();
+      pdf_dev_gsave();
+      sprintf(content, " /%s gs ", resname);
+      pdf_doc_add_page_content(content, strlen(content));
+    }
   }
 
   for (i = 0; i < slen; i++) {
@@ -1755,6 +1789,10 @@ do_glyphs (int do_actual_text)
   }
 
   if (font->rgba_color != 0xffffffff) {
+    if (font->xgs_id >= 0) {
+      graphics_mode(); 
+      pdf_dev_grestore();
+    }
     pdf_color_pop();
   }
   RELEASE(xloc);

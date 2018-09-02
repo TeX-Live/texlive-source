@@ -155,12 +155,13 @@ Type0Font_create_ToUnicode_stream(Type0Font *font) {
   return otf_create_ToUnicode_stream(CIDFont_get_ident(cidfont),
                                      CIDFont_get_opt_index(cidfont),
                                      CIDFont_get_fontname(cidfont),
-                                     Type0Font_get_usedchars(font),
-                                     font->cmap_id);
+                                     Type0Font_get_usedchars(font));
 }
 
 /* Try to load ToUnicode CMap from file system first, if not found fallback to
- * font CMap reverse lookup. */
+ * font CMap reverse lookup.
+ * CHANGED: CMap here is not always Unicode to CID mapping. Don't use reverse lookup.
+ */
 static pdf_obj *
 Type0Font_try_load_ToUnicode_stream(Type0Font *font, char *cmap_base) {
   char *cmap_name = NEW(strlen(cmap_base) + strlen("-UTF-16"), char);

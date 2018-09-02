@@ -1,3 +1,14 @@
+2018-09-02  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvi.c: Experimental support for XeTeX transparency font feature.
+	* cid.c, cid_p.h, cidtype0.c, cmap.[ch], cmap_p.h, fontmap.[ch],
+	pdfdev.c, pdffont.c, tt_cmap.[ch], type0.c:
+	Removed reverse CMap mappings. Do not use cff charset data
+	directly in pdfdev. Using reverse CMap for ToUnicode creation
+	causes problems since input CMap can not be assumed to be
+	always Unicode. Also, current implementation is imcomplete.
+	* configure.ac: Version 20180902.
+
 2018-08-28  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* otl_conf.[ch]: Removed. This undocumented feature is no

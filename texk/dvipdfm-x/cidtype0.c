@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2016 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2018 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -889,12 +889,6 @@ CIDFont_type0_open (CIDFont *font, const char *name,
       if (fp)
         DPXFCLOSE(fp);
       return -1;
-    }
-
-    if (is_cid_font) {
-      cff_read_charsets(cffont);
-      opt->cff_charsets = cffont->charsets;
-      cffont->charsets = NULL;
     }
   } else {
     if (!fp)

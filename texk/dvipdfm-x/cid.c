@@ -570,7 +570,6 @@ CIDFont_cache_find (const char *map_name,
   opt->name  = NULL;
   opt->csi   = get_cidsysinfo(map_name, fmap_opt);
   opt->stemv = fmap_opt->stemv;
-  opt->cff_charsets = NULL;
 
   if (!opt->csi && cmap_csi) {
     /*
@@ -651,8 +650,6 @@ CIDFont_cache_find (const char *map_name,
       font->options = opt;
       __cache->fonts[font_id] = font;
       (__cache->num)++;
-
-      fmap_opt->cff_charsets = opt->cff_charsets;
     }
   } else if (opt) {
     release_opt(opt);
@@ -708,8 +705,6 @@ release_opt (cid_opt *opt)
     if (opt->csi->ordering)
       RELEASE(opt->csi->ordering);
     RELEASE(opt->csi);
-    if (opt->cff_charsets)
-      cff_release_charsets((cff_charsets *) opt->cff_charsets);
   }
   RELEASE(opt);
 }

@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2017 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2018 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -76,8 +76,7 @@ pdf_init_fontmap_record (fontmap_rec *mrec)
   mrec->opt.charcoll  = NULL;
   mrec->opt.style     = FONTMAP_STYLE_NONE;
   mrec->opt.stemv     = -1; /* not given explicitly by an option */
-
-  mrec->opt.cff_charsets = NULL;
+  mrec->opt.use_glyph_encoding = 0;
 }
 
 void
@@ -143,8 +142,7 @@ pdf_copy_fontmap_record (fontmap_rec *dst, const fontmap_rec *src)
   dst->opt.charcoll  = mstrdup(src->opt.charcoll);
   dst->opt.style     = src->opt.style;
   dst->opt.stemv     = src->opt.stemv;
-
-  dst->opt.cff_charsets = src->opt.cff_charsets;
+  dst->opt.use_glyph_encoding = src->opt.use_glyph_encoding;
 }
 
 
@@ -1077,7 +1075,8 @@ pdf_insert_native_fontmap_record (const char *path, uint32_t index,
   mrec->opt.extend = extend   / 65536.0;
   mrec->opt.slant  = slant    / 65536.0;
   mrec->opt.bold   = embolden / 65536.0;
-  
+  mrec->opt.use_glyph_encoding = 1;
+
   ret = pdf_insert_fontmap_record(mrec->map_name, mrec);
   pdf_clear_fontmap_record(mrec);
   RELEASE(mrec);

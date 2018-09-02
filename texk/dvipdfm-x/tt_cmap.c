@@ -782,8 +782,8 @@ handle_CIDFont (sfnt *sfont,
     ERROR("No CFF charset data???");
   }
 
-  map     = NEW(num_glyphs * 2, unsigned char);
-  memset(map, 0, num_glyphs * 2);
+  map     = NEW(65536 * 2, unsigned char);
+  memset(map, 0, 65536 * 2);
   switch (charset->format) {
   case 0:
     {
@@ -791,10 +791,10 @@ handle_CIDFont (sfnt *sfont,
 
       cids = charset->data.glyphs;
       for (gid = 1, i = 0;
-	   i < charset->num_entries; i++) {
-	map[2*gid  ] = (cids[i] >> 8) & 0xff;
-	map[2*gid+1] = cids[i] & 0xff;
-	gid++;
+	         i < charset->num_entries; i++) {
+	      map[2*gid  ] = (cids[i] >> 8) & 0xff;
+	      map[2*gid+1] = cids[i] & 0xff;
+	      gid++;
       }
     }
     break;
@@ -805,15 +805,15 @@ handle_CIDFont (sfnt *sfont,
 
       ranges = charset->data.range1;
       for (gid = 1, i = 0;
-	   i < charset->num_entries; i++) {
-	cid   = ranges[i].first;
-	count = ranges[i].n_left + 1; /* card8 */
-	while (count-- > 0 &&
-	       gid <= num_glyphs) {
-	  map[2*gid    ] = (cid >> 8) & 0xff;
-	  map[2*gid + 1] = cid & 0xff;
-	  gid++; cid++;
-	}
+	         i < charset->num_entries; i++) {
+	      cid   = ranges[i].first;
+	      count = ranges[i].n_left + 1; /* card8 */
+	      while (count-- > 0 &&
+	             gid <= num_glyphs) {
+	        map[2*gid    ] = (cid >> 8) & 0xff;
+	        map[2*gid + 1] = cid & 0xff;
+	        gid++; cid++;
+	      }
       }
     }
     break;
@@ -824,23 +824,22 @@ handle_CIDFont (sfnt *sfont,
 
       ranges = charset->data.range2;
       if (charset->num_entries == 1 &&
-	  ranges[0].first == 1) {
-	/* "Complete" CIDFont */
-	RELEASE(map); map = NULL;
+	        ranges[0].first == 1) {
+	      /* "Complete" CIDFont */
+	      RELEASE(map); map = NULL;
       } else {
-	/* Not trivial mapping */
-	for (gid = 1, i = 0;
-	     i < charset->num_entries; i++) {
-	  cid   = ranges[i].first;
-	  count = ranges[i].n_left + 1;
-	  while (count-- > 0 &&
-		 gid <= num_glyphs) {
-	    map[2*gid] = (cid >> 8) & 0xff;
-	    map[2*gid+1] = cid & 0xff;
-	    gid++; cid++;
-	  }
-	}
-	
+	      /* Not trivial mapping */
+	      for (gid = 1, i = 0;
+	           i < charset->num_entries; i++) {
+	       cid   = ranges[i].first;
+	       count = ranges[i].n_left + 1;
+	       while (count-- > 0 &&
+		              gid <= num_glyphs) {
+	          map[2*gid] = (cid >> 8) & 0xff;
+	          map[2*gid+1] = cid & 0xff;
+	          gid++; cid++;
+	        }
+	      }
       }
     }
     break;
@@ -1095,13 +1094,17 @@ create_ToUnicode_cmap12 (CMap *cmap,
   return count;
 }
 
+/* NOTE: Reverse mapping code which had been placed here is removed since:
+ *  - Implementation of reserve CMap mapping itself is imcomplete.
+ *  - It is wrong to assume that all CMap passed here is Unicode to CID mapping.
+ * Especially, the second one causes problems.
+ */  
 static pdf_obj *
 create_ToUnicode_cmap (tt_cmap *ttcmap,
                        const char *cmap_name,
                        CMap *cmap_add,
                        const char *used_chars,
-                       sfnt *sfont,
-                       CMap *code_to_cid_cmap)
+                       sfnt *sfont)
 {
   pdf_obj  *stream = NULL;
   CMap     *cmap;
@@ -1119,34 +1122,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
   /* cmap_add here stores information about all unencoded glyphs which can be
    * accessed only through OT Layout GSUB table.
    */
-  if (code_to_cid_cmap && cffont && is_cidfont && !cmap_add) {
-    USHORT i;
-    for (i = 0; i < 8192; i++) {
-      int j;
-
-      if (used_chars[i] == 0)
-        continue;
-
-      for (j = 0; j < 8; j++) {
-        USHORT cid = 8 * i + j;
-        int ch;
-
-        if (!is_used_char2(used_chars, cid))
-          continue;
-
-        ch = CMap_reverse_decode(code_to_cid_cmap, cid);
-        if (ch >= 0) {
-          int len;
-          unsigned char *p = wbuf + 2;
-          wbuf[0] = (cid >> 8) & 0xff;
-          wbuf[1] =  cid & 0xff;
-          len = UC_UTF16BE_encode_char(ch, &p, wbuf + WBUF_SIZE);
-          CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
-          count++;
-        }
-      }
-    }
-  } else {
+  {
     char used_chars_copy[8192];
     memcpy(used_chars_copy, used_chars, 8192);
 
@@ -1199,13 +1175,12 @@ pdf_obj *
 otf_create_ToUnicode_stream (const char *font_name,
                              int ttc_index, /* 0 for non-TTC */
                              const char *basefont,
-                             const char *used_chars,
-                             int cmap_id)
+                             const char *used_chars)
 {
   pdf_obj    *cmap_ref = NULL;
   int         res_id;
   pdf_obj    *cmap_obj = NULL;
-  CMap       *cmap_add, *code_to_cid_cmap;
+  CMap       *cmap_add;
   int         cmap_add_id;
   tt_cmap    *ttcmap;
   char       *normalized_font_name;
@@ -1264,11 +1239,6 @@ otf_create_ToUnicode_stream (const char *font_name,
     ERROR("Could not read OpenType/TrueType table directory.");
   }
 
-  code_to_cid_cmap = CMap_cache_get(cmap_id);
-  cmap_type = CMap_get_type(code_to_cid_cmap);
-  if (cmap_type != CMAP_TYPE_CODE_TO_CID)
-    code_to_cid_cmap = NULL;
-
   cmap_add_name = NEW(strlen(font_name)+strlen(",000-UCS32-Add")+1, char);
   sprintf(cmap_add_name, "%s,%03d-UCS32-Add", font_name, ttc_index);
   cmap_add_id = CMap_cache_find(cmap_add_name);
@@ -1286,8 +1256,7 @@ otf_create_ToUnicode_stream (const char *font_name,
       continue;
 
     if (ttcmap->format == 4 || ttcmap->format == 12) {
-      cmap_obj = create_ToUnicode_cmap(ttcmap, cmap_name, cmap_add, used_chars,
-                                       sfont, code_to_cid_cmap);
+      cmap_obj = create_ToUnicode_cmap(ttcmap, cmap_name, cmap_add, used_chars, sfont);
       break;
     }
   }
@@ -1302,7 +1271,7 @@ otf_create_ToUnicode_stream (const char *font_name,
 
   if (cmap_obj) {
     res_id   = pdf_defineresource("CMap", cmap_name,
-				  cmap_obj, PDF_RES_FLUSH_IMMEDIATE);
+				                          cmap_obj, PDF_RES_FLUSH_IMMEDIATE);
     cmap_ref = pdf_get_resource_reference(res_id);
   } else {
     cmap_ref = NULL;
@@ -1366,7 +1335,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
   int    is_cidfont = 0;
   sfnt  *sfont;
   ULONG  offset = 0;
-  char  *base_name = NULL, *cmap_name = NULL;
+  char  *cmap_name = NULL;
   FILE  *fp = NULL;
   otl_gsub      *gsub_vert = NULL, *gsub_list = NULL;
   tt_cmap       *ttcmap;
@@ -1380,13 +1349,46 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     return -1; /* Sorry for this... */
   }
 
+  /* First look for cache if it was already loaded */
+  cmap_name = NEW(strlen(map_name)+strlen("-UCS4-H")+5, char);
+  if (otl_tags) {
+    cmap_name = NEW(strlen(map_name)+strlen(otl_tags)+strlen("-UCS4-H")+6, char);
+    if (wmode)
+      sprintf(cmap_name, "%s,%03d,%s-UCS4-V", map_name, ttc_index, otl_tags);
+    else
+      sprintf(cmap_name, "%s,%03d,%s-UCS4-H", map_name, ttc_index, otl_tags);
+  } else {
+    if (wmode)
+      sprintf(cmap_name, "%s,%03d-UCS4-V", map_name, ttc_index);
+    else {
+      sprintf(cmap_name, "%s,%03d-UCS4-H", map_name, ttc_index);
+    }
+  }
+  if (verbose > VERBOSE_LEVEL_MIN) {
+    MESG("\n");
+    MESG("otf_cmap>> Unicode charmap for font=\"%s\" layout=\"%s\"\n",
+	       map_name, (otl_tags ? otl_tags : "none"));
+  } 
+  cmap_id = CMap_cache_find(cmap_name);
+  if (cmap_id >= 0) {
+    RELEASE(cmap_name);
+    if (verbose > VERBOSE_LEVEL_MIN)
+      MESG("otf_cmap>> Found at cmap_id=%d.\n", cmap_id);
+
+    return cmap_id;
+  }
+
+  /* CMap not found */
   fp = DPXFOPEN(map_name, DPX_RES_TYPE_TTFONT);
   if (!fp) {
     fp = DPXFOPEN(map_name, DPX_RES_TYPE_OTFONT);
   }
   if (!fp) {
     fp = DPXFOPEN(map_name, DPX_RES_TYPE_DFONT);
-    if (!fp) return -1;
+    if (!fp) {
+      RELEASE(cmap_name);
+      return -1;
+    }
     sfont = dfont_open(fp, ttc_index);
   } else {
     sfont = sfnt_open(fp);
@@ -1417,19 +1419,8 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
   if (sfnt_read_table_directory(sfont, offset) < 0)
     ERROR("Could not read OpenType/TrueType table directory.");
 
-  base_name = NEW(strlen(map_name)+strlen("-UCS4-H")+5, char);
-  if (wmode)
-    sprintf(base_name, "%s,%03d-UCS4-V", map_name, ttc_index);
-  else {
-    sprintf(base_name, "%s,%03d-UCS4-H", map_name, ttc_index);
-  }
 
   if (otl_tags) {
-    cmap_name = NEW(strlen(map_name)+strlen(otl_tags)+strlen("-UCS4-H")+6, char);
-    if (wmode)
-      sprintf(cmap_name, "%s,%03d,%s-UCS4-V", map_name, ttc_index, otl_tags);
-    else
-      sprintf(cmap_name, "%s,%03d,%s-UCS4-H", map_name, ttc_index, otl_tags);
     /* tounicode_add here is later refered by otf_create_ToUnicode_stream()
      * for finding additional CID to Unicode mapping entries required by
      * OTL gsub substitution.
@@ -1450,35 +1441,12 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
       tounicode_add_id = CMap_cache_add(tounicode_add);
     }
     RELEASE(tounicode_add_name);
-  } else {
-    cmap_name = NEW(strlen(base_name)+1, char);
-    strcpy(cmap_name, base_name);
   }
 
   if (sfont->type == SFNT_TYPE_POSTSCRIPT) {
     is_cidfont = handle_CIDFont(sfont, &GIDToCIDMap, &csi);
   } else {
     is_cidfont = 0;
-  }
-
-  if (verbose > VERBOSE_LEVEL_MIN) {
-    MESG("\n");
-    MESG("otf_cmap>> Unicode charmap for font=\"%s\" layout=\"%s\"\n",
-	 map_name, (otl_tags ? otl_tags : "none"));
-  }
-  cmap_id = CMap_cache_find(cmap_name);
-  if (cmap_id >= 0) {
-    RELEASE(cmap_name);
-    RELEASE(base_name);
-    if (GIDToCIDMap)
-      RELEASE(GIDToCIDMap);
-    sfnt_close(sfont);
-    DPXFCLOSE(fp);
-
-    if (verbose > VERBOSE_LEVEL_MIN)
-      MESG("otf_cmap>> Found at cmap_id=%d.\n", cmap_id);
-
-    return cmap_id;
   }
 
   ttcmap = tt_cmap_read(sfont, 3, 10); /* Microsoft UCS4 */
@@ -1533,19 +1501,136 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     otl_gsub_release(gsub_list);
   gsub_list = NULL;
 
-    RELEASE(cmap_name);
-    RELEASE(base_name);
-    if (GIDToCIDMap)
-      RELEASE(GIDToCIDMap);
-    if (is_cidfont) {
-      if (csi.registry)
-	RELEASE(csi.registry);
-      if (csi.ordering)
-	RELEASE(csi.ordering);
-    }
-    tt_cmap_release(ttcmap);
-    sfnt_close(sfont);
-    DPXFCLOSE(fp);
+  RELEASE(cmap_name);
+  if (GIDToCIDMap)
+    RELEASE(GIDToCIDMap);
+  if (is_cidfont) {
+    if (csi.registry)
+	    RELEASE(csi.registry);
+    if (csi.ordering)
+	    RELEASE(csi.ordering);
+  }
+  tt_cmap_release(ttcmap);
+  sfnt_close(sfont);
+  DPXFCLOSE(fp);
 
   return cmap_id;
+}
+
+int
+otf_try_load_GID_to_CID_map (const char *map_name, int ttc_index, int wmode)
+{
+  int            cmap_id = -1;
+  sfnt          *sfont;
+  ULONG          offset = 0;
+  char          *cmap_name = NULL;
+  FILE          *fp = NULL;
+  CIDSysInfo     csi = {NULL, NULL, 0};
+  int            is_cidfont = 0;
+  unsigned char *GIDToCIDMap = NULL;
+
+  if (!map_name)
+    return -1;
+
+  if (ttc_index > 999 || ttc_index < 0) {
+    return -1; /* Sorry for this... */
+  }
+
+  /* Check if already loaded */
+  cmap_name = NEW(strlen(map_name)+strlen("-GID")+5, char);
+  sprintf(cmap_name, "%s:%3d-GID", map_name, ttc_index);
+  cmap_id = CMap_cache_find(cmap_name);
+  if (cmap_id >= 0) {
+    RELEASE(cmap_name);
+    if (verbose > VERBOSE_LEVEL_MIN)
+      MESG("otf_cmap>> GID-to-CID mapping found at cmap_id=%d.\n", cmap_id);
+
+    return cmap_id;
+  }
+
+  fp = DPXFOPEN(map_name, DPX_RES_TYPE_TTFONT);
+  if (!fp) {
+    fp = DPXFOPEN(map_name, DPX_RES_TYPE_OTFONT);
+  }
+  if (!fp) {
+    fp = DPXFOPEN(map_name, DPX_RES_TYPE_DFONT);
+    if (!fp) {
+      RELEASE(cmap_name);
+      return -1;
+    }
+    sfont = dfont_open(fp, ttc_index);
+  } else {
+    sfont = sfnt_open(fp);
+  }
+
+  if (!sfont) {
+    ERROR("Could not open OpenType/TrueType/dfont font file \"%s\"", map_name);
+  }
+  switch (sfont->type) {
+  case SFNT_TYPE_TTC:
+    offset = ttc_read_offset(sfont, ttc_index);
+    if (offset == 0) {
+      ERROR("Invalid TTC index");
+    }
+    break;
+  case SFNT_TYPE_TRUETYPE:
+  case SFNT_TYPE_POSTSCRIPT:
+    offset = 0;
+    break;
+  case SFNT_TYPE_DFONT:
+    offset = sfont->offset;
+    break;
+  default:
+    ERROR("Not a OpenType/TrueType/TTC font?: %s", map_name);
+    break;
+  }
+
+  if (sfnt_read_table_directory(sfont, offset) < 0)
+    ERROR("Could not read OpenType/TrueType table directory.");
+  if (sfont->type != SFNT_TYPE_POSTSCRIPT) {
+    RELEASE(cmap_name);
+    sfnt_close(sfont);
+    DPXFCLOSE(fp);
+    return -1;
+  }
+
+  /* Read GID-to-CID mapping if CFF OpenType is found. */
+  is_cidfont = handle_CIDFont(sfont, &GIDToCIDMap, &csi);
+  if (is_cidfont) {
+    if (GIDToCIDMap) {
+      CMap     *cmap;
+      int32_t   gid;
+
+      cmap = CMap_new();
+      CMap_set_name (cmap, cmap_name);
+      CMap_set_type (cmap, CMAP_TYPE_CODE_TO_CID);
+      CMap_set_wmode(cmap, wmode);
+      CMap_add_codespacerange(cmap, "\x00\x00", "\xff\xff", 2);
+      CMap_set_CIDSysInfo(cmap, &csi);
+
+      for (gid = 0; gid < 65536; gid++) {
+        unsigned char src[2];
+        src[0] = (gid >> 8) & 0xff;
+        src[1] = gid & 0xff;
+        CMap_add_bfchar(cmap, src, 2, &GIDToCIDMap[gid*2], 2);
+      }
+      cmap_id = CMap_cache_add(cmap);
+      if (verbose > VERBOSE_LEVEL_MIN) {
+        MESG("\n");
+        MESG("otf_cmap>> Creating GID-to-CID mapping for font=\"%s\"\n", map_name);
+      }
+    }
+    /* Identity mapping for null GIDToCIDMap */
+  }
+  RELEASE(cmap_name);
+  if (GIDToCIDMap)
+    RELEASE(GIDToCIDMap);
+  if (csi.registry)
+	  RELEASE(csi.registry);
+  if (csi.ordering)
+	  RELEASE(csi.ordering);
+  sfnt_close(sfont);
+  DPXFCLOSE(fp);
+
+  return cmap_id;  
 }
