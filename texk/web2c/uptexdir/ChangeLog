@@ -1,3 +1,11 @@
+2018-09-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* gkhuge.test: Export TEXMFCNF beforehand, instead of setting
+	it at each one-line command execution. This should avoid test
+	failure on some platforms.
+	http://tug.org/pipermail/tlbuild/2018q3/004244.html
+	http://tug.org/pipermail/tlbuild/2018q3/004250.html
+
 2018-08-18  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* gkhuge.test: More strict test.

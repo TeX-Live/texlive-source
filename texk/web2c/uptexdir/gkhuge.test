@@ -5,6 +5,9 @@
 
 test -d uptests || mkdir -p uptests
 
+TEXMFCNF=$srcdir/../kpathsea
+export TEXMFCNF
+
 # Test inputs
 testdir=$srcdir/uptexdir/tests
 
@@ -14,10 +17,9 @@ for font in gkhugeok; do
 
   # This test is constructed as a cycle, since JPL source
   # of gkhugeok.tfm is so large.
-  TEXMFCNF=$srcdir/../kpathsea \
-    ./uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl && \
-    ./uppltotf -verbose uptests/y$font.pl uptests/y$font.tfm && \
-    cmp $testdir/$font.tfm uptests/y$font.tfm && echo || exit 1
+  ./uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl && \
+  ./uppltotf -verbose uptests/y$font.pl uptests/y$font.tfm && \
+  cmp $testdir/$font.tfm uptests/y$font.tfm && echo || exit 1
 
 done
 
@@ -28,10 +30,9 @@ for font in gkhugeng; do
   # error message, instead of trying to allocate too much.
   # The invalid gkhugeng.tfm was erroneously created before
   # web2c/pltotf.ch change 2017-09-10, due to overflow
-  TEXMFCNF=$srcdir/../kpathsea \
-    ./uptftopl $testdir/$font.tfm uptests/y$font.pl \
-      2>uptests/y$font.err && exit 1 || echo
-    cmp $testdir/$font.err uptests/y$font.err && echo || exit 1
+  ./uptftopl $testdir/$font.tfm uptests/y$font.pl \
+    2>uptests/y$font.err && exit 1 || echo
+  diff $testdir/$font.err uptests/y$font.err && echo || exit 1
 
 done
 
