@@ -1,3 +1,8 @@
+2018-09-04  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfobj.c: More fix on circular reference issue.
+	* configure.ac: Version 20180904.
+
 2018-09-02  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvi.c: Experimental support for XeTeX transparency font feature.

@@ -3901,9 +3901,8 @@ pdf_import_indirect (pdf_obj *object)
     return pdf_new_null();
   }
 
-  if ((ref = pf->xref_table[obj_num].indirect)) {
-    return  pdf_link_obj(ref);
-  } else {
+  ref = pf->xref_table[obj_num].indirect;
+  if (!ref) {
     pdf_obj *obj, *reserved, *imported;
 
     obj = pdf_get_object(pf, obj_num, obj_gen);
@@ -3920,32 +3919,27 @@ pdf_import_indirect (pdf_obj *object)
      *   obj #2 --> << /Parents [1 0 R] >>
      * The problem is in that dvipdfmx gives new labels to objects after they
      * are completely read.
-     * 
-     * Dirty hack though...
      */
     reserved = pdf_new_null(); /* for reservation of label */
     pf->xref_table[obj_num].indirect = ref = pdf_new_ref(reserved);
     imported = pdf_import_object(obj);
-    /* Substitute object here...
-     * We can't use pdf_transfer_label() here, since "reserved" object may
-     * have already be referenced by others and possibly be deref'ed later.
-     */
-    reserved->refcount = imported->refcount;
-    reserved->type     = imported->type;
-    reserved->flags    = imported->flags;
-    reserved->data     = imported->data;
-    /* Object returned by pdf_import_object(obj) might be simply a link to "obj".
-     * In that case we can't simply delete that object.
-     */
-    if (imported->refcount == 1) {
-      RELEASE(imported);
-      imported = NULL;
+    if (imported) {
+      if (imported->label) {
+        WARN("Imported object already has a label: obj_id=%lu", imported->label);
+      }
+      OBJ_OBJ(ref) = imported;
+      imported->label = reserved->label;
+      imported->generation = reserved->generation;
+      reserved->label = 0;
+      reserved->generation = 0;
+      pdf_release_obj(imported);
     }
+
     pdf_release_obj(reserved);
     pdf_release_obj(obj);
+  }
     
     return  pdf_link_obj(ref);
-  }
 }
 
 /*
