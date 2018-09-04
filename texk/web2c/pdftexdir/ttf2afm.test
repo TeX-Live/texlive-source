@@ -4,10 +4,11 @@
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+LC_ALL=C
 TEXMFCNF=$srcdir/../kpathsea
 TEXINPUTS=$srcdir/pdftexdir/tests:$srcdir/tests
 TEXFONTS=$srcdir/pdftexdir/tests
-export TEXMFCNF TEXINPUTS TEXFONTS
+export LC_ALL TEXMFCNF TEXINPUTS TEXFONTS
 
 testsrc=$srcdir/pdftexdir/tests
 
