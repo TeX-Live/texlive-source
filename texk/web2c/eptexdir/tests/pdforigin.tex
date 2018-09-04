@@ -1,0 +1,40 @@
+\mag=3000
+
+\newdimen\XPOS\newdimen\YPOS\newread\TMP
+\openin\TMP=\jobname.tmp
+\ifeof\TMP\else\closein\TMP\input \jobname.tmp\fi
+\immediate\openout\TMP=\jobname.tmp
+\topskip0pt
+\ifdefined\pagewidth
+  \pagewidth=10truein\pageheight=10truein
+\else\ifdefined\pdfpagewidth
+  \pdfpagewidth=10truein\pdfpageheight=10truein
+\fi\fi
+
+\shipout\hbox{%
+  \special{papersize=10truein,10truein}%
+  \pdfsavepos%
+  \write\TMP{\noexpand\XPOS=\the\pdflastxpos sp\noexpand\YPOS=\the\pdflastypos sp}%
+  \smash{%
+    \llap{\hss\vrule height 1pt depth 0pt width \XPOS}%
+    \llap{\hss\vrule height 2.4pt depth -2pt width 1in}%
+    \llap{\hss\vrule height 4pt depth -3.2pt width 1truein}%
+    \llap{\vrule height 1in depth 0pt width 0.4pt\kern.8pt%
+    \vrule height 1truein depth 0pt width 0.8pt}%
+	\rlap{%
+	\vrule height 0pt depth \dimexpr\YPOS+5truept width .4pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS+4truept width .4pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS+3truept width .4pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS+2truept width .4pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS+1truept width .4pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS width .8pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS-1truept width .4pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS-2truept width .4pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS-3truept width .4pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS-4truept width .4pt\kern.8pt
+	\vrule height 0pt depth \dimexpr\YPOS-5truept width .4pt\kern.8pt%
+	}%
+  }%
+}
+\end
+

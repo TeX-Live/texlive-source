@@ -8,7 +8,6 @@
 %%
 %% \pdfsavepos and co.
 %%   (\pdfsavepos, \pdfpage{width,height}, \pdflast{x,y}pos)
-%%   papersize special automatically sets \pdfpage{width,height} (quick hack).
 %%
 %% \pdffiledump: for bmpsize package by Heiko Oberdiek
 %%
@@ -1197,7 +1196,7 @@ procedure special_out(@!p:pointer);
 label done;
 var old_setting:0..max_selector; {holds print |selector|}
 @!k:pool_pointer; {index into |str_pool|}
-@!s,@!t,@!cw: scaled;
+@!s,@!t,@!cw, @!num, @!denom: scaled;
 @!bl: boolean;
 @!i: small_number;
 @z
@@ -1205,7 +1204,8 @@ var old_setting:0..max_selector; {holds print |selector|}
 @x
 pool_ptr:=str_start[str_ptr]; {erase the string}
 @y
-@<Determine whether this \.{\\special} is a papersize special@>;
+if read_papersize_special>0 then
+  @<Determine whether this \.{\\special} is a papersize special@>;
 done: pool_ptr:=str_start[str_ptr]; {erase the string}
 @z
 
@@ -1460,56 +1460,97 @@ end
 A \.{DVI} file does not have the information of the page height,
 which is needed to implement \.{\\pdflastypos} correctly.
 To keep the information of the page height, I (H.~Kitagawa)
-adopted \.{\\pdfpageheight} primitive from pdf\TeX. However, in \pTeX (and \hbox{\epTeX}),
-the papersize special \.{\\special\{papersize=|width|,|height|\}} is commonly used
-for specifying page width/height. Hence, I decided that the papersize special also
+adopted \.{\\pdfpageheight} primitive from pdf\TeX. 
+
+In \pTeX (and \hbox{\epTeX}), the papersize special 
+\.{\\special\{papersize=\<width>,\<height>\}} is commonly used
+for specifying page width/height. 
+If \.{\\readpapersizespecial} is greater than~0, the papersize special also
 changes the value of \.{\\pdfpagewidth} and \.{\\pdfpageheight}.
-The following routine does this.
+This process is done in the following routine.
 
-In present implementation, the ``valid'' papersize special, which can be interpreted by
-this routine, is in the following form:
-$$\hbox{\.{\\special\char"7Bpapersize=}$x$\.{pt,}$y$\.{pt\char"7D}}$$
-where $x$\thinspace pt and $y$\thinspace pt are positive dimensions which \TeX\ can comprehend.
-No spaces are allowed in the above form, and only ``pt'' is allowed for unit, for simplicity.
+{\def\<#1>{\langle\hbox{#1\/}\rangle}
+In present implementation, the papersize special $\<special>$, 
+which can be interpreted by this routine, is defined as follows.
+$$\eqalign{%
+  \<special> &\longrightarrow \.{papersize=}\<length>\.{,}\<length>\cr
+  \<length>  &\longrightarrow \<decimal> 
+    \<optional~\.{true}>\<physical unit>\cr
+  \<decimal> &\longrightarrow \.{.} \mid \<digit>\<decimal> \mid
+    \<decimal>\<digit>\cr
+}$$}
+Note that any space, ``\.{,}'' as a decimal separator, minus~symbol
+are neither permitted.
 
-@d ifps==if k=pool_ptr then goto done else if
-@d sop(#)==so(str_pool[(#)])
+@d ifps(#)==@+if k+(#)>pool_ptr then goto done @+ else @+ if
+@d sop(#)==so(str_pool[#])
+@f ifps==if
 
 @<Determine whether this \.{\\special} is a papersize special@>=
-if pool_ptr-str_start[str_ptr]<=10 then goto done;
-k:=str_start[str_ptr];
-if (sop(k+0)<>'p')or(sop(k+1)<>'a')or(sop(k+2)<>'p')or
-   (sop(k+3)<>'e')or(sop(k+4)<>'r')or(sop(k+5)<>'s')or
-   (sop(k+6)<>'i')or(sop(k+7)<>'z')or(sop(k+8)<>'e') then goto done;
-k:=k+9; ifps sop(k)='=' then incr(k);
+begin k:=str_start[str_ptr];@/
+ifps(10) @,
+   (sop(k+0)<>'p')or(sop(k+1)<>'a')or(sop(k+2)<>'p')or
+   (sop(k+3)<>'e')@|or(sop(k+4)<>'r')or(sop(k+5)<>'s')or
+   (sop(k+6)<>'i')or(sop(k+7)<>'z')@|or(sop(k+8)<>'e')or
+   (sop(k+9)<>'=')  then goto done;
+k:=k+10;
 @<Read dimensions in the argument in the papersize special@>;
-incr(k); ifps sop(k)<>',' then goto done else incr(k); cw:=t;
-@<Read dimensions in the argument in the papersize special@>;
-geq_word_define(dimen_base+pdf_page_width_code,cw);
-geq_word_define(dimen_base+pdf_page_height_code,t);
-cur_page_height := t; cur_page_width := cw;
-if (dvi_dir=dir_tate)or(dvi_dir=dir_dtou) then begin
+ifps(1) @, sop(k)=',' then begin 
+  incr(k); cw:=s;
+  @<Read dimensions in the argument in the papersize special@>;
+  if pool_ptr>k then goto done;
+  geq_word_define(dimen_base+pdf_page_width_code,cw);
+  geq_word_define(dimen_base+pdf_page_height_code,s);@|
+  cur_page_height := s; cur_page_width := cw;
+  if (dvi_dir=dir_tate)or(dvi_dir=dir_dtou) then begin
     t:=cur_page_height; cur_page_height:=cur_page_width;
     cur_page_width:=t; end;
-
-@ @<Read dimensions in the argument in the papersize special@>=
-s:=1; t:=0; bl:=true;
-while (k<pool_ptr)and(bl)  do begin
-  if (sop(k)>='0')and (sop(k)<='9') then begin t:=10*t+sop(k)-'0'; incr(k); end
-  else begin bl:=false; end;
 end;
-t:=t*unity;
-ifps sop(k)='.' then begin incr(k); bl:=true; i:=0;
-  while (k<pool_ptr)and(bl)and(i<=17)  do begin
-    if (sop(k)>='0')and (sop(k)<='9') then begin
-      dig[i]:=sop(k)-'0'; incr(k); incr(i); end
-    else begin bl:=false; incr(k); incr(i); end;
+end;
+
+@
+
+@d if_ps_unit(#)==if bl then @+ begin @+ ifps(2) sop(k)=(#) @, if_ps_unit_two
+@d if_ps_unit_two(#)==and (sop(k+1)=(#)) then begin bl:=false; k:=k+2; if_ps_unit_end
+@d if_ps_unit_end(#)==# @+ end @+ end;
+
+@d do_ps_conversion(#)==num:=#; do_ps_conversion_end
+@d do_ps_conversion_end(#)==
+  s:=xn_over_d(s,num,#); s:=s*unity+((num*t+@'200000*remainder) div #)
+
+@<Read dimensions in the argument in the papersize special@>=
+s:=0; t:=0; bl:=true;
+while (k<pool_ptr)and bl do
+  if (sop(k)>='0')and (sop(k)<='9') then begin s:=10*s+sop(k)-'0'; incr(k); @+end
+  else bl:=false;
+ifps(1) sop(k)='.' then 
+  begin incr(k); bl:=true; i:=0; dig[0]:=0;
+  while (k<pool_ptr)and bl do begin
+    if (sop(k)>='0')and (sop(k)<='9') then
+      begin if i<17 then begin dig[i]:=sop(k)-'0'; incr(i); @+end;
+      incr(k); end
+    else bl:=false;
   end;
-  t:=s*(t+round_decimals(i-1));
-end
-else if (sop(k)>='0')and(sop(k)<='9') then goto done
-else begin t:=s*t; incr(k); end;
-ifps sop(k-1)<>'p' then goto done; ifps sop(k)<>'t' then goto done;
+  t:=round_decimals(i);
+  end;
+if k+4>pool_ptr then
+  if (sop(k)='t')and(sop(k+1)='r')and(sop(k+2)='u')and(sop(k+3)='e') then
+    k:=k+4;
+if mag<>1000 then 
+  begin s:=xn_over_d(s,1000,mag);
+  t:=(1000*t+@'200000*remainder) div mag;
+  s:=s+(t div @'200000); t:=t mod @'200000;
+end;
+bl:=true;@/
+if_ps_unit('p')('t')(s:=s*unity+t)@/
+if_ps_unit('i')('n')(do_ps_conversion(7227)(100))@/
+if_ps_unit('p')('c')(do_ps_conversion(12)(1))@/
+if_ps_unit('c')('m')(do_ps_conversion(7227)(254))@/
+if_ps_unit('m')('m')(do_ps_conversion(7227)(2540))@/
+if_ps_unit('b')('p')(do_ps_conversion(7227)(7200))@/
+if_ps_unit('d')('d')(do_ps_conversion(1238)(1157))@/
+if_ps_unit('c')('c')(do_ps_conversion(14856)(1157))@/
+if_ps_unit('s')('p')(do_nothing)
 
 @ Finally, we declare some routine needed for \.{\\pdffilemoddate}.
 

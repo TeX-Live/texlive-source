@@ -1,0 +1,24 @@
+%#!eptex
+
+\def\TEST#1{%
+  \pdfpagewidth0pt\pdfpageheight0pt
+  \shipout\hbox{\special{#1}}%
+  \message{<\the\pdfpagewidth, \the\pdfpageheight>}%
+}
+\count0=0
+\readpapersizespecial=1
+\TEST{papersize=10pt,20pt} % OK
+\TEST{papersize=10pt,20zw} % `zw' is not supported
+\TEST{papersize=10pt,20ex} % `ex' is neither
+\TEST{papersize=1pt,2}     % no unit
+\TEST{papersize 10pc,20pc}  % there is no `='
+\TEST{papersize=10pcA,20pc}% 
+\TEST{papersize=10pc,20pcs}% 
+\TEST{papersize=10pt,-20pt}% negative value
+\TEST{papersize=0pt,20000.6sp}% OK
+\TEST{papersize=30.2pt,665pt}% OK
+
+\readpapersizespecial=0
+\TEST{papersize=10pt,20pt}
+
+\end

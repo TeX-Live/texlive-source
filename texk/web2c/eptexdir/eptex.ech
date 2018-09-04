@@ -8,7 +8,11 @@
 %% \lastnodesubtype: the (internal) subtype of the last node
 %%   -1: null
 %%   fallback to 0 if not explicitly set
-
+%% \readpapersizespecial
+%%  1: papersize special automatically sets \pdfpage{width,height} (quick hack).
+%%  0: off
+%%  The default value is 1.
+%%
 
 @x e-pTeX: logo
 \def\eTeX{$\varepsilon$-\TeX}
@@ -22,8 +26,8 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-180518'
-@d epTeX_version_number==180518
+@d epTeX_version_string=='-180901'
+@d epTeX_version_number==180901
 @z
 
 @x e-pTeX: banner
@@ -64,6 +68,22 @@ In \epTeX\ the |subtype| field is |qi(16*box_lr+box_dir)|.
 @y
 @d box_dir(#) == ((qo(subtype(#)))mod 16 - dir_max) {direction of a box}
 @d set_box_dir(#) == subtype(#):=box_lr(#)*16+set_box_dir_end
+@z
+
+@x [17]
+@d saving_hyph_codes_code=etex_int_base+8 {save hyphenation codes for languages}
+@d eTeX_state_code=etex_int_base+9 {\eTeX\ state variables}
+@y
+@d saving_hyph_codes_code=etex_int_base+8 {save hyphenation codes for languages}
+@d read_papersize_special_code=etex_int_base+9
+@d eTeX_state_code=etex_int_base+10 {\eTeX\ state variables}
+@z
+
+@x [17]
+@d saving_hyph_codes==int_par(saving_hyph_codes_code)
+@y
+@d saving_hyph_codes==int_par(saving_hyph_codes_code)
+@d read_papersize_special==int_par(read_papersize_special_code)
 @z
 
 @x [26.413] l.8343 - e-pTeX: scan_something_internal
@@ -238,6 +258,15 @@ end
 @d box_lr(#) == ((qo(subtype(#)))div 16) {direction mode of a box}
 @d set_box_lr(#) == subtype(#):=box_dir(#)+dir_max+set_box_lr_end
 @d set_box_lr_end(#) == qi(16*(#))
+@z
+
+@x [35]
+@<Initialize table entries...@>=
+text_baseline_shift_factor:=1000;
+@y
+@<Initialize table entries...@>=
+text_baseline_shift_factor:=1000;
+read_papersize_special:=1;
 @z
 
 @x
@@ -469,6 +498,21 @@ last_node_char_code: print_esc("lastnodechar");
 last_node_subtype_code: print_esc("lastnodesubtype");
 @z
 
+@x
+primitive("savinghyphcodes",assign_int,int_base+saving_hyph_codes_code);@/
+@!@:saving_hyph_codes_}{\.{\\savinghyphcodes} primitive@>
+@y
+primitive("savinghyphcodes",assign_int,int_base+saving_hyph_codes_code);@/
+@!@:saving_hyph_codes_}{\.{\\savinghyphcodes} primitive@>
+primitive("readpapersizespecial",assign_int,int_base+read_papersize_special_code);@/
+@!@:read_papersize_special_}{\.{\\readpapersizespecial} primitive@>
+@z
+
+@x
+saving_hyph_codes_code:print_esc("savinghyphcodes");
+@y
+read_papersize_special_code:print_esc("readpapersizespecial");
+@z
 @x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306
   if (font_bc[q]<=cur_val)and(font_ec[q]>=cur_val) then
     begin i:=char_info(q)(qi(cur_val));
