@@ -42,11 +42,11 @@ endif LUAJITTEX
 EXTRA_PROGRAMS += luatex luatex53 luajittex
 
 # Force Automake to use CXXLD for linking
-nodist_EXTRA_luatex_SOURCES = dummy.cxx
-nodist_EXTRA_luatex53_SOURCES = dummy.cxx
-nodist_EXTRA_luajittex_SOURCES = dummy.cxx
+#nodist_EXTRA_luatex_SOURCES = dummy.cxx
+#nodist_EXTRA_luatex53_SOURCES = dummy.cxx
+#nodist_EXTRA_luajittex_SOURCES = dummy.cxx
 
-luatex_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(POPPLER_INCLUDES) 
+luatex_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) 
 luatex_postflags = -I$(srcdir)/libmd5 -DpdfTeX -I$(srcdir)/luatexdir -I$(srcdir)/mplibdir
 luatex_postflags += -Dextra_version_info=`date +-%Y%m%d%H`
 luatex_postflags += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
@@ -64,14 +64,15 @@ luatex_LDFLAGS = -export-dynamic
 luatex53_LDFLAGS = -export-dynamic
 luajittex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
-luatex_postldadd = libmplibcore.a $(MPFR_LIBS) $(GMP_LIBS) 
-luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
+#luatex_postldadd = libmplibcore.a $(MPFR_LIBS) $(GMP_LIBS) 
+luatex_postldadd = libmplibcore.a 
+luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) 
 luatex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
 
-luatex_LDADD = libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a $(LUA_LIBS) $(luatex_postldadd)
-luatex53_LDADD = liblua53tex.a libff.a liblua53misc.a liblua53socket.a liblua53ffi.a $(LUA_LUA53_LIBS) $(luatex_postldadd)
-luajittex_LDADD = libluajittex.a libff.a libluajitmisc.a libluajitsocket.a $(LUAJIT_LIBS) $(luatex_postldadd)
+luatex_LDADD = libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a libluapplib.a $(LUA_LIBS) $(luatex_postldadd)
+luatex53_LDADD = liblua53tex.a libff.a liblua53misc.a liblua53socket.a liblua53ffi.a liblua53pplib.a $(LUA_LUA53_LIBS) $(luatex_postldadd)
+luajittex_LDADD = libluajittex.a libff.a libluajitmisc.a libluajitsocket.a libluajitpplib.a $(LUAJIT_LIBS) $(luatex_postldadd)
 
 luatex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) libmputil.a libmd5.a
 luatex_DEPENDENCIES = $(luatex_depend) libluatex.a

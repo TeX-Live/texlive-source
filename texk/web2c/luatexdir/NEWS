@@ -1,4 +1,39 @@
 ==============================================================
+LuaTeX 1.08 2018-08-28
+==============================================================
+
+
+(1) This release is a prelude to 1.10, the next stable iteration of LuaTeX
+after version 1.00.
+
+(2) Lua 5.3 is now considered to be default and we might use 5.4 in version
+1.10. There are no real functional changed expected. You still need to rename
+the binary for 5.3!
+
+(3) Binary mode is no longer available in MPlib but it is still available in
+stand alone MetaPost. This simplifies compilation and reduces dependencies.
+
+(4) The dependency on Poppler for pdf image inclusion has been removed. We
+now use a small dedicated library written by Pawel Jakowski. We no longer
+need c++ compilers. We're in the process of making it behave well on all
+platforms. It has been tested on intel platforms.
+
+(5) We know that there can be some (alignment) issues with the arm platform
+but these are looked into. Therefore, later this year we will release 1.09.
+Version 1.10 is planned for TeXlive. We hope that ffi works ok on intel and
+arm platforms at that point.
+
+(6) There have been some extensions to the Lua libraries and some callbacks
+have been added. Also, a few new primitives have been introduced. The
+documentation mentions the stable extensions.
+
+(7) There are the usual bug fixes and cleanups but there have been no real
+fundamental changes in the API.
+
+
+
+
+==============================================================
 LuaTeX 1.07 2018-01-17
 ==============================================================
 

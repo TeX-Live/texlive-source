@@ -237,6 +237,7 @@ include $(srcdir)/luatexdir/am/libunilib.am
 include $(srcdir)/luatexdir/am/luafontforge.am
 include $(srcdir)/luatexdir/am/libluatex.am
 include $(srcdir)/luatexdir/am/luaffi.am
+include $(srcdir)/luatexdir/am/luapplib.am 
 include $(srcdir)/luatexdir/am/luatex.am
 
 ## XeTeX

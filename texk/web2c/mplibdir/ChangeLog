@@ -1,3 +1,7 @@
+2018-08-27  Luigi Scarso  <luigi.scarso@gmail.com>
+	* separation of mpmathbinary from the the core
+
+
 2018-02-19  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Small cleanup of the code
 	* Bump to version 2.0rc2: the current version is 2.00

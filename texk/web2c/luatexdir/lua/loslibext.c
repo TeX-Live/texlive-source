@@ -703,28 +703,49 @@ static int uname(struct utsname *uts)
     GetVersionEx(&osver);
     GetSystemInfo(&sysinfo);
 
+
+    /*
+        Windows 10               10.0*
+        Windows Server 2016      10.0*
+        Windows 8.1               6.3*
+        Windows Server 2012 R2    6.3*
+        Windows 8                 6.2
+        Windows Server 2012       6.2
+        Windows 7                 6.1
+        Windows Server 2008 R2	  6.1
+        Windows Server 2008       6.0
+        Windows Vista             6.0
+        Windows Server 2003 R2	  5.2
+        Windows Server 2003       5.2
+        Windows XP 64-Bit Edition 5.2
+        Windows XP                5.1
+        Windows 2000              5.0
+    */
+
     switch (osver.dwPlatformId) {
-    case VER_PLATFORM_WIN32_NT:        /* NT, Windows 2000 or Windows XP */
+    case VER_PLATFORM_WIN32_NT:
         if (osver.dwMajorVersion == 4)
-            strcpy(uts->sysname, "Windows NT4x");       /* NT4x */
+            strcpy(uts->sysname, "Windows NT 4");
         else if (osver.dwMajorVersion <= 3)
-            strcpy(uts->sysname, "Windows NT3x");       /* NT3x */
+            strcpy(uts->sysname, "Windows NT 3");
         else if (osver.dwMajorVersion == 5) {
             if (osver.dwMinorVersion == 0)
-                strcpy(uts->sysname, "Windows 2000");   /* 2k */
+                strcpy(uts->sysname, "Windows 2000");
             else if (osver.dwMinorVersion == 1)
-                strcpy(uts->sysname, "Windows XP");     /* XP */
+                strcpy(uts->sysname, "Windows XP");
             else if (osver.dwMinorVersion == 2)
-                strcpy(uts->sysname, "Windows Server 2003");    /* Server 2003 */
+                strcpy(uts->sysname, "Windows XP 64-Bit");
         } else if (osver.dwMajorVersion == 6) {
-            /*
-               if( osver.wProductType == VER_NT_WORKSTATION )
-             */
-            strcpy(uts->sysname, "Windows Vista");      /* Vista */
-            /*
-               else
-               strcpy (uts->sysname, "Windows Server 2008");
-             */
+            if (osver.dwMinorVersion == 0)
+                strcpy(uts->sysname, "Windows Vista");
+            else if (osver.dwMinorVersion == 1)
+                strcpy(uts->sysname, "Windows 7");
+            else if (osver.dwMinorVersion == 2)
+                strcpy(uts->sysname, "Windows 8");
+            else if (osver.dwMinorVersion == 3)
+                strcpy(uts->sysname, "Windows 8.1");
+        } else if (osver.dwMajorVersion == 10) {
+                strcpy(uts->sysname, "Windows 10");
         }
         os = WinNT;
         break;

@@ -39,6 +39,19 @@
 #include "mpmp.h" /* internal header */
 #include <gmp.h>
 #include <mpfr.h>
+
+#ifdef HAVE_CONFIG_H
+#include <gmp/config.h>
+const char * const COMPILED_gmp_version  = VERSION;
+#else
+const char * const COMPILED_gmp_version  = "unknown";
+#endif
+
+const char *COMPILED_MPFR_VERSION_STRING = MPFR_VERSION_STRING;
+int COMPILED__GNU_MP_VERSION = __GNU_MP_VERSION ;
+int COMPILED__GNU_MP_VERSION_MINOR = __GNU_MP_VERSION_MINOR ;
+int COMPILED__GNU_MP_VERSION_PATCHLEVEL = __GNU_MP_VERSION_PATCHLEVEL ;
+
 @<Internal library declarations@>;
 #endif
 

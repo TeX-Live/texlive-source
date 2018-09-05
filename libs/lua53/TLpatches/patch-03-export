@@ -1,6 +1,6 @@
-diff -ur lopcodes.h.orig lopcodes.h 
---- lopcodes.h.orig	2017-10-24 15:22:51.012119943 +0200
-+++ lopcodes.h	2017-10-24 15:18:37.924130321 +0200
+diff -u lopcodes.h.orig lopcodes.h 
+--- lopcodes.h.orig	2018-07-21 09:59:37.349687255 +0200
++++ lopcodes.h	2018-07-21 10:07:04.413668921 +0200
 @@ -278,7 +278,7 @@
    OpArgK   /* argument is a constant or register/constant */
  };
@@ -20,9 +20,10 @@ diff -ur lopcodes.h.orig lopcodes.h
  
  /* number of list items to accumulate before a SETLIST instruction */
 
-diff -ur lundump.h.orig lundump.h 
---- lundump.h.orig	2017-10-24 15:19:03.860129258 +0200
-+++ lundump.h	2017-10-24 15:19:47.088127485 +0200
+
+diff -u lundump.h.orig lundump.h 
+--- lundump.h.orig	2018-07-21 10:00:01.545686262 +0200
++++ lundump.h	2018-07-21 10:08:12.341666136 +0200
 @@ -26,7 +26,7 @@
  LUAI_FUNC LClosure* luaU_undump (lua_State* L, ZIO* Z, const char* name);
  
@@ -32,4 +33,3 @@ diff -ur lundump.h.orig lundump.h
                           void* data, int strip);
  
  #endif
-

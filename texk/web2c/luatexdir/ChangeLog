@@ -1,3 +1,7 @@
+2018-08-27 Luigi Scarso <luigi.scarso@gmail.com>
+	* dropped dependency from gmp and mpfr
+
+
 2017-11-02 Luigi Scarso <luigi.scarso@gmail.com>
 	LuaFilesystem 1.7.0
 

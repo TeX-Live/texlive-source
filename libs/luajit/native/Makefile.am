@@ -28,6 +28,7 @@ buildvm_arch.h: minilua$(EXEEXT) $(LUAJIT_TREE)/dynasm/dynasm.lua
 	  `cat ../dynasm_flags` \
 	  -o $@ $(srcdir)/$(LUAJIT_TREE)/src/vm_$(DASM_ARCH).dasc
 
+minilua_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_DEFINES) `cat ../native_flags`
 nodist_minilua_SOURCES = \
 	@LUAJIT_TREE@/src/host/minilua.c
 minilua_LDADD = $(MATH_LIB)

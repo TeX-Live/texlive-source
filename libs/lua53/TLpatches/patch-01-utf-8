@@ -1,7 +1,16 @@
-diff -ur lua-5.3.4.orig/src/lctype.h lua-5.3.4/src/lctype.h
---- lctype.h.orig	2017-10-24 15:14:50.724139638 +0200
-+++ lctype.h	2017-10-24 15:15:51.704137138 +0200
-@@ -53,9 +53,11 @@
+diff -u lctype.h.orig lctype.h 
+--- lctype.h.orig	2018-07-21 09:57:36.061692228 +0200
++++ lctype.h	2018-07-21 10:03:29.625677730 +0200
+@@ -7,6 +7,8 @@
+ #ifndef lctype_h
+ #define lctype_h
+ 
++#include <ctype.h>
++
+ #include "lua.h"
+ 
+ 
+@@ -53,9 +55,11 @@
  
  /*
  ** 'lalpha' (Lua alphabetic) and 'lalnum' (Lua alphanumeric) both include '_'
