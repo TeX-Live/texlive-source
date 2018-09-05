@@ -1,0 +1,86 @@
+## texk/web2c/luatexdir/am/luapplib.am: Makefile fragment for libluapplib.
+##
+## Copyright (C) 2018 Luigi Scarso <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## luapplib
+##
+EXTRA_LIBRARIES += libluapplib.a liblua53pplib.a libluajitpplib.a
+
+libluapplib_a_DEPENDENCIES = $(ZLIB_DEPEND)
+liblua53pplib_a_DEPENDENCIES = $(ZLIB_DEPEND)
+libluajitpplib_a_DEPENDENCIES = $(ZLIB_DEPEND)
+
+$(libluapplib_a_OBJECTS): $(LUA_DEPEND)
+$(liblua53pplib_a_OBJECTS): $(LUA_DEPEND)
+$(libluajitpplib_a_OBJECTS): $(LUAJIT_DEPEND)
+
+## replace -I../../libs/zlib/include $(ZLIB_INCLUDES)
+
+libluapplib_a_CPPFLAGS = \
+	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUA_INCLUDES)
+
+liblua53pplib_a_CPPFLAGS = \
+	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUA_LUA53_INCLUDES)
+
+libluajitpplib_a_CPPFLAGS = \
+	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUAJIT_INCLUDES)
+
+libluapplib_a_CFLAGS = # $(WARNING_CFLAGS)
+libluajitpplib_a_CFLAGS = # $(WARNING_CFLAGS)
+
+nodist_libluapplib_a_SOURCES = $(libluapplib_sources)
+nodist_liblua53pplib_a_SOURCES = $(libluapplib_sources)
+nodist_libluajitpplib_a_SOURCES = $(libluapplib_sources)
+
+libluapplib_sources = \
+	luatexdir/luapplib/ppapi.h \
+	luatexdir/luapplib/pparray.c \
+	luatexdir/luapplib/pparray.h \
+	luatexdir/luapplib/ppconf.h \
+	luatexdir/luapplib/ppcrypt.c \
+	luatexdir/luapplib/ppcrypt.h \
+	luatexdir/luapplib/ppdict.c \
+	luatexdir/luapplib/ppdict.h \
+	luatexdir/luapplib/ppfilter.h \
+	luatexdir/luapplib/ppheap.c \
+	luatexdir/luapplib/ppheap.h \
+	luatexdir/luapplib/pplib.h \
+	luatexdir/luapplib/ppload.c \
+	luatexdir/luapplib/ppload.h \
+	luatexdir/luapplib/ppstream.c \
+	luatexdir/luapplib/ppstream.h \
+	luatexdir/luapplib/ppxref.c \
+	luatexdir/luapplib/ppxref.h \
+	luatexdir/luapplib/util/utilbasexx.c \
+	luatexdir/luapplib/util/utilbasexx.h \
+	luatexdir/luapplib/util/utilcrypt.c \
+	luatexdir/luapplib/util/utilcrypt.h \
+	luatexdir/luapplib/util/utilcryptdef.h \
+	luatexdir/luapplib/util/utildecl.h \
+	luatexdir/luapplib/util/utilflate.c \
+	luatexdir/luapplib/util/utilflate.h \
+	luatexdir/luapplib/util/utilfpred.c \
+	luatexdir/luapplib/util/utilfpred.h \
+	luatexdir/luapplib/util/utiliof.c \
+	luatexdir/luapplib/util/utiliof.h \
+	luatexdir/luapplib/util/utillog.c \
+	luatexdir/luapplib/util/utillog.h \
+	luatexdir/luapplib/util/utillzw.c \
+	luatexdir/luapplib/util/utillzw.h \
+	luatexdir/luapplib/util/utilmd5.c \
+	luatexdir/luapplib/util/utilmd5.h \
+	luatexdir/luapplib/util/utilmem.c \
+	luatexdir/luapplib/util/utilmem.h \
+	luatexdir/luapplib/util/utilnumber.c \
+	luatexdir/luapplib/util/utilnumber.h \
+	luatexdir/luapplib/util/utilplat.h \
+	luatexdir/luapplib/util/utilsha.c \
+	luatexdir/luapplib/util/utilsha.h \
+	luatexdir/luapplib/zlib/zconf.h \
+	luatexdir/luapplib/zlib/zlib.h 
+
+
+
+liblua53pplib_sources = $(libluapplib_sources)
+libluajitpplib_sources = $(libluapplib_sources)
