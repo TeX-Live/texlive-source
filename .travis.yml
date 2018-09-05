@@ -69,19 +69,43 @@ matrix:
       env:
       - tldir=x86_64-linux
       - package=texlive-bin-x86_64-linux.tar.gz
-      script: docker run -e TL_MAKE_FLAGS="${TL_MAKE_FLAGS}" -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t debian:jessie sh -c "apt-get update; apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential ; ./Build -C"
+      script: |
+        docker run \
+        -e TL_MAKE_FLAGS="${TL_MAKE_FLAGS}" \
+        -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive \
+        -it --rm debian:jessie sh -c \
+        "apt-get update; apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential ; ./Build -C"
     - os: linux
       services: docker
       env:
       - tldir=i386-linux
       - package=texlive-bin-i386-linux.tar.gz
-      script: docker run -e TL_MAKE_FLAGS="${TL_MAKE_FLAGS}" -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t i386/debian:jessie sh -c "apt-get update; apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential ; ./Build -C"
+      script: |
+        docker run \
+        -e TL_MAKE_FLAGS="${TL_MAKE_FLAGS}" \
+        -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive \
+        -it --rm i386/debian:jessie sh -c \
+        "apt-get update; apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential ; ./Build -C"
     - os: linux
       services: docker
       env:
       - tldir=x86_64-linuxmusl
       - package=texlive-bin-x86_64-musl.tar.gz
-      script: docker run -e TL_MAKE_FLAGS="${TL_MAKE_FLAGS}" -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive -i -t alpine:3.1 sh -c "apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; ./Build -C"
+      script: |
+        docker run \
+        -e TL_MAKE_FLAGS="${TL_MAKE_FLAGS}" \
+        -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive \
+        -it --rm alpine:3.1 sh -c \
+        "apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev; ./Build -C"
+    - os: osx
+      osx_image: xcode7.3
+      env:
+      - tldir=x86_64-darwin
+      - package=texlive-bin-x86_64-darwin.tar.gz
+      before_script:
+      - export LC_ALL=C
+      - export LANG=C
+      script: ./Build -C
 
 # somehow all binaries are always put into x86_64-pc-linux-gnu, probably because
 # this is the architecture travis-ci is running on.
