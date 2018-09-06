@@ -18767,8 +18767,6 @@ case $enable_luatex in #(
 esac
 
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
-  need_poppler=yes
-  need_mpfr=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua52=yes
@@ -18785,8 +18783,6 @@ case $enable_luatex53 in #(
 esac
 
 test "x$enable_web2c:$enable_luatex53" = xyes:yes && {
-  need_poppler=yes
-  need_mpfr=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua53=yes
@@ -18803,8 +18799,6 @@ case $enable_luajittex in #(
 esac
 
 test "x$enable_web2c:$enable_luajittex" = xyes:yes && {
-  need_poppler=yes
-  need_mpfr=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
@@ -19004,14 +18998,11 @@ fi
 
 
 
-# LuaTeX and XeTeX now require C++11 because poppler does :(.
+# XeTeX now requires C++11 because poppler does :(.
 # XeTeX also requires C+11 because of ICU.
-if test "x$enable_xetex" = xyes \
-   || test "x$enable_luatex" = xyes \
-   || test "x$enable_luajittex" = xyes \
-   || test "x$enable_luatex53" = xyes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for C++11, since LuaTeX and/or XeTeX enabled" >&5
-$as_echo "$as_me: checking for C++11, since LuaTeX and/or XeTeX enabled" >&6;}
+if test "x$enable_xetex" = xyes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for C++11, since XeTeX enabled" >&5
+$as_echo "$as_me: checking for C++11, since XeTeX enabled" >&6;}
     ax_cxx_compile_alternatives="11 0x"    ax_cxx_compile_cxx11_required=true
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
