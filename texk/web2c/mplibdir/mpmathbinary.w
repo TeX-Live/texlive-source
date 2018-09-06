@@ -41,8 +41,9 @@
 #include <mpfr.h>
 
 #ifdef HAVE_CONFIG_H
-#include <gmp/config.h>
-const char * const COMPILED_gmp_version  = VERSION;
+#define MP_STR_HELPER(x) #x
+#define MP_STR(x) MP_STR_HELPER(x)
+const char * const COMPILED_gmp_version  = MP_STR(__GNU_MP_VERSION) "." MP_STR( __GNU_MP_VERSION_MINOR) "." MP_STR(__GNU_MP_VERSION_PATCHLEVEL);
 #else
 const char * const COMPILED_gmp_version  = "unknown";
 #endif
