@@ -569,11 +569,14 @@ pdf_close_fonts (void)
         pdf_add_dict(font->resource,
 		                 pdf_new_name("Encoding"),
 		                 PDF_OBJ_NAMETYPE(enc_obj) ? pdf_link_obj(enc_obj) : pdf_ref_obj(enc_obj));
-
-      if (!pdf_lookup_dict(font->resource, "ToUnicode") &&
-          (tounicode = pdf_encoding_get_tounicode(font->encoding_id)))
-        pdf_add_dict(font->resource,
-                     pdf_new_name("ToUnicode"), pdf_ref_obj(tounicode));
+      /* For built-in encoding, each font loader create ToUnicode CMap. */
+      if (!pdf_lookup_dict(font->resource, "ToUnicode")) {
+        tounicode = pdf_encoding_get_tounicode(font->encoding_id);
+        if (tounicode) {
+          pdf_add_dict(font->resource,
+                       pdf_new_name("ToUnicode"), pdf_ref_obj(tounicode));
+        }
+      }
     } else if (font->subtype == PDF_FONT_FONTTYPE_TRUETYPE) {
       /* encoding_id < 0 means MacRoman here (but not really)
        * We use MacRoman as "default" encoding. */

@@ -149,7 +149,7 @@ pdf_get_page_obj (pdf_file *pf, int page_no,
       WARN("Can't read document catalog.");
       pdf_release_obj(trailer);
       if (catalog)
-	pdf_release_obj(catalog);
+        pdf_release_obj(catalog);
       return NULL;
     }
     pdf_release_obj(trailer);
@@ -457,14 +457,14 @@ pdf_include_page (pdf_ximage        *ximage,
       int idx, len = pdf_array_length(contents);
       content_new = pdf_new_stream(STREAM_COMPRESS);
       for (idx = 0; idx < len; idx++) {
-	pdf_obj *content_seg = pdf_deref_obj(pdf_get_array(contents, idx));
-	if (!PDF_OBJ_STREAMTYPE(content_seg) ||
-	    pdf_concat_stream(content_new, content_seg) < 0) {
-	  pdf_release_obj(content_seg);
-	  pdf_release_obj(content_new);
-	  goto error;
-	}
-	pdf_release_obj(content_seg);
+        pdf_obj *content_seg = pdf_deref_obj(pdf_get_array(contents, idx));
+        if (!PDF_OBJ_STREAMTYPE(content_seg) ||
+            pdf_concat_stream(content_new, content_seg) < 0) {
+          pdf_release_obj(content_seg);
+          pdf_release_obj(content_new);
+          goto error;
+        }
+        pdf_release_obj(content_seg);
       }
     } else {
       goto error;

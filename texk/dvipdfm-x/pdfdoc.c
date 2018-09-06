@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008-2017 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2008-2018 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -921,6 +921,183 @@ pdf_doc_get_page_count (pdf_file *pf)
   return count;
 }
 
+static int
+set_bounding_box (pdf_rect *bbox, int option,
+                  pdf_obj *media_box, pdf_obj *crop_box,
+                  pdf_obj *art_box, pdf_obj *trim_box, pdf_obj *bleed_box)
+{
+  pdf_obj *box = NULL;
+
+  if (!media_box) {
+    WARN("MediaBox not found in included PDF...");
+    return -1;
+  }
+#define VALIDATE_BOX(o) if ((o)) {\
+  if (!PDF_OBJ_ARRAYTYPE((o)) || pdf_array_length((o)) != 4) \
+    return -1;\
+}
+  VALIDATE_BOX(media_box);
+  VALIDATE_BOX(crop_box);
+  VALIDATE_BOX(art_box);
+  VALIDATE_BOX(trim_box);
+  VALIDATE_BOX(bleed_box);
+
+  if (option == 0) {
+    if (crop_box)
+      box = pdf_link_obj(crop_box);
+    else if (art_box)
+      box = pdf_link_obj(art_box);
+    else if (trim_box)
+      box = pdf_link_obj(trim_box);
+    else if (bleed_box)
+      box = pdf_link_obj(bleed_box);
+    else {
+      box = pdf_link_obj(media_box);
+    }
+  } else {
+    if (!crop_box) {
+      crop_box = pdf_link_obj(media_box);
+    }
+    if (!art_box) {
+      art_box = pdf_link_obj(crop_box);
+    }
+    if (!trim_box) {
+      trim_box = pdf_link_obj(crop_box);
+    }
+    if (!bleed_box) {
+      bleed_box = pdf_link_obj(crop_box);
+    }
+    /* At this point all boxes must be defined. */
+    switch (option) {
+    case 1: /* crop box */
+      box = pdf_link_obj(crop_box);
+      break;
+    case 2: /* mdeia box */
+      box = pdf_link_obj(media_box);
+      break;
+    case 3: /* art box */
+      box = pdf_link_obj(art_box);
+      break;
+    case 4: /* trim box */
+      box = pdf_link_obj(trim_box);
+      break;
+    case 5: /* bleen box */
+      box = pdf_link_obj(bleed_box);
+      break;
+    default:
+      box = pdf_link_obj(crop_box);
+      break;
+    }
+  }
+
+  if (!box) {
+    /* Impossible */
+    WARN("No appropriate page boudary box found???");
+    return -1;
+  } else {
+    int i;
+
+    for (i = 4; i--; ) {
+      double x;
+      pdf_obj *tmp = pdf_deref_obj(pdf_get_array(box, i));
+      if (!PDF_OBJ_NUMBERTYPE(tmp)) {
+        pdf_release_obj(tmp);
+        pdf_release_obj(box);
+        return -1;
+      }
+      x = pdf_number_value(tmp);
+      switch (i) {
+      case 0: bbox->llx = x; break;
+      case 1: bbox->lly = x; break;
+      case 2: bbox->urx = x; break;
+      case 3: bbox->ury = x; break;
+      }
+      pdf_release_obj(tmp);
+    }
+
+    /* New scheme only for XDV files */
+    if (is_xdv || option) {
+      for (i = 4; i--; ) {
+        double x;
+        pdf_obj *tmp = pdf_deref_obj(pdf_get_array(media_box, i));
+        if (!PDF_OBJ_NUMBERTYPE(tmp)) {
+          pdf_release_obj(tmp);
+          pdf_release_obj(box);
+          return -1;
+        }
+        x = pdf_number_value(tmp);
+        switch (i) {
+        case 0: if (bbox->llx < x) bbox->llx = x; break;
+        case 1: if (bbox->lly < x) bbox->lly = x; break;
+        case 2: if (bbox->urx > x) bbox->urx = x; break;
+        case 3: if (bbox->ury > x) bbox->ury = x; break;
+        }
+        pdf_release_obj(tmp);
+      }
+    }
+  }
+  pdf_release_obj(box);
+
+  return 0;
+}
+
+static int
+set_transform_matrix (pdf_tmatrix *matrix, pdf_rect *bbox, pdf_obj *rotate)
+{
+  double deg;
+  int    rot;
+
+  matrix->a = matrix->d = 1.0;
+  matrix->b = matrix->c = 0.0;
+  matrix->e = matrix->f = 0.0;
+  /* Handle Rotate */
+  if (rotate) {
+    if (!PDF_OBJ_NUMBERTYPE(rotate)) {
+      return -1;
+    } else {
+      deg = pdf_number_value(rotate);
+      if (deg - (int)deg != 0.0) {
+        WARN("Invalid value specified for /Rotate: %f", deg);
+        return -1;
+      } else if (deg != 0.0) {
+        rot = (int) deg;
+        if (rot % 90 != 0.0) {
+          WARN("Invalid value specified for /Rotate: %f", deg);
+        } else {
+          rot = rot % 360;
+          if (rot < 0) rot += 360;
+          switch (rot) {
+          case 90:
+            matrix->a = matrix->d = 0;
+            matrix->b = -1;
+            matrix->c = 1;
+            matrix->e = bbox->llx - bbox->lly;
+            matrix->f = bbox->lly + bbox->urx;
+            break;
+          case 180:
+            matrix->a = matrix->d = -1;
+            matrix->b = matrix->c = 0;
+            matrix->e = bbox->llx + bbox->urx;
+            matrix->f = bbox->lly + bbox->ury;
+            break;
+          case 270:
+            matrix->a = matrix->d = 0;
+            matrix->b = 1;
+            matrix->c = -1;
+            matrix->e = bbox->llx + bbox->ury;
+            matrix->f = bbox->lly - bbox->llx;
+           break;
+           default:
+            WARN("Invalid value specified for /Rotate: %f", deg);
+            break;
+          }
+        }
+      }
+    }
+  }
+  return 0;
+}
+
 /*
  * From PDFReference15_v6.pdf (p.119 and p.834)
  *
@@ -982,16 +1159,18 @@ pdf_doc_get_page (pdf_file *pf,
                   pdf_rect *bbox, pdf_tmatrix *matrix,  /* returned value */
                   pdf_obj **resources_p /* returned values */
                   ) {
-  pdf_obj *page_tree = NULL;
-  pdf_obj *resources = NULL, *box = NULL, *rotate = NULL, *medbox = NULL;
-  pdf_obj *catalog;
+  pdf_obj *catalog = NULL, *page_tree = NULL;
+  pdf_obj *resources = NULL, *rotate = NULL;
+  pdf_obj *art_box = NULL, *trim_box = NULL, *bleed_box = NULL;
+  pdf_obj *media_box = NULL, *crop_box = NULL;
+  int      error = 0;
 
   catalog = pdf_file_get_catalog(pf);
 
   page_tree = pdf_deref_obj(pdf_lookup_dict(catalog, "Pages"));
 
   if (!PDF_OBJ_DICTTYPE(page_tree))
-    goto error;
+    goto error_exit;
 
   {
     int count;
@@ -999,7 +1178,7 @@ pdf_doc_get_page (pdf_file *pf,
     if (!PDF_OBJ_NUMBERTYPE(tmp)) {
       if (tmp)
         pdf_release_obj(tmp);
-      goto error;
+      goto error_exit;
     }
     count = pdf_number_value(tmp);
     pdf_release_obj(tmp);
@@ -1014,10 +1193,9 @@ pdf_doc_get_page (pdf_file *pf,
    * (Note that these entries can be inherited.)
    */
   {
-    pdf_obj *art_box = NULL, *trim_box = NULL, *bleed_box = NULL;
-    pdf_obj *media_box = NULL, *crop_box = NULL, *kids, *tmp;
-    int depth = PDF_OBJ_MAX_DEPTH;
-    int page_idx = page_no-1, kids_length = 1, i = 0;
+    pdf_obj *kids, *tmp;
+    int      depth = PDF_OBJ_MAX_DEPTH;
+    int      page_idx = page_no - 1, kids_length = 1, i = 0;
 
     while (--depth && i != kids_length) {
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "MediaBox")))) {
@@ -1025,37 +1203,31 @@ pdf_doc_get_page (pdf_file *pf,
           pdf_release_obj(media_box);
         media_box = tmp;
       }
-
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "CropBox")))) {
         if (crop_box)
           pdf_release_obj(crop_box);
         crop_box = tmp;
       }
-
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "ArtBox")))) {
         if (art_box)
           pdf_release_obj(art_box);
         art_box = tmp;
       }
-
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "TrimBox")))) {
         if (trim_box)
           pdf_release_obj(trim_box);
         trim_box = tmp;
       }
-
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "BleedBox")))) {
         if (bleed_box)
           pdf_release_obj(bleed_box);
         bleed_box = tmp;
       }
-
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Rotate")))) {
         if (rotate)
           pdf_release_obj(rotate);
         rotate = tmp;
       }
-
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Resources")))) {
         if (resources)
           pdf_release_obj(resources);
@@ -1067,7 +1239,7 @@ pdf_doc_get_page (pdf_file *pf,
         break;
       else if (!PDF_OBJ_ARRAYTYPE(kids)) {
         pdf_release_obj(kids);
-        goto error;
+        goto error_exit;
       }
       kids_length = pdf_array_length(kids);
 
@@ -1077,7 +1249,7 @@ pdf_doc_get_page (pdf_file *pf,
         pdf_release_obj(page_tree);
         page_tree = pdf_deref_obj(pdf_get_array(kids, i));
         if (!PDF_OBJ_DICTTYPE(page_tree))
-          goto error;
+          goto error_exit;
 
         tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
         if (PDF_OBJ_NUMBERTYPE(tmp)) {
@@ -1089,190 +1261,58 @@ pdf_doc_get_page (pdf_file *pf,
           count = 1;
         else {
           pdf_release_obj(tmp);
-          goto error;
+          goto error_exit;
         }
-
         if (page_idx < count)
           break;
-
         page_idx -= count;
-      }
-      
+      }      
       pdf_release_obj(kids);
     }
-
-    if (!depth || kids_length == i) {
-      if (media_box)
-        pdf_release_obj(media_box);
-     if (crop_box)
-        pdf_release_obj(crop_box);
-      goto error;
-    }
-
-    /* Nasty BBox selection... */
-    if ((options == 0) || (options == 1)) {
-      if (crop_box)
-        box = crop_box;
-      else
-        if (!(box = media_box) &&
-            !(box = bleed_box) &&
-            !(box = trim_box) &&
-            art_box) {
-            box = art_box;
-        }
-    } else if (options == 2) {
-      if (media_box)
-        box = media_box;
-      else
-        if (!(box = crop_box) &&
-            !(box = bleed_box) &&
-            !(box = trim_box) &&
-            art_box) {
-            box = art_box;
-        }
-    } else if (options == 3) {
-      if (art_box)
-        box = art_box;
-      else
-        if (!(box = crop_box) &&
-            !(box = media_box) &&
-            !(box = bleed_box) &&
-            trim_box) {
-            box = trim_box;
-        }
-    } else if (options == 4) {
-      if (trim_box)
-        box = trim_box;
-      else
-        if (!(box = crop_box) &&
-            !(box = media_box) &&
-            !(box = bleed_box) &&
-            art_box) {
-            box = art_box;
-        }
-    } else if (options == 5) {
-      if (bleed_box)
-        box = bleed_box;
-      else
-        if (!(box = crop_box) &&
-            !(box = media_box) &&
-            !(box = trim_box) &&
-            art_box) {
-            box = art_box;
-        }
-    }
-    medbox = media_box;
+    if (!depth || kids_length == i)
+      goto error_exit;
   }
 
-  if (!PDF_OBJ_ARRAYTYPE(box) || pdf_array_length(box) != 4 ||
-      !PDF_OBJ_DICTTYPE(resources))
-    goto error;
-
-  {
-    int i;
-
-    for (i = 4; i--; ) {
-      double x;
-      pdf_obj *tmp = pdf_deref_obj(pdf_get_array(box, i));
-      if (!PDF_OBJ_NUMBERTYPE(tmp)) {
-        pdf_release_obj(tmp);
-        goto error;
-      }
-      x = pdf_number_value(tmp);
-      switch (i) {
-      case 0: bbox->llx = x; break;
-      case 1: bbox->lly = x; break;
-      case 2: bbox->urx = x; break;
-      case 3: bbox->ury = x; break;
-      }
-      pdf_release_obj(tmp);
-    }
-
-    /* New scheme only for XDV files */
-    if (medbox && (is_xdv || options)) {
-      for (i = 4; i--; ) {
-        double x;
-        pdf_obj *tmp = pdf_deref_obj(pdf_get_array(medbox, i));
-        if (!PDF_OBJ_NUMBERTYPE(tmp)) {
-          pdf_release_obj(tmp);
-          goto error;
-        }
-        x = pdf_number_value(tmp);
-        switch (i) {
-        case 0: if (bbox->llx < x) bbox->llx = x; break;
-        case 1: if (bbox->lly < x) bbox->lly = x; break;
-        case 2: if (bbox->urx > x) bbox->urx = x; break;
-        case 3: if (bbox->ury > x) bbox->ury = x; break;
-        }
-        pdf_release_obj(tmp);
-      }
-    }
-  }
-  pdf_release_obj(box);
-
-  matrix->a = matrix->d = 1.0;
-  matrix->b = matrix->c = 0.0;
-  matrix->e = matrix->f = 0.0;
-  if (PDF_OBJ_NUMBERTYPE(rotate)) {
-    double deg = pdf_number_value(rotate);
-    if (deg - (int)deg != 0.0)
-    WARN("Invalid value specified for /Rotate: %f", deg);
-    else if (deg != 0.0) {
-      int rot = (int) deg;
-      if (rot % 90 != 0.0) {
-        WARN("Invalid value specified for /Rotate: %f", deg);
-      } else {
-        rot = rot % 360;
-        if (rot < 0) rot += 360;
-        switch (rot) {
-        case 90:
-          matrix->a = matrix->d = 0;
-          matrix->b = -1;
-          matrix->c = 1;
-          matrix->e = bbox->llx - bbox->lly;
-          matrix->f = bbox->lly + bbox->urx;
-          break;
-        case 180:
-          matrix->a = matrix->d = -1;
-          matrix->b = matrix->c = 0;
-          matrix->e = bbox->llx + bbox->urx;
-          matrix->f = bbox->lly + bbox->ury;
-          break;
-        case 270:
-          matrix->a = matrix->d = 0;
-          matrix->b = 1;
-          matrix->c = -1;
-          matrix->e = bbox->llx + bbox->ury;
-          matrix->f = bbox->lly - bbox->llx;
-          break;
-        }
-      }
-    }
-    pdf_release_obj(rotate);
-    rotate = NULL;
-  } else if (rotate)
-    goto error;
-
+  if (!PDF_OBJ_DICTTYPE(resources))
+    goto error_exit;
   if (resources_p)
-    *resources_p = resources;
-  else if (resources)
-    pdf_release_obj(resources);
+    *resources_p = pdf_link_obj(resources);
 
-  return page_tree;
+  /* Select page boundary box */
+  error = set_bounding_box(bbox, options, media_box, crop_box, art_box, trim_box, bleed_box);
+  if (error)
+    goto error_exit;
+  /* Set transformation matrix */
+  error = set_transform_matrix(matrix, bbox, rotate);
+  if (error)
+    goto error_exit;
 
- error:
-  WARN("Cannot parse document. Broken PDF file?");
+goto clean_exit; /* Success */
+
+ error_exit:
+  WARN("Error found in including PDF image.");
  error_silent:
-  if (box)
-    pdf_release_obj(box);
+  if (page_tree)
+    pdf_release_obj(page_tree);
+  page_tree = NULL;
+
+clean_exit:
+  if (crop_box)
+    pdf_release_obj(crop_box);
+  if (bleed_box)
+    pdf_release_obj(bleed_box);
+  if (trim_box)
+    pdf_release_obj(trim_box);
+  if (art_box)
+    pdf_release_obj(art_box);
+  if (media_box)
+    pdf_release_obj(media_box);
   if (rotate)
     pdf_release_obj(rotate);
   if (resources)
     pdf_release_obj(resources);
-  if (page_tree)
-    pdf_release_obj(page_tree);
 
-  return NULL;
+  return page_tree;
 }
 
 #ifndef BOOKMARKS_OPEN_DEFAULT

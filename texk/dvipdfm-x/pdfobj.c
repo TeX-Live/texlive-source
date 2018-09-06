@@ -67,7 +67,16 @@ struct pdf_obj
   unsigned refcount;  /* Number of links to this object */
   int      flags;
   void    *data;
+
+#if defined(PDFOBJ_DEBUG)
+  int      obj_id;
+#endif
 };
+
+#if defined(PDFOBJ_DEBUG)
+static pdf_obj *bucket[65535];
+static int cur_obj_id = 0;
+#endif
 
 struct pdf_boolean
 {
@@ -540,6 +549,25 @@ pdf_out_flush (void)
 
     MFCLOSE(pdf_output_file);
   }
+#if defined(PDFOBJ_DEBUG)
+  {
+    int i;
+    MESG("\ndebug>> %d PDF objects created.", cur_obj_id);
+    for (i = 0; i < cur_obj_id; i++) {
+      pdf_obj *obj = bucket[i];
+      if (obj) {
+        if (obj->label > 0) {
+          WARN("Object obj_id=<%lu, %u> unreleased...", obj->label, obj->generation);
+          WARN("Reference count=%d", obj->refcount);
+        } else {
+          WARN("Unreleased object found: %d", i);
+          pdf_write_obj(obj, stderr);
+          MESG("\n");
+        }
+      }
+    }
+  }
+#endif
 }
 
 void
@@ -679,6 +707,12 @@ pdf_new_obj(int type)
   result->generation = 0;
   result->refcount   = 1;
   result->flags      = 0;
+
+#if defined(PDFOBJ_DEBUG)
+  result->obj_id = cur_obj_id;
+  bucket[cur_obj_id] = result;
+  cur_obj_id++;
+#endif
 
   return result;
 }
@@ -2771,6 +2805,9 @@ pdf_release_obj (pdf_obj *object)
   }
   object->refcount -= 1;
   if (object->refcount == 0) {
+#if defined(PDFOBJ_DEBUG)
+  bucket[object->obj_id] = NULL;
+#endif
     /*
      * Nothing is using this object so it's okay to remove it.
      * Nonzero "label" means object needs to be written before it's destroyed.
@@ -3576,19 +3613,17 @@ parse_xref_stream (pdf_file *pf, int xref_pos, pdf_obj **trailer)
   if (index_obj) {
     unsigned int index_len;
     if (!PDF_OBJ_ARRAYTYPE(index_obj) ||
-	((index_len = pdf_array_length(index_obj)) % 2 ))
+        ((index_len = pdf_array_length(index_obj)) % 2 ))
       goto error;
 
     i = 0;
     while (i < index_len) {
       pdf_obj *first = pdf_get_array(index_obj, i++);
       size_obj  = pdf_get_array(index_obj, i++);
-      if (!PDF_OBJ_NUMBERTYPE(first) ||
-	  !PDF_OBJ_NUMBERTYPE(size_obj) ||
-	  parse_xrefstm_subsec(pf, &p, &length, W, wsum,
-			       (int) pdf_number_value(first),
-			       (int) pdf_number_value(size_obj)))
-	goto error;
+      if (!PDF_OBJ_NUMBERTYPE(first) || !PDF_OBJ_NUMBERTYPE(size_obj) ||
+          parse_xrefstm_subsec(pf, &p, &length, W, wsum,
+            (int) pdf_number_value(first), (int) pdf_number_value(size_obj)))
+        goto error;
     }
   } else if (parse_xrefstm_subsec(pf, &p, &length, W, wsum, 0, size))
       goto error;
@@ -3752,6 +3787,10 @@ pdf_file_get_trailer (pdf_file *pf)
   return pdf_link_obj(pf->trailer);
 }
 
+/* FIXME:
+ * pdf_file_get_trailer() does pdf_link_obj() but
+ * pdf_file_get_catalog() does not. Why?
+ */
 pdf_obj *
 pdf_file_get_catalog (pdf_file *pf)
 {
@@ -3807,9 +3846,9 @@ pdf_open (const char *ident, FILE *file)
 
       if (!PDF_OBJ_NAMETYPE(new_version) ||
           sscanf(pdf_name_value(new_version), "%u.%u", &major, &minor) != 2) {
-	pdf_release_obj(new_version);
-	WARN("Illegal Version entry in document catalog. Broken PDF file?");
-	goto error;
+        pdf_release_obj(new_version);
+        WARN("Illegal Version entry in document catalog. Broken PDF file?");
+        goto error;
       }
 
       if (pf->version < major*10+minor)
