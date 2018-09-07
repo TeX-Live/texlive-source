@@ -2,7 +2,8 @@
 
 -- Copyright 2016-2018 Brian Dunn
 
-printversion = "v0.58"
+printversion = "v0.59"
+requiredconfversion = "1" -- also at *lwarpmk.conf
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -29,6 +30,7 @@ lwarpmk pdftohtml [-p project]:
     Converts project_html.pdf to project_html.html and individual HTML files.
     Finishes the HTML conversion even if there was a compile error.
 lwarpmk pdftosvg <list of file names>: Converts each PDF file to SVG.
+lwarpmk epstopdf <list of file names>: Converts each EPS file to PDF.
 lwarpmk clean [-p project]: Remove .aux, .toc, .lof/t, .idx, .ind, .log, *_html_inc.*, .gl*
 lwarpmk cleanall [-p project]: Remove auxiliary files and also project.pdf, *.html
 lwarpmk cleanlimages: Removes all images from the "lateximages" directory.
@@ -38,37 +40,6 @@ lwarpmk --help: Print this help message.
 ]] )
 -- printconf ()
 end
-
--- function printconf ()
--- --
--- -- Print the format of the configuration file lwarpmk.conf:
--- --
--- print ( [[
--- An example lwarpmk.conf or <project>.lwarpmkconf project file:
--- --
--- opsystem = "Unix"   (or "Windows")
--- latexname = "pdflatex"  (or "lualatex", or "xelatex")
--- sourcename = "projectname"  (the source-code filename w/o .tex)
--- homehtmlfilename = "index"  (or perhaps the project name)
--- htmlfilename = ""  (or "projectname" - filename prefix)
--- latexmk = "false"  (or "true" to use latexmk to build PDFs)
--- shellescape = "false"
--- printindexcmd = "makeindex -s lwarp.ist <name>.idx"
--- HTMLindexcmd = "makeindex -s lwarp.ist <name>_html.idx"
--- latexmkindexcmd = "makeindex -s lwarp.ist"
--- -- indexprog = "makeindex" or "xindy"
--- -- makeindexstyle = "lwarp.ist" (or a custom file based on lwarp.ist)
--- -- xindylanguge = "english"  (use a language supported by xindy)
--- -- xindycodepage = "utf8"  (use a codepage supported by xindy)
--- -- xindystyle = "lwarp.xdy" (or a custom file based on lwarp.xdy)
--- glossarycmd = "makeglossaries"
--- pdftotextenc = "UTF-8"  (use an encoding supported by pdftotext)
--- --
--- Filenames must contain only letters, numbers, underscore, or dash.
--- Values must be in upright "quotes".
---
--- ]] ) ;
--- end
 
 function splitfile (destfile,sourcefile)
 --
@@ -107,6 +78,11 @@ function cvalueerror ( line, linenum , cvalue )
     os.exit(1) ;
 end
 
+function ignoreconf ()
+-- Global argument index
+argindex = 2
+end
+
 function loadconf ()
 --
 -- Load settings from the project's "lwarpmk.conf" file:
@@ -124,9 +100,11 @@ if ( arg[argindex] == "-p" ) then
     argindex = argindex + 1
 end
 -- Additional defaults:
+confversion = "0"
 opsystem = "Unix"
 latexmk = "false"
-shellescape = "false"
+printlatexcmd = ""
+HTMLlatexcmd = ""
 printindexcmd = ""
 HTMLindexcmd = ""
 latexmkindexcmd = ""
@@ -159,11 +137,11 @@ else -- file exists
 -- Read the file:
 print ("lwarpmk: Reading " .. conffile ..".")
 local cfile = io.open(conffile)
--- Scan each line:
+-- Scan each line, parsing each line as: name = [[string]]
 local linenum = 0
 for line in cfile:lines() do -- scan lines
 linenum = linenum + 1
-i,j,cvarname,cvalue = string.find (line,"([%w-_]*)%s*=%s*\"([^\"]*)\"") ;
+i,j,cvarname,cvalue = string.find (line,"([%w-_]*)%s*=%s*%[%[([^%]]*)%]%]") ;
 -- Error if incorrect enclosing characters:
 if ( i == nil ) then
     print ("lwarpmk: ===")
@@ -173,21 +151,12 @@ if ( i == nil ) then
 --    printconf () ;
     os.exit(1) ;
 end -- nil
-if ( cvarname == "opsystem" ) then
+if ( cvarname == "confversion" ) then
+    confversion = cvalue
+elseif ( cvarname == "opsystem" ) then
     -- Verify choice of opsystem:
     if ( (cvalue == "Unix") or (cvalue == "Windows") ) then
         opsystem = cvalue
-    else
-        cvalueerror ( line, linenum , cvalue )
-    end
-elseif ( cvarname == "latexname" ) then
-    -- Verify choice of LaTeX compiler:
-    if (
-        (cvalue == "pdflatex") or
-        (cvalue == "xelatex") or
-        (cvalue == "lualatex")
-    ) then
-        latexname = cvalue
     else
         cvalueerror ( line, linenum , cvalue )
     end
@@ -195,26 +164,12 @@ elseif ( cvarname == "sourcename" ) then sourcename = cvalue
 elseif ( cvarname == "homehtmlfilename" ) then homehtmlfilename = cvalue
 elseif ( cvarname == "htmlfilename" ) then htmlfilename = cvalue
 elseif ( cvarname == "latexmk" ) then latexmk = cvalue
-elseif ( cvarname == "shellescape" ) then shellescape = cvalue
+elseif ( cvarname == "printlatexcmd" ) then printlatexcmd = cvalue
+elseif ( cvarname == "HTMLlatexcmd" ) then HTMLlatexcmd = cvalue
 elseif ( cvarname == "printindexcmd" ) then printindexcmd = cvalue
 elseif ( cvarname == "HTMLindexcmd" ) then HTMLindexcmd = cvalue
 elseif ( cvarname == "latexmkindexcmd" ) then latexmkindexcmd = cvalue
 elseif ( cvarname == "glossarycmd" ) then glossarycmd = cvalue
--- to be removed:
--- elseif ( cvarname == "indexprog" ) then
---     -- Verify choice of indexing program:
---     if (
---         (cvalue == "makeindex") or
---         (cvalue == "xindy")
---     ) then
---         indexprog = cvalue
---     else
---         cvalueerror ( line, linenum , cvalue )
---     end
--- elseif ( cvarname == "makeindexstyle" ) then makeindexstyle = cvalue
--- elseif ( cvarname == "xindylanguage" ) then xindylanguage = cvalue
--- elseif ( cvarname == "xindycodepage" ) then xindycodepage = cvalue
--- elseif ( cvarname == "xindystyle" ) then xindystyle = cvalue
 elseif ( cvarname == "pdftotextenc" ) then pdftotextenc = cvalue
 else
     print ("lwarpmk: ===")
@@ -234,7 +189,7 @@ end -- file exists
 -- This could happen if a local copy of lwarp has recently been recompiled.
 if sourcename=="lwarp" then
     print ("lwarpmk: ===")
-    print ("lwarpmk: Lwarp has recently been recompiled in this directory,")
+    print ("lwarpmk: lwarp.sty has recently been recompiled in this directory,")
     print ("lwarpmk: and \"lwarpmk.conf\" is no longer set for your own project.")
     print ("lwarpmk: Recompile your own project using pdf/lua/xelatex <projectname>.")
     print ("lwarpmk: After a recompile, \"lwarpmk.conf\" will be set for your project,")
@@ -269,9 +224,33 @@ elseif opsystem=="Windows" then -- For Windows
     cmdgroupclosename = ""
     seqname = " & "
     bgname = ""
-else print ( "lwarpmk: Select Unix or Windows for opsystem" )
+else
+    print ("lwarpmk: ===")
+    print ("lwarpmk: Select Unix or Windows for opsystem." )
+    print ("lwarpmk: ===")
+    os.exit(1)
 end --- for Windows
-
+-- Warning if the operating system does not appear to be correct,
+-- in case files were transferred to another system.
+if ( (package.config:sub(1,1)) ~= dirslash ) then
+    print ("lwarpmk: ===")
+    print ("lwarpmk: It appears that lwarpmk.conf is for a different operating system." )
+    print ("lwarpmk: To adjust lwarpmk.conf for the current operating system," )
+    print ("lwarpmk:   recompile the original document using xe/lua/pdflatex." )
+    print ("lwarpmk: ")
+    print ("lwarpmk: lwarpmk shall attempt to continue...")
+    print ("lwarpmk: ===")
+end
+-- Error if the configuration file's version is not current:
+if ( confversion ~= requiredconfversion ) then
+    print ("lwarpmk: ===")
+    print ("lwarpmk: The configuration files lwarpmk.conf and "..sourcename..".lwarpmkconf" )
+    print ("lwarpmk:   must be updated.  To update the configuration files," )
+    print ("lwarpmk:   recompile "..sourcename..".tex using xe/lua/pdflatex," )
+    print ("lwarpmk:   then use lwarpmk again.")
+    print ("lwarpmk: ===")
+    os.exit(1)
+end
 end -- loadconf
 
 function executecheckerror ( executecommands , errormessage )
@@ -310,35 +289,29 @@ io.close(fsource)
 return false
 end
 
-function onetime (fsuffix)
+function onetime (latexcmd, fsuffix)
 --
 -- Compile one time, return true if should compile again.
 -- fsuffix is "" for print, "_html" for HTML output.
 --
-print("lwarpmk: Compiling with " .. latexname .. " " .. sourcename..fsuffix)
-local thisshellescape = " "
-if ( shellescape == "true" ) then
-    thisshellescape = " -shell-escape "
-else
-    thisshellescape = " "
-end
+print("lwarpmk: Compiling with: " .. latexcmd)
 executecheckerror (
-    latexname .. thisshellescape .. sourcename..fsuffix ,
+    latexcmd ,
     "Compile error."
 )
 return (reruntoget(sourcename .. fsuffix .. ".log") ) ;
 end
 
-function manytimes (fsuffix)
+function manytimes (latexcmd, fsuffix)
 --
 -- Compile up to five times.
 -- fsuffix is "" for print, "_html" for HTML output
 --
-if onetime(fsuffix) == true then
-if onetime(fsuffix) == true then
-if onetime(fsuffix) == true then
-if onetime(fsuffix) == true then
-if onetime(fsuffix) == true then
+if onetime(latexcmd, fsuffix) == true then
+if onetime(latexcmd, fsuffix) == true then
+if onetime(latexcmd, fsuffix) == true then
+if onetime(latexcmd, fsuffix) == true then
+if onetime(latexcmd, fsuffix) == true then
 end end end end end
 end
 
@@ -370,7 +343,7 @@ end
 function removeaux ()
 --
 -- Remove auxiliary files:
--- All aux files are removed since there may be many bbl*.aux files.
+-- All .aux files are removed since there may be many bbl*.aux files.
 --
 os.execute ( rmname .. " *.aux " ..
     sourcename ..".toc " .. sourcename .. "_html.toc " ..
@@ -378,6 +351,7 @@ os.execute ( rmname .. " *.aux " ..
     sourcename ..".lot " .. sourcename .. "_html.lot " ..
     " *.idx " ..
     " *.ind " ..
+    sourcename ..".ps " .. sourcename .."_html.ps " ..
     sourcename ..".log " .. sourcename .. "_html.log " ..
     sourcename ..".gl* " .. sourcename .. "_html.gl* " ..
     " *_html_inc.* "
@@ -603,34 +577,22 @@ if ( pagezerowarning == true ) then
 end -- pagezerowarning
 end -- function
 
-function compilelatexmk ( fsuffix )
+function convertepstopdf ()
 --
--- Use latexmk to compile source and index:
--- fsuffix is "" for print, or "_html" for HTML
+-- Converts EPS files to PDF files.
+-- The filenames are arg[argindex] and up.
+-- arg[1] is the command "pdftosvg".
 --
--- Maybe select the shell-escape option:
-local thisshellescape = " "
-if ( shellescape == "true" ) then
-    thisshellescape = " -shell-escape "
-else
-    thisshellescape = " "
-end
--- The recorder option is required to detect changes in <project>.tex
--- while we are loading <project>_html.tex.
-executecheckerror (
-    "latexmk -pdf -dvi- -ps- -recorder "
-    .. "-e "
-    .. opquote
-    .. "$makeindex = q/" -- $
-    .. latexmkindexcmd
-    .. " /"
-    .. opquote
-    .. " -pdflatex=\"" .. latexname .. thisshellescape .." %O %S\" "
-    .. sourcename..fsuffix ..".tex"
-    ,
-    "Compile error."
-)
-end -- function
+ignoreconf ()
+for i = argindex , #arg do
+    if (lfs.attributes(arg[i],"mode")==nil) then
+        print ("lwarpmk: File \"" .. arg[i] .. "\" does not exist.")
+    else
+        print ("lwarpmk: Converting \"" .. arg[i] .. "\"")
+        os.execute ( "epstopdf " .. arg[i] )
+    end -- if
+end -- do
+end --function
 
 function convertpdftosvg ()
 --
@@ -638,6 +600,7 @@ function convertpdftosvg ()
 -- The filenames are arg[argindex] and up.
 -- arg[1] is the command "pdftosvg".
 --
+ignoreconf ()
 for i = argindex , #arg do
     if (lfs.attributes(arg[i],"mode")==nil) then
         print ("lwarpmk: File \"" .. arg[i] .. "\" does not exist.")
@@ -674,7 +637,11 @@ print ("lwarpmk: " .. printversion .. "  Automated make for the LaTeX lwarp pack
 if arg[1] == "print" then
 loadconf ()
 if ( latexmk == "true" ) then
-    compilelatexmk ("")
+    print ("lwarpmk: Compiling with: " .. printlatexcmd)
+    executecheckerror (
+        printlatexcmd ,
+        "Compile error."
+    )
     print ("lwarpmk: Done.")
 else -- not latexmk
     verifyfileexists (sourcename .. ".tex") ;
@@ -687,7 +654,7 @@ else -- not latexmk
         )
     ) then
         -- Recompile if not yet up to date:
-        manytimes("")
+        manytimes(printlatexcmd, "")
         print ("lwarpmk: Done.") ;
     else
         print ("lwarpmk: " .. sourcename .. ".pdf is up to date.") ;
@@ -699,7 +666,7 @@ end -- not latexmk
 elseif arg[1] == "print1" then
     loadconf ()
     verifyfileexists (sourcename .. ".tex") ;
-    onetime("")
+    onetime(printlatexcmd, "")
     print ("lwarpmk: Done.") ;
 
 -- lwarpmk printindex:
@@ -728,7 +695,11 @@ updateanddone ()
 elseif arg[1] == "html" then
 loadconf ()
 if ( latexmk == "true" ) then
-    compilelatexmk ("_html")
+    print ("lwarpmk: Compiling with: " .. HTMLlatexcmd)
+    executecheckerror (
+        HTMLlatexcmd ,
+        "Compile error."
+    )
     pdftohtml ()
     print ("lwarpmk: Done.")
 else -- not latexmk
@@ -742,7 +713,7 @@ else -- not latexmk
         )
     ) then
         -- Recompile if not yet up to date:
-        manytimes("_html")
+        manytimes(HTMLlatexcmd, "_html")
         pdftohtml ()
         print ("lwarpmk: Done.")
     else
@@ -755,7 +726,7 @@ end -- not latexmk
 elseif arg[1] == "html1" then
     loadconf ()
     verifyfileexists ( sourcename .. ".tex" ) ;
-    onetime("_html")
+    onetime(HTMLlatexcmd, "_html")
     pdftohtml ()
     print ("lwarpmk: Done.")
 
@@ -811,13 +782,14 @@ print ("lwarpmk: Done.")
 
 -- lwarpmk cleanall
 -- Remove project.aux, .toc, .lof, .lot, .log, *.idx, *.ind, *_html_inc.*, .gl*
---    and also project.pdf, *.html
+--    and also project.pdf, project.dvi, *.html
 
 elseif arg[1] == "cleanall" then
 loadconf ()
 removeaux ()
 os.execute ( rmname .. " " ..
     sourcename .. ".pdf " .. sourcename .. "_html.pdf " ..
+    sourcename .. ".dvi " .. sourcename .. "_html.dvi " ..
     "*.html"
     )
 print ("lwarpmk: Done.")
@@ -830,8 +802,14 @@ loadconf ()
 os.execute ( rmname .. " lateximages/*" )
 print ("lwarpmk: Done.")
 
+-- lwarpmk epstopdf <list of file names>
+-- Convert EPS files to PDF using epstopdf
+elseif arg[1] == "epstopdf" then
+convertepstopdf ()
+print ("lwarpmk: Done.")
+
 -- lwarpmk pdftosvg <list of file names>
--- Convert PDf files to SVG using pdftocairo
+-- Convert PDF files to SVG using pdftocairo
 elseif arg[1] == "pdftosvg" then
 convertpdftosvg ()
 print ("lwarpmk: Done.")
