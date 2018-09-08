@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 #
 # thumbpdf.pl
 #
-# Copyright (C) 1999-2014 Heiko Oberdiek.
+# Copyright (C) 1999-2018 Heiko Oberdiek.
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
@@ -27,10 +27,10 @@ $^W=1; # turn warning on
 my $file        = "thumbpdf.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
 my $prj         = 'thumbpdf';
-my $version     = "3.16";
-my $date        = "2014/07/15";
+my $version     = "3.17";
+my $date        = "2018/09/07";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 1999-2014 by $author.";
+my $copyright   = "Copyright (c) 1999-2018 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -156,6 +156,8 @@ my $copyright   = "Copyright (c) 1999-2014 by $author.";
 #   2014/07/15 v3.16
 #    * Patch for "thumbpdf.pl" by Norbert Preining because of
 #      pdfTeX 1.40.15 (TeX Live 2014).
+#   2018/09/07 v3.17
+#    * { } quoted as \{ \} in regex for "new" stricter perl syntax.
 #
 
 ### program identification
@@ -1454,7 +1456,7 @@ END_DTA
         my $length = $thumblength[$i];
         my $dict = $objtext[$thumbobj[$i]];
         $dict =~ s/\\the\\pdflastobj\\\s*\d+\s*R/{RGB_$i}/;
-        $dict =~ s/\\UseRGB{(\d+)}\\\s*\d+\s*R/{RGB_$1}/;
+        $dict =~ s/\\UseRGB\{(\d+)\}\\\s*\d+\s*R/{RGB_$1}/;
         $dict =~ s/\/Length\s+\d+\s*//;
         $dict =~ s/^\s+//;
         $dict =~ s/\s+$//;
