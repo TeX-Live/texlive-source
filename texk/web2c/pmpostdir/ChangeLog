@@ -1,3 +1,8 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* upmpsamp.test,
+	* pmpsamp.test: LC_ALL=LANGUAGE=C.
+
 2018-08-16  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptfmin.ch: Support new JFM spec, which allows 3-byte

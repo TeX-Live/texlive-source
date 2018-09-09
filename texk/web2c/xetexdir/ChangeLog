@@ -1,3 +1,7 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* xetex-bug73.test: LC_ALL=LANGUAGE=C.
+
 2018-05-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_pic.c: Allow non-ascii image names (W32 only).

@@ -1,3 +1,7 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* uptriptest.test: LC_ALL=LANGUAGE=C.
+
 2018-09-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* gkhuge.test: Export TEXMFCNF beforehand, instead of setting

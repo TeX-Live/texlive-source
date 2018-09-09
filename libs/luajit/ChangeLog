@@ -1,3 +1,7 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* lutjiterr.test: LC_ALL=LANGUAGE=C.
+
 2017-20-06 Luigi Scarso <luigi.scarso@gmail.com>
 
 	Import LuaJIT-2.1.0-beta3.

@@ -1,3 +1,7 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* tests/ps2pk.test: LC_ALL=LANGUAGE=C.
+
 2018-01-18  Karl Berry  <karl@tug.org>
 
 	* objects.h (IfTrace0): printf %s instead of direct string

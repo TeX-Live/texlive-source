@@ -1,3 +1,7 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* xdvipfm-bb.test: LC_ALL=LANGUAGE=C.
+
 2018-09-06  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfencoding.c: Reverted change made for 20071115.

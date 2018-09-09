@@ -1,3 +1,8 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* expanded.test,
+	* ttf2afm.test: LC_ALL=LANGUAGE=C.
+
 2018-07-09  Karl Berry  <karl@freefriends.org>
 
 	* writefont.c (write_fontdescriptor) [ENABLE_PDF_CHARSET]:

@@ -1,3 +1,7 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* psutils.test: LC_ALL=LANGUAGE=C.
+
 2018-09-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* psnup.c: Enable -W and -H options.

@@ -1,12 +1,12 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
 # Copyright 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-TEXMFCNF=$srcdir/../kpathsea
-DVIPDFMXINPUTS=$srcdir/tests:$srcdir/data
-export TEXMFCNF DVIPDFMXINPUTS
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+DVIPDFMXINPUTS=$srcdir/tests:$srcdir/data; export DVIPDFMXINPUTS
 
 testsrc=$srcdir/tests
 

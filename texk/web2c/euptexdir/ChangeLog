@@ -1,3 +1,8 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* euptriptest.test,
+	* pdfprimitve.test: LC_ALL=LANGUAGE=C.
+
 2018-01-21  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* euptex.ch0, euptex.ch1, pdfstrcmp-eup-post.ch, am/euptex.am:

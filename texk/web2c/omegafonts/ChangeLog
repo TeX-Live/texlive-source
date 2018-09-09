@@ -1,3 +1,7 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* overbmp.test: LC_ALL=LANGUAGE=C.
+
 2018-01-18  Karl Berry  <karl@tug.org>
 
 	* error_routines.c (yyerror, warning_0, fatal_error_0,

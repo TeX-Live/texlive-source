@@ -1,14 +1,16 @@
 #! /bin/sh -vx
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
 # Copyright 2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 PATH=$LCDF_TYPETOOLS_TREE/cfftot1:$PATH		# May need to run cfftot1, ...
 PATH=$LCDF_TYPETOOLS_TREE/t1dotlessj:$PATH	# ... t1dotlessj, ...
 PATH=$LCDF_TYPETOOLS_TREE/ttftotype42:$PATH	# ... or ttftotype42.
-TEXMFCNF=$srcdir/../kpathsea
-ENCFONTS=.:$srcdir/tests
-export PATH TEXMFCNF ENCFONTS
+export PATH 
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF 
+ENCFONTS=.:$srcdir/tests; export ENCFONTS
 
 rm -f Ant* a_enhg3c.enc
 

@@ -1,13 +1,13 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017 Karl Berry <tex-live@tug.org>#
+# Copyright 2017-2018 Karl Berry <tex-live@tug.org>#
 # Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-TEXMFCNF=$srcdir/../kpathsea
-TEXINPUTS=.
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
-export TEXMFCNF TEXINPUTS
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS=.; export TEXINPUTS
 
 FILE=pdfprimitive-eptex
 

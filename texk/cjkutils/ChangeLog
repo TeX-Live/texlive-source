@@ -1,3 +1,8 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* cef5conv.test,
+	* cefsconv.test: LC_ALL=LANGUAGE=C.
+
 2018-06-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* *.c: Adjust #line directive to the new convention.

@@ -3,6 +3,8 @@
 # Copyright (C) 2018 John Collins (jcc8 at psu dot edu)
 # You may freely use, modify and/or distribute this file.
 
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
 # Notes about interpretation of tests:
 # The test file was generated in the compilation of axodraw2's manual,
 # and this test script therefore verifies much functionality of

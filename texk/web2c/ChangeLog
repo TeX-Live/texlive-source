@@ -1,3 +1,8 @@
+2018-09-09  Karl Berry  <karl@tug.org>
+
+	* mftraptest.test,
+	* triptest.test: LC_ALL=LANGUAGE=C.
+
 2018-07-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctexdir/am/synctex.am: Add synctex_version.h.

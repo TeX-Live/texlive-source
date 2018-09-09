@@ -3,6 +3,8 @@
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
 if test -z "$test_srcdir"; then
   # If not set, then we are not running from `make check'.
   test_srcdir=`echo "$0" | sed -e 's,/[^\\/]*$,,'`  # == dirname $0
