@@ -103,8 +103,6 @@ matrix:
       - tldir=x86_64-darwin
       - package=texlive-bin-x86_64-darwin.tar.gz
       before_script:
-      - export LC_ALL=C
-      - export LANG=C
       script: ./Build -C
 
 # somehow all binaries are always put into x86_64-pc-linux-gnu, probably because
