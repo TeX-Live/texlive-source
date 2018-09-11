@@ -1,3 +1,1220 @@
+commit 616fd34a69bb69bc35c7e4ea939e71c3ea2e92cb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 10 11:19:49 2018 +0200
+
+    [subset] Disable GSUB/GPOS subsetting for now
+
+    So I can get a release out.  I haven't debugged those yet, and they
+    are producing bad tables.
+
+ src/hb-subset.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit d42f0e5809964136911cbbd845bc423a8dfd5e31
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 10 11:05:33 2018 +0200
+
+    [atomic] Fix pointer type passed to InterlockedExchangeAdd()
+
+    John Emmas reported on mailing list that build with MSVC is failing.
+    Not sure why bots don't catch it, but this should fix.
+
+ src/hb-atomic.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit fda994e1d45c4d34601af7272f37ea257f92a3d8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Sep 7 15:02:57 2018 -0400
+
+    Use enum instead of "static const" in class scope
+
+    Technically, static const needs an out-of-class definition.  Eg:
+
+      CXXLD    libharfbuzz-subset.la
+    Undefined symbols for architecture x86_64:
+      "OT::FeatureVariationRecord::min_size", referenced from:
+          bool OT::GSUBGPOS::subset<OT::PosLookup>(hb_subset_context_t*)
+          constin libharfbuzz_subset_la-hb-subset.o
+          bool OT::GSUBGPOS::subset<OT::SubstLookup>(hb_subset_context_t*)
+          constin libharfbuzz_subset_la-hb-subset.o
+      "OT::Record<OT::LangSys>::min_size", referenced from:
+          OT::Script::subset(hb_subset_context_t*) constin
+          libharfbuzz_subset_la-hb-subset.o
+      "OT::IntType<unsigned short, 2u>::min_size", referenced from:
+          OT::Script::subset(hb_subset_context_t*) constin
+          libharfbuzz_subset_la-hb-subset.o
+          OT::RecordListOf<OT::Feature>::subset(hb_subset_context_t*)
+          const  in libharfbuzz_subset_la-hb-subset.o
+    ld: symbol(s) not found for architecture x86_64
+    collect2: ld returned 1 exit status
+    make[4]: *** [libharfbuzz-subset.la] Error 1
+    make[3]: *** [all-recursive] Error 1
+    make[2]: *** [all] Error 2
+    make[1]: *** [all-recursive] Error 1
+    make: *** [all] Error 2
+    Exited with code 2
+
+ src/hb-buffer.hh           |  2 +-
+ src/hb-machinery.hh        |  8 ++++----
+ src/hb-open-file.hh        |  2 +-
+ src/hb-open-type.hh        |  2 +-
+ src/hb-ot-layout-common.hh |  2 +-
+ src/hb-ot-layout.cc        |  4 ++--
+ src/hb-set-digest.hh       |  4 ++--
+ src/hb-set.hh              | 12 ++++++------
+ 8 files changed, 18 insertions(+), 18 deletions(-)
+
+commit ebe67137ab3559c2c6aaf53442ca223cb34df5af
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Sep 7 10:46:13 2018 -0400
+
+    Try fixing bots
+
+ src/hb-ot-layout-common.hh | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
+
+commit 5f17dbc3025093308d2191a4abd2eec24db35c0e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Sep 7 10:24:22 2018 -0400
+
+    [subset] Fix div-by-zero
+
+ src/hb-subset.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 21bf147054f6b5bd1c430c0e02a8c4058ed229a1
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Sep 5 18:04:52 2018 -0700
+
+    [subset] Fix hdmx subsetted size calculation.
+
+ src/hb-ot-hdmx-table.hh                         |  14 ++++++++++----
+ test/api/fonts/Roboto-Regular.multihdmx.a.ttf   | Bin 0 -> 2052 bytes
+ test/api/fonts/Roboto-Regular.multihdmx.abc.ttf | Bin 0 -> 2468 bytes
+ test/api/test-subset-hdmx.c                     |  20
+ ++++++++++++++++++++
+ 4 files changed, 30 insertions(+), 4 deletions(-)
+
+commit 1e6599f59680c81356b2e9ddddb61252490337a0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Sep 5 19:29:42 2018 -0700
+
+    Fix older compilers re '>>' at nested template declarations
+
+ src/hb-ot-layout-gsub-table.hh | 8 ++++----
+ src/hb-subset.cc               | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit a1e5e07c735091e82d66ac56a4e27341f589369d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Sep 5 16:24:28 2018 -0700
+
+    [subset] Hook up GSUB/GPOS, but still disabled
+
+    They are still in the drop list.
+
+ src/hb-ot-hdmx-table.hh |  3 +-
+ src/hb-subset.cc        | 75
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 77 insertions(+), 1 deletion(-)
+
+commit 0d160d5ff5158fd4190201becd652c8f28ef4430
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 3 20:50:11 2018 -0700
+
+    [subset] Implement subsetting of SingleSubst
+
+ src/hb-machinery.hh            |  2 ++
+ src/hb-null.hh                 | 43 +++++++++++++++++++-----------
+ src/hb-ot-layout-gsub-table.hh | 59
+ +++++++++++++++++++++++++++++++++++-------
+ src/hb-vector.hh               |  2 ++
+ 4 files changed, 81 insertions(+), 25 deletions(-)
+
+commit 3f00d0b0df14d69859b15568ff28a810d08f59ea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 3 18:54:32 2018 -0700
+
+    [subset] Keep glyph set in plan
+
+    Should remove the vector version at some point...
+
+ src/hb-subset-plan.cc | 19 ++++++++++---------
+ src/hb-subset-plan.hh |  3 +--
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+commit dc50493a8da05d6561242136d63cae836486c150
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 3 18:23:23 2018 -0700
+
+    [subset] Towards subsetting SingleSubstFormat1
+
+    Why does subset plan not have a hb_set_t of glyphs?
+
+ src/hb-machinery.hh            | 10 +++++++++-
+ src/hb-ot-layout-gsub-table.hh | 12 +++++++++++-
+ 2 files changed, 20 insertions(+), 2 deletions(-)
+
+commit 339d3603b916cebf24ff86d9842b766261e1b262
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 3 17:33:34 2018 -0700
+
+    [subset] Wire up subset() call down to subtables
+
+ src/hb-ot-layout-common.hh     | 36 +++++++++++++++++++++++
+ src/hb-ot-layout-gpos-table.hh | 67
+ +++++++++++++++++++++++++++++++++++++++---
+ src/hb-ot-layout-gsub-table.hh | 54 ++++++++++++++++++++++++++++------
+ src/hb-ot-layout-gsubgpos.hh   | 42 ++++++++++++++++++++++++++
+ 4 files changed, 186 insertions(+), 13 deletions(-)
+
+commit 7b2ef551da0d53cd94106035b1f065a759cf3cd5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 3 17:16:09 2018 -0700
+
+    Templatize Lookup::sanitize()
+
+ src/hb-ot-layout-common.hh     | 40
+ ++++++++++++++++++++++++++++------------
+ src/hb-ot-layout-gpos-table.hh |  7 ++-----
+ src/hb-ot-layout-gsub-table.hh | 25 +++----------------------
+ 3 files changed, 33 insertions(+), 39 deletions(-)
+
+commit 9c3747c5e50423e0a7202f249728d5c5b2b09073
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 3 16:53:03 2018 -0700
+
+    [subset] More
+
+ src/hb-ot-layout-gpos-table.hh | 10 +++++----
+ src/hb-ot-layout-gsub-table.hh | 48
+ +++++++++++++++++++++---------------------
+ src/hb-ot-layout-gsubgpos.hh   | 22 +++++++++++++------
+ 3 files changed, 45 insertions(+), 35 deletions(-)
+
+commit 6d618522d63a94230ad708fc49c1c73927da0137
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 3 16:41:28 2018 -0700
+
+    Templatize GSUBGPOS::sanitize()
+
+ src/hb-ot-layout-gpos-table.hh |  6 +-----
+ src/hb-ot-layout-gsub-table.hh | 14 +++++---------
+ src/hb-ot-layout-gsubgpos.hh   |  4 +++-
+ 3 files changed, 9 insertions(+), 15 deletions(-)
+
+commit 49c44b58f6c2536ea5f403c54a40cab41b905150
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 3 16:37:17 2018 -0700
+
+    [subset] Fix serialize_subset() calls
+
+    Ouch.
+
+ src/hb-open-type.hh            |  2 +-
+ src/hb-ot-layout-common.hh     |  6 +++---
+ src/hb-ot-layout-gsub-table.hh | 13 ++++++-------
+ src/hb-ot-layout-gsubgpos.hh   |  6 +++---
+ 4 files changed, 13 insertions(+), 14 deletions(-)
+
+commit 7c9cfa2b4002c18585a26134ab987ceb7ebc97a2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Sep 2 19:47:50 2018 -0700
+
+    Add intersects() method to GSUB/GPOS lookups
+
+ src/hb-ot-layout-common.hh     |  77 +++++++++--
+ src/hb-ot-layout-gpos-table.hh | 103 ++++++++++----
+ src/hb-ot-layout-gsub-table.hh | 205 +++++++++++++++++++--------
+ src/hb-ot-layout-gsubgpos.hh   | 306
+ ++++++++++++++++++++++++++++++++---------
+ 4 files changed, 528 insertions(+), 163 deletions(-)
+
+commit 61ce62e55455bb0d6c9db3b076676ab18e51d449
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Sep 2 17:00:27 2018 -0700
+
+    [subset] Minor
+
+    Remove Lookup::subset().
+
+ src/hb-ot-layout-common.hh   | 11 -----------
+ src/hb-ot-layout-gsubgpos.hh |  2 +-
+ 2 files changed, 1 insertion(+), 12 deletions(-)
+
+commit bfa72a9a72a15d977f503f12eef376a355679d76
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Sep 1 18:34:50 2018 -0700
+
+    [subset] Towards GSUB/GPOS subsetting
+
+    Add subset() call for GSUBGPOS struct and its dependencies.
+    Not hooked up anywhere.
+
+ src/hb-machinery.hh            | 10 ++++--
+ src/hb-open-type.hh            | 25 ++++++++++++-
+ src/hb-ot-layout-common.hh     | 80
+ +++++++++++++++++++++++++++++++++++-------
+ src/hb-ot-layout-gdef-table.hh | 33 ++++++++++-------
+ src/hb-ot-layout-gsub-table.hh | 11 ++++--
+ src/hb-ot-layout-gsubgpos.hh   | 19 ++++++++++
+ 6 files changed, 145 insertions(+), 33 deletions(-)
+
+commit 6803ed8674028a656957910381150ab28d75a5f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 31 17:11:08 2018 -0700
+
+    [serialize] Add reset()
+
+ src/hb-machinery.hh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit e58b190292f85c9676fe14cf63d2831d4d6e6bab
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 31 16:46:35 2018 -0700
+
+    [subset] De-templatize hb_subset_context_t
+
+    We're going to (finally) use virtual methods for
+    hb_serialize_context_t
+    customization, so don't need to carry a Serializer template variable
+    around...  Simplifies code.
+
+ src/hb-machinery.hh            | 2 +-
+ src/hb-ot-layout-gsub-table.hh | 5 ++---
+ src/hb-subset.hh               | 7 +++----
+ 3 files changed, 6 insertions(+), 8 deletions(-)
+
+commit 22acd424ca77c16d28405021f06c5562497920ab
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 31 16:38:04 2018 -0700
+
+    [serialize] Add a couple small methods
+
+ src/hb-machinery.hh            | 25 +++++++++++++++++--------
+ src/hb-open-file.hh            |  3 +--
+ src/hb-ot-layout-gsub-table.hh |  1 +
+ 3 files changed, 19 insertions(+), 10 deletions(-)
+
+commit d1f29908c281b1685eea00b71bae934d9f1f20eb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 31 16:31:00 2018 -0700
+
+    [subset] Add hb_subset_context_t<>
+
+ src/hb-open-type.hh            |  1 +
+ src/hb-ot-cmap-table.hh        |  1 -
+ src/hb-ot-hdmx-table.hh        |  1 -
+ src/hb-ot-hmtx-table.hh        |  1 -
+ src/hb-ot-layout-gsub-table.hh |  9 +++++++++
+ src/hb-ot-maxp-table.hh        |  1 -
+ src/hb-ot-os2-table.hh         |  1 -
+ src/hb-ot-post-table.hh        |  1 -
+ src/hb-subset.hh               | 21 +++++++++++++++++++++
+ 9 files changed, 31 insertions(+), 6 deletions(-)
+
+commit aba0a945c5f8724cc7bd1a9b7f7b5df1c64b03f4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 31 13:25:19 2018 -0700
+
+    [subset] Add hb-subset-input.hh and make hb-subset.hh toplevel include
+
+ src/Makefile.sources    |  1 +
+ src/hb-ot-cmap-table.hh |  2 +-
+ src/hb-ot-glyf-table.hh |  2 --
+ src/hb-ot-hdmx-table.hh |  2 +-
+ src/hb-ot-hmtx-table.hh |  2 +-
+ src/hb-ot-maxp-table.hh |  2 +-
+ src/hb-ot-os2-table.hh  |  2 +-
+ src/hb-ot-post-table.hh |  2 +-
+ src/hb-subset-glyf.cc   |  1 -
+ src/hb-subset-glyf.hh   |  2 +-
+ src/hb-subset-input.hh  | 57
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-subset-plan.cc   |  3 +--
+ src/hb-subset-plan.hh   |  2 +-
+ src/hb-subset.cc        |  3 +--
+ src/hb-subset.hh        | 23 +++-----------------
+ 15 files changed, 71 insertions(+), 35 deletions(-)
+
+commit 18d01eac7f2870e2804ceed2c70a604a5dc6a320
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 31 13:00:57 2018 -0700
+
+    Minor
+
+ src/hb-ot-shape-complex-arabic-fallback.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit a23b892fe6cc4859a30edc7ffc003ab7624aa5f0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 29 18:28:39 2018 -0700
+
+    Shuffle
+
+ src/hb-machinery.hh | 62
+ +++++++++++++++++++++++++++--------------------------
+ 1 file changed, 32 insertions(+), 30 deletions(-)
+
+commit 93fe0faaee45b8fb646f7aa33620105c62193885
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 29 18:24:03 2018 -0700
+
+    [subset] Clean up hb_subset_input_t API
+
+ src/hb-subset-input.cc           | 44
+ +++++++++++++++++++---------------------
+ src/hb-subset-plan.cc            |  4 ++--
+ src/hb-subset-plan.hh            | 10 ++++-----
+ src/hb-subset.cc                 |  2 +-
+ src/hb-subset.h                  | 14 +++++++++----
+ src/hb-subset.hh                 |  4 ++--
+ test/api/test-subset-glyf.c      | 10 ++++-----
+ test/fuzzing/hb-subset-fuzzer.cc | 10 ++++-----
+ util/hb-subset.cc                |  3 +--
+ 9 files changed, 52 insertions(+), 49 deletions(-)
+
+commit d237ce71810045ee400c52740cd8ab6e1113aada
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 29 18:13:07 2018 -0700
+
+    [subset] Bail if subsetting a table failed
+
+ src/hb-subset.cc | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+commit f39166f0c0c09fac7874fda6b0b0825f20768e3e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 29 18:09:55 2018 -0700
+
+    [subset] Remove unused hb_subset_profile_t
+
+    We might reintroduce it later, but for now remove, as it was unused.
+    Some things that should have been in this object (drop_hints, etc)
+    are already in hb_subset_input_t.  So, for now, keep everything there.
+
+ src/hb-subset-plan.cc            |  3 +--
+ src/hb-subset-plan.hh            |  1 -
+ src/hb-subset.cc                 | 39
+ +++------------------------------------
+ src/hb-subset.h                  | 16 +---------------
+ test/api/hb-subset-test.h        |  4 +---
+ test/api/test-subset-hdmx.c      |  8 ++------
+ test/api/test-subset-hmtx.c      |  4 +---
+ test/api/test-subset.c           | 12 +++---------
+ test/fuzzing/hb-subset-fuzzer.cc |  5 +----
+ util/hb-subset.cc                |  4 +---
+ 10 files changed, 14 insertions(+), 82 deletions(-)
+
+commit 2ccc322cf88a01248aa5df88a5073db3dfb40eea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 29 16:38:04 2018 -0700
+
+    [ot-font] Clean up cmap with gid=0
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1145
+
+ src/hb-ot-cmap-table.hh | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
+commit 0c7b633f528bae4a0cf5ca816f75a0d84206b3fb
+Author: Ross Burton <ross@burtonini.com>
+Date:   Wed Aug 29 22:37:39 2018 +0100
+
+    Delete pkg.m4
+
+    pkg.m4 is provided by pkg-config, which is a requirement to build,
+    and this copy is ancient.  Delete it to avoid it being used instead
+    of the host copy.
+
+ m4/pkg.m4 | 157
+ --------------------------------------------------------------
+ 1 file changed, 157 deletions(-)
+
+commit fee0f41c6c1e50621d10b07802ca36a9b295b53d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 28 18:27:41 2018 -0700
+
+    Don't declare extern symbols as inline
+
+    clang -O3 was completely removing _get_gdef(), causing link
+    failure when needed from another compilation unit.  Surprisingly,
+    "extern inline" didn't fix it.
+
+ src/hb-ot-layout.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 967741e4c468ebf0a40f91934ed1923506099806
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 28 18:18:02 2018 -0700
+
+    Add explicit to hb_auto_t 1param constructors
+
+ src/hb-dsalgs.hh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit c0a3f38f78362a183b30afd109dcebfca563d144
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 28 17:22:38 2018 -0700
+
+    Fix distcheck
+
+ src/Makefile.sources | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 2dde6c803a9e50c5bff74095187b0cb2e12eebdd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 28 11:02:00 2018 -0700
+
+    Explicitly pass reference in hb_auto_t constructor
+
+    Fixes clang bots as well as fuzzer issue.
+
+ src/hb-dsalgs.hh | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+commit a26806801005c28115ae9e48bdcf3bbbc1bcd767
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 15:18:46 2018 -0700
+
+    [ot-face] Remove tables_t. The face_data_t is what tables_t was
+
+ src/hb-aat-layout.cc |  4 ++--
+ src/hb-face.cc       |  6 +++---
+ src/hb-ot-face.cc    |  8 ++++----
+ src/hb-ot-face.hh    | 28 ++++++++++++----------------
+ src/hb-ot-font.cc    | 25 +++++++++++--------------
+ src/hb-ot-layout.cc  | 36 ++++++++++++++++++------------------
+ src/hb-ot-math.cc    |  4 ++--
+ src/hb-ot-var.cc     |  4 ++--
+ 8 files changed, 54 insertions(+), 61 deletions(-)
+
+commit 3a0b3a29cc246d0b1e5989c9e8c1e6d544046dcc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 15:11:24 2018 -0700
+
+    Free up hb-ot-face.hh from includes
+
+    There might be a better way to do this, but I couldn't find...
+
+ src/hb-face.cc                 |  1 +
+ src/hb-ot-cmap-table.hh        |  1 +
+ src/hb-ot-color-cbdt-table.hh  |  2 ++
+ src/hb-ot-face.cc              | 10 ++++++++++
+ src/hb-ot-face.hh              | 15 ++-------------
+ src/hb-ot-font.cc              |  7 +++++++
+ src/hb-ot-glyf-table.hh        |  2 ++
+ src/hb-ot-hmtx-table.hh        |  3 +++
+ src/hb-ot-kern-table.hh        |  2 ++
+ src/hb-ot-layout-gdef-table.hh |  1 +
+ src/hb-ot-layout-gpos-table.hh |  2 ++
+ src/hb-ot-layout-gsub-table.hh |  1 +
+ src/hb-ot-post-table.hh        |  2 ++
+ 13 files changed, 36 insertions(+), 13 deletions(-)
+
+commit a84309afc8817cd386e555af21dfcdc03388b329
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 09:33:01 2018 -0700
+
+    [face] Use saved cmap in collect_unicodes() APIs
+
+ src/hb-face.cc | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+commit c624e18a24311c66737dde4ce515aa1eca892b94
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 09:19:20 2018 -0700
+
+    [OT] Move code around
+
+ src/hb-ot-layout-gsub-table.hh | 18 ------------------
+ src/hb-ot-layout.cc            | 23 +++++++++++++++++++++--
+ 2 files changed, 21 insertions(+), 20 deletions(-)
+
+commit 399909468204b76769857508e74f802d648ca0a5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 09:12:25 2018 -0700
+
+    [OT] Use relaxed ops for recursing into GSUB/GPOS lookups again
+
+ src/hb-ot-layout-gpos-table.hh |  4 ++--
+ src/hb-ot-layout-gsub-table.hh |  4 ++--
+ src/hb-ot-layout.cc            | 12 ++++++++++--
+ src/hb-ot-layout.hh            |  4 ++--
+ 4 files changed, 16 insertions(+), 8 deletions(-)
+
+commit d8c57e85d9981b4c7a11fae4f31100359574cf13
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 09:03:31 2018 -0700
+
+    [GDEF] Move code around
+
+ src/hb-ot-layout-gdef-table.hh | 118 +-----------------------------------
+ src/hb-ot-layout.cc            | 134
+ ++++++++++++++++++++++++++++++++++++++---
+ src/hb-ot-layout.hh            |  14 +----
+ 3 files changed, 128 insertions(+), 138 deletions(-)
+
+commit 453e0c60b1c87d2cd2527d6d2de673f65458a9fd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 01:30:52 2018 -0700
+
+    Add template keyword
+
+    I swear I have no idea why this is needed, but it is...
+
+ src/hb-ot-layout-gsubgpos.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c44b0caf0d0cddb7228dcec0b9d25bb62f641abc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 01:29:30 2018 -0700
+
+    Fixup
+
+ src/hb-ot-layout-gpos-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 4096fbe487d90de04020e32e8487295ecd4d8836
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 01:25:54 2018 -0700
+
+    [ot-face] Port GDEF to unified table accelerator model as well
+
+ src/hb-ot-face.cc              | 108 ----------------------------------
+ src/hb-ot-face.hh              |   2 +-
+ src/hb-ot-layout-gdef-table.hh | 129
+ +++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-layout.cc            |  14 ++++-
+ src/hb-ot-layout.hh            |   5 +-
+ 5 files changed, 147 insertions(+), 111 deletions(-)
+
+commit b929100f8782816c2621715f6c007ecefc419d83
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 01:15:47 2018 -0700
+
+    [ot-face] Unify GSUB/GPOS accelerators in the table accelerator
+    framework
+
+ src/hb-aat-layout.cc           |  4 +---
+ src/hb-ot-face.cc              | 40
+ ++--------------------------------------
+ src/hb-ot-face.hh              | 25 +++++++++++--------------
+ src/hb-ot-layout-gpos-table.hh |  2 +-
+ src/hb-ot-layout-gsub-table.hh |  6 +++---
+ src/hb-ot-layout-gsubgpos.hh   | 24 +++++++++++++-----------
+ src/hb-ot-layout.cc            | 33 +++++++++++++++++----------------
+ src/hb-ot-layout.hh            | 17 +++++++++++++++++
+ src/hb-ot-shape.cc             |  1 +
+ 9 files changed, 66 insertions(+), 86 deletions(-)
+
+commit 963413fc5454d92621ae83a8d9c9324e404b8166
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 00:47:55 2018 -0700
+
+    WIP
+
+ src/hb-ot-cmap-table.hh        |  1 -
+ src/hb-ot-face.hh              | 22 ----------------------
+ src/hb-ot-layout-gpos-table.hh |  2 ++
+ src/hb-ot-layout-gsub-table.hh |  2 ++
+ src/hb-ot-layout-gsubgpos.hh   | 31 ++++++++++++++++++++++++++++++-
+ src/hb-ot-layout.hh            | 18 +++++++++++++++++-
+ 6 files changed, 51 insertions(+), 25 deletions(-)
+
+commit e6cb9380651c753485f721bd3df523d03be41d91
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 00:21:29 2018 -0700
+
+    [ot-face] Unify accelerators and tables
+
+ src/hb-machinery.hh     |  4 ++--
+ src/hb-ot-cmap-table.hh |  3 ++-
+ src/hb-ot-face.cc       |  6 +++--
+ src/hb-ot-face.hh       | 58
+ +++++++++++++------------------------------------
+ src/hb-ot-font.cc       |  6 ++---
+ 5 files changed, 26 insertions(+), 51 deletions(-)
+
+commit 7f8b6fe67d64b41786edbf8650efb1c0deba573f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 00:07:12 2018 -0700
+
+    Minor
+
+ src/hb-ot-face.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 59bca0d2cb6010bc237afb2255ccda3b8dd0585d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 26 00:06:12 2018 -0700
+
+    [ot-font] Rename
+
+ src/hb-ot-face.hh | 12 ++++++------
+ src/hb-ot-font.cc | 24 ++++++++++++------------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
+
+commit 1c48a7ef06b82ef9ca013066d1fb3c6fda82aa0c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 23:54:06 2018 -0700
+
+    [ot-font] Cache tables on face, not font
+
+ src/hb-ot-cmap-table.hh      |  1 +
+ src/hb-ot-face.cc            |  2 ++
+ src/hb-ot-face.hh            | 55 +++++++++++++++++++++++++++-----
+ src/hb-ot-font.cc            | 75
+ ++++----------------------------------------
+ src/hb-ot-layout-gsubgpos.hh |  1 +
+ src/hb-ot-layout.hh          |  1 -
+ 6 files changed, 58 insertions(+), 77 deletions(-)
+
+commit 71f8893eff56bff651e3df6288becc68ecea6cd1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 23:27:45 2018 -0700
+
+    [ot-font] Use init0
+
+ src/hb-ot-font.cc | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+commit f36ae6f8a82485bbf727f24dfd7da8f32002cad6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 23:19:34 2018 -0700
+
+    [ot-font] Make everything (cmap/metrics) lazy
+
+ src/hb-machinery.hh |  5 +++++
+ src/hb-ot-font.cc   | 51
+ ++++++++++++++++++++++++++-------------------------
+ 2 files changed, 31 insertions(+), 25 deletions(-)
+
+commit 62fc54725a3863473829f3a3748c9336e4dc0787
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 23:15:52 2018 -0700
+
+    [ot-font] Fallback vertical advance to UPEM
+
+    Used to be ascent+descent.  Whatever. This is more convenient for
+    upcoming changes.
+
+ src/hb-ot-font.cc                               | 2 +-
+ test/shaping/data/in-house/tests/vertical.tests | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit d950022c8ae3f85546272b38b187d6ed9f5ff16f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 23:06:37 2018 -0700
+
+    Add hb-ot-face.cc/hh
+
+ src/Makefile.sources |   2 +
+ src/hb-ot-face.cc    | 206
+ +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-face.hh    | 144 +++++++++++++++++++++++++++++++++++
+ src/hb-ot-layout.cc  | 172 ------------------------------------------
+ src/hb-ot-layout.hh  | 108 +--------------------------
+ src/hb-ot-math.cc    |   2 +-
+ src/hb-ot-var.cc     |   2 +-
+ 7 files changed, 355 insertions(+), 281 deletions(-)
+
+commit dae39c58fb63c2211e2842121bbe6d5b8b18651b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 22:44:39 2018 -0700
+
+    [face] Introduce character-map API
+
+    New API:
+    +hb_face_collect_unicodes
+    +hb_face_collect_variation_selectors
+    +hb_face_collect_variation_unicodes
+
+ docs/harfbuzz-sections.txt                      |  3 ++
+ src/hb-face.cc                                  | 61
+ ++++++++++++++++++++++++-
+ src/hb-face.h                                   | 19 ++++++++
+ src/hb-subset.cc                                | 53
+ ---------------------
+ src/hb-subset.h                                 | 15 ------
+ test/api/test-subset-codepoints.c               |  6 +--
+ test/fuzzing/hb-subset-get-codepoints-fuzzer.cc |  2 +-
+ 7 files changed, 86 insertions(+), 73 deletions(-)
+
+commit 66384db97c439a64d729f9206657d0b37ec0cb32
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 22:39:17 2018 -0700
+
+    Minor
+
+ src/hb-subset.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit c77ae40852aabb1698da9e8d488f75bae2f4e734
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 22:36:36 2018 -0700
+
+    Rename hb-*private.hh to hb-*.hh
+
+    Sorry for the noise, downstream custom builders.  Please adjust.
+
+ src/Makefile.sources                               | 75
+ +++++++++++-----------
+ src/check-includes.sh                              |  8 +--
+ src/dump-indic-data.cc                             |  2 +-
+ src/dump-khmer-data.cc                             |  2 +-
+ src/dump-myanmar-data.cc                           |  2 +-
+ src/dump-use-data.cc                               |  2 +-
+ src/gen-indic-table.py                             |  2 +-
+ src/gen-use-table.py                               |  2 +-
+ src/hb-aat-layout-ankr-table.hh                    |  2 +-
+ src/hb-aat-layout-bsln-table.hh                    |  2 +-
+ ...t-common-private.hh => hb-aat-layout-common.hh} |  8 +--
+ src/hb-aat-layout-feat-table.hh                    |  2 +-
+ src/hb-aat-layout-kerx-table.hh                    |  4 +-
+ src/hb-aat-layout-morx-table.hh                    |  6 +-
+ src/hb-aat-layout-trak-table.hh                    |  6 +-
+ src/hb-aat-layout.cc                               |  8 +--
+ src/{hb-aat-layout-private.hh => hb-aat-layout.hh} | 14 ++--
+ src/hb-aat-ltag-table.hh                           |  2 +-
+ src/{hb-atomic-private.hh => hb-atomic.hh}         |  8 +--
+ src/hb-blob.cc                                     |  4 +-
+ src/{hb-blob-private.hh => hb-blob.hh}             |  8 +--
+ src/hb-buffer-deserialize-json.hh                  |  2 +-
+ src/hb-buffer-deserialize-json.rl                  |  2 +-
+ src/hb-buffer-deserialize-text.hh                  |  2 +-
+ src/hb-buffer-deserialize-text.rl                  |  2 +-
+ src/hb-buffer-serialize.cc                         |  2 +-
+ src/hb-buffer.cc                                   |  4 +-
+ src/{hb-buffer-private.hh => hb-buffer.hh}         | 10 +--
+ src/hb-common.cc                                   |  4 +-
+ src/hb-coretext.cc                                 |  4 +-
+ src/hb-debug.hh                                    |  4 +-
+ src/hb-directwrite.cc                              |  4 +-
+ src/hb-dsalgs.hh                                   |  2 +-
+ src/hb-face.cc                                     |  8 +--
+ src/{hb-face-private.hh => hb-face.hh}             | 12 ++--
+ src/hb-fallback-shape.cc                           |  2 +-
+ src/hb-font.cc                                     |  6 +-
+ src/{hb-font-private.hh => hb-font.hh}             | 12 ++--
+ src/hb-ft.cc                                       |  6 +-
+ src/hb-glib.cc                                     |  6 +-
+ src/hb-gobject-enums.cc.tmpl                       |  2 +-
+ src/hb-gobject-structs.cc                          |  2 +-
+ src/hb-graphite2.cc                                |  2 +-
+ src/hb-icu.cc                                      |  6 +-
+ src/{hb-iter-private.hh => hb-iter.hh}             |  8 +--
+ src/{hb-machinery-private.hh => hb-machinery.hh}   | 12 ++--
+ src/hb-map.cc                                      |  2 +-
+ src/{hb-map-private.hh => hb-map.hh}               |  8 +--
+ src/{hb-mutex-private.hh => hb-mutex.hh}           |  8 +--
+ src/hb-null.hh                                     |  2 +-
+ src/{hb-object-private.hh => hb-object.hh}         | 14 ++--
+ src/{hb-open-file-private.hh => hb-open-file.hh}   |  8 +--
+ src/{hb-open-type-private.hh => hb-open-type.hh}   | 14 ++--
+ src/hb-ot-cmap-table.hh                            |  4 +-
+ src/hb-ot-color-cbdt-table.hh                      |  2 +-
+ src/hb-ot-color-colr-table.hh                      |  2 +-
+ src/hb-ot-color-cpal-table.hh                      |  2 +-
+ src/hb-ot-color-sbix-table.hh                      |  2 +-
+ src/hb-ot-color-svg-table.hh                       |  2 +-
+ src/hb-ot-color.cc                                 |  6 +-
+ src/hb-ot-font.cc                                  |  6 +-
+ src/hb-ot-glyf-table.hh                            |  4 +-
+ src/hb-ot-hdmx-table.hh                            |  2 +-
+ src/hb-ot-head-table.hh                            |  2 +-
+ src/hb-ot-hhea-table.hh                            |  2 +-
+ src/hb-ot-hmtx-table.hh                            |  2 +-
+ src/hb-ot-kern-table.hh                            |  2 +-
+ src/hb-ot-layout-base-table.hh                     |  4 +-
+ ...ut-common-private.hh => hb-ot-layout-common.hh} | 14 ++--
+ src/hb-ot-layout-gdef-table.hh                     |  4 +-
+ src/hb-ot-layout-gpos-table.hh                     |  2 +-
+ src/hb-ot-layout-gsub-table.hh                     |  2 +-
+ ...subgpos-private.hh => hb-ot-layout-gsubgpos.hh} | 14 ++--
+ src/hb-ot-layout-jstf-table.hh                     |  2 +-
+ src/hb-ot-layout.cc                                |  8 +--
+ src/{hb-ot-layout-private.hh => hb-ot-layout.hh}   | 16 ++---
+ src/hb-ot-map.cc                                   |  4 +-
+ src/{hb-ot-map-private.hh => hb-ot-map.hh}         |  8 +--
+ src/hb-ot-math-table.hh                            |  4 +-
+ src/hb-ot-math.cc                                  |  4 +-
+ src/hb-ot-maxp-table.hh                            |  2 +-
+ src/hb-ot-name-table.hh                            |  2 +-
+ src/hb-ot-os2-table.hh                             |  2 +-
+ src/hb-ot-os2-unicode-ranges.hh                    |  2 +-
+ src/hb-ot-post-macroman.hh                         |  2 +-
+ src/hb-ot-post-table.hh                            |  2 +-
+ src/hb-ot-shape-complex-arabic-fallback.hh         |  4 +-
+ src/hb-ot-shape-complex-arabic-win1256.hh          |  2 +-
+ src/hb-ot-shape-complex-arabic.cc                  |  6 +-
+ ...ic-private.hh => hb-ot-shape-complex-arabic.hh} | 10 +--
+ src/hb-ot-shape-complex-default.cc                 |  2 +-
+ src/hb-ot-shape-complex-hangul.cc                  |  2 +-
+ src/hb-ot-shape-complex-hebrew.cc                  |  2 +-
+ src/hb-ot-shape-complex-indic-machine.hh           |  2 +-
+ src/hb-ot-shape-complex-indic-machine.rl           |  2 +-
+ src/hb-ot-shape-complex-indic-table.cc             |  2 +-
+ src/hb-ot-shape-complex-indic.cc                   |  4 +-
+ ...dic-private.hh => hb-ot-shape-complex-indic.hh} | 12 ++--
+ src/hb-ot-shape-complex-khmer-machine.hh           |  2 +-
+ src/hb-ot-shape-complex-khmer-machine.rl           |  2 +-
+ src/hb-ot-shape-complex-khmer.cc                   |  4 +-
+ ...mer-private.hh => hb-ot-shape-complex-khmer.hh} | 10 +--
+ src/hb-ot-shape-complex-myanmar-machine.hh         |  2 +-
+ src/hb-ot-shape-complex-myanmar-machine.rl         |  2 +-
+ src/hb-ot-shape-complex-myanmar.cc                 |  2 +-
+ ...r-private.hh => hb-ot-shape-complex-myanmar.hh} | 10 +--
+ src/hb-ot-shape-complex-thai.cc                    |  2 +-
+ src/hb-ot-shape-complex-tibetan.cc                 |  2 +-
+ src/hb-ot-shape-complex-use-machine.hh             |  2 +-
+ src/hb-ot-shape-complex-use-machine.rl             |  2 +-
+ src/hb-ot-shape-complex-use-table.cc               |  2 +-
+ src/hb-ot-shape-complex-use.cc                     |  4 +-
+ ...x-use-private.hh => hb-ot-shape-complex-use.hh} | 10 +--
+ ...e-complex-private.hh => hb-ot-shape-complex.hh} | 12 ++--
+ src/hb-ot-shape-fallback.cc                        |  4 +-
+ ...fallback-private.hh => hb-ot-shape-fallback.hh} | 10 +--
+ src/hb-ot-shape-normalize.cc                       |  6 +-
+ ...rmalize-private.hh => hb-ot-shape-normalize.hh} |  8 +--
+ src/hb-ot-shape.cc                                 | 20 +++---
+ src/{hb-ot-shape-private.hh => hb-ot-shape.hh}     | 12 ++--
+ src/hb-ot-tag.cc                                   |  2 +-
+ src/hb-ot-var-avar-table.hh                        |  2 +-
+ src/hb-ot-var-fvar-table.hh                        |  2 +-
+ src/hb-ot-var-hvar-table.hh                        |  2 +-
+ src/hb-ot-var-mvar-table.hh                        |  2 +-
+ src/hb-ot-var.cc                                   |  4 +-
+ src/{hb-set-digest-private.hh => hb-set-digest.hh} |  8 +--
+ src/hb-set.cc                                      |  2 +-
+ src/{hb-set-private.hh => hb-set.hh}               |  8 +--
+ src/hb-shape-plan.cc                               | 10 +--
+ src/{hb-shape-plan-private.hh => hb-shape-plan.hh} | 10 +--
+ src/hb-shape.cc                                    | 12 ++--
+ ...hb-shaper-impl-private.hh => hb-shaper-impl.hh} | 16 ++---
+ src/hb-shaper.cc                                   |  6 +-
+ src/{hb-shaper-private.hh => hb-shaper.hh}         |  8 +--
+ src/hb-static.cc                                   |  8 +--
+ src/hb-string-array.hh                             |  2 +-
+ src/hb-subset-glyf.cc                              |  2 +-
+ src/hb-subset-glyf.hh                              |  2 +-
+ src/hb-subset-input.cc                             |  4 +-
+ src/hb-subset-plan.cc                              |  6 +-
+ src/hb-subset-plan.hh                              |  6 +-
+ src/hb-subset.cc                                   |  8 +--
+ src/{hb-subset-private.hh => hb-subset.hh}         | 10 +--
+ src/hb-ucdn.cc                                     |  6 +-
+ src/hb-unicode.cc                                  |  6 +-
+ src/{hb-unicode-private.hh => hb-unicode.hh}       |  8 +--
+ src/hb-uniscribe.cc                                |  6 +-
+ src/{hb-utf-private.hh => hb-utf.hh}               |  8 +--
+ src/{hb-vector-private.hh => hb-vector.hh}         |  8 +--
+ src/hb-warning.cc                                  |  6 +-
+ src/{hb-private.hh => hb.hh}                       | 12 ++--
+ src/main.cc                                        |  4 +-
+ src/test-buffer-serialize.cc                       |  2 +-
+ src/test-size-params.cc                            |  2 +-
+ src/test-unicode-ranges.cc                         |  2 +-
+ src/test-would-substitute.cc                       |  2 +-
+ src/test.cc                                        |  2 +-
+ test/api/test-common.c                             |  1 -
+ util/Makefile.am                                   |  4 +-
+ util/ansi-print.hh                                 |  3 +-
+ util/hb-subset.cc                                  |  2 +-
+ util/helper-cairo-ansi.hh                          |  2 +-
+ util/helper-cairo.hh                               |  2 +-
+ util/main-font-text.hh                             |  2 +-
+ util/options.hh                                    |  2 +-
+ util/shape-consumer.hh                             |  2 +-
+ util/view-cairo.hh                                 |  2 +-
+ 168 files changed, 452 insertions(+), 455 deletions(-)
+
+commit 82b12bcadd50c9e86bbe82623a1cbc0b4afdd237
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 22:07:17 2018 -0700
+
+    [unicode] Add HB_UNICODE_MAX
+
+    New API:
+    HB_UNICODE_MAX
+
+ docs/harfbuzz-sections.txt | 1 +
+ src/hb-ot-cmap-table.hh    | 8 ++------
+ src/hb-unicode.h           | 3 +++
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+commit b09a0336ca856a2b1040e7fabd5819b64749e308
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 22:04:39 2018 -0700
+
+    [cmap] More hb_auto_t<>(...)
+
+ src/hb-subset.cc | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+commit 28634db07e6ecbdb7e59ed8f989212272a97de86
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 21:23:43 2018 -0700
+
+    [cmap] Fix skipping gid0 in Format4 collect_unicodes()
+
+ src/hb-ot-cmap-table.hh | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+commit acce1fa3ea9707d0883cd66397fd187d3268905c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 21:15:39 2018 -0700
+
+    Use new hb_auto_t<> constructor with Coverage::Iter
+
+ src/hb-ot-layout-common-private.hh | 65
+ ++++++++++++++++++++++++--------------
+ src/hb-ot-layout-gsub-table.hh     | 30 ++++++------------
+ 2 files changed, 52 insertions(+), 43 deletions(-)
+
+commit ddea4d19cf6d64270e14418f02e7ff1f1b9458db
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 21:08:15 2018 -0700
+
+    Add 1-param passthrough constructor to hb_auto_t<>
+
+    And use.
+
+ src/hb-dsalgs.hh        | 1 +
+ src/hb-ot-cmap-table.hh | 7 +++----
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit c8cfb702e96bf4e89495fcc56f965c88bfa77dca
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 16:14:32 2018 -0700
+
+    [cmap] Minor
+
+ src/hb-ot-cmap-table.hh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit 1dcf5fb038e7c2d3d03a50c4cd9869a922f9adf7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 16:11:26 2018 -0700
+
+    [cmap Add hb_subset_collect_variation_unicodes()
+
+    To be moved to hb-face.h later.
+
+ src/hb-ot-cmap-table.hh | 59
+ +++++++++++++++++++++++++++++++++++++++++--------
+ src/hb-subset.cc        | 25 ++++++++++++++++++++-
+ src/hb-subset.h         | 10 +++++++--
+ 3 files changed, 82 insertions(+), 12 deletions(-)
+
+commit 4806b3800d77603c203e8bb2e88baeb2b3a14f05
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 15:56:07 2018 -0700
+
+    [cmap] Add hb_subset_collect_variation_selectors()
+
+    To be moved to hb-face later.
+
+ src/hb-ot-cmap-table.hh | 20 ++++++++++++++++----
+ src/hb-subset.cc        | 30 ++++++++++++++++++++++++++----
+ src/hb-subset.h         |  8 +++++++-
+ 3 files changed, 49 insertions(+), 9 deletions(-)
+
+commit 3336de24790ac1a12852ac2a3e2fff4d6bb19bc7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 15:41:25 2018 -0700
+
+    [cmap] Remove unused code
+
+ src/hb-ot-cmap-table.hh | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+commit 1becabe06c0c58aaf69a9ba641508e77a60f3451
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 15:37:56 2018 -0700
+
+    [cmap] Use bsearch to find subtables
+
+ src/hb-ot-cmap-table.hh                       | 5 +----
+ test/shaping/data/in-house/tests/fuzzed.tests | 2 +-
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+commit 02fe03e09a3258e07d2d6749990f6d31dd2a8525
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 15:33:05 2018 -0700
+
+    [cmap] Factor out find_best_subtable
+
+ src/hb-ot-cmap-table.hh | 52
+ +++++++++++++++++++++++++++++--------------------
+ 1 file changed, 31 insertions(+), 21 deletions(-)
+
+commit b41c43b4e112bfa38fef35694842f242c28a7da2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 15:25:03 2018 -0700
+
+    Minor
+
+ src/hb-ot-cmap-table.hh | 48
+ ++++++++++++++++++++++++++----------------------
+ 1 file changed, 26 insertions(+), 22 deletions(-)
+
+commit 7d382fa276f44b7b163e98d434cc79f958bf87fb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 09:35:45 2018 -0700
+
+    [cmap] Implement collect_unicodes() for Format0/6/10
+
+ src/hb-ot-cmap-table.hh | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
+
+commit bd0e542525d41d9ebe51cbcab8151d65eb984b2e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 09:33:30 2018 -0700
+
+    [cmap] Simplify collect_unicodes()
+
+    Don't use accelerator (almost).  Hooks up Format13 as well.
+
+ src/hb-ot-cmap-table.hh | 52
+ +++++++++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 23 deletions(-)
+
+commit d60c465627d76fcfbeb37d6b8f9382f3b84ace6e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 08:47:06 2018 -0700
+
+    Rename get_all_codepoints() to collect_unicodes()
+
+ src/hb-ot-cmap-table.hh                         | 26
+ ++++++++++++-------------
+ src/hb-subset.cc                                |  6 +++---
+ src/hb-subset.h                                 |  4 ++--
+ test/api/test-subset-codepoints.c               | 18 ++++++++---------
+ test/fuzzing/hb-subset-get-codepoints-fuzzer.cc |  2 +-
+ 5 files changed, 28 insertions(+), 28 deletions(-)
+
+commit 531051b8b904cf4eb6a50bacebc11c2d85e40140
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 08:44:18 2018 -0700
+
+    [ot-font] Return char-not-found if mapped to gid 0
+
+    OpenType cmap table can use gid=0 to mean "not covered" to produce
+    more optimized cmap subtables.  Return false from get_nominal_glyph()
+    for those.  hb-ft already does this.
+
+ src/hb-ot-cmap-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit aadb2a9188f143126392c0b0f139326dcf7f9c8d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 25 08:18:53 2018 -0700
+
+    Add face-builder
+
+    New API:
+    +hb_face_builder_create
+    +hb_face_builder_add_table
+
+ docs/harfbuzz-sections.txt |   5 +-
+ src/hb-face.cc             | 149
+ +++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-face.h              |  14 +++++
+ src/hb-subset-plan.cc      |   2 +-
+ src/hb-subset-plan.hh      |   2 +-
+ src/hb-subset-private.hh   |   7 ---
+ src/hb-subset.cc           | 129 ---------------------------------------
+ 7 files changed, 169 insertions(+), 139 deletions(-)
+
+commit 6cac9dc9ccb76945e9dfacafc169afad4a6e1e88
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 24 10:29:45 2018 -0700
+
+    [blob] Add as_bytes()
+
+ src/hb-blob-private.hh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 29a9a0883877c598413de78cd0c61f07bc393b2c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 24 10:24:45 2018 -0700
+
+    [sanitize] Document how sanitize machinery works
+
+ src/hb-machinery-private.hh | 62
+ +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+
+commit 142ac5a6be6088771e0ee4b135ba753c80036a9a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 24 10:07:49 2018 -0700
+
+    [serialize] Add copy_bytes() and copy_blob()
+
+ src/hb-dsalgs.hh            |  3 +++
+ src/hb-machinery-private.hh | 21 ++++++++++++++++++++-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+commit 1c6b3693245d38103cab224d75262d45dc88c71c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 15 20:12:25 2018 -0700
+
+    [ot] Rename hb_ot_layout_t to hb_ot_face_data_t
+
+ src/hb-aat-layout.cc                 |  17 +-----
+ src/hb-ot-color.cc                   |   6 +--
+ src/hb-ot-layout-gpos-table.hh       |   6 +--
+ src/hb-ot-layout-gsub-table.hh       |   8 ++-
+ src/hb-ot-layout-gsubgpos-private.hh |   2 +-
+ src/hb-ot-layout-private.hh          |  12 ++---
+ src/hb-ot-layout.cc                  | 100
+ +++++++++++++++++------------------
+ src/hb-ot-math.cc                    |   2 +-
+ src/hb-ot-shape.cc                   |   5 +-
+ src/hb-ot-var.cc                     |   4 +-
+ 10 files changed, 71 insertions(+), 91 deletions(-)
+
+commit 22defe0965adddaa09eebc13df7fa6c64e2abba3
+Author: Emil A Eklund <eae@chromium.org>
+Date:   Tue Aug 14 14:47:20 2018 -0700
+
+    Add guard around free_static_C_locale
+
+    Add HB_USE_ATEXIT guard around free_static_C_locale missed by previous
+    commit.
+
+ src/hb-common.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 7112c6413ca7a1773847fe258145cc5162420953
+Author: Emil A Eklund <eae@chromium.org>
+Date:   Tue Aug 14 13:50:24 2018 -0700
+
+    Guard free_static function definitions with macro
+
+    Add HB_USE_ATEXIT macros around free_static function definitions to
+    avoid unused function compiler warnings/errors.
+
+ src/hb-ft.cc      | 5 ++++-
+ src/hb-glib.cc    | 3 ++-
+ src/hb-icu.cc     | 3 ++-
+ src/hb-ot-font.cc | 3 ++-
+ src/hb-shape.cc   | 4 +++-
+ src/hb-shaper.cc  | 3 ++-
+ 6 files changed, 15 insertions(+), 6 deletions(-)
+
+commit 63be5dcdde61275822d931b2924425478bc1dac1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 14 10:59:34 2018 -0700
+
+    1.8.8
+
+ NEWS             | 18 ++++++++++++++++++
+ configure.ac     |  2 +-
+ src/hb-version.h |  4 ++--
+ 3 files changed, 21 insertions(+), 3 deletions(-)
+
 commit c9a22fa124310c98c73b8d7b495ed354542a75de
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Aug 13 17:02:21 2018 -0700
