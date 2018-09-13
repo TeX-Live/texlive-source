@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 08/08/2018
+.\"      Date: 09/08/2018
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 2.5
+.\"    Source: dvisvgm 2.6
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "08/08/2018" "dvisvgm 2\&.5" "dvisvgm Manual"
+.TH "DVISVGM" "1" "09/08/2018" "dvisvgm 2\&.6" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -470,8 +470,11 @@ Sets the pattern specifying the names of the generated SVG files\&. Parameter
 \fIpattern\fR
 is a string that may contain static character sequences as well as the variables
 \fB%f\fR,
-\fB%p\fR, and
-\fB%P\fR\&.
+\fB%p\fR,
+\fB%P\fR,
+\fB%hd\fR,
+\fB%ho\fR, and
+\fB%hc\fR\&.
 \fB%f\fR
 expands to the base name of the DVI file, i\&.e\&. the filename without suffix,
 \fB%p\fR
@@ -485,7 +488,7 @@ gets the same number of digits as
 \fB%P\fR\&.
 .sp
 If you need more control over the numbering, you can use arithmetic expressions as part of a pattern\&. The syntax is
-\fB%(expr)\fR
+\fB%(\fR\fIexpr\fR\fB)\fR
 where
 \fIexpr\fR
 may contain additions, subtractions, multiplications, and integer divisions with common precedence\&. The variables
@@ -495,6 +498,18 @@ and
 contain the current page number and the total number of pages, respectively\&. For example,
 \fB\-\-output="%f\-%(p\-1)"\fR
 creates filenames where the numbering starts with 0 rather than 1\&.
+.sp
+The variables
+\fB%hX\fR
+contain different hash values computed from the DVI page data and the options given on the command\-line\&.
+\fB%hd\fR
+and
+\fB%hc\fR
+are only set if option
+\fB\-\-page\-hashes\fR
+is present\&. Otherwise, it\(cqs empty\&. For further information, see the description of option
+\fB\-\-page\-hashes\fR
+below\&.
 .sp
 The default pattern is
 \fB%f\-%p\&.svg\fR
@@ -523,6 +538,72 @@ is omitted\&. Usually, page ranges consist of two numbers denoting the first and
 converts all pages up to page 10,
 \fB\-\-page=10\-\fR
 converts all pages starting with page 10\&. Please consider that the page values don\(cqt refer to the page numbers printed on the corresponding page\&. Instead, the physical page count is expected, where the first page always gets number 1\&.
+.RE
+.PP
+\fB\-H, \-\-page\-hashes\fR[=\fIparams\fR]
+.RS 4
+If this option is given, dvisvgm computes hash values of all pages to be processed\&. As long as the page contents don\(cqt change, the hash value of that page stays the same\&. This property can be used to determine whether a DVI page must be converted again or can be skipped in consecutive runs of dvisvgm\&. This is done by propagating the hash value to variable
+\fB%hd\fR
+which can be accessed in the output pattern (see option
+\fB\-\-output\fR)\&. By default, dvisvgm changes the output pattern to
+\fB%f\-%hd\fR
+if option
+\fB\-\-page\-hashes\fR
+is given\&. As a result, all SVG file names contain the hash value instead of the page number\&. When calling dvisvgm again with option
+\fB\-\-page\-hashes\fR
+with the same output pattern, it checks the existence of the SVG file to be created and skips the conversion if it\(cqs already present\&. This also applies for consecutive calls of dvisvgm with different command\-line parameters\&. If you want to force another conversion of a DVI file that hasn\(cqt changed, you must remove the corresponding SVG files beforehand or add the parameter
+\fBreplace\fR
+(see below)\&. If you manually set the output pattern to not contain a hash value, the conversion won\(cqt be skipped\&.
+.sp
+Alternatively, the output pattern may contain the variables
+\fB%ho\fR
+and
+\fB%hc\fR\&.
+\fB%ho\fR
+expands to a 32\-bit hash representing the given command\-line options that affect the generated SVG output, like
+\fB\-\-no\-fonts\fR
+and
+\fB\-\-precision\fR\&. Different combinations of options and parameters lead to different hashes\&. Thus pattern
+\fB%f\-%hd\-%ho\fR
+creates filenames that change depending on the DVI data and the given command\-line options\&. Variable
+\fB%hc\fR
+provides a combined hash computed from the DVI data and the command\-line options\&. It has the same length as
+\fB%hd\fR\&.
+.sp
+Since the page number isn\(cqt part of the file name by default, different DVI pages with identical contents get the same file name\&. Therefore, only the first one is converted while the others are skipped\&. To create separate files for each page, you can add the page number to the output pattern, e\&.g\&.
+\fB\-\-output="%f\-%p\-%hc"\fR\&.
+.sp
+By default, dvisvgm uses the XXH64 hash algorithm to compute the values provided through
+\fB%hd\fR
+and
+\fB%hc\fR\&. It\(cqs extremely fast, and a 64\-bit hash should be sufficient for most documents with an average size of pages\&. Alternatively, XXH32 and MD5 can be used as well\&. The desired algorithm is specified by argument
+\fIparams\fR
+of option
+\fB\-\-page\-hashes\fR\&. It takes one of the strings
+\fBMD5\fR,
+\fBXXH32\fR, and
+\fBXXH64\fR, where the names can be given in lower case too, like
+\fB\-\-page\-hashes=md5\fR\&.
+.sp
+Finally, option
+\fB\-\-page\-hashes\fR
+can take a second argument that must be separated by a comma\&. Currently, only the two parameters
+\fIlist\fR
+and
+\fIreplace\fR
+are evaluated, e\&.g\&.
+\fB\-\-page\-hashes=md5,list\fR
+or
+\fB\-\-page\-hashes=replace\fR\&. When
+\fIlist\fR
+is present, dvisvgm doesn\(cqt perform any conversion but just lists the hash values
+\fB%hd\fR
+and
+\fB%hc\fR
+of the pages specified by option
+\fB\-\-page\fR\&. Parameter
+\fIreplace\fR
+forces dvisvgm to convert a DVI page even if a file with the target name already exists\&.
 .RE
 .PP
 \fB\-P, \-\-pdf\fR

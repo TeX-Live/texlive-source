@@ -15,7 +15,7 @@ dnl
 AC_PREREQ([2.65])
 m4_include([version.ac])[] dnl define dvisvgm_version
 AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
-DATE="August 2018"
+DATE="September 2018"
 AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([../../m4])dnl not just _DIR
@@ -152,19 +152,13 @@ KPSE_RESTORE_FLAGS
 # Check for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([libintl.h stdlib.h string.h strings.h unistd.h])
+AC_CHECK_HEADERS_ONCE([libintl.h stdlib.h string.h strings.h unistd.h])
 
 # Check for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_STRUCT_TM
-# TL? AC_C_CONST
-# TL? AC_C_INLINE
 
-# TL? AC_FUNC_CLOSEDIR_VOID
-# TL? AC_FUNC_ERROR_AT_LINE
-# TL? AC_FUNC_MALLOC
-# TL? AC_FUNC_VPRINTF
 # Check for library functions.
 AC_FUNC_STAT
 AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
@@ -185,13 +179,16 @@ fi
 
 # TL: skip ttfautohint?
 
-# Add option to enable linking of bundled libraries (brotli, woff2, xxhash).
+# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
 AC_ARG_ENABLE([bundled-libs],
 	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])],
 	[use_bundled_libs=yes])
 AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$use_bundled_libs" = "xyes" dnl
                                || test "x$enable_native_texlive_build" = xyes])
-# that is, use bundled libs for native TL build.
+# that is, force using bundled libs for native TL build.
+
+# TL: use bundled md5 too
+AM_CONDITIONAL([USE_BUNDLED_MD5], true)
 
 # TL: not going to build_manpage (which is the default).
 # TL: not going to attempt code coverage; need to subst it away.
@@ -210,6 +207,7 @@ AC_CONFIG_FILES([Makefile
 	dvisvgm-src/libs/brotli/Makefile
 	dvisvgm-src/libs/clipper/Makefile
 	dvisvgm-src/libs/ff-woff/Makefile
+	dvisvgm-src/libs/md5/Makefile
 	dvisvgm-src/libs/potrace/Makefile
 	dvisvgm-src/libs/variant/Makefile
 	dvisvgm-src/libs/woff2/Makefile

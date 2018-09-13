@@ -1,5 +1,5 @@
 /*************************************************************************
-** version.hpp                                                          **
+** HashFunction.hpp                                                     **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
 ** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
@@ -18,11 +18,30 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#ifndef VERSION_HPP
-#define VERSION_HPP
+#ifndef HASHFUNCTION_HPP
+#define HASHFUNCTION_HPP
 
-constexpr const char *PROGRAM_NAME = "dvisvgm";
-constexpr const char *PROGRAM_VERSION = "2.6";
+#include <memory>
+#include <string>
+#include <vector>
+
+/** Common base class for all hash functions. */
+class HashFunction {
+   public:
+		virtual ~HashFunction () =default;
+		virtual int digestSize () const =0;
+		virtual void reset () =0;
+		virtual void update (const char *data, size_t length) =0;
+		virtual void update (const std::string &data) =0;
+		virtual void update (const std::vector<uint8_t> &data) =0;
+		virtual std::vector<uint8_t> digestValue () const =0;
+		std::string digestString () const;
+		static std::vector<std::string> supportedAlgorithms ();
+		static bool isSupportedAlgorithm (const std::string &algo);
+		static std::unique_ptr<HashFunction> create (const std::string &name);
+		static std::unique_ptr<HashFunction> create (const std::string &name, const char *data, size_t length);
+		static std::unique_ptr<HashFunction> create (const std::string &name, const std::string &data);
+		static std::unique_ptr<HashFunction> create (const std::string &name, const std::vector<uint8_t> &data);
+};
 
 #endif
-

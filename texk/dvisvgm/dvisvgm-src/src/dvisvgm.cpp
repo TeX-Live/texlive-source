@@ -26,7 +26,6 @@
 #include <potracelib.h>
 #include <sstream>
 #include <vector>
-#include <xxhash.h>
 #include <zlib.h>
 #include "CommandLine.hpp"
 #include "DVIToSVG.hpp"
@@ -37,6 +36,7 @@
 #include "Font.hpp"
 #include "FontEngine.hpp"
 #include "Ghostscript.hpp"
+#include "HashFunction.hpp"
 #include "HyperlinkManager.hpp"
 #include "Message.hpp"
 #include "PageSize.hpp"
@@ -47,6 +47,7 @@
 #include "SourceInput.hpp"
 #include "SVGOutput.hpp"
 #include "System.hpp"
+#include "XXHashFunction.hpp"
 #include "utility.hpp"
 #include "version.hpp"
 
@@ -114,7 +115,12 @@ static bool set_cache_dir (const CommandLine &args) {
 			Message::wstream(true) << "cache directory '" << args.cacheOpt.value() << "' does not exist (caching disabled)\n";
 	}
 	else if (const char *userdir = FileSystem::userdir()) {
-		static string cachepath = userdir + string("/.dvisvgm/cache");
+#ifdef _WIN32
+		string cachedir = "\\.dvisvgm\\cache";
+#else
+		string cachedir = "/.dvisvgm/cache";
+#endif
+		static string cachepath = userdir + cachedir;
 		if (!FileSystem::exists(cachepath))
 			FileSystem::mkdir(cachepath);
 		PhysicalFont::CACHE_PATH = cachepath.c_str();
@@ -247,7 +253,7 @@ static void print_version (bool extended) {
 		versionInfo.add("clipper", CLIPPER_VERSION);
 		versionInfo.add("freetype", FontEngine::version());
 		versionInfo.add("potrace", strchr(potrace_version(), ' '));
-		versionInfo.add("xxhash", XXH_versionNumber(), 3, 100);
+		versionInfo.add("xxhash", XXH64HashFunction::version(), 3, 100);
 		versionInfo.add("zlib", zlibVersion());
 		versionInfo.add("Ghostscript", Ghostscript().revisionstr(), true);
 #ifndef DISABLE_WOFF
@@ -282,6 +288,39 @@ static void init_fontmap (const CommandLine &cmdline) {
 	}
 	if (!mapseq.empty())
 		FontMap::instance().read(mapseq);
+}
+
+
+/** Returns a unique string for the current state of the command-line
+ *  options affecting the SVG output. */
+static string svg_options_hash (const CommandLine &cmdline) {
+	// options affecting the SVG output
+	vector<const CL::Option*> svg_options = {
+		&cmdline.bboxOpt,	&cmdline.clipjoinOpt, &cmdline.colornamesOpt, &cmdline.commentsOpt,
+		&cmdline.exactOpt, &cmdline.fontFormatOpt, &cmdline.fontmapOpt, &cmdline.gradOverlapOpt,
+		&cmdline.gradSegmentsOpt, &cmdline.gradSimplifyOpt, &cmdline.linkmarkOpt, &cmdline.magOpt,
+		&cmdline.noFontsOpt, &cmdline.noMergeOpt,	&cmdline.noSpecialsOpt,	&cmdline.noStylesOpt,
+		&cmdline.precisionOpt,	&cmdline.relativeOpt, &cmdline.zoomOpt
+	};
+	string idString = get_transformation_string(cmdline);
+	for (const CL::Option *opt : svg_options) {
+		idString += opt->given();
+		idString += opt->valueString();
+	}
+	return XXH64HashFunction(idString).digestString();
+}
+
+
+static bool list_page_hashes (const CommandLine &cmdline, DVIToSVG &dvisvg) {
+	if (cmdline.pageHashesOpt.given()) {
+		DVIToSVG::PAGE_HASH_SETTINGS.setParameters(cmdline.pageHashesOpt.value());
+		DVIToSVG::PAGE_HASH_SETTINGS.setOptionHash(svg_options_hash(cmdline));
+		if (DVIToSVG::PAGE_HASH_SETTINGS.isSet(DVIToSVG::HashSettings::P_LIST)) {
+			dvisvg.listHashes(cmdline.pageOpt.value(), cout);
+			return true;
+		}
+	}
+	return false;
 }
 
 
@@ -390,6 +429,8 @@ int main (int argc, char *argv[]) {
 		else {
 			init_fontmap(cmdline);
 			DVIToSVG dvi2svg(srcin.getInputStream(), out);
+			if (list_page_hashes(cmdline, dvi2svg))
+				return 0;
 			const char *ignore_specials=nullptr;
 			if (cmdline.noSpecialsOpt.given())
 				ignore_specials = cmdline.noSpecialsOpt.value().empty() ? "*" : cmdline.noSpecialsOpt.value().c_str();

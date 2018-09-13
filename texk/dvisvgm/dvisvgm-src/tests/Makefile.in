@@ -90,6 +90,10 @@ host_triplet = @host@
 target_triplet = @target@
 @ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@am__append_1 = ../libs/woff2/libwoff2.a ../libs/brotli/libbrotli.a
 @ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__append_2 = $(WOFF2_LIBS) $(BROTLI_LIBS)
+@USE_BUNDLED_MD5_TRUE@am__append_3 = -I$(top_srcdir)/libs/md5
+@USE_BUNDLED_MD5_TRUE@am__append_4 = ../libs/md5/libmd5.a
+@USE_BUNDLED_MD5_FALSE@am__append_5 = $(LIBCRYPTO_CFLAGS)
+@USE_BUNDLED_MD5_FALSE@am__append_6 = $(LIBCRYPTO_LIBS)
 TESTS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) BitmapTest$(EXEEXT) \
 	BoundingBoxTest$(EXEEXT) CalculatorTest$(EXEEXT) \
 	CMapManagerTest$(EXEEXT) CMapReaderTest$(EXEEXT) \
@@ -102,8 +106,9 @@ TESTS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) BitmapTest$(EXEEXT) \
 	FontCacheTest$(EXEEXT) FontManagerTest$(EXEEXT) \
 	FontMapTest$(EXEEXT) GFGlyphTracerTest$(EXEEXT) \
 	GFReaderTest$(EXEEXT) GhostscriptTest$(EXEEXT) \
-	GraphicsPathTest$(EXEEXT) JFMReaderTest$(EXEEXT) \
-	LengthTest$(EXEEXT) MapLineTest$(EXEEXT) MatrixTest$(EXEEXT) \
+	GraphicsPathTest$(EXEEXT) HashFunctionTest$(EXEEXT) \
+	JFMReaderTest$(EXEEXT) LengthTest$(EXEEXT) \
+	MapLineTest$(EXEEXT) MatrixTest$(EXEEXT) \
 	MessageExceptionTest$(EXEEXT) PageRagesTest$(EXEEXT) \
 	PageSizeTest$(EXEEXT) PairTest$(EXEEXT) \
 	PapersizeSpecialTest$(EXEEXT) PDFParserTest$(EXEEXT) \
@@ -132,8 +137,9 @@ check_PROGRAMS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) \
 	FontCacheTest$(EXEEXT) FontManagerTest$(EXEEXT) \
 	FontMapTest$(EXEEXT) GFGlyphTracerTest$(EXEEXT) \
 	GFReaderTest$(EXEEXT) GhostscriptTest$(EXEEXT) \
-	GraphicsPathTest$(EXEEXT) JFMReaderTest$(EXEEXT) \
-	LengthTest$(EXEEXT) MapLineTest$(EXEEXT) MatrixTest$(EXEEXT) \
+	GraphicsPathTest$(EXEEXT) HashFunctionTest$(EXEEXT) \
+	JFMReaderTest$(EXEEXT) LengthTest$(EXEEXT) \
+	MapLineTest$(EXEEXT) MatrixTest$(EXEEXT) \
 	MessageExceptionTest$(EXEEXT) PageRagesTest$(EXEEXT) \
 	PageSizeTest$(EXEEXT) PairTest$(EXEEXT) \
 	PapersizeSpecialTest$(EXEEXT) PDFParserTest$(EXEEXT) \
@@ -149,7 +155,7 @@ check_PROGRAMS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) \
 	UtilityTest$(EXEEXT) VectorIteratorTest$(EXEEXT) \
 	VectorStreamTest$(EXEEXT) XMLNodeTest$(EXEEXT) \
 	XMLStringTest$(EXEEXT)
-@ENABLE_WOFF_TRUE@am__append_3 = ../libs/ff-woff/libfontforge.a
+@ENABLE_WOFF_TRUE@am__append_7 = ../libs/ff-woff/libfontforge.a
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_code_coverage.m4 \
@@ -181,214 +187,221 @@ BezierTest_OBJECTS = $(am_BezierTest_OBJECTS)
 am__DEPENDENCIES_1 =
 @ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) \
 @ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(am__DEPENDENCIES_1)
-@USE_BUNDLED_LIBS_FALSE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_2)
-@USE_BUNDLED_LIBS_TRUE@am__DEPENDENCIES_3 =  \
+@USE_BUNDLED_MD5_FALSE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
+@USE_BUNDLED_LIBS_FALSE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_2) \
+@USE_BUNDLED_LIBS_FALSE@	$(am__append_4) $(am__DEPENDENCIES_3)
+@USE_BUNDLED_LIBS_TRUE@am__DEPENDENCIES_4 =  \
 @USE_BUNDLED_LIBS_TRUE@	../libs/potrace/libpotrace.a \
 @USE_BUNDLED_LIBS_TRUE@	../libs/xxHash/libxxhash.a \
-@USE_BUNDLED_LIBS_TRUE@	$(am__append_1) $(am__DEPENDENCIES_2)
-am__DEPENDENCIES_4 = libgtest.la ../src/libdvisvgm.a \
-	$(am__DEPENDENCIES_3) $(am__append_3) $(am__DEPENDENCIES_1)
-BezierTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+@USE_BUNDLED_LIBS_TRUE@	$(am__append_1) $(am__DEPENDENCIES_2) \
+@USE_BUNDLED_LIBS_TRUE@	$(am__append_4) $(am__DEPENDENCIES_3)
+am__DEPENDENCIES_5 = libgtest.la ../src/libdvisvgm.a \
+	$(am__DEPENDENCIES_4) $(am__append_7) $(am__DEPENDENCIES_1)
+BezierTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_BitmapTest_OBJECTS = BitmapTest-BitmapTest.$(OBJEXT)
 BitmapTest_OBJECTS = $(am_BitmapTest_OBJECTS)
-BitmapTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+BitmapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_BoundingBoxTest_OBJECTS =  \
 	BoundingBoxTest-BoundingBoxTest.$(OBJEXT)
 BoundingBoxTest_OBJECTS = $(am_BoundingBoxTest_OBJECTS)
-BoundingBoxTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+BoundingBoxTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_CMapManagerTest_OBJECTS =  \
 	CMapManagerTest-CMapManagerTest.$(OBJEXT)
 CMapManagerTest_OBJECTS = $(am_CMapManagerTest_OBJECTS)
-CMapManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+CMapManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_CMapReaderTest_OBJECTS = CMapReaderTest-CMapReaderTest.$(OBJEXT)
 CMapReaderTest_OBJECTS = $(am_CMapReaderTest_OBJECTS)
-CMapReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+CMapReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_CMapTest_OBJECTS = CMapTest-CMapTest.$(OBJEXT)
 CMapTest_OBJECTS = $(am_CMapTest_OBJECTS)
-CMapTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+CMapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_CRC32Test_OBJECTS = CRC32Test-CRC32Test.$(OBJEXT)
 CRC32Test_OBJECTS = $(am_CRC32Test_OBJECTS)
-CRC32Test_DEPENDENCIES = $(am__DEPENDENCIES_4)
+CRC32Test_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_CalculatorTest_OBJECTS = CalculatorTest-CalculatorTest.$(OBJEXT)
 CalculatorTest_OBJECTS = $(am_CalculatorTest_OBJECTS)
-CalculatorTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+CalculatorTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_ColorSpecialTest_OBJECTS =  \
 	ColorSpecialTest-ColorSpecialTest.$(OBJEXT)
 ColorSpecialTest_OBJECTS = $(am_ColorSpecialTest_OBJECTS)
-ColorSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+ColorSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_ColorTest_OBJECTS = ColorTest-ColorTest.$(OBJEXT)
 ColorTest_OBJECTS = $(am_ColorTest_OBJECTS)
-ColorTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+ColorTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_CommandLineTest_OBJECTS =  \
 	CommandLineTest-CommandLineTest.$(OBJEXT)
 CommandLineTest_OBJECTS = $(am_CommandLineTest_OBJECTS)
-CommandLineTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+CommandLineTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_DVIReaderTest_OBJECTS = DVIReaderTest-DVIReaderTest.$(OBJEXT)
 DVIReaderTest_OBJECTS = $(am_DVIReaderTest_OBJECTS)
-DVIReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+DVIReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_DependencyGraphTest_OBJECTS =  \
 	DependencyGraphTest-DependencyGraphTest.$(OBJEXT)
 DependencyGraphTest_OBJECTS = $(am_DependencyGraphTest_OBJECTS)
-DependencyGraphTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+DependencyGraphTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_DirectoryTest_OBJECTS = DirectoryTest-DirectoryTest.$(OBJEXT)
 DirectoryTest_OBJECTS = $(am_DirectoryTest_OBJECTS)
-DirectoryTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+DirectoryTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_DvisvgmSpecialTest_OBJECTS =  \
 	DvisvgmSpecialTest-DvisvgmSpecialTest.$(OBJEXT)
 DvisvgmSpecialTest_OBJECTS = $(am_DvisvgmSpecialTest_OBJECTS)
-DvisvgmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+DvisvgmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_EmSpecialTest_OBJECTS = EmSpecialTest-EmSpecialTest.$(OBJEXT)
 EmSpecialTest_OBJECTS = $(am_EmSpecialTest_OBJECTS)
-EmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+EmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_FileFinderTest_OBJECTS = FileFinderTest-FileFinderTest.$(OBJEXT)
 FileFinderTest_OBJECTS = $(am_FileFinderTest_OBJECTS)
-FileFinderTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+FileFinderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_FilePathTest_OBJECTS = FilePathTest-FilePathTest.$(OBJEXT)
 FilePathTest_OBJECTS = $(am_FilePathTest_OBJECTS)
-FilePathTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+FilePathTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_FileSystemTest_OBJECTS = FileSystemTest-FileSystemTest.$(OBJEXT)
 FileSystemTest_OBJECTS = $(am_FileSystemTest_OBJECTS)
-FileSystemTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+FileSystemTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_FontCacheTest_OBJECTS = FontCacheTest-FontCacheTest.$(OBJEXT)
 FontCacheTest_OBJECTS = $(am_FontCacheTest_OBJECTS)
-FontCacheTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+FontCacheTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_FontManagerTest_OBJECTS =  \
 	FontManagerTest-FontManagerTest.$(OBJEXT)
 FontManagerTest_OBJECTS = $(am_FontManagerTest_OBJECTS)
-FontManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+FontManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_FontMapTest_OBJECTS = FontMapTest-FontMapTest.$(OBJEXT)
 FontMapTest_OBJECTS = $(am_FontMapTest_OBJECTS)
-FontMapTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+FontMapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_GFGlyphTracerTest_OBJECTS =  \
 	GFGlyphTracerTest-GFGlyphTracerTest.$(OBJEXT)
 GFGlyphTracerTest_OBJECTS = $(am_GFGlyphTracerTest_OBJECTS)
-GFGlyphTracerTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+GFGlyphTracerTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_GFReaderTest_OBJECTS = GFReaderTest-GFReaderTest.$(OBJEXT)
 GFReaderTest_OBJECTS = $(am_GFReaderTest_OBJECTS)
-GFReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+GFReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_GhostscriptTest_OBJECTS =  \
 	GhostscriptTest-GhostscriptTest.$(OBJEXT)
 GhostscriptTest_OBJECTS = $(am_GhostscriptTest_OBJECTS)
-GhostscriptTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+GhostscriptTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_GraphicsPathTest_OBJECTS =  \
 	GraphicsPathTest-GraphicsPathTest.$(OBJEXT)
 GraphicsPathTest_OBJECTS = $(am_GraphicsPathTest_OBJECTS)
-GraphicsPathTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+GraphicsPathTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+am_HashFunctionTest_OBJECTS =  \
+	HashFunctionTest-HashFunctionTest.$(OBJEXT)
+HashFunctionTest_OBJECTS = $(am_HashFunctionTest_OBJECTS)
+HashFunctionTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_JFMReaderTest_OBJECTS = JFMReaderTest-JFMReaderTest.$(OBJEXT)
 JFMReaderTest_OBJECTS = $(am_JFMReaderTest_OBJECTS)
-JFMReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+JFMReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_LengthTest_OBJECTS = LengthTest-LengthTest.$(OBJEXT)
 LengthTest_OBJECTS = $(am_LengthTest_OBJECTS)
-LengthTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+LengthTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_MapLineTest_OBJECTS = MapLineTest-MapLineTest.$(OBJEXT)
 MapLineTest_OBJECTS = $(am_MapLineTest_OBJECTS)
-MapLineTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+MapLineTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_MatrixTest_OBJECTS = MatrixTest-MatrixTest.$(OBJEXT)
 MatrixTest_OBJECTS = $(am_MatrixTest_OBJECTS)
-MatrixTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+MatrixTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_MessageExceptionTest_OBJECTS =  \
 	MessageExceptionTest-MessageExceptionTest.$(OBJEXT)
 MessageExceptionTest_OBJECTS = $(am_MessageExceptionTest_OBJECTS)
-MessageExceptionTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+MessageExceptionTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_PDFParserTest_OBJECTS = PDFParserTest-PDFParserTest.$(OBJEXT)
 PDFParserTest_OBJECTS = $(am_PDFParserTest_OBJECTS)
-PDFParserTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+PDFParserTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_PSInterpreterTest_OBJECTS =  \
 	PSInterpreterTest-PSInterpreterTest.$(OBJEXT)
 PSInterpreterTest_OBJECTS = $(am_PSInterpreterTest_OBJECTS)
-PSInterpreterTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+PSInterpreterTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_PageRagesTest_OBJECTS = PageRagesTest-PageRagesTest.$(OBJEXT)
 PageRagesTest_OBJECTS = $(am_PageRagesTest_OBJECTS)
-PageRagesTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+PageRagesTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_PageSizeTest_OBJECTS = PageSizeTest-PageSizeTest.$(OBJEXT)
 PageSizeTest_OBJECTS = $(am_PageSizeTest_OBJECTS)
-PageSizeTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+PageSizeTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_PairTest_OBJECTS = PairTest-PairTest.$(OBJEXT)
 PairTest_OBJECTS = $(am_PairTest_OBJECTS)
-PairTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+PairTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_PapersizeSpecialTest_OBJECTS =  \
 	PapersizeSpecialTest-PapersizeSpecialTest.$(OBJEXT)
 PapersizeSpecialTest_OBJECTS = $(am_PapersizeSpecialTest_OBJECTS)
-PapersizeSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+PapersizeSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_RangeMapTest_OBJECTS = RangeMapTest-RangeMapTest.$(OBJEXT)
 RangeMapTest_OBJECTS = $(am_RangeMapTest_OBJECTS)
-RangeMapTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+RangeMapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_SVGOutputTest_OBJECTS = SVGOutputTest-SVGOutputTest.$(OBJEXT)
 SVGOutputTest_OBJECTS = $(am_SVGOutputTest_OBJECTS)
-SVGOutputTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+SVGOutputTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_ShadingPatchTest_OBJECTS =  \
 	ShadingPatchTest-ShadingPatchTest.$(OBJEXT)
 ShadingPatchTest_OBJECTS = $(am_ShadingPatchTest_OBJECTS)
-ShadingPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+ShadingPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_SpecialManagerTest_OBJECTS =  \
 	SpecialManagerTest-SpecialManagerTest.$(OBJEXT)
 SpecialManagerTest_OBJECTS = $(am_SpecialManagerTest_OBJECTS)
-SpecialManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+SpecialManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_SplittedCharInputBufferTest_OBJECTS = SplittedCharInputBufferTest-SplittedCharInputBufferTest.$(OBJEXT)
 SplittedCharInputBufferTest_OBJECTS =  \
 	$(am_SplittedCharInputBufferTest_OBJECTS)
-SplittedCharInputBufferTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+SplittedCharInputBufferTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_StreamInputBufferTest_OBJECTS =  \
 	StreamInputBufferTest-StreamInputBufferTest.$(OBJEXT)
 StreamInputBufferTest_OBJECTS = $(am_StreamInputBufferTest_OBJECTS)
-StreamInputBufferTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+StreamInputBufferTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_StreamReaderTest_OBJECTS =  \
 	StreamReaderTest-StreamReaderTest.$(OBJEXT)
 StreamReaderTest_OBJECTS = $(am_StreamReaderTest_OBJECTS)
-StreamReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+StreamReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_StreamWriterTest_OBJECTS =  \
 	StreamWriterTest-StreamWriterTest.$(OBJEXT)
 StreamWriterTest_OBJECTS = $(am_StreamWriterTest_OBJECTS)
-StreamWriterTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+StreamWriterTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_StringMatcherTest_OBJECTS =  \
 	StringMatcherTest-StringMatcherTest.$(OBJEXT)
 StringMatcherTest_OBJECTS = $(am_StringMatcherTest_OBJECTS)
-StringMatcherTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+StringMatcherTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_SubfontTest_OBJECTS = SubfontTest-SubfontTest.$(OBJEXT)
 SubfontTest_OBJECTS = $(am_SubfontTest_OBJECTS)
-SubfontTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+SubfontTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_TFMReaderTest_OBJECTS = TFMReaderTest-TFMReaderTest.$(OBJEXT)
 TFMReaderTest_OBJECTS = $(am_TFMReaderTest_OBJECTS)
-TFMReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+TFMReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_TensorProductPatchTest_OBJECTS =  \
 	TensorProductPatchTest-TensorProductPatchTest.$(OBJEXT)
 TensorProductPatchTest_OBJECTS = $(am_TensorProductPatchTest_OBJECTS)
-TensorProductPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+TensorProductPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_ToUnicodeMapTest_OBJECTS =  \
 	ToUnicodeMapTest-ToUnicodeMapTest.$(OBJEXT)
 ToUnicodeMapTest_OBJECTS = $(am_ToUnicodeMapTest_OBJECTS)
-ToUnicodeMapTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+ToUnicodeMapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_TpicSpecialTest_OBJECTS =  \
 	TpicSpecialTest-TpicSpecialTest.$(OBJEXT)
 TpicSpecialTest_OBJECTS = $(am_TpicSpecialTest_OBJECTS)
-TpicSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+TpicSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_TriangularPatchTest_OBJECTS =  \
 	TriangularPatchTest-TriangularPatchTest.$(OBJEXT)
 TriangularPatchTest_OBJECTS = $(am_TriangularPatchTest_OBJECTS)
-TriangularPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+TriangularPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_UnicodeTest_OBJECTS = UnicodeTest-UnicodeTest.$(OBJEXT)
 UnicodeTest_OBJECTS = $(am_UnicodeTest_OBJECTS)
-UnicodeTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+UnicodeTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_UtilityTest_OBJECTS = UtilityTest-UtilityTest.$(OBJEXT)
 UtilityTest_OBJECTS = $(am_UtilityTest_OBJECTS)
-UtilityTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+UtilityTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_VectorIteratorTest_OBJECTS =  \
 	VectorIteratorTest-VectorIteratorTest.$(OBJEXT)
 VectorIteratorTest_OBJECTS = $(am_VectorIteratorTest_OBJECTS)
-VectorIteratorTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+VectorIteratorTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_VectorStreamTest_OBJECTS =  \
 	VectorStreamTest-VectorStreamTest.$(OBJEXT)
 VectorStreamTest_OBJECTS = $(am_VectorStreamTest_OBJECTS)
-VectorStreamTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+VectorStreamTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_XMLNodeTest_OBJECTS = XMLNodeTest-XMLNodeTest.$(OBJEXT)
 XMLNodeTest_OBJECTS = $(am_XMLNodeTest_OBJECTS)
-XMLNodeTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+XMLNodeTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_XMLStringTest_OBJECTS = XMLStringTest-XMLStringTest.$(OBJEXT)
 XMLStringTest_OBJECTS = $(am_XMLStringTest_OBJECTS)
-XMLStringTest_DEPENDENCIES = $(am__DEPENDENCIES_4)
+XMLStringTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 nodist_hashcheck_OBJECTS = hashcheck-hashcheck.$(OBJEXT)
 hashcheck_OBJECTS = $(nodist_hashcheck_OBJECTS)
-hashcheck_DEPENDENCIES = $(am__DEPENDENCIES_3)
+hashcheck_DEPENDENCIES = $(am__DEPENDENCIES_4)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -454,14 +467,15 @@ SOURCES = $(libgtest_la_SOURCES) $(BezierTest_SOURCES) \
 	$(FontCacheTest_SOURCES) $(FontManagerTest_SOURCES) \
 	$(FontMapTest_SOURCES) $(GFGlyphTracerTest_SOURCES) \
 	$(GFReaderTest_SOURCES) $(GhostscriptTest_SOURCES) \
-	$(GraphicsPathTest_SOURCES) $(JFMReaderTest_SOURCES) \
-	$(LengthTest_SOURCES) $(MapLineTest_SOURCES) \
-	$(MatrixTest_SOURCES) $(MessageExceptionTest_SOURCES) \
-	$(PDFParserTest_SOURCES) $(PSInterpreterTest_SOURCES) \
-	$(PageRagesTest_SOURCES) $(PageSizeTest_SOURCES) \
-	$(PairTest_SOURCES) $(PapersizeSpecialTest_SOURCES) \
-	$(RangeMapTest_SOURCES) $(SVGOutputTest_SOURCES) \
-	$(ShadingPatchTest_SOURCES) $(SpecialManagerTest_SOURCES) \
+	$(GraphicsPathTest_SOURCES) $(HashFunctionTest_SOURCES) \
+	$(JFMReaderTest_SOURCES) $(LengthTest_SOURCES) \
+	$(MapLineTest_SOURCES) $(MatrixTest_SOURCES) \
+	$(MessageExceptionTest_SOURCES) $(PDFParserTest_SOURCES) \
+	$(PSInterpreterTest_SOURCES) $(PageRagesTest_SOURCES) \
+	$(PageSizeTest_SOURCES) $(PairTest_SOURCES) \
+	$(PapersizeSpecialTest_SOURCES) $(RangeMapTest_SOURCES) \
+	$(SVGOutputTest_SOURCES) $(ShadingPatchTest_SOURCES) \
+	$(SpecialManagerTest_SOURCES) \
 	$(SplittedCharInputBufferTest_SOURCES) \
 	$(StreamInputBufferTest_SOURCES) $(StreamReaderTest_SOURCES) \
 	$(StreamWriterTest_SOURCES) $(StringMatcherTest_SOURCES) \
@@ -485,14 +499,15 @@ DIST_SOURCES = $(libgtest_la_SOURCES) $(BezierTest_SOURCES) \
 	$(FontCacheTest_SOURCES) $(FontManagerTest_SOURCES) \
 	$(FontMapTest_SOURCES) $(GFGlyphTracerTest_SOURCES) \
 	$(GFReaderTest_SOURCES) $(GhostscriptTest_SOURCES) \
-	$(GraphicsPathTest_SOURCES) $(JFMReaderTest_SOURCES) \
-	$(LengthTest_SOURCES) $(MapLineTest_SOURCES) \
-	$(MatrixTest_SOURCES) $(MessageExceptionTest_SOURCES) \
-	$(PDFParserTest_SOURCES) $(PSInterpreterTest_SOURCES) \
-	$(PageRagesTest_SOURCES) $(PageSizeTest_SOURCES) \
-	$(PairTest_SOURCES) $(PapersizeSpecialTest_SOURCES) \
-	$(RangeMapTest_SOURCES) $(SVGOutputTest_SOURCES) \
-	$(ShadingPatchTest_SOURCES) $(SpecialManagerTest_SOURCES) \
+	$(GraphicsPathTest_SOURCES) $(HashFunctionTest_SOURCES) \
+	$(JFMReaderTest_SOURCES) $(LengthTest_SOURCES) \
+	$(MapLineTest_SOURCES) $(MatrixTest_SOURCES) \
+	$(MessageExceptionTest_SOURCES) $(PDFParserTest_SOURCES) \
+	$(PSInterpreterTest_SOURCES) $(PageRagesTest_SOURCES) \
+	$(PageSizeTest_SOURCES) $(PairTest_SOURCES) \
+	$(PapersizeSpecialTest_SOURCES) $(RangeMapTest_SOURCES) \
+	$(SVGOutputTest_SOURCES) $(ShadingPatchTest_SOURCES) \
+	$(SpecialManagerTest_SOURCES) \
 	$(SplittedCharInputBufferTest_SOURCES) \
 	$(StreamInputBufferTest_SOURCES) $(StreamReaderTest_SOURCES) \
 	$(StreamWriterTest_SOURCES) $(StringMatcherTest_SOURCES) \
@@ -831,6 +846,8 @@ KPSE_LIBS = @KPSE_LIBS@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
+LIBCRYPTO_CFLAGS = @LIBCRYPTO_CFLAGS@
+LIBCRYPTO_LIBS = @LIBCRYPTO_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -940,13 +957,17 @@ EXTRA_DIST = gtest/LICENSE gtest/include gtest/src/gtest.cc \
 	gtest/src/gtest-port.cc gtest/src/gtest-printers.cc \
 	gtest/src/gtest-test-part.cc gtest/src/gtest-typed-test.cc \
 	check-conv genhashcheck.py normalize.xsl
-@USE_BUNDLED_LIBS_FALSE@LIBS_CFLAGS = -I$(XXHASH_CFLAGS)
-@USE_BUNDLED_LIBS_TRUE@LIBS_CFLAGS = -I$(top_srcdir)/libs/xxHash
+@USE_BUNDLED_LIBS_FALSE@LIBS_CFLAGS = $(XXHASH_CFLAGS) $(am__append_3) \
+@USE_BUNDLED_LIBS_FALSE@	$(am__append_5)
+@USE_BUNDLED_LIBS_TRUE@LIBS_CFLAGS = -I$(top_srcdir)/libs/xxHash \
+@USE_BUNDLED_LIBS_TRUE@	$(am__append_3) $(am__append_5)
 @USE_BUNDLED_LIBS_FALSE@LIBS_LIBS = $(POTRACE_LIBS) $(XXHASH_LIBS) \
-@USE_BUNDLED_LIBS_FALSE@	$(am__append_2)
+@USE_BUNDLED_LIBS_FALSE@	$(am__append_2) $(am__append_4) \
+@USE_BUNDLED_LIBS_FALSE@	$(am__append_6)
 @USE_BUNDLED_LIBS_TRUE@LIBS_LIBS = ../libs/potrace/libpotrace.a \
 @USE_BUNDLED_LIBS_TRUE@	../libs/xxHash/libxxhash.a \
-@USE_BUNDLED_LIBS_TRUE@	$(am__append_1) $(am__append_2)
+@USE_BUNDLED_LIBS_TRUE@	$(am__append_1) $(am__append_2) \
+@USE_BUNDLED_LIBS_TRUE@	$(am__append_4) $(am__append_6)
 AM_CXXFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/libs/variant/include \
 	-Wall -Wno-mismatched-tags \
 	-DBUILDDIR='"$(abs_builddir)"' -DSRCDIR='"$(abs_srcdir)"' \
@@ -956,180 +977,183 @@ nodist_hashcheck_SOURCES = hashcheck.cpp
 hashcheck_CPPFLAGS = $(LIBS_CFLAGS)
 hashcheck_LDADD = $(LIBS_LIBS)
 TESTLIBS = libgtest.la ../src/libdvisvgm.a $(LIBS_LIBS) -lfreetype \
-	$(am__append_3) $(CODE_COVERAGE_LDFLAGS)
+	$(am__append_7) $(CODE_COVERAGE_LDFLAGS)
 BezierTest_SOURCES = BezierTest.cpp testutil.hpp
-BezierTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+BezierTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 BezierTest_LDADD = $(TESTLIBS)
 BitmapTest_SOURCES = BitmapTest.cpp testutil.hpp
-BitmapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+BitmapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 BitmapTest_LDADD = $(TESTLIBS)
 BoundingBoxTest_SOURCES = BoundingBoxTest.cpp testutil.hpp
-BoundingBoxTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+BoundingBoxTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 BoundingBoxTest_LDADD = $(TESTLIBS)
 CalculatorTest_SOURCES = CalculatorTest.cpp testutil.hpp
-CalculatorTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+CalculatorTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 CalculatorTest_LDADD = $(TESTLIBS)
 CMapManagerTest_SOURCES = CMapManagerTest.cpp testutil.hpp
-CMapManagerTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+CMapManagerTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 CMapManagerTest_LDADD = $(TESTLIBS)
 CMapReaderTest_SOURCES = CMapReaderTest.cpp testutil.hpp
-CMapReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+CMapReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 CMapReaderTest_LDADD = $(TESTLIBS)
 CMapTest_SOURCES = CMapTest.cpp testutil.hpp
-CMapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+CMapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 CMapTest_LDADD = $(TESTLIBS)
 ColorSpecialTest_SOURCES = ColorSpecialTest.cpp testutil.hpp
-ColorSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+ColorSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 ColorSpecialTest_LDADD = $(TESTLIBS)
 ColorTest_SOURCES = ColorTest.cpp testutil.hpp
-ColorTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+ColorTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 ColorTest_LDADD = $(TESTLIBS)
 CommandLineTest_SOURCES = CommandLineTest.cpp testutil.hpp
-CommandLineTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+CommandLineTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 CommandLineTest_LDADD = $(TESTLIBS)
 CRC32Test_SOURCES = CRC32Test.cpp testutil.hpp
-CRC32Test_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+CRC32Test_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 CRC32Test_LDADD = $(TESTLIBS)
 DependencyGraphTest_SOURCES = DependencyGraphTest.cpp testutil.hpp
-DependencyGraphTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+DependencyGraphTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 DependencyGraphTest_LDADD = $(TESTLIBS)
 DirectoryTest_SOURCES = DirectoryTest.cpp testutil.hpp
-DirectoryTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+DirectoryTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 DirectoryTest_LDADD = $(TESTLIBS)
 DVIReaderTest_SOURCES = DVIReaderTest.cpp testutil.hpp
-DVIReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+DVIReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 DVIReaderTest_LDADD = $(TESTLIBS)
 DvisvgmSpecialTest_SOURCES = DvisvgmSpecialTest.cpp testutil.hpp
-DvisvgmSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+DvisvgmSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 DvisvgmSpecialTest_LDADD = $(TESTLIBS)
 EmSpecialTest_SOURCES = EmSpecialTest.cpp testutil.hpp
-EmSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+EmSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 EmSpecialTest_LDADD = $(TESTLIBS)
 FileFinderTest_SOURCES = FileFinderTest.cpp testutil.hpp
-FileFinderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+FileFinderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 FileFinderTest_LDADD = $(TESTLIBS)
 FilePathTest_SOURCES = FilePathTest.cpp testutil.hpp
-FilePathTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+FilePathTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 FilePathTest_LDADD = $(TESTLIBS)
 FileSystemTest_SOURCES = FileSystemTest.cpp testutil.hpp
-FileSystemTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+FileSystemTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 FileSystemTest_LDADD = $(TESTLIBS)
 FontCacheTest_SOURCES = FontCacheTest.cpp testutil.hpp
-FontCacheTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+FontCacheTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 FontCacheTest_LDADD = $(TESTLIBS)
 FontManagerTest_SOURCES = FontManagerTest.cpp testutil.hpp
-FontManagerTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+FontManagerTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 FontManagerTest_LDADD = $(TESTLIBS)
 FontMapTest_SOURCES = FontMapTest.cpp testutil.hpp
-FontMapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+FontMapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 FontMapTest_LDADD = $(TESTLIBS)
 GFGlyphTracerTest_SOURCES = GFGlyphTracerTest.cpp testutil.hpp
-GFGlyphTracerTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+GFGlyphTracerTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 GFGlyphTracerTest_LDADD = $(TESTLIBS)
 GFReaderTest_SOURCES = GFReaderTest.cpp testutil.hpp
-GFReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+GFReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 GFReaderTest_LDADD = $(TESTLIBS)
 GhostscriptTest_SOURCES = GhostscriptTest.cpp testutil.hpp
-GhostscriptTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+GhostscriptTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 GhostscriptTest_LDADD = $(TESTLIBS)
 GraphicsPathTest_SOURCES = GraphicsPathTest.cpp testutil.hpp
-GraphicsPathTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+GraphicsPathTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 GraphicsPathTest_LDADD = $(TESTLIBS)
+HashFunctionTest_SOURCES = HashFunctionTest.cpp testutil.hpp
+HashFunctionTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
+HashFunctionTest_LDADD = $(TESTLIBS)
 JFMReaderTest_SOURCES = JFMReaderTest.cpp testutil.hpp
-JFMReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+JFMReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 JFMReaderTest_LDADD = $(TESTLIBS)
 LengthTest_SOURCES = LengthTest.cpp testutil.hpp
-LengthTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+LengthTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 LengthTest_LDADD = $(TESTLIBS)
 MapLineTest_SOURCES = MapLineTest.cpp testutil.hpp
-MapLineTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+MapLineTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 MapLineTest_LDADD = $(TESTLIBS)
 MatrixTest_SOURCES = MatrixTest.cpp testutil.hpp
-MatrixTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+MatrixTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 MatrixTest_LDADD = $(TESTLIBS)
 MessageExceptionTest_SOURCES = MessageExceptionTest.cpp testutil.hpp
-MessageExceptionTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+MessageExceptionTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 MessageExceptionTest_LDADD = $(TESTLIBS)
 PageRagesTest_SOURCES = PageRagesTest.cpp testutil.hpp
-PageRagesTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+PageRagesTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 PageRagesTest_LDADD = $(TESTLIBS)
 PageSizeTest_SOURCES = PageSizeTest.cpp testutil.hpp
-PageSizeTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+PageSizeTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 PageSizeTest_LDADD = $(TESTLIBS)
 PairTest_SOURCES = PairTest.cpp testutil.hpp
-PairTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+PairTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 PairTest_LDADD = $(TESTLIBS)
 PapersizeSpecialTest_SOURCES = PapersizeSpecialTest.cpp testutil.hpp
-PapersizeSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+PapersizeSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 PapersizeSpecialTest_LDADD = $(TESTLIBS)
 PDFParserTest_SOURCES = PDFParserTest.cpp testutil.hpp
-PDFParserTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+PDFParserTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 PDFParserTest_LDADD = $(TESTLIBS)
 PSInterpreterTest_SOURCES = PSInterpreterTest.cpp testutil.hpp
-PSInterpreterTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+PSInterpreterTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 PSInterpreterTest_LDADD = $(TESTLIBS)
 RangeMapTest_SOURCES = RangeMapTest.cpp testutil.hpp
-RangeMapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+RangeMapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 RangeMapTest_LDADD = $(TESTLIBS)
 ShadingPatchTest_SOURCES = ShadingPatchTest.cpp testutil.hpp
-ShadingPatchTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+ShadingPatchTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 ShadingPatchTest_LDADD = $(TESTLIBS)
 SpecialManagerTest_SOURCES = SpecialManagerTest.cpp testutil.hpp
-SpecialManagerTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+SpecialManagerTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 SpecialManagerTest_LDADD = $(TESTLIBS)
 SplittedCharInputBufferTest_SOURCES = SplittedCharInputBufferTest.cpp testutil.hpp
-SplittedCharInputBufferTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+SplittedCharInputBufferTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 SplittedCharInputBufferTest_LDADD = $(TESTLIBS)
 StreamInputBufferTest_SOURCES = StreamInputBufferTest.cpp testutil.hpp
-StreamInputBufferTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+StreamInputBufferTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 StreamInputBufferTest_LDADD = $(TESTLIBS)
 StreamReaderTest_SOURCES = StreamReaderTest.cpp testutil.hpp
-StreamReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+StreamReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 StreamReaderTest_LDADD = $(TESTLIBS)
 StreamWriterTest_SOURCES = StreamWriterTest.cpp testutil.hpp
-StreamWriterTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+StreamWriterTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 StreamWriterTest_LDADD = $(TESTLIBS)
 StringMatcherTest_SOURCES = StringMatcherTest.cpp testutil.hpp
-StringMatcherTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+StringMatcherTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 StringMatcherTest_LDADD = $(TESTLIBS)
 SubfontTest_SOURCES = SubfontTest.cpp testutil.hpp
-SubfontTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+SubfontTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 SubfontTest_LDADD = $(TESTLIBS)
 SVGOutputTest_SOURCES = SVGOutputTest.cpp testutil.hpp
-SVGOutputTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+SVGOutputTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 SVGOutputTest_LDADD = $(TESTLIBS)
 TensorProductPatchTest_SOURCES = TensorProductPatchTest.cpp testutil.hpp
-TensorProductPatchTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+TensorProductPatchTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 TensorProductPatchTest_LDADD = $(TESTLIBS)
 TFMReaderTest_SOURCES = TFMReaderTest.cpp testutil.hpp
-TFMReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+TFMReaderTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 TFMReaderTest_LDADD = $(TESTLIBS)
 ToUnicodeMapTest_SOURCES = ToUnicodeMapTest.cpp testutil.hpp
-ToUnicodeMapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+ToUnicodeMapTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 ToUnicodeMapTest_LDADD = $(TESTLIBS)
 TpicSpecialTest_SOURCES = TpicSpecialTest.cpp testutil.hpp
-TpicSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+TpicSpecialTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 TpicSpecialTest_LDADD = $(TESTLIBS)
 TriangularPatchTest_SOURCES = TriangularPatchTest.cpp testutil.hpp
-TriangularPatchTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+TriangularPatchTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 TriangularPatchTest_LDADD = $(TESTLIBS)
 UnicodeTest_SOURCES = UnicodeTest.cpp testutil.hpp
-UnicodeTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+UnicodeTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 UnicodeTest_LDADD = $(TESTLIBS)
 UtilityTest_SOURCES = UtilityTest.cpp testutil.hpp
-UtilityTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+UtilityTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 UtilityTest_LDADD = $(TESTLIBS)
 VectorIteratorTest_SOURCES = VectorIteratorTest.cpp testutil.hpp
-VectorIteratorTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+VectorIteratorTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 VectorIteratorTest_LDADD = $(TESTLIBS)
 VectorStreamTest_SOURCES = VectorStreamTest.cpp testutil.hpp
-VectorStreamTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+VectorStreamTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 VectorStreamTest_LDADD = $(TESTLIBS)
 XMLNodeTest_SOURCES = XMLNodeTest.cpp testutil.hpp
-XMLNodeTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+XMLNodeTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 XMLNodeTest_LDADD = $(TESTLIBS)
 XMLStringTest_SOURCES = XMLStringTest.cpp testutil.hpp
-XMLStringTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include
+XMLStringTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 XMLStringTest_LDADD = $(TESTLIBS)
 CLEANFILES = *.gcda *.gcno hashcheck.cpp
 all: all-recursive
@@ -1301,6 +1325,10 @@ GraphicsPathTest$(EXEEXT): $(GraphicsPathTest_OBJECTS) $(GraphicsPathTest_DEPEND
 	@rm -f GraphicsPathTest$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(GraphicsPathTest_OBJECTS) $(GraphicsPathTest_LDADD) $(LIBS)
 
+HashFunctionTest$(EXEEXT): $(HashFunctionTest_OBJECTS) $(HashFunctionTest_DEPENDENCIES) $(EXTRA_HashFunctionTest_DEPENDENCIES) 
+	@rm -f HashFunctionTest$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(HashFunctionTest_OBJECTS) $(HashFunctionTest_LDADD) $(LIBS)
+
 JFMReaderTest$(EXEEXT): $(JFMReaderTest_OBJECTS) $(JFMReaderTest_DEPENDENCIES) $(EXTRA_JFMReaderTest_DEPENDENCIES) 
 	@rm -f JFMReaderTest$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(JFMReaderTest_OBJECTS) $(JFMReaderTest_LDADD) $(LIBS)
@@ -1467,6 +1495,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GFReaderTest-GFReaderTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GhostscriptTest-GhostscriptTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GraphicsPathTest-GraphicsPathTest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HashFunctionTest-HashFunctionTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JFMReaderTest-JFMReaderTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LengthTest-LengthTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapLineTest-MapLineTest.Po@am__quote@
@@ -1904,6 +1933,20 @@ GraphicsPathTest-GraphicsPathTest.obj: GraphicsPathTest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='GraphicsPathTest.cpp' object='GraphicsPathTest-GraphicsPathTest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(GraphicsPathTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GraphicsPathTest-GraphicsPathTest.obj `if test -f 'GraphicsPathTest.cpp'; then $(CYGPATH_W) 'GraphicsPathTest.cpp'; else $(CYGPATH_W) '$(srcdir)/GraphicsPathTest.cpp'; fi`
+
+HashFunctionTest-HashFunctionTest.o: HashFunctionTest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(HashFunctionTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT HashFunctionTest-HashFunctionTest.o -MD -MP -MF $(DEPDIR)/HashFunctionTest-HashFunctionTest.Tpo -c -o HashFunctionTest-HashFunctionTest.o `test -f 'HashFunctionTest.cpp' || echo '$(srcdir)/'`HashFunctionTest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/HashFunctionTest-HashFunctionTest.Tpo $(DEPDIR)/HashFunctionTest-HashFunctionTest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='HashFunctionTest.cpp' object='HashFunctionTest-HashFunctionTest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(HashFunctionTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o HashFunctionTest-HashFunctionTest.o `test -f 'HashFunctionTest.cpp' || echo '$(srcdir)/'`HashFunctionTest.cpp
+
+HashFunctionTest-HashFunctionTest.obj: HashFunctionTest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(HashFunctionTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT HashFunctionTest-HashFunctionTest.obj -MD -MP -MF $(DEPDIR)/HashFunctionTest-HashFunctionTest.Tpo -c -o HashFunctionTest-HashFunctionTest.obj `if test -f 'HashFunctionTest.cpp'; then $(CYGPATH_W) 'HashFunctionTest.cpp'; else $(CYGPATH_W) '$(srcdir)/HashFunctionTest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/HashFunctionTest-HashFunctionTest.Tpo $(DEPDIR)/HashFunctionTest-HashFunctionTest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='HashFunctionTest.cpp' object='HashFunctionTest-HashFunctionTest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(HashFunctionTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o HashFunctionTest-HashFunctionTest.obj `if test -f 'HashFunctionTest.cpp'; then $(CYGPATH_W) 'HashFunctionTest.cpp'; else $(CYGPATH_W) '$(srcdir)/HashFunctionTest.cpp'; fi`
 
 JFMReaderTest-JFMReaderTest.o: JFMReaderTest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(JFMReaderTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JFMReaderTest-JFMReaderTest.o -MD -MP -MF $(DEPDIR)/JFMReaderTest-JFMReaderTest.Tpo -c -o JFMReaderTest-JFMReaderTest.o `test -f 'JFMReaderTest.cpp' || echo '$(srcdir)/'`JFMReaderTest.cpp
@@ -2823,6 +2866,13 @@ GhostscriptTest.log: GhostscriptTest$(EXEEXT)
 GraphicsPathTest.log: GraphicsPathTest$(EXEEXT)
 	@p='GraphicsPathTest$(EXEEXT)'; \
 	b='GraphicsPathTest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+HashFunctionTest.log: HashFunctionTest$(EXEEXT)
+	@p='HashFunctionTest$(EXEEXT)'; \
+	b='HashFunctionTest'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

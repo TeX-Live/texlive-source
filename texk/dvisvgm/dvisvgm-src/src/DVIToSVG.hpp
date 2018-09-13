@@ -21,6 +21,7 @@
 #ifndef DVITOSVG_HPP
 #define DVITOSVG_HPP
 
+#include <set>
 #include <string>
 #include <utility>
 #include "DVIReader.hpp"
@@ -28,8 +29,25 @@
 
 struct DVIActions;
 struct SVGOutputBase;
+class HashFunction;
 
 class DVIToSVG : public DVIReader {
+	public:
+		class HashSettings {
+			public:
+				enum Parameter {P_LIST, P_REPLACE};
+				void setParameters (const std::string &paramstr);
+				void setOptionHash (const std::string &optHash) {_optHash = optHash;}
+				std::string algorithm () const {return _algo;}
+				std::string optionsHash () const {return _optHash;}
+				bool isSet (Parameter param) {return _params.find(param) != _params.end();}
+
+			private:
+				std::string _algo;
+				std::string _optHash;
+				std::set<Parameter> _params;
+		};
+
 	public:
 		explicit DVIToSVG (std::istream &is, SVGOutputBase &out);
 		void convert (const std::string &range, std::pair<int,int> *pageinfo=0);
@@ -41,6 +59,7 @@ class DVIToSVG : public DVIReader {
 		double getXPos() const override       {return dviState().h+_tx;}
 		double getYPos() const override       {return dviState().v+_ty;}
 		void finishLine () override           {_prevYPos = std::numeric_limits<double>::min();}
+		void listHashes (const std::string &rangestr, std::ostream &os);
 
 		std::string getSVGFilename (unsigned pageno) const;
 		std::string getUserBBoxString () const  {return _bboxFormatString;}
@@ -49,10 +68,11 @@ class DVIToSVG : public DVIReader {
 	public:
 		static bool COMPUTE_PROGRESS;  ///< if true, an action to handle the progress ratio of a page is triggered
 		static char TRACE_MODE;
+		static HashSettings PAGE_HASH_SETTINGS;
 
 	protected:
 		DVIToSVG (const DVIToSVG&) =delete;
-		void convert (unsigned firstPage, unsigned lastPage, std::pair<int,int> *pageinfo=0);
+		void convert (unsigned firstPage, unsigned lastPage, HashFunction *hashFunc);
 		int executeCommand () override;
 		void enterBeginPage (unsigned pageno, const std::vector<int32_t> &c);
 		void leaveEndPage (unsigned pageno);

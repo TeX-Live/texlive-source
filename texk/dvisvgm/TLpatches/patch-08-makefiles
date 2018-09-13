@@ -1,14 +1,78 @@
-diff -u1r dvisvgm-2.5/Makefile.am dvisvgm-src/Makefile.am
---- dvisvgm-2.5/Makefile.am	2018-07-31 07:51:05.000000000 -0700
-+++ dvisvgm-src/Makefile.am	2018-08-27 09:10:41.553596312 -0700
+	See ./TL-Changes.
+
+Index: configure.ac
+===================================================================
+--- configure.ac	(revision 48652)
++++ configure.ac	(working copy)
+@@ -15,7 +15,7 @@
+ AC_PREREQ([2.65])
+ m4_include([version.ac])[] dnl define dvisvgm_version
+ AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
+-DATE="August 2018"
++DATE="September 2018"
+ AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
+ AC_CONFIG_HEADERS([config.h])
+ AC_CONFIG_MACRO_DIRS([../../m4])dnl not just _DIR
+@@ -152,19 +152,13 @@
+ # Check for header files.
+ AC_HEADER_DIRENT
+ AC_HEADER_STDC
+-AC_CHECK_HEADERS([libintl.h stdlib.h string.h strings.h unistd.h])
++AC_CHECK_HEADERS_ONCE([libintl.h stdlib.h string.h strings.h unistd.h])
+ 
+ # Check for typedefs, structures, and compiler characteristics.
+ AC_HEADER_STDBOOL
+ AC_TYPE_SIZE_T
+ AC_STRUCT_TM
+-# TL? AC_C_CONST
+-# TL? AC_C_INLINE
+ 
+-# TL? AC_FUNC_CLOSEDIR_VOID
+-# TL? AC_FUNC_ERROR_AT_LINE
+-# TL? AC_FUNC_MALLOC
+-# TL? AC_FUNC_VPRINTF
+ # Check for library functions.
+ AC_FUNC_STAT
+ AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
+@@ -185,14 +179,17 @@
+ 
+ # TL: skip ttfautohint?
+ 
+-# Add option to enable linking of bundled libraries (brotli, woff2, xxhash).
++# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
+ AC_ARG_ENABLE([bundled-libs],
+ 	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])],
+ 	[use_bundled_libs=yes])
+ AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$use_bundled_libs" = "xyes" dnl
+                                || test "x$enable_native_texlive_build" = xyes])
+-# that is, use bundled libs for native TL build.
++# that is, force using bundled libs for native TL build.
+ 
++# TL: use bundled md5 too
++AM_CONDITIONAL([USE_BUNDLED_MD5], true)
++
+ # TL: not going to build_manpage (which is the default).
+ # TL: not going to attempt code coverage; need to subst it away.
+ AM_CONDITIONAL([CODE_COVERAGE_ENABLED], false)
+@@ -210,6 +207,7 @@
+ 	dvisvgm-src/libs/brotli/Makefile
+ 	dvisvgm-src/libs/clipper/Makefile
+ 	dvisvgm-src/libs/ff-woff/Makefile
++	dvisvgm-src/libs/md5/Makefile
+ 	dvisvgm-src/libs/potrace/Makefile
+ 	dvisvgm-src/libs/variant/Makefile
+ 	dvisvgm-src/libs/woff2/Makefile
+diff -u1r dvisvgm-2.6/Makefile.am dvisvgm-src/Makefile.am
+--- dvisvgm-2.6/Makefile.am	2018-07-31 07:51:05.000000000 -0700
++++ dvisvgm-src/Makefile.am	2018-09-11 08:17:11.309982883 -0700
 @@ -7,3 +7,3 @@
  EXTRA_DIST = COPYING
 -SUBDIRS = libs src tests doc
 +SUBDIRS = libs src #not for TL: tests doc
  ACLOCAL_AMFLAGS = -I m4
-diff -u1r dvisvgm-2.5/src/Makefile.am dvisvgm-src/src/Makefile.am
---- dvisvgm-2.5/src/Makefile.am	2018-07-31 07:53:41.000000000 -0700
-+++ dvisvgm-src/src/Makefile.am	2018-08-27 16:28:25.615599693 -0700
+diff -u1r dvisvgm-2.6/src/Makefile.am dvisvgm-src/src/Makefile.am
+--- dvisvgm-2.6/src/Makefile.am	2018-09-08 00:57:37.000000000 -0700
++++ dvisvgm-src/src/Makefile.am	2018-09-13 10:00:48.798891259 -0700
 @@ -14,6 +14,3 @@
  	$(noinst_LIBRARIES) \
 -	../libs/clipper/libclipper.a \
@@ -17,7 +81,7 @@ diff -u1r dvisvgm-2.5/src/Makefile.am dvisvgm-src/src/Makefile.am
 -	$(ZLIB_LIBS)
 +	../libs/clipper/libclipper.a
  
-@@ -43,3 +40,11 @@
+@@ -49,3 +46,11 @@
  
 +dvisvgm_LDADD += \
 +	$(KPATHSEA_LIBS) \
@@ -29,7 +93,7 @@ diff -u1r dvisvgm-2.5/src/Makefile.am dvisvgm-src/src/Makefile.am
  dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES)
 +dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
  
-@@ -263,18 +268,16 @@
+@@ -273,18 +278,16 @@
  
 -AM_CFLAGS = -Wall \
 -	$(ZLIB_CFLAGS) \
@@ -57,21 +121,26 @@ diff -u1r dvisvgm-2.5/src/Makefile.am dvisvgm-src/src/Makefile.am
 +	-I$(dvisvgm_srcdir)/libs/potrace \
 +	-I$(dvisvgm_srcdir)/libs/xxHash
  else
-@@ -291,4 +294,4 @@
+@@ -301,4 +304,4 @@
  AM_CFLAGS +=  \
 -	-I$(top_srcdir)/libs/ff-woff/fontforge \
 -	-I$(top_srcdir)/libs/ff-woff/inc
 +	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
 +	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
  
-@@ -298,4 +301,4 @@
+@@ -308,4 +311,4 @@
  AM_CXXFLAGS +=  \
 -	-I$(top_srcdir)/libs/brotli/include \
 -	-I$(top_srcdir)/libs/woff2/include
 +	-I$(dvisvgm_srcdir)/libs/brotli/include \
 +	-I$(dvisvgm_srcdir)/libs/woff2/include
  else
-@@ -309,3 +312,16 @@
+@@ -317,3 +320,3 @@
+ if USE_BUNDLED_MD5
+-AM_CXXFLAGS += -I$(top_srcdir)/libs/md5
++AM_CXXFLAGS += -I$(dvisvgm_srcdir)/libs/md5
+ else
+@@ -326,3 +329,16 @@
  
 +AM_CXXFLAGS += \
 +	$(KPATHSEA_INCLUDES) \
@@ -88,11 +157,11 @@ diff -u1r dvisvgm-2.5/src/Makefile.am dvisvgm-src/src/Makefile.am
 +if ! TEXLIVE_BUILD
 +# TL: do not try to rebuild these source files.
  # the command-line parser class is generated from options.xml by opt2cpp
-@@ -322,2 +338,3 @@
+@@ -339,2 +355,3 @@
  psdefs.ps: ;
 +endif ! TEXLIVE_BUILD
  
-@@ -326 +343,8 @@
+@@ -343 +360,8 @@
  CLEANFILES = *.gcda *.gcno
 +
 +## Rebuild libkpathsea
@@ -101,3 +170,32 @@ diff -u1r dvisvgm-2.5/src/Makefile.am dvisvgm-src/src/Makefile.am
 +@FREETYPE2_RULE@
 +## Rebuild libz
 +@ZLIB_RULE@
+diff -u1r dvisvgm-2.6/src/XXHashFunction.hpp dvisvgm-src/src/XXHashFunction.hpp
+--- dvisvgm-2.6/src/XXHashFunction.hpp	2018-09-08 00:57:37.000000000 -0700
++++ dvisvgm-src/src/XXHashFunction.hpp	2018-09-13 09:16:09.902914484 -0700
+@@ -34,7 +34,7 @@
+ 	using State = XXH32_state_t;
+-	static constexpr auto createState = XXH32_createState;
+-	static constexpr auto freeState = XXH32_freeState;
+-	static constexpr auto reset = XXH32_reset;
+-	static constexpr auto update = XXH32_update;
+-	static constexpr auto digest = XXH32_digest;
++	static constexpr auto createState = &XXH32_createState;
++	static constexpr auto freeState = &XXH32_freeState;
++	static constexpr auto reset = &XXH32_reset;
++	static constexpr auto update = &XXH32_update;
++	static constexpr auto digest = &XXH32_digest;
+ };
+@@ -44,7 +44,7 @@
+ 	using State = XXH64_state_t;
+-	static constexpr auto createState = XXH64_createState;
+-	static constexpr auto freeState = XXH64_freeState;
+-	static constexpr auto reset = XXH64_reset;
+-	static constexpr auto update = XXH64_update;
+-	static constexpr auto digest = XXH64_digest;
++	static constexpr auto createState = &XXH64_createState;
++	static constexpr auto freeState = &XXH64_freeState;
++	static constexpr auto reset = &XXH64_reset;
++	static constexpr auto update = &XXH64_update;
++	static constexpr auto digest = &XXH64_digest;
+ };

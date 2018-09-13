@@ -4,8 +4,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[2.5],[martin.gieseking@uos.de])
-DATE="August 2018"
+AC_INIT([dvisvgm],[2.6],[martin.gieseking@uos.de])
+DATE="September 2018"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -71,12 +71,6 @@ AS_IF([test -z "$kpseversion"],
 AC_SUBST(KPSE_CFLAGS)
 AC_SUBST(KPSE_LIBS)
 
-# Check how to link potrace library
-AC_CHECK_HEADER([potracelib.h],
-	[AC_CHECK_LIB(m, sqrt)] # required to pass potrace check
-	[AC_CHECK_LIB(potrace, potrace_trace,,
-		[AC_MSG_ERROR([potrace library not found])])])
-
 # Check how to link Ghostscript
 have_libgs=yes
 AC_CHECK_HEADER([ghostscript/iapi.h],
@@ -105,15 +99,15 @@ AC_ARG_WITH([ttfautohint],
 	[with_ttfautohint="$withval"],
 	[with_ttfautohint=no])
 
-# Add option to enable linking of bundled libraries (brotli, woff2, xxhash).
+# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
 AC_ARG_ENABLE([bundled-libs],
-	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])],
-	[use_bundled_libs=yes])
-AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$use_bundled_libs" = "xyes"])
+	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])])
+AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$enable_bundled_libs" = "xyes"])
 
-# If option --enable-bundled-libs is not given, look for system libraries of brotli, woff2, and xxhash.
-AS_IF([test "x$use_bundled_libs" != "xyes"],
+# If option --enable-bundled-libs is not given, look for system libraries of brotli, potrace, woff2, and xxhash.
+AS_IF([test "x$enable_bundled_libs" != "xyes"],
 	[AC_CHECK_HEADER([potracelib.h],
+		[AC_CHECK_LIB(m, sqrt)] # required to pass potrace check
 		[AC_CHECK_LIB(potrace, potrace_trace,,
 			[AC_MSG_ERROR([system library 'libpotrace' not found])])],
 		[AC_MSG_ERROR([header file 'potracelib.h' for system library 'libpotrace' not found])])]
@@ -146,12 +140,16 @@ AS_IF([test "x$enable_woff" != "xyes"],
 				[AC_MSG_WARN([disabled ttfautohint support])])])]
 		[AC_SUBST(TTFAUTOHINT_CFLAGS) AC_SUBST(TTFAUTOHINT_LIBS)])])
 
+AC_CHECK_HEADERS([openssl/md5.h])
+PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto], [HAVE_LIBCRYPTO=1], [HAVE_LIBCRYPTO=0])
+AM_CONDITIONAL([USE_BUNDLED_MD5], [test "$HAVE_LIBCRYPTO" -eq 0])
+
 AC_CHECK_LIB(z, gzopen)
 
 # Check for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([libintl.h stdlib.h string.h strings.h unistd.h])
+AC_CHECK_HEADERS_ONCE([libintl.h stdlib.h string.h strings.h unistd.h])
 
 # Check for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -222,6 +220,7 @@ AC_CONFIG_FILES([
 	libs/brotli/Makefile
 	libs/clipper/Makefile
 	libs/ff-woff/Makefile
+	libs/md5/Makefile
 	libs/potrace/Makefile
 	libs/variant/Makefile
 	libs/woff2/Makefile
