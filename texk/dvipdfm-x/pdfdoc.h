@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2017 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2018 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -26,9 +26,16 @@
 #include "pdfobj.h"
 #include "pdfdev.h"
 
-#define PDF_DOC_GRABBING_NEST_MAX 4
+enum pdf_page_boundary {
+    pdf_page_boundary__auto = 0,
+    pdf_page_boundary_mediabox,
+    pdf_page_boundary_cropbox,
+    pdf_page_boundary_artbox,
+    pdf_page_boundary_trimbox,
+    pdf_page_boundary_bleedbox
+};
 
-extern void     pdf_doc_set_verbose (void);
+#define PDF_DOC_GRABBING_NEST_MAX 4
 
 extern void     pdf_open_document  (const char *filename,
                                     int enable_encrypt,
@@ -57,7 +64,7 @@ extern pdf_obj *pdf_doc_get_reference  (const char *category);
 #define pdf_doc_this_page() pdf_doc_get_dictionary("@THISPAGE")
 
 extern int      pdf_doc_get_page_count (pdf_file *pf);
-extern pdf_obj *pdf_doc_get_page (pdf_file *pf, int page_no, int options,
+extern pdf_obj *pdf_doc_get_page (pdf_file *pf, int page_no, enum pdf_page_boundary opt_bbox,
 				  pdf_rect *bbox, pdf_tmatrix *matrix, pdf_obj **resources_p);
 
 extern int      pdf_doc_current_page_number    (void);

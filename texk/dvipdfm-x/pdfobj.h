@@ -51,10 +51,9 @@ typedef struct pdf_obj  pdf_obj;
 typedef struct pdf_file pdf_file;
 
 /* External interface to pdf routines */
-
-extern int      pdf_obj_get_verbose (void);
-extern void     pdf_obj_set_verbose (void);
 extern void     pdf_error_cleanup   (void);
+
+extern FILE    *pdf_get_output_file (void);
 
 extern void     pdf_out_init      (const char *filename,
                                    int enable_encrypt, int enable_objstm);

@@ -59,7 +59,7 @@
 #include "mfileio.h"
 #include "numbers.h"
 
-#include "dvipdfmx.h"
+#include "dpxconf.h"
 
 #include "pdfobj.h"
 
@@ -363,7 +363,7 @@ jpeg_include_image (pdf_ximage *ximage, FILE *fp)
 static void
 jpeg_get_density (struct JPEG_info *j_info, double *xdensity, double *ydensity)
 {
-  if (compat_mode) {
+  if (dpx_conf.compat_mode == dpx_mode_compat_mode) {
     *xdensity = *ydensity = 72.0 / 100.0;
     return;
   }

@@ -31,6 +31,7 @@
 #include "system.h"
 #include "mem.h"
 #include "error.h"
+#include "dpxconf.h"
 
 #include "mfileio.h"
 #include "numbers.h"
@@ -51,14 +52,6 @@
 #include "dvi.h"
 
 #include "pdfdev.h"
-
-static int verbose = 0;
-
-void
-pdf_dev_set_verbose (void)
-{
-  verbose++;
-}
 
 /* Not working yet... */
 double
@@ -1469,7 +1462,7 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   /* New font */
   mrec = pdf_lookup_fontmap_record(font_name);
 
-  if (verbose > 1)
+  if (dpx_conf.verbose_level > 1)
     print_fontmap(font_name, mrec);
 
   font->font_id = pdf_font_findresource(font_name, ptsize * dev_unit.dvi2pts, mrec);

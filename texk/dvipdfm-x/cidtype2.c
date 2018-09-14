@@ -31,6 +31,7 @@
 #include "numbers.h"
 #include "mem.h"
 #include "error.h"
+#include "dpxconf.h"
 #include "dpxfile.h"
 
 #include "pdfobj.h"
@@ -57,14 +58,7 @@
 #include "cid_p.h"
 #include "cidtype2.h"
 
-static int verbose   = 0;
 static int opt_flags = 0;
-
-void
-CIDFont_type2_set_verbose (void)
-{
-  verbose++;
-}
 
 void
 CIDFont_type2_set_flags (int32_t flags)
@@ -837,7 +831,7 @@ CIDFont_type2_dofont (CIDFont *font)
   if (CIDFont_get_embedding(font)) {
     if (tt_build_tables(sfont, glyphs) < 0)
       ERROR("Could not created FontFile stream.");
-    if (verbose > 1)
+    if (dpx_conf.verbose_level > 1)
       MESG("[%u glyphs (Max CID: %u)]", glyphs->num_glyphs, last_cid);
   } else {
     if (tt_get_metrics(sfont, glyphs) < 0)
@@ -910,7 +904,7 @@ CIDFont_type2_dofont (CIDFont *font)
   if (!fontfile)
     ERROR("Could not created FontFile stream for \"%s\".", font->ident);
 
-  if (verbose > 1) {
+  if (dpx_conf.verbose_level > 1) {
     MESG("[%ld bytes]", pdf_stream_length(fontfile));
   }
 

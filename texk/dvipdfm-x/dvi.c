@@ -41,6 +41,7 @@
 #include "error.h"
 #include "mfileio.h"
 #include "numbers.h"
+#include "dpxconf.h"
 
 #include "pdfdev.h"
 #include "pdfdoc.h"
@@ -195,7 +196,6 @@ static struct font_def
 
 static int num_def_fonts = 0, max_def_fonts = 0;
 static int compute_boxes = 0, link_annot    = 1;
-static int verbose       = 0;
 
 #define DVI_PAGE_BUF_CHUNK              0x10000U        /* 64K should be plenty for most pages */
 
@@ -292,16 +292,6 @@ static int32_t get_buffered_unsigned_num(unsigned char num)
 
 #define skip_bufferd_bytes(n) dvi_page_buf_index += n
 
-void
-dvi_set_verbose (void)
-{
-  verbose++;
-  subfont_set_verbose();
-  tfm_set_verbose();
-  vf_set_verbose ();
-  spc_set_verbose();
-}
-
 unsigned int
 dvi_npages (void)
 {
@@ -326,7 +316,7 @@ check_id_bytes (void) {
 
 static void
 need_XeTeX (int c) {
-  if (!is_xdv)
+  if (dpx_conf.compat_mode != dpx_mode_xdv_mode)
     ERROR ("DVI opcode %i only valid for XeTeX", c);
 }
 
@@ -366,7 +356,8 @@ find_post (void)
   } 
 
   post_id_byte = ch;
-  is_xdv = (ch == XDV_ID || ch == XDV_ID_OLD);
+  if (ch == XDV_ID || ch == XDV_ID_OLD)
+    dpx_conf.compat_mode = dpx_mode_xdv_mode;
   is_ptex = ch == DVIV_ID;
 
   /* Make sure post_post is really there */
@@ -411,7 +402,7 @@ get_page_info (int32_t post_location)
   if (num_pages == 0) {
     ERROR("Page count is 0!");
   }
-  if (verbose > 2) {
+  if (dpx_conf.verbose_level > 2) {
     MESG("Page count:\t %4d\n", num_pages);
   }
 
@@ -464,7 +455,7 @@ get_dvi_info (int32_t post_location)
     ERROR("Capacity exceeded.");
   }
 
-  if (verbose > 2) {
+  if (dpx_conf.verbose_level > 2) {
     MESG("DVI File Info\n");
     MESG("Unit: %ld / %ld\n",    dvi_info.unit_num, dvi_info.unit_den);
     MESG("Magnification: %ld\n", dvi_info.mag);
@@ -493,7 +484,8 @@ get_preamble_dvi_info (void)
   }
 
   pre_id_byte = ch;
-  is_xdv = (ch == XDV_ID || ch == XDV_ID_OLD);
+  if (ch == XDV_ID || ch == XDV_ID_OLD)
+    dpx_conf.compat_mode = dpx_mode_xdv_mode;
   is_ptex = ch == DVI_ID; /* maybe */
   
   dvi_info.unit_num = get_positive_quad(dvi_file, "DVI", "unit_num");
@@ -507,13 +499,13 @@ get_preamble_dvi_info (void)
   }
   dvi_info.comment[ch] = '\0';
 
-  if (verbose > 2) {
+  if (dpx_conf.verbose_level > 2) {
     MESG("DVI File Info\n");
     MESG("Unit: %ld / %ld\n",    dvi_info.unit_num, dvi_info.unit_den);
     MESG("Magnification: %ld\n", dvi_info.mag);
   }
 
-  if (verbose) {
+  if (dpx_conf.verbose_level > 0) {
     MESG("DVI Comment: %s\n", dvi_info.comment);
   }
 
@@ -651,7 +643,7 @@ get_dvi_fonts (int32_t post_location)
       ERROR(invalid_signature);
     }
   }
-  if (verbose > 2) {
+  if (dpx_conf.verbose_level > 2) {
     unsigned  i;
 
     MESG("\n");
@@ -678,7 +670,7 @@ static void get_comment (void)
     ERROR(invalid_signature);
   }
   dvi_info.comment[length] = '\0';
-  if (verbose) {
+  if (dpx_conf.verbose_level > 0) {
     MESG("DVI Comment: %s\n", dvi_info.comment);
   }
 }
@@ -792,7 +784,7 @@ dvi_do_special (const void *buffer, int32_t size)
   mag    =  dvi_tell_mag();
 
   if (spc_exec_special(p, size, x_user, y_user, mag) < 0) {
-    if (verbose) {
+    if (dpx_conf.verbose_level > 0) {
       dump(p, p + size);
     }
   }
@@ -815,7 +807,7 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
   int           subfont_id = -1, font_id; /* VF or device font ID */
   fontmap_rec  *mrec;
 
-  if (verbose)
+  if (dpx_conf.verbose_level > 0)
     MESG("<%s@%.2fpt", tfm_name, ptsize * dvi2pts);
 
   need_more_fonts(1);
@@ -861,7 +853,7 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
     if (font_id >= 0) {
       loaded_fonts[cur_id].type    = VIRTUAL;
       loaded_fonts[cur_id].font_id = font_id;
-      if (verbose)
+      if (dpx_conf.verbose_level > 0)
         MESG("(VF)>");
       return  cur_id;
     }
@@ -891,7 +883,7 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
       else {
         loaded_fonts[cur_id].type    = VIRTUAL;
         loaded_fonts[cur_id].font_id = font_id;
-        if (verbose)
+        if (dpx_conf.verbose_level > 0)
           MESG("(OVF)>");
         return  cur_id;
       }
@@ -940,7 +932,7 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
   loaded_fonts[cur_id].type    = PHYSICAL;
   loaded_fonts[cur_id].font_id = font_id;
 
-  if (verbose)
+  if (dpx_conf.verbose_level > 0)
     MESG(">");
 
   return  cur_id;
@@ -966,7 +958,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   struct tt_hhea_table *hhea;
   int is_dfont = 0, is_type1 = 0;
 
-  if (verbose)
+  if (dpx_conf.verbose_level > 0)
     MESG("<%s@%.2fpt", filename, ptsize * dvi2pts);
 
   if ((path = dpx_find_dfont_file(filename)) != NULL &&
@@ -1069,7 +1061,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   loaded_fonts[cur_id].slant = mrec->opt.slant;
   loaded_fonts[cur_id].embolden = mrec->opt.bold;
 
-  if (verbose)
+  if (dpx_conf.verbose_level > 0)
     MESG(">");
 
   return cur_id;
@@ -1312,7 +1304,7 @@ dvi_rule (int32_t width, int32_t height)
 void
 dvi_dirchg (unsigned char dir)
 {
-  if (verbose)
+  if (dpx_conf.verbose_level > 0)
     fprintf(stderr, "  > dvi_dirchg %d\n", dir);
   dvi_state.d = dir;
   pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1,3: vertical */

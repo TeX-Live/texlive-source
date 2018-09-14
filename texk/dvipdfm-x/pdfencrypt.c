@@ -27,17 +27,11 @@
 #include <string.h>
 #include <time.h>
 
-#ifdef WIN32
-#include <conio.h>
-#define getch _getch
-#else  /* !WIN32 */
-#include <unistd.h>
-#endif /* WIN32 */
-
 #include "system.h"
 #include "mem.h"
 #include "numbers.h"
 #include "error.h"
+#include "dpxconf.h"
 #include "pdfobj.h"
 #include "unicode.h"
 #include "dpxcrypt.h"
@@ -87,13 +81,6 @@ static const unsigned char padding_bytes[32] = {
   0x2e, 0x2e, 0x00, 0xb6, 0xd0, 0x68, 0x3e, 0x80,
   0x2f, 0x0c, 0xa9, 0xfe, 0x64, 0x53, 0x69, 0x7a
 };
-
-static unsigned char verbose = 0;
-
-void pdf_enc_set_verbose (void)
-{
-  if (verbose < 255) verbose++;
-}
 
 static void
 pdf_enc_init (int use_aes, int encrypt_metadata)
@@ -439,29 +426,6 @@ compute_user_password_V5 (struct pdf_sec *p, const char *uplain)
   RELEASE(UE);
 }
 
-#ifdef WIN32
-/* Broken on mintty? */
-static char *
-getpass (const char *prompt)
-{
-  static char pwd_buf[128];
-  size_t i;
-
-  fputs(prompt, stderr);
-  fflush(stderr);
-  for (i = 0; i < sizeof(pwd_buf)-1; i++) {
-    pwd_buf[i] = getch();
-    if (pwd_buf[i] == '\r' || pwd_buf[i] == '\n')
-      break;
-    fputs("*", stderr);
-    fflush(stderr);
-  }
-  pwd_buf[i] = '\0';
-  fputs("\n", stderr);
-  return pwd_buf;
-}
-#endif
-
 static void
 check_version (struct pdf_sec *p, int version)
 {
@@ -558,9 +522,9 @@ pdf_enc_set_passwd (unsigned int bits, unsigned int perm,
                     const char *oplain, const char *uplain)
 {
   struct pdf_sec *p = &sec_data;
-  char            input[128], opasswd[128], upasswd[128];
-  char *retry_passwd;
+  char            opasswd[128], upasswd[128];
   int             version;
+  char            empty_passwd[1] = "\0";
 
   version = pdf_get_version();
 
@@ -612,31 +576,13 @@ pdf_enc_set_passwd (unsigned int bits, unsigned int perm,
     if (preproc_password(oplain, opasswd, p->V) < 0)
       WARN("Invaid UTF-8 string for password.");
   } else {
-    while (1) {
-      strncpy(input, getpass("Owner password: "), MAX_PWD_LEN);
-      retry_passwd = getpass("Re-enter owner password: ");
-      if (!strncmp(input, retry_passwd, MAX_PWD_LEN))
-	break;
-      fputs("Password is not identical.\nTry again.\n", stderr);
-      fflush(stderr);
-    }
-    if (preproc_password(input, opasswd, p->V) < 0)
-      WARN("Invaid UTF-8 string for password.");
+    preproc_password(empty_passwd, opasswd, p->V);
   }
   if (uplain) {
     if (preproc_password(uplain, upasswd, p->V) < 0)
       WARN("Invalid UTF-8 string for passowrd.");
   } else {
-    while (1) {
-      strncpy(input, getpass("User password: "), MAX_PWD_LEN);
-      retry_passwd = getpass("Re-enter user password: ");
-      if (!strncmp(input, retry_passwd, MAX_PWD_LEN))
-	break;
-      fputs("Password is not identical.\nTry again.\n", stderr);
-      fflush(stderr);
-    }
-    if (preproc_password(input, upasswd, p->V) < 0)
-      WARN("Invaid UTF-8 string for password.");
+    preproc_password(empty_passwd, upasswd, p->V);
   }
 
   if (p->R >= 3)

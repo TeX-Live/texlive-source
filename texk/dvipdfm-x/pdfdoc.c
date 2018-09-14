@@ -35,6 +35,7 @@
 #include "mem.h"
 #include "error.h"
 #include "mfileio.h"
+#include "dpxconf.h"
 
 #include "numbers.h"
 
@@ -66,8 +67,6 @@
 #define PDFDOC_PAGES_ALLOC_SIZE   128u
 #define PDFDOC_ARTICLE_ALLOC_SIZE 16
 #define PDFDOC_BEAD_ALLOC_SIZE    16
-
-static int verbose = 0;
 
 static char  manual_thumb_enabled  = 0;
 static char *thumb_basename = NULL;
@@ -113,14 +112,6 @@ read_thumbnail (const char *thumb_filename)
   return image_ref;
 }
 
-void
-pdf_doc_set_verbose (void)
-{
-  verbose++;
-  pdf_font_set_verbose();
-  pdf_color_set_verbose();
-  pdf_ximage_set_verbose();
-}
 
 typedef struct pdf_form
 {
@@ -922,7 +913,7 @@ pdf_doc_get_page_count (pdf_file *pf)
 }
 
 static int
-set_bounding_box (pdf_rect *bbox, int option,
+set_bounding_box (pdf_rect *bbox, enum pdf_page_boundary opt_bbox,
                   pdf_obj *media_box, pdf_obj *crop_box,
                   pdf_obj *art_box, pdf_obj *trim_box, pdf_obj *bleed_box)
 {
@@ -942,7 +933,7 @@ set_bounding_box (pdf_rect *bbox, int option,
   VALIDATE_BOX(trim_box);
   VALIDATE_BOX(bleed_box);
 
-  if (option == 0) {
+  if (opt_bbox == pdf_page_boundary__auto) {
     if (crop_box)
       box = pdf_link_obj(crop_box);
     else if (art_box)
@@ -968,20 +959,20 @@ set_bounding_box (pdf_rect *bbox, int option,
       bleed_box = pdf_link_obj(crop_box);
     }
     /* At this point all boxes must be defined. */
-    switch (option) {
-    case 1: /* crop box */
+    switch (opt_bbox) {
+    case pdf_page_boundary_cropbox:
       box = pdf_link_obj(crop_box);
       break;
-    case 2: /* mdeia box */
+    case pdf_page_boundary_mediabox:
       box = pdf_link_obj(media_box);
       break;
-    case 3: /* art box */
+    case pdf_page_boundary_artbox:
       box = pdf_link_obj(art_box);
       break;
-    case 4: /* trim box */
+    case pdf_page_boundary_trimbox:
       box = pdf_link_obj(trim_box);
       break;
-    case 5: /* bleen box */
+    case pdf_page_boundary_bleedbox:
       box = pdf_link_obj(bleed_box);
       break;
     default:
@@ -1016,7 +1007,8 @@ set_bounding_box (pdf_rect *bbox, int option,
     }
 
     /* New scheme only for XDV files */
-    if (is_xdv || option) {
+    if (dpx_conf.compat_mode == dpx_mode_xdv_mode ||
+        opt_bbox != pdf_page_boundary__auto) {
       for (i = 4; i--; ) {
         double x;
         pdf_obj *tmp = pdf_deref_obj(pdf_get_array(media_box, i));
@@ -1155,7 +1147,7 @@ set_transform_matrix (pdf_tmatrix *matrix, pdf_rect *bbox, pdf_obj *rotate)
  */
 pdf_obj *
 pdf_doc_get_page (pdf_file *pf,
-                  int page_no, int options,             /* load options */
+                  int page_no, enum pdf_page_boundary opt_bbox, /* load options */
                   pdf_rect *bbox, pdf_tmatrix *matrix,  /* returned value */
                   pdf_obj **resources_p /* returned values */
                   ) {
@@ -1279,7 +1271,7 @@ pdf_doc_get_page (pdf_file *pf,
     *resources_p = pdf_link_obj(resources);
 
   /* Select page boundary box */
-  error = set_bounding_box(bbox, options, media_box, crop_box, art_box, trim_box, bleed_box);
+  error = set_bounding_box(bbox, opt_bbox, media_box, crop_box, art_box, trim_box, bleed_box);
   if (error)
     goto error_exit;
   /* Set transformation matrix */
@@ -1801,7 +1793,7 @@ pdf_doc_close_names (pdf_doc *p)
       else {
         name_tree = pdf_names_create_tree(data, &count, &pdoc.gotos);
 
-        if (verbose && count < data->count)
+        if (dpx_conf.verbose_level > 0 && count < data->count)
           MESG("\nRemoved %ld unused PDF destinations\n", data->count-count);
 
         if (count < pdoc.gotos.count)

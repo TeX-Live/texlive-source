@@ -63,20 +63,13 @@
 
 #include "error.h"
 
-int is_xdv = 0;
-int translate_origin = 0;
-
 #if defined(LIBDPX)
 const char *my_name = "ApTeX";
 #else
 const char *my_name;
 #endif /* LIBDPX */
 
-int compat_mode = 0;     /* 0 = dvipdfmx, 1 = dvipdfm */
-
 static int verbose = 0;
-
-static int mp_mode = 0;
 
 static int opt_flags = 0;
 
@@ -124,6 +117,8 @@ static char *psize_optarg = NULL;
 
 int always_embed = 0; /* always embed fonts, regardless of licensing flags */
 
+int translate_origin = 0;
+
 char *dvi_filename = NULL, *pdf_filename = NULL;
 
 static void
@@ -135,7 +130,7 @@ set_default_pdf_filename(void)
   const char *dvi_base;
 
   dvi_base = xbasename(dvi_filename);
-  if (mp_mode &&
+  if (dpx_conf.compat_mode == dpx_mode_mpost_mode &&
       strlen(dvi_base) > 4 &&
       FILESTRCASEEQ(".mps", dvi_base + strlen(dvi_base) - 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
@@ -403,6 +398,59 @@ select_pages (const char *pagespec)
   return;
 }
 
+/* Ask passwords for encryption */
+#ifdef WIN32
+/* Broken on mintty? */
+#include <conio.h>
+#define getch _getch
+static char *
+getpass (const char *prompt)
+{
+  static char pwd_buf[128];
+  size_t i;
+
+  fputs(prompt, stderr);
+  fflush(stderr);
+  for (i = 0; i < sizeof(pwd_buf)-1; i++) {
+    pwd_buf[i] = getch();
+    if (pwd_buf[i] == '\r' || pwd_buf[i] == '\n')
+      break;
+    fputs("*", stderr);
+    fflush(stderr);
+  }
+  pwd_buf[i] = '\0';
+  fputs("\n", stderr);
+  return pwd_buf;
+}
+#else  /* !WIN32 */
+#include <unistd.h>
+#endif /* WIN32 */
+
+static int
+get_enc_password (char *uplain, char *oplain)
+{
+  char  *retry_passwd;
+
+  while (1) {
+    strncpy(uplain, getpass("Owner password: "), MAX_PWD_LEN);
+    retry_passwd = getpass("Re-enter owner password: ");
+    if (!strncmp(uplain, retry_passwd, MAX_PWD_LEN))
+      break;
+    fputs("Password is not identical.\nTry again.\n", stderr);
+    fflush(stderr);
+  }
+  while (1) {
+    strncpy(oplain, getpass("User password: "), MAX_PWD_LEN);
+    retry_passwd = getpass("Re-enter user password: ");
+    if (!strncmp(oplain, retry_passwd, MAX_PWD_LEN))
+      break;
+    fputs("Password is not identical.\nTry again.\n", stderr);
+    fflush(stderr);
+  }
+
+  return 0;
+}
+
 static const char *optstrig = ":hD:r:m:g:x:y:o:s:p:clf:i:qtvV:z:d:I:K:P:O:MSC:Ee";
 
 static struct option long_options[] = {
@@ -459,14 +507,7 @@ do_early_args (int argc, char *argv[])
     int i;
 
     for (i = 0; i < verbose; i++) {
-      dvi_set_verbose();
-      pdf_dev_set_verbose();
-      pdf_doc_set_verbose();
-      pdf_enc_set_verbose();
-      pdf_obj_set_verbose();
-      pdf_fontmap_set_verbose();
-      dpx_file_set_verbose();
-      tt_aux_set_verbose();
+      dpx_conf.verbose_level++;
     }
   }
 }
@@ -495,7 +536,7 @@ do_args (int argc, char *argv[], const char *source, int unsafe)
       break;
 
     case 132: /* --dvipdfm */
-      compat_mode = 1;
+      dpx_conf.compat_mode = dpx_mode_compat_mode;
       break;
 
     case 133: /* --kpathsea-debug */
@@ -645,7 +686,7 @@ do_args (int argc, char *argv[], const char *source, int unsafe)
       break;
 
     case 'M':
-      mp_mode = 1;
+      dpx_conf.compat_mode = dpx_mode_mpost_mode;
       break;
 
     case 'C':
@@ -665,7 +706,7 @@ do_args (int argc, char *argv[], const char *source, int unsafe)
       break;
 
     case 'e':
-      if (compat_mode) {
+      if (dpx_conf.compat_mode == dpx_mode_compat_mode) {
         WARN("dvipdfm \"-e\" option not supported.");
         break;
       } /* else fall through */
@@ -806,8 +847,12 @@ error_cleanup (void)
   pdf_close_images();  /* delete temporary files */
   pdf_error_cleanup();
   if (pdf_filename) {
-    remove(pdf_filename);
-    fprintf(stderr, "\nOutput file removed.\n");
+    if (pdf_get_output_file()) {
+      remove(pdf_filename);
+      fprintf(stderr, "\nOutput file removed.\n");
+    } else {
+      fprintf(stderr, "\nNo output PDF file written.\n");
+    }
   }
 }
 
@@ -1021,11 +1066,11 @@ main (int argc, char *argv[])
   }
   if (FILESTRCASEEQ (base, "ebb")) {
     my_name = "ebb";
-    compat_mode = 1;
+    dpx_conf.compat_mode = dpx_mode_compat_mode;
     return extractbb (argc, argv);
   }
   if (FILESTRCASEEQ (base, "dvipdfm"))
-    compat_mode = 1;
+    dpx_conf.compat_mode = dpx_mode_compat_mode;
   if (FILESTRCASEEQ (base, "dvipdfmx"))
     my_name = "dvipdfmx";
   else
@@ -1073,13 +1118,15 @@ main (int argc, char *argv[])
 
   pdf_enc_compute_id_string(dvi_filename, pdf_filename);
   if (do_encryption) {
+    char uplain[MAX_PWD_LEN], oplain[MAX_PWD_LEN];
     if (key_bits > 40 && pdf_check_version(1, 4) < 0)
       ERROR("Chosen key length requires at least PDF 1.4. "
             "Use \"-V 4\" to change.");
-    pdf_enc_set_passwd(key_bits, permission, NULL, NULL);
+    get_enc_password(uplain, oplain);
+    pdf_enc_set_passwd(key_bits, permission, uplain, oplain);
   }
 
-  if (mp_mode) {
+  if (dpx_conf.compat_mode == dpx_mode_mpost_mode) {
     x_offset = 0.0;
     y_offset = 0.0;
     dvi2pts  = 0.01; /* dvi2pts controls accuracy. */
@@ -1164,11 +1211,13 @@ main (int argc, char *argv[])
   /* Please move this to spc_init_specials(). */
   if (opt_flags & OPT_TPIC_TRANSPARENT_FILL)
     tpic_set_fill_mode(1);
+  if (translate_origin)
+    mps_set_translate_origin(1);
 
   if (opt_flags & OPT_PDFOBJ_NO_PREDICTOR)
     pdf_set_use_predictor(0); /* No prediction */
 
-  if (mp_mode) {
+  if (dpx_conf.compat_mode == dpx_mode_mpost_mode) {
     do_mps_pages();
   } else {
     do_dvi_pages();
@@ -1183,7 +1232,7 @@ main (int argc, char *argv[])
 
   pdf_close_fontmaps(); /* pdf_font may depend on fontmap. */
 
-  if (!mp_mode)
+  if (dpx_conf.compat_mode != dpx_mode_mpost_mode)
     dvi_close();
 
   MESG("\n");

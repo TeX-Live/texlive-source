@@ -1,3 +1,17 @@
+2018-09-14  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* agl.[ch], bmpimage.c, cid.[ch], cidtype0.[ch], cidtype2.[ch],
+	cmap.[ch], cmap_read.c, dpxconf.[ch], dpxfile.[ch], dvi.[ch],
+	dvipdfmx.[ch], epdf.c, fontmap.[ch], jp2image.c, jpegimage.c,
+	mpost.[ch], pdfcolor.[ch], pdfdev.[ch], pdfdoc.[ch], pdfdraw.c,
+	pdfencoding.[ch], pdfencrypt.[ch], pdffont.[ch], pdfobj.[ch],
+	pdfximage.[ch], pngimage.c, spc_pdfm.c, spc_util.[ch],
+	specials.[ch], subfont.[ch], t1_char.c, tfm.[ch], truetype.c,
+	tt_aux.[ch], tt_cmap.[ch], tt_gsub.[ch], type0.[ch], type1.c,
+	type1c.c, vf.[ch], xbb.c: Cleanup. Remove duplicated code.
+	Reorganize global variables.
+	* configure.ac: Version 20180914.
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* xdvipfm-bb.test: LC_ALL=LANGUAGE=C.

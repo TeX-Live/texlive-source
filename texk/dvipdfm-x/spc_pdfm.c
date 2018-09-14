@@ -36,6 +36,7 @@
 #include "fontmap.h"
 #include "dpxfile.h"
 #include "dpxutil.h"
+#include "dpxconf.h"
 
 #include "unicode.h"
 
@@ -553,7 +554,7 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
       CMap *cmap = CMap_cache_get(cd->cmap_id);
       if (needreencode(kp, vp, cd))
         r = reencodestring(cmap, vp);
-    } else if (is_xdv && cd && cd->taintkeys) {
+    } else if ((dpx_conf.compat_mode == dpx_mode_xdv_mode) && cd && cd->taintkeys) {
       /* Please fix this... PDF string object is not always a text string.
        * needreencode() is assumed to do a simple check if given string
        * object is actually a text string.
@@ -581,7 +582,7 @@ parse_pdf_dict_with_tounicode (const char **pp, const char *endptr, struct touni
   pdf_obj  *dict;
 
   /* disable this test for XDV files, as we do UTF8 reencoding with no cmap */
-  if (!is_xdv && cd->cmap_id < 0)
+  if ((dpx_conf.compat_mode != dpx_mode_xdv_mode) && cd->cmap_id < 0)
     return  parse_pdf_dict(pp, endptr, NULL);
 
   /* :( */
@@ -1077,7 +1078,7 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);
 
   if (ident) {
-    if (compat_mode &&
+    if ((dpx_conf.compat_mode == dpx_mode_compat_mode) &&
         pdf_ximage_get_subtype(xobj_id) == PDF_XOBJECT_TYPE_IMAGE)
       pdf_ximage_set_attr(xobj_id, 1, 1, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0);
     addresource(sd, ident, xobj_id);
@@ -1108,7 +1109,7 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
   }
 
 #if 0
-  if (is_xdv && maybe_reencode_utf8(name) < 0)
+  if ((dpx_conf.compat_mode == dpx_mode_xdv_mode) && maybe_reencode_utf8(name) < 0)
     WARN("Failed to convert input string to UTF16...");
 #endif
 

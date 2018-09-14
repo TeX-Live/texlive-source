@@ -24,6 +24,7 @@
 #include <time.h>
 #include <string.h>
 
+#include "dpxconf.h"
 #include "dpxutil.h"
 
 #include "numbers.h"
@@ -44,15 +45,7 @@
 #include "dvipdfmx.h"
 #include "pdflimits.h"
 
-static int PageBox = 0;
-/*
- PageBox=0 :default
- PageBox=1 :cropbox
- PageBox=2 :mediabox
- PageBox=3 :artbox
- PageBox=4 :trimbox
- PageBox=5 :bleedbox
-*/
+static enum pdf_page_boundary PageBox = pdf_page_boundary__auto;
 
 static int Include_Page = 1;
 
@@ -89,8 +82,6 @@ static void usage(void)
   fprintf(stdout, "\nTry \"%s --help\" for more information.\n", my_name);
   exit(1);
 }
-
-static char verbose = 0;
 
 static void do_time(FILE *file)
 {
@@ -133,7 +124,7 @@ static char *make_xbb_filename(const char *name)
     strncpy(result, name, strlen(name)-strlen(extensions[i]));
     result[strlen(name)-strlen(extensions[i])] = 0;
   }
-  strcat(result, (compat_mode ? ".bb" : ".xbb"));
+  strcat(result, ((dpx_conf.compat_mode == dpx_mode_compat_mode) ? ".bb" : ".xbb"));
   return result;
 }
 
@@ -160,7 +151,7 @@ static void write_xbb(char *fname,
 #endif
   }
 
-  if (verbose) {
+  if (dpx_conf.verbose_level > 0) {
     MESG("Writing to %s: ", xbb_to_file ? outname : "stdout");
     MESG("Bounding box: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
   }
@@ -169,7 +160,7 @@ static void write_xbb(char *fname,
   fprintf(fp, "%%%%Creator: extractbb %s\n", VERSION);
   fprintf(fp, "%%%%BoundingBox: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
 
-  if (!compat_mode) {
+  if (dpx_conf.compat_mode != dpx_mode_compat_mode) {
     /* Note:
      * According to Adobe Technical Note #5644, the arguments to
      * "%%HiResBoundingBox:" must be of type real. And according
@@ -326,11 +317,11 @@ int extractbb (int argc, char *argv[])
       exit(0);
 
     case 'B':
-      if (strcasecmp (optarg, "cropbox") == 0) PageBox = 1;
-      else if (strcasecmp (optarg, "mediabox") == 0) PageBox = 2;
-      else if (strcasecmp (optarg, "artbox") == 0) PageBox = 3; 
-      else if (strcasecmp (optarg, "trimbox") == 0) PageBox = 4;
-      else if (strcasecmp (optarg, "bleedbox") == 0) PageBox = 5;
+      if (strcasecmp (optarg, "cropbox") == 0) PageBox = pdf_page_boundary_cropbox;
+      else if (strcasecmp (optarg, "mediabox") == 0) PageBox = pdf_page_boundary_mediabox;
+      else if (strcasecmp (optarg, "artbox") == 0) PageBox = pdf_page_boundary_artbox; 
+      else if (strcasecmp (optarg, "trimbox") == 0) PageBox = pdf_page_boundary_trimbox;
+      else if (strcasecmp (optarg, "bleedbox") == 0) PageBox = pdf_page_boundary_bleedbox;
       else {
         fprintf(stderr, "%s: Invalid argument \"-B %s\"", my_name, optarg);
         usage();
@@ -343,8 +334,11 @@ int extractbb (int argc, char *argv[])
         Include_Page = 1;
       break;
 
-    case 'q': case 'v':
-      verbose = c == 'v';
+    case 'q':
+      dpx_conf.verbose_level = 0;
+      break;
+    case 'v':
+      dpx_conf.verbose_level++;
       break;
 
     case 'O':
@@ -352,8 +346,11 @@ int extractbb (int argc, char *argv[])
     case 'b':  /* Ignored for backward compatibility */
       break;
 
-    case 'm': case 'x':
-      compat_mode = c == 'm';
+    case 'm':
+      dpx_conf.compat_mode = dpx_mode_compat_mode;
+      break;
+    case 'x':
+      dpx_conf.compat_mode = dpx_mode_normal_mode;
       break;
 
     default:

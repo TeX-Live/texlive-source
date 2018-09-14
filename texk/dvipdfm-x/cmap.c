@@ -45,19 +45,13 @@
 #include "system.h"
 #include "mem.h"
 #include "error.h"
+#include "dpxconf.h"
 #include "dpxutil.h"
 
 #include "cmap_p.h"
 #include "cmap.h"
 
-static int __verbose = 0;
 static int __silent  = 0;
-
-void
-CMap_set_verbose (void)
-{
-  __verbose++;
-}
 
 void
 CMap_set_silent (int value)
@@ -932,7 +926,7 @@ CMap_cache_find (const char *cmap_name)
     return -1;
   }
      
-  if (__verbose)
+  if (dpx_conf.verbose_level > 0)
     MESG("(CMap:%s", cmap_name);
 
   if (__cache->num >= __cache->max) {
@@ -948,7 +942,7 @@ CMap_cache_find (const char *cmap_name)
 
   DPXFCLOSE(fp);
 
-  if (__verbose)
+  if (dpx_conf.verbose_level > 0)
     MESG(")");
 
   return id;

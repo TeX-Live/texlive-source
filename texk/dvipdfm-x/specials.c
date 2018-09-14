@@ -30,6 +30,7 @@
 #include "mem.h"
 #include "error.h"
 #include "numbers.h"
+#include "dpxconf.h"
 
 #include "dvi.h"
 
@@ -51,14 +52,6 @@
 #include "spc_xtx.h"
 
 #include "specials.h"
-
-static int verbose = 0;
-void
-spc_set_verbose (void)
-{
-  verbose++;
-}
-
 
 void
 spc_warn (struct spc_env *spe, const char *fmt, ...)
@@ -571,7 +564,8 @@ spc_exec_special (const char *buffer, int32_t size,
   struct spc_arg     args;
   struct spc_handler special;
 
-  if (verbose > 3) {
+  if (dpx_conf.verbose_level > 3) {
+    MESG("Executing special command: ");
     dump(buffer, buffer + size);
   }
 

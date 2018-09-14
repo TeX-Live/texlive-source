@@ -33,6 +33,7 @@
 #include "mem.h"
 #include "error.h"
 #include "mfileio.h"
+#include "dpxconf.h"
 #include "dpxutil.h"
 #include "pdflimits.h"
 #include "pdfencrypt.h"
@@ -250,7 +251,6 @@ static void release_dict (pdf_dict *dict);
 static void write_stream   (pdf_stream *stream, FILE *file);
 static void release_stream (pdf_stream *stream);
 
-static int  verbose = 0;
 static char compression_level = 9;
 static char compression_use_predictor = 1;
 
@@ -272,6 +272,12 @@ pdf_set_compression (int level)
 #endif /* !HAVE_ZLIB */
 
   return;
+}
+
+FILE *
+pdf_get_output_file (void)
+{
+  return pdf_output_file;
 }
 
 void
@@ -313,18 +319,6 @@ int
 pdf_check_version (int major, int minor)
 {
   return (pdf_version >= major*10+minor) ? 0 : -1;
-}
-
-int
-pdf_obj_get_verbose(void)
-{
-  return verbose;
-}
-
-void
-pdf_obj_set_verbose(void)
-{
-  verbose++;
 }
 
 static pdf_obj *current_objstm = NULL;
@@ -537,7 +531,7 @@ pdf_out_flush (void)
 #if !defined(LIBDPX)
     MESG("\n");
 #endif /* !LIBDPX */
-    if (verbose) {
+    if (dpx_conf.verbose_level > 0) {
       if (compression_level > 0) {
 	MESG("Compression saved %ld bytes%s\n", compression_saved,
 	     pdf_version < 15 ? ". Try \"-V 1.5\" for better compression" : "");
@@ -548,6 +542,7 @@ pdf_out_flush (void)
 #endif /* !LIBDPX */
 
     MFCLOSE(pdf_output_file);
+    pdf_output_file = NULL;
   }
 #if defined(PDFOBJ_DEBUG)
   {
@@ -579,6 +574,7 @@ pdf_error_cleanup (void)
    */
   if (pdf_output_file)
     MFCLOSE(pdf_output_file);
+  pdf_output_file = NULL;
 }
 
 

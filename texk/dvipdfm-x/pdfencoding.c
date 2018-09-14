@@ -29,6 +29,7 @@
 #include "system.h"
 #include "mem.h"
 #include "error.h"
+#include "dpxconf.h"
 #include "dpxutil.h"
 
 #include "pdfparse.h"
@@ -42,8 +43,6 @@ static int      is_similar_charset (char **encoding, const char **encoding2);
 static pdf_obj *make_encoding_differences (char **encoding, char **baseenc,
 					   const char *is_used);
 
-static unsigned char verbose = 0;
-
 static const char *MacRomanEncoding[256];
 static const char *MacExpertEncoding[256];
 static const char *WinAnsiEncoding[256];
@@ -51,12 +50,6 @@ static const char *WinAnsiEncoding[256];
 static const char *StandardEncoding[256];
 static const char *ISOLatin1Encoding[256];
 #endif
-
-void
-pdf_encoding_set_verbose (void)
-{
-  verbose++;
-}
 
 /*
  * ident:  File name, e.g., 8a.enc.
@@ -291,7 +284,7 @@ load_encoding_file (const char *filename)
   if (!filename)
     return -1;
 
-  if (verbose) {
+  if (dpx_conf.verbose_level > 0) {
     MESG("(Encoding:%s", filename);
   }
 
@@ -340,13 +333,13 @@ load_encoding_file (const char *filename)
 				     filename, enc_vec, NULL, 0);
 
   if (enc_name) {
-    if (verbose > 1)
+    if (dpx_conf.verbose_level > 1)
       MESG("[%s]", pdf_name_value(enc_name));
     pdf_release_obj(enc_name);
   }
   pdf_release_obj(encoding_array);
 
-  if (verbose) MESG(")");
+  if (dpx_conf.verbose_level > 0) MESG(")");
 
   return enc_id;
 }
@@ -689,7 +682,7 @@ pdf_create_ToUnicode_CMap (const char *enc_name,
   }
 
   if (total_fail > 0) {
-    if (verbose)
+    if (dpx_conf.verbose_level > 0)
       WARN("Glyphs with no Unicode mapping found. Removing ToUnicode CMap.");
   }
   stream = total_fail > 0 ? NULL : CMap_create_stream(cmap);
@@ -723,7 +716,7 @@ pdf_load_ToUnicode_stream (const char *ident)
   if (CMap_parse(cmap, fp) < 0) {
     WARN("Reading CMap file \"%s\" failed.", ident);
   } else {
-    if (verbose) {
+    if (dpx_conf.verbose_level > 0) {
       MESG("(CMap:%s)", ident);
     }
     stream = CMap_create_stream(cmap);

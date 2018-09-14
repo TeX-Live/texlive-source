@@ -23,8 +23,6 @@
 
 #include "sfnt.h"
 
-extern void otf_cmap_set_verbose (void);
-
 /* TrueType cmap table */
 typedef struct
 {

@@ -29,6 +29,7 @@
 #include "system.h"
 #include "mem.h"
 #include "error.h"
+#include "dpxconf.h"
 
 #include "sfnt.h"
 
@@ -54,13 +55,6 @@
 #include "tt_cmap.h"
 
 #define VERBOSE_LEVEL_MIN 0
-static int verbose = 0;
-void
-otf_cmap_set_verbose (void)
-{
-  otl_gsub_set_verbose();
-  verbose++;
-}
 
 /* format 0: byte encoding table */
 struct cmap0
@@ -927,7 +921,7 @@ handle_subst_glyphs (CMap *cmap,
         }
 #undef MAX_UNICODES
         if (unicode_count == -1) {
-          if(verbose > VERBOSE_LEVEL_MIN) {
+          if(dpx_conf.verbose_level > VERBOSE_LEVEL_MIN) {
             if (name)
               MESG("No Unicode mapping available: GID=%u, name=%s\n", gid, name);
             else
@@ -964,7 +958,7 @@ handle_subst_glyphs (CMap *cmap,
           CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
           count++;
 
-          if (verbose > VERBOSE_LEVEL_MIN) {
+          if (dpx_conf.verbose_level > VERBOSE_LEVEL_MIN) {
             int _i;
 
             MESG("otf_cmap>> Additional ToUnicode mapping: <%04X> <", gid);
@@ -1183,12 +1177,11 @@ otf_create_ToUnicode_stream (const char *font_name,
   CMap       *cmap_add;
   int         cmap_add_id;
   tt_cmap    *ttcmap;
-  char       *normalized_font_name;
   char       *cmap_name, *cmap_add_name;
   FILE       *fp = NULL;
   sfnt       *sfont;
   ULONG       offset = 0;
-  int         i, cmap_type;
+  int         i;
 
   cmap_name = NEW(strlen(basefont)+strlen("-UTF16")+1, char);
   sprintf(cmap_name, "%s-UTF16", basefont);
@@ -1200,7 +1193,7 @@ otf_create_ToUnicode_stream (const char *font_name,
     return cmap_ref;
   }
 
-  if (verbose > VERBOSE_LEVEL_MIN) {
+  if (dpx_conf.verbose_level > VERBOSE_LEVEL_MIN) {
     MESG("\n");
     MESG("otf_cmap>> Creating ToUnicode CMap for \"%s\"...\n", font_name);
   }
@@ -1261,7 +1254,7 @@ otf_create_ToUnicode_stream (const char *font_name,
     }
   }
 #if defined(LIBDPX)
-  if (cmap_obj == NULL && verbose > VERBOSE_LEVEL_MIN)
+  if (cmap_obj == NULL && dpx_conf.verbose_level > VERBOSE_LEVEL_MIN)
 #else
   if (cmap_obj == NULL)
 #endif /* LIBDPX */
@@ -1364,7 +1357,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
       sprintf(cmap_name, "%s,%03d-UCS4-H", map_name, ttc_index);
     }
   }
-  if (verbose > VERBOSE_LEVEL_MIN) {
+  if (dpx_conf.verbose_level > VERBOSE_LEVEL_MIN) {
     MESG("\n");
     MESG("otf_cmap>> Unicode charmap for font=\"%s\" layout=\"%s\"\n",
 	       map_name, (otl_tags ? otl_tags : "none"));
@@ -1372,7 +1365,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
   cmap_id = CMap_cache_find(cmap_name);
   if (cmap_id >= 0) {
     RELEASE(cmap_name);
-    if (verbose > VERBOSE_LEVEL_MIN)
+    if (dpx_conf.verbose_level > VERBOSE_LEVEL_MIN)
       MESG("otf_cmap>> Found at cmap_id=%d.\n", cmap_id);
 
     return cmap_id;
@@ -1455,7 +1448,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     if (!ttcmap) {
       ttcmap = tt_cmap_read(sfont, 0, 3); /* Unicode 2.0 or later */
 #if defined(LIBDPX)
-      if (!ttcmap && verbose > VERBOSE_LEVEL_MIN) {
+      if (!ttcmap && dpx_conf.verbose_level > VERBOSE_LEVEL_MIN) {
 #else
       if (!ttcmap) {
 #endif /* LIBDPX */
@@ -1542,7 +1535,7 @@ otf_try_load_GID_to_CID_map (const char *map_name, int ttc_index, int wmode)
   cmap_id = CMap_cache_find(cmap_name);
   if (cmap_id >= 0) {
     RELEASE(cmap_name);
-    if (verbose > VERBOSE_LEVEL_MIN)
+    if (dpx_conf.verbose_level > VERBOSE_LEVEL_MIN)
       MESG("otf_cmap>> GID-to-CID mapping found at cmap_id=%d.\n", cmap_id);
 
     return cmap_id;
@@ -1600,12 +1593,13 @@ otf_try_load_GID_to_CID_map (const char *map_name, int ttc_index, int wmode)
     if (GIDToCIDMap) {
       CMap     *cmap;
       int32_t   gid;
+      const unsigned char csrange[4] = {0x00, 0x00, 0xff, 0xff};
 
       cmap = CMap_new();
       CMap_set_name (cmap, cmap_name);
       CMap_set_type (cmap, CMAP_TYPE_CODE_TO_CID);
       CMap_set_wmode(cmap, wmode);
-      CMap_add_codespacerange(cmap, "\x00\x00", "\xff\xff", 2);
+      CMap_add_codespacerange(cmap, &csrange[0], &csrange[2], 2);
       CMap_set_CIDSysInfo(cmap, &csi);
 
       for (gid = 0; gid < 65536; gid++) {
@@ -1615,7 +1609,7 @@ otf_try_load_GID_to_CID_map (const char *map_name, int ttc_index, int wmode)
         CMap_add_bfchar(cmap, src, 2, &GIDToCIDMap[gid*2], 2);
       }
       cmap_id = CMap_cache_add(cmap);
-      if (verbose > VERBOSE_LEVEL_MIN) {
+      if (dpx_conf.verbose_level > VERBOSE_LEVEL_MIN) {
         MESG("\n");
         MESG("otf_cmap>> Creating GID-to-CID mapping for font=\"%s\"\n", map_name);
       }

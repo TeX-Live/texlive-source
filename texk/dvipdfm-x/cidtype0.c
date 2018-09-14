@@ -33,6 +33,7 @@
 #include "numbers.h"
 #include "mem.h"
 #include "error.h"
+#include "dpxconf.h"
 
 #include "dpxfile.h"
 
@@ -70,14 +71,7 @@
 #include "cmap_write.h"
 #include "fontmap.h"
 
-static int  verbose   = 0;
 static int  opt_flags = 0;
-
-void
-CIDFont_type0_set_verbose (void)
-{
-  verbose++;
-}
 
 void
 CIDFont_type0_set_flags (int flags)
@@ -820,7 +814,7 @@ CIDFont_type0_dofont (CIDFont *font)
 
   CIDFontInfo_close(&info);
 
-  if (verbose > 1)
+  if (dpx_conf.verbose_level > 1)
     MESG("[%u/%u glyphs][%ld bytes]", num_glyphs, cs_count, destlen);
 
   CIDFont_type0_add_CIDSet(font, used_chars, last_cid);
@@ -1264,7 +1258,7 @@ CIDFont_type0_t1cdofont (CIDFont *font)
 
   CIDFontInfo_close(&info);
 
-  if (verbose > 1)
+  if (dpx_conf.verbose_level > 1)
     MESG("[%u glyphs][%ld bytes]", num_glyphs, destlen);
 
   CIDFont_type0_add_CIDSet(font, used_chars, last_cid);

@@ -30,7 +30,7 @@
 #include "system.h"
 #include "mem.h"
 #include "error.h"
-
+#include "dpxconf.h"
 #include "dpxfile.h"
 
 #include "numbers.h"
@@ -524,15 +524,13 @@ pdf_font_load_type1 (pdf_font *font)
   card16       *GIDMap, num_glyphs = 0;
   FILE         *fp;
   int           offset;
-  int           code, verbose;
+  int           code;
 
   ASSERT(font);
 
   if (!pdf_font_is_in_use(font)) {
     return 0;
   }
-
-  verbose     = pdf_font_get_verbose();
 
   encoding_id = pdf_font_get_encoding  (font);
   fontdict    = pdf_font_get_resource  (font);
@@ -639,7 +637,7 @@ pdf_font_load_type1 (pdf_font *font)
     if (gid < 0)
       ERROR("Type 1 font with no \".notdef\" glyph???");
     GIDMap[0] = (card16) gid;
-    if (verbose > 2)
+    if (dpx_conf.verbose_level > 2)
       MESG("[glyphs:/.notdef");
     num_glyphs =  1;
     for (prev = -2, code = 0; code <= 0xff; code++) {
@@ -686,7 +684,7 @@ pdf_font_load_type1 (pdf_font *font)
         prev = code;
         num_glyphs++;
 
-        if (verbose > 2) {
+        if (dpx_conf.verbose_level > 2) {
           MESG("/%s", glyph);
         }
 #if !defined(LIBDPX)
@@ -775,7 +773,7 @@ pdf_font_load_type1 (pdf_font *font)
             break;
         }
         if (i == num_glyphs) {
-          if (verbose > 2)
+          if (dpx_conf.verbose_level > 2)
             MESG("/%s", achar_name);
           GIDMap[num_glyphs++] = achar_gid;
           charset->data.glyphs[charset->num_entries] = cff_get_seac_sid(cffont, achar_name);
@@ -794,7 +792,7 @@ pdf_font_load_type1 (pdf_font *font)
             break;
         }
         if (i == num_glyphs) {
-          if (verbose > 2)
+          if (dpx_conf.verbose_level > 2)
             MESG("/%s", bchar_name);
           GIDMap[num_glyphs++] = bchar_gid;
           charset->data.glyphs[charset->num_entries] = cff_get_seac_sid(cffont, bchar_name);
@@ -823,7 +821,7 @@ pdf_font_load_type1 (pdf_font *font)
     cff_release_charsets(cffont->charsets);
     cffont->charsets = charset;
   }
-  if (verbose > 2)
+  if (dpx_conf.verbose_level > 2)
     MESG("]");
 
   /* Now we can update the String Index */
@@ -838,7 +836,7 @@ pdf_font_load_type1 (pdf_font *font)
 #else
   offset = write_fontfile(font, cffont, pdfcharset);
 #endif /* LIBDPX */
-  if (verbose > 1)
+  if (dpx_conf.verbose_level > 1)
     MESG("[%u glyphs][%ld bytes]", num_glyphs, offset);
 
 #if !defined(LIBDPX)

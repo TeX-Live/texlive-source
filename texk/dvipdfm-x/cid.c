@@ -33,6 +33,7 @@
 #include "system.h"
 #include "mem.h"
 #include "error.h"
+#include "dpxconf.h"
 #include "dpxutil.h"
 
 #include "pdfobj.h"
@@ -115,16 +116,7 @@ static struct {
 static void release_opt (cid_opt *opt);
 static CIDSysInfo *get_cidsysinfo (const char *map_name, fontmap_opt *fmap_opt);
 
-static int   __verbose   = 0;
-static int   cidoptflags = 0;
-
-void
-CIDFont_set_verbose (void)
-{
-  CIDFont_type0_set_verbose();
-  CIDFont_type2_set_verbose();
-  __verbose++;
-}
+static int cidoptflags = 0;
 
 #if 0
 int
@@ -343,16 +335,16 @@ CIDFont_dofont (CIDFont *font)
   if (!font || !font->indirect)
     return;
 
-  if (__verbose)
+  if (dpx_conf.verbose_level > 0)
     MESG(":%s", font->ident);
-  if (__verbose > 1) {
+  if (dpx_conf.verbose_level > 1) {
     if (font->fontname)
       MESG("[%s]", font->fontname);
   }
 
   switch (font->subtype) {
   case CIDFONT_TYPE0:
-    if(__verbose)
+    if(dpx_conf.verbose_level > 0)
       MESG("[CIDFontType0]");
     if (CIDFont_get_flag(font, CIDFONT_FLAG_TYPE1))
       CIDFont_type0_t1dofont(font);
@@ -362,7 +354,7 @@ CIDFont_dofont (CIDFont *font)
       CIDFont_type0_dofont(font);
     break;
   case CIDFONT_TYPE2:
-    if(__verbose)
+    if(dpx_conf.verbose_level > 0)
       MESG("[CIDFontType2]");
     CIDFont_type2_dofont(font);
     break;
@@ -670,7 +662,7 @@ CIDFont_cache_close (void)
 
       font = __cache->fonts[font_id];
 
-      if (__verbose)
+      if (dpx_conf.verbose_level > 0)
         MESG("(CID");
 
       CIDFont_dofont (font);
@@ -679,7 +671,7 @@ CIDFont_cache_close (void)
 
       RELEASE(font);
 
-      if (__verbose)
+      if (dpx_conf.verbose_level > 0)
         MESG(")");
     }
     RELEASE(__cache->fonts);

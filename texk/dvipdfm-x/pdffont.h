@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2016 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2018 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -33,9 +33,6 @@
 #define PDF_FONT_FONTTYPE_TRUETYPE 3
 
 #define PDF_FONT_FONTTYPE_TYPE0    4
-
-extern void pdf_font_set_verbose (void);
-extern int  pdf_font_get_verbose (void);
 
 extern void pdf_font_set_dpi (int font_dpi);
 
