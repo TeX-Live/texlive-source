@@ -280,12 +280,6 @@ pdf_get_output_file (void)
   return pdf_output_file;
 }
 
-void
-pdf_set_use_predictor (int bval)
-{
-  compression_use_predictor = bval ? 1 : 0;
-}
-
 static int pdf_version = PDF_VERSION_DEFAULT;
 
 void
@@ -341,7 +335,8 @@ add_xref_entry (unsigned label, unsigned char type, unsigned int field2, unsigne
 
 #define BINARY_MARKER "%\344\360\355\370\n"
 void
-pdf_out_init (const char *filename, int do_encryption, int enable_objstm)
+pdf_out_init (const char *filename,
+              int do_encryption, int enable_objstm, int enable_predictor)
 {
   char v;
 
@@ -394,6 +389,7 @@ pdf_out_init (const char *filename, int do_encryption, int enable_objstm)
 
   enc_mode = 0;
   doc_enc_mode = do_encryption;
+  compression_use_predictor = enable_predictor;
 }
 
 static void

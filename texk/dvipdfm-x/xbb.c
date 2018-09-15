@@ -88,7 +88,7 @@ static void do_time(FILE *file)
   time_t current_time;
   struct tm *bd_time;
 
-  current_time = get_unique_time_if_given();
+  current_time = dpx_util_get_unique_time_if_given();
   if (current_time == INVALID_EPOCH_VALUE) {
     time(&current_time);
     bd_time = localtime(&current_time);

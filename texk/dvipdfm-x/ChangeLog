@@ -1,3 +1,10 @@
+2018-09-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dpxutil.[ch], dvi.[ch], dvipdfmx.c, pdfdoc.[ch], pdfencrypt.[ch],
+	pdffont.[ch], xbb.c: Remove duplicated code. Reorganize
+	initialization process. Use struct for passing options.
+	* configure.ac: Version 20180916.
+
 2018-09-14  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* agl.[ch], bmpimage.c, cid.[ch], cidtype0.[ch], cidtype2.[ch],
