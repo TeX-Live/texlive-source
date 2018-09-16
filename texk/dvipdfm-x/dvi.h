@@ -69,7 +69,6 @@ extern void dvi_dirchg(unsigned char dir);
 
 extern void  dvi_do_page  (double paper_height, double x_offset, double y_offset);
 extern void  dvi_scan_specials (int page_no,
-                                int has_paper_option, int has_encrypt_option,
 				                double *width, double *height,
                                 double *x_offset, double *y_offset, int *landscape,
                                 int *majorversion, int *minorversion,

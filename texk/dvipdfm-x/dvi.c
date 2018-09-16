@@ -2310,8 +2310,7 @@ scan_special_encrypt (int *key_bits, int32_t *permission, char *opassword, char 
 }
 
 static int
-scan_special (int has_paper_option, int has_encrypt_option,
-              double *wd, double *ht, double *xo, double *yo, int *lm,
+scan_special (double *wd, double *ht, double *xo, double *yo, int *lm,
               int *majorversion, int *minorversion,
               int *enable_encryption, int *key_bits, int32_t *permission,
               char *opassword, char *upassword,
@@ -2443,20 +2442,12 @@ scan_special (int has_paper_option, int has_encrypt_option,
         RELEASE(kv);
       }
     } else if (ns_pdf && !strcmp(q, "encrypt")) {
-      if (!has_encrypt_option) {
-        *enable_encryption = 1;
-        error = scan_special_encrypt(key_bits, permission, opassword, upassword, &p, endptr);
-      }
+      *enable_encryption = 1;
+      error = scan_special_encrypt(key_bits, permission, opassword, upassword, &p, endptr);
     } else if (ns_dvipdfmx && !strcmp(q, "config")) {
       read_config_special(&p, endptr);
     }
     RELEASE(q);
-  }
-
-  /* Recover papersizes specified via command line option */
-  if (has_paper_option) {
-    *wd = width;
-    *ht = height;
   }
 
   return  error;
@@ -2465,7 +2456,6 @@ scan_special (int has_paper_option, int has_encrypt_option,
 
 void
 dvi_scan_specials (int page_no,
-                   int has_paper_option, int has_encrypt_option,
                    double *page_width, double *page_height,
                    double *x_offset, double *y_offset, int *landscape,
                    int *majorversion, int *minorversion,
@@ -2514,8 +2504,7 @@ dvi_scan_specials (int page_no,
 #define buf ((char*)(dvi_page_buffer + dvi_page_buf_index))
       if (fread(buf, sizeof(char), size, fp) != size)
         ERROR("Reading DVI file failed!");
-      if (scan_special(has_paper_option, has_encrypt_option,
-                       page_width, page_height, x_offset, y_offset, landscape,
+      if (scan_special(page_width, page_height, x_offset, y_offset, landscape,
                        majorversion, minorversion,
                        do_enc, key_bits, permission, owner_pw, user_pw,
                        buf, size))

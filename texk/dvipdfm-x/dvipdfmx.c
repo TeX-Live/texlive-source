@@ -115,20 +115,15 @@ double paper_height = 842.0;
 static double x_offset = 72.0;
 static double y_offset = 72.0;
 int    landscape_mode  = 0;
-
+static int    translate_origin = 0;
 
 /* Command line option takes precedence */
 static int     has_paper_option   = 0;
 static int     has_encrypt_option = 0;
 
-int always_embed = 0; /* always embed fonts, regardless of licensing flags */
-
-int translate_origin = 0;
-
 char *dvi_filename = NULL, *pdf_filename = NULL;
 
-static void
-read_config_file (const char *config);
+static void read_config_file (const char *config);
 
 static void
 set_default_pdf_filename(void)
@@ -470,10 +465,11 @@ static struct option long_options[] = {
 };
 
 static void
-do_early_args (int argc, char *argv[])
+do_args_first_pass (int argc, char *argv[], const char *source, int unsafe)
 {
   int c;
 
+  optind = 1;
   while ((c = getopt_long(argc, argv, optstrig, long_options, NULL)) != -1) {
     switch(c) {
     case 'h':
@@ -489,6 +485,14 @@ do_early_args (int argc, char *argv[])
     case 131: /* --showpaper */
       dumppaperinfo();
       exit(0);
+      break;
+
+    case 132: /* --dvipdfm */
+      dpx_conf.compat_mode = dpx_mode_compat_mode;
+      break;
+
+    case 133: /* --kpathsea-debug */
+      kpathsea_debug = atoi(optarg);
       break;
 
     case 1000: /* --mvorigin */
@@ -516,30 +520,30 @@ do_early_args (int argc, char *argv[])
       dpx_conf.verbose_level++;
     }
   }
+
+  if (argc > optind + 1) {
+    fprintf(stderr, "%s: Multiple dvi filenames?", my_name);
+    usage();
+  } else if (argc > optind) { /* last argument */
+    dvi_filename = NEW(strlen(argv[optind]) + 5, char);  /* space to append ".dvi" */
+    strcpy(dvi_filename, argv[optind]);
+  }
 }
 
 /* Set "unsafe" to non-zero value when parsing config specials to
  * disallow overriding "D" option value.
  */
 static void
-do_args (int argc, char *argv[], const char *source, int unsafe)
+do_args_second_pass (int argc, char *argv[], const char *source, int unsafe)
 {
-  int c;
-  char *nextptr;
+  int         c;
+  char       *nextptr;
   const char *nnextptr;
 
   optind = 1;
   while ((c = getopt_long(argc, argv, optstrig, long_options, NULL)) != -1) {
     switch(c) {
-    case 'h': case 130: case 131: case 1000: case 'q': case 'v': /* already done */
-      break;
-
-    case 132: /* --dvipdfm */
-      dpx_conf.compat_mode = dpx_mode_compat_mode;
-      break;
-
-    case 133: /* --kpathsea-debug */
-      kpathsea_debug = atoi(optarg);
+    case 'h': case 130: case 131: case 132: case 133: case 1000: case 'q': case 'v': /* already done */
       break;
 
     case 'D':
@@ -683,7 +687,7 @@ do_args (int argc, char *argv[], const char *source, int unsafe)
     }
 
     case 'E':
-      always_embed = 1;
+      dpx_conf.ignore_font_license = 1;
       break;
 
     case 'e':
@@ -706,13 +710,7 @@ do_args (int argc, char *argv[], const char *source, int unsafe)
     return;
   }
 
-  if (argc > optind + 1) {
-    fprintf(stderr, "%s: Multiple dvi filenames?", my_name);
-    usage();
-  } else if (argc > optind) {
-    dvi_filename = NEW(strlen(argv[optind]) + 5, char);  /* space to append ".dvi" */
-    strcpy(dvi_filename, argv[optind]);
-  }
+  return;
 }
 
 static void
@@ -724,6 +722,8 @@ cleanup (void)
     RELEASE(pdf_filename);
   if (page_ranges)
     RELEASE(page_ranges);
+  if (filter_template)
+    RELEASE(filter_template);
 }
 
 static void
@@ -766,7 +766,7 @@ read_config_file (const char *config)
           argv[2] = parse_ident (&start, end);
       }
     }
-    do_args (argc, argv, config, 0);
+    do_args_second_pass (argc, argv, config, 0);
     while (argc > 1) {
       RELEASE (argv[--argc]);
     }
@@ -806,7 +806,7 @@ read_config_special (const char **start, const char *end)
       argv[2] = parse_ident (start, end);
     }
   }
-  do_args (argc, argv, argv0, 1); /* Set to unsafe */
+  do_args_second_pass (argc, argv, argv0, 1); /* Set to unsafe */
   while (argc > 1) {
     RELEASE (argv[--argc]);
   }
@@ -890,9 +890,9 @@ do_dvi_pages (void)
         page_width = paper_width; page_height = paper_height;
         w = page_width; h = page_height; lm = landscape_mode;
         xo = x_offset; yo = y_offset;
-        dvi_scan_specials(page_no, has_paper_option, has_encrypt_option,
+        dvi_scan_specials(page_no,
                           &w, &h, &xo, &yo, &lm, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-        if (lm != landscape_mode) {
+        if (lm != landscape_mode) { /* already swapped for the first page */
           SWAP(w, h);
           landscape_mode = lm;
         }
@@ -1013,7 +1013,7 @@ main (int argc, char *argv[])
   double             dvi2pts;
   char              *base;
   struct pdf_setting settings;
-  char               uplain[MAX_PWD_LEN], oplain[MAX_PWD_LEN]; /* encryption password */
+  char               uplain[MAX_PWD_LEN+1], oplain[MAX_PWD_LEN+1]; /* encryption password */
   const char        *ids[4] = {NULL, NULL, NULL, NULL};
 
 #ifdef WIN32
@@ -1065,9 +1065,11 @@ main (int argc, char *argv[])
   opterr = 0;
 
   /* Special-case single option --mvorigin, --help, --showpaper, or --version,
-     to avoid possible diagnostics about config files, etc.
-     Also handle -q and -v that cannot be set in config file. */
-  do_early_args(argc, argv);
+   * to avoid possible diagnostics about config files, etc.
+   * Also handle -q and -v that cannot be set in config file.
+   * Get input DVI file name too.
+   */
+  do_args_first_pass(argc, argv, NULL, 0);
 
   paperinit();
   system_default();
@@ -1075,8 +1077,6 @@ main (int argc, char *argv[])
   pdf_init_fontmaps(); /* This must come before parsing options... */
 
   read_config_file(DPX_CONFIG_FILE);
-
-  do_args (argc, argv, NULL, 0);
 
 #ifndef MIKTEX
   kpse_init_prog("", font_dpi, NULL, NULL);
@@ -1111,20 +1111,24 @@ main (int argc, char *argv[])
     dvi2pts = dvi_init(dvi_filename, mag);
     if (dvi2pts == 0.0)
       ERROR("dvi_init() failed!");
-
     ids[3] = dvi_comment(); /* Set PDF Creator entry */
-
-    if (do_encryption) {
-      get_enc_password(oplain, uplain);
-    }
-    dvi_scan_specials(0, has_paper_option, has_encrypt_option,
+    dvi_scan_specials(0,
                       &paper_width, &paper_height,
                       &x_offset, &y_offset, &landscape_mode,
                       &pdf_version_major, &pdf_version_minor,
                       &do_encryption, &key_bits, &permission, oplain, uplain);
-
     if (landscape_mode) {
       SWAP(paper_width, paper_height);
+    }
+  }
+
+  /* Command-line options take precedence */
+  {
+    int has_encrypt_special = do_encryption;
+
+    do_args_second_pass(argc, argv, NULL, 0);
+    if (do_encryption && !has_encrypt_special) {
+      get_enc_password(oplain, uplain);
     }
   }
 

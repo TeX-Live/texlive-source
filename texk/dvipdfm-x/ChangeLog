@@ -1,5 +1,15 @@
 2018-09-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
+	* dvi.[ch], dvipdfmx.c: Fixed a bug that papersize special does
+	not work. (introduced in the previous change) Command line
+	options other than papersize now take precedence over special
+	command options.
+	* dpxconf.[ch], tt_aux.c: Moved always_embed flag to dpx_conf.
+	* pdfencrypt.c: Fixed a bug that calculation of encryption key
+	was not done properly for RC4 and revision 2-3 AES security.
+
+2018-09-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
 	* dpxutil.[ch], dvi.[ch], dvipdfmx.c, pdfdoc.[ch], pdfencrypt.[ch],
 	pdffont.[ch], xbb.c: Remove duplicated code. Reorganize
 	initialization process. Use struct for passing options.

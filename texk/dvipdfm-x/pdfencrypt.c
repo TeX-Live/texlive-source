@@ -173,16 +173,16 @@ compute_owner_password (struct pdf_sec *p,
 
     ARC4(&arc4, 32, padded, tmp1);
     if (p->R >= 3) {
-    for (i = 1; i <= 19; i++) {
+      for (i = 1; i <= 19; i++) {
         memcpy(tmp2, tmp1, 32);
         for (j = 0; j < p->key_size; j++)
           key[j] = hash[j] ^ i;
         ARC4_set_key(&arc4, p->key_size, key);
         ARC4(&arc4, 32, tmp2, tmp1);
+      }
     }
-    }
+    memcpy(p->O, tmp1, 32);
   }
-  memcpy(p->O, hash, 32);
 }
 
 static void

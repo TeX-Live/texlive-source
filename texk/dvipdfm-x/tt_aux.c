@@ -179,7 +179,7 @@ pdf_obj *tt_get_fontdesc (sfnt *sfont, int *embed, int stemv, int type, const ch
         WARN("Font \"%s\" permits \"Preview & Print\" embedding only **\n", fontname);
       *embed = 1;
     } else {
-      if (always_embed) {
+      if (dpx_conf.ignore_font_license) {
         if (dpx_conf.verbose_level > 0)
           WARN("Font \"%s\" may be subject to embedding restrictions **\n", fontname);
         *embed = 1;
