@@ -258,35 +258,18 @@ end;
 @y
 { |2..4| bytes Kanji code break check }
 tps:=str_start[pop_lit3];
-while (tps < sp_ptr) do begin
-    tps := tps + multibytelen(str_pool[tps])
-end;
 tpe:=tps;
-while (tpe < sp_end) do begin
-    tpe := tpe + multibytelen(str_pool[tpe])
+while tpe < str_start[pop_lit3+1] do begin
+    if multibytelen(str_pool[tpe])<0
+        or (str_start[pop_lit3+1] < tpe+multibytelen(str_pool[tpe])) then
+        break;
+    tpe := tpe + multibytelen(str_pool[tpe]);
+    if tpe<=sp_ptr then
+        tps := tpe;
+    if sp_end<=tpe then break;
 end;
-if tps<>sp_ptr then begin
-    if (is_internalUPTEX) then begin
-        if tps>str_start[pop_lit3]
-        then while (multibytelen(str_pool[sp_ptr])<0) do decr(sp_ptr)
-        else while (multibytelen(str_pool[sp_ptr])<0) do incr(sp_ptr)
-    end else begin
-        if tps>str_start[pop_lit3]
-        then decr(sp_ptr)
-        else incr(sp_ptr)
-    end;
-end;
-if tpe<>sp_end then begin
-    if (is_internalUPTEX) then begin
-        if tpe<str_start[pop_lit3+1]
-        then while (multibytelen(str_pool[sp_end])<0) do incr(sp_end)
-        else while (multibytelen(str_pool[sp_end])<0) do decr(sp_end)
-    end else begin
-        if tpe<str_start[pop_lit3+1]
-        then incr(sp_end)
-        else decr(sp_end)
-    end;
-end;
+sp_ptr := tps;
+sp_end := tpe;
 @z
 
 @x
@@ -299,16 +282,7 @@ end;
          end;
 @y
     append_char (str_pool[sp_ptr]);
-    if multibytelen(str_pool[sp_ptr]) > 1 then
-        append_char (str_pool[sp_ptr+1]);
-    if multibytelen(str_pool[sp_ptr]) > 2 then
-        append_char (str_pool[sp_ptr+2]);
-    if multibytelen(str_pool[sp_ptr]) > 3 then
-        append_char (str_pool[sp_ptr+3]);
-    if multibytelen(str_pool[sp_ptr]) > 0 then
-        sp_ptr := sp_ptr + multibytelen(str_pool[sp_ptr])
-    else
-        incr(sp_ptr);
+    incr(sp_ptr);
 @z
 
 @x
