@@ -1,3 +1,20 @@
+2018-05-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c: First search for an input file with a suffix .xdv
+	or .dvi. Report from Andreas Scherer:
+	http://tug.org/pipermail/tex-k/2018-May/002882.html.
+
+2018-05-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfparse.c: Revert. The changes on 2018-05-14 must be
+	problematic. Again, kanji characters including 0x5c can't be
+	used as names of image files in (e)-pTeX.
+
+2018-05-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfparse.c: Allow image file names including 0x5c for
+	(e)-pTeX in CP932-like system (Windows only).
+
 2018-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tt_cmap.c: Revert a part of changes in 2017-12-09,
@@ -5,7 +22,7 @@
 	http://tug.org/pipermail/tex-live/2018-May/041608.html.
 	* configure.ac: Version 20180506.
 
- 2018-04-28  Stefan Br\"uns  <stefan.bruens@rwth-aachen.de>
+2018-04-28  Stefan Br\"uns  <stefan.bruens@rwth-aachen.de>
 
 	* pngimage.c: Fix a bug which causes a segfault with 1/2/4-bit
 	transparent indexed PNGs.
