@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 45306 2017-09-14 21:41:37Z karl $
+# $Id: epstopdf.pl 48681 2018-09-16 23:03:58Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,9 @@
 #
 # emacs-page
 #
-my $ver = "2.27";
+my $ver = "2.28";
+#  2018/09/17 v2.28 (Karl Berry)
+#    * -dCompatibilityLevel=1.5 by default, since gs9.25 switched to 1.7.
 #  2017/09/14 v2.27 (Karl Berry)
 #    * extract value from --gsopt with $3 not $2 (extra regexp group
 #      added previously), and check it with ^(...)$ so anchors apply to all.
@@ -187,9 +189,9 @@ my $ver = "2.27";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 45306 2017-09-14 21:41:37Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 48681 2018-09-16 23:03:58Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2017 Karl Berry et al.
+Copyright 2009-2018 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
@@ -347,6 +349,9 @@ By default, the output name is the input name with any extension
 replaced by ".pdf".  An output name ending with .pdf can also be given
 as a second argument on the command line, or the --outfile (-o) option
 can be used with any name.
+
+The output is PDF 1.5 by default; use --gsopt=-dCompatibilityLevel=1.7
+(for example) to change this.
 
 The resulting output is guaranteed to start at the 0,0 coordinate, and
 sets a page size exactly corresponding to the BoundingBox.  Thus, the
@@ -550,6 +555,7 @@ push @GS, '-q' if $::opt_quiet;
 push @GS, $::opt_safer ? '-dSAFER' : '-dNOSAFER';
 push @GS, '-dNOPAUSE';
 push @GS, '-dBATCH';
+push @GS, '-dCompatibilityLevel=1.5';
 
 ### option device
 if ($::opt_device) {
