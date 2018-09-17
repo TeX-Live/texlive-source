@@ -1,3 +1,8 @@
+2018-09-18  Norbert Preining  <preining@logic.at>
+
+	* fonts/writet1.w (t1_check_unusual_charstring): protect against 
+	buffer overflow.
+
 2017-11-02 Luigi Scarso <luigi.scarso@gmail.com>
 	LuaFilesystem 1.7.0
 
