@@ -1,3 +1,8 @@
+2018-09-18  Nick Roessler  <nicholas.e.roessler@gmail.com>
+
+	* writet1.c (t1_check_unusual_charstring): protect against buffer
+	overflow.
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* expanded.test,

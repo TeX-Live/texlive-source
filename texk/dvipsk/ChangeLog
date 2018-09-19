@@ -1,3 +1,8 @@
+2018-09-18  Nick Roessler  <nicholas.e.roessler@gmail.com>
+
+	* writet1.c (t1_check_unusual_charstring): protect against buffer
+	overflow.
+
 2018-04-14  Karl Berry  <karl@tug.org>
 
 	* Version 5.998 for TeX Live 2018 release.
