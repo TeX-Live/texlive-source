@@ -1,11 +1,13 @@
 #!/bin/sh
-
+# Script to do (la)tex->dvi->[ps->]pdf.
+# 
 # Created by Gerben Wierda, May 2001
 # Rewritten by Gerben Wierda, January 2002
 # Modified by Joachim Kock, May 2003
 # Modified by Gerben Wierda, April 2007
+# Modified by Bruno Voisin and Herbert Schulz, September 2018
 
-# COPYRIGHT Gerben Wierda 2001--2004
+# COPYRIGHT Gerben Wierda 2001--2018
 # This file is free software. You are free to use this file in any way you like
 # However, if you change it you should note in this file that you did and who
 # you are, you also need to change the version string if you do. That way
@@ -21,8 +23,6 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-# $Id: altpdftex,v 2.18 2004/11/15 20:36:11 gerben Exp $
 
 # This script assumes that there is a config.pdf somewhere that sets
 # the bitmap mode to something large but realistic (real mode) so that
@@ -117,20 +117,24 @@
 # 2007/08/09	Protected echo command against broken builtin versions by running
 #		/bin/echo explicitly. There may exist /bin/echo implementations
 #		that do not support -n and this script will have to be changed
-#		before it works on such a system
+#		before it works on such a system.
+# 2018/09/19	Added --distilleropts optlist command line flag for 
+#		options to be added to the distiller aapplication; 
+#		e.g. "-dCompatibilityLevel=1.5 -dNOSAFER".
+#		Removed uses of echo -n.
 
 # FEATURE: it seems -u +foo.map -u -foo.map does not work. So --extradvipsopts
 # cannot be used to remove a map from the standard list
 
 # BUG: Handling of file name extensions is not completely equialent to TeX
 # i.e. foo.bar.bla gets you foo.bar.pdf not foo.bar.bla.pdf
-# Hint: Give all extensions explicitely on the command line
+# Hint: Give all extensions explicitly on the command line
 
-version='20070809'
+version='20180920'
 calledas=`basename "$0"`
 if [ "${calledas}" = "simpdftex" ]
 then
-	argwithoutlead=`/bin/echo -n "$1"|sed 's/^--//'`
+	argwithoutlead=`/bin/echo "$1"|sed 's/^--//'`
 	if [ "$1" != "" -a "$1" = "${argwithoutlead}" ]
 	then
 		formatname="$1"
@@ -164,11 +168,13 @@ texpath=`dirname "$0"`
 #distillerprog="/usr/local/bin/gs -dCompatibility=1.3 -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=- -c save pop"
 #distillerfilter="yes"
 distillerpath="/usr/local/bin"
-distillerprog="ps2pdf13"
+#distillerprog="ps2pdf13"
+distillerprog="ps2pdf"
 distillerfilter="no"
 unset outdir
 debug="no"
 dvipdfmoptions=""
+distilleroptions=""
 
 usage()
 {
@@ -179,8 +185,8 @@ Usage: simpdftex formatname [--mode modestring]
 	[--dvipsopts dvipsoptstring] [--extradvipsopts dvipsoptstring] [--pdf]
 	[--default] [--maxpk] [--maxpfb] [--extendedname] [--no-echo-version]
 	[--tex-path dir] [--keep-psfile] [--distiller-path dir] [--debug]
-	[--distiller prog] [--distiller-filter prog] [--help]
-	[--outdir dir] [--extratexopts texoptsstring]
+	[--distiller prog] [--distiller-filter prog] [--distilleropts opts]
+	[--help] [--outdir dir] [--extratexopts texoptsstring]
 	[--dvipdfmopts dvipdfmoptstring] tex-or-dvi-file
 
 simpdftex is a way to do pdf{e}{la}tex without having pdf{e}{la}tex. It needs a
@@ -191,7 +197,7 @@ working TeX environment and one of three ways to turn  DVI file into PDF:
 Since pdf{e}{la}tex cannot handle insertion of .eps graphics, simpdftex gives an
 alternative when using dvips mode. The output for both systems is comparable.
 
-simpdftex compiles the file with {LA}TeX, processes the DVI file with dvips into
+simpdftex compiles the file with {La}TeX, processes the DVI file with dvips into
 PostScript and uses gs to produce pdf (with ps2pdf). Or it uses dvipdfm or
 dvipdfmx to turn the DVI file into PDF. There is finegrained control over the
 resulting filename and the options with which dvips produces the PostScript
@@ -301,6 +307,8 @@ Arguments:
 		the PDF output to standard output. E.g.:
 		--distiller-filter=u-psbuild
 		This flag only makes sense in dvips mode
+	--distilleropts optionlist
+		special options to pass to the distiller
 	--distiller-path
 		Give path needed by the distiller binary. This path is added
 		to the begin of you PATH environment before the distiller is
@@ -403,6 +411,10 @@ do
 		distillerprog="$1"
 		distillerfilter="no"
 		;;
+	--distilleropts)
+		shift
+		distilleroptions="$1"
+		;;
 	--mode)
 		shift
 		if [ "$1" = "dvips" -o "$1" = "dvipdfm" -o "$1" = "dvipdfmx" ]
@@ -486,13 +498,13 @@ run_dvips()
 	fi
 
 	if [ "${distillerfilter}" = "yes" ]; then
-		/bin/echo "### ${distillerprog} <${psfile} >${pdffile}"
-		"${distillerprog}" <"${psfile}" >"${pdffile}" || \
+		/bin/echo "### ${distillerprog} ${distilleroptions} <${psfile} >${pdffile}"
+		"${distillerprog}" ${distilleroptions} <"${psfile}" >"${pdffile}" || \
 			{ /bin/echo "### FAILED to generate ${pdffile} (${status})"
 			  exit 1; }
 	else
-		/bin/echo "### ${distillerprog} ${psfile} ${pdffile}"
-		"${distillerprog}" "${psfile}" "${pdffile}" || \
+		/bin/echo "### ${distillerprog} ${distilleroptions} ${psfile} ${pdffile}"
+		"${distillerprog}" ${distilleroptions} "${psfile}" "${pdffile}" || \
 			{ /bin/echo "### FAILED to generate ${pdffile} (${status})"
 			  exit 1; }
 	fi
@@ -531,8 +543,8 @@ main()
 
 	startwithdvi="no"
 	basename=`basename "${file}"`
-	nosuffixbasename=`/bin/echo -n ${basename}|sed 's/\.[^.]*$//'`
-	nodvisuffixbasename=`/bin/echo -n ${basename}|sed 's/\.[dD][vV][iI]$//'`
+	nosuffixbasename=`/bin/echo ${basename}|sed 's/\.[^.]*$//'`
+	nodvisuffixbasename=`/bin/echo ${basename}|sed 's/\.[dD][vV][iI]$//'`
 	if [ "${nodvisuffixbasename}" = "${nosuffixbasename}" -a \
 		"${basename}" != "${nosuffixbasename}" ]
 	then
