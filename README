@@ -69,3 +69,32 @@ x86_64-linuxmusl:
   Binaries are taken from the CI testing on travis-ci
   see the source/.travis.yaml file for details on how to build,
   and tlpkg/bin/tl-update-bindir for updating binaries (in general).
+
+x86_64-linux-glibc2.12, on CentOS6:
+#!/bin/sh -x
+# Public domain.
+# in ~/.subversion/config: use-commit-times=yes
+# mkdir /usr/local/src/tl
+# cd !$
+# svn -q co svn://tug.org/texlive/branches/branch2018/Build/source
+# rm -rf source/libs/icu source/libs/poppler # to avoid configuring them
+#
+cd /usr/local/src/tl || exit 1
+#
+debug=-g # for debugging, no optimization
+#
+./Build \
+  $debug \
+  -C \
+  --disable-xetex \
+  --disable-luatex \
+  --disable-luajittex \
+  --disable-luatex53 \
+  --disable-dvisvgm \
+  --disable-bibtexu \
+  --disable-upmendex \
+  --disable-poppler \
+  --without-system-icu \
+  --without-system-poppler \
+  --enable-native-texlive-build \
+exit $?
