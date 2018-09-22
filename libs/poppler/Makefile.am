@@ -43,6 +43,8 @@ nodist_libpoppler_a_SOURCES = \
 goo_libGoo_a_sources = \
 	@POPPLER_TREE@/goo/gfile.cc \
 	@POPPLER_TREE@/goo/glibc.cc \
+	@POPPLER_TREE@/goo/gmem.cc \
+	@POPPLER_TREE@/goo/gmempp.cc \
 	@POPPLER_TREE@/goo/grandom.cc \
 	@POPPLER_TREE@/goo/gstrtod.cc \
 	@POPPLER_TREE@/goo/FixedPoint.cc \

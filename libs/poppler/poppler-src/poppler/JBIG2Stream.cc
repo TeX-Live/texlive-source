@@ -23,7 +23,6 @@
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013, 2014 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2015 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
-// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -2967,19 +2966,17 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
   if (mmr) {
 
     mmrDecoder->reset();
-    // 0 <= codingLine[0] < codingLine[1] < ... < codingLine[n] = w
-    // ---> max codingLine size = w + 1
-    // refLine has one extra guard entry at the end
-    // ---> max refLine size = w + 2
-    codingLine = (int *)gmallocn_checkoverflow(w + 1, sizeof(int));
-    refLine = (int *)gmallocn_checkoverflow(w + 2, sizeof(int));
-
-    if (unlikely(!codingLine || !refLine)) {
+    if (w > INT_MAX - 2) {
       error(errSyntaxError, curStr->getPos(), "Bad width in JBIG2 generic bitmap");
       delete bitmap;
       return nullptr;
     }
-
+    // 0 <= codingLine[0] < codingLine[1] < ... < codingLine[n] = w
+    // ---> max codingLine size = w + 1
+    // refLine has one extra guard entry at the end
+    // ---> max refLine size = w + 2
+    codingLine = (int *)gmallocn(w + 1, sizeof(int));
+    refLine = (int *)gmallocn(w + 2, sizeof(int));
     memset(refLine, 0, (w + 2) * sizeof(int));
     for (i = 0; i < w + 1; ++i) codingLine[i] = w;
 
@@ -4088,20 +4085,15 @@ void JBIG2Stream::readCodeTableSeg(Guint segNum, Guint length) {
 
   huffDecoder->reset();
   huffTabSize = 8;
-  huffTab = (JBIG2HuffmanTable *)gmallocn_checkoverflow(huffTabSize, sizeof(JBIG2HuffmanTable));
-  if (unlikely(!huffTab)) {
-    goto oomError;
-  }
-
+  huffTab = (JBIG2HuffmanTable *)
+                gmallocn(huffTabSize, sizeof(JBIG2HuffmanTable));
   i = 0;
   val = lowVal;
   while (val < highVal) {
     if (i == huffTabSize) {
       huffTabSize *= 2;
-      huffTab = (JBIG2HuffmanTable *)greallocn_checkoverflow(huffTab, huffTabSize, sizeof(JBIG2HuffmanTable));
-      if (unlikely(!huffTab)) {
-	goto oomError;
-      }
+      huffTab = (JBIG2HuffmanTable *)
+	            greallocn(huffTab, huffTabSize, sizeof(JBIG2HuffmanTable));
     }
     huffTab[i].val = val;
     huffTab[i].prefixLen = huffDecoder->readBits(prefixBits);
@@ -4111,10 +4103,8 @@ void JBIG2Stream::readCodeTableSeg(Guint segNum, Guint length) {
   }
   if (i + oob + 3 > huffTabSize) {
     huffTabSize = i + oob + 3;
-    huffTab = (JBIG2HuffmanTable *)greallocn_checkoverflow(huffTab, huffTabSize, sizeof(JBIG2HuffmanTable));
-    if (unlikely(!huffTab)) {
-      goto oomError;
-    }
+    huffTab = (JBIG2HuffmanTable *)
+                  greallocn(huffTab, huffTabSize, sizeof(JBIG2HuffmanTable));
   }
   huffTab[i].val = lowVal - 1;
   huffTab[i].prefixLen = huffDecoder->readBits(prefixBits);
@@ -4142,8 +4132,6 @@ void JBIG2Stream::readCodeTableSeg(Guint segNum, Guint length) {
 
  eofError:
   error(errSyntaxError, curStr->getPos(), "Unexpected EOF in JBIG2 stream");
- oomError:
-  error(errInternal, curStr->getPos(), "Failed allocation when processing JBIG2 stream");
 }
 
 void JBIG2Stream::readExtensionSeg(Guint length) {

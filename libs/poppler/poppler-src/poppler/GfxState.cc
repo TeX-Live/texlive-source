@@ -31,8 +31,6 @@
 // Copyright (C) 2016 Marek Kasik <mkasik@redhat.com>
 // Copyright (C) 2017 Oliver Sander <oliver.sander@tu-dresden.de>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
-// Copyright (C) 2018 Volker Krause <vkrause@kde.org>
-// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -4008,9 +4006,7 @@ void GfxUnivariateShading::setupCache(const Matrix *ctm,
     tMax = t0 + sMin * (t1 - t0);
   }
 
-  cacheBounds = (double *)gmallocn_checkoverflow(maxSize, sizeof(double) * (nComps + 2));
-  if (unlikely(!cacheBounds))
-    return;
+  cacheBounds = (double *)gmallocn(maxSize, sizeof(double) * (nComps + 2));
   cacheCoeff = cacheBounds + maxSize;
   cacheValues = cacheCoeff + maxSize;
 
@@ -5228,7 +5224,7 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(GfxResources *res, int typeA, Di
   nPatchesA = 0;
   patchesA = nullptr;
   patchesSize = 0;
-  auto bitBuf = std::make_unique<GfxShadingBitBuf>(str);
+  std::unique_ptr<GfxShadingBitBuf> bitBuf(new GfxShadingBitBuf(str));
   while (1) {
     if (!bitBuf->getBits(flagBits, &flag)) {
       break;
@@ -5872,30 +5868,24 @@ GfxImageColorMap::GfxImageColorMap(GfxImageColorMap *colorMap) {
   colorSpace2 = nullptr;
   for (k = 0; k < gfxColorMaxComps; ++k) {
     lookup[k] = nullptr;
-    lookup2[k] = nullptr;
   }
-  byte_lookup = nullptr;
   n = 1 << bits;
-  for (k = 0; k < nComps; ++k) {
-    lookup[k] = (GfxColorComp *)gmallocn(n, sizeof(GfxColorComp));
-    memcpy(lookup[k], colorMap->lookup[k], n * sizeof(GfxColorComp));
-  }
   if (colorSpace->getMode() == csIndexed) {
     colorSpace2 = ((GfxIndexedColorSpace *)colorSpace)->getBase();
     for (k = 0; k < nComps2; ++k) {
-      lookup2[k] = (GfxColorComp *)gmallocn(n, sizeof(GfxColorComp));
-      memcpy(lookup2[k], colorMap->lookup2[k], n * sizeof(GfxColorComp));
+      lookup[k] = (GfxColorComp *)gmallocn(n, sizeof(GfxColorComp));
+      memcpy(lookup[k], colorMap->lookup[k], n * sizeof(GfxColorComp));
     }
   } else if (colorSpace->getMode() == csSeparation) {
     colorSpace2 = ((GfxSeparationColorSpace *)colorSpace)->getAlt();
     for (k = 0; k < nComps2; ++k) {
-      lookup2[k] = (GfxColorComp *)gmallocn(n, sizeof(GfxColorComp));
-      memcpy(lookup2[k], colorMap->lookup2[k], n * sizeof(GfxColorComp));
+      lookup[k] = (GfxColorComp *)gmallocn(n, sizeof(GfxColorComp));
+      memcpy(lookup[k], colorMap->lookup[k], n * sizeof(GfxColorComp));
     }
   } else {
     for (k = 0; k < nComps; ++k) {
-      lookup2[k] = (GfxColorComp *)gmallocn(n, sizeof(GfxColorComp));
-      memcpy(lookup2[k], colorMap->lookup2[k], n * sizeof(GfxColorComp));
+      lookup[k] = (GfxColorComp *)gmallocn(n, sizeof(GfxColorComp));
+      memcpy(lookup[k], colorMap->lookup[k], n * sizeof(GfxColorComp));
     }
   }
   if (colorMap->byte_lookup) {

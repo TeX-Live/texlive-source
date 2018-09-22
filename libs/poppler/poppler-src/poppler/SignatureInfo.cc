@@ -127,16 +127,16 @@ void SignatureInfo::setSubjectDN(const char *subjectDN)
   subject_dn = strdup(subjectDN);
 }
 
-void SignatureInfo::setLocation(const char *loc)
+void SignatureInfo::setLocation(char *loc)
 {
   free(location);
-  location = strdup(loc);
+  location = loc;
 }
 
-void SignatureInfo::setReason(const char *signingReason)
+void SignatureInfo::setReason(char *signingReason)
 {
   free(reason);
-  reason = strdup(signingReason);
+  reason = signingReason;
 }
 
 void SignatureInfo::setHashAlgorithm(int type)

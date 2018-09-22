@@ -68,7 +68,6 @@
 #include "goo/GooString.h"
 #include "goo/GooList.h"
 #include "goo/gfile.h"
-#include "goo/gdir.h"
 #include "Error.h"
 #include "NameToCharCode.h"
 #include "CharCodeToUnicode.h"

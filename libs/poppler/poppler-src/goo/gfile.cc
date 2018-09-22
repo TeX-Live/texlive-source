@@ -56,7 +56,6 @@
 #include <limits>
 #include "GooString.h"
 #include "gfile.h"
-#include "gdir.h"
 
 // Some systems don't define this, so just make it something reasonably
 // large.

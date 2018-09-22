@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2007 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2008 Kees Cook <kees@outflux.net>
-// Copyright (C) 2008, 2010, 2017, 2018 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2010, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009 Jakub Wilk <jwilk@jwilk.net>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -23,7 +23,6 @@
 // Copyright (C) 2013 Adrian Perez de Castro <aperez@igalia.com>
 // Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
-// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -37,7 +36,6 @@
 #pragma interface
 #endif
 
-#include <cassert>
 #include <set>
 #include <stdio.h>
 #include <string.h>
@@ -89,32 +87,13 @@ struct Ref {
   int gen;			// generation number
 };
 
-inline bool operator== (const Ref& lhs, const Ref& rhs) noexcept {
-  return lhs.num == rhs.num && lhs.gen == rhs.gen;
-}
-
-inline bool operator< (const Ref& lhs, const Ref& rhs) noexcept {
-  if (lhs.num != rhs.num)
-    return lhs.num < rhs.num;
-  return lhs.gen < rhs.gen;
-}
-
-namespace std
-{
-
-template<>
-struct hash<Ref>
-{
-    using argument_type = Ref;
-    using result_type = size_t;
-
-    result_type operator() (const argument_type &ref) const noexcept
-    {
-	return std::hash<int>{}(ref.num) ^ (std::hash<int>{}(ref.gen) << 1);
-    }
+struct RefCompare {
+  bool operator() (const Ref& lhs, const Ref& rhs) const {
+    if (lhs.num != rhs.num)
+      return lhs.num < rhs.num;
+    return lhs.gen < rhs.gen;
+  }
 };
-
-}
 
 //------------------------------------------------------------------------
 // object types
@@ -152,8 +131,17 @@ enum ObjType {
 // Object
 //------------------------------------------------------------------------
 
+#ifdef DEBUG_MEM
+#define initObj(t) free(); zeroUnion(); ++numAlloc[type = t]
+#else
 #define initObj(t) free(); zeroUnion(); type = t
+#endif
+
+#ifdef DEBUG_MEM
+#define constructObj(t) ++numAlloc[type = t]
+#else
 #define constructObj(t) type = t
+#endif
 
 class Object {
 public:
@@ -174,17 +162,17 @@ public:
   explicit Object(double realA)
     { constructObj(objReal); real = realA; }
   explicit Object(GooString *stringA)
-    { assert(stringA); constructObj(objString); string = stringA; }
+    { constructObj(objString); string = stringA; }
   Object(ObjType typeA, const char *stringA)
-    { assert(typeA == objName || typeA == objCmd); assert(stringA); constructObj(typeA); cString = copyString(stringA); }
+    { constructObj(typeA); cString = copyString(stringA); }
   explicit Object(long long int64gA)
     { constructObj(objInt64); int64g = int64gA; }
   explicit Object(Array *arrayA)
-    { assert(arrayA); constructObj(objArray); array = arrayA; }
+    { constructObj(objArray); array = arrayA; }
   explicit Object(Dict *dictA)
-    { assert(dictA); constructObj(objDict); dict = dictA; }
+    { constructObj(objDict); dict = dictA; }
   explicit Object(Stream *streamA)
-    { assert(streamA); constructObj(objStream); stream = streamA; }
+    { constructObj(objStream); stream = streamA; }
   Object(int numA, int genA)
     { constructObj(objRef); ref.num = numA; ref.gen = genA; }
   template<typename T> Object(T) = delete;
@@ -250,8 +238,10 @@ public:
     return type == objInt ? (double)intg : type == objInt64 ? (double)int64g : real;
   }
   const GooString *getString() const { OBJECT_TYPE_CHECK(objString); return string; }
-  // After takeString() the only method that should be called for the object is free().
-  GooString *takeString() { OBJECT_TYPE_CHECK(objString); type = objDead; return string; }
+  // After takeString() the only method that should be called for the object is free()
+  // because the object it's not expected to have a NULL string.
+  GooString *takeString() {
+    OBJECT_TYPE_CHECK(objString); GooString *s = string; string = nullptr; return s; }
   const char *getName() const { OBJECT_TYPE_CHECK(objName); return cString; }
   Array *getArray() const { OBJECT_TYPE_CHECK(objArray); return array; }
   Dict *getDict() const { OBJECT_TYPE_CHECK(objDict); return dict; }
@@ -273,14 +263,13 @@ public:
 
   // Dict accessors.
   int dictGetLength() const;
-  void dictAdd(char *key, Object &&val) = delete;
-  void dictAdd(const char *key, Object &&val);
+  void dictAdd(char *key, Object &&val);
   void dictSet(const char *key, Object &&val);
   void dictRemove(const char *key);
   GBool dictIs(const char *dictType) const;
   Object dictLookup(const char *key, int recursion = 0) const;
   Object dictLookupNF(const char *key) const;
-  const char *dictGetKey(int i) const;
+  char *dictGetKey(int i) const;
   Object dictGetVal(int i) const;
   Object dictGetValNF(int i) const;
 
@@ -299,6 +288,9 @@ public:
   // Output.
   const char *getTypeName() const;
   void print(FILE *f = stdout) const;
+
+  // Memory testing.
+  static void memCheck(FILE *f);
 
 private:
   friend class Array; // Needs free and initNullAfterMalloc
@@ -324,6 +316,11 @@ private:
     Stream *stream;		//   stream
     Ref ref;			//   indirect reference
   };
+
+#ifdef DEBUG_MEM
+  static int			// number of each type of object
+    numAlloc[numObjTypes];	//   currently allocated
+#endif
 };
 
 //------------------------------------------------------------------------
@@ -356,7 +353,7 @@ inline Object Object::arrayGetNF(int i) const
 inline int Object::dictGetLength() const
   { OBJECT_TYPE_CHECK(objDict); return dict->getLength(); }
 
-inline void Object::dictAdd(const char *key, Object &&val)
+inline void Object::dictAdd(char *key, Object &&val)
   { OBJECT_TYPE_CHECK(objDict); dict->add(key, std::move(val)); }
 
 inline void Object::dictSet(const char *key, Object &&val)
@@ -377,7 +374,7 @@ inline Object Object::dictLookup(const char *key, int recursion) const
 inline Object Object::dictLookupNF(const char *key) const
   { OBJECT_TYPE_CHECK(objDict); return dict->lookupNF(key); }
 
-inline const char *Object::dictGetKey(int i) const
+inline char *Object::dictGetKey(int i) const
   { OBJECT_TYPE_CHECK(objDict); return dict->getKey(i); }
 
 inline Object Object::dictGetVal(int i) const

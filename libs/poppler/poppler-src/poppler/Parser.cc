@@ -20,7 +20,6 @@
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
-// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -113,18 +112,20 @@ Object Parser::getObj(GBool simpleOnly,
 	if (strict) goto err;
 	shift();
       } else {
-	// buf1 will go away in shift(), so keep the key
-	const auto key = std::move(buf1);
+	// buf1 might go away in shift(), so construct the key
+	char *key = copyString(buf1.getName());
 	shift();
 	if (buf1.isEOF() || buf1.isError()) {
+	  gfree(key);
 	  if (strict && buf1.isError()) goto err;
 	  break;
 	}
 	Object obj2 = getObj(gFalse, fileKey, encAlgorithm, keyLength, objNum, objGen, recursion + 1);
 	if (unlikely(obj2.isError() && recursion + 1 >= recursionLimit)) {
+	  gfree(key);
 	  break;
 	}
-	obj.dictAdd(key.getName(), std::move(obj2));
+	obj.dictAdd(key, std::move(obj2));
       }
     }
     if (buf1.isEOF()) {

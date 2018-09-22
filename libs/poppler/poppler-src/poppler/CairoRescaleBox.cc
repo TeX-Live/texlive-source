@@ -32,7 +32,6 @@
 //
 // Copyright (C) 2012 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2012, 2017 Adrian Johnson <ajohnson@redneon.com>
-// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -282,10 +281,10 @@ GBool CairoRescaleBox::downScaleImage(unsigned orig_width, unsigned orig_height,
   dest = (unsigned int *)cairo_image_surface_get_data (dest_surface);
   dst_stride = cairo_image_surface_get_stride (dest_surface);
 
-  scanline = (uint32_t*)gmallocn (orig_width, sizeof(int));
+  scanline = (uint32_t*)gmallocn3 (orig_width, 1, sizeof(int));
 
-  x_coverage = (int *)gmallocn (orig_width, sizeof(int));
-  y_coverage = (int *)gmallocn (orig_height, sizeof(int));
+  x_coverage = (int *)gmallocn3 (orig_width, 1, sizeof(int));
+  y_coverage = (int *)gmallocn3 (orig_height, 1, sizeof(int));
 
   /* we need to allocate enough room for ceil(src_height/dest_height)+1
      Example:

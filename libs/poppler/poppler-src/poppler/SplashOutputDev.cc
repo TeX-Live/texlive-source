@@ -2294,71 +2294,88 @@ reload:
 }
 
 void SplashOutputDev::stroke(GfxState *state) {
+  SplashPath *path;
+
   if (state->getStrokeColorSpace()->isNonMarking()) {
     return;
   }
   setOverprintMask(state->getStrokeColorSpace(), state->getStrokeOverprint(),
 		   state->getOverprintMode(), state->getStrokeColor());
-  SplashPath path = convertPath(state, state->getPath(), gFalse);
-  splash->stroke(&path);
+  path = convertPath(state, state->getPath(), gFalse);
+  splash->stroke(path);
+  delete path;
 }
 
 void SplashOutputDev::fill(GfxState *state) {
+  SplashPath *path;
+
   if (state->getFillColorSpace()->isNonMarking()) {
     return;
   }
   setOverprintMask(state->getFillColorSpace(), state->getFillOverprint(),
 		   state->getOverprintMode(), state->getFillColor());
-  SplashPath path = convertPath(state, state->getPath(), gTrue);
-  splash->fill(&path, gFalse);
+  path = convertPath(state, state->getPath(), gTrue);
+  splash->fill(path, gFalse);
+  delete path;
 }
 
 void SplashOutputDev::eoFill(GfxState *state) {
+  SplashPath *path;
+
   if (state->getFillColorSpace()->isNonMarking()) {
     return;
   }
   setOverprintMask(state->getFillColorSpace(), state->getFillOverprint(),
 		   state->getOverprintMode(), state->getFillColor());
-  SplashPath path = convertPath(state, state->getPath(), gTrue);
-  splash->fill(&path, gTrue);
+  path = convertPath(state, state->getPath(), gTrue);
+  splash->fill(path, gTrue);
+  delete path;
 }
 
 void SplashOutputDev::clip(GfxState *state) {
-  SplashPath path = convertPath(state, state->getPath(), gTrue);
-  splash->clipToPath(&path, gFalse);
+  SplashPath *path;
+
+  path = convertPath(state, state->getPath(), gTrue);
+  splash->clipToPath(path, gFalse);
+  delete path;
 }
 
 void SplashOutputDev::eoClip(GfxState *state) {
-  SplashPath path = convertPath(state, state->getPath(), gTrue);
-  splash->clipToPath(&path, gTrue);
+  SplashPath *path;
+
+  path = convertPath(state, state->getPath(), gTrue);
+  splash->clipToPath(path, gTrue);
+  delete path;
 }
 
 void SplashOutputDev::clipToStrokePath(GfxState *state) {
-  SplashPath *path2;
+  SplashPath *path, *path2;
 
-  SplashPath path = convertPath(state, state->getPath(), gFalse);
-  path2 = splash->makeStrokePath(&path, state->getLineWidth());
+  path = convertPath(state, state->getPath(), gFalse);
+  path2 = splash->makeStrokePath(path, state->getLineWidth());
+  delete path;
   splash->clipToPath(path2, gFalse);
   delete path2;
 }
 
-SplashPath SplashOutputDev::convertPath(GfxState *state, GfxPath *path,
+SplashPath *SplashOutputDev::convertPath(GfxState *state, GfxPath *path,
 					 GBool dropEmptySubpaths) {
-  SplashPath sPath;
+  SplashPath *sPath;
   GfxSubpath *subpath;
   int n, i, j;
 
   n = dropEmptySubpaths ? 1 : 0;
+  sPath = new SplashPath();
   for (i = 0; i < path->getNumSubpaths(); ++i) {
     subpath = path->getSubpath(i);
     if (subpath->getNumPoints() > n) {
-      sPath.reserve(subpath->getNumPoints() + 1);
-      sPath.moveTo((SplashCoord)subpath->getX(0),
+      sPath->reserve(subpath->getNumPoints() + 1);
+      sPath->moveTo((SplashCoord)subpath->getX(0),
 		    (SplashCoord)subpath->getY(0));
       j = 1;
       while (j < subpath->getNumPoints()) {
 	if (subpath->getCurve(j)) {
-	  sPath.curveTo((SplashCoord)subpath->getX(j),
+	  sPath->curveTo((SplashCoord)subpath->getX(j),
 			 (SplashCoord)subpath->getY(j),
 			 (SplashCoord)subpath->getX(j+1),
 			 (SplashCoord)subpath->getY(j+1),
@@ -2366,13 +2383,13 @@ SplashPath SplashOutputDev::convertPath(GfxState *state, GfxPath *path,
 			 (SplashCoord)subpath->getY(j+2));
 	  j += 3;
 	} else {
-	  sPath.lineTo((SplashCoord)subpath->getX(j),
+	  sPath->lineTo((SplashCoord)subpath->getX(j),
 			(SplashCoord)subpath->getY(j));
 	  ++j;
 	}
       }
       if (subpath->isClosed()) {
-	sPath.close();
+	sPath->close();
       }
     }
   }
@@ -3553,16 +3570,14 @@ void SplashOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
       }
       break;
     case splashModeXBGR8:
-      imgData.lookup = (SplashColorPtr)gmallocn_checkoverflow(n, 4);
-      if (likely(imgData.lookup != nullptr)) {
-	for (i = 0; i < n; ++i) {
-	  pix = (Guchar)i;
-	  colorMap->getRGB(&pix, &rgb);
-	  imgData.lookup[4*i] = colToByte(rgb.r);
-	  imgData.lookup[4*i+1] = colToByte(rgb.g);
-	  imgData.lookup[4*i+2] = colToByte(rgb.b);
-	  imgData.lookup[4*i+3] = 255;
-	}
+      imgData.lookup = (SplashColorPtr)gmallocn(n, 4);
+      for (i = 0; i < n; ++i) {
+	pix = (Guchar)i;
+	colorMap->getRGB(&pix, &rgb);
+	imgData.lookup[4*i] = colToByte(rgb.r);
+	imgData.lookup[4*i+1] = colToByte(rgb.g);
+	imgData.lookup[4*i+2] = colToByte(rgb.b);
+	imgData.lookup[4*i+3] = 255;
       }
       break;
 #ifdef SPLASH_CMYK
@@ -4071,16 +4086,14 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
       }
       break;
     case splashModeXBGR8:
-      imgData.lookup = (SplashColorPtr)gmallocn_checkoverflow(n, 4);
-      if (likely(imgData.lookup != nullptr)) {
-	for (i = 0; i < n; ++i) {
-	  pix = (Guchar)i;
-	  colorMap->getRGB(&pix, &rgb);
-	  imgData.lookup[4*i] = colToByte(rgb.r);
-	  imgData.lookup[4*i+1] = colToByte(rgb.g);
-	  imgData.lookup[4*i+2] = colToByte(rgb.b);
-	  imgData.lookup[4*i+3] = 255;
-	}
+      imgData.lookup = (SplashColorPtr)gmallocn(n, 4);
+      for (i = 0; i < n; ++i) {
+	pix = (Guchar)i;
+	colorMap->getRGB(&pix, &rgb);
+	imgData.lookup[4*i] = colToByte(rgb.r);
+	imgData.lookup[4*i+1] = colToByte(rgb.g);
+	imgData.lookup[4*i+2] = colToByte(rgb.b);
+	imgData.lookup[4*i+3] = 255;
       }
       break;
 #ifdef SPLASH_CMYK
@@ -4771,6 +4784,7 @@ GBool SplashOutputDev::gouraudTriangleShadedFill(GfxState *state, GfxGouraudTria
 
 GBool SplashOutputDev::univariateShadedFill(GfxState *state, SplashUnivariatePattern *pattern, double tMin, double tMax) {
   double xMin, yMin, xMax, yMax;
+  SplashPath *path;
   GBool vaa = getVectorAntialias();
   // restore vector antialias because we support it here
   setVectorAntialias(gTrue);
@@ -4817,16 +4831,17 @@ GBool SplashOutputDev::univariateShadedFill(GfxState *state, SplashUnivariatePat
   state->lineTo(xMax, yMax);
   state->lineTo(xMin, yMax);
   state->closePath();
-  SplashPath path = convertPath(state, state->getPath(), gTrue);
+  path = convertPath(state, state->getPath(), gTrue);
 
 #ifdef SPLASH_CMYK
   pattern->getShading()->getColorSpace()->createMapping(bitmap->getSeparationList(), SPOT_NCOMPS);
 #endif
   setOverprintMask(pattern->getShading()->getColorSpace(), state->getFillOverprint(),
 		   state->getOverprintMode(), nullptr);
-  retVal = (splash->shadedFill(&path, pattern->getShading()->getHasBBox(), pattern) == splashOk);
+  retVal = (splash->shadedFill(path, pattern->getShading()->getHasBBox(), pattern) == splashOk);
   state->clearPath();
   setVectorAntialias(vaa);
+  delete path;
 
   return retVal;
 }
@@ -4834,6 +4849,7 @@ GBool SplashOutputDev::univariateShadedFill(GfxState *state, SplashUnivariatePat
 GBool SplashOutputDev::functionShadedFill(GfxState *state, GfxFunctionShading *shading) {
   SplashFunctionPattern *pattern = new SplashFunctionPattern(colorMode, state, shading);
   double xMin, yMin, xMax, yMax;
+  SplashPath *path;
   GBool vaa = getVectorAntialias();
   // restore vector antialias because we support it here
   setVectorAntialias(gTrue);
@@ -4880,16 +4896,17 @@ GBool SplashOutputDev::functionShadedFill(GfxState *state, GfxFunctionShading *s
   state->lineTo(xMax, yMax);
   state->lineTo(xMin, yMax);
   state->closePath();
-  SplashPath path = convertPath(state, state->getPath(), gTrue);
+  path = convertPath(state, state->getPath(), gTrue);
 
 #ifdef SPLASH_CMYK
   pattern->getShading()->getColorSpace()->createMapping(bitmap->getSeparationList(), SPOT_NCOMPS);
 #endif
   setOverprintMask(pattern->getShading()->getColorSpace(), state->getFillOverprint(),
 		   state->getOverprintMode(), nullptr);
-  retVal = (splash->shadedFill(&path, pattern->getShading()->getHasBBox(), pattern) == splashOk);
+  retVal = (splash->shadedFill(path, pattern->getShading()->getHasBBox(), pattern) == splashOk);
   state->clearPath();
   setVectorAntialias(vaa);
+  delete path;
 
   delete pattern;
 

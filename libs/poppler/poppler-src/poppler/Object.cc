@@ -15,7 +15,6 @@
 //
 // Copyright (C) 2008, 2010, 2012, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
-// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -59,6 +58,11 @@ static const char *objTypeNames[numObjTypes] = {
   "dead"
 };
 
+#ifdef DEBUG_MEM
+int Object::numAlloc[numObjTypes] =
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+#endif
+
 Object::Object(Object&& other)
 {
   type = other.type;
@@ -91,7 +95,6 @@ Object Object::copy() const {
     obj.string = string->copy();
     break;
   case objName:
-  case objCmd:
     obj.cString = copyString(cString);
     break;
   case objArray:
@@ -103,9 +106,15 @@ Object Object::copy() const {
   case objStream:
     stream->incRef();
     break;
+  case objCmd:
+    obj.cString = copyString(cString);
+    break;
   default:
     break;
   }
+#ifdef DEBUG_MEM
+  ++numAlloc[type];
+#endif
   return obj;
 }
 
@@ -122,7 +131,6 @@ void Object::free() {
     delete string;
     break;
   case objName:
-  case objCmd:
     gfree(cString);
     break;
   case objArray:
@@ -140,9 +148,15 @@ void Object::free() {
       delete stream;
     }
     break;
+  case objCmd:
+    gfree(cString);
+    break;
   default:
     break;
   }
+#ifdef DEBUG_MEM
+  --numAlloc[type];
+#endif
   type = objNone;
 }
 
@@ -219,4 +233,24 @@ void Object::print(FILE *f) const {
     fprintf(f, "%lld", int64g);
     break;
   }
+}
+
+void Object::memCheck(FILE *f) {
+#ifdef DEBUG_MEM
+  int i;
+  int t;
+
+  t = 0;
+  for (i = 0; i < numObjTypes; ++i)
+    t += numAlloc[i];
+  if (t > 0) {
+    fprintf(f, "Allocated objects:\n");
+    for (i = 0; i < numObjTypes; ++i) {
+      if (numAlloc[i] > 0)
+	fprintf(f, "  %-20s: %6d\n", objTypeNames[i], numAlloc[i]);
+    }
+  }
+#else
+  (void)f;
+#endif
 }

@@ -26,7 +26,6 @@
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 // Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
-// Copyright (C) 2018 Philipp Knechtges <philipp-dev@knechtges.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -153,7 +152,7 @@ public:
   // radialShadedFill()?  If this returns false, these shaded fills
   // will be reduced to a series of other drawing operations.
   GBool useShadedFills(int type) override
-    { return (type < 4 && level >= psLevel2) || (type == 7 && level >= psLevel3); }
+    { return type < 4 && level >= psLevel2; }
 
   // Does this device use drawForm()?  If this returns false,
   // form-type XObjects will be interpreted (i.e., unrolled).
@@ -250,7 +249,6 @@ public:
 				   GfxFunctionShading *shading) override;
   GBool axialShadedFill(GfxState *state, GfxAxialShading *shading, double /*tMin*/, double /*tMax*/) override;
   GBool radialShadedFill(GfxState *state, GfxRadialShading *shading, double /*sMin*/, double /*sMax*/) override;
-  GBool patchMeshShadedFill(GfxState *state, GfxPatchMeshShading *shading) override;
 
   //----- path clipping
   void clip(GfxState *state) override;

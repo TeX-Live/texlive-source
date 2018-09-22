@@ -7,7 +7,6 @@
 // Copyright 2013, 2014 Igalia S.L.
 // Copyright 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2018 Adrian Johnson <ajohnson@redneon.com>
-// Copyright 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 //========================================================================
 
@@ -80,7 +79,7 @@ private:
   Object classMap;
   ElemPtrArray elements;
   std::map<int, std::vector<Parent> > parentTree;
-  std::multimap<Ref, Parent*> refToParentMap;
+  std::multimap<Ref, Parent*, RefCompare> refToParentMap;
 
   void parse(Dict *rootDict);
   void parseNumberTreeNode(Dict *node);

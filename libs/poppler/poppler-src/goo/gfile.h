@@ -169,4 +169,53 @@ private:
 #endif // _WIN32
 };
 
+//------------------------------------------------------------------------
+// GDir and GDirEntry
+//------------------------------------------------------------------------
+
+class GDirEntry {
+public:
+
+  GDirEntry(char *dirPath, char *nameA, GBool doStat);
+  ~GDirEntry();
+  GooString *getName() { return name; }
+  GooString *getFullPath() { return fullPath; }
+  GBool isDir() { return dir; }
+
+private:
+  GDirEntry(const GDirEntry &other);
+  GDirEntry& operator=(const GDirEntry &other);
+
+  GooString *name;		// dir/file name
+  GooString *fullPath;
+  GBool dir;			// is it a directory?
+};
+
+class GDir {
+public:
+
+  GDir(char *name, GBool doStatA = gTrue);
+  ~GDir();
+  GDirEntry *getNextEntry();
+  void rewind();
+
+private:
+  GDir(const GDir &other);
+  GDir& operator=(const GDir &other);
+
+  GooString *path;		// directory path
+  GBool doStat;			// call stat() for each entry?
+#if defined(_WIN32)
+  WIN32_FIND_DATAA ffd;
+  HANDLE hnd;
+#elif defined(ACORN)
+#elif defined(MACOS)
+#else
+  DIR *dir;			// the DIR structure from opendir()
+#ifdef VMS
+  GBool needParent;		// need to return an entry for [-]
+#endif
+#endif
+};
+
 #endif

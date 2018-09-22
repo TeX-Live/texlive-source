@@ -22,7 +22,6 @@
 // Copyright (C) 2012, 2013, 2015, 2016 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
-// Copyright (C) 2018 Sanchit Anand <sanxchit@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -890,10 +889,6 @@ public:
 
   // Turn extra processing for HTML conversion on or off.
   void enableHTMLExtras(GBool doHTMLA) { doHTML = doHTMLA; }
-
-  // Get the head of the linked list of TextFlows for the
-  // last rasterized page.
-  TextFlow *getFlows();
 
 private:
 

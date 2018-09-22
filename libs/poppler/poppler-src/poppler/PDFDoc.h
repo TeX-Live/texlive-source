@@ -31,7 +31,6 @@
 // Copyright (C) 2015 André Esser <bepandre@hotmail.com>
 // Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
-// Copyright (C) 2018 Evangelos Rigas <erigas@rnd2.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -73,41 +72,6 @@ enum PDFWriteMode {
   writeStandard,
   writeForceRewrite,
   writeForceIncremental
-};
-
-enum PDFSubtype {
-  subtypeNull,
-  subtypePDFA,
-  subtypePDFE,
-  subtypePDFUA,
-  subtypePDFVT,
-  subtypePDFX,
-  subtypeNone
-};
-
-enum PDFSubtypePart {
-  subtypePartNull,
-  subtypePart1,
-  subtypePart2,
-  subtypePart3,
-  subtypePart4,
-  subtypePart5,
-  subtypePart6,
-  subtypePart7,
-  subtypePart8,
-  subtypePartNone
-};
-
-enum PDFSubtypeConformance {
-  subtypeConfNull,
-  subtypeConfA,
-  subtypeConfB,
-  subtypeConfG,
-  subtypeConfN,
-  subtypeConfP,
-  subtypeConfPG,
-  subtypeConfU,
-  subtypeConfNone
 };
 
 //------------------------------------------------------------------------
@@ -309,11 +273,6 @@ public:
   GooString *getDocInfoCreatDate() { return getDocInfoStringEntry("CreationDate"); }
   GooString *getDocInfoModDate() { return getDocInfoStringEntry("ModDate"); }
 
-  // Return the PDF subtype, part, and conformance
-  PDFSubtype getPDFSubtype() const { return pdfSubtype; }
-  PDFSubtypePart getPDFSubtypePart() const { return pdfPart; }
-  PDFSubtypeConformance getPDFSubtypeConformance() const { return pdfConformance; }
-
   // Return the PDF version specified by the file.
   int getPDFMajorVersion() { return pdfMajorVersion; }
   int getPDFMinorVersion() { return pdfMinorVersion; }
@@ -387,8 +346,6 @@ private:
   GBool checkFooter();
   void checkHeader();
   GBool checkEncryption(GooString *ownerPassword, GooString *userPassword);
-  void extractPDFSubtype();
-
   // Get the offset of the start xref table.
   Goffset getStartXRef(GBool tryingToReconstruct = gFalse);
   // Get the offset of the entries in the main XRef table of a
@@ -408,9 +365,6 @@ private:
   void *guiData;
   int pdfMajorVersion;
   int pdfMinorVersion;
-  PDFSubtype pdfSubtype;
-  PDFSubtypePart pdfPart;
-  PDFSubtypeConformance pdfConformance;
   Linearization *linearization;
   // linearizationState = 0: unchecked
   // linearizationState = 1: checked and valid

@@ -20,7 +20,6 @@
 // Copyright (C) 2010 Paweł Wiejacha <pawel.wiejacha@gmail.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
-// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -34,11 +33,6 @@
 #pragma interface
 #endif
 
-#include <atomic>
-#include <string>
-#include <vector>
-#include <utility>
-
 #include "poppler-config.h"
 #include "Object.h"
 #include "goo/GooMutex.h"
@@ -47,13 +41,18 @@
 // Dict
 //------------------------------------------------------------------------
 
+struct DictEntry {
+  char *key;
+  Object val;
+};
+
 class Dict {
 public:
 
   // Constructor.
   Dict(XRef *xrefA);
-  Dict(const Dict *dictA);
-  Dict *copy(XRef *xrefA) const;
+  Dict(Dict* dictA);
+  Dict *copy(XRef *xrefA);
 
   // Destructor.
   ~Dict();
@@ -62,14 +61,11 @@ public:
   Dict& operator=(const Dict &) = delete;
 
   // Get number of entries.
-  int getLength() const { return static_cast<int>(entries.size()); }
+  int getLength() const { return length; }
 
-  // Add an entry. (Copies key into Dict.)
+  // Add an entry.  NB: does not copy key.
   // val becomes a dead object after the call
-  void add(const char *key, Object &&val);
-
-  // Add an entry. (Takes ownership of key.)
-  void add(char *key, Object &&val) = delete;
+  void add(char *key, Object &&val);
 
   // Update the value of an existing entry, otherwise create it
   // val becomes a dead object after the call
@@ -87,9 +83,9 @@ public:
   GBool lookupInt(const char *key, const char *alt_key, int *value) const;
 
   // Iterative accessors.
-  const char *getKey(int i) const { return entries[i].first.c_str(); }
-  Object getVal(int i) const { return entries[i].second.fetch(xref); }
-  Object getValNF(int i) const { return entries[i].second.copy(); }
+  char *getKey(int i) const;
+  Object getVal(int i) const;
+  Object getValNF(int i) const;
 
   // Set the xref pointer.  This is only used in one special case: the
   // trailer dictionary, which is read before the xref table is
@@ -104,22 +100,20 @@ private:
   friend class Object; // for incRef/decRef
 
   // Reference counting.
-  int incRef() { return ++ref; }
-  int decRef() { return --ref; }
+  int incRef();
+  int decRef();
 
-  using DictEntry = std::pair<std::string, Object>;
-  struct CmpDictEntry;
-
-  std::atomic_bool sorted;
+  mutable GBool sorted;
   XRef *xref;			// the xref table for this PDF file
-  std::vector<DictEntry> entries;
-  std::atomic_int ref;			// reference count
+  DictEntry *entries;		// array of entries
+  int size;			// size of <entries> array
+  int length;			// number of entries in dictionary
+  int ref;			// reference count
 #ifdef MULTITHREADED
   mutable GooMutex mutex;
 #endif
 
-  const DictEntry *find(const char *key) const;
-  DictEntry *find(const char *key);
+  DictEntry *find(const char *key) const;
 };
 
 #endif

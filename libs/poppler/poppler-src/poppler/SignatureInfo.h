@@ -61,8 +61,8 @@ public:
   void setCertificateValStatus(enum CertificateValidationStatus );
   void setSignerName(char *);
   void setSubjectDN(const char *);
-  void setLocation(const char *);
-  void setReason(const char *);
+  void setLocation(char *);
+  void setReason(char *);
   void setHashAlgorithm(int);
   void setSigningTime(time_t);
   void setSubFilterSupport(bool isSupported) { sig_subfilter_supported = isSupported; }
