@@ -9,6 +9,7 @@
 // Copyright 2017 Jan-Erik S <janerik234678@gmail.com>
 // Copyright 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2017, 2018 Adrian Johnson <ajohnson@redneon.com>
+// Copyright 2018, Adam Reichold <adam.reichold@t-online.de>
 //
 //========================================================================
 
@@ -110,7 +111,7 @@ void StructTreeRoot::parse(Dict *root)
   }
 
   // refToParentMap is only used during parsing. Ensure all memory used by it is freed.
-  std::multimap<Ref, Parent*, RefCompare>().swap(refToParentMap);
+  std::multimap<Ref, Parent*>().swap(refToParentMap);
 }
 
 void StructTreeRoot::parseNumberTreeNode(Dict *node)

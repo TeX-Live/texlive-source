@@ -40,6 +40,7 @@
 // Copyright (C) 2014 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2017, 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 // Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
+// Copyright (C) 2018 Denis Onishchenko <denis.onischenko@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -3884,15 +3885,15 @@ void Gfx::doShowText(const GooString *s) {
   double x, y, dx, dy, dx2, dy2, curX, curY, tdx, tdy, ddx, ddy;
   double originX, originY, tOriginX, tOriginY;
   double x0, y0, x1, y1;
-  double oldCTM[6], newCTM[6];
-  double *mat;
+  double tmp[4], newCTM[6];
+  double *oldCTM, *mat;
   Dict *resDict;
   Parser *oldParser;
   GfxState *savedState;
   const char *p;
   int render;
   GBool patternFill;
-  int len, n, uLen, nChars, nSpaces, i;
+  int len, n, uLen, nChars, nSpaces;
 
   font = state->getFont();
   wMode = font->getWMode();
@@ -3925,26 +3926,23 @@ void Gfx::doShowText(const GooString *s) {
 
   // handle a Type 3 char
   if (font->getType() == fontType3 && out->interpretType3Chars()) {
-    mat = state->getCTM();
-    for (i = 0; i < 6; ++i) {
-      oldCTM[i] = mat[i];
-    }
+    oldCTM = state->getCTM();
     mat = state->getTextMat();
-    newCTM[0] = mat[0] * oldCTM[0] + mat[1] * oldCTM[2];
-    newCTM[1] = mat[0] * oldCTM[1] + mat[1] * oldCTM[3];
-    newCTM[2] = mat[2] * oldCTM[0] + mat[3] * oldCTM[2];
-    newCTM[3] = mat[2] * oldCTM[1] + mat[3] * oldCTM[3];
+    tmp[0] = mat[0] * oldCTM[0] + mat[1] * oldCTM[2];
+    tmp[1] = mat[0] * oldCTM[1] + mat[1] * oldCTM[3];
+    tmp[2] = mat[2] * oldCTM[0] + mat[3] * oldCTM[2];
+    tmp[3] = mat[2] * oldCTM[1] + mat[3] * oldCTM[3];
     mat = font->getFontMatrix();
-    newCTM[0] = mat[0] * newCTM[0] + mat[1] * newCTM[2];
-    newCTM[1] = mat[0] * newCTM[1] + mat[1] * newCTM[3];
-    newCTM[2] = mat[2] * newCTM[0] + mat[3] * newCTM[2];
-    newCTM[3] = mat[2] * newCTM[1] + mat[3] * newCTM[3];
+    newCTM[0] = mat[0] * tmp[0] + mat[1] * tmp[2];
+    newCTM[1] = mat[0] * tmp[1] + mat[1] * tmp[3];
+    newCTM[2] = mat[2] * tmp[0] + mat[3] * tmp[2];
+    newCTM[3] = mat[2] * tmp[1] + mat[3] * tmp[3];
     newCTM[0] *= state->getFontSize();
     newCTM[1] *= state->getFontSize();
     newCTM[2] *= state->getFontSize();
     newCTM[3] *= state->getFontSize();
     newCTM[0] *= state->getHorizScaling();
-    newCTM[2] *= state->getHorizScaling();
+    newCTM[1] *= state->getHorizScaling();
     curX = state->getCurX();
     curY = state->getCurY();
     oldParser = parser;
@@ -4214,7 +4212,7 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
   GBool invert;
   GfxColorSpace *colorSpace, *maskColorSpace;
   GBool haveColorKeyMask, haveExplicitMask, haveSoftMask;
-  int maskColors[2*gfxColorMaxComps];
+  int maskColors[2*gfxColorMaxComps] = {};
   int maskWidth, maskHeight;
   GBool maskInvert;
   GBool maskInterpolate;
@@ -4912,7 +4910,6 @@ void Gfx::opBeginImage(Object args[], int numArgs) {
 }
 
 Stream *Gfx::buildImageStream() {
-  char *key;
   Stream *str;
 
   // build dictionary
@@ -4922,13 +4919,11 @@ Stream *Gfx::buildImageStream() {
     if (!obj.isName()) {
       error(errSyntaxError, getPos(), "Inline image dictionary key must be a name object");
     } else {
-      key = copyString(obj.getName());
-      obj = parser->getObj();
-      if (obj.isEOF() || obj.isError()) {
-	gfree(key);
+      auto val = parser->getObj();
+      if (val.isEOF() || val.isError()) {
 	break;
       }
-      dict.dictAdd(key, std::move(obj));
+      dict.dictAdd(obj.getName(), std::move(val));
     }
     obj = parser->getObj();
   }

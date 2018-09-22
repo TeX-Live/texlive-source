@@ -30,11 +30,11 @@ if (ECM_FOUND)
 endif()
 
 set(POPPLER_MAJOR_VERSION "0")
-set(POPPLER_MINOR_VERSION "68")
+set(POPPLER_MINOR_VERSION "69")
 set(POPPLER_MICRO_VERSION "0")
 set(POPPLER_VERSION "${POPPLER_MAJOR_VERSION}.${POPPLER_MINOR_VERSION}.${POPPLER_MICRO_VERSION}")
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 14)
 set (CMAKE_CXX_EXTENSIONS OFF)
 
 # command line switches
@@ -315,11 +315,9 @@ configure_file(poppler/poppler-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/popple
 
 set(poppler_SRCS
   goo/gfile.cc
-  goo/gmempp.cc
   goo/GooList.cc
   goo/GooTimer.cc
   goo/GooString.cc
-  goo/gmem.cc
   goo/FixedPoint.cc
   goo/NetPBMWriter.cc
   goo/PNGWriter.cc
@@ -489,7 +487,7 @@ add_library(poppler STATIC ${poppler_SRCS})
 else()
 add_library(poppler ${poppler_SRCS})
 endif()
-set_target_properties(poppler PROPERTIES VERSION 79.0.0 SOVERSION 79)
+set_target_properties(poppler PROPERTIES VERSION 80.0.0 SOVERSION 80)
 if(MINGW)
     get_target_property(POPPLER_SOVERSION poppler SOVERSION)
     set_target_properties(poppler PROPERTIES SUFFIX "-${POPPLER_SOVERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}")
@@ -584,9 +582,11 @@ if(ENABLE_XPDF_HEADERS)
     goo/GooString.h
     goo/gtypes.h
     goo/gmem.h
+    goo/gdir.h
     goo/gfile.h
     goo/FixedPoint.h
     goo/ImgWriter.h
+    goo/GooCheckedOps.h
     goo/GooLikely.h
     goo/gstrtod.h
     goo/grandom.h

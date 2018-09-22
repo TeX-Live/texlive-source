@@ -38,6 +38,9 @@
 // Copyright (C) 2017 Hans-Ulrich Jüttner <huj@froreich-bioscientia.de>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 // Copyright 2018 Andre Heinecke <aheinecke@intevation.de>
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
+// Copyright (C) 2018 Dileep Sankhla <sankhla.dileep96@gmail.com>
+// Copyright (C) 2018 Tobias Deiminger <haxtibal@posteo.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -789,6 +792,73 @@ Object AnnotColor::writeToObject(XRef *xref) const {
       a->add( Object( values[i] ) );
     return Object(a);
   }
+}
+
+//------------------------------------------------------------------------
+// DefaultAppearance
+//------------------------------------------------------------------------
+
+DefaultAppearance::DefaultAppearance(Object &&fontNameA, double fontPtSizeA, std::unique_ptr<AnnotColor> fontColorA) :
+    fontName(std::move(fontNameA)), fontPtSize(fontPtSizeA), fontColor(std::move(fontColorA)) {
+}
+
+DefaultAppearance::DefaultAppearance(GooString *da) {
+  fontPtSize = -1;
+
+  if (da) {
+    GooList * daToks = new GooList();
+    int i = FormFieldText::tokenizeDA(da, daToks, "Tf");
+
+    if (i >= 1) {
+      fontPtSize = gatof(( (GooString *)daToks->get(i-1) )->getCString());
+    }
+    if (i >= 2) {
+      // We are expecting a name, therefore the first letter should be '/'.
+      if (((const char*)daToks->get(i-2)) && ((const char*)daToks->get(i-2))[0] == '/') {
+        // The +1 is here to skip the leading '/'.
+        fontName = Object(objName, ((const char*)daToks->get(i-2))+1);
+      }
+    }
+    // Scan backwards: we are looking for the last set value
+    for (i = daToks->getLength()-1; i >= 0; --i) {
+      if (!fontColor) {
+        if (!((GooString *)daToks->get(i))->cmp("g") && i >= 1) {
+          fontColor = std::make_unique<AnnotColor>(gatof(( (GooString *)daToks->get(i-1) )->getCString()));
+        } else if (!((GooString *)daToks->get(i))->cmp("rg") && i >= 3) {
+          fontColor = std::make_unique<AnnotColor>(gatof(( (GooString *)daToks->get(i-3) )->getCString()),
+                                                   gatof(( (GooString *)daToks->get(i-2) )->getCString()),
+                                                   gatof(( (GooString *)daToks->get(i-1) )->getCString()));
+        } else if (!((GooString *)daToks->get(i))->cmp("k") && i >= 4) {
+          fontColor = std::make_unique<AnnotColor>(gatof(( (GooString *)daToks->get(i-4) )->getCString()),
+                                                   gatof(( (GooString *)daToks->get(i-3) )->getCString()),
+                                                   gatof(( (GooString *)daToks->get(i-2) )->getCString()),
+                                                   gatof(( (GooString *)daToks->get(i-1) )->getCString()));
+        }
+      }
+    }
+    deleteGooList(daToks, GooString);
+  }
+}
+
+void DefaultAppearance::setFontName(Object &&fontNameA) {
+  fontName = std::move(fontNameA);
+}
+
+void DefaultAppearance::setFontPtSize(double fontPtSizeA) {
+  fontPtSize = fontPtSizeA;
+}
+
+void DefaultAppearance::setFontColor(std::unique_ptr<AnnotColor> fontColorA) {
+  fontColor = std::move(fontColorA);
+}
+
+GooString *DefaultAppearance::toAppearanceString() const {
+  AnnotAppearanceBuilder appearBuilder;
+  if (fontColor) {
+    appearBuilder.setDrawColor(fontColor.get(), gTrue);
+  }
+  appearBuilder.setTextFont(fontName, fontPtSize);
+  return appearBuilder.buffer()->copy();
 }
 
 //------------------------------------------------------------------------
@@ -1616,17 +1686,17 @@ void AnnotAppearanceBuilder::setDrawColor(const AnnotColor *drawColor, GBool fil
 
   switch (drawColor->getSpace()) {
   case AnnotColor::colorCMYK:
-    appearBuf->appendf("{0:.2f} {1:.2f} {2:.2f} {3:.2f} {4:c}\n",
+    appearBuf->appendf("{0:.5f} {1:.5f} {2:.5f} {3:.5f} {4:c}\n",
 		       values[0], values[1], values[2], values[3],
 		       fill ? 'k' : 'K');
     break;
   case AnnotColor::colorRGB:
-    appearBuf->appendf("{0:.2f} {1:.2f} {2:.2f} {3:s}\n",
+    appearBuf->appendf("{0:.5f} {1:.5f} {2:.5f} {3:s}\n",
 		       values[0], values[1], values[2],
 		       fill ? "rg" : "RG");
     break;
   case AnnotColor::colorGray:
-    appearBuf->appendf("{0:.2f} {1:c}\n",
+    appearBuf->appendf("{0:.5f} {1:c}\n",
 		       values[0],
 		       fill ? 'g' : 'G');
     break;
@@ -1634,6 +1704,11 @@ void AnnotAppearanceBuilder::setDrawColor(const AnnotColor *drawColor, GBool fil
   default:
     break;
   }
+}
+
+void AnnotAppearanceBuilder::setTextFont(const Object &fontName, double fontSize) {
+  if (fontName.isName() && strlen(fontName.getName()) > 0)
+    appearBuf->appendf("/{0:s} {1:.2f} Tf\n", fontName.getName(), fontSize);
 }
 
 void AnnotAppearanceBuilder::setLineStyleForBorder(const AnnotBorder *border) {
@@ -2593,12 +2668,13 @@ void AnnotLink::draw(Gfx *gfx, GBool printing) {
 //------------------------------------------------------------------------
 // AnnotFreeText
 //------------------------------------------------------------------------
-AnnotFreeText::AnnotFreeText(PDFDoc *docA, PDFRectangle *rect, GooString *da) :
+AnnotFreeText::AnnotFreeText(PDFDoc *docA, PDFRectangle *rect, const DefaultAppearance &da) :
     AnnotMarkup(docA, rect) {
   type = typeFreeText;
 
+  GooString *daStr = da.toAppearanceString();
   annotObj.dictSet ("Subtype", Object(objName, "FreeText"));
-  annotObj.dictSet("DA", Object(da->copy()));
+  annotObj.dictSet("DA", Object(daStr));
 
   initialize (docA, annotObj.getDict());
 }
@@ -2726,14 +2802,10 @@ void AnnotFreeText::setContents(GooString *new_content) {
   invalidateAppearance();
 }
 
-void AnnotFreeText::setAppearanceString(GooString *new_string) {
+void AnnotFreeText::setDefaultAppearance(const DefaultAppearance &da) {
   delete appearanceString;
 
-  if (new_string) {
-    appearanceString = new GooString(new_string);
-  } else {
-    appearanceString = new GooString();
-  }
+  appearanceString = da.toAppearanceString();
 
   update ("DA", Object(appearanceString->copy()));
   invalidateAppearance();
@@ -2805,53 +2877,25 @@ void AnnotFreeText::setIntent(AnnotFreeTextIntent new_intent) {
   update ("IT", Object(objName, intentName));
 }
 
-static GfxFont * createAnnotDrawFont(XRef * xref, Dict *fontResDict)
+std::unique_ptr<DefaultAppearance> AnnotFreeText::getDefaultAppearance() const {
+  return std::make_unique<DefaultAppearance>(appearanceString);
+}
+
+static GfxFont *createAnnotDrawFont(XRef * xref, Dict *fontResDict)
 {
   const Ref dummyRef = { -1, -1 };
 
   Dict *fontDict = new Dict(xref);
-  fontDict->add(copyString("BaseFont"), Object(objName, "Helvetica"));
-  fontDict->add(copyString("Subtype"), Object(objName, "Type0"));
-  fontDict->add(copyString("Encoding"), Object(objName, "WinAnsiEncoding"));
+  fontDict->add("BaseFont", Object(objName, "Helvetica"));
+  fontDict->add("Subtype", Object(objName, "Type0"));
+  fontDict->add("Encoding", Object(objName, "WinAnsiEncoding"));
 
   Dict *fontsDict = new Dict(xref);
-  fontsDict->add(copyString("AnnotDrawFont"), Object(fontDict));
+  fontsDict->add("AnnotDrawFont", Object(fontDict));
 
-  fontResDict->add(copyString("Font"), Object(fontsDict));
+  fontResDict->add("Font", Object(fontsDict));
 
   return GfxFont::makeFont(xref, "AnnotDrawFont", dummyRef, fontDict);
-}
-
-void AnnotFreeText::parseAppearanceString(GooString *da, double &fontsize, AnnotColor* &fontcolor) {
-  fontsize = -1;
-  fontcolor = nullptr;
-  if (da) {
-    GooList * daToks = new GooList();
-    int i = FormFieldText::tokenizeDA(da, daToks, "Tf");
-
-    if (i >= 1) {
-      fontsize = gatof(( (GooString *)daToks->get(i-1) )->getCString());
-      // TODO: Font name
-    }
-    // Scan backwards: we are looking for the last set value
-    for (i = daToks->getLength()-1; i >= 0; --i) {
-      if (fontcolor == nullptr) {
-        if (!((GooString *)daToks->get(i))->cmp("g") && i >= 1) {
-          fontcolor = new AnnotColor(gatof(( (GooString *)daToks->get(i-1) )->getCString()));
-        } else if (!((GooString *)daToks->get(i))->cmp("rg") && i >= 3) {
-          fontcolor = new AnnotColor(gatof(( (GooString *)daToks->get(i-3) )->getCString()),
-                                     gatof(( (GooString *)daToks->get(i-2) )->getCString()),
-                                     gatof(( (GooString *)daToks->get(i-1) )->getCString()));
-        } else if (!((GooString *)daToks->get(i))->cmp("k") && i >= 4) {
-          fontcolor = new AnnotColor(gatof(( (GooString *)daToks->get(i-4) )->getCString()),
-                                     gatof(( (GooString *)daToks->get(i-3) )->getCString()),
-                                     gatof(( (GooString *)daToks->get(i-2) )->getCString()),
-                                     gatof(( (GooString *)daToks->get(i-1) )->getCString()));
-        }
-      }
-    }
-    deleteGooList(daToks, GooString);
-  }
 }
 
 void AnnotFreeText::generateFreeTextAppearance()
@@ -2870,14 +2914,13 @@ void AnnotFreeText::generateFreeTextAppearance()
   const double height = rect->y2 - rect->y1;
 
   // Parse some properties from the appearance string
-  double fontsize;
-  AnnotColor *fontcolor;
-  parseAppearanceString(appearanceString, fontsize, fontcolor);
+  DefaultAppearance da{appearanceString};
+
   // Default values
-  if (fontsize <= 0)
-    fontsize = 10;
-  if (fontcolor == nullptr)
-    fontcolor = new AnnotColor(0, 0, 0); // Black
+  if (da.getFontPtSize() <= 0)
+    da.setFontPtSize(10);
+  if (!da.getFontColor())
+    da.setFontColor(std::make_unique<AnnotColor>(0, 0, 0));
   if (!contents)
     contents = new GooString ();
 
@@ -2886,7 +2929,7 @@ void AnnotFreeText::generateFreeTextAppearance()
   GBool doStroke = (borderWidth != 0);
   if (doFill || doStroke) {
     if (doStroke) {
-      appearBuilder.setDrawColor(fontcolor, gFalse); // Border color: same as font color
+      appearBuilder.setDrawColor(da.getFontColor(), gFalse); // Border color: same as font color
     }
     appearBuilder.appendf ("{0:.2f} {0:.2f} {1:.2f} {2:.2f} re\n", borderWidth/2, width-borderWidth, height-borderWidth);
     if (doFill) {
@@ -2906,17 +2949,17 @@ void AnnotFreeText::generateFreeTextAppearance()
   GfxFont *font = createAnnotDrawFont(xref, fontResDict);
 
   // Set font state
-  appearBuilder.setDrawColor(fontcolor, gTrue);
-  appearBuilder.appendf ("BT 1 0 0 1 {0:.2f} {1:.2f} Tm\n", textmargin, height - textmargin - fontsize * font->getDescent());
-  appearBuilder.appendf ("/AnnotDrawFont {0:.2f} Tf\n", fontsize);
+  appearBuilder.setDrawColor(da.getFontColor(), gTrue);
+  appearBuilder.appendf ("BT 1 0 0 1 {0:.2f} {1:.2f} Tm\n", textmargin, height - textmargin - da.getFontPtSize() * font->getDescent());
+  appearBuilder.appendf ("/AnnotDrawFont {0:.2f} Tf\n", da.getFontPtSize());
 
   int i = 0;
   double xposPrev = 0;
   while (i < contents->getLength()) {
     GooString out;
     double linewidth, xpos;
-    layoutText(contents, &out, &i, font, &linewidth, textwidth/fontsize, nullptr, gFalse);
-    linewidth *= fontsize;
+    layoutText(contents, &out, &i, font, &linewidth, textwidth/da.getFontPtSize(), nullptr, gFalse);
+    linewidth *= da.getFontPtSize();
     switch (quadding) {
     case quaddingCentered:
       xpos = (textwidth - linewidth) / 2;
@@ -2928,14 +2971,13 @@ void AnnotFreeText::generateFreeTextAppearance()
       xpos = 0;
       break;
     }
-    appearBuilder.appendf("{0:.2f} {1:.2f} Td\n", xpos - xposPrev, -fontsize);
+    appearBuilder.appendf("{0:.2f} {1:.2f} Td\n", xpos - xposPrev, -da.getFontPtSize());
     appearBuilder.writeString(out);
     appearBuilder.append("Tj\n");
     xposPrev = xpos;
   }
 
   font->decRefCnt();
-  delete fontcolor;
   appearBuilder.append ("ET Q\n");
 
   double bbox[4];
@@ -4883,19 +4925,19 @@ void AnnotWidget::generateFieldAppearance(bool *addedDingbatsResource) {
   const GooString *appearBuf = appearBuilder.buffer();
   // build the appearance stream dictionary
   Dict *appearDict = new Dict(xref);
-  appearDict->add(copyString("Length"), Object(appearBuf->getLength()));
-  appearDict->add(copyString("Subtype"), Object(objName, "Form"));
+  appearDict->add("Length", Object(appearBuf->getLength()));
+  appearDict->add("Subtype", Object(objName, "Form"));
   Array *bbox = new Array(xref);
   bbox->add(Object(0));
   bbox->add(Object(0));
   bbox->add(Object(rect->x2 - rect->x1));
   bbox->add(Object(rect->y2 - rect->y1));
-  appearDict->add(copyString("BBox"), Object(bbox));
+  appearDict->add("BBox", Object(bbox));
 
   // set the resource dictionary
   Object *resDict = form->getDefaultResourcesObj();
   if (resDict->isDict()) {
-    appearDict->add(copyString("Resources"), resDict->copy());
+    appearDict->add("Resources", resDict->copy());
   }
 
   // build the appearance stream
@@ -4934,7 +4976,7 @@ void AnnotWidget::updateAppearanceStream()
 
     // Write the AP dictionary
     obj1 = Object(new Dict(xref));
-    obj1.dictAdd(copyString("N"), Object(updatedAppearanceStream.num, updatedAppearanceStream.gen));
+    obj1.dictAdd("N", Object(updatedAppearanceStream.num, updatedAppearanceStream.gen));
 
     // Update our internal pointers to the appearance dictionary
     appearStreams = new AnnotAppearance(doc, &obj1);
@@ -4967,14 +5009,14 @@ void AnnotWidget::draw(Gfx *gfx, GBool printing) {
     // We are forcing ZaDb but the font does not exist
     // so create a fake one
     Dict *fontDict = new Dict(gfx->getXRef());
-    fontDict->add(copyString("BaseFont"), Object(objName, "ZapfDingbats"));
-    fontDict->add(copyString("Subtype"), Object(objName, "Type1"));
+    fontDict->add("BaseFont", Object(objName, "ZapfDingbats"));
+    fontDict->add("Subtype", Object(objName, "Type1"));
 
     Dict *fontsDict = new Dict(gfx->getXRef());
-    fontsDict->add(copyString("ZaDb"), Object(fontDict));
+    fontsDict->add("ZaDb", Object(fontDict));
 
     Dict *dict = new Dict(gfx->getXRef());
-    dict->add(copyString("Font"), Object(fontsDict));
+    dict->add("Font", Object(fontsDict));
     gfx->pushResources(dict);
     delete dict;
   }

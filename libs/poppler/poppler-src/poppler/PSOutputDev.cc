@@ -33,6 +33,7 @@
 // Copyright (C) 2016 Caolán McNamara <caolanm@redhat.com>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 // Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
+// Copyright (C) 2018 Philipp Knechtges <philipp-dev@knechtges.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -52,6 +53,7 @@
 #include <math.h>
 #include <limits.h>
 #include <algorithm>
+#include <array>
 #include "goo/GooString.h"
 #include "goo/GooList.h"
 #include "poppler-config.h"
@@ -4924,6 +4926,60 @@ GBool PSOutputDev::radialShadedFill(GfxState *state, GfxRadialShading *shading, 
     }
   }
 
+  return gTrue;
+}
+
+GBool PSOutputDev::patchMeshShadedFill(GfxState *state,
+				        GfxPatchMeshShading *shading) {
+  // TODO: support parametrized shading
+  if (level < psLevel3 || shading->isParameterized()) {
+    return gFalse;
+  }
+
+  writePS("%% Begin patchMeshShadedFill\n");
+
+  // ShadingType 7 shadings are pretty much the same for pdf and ps.
+  // As such, we basically just need to invert GfxPatchMeshShading::parse here.
+
+  writePS("<<\n");
+  writePS("  /ShadingType 7\n");
+  writePS("  /ColorSpace ");
+  dumpColorSpaceL2(shading->getColorSpace(), gFalse, gFalse, gFalse);
+  writePS("\n");
+  writePS("  /DataSource [\n");
+
+  const int ncomps = shading->getColorSpace()->getNComps();
+
+  for (int i = 0; i < shading->getNPatches(); ++i) {
+    const auto& patch = *shading->getPatch(i);
+    // Print Flag, for us always f = 0
+    writePS("  0 \n");
+
+    // Print coordinates
+    const std::array<std::pair<int,int>, 16> coordindices = {{ {0,0}, {0,1}, {0,2}, {0,3},
+                                                               {1,3}, {2,3}, {3,3}, {3,2},
+                                                               {3,1}, {3,0}, {2,0}, {1,0},
+                                                               {1,1}, {1,2}, {2,2}, {2,1} }};
+    for (const auto& index: coordindices) {
+      writePSFmt("  {0:.6g} {1:.6g}\n", patch.x[index.first][index.second],
+        patch.y[index.first][index.second]);
+    }
+
+    // Print colors
+    const std::array<std::pair<int, int>, 4> colindices = {{ {0,0}, {0,1}, {1,1}, {1,0} }};
+    for (const auto& index: colindices) {
+      writePS(" ");
+      for (int comp = 0; comp < ncomps; ++comp) {
+        writePSFmt(" {0:.6g}", colToDbl(patch.color[index.first][index.second].c[comp]));
+      }
+      writePS("\n");
+    }
+  }
+
+  writePS("  ]\n");
+
+  writePS(">> shfill\n");
+  writePS("%% End patchMeshShadedFill\n");
   return gTrue;
 }
 

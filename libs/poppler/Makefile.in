@@ -117,8 +117,6 @@ libpoppler_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = @POPPLER_TREE@/goo/gfile.$(OBJEXT) \
 	@POPPLER_TREE@/goo/glibc.$(OBJEXT) \
-	@POPPLER_TREE@/goo/gmem.$(OBJEXT) \
-	@POPPLER_TREE@/goo/gmempp.$(OBJEXT) \
 	@POPPLER_TREE@/goo/grandom.$(OBJEXT) \
 	@POPPLER_TREE@/goo/gstrtod.$(OBJEXT) \
 	@POPPLER_TREE@/goo/FixedPoint.$(OBJEXT) \
@@ -224,8 +222,6 @@ am__depfiles_remade = @POPPLER_TREE@/fofi/$(DEPDIR)/FoFiBase.Po \
 	@POPPLER_TREE@/goo/$(DEPDIR)/GooTimer.Po \
 	@POPPLER_TREE@/goo/$(DEPDIR)/gfile.Po \
 	@POPPLER_TREE@/goo/$(DEPDIR)/glibc.Po \
-	@POPPLER_TREE@/goo/$(DEPDIR)/gmem.Po \
-	@POPPLER_TREE@/goo/$(DEPDIR)/gmempp.Po \
 	@POPPLER_TREE@/goo/$(DEPDIR)/grandom.Po \
 	@POPPLER_TREE@/goo/$(DEPDIR)/gstrtod.Po \
 	@POPPLER_TREE@/poppler/$(DEPDIR)/Annot.Po \
@@ -533,8 +529,6 @@ nodist_libpoppler_a_SOURCES = \
 goo_libGoo_a_sources = \
 	@POPPLER_TREE@/goo/gfile.cc \
 	@POPPLER_TREE@/goo/glibc.cc \
-	@POPPLER_TREE@/goo/gmem.cc \
-	@POPPLER_TREE@/goo/gmempp.cc \
 	@POPPLER_TREE@/goo/grandom.cc \
 	@POPPLER_TREE@/goo/gstrtod.cc \
 	@POPPLER_TREE@/goo/FixedPoint.cc \
@@ -699,11 +693,6 @@ clean-noinstLIBRARIES:
 	@POPPLER_TREE@/goo/$(am__dirstamp) \
 	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/goo/glibc.$(OBJEXT):  \
-	@POPPLER_TREE@/goo/$(am__dirstamp) \
-	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
-@POPPLER_TREE@/goo/gmem.$(OBJEXT): @POPPLER_TREE@/goo/$(am__dirstamp) \
-	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
-@POPPLER_TREE@/goo/gmempp.$(OBJEXT):  \
 	@POPPLER_TREE@/goo/$(am__dirstamp) \
 	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/goo/grandom.$(OBJEXT):  \
@@ -970,8 +959,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/GooTimer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/gfile.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/glibc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/gmem.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/gmempp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/grandom.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/gstrtod.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/Annot.Po@am__quote@ # am--include-marker
@@ -1421,8 +1408,6 @@ distclean: distclean-recursive
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooTimer.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/gfile.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/glibc.Po
-	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/gmem.Po
-	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/gmempp.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/grandom.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/gstrtod.Po
 	-rm -f @POPPLER_TREE@/poppler/$(DEPDIR)/Annot.Po
@@ -1547,8 +1532,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/GooTimer.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/gfile.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/glibc.Po
-	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/gmem.Po
-	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/gmempp.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/grandom.Po
 	-rm -f @POPPLER_TREE@/goo/$(DEPDIR)/gstrtod.Po
 	-rm -f @POPPLER_TREE@/poppler/$(DEPDIR)/Annot.Po

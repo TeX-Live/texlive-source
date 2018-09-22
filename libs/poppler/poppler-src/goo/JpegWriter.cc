@@ -11,6 +11,7 @@
 // Copyright (C) 2013 Peter Breitenlohner <peb@mppmu.mpg.de>
 // Copyright (C) 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2018 Martin Packman <gzlist@googlemail.com>
+// Copyright (C) 2018 Ed Porras <ed@motologic.com>
 //
 //========================================================================
 
@@ -143,7 +144,7 @@ bool JpegWriter::init(FILE *f, int width, int height, int hDPI, int vDPI)
   }
 
   // Set whether to compute optimal Huffman coding tables
-  priv->cinfo.optimize_coding = priv->optimize;
+  priv->cinfo.optimize_coding = static_cast<boolean>(priv->optimize);
 
   // Get ready for data
   jpeg_start_compress(&priv->cinfo, TRUE);

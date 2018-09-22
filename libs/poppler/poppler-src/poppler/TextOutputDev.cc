@@ -37,6 +37,7 @@
 // Copyright (C) 2013 Ed Catmur <ed@catmur.co.uk>
 // Copyright (C) 2016 Khaled Hosny <khaledhosny@eglug.org>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Sanchit Anand <sanxchit@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -5877,4 +5878,8 @@ TextPage *TextOutputDev::takeText() {
   ret = text;
   text = new TextPage(rawOrder);
   return ret;
+}
+
+TextFlow *TextOutputDev::getFlows() {
+  return text->getFlows();
 }

@@ -27,6 +27,8 @@
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013, 2017 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Dileep Sankhla <sankhla.dileep96@gmail.com>
+// Copyright (C) 2018 Tobias Deiminger <haxtibal@posteo.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -40,6 +42,7 @@
 #pragma interface
 #endif
 
+#include <memory>
 #include "Object.h"
 
 class XRef;
@@ -348,6 +351,33 @@ private:
 };
 
 //------------------------------------------------------------------------
+// DefaultAppearance
+//------------------------------------------------------------------------
+
+class DefaultAppearance {
+public:
+
+  DefaultAppearance(Object &&fontNameA, double fontPtSizeA, std::unique_ptr<AnnotColor> fontColorA);
+  DefaultAppearance(GooString *da);
+  void setFontName(Object &&fontNameA);
+  const Object &getFontName() const { return fontName; }
+  void setFontPtSize(double fontPtSizeA);
+  double getFontPtSize() const { return fontPtSize; }
+  void setFontColor(std::unique_ptr<AnnotColor> fontColorA);
+  const AnnotColor *getFontColor() const { return fontColor.get(); }
+  GooString *toAppearanceString() const;
+
+  DefaultAppearance(const DefaultAppearance &) = delete;
+  DefaultAppearance& operator=(const DefaultAppearance&) = delete;
+
+private:
+
+  Object fontName;
+  double fontPtSize;
+  std::unique_ptr<AnnotColor> fontColor;
+};
+
+//------------------------------------------------------------------------
 // AnnotIconFit
 //------------------------------------------------------------------------
 
@@ -511,6 +541,7 @@ public:
 
   void setDrawColor(const AnnotColor *color, GBool fill);
   void setLineStyleForBorder(const AnnotBorder *border);
+  void setTextFont(const Object &fontName, double fontSize);
   void drawCircle(double cx, double cy, double r, GBool fill);
   void drawCircleTopLeft(double cx, double cy, double r);
   void drawCircleBottomRight(double cx, double cy, double r);
@@ -969,7 +1000,7 @@ public:
     intentFreeTextTypeWriter  // FreeTextTypeWriter
   };
 
-  AnnotFreeText(PDFDoc *docA, PDFRectangle *rect, GooString *da);
+  AnnotFreeText(PDFDoc *docA, PDFRectangle *rect, const DefaultAppearance &da);
   AnnotFreeText(PDFDoc *docA, Object *dictObject, Object *obj);
   ~AnnotFreeText();
 
@@ -977,14 +1008,14 @@ public:
   Object getAppearanceResDict() override;
   void setContents(GooString *new_content) override;
 
-  void setAppearanceString(GooString *new_string);
+  void setDefaultAppearance(const DefaultAppearance &da);
   void setQuadding(AnnotFreeTextQuadding new_quadding);
   void setStyleString(GooString *new_string);
   void setCalloutLine(AnnotCalloutLine *line);
   void setIntent(AnnotFreeTextIntent new_intent);
 
   // getters
-  const GooString *getAppearanceString() const { return appearanceString; }
+  std::unique_ptr<DefaultAppearance> getDefaultAppearance() const;
   AnnotFreeTextQuadding getQuadding() const { return quadding; }
   // return rc
   const GooString *getStyleString() const { return styleString; }
@@ -997,7 +1028,6 @@ public:
 protected:
 
   void initialize(PDFDoc *docA, Dict *dict);
-  static void parseAppearanceString(GooString *da, double &fontsize, AnnotColor* &fontcolor);
   void generateFreeTextAppearance();
 
   // required

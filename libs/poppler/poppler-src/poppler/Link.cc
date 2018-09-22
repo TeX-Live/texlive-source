@@ -56,7 +56,8 @@ LinkAction::LinkAction() : nextActionList(nullptr) {
 }
 
 LinkAction::~LinkAction() {
-  delete nextActionList;
+  if (nextActionList)
+    deleteGooList(nextActionList, LinkAction);
 }
 
 LinkAction *LinkAction::parseDest(const Object *obj) {

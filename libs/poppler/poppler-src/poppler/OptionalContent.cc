@@ -7,6 +7,7 @@
 // Copyright 2008, 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright 2008, 2010, 2011, 2017, 2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2008 Mark Kaplan <mkaplan@finjan.com>
+// Copyright 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // Released under the GPL (version 2, or later, at your option)
 //
@@ -22,7 +23,6 @@
 #include "goo/GooString.h"
 #include "goo/GooList.h"
 #include "Error.h"
-// #include "PDFDocEncoding.h"
 #include "OptionalContent.h"
 
 // Max depth of nested visibility expressions.  This is used to catch
@@ -40,8 +40,6 @@ OCGs::OCGs(Object *ocgObject, XRef *xref) :
 {
   // we need to parse the dictionary here, and build optionalContentGroups
   ok = gTrue;
-  optionalContentGroups = new GooList();
-  display = nullptr;
 
   Object ocgList = ocgObject->dictLookup("OCGs");
   if (!ocgList.isArray()) {
@@ -56,17 +54,15 @@ OCGs::OCGs(Object *ocgObject, XRef *xref) :
     if (!ocg.isDict()) {
       break;
     }
-    OptionalContentGroup *thisOptionalContentGroup = new OptionalContentGroup(ocg.getDict());
+    auto thisOptionalContentGroup = std::make_unique<OptionalContentGroup>(ocg.getDict());
     ocg = ocgList.arrayGetNF(i);
     if (!ocg.isRef()) {
-      delete thisOptionalContentGroup;
       break;
     }
-    // TODO: we should create a lookup map from Ref to the OptionalContentGroup
     thisOptionalContentGroup->setRef( ocg.getRef() );
     // the default is ON - we change state later, depending on BaseState, ON and OFF
     thisOptionalContentGroup->setState(OptionalContentGroup::On);
-    optionalContentGroups->append(thisOptionalContentGroup);
+    optionalContentGroups.emplace(ocg.getRef(), std::move(thisOptionalContentGroup));
   }
 
   Object defaultOcgConfig = ocgObject->dictLookup("D");
@@ -78,11 +74,8 @@ OCGs::OCGs(Object *ocgObject, XRef *xref) :
 
   Object baseState = defaultOcgConfig.dictLookup("BaseState");
   if (baseState.isName("OFF")) {
-    for (int i = 0; i < optionalContentGroups->getLength(); ++i) {
-      OptionalContentGroup *group;
-
-      group = (OptionalContentGroup *)optionalContentGroups->get(i);
-      group->setState(OptionalContentGroup::Off);
+    for (auto &group : optionalContentGroups) {
+      group.second->setState(OptionalContentGroup::Off);
     }
   }
 
@@ -126,42 +119,26 @@ OCGs::OCGs(Object *ocgObject, XRef *xref) :
   rbgroups = defaultOcgConfig.dictLookup("RBGroups");
 }
 
-OCGs::~OCGs()
-{
-  deleteGooList(optionalContentGroups, OptionalContentGroup);
-  delete display;
-}
-
-
 bool OCGs::hasOCGs() const
 {
-  return ( optionalContentGroups->getLength() > 0 );
+  return !( optionalContentGroups.empty() );
 }
 
-OptionalContentGroup* OCGs::findOcgByRef( const Ref &ref)
+OptionalContentGroup* OCGs::findOcgByRef( const Ref &ref )
 {
-  //TODO: make this more efficient
-  OptionalContentGroup *ocg = nullptr;
-  for (int i=0; i < optionalContentGroups->getLength(); ++i) {
-    ocg = (OptionalContentGroup*)optionalContentGroups->get(i);
-    if ( (ocg->getRef().num == ref.num) && (ocg->getRef().gen == ref.gen) ) {
-      return ocg;
-    }
-  }
-
-  // not found
-  return nullptr;
+  const auto ocg = optionalContentGroups.find( ref );
+  return ocg != optionalContentGroups.end() ? ocg->second.get() : nullptr;
 }
 
 OCDisplayNode *OCGs::getDisplayRoot()
 {
   if (display)
-    return display;
+    return display.get();
 
   if (order.isArray())
-    display = OCDisplayNode::parse(&order, this, m_xref);
+    display.reset(OCDisplayNode::parse(&order, this, m_xref));
 
-  return display;
+  return display.get();
 }
 
 bool OCGs::optContentIsVisible( Object *dictRef )
@@ -184,7 +161,6 @@ bool OCGs::optContentIsVisible( Object *dictRef )
     return result;
   }
   dict = dictObj.getDict();
-  // printf("checking if optContent is visible\n");
   Object dictType = dict->lookup("Type");
   if (dictType.isName("OCMD")) {
     Object ve = dict->lookup("VE");
@@ -213,13 +189,12 @@ bool OCGs::optContentIsVisible( Object *dictRef )
         }
       }
     }
-  } else if ( dictType.isName("OCG") ) {
+  } else if ( dictType.isName("OCG") && dictRef->isRef() ) {
     OptionalContentGroup* oc = findOcgByRef( dictRef->getRef() );
     if ( oc && oc->getState() == OptionalContentGroup::Off ) {
       result=false;
     }
   }
-  // printf("visibility: %s\n", result? "on" : "off");
   return result;
 }
 

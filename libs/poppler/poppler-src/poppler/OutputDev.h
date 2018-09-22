@@ -244,7 +244,19 @@ public:
     { return gFalse; }
 
   //----- path clipping
+
+  // Update the clipping path.  The new path is the intersection of the old path
+  // with the path given in 'state'.
+  // Additionally, set the clipping mode to the 'nonzero winding number rule'.
+  // That is, a point is inside the clipping region if its winding number
+  // with respect to the clipping path is nonzero.
   virtual void clip(GfxState * /*state*/) {}
+
+  // Update the clipping path.  The new path is the intersection of the old path
+  // with the path given in 'state'.
+  // Additionally, set the clipping mode to the 'even-odd rule'.  That is, a point is
+  // inside the clipping region if a ray from it to infinity will cross the clipping
+  // path an odd number of times (disregarding the path orientation).
   virtual void eoClip(GfxState * /*state*/) {}
   virtual void clipToStrokePath(GfxState * /*state*/) {}
 

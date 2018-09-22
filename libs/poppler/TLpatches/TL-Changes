@@ -1,8 +1,11 @@
-Changes applied to the poppler-0.68.0 tree as obtained from:
+Changes applied to the poppler-0.69.0 tree as obtained from:
 	http://poppler.freedesktop.org/
 
 Removed unused dirs:
 	cmake cpp glib qt5 test utils
+
+Removed unused file:
+	.gitlab-ci.yml
 
 Removed unused files in splash:
 	only SplashTypes.h is used

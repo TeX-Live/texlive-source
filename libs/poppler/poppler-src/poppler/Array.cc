@@ -18,6 +18,7 @@
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013, 2017 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2017 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -32,6 +33,7 @@
 
 #include <stdlib.h>
 #include <stddef.h>
+#include <cassert>
 #include "goo/gmem.h"
 #include "Object.h"
 #include "Array.h"
@@ -105,11 +107,8 @@ void Array::add(Object &&elem) {
 void Array::remove(int i) {
   arrayLocker();
   if (i < 0 || i >= length) {
-#ifdef DEBUG_MEM
-    abort();
-#else
+    assert(i >= 0 && i < length);
     return;
-#endif
   }
   --length;
   memmove( static_cast<void*>(elems + i), elems + i + 1, sizeof(elems[0]) * (length - i) );
@@ -117,22 +116,14 @@ void Array::remove(int i) {
 
 Object Array::get(int i, int recursion) const {
   if (i < 0 || i >= length) {
-#ifdef DEBUG_MEM
-    abort();
-#else
     return Object(objNull);
-#endif
   }
   return elems[i].fetch(xref, recursion);
 }
 
 Object Array::getNF(int i) const {
   if (i < 0 || i >= length) {
-#ifdef DEBUG_MEM
-    abort();
-#else
     return Object(objNull);
-#endif
   }
   return elems[i].copy();
 }

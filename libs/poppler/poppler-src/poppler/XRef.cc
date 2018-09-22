@@ -773,10 +773,10 @@ GBool XRef::readXRefStream(Stream *xrefStr, Goffset *pos) {
   }
 
   obj = dict->lookupNF("Prev");
-  if (obj.isInt()) {
+  if (obj.isInt() && obj.getInt() >= 0) {
     *pos = obj.getInt();
     more = gTrue;
-  } else if (obj.isInt64()) {
+  } else if (obj.isInt64() && obj.getInt64() >= 0) {
     *pos = obj.getInt64();
     more = gTrue;
   } else {

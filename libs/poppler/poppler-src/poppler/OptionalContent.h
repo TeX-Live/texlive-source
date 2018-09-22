@@ -5,6 +5,7 @@
 // Copyright 2007 Brad Hards <bradh@kde.org>
 // Copyright 2008 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright 2013, 2018 Albert Astals Cid <aacid@kde.org>
+// Copyright 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // Released under the GPL (version 2, or later, at your option)
 //
@@ -19,6 +20,8 @@
 
 #include "Object.h"
 #include "CharTypes.h"
+#include <unordered_map>
+#include <memory>
 
 class GooString;
 class GooList;
@@ -33,7 +36,6 @@ class OCGs {
 public:
 
   OCGs(Object *ocgObject, XRef *xref);
-  ~OCGs();
 
   OCGs(const OCGs &) = delete;
   OCGs& operator=(const OCGs &) = delete;
@@ -42,7 +44,7 @@ public:
   GBool isOk() const { return ok; }
   
   bool hasOCGs() const;
-  GooList *getOCGs() const { return optionalContentGroups; }
+  const std::unordered_map< Ref, std::unique_ptr< OptionalContentGroup > > &getOCGs() const { return optionalContentGroups; }
 
   OptionalContentGroup* findOcgByRef( const Ref &ref);
 
@@ -66,12 +68,12 @@ private:
   bool anyOn( Array *ocgArray );
   bool anyOff( Array *ocgArray );
 
-  GooList *optionalContentGroups;
+  std::unordered_map< Ref, std::unique_ptr< OptionalContentGroup > > optionalContentGroups;
 
   Object order;
   Object rbgroups;
   XRef *m_xref;
-  OCDisplayNode *display; // root node of display tree
+  std::unique_ptr< OCDisplayNode > display; // root node of display tree
 };
 
 //------------------------------------------------------------------------

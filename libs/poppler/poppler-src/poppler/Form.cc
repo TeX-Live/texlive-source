@@ -5,7 +5,7 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright 2006-2008 Julien Rebetez <julienr@svn.gnome.org>
-// Copyright 2007-2012, 2015-2017 Albert Astals Cid <aacid@kde.org>
+// Copyright 2007-2012, 2015-2018 Albert Astals Cid <aacid@kde.org>
 // Copyright 2007-2008, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright 2007, 2013, 2016 Adrian Johnson <ajohnson@redneon.com>
 // Copyright 2007 Iñigo Martínez <inigomartinez@gmail.com>
@@ -22,6 +22,7 @@
 // Copyright 2018 Andre Heinecke <aheinecke@intevation.de>
 // Copyright 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
 // Copyright 2018 Chinmoy Ranjan Pradhan <chinmoyrp65@protonmail.com>
+// Copyright 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 //========================================================================
 
@@ -193,7 +194,7 @@ FormWidgetButton::FormWidgetButton (PDFDoc *docA, Object *aobj, unsigned num, Re
     Object obj2 = obj1.dictLookup("N");
     if (obj2.isDict()) {
       for (int i = 0; i < obj2.dictGetLength(); i++) {
-        char *key = obj2.dictGetKey(i);
+        const char *key = obj2.dictGetKey(i);
         if (strcmp (key, "Off") != 0) {
           onStr = new GooString (key);
           break;
@@ -1637,12 +1638,12 @@ void FormFieldSignature::parseInfo()
 
   const Object location_obj = sig_dict.dictLookup("Location");
   if (location_obj.isString()) {
-    signature_info->setLocation(location_obj.getString()->copy()->getCString());
+    signature_info->setLocation(location_obj.getString()->getCString());
   }
 
   const Object reason_obj = sig_dict.dictLookup("Reason");
   if (reason_obj.isString()) {
-    signature_info->setReason(reason_obj.getString()->copy()->getCString());
+    signature_info->setReason(reason_obj.getString()->getCString());
   }
 
   // retrieve SigningTime

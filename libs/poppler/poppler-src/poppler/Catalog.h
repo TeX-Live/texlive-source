@@ -27,6 +27,7 @@
 // Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
 // Copyright (C) 2016 Masamichi Hosoda <trueroad@trueroad.jp>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -163,7 +164,7 @@ public:
   int numDests();
 
   // Get the i'th named destination name in name-dict
-  char *getDestsName(int i);
+  const char *getDestsName(int i);
 
   // Get the i'th named destination link destination in name-dict
   LinkDest *getDestsDest(int i);

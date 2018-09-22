@@ -362,7 +362,11 @@ SampledFunction::SampledFunction(Object *funcObj, Dict *dict) {
   nSamples = n;
   for (i = 0; i < m; ++i)
     nSamples *= sampleSize[i];
-  samples = (double *)gmallocn(nSamples, sizeof(double));
+  samples = (double *)gmallocn_checkoverflow(nSamples, sizeof(double));
+  if (!samples) {
+    error(errSyntaxError, -1, "Function has invalid number of samples");
+    return;
+  }
   buf = 0;
   bits = 0;
   bitMask = (1 << sampleBits) - 1;

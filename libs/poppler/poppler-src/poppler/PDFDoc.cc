@@ -29,7 +29,7 @@
 // Copyright (C) 2011-2016 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013, 2014, 2017 Adrian Johnson <ajohnson@redneon.com>
-// Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
+// Copyright (C) 2013, 2018 Adam Reichold <adamreichold@myopera.com>
 // Copyright (C) 2014 Bogdan Cristea <cristeab@gmail.com>
 // Copyright (C) 2015 Li Junling <lijunling@sina.com>
 // Copyright (C) 2015 André Guerreiro <aguerreiro1985@gmail.com>
@@ -40,6 +40,7 @@
 // Copyright (C) 2018 Ben Timby <btimby@gmail.com>
 // Copyright (C) 2018 Evangelos Foutras <evangelos@foutrelis.com>
 // Copyright (C) 2018 Klarälvdalens Datakonsult AB, a KDAB Group company, <info@kdab.com>. Work sponsored by the LiMux project of the city of Munich
+// Copyright (C) 2018 Evangelos Rigas <erigas@rnd2.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -62,6 +63,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <time.h>
+#include <regex>
 #include <sys/stat.h>
 #include "goo/glibc.h"
 #include "goo/gstrtod.h"
@@ -318,6 +320,9 @@ GBool PDFDoc::setup(GooString *ownerPassword, GooString *userPassword) {
     }
   }
 
+  // Extract PDF Subtype information
+  extractPDFSubtype();
+
   // done
   return gTrue;
 }
@@ -480,6 +485,133 @@ GBool PDFDoc::checkEncryption(GooString *ownerPassword, GooString *userPassword)
     ret = gTrue;
   }
   return ret;
+}
+
+static PDFSubtypePart pdfPartFromString(PDFSubtype subtype, GooString *pdfSubtypeVersion) {
+  const std::regex regex("PDF/(?:A|X|VT|E|UA)-([[:digit:]])(?:[[:alpha:]]{1,2})?:?([[:digit:]]{4})?");
+  std::smatch match;
+  std::string pdfsubver = pdfSubtypeVersion->toStr();
+  PDFSubtypePart subtypePart = subtypePartNone;
+
+  if (std::regex_search(pdfsubver, match, regex)) {
+    int date = 0;
+    const int part = std::stoi(match.str(1));
+
+    if (match[2].matched) {
+      date = std::stoi(match.str(2));
+    }
+
+    switch (subtype) {
+      case subtypePDFX:
+        switch (part) {
+          case 1:
+            switch (date) {
+              case 2001:
+              default:
+                subtypePart = subtypePart1;
+                break;
+              case 2003:
+                subtypePart = subtypePart4;
+                break;
+            }
+            break;
+          case 2:
+            subtypePart = subtypePart5;
+            break;
+          case 3:
+            switch (date) {
+              case 2002:
+              default:
+                subtypePart = subtypePart3;
+                break;
+              case 2003:
+                subtypePart = subtypePart6;
+                break;
+            }
+            break;
+          case 4:
+            subtypePart = subtypePart7;
+            break;
+          case 5:
+            subtypePart = subtypePart8;
+            break;
+        }
+        break;
+      default:
+        subtypePart = (PDFSubtypePart)part;
+        break;
+
+    }
+  }
+
+  return subtypePart;
+}
+
+static PDFSubtypeConformance pdfConformanceFromString(GooString *pdfSubtypeVersion) {
+  const std::regex regex("PDF/(?:A|X|VT|E|UA)-[[:digit:]]([[:alpha:]]+)");
+  std::smatch match;
+  const std::string pdfsubver = pdfSubtypeVersion->toStr();
+  PDFSubtypeConformance pdfConf = subtypeConfNone;
+
+  // match contains the PDF conformance (A, B, G, N, P, PG or U)
+  if (std::regex_search(pdfsubver, match, regex)) {
+    GooString *conf = new GooString(match.str(1));
+    // Convert to lowercase as the conformance may appear in both cases
+    conf->lowerCase();
+    if (conf->cmp("a")==0) {
+      pdfConf = subtypeConfA;
+    } else if (conf->cmp("b")==0) {
+      pdfConf = subtypeConfB;
+    } else if (conf->cmp("g")==0) {
+      pdfConf = subtypeConfG;
+    } else if (conf->cmp("n")==0) {
+      pdfConf = subtypeConfN;
+    } else if (conf->cmp("p")==0) {
+      pdfConf = subtypeConfP;
+    } else if (conf->cmp("pg")==0) {
+      pdfConf = subtypeConfPG;
+    } else if (conf->cmp("u")==0) {
+      pdfConf = subtypeConfU;
+    } else {
+      pdfConf = subtypeConfNone;
+    }
+    delete conf;
+  }
+
+  return pdfConf;
+}
+
+void PDFDoc::extractPDFSubtype() {
+  pdfSubtype = subtypeNull;
+  pdfPart = subtypePartNull;
+  pdfConformance = subtypeConfNull;
+
+  GooString *pdfSubtypeVersion = nullptr;
+  // Find PDF InfoDict subtype key if any
+  if ((pdfSubtypeVersion = getDocInfoStringEntry("GTS_PDFA1Version"))) {
+    pdfSubtype = subtypePDFA;
+  } else if ((pdfSubtypeVersion = getDocInfoStringEntry("GTS_PDFEVersion"))) {
+    pdfSubtype = subtypePDFE;
+  } else if ((pdfSubtypeVersion = getDocInfoStringEntry("GTS_PDFUAVersion"))) {
+    pdfSubtype = subtypePDFUA;
+  } else if ((pdfSubtypeVersion = getDocInfoStringEntry("GTS_PDFVTVersion"))) {
+    pdfSubtype = subtypePDFVT;
+  } else if ((pdfSubtypeVersion = getDocInfoStringEntry("GTS_PDFXVersion"))) {
+    pdfSubtype = subtypePDFX;
+  } else {
+    pdfSubtype = subtypeNone;
+    pdfPart = subtypePartNone;
+    pdfConformance = subtypeConfNone;
+    return;
+  }
+
+  // Extract part from version string
+  pdfPart = pdfPartFromString(pdfSubtype, pdfSubtypeVersion);
+
+  // Extract conformance from version string
+  pdfConformance = pdfConformanceFromString(pdfSubtypeVersion);
+
+  delete pdfSubtypeVersion;
 }
 
 std::vector<FormWidgetSignature*> PDFDoc::getSignatureWidgets()
@@ -1645,7 +1777,7 @@ void PDFDoc::replacePageDict(int pageNo, int rotate,
   mediaBoxArray->add(Object(mediaBox->y2));
   Object mediaBoxObject(mediaBoxArray);
   Object trimBoxObject = mediaBoxObject.copy();
-  pageDict->add(copyString("MediaBox"), std::move(mediaBoxObject));
+  pageDict->add("MediaBox", std::move(mediaBoxObject));
   if (cropBox != nullptr) {
     Array *cropBoxArray = new Array(getXRef());
     cropBoxArray->add(Object(cropBox->x1));
@@ -1654,10 +1786,10 @@ void PDFDoc::replacePageDict(int pageNo, int rotate,
     cropBoxArray->add(Object(cropBox->y2));
     Object cropBoxObject(cropBoxArray);
     trimBoxObject = cropBoxObject.copy();
-    pageDict->add(copyString("CropBox"), std::move(cropBoxObject));
+    pageDict->add("CropBox", std::move(cropBoxObject));
   }
-  pageDict->add(copyString("TrimBox"), std::move(trimBoxObject));
-  pageDict->add(copyString("Rotate"), Object(rotate));
+  pageDict->add("TrimBox", std::move(trimBoxObject));
+  pageDict->add("Rotate", Object(rotate));
   getXRef()->setModifiedObject(&page, *refPage);
 }
 
