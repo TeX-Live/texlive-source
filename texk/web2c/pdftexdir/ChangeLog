@@ -1,3 +1,12 @@
+2018-06-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftosrc-newpoppler.cc: Add a comment that it works upto
+	the poppler 0.69.0.
+	* pdftoepdf-poppler0.68.0.cc: Rename pdftoepdf-newpoppler.cc
+	and add comments.
+	* pdftoepdf-poppler0.69.0.cc: A new file for poppler-0.69.0
+	and newer.
+
 2018-09-18  Nick Roessler  <nicholas.e.roessler@gmail.com>
 
 	* writet1.c (t1_check_unusual_charstring): protect against buffer
