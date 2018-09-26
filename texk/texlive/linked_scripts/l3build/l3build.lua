@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2018-09-23"
+release_date = "2018-09-26"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -140,8 +140,8 @@ if options["target"] == "check" then
       for _,config in ipairs(failed) do
         print("Failed tests for configuration " .. config .. ":")
         print("\n  Check failed with difference files")
-        if failed ~= "build" then
-          local testdir = testdir .. "-" .. failed
+        if config ~= "build" then
+          local testdir = testdir .. "-" .. config
         end
         for _,i in ipairs(filelist(testdir,"*" .. os_diffext)) do
           print("  - " .. testdir .. "/" .. i)
