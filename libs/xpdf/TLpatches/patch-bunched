@@ -1,6 +1,6 @@
 diff -ur xpdf-4.00/goo/gfile.cc xpdf-src/goo/gfile.cc
 --- xpdf-4.00/goo/gfile.cc	Wed Aug 09 08:22:50 2017
-+++ xpdf-src/goo/gfile.cc	Tue Oct 02 19:53:38 2018
++++ xpdf-src/goo/gfile.cc	Wed Oct 03 00:39:16 2018
 @@ -7,6 +7,9 @@
  // Copyright 1996-2003 Glyph & Cog, LLC
  //
@@ -117,9 +117,31 @@ diff -ur xpdf-4.00/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
        }
      }
    }
+diff -ur xpdf-4.00/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
+--- xpdf-4.00/xpdf/GlobalParams.h	Wed Aug 09 08:22:50 2017
++++ xpdf-src/xpdf/GlobalParams.h	Sun Aug 13 16:14:54 2017
+@@ -5,6 +5,9 @@
+ // Copyright 2001-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
+ 
+ #ifndef GLOBALPARAMS_H
+ #define GLOBALPARAMS_H
+@@ -217,7 +220,7 @@
+ 
+   // Initialize the global parameters by attempting to read a config
+   // file.
+-  GlobalParams(const char *cfgFileName);
++  GlobalParams(const char *cfgFileName = NULL);
+ 
+   ~GlobalParams();
+ 
 diff -ur xpdf-4.00/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
 --- xpdf-4.00/xpdf/PDFDoc.cc	Wed Aug 09 08:22:50 2017
-+++ xpdf-src/xpdf/PDFDoc.cc	Tue Oct 02 19:57:40 2018
++++ xpdf-src/xpdf/PDFDoc.cc	Wed Oct 03 00:39:16 2018
 @@ -147,13 +147,17 @@
  
    // try to open file
@@ -199,3 +221,18 @@ diff -ur xpdf-4.00/xpdf/XFAForm.cc xpdf-src/xpdf/XFAForm.cc
  #endif
  
  //------------------------------------------------------------------------
+diff -ur xpdf-4.00/xpdf/config.h xpdf-src/xpdf/config.h
+--- xpdf-4.00/xpdf/config.h	Wed Aug 09 08:22:50 2017
++++ xpdf-src/xpdf/config.h	Sun Aug 13 16:14:54 2017
+@@ -78,11 +78,6 @@
+ // popen
+ //------------------------------------------------------------------------
+ 
+-#if defined(_MSC_VER) || defined(__BORLANDC__)
+-#define popen _popen
+-#define pclose _pclose
+-#endif
+-
+ #if defined(VMS) || defined(VMCMS) || defined(DOS) || defined(OS2) || defined(__EMX__) || defined(_WIN32) || defined(__DJGPP__)
+ #define POPEN_READ_MODE "rb"
+ #else
