@@ -505,8 +505,9 @@ do_args_first_pass (int argc, char *argv[], const char *source, int unsafe)
 
     case 'v':
       verbose++;
+      break;
 
-   case 'M':
+    case 'M':
       dpx_conf.compat_mode = dpx_mode_mpost_mode;
       break;
 
