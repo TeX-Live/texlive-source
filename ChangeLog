@@ -1,3 +1,9 @@
+2018-10-02  Karl Berry  <karl@tug.org>
+
+	* Build: TL_MAKE_VERBOSE=VERBOSE=1 by default,
+	so that test-suite.log will be shown on failure.
+	https://lists.gnu.org/archive/html/automake/2018-09/msg00015.html
+
 2018-04-28  Karl Berry  <karl@tug.org>
 
 	* version.ac: 2019/dev.

@@ -43,6 +43,7 @@ export MAKE
 
 # make flags
 : ${TL_MAKE_FLAGS=}
+: ${TL_MAKE_VERBOSE=VERBOSE=1}
 
 # allow override of make target.
 : ${TL_TARGET=world}
@@ -127,7 +128,7 @@ cd $TL_WORKDIR || exit 1
         $TL_CONFIGURE_ARGS \
         "$@" \
   && eval $TL_POSTCONFIGURE \
-  && eval $TL_BUILD_ENV $TL_MAKE $TL_MAKE_FLAGS $TL_TARGET
+  && eval $TL_BUILD_ENV $TL_MAKE $TL_MAKE_FLAGS $TL_MAKE_VERBOSE $TL_TARGET
   
   # Too arcane to try to propagate the exit status through a pipeline.
   # Just use a temp file.
