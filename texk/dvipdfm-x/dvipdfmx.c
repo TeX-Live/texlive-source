@@ -506,6 +506,10 @@ do_args_first_pass (int argc, char *argv[], const char *source, int unsafe)
     case 'v':
       verbose++;
 
+   case 'M':
+      dpx_conf.compat_mode = dpx_mode_mpost_mode;
+      break;
+
     default: /* ignore everything else */
       break;
     }
@@ -543,7 +547,7 @@ do_args_second_pass (int argc, char *argv[], const char *source, int unsafe)
   optind = 1;
   while ((c = getopt_long(argc, argv, optstrig, long_options, NULL)) != -1) {
     switch(c) {
-    case 'h': case 130: case 131: case 132: case 133: case 1000: case 'q': case 'v': /* already done */
+    case 'h': case 130: case 131: case 132: case 133: case 1000: case 'q': case 'v': case 'M': /* already done */
       break;
 
     case 'D':
@@ -668,10 +672,6 @@ do_args_second_pass (int argc, char *argv[], const char *source, int unsafe)
 
     case 'O':
       bookmark_open = atoi(optarg);
-      break;
-
-    case 'M':
-      dpx_conf.compat_mode = dpx_mode_mpost_mode;
       break;
 
     case 'C':

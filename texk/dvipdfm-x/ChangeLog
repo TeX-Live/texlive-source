@@ -1,7 +1,14 @@
+2018-10-02  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvipdfmx.c: Fixed a bug in handling of command line option '-M'.
+	* mpost.c:  Fixed a bug in MetaPost generated PS files.
+	Font selection had not been properly done for gsave/grestore.
+	* configure.ac: Version 20181002.
+
 2018-09-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvi.[ch], dvipdfmx.c: Fixed a bug that papersize special does
-	not work. (introduced in the previous change) Command line
+	not work (introduced in the previous change). Command line
 	options other than papersize now take precedence over special
 	command options.
 	* dpxconf.[ch], tt_aux.c: Moved always_embed flag to dpx_conf.
