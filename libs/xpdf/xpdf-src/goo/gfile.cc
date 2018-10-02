@@ -580,6 +580,8 @@ GString *fileNameToUTF8(wchar_t *path) {
 
 FILE *openFile(const char *path, const char *mode) {
 #ifdef _WIN32
+  return fopen(path, mode);
+#if 0
   OSVERSIONINFO version;
   wchar_t wPath[_MAX_PATH + 1];
   char nPath[_MAX_PATH + 1];
@@ -636,6 +638,7 @@ FILE *openFile(const char *path, const char *mode) {
     nPath[i] = '\0';
     return fopen(nPath, mode);
   }
+#endif /* 0 */
 #else
   return fopen(path, mode);
 #endif

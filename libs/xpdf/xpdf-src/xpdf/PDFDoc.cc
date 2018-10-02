@@ -147,13 +147,17 @@ PDFDoc::PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword,
 
   // try to open file
   // NB: _wfopen is only available in NT
+/*
   version.dwOSVersionInfoSize = sizeof(version);
   GetVersionEx(&version);
   if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
     file = _wfopen(fileNameU, L"rb");
   } else {
+*/
     file = fopen(fileName->getCString(), "rb");
+/*
   }
+*/
   if (!file) {
     error(errIO, -1, "Couldn't open file '{0:t}'", fileName);
     errCode = errOpenFile;
@@ -535,6 +539,7 @@ GBool PDFDoc::saveEmbeddedFile(int idx, const wchar_t *path, int pathLen) {
   GBool ret;
 
   // NB: _wfopen is only available in NT
+/*
   version.dwOSVersionInfoSize = sizeof(version);
   GetVersionEx(&version);
   if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
@@ -544,12 +549,15 @@ GBool PDFDoc::saveEmbeddedFile(int idx, const wchar_t *path, int pathLen) {
     path2w[i] = 0;
     f = _wfopen(path2w, L"wb");
   } else {
+*/
     for (i = 0; i < pathLen && i < _MAX_PATH; ++i) {
       path2c[i] = (char)path[i];
     }
     path2c[i] = 0;
     f = fopen(path2c, "wb");
+/*
   }
+*/
   if (!f) {
     return gFalse;
   }
