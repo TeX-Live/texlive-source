@@ -119,9 +119,12 @@
 #		that do not support -n and this script will have to be changed
 #		before it works on such a system.
 # 2018/09/19	Added --distilleropts optlist command line flag for 
-#		options to be added to the distiller aapplication; 
+#		options to be added to the distiller application; 
 #		e.g. "-dCompatibilityLevel=1.5 -dNOSAFER".
 #		Removed uses of echo -n.
+# 2018/09/24 Added -dCompatibilityLevel=15 into the distillerprog definition
+#		and removed quotes around execution of ${distillerprog} so it can
+#		contain options.
 
 # FEATURE: it seems -u +foo.map -u -foo.map does not work. So --extradvipsopts
 # cannot be used to remove a map from the standard list
@@ -130,7 +133,7 @@
 # i.e. foo.bar.bla gets you foo.bar.pdf not foo.bar.bla.pdf
 # Hint: Give all extensions explicitly on the command line
 
-version='20180920'
+version='20180924'
 calledas=`basename "$0"`
 if [ "${calledas}" = "simpdftex" ]
 then
@@ -169,7 +172,7 @@ texpath=`dirname "$0"`
 #distillerfilter="yes"
 distillerpath="/usr/local/bin"
 #distillerprog="ps2pdf13"
-distillerprog="ps2pdf"
+distillerprog="ps2pdf -dCompatibilityLevel=1.5"
 distillerfilter="no"
 unset outdir
 debug="no"
@@ -499,12 +502,12 @@ run_dvips()
 
 	if [ "${distillerfilter}" = "yes" ]; then
 		/bin/echo "### ${distillerprog} ${distilleroptions} <${psfile} >${pdffile}"
-		"${distillerprog}" ${distilleroptions} <"${psfile}" >"${pdffile}" || \
+		${distillerprog} ${distilleroptions} <"${psfile}" >"${pdffile}" || \
 			{ /bin/echo "### FAILED to generate ${pdffile} (${status})"
 			  exit 1; }
 	else
 		/bin/echo "### ${distillerprog} ${distilleroptions} ${psfile} ${pdffile}"
-		"${distillerprog}" ${distilleroptions} "${psfile}" "${pdffile}" || \
+		${distillerprog} ${distilleroptions} "${psfile}" "${pdffile}" || \
 			{ /bin/echo "### FAILED to generate ${pdffile} (${status})"
 			  exit 1; }
 	fi
