@@ -1,0 +1,21 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright (C) 2018 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+testdir=$srcdir/tests
+
+rc=0
+
+./dvispc -s $testdir/test.dvi > xtest.spc && \
+  diff $testdir/test.spc xtest.spc && echo || rc=1
+
+./dvispc -c $testdir/test.dvi xtestout.dvi >/dev/null && \
+  cmp $testdir/testout.dvi xtestout.dvi && echo || rc=2
+
+./dvispc -a $testdir/test.dvi xtesta.txt && \
+  ./dvispc -x xtesta.txt xtestax.dvi >/dev/null && \
+  cmp $testdir/test.dvi xtestax.dvi && echo || rc=4
+
+exit $rc
+

@@ -1,0 +1,15 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright (C) 2018 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+testdir=$srcdir/tests
+
+rc=0
+
+cp $testdir/test.dvi . && \
+  ./chkdvifont -c ./test.dvi > xtest.cfn && \
+  diff $testdir/test.cfn xtest.cfn && echo || rc=1
+
+exit $rc
+

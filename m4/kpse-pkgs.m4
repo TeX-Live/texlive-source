@@ -112,6 +112,7 @@ dtl
 dvi2tty
 dvidvi
 dviljk
+dviout-util
 dvipdfm-x
 dvipng
 dvipos

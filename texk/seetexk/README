@@ -1,4 +1,4 @@
-Note that this is is a *partial* repackaging of elements of the SeeTeX
+Note that this is a *partial* repackaging of elements of the SeeTeX
 package by Chris Torek; the full package is in CTAN:drivers. Here we
 just want dviconcat and dviselect, plus Angus Duggan's dvibook and
 dvitodvi.

@@ -1,0 +1,260 @@
+[2]	  Modify a DVI file to be page-independent in specials
+[1]	  Translation between  DVI file  <->  Text file
+	         Originally written by SHIMA, Jan. 2003
+	         Ver.YYYYMMDD (TeX Live YYYY)
+
+Usage: dvispc [-c] [-bvz] input_dvi_file [output_dvi_file]
+       dvispc -d input_dvi_file
+       dvispc -s [-p..] input_dvi_file [output_text_file]
+       dvispc -a [-ltv][-J..][-p..][-r..] input_dvi_file [output_text_file]
+       dvispc -x[..] [-ltv][-r..] [input_text_file] output_dvi_file
+
+Mode options:
+   -c: make page-indepent DVI in specials (default)
+   -d: check page-independence
+   -s: show specials
+   -a: translate DVI to Text
+   -x: translate Text to DVI (-x0:str0 1:chkfnt 2:variety)
+
+Other options:
+   -v: verbose       -l: location
+   -b: backup original even if output_dvi_file is not given
+   -z: append empty pages if necessary to have multiple of 4 pages for book
+   -p: T:preamble  L:postamble  pages with - (eg: -pT-L  -pT2/4-8L  -p-4 etc.)
+   -r: replace  (-rorg_1=new_1/org_2=new_2...  eg. -rxxx=special/fnt=font)
+   -t: compatible to DTL (the followings are suboptions if necessary eg. -t02)
+       0:str 1:ch 2:ch2 3:cmd 4:c-sum 5:dir/name 6:err 7:page 8:oct 9:str0
+   -J: set Japanese characters output with a suboption:
+       e:EUC-JP s:Shift_JIS u:UTF-8 for pTeX  or  U:UTF-8 for upTeX.
+   output_dvi_file  : overwrite if it is not specified.
+   output_text_file : stdout if it is not specified.
+   input_text_file  : stdin  if it is not specified.
+
+Supported specials:
+   color specials:  push, pop, background
+   pdf   specials:  pdf:bcolor, pdf:ecolor, pdf:bgcolor
+   tpic  specials:  pn
+
+
+         *****************************************************
+[1]      **  DVI ファイルとテキストファイルとの間の相互変換 **
+         *****************************************************
+
+-a: DVIファイルを可読なテキスト形式に変換します。
+
+-x: -a オプションの逆変換で可読なテキスト形式からDVIファイルへ変換します。
+    stack の深さとunderflow, page数, アドレスなどは自動修正される。
+    -x0 は -x -t9 と等価
+    最初の文字が小文字のアルファベット以外で [ ] \ のいずれでもない行は無視
+    される。
+    有効な行は以下の形で、各ブロックは空白で区切られる
+
+<key>  <number><comment>  ...  <number><comment>  '<string>'  <any comment>
+
+    <key>: code を表すキーワード
+    <number>: 10進数または、0x で始まる16進数、または 0 で始まる8進数
+    <comment>: 空であるか、先頭が数字（含16進数）や空白を含まない文字列。
+               <number> に続けて空白を入れずに表記。コード生成では無視される。
+    <any comment>: 空であっても、間に空白があってもよい。コード生成では無視。
+
+    <number><comment> のブロックの数、および '<string>' が必要かどうかは、
+    <key> によって以下のように定まっている。
+
+<key> のリスト（X: 1 - 4   XX: 0 - 127   YY: 0 - 63）
+    <key>                        <number><comment>  '<string>'
+    pre                          :      5              1
+    bop                          :     11              0
+    nop, eop, push, pop          :      0              0
+    setcharXX                    :      0              0
+    fntnumYY                     :      0              0
+    setX, putX, rightX, downX    :      1              0
+    setrule, writerule           :      2              0
+    w0, x0, y0, z0               :      0              0
+    wX, xX, yX, zX               :      1              0
+    fntX                         :      1              0
+    fntdefX                      :      6              1
+    xxxX                         :      1              1
+    dir                          :      1              0
+    post_post                    :      6 - 9          0
+
+    DTL において不正なコードを表す以下も有効（Text -> DVI）
+    opcode                       :      1              0
+
+    DTL における以下の表記も可能です。
+
+      push    ->  [    pop    ->  ]
+      fntnum  -> fn    set    ->  s   put -> p   right  ->  r   down -> d
+      setrule -> sr    putrule -> pr  fnt -> f   fntdef -> fd
+
+dvispc を使って、DVIファイル -> テキスト形式 -> 編集 -> DVIファイル が可能です
+以下によって、foo1.dvi の 4,5,6,8 ページのみを抽出して、foo2.dvi が作成される。
+
+dvispc -atpT4-6/8L foo1.dvi | dvispc -x foo2.dvi
+
+次のようにしても同じです。
+
+dvispc -atpT4-6/8L foo1.dvi | dvispc -x > foo2.dvi
+
+-x : 0: toggle  文字列の長さは、実際に指定した文字列に従う
+     1: toggle  不要なフォント定義を削る
+     2: toggle  先頭の  "variety ..."  の行を無視
+               （無視しない場合は、存在すると -t オプションが設定される）
+
+-p オプション：DVI -> Text における出力指定（指定した順に出力される）
+    T: preambre
+    L: postambre
+    <n>: <n>ページ
+    <n1>-<n2>: <n1>ページから<n2>ページまで
+               <n1> の指定がないと、<n1>は 1 と解釈される
+               <n2> の指定がないと、<n2>は最後のページと解釈される
+    これらは、必要なら適当な区切りで区切って並べて指定できる
+
+    -pT-L       デフォルト（全てを解釈）
+    -pTL        preambre と postambre のみ
+    -p3-15/20L  3ページから15ページまでと20ページとpostambre
+
+-r  -rorg_1=new_1/org_2=new_2/... は、キーワード org_i を new_i で置き換える
+   （i = 1,2...）
+    ここで org_i は、最後の数字を除いたもので、例えば以下のように指定する
+
+    -rxxx=special/setchar=set_char_
+
+    -x オプションでは、new_i の最初の文字は、小文字のアルファベットとなる必要が
+    ある。
+
+-t  オプション：Geoffrey Tobin氏 による DVIware DTL (dt2dv/dv2dt) の形式での書き
+    込み読み込みとなる。以下の 0 から 9 までのサブオプション（トグルスイッチ）が
+    指定できる。
+
+    -t をサブオプション無しで指定すると、上記のスイッチが全て On になるほか、-j
+    がOff になり、-x0 -x1 -x2  に対応するスイッチが On で、 On DVI -> Text では、
+    先頭に以下の行が出力される。
+
+variety sequences-6
+
+    逆にこの行が先頭にあれば、Text -> DVI では、自動的に -t が指定される。
+
+  0: str
+     文字列は、' ' で囲って表記されるが、' -> \' および  \ -> \\ と表す。
+     0 から 31 および、127以上のコードの文字は、以下と同様に16進表示で表す。
+  1: ch
+     0 から 127 までのコードの文字は、(  ) で囲って表記する。
+     ただし、(  -> \(,  ) -> \),  \ -> \\ と表す。また、0 から 31 および 127 の
+     コードの文字は、独立させて \03 のように \ を先頭に 2 桁の16進数で表す。
+  2: ch2
+     128 以上のコードの文字は、コードを10進数で表す。
+  3: cmd
+     コマンドをDTL形式の短いキーワードで表す。
+  4: c-sum
+     フォント定義におけるチェックサムを8進数で表す。
+  5: dir/name
+     フォント名の文字列をディレクトリと名前の2つの文字列に分解して表記。
+  6: err
+     未定義のコードを opcode x として表記。
+  7: page
+     ページ番号を表記しない。
+  8: oct
+     フォント定義のチェックサムを8進数で表したとき、先頭に 0 をつけない。
+  9: str0
+     Text -> DVI のとき、文字列の長さを、実際に指定した文字列で決める。
+
+
+-l  DVIファイルにおけるアドレスを10進数で先頭につける。
+    アドレスをつけると、最初に
+
+0: pre  2 ...
+
+    という行が出現する。Text -> DVI では、この行があれば自動的に -l が設定される。
+
+
+-J オプション：出力する日本語文字のエンコーディングを、サブオプションによって指定する。
+
+  e: EUC-JP
+  s: Shift_JIS
+  u: UTF-8 for pTeX
+  U: UTF-8 for upTeX
+
+    このオプションは、TeX Live などの ptexenc ライブラリを利用して dvispc をビルド
+    した場合に利用可能である。そうでない場合は -J オプションの代わりに、下記の
+    -j オプションが実装されている。
+
+
+-j オプション（トグルスイッチ）：文字が JISコードならば、対応する文字を表記。
+    TeX Live では利用不可。
+
+
+          **************************************************
+[2]       **  ページ独立性が破れている DVI ファイルの修正 **
+          **************************************************
+
+DVIファイルは、本来ページ独立性が保たれるよう設計されていますが、一部の specials
+の処理に関しては、これが破られるDVIファイルが作成されることがあります。
+
+たとえば、dvips オプションでの color specials はこの典型的な例で、100ページのDVI
+ファイルで、2ページに文字を赤にする設定が書いてあって、99ページ目にそれを終える
+設定が書いてあったとすると、50ページ目にはこの色の情報は何も書かれていません。
+
+\usepackages[dvips]{graphicx, color}
+...
+{\color{red}%			 2ページ目
+...
+...
+...%					99ページ目
+}
+...
+
+dvips など、最初のページから順に解釈するものは、問題ありませんが、dviout で 50ペ
+ージ目のみを表示する、などの場合に不具合が生じます。dvidvi などで、ページを切り
+出して新たにDVIを作成するときも、同様な不具合が生じます。
+
+dvispc は、このようなDVIファイルを、ページ独立なDVIファイルに修正します。
+
+対応している specials は、dvips/dvipdfmx/dviout など用のもので
+
+   color specials:  push, pop, background
+   pdf   specials:  pdf:bcolor, pdf:ecolor, pdf:bgcolor
+   tpic  specials:  pn
+
+                            --- 仕様 ---
+-c:  上記の修正を行う。
+-d:  修正の必要性をチェック。
+-s:  specials を全て抜き出して表示します（-p... でページ指定可）。
+
+以上のパラメータ、あるいは -a -x を指定しない場合は、デフォルト動作となり、上記
+の修正を行います。
+
+-b:  dvispc のデフォルトでは、ぺージ独立性の修正を行って元のDVIファイルを
+     上書きする。この -b オプションを付けると、元のファイルを.bakを付けた
+     名前で保持する。
+
+-z:  ページ数が4の倍数でない場合に、最後に空白のページを付け足すことで
+     4の倍数にする。dvibook にも類似の機能があるが、空白ページに背景色が
+     付いたり付かなかったりする。dvispc の場合は空白ページの背景色を白に
+     することで、ぺージ独立性を担保する。
+
+サポートしている specials は以下の通りです。
+
+color specials: push/pop に対し、次のページにスタックを繰り越すことがないよう
+  に、各ページの最後に必要な数の color pop を置く。このとき次のページの先頭で、
+  スタックを回復するために必要な color push を置く。
+
+  スタックのアンダーフローとオーバーフロー（500程度を越える）のチェックをしてい
+  る。オーバーフローは通常は TeX のソースの書き方のエラーと考えられる。アンダー
+  フローがあった場合は、そのページの先頭に color push  Black を必要な個数置くこ
+  とによって修正する。
+
+background    : 背景色が定義されており、その後のページで再定義がないページには、
+  ページの先頭に背景色の定義を（高々１つ）おく。
+
+pdf:bcolor, pdf:color : color push/pop と同等。
+
+pdf:bgcolor   : background と同等。
+
+tpic specials : pn が定義されたら、その後のページに pn の定義を置く（スタックで
+  はないので、高々１つ）
+
+ページの先頭に置かれる順序は、
+
+color push -> pdf:bcolor -> background -> pdf:bgcolor -> pn (tpic special)
+
+となっている。

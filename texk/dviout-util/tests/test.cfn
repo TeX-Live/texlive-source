@@ -1,0 +1,26 @@
+dvi file name			= ./test.dvi
+comment				= TeX output 2018.02.11:1459
+factor converting to 10^{-5}m	= 25400000/473628672
+magnification			= 1000
+maximum width			= 26083328 scaled points = 398 points
+maximum height+depth		= 11099063 scaled points = 169 points
+maximum stack depth		= 4
+number of pages			= 13
+page size			= 14.0 cm x  6.0 cm
+page size magnificated		= 14.0 cm x  6.0 cm
+
+Font 14
+	checksum		= 44D3ED74
+	design size		=  1132462 scaled points = 17 points
+	space size		=  1630536 scaled points = 24 points
+	magnification		= +magstep2
+	font name		= cmr17
+
+Font 7
+	checksum		= 4BF16079
+	design size		=   655360 scaled points = 10 points
+	space size		=   655360 scaled points = 10 points
+	font name		= cmr10
+
+EXIT Code (errorlevel)		= 0
+No AMS Font

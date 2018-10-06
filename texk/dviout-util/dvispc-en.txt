@@ -1,0 +1,265 @@
+[2]	  Modify a DVI file to be page-independent in specials
+[1]	  Translation between  DVI file  <->  Text file
+	         Originally written by SHIMA, Jan. 2003
+	         Ver.YYYYMMDD (TeX Live YYYY)
+
+Usage: dvispc [-c] [-bvz] input_dvi_file [output_dvi_file]
+       dvispc -d input_dvi_file
+       dvispc -s [-p..] input_dvi_file [output_text_file]
+       dvispc -a [-ltv][-J..][-p..][-r..] input_dvi_file [output_text_file]
+       dvispc -x[..] [-ltv][-r..] [input_text_file] output_dvi_file
+
+Mode options:
+   -c: make page-indepent DVI in specials (default)
+   -d: check page-independence
+   -s: show specials
+   -a: translate DVI to Text
+   -x: translate Text to DVI (-x0:str0 1:chkfnt 2:variety)
+
+Other options:
+   -v: verbose       -l: location
+   -b: backup original even if output_dvi_file is not given
+   -z: append empty pages if necessary to have multiple of 4 pages for book
+   -p: T:preamble  L:postamble  pages with - (eg: -pT-L  -pT2/4-8L  -p-4 etc.)
+   -r: replace  (-rorg_1=new_1/org_2=new_2...  eg. -rxxx=special/fnt=font)
+   -t: compatible to DTL (the followings are suboptions if necessary eg. -t02)
+       0:str 1:ch 2:ch2 3:cmd 4:c-sum 5:dir/name 6:err 7:page 8:oct 9:str0
+   -J: set Japanese characters output with a suboption:
+       e:EUC-JP s:Shift_JIS u:UTF-8 for pTeX  or  U:UTF-8 for upTeX.
+   output_dvi_file  : overwrite if it is not specified.
+   output_text_file : stdout if it is not specified.
+   input_text_file  : stdin  if it is not specified.
+
+Supported specials:
+   color specials:  push, pop, background
+   pdf   specials:  pdf:bcolor, pdf:ecolor, pdf:bgcolor
+   tpic  specials:  pn
+
+
+         *****************************************************
+[1]      **  Translation between  DVI file  <->  Text file  **
+         *****************************************************
+
+-a: transform DVI file into a text file (the option -v can be valid)
+
+-x: transform a text to DVI file.
+    stack depth, page numbers and address are automatically corrected.
+    -x0 is equivalent to -x -t9
+    The text should be the same format obtained by -a option.
+    The line which starts with an alphabetical character of the lower
+    case or the character  [  or  ]  or   \  has only been interpreted.
+    The valid line is of the following format with several blocks separated by
+    spaces.
+
+<key>  <number><comment>  ...  <number><comment>  '<string>'  <any comment>
+
+    <key>: key word
+    <number>: decimal, hexadecimal starting with 0x or 0X, octal starting with 0
+    <comment>: void or a string without a space and not starting with a figure
+               indicate after <number> without a space.
+               This is ignored.
+    <any comment>: void or any string.  This is ignored.
+
+    The number of the blocks of <number><comment> and  the existence of '<string>'
+    is determined by <key> as follows.
+
+List of <key> (X: 1 - 4   XX: 0 - 127   YY: 0 - 63)
+    <key>                        <number><comment>  '<string>'
+    pre                          :      5              1
+    bop                          :     11              0
+    nop, eop, push, pop          :      0              0
+    setcharXX                    :      0              0
+    fntnumYY                     :      0              0
+    setX, putX, rightX, downX    :      1              0
+    setrule, writerule           :      2              0
+    w0, x0, y0, z0               :      0              0
+    wX, xX, yX, zX               :      1              0
+    fntX                         :      1              0
+    fntdefX                      :      6              1
+    xxxX                         :      1              1
+    dir                          :      1              0
+    post_post                    :      6 - 9          0
+
+    The following is used in DTL for illegal code
+    opcode                       :      1              0
+
+    The following expression in DTL are also valid.
+
+      push    ->  [    pop    ->  ]
+      fntnum  -> fn    set    ->  s   put -> p   right  ->  r   down -> d
+      setrule -> sr    putrule -> pr  fnt -> f   fntdef -> fd
+
+dvispc can read the format of the DVIware DTL (dt2dv/dv2dt) by Geoffrey Tobin.
+
+Transformations:  [DVI file -> a text -> edit it -> DVI file]  is possible
+The following command makes foo2.dvi by extracting the pages 4,5,6,8 from
+foo.dvi.
+
+dvispc -atpT4-6/8L foo1.dvi | dvispc -x foo2.dvi
+
+The following command is the same as the above.
+
+dvispc -atpT4-6/8L foo1.dvi | dvispc -x > foo2.dvi
+
+-x : 0: toggle  length follows from the given string
+     1: toggle  omit unnecessary definitions of fonts
+     2: toggle  igonore the first line "variety ..."
+                (If it is not ignored and it exists, then -t option is set).
+
+-p : Output instruction for DVI -> Text
+    T: preambre
+    L: postambre
+    <n>: page <n>
+    <n1>-<n2>: from the page <n1> to the page <n2>
+               If <n1> is omitted, <n1> is assumed to be 1.
+               If <n2> is omitted, <n2> is assumed to be the last page number.
+
+    There are indicated by separating by appropriate characters if necessary.
+
+    -pT-L       default (total as in the original order)
+    -pTL        preambre  and  postambre
+    -p3-15/20L  the pages 3,4,5,...,15 and 20 in this order and postambre
+
+-r  -rorg_1=new_1/org_2=new_2/... means org_i is replaced by new_i for i=1,2..
+    Here  org_i  is the keyword omitting figures.  For example
+
+    -rxxx=special/setchar=set_char_
+
+    The first letter of  orig_i  should be an alphabet in the small case if the
+    option  -x  is indicated.
+
+-t : Transformation is done according to the DTL(dt2dv/dv2dt) by Geoffrey Tobin.
+    The following suboptions (0-9: toggle switch) can be indicated such as -t02.
+
+    The option  -t  with no suboption means that the following all suboptions
+    and the options corresponding to the switches -x0 -x1 -x2 are all On and  -j
+    is Off and also the following line is inserted at the top in case of
+    DVI -> Text.
+
+variety sequences-6
+
+    If in case of Text -> dvi this line exists at the top, -t is automatically
+    set.
+
+  0: str
+     A string is indicated by '...'  with the transformations ' -> \' and
+     \ -> \\.  A character whose code is smaller that 32 or larger than 126 is
+     expressed by hexadecimal as in the following.
+  1: ch
+     Characters with the code between 0 and 127 are indicated by (...).
+     Here the transformations (  -> \(,  ) -> \) and  \ -> \\ are used and the
+     character with the code between 0 and 31 or 127 is independently shown by
+     hexadecimal character starting with \ such as \12.
+  2: ch2
+     The code of a character larger than 128 is expressed in digits.
+  3: cmd
+     The key word corresponding to a code is in the format as in DTL.
+  4: c-sum
+     check sum in the font definition is expressed by octal.
+  5: dir/name
+     The string of fontname is expressed by dividing into the directory and name.
+  6: err
+     The illegal code is expressed by  opcode x (x: code).
+  7: page
+     The page number is not shown.
+  8: oct
+     The octal number for the check sum of the font definition is expressed
+     without the top 0.
+  9: str0
+     The length of a string is determined by the given string in case of
+     Text -> DVI.
+
+-l: The address of the code is shown at the top of line.
+    In this case
+
+0: pre  2 ...
+
+    exists at the head.
+    In case of Text -> DVI, the option -l is set if this line exists.
+
+-J: Set Japanese characters output with a suboption
+
+  e: EUC-JP
+  s: Shift_JIS
+  u: UTF-8 for pTeX
+  U: UTF-8 for upTeX
+
+    When the program dvispc is built without ptexenc library (i.e.
+    built outside TeX Live), the -J option is unavailable.
+    Instead, the -j option can be used.
+
+-j: toggle, If the code of the character is within JIS code, then the
+    corresponding character is shown. (unavailable for TeX Live)
+
+
+        ************************************************************
+[2]     **  Modify a DVI file to be page-independent in specials  **
+        ************************************************************
+DVI file should be page-independent in principle.  But some specials break this
+principle.
+
+For example, color specials of graphics package of LaTeX2e for dvips break this.
+Suppose there is a command to make letters red at page 2 of a document with the
+total pages 100 and it continues up to page 99.  Then there is no command to
+make letters red at page 50.
+
+\usepackages[dvips]{graphicx, color}
+...
+{\color{red}%			 page 2
+...
+...
+...%					 page 99
+}
+...
+
+dvips reads a DVI file from the first page and therefore it correctly interprets
+color specials.  But some other DVIwares such as dviout (previewer) cannot do so
+because it may be requested only to display the page 50.  The same problem
+occurs for some DVI tools such as dvidvi.
+
+dvispc modifies such a DVI file to be page-independent.  Supporting specials are
+
+   color specials:  push, pop, background
+   pdf   specials:  pdf:bcolor, pdf:ecolor, pdf:bgcolor
+   tpic  specials:  pn
+
+                          --- specifications ---
+-c: the above modification will be done
+-d: check the necessity of the modification
+-s: show all specials in DVI file
+
+If none of the parameters -s -d -a -x is indicated, dvispc modifies DVI file as
+described.
+
+-b : dvispc by default overwrites the original DVI file after modification.
+     If -b is specified, the original file is backuped with suffix .bak.
+
+-z : If the input DVI has less than multiple of 4 pages, append empty pages
+     to have multiple of 4.
+     The program dvibook has similar function, but dvispc ensures page
+     independency by explicitly setting the background of empty pages white.
+
+Supported specials are the followings.
+
+color specials: dvispc inserts necessary specials "color pop" at the end of each
+  page so that the stack becomes empty there.  Then it also inserts necessary
+  specials "color push" at the top of the following page.
+  dvispc checks the underflow and overflow (the limit is about 500 in dvispc)
+  of this stack. Usually the overflow of stack occurs by the wrong source of
+  TeX.  In the case of the unerflow, dvispc writes specials "color push  Black"
+  at the top of the corresponding page to recover the error.
+
+background    : If the "background" color is defined in a page and the
+  definition is not written in another page where the definition should be
+  valid, then the definition is inserted at the top of the page.
+
+pdf:bcolor, pdf:ecolor : Similar to color push/pop.
+
+pdf:bgcolor   : Similar to background.
+
+tpic specials : If tpic special "pn" is defined, then the same special will be
+  inserted at the top of the following pages.
+
+The order to be inserted at the top of each page is as follows
+
+color push -> pdf:bcolor -> background -> pdf:bgcolor -> pn (tpic special)

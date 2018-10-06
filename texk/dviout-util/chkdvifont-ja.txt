@@ -1,0 +1,291 @@
+1. chkdvifont をパラメータをつけずに実行したときの画面は、以下の通りです。
+
+	<<< CHecK DVI/tfm/font file and tell informations of FONTs >>>
+				Originally written by SHIMA, 1990/1992
+				Ver.YYYYMMDD (TeX Live YYYY)
+
+Usage: chkdvifont [-s] [-c] [-{f|F}<font_data_file>] [-d] dvi_file_name
+       chkdvifont [-s] [-c] [-{f|F}<font_data_file>] [-t] tfm_file_name
+       chkdvifont [-s] [-c] [-{f|F}<font_data_file>] [-p] font_file_name
+
+Option	 -c: check mode
+	 -s: silent check mode
+	 -f: use font_data_file (-F: and ignore default data)
+	 -d: force DVI mode
+	 -t: force TFM/OFM mode
+	 -p: force FONT mode
+	     (supported formats: vf/ovf/gf/pk/pkd/pxl/gth/far)
+	 By default, mode is guessed from the file extension.
+
+Errorlevel is the sum of the following number
+	  1: cmbsy5-9, cmcsc8-9, cmex7-9, cmmib5-9
+	  2: new font: eu??, msam, msbm, wncy??, font_data_file
+	  4: new eufm5-10
+	  8: unknown eufm
+	 16: old font: msxm, msym, amcsc, mcyr, mcyb, font_data_file
+	 32: old eufm5-10
+If errorlevel is larger than 240,
+	248: error in font_data_file
+	249: cannot find font_data_file
+	250: bad parameter
+	251: old and new eufm
+	252: bad dvi file
+	253: error in dvi file
+	254: not dvi/tfm file or unknown font ID
+	255: cannot find dvi/tfm/font file
+
+		<<< Example of font_data_file >>>
+# font_name old_check_sum new_check_sum  (in HEX, 0 means existence check)
+eufm5	0891FD38	246A686B
+eufm10	BF989013	8F256EB2
+# The line beginning with # or ; is ignored.
+
+
+
+2. chkdvifont は、dvi file あるいは、tfm file および、vf file, gf file,
+   pk file, pxl file のフォントのデータをチェックするプログラムで、次の機能が
+   あります。
+
+  １． dvi file で使われているフォントを調べる。特にチェックサムを調べて、同じ
+       フォント名でもバージョンが異なる場合のチェックを行う。
+
+  ２． tfm/vf/gf/pk/pxl file を調べて、チェックサムなどの情報を調べる。
+
+  ３． チェックするチェックサムのデータは、データ・ファイルから読み込める。
+
+
+
+2.1. AMSTeX が、Ver 2.* になったとき、AMSFONT は、それ以前のフォントから大幅に
+  変更がなされました。フォント名もほとんど新しくなりましたが、Fraktur フォント
+  の eufm ファミリーのみ、同じ名前が用いられました。デザインは全く変わっている
+  ので、dvi file で AMSFONT が用いられているとき、それが Ver 2.0 以前のものか
+  どうか知る必要に迫られ作成されたプログラムが chkdvifont の元になっています。
+
+     プリンタ・ドライバで印刷するとき、適当なバージョンのフォントを選ぶことが
+  バッチ・プログラムで容易に実現できるよう作られたので、エラーレベルで情報を返
+  します。dviout/dviprt Ver 2.33 には、checkasm.exe というファイル名で付属して
+  いたものを Version up したものです。
+
+     デフォールトでは、AMSFONT の Ver 2.0 とそれ以前との区別がなされます。
+
+
+
+2.2. dvi file のフォントなどのデータを読み出すことができます。
+  以下の実行例を参照してください。
+  dvi_file_name は、拡張子をつけなければ、自動的に .dvi が補われます。
+
+B>chkdvifont -c a:\tex\dvi\texjman
+
+dvi file name                   = b:\tex\doc\texjman.dvi
+comment                         = TeX output 1991.03.20:0839
+factor converting to 10^{-5}m   = 25400000/473628672
+magnification                   = 1000
+maximum height+depth            = 45413867 scaled points = 692 points
+maximum width                   = 29834876 scaled points = 455 points
+maximum stack depth             = 9
+number of pages                 = 22
+page size                       = 16.0 cm x 24.4 cm
+page size magnificated          = 16.0 cm x 24.4 cm
+
+Font 91
+        checksum                = F16B4148
+        design size             =   655360 scaled points = 10 points
+        space size              =  1630535 scaled points = 24 points
+        magnification           = +magstep5
+        font name               = cmssbx10
+
+Font 90
+        checksum                = DE3E61CB
+        design size             =  6820250 scaled points =104 points
+        space size              =  6820250 scaled points =104 points
+        font name               = cminch
+
+Font 70
+        checksum                = E99FD0F6
+        design size             =   655360 scaled points = 10 points
+        space size              =   943718 scaled points = 14 points
+        magnification           = +magstep2
+        font name               = goth10
+
+Font 67
+        checksum                = 1AF22256
+        design size             =   655360 scaled points = 10 points
+        space size              =   943718 scaled points = 14 points
+        magnification           = +magstep2
+        font name               = cmbx10
+
+                   <<< 途中省略 >>>
+
+Font 10
+        checksum                = D993A052
+        design size             =   458752 scaled points =  7 points
+        space size              =   458752 scaled points =  7 points
+        font name               = cmr7
+
+EXIT Code (errorlevel)          = 0
+No AMS Font
+
+B>chkdvifont -c b:\tex\sample
+
+dvi file name                   = b:\tex\sample.dvi
+comment                         = TeX output 1990.01.04:0912 No.MTV02003920
+factor converting to 10^{-5}m   = 25400000/473628672
+magnification                   = 2074
+maximum height+depth            = 25249672 scaled points = 385 points
+maximum width                   = 16771048 scaled points = 255 points
+maximum stack depth             = 13
+number of pages                 = 13
+
+Font 68
+        checksum                = BF989013
+        design size             =   655360 scaled points = 10 points
+        space size              =   655360 scaled points = 10 points
+        font name               = eufm10 (Old AMSTeX) 
+
+Font 67
+        checksum                = 7AFB15BF
+        design size             =   327680 scaled points =  5 points
+        space size              =   327680 scaled points =  5 points
+        font name               = msym5 (Old AMS Font) 
+
+                   <<< 途中省略 >>>
+
+Font 0
+        checksum                = 00000000
+        design size             =   655360 scaled points = 10 points
+        space size              =   655360 scaled points = 10 points
+        font name               = cmr10
+
+EXIT Code (errorlevel)          = 48
+Old eufm Old font 
+
+
+
+2.3. tfm/ofm ファイルのデータを読みだすことができます。
+  以下の実行例を参照してください。
+  tfm_file_name は、拡張子をつけなければ、自動的に .tfm が補われます。
+
+B>chkdvifont -c -t A:\tex\tfm\cmr8
+        "cmr8" is a tfm file :  0  -> 127
+        checksum                = 7C7B5907
+        design size             = 8388608 2^{-20} points = 8 points
+
+EXIT Code (errorlevel)          = 0
+No AMS Font
+
+B>chkdvifont -t a:\tex\amstfm\eufm10
+        "eufm10" is a tfm file :  0  -> 127
+        checksum                = 8F256EB2
+        design size             = 10485760 2^{-20} points = 10 points
+                                 (AMSTeX 2.0/2.1) 
+
+EXIT Code (errorlevel)          = 4
+New eufm 
+
+B>chkdvifont -c -t a:\tex\tfm\eufm10
+        "eufm10" is a tfm file :  0  -> 122
+        checksum                = BF989013
+        design size             = 10485760 2^{-20} points = 10 points
+                                 (Old AMSTeX) 
+
+EXIT Code (errorlevel)          = 32
+Old eufm
+
+B>chkdvifont -c -t a:\tex\tfm\goth10
+        "goth10" is a jfm file :  0  ->  12
+        checksum                = E99FD0F6
+        design size             = 10485760 2^{-20} points = 10 points
+
+EXIT Code (errorlevel)          = 0
+No AMS Font
+
+
+
+2.4. vf/ovf/gf/pk/pkd/pxl/gth/far ファイルのデータを読みだすことができます。
+  以下の実行例を参照してください。
+
+B>chkdvifont -c a:\tex\fonts\170dpi\eufm8.pk
+        "eufm8.pk" is in PK format
+        checksum                = 2564B2F5
+        design size             = 8388608 2^{-20} points = 8 points
+        horizontal              = 154087 2^{-16} dots/point = 170 dpi
+        vertical                = 154087 2^{-16} dots/point = 170 dpi
+                                 (AMSTeX 2.0/2.1) 
+
+EXIT Code (errorlevel)          = 4
+New eufm
+
+
+B>chkdvifont -c a:\tex\fonts\850\eufm8.pxl
+        "eufm8.pxl" is in PXL1002 format
+        checksum                = 2564B2F5
+        design size             = 8388608 2^{-20} points = 8 points
+        magnification           = 850 (170 dpi)
+                                 (AMSTeX 2.0/2.1) 
+
+EXIT Code (errorlevel)          = 4
+New eufm 
+
+
+B>chkdvifont b:\tex\fonts\pk118.gth
+        "b:\pxlfont\pk118.gth" is a GTH file which contains...
+
+        "cmb10.118" is in PK format
+        checksum                = D20B9E26
+        design size             = 10485760 2^{-20} points = 10 points
+        horizontal              = 107005 2^{-16} dots/point = 118 dpi
+        vertical                = 107005 2^{-16} dots/point = 118 dpi
+
+
+        "cmbsy10.118" is in PK format
+        checksum                = E0C98C0C
+        design size             = 10485760 2^{-20} points = 10 points
+        horizontal              = 107005 2^{-16} dots/point = 118 dpi
+        vertical                = 107005 2^{-16} dots/point = 118 dpi
+
+
+        "cmbx10.118" is in PK format
+        checksum                = 1AF22256
+        design size             = 10485760 2^{-20} points = 10 points
+        horizontal              = 107005 2^{-16} dots/point = 118 dpi
+        vertical                = 107005 2^{-16} dots/point = 118 dpi
+
+
+                   <<< 以下省略 >>>
+
+
+
+2.5. font_data_file によって、チェックサムなどの情報を与え、それから判断して
+  エラーレベルで返すようにできます。
+
+     font_data_file は、最初にフォンと名、次に、旧バージョンのチェックサム、
+  その後に新バージョンのチェックサムを書きます（その後には、空白をおけば、コメ
+  ントを書いてもかまいません）。１桁目が、# または、; となっている行は無視され
+  ます。また、0 はそのフォントが存在が旧バージョン（または、新バージョン）を意
+  味するときに使います。そのとき、逆のバージョンには 0 以外の適当な（チェック
+  サムに一致しない）値を書きます。チェックサムは 16進数で書きますが、それは、
+  2.3 で書いてあるようにして、tfm file から読むことができます。
+
+    -f で指定したときは、デフォールトのデータに合わせて用いられます。
+    -F で指定したときは、font_dat_file のみを判断のためのデータにします。
+
+    font_dat_file の例
+
+    ; font_name    check_sum_old  check_sum_new
+    eufm8           37CCA321         2564B2F5   ; 2.0
+    eufm8           37CCA321         5C978225   ; 2.1
+    eufm9           3F977CF3         1F6C4283   ; 2.0 
+    eufm9           3F977CF3         F833F3AF   ; 2.1
+    eufm10          BF989013         8F256EB2   ; 2.0/2.1
+    msxm10                 0                1
+    msam10                 1                0
+
+    このようだと、eufm8 のフォントに対し、チェックサムが 16進で、37CCA321 の
+  ときは、Old Font と判断され、2564B2F5 または、5C978225 のとき New Font と
+  判断され、前者は 16進で 10、 後者は 2 に対応します。dvi file をチェックした
+  場合は、使われたフォントに対応するこの数（データがないものは 0 とする）の
+  すべての OR をとってエラーレベルで返します。msxm10 のフォントは、Old Font と
+  みなされ、msam10 の方は New Font とみなされます（チェックサムは調べない）。
+
+
+    font_data_file は、; や # の行を除いて、最大 1024行までが許されます。

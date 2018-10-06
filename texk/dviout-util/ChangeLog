@@ -1,0 +1,92 @@
+2018-10-06  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* chkdvifont.man, dvispc.man: New man pages.
+	* Makefile.am: Adjusted.
+
+2018-10-05  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Exit code 0 when called without argument.
+
+2018-10-04  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Fix a bug that -b option does not work. Make
+	sure that -v option is not ignored for default -c mode.
+	Remove unused code.
+
+2018-09-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* Makefile.{am,in}, propw.c, propw-ja.txt, propw.test,
+	tests/jistest.pl: Removed propw from this bundle.
+
+2018-09-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* chkdvifont.c: Renamed from chkfont.c.
+	* chkdvifont-ja.txt: Renamed from chkfont.txt, updated.
+	* chkdvifont.test: Renamed from chkfont.test, adapted.
+	* dvispc-ja.txt: Renamed from dvispc.txt, updated.
+	* dvispc-en.txt: Renamed from dvispce.txt, updated.
+	* propw.c: Partially revert the change on 2017-06-25.
+	(I was misunderstanding the usage of mapfile, sorry.)
+	* propw-ja.txt: Renamed from propw0.txt.
+	* Makefile.am: Adapted.
+
+2018-09-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* Makefile.{am,in}, ac/withenable.ac, aclocal.m4,
+	config.h.in, configure{,.ac}:
+	Added files related to autotools.
+	* {chkfont,dvispc,propw}.test, tests/{jistest.pl,test.cfn}:
+	Added new tests.
+	* chkfont.c, dvispc.c, propw.c:
+	Changed version number to Ver. date, (TL_VERSION).
+	* dvispc.c: Implemented -J option for japanese characters output
+	instead of -j option.
+	* dvispc.c: Fixed file open issue in unix.
+	* propw.c: Set ppltotf input UTF-8.
+	* propw.c, dd.h, {chkfont,dvispc,propw0}.txt:
+	Converted file encoding to UTF-8.
+
+2018-02-11  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c, chkfont.c: No longer require -DMSVC and -DUNIX
+	compiler options.
+
+2017-11-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Support pdf:bann, pdf:eann (nesting is not
+	supported yet).
+
+2017-06-25  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* propw.c: Fix bugs for dviout mapfile handling.
+	* dvispc.txt, dvispce.txt, chkfont.txt, propw0.txt: Adjusted.
+
+2017-06-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* chkfont.c: Add support for VF and OFM (level 0 and 1) format.
+
+2017-06-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Support page indendence in reverse order.
+
+2017-06-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Additional pages by -z option are always white.
+
+2017-05-31  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Add -z option, which appends empty pages if
+	necessary to make multiple of 4 pages.
+
+2017-05-30  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Support pdf:bcolor, pdf:ecolor, pdf:bgcolor.
+
+2017-05-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* Started ChangeLog for dviout-util.
+	* Checked out r186 of http://tug.org/svn/dviout/trunk/ and
+	fixed some typos.
+
+Copyright (C) 2017--  Hironobu Yamashita
+You may freely use, modify and/or distribute this file.

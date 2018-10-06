@@ -1,0 +1,98 @@
+.if t .ds TX T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
+.if t .ds LX L\\h'-0.36m'\\v'-0.15v'\\s-2A\\s+2\\h'-0.15m'\\v'0.15v'T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
+.TH CHKDVIFONT 1
+.SH NAME
+chkdvifont \- CHecK DVI/tfm/font file and tell informations of FONTs
+.SH SYNOPSIS
+.B chkdvifont
+[\fB\-s\fR] [\fB\-c\fR] [\fB-{f|F}\fI<font_data_file>\fR]
+[\fB\-d\fR]
+\fIdvi_file_name\fR
+.PP
+.B chkdvifont
+[\fB\-s\fR] [\fB\-c\fR] [\fB-{f|F}\fI<font_data_file>\fR]
+[\fB\-t\fR]
+\fItfm_file_name\fR
+.PP
+.B chkdvifont
+[\fB\-s\fR] [\fB\-c\fR] [\fB-{f|F}\fI<font_data_file>\fR]
+[\fB\-p\fR]
+\fIfont_file_name\fR
+.SH DESCRIPTION
+.B Chkdvifont
+is a utility to check DVI and other \*(TX font-related formats
+(such as TFM, VF, GF and PK) and print information of those fonts.
+There are 3 modes;
+.PP
+Option \fB\-d\fR: force DVI mode
+.PP
+Option \fB\-t\fR: force TFM/OFM mode
+.PP
+Option \fB\-p\fR: force other FONT mode
+.PP
+By default, the mode is guessed from the file extension.
+.SH EXAMPLE
+.TP 5
+(1) If you want to know what font is used in sample.dvi,
+
+    $ chkdvifont sample.dvi
+    dvi file name                   = sample.dvi
+    comment                         = TeX output 2007.11.24:0632
+    factor converting to 10^{-5}m   = 25400000/473628672
+    magnification                   = 1000
+    maximum width                   = 26083328 scaled points = 398 points
+    maximum height+depth            = 11099063 scaled points = 169 points
+    maximum stack depth             = 4
+    number of pages                 = 13
+    page size                       = 14.0 cm x  6.0 cm
+    page size magnificated          = 14.0 cm x  6.0 cm
+
+    Font 14
+        checksum                    = 44D3ED74
+        design size                 =  1132462 scaled points = 17 points
+        space size                  =  1630536 scaled points = 24 points
+        magnification               = +magstep2
+        font name                   = cmr17
+
+    Font 7
+        checksum                    = 4BF16079
+        design size                 =   655360 scaled points = 10 points
+        space size                  =   655360 scaled points = 10 points
+        font name                   = cmr10
+
+.TP 5
+(2) If you want to know the brief summary of jis.tfm,
+
+    $ chkdvifont jis.tfm
+    "jis" is a jfm file :  0  ->   5
+    checksum                = 00000000
+    design size             = 10485760 2^{-20} points = 10 points
+
+.TP 5
+(3) If you want to know what font is referred to by jis.vf,
+
+    $ chkdvifont jis.vf
+    "jis.vf" is in VF format
+    checksum                = 00000000
+    design size             = 10485760 2^{-20} points = 10 points
+
+    Mapped Font 1
+            font dsize      = 10485760 2^{-20} points = 10 points
+            font at         =  0.962216
+            font name       = rml
+
+.SH SEE ALSO
+pltotf(1), tftopl(1), vptovf(1), vftovp(1)
+.SH AUTHOR
+The program
+.B chkdvifont
+(original name "chkfont")
+is derived from the DVIOUT package (DVI previewer for Windows)
+by Toshio OSHIMA ("SHIMA"), Yoshiki OTOBE, and Kazunori ASAYAMA.
+Current version is maintained by Japanese \*(TX Development Community
+<https://texjp.org>.
+.br
+For more information, please refer to
+chkdvifont-ja.txt (in Japanese)
+on our GitHub repository, <https://github.com/texjporg/tex-jp-build>
+(under source/texk/dviout-util directory).

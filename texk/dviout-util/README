@@ -1,0 +1,89 @@
+dviout-util
+===========
+
+This is a *partial* repackaging of elements of the DVIOUT package
+by Toshio OSHIMA, Yoshiki OTOBE, and Kazunori ASAYAMA.
+Here we don't include the main DVI previewer, but just want small utility
+programs. Small description:
+
+* chkdvifont[.exe]  : A utility to check font in DVI/TFM/JFM/FONT files
+                      (formerly chkfont.exe; renamed due to name conflicts)
+* chkdvifont-ja.txt : Document of chkdvifont.exe (in Japanese)
+                      (formerly chkfont.txt)
+* dvispc[.exe]   : A utility to correct the page-independence of DVI file
+                   using color specials or tpic specials and
+                   to transform between a DVI file and a text file
+* dvispc-ja.txt  : A document of dvispc.exe (in Japanese)
+                   (formerly dvispc.txt)
+* dvispc-en.txt  : A document of dvispc.exe
+                   (formerly dvispce.txt)
+
+The followings are not (currently) added.
+
+* propw[.exe]    : A utility to make jfm files for Japanese proportional font
+* propw-ja.txt   : Document of propw.exe (in Japanese)
+                   (formerly propw0.txt)
+
+
+### License
+
+This package is licensed under the Expat license. See COPYING for detail.
+(Similar to the original DVIOUT package.)
+
+
+### Repository
+
+This package is maintained on GitHub for development.
+  https://github.com/texjporg/tex-jp-build
+  (under source/texk/dviout-util)
+
+Please email any bug reports or problems to issue@texjp.org mailing list.
+
+
+### Building dviout-util outside TeX Live
+
+You can visit the GitHub repository
+  https://github.com/aminophen/dviout-util
+to obtain the standalone sources of dviout-util.
+
+The files in 00texjporg/ are encoded in UTF-8 (LF) for Unix.
+Other files are encoded in CP932 (LF) for Windows.
+
+For Unix (GNU C; gcc, clang):
+
+    $ cd dviout-util/00texjporg
+    $ gcc -o chkdvifont -I.. chkdvifont.c
+    $ gcc -o dvispc -I.. dvispc.c
+    $ gcc -o propw -I.. propw.c
+
+For Windows:
+
+    $ cd dviout-util
+    $ cl -O2 /MD -I. chkdvifont.c
+    $ cl -O2 /MD -I. dvispc.c
+    $ cl -O2 /MD -I. -DWIN32 propw.c /link gdi32.lib
+
+The only difference from TeX Live version is that dvispc does not use
+PTEXENC, which enables UTF-8 character printing.
+
+
+### Character Encodings
+
+The files in texlive subversion repository (under Build/source/texk/dviout-util)
+  https://www.tug.org/svn/texlive/trunk/
+are encoded in UTF-8 (LF).
+The files in dviout subversion repository
+  https://www.tug.org/svn/dviout/trunk/
+are encoded in CP932 (LF), except for files inside distribution/ directory.
+
+If you like to distribute the files (especially .txt documents) on
+Windows, it might be better to convert LF to CRLF (CP932 should be kept):
+
+    $ nkf -s -Lw --overwrite propw0.txt
+
+The LF -> CRLF conversion is suggested in dviout subversion repository,
+under distribution/ directory.
+
+
+This README was written by Hironobu Yamashita.
+Public domain. (September 2018)
