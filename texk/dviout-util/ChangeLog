@@ -1,7 +1,10 @@
 2018-10-06  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
+	* dvispc.c: Change option handling for future extensions.
+	Make sure binary with trace does not fail tests.
 	* chkdvifont.man, dvispc.man: New man pages.
 	* Makefile.am: Adjusted.
+	* configure.ac: Version 20181006.
 
 2018-10-05  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
