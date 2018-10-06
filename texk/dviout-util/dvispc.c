@@ -616,7 +616,9 @@ error:                  fprintf(stderr, "Error in parameter %s\n", argv[i]);
       }
 skip: ;
     }
-    /* now, i = (number of optional argument) + 1 */
+    /* now, i = (number of optional arguments) + 1
+       cf.  argc = (number of all arguments) + 1
+        {argv[0] is the program name itself} ^^^ */
 
     if(!f_mode) f_mode = EXE2INDEP; /* default mode */
 
@@ -728,6 +730,7 @@ skip: ;
         dvi_info.file_name = infile;
     }
 
+    /* [TODO] comments not added yet */
     if(i == argc - 1){
         if((f_mode & EXE2INDEP) && !fnum){
 #ifdef UNIX
