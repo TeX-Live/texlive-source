@@ -635,11 +635,14 @@ skip: ;
             error("Too long filename");
     }
 
-    switch(argc - i){
+    switch(argc - i){ /* number of non-optional arguments */
         case 0:
             if(fp_in == NULL)
+                /* infile not given, empty stdin; nothing I can do */
                 usage(1);
             if(fp_out == NULL){
+                /* outfile not given, free stdout;
+                   binary cannot be written, text is fine */
                 if((f_mode & EXE2INDEP) || f_mode == EXE2DVI)
                     usage(1);
                 fp_out = stdout;
@@ -647,26 +650,35 @@ skip: ;
             break;
 
         case 1:
-            if(fnum == 2)
+            if(fnum == 2)   /* non-empty stdin, redirected stdout */
+                /* [TODO] ??? */
                 usage(1);
-            if(!fnum){
+            if(!fnum){  /* empty stdin, free stdout */
+                /* if EXE2DVI, the only argument might be outfile,
+                   but no input available; nothing I can do */
+                if(f_mode == EXE2DVI)
+                    usage(1);
+                /* otherwise, the only argument should be infile */
                 strcpy(infile, argv[argc-1]);
+                /* outfile not given;
+                   nonetheless binary should be written to a file,
+                   text is fine with free stdout */
                 if((f_mode & EXE2INDEP))
                     strcpy(outfile, argv[argc-1]);
-                else if(f_mode == EXE2DVI)
-                    usage(1);
                 else
                     fp_out = stdout;
-            }else
+            }else   /* if fp_out == NULL, free stdout; otherwise empty stdin */
+                /* [TODO] ??? */
                 strcpy((fp_out == NULL)?outfile:infile, argv[argc-1]);
             break;
 
         case 2:
             if(fp_in == NULL){
+                /* prioritize filename arguments */
                 strcpy(infile, argv[argc-2]);
                 strcpy(outfile, argv[argc-1]);
                 break;
-            }
+            }   /* else non-empty stdin already given, confused! */
         default:
             usage(1);
     }
@@ -683,6 +695,8 @@ skip: ;
     }
                         /* -x : text -> DVI */
     if(f_mode == EXE2DVI){
+        /* use infile if given, otherwise use existing fp_in (= non-empty stdin)
+           note that fp_in and infile are exclusive (already checked above) */
         if(fp_in == NULL){
             fp_in = fopen(infile, READ_TEXT);
             if(fp_in == NULL){
@@ -690,7 +704,8 @@ skip: ;
                 exit(1);
             }
         }
-        if(fp_out == NULL){
+        /* [TODO] I'd like to use outfile if given */
+        if(fp_out == NULL || outfile){
             len = strlen(outfile);
             if(len < 4 || StrCmp(outfile + len - 4, ".dvi"))
                 strcat(outfile, ".dvi");
