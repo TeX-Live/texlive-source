@@ -670,7 +670,11 @@ skip: ;
                 else
                     fp_out = stdout;
             }else   /* if fp_out == NULL, free stdout; otherwise empty stdin */
-                /* [TODO] ??? */
+                /* [TODO] to be confirmed
+                      if non-empty stdin, the only argument = outfile
+                        (input is taken from stdin)
+                      if redirected stdout, the only argument = infile
+                        (output goes to stdout for EXE2DVI, overwrite for EXE2INDEP) */
                 strcpy((fp_out == NULL)?outfile:infile, argv[argc-1]);
             break;
 
@@ -731,7 +735,7 @@ skip: ;
     }
 
     /* [TODO] comments not added yet */
-    if(i == argc - 1){
+    if(argc - i == 1){
         if((f_mode & EXE2INDEP) && !fnum){
 #ifdef UNIX
             static char tmpfile[] = "/tmp/dvispcXXXXXX";
@@ -754,7 +758,7 @@ same:       strcpy(outfile, infile);
 #endif
             f_overwrite = 1;
         }
-    }else if(i == argc - 2){
+    }else if(argc - i == 2){
 #ifdef UNIX
         struct stat infstat, outfstat;
 #endif
@@ -774,7 +778,8 @@ same:       strcpy(outfile, infile);
         fprintf(stderr, "Cannot open %s\n", infile);
         exit(1);
     }
-    if(fp_out == NULL){
+    /* [TODO] I'd like to use outfile if given */
+    if(fp_out == NULL || outfile){
         if(!*outfile)
             fp_out = (f_mode == EXE2TEXT || f_mode == EXE2SPECIAL)?stdout:stderr;
         else if((f_mode & EXE2INDEP))
