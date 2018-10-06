@@ -3,6 +3,7 @@
 	* dvispc.c: Change option handling for future extensions.
 	Make sure binary with trace does not fail tests by
 	prioritizing infile and outfile as explicit arguments.
+	* chkdvifont.test, dvispc.test: More tests stdin/stdout.
 	* chkdvifont.man, dvispc.man: New man pages.
 	* Makefile.am: Adjusted.
 	* configure.ac: Version 20181006.

@@ -5,11 +5,9 @@
 
 testdir=$srcdir/tests
 
-rc=0
-
 cp $testdir/test.dvi . && \
   ./chkdvifont -c ./test.dvi > xtest.cfn && \
-  diff $testdir/test.cfn xtest.cfn && echo || rc=1
+  diff $testdir/test.cfn xtest.cfn && echo || exit 1
 
-exit $rc
+exit 0
 

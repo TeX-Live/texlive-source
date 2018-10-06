@@ -690,10 +690,10 @@ skip: ;
             usage(1);
     }
 #ifndef UNIX
-    if(fp_out && (f_mode == EXE2DVI || (f_mode & EXE2INDEP)))
+    if(fp_out && !*outfile && (f_mode == EXE2DVI || (f_mode & EXE2INDEP)))
         setmode( fileno( stdout ), O_BINARY);
 #endif
-    if(fp_in && !infile && f_mode != EXE2DVI){
+    if(fp_in && !*infile && f_mode != EXE2DVI){
         fprintf(stderr, "*** stdin is a DVI file. ***\n"
             "*** Random Access may not be supported! ***\n");
 #ifndef UNIX
@@ -704,7 +704,7 @@ skip: ;
     if(f_mode == EXE2DVI){
         /* use infile if given, otherwise use existing fp_in (= non-empty stdin)
            note that fp_in and infile are exclusive (already checked above) */
-        if(fp_in == NULL || infile){
+        if(fp_in == NULL || *infile){
             fp_in = fopen(infile, READ_TEXT);
             if(fp_in == NULL){
                 fprintf(stderr, "Cannot open %s\n", infile);
@@ -712,7 +712,7 @@ skip: ;
             }
         }
         /* [TODO] I'd like to use outfile if given */
-        if(fp_out == NULL || outfile){
+        if(fp_out == NULL || *outfile){
             len = strlen(outfile);
             if(len < 4 || StrCmp(outfile + len - 4, ".dvi"))
                 strcat(outfile, ".dvi");
@@ -772,7 +772,7 @@ same:       strcpy(outfile, infile);
 #endif
             goto same;
     }
-    if(fp_in && !infile){
+    if(fp_in && !*infile){
         dvi_info.file_ptr = fp_in;
         dvi_info.file_name = "stdin";
     }else if ((dvi_info.file_ptr = fopen(dvi_info.file_name, READ_BINARY)) == NULL){
@@ -780,7 +780,7 @@ same:       strcpy(outfile, infile);
         exit(1);
     }
     /* [TODO] I'd like to use outfile if given */
-    if(fp_out == NULL || outfile){
+    if(fp_out == NULL || *outfile){
         if(!*outfile)
             fp_out = (f_mode == EXE2TEXT || f_mode == EXE2SPECIAL)?stdout:stderr;
         else if((f_mode & EXE2INDEP))

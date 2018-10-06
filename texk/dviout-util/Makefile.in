@@ -561,7 +561,7 @@ dist_man1_MANS = dvispc.man chkdvifont.man
 TESTS = dvispc.test chkdvifont.test
 EXTRA_DIST = $(TESTS) tests/test.tex tests/test.dvi tests/test.spc \
 	tests/testout.dvi tests/test.cfn
-DISTCLEANFILES = xtest.spc xtestout.dvi xtesta.txt xtestax.dvi \
+DISTCLEANFILES = x*test.spc x*testout.dvi x*testa.txt x*testax.dvi \
 	test.dvi xtest.cfn
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

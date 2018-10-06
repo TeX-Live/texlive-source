@@ -5,17 +5,41 @@
 
 testdir=$srcdir/tests
 
-rc=0
+./dvispc -s $testdir/test.dvi xtest.spc && \
+  diff $testdir/test.spc xtest.spc && echo || exit 1
 
-./dvispc -s $testdir/test.dvi > xtest.spc && \
-  diff $testdir/test.spc xtest.spc && echo || rc=1
+./dvispc -s $testdir/test.dvi > x1test.spc && \
+  diff $testdir/test.spc x1test.spc && echo || exit 2
 
-./dvispc -c $testdir/test.dvi xtestout.dvi >/dev/null && \
-  cmp $testdir/testout.dvi xtestout.dvi && echo || rc=2
+## invalid usage
+#./dvispc -s < $testdir/test.dvi x2test.spc && \
+#  diff $testdir/test.spc x2test.spc && echo || exit 3
+
+## stdin is a DVI, random access may not be supported, no test
+#./dvispc -s < $testdir/test.dvi > x3test.spc && \
+#  diff $testdir/test.spc x3test.spc && echo || exit 4
+
+./dvispc -c $testdir/test.dvi xtestout.dvi && \
+  cmp $testdir/testout.dvi xtestout.dvi && echo || exit 5
+
+./dvispc -c $testdir/test.dvi > x1testout.dvi && \
+  cmp $testdir/testout.dvi x1testout.dvi && echo || exit 6
+
+## invalid usage
+#./dvispc -c < $testdir/test.dvi x2testout.dvi && \
+#  cmp $testdir/testout.dvi x2testout.dvi && echo || exit 7
+
+## stdin is a DVI, random access may not be supported, no test
+#./dvispc -c < $testdir/test.dvi > x3testout.dvi && \
+#  cmp $testdir/testout.dvi x3testout.dvi && echo || exit 8
 
 ./dvispc -a $testdir/test.dvi xtesta.txt && \
-  ./dvispc -x xtesta.txt xtestax.dvi >/dev/null && \
-  cmp $testdir/test.dvi xtestax.dvi && echo || rc=4
+  ./dvispc -x xtesta.txt xtestax.dvi && \
+  cmp $testdir/test.dvi xtestax.dvi && echo || exit 9
 
-exit $rc
+./dvispc -a $testdir/test.dvi > x1testa.txt && \
+  ./dvispc -x < x1testa.txt > x1testax.dvi && \
+  cmp $testdir/test.dvi x1testax.dvi && echo || exit 10
+
+exit 0
 
