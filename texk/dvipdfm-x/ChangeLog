@@ -1,3 +1,10 @@
+2018-10-08  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* mpost.c: Fix a bug in inline PS code handling.
+	* dpxfile.c, pdfencrypt.c, type0.c: Avoid compiler warnings.
+	* pdfobj.c: Fix a bug in (unused) TIFF predictor code.
+	* configure.ac: Version 20181008.
+
 2018-10-07  Simon Cozens  <simon@simon-cozens.org>
 
 	* pdfobj.c: Clear static variables to allow PDF funcfions to

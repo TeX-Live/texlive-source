@@ -1823,20 +1823,6 @@ filter_PNG15_apply_filter (unsigned char *raster,
   return  dst;
 }
 
-/* TIFF predictor filter support
- *
- * Many PDF viewers seems to have broken TIFF 2 predictor support?
- * Ony GhostScript and MuPDF render 4bpc grayscale image with TIFF 2 predictor
- * filter applied correctly.
- *
- *  Acrobat Reader DC  2015.007.20033  NG
- *  Adobe Acrobat X    10.1.13         NG
- *  Foxit Reader       4.1.5.425       NG
- *  GhostScript        9.16            OK
- *  SumatraPDF(MuPDF)  v3.0            OK
- *  Evince(poppler)    2.32.0.145      NG (1bit and 4bit broken)
- */
-
 /* This modifies "raster" itself! */
 static void
 apply_filter_TIFF2_1_2_4 (unsigned char *raster,
@@ -1890,13 +1876,14 @@ apply_filter_TIFF2_1_2_4 (unsigned char *raster,
         }
       }
     }
-    if (outbits > 0)
+    if (outbits > 0) {
       raster[k] = (outbuf << (8 - outbits)); k++;
+    }
   }
   RELEASE(prev);
 }
 
-unsigned char *
+static unsigned char *
 filter_TIFF2_apply_filter (unsigned char *raster,
                            int32_t columns, int32_t rows,
                            int8_t bpc, int8_t colors, int32_t *length)
