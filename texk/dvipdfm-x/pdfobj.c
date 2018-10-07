@@ -538,6 +538,8 @@ pdf_out_flush (void)
 #endif /* !LIBDPX */
 
     MFCLOSE(pdf_output_file);
+    pdf_output_file_position = 0;
+    pdf_output_line_position = 0;
     pdf_output_file = NULL;
   }
 #if defined(PDFOBJ_DEBUG)

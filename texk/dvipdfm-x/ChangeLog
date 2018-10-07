@@ -1,3 +1,8 @@
+2018-10-07  Simon Cozens  <simon@simon-cozens.org>
+
+	* pdfobj.c: Clear static variables to allow PDF funcfions to
+	be used more than once.
+
 2018-10-02  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvipdfmx.c: Fixed a bug in handling of command line option '-M'.
