@@ -1,0 +1,16 @@
+	"upjisr-h.vf" is in VF format
+	checksum		= 00000000
+	design size		= 10485760 2^{-20} points = 10 points
+
+	Mapped Font 0
+		font dsize	= 10485760 2^{-20} points = 10 points
+		font at		=  1.000000
+		font name	= uprml-h
+
+	Mapped Font 2
+		font dsize	= 10485760 2^{-20} points = 10 points
+		font at		=  1.000000
+		font name	= upjisr-hq
+
+EXIT Code (errorlevel)		= 0
+No AMS Font

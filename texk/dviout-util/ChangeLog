@@ -1,3 +1,13 @@
+2018-10-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* chkdvifont.c: Checksum should be read as unsigned.
+	Exit code 0 when called without argument and input M.
+	* chkdvifont.test, dvispc.test: Test compatibility with
+	old version.
+	* tests/oldindep.{tex,dvi}, tests/oldindepout.dvi,
+	tests/jis.{tfm,cfn}, tests/eufm10.{tfm,cfn}
+	tests/cmr10.{pk,cfn}, tests/upjisr-h.{vf,cfn}: New tests.
+
 2018-10-06  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvispc.c: Change option handling for future extensions.

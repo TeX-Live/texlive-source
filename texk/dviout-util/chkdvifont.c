@@ -927,7 +927,7 @@ void tfm_define(FILE * fp)
 				font.n, ch, u, bc, ec);
 	}
 
-	font.c = read_long(fp);		/* header[0] */
+	font.c = read_n(fp,4);		/* header[0] */
 	font.d = read_long(fp);		/* header[1] */
 	fclose(fp);
 	check_font();
@@ -994,7 +994,7 @@ void pxl_define(FILE * fp)
 			  fseek(fp, -20L, SEEK_END);
 		  else
 			  fseek(fp, f_end - 20, SEEK_SET);
-		  font.c = read_long(fp);
+		  font.c = read_n(fp,4);
 		  pmag = read_long(fp);
 		  font.d = read_long(fp);
 		  break;
@@ -1006,7 +1006,7 @@ void pxl_define(FILE * fp)
 				  fseek(fp, -28L, SEEK_END);
 			  else
 				  fseek(fp, f_end - 28, SEEK_END);
-			  font.c = read_long(fp);
+			  font.c = read_n(fp,4);
 			  pmag = read_long(fp);
 			  font.d = read_long(fp);
 		  }
@@ -1051,7 +1051,7 @@ void pxl_define(FILE * fp)
 			  (void)read_byte(fp);
 		pk3:f_t = PK_FILE;
 		  font.d = read_long(fp);
-		  font.c = read_long(fp);
+		  font.c = read_n(fp,4);
 		  hppp = read_long(fp);
 		  vppp = read_long(fp);
 		  break;
@@ -1074,7 +1074,7 @@ void font_define(int code, FILE * dvifile)
 	int i, len, lenm;
 
 	font.k = read_n(dvifile, code - FNT_DEF_1 + 1);
-	font.c = read_long(dvifile);
+	font.c = read_n(dvifile,4);
 	font.s = read_long(dvifile);
 	font.d = read_long(dvifile);
 	font.a = read_byte(dvifile);
@@ -1092,7 +1092,7 @@ void vf_define(int code, FILE * vffile)
 	int i, len, lenm;
 
 	vffont.k = read_n(vffile, code - FNT_DEF_1 + 1);
-	vffont.c = read_long(vffile);
+	vffont.c = read_n(vffile,4);
 	vffont.s = read_long(vffile);
 	vffont.d = read_long(vffile);
 	vffont.a = read_byte(vffile);
@@ -1106,7 +1106,7 @@ void vf_define(int code, FILE * vffile)
 }
 
 int read_uint(FILE * fp)
-{	   /* read signed integer */
+{	   /* read unsigned integer */
 	int d;
 
 	d = (uchar)getc(fp);
@@ -1115,7 +1115,7 @@ int read_uint(FILE * fp)
 }
 
 long read_mit(FILE * fp)
-{	   /* read three bytes as a long integer */
+{	   /* read three bytes as long integer */
 	long d;
 
 	d = (uchar)getc(fp);
@@ -1164,7 +1164,7 @@ char *
 }
 
 long read_n(FILE * fp, int n)
-{
+{	   /* read 1--4 bytes as unsigned long integer */
 	ulong d;
 
 	d = (uchar)getc(fp);
@@ -1288,6 +1288,6 @@ void usage()
 			"eufm10	BF989013	8F256EB2\n"
 			"# The line beginning with # or ; is ignored.\n"
 		);
-	exit(250);
+	exit(0);
 }
 

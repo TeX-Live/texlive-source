@@ -33,9 +33,16 @@ EXTRA_DIST = $(TESTS)
 EXTRA_DIST += \
 	tests/test.tex tests/test.dvi tests/test.spc \
 	tests/testout.dvi
-DISTCLEANFILES = x*test.spc x*testout.dvi x*testa.txt x*testax.dvi
+DISTCLEANFILES = x*test.spc x*testa.txt x*testax.dvi \
+	x*oldindepout.dvi x*testout.dvi
 
 ## chkdvifont.test
-EXTRA_DIST += tests/test.cfn
-DISTCLEANFILES += test.dvi xtest.cfn
+EXTRA_DIST += tests/test.cfn \
+	tests/jis.tfm tests/jis.cfn \
+	tests/eufm10.tfm tests/eufm10.cfn \
+	tests/cmr10.pk tests/cmr10.cfn \
+	tests/upjisr-h.vf tests/upsjir-h.cfn
+DISTCLEANFILES += test.dvi xtest.cfn \
+	tests/xjis.cfn xeufm10.cfn xeufm10.ed.cfn \
+	xcmr10.cfn xupsjir-h.cfn
 
