@@ -9,7 +9,7 @@ testdir=$srcdir/tests
 # but the output might be written in CRLF on some platform.
 # if 'diff --strip-trailing-cr' is available, exploit it.
 # (useful for tests on win32 binaries run on MSYS shell)
-diffoptCRLF=--strip-trailing-cr
+diffoptCRLF=
 diff --strip-trailing-cr $testdir/test.spc $testdir/test.spc \
   && diffoptCRLF=--strip-trailing-cr || echo
 
