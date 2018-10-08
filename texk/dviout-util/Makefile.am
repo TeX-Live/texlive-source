@@ -31,8 +31,9 @@ EXTRA_DIST = $(TESTS)
 
 ## dvispc.test
 EXTRA_DIST += \
-	tests/test.tex tests/test.dvi tests/test.spc \
-	tests/testout.dvi
+	tests/test.tex tests/test.dvi \
+	tests/oldindep.tex tests/oldindep.dvi \
+	tests/test.spc tests/testout.dvi tests/oldindepout.dvi
 DISTCLEANFILES = x*test.spc x*testa.txt x*testax.dvi \
 	x*oldindepout.dvi x*testout.dvi
 
