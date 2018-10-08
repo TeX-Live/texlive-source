@@ -43,6 +43,6 @@ EXTRA_DIST += tests/test.cfn \
 	tests/cmr10.pk tests/cmr10.cfn \
 	tests/upjisr-h.vf tests/upsjir-h.cfn
 DISTCLEANFILES += test.dvi xtest.cfn \
-	tests/xjis.cfn xeufm10.cfn xeufm10.ed.cfn \
-	xcmr10.cfn xupsjir-h.cfn
+	xjis.cfn xeufm10.cfn xeufm10.ed.cfn \
+	xcmr10.cfn xupjisr-h.cfn
 
