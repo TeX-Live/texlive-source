@@ -100,6 +100,7 @@ texmf_other_scripts = \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
 	cjk-gs-integrate/cjk-gs-integrate.pl \
+	cluttex/cluttex.lua \
 	context/perl/mptopdf.pl \
 	convbkmk/convbkmk.rb \
 	crossrefware/bbl2bib.pl \
@@ -234,6 +235,8 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 
 ## Symlinks within $(bindir): FILE:LINK here means "ln -s FILE LINK" is done.
 bin_links = \
+	cluttex:clxelatex \
+	cluttex:cllualatex \
 	epstopdf:repstopdf \
 	pdfcrop:rpdfcrop \
 	texdef:latexdef
