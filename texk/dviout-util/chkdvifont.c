@@ -1254,6 +1254,7 @@ void usage()
 			"\t -p: force FONT mode\n"
 			"\t     (supported formats: vf/ovf/gf/pk/pkd/pxl/gth/far)\n"
 			"\t By default, mode is guessed from the file extension.\n\n"
+#if 0
 			"Input  M  to see more.  Push Return to quit");
 	switch (getc(stdin)) {
 	  case ('M'):
@@ -1266,7 +1267,8 @@ void usage()
 
   show:
 	fprintf(stderr,
-			"\n\nErrorlevel is the sum of the following number\n"
+#endif
+			"Errorlevel is the sum of the following number\n"
 			"\t  1: cmbsy5-9, cmcsc8-9, cmex7-9, cmmib5-9\n"
 			"\t  2: new font: eu??, msam, msbm, wncy??, font_data_file\n"
 			"\t  4: new eufm5-10\n"

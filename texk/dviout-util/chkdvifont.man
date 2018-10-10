@@ -81,6 +81,17 @@ By default, the mode is guessed from the file extension.
             font at         =  0.962216
             font name       = rml
 
+.PP
+Listing the fonts used in a DVI file (as shown in the first example)
+is almost equivalent to
+.B dvifontlist
+in TeX-Guy package
+<http://www-masu.ist.osaka-u.ac.jp/%7Ekakugawa/TeX-Guy/>
+and a script
+.B dviinfox
+<https://ctan.org/pkg/dviinfox>.
+I don't know any alternatives for obtaining information about TFM, OFM,
+VF and other font formats.
 .SH SEE ALSO
 pltotf(1), tftopl(1), vptovf(1), vftovp(1)
 .SH AUTHOR

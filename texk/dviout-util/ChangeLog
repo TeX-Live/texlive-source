@@ -1,3 +1,14 @@
+2018-10-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Clean up code, more comments. Mostly revert
+	the change on 2018-10-06, "Change option handling for
+	future extensions" and change EXE2INDEP -> EXE2MODIFY.
+	Make sure outfile string is non-empty.
+	* chkdvifont.c: Do not stop for usage, always show all.
+	* dvispc.test: Test pipe input/output.
+	* chkdvifont.man, dvispc.man: More info.
+	* configure.ac: Version 20181010.
+
 2018-10-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* chkdvifont.c: Checksum should be read as unsigned.

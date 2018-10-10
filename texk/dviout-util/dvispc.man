@@ -25,22 +25,22 @@ dvispc \- Modify a DVI file to be page-independent in specials
 .B Dvispc
 is a utility to modify/edit \*(TX DVI file with the following features:
 .PP
-Option \fB\-c\fR (default):
-  modify an input DVI to be page-independent in specials (default)
+    Mode option \fB\-c\fR (default):
+        modify an input DVI to be page-independent in specials (default)
 .PP
-Option \fB\-d\fR:
-  check if an input DVI is page-independent in specials
+    Mode option \fB\-d\fR:
+        check if an input DVI is page-independent in specials
 .PP
-Option \fB\-s\fR:
-  show all specials in the input DVI
+    Mode option \fB\-s\fR:
+        show all specials in the input DVI
 .PP
-Option \fB\-a\fR:
-  translate DVI into a Text (like \fBdv2dt\fR in dtl)
+    Mode option \fB\-a\fR:
+        translate DVI into a Text (like \fBdv2dt\fR in dtl)
 .PP
-Option \fB\-x\fR:
-  translate Text into a DVI (like \fBdt2dv\fR in dtl)
+    Mode option \fB\-x\fR:
+        translate Text into a DVI (like \fBdt2dv\fR in dtl)
 .PP
-The main feature of
+(1) The \fImain\fR feature of
 .B dvispc
 is the first one, to make a page-independent DVI file.
 .PP
@@ -55,8 +55,72 @@ fails to preserve \\special's (e.g. page color might be lost).
 .PP
 The program
 .B dvispc
-corrects such DVI files to be page-independent, which can be properly
-processed by common DVI drivers such as \fBdvips\fR and \fBdvipdfmx\fR.
+corrects such page-"dependent" DVI files to be page-independent,
+which can be safely processed by
+.B dviselect
+or
+.B dvidvi
+and then properly converted to other formats such as PostScript and PDF.
+.PP
+(2) To know whether such a correction is needed or not,
+.B dvispc \-d
+will suffice.
+.PP
+(3) The mode \fB\-s\fR lists all specials found in the input DVI as-is,
+with a preceding number which denotes the page where it appears.
+For example,
+.PP
+.RS
+[1]
+.br
+{color push  Black}
+.br
+{color pop}
+.br
+{color push rgb 1 0 0}
+.br
+{color pop}
+.br
+[2]
+.br
+{color push  Black}
+.br
+{color pop}
+.RE
+.LP
+This feature is equivalent to a program
+.B dvispecials
+in TeX-Guy package
+<http://www-masu.ist.osaka-u.ac.jp/%7Ekakugawa/TeX-Guy/>
+and
+.B dvii \-s
+<https://ctan.org/pkg/dvii>.
+.PP
+(4) The mode \fB-a\fR and \fB-x\fR correspond to
+.B dv2dt
+and
+.B dt2dv
+in the dtl (= DVI Text Language) package respectively. By default
+.B dvispc \-a
+formats the output text in its own style, but DTL-compatible
+format is available with
+.B \-t
+option. Also,
+.B dvispc \-x
+can accept DTL-compatible text input.
+.SH SUPPORTED SPECIALS
+Currently
+.B dvispc
+supports the followings:
+.PP
+    dvips-compatible specials
+        color push, color pop, background
+    dvipdfm(x) specials
+        pdf:bcolor, pdf:ecolor, pdf:bgcolor, pdf:bann, pdf:eann
+    tpic specials:
+        pn
+.PP
+Other specials might be supported in the future if needed.
 .SH SEE ALSO
 dviselect(1), dvidvi(1), dvips(1), dvipdfmx(1)
 .SH AUTHOR

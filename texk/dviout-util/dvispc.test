@@ -41,6 +41,13 @@ diff --strip-trailing-cr $testdir/test.spc $testdir/test.spc \
   ./dvispc -x < x1testa.txt > x1testax.dvi && \
   cmp $testdir/test.dvi x1testax.dvi && echo || exit 5
 
+# not working as expected only for test ??
+#./dvispc -a $testdir/test.dvi | ./dvispc -x x2testax.dvi && \
+#  cmp $testdir/test.dvi x2testax.dvi && echo || exit 5
+
+./dvispc -a $testdir/test.dvi | ./dvispc -x > x2testax.dvi && \
+  cmp $testdir/test.dvi x2testax.dvi && echo || exit 5
+
 
 ## EXE2INDEP
 
