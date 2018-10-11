@@ -43,34 +43,35 @@ diff --strip-trailing-cr $testdir/test.spc $testdir/test.spc \
 
 # not working as expected only for test ??
 #./dvispc -a $testdir/test.dvi | ./dvispc -x x2testax.dvi && \
-#  cmp $testdir/test.dvi x2testax.dvi && echo || exit 5
+#  cmp $testdir/test.dvi x2testax.dvi && echo || exit 6
 
 ./dvispc -a $testdir/test.dvi | ./dvispc -x > x2testax.dvi && \
-  cmp $testdir/test.dvi x2testax.dvi && echo || exit 5
+  cmp $testdir/test.dvi x2testax.dvi && echo || exit 7
 
 
 ## EXE2INDEP
 
 ./dvispc -c $testdir/oldindep.dvi xoldindepout.dvi && \
-  cmp $testdir/oldindepout.dvi xoldindepout.dvi && echo || exit 6
+  cmp $testdir/oldindepout.dvi xoldindepout.dvi && echo || exit 8
 
 ./dvispc -c $testdir/oldindep.dvi > x1oldindepout.dvi && \
-  cmp $testdir/oldindepout.dvi x1oldindepout.dvi && echo || exit 7
+  cmp $testdir/oldindepout.dvi x1oldindepout.dvi && echo || exit 9
 
 ./dvispc && echo || exit 0
 
 # the following tests include
 #   * correction of dvipdfmx-style specials
+#   * correction of long (>255) specials
 #   * correction in reversed order which requires prior scanning
 # so will not pass for old version written by SHIMA.
 # that version can be distinguished from the new version by
 # exit code 1 for usage without argument. (the above line did it!)
 
 ./dvispc -c $testdir/test.dvi xtestout.dvi && \
-  cmp $testdir/testout.dvi xtestout.dvi && echo || exit 8
+  cmp $testdir/testout.dvi xtestout.dvi && echo || exit 10
 
 ./dvispc -c $testdir/test.dvi > x1testout.dvi && \
-  cmp $testdir/testout.dvi x1testout.dvi && echo || exit 9
+  cmp $testdir/testout.dvi x1testout.dvi && echo || exit 11
 
 ## invalid usage
 #./dvispc -c < $testdir/test.dvi x2testout.dvi && \
@@ -78,7 +79,14 @@ diff --strip-trailing-cr $testdir/test.spc $testdir/test.spc \
 
 ## stdin is a DVI, random access may not be supported, no test
 #./dvispc -c < $testdir/test.dvi > x3testout.dvi && \
-#  cmp $testdir/testout.dvi x3testout.dvi && echo || exit 10
+#  cmp $testdir/testout.dvi x3testout.dvi && echo || exit 12
+
+./dvispc -c $testdir/longspec.dvi xlongspecout.dvi && \
+  cmp $testdir/longspecout.dvi xlongspecout.dvi && echo || exit 13
+
+## check default is -c
+./dvispc $testdir/longspec.dvi x1longspecout.dvi && \
+  cmp $testdir/longspecout.dvi x1longspecout.dvi && echo || exit 14
 
 
 exit 0

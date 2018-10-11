@@ -221,15 +221,14 @@ struct DIMENSION_REC {
 int f_dtl = 0;
 
 enum {
-    EXE2NONE, EXE2MODIFY, EXE2CHECK, EXE2SPECIAL, EXE2TEXT, EXE2DVI
+    EXE2MODIFY, EXE2CHECK, EXE2SPECIAL, EXE2TEXT, EXE2DVI
 };
 
-int  f_mode = EXE2NONE; /*  1: -c modify
-                            2: -d report only
-                            3: -s specials
-                            4: -a to_Text
-                            5: -x to_DVI   */
-/* default mode will be set in main() to be page_indep */
+int f_mode = EXE2MODIFY; /*  0: -c modify
+                             1: -d report only
+                             2: -s specials
+                             3: -a to_Text
+                             4: -x to_DVI   */
 
 int f_debug = 0;        /* -v */
 int f_overwrite = 0;
@@ -610,8 +609,6 @@ skip: ;
        cf.  argc = (number of all arguments) + 1
         {argv[0] is the program name itself} ^^^ */
 
-    if(!f_mode) f_mode = EXE2MODIFY; /* default mode */
-
     fnum = 0;
     if(!isatty(fileno(stdin))){  /* if stdin is redirected from a file */
         fp_in = stdin;
@@ -796,11 +793,16 @@ void write_sp(FILE *fp, char *sp)
     int len;
     len = strlen(sp);
 
-    if(len > 255){
+    if(len <= 0xff)
+        fprintf(fp, "%c%c%s", XXX1, len, sp);
+    else if(len <= 0xffffffff){
+        fprintf(fp, "%c", XXX1+3);
+        write_long(len, fp);
+        fprintf(fp, "%s", sp);
+    }else{
         fprintf(stderr, "Too long special:\n%s\n", sp);
         Exit(1);
     }
-    fprintf(fp, "%c%c%s", XXX1, len, sp);
 }
 
 
@@ -1368,8 +1370,10 @@ void sp_color(char *sp)
         return;
     }
     if(strstr(sp, "push")){
-        if(color_depth >= MAX_COLOR)
-            error("Too many color push > 512");
+        if(color_depth >= MAX_COLOR){
+            fprintf(stderr, "Too many color push > %d\n", MAX_COLOR);
+            Exit(1);
+        }
         if(color_depth){
             s = color_pt[color_depth-1];
             s += strlen(s) + 1;
@@ -1393,8 +1397,10 @@ void sp_pdf_bcolor(char *sp)
     char *s;
 
     /* copied from "color push" routine of sp_color */
-    if(pdf_color_depth >= MAX_COLOR)
-        error("Too many pdf:bcolor > 512");
+    if(pdf_color_depth >= MAX_COLOR){
+        fprintf(stderr, "Too many pdf:bcolor > %d\n", MAX_COLOR);
+        Exit(1);
+    }
     if(pdf_color_depth){
         s = pdf_color_pt[pdf_color_depth-1];
         s += strlen(s) + 1;
@@ -1430,8 +1436,10 @@ void sp_pdf_ecolor(char *sp)
 void sp_pdf_bann(char *sp)
 {
     char *s;
-    if(pdf_annot_depth >= MAX_ANNOT)
-        error("Too many pdf:bann > 8");
+    if(pdf_annot_depth >= MAX_ANNOT){
+        fprintf(stderr, "Too many pdf:bann > %d\n", MAX_ANNOT);
+        Exit(1);
+    }
     if(pdf_annot_depth){
         s = pdf_annot_pt[pdf_annot_depth-1];
         s += strlen(s) + 1;
