@@ -1,3 +1,9 @@
+2018-10-12  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvipdfmx.c: Fix a bug that landscape option is not handled
+	properly.
+	* configure.ac: Version 20181012.
+
 2018-10-08  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* mpost.c: Fix a bug in inline PS code handling.
