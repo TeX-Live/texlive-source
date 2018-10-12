@@ -1,3 +1,9 @@
+2018-10-12  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Append .dvi suffix for DVI output.
+	* dvispc.test: Test omitted .dvi suffix.
+	* Makefile.am: Adjusted.
+
 2018-10-11  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvispc.c: Support page-independence even with long
