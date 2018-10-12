@@ -41,21 +41,27 @@ diff --strip-trailing-cr $testdir/test.spc $testdir/test.spc \
   ./dvispc -x < x1testa.txt > x1testax.dvi && \
   cmp $testdir/test.dvi x1testax.dvi && echo || exit 5
 
-# not working as expected only for test ??
+# not working as expected only for test (redirect??)
 #./dvispc -a $testdir/test.dvi | ./dvispc -x x2testax.dvi && \
 #  cmp $testdir/test.dvi x2testax.dvi && echo || exit 6
 
-./dvispc -a $testdir/test.dvi | ./dvispc -x > x2testax.dvi && \
-  cmp $testdir/test.dvi x2testax.dvi && echo || exit 7
+./dvispc -a $testdir/test.dvi | ./dvispc -x > x3testax.dvi && \
+  cmp $testdir/test.dvi x3testax.dvi && echo || exit 7
 
 
 ## EXE2INDEP
 
 ./dvispc -c $testdir/oldindep.dvi xoldindepout.dvi && \
-  cmp $testdir/oldindepout.dvi xoldindepout.dvi && echo || exit 8
+  cmp $testdir/oldindepout.dvi xoldindepout.dvi && echo || exit 1
 
 ./dvispc -c $testdir/oldindep.dvi > x1oldindepout.dvi && \
-  cmp $testdir/oldindepout.dvi x1oldindepout.dvi && echo || exit 9
+  cmp $testdir/oldindepout.dvi x1oldindepout.dvi && echo || exit 2
+
+## check default overwrite
+# not working as expected only for test (redirect??)
+#cp $testdir/oldindep.dvi x3write.dvi && \
+#  ./dvispc x3write.dvi
+#  cmp $testdir/oldindepout.dvi x3write.dvi && echo || exit 3
 
 ./dvispc && echo || exit 0
 
@@ -68,10 +74,10 @@ diff --strip-trailing-cr $testdir/test.spc $testdir/test.spc \
 # exit code 1 for usage without argument. (the above line did it!)
 
 ./dvispc -c $testdir/test.dvi xtestout.dvi && \
-  cmp $testdir/testout.dvi xtestout.dvi && echo || exit 10
+  cmp $testdir/testout.dvi xtestout.dvi && echo || exit 4
 
 ./dvispc -c $testdir/test.dvi > x1testout.dvi && \
-  cmp $testdir/testout.dvi x1testout.dvi && echo || exit 11
+  cmp $testdir/testout.dvi x1testout.dvi && echo || exit 5
 
 ## invalid usage
 #./dvispc -c < $testdir/test.dvi x2testout.dvi && \
@@ -79,14 +85,26 @@ diff --strip-trailing-cr $testdir/test.spc $testdir/test.spc \
 
 ## stdin is a DVI, random access may not be supported, no test
 #./dvispc -c < $testdir/test.dvi > x3testout.dvi && \
-#  cmp $testdir/testout.dvi x3testout.dvi && echo || exit 12
+#  cmp $testdir/testout.dvi x3testout.dvi && echo || exit 6
 
 ./dvispc -c $testdir/longspec.dvi xlongspecout.dvi && \
-  cmp $testdir/longspecout.dvi xlongspecout.dvi && echo || exit 13
+  cmp $testdir/longspecout.dvi xlongspecout.dvi && echo || exit 7
 
 ## check default is -c
 ./dvispc $testdir/longspec.dvi x1longspecout.dvi && \
-  cmp $testdir/longspecout.dvi x1longspecout.dvi && echo || exit 14
+  cmp $testdir/longspecout.dvi x1longspecout.dvi && echo || exit 8
+
+## check -b backup works (old version did not work)
+# not working as expected only for test (redirect??)
+#cp $testdir/oldindep.dvi x4write.dvi && \
+#  ./dvispc -b x4write.dvi
+#  cmp $testdir/oldindepout.dvi x4write.dvi && echo || exit 9
+#  cmp $testdir/oldindep.dvi x4write.dvi.bak && echo || exit 9
+
+## without .dvi extension (old version missed for outfile)
+cp $testdir/oldindep.dvi x5write.dvi && \
+  ./dvispc x5write x5writeout
+  cmp $testdir/oldindepout.dvi x5writeout.dvi && echo || exit 10
 
 
 exit 0

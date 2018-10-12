@@ -252,6 +252,14 @@ int  max_stack;
 char *out_pages ="T-L";
 int  total_book_page;
 
+/* non-stack specials */
+int  f_background = 0;
+char background[MAX_LEN];
+int  f_pdf_bgcolor = 0;
+char pdf_bgcolor[MAX_LEN];
+int  f_pn = 0;
+char tpic_pn[MAX_LEN];
+
 /* stack specials */
 int  color_depth;
 int  color_depth_max;
@@ -265,14 +273,6 @@ int  pdf_annot_depth;
 int  pdf_annot_depth_max;
 int  pdf_annot_under;
 char *pdf_annot_pt[MAX_ANNOT];
-
-/* non-stack specials */
-int  f_background = 0;
-char background[MAX_LEN];
-int  f_pdf_bgcolor = 0;
-char pdf_bgcolor[MAX_LEN];
-int  f_pn = 0;
-char tpic_pn[MAX_LEN];
 
 int  f_needs_corr; /* flag to determine if correction is needed */
 char color_buf[COLOR_BUF_SIZE]; /* common buffer for color/pdf_color */
@@ -667,13 +667,11 @@ skip: ;
             break;
 
         case 2:
-         /* if(fp_in == NULL){  */
             /* prioritize filename arguments;
                if fp_in != NULL, non-empty stdin will be discarded but don't care! */
             strcpy(infile, argv[argc-2]);
             strcpy(outfile, argv[argc-1]);
             break;
-         /*   }     */
         default:
             usage(1);
     }
@@ -688,7 +686,27 @@ skip: ;
         setmode( fileno( stdin ), O_BINARY);
 #endif
     }
-                        /* -x : text -> DVI */
+
+    /* append .dvi suffix if input/output is DVI */
+    if(f_mode == EXE2DVI || f_mode == EXE2MODIFY){
+        len = strlen(outfile);
+        if(len){
+            if(len < 4 || StrCmp(outfile + len - 4, ".dvi"))
+                strcat(outfile, ".dvi");
+        }
+    }
+    if(f_mode != EXE2DVI){
+        len = strlen(infile);
+        if(len){
+            if(len < 4 || StrCmp(infile + len - 4, ".dvi")){
+                strcat(infile, ".dvi");
+                len += 4;   /* will be reused later while preparing overwrite */
+            }
+            dvi_info.file_name = infile;
+        }
+    }
+
+    /* -x : text -> DVI */
     if(f_mode == EXE2DVI){
         /* use infile if given, otherwise use existing fp_in (= non-empty stdin)
            note that fp_in and infile are exclusive (already checked above) */
@@ -699,11 +717,8 @@ skip: ;
                 exit(1);
             }
         }
-        /* [TODO] I'd like to use outfile if given */
+        /* use outfile if given */
         if(fp_out == NULL || *outfile){
-            len = strlen(outfile);
-            if(len < 4 || StrCmp(outfile + len - 4, ".dvi"))
-                strcat(outfile, ".dvi");
             fp_out = fopen(outfile, WRITE_BINARY);
             if(fp_out == NULL){
                 fprintf(stderr, "Cannot open %s for output\n", outfile);
@@ -713,16 +728,8 @@ skip: ;
         trans2dvi();  /* files will be closed */
         return 0;
     }
-                        /* dvi->dvi or -d or -s or -a */
-    len = strlen(infile);
-    if(len){
-        if(len < 4 || StrCmp(infile + len - 4, ".dvi")){
-            strcat(infile, ".dvi");
-            len += 4;
-        }
-        dvi_info.file_name = infile;
-    }
 
+    /* dvi->dvi or -d or -s or -a */
     /* [TODO] comments not added yet */
     if(argc - i == 1){
         if(f_mode == EXE2MODIFY && !fnum){
@@ -750,9 +757,6 @@ same:       strcpy(outfile, infile);
     }else if(argc - i == 2){
 #ifdef UNIX
         struct stat infstat, outfstat;
-#endif
-        strcpy(outfile, argv[argc-1]);
-#ifdef UNIX
         if(stat(infile, &infstat) == 0 && stat(outfile, &outfstat) == 0 &&
            infstat.st_dev == outfstat.st_dev && infstat.st_ino == outfstat.st_ino)
 #else
@@ -1327,11 +1331,11 @@ skip:                 while (tmp--)
                            !strsubcmp(special, "ar") ||         /* ar: draw circle */
                            !strsubcmp(special, "ia")) )         /* ia: fill */
                             f_pn = -1;
-                        else if(!strsubcmp(special, "color") && !f_prescan) /* color push/pop */
+                        else if(!strsubcmp(special, "color"))   /* color push/pop */
                             sp_color(special);
-                        else if(!strsubcmp(special, "pdf:bcolor") && !f_prescan)    /* pdf:bcolor */
+                        else if(!strsubcmp(special, "pdf:bcolor"))  /* pdf:bcolor */
                             sp_pdf_bcolor(special);
-                        else if(!strsubcmp(special, "pdf:ecolor") && !f_prescan)    /* pdf:ecolor */
+                        else if(!strsubcmp(special, "pdf:ecolor"))  /* pdf:ecolor */
                             sp_pdf_ecolor(special);
                         else if(!strsubcmp(special, "background")){     /* background */
                             strncpy(background, special, MAX_LEN);
@@ -1341,13 +1345,13 @@ skip:                 while (tmp--)
                             strncpy(pdf_bgcolor, special, MAX_LEN);
                             f_pdf_bgcolor = 1;
                         }
-                        else if(!strsubcmp_n(special, "pdf:bann") && !f_prescan)    /* pdf:bann */
+                        else if(!strsubcmp_n(special, "pdf:bann"))  /* pdf:bann */
                             sp_pdf_bann(special);
-                        else if(!strsubcmp(special, "pdf:eann") && !f_prescan)      /* pdf:eann */
+                        else if(!strsubcmp(special, "pdf:eann"))    /* pdf:eann */
                             sp_pdf_eann(special);
                             break;
-                        }
-                        goto skip;
+                      }
+                    goto skip;
                 }
             }
         }
@@ -1359,6 +1363,7 @@ skip:                 while (tmp--)
 void sp_color(char *sp)
 {
     char *s;
+    if(f_prescan) return;
 
     if(strstr(sp, "pop")){
         if(--color_depth < 0){
@@ -1395,6 +1400,7 @@ void sp_color(char *sp)
 void sp_pdf_bcolor(char *sp)
 {
     char *s;
+    if(f_prescan) return;
 
     /* copied from "color push" routine of sp_color */
     if(pdf_color_depth >= MAX_COLOR){
@@ -1421,6 +1427,7 @@ void sp_pdf_bcolor(char *sp)
 void sp_pdf_ecolor(char *sp)
 {
     char *s;
+    if(f_prescan) return;
 
     /* copied from "color pop" routine of sp_color */
     if(--pdf_color_depth < 0){
@@ -1436,6 +1443,7 @@ void sp_pdf_ecolor(char *sp)
 void sp_pdf_bann(char *sp)
 {
     char *s;
+    if(f_prescan) return;
     if(pdf_annot_depth >= MAX_ANNOT){
         fprintf(stderr, "Too many pdf:bann > %d\n", MAX_ANNOT);
         Exit(1);
@@ -1460,6 +1468,7 @@ void sp_pdf_bann(char *sp)
 void sp_pdf_eann(char *sp)
 {
     char *s;
+    if(f_prescan) return;
     if(--pdf_annot_depth < 0){
         fprintf(stderr, "pdf:bann ... pdf:eann stack underflow\n");
         pdf_annot_under++;

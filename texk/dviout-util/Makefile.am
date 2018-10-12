@@ -36,7 +36,8 @@ EXTRA_DIST += tests/test.spc \
 	tests/longspec.tex tests/longspec.dvi tests/longspecout.dvi
 DISTCLEANFILES = x*test.spc \
 	x*testa.txt x*testax.dvi \
-	x*testout.dvi x*oldindepout.dvi x*longspecout.dvi
+	x*testout.dvi x*oldindepout.dvi x*longspecout.dvi \
+	x*write.dvi x*writeout.dvi
 
 ## chkdvifont.test
 EXTRA_DIST += tests/test.cfn \
