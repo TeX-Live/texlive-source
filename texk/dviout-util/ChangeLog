@@ -1,3 +1,10 @@
+2018-10-14  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Fix a bug that modification for tpic_pn was
+	not working (my previous fault). Minimize correction
+	for tpic_pn, report effective tpic_pn properly.
+	* tests/tpicpn.{tex,dvi}, tests/tpicsh.{tex,dvi}: Added.
+
 2018-10-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvispc.c: Stop support for pdf:bann, pe:eann which was

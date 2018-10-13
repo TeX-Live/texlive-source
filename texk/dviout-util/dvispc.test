@@ -81,6 +81,15 @@ diff --strip-trailing-cr $testdir/oldindep.spc $testdir/oldindep.spc \
 # that version can be distinguished from the new version by
 # exit code 1 for usage without argument. (the above line did it!)
 
+# correction for tpicpn.dvi is needed but should be minimal
+./dvispc $testdir/tpicpn.dvi x0tpicpnout.dvi && \
+  cmp $testdir/tpicpnout.dvi x0tpicpnout.dvi && echo || exit 1
+
+# correction for tpicsh.dvi is never needed, check no output
+rm -f x0tpicshout.dvi
+./dvispc $testdir/tpicsh.dvi x0tpicshout.dvi && \
+  if test -f x0tpicshout.dvi; then exit 1; else echo; fi
+
 ## page independence in reverse order which requires prior scanning
 ./dvispc -c $testdir/reverse.dvi xreverseout.dvi && \
   cmp $testdir/reverseout.dvi xreverseout.dvi && echo || exit 1

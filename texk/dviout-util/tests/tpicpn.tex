@@ -1,0 +1,84 @@
+% tpic pn -> pa (-> fp etc.), ar
+\documentclass{article}
+\begin{document}
+\unitlength 0.001in
+
+PN 30 (explicit)\par
+\begin{picture}(850,550)(-50,-500)
+  \special{pn 30}%
+  \special{ar 400 250 400 250 0 6.28319}%
+  \put(400,-250){\makebox(0,0){document}}%
+\end{picture}
+\newpage
+
+PN 30 (implicit from previous page)\par
+\begin{picture}(850,550)(-50,-500)
+  \special{ar 400 250 400 250 0 6.28319}%
+  \put(400,-250){\makebox(0,0){document}}%
+\end{picture}
+\newpage
+
+PN 5 (explicit)\par
+\begin{picture}(850,550)(-50,-500)
+  \special{pn 5}%
+  \special{ar 400 250 400 250 0 6.28319}%
+  \put(400,-250){\makebox(0,0){document}}%
+\end{picture}
+\newpage
+
+No TPIC picture
+\newpage
+
+PN 5 (implicit from previous page)\par
+\begin{picture}(850,550)(-50,-500)
+  \special{ar 400 250 400 250 0 6.28319}%
+  \put(400,-250){\makebox(0,0){document}}%
+\end{picture}
+\newpage
+
+PN 5 (implicit from previous page)\par
+Note that IA has nothing to do with PN!\par
+\begin{picture}(850,550)(-50,-500)
+  \special{sh 0.1}
+  \special{ia 400 250 400 250 0 6.28319}%
+  \put(400,-250){\makebox(0,0){document}}%
+\end{picture}
+\newpage
+
+PN 30 (explicit)\par
+\begin{picture}(600,400)(0,-300)
+  \special{pn 30}%
+  \special{pa 100 0}%
+  \special{pa 500 0}%
+  \special{pa 500 200}%
+  \special{pa 100 200}%
+  \special{pa 100 0}%
+  \special{fp}%
+\end{picture}
+\newpage
+
+PN 30 (implicit from previous page)\par
+\begin{picture}(600,400)(0,-300)
+  \special{pa 100 0}%
+  \special{pa 500 0}%
+  \special{pa 500 200}%
+  \special{pa 100 200}%
+  \special{pa 100 0}%
+  \special{fp}%
+\end{picture}
+\newpage
+
+PN 30 (implicit from previous page) and PN 5 in the middle\par
+\begin{picture}(850,550)(-50,-500)
+  \special{pa 100 0}%
+  \special{pa 500 0}%
+  \special{pa 500 200}%
+  \special{pa 100 200}%
+  \special{pa 100 0}%
+  \special{fp}%
+  \special{pn 5}%
+  \special{ar 400 250 400 250 0 6.28319}%
+\end{picture}
+\newpage
+
+\end{document}

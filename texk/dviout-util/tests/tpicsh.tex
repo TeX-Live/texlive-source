@@ -1,0 +1,41 @@
+% tpic sh -> pa (-> fp, ip etc), ar, ia
+% No correction is needed for this file!
+\documentclass{article}
+\begin{document}
+\unitlength 0.001in
+
+SH (explicit)\par
+\begin{picture}(850,550)(-50,-500)
+  \special{pn 8}%
+  \special{sh}%
+  \special{ia 350 200 400 250 0 6.28319}%
+  \special{sh 0}%
+  \special{ar 400 250 400 250 0 6.28319}%
+  \put(400,-250){\makebox(0,0){document}}%
+\end{picture}
+\newpage
+
+SH 0.1 (explicit)\par
+\begin{picture}(600,400)(0,-300)
+  \special{pn 30}%
+  \special{sh 0.1}%
+  \special{pa 100 0}%
+  \special{pa 500 0}%
+  \special{pa 500 200}%
+  \special{pa 100 200}%
+  \special{pa 100 0}%
+  \special{fp}%
+\end{picture}
+
+SH 0 (implicit: SH should not be inherited from the previous one!)\par
+\begin{picture}(600,400)(0,-300)
+  \special{pn 30}%
+  \special{pa 100 0}%
+  \special{pa 500 0}%
+  \special{pa 500 200}%
+  \special{pa 100 200}%
+  \special{pa 100 0}%
+  \special{fp}%
+\end{picture}
+
+\end{document}

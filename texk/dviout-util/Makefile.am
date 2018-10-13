@@ -32,13 +32,15 @@ EXTRA_DIST = $(TESTS)
 ## dvispc.test
 EXTRA_DIST += tests/oldindep.spc \
 	tests/oldindep.tex tests/oldindep.dvi tests/oldindepout.dvi \
+	tests/tpicpn.tex tests/tpicpn.dvi tests/tpicpnout.dvi \
+	tests/tpicsh.tex tests/tpicsh.dvi \
 	tests/reverse.tex tests/reverse.dvi tests/reverseout.dvi \
 	tests/annot.tex tests/annot.dvi \
 	tests/longspec.tex tests/longspec.dvi \
 	tests/flatnest.tex tests/flatnest.dvi
 DISTCLEANFILES = x*oldindep.spc \
 	x*oldindepa.txt x*oldindepax.dvi x*oldindepout.dvi \
-	x*reverseout.dvi \
+	x*tpicpnout.dvi x*reverseout.dvi \
 	x*write.dvi x*writeout.dvi
 
 ## chkdvifont.test
