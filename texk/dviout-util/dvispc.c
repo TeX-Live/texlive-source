@@ -254,8 +254,10 @@ int  total_book_page;
 
 /* non-stack specials */
 char background[MAX_LEN];
+char background_prev[MAX_LEN];
 int  f_background = 0;  /* in each page, 0: not found; 1: found */
 char pdf_bgcolor[MAX_LEN];
+char pdf_bgcolor_prev[MAX_LEN];
 int  f_pdf_bgcolor = 0; /* in each page, 0: not found; 1: found */
 char tpic_pn[MAX_LEN];
 char tpic_pn_prev[MAX_LEN];
@@ -884,10 +886,11 @@ lastpage:           if(isdigit(*++out_pages)){
          if((f_mode == EXE2MODIFY) and (f_mode == EXE2CHECK)) */
 
     /* Prior scanning. This ensures page independence in reverse order too,
-       by checking whether non-stack specials appears somewhere in DVI.
+       (e.g. Page 1 & 2 without background (= white) and Page 3 with background)
+       by checking whether non-stack specials (except tpic_pn) appears somewhere in DVI.
        Specials with paired syntax (push/pop, bcolor/ecolor) are already safe
        without pre-scanning, so these are skipped due to f_prescan = 1.
-       Other specials (background, pdf_bgcolor, pn) are handled in this scanning. */
+       Other specials (background, pdf_bgcolor) are handled in this scanning. */
     f_prescan = 1;  /* change behavior of interpret(dvi) */
     for(page = 1; page <= dim->total_page; page++){
         fseek(dvi->file_ptr, dim->page_index[page], SEEK_SET);
@@ -911,18 +914,23 @@ lastpage:           if(isdigit(*++out_pages)){
         fseek(dvi->file_ptr, dim->page_index[page], SEEK_SET);
         pos = interpret(dvi->file_ptr); /* scanned the whole page content; now
                                            pos = position of EOP + 1 */
-        if(f_debug){
+        if(f_debug){    /* EXE2CHECK always falls into this */
             fprintf(fp_out, "[%d]", page);
-            /* if(page <= dim->total_page){ */ /* always true inside loop */
             flag = color_depth;
             flag += pdf_color_depth;
             flag += pdf_annot_depth;
             if(background[0] && !f_background){
-                fprintf(fp_out, "\n%s", background);
+                if(!background_prev[0]) /* assume white */
+                    fprintf(fp_out, "\nbackground gray 1");
+                else
+                    fprintf(fp_out, "\n%s", background_prev);
                 flag++;
             }
             if(pdf_bgcolor[0] && !f_pdf_bgcolor){
-                fprintf(fp_out, "\n%s", pdf_bgcolor);
+                if(!pdf_bgcolor_prev[0]) /* assume white */
+                    fprintf(fp_out, "\npdf:bgcolor [1]");
+                else
+                    fprintf(fp_out, "\n%s", pdf_bgcolor_prev);
                 flag++;
             }
             for(count = 0; count < color_depth; count++)
@@ -944,13 +952,17 @@ lastpage:           if(isdigit(*++out_pages)){
                 fprintf(fp_out, "\n"); /* at least one special printed */
                 f_needs_corr += flag;
             }
-            /* } */
+        }
+        if(f_mode == EXE2CHECK){
+            if(background[0] && f_background)   /* save current status of background */
+                strncpy(background_prev, background, MAX_LEN);
+            if(pdf_bgcolor[0] && f_pdf_bgcolor) /* save current status of pdf_bgcolor */
+                strncpy(pdf_bgcolor_prev, pdf_bgcolor, MAX_LEN);
             if(tpic_pn[0])  /* save current status of tpic_pn */
                 strncpy(tpic_pn_prev, tpic_pn, MAX_LEN);
-        }
-        if(f_mode == EXE2CHECK)
             continue;  /* skip loop if (f_mode == EXE2CHECK);
                         * remainings in this loop are for (f_mode == EXE2MODIFY) */
+        }
 
         /* [Process 2] At the beginning of each page,
            put non-stack specials if necessary.
@@ -967,11 +979,17 @@ lastpage:           if(isdigit(*++out_pages)){
             pdf_color_under--;
         }
         if(background[0] && !f_background){     /* background from the former page is effective */
-            write_sp(fp, background);
+            if(!background_prev[0]) /* assume white */
+                write_sp(fp, "background gray 1");
+            else
+                write_sp(fp, background_prev);
             f_needs_corr++;
         }
         if(pdf_bgcolor[0] && !f_pdf_bgcolor){   /* pdf:bgcolor from the former page is effective */
-            write_sp(fp, pdf_bgcolor);
+            if(!pdf_bgcolor_prev[0]) /* assume white */
+                write_sp(fp, "pdf:bgcolor [1]");
+            else
+                write_sp(fp, pdf_bgcolor_prev);
             f_needs_corr++;
         }
 //        while(pdf_annot_under > 0){ /* recover underflow of pdf:bann ... pdf:eann stack */
@@ -1028,10 +1046,12 @@ lastpage:           if(isdigit(*++out_pages)){
             f_needs_corr += color_depth;
             f_needs_corr += pdf_color_depth;
 //            f_needs_corr += pdf_annot_depth;
-            /* Special case for tpic_pn:
-               save current status of tpic_pn now, before it is (probably)
-               overwritten after scanning the whole next page.
-               Note that pn can have different values in the same page! */
+            /* Save current status of now, before it is (probably)
+               overwritten after scanning the whole next page. */
+            if(background[0] && f_background)   /* save current status of background */
+                strncpy(background_prev, background, MAX_LEN);
+            if(pdf_bgcolor[0] && f_pdf_bgcolor) /* save current status of pdf_bgcolor */
+                strncpy(pdf_bgcolor_prev, pdf_bgcolor, MAX_LEN);
             if(tpic_pn[0])  /* save current status of tpic_pn */
                 strncpy(tpic_pn_prev, tpic_pn, MAX_LEN);
         }
@@ -1346,7 +1366,7 @@ skip:                 while (tmp--)
                         while(*special && ((uchar)*special) <= ' ')
                             special++;
                         if(!strsubcmp(special, "pn")){          /* pn: tpic pen size */
-                            strncpy(tpic_pn, special, MAX_LEN);
+                            if(!f_prescan) strncpy(tpic_pn, special, MAX_LEN);
                             if(!f_pn)
                                 f_pn = 1;
                         }else if(!f_pn && 

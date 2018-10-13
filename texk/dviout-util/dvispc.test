@@ -91,8 +91,17 @@ rm -f x0tpicshout.dvi
   if test -f x0tpicshout.dvi; then exit 1; else echo; fi
 
 ## page independence in reverse order which requires prior scanning
-./dvispc -c $testdir/reverse.dvi xreverseout.dvi && \
+./dvispc $testdir/reverse.dvi xreverseout.dvi && \
   cmp $testdir/reverseout.dvi xreverseout.dvi && echo || exit 1
+
+# prior scanning should not mess up
+./dvispc $testdir/first.dvi xfirstout.dvi && \
+  cmp $testdir/firstout.dvi xfirstout.dvi && echo || exit 1
+
+# prior scanning should not mess up (no correction)
+rm -f xfirstpn.dvi
+./dvispc $testdir/firstpn.dvi xfirstpn.dvi && \
+  if test -f xfirstpn.dvi; then exit 1; else echo; fi
 
 # ==== future work start ====
 

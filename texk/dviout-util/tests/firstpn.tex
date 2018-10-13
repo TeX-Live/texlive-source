@@ -1,0 +1,28 @@
+% page independence in reverse order should not mess it up
+\documentclass{article}
+\begin{document}
+
+\unitlength 0.001in
+
+No PN (invalid usage for test purpose only)\par
+\begin{picture}(850,550)(-50,-500)
+  \special{ar 400 250 400 250 0 6.28319}%
+  \put(400,-250){\makebox(0,0){document}}%
+\end{picture}
+\newpage
+
+No PN (invalid usage for test purpose only)\par
+\begin{picture}(850,550)(-50,-500)
+  \special{ar 400 250 400 250 0 6.28319}%
+  \put(400,-250){\makebox(0,0){document}}%
+\end{picture}
+\newpage
+
+PN 30 (explicit)\par
+\begin{picture}(850,550)(-50,-500)
+  \special{pn 30}%
+  \special{ar 400 250 400 250 0 6.28319}%
+  \put(400,-250){\makebox(0,0){document}}%
+\end{picture}
+
+\end{document}
