@@ -16,8 +16,8 @@ diff --strip-trailing-cr $testdir/oldindep.spc $testdir/oldindep.spc \
 
 ## EXE2SPECIAL
 
-./dvispc -s $testdir/oldindep.dvi xoldindep.spc && \
-  diff $diffoptCRLF $testdir/oldindep.spc xoldindep.spc && echo || exit 1
+./dvispc -s $testdir/oldindep.dvi x0oldindep.spc && \
+  diff $diffoptCRLF $testdir/oldindep.spc x0oldindep.spc && echo || exit 1
 
 ./dvispc -s $testdir/oldindep.dvi > x1oldindep.spc && \
   diff $diffoptCRLF $testdir/oldindep.spc x1oldindep.spc && echo || exit 2
@@ -33,9 +33,9 @@ diff --strip-trailing-cr $testdir/oldindep.spc $testdir/oldindep.spc \
 
 ## EXE2TEXT + EXE2DVI
 
-./dvispc -a $testdir/oldindep.dvi xoldindepa.txt && \
-  ./dvispc -x xoldindepa.txt xoldindepax.dvi && \
-  cmp $testdir/oldindep.dvi xoldindepax.dvi && echo || exit 4
+./dvispc -a $testdir/oldindep.dvi x0oldindepa.txt && \
+  ./dvispc -x x0oldindepa.txt x0oldindepax.dvi && \
+  cmp $testdir/oldindep.dvi x0oldindepax.dvi && echo || exit 4
 
 ./dvispc -a $testdir/oldindep.dvi > x1oldindepa.txt && \
   ./dvispc -x < x1oldindepa.txt > x1oldindepax.dvi && \
@@ -51,21 +51,29 @@ diff --strip-trailing-cr $testdir/oldindep.spc $testdir/oldindep.spc \
 
 ## EXE2INDEP
 
-./dvispc -c $testdir/oldindep.dvi xoldindepout.dvi && \
-  cmp $testdir/oldindepout.dvi xoldindepout.dvi && echo || exit 1
+./dvispc -c $testdir/oldindep.dvi x0oldindepout.dvi && \
+  cmp $testdir/oldindepout.dvi x0oldindepout.dvi && echo || exit 1
 
 ./dvispc -c $testdir/oldindep.dvi > x1oldindepout.dvi && \
   cmp $testdir/oldindepout.dvi x1oldindepout.dvi && echo || exit 2
 
+## invalid usage
+#./dvispc -c < $testdir/oldindep.dvi x2oldindepout.dvi && \
+#  cmp $testdir/oldindepout.dvi x2oldindepout.dvi && echo || exit 0
+
+## stdin is a DVI, random access may not be supported, no test
+#./dvispc -c < $testdir/oldindep.dvi > x3oldindepout.dvi && \
+#  cmp $testdir/oldindepout.dvi x3oldindepout.dvi && echo || exit 3
+
 ## check default is -c
-./dvispc $testdir/oldindep.dvi x1oldindepout.dvi && \
-  cmp $testdir/oldindepout.dvi x1oldindepout.dvi && echo || exit 3
+./dvispc $testdir/oldindep.dvi x2oldindepout.dvi && \
+  cmp $testdir/oldindepout.dvi x2oldindepout.dvi && echo || exit 4
 
 ## check default overwrite
 # not working as expected only for test (redirect??)
 #cp $testdir/oldindep.dvi x3write.dvi && \
 #  ./dvispc x3write.dvi
-#  cmp $testdir/oldindepout.dvi x3write.dvi && echo || exit 4
+#  cmp $testdir/oldindepout.dvi x3write.dvi && echo || exit 5
 
 ./dvispc && echo || exit 0
 
@@ -73,35 +81,24 @@ diff --strip-trailing-cr $testdir/oldindep.spc $testdir/oldindep.spc \
 # that version can be distinguished from the new version by
 # exit code 1 for usage without argument. (the above line did it!)
 
-## page independence in reversed order which requires prior scanning
+## page independence in reverse order which requires prior scanning
 ./dvispc -c $testdir/reverse.dvi xreverseout.dvi && \
-  cmp $testdir/reverseout.dvi xreverseout.dvi && echo || exit 5
-
-./dvispc -c $testdir/reverse.dvi > x1reverseout.dvi && \
-  cmp $testdir/reverseout.dvi x1reverseout.dvi && echo || exit 6
-
-## invalid usage
-#./dvispc -c < $testdir/reverse.dvi x2reverseout.dvi && \
-#  cmp $testdir/reverseout.dvi x2reverseout.dvi && echo || exit 0
-
-## stdin is a DVI, random access may not be supported, no test
-#./dvispc -c < $testdir/reverse.dvi > x3reverseout.dvi && \
-#  cmp $testdir/reverseout.dvi x3reverseout.dvi && echo || exit 7
+  cmp $testdir/reverseout.dvi xreverseout.dvi && echo || exit 1
 
 # ==== future work start ====
 
 ## page independence of annotation
 #./dvispc $testdir/annot.dvi xannotout.dvi && \
-#  cmp $testdir/annotout.dvi xannotout.dvi && echo || exit 1
+#  cmp $testdir/annotout.dvi xannotout.dvi && echo || exit 2
 
 ## page independence of long (>255) specials (e.g. annotation)
 ## disabled because annotation is unsupported
 #./dvispc $testdir/longspec.dvi xlongspecout.dvi && \
-#  cmp $testdir/longspecout.dvi xlongspecout.dvi && echo || exit 2
+#  cmp $testdir/longspecout.dvi xlongspecout.dvi && echo || exit 3
 
 ## flatten nested anotation
 #./dvispc $testdir/flatnest.dvi xflatnestout.dvi && \
-#  cmp $testdir/flatnestout.dvi xflatnestout.dvi && echo || exit 3
+#  cmp $testdir/flatnestout.dvi xflatnestout.dvi && echo || exit 4
 
 # ==== future work end ====
 
