@@ -1,0 +1,30 @@
+% flatten nested annotation
+\documentclass[dvipdfmx]{article}
+\usepackage[colorlinks=true]{hyperref}
+\textwidth5cm
+\makeatletter
+\usepackage{etoolbox}
+\patchcmd{\@makecol}{%
+       \color@begingroup
+         \normalcolor
+         \footnoterule
+         \unvbox \footins
+       \color@endgroup
+}{%
+       \color@begingroup
+         \normalcolor
+         \special{pdf:nolink}%
+         \footnoterule
+         \unvbox \footins
+         \special{pdf:link}%
+       \color@endgroup
+}{}{}
+\makeatother
+
+\begin{document}
+A\footnote{CTAN web: \href{https://ctan.org/}{CTAN} here!}
+\vspace*{41\baselineskip}
+
+Text with link: \href{https://tug.org/}{TUG TUG TUG TUG
+TUG TUG TUG TUG TUG TUG TUG TUG TUG TUG TUG TUG} all done!
+\end{document}

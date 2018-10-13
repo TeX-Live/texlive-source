@@ -10,43 +10,43 @@ testdir=$srcdir/tests
 # if 'diff --strip-trailing-cr' is available, exploit it.
 # (useful for tests on win32 binaries run on MSYS shell)
 diffoptCRLF=
-diff --strip-trailing-cr $testdir/test.spc $testdir/test.spc \
+diff --strip-trailing-cr $testdir/oldindep.spc $testdir/oldindep.spc \
   && diffoptCRLF=--strip-trailing-cr || echo
 
 
 ## EXE2SPECIAL
 
-./dvispc -s $testdir/test.dvi xtest.spc && \
-  diff $diffoptCRLF $testdir/test.spc xtest.spc && echo || exit 1
+./dvispc -s $testdir/oldindep.dvi xoldindep.spc && \
+  diff $diffoptCRLF $testdir/oldindep.spc xoldindep.spc && echo || exit 1
 
-./dvispc -s $testdir/test.dvi > x1test.spc && \
-  diff $diffoptCRLF $testdir/test.spc x1test.spc && echo || exit 2
+./dvispc -s $testdir/oldindep.dvi > x1oldindep.spc && \
+  diff $diffoptCRLF $testdir/oldindep.spc x1oldindep.spc && echo || exit 2
 
 ## invalid usage
-#./dvispc -s < $testdir/test.dvi x2test.spc && \
-#  diff $testdir/test.spc x2test.spc && echo || exit 0
+#./dvispc -s < $testdir/oldindep.dvi x2oldindep.spc && \
+#  diff $testdir/oldindep.spc x2oldindep.spc && echo || exit 0
 
 ## stdin is a DVI, random access may not be supported, no test
-#./dvispc -s < $testdir/test.dvi > x3test.spc && \
-#  diff $testdir/test.spc x3test.spc && echo || exit 3
+#./dvispc -s < $testdir/oldindep.dvi > x3oldindep.spc && \
+#  diff $testdir/oldindep.spc x3oldindep.spc && echo || exit 3
 
 
 ## EXE2TEXT + EXE2DVI
 
-./dvispc -a $testdir/test.dvi xtesta.txt && \
-  ./dvispc -x xtesta.txt xtestax.dvi && \
-  cmp $testdir/test.dvi xtestax.dvi && echo || exit 4
+./dvispc -a $testdir/oldindep.dvi xoldindepa.txt && \
+  ./dvispc -x xoldindepa.txt xoldindepax.dvi && \
+  cmp $testdir/oldindep.dvi xoldindepax.dvi && echo || exit 4
 
-./dvispc -a $testdir/test.dvi > x1testa.txt && \
-  ./dvispc -x < x1testa.txt > x1testax.dvi && \
-  cmp $testdir/test.dvi x1testax.dvi && echo || exit 5
+./dvispc -a $testdir/oldindep.dvi > x1oldindepa.txt && \
+  ./dvispc -x < x1oldindepa.txt > x1oldindepax.dvi && \
+  cmp $testdir/oldindep.dvi x1oldindepax.dvi && echo || exit 5
 
 # not working as expected only for test (redirect??)
-#./dvispc -a $testdir/test.dvi | ./dvispc -x x2testax.dvi && \
-#  cmp $testdir/test.dvi x2testax.dvi && echo || exit 6
+#./dvispc -a $testdir/oldindep.dvi | ./dvispc -x x2oldindepax.dvi && \
+#  cmp $testdir/oldindep.dvi x2oldindepax.dvi && echo || exit 6
 
-./dvispc -a $testdir/test.dvi | ./dvispc -x > x3testax.dvi && \
-  cmp $testdir/test.dvi x3testax.dvi && echo || exit 7
+./dvispc -a $testdir/oldindep.dvi | ./dvispc -x > x3oldindepax.dvi && \
+  cmp $testdir/oldindep.dvi x3oldindepax.dvi && echo || exit 7
 
 
 ## EXE2INDEP
@@ -57,54 +57,65 @@ diff --strip-trailing-cr $testdir/test.spc $testdir/test.spc \
 ./dvispc -c $testdir/oldindep.dvi > x1oldindepout.dvi && \
   cmp $testdir/oldindepout.dvi x1oldindepout.dvi && echo || exit 2
 
+## check default is -c
+./dvispc $testdir/oldindep.dvi x1oldindepout.dvi && \
+  cmp $testdir/oldindepout.dvi x1oldindepout.dvi && echo || exit 3
+
 ## check default overwrite
 # not working as expected only for test (redirect??)
 #cp $testdir/oldindep.dvi x3write.dvi && \
 #  ./dvispc x3write.dvi
-#  cmp $testdir/oldindepout.dvi x3write.dvi && echo || exit 3
+#  cmp $testdir/oldindepout.dvi x3write.dvi && echo || exit 4
 
 ./dvispc && echo || exit 0
 
-# the following tests include
-#   * correction of dvipdfmx-style specials
-#   * correction of long (>255) specials
-#   * correction in reversed order which requires prior scanning
-# so will not pass for old version written by SHIMA.
+# the following tests will not pass for old version written by SHIMA.
 # that version can be distinguished from the new version by
 # exit code 1 for usage without argument. (the above line did it!)
 
-./dvispc -c $testdir/test.dvi xtestout.dvi && \
-  cmp $testdir/testout.dvi xtestout.dvi && echo || exit 4
+## page independence in reversed order which requires prior scanning
+./dvispc -c $testdir/reverse.dvi xreverseout.dvi && \
+  cmp $testdir/reverseout.dvi xreverseout.dvi && echo || exit 5
 
-./dvispc -c $testdir/test.dvi > x1testout.dvi && \
-  cmp $testdir/testout.dvi x1testout.dvi && echo || exit 5
+./dvispc -c $testdir/reverse.dvi > x1reverseout.dvi && \
+  cmp $testdir/reverseout.dvi x1reverseout.dvi && echo || exit 6
 
 ## invalid usage
-#./dvispc -c < $testdir/test.dvi x2testout.dvi && \
-#  cmp $testdir/testout.dvi x2testout.dvi && echo || exit 0
+#./dvispc -c < $testdir/reverse.dvi x2reverseout.dvi && \
+#  cmp $testdir/reverseout.dvi x2reverseout.dvi && echo || exit 0
 
 ## stdin is a DVI, random access may not be supported, no test
-#./dvispc -c < $testdir/test.dvi > x3testout.dvi && \
-#  cmp $testdir/testout.dvi x3testout.dvi && echo || exit 6
+#./dvispc -c < $testdir/reverse.dvi > x3reverseout.dvi && \
+#  cmp $testdir/reverseout.dvi x3reverseout.dvi && echo || exit 7
 
-./dvispc -c $testdir/longspec.dvi xlongspecout.dvi && \
-  cmp $testdir/longspecout.dvi xlongspecout.dvi && echo || exit 7
+# ==== future work start ====
 
-## check default is -c
-./dvispc $testdir/longspec.dvi x1longspecout.dvi && \
-  cmp $testdir/longspecout.dvi x1longspecout.dvi && echo || exit 8
+## page independence of annotation
+#./dvispc $testdir/annot.dvi xannotout.dvi && \
+#  cmp $testdir/annotout.dvi xannotout.dvi && echo || exit 1
 
-## check -b backup works (old version did not work)
+## page independence of long (>255) specials (e.g. annotation)
+## disabled because annotation is unsupported
+#./dvispc $testdir/longspec.dvi xlongspecout.dvi && \
+#  cmp $testdir/longspecout.dvi xlongspecout.dvi && echo || exit 2
+
+## flatten nested anotation
+#./dvispc $testdir/flatnest.dvi xflatnestout.dvi && \
+#  cmp $testdir/flatnestout.dvi xflatnestout.dvi && echo || exit 3
+
+# ==== future work end ====
+
+## check -b backup works (old version did not!)
 # not working as expected only for test (redirect??)
 #cp $testdir/oldindep.dvi x4write.dvi && \
 #  ./dvispc -b x4write.dvi
-#  cmp $testdir/oldindepout.dvi x4write.dvi && echo || exit 9
-#  cmp $testdir/oldindep.dvi x4write.dvi.bak && echo || exit 9
+#  cmp $testdir/oldindepout.dvi x4write.dvi && echo || exit 1
+#  cmp $testdir/oldindep.dvi x4write.dvi.bak && echo || exit 1
 
-## without .dvi extension (old version missed for outfile)
+## without .dvi extension (old version missed for outfile!)
 cp $testdir/oldindep.dvi x5write.dvi && \
   ./dvispc x5write x5writeout
-  cmp $testdir/oldindepout.dvi x5writeout.dvi && echo || exit 10
+  cmp $testdir/oldindepout.dvi x5writeout.dvi && echo || exit 2
 
 
 exit 0

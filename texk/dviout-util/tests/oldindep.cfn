@@ -1,0 +1,19 @@
+dvi file name			= ./oldindep.dvi
+comment				= TeX output 2018.10.08:1213
+factor converting to 10^{-5}m	= 25400000/473628672
+magnification			= 1000
+maximum width			= 26673152 scaled points = 407 points
+maximum height+depth		= 41484288 scaled points = 633 points
+maximum stack depth		= 3
+number of pages			= 4
+page size			= 14.3 cm x 22.2 cm
+page size magnificated		= 14.3 cm x 22.2 cm
+
+Font 7
+	checksum		= 4BF16079
+	design size		=   655360 scaled points = 10 points
+	space size		=   655360 scaled points = 10 points
+	font name		= cmr10
+
+EXIT Code (errorlevel)		= 0
+No AMS Font

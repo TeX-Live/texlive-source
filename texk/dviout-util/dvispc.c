@@ -963,11 +963,11 @@ lastpage:           if(isdigit(*++out_pages)){
             write_sp(fp, pdf_bgcolor);
             f_needs_corr++;
         }
-        while(pdf_annot_under > 0){         /* recover underflow of pdf:bann ... pdf:eann stack */
-            /* [TODO] what should we do here? */
-            f_needs_corr++;
-            pdf_annot_under--;
-        }
+//        while(pdf_annot_under > 0){         /* recover underflow of pdf:bann ... pdf:eann stack */
+//            /* [TODO] what should we do here? */
+//            f_needs_corr++;
+//            pdf_annot_under--;
+//        }
 
         /* [Process 3] write contents of the current page */
         fseek(dvi->file_ptr, dim->page_index[page]+45, SEEK_SET);
@@ -984,10 +984,10 @@ lastpage:           if(isdigit(*++out_pages)){
             write_sp(fp, "pdf:ecolor");
             f_needs_corr++;
         }
-        for(count = 0; count < pdf_annot_depth; count++){
-            write_sp(fp, "pdf:eann");
-            f_needs_corr++;
-        }
+//        for(count = 0; count < pdf_annot_depth; count++){
+//            write_sp(fp, "pdf:eann");
+//            f_needs_corr++;
+//        }
         write_byte((uchar)EOP, fp); /* write EOP */
         former = current;
         current = ftell(fp);        /* get position of BOP/POST */
@@ -1003,15 +1003,15 @@ lastpage:           if(isdigit(*++out_pages)){
                 write_sp(fp, color_pt[count]);
             for(count = 0; count < pdf_color_depth; count++)
                 write_sp(fp, pdf_color_pt[count]);
-            for(count = 0; count < pdf_annot_depth; count++)
-                write_sp(fp, pdf_annot_pt[count]);
+//            for(count = 0; count < pdf_annot_depth; count++)
+//                write_sp(fp, pdf_annot_pt[count]);
             if(tpic_pn[0]) {
                 write_sp(fp, tpic_pn);
                 f_needs_corr++;
             }
             f_needs_corr += color_depth;
             f_needs_corr += pdf_color_depth;
-            f_needs_corr += pdf_annot_depth;
+//            f_needs_corr += pdf_annot_depth;
             if(tpic_pn[0])
                 f_needs_corr++;
         }
@@ -1345,11 +1345,11 @@ skip:                 while (tmp--)
                             strncpy(pdf_bgcolor, special, MAX_LEN);
                             f_pdf_bgcolor = 1;
                         }
-                        else if(!strsubcmp_n(special, "pdf:bann"))  /* pdf:bann */
-                            sp_pdf_bann(special);
-                        else if(!strsubcmp(special, "pdf:eann"))    /* pdf:eann */
-                            sp_pdf_eann(special);
-                            break;
+//                        else if(!strsubcmp_n(special, "pdf:bann"))  /* pdf:bann */
+//                            sp_pdf_bann(special);
+//                        else if(!strsubcmp(special, "pdf:eann"))    /* pdf:eann */
+//                            sp_pdf_eann(special);
+                        break;
                       }
                     goto skip;
                 }
@@ -1472,7 +1472,7 @@ void sp_pdf_eann(char *sp)
     if(--pdf_annot_depth < 0){
         fprintf(stderr, "pdf:bann ... pdf:eann stack underflow\n");
         pdf_annot_under++;
-        f_needs_corr++;
+//        f_needs_corr++;
         pdf_annot_depth = 0;
     }
     return;

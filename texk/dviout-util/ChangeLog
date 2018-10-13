@@ -1,3 +1,12 @@
+2018-10-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Stop support for pdf:bann, pe:eann which was
+	not working properly.
+	* chkdvifont.test, dvispc.test: Reconstruct tests.
+	* tests/annot.{tex,dvi}, tests/longspec.{tex,dvi},
+	tests/flatnest.{tex,dvi}: Prepared for future work.
+	* Makefile.am: Adjusted.
+
 2018-10-12  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvispc.c: Append .dvi suffix for DVI output.
@@ -9,7 +18,7 @@
 	* dvispc.c: Support page-independence even with long
 	specials. Use MAX_... constants for error messages.
 	* dvispc.test: Test long specials.
-	* tests/longspec.{tex,dvi}, tests/longspecout.dvi: New tests.
+	* tests/longspec.{tex,dvi}: New tests.
 	* Makefile.am: Adjusted.
 
 2018-10-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
