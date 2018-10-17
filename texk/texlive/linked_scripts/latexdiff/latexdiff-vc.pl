@@ -27,7 +27,11 @@
 #
 # TODO/IDEAS: - option to call external pre-processing codes
 #             - choose type of latex processor / bibtex (luatex, xelatex etc)
-# version 1.2.1 (22 June 2017)
+# version 1.3.0 ((7 October 2018)
+#    - option --only-changes with hyperref will suppress hyperrefs (pull request jprotze)_
+#    - option --only-changes now moves (rather than copies) file with only changes 
+# version 1.2.1 (22 June 2017):
+#    - update: use qpdf (instead of pdftk) to select particular pages of output (pull request #102 submited by Tom Scogland via github). This was necessary because pdftk is being deprecated. pdftk is still used as a fall-back
 #    - bug fix: --hg option was not recognised (partially fixes github issue #93 )
 #    - wrap passed-through options to latexdiff in quotation marks (fix github issue #58 )
 #    - program names for latexdiff, latex, dvips, bibtex configurable (fixes issue #40)
@@ -68,8 +72,8 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.2.1
-  (c) 2005-2017 F J Tilmann
+This is LATEXDIFF-VC 1.3.0
+  (c) 2005-2018 F J Tilmann
 EOF
 
 # output debug and intermediate files, set to 0 in final distribution
@@ -234,6 +238,7 @@ if ( defined($dir) && ( -f $dir || $dir =~ /^-/ ) ) {
   $dir="";
 }
 # check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty --flatten option
+
 if ( defined($flatten) && ( -f $flatten || $flatten =~ /^-/ ) ) {
   unshift @ARGV,$flatten;
   $flatten="";
@@ -325,16 +330,20 @@ while( $file1=pop @ARGV ) {
 }
 
 if ( length $configlatexdiff >0 ) {
-  push @ldoptions, "--config $configlatexdiff";
+  push @ldoptions, "--config=$configlatexdiff";
 }
 
 if ( defined($flatten) ) {
   push @ldoptions, "--flatten" ;
 }
 
+if ( defined($debug) && $debug ) {
+  push @ldoptions, "--debug" ;
+}
+
 # impose ZLABEL subtype if --only-changes option
 if ( $onlychanges ) {
-  push @ldoptions, "-s", "ZLABEL","-f","IDENTICAL" ;
+  push @ldoptions, "-s", "ZLABEL","-f","IDENTICAL","--no-links" ;
 }
 
 if ( scalar(@revs) == 0 ) {
@@ -525,18 +534,25 @@ foreach $diff ( @difffiles ) {
     } elsif ( $run ) {
       if ( $onlychanges ) {
 	my @pages=findchangedpages("$diffbase.aux");
-	###      print ("Running pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"\n") or 
+        my $gs = `which gs`;
+        $gs =~ s/^\s+|\s+$//g;
         my $qpdf = `which qpdf`;
         $qpdf =~ s/^\s+|\s+$//g;
         my $pdftk = `which pdftk`;
         $pdftk =~ s/^\s+|\s+$//g;
-        if (-x $qpdf) {
-          system("qpdf --linearize \"$diffbase.pdf\" --pages \"$diffbase.pdf\" " . join(",", @pages) . " -- \"$diffbase-changedpage.pdf\" ") == 0
-            or die("could not execute qpdf to strip pages. Return code: $?");
+        my $command;
+        if (-x $gs && `gs --version` >= 9.20) {
+          $command="gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -sPageList=" . join(",", @pages) . " -sOutputFile=\"$diffbase-changedpage.pdf\" \"$diffbase.pdf\"";
         } elsif (-x $pdftk) {
-          system ("pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"")==0 or
-            die ("Could not execute <pdftk $diffbase.pdf cat " . join(" ",@pages) . " output $diffbase-changedpage.pdf> . Return code: $?");
+          $command="pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"";
+        } elsif (-x $qpdf) {
+          $command="qpdf --linearize \"$diffbase.pdf\" --pages \"$diffbase.pdf\" " . join(",", @pages) . " -- \"$diffbase-changedpage.pdf\" ";
+        } else {
+          die ("could not find any of gs, pdftk or qpdf");
         }
+        print "Executing ".$command;
+        system($command) == 0
+          or die("could not execute <".$command."> to strip pages. Return code: $?");
 	move("$diffbase-changedpage.pdf","$diffbase.pdf");
       }
       push @ptmpfiles, "$diffbase.aux","$diffbase.log";
@@ -641,11 +657,13 @@ file in postscript or pdf format.
 
 =item B<--rcs>, B<--svn>, B<--cvs>, B<--git> or B<--hg>
 
-Set the version system. 
+Set the version control system used. 
 If no version system is specified, latexdiff-vc will venture a guess.
 
 latexdiff-cvs, latexdiff-rcs etc are variants of latexdiff-vc which default to 
 the respective versioning system. However, this default can still be overridden using the options above.
+
+Note that hg needs to support the C<--root> option (version >= 2.9)
 
 =item B<-r>, B<-r> F<rev> or B<--revision>, B<--revision=>F<rev>
 
