@@ -1,3 +1,11 @@
+2018-10-18  Norbert Preining  <preining@logic.at>
+
+	* ligkern_routines.c (retrieve_ligkern_table): need
+	lig_kern_size+1 for `activity' array, else glibc 2.28
+	on 32-bit architectures finds malloc error.
+	Original report from Tom Callaway,
+	https://tug.org/pipermail/tex-live/2018-September/042411.html
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* overbmp.test: LC_ALL=LANGUAGE=C.

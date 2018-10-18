@@ -3,7 +3,7 @@
 This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
-Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (c) 1994--2018 John Plaice and Yannis Haralambous
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -649,7 +649,8 @@ retrieve_ligkern_table(unsigned char *ofm_lig_table,
         }
     }
 
-    activity = (unsigned char *) xcalloc(lig_kern_size, sizeof(unsigned char));
+    activity = (unsigned char *) xcalloc(lig_kern_size+1,
+                                         sizeof(unsigned char));
 
     if (nl > 0) {
         if (lig_kern_table[0].entries[0] == 255) {
