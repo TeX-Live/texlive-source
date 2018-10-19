@@ -7545,6 +7545,9 @@ $as_echo "#define HAVE_OT 1" >>confdefs.h
 $as_echo "#define HAVE_ICU 1" >>confdefs.h
 
 
+$as_echo "#define HAVE_ICU_BUILTIN 1" >>confdefs.h
+
+
 $as_echo "#define HAVE_GRAPHITE2 1" >>confdefs.h
 
 else

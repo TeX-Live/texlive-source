@@ -85,6 +85,7 @@ fi
 if :; then
   AC_DEFINE([HAVE_OT], 1, [Use native OpenType Layout backend])
   AC_DEFINE([HAVE_ICU], 1, [Use ICU library])
+  AC_DEFINE([HAVE_ICU_BUILTIN], 1, [ICU support is not a seperate library])
   AC_DEFINE([HAVE_GRAPHITE2], 1, [Use Graphite library])
 else
 dnl add all these to config.h.in but do not define them in config.h

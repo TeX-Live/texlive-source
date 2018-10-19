@@ -1,3 +1,7 @@
+2018-10-20  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* configure.ac: Set HAVE_ICU_BUILTIN.
+
 2018-09-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import harfbuzz-1.9.0.
