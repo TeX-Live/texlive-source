@@ -93,6 +93,7 @@ struct hb_buffer_t
   hb_buffer_flags_t flags; /* BOT / EOT / etc. */
   hb_buffer_cluster_level_t cluster_level;
   hb_codepoint_t replacement; /* U+FFFD or something else. */
+  hb_codepoint_t invisible; /* 0 or something else. */
   hb_buffer_scratch_flags_t scratch_flags; /* Have space-fallback, etc. */
   unsigned int max_len; /* Maximum allowed len. */
   int max_ops; /* Maximum allowed operations. */
@@ -212,13 +213,49 @@ struct hb_buffer_t
 				   unsigned int num_out,
 				   const hb_codepoint_t *glyph_data);
 
-  HB_INTERNAL void replace_glyph (hb_codepoint_t glyph_index);
+  inline void replace_glyph (hb_codepoint_t glyph_index)
+  {
+    if (unlikely (out_info != info || out_len != idx)) {
+      if (unlikely (!make_room_for (1, 1))) return;
+      out_info[out_len] = info[idx];
+    }
+    out_info[out_len].codepoint = glyph_index;
+
+    idx++;
+    out_len++;
+  }
   /* Makes a copy of the glyph at idx to output and replace glyph_index */
-  HB_INTERNAL void output_glyph (hb_codepoint_t glyph_index);
-  HB_INTERNAL void output_info (const hb_glyph_info_t &glyph_info);
+  inline hb_glyph_info_t & output_glyph (hb_codepoint_t glyph_index)
+  {
+    if (unlikely (!make_room_for (0, 1))) return Crap(hb_glyph_info_t);
+
+    if (unlikely (idx == len && !out_len))
+      return Crap(hb_glyph_info_t);
+
+    out_info[out_len] = idx < len ? info[idx] : out_info[out_len - 1];
+    out_info[out_len].codepoint = glyph_index;
+
+    out_len++;
+
+    return out_info[out_len - 1];
+  }
+  inline void output_info (const hb_glyph_info_t &glyph_info)
+  {
+    if (unlikely (!make_room_for (0, 1))) return;
+
+    out_info[out_len] = glyph_info;
+
+    out_len++;
+  }
   /* Copies glyph at idx to output but doesn't advance idx */
-  HB_INTERNAL void copy_glyph (void);
-  HB_INTERNAL bool move_to (unsigned int i); /* i is output-buffer index. */
+  inline void copy_glyph (void)
+  {
+    if (unlikely (!make_room_for (0, 1))) return;
+
+    out_info[out_len] = info[idx];
+
+    out_len++;
+  }
   /* Copies glyph at idx to output and advance idx.
    * If there's no output, just advance idx. */
   inline void
@@ -226,7 +263,8 @@ struct hb_buffer_t
   {
     if (have_output)
     {
-      if (unlikely (out_info != info || out_len != idx)) {
+      if (out_info != info || out_len != idx)
+      {
 	if (unlikely (!make_room_for (1, 1))) return;
 	out_info[out_len] = info[idx];
       }
@@ -235,10 +273,28 @@ struct hb_buffer_t
 
     idx++;
   }
+  /* Copies n glyphs at idx to output and advance idx.
+   * If there's no output, just advance idx. */
+  inline void
+  next_glyphs (unsigned int n)
+  {
+    if (have_output)
+    {
+      if (out_info != info || out_len != idx)
+      {
+	if (unlikely (!make_room_for (n, n))) return;
+	memmove (out_info + out_len, info + idx, n * sizeof (out_info[0]));
+      }
+      out_len += n;
+    }
 
+    idx += n;
+  }
   /* Advance idx without copying to output. */
-  inline void skip_glyph (void) { idx++; }
-
+  inline void skip_glyph (void)
+  {
+    idx++;
+  }
   inline void reset_masks (hb_mask_t mask)
   {
     for (unsigned int j = 0; j < len; j++)
@@ -275,6 +331,8 @@ struct hb_buffer_t
 
 
   /* Internal methods */
+  HB_INTERNAL bool move_to (unsigned int i); /* i is output-buffer index. */
+
   HB_INTERNAL bool enlarge (unsigned int size);
 
   inline bool ensure (unsigned int size)

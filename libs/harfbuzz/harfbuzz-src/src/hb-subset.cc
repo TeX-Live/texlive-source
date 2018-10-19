@@ -77,7 +77,7 @@ _subset2 (hb_subset_plan_t *plan)
       return false;
     }
   retry:
-    hb_serialize_context_t serializer (buf.arrayZ, buf_size);
+    hb_serialize_context_t serializer (buf.arrayZ(), buf_size);
     hb_subset_context_t c (plan, &serializer);
     result = table->subset (&c);
     if (serializer.ran_out_of_room)
@@ -179,10 +179,10 @@ _subset_table (hb_subset_plan_t *plan,
       break;
 
     case HB_OT_TAG_GSUB:
-      //result = _subset2<const OT::GSUB> (plan);
+      result = _subset2<const OT::GSUB> (plan);
       break;
     case HB_OT_TAG_GPOS:
-      //result = _subset2<const OT::GPOS> (plan);
+      result = _subset2<const OT::GPOS> (plan);
       break;
 
     default:

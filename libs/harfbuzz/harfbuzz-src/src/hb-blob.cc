@@ -25,11 +25,6 @@
  * Red Hat Author(s): Behdad Esfahbod
  */
 
-/* http://www.oracle.com/technetwork/articles/servers-storage-dev/standardheaderfiles-453865.html */
-#ifndef _POSIX_C_SOURCE
-#define _POSIX_C_SOURCE 200809L
-#endif
-
 #include "hb.hh"
 #include "hb-blob.hh"
 
@@ -293,6 +288,8 @@ hb_blob_make_immutable (hb_blob_t *blob)
 {
   if (hb_object_is_inert (blob))
     return;
+  if (blob->immutable)
+    return;
 
   blob->immutable = true;
 }
@@ -510,8 +507,9 @@ struct hb_mapped_file_t
 
 #if (defined(HAVE_MMAP) || defined(_WIN32) || defined(__CYGWIN__)) && !defined(HB_NO_MMAP)
 static void
-_hb_mapped_file_destroy (hb_mapped_file_t *file)
+_hb_mapped_file_destroy (void *file_)
 {
+  hb_mapped_file_t *file = (hb_mapped_file_t *) file_;
 #ifdef HAVE_MMAP
   munmap (file->contents, file->length);
 #elif defined(_WIN32) || defined(__CYGWIN__)
@@ -574,18 +572,45 @@ fail_without_close:
   wchar_t * wchar_file_name = (wchar_t *) malloc (sizeof (wchar_t) * size);
   if (unlikely (wchar_file_name == nullptr)) goto fail_without_close;
   mbstowcs (wchar_file_name, file_name, size);
+#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY==WINAPI_FAMILY_PC_APP || WINAPI_FAMILY==WINAPI_FAMILY_PHONE_APP)
+  {
+    CREATEFILE2_EXTENDED_PARAMETERS ceparams = { 0 };
+    ceparams.dwSize = sizeof(CREATEFILE2_EXTENDED_PARAMETERS);
+    ceparams.dwFileAttributes = FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED & 0xFFFF;
+    ceparams.dwFileFlags = FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED & 0xFFF00000;
+    ceparams.dwSecurityQosFlags = FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED & 0x000F0000;
+    ceparams.lpSecurityAttributes = nullptr;
+    ceparams.hTemplateFile = nullptr;
+    fd = CreateFile2 (wchar_file_name, GENERIC_READ, FILE_SHARE_READ,
+                      OPEN_EXISTING, &ceparams);
+  }
+#else
   fd = CreateFileW (wchar_file_name, GENERIC_READ, FILE_SHARE_READ, nullptr,
 		    OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL|FILE_FLAG_OVERLAPPED,
 		    nullptr);
+#endif
   free (wchar_file_name);
 
   if (unlikely (fd == INVALID_HANDLE_VALUE)) goto fail_without_close;
 
+#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY==WINAPI_FAMILY_PC_APP || WINAPI_FAMILY==WINAPI_FAMILY_PHONE_APP)
+  {
+    LARGE_INTEGER length;
+    GetFileSizeEx (fd, &length);
+    file->length = length.LowPart;
+    file->mapping = CreateFileMappingFromApp (fd, nullptr, PAGE_READONLY, length.QuadPart, nullptr);
+  }
+#else
   file->length = (unsigned long) GetFileSize (fd, nullptr);
   file->mapping = CreateFileMapping (fd, nullptr, PAGE_READONLY, 0, 0, nullptr);
+#endif
   if (unlikely (file->mapping == nullptr)) goto fail;
 
+#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY==WINAPI_FAMILY_PC_APP || WINAPI_FAMILY==WINAPI_FAMILY_PHONE_APP)
+  file->contents = (char *) MapViewOfFileFromApp (file->mapping, FILE_MAP_READ, 0, 0);
+#else
   file->contents = (char *) MapViewOfFile (file->mapping, FILE_MAP_READ, 0, 0, 0);
+#endif
   if (unlikely (file->contents == nullptr)) goto fail;
 
   CloseHandle (fd);

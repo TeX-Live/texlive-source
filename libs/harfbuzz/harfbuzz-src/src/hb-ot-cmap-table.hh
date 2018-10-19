@@ -231,7 +231,7 @@ struct CmapSubtableFormat4
     inline void init (const CmapSubtableFormat4 *subtable)
     {
       segCount = subtable->segCountX2 / 2;
-      endCount = subtable->values;
+      endCount = subtable->values.arrayZ;
       startCount = endCount + segCount + 1;
       idDelta = startCount + segCount;
       idRangeOffset = idDelta + segCount;
@@ -369,7 +369,8 @@ struct CmapSubtableFormat4
   HBUINT16	entrySelector;	/* log2(searchRange/2) */
   HBUINT16	rangeShift;	/* 2 x segCount - searchRange */
 
-  HBUINT16	values[VAR];
+  UnsizedArrayOf<HBUINT16>
+		values;
 #if 0
   HBUINT16	endCount[segCount];	/* End characterCode for each segment,
 					 * last=0xFFFFu. */
@@ -377,7 +378,8 @@ struct CmapSubtableFormat4
   HBUINT16	startCount[segCount];	/* Start character code for each segment. */
   HBINT16		idDelta[segCount];	/* Delta for all character codes in segment. */
   HBUINT16	idRangeOffset[segCount];/* Offsets into glyphIdArray or 0 */
-  HBUINT16	glyphIdArray[VAR];	/* Glyph index array (arbitrary length) */
+  UnsizedArrayOf<HBUINT16>
+		glyphIdArray;	/* Glyph index array (arbitrary length) */
 #endif
 
   public:
@@ -493,7 +495,7 @@ struct CmapSubtableLongSegmented
   {
     TRACE_SERIALIZE (this);
     if (unlikely (!c->extend_min (*this))) return_trace (false);
-    Supplier<CmapSubtableLongGroup> supplier (group_data.arrayZ, group_data.len);
+    Supplier<CmapSubtableLongGroup> supplier (group_data.arrayZ(), group_data.len);
     if (unlikely (!groups.serialize (c, supplier, group_data.len))) return_trace (false);
     return true;
   }
@@ -707,9 +709,9 @@ struct VariationSelectorRecord
 
   HBUINT24	varSelector;	/* Variation selector. */
   LOffsetTo<DefaultUVS>
-		defaultUVS;	/* Offset to Default UVS Table. May be 0. */
+		defaultUVS;	/* Offset to Default UVS Table.  May be 0. */
   LOffsetTo<NonDefaultUVS>
-		nonDefaultUVS;	/* Offset to Non-Default UVS Table. May be 0. */
+		nonDefaultUVS;	/* Offset to Non-Default UVS Table.  May be 0. */
   public:
   DEFINE_SIZE_STATIC (11);
 };

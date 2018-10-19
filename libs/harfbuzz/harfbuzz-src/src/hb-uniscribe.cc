@@ -392,7 +392,7 @@ _hb_rename_font (hb_blob_t *blob, wchar_t *new_name)
   name.stringOffset.set (name.get_size ());
   for (unsigned int i = 0; i < ARRAY_LENGTH (name_IDs); i++)
   {
-    OT::NameRecord &record = name.nameRecord[i];
+    OT::NameRecord &record = name.nameRecordZ[i];
     record.platformID.set (3);
     record.encodingID.set (1);
     record.languageID.set (0x0409u); /* English */
@@ -717,7 +717,7 @@ _hb_uniscribe_shape (hb_shape_plan_t    *shape_plan,
       {
         active_feature_t *feature = active_features.find (&event->feature);
 	if (feature)
-	  active_features.remove (feature - active_features.arrayZ);
+	  active_features.remove (feature - active_features.arrayZ());
       }
     }
 
@@ -728,7 +728,7 @@ _hb_uniscribe_shape (hb_shape_plan_t    *shape_plan,
     for (unsigned int i = 0; i < range_records.len; i++)
     {
       range_record_t *range = &range_records[i];
-      range->props.potfRecords = feature_records.arrayZ + reinterpret_cast<uintptr_t> (range->props.potfRecords);
+      range->props.potfRecords = feature_records.arrayZ() + reinterpret_cast<uintptr_t> (range->props.potfRecords);
     }
   }
 
@@ -902,8 +902,8 @@ retry:
 				     &items[i].a,
 				     script_tags[i],
 				     language_tag,
-				     range_char_counts.arrayZ,
-				     range_properties.arrayZ,
+				     range_char_counts.arrayZ(),
+				     range_properties.arrayZ(),
 				     range_properties.len,
 				     pchars + chars_offset,
 				     item_chars_len,
@@ -943,8 +943,8 @@ retry:
 				     &items[i].a,
 				     script_tags[i],
 				     language_tag,
-				     range_char_counts.arrayZ,
-				     range_properties.arrayZ,
+				     range_char_counts.arrayZ(),
+				     range_properties.arrayZ(),
 				     range_properties.len,
 				     pchars + chars_offset,
 				     log_clusters + chars_offset,

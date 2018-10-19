@@ -92,6 +92,9 @@ typedef IntType<uint32_t, 3> HBUINT24;	/* 24-bit unsigned integer. */
 /* 16-bit signed integer (HBINT16) that describes a quantity in FUnits. */
 typedef HBINT16 FWORD;
 
+/* 32-bit signed integer (HBINT32) that describes a quantity in FUnits. */
+typedef HBINT32 FWORD32;
+
 /* 16-bit unsigned integer (HBUINT16) that describes a quantity in FUnits. */
 typedef HBUINT16 UFWORD;
 
@@ -155,10 +158,10 @@ struct Index : HBUINT16 {
 DECLARE_NULL_NAMESPACE_BYTES (OT, Index);
 
 /* Offset, Null offset = 0 */
-template <typename Type>
+template <typename Type, bool has_null=true>
 struct Offset : Type
 {
-  inline bool is_null (void) const { return 0 == *this; }
+  inline bool is_null (void) const { return has_null && 0 == *this; }
 
   inline void *serialize (hb_serialize_context_t *c, const void *base)
   {
@@ -226,20 +229,23 @@ struct FixedVersion
  * Use: (base+offset)
  */
 
-template <typename Type, typename OffsetType=HBUINT16>
-struct OffsetTo : Offset<OffsetType>
+template <typename Type, bool has_null_> struct assert_has_min_size { static_assert (Type::min_size > 0, ""); };
+template <typename Type> struct assert_has_min_size<Type, false> {};
+
+template <typename Type, typename OffsetType=HBUINT16, bool has_null=true>
+struct OffsetTo : Offset<OffsetType, has_null>
 {
+  static_assert (sizeof (assert_has_min_size<Type, has_null>) || true, "");
+
   inline const Type& operator () (const void *base) const
   {
-    unsigned int offset = *this;
-    if (unlikely (!offset)) return Null(Type);
-    return StructAtOffset<const Type> (base, offset);
+    if (unlikely (this->is_null ())) return Null(Type);
+    return StructAtOffset<const Type> (base, *this);
   }
   inline Type& operator () (void *base) const
   {
-    unsigned int offset = *this;
-    if (unlikely (!offset)) return Crap(Type);
-    return StructAtOffset<Type> (base, offset);
+    if (unlikely (this->is_null ())) return Crap(Type);
+    return StructAtOffset<Type> (base, *this);
   }
 
   inline Type& serialize (hb_serialize_context_t *c, const void *base)
@@ -260,46 +266,70 @@ struct OffsetTo : Offset<OffsetType>
       this->set (0);
   }
 
+  inline bool sanitize_shallow (hb_sanitize_context_t *c, const void *base) const
+  {
+    TRACE_SANITIZE (this);
+    if (unlikely (!c->check_struct (this))) return_trace (false);
+    if (unlikely (this->is_null ())) return_trace (true);
+    if (unlikely (!c->check_range (base, *this))) return_trace (false);
+    return_trace (true);
+  }
+
   inline bool sanitize (hb_sanitize_context_t *c, const void *base) const
   {
     TRACE_SANITIZE (this);
-    if (unlikely (!c->check_struct (this))) return_trace (false);
-    unsigned int offset = *this;
-    if (unlikely (!offset)) return_trace (true);
-    if (unlikely (!c->check_range (base, offset))) return_trace (false);
-    const Type &obj = StructAtOffset<Type> (base, offset);
-    return_trace (likely (obj.sanitize (c)) || neuter (c));
+    return_trace (sanitize_shallow (c, base) &&
+		  (this->is_null () ||
+		   StructAtOffset<Type> (base, *this).sanitize (c) ||
+		   neuter (c)));
   }
-  template <typename T>
-  inline bool sanitize (hb_sanitize_context_t *c, const void *base, T user_data) const
+  template <typename T1>
+  inline bool sanitize (hb_sanitize_context_t *c, const void *base, T1 d1) const
   {
     TRACE_SANITIZE (this);
-    if (unlikely (!c->check_struct (this))) return_trace (false);
-    unsigned int offset = *this;
-    if (unlikely (!offset)) return_trace (true);
-    if (unlikely (!c->check_range (base, offset))) return_trace (false);
-    const Type &obj = StructAtOffset<Type> (base, offset);
-    return_trace (likely (obj.sanitize (c, user_data)) || neuter (c));
+    return_trace (sanitize_shallow (c, base) &&
+		  (this->is_null () ||
+		   StructAtOffset<Type> (base, *this).sanitize (c, d1) ||
+		   neuter (c)));
+  }
+  template <typename T1, typename T2>
+  inline bool sanitize (hb_sanitize_context_t *c, const void *base, T1 d1, T2 d2) const
+  {
+    TRACE_SANITIZE (this);
+    return_trace (sanitize_shallow (c, base) &&
+		  (this->is_null () ||
+		   StructAtOffset<Type> (base, *this).sanitize (c, d1, d2) ||
+		   neuter (c)));
+  }
+  template <typename T1, typename T2, typename T3>
+  inline bool sanitize (hb_sanitize_context_t *c, const void *base, T1 d1, T2 d2, T3 d3) const
+  {
+    TRACE_SANITIZE (this);
+    return_trace (sanitize_shallow (c, base) &&
+		  (this->is_null () ||
+		   StructAtOffset<Type> (base, *this).sanitize (c, d1, d2, d3) ||
+		   neuter (c)));
   }
 
   /* Set the offset to Null */
-  inline bool neuter (hb_sanitize_context_t *c) const {
+  inline bool neuter (hb_sanitize_context_t *c) const
+  {
+    if (!has_null) return false;
     return c->try_set (this, 0);
   }
   DEFINE_SIZE_STATIC (sizeof(OffsetType));
 };
-template <typename Type> struct LOffsetTo : OffsetTo<Type, HBUINT32> {};
-template <typename Base, typename OffsetType, typename Type>
-static inline const Type& operator + (const Base &base, const OffsetTo<Type, OffsetType> &offset) { return offset (base); }
-template <typename Base, typename OffsetType, typename Type>
-static inline Type& operator + (Base &base, OffsetTo<Type, OffsetType> &offset) { return offset (base); }
+template <typename Type, bool has_null=true> struct LOffsetTo : OffsetTo<Type, HBUINT32, has_null> {};
+template <typename Base, typename OffsetType, bool has_null, typename Type>
+static inline const Type& operator + (const Base &base, const OffsetTo<Type, OffsetType, has_null> &offset) { return offset (base); }
+template <typename Base, typename OffsetType, bool has_null, typename Type>
+static inline Type& operator + (Base &base, OffsetTo<Type, OffsetType, has_null> &offset) { return offset (base); }
 
 
 /*
  * Array Types
  */
 
-/* TODO Use it in ArrayOf, HeadlessArrayOf, and other places around the code base?? */
 template <typename Type>
 struct UnsizedArrayOf
 {
@@ -345,22 +375,22 @@ struct UnsizedArrayOf
   inline bool sanitize_shallow (hb_sanitize_context_t *c, unsigned int count) const
   {
     TRACE_SANITIZE (this);
-    return_trace (c->check_array (arrayZ, arrayZ[0].static_size, count));
+    return_trace (c->check_array (arrayZ, count));
   }
 
   public:
-  Type	arrayZ[VAR];
+  Type		arrayZ[VAR];
   public:
   DEFINE_SIZE_ARRAY (0, arrayZ);
 };
 
 /* Unsized array of offset's */
-template <typename Type, typename OffsetType>
-struct UnsizedOffsetArrayOf : UnsizedArrayOf<OffsetTo<Type, OffsetType> > {};
+template <typename Type, typename OffsetType, bool has_null=true>
+struct UnsizedOffsetArrayOf : UnsizedArrayOf<OffsetTo<Type, OffsetType, has_null> > {};
 
 /* Unsized array of offsets relative to the beginning of the array itself. */
-template <typename Type, typename OffsetType>
-struct UnsizedOffsetListOf : UnsizedOffsetArrayOf<Type, OffsetType>
+template <typename Type, typename OffsetType, bool has_null=true>
+struct UnsizedOffsetListOf : UnsizedOffsetArrayOf<Type, OffsetType, has_null>
 {
   inline const Type& operator [] (unsigned int i) const
   {
@@ -370,13 +400,13 @@ struct UnsizedOffsetListOf : UnsizedOffsetArrayOf<Type, OffsetType>
   inline bool sanitize (hb_sanitize_context_t *c, unsigned int count) const
   {
     TRACE_SANITIZE (this);
-    return_trace ((UnsizedOffsetArrayOf<Type, OffsetType>::sanitize (c, count, this)));
+    return_trace ((UnsizedOffsetArrayOf<Type, OffsetType, has_null>::sanitize (c, count, this)));
   }
   template <typename T>
   inline bool sanitize (hb_sanitize_context_t *c, unsigned int count, T user_data) const
   {
     TRACE_SANITIZE (this);
-    return_trace ((UnsizedOffsetArrayOf<Type, OffsetType>::sanitize (c, count, this, user_data)));
+    return_trace ((UnsizedOffsetArrayOf<Type, OffsetType, has_null>::sanitize (c, count, this, user_data)));
   }
 };
 
@@ -487,12 +517,12 @@ struct ArrayOf
   inline bool sanitize_shallow (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
-    return_trace (len.sanitize (c) && c->check_array (arrayZ, Type::static_size, len));
+    return_trace (len.sanitize (c) && c->check_array (arrayZ, len));
   }
 
   public:
-  LenType len;
-  Type arrayZ[VAR];
+  LenType	len;
+  Type		arrayZ[VAR];
   public:
   DEFINE_SIZE_ARRAY (sizeof (LenType), arrayZ);
 };
@@ -548,16 +578,16 @@ struct HeadlessArrayOf
 {
   inline const Type& operator [] (unsigned int i) const
   {
-    if (unlikely (i >= len || !i)) return Null(Type);
+    if (unlikely (i >= lenP1 || !i)) return Null(Type);
     return arrayZ[i-1];
   }
   inline Type& operator [] (unsigned int i)
   {
-    if (unlikely (i >= len || !i)) return Crap(Type);
+    if (unlikely (i >= lenP1 || !i)) return Crap(Type);
     return arrayZ[i-1];
   }
   inline unsigned int get_size (void) const
-  { return len.static_size + (len ? len - 1 : 0) * Type::static_size; }
+  { return lenP1.static_size + (lenP1 ? lenP1 - 1 : 0) * Type::static_size; }
 
   inline bool serialize (hb_serialize_context_t *c,
 			 Supplier<Type> &items,
@@ -565,7 +595,7 @@ struct HeadlessArrayOf
   {
     TRACE_SERIALIZE (this);
     if (unlikely (!c->extend_min (*this))) return_trace (false);
-    len.set (items_len); /* TODO(serialize) Overflow? */
+    lenP1.set (items_len); /* TODO(serialize) Overflow? */
     if (unlikely (!items_len)) return_trace (true);
     if (unlikely (!c->extend (*this))) return_trace (false);
     for (unsigned int i = 0; i < items_len - 1; i++)
@@ -595,13 +625,57 @@ struct HeadlessArrayOf
   inline bool sanitize_shallow (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
-    return_trace (len.sanitize (c) &&
-		  (!len || c->check_array (arrayZ, Type::static_size, len - 1)));
+    return_trace (lenP1.sanitize (c) &&
+		  (!lenP1 || c->check_array (arrayZ, lenP1 - 1)));
   }
 
   public:
-  LenType len;
-  Type arrayZ[VAR];
+  LenType	lenP1;
+  Type		arrayZ[VAR];
+  public:
+  DEFINE_SIZE_ARRAY (sizeof (LenType), arrayZ);
+};
+
+/* An array storing length-1. */
+template <typename Type, typename LenType=HBUINT16>
+struct ArrayOfM1
+{
+  inline const Type& operator [] (unsigned int i) const
+  {
+    if (unlikely (i > lenM1)) return Null(Type);
+    return arrayZ[i];
+  }
+  inline Type& operator [] (unsigned int i)
+  {
+    if (unlikely (i > lenM1)) return Crap(Type);
+    return arrayZ[i];
+  }
+  inline unsigned int get_size (void) const
+  { return lenM1.static_size + (lenM1 + 1) * Type::static_size; }
+
+  template <typename T>
+  inline bool sanitize (hb_sanitize_context_t *c, const void *base, T user_data) const
+  {
+    TRACE_SANITIZE (this);
+    if (unlikely (!sanitize_shallow (c))) return_trace (false);
+    unsigned int count = lenM1 + 1;
+    for (unsigned int i = 0; i < count; i++)
+      if (unlikely (!arrayZ[i].sanitize (c, base, user_data)))
+        return_trace (false);
+    return_trace (true);
+  }
+
+  private:
+  inline bool sanitize_shallow (hb_sanitize_context_t *c) const
+  {
+    TRACE_SANITIZE (this);
+    return_trace (lenM1.sanitize (c) &&
+		  (c->check_array (arrayZ, lenM1 + 1)));
+  }
+
+  public:
+  LenType	lenM1;
+  Type		arrayZ[VAR];
   public:
   DEFINE_SIZE_ARRAY (sizeof (LenType), arrayZ);
 };
@@ -631,7 +705,11 @@ struct SortedArrayOf : ArrayOf<Type, LenType>
   }
 };
 
-/* Binary-search arrays */
+/*
+ * Binary-search arrays
+ */
+
+template <typename LenType=HBUINT16>
 struct BinSearchHeader
 {
   inline operator uint32_t (void) const { return len; }
@@ -654,17 +732,117 @@ struct BinSearchHeader
   }
 
   protected:
-  HBUINT16	len;
-  HBUINT16	searchRange;
-  HBUINT16	entrySelector;
-  HBUINT16	rangeShift;
+  LenType	len;
+  LenType	searchRange;
+  LenType	entrySelector;
+  LenType	rangeShift;
 
   public:
   DEFINE_SIZE_STATIC (8);
 };
 
+template <typename Type, typename LenType=HBUINT16>
+struct BinSearchArrayOf : SortedArrayOf<Type, BinSearchHeader<LenType> > {};
+
+struct VarSizedBinSearchHeader
+{
+
+  inline bool sanitize (hb_sanitize_context_t *c) const
+  {
+    TRACE_SANITIZE (this);
+    return_trace (c->check_struct (this));
+  }
+
+  HBUINT16	unitSize;	/* Size of a lookup unit for this search in bytes. */
+  HBUINT16	nUnits;		/* Number of units of the preceding size to be searched. */
+  HBUINT16	searchRange;	/* The value of unitSize times the largest power of 2
+				 * that is less than or equal to the value of nUnits. */
+  HBUINT16	entrySelector;	/* The log base 2 of the largest power of 2 less than
+				 * or equal to the value of nUnits. */
+  HBUINT16	rangeShift;	/* The value of unitSize times the difference of the
+				 * value of nUnits minus the largest power of 2 less
+				 * than or equal to the value of nUnits. */
+  public:
+  DEFINE_SIZE_STATIC (10);
+};
+
 template <typename Type>
-struct BinSearchArrayOf : SortedArrayOf<Type, BinSearchHeader> {};
+struct VarSizedBinSearchArrayOf
+{
+  inline const Type& operator [] (unsigned int i) const
+  {
+    if (unlikely (i >= header.nUnits)) return Null(Type);
+    return StructAtOffset<Type> (&bytesZ, i * header.unitSize);
+  }
+  inline Type& operator [] (unsigned int i)
+  {
+    return StructAtOffset<Type> (&bytesZ, i * header.unitSize);
+  }
+  inline unsigned int get_size (void) const
+  { return header.static_size + header.nUnits * header.unitSize; }
+
+  inline bool sanitize (hb_sanitize_context_t *c) const
+  {
+    TRACE_SANITIZE (this);
+    if (unlikely (!sanitize_shallow (c))) return_trace (false);
+
+    /* Note: for structs that do not reference other structs,
+     * we do not need to call their sanitize() as we already did
+     * a bound check on the aggregate array size.  We just include
+     * a small unreachable expression to make sure the structs
+     * pointed to do have a simple sanitize(), ie. they do not
+     * reference other structs via offsets.
+     */
+    (void) (false && StructAtOffset<Type> (&bytesZ, 0).sanitize (c));
+
+    return_trace (true);
+  }
+  inline bool sanitize (hb_sanitize_context_t *c, const void *base) const
+  {
+    TRACE_SANITIZE (this);
+    if (unlikely (!sanitize_shallow (c))) return_trace (false);
+    unsigned int count = header.nUnits;
+    for (unsigned int i = 0; i < count; i++)
+      if (unlikely (!(*this)[i].sanitize (c, base)))
+        return_trace (false);
+    return_trace (true);
+  }
+
+  template <typename T>
+  inline const Type *bsearch (const T &key) const
+  {
+    unsigned int size = header.unitSize;
+    int min = 0, max = (int) header.nUnits - 1;
+    while (min <= max)
+    {
+      int mid = (min + max) / 2;
+      const Type *p = (const Type *) (((const char *) &bytesZ) + (mid * size));
+      int c = p->cmp (key);
+      if (c < 0)
+	max = mid - 1;
+      else if (c > 0)
+	min = mid + 1;
+      else
+	return p;
+    }
+    return nullptr;
+  }
+
+  private:
+  inline bool sanitize_shallow (hb_sanitize_context_t *c) const
+  {
+    TRACE_SANITIZE (this);
+    return_trace (header.sanitize (c) &&
+		  Type::static_size <= header.unitSize &&
+		  c->check_array (bytesZ.arrayZ, header.nUnits, header.unitSize));
+  }
+
+  protected:
+  VarSizedBinSearchHeader	header;
+  UnsizedArrayOf<HBUINT8>	bytesZ;
+  public:
+  DEFINE_SIZE_ARRAY (10, bytesZ);
+};
 
 
 } /* namespace OT */

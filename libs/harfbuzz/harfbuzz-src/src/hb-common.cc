@@ -47,8 +47,27 @@ _hb_options_init (void)
   u.i = 0;
   u.opts.initialized = 1;
 
-  char *c = getenv ("HB_OPTIONS");
-  u.opts.uniscribe_bug_compatible = c && strstr (c, "uniscribe-bug-compatible");
+  const char *c = getenv ("HB_OPTIONS");
+  if (c)
+  {
+    while (*c)
+    {
+      const char *p = strchr (c, ':');
+      if (!p)
+        p = c + strlen (c);
+
+#define OPTION(name, symbol) \
+	if (0 == strncmp (c, name, p - c) && strlen (name) == p - c) u.opts.symbol = true;
+
+      OPTION ("uniscribe-bug-compatible", uniscribe_bug_compatible);
+      OPTION ("aat", aat);
+
+#undef OPTION
+
+      c = *p ? p + 1 : p;
+    }
+
+  }
 
   /* This is idempotent and threadsafe. */
   _hb_options.set_relaxed (u.i);
@@ -306,14 +325,14 @@ retry:
 /**
  * hb_language_from_string:
  * @str: (array length=len) (element-type uint8_t): a string representing
- *       ISO 639 language code
+ *       a BCP 47 language tag
  * @len: length of the @str, or -1 if it is %NULL-terminated.
  *
- * Converts @str representing an ISO 639 language code to the corresponding
+ * Converts @str representing a BCP 47 language tag to the corresponding
  * #hb_language_t.
  *
  * Return value: (transfer none):
- * The #hb_language_t corresponding to the ISO 639 language code.
+ * The #hb_language_t corresponding to the BCP 47 language tag.
  *
  * Since: 0.9.2
  **/
@@ -361,7 +380,14 @@ hb_language_to_string (hb_language_t language)
 /**
  * hb_language_get_default:
  *
+ * Get default language from current locale.
  *
+ * Note that the first time this function is called, it calls
+ * "setlocale (LC_CTYPE, nullptr)" to fetch current locale.  The underlying
+ * setlocale function is, in many implementations, NOT threadsafe.  To avoid
+ * problems, call this function once before multiple threads can call it.
+ * This function is only used from hb_buffer_guess_segment_properties() by
+ * HarfBuzz itself.
  *
  * Return value: (transfer none):
  *
@@ -531,7 +557,6 @@ hb_script_get_horizontal_direction (hb_script_t script)
 
     /* Unicode-8.0 additions */
     case HB_SCRIPT_HATRAN:
-    case HB_SCRIPT_OLD_HUNGARIAN:
 
     /* Unicode-9.0 additions */
     case HB_SCRIPT_ADLAM:
@@ -545,6 +570,7 @@ hb_script_get_horizontal_direction (hb_script_t script)
 
 
     /* https://github.com/harfbuzz/harfbuzz/issues/1000 */
+    case HB_SCRIPT_OLD_HUNGARIAN:
     case HB_SCRIPT_OLD_ITALIC:
     case HB_SCRIPT_RUNIC:
 
@@ -877,8 +903,8 @@ parse_feature_indices (const char **pp, const char *end, hb_feature_t *feature)
 
   bool has_start;
 
-  feature->start = 0;
-  feature->end = (unsigned int) -1;
+  feature->start = HB_FEATURE_GLOBAL_START;
+  feature->end = HB_FEATURE_GLOBAL_END;
 
   if (!parse_char (pp, end, '['))
     return true;
@@ -1065,7 +1091,7 @@ hb_variation_to_string (hb_variation_t *variation,
   while (len && s[len - 1] == ' ')
     len--;
   s[len++] = '=';
-  len += MAX (0, snprintf (s + len, ARRAY_LENGTH (s) - len, "%g", variation->value));
+  len += MAX (0, snprintf (s + len, ARRAY_LENGTH (s) - len, "%g", (double) variation->value));
 
   assert (len < ARRAY_LENGTH (s));
   len = MIN (len, size - 1);

@@ -55,10 +55,11 @@ struct postV2Tail
     return_trace (glyphNameIndex.sanitize (c));
   }
 
-  ArrayOf<HBUINT16>glyphNameIndex;	/* This is not an offset, but is the
+  ArrayOf<HBUINT16>	glyphNameIndex;	/* This is not an offset, but is the
 					 * ordinal number of the glyph in 'post'
 					 * string tables. */
-  HBUINT8		namesX[VAR];		/* Glyph names with length bytes [variable]
+  UnsizedArrayOf<HBUINT8>
+			namesX;		/* Glyph names with length bytes [variable]
 					 * (a Pascal string). */
 
   DEFINE_SIZE_ARRAY2 (2, glyphNameIndex, namesX);
@@ -130,6 +131,7 @@ struct post
     {
       index_to_offset.fini ();
       free (gids_sorted_by_name.get ());
+      hb_blob_destroy (blob);
     }
 
     inline bool get_glyph_name (hb_codepoint_t glyph,
@@ -142,7 +144,7 @@ struct post
 	return true;
       if (buf_len <= s.len) /* What to do with truncation? Returning false for now. */
         return false;
-      strncpy (buf, s.bytes, s.len);
+      strncpy (buf, s.arrayZ, s.len);
       buf[s.len] = '\0';
       return true;
     }
@@ -240,7 +242,7 @@ struct post
 
       if (index >= index_to_offset.len)
 	return hb_bytes_t ();
-      unsigned int offset = index_to_offset.arrayZ[index];
+      unsigned int offset = index_to_offset[index];
 
       const uint8_t *data = pool + offset;
       unsigned int name_length = *data;

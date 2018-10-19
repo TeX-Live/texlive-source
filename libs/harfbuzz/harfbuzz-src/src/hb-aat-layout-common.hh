@@ -36,111 +36,6 @@ using namespace OT;
 
 
 /*
- * Binary Searching Tables
- */
-
-struct BinSearchHeader
-{
-
-  inline bool sanitize (hb_sanitize_context_t *c) const
-  {
-    TRACE_SANITIZE (this);
-    return_trace (c->check_struct (this));
-  }
-
-  HBUINT16	unitSize;	/* Size of a lookup unit for this search in bytes. */
-  HBUINT16	nUnits;		/* Number of units of the preceding size to be searched. */
-  HBUINT16	searchRange;	/* The value of unitSize times the largest power of 2
-				 * that is less than or equal to the value of nUnits. */
-  HBUINT16	entrySelector;	/* The log base 2 of the largest power of 2 less than
-				 * or equal to the value of nUnits. */
-  HBUINT16	rangeShift;	/* The value of unitSize times the difference of the
-				 * value of nUnits minus the largest power of 2 less
-				 * than or equal to the value of nUnits. */
-  public:
-  DEFINE_SIZE_STATIC (10);
-};
-
-template <typename Type>
-struct BinSearchArrayOf
-{
-  inline const Type& operator [] (unsigned int i) const
-  {
-    if (unlikely (i >= header.nUnits)) return Null(Type);
-    return StructAtOffset<Type> (bytesZ, i * header.unitSize);
-  }
-  inline Type& operator [] (unsigned int i)
-  {
-    return StructAtOffset<Type> (bytesZ, i * header.unitSize);
-  }
-  inline unsigned int get_size (void) const
-  { return header.static_size + header.nUnits * header.unitSize; }
-
-  inline bool sanitize (hb_sanitize_context_t *c) const
-  {
-    TRACE_SANITIZE (this);
-    if (unlikely (!sanitize_shallow (c))) return_trace (false);
-
-    /* Note: for structs that do not reference other structs,
-     * we do not need to call their sanitize() as we already did
-     * a bound check on the aggregate array size.  We just include
-     * a small unreachable expression to make sure the structs
-     * pointed to do have a simple sanitize(), ie. they do not
-     * reference other structs via offsets.
-     */
-    (void) (false && StructAtOffset<Type> (bytesZ, 0).sanitize (c));
-
-    return_trace (true);
-  }
-  inline bool sanitize (hb_sanitize_context_t *c, const void *base) const
-  {
-    TRACE_SANITIZE (this);
-    if (unlikely (!sanitize_shallow (c))) return_trace (false);
-    unsigned int count = header.nUnits;
-    for (unsigned int i = 0; i < count; i++)
-      if (unlikely (!(*this)[i].sanitize (c, base)))
-        return_trace (false);
-    return_trace (true);
-  }
-
-  template <typename T>
-  inline const Type *bsearch (const T &key) const
-  {
-    unsigned int size = header.unitSize;
-    int min = 0, max = (int) header.nUnits - 1;
-    while (min <= max)
-    {
-      int mid = (min + max) / 2;
-      const Type *p = (const Type *) (((const char *) bytesZ) + (mid * size));
-      int c = p->cmp (key);
-      if (c < 0)
-	max = mid - 1;
-      else if (c > 0)
-	min = mid + 1;
-      else
-	return p;
-    }
-    return nullptr;
-  }
-
-  private:
-  inline bool sanitize_shallow (hb_sanitize_context_t *c) const
-  {
-    TRACE_SANITIZE (this);
-    return_trace (header.sanitize (c) &&
-		  Type::static_size >= header.unitSize &&
-		  c->check_array (bytesZ, header.unitSize, header.nUnits));
-  }
-
-  protected:
-  BinSearchHeader	header;
-  HBUINT8		bytesZ[VAR];
-  public:
-  DEFINE_SIZE_ARRAY (10, bytesZ);
-};
-
-
-/*
  * Lookup Table
  */
 
@@ -213,7 +108,7 @@ struct LookupFormat2
 
   protected:
   HBUINT16	format;		/* Format identifier--format = 2 */
-  BinSearchArrayOf<LookupSegmentSingle<T> >
+  VarSizedBinSearchArrayOf<LookupSegmentSingle<T> >
 		segments;	/* The actual segments. These must already be sorted,
 				 * according to the first word in each one (the last
 				 * glyph in each segment). */
@@ -243,7 +138,7 @@ struct LookupSegmentArray
 
   GlyphID	last;		/* Last GlyphID in this segment */
   GlyphID	first;		/* First GlyphID in this segment */
-  OffsetTo<UnsizedArrayOf<T> >
+  OffsetTo<UnsizedArrayOf<T>, HBUINT16, false>
 		valuesZ;	/* A 16-bit offset from the start of
 				 * the table to the data. */
   public:
@@ -269,8 +164,8 @@ struct LookupFormat4
   }
 
   protected:
-  HBUINT16	format;		/* Format identifier--format = 2 */
-  BinSearchArrayOf<LookupSegmentArray<T> >
+  HBUINT16	format;		/* Format identifier--format = 4 */
+  VarSizedBinSearchArrayOf<LookupSegmentArray<T> >
 		segments;	/* The actual segments. These must already be sorted,
 				 * according to the first word in each one (the last
 				 * glyph in each segment). */
@@ -292,7 +187,7 @@ struct LookupSingle
   GlyphID	glyph;		/* Last GlyphID */
   T		value;		/* The lookup value (only one) */
   public:
-  DEFINE_SIZE_STATIC (4 + T::static_size);
+  DEFINE_SIZE_STATIC (2 + T::static_size);
 };
 
 template <typename T>
@@ -315,7 +210,7 @@ struct LookupFormat6
 
   protected:
   HBUINT16	format;		/* Format identifier--format = 6 */
-  BinSearchArrayOf<LookupSingle<T> >
+  VarSizedBinSearchArrayOf<LookupSingle<T> >
 		entries;	/* The actual entries, sorted by glyph index. */
   public:
   DEFINE_SIZE_ARRAY (8, entries);
@@ -329,7 +224,8 @@ struct LookupFormat8
   private:
   inline const T* get_value (hb_codepoint_t glyph_id) const
   {
-    return firstGlyph <= glyph_id && glyph_id - firstGlyph < glyphCount ? &valueArrayZ[glyph_id - firstGlyph] : nullptr;
+    return firstGlyph <= glyph_id && glyph_id - firstGlyph < glyphCount ?
+	   &valueArrayZ[glyph_id - firstGlyph] : nullptr;
   }
 
   inline bool sanitize (hb_sanitize_context_t *c) const
@@ -339,7 +235,7 @@ struct LookupFormat8
   }
 
   protected:
-  HBUINT16	format;		/* Format identifier--format = 6 */
+  HBUINT16	format;		/* Format identifier--format = 8 */
   GlyphID	firstGlyph;	/* First glyph index included in the trimmed array. */
   HBUINT16	glyphCount;	/* Total number of glyphs (equivalent to the last
 				 * glyph minus the value of firstGlyph plus 1). */
@@ -363,6 +259,12 @@ struct Lookup
     case 8: return u.format8.get_value (glyph_id);
     default:return nullptr;
     }
+  }
+
+  inline const T& get_value_or_null (hb_codepoint_t glyph_id, unsigned int num_glyphs) const
+  {
+    const T *v = get_value (glyph_id, num_glyphs);
+    return v ? *v : Null(T);
   }
 
   inline bool sanitize (hb_sanitize_context_t *c) const
@@ -391,6 +293,25 @@ struct Lookup
   public:
   DEFINE_SIZE_UNION (2, format);
 };
+/* Lookup 0 has unbounded size (dependant on num_glyphs).  So we need to defined
+ * special NULL objects for Lookup<> objects, but since it's template our macros
+ * don't work.  So we have to hand-code them here.  UGLY. */
+} /* Close namespace. */
+/* Ugly hand-coded null objects for template Lookup<> :(. */
+extern HB_INTERNAL const unsigned char _hb_Null_AAT_Lookup[2];
+template <>
+/*static*/ inline const AAT::Lookup<OT::HBUINT16>& Null<AAT::Lookup<OT::HBUINT16> > (void) {
+  return *reinterpret_cast<const AAT::Lookup<OT::HBUINT16> *> (_hb_Null_AAT_Lookup);
+}
+template <>
+/*static*/ inline const AAT::Lookup<OT::HBUINT32>& Null<AAT::Lookup<OT::HBUINT32> > (void) {
+  return *reinterpret_cast<const AAT::Lookup<OT::HBUINT32> *> (_hb_Null_AAT_Lookup);
+}
+template <>
+/*static*/ inline const AAT::Lookup<OT::Offset<OT::HBUINT16, false> >& Null<AAT::Lookup<OT::Offset<OT::HBUINT16, false> > > (void) {
+  return *reinterpret_cast<const AAT::Lookup<OT::Offset<OT::HBUINT16, false> > *> (_hb_Null_AAT_Lookup);
+}
+namespace AAT {
 
 
 /*
@@ -439,10 +360,23 @@ struct Entry<void>
 template <typename Extra>
 struct StateTable
 {
+  enum State
+  {
+    STATE_START_OF_TEXT = 0,
+    STATE_START_OF_LINE = 1,
+  };
+  enum Class
+  {
+    CLASS_END_OF_TEXT = 0,
+    CLASS_OUT_OF_BOUNDS = 1,
+    CLASS_DELETED_GLYPH = 2,
+    CLASS_END_OF_LINE = 3,
+  };
+
   inline unsigned int get_class (hb_codepoint_t glyph_id, unsigned int num_glyphs) const
   {
     const HBUINT16 *v = (this+classTable).get_value (glyph_id, num_glyphs);
-    return v ? *v : 1;
+    return v ? (unsigned) *v : (unsigned) CLASS_OUT_OF_BOUNDS;
   }
 
   inline const Entry<Extra> *get_entries () const
@@ -472,6 +406,8 @@ struct StateTable
     const HBUINT16 *states = (this+stateArrayTable).arrayZ;
     const Entry<Extra> *entries = (this+entryTable).arrayZ;
 
+    unsigned int num_classes = nClasses;
+
     unsigned int num_states = 1;
     unsigned int num_entries = 0;
 
@@ -479,20 +415,25 @@ struct StateTable
     unsigned int entry = 0;
     while (state < num_states)
     {
+      if (unlikely (hb_unsigned_mul_overflows (num_classes, states[0].static_size)))
+	return_trace (false);
+
       if (unlikely (!c->check_array (states,
-				     states[0].static_size * nClasses,
-				     num_states)))
+				     num_states,
+				     num_classes * states[0].static_size)))
+	return_trace (false);
+      if ((c->max_ops -= num_states - state) < 0)
 	return_trace (false);
       { /* Sweep new states. */
-	const HBUINT16 *stop = &states[num_states * nClasses];
-	for (const HBUINT16 *p = &states[state * nClasses]; p < stop; p++)
+	const HBUINT16 *stop = &states[num_states * num_classes];
+	for (const HBUINT16 *p = &states[state * num_classes]; p < stop; p++)
 	  num_entries = MAX<unsigned int> (num_entries, *p + 1);
 	state = num_states;
       }
 
-      if (unlikely (!c->check_array (entries,
-				     entries[0].static_size,
-				     num_entries)))
+      if (unlikely (!c->check_array (entries, num_entries)))
+	return_trace (false);
+      if ((c->max_ops -= num_entries - entry) < 0)
 	return_trace (false);
       { /* Sweep new entries. */
 	const Entry<Extra> *stop = &entries[num_entries];
@@ -511,11 +452,11 @@ struct StateTable
   protected:
   HBUINT32	nClasses;	/* Number of classes, which is the number of indices
 				 * in a single line in the state array. */
-  LOffsetTo<Lookup<HBUINT16> >
+  LOffsetTo<Lookup<HBUINT16>, false>
 		classTable;	/* Offset to the class table. */
-  LOffsetTo<UnsizedArrayOf<HBUINT16> >
+  LOffsetTo<UnsizedArrayOf<HBUINT16>, false>
 		stateArrayTable;/* Offset to the state array. */
-  LOffsetTo<UnsizedArrayOf<Entry<Extra> > >
+  LOffsetTo<UnsizedArrayOf<Entry<Extra> >, false>
 		entryTable;	/* Offset to the entry array. */
 
   public:
@@ -535,31 +476,32 @@ struct StateTableDriver
   template <typename context_t>
   inline void drive (context_t *c)
   {
-    hb_glyph_info_t *info = buffer->info;
-
     if (!c->in_place)
       buffer->clear_output ();
 
-    unsigned int state = 0;
+    unsigned int state = StateTable<EntryData>::STATE_START_OF_TEXT;
     bool last_was_dont_advance = false;
     for (buffer->idx = 0;;)
     {
       unsigned int klass = buffer->idx < buffer->len ?
-			   machine.get_class (info[buffer->idx].codepoint, num_glyphs) :
-			   0 /* End of text */;
+			   machine.get_class (buffer->info[buffer->idx].codepoint, num_glyphs) :
+			   (unsigned) StateTable<EntryData>::CLASS_END_OF_TEXT;
       const Entry<EntryData> *entry = machine.get_entryZ (state, klass);
       if (unlikely (!entry))
 	break;
 
       /* Unsafe-to-break before this if not in state 0, as things might
-       * go differently if we start from state 0 here. */
-      if (state && buffer->idx)
+       * go differently if we start from state 0 here.
+       *
+       * Ugh.  The indexing here is ugly... */
+      if (state && buffer->backtrack_len () && buffer->idx < buffer->len)
       {
 	/* If there's no action and we're just epsilon-transitioning to state 0,
 	 * safe to break. */
 	if (c->is_actionable (this, entry) ||
-	    !(entry->newState == 0 && entry->flags == context_t::DontAdvance))
-	  buffer->unsafe_to_break (buffer->idx - 1, buffer->idx + 1);
+	    !(entry->newState == StateTable<EntryData>::STATE_START_OF_TEXT &&
+	      entry->flags == context_t::DontAdvance))
+	  buffer->unsafe_to_break_from_outbuffer (buffer->backtrack_len () - 1, buffer->idx + 1);
       }
 
       /* Unsafe-to-break if end-of-text would kick in here. */
@@ -572,6 +514,8 @@ struct StateTableDriver
 
       if (unlikely (!c->transition (this, entry)))
         break;
+
+      if (unlikely (!buffer->successful)) return;
 
       last_was_dont_advance = (entry->flags & context_t::DontAdvance) && buffer->max_ops-- > 0;
 
@@ -586,9 +530,10 @@ struct StateTableDriver
 
     if (!c->in_place)
     {
-      for (; buffer->idx < buffer->len;)
-        buffer->next_glyph ();
-      buffer->swap_buffers ();
+      for (; buffer->successful && buffer->idx < buffer->len;)
+	buffer->next_glyph ();
+      if (likely (buffer->successful))
+	buffer->swap_buffers ();
     }
   }
 
@@ -599,6 +544,7 @@ struct StateTableDriver
 };
 
 
+struct ankr;
 
 struct hb_aat_apply_context_t :
        hb_dispatch_context_t<hb_aat_apply_context_t, bool, HB_DEBUG_APPLY>
@@ -609,24 +555,33 @@ struct hb_aat_apply_context_t :
   static return_t default_return_value (void) { return false; }
   bool stop_sublookup_iteration (return_t r) const { return r; }
 
+  hb_ot_shape_plan_t *plan;
   hb_font_t *font;
   hb_face_t *face;
   hb_buffer_t *buffer;
   hb_sanitize_context_t sanitizer;
+  const ankr &ankr_table;
+  const char *ankr_end;
 
   /* Unused. For debug tracing only. */
   unsigned int lookup_index;
   unsigned int debug_depth;
 
-  inline hb_aat_apply_context_t (hb_font_t *font_,
+  inline hb_aat_apply_context_t (hb_ot_shape_plan_t *plan_,
+				 hb_font_t *font_,
 				 hb_buffer_t *buffer_,
-				 hb_blob_t *table) :
-		font (font_), face (font->face), buffer (buffer_),
-		sanitizer (), lookup_index (0), debug_depth (0)
+				 hb_blob_t *blob = const_cast<hb_blob_t *> (&Null(hb_blob_t)),
+				 const ankr &ankr_table_ = Null(ankr),
+				 const char *ankr_end_ = nullptr) :
+		plan (plan_), font (font_), face (font->face), buffer (buffer_),
+		sanitizer (),
+		ankr_table (ankr_table_), ankr_end (ankr_end_),
+		lookup_index (0), debug_depth (0)
   {
-    sanitizer.init (table);
+    sanitizer.init (blob);
     sanitizer.set_num_glyphs (face->get_num_glyphs ());
     sanitizer.start_processing ();
+    sanitizer.set_max_ops (HB_SANITIZE_MAX_OPS_MAX);
   }
 
   inline void set_lookup_index (unsigned int i) { lookup_index = i; }

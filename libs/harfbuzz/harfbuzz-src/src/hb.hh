@@ -35,12 +35,18 @@
 #include "config.h"
 #endif
 
+#ifndef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L
+#endif
+
+#if defined (_MSC_VER) && defined (HB_DLL_EXPORT)
+#define HB_EXTERN __declspec (dllexport) extern
+#endif
+
 #include "hb.h"
 #define HB_H_IN
-#ifdef HAVE_OT
 #include "hb-ot.h"
 #define HB_OT_H_IN
-#endif
 
 #include <math.h>
 #include <stdlib.h>
@@ -174,8 +180,10 @@ struct _hb_alignof
 # if !defined(HB_NO_VISIBILITY) && !defined(__MINGW32__) && !defined(__CYGWIN__) && !defined(_MSC_VER) && !defined(__SUNPRO_CC)
 #  define HB_INTERNAL __attribute__((__visibility__("hidden")))
 # elif defined(__MINGW32__)
-   /* We use -export-symbols on mingw32, since it does not support visibility
-    * attribute. */
+   /* We use -export-symbols on mingw32, since it does not support visibility attributes. */
+#  define HB_INTERNAL
+# elif defined (_MSC_VER) && defined (HB_DLL_EXPORT)
+   /* We do not try to export internal symbols on Visual Studio */
 #  define HB_INTERNAL
 #else
 #  define HB_INTERNAL
@@ -229,6 +237,15 @@ struct _hb_alignof
 #  define HB_FALLTHROUGH /* FALLTHROUGH */
 #endif
 
+#if defined(__clang__)
+/* Disable certain sanitizer errors. */
+/* https://github.com/harfbuzz/harfbuzz/issues/1247 */
+#define HB_NO_SANITIZE_SIGNED_INTEGER_OVERFLOW __attribute__((no_sanitize("signed-integer-overflow")))
+#else
+#define HB_NO_SANITIZE_SIGNED_INTEGER_OVERFLOW
+#endif
+
+
 #if defined(_WIN32) || defined(__CYGWIN__)
    /* We need Windows Vista for both Uniscribe backend and for
     * MemoryBarrier.  We don't support compiling on Windows XP,
@@ -237,7 +254,9 @@ struct _hb_alignof
 #    undef _WIN32_WINNT
 #  endif
 #  ifndef _WIN32_WINNT
-#    define _WIN32_WINNT 0x0600
+#    if !defined(WINAPI_FAMILY) || !(WINAPI_FAMILY==WINAPI_FAMILY_PC_APP || WINAPI_FAMILY==WINAPI_FAMILY_PHONE_APP)
+#      define _WIN32_WINNT 0x0600
+#    endif
 #  endif
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN 1
@@ -466,6 +485,14 @@ _hb_memalign(void **memptr, size_t alignment, size_t size)
 #if !defined(posix_memalign) && !defined(HAVE_POSIX_MEMALIGN)
 #define posix_memalign _hb_memalign
 #endif
+
+
+/*
+ * For lack of a better place, put Zawgyi script hack here.
+ * https://github.com/harfbuzz/harfbuzz/issues/1162
+ */
+
+#define HB_SCRIPT_MYANMAR_ZAWGYI	((hb_script_t) HB_TAG ('Q','a','a','g'))
 
 
 /* Headers we include for everyone.  Keep sorted.  They express dependency amongst

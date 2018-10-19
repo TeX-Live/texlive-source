@@ -32,6 +32,9 @@
 #include "hb-buffer.hh"
 
 
+#define HB_OT_MAP_MAX_BITS 8u
+#define HB_OT_MAP_MAX_VALUE ((1u << HB_OT_MAP_MAX_BITS) - 1u)
+
 struct hb_ot_shape_plan_t;
 
 static const hb_tag_t table_tags[2] = {HB_OT_TAG_GSUB, HB_OT_TAG_GPOS};
@@ -52,6 +55,7 @@ struct hb_ot_map_t
     unsigned int needs_fallback : 1;
     unsigned int auto_zwnj : 1;
     unsigned int auto_zwj : 1;
+    unsigned int random : 1;
 
     inline int cmp (const hb_tag_t *tag_) const
     { return *tag_ < tag ? -1 : *tag_ > tag ? 1 : 0; }
@@ -61,6 +65,7 @@ struct hb_ot_map_t
     unsigned short index;
     unsigned short auto_zwnj : 1;
     unsigned short auto_zwj : 1;
+    unsigned short random : 1;
     hb_mask_t mask;
 
     static int cmp (const void *pa, const void *pb)
@@ -161,17 +166,27 @@ struct hb_ot_map_t
   hb_vector_t<stage_map_t, 4> stages[2]; /* GSUB/GPOS */
 };
 
-enum hb_ot_map_feature_flags_t {
+enum hb_ot_map_feature_flags_t
+{
   F_NONE		= 0x0000u,
   F_GLOBAL		= 0x0001u, /* Feature applies to all characters; results in no mask allocated for it. */
   F_HAS_FALLBACK	= 0x0002u, /* Has fallback implementation, so include mask bit even if feature not found. */
   F_MANUAL_ZWNJ		= 0x0004u, /* Don't skip over ZWNJ when matching **context**. */
   F_MANUAL_ZWJ		= 0x0008u, /* Don't skip over ZWJ when matching **input**. */
-  F_GLOBAL_SEARCH	= 0x0010u  /* If feature not found in LangSys, look for it in global feature list and pick one. */
+  F_MANUAL_JOINERS	= F_MANUAL_ZWNJ | F_MANUAL_ZWJ,
+  F_GLOBAL_MANUAL_JOINERS= F_GLOBAL | F_MANUAL_JOINERS,
+  F_GLOBAL_HAS_FALLBACK = F_GLOBAL | F_HAS_FALLBACK,
+  F_GLOBAL_SEARCH	= 0x0010u, /* If feature not found in LangSys, look for it in global feature list and pick one. */
+  F_RANDOM		= 0x0020u  /* Randomly select a glyph from an AlternateSubstFormat1 subtable. */
 };
 HB_MARK_AS_FLAG_T (hb_ot_map_feature_flags_t);
-/* Macro version for where const is desired. */
-#define F_COMBINE(l,r) (hb_ot_map_feature_flags_t ((unsigned int) (l) | (unsigned int) (r)))
+
+
+struct hb_ot_map_feature_t
+{
+  hb_tag_t tag;
+  hb_ot_map_feature_flags_t flags;
+};
 
 
 struct hb_ot_map_builder_t
@@ -183,11 +198,20 @@ struct hb_ot_map_builder_t
 
   HB_INTERNAL ~hb_ot_map_builder_t (void);
 
-  HB_INTERNAL void add_feature (hb_tag_t tag, unsigned int value,
-				hb_ot_map_feature_flags_t flags);
+  HB_INTERNAL void add_feature (hb_tag_t tag,
+				hb_ot_map_feature_flags_t flags=F_NONE,
+				unsigned int value=1);
 
-  inline void add_global_bool_feature (hb_tag_t tag)
-  { add_feature (tag, 1, F_GLOBAL); }
+  inline void add_feature (const hb_ot_map_feature_t &feat)
+  { add_feature (feat.tag, feat.flags); }
+
+  inline void enable_feature (hb_tag_t tag,
+			      hb_ot_map_feature_flags_t flags=F_NONE,
+			      unsigned int value=1)
+  { add_feature (tag, F_GLOBAL | flags, value); }
+
+  inline void disable_feature (hb_tag_t tag)
+  { add_feature (tag, F_GLOBAL, 0); }
 
   inline void add_gsub_pause (hb_ot_map_t::pause_func_t pause_func)
   { add_pause (0, pause_func); }
@@ -206,7 +230,8 @@ struct hb_ot_map_builder_t
 				unsigned int  variations_index,
 				hb_mask_t     mask,
 				bool          auto_zwnj = true,
-				bool          auto_zwj = true);
+				bool          auto_zwj = true,
+				bool          random = false);
 
   struct feature_info_t {
     hb_tag_t tag;

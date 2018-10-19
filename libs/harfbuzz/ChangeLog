@@ -1,3 +1,8 @@
+2018-10-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import harfbuzz-2.0.0.
+	* version.ac, Makefile.am, include/Makefile.am: Adjusted.
+
 2018-10-20  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* configure.ac: Set HAVE_ICU_BUILTIN.

@@ -45,8 +45,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void cbdt_callback (const uint8_t* data, unsigned int length,
-                    unsigned int group, unsigned int gid)
+static void cbdt_callback (const uint8_t* data, unsigned int length,
+			   unsigned int group, unsigned int gid)
 {
   char output_path[255];
   sprintf (output_path, "out/cbdt-%d-%d.png", group, gid);
@@ -55,8 +55,8 @@ void cbdt_callback (const uint8_t* data, unsigned int length,
   fclose (f);
 }
 
-void sbix_callback (const uint8_t* data, unsigned int length,
-                    unsigned int group, unsigned int gid)
+static void sbix_callback (const uint8_t* data, unsigned int length,
+			   unsigned int group, unsigned int gid)
 {
   char output_path[255];
   sprintf (output_path, "out/sbix-%d-%d.png", group, gid);
@@ -65,8 +65,8 @@ void sbix_callback (const uint8_t* data, unsigned int length,
   fclose (f);
 }
 
-void svg_callback (const uint8_t* data, unsigned int length,
-                   unsigned int start_glyph, unsigned int end_glyph)
+static void svg_callback (const uint8_t* data, unsigned int length,
+			  unsigned int start_glyph, unsigned int end_glyph)
 {
   char output_path[255];
   if (start_glyph == end_glyph)
@@ -83,8 +83,8 @@ void svg_callback (const uint8_t* data, unsigned int length,
   fclose (f);
 }
 
-void colr_cpal_rendering (cairo_font_face_t *cairo_face, unsigned int upem, unsigned int num_glyphs,
-			  const OT::COLR *colr, const OT::CPAL *cpal)
+static void colr_cpal_rendering (cairo_font_face_t *cairo_face, unsigned int upem, unsigned int num_glyphs,
+				 const OT::COLR *colr, const OT::CPAL *cpal)
 {
   for (unsigned int i = 0; i < num_glyphs; ++i)
   {
@@ -146,7 +146,7 @@ void colr_cpal_rendering (cairo_font_face_t *cairo_face, unsigned int upem, unsi
 	  int r = (color >> 8) & 0xFF;
 	  int g = (color >> 16) & 0xFF;
 	  int b = (color >> 24) & 0xFF;
-	  cairo_set_source_rgba (cr, r / 255.f, g / 255.f, b / 255.f, alpha);
+	  cairo_set_source_rgba (cr, r / 255., g / 255., b / 255., alpha);
 
 	  cairo_glyph_t glyph;
 	  glyph.index = glyph_id;
@@ -162,7 +162,8 @@ void colr_cpal_rendering (cairo_font_face_t *cairo_face, unsigned int upem, unsi
   }
 }
 
-void dump_glyphs (cairo_font_face_t *cairo_face, unsigned int upem, unsigned int num_glyphs)
+static void dump_glyphs (cairo_font_face_t *cairo_face, unsigned int upem,
+			 unsigned int num_glyphs)
 {
   // Dump every glyph available on the font
   return; // disabled for now
@@ -210,9 +211,28 @@ void dump_glyphs (cairo_font_face_t *cairo_face, unsigned int upem, unsigned int
 int main (int argc, char **argv)
 {
   if (argc != 2) {
-    fprintf (stderr, "usage: %s font-file.ttf\n", argv[0]);
+    fprintf (stderr, "usage: %s font-file.ttf\n"
+		     "run it like `rm -rf out && mkdir out && %s font-file.ttf`\n",
+		     argv[0], argv[0]);
     exit (1);
   }
+
+
+  FILE *font_name_file = fopen ("out/_font_name_file.txt", "r");
+  if (font_name_file != nullptr)
+  {
+    fprintf (stderr, "Purge or move ./out folder in order to run a new dump\n");
+    exit (1);
+  }
+
+  font_name_file = fopen ("out/_font_name_file.txt", "w");
+  if (font_name_file == nullptr)
+  {
+    fprintf (stderr, "./out is not accessible, create it please\n");
+    exit (1);
+  }
+  fwrite (argv[1], 1, strlen (argv[1]), font_name_file);
+  fclose (font_name_file);
 
   hb_blob_t *blob = hb_blob_create_from_file (argv[1]);
   hb_face_t *face = hb_face_create (blob, 0);

@@ -541,6 +541,10 @@ struct AlternateSet
     unsigned int shift = hb_ctz (lookup_mask);
     unsigned int alt_index = ((lookup_mask & glyph_mask) >> shift);
 
+    /* If alt_index is MAX, randomize feature if it is the rand feature. */
+    if (alt_index == HB_OT_MAP_MAX_VALUE && c->random)
+      alt_index = c->random_number () % count + 1;
+
     if (unlikely (alt_index > count || alt_index == 0)) return_trace (false);
 
     c->replace_glyph (alternates[alt_index - 1]);
@@ -706,7 +710,7 @@ struct Ligature
 {
   inline bool intersects (const hb_set_t *glyphs) const
   {
-    unsigned int count = component.len;
+    unsigned int count = component.lenP1;
     for (unsigned int i = 1; i < count; i++)
       if (!glyphs->has (component[i]))
         return false;
@@ -716,7 +720,7 @@ struct Ligature
   inline void closure (hb_closure_context_t *c) const
   {
     TRACE_CLOSURE (this);
-    unsigned int count = component.len;
+    unsigned int count = component.lenP1;
     for (unsigned int i = 1; i < count; i++)
       if (!c->glyphs->has (component[i]))
         return;
@@ -726,14 +730,14 @@ struct Ligature
   inline void collect_glyphs (hb_collect_glyphs_context_t *c) const
   {
     TRACE_COLLECT_GLYPHS (this);
-    c->input->add_array (component.arrayZ, component.len ? component.len - 1 : 0);
+    c->input->add_array (component.arrayZ, component.lenP1 ? component.lenP1 - 1 : 0);
     c->output->add (ligGlyph);
   }
 
   inline bool would_apply (hb_would_apply_context_t *c) const
   {
     TRACE_WOULD_APPLY (this);
-    if (c->len != component.len)
+    if (c->len != component.lenP1)
       return_trace (false);
 
     for (unsigned int i = 1; i < c->len; i++)
@@ -746,7 +750,7 @@ struct Ligature
   inline bool apply (hb_ot_apply_context_t *c) const
   {
     TRACE_APPLY (this);
-    unsigned int count = component.len;
+    unsigned int count = component.lenP1;
 
     if (unlikely (!count)) return_trace (false);
 
@@ -758,7 +762,6 @@ struct Ligature
       return_trace (true);
     }
 
-    bool is_mark_ligature = false;
     unsigned int total_component_count = 0;
 
     unsigned int match_length = 0;
@@ -770,7 +773,6 @@ struct Ligature
 			      nullptr,
 			      &match_length,
 			      match_positions,
-			      &is_mark_ligature,
 			      &total_component_count)))
       return_trace (false);
 
@@ -779,7 +781,6 @@ struct Ligature
 		  match_positions,
 		  match_length,
 		  ligGlyph,
-		  is_mark_ligature,
 		  total_component_count);
 
     return_trace (true);

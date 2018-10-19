@@ -85,9 +85,6 @@
 /* Define to 1 if you have the `newlocale' function. */
 #undef HAVE_NEWLOCALE
 
-/* Have native OpenType Layout backend */
-#undef HAVE_OT
-
 /* Define to 1 if you have the `posix_memalign' function. */
 #undef HAVE_POSIX_MEMALIGN
 

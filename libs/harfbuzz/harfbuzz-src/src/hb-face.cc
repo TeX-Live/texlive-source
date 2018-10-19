@@ -36,12 +36,12 @@
 
 
 /**
- * hb_face_count: Get number of faces on the blob
- * @blob:
+ * hb_face_count:
+ * @blob: a blob.
  *
+ * Get number of faces in a blob.
  *
- *
- * Return value: Number of faces on the blob
+ * Return value: Number of faces in @blob
  *
  * Since: 1.7.7
  **/
@@ -163,11 +163,12 @@ _hb_face_for_data_reference_table (hb_face_t *face HB_UNUSED, hb_tag_t tag, void
     return hb_blob_reference (data->blob);
 
   const OT::OpenTypeFontFile &ot_file = *data->blob->as<OT::OpenTypeFontFile> ();
-  const OT::OpenTypeFontFace &ot_face = ot_file.get_face (data->index);
+  unsigned int base_offset;
+  const OT::OpenTypeFontFace &ot_face = ot_file.get_face (data->index, &base_offset);
 
   const OT::OpenTypeTable &table = ot_face.get_table_by_tag (tag);
 
-  hb_blob_t *blob = hb_blob_create_sub_blob (data->blob, table.offset, table.length);
+  hb_blob_t *blob = hb_blob_create_sub_blob (data->blob, base_offset + table.offset, table.length);
 
   return blob;
 }
@@ -323,6 +324,8 @@ void
 hb_face_make_immutable (hb_face_t *face)
 {
   if (unlikely (hb_object_is_inert (face)))
+    return;
+  if (face->immutable)
     return;
 
   face->immutable = true;
@@ -487,6 +490,9 @@ hb_face_get_glyph_count (const hb_face_t *face)
 /**
  * hb_face_get_table_tags:
  * @face: a face.
+ * @start_offset: index of first tag to return.
+ * @table_count: input length of @table_tags array, output number of items written.
+ * @table_tags: array to write tags into.
  *
  * Retrieves table tags for a face, if possible.
  *
@@ -628,7 +634,7 @@ _hb_face_builder_data_reference_blob (hb_face_builder_data_t *data)
   unsigned int face_length = table_count * 16 + 12;
 
   for (unsigned int i = 0; i < table_count; i++)
-    face_length += hb_ceil_to_4 (hb_blob_get_length (data->tables.arrayZ[i].blob));
+    face_length += hb_ceil_to_4 (hb_blob_get_length (data->tables[i].blob));
 
   char *buf = (char *) malloc (face_length);
   if (unlikely (!buf))
@@ -682,7 +688,7 @@ _hb_face_builder_reference_table (hb_face_t *face, hb_tag_t tag, void *user_data
  * After tables are added to the face, it can be compiled to a binary
  * font file by calling hb_face_reference_blob().
  *
- * Return value: (transfer full) New face.
+ * Return value: (transfer full): New face.
  *
  * Since: 1.9.0
  **/

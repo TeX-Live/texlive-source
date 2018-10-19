@@ -36,7 +36,7 @@
 
 /* Global nul-content Null pool.  Enlarge as necessary. */
 
-#define HB_NULL_POOL_SIZE 264
+#define HB_NULL_POOL_SIZE 1024
 
 extern HB_INTERNAL
 hb_vector_size_impl_t const _hb_NullPool[(HB_NULL_POOL_SIZE + sizeof (hb_vector_size_impl_t) - 1) / sizeof (hb_vector_size_impl_t)];
@@ -72,19 +72,6 @@ static inline Type const & Null (void) {
 static_assert (true, "Just so we take semicolon after.")
 #define DEFINE_NULL_INSTANCE(Type) \
 	const Type _hb_Null_##Type
-
-/* Specializaiton to disallow Null objects. */
-#define DECLARE_NULL_DISALLOW(Type) \
-	template <> inline const Type& Null<Type> (void)
-#define DECLARE_NULL_NAMSPACE_DISALLOW(Namespace, Type) \
-	} /* Close namespace. */ \
-	template <> \
-	/*static*/ inline const Namespace::Type& Null<Namespace::Type> (void) { \
-	  extern void *_hb_undefined; \
-	  return *reinterpret_cast<const Namespace::Type *> (_hb_undefined); \
-	} \
-	namespace Namespace { \
-	static_assert (true, "Just so we take semicolon after.")
 
 /* Global writable pool.  Enlarge as necessary. */
 

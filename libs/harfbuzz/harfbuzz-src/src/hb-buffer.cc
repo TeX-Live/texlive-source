@@ -182,7 +182,11 @@ hb_buffer_t::shift_forward (unsigned int count)
   if (idx + count > len)
   {
     /* Under memory failure we might expose this area.  At least
-     * clean it up.  Oh well... */
+     * clean it up.  Oh well...
+     *
+     * Ideally, we should at least set Default_Ignorable bits on
+     * these, as well as consistent cluster values.  But the former
+     * is layering violation... */
     memset (info + len, 0, (idx + count - len) * sizeof (info[0]));
   }
   len += count;
@@ -219,6 +223,7 @@ hb_buffer_t::reset (void)
   unicode = hb_unicode_funcs_reference (hb_unicode_funcs_get_default ());
   flags = HB_BUFFER_FLAG_DEFAULT;
   replacement = HB_BUFFER_REPLACEMENT_CODEPOINT_DEFAULT;
+  invisible = 0;
 
   clear ();
 }
@@ -354,6 +359,8 @@ hb_buffer_t::replace_glyphs (unsigned int num_in,
 {
   if (unlikely (!make_room_for (num_in, num_out))) return;
 
+  assert (idx + num_in <= len);
+
   merge_clusters (idx, idx + num_in);
 
   hb_glyph_info_t orig_info = info[idx];
@@ -367,37 +374,6 @@ hb_buffer_t::replace_glyphs (unsigned int num_in,
 
   idx  += num_in;
   out_len += num_out;
-}
-
-void
-hb_buffer_t::output_glyph (hb_codepoint_t glyph_index)
-{
-  if (unlikely (!make_room_for (0, 1))) return;
-
-  out_info[out_len] = info[idx];
-  out_info[out_len].codepoint = glyph_index;
-
-  out_len++;
-}
-
-void
-hb_buffer_t::output_info (const hb_glyph_info_t &glyph_info)
-{
-  if (unlikely (!make_room_for (0, 1))) return;
-
-  out_info[out_len] = glyph_info;
-
-  out_len++;
-}
-
-void
-hb_buffer_t::copy_glyph (void)
-{
-  if (unlikely (!make_room_for (0, 1))) return;
-
-  out_info[out_len] = info[idx];
-
-  out_len++;
 }
 
 bool
@@ -429,8 +405,14 @@ hb_buffer_t::move_to (unsigned int i)
     unsigned int count = out_len - i;
 
     /* This will blow in our face if memory allocation fails later
-     * in this same lookup... */
-    if (unlikely (idx < count && !shift_forward (count + 32))) return false;
+     * in this same lookup...
+     *
+     * We used to shift with extra 32 items, instead of the 0 below.
+     * But that would leave empty slots in the buffer in case of allocation
+     * failures.  Setting to zero for now to avoid other problems (see
+     * comments in shift_forward().  This can cause O(N^2) behavior more
+     * severely than adding 32 empty slots can... */
+    if (unlikely (idx < count && !shift_forward (count + 0))) return false;
 
     assert (idx >= count);
 
@@ -440,19 +422,6 @@ hb_buffer_t::move_to (unsigned int i)
   }
 
   return true;
-}
-
-void
-hb_buffer_t::replace_glyph (hb_codepoint_t glyph_index)
-{
-  if (unlikely (out_info != info || out_len != idx)) {
-    if (unlikely (!make_room_for (1, 1))) return;
-    out_info[out_len] = info[idx];
-  }
-  out_info[out_len].codepoint = glyph_index;
-
-  idx++;
-  out_len++;
 }
 
 
@@ -709,6 +678,7 @@ DEFINE_NULL_INSTANCE (hb_buffer_t) =
   HB_BUFFER_FLAG_DEFAULT,
   HB_BUFFER_CLUSTER_LEVEL_DEFAULT,
   HB_BUFFER_REPLACEMENT_CODEPOINT_DEFAULT,
+  0, /* invisible */
   HB_BUFFER_SCRATCH_FLAG_DEFAULT,
   HB_BUFFER_MAX_LEN_DEFAULT,
   HB_BUFFER_MAX_OPS_DEFAULT,
@@ -1028,7 +998,7 @@ hb_buffer_get_script (hb_buffer_t *buffer)
  * are orthogonal to the scripts, and though they are related, they are
  * different concepts and should not be confused with each other.
  *
- * Use hb_language_from_string() to convert from ISO 639 language codes to
+ * Use hb_language_from_string() to convert from BCP 47 language tags to
  * #hb_language_t.
  *
  * Since: 0.9.2
@@ -1207,6 +1177,46 @@ hb_codepoint_t
 hb_buffer_get_replacement_codepoint (hb_buffer_t    *buffer)
 {
   return buffer->replacement;
+}
+
+
+/**
+ * hb_buffer_set_invisible_glyph:
+ * @buffer: an #hb_buffer_t.
+ * @invisible: the invisible #hb_codepoint_t
+ *
+ * Sets the #hb_codepoint_t that replaces invisible characters in
+ * the shaping result.  If set to zero (default), the glyph for the
+ * U+0020 SPACE character is used.  Otherwise, this value is used
+ * verbatim.
+ *
+ * Since: 2.0.0
+ **/
+void
+hb_buffer_set_invisible_glyph (hb_buffer_t    *buffer,
+			       hb_codepoint_t  invisible)
+{
+  if (unlikely (hb_object_is_inert (buffer)))
+    return;
+
+  buffer->invisible = invisible;
+}
+
+/**
+ * hb_buffer_get_invisible_glyph:
+ * @buffer: an #hb_buffer_t.
+ *
+ * See hb_buffer_set_invisible_glyph().
+ *
+ * Return value: 
+ * The @buffer invisible #hb_codepoint_t.
+ *
+ * Since: 2.0.0
+ **/
+hb_codepoint_t
+hb_buffer_get_invisible_glyph (hb_buffer_t    *buffer)
+{
+  return buffer->invisible;
 }
 
 
@@ -1499,6 +1509,8 @@ hb_buffer_reverse_clusters (hb_buffer_t *buffer)
  * it will be set to the process's default language as returned by
  * hb_language_get_default().  This may change in the future by
  * taking buffer script into consideration when choosing a language.
+ * Note that hb_language_get_default() is NOT threadsafe the first time
+ * it is called.  See documentation for that function for details.
  *
  * Since: 0.9.7
  **/
@@ -1887,6 +1899,10 @@ hb_buffer_t::sort (unsigned int start, unsigned int end, int(*compar)(const hb_g
 
 /**
  * hb_buffer_diff:
+ * @buffer: a buffer.
+ * @reference: other buffer to compare to.
+ * @dottedcircle_glyph: glyph id of U+25CC DOTTED CIRCLE, or (hb_codepont_t) -1.
+ * @position_fuzz: allowed absolute difference in position values.
  *
  * If dottedcircle_glyph is (hb_codepoint_t) -1 then %HB_BUFFER_DIFF_FLAG_DOTTED_CIRCLE_PRESENT
  * and %HB_BUFFER_DIFF_FLAG_NOTDEF_PRESENT are never returned.  This should be used by most

@@ -7,6 +7,7 @@ HB_BASE_sources = \
 	hb-buffer.hh \
 	hb-buffer-serialize.cc \
 	hb-buffer.cc \
+	hb-cache.hh \
 	hb-common.cc \
 	hb-debug.hh \
 	hb-dsalgs.hh \
@@ -37,6 +38,7 @@ HB_BASE_sources = \
 	hb-ot-os2-unicode-ranges.hh \
 	hb-ot-post-macroman.hh \
 	hb-ot-post-table.hh \
+	hb-ot-tag-table.hh \
 	hb-ot-tag.cc \
 	hb.hh \
 	hb-set-digest.hh \
@@ -52,6 +54,7 @@ HB_BASE_sources = \
 	hb-static.cc \
 	hb-string-array.hh \
 	hb-unicode.hh \
+	hb-unicode-emoji-table.hh \
 	hb-unicode.cc \
 	hb-vector.hh \
 	hb-utf.hh \
@@ -136,7 +139,6 @@ HB_OT_sources = \
 	hb-ot-shape-complex-myanmar.hh \
 	hb-ot-shape-complex-myanmar.cc \
 	hb-ot-shape-complex-thai.cc \
-	hb-ot-shape-complex-tibetan.cc \
 	hb-ot-shape-complex-use.cc \
 	hb-ot-shape-complex-use.hh \
 	hb-ot-shape-complex-use-table.cc \
@@ -171,6 +173,7 @@ HB_OT_headers = \
 	hb-ot-font.h \
 	hb-ot-layout.h \
 	hb-ot-math.h \
+	hb-ot-name.h \
 	hb-ot-shape.h \
 	hb-ot-tag.h \
 	hb-ot-var.h \

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2012  Google, Inc.
+ * Copyright © 2018  Ebrahim Byagowi.
  *
  *  This is part of HarfBuzz, a text shaping library.
  *
@@ -20,34 +20,34 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE COPYRIGHT HOLDER HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *
- * Google Author(s): Behdad Esfahbod
  */
 
-#ifndef HB_OT_SHAPE_FALLBACK_HH
-#define HB_OT_SHAPE_FALLBACK_HH
+#ifndef HB_OT_H_IN
+#error "Include <hb-ot.h> instead."
+#endif
 
-#include "hb.hh"
+#ifndef HB_OT_NAME_H
+#define HB_OT_NAME_H
 
-#include "hb-ot-shape.hh"
+#include "hb.h"
 
-
-HB_INTERNAL void _hb_ot_shape_fallback_mark_position (const hb_ot_shape_plan_t *plan,
-						      hb_font_t *font,
-						      hb_buffer_t  *buffer);
-
-HB_INTERNAL void _hb_ot_shape_fallback_mark_position_recategorize_marks (const hb_ot_shape_plan_t *plan,
-									 hb_font_t *font,
-									 hb_buffer_t  *buffer);
+HB_BEGIN_DECLS
 
 
-HB_INTERNAL void _hb_ot_shape_fallback_kern (const hb_ot_shape_plan_t *plan,
-					     hb_font_t *font,
-					     hb_buffer_t  *buffer);
+/**
+ * hb_name_id_t:
+ *
+ * Since: 2.0.0
+ */
+typedef unsigned int hb_name_id_t;
 
-HB_INTERNAL void _hb_ot_shape_fallback_spaces (const hb_ot_shape_plan_t *plan,
-					       hb_font_t *font,
-					       hb_buffer_t  *buffer);
+/**
+ * HB_NAME_ID_INVALID
+ *
+ * Since: 2.0.0
+ **/
+#define HB_NAME_ID_INVALID 0xFFFF
 
+HB_END_DECLS
 
-#endif /* HB_OT_SHAPE_FALLBACK_HH */
+#endif /* HB_OT_NAME_H */

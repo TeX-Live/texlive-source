@@ -217,6 +217,9 @@ struct hb_dispatch_context_t
 #ifndef HB_SANITIZE_MAX_OPS_MIN
 #define HB_SANITIZE_MAX_OPS_MIN 16384
 #endif
+#ifndef HB_SANITIZE_MAX_OPS_MAX
+#define HB_SANITIZE_MAX_OPS_MAX 0x3FFFFFFF
+#endif
 
 struct hb_sanitize_context_t :
        hb_dispatch_context_t<hb_sanitize_context_t, bool, HB_DEBUG_SANITIZE>
@@ -224,7 +227,8 @@ struct hb_sanitize_context_t :
   inline hb_sanitize_context_t (void) :
 	debug_depth (0),
 	start (nullptr), end (nullptr),
-	writable (false), edit_count (0), max_ops (0),
+	max_ops (0),
+	writable (false), edit_count (0),
 	blob (nullptr),
 	num_glyphs (65536),
 	num_glyphs_set (false) {}
@@ -251,6 +255,23 @@ struct hb_sanitize_context_t :
     num_glyphs_set = true;
   }
   inline unsigned int get_num_glyphs (void) { return num_glyphs; }
+
+  inline void set_max_ops (int max_ops_) { max_ops = max_ops_; }
+
+  /* TODO
+   * This set_object() thing is to use sanitize at runtime lookup
+   * application time.  This is very distinct from the regular
+   * sanitizer operation, so, eventually, separate into another
+   * type and make hb_aat_apply_context_t use that one instead
+   * of abusing this one.
+   */
+  template <typename T>
+  inline void set_object (const T& obj)
+  {
+    this->start = (const char *) &obj;
+    this->end = (const char *) &obj + obj.get_size ();
+    assert (this->start <= this->end); /* Must not overflow. */
+  }
 
   inline void start_processing (void)
   {
@@ -282,10 +303,10 @@ struct hb_sanitize_context_t :
   inline bool check_range (const void *base, unsigned int len) const
   {
     const char *p = (const char *) base;
-    bool ok = this->max_ops-- > 0 &&
-	      this->start <= p &&
+    bool ok = this->start <= p &&
 	      p <= this->end &&
-	      (unsigned int) (this->end - p) >= len;
+	      (unsigned int) (this->end - p) >= len &&
+	      this->max_ops-- > 0;
 
     DEBUG_MSG_LEVEL (SANITIZE, p, this->debug_depth+1, 0,
        "check_range [%p..%p] (%d bytes) in [%p..%p] -> %s",
@@ -296,7 +317,8 @@ struct hb_sanitize_context_t :
     return likely (ok);
   }
 
-  inline bool check_array (const void *base, unsigned int record_size, unsigned int len) const
+  template <typename T>
+  inline bool check_array (const T *base, unsigned int len, unsigned int record_size = T::static_size) const
   {
     const char *p = (const char *) base;
     bool overflows = hb_unsigned_mul_overflows (len, record_size);
@@ -422,10 +444,10 @@ struct hb_sanitize_context_t :
 
   mutable unsigned int debug_depth;
   const char *start, *end;
+  mutable int max_ops;
   private:
   bool writable;
   unsigned int edit_count;
-  mutable int max_ops;
   hb_blob_t *blob;
   unsigned int num_glyphs;
   bool  num_glyphs_set;
@@ -590,7 +612,7 @@ struct Supplier
   }
   inline Supplier (const hb_vector_t<Type> *v)
   {
-    head = v->arrayZ;
+    head = v->arrayZ();
     len = v->len;
     stride = sizeof (Type);
   }
