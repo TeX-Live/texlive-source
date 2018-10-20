@@ -1,3 +1,276 @@
+commit 7c2c8ac301b526da8b5384d6b90f156ca096568e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 19:37:46 2018 -0700
+
+    2.0.1
+
+ NEWS             | 15 ++++++++++++++-
+ configure.ac     |  2 +-
+ src/hb-version.h |  4 ++--
+ 3 files changed, 17 insertions(+), 4 deletions(-)
+
+commit 5a24ea15e0c242c3e2a4a49980da3ab7dd61a3df
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Sat Oct 20 08:09:52 2018 +0700
+
+    Make more 'coords' params const.
+
+ src/hb-ot-layout-common.hh   | 8 ++++----
+ src/hb-ot-layout-gsubgpos.hh | 2 +-
+ src/hb-ot-var-hvar-table.hh  | 2 +-
+ src/hb-ot-var-mvar-table.hh  | 2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 08b7172969b442cc83b47f44e685a0495b2d8cd4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 19:12:33 2018 -0700
+
+    [font] Fix parallel funcs passing to eachover in infinite-loop
+
+    Fixes test just added.
+
+ src/hb-font.cc | 20 +++++++++++++-------
+ src/hb-font.hh |  8 ++++++++
+ 2 files changed, 21 insertions(+), 7 deletions(-)
+
+commit 77d5c3df07bec8e9d2dd57f89d5810b768bdc4f5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 19:01:01 2018 -0700
+
+    [font] Add failing test amongst font-func parallels infinite-looping
+
+    Reported by Nona while updating Android to HarfBuzz 2.0.0.
+
+ test/api/test-font.c | 64
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
+commit 29d877518fc2c29083cd7b955b422087966235f7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 16:06:54 2018 -0700
+
+    [kerx] Implement variation-kerning tables (without the variation part)
+
+    SFSNDisplay uses these.  We just apply the default kern without
+    variations right now.  But at least makes the default kern work.
+
+ src/hb-aat-layout-kerx-table.hh | 37
+ +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
+
+commit f7c0b4319c6f82f1e0020a0029469d8953a7a161
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 15:23:49 2018 -0700
+
+    [aat] Implement LookupFormat10
+
+ src/hb-aat-layout-ankr-table.hh |  6 +++--
+ src/hb-aat-layout-common.hh     | 55
+ ++++++++++++++++++++++++++++++++++++++---
+ src/hb-machinery.hh             |  4 +++
+ src/hb-open-type.hh             |  3 +++
+ 4 files changed, 63 insertions(+), 5 deletions(-)
+
+commit 257ded1f9ec653d15e79d2ea0a83bd8c5c53d831
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 11:20:14 2018 -0700
+
+    [trak] Fix test for previous fix
+
+ test/shaping/data/in-house/tests/aat-trak.tests | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 72bb139b807c21f1569058fb5fb260dcdd81eba4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 11:15:35 2018 -0700
+
+    [RELEASING] Post-mortem
+
+    Re https://github.com/harfbuzz/harfbuzz/issues/1271
+
+ RELEASING.md | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 79b63561552bdfe8dc67a450d740fda8802486ad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 11:00:20 2018 -0700
+
+    [trak] Fix extrapolation at end side
+
+ src/hb-aat-layout-trak-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2352cc3539b2e58d0481cdb8b9cd48cbc09a778e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 09:58:45 2018 -0700
+
+    [kerx] Whitespace
+
+ src/hb-aat-layout-kerx-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 114f66dda6a07d61b5e64da5c44b05db7aa51cc9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 12:05:26 2018 +0330
+
+    Fix hb_map_is_empty logic
+
+    This needs reviewing
+
+ src/hb-map.hh       |  2 +-
+ test/api/test-map.c | 13 ++++++++-----
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+commit 9df2fb1611e03e401f0d5a9432b440641085ba1e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 12:04:47 2018 +0330
+
+    Add API tests for hb_map_t
+
+ src/Makefile.am      |   2 +-
+ test/api/Makefile.am |   6 ++-
+ test/api/test-map.c  | 114
+ +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 120 insertions(+), 2 deletions(-)
+
+commit 8a5eba711069285e8d8b6d682eea0090256527bb
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 10:20:16 2018 +0330
+
+    [test] cosmetic, use g_assert_cmpint
+
+ test/api/test-ot-name.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+commit c6eb5e852c24e12fec3138cf9def5eb76acedfd6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 10:14:25 2018 +0330
+
+    Don't report deprecated symbols as unused symbols
+
+ src/Makefile.am      | 2 ++
+ test/api/Makefile.am | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+commit 34f357c78a7a530fdb3580ec9d3d865600c06128
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 10:13:53 2018 +0330
+
+    Add test for hb_set_del
+
+ test/api/test-set.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 4594730f64e534e975065afce925b581fd9c6acd
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Fri Oct 19 22:12:25 2018 +0700
+
+    Remove redundant return at end of void-returning function.
+
+ src/hb-ot-layout-gsubgpos.hh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 093c7c4a54b37f5b12ad21e2d67f109597d068b1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 18:46:41 2018 +0330
+
+    [ci] Run valgrind on test/api
+
+    run-shape-fuzzer-tests.py automatically runs valgrind if see available
+    but test/api runs it by request, we probably should normalize the
+    approaches
+    later
+
+ .circleci/config.yml | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 8d1e479d1dcf7789be99a6cd0db0b883a90299dc
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Thu Oct 18 22:18:42 2018 +0700
+
+    Use bool literals instead of 0/1.
+
+ src/hb-common.cc               | 2 +-
+ src/hb-coretext.cc             | 4 ++--
+ src/hb-ot-layout-gpos-table.hh | 2 +-
+ src/hb-ot-tag.cc               | 2 +-
+ src/hb-shape-plan.cc           | 8 ++++----
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+
+commit 257d0e5aa36fd5b3e54e04918ce12bb7d7e0d177
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Fri Oct 19 22:49:21 2018 +0700
+
+    Fix typos.
+
+ BUILD.md                       | 2 +-
+ CMakeLists.txt                 | 8 ++++----
+ README.python.md               | 2 +-
+ README.wine.md                 | 6 +++---
+ src/hb-machinery.hh            | 2 +-
+ src/hb-null.hh                 | 4 ++--
+ src/hb-open-file.hh            | 2 +-
+ src/hb-ot-layout-common.hh     | 2 +-
+ src/hb-ot-layout-gdef-table.hh | 2 +-
+ src/hb-ot-layout-gsub-table.hh | 2 +-
+ src/hb-ot-layout-gsubgpos.hh   | 2 +-
+ 11 files changed, 17 insertions(+), 17 deletions(-)
+
+commit b7cef8cb1dfaf1f0f2c0d79b96b171049b69466a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 09:24:21 2018 +0330
+
+    Enable valgrind and dedicate a bot to it
+
+ .circleci/config.yml                   | 13 +++++++++++++
+ test/fuzzing/run-shape-fuzzer-tests.py | 31
+ +++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+)
+
+commit bccd09d6c7baa99fdaccb8c5b3ff7e1834edd3bf
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 09:06:42 2018 +0330
+
+    Minor, tweak spaces on hb-shape-fuzzer.cc
+
+ test/fuzzing/hb-shape-fuzzer.cc | 42
+ ++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
+
+commit fbf665b307c8cc9f16f5897671bfdd8719a195b5
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 08:09:53 2018 +0330
+
+    [fuzz] Add more found cases (#1275)
+
+ ...clusterfuzz-testcase-hb-shape-fuzzer-5728971283496960 | Bin 0 ->
+ 101 bytes
+ ...terfuzz-testcase-minimized-hb-fuzzer-5713868010553344 | Bin 0 ->
+ 370 bytes
+ ...terfuzz-testcase-minimized-hb-fuzzer-6278851874258944 | Bin 0 ->
+ 598 bytes
+ ...z-testcase-minimized-hb-shape-fuzzer-5649959857160192 | Bin 0 ->
+ 3608 bytes
+ ...z-testcase-minimized-hb-shape-fuzzer-5664873493561344 | Bin 0 ->
+ 400 bytes
+ ...z-testcase-minimized-hb-shape-fuzzer-5762953198960640 | Bin 0 ->
+ 62 bytes
+ ...z-testcase-minimized-hb-shape-fuzzer-5764636557705216 | Bin 0 ->
+ 2184 bytes
+ ...-testcase-minimized-hb-subset-fuzzer-5690658895953920 | Bin 0 ->
+ 2735 bytes
+ ...-testcase-minimized-hb-subset-fuzzer-5695279609675776 | Bin 0 ->
+ 135 bytes
+ ...-testcase-minimized-hb-subset-fuzzer-5718215406125056 | Bin 0 ->
+ 107 bytes
+ ...-testcase-minimized-hb-subset-fuzzer-5743250149736448 | Bin 0 ->
+ 103 bytes
+ ...-testcase-minimized-hb-subset-fuzzer-5765071062958080 | Bin 0 ->
+ 329 bytes
+ ...ized-hb-subset-get-codepoints-fuzzer-5930139383758848 | Bin 0 ->
+ 9410 bytes
+ 13 files changed, 0 insertions(+), 0 deletions(-)
+
 commit 3d9a0306ebb48706778fd2c487c3cacc7d508d6c
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Oct 18 05:58:17 2018 -0700

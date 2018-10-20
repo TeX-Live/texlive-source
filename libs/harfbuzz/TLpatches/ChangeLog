@@ -1,5 +1,10 @@
 2018-10-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
+	Imported harfbuzz-2.0.1 source tree from:
+	  http://www.freedesktop.org/software/harfbuzz/release/
+
+2018-10-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
 	Imported harfbuzz-2.0.0 source tree from:
 	  http://www.freedesktop.org/software/harfbuzz/release/
 
