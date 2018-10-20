@@ -1,7 +1,7 @@
 2018-10-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import cairo-1.16.0.
-	* Makefile.am, version.ac: Adapted.
+	* version.ac: Adapted.
 
 2017-12-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

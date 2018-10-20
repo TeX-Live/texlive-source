@@ -98,7 +98,6 @@ libcairo_a_SOURCES = \
 	@CAIRO_TREE@/src/cairo-path-stroke-traps.c \
 	@CAIRO_TREE@/src/cairo-path-stroke-tristrip.c \
 	@CAIRO_TREE@/src/cairo-pattern.c \
-	@CAIRO_TREE@/src/cairo-pdf-interchange.c \
 	@CAIRO_TREE@/src/cairo-pen.c \
 	@CAIRO_TREE@/src/cairo-polygon.c \
 	@CAIRO_TREE@/src/cairo-polygon-intersect.c \
@@ -125,8 +124,6 @@ libcairo_a_SOURCES = \
 	@CAIRO_TREE@/src/cairo-surface-snapshot.c \
 	@CAIRO_TREE@/src/cairo-surface-subsurface.c \
 	@CAIRO_TREE@/src/cairo-surface-wrapper.c \
-	@CAIRO_TREE@/src/cairo-tag-attributes.c \
-	@CAIRO_TREE@/src/cairo-tag-stack.c \
 	@CAIRO_TREE@/src/cairo-time.c \
 	@CAIRO_TREE@/src/cairo-tor-scan-converter.c \
 	@CAIRO_TREE@/src/cairo-tor22-scan-converter.c \

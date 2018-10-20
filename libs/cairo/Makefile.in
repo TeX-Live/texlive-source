@@ -234,9 +234,8 @@ am__libcairo_a_SOURCES_DIST =  \
 	@CAIRO_TREE@/src/cairo-path-stroke-polygon.c \
 	@CAIRO_TREE@/src/cairo-path-stroke-traps.c \
 	@CAIRO_TREE@/src/cairo-path-stroke-tristrip.c \
-	@CAIRO_TREE@/src/cairo-pattern.c \
-	@CAIRO_TREE@/src/cairo-pdf-interchange.c \
-	@CAIRO_TREE@/src/cairo-pen.c @CAIRO_TREE@/src/cairo-polygon.c \
+	@CAIRO_TREE@/src/cairo-pattern.c @CAIRO_TREE@/src/cairo-pen.c \
+	@CAIRO_TREE@/src/cairo-polygon.c \
 	@CAIRO_TREE@/src/cairo-polygon-intersect.c \
 	@CAIRO_TREE@/src/cairo-polygon-reduce.c \
 	@CAIRO_TREE@/src/cairo-raster-source-pattern.c \
@@ -259,8 +258,6 @@ am__libcairo_a_SOURCES_DIST =  \
 	@CAIRO_TREE@/src/cairo-surface-snapshot.c \
 	@CAIRO_TREE@/src/cairo-surface-subsurface.c \
 	@CAIRO_TREE@/src/cairo-surface-wrapper.c \
-	@CAIRO_TREE@/src/cairo-tag-attributes.c \
-	@CAIRO_TREE@/src/cairo-tag-stack.c \
 	@CAIRO_TREE@/src/cairo-time.c \
 	@CAIRO_TREE@/src/cairo-tor-scan-converter.c \
 	@CAIRO_TREE@/src/cairo-tor22-scan-converter.c \
@@ -429,7 +426,6 @@ am_libcairo_a_OBJECTS =  \
 	@CAIRO_TREE@/src/cairo-path-stroke-traps.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-path-stroke-tristrip.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-pattern.$(OBJEXT) \
-	@CAIRO_TREE@/src/cairo-pdf-interchange.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-pen.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-polygon.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-polygon-intersect.$(OBJEXT) \
@@ -456,8 +452,6 @@ am_libcairo_a_OBJECTS =  \
 	@CAIRO_TREE@/src/cairo-surface-snapshot.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-surface-subsurface.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-surface-wrapper.$(OBJEXT) \
-	@CAIRO_TREE@/src/cairo-tag-attributes.$(OBJEXT) \
-	@CAIRO_TREE@/src/cairo-tag-stack.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-time.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-tor-scan-converter.$(OBJEXT) \
 	@CAIRO_TREE@/src/cairo-tor22-scan-converter.$(OBJEXT) \
@@ -576,7 +570,6 @@ am__depfiles_remade = ./$(DEPDIR)/cairotst-cairotst.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-path-stroke.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-path.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-pattern.Po \
-	@CAIRO_TREE@/src/$(DEPDIR)/cairo-pdf-interchange.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-pen.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-png.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-polygon-intersect.Po \
@@ -608,8 +601,6 @@ am__depfiles_remade = ./$(DEPDIR)/cairotst-cairotst.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-surface-wrapper.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-surface.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-svg-surface.Po \
-	@CAIRO_TREE@/src/$(DEPDIR)/cairo-tag-attributes.Po \
-	@CAIRO_TREE@/src/$(DEPDIR)/cairo-tag-stack.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-time.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-tor-scan-converter.Po \
 	@CAIRO_TREE@/src/$(DEPDIR)/cairo-tor22-scan-converter.Po \
@@ -1141,9 +1132,8 @@ libcairo_a_SOURCES = @CAIRO_TREE@/src/cairo-analysis-surface.c \
 	@CAIRO_TREE@/src/cairo-path-stroke-polygon.c \
 	@CAIRO_TREE@/src/cairo-path-stroke-traps.c \
 	@CAIRO_TREE@/src/cairo-path-stroke-tristrip.c \
-	@CAIRO_TREE@/src/cairo-pattern.c \
-	@CAIRO_TREE@/src/cairo-pdf-interchange.c \
-	@CAIRO_TREE@/src/cairo-pen.c @CAIRO_TREE@/src/cairo-polygon.c \
+	@CAIRO_TREE@/src/cairo-pattern.c @CAIRO_TREE@/src/cairo-pen.c \
+	@CAIRO_TREE@/src/cairo-polygon.c \
 	@CAIRO_TREE@/src/cairo-polygon-intersect.c \
 	@CAIRO_TREE@/src/cairo-polygon-reduce.c \
 	@CAIRO_TREE@/src/cairo-raster-source-pattern.c \
@@ -1166,8 +1156,6 @@ libcairo_a_SOURCES = @CAIRO_TREE@/src/cairo-analysis-surface.c \
 	@CAIRO_TREE@/src/cairo-surface-snapshot.c \
 	@CAIRO_TREE@/src/cairo-surface-subsurface.c \
 	@CAIRO_TREE@/src/cairo-surface-wrapper.c \
-	@CAIRO_TREE@/src/cairo-tag-attributes.c \
-	@CAIRO_TREE@/src/cairo-tag-stack.c \
 	@CAIRO_TREE@/src/cairo-time.c \
 	@CAIRO_TREE@/src/cairo-tor-scan-converter.c \
 	@CAIRO_TREE@/src/cairo-tor22-scan-converter.c \
@@ -1472,9 +1460,6 @@ clean-noinstLIBRARIES:
 @CAIRO_TREE@/src/cairo-pattern.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@CAIRO_TREE@/src/cairo-pdf-interchange.$(OBJEXT):  \
-	@CAIRO_TREE@/src/$(am__dirstamp) \
-	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @CAIRO_TREE@/src/cairo-pen.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1551,12 +1536,6 @@ clean-noinstLIBRARIES:
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @CAIRO_TREE@/src/cairo-surface-wrapper.$(OBJEXT):  \
-	@CAIRO_TREE@/src/$(am__dirstamp) \
-	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@CAIRO_TREE@/src/cairo-tag-attributes.$(OBJEXT):  \
-	@CAIRO_TREE@/src/$(am__dirstamp) \
-	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@CAIRO_TREE@/src/cairo-tag-stack.$(OBJEXT):  \
 	@CAIRO_TREE@/src/$(am__dirstamp) \
 	@CAIRO_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @CAIRO_TREE@/src/cairo-time.$(OBJEXT):  \
@@ -1811,7 +1790,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-path-stroke.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-path.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-pattern.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-pdf-interchange.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-pen.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-png.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-polygon-intersect.Po@am__quote@ # am--include-marker
@@ -1843,8 +1821,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-surface-wrapper.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-surface.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-svg-surface.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-tag-attributes.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-tag-stack.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-time.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-tor-scan-converter.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@CAIRO_TREE@/src/$(DEPDIR)/cairo-tor22-scan-converter.Po@am__quote@ # am--include-marker
@@ -2504,7 +2480,6 @@ distclean: distclean-recursive
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-path-stroke.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-path.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-pattern.Po
-	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-pdf-interchange.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-pen.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-png.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-polygon-intersect.Po
@@ -2536,8 +2511,6 @@ distclean: distclean-recursive
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-surface-wrapper.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-surface.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-svg-surface.Po
-	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-tag-attributes.Po
-	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-tag-stack.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-time.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-tor-scan-converter.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-tor22-scan-converter.Po
@@ -2699,7 +2672,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-path-stroke.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-path.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-pattern.Po
-	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-pdf-interchange.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-pen.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-png.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-polygon-intersect.Po
@@ -2731,8 +2703,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-surface-wrapper.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-surface.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-svg-surface.Po
-	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-tag-attributes.Po
-	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-tag-stack.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-time.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-tor-scan-converter.Po
 	-rm -f @CAIRO_TREE@/src/$(DEPDIR)/cairo-tor22-scan-converter.Po
