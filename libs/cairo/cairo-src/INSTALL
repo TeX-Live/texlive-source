@@ -140,11 +140,11 @@ itself), then you're in the right place and should read on.
 However, if you don't need such a bleeding-edge version of cairo, then
 you might prefer to start by building the latest stable cairo release:
 
-	http://cairographics.org/releases
+	https://cairographics.org/releases
 
 or perhaps the latest (unstable) development snapshot:
 
-	http://cairographics.org/snapshots
+	https://cairographics.org/snapshots
 
 There you'll find nicely packaged tar files that include a configure
 script so you can go back the the simpler instructions above.

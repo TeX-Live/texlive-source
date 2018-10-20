@@ -1,5 +1,5 @@
 Cairo - Multi-platform 2D graphics library
-http://cairographics.org
+https://cairographics.org
 
 What is cairo
 =============
@@ -35,25 +35,25 @@ Where to get more information about cairo
 =========================================
 The primary source of information about cairo is:
 
-	http://cairographics.org/
+	https://cairographics.org/
 
 The latest versions of cairo can always be found at:
 
-	http://cairographics.org/download
+	https://cairographics.org/download
 
 Documentation on using cairo and frequently-asked questions:
 
-	http://cairographics.org/documentation
-	http://cairographics.org/FAQ
+	https://cairographics.org/documentation
+	https://cairographics.org/FAQ
 
 Mailing lists for contacting cairo users and developers:
 
-	http://cairographics.org/lists
+	https://cairographics.org/lists
 
 Roadmap and unscheduled things to do, (please feel free to help out):
 
-	http://cairographics.org/roadmap
-	http://cairographics.org/todo
+	https://cairographics.org/roadmap
+	https://cairographics.org/todo
 
 Dependencies
 ============
@@ -91,7 +91,7 @@ Supported, "standard" surface backends
 ------------------------------------
 	image backend (required)
 	------------------------
-	pixman >= 0.30.0	http://cairographics.org/releases
+	pixman >= 0.30.0	https://cairographics.org/releases
 
 	png support (can be left out if desired, but many
 	-----------  applications expect it to be present)
@@ -113,15 +113,15 @@ Supported, "platform" surface backends
 -----------------------------------
 	xlib backend
 	------------
-	X11			http://freedesktop.org/Software/xlibs
+	X11			https://freedesktop.org/Software/xlibs
 
 	xlib-xrender backend
 	--------------------
-	Xrender >= 0.6		http://freedesktop.org/Software/xlibs
+	Xrender >= 0.6		https://freedesktop.org/Software/xlibs
 
 	quartz backend
 	--------------
-	MacOS X >= 10.5 with Xcode >= 3.0
+	MacOS X >= 10.4 with Xcode >= 2.5
 
 	win32 backend
 	-------------
@@ -129,7 +129,7 @@ Supported, "platform" surface backends
 
 	xcb backend
 	-----------
-	XCB			http://xcb.freedesktop.org
+	XCB			https://xcb.freedesktop.org
 
 Font backends (required to have at least one)
 ---------------------------------------------
@@ -180,12 +180,6 @@ Experimental surface backends
 	requires a font backend. See the freetype dependency list. Ready to use
 	packages and developer dependencies are available at Netlabs:
 				ftp://ftp.netlabs.org/pub/cairo
-
-	skia backend
-	------------
-	Requires the skia library as of June 2014.  Since skia is not
-	API stable, building against newer (or older) versions of skia
-	will probably fail.
 
 
 Compiling

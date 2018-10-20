@@ -108,7 +108,7 @@ AC_CHECK_HEADER(fenv.h,
 
 dnl check for misc headers and functions
 AC_CHECK_HEADERS([libgen.h byteswap.h signal.h setjmp.h fenv.h sys/wait.h])
-AC_CHECK_FUNCS([ctime_r drand48 flockfile funlockfile getline link strndup])
+AC_CHECK_FUNCS([ctime_r localtime_r gmtime_r drand48 flockfile funlockfile getline link strndup])
 
 dnl Check if the runtime platform is a native Win32 host.
 AC_COMPILE_IFELSE([[

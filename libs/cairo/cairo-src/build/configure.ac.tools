@@ -12,7 +12,7 @@ dnl ===========================================================================
 
 PKG_PROG_PKG_CONFIG()
 if test "x$PKG_CONFIG" = x; then
-	AC_MSG_ERROR([pkg-config >= $PKGCONFIG_REQUIRED required but not found (http://pkgconfig.freedesktop.org/)])
+	AC_MSG_ERROR([pkg-config >= $PKGCONFIG_REQUIRED required but not found (https://pkgconfig.freedesktop.org/)])
 fi
 
 dnl Check for recent pkg-config which supports Requires.private

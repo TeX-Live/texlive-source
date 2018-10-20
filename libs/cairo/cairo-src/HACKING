@@ -24,7 +24,7 @@ Contact
 Various ways to get in touch with other cairo developers and maintainers
 have been enumerated at:
 
-	http://cairographics.org/contact/
+	https://cairographics.org/contact/
 
 Most of that information is also reflected in the following sections.
 
@@ -35,7 +35,7 @@ Mailing Lists
 There are various mailing lists that are useful when developing cairo
 code.  A complete list is always available at:
 
-	http://cairographics.org/lists/
+	https://cairographics.org/lists/
 
 It is recommended that cairo developers subscribe to all those lists.
 The cairo list by itself generates much more traffic than the others
@@ -48,7 +48,7 @@ Bug Tracking System
 
 We use a standard bugzilla bug tracking system available at:
 
-	http://bugs.freedesktop.org/
+	https://bugs.freedesktop.org/
 
 See file named BUGS for detailed information on reporting bugs.  In short,
 for straight bug reports, it's best to report them there such that they
@@ -71,11 +71,11 @@ Version Control System
 
 We use /git/ for version control.  See:
 
-	http://cairographics.org/download/
+	https://cairographics.org/download/
 
 For more information on using git, see:
 
-	http://freedesktop.org/wiki/Infrastructure/git/
+	https://freedesktop.org/wiki/Infrastructure/git/
 
 
 Build System
@@ -165,7 +165,7 @@ See doc/public/README for more information.
 For more documentation including frequently asked questions, tutorials,
 samples, roadmap, todo list, etc visit:
 
-	http://cairographics.org/documentation/
+	https://cairographics.org/documentation/
 
 Some of those should gradually be moved to doc/.
 

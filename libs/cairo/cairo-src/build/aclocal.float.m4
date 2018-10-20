@@ -12,7 +12,7 @@ AC_DEFUN([AX_C_FLOAT_WORDS_BIGENDIAN],
   [AC_CACHE_CHECK(whether float word ordering is bigendian,
                   ax_cv_c_float_words_bigendian, [
 
-# The endianess is detected by first compiling C code that contains a special
+# The endianness is detected by first compiling C code that contains a special
 # double float value, then grepping the resulting object file for certain
 # strings of ascii values. The double is specially crafted to have a
 # binary representation that corresponds with a simple string. In this

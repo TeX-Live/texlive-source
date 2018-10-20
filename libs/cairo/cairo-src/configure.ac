@@ -2,9 +2,9 @@ AC_PREREQ([2.63])
 CAIRO_PARSE_VERSION
 AC_INIT([cairo],
 	[cairo_version_major.cairo_version_minor.cairo_version_micro],
-	[http://bugs.freedesktop.org/enter_bug.cgi?product=cairo],
+	[https://bugs.freedesktop.org/enter_bug.cgi?product=cairo],
 	[cairo],
-	[http://cairographics.org/])
+	[https://cairographics.org/])
 AC_CONFIG_AUX_DIR(build)
 AC_CONFIG_MACRO_DIR(build)
 AC_USE_SYSTEM_EXTENSIONS
@@ -12,6 +12,7 @@ AC_CONFIG_SRCDIR(src/cairo.h)
 AC_CONFIG_HEADERS(config.h)
 
 AC_CHECK_HEADERS([unistd.h sys/ioctl.h])
+AC_C_TYPEOF
 
 AM_INIT_AUTOMAKE([1.11 foreign -Wall no-define no-dist-gzip dist-xz])
 AM_SILENT_RULES([yes])
@@ -74,6 +75,9 @@ if test "x$have_dlsym" = "xyes"; then
   AC_DEFINE([CAIRO_HAS_DLSYM], 1, [Define to 1 if dlsym is available])
 fi
 AM_CONDITIONAL(CAIRO_HAS_DLSYM, test "x$have_dlsym" = "xyes")
+
+AC_CHECK_HEADERS(xlocale.h)
+AC_CHECK_FUNCS(newlocale strtod_l)
 
 dnl ===========================================================================
 
@@ -139,7 +143,7 @@ CAIRO_ENABLE_SURFACE_BACKEND(xlib_xrender, Xlib Xrender, auto, [
 		       CPPFLAGS="$CPPFLAGS $xlib_CFLAGS $xlib_NONPKGCONFIG_CFLAGS"
 		       AC_CHECK_HEADER(X11/extensions/Xrender.h,
 				       [xlib_xrender_NONPKGCONFIG_LIBS="-lXrender"],
-				       [use_xlib_xrender="no (requires $xlib_xrender_REQUIRES http://freedesktop.org/Software/xlibs)"],
+				       [use_xlib_xrender="no (requires $xlib_xrender_REQUIRES https://freedesktop.org/Software/xlibs)"],
 				       [#include <X11/X.h>])
 		       CPPFLAGS=$old_CPPFLAGS
 		      ])
@@ -160,14 +164,14 @@ dnl ===========================================================================
 CAIRO_ENABLE_SURFACE_BACKEND(xcb, XCB, auto, [
   xcb_REQUIRES="xcb >= 1.6 xcb-render >= 1.6"
   PKG_CHECK_MODULES(xcb, $xcb_REQUIRES, ,
-		    [use_xcb="no (requires $xcb_REQUIRES http://xcb.freedesktop.org)"])
+		    [use_xcb="no (requires $xcb_REQUIRES https://xcb.freedesktop.org)"])
 ])
 
 CAIRO_ENABLE_FUNCTIONS(xlib_xcb, Xlib/XCB, no, [
   if test "x$use_xcb" = "xyes" -a "x$use_xlib" = "xyes"; then
     xlib_xcb_REQUIRES="x11-xcb"
     PKG_CHECK_MODULES(xlib_xcb, $xlib_xcb_REQUIRES, ,
-		      [use_xlib_xcb="no (requires $xlib_xcb_REQUIRES http://xcb.freedesktop.org)"])
+		      [use_xlib_xcb="no (requires $xlib_xcb_REQUIRES https://xcb.freedesktop.org)"])
   else
     use_xlib_xcb="no (requires both --enable-xlib and --enable-xcb)"
   fi
@@ -177,7 +181,7 @@ CAIRO_ENABLE_FUNCTIONS(xcb_shm, XCB/SHM, auto, [
   if test "x$use_xcb" = "xyes"; then
       xcb_shm_REQUIRES="xcb-shm"
       PKG_CHECK_MODULES(xcb_shm, $xcb_shm_REQUIRES, ,
-			[use_xcb_shm="no (requires $xcb_shm http://xcb.freedesktop.org)"])
+			[use_xcb_shm="no (requires $xcb_shm https://xcb.freedesktop.org)"])
   else
     use_xcb_shm="no (requires --enable-xcb)"
   fi
@@ -245,27 +249,6 @@ AM_CONDITIONAL(CAIRO_CAN_TEST_WIN32_PRINTING_SURFACE, test "x$test_win32_printin
 
 dnl ===========================================================================
 
-CAIRO_ENABLE_SURFACE_BACKEND(skia, Skia, no, [
-  AC_ARG_WITH([skia],
-	      [AS_HELP_STRING([--with-skia=/path/to/skia],
-			      [directory to find compiled skia sources])],
-	      [skia_DIR="$withval"],
-	      [skia_DIR="`pwd`/../skia"])
-  AC_ARG_WITH([skia-build-type],
-	      [AS_HELP_STRING([--with-skia-build-type=(Release|Debug)]
-			      [build of skia to link with, default is Release])],
-	      [skia_BUILD_TYPE="$withval"],
-	      [skia_BUILD_TYPE="Release"])
-  skia_NONPKGCONFIG_CFLAGS="-I$skia_DIR/include/config -I$skia_DIR/include/core -I$skia_DIR/include/effects"
-  if test "x$skia_BUILD_TYPE" = "xRelease"; then
-  	skia_NONPKGCONFIG_CFLAGS="-DSK_RELEASE -DSK_CAN_USE_FLOAT $skia_NONPKGCONFIG_CFLAGS"
-  fi
-  skia_NONPKGCONFIG_LIBS="-L$skia_DIR/out/$skia_BUILD_TYPE/lib.target/ -lskia -lstdc++"
-  AC_SUBST(skia_DIR)
-])
-
-dnl ===========================================================================
-
 CAIRO_ENABLE_SURFACE_BACKEND(os2, OS/2, no, [
   case "$host" in
     *-*-os2*)
@@ -296,7 +279,7 @@ CAIRO_ENABLE_SURFACE_BACKEND(beos, BeOS/Zeta, no, [
 dnl ===========================================================================
 
 CAIRO_ENABLE_SURFACE_BACKEND(drm, DRM, no, [
-  drm_REQUIRES="libudev >= 136"
+  drm_REQUIRES="libudev >= 136, libdrm >= 2.4"
   PKG_CHECK_MODULES(drm, $drm_REQUIRES, ,
    [use_drm="no (requires $drm_REQUIRES, udev is available from git://git.kernel.org/pub/scm/linux/hotplug/udev.git)"])
 ])
@@ -380,6 +363,32 @@ CAIRO_ENABLE_SURFACE_BACKEND(glesv2, OpenGLESv2, no, [
 
   if test "x$use_glesv2" = "xyes" -a "x$use_gl" = "xyes"; then
       AC_MSG_ERROR([use either --enable-gl=yes or --enable-glesv2=yes. Not both at the same time.])
+  fi
+
+  need_egl_functions=yes
+])
+
+dnl ===========================================================================
+CAIRO_ENABLE_SURFACE_BACKEND(glesv3, OpenGLESv3, no, [
+  dnl glesv3 is provided via libGLESv2.so, so require glesv2.pc (there is no libGLESv3, nor glesv3.pc)
+  glesv3_REQUIRES="glesv2"
+  PKG_CHECK_MODULES(glesv3, $glesv3_REQUIRES,, [
+    use_glesv3="no (glesv2.pc not found, required for glesv3)"
+  ])
+
+  dnl Since there is no glesv3.pc, need to search for header files
+  AC_CHECK_HEADER(GLES3/gl3.h,, [use_glesv3="no (OpenGL ES 3.0 headers not found)"])
+  if test "x$use_glesv3" = "xyes"; then
+    glesv3_NONPKGCONFIG_CFLAGS=
+    glesv3_NONPKGCONFIG_LIBS="-lGLESv2"
+  fi
+
+  if test "x$have_dl" = "xyes" -a "x$have_dlsym" = "xyes"; then
+    glesv3_LIBS="$glesv3_LIBS -ldl"
+  fi
+
+  if test "x$use_glesv3" = "xyes" -a "x$use_gl" = "xyes"; then
+      AC_MSG_ERROR([use either --enable-gl=yes or --enable-glesv3=yes. Not both at the same time.])
   fi
 
   need_egl_functions=yes
@@ -470,6 +479,9 @@ dnl ===========================================================================
 any2ppm_cs=no
 CAIRO_ENABLE_SURFACE_BACKEND(script, script, yes, [
   any2ppm_cs=yes
+  # The script backend requires zlib.
+  use_script=$have_libz
+  script_NONPKGCONFIG_LIBS=-lz
 ])
 
 dnl ===========================================================================
@@ -544,7 +556,18 @@ if test "x$use_ft" = "xyes"; then
   LIBS="$LIBS $ft_LIBS"
   CFLAGS="$CFLAGS $ft_CFLAGS"
 
-  AC_CHECK_FUNCS(FT_Get_X11_Font_Format FT_GlyphSlot_Embolden FT_GlyphSlot_Oblique FT_Load_Sfnt_Table FT_Library_SetLcdFilter)
+  AC_CHECK_FUNCS(FT_Get_X11_Font_Format FT_GlyphSlot_Embolden FT_GlyphSlot_Oblique FT_Load_Sfnt_Table FT_Library_SetLcdFilter FT_Get_Var_Design_Coordinates FT_Done_MM_Var)
+
+  AC_MSG_CHECKING(for FT_HAS_COLOR)
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([
+#include <ft2build.h>
+#include FT_FREETYPE_H
+],[
+FT_Long has_color = FT_HAS_COLOR( ((FT_Face)NULL) );
+])],[AC_MSG_RESULT([yes])],[
+  AC_DEFINE([FT_HAS_COLOR(x)], [(0)], [Define to (0) if freetype2 does not support color fonts])
+  AC_MSG_RESULT([no, disable color font (freetype2 >= 2.5.1 is required)])
+])
 
   LIBS="$_save_libs"
   CFLAGS="$_save_cflags"
@@ -664,7 +687,7 @@ dnl ===========================================================================
 CAIRO_ENABLE_SURFACE_BACKEND(image, image, always, [
   pixman_REQUIRES="pixman-1 >= 0.30.0"
   PKG_CHECK_MODULES(pixman, $pixman_REQUIRES, ,
-    [use_image="no (requires $pixman_REQUIRES http://cairographics.org/releases/)"])
+    [use_image="no (requires $pixman_REQUIRES https://cairographics.org/releases/)"])
   image_REQUIRES=$pixman_REQUIRES
   image_CFLAGS=$pixman_CFLAGS
   image_LIBS=$pixman_LIBS
@@ -712,7 +735,7 @@ dnl Build gobject integration library
 CAIRO_ENABLE_FUNCTIONS(gobject, gobject, auto, [
   gobject_REQUIRES="gobject-2.0 glib-2.0 >= 2.14"
   PKG_CHECK_MODULES(GOBJECT, $gobject_REQUIRES, ,
-    [use_gobject="no (requires $gobject_REQUIRES http://download.gnome.org/pub/GNOME/sources/glib/)"])
+    [use_gobject="no (requires $gobject_REQUIRES https://download.gnome.org/pub/GNOME/sources/glib/)"])
   gobject_NONPKGCONFIG_EXTRA_LIBS="-L\${libdir} -lcairo-gobject"
 ])
 dnl I'm too lazy to fix the caching properly
@@ -839,7 +862,6 @@ dnl ===========================================================================
 
 dnl Extra stuff we need to do when building C++ code
 need_cxx="no"
-AS_IF([test "x$use_skia" = "xyes"], [need_cxx="yes"])
 AS_IF([test "x$use_qt" = "xyes"], [need_cxx="yes"])
 AS_IF([test "x$use_beos" = "xyes"], [need_cxx="yes"])
 

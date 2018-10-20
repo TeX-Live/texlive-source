@@ -1,5 +1,5 @@
-Changes applied to the cairo-1.14.12/ tree as obtained from:
-	http://cairographics.org/releases/cairo-1.14.12.tar.xz
+Changes applied to the cairo-1.16.0/ tree as obtained from:
+	http://cairographics.org/releases/cairo-1.16.0.tar.xz
 
 Removed:
 	Makefile.in
@@ -27,7 +27,6 @@ Removed unused dirs:
 	doc
 	perf
 	src/drm
-	src/skia
 	src/win32
 	test
 	util

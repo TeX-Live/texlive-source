@@ -193,22 +193,6 @@ if CAIRO_HAS_WIN32_FONT
 enabled_cairo_pkgconf += cairo-win32-font.pc
 endif
 
-unsupported_cairo_headers += $(cairo_skia_headers)
-all_cairo_headers += $(cairo_skia_headers)
-all_cairo_private += $(cairo_skia_private)
-all_cairo_cxx_sources += $(cairo_skia_cxx_sources)
-all_cairo_sources += $(cairo_skia_sources)
-if CAIRO_HAS_SKIA_SURFACE
-enabled_cairo_headers += $(cairo_skia_headers)
-enabled_cairo_private += $(cairo_skia_private)
-enabled_cairo_cxx_sources += $(cairo_skia_cxx_sources)
-enabled_cairo_sources += $(cairo_skia_sources)
-endif
-all_cairo_pkgconf += cairo-skia.pc
-if CAIRO_HAS_SKIA_SURFACE
-enabled_cairo_pkgconf += cairo-skia.pc
-endif
-
 unsupported_cairo_headers += $(cairo_os2_headers)
 all_cairo_headers += $(cairo_os2_headers)
 all_cairo_private += $(cairo_os2_private)
@@ -319,6 +303,22 @@ endif
 all_cairo_pkgconf += cairo-glesv2.pc
 if CAIRO_HAS_GLESV2_SURFACE
 enabled_cairo_pkgconf += cairo-glesv2.pc
+endif
+
+unsupported_cairo_headers += $(cairo_glesv3_headers)
+all_cairo_headers += $(cairo_glesv3_headers)
+all_cairo_private += $(cairo_glesv3_private)
+all_cairo_cxx_sources += $(cairo_glesv3_cxx_sources)
+all_cairo_sources += $(cairo_glesv3_sources)
+if CAIRO_HAS_GLESV3_SURFACE
+enabled_cairo_headers += $(cairo_glesv3_headers)
+enabled_cairo_private += $(cairo_glesv3_private)
+enabled_cairo_cxx_sources += $(cairo_glesv3_cxx_sources)
+enabled_cairo_sources += $(cairo_glesv3_sources)
+endif
+all_cairo_pkgconf += cairo-glesv3.pc
+if CAIRO_HAS_GLESV3_SURFACE
+enabled_cairo_pkgconf += cairo-glesv3.pc
 endif
 
 unsupported_cairo_headers += $(cairo_cogl_headers)

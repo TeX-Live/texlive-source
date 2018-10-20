@@ -12,7 +12,7 @@ which you prefer:
    up on previous bug reports, and search for existing, known
    bugs. Just use the "cairo" product:
 
-	http://bugs.freedesktop.org
+	https://bugs.freedesktop.org
 
    It is necessary to go through a quick account creation process,
    (with email address verification), in order to be able to report
@@ -26,7 +26,7 @@ which you prefer:
    mailing list only allows posting from subscribers, so use the
    following page for subscription instructions:
 
-	http://cairographics.org/lists
+	https://cairographics.org/lists
 
    Again, we apologize for any inconvenience this subscription step
    might cause, but we've found it necessary to require this in order
@@ -49,10 +49,10 @@ in getting the bug fixed sooner):
 
 1) Check to see if the bug has been reported already. It's pretty easy
    to run a search or two against the cairo product in the
-   http://bugs.freedesktop.org bugzilla database. Another place to
+   https://bugs.freedesktop.org bugzilla database. Another place to
    look for known bugs is the cairo ROADMAP:
 
-	http://cairographics.org/ROADMAP
+	https://cairographics.org/ROADMAP
 
    which shows a planned schedule of releases and which bug fixes are
    being planned for each release.
