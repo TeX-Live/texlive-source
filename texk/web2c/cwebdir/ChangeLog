@@ -1,3 +1,8 @@
+2018-10-20  Karl Berry  <karl@tug.org>
+
+	* cweb.1: do not mention nonexistent -DSTAT option.
+	From Andreas Scherer, tex-k 20 Oct 2018 16:26:14.
+
 2018-01-18  Karl Berry  <karl@tug.org>
 
 	* cweave.w,
