@@ -1,3 +1,112 @@
+commit 8931bc4a6b41a2a41069b99cb5c551fa30216f0b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 20 23:23:32 2018 +0330
+
+    [test] Fix -Wunused-parameter on test-font.c
+
+ test/api/test-font.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 68b705076808d4b0a4ac3bfa945b8f9ae23db1df
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 12:09:41 2018 -0700
+
+    [kerx] Fix sanitize of KerxSubtableFormat2::array read
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11033
+
+ src/hb-aat-layout-kerx-table.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 00fdbca4f6a5c4623b9c4838da502cccce8aaa74
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 12:04:51 2018 -0700
+
+    [aat] Fix LookupFormat10 sanitize
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11060
+
+ src/hb-aat-layout-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f11c557662dee16a59bb54276c50a96e4e675201
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 11:56:30 2018 -0700
+
+    [test] Fix leak
+
+ test/api/test-font.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 440a675c7cc72c7c77b4ad7b20c855c53808ef48
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 20 21:13:25 2018 +0330
+
+    [TODO] Remove BCP 47 language handling item
+
+    Closes https://github.com/harfbuzz/harfbuzz/issues/1286
+
+ TODO | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit d39acc5a95f968b0dbfd5a942abda606d9aa3343
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 20 12:20:30 2018 +0330
+
+    [fuzzing] Add new testcases
+
+ .../clusterfuzz-testcase-hb-shape-fuzzer-5688420752424960 | Bin 0 ->
+ 163 bytes
+ ...zz-testcase-minimized-hb-shape-fuzzer-5688420752424960 | Bin 0 ->
+ 69 bytes
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 1e55e21dea78aaaddc0715e7df96fd198ec8f78a
+Merge: 964ae32a d084719f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 20 07:45:46 2018 +0330
+
+    Merge pull request #1283 from khaledhosny/cygwin
+
+    Cygwin fixes and CI build
+
+commit 964ae32aac793540a49c44efab878592394d48db
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 20 07:39:18 2018 +0330
+
+    Run valgrind on run-shape-fuzzer only when RUN_VALGRIND is set (#1285)
+
+ .circleci/config.yml                   | 2 +-
+ test/fuzzing/run-shape-fuzzer-tests.py | 4 +++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+commit f70f994112b2577271c20a929f7b980fa1d17428
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 20:00:36 2018 -0700
+
+    Minor
+
+ test/api/test-ot-name.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 4e09fb8f7a93ec0c8d7f71cd58772ba468b5523f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 19:59:41 2018 -0700
+
+    Oops. Fix build
+
+ test/api/test-map.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9e288d29d86ef27acacd397b1abf04d512f1e61e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 19 19:47:27 2018 -0700
+
+    [test-map] Cosmetic
+
+ test/api/test-map.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
 commit 7c2c8ac301b526da8b5384d6b90f156ca096568e
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Oct 19 19:37:46 2018 -0700
@@ -45,6 +154,17 @@ Date:   Fri Oct 19 19:01:01 2018 -0700
  ++++++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 64 insertions(+)
 
+commit d084719ff5a9e0e363bf352037f85b884bff11a7
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sat Oct 20 00:18:36 2018 +0200
+
+    Add Cygwin CI build
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1274
+
+ appveyor.yml | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
 commit 29d877518fc2c29083cd7b955b422087966235f7
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Oct 19 16:06:54 2018 -0700
@@ -70,6 +190,28 @@ Date:   Fri Oct 19 15:23:49 2018 -0700
  src/hb-machinery.hh             |  4 +++
  src/hb-open-type.hh             |  3 +++
  4 files changed, 63 insertions(+), 5 deletions(-)
+
+commit cf92cb7e002f479505fed8c2c55ab12dcbea2d83
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Fri Oct 19 22:21:39 2018 +0200
+
+    Use g_strdup instead of strdup
+
+    Cygwin does not seem to have strdup.
+
+ util/options.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 30cbe6158de1ddc0546d55e4edc1fe264e1b86ef
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Fri Oct 19 22:04:56 2018 +0200
+
+    Use O_BINARY instead of _O_BINARY
+
+    Cygwin does not seem to have the later
+
+ src/hb-blob.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 commit 257ded1f9ec653d15e79d2ea0a83bd8c5c53d831
 Author: Behdad Esfahbod <behdad@behdad.org>
