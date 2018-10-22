@@ -1,3 +1,10 @@
+2018-10-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftosrc-newpoppler.cc: Add a comment that it works upto
+	the poppler 0.70.0.
+	* pdftoepdf-poppler0.70.0.cc: A new file for poppler-0.70.0
+	and newer.
+
 2018-10-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftoepdf.cc: Remove changes for w32.
