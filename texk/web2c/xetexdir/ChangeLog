@@ -1,3 +1,7 @@
+2018-10-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfimage.cpp: Cast types to support poppler 0.70.0.
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* xetex-bug73.test: LC_ALL=LANGUAGE=C.
