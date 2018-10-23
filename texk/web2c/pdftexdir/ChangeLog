@@ -1,3 +1,9 @@
+2018-10-24  Karl Berry  <karl@tug.org>
+
+	* writet1.c (t1_check_unusual_charstring): don't call
+	strlen(t1_buf_array) if it is null.
+	From Luigi, 22 Oct 2018 22:43:03.
+
 2018-10-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftosrc-newpoppler.cc: Add a comment that it works upto
