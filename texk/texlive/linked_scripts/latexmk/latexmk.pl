@@ -121,8 +121,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.59';
-$version_details = "$My_name, John Collins, 7 August 2018";
+$version_num = '4.61';
+$version_details = "$My_name, John Collins, 25 October 2018";
 
 use Config;
 use File::Basename;
@@ -222,7 +222,27 @@ else {
 ##
 ## 12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
-##  7 Aug 2018 John Collins  V. 4.59
+## 25 Oct 2018 John Collins  Fix definition of clean up substitution for %R
+##                             so that something with intermediate %R works,
+##                             as in 'pythontex-files-%R/*'.
+## 24 Oct 2018 John Collins  V. 4.61
+## 16 Oct 2018 John Collins  Routines for setting all of $latex, etc.
+##                           Variables, options, substitutable parameters
+##                             for executing code in *latex before inputting
+##                             source file.
+## 10 Oct 2018 John Collins  Fix problem that if biber gets a remote file,
+##                              it would be deleted and latexmk would report
+##                              it as missing, incorrectly.
+##  8 Oct 2018 John Collins  Report count of warnings about missing characters
+##                             (typically unavailable Unicode characters).
+##                             Messages about this may appear only in the .log
+##                             file and are therefore easily missed by the user.
+##                           V. 4.60a
+## 21 Sep 2018 John Collins  Fix bug that --gg with --deps-file doesn't
+##                             create deps file.
+##  3 Sep 2018 John Collins  -pdfxelatex and -pdflualatex options
+##  3 Sep 2018 John Collins  V. 4.60
+##  7 Aug 2018 John Collins  V. 4.59  Released on CTAN
 ##  1 Aug 2018 John Collins  Correct sub rdb_find_source_file.
 ## 30 Jul 2018 John Collins  Change handling of warnings for a difference 
 ##                             between actual and expected output filenames
@@ -363,18 +383,18 @@ $illegal_in_texname = "\x00\t\f\n\r\$%\\~\x7F";
 ## "" means not determined. Obtain from first line of .log file.
 $tex_distribution = '';
 
-## Commands to invoke latex, pdflatex, etc
-$latex  = 'latex %O %S';
-$pdflatex = 'pdflatex %O %S';
-$lualatex = 'lualatex %O %S';
-# Note that xelatex is used to give xdv file, not pdf file, hence the -no-pdf option.
-# See also setting of $xelatex_default_switches, which overcomes user mal-configuration
-$xelatex = 'xelatex -no-pdf %O %S';
+&std_tex_cmds;
+
+# Possible code to execute by *latex before inputting source file.
+# Not used by default.
+$pre_tex_code = '';
 
 ## Default switches:
 $latex_default_switches = '';
 $pdflatex_default_switches = '';
 $lualatex_default_switches = '';
+    # Note that xelatex is used to give xdv file, not pdf file, hence 
+    # we need the -no-pdf option.
 $xelatex_default_switches = '-no-pdf';
 
 ## Switch(es) to make them silent:
@@ -1245,6 +1265,7 @@ $waiting = 0;           # Flags whether we are in loop waiting for an event
 $reference_changed = 0;
 $mult_defined = 0;
 $bad_reference = 0;
+$bad_character = 0;
 $bad_citation = 0;
 @primary_warning_summary = ();
 
@@ -1701,6 +1722,7 @@ while ($_ = $ARGV[0])
   elsif (/^-pdf-$/)  { $pdf_mode = 0; }
   elsif (/^-pdfdvi$/){ $pdf_mode = 3; }
   elsif (/^-pdflua$/){ $pdf_mode = 4; }
+  elsif (/^-pdfps$/) { $pdf_mode = 2; }
   elsif (/^-pdfxe$/) { $pdf_mode = 5; }
 #  elsif (/^-pdflatex$/) {
 #      $pdflatex = "pdflatex %O %S";
@@ -1710,7 +1732,15 @@ while ($_ = $ARGV[0])
   elsif (/^-pdflatex=(.*)$/) {
       $pdflatex = $1;
   }
-  elsif (/^-pdfps$/) { $pdf_mode = 2; }
+  elsif (/^-pdflualatex=(.*)$/) {
+      $lualatex = $1;
+  }
+  elsif (/^-pdfxelatex=(.*)$/) {
+      $xelatex = $1;
+  }
+  elsif (/^-pretex=(.*)$/) {
+      $pre_tex_code = $1;
+  }
   elsif (/^-print=(.*)$/) {
       $value = $1;
       if ( $value =~ /^dvi$|^ps$|^pdf$|^auto$/ ) {
@@ -1761,10 +1791,16 @@ while ($_ = $ARGV[0])
      exit;
   }
   elsif (/^-silent$/ || /^-quiet$/ ){ $silent = 1; }
+  elsif (/^-stdtexcmds$/) { &std_tex_cmds; }
   elsif (/^-time$/) { $show_time = 1;}
   elsif (/^-time-$/) { $show_time = 0;}
   elsif (/^-use-make$/)  { $use_make_for_missing_files = 1; }
   elsif (/^-use-make-$/)  { $use_make_for_missing_files = 0; }
+  elsif (/^-usepretex$/) { &alt_tex_cmds; }
+  elsif (/^-usepretex=(.*)$/) {
+      &alt_tex_cmds;
+      $pre_tex_code = $1;
+  }
   elsif (/^-v$/ || /^-version$/)   { 
       print "\n$version_details. Version $version_num\n";
       exit;
@@ -2180,14 +2216,31 @@ if ($deps_file eq '' ) {
     $deps_file = '-';
 }
 
+# Since deps_file is global (common to all processed files), we must
+# delete it here when doing a clean up, and not in the FILE loop, where
+# per-file processing (including clean-up) is done
+if ( ($cleanup_mode > 0) &&  $dependents_list && ( $deps_file ne '-' ) ) {
+    unlink_or_move( $deps_file );
+}
+
 # In non-pvc mode, the dependency list is global to all processed TeX files,
-# so we open a single file here, and add items to it after processing each file
-# But in -pvc mode, the dependency list should be written after round of
-# processing the single TeX file (as if each round were a separate run of
-# latexmk).  There's undoubtedly some non-optimal structuring here!
-if ( $dependents_list && ! $preview_continuous_mode ) {
+#   so we open a single file here, and add items to it after processing
+#   each file.  But in -pvc mode, the dependency list should be written
+#   after round of processing the single TeX file (as if each round were
+#   a separate run of latexmk).
+# If we are cleaning up ($cleanup_mode != 0) AND NOT continuing to
+#   make files (--gg option and $go_mode == 2), deps_file should not be
+#   created.
+# I will use definedness of $deps_handle as flag for global deps file having
+#   been opened and therefore being available to be written to after
+#   compiling a file.
+$deps_handle = undef;
+if ( $dependents_list
+     && ! $preview_continuous_mode
+     && ( ($cleanup_mode == 0) || ($go_mode == 2) )
+   ) {
     $deps_handle = new FileHandle "> $deps_file";
-    if (! defined $deps_handle ) {
+    if (! $deps_handle ) {
         die "Cannot open '$deps_file' for output of dependency information\n";
     }
 }
@@ -2399,9 +2452,6 @@ foreach $filename ( @file_list )
         unlink_or_move( 'texput.log', "texput.aux", "missfont.log",
                 keys %index_bibtex_generated, 
                 keys %aux_files );
-        if ( $dependents_list && ( $deps_file ne '-' ) ) {
-            unlink_or_move( $deps_file );
-        }
         if ($cleanup_includes_generated) {
             unlink_or_move( keys %other_generated );
         }
@@ -2530,7 +2580,7 @@ foreach $filename ( @file_list )
       rdb_for_some( [keys %one_time], \&rdb_run1 );
     }
     if ($#primary_warning_summary > -1) {
-	# N.B. $mult_defined, $bad_reference, $bad_citation also available here.
+	# N.B. $mult_defined, $bad_reference, $bad_character, $bad_citation also available here.
         if ($warnings_as_errors) {
             $failure = 1;
 	    $failure_msg = "Warning(s) from latex (or c.) for '$filename'; treated as error";
@@ -2613,6 +2663,22 @@ if ( $where_log == 2 ) {
 # end MAIN PROGRAM
 #############################################################
 #############################################################
+
+sub set_tex_cmds {
+    # Usage, e.g., set_tex_cmds( '%O %S' )
+    my $args = $_[0];
+    foreach my $cmd ('latex', 'lualatex', 'pdflatex', 'xelatex' ) {
+	${$cmd} = "$cmd $args";
+    }
+    # N.B. See setting of $latex_default_switches, ...,
+    # $xelatex_default_switches, etc, for any special options needed.
+}
+
+sub std_tex_cmds { set_tex_cmds( '%O %S' ); }
+
+sub alt_tex_cmds { set_tex_cmds( '%O %P' ); }
+
+#========================
 
 sub test_fix_texnames {
     my $illegal_char = 0;
@@ -3512,7 +3578,9 @@ sub cleanup1 {
     my $dir = fix_pattern( shift );
     my $root_fixed = fix_pattern( $root_filename );
     foreach (@_) { 
-        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/${dir}${root_fixed}/;
+        my $name = /%R/ ? $_ : "%R.$_";
+	$name =~ s/%R/${root_fixed}/;
+	$name = $dir.$name;
         unlink_or_move( my_glob( "$name" ) );
     }
 } #END cleanup1
@@ -3697,15 +3765,21 @@ sub print_help
   "   -pdfdvi - generate pdf by dvipdf\n",
   "   -pdflatex=<program> - set program used for pdflatex.\n",
   "                      (replace '<program>' by the program name)\n",
+  "   -pdflualatex=<program> - set program used for lualatex.\n",
+  "                      (replace '<program>' by the program name)\n",
   "   -pdfps - generate pdf by ps2pdf\n",
   "   -pdflua - generate pdf by lualatex\n",
   "   -pdfxe - generate pdf by xelatex\n",
+  "   -pdfxelatex=<program> - set program used for xelatex.\n",
+  "                      (replace '<program>' by the program name)\n",
   "   -pdf-  - turn off pdf\n",
   "   -ps    - generate postscript\n",
   "   -ps-   - turn off postscript\n",
   "   -pF <filter> - Filter to apply to postscript file\n",
   "   -p     - print document after generating postscript.\n",
   "            (Can also .dvi or .pdf files -- see documentation)\n",
+  "   -pretex=<TeX code> - Sets TeX code to be executed before inputting source\n",
+  "                    file, if commands suitable configured\n",    
   "   -print=dvi     - when file is to be printed, print the dvi file\n",
   "   -print=ps      - when file is to be printed, print the ps file (default)\n",
   "   -print=pdf     - when file is to be printed, print the pdf file\n",
@@ -3730,10 +3804,14 @@ sub print_help
   "   -showextraoptions  - Show other allowed options that are simply passed\n",
   "               as is to latex and pdflatex\n",
   "   -silent   - silence progress messages from called programs\n",
+  "   -stdtexcmds - Sets standard commands for *latex\n",    
   "   -time     - show CPU time used\n",
   "   -time-    - don't show CPU time used\n",
   "   -use-make - use the make program to try to make missing files\n",
   "   -use-make- - don't use the make program to try to make missing files\n",
+  "   -usepretex - Sets commands for *latex to use extra code before inputting\n",
+  "                source file\n",    
+  "   -usepretex=<TeX code> - Equivalent to -pretex=<TeX code> -usepretex\n",
   "   -v        - display program version\n",
   "   -verbose  - display usual progress messages from called programs\n",
   "   -version      - display program version\n",
@@ -3841,6 +3919,7 @@ sub check_biber_log {
     my $not_found_count = 0;
     my $control_file_missing = 0;
     my $control_file_malformed = 0;
+    my %remote = ();                # List of extensions of remote files
     while (<$log_file>) {
         if (/> WARN /) { 
             print "Biber warning: $_"; 
@@ -3872,13 +3951,34 @@ sub check_biber_log {
                 }
             }
         }
+        elsif ( /> INFO - Data source '([^']*)' is a remote BibTeX data source - fetching/
+	    ){
+	    my $spec = $1;
+            my ( $base, $path, $ext ) = fileparseA( $spec );
+            $remote{$ext} = 1;
+	}
         elsif ( /> INFO - Found .* '([^']+)'\s*$/
                 || /> INFO - Found '([^']+)'\s*$/
                 || /> INFO - Reading '([^']+)'\s*$/
                 || /> INFO - Processing .* file '([^']+)' .*$/
-              ) {
-            if ( defined $Pbiber_source ) {
-                push @$Pbiber_source, $1;
+	    ) {
+	    my $file = $1;
+            my ( $base, $path, $ext ) = fileparseA( $file );
+	    if ($remote{$ext} && ( $base =~ /^biber_remote_data_source/ ) && 1) {
+		# Ignore the file, which appears to be a temporary local copy
+		# of a remote file. Treating the file as a source file will
+		# be misleading, since it will normally have been deleted by
+		# biber itself.
+	    }
+            elsif ( (defined $Pbiber_source) && (-e $file) ) {
+		# Note that biber log file gives full path to file. (No search is
+		# needed to find it.)  The file must have existed when biber was
+		# run.  If it doesn't exist now, a few moments later, it must
+		# have gotten deleted, probably by biber (e.g., because it is a
+		# copy of a remote file).
+		# So I have included a condition above that the file must
+		# exist to be included in the source-file list.
+                push @$Pbiber_source, $file;
             }
         }
         elsif ( /> INFO - WARNINGS: ([\d]+)\s*$/ ) {
@@ -4155,6 +4255,7 @@ sub parse_log {
     $reference_changed = 0;
     $mult_defined = 0;
     $bad_reference = 0;
+    $bad_character = 0;
     $bad_citation = 0;
 
     my $log_file = new FileHandle;
@@ -4342,6 +4443,12 @@ LINE:
             push @warning_list, $1;
             $bad_citation++;
         }
+        elsif ( /^Missing character: There is no /
+  	        || /^! Package inputenc Error: Unicode character /
+	        || /^! Bad character code /
+	    ) {
+            $bad_character++;
+        } 
         elsif ( /^Document Class: / ) {
             # Class sign-on line
             next LINE;
@@ -5652,7 +5759,7 @@ sub rdb_set_latex_deps {
     local $pwd_latex = undef;     # Cwd as reported in fls file by (pdf)latex
 
     # The following are also returned, but are global, to be used by caller
-    # $reference_changed, $bad_reference $bad_citation, $mult_defined
+    # $reference_changed, $bad_reference, $bad_character, $bad_citation, $mult_defined
 
     # Do I have my own eps-to-pdf conversion?
     my $epspdf_cusdep = 0;
@@ -6672,7 +6779,7 @@ sub rdb_make {
     rdb_write( $fdb_name );
 
     if ($#primary_warning_summary > -1) {
-	# N.B. $mult_defined, $bad_reference, $bad_citation also available here.
+	# N.B. $mult_defined, $bad_reference, $bad_character, $bad_citation also available here.
         show_array( "$My_name: Summary of warnings from last run of (pdf)latex:", 
                     @primary_warning_summary );
     }
@@ -7302,16 +7409,25 @@ sub Run_subst {
     my $q = $quote_filenames ? '"' : '';
 
     my %subst = ( 
-       '%O' => $options,
-       '%R' => $q.$root_filename.$q,
        '%B' => $q.$base.$q,
-       '%T' => $q.$texfile_name.$q,
-       '%S' => $q.$source.$q,
        '%D' => $q.$dest.$q,
+       '%O' => $options,
+       '%S' => $q.$source.$q,
+       '%R' => $q.$root_filename.$q,
+       '%S' => $q.$source.$q,
+       '%T' => $q.$texfile_name.$q,
        '%Y' => $q.$aux_dir1.$q,
        '%Z' => $q.$out_dir1.$q,
        '%%' => '%'         # To allow literal %B, %R, etc, by %%B.
-    );
+	);
+    if ($pre_tex_code) {
+	$subst{'%U'} = $q.$pre_tex_code.$q;
+	$subst{'%P'} = "$q$pre_tex_code\\input{$source}$q";
+    }
+    else {
+	$subst{'%U'} = '';
+	$subst{'%P'} = $subst{'%S'};
+    }
     if ( ($^O eq "MSWin32" ) && $MSWin_back_slash ) {
         foreach ( '%R', '%B', '%T', '%S', '%D', '%Y', '%Z' ) {
             $subst{$_} =~ s(/)(\\)g;
@@ -7450,6 +7566,11 @@ sub rdb_primary_run {
     if ($mult_defined) {
         push @primary_warning_summary,
              "Latex found $mult_defined multiply defined reference(s)";
+    }
+    if ($bad_character) {
+        push @primary_warning_summary,
+	    "=====Latex reported missing or unavailable character(s).\n".
+	    "=====See log file for details.";
     }
     if ($bad_citation) {
         push @primary_warning_summary,
