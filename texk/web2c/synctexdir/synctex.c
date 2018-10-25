@@ -293,7 +293,7 @@ mem[NODE+TYPE##_node_size-synchronization_field_size+1].cint
 #   endif
 
 #if defined(_WIN32)
-#if defined(pdfTeX) || defined(upTeX) || defined(eupTeX) || defined(XeTeX) || (defined(_MSC_VER) && (defined(LuaTeX) || defined(LuajitTeX)))
+#if defined(pdfTeX) || defined(upTeX) || defined(eupTeX) || defined(XeTeX)
 #define W32UPTEXSYNCTEX 1
 #include <wchar.h>
 static char *chgto_oem(char *src);
@@ -591,12 +591,7 @@ static int fsyscp_rename(char *s1, char *s2)
 }
 
 #undef fopen
-#if defined(LuaTeX) || defined(LuajitTeX)
-extern FILE *futf8open(const char *filename, const char *mode);
-#define fopen futf8open
-#else
 #define fopen fsyscp_fopen
-#endif /* LuaTeX || LuajitTeX */
 #define gzopen fsyscp_gzopen
 #define rename fsyscp_rename
 #define remove fsyscp_remove
