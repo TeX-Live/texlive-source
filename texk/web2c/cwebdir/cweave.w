@@ -1785,7 +1785,7 @@ void
 print_cat(c) /* symbolic printout of a category */
 eight_bits c;
 {
-  printf("%s",cat_name[c]);
+  printf(cat_name[c]);
 }
 
 @ The token lists for translated \TEX/ output contain some special control
