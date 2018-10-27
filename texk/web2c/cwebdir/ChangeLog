@@ -5,6 +5,14 @@
 	* ../ctangleboot.cin: clean build with non-implicit 'int change_depth'.
 	tex-k mail, 2 Nov 2018 18:03:39.
 
+2018-10-28  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweave.w,
+	* common.w,
+	* common.c,
+	* ../cwebboot.cin: do not change the CWEB sources, use
+	changefile entries instead.
+
 2018-01-18  Karl Berry  <karl@tug.org>
 
 	* cweave.w,

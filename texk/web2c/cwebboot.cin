@@ -250,7 +250,7 @@ FILE*C_file;
 FILE*tex_file;
 FILE*idx_file;
 FILE*scn_file;
-#line 730 "cwebdir/comm-w2c.ch"
+#line 736 "cwebdir/comm-w2c.ch"
 FILE*active_file;
 char*found_filename;
 #line 1376 "cwebdir/common.w"
@@ -283,7 +283,7 @@ static int section_name_cmp(char**,int,name_pointer);
 /*:55*//*71:*/
 #line 1251 "cwebdir/common.w"
 
-#line 647 "cwebdir/comm-w2c.ch"
+#line 653 "cwebdir/comm-w2c.ch"
 static void scan_args(void);
 #line 1253 "cwebdir/common.w"
 
@@ -334,7 +334,7 @@ kpse_set_program_name(argv[0],"cweb");
 /*70:*/
 #line 1233 "cwebdir/common.w"
 
-#line 639 "cwebdir/comm-w2c.ch"
+#line 645 "cwebdir/comm-w2c.ch"
 show_banner= show_happiness= show_progress= 1;
 #line 1235 "cwebdir/common.w"
 
@@ -346,14 +346,14 @@ show_banner= show_happiness= show_progress= 1;
 
 scan_args();
 if(program==ctangle){
-#line 739 "cwebdir/comm-w2c.ch"
+#line 745 "cwebdir/comm-w2c.ch"
 if((C_file= fopen(C_file_name,"wb"))==NULL)
 #line 1381 "cwebdir/common.w"
 fatal("! Cannot open output file ",C_file_name);
 
 }
 else{
-#line 745 "cwebdir/comm-w2c.ch"
+#line 751 "cwebdir/comm-w2c.ch"
 if((tex_file= fopen(tex_file_name,"wb"))==NULL)
 #line 1386 "cwebdir/common.w"
 fatal("! Cannot open output file ",tex_file_name);
@@ -1098,7 +1098,9 @@ void
  fatal(const char*s,const char*t)
 #line 1182 "cwebdir/common.w"
 {
+#line 595 "cwebdir/comm-w2c.ch"
 if(*s)printf("%s",s);
+#line 1184 "cwebdir/common.w"
 err_print(t);
 history= fatal_message;exit(wrap_up());
 }
@@ -1106,7 +1108,7 @@ history= fatal_message;exit(wrap_up());
 /*:66*//*67:*/
 #line 1190 "cwebdir/common.w"
 void
-#line 598 "cwebdir/comm-w2c.ch"
+#line 604 "cwebdir/comm-w2c.ch"
  overflow(const char*t)
 #line 1193 "cwebdir/common.w"
 {
@@ -1117,7 +1119,7 @@ printf("\n! Sorry, %s capacity exceeded",t);fatal("","");
 /*:67*//*72:*/
 #line 1254 "cwebdir/common.w"
 
-#line 657 "cwebdir/comm-w2c.ch"
+#line 663 "cwebdir/comm-w2c.ch"
 static void
 scan_args(void)
 #line 1257 "cwebdir/common.w"
@@ -1131,40 +1133,40 @@ boolean flag_change;
 
 while(--argc> 0){
 if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*76:*/
-#line 682 "cwebdir/comm-w2c.ch"
+#line 688 "cwebdir/comm-w2c.ch"
 
 {
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 /*86:*/
-#line 797 "cwebdir/comm-w2c.ch"
+#line 803 "cwebdir/comm-w2c.ch"
 
 usagehelp(program==ctangle?CTANGLEHELP:CWEAVEHELP,NULL);
 
 
 /*:86*/
-#line 685 "cwebdir/comm-w2c.ch"
+#line 691 "cwebdir/comm-w2c.ch"
 ;
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 /*87:*/
-#line 806 "cwebdir/comm-w2c.ch"
+#line 812 "cwebdir/comm-w2c.ch"
 
 printversionandexit((program==ctangle?ctangle_banner:cweave_banner),
 "Silvio Levy and Donald E. Knuth",NULL,NULL);
 
 
 /*:87*/
-#line 687 "cwebdir/comm-w2c.ch"
+#line 693 "cwebdir/comm-w2c.ch"
 ;
 #line 1346 "cwebdir/common.w"
 if(**argv=='-')flag_change= 0;
-#line 693 "cwebdir/comm-w2c.ch"
+#line 699 "cwebdir/comm-w2c.ch"
 else flag_change= 1;
 if(*(*argv+1)=='d')
 if(sscanf(*argv+2,"%u",&kpathsea_debug)!=1)/*77:*/
 #line 1352 "cwebdir/common.w"
 
 {
-#line 716 "cwebdir/comm-w2c.ch"
+#line 722 "cwebdir/comm-w2c.ch"
 if(program==ctangle){
 fprintf(stderr,"ctangle: Need one to three file arguments.\n");
 usage("ctangle");
@@ -1176,11 +1178,11 @@ usage("cweave");
 }
 
 /*:77*/
-#line 695 "cwebdir/comm-w2c.ch"
+#line 701 "cwebdir/comm-w2c.ch"
 ;
 #line 1348 "cwebdir/common.w"
 for(dot_pos= *argv+1;*dot_pos> '\0';dot_pos++)
-#line 701 "cwebdir/comm-w2c.ch"
+#line 707 "cwebdir/comm-w2c.ch"
 flags[(unsigned char)*dot_pos]= flag_change;
 #line 1350 "cwebdir/common.w"
 }
@@ -1280,7 +1282,7 @@ sprintf(scn_file_name,"%s.scn",*argv);
 found_out= 1;
 }
 
-#line 682 "cwebdir/comm-w2c.ch"
+#line 688 "cwebdir/comm-w2c.ch"
 /*:75*/
 #line 1277 "cwebdir/common.w"
 
@@ -1288,7 +1290,7 @@ else/*77:*/
 #line 1352 "cwebdir/common.w"
 
 {
-#line 716 "cwebdir/comm-w2c.ch"
+#line 722 "cwebdir/comm-w2c.ch"
 if(program==ctangle){
 fprintf(stderr,"ctangle: Need one to three file arguments.\n");
 usage("ctangle");
@@ -1308,7 +1310,7 @@ if(!found_web)/*77:*/
 #line 1352 "cwebdir/common.w"
 
 {
-#line 716 "cwebdir/comm-w2c.ch"
+#line 722 "cwebdir/comm-w2c.ch"
 if(program==ctangle){
 fprintf(stderr,"ctangle: Need one to three file arguments.\n");
 usage("ctangle");
@@ -1322,7 +1324,7 @@ usage("cweave");
 /*:77*/
 #line 1281 "cwebdir/common.w"
 ;
-#line 667 "cwebdir/comm-w2c.ch"
+#line 673 "cwebdir/comm-w2c.ch"
 if(found_change<=0)strcpy(change_file_name,DEV_NULL);
 #line 1283 "cwebdir/common.w"
 }
