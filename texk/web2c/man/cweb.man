@@ -1,4 +1,4 @@
-.TH CWEB 1 "7 April 2010" "Web2C @VERSION@"
+.TH CWEB 1 "28 October 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .SH NAME
 ctangle, cweave \- translate CWEB to C and/or TeX
@@ -90,8 +90,7 @@ you get nothing but error messages.
 .PP
 The
 .B +s
-option prints statistics about memory usage at the end of a run
-(assuming that the programs have been compiled with the -DSTAT switch).
+option prints statistics about memory usage at the end of a run.
 .PP
 There are three other options applicable to
 .B cweave
