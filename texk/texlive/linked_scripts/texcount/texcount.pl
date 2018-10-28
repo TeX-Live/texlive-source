@@ -36,21 +36,30 @@ if (!defined $terminalwidth) {$terminalwidth=76;}
 elsif ($terminalwidth<60) {$terminalwidth=60;}
 elsif ($terminalwidth>120) {$terminalwidth=120;}
 
+
 ##### Version information
 
-my $versionnumber="3.1";
-my $versiondate="2017 Sep 16";
+my $versionnumber="3.1.1";
+my $versiondate="2018 Oct 28";
 
-###### Set global settings and variables
+###### Set global constants and names
 
 ### Global data about TeXcount
 my %GLOBALDATA=
    ('versionnumber'  => $versionnumber
    ,'versiondate'    => $versiondate
    ,'maintainer'     => 'Einar Andreas Rodland'
-   ,'copyrightyears' => '2008-2017'
+   ,'copyrightyears' => '2008-2018'
    ,'website'        => 'http://app.uio.no/ifi/texcount/'
    );
+
+### Named constants
+my ($INCLUDE_NONE,$INCLUDE_AFTER,$INCLUDE_MERGE)=(0,1,2); # Value of $includeTeX
+my ($HTML_NONE,$HTML_CORE,$HTML_FULL)=(0,1,2); # Value of $htmlstyle
+
+
+
+###### Set global settings and variables
 
 ### Options and states
 
@@ -58,7 +67,7 @@ my %GLOBALDATA=
 my $Main=getMain();
 
 # Global options and settings
-my $htmlstyle=0; # Flag to print HTML
+my $htmlstyle=$HTML_NONE; # Flag to print HTML
 my $texcodeoutput=0; # Flag to convert output to valid TeX text
 my $encoding=undef; # Selected input encoding (default will be guess)
 my @encodingGuessOrder=qw/ascii utf8 latin1/; # Encoding guessing order
@@ -67,7 +76,7 @@ my @AlphabetScripts=qw/Digit Is_alphabetic/; # Letters minus logograms: defined 
 my @LogogramScripts=qw/Ideographic Katakana Hiragana Thai Lao Hangul/; # Scripts counted as whole words
 
 # Parsing rules options
-my $includeTeX=0; # Flag to parse included files
+my $includeTeX=$INCLUDE_NONE; # Flag to parse included files
 my $includeBibliography=0; # Flag to include bibliography
 my %substitutions; # Substitutions to make globally
 my %IncludedPackages; # List of included packages
@@ -125,6 +134,7 @@ my $STRING_GOBBLED_OPTION='[]'; # used to log gobbled macro option
 my $STRING_ERROR='<error>'; # used to log errors causing parsing to stop
 my $REGEX_NUMBER=qr/^\d+$/; # regex to recognize a number
 
+
 ###### Set CMD specific settings and variables
 
 ## Preset command line options
@@ -143,6 +153,7 @@ my $_STDIN_='<STDIN>'; # File name to represent STDIN (must be '<...>'!)
 
 # CMD specific settings
 $Text::Wrap::columns=$terminalwidth; # Page width for wrapped output
+
 
 ###### Set state identifiers and methods
 
@@ -396,6 +407,7 @@ sub add_new_counter {
   $SIZE_CNT++;
 }
 
+
 ###### Set global definitions
 
 
@@ -467,6 +479,7 @@ my %STYLE_DESC=(
   'state'       => '[state]: internal TeXcount state',
   'cumsum'      => '[cumsum]: cumulative sum count');
 
+
 ###### Define what a word is and language options
 
 
@@ -511,6 +524,7 @@ my %NamedEncodingGuessOrder;
 $NamedEncodingGuessOrder{'chinese'}=[qw/utf8 gb2312 big5/];
 $NamedEncodingGuessOrder{'japanese'}=[qw/utf8 euc-jp iso-2022-jp jis shiftjis/];
 $NamedEncodingGuessOrder{'korean'}=[qw/utf8 euc-kr iso-2022-kr/];
+
 
 
 ###### Define character classes (alphabets)
@@ -577,6 +591,7 @@ ff3b\tff3f
 ff5b\tff65
 END
 }
+
 
 ###### Define core rules
 
@@ -717,9 +732,9 @@ add_keys_to_hash(\%TeXmacro,['nooptions'],
 my %TeXmacrocount=('\LaTeX'=>1,'\TeX'=>1,'beginabstract'=>['header','headerword']);
 
 ### Macros for including tex files
-# Allows \macro{file} or \macro file. If the value is 0, the filename will
-# be used as is; if it is 1, the filetype .tex will be added if the
-# filename is without filetype; if it is 2, the filetype .tex will be added.
+# Allows \macro{file} to include file; or \macro file if of type 'input'.
+# Main types are 'input' for \input, 'texfile' which adds '.tex', and
+# 'file' which adds '.tex' if missing.
 my %TeXfileinclude=('\input'=>'input','\include'=>'texfile');
 
 ### Convert state keys to codes
@@ -729,6 +744,7 @@ convert_hash(\%TeXfloatinc,\&keyarray_to_state);
 convert_hash(\%TeXmacro,\&keyarray_to_state);
 convert_hash(\%TeXmacrocount,\&keyarray_to_cnt);
 convert_hash(\%TeXenvir,\&key_to_state);
+
 
 ###### Define package specific rules
 
@@ -774,6 +790,11 @@ $PackageTeXmacro{'color'}={
 
 # Rules for package endnotes
 $PackageTeXmacro{'endnotes'}={'\endnote'=>['oword'],'\endnotetext'=>['oword'],'\addtoendnotetext'=>['oword']};
+
+# Rules for package etoolbox
+$PackageTeXmacro{'etoolbox'}={'\apptocmd'=>['xxx','ignore','ignore','ignore'],
+    '\pretocmd'=>['xxx','ignore','ignore','ignore'],
+    '\patchcmd'=>['xxx','xxx','xxx','ignore','ignore']};
 
 # Rules for package fancyhdr
 $PackageTeXmacro{'fancyhdr'}={
@@ -864,6 +885,9 @@ $PackageTeXmacro{'xcolor'}={
     '\colorbox'=>['ignore','text'],'\fcolorbox'=>['ignore','ignore','text'],
     '\definecolor'=>3,\'DefineNamedColor'=>4,
     '\colorlet'=>2};
+
+# Rules for package xparse
+$PackageSubpackage{'xparse'}=['etoolbox'];
 
 
 ###### Main script
@@ -1011,9 +1035,9 @@ sub parse_options_preset {
 sub parse_options_parsing {
   my $arg=shift @_;
   if    ($arg eq '-') {$fileFromSTDIN=1;}
-  elsif ($arg eq '-merge') {$includeTeX=2;}
-  elsif ($arg eq '-inc') {$includeTeX=1;}
-  elsif ($arg eq '-noinc') {$includeTeX=0;}
+  elsif ($arg eq '-merge') {$includeTeX=$INCLUDE_MERGE;}
+  elsif ($arg eq '-inc') {$includeTeX=$INCLUDE_AFTER;}
+  elsif ($arg eq '-noinc') {$includeTeX=$INCLUDE_NONE;}
   elsif ($arg =~/^-(includepackage|incpackage|package|pack)=(.*)$/) {include_package($2);}
   elsif ($arg eq '-incbib') {$includeBibliography=1;}
   elsif ($arg eq '-nobib') {$includeBibliography=0;}
@@ -1129,8 +1153,8 @@ sub parse_options_format {
   elsif ($arg eq '-total') {$totalflag=1;}
   elsif ($arg eq '-0') {$briefsum=1;$totalflag=1;$printlevel=-1;$finalLineBreak=0;}
   elsif ($arg eq '-1') {$briefsum=1;$totalflag=1;$printlevel=-1;}
-  elsif ($arg eq '-htmlcore' ) {option_ansi_colours(0);$htmlstyle=1;}
-  elsif ($arg eq '-html' ) {option_ansi_colours(0);$htmlstyle=2;}
+  elsif ($arg eq '-htmlcore' ) {option_ansi_colours(0);$htmlstyle=$HTML_CORE;}
+  elsif ($arg eq '-html' ) {option_ansi_colours(0);$htmlstyle=$HTML_FULL;}
   elsif ($arg eq '-tex' ) {option_ansi_colours(0);$texcodeoutput=1;}
   elsif ($arg =~/^\-(nocol|nc$)/) {option_ansi_colours(0);}
   elsif ($arg =~/^\-(col)$/) {option_ansi_colours(1);}
@@ -1216,8 +1240,8 @@ sub parse_file {
     _add_file($filetotalcount,$f,'Included file: '.$f->[0]);
   }
   if (!$totalflag && get_count($filetotalcount,$CNT_FILE)>1) {
-    if ($htmlstyle) {formatprint("Sum of files: $file\n",'h2');}
-    print_count($filetotalcount,'sumcount');
+    #if ($htmlstyle) {formatprint("Sum of files: $file\n",'h2');}
+    print_count($filetotalcount,'sumcount',"Sum of files: $file");
   }
   if ($htmlstyle && ($printlevel>0 || !$totalflag)) {print "</div>\n\n";}
   return $filetotalcount;
@@ -1240,6 +1264,7 @@ sub _add_file {
   add_to_total($filetotalcount,$filecount);
 }
 
+
 ######
 ###### Subroutines
 ######
@@ -1253,7 +1278,6 @@ sub include_file {
   my %params=%$refparam;
   my $type=$params{'<type>'};
   my @paths=@{$tex->{'PATH'}};
-  my $filepath;
   if ($type eq '<bbl>' && defined $auxdir) {
     $auxdir=~s/([\\\/])*$/\//;
     if (defined $globalworkdir) {@paths=[$auxdir];}
@@ -1265,22 +1289,23 @@ sub include_file {
     if ($key eq 'dir') {unshift @paths,$workdir.$value;}
     elsif ($key eq 'subdir') {unshift @paths,$paths[0].$value;}
   }
+  # Decide full file path
+  my $filepath;
   if ($file=~/^(\w:)?[\\\/]/) {$filepath=$file;}
   else {
-    $filepath=_find_file_in_path($tex,$file,@paths) || BLOCK {
+    $filepath=_find_file_in_path($tex,$file,\@paths,$params{'SUFFICES'}) || BLOCK {
       error($tex,'File '.$file.' not found in path ['.join(';',@paths).'].');
       return;
     };
   }
-  if ($includeTeX==2) {
+  if ($includeTeX==$INCLUDE_MERGE) {
     my $bincode=read_binary($filepath) || BLOCK {
       error($tex,"File $filepath not readable.");
       return;
     };
     flush_next($tex);
     line_return(0,$tex);
-    # DELETE: prepend_code($tex,$bincode,$file);
-    my $texstate=texcode_insert_text($tex,$bincode,$file,@paths);
+    my $texstate=texcode_insert_text($tex,$bincode,$filepath,@paths);
     parse_all($tex,$state);
     texcode_restore_state($tex,$texstate);
   } else {
@@ -1290,14 +1315,15 @@ sub include_file {
 
 # Seach path list to find file
 sub _find_file_in_path {
-  my $tex=shift @_;
-  my $file=shift @_;
-  foreach my $path (@_) {
-    if ($path && $path!~/[\\\/]$/) {$path.='/';}
-    my $filepath=$path.$file;
-    if (-e $filepath) {return $filepath;}
-    elsif ($filepath=~/\.tex$/i) {}
-    elsif (-e $filepath.'.tex') {return $filepath.'.tex';}
+  my ($tex,$file,$paths,$suffices)=@_;
+  foreach my $suffix (@{$suffices}) {
+    foreach my $path (@{$paths}) {
+      if ($path && $path!~/[\\\/]$/) {$path.='/';}
+      my $filepath=$path.$file.$suffix;
+      if (-e $filepath && ! -d $filepath) {return $filepath;}
+      # DELETE: elsif ($filepath=~/\.tex$/i) {}
+      # DELETE: elsif (-e $filepath.'.tex') {return $filepath.'.tex';}
+    }
   }
   return undef;
 }
@@ -1308,8 +1334,12 @@ sub conditional_print_total {
   if ($totalflag || number_of_subcounts($sumcount)>1) {
     if ($totalflag && $briefsum && @sumweights) {
       print get_sum_count($sumcount),"\n";
+    } elsif ($htmlstyle) {
+      print "<div class='sumgroup'>\n";
+      formatprint('Total word count','h2');
+      print_count($sumcount,'sumcount');
+      print "</div>\n";
     } else {
-      if ($htmlstyle) {formatprint('Total word count','h2');}
       print_count($sumcount,'sumcount');
     }
   }
@@ -1327,13 +1357,14 @@ sub ansiprint {
   print Term::ANSIColor::colored($text,$colour);
 }
 
+
 ###### Option handling
 
 
 # Apply options to set values
 sub Apply_Options {
   apply_encoding_options();
-  if ($htmlstyle>1) {html_head();}
+  if ($htmlstyle==$HTML_FULL) {html_head();}
   flush_errorbuffer($Main);
   apply_language_options();
   if ($includeBibliography) {apply_include_bibliography();}
@@ -1589,6 +1620,7 @@ sub __interpret_tc_parameter {
 }
 
 
+
 ###### Macro rules handling
 
 
@@ -1731,6 +1763,7 @@ sub _add_package {
 sub __dummy {
   return shift @_;
 }
+
 
 ###### TeX code handle
 
@@ -1952,6 +1985,7 @@ sub get_texsize {
 }
 
 
+
 ###### TeX file reader
 
 
@@ -1992,6 +2026,7 @@ sub _read_stdin {
   return $latexcode;
 }
 
+
 ###### Error handling
 
 
@@ -2015,9 +2050,11 @@ sub assertion_note {
   my ($tex,$checktext,$template)=@_;
   my $count=$tex->{'subcount'};
   my @check=split(/,/,$checktext);
+  my @actual;
+  for (my $i=scalar @check;$i>0;$i--) {$actual[$i-1]=get_count($count,$i);}
   for (my $i=scalar @check;$i>0;$i--) {
-    if ($check[$i-1] ne get_count($count,$i)) {
-      my $msg=$template.' [expected:'.join(',',@check).']';
+    if ($check[$i-1] ne $actual[$i-1]) {
+      my $msg=$template.' [expected:'.join('+',@check).'; found: '.join('+',@actual).']';
       note($tex,0,$msg,'%ASSERTION FAILED: ','error');
       return 1;
     }
@@ -2081,6 +2118,7 @@ sub flush_errorbuffer {
   foreach (@$err) {print_error($_);}
   $source->{'errorbuffer'}=undef;
 }
+
 
 ###### Parsing routines
 
@@ -2431,6 +2469,7 @@ sub _parse_include_file {
   my %params;
   flush_next($tex);
   $params{'<type>'}=$includetype;
+  $params{'SUFFICES'}=[''];
   if ($includetype eq '<bbl>') {
     _parse_include_bbl($tex,$state,\%params);
     return;
@@ -2445,6 +2484,7 @@ sub _parse_include_file {
     };
     print_style($1,$style);
     $file=$2;
+    if (!($file=~/\.tex$/i)) {$params{'SUFFICES'}=['.tex',''];}
   }
   else {
     foreach my $param (split(/\s+|,/,$includetype)) {
@@ -2456,12 +2496,12 @@ sub _parse_include_file {
       print_style($1,'ignore');
       print_style($2,$style);
       print_style($3,'ignore');
-      if ($param eq 'file') {$file=$2;}
-      elsif ($param eq 'texfile') {
+      if ($param eq 'file') {
         $file=$2;
-        if ($file!~/\.tex$/i) {$file.='.tex';}
-      }
-      else {$params{$param}=$2;}
+        if (!($file=~/\.tex$/i)) {$params{'SUFFICES'}=['.tex',''];}
+      } elsif ($param eq 'texfile') {
+        $file=$2.'.tex';
+      } else {$params{$param}=$2;}
     }
   }
   if (!defined $file) {
@@ -2641,6 +2681,7 @@ sub __new_state {
 }
 
 
+
 ###### Tokenisation routines
 
 
@@ -2691,7 +2732,7 @@ sub _get_next_token {
       if ($match=~/^$WordPattern$/) {return __set_token($tex,$match,$TOKEN_WORD);}
       else {return __set_token($tex,$match,$TOKEN_SYMBOL);}
     } elsif ($ch eq '\\') {
-      if ($tex->{'line'}=~s/^(\\[{}%])//) {return __set_token($tex,$1,$TOKEN_SYMBOL);}
+      if ($tex->{'line'}=~s/^(\\[\{\}%])//) {return __set_token($tex,$1,$TOKEN_SYMBOL);}
       if ($tex->{'line'}=~s/^(\\([a-zA-Z@]+|[^a-zA-Z@[:^print:]]))//) {return __set_token($tex,$1,$TOKEN_MACRO);}
       return __get_chtoken($tex,$ch,$TOKEN_END);
     } elsif ($ch eq '$') {
@@ -2734,6 +2775,7 @@ sub __get_chtoken {
   $tex->{'type'}=$type;
   return $ch;
 }
+
 
 
 ###### Count handling routines
@@ -2856,12 +2898,13 @@ sub add_to_total {
   $count->{'parentcount'}=$total;
 }
 
+
 ###### Result output routines
 
 
 # Close the output (STDOUT), e.g. adding HTML tail
 sub Close_Output {
-  if ($htmlstyle>1) {
+  if ($htmlstyle==$HTML_FULL) {
     html_tail();
   }
   close STDOUT;
@@ -2931,7 +2974,7 @@ sub __lc_merge {
 sub __word_class {
   my ($wd,$regs)=@_;
   my @classes;
-  $wd=~s/\\\w+({})?/\\{}/g;
+  $wd=~s/\\\w+(\{\})?/\\{}/g;
   foreach my $name (keys %{$regs}) {
     if ($wd=~$regs->{$name}) {push @classes,$name;}
   }
@@ -2995,6 +3038,7 @@ sub print_macro_stat {
 }
 
 
+
 ###### Printing routines
 
 
@@ -3021,7 +3065,7 @@ sub text_to_print {
     $text=~s/[ \t]{2}/\&nbsp; /g;
   } elsif ($texcodeoutput) {
     $text=~s/\\/\\textbackslash¤/g;
-    $text=~s/([%{}])/\\$1/g;
+    $text=~s/([%\{\}])/\\$1/g;
     $text=~s/¤/{}/g;
   }
   return $text;
@@ -3059,14 +3103,16 @@ sub linebreak {
   if ($htmlstyle) {print "<br>\n";} else {print "\n";}
 }
 
+
 ###### Routines for printing count summary
 
 
 # Print count summary for a count object
 sub print_count {
-  my ($count,$class)=@_;
+  my ($count,$class,$title)=@_;
   line_return(0);
-  if ($htmlstyle) {print "<div class='".($class||'count')."'>\n";}  
+  if ($htmlstyle) {print "<div class='".($class||'count')."'>\n";}
+  if (defined $title) {formatprint($title."\n",'h2');}
   if ($outputtemplate) {
     _print_count_template($count,$outputtemplate);
   } elsif ($briefsum && @sumweights) {
@@ -3219,6 +3265,7 @@ sub __process_template {
 }
 
 
+
 ###### Routines for printing parsing details
 
 
@@ -3302,6 +3349,7 @@ sub line_return {
   }
 }
 
+
 ###### Print help on style/colour codes
 
 
@@ -3340,6 +3388,7 @@ sub _help_style_line {
     linebreak();
   }
 }
+
 
 ###### Help routines
 
@@ -3531,6 +3580,7 @@ sub _print_help_on_style_category {
   if (!defined $indent) {$indent='   ';}
 }
 
+
 ###### HTML routines
 
 
@@ -3666,6 +3716,7 @@ table.stat .sum {font-weight:bold; font-style:italic;}
 END
 }
 
+
 ###### Read text data
 
 
@@ -3780,6 +3831,7 @@ sub wprintlines {
 ##### TEXT DATA
 
 __DATA__
+
 
 ::::::::::::::::::::::::::::::::::::::::
 :::::::::: Version
@@ -3961,4 +4013,5 @@ See the documentation for more details.
 Command line options and most %TC commands (prefixed by % rather than %TC:) may be placed in an options file. This is particularly useful for defining your own output templates and macro handling rules.
 
 ::::::::::::::::::::::::::::::::::::::::
+
 
