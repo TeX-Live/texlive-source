@@ -1,3 +1,7 @@
+2018-10-28  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweb.man: do not mention nonexistent -DSTAT option.
+
 2018-06-04  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (man_sources, man1_links) [PTEX]: add ptex.man.
