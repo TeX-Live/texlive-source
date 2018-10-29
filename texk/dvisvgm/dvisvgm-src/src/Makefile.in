@@ -90,52 +90,24 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dvisvgm$(EXEEXT)
-@USE_BUNDLED_LIBS_TRUE@am__append_1 = \
-@USE_BUNDLED_LIBS_TRUE@	../libs/potrace/libpotrace.a \
-@USE_BUNDLED_LIBS_TRUE@	../libs/xxHash/libxxhash.a
+@ENABLE_WOFF_TRUE@am__append_1 = \
+@ENABLE_WOFF_TRUE@	../libs/ff-woff/libfontforge.a \
+@ENABLE_WOFF_TRUE@	$(WOFF2_LIBS) \
+@ENABLE_WOFF_TRUE@	$(BROTLI_LIBS)
 
-@USE_BUNDLED_LIBS_FALSE@am__append_2 = \
-@USE_BUNDLED_LIBS_FALSE@	$(POTRACE_LIBS) \
-@USE_BUNDLED_LIBS_FALSE@	$(XXHASH_LIBS)
-
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@am__append_3 = \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	../libs/ff-woff/libfontforge.a \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	../libs/woff2/libwoff2.a \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	../libs/brotli/libbrotli.a
-
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__append_4 = \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	../libs/ff-woff/libfontforge.a \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(WOFF2_LIBS) \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(BROTLI_LIBS)
-
-@USE_BUNDLED_MD5_TRUE@am__append_5 = ../libs/md5/libmd5.a
-@USE_BUNDLED_MD5_FALSE@am__append_6 = $(LIBCRYPTO_LIBS)
-@ENABLE_WOFF_TRUE@am__append_7 = ffwrapper.c ffwrapper.h
-@USE_BUNDLED_LIBS_TRUE@am__append_8 = \
-@USE_BUNDLED_LIBS_TRUE@	-I$(dvisvgm_srcdir)/libs/potrace \
-@USE_BUNDLED_LIBS_TRUE@	-I$(dvisvgm_srcdir)/libs/xxHash
-
-@USE_BUNDLED_LIBS_FALSE@am__append_9 = \
-@USE_BUNDLED_LIBS_FALSE@	$(POTRACE_CFLAGS) \
-@USE_BUNDLED_LIBS_FALSE@	$(XXHASH_CFLAGS)
-
-@ENABLE_WOFF_TRUE@am__append_10 = \
+@USE_BUNDLED_MD5_TRUE@am__append_2 = ../libs/md5/libmd5.a
+@USE_BUNDLED_MD5_FALSE@am__append_3 = $(LIBCRYPTO_LIBS)
+@ENABLE_WOFF_TRUE@am__append_4 = ffwrapper.c ffwrapper.h
+@ENABLE_WOFF_TRUE@am__append_5 = \
 @ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
 @ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
 
-@ENABLE_WOFF_TRUE@am__append_11 = $(TTFAUTOHINT_CFLAGS)
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@am__append_12 = \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	-I$(dvisvgm_srcdir)/libs/brotli/include \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@	-I$(dvisvgm_srcdir)/libs/woff2/include
-
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__append_13 = \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(BROTLI_CFLAGS) \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(WOFF2_CFLAGS)
-
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_MD5_TRUE@am__append_14 = -I$(dvisvgm_srcdir)/libs/md5
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_MD5_FALSE@am__append_15 = $(LIBCRYPTO_CFLAGS)
-@ENABLE_WOFF_TRUE@am__append_16 = $(TTFAUTOHINT_LIBS)
-@WIN32_TRUE@am__append_17 = -DTEXLIVEWIN32
+@ENABLE_WOFF_TRUE@am__append_6 = $(TTFAUTOHINT_CFLAGS) \
+@ENABLE_WOFF_TRUE@	$(BROTLI_CFLAGS) $(WOFF2_CFLAGS)
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_MD5_TRUE@am__append_7 = -I$(dvisvgm_srcdir)/libs/md5
+@ENABLE_WOFF_TRUE@@USE_BUNDLED_MD5_FALSE@am__append_8 = $(LIBCRYPTO_CFLAGS)
+@ENABLE_WOFF_TRUE@am__append_9 = $(TTFAUTOHINT_LIBS)
+@WIN32_TRUE@am__append_10 = -DTEXLIVEWIN32
 subdir = dvisvgm-src/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
@@ -279,7 +251,6 @@ libdvisvgm_a_OBJECTS = $(am_libdvisvgm_a_OBJECTS)
 am_dvisvgm_OBJECTS = dvisvgm.$(OBJEXT)
 dvisvgm_OBJECTS = $(am_dvisvgm_OBJECTS)
 am__DEPENDENCIES_1 =
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__DEPENDENCIES_2 = ../libs/ff-woff/libfontforge.a
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -413,14 +384,14 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/version.hpp.in \
-	$(top_srcdir)/../../build-aux/depcomp
+am__DIST_COMMON = $(srcdir)/../libs/defs.am $(srcdir)/Makefile.in \
+	$(srcdir)/version.hpp.in $(top_srcdir)/../../build-aux/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
-AM_LDFLAGS = $(KPSE_LIBS) $(CODE_COVERAGE_LDFLAGS) $(am__append_16)
+AM_LDFLAGS = $(KPSE_LIBS) $(CODE_COVERAGE_LDFLAGS) $(am__append_9)
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -565,11 +536,19 @@ dvisvgm_SOURCES = \
 	CommandLine.hpp \
 	dvisvgm.cpp
 
+@HAVE_BROTLI_FALSE@BROTLI_CFLAGS = -I$(dvisvgm_srcdir)/libs/brotli/include
+@HAVE_BROTLI_FALSE@BROTLI_LIBS = ../libs/brotli/libbrotli.a
+@HAVE_POTRACE_FALSE@POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
+@HAVE_POTRACE_FALSE@POTRACE_LIBS = ../libs/potrace/libpotrace.a
+@HAVE_WOFF2_FALSE@WOFF2_CFLAGS = -I$(dvisvgm_srcdir)/libs/woff2/include
+@HAVE_WOFF2_FALSE@WOFF2_LIBS = ../libs/woff2/libwoff2.a
+@HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
+@HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
+dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
 dvisvgm_LDADD = $(noinst_LIBRARIES) ../libs/clipper/libclipper.a \
-	$(am__append_1) $(am__append_2) $(am__append_3) \
-	$(am__append_4) $(am__append_5) $(am__append_6) \
-	$(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(FONTFORGE_LIBS) \
-	$(ZLIB_LIBS) $(LIBGS_LIBS)
+	$(POTRACE_LIBS) $(XXHASH_LIBS) $(am__append_1) $(am__append_2) \
+	$(am__append_3) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) \
+	$(FONTFORGE_LIBS) $(ZLIB_LIBS) $(LIBGS_LIBS)
 dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES) $(KPATHSEA_DEPEND) \
 	$(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
 libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
@@ -634,25 +613,23 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
 	VectorStream.hpp version.hpp VFActions.hpp VFReader.cpp \
 	VFReader.hpp windows.hpp XMLDocument.cpp XMLDocument.hpp \
 	XMLNode.cpp XMLNode.hpp XMLString.cpp XMLString.hpp \
-	XXHashFunction.hpp ZLibOutputStream.hpp $(am__append_7)
+	XXHashFunction.hpp ZLibOutputStream.hpp $(am__append_4)
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
-dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
 AM_CFLAGS = $(WARNING_CFLAGS) $(ZLIB_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
-	$(am__append_10)
+	$(am__append_5)
 AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
 	-Wno-mismatched-tags -I$(dvisvgm_srcdir)/libs/clipper \
-	-I$(dvisvgm_srcdir)/libs/variant/include $(am__append_8) \
-	$(am__append_9) $(am__append_11) $(am__append_12) \
-	$(am__append_13) $(am__append_14) $(am__append_15) \
-	$(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES) \
-	$(ZLIB_INCLUDES) $(LIBGS_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
-	$(am__append_17)
+	-I$(dvisvgm_srcdir)/libs/variant/include $(POTRACE_CFLAGS) \
+	$(XXHASH_CFLAGS) $(am__append_6) $(am__append_7) \
+	$(am__append_8) $(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) \
+	$(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) $(LIBGS_INCLUDES) \
+	$(CODE_COVERAGE_CFLAGS) $(am__append_10)
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .cpp .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../libs/defs.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -672,6 +649,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles);; \
 	esac;
+$(srcdir)/../libs/defs.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh

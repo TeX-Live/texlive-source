@@ -15,7 +15,7 @@ dnl
 AC_PREREQ([2.65])
 m4_include([version.ac])[] dnl define dvisvgm_version
 AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
-DATE="September 2018"
+DATE="October 2018"
 AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([../../m4])dnl not just _DIR
@@ -29,8 +29,7 @@ AM_PROG_AR
 KPSE_COMMON([dvisvgm])
 
 AH_TEMPLATE([TARGET_SYSTEM], [The machine triplet of the target system])
-AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$host"],
-                   [The machine triplet of the target system.])
+AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$target"])
 
 AC_PROG_CC
 AC_PROG_CC_C99
@@ -162,7 +161,6 @@ AC_STRUCT_TM
 # Check for library functions.
 AC_FUNC_STAT
 AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
-# TL? memset strcasecmp strtol
 
 AC_ARG_ENABLE([woff],
 	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
@@ -189,6 +187,12 @@ AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$use_bundled_libs" = "xyes" dnl
 
 # TL: use bundled md5 too
 AM_CONDITIONAL([USE_BUNDLED_MD5], true)
+
+# TL: these conditionals for system libraries are in the Makefile.am's.
+AM_CONDITIONAL(HAVE_POTRACE, false)
+AM_CONDITIONAL(HAVE_BROTLI, false)
+AM_CONDITIONAL(HAVE_WOFF2, false)
+AM_CONDITIONAL(HAVE_XXHASH, false)
 
 # TL: not going to build_manpage (which is the default).
 # TL: not going to attempt code coverage; need to subst it away.

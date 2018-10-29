@@ -28,6 +28,7 @@ svn status | sed -n 's/^\!//p'  # rerun, should be empty now
 cd ..
 
 Update our ./configure.ac from upstream dvisvgm-src/configure.ac.
+(See patch-04-configure-* for reference, but they won't apply as-is.)
 
 # patch to integrate into TL build. Will probably need adjusting;
 # any top_srcdir in dvisvgm-src/src/Makefile.am needs to become dvisvgm_srcdir.

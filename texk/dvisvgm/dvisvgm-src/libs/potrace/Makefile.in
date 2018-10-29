@@ -122,9 +122,9 @@ libpotrace_a_LIBADD =
 am__libpotrace_a_SOURCES_DIST = auxiliary.h bitmap.h config.h curve.c \
 	curve.h decompose.c decompose.h lists.h potracelib.c \
 	potracelib.h progress.h trace.c trace.h
-@USE_BUNDLED_LIBS_TRUE@am_libpotrace_a_OBJECTS = curve.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	decompose.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	potracelib.$(OBJEXT) trace.$(OBJEXT)
+@HAVE_POTRACE_FALSE@am_libpotrace_a_OBJECTS = curve.$(OBJEXT) \
+@HAVE_POTRACE_FALSE@	decompose.$(OBJEXT) potracelib.$(OBJEXT) \
+@HAVE_POTRACE_FALSE@	trace.$(OBJEXT)
 libpotrace_a_OBJECTS = $(am_libpotrace_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -339,23 +339,23 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@USE_BUNDLED_LIBS_TRUE@noinst_LIBRARIES = libpotrace.a
-@USE_BUNDLED_LIBS_TRUE@libpotrace_a_SOURCES = \
-@USE_BUNDLED_LIBS_TRUE@	auxiliary.h \
-@USE_BUNDLED_LIBS_TRUE@	bitmap.h \
-@USE_BUNDLED_LIBS_TRUE@	config.h \
-@USE_BUNDLED_LIBS_TRUE@	curve.c \
-@USE_BUNDLED_LIBS_TRUE@	curve.h \
-@USE_BUNDLED_LIBS_TRUE@	decompose.c \
-@USE_BUNDLED_LIBS_TRUE@	decompose.h \
-@USE_BUNDLED_LIBS_TRUE@	lists.h \
-@USE_BUNDLED_LIBS_TRUE@	potracelib.c \
-@USE_BUNDLED_LIBS_TRUE@	potracelib.h \
-@USE_BUNDLED_LIBS_TRUE@	progress.h \
-@USE_BUNDLED_LIBS_TRUE@	trace.c \
-@USE_BUNDLED_LIBS_TRUE@	trace.h
+@HAVE_POTRACE_FALSE@noinst_LIBRARIES = libpotrace.a
+@HAVE_POTRACE_FALSE@libpotrace_a_SOURCES = \
+@HAVE_POTRACE_FALSE@	auxiliary.h \
+@HAVE_POTRACE_FALSE@	bitmap.h \
+@HAVE_POTRACE_FALSE@	config.h \
+@HAVE_POTRACE_FALSE@	curve.c \
+@HAVE_POTRACE_FALSE@	curve.h \
+@HAVE_POTRACE_FALSE@	decompose.c \
+@HAVE_POTRACE_FALSE@	decompose.h \
+@HAVE_POTRACE_FALSE@	lists.h \
+@HAVE_POTRACE_FALSE@	potracelib.c \
+@HAVE_POTRACE_FALSE@	potracelib.h \
+@HAVE_POTRACE_FALSE@	progress.h \
+@HAVE_POTRACE_FALSE@	trace.c \
+@HAVE_POTRACE_FALSE@	trace.h
 
-@USE_BUNDLED_LIBS_TRUE@AM_CFLAGS = -Wall -I$(srcdir)
+@HAVE_POTRACE_FALSE@AM_CFLAGS = -Wall -I$(srcdir)
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
@@ -662,7 +662,7 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-@USE_BUNDLED_LIBS_TRUE@@CODE_COVERAGE_RULES@
+@HAVE_POTRACE_FALSE@@CODE_COVERAGE_RULES@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -88,12 +88,15 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_TRUE@am__append_1 = ../libs/woff2/libwoff2.a ../libs/brotli/libbrotli.a
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__append_2 = $(WOFF2_LIBS) $(BROTLI_LIBS)
-@USE_BUNDLED_MD5_TRUE@am__append_3 = -I$(top_srcdir)/libs/md5
-@USE_BUNDLED_MD5_TRUE@am__append_4 = ../libs/md5/libmd5.a
-@USE_BUNDLED_MD5_FALSE@am__append_5 = $(LIBCRYPTO_CFLAGS)
-@USE_BUNDLED_MD5_FALSE@am__append_6 = $(LIBCRYPTO_LIBS)
+@HAVE_BROTLI_FALSE@am__append_1 = -I$(top_srcdir)/libs/brotli/include
+@HAVE_BROTLI_FALSE@am__append_2 = ../libs/brotli/libbrotli.a
+@HAVE_WOFF2_FALSE@am__append_3 = -I$(top_srcdir)/libs/woff2/include
+@HAVE_WOFF2_FALSE@am__append_4 = ../libs/woff2/libwoff2.a
+@ENABLE_WOFF_TRUE@am__append_5 = $(WOFF2_LIBS) $(BROTLI_LIBS)
+@USE_BUNDLED_MD5_TRUE@am__append_6 = -I$(top_srcdir)/libs/md5
+@USE_BUNDLED_MD5_TRUE@am__append_7 = ../libs/md5/libmd5.a
+@USE_BUNDLED_MD5_FALSE@am__append_8 = $(LIBCRYPTO_CFLAGS)
+@USE_BUNDLED_MD5_FALSE@am__append_9 = $(LIBCRYPTO_LIBS)
 TESTS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) BitmapTest$(EXEEXT) \
 	BoundingBoxTest$(EXEEXT) CalculatorTest$(EXEEXT) \
 	CMapManagerTest$(EXEEXT) CMapReaderTest$(EXEEXT) \
@@ -155,7 +158,7 @@ check_PROGRAMS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) \
 	UtilityTest$(EXEEXT) VectorIteratorTest$(EXEEXT) \
 	VectorStreamTest$(EXEEXT) XMLNodeTest$(EXEEXT) \
 	XMLStringTest$(EXEEXT)
-@ENABLE_WOFF_TRUE@am__append_7 = ../libs/ff-woff/libfontforge.a
+@ENABLE_WOFF_TRUE@am__append_10 = ../libs/ff-woff/libfontforge.a
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_code_coverage.m4 \
@@ -184,224 +187,221 @@ libgtest_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(CXXFLAGS) $(libgtest_la_LDFLAGS) $(LDFLAGS) -o $@
 am_BezierTest_OBJECTS = BezierTest-BezierTest.$(OBJEXT)
 BezierTest_OBJECTS = $(am_BezierTest_OBJECTS)
-am__DEPENDENCIES_1 =
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) \
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_LIBS_FALSE@	$(am__DEPENDENCIES_1)
-@USE_BUNDLED_MD5_FALSE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
-@USE_BUNDLED_LIBS_FALSE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_2) \
-@USE_BUNDLED_LIBS_FALSE@	$(am__append_4) $(am__DEPENDENCIES_3)
-@USE_BUNDLED_LIBS_TRUE@am__DEPENDENCIES_4 =  \
-@USE_BUNDLED_LIBS_TRUE@	../libs/potrace/libpotrace.a \
-@USE_BUNDLED_LIBS_TRUE@	../libs/xxHash/libxxhash.a \
-@USE_BUNDLED_LIBS_TRUE@	$(am__append_1) $(am__DEPENDENCIES_2) \
-@USE_BUNDLED_LIBS_TRUE@	$(am__append_4) $(am__DEPENDENCIES_3)
-am__DEPENDENCIES_5 = libgtest.la ../src/libdvisvgm.a \
-	$(am__DEPENDENCIES_4) $(am__append_7) $(am__DEPENDENCIES_1)
-BezierTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+am__DEPENDENCIES_1 = $(am__append_4)
+am__DEPENDENCIES_2 = $(am__append_2)
+@ENABLE_WOFF_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1) \
+@ENABLE_WOFF_TRUE@	$(am__DEPENDENCIES_2)
+am__DEPENDENCIES_4 =
+@USE_BUNDLED_MD5_FALSE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_4)
+am__DEPENDENCIES_6 = $(POTRACE_LIBS) $(XXHASH_LIBS) \
+	$(am__DEPENDENCIES_3) $(am__append_7) $(am__DEPENDENCIES_5)
+am__DEPENDENCIES_7 = libgtest.la ../src/libdvisvgm.a \
+	$(am__DEPENDENCIES_6) $(am__append_10) $(am__DEPENDENCIES_4)
+BezierTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_BitmapTest_OBJECTS = BitmapTest-BitmapTest.$(OBJEXT)
 BitmapTest_OBJECTS = $(am_BitmapTest_OBJECTS)
-BitmapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+BitmapTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_BoundingBoxTest_OBJECTS =  \
 	BoundingBoxTest-BoundingBoxTest.$(OBJEXT)
 BoundingBoxTest_OBJECTS = $(am_BoundingBoxTest_OBJECTS)
-BoundingBoxTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+BoundingBoxTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_CMapManagerTest_OBJECTS =  \
 	CMapManagerTest-CMapManagerTest.$(OBJEXT)
 CMapManagerTest_OBJECTS = $(am_CMapManagerTest_OBJECTS)
-CMapManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+CMapManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_CMapReaderTest_OBJECTS = CMapReaderTest-CMapReaderTest.$(OBJEXT)
 CMapReaderTest_OBJECTS = $(am_CMapReaderTest_OBJECTS)
-CMapReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+CMapReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_CMapTest_OBJECTS = CMapTest-CMapTest.$(OBJEXT)
 CMapTest_OBJECTS = $(am_CMapTest_OBJECTS)
-CMapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+CMapTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_CRC32Test_OBJECTS = CRC32Test-CRC32Test.$(OBJEXT)
 CRC32Test_OBJECTS = $(am_CRC32Test_OBJECTS)
-CRC32Test_DEPENDENCIES = $(am__DEPENDENCIES_5)
+CRC32Test_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_CalculatorTest_OBJECTS = CalculatorTest-CalculatorTest.$(OBJEXT)
 CalculatorTest_OBJECTS = $(am_CalculatorTest_OBJECTS)
-CalculatorTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+CalculatorTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_ColorSpecialTest_OBJECTS =  \
 	ColorSpecialTest-ColorSpecialTest.$(OBJEXT)
 ColorSpecialTest_OBJECTS = $(am_ColorSpecialTest_OBJECTS)
-ColorSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+ColorSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_ColorTest_OBJECTS = ColorTest-ColorTest.$(OBJEXT)
 ColorTest_OBJECTS = $(am_ColorTest_OBJECTS)
-ColorTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+ColorTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_CommandLineTest_OBJECTS =  \
 	CommandLineTest-CommandLineTest.$(OBJEXT)
 CommandLineTest_OBJECTS = $(am_CommandLineTest_OBJECTS)
-CommandLineTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+CommandLineTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_DVIReaderTest_OBJECTS = DVIReaderTest-DVIReaderTest.$(OBJEXT)
 DVIReaderTest_OBJECTS = $(am_DVIReaderTest_OBJECTS)
-DVIReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+DVIReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_DependencyGraphTest_OBJECTS =  \
 	DependencyGraphTest-DependencyGraphTest.$(OBJEXT)
 DependencyGraphTest_OBJECTS = $(am_DependencyGraphTest_OBJECTS)
-DependencyGraphTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+DependencyGraphTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_DirectoryTest_OBJECTS = DirectoryTest-DirectoryTest.$(OBJEXT)
 DirectoryTest_OBJECTS = $(am_DirectoryTest_OBJECTS)
-DirectoryTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+DirectoryTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_DvisvgmSpecialTest_OBJECTS =  \
 	DvisvgmSpecialTest-DvisvgmSpecialTest.$(OBJEXT)
 DvisvgmSpecialTest_OBJECTS = $(am_DvisvgmSpecialTest_OBJECTS)
-DvisvgmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+DvisvgmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_EmSpecialTest_OBJECTS = EmSpecialTest-EmSpecialTest.$(OBJEXT)
 EmSpecialTest_OBJECTS = $(am_EmSpecialTest_OBJECTS)
-EmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+EmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_FileFinderTest_OBJECTS = FileFinderTest-FileFinderTest.$(OBJEXT)
 FileFinderTest_OBJECTS = $(am_FileFinderTest_OBJECTS)
-FileFinderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+FileFinderTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_FilePathTest_OBJECTS = FilePathTest-FilePathTest.$(OBJEXT)
 FilePathTest_OBJECTS = $(am_FilePathTest_OBJECTS)
-FilePathTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+FilePathTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_FileSystemTest_OBJECTS = FileSystemTest-FileSystemTest.$(OBJEXT)
 FileSystemTest_OBJECTS = $(am_FileSystemTest_OBJECTS)
-FileSystemTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+FileSystemTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_FontCacheTest_OBJECTS = FontCacheTest-FontCacheTest.$(OBJEXT)
 FontCacheTest_OBJECTS = $(am_FontCacheTest_OBJECTS)
-FontCacheTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+FontCacheTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_FontManagerTest_OBJECTS =  \
 	FontManagerTest-FontManagerTest.$(OBJEXT)
 FontManagerTest_OBJECTS = $(am_FontManagerTest_OBJECTS)
-FontManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+FontManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_FontMapTest_OBJECTS = FontMapTest-FontMapTest.$(OBJEXT)
 FontMapTest_OBJECTS = $(am_FontMapTest_OBJECTS)
-FontMapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+FontMapTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_GFGlyphTracerTest_OBJECTS =  \
 	GFGlyphTracerTest-GFGlyphTracerTest.$(OBJEXT)
 GFGlyphTracerTest_OBJECTS = $(am_GFGlyphTracerTest_OBJECTS)
-GFGlyphTracerTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+GFGlyphTracerTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_GFReaderTest_OBJECTS = GFReaderTest-GFReaderTest.$(OBJEXT)
 GFReaderTest_OBJECTS = $(am_GFReaderTest_OBJECTS)
-GFReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+GFReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_GhostscriptTest_OBJECTS =  \
 	GhostscriptTest-GhostscriptTest.$(OBJEXT)
 GhostscriptTest_OBJECTS = $(am_GhostscriptTest_OBJECTS)
-GhostscriptTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+GhostscriptTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_GraphicsPathTest_OBJECTS =  \
 	GraphicsPathTest-GraphicsPathTest.$(OBJEXT)
 GraphicsPathTest_OBJECTS = $(am_GraphicsPathTest_OBJECTS)
-GraphicsPathTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+GraphicsPathTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_HashFunctionTest_OBJECTS =  \
 	HashFunctionTest-HashFunctionTest.$(OBJEXT)
 HashFunctionTest_OBJECTS = $(am_HashFunctionTest_OBJECTS)
-HashFunctionTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+HashFunctionTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_JFMReaderTest_OBJECTS = JFMReaderTest-JFMReaderTest.$(OBJEXT)
 JFMReaderTest_OBJECTS = $(am_JFMReaderTest_OBJECTS)
-JFMReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+JFMReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_LengthTest_OBJECTS = LengthTest-LengthTest.$(OBJEXT)
 LengthTest_OBJECTS = $(am_LengthTest_OBJECTS)
-LengthTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+LengthTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_MapLineTest_OBJECTS = MapLineTest-MapLineTest.$(OBJEXT)
 MapLineTest_OBJECTS = $(am_MapLineTest_OBJECTS)
-MapLineTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+MapLineTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_MatrixTest_OBJECTS = MatrixTest-MatrixTest.$(OBJEXT)
 MatrixTest_OBJECTS = $(am_MatrixTest_OBJECTS)
-MatrixTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+MatrixTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_MessageExceptionTest_OBJECTS =  \
 	MessageExceptionTest-MessageExceptionTest.$(OBJEXT)
 MessageExceptionTest_OBJECTS = $(am_MessageExceptionTest_OBJECTS)
-MessageExceptionTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+MessageExceptionTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_PDFParserTest_OBJECTS = PDFParserTest-PDFParserTest.$(OBJEXT)
 PDFParserTest_OBJECTS = $(am_PDFParserTest_OBJECTS)
-PDFParserTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+PDFParserTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_PSInterpreterTest_OBJECTS =  \
 	PSInterpreterTest-PSInterpreterTest.$(OBJEXT)
 PSInterpreterTest_OBJECTS = $(am_PSInterpreterTest_OBJECTS)
-PSInterpreterTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+PSInterpreterTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_PageRagesTest_OBJECTS = PageRagesTest-PageRagesTest.$(OBJEXT)
 PageRagesTest_OBJECTS = $(am_PageRagesTest_OBJECTS)
-PageRagesTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+PageRagesTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_PageSizeTest_OBJECTS = PageSizeTest-PageSizeTest.$(OBJEXT)
 PageSizeTest_OBJECTS = $(am_PageSizeTest_OBJECTS)
-PageSizeTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+PageSizeTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_PairTest_OBJECTS = PairTest-PairTest.$(OBJEXT)
 PairTest_OBJECTS = $(am_PairTest_OBJECTS)
-PairTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+PairTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_PapersizeSpecialTest_OBJECTS =  \
 	PapersizeSpecialTest-PapersizeSpecialTest.$(OBJEXT)
 PapersizeSpecialTest_OBJECTS = $(am_PapersizeSpecialTest_OBJECTS)
-PapersizeSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+PapersizeSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_RangeMapTest_OBJECTS = RangeMapTest-RangeMapTest.$(OBJEXT)
 RangeMapTest_OBJECTS = $(am_RangeMapTest_OBJECTS)
-RangeMapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+RangeMapTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_SVGOutputTest_OBJECTS = SVGOutputTest-SVGOutputTest.$(OBJEXT)
 SVGOutputTest_OBJECTS = $(am_SVGOutputTest_OBJECTS)
-SVGOutputTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+SVGOutputTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_ShadingPatchTest_OBJECTS =  \
 	ShadingPatchTest-ShadingPatchTest.$(OBJEXT)
 ShadingPatchTest_OBJECTS = $(am_ShadingPatchTest_OBJECTS)
-ShadingPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+ShadingPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_SpecialManagerTest_OBJECTS =  \
 	SpecialManagerTest-SpecialManagerTest.$(OBJEXT)
 SpecialManagerTest_OBJECTS = $(am_SpecialManagerTest_OBJECTS)
-SpecialManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+SpecialManagerTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_SplittedCharInputBufferTest_OBJECTS = SplittedCharInputBufferTest-SplittedCharInputBufferTest.$(OBJEXT)
 SplittedCharInputBufferTest_OBJECTS =  \
 	$(am_SplittedCharInputBufferTest_OBJECTS)
-SplittedCharInputBufferTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+SplittedCharInputBufferTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_StreamInputBufferTest_OBJECTS =  \
 	StreamInputBufferTest-StreamInputBufferTest.$(OBJEXT)
 StreamInputBufferTest_OBJECTS = $(am_StreamInputBufferTest_OBJECTS)
-StreamInputBufferTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+StreamInputBufferTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_StreamReaderTest_OBJECTS =  \
 	StreamReaderTest-StreamReaderTest.$(OBJEXT)
 StreamReaderTest_OBJECTS = $(am_StreamReaderTest_OBJECTS)
-StreamReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+StreamReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_StreamWriterTest_OBJECTS =  \
 	StreamWriterTest-StreamWriterTest.$(OBJEXT)
 StreamWriterTest_OBJECTS = $(am_StreamWriterTest_OBJECTS)
-StreamWriterTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+StreamWriterTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_StringMatcherTest_OBJECTS =  \
 	StringMatcherTest-StringMatcherTest.$(OBJEXT)
 StringMatcherTest_OBJECTS = $(am_StringMatcherTest_OBJECTS)
-StringMatcherTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+StringMatcherTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_SubfontTest_OBJECTS = SubfontTest-SubfontTest.$(OBJEXT)
 SubfontTest_OBJECTS = $(am_SubfontTest_OBJECTS)
-SubfontTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+SubfontTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_TFMReaderTest_OBJECTS = TFMReaderTest-TFMReaderTest.$(OBJEXT)
 TFMReaderTest_OBJECTS = $(am_TFMReaderTest_OBJECTS)
-TFMReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+TFMReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_TensorProductPatchTest_OBJECTS =  \
 	TensorProductPatchTest-TensorProductPatchTest.$(OBJEXT)
 TensorProductPatchTest_OBJECTS = $(am_TensorProductPatchTest_OBJECTS)
-TensorProductPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+TensorProductPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_ToUnicodeMapTest_OBJECTS =  \
 	ToUnicodeMapTest-ToUnicodeMapTest.$(OBJEXT)
 ToUnicodeMapTest_OBJECTS = $(am_ToUnicodeMapTest_OBJECTS)
-ToUnicodeMapTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+ToUnicodeMapTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_TpicSpecialTest_OBJECTS =  \
 	TpicSpecialTest-TpicSpecialTest.$(OBJEXT)
 TpicSpecialTest_OBJECTS = $(am_TpicSpecialTest_OBJECTS)
-TpicSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+TpicSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_TriangularPatchTest_OBJECTS =  \
 	TriangularPatchTest-TriangularPatchTest.$(OBJEXT)
 TriangularPatchTest_OBJECTS = $(am_TriangularPatchTest_OBJECTS)
-TriangularPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+TriangularPatchTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_UnicodeTest_OBJECTS = UnicodeTest-UnicodeTest.$(OBJEXT)
 UnicodeTest_OBJECTS = $(am_UnicodeTest_OBJECTS)
-UnicodeTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+UnicodeTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_UtilityTest_OBJECTS = UtilityTest-UtilityTest.$(OBJEXT)
 UtilityTest_OBJECTS = $(am_UtilityTest_OBJECTS)
-UtilityTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+UtilityTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_VectorIteratorTest_OBJECTS =  \
 	VectorIteratorTest-VectorIteratorTest.$(OBJEXT)
 VectorIteratorTest_OBJECTS = $(am_VectorIteratorTest_OBJECTS)
-VectorIteratorTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+VectorIteratorTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_VectorStreamTest_OBJECTS =  \
 	VectorStreamTest-VectorStreamTest.$(OBJEXT)
 VectorStreamTest_OBJECTS = $(am_VectorStreamTest_OBJECTS)
-VectorStreamTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+VectorStreamTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_XMLNodeTest_OBJECTS = XMLNodeTest-XMLNodeTest.$(OBJEXT)
 XMLNodeTest_OBJECTS = $(am_XMLNodeTest_OBJECTS)
-XMLNodeTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+XMLNodeTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_XMLStringTest_OBJECTS = XMLStringTest-XMLStringTest.$(OBJEXT)
 XMLStringTest_OBJECTS = $(am_XMLStringTest_OBJECTS)
-XMLStringTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
+XMLStringTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 nodist_hashcheck_OBJECTS = hashcheck-hashcheck.$(OBJEXT)
 hashcheck_OBJECTS = $(nodist_hashcheck_OBJECTS)
-hashcheck_DEPENDENCIES = $(am__DEPENDENCIES_4)
+hashcheck_DEPENDENCIES = $(am__DEPENDENCIES_6)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -761,8 +761,8 @@ TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
 DIST_SUBDIRS = $(SUBDIRS)
-am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp \
-	$(top_srcdir)/test-driver
+am__DIST_COMMON = $(srcdir)/../libs/defs.am $(srcdir)/Makefile.in \
+	$(top_srcdir)/depcomp $(top_srcdir)/test-driver
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -800,8 +800,8 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-BROTLI_CFLAGS = @BROTLI_CFLAGS@
-BROTLI_LIBS = @BROTLI_LIBS@
+BROTLI_CFLAGS = @BROTLI_CFLAGS@ $(am__append_1)
+BROTLI_LIBS = @BROTLI_LIBS@ $(am__append_2)
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -883,8 +883,8 @@ STRIP = @STRIP@
 TTFAUTOHINT_CFLAGS = @TTFAUTOHINT_CFLAGS@
 TTFAUTOHINT_LIBS = @TTFAUTOHINT_LIBS@
 VERSION = @VERSION@
-WOFF2_CFLAGS = @WOFF2_CFLAGS@
-WOFF2_LIBS = @WOFF2_LIBS@
+WOFF2_CFLAGS = @WOFF2_CFLAGS@ $(am__append_3)
+WOFF2_LIBS = @WOFF2_LIBS@ $(am__append_4)
 XMLTO = @XMLTO@
 XSLTPROC = @XSLTPROC@
 ZLIB_CFLAGS = @ZLIB_CFLAGS@
@@ -957,17 +957,13 @@ EXTRA_DIST = gtest/LICENSE gtest/include gtest/src/gtest.cc \
 	gtest/src/gtest-port.cc gtest/src/gtest-printers.cc \
 	gtest/src/gtest-test-part.cc gtest/src/gtest-typed-test.cc \
 	check-conv genhashcheck.py normalize.xsl
-@USE_BUNDLED_LIBS_FALSE@LIBS_CFLAGS = $(XXHASH_CFLAGS) $(am__append_3) \
-@USE_BUNDLED_LIBS_FALSE@	$(am__append_5)
-@USE_BUNDLED_LIBS_TRUE@LIBS_CFLAGS = -I$(top_srcdir)/libs/xxHash \
-@USE_BUNDLED_LIBS_TRUE@	$(am__append_3) $(am__append_5)
-@USE_BUNDLED_LIBS_FALSE@LIBS_LIBS = $(POTRACE_LIBS) $(XXHASH_LIBS) \
-@USE_BUNDLED_LIBS_FALSE@	$(am__append_2) $(am__append_4) \
-@USE_BUNDLED_LIBS_FALSE@	$(am__append_6)
-@USE_BUNDLED_LIBS_TRUE@LIBS_LIBS = ../libs/potrace/libpotrace.a \
-@USE_BUNDLED_LIBS_TRUE@	../libs/xxHash/libxxhash.a \
-@USE_BUNDLED_LIBS_TRUE@	$(am__append_1) $(am__append_2) \
-@USE_BUNDLED_LIBS_TRUE@	$(am__append_4) $(am__append_6)
+@HAVE_POTRACE_FALSE@POTRACE_CFLAGS = -I$(top_srcdir)/libs/potrace
+@HAVE_POTRACE_FALSE@POTRACE_LIBS = ../libs/potrace/libpotrace.a
+@HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(top_srcdir)/libs/xxHash
+@HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
+LIBS_CFLAGS = $(XXHASH_CFLAGS) $(am__append_6) $(am__append_8)
+LIBS_LIBS = $(POTRACE_LIBS) $(XXHASH_LIBS) $(am__append_5) \
+	$(am__append_7) $(am__append_9)
 AM_CXXFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/libs/variant/include \
 	-Wall -Wno-mismatched-tags \
 	-DBUILDDIR='"$(abs_builddir)"' -DSRCDIR='"$(abs_srcdir)"' \
@@ -977,7 +973,7 @@ nodist_hashcheck_SOURCES = hashcheck.cpp
 hashcheck_CPPFLAGS = $(LIBS_CFLAGS)
 hashcheck_LDADD = $(LIBS_LIBS)
 TESTLIBS = libgtest.la ../src/libdvisvgm.a $(LIBS_LIBS) -lfreetype \
-	$(am__append_7) $(CODE_COVERAGE_LDFLAGS)
+	$(am__append_10) $(CODE_COVERAGE_LDFLAGS)
 BezierTest_SOURCES = BezierTest.cpp testutil.hpp
 BezierTest_CPPFLAGS = -I$(top_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 BezierTest_LDADD = $(TESTLIBS)
@@ -1160,7 +1156,7 @@ all: all-recursive
 
 .SUFFIXES:
 .SUFFIXES: .cc .cpp .lo .log .o .obj .test .test$(EXEEXT) .trs
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/../libs/defs.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1169,9 +1165,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign tests/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign tests/Makefile
+	  $(AUTOMAKE) --gnu tests/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -1180,6 +1176,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/../libs/defs.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh

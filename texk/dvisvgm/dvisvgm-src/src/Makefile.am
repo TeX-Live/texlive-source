@@ -10,32 +10,21 @@ dvisvgm_SOURCES = \
 	CommandLine.hpp \
 	dvisvgm.cpp
 
+include ../libs/defs.am
+
+dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
+
 dvisvgm_LDADD = \
 	$(noinst_LIBRARIES) \
-	../libs/clipper/libclipper.a
-
-if USE_BUNDLED_LIBS
-dvisvgm_LDADD += \
-	../libs/potrace/libpotrace.a \
-	../libs/xxHash/libxxhash.a
-else
-dvisvgm_LDADD += \
+	../libs/clipper/libclipper.a \
 	$(POTRACE_LIBS) \
 	$(XXHASH_LIBS)
-endif
 
 if ENABLE_WOFF
-if USE_BUNDLED_LIBS
-dvisvgm_LDADD += \
-	../libs/ff-woff/libfontforge.a \
-	../libs/woff2/libwoff2.a \
-	../libs/brotli/libbrotli.a
-else
 dvisvgm_LDADD += \
 	../libs/ff-woff/libfontforge.a \
 	$(WOFF2_LIBS) \
 	$(BROTLI_LIBS)
-endif
 endif
 
 if USE_BUNDLED_MD5
@@ -276,8 +265,6 @@ endif
 
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
 
-dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
-
 AM_CFLAGS = $(WARNING_CFLAGS) \
 	$(ZLIB_INCLUDES) \
 	$(CODE_COVERAGE_CFLAGS)
@@ -286,15 +273,9 @@ AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor -Wno-mismatched-tags \
 	-I$(dvisvgm_srcdir)/libs/clipper \
 	-I$(dvisvgm_srcdir)/libs/variant/include
 
-if USE_BUNDLED_LIBS
-AM_CXXFLAGS +=  \
-	-I$(dvisvgm_srcdir)/libs/potrace \
-	-I$(dvisvgm_srcdir)/libs/xxHash
-else
 AM_CXXFLAGS += \
 	$(POTRACE_CFLAGS) \
 	$(XXHASH_CFLAGS)
-endif
 
 AM_LDFLAGS = \
 	$(KPSE_LIBS) \
@@ -307,22 +288,15 @@ AM_CFLAGS +=  \
 
 AM_CXXFLAGS += $(TTFAUTOHINT_CFLAGS)
 
-if USE_BUNDLED_LIBS
-AM_CXXFLAGS +=  \
-	-I$(dvisvgm_srcdir)/libs/brotli/include \
-	-I$(dvisvgm_srcdir)/libs/woff2/include
-else
 AM_CXXFLAGS +=  \
 	$(BROTLI_CFLAGS) \
 	$(WOFF2_CFLAGS)
-endif
 
 if USE_BUNDLED_MD5
 AM_CXXFLAGS += -I$(dvisvgm_srcdir)/libs/md5
 else
 AM_CXXFLAGS += $(LIBCRYPTO_CFLAGS)
 endif
-
 
 AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
 endif

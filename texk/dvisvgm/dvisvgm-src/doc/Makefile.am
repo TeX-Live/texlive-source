@@ -10,7 +10,7 @@ if BUILD_MANPAGE
 man_MANS = dvisvgm.1
 endif
 
-EXTRA_DIST = $(man_MANS) conf-dblatex-man.xsl conf-dblatex-pdf.xsl tweak-dblatex-pdf.xsl tweak-db-refentry.xsl
+EXTRA_DIST = $(man_MANS) conf-dblatex-man.xsl conf-dblatex-pdf.xsl dvisvgm.sty dvisvgm.txt.in tweak-dblatex-pdf.xsl tweak-db-refentry.xsl
 
 CONF_DBLATEX_MAN  = $(top_srcdir)/doc/conf-dblatex-man.xsl
 CONF_DBLATEX_PDF  = $(top_srcdir)/doc/conf-dblatex-pdf.xsl
@@ -44,6 +44,8 @@ dvisvgm.epub: dvisvgm-article.xml
 	a2x -darticle -fepub -L --icons --icons-dir=. $<
 	mv $(basename $<).epub $@
 
+.SECONDARY: dvisvgm-article.xml dvisvgm-man.xml
+
 dvisvgm-man.xml: dvisvgm.txt $(TWEAK_DB_REFENTRY)
 	asciidoc -a icons -a 'iconsdir=.' -a badges -a 'revnumber=@VERSION@' --unsafe -bdocbook -dmanpage -o $@.tmp $<
 	xsltproc -o $@ $(TWEAK_DB_REFENTRY) $@.tmp
@@ -54,6 +56,10 @@ dvisvgm-article.xml: dvisvgm.txt
 	xsltproc -o $@ $(TWEAK_DB_ARTICLE) $@.tmp
 	rm $@.tmp
 	sed -i "s/{VERSION}/@VERSION@/" $@
+
+dvisvgm.txt: dvisvgm.txt.in
+	sed -e 's/@VERSION[@]/@VERSION@/g' -e 's/@PACKAGE_BUGREPORT[@]/@PACKAGE_BUGREPORT@/g' $< >$@
+	touch -r $< $@
 
 epub: dvisvgm.epub
 html: dvisvgm.html
@@ -69,7 +75,7 @@ distclean-local:
 # Ensure that distribution tarballs always contain a recent manpage, i.e.
 # let "make dist" and "make distcheck" fail if dvisvgm.1 can't be built.
 dist-hook:
-	@if test ! -f dvisvgm.1; then \
+	@if test ! -f $(top_srcdir)/doc/dvisvgm.1; then \
 		echo "----------------------------------------------------------------"; \
 		echo "manpage file dvisvgm.1 could not be built because one or more of"; \
 		echo "the following utilities are missing: asciidoc, xmlto, xsltproc  "; \

@@ -149,27 +149,27 @@ am__libbrotli_a_SOURCES_DIST = common/constants.h common/context.h \
 	include/brotli/encode.h include/brotli/port.h \
 	include/brotli/types.h
 am__dirstamp = $(am__leading_dot)dirstamp
-@USE_BUNDLED_LIBS_TRUE@am_libbrotli_a_OBJECTS =  \
-@USE_BUNDLED_LIBS_TRUE@	common/dictionary.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	common/transform.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/backward_references.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/backward_references_hq.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/bit_cost.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/block_splitter.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/brotli_bit_stream.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/cluster.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/compress_fragment.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/compress_fragment_two_pass.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/dictionary_hash.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/encode.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/encoder_dict.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/entropy_encode.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/histogram.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/literal_cost.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/memory.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/metablock.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/static_dict.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	enc/utf8_util.$(OBJEXT)
+@HAVE_BROTLI_FALSE@am_libbrotli_a_OBJECTS =  \
+@HAVE_BROTLI_FALSE@	common/dictionary.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	common/transform.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/backward_references.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/backward_references_hq.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/bit_cost.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/block_splitter.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/brotli_bit_stream.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/cluster.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/compress_fragment.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/compress_fragment_two_pass.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/dictionary_hash.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/encode.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/encoder_dict.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/entropy_encode.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/histogram.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/literal_cost.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/memory.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/metablock.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/static_dict.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/utf8_util.$(OBJEXT)
 libbrotli_a_OBJECTS = $(am_libbrotli_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -395,82 +395,82 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@USE_BUNDLED_LIBS_TRUE@noinst_LIBRARIES = libbrotli.a
-@USE_BUNDLED_LIBS_TRUE@libbrotli_a_SOURCES = \
-@USE_BUNDLED_LIBS_TRUE@	common/constants.h \
-@USE_BUNDLED_LIBS_TRUE@	common/context.h \
-@USE_BUNDLED_LIBS_TRUE@	common/dictionary.c \
-@USE_BUNDLED_LIBS_TRUE@	common/dictionary.h \
-@USE_BUNDLED_LIBS_TRUE@	common/platform.h \
-@USE_BUNDLED_LIBS_TRUE@	common/transform.c \
-@USE_BUNDLED_LIBS_TRUE@	common/transform.h \
-@USE_BUNDLED_LIBS_TRUE@	common/version.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/backward_references.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/backward_references.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/backward_references_hq.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/backward_references_hq.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/backward_references_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/bit_cost.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/bit_cost.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/bit_cost_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/block_encoder_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/block_splitter.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/block_splitter.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/block_splitter_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/brotli_bit_stream.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/brotli_bit_stream.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/cluster.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/cluster.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/cluster_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/command.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/compress_fragment.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/compress_fragment.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/compress_fragment_two_pass.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/compress_fragment_two_pass.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/dictionary_hash.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/dictionary_hash.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/encode.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/encoder_dict.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/encoder_dict.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/entropy_encode.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/entropy_encode.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/entropy_encode_static.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/fast_log.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/find_match_length.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/hash_composite_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/hash_forgetful_chain_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/hash.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/hash_longest_match64_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/hash_longest_match_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/hash_longest_match_quickly_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/hash_rolling_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/hash_to_binary_tree_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/histogram.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/histogram.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/histogram_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/literal_cost.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/literal_cost.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/memory.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/memory.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/metablock.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/metablock.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/metablock_inc.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/params.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/prefix.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/quality.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/ringbuffer.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/static_dict.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/static_dict.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/static_dict_lut.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/utf8_util.c \
-@USE_BUNDLED_LIBS_TRUE@	enc/utf8_util.h \
-@USE_BUNDLED_LIBS_TRUE@	enc/write_bits.h \
-@USE_BUNDLED_LIBS_TRUE@	include/brotli/decode.h \
-@USE_BUNDLED_LIBS_TRUE@	include/brotli/encode.h \
-@USE_BUNDLED_LIBS_TRUE@	include/brotli/port.h \
-@USE_BUNDLED_LIBS_TRUE@	include/brotli/types.h
+@HAVE_BROTLI_FALSE@noinst_LIBRARIES = libbrotli.a
+@HAVE_BROTLI_FALSE@libbrotli_a_SOURCES = \
+@HAVE_BROTLI_FALSE@	common/constants.h \
+@HAVE_BROTLI_FALSE@	common/context.h \
+@HAVE_BROTLI_FALSE@	common/dictionary.c \
+@HAVE_BROTLI_FALSE@	common/dictionary.h \
+@HAVE_BROTLI_FALSE@	common/platform.h \
+@HAVE_BROTLI_FALSE@	common/transform.c \
+@HAVE_BROTLI_FALSE@	common/transform.h \
+@HAVE_BROTLI_FALSE@	common/version.h \
+@HAVE_BROTLI_FALSE@	enc/backward_references.c \
+@HAVE_BROTLI_FALSE@	enc/backward_references.h \
+@HAVE_BROTLI_FALSE@	enc/backward_references_hq.c \
+@HAVE_BROTLI_FALSE@	enc/backward_references_hq.h \
+@HAVE_BROTLI_FALSE@	enc/backward_references_inc.h \
+@HAVE_BROTLI_FALSE@	enc/bit_cost.c \
+@HAVE_BROTLI_FALSE@	enc/bit_cost.h \
+@HAVE_BROTLI_FALSE@	enc/bit_cost_inc.h \
+@HAVE_BROTLI_FALSE@	enc/block_encoder_inc.h \
+@HAVE_BROTLI_FALSE@	enc/block_splitter.c \
+@HAVE_BROTLI_FALSE@	enc/block_splitter.h \
+@HAVE_BROTLI_FALSE@	enc/block_splitter_inc.h \
+@HAVE_BROTLI_FALSE@	enc/brotli_bit_stream.c \
+@HAVE_BROTLI_FALSE@	enc/brotli_bit_stream.h \
+@HAVE_BROTLI_FALSE@	enc/cluster.c \
+@HAVE_BROTLI_FALSE@	enc/cluster.h \
+@HAVE_BROTLI_FALSE@	enc/cluster_inc.h \
+@HAVE_BROTLI_FALSE@	enc/command.h \
+@HAVE_BROTLI_FALSE@	enc/compress_fragment.c \
+@HAVE_BROTLI_FALSE@	enc/compress_fragment.h \
+@HAVE_BROTLI_FALSE@	enc/compress_fragment_two_pass.c \
+@HAVE_BROTLI_FALSE@	enc/compress_fragment_two_pass.h \
+@HAVE_BROTLI_FALSE@	enc/dictionary_hash.c \
+@HAVE_BROTLI_FALSE@	enc/dictionary_hash.h \
+@HAVE_BROTLI_FALSE@	enc/encode.c \
+@HAVE_BROTLI_FALSE@	enc/encoder_dict.c \
+@HAVE_BROTLI_FALSE@	enc/encoder_dict.h \
+@HAVE_BROTLI_FALSE@	enc/entropy_encode.c \
+@HAVE_BROTLI_FALSE@	enc/entropy_encode.h \
+@HAVE_BROTLI_FALSE@	enc/entropy_encode_static.h \
+@HAVE_BROTLI_FALSE@	enc/fast_log.h \
+@HAVE_BROTLI_FALSE@	enc/find_match_length.h \
+@HAVE_BROTLI_FALSE@	enc/hash_composite_inc.h \
+@HAVE_BROTLI_FALSE@	enc/hash_forgetful_chain_inc.h \
+@HAVE_BROTLI_FALSE@	enc/hash.h \
+@HAVE_BROTLI_FALSE@	enc/hash_longest_match64_inc.h \
+@HAVE_BROTLI_FALSE@	enc/hash_longest_match_inc.h \
+@HAVE_BROTLI_FALSE@	enc/hash_longest_match_quickly_inc.h \
+@HAVE_BROTLI_FALSE@	enc/hash_rolling_inc.h \
+@HAVE_BROTLI_FALSE@	enc/hash_to_binary_tree_inc.h \
+@HAVE_BROTLI_FALSE@	enc/histogram.c \
+@HAVE_BROTLI_FALSE@	enc/histogram.h \
+@HAVE_BROTLI_FALSE@	enc/histogram_inc.h \
+@HAVE_BROTLI_FALSE@	enc/literal_cost.c \
+@HAVE_BROTLI_FALSE@	enc/literal_cost.h \
+@HAVE_BROTLI_FALSE@	enc/memory.c \
+@HAVE_BROTLI_FALSE@	enc/memory.h \
+@HAVE_BROTLI_FALSE@	enc/metablock.c \
+@HAVE_BROTLI_FALSE@	enc/metablock.h \
+@HAVE_BROTLI_FALSE@	enc/metablock_inc.h \
+@HAVE_BROTLI_FALSE@	enc/params.h \
+@HAVE_BROTLI_FALSE@	enc/prefix.h \
+@HAVE_BROTLI_FALSE@	enc/quality.h \
+@HAVE_BROTLI_FALSE@	enc/ringbuffer.h \
+@HAVE_BROTLI_FALSE@	enc/static_dict.c \
+@HAVE_BROTLI_FALSE@	enc/static_dict.h \
+@HAVE_BROTLI_FALSE@	enc/static_dict_lut.h \
+@HAVE_BROTLI_FALSE@	enc/utf8_util.c \
+@HAVE_BROTLI_FALSE@	enc/utf8_util.h \
+@HAVE_BROTLI_FALSE@	enc/write_bits.h \
+@HAVE_BROTLI_FALSE@	include/brotli/decode.h \
+@HAVE_BROTLI_FALSE@	include/brotli/encode.h \
+@HAVE_BROTLI_FALSE@	include/brotli/port.h \
+@HAVE_BROTLI_FALSE@	include/brotli/types.h
 
-@USE_BUNDLED_LIBS_TRUE@AM_CFLAGS = -Wall -I$(srcdir)/include
+@HAVE_BROTLI_FALSE@AM_CFLAGS = -Wall -I$(srcdir)/include
 EXTRA_DIST = LICENSE
 CLEANFILES = *.gcda *.gcno
 all: all-am
@@ -884,7 +884,7 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-@USE_BUNDLED_LIBS_TRUE@@CODE_COVERAGE_RULES@
+@HAVE_BROTLI_FALSE@@CODE_COVERAGE_RULES@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

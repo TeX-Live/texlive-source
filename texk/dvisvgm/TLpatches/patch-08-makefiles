@@ -1,87 +1,74 @@
 	See ./TL-Changes.
 
-Index: configure.ac
-===================================================================
---- configure.ac	(revision 48652)
-+++ configure.ac	(working copy)
-@@ -15,7 +15,7 @@
- AC_PREREQ([2.65])
- m4_include([version.ac])[] dnl define dvisvgm_version
- AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
--DATE="August 2018"
-+DATE="September 2018"
- AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
- AC_CONFIG_HEADERS([config.h])
- AC_CONFIG_MACRO_DIRS([../../m4])dnl not just _DIR
-@@ -152,19 +152,13 @@
- # Check for header files.
- AC_HEADER_DIRENT
- AC_HEADER_STDC
--AC_CHECK_HEADERS([libintl.h stdlib.h string.h strings.h unistd.h])
-+AC_CHECK_HEADERS_ONCE([libintl.h stdlib.h string.h strings.h unistd.h])
+diff -ur dvisvgm-2.6.1/Makefile.am dvisvgm-src/Makefile.am
+--- dvisvgm-2.6.1/Makefile.am	2018-09-20 04:39:12.000000000 -0700
++++ dvisvgm-src/Makefile.am	2018-10-28 11:05:34.960588136 -0700
+@@ -5,7 +5,7 @@
  
- # Check for typedefs, structures, and compiler characteristics.
- AC_HEADER_STDBOOL
- AC_TYPE_SIZE_T
- AC_STRUCT_TM
--# TL? AC_C_CONST
--# TL? AC_C_INLINE
- 
--# TL? AC_FUNC_CLOSEDIR_VOID
--# TL? AC_FUNC_ERROR_AT_LINE
--# TL? AC_FUNC_MALLOC
--# TL? AC_FUNC_VPRINTF
- # Check for library functions.
- AC_FUNC_STAT
- AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
-@@ -185,14 +179,17 @@
- 
- # TL: skip ttfautohint?
- 
--# Add option to enable linking of bundled libraries (brotli, woff2, xxhash).
-+# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
- AC_ARG_ENABLE([bundled-libs],
- 	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])],
- 	[use_bundled_libs=yes])
- AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$use_bundled_libs" = "xyes" dnl
-                                || test "x$enable_native_texlive_build" = xyes])
--# that is, use bundled libs for native TL build.
-+# that is, force using bundled libs for native TL build.
- 
-+# TL: use bundled md5 too
-+AM_CONDITIONAL([USE_BUNDLED_MD5], true)
-+
- # TL: not going to build_manpage (which is the default).
- # TL: not going to attempt code coverage; need to subst it away.
- AM_CONDITIONAL([CODE_COVERAGE_ENABLED], false)
-@@ -210,6 +207,7 @@
- 	dvisvgm-src/libs/brotli/Makefile
- 	dvisvgm-src/libs/clipper/Makefile
- 	dvisvgm-src/libs/ff-woff/Makefile
-+	dvisvgm-src/libs/md5/Makefile
- 	dvisvgm-src/libs/potrace/Makefile
- 	dvisvgm-src/libs/variant/Makefile
- 	dvisvgm-src/libs/woff2/Makefile
-diff -u1r dvisvgm-2.6/Makefile.am dvisvgm-src/Makefile.am
---- dvisvgm-2.6/Makefile.am	2018-07-31 07:51:05.000000000 -0700
-+++ dvisvgm-src/Makefile.am	2018-09-11 08:17:11.309982883 -0700
-@@ -7,3 +7,3 @@
+ AUTOMAKE_OPTIONS = foreign
  EXTRA_DIST = COPYING
 -SUBDIRS = libs src tests doc
 +SUBDIRS = libs src #not for TL: tests doc
  ACLOCAL_AMFLAGS = -I m4
-diff -u1r dvisvgm-2.6/src/Makefile.am dvisvgm-src/src/Makefile.am
---- dvisvgm-2.6/src/Makefile.am	2018-09-08 00:57:37.000000000 -0700
-+++ dvisvgm-src/src/Makefile.am	2018-09-13 10:00:48.798891259 -0700
-@@ -14,6 +14,3 @@
+ 
+ if USE_BUNDLED_LIBS
+diff -ur dvisvgm-2.6.1/libs/defs.am dvisvgm-src/libs/defs.am
+--- dvisvgm-2.6.1/libs/defs.am	2018-10-10 02:02:17.000000000 -0700
++++ dvisvgm-src/libs/defs.am	2018-10-29 11:19:34.259446467 -0700
+@@ -1,23 +1,23 @@
+ if HAVE_BROTLI
+ else
+-BROTLI_CFLAGS += -I$(top_srcdir)/libs/brotli/include
+-BROTLI_LIBS += ../libs/brotli/libbrotli.a
++BROTLI_CFLAGS = -I$(dvisvgm_srcdir)/libs/brotli/include
++BROTLI_LIBS = ../libs/brotli/libbrotli.a
+ endif
+ 
+ if HAVE_POTRACE
+ else
+-POTRACE_CFLAGS = -I$(top_srcdir)/libs/potrace
++POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
+ POTRACE_LIBS = ../libs/potrace/libpotrace.a
+ endif
+ 
+ if HAVE_WOFF2
+ else
+-WOFF2_CFLAGS += -I$(top_srcdir)/libs/woff2/include
+-WOFF2_LIBS += ../libs/woff2/libwoff2.a
++WOFF2_CFLAGS = -I$(dvisvgm_srcdir)/libs/woff2/include
++WOFF2_LIBS = ../libs/woff2/libwoff2.a
+ endif
+ 
+ if HAVE_XXHASH
+ else
+-XXHASH_CFLAGS = -I$(top_srcdir)/libs/xxHash
++XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
+ XXHASH_LIBS = ../libs/xxHash/libxxhash.a
+ endif
+diff -ur dvisvgm-2.6.1/src/Makefile.am dvisvgm-src/src/Makefile.am
+--- dvisvgm-2.6.1/src/Makefile.am	2018-10-10 02:02:17.000000000 -0700
++++ dvisvgm-src/src/Makefile.am	2018-10-29 14:31:28.299115543 -0700
+@@ -12,14 +12,13 @@
+ 
+ include ../libs/defs.am
+ 
++dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
++
+ dvisvgm_LDADD = \
  	$(noinst_LIBRARIES) \
--	../libs/clipper/libclipper.a \
+ 	../libs/clipper/libclipper.a \
 -	$(FREETYPE_LIBS) \
 -	$(FONTFORGE_LIBS) \
+ 	$(POTRACE_LIBS) \
+-	$(XXHASH_LIBS) \
 -	$(ZLIB_LIBS)
-+	../libs/clipper/libclipper.a
++	$(XXHASH_LIBS)
  
-@@ -49,3 +46,11 @@
+ if ENABLE_WOFF
+ dvisvgm_LDADD += \
+@@ -34,7 +33,15 @@
+ dvisvgm_LDADD += $(LIBCRYPTO_LIBS)
+ endif
  
 +dvisvgm_LDADD += \
 +	$(KPATHSEA_LIBS) \
@@ -93,12 +80,17 @@ diff -u1r dvisvgm-2.6/src/Makefile.am dvisvgm-src/src/Makefile.am
  dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES)
 +dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
  
-@@ -273,18 +278,16 @@
+ libdvisvgm_a_SOURCES = \
+ 	AGLTable.hpp \
+@@ -258,17 +265,13 @@
+ 
+ EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
  
 -AM_CFLAGS = -Wall \
 -	$(ZLIB_CFLAGS) \
--	$(CODE_COVERAGE_CFLAGS)
-+dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
++AM_CFLAGS = $(WARNING_CFLAGS) \
++	$(ZLIB_INCLUDES) \
+ 	$(CODE_COVERAGE_CFLAGS)
  
 -AM_CXXFLAGS = -Wall -Wnon-virtual-dtor -Wno-mismatched-tags \
 -	-I$(top_srcdir)/libs/clipper \
@@ -106,41 +98,36 @@ diff -u1r dvisvgm-2.6/src/Makefile.am dvisvgm-src/src/Makefile.am
 -	$(KPSE_CFLAGS) \
 -	$(FREETYPE_CFLAGS) \
 -	$(ZLIB_CFLAGS) \
-+AM_CFLAGS = $(WARNING_CFLAGS) \
-+	$(ZLIB_INCLUDES) \
- 	$(CODE_COVERAGE_CFLAGS)
- 
+-	$(CODE_COVERAGE_CFLAGS)
 +AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor -Wno-mismatched-tags \
 +	-I$(dvisvgm_srcdir)/libs/clipper \
 +	-I$(dvisvgm_srcdir)/libs/variant/include
-+
- if USE_BUNDLED_LIBS
- AM_CXXFLAGS +=  \
--	-I$(top_srcdir)/libs/potrace \
--	-I$(top_srcdir)/libs/xxHash
-+	-I$(dvisvgm_srcdir)/libs/potrace \
-+	-I$(dvisvgm_srcdir)/libs/xxHash
- else
-@@ -301,4 +304,4 @@
+ 
+ AM_CXXFLAGS += \
+ 	$(POTRACE_CFLAGS) \
+@@ -280,8 +283,8 @@
+ 
+ if ENABLE_WOFF
  AM_CFLAGS +=  \
 -	-I$(top_srcdir)/libs/ff-woff/fontforge \
 -	-I$(top_srcdir)/libs/ff-woff/inc
 +	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
 +	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
  
-@@ -308,4 +311,4 @@
- AM_CXXFLAGS +=  \
--	-I$(top_srcdir)/libs/brotli/include \
--	-I$(top_srcdir)/libs/woff2/include
-+	-I$(dvisvgm_srcdir)/libs/brotli/include \
-+	-I$(dvisvgm_srcdir)/libs/woff2/include
- else
-@@ -317,3 +320,3 @@
+ AM_CXXFLAGS += $(TTFAUTOHINT_CFLAGS)
+ 
+@@ -290,7 +293,7 @@
+ 	$(WOFF2_CFLAGS)
+ 
  if USE_BUNDLED_MD5
 -AM_CXXFLAGS += -I$(top_srcdir)/libs/md5
 +AM_CXXFLAGS += -I$(dvisvgm_srcdir)/libs/md5
  else
-@@ -326,3 +329,16 @@
+ AM_CXXFLAGS += $(LIBCRYPTO_CFLAGS)
+ endif
+@@ -298,7 +301,20 @@
+ AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
+ endif
  
 +AM_CXXFLAGS += \
 +	$(KPATHSEA_INCLUDES) \
@@ -157,11 +144,16 @@ diff -u1r dvisvgm-2.6/src/Makefile.am dvisvgm-src/src/Makefile.am
 +if ! TEXLIVE_BUILD
 +# TL: do not try to rebuild these source files.
  # the command-line parser class is generated from options.xml by opt2cpp
-@@ -339,2 +355,3 @@
+ $(srcdir)/CommandLine.hpp: options.xml
+ 	rm -f $@
+@@ -311,7 +327,15 @@
+ 	fi
+ 
  psdefs.ps: ;
 +endif ! TEXLIVE_BUILD
  
-@@ -343 +360,8 @@
+ @CODE_COVERAGE_RULES@
+ 
  CLEANFILES = *.gcda *.gcno
 +
 +## Rebuild libkpathsea
@@ -170,32 +162,3 @@ diff -u1r dvisvgm-2.6/src/Makefile.am dvisvgm-src/src/Makefile.am
 +@FREETYPE2_RULE@
 +## Rebuild libz
 +@ZLIB_RULE@
-diff -u1r dvisvgm-2.6/src/XXHashFunction.hpp dvisvgm-src/src/XXHashFunction.hpp
---- dvisvgm-2.6/src/XXHashFunction.hpp	2018-09-08 00:57:37.000000000 -0700
-+++ dvisvgm-src/src/XXHashFunction.hpp	2018-09-13 09:16:09.902914484 -0700
-@@ -34,7 +34,7 @@
- 	using State = XXH32_state_t;
--	static constexpr auto createState = XXH32_createState;
--	static constexpr auto freeState = XXH32_freeState;
--	static constexpr auto reset = XXH32_reset;
--	static constexpr auto update = XXH32_update;
--	static constexpr auto digest = XXH32_digest;
-+	static constexpr auto createState = &XXH32_createState;
-+	static constexpr auto freeState = &XXH32_freeState;
-+	static constexpr auto reset = &XXH32_reset;
-+	static constexpr auto update = &XXH32_update;
-+	static constexpr auto digest = &XXH32_digest;
- };
-@@ -44,7 +44,7 @@
- 	using State = XXH64_state_t;
--	static constexpr auto createState = XXH64_createState;
--	static constexpr auto freeState = XXH64_freeState;
--	static constexpr auto reset = XXH64_reset;
--	static constexpr auto update = XXH64_update;
--	static constexpr auto digest = XXH64_digest;
-+	static constexpr auto createState = &XXH64_createState;
-+	static constexpr auto freeState = &XXH64_freeState;
-+	static constexpr auto reset = &XXH64_reset;
-+	static constexpr auto update = &XXH64_update;
-+	static constexpr auto digest = &XXH64_digest;
- };

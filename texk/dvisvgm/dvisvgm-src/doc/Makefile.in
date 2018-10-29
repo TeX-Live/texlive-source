@@ -100,7 +100,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = dvisvgm.txt
+CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -153,7 +153,7 @@ am__installdirs = "$(DESTDIR)$(man1dir)"
 NROFF = nroff
 MANS = $(man_MANS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/dvisvgm.txt.in
+am__DIST_COMMON = $(srcdir)/Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -317,7 +317,7 @@ top_srcdir = @top_srcdir@
 # However, the distribution tarball should always contain a recent manpage. We ensure
 # this by adding a dist-hook rule below.
 @BUILD_MANPAGE_TRUE@man_MANS = dvisvgm.1
-EXTRA_DIST = $(man_MANS) conf-dblatex-man.xsl conf-dblatex-pdf.xsl tweak-dblatex-pdf.xsl tweak-db-refentry.xsl
+EXTRA_DIST = $(man_MANS) conf-dblatex-man.xsl conf-dblatex-pdf.xsl dvisvgm.sty dvisvgm.txt.in tweak-dblatex-pdf.xsl tweak-db-refentry.xsl
 CONF_DBLATEX_MAN = $(top_srcdir)/doc/conf-dblatex-man.xsl
 CONF_DBLATEX_PDF = $(top_srcdir)/doc/conf-dblatex-pdf.xsl
 TWEAK_DBLATEX_PDF = $(top_srcdir)/doc/tweak-dblatex-pdf.xsl
@@ -336,9 +336,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign doc/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu doc/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign doc/Makefile
+	  $(AUTOMAKE) --gnu doc/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -356,8 +356,6 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-dvisvgm.txt: $(top_builddir)/config.status $(srcdir)/dvisvgm.txt.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -588,6 +586,8 @@ dvisvgm.epub: dvisvgm-article.xml
 	a2x -darticle -fepub -L --icons --icons-dir=. $<
 	mv $(basename $<).epub $@
 
+.SECONDARY: dvisvgm-article.xml dvisvgm-man.xml
+
 dvisvgm-man.xml: dvisvgm.txt $(TWEAK_DB_REFENTRY)
 	asciidoc -a icons -a 'iconsdir=.' -a badges -a 'revnumber=@VERSION@' --unsafe -bdocbook -dmanpage -o $@.tmp $<
 	xsltproc -o $@ $(TWEAK_DB_REFENTRY) $@.tmp
@@ -598,6 +598,10 @@ dvisvgm-article.xml: dvisvgm.txt
 	xsltproc -o $@ $(TWEAK_DB_ARTICLE) $@.tmp
 	rm $@.tmp
 	sed -i "s/{VERSION}/@VERSION@/" $@
+
+dvisvgm.txt: dvisvgm.txt.in
+	sed -e 's/@VERSION[@]/@VERSION@/g' -e 's/@PACKAGE_BUGREPORT[@]/@PACKAGE_BUGREPORT@/g' $< >$@
+	touch -r $< $@
 
 epub: dvisvgm.epub
 html: dvisvgm.html
@@ -613,7 +617,7 @@ distclean-local:
 # Ensure that distribution tarballs always contain a recent manpage, i.e.
 # let "make dist" and "make distcheck" fail if dvisvgm.1 can't be built.
 dist-hook:
-	@if test ! -f dvisvgm.1; then \
+	@if test ! -f $(top_srcdir)/doc/dvisvgm.1; then \
 		echo "----------------------------------------------------------------"; \
 		echo "manpage file dvisvgm.1 could not be built because one or more of"; \
 		echo "the following utilities are missing: asciidoc, xmlto, xsltproc  "; \

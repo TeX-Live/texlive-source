@@ -129,15 +129,14 @@ am__libwoff2_a_SOURCES_DIST = include/woff2/decode.h \
 	src/woff2_common.cc src/woff2_common.h src/woff2_enc.cc \
 	src/woff2_out.cc
 am__dirstamp = $(am__leading_dot)dirstamp
-@USE_BUNDLED_LIBS_TRUE@am_libwoff2_a_OBJECTS = src/font.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	src/glyph.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	src/normalize.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	src/table_tags.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	src/transform.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	src/variable_length.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	src/woff2_common.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	src/woff2_enc.$(OBJEXT) \
-@USE_BUNDLED_LIBS_TRUE@	src/woff2_out.$(OBJEXT)
+@HAVE_WOFF2_FALSE@am_libwoff2_a_OBJECTS = src/font.$(OBJEXT) \
+@HAVE_WOFF2_FALSE@	src/glyph.$(OBJEXT) src/normalize.$(OBJEXT) \
+@HAVE_WOFF2_FALSE@	src/table_tags.$(OBJEXT) \
+@HAVE_WOFF2_FALSE@	src/transform.$(OBJEXT) \
+@HAVE_WOFF2_FALSE@	src/variable_length.$(OBJEXT) \
+@HAVE_WOFF2_FALSE@	src/woff2_common.$(OBJEXT) \
+@HAVE_WOFF2_FALSE@	src/woff2_enc.$(OBJEXT) \
+@HAVE_WOFF2_FALSE@	src/woff2_out.$(OBJEXT)
 libwoff2_a_OBJECTS = $(am_libwoff2_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -372,34 +371,34 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@USE_BUNDLED_LIBS_TRUE@noinst_LIBRARIES = libwoff2.a
-@USE_BUNDLED_LIBS_TRUE@libwoff2_a_SOURCES = \
-@USE_BUNDLED_LIBS_TRUE@	include/woff2/decode.h \
-@USE_BUNDLED_LIBS_TRUE@	include/woff2/encode.h \
-@USE_BUNDLED_LIBS_TRUE@	include/woff2/output.h \
-@USE_BUNDLED_LIBS_TRUE@	include/woff2/version.h \
-@USE_BUNDLED_LIBS_TRUE@	src/buffer.h \
-@USE_BUNDLED_LIBS_TRUE@	src/font.cc \
-@USE_BUNDLED_LIBS_TRUE@	src/font.h \
-@USE_BUNDLED_LIBS_TRUE@	src/glyph.cc \
-@USE_BUNDLED_LIBS_TRUE@	src/glyph.h \
-@USE_BUNDLED_LIBS_TRUE@	src/normalize.cc \
-@USE_BUNDLED_LIBS_TRUE@	src/normalize.h \
-@USE_BUNDLED_LIBS_TRUE@	src/port.h \
-@USE_BUNDLED_LIBS_TRUE@	src/round.h \
-@USE_BUNDLED_LIBS_TRUE@	src/store_bytes.h \
-@USE_BUNDLED_LIBS_TRUE@	src/table_tags.cc \
-@USE_BUNDLED_LIBS_TRUE@	src/table_tags.h \
-@USE_BUNDLED_LIBS_TRUE@	src/transform.cc \
-@USE_BUNDLED_LIBS_TRUE@	src/transform.h \
-@USE_BUNDLED_LIBS_TRUE@	src/variable_length.cc \
-@USE_BUNDLED_LIBS_TRUE@	src/variable_length.h \
-@USE_BUNDLED_LIBS_TRUE@	src/woff2_common.cc \
-@USE_BUNDLED_LIBS_TRUE@	src/woff2_common.h \
-@USE_BUNDLED_LIBS_TRUE@	src/woff2_enc.cc \
-@USE_BUNDLED_LIBS_TRUE@	src/woff2_out.cc
+@HAVE_WOFF2_FALSE@noinst_LIBRARIES = libwoff2.a
+@HAVE_WOFF2_FALSE@libwoff2_a_SOURCES = \
+@HAVE_WOFF2_FALSE@	include/woff2/decode.h \
+@HAVE_WOFF2_FALSE@	include/woff2/encode.h \
+@HAVE_WOFF2_FALSE@	include/woff2/output.h \
+@HAVE_WOFF2_FALSE@	include/woff2/version.h \
+@HAVE_WOFF2_FALSE@	src/buffer.h \
+@HAVE_WOFF2_FALSE@	src/font.cc \
+@HAVE_WOFF2_FALSE@	src/font.h \
+@HAVE_WOFF2_FALSE@	src/glyph.cc \
+@HAVE_WOFF2_FALSE@	src/glyph.h \
+@HAVE_WOFF2_FALSE@	src/normalize.cc \
+@HAVE_WOFF2_FALSE@	src/normalize.h \
+@HAVE_WOFF2_FALSE@	src/port.h \
+@HAVE_WOFF2_FALSE@	src/round.h \
+@HAVE_WOFF2_FALSE@	src/store_bytes.h \
+@HAVE_WOFF2_FALSE@	src/table_tags.cc \
+@HAVE_WOFF2_FALSE@	src/table_tags.h \
+@HAVE_WOFF2_FALSE@	src/transform.cc \
+@HAVE_WOFF2_FALSE@	src/transform.h \
+@HAVE_WOFF2_FALSE@	src/variable_length.cc \
+@HAVE_WOFF2_FALSE@	src/variable_length.h \
+@HAVE_WOFF2_FALSE@	src/woff2_common.cc \
+@HAVE_WOFF2_FALSE@	src/woff2_common.h \
+@HAVE_WOFF2_FALSE@	src/woff2_enc.cc \
+@HAVE_WOFF2_FALSE@	src/woff2_out.cc
 
-@USE_BUNDLED_LIBS_TRUE@AM_CXXFLAGS = -Wall -I$(srcdir)/include -I$(srcdir)/../brotli/include
+@HAVE_WOFF2_FALSE@AM_CXXFLAGS = -Wall -I$(srcdir)/include -I$(srcdir)/../brotli/include
 EXTRA_DIST = LICENSE
 CLEANFILES = *.gcda *.gcno
 all: all-am
@@ -747,7 +746,7 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-@USE_BUNDLED_LIBS_TRUE@@CODE_COVERAGE_RULES@
+@HAVE_WOFF2_FALSE@@CODE_COVERAGE_RULES@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

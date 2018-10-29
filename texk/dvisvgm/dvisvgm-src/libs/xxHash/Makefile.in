@@ -120,7 +120,7 @@ am__v_AR_1 =
 libxxhash_a_AR = $(AR) $(ARFLAGS)
 libxxhash_a_LIBADD =
 am__libxxhash_a_SOURCES_DIST = xxhash.c xxhash.h
-@USE_BUNDLED_LIBS_TRUE@am_libxxhash_a_OBJECTS = xxhash.$(OBJEXT)
+@HAVE_XXHASH_FALSE@am_libxxhash_a_OBJECTS = xxhash.$(OBJEXT)
 libxxhash_a_OBJECTS = $(am_libxxhash_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -334,9 +334,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@USE_BUNDLED_LIBS_TRUE@noinst_LIBRARIES = libxxhash.a
-@USE_BUNDLED_LIBS_TRUE@libxxhash_a_SOURCES = xxhash.c xxhash.h
-@USE_BUNDLED_LIBS_TRUE@AM_CXXFLAGS = -Wall
+@HAVE_XXHASH_FALSE@noinst_LIBRARIES = libxxhash.a
+@HAVE_XXHASH_FALSE@libxxhash_a_SOURCES = xxhash.c xxhash.h
+@HAVE_XXHASH_FALSE@AM_CXXFLAGS = -Wall
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
@@ -634,9 +634,9 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-@USE_BUNDLED_LIBS_TRUE@xxhash.c: xxhash.h
+@HAVE_XXHASH_FALSE@xxhash.c: xxhash.h
 
-@USE_BUNDLED_LIBS_TRUE@@CODE_COVERAGE_RULES@
+@HAVE_XXHASH_FALSE@@CODE_COVERAGE_RULES@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

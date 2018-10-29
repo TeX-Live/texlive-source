@@ -1,3 +1,16 @@
+2018-10-29  Karl Berry  <karl@freefriends.org>
+
+	* version.ac: now 2.6.1. Import new upstream source tree.
+	
+	* configure.ac (HAVE_BROTLI, ..., HAVE_XXHASH): new conditionals.
+	(DATE): October 2018 per upstream configure.ac.
+	Remove old commentary for better merging.
+	
+	* dvisvgm-src/Makefile.am,
+	* dvisvgm-src/libs/defs.am,
+	* dvisvgm-src/src/Makefile.am: import and update
+	TLpatches/patch-08-makefiles.
+
 2018-08-30  Karl Berry  <karl@freefriends.org>
 
 	* version.ac: now version 2.5.
