@@ -33,6 +33,10 @@
 #ifndef HB_COMMON_H
 #define HB_COMMON_H
 
+#ifndef HB_EXTERN
+#define HB_EXTERN extern
+#endif
+
 #ifndef HB_BEGIN_DECLS
 # ifdef __cplusplus
 #  define HB_BEGIN_DECLS	extern "C" {
@@ -443,6 +447,50 @@ hb_variation_from_string (const char *str, int len,
 HB_EXTERN void
 hb_variation_to_string (hb_variation_t *variation,
 			char *buf, unsigned int size);
+
+/**
+ * hb_color_t:
+ *
+ * Data type for holding color values.
+ *
+ * Since: 2.1.0
+ */
+typedef uint32_t hb_color_t;
+
+#define HB_COLOR(b,g,r,a) ((hb_color_t) HB_TAG ((b),(g),(r),(a)))
+
+/**
+ * hb_color_get_alpha:
+ *
+ *
+ *
+ * Since: 2.1.0
+ */
+#define hb_color_get_alpha(color)	((color) & 0xFF)
+/**
+ * hb_color_get_red:
+ *
+ *
+ *
+ * Since: 2.1.0
+ */
+#define hb_color_get_red(color)		(((color) >> 8) & 0xFF)
+/**
+ * hb_color_get_green:
+ *
+ *
+ *
+ * Since: 2.1.0
+ */
+#define hb_color_get_green(color)	(((color) >> 16) & 0xFF)
+/**
+ * hb_color_get_blue:
+ *
+ *
+ *
+ * Since: 2.1.0
+ */
+#define hb_color_get_blue(color)	(((color) >> 24) & 0xFF)
 
 
 HB_END_DECLS

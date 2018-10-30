@@ -30,6 +30,7 @@
 #include "hb.hh"
 
 #include "hb-ot-map.hh"
+#include "hb-aat-map.hh"
 #include "hb-shape-plan.hh"
 
 
@@ -39,11 +40,15 @@ struct hb_ot_shape_plan_t
   hb_segment_properties_t props;
   const struct hb_ot_complex_shaper_t *shaper;
   hb_ot_map_t map;
+  hb_aat_map_t aat_map;
   const void *data;
-  hb_mask_t rtlm_mask, frac_mask, numr_mask, dnom_mask;
+  hb_mask_t frac_mask, numr_mask, dnom_mask;
+  hb_mask_t rtlm_mask;
   hb_mask_t kern_mask;
+  hb_mask_t trak_mask;
 
   bool requested_kerning : 1;
+  bool requested_tracking : 1;
   bool has_frac : 1;
   bool has_gpos_mark : 1;
   bool fallback_glyph_classes : 1;
@@ -74,9 +79,11 @@ struct hb_ot_shape_plan_t
   {
     memset (this, 0, sizeof (*this));
     map.init ();
+    aat_map.init ();
   }
   void fini (void) {
     map.fini ();
+    aat_map.fini ();
   }
 };
 
@@ -85,21 +92,16 @@ struct hb_ot_shape_planner_t
   /* In the order that they are filled in. */
   hb_face_t *face;
   hb_segment_properties_t props;
-  const struct hb_ot_complex_shaper_t *shaper;
   hb_ot_map_builder_t map;
+  hb_aat_map_builder_t aat_map;
+  bool apply_morx : 1;
+  const struct hb_ot_complex_shaper_t *shaper;
 
-  hb_ot_shape_planner_t (const hb_shape_plan_t *master_plan) :
-			 face (master_plan->face_unsafe),
-			 props (master_plan->props),
-			 shaper (nullptr),
-			 map (face, &props) {}
+  HB_INTERNAL hb_ot_shape_planner_t (const hb_shape_plan_t *master_plan);
 
   HB_INTERNAL void compile (hb_ot_shape_plan_t &plan,
 			    const int          *coords,
 			    unsigned int        num_coords);
-
-  private:
-  HB_DISALLOW_COPY_AND_ASSIGN (hb_ot_shape_planner_t);
 };
 
 

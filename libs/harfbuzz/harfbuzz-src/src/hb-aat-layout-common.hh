@@ -362,6 +362,7 @@ template <>
 }
 namespace AAT {
 
+enum { DELETED_GLYPH = 0xFFFF };
 
 /*
  * Extended State Table
@@ -376,7 +377,10 @@ struct Entry
     /* Note, we don't recurse-sanitize data because we don't access it.
      * That said, in our DEFINE_SIZE_STATIC we access T::static_size,
      * which ensures that data has a simple sanitize(). To be determined
-     * if I need to remove that as well. */
+     * if I need to remove that as well.
+     *
+     * XXX Because we are a template, our DEFINE_SIZE_STATIC assertion
+     * wouldn't be checked. */
     return_trace (c->check_struct (this));
   }
 
@@ -393,7 +397,7 @@ struct Entry
 template <>
 struct Entry<void>
 {
-  inline bool sanitize (hb_sanitize_context_t *c, unsigned int count) const
+  inline bool sanitize (hb_sanitize_context_t *c, unsigned int count /*XXX Unused?*/) const
   {
     TRACE_SANITIZE (this);
     return_trace (c->check_struct (this));
@@ -424,6 +428,7 @@ struct StateTable
 
   inline unsigned int get_class (hb_codepoint_t glyph_id, unsigned int num_glyphs) const
   {
+    if (unlikely (glyph_id == DELETED_GLYPH)) return CLASS_DELETED_GLYPH;
     const HBUINT16 *v = (this+classTable).get_value (glyph_id, num_glyphs);
     return v ? (unsigned) *v : (unsigned) CLASS_OUT_OF_BOUNDS;
   }
@@ -530,7 +535,7 @@ struct StateTableDriver
 
     unsigned int state = StateTable<EntryData>::STATE_START_OF_TEXT;
     bool last_was_dont_advance = false;
-    for (buffer->idx = 0;;)
+    for (buffer->idx = 0; buffer->successful;)
     {
       unsigned int klass = buffer->idx < buffer->len ?
 			   machine.get_class (buffer->info[buffer->idx].codepoint, num_glyphs) :
@@ -563,8 +568,6 @@ struct StateTableDriver
 
       if (unlikely (!c->transition (this, entry)))
         break;
-
-      if (unlikely (!buffer->successful)) return;
 
       last_was_dont_advance = (entry->flags & context_t::DontAdvance) && buffer->max_ops-- > 0;
 

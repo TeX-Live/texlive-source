@@ -257,9 +257,9 @@ hdr_links = $(HARFBUZZ_SRC)/hb.h $(HARFBUZZ_SRC)/hb-blob.h \
 	$(HARFBUZZ_SRC)/hb-set.h $(HARFBUZZ_SRC)/hb-shape.h \
 	$(HARFBUZZ_SRC)/hb-shape-plan.h $(HARFBUZZ_SRC)/hb-unicode.h \
 	$(HARFBUZZ_BLD)/hb-version.h $(HARFBUZZ_SRC)/hb-ot.h \
-	$(HARFBUZZ_SRC)/hb-ot-font.h $(HARFBUZZ_SRC)/hb-ot-layout.h \
-	$(HARFBUZZ_SRC)/hb-ot-math.h $(HARFBUZZ_SRC)/hb-ot-name.h \
-	$(HARFBUZZ_SRC)/hb-ot-shape.h $(HARFBUZZ_SRC)/hb-ot-tag.h \
+	$(HARFBUZZ_SRC)/hb-ot-color.h $(HARFBUZZ_SRC)/hb-ot-font.h \
+	$(HARFBUZZ_SRC)/hb-ot-layout.h $(HARFBUZZ_SRC)/hb-ot-math.h \
+	$(HARFBUZZ_SRC)/hb-ot-name.h $(HARFBUZZ_SRC)/hb-ot-shape.h \
 	$(HARFBUZZ_SRC)/hb-ot-var.h $(HARFBUZZ_SRC)/hb-icu.h \
 	$(HARFBUZZ_SRC)/hb-graphite2.h
 all: all-am

@@ -52,6 +52,9 @@ struct hb_aat_feature_mapping_t
 HB_INTERNAL const hb_aat_feature_mapping_t *
 hb_aat_layout_find_feature_mapping (hb_tag_t tag);
 
+HB_INTERNAL void
+hb_aat_layout_compile_map (const hb_aat_map_builder_t *mapper,
+			   hb_aat_map_t *map);
 
 HB_INTERNAL hb_bool_t
 hb_aat_layout_has_substitution (hb_face_t *face);
@@ -76,5 +79,10 @@ HB_INTERNAL void
 hb_aat_layout_track (hb_ot_shape_plan_t *plan,
 		     hb_font_t *font,
 		     hb_buffer_t *buffer);
+
+HB_INTERNAL hb_language_t
+_hb_aat_language_get (hb_face_t *face,
+		      unsigned int i);
+
 
 #endif /* HB_AAT_LAYOUT_HH */

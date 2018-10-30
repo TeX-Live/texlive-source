@@ -1,3 +1,3520 @@
+commit bfd549daaa078e7edba5a65971b1d3e872664f2d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 14:47:27 2018 -0700
+
+    Fix everything-bot
+
+ src/hb-ot-layout.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0e1ad5a075c6858ca60bad0e2da58b5256e15815
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Oct 30 11:29:58 2018 -0700
+
+    [subset] Limit the number of scripts and langsys' that should be
+    checked when collecting features.
+
+ src/hb-ot-layout-common.hh |  8 ++++++++
+ src/hb-ot-layout.cc        | 11 ++++++++++-
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+commit a7aba99baab2d6e6105675ceedbe22222fa0f166
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 14:04:09 2018 -0700
+
+    [name] Rename hb_name_id_t to hb_ot_name_id_t
+
+    https://github.com/harfbuzz/harfbuzz/pull/1254
+
+ docs/harfbuzz-sections.txt    |  3 +-
+ src/hb-ot-color-cpal-table.hh | 12 +++---
+ src/hb-ot-color.cc            |  6 +--
+ src/hb-ot-color.h             |  4 +-
+ src/hb-ot-layout.cc           | 44 +++++++++----------
+ src/hb-ot-layout.h            | 28 ++++++-------
+ src/hb-ot-name-table.hh       |  6 +--
+ src/hb-ot-name.cc             | 38 ++++++++---------
+ src/hb-ot-name.h              | 98
+ +++++++++++++++++++++----------------------
+ test/api/test-ot-color.c      | 30 ++++++-------
+ test/api/test-ot-name.c       |  8 ++--
+ 11 files changed, 139 insertions(+), 138 deletions(-)
+
+commit 881e1054bc66fd07489d661dd5c3f84a5d077edc
+Author: Simon Tooke <stooke@redhat.com>
+Date:   Tue Oct 30 14:16:23 2018 -0400
+
+    fix various GCC function pointer warnings
+
+ src/hb-debug.hh | 6 +++---
+ src/hb-set.hh   | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit dc9bd29feac6675c79343b88a06f03f356f9175b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 13:16:07 2018 -0700
+
+    [CBDT] Implement Format18 get_extens
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1327
+
+ src/hb-ot-color-cbdt-table.hh | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+commit a2a7422aaf47dd43c2c55ad48dd15513f9d5b081
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 13:14:56 2018 -0700
+
+    [CBDT] Bound checks in reference_png
+
+ src/hb-ot-color-cbdt-table.hh | 57
+ ++++++++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 23 deletions(-)
+
+commit f236f790884d7b5c7afb73768724c360d4ea5212
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Tue Oct 30 11:24:56 2018 -0500
+
+    Docs Makefile: sync SGML list to harfbuzz-docs.xml include
+    list. Hopefully fixes distcheck failure.
+
+ docs/Makefile.am | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+commit 9f4b375e396fe65b30c792b9524a732da0b477d1
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Mon Oct 29 17:10:53 2018 -0500
+
+    Usermanual: minor wording updates, build fixes.
+
+ ...rmanual-buffers-language-script-and-direction.xml |  8 +++++++-
+ docs/usermanual-clusters.xml                         |  6 ++++++
+ docs/usermanual-fonts-and-faces.xml                  |  8 +++++++-
+ docs/usermanual-getting-started.xml                  |  6 ++++++
+ docs/usermanual-glyph-information.xml                |  8 +++++++-
+ docs/usermanual-install-harfbuzz.xml                 | 20
+ +++++++++++++++++---
+ docs/usermanual-opentype-features.xml                |  8 +++++++-
+ docs/usermanual-shaping-concepts.xml                 |  6 ++++++
+ docs/usermanual-what-is-harfbuzz.xml                 | 12 +++++++-----
+ 9 files changed, 70 insertions(+), 12 deletions(-)
+
+commit e110032b914db9f417cc152b2beb51cda0a91dd7
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Mon Oct 29 16:42:59 2018 -0500
+
+    Usermanual: update DTD in chapter XML to avoid HTML entity parsing
+    errors.
+
+ docs/usermanual-what-is-harfbuzz.xml | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+commit 01400f7425f7aec852f39ebee17aa502a74025fb
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Sat Oct 20 17:21:49 2018 +0100
+
+    Usermanual; minor wording changes.
+
+ docs/usermanual-getting-started.xml  | 14 +++++++-------
+ docs/usermanual-install-harfbuzz.xml | 10 +++++++++-
+ docs/usermanual-what-is-harfbuzz.xml | 31 ++++++++++---------------------
+ 3 files changed, 26 insertions(+), 29 deletions(-)
+
+commit e89f43dc0884cb4a73beff86e49b7bd8565a01f1
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sat Oct 20 16:12:45 2018 +0100
+
+    Minor; rewording unsafe-to-break note.
+
+    Co-Authored-By: n8willis <nwillis@glyphography.com>
+
+ docs/usermanual-getting-started.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ccdfb634382596a6114380c72f2f344b1af23f94
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sat Oct 20 15:46:04 2018 +0100
+
+    Trivial; typo.
+
+    Co-Authored-By: n8willis <nwillis@glyphography.com>
+
+ docs/usermanual-what-is-harfbuzz.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 722099487be72346e7109872b6abf30696f3b7c3
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sat Oct 20 15:45:24 2018 +0100
+
+    Minor; simplify example code
+
+    Co-Authored-By: n8willis <nwillis@glyphography.com>
+
+ docs/usermanual-getting-started.xml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 6e4dd58a4af003eeec93cbe90d1258d91a38b53c
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sat Oct 20 15:44:51 2018 +0100
+
+    Minor: simplify example code
+
+    Co-Authored-By: n8willis <nwillis@glyphography.com>
+
+ docs/usermanual-getting-started.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f9ee0deceebd8952a8d80f3fd7b264b33e70f703
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sat Oct 20 15:41:00 2018 +0100
+
+    Minor; drop 'OpenType' from sentence
+
+    Co-Authored-By: n8willis <nwillis@glyphography.com>
+
+ docs/usermanual-what-is-harfbuzz.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f028da59d902c39e61021b48fc73f2821a9f3be2
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Sat Oct 20 15:18:29 2018 +0100
+
+    Minor.
+
+ docs/harfbuzz-docs.xml | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+commit ed5547f828fe7559cc3331f05780ae9f041b1e0f
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sat Oct 20 15:00:52 2018 +0100
+
+    Use 'glyphs' instead of 'text'
+
+    Co-Authored-By: n8willis <nwillis@glyphography.com>
+
+ docs/harfbuzz-docs.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 236285545b5da8513f2b61fc8066ba78308a555a
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Wed Oct 17 10:10:48 2018 -0500
+
+    Docs: minor, update Makefile w new file name.
+
+ docs/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 163ab81ab0f4000d968cc55b418402497e605e6c
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Tue Oct 16 17:48:15 2018 -0500
+
+    Docs: rename Hello HarfBuzz to Getting Started.
+
+ docs/harfbuzz-docs.xml                                                 |
+ 2 +-
+ docs/{usermanual-hello-harfbuzz.xml => usermanual-getting-started.xml}
+ | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 9e7efa3f47557a77852a15d89619787fd9933ed1
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Tue Oct 16 17:46:03 2018 -0500
+
+    Docs: usermanual, add API Overview to Hello HarfBuzz chapter. Start
+    Terminology section.
+
+ docs/usermanual-hello-harfbuzz.xml | 309
+ +++++++++++++++++++++++++------------
+ 1 file changed, 212 insertions(+), 97 deletions(-)
+
+commit 3a27e8fb97f716c17b03e3a4a634a4900bcb6045
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Fri Oct 12 18:23:26 2018 -0500
+
+    Docs: usermanual, add Shaping Concepts chapter.
+
+ docs/harfbuzz-docs.xml               |   5 +-
+ docs/usermanual-shaping-concepts.xml | 368
+ +++++++++++++++++++++++++++++++++++
+ 2 files changed, 371 insertions(+), 2 deletions(-)
+
+commit 9aa865dcc68ec207741e07ba3f7aacf4ac750c1c
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Fri Oct 12 18:22:41 2018 -0500
+
+    Docs: usermanual, minor cleanup to What Is HarfBuzz chapter.
+
+ docs/usermanual-what-is-harfbuzz.xml | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 443f87213272be5ae0579dce4749b2036dfe3815
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Thu Oct 11 15:40:08 2018 -0500
+
+    Docs: move harfbuzz-ng-vs-old discussion down below the TOC; put
+    in note.
+
+ docs/harfbuzz-docs.xml | 63
+ ++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 43 insertions(+), 20 deletions(-)
+
+commit 792af5d254fddcdc4292dffb76b81d65754e65a9
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Thu Oct 11 14:05:59 2018 -0500
+
+    Docs: flesh out config options in Usermanual:Install chapter.
+
+ docs/usermanual-install-harfbuzz.xml | 108
+ +++++++++++++++++++++++++++--------
+ 1 file changed, 85 insertions(+), 23 deletions(-)
+
+commit 325e2745cfa55f9ef114ee8eeaf7bd8176743822
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Wed Oct 10 17:01:21 2018 -0500
+
+    Docs: add basic config-options section to Usermanual Installation
+    chapter.
+
+ docs/usermanual-install-harfbuzz.xml | 132
+ ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 131 insertions(+), 1 deletion(-)
+
+commit 97c1c46cd2241d77b531a582dd1a2432af976357
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Wed Oct 10 16:38:22 2018 -0500
+
+    Docs: update and linearize build instructions; add installation
+    overview material.
+
+ docs/usermanual-install-harfbuzz.xml | 229
+ ++++++++++++++++++++++++++++-------
+ 1 file changed, 188 insertions(+), 41 deletions(-)
+
+commit 088755f9e654d2ec638dce0c68d523084b9eaf5a
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Wed Oct 10 16:37:29 2018 -0500
+
+    Docs: update usermanual What Is HarfBuzz material.
+
+ docs/usermanual-what-is-harfbuzz.xml | 220
+ +++++++++++++++++++++++++++--------
+ 1 file changed, 172 insertions(+), 48 deletions(-)
+
+commit 0956ab41851d30f50c39c28730cf30ea0bbc5466
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Fri Sep 28 17:15:59 2018 -0500
+
+    Docs: Move What-HarfBuzz-doesnt-do to Usermanual-what-is-HarfBuzz.
+
+ docs/usermanual-hello-harfbuzz.xml   |  98
+ +++------------------------------
+ docs/usermanual-what-is-harfbuzz.xml | 101
+ +++++++++++++++++++++++++++++++++--
+ 2 files changed, 104 insertions(+), 95 deletions(-)
+
+commit fd270beedb331c4685e918f5a3ef5789a23ffaeb
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Fri Sep 28 16:36:38 2018 -0500
+
+    Docs: Usermanual- What is HarfBuzz; add intro to shaping concepts.
+
+ docs/usermanual-what-is-harfbuzz.xml | 51
+ ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+
+commit d9fd92721002726c4aeaae9cc3a519a41f694e48
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Fri Sep 28 16:07:37 2018 -0500
+
+    Docs: update Usermanual-What Is HarfBuzz.
+
+ docs/usermanual-what-is-harfbuzz.xml | 199
+ +++++++++++++++++++++++------------
+ 1 file changed, 130 insertions(+), 69 deletions(-)
+
+commit 0af3d176a64c0a57c7acb2a64ce8b9d08f449241
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Tue Oct 30 17:05:28 2018 +0200
+
+    [sbix] Fix memory leak in early return
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11210
+
+ src/hb-ot-color-sbix-table.hh                             |   3 +++
+ ...zz-testcase-minimized-hb-shape-fuzzer-5768601332613120 | Bin 0 ->
+ 108 bytes
+ 2 files changed, 3 insertions(+)
+
+commit edaa768253cfeb97d614537253f90d47aa93ff6f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 01:35:58 2018 -0700
+
+    [util] Use fgets instead of getline such that windows passes
+
+ util/hb-shape.cc | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+commit 56738429d667f6c35e5c7af30b51604fc133c23c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 01:33:22 2018 -0700
+
+    [test] Fix warnings
+
+ test/api/test-ot-tag.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 138f9e0f25752bbf7f8e867f230ca91442f40028
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 01:31:13 2018 -0700
+
+    Minor
+
+ src/hb-machinery.hh | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+commit 83a612739accf6b0f2e1cb1be15097402f7ecf33
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 01:24:23 2018 -0700
+
+    [util] Minor
+
+ util/options.cc | 6 ------
+ util/options.hh | 8 ++------
+ 2 files changed, 2 insertions(+), 12 deletions(-)
+
+commit 64e41d2c89c533f554e49ffbd18e6653a70ab999
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 01:08:34 2018 -0700
+
+    [test] Fix Python3
+
+ test/shaping/run-tests.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f7a08cd41df1ff3e44aa838306218ae0565b7273
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 30 11:29:09 2018 +0330
+
+    Fix extra semicolon issues and test that on CI (#1330)
+
+ .circleci/config.yml         |  2 +-
+ src/hb-machinery.hh          | 16 ++++++++--------
+ src/hb-ot-layout-common.hh   |  6 +++---
+ src/hb-ot-layout-gsubgpos.hh |  2 +-
+ src/hb.hh                    |  2 +-
+ util/options.hh              |  2 +-
+ 6 files changed, 15 insertions(+), 15 deletions(-)
+
+commit 422debb830fe150c26e1628f77531f41f0871325
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 00:51:43 2018 -0700
+
+    [test/shaping] Spawn one hb-shape per test file
+
+    Speeds up runnings in-house tests from over 20s to 2s.
+
+ test/shaping/run-tests.py | 32 ++++++++++++--------------------
+ 1 file changed, 12 insertions(+), 20 deletions(-)
+
+commit 58e20f53bf61244e3eef09be8ebed60aaf52fb11
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 00:50:18 2018 -0700
+
+    [util] Add hb-shape --batch
+
+ util/hb-shape.cc | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+commit 6131fb6283cff87333db14b9b32e92be6139c3d6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 00:38:01 2018 -0700
+
+    [util] Don't close stdin/stdout
+
+ util/options.cc | 6 ++++++
+ util/options.hh | 8 ++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+commit 7e998d193a1429b42bb69582f9e5738aa6fd1a72
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 23:31:42 2018 -0700
+
+    Fix spurious warning re uninitialized use
+
+ src/hb-ot-layout-common.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 1b7bfb5e1864fc355715b536faac6693b5ce0218
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 30 10:19:40 2018 +0330
+
+    [cmake] Make build of tests and subset optional (#1329)
+
+ .circleci/config.yml |  2 +-
+ CMakeLists.txt       | 19 ++++++-------------
+ 2 files changed, 7 insertions(+), 14 deletions(-)
+
+commit b186274362725b7501211c2a782c1a0badd57107
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 23:21:14 2018 -0700
+
+    [set/map] Fix uninitialized memory
+
+    I keep forgetting that primitive types are NOT initialized during
+    construction. :|
+
+ src/hb-map.hh    | 4 ++--
+ src/hb-object.hh | 1 +
+ src/hb-set.hh    | 4 ++--
+ 3 files changed, 5 insertions(+), 4 deletions(-)
+
+commit ad3cededdd5ee6a364161e9d27e4cf4d95a80177
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 22:53:16 2018 -0700
+
+    [fuzzing] Make test runners less verbose
+
+ test/fuzzing/run-shape-fuzzer-tests.py  | 3 ++-
+ test/fuzzing/run-subset-fuzzer-tests.py | 1 -
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 4ef671f25f38895e3f87cd69687670c3d8ea4600
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 22:46:19 2018 -0700
+
+    [unicode] Fix a long-standing double-declaration warning
+
+ src/hb-unicode.cc | 31 +++++++------------------------
+ 1 file changed, 7 insertions(+), 24 deletions(-)
+
+commit 166ae8b0aa3b1e7298a1bbb872647cb352a0f924
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 22:40:37 2018 -0700
+
+    Remove now unused hb_auto_t<>
+
+ src/hb-dsalgs.hh | 20 --------------------
+ 1 file changed, 20 deletions(-)
+
+commit 56e0fd345c4e68753123a05cd80291e933d71061
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 22:35:44 2018 -0700
+
+    Remove last use of hb_auto_t<>
+
+ src/hb-ot-cmap-table.hh | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit ca5e5a4979fa4aca873ba986e60b3010aaf0b1de
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 22:30:21 2018 -0700
+
+    Port Coverage::Iter off hb_auto_t<>
+
+ src/hb-ot-layout-common.hh     |  4 +---
+ src/hb-ot-layout-gpos-table.hh |  2 +-
+ src/hb-ot-layout-gsub-table.hh | 26 +++++++++++++-------------
+ src/hb-ot-layout-gsubgpos.hh   |  8 ++++----
+ 4 files changed, 19 insertions(+), 21 deletions(-)
+
+commit 3a4e5dd425a2a37ff4c37db953943386c0b6e5d8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 18:05:25 2018 -0700
+
+    Remove a few unnecessary hb_auto_t<>'s
+
+    See a85641446c30247c4e948263f0f8c1147ed4efb9
+
+ src/hb-coretext.cc             |  8 ++++----
+ src/hb-ot-cmap-table.hh        |  6 ++----
+ src/hb-ot-layout-gsub-table.hh |  8 ++++----
+ src/hb-ot-layout-gsubgpos.hh   |  2 +-
+ src/hb-ot-layout.cc            | 10 +++++-----
+ src/hb-subset-plan.cc          |  2 +-
+ src/hb-subset.cc               |  2 +-
+ src/hb-uniscribe.cc            | 12 ++++++------
+ 8 files changed, 24 insertions(+), 26 deletions(-)
+
+commit 67a22f377dee0dbd89f301f0a1fec6f787867b5e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 17:37:41 2018 -0700
+
+    [set/map/vector] Make constructable, but not copy or assignable
+
+    Disable copy/assign on them, as they shouldn't.
+
+    Make constructor / destructor call init_shallow/fini_shallow,
+    and make those idempotent.  So, these three can be constructed
+    on stack now and no init/fini call is needed.  As such,
+    hb_auto_t<> is not needed anymore.  I'll remove that separately.
+
+ src/hb-map.hh    |  6 ++++++
+ src/hb-set.hh    |  5 +++++
+ src/hb-vector.hh | 37 ++++++++++++++++++++-----------------
+ src/hb.hh        | 12 ++++++++++++
+ 4 files changed, 43 insertions(+), 17 deletions(-)
+
+commit ea0e51d1b161245aaf5ad0f844bb5316b1cbcd5e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 16:00:23 2018 -0700
+
+    Add HB_NO_CREATE_COPY_ASSIGN
+
+ src/hb-open-type.hh | 10 +++++-----
+ src/hb.hh           | 15 +++++++++------
+ 2 files changed, 14 insertions(+), 11 deletions(-)
+
+commit 5b563640b2df5b100130c9901b666713b2e1767e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 15:58:44 2018 -0700
+
+    Remove HB_DISALLOW_COPY_AND_ASSIGN from hb_ot_shape_planner_t
+
+    It was arbitrary that this struct had it and not dozens of others.
+
+ src/hb-ot-shape.hh | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit 14b353c1852be64db244f84bf5e95b4b7f3e65b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 15:29:13 2018 -0700
+
+    One more iteration
+
+ src/hb.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit c7c5df9ffd4f7bcc84a9a02a565ccc1807cca529
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 15:16:52 2018 -0700
+
+    Try fixing older bots
+
+    Older C++ doesn't allow struct-with-constructor in union.
+
+ src/hb.hh | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+commit be87959a67b8ccf2b21d3cfdb7d16202f18df670
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 15:16:38 2018 -0700
+
+    [cmap] Minor
+
+ src/hb-ot-cmap-table.hh | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+commit 35d410f2bad62e98f3634c5ee156d0aea9031067
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 14:45:44 2018 -0700
+
+    Remove ASSERT_POD
+
+    Newer compilers / language allows structs with constructor in union.
+    So, this was not actually testing anything.  Indeed, the recent
+    change in DISALLOW_COPY *is* making some of our types non-POD.
+    That broke some bots.
+
+    Just remove this since it wasn't doing much, and I'd rather have
+    DISALLOW_COPY.
+
+ src/hb-blob.hh                             |  1 -
+ src/hb-buffer.hh                           |  1 -
+ src/hb-face.hh                             |  1 -
+ src/hb-font.hh                             |  2 --
+ src/hb-machinery.hh                        |  5 +----
+ src/hb-object.hh                           |  6 +-----
+ src/hb-ot-shape-complex-arabic-fallback.hh |  2 --
+ src/hb-ot-shape-complex-arabic.cc          |  2 --
+ src/hb-ot-shape-complex-hangul.cc          |  2 --
+ src/hb-ot-shape-complex-indic.cc           |  2 --
+ src/hb-ot-shape-complex-khmer.cc           |  2 --
+ src/hb-ot-shape-complex-use.cc             |  2 --
+ src/hb-set-digest.hh                       |  4 ----
+ src/hb-shape-plan.hh                       |  1 -
+ src/hb-subset-input.hh                     |  1 -
+ src/hb-subset-plan.hh                      |  1 -
+ src/hb-unicode.hh                          |  1 -
+ src/hb.hh                                  | 26
+ --------------------------
+ 18 files changed, 2 insertions(+), 60 deletions(-)
+
+commit 6f0454e176efdb8b99c8aa59b5ad765ca455b8d6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 13:51:15 2018 -0700
+
+    Fix extra-semicolon warnings
+
+ src/hb-machinery.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit a256a92b3fbb72487cf073a63e646eab952b42ed
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 11:25:35 2018 -0700
+
+    Make Array types uncopyable-unassignable
+
+    Finally!  Catches hard-to-find errors like this:
+
+    -    const SortedArrayOf<SVGDocumentIndexEntry> docs =
+    this+svgDocEntries;
+    +    const SortedArrayOf<SVGDocumentIndexEntry> &docs =
+    this+svgDocEntries;
+
+    We implement this for our array types.  This, in turn, trickles down
+    into all types that embed the arrays.  So, as long as we define all
+    open-ended structs in terms of Array types (all can be done using
+    UnsizedArrayOf), this achieves the goal of making uncopyable all
+    structs that are variable-sized.  Yay!
+
+ src/hb-open-type.hh | 11 +++++++++++
+ src/hb.hh           |  6 ++++++
+ 2 files changed, 17 insertions(+)
+
+commit 31cc1f74b7028ef88fa0e93e7f12166c7e06de8e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 11:14:37 2018 -0700
+
+    [svg] Minor
+
+ src/hb-ot-color-svg-table.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 1366bb9760d0f171f8f655e5739e74dfd2537652
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 29 11:01:25 2018 -0700
+
+    Fix g-i warnings
+
+ src/hb-ot-color.h | 4 +++-
+ src/hb-ot-name.cc | 4 ++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+commit ae802c2c6e001492f8f639e4c24546f0e21d86c7
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 13:42:14 2018 +0330
+
+    [test-ot-color] Minor
+
+ src/test-ot-color.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 7170e35096f0afd084be1350d080695c70c65d40
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 13:11:01 2018 +0330
+
+    Rename deprecated symbols list file name and clean it up (#1328)
+
+ src/Makefile.am      | 6 +++---
+ src/gen-def.py       | 9 ++++-----
+ test/api/Makefile.am | 2 +-
+ 3 files changed, 8 insertions(+), 9 deletions(-)
+
+commit 1dfe964378e97e45eedf9db9b9a7f675fe38c0bf
+Merge: f10252b4 9c692e5b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 12:34:33 2018 +0330
+
+    Merge pull request #1326 from ebraminio/test-ot-color
+
+    Revive and rename dump-emoji to test-ot-color but use public APIs
+    instead
+
+commit 9c692e5b8d195d8e82538594d89865c609d708f3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 11:36:11 2018 +0330
+
+    [test-ot-color] Use public APIs on the tool
+
+ src/Makefile.am      |   9 +++
+ src/test-ot-color.cc | 184
+ +++++++++++++++++++++++++++++----------------------
+ 2 files changed, 113 insertions(+), 80 deletions(-)
+
+commit fb525f8943b43fe241424c93461bee2b94af28e3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 09:43:17 2018 +0330
+
+    Rename dump-emoji to test-ot-color
+
+ src/{dump-emoji.cc => test-ot-color.cc} | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 81bcf47e9ea7eb447ff95ce48ecbc5c4439cb53f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 09:40:39 2018 +0330
+
+    Revive dump-emoji
+
+ src/dump-emoji.cc | 322
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 322 insertions(+)
+
+commit f10252b4b637b4aa0b74bb75963ae1e1a41b5b9f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 10:29:58 2018 +0330
+
+    [svg] Fix incorrect array referencing
+
+ src/hb-ot-color-svg-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5eb251aab041d89b06b0d3f65906ff6712608263
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 23:16:13 2018 -0700
+
+    [cbdt] Implement strike selection logic
+
+ src/hb-ot-color-cbdt-table.hh | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
+
+commit 98bddbc8ef3330bc5635f6255e6b9c16593a1934
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 23:14:15 2018 -0700
+
+    [sbix] Minor
+
+ src/hb-ot-color-sbix-table.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 8cffee0577284839a24d9fb863206886d2373974
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 23:07:59 2018 -0700
+
+    [cbdt] Simplify more
+
+ src/hb-ot-color-cbdt-table.hh | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
+
+commit 574579d3766b7b42e62495cb9a98f3ffd91079e8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 23:04:37 2018 -0700
+
+    [color] Rename get_strike() to choose_strike()
+
+ src/hb-ot-color-cbdt-table.hh |  8 ++++----
+ src/hb-ot-color-sbix-table.hh | 10 +++++-----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+commit 0aa90271fdbb2b85389cd5af029b6d4468fb8146
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 23:03:20 2018 -0700
+
+    [tests] Fix for recent rounding change in CBDT
+
+ test/shaping/data/in-house/tests/color-fonts.tests | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e2ba96da4c39ba5fe941bf2704c1e7cc5f98034f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 23:01:57 2018 -0700
+
+    [cbdt] Refactor get_strike()
+
+ src/hb-ot-color-cbdt-table.hh | 39
+ ++++++++++++++++-----------------------
+ src/hb-ot-color.cc            |  2 +-
+ 2 files changed, 17 insertions(+), 24 deletions(-)
+
+commit 6983cca9c865752fe0a9a065f9b0278b686c3abc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 22:46:18 2018 -0700
+
+    [cbdt] Minor
+
+ src/hb-ot-color-cbdt-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e998fb9fbfbd79b476d758238af60f6a4ddff20c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 22:45:53 2018 -0700
+
+    [color] Round extents when scaling
+
+ src/hb-ot-color-cbdt-table.hh | 12 +++++++-----
+ src/hb-ot-color-sbix-table.hh | 12 ++++++------
+ 2 files changed, 13 insertions(+), 11 deletions(-)
+
+commit c929ccfcea18c5c35d6d41ae921845eeffba978a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 08:41:13 2018 +0330
+
+    [ot-color/png] Consider strike ppem on scaling
+
+ src/hb-ot-color-cbdt-table.hh |  5 +++--
+ src/hb-ot-color-sbix-table.hh | 23 +++++++++++++++++++----
+ src/hb-ot-color.cc            |  2 +-
+ src/hb-ot-font.cc             |  2 +-
+ test/api/test-ot-color.c      |  4 ++--
+ 5 files changed, 26 insertions(+), 10 deletions(-)
+
+commit a8c9facf7a73cca39e3fed1f637db4858e64414a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 18:32:37 2018 -0700
+
+    [svg] Cosmetic
+
+ src/hb-ot-color-svg-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 9c1460e5685448ad4eac8faff9f05e456f87ed28
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 18:29:14 2018 -0700
+
+    [svg] Use SortedArrayOf.bsearch
+
+ src/hb-ot-color-svg-table.hh | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
+
+commit 18dd6363a5021cfd770b431a6320386f94447674
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 18:26:49 2018 -0700
+
+    [svg] Minor
+
+ src/hb-ot-color-svg-table.hh | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
+
+commit 4876c938a20af356988d566ba95472d3bcbb133d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 18:01:25 2018 -0700
+
+    [sbix] Comment
+
+ src/hb-ot-color-sbix-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 519fca101466283ca5c993dec2ec2c6891d8add5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 16:32:20 2018 -0700
+
+    [color] Minor
+
+ src/hb-ot-color.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e8ff27c2082ffcf3bd213e7a77d823dc1809857e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 16:29:09 2018 -0700
+
+    Minor
+
+ src/hb-open-type.hh        | 6 ++++--
+ src/hb-ot-layout-common.hh | 4 ++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+commit 65621723815138150e8a6354413ed14d53cf35b5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 16:27:18 2018 -0700
+
+    [sbix] Use LOffsetLArrayOf<>
+
+ src/hb-open-type.hh           | 2 ++
+ src/hb-ot-color-sbix-table.hh | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+commit a3ddd8067f266e49d9451c53a0fd40aff8551af7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 16:26:03 2018 -0700
+
+    [sbix] Add get_strike
+
+ src/hb-ot-color-sbix-table.hh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit 95524ed9bccdcd0d6a46c5dcc372e96a0c34b5f0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:58:48 2018 -0700
+
+    [sbix] Remove sbix_len
+
+ src/hb-ot-color-sbix-table.hh | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
+
+commit 69e9846452f829f82f6866a683845167b3d3d6e5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:53:11 2018 -0700
+
+    [sbix] Fix get_glyph_blob() on Null object
+
+ src/hb-ot-color-sbix-table.hh | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 4e0ee2af091634198c4b9b17036d9391a4e6b084
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:44:40 2018 -0700
+
+    [sbix] Simplify ppem access
+
+    If struct members are simple and needed publicly, we make them public.
+
+ src/hb-ot-color-sbix-table.hh | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+commit 6ac9a4eaa3a47c9b9f2c7aa123255e82ccc53551
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:43:54 2018 -0700
+
+    [sbix] Simplify glyph_length calc
+
+ src/hb-ot-color-sbix-table.hh | 22 +++++-----------------
+ 1 file changed, 5 insertions(+), 17 deletions(-)
+
+commit 0730d623854dc17ce0c3f1f2755a90b656c8e52c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:38:42 2018 -0700
+
+    [sbix] Check glyph data end is in range
+
+ src/hb-ot-color-sbix-table.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit b76dc03108d04975335dbf3580f8d02321cb5d25
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:36:17 2018 -0700
+
+    [sbix] Reduce code
+
+ src/hb-ot-color-sbix-table.hh | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 50fb02a219dbf168d300c4ccf9f29aee38a78e6c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:33:12 2018 -0700
+
+    [sbix] Check glyph id before looking into unsafe array
+
+    That 'Z' at end of imageOffsetsZ is a reminder that you should
+    check...
+
+ src/hb-ot-color-sbix-table.hh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit a8cb9c73da29afa89b0253b6475ff220613e100a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:30:57 2018 -0700
+
+    [sbix] Simplify 'dupe' handling logic
+
+ src/hb-ot-color-sbix-table.hh | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+commit d7eb534e59064633732959c3771b6557cc97005e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:27:04 2018 -0700
+
+    [sbix] Check offsets before proceeding
+
+ src/hb-ot-color-sbix-table.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit c8380bd3e4a2e51dfbe2e44e19738445be16ac75
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:20:33 2018 -0700
+
+    [color] Remove more dump-emoji cruft
+
+ src/hb-ot-color-cbdt-table.hh | 53
+ -------------------------------------------
+ src/hb-ot-color-sbix-table.hh | 13 -----------
+ 2 files changed, 66 deletions(-)
+
+commit 68f2c832c894d71715073d4748ad321a9d271a0e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:18:55 2018 -0700
+
+    Remove dump-emoji
+
+ src/Makefile.am               |   9 --
+ src/dump-emoji.cc             | 322
+ ------------------------------------------
+ src/hb-ot-color-sbix-table.hh |   4 +-
+ 3 files changed, 3 insertions(+), 332 deletions(-)
+
+commit b46de42b3a4bdf110154f4f067656f153f5a7d1b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:13:45 2018 -0700
+
+    [sbix] Fix order of parameters
+
+ src/hb-ot-color-sbix-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit a91cda72abdfc5e401510474c59dd14026e8b6cb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:12:05 2018 -0700
+
+    [sbix] Remove redundant parameter
+
+ src/hb-ot-color-sbix-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit c712005f55b2a1e5c782302d8a548cf1231c01f0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:11:10 2018 -0700
+
+    [sbix] Add get_strike()
+
+ src/hb-ot-color-sbix-table.hh | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+commit 400bc3f030b4ffebe24aa3562d8eb5fcc1cf4bdd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:05:40 2018 -0700
+
+    [sbix] Remove a couple of extra checks
+
+ src/hb-ot-color-sbix-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 3770282c837aacbf49b16be1986c91a608faa7da
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:02:53 2018 -0700
+
+    [sbix] Rename sbix_table to table in accelerator
+
+ src/hb-ot-color-sbix-table.hh | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+commit 7346841807ad96fc65bfc6ee9e78c3f190488f2a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 15:00:13 2018 -0700
+
+    [cbdt] Rename reference_blob_for_glyph() to reference_png()
+
+ src/hb-ot-color-cbdt-table.hh | 8 ++++----
+ src/hb-ot-color.cc            | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 1f33b8525d578323d6c798c08fc23c56896f9de0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 14:56:55 2018 -0700
+
+    [sbix] Rename ugly reference_blob_for_glyph() to reference_png()
+
+ src/hb-ot-color-sbix-table.hh | 16 +++++++---------
+ src/hb-ot-color.cc            |  4 +---
+ 2 files changed, 8 insertions(+), 12 deletions(-)
+
+commit 946b5344193183133bfc9799e26d3d0436d86404
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 14:52:25 2018 -0700
+
+    [sbix] Fix uninitialized variables
+
+ src/hb-ot-color-sbix-table.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 01c7d53fb739b547f3633972194893f68a4738bc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 14:51:18 2018 -0700
+
+    [sbix] Select best strike based on ppem
+
+ src/hb-ot-color-sbix-table.hh | 50
+ ++++++++++++++++++++++++-------------------
+ src/hb-ot-color.cc            |  3 +--
+ src/hb-ot-font.cc             |  2 +-
+ 3 files changed, 30 insertions(+), 25 deletions(-)
+
+commit f9f26bff4c79d65a92affd6b73e2b3de017f2d6d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 14:20:50 2018 -0700
+
+    [sbix] Move code around. Add get_extents()
+
+ src/hb-ot-color-sbix-table.hh | 15 +++++++++++++--
+ src/hb-ot-font.cc             |  2 +-
+ 2 files changed, 14 insertions(+), 3 deletions(-)
+
+commit 48bc3039cb46d2b8cf672d86b63b4235a86252e6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 14:16:52 2018 -0700
+
+    [sbix] Check blob length against PNG header leangth
+
+ src/hb-ot-color-sbix-table.hh | 37 +++++++++++++++++++++++--------------
+ 1 file changed, 23 insertions(+), 14 deletions(-)
+
+commit d3ec31a57cb99048fb33bca65041da9dc884d8cb
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 00:28:44 2018 +0330
+
+    [ot-color] More on PNGHeader fields
+
+ src/hb-ot-color-sbix-table.hh | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+commit 35fa3d326096639a33635e19f204a9cb31f20826
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 00:07:26 2018 +0330
+
+    [ot-color] Apply Behdad comment
+
+ src/hb-ot-color-sbix-table.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 307d61867a2b70073eecd1e0cb9b7d912e1c3f06
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 29 00:03:01 2018 +0330
+
+    [ot-color] Make PNGHeader reading actually work
+
+ src/hb-ot-color-sbix-table.hh | 6 +++---
+ test/api/test-ot-color.c      | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 632e9af862aba49ab31343c4fd07dffef6d2749f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 28 23:43:50 2018 +0330
+
+    [ot-color] Implement PNGHeader and test it, it doesn't work however
+
+ src/hb-ot-color-sbix-table.hh | 20 +++++++++++++++-----
+ src/hb-ot-font.cc             |  4 +---
+ test/api/test-ot-color.c      | 16 ++++++++++++++++
+ 3 files changed, 32 insertions(+), 8 deletions(-)
+
+commit 38706a0746822865008f810f9f577740c32580fa
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 28 23:19:04 2018 +0330
+
+    [ot-color] Preparation for setting PNG width/height in extents
+
+ src/dump-emoji.cc             |  7 +++---
+ src/hb-ot-color-sbix-table.hh | 52
+ +++++++++++++++++++++++++++++++++++--------
+ src/hb-ot-color.cc            | 14 +++++-------
+ src/hb-ot-font.cc             |  7 +++++-
+ 4 files changed, 59 insertions(+), 21 deletions(-)
+
+commit d6d6f3bc225bab57c1ab29b41876c98ac4ec1e4d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 11:41:33 2018 -0700
+
+    [docs] Add comment
+
+ src/hb-ot-font.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 3d4c1f6a41022ec99adefa2bdd2489622e2f9a66
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 28 21:38:56 2018 +0330
+
+    [ot-color] Apply Behdad reviews
+
+ docs/harfbuzz-sections.txt    |  4 ++--
+ src/hb-ot-color-cbdt-table.hh | 15 ++++-----------
+ src/hb-ot-color-sbix-table.hh |  6 ++----
+ src/hb-ot-color.cc            |  8 ++++----
+ src/hb-ot-color.h             |  4 ++--
+ test/api/test-ot-color.c      | 14 +++++++-------
+ 6 files changed, 21 insertions(+), 30 deletions(-)
+
+commit 8ef0d2ef928ac47278d7c6db8c8040a47f076e85
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 28 20:09:40 2018 +0330
+
+    [ot-color] Apply Behdad comment
+
+ src/dump-emoji.cc             |  2 +-
+ src/hb-ot-color-cbdt-table.hh | 16 +++++++---------
+ src/hb-ot-color-sbix-table.hh | 14 ++++----------
+ src/hb-ot-color.cc            | 22 +++++++---------------
+ src/hb-ot-color.h             |  5 +----
+ test/api/test-ot-color.c      | 15 ++++-----------
+ 6 files changed, 24 insertions(+), 50 deletions(-)
+
+commit dbd419bedef06a07c844b6a748a5e2868016000c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 15:15:24 2018 +0330
+
+    [ot-color] Add public API for CBDT/sbix/SVG color Emojis
+
+ docs/harfbuzz-sections.txt |  4 ++++
+ src/dump-emoji.cc          |  4 ++--
+ src/hb-ot-color.cc         | 39 ++++-----------------------------------
+ src/hb-ot-color.h          | 24 ++++++++++++++++++++++++
+ test/api/test-ot-color.c   |  8 ++------
+ 5 files changed, 36 insertions(+), 43 deletions(-)
+
+commit 6ce49a921a80f1238ddc537f77a1fceea5274a21
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 08:26:30 2018 -0700
+
+    [name] Change hb_name_id_t back to unsigned int
+
+    https://github.com/harfbuzz/harfbuzz/commit/d941f66c75fe26f909b1ba248535cc372bbde851#commitcomment-31076011
+
+ docs/harfbuzz-sections.txt    |  2 --
+ src/hb-ot-color-cpal-table.hh |  4 ++--
+ src/hb-ot-layout.cc           | 12 ++++++------
+ src/hb-ot-name-table.hh       |  2 +-
+ src/hb-ot-name.h              |  6 +++---
+ src/test-size-params.cc       |  2 +-
+ 6 files changed, 13 insertions(+), 15 deletions(-)
+
+commit a4f4f5ba5f64174dea931e02367aa4067d034383
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 28 08:23:36 2018 -0700
+
+    [docs] Fix titles here as well
+
+ src/hb-map.cc        | 2 +-
+ src/hb-set.cc        | 2 +-
+ src/hb-shape-plan.cc | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 213b6dd33564d0273b1db1c17a4e82548b727dfe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 18:36:24 2018 -0700
+
+    [name] Make sure hb_name_id_t is int-sized
+
+    https://github.com/harfbuzz/harfbuzz/commit/d941f66c75fe26f909b1ba248535cc372bbde851#commitcomment-31068905
+
+ src/hb-ot-name.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 4740a3593d6bbb97758593b7d5cd1b86eccbed78
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 05:07:54 2018 -0700
+
+    [docs] Divide reference API into three chapters
+
+ docs/harfbuzz-docs.xml | 213
+ +++++++++++++------------------------------------
+ 1 file changed, 56 insertions(+), 157 deletions(-)
+
+commit 1d40d72f291ed5e11850f8bd51a8562b57de1997
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 05:00:42 2018 -0700
+
+    [docs] Hook up hb-var
+
+ docs/harfbuzz-docs.xml |  1 +
+ src/hb-ot-var.cc       | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
+
+commit 80d9a427cf61f61512de13cd88bdc63d881019fe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 04:58:32 2018 -0700
+
+    [docs] Document remaining sections
+
+ src/hb-ot-color.cc  | 10 ++++++++++
+ src/hb-ot-font.cc   | 10 ++++++++++
+ src/hb-ot-layout.cc | 10 ++++++++++
+ src/hb-ot-math.cc   | 11 +++++++++++
+ src/hb-ot-name.cc   | 10 ++++++++++
+ src/hb-ot-shape.cc  | 10 ++++++++++
+ 6 files changed, 61 insertions(+)
+
+commit cf5fa57f00613d324b55732d9e21c779ba0d2de2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 04:50:38 2018 -0700
+
+    [docs] Change section titles again
+
+    I think I like the uniform "hb-*" more.
+
+ src/hb-blob.cc      |  2 +-
+ src/hb-buffer.cc    |  2 +-
+ src/hb-common.cc    |  4 ++--
+ src/hb-deprecated.h | 12 ++++++++++++
+ src/hb-face.cc      |  2 +-
+ src/hb-font.cc      |  2 +-
+ src/hb-shape.cc     |  2 +-
+ src/hb-unicode.cc   |  2 +-
+ 8 files changed, 20 insertions(+), 8 deletions(-)
+
+commit 04981ee05d83ed30c9f818106589a4de9c3e9b7f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 04:40:43 2018 -0700
+
+    [docs] More
+
+ src/hb-coretext.cc        | 10 ++++++++++
+ src/hb-ft.cc              | 11 +++++++++++
+ src/hb-glib.cc            | 10 ++++++++++
+ src/hb-gobject-structs.cc | 12 ++++++++++++
+ src/hb-graphite2.cc       | 10 ++++++++++
+ src/hb-icu.cc             | 10 ++++++++++
+ src/hb-uniscribe.cc       | 10 ++++++++++
+ 7 files changed, 73 insertions(+)
+
+commit 5dd86aa33b4e52a0de4fcd96b2ea7bafcae8dd34
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 04:28:40 2018 -0700
+
+    [docs] Rename section titles to object names
+
+    More useful.
+
+ src/hb-blob.cc       | 2 +-
+ src/hb-buffer.cc     | 2 +-
+ src/hb-face.cc       | 4 ++--
+ src/hb-font.cc       | 4 ++--
+ src/hb-map.cc        | 2 +-
+ src/hb-set.cc        | 2 +-
+ src/hb-shape-plan.cc | 2 +-
+ src/hb-unicode.cc    | 2 +-
+ 8 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 524fb70216d7fec17f5327237faa4d092ae15a00
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 04:27:36 2018 -0700
+
+    [docs] More
+
+ src/hb-map.cc | 11 ++++++++++-
+ src/hb-set.cc | 11 ++++++++++-
+ 2 files changed, 20 insertions(+), 2 deletions(-)
+
+commit 46072b7cb55bfeb8c46a78cbdb335dfdcce48298
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 04:21:20 2018 -0700
+
+    [ot] Fold hb-ot-tag.h into hb-ot-layout.h
+
+ docs/harfbuzz-docs.xml     |  1 -
+ docs/harfbuzz-sections.txt | 20 +++++-------
+ src/Makefile.sources       |  1 -
+ src/hb-graphite2.cc        |  2 +-
+ src/hb-ot-layout.h         | 42 ++++++++++++++++++++++++-
+ src/hb-ot-tag.h            | 78
+ ----------------------------------------------
+ src/hb-ot.h                |  1 -
+ src/hb-uniscribe.cc        |  2 +-
+ 8 files changed, 51 insertions(+), 96 deletions(-)
+
+commit 00cf4e5eb6dcb04406d5a519712da799277cec2e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 04:07:33 2018 -0700
+
+    [docs] Fill in some sections
+
+ docs/harfbuzz-docs.xml     | 20 ++++++--------
+ docs/harfbuzz-sections.txt | 65
+ +++++++++++++++++++---------------------------
+ src/hb-blob.cc             | 13 ++++++++++
+ src/hb-buffer.cc           |  3 ++-
+ src/hb-common.cc           | 23 ++++++++++++++++
+ src/hb-face.cc             | 13 ++++++++++
+ src/hb-font.cc             | 13 ++++++++++
+ src/hb-shape-plan.cc       | 13 ++++++++++
+ src/hb-shape.cc            |  4 ++-
+ src/hb-unicode.cc          | 14 ++++++++++
+ 10 files changed, 129 insertions(+), 52 deletions(-)
+
+commit 55a19d73b4d5e7ddd328263d241a442f16f005b2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 04:01:19 2018 -0700
+
+    Move HB_EXTERN
+
+ src/hb-common.h | 4 ++++
+ src/hb.h        | 4 ----
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 524e854c15f9d6c50c5456ae0e188f039dcf153c
+Merge: 4ee3c827 8180c37d
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 15:04:43 2018 +0330
+
+    Merge pull request #1318 from ebraminio/png
+
+    Add a non-hooked _png _svg get emoji blob
+
+commit 8180c37df0a856dbc3564c0aefd8b2acab8baf8a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 14:45:00 2018 +0330
+
+    [ot-color] Remove _png and _svg public APIs
+
+ docs/harfbuzz-sections.txt |  4 ----
+ src/dump-emoji.cc          | 11 ++++++++---
+ src/hb-ot-color.cc         | 39 +++++++++++++++++++++++++++++++++++----
+ src/hb-ot-color.h          | 24 ------------------------
+ test/api/test-ot-color.c   |  8 ++++++--
+ 5 files changed, 49 insertions(+), 37 deletions(-)
+
+commit 9aa6279a2d64ab8057b0d7acbcc77044442c6d0e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 14:24:58 2018 +0330
+
+    [ot-color/png] Try to get image blob from sbix first options.aat
+    is set
+
+ src/hb-ot-color.cc | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+commit b42661ee91ea92309e827a970f370cacc62c73aa
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 14:15:38 2018 +0330
+
+    [ot-color] Add some documentation
+
+ src/hb-ot-color.cc | 37 +++++++++++++++++++------------------
+ src/hb-ot-color.h  |  2 +-
+ 2 files changed, 20 insertions(+), 19 deletions(-)
+
+commit 4ee3c8272c31736980218cba95f97fed53d24e14
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 03:18:45 2018 -0700
+
+    [docs] Fix hb_name_id_t
+
+    Yep, was not recognized without this patch!
+
+ src/hb-ot-name.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9435fb24daadf08add9a701816da01bd54c0cd78
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 13:32:14 2018 +0330
+
+    [ot-color/png] Implement CBDT part
+
+ src/hb-ot-color-cbdt-table.hh | 56
+ +++++++++++++++++++++++++++++++++++++++----
+ src/hb-ot-color.cc            | 19 ++-------------
+ src/hb-ot-color.h             |  4 ++++
+ test/api/test-ot-color.c      | 25 ++++++++++++++++---
+ 4 files changed, 79 insertions(+), 25 deletions(-)
+
+commit 9457cfd7bcc9c2fff38194f2bb82ab7be881bfeb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 03:15:34 2018 -0700
+
+    [docs] Hook up hb-map
+
+ docs/harfbuzz-docs.xml | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit d941f66c75fe26f909b1ba248535cc372bbde851
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 02:55:52 2018 -0700
+
+    [name] Make hb_name_id_t be the enum
+
+    This is like hb_script_t.
+
+    We had this exposed as unsigned int since 2.0.0 release in two APIs,
+    as well as hb_ot_layout_get_size_params() from earlier.
+    But since no one uses those (right?!), let's just fix this now.
+
+ docs/harfbuzz-docs.xml        |  6 ++++--
+ docs/harfbuzz-sections.txt    |  4 +++-
+ src/hb-ot-color-cpal-table.hh | 12 ++++++------
+ src/hb-ot-layout.cc           | 16 ++++++++--------
+ src/hb-ot-name-table.hh       |  2 +-
+ src/hb-ot-name.h              | 15 ++++-----------
+ src/test-size-params.cc       |  2 +-
+ 7 files changed, 27 insertions(+), 30 deletions(-)
+
+commit 40496a54a03864c5e6a1224c18b4b93a1f578eed
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 02:49:32 2018 -0700
+
+    [name] Move HB_NAME_ID_INVALID into the enum
+
+    Don't know how to document anonymous enum members.
+
+ src/hb-ot-name.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit a8a55b9f892a5e4f086b20bbe337dc29182210af
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 02:45:57 2018 -0700
+
+    [name] Move around
+
+ src/hb-ot-name.h | 74
+ ++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 37 insertions(+), 37 deletions(-)
+
+commit 3b7e5f131383956e19642d28c938f1bc0d16295f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 02:39:20 2018 -0700
+
+    [name] Rename hb_ot_name_get_names() to hb_ot_name_list_names()
+
+    And swap return value positions, so can be annotated for
+    gobject-introspectin.
+
+ docs/harfbuzz-sections.txt |  2 +-
+ src/hb-ot-name.cc          | 17 ++++++++---------
+ src/hb-ot-name.h           |  6 +++---
+ src/test-name-table.cc     |  4 ++--
+ 4 files changed, 14 insertions(+), 15 deletions(-)
+
+commit 4025ad804383dc8d5ace9654ae21d4d726d0dbc4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 02:35:06 2018 -0700
+
+    Document new API
+
+ src/hb-common.h     | 30 +++++++++++++++++++++++++-
+ src/hb-ot-color.cc  | 16 +++++++-------
+ src/hb-ot-layout.cc |  2 +-
+ src/hb-ot-name.cc   | 61
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ src/hb-ot-name.h    | 15 +++++++++++++
+ 5 files changed, 113 insertions(+), 11 deletions(-)
+
+commit 5e2a52f71a8d081441fbc1c57a3550e3a9573e46
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 12:44:33 2018 +0330
+
+    [sbix] Remove dump method from sbix accelerator
+
+ src/dump-emoji.cc             | 36 ++++++++++++++++++++++++------------
+ src/hb-ot-color-sbix-table.hh | 26 ++++++++++----------------
+ 2 files changed, 34 insertions(+), 28 deletions(-)
+
+commit 0353ac6cde47df8f5386733f5c12cc60732a5bf4
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 12:24:53 2018 +0330
+
+    Fix test-name-table on older bots
+
+ src/test-name-table.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit dc11a38107ac1f0a2d3edacae33ff7f10f5e894c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 12:15:25 2018 +0330
+
+    [sbix] Set num_glyphs on accelerator
+
+    dump-emoji was broken without it
+
+ src/hb-ot-color-sbix-table.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 6a38fd68a8f4e66d9248e0c943ae3a1cf45c521b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 27 10:50:53 2018 +0330
+
+    [ot-color/png] sbix runtime memory check
+
+ src/hb-ot-color-cbdt-table.hh | 16 +++++++---------
+ src/hb-ot-color-sbix-table.hh | 18 ++++++++++++------
+ src/hb-ot-color-svg-table.hh  |  4 ++--
+ 3 files changed, 21 insertions(+), 17 deletions(-)
+
+commit ca645accb97841e01846e45cda32e6bd2ad15940
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 00:39:31 2018 -0700
+
+    Comment
+
+ src/hb-ot-shape-complex-indic.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 265ad408ca41e9d0b5a1056a751d834d4eadc911
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 26 23:55:11 2018 +0330
+
+    [ot-color/png] Implement sbix part
+
+ docs/harfbuzz-sections.txt    |  2 +
+ src/dump-emoji.cc             |  5 ++-
+ src/hb-ot-color-cbdt-table.hh | 27 ++++++++----
+ src/hb-ot-color-sbix-table.hh | 98
+ +++++++++++++++++++++++++++++++++++++------
+ src/hb-ot-color.cc            | 64 ++++++++++++++++++++++++++++
+ src/hb-ot-color.h             |  9 ++++
+ test/api/test-ot-color.c      | 32 ++++++++++++++
+ 7 files changed, 215 insertions(+), 22 deletions(-)
+
+commit 7f5941e162bf7806299656edafd452a47b5a55b9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 27 00:06:48 2018 -0700
+
+    Remove stale comment
+
+    Ugliness was fixed in 30eab97a0072fbc22d353082249e0e6e546cd86b
+    But yeah, my smell detector was working.  Ugliness was buggy.
+
+ src/hb-ot-shape-normalize.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit e7400c0275cad4f584eeaf21ce6d5c6adca29bbb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 22:09:17 2018 -0700
+
+    [docs] Hook up new symbols
+
+ docs/harfbuzz-docs.xml     | 46
+ +++++++++++++++++++++++++++++++++++++++++-----
+ docs/harfbuzz-sections.txt | 21 +++++++++++++++++++++
+ src/hb-ot-color.cc         |  2 +-
+ 3 files changed, 63 insertions(+), 6 deletions(-)
+
+commit 6aa019c4af6b64bb732205e6051f3e73e1b70721
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 22:02:17 2018 -0700
+
+    [morx] Fix merge_cluster to end at last ligature component
+
+    Don't assume current position was a component in the ligature.
+
+ src/hb-aat-layout-morx-table.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 00ae4be6bf8b1d0800043167c5cf95187ac12515
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 21:59:20 2018 -0700
+
+    [morx] Fix bailing out ligation at end-of-text
+
+    Check was after a move_to, which wouldn't work.
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11147
+
+ src/hb-aat-layout-morx-table.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 30eab97a0072fbc22d353082249e0e6e546cd86b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 21:54:07 2018 -0700
+
+    Fix invalid memory read
+
+    Buffer might be relocated inside replace_glyphs().
+
+    Fixes https://bugs.chromium.org/p/chromium/issues/detail?id=895117
+
+ src/hb-ot-shape-normalize.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 79b2fa62ca7eb5a875778d3a2ecae63350083ba3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 21:21:18 2018 -0700
+
+    [indic] Fix infinite loop
+
+    Fixes https://bugs.chromium.org/p/chromium/issues/detail?id=863044
+
+ src/hb-ot-shape-complex-indic.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 39bd07aed5fe6ccddde53206bafceec32d56dcc1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 21:01:11 2018 -0700
+
+    Fix bunch of unused parameter warnings
+
+    Show up with gcc -O0.
+
+    There's a few more but those are functions that need to be filled in.
+
+    Maybe this is a lost battle...
+
+ src/gen-vowel-constraints.py                 |  4 ++--
+ src/hb-aat-layout-common.hh                  |  7 +++++--
+ src/hb-aat-layout-kerx-table.hh              |  4 ++--
+ src/hb-aat-layout-morx-table.hh              | 10 +++++-----
+ src/hb-face.cc                               |  2 +-
+ src/hb-font.cc                               | 29
+ ++++++++++++++--------------
+ src/hb-graphite2.cc                          |  9 ++++++---
+ src/hb-machinery.hh                          |  4 ++--
+ src/hb-ot-color-cbdt-table.hh                |  2 +-
+ src/hb-ot-glyf-table.hh                      |  4 ++--
+ src/hb-ot-hmtx-table.hh                      |  2 +-
+ src/hb-ot-layout-gpos-table.hh               |  2 +-
+ src/hb-ot-math-table.hh                      |  2 +-
+ src/hb-ot-maxp-table.hh                      |  2 +-
+ src/hb-ot-shape-complex-arabic-fallback.hh   |  6 +++---
+ src/hb-ot-shape-complex-arabic.cc            |  6 +++---
+ src/hb-ot-shape-complex-hangul.cc            |  2 +-
+ src/hb-ot-shape-complex-khmer.cc             |  2 +-
+ src/hb-ot-shape-complex-myanmar.cc           |  6 +++---
+ src/hb-ot-shape-complex-use.cc               |  8 ++++----
+ src/hb-ot-shape-complex-vowel-constraints.cc |  4 ++--
+ src/hb-ot-shape-fallback.cc                  |  4 ++--
+ src/hb-ot-shape-normalize.cc                 |  4 +++-
+ src/hb-ot-shape.cc                           |  2 +-
+ src/hb-ot-tag.cc                             |  3 +--
+ src/hb-ot-vorg-table.hh                      |  2 +-
+ src/hb-set.cc                                |  2 +-
+ src/hb-shape-plan.cc                         |  2 +-
+ src/hb-utf.hh                                |  2 +-
+ 29 files changed, 73 insertions(+), 65 deletions(-)
+
+commit b2e1ec374cbd2a6e4d79419bd5601a4e2ecb9864
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 20:45:28 2018 -0700
+
+    [subset] Fix warning
+
+ src/hb-subset.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 337ea0b7175793305e9d8935aecf385b707a5bc4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 20:31:14 2018 -0700
+
+    [fuzzing] Remove HB_NDEBUG
+
+    Not sure why it ever was added.
+
+ src/Makefile.am | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 12058e44d100c28816f42c91c63a0f960a662181
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 16:23:50 2018 -0700
+
+    [fuzzing] Add more test
+
+ ...z-testcase-minimized-harfbuzz_fuzzer-5659690013556736 | Bin 0 ->
+ 2732 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit c965eeadbc71943f2336a20dc16ac691c805b90e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 13:43:25 2018 -0700
+
+    [name] Default to "en" if language is not specified
+
+ src/hb-ot-name.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 3fd6e5dbefe52a4a2e604c28a4edfbd40ed16027
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 24 13:42:38 2018 -0700
+
+    [name] Add pre-defined nameIDs
+
+ src/hb-ot-name.h | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+commit 20d0171d20cf9f3f93bdd6878bbc1d7d8329e75f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 24 13:20:19 2018 -0700
+
+    [name] Fill out most missing language codes
+
+ src/hb-ot-name-language.cc | 114
+ +++++++++++++++++++++++----------------------
+ 1 file changed, 58 insertions(+), 56 deletions(-)
+
+commit 622b014faf7bbe7a97f9aff959c434d1664c10d0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 24 12:40:15 2018 -0700
+
+    [name] Skip enumerating names with unknown language
+
+ src/hb-ot-name-table.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 2c39f359e4a7312e3b518f76815d79e42ee96a32
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 24 12:34:30 2018 -0700
+
+    [utf] Remove unused typedef
+
+ src/hb-utf.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit ce81c7429810ad3902c37e50016ca54b9bae6f91
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 24 12:34:03 2018 -0700
+
+    [utf] Fix ASCII
+
+ src/hb-utf.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 327546e633b590d6dedfb901810ccf490a0bf922
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 23:33:44 2018 -0700
+
+    [name] Hook up ltag table
+
+ src/hb-aat-layout.cc     | 15 ++++++++++++++-
+ src/hb-aat-layout.hh     |  5 +++++
+ src/hb-aat-ltag-table.hh | 17 +++++++++++++++--
+ src/hb-ot-face.hh        |  3 ++-
+ src/hb-ot-name-table.hh  |  9 +++++----
+ 5 files changed, 41 insertions(+), 8 deletions(-)
+
+commit dc9a5f88b401fcad598946fcf735010c563741ac
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 23:16:06 2018 -0700
+
+    [name] Do record sanitization at run-time
+
+ src/hb-dsalgs.hh        | 62
+ +++++++++++++++++++++++++++----------------------
+ src/hb-ot-name-table.hh | 22 +++++++++++-------
+ src/hb-ot-name.cc       |  2 +-
+ 3 files changed, 49 insertions(+), 37 deletions(-)
+
+commit a53d301b1c9f72cb42cc0fc321e2ad4dbac8e064
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 23:05:55 2018 -0700
+
+    [name] Minor
+
+ src/hb-ot-name-table.hh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit c442fd9a10b3e91ab18720188afff08325adf6dc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 22:45:45 2018 -0700
+
+    [name] Add src/test-name-table tool to show all font names
+
+ src/Makefile.am        | 17 ++++++++-----
+ src/test-name-table.cc | 67
+ ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 78 insertions(+), 6 deletions(-)
+
+commit 7007bd9dff9f8eef3263f1b39327552ff1ebae3f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 22:44:36 2018 -0700
+
+    [name] Rebuild language list, include missing entries
+
+ src/hb-ot-name-language.cc | 634
+ ++++++++++++++++++++++++++-------------------
+ 1 file changed, 370 insertions(+), 264 deletions(-)
+
+commit 68f172101c1228a7d669d71da1d0eeb96a10565e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 22:19:09 2018 -0700
+
+    [name] Fix cmp for invalid language
+
+ src/hb-ot-name-table.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 888a65615c7b11222749ae85c124aaa9a36fe863
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 22:16:32 2018 -0700
+
+    [name] Fix nul-termination bug
+
+ src/hb-ot-name.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9b532e2ed432611005b19c40cac7e626afcccd08
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 22:00:19 2018 -0700
+
+    [name] Add language mapping
+
+ src/Makefile.sources       |   2 +
+ src/hb-ot-name-language.cc | 349
+ +++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-name-language.hh |  40 ++++++
+ src/hb-ot-name-table.hh    |  21 ++-
+ 4 files changed, 399 insertions(+), 13 deletions(-)
+
+commit e2f9b657758cda3708c0a9db971c467ca59d5c19
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 21:19:56 2018 -0700
+
+    [name] Start adding language support
+
+ src/hb-ot-name-table.hh | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+commit 6db6bbe64bd63554919647c5b527e03aedbaee4e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 21:12:58 2018 -0700
+
+    [name] Remove unused cmp function
+
+ src/hb-ot-name-table.hh | 16 ----------------
+ 1 file changed, 16 deletions(-)
+
+commit 4668a05006e6c4797df19651489b4589817e1e01
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 20:51:53 2018 -0700
+
+    [name] Hook things up
+
+    Accept Mac Latin name entries as ASCII as well.
+
+ src/hb-ot-name-table.hh | 24 +++++++++++++++------
+ src/hb-ot-name.cc       |  8 +++++--
+ src/hb-utf.hh           | 55
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 79 insertions(+), 8 deletions(-)
+
+commit 69f5da0629f1e5a307fc49fe58490aa92d1bd0e2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 20:30:40 2018 -0700
+
+    [name] More
+
+    It assumes all names are encoded in UTF16-BE.  Other than that,
+    and not
+    listing languages correctly, it's *supposed* to work.
+
+ src/hb-dsalgs.hh                | 21 +++++++++++++++++++++
+ src/hb-ot-name-table.hh         | 37
+ ++++++++++++++++++++++++++++++-------
+ src/hb-ot-name.cc               | 12 ++++++++----
+ src/hb-ot-os2-unicode-ranges.hh | 10 +++++-----
+ src/hb-unicode.cc               |  8 ++++----
+ src/hb-unicode.hh               |  2 +-
+ 6 files changed, 69 insertions(+), 21 deletions(-)
+
+commit 64334aff8c2ea5aa066d77a95844bc6f84efe725
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 20:15:53 2018 -0700
+
+    [name] Fix check
+
+ src/hb-ot-name.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5531bd068e759a5acb3b8d301c0ff9c64844166e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 20:04:05 2018 -0700
+
+    [name] Flesh out UTF-X to UTF-X conversion routines
+
+ src/hb-ot-name.cc |  84 ++++++++++++++++++++++++++++++++++++------
+ src/hb-ot-name.h  |  10 ++---
+ src/hb-utf.hh     | 107
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 182 insertions(+), 19 deletions(-)
+
+commit 84811a06a26508effe9f4a9eaf1be15297ecf0cb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 03:16:03 2018 -0700
+
+    [name] Fix for rebase changes to hb_array_t
+
+ src/hb-ot-name-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 1046b1938b16ab6be861b0828b446fa13cf0377b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 17 05:42:23 2018 -0700
+
+    [name] Some more
+
+ src/hb-ot-name.cc | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+commit b4d4d1ea787c829dea023d99f974a38bdc3de0ae
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 16 19:55:17 2018 -0700
+
+    [name] Return full string length from API
+
+ src/hb-ot-name.cc | 6 +++---
+ src/hb-ot-name.h  | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+commit 8d304ef7f9094a71fabc3efd87b37a030c437adf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 16 19:04:48 2018 -0700
+
+    [utf] Add UTF16-BE and UTF32-BE
+
+ src/hb-buffer.cc |  4 +--
+ src/hb-utf.hh    | 80
+ ++++++++++++++++++++++++++++++++------------------------
+ 2 files changed, 48 insertions(+), 36 deletions(-)
+
+commit a826a8730f21ae996ae8f4d12c44dc18b9e8e933
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 16 13:06:56 2018 -0700
+
+    [name] Hide internal details from public API
+
+ src/hb-ot-name-table.hh | 23 +++++++++++++----------
+ src/hb-ot-name.h        |  3 +--
+ 2 files changed, 14 insertions(+), 12 deletions(-)
+
+commit e7c595a9f09ba1552b2de1f8d56cbdcf376b9cad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 23:34:54 2018 -0700
+
+    [name] More
+
+ src/hb-ot-name.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 75cd8c86bd9b0973864bb92e0244bf038980765e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 23:32:08 2018 -0700
+
+    [name] Add hb_ot_name_get_utf()
+
+ src/hb-ot-name.cc | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
+
+commit c783d36324dd1e2031d3387064afab1ce5d90b6f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 23:28:49 2018 -0700
+
+    [name] Pre-allocate array
+
+ src/hb-ot-name-table.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit c2aa409537c3e8a7b8592ef90f8304bd6588561d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 23:09:28 2018 -0700
+
+    [name] Start implementing hb_ot_name_get_utf16()
+
+ src/hb-ot-name-table.hh |  6 ++++--
+ src/hb-ot-name.cc       | 22 ++++++++++++++++++++++
+ src/hb-ot-name.h        |  8 ++++++--
+ 3 files changed, 32 insertions(+), 4 deletions(-)
+
+commit 740cde8991283b8b4e1e77e022175251eb37d3d1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 23:00:27 2018 -0700
+
+    [name] Implement hb_bytes_t get_name()
+
+ src/hb-ot-name-table.hh | 24 +++++-------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
+
+commit c3425f2401dffb1f3b5bd6fdbc0c3e9aad0f4306
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 22:53:40 2018 -0700
+
+    [name] Add hb-ot-name.cc for realz
+
+ src/hb-ot-name.cc | 50 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+commit 90420ed8cb297f1ceff75f5a75c8fa7b6ea6f65e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 22:48:48 2018 -0700
+
+    [name] Implement hb_ot_name_get_names()
+
+ src/Makefile.sources    | 1 +
+ src/hb-ot-name-table.hh | 3 +--
+ src/hb-ot-name.h        | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 9a6c87c17d51fd57e4225c776a0fabbfd313f4f4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 22:42:04 2018 -0700
+
+    [name] Finish accelerator sorting
+
+ src/hb-ot-name-table.hh | 61
+ +++++++++++++++++++++++++++++++++++++++++--------
+ src/hb-ot-name.h        |  3 ++-
+ 2 files changed, 53 insertions(+), 11 deletions(-)
+
+commit 2157e56b34e7b932dd144ee3563f5bd682bbed30
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 22:22:50 2018 -0700
+
+    [name] Start implementing public API infrastructure
+
+ src/hb-ot-face.cc       |  1 +
+ src/hb-ot-face.hh       |  7 +++---
+ src/hb-ot-name-table.hh | 60
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-name.h        |  3 +++
+ 4 files changed, 68 insertions(+), 3 deletions(-)
+
+commit 0bf93ec0fb549d838b0a246de02a95559a9b2772
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 15 21:34:10 2018 -0700
+
+    [name] Add public API declarations
+
+ src/hb-ot-name.h | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+commit 982c2f4a65d127e56e09e7ab583f84099b8136bb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 26 15:40:12 2018 -0700
+
+    [indic/khmer/myanmar/use] Clarify clear_syllable
+
+    No logic change.
+
+ src/hb-ot-shape-complex-indic.cc   |  3 ++-
+ src/hb-ot-shape-complex-khmer.cc   |  4 +---
+ src/hb-ot-shape-complex-myanmar.cc | 40
+ ++++++++++++++++++--------------------
+ src/hb-ot-shape-complex-use.cc     | 22 +++++++++++++++------
+ 4 files changed, 38 insertions(+), 31 deletions(-)
+
+commit 143ffe65aa7f20d6c53219905cbc2520d680b8dd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 26 12:14:30 2018 +0330
+
+    [fuzz] Add a new testcase
+
+ ...z-testcase-minimized-hb-shape-fuzzer-5658272078495744 | Bin 0 ->
+ 2252 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 30f18039b3c0e5748101f8934ae82aebfc5a83f7
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 26 09:34:34 2018 +0330
+
+    [svg] Rename _svg_create_blob to _glyph_reference_blob_svg
+
+ docs/harfbuzz-sections.txt | 2 ++
+ src/dump-emoji.cc          | 2 +-
+ src/hb-ot-color.cc         | 4 ++--
+ src/hb-ot-color.h          | 2 +-
+ test/api/test-ot-color.c   | 6 +++---
+ 5 files changed, 9 insertions(+), 7 deletions(-)
+
+commit 5cb1ce868138a10c0663a18c3891bc717aa4bc64
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Oct 25 22:39:58 2018 +0330
+
+    [svg] Collapse SVGDocumentIndex into SVG
+
+ src/hb-ot-color-svg-table.hh | 54
+ +++++++++++++++-----------------------------
+ src/hb-ot-color.cc           |  2 +-
+ test/api/test-ot-color.c     |  2 +-
+ 3 files changed, 20 insertions(+), 38 deletions(-)
+
+commit 4ceabb8c2126fe365303b8d69e667005276c0241
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Oct 25 21:52:35 2018 +0330
+
+    [svg] Hide start_glyph and end_glyph from API
+
+ src/dump-emoji.cc            | 21 ++++++++-------------
+ src/hb-ot-color-svg-table.hh | 42
+ ++++++++++++------------------------------
+ src/hb-ot-color.cc           |  9 ++-------
+ src/hb-ot-color.h            |  5 +----
+ test/api/test-ot-color.c     | 11 ++---------
+ 5 files changed, 25 insertions(+), 63 deletions(-)
+
+commit c7a4e3dfb5c8dd4f8faf08e327bb1900c0096cf6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 23 18:00:48 2018 +0330
+
+    [svg] Add public API
+
+    * hb_ot_color_has_svg
+    * hb_ot_color_glyph_svg_create_blob
+
+ src/dump-emoji.cc             | 51 +++++++++++++++----------
+ src/hb-open-type.hh           |  1 -
+ src/hb-ot-color-sbix-table.hh |  2 +
+ src/hb-ot-color-svg-table.hh  | 86
+ ++++++++++++++++++++++++++++++++-----------
+ src/hb-ot-color.cc            | 53 ++++++++++++++++++++++----
+ src/hb-ot-color.h             | 13 +++++++
+ src/hb-ot-face.cc             |  2 +
+ src/hb-ot-face.hh             |  4 +-
+ src/hb-ot-layout.cc           |  4 --
+ test/api/test-ot-color.c      | 43 +++++++++++++++++++---
+ 10 files changed, 199 insertions(+), 60 deletions(-)
+
+commit e98af6d1eda33346f72de8a45fbd317fc0e15935
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 22:25:29 2018 -0700
+
+    [layout] Try to speed up collect_lookups some more
+
+    Barely made a dent :(.
+
+ src/hb-ot-layout-common.hh |  2 ++
+ src/hb-ot-layout.cc        | 23 ++++-------------------
+ 2 files changed, 6 insertions(+), 19 deletions(-)
+
+commit eb44bfc864f91c0c833c3156475d191ac1b79c72
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 21:42:19 2018 -0700
+
+    [layout] Memoize collect_features
+
+    Fixes https://github.com/harfbuzz/harfbuzz/pull/1317
+    Fixes https://oss-fuzz.com/v2/testcase-detail/6543700493598720
+
+ src/hb-ot-layout.cc | 55
+ ++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 48 insertions(+), 7 deletions(-)
+
+commit 84098b1639775aea5bf3f5d91fa6e657b612ce3a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 21:33:12 2018 -0700
+
+    [layout] Remove unintentionally added code
+
+ src/hb-ot-layout-common.hh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 941600a9e06309f148d51403fa07dc56ce542572
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 21:26:08 2018 -0700
+
+    [layout] Add hb_collect_features_context_t
+
+    Towards https://github.com/harfbuzz/harfbuzz/pull/1317
+
+ src/hb-ot-layout.cc | 66
+ +++++++++++++++++++++++++++++------------------------
+ 1 file changed, 36 insertions(+), 30 deletions(-)
+
+commit c237cdfcc74d33f77b2399b4d08228c2fcf50df5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 21:17:30 2018 -0700
+
+    [lookup] Fold another function inline
+
+ src/hb-ot-layout.cc | 48 +++++++++++++++++++++---------------------------
+ 1 file changed, 21 insertions(+), 27 deletions(-)
+
+commit fe5520ddea3941f7a72888d908fd2b895e2f388e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 20:58:34 2018 -0700
+
+    [layout] More prep work to memoize collect_features() work
+
+ src/hb-ot-layout.cc | 62
+ ++++++++++++++++++++---------------------------------
+ 1 file changed, 23 insertions(+), 39 deletions(-)
+
+commit e8e67503ff0a50eb10ad410d6a76a282ea494cf4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 20:48:20 2018 -0700
+
+    [lookup] More prep work for memoizing collect_features
+
+    https://github.com/harfbuzz/harfbuzz/pull/1317
+
+ src/hb-ot-layout-common.hh |  2 ++
+ src/hb-ot-layout.cc        | 83
+ +++++++++++++++++++++-------------------------
+ 2 files changed, 40 insertions(+), 45 deletions(-)
+
+commit 96828b97a8fc2c50721ce040bdde63c462908791
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 20:34:29 2018 -0700
+
+    [layout] Minor
+
+    We were returning the accelerator's lookup count.  Returns table's.
+    They are the same except for OOM cases.  Just shorter code.
+
+ src/hb-ot-layout.cc | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
+
+commit 73449cd213c3a12468e99b9c3d840fc60a334902
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 20:32:05 2018 -0700
+
+    [layout] Fold one function inline
+
+    Preparation for fixing https://github.com/harfbuzz/harfbuzz/pull/1317
+
+ src/hb-ot-layout.cc | 22 +++-------------------
+ 1 file changed, 3 insertions(+), 19 deletions(-)
+
+commit ba5ca6a762cb46a17f41673b14996a12e6cfe3d1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 17:41:26 2018 -0700
+
+    [morx] Use deleted-glyph, instead of actual deletion, in Ligation
+
+    Closer to what CoreText does.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1302
+
+ src/hb-aat-layout-morx-table.hh | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 5c272e3613667ca532f32764824784c63d797f57
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 17:36:33 2018 -0700
+
+    [morx] Remove deleted-glyph at the end of processing
+
+ src/hb-aat-layout-morx-table.hh | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+commit 1bb8ed86d6cfec0fc87c8e1930d9a86426b42001
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 17:33:48 2018 -0700
+
+    [aat] Minor
+
+ src/hb-aat-layout-common.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 102af615f15d04da20c17d80eb38f5948020f9ac
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 17:29:32 2018 -0700
+
+    [aat] Start adding support for DELETED-GLYPH
+
+    https://github.com/harfbuzz/harfbuzz/issues/1302
+
+ src/hb-aat-layout-common.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 955aa56b11e4fa14bc6d5b1b56cb810e28fab6cd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 16:50:38 2018 -0700
+
+    [vector] Make it act more like pointer
+
+    Add pointer cast operator and plus operator.
+
+ src/hb-coretext.cc      |  2 +-
+ src/hb-machinery.hh     |  2 +-
+ src/hb-ot-cmap-table.hh |  2 +-
+ src/hb-set.hh           |  8 ++++----
+ src/hb-subset.cc        |  2 +-
+ src/hb-uniscribe.cc     | 12 ++++++------
+ src/hb-vector.hh        |  6 ++++++
+ 7 files changed, 20 insertions(+), 14 deletions(-)
+
+commit 8d55e2adef9a376a5cf83c20aff2dba27dd64da8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 16:37:53 2018 -0700
+
+    [set] Minor
+
+ src/hb-set.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 64c32edfe18f5ef3b348e5c84077ee1f6faf4f48
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 16:35:36 2018 -0700
+
+    [set] Make array access more explicit
+
+    Follow up on 94e421abbfc7ede9aaf3c8d86bb0ff9992ea3123
+
+ src/hb-set.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit e3ceb2dde3525824de68914e12ad4e8a873ab90a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 14:30:24 2018 -0700
+
+    Fix again
+
+ test/shaping/data/in-house/fonts/DFONT.dfont | Bin 0 -> 3505 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit eceeb85666814023f57ee3517bbb304830a60c55
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 26 00:23:45 2018 +0330
+
+    [docs] Add hb-ot-color section
+
+ docs/harfbuzz-sections.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+commit 1cfe702872058ebc50d6cb5543daa38fb3a7ebfb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 13:37:08 2018 -0700
+
+    Fixup
+
+ test/shaping/data/in-house/fonts/{TRAK.tff => TRAK.ttf} | Bin
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 5739c876d0d080e7feaefd323245702c663f33be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 13:23:33 2018 -0700
+
+    [test] Rename some fonts
+
+    If we have duplicae font files in different directories, that would
+    break the oss-fuzz build currently.  So, rename some to avoid
+    name class with text-rendering-test.  Would be better to find
+    another solution.
+
+ ...TestMORXTwentyeight.ttf => MORXTwentyeight.ttf} | Bin
+ .../data/in-house/fonts/{TestTRAK.ttf => TRAK.tff} | Bin
+ .../data/in-house/fonts/{TestTTC.ttc => TTC.ttc}   | Bin
+ test/shaping/data/in-house/fonts/TestDFONT.dfont   | Bin 3505 -> 0 bytes
+ test/shaping/data/in-house/tests/aat-morx.tests    |   2 +-
+ test/shaping/data/in-house/tests/aat-trak.tests    |  22
+ ++++++++++-----------
+ test/shaping/data/in-house/tests/collections.tests |  12 +++++------
+ 7 files changed, 18 insertions(+), 18 deletions(-)
+
+commit 21ede867df28d1214ca677a24ac65ab0b7e95f42
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Oct 25 13:19:34 2018 -0700
+
+    Fix possible overflow in bsearch impls
+
+    From bungeman.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/pull/1314
+
+ src/hb-dsalgs.hh               | 2 +-
+ src/hb-open-type.hh            | 4 ++--
+ src/hb-ot-cmap-table.hh        | 2 +-
+ src/hb-ot-layout-gpos-table.hh | 2 +-
+ src/hb-vector.hh               | 2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
+
+commit 94e421abbfc7ede9aaf3c8d86bb0ff9992ea3123
+Author: Ben Wagner <bungeman@chromium.org>
+Date:   Thu Oct 25 13:44:27 2018 -0400
+
+    Remove some use of Crap in hb-set.
+
+    When hb_set_t::page_for_insert needs to insert at the end of the
+    page_map
+    it ends up evaluating '&page_map[i + 1]' which has hb_vector return an
+    lvalue of a Crap so that nothing can be moved to its address. This
+    turns
+    into issues with ThreadSanitizer on Crap when two threads modify
+    different
+    hb_set_t instances. This can be avoided by using '&page_map[i] + 1'
+    instead.
+
+ src/hb-set.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2798ac1c28edc4ba6f2283784d1027393f588f8c
+Author: azure-pipelines[bot]
+<azure-pipelines[bot]@users.noreply.github.com>
+Date:   Thu Oct 25 15:22:54 2018 +0000
+
+    Set up CI with Azure Pipelines
+
+ azure-pipelines.yml | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+commit 9a830a17318446dab86e1439f7167d8a698eb856
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Thu Oct 25 01:55:10 2018 +0200
+
+    [appveyor] Drop Cygwin builds again
+
+    They are so slow and we had only a couple of Cygwin build failure
+    reported in ~5 years.
+
+ appveyor.yml | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+commit 00e51a10832965f4c1d65a6d71c9582782f02c2b
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Oct 24 22:58:22 2018 +0200
+
+    [appveyor] Limit make to three jobs
+
+    https://github.com/harfbuzz/harfbuzz/pull/1309#issuecomment-432778270
+
+ appveyor.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit ae9e8f292b2ad79b01776ae5785a94afbfc4b3e4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 24 16:46:07 2018 -0700
+
+    [vowel-constraints] Reset continuation on all dottedcircles
+
+    One of the was missed before.  Not intentional.
+
+ src/gen-vowel-constraints.py                 | 9 +++++++--
+ src/hb-ot-shape-complex-vowel-constraints.cc | 9 +++++++--
+ 2 files changed, 14 insertions(+), 4 deletions(-)
+
+commit d2b20ba18dfe3fe507ee7cb64fd73e3f1e1e5ae0
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Oct 24 11:37:09 2018 +0200
+
+    [appveyor] Build on Cygwin and msys2 in parallel
+
+ appveyor.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0d2fa7fd4c4df0dcf7800b1267d1126e5a4b1ab1
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Oct 24 11:23:21 2018 +0200
+
+    [appveyor] Do not update msys2
+
+    Looks like AppVeyor has new enough packages for our needs. Cuts
+    CI build
+    time by 5 minutes.
+
+ appveyor.yml | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit 6a3ad245609ce8496d08404b28217dca8d01c10b
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Oct 24 09:49:08 2018 +0200
+
+    [appveyor] Organize config file a bit
+
+ appveyor.yml | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 0cd7d041d83ae28e8c7d8a156750464af76de291
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Oct 24 09:43:10 2018 +0200
+
+    [appveyor] Don’t build branches with open PR twice
+
+ appveyor.yml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 401cdf07922f66c762dabfd8e3d45c35e33de7c0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 17:00:49 2018 -0700
+
+    [ot-font] Fix sign of ascent/descent
+
+    Some fonts, like msmincho, have positive number as descent
+    in vhea table.  That's wrong.  Just enforce sign on ascent/descent
+    when reading both horizontal and vertical metrics.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1248
+
+ src/hb-ot-hmtx-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit ba502dea1e81981f3893b5353400909bf60e354f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 16:46:10 2018 -0700
+
+    [morx] Fix cluster-merging when ligating
+
+    Only merge when actual ligature happened.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1305
+
+ src/hb-aat-layout-morx-table.hh                          |   7 ++++---
+ test/shaping/data/in-house/Makefile.sources              |   1 +
+ test/shaping/data/in-house/fonts/TestMORXTwentyeight.ttf | Bin 0 ->
+ 2660 bytes
+ test/shaping/data/in-house/tests/aat-morx.tests          |   1 +
+ 4 files changed, 6 insertions(+), 3 deletions(-)
+
+commit aa5af8d041521507f8bc8ded8a365ee56098388c
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Oct 23 15:45:35 2018 -0700
+
+    Fix size calculation in DEFINE_SIZE_ARRAY_SIZED.
+
+ src/hb-machinery.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f33ad6d69216a983624e832177895481549bdc07
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 14:31:51 2018 -0700
+
+    [aat] Fix up previous commit and add files
+
+ src/hb-aat-map.cc  |  62 +++++++++++++++++++++++++++++++
+ src/hb-aat-map.hh  | 106
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-map.cc   |   1 +
+ src/hb-ot-shape.cc |  15 ++++++--
+ 4 files changed, 181 insertions(+), 3 deletions(-)
+
+commit ffe347844803a6a9036d8357b744a982f5e5a6c9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 14:14:03 2018 -0700
+
+    [aat] Allow enabling/disabling features
+
+    Only works at entire-buffer range, not sub-ranges.
+
+    Test with:
+
+    $ hb-shape Zapfino.dfont Zapfino
+    [Z_a_p_f_i_n_o=0+2333]
+
+    $ hb-shape Zapfino.dfont Zapfino --features=-dlig
+    [Z=0+416|a=1@-21,0+264|p_f=2+433|i=4+181|n=5+261|o=6+250]
+
+    $ hb-shape Zapfino.dfont Zapfino --features=+dlig
+    [Z_a_p_f_i_n_o=0+2333]
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1303
+
+ src/Makefile.sources            |  2 ++
+ src/hb-aat-layout-morx-table.hh | 29 +++++++++++++++++++++++++----
+ src/hb-aat-layout.cc            |  8 ++++++++
+ src/hb-aat-layout.hh            |  3 +++
+ src/hb-ot-shape.cc              |  4 ++++
+ src/hb-ot-shape.hh              |  5 +++++
+ 6 files changed, 47 insertions(+), 4 deletions(-)
+
+commit 8be0e5fd4540b18e26b28b414bd99af3bb1548b1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 13:39:50 2018 -0700
+
+    [ot-map] Minor
+
+ src/hb-ot-map.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e8fccbc36b2cc5e1c9f218c83cad7f606c03e7a1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 13:25:03 2018 -0700
+
+    Minor
+
+ src/hb-ot-map.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 76324d95caa4b83cd4b515f516c2d3674455ea5e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 13:09:30 2018 -0700
+
+    Shift code around
+
+ src/hb-ot-shape.cc | 18 ++++++++++--------
+ src/hb-ot-shape.hh |  9 +++------
+ 2 files changed, 13 insertions(+), 14 deletions(-)
+
+commit cf92d6579e91d326598dcff93457fe85dfa962c2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 03:10:56 2018 -0700
+
+    [trak] Allow disabling tracking for ranges of text
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1303
+
+ src/hb-aat-layout-trak-table.hh                 |  4 ++++
+ src/hb-ot-shape.cc                              | 11 +++++++----
+ src/hb-ot-shape.hh                              |  5 ++++-
+ test/shaping/data/in-house/tests/aat-trak.tests |  1 +
+ 4 files changed, 16 insertions(+), 5 deletions(-)
+
+commit 8869436cb8a338b46c138305966a4b7b2c3ee374
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 03:07:48 2018 -0700
+
+    When parsing feature ranges, accept ';' instead of ':'
+
+ src/hb-common.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 22ecefd88e1ea1841f363057b948aa792ac871a6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 23 00:52:05 2018 +0330
+
+    Make tracking optout possible using 'trak' ot feature
+
+    So '--features=-trak' or 'font-feature-settings: 'trak' 0;'
+    can prevent
+    applying of tracking if used.
+
+ src/hb-ot-shape.cc                              | 10 +++++++---
+ test/shaping/data/in-house/tests/aat-trak.tests |  2 ++
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+commit 6d40eb8372a2c74a6e1294b44a2b19c99d11e7da
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 02:51:42 2018 -0700
+
+    Touch up on previous commit
+
+    https://github.com/harfbuzz/harfbuzz/pull/1273
+
+ src/HBIndicVowelConstraints.txt              |  97 ++++++
+ src/Makefile.am                              |   6 +-
+ src/Makefile.sources                         |   1 +
+ src/gen-vowel-constraints.py                 | 124 ++------
+ src/hb-ot-shape-complex-indic.cc             |  10 +-
+ src/hb-ot-shape-complex-use.cc               |  11 +-
+ src/hb-ot-shape-complex-vowel-constraints.cc | 433
+ ++++++++++++++++++++++++++
+ src/hb-ot-shape-complex-vowel-constraints.hh | 447
+ ++-------------------------
+ 8 files changed, 606 insertions(+), 523 deletions(-)
+
+commit 205737acdc268b1c90cf00bde2d2038519a8bf48
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Fri Oct 12 16:54:54 2018 -0400
+
+    [use] Prohibit visually ambiguous vowel sequences
+
+ src/Makefile.am                                    |   7 +-
+ src/Makefile.sources                               |   1 +
+ src/gen-vowel-constraints.py                       | 286 ++++++++++++++
+ src/hb-ot-shape-complex-indic.cc                   | 272 +------------
+ src/hb-ot-shape-complex-use.cc                     |   3 +-
+ src/hb-ot-shape-complex-vowel-constraints.hh       | 434
+ +++++++++++++++++++++
+ test/shaping/README.md                             |   4 +-
+ .../46669c8860cbfea13562a6ca0d83130ee571137b.ttf   | Bin 0 -> 7184 bytes
+ .../in-house/tests/use-vowel-letter-spoofing.tests |  94 +++++
+ 9 files changed, 827 insertions(+), 274 deletions(-)
+
+commit 48ed598a356983f4623029dd5e87254fb59e3691
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 02:19:32 2018 -0700
+
+    [VORG] Hook up to hb-ot-font's v_origin
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/544
+
+    Test added with NotoSansCJK, eg. with U+FF38.
+
+ src/hb-ot-face.cc                                        |   1 -
+ src/hb-ot-font.cc                                        |  11
+ +++++++++--
+ src/hb-ot-vorg-table.hh                                  |   6 ++++--
+ .../fonts/4cbbc461be066fccc611dcc634af6e8cb2705537.ttf   | Bin 0 ->
+ 2808 bytes
+ test/shaping/data/in-house/tests/vertical.tests          |   1 +
+ 5 files changed, 14 insertions(+), 5 deletions(-)
+
+commit 097ecfd4a991d4fa306bab7330d9952966e94d1f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 02:09:42 2018 -0700
+
+    [VORG] Add get_y_origin()
+
+    Unhooked.
+
+ src/hb-ot-vorg-table.hh | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+commit 6fb24d5e3e0cf61c0ed3574e5bcf4598a13d6b69
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 01:58:59 2018 -0700
+
+    [VORG] Add VORG table
+
+    Cherry-picked from cff-subset branch.
+
+ src/Makefile.sources    |   1 +
+ src/hb-ot-face.cc       |   1 +
+ src/hb-ot-face.hh       |   1 +
+ src/hb-ot-vorg-table.hh | 168
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 171 insertions(+)
+
+commit 531f9822b2e8a60f03c43d6f86ef9ed32c951f0e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 01:32:08 2018 -0700
+
+    [morx] Add a few debug messages to Ligature chain
+
+ src/hb-aat-layout-morx-table.hh | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+commit 0e5bcdef7fb592f986ad5b4e07b80d2efb5e3344
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 23 00:39:44 2018 -0700
+
+    [morx] Clear stack upon underflow when acting ligatures
+
+ src/hb-aat-layout-morx-table.hh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 1bfb96a9c8d7653f0dee5c5fab3c6e85cea900cd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 23:41:47 2018 -0700
+
+    [test/text-rendering-tests] Update from upstream
+
+ test/shaping/data/text-rendering-tests/Makefile.sources  |   2 +-
+ .../data/text-rendering-tests/fonts/TestTRAKOne.ttf      | Bin 0 ->
+ 1752 bytes
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 792071de4075cb9af0793f0d7c70da0780923bb6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 23:38:34 2018 -0700
+
+    [morx] Leave ligature on stack after ligating
+
+    Test with Apple Color Emoji.ttf of ~66MB and following sequence:
+
+    ./hb-shape Apple\ Color\ Emoji-old.ttf --font-funcs=ot -u
+    U+1F468,200d,U+1F469,200d,U+1F467,200d,1f466
+
+    Should form full family if matching works correctly.  It first makes
+    family of three, then makes family of four out of that and the last
+    two characters.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1292
+
+ src/hb-aat-layout-morx-table.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit e1b8e933f099efae3c3e1f5706be19120b44de20
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 23 09:23:48 2018 +0330
+
+    [ci] Disable llvm-gcc
+
+      #define Null(Type) Null<typename hb_remove_const<typename
+      hb_remove_reference<Type>::value>::value>()
+
+    raises:
+      hb-blob.cc: In function 'hb_blob_t* hb_blob_get_empty()':
+      hb-blob.cc:194: error: using 'typename' outside of template
+      hb-blob.cc:194: error: using 'typename' outside of template
+
+    Removing "typename"s fixes the issue but makes newer compiler fail
+    apparently.
+
+    Probably downstream can patch that locally till we get a solution.
+
+ .circleci/config.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 8c78ced95b639730efd0edc521e4e81ad50af501
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 21:49:42 2018 -0700
+
+    Unbreak builds
+
+ src/hb-dsalgs.hh    | 2 +-
+ src/hb-open-type.hh | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 8d689f8a7bccda861bcb286d52f1a90fca52df0f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 21:33:18 2018 -0700
+
+    Add hb_array<>() specialization for UnsizedArrayOf
+
+    Related https://github.com/harfbuzz/harfbuzz/issues/1301
+
+ src/hb-aat-layout-trak-table.hh | 2 +-
+ src/hb-open-file.hh             | 2 +-
+ src/hb-open-type.hh             | 8 ++++++++
+ src/hb-ot-color-cpal-table.hh   | 6 +++---
+ 4 files changed, 13 insertions(+), 5 deletions(-)
+
+commit abfbba191141c3e3cf2a391f365b5323f9dc37c0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 21:27:45 2018 -0700
+
+    Add hb_array<>()
+
+    Simplifies transient object creation.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1301
+
+ src/hb-aat-layout-trak-table.hh | 2 +-
+ src/hb-dsalgs.hh                | 2 ++
+ src/hb-open-file.hh             | 3 +--
+ src/hb-ot-color-cpal-table.hh   | 6 +++---
+ 4 files changed, 7 insertions(+), 6 deletions(-)
+
+commit 17ffbc070ff4190d8ebaf88f8db62f19e6fa370d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 21:22:25 2018 -0700
+
+    [color] Use Index for colorIdx
+
+    Doesn't matter, but matches the description.
+
+ src/hb-ot-color-colr-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 07386ea410af13e8fc844eb939a6c6e47c2adaf1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 21:18:27 2018 -0700
+
+    Remove const and references when binding Null()
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1299
+
+    Removes anomaly I was seeing in cpal table trying to use implicit
+    Null(NameID).
+
+ src/hb-atomic.hh              | 5 +----
+ src/hb-common.cc              | 2 +-
+ src/hb-ft.cc                  | 2 +-
+ src/hb-null.hh                | 4 ++--
+ src/hb-open-type.hh           | 6 ++----
+ src/hb-ot-color-cpal-table.hh | 8 ++------
+ src/hb-static.cc              | 1 -
+ src/hb.hh                     | 9 +++++++++
+ 8 files changed, 18 insertions(+), 19 deletions(-)
+
+commit b18acab7bce062fef397d3d8b0efc7826f473b50
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 18:20:57 2018 -0700
+
+    [color] Add HB_COLOR
+
+    Normally I would have added to_string / from_string like other types
+    have.  But since we don't use hb_color_t much, I'm not going to
+    do that.
+    Although, if we did, we could use it in hb-view to parse colors...
+
+ src/hb-common.h | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+commit 228f96c9d09272c8f677935a640e75e173b817a3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 16:55:12 2018 -0700
+
+    [color] Finish reviewing / revamping CPAL
+
+    Now to hb_color_t.
+
+ src/hb-ot-color-cpal-table.hh | 52
+ ++++++++++++++++++++++---------------------
+ src/hb-ot-color.cc            | 33 +++++----------------------
+ src/hb-ot-color.h             | 10 ++++-----
+ 3 files changed, 38 insertions(+), 57 deletions(-)
+
+commit 683fad062792a199e2fe86fe161f41b9389d08c3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 16:35:03 2018 -0700
+
+    [color] Minor
+
+ src/hb-ot-color.cc | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+commit 14474d21040bf9b025b53bb9b0df599eaf260119
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 16:30:30 2018 -0700
+
+    [color] Rely on CPALV1Tail Null object
+
+ src/hb-ot-color-cpal-table.hh | 39
+ ++++++++++++++-------------------------
+ 1 file changed, 14 insertions(+), 25 deletions(-)
+
+commit d7865107ea4664e04c03a1d79678cdcadc0d5ea5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 16:18:34 2018 -0700
+
+    Remove const from hb_array_t details
+
+    Will come in through <T> if desired.
+
+ src/hb-aat-layout-trak-table.hh | 6 +++---
+ src/hb-dsalgs.hh                | 6 +++---
+ src/hb-open-file.hh             | 4 ++--
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+commit f3336580dd0c6959a1871f92b4a37f7c0a4b2160
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 16:16:21 2018 -0700
+
+    [color] Use hb_array_t in CPAL
+
+    Doesn't work though, ouch :(.  Need to figure out if it's unreasonable
+    to expect Null(T) inside hb_array_t<T> to see the later specialization
+    of Null for NameID.
+
+ src/hb-open-type.hh           |  3 ++-
+ src/hb-ot-color-cpal-table.hh | 47
+ ++++++++++++++++++++++---------------------
+ src/hb-static.cc              |  1 +
+ 3 files changed, 27 insertions(+), 24 deletions(-)
+
+commit 5ae18855d115577ff796158d483db7b890d9956f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 14:54:55 2018 -0700
+
+    [color] Check for null CPAL arrays
+
+    We cannot use a nullable offset here though.
+
+ src/hb-ot-color-cpal-table.hh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 69ab72e4aa7cbf197873d38f7e623866b4e40502
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 14:51:40 2018 -0700
+
+    [color] More CPAL rename
+
+ src/hb-ot-color-cpal-table.hh | 104
+ +++++++++++++++++++++---------------------
+ src/hb-ot-color.cc            |   6 +--
+ 2 files changed, 54 insertions(+), 56 deletions(-)
+
+commit 0befb06c468aa36f3337b5ef2235f6d69dda8397
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 14:46:21 2018 -0700
+
+    [color] More CPAL rename
+
+ src/hb-ot-color-cpal-table.hh | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit 3600d206037ef23d6448c79a3f010c4f903a971c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 14:43:12 2018 -0700
+
+    [color] Rename vars in CPAL
+
+ src/hb-ot-color-cpal-table.hh | 32 ++++++++++++++++----------------
+ src/hb-ot-color.cc            |  1 +
+ 2 files changed, 17 insertions(+), 16 deletions(-)
+
+commit 0babf761c986855f9cdd1a2679380ee6a02390c8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 23 01:33:45 2018 +0330
+
+    Adopt dump-emoji with latest unreleased APIs changes (#1297)
+
+ src/dump-emoji.cc | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+commit 7997144b5f08c81b2cce2c7c2a085fb7eeb506e3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 13:02:04 2018 -0700
+
+    [color] Revamp palette API
+
+ src/hb-ot-color.cc       |  81 ++++++++++++++---------------
+ src/hb-ot-color.h        |  26 +++++-----
+ test/api/test-ot-color.c | 130
+ +++++++++++++++++++++++------------------------
+ 3 files changed, 117 insertions(+), 120 deletions(-)
+
+commit 3bf91bd2690cda34a7687ed5465dc4bb0672f2b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 12:40:38 2018 -0700
+
+    [color] Rewrite colr access
+
+    COLR table has one function: return layers for a glyph, and we
+    expose exactly
+    that, so should just wire it through.  Also use sub_array() for
+    verifiable
+    safety.
+
+    Also, BaseGlyphRecord's null object is enough.  We don't need to
+    special-case
+    the not-found.
+
+ src/hb-dsalgs.hh              | 11 +++++++++
+ src/hb-open-type.hh           |  2 +-
+ src/hb-ot-color-colr-table.hh | 53
+ +++++++++++++++++++++++--------------------
+ src/hb-ot-color.cc            | 19 +---------------
+ 4 files changed, 41 insertions(+), 44 deletions(-)
+
+commit 1de17bdb80b0668f4d4a4700e3f80c8caee3303d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 22 10:29:01 2018 -0700
+
+    [colr] Add hb_ot_color_layer_t
+
+    We never return parallel arrays from functions.  That's inconvenient
+    and hard to bind.
+
+ src/hb-ot-color.cc       | 18 ++++++++----------
+ src/hb-ot-color.h        | 22 ++++++++++++++++------
+ test/api/test-ot-color.c | 33 +++++++++++++++------------------
+ 3 files changed, 39 insertions(+), 34 deletions(-)
+
+commit 3b3668acc8b16afacb96d8c525eff603ef5f411f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 21 19:23:11 2018 -0700
+
+    [color] Rename / reorder a bit
+
+    Implement has_data() for realz.
+
+ src/hb-ot-color-colr-table.hh |  2 ++
+ src/hb-ot-color-cpal-table.hh |  2 ++
+ src/hb-ot-color.cc            | 78
+ ++++++++++++++++++++++++-------------------
+ src/hb-ot-color.h             | 33 ++++++++++++------
+ test/api/test-ot-color.c      | 30 ++++++++---------
+ 5 files changed, 85 insertions(+), 60 deletions(-)
+
+commit 9085a72deb041cf10edfa61d24b7c25f947f736b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 21 19:08:25 2018 -0700
+
+    [cpal] Touch up palette flags
+
+ src/hb-ot-color.h        | 16 ++++++++++------
+ test/api/test-ot-color.c |  4 ++--
+ 2 files changed, 12 insertions(+), 8 deletions(-)
+
+commit ee11fae9d0d2c16a3a4b4ecf5cf328ffe950bb03
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 21 19:02:47 2018 -0700
+
+    [color] Rename "gid" to "glyph"
+
+    We don't expose "gid" in API.
+
+ src/hb-ot-color.cc | 12 ++++++------
+ src/hb-ot-color.h  |  8 ++++----
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 228fa71bf9186faedff48b3a259d696c7c07b5b5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 21 17:43:29 2018 -0700
+
+    [colr] Move sanitize
+
+ src/hb-ot-color-colr-table.hh | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+commit d440c8d3fbb907f17b1eb9287918009ced27a8c1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 22 22:07:59 2018 +0330
+
+    Add chromacheck Emoji test fonts and minor preparations (#1294)
+
+ src/hb-ot-color.cc                  |  26 ++++++++++++++++++++++++++
+ src/hb-ot-face.hh                   |   8 +++++---
+ test/api/fonts/README               |   2 ++
+ test/api/fonts/chromacheck-cbdt.ttf | Bin 0 -> 792 bytes
+ test/api/fonts/chromacheck-colr.ttf | Bin 0 -> 652 bytes
+ test/api/fonts/chromacheck-sbix.ttf | Bin 0 -> 864 bytes
+ test/api/fonts/chromacheck-svg.ttf  | Bin 0 -> 792 bytes
+ test/api/hb-test.h                  |   2 +-
+ test/api/test-ot-color.c            |  21 +++++++++++++++++++++
+ 9 files changed, 55 insertions(+), 4 deletions(-)
+
+commit b92b9d7e5290eaa83e94fd40cddaee71628a3c2a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 21 17:42:51 2018 -0700
+
+    [colr] Move compare function into a static
+
+    Not sure if MSVC would be unhappy about this.
+
+ src/hb-ot-color-colr-table.hh | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit b6b171732a12b396a704984699bd0da906f5dc24
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 21 17:41:49 2018 -0700
+
+    [colr] Minor
+
+ src/hb-ot-color-colr-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit a6ade3471e730d7a8b56e4ed706a8eb126e957f6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 21 17:39:39 2018 -0700
+
+    [colr] Move sanitize() to right place
+
+    Sanitize always comes just before data member definitions, so
+    it's easy to cross-check.
+
+ src/hb-ot-color-colr-table.hh | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit 24adc1575745a711558dab79488760f1ceb24750
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 21 17:39:00 2018 -0700
+
+    [colr] Touch up a bit
+
+    When a struct is plain old data with no references, etc, it's okay
+    to mark its members public.
+
+ src/hb-ot-color-colr-table.hh | 36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
+
+commit cc6e77ca98e90fb531dd90a5c9c41d14d1dda9c4
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sun Oct 21 13:29:40 2018 +0200
+
+    [color] Fix documentation a bit
+
+ src/hb-ot-color.cc | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 37ba2413c19f6a1d62868178fc80f870ee44e7ab
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 21 11:46:51 2018 +0330
+
+    Minor
+
+ src/hb-ot-color-cpal-table.hh | 10 +++++-----
+ src/hb-ot-color.cc            | 25 ++++++++++++++-----------
+ src/hb-ot-color.h             | 12 ++++++------
+ 3 files changed, 25 insertions(+), 22 deletions(-)
+
+commit 44f79b4bf8ac341c5968a27f6a2a13a8af48b34f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 21 10:17:34 2018 +0330
+
+    Remove _palette_entry_count as can be done with _palette_colors
+
+ src/hb-ot-color.cc       | 18 ++----------------
+ src/hb-ot-color.h        |  3 ---
+ test/api/test-ot-color.c |  8 ++------
+ 3 files changed, 4 insertions(+), 25 deletions(-)
+
+commit 6795dcfc0884b87b72fce8d902654f28ffe1366c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 21 09:51:15 2018 +0330
+
+    [test] Test hb_ot_color_has_{colr,cpal}_data
+
+ src/dump-emoji.cc        |  3 ++-
+ src/hb-ot-color.cc       |  7 ++++---
+ test/api/test-ot-color.c | 23 +++++++++++++++++++++++
+ 3 files changed, 29 insertions(+), 4 deletions(-)
+
+commit b8ee3a0ec89d63721618ac90c01ac6da228f5055
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 21 09:44:16 2018 +0330
+
+    [CPAL] Add palette entry and enable palette flag API
+
+ src/hb-ot-color-cpal-table.hh |  66 +++++++++++++++----------
+ src/hb-ot-color.cc            | 109
+ ++++++++++++++++++++++++------------------
+ src/hb-ot-color.h             |  23 +++++++++
+ test/api/test-ot-color.c      |  35 ++++++++++++--
+ 4 files changed, 158 insertions(+), 75 deletions(-)
+
+commit d4261b4bb6d20fac7deebacfbe120fb84a92e423
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 21 08:48:07 2018 +0330
+
+    Add API test for hb_ot_color_get_color_layers
+
+ src/dump-emoji.cc        |  3 ++-
+ src/hb-ot-color.cc       |  2 +-
+ src/hb-ot-color.h        |  2 ++
+ test/api/test-ot-color.c | 31 +++++++++++++++++++++++++++++--
+ 4 files changed, 34 insertions(+), 4 deletions(-)
+
+commit 456978d408cd41156e1123abfc3689800558e89b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 21 08:26:40 2018 +0330
+
+    Address COLR/CPAL reviews and revive cpal_v1 tests
+
+ src/dump-emoji.cc             |  26 ++++----
+ src/hb-common.h               |  12 ++++
+ src/hb-ot-color-cpal-table.hh |  37 +++++-------
+ src/hb-ot-color.cc            | 136
+ +++++++++++++++++++++++++-----------------
+ src/hb-ot-color.h             |  38 +++---------
+ test/api/test-ot-color.c      | 101 +++++++++++++++----------------
+ 6 files changed, 179 insertions(+), 171 deletions(-)
+
+commit 687f679b80c071c69d0924f07a315f9d2691b7fc
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 20 17:50:39 2018 +0330
+
+    [color] Fix alpha channel value and adjust spaces
+
+ src/dump-emoji.cc          | 36 ++++++++++++++++++------------------
+ src/hb-buffer-serialize.cc | 14 +++++++-------
+ src/hb-ot-color.cc         | 10 +++++-----
+ 3 files changed, 30 insertions(+), 30 deletions(-)
+
+commit 00e94ce24efb1f5b3a9cd13c0b9f81f405ad8055
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 20 00:31:04 2018 +0330
+
+    [dump-emoji] Formatting
+
+ src/dump-emoji.cc | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+commit e9d798dc12d42e97ae8c19e7b73e25abc34d265a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 18:30:01 2018 +0330
+
+    [test] Use hb_test_open_font_file
+
+ test/api/test-ot-color.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+commit e8a6f5b8039cce3f7ec568fd90fe73690e49a037
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 18:23:42 2018 +0330
+
+    Add three macros for separating color channels
+
+ src/dump-emoji.cc        |  8 ++++----
+ src/hb-ot-color.cc       |  1 -
+ src/hb-ot-color.h        | 15 ++++++++++-----
+ test/api/test-ot-color.c | 10 +++++-----
+ 4 files changed, 19 insertions(+), 15 deletions(-)
+
+commit 0e33467e52942e62e04cf825a6bd105fa311c864
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 19 17:44:06 2018 +0330
+
+    Make ot-color tests pass
+
+ test/api/test-ot-color.c | 52
+ ++++++++++++++++++++++++------------------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
+
+commit d4e928b1421c154adbda9b6e1f2cf804b21654cb
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Tue May 1 17:16:46 2018 +0200
+
+    [color] Minimal API for COLR/CPAL
+
+ src/Makefile.sources                               |   1 +
+ src/dump-emoji.cc                                  | 114
+ +++++++++++----------
+ src/hb-ot-color-colr-table.hh                      |  12 +--
+ src/hb-ot-color-cpal-table.hh                      |  51 +++------
+ src/hb-ot-color.cc                                 |  87 +++++++++++-----
+ src/hb-ot-color.h                                  |  85 +++++++++++++++
+ src/hb-ot-face.hh                                  |   3 +
+ src/hb-ot.h                                        |   1 +
+ .../fonts/cpal-v0.ttf}                             | Bin
+ .../fonts/cpal-v1.ttf}                             | Bin
+ test/api/test-ot-color.c                           |  43 +++++---
+ 11 files changed, 257 insertions(+), 140 deletions(-)
+
+commit 0229eaea299443b4faa3bd086f23ec1496d6112c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 22 10:51:37 2018 +0330
+
+    [fuzz] Add a found hb-subset testcase
+
+ ...z-testcase-minimized-hb-subset-fuzzer-5725847365877760 | Bin 0 ->
+ 880 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 0ecddad7c5948ecd7879bc7507f8a7a2d99eee86
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 22 00:44:28 2018 +0330
+
+    [ci] Disable flaky -windows-x64 and add a comment for iOS
+
+ .circleci/config.yml | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+commit 9b3461574f6473c8ff7c995202858cf46012eed8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 21 11:37:38 2018 +0330
+
+    [fuzz] Add more testcases
+
+    Fixed already but better to have anyway.
+
+    One didn't have minimized but it was only 164 B, so
+
+ ...uzz-testcase-minimized-hb-shape-fuzzer-5706010589659136 | Bin 0 ->
+ 52 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 4fa94a3e39c21bc1dcdbbd5bda99bff1e1490b0e
+Merge: 217a3728 c110878c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 21 11:36:41 2018 +0330
+
+    Merge pull request #1290 from ebraminio/testopenfont
+
+    [test] Unify font file opening across the tests
+
+commit c110878cb61f5df99e9d97dda253f2987ddce58e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 21 11:07:17 2018 +0330
+
+    [test] Unify font file opening across the tests
+
+ test/api/hb-subset-test.h        | 21 ---------------------
+ test/api/hb-test.h               | 21 +++++++++++++++++++++
+ test/api/test-collect-unicodes.c |  6 +++---
+ test/api/test-multithread.c      | 26 +++++---------------------
+ test/api/test-ot-name.c          | 27 ++++-----------------------
+ test/api/test-subset-cmap.c      |  8 ++++----
+ test/api/test-subset-glyf.c      | 28 ++++++++++++++--------------
+ test/api/test-subset-hdmx.c      | 14 +++++++-------
+ test/api/test-subset-hmtx.c      | 20 ++++++++++----------
+ test/api/test-subset-os2.c       |  4 ++--
+ test/api/test-subset-post.c      |  4 ++--
+ test/api/test-subset-vmtx.c      |  6 +++---
+ test/api/test-subset.c           |  6 +++---
+ 13 files changed, 78 insertions(+), 113 deletions(-)
+
+commit 217a3728b4991a855070678bc079cb400eee605a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 20:39:56 2018 -0700
+
+    [fuzzing] Add more font
+
+ .../clusterfuzz-testcase-hb-shape-fuzzer-5097734906839040 | Bin 0 ->
+ 164 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 1e39833ba8547c90a0a4ed7f265a6c4bc8eb8fe1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 16:56:06 2018 -0700
+
+    [docs] Minor
+
+ src/hb-buffer.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit a5ad8c658dac1fbe63d1034cdfe8df33f50462b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 16:52:55 2018 -0700
+
+    [docs] More fixes
+
+ src/hb-ot-layout.cc | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit 2d9198f205fafda557520d7206f9cfbf3373353f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 16:50:39 2018 -0700
+
+    [docs] Fix for hb-version.h being in src tree
+
+ docs/Makefile.am | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 314b1af74f1fb71ea5cfcb5a58766773f0b2a5a1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 16:49:16 2018 -0700
+
+    [docs] Fix warning
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1260
+
+ src/hb-deprecated.h | 6 ------
+ src/hb-unicode.cc   | 1 +
+ 2 files changed, 1 insertion(+), 6 deletions(-)
+
+commit b713c1397718bf1f702a2ead2afb4dcee2c1505a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 14:56:28 2018 -0700
+
+    [kerx] Implement tuple-kerning in Format0
+
+ src/hb-aat-layout-kerx-table.hh | 44
+ ++++++++++++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 14 deletions(-)
+
+commit 0a3b7a0fb0734a66926dfda5d95d3cacea8890ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Oct 20 13:14:07 2018 -0700
+
+    2.0.2
+
+ NEWS             | 6 ++++++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+
 commit 8931bc4a6b41a2a41069b99cb5c551fa30216f0b
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
 Date:   Sat Oct 20 23:23:32 2018 +0330
