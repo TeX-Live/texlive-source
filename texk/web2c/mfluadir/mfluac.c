@@ -10,6 +10,9 @@
 #include <lualib.h>
 #include <lauxlib.h>
 #include <kpathsea/kpathsea.h>
+#if defined(JIT)
+#include <luajit.h>
+#endif
 /**************************************************************/
 /*                                                            */
 /* private functions                                          */
@@ -537,6 +540,7 @@ int mfluabeginprogram(void)
       lua_pushstring(L,"MFbuiltin");
 #ifdef MFLuaJIT
       /* 5.1 */ 
+      luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_OFF);
       lua_newtable(L);
       luaL_register (L,NULL,MFbuiltin_l);
 #else
