@@ -21,12 +21,15 @@ pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
     now be separated by spaces (as has always been documented).
 
 - source: support xpdf-4 by default, or xpdf-3.04, or poppler-0.57.0
-  and older, via #defines. Provide new files, pdftosrc-newpoppler.cc,
-  for poppler-0.59.0 and newer, pdftoepdf-poppler0.68.0.cc for
+  and older, via #defines. Provide new files, pdftosrc-newpoppler.cc
+  for poppler-0.59.0 upto poppler-0.70.1, pdftosrc-poppler0.71.0 for
+  poppler-0.71.0 and newer, pdftoepdf-poppler0.68.0.cc for
   poppler-0.59.0 upto poppler-0.68.0, pdftoepdf-poppler0.69.0.cc
-  for poppler-0.69.0, and pdftoepdf-poppler0.70.0.cc for poppler-0.70.0
-  and newer. They should be renamed as pdftosrc.cc
-  and pdftoepdf.cc, respectively, before compilation.
+  for poppler-0.69.0, pdftoepdf-poppler0.70.0.cc for poppler-0.70.0
+  and poppler-0.71.0, and pdftoepdf-poppler0.71.0 for poppler-0.71.0
+  and newer. Note that pdftosrc-*.cc and pdftoepdf-*.cc should be
+  renamed as pdftosrc.cc, and pdftoepdf.cc, respectively, before
+  compilation.
 
 ---------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)  (April 27, 2017)
