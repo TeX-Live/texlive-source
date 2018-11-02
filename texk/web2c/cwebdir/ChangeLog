@@ -1,3 +1,10 @@
+2018-11-02  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctang-w2c.ch,
+	* cweav-w2c.ch,
+	* ../ctangleboot.cin: clean build with non-implicit 'int change_depth'.
+	tex-k mail, 2 Nov 2018 18:03:39.
+
 2018-01-18  Karl Berry  <karl@tug.org>
 
 	* cweave.w,
