@@ -12,12 +12,59 @@
 #include <ptexenc/ptexenc.h>
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
+static int fsyscp_remove(char *s)
+{
+  wchar_t *sw = NULL;
+  int ret;
+
+  if(!file_system_codepage)
+    return remove(s);
+
+  sw = get_wstring_from_fsyscp(s, sw);
+  ret = _wremove(sw);
+  if(sw) free(sw);
+  return ret;
+}
+
+static int fsyscp_rename(char *s1, char *s2)
+{
+  wchar_t *sw1 = NULL, *sw2 = NULL;
+  int ret;
+
+  if(!file_system_codepage)
+    return rename(s1, s2);
+
+  sw1 = get_wstring_from_fsyscp(s1, sw1);
+  sw2 = get_wstring_from_fsyscp(s2, sw2);
+  ret = _wrename(sw1, sw2);
+  if(sw1) free(sw1);
+  if(sw2) free(sw2);
+  return ret;
+}
+
+static FILE *f_fsyscp_fopen(const char *filename, const char *mode)
+{
+  if(!file_system_codepage)
+    return fopen(filename, mode);
+
+  return fsyscp_fopen(filename, mode);
+}
+
+static FILE *f_fsyscp_xfopen(const char *filename, const char *mode)
+{
+  if(!file_system_codepage)
+    return xfopen(filename, mode);
+
+  return fsyscp_xfopen(filename, mode);
+}
 #undef fopen
 #undef xfopen
-#define fopen fsyscp_fopen
-#define xfopen fsyscp_xfopen
-#endif
+#define fopen f_fsyscp_fopen
+#define xfopen f_fsyscp_xfopen
+#define rename fsyscp_rename
+#define remove fsyscp_remove
+#endif /* _WIN32 */
 
 /* The globals we use to communicate.  */
 extern string nameoffile;
@@ -87,9 +134,9 @@ recorder_change_filename (string new_name)
      return;
 
    /* On windows, an opened file cannot be renamed. */
-#if defined(WIN32)
+#if defined(_WIN32)
    fclose (recorder_file);
-#endif
+#endif /* _WIN32 */
 
    /* If an output directory was specified, use it.  */
    if (output_directory) {
@@ -98,18 +145,18 @@ recorder_change_filename (string new_name)
    }
 
    /* On windows, renaming fails if a file with new_name exists. */
-#if defined(WIN32)
+#if defined(_WIN32)
    remove (new_name);
-#endif
+#endif /* _WIN32 */
 
    rename(recorder_name, new_name);
    free(recorder_name);
    recorder_name = xstrdup(new_name);
 
    /* reopen the recorder file by FOPEN_A_MODE. */
-#if defined(WIN32)
-   recorder_file = fsyscp_xfopen (recorder_name, FOPEN_A_MODE);
-#endif
+#if defined(_WIN32)
+   recorder_file = xfopen (recorder_name, FOPEN_A_MODE);
+#endif /* _WIN32 */
 
    if (temp)
      free (temp);
