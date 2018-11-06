@@ -340,6 +340,15 @@ struct UnsizedArrayOf
   inline const Type& operator [] (unsigned int i) const { return arrayZ[i]; }
   inline Type& operator [] (unsigned int i) { return arrayZ[i]; }
 
+  template <typename T> inline operator T * (void) { return arrayZ; }
+  template <typename T> inline operator const T * (void) const { return arrayZ; }
+
+  inline unsigned int get_size (unsigned int len) const
+  { return len * Type::static_size; }
+
+  inline hb_array_t<Type> as_array (unsigned int len) { return hb_array_t<Type> (arrayZ, len); }
+  inline hb_array_t<const Type> as_array (unsigned int len) const { return hb_array_t<const Type> (arrayZ, len); }
+
   inline bool sanitize (hb_sanitize_context_t *c, unsigned int count) const
   {
     TRACE_SANITIZE (this);
@@ -387,14 +396,6 @@ struct UnsizedArrayOf
   public:
   DEFINE_SIZE_ARRAY (0, arrayZ);
 };
-} /* namespace OT */
-template <typename T> static inline
-hb_array_t<T> hb_array (OT::UnsizedArrayOf<T> &array, unsigned int len)
-{ return hb_array (array.arrayZ, len); }
-template <typename T> static inline
-hb_array_t<const T> hb_array (const OT::UnsizedArrayOf<T> &array, unsigned int len)
-{ return hb_array (array.arrayZ, len); }
-namespace OT {
 
 /* Unsized array of offset's */
 template <typename Type, typename OffsetType, bool has_null=true>
@@ -450,6 +451,7 @@ struct ArrayOf
     if (unlikely (i >= len)) return Crap(Type);
     return arrayZ[i];
   }
+
   inline unsigned int get_size (void) const
   { return len.static_size + len * Type::static_size; }
 

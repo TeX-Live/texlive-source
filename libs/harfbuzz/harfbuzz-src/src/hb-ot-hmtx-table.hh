@@ -194,8 +194,8 @@ struct hmtxvmtx
       bool got_font_extents = false;
       if (T::os2Tag)
       {
-	hb_blob_t *os2_blob = hb_sanitize_context_t().reference_table<os2> (face);
-	const os2 *os2_table = os2_blob->as<os2> ();
+	hb_blob_t *os2_blob = hb_sanitize_context_t().reference_table<OS2> (face);
+	const OS2 *os2_table = os2_blob->as<OS2> ();
 #define USE_TYPO_METRICS (1u<<7)
 	if (0 != (os2_table->fsSelection & USE_TYPO_METRICS))
 	{
@@ -255,7 +255,7 @@ struct hmtxvmtx
       if (glyph < num_advances)
         return table->longMetricZ[glyph].sb;
 
-      if (unlikely (glyph > num_metrics))
+      if (unlikely (glyph >= num_metrics))
         return 0;
 
       const FWORD *bearings = (const FWORD *) &table->longMetricZ[num_advances];
@@ -336,7 +336,7 @@ struct hmtxvmtx
 struct hmtx : hmtxvmtx<hmtx, hhea> {
   static const hb_tag_t tableTag	= HB_OT_TAG_hmtx;
   static const hb_tag_t variationsTag	= HB_OT_TAG_HVAR;
-  static const hb_tag_t os2Tag		= HB_OT_TAG_os2;
+  static const hb_tag_t os2Tag		= HB_OT_TAG_OS2;
 };
 struct vmtx : hmtxvmtx<vmtx, vhea> {
   static const hb_tag_t tableTag	= HB_OT_TAG_vmtx;

@@ -410,9 +410,13 @@ struct Entry<void>
   DEFINE_SIZE_STATIC (4);
 };
 
-template <typename Extra>
+template <typename Types, typename Extra>
 struct StateTable
 {
+  typedef typename Types::HBUINT HBUINT;
+  typedef typename Types::HBUSHORT HBUSHORT;
+  typedef typename Types::ClassType ClassType;
+
   enum State
   {
     STATE_START_OF_TEXT = 0,
@@ -426,11 +430,13 @@ struct StateTable
     CLASS_END_OF_LINE = 3,
   };
 
+  inline unsigned int new_state (unsigned int newState) const
+  { return Types::extended ? newState : (newState - stateArrayTable) / nClasses; }
+
   inline unsigned int get_class (hb_codepoint_t glyph_id, unsigned int num_glyphs) const
   {
     if (unlikely (glyph_id == DELETED_GLYPH)) return CLASS_DELETED_GLYPH;
-    const HBUINT16 *v = (this+classTable).get_value (glyph_id, num_glyphs);
-    return v ? (unsigned) *v : (unsigned) CLASS_OUT_OF_BOUNDS;
+    return (this+classTable).get_class (glyph_id, num_glyphs);
   }
 
   inline const Entry<Extra> *get_entries () const
@@ -442,7 +448,7 @@ struct StateTable
   {
     if (unlikely (klass >= nClasses)) return nullptr;
 
-    const HBUINT16 *states = (this+stateArrayTable).arrayZ;
+    const HBUSHORT *states = (this+stateArrayTable).arrayZ;
     const Entry<Extra> *entries = (this+entryTable).arrayZ;
 
     unsigned int entry = states[state * nClasses + klass];
@@ -457,7 +463,7 @@ struct StateTable
     if (unlikely (!(c->check_struct (this) &&
 		    classTable.sanitize (c, this)))) return_trace (false);
 
-    const HBUINT16 *states = (this+stateArrayTable).arrayZ;
+    const HBUSHORT *states = (this+stateArrayTable).arrayZ;
     const Entry<Extra> *entries = (this+entryTable).arrayZ;
 
     unsigned int num_classes = nClasses;
@@ -479,8 +485,8 @@ struct StateTable
       if ((c->max_ops -= num_states - state) < 0)
 	return_trace (false);
       { /* Sweep new states. */
-	const HBUINT16 *stop = &states[num_states * num_classes];
-	for (const HBUINT16 *p = &states[state * num_classes]; p < stop; p++)
+	const HBUSHORT *stop = &states[num_states * num_classes];
+	for (const HBUSHORT *p = &states[state * num_classes]; p < stop; p++)
 	  num_entries = MAX<unsigned int> (num_entries, *p + 1);
 	state = num_states;
       }
@@ -492,7 +498,10 @@ struct StateTable
       { /* Sweep new entries. */
 	const Entry<Extra> *stop = &entries[num_entries];
 	for (const Entry<Extra> *p = &entries[entry]; p < stop; p++)
-	  num_states = MAX<unsigned int> (num_states, p->newState + 1);
+	{
+	  unsigned int newState = new_state (p->newState);
+	  num_states = MAX<unsigned int> (num_states, newState + 1);
+	}
 	entry = num_entries;
       }
     }
@@ -504,23 +513,101 @@ struct StateTable
   }
 
   protected:
-  HBUINT32	nClasses;	/* Number of classes, which is the number of indices
+  HBUINT	nClasses;	/* Number of classes, which is the number of indices
 				 * in a single line in the state array. */
-  LOffsetTo<Lookup<HBUINT16>, false>
+  OffsetTo<ClassType, HBUINT, false>
 		classTable;	/* Offset to the class table. */
-  LOffsetTo<UnsizedArrayOf<HBUINT16>, false>
+  OffsetTo<UnsizedArrayOf<HBUSHORT>, HBUINT, false>
 		stateArrayTable;/* Offset to the state array. */
-  LOffsetTo<UnsizedArrayOf<Entry<Extra> >, false>
+  OffsetTo<UnsizedArrayOf<Entry<Extra> >, HBUINT, false>
 		entryTable;	/* Offset to the entry array. */
 
   public:
-  DEFINE_SIZE_STATIC (16);
+  DEFINE_SIZE_STATIC (4 * sizeof (HBUINT));
 };
 
-template <typename EntryData>
+struct ClassTable
+{
+  inline unsigned int get_class (hb_codepoint_t glyph_id) const
+  {
+    return firstGlyph <= glyph_id && glyph_id - firstGlyph < glyphCount ? classArrayZ[glyph_id - firstGlyph] : 1;
+  }
+  inline bool sanitize (hb_sanitize_context_t *c) const
+  {
+    TRACE_SANITIZE (this);
+    return_trace (c->check_struct (this) && classArrayZ.sanitize (c, glyphCount));
+  }
+  protected:
+  GlyphID	firstGlyph;	/* First glyph index included in the trimmed array. */
+  HBUINT16	glyphCount;	/* Total number of glyphs (equivalent to the last
+				 * glyph minus the value of firstGlyph plus 1). */
+  UnsizedArrayOf<HBUINT8>
+		classArrayZ;	/* The class codes (indexed by glyph index minus
+				 * firstGlyph). */
+  public:
+  DEFINE_SIZE_ARRAY (4, classArrayZ);
+};
+
+struct MortTypes
+{
+  static const bool extended = false;
+  typedef HBUINT16 HBUINT;
+  typedef HBUINT8 HBUSHORT;
+  struct ClassType : ClassTable
+  {
+    inline unsigned int get_class (hb_codepoint_t glyph_id, unsigned int num_glyphs HB_UNUSED) const
+    {
+      return ClassTable::get_class (glyph_id);
+    }
+  };
+  template <typename T>
+  static inline unsigned int offsetToIndex (unsigned int offset,
+					    const void *base,
+					    const T *array)
+  {
+    return (offset - ((const char *) array - (const char *) base)) / sizeof (T);
+  }
+  template <typename T>
+  static inline unsigned int wordOffsetToIndex (unsigned int offset,
+						const void *base,
+						const T *array)
+  {
+    return offsetToIndex (2 * offset, base, array);
+  }
+};
+struct MorxTypes
+{
+  static const bool extended = true;
+  typedef HBUINT32 HBUINT;
+  typedef HBUINT16 HBUSHORT;
+  struct ClassType : Lookup<HBUINT16>
+  {
+    inline unsigned int get_class (hb_codepoint_t glyph_id, unsigned int num_glyphs) const
+    {
+      const HBUINT16 *v = get_value (glyph_id, num_glyphs);
+      return v ? *v : 1;
+    }
+  };
+  template <typename T>
+  static inline unsigned int offsetToIndex (unsigned int offset,
+					    const void *base,
+					    const T *array)
+  {
+    return offset;
+  }
+  template <typename T>
+  static inline unsigned int wordOffsetToIndex (unsigned int offset,
+						const void *base,
+						const T *array)
+  {
+    return offset;
+  }
+};
+
+template <typename Types, typename EntryData>
 struct StateTableDriver
 {
-  inline StateTableDriver (const StateTable<EntryData> &machine_,
+  inline StateTableDriver (const StateTable<Types, EntryData> &machine_,
 			   hb_buffer_t *buffer_,
 			   hb_face_t *face_) :
 	      machine (machine_),
@@ -533,13 +620,13 @@ struct StateTableDriver
     if (!c->in_place)
       buffer->clear_output ();
 
-    unsigned int state = StateTable<EntryData>::STATE_START_OF_TEXT;
+    unsigned int state = StateTable<Types, EntryData>::STATE_START_OF_TEXT;
     bool last_was_dont_advance = false;
     for (buffer->idx = 0; buffer->successful;)
     {
       unsigned int klass = buffer->idx < buffer->len ?
 			   machine.get_class (buffer->info[buffer->idx].codepoint, num_glyphs) :
-			   (unsigned) StateTable<EntryData>::CLASS_END_OF_TEXT;
+			   (unsigned) StateTable<Types, EntryData>::CLASS_END_OF_TEXT;
       const Entry<EntryData> *entry = machine.get_entryZ (state, klass);
       if (unlikely (!entry))
 	break;
@@ -553,7 +640,7 @@ struct StateTableDriver
 	/* If there's no action and we're just epsilon-transitioning to state 0,
 	 * safe to break. */
 	if (c->is_actionable (this, entry) ||
-	    !(entry->newState == StateTable<EntryData>::STATE_START_OF_TEXT &&
+	    !(entry->newState == StateTable<Types, EntryData>::STATE_START_OF_TEXT &&
 	      entry->flags == context_t::DontAdvance))
 	  buffer->unsafe_to_break_from_outbuffer (buffer->backtrack_len () - 1, buffer->idx + 1);
       }
@@ -567,30 +654,29 @@ struct StateTableDriver
       }
 
       if (unlikely (!c->transition (this, entry)))
-        break;
+	break;
 
       last_was_dont_advance = (entry->flags & context_t::DontAdvance) && buffer->max_ops-- > 0;
 
-      state = entry->newState;
+      state = machine.new_state (entry->newState);
 
       if (buffer->idx == buffer->len)
-        break;
+	break;
 
       if (!last_was_dont_advance)
-        buffer->next_glyph ();
+	buffer->next_glyph ();
     }
 
     if (!c->in_place)
     {
       for (; buffer->successful && buffer->idx < buffer->len;)
 	buffer->next_glyph ();
-      if (likely (buffer->successful))
-	buffer->swap_buffers ();
+      buffer->swap_buffers ();
     }
   }
 
   public:
-  const StateTable<EntryData> &machine;
+  const StateTable<Types, EntryData> &machine;
   hb_buffer_t *buffer;
   unsigned int num_glyphs;
 };
@@ -612,36 +698,23 @@ struct hb_aat_apply_context_t :
   hb_face_t *face;
   hb_buffer_t *buffer;
   hb_sanitize_context_t sanitizer;
-  const ankr &ankr_table;
+  const ankr *ankr_table;
   const char *ankr_end;
 
   /* Unused. For debug tracing only. */
   unsigned int lookup_index;
   unsigned int debug_depth;
 
-  inline hb_aat_apply_context_t (hb_ot_shape_plan_t *plan_,
-				 hb_font_t *font_,
-				 hb_buffer_t *buffer_,
-				 hb_blob_t *blob = const_cast<hb_blob_t *> (&Null(hb_blob_t)),
-				 const ankr &ankr_table_ = Null(ankr),
-				 const char *ankr_end_ = nullptr) :
-		plan (plan_), font (font_), face (font->face), buffer (buffer_),
-		sanitizer (),
-		ankr_table (ankr_table_), ankr_end (ankr_end_),
-		lookup_index (0), debug_depth (0)
-  {
-    sanitizer.init (blob);
-    sanitizer.set_num_glyphs (face->get_num_glyphs ());
-    sanitizer.start_processing ();
-    sanitizer.set_max_ops (HB_SANITIZE_MAX_OPS_MAX);
-  }
+  HB_INTERNAL hb_aat_apply_context_t (hb_ot_shape_plan_t *plan_,
+				      hb_font_t *font_,
+				      hb_buffer_t *buffer_,
+				      hb_blob_t *blob = const_cast<hb_blob_t *> (&Null(hb_blob_t)));
+
+  HB_INTERNAL ~hb_aat_apply_context_t (void);
+
+  HB_INTERNAL void set_ankr_table (const AAT::ankr *ankr_table_, const char *ankr_end_);
 
   inline void set_lookup_index (unsigned int i) { lookup_index = i; }
-
-  inline ~hb_aat_apply_context_t (void)
-  {
-    sanitizer.end_processing ();
-  }
 };
 
 

@@ -1,3 +1,955 @@
+commit 6482fda519ca7d173e3bcb3717aa30e237f04b25
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 15:03:18 2018 -0500
+
+    [fuzzing] Fuzz glyph-id etc in test-ot-face
+
+ test/api/test-ot-face.c         | 57
+ +++++++++++++++++++++--------------------
+ test/fuzzing/hb-shape-fuzzer.cc | 19 +-------------
+ 2 files changed, 30 insertions(+), 46 deletions(-)
+
+commit 252632c477b963f305116d69fcafacd8bf7b97bf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 14:33:41 2018 -0500
+
+    [uniscribe] Fix use of deprecated API
+
+ src/hb-uniscribe.cc | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit bb380ec18394b2c581b672ecbf98991e14897f2e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 13:45:12 2018 -0500
+
+    [cmap] Make null accelerator safe
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1146
+
+ src/hb-ot-cmap-table.hh | 50
+ ++++++++++++++++++++++++-------------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
+
+commit f6fc5574d3dae177a54b10195e0d1f368a74f768
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 13:23:54 2018 -0500
+
+    Add pointer magic operators to hb_atomic_ptr_t
+
+ src/hb-atomic.hh                  | 3 +++
+ src/hb-common.cc                  | 6 +++---
+ src/hb-face.cc                    | 2 +-
+ src/hb-graphite2.cc               | 8 ++++----
+ src/hb-machinery.hh               | 1 +
+ src/hb-ot-shape-complex-arabic.cc | 4 ++--
+ src/hb-shape-plan.cc              | 2 +-
+ 7 files changed, 15 insertions(+), 11 deletions(-)
+
+commit f6e7cb51b13aabb447dc97a59602d65eb42edc4b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 13:23:07 2018 -0500
+
+    Fix const-confusion in hb_array_t as well
+
+ src/hb-dsalgs.hh | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+commit 0da22fb0ada8a54fc59739057f281a406a993212
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 13:13:39 2018 -0500
+
+    [null] Tweak hb_nonnull_ptr_t some more
+
+ src/hb-null.hh | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
+
+commit 03348ce0051cfae7172ac0d09b83ed5f82fa842a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 12:59:32 2018 -0500
+
+    Minor
+
+ src/hb-aat-layout.cc | 12 ++++++------
+ src/hb-ot-color.cc   | 10 +++++-----
+ src/hb-ot-font.cc    | 18 +++++++++---------
+ src/hb-ot-layout.cc  |  2 +-
+ src/hb-ot-math.cc    |  2 +-
+ src/hb-ot-name.cc    |  2 +-
+ src/hb-ot-var.cc     |  6 ++----
+ 7 files changed, 25 insertions(+), 27 deletions(-)
+
+commit b605db2f65e62ad6727a61481f78015933dbf207
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 4 12:58:02 2018 -0500
+
+    [aat] Clean up ankr table include mess
+
+ src/hb-aat-layout-ankr-table.hh |  2 ++
+ src/hb-aat-layout-common.hh     | 31 +++++++++---------------------
+ src/hb-aat-layout-kerx-table.hh | 16 ++++++++--------
+ src/hb-aat-layout.cc            | 42
+ +++++++++++++++++++++++++++++++++++++++--
+ src/hb-ot-kern-table.hh         |  1 -
+ src/hb-static.cc                |  1 -
+ 6 files changed, 59 insertions(+), 34 deletions(-)
+
+commit bce437cf0b71e9b60bbf058eaf61593fed30ae33
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 4 02:47:34 2018 -0500
+
+    [test] Call test-ot-face.c test from hb-shape-fuzzer
+
+    Should increase coverage...
+
+ test/api/test-ot-face.c         | 28 ++++++++++++++++++----------
+ test/fuzzing/hb-shape-fuzzer.cc |  6 ++++++
+ 2 files changed, 24 insertions(+), 10 deletions(-)
+
+commit 777c22425cae97009ca4dc5b1e400670c4aa0799
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 4 02:40:20 2018 -0500
+
+    [test] More funcs in test-ot-face
+
+ test/api/test-font.c    |  5 +++++
+ test/api/test-ot-face.c | 21 +++++++++++++++++++--
+ 2 files changed, 24 insertions(+), 2 deletions(-)
+
+commit 17335a8161e674e630287e18a6d304ec0c33767c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 4 02:25:07 2018 -0500
+
+    Clean up buffer->swap_buffers() calls
+
+    That function checks for buffer->successful already.  No need
+    to check at call site.
+
+ src/gen-vowel-constraints.py                 | 4 +---
+ src/hb-aat-layout-common.hh                  | 3 +--
+ src/hb-aat-layout-morx-table.hh              | 3 +--
+ src/hb-ot-shape-complex-indic.cc             | 1 -
+ src/hb-ot-shape-complex-khmer.cc             | 1 -
+ src/hb-ot-shape-complex-myanmar.cc           | 1 -
+ src/hb-ot-shape-complex-thai.cc              | 3 +--
+ src/hb-ot-shape-complex-use.cc               | 1 -
+ src/hb-ot-shape-complex-vowel-constraints.cc | 5 ++---
+ src/hb-ot-shape.cc                           | 1 -
+ 10 files changed, 6 insertions(+), 17 deletions(-)
+
+commit 4eb52460c8c6dc48af240f2254f76fae065bfa97
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 21:45:39 2018 -0400
+
+    Fix >>
+
+ src/hb-ot-post-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ae9ad1076e536aee370f9863cde8351b79f01b3b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 21:41:50 2018 -0400
+
+    Fix "Warning: extra ";" ignored."
+
+ src/hb.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit d0163afb7bed83935c6a54d57a0e7366caeba0b3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 21:38:24 2018 -0400
+
+    Revert "Add operator char * to the naked array types as well"
+
+    This reverts commit db889c182ee5f54127285bfaab5bc94dafe46bda.
+
+    Was resulting in ambigious overloads...
+
+ src/hb-dsalgs.hh    | 4 +---
+ src/hb-open-type.hh | 2 --
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+commit c8f94a1ca6928f07749285da910b63087d485537
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 21:07:39 2018 -0400
+
+    Minor
+
+ src/hb-ot-name.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 9779e602ed7ac214c0da2c90e104b38460422476
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 20:50:56 2018 -0400
+
+    [test] Add test for empty face
+
+ test/api/Makefile.am    |  1 +
+ test/api/test-ot-face.c | 94
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 95 insertions(+)
+
+commit 0b0b38ec1e6a815a30bef98193043d255b52c4a1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 16:15:30 2018 -0400
+
+    Fix null accelerator's
+
+    Fixes all except for cmap.  To be done separately.
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1146
+
+ src/hb-ot-color-cbdt-table.hh  | 10 ++--------
+ src/hb-ot-color-sbix-table.hh  | 11 ++++-------
+ src/hb-ot-color-svg-table.hh   | 11 ++++-------
+ src/hb-ot-glyf-table.hh        |  6 +++---
+ src/hb-ot-layout-gdef-table.hh |  2 +-
+ src/hb-ot-layout-gsubgpos.hh   |  2 +-
+ src/hb-ot-name-table.hh        |  2 +-
+ src/hb-ot-post-table.hh        |  2 +-
+ 8 files changed, 17 insertions(+), 29 deletions(-)
+
+commit db889c182ee5f54127285bfaab5bc94dafe46bda
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 16:04:19 2018 -0400
+
+    Add operator char * to the naked array types as well
+
+ src/hb-dsalgs.hh    | 4 +++-
+ src/hb-open-type.hh | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+commit d6fdae310f2a98ca624c3a77c3aa03b8b3bd393a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 16:02:03 2018 -0400
+
+    Add operator char * to hb_nonnull_ptr_t
+
+ src/hb-null.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 7430ff604aa54bedcb07cc1c2962eae85fcade76
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 15:59:13 2018 -0400
+
+    Template casts in hb_nonnull_ptr_t
+
+ src/hb-null.hh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit da408fce98153e0fab3d82fe28813085feed0974
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 15:49:37 2018 -0400
+
+    [blob] Allow null parent in create_sub_blob()
+
+    Like font and unicode.
+
+ src/hb-blob.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fb0f30f55a5d654b2f1f9b99efa9b8abc51dbf34
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 15:24:14 2018 -0400
+
+    Add hb_nonnull_ptr_t
+
+    Towards fixing https://github.com/harfbuzz/harfbuzz/issues/1146
+
+ src/hb-null.hh | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+commit 8d98c51d133b058a845ed7a84bfe8a43083bbb03
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 15:14:57 2018 -0400
+
+    [kern] Third try fix access violation in Format3
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11245
+
+ src/hb-ot-kern-table.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit f074da8c2b6a7061c71d12213a6c494c119eb20e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 15:06:45 2018 -0400
+
+    [kern] Really fix access violation in Format3
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11245
+
+ src/hb-ot-kern-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 93ef20a83b31e6528bb1835d2b4b83b913805885
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 15:03:06 2018 -0400
+
+    Replace most uses of is_inert with is_immutable
+
+ src/hb-buffer.cc     | 32 ++++++++++++++++----------------
+ src/hb-coretext.cc   |  2 +-
+ src/hb-font.cc       |  2 +-
+ src/hb-set.hh        |  8 +++++---
+ src/hb-shape-plan.cc |  2 +-
+ 5 files changed, 24 insertions(+), 22 deletions(-)
+
+commit 0589787ff55bff9bd5849c4443229e926cc574a5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 14:58:54 2018 -0400
+
+    [kern] Fix access violation in Format3
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11245
+
+ src/hb-ot-kern-table.hh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 5570c87f21f061cc197e02bd0526ab44c63ed6f1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 14:51:38 2018 -0400
+
+    Port objects to use header.writable instead of immutable
+
+    Saves 4 or 8 bytes per object on 64bit archs.
+
+ src/hb-blob.cc    | 12 ++++--------
+ src/hb-blob.hh    |  2 --
+ src/hb-face.cc    | 16 ++++++----------
+ src/hb-face.hh    |  2 --
+ src/hb-font.cc    | 46 +++++++++++++++++++---------------------------
+ src/hb-font.hh    |  4 ----
+ src/hb-ft.cc      |  2 +-
+ src/hb-object.hh  | 11 ++++++++---
+ src/hb-unicode.cc | 11 ++++-------
+ src/hb-unicode.hh |  2 --
+ 10 files changed, 42 insertions(+), 66 deletions(-)
+
+commit ee351a38ec0c62b76dd1b3f20fe56cb4d63e62be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 3 14:28:55 2018 -0400
+
+    [object] Add "writable"
+
+ src/hb-object.hh | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+commit b8a78ce201608e9ac6d7f77447b2bbef6f09e9ff
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Nov 3 22:28:30 2018 +0330
+
+    [BASE] Improvements (#1347)
+
+ src/hb-ot-layout-base-table.hh | 610
+ ++++++++++++++++++-----------------------
+ src/hb-ot-layout.cc            |  65 ++++-
+ src/hb-ot-layout.h             |  16 --
+ test/api/Makefile.am           |   1 +
+ test/api/fonts/base.ttf        | Bin 0 -> 5596 bytes
+ test/api/test-baseline.c       |  58 ++++
+ 6 files changed, 380 insertions(+), 370 deletions(-)
+
+commit c560ca92512c0283e826c059431273ffecf5d993
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Nov 3 13:03:36 2018 +0330
+
+    [fuzz] A new testcase
+
+ ...uzz-testcase-minimized-hb-shape-fuzzer-5735679418433536 | Bin 0 ->
+ 36 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 2c68f34bddbe506d0b22948562f2f59b9a5b6050
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Fri Nov 2 23:06:00 2018 +0200
+
+    [os2] Capitalize table tag and struct
+
+    Other tables follow the case of the OT tag, except this one.
+
+ src/hb-ot-hmtx-table.hh |  6 +++---
+ src/hb-ot-os2-table.hh  | 12 ++++++------
+ src/hb-subset.cc        |  4 ++--
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+commit 8034d1dda091998d356e77f249d3c9f50501cc77
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 14:47:42 2018 -0400
+
+    [kern] Implement Format1
+
+    Also, implement backwards kerning for Format1 in kern and kerx.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1350
+
+ src/hb-aat-layout-kerx-table.hh |  11 +++-
+ src/hb-ot-kern-table.hh         | 127
+ ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 136 insertions(+), 2 deletions(-)
+
+commit 46b3885c1a8ea3b85efbdd1704edcee385797c5d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 14:43:38 2018 -0400
+
+    [kern] Set subtable on sanitizer
+
+ src/hb-ot-kern-table.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 74c7a2c6c892446dcec574986e128967bd570e47
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 14:26:04 2018 -0400
+
+    [kern] Respect more flags
+
+ src/hb-ot-kern-table.hh | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+commit 9f880bad0d7291eaab10d814567c7a680e139c48
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 13:57:41 2018 -0400
+
+    [kern] Minor
+
+    We like check_struct() more.
+
+ src/hb-ot-kern-table.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 04b82b181d06c229a98314c1620d3ae8a2825267
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 13:47:33 2018 -0400
+
+    Remove pointer cast operators from ArrayOf<>
+
+    ArrayOf<>, unlike UnsizedArrayOf<>, has data before the array.
+    This was confusing.  Remove.
+
+ src/hb-open-type.hh | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit f1df441bedaf5b2c7fadf9954ea39616af87702a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 13:26:15 2018 -0400
+
+    [kern] Comment
+
+ src/hb-ot-kern-table.hh | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 095f5add0b1ca39dd09842594b80fae92f0796e4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 13:23:54 2018 -0400
+
+    [kern] Push apply loop to each subtable
+
+ src/hb-ot-kern-table.hh | 153
+ ++++++++++++++++++++++++++++++++++++++----------
+ src/hb-ot-layout.cc     |  28 ++++++---
+ src/hb-ot-layout.hh     |   8 ++-
+ src/hb-ot-shape.cc      |   2 +-
+ 4 files changed, 149 insertions(+), 42 deletions(-)
+
+commit 949dad89a81ff5b6ef92e8737962b667249a3f2b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 12:47:55 2018 -0400
+
+    [kern] Remove accelerator
+
+    It wasn't doing anything.
+
+ src/hb-ot-face.hh       |  2 +-
+ src/hb-ot-kern-table.hh | 55
+ ++++++++++++++-----------------------------------
+ src/hb-ot-layout.cc     |  4 ++--
+ 3 files changed, 18 insertions(+), 43 deletions(-)
+
+commit 0382b7184addf5b3723db40a57790e5e62ac1703
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 12:23:26 2018 -0400
+
+    Use as_array in more places
+
+ src/hb-aat-layout-morx-table.hh |  4 ++--
+ src/hb-ot-layout-gsubgpos.hh    | 22 +++++++++++++---------
+ 2 files changed, 15 insertions(+), 11 deletions(-)
+
+commit 91de9dfcf3bba7cbeef1e709679c8e24ab684c97
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 12:14:21 2018 -0400
+
+    Fix &array_of<>
+
+ src/hb-dsalgs.hh    | 3 +++
+ src/hb-open-type.hh | 4 ++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+commit 9b7cb137946013592c9a5a9f0a3464fb4613577b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 12:00:55 2018 -0400
+
+    Fixup
+
+ src/hb-dsalgs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6e06fe162ed79bb47f62aae03669cd72b99014a0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 11:56:55 2018 -0400
+
+    [kern] Implement Format3
+
+    Untested.
+
+ src/hb-ot-kern-table.hh | 51
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+
+commit c6ef5dbd5c40cc8934756456221e080012a82530
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 11:51:21 2018 -0400
+
+    Add cast operators to hb_array_t
+
+ src/hb-dsalgs.hh | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+commit 72462eb76584a2892f1d961c90fd289240ea9380
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 11:46:24 2018 -0400
+
+    Add UnsizedArrayOf::as_array() instead of hb_array() template
+
+ src/hb-aat-layout-trak-table.hh |  2 +-
+ src/hb-dsalgs.hh                |  2 --
+ src/hb-open-file.hh             |  2 +-
+ src/hb-open-type.hh             | 11 +++--------
+ src/hb-ot-color-cpal-table.hh   |  6 +++---
+ 5 files changed, 8 insertions(+), 15 deletions(-)
+
+commit 1cf075ecb674cc0c7043bffe2fef5ef187c15335
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 11:38:00 2018 -0400
+
+    Add get_size to UnsizedArrayOf
+
+ src/hb-open-type.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit a4a7a623893fd4c8db3a987d81a1c80243006f1e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 2 11:16:43 2018 -0400
+
+    [kern] Add buffer message
+
+ src/hb-ot-kern-table.hh | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit de96e5c81c7f473520df93052ecea162baa5a350
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 1 18:13:58 2018 -0400
+
+    [Crap] Avoid operator=
+
+ src/hb-null.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f9353bd68c112dea8962dd586bf5e664f75a2a07
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 1 18:05:22 2018 -0400
+
+    [aat] Rely on vector auto initialization
+
+ src/hb-aat-map.hh | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+commit 5a18d97b35d05c826c242e6847764c2418831a55
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 1 18:01:26 2018 -0400
+
+    [aat] Remove unused forward declaration
+
+ src/hb-aat-map.hh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 07ec792212063851ee41eae33792d3d90d31e6a1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 1 10:31:12 2018 -0400
+
+    Warning fix
+
+ src/test-ot-color.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c32280b30fb3844addda31a0d97ae7cb55ef07d2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 1 15:31:14 2018 +0330
+
+    [ot-layout] minor
+
+ src/hb-ot-layout.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit cad90be4ea56a85ddc084f86f36dd7129850f6d7
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 1 13:39:06 2018 +0330
+
+    [test] minor
+
+ test/api/test-ot-color.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 52a00cd87f63c8ab32413a1a9ce792a3e2ec84e2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 19:05:53 2018 -0700
+
+    [aat] Implement 'aalt' mapping
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1160
+
+ src/hb-aat-map.cc | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit 6e3ea269fa1fe0a3de7a8a13c6e853c91231808e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 19:00:11 2018 -0700
+
+    [aat] Add 'afrc' feature mapping
+
+    https://github.com/harfbuzz/harfbuzz/issues/1342#issuecomment-434829028
+
+ src/hb-aat-layout.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 40b19fd46951e2f9b402e59e1fbbf06fde7ecd61
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 18:51:45 2018 -0700
+
+    [aat] Fallback to old style "Letter Case" small caps
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1342
+
+ src/hb-aat-layout-morx-table.hh | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit f9289319481a1e9762ad366b287e781c44ba9fc6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 18:25:05 2018 -0700
+
+    [test] Minor
+
+ test/shaping/run-tests.py | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+commit cf203af8a33591c163b63dbdf0fd341bc4606190
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 18:21:48 2018 -0700
+
+    Implement space fallback in vertical direction
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1343
+
+ src/hb-ot-shape-fallback.cc                   | 36
+ +++++++++++++++++++--------
+ test/shaping/data/in-house/tests/spaces.tests | 17 +++++++++++++
+ 2 files changed, 42 insertions(+), 11 deletions(-)
+
+commit e01250230b1ad85e49cc0021365d1ee43feb9855
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 18:14:00 2018 -0700
+
+    [hmtx/vmtx] Fix a crasher
+
+ src/hb-ot-hmtx-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 36e90ef56e6c0643ef61e947d7361c6fa4eadf10
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 15:09:09 2018 -0700
+
+    [mort] Massage some more
+
+ src/hb-aat-layout-common.hh     | 28 ++++++++++++++++++++++++++++
+ src/hb-aat-layout-morx-table.hh | 21 +++++----------------
+ 2 files changed, 33 insertions(+), 16 deletions(-)
+
+commit cbaff4ef1910e2872bfff61f3d5427c076b3673d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 15:06:12 2018 -0700
+
+    [mort] Some more
+
+ src/hb-aat-layout-morx-table.hh | 34 ++++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
+
+commit 3087046d3144afb50bcc13e4afa2d20d9f71f2c8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 14:59:14 2018 -0700
+
+    [mort] Refactor offset-to-index mapping
+
+ src/hb-aat-layout-morx-table.hh | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+commit b9db610add702da0a257db2eb21f3a7fb56682f7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 14:22:31 2018 -0700
+
+    Minor
+
+ src/hb-font.cc | 28 ++++++++++++++--------------
+ src/hb-font.h  |  2 +-
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+
+commit 995bf6c6f82d6b2dabcb81e1426910ee82b91b44
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 13:21:33 2018 -0700
+
+    [sbix] Rely on blob->as<> checking size against Type::min_size
+
+ src/hb-ot-color-sbix-table.hh | 6 ------
+ 1 file changed, 6 deletions(-)
+
+commit 4d4e526b5cc703111eb445b7e319a4cd1917489f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 13:19:42 2018 -0700
+
+    Improve blob->as<>
+
+    It's true that blob->as<> should only be called on null or sanitized
+    data.  But this change is safe, so keep it.
+
+ src/hb-blob.hh          | 2 +-
+ src/hb-ot-glyf-table.hh | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+commit 5854d3fa251069f8158b97a831d1439c2ff8b510
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 10:42:49 2018 -0700
+
+    [set] Warning fix with gcc 8.1
+
+    https://github.com/harfbuzz/harfbuzz/pull/1334
+
+ src/hb-dsalgs.hh | 6 ++++--
+ src/hb-set.hh    | 4 ++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+commit 850a7af3a419c6c4ab92bff59991758a2951d41f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Oct 31 14:20:23 2018 +0330
+
+    [ot-color-test] Remove the non-working exact strike size storing
+    (#1339)
+
+ src/test-ot-color.cc | 135
+ +++++++++++++++++++++++----------------------------
+ 1 file changed, 62 insertions(+), 73 deletions(-)
+
+commit 2e639c47c9d35ff7dc4dde21f744f9ee695a27f3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Oct 31 14:20:14 2018 +0330
+
+    [aat] Fix older compilers by not referencing enum directly (#1340)
+
+ src/hb-aat-layout-morx-table.hh | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit 642c9dcf1b34b51ffdbf88ccbef4762aa12a5cbe
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Oct 31 14:02:37 2018 +0330
+
+    [aat] Minor, remove extra semicolons
+
+ src/hb-aat-layout-morx-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit c962d5e714a6f88c4cb20bed219177b1bc4a2dfd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 01:16:33 2018 -0700
+
+    [mort] Make ligatures work
+
+     ./hb-shape Apple_Chancery_10_12.ttf  "Th th ll te to tr fr fu fj"
+    [T_h=0+2308|space=2+569|t_h=3+1687|space=5+569|l_l=6+1108|space=8+569|t_e=9+1408|space=11+569|t_o=12+1531|space=14+569|t_r=15+1385|space=17+569|f_r=18+1432|space=20+569|f_u=21+1733|space=23+569|f_j=24+1098]
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1331
+
+ src/hb-aat-layout-morx-table.hh | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
+
+commit c07798960004439fcd8fa0f4ae33e225428d1065
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 00:36:03 2018 -0700
+
+    [mort] More Ligature work
+
+ src/hb-aat-layout-morx-table.hh | 54
+ ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 40 insertions(+), 14 deletions(-)
+
+commit 431c6e496be56e441ee4b9b705f40a1246bdd0d6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 31 00:15:00 2018 -0700
+
+    [mort] Some Ligature work
+
+ src/hb-aat-layout-morx-table.hh | 38
+ +++++++++++++++++++++++++++++++-------
+ 1 file changed, 31 insertions(+), 7 deletions(-)
+
+commit 28b68cffe4e5ebf82217ebf439f428431d672af3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 23:33:30 2018 -0700
+
+    [mort] Implement / adjust Contextual substitution
+
+ src/hb-aat-layout-morx-table.hh | 70
+ ++++++++++++++++++++++++++++++-----------
+ src/hb-open-type.hh             |  7 +++++
+ 2 files changed, 59 insertions(+), 18 deletions(-)
+
+commit 11dbf0f12926b80d0c308c70a218342280045c23
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 21:49:59 2018 -0700
+
+    [mort] More fixes]
+
+ src/hb-aat-layout-common.hh | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit e1552af95b6c17571f7ee58ebac92f48d93c8f98
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 21:09:05 2018 -0700
+
+    [maxp] Minor
+
+ src/hb-ot-maxp-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0cf282a32e5b0fe1fec454ff293ffe04b33f1112
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 20:51:44 2018 -0700
+
+    [mort] Grind some more
+
+ src/hb-aat-layout-common.hh | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+commit 90667b31bc3e61e68e27966e4781aba456c6b93b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 20:15:28 2018 -0700
+
+    [mort] Hook up more
+
+ src/hb-aat-layout.cc | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+commit 9346b1f158dfd7d25ed0057b40aaa6980a85ea17
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 20:04:13 2018 -0700
+
+    [morx] Remove stale comment
+
+ src/hb-aat-layout-morx-table.hh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit f864ef215e1354a1e5a3c8796afafba761404e08
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 19:42:21 2018 -0700
+
+    [mort] More massaging towards mort
+
+ src/hb-aat-layout-morx-table.hh | 53
+ +++++++++++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 26 deletions(-)
+
+commit 2d9467340b1498ccc0cd47bf915b84ab12dfa025
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 19:33:31 2018 -0700
+
+    [mort] Fix version check in sanitize
+
+ src/hb-aat-layout-morx-table.hh | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit c2527a1bc2b493473f06ea6ae79f0a87b722c4d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 19:26:16 2018 -0700
+
+    [mort] Make it compile / hook it up
+
+    Untested.
+
+ src/hb-aat-layout-common.hh     | 11 +++++-----
+ src/hb-aat-layout-morx-table.hh |  2 +-
+ src/hb-aat-layout.cc            | 47
+ ++++++++++++++++++++++++++---------------
+ 3 files changed, 36 insertions(+), 24 deletions(-)
+
+commit 933babdc075c27fbcc1b726c3c9b2aa67338c6ad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 19:22:43 2018 -0700
+
+    [mort] Fixup on previous commit
+
+ src/hb-aat-layout-morx-table.hh | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+commit b053cabacd99ff69144a1459fe02ffd574c2416c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 30 18:41:34 2018 +0330
+
+    [mort] Bring back mort generalizations
+
+    Started by reverting
+    https://github.com/harfbuzz/harfbuzz/commit/1f1c85a5
+
+    Just a starting point, if we agree even mort can come back.
+
+ src/hb-aat-layout-common.hh     |  76 +++++++++++++++++++----
+ src/hb-aat-layout-kerx-table.hh |  17 ++---
+ src/hb-aat-layout-morx-table.hh | 133
+ ++++++++++++++++++++++++----------------
+ src/hb-aat-layout.cc            |  16 ++++-
+ src/hb-ot-face.hh               |   1 +
+ 5 files changed, 171 insertions(+), 72 deletions(-)
+
+commit 5cd544a621f10b307bb97aea27ea54e55aacb2e9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 19:16:00 2018 -0700
+
+    Fix build
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1338
+
+ src/test-ot-color.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 69297bb21640677532b7030332f803c0768c6579
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 19:06:21 2018 -0700
+
+    [fuzzing] Call hb-ot-color API
+
+ test/fuzzing/hb-shape-fuzzer.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 1019391046cf01524c4ef20c9256a47b7411610b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 30 15:52:26 2018 -0700
+
+    2.1.0
+
+ NEWS                   | 81
+ ++++++++++++++++++++++++++++++++++++++++++++++++++
+ RELEASING.md           |  3 +-
+ configure.ac           |  2 +-
+ docs/harfbuzz-docs.xml |  1 +
+ src/hb-ot-color.cc     | 22 +++++++++-----
+ src/hb-ot-color.h      |  4 +--
+ src/hb-version.h       |  6 ++--
+ 7 files changed, 105 insertions(+), 14 deletions(-)
+
 commit bfd549daaa078e7edba5a65971b1d3e872664f2d
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Oct 30 14:47:27 2018 -0700

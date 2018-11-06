@@ -152,9 +152,6 @@ struct sbix
 
     inline bool has_data () const
     {
-      /* XXX Fix somehow and remove next line.
-       * https://github.com/harfbuzz/harfbuzz/issues/1146 */
-      if (!num_glyphs) return false;
       return table->has_data ();
     }
 
@@ -234,20 +231,14 @@ struct sbix
 				 hb_codepoint_t      glyph,
 				 hb_glyph_extents_t *extents) const
     {
-      /* Following code is safe to call even without data (XXX currently
-       * isn't.  See has_data()), but faster to short-circuit. */
+      /* Following code is safe to call even without data.
+       * But faster to short-circuit. */
       if (!has_data ())
         return false;
 
       int x_offset = 0, y_offset = 0;
       unsigned int strike_ppem = 0;
       hb_blob_t *blob = reference_png (font, glyph, &x_offset, &y_offset, &strike_ppem);
-
-      if (unlikely (blob->length < sizeof (PNGHeader)))
-      {
-        hb_blob_destroy (blob);
-        return false;
-      }
 
       const PNGHeader &png = *blob->as<PNGHeader>();
 
@@ -268,12 +259,12 @@ struct sbix
 
       hb_blob_destroy (blob);
 
-      return true;
+      return strike_ppem;
     }
 
     private:
     hb_blob_t *sbix_blob;
-    const sbix *table;
+    hb_nonnull_ptr_t<const sbix> table;
 
     unsigned int num_glyphs;
   };

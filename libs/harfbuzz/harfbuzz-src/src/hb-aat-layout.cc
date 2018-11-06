@@ -41,6 +41,7 @@
  * when moving to this file. */
 static const hb_aat_feature_mapping_t feature_mappings[] =
 {
+  {HB_TAG ('a','f','r','c'),	11/*kFractionsType*/,			1/*kVerticalFractionsSelector*/,		0/*kNoFractionsSelector*/},
   {HB_TAG ('c','2','p','c'),	38/*kUpperCaseType*/,			2/*kUpperCasePetiteCapsSelector*/,		0/*kDefaultUpperCaseSelector*/},
   {HB_TAG ('c','2','s','c'),	38/*kUpperCaseType*/,			1/*kUpperCaseSmallCapsSelector*/,		0/*kDefaultUpperCaseSelector*/},
   {HB_TAG ('c','a','l','t'),	36/*kContextualAlternatesType*/,	0/*kContextualAlternatesOnSelector*/,		1/*kContextualAlternatesOffSelector*/},
@@ -130,9 +131,61 @@ hb_aat_layout_find_feature_mapping (hb_tag_t tag)
 
 
 /*
- * morx/kerx/trak
+ * hb_aat_apply_context_t
  */
 
+AAT::hb_aat_apply_context_t::hb_aat_apply_context_t (hb_ot_shape_plan_t *plan_,
+						     hb_font_t *font_,
+						     hb_buffer_t *buffer_,
+						     hb_blob_t *blob) :
+						       plan (plan_),
+						       font (font_),
+						       face (font->face),
+						       buffer (buffer_),
+						       sanitizer (),
+						       ankr_table (&Null(AAT::ankr)),
+						       ankr_end (nullptr),
+						       lookup_index (0),
+						       debug_depth (0)
+{
+  sanitizer.init (blob);
+  sanitizer.set_num_glyphs (face->get_num_glyphs ());
+  sanitizer.start_processing ();
+  sanitizer.set_max_ops (HB_SANITIZE_MAX_OPS_MAX);
+}
+
+AAT::hb_aat_apply_context_t::~hb_aat_apply_context_t (void)
+{
+  sanitizer.end_processing ();
+}
+
+void
+AAT::hb_aat_apply_context_t::set_ankr_table (const AAT::ankr *ankr_table_,
+					     const char      *ankr_end_)
+{
+  ankr_table = ankr_table_;
+  ankr_end = ankr_end_;
+}
+
+
+/*
+ * mort/morx/kerx/trak
+ */
+
+static inline const AAT::mort&
+_get_mort (hb_face_t *face, hb_blob_t **blob = nullptr)
+{
+  if (unlikely (!hb_ot_shaper_face_data_ensure (face)))
+  {
+    if (blob)
+      *blob = hb_blob_get_empty ();
+    return Null(AAT::mort);
+  }
+  const AAT::mort& mort = *(hb_ot_face_data (face)->mort);
+  if (blob)
+    *blob = hb_ot_face_data (face)->mort.get_blob ();
+  return mort;
+}
 static inline const AAT::morx&
 _get_morx (hb_face_t *face, hb_blob_t **blob = nullptr)
 {
@@ -142,7 +195,7 @@ _get_morx (hb_face_t *face, hb_blob_t **blob = nullptr)
       *blob = hb_blob_get_empty ();
     return Null(AAT::morx);
   }
-  const AAT::morx& morx = *(hb_ot_face_data (face)->morx.get ());
+  const AAT::morx& morx = *(hb_ot_face_data (face)->morx);
   if (blob)
     *blob = hb_ot_face_data (face)->morx.get_blob ();
   return morx;
@@ -156,7 +209,7 @@ _get_kerx (hb_face_t *face, hb_blob_t **blob = nullptr)
       *blob = hb_blob_get_empty ();
     return Null(AAT::kerx);
   }
-  const AAT::kerx& kerx = *(hb_ot_face_data (face)->kerx.get ());
+  const AAT::kerx& kerx = *(hb_ot_face_data (face)->kerx);
   if (blob)
     *blob = hb_ot_face_data (face)->kerx.get_blob ();
   return kerx;
@@ -170,7 +223,7 @@ _get_ankr (hb_face_t *face, hb_blob_t **blob = nullptr)
       *blob = hb_blob_get_empty ();
     return Null(AAT::ankr);
   }
-  const AAT::ankr& ankr = *(hb_ot_face_data (face)->ankr.get ());
+  const AAT::ankr& ankr = *(hb_ot_face_data (face)->ankr);
   if (blob)
     *blob = hb_ot_face_data (face)->ankr.get_blob ();
   return ankr;
@@ -179,13 +232,13 @@ static inline const AAT::trak&
 _get_trak (hb_face_t *face)
 {
   if (unlikely (!hb_ot_shaper_face_data_ensure (face))) return Null(AAT::trak);
-  return *(hb_ot_face_data (face)->trak.get ());
+  return *(hb_ot_face_data (face)->trak);
 }
 static inline const AAT::ltag&
 _get_ltag (hb_face_t *face)
 {
   if (unlikely (!hb_ot_shaper_face_data_ensure (face))) return Null(AAT::ltag);
-  return *(hb_ot_face_data (face)->ltag.get ());
+  return *(hb_ot_face_data (face)->ltag);
 }
 
 
@@ -193,14 +246,27 @@ void
 hb_aat_layout_compile_map (const hb_aat_map_builder_t *mapper,
 			   hb_aat_map_t *map)
 {
-  _get_morx (mapper->face).compile_flags (mapper, map);
+  const AAT::morx& morx = _get_morx (mapper->face, nullptr);
+  if (morx.has_data ())
+  {
+    morx.compile_flags (mapper, map);
+    return;
+  }
+
+  const AAT::mort& mort = _get_mort (mapper->face, nullptr);
+  if (mort.has_data ())
+  {
+    mort.compile_flags (mapper, map);
+    return;
+  }
 }
 
 
 hb_bool_t
 hb_aat_layout_has_substitution (hb_face_t *face)
 {
-  return _get_morx (face).has_data ();
+  return _get_morx (face).has_data () ||
+	 _get_mort (face).has_data ();
 }
 
 void
@@ -209,10 +275,22 @@ hb_aat_layout_substitute (hb_ot_shape_plan_t *plan,
 			  hb_buffer_t *buffer)
 {
   hb_blob_t *blob;
-  const AAT::morx& morx = _get_morx (font->face, &blob);
 
-  AAT::hb_aat_apply_context_t c (plan, font, buffer, blob);
-  morx.apply (&c);
+  const AAT::morx& morx = _get_morx (font->face, &blob);
+  if (morx.has_data ())
+  {
+    AAT::hb_aat_apply_context_t c (plan, font, buffer, blob);
+    morx.apply (&c);
+    return;
+  }
+
+  const AAT::mort& mort = _get_mort (font->face, &blob);
+  if (mort.has_data ())
+  {
+    AAT::hb_aat_apply_context_t c (plan, font, buffer, blob);
+    mort.apply (&c);
+    return;
+  }
 }
 
 
@@ -233,8 +311,8 @@ hb_aat_layout_position (hb_ot_shape_plan_t *plan,
   hb_blob_t *ankr_blob;
   const AAT::ankr& ankr = _get_ankr (font->face, &ankr_blob);
 
-  AAT::hb_aat_apply_context_t c (plan, font, buffer, blob,
-				 ankr, ankr_blob->data + ankr_blob->length);
+  AAT::hb_aat_apply_context_t c (plan, font, buffer, blob);
+  c.set_ankr_table (&ankr, ankr_blob->data + ankr_blob->length);
   kerx.apply (&c);
 }
 

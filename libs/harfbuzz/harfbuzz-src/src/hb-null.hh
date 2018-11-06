@@ -87,7 +87,7 @@ template <typename Type>
 static inline Type& Crap (void) {
   static_assert (sizeof (Type) <= HB_NULL_POOL_SIZE, "Increase HB_NULL_POOL_SIZE.");
   Type *obj = reinterpret_cast<Type *> (_hb_CrapPool);
-  *obj = Null(Type);
+  memcpy (obj, &Null(Type), sizeof (*obj));
   return *obj;
 }
 #define Crap(Type) Crap<typename hb_remove_const<typename hb_remove_reference<Type>::value>::value>()
@@ -101,6 +101,30 @@ struct CrapOrNull<const Type> {
   static inline Type const & get (void) { return Null(Type); }
 };
 #define CrapOrNull(Type) CrapOrNull<Type>::get ()
+
+
+/*
+ * hb_nonnull_ptr_t
+ */
+
+template <typename P>
+struct hb_nonnull_ptr_t
+{
+  typedef typename hb_remove_pointer<P>::value T;
+
+  inline hb_nonnull_ptr_t (T *v_ = nullptr) : v (v_) {}
+  inline T * operator = (T *v_) { return v = v_; }
+  inline T * operator -> (void) const { return get (); }
+  inline T & operator * (void) const { return *get (); }
+  inline T ** operator & (void) const { return &v; }
+  /* Only auto-cast to const types. */
+  template <typename C> inline operator const C * (void) const { return get (); }
+  inline operator const char * (void) const { return (const char *) get (); }
+  inline T * get (void) const { return v ? v : const_cast<T *> (&Null(T)); }
+  inline T * get_raw (void) const { return v; }
+
+  T *v;
+};
 
 
 #endif /* HB_NULL_HH */
