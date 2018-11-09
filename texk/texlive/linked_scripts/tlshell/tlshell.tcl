@@ -10,20 +10,38 @@ package require Tk
 # security: disable send
 catch {rename send {}}
 
+# unix: make sure TL comes first on process searchpath
+# on windows, runscript takes care of this.
+if {$::tcl_platform(platform) ne "windows"} {
+  set texbin [file dirname [file normalize [info script]]]
+  set savedir [pwd]
+  cd $texbin
+  set texbin [pwd]
+  cd $savedir
+  # prepend texbin to PATH, unless it is already the _first_
+  # path component
+  set dirs [split $::env(PATH) ":"]
+  if {[lindex $dirs 0] ne $texbin} {
+    set ::env(PATH) "${texbin}:$::env(PATH)"
+  }
+  unset texbin
+  unset savedir
+  unset dirs
+  # now is a good time to ask tlmgr for the _TL_ name of our platform
+  set ::our_platform [exec tlmgr print-platform]
+}
+
 # declarations and utilities shared with install-tl-gui.tcl
 set ::instroot [exec kpsewhich -var-value=TEXMFROOT]
 source [file join $::instroot "tlpkg" "TeXLive" "tltcl.tcl"]
 
 # searchpath and locale:
 # windows: most scripts run via [w]runscript, which adjusts the searchpath
-# for the current process. The provided tcl/tk can set locale on the fly.
-# unix/linux:
-# we may need to run tlshell.tcl via a wrapper in order to
-# make localization work right for tcl/tk version 8.5 and on macos.
-# tlshell.[sh|tcl] should  be run via a symlink in a directory
+# for the current process.
+# tlshell.tcl should  be run via a symlink in a directory
 # which also contains (a symlink to) kpsewhich.
 # This directory will be prepended to the searchpath.
-# kpsewhich will disentangle symlinks.
+# kpsewhich should disentangle symlinks.
 
 # dis/enable the restore dialog
 set do_restore 0
@@ -144,6 +162,8 @@ proc long_message {str type {p "."}} {
   }
 
   place_dlg .tlmg $p
+  tkwait window .tlmg
+  return $::dialog_ans
 } ; # long_message
 
 proc any_message {str type {p "."}} {
@@ -930,33 +950,6 @@ proc pick_local_repo {} {
   }
 } ; # pick_local_repo
 
-# what is wrong with this version?
-#proc get_repos_from_tlmgr {} {
-#  array unset ::repos
-#  run_cmd_waiting "repository list"
-#  # set re0 {^\s+([^\s\(][^\(]*[^\s\(])\s+\(([^\)]+)\)$}
-#  set re0 {^[ \t]+(\S.*\S)[ \t]+\(([^\)]+)\)$}
-#  set re1 {^[ \t]+(\S.*\S)$}
-#  foreach l $::out_log {
-#    if [regexp $re0 $l dum r t] {
-#      # repository with tag
-#      puts "$l\n$dum\nrep $r tag $t"
-#      set ::repos($t) $r
-#    } elseif [regexp $re1 $l dum r] {
-#      # repository without tag, assign repository itself as tag
-#      puts "rep $r"
-#      set ::repos($r) $r
-#    }
-#  }
-#  if {[llength [array names ::repos]] == 1} {
-#    set n [lindex [array names ::repos] 0]
-#    if {$n ne "main"} {
-#      set ::repos(main) $::repos($n)
-#      array unset ::repos $n
-#    }
-#  }
-#} ; # get_repos_from_tlmgr
-
 proc get_repos_from_tlmgr {} {
   array unset ::repos
   run_cmd_waiting "option repository"
@@ -969,8 +962,8 @@ proc get_repos_from_tlmgr {} {
     set nr [llength $reps]
     foreach rp $reps {
       # decode spaces and %
-      #set rp [string map {"%20" " "} $rp]
-      #set rp [string map {"%25" "%"} $rp]
+      set rp [string map {"%20" " "} $rp]
+      set rp [string map {"%25" "%"} $rp]
       if {! [regexp {^(.+)#(.+)$} $rp dum r t]} {
         # no tag; use repository as its own tag
         set r $rp
@@ -1008,13 +1001,11 @@ proc set_repos_in_tlmgr {} {
         append rp "#$nm"
       }
     }
-    # for now, ignore the possibility of spaces in paths;
-    # I think tlmgr has bugs there
-    #set rp [string map {"%" "%25"} $rp]
-    #set rp [string map {" " "%20"} $rp]
+    # encode % and spaces
+    set rp [string map {"%" "%25"} $rp]
+    set rp [string map {" " "%20"} $rp]
     append opt_repos " $rp"
   }
-  # puts "repository set [string range $opt_repos 1 end]"
   run_cmd_waiting "repository set [string range $opt_repos 1 end]"
 }; # set_repos_in_tlmgr
 
@@ -1035,21 +1026,52 @@ proc print_repos {} {
     }
     return $s
   }
-}
+} ; # print_repos
 
 proc repos_commit {} {
-  .topf.lrepos configure -text [print_repos]
-  set_repos_in_tlmgr
-  close_tlmgr
-  start_tlmgr
-  # reload remote package information
-  set ::have_remote 0
-  get_packages_info_remote
-  collect_filtered
+  set changes 0
+  # first remove pinning if appropriate
+  # then set repositories
+  # then add pinning if appropriate
+  if {! [regexp {^\s*$} [.tlr.new get]]} {
+    if {$::repos(main) ne [.tlr.new get]} {
+      set ::repos(main) [.tlr.new get]
+      set changes 1
+    }
+  }
+  set had_contrib 0
+  if $::toggle_contrib {
+    set changes 1
+    foreach nm [array names ::repos] {
+      if {$::repos($nm) eq $::tlcontrib} {
+        set had_contrib 1
+        run_cmd "pinning remove $nm --all" 0
+        run_cmd "pinning remove $::repos($nm) --all" 0
+        vwait ::done_waiting
+        array unset ::repos $nm
+      }
+    }
+    if {! $had_contrib} {
+      set ::repos(tlcontrib) $::tlcontrib
+    }
+  }
+  if $changes {
+    set_repos_in_tlmgr
+    .topf.lrepos configure -text [print_repos]
+    close_tlmgr
+    start_tlmgr
+    # reload remote package information
+    if {$::toggle_contrib && ! $had_contrib} {
+      run_cmd_waiting "pinning add tlcontrib \"*\""
+    }
+    set ::have_remote 0
+    get_packages_info_remote
+    collect_filtered
+  }
 } ; # repos_commit
 
 # main repository dialog
-proc main_repository {} {
+proc repository_dialog {} {
 
   # dialog toplevel with
   # - popup menu of mirrors (parse tlpkg/installer/ctan-mirrors.pl)
@@ -1073,7 +1095,7 @@ proc main_repository {} {
       -in .tlr.info -row $row -column 0 -sticky w
   pgrid [ttk::label .tlr.cur -text $::repos(main)] \
       -in .tlr.info -row 0 -column 1 -sticky w
-  # new repository
+  # proposed new repository
   incr row
   pgrid [ttk::label .tlr.lnew -text [__ "New"]] \
       -in .tlr.info -row $row -column 0 -sticky w
@@ -1082,13 +1104,13 @@ proc main_repository {} {
 
   ### three ways to specify a repository ###
   pack [ttk::frame .tlr.mirbuttons] -in .tlr.bg -fill x
-  # default remote repository
+  # 1. default remote repository
   ttk::button .tlr.ctan -text [__ "Any CTAN mirror"] -command {
     .tlr.new delete 0 end
     .tlr.new insert end $::any_mirror
   }
   ppack .tlr.ctan -in .tlr.mirbuttons -side left -fill x
-  # freshly create a cascading mirror dropdown menu
+  # 2. specific repository: create a cascading dropdown menu of mirrors
   destroy .tlr.mir.m
   if {[dict size $::mirrors] == 0} read_mirrors
   do_debug "[dict size $::mirrors] mirrors"
@@ -1112,15 +1134,39 @@ proc main_repository {} {
       }
     }
   }
-  # local repository
+  # 3. local repository
   ttk::button .tlr.browse -text [__ "Local directory..."] -command {
     .tlr.new delete 0 end; .tlr.new insert end [pick_local_repo]}
   ppack .tlr.browse -in .tlr.mirbuttons -side left -fill x
 
+  ### add/remove tlcontrib ###
+  ttk::label .tlr.contribt -text [__ "tlcontrib additional repository"] \
+      -font bfont
+  pack .tlr.contribt -in .tlr.bg -anchor w -padx 3 -pady [list 10 3]
+  pack [ttk::label .tlr.contribl] -in .tlr.bg -anchor w -padx 3 -pady 3
+  ttk::checkbutton .tlr.contribb -variable ::toggle_contrib
+  pack .tlr.contribb -in .tlr.bg -anchor w -padx 3 -pady [list 3 10]
+  set ::toggle_contrib 0
+  set has_contrib 0
+  foreach nm [array names ::repos] {
+    if {$::repos($nm) eq $::tlcontrib} {
+      set has_contrib 1
+      set contrib_tag $nm
+      break
+    }
+  }
+  if $has_contrib {
+    .tlr.contribl configure -text [__ "tlcontrib repository is included"]
+    .tlr.contribb configure -text [__ "Remove tlcontrib repository"]
+  } else {
+    .tlr.contribl configure -text [__ "tlcontrib repository is not included"]
+    .tlr.contribb configure -text [__ "Add tlcontrib repository"]
+  }
+
   # two ways to close the dialog
   pack [ttk::frame .tlr.closebuttons] -pady [list 10 0] -in .tlr.bg -fill x
   ttk::button .tlr.save -text [__ "Save and Load"] -command {
-    set ::repos(main) [.tlr.new get]
+    #set ::repos(main) [.tlr.new get]
     repos_commit
     end_dlg "" .tlr
   }
@@ -1130,79 +1176,7 @@ proc main_repository {} {
 
   place_dlg .tlr .
   wm resizable .tlr 0 0
-} ; # main_repository
-
-proc more_repos {} {
-
-  create_dlg .tladr .
-  wm title .tladr [__ "Additional repositories"]
-
-  # wallpaper frame; see populate_main
-  pack [ttk::frame .tladr.bg] -expand 1 -fill x
-
-  set ttl [__ "Additional repositories"]
-  ttk::label .tladr.title -text "$ttl (does nothing yet)" -font bigfont
-  pack .tladr.title -in .tladr.bg -padx 3 -pady 10
-
-  pack [ttk::frame .tladr.tlcf] -in .tladr.bg -anchor w -padx 3 -pady 10
-  ppack [ttk::button .tladr.tlc -text [__ "Add tlcontrib"]] \
-      -in .tladr.tlcf -side left
-  ttk::label .tladr.tlcl -text [__ "Packages which cannot be part of TeX Live"]
-  pack .tladr.tlcl -in .tladr.tlcf -side left
-
-  # treeview with repositories
-  ppack [ttk::frame .tladr.adrf] -in .tladr.bg -fill x -side top
-  ttk::treeview .tladr.reps -columns {url tag} -height 3 -show headings \
-      -selectmode browse -yscrollcommand {.tladr.vsb set}
-  .tladr.reps heading url -text "Url" -anchor w
-  .tladr.reps heading tag -text [__ "Tag (optional)"] -anchor w
-  .tladr.reps column url -width [expr {$::cw * 60}]
-  .tladr.reps column tag -width [expr {$::cw * 15}]
-  grid columnconfigure .tladr.adrf 0 -weight 1
-  ttk::scrollbar .tladr.vsb -orient vertical -command {.tladr.reps yview}
-  incr row
-  grid .tladr.vsb -in .tladr.adrf -row 0 -column 1 -sticky ns
-  grid .tladr.reps -in .tladr.adrf -row 0 -column 0 -sticky news
-  #pack .tladr.reps -in .tladr.adrf -side left -fill both -expand 1
-  foreach nm [array names ::repos] {
-    if {$nm ne "main"} {
-      if {$nm ne $::repos($nm)} {
-        .tladr.reps insert {} end -values [list $::repos($nm) $nm]
-      } else {
-        .tladr.reps insert {} end -values [list $::repos($nm) ""]
-      }
-    }
-  }
-  pack [ttk::frame .tladr.add_del] -in .tladr.bg -fill x -expand 1
-  ppack [ttk::button .tladr.delb -text [__ "Delete"]] \
-      -in .tladr.add_del -side left -fill x
-  ppack [ttk::button .tladr.addb -text [__ "Add"]] \
-      -in .tladr.add_del -side right -fill x
-
-  # pinning
-
-  ppack [ttk::frame .tladr.pinf] -in .tladr.bg -fill x -expand 1
-  ttk::label .tladr.pinl -text "Pinning" -font bfont
-  ttk::scrollbar .tladr.pinvbs -orient vertical -command {.tladr.pintx yview}
-  ttk::scrollbar .tladr.pinhbs -orient horizontal -command {.tladr.pintx xview}
-  text .tladr.pintx -height 3 -wrap none \
-      -yscrollcommand {.tladr.pinvbs set} -xscrollcommand {.tladr.pinhbs set}
-  grid columnconfigure .tladr.pinf 0 -weight 1
-  grid .tladr.pinl -in .tladr.pinf -row 0 -column 0 -sticky w
-  grid .tladr.pinhbs -in .tladr.pinf -row 2 -column 0 -sticky ew
-  grid .tladr.pinvbs -in .tladr.pinf -row 1 -column 1 -sticky ns
-  grid .tladr.pintx -in .tladr.pinf -row 1 -column 0 -sticky news
-
-  pack [ttk::frame .tladr.cancelok] \
-      -in .tladr.bg -fill x -pady [list 10 0] -side bottom
-  ppack [ttk::button .tladr.ok -text [__ "Ok"]] -in .tladr.cancelok -side right
-  ppack [ttk::button .tladr.cancel -text [__ "Cancel"]] \
-      -in .tladr.cancelok -side right
-  .tladr.ok configure -command {end_dlg "" .tladr}
-  .tladr.cancel configure -command {end_dlg "" .tladr}
-
-  place_dlg .tladr
-}
+} ; # repository_dialog
 
 ### platforms
 
@@ -1837,6 +1811,45 @@ proc set_paper {p} {
   run_cmd "paper paper $p" 1
 }
 
+proc set_language {l} {
+  set ok 1
+  if [catch {exec kpsewhich -var-value "TEXMFCONFIG"} d] {set ok 0}
+  if $ok {
+    set d [file join $d "tlmgr"]
+    if [catch {file mkdir $d}] {set ok 0}
+  }
+  set fn [file join $d "config"]
+  set oldlines [list]
+  if {$ok && ! [catch {open $fn r} fid]} {
+    set cnt 0
+    while 1 {
+      if [catch {chan gets $fid} ll] break
+      if [chan eof $fid] break
+      incr cnt
+      if {! [regexp {^\s*gui-lang} $ll]} {
+          lappend oldlines $ll
+      }
+      if {$cnt>20} break
+    }
+    catch {chan close $fid}
+  }
+  lappend oldlines "gui-lang = $l"
+  if {$ok && ! [catch {open $fn w} fid]} {
+    foreach ll $oldlines {
+      if [catch {puts $fid $ll}] {
+        set ok 0
+        break
+      }
+    }
+    catch {chan close $fid}
+  }
+  if $ok {
+    restart_self
+  } else {
+    tk_messageBox -message [__ "Cannot set default GUI language"] -icon error
+  }
+} ; # set_language
+
 ##### running external commands #####
 
 # For capturing an external command, we need a separate output channel,
@@ -1911,7 +1924,8 @@ proc populate_main {} {
   .mn.file add command -command {destroy .} -label [__ "Exit"] -underline 1
 
   # inx: keeping count to record indices where needed,
-  # i.e. when an entry needs to be referenced
+  # i.e. when an entry needs to be referenced.
+  # not all submenus need this.
   .mn add cascade -label [__ "Packages"] -menu .mn.pkg
   menu .mn.pkg
   set inx 0
@@ -1946,18 +1960,23 @@ proc populate_main {} {
 
   .mn add cascade -label [__ "Options"] -menu .mn.opt -underline 0
   menu .mn.opt
-  set inx 0
-  .mn.opt add command -label [__ "Change main repository"] \
-      -command main_repository
-  incr inx
-  .mn.opt add command -label [__ "Additional repositories"] \
-      -command more_repos
-  incr inx
+  .mn.opt add command -label [__ "Repositories"] \
+      -command repository_dialog
+
   .mn.opt add cascade -label [__ "Paper"] -menu .mn.opt.paper
   menu .mn.opt.paper
   foreach p [list a4 letter] {
     .mn.opt.paper add command -label $p -command "set_paper $p"
   }
+
+  if {[llength $::langs] > 1} {
+    .mn.opt add cascade -label [__ "GUI language"] -menu .mn.opt.lang
+    menu .mn.opt.lang
+    foreach l $::langs {
+      .mn.opt.lang add command -label $l -command "set_language $l"
+    }
+  }
+
   if {$::tcl_platform(platform) ne "windows"} {
     incr inx
     set ::inx_platforms $inx
@@ -2027,7 +2046,7 @@ proc populate_main {} {
   pgrid .pkfilter.upd -column 0 -row 3 -sticky w
 
   # filter on detail level: all, coll, schm
-  ttk::label .pkfilter.ldtl -font TkHeadingFont -text [__ "Detail >> Global"]
+  ttk::label .pkfilter.ldtl -font TkHeadingFont -text [__ "Global >> Detail"]
   ttk::radiobutton .pkfilter.alld -text [__ All] -value all \
       -variable ::dtl_opt -command collect_filtered
   ttk::radiobutton .pkfilter.coll -text [__ "Collections and schemes"] \
@@ -2115,22 +2134,7 @@ proc populate_main {} {
 proc initialize {} {
   # seed random numbers
   expr {srand([clock seconds])}
-  # unix: make sure TL comes first on process searchpath
-  if {$::tcl_platform(platform) ne "windows"} {
-    set texbin [file dirname [file normalize [info script]]]
-    set savedir [pwd]
-    cd $texbin
-    set texbin [pwd]
-    cd $savedir
-    # prepend texbin to PATH, unless it is already the _first_
-    # path component
-    set dirs [split $::env(PATH) ":"]
-    if {[lindex $dirs 0] ne $texbin} {
-      set ::env(PATH) "${texbin}:$::env(PATH)"
-    }
-    # now is a good time to ask tlmgr for the _TL_ name of our platform
-    set ::our_platform [exec tlmgr print-platform]
-  }
+
   # directory for temp files
   set attemptdirs {}
   foreach tmp {TMPDIR TEMP TMP} {
@@ -2170,6 +2174,13 @@ proc initialize {} {
     set fname [file join $::tempsub \
       [clock format [clock seconds] -format {%H:%M}]]
     set ::flid [open $fname w]
+  }
+
+  # languages
+  set ::langs [list "en"]
+  foreach l [glob -nocomplain -directory \
+                 [file join $::instroot "tlpkg" "translations"] *.po] {
+    lappend ::langs [string range [file tail $l] 0 end-3]
   }
 
   # in case we are going to do something with json:
