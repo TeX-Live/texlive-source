@@ -1,11 +1,11 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 
 =begin
 
-= convbkmk Ver.0.10a
+= convbkmk Ver.0.20
 
-  2014.12.29
+  2018.11.11
   Takuji Tanaka
   ttk (at) t-lab.opal.ne.jp
 ((<URL:http://www.t-lab.opal.ne.jp/tex/uptex_en.html>))
@@ -25,8 +25,8 @@ the encoding conversion and formatting the bookmark data.
 
 == Requirement
 
-ruby 1.8.3 or later
-ruby 1.8.x will not be supported in the near future release.
+ruby 1.9.x or later is required.
+ruby 1.8.x is no longer supported.
 
 == Examples
 
@@ -37,7 +37,7 @@ platex (internal kanji code: euc) + hyperref + dvips :
  $ convbkmk.rb -e doc00.ps
  $ ps2pdf doc00-convbkmk.ps
 
-platex (internal kanji code: sjis) + hyperref + dvipdfmx :
+platex (kanji code: sjis) + hyperref + dvipdfmx :
  $ platex doc01.tex
  $ platex doc01.tex
  $ convbkmk.rb -s -o doc01.out
@@ -60,11 +60,16 @@ uplatex + hyperref + dvipdfmx :
 
 More examples are included in the uptex source archive.
 
+== Repository
+
+convbkmk is maintained on GitHub:
+((<URL:https://github.com/t-tk/convbkmk>))
+
 == License
 
 convbkmk
 
-Copyright (c) 2009-2014 Takuji Tanaka
+Copyright (c) 2009-2018 Takuji Tanaka
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -115,79 +120,28 @@ THE SOFTWARE.
  * Bug fix: Output of binary data might be broken in filter mode on Windows.
 : 2014.12.29  0.10a
  * Update the author's mail address and web site.
+: 2018.11.11  0.20
+ * Do not support Ruby1.8 anymore.
 
 =end
 
-Version = "0.10"
+Version = "0.20"
 
 require "optparse"
 
-if RUBY_VERSION >= "1.9"
-  $RUBY_M17N = true
+if RUBY_VERSION < "1.9"
+  abort("Ruby 1.8 or earlier is no longer supported.")
+end
 
-  class String
-    def to_utf8(enc)
-      self.force_encoding(enc.current).encode('UTF-8')
-    end
-    def utf16be_to_utf8
-      self.force_encoding('UTF-16BE').encode('UTF-8')
-    end
-    def utf8_to_utf16be
-      self.force_encoding('UTF-8').encode('UTF-16BE')
-    end
+class String
+  def to_utf8(enc)
+    self.force_encoding(enc.current).encode('UTF-8')
   end
-else
-  $RUBY_M17N = false
-
-  require "jcode" # for method each_char
-  require "nkf"
-  class String
-    def to_utf8(enc)
-      NKF.nkf('-w -x -m0 '+enc.kconv_enc, self)
-    end
-    def utf16be_to_utf8
-      NKF.nkf('-w -x -m0 --utf16-input', self)
-    end
-    def utf8_to_utf16be
-      NKF.nkf('-w16 -x -m0 --utf8-input', self)
-    end
-    def ascii_only?
-      return self !~ /[\x80-\xFF]/n
-    end
-    REPLACE_TABLE = {"\n" => "\\n", "\r" => "\\r", "\t" => "\\t",
-      "\b" => "\\b", "\f" => "\\f", "\e" => "\\e", "\"" => "\\\""}
-    def valid_encoding?
-      conv = ''
-      tmp = self.dup
-      while tmp.length>0 do
-        case tmp
-        when /\A\\\\/
-          conv += "\\\\\\\\"
-        when /\A\\[nrtbf()]/, /\A\\[0-3][0-7][0-7]/, /\A\\0x[0-9A-F]{4}/i
-          conv += "\\"+$&
-        when /\A\\/
-          conv += "\\\\"
-        when /\A[^\\]*/
-          conv += $&
-        else
-          raise 'unexpected input!'
-        end
-        tmp = $'
-      end
-      conv.gsub!(/[\n\r\t\b\f\e"]/) { |s| REPLACE_TABLE[s] }
-      conv.gsub!(/([\000-\037\177])/) { "\\%#03o" % $1.unpack("C*") }
-      tmp = "\"" + conv + "\""
-#      puts 's:' + self
-#      puts 't:' + tmp
-#      puts 'i:' + self.inspect
-      return tmp == self.inspect
-    end
-    def force_encoding(enc)
-      if (enc =~ /^(Shift_JIS|EUC-JP|UTF-8)/i)
-        $KCODE=enc
-      end
-      return self
-    end
+  def utf16be_to_utf8
+    self.force_encoding('UTF-16BE').encode('UTF-8')
+  end
+  def utf8_to_utf16be
+    self.force_encoding('UTF-8').encode('UTF-16BE')
   end
 end
 
@@ -201,12 +155,6 @@ class TeXEncoding
     @status = false
     @is_8bit = false
     @list = ['Shift_JIS', 'EUC-JP', 'UTF-8']
-    if !$RUBY_M17N
-      @kconv_enc = nil
-      @kconv_list = {'Shift_JIS' => '--sjis-input',
-                     'EUC-JP' => '--euc-input',
-                     'UTF-8' => '--utf8-input'}
-    end
   end
 
   def set_process_encoding(enc)
@@ -220,9 +168,6 @@ class TeXEncoding
       @current = enc
       @option = enc
       @status = 'fixed'
-      if !$RUBY_M17N
-        @kconv_enc = @kconv_list[enc]
-      end
     end
     return enc
   end
@@ -335,10 +280,6 @@ def check_parentheses_balance(line, enc)
       p '  option: ' + enc.option
       p '  current: ' + enc.current
       p enc.is_8bit
-      if !$RUBY_M17N
-        p '  inspect: '   + tmp_rest.inspect
-        p '  rest   :   [' + tmp_rest + ']'
-      end
       p '             [' + line + ']'
       raise 'encoding is not consistent'
     end
@@ -416,7 +357,7 @@ def conv_string_to_utf16be(line, enc)
 
   buf = ''
   conv16be = "\xFE\xFF"            # BOM U+FEFF
-  conv16be.force_encoding('UTF-16BE') if $RUBY_M17N
+  conv16be.force_encoding('UTF-16BE')
   conv16be += conv.utf8_to_utf16be # UTF-16BE with BOM
   conv16be.each_byte {|byte|
     buf += (Opts[:mode] == 'out' ? '\%03o' : '%02X') % byte
@@ -427,14 +368,12 @@ end
 
 
 def file_treatment(ifile, ofile, enc)
-  if $RUBY_M17N
-    ifile.set_encoding('ASCII-8BIT')
-    ofile.set_encoding('ASCII-8BIT')
-  end
+  ifile.set_encoding('ASCII-8BIT')
+  ofile.set_encoding('ASCII-8BIT')
 
   line = ''
   while l = ifile.gets do
-    line.force_encoding('ASCII-8BIT') if $RUBY_M17N
+    line.force_encoding('ASCII-8BIT')
     line += l
     reg = Opts[:mode] == 'out' ? %r!(\{)! : %r!(/Title|/Author|/Keywords|/Subject|/Creator|/Producer)(\s+\(|$)!
     if (line !~ reg )
