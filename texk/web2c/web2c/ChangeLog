@@ -1,3 +1,8 @@
+2018-11-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* fixwrites.c (main): check return value from fgets.
+	(tex-k 11 Nov 2018 11:53:24)
+
 2018-06-08  Karl Berry  <karl@freefriends.org>
 
 	* common.defines (aopeninwithdirname): add.

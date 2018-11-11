@@ -311,7 +311,8 @@ main (int argc,  string *argv)
       cmd = cp;
       while (!whole (buf))	/* make sure we have whole stmt */
 	{
-	  fgets (&buf[strlen (buf)], BUFSIZ - strlen (buf), stdin);
+	  if (!fgets (&buf[strlen (buf)], BUFSIZ - strlen (buf), stdin))
+            break;
 	  remove_newline (buf);
 	}
 
