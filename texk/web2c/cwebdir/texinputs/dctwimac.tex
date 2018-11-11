@@ -1,0 +1,12 @@
+\ifx\undefined\documentclass\input ctwimac.tex
+\else\endinput\fi % LaTeX will use other macros
+
+\let\acrofalse=\relax
+\input dcwebstrings.tex
+
+\def\fin{\parfillskip 0pt plus 1fil
+  \let\topsecno=\nullsec
+  \redeffin
+  \def\note##1##2.{\quad{\eightrm##1~##2.}}
+  \def\I{\par\hangindent 2em}\let\*=*
+  \readsections}

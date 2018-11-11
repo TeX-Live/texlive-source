@@ -1,0 +1,50 @@
+# International version of CWEB (CWEBbin, TeXLive).
+# Copyright (C) 2018 Andreas Scherer et al.
+# This file is distributed under the same license as the CWEB package.
+# Andreas Scherer <https://ascherer.github.io>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: CWEBbin 2018\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-01 15:41+0100\n"
+"PO-Revision-Date: 2018-12-28 16:20+0100\n"
+"Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: comm-texlive.ch:416
+#, c-format
+msgid "%s: Need one to three file arguments.\n"
+msgstr "%s: Benötige ein bis drei Dateiargumente.\n"
+
+#: comm-texlive.ch:417
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "Versuche `%s --help' für weitere Informationen.\n"
+
+#: comm-texlive.ch:436
+#, c-format
+msgid ""
+"\n"
+"Email bug reports to %s.\n"
+msgstr ""
+"\n"
+"Sende Fehler per Email an %s.\n"
+
+#: ctang-texlive.ch:33
+msgid "This is CTANGLE, Version 3.64"
+msgstr "Dies ist CTANGLE, Version 3.64"
+
+#: cweav-texlive.ch:33
+msgid "This is CWEAVE, Version 3.64"
+msgstr "Dies ist CWEAVE, Version 3.64"
+
+#: ctwill-texlive.ch:33
+#, fuzzy
+msgid "This is CTWILL, Version 3.64"
+msgstr "Dies ist CTWILL, Version 3.64"

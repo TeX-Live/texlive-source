@@ -1,0 +1,28 @@
+\ifx\undefined\documentclass\input ctproofmac.tex
+\else\endinput\fi % LaTeX will use other macros
+
+\let\acrofalse=\relax
+\input dcwebstrings.tex
+
+\def\fin{\par\vfill\eject % this is done when we are ending the index
+  \ifpagesaved\null\vfill\eject\fi % output a null index column
+  \if L\lr\else\null\vfill\eject\fi % finish the current page
+  \parfillskip 0pt plus 1fil
+  \let\topsecno=\nullsec
+  \redeffin
+  \output={\normaloutput\page\lheader\rheader}
+  \setpage
+  \def\note##1##2.{\quad{\eightrm##1~##2.}}
+  \def\I{\par\hangindent 2em}\let\*=*
+  \readsections}
+\def\con{\par\vfill\eject % finish the section names
+  \rightskip 0pt \hyphenpenalty 50 \tolerance 200
+  \setpage \output={\normaloutput\page\lheader\rheader}
+  \titletrue % prepare to output the table of contents
+  \pageno=\contentspagenumber
+  \redefcon
+  \topofcontents
+  \line{\headerline}
+  \let\ZZ=\contentsline
+  \readcontents\relax % read the contents info
+  \botofcontents \end} % print the contents page(s) and terminate
