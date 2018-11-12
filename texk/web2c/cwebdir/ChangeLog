@@ -1,3 +1,16 @@
+2018-12-25  Andreas Scherer  <https://ascherer.github.io>
+
+	* Purge cwebboot.h[in] from CWEB build process.
+	* Purge cweb.h from CWEB build process.
+	* Makefile.in,
+	* am/bootstrap.am,
+	* am/cweb.am: Depend on 'comm-foo.h' instead of 'common.h'
+	when tangling the CWEB sources.
+
+2018-11-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* Integration of CWEBbin as the new CWEB in TeXLive.
+
 2018-11-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctang-w2c.ch,

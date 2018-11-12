@@ -3150,7 +3150,7 @@ nodist_man_MANS =
 TEST_EXTENSIONS = .pl .test
 EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap-sh tangle.web tangle.ch tangleboot.pin cwebdir \
-	ctangleboot.cin cwebboot.cin cwebboot.hin tangle.test \
+	ctangleboot.cin cwebboot.cin tangle.test \
 	$(web_programs:=.web) $(web_programs:=.ch) $(web_tests) \
 	tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst \
 	tests/auxinclude.aux tests/auxinclude.bbl tests/auxinclude.bib \
@@ -3491,8 +3491,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	synctexdir/synctex-xe-rec.ch3 $(synctex_tests) libmd5/md5.test
 DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	tangleboot.c tangleboot.h tangleboot.p tangleboot-web2c \
-	ctangle.c cweb.c cweb.h common-ctangle ctangleboot.c \
-	cwebboot.c cwebboot.h cftest.p $(web_programs:=.c) \
+	ctangle.c cweb.c common-ctangle ctangleboot.c \
+	cwebboot.c cftest.p $(web_programs:=.c) \
 	$(web_programs:=.h) $(web_programs:=.p) \
 	$(web_programs:=-web2c) tests/xexampl.aux tests/xexampl.bbl \
 	tests/xexampl.blg longline.aux longline.bbl longline.bib \
@@ -3671,7 +3671,7 @@ nodist_tangle_SOURCES = tangle.c tangle.h
 nodist_tangleboot_SOURCES = tangleboot.c tangleboot.h
 tangleboot_DEPENDENCIES = $(default_dependencies)
 nodist_ctangle_SOURCES = ctangle.c cweb.c
-# ctangle.c and cweb.[ch] are special cases, since they are needed to compile
+# ctangle.c and cweb.c are special cases, since they are needed to compile
 # themselves.  We depend on ctangleboot, even though we might not use it.
 ctangleboot = AM_V_P=$(AM_V_P) $(SHELL) ./ctangleboot-sh $@
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
@@ -21457,15 +21457,14 @@ tangleboot-web2c: tangleboot.p $(web2c_depend)
 .pin.p:
 	$(cp_silent)cp -f $< $@
 $(tangleboot_OBJECTS): $(tangleboot_DEPENDENCIES)
-$(ctangle_OBJECTS): cweb.h
-ctangle.c: ctangleboot$(EXEEXT) cwebdir/common.h cwebdir/ctangle.w cwebdir/ctang-w2c.ch ctangleboot-sh
+ctangle.c: ctangleboot$(EXEEXT) cwebdir/comm-foo.h cwebdir/ctangle.w cwebdir/ctang-w2c.ch ctangleboot-sh
 	@$(ctangleboot) ctangle ctang-w2c
-cweb.c cweb.h: common-ctangle
+cweb.c: common-ctangle
 	@$(ctangleboot) common comm-w2c cweb.c
 common-ctangle: ctangleboot$(EXEEXT) cwebdir/common.w cwebdir/comm-w2c.ch ctangleboot-sh
 	@$(ctangleboot) common comm-w2c cweb.c
-$(ctangleboot_OBJECTS): cwebboot.h $(ctangleboot_DEPENDENCIES)
-# ctangleboot.cin and cwebboot.[ch]in are in the distribution
+$(ctangleboot_OBJECTS): $(ctangleboot_DEPENDENCIES)
+# ctangleboot.cin and cwebboot.cin are in the distribution
 .cin.c:
 	$(cp_silent)cp -f $< $@
 .hin.h:
@@ -21587,8 +21586,7 @@ weave.p: tangle$(EXEEXT) weave.web weave.ch
 weave.log: weave$(EXEEXT)
 ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
-$(cweave_OBJECTS): cweb.h
-cweave.c: ctangle$(EXEEXT) cwebdir/common.h cwebdir/cweave.w cwebdir/prod.w cwebdir/cweav-w2c.ch
+cweave.c: ctangle$(EXEEXT) cwebdir/comm-foo.h cwebdir/cweave.w cwebdir/prod.w cwebdir/cweav-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
 tie.c: ctangle$(EXEEXT) tiedir/tie.w tiedir/tie-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/tiedir $(ctangle) tie.w tie-w2c.ch
