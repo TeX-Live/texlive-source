@@ -1,0 +1,75 @@
+#!/bin/bash
+#
+# Author: Jiří Kozlovský <pdftex-quiet@jkozlovsky.cz>
+# Licence: GNU GPLv3
+# Version: v1.0.0
+#
+
+# Print help if required
+if [[ "$@" =~ -help ]]; then
+	echo "Usage: pdftex-quiet [OPTION]... TEXNAME[.tex]"
+	echo
+
+	# Print only arguments from the pdftex help
+	pdftex --help | grep --color=never -E '^[\[-]' -A500
+	exit $?
+fi
+
+# Do not ignore failures within the pipe
+set -o pipefail
+
+# FILENAME is always the last argument for pdftex
+# Create FILENAME variable only if there was provided some argument
+test $# -gt 0 && eval FILENAME=\${$#}
+
+# Test that the filename was provided
+test -z "$FILENAME" && { echo "It's mandatory to provide the filename of tex source as first argument!" && exit 1; }
+
+# Test the existence of the file provided
+test -f "$FILENAME" || test -f "$FILENAME.tex" || { echo "Last argument must be a file! Provided file '$FILENAME' doesn't exist!" && exit 2; }
+
+# Run pdftex on the file.
+# Use -halt-on-error because grep basically disables the interactive mode.
+# Using $@ we also allow to pass all other arguments to the pdftex.
+
+# Use grep to show only errors that occur with another 200 lines followed by the error.
+# Errors start with '!' at the line start. We match whole line to mark it in red bold color.
+
+# Finally, let's inverse the grep command result so the command is considered failed 
+# only if grep have found something.
+
+# Also make sure we provide no stdin by piping program with no output ':'
+# We have to do this, because grep basically disables program <-> user dialog by not printing
+# characters without finishing newline character (which is usually printed after user's input).
+
+: | \
+  pdftex --halt-on-error $@ | \
+  { ! grep --color=auto '^!.*' -A200; }
+
+EVERYTHING_SUCCEEDED=$?
+
+# And finally, print the result accordingly
+if ! test $EVERYTHING_SUCCEEDED -eq 0; then
+  # But first let's print empty line to improve readability
+  echo
+  echo "---------------------------------------------"
+  echo "- Failed to compile the provided TEX file! --"
+  echo "---------------------------------------------"
+
+  # The compilation has actually failed, so exit with failure status code
+  exit $EVERYTHING_SUCCEEDED
+else
+  echo "The compilation was successful!"
+
+  # Finally, we are about to print the result pdf/dvi file name, so parse the arguments provided (if any)
+  [[ "$@" =~ -output-format(=|[ ]*)dvi($|[ ]*) ]] && EXTENSION=dvi || EXTENSION=pdf
+  [[ "$@" =~ -output-directory(=|[ ]*)([^ $]*) ]] && OUTPUT_DIRECTORY="${BASH_REMATCH[2]}/"
+
+  # Replace whatever extension we provided to pdftex with either dvi or pdf (based on arguments provided)
+  OUTPUT_FILENAME="${FILENAME/%.*/.${EXTENSION}}"
+
+  echo "Output file: '${OUTPUT_DIRECTORY}${OUTPUT_FILENAME}'"
+
+  # The compilation has succeeded, so exit with success status code
+  exit $EVERYTHING_SUCCEEDED
+fi

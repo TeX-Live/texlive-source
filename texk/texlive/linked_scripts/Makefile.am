@@ -78,6 +78,7 @@ texmf_shell_scripts = \
 	pdfjam/pdfjoin \
 	pdfjam/pdfnup \
 	pdfjam/pdfpun \
+	pdftex-quiet/pdftex-quiet \
 	pdfxup/pdfxup \
 	pst-pdf/ps4pdf \
 	simpdftex/simpdftex \
