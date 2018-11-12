@@ -1,3 +1,10 @@
+2019-01-05  Andreas Scherer  <https://ascherer.github.io>
+
+	* Integration of CWEBbin as the new CWEB in TeXLive.
+	* Add CTWILL material on top of CWEAVE.
+	* Add CTWILL utility programs 'refsort' and 'twinx'
+	with non-generic names.
+
 2018-12-30  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweave.w,
