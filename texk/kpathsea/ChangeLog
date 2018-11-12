@@ -1,3 +1,7 @@
+2018-11-12  Andreas Scherer  <https://ascherer.github.io>
+
+	* tex-make.c (maketex): check return value from dup(2).
+
 2018-07-02  Karl Berry  <karl@freefriends.org>
 
 	* kpsewhich.c (lookup): warn that --all is ignored with bitmap fonts.

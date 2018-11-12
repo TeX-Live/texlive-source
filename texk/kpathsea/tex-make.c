@@ -318,20 +318,32 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
       /* stdin -- the child will not receive input from this */
       if (childin != 0) {
         close(0);
-        dup(childin);
+        if (dup(childin) != 0) {
+          perror("kpathsea: dup(2) failed for stdin");
+          close(childin);
+          _exit(1);
+        }
         close(childin);
       }
       /* stdout -- the output of the child's action */
       if (childout[1] != 1) {
         close(1);
-        dup(childout[1]);
+        if (dup(childout[1]) != 1) {
+          perror("kpathsea: dup(2) failed for stdout");
+          close(childout[1]);
+          _exit(1);
+        }
         close(childout[1]);
       }
       /* stderr -- use /dev/null if we discard errors */
       if (childerr != 2) {
         if (kpse->make_tex_discard_errors) {
           close(2);
-          dup(childerr);
+          if (dup(childerr) != 2) {
+            perror("kpathsea: dup(2) failed for stderr");
+            close(childerr);
+            _exit(1);
+          }
         }
         close(childerr);
       }
