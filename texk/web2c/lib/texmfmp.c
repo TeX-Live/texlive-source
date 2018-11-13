@@ -2219,6 +2219,9 @@ catch_interrupt (int arg)
 static boolean start_time_set = false;
 static time_t start_time = 0;
 
+static boolean SOURCE_DATE_EPOCH_set = false;
+static boolean FORCE_SOURCE_DATE_set = false;
+
 void init_start_time() {
     char *source_date_epoch;
     unsigned long long epoch;
@@ -2239,6 +2242,7 @@ FATAL1 ("invalid epoch-seconds-timezone value for environment variable $SOURCE_D
                 epoch = 32535291599ULL;
 #endif
             start_time = epoch;
+            SOURCE_DATE_EPOCH_set = true;
         } else
 #endif /* not onlyTeX */
         {
@@ -2263,6 +2267,7 @@ get_date_and_time (integer *minutes,  integer *day,
   if (sde_texprim && STREQ (sde_texprim, "1")) {
     init_start_time ();
     tmptr = gmtime (&start_time);
+    FORCE_SOURCE_DATE_set = true;
   } else
 #endif /* not onlyTeX */
     {
@@ -3150,9 +3155,13 @@ void getfilemoddate(integer s)
 {
     struct stat file_data;
 
-    char *file_name = kpse_find_tex(makecfilename(s));
+    const_string orig_name = makecfilename(s);
+    char *file_name = kpse_find_tex(orig_name);
     if (file_name == NULL) {
         return;                 /* empty string */
+    }
+    if (! kpse_in_name_ok(file_name)) {
+       return;                  /* no permission */
     }
 
     recorder_record_input(file_name);
@@ -3163,8 +3172,8 @@ void getfilemoddate(integer s)
     if (stat(file_name, &file_data) == 0) {
 #endif
         size_t len;
-
-        makepdftime(file_data.st_mtime, time_str, /* utc= */false);
+	boolean use_utc = FORCE_SOURCE_DATE_set && SOURCE_DATE_EPOCH_set;
+        makepdftime(file_data.st_mtime, time_str, use_utc);
         len = strlen(time_str);
         if ((unsigned) (poolptr + len) >= (unsigned) (poolsize)) {
             poolptr = poolsize;
