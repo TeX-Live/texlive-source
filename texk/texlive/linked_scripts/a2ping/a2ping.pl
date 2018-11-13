@@ -2277,6 +2277,8 @@ just::end __END__
 
 Dat: `=item * foo' is wrong, puts big space between `*' and `foo'
 
+=encoding latin1
+
 =begin man
 
 .ds pts-dev \*[.T]
@@ -2293,7 +2295,7 @@ Dat: `=item * foo' is wrong, puts big space between `*' and `foo'
 .\}
 .ad n
 
-=end
+=end man
 
 =head1 NAME
 
@@ -2377,7 +2379,11 @@ Show the man page
 
 Show progress and debug messages (default: no)
 
+=back
+
 =head2 Options for the Bounding box
+
+=over 2
 
 =item B<--(no)hires>
 
@@ -2399,8 +2405,11 @@ Method for determining the BoundingBox  (default: guess)
 
 Allow page content below and left of the origin (default: no)
 
+=back
 
 =head2 Options for graphics and fonts
+
+=over 2
 
 =item B<--(no)compress>
 
@@ -2422,8 +2431,11 @@ allow lossy image filters (EPS->PDF) (default: yes)
 
 min color for 1 in 8->1 bit conv  (default: 128)
 
+=back
 
 =head2 Options for debugging and changing internals
+
+=over 2
 
 =item B<--(no)tmpunlink>
 
@@ -2446,6 +2458,7 @@ Pass extra arguments to gs
 
 Pass extra arguments to external program (i.e pdftops)
 
+=back
 
 =head1 TIPS AND TRICKS
 
