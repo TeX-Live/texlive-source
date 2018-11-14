@@ -1,3 +1,7 @@
+2018-11-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* printversion.c: free xmalloc'd prog_name.
+
 2018-11-13  Karl Berry  <karl@freefriends.org>
 
 	* texmfmp.c (FORCE_SOURCE_DATE_set, SOURCE_DATE_EPOCH_set): new static.

@@ -67,5 +67,7 @@ printversionandexit (const_string banner,
   if (extra_info)
     fputs (extra_info, stdout);
 
+  free (prog_name);
+
   uexit (0);
 }
