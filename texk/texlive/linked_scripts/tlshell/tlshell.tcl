@@ -33,7 +33,7 @@ if {$::tcl_platform(platform) ne "windows"} {
 
 # declarations and utilities shared with install-tl-gui.tcl
 set ::instroot [exec kpsewhich -var-value=TEXMFROOT]
-source [file join $::instroot "tlpkg" "TeXLive" "tltcl.tcl"]
+source [file join $::instroot "tlpkg" "tltcl" "tltcl.tcl"]
 
 # searchpath and locale:
 # windows: most scripts run via [w]runscript, which adjusts the searchpath

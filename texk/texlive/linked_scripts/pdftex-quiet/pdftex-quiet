@@ -1,36 +1,81 @@
 #!/bin/bash
 #
-# Author: Jiří Kozlovský <pdftex-quiet@jkozlovsky.cz>
-# Licence: GNU GPLv3
-# Version: v1.0.0
+# pdftex-quiet
+# Copyright (C) 2018  Jiří Kozlovský <pdftex-quiet@jkozlovsky.cz>
 #
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Print help if required
-if [[ "$@" =~ -help ]]; then
-	echo "Usage: pdftex-quiet [OPTION]... TEXNAME[.tex]"
-	echo
-
-	# Print only arguments from the pdftex help
-	pdftex --help | grep --color=never -E '^[\[-]' -A500
-	exit $?
-fi
+VERSION="v1.1.0"
 
 # Do not ignore failures within the pipe
 set -o pipefail
 
-# FILENAME is always the last argument for pdftex
+# Get the script name
+BASENAME=`basename "$0"`
+
+# Remove the script's name '-quiet' suffix to get the underlying program to wrap
+WRAPPED_PROGRAM=${BASENAME/%-quiet}
+
+# Assert the wrapped program is either pdflatex or pdftex
+[[ "$WRAPPED_PROGRAM" =~ ^pdf(la)?tex$ ]] || {
+	echo "ERROR: Unsupported program to be wrapped!";
+	echo "       - only pdftex & pdflatex is allowed, but '$WRAPPED_PROGRAM' was provided.";
+	exit 101;
+}
+
+# Assert the underlying program is installed
+hash "$WRAPPED_PROGRAM" 2>/dev/null || {
+	echo "ERROR: You need to install $WRAPPED_PROGRAM first!";
+	exit 102;
+}
+
+# Print version if required
+[[ "$@" =~ -v ]] && {
+	echo "pdfTeX-quiet $VERSION";
+	"$WRAPPED_PROGRAM" --version;
+	exit $?;
+}
+
+# Print help if required (let's print it even if only -h is specified
+# although it's ambiguous because of -halt-on-error, but the regex should take care of that)
+[[ "$@" =~ -h([^a]|$) ]] && {
+	echo -e "Usage: $BASENAME [OPTION]... TEXNAME[.tex]\n";
+
+	# Print only arguments from the pdftex|pdflatex help
+	"$WRAPPED_PROGRAM" --help | grep --color=never -E '^[\[-]' -A500;
+	exit $?;
+}
+
+# FILENAME is always the last argument for pdftex|pdflatex
 # Create FILENAME variable only if there was provided some argument
 test $# -gt 0 && eval FILENAME=\${$#}
 
 # Test that the filename was provided
-test -z "$FILENAME" && { echo "It's mandatory to provide the filename of tex source as first argument!" && exit 1; }
+test -z "$FILENAME" && {
+	echo "It's mandatory to provide the filename of tex source as first argument!";
+	exit 103;
+}
 
 # Test the existence of the file provided
-test -f "$FILENAME" || test -f "$FILENAME.tex" || { echo "Last argument must be a file! Provided file '$FILENAME' doesn't exist!" && exit 2; }
+test -f "$FILENAME" || test -f "$FILENAME.tex" || {
+	echo "Last argument must be a file! Provided file '$FILENAME' doesn't exist!";
+	exit 104;
+}
 
-# Run pdftex on the file.
+# Run pdftex|pdflatex on the file.
 # Use -halt-on-error because grep basically disables the interactive mode.
-# Using $@ we also allow to pass all other arguments to the pdftex.
+# Using $@ we also allow to pass all other arguments to the pdftex|pdflatex.
 
 # Use grep to show only errors that occur with another 200 lines followed by the error.
 # Errors start with '!' at the line start. We match whole line to mark it in red bold color.
@@ -43,7 +88,7 @@ test -f "$FILENAME" || test -f "$FILENAME.tex" || { echo "Last argument must be 
 # characters without finishing newline character (which is usually printed after user's input).
 
 : | \
-  pdftex --halt-on-error $@ | \
+  "$WRAPPED_PROGRAM" --halt-on-error $@ | \
   { ! grep --color=auto '^!.*' -A200; }
 
 EVERYTHING_SUCCEEDED=$?
@@ -65,7 +110,7 @@ else
   [[ "$@" =~ -output-format(=|[ ]*)dvi($|[ ]*) ]] && EXTENSION=dvi || EXTENSION=pdf
   [[ "$@" =~ -output-directory(=|[ ]*)([^ $]*) ]] && OUTPUT_DIRECTORY="${BASH_REMATCH[2]}/"
 
-  # Replace whatever extension we provided to pdftex with either dvi or pdf (based on arguments provided)
+  # Replace whatever extension we provided to pdftex|pdflatex with either dvi or pdf (based on arguments provided)
   OUTPUT_FILENAME="${FILENAME/%.*/.${EXTENSION}}"
 
   echo "Output file: '${OUTPUT_DIRECTORY}${OUTPUT_FILENAME}'"
