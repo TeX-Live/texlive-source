@@ -3129,6 +3129,9 @@ char *makecfilename(integer s)
 void getcreationdate(void)
 {
     size_t len;
+#if defined(XeTeX)
+    int i;
+#endif
     initstarttime();
     /* put creation date on top of string pool and update poolptr */
     len = strlen(start_time_str);
@@ -3142,15 +3145,24 @@ void getcreationdate(void)
         return;
     }
 
+#if defined(XeTeX)
+    for (i = 0; i < len; i++)
+        strpool[poolptr++] = (uint16_t)start_time_str[i];
+#else
     memcpy(&strpool[poolptr], start_time_str, len);
+#endif
     poolptr += len;
 }
 
 void getfilemoddate(integer s)
 {
     struct stat file_data;
-
+#if defined(XeTeX)
+    int i;
+    const_string orig_name = gettexstring(s);
+#else
     const_string orig_name = makecfilename(s);
+#endif
     char *file_name = kpse_find_tex(orig_name);
     if (file_name == NULL) {
         return;                 /* empty string */
@@ -3174,8 +3186,13 @@ void getfilemoddate(integer s)
             poolptr = poolsize;
             /* error by str_toks that calls str_room(1) */
         } else {
+#if defined(XeTeX)
+            for (i = 0; i < len; i++)
+                strpool[poolptr++] = time_str[i];
+#else
             memcpy(&strpool[poolptr], time_str, len);
             poolptr += len;
+#endif
         }
     }
     /* else { errno contains error code } */
@@ -3188,7 +3205,11 @@ void getfilesize(integer s)
     struct stat file_data;
     int i;
 
+#if defined(XeTeX)
+    char *file_name = kpse_find_tex(gettexstring(s));
+#else
     char *file_name = kpse_find_tex(makecfilename(s));
+#endif
     if (file_name == NULL) {
         return;                 /* empty string */
     }
@@ -3212,8 +3233,13 @@ void getfilesize(integer s)
             poolptr = poolsize;
             /* error by str_toks that calls str_room(1) */
         } else {
+#if defined(XeTeX)
+            for (i = 0; i < len; i++)
+                strpool[poolptr++] = (uint16_t)buf[i];
+#else
             memcpy(&strpool[poolptr], buf, len);
             poolptr += len;
+#endif
         }
     }
     /* else { errno contains error code } */
@@ -3241,7 +3267,11 @@ void getfiledump(integer s, int offset, int length)
         return;
     }
 
+#if defined(XeTeX)
+    file_name = kpse_find_tex(gettexstring(s));
+#else
     file_name = kpse_find_tex(makecfilename(s));
+#endif
     if (file_name == NULL) {
         return;                 /* empty string */
     }
