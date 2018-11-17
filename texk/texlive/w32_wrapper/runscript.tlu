@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 48059 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2018-06-20 05:55:23 +0200 (Wed, 20 Jun 2018) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 48877 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2018-10-10 09:25:30 +0200 (Wed, 10 Oct 2018) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -270,6 +270,9 @@ local docstr = [[
     2018/06/20
         - support also scripts in trees other than TEXMFDIST:
           https://tug.org/pipermail/tex-live/2018-June/041922.html
+    2018/10/10
+        - support cluttex scripts
+
 ]]
 
 -- HELPER SUBROUTINES --
@@ -762,6 +765,12 @@ elseif progname == 'tlperl' then
 elseif progname == 'latexdef' then
   progname = 'texdef'
   argline = ' --tex latex ' .. argline
+elseif progname == 'cllualatex' then
+  progname = 'cluttex'
+  argline = ' --engine=lualatex ' .. argline
+elseif progname == 'clxelatex' then
+  progname = 'cluttex'
+  argline = ' --engine=xelatex ' .. argline
 end
 
 -- general case

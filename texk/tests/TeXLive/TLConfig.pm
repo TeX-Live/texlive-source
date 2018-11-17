@@ -1,4 +1,3 @@
-# $Id: TLConfig.pm 48093 2018-06-26 21:03:56Z preining $
 # TeXLive::TLConfig.pm - module exporting configuration values
 # Copyright 2007-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 48093 $';
+my $svnrev = '$Revision: 48727 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -22,7 +21,6 @@ BEGIN {
     $MetaCategoriesRegexp
     $CategoriesRegexp
     $DefaultCategory
-    $DefaultFallbackDownloader
     @AcceptedFallbackDownloaders
     %FallbackDownloaderProgram
     %FallbackDownloaderArgs
@@ -112,11 +110,11 @@ if ($^O =~ /^MSWin/i) {
 }
 
 #
-our $DefaultFallbackDownloader = "wget";
 our @AcceptedFallbackDownloaders = qw/curl wget/;
 our %FallbackDownloaderProgram = ( 'wget' => 'wget', 'curl' => 'curl');
 our %FallbackDownloaderArgs = (
-  'curl' => ['--user-agent', 'texlive/curl', '--retry', '10', '--fail', '--location',
+  'curl' => ['--user-agent', 'texlive/curl', '--retry', '10', 
+             '--fail', '--location',
              '--connect-timeout', "$NetworkTimeout", '--silent', '--output'],
   'wget' => ['--user-agent=texlive/wget', '--tries=10',
              "--timeout=$NetworkTimeout", '-q', '-O'],
@@ -145,7 +143,9 @@ our %Compressors = (
     "priority"        => 30,
   },
 );
-our $CompressorExtRegexp = "(" . join("|", map { $Compressors{$_}{'extension'} } keys(%Compressors)) . ")";
+our $CompressorExtRegexp = "("
+    . join("|", map { $Compressors{$_}{'extension'} } keys %Compressors)
+    . ")";
 
 # archive (not user) settings.
 # these can be overridden by putting them into 00texlive.config.tlpsrc
@@ -225,7 +225,7 @@ our %TLPDBOptions = (
 
 our %TLPDBSettings = (
   "platform" => [ "s", "Main platform for this computer" ],
-  "available_architectures" => [ "l", "All available/installed architectures" ],
+  "available_architectures" => [ "l","All available/installed architectures" ],
   "usertree" => [ "b", "This tree acts as user tree" ]
 );
 
