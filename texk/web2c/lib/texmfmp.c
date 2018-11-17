@@ -3188,7 +3188,7 @@ void getfilemoddate(integer s)
         } else {
 #if defined(XeTeX)
             for (i = 0; i < len; i++)
-                strpool[poolptr++] = time_str[i];
+                strpool[poolptr++] = (uint16_t)time_str[i];
 #else
             memcpy(&strpool[poolptr], time_str, len);
             poolptr += len;
