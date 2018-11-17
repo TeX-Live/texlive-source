@@ -151,7 +151,22 @@ char *generic_synctex_get_current_name (void)
 #if !IS_pTeX
 FILE *Poptr;
 #endif
-#endif
+#undef fopen
+#undef xfopen
+#define fopen fsyscp_fopen
+#define xfopen fsyscp_xfopen
+#include <wchar.h>
+int fsyscp_stat(const char *path, struct stat *buffer)
+{
+  wchar_t *wpath;
+  int     ret;
+  wpath = get_wstring_from_mbstring(file_system_codepage,
+          path, wpath = NULL);
+  ret = _wstat(wpath, buffer);
+  free(wpath);
+  return ret;
+}
+#endif /* WIN32 */
 
 #if defined(TeX) || (defined(MF) && defined(WIN32))
 static int
@@ -1379,24 +1394,6 @@ tcx_get_num (int upb,
 
 /* FIXME: A new format ought to be introduced for these files. */
 
-#ifdef _WIN32
-#undef fopen
-#undef xfopen
-#define fopen fsyscp_fopen
-#define xfopen fsyscp_xfopen
-#include <wchar.h>
-int fsyscp_stat(const char *path, struct stat *buffer)
-{
-  wchar_t *wpath;
-  int     ret;
-  wpath = get_wstring_from_mbstring(file_system_codepage,
-          path, wpath = NULL);
-  ret = _wstat(wpath, buffer);
-  free(wpath);
-  return ret;
-}
-#endif /* WIN32 */
-
 void
 readtcxfile (void)
 {
@@ -2322,7 +2319,7 @@ WARNING1 ("invalid value (expected 0 or 1) for environment variable $FORCE_SOURC
   }
 }
 
-#if defined(pdfTeX) || defined(epTeX) || defined(eupTeX)
+#if defined(pdfTeX) || defined(epTeX) || defined(eupTeX) || defined(XeTeX)
 /*
  Getting a high resolution time.
  */
@@ -3010,8 +3007,6 @@ void pdftex_fail(const char *fmt, ...)
 }
 #endif /* not pdfTeX */
 
-#if !defined(XeTeX)
-
 #define TIME_STR_SIZE 30
 char start_time_str[TIME_STR_SIZE];
 static char time_str[TIME_STR_SIZE];
@@ -3280,7 +3275,6 @@ void getfiledump(integer s, int offset, int length)
     }
     xfree(file_name);
 }
-#endif /* not XeTeX */
 
 /* Converts any given string in into an allowed PDF string which is
  * hexadecimal encoded;

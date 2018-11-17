@@ -124,7 +124,6 @@ extern int tfmtemp, texinputtype;
 #if !defined (pdfTeX)
 extern void pdftex_fail(const char *fmt, ...);
 #endif
-#if !defined(XeTeX)
 extern char start_time_str[];
 extern void initstarttime(void);
 extern char *makecstring(integer s);
@@ -133,7 +132,6 @@ extern void getcreationdate(void);
 extern void getfilemoddate(integer s);
 extern void getfilesize(integer s);
 extern void getfiledump(integer s, int offset, int length);
-#endif
 extern void convertStringToHexString(const char *in, char *out, int lin);
 extern void getmd5sum(integer s, int file);
 #endif
@@ -220,7 +218,7 @@ extern boolean input_line (FILE *);
 #define	dateandtime(i,j,k,l) get_date_and_time (&(i), &(j), &(k), &(l))
 extern void get_date_and_time (integer *, integer *, integer *, integer *);
 
-#if defined(pdfTeX) || defined(epTeX) || defined(eupTeX)
+#if defined(pdfTeX) || defined(epTeX) || defined(eupTeX) || defined(XeTeX)
 /* Get high-res time info. */
 #define secondsandmicros(i,j) get_seconds_and_micros (&(i), &(j))
 extern void get_seconds_and_micros (integer *, integer *);

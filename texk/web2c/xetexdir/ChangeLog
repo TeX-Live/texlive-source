@@ -1,3 +1,8 @@
+2018-11-17  Joseph Wright  <joseph.wright@morningstar2.co.uk>
+
+	* xetex.web, xetex.defines: Support some primitives from
+	pdfTeX in XeTeX. Add \expanded and extend \Uchar a bit.
+
 2018-10-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfimage.cpp: Cast types to support poppler 0.70.0.

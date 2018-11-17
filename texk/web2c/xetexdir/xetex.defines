@@ -179,4 +179,9 @@ authorization from the copyright holders.
 @define function getcpcode();
 @define function getnativewordcp();
 
+@define procedure initstarttime;
+@define procedure getcreationdate;
+@define procedure getfilemoddate();
+@define procedure getfilesize();
+@define procedure getfiledump();
 @define procedure getmd5sum();
