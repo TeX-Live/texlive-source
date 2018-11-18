@@ -1,3 +1,9 @@
+2018-11-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c: Remove unused functions for XeTeX.
+	Check kpse_in_name_ok() in getfilesize(), getfiledump(),
+	and getmd5sum().
+
 2018-11-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Make necessary changes for XeTeX in
