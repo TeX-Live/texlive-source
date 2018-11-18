@@ -9878,9 +9878,11 @@ the codes for its extensions: |eTeX_version_code|, \dots\ .
 @d elapsed_time_code      = pdftex_first_rint_code + 10 {code for \.{\\elapsedtime}}
 @d pdf_shell_escape_code  = pdftex_first_rint_code + 11 {code for \.{\\shellescape}}
 @d random_seed_code       = pdftex_first_rint_code + 12 {code for \.{\\randomseed}}
-@d pdftex_last_item_codes = pdftex_first_rint_code + 13 {end of \pdfTeX's command codes}
+@d pdftex_last_item_codes = pdftex_first_rint_code + 12 {end of \pdfTeX's command codes}
 @#
-@d XeTeX_int                         = pdftex_last_item_codes + 1 {base for \XeTeX's command codes}
+@d eTeX_int=pdftex_last_item_codes + 1 {first of \eTeX\ codes for integers}
+@#
+@d XeTeX_int                         = eTeX_int + 8 {base for \XeTeX's command codes}
 @d XeTeX_version_code                = XeTeX_int + 0 {code for \.{\\XeTeXversion}}
 @d XeTeX_count_glyphs_code           = XeTeX_int + 1 {code for \.{\\XeTeXcountglyphs}}
 @d XeTeX_count_variations_code       = XeTeX_int + 2 {Deprecated}
@@ -9915,8 +9917,7 @@ the codes for its extensions: |eTeX_version_code|, \dots\ .
 @d XeTeX_glyph_bounds_code = XeTeX_dim + 0 {code for \.{\\XeTeXglyphbounds}}
 @d XeTeX_last_dim_codes    = XeTeX_dim + 0 {end of \XeTeX's command codes}
 @#
-@d eTeX_int=XeTeX_last_dim_codes+1 {first of \eTeX\ codes for integers}
-@d eTeX_dim=eTeX_int+8 {first of \eTeX\ codes for dimensions}
+@d eTeX_dim=XeTeX_last_dim_codes+1 {first of \eTeX\ codes for dimensions}
 @d eTeX_glue=eTeX_dim+9 {first of \eTeX\ codes for glue}
 @d eTeX_mu=eTeX_glue+1 {first of \eTeX\ codes for muglue}
 @d eTeX_expr=eTeX_mu+1 {first of \eTeX\ codes for expressions}
