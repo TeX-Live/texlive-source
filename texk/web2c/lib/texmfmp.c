@@ -3254,7 +3254,10 @@ void getfiledump(integer s, int offset, int length)
     poolpointer data_ptr;
     poolpointer data_end;
     char *file_name;
-
+#if defined(XeTeX)
+    char *readbuffer, strbuf[3];
+    int j, k;
+#endif
     if (length == 0) {
         /* empty result string */
         return;
@@ -3287,6 +3290,18 @@ void getfiledump(integer s, int offset, int length)
         xfree(file_name);
         return;
     }
+#if defined(XeTeX)
+    readbuffer = (char *)xmalloc (length + 1);
+    read = fread(readbuffer, sizeof(char), length, f);
+    fclose(f);
+    for (j = 0; j < read; j++) {
+        i = snprintf (strbuf, 3, "%.2X", (unsigned int)readbuffer[j]);
+        check_nprintf(i, 3);
+        for (k = 0; k < i; k++)
+            strpool[poolptr++] = (uint16_t)strbuf[k];
+    }
+    xfree (readbuffer);
+#else
     /* there is enough space in the string pool, the read
        data are put in the upper half of the result, thus
        the conversion to hex can be done without overwriting
@@ -3303,6 +3318,7 @@ void getfiledump(integer s, int offset, int length)
         check_nprintf(i, 3);
         poolptr += i;
     }
+#endif /* XeTeX */
     xfree(file_name);
 }
 

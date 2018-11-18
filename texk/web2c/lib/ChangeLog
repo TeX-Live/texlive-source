@@ -2,7 +2,7 @@
 
 	* texmfmp.c: Make necessary changes for XeTeX in
 	getcreationdate(), getfilemoddate(), getfilesize(),
-	and getfiledump(). getfiledump() is still incomplete.
+	and getfiledump().
 
 2018-11-17  Joseph Wright  <joseph.wright@morningstar2.co.uk>
 
