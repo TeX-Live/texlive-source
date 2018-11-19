@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2018 Brian Dunn
 
-printversion = "v0.61"
+printversion = "v0.62"
 requiredconfversion = "1" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -31,8 +31,9 @@ lwarpmk pdftohtml [-p project]:
     Finishes the HTML conversion even if there was a compile error.
 lwarpmk pdftosvg <list of file names>: Converts each PDF file to SVG.
 lwarpmk epstopdf <list of file names>: Converts each EPS file to PDF.
-lwarpmk clean [-p project]: Remove .aux, .toc, .lof/t, .idx, .ind, .log, *_html_inc.*, .gl*
-lwarpmk cleanall [-p project]: Remove auxiliary files and also project.pdf, *.html
+lwarpmk clean [-p project]: Remove *.aux, *.toc, *.lof/t,
+    *.idx, *.ind, *.log, *_html_inc.*, .gl*
+lwarpmk cleanall [-p project]: Remove auxiliary files, project.pdf, *.html
 lwarpmk cleanlimages: Removes all images from the "lateximages" directory.
 lwarpmk -h: Print this help message.
 lwarpmk --help: Print this help message.
