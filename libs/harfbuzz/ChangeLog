@@ -1,3 +1,8 @@
+2018-11-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import harfbuzz-2.1.3.
+	* version.ac, Makefile.am: Adjusted.
+
 2018-11-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import harfbuzz-2.1.1.

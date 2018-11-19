@@ -87,16 +87,10 @@ DEFINE_NULL_INSTANCE (hb_face_t) =
   nullptr, /* destroy */
 
   0,    /* index */
-  1000, /* upem */
-  0,    /* num_glyphs */
+  HB_ATOMIC_INT_INIT (1000), /* upem */
+  HB_ATOMIC_INT_INIT (0),    /* num_glyphs */
 
-  {
-#define HB_SHAPER_IMPLEMENT(shaper) HB_ATOMIC_PTR_INIT (HB_SHAPER_DATA_INVALID),
-#include "hb-shaper-list.hh"
-#undef HB_SHAPER_IMPLEMENT
-  },
-
-  HB_ATOMIC_PTR_INIT (nullptr), /* shape_plans */
+  /* Zero for the rest is fine. */
 };
 
 
@@ -129,8 +123,10 @@ hb_face_create_for_tables (hb_reference_table_func_t  reference_table_func,
   face->user_data = user_data;
   face->destroy = destroy;
 
-  face->upem = 0;
-  face->num_glyphs = (unsigned int) -1;
+  face->num_glyphs.set_relaxed (-1);
+
+  face->data.init0 (face);
+  face->table.init0 (face);
 
   return face;
 }
@@ -271,9 +267,8 @@ hb_face_destroy (hb_face_t *face)
     node = next;
   }
 
-#define HB_SHAPER_IMPLEMENT(shaper) HB_SHAPER_DATA_DESTROY(shaper, face);
-#include "hb-shaper-list.hh"
-#undef HB_SHAPER_IMPLEMENT
+  face->data.fini ();
+  face->table.fini ();
 
   if (face->destroy)
     face->destroy (face->user_data);
@@ -442,7 +437,7 @@ hb_face_set_upem (hb_face_t    *face,
   if (hb_object_is_immutable (face))
     return;
 
-  face->upem = upem;
+  face->upem.set_relaxed (upem);
 }
 
 /**
@@ -477,7 +472,7 @@ hb_face_set_glyph_count (hb_face_t    *face,
   if (hb_object_is_immutable (face))
     return;
 
-  face->num_glyphs = glyph_count;
+  face->num_glyphs.set_relaxed (glyph_count);
 }
 
 /**
@@ -547,8 +542,7 @@ void
 hb_face_collect_unicodes (hb_face_t *face,
 			  hb_set_t  *out)
 {
-  if (unlikely (!hb_ot_shaper_face_data_ensure (face))) return;
-  hb_ot_face_data (face)->cmap->collect_unicodes (out);
+  face->table.cmap->collect_unicodes (out);
 }
 
 /**
@@ -564,8 +558,7 @@ void
 hb_face_collect_variation_selectors (hb_face_t *face,
 				     hb_set_t  *out)
 {
-  if (unlikely (!hb_ot_shaper_face_data_ensure (face))) return;
-  hb_ot_face_data (face)->cmap->collect_variation_selectors (out);
+  face->table.cmap->collect_variation_selectors (out);
 }
 
 /**
@@ -582,8 +575,7 @@ hb_face_collect_variation_unicodes (hb_face_t *face,
 				    hb_codepoint_t variation_selector,
 				    hb_set_t  *out)
 {
-  if (unlikely (!hb_ot_shaper_face_data_ensure (face))) return;
-  hb_ot_face_data (face)->cmap->collect_variation_unicodes (variation_selector, out);
+  face->table.cmap->collect_variation_unicodes (variation_selector, out);
 }
 
 

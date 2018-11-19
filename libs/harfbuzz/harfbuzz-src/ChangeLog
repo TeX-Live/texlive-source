@@ -1,3 +1,2457 @@
+commit e3a1a8350a6a7933b0a100194985f4425ab9de19
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 16:53:25 2018 -0800
+
+    2.1.3
+
+ NEWS             | 6 ++++++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+
+commit 9714e114b88893bd962b1bcf36382bdacbc4866c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 16:52:42 2018 -0800
+
+    Fix recent commits
+
+ src/hb-open-type.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0328a1ce41611ed981d41384ae5727479699f3a0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 16:48:28 2018 -0800
+
+    Revert b4c61130324455bfd42095b01fa14ac901e441f1
+
+    Was causing more trouble than it solved.  We use unsigned for
+    indexing,
+    and it's not helpful to allow that wrapping to negative integers on
+    32bit machines.  The only way we could work around it would have been
+    by accepting int64_t arg, but that's overkill.
+
+    Ignore the MSVC 2008 build issue.  We don't support that compiler.
+
+ src/hb-open-type.hh | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
+
+commit 52f61cdb87b67ef42a25288d8624170d0b6d3a25
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 16:41:59 2018 -0800
+
+    Detect over/under-flow in UnsizedArray::operator[]
+
+    Was causing bad substitutions in mort table because of
+    WordOffsetToIndex()
+    producing negative numbers that were cast to unsigned int and
+    returned as
+    large numbers (which was desirable, so they would be rejected),
+    but then
+    they were cast to int when passed to this operator and acting as small
+    negative integers, which was bad...
+
+    Detect overflow.  Ouch, however, now I see this still fails on 32-bit.
+    Guess I'm going to revert an earlier change.
+
+ src/hb-open-type.hh | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+commit 6910ff03e66f5f4c9eb5592262d414ef7d91df04
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 16:11:02 2018 -0800
+
+    [aat] Fix mort shaping
+
+    Ouch!
+
+ src/hb-aat-layout.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fdb29ab2b0058c9813f9fc44c83dd9048db92d16
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 15:38:11 2018 -0800
+
+    2.1.2
+
+ NEWS             | 13 ++++++++++++-
+ configure.ac     |  2 +-
+ src/hb-version.h |  4 ++--
+ 3 files changed, 15 insertions(+), 4 deletions(-)
+
+commit cff4c6087fdb667a40f54f20ca3c49251bf076de
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 15:04:41 2018 -0800
+
+    Fix vertical fallback space sign
+
+    Ouch!
+
+    Follow-up to cf203af8a33591c163b63dbdf0fd341bc4606190
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1343
+
+ src/hb-ot-shape-fallback.cc                   |  8 ++++----
+ test/shaping/data/in-house/tests/spaces.tests | 22 +++++++++++-----------
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+
+commit 7a97f7074052a5d746af29f0743abd20682b09a2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 14:46:40 2018 -0800
+
+    Don't apply GPOS if applying morx
+
+    That's what Apple does, and it wouldn't degrade our OpenType
+    performance.
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1348
+
+ src/hb-ot-shape.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit eafd515639497098436ecf4c7b836e231bced323
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 14:45:56 2018 -0800
+
+    Prefer morx table if GSUB is empty (no scripts)
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1348
+
+ src/hb-ot-shape.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit aa06574823e27c4dbb378d2467a3e6f6f36af9fe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 14:31:05 2018 -0800
+
+    Minor
+
+ src/hb-aat-layout-trak-table.hh | 2 +-
+ src/hb-ot-layout-gdef-table.hh  | 2 +-
+ src/hb-ot-layout-gsubgpos.hh    | 2 +-
+ src/hb-ot-math-table.hh         | 2 +-
+ src/hb-ot-var-fvar-table.hh     | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 50d1a41c08ad3508a94240b52df03c383ae8f1f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 08:52:57 2018 -0500
+
+    [coretext] Hopefully the last one
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0aab861f9cda6fba5ce71562d9f087d924e8a161
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 08:43:25 2018 -0500
+
+    [coretext] Another round
+
+ src/hb-coretext.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 0809b76a9a1d7bd53818df7e83a9c81e664dfe0e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 08:29:47 2018 -0500
+
+    [coretext] One more try..
+
+ src/hb-coretext.cc | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit 78bd4475946f2d255539306e4b1115f408c54b54
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 04:10:53 2018 -0500
+
+    [coretext] One more try
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fd27a23c824bbbd4f4c7e75701cc5d287289704b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 03:57:12 2018 -0500
+
+    [coretext] Another build fix attemt
+
+ src/hb-coretext.cc | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit 729aedf0da90cbf11235a35588cfdc06ba87a784
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 03:26:46 2018 -0500
+
+    [directwrite] Fix build
+
+ src/hb-directwrite.cc | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit cfb9771a3b096006cbae98438f1ba101d222e0e4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 03:24:22 2018 -0500
+
+    [coretext] Try to fix
+
+ src/hb-coretext.cc  | 48 ++++++++++++++++++++++++++++++++++++++----------
+ src/hb-machinery.hh | 15 +++++----------
+ src/hb-shaper.hh    | 44 --------------------------------------------
+ 3 files changed, 43 insertions(+), 64 deletions(-)
+
+commit e3e9547365417e547beec84494c8bf6e4e2947fb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 02:55:29 2018 -0500
+
+    [coretext] Unbreak build
+
+ src/hb-coretext.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit ce5da0f36a2ece29c387810a060531df15ad6c7b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 02:29:13 2018 -0500
+
+    [shaper] Rewrite shaper data code to be more template-driven than
+    macro-driven
+
+ src/hb-coretext.cc       |  17 +++----
+ src/hb-directwrite.cc    |   9 +---
+ src/hb-face.cc           |  12 +----
+ src/hb-face.hh           |  13 ++----
+ src/hb-fallback-shape.cc |   5 --
+ src/hb-font.cc           |  14 ++----
+ src/hb-font.hh           |  12 ++---
+ src/hb-graphite2.cc      |  11 ++---
+ src/hb-machinery.hh      |  14 ++----
+ src/hb-ot-shape.cc       |   5 --
+ src/hb-shape-plan.cc     |   4 +-
+ src/hb-shaper-impl.hh    |   9 +---
+ src/hb-shaper.hh         | 117
+ ++++++++++++++++++++++++++++++++---------------
+ src/hb-uniscribe.cc      |  32 +++++--------
+ 14 files changed, 127 insertions(+), 147 deletions(-)
+
+commit cb4bf85b14afb3761a85e3da130f2844ac94a49d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 02:02:24 2018 -0500
+
+    [hdmx] Fix bounds checking
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11351
+
+ src/hb-ot-hdmx-table.hh | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+commit af727b4e629f8b07d7afb809be69d053827f6a51
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 01:55:39 2018 -0500
+
+    [hdmx] Minor
+
+ src/hb-ot-hdmx-table.hh | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+commit 9e9f16c92debecb4caf533fa112898dfec116d98
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 16 01:48:26 2018 -0500
+
+    [subset] Remove invalid glyphs from glypset to retain
+
+    Fixes https://github.com/harfbuzz/harfbuzz/pull/1388
+
+ src/hb-subset-plan.cc | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+commit 11aa0468ac2c62ff734ba6b0f6eb43d1bd6f602b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 15 23:10:56 2018 +0330
+
+    [subset] minor, adjust spaces
+
+ src/hb-open-type.hh            |  70 ++++++------
+ src/hb-ot-cmap-table.hh        | 182 +++++++++++++++----------------
+ src/hb-ot-glyf-table.hh        | 242
+ ++++++++++++++++++++---------------------
+ src/hb-ot-hdmx-table.hh        |  20 ++--
+ src/hb-ot-hmtx-table.hh        |  14 +--
+ src/hb-ot-layout-common.hh     |  77 ++++++-------
+ src/hb-ot-layout-gpos-table.hh |  16 +--
+ src/hb-ot-layout-gsub-table.hh |   4 +-
+ src/hb-ot-layout-gsubgpos.hh   |  88 +++++++--------
+ src/hb-ot-os2-table.hh         |  24 ++--
+ src/hb-ot-post-table.hh        |  26 ++---
+ src/hb-subset-glyf.cc          | 182 +++++++++++++++----------------
+ src/hb-subset-glyf.hh          |   6 +-
+ src/hb-subset-input.cc         |   4 +-
+ src/hb-subset-plan.cc          |  32 +++---
+ src/hb-subset-plan.hh          |  12 +-
+ src/hb-subset.cc               |  46 ++++----
+ src/hb-subset.h                |   7 +-
+ util/hb-subset.cc              |   2 +-
+ 19 files changed, 510 insertions(+), 544 deletions(-)
+
+commit d7c50ff0d65192fd2b7b80704e227fa108c06de3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 15 23:10:49 2018 +0330
+
+    [math] minor, adjust spaces
+
+ src/hb-ot-math-table.hh | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
+
+commit cabe433fbb81d314ad9e3cbed768dd13983a4477
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 15 02:48:50 2018 -0500
+
+    [base] Add TODO items
+
+ src/hb-ot-layout-base-table.hh | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+commit 3bf1ce748fa89316dd32de28bfdc636495e657fb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 14 21:08:54 2018 -0500
+
+    [shaper] Rename
+
+ src/hb-shape-plan.cc |  2 +-
+ src/hb-shape.cc      |  2 +-
+ src/hb-shaper.cc     | 16 ++++++++--------
+ src/hb-shaper.hh     |  4 ++--
+ 4 files changed, 12 insertions(+), 12 deletions(-)
+
+commit c221dc0ba70fd4af94d8f735a9cef1ab92cc6ede
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 14 14:49:34 2018 -0500
+
+    [ot-shape] Move code around
+
+ src/hb-aat-layout-common.hh |  4 ++--
+ src/hb-aat-layout.cc        |  8 ++++----
+ src/hb-aat-layout.hh        |  6 +++---
+ src/hb-ot-layout.cc         |  2 +-
+ src/hb-ot-layout.hh         |  2 +-
+ src/hb-ot-shape.cc          | 44
+ +++++++++++++++++++++++++++++---------------
+ src/hb-ot-shape.hh          |  6 +++---
+ 7 files changed, 43 insertions(+), 29 deletions(-)
+
+commit 7867c2bad05fe48f9e4a1b776fb7da67b747fb4e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Nov 14 22:13:50 2018 +0330
+
+    [STAT] Add table parsing (#1384)
+
+ src/Makefile.sources    |   1 +
+ src/hb-ot-face.hh       |   2 +
+ src/hb-ot-font.cc       |   4 +-
+ src/hb-ot-hmtx-table.hh |  11 +-
+ src/hb-ot-stat-table.hh | 280
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 290 insertions(+), 8 deletions(-)
+
+commit 48d16c2ab2b181c733accd4fd9730963e59b6323
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 14 09:56:30 2018 -0500
+
+    [hmtx] Fix signedness issue
+
+    Fixes
+    https://github.com/harfbuzz/harfbuzz/issues/1248#issuecomment-438689499
+
+ src/hb-ot-hmtx-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 29db2a44a6b7a28ade5e288779dbf5a200b43acd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Nov 14 12:13:16 2018 +0330
+
+    [ot-color/svg] Note that it can be gzipped
+
+ src/hb-ot-color.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a9c27d576ffe4452d1a3dae73964a8f4d6dcc088
+Merge: 3c3eb5ea e543e1a0
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Nov 14 08:29:17 2018 +0330
+
+    Merge pull request #1383 from punchcutter/master
+
+    Add test for https://github.com/harfbuzz/harfbuzz/issues/1379
+
+commit e543e1a0858bb5d7384d82600a789d40b62d9821
+Author: punchcutter <zarijoscha@gmail.com>
+Date:   Tue Nov 13 20:44:27 2018 -0800
+
+    Add Grantha test
+
+ .../fonts/dcf774ca21062e7439f98658b18974ea8b956d0c.ttf   | Bin 0 ->
+ 2568 bytes
+ test/shaping/data/in-house/tests/use.tests               |   1 +
+ 2 files changed, 1 insertion(+)
+
+commit 3c3eb5ea9ccf34d33e94f83b9961b3a5e903d196
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 13 21:10:10 2018 -0500
+
+    [aat] Disable fallback mark advance zeroing and positioning if
+    morx applied
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1357
+
+ src/hb-ot-shape.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit dc4225ccd1d16a1139cbc6092353db9ed03e8980
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 13 20:48:46 2018 -0500
+
+    Don't retry creating again and again in lazy_loader if create failed
+
+    Still does that if get_null() returns nullptr.  Our shaper data
+    objects
+    are like that.  Shrug.
+
+ src/hb-machinery.hh | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+commit 086235f59310ed77542d4916d31a4285c68630ff
+Merge: 2092f595 c565fc3f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 13 19:50:25 2018 -0500
+
+    Merge pull request #1382 from punchcutter/master
+
+    Change USE Category for Grantha Virama
+
+commit 2092f595c7a4c591cace41cb99d31620fa6d5fa4
+Merge: 475be9d5 eee5b5ed
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 13 19:49:06 2018 -0500
+
+    Merge pull request #1380 from kbrow1i/cygwin
+
+    Don't use Win32 API on Cygwin
+
+commit c565fc3fb3b14c02e30af28b9d4d4289b0d2e162
+Author: punchcutter <zarijoscha@gmail.com>
+Date:   Tue Nov 13 12:51:10 2018 -0800
+
+    Change USE Category for Grantha Virama
+    https://github.com/harfbuzz/harfbuzz/issues/1379
+
+ src/gen-use-table.py                 | 3 ++-
+ src/hb-ot-shape-complex-use-table.cc | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+commit 475be9d5c672db6e1764d9425ed7fdaa0dff35c9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 13 13:01:13 2018 -0500
+
+    Fix Windows build
+
+ src/hb-atomic.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit fc44dea341f1750fec801faed66656b8a58dcded
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 13 11:54:33 2018 -0500
+
+    Use atomic ints for upem and num_glyphs on face
+
+ src/hb-aat-layout-lcar-table.hh |  3 ++-
+ src/hb-face.cc                  | 10 +++++-----
+ src/hb-face.hh                  | 24 ++++++++++++++----------
+ src/hb-ot-color-sbix-table.hh   |  2 +-
+ src/hb-static.cc                | 13 +++++++++----
+ 5 files changed, 31 insertions(+), 21 deletions(-)
+
+commit 9579ed9755d7c3e47435c55881c9841a5f60ad7e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 13 11:45:12 2018 -0500
+
+    Make atomic types' internal values non-mutable
+
+    This resulted from confusion previously...
+
+ src/hb-atomic.hh | 10 +++++-----
+ src/hb-object.hh |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+commit c52d5bcd9405dbaa9289d720d9f0853aeac6b244
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 13 11:41:29 2018 -0500
+
+    [ot-face] Add 'head' table
+
+ src/hb-ot-face.hh       |  1 +
+ src/hb-ot-glyf-table.hh | 11 +++--------
+ src/hb-static.cc        |  5 +----
+ 3 files changed, 5 insertions(+), 12 deletions(-)
+
+commit eee5b5ed04f588f618a2251397dd5b850c378627
+Author: Ken Brown <kbrown@cornell.edu>
+Date:   Mon Nov 12 21:05:39 2018 -0500
+
+    Don't use Win32 API on Cygwin
+
+    Cygwin is a Posix platform to the extent possible.  It should use the
+    Posix API except in special circumstances.
+
+ src/hb-atomic.hh                           |  2 +-
+ src/hb-blob.cc                             | 10 +++++-----
+ src/hb-mutex.hh                            |  2 +-
+ src/hb-ot-shape-complex-arabic-fallback.hh |  2 +-
+ src/hb.hh                                  |  2 +-
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+
+commit 56f541d0001f6d7e2e35cdd15217bdf52ebf8391
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 19:46:37 2018 -0500
+
+    [shape-plan] Remove unused code
+
+ src/hb-shape-plan.hh | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+commit 6c22f3fd95617a8c3cd558858c6758a0d548d370
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 19:26:01 2018 -0500
+
+    [shape-plan] Implement fine-grained caching plans with user-features
+
+    Only tag, value, and global-ness of features are considered, not their
+    start/end offsets.
+
+ src/hb-shape-plan.cc | 69
+ ++++++++++++++++++++++++++++++----------------------
+ src/hb-shape-plan.hh | 17 ++-----------
+ 2 files changed, 42 insertions(+), 44 deletions(-)
+
+commit cc8428756a1b18b0445c2c5fbb38e05453693dad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 18:48:10 2018 -0500
+
+    [shape-plan] Cache shape plans with variations based on variation
+    indices
+
+ src/hb-aat-map.cc    |  4 +---
+ src/hb-aat-map.hh    |  4 +---
+ src/hb-ot-map.cc     | 18 +++++------------
+ src/hb-ot-map.hh     |  6 +++---
+ src/hb-ot-shape.cc   | 13 +++++--------
+ src/hb-ot-shape.hh   | 28 +++++++++++++++++++++++---
+ src/hb-shape-plan.cc | 55
+ ++++------------------------------------------------
+ src/hb-shape-plan.hh | 23 ++++++++++++++++++----
+ 8 files changed, 63 insertions(+), 88 deletions(-)
+
+commit 8284cb9fb3600268e06d8a2ba8400700510de7a5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 18:18:20 2018 -0500
+
+    [shape-plan] Refactor more
+
+ src/hb-shape-plan.cc | 46 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 20 deletions(-)
+
+commit 1082338525c96206f43785e283e41b3e959871fd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 18:05:02 2018 -0500
+
+    [shape-plan] Only use shape-plan key to initialize hb_ot_shape_plan_t
+
+    Such that we don't accidentally use info not in the cache key.
+
+ src/hb-ot-shape.cc   | 25 +++++++++++--------------
+ src/hb-ot-shape.hh   |  8 +++-----
+ src/hb-shape-plan.cc |  7 +------
+ 3 files changed, 15 insertions(+), 25 deletions(-)
+
+commit 7ac03f88a22325fb4d6b77ee7694ad11f6a99bcb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 17:50:30 2018 -0500
+
+    [shape-plan] Minor
+
+ src/hb-shape-plan.cc | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+commit c7be933439af1bc8251b2b19df75b42bd0f3bdb5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 17:49:15 2018 -0500
+
+    [shape-plan] Refactor some more
+
+ src/hb-shape-plan.cc | 147
+ ++++++++++++++++++++++++++++-----------------------
+ src/hb-shape-plan.hh |  15 ++++++
+ 2 files changed, 95 insertions(+), 67 deletions(-)
+
+commit fc27777833e052dab91ca5777802e6c4e956deb4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 17:27:34 2018 -0500
+
+    [shape-plan] Refactor more
+
+ src/hb-shape-plan.cc | 44 +++++++++++++++++++++++---------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
+
+commit 566612295b7c9bc003e9f1723f2491113724b788
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 17:19:45 2018 -0500
+
+    [shape-plan] Turn hb_shape_plan_proposal_t into hb_shape_plan_key_t
+
+    And include it in hb_shape_plan_t itself.
+
+ src/hb-shape-plan.cc | 206
+ +++++++++++++++++++--------------------------------
+ src/hb-shape-plan.hh |  27 +++----
+ 2 files changed, 92 insertions(+), 141 deletions(-)
+
+commit af123bd1b814b4fb881ea3d11f1ef0bcced75942
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 16:27:08 2018 -0500
+
+    Add hb_memcmp()
+
+ src/hb-dsalgs.hh | 17 ++++++++++++-----
+ src/hb-set.hh    |  2 +-
+ 2 files changed, 13 insertions(+), 6 deletions(-)
+
+commit 65456bff37ef61094c35574a35c96f6437fd6015
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 16:15:26 2018 -0500
+
+    [shape-plan] Minor
+
+ src/hb-shape-plan.cc | 15 ++++++++-------
+ src/hb-shape-plan.hh |  9 +++++----
+ 2 files changed, 13 insertions(+), 11 deletions(-)
+
+commit 1db672a5e903de39f955e70b8814c275ccbe1b5c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 16:05:09 2018 -0500
+
+    [shaper] Rename
+
+ src/hb-shape-plan.cc |  2 +-
+ src/hb-shape.cc      |  2 +-
+ src/hb-shaper.cc     | 16 ++++++++--------
+ src/hb-shaper.hh     |  4 ++--
+ 4 files changed, 12 insertions(+), 12 deletions(-)
+
+commit 5212cd8af2171b9d0e9b78196e7758c37f148b80
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 14:25:18 2018 -0500
+
+    [fuzzing] Add new test
+
+ ...zz-testcase-minimized-hb-shape-fuzzer-5754863779053568 | Bin 0 ->
+ 100 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 274f4c726f461f49f54a79557d63bf95d22903cf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 14:24:36 2018 -0500
+
+    Rename check_array2() to check_array()
+
+ src/hb-aat-layout-kerx-table.hh | 2 +-
+ src/hb-machinery.hh             | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit e014405a214bceff3a1ce80f0b98273c44078e82
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 14:23:31 2018 -0500
+
+    Rename check_array(array, a, b) to check_range()
+
+ src/hb-aat-layout-common.hh    |  8 ++++++--
+ src/hb-machinery.hh            | 31 +++++++++++++++++++++++--------
+ src/hb-open-type.hh            |  4 +++-
+ src/hb-ot-layout-common.hh     |  5 +++--
+ src/hb-ot-layout-gpos-table.hh | 11 ++++++++---
+ src/hb-ot-var-hvar-table.hh    |  4 +++-
+ src/hb-ot-var-mvar-table.hh    |  4 +++-
+ 7 files changed, 49 insertions(+), 18 deletions(-)
+
+commit c8f4cc49272d8bcd47706a6306a625d724349f5a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 14:11:29 2018 -0500
+
+    [kerx] Fix integer overflow in multiply
+
+    Fixes https://oss-fuzz.com/v2/testcase-detail/5754863779053568
+
+ src/hb-aat-layout-kerx-table.hh |  2 +-
+ src/hb-machinery.hh             | 29 ++++++++++++++++-------------
+ 2 files changed, 17 insertions(+), 14 deletions(-)
+
+commit 1300f027a938d8898cdc9abbcad71afadf70e6e6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 13:56:48 2018 -0500
+
+    [kerx] Minor tweak on previous commit
+
+ src/hb-aat-layout-kerx-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit d6666b3866037c9d3e8a497958af9ba8d2f47a73
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 13:21:14 2018 -0500
+
+    [fuzzing] Remove limited-edition build of libraries
+
+    Use normal, production, shared libraries.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1237
+
+ src/Makefile.am          | 31 -------------------------------
+ test/fuzzing/Makefile.am | 39 +++++++++++++--------------------------
+ 2 files changed, 13 insertions(+), 57 deletions(-)
+
+commit a549aa14a0b60436a16f7f8924a5b5f82b4d5b7e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 12 13:01:22 2018 -0500
+
+    [kerx] Protect against stack underflow
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11367
+
+ src/hb-aat-layout-kerx-table.hh                            |   2 +-
+ ...uzz-testcase-minimized-hb-shape-fuzzer-5691469793329152 | Bin 0 ->
+ 69 bytes
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 3e284e02c2a5da758526360a45364a330b8ab8e9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 22:51:34 2018 -0500
+
+    [shape-plan] Minor
+
+ src/hb-ot-shape.cc   | 26 ++++++++++++++------------
+ src/hb-ot-shape.hh   | 15 ++++++++-------
+ src/hb-shape-plan.cc |  3 ++-
+ 3 files changed, 24 insertions(+), 20 deletions(-)
+
+commit 420c9de6447cdb491184e7f8caf0811b0c962c05
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 22:38:05 2018 -0500
+
+    [shape-plan] Minor rename
+
+ src/hb-shape-plan.cc | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+commit 77bd0a6458a9169df59f6be667a8eb79bd353dc9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 22:08:48 2018 -0500
+
+    Add variation coords to shape_plan proposal
+
+    This is the root cause of bug worked around in
+    19e77e01bc13f44138e1d50533327d314dd0a018.
+
+    Still no shape plan caching for variations though.
+
+ src/hb-shape-plan.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 9c767d075d0be85227b8dc146061de9bd24f3fec
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 22:03:15 2018 -0500
+
+    Minor
+
+ src/hb-shape-plan.cc | 31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
+
+commit f521a28b4aad1566664cf14d70a911728ee0b962
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 21:32:01 2018 -0500
+
+    Embed hb_ot_shape_plan_t into hb_shape_plan_t
+
+    No other shaper will need shape_plan_data, by definition.  So, remove
+    abstraction layer and always create hb_ot_shape_plan_t as part of
+    hb_shape_plan_t.
+
+ src/hb-coretext.cc       | 45 ----------------------
+ src/hb-directwrite.cc    | 21 ----------
+ src/hb-fallback-shape.cc | 22 -----------
+ src/hb-graphite2.cc      | 22 -----------
+ src/hb-ot-shape.cc       | 99
+ ++++++++++++++++++++++--------------------------
+ src/hb-ot-shape.hh       | 21 +++++-----
+ src/hb-shape-plan.cc     | 22 ++++++-----
+ src/hb-shape-plan.hh     |  3 +-
+ src/hb-uniscribe.cc      | 22 -----------
+ 9 files changed, 70 insertions(+), 207 deletions(-)
+
+commit fabb01210433ce1c6d5f630bc270f82a8a4a4014
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 17:10:23 2018 -0500
+
+    Remove wrong comment
+
+ src/hb-shape-plan.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 1fd183ee1c40e2eedf86b5e82d1b547c5650ebf5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 16:47:52 2018 -0500
+
+    Finish off eecccc919ce15f60ae7ef9da5cfb311b4aa05c63
+
+ src/hb-machinery.hh | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+commit 1beacdded9cd1e4467b52244cdfd8497516eb107
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 16:35:28 2018 -0500
+
+    Minor
+
+ src/hb-coretext.cc       | 8 ++++----
+ src/hb-directwrite.cc    | 4 ++--
+ src/hb-fallback-shape.cc | 4 ++--
+ src/hb-graphite2.cc      | 4 ++--
+ src/hb-ot-shape.cc       | 4 ++--
+ src/hb-shaper.hh         | 3 ++-
+ src/hb-uniscribe.cc      | 4 ++--
+ 7 files changed, 16 insertions(+), 15 deletions(-)
+
+commit e88d47b7f2f9aee5b0b3cdc0b8f708884175a71f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 16:25:43 2018 -0500
+
+    Minor
+
+ src/hb-face.cc | 2 +-
+ src/hb-face.hh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 55c66c7c56c1ecd493f51fe66fd434b28addfb41
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 16:09:38 2018 -0500
+
+    Revert "Declare Null() constexpr"
+
+    This reverts commit 442a72d95ab1fb3a47b486d8d1eb68e909d0ffb8.
+
+    Doesn't make sense.  No idea how my local compilers where happy
+    with it!
+
+ src/hb-null.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 98c6f03ccdd0630282ea0b166f66dcfb2a9c1f51
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 15:54:20 2018 -0500
+
+    Minor
+
+ src/hb-face.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 442a72d95ab1fb3a47b486d8d1eb68e909d0ffb8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 15:51:23 2018 -0500
+
+    Declare Null() constexpr
+
+ src/hb-null.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit eecccc919ce15f60ae7ef9da5cfb311b4aa05c63
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 15:48:47 2018 -0500
+
+    Don't store to null object
+
+    Ouch :).
+
+ src/hb-machinery.hh | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+commit 903856ab505cbc6b756d7b904650df72e90f67a7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 15:45:58 2018 -0500
+
+    Remove unused function
+
+ src/hb-machinery.hh | 5 -----
+ 1 file changed, 5 deletions(-)
+
+commit 0e0af11c62c6a55248a5d3c8868da91ef36384c5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 12:54:16 2018 -0500
+
+    [hdmx] Renames
+
+ src/hb-ot-hdmx-table.hh | 46
+ +++++++++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
+
+commit da6aa3b0333de3f2169a5cfcb33374e1b2fe346e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 11:40:57 2018 -0500
+
+    Add hb_blob_ptr_t.destroy()
+
+ src/hb-blob.hh                 | 1 +
+ src/hb-ot-cmap-table.hh        | 2 +-
+ src/hb-ot-color-cbdt-table.hh  | 4 ++--
+ src/hb-ot-color-sbix-table.hh  | 2 +-
+ src/hb-ot-color-svg-table.hh   | 2 +-
+ src/hb-ot-glyf-table.hh        | 4 ++--
+ src/hb-ot-hmtx-table.hh        | 6 +++---
+ src/hb-ot-layout-gdef-table.hh | 2 +-
+ src/hb-ot-layout-gsubgpos.hh   | 2 +-
+ src/hb-ot-name-table.hh        | 2 +-
+ src/hb-ot-post-table.hh        | 2 +-
+ 11 files changed, 15 insertions(+), 14 deletions(-)
+
+commit bb9abb4efd7d72198ffe8abb137ccf07ae17743e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 00:39:52 2018 -0500
+
+    [hmtx/port] Use hb_blob_ptr_t
+
+ src/hb-ot-hmtx-table.hh | 24 ++++++++++--------------
+ src/hb-ot-post-table.hh | 11 +++++------
+ 2 files changed, 15 insertions(+), 20 deletions(-)
+
+commit 0e2680a6e8d16afd38ffdb6e8cf244150a5e3837
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 00:28:47 2018 -0500
+
+    [cmap] Port to hb_blob_ptr_t
+
+    Although didn't need it...
+
+ src/hb-ot-cmap-table.hh | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 0b0fad3ea8888d57d1e077077f5897d1901c5371
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 00:26:55 2018 -0500
+
+    [color] Port to hb_blob_ptr_t
+
+    Fix hb_blob_ptr_t::get_length () as well.
+
+ src/hb-blob.hh                |  2 +-
+ src/hb-ot-color-cbdt-table.hh | 38 +++++++++++++-------------------------
+ src/hb-ot-color-sbix-table.hh | 10 ++++------
+ src/hb-ot-color-svg-table.hh  | 11 +++++------
+ src/hb-ot-glyf-table.hh       | 22 ++++++++--------------
+ 5 files changed, 31 insertions(+), 52 deletions(-)
+
+commit 925b7a214f06b83b6f2278052656dabc4ebdd6b7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 00:17:30 2018 -0500
+
+    Comment
+
+ src/hb-font.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit dcb63868333ba8e229fd8756377151440dd9fd23
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 00:16:17 2018 -0500
+
+    [shape-plan] Remove use of custom null object
+
+ src/hb-shape-plan.cc | 24 ------------------------
+ src/hb-shape-plan.hh |  1 -
+ 2 files changed, 25 deletions(-)
+
+commit 109891d49876de4de14a91adefbdf681c2b9acc2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 00:15:08 2018 -0500
+
+    [shape-plan] Make null object all zeros
+
+    To remove custom null object next..
+
+ src/hb-shape-plan.cc | 8 ++++----
+ src/hb-shape-plan.hh | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 34185ff3bc7ece5620145fc05da07c79da950f34
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 00:12:30 2018 -0500
+
+    [blob] Use default null object
+
+ src/hb-blob.cc | 12 ------------
+ src/hb-blob.hh |  1 -
+ 2 files changed, 13 deletions(-)
+
+commit 2ee1d9f555fba60342bab63294a6dacca10466de
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 11 00:11:28 2018 -0500
+
+    [blob] Change null object memory mode to DUPLICATE
+
+    We never rely on that being equal to readonly.  Just not being
+    writable.  Maybe not even that given that the object is inert.
+
+    In prep for next commit, using default null pool.
+
+ src/hb-blob.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5d0078a48b246e713817e5bb6b4efada9618bea3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 23:52:15 2018 -0500
+
+    Add hb_blob_ptr_t
+
+    Use in a couple of places.  Push to bots to see how many unhappy
+    before
+    I convert the rest.
+
+ src/hb-blob.hh                 | 23 +++++++++++++++++++++++
+ src/hb-ot-layout-gdef-table.hh |  5 ++---
+ src/hb-ot-layout-gsubgpos.hh   |  8 +++-----
+ src/hb-ot-layout.cc            | 14 ++++++--------
+ src/hb-ot-name-table.hh        | 12 +++++-------
+ 5 files changed, 39 insertions(+), 23 deletions(-)
+
+commit e44046ec499949884b9b77c4c9937ad381386850
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 22:41:35 2018 -0500
+
+    Minor
+
+ src/hb-ot-layout.cc | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit 752bd8a192af209f44dacaf1d3510d0bfc6354b8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 21:13:13 2018 -0500
+
+    [kerx] Fix Format1 tupleKern sanitization
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11312
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11305
+
+ src/hb-aat-layout-kerx-table.hh                            |   6 +++---
+ ...uzz-testcase-minimized-hb-shape-fuzzer-5629524117553152 | Bin 0 ->
+ 93 bytes
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit f9e0552debc45afedd86c848484bcd169af62dc2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 21:01:49 2018 -0500
+
+    [fuzzing] Make "make lib" faster and more usable
+
+ src/Makefile.am          |  2 +-
+ test/fuzzing/Makefile.am | 12 +++++++-----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+commit 4674655841bb810e7b68f03431d7b5a7c34c6f20
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 20:11:10 2018 -0500
+
+    Minor
+
+ src/hb-ot-shape-complex-arabic-fallback.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit a953b647507fe2ae8f5187fbfb04e69d2a2952e4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 20:10:03 2018 -0500
+
+    Revert parts of previous commit that made clang unhappy
+
+ src/hb-machinery.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1d66cdcf770e45d995a318592352e4349faecb71
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 19:54:08 2018 -0500
+
+    Better fix for MSVC 2008
+
+    Follow up on b4c61130324455bfd42095b01fa14ac901e441f1
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1374
+
+ src/hb-machinery.hh            | 8 ++++----
+ src/hb-open-type.hh            | 8 ++++++++
+ src/hb-ot-cmap-table.hh        | 4 ++--
+ src/hb-ot-layout-gpos-table.hh | 4 ++--
+ src/hb-ot-var-avar-table.hh    | 9 ++++-----
+ 5 files changed, 20 insertions(+), 13 deletions(-)
+
+commit b4c61130324455bfd42095b01fa14ac901e441f1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 16:35:39 2018 -0500
+
+    Try fixing MSVC 2008 build
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1374
+
+ src/hb-open-type.hh | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+commit f2e942f3023e3c5cb3e732ee7b4782b3df170a85
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 16:11:14 2018 -0500
+
+    Fix hb_bytes_t's unused template array constructor
+
+ src/hb-dsalgs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6213a75b68825037fbaf6f5ad4eef66e8bad4b3c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 16:09:21 2018 -0500
+
+    Add trivial casts to hb_bytes_t
+
+ src/hb-dsalgs.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 8bb97d2ce140b7fe81d0726c32e024d887e0be1c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 15:54:33 2018 -0500
+
+    Revert back hb_bytes_t.cmp() to the scheme it was
+
+    But fix UBSan complaint.
+
+    There's nothing in hb_bytes_t that guarantees lexical ordering, and
+    ordering by length first is much faster.
+
+ src/hb-dsalgs.hh | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+commit 534e1d7694c96f61e853daef481b41274d5d16d8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 15:43:16 2018 -0500
+
+    Fix hb_bytes_t.cmp() for realz this time
+
+ src/hb-dsalgs.hh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit 929f07dbfc8b8c40771d27a502f6e5842c1c1e90
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 15:38:48 2018 -0500
+
+    Fix hb_bytes_t.cmp()
+
+    Ouch!
+
+ src/hb-dsalgs.hh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit 5547bfa9f2815df727fa524b0ea0f136a6f955b7
+Merge: 3a9fa8c0 1d82b476
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 15:35:12 2018 -0500
+
+    Merge pull request #1376 from ebraminio/minor
+
+    [colr/feat/trak] minor
+
+commit 1d82b4761d0a2e2e0be002e8a6bfe060f7b6dec3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Nov 10 18:08:11 2018 +0330
+
+    [colr/feat/trak] minor
+
+ src/hb-aat-layout-feat-table.hh | 14 +++++++-------
+ src/hb-aat-layout-trak-table.hh | 35 +++++++++++++++++++----------------
+ src/hb-ot-color-colr-table.hh   | 18 ++++++------------
+ 3 files changed, 32 insertions(+), 35 deletions(-)
+
+commit 3a9fa8c026bf28bf87e20ec95327f74fd7070b74
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 01:56:37 2018 -0500
+
+    [qsort] Fix O(N^2) behavior if all array elements are the same
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11327
+
+    Reported as https://github.com/noporpoise/sort_r/issues/7
+
+ src/hb-dsalgs.hh                                        |  15
+ +++++++++++----
+ ...-testcase-minimized-hb-shape-fuzzer-5634443633491968 | Bin 0 ->
+ 41814 bytes
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+
+commit b308aaccf0773e252880b9b887f3d3d1dec00168
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 00:37:17 2018 -0500
+
+    [post] Minor
+
+ src/hb-ot-post-table.hh | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
+
+commit 4111c3b8cd1b1c44f722877614ec1ee25111e78c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 00:26:36 2018 -0500
+
+    [post] Move sanitize close to data fields
+
+ src/hb-ot-post-table.hh | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+commit e26e6dbb336e48a5898738dbbd9e56e3a00b7bed
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 10 00:19:50 2018 -0500
+
+    [post] Remove unnecessary hb_nonnull_ptr_t<>
+
+ src/hb-ot-post-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6b8178c6499f8d0ee45a57332af778af0e48d1b5
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Nov 10 02:42:08 2018 +0330
+
+    [glyf] minor
+
+ src/hb-ot-glyf-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5f97fe9956274d9de4e7813d7f2e850d9ffd8224
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 9 10:01:50 2018 -0500
+
+    Fix a few MSVC 2008 warnings
+
+    https://github.com/harfbuzz/harfbuzz/issues/1374
+
+ src/hb-set.hh    | 4 ++--
+ src/hb-vector.hh | 3 +++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+commit f51bb6ee7bd4ebca9b432851adc527ec086360fe
+Merge: 2d987110 b986fead
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 8 14:42:40 2018 -0500
+
+    Merge pull request #1358 from ebraminio/lcar
+
+    Hook AAT's lcar to _get_ligature_carets
+
+commit b986fead0aee52d219ce85dd49c9109bfaf31801
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Nov 5 12:31:58 2018 +0330
+
+    Hook AAT's lcar to _get_ligature_carets
+
+ src/Makefile.sources               |   1 +
+ src/hb-aat-layout-lcar-table.hh    |  92
+ +++++++++++++++++++++++++++++++++++++
+ src/hb-ot-face.hh                  |   1 +
+ src/hb-ot-layout-gdef-table.hh     |   6 +--
+ src/hb-ot-layout.cc                |  17 ++++---
+ test/api/Makefile.am               |   1 +
+ test/api/fonts/lcar.ttf            | Bin 0 -> 808 bytes
+ test/api/test-ot-ligature-carets.c |  67 +++++++++++++++++++++++++++
+ 8 files changed, 175 insertions(+), 10 deletions(-)
+
+commit 2d987110c067ccbf63b1399d2a87820121925e39
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 8 21:46:26 2018 +0330
+
+    [aat] Minor
+
+ src/hb-aat-layout-just-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 9fae611740f514e5fc101a18c4551a20b4a47b59
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 8 12:17:09 2018 -0500
+
+    [test/text-rendering-tests] Update from upstream
+
+ test/shaping/data/text-rendering-tests/DISABLED          |  1 +
+ test/shaping/data/text-rendering-tests/Makefile.sources  |  2 +-
+ .../data/text-rendering-tests/tests/MORX-31.tests        | 16
+ ++++++++--------
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+
+commit b989507fa6b36eb9950001d4e28f3946ffbe75f9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 8 20:48:54 2018 +0330
+
+    [aat] Minor (#1369)
+
+ src/hb-aat-layout-just-table.hh | 11 ++++++-----
+ src/hb-aat-layout-trak-table.hh | 12 ++++++------
+ 2 files changed, 12 insertions(+), 11 deletions(-)
+
+commit f90423847b07ff9c9f66be6dfa3b6071f9c7d9d3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 8 19:17:02 2018 +0330
+
+    [just] Initial table implementation (#1364)
+
+    A starting point, its sanitization is not tested however
+
+ src/Makefile.sources            |   1 +
+ src/hb-aat-layout-just-table.hh | 416
+ ++++++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout.cc            |   1 +
+ 3 files changed, 418 insertions(+)
+
+commit b8b00fb3c60d23efca5720db15555c4a01c56a45
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 8 18:53:14 2018 +0330
+
+    [aat] Support Lookup<OffsetTo<>>, needed by just and lcar (#1368)
+
+ src/hb-aat-layout-common.hh | 57
+ +++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-open-type.hh         | 11 +++++++++
+ 2 files changed, 68 insertions(+)
+
+commit 073d0a9fbcf4f9cf44878f3f91afa27615b14e5c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 8 10:59:50 2018 +0330
+
+    [ci] minor
+
+ .circleci/config.yml | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 15326826bf20f1f3d5ef3ddde2ad17b0ccbfa605
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 21:58:04 2018 -0500
+
+    [aat] Ignore cross-stream offset of deleted-glyphs
+
+    I think it makes sense to accumulate it, but Ned tells me that's
+    what CoreText does.
+
+ src/hb-aat-layout.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0bf76154f1bb15aa2fc361eb725977313f103a58
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 19:11:43 2018 -0500
+
+    [fuzzing] Take whatever text we can
+
+ test/fuzzing/hb-shape-fuzzer.cc | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+commit 517a1bac97b6273e03562deefcca129648698c31
+Merge: 9d502769 b18a56a2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 18:40:48 2018 -0500
+
+    Merge pull request #1362 from harfbuzz/cross-kern
+
+    Vastly improve kern/kerx tables, including cross-stream "kerning"
+
+commit b18a56a290bf5330e81019b33f15e6951dd86a8b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 18:13:22 2018 -0500
+
+    [kerx] Comment
+
+ src/hb-aat-layout-kerx-table.hh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 006386be3a069199ebaf22bcc55fa7233c62e0d5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 18:04:53 2018 -0500
+
+    [kern] Implement negative state numbers
+
+    Let the fuzzing bots rip this code apart...
+
+ src/hb-aat-layout-common.hh     | 90
+ ++++++++++++++++++++++++++++++-----------
+ src/hb-aat-layout-kerx-table.hh | 10 -----
+ 2 files changed, 66 insertions(+), 34 deletions(-)
+
+commit 29c5302376ff2bc8f04b0fc0efba3ce40ef564a7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 17:29:37 2018 -0500
+
+    [morx] Minor
+
+ src/hb-aat-layout-morx-table.hh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 385f78b3123f268e4c7ff423621e5ce9e8a5c54b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 17:19:21 2018 -0500
+
+    [aat] Remove deleted-glyhs after applying kerx/kern
+
+    Finally:  Fixes https://github.com/harfbuzz/harfbuzz/issues/1356
+
+    Test case:
+    $ ./hb-shape GeezaPro.ttc -u U+0628,U+064A,U+064E,U+0651,U+0629
+    [u0629.final.tehMarbuta=4+713|u064e_u0651.shaddaFatha=1@0,-200+0|u064a.medial.yeh=1+656|u0628.initial.beh=0+656]
+
+    The mark positioning (kern table CrossStream kerning) only works
+    if deleted
+    glyph (as result of ligation) is still in stream and pushed through
+    the
+    state machine.
+
+ src/hb-aat-layout-morx-table.hh |  16 -------
+ src/hb-aat-layout.cc            |  30 ++++++++++--
+ src/hb-aat-layout.hh            |  12 +++--
+ src/hb-ot-layout-gpos-table.hh  |   6 +--
+ src/hb-ot-layout.cc             |  60 +++++++++++++++++++++--
+ src/hb-ot-layout.hh             |  23 +++++----
+ src/hb-ot-shape.cc              | 102
+ ++++++++++++++--------------------------
+ 7 files changed, 142 insertions(+), 107 deletions(-)
+
+commit 1909072235e59eb80f9169300279b65779b932a4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 16:42:16 2018 -0500
+
+    [aat] Add debug info to state machine
+
+ src/hb-aat-layout-common.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit ca23567f41a2d6389f6fd2483a994cf5aa6aeaf8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 16:19:51 2018 -0500
+
+    Disable fallback mark positioning if kern table has cross-stream
+    kerning
+
+    Happens even if the cross-stream kerning is for cursive attachment
+    only.  Oh well..
+
+ src/hb-ot-layout.cc |  6 ++++++
+ src/hb-ot-layout.hh |  3 +++
+ src/hb-ot-shape.cc  | 14 ++++++--------
+ src/hb-ot-shape.hh  |  2 +-
+ 4 files changed, 16 insertions(+), 9 deletions(-)
+
+commit 5cf6f94dfd30a468ab8464435e846811c39d9226
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 16:07:22 2018 -0500
+
+    Don't apply both kerx and kern
+
+    Ouch!
+
+ src/hb-ot-shape.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 41cff7afc916048810a7ea4aa33ecdee7401df74
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 16:05:36 2018 -0500
+
+    Minor
+
+ src/hb-ot-shape.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 9af983af24788afad4b37bd2297b86cdca7c5c29
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 16:03:09 2018 -0500
+
+    [kern] Switch to dispatch
+
+ src/hb-aat-layout-kerx-table.hh |  7 +++++--
+ src/hb-ot-kern-table.hh         | 28 +++++++++++++++-------------
+ src/hb-ot-layout.cc             |  6 ++----
+ 3 files changed, 22 insertions(+), 19 deletions(-)
+
+commit bc06e2805ae55f5c152dfb70ee91c75830ad8f54
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 16:02:40 2018 -0500
+
+    [kerx/kern] Add has_cross_stream()
+
+ src/hb-aat-layout-kerx-table.hh | 15 +++++++++++++++
+ src/hb-ot-kern-table.hh         |  9 +++++++++
+ 2 files changed, 24 insertions(+)
+
+commit ea579f9ccc87718d4c2ca8945a997e6679428a12
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 15:44:40 2018 -0500
+
+    [kerx] Fix peculiar indexing that was needed previously
+
+    Not needed now that we use GPOS attachment for cursive kerx.
+
+ src/hb-aat-layout-kerx-table.hh | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
+
+commit 6ee6cd93d8c61389cf242e42a531cc6e7214b21a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 15:40:55 2018 -0500
+
+    [GPOS] Only mark unsafe-to-break if kerning happened
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1365
+
+ src/hb-ot-layout-gpos-table.hh | 56
+ ++++++++++++++++++++++++------------------
+ 1 file changed, 32 insertions(+), 24 deletions(-)
+
+commit 501a364d9bb6c5828f9d660bae8b6e93b158b275
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 15:02:16 2018 -0500
+
+    [GPOS] Add TODO item
+
+ src/hb-ot-layout-gpos-table.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 7a9629f2f11a11d1c064662a08a0172ac2001668
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 14:52:36 2018 -0500
+
+    [kerx] Implement CrossStream kerning for non-state-machine subtables
+
+    Untested.
+
+ src/hb-aat-layout-kerx-table.hh | 12 ++++++------
+ src/hb-kern.hh                  | 43
+ +++++++++++++++++++++++++++++------------
+ src/hb-ot-kern-table.hh         |  4 ++--
+ 3 files changed, 39 insertions(+), 20 deletions(-)
+
+commit 0eb4157011e78c332d781e28b54b020aa08957c0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 14:42:15 2018 -0500
+
+    [kerx] Disable backwards-kerning for non-state-machine tables
+
+    That's what the spec says for Backwards flag, only applicable to
+    formats 1 and 4.
+
+ src/hb-aat-layout-kerx-table.hh | 8 +++-----
+ src/hb-ot-kern-table.hh         | 2 +-
+ 2 files changed, 4 insertions(+), 6 deletions(-)
+
+commit b2f687c2569a3cc0b1cd0335c5ca0f8d193f8a39
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 14:38:29 2018 -0500
+
+    [kerx] Use GPOS attachment facilities for CrossStream kerning
+
+ src/hb-aat-layout-kerx-table.hh | 51
+ ++++++++++++++++++++++++++++-------------
+ 1 file changed, 35 insertions(+), 16 deletions(-)
+
+commit e10a856eb24ae45e301c3ffa778caa4c0a995bb9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 14:11:48 2018 -0500
+
+    [kerx] Format
+
+ src/hb-aat-layout-kerx-table.hh | 58
+ ++++++++++++++++++++---------------------
+ 1 file changed, 28 insertions(+), 30 deletions(-)
+
+commit 649cc3ef2773950b0b5884d9d1caf414aac888bf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 14:04:04 2018 -0500
+
+    [kerx] Don't disable crossKerning if kern feature is off
+
+ src/hb-aat-layout-kerx-table.hh | 9 +++++----
+ src/hb-ot-shape.cc              | 2 +-
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+commit 0c3b061ac244fa8a8657366e1b95523503fdf7be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 13:58:41 2018 -0500
+
+    [kern] Apply erlier, where GPOS/kerx are applied
+
+ src/hb-aat-layout-kerx-table.hh |  3 +--
+ src/hb-ot-shape-fallback.cc     |  9 +++++++++
+ src/hb-ot-shape.cc              | 12 +++++-------
+ 3 files changed, 15 insertions(+), 9 deletions(-)
+
+commit f4bad0086e40c70d66d6514f038ddda1411657c8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 13:51:17 2018 -0500
+
+    [kerx] Implement tupleKerning for Format1
+
+    Untested.
+
+ src/hb-aat-layout-kerx-table.hh | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 39b4ef6f18605e85c68cbcec534e137fc831dbca
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 13:48:45 2018 -0500
+
+    [kerx] Better sanitize tupleKerning
+
+ src/hb-aat-layout-kerx-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 14772da06f9c67d0d40712369e26064e3dee2a91
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 13:40:22 2018 -0500
+
+    [kern/kerx] Share KernTable, renamed to KerxTable
+
+ src/hb-aat-layout-kerx-table.hh |  77 ++++++++++++++++++++++--------
+ src/hb-ot-kern-table.hh         | 103
+ ++--------------------------------------
+ 2 files changed, 61 insertions(+), 119 deletions(-)
+
+commit c038f5be6b70b8edffc701dd3e4e3cd08d14e2f0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 13:35:06 2018 -0500
+
+    [fallback] Minor
+
+ src/hb-ot-shape-fallback.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit db6e658e8c0c4953c2f026f6a67a5d2fb4bdc204
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 13:33:23 2018 -0500
+
+    [kern/kerx] More towards sharing KernTable
+
+ src/hb-aat-layout-kerx-table.hh | 48 ++++++++++++++++++---------------
+ src/hb-ot-kern-table.hh         | 59
+ ++++++++++++++++++++++++++++-------------
+ 2 files changed, 67 insertions(+), 40 deletions(-)
+
+commit 89ec095979bde94bd203ed2c394f6e40629e9e78
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 13:10:05 2018 -0500
+
+    [kern] Disable Format1 and Format3 for OT-style tables
+
+ src/hb-ot-kern-table.hh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit ab57bcae0fd4505c80bb4ccdef6838bb2805ce79
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 13:04:21 2018 -0500
+
+    [kern] Minor
+
+ src/hb-ot-kern-table.hh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit 30af5b4a4c2071599dc87bc092a7329befcc45cc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 12:57:10 2018 -0500
+
+    [kern] Move code
+
+ src/hb-ot-kern-table.hh | 118
+ +++++++++++++++++++++++++-----------------------
+ 1 file changed, 62 insertions(+), 56 deletions(-)
+
+commit 1ff300464a1075b8cd5311970afbbcf4bb3b6f3d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 12:51:49 2018 -0500
+
+    [kern] Massage more
+
+ src/hb-ot-kern-table.hh | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+commit 8e9f6cd0fddd572e048487aae3141d3dbb1b99cb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 12:49:20 2018 -0500
+
+    [kerx] More minor
+
+ src/hb-aat-layout-kerx-table.hh | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit f8c3df7d4a685bb86a1c15a5ef95485e8ef30305
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 12:48:06 2018 -0500
+
+    [kern/kerx] Minor
+
+ src/hb-aat-layout-kerx-table.hh |  5 +++--
+ src/hb-ot-kern-table.hh         | 19 ++++++++++---------
+ 2 files changed, 13 insertions(+), 11 deletions(-)
+
+commit f5e0a63a22f91720a997f5070b84e982e57de661
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 12:32:39 2018 -0500
+
+    [kern/kerx] Towards sharing KernTable
+
+ src/hb-aat-layout-kerx-table.hh |  4 ++--
+ src/hb-ot-kern-table.hh         | 19 +++++++------------
+ 2 files changed, 9 insertions(+), 14 deletions(-)
+
+commit 330508497d301c0ba5d5fb5d0900b62c191aabb5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 12:27:44 2018 -0500
+
+    [kern/kerx] Minor
+
+ src/hb-aat-layout-kerx-table.hh | 2 +-
+ src/hb-ot-kern-table.hh         | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+commit 1a5ef8490034f4bd8965a3c71d34a5930ebe11b7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 12:19:52 2018 -0500
+
+    [kern/kerx] Share Format2
+
+    This, enables Format2 for kern table, which was disabled before.
+
+ src/hb-aat-layout-kerx-table.hh |  6 ++++
+ src/hb-ot-kern-table.hh         | 73
+ +----------------------------------------
+ 2 files changed, 7 insertions(+), 72 deletions(-)
+
+commit 8faec4e33486616fdc0d690ad80d4a38a73c8182
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 12:16:38 2018 -0500
+
+    [kerx] Towards merging Format2
+
+ src/hb-aat-layout-kerx-table.hh | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+commit d5c0ca210fef315fd039e5b1825a865f36606a3f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 12:08:44 2018 -0500
+
+    [aat] Minor
+
+ src/hb-aat-layout-common.hh | 16 ++++++++++------
+ src/hb-ot-kern-table.hh     |  4 ++--
+ 2 files changed, 12 insertions(+), 8 deletions(-)
+
+commit e72e041c3cda164b2ffb02d770b35d0d70954818
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 11:56:36 2018 -0500
+
+    [kerx] Rename
+
+ src/hb-aat-layout-kerx-table.hh | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+commit 241ba7da518adee334fff105ae19dfb051868a57
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 11:51:40 2018 -0500
+
+    [morx/kerx] Rename types
+
+ src/hb-aat-layout-common.hh     |  4 ++--
+ src/hb-aat-layout-kerx-table.hh | 17 +++++++++--------
+ src/hb-aat-layout-morx-table.hh |  4 ++--
+ src/hb-ot-kern-table.hh         |  4 ++--
+ 4 files changed, 15 insertions(+), 14 deletions(-)
+
+commit c808e444da12840ac3ab1d78569504b9b7e876f9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 11:28:36 2018 -0500
+
+    [kern/kerx] Share Format1 subtable
+
+ src/hb-aat-layout-kerx-table.hh |   9 +-
+ src/hb-ot-kern-table.hh         | 187
+ +---------------------------------------
+ 2 files changed, 4 insertions(+), 192 deletions(-)
+
+commit a244190afa90ac253724a2ff23a3bdf0c507d0e6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 11:43:25 2018 -0500
+
+    [kerx] Minor
+
+ src/hb-aat-layout-kerx-table.hh | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 2a720911964a00ad607ff712be09ea3ea0925c9b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 11:25:55 2018 -0500
+
+    [kerx] Minor
+
+ src/hb-aat-layout-kerx-table.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit f5f4ca7871ec2be2b5666a7b9e6e5e28133b8393
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 11:21:09 2018 -0500
+
+    [kern/kerx] Enable crossStream kerning in vertical
+
+    CoreText doesn't, but no reason we shouldn't do.
+
+ src/hb-aat-layout-kerx-table.hh | 8 ++++----
+ src/hb-ot-kern-table.hh         | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+commit d5c88af4a23bffc09840c43e6b1403b64a9f74d5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 11:20:14 2018 -0500
+
+    [kerx] More towards sharing Format1
+
+ src/hb-aat-layout-kerx-table.hh | 35 +++++++++++++++++++++++++++++++----
+ src/hb-aat-layout-morx-table.hh | 10 ++++++----
+ 2 files changed, 37 insertions(+), 8 deletions(-)
+
+commit b693fd0dc6c7979dcacdff060ecf12a2e107071d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 11:05:28 2018 -0500
+
+    [morx] Simplify
+
+ src/hb-aat-layout-morx-table.hh | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
+
+commit ce3451dc2aad2241c148953842e696e9f53b5deb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 11:02:04 2018 -0500
+
+    [kerx] Towards sharing Format1
+
+ src/hb-aat-layout-kerx-table.hh | 61
+ +++++++++++++++++++++++++++++++----------
+ 1 file changed, 47 insertions(+), 14 deletions(-)
+
+commit e890753ebbf0d20c1c86796837918d530610df3b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 10:58:50 2018 -0500
+
+    [morx] Minor
+
+ src/hb-aat-layout-morx-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 5b17853547ca6848ee652ef6990a81bb345ac06f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 10:45:25 2018 -0500
+
+    [kern/kerx] Share Format0
+
+ src/hb-aat-layout-kerx-table.hh | 22 +++++++++++++-----
+ src/hb-ot-kern-table.hh         | 50
+ ++++++-----------------------------------
+ 2 files changed, 23 insertions(+), 49 deletions(-)
+
+commit c97dde5d55929df394fbe57c1ba1a725592c6732
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 10:39:39 2018 -0500
+
+    [kern/kerx] Towards merge more
+
+ src/hb-aat-layout-kerx-table.hh | 75
+ ++++++++++++++++++++++++++++++-----------
+ src/hb-kern.hh                  | 33 ------------------
+ src/hb-ot-kern-table.hh         |  7 ++--
+ 3 files changed, 58 insertions(+), 57 deletions(-)
+
+commit 540ccc38b0f95804d08047f8b2d059bfd1e09337
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 10:33:46 2018 -0500
+
+    [kern/kerx] More towards sharing
+
+ src/hb-aat-layout-kerx-table.hh |  7 ++++---
+ src/hb-ot-kern-table.hh         | 10 +++++++---
+ 2 files changed, 11 insertions(+), 6 deletions(-)
+
+commit d0f8f4c200670bc0bfbffbf301139a3613865a7f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 10:25:25 2018 -0500
+
+    [kern] Move kern machine to hb-kern.hh
+
+ src/Makefile.sources            |   1 +
+ src/hb-aat-layout-kerx-table.hh |   5 +-
+ src/hb-kern.hh                  | 153
+ ++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-kern-table.hh         | 115 +-----------------------------
+ src/hb-ot-shape-fallback.cc     |   2 +-
+ 5 files changed, 157 insertions(+), 119 deletions(-)
+
+commit a6acff252c72457ecfa856fd6c57081b3a4290dd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 10:19:46 2018 -0500
+
+    [kerx] Towards sharing subtables with kern
+
+ src/hb-aat-layout-kerx-table.hh | 41
+ +++++++++++++++++++++++------------------
+ 1 file changed, 23 insertions(+), 18 deletions(-)
+
+commit befac337ca2c705e2cea60a9a92e40e0dbbc40aa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 09:53:02 2018 -0500
+
+    [kern] Remove Override business
+
+    Not used in any fonts.  Not well-specified when mixing kerning with
+    Cross-Stream positioning.
+
+ src/hb-ot-kern-table.hh | 16 ----------------
+ 1 file changed, 16 deletions(-)
+
+commit 9d5027696e418b7c2a5ccbc18faafe6b9290d08b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 09:16:53 2018 -0500
+
+    [post] Return true on truncation
+
+    Client can check that buffer was completely filled out and reallocate.
+
+ src/hb-ot-post-table.hh | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 7d91f07edf29c4923716af6cee8eb94f948ac91f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 09:14:42 2018 -0500
+
+    [post] Protect against huge empty tables
+
+ src/hb-ot-post-table.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 5ed816ab5900ac4ff7feca3d98cbd92e62fd1754
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 09:13:51 2018 -0500
+
+    [post] Minor
+
+ src/hb-ot-post-table.hh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 64f0becd89cc2b0136c7dc1609abc9f957525cf8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 09:10:55 2018 -0500
+
+    [post] Fix bound checking
+
+ src/hb-ot-post-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7ec694ddf25a313483044256f7ed88b644432e15
+Author: HinTak <htl10@users.sourceforge.net>
+Date:   Wed Nov 7 13:19:36 2018 +0000
+
+    Use non-GRID-fitted values for metrics (#1363)
+
+    * Use non-GRID-fitted values for metrics
+
+    See freetype/src/base/ftobjs.c:ft_recompute_scaled_metrics() and
+    the usage of GRID_FIT_METRICS inside.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/1262
+
+    * Update hb-ft.cc
+
+ src/hb-ft.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 59e04e42312293c30714a666c4479e209aec3c0e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 00:25:48 2018 -0500
+
+    [kern/kerx] Fix cursive joining
+
+    Tested with Waseem TTC:
+
+    $ hb-shape Waseem.ttc جحخج
+    [F1Jeem_R2=3@0,180+479|M1Khah_L2_R2=2@0,682+403|M1Hah_L2_R2=1@0,1184+403|I1Jeem_L2=0@0,1184+744]
+
+ src/hb-aat-layout-kerx-table.hh | 2 ++
+ src/hb-ot-kern-table.hh         | 2 ++
+ 2 files changed, 4 insertions(+)
+
+commit 8d0f797139e853d13cb2383d541c2e691d9dbae3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 7 00:04:40 2018 -0500
+
+    [kern/kerx] Fix "reset" magic value
+
+ src/hb-aat-layout-kerx-table.hh | 2 +-
+ src/hb-ot-kern-table.hh         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 0123976a0c1e2f629252969a7ff632dc2b1dbbc9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 21:45:40 2018 -0500
+
+    [kerx] Adjust CrossStream kern to match 'kern' table
+
+ src/hb-aat-layout-kerx-table.hh | 62
+ +++++++++++++++++++++++++++++++----------
+ 1 file changed, 48 insertions(+), 14 deletions(-)
+
+commit 80a33b9ac351d81793f35a92e0255ffbf5ceb8b9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 21:41:28 2018 -0500
+
+    [kern] More tweaks
+
+    Solves a mystery or two.  I'm fairly confident this is what CoreText
+    does now.
+
+ src/hb-ot-kern-table.hh | 40 ++++++++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 18 deletions(-)
+
+commit 564e8ac0465d8ced3a98ecb55d09ffaa45eefc2f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 21:04:40 2018 -0500
+
+    [kern] Adjust some more
+
+    Getting closer.  So many open questions still...
+
+ src/hb-ot-kern-table.hh | 36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
+
+commit 4d003b8503f9c984abe2ac0de8c526a276ea8e54
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 21:04:02 2018 -0500
+
+    [kern] Add TODO
+
+ src/hb-ot-kern-table.hh | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit 9810f0b80e5b6580a7a15debcec073dfc9ca759f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 19:24:04 2018 -0500
+
+    [kern] Minor
+
+ src/hb-ot-kern-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9c04b6058306cd4b2123a33a7cbeb47505434217
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 18:35:58 2018 -0500
+
+    [kern] In Format1, adjust how kerning is done
+
+    In a series of kerns in one action, kern all but last glyph forward,
+    and the last one backward.  Seems to better match what CoreText
+    is doing.
+
+    Test cases, with GeezaPro Arabic:
+
+    $ ./hb-shape GeezaPro_10_10.ttc -u U+0631,U+0628
+    [u0628.beh=1+1415|u0631.reh=0@-202,0+700]
+
+    $ ./hb-shape GeezaPro_10_10.ttc -u U+0628,U+064F
+    [u064f.damma=0@0,-250+-250|u0628.beh=0@250,0+1665]
+
+    In a later change, I'll make kern machine avoid producing negative
+    kerns.
+
+ src/hb-ot-kern-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit e8c47724638c29d78001905610c662de99c59cad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 17:16:04 2018 -0500
+
+    [kern] XXX Negate CrossKerning sign
+
+    Not sure why, but seems to better match GeezaPro Arabic w CoreText.
+
+    Quite possibly I'm doing something very wrong...
+
+ src/hb-ot-kern-table.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 01bf43ac01576a6415336cc56c74bb1a872566d1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 14:48:42 2018 -0500
+
+    [kern] Implement CrossStream kerning
+
+ src/hb-aat-layout-kerx-table.hh | 75
+ ++++++++++++++++++++++++++---------------
+ src/hb-ot-kern-table.hh         | 63 ++++++++++++++++++++++++++++------
+ 2 files changed, 101 insertions(+), 37 deletions(-)
+
+commit b11830c09e0d78bbdaf86ef02191d00b3d8256c4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 15:23:18 2018 -0500
+
+    [kern] Improve Format 2
+
+    Still disabled.
+
+ src/hb-aat-layout-common.hh | 20 +++++++++-----------
+ src/hb-ot-kern-table.hh     | 35 ++++++-----------------------------
+ 2 files changed, 15 insertions(+), 40 deletions(-)
+
+commit c0383c6bb725bed2a48485988a427348384f3f87
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 15:07:19 2018 -0500
+
+    Minor
+
+ src/hb-aat-layout-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 10e6f708f30986bab9f7b506935f2555d6b79ff4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 13:32:13 2018 -0500
+
+    [kern] Minor
+
+ src/hb-ot-kern-table.hh | 30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
+
+commit 164eedd9181345d84d5f8059475ad4b97784fd46
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 13:18:27 2018 -0500
+
+    [kern] Minor
+
+ src/hb-ot-kern-table.hh | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+commit 220a5991baa213b7bd173ea02090dc6fc8aef655
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 13:51:39 2018 -0500
+
+    [kern/kerx] Fix trace numbering
+
+ src/hb-aat-layout-kerx-table.hh | 1 +
+ src/hb-ot-kern-table.hh         | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit bfafe208da11817b5ebf3751f02af2dcdf57bd19
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 12:11:45 2018 -0500
+
+    [kern] Switch to dispatch
+
+ src/hb-aat-layout-kerx-table.hh | 12 ++++++------
+ src/hb-ot-kern-table.hh         | 31 +++++++++++++++----------------
+ 2 files changed, 21 insertions(+), 22 deletions(-)
+
+commit 213fa3bf711dae5028e3d041e305cdd35223de77
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 12:07:15 2018 -0500
+
+    [kern] Refactor to include header in each subtable type
+
+ src/hb-ot-kern-table.hh | 189
+ +++++++++++++++++++++++-------------------------
+ 1 file changed, 91 insertions(+), 98 deletions(-)
+
+commit b0da2cd0b9c1346b7cda5997fb799e895e34aace
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 11:16:45 2018 -0500
+
+    [kern] Some more
+
+ src/hb-ot-kern-table.hh | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+commit 75b00b51c8fca5d605c479333eb3abd608623613
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 11:13:40 2018 -0500
+
+    [kern] Renames
+
+ src/hb-ot-kern-table.hh | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
+commit 5c3ccbc634158ba9f84d365c9a31a596f6d8825b
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Tue Nov 6 18:10:56 2018 +0200
+
+    Another missing backlash
+
+    Did this ever work?
+
+ test/api/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d29602b962c13836f4c0d46796bc693f66f9b9fe
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Tue Nov 6 18:07:47 2018 +0200
+
+    Add missing backslash
+
+ test/api/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9bddfde25dc8c302c765a1e9a8a2c38c4a836e2e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 11:03:34 2018 -0500
+
+    [util] Fix up previous commit
+
+ util/options.cc | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit 3ec2e4fa7bec07ec181a0390e5f5fd695abee611
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 10:49:19 2018 -0500
+
+    [util] Don't terminate string after a a 0 in -u
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1361
+
+ util/options.cc | 4 +++-
+ util/options.hh | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+commit 8790b2740a334f1789fb0cf329f2b8ac9733793c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 10:24:54 2018 -0500
+
+    [fuzzing] Fix test
+
+ test/fuzzing/hb-shape-fuzzer.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 3af0a7edd0c99aaef846ae787056d7664bc69d35
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 10:20:57 2018 -0500
+
+    [fuzzing] Add make check-valgrind
+
+ test/fuzzing/Makefile.am | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit b062378ce640eb418cb413b595b79cc81a193209
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 10:20:36 2018 -0500
+
+    [test] Minor
+
+ test/api/.valgrind-suppressions | 0
+ test/api/Makefile.am            | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 37f421c951c853dff165df6731d0ab9c46350790
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 6 10:03:38 2018 -0500
+
+    Minor
+
+ src/hb-ot-layout.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b6112e5ea4d08fcbfa8f7cb4ef3903514a6e99f3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Nov 6 11:42:47 2018 +0330
+
+    [test] Fix -Weverything bot complain
+
+ test/api/test-ot-name.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a49df419f04b4065fc7f70a77c5cbc453e6ba906
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Nov 6 11:26:30 2018 +0330
+
+    [test] Test hb_ot_name_{list_names,get_utf8} on test-ot-name
+
+ test/api/test-ot-name.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+commit 9139cc23ea9fb339be9426860e0c72038d32a2ab
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Nov 6 11:17:14 2018 +0330
+
+    Fix link issue of some of the bots
+
+    e.g. https://circleci.com/gh/harfbuzz/harfbuzz/52410
+
+ src/hb-ot-layout.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 98b37f0c109d0f7454e91c9563c56d1903d6d496
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Nov 6 09:16:28 2018 +0330
+
+    [mort] Fix table detection logic
+
+    mort really needs some initial tests at least.
+
+ src/hb-aat-layout.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fa3ebf845fcffa827600fc4ca9fdde3aaa99f4c5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 23:34:07 2018 -0500
+
+    Simplify some more
+
+ src/hb-aat-layout.cc | 10 +++++-----
+ src/hb-ot-layout.cc  |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+commit 61f52231f430c72e1b66b76dabb018cfe45a01d5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 23:28:52 2018 -0500
+
+    [math] Shorten names a bit
+
+ src/hb-ot-math-table.hh |  4 ++--
+ src/hb-ot-math.cc       | 33 +++++++++++++++++++--------------
+ 2 files changed, 21 insertions(+), 16 deletions(-)
+
+commit 737efbe65583a71d7df9ae7b423d9fb1d68599b7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 23:26:29 2018 -0500
+
+    [ot-layout] Simplify GSUB/GPOS access
+
+    This concludes simplifying table access to face->table.XXXX.
+
+ src/hb-ot-layout.cc | 31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
+
+commit 5e68cec17913e9f6e98e5017a56c78a5614e4030
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 23:23:57 2018 -0500
+
+    [ot-layout] Simplify GDEF access
+
+ src/hb-ot-layout.cc | 44 ++++++++++++++++----------------------------
+ 1 file changed, 16 insertions(+), 28 deletions(-)
+
+commit 33b006cc51b0d27cbe1d8ed498bbf2b548cb6554
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 23:19:04 2018 -0500
+
+    [ot-layout] Simplify some access
+
+ src/hb-ot-layout-gdef-table.hh |  2 +-
+ src/hb-ot-layout-gpos-table.hh |  9 +++++----
+ src/hb-ot-layout-gsub-table.hh |  9 +++++----
+ src/hb-ot-layout-gsubgpos.hh   |  2 +-
+ src/hb-ot-layout.hh            | 12 +-----------
+ 5 files changed, 13 insertions(+), 21 deletions(-)
+
+commit db35409f0db9faf91a10defc81e4d6d60dc7822a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 23:11:46 2018 -0500
+
+    [ot-layout] Remove ensures
+
+ src/hb-ot-layout.cc | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+commit 9198de7b9b6020c1e3d6a48783e36db7e1f7e99a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 23:10:37 2018 -0500
+
+    [ot-font] Remove ensure
+
+ src/hb-ot-font.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit ea6d9b661fc3cf6bc4366feeb7694c0b712abfae
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 23:09:29 2018 -0500
+
+    [ot-face] Remove a few ensures
+
+ src/hb-face.cc | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit 0fe7a745c9a323a3fc76beb011b6ab8919cf905b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 23:08:33 2018 -0500
+
+    [ot-face] Simplify more table access
+
+ src/hb-face.cc      |  6 +++---
+ src/hb-ot-face.hh   |  3 ---
+ src/hb-ot-font.cc   |  4 +---
+ src/hb-ot-layout.cc | 34 +++++++++++++++++-----------------
+ 4 files changed, 21 insertions(+), 26 deletions(-)
+
+commit a35c92cbe771a75df40412fd248ad06f6a0cfebf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 22:58:43 2018 -0500
+
+    [ot-face] Simplify table access
+
+    Yoohoo!
+
+ src/hb-aat-layout.cc | 107
+ ++++++++++-----------------------------------------
+ src/hb-ot-color.cc   |  66 ++++++++-----------------------
+ src/hb-ot-layout.cc  |  20 ++--------
+ src/hb-ot-math.cc    |  47 ++++++++--------------
+ src/hb-ot-name.cc    |  11 +-----
+ src/hb-ot-var.cc     |  33 ++++------------
+ 6 files changed, 64 insertions(+), 220 deletions(-)
+
+commit 914b595f2598d5bdb2c750832d567a57d45db84e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 22:39:50 2018 -0500
+
+    [ot-face] Include hb-ot-face directly in hb_face_t
+
+    Simplifying access coming next.
+
+ src/hb-face.cc     |  4 ++++
+ src/hb-face.hh     |  3 +++
+ src/hb-ot-face.cc  | 24 ++----------------------
+ src/hb-ot-face.hh  | 39 +++++++++++++++------------------------
+ src/hb-ot-font.cc  | 24 ++++++++++++------------
+ src/hb-ot-math.cc  |  3 +--
+ src/hb-ot-shape.cc |  5 +++--
+ 7 files changed, 40 insertions(+), 62 deletions(-)
+
+commit 56ba998cddbb2ba5d24fb0b02d2bf77a46c0f23f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 19:49:54 2018 -0500
+
+    [cmap] Push get_nominal_glyphs down into cmap accelerator
+
+ src/hb-ot-cmap-table.hh | 21 +++++++++++++++++++++
+ src/hb-ot-font.cc       | 13 +++----------
+ 2 files changed, 24 insertions(+), 10 deletions(-)
+
+commit 36d85dce25abd079252d973f804220bf7b97e987
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 19:46:29 2018 -0500
+
+    [cmap] Use hb_nonnullptr_t
+
+ src/hb-ot-cmap-table.hh | 34 ++++++++++++++--------------------
+ 1 file changed, 14 insertions(+), 20 deletions(-)
+
+commit 8be74d85534534dbdd39a0a6f496e26e9f3e661d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 5 18:47:22 2018 -0500
+
+    2.1.1
+
+ NEWS             | 8 ++++++++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+
 commit 6482fda519ca7d173e3bcb3717aa30e237f04b25
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Nov 5 15:03:18 2018 -0500

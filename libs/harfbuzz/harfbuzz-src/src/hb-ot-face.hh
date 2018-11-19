@@ -34,35 +34,13 @@
 #include "hb-machinery.hh"
 
 
-#define hb_ot_face_data(face) ((hb_ot_face_data_t *) face->shaper_data.ot.get_relaxed ())
-
-
 /*
- * hb_ot_face_data_t
+ * hb_ot_face_t
  */
 
-/* Most of these tables are NOT needed for shaping.  But we need to hook them *somewhere*.
- * This is as good as any place. */
 #define HB_OT_TABLES \
-    /* OpenType shaping. */ \
-    HB_OT_ACCELERATOR(OT, GDEF) \
-    HB_OT_ACCELERATOR(OT, GSUB) \
-    HB_OT_ACCELERATOR(OT, GPOS) \
-    HB_OT_TABLE(OT, JSTF) \
-    HB_OT_TABLE(OT, BASE) \
-    /* AAT shaping. */ \
-    HB_OT_TABLE(AAT, morx) \
-    HB_OT_TABLE(AAT, mort) \
-    HB_OT_TABLE(AAT, kerx) \
-    HB_OT_TABLE(AAT, ankr) \
-    HB_OT_TABLE(AAT, trak) \
-    /* OpenType variations. */ \
-    HB_OT_TABLE(OT, fvar) \
-    HB_OT_TABLE(OT, avar) \
-    HB_OT_TABLE(OT, MVAR) \
-    /* OpenType math. */ \
-    HB_OT_TABLE(OT, MATH) \
     /* OpenType fundamentals. */ \
+    HB_OT_TABLE(OT, head) \
     HB_OT_ACCELERATOR(OT, cmap) \
     HB_OT_ACCELERATOR(OT, hmtx) \
     HB_OT_ACCELERATOR(OT, vmtx) \
@@ -71,7 +49,28 @@
     HB_OT_ACCELERATOR(OT, glyf) \
     HB_OT_TABLE(OT, VORG) \
     HB_OT_ACCELERATOR(OT, name) \
+    HB_OT_TABLE(OT, OS2) \
+    HB_OT_TABLE(OT, STAT) \
+    /* OpenType shaping. */ \
+    HB_OT_ACCELERATOR(OT, GDEF) \
+    HB_OT_ACCELERATOR(OT, GSUB) \
+    HB_OT_ACCELERATOR(OT, GPOS) \
+    HB_OT_TABLE(OT, BASE) \
+    HB_OT_TABLE(OT, JSTF) \
+    /* AAT shaping. */ \
+    HB_OT_TABLE(AAT, mort) \
+    HB_OT_TABLE(AAT, morx) \
+    HB_OT_TABLE(AAT, kerx) \
+    HB_OT_TABLE(AAT, ankr) \
+    HB_OT_TABLE(AAT, trak) \
+    HB_OT_TABLE(AAT, lcar) \
     HB_OT_TABLE(AAT, ltag) \
+    /* OpenType variations. */ \
+    HB_OT_TABLE(OT, fvar) \
+    HB_OT_TABLE(OT, avar) \
+    HB_OT_TABLE(OT, MVAR) \
+    /* OpenType math. */ \
+    HB_OT_TABLE(OT, MATH) \
     /* OpenType color fonts. */ \
     HB_OT_TABLE(OT, COLR) \
     HB_OT_TABLE(OT, CPAL) \
@@ -87,7 +86,7 @@ HB_OT_TABLES
 #undef HB_OT_ACCELERATOR
 #undef HB_OT_TABLE
 
-struct hb_ot_face_data_t
+struct hb_ot_face_t
 {
   HB_INTERNAL void init0 (hb_face_t *face);
   HB_INTERNAL void fini (void);
@@ -113,13 +112,6 @@ struct hb_ot_face_data_t
 #undef HB_OT_ACCELERATOR
 #undef HB_OT_TABLE
 };
-
-
-HB_INTERNAL hb_ot_face_data_t *
-_hb_ot_face_data_create (hb_face_t *face);
-
-HB_INTERNAL void
-_hb_ot_face_data_destroy (hb_ot_face_data_t *data);
 
 
 #endif /* HB_OT_FACE_HH */

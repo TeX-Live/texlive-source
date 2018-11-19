@@ -110,17 +110,17 @@ static inline Type& StructAfter(TObject &X)
   static const unsigned int min_size = (size)
 
 #define DEFINE_SIZE_ARRAY(size, array) \
-  DEFINE_INSTANCE_ASSERTION (sizeof (*this) == (size) + VAR * sizeof (array[0])); \
-  DEFINE_COMPILES_ASSERTION ((void) array[0].static_size) \
+  DEFINE_INSTANCE_ASSERTION (sizeof (*this) == (size) + VAR * sizeof ((array)[0])); \
+  DEFINE_COMPILES_ASSERTION ((void) (array)[0].static_size) \
   enum { min_size = (size) }
 
 #define DEFINE_SIZE_ARRAY_SIZED(size, array) \
-	inline unsigned int get_size (void) const { return (size - array.min_size + array.get_size ()); } \
+	inline unsigned int get_size (void) const { return (size - (array).min_size + (array).get_size ()); } \
 	DEFINE_SIZE_ARRAY(size, array)
 
 #define DEFINE_SIZE_ARRAY2(size, array1, array2) \
   DEFINE_INSTANCE_ASSERTION (sizeof (*this) == (size) + sizeof (this->array1[0]) + sizeof (this->array2[0])); \
-  DEFINE_COMPILES_ASSERTION ((void) array1[0].static_size; (void) array2[0].static_size) \
+  DEFINE_COMPILES_ASSERTION ((void) (array1)[0].static_size; (void) (array2)[0].static_size) \
   static const unsigned int min_size = (size)
 
 
@@ -298,7 +298,8 @@ struct hb_sanitize_context_t :
     this->start = this->end = nullptr;
   }
 
-  inline bool check_range (const void *base, unsigned int len) const
+  inline bool check_range (const void *base,
+			   unsigned int len) const
   {
     const char *p = (const char *) base;
     bool ok = this->start <= p &&
@@ -316,20 +317,37 @@ struct hb_sanitize_context_t :
   }
 
   template <typename T>
-  inline bool check_array (const T *base, unsigned int len, unsigned int record_size = T::static_size) const
+  inline bool check_range (const T *base,
+			   unsigned int a,
+			   unsigned int b) const
   {
-    const char *p = (const char *) base;
-    bool overflows = hb_unsigned_mul_overflows (len, record_size);
-    unsigned int array_size = record_size * len;
-    bool ok = !overflows && this->check_range (base, array_size);
+    return !hb_unsigned_mul_overflows (a, b) &&
+	   this->check_range (base, a * b);
+  }
 
-    DEBUG_MSG_LEVEL (SANITIZE, p, this->debug_depth+1, 0,
-       "check_array [%p..%p] (%d*%d=%d bytes) in [%p..%p] -> %s",
-       p, p + (record_size * len), record_size, len, (unsigned int) array_size,
-       this->start, this->end,
-       overflows ? "OVERFLOWS" : ok ? "OK" : "OUT-OF-RANGE");
+  template <typename T>
+  inline bool check_range (const T *base,
+			   unsigned int a,
+			   unsigned int b,
+			   unsigned int c) const
+  {
+    return !hb_unsigned_mul_overflows (a, b) &&
+	   this->check_range (base, a * b, c);
+  }
 
-    return likely (ok);
+  template <typename T>
+  inline bool check_array (const T *base,
+			   unsigned int len) const
+  {
+    return this->check_range (base, len, T::static_size);
+  }
+
+  template <typename T>
+  inline bool check_array (const T *base,
+			   unsigned int a,
+			   unsigned int b) const
+  {
+    return this->check_range (base, a, b, T::static_size);
   }
 
   template <typename Type>
@@ -734,21 +752,18 @@ struct hb_data_wrapper_t
     return *(((Data **) (void *) this) - WheresData);
   }
 
+  inline bool is_inert (void) const { return !get_data (); }
+
   template <typename Stored, typename Subclass>
-  inline Stored * call_create (void) const
-  {
-    Data *data = this->get_data ();
-    return likely (data) ? Subclass::create (data) : nullptr;
-  }
+  inline Stored * call_create (void) const { return Subclass::create (get_data ()); }
 };
 template <>
 struct hb_data_wrapper_t<void, 0>
 {
+  inline bool is_inert (void) const { return false; }
+
   template <typename Stored, typename Funcs>
-  inline Stored * call_create (void) const
-  {
-    return Funcs::create ();
-  }
+  inline Stored * call_create (void) const { return Funcs::create (); }
 };
 
 template <typename T1, typename T2> struct hb_non_void_t { typedef T1 value; };
@@ -775,32 +790,22 @@ struct hb_lazy_loader_t : hb_data_wrapper_t<Data, WheresData>
   {
   retry:
     Stored *p = instance.get ();
-    if (unlikely (p && !this->instance.cmpexch (p, nullptr)))
+    if (unlikely (p && !cmpexch (p, nullptr)))
       goto retry;
     do_destroy (p);
   }
 
-  inline Stored * do_create (void) const
-  {
-    Stored *p = this->template call_create<Stored, Funcs> ();
-    if (unlikely (!p))
-      p = const_cast<Stored *> (Funcs::get_null ());
-    return p;
-  }
   static inline void do_destroy (Stored *p)
   {
-    if (p && p != Funcs::get_null ())
+    if (p && p != const_cast<Stored *> (Funcs::get_null ()))
       Funcs::destroy (p);
   }
 
   inline const Returned * operator -> (void) const { return get (); }
   inline const Returned & operator * (void) const { return *get (); }
+  explicit_operator inline operator bool (void) const
+  { return get_stored () != Funcs::get_null (); }
   template <typename C> inline operator const C * (void) const { return get (); }
-
-  inline Data * get_data (void) const
-  {
-    return *(((Data **) this) - WheresData);
-  }
 
   inline Stored * get_stored (void) const
   {
@@ -808,8 +813,14 @@ struct hb_lazy_loader_t : hb_data_wrapper_t<Data, WheresData>
     Stored *p = this->instance.get ();
     if (unlikely (!p))
     {
-      p = do_create ();
-      if (unlikely (!this->instance.cmpexch (nullptr, p)))
+      if (unlikely (this->is_inert ()))
+	return const_cast<Stored *> (Funcs::get_null ());
+
+      p = this->template call_create<Stored, Funcs> ();
+      if (unlikely (!p))
+	p = const_cast<Stored *> (Funcs::get_null ());
+
+      if (unlikely (!cmpexch (nullptr, p)))
       {
         do_destroy (p);
 	goto retry;
@@ -822,15 +833,10 @@ struct hb_lazy_loader_t : hb_data_wrapper_t<Data, WheresData>
     return this->instance.get_relaxed ();
   }
 
-  inline void set_stored (Stored *instance_)
+  inline bool cmpexch (Stored *current, Stored *value) const
   {
-    /* This *must* be called when there are no other threads accessing.
-     * However, to make TSan, etc, happy, we using cmpexch. */
-  retry:
-    Stored *p = this->instance.get ();
-    if (unlikely (!this->instance.cmpexch (p, instance_)))
-      goto retry;
-    do_destroy (p);
+    /* This *must* be called when there are no other threads accessing. */
+    return this->instance.cmpexch (current, value);
   }
 
   inline const Returned * get (void) const { return Funcs::convert (get_stored ()); }
@@ -862,7 +868,7 @@ struct hb_lazy_loader_t : hb_data_wrapper_t<Data, WheresData>
     free (p);
   }
 
-  private:
+//  private:
   /* Must only have one pointer. */
   hb_atomic_ptr_t<Stored *> instance;
 };

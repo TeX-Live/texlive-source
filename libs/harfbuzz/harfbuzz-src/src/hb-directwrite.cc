@@ -23,16 +23,11 @@
  */
 
 #include "hb.hh"
-#define HB_SHAPER directwrite
 #include "hb-shaper-impl.hh"
 
 #include <DWrite_1.h>
 
 #include "hb-directwrite.h"
-
-
-HB_SHAPER_DATA_ENSURE_DEFINE (directwrite, face)
-HB_SHAPER_DATA_ENSURE_DEFINE (directwrite, font)
 
 
 /*
@@ -240,8 +235,6 @@ struct hb_directwrite_font_data_t
 hb_directwrite_font_data_t *
 _hb_directwrite_shaper_font_data_create (hb_font_t *font)
 {
-  if (unlikely (!hb_directwrite_shaper_face_data_ensure (font->face))) return nullptr;
-
   hb_directwrite_font_data_t *data = new hb_directwrite_font_data_t;
   if (unlikely (!data))
     return nullptr;
@@ -255,27 +248,6 @@ _hb_directwrite_shaper_font_data_destroy (hb_directwrite_font_data_t *data)
   delete data;
 }
 
-
-/*
- * shaper shape_plan data
- */
-
-struct hb_directwrite_shape_plan_data_t {};
-
-hb_directwrite_shape_plan_data_t *
-_hb_directwrite_shaper_shape_plan_data_create (hb_shape_plan_t    *shape_plan HB_UNUSED,
-					       const hb_feature_t *user_features HB_UNUSED,
-					       unsigned int        num_user_features HB_UNUSED,
-					       const int          *coords HB_UNUSED,
-					       unsigned int        num_coords HB_UNUSED)
-{
-  return (hb_directwrite_shape_plan_data_t *) HB_SHAPER_DATA_SUCCEEDED;
-}
-
-void
-_hb_directwrite_shaper_shape_plan_data_destroy (hb_directwrite_shape_plan_data_t *data HB_UNUSED)
-{
-}
 
 // Most of TextAnalysis is originally written by Bas Schouten for Mozilla project
 // but now is relicensed to MIT for HarfBuzz use
@@ -555,8 +527,8 @@ _hb_directwrite_shape_full (hb_shape_plan_t    *shape_plan,
   float               lineWidth)
 {
   hb_face_t *face = font->face;
-  hb_directwrite_face_data_t *face_data = HB_SHAPER_DATA_GET (face);
-  hb_directwrite_font_data_t *font_data = HB_SHAPER_DATA_GET (font);
+  const hb_directwrite_face_data_t *face_data = face->data.directwrite;
+  const hb_directwrite_font_data_t *font_data = font->data.directwrite;
   IDWriteFactory *dwriteFactory = face_data->dwriteFactory;
   IDWriteFontFace *fontFace = face_data->fontFace;
 

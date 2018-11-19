@@ -46,6 +46,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-font.hh \
 	@HARFBUZZ_TREE@/src/hb-font.cc \
 	@HARFBUZZ_TREE@/src/hb-iter.hh \
+	@HARFBUZZ_TREE@/src/hb-kern.hh \
 	@HARFBUZZ_TREE@/src/hb-map.hh \
 	@HARFBUZZ_TREE@/src/hb-map.cc \
 	@HARFBUZZ_TREE@/src/hb-machinery.hh \
@@ -66,6 +67,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-ot-kern-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-maxp-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-name-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-stat-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-name-language.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-name-language.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-name.cc \
@@ -107,7 +109,9 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-ankr-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-bsln-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-feat-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-just-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-kerx-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-lcar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-morx-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-trak-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout.hh \

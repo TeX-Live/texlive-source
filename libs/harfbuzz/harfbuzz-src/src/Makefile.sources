@@ -16,6 +16,7 @@ HB_BASE_sources = \
 	hb-font.hh \
 	hb-font.cc \
 	hb-iter.hh \
+	hb-kern.hh \
 	hb-map.hh \
 	hb-map.cc \
 	hb-machinery.hh \
@@ -99,7 +100,9 @@ HB_OT_sources = \
 	hb-aat-layout-ankr-table.hh \
 	hb-aat-layout-bsln-table.hh \
 	hb-aat-layout-feat-table.hh \
+	hb-aat-layout-just-table.hh \
 	hb-aat-layout-kerx-table.hh \
+	hb-aat-layout-lcar-table.hh \
 	hb-aat-layout-morx-table.hh \
 	hb-aat-layout-trak-table.hh \
 	hb-aat-layout.hh \
@@ -155,6 +158,7 @@ HB_OT_sources = \
 	hb-ot-shape-fallback.hh \
 	hb-ot-shape-fallback.cc \
 	hb-ot-shape.hh \
+	hb-ot-stat-table.hh \
 	hb-ot-var.cc \
 	hb-ot-var-avar-table.hh \
 	hb-ot-var-fvar-table.hh \

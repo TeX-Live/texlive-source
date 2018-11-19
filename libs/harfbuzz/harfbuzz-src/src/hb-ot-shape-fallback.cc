@@ -25,7 +25,7 @@
  */
 
 #include "hb-ot-shape-fallback.hh"
-#include "hb-ot-kern-table.hh"
+#include "hb-kern.hh"
 
 static unsigned int
 recategorize_combining_class (hb_codepoint_t u,
@@ -464,9 +464,18 @@ _hb_ot_shape_fallback_kern (const hb_ot_shape_plan_t *plan,
       !font->has_glyph_h_kerning_func () :
       !font->has_glyph_v_kerning_func ())
     return;
+
+  bool reverse = HB_DIRECTION_IS_BACKWARD (buffer->props.direction);
+
+  if (reverse)
+    buffer->reverse ();
+
   hb_ot_shape_fallback_kern_driver_t driver (font, buffer);
-  hb_kern_machine_t<hb_ot_shape_fallback_kern_driver_t> machine (driver);
+  OT::hb_kern_machine_t<hb_ot_shape_fallback_kern_driver_t> machine (driver);
   machine.kern (font, buffer, plan->kern_mask, false);
+
+  if (reverse)
+    buffer->reverse ();
 }
 
 
@@ -500,16 +509,16 @@ _hb_ot_shape_fallback_spaces (const hb_ot_shape_plan_t *plan HB_UNUSED,
 	case t::SPACE_EM_6:
 	case t::SPACE_EM_16:
 	  if (horizontal)
-	    pos[i].x_advance = (font->x_scale + ((int) space_type)/2) / (int) space_type;
+	    pos[i].x_advance = +(font->x_scale + ((int) space_type)/2) / (int) space_type;
 	  else
-	    pos[i].y_advance = (font->y_scale + ((int) space_type)/2) / (int) space_type;
+	    pos[i].y_advance = -(font->y_scale + ((int) space_type)/2) / (int) space_type;
 	  break;
 
 	case t::SPACE_4_EM_18:
 	  if (horizontal)
-	    pos[i].x_advance = (int64_t) font->x_scale * 4 / 18;
+	    pos[i].x_advance = (int64_t) +font->x_scale * 4 / 18;
 	  else
-	    pos[i].y_advance = (int64_t) font->y_scale * 4 / 18;
+	    pos[i].y_advance = (int64_t) -font->y_scale * 4 / 18;
 	  break;
 
 	case t::SPACE_FIGURE:
