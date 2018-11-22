@@ -1,4 +1,4 @@
-Changes applied to the pixman-0.34.0/ tree as obtained from:
+Changes applied to the pixman-0.36.0/ tree as obtained from:
 	http://cairographics.org/releases/
 
 Removed:
@@ -19,4 +19,3 @@ Removed:
 Removed unused dirs:
 	demos
 	test
-
