@@ -4,7 +4,7 @@
 # Descr:	Latex -->  MAN-page (groff -man), HTML and TexInfo;
 # Language:	PERL (>= 5.0)
 # Author:	Dr. Jürgen Vollmer, Juergen.Vollmer@informatik-vollmer.de
-# $Id: latex2man,v 1.176 2018/06/05 18:53:10 vollmer Exp $
+# $Id: latex2man,v 1.177 2018/11/22 07:42:26 vollmer Exp $
 #
 # Copyright (C) 1998 Dr. Juergen Vollmer
 #                    Am Rennbuckel 21, D-76185 Karlsruhe, Germany
@@ -27,8 +27,8 @@ $CMD=`basename "$0"`; chop ($CMD);
 $gen_date = `date`; chomp $gen_date;       # date when the output was generated
 
 sub date2str;
-$VERSION = "1.27";
-$DATE    = date2str ('$Date: 2018/06/05 18:53:10 $' =~ m|(\d+/\d+/\d+)|);
+$VERSION = "1.28";
+$DATE    = date2str ('$Date: 2018/11/22 07:42:26 $' =~ m|(\d+/\d+/\d+)|);
 
 $tmp = "/tmp/$CMD.$$";
 
