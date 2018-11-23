@@ -409,6 +409,11 @@ kpathsea_element_dirs (kpathsea kpse, string elt)
   str_llist_type *ret;
   unsigned i;
 
+#ifdef _WIN32
+  char *tname = NULL;
+  wchar_t *wtname = NULL;
+#endif /* _WIN32 */
+
   /* If given nothing, return nothing.  */
   if (!elt || !*elt)
     return NULL;
@@ -419,8 +424,6 @@ kpathsea_element_dirs (kpathsea kpse, string elt)
   to support non-ascii values for the variable.
 */
   if (kpse->File_system_codepage != kpse->Win32_codepage) {
-    char *tname;
-    wchar_t *wtname;
     wtname = get_wstring_from_mbstring (kpse->Win32_codepage,
                                         elt, wtname = NULL);
     tname = get_mbstring_from_wstring (kpse->File_system_codepage,
@@ -428,15 +431,22 @@ kpathsea_element_dirs (kpathsea kpse, string elt)
     elt = tname;
     free(wtname);
   }
-#endif
+#endif /* _WIN32 */
 
   /* Normalize ELT before looking for a cached value.  */
   i = kpathsea_normalize_path (kpse, elt);
 
   /* If we've already cached the answer for ELT, return it.  */
   ret = cached (kpse, elt);
+#ifdef _WIN32
+  if (ret) {
+    if (tname) free (tname);
+    return ret;
+  }
+#else
   if (ret)
     return ret;
+#endif /* _WIN32 */
 
   /* We're going to have a real directory list to return.  */
   ret = XTALLOC1 (str_llist_type);
@@ -463,6 +473,10 @@ kpathsea_element_dirs (kpathsea kpse, string elt)
       fflush (stderr);
     }
 #endif /* KPSE_DEBUG */
+
+#ifdef _WIN32
+  if (tname) free (tname);
+#endif /* _WIN32 */
 
   return ret;
 }
