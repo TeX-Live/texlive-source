@@ -409,6 +409,10 @@ kpathsea_element_dirs (kpathsea kpse, string elt)
   str_llist_type *ret;
   unsigned i;
 
+  /* If given nothing, return nothing.  */
+  if (!elt || !*elt)
+    return NULL;
+
 #ifdef _WIN32
 /*
   Change encoding of a variable into kpse->File_system_codepage
@@ -425,10 +429,6 @@ kpathsea_element_dirs (kpathsea kpse, string elt)
     free(wtname);
   }
 #endif
-
-  /* If given nothing, return nothing.  */
-  if (!elt || !*elt)
-    return NULL;
 
   /* Normalize ELT before looking for a cached value.  */
   i = kpathsea_normalize_path (kpse, elt);
