@@ -494,9 +494,10 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   }
 
 #if defined(WIN32)
+  cp = AreFileApisANSI() ? GetACP() : GetOEMCP();
   if (!kpse->File_system_codepage)
-    kpse->File_system_codepage = AreFileApisANSI() ? GetACP() : GetOEMCP();
-  cp = kpse->Win32_codepage = kpse->File_system_codepage;
+    kpse->File_system_codepage = cp;
+  kpse->Win32_codepage = cp;
   if (cp == 932 || cp == 936 || cp == 950) {
     kpse->Is_cp932_system = cp;
   }

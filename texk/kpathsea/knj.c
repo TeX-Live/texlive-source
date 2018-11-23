@@ -1,6 +1,6 @@
 /* knj.c: check for 2-Byte Kanji (CP 932, SJIS) codes.
 
-   Copyright 2010, 2016 Akira Kakuto.
+   Copyright 2010, 2016, 2018 Akira Kakuto.
    Copyright 2013, 2016 TANAKA Takuji.
 
    This library is free software; you can redistribute it and/or
@@ -244,7 +244,12 @@ kpathsea_get_command_line_args_utf8 (kpathsea kpse, const_string enc, int *p_ac,
       hStderr = GetStdHandle( STD_ERROR_HANDLE );
 #endif /* DEBUG */
       kpse->File_system_codepage = CP_UTF8;
+/*
+  IS_KANJI() in the CP932-like system seems to be necessary to
+  support non-ascii values for variables in the case of
+  command_line_encoding = utf-8.
       kpse->Is_cp932_system = 0;
+*/
       argvw = CommandLineToArgvW(GetCommandLineW(), &argcw);
       argc = argcw;
       argv = xmalloc(sizeof(char *)*(argcw+1));
