@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 49070 2018-11-03 21:12:00Z karl $
+# $Id: tlmgr.pl 49226 2018-11-22 23:37:16Z karl $
 #
 # Copyright 2008-2018 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 49070 $';
-my $datrev = '$Date: 2018-11-03 22:12:00 +0100 (Sat, 03 Nov 2018) $';
+my $svnrev = '$Revision: 49226 $';
+my $datrev = '$Date: 2018-11-23 00:37:16 +0100 (Fri, 23 Nov 2018) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -9704,10 +9704,9 @@ automatically selected by the installer. The order of selection is:
 
 =item 1.
 
-If the environment variable C<TEXLIVE_DOWNLOADER> is
-defined, use it; abort if the specified program doesn't work.
-Possible values: C<curl>, C<wget>. The necessary options are added
-internally.
+If the environment variable C<TEXLIVE_DOWNLOADER> is defined, use it;
+abort if the specified program doesn't work. Possible values: C<lwp>,
+C<curl>, C<wget>. The necessary options are added internally.
 
 =item 2.
 
@@ -9730,8 +9729,27 @@ If wget is available (either from the system or TL) and working, use that.
 
 =back
 
-TL still provides C<wget> binaries for some platforms, so
-some download method should always be available.
+TL provides C<wget> binaries for platforms where necessary, so some
+download method should always be available.
+
+=item C<TEXLIVE_PREFER_OWN>
+
+By default, compression and download programs provided by the system,
+i.e., found along C<PATH> are preferred over those shipped with TeX
+Live.
+
+This can create problems with systems that are too old, and so can be
+overridden by setting the environment variable C<TEXLIVE_PREFER_OWN> to
+1. In this case, executables shipped with TL will be preferred.
+
+Extra compression/download programs not provided by TL, such as gzip,
+lwp, and curl, are still checked for on the system and used if
+available, per the above. C<TEXLIVE_PREFER_OWN> only applies when the
+program being checked for is shipped with TL, namely the lz4 and
+xz compressors and wget downloader.
+
+Exception: on Windows, the C<tar.exe> shipped with TL is always used,
+regardless of any setting.
 
 =back
 
@@ -9742,7 +9760,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 49070 2018-11-03 21:12:00Z karl $
+$Id: tlmgr.pl 49226 2018-11-22 23:37:16Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

@@ -4,7 +4,7 @@
 # Descr:	Latex -->  MAN-page (groff -man), HTML and TexInfo;
 # Language:	PERL (>= 5.0)
 # Author:	Dr. Jürgen Vollmer, Juergen.Vollmer@informatik-vollmer.de
-# $Id: latex2man,v 1.177 2018/11/22 07:42:26 vollmer Exp $
+# $Id: latex2man,v 1.181 2018/11/25 13:05:37 vollmer Exp $
 #
 # Copyright (C) 1998 Dr. Juergen Vollmer
 #                    Am Rennbuckel 21, D-76185 Karlsruhe, Germany
@@ -20,15 +20,16 @@
 require 5.0004_03;
 
 use Getopt::Std;
+use File::Basename;
 no warnings 'once';
 # use strict 'vars';
 
-$CMD=`basename "$0"`; chop ($CMD);
-$gen_date = `date`; chomp $gen_date;       # date when the output was generated
+$CMD      = basename ($0);
+$gen_date = localtime();       # date when the output was generated
 
 sub date2str;
-$VERSION = "1.28";
-$DATE    = date2str ('$Date: 2018/11/22 07:42:26 $' =~ m|(\d+/\d+/\d+)|);
+$VERSION = "1.29";
+$DATE    = date2str ('$Date: 2018/11/25 13:05:37 $' =~ m|(\d+/\d+/\d+)|);
 
 $tmp = "/tmp/$CMD.$$";
 
@@ -1092,7 +1093,7 @@ sub texiParagraph
 sub texiVerb
 {
     $arg = $_[0];
-    $arg =~ s/({|})/\@$1/g;
+    $arg =~ s/([{]|})/\@$1/g;
     Print $arg;
 }
 
@@ -1398,7 +1399,7 @@ sub interpret_word
 					    $add_blank = 0;
 					    last SWITCH;
        					};
-       /\\({|}|\$|_|#|&|-|%|,|\.|;)/ && do {$s=$`;$m=$1;$r=$';	#'
+      /\\([{]|}|\$|_|#|&|-|%|,|\.|;)/ && do {$s=$`;$m=$1;$r=$';	#'
 	                                    interpret_word $s;
 	                                    PrintM $Macro->{$m};
 					    interpret_word $r;
