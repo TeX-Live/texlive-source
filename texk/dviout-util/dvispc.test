@@ -49,7 +49,10 @@ diff --strip-trailing-cr $testdir/oldindep.spc $testdir/oldindep.spc \
   cmp $testdir/oldindep.dvi x3oldindepax.dvi && echo || exit 7
 
 
-## EXE2INDEP
+## EXE2MODIFY & EXE2CHECK (should be consistent)
+
+./dvispc -d $testdir/oldindep.dvi >x0oldindep.dry
+  diff $diffoptCRLF $testdir/oldindep.dry x0oldindep.dry && echo || exit 1
 
 ./dvispc -c $testdir/oldindep.dvi x0oldindepout.dvi && \
   cmp $testdir/oldindepout.dvi x0oldindepout.dvi && echo || exit 1
@@ -75,6 +78,13 @@ diff --strip-trailing-cr $testdir/oldindep.spc $testdir/oldindep.spc \
 #  ./dvispc x3write.dvi
 #  cmp $testdir/oldindepout.dvi x3write.dvi && echo || exit 5
 
+## case of underflow
+./dvispc $testdir/under.dvi x0underout.dvi && \
+  cmp $testdir/underout.dvi x0underout.dvi && echo || exit 6
+rm -f x1underout.dvi
+./dvispc x0underout.dvi x1underout.dvi && \
+  if test -f x1underout.dvi; then exit 1; else echo; fi || exit 6
+
 ./dvispc && echo || exit 0
 
 # the following tests will not pass for old version written by SHIMA.
@@ -82,39 +92,55 @@ diff --strip-trailing-cr $testdir/oldindep.spc $testdir/oldindep.spc \
 # exit code 1 for usage without argument. (the above line did it!)
 
 # correction for tpicpn.dvi is needed but should be minimal
+./dvispc -d $testdir/tpicpn.dvi >x0tpicpn.dry
+  diff $diffoptCRLF $testdir/tpicpn.dry x0tpicpn.dry && echo || exit 1
 ./dvispc $testdir/tpicpn.dvi x0tpicpnout.dvi && \
   cmp $testdir/tpicpnout.dvi x0tpicpnout.dvi && echo || exit 1
 
 # correction for tpicsh.dvi is never needed, check no output
+./dvispc -d $testdir/tpicsh.dvi >x0tpicsh.dry
+  diff $diffoptCRLF $testdir/tpicsh.dry x0tpicsh.dry && echo || exit 1
 rm -f x0tpicshout.dvi
 ./dvispc $testdir/tpicsh.dvi x0tpicshout.dvi && \
-  if test -f x0tpicshout.dvi; then exit 1; else echo; fi
+  if test -f x0tpicshout.dvi; then exit 1; else echo; fi || exit 1
 
 ## page independence in reverse order which requires prior scanning
+./dvispc -d $testdir/reverse.dvi >xreverse.dry
+  diff $diffoptCRLF $testdir/reverse.dry xreverse.dry && echo || exit 1
 ./dvispc $testdir/reverse.dvi xreverseout.dvi && \
   cmp $testdir/reverseout.dvi xreverseout.dvi && echo || exit 1
 
 # prior scanning should not mess up
+./dvispc -d $testdir/first.dvi >xfirst.dry
+  diff $diffoptCRLF $testdir/first.dry xfirst.dry && echo || exit 1
 ./dvispc $testdir/first.dvi xfirstout.dvi && \
   cmp $testdir/firstout.dvi xfirstout.dvi && echo || exit 1
 
 # prior scanning should not mess up (no correction)
+./dvispc -d $testdir/firstpn.dvi >xfirstpn.dry
+  diff $diffoptCRLF $testdir/firstpn.dry xfirstpn.dry && echo || exit 1
 rm -f xfirstpn.dvi
 ./dvispc $testdir/firstpn.dvi xfirstpn.dvi && \
-  if test -f xfirstpn.dvi; then exit 1; else echo; fi
+  if test -f xfirstpn.dvi; then exit 1; else echo; fi || exit 1
 
 # ==== future work start ====
 
 ## page independence of annotation
+#./dvispc -d $testdir/annot.dvi >xannot.dry
+#  diff $diffoptCRLF $testdir/annot.dry xannot.dry && echo || exit 2
 #./dvispc $testdir/annot.dvi xannotout.dvi && \
 #  cmp $testdir/annotout.dvi xannotout.dvi && echo || exit 2
 
 ## page independence of long (>255) specials (e.g. annotation)
 ## disabled because annotation is unsupported
+#./dvispc -d $testdir/longspec.dvi >xlongspec.dry
+#  diff $diffoptCRLF $testdir/longspec.dry xlongspec.dry && echo || exit 3
 #./dvispc $testdir/longspec.dvi xlongspecout.dvi && \
 #  cmp $testdir/longspecout.dvi xlongspecout.dvi && echo || exit 3
 
 ## flatten nested anotation
+#./dvispc -d $testdir/flatnest.dvi >xflatnest.dry
+#  diff $diffoptCRLF $testdir/flatnest.dry xflatnest.dry && echo || exit 3
 #./dvispc $testdir/flatnest.dvi xflatnestout.dvi && \
 #  cmp $testdir/flatnestout.dvi xflatnestout.dvi && echo || exit 4
 

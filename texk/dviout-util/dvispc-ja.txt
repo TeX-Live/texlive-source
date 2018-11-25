@@ -10,8 +10,8 @@ Usage: dvispc [-c] [-bvz] input_dvi_file [output_dvi_file]
        dvispc -x[..] [-ltv][-r..] [input_text_file] output_dvi_file
 
 Mode options:
-   -c: make page-indepent DVI in specials (default)
-   -d: check page-independence
+   -c: correct input DVI to be page-indepent in specials (default)
+   -d: dry run to check page-independence
    -s: show specials
    -a: translate DVI to Text
    -x: translate Text to DVI (-x0:str0 1:chkfnt 2:variety)

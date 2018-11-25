@@ -1,3 +1,28 @@
+2018-11-25  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* configure.ac: Version 20181125.
+
+2018-11-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c, dvispc.man, dvispc-{ja,en}.txt: Better help message.
+
+2018-10-16  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.test: Add tests for underflow.
+	* tests/under.{tex,dvi}, tests/underout.dvi: New tests.
+	* Makefile.am: Adjusted.
+
+2018-10-15  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Use common routine for EXE2MODIFY and EXE2CHECK
+	for simplicity.
+	* dvispc.test: Add tests for consistency between EXE2MODIFY
+	and EXE2CHECK.
+	* tests/oldindep.dry, tests/tpicpn.dry, tests/tpicsh.dry,
+	tests/reverse.dry, tests/first.dry, tests/firstpn.dry:
+	New tests.
+	* Makefile.am: Adjusted.
+
 2018-10-14  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvispc.c: Fix a bug that modification of non-stack

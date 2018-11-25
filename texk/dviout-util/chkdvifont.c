@@ -1266,7 +1266,7 @@ void usage()
  exit(1);
 
   show:
-	fprintf(stderr,
+	fprintf(stderr, "\n\n"
 #endif
 			"Errorlevel is the sum of the following number\n"
 			"\t  1: cmbsy5-9, cmcsc8-9, cmex7-9, cmmib5-9\n"

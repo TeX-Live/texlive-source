@@ -1,0 +1,44 @@
+% check underflow
+\documentclass{article}
+\usepackage[dvips]{color}
+\usepackage{atbegshi}
+\begin{document}
+black
+\newpage
+\AtBeginShipoutNext{\AtBeginShipoutDiscard}
+{\color{red}
+ start red (but discarded)
+\newpage
+ \AtBeginShipoutNext{\AtBeginShipoutDiscard}
+ {\color{blue}
+  start blue (but discarded)
+\newpage
+  \AtBeginShipoutNext{\AtBeginShipoutDiscard}
+  {\color{green}
+   start green (but discarded)
+\newpage
+   end green}
+\newpage
+  end blue}
+\newpage
+ end red}
+\newpage
+black
+\newpage
+\AtBeginShipoutNext{\AtBeginShipoutDiscard}
+{\color{red}
+ start red (but discarded)
+ {\color{blue}
+  start blue (but discarded)
+\newpage
+  end blue}
+ end red}
+\newpage
+black
+\newpage
+{\color{yellow}
+ start yellow
+\newpage
+ \AtBeginShipoutNext{\AtBeginShipoutDiscard}
+ end yellow (but discarded)}
+\end{document}

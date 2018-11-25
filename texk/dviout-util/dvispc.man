@@ -26,10 +26,10 @@ dvispc \- Modify a DVI file to be page-independent in specials
 is a utility to modify/edit \*(TX DVI file with the following features:
 .PP
     Mode option \fB\-c\fR (default):
-        modify an input DVI to be page-independent in specials (default)
+        correct an input DVI to be page-independent in specials (default)
 .PP
     Mode option \fB\-d\fR:
-        check if an input DVI is page-independent in specials
+        dry run to check if an input DVI is page-independent in specials
 .PP
     Mode option \fB\-s\fR:
         show all specials in the input DVI

@@ -1,0 +1,23 @@
+[1]
+background gray 1
+[2]
+background gray 1
+[3][4]
+background rgb 1 0 0
+[5]
+background rgb 1 0 0
+[6][7]
+background gray 1
+[8]
+background gray 1
+1:color push rgb 1 0 0
+[9]
+background gray 1
+1:color push rgb 1 0 0
+[10]
+background gray 1
+[11]
+background gray 1
+
+Maximal depth of color stack:2
+Some corrections are necessary!

@@ -31,18 +31,32 @@ EXTRA_DIST = $(TESTS)
 
 ## dvispc.test
 EXTRA_DIST += tests/oldindep.spc \
-	tests/oldindep.tex tests/oldindep.dvi tests/oldindepout.dvi \
-	tests/tpicpn.tex tests/tpicpn.dvi tests/tpicpnout.dvi \
+	tests/oldindep.tex tests/oldindep.dvi \
+	tests/oldindep.dry tests/oldindepout.dvi \
+	tests/under.tex tests/under.dvi \
+	tests/underout.dvi \
+	tests/tpicpn.tex tests/tpicpn.dvi \
+	tests/tpicpn.dry tests/tpicpnout.dvi \
 	tests/tpicsh.tex tests/tpicsh.dvi \
-	tests/reverse.tex tests/reverse.dvi tests/reverseout.dvi \
-	tests/first.tex tests/first.dvi tests/firstout.dvi \
+	tests/tpicsh.dry \
+	tests/reverse.tex tests/reverse.dvi \
+	tests/reverse.dry tests/reverseout.dvi \
+	tests/first.tex tests/first.dvi \
+	tests/first.dry tests/firstout.dvi \
 	tests/firstpn.tex tests/firstpn.dvi \
+	tests/firstpn.dry \
 	tests/annot.tex tests/annot.dvi \
 	tests/longspec.tex tests/longspec.dvi \
 	tests/flatnest.tex tests/flatnest.dvi
 DISTCLEANFILES = x*oldindep.spc \
-	x*oldindepa.txt x*oldindepax.dvi x*oldindepout.dvi \
-	x*tpicpnout.dvi x*reverseout.dvi x*firstout.dvi \
+	x*oldindepa.txt x*oldindepax.dvi \
+	x*oldindep.dry x*oldindepout.dvi \
+	x*underout.dvi \
+	x*tpicpn.dry x*tpicpnout.dvi \
+	x*tpicsh.dry \
+	x*reverse.dry x*reverseout.dvi \
+	x*first.dry x*firstout.dvi \
+	x*firstpn.dry \
 	x*write.dvi x*writeout.dvi
 
 ## chkdvifont.test
