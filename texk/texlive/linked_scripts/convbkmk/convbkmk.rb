@@ -3,9 +3,9 @@
 
 =begin
 
-= convbkmk Ver.0.20
+= convbkmk Ver.0.30
 
-  2018.11.11
+  2018.11.25
   Takuji Tanaka
   ttk (at) t-lab.opal.ne.jp
 ((<URL:http://www.t-lab.opal.ne.jp/tex/uptex_en.html>))
@@ -14,51 +14,83 @@
 == Abstract
 
 ((*convbkmk*)) is a tiny utility for making correct bookmarks in pdf files
-typesetted by platex/uplatex with the hyperref package.
-platex/uplatex + hyperref outputs data of bookmarks
+typesetted by pLaTeX/upLaTeX with the hyperref package.
+pLaTeX/upLaTeX + hyperref outputs data of bookmarks
 in their internal encodings (EUC-JP, Shift_JIS or UTF-8).
 On the other hand, the PostScript/PDF format requests that
 the data is written in a certain syntax with UTF-16 or PDFDocEncoding.
 Thus, data conversion is required to create correct bookmarks.
+
+In addition, pLaTeX outputs dvi files with special commands
+in its internal encoding (EUC-JP or Shift_JIS).
+It is not consistent with recent dviware and file systems
+which assume UTF-8.
+
 ((*convbkmk*)) provides a function of
-the encoding conversion and formatting the bookmark data.
+the encoding conversion and formatting the data.
 
 == Requirement
 
-ruby 1.9.x or later is required.
-ruby 1.8.x is no longer supported.
+((*ruby*)) 1.9.x or later is required.
+((*ruby*)) 1.8.x is no longer supported.
+To support conversion of dvi special,
+((*dvispc*)) in dviout-util is required.
 
 == Examples
 
-platex (internal kanji code: euc) + hyperref + dvips :
+=== for pdf bookmark
+
+pLaTeX (internal kanji code: euc) + hyperref + dvips :
  $ platex doc00.tex
  $ platex doc00.tex
  $ dvips doc00.dvi
  $ convbkmk.rb -e doc00.ps
  $ ps2pdf doc00-convbkmk.ps
 
-platex (kanji code: sjis) + hyperref + dvipdfmx :
+pLaTeX (kanji code: sjis) + hyperref + dvipdfmx :
  $ platex doc01.tex
  $ platex doc01.tex
  $ convbkmk.rb -s -o doc01.out
  $ platex doc01.tex
  $ dvipdfmx doc01.dvi
 
-uplatex + hyperref + dvips :
+upLaTeX + hyperref + dvips :
  $ uplatex doc02.tex
  $ uplatex doc02.tex
  $ dvips doc02.dvi
  $ convbkmk.rb doc02.ps
  $ ps2pdf doc02-convbkmk.ps
 
-uplatex + hyperref + dvipdfmx :
+upLaTeX + hyperref + dvipdfmx :
  $ uplatex doc03.tex
  $ uplatex doc03.tex
  $ convbkmk.rb -o doc03.out
  $ uplatex doc03.tex
  $ dvipdfmx doc03.dvi
 
-More examples are included in the uptex source archive.
+=== for dvi special (graphic file names)
+
+pLaTeX (internal kanji code: euc) + dvips :
+ $ platex doc04.tex
+ $ platex doc04.tex
+ $ convbkmk.rb -e -d doc04.dvi
+ $ dvips doc04-convbkmk.dvi
+ $ ps2pdf doc04-convbkmk.ps
+
+pLaTeX (internal kanji code: sjis) + dvipdfmx :
+ $ platex doc05.tex
+ $ platex doc05.tex
+ $ convbkmk.rb -s -d doc05.dvi
+ $ dvipdfmx doc05.dvi
+
+((*convbkmk*)) executes ((*dvispc*)) command
+to extract dvi files.
+((*dvispc*)) command is designated by
+an environmental variable 'DVISPC'.
+By default, 'dvispc' is set.
+
+More examples are provided at the GitHub repository
+and by the upTeX source archive.
 
 == Repository
 
@@ -122,10 +154,12 @@ THE SOFTWARE.
  * Update the author's mail address and web site.
 : 2018.11.11  0.20
  * Do not support Ruby1.8 anymore.
+: 2018.11.25  0.30
+ * Add -d option to support conversion of graphic file names in dvi special by pLaTeX.
 
 =end
 
-Version = "0.20"
+Version = "0.30"
 
 require "optparse"
 
@@ -146,7 +180,7 @@ class String
 end
 
 class TeXEncoding
-  attr_accessor :current, :option, :status, :is_8bit, :kconv_enc
+  attr_accessor :current, :option, :status, :is_8bit
   attr_reader :list
 
   def initialize
@@ -205,17 +239,26 @@ OptionParser.new do |opt|
   }
   opt.on('-o', '--out',
          'treat OUT files') {|v|
-    Opts[:mode] = 'out'
+    Opts[:mode] = :out
+    Opts[:overwrite] = true
+    require "fileutils"
+  }
+  opt.on('-d', '--dvi-special',
+         'treat specials in DVI files') {|v|
+    Opts[:mode] = :spc
+    Dvispc = ENV["DVISPC"] ||= 'dvispc'
     require "fileutils"
   }
   opt.on('-O', '--overwrite',
          'overwrite output files') {|v|
-    Opts[:mode] = 'overwrite'
+    Opts[:overwrite] = true
     require "fileutils"
   }
   opt.banner += " file0.ps [file1.ps ...]\n" \
     + opt.banner.sub('Usage:','      ') + " < in_file.ps > out_file.ps\n" \
-    + opt.banner.sub('Usage:','      ') + ' -o file0.out [file1.out ...]'
+    + opt.banner.sub('Usage:','      ') + " -o file0.out [file1.out ...]\n" \
+    + opt.banner.sub('Usage:','      ') + " -d file0.dvi [file1.dvi ...]\n" \
+    + opt.banner.sub('Usage:','      ') + " -d file0.dvispc [file1.dvispc ...]"
 
   opt.parse!
 end
@@ -224,9 +267,11 @@ end
 if enc.status == false
   enc.set_process_encoding('UTF-8')
 end
-if Opts[:mode] == 'out'
+if Opts[:mode] == :out
   OpenP, CloseP, OpenPEsc, ClosePEsc = '{', '}', '\{', '\}'
   FileSfx = 'out'
+elsif Opts[:mode] == :spc then
+  FileSfx = '(dvi|dvispc)'
 else
   OpenP, CloseP, OpenPEsc, ClosePEsc = '(', ')', '\(', '\)'
   FileSfx = 'ps'
@@ -254,6 +299,16 @@ def try_guess_encoding(line, enc)
   end
 end
 
+def os_legacy_encoding(enc)
+  return if enc.status != 'guess'
+  enc.is_8bit = true
+  if (RUBY_PLATFORM =~ /mswin|msys|mingw|cygwin|bccwin|wince|emc/i)
+    valid_enc = 'Shift_JIS'
+  else
+    valid_enc = 'EUC-JP'
+  end
+  enc.set_process_encoding(valid_enc)
+end
 
 def check_parentheses_balance(line, enc)
   depth = 0
@@ -360,23 +415,81 @@ def conv_string_to_utf16be(line, enc)
   conv16be.force_encoding('UTF-16BE')
   conv16be += conv.utf8_to_utf16be # UTF-16BE with BOM
   conv16be.each_byte {|byte|
-    buf += (Opts[:mode] == 'out' ? '\%03o' : '%02X') % byte
+    buf += (Opts[:mode] == :out ? '\%03o' : '%02X') % byte
   }
-  buf = Opts[:mode] == 'out' ? '{' + buf + '}' : '<' + buf + '>'
+  buf = Opts[:mode] == :out ? '{' + buf + '}' : '<' + buf + '>'
   return pre + buf + post
 end
 
+def special_string_to_utf8(line, enc)
+  if line.ascii_only? || line !~ /\Axxx[1-4]/mo
+    return line, 0
+  end
+
+  if line !~ /\Axxx(\d) (\d+) '(.*)'([^']*)\Z/mo
+    raise 'illegal input!'
+  end
+  xxx, bytes, str, trail = $1.to_i, $2.to_i, $3, $4
+  if str.bytesize != bytes
+    raise 'byte size is not consistent!'
+  end
+  if str !~ /\A((PS|ps)file=|pdf:image |pdf:epdf )/mo
+    return line, 0
+  end
+
+  conv = ''
+  conv.force_encoding('UTF-8')
+
+  os_legacy_encoding(enc)
+  str.force_encoding(enc.current)
+  str = str.to_utf8(enc)
+  bytes_new = str.bytesize
+
+  xxx_new = bytes_new <= 0xff ? 1 : 4
+  conv = 'xxx' + xxx_new.to_s + ' ' + bytes_new.to_s + " '" + str + "'" + trail
+  return conv, bytes_new - bytes + xxx_new - xxx
+end
+
+def dvi_post_post(line, offset)
+  if line !~ /\Apost_post (\d+) ([23])(?: 223){4,7}\Z/mo
+    raise 'illegal input!'
+  end
+  bytes, id = $1.to_i, $2
+  padding = line.scan(' 223').count
+  bytes += offset
+  padding = (padding - offset) % 4 + 4
+  line = 'post_post ' + bytes.to_s + ' ' + id + ' 223' * padding + "\n"
+  return line
+end
 
 def file_treatment(ifile, ofile, enc)
   ifile.set_encoding('ASCII-8BIT')
   ofile.set_encoding('ASCII-8BIT')
 
-  line = ''
+  line, offset = '', 0
   while l = ifile.gets do
     line.force_encoding('ASCII-8BIT')
     line += l
-    reg = Opts[:mode] == 'out' ? %r!(\{)! : %r!(/Title|/Author|/Keywords|/Subject|/Creator|/Producer)(\s+\(|$)!
+    if    Opts[:mode] == :out then
+      reg = %r!(\{)!
+    elsif Opts[:mode] == :spc then
+      reg = %r!(\A(xxx|post_post))!
+    else
+      reg = %r!(/Title|/Author|/Keywords|/Subject|/Creator|/Producer)(\s+\(|$)!
+    end
     if (line !~ reg )
+      ofile.print line
+      line = ''
+      next
+    end
+
+    if Opts[:mode] == :spc
+      if (line =~ /\Axxx/)
+        line, diff = special_string_to_utf8(line, enc)
+        offset += diff
+      else
+        line = dvi_post_post(line, offset)
+      end
       ofile.print line
       line = ''
       next
@@ -385,7 +498,7 @@ def file_treatment(ifile, ofile, enc)
     ofile.print $`
     line = $& + $'
 
-    if Opts[:mode] != 'out'
+    if Opts[:mode] != :out
       while line =~ %r!(/Title|/Author|/Keywords|/Subject|/Creator|/Producer)\Z! do
         line += ifile.gets
       end
@@ -440,14 +553,31 @@ else
     if (fin !~ /\.#{FileSfx}$/io)
       raise 'input file does not seem ' + FileSfx.upcase + ' file'
     end
-    fout = fin.gsub(/\.#{FileSfx}$/io, "-convbkmk#{$&}")
+    sfx = $&
+    if (Opts[:mode] == :spc && fin =~ /\.dvi$/i)
+      dvi_conversion = true
+      fspc = fin.gsub(/\.dvi$/io, '.dvispc')
+      if !(system Dvispc + ' -a ' + fin + ' ' + fspc)
+        raise "fail to execute 'dvispc -a' command!"
+      end
+      fin = fspc
+      sfx = '.dvispc'
+    end
+    fout = fin.gsub(/#{sfx}$/i, "-convbkmk#{sfx}")
     open(fin, 'rb') {|ifile|
       open(fout, 'wb') {|ofile|
         file_treatment(ifile, ofile, enc)
       }
     }
-    if (Opts[:mode] == 'out' || Opts[:mode] == 'overwrite')
-      FileUtils.mv(fout, fin) 
+    if (Opts[:overwrite])
+      FileUtils.mv(fout, fin)
+      fout = fin
+    end
+    if dvi_conversion
+      fdvi = fout.gsub(/\.dvispc$/o, '.dvi')
+      if !(system Dvispc + ' -x ' + fout + ' ' + fdvi)
+        raise "fail to execute 'dvispc -x' command!"
+      end
     end
   }
 end
