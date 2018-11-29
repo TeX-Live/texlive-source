@@ -1424,6 +1424,9 @@ EOF
     amd64:Isilon\ OneFS:*:*)
 	echo x86_64-unknown-onefs
 	exit ;;
+    *:Unleashed:*:*)
+	echo "$UNAME_MACHINE"-unknown-unleashed"$UNAME_RELEASE"
+	exit ;;
 esac
 
 echo "$0: unable to guess system type" >&2
