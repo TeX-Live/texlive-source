@@ -14,6 +14,8 @@ HARFBUZZ_BLD = $(top_builddir)
 ## common
 hdr_links = \
 	$(HARFBUZZ_SRC)/hb.h \
+	$(HARFBUZZ_SRC)/hb-aat-layout.h \
+	$(HARFBUZZ_SRC)/hb-aat.h \
 	$(HARFBUZZ_SRC)/hb-blob.h \
 	$(HARFBUZZ_SRC)/hb-buffer.h \
 	$(HARFBUZZ_SRC)/hb-common.h \

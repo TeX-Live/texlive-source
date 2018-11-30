@@ -1,3 +1,2442 @@
+commit 7b85081be4fbd6cad75dc28ae933ce920f71b22d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 11:34:22 2018 -0500
+
+    [icu] Minor
+
+ src/hb-icu.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0bcb1de1265368a27e53c6d935c965cbcb4130a0
+Merge: e0307de8 a85886fc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 10:39:18 2018 -0500
+
+    Merge pull request #1418 from gvictor/replace_icu_deprecated
+
+    Replace @Deprecated ICU API - USCRIPT_CODE_LIMIT
+
+commit e0307de818ad1f70ef96938642bda61d7a62532a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 29 11:36:05 2018 +0330
+
+    [test][aat.kern] More (#1427)
+
+ test/shaping/data/in-house/tests/macos.tests | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+commit 949655aa7853a4513af6b5247b9822be38f5d322
+Merge: 7b78d223 d3d0f15f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 28 17:21:57 2018 -0500
+
+    Merge pull request #1425 from mbutterick/patch-1
+
+    update simple shaping example (closes #298)
+
+commit d3d0f15f7d20bedf7018fb2fb652f92ff4159bd7
+Author: Matthew Butterick <mbutterick@users.noreply.github.com>
+Date:   Wed Nov 28 13:46:12 2018 -0800
+
+    update simple shaping example (closes #298)
+
+    add call to `FT_Set_Char_Size`, otherwise default size remains at
+    `0`, and glyph positions come back as `0` too
+
+ docs/usermanual-getting-started.xml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 7b78d2233df0e51e2967bc54a9202b3f9e05059a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 29 00:55:05 2018 +0330
+
+    [test][aat] Update expectency
+
+    It is not visually noticeable but apparently affected by kern format2
+    correct implementation.
+    I should've checked CoreText result which can't as CircleCI outage.
+
+ test/shaping/data/in-house/tests/macos.tests | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 5155067e10011f78f1ce35b3dadb062bccd3a706
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 29 00:07:00 2018 +0330
+
+    [test] Add test for format2 kern (#1423)
+
+ test/shaping/data/in-house/Makefile.sources             |   1 +
+ .../fonts/e39391c77a6321c2ac7a2d644de0396470cd4bfe.ttf  | Bin 0 ->
+ 34116 bytes
+ test/shaping/data/in-house/tests/kern-format2.tests     |   3 +++
+ 3 files changed, 4 insertions(+)
+
+commit 42a2b496e428521151ff5cb07454d2e993f892cc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 28 15:24:30 2018 -0500
+
+    [kerx] Fix Format2 index calc again
+
+ src/hb-aat-layout-common.hh     | 14 ++++++++++++++
+ src/hb-aat-layout-kerx-table.hh |  2 +-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+commit 9e4f03b6ed80a81f8aee5ba93564f5eabab4299c
+Merge: 19863c80 a3267cf8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 28 15:08:01 2018 -0500
+
+    Merge remote-tracking branch 'fdo/master'
+
+commit a3267cf803082af157a7f2b0026af2633b14f8e3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 28 15:06:01 2018 -0500
+
+    [kern] Fix kern table Format2 offsetToIndex
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1421
+
+ src/hb-aat-layout-kerx-table.hh | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit f9a9c0fd1e561715d696c7bd840bab552d0718ee
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 28 14:51:56 2018 -0500
+
+    [kerx] Fix ClassTable implementation for 'kern' table Format 2
+
+ src/hb-aat-layout-common.hh     |  8 +++++---
+ src/hb-aat-layout-kerx-table.hh | 10 ++--------
+ 2 files changed, 7 insertions(+), 11 deletions(-)
+
+commit 5b4a789ca857664668ff69936574dcd09bee6065
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 28 14:46:26 2018 -0500
+
+    [aat] Towards adding two ClassTable's
+
+ src/hb-aat-layout-common.hh | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
+
+commit 19863c805982d5d1d059d4dd9376039d3fdaabcd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Nov 28 20:28:42 2018 +0330
+
+    [test][aat] Add a test and make macOS runners faster (#1422)
+
+ .circleci/config.yml                         | 15 +++-----
+ test/shaping/data/in-house/tests/macos.tests | 54
+ ++++++++++++++--------------
+ 2 files changed, 33 insertions(+), 36 deletions(-)
+
+commit 987f4187722a05e3f360b85c66309a351fc5d6ad
+Merge: 1042d9fb 4e2a03b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 27 17:40:32 2018 -0500
+
+    Merge pull request #1398 from Adenilson/bigInt01
+
+    Optimize harfbuzz big integer conversions
+
+commit 4e2a03b6b6e0c0d1c4edea10dc1aae63eeb6c581
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 27 17:40:09 2018 -0500
+
+    Comment
+
+ src/hb-machinery.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 4a719a7f4c997ea7e47588bc0288c97706dae015
+Author: Adenilson Cavalcanti <adenilson.cavalcanti@arm.com>
+Date:   Tue Nov 20 14:41:19 2018 -0800
+
+    Optimize harfbuzz big integer conversions
+
+    Profiling showed that type conversions were adding considerable
+    cycles in time
+    spent doing text shaping.
+
+    The idea is to optimize it using native processor instructions to
+    help Blink
+    layout performance.
+
+    Doing further investigation revelead that compilers may not use the
+    proper instruction on ARM 32bits builds (i.e. REV16).
+
+    One way to insure that the generated ASM was ideal for both gcc/clang
+    was using __builtin_bswap16.
+
+    Added bonus is that we no longer need to test for CPU architecture.
+
+ src/hb-machinery.hh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit a85886fc77083084e9a12ee15b47eab7876f9f53
+Author: Victor Chang <vichang@google.com>
+Date:   Tue Nov 27 11:34:56 2018 +0000
+
+    Replace @Deprecated ICU API - USCRIPT_CODE_LIMIT
+
+    Use of the deprecated API USCRIPT_CODE_LIMIT prevents harfbuzz
+    using the ICU4C as a shared library.
+
+    The API has been replaced by u_getIntPropertyMaxValue(UCHAR_SCRIPT)
+
+ src/hb-icu.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 1042d9fbc05aff9d51f15c2824a8521e963d0acd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Nov 26 18:58:39 2018 +0330
+
+    [ci] Add .codecov.yml
+
+    Similar to
+    https://github.com/GoogleChrome/lighthouse/blob/master/.codecov.yml
+
+    No strong preference on commenting, feel free to enable it again
+
+ .codecov.yml | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+commit 97eaedca5de76c74534bab41562aee130098558a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Nov 26 16:58:58 2018 +0330
+
+    [test][aat] Enable Tamil MN test (#1414)
+
+ test/shaping/data/in-house/tests/macos.tests | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 574d888c8a409295a952361a39c8e83a52a0fc3d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 25 16:51:22 2018 -0500
+
+    [aat] Ignore GSUB table of Muthu Foundry if they have morx table
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1410
+
+ src/hb-ot-layout-gpos-table.hh |  3 +++
+ src/hb-ot-layout-gsub-table.hh |  3 +++
+ src/hb-ot-layout-gsubgpos.hh   |  5 +++++
+ src/hb-ot-layout.cc            | 36 +++++++++++++++++++++++++++++++++++-
+ 4 files changed, 46 insertions(+), 1 deletion(-)
+
+commit 4151c2848d8df75b6d0a4f5d79bee843158aa4a4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 25 16:38:36 2018 -0500
+
+    [GDEF] Move more code
+
+ src/hb-ot-layout-gdef-table.hh | 10 +++++++++-
+ src/hb-ot-layout.cc            | 11 -----------
+ 2 files changed, 9 insertions(+), 12 deletions(-)
+
+commit 4f21703f225b6977196ef180e8d7300ea86d2cc3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 25 15:59:18 2018 -0500
+
+    [GDEF] Move code around
+
+ src/hb-ot-layout-gdef-table.hh |  3 +++
+ src/hb-ot-layout.cc            | 16 +++++++---------
+ 2 files changed, 10 insertions(+), 9 deletions(-)
+
+commit 4ed9fb1a0050f3151f9332f08c8bb2c13652c607
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 25 15:51:01 2018 -0500
+
+    [GDEF] Minor
+
+ src/hb-ot-layout.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0e3a48e54248d69197e8fb23c824d987f91b3bf7
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Nov 25 13:37:23 2018 +0330
+
+    [test][aat] fix 10.13.6 Helvetica expectation
+
+ test/shaping/data/in-house/tests/macos.tests | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit cbc541b426f01717641f1f3529a7c9703aec7a28
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Nov 25 12:50:30 2018 +0330
+
+    [aat] Add m grave test (#1412)
+
+ test/shaping/data/in-house/tests/macos.tests | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit fa26ad0f48462063f2160a43cb62b018bb21e251
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Nov 25 11:25:17 2018 +0330
+
+    [aat] Fix macos expectation
+
+ test/shaping/data/in-house/tests/macos.tests | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 926f512f354835f8323bb2c2e58789dd918a9b65
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 25 01:14:40 2018 -0500
+
+    [aat.feat] Rework API and implementation
+
+    Fixes https://github.com/harfbuzz/harfbuzz/pull/1346
+
+ docs/harfbuzz-docs.xml          |  5 +++
+ docs/harfbuzz-sections.txt      |  7 ++--
+ src/hb-aat-layout-feat-table.hh | 89
+ +++++++++++++++++++++++------------------
+ src/hb-aat-layout.cc            | 80 ++++++++++++++++--------------------
+ src/hb-aat-layout.h             | 32 +++++++++------
+ test/api/test-aat-layout.c      | 58 ++++++++++++++-------------
+ 6 files changed, 141 insertions(+), 130 deletions(-)
+
+commit 84dacbca7ea54a3ca2d5d711d50272a7f3baf456
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 12:08:36 2018 -0500
+
+    [aat.feat] Add _MAX_VALUE to enums
+
+ src/hb-aat-layout.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit 3922aae1620958768d3257c0988432d5609dca1b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 11:02:04 2018 -0500
+
+    [aat.feat] Minor
+
+ src/hb-aat-layout-feat-table.hh | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+commit 0f8e98eca2463da3b83d1b66a19259a584df1682
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 11:00:42 2018 -0500
+
+    [aat.feat] Whitespace
+
+ src/hb-aat-layout-feat-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit c2256068339c9e10c8e6df5d1749be4b4eb04ad4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 10:54:40 2018 -0500
+
+    [aat.feat] Port to SortedUnsizedArrayOf.bsearch()
+
+ src/hb-aat-layout-feat-table.hh | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+commit 52ae9867efd6520d17306b9f3ad612fe5463e93d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 10:46:56 2018 -0500
+
+    [AAT.feat] Use lsearch for looking up SettingName's
+
+    They are not sorted.
+
+ src/hb-aat-layout-feat-table.hh | 18 ++++++------------
+ src/hb-open-type.hh             | 16 ++++++++--------
+ src/hb-static.cc                |  6 ++++--
+ 3 files changed, 18 insertions(+), 22 deletions(-)
+
+commit 44b9331f663c09174d94e06baf36d48a50599c42
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 10:30:35 2018 -0500
+
+    [aat] Fix include issues
+
+ src/Makefile.am | 2 ++
+ src/hb-aat.h    | 2 ++
+ 2 files changed, 4 insertions(+)
+
+commit b206133d1f616339a57996b634dadc7f0a2c4cfb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 14:05:11 2018 -0500
+
+    [aat] Move contents of hb-aat.h to hb-aat-layout.h
+
+    Since it was pages and pages...
+
+ src/Makefile.sources |   1 +
+ src/hb-aat-layout.cc |   1 -
+ src/hb-aat-layout.h  | 452
+ +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout.hh |   1 -
+ src/hb-aat-map.hh    |   1 -
+ src/hb-aat.h         | 417
+ +----------------------------------------------
+ src/hb.hh            |   2 +
+ 7 files changed, 458 insertions(+), 417 deletions(-)
+
+commit 2cb235d0210e74ea4ee123767b489301a9c340ab
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 12:23:35 2018 -0500
+
+    [aat.feat] Fix enum namespace
+
+ src/hb-aat-layout-feat-table.hh |   2 +-
+ src/hb-aat-layout-morx-table.hh |   4 +-
+ src/hb-aat-layout.cc            | 150 ++++++------
+ src/hb-aat.h                    | 502
+ ++++++++++++++++++++--------------------
+ test/api/test-aat-layout.c      |   2 +-
+ 5 files changed, 330 insertions(+), 330 deletions(-)
+
+commit 712762cabbbe85e6ab8361cd115c22a176827734
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 12:21:02 2018 -0500
+
+    Minor
+
+ src/hb-aat.h | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit e20f81f4fa977a8d22c6afee1e46fbf46bc182d9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 11:57:42 2018 -0500
+
+    [aat] Rename feat API a bit more
+
+ docs/harfbuzz-sections.txt      | 10 +++++-----
+ src/hb-aat-layout-feat-table.hh |  8 ++++----
+ src/hb-aat-layout.cc            | 32 ++++++++++++++++----------------
+ src/hb-aat.h                    | 26 +++++++++++++-------------
+ test/api/test-aat-layout.c      | 28 ++++++++++++++--------------
+ 5 files changed, 52 insertions(+), 52 deletions(-)
+
+commit 54f4c17f0a932b0ca0317e1ad5e5e43a11a83fd1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Nov 23 12:05:06 2018 +0330
+
+    [feat] Rename API uses of setting to selector
+
+ docs/harfbuzz-sections.txt      |  6 +--
+ src/hb-aat-layout-feat-table.hh | 52 ++++++++++++------------
+ src/hb-aat-layout-morx-table.hh |  2 +-
+ src/hb-aat-layout.cc            | 88
+ ++++++++++++++++++++---------------------
+ src/hb-aat-layout.hh            |  4 +-
+ src/hb-aat-map.cc               |  2 +-
+ src/hb-aat-map.hh               |  2 +-
+ src/hb-aat.h                    | 20 +++++-----
+ test/api/test-aat-layout.c      | 46 ++++++++++-----------
+ 9 files changed, 111 insertions(+), 111 deletions(-)
+
+commit 9c64b216ec7ae2c2c124ebd00dc6fa568752be78
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Nov 23 11:44:53 2018 +0330
+
+    [feat] Apply renamings and add documentation
+
+ docs/harfbuzz-sections.txt | 10 ++++++++++
+ src/hb-aat-layout.cc       | 44
+ ++++++++++++++++++++++++++++++++++++++------
+ src/hb-aat.h               |  6 +++---
+ test/api/test-aat-layout.c | 28 ++++++++++++++--------------
+ 4 files changed, 65 insertions(+), 23 deletions(-)
+
+commit a8726cb4830f51a820db4bc6346ed09c91493817
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Nov 17 14:23:11 2018 +0330
+
+    [feat] Use bsearch
+
+ src/hb-aat-layout-feat-table.hh | 36 ++++++++++++++++++++++--------------
+ src/hb-aat-layout-morx-table.hh |  2 +-
+ src/hb.hh                       |  2 ++
+ 3 files changed, 25 insertions(+), 15 deletions(-)
+
+commit 4009a05ca7de21fff2176621597cd0cd01e9d80e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Nov 17 11:30:50 2018 +0330
+
+    [feat] Address Behdad comments
+
+ src/hb-aat-layout-feat-table.hh | 114 ++++---
+ src/hb-aat-layout.cc            |  14 +-
+ src/hb-aat.h                    | 673
+ +++++++++++++++++-----------------------
+ test/api/test-aat-layout.c      |  88 +++---
+ 4 files changed, 423 insertions(+), 466 deletions(-)
+
+commit 19b6025534a98df96d67eee45c5c1ea6fbc1cc43
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Nov 17 01:07:09 2018 +0330
+
+    [feat] Address @behdad comments
+
+ src/Makefile.sources            |   2 +-
+ src/hb-aat-layout-feat-table.hh |  82 +++----
+ src/hb-aat-layout-morx-table.hh |   2 +-
+ src/hb-aat-layout.cc            | 104 ++++----
+ src/hb-aat-map.cc               |   2 +-
+ src/hb-aat.h                    | 533
+ ++++++++++++----------------------------
+ src/hb-ot.h                     |   1 -
+ test/api/test-aat-layout.c      |  84 +++----
+ 8 files changed, 282 insertions(+), 528 deletions(-)
+
+commit 9212ec203c948e290a1d92b701619ccdbc89377c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Nov 9 00:50:10 2018 +0330
+
+    [feat] Complete feature types list
+
+ src/hb-aat-layout-morx-table.hh |   2 +-
+ src/hb-aat-layout.cc            | 154 ++++-----
+ src/hb-aat.h                    | 697
+ ++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 752 insertions(+), 101 deletions(-)
+
+commit fbad794bd2c574363a0c5c5fefabce764496f93c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 1 22:24:42 2018 +0330
+
+    [feat] Add feature iteration API
+
+ src/hb-aat-layout-feat-table.hh | 36 +++++++++++++++++++++--------
+ src/hb-aat-layout.cc            | 26 +++++++++++----------
+ src/hb-aat.h                    | 23 +++++++++++++++++--
+ test/api/test-aat-layout.c      | 51
+ +++++++++++++++++++++++++++--------------
+ 4 files changed, 96 insertions(+), 40 deletions(-)
+
+commit 7a0471aa356bcd062d31a59bdb19c335249116c7
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 1 21:38:54 2018 +0330
+
+    [feat] Turn AAT feature id into enum
+
+ src/hb-aat-layout-feat-table.hh |  20 ++---
+ src/hb-aat-layout-morx-table.hh |  10 +--
+ src/hb-aat-layout.cc            | 170
+ ++++++++++++++++++++--------------------
+ src/hb-aat-layout.hh            |   6 +-
+ src/hb-aat-map.cc               |   2 +-
+ src/hb-aat-map.hh               |   4 +-
+ src/hb-aat.h                    |  64 +++++++++------
+ test/api/test-aat-layout.c      |   8 +-
+ test/api/test-c.c               |   1 +
+ 9 files changed, 150 insertions(+), 135 deletions(-)
+
+commit b233fa4bc9cdb1c6677b37106d96d878d6e03bfd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 1 20:02:57 2018 +0330
+
+    [feat] Rename records to selectors as @drott
+
+ src/hb-aat-layout-feat-table.hh | 20 ++++++++++----------
+ src/hb-aat-layout.cc            | 10 +++++-----
+ src/hb-aat.h                    |  4 ++--
+ 3 files changed, 17 insertions(+), 17 deletions(-)
+
+commit a157b3e4ebd57ad29f217c4cef6519e7398cfa5c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 1 19:56:16 2018 +0330
+
+    [feat] Apply @behdad comments
+
+ src/Makefile.sources              |  2 +-
+ src/hb-aat-layout-feat-table.hh   |  1 +
+ src/hb-aat-layout.cc              | 16 ++++++++--------
+ src/hb-aat-layout.hh              |  2 +-
+ src/hb-aat-map.hh                 |  2 +-
+ src/{hb-aat-layout.h => hb-aat.h} | 22 +++++++++++++---------
+ src/hb-ot.h                       |  1 +
+ test/api/test-aat-layout.c        | 14 +++++++-------
+ test/api/test-c.c                 |  1 -
+ 9 files changed, 33 insertions(+), 28 deletions(-)
+
+commit 3aff3f822f0d7bf7a2b5160ad93df3fe413c7c47
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 1 19:20:20 2018 +0330
+
+    [feat] Apply @drott and @jfkthame comments
+
+ src/hb-aat-layout-feat-table.hh | 14 ++++++--------
+ src/hb-aat-layout.cc            | 12 +++++++-----
+ src/hb-aat-layout.h             | 10 +++++-----
+ test/api/test-aat-layout.c      |  4 ++--
+ 4 files changed, 20 insertions(+), 20 deletions(-)
+
+commit b791bbbae47aa19709da640a1dc5e84590c5c2c2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 1 15:15:56 2018 +0330
+
+    [feat] Apply @jfkthame reviews
+
+ src/hb-aat-layout-feat-table.hh |  27 +++++++++++++++------------
+ src/hb-aat-layout.cc            |  23 ++++++++++++-----------
+ src/hb-aat-layout.h             |  14 +++++++++-----
+ test/api/fonts/aat-feat.ttf     | Bin 0 -> 1132 bytes
+ test/api/test-aat-layout.c      |  30 ++++++++++++++++++------------
+ 5 files changed, 54 insertions(+), 40 deletions(-)
+
+commit 95abd53758e281325b9124f0942aafb382a89090
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 1 13:14:29 2018 +0330
+
+    [feat] Expose public API
+
+    * hb_aat_get_feature_settings
+
+ src/Makefile.sources            |  1 +
+ src/hb-aat-layout-feat-table.hh | 68 ++++++++++++++++++++++++++++++-
+ src/hb-aat-layout-morx-table.hh |  6 +--
+ src/hb-aat-layout.cc            | 33 +++++++++++++++
+ src/hb-aat-layout.h             | 75 ++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout.hh            |  7 ++--
+ src/hb-aat-map.hh               |  5 ++-
+ src/hb-ot-face.hh               |  1 +
+ test/api/Makefile.am            |  1 +
+ test/api/test-aat-layout.c      | 89
+ +++++++++++++++++++++++++++++++++++++++++
+ test/api/test-c.c               |  1 +
+ 11 files changed, 278 insertions(+), 9 deletions(-)
+
+commit 264c4a539cbfd8d5e5f143206d9d27230a186897
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 25 00:30:08 2018 -0500
+
+    [test] Reorder test suites
+
+    aots is less interesting.  Run text-rendering-tests before aots.
+
+ test/shaping/data/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9326912941e5927bcfb4689689c954b9a3995baa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 25 00:27:23 2018 -0500
+
+    [kerx] Fix crash
+
+ src/hb-machinery.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 6ee401049d475b2a2d9c859e6dbf8ff2750a1609
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Nov 25 00:21:13 2018 -0500
+
+    Simplify sanitize set_object() / fix bots
+
+ src/hb-machinery.hh | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+commit c5a6b355e165e90d8d90454ceeca7b100282945f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 23:49:23 2018 -0500
+
+    [kerx] Port to hb_sanitize_with_object_t
+
+ src/hb-aat-layout-kerx-table.hh | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+commit c405ed0509afaa7c3846e8e461bedfbceb0cd937
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 23:46:15 2018 -0500
+
+    [morx] Port to hb_sanitize_with_object_t
+
+ src/hb-aat-layout-morx-table.hh | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+commit 1e8994221fb5cfdb1902d5249c7a75cde6d6e3c8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 23:38:06 2018 -0500
+
+    Add hb_sanitize_with_object_t
+
+    Context manager.
+
+ src/hb-machinery.hh | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+commit b3c5affc05a3c7bbcfbd98521703d3d3447fcd7d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 23:34:34 2018 -0500
+
+    Simplify sanitize set_object()
+
+ src/hb-aat-layout-kerx-table.hh | 12 ++++++------
+ src/hb-aat-layout-morx-table.hh | 10 +++++-----
+ src/hb-machinery.hh             | 26 +++++++++++++-------------
+ 3 files changed, 24 insertions(+), 24 deletions(-)
+
+commit 3d3097269995aa227b4b198d4da2baf942b65c66
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 23:12:28 2018 -0500
+
+    [aat] Skip terminator in VarSizedBinSearchArray<>
+
+    Fixes shaping with Apple Chancery on 10.13 again.  In that font,
+    there was a terminator segment, that was tripping off sanitize().
+
+ src/hb-aat-layout-common.hh |  6 ++++++
+ src/hb-open-type.hh         | 21 ++++++++++++++++++++-
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+
+commit 4202a3cde3b6065124feb7f4c662563de1e08126
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 22:48:34 2018 -0500
+
+    Minor
+
+ src/hb-open-type.hh | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+commit 1c2302bbf1d2d0e66f49ab54ad98d1b61bc5603d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 22:32:17 2018 -0500
+
+    [debug] Print function in return_trace()
+
+ src/hb-debug.hh | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+commit 748198a6718adbb200ee24ac013c617f62c946a4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 22:16:59 2018 -0500
+
+    Revert "[aat.morx] Remove set_object() business"
+
+    This reverts commit ae8ed58a6e53441d9ccbf67afd8a00b815cde99e.
+
+    Apparently this broke Apple Chancery from OS X 10.12 :(.
+    Investigating...
+
+ src/hb-aat-layout-morx-table.hh | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit c8a2dc820eb0ee3124e3762cb1167ac9e528ad28
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 22:16:53 2018 -0500
+
+    Revert "[aat.kerx] Remove kerx subtable boundary enforcement"
+
+    This reverts commit 15905a2a2998f7ddd964f920a4828602235d6b00.
+
+ src/hb-aat-layout-kerx-table.hh | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+commit 9eeebd8ddedb96c03860ce7eb5500aafa3969d6b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 22:16:47 2018 -0500
+
+    Revert "[sanitize] Remove now-unused set_object() machinery"
+
+    This reverts commit bbdb6edb3e1cea4c5b7076c4f6b3e6998ae36dae.
+
+ src/hb-machinery.hh | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+commit 248ce22857c8918bf3468ef48d906de4c19c3d4d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 22:01:06 2018 -0500
+
+    [tests] Minor
+
+ test/shaping/run-tests.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit f47c5da0aa04a88b37d9c3af4730204319a9a36b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 21:36:57 2018 -0500
+
+    [arrays] Use hb_array_t<> in all places with sub_array()
+
+ src/hb-aat-layout-lcar-table.hh |  6 +++---
+ src/hb-ot-layout-gdef-table.hh  | 14 ++++++++------
+ src/hb-ot-math-table.hh         | 10 ++++------
+ 3 files changed, 15 insertions(+), 15 deletions(-)
+
+commit 3246a8ebbd900bcc3e3c70532eab0f406b8f5c4a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 21:32:00 2018 -0500
+
+    [arrays] Merge ArrayOf's sub_array into hb_array_t's
+
+ src/hb-dsalgs.hh    | 44 +++++++++++++++++++++++++++-----------------
+ src/hb-open-type.hh | 30 ++++++++++++++++++------------
+ 2 files changed, 45 insertions(+), 29 deletions(-)
+
+commit e6877e28cd30e89af7cce59d903184a5a01ec970
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Nov 25 02:12:40 2018 +0330
+
+    [test] Add the missed aots fonts
+
+ test/shaping/data/aots/fonts/classdef1_font1.otf   | Bin 0 -> 6004 bytes
+ test/shaping/data/aots/fonts/classdef1_font2.otf   | Bin 0 -> 6020 bytes
+ test/shaping/data/aots/tests/classdef1_empty.tests |   2 +-
+ 3 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 825ea5a4607fafa11c56a72a82bda773f6b44e79
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Nov 25 01:59:54 2018 +0330
+
+    [test] Merge 10.12.6 and 10.13.6 tests, update to Apple Chancery fix
+
+ test/shaping/data/in-house/Makefile.sources        |  3 +--
+ .../data/in-house/tests/macos-10.12.6.tests        | 11 ---------
+ .../data/in-house/tests/macos-10.13.6.tests        | 13 -----------
+ test/shaping/data/in-house/tests/macos.tests       | 26
+ ++++++++++++++++++++++
+ 4 files changed, 27 insertions(+), 26 deletions(-)
+
+commit bbdb6edb3e1cea4c5b7076c4f6b3e6998ae36dae
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 17:15:38 2018 -0500
+
+    [sanitize] Remove now-unused set_object() machinery
+
+ src/hb-machinery.hh | 25 +------------------------
+ 1 file changed, 1 insertion(+), 24 deletions(-)
+
+commit 15905a2a2998f7ddd964f920a4828602235d6b00
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 17:14:39 2018 -0500
+
+    [aat.kerx] Remove kerx subtable boundary enforcement
+
+    Have not encountered fonts needing this, but same reasoning as
+    for morx (see previos commit.)
+
+ src/hb-aat-layout-kerx-table.hh | 21 ---------------------
+ 1 file changed, 21 deletions(-)
+
+commit ae8ed58a6e53441d9ccbf67afd8a00b815cde99e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 17:11:09 2018 -0500
+
+    [aat.morx] Remove set_object() business
+
+    With OS X 10.13 Apple Chancery fails to ligate if we limit each morx
+    sub-chain to its declared length.  Perhaps their newer compiler does
+    object-sharing across sub-chains.  Anyway, since that's a valid, if
+    unspecified, way to compile tables, remove enforcement.
+
+    Probably do the same with kern/kerx.
+
+ src/hb-aat-layout-morx-table.hh | 8 --------
+ 1 file changed, 8 deletions(-)
+
+commit b518e5af9f66414396752069bb8f43466a9236fa
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Nov 25 01:39:00 2018 +0330
+
+    Add 10.13.6 aat fonts tests and bot (#1409)
+
+ .circleci/config.yml                                     | 16
+ ++++++++++++++--
+ test/shaping/data/in-house/Makefile.sources              |  3 ++-
+ .../in-house/tests/{macos.tests => macos-10.12.6.tests}  |  2 --
+ test/shaping/data/in-house/tests/macos-10.13.6.tests     | 13
+ +++++++++++++
+ 4 files changed, 29 insertions(+), 5 deletions(-)
+
+commit b7f7950e8fc4b9e229b466ac2453d57b8da9a5a6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 15:56:17 2018 -0500
+
+    [aat] Add test for recent regression
+
+ test/shaping/data/in-house/tests/macos.tests | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit ea9512e61a7ed333b810918e74cce4c8bd2291b9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 15:49:33 2018 -0500
+
+    [tests] Redo test runner logging a  bit
+
+ test/shaping/run-tests.py | 44
+ +++++++++++++++++++++++---------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
+
+commit 5020affc3877d39377506245ecaf01a659eef82a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 15:42:11 2018 -0500
+
+    [tests] Minor
+
+ test/shaping/data/in-house/tests/macos.tests | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit ee3a3e10d45f5df1a74b65fbe3df77f8dd8f902e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 15:37:01 2018 -0500
+
+    [tests/shaping] Allow comments in test files
+
+    Line should start with "# ".
+
+ test/shaping/run-tests.py | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+commit ed900ee9afa0dabdbf6bf9d2af46c2343a16773f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 15:22:09 2018 -0500
+
+    [tests] Rename
+
+ test/shaping/data/in-house/Makefile.sources                         |
+ 2 +-
+ test/shaping/data/in-house/tests/{macos-10.12.tests => macos.tests} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 20edc70d537b01e8a384ee05673335f2f8a18238
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 14:52:34 2018 -0500
+
+    [morx/kerx] Fix sanitize regression
+
+    Broke in 8dcc1913a1670ede7b124f7b5b775d7ab8791386
+
+    If sanitizer is left with another object, it wouldn't work.
+
+    Better fix coming soon.
+
+ src/hb-aat-layout-kerx-table.hh | 6 +-----
+ src/hb-aat-layout-morx-table.hh | 4 +---
+ 2 files changed, 2 insertions(+), 8 deletions(-)
+
+commit 3cc14e78aeb1c70eb82891ab4513c0e7d0f59928
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Nov 24 20:49:21 2018 +0330
+
+    [test] Enable more of aots tests (#1408)
+
+    The ones commented out in this change should've be passed :/
+    a closer look is needed.
+
+ test/shaping/data/aots/Makefile.sources            | 76
+ +++++++++++-----------
+ test/shaping/data/aots/hb-aots-tester.cpp          |  1 +
+ test/shaping/data/aots/tests/classdef1_empty.tests |  2 +-
+ test/shaping/data/aots/tests/gsub3_1_simple.tests  |  2 +-
+ .../data/aots/tests/lookupflag_ignore_attach.tests | 10 +--
+ 5 files changed, 46 insertions(+), 45 deletions(-)
+
+commit 24887d1115ee41cfad70577eb243382f6c23ab6e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Nov 24 20:07:24 2018 +0330
+
+    Add Adobe AOTS tests (#1395)
+
+    Annotated OpenType Specification or aots,
+    https://github.com/adobe-type-tools/aots
+    provides a set of tests for OpenType specification, this change add
+    those tests in addition
+    to modified version of their HarfBuzz test runner for generating
+    harfbuzz project specific tests.
+
+ configure.ac                                       |   1 +
+ test/shaping/CMakeLists.txt                        |  13 +-
+ test/shaping/data/Makefile.am                      |   1 +
+ test/shaping/data/aots/COPYING                     |  13 +
+ test/shaping/data/aots/Makefile.am                 |  37 +++
+ test/shaping/data/aots/Makefile.sources            | 126 ++++++++
+ test/shaping/data/aots/fonts/classdef1_font3.otf   | Bin 0 -> 6060 bytes
+ test/shaping/data/aots/fonts/classdef1_font4.otf   | Bin 0 -> 5984 bytes
+ test/shaping/data/aots/fonts/classdef2_font1.otf   | Bin 0 -> 6004 bytes
+ test/shaping/data/aots/fonts/classdef2_font2.otf   | Bin 0 -> 6016 bytes
+ test/shaping/data/aots/fonts/classdef2_font3.otf   | Bin 0 -> 6052 bytes
+ test/shaping/data/aots/fonts/classdef2_font4.otf   | Bin 0 -> 5984 bytes
+ test/shaping/data/aots/fonts/cmap0_font1.otf       | Bin 0 -> 5196 bytes
+ test/shaping/data/aots/fonts/cmap10_font1.otf      | Bin 0 -> 4968 bytes
+ test/shaping/data/aots/fonts/cmap10_font2.otf      | Bin 0 -> 4960 bytes
+ test/shaping/data/aots/fonts/cmap12_font1.otf      | Bin 0 -> 4980 bytes
+ test/shaping/data/aots/fonts/cmap14_font1.otf      | Bin 0 -> 5028 bytes
+ test/shaping/data/aots/fonts/cmap2_font1.otf       | Bin 0 -> 6000 bytes
+ test/shaping/data/aots/fonts/cmap4_font1.otf       | Bin 0 -> 4964 bytes
+ test/shaping/data/aots/fonts/cmap4_font2.otf       | Bin 0 -> 4956 bytes
+ test/shaping/data/aots/fonts/cmap4_font3.otf       | Bin 0 -> 4956 bytes
+ test/shaping/data/aots/fonts/cmap4_font4.otf       | Bin 0 -> 4972 bytes
+ test/shaping/data/aots/fonts/cmap6_font1.otf       | Bin 0 -> 4948 bytes
+ test/shaping/data/aots/fonts/cmap6_font2.otf       | Bin 0 -> 4944 bytes
+ test/shaping/data/aots/fonts/cmap8_font1.otf       | Bin 0 -> 13224 bytes
+ .../data/aots/fonts/cmap_composition_font1.otf     | Bin 0 -> 5096 bytes
+ .../aots/fonts/cmap_subtableselection_font1.otf    | Bin 0 -> 6412 bytes
+ .../aots/fonts/cmap_subtableselection_font2.otf    | Bin 0 -> 6140 bytes
+ .../aots/fonts/cmap_subtableselection_font3.otf    | Bin 0 -> 5872 bytes
+ .../aots/fonts/cmap_subtableselection_font4.otf    | Bin 0 -> 5600 bytes
+ .../aots/fonts/cmap_subtableselection_font5.otf    | Bin 0 -> 5332 bytes
+ .../data/aots/fonts/gpos1_1_lookupflag_f1.otf      | Bin 0 -> 5208 bytes
+ test/shaping/data/aots/fonts/gpos1_1_simple_f1.otf | Bin 0 -> 5136 bytes
+ test/shaping/data/aots/fonts/gpos1_1_simple_f2.otf | Bin 0 -> 5136 bytes
+ test/shaping/data/aots/fonts/gpos1_1_simple_f3.otf | Bin 0 -> 5136 bytes
+ test/shaping/data/aots/fonts/gpos1_1_simple_f4.otf | Bin 0 -> 5136 bytes
+ test/shaping/data/aots/fonts/gpos1_2_font1.otf     | Bin 0 -> 5108 bytes
+ test/shaping/data/aots/fonts/gpos1_2_font2.otf     | Bin 0 -> 5148 bytes
+ test/shaping/data/aots/fonts/gpos2_1_font6.otf     | Bin 0 -> 5120 bytes
+ test/shaping/data/aots/fonts/gpos2_1_font7.otf     | Bin 0 -> 5132 bytes
+ .../data/aots/fonts/gpos2_1_lookupflag_f1.otf      | Bin 0 -> 5220 bytes
+ .../data/aots/fonts/gpos2_1_lookupflag_f2.otf      | Bin 0 -> 5220 bytes
+ .../data/aots/fonts/gpos2_1_next_glyph_f1.otf      | Bin 0 -> 5180 bytes
+ .../data/aots/fonts/gpos2_1_next_glyph_f2.otf      | Bin 0 -> 5176 bytes
+ test/shaping/data/aots/fonts/gpos2_1_simple_f1.otf | Bin 0 -> 5148 bytes
+ test/shaping/data/aots/fonts/gpos2_2_font1.otf     | Bin 0 -> 5148 bytes
+ test/shaping/data/aots/fonts/gpos2_2_font2.otf     | Bin 0 -> 5188 bytes
+ test/shaping/data/aots/fonts/gpos2_2_font3.otf     | Bin 0 -> 5188 bytes
+ test/shaping/data/aots/fonts/gpos2_2_font4.otf     | Bin 0 -> 5148 bytes
+ test/shaping/data/aots/fonts/gpos2_2_font5.otf     | Bin 0 -> 5140 bytes
+ test/shaping/data/aots/fonts/gpos3_font1.otf       | Bin 0 -> 5120 bytes
+ test/shaping/data/aots/fonts/gpos3_font2.otf       | Bin 0 -> 5160 bytes
+ test/shaping/data/aots/fonts/gpos3_font3.otf       | Bin 0 -> 5164 bytes
+ .../data/aots/fonts/gpos4_lookupflag_f1.otf        | Bin 0 -> 5256 bytes
+ .../data/aots/fonts/gpos4_lookupflag_f2.otf        | Bin 0 -> 5240 bytes
+ .../data/aots/fonts/gpos4_multiple_anchors_1.otf   | Bin 0 -> 5352 bytes
+ test/shaping/data/aots/fonts/gpos4_simple_1.otf    | Bin 0 -> 5200 bytes
+ test/shaping/data/aots/fonts/gpos5_font1.otf       | Bin 0 -> 5284 bytes
+ test/shaping/data/aots/fonts/gpos6_font1.otf       | Bin 0 -> 5176 bytes
+ test/shaping/data/aots/fonts/gpos7_1_font1.otf     | Bin 0 -> 5160 bytes
+ test/shaping/data/aots/fonts/gpos9_font1.otf       | Bin 0 -> 5096 bytes
+ test/shaping/data/aots/fonts/gpos9_font2.otf       | Bin 0 -> 5124 bytes
+ .../data/aots/fonts/gpos_chaining1_boundary_f1.otf | Bin 0 -> 5496 bytes
+ .../data/aots/fonts/gpos_chaining1_boundary_f2.otf | Bin 0 -> 5500 bytes
+ .../data/aots/fonts/gpos_chaining1_boundary_f3.otf | Bin 0 -> 5496 bytes
+ .../data/aots/fonts/gpos_chaining1_boundary_f4.otf | Bin 0 -> 5496 bytes
+ .../aots/fonts/gpos_chaining1_lookupflag_f1.otf    | Bin 0 -> 5520 bytes
+ .../fonts/gpos_chaining1_multiple_subrules_f1.otf  | Bin 0 -> 5592 bytes
+ .../fonts/gpos_chaining1_multiple_subrules_f2.otf  | Bin 0 -> 5592 bytes
+ .../aots/fonts/gpos_chaining1_next_glyph_f1.otf    | Bin 0 -> 5540 bytes
+ .../data/aots/fonts/gpos_chaining1_simple_f1.otf   | Bin 0 -> 5488 bytes
+ .../data/aots/fonts/gpos_chaining1_simple_f2.otf   | Bin 0 -> 5488 bytes
+ .../aots/fonts/gpos_chaining1_successive_f1.otf    | Bin 0 -> 5524 bytes
+ .../data/aots/fonts/gpos_chaining2_boundary_f1.otf | Bin 0 -> 5704 bytes
+ .../data/aots/fonts/gpos_chaining2_boundary_f2.otf | Bin 0 -> 5708 bytes
+ .../data/aots/fonts/gpos_chaining2_boundary_f3.otf | Bin 0 -> 5704 bytes
+ .../data/aots/fonts/gpos_chaining2_boundary_f4.otf | Bin 0 -> 5704 bytes
+ .../aots/fonts/gpos_chaining2_lookupflag_f1.otf    | Bin 0 -> 5728 bytes
+ .../fonts/gpos_chaining2_multiple_subrules_f1.otf  | Bin 0 -> 5800 bytes
+ .../fonts/gpos_chaining2_multiple_subrules_f2.otf  | Bin 0 -> 5800 bytes
+ .../aots/fonts/gpos_chaining2_next_glyph_f1.otf    | Bin 0 -> 5744 bytes
+ .../data/aots/fonts/gpos_chaining2_simple_f1.otf   | Bin 0 -> 5696 bytes
+ .../data/aots/fonts/gpos_chaining2_simple_f2.otf   | Bin 0 -> 5696 bytes
+ .../aots/fonts/gpos_chaining2_successive_f1.otf    | Bin 0 -> 5732 bytes
+ .../data/aots/fonts/gpos_chaining3_boundary_f1.otf | Bin 0 -> 5504 bytes
+ .../data/aots/fonts/gpos_chaining3_boundary_f2.otf | Bin 0 -> 5508 bytes
+ .../data/aots/fonts/gpos_chaining3_boundary_f3.otf | Bin 0 -> 5500 bytes
+ .../data/aots/fonts/gpos_chaining3_boundary_f4.otf | Bin 0 -> 5500 bytes
+ .../aots/fonts/gpos_chaining3_lookupflag_f1.otf    | Bin 0 -> 5548 bytes
+ .../aots/fonts/gpos_chaining3_next_glyph_f1.otf    | Bin 0 -> 5524 bytes
+ .../data/aots/fonts/gpos_chaining3_simple_f1.otf   | Bin 0 -> 5496 bytes
+ .../data/aots/fonts/gpos_chaining3_simple_f2.otf   | Bin 0 -> 5516 bytes
+ .../aots/fonts/gpos_chaining3_successive_f1.otf    | Bin 0 -> 5544 bytes
+ .../data/aots/fonts/gpos_context1_boundary_f1.otf  | Bin 0 -> 5480 bytes
+ .../data/aots/fonts/gpos_context1_boundary_f2.otf  | Bin 0 -> 5480 bytes
+ .../data/aots/fonts/gpos_context1_expansion_f1.otf | Bin 0 -> 5492 bytes
+ .../aots/fonts/gpos_context1_lookupflag_f1.otf     | Bin 0 -> 5508 bytes
+ .../aots/fonts/gpos_context1_lookupflag_f2.otf     | Bin 0 -> 5500 bytes
+ .../fonts/gpos_context1_multiple_subrules_f1.otf   | Bin 0 -> 5568 bytes
+ .../fonts/gpos_context1_multiple_subrules_f2.otf   | Bin 0 -> 5568 bytes
+ .../aots/fonts/gpos_context1_next_glyph_f1.otf     | Bin 0 -> 5500 bytes
+ .../data/aots/fonts/gpos_context1_simple_f1.otf    | Bin 0 -> 5476 bytes
+ .../data/aots/fonts/gpos_context1_simple_f2.otf    | Bin 0 -> 5468 bytes
+ .../aots/fonts/gpos_context1_successive_f1.otf     | Bin 0 -> 5508 bytes
+ .../data/aots/fonts/gpos_context2_boundary_f1.otf  | Bin 0 -> 5492 bytes
+ .../data/aots/fonts/gpos_context2_boundary_f2.otf  | Bin 0 -> 5496 bytes
+ .../data/aots/fonts/gpos_context2_classes_f1.otf   | Bin 0 -> 5540 bytes
+ .../data/aots/fonts/gpos_context2_classes_f2.otf   | Bin 0 -> 5564 bytes
+ .../data/aots/fonts/gpos_context2_expansion_f1.otf | Bin 0 -> 5524 bytes
+ .../aots/fonts/gpos_context2_lookupflag_f1.otf     | Bin 0 -> 5540 bytes
+ .../aots/fonts/gpos_context2_lookupflag_f2.otf     | Bin 0 -> 5532 bytes
+ .../fonts/gpos_context2_multiple_subrules_f1.otf   | Bin 0 -> 5600 bytes
+ .../fonts/gpos_context2_multiple_subrules_f2.otf   | Bin 0 -> 5600 bytes
+ .../aots/fonts/gpos_context2_next_glyph_f1.otf     | Bin 0 -> 5512 bytes
+ .../data/aots/fonts/gpos_context2_simple_f1.otf    | Bin 0 -> 5508 bytes
+ .../data/aots/fonts/gpos_context2_simple_f2.otf    | Bin 0 -> 5484 bytes
+ .../aots/fonts/gpos_context2_successive_f1.otf     | Bin 0 -> 5544 bytes
+ .../data/aots/fonts/gpos_context3_boundary_f1.otf  | Bin 0 -> 5476 bytes
+ .../data/aots/fonts/gpos_context3_boundary_f2.otf  | Bin 0 -> 5472 bytes
+ .../aots/fonts/gpos_context3_lookupflag_f1.otf     | Bin 0 -> 5512 bytes
+ .../aots/fonts/gpos_context3_lookupflag_f2.otf     | Bin 0 -> 5504 bytes
+ .../aots/fonts/gpos_context3_next_glyph_f1.otf     | Bin 0 -> 5496 bytes
+ .../data/aots/fonts/gpos_context3_simple_f1.otf    | Bin 0 -> 5480 bytes
+ .../aots/fonts/gpos_context3_successive_f1.otf     | Bin 0 -> 5516 bytes
+ .../data/aots/fonts/gsub1_1_lookupflag_f1.otf      | Bin 0 -> 5208 bytes
+ test/shaping/data/aots/fonts/gsub1_1_modulo_f1.otf | Bin 0 -> 5216 bytes
+ test/shaping/data/aots/fonts/gsub1_1_simple_f1.otf | Bin 0 -> 5136 bytes
+ .../data/aots/fonts/gsub1_2_lookupflag_f1.otf      | Bin 0 -> 5212 bytes
+ test/shaping/data/aots/fonts/gsub1_2_simple_f1.otf | Bin 0 -> 5140 bytes
+ .../data/aots/fonts/gsub2_1_lookupflag_f1.otf      | Bin 0 -> 5224 bytes
+ .../aots/fonts/gsub2_1_multiple_sequences_f1.otf   | Bin 0 -> 5248 bytes
+ test/shaping/data/aots/fonts/gsub2_1_simple_f1.otf | Bin 0 -> 5144 bytes
+ .../data/aots/fonts/gsub3_1_lookupflag_f1.otf      | Bin 0 -> 5224 bytes
+ .../data/aots/fonts/gsub3_1_multiple_f1.otf        | Bin 0 -> 5168 bytes
+ test/shaping/data/aots/fonts/gsub3_1_simple_f1.otf | Bin 0 -> 5144 bytes
+ .../data/aots/fonts/gsub4_1_lookupflag_f1.otf      | Bin 0 -> 5220 bytes
+ .../aots/fonts/gsub4_1_multiple_ligatures_f1.otf   | Bin 0 -> 5252 bytes
+ .../aots/fonts/gsub4_1_multiple_ligatures_f2.otf   | Bin 0 -> 5252 bytes
+ .../aots/fonts/gsub4_1_multiple_ligsets_f1.otf     | Bin 0 -> 5240 bytes
+ test/shaping/data/aots/fonts/gsub4_1_simple_f1.otf | Bin 0 -> 5148 bytes
+ test/shaping/data/aots/fonts/gsub7_font1.otf       | Bin 0 -> 5096 bytes
+ test/shaping/data/aots/fonts/gsub7_font2.otf       | Bin 0 -> 5116 bytes
+ .../data/aots/fonts/gsub_chaining1_boundary_f1.otf | Bin 0 -> 5516 bytes
+ .../data/aots/fonts/gsub_chaining1_boundary_f2.otf | Bin 0 -> 5520 bytes
+ .../data/aots/fonts/gsub_chaining1_boundary_f3.otf | Bin 0 -> 5520 bytes
+ .../data/aots/fonts/gsub_chaining1_boundary_f4.otf | Bin 0 -> 5520 bytes
+ .../aots/fonts/gsub_chaining1_lookupflag_f1.otf    | Bin 0 -> 5544 bytes
+ .../fonts/gsub_chaining1_multiple_subrules_f1.otf  | Bin 0 -> 5616 bytes
+ .../fonts/gsub_chaining1_multiple_subrules_f2.otf  | Bin 0 -> 5616 bytes
+ .../aots/fonts/gsub_chaining1_next_glyph_f1.otf    | Bin 0 -> 5560 bytes
+ .../data/aots/fonts/gsub_chaining1_simple_f1.otf   | Bin 0 -> 5508 bytes
+ .../data/aots/fonts/gsub_chaining1_simple_f2.otf   | Bin 0 -> 5512 bytes
+ .../aots/fonts/gsub_chaining1_successive_f1.otf    | Bin 0 -> 5544 bytes
+ .../data/aots/fonts/gsub_chaining2_boundary_f1.otf | Bin 0 -> 5724 bytes
+ .../data/aots/fonts/gsub_chaining2_boundary_f2.otf | Bin 0 -> 5728 bytes
+ .../data/aots/fonts/gsub_chaining2_boundary_f3.otf | Bin 0 -> 5728 bytes
+ .../data/aots/fonts/gsub_chaining2_boundary_f4.otf | Bin 0 -> 5728 bytes
+ .../aots/fonts/gsub_chaining2_lookupflag_f1.otf    | Bin 0 -> 5752 bytes
+ .../fonts/gsub_chaining2_multiple_subrules_f1.otf  | Bin 0 -> 5824 bytes
+ .../fonts/gsub_chaining2_multiple_subrules_f2.otf  | Bin 0 -> 5824 bytes
+ .../aots/fonts/gsub_chaining2_next_glyph_f1.otf    | Bin 0 -> 5764 bytes
+ .../data/aots/fonts/gsub_chaining2_simple_f1.otf   | Bin 0 -> 5716 bytes
+ .../data/aots/fonts/gsub_chaining2_simple_f2.otf   | Bin 0 -> 5720 bytes
+ .../aots/fonts/gsub_chaining2_successive_f1.otf    | Bin 0 -> 5752 bytes
+ .../data/aots/fonts/gsub_chaining3_boundary_f1.otf | Bin 0 -> 5528 bytes
+ .../data/aots/fonts/gsub_chaining3_boundary_f2.otf | Bin 0 -> 5532 bytes
+ .../data/aots/fonts/gsub_chaining3_boundary_f3.otf | Bin 0 -> 5524 bytes
+ .../data/aots/fonts/gsub_chaining3_boundary_f4.otf | Bin 0 -> 5524 bytes
+ .../aots/fonts/gsub_chaining3_lookupflag_f1.otf    | Bin 0 -> 5572 bytes
+ .../aots/fonts/gsub_chaining3_next_glyph_f1.otf    | Bin 0 -> 5548 bytes
+ .../data/aots/fonts/gsub_chaining3_simple_f1.otf   | Bin 0 -> 5520 bytes
+ .../data/aots/fonts/gsub_chaining3_simple_f2.otf   | Bin 0 -> 5540 bytes
+ .../aots/fonts/gsub_chaining3_successive_f1.otf    | Bin 0 -> 5568 bytes
+ .../data/aots/fonts/gsub_context1_boundary_f1.otf  | Bin 0 -> 5500 bytes
+ .../data/aots/fonts/gsub_context1_boundary_f2.otf  | Bin 0 -> 5504 bytes
+ .../data/aots/fonts/gsub_context1_expansion_f1.otf | Bin 0 -> 5516 bytes
+ .../aots/fonts/gsub_context1_lookupflag_f1.otf     | Bin 0 -> 5532 bytes
+ .../aots/fonts/gsub_context1_lookupflag_f2.otf     | Bin 0 -> 5524 bytes
+ .../fonts/gsub_context1_multiple_subrules_f1.otf   | Bin 0 -> 5592 bytes
+ .../fonts/gsub_context1_multiple_subrules_f2.otf   | Bin 0 -> 5592 bytes
+ .../aots/fonts/gsub_context1_next_glyph_f1.otf     | Bin 0 -> 5520 bytes
+ .../data/aots/fonts/gsub_context1_simple_f1.otf    | Bin 0 -> 5500 bytes
+ .../data/aots/fonts/gsub_context1_simple_f2.otf    | Bin 0 -> 5492 bytes
+ .../aots/fonts/gsub_context1_successive_f1.otf     | Bin 0 -> 5528 bytes
+ .../data/aots/fonts/gsub_context2_boundary_f1.otf  | Bin 0 -> 5516 bytes
+ .../data/aots/fonts/gsub_context2_boundary_f2.otf  | Bin 0 -> 5516 bytes
+ .../data/aots/fonts/gsub_context2_classes_f1.otf   | Bin 0 -> 5564 bytes
+ .../data/aots/fonts/gsub_context2_classes_f2.otf   | Bin 0 -> 5584 bytes
+ .../data/aots/fonts/gsub_context2_expansion_f1.otf | Bin 0 -> 5544 bytes
+ .../aots/fonts/gsub_context2_lookupflag_f1.otf     | Bin 0 -> 5560 bytes
+ .../aots/fonts/gsub_context2_lookupflag_f2.otf     | Bin 0 -> 5552 bytes
+ .../fonts/gsub_context2_multiple_subrules_f1.otf   | Bin 0 -> 5620 bytes
+ .../fonts/gsub_context2_multiple_subrules_f2.otf   | Bin 0 -> 5620 bytes
+ .../aots/fonts/gsub_context2_next_glyph_f1.otf     | Bin 0 -> 5536 bytes
+ .../data/aots/fonts/gsub_context2_simple_f1.otf    | Bin 0 -> 5528 bytes
+ .../data/aots/fonts/gsub_context2_simple_f2.otf    | Bin 0 -> 5504 bytes
+ .../aots/fonts/gsub_context2_successive_f1.otf     | Bin 0 -> 5568 bytes
+ .../data/aots/fonts/gsub_context3_boundary_f1.otf  | Bin 0 -> 5500 bytes
+ .../data/aots/fonts/gsub_context3_boundary_f2.otf  | Bin 0 -> 5496 bytes
+ .../aots/fonts/gsub_context3_lookupflag_f1.otf     | Bin 0 -> 5536 bytes
+ .../aots/fonts/gsub_context3_lookupflag_f2.otf     | Bin 0 -> 5528 bytes
+ .../aots/fonts/gsub_context3_next_glyph_f1.otf     | Bin 0 -> 5520 bytes
+ .../data/aots/fonts/gsub_context3_simple_f1.otf    | Bin 0 -> 5504 bytes
+ .../aots/fonts/gsub_context3_successive_f1.otf     | Bin 0 -> 5540 bytes
+ .../aots/fonts/lookupflag_ignore_attach_f1.otf     | Bin 0 -> 5416 bytes
+ .../data/aots/fonts/lookupflag_ignore_base_f1.otf  | Bin 0 -> 5256 bytes
+ .../fonts/lookupflag_ignore_combination_f1.otf     | Bin 0 -> 5408 bytes
+ .../aots/fonts/lookupflag_ignore_ligatures_f1.otf  | Bin 0 -> 5320 bytes
+ .../data/aots/fonts/lookupflag_ignore_marks_f1.otf | Bin 0 -> 5288 bytes
+ test/shaping/data/aots/hb-aots-tester.cpp          | 343
+ +++++++++++++++++++++
+ test/shaping/data/aots/tests/classdef1.tests       |   1 +
+ test/shaping/data/aots/tests/classdef1_empty.tests |   1 +
+ .../data/aots/tests/classdef1_multiple.tests       |   1 +
+ .../shaping/data/aots/tests/classdef1_single.tests |   1 +
+ test/shaping/data/aots/tests/classdef2.tests       |   1 +
+ test/shaping/data/aots/tests/classdef2_empty.tests |   1 +
+ .../data/aots/tests/classdef2_multiple.tests       |   1 +
+ .../shaping/data/aots/tests/classdef2_single.tests |   1 +
+ .../data/aots/tests/gpos1_1_lookupflag.tests       |   1 +
+ test/shaping/data/aots/tests/gpos1_1_simple.tests  |   4 +
+ test/shaping/data/aots/tests/gpos1_2.tests         |   1 +
+ .../data/aots/tests/gpos1_2_lookupflag.tests       |   1 +
+ test/shaping/data/aots/tests/gpos2_1.tests         |   2 +
+ .../data/aots/tests/gpos2_1_lookupflag.tests       |   2 +
+ .../data/aots/tests/gpos2_1_next_glyph.tests       |   2 +
+ test/shaping/data/aots/tests/gpos2_1_simple.tests  |   2 +
+ test/shaping/data/aots/tests/gpos2_2.tests         |   5 +
+ test/shaping/data/aots/tests/gpos3.tests           |  11 +
+ .../shaping/data/aots/tests/gpos3_lookupflag.tests |   2 +
+ .../shaping/data/aots/tests/gpos4_lookupflag.tests |   2 +
+ .../data/aots/tests/gpos4_multiple_anchors.tests   |   1 +
+ test/shaping/data/aots/tests/gpos4_simple.tests    |   5 +
+ test/shaping/data/aots/tests/gpos5.tests           |   2 +
+ test/shaping/data/aots/tests/gpos6.tests           |   3 +
+ test/shaping/data/aots/tests/gpos7_1.tests         |   2 +
+ test/shaping/data/aots/tests/gpos9.tests           |   2 +
+ .../data/aots/tests/gpos_chaining1_boundary.tests  |   4 +
+ .../aots/tests/gpos_chaining1_lookupflag.tests     |   1 +
+ .../tests/gpos_chaining1_multiple_subrules.tests   |   2 +
+ .../aots/tests/gpos_chaining1_next_glyph.tests     |   1 +
+ .../data/aots/tests/gpos_chaining1_simple.tests    |  11 +
+ .../aots/tests/gpos_chaining1_successive.tests     |   1 +
+ .../data/aots/tests/gpos_chaining2_boundary.tests  |   4 +
+ .../aots/tests/gpos_chaining2_lookupflag.tests     |   1 +
+ .../tests/gpos_chaining2_multiple_subrules.tests   |   2 +
+ .../aots/tests/gpos_chaining2_next_glyph.tests     |   1 +
+ .../data/aots/tests/gpos_chaining2_simple.tests    |  11 +
+ .../aots/tests/gpos_chaining2_successive.tests     |   1 +
+ .../data/aots/tests/gpos_chaining3_boundary.tests  |   4 +
+ .../aots/tests/gpos_chaining3_lookupflag.tests     |   1 +
+ .../aots/tests/gpos_chaining3_next_glyph.tests     |   1 +
+ .../data/aots/tests/gpos_chaining3_simple.tests    |  11 +
+ .../aots/tests/gpos_chaining3_successive.tests     |   1 +
+ .../data/aots/tests/gpos_context1_boundary.tests   |   2 +
+ .../data/aots/tests/gpos_context1_expansion.tests  |   1 +
+ .../data/aots/tests/gpos_context1_lookupflag.tests |   2 +
+ .../tests/gpos_context1_multiple_subrules.tests    |   2 +
+ .../data/aots/tests/gpos_context1_next_glyph.tests |   1 +
+ .../data/aots/tests/gpos_context1_simple.tests     |   3 +
+ .../data/aots/tests/gpos_context1_successive.tests |   1 +
+ .../data/aots/tests/gpos_context2_boundary.tests   |   2 +
+ .../data/aots/tests/gpos_context2_classes.tests    |   2 +
+ .../data/aots/tests/gpos_context2_expansion.tests  |   1 +
+ .../data/aots/tests/gpos_context2_lookupflag.tests |   2 +
+ .../tests/gpos_context2_multiple_subrules.tests    |   2 +
+ .../data/aots/tests/gpos_context2_next_glyph.tests |   1 +
+ .../data/aots/tests/gpos_context2_simple.tests     |   3 +
+ .../data/aots/tests/gpos_context2_successive.tests |   1 +
+ .../data/aots/tests/gpos_context3_boundary.tests   |   2 +
+ .../data/aots/tests/gpos_context3_lookupflag.tests |   2 +
+ .../data/aots/tests/gpos_context3_next_glyph.tests |   1 +
+ .../data/aots/tests/gpos_context3_simple.tests     |   2 +
+ .../data/aots/tests/gpos_context3_successive.tests |   1 +
+ .../data/aots/tests/gsub1_1_lookupflag.tests       |   1 +
+ test/shaping/data/aots/tests/gsub1_1_modulo.tests  |   1 +
+ test/shaping/data/aots/tests/gsub1_1_simple.tests  |   1 +
+ .../data/aots/tests/gsub1_2_lookupflag.tests       |   1 +
+ test/shaping/data/aots/tests/gsub1_2_simple.tests  |   1 +
+ .../data/aots/tests/gsub2_1_lookupflag.tests       |   1 +
+ .../aots/tests/gsub2_1_multiple_sequences.tests    |   1 +
+ test/shaping/data/aots/tests/gsub2_1_simple.tests  |   2 +
+ .../data/aots/tests/gsub3_1_lookupflag.tests       |   1 +
+ .../shaping/data/aots/tests/gsub3_1_multiple.tests |   1 +
+ test/shaping/data/aots/tests/gsub3_1_simple.tests  |   1 +
+ .../data/aots/tests/gsub4_1_lookupflag.tests       |   1 +
+ .../aots/tests/gsub4_1_multiple_ligatures.tests    |   2 +
+ .../data/aots/tests/gsub4_1_multiple_ligsets.tests |   1 +
+ test/shaping/data/aots/tests/gsub4_1_simple.tests  |   1 +
+ test/shaping/data/aots/tests/gsub7.tests           |   2 +
+ .../data/aots/tests/gsub_chaining1_boundary.tests  |   4 +
+ .../aots/tests/gsub_chaining1_lookupflag.tests     |   1 +
+ .../tests/gsub_chaining1_multiple_subrules.tests   |   2 +
+ .../aots/tests/gsub_chaining1_next_glyph.tests     |   1 +
+ .../data/aots/tests/gsub_chaining1_simple.tests    |  11 +
+ .../aots/tests/gsub_chaining1_successive.tests     |   1 +
+ .../data/aots/tests/gsub_chaining2_boundary.tests  |   4 +
+ .../aots/tests/gsub_chaining2_lookupflag.tests     |   1 +
+ .../tests/gsub_chaining2_multiple_subrules.tests   |   2 +
+ .../aots/tests/gsub_chaining2_next_glyph.tests     |   1 +
+ .../data/aots/tests/gsub_chaining2_simple.tests    |  11 +
+ .../aots/tests/gsub_chaining2_successive.tests     |   1 +
+ .../data/aots/tests/gsub_chaining3_boundary.tests  |   4 +
+ .../aots/tests/gsub_chaining3_lookupflag.tests     |   1 +
+ .../aots/tests/gsub_chaining3_next_glyph.tests     |   1 +
+ .../data/aots/tests/gsub_chaining3_simple.tests    |  11 +
+ .../aots/tests/gsub_chaining3_successive.tests     |   1 +
+ .../data/aots/tests/gsub_context1_boundary.tests   |   2 +
+ .../data/aots/tests/gsub_context1_expansion.tests  |   1 +
+ .../data/aots/tests/gsub_context1_lookupflag.tests |   2 +
+ .../tests/gsub_context1_multiple_subrules.tests    |   2 +
+ .../data/aots/tests/gsub_context1_next_glyph.tests |   1 +
+ .../data/aots/tests/gsub_context1_simple.tests     |   3 +
+ .../data/aots/tests/gsub_context1_successive.tests |   1 +
+ .../data/aots/tests/gsub_context2_boundary.tests   |   2 +
+ .../data/aots/tests/gsub_context2_classes.tests    |   2 +
+ .../data/aots/tests/gsub_context2_expansion.tests  |   1 +
+ .../data/aots/tests/gsub_context2_lookupflag.tests |   2 +
+ .../tests/gsub_context2_multiple_subrules.tests    |   2 +
+ .../data/aots/tests/gsub_context2_next_glyph.tests |   1 +
+ .../data/aots/tests/gsub_context2_simple.tests     |   3 +
+ .../data/aots/tests/gsub_context2_successive.tests |   1 +
+ .../data/aots/tests/gsub_context3_boundary.tests   |   2 +
+ .../data/aots/tests/gsub_context3_lookupflag.tests |   2 +
+ .../data/aots/tests/gsub_context3_next_glyph.tests |   1 +
+ .../data/aots/tests/gsub_context3_simple.tests     |   2 +
+ .../data/aots/tests/gsub_context3_successive.tests |   1 +
+ .../data/aots/tests/lookupflag_ignore_attach.tests |   5 +
+ .../data/aots/tests/lookupflag_ignore_base.tests   |   2 +
+ .../aots/tests/lookupflag_ignore_combination.tests |   3 +
+ .../aots/tests/lookupflag_ignore_ligatures.tests   |   3 +
+ .../data/aots/tests/lookupflag_ignore_marks.tests  |   1 +
+ test/shaping/run-tests.py                          |   9 +-
+ 332 files changed, 815 insertions(+), 3 deletions(-)
+
+commit ae96c98dfaef3a789227ffecd40b92518dface8a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 10:25:10 2018 -0500
+
+    [color] Use SortedUnsizedArrayOf<>
+
+ src/hb-ot-color-colr-table.hh | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+commit 4a3b20738fca3231e5d9a36adba333b5bce05f4a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 10:17:59 2018 -0500
+
+    [trak] Coment
+
+ src/hb-aat-layout-trak-table.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 918b1ee54d43eb493c9226bff7677ed8ec07934b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 10:09:17 2018 -0500
+
+    [arrays] Add not_found to reference bsearch as well
+
+ src/hb-open-type.hh | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit d77a098b735cf14aa601feab5bdb9f4e474c794f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 10:06:13 2018 -0500
+
+    [arrays] Improve bfind() interface
+
+    Much more useful now. :)
+
+ src/hb-dsalgs.hh           | 29 +++++++++++++++++++++++++----
+ src/hb-open-file.hh        |  9 +--------
+ src/hb-open-type.hh        | 12 ++++++++----
+ src/hb-ot-layout-common.hh | 10 ++--------
+ src/hb-set.hh              |  6 +++---
+ src/hb-vector.hh           |  6 ++++--
+ 6 files changed, 43 insertions(+), 29 deletions(-)
+
+commit 1204a247a5d9a4da39675d3da85d4fd3268a5b66
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 09:49:21 2018 -0500
+
+    [fuzzing] Add tests for previous commit
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11526
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11522
+
+ ...zz-testcase-minimized-hb-shape-fuzzer-5634620935110656 | Bin 0 ->
+ 41 bytes
+ ...zz-testcase-minimized-hb-shape-fuzzer-5716208469409792 | Bin 0 ->
+ 243 bytes
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 8dcc1913a1670ede7b124f7b5b775d7ab8791386
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 09:47:45 2018 -0500
+
+    [kerx/morx] Make sure object length is sanitized before accessing it
+
+ src/hb-aat-layout-kerx-table.hh | 5 +++++
+ src/hb-aat-layout-morx-table.hh | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+commit 70d80c90fe2f4eca66bec3e1d313bbf7e4d0ab65
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:59:50 2018 -0500
+
+    [arrays] Port ArrayOf.qsort() and hb_vector_t.qsort() to hb_array_t
+
+ src/hb-dsalgs.hh    | 14 ++++++++++++--
+ src/hb-open-type.hh | 14 ++++++++++++--
+ 2 files changed, 24 insertions(+), 4 deletions(-)
+
+commit 073d837aa2394d29dda72679802d583c559c3c5b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:48:48 2018 -0500
+
+    [arrays] Port ArrayOf.qsort() to hb_array_t's
+
+ src/hb-open-type.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit ad5c871d801b481f95dd32c8b65ecc70def597be
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:47:49 2018 -0500
+
+    [arrays] Add copy-constructor to hb_array_t and hb_sorted_array_t
+
+ src/hb-dsalgs.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 61de55bf496c1edb120e4d096140eb1125552bbe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:45:58 2018 -0500
+
+    [arrays] Port hb_vector_t.qsort() to hb_array_t's
+
+ src/hb-dsalgs.hh | 16 +++++++++++++---
+ src/hb-vector.hh | 10 ++--------
+ 2 files changed, 15 insertions(+), 11 deletions(-)
+
+commit e3face8e791d677f94154e8a7f3d787d0d69a02f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:42:17 2018 -0500
+
+    [arrays] Remove one flavor of hb_vector_t.qsort()
+
+ src/hb-vector.hh | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+commit 7c1600dcd9813ca560ecccc5c54877a5750caf4e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:37:11 2018 -0500
+
+    [arrays] Add (unused) SortedUnsizedArrayOf<>
+
+ src/hb-open-type.hh | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+commit e700392f5cbf366f1e03dc7e7b1a2eb6c3027b92
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:31:00 2018 -0500
+
+    [arrays] Port SortedArrayOf.bsearch/bfind to hb_sorted_array_t's
+
+ src/hb-dsalgs.hh    |  9 +++------
+ src/hb-open-type.hh | 50
+ ++++++++++----------------------------------------
+ src/hb-vector.hh    | 35 ++++++++++-------------------------
+ 3 files changed, 23 insertions(+), 71 deletions(-)
+
+commit e604306f2829804e9016966c1378166253b19d29
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:24:48 2018 -0500
+
+    [arrays] Port hb_vector_t.bsearch/bfind to (new) hb_sorted_array_t's
+
+ src/hb-dsalgs.hh    | 63
+ +++++++++++++++++++++++++++++++++++++++++++++++++----
+ src/hb-open-type.hh | 12 ++++++----
+ src/hb-vector.hh    | 57 +++++++++++++++++++-----------------------------
+ 3 files changed, 89 insertions(+), 43 deletions(-)
+
+commit 268eca24921e85eda98f4f0cce05d40c7235ba62
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:11:12 2018 -0500
+
+    [arrays] Port (unused) ArrayOf.lsearch() to hb_array_t's
+
+ src/hb-open-type.hh | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+commit 830856ba6b9454bf507e00416f9d45e9975fb7dc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:09:28 2018 -0500
+
+    [arrays] Port hb_vector_t.lsearch() to hb_array_t's
+
+ src/hb-dsalgs.hh | 26 +++++++++++++++++++++++---
+ src/hb-vector.hh | 16 ++++------------
+ 2 files changed, 27 insertions(+), 15 deletions(-)
+
+commit 96cf0889804b7d72a96274b25641bb18f7dd2e1e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 01:07:15 2018 -0500
+
+    [arrays] More
+
+ src/hb-face.cc   | 6 +++---
+ src/hb-vector.hh | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 3e26c8d2b10fc08642c25c7f13aef68b0b1008f6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:58:44 2018 -0500
+
+    [arrays] Update ArrayOf.lsearch()
+
+    Currently unused apparently
+
+ src/hb-open-type.hh | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+commit 22e1857b01c71714245ddca05cb3fa0127bf7da2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:53:19 2018 -0500
+
+    [arrays] Change argument type of cmp called by hb_vector_t.bsearch()
+
+    Towards consolidating all array bsearch/...
+
+ src/hb-aat-map.hh | 4 ++--
+ src/hb-ot-map.hh  | 4 ++--
+ src/hb-set.hh     | 2 +-
+ src/hb-vector.hh  | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 5fdf7b724eb3cb5ac60cd7f90d3250877ad7ca06
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Thu Nov 15 17:40:21 2018 -0600
+
+    Usermanual: clusters chapter; add brief grapheme definition and
+    clarify monotonous cluster handling.
+
+ docs/usermanual-clusters.xml | 56
+ ++++++++++++++++++++++++++++++--------------
+ 1 file changed, 39 insertions(+), 17 deletions(-)
+
+commit 939220e57da613e090d247aa1af2396c28370af4
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Thu Nov 15 15:47:03 2018 -0600
+
+    Usermanual: clusters chapter, minor updates.
+
+ docs/usermanual-clusters.xml | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+commit 53ac46e974cf0ee8720b40ef394714eb97ff53b9
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Mon Nov 12 12:17:06 2018 -0600
+
+    Usermanual: expand clusters chapter.
+
+ docs/usermanual-clusters.xml | 743
+ +++++++++++++++++++++++++++----------------
+ 1 file changed, 473 insertions(+), 270 deletions(-)
+
+commit 30cb45b3eaacda15cc45435815cae3fd50e87557
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:35:31 2018 -0500
+
+    Change ArrayOf.bsearch() return semantics
+
+    Towards consolidating all array bsearch/...
+
+ src/hb-aat-layout-kerx-table.hh | 16 +++-------------
+ src/hb-open-file.hh             | 12 ++++++++----
+ src/hb-open-type.hh             | 42
+ ++++++++++++++++++++++++++++++++---------
+ src/hb-ot-cmap-table.hh         | 30 ++++++++++++-----------------
+ src/hb-ot-color-svg-table.hh    |  3 +--
+ src/hb-ot-layout-common.hh      | 29 +++++++++++-----------------
+ src/hb-ot-vorg-table.hh         |  9 ++++-----
+ src/hb-vector.hh                | 14 +++++++++-----
+ 8 files changed, 81 insertions(+), 74 deletions(-)
+
+commit 5cd9546ba73d9f8c8b7b8db0960d657c50b70f64
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:38:36 2018 -0500
+
+    Minor
+
+ src/hb-ot-layout-common.hh | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+commit fd94e729cb50f2b6bd83b80cbf400e10ac633a1c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:45:55 2018 -0500
+
+    Whitespace
+
+ src/hb-ot-layout-common.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit bb2a2065080a3099eb0dc82d1df0891ad2601316
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:31:40 2018 -0500
+
+    Assert that item-type of arrays have static size
+
+ src/hb-dsalgs.hh    | 2 ++
+ src/hb-open-type.hh | 4 ++++
+ src/hb-vector.hh    | 2 ++
+ 3 files changed, 8 insertions(+)
+
+commit 690d9eb83d3421b397b0cb824cd768d6d73cbf12
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:29:22 2018 -0500
+
+    [vector] Rename
+
+ src/hb-vector.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit ba38378fd4374f3d44bdc9aa0de902401b60b13d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:27:57 2018 -0500
+
+    [aat] Minor
+
+ src/hb-aat-layout-common.hh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 39b9d63b014380d421cc9b94a49dd411c7a5aabf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:25:40 2018 -0500
+
+    Add hb_static_size(T)
+
+ src/hb-null.hh | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+commit f99abcc37990a478189dda691d1fdac7b9d51386
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Nov 24 00:22:21 2018 -0500
+
+    Add template-function convenience macros
+
+ src/hb-atomic.hh |  2 +-
+ src/hb-blob.hh   |  4 ++--
+ src/hb-common.cc |  2 +-
+ src/hb-ft.cc     |  2 +-
+ src/hb-null.hh   | 11 ++++++-----
+ src/hb.hh        |  3 +++
+ 6 files changed, 14 insertions(+), 10 deletions(-)
+
+commit ec83b2228e0bbb6df7e7b94dad49db32b041af4a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 19:58:49 2018 -0500
+
+    Add null bytes for CmapSubtableLongGroup
+
+ src/hb-ot-cmap-table.hh | 1 +
+ src/hb-static.cc        | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+commit e2ffb33a534a427c760dae53d0469eeced4343ba
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 16:24:28 2018 -0500
+
+    Remove lsearch for small TableDirectorys
+
+ src/hb-open-file.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 04f7e5536924e7f277d72b8cb9d878239877c331
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 16:07:43 2018 -0500
+
+    [arrays] Add as_array() to hb_vector_t<>
+
+ src/hb-vector.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit c514f65181390ab98b0f738632f71cda31e46b68
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 16:04:56 2018 -0500
+
+    [arrays] Add as_array() to ArrayOf<>
+
+ src/hb-open-type.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 9552f4ef0da0b7e1fb28cb2738b865888e7941d9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 15:24:17 2018 -0500
+
+    [kern] Don't enforce length of last subtable
+
+ src/hb-aat-layout-kerx-table.hh | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+commit 992b7128656e72f935089dc2e12c2d2a25511886
+Merge: c9cc96c0 018ba46e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 13:49:34 2018 -0500
+
+    Merge pull request #1407 from harfbuzz/at-sign
+
+    Don't canonicalize '@' to '-' in language tags
+
+commit 018ba46e4d003a5dd0f6d2d899226129c4ef0c60
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Fri Nov 23 13:21:22 2018 -0500
+
+    Don't canonicalize '@' to '-' in language tags
+
+    Fixes #1406.
+
+ src/hb-common.cc       | 2 +-
+ test/api/test-ot-tag.c | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+commit c9cc96c0cfbbb87b9292e413d500a454182be9f4
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Nov 23 19:58:56 2018 +0330
+
+    [aat] Update expectation
+
+ test/shaping/data/in-house/tests/macos-10.12.tests | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 748962264a9f098b32b9cb3fe4d18c786907a184
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 11:10:17 2018 -0500
+
+    [aat] Disable mark advance zeroing if kern table has state-machines
+
+    Geeza Pro for example, relies on that for fancy mark positioning.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1405
+
+ src/hb-aat-layout-kerx-table.hh | 15 +++++++++++++++
+ src/hb-ot-kern-table.hh         |  9 +++++++++
+ src/hb-ot-layout.cc             |  6 ++++++
+ src/hb-ot-layout.hh             |  3 +++
+ src/hb-ot-shape.cc              |  4 +++-
+ 5 files changed, 36 insertions(+), 1 deletion(-)
+
+commit 3d2b98ef14af29acd74f01647bef60cd410825fb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 23 10:45:44 2018 -0500
+
+    Minor
+
+ src/hb.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 341851efe158599a34d241a97593058a4333852e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Nov 23 15:40:05 2018 +0330
+
+    [aat] Add macOS specific tests (#1404)
+
+ .circleci/config.yml                               | 46
+ ++++++++++++++--------
+ test/shaping/CMakeLists.txt                        |  2 +
+ test/shaping/data/in-house/Makefile.sources        |  1 +
+ test/shaping/data/in-house/tests/macos-10.12.tests | 10 +++++
+ test/shaping/run-tests.py                          | 38
+ ++++++++++++++----
+ 5 files changed, 73 insertions(+), 24 deletions(-)
+
+commit 22798e93c414a2655c757a6e41b300f67e04a9a3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 22:47:51 2018 -0500
+
+    [use] Minor clarification
+
+ src/hb-ot-shape-complex-use.cc | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+commit a2d6c1075a5595a08ef09357293919d9df8eb64a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 22:40:57 2018 -0500
+
+    Minor tweak to FLAG64
+
+ src/hb.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 8280459e74cff2dec3de012abd309cda9578b759
+Merge: e4a4555d 3c7792ca
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 22:39:12 2018 -0500
+
+    Merge pull request #1291 from harfbuzz/use-reordering
+
+    [use] Fix reordering
+
+commit e4a4555d1e40dacdf72452805e9e6b6109627d63
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 22:17:49 2018 -0500
+
+    [cmap] Move code around
+
+ src/hb-ot-cmap-table.hh | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+commit 758c9d68e2143493978d8ac8391f4af2a2abc26a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 22:16:12 2018 -0500
+
+    [morx/kerx] Limit range to subtable when sanitizing
+
+ src/hb-aat-layout-kerx-table.hh | 2 ++
+ src/hb-aat-layout-morx-table.hh | 2 ++
+ 2 files changed, 4 insertions(+)
+
+commit a9fe787a11fc391d9a43a4ea19e6eb1c474199bd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 22:12:36 2018 -0500
+
+    [sanitizer] Add reset_object(), make set_object() do bounds-check
+
+    Affects morx/kerx run-time only currently.  Will adjust their
+    sanitize next.
+
+ src/hb-aat-layout-kerx-table.hh |  1 +
+ src/hb-aat-layout-morx-table.hh |  1 +
+ src/hb-machinery.hh             | 30 +++++++++++++++++++-----------
+ 3 files changed, 21 insertions(+), 11 deletions(-)
+
+commit 2c8188bf599e351a4e0804d74612f9643b3d2443
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 22:02:19 2018 -0500
+
+    [kerx] Make sure subtables are non-zero-length
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11400
+
+ src/hb-aat-layout-kerx-table.hh                          |   1 +
+ src/hb-aat-layout-morx-table.hh                          |   2 +-
+ ...z-testcase-minimized-hb-shape-fuzzer-5722888989048832 | Bin 0 ->
+ 3608 bytes
+ 3 files changed, 2 insertions(+), 1 deletion(-)
+
+commit a9e0bdc35dfcbead7d4b6fa249d60ebedd7d43ca
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 21:30:04 2018 -0500
+
+    [GSUB] Don't flush glyphset during recursion in closure()
+
+    See comment.
+
+    Supercedes https://github.com/harfbuzz/harfbuzz/pull/1401
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=11366
+
+ src/hb-ot-layout-gsub-table.hh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 8982830d3ec54f50cc951de9569520fafc735e75
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Nov 19 13:00:24 2018 -0800
+
+    [subset] add fuzzer testcase.
+
+ ...z-testcase-minimized-hb-subset-fuzzer-5067936541179904 | Bin 0 ->
+ 172 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit d0e81b2cc85d09d01905c5fc5b3382c25eaa3bb3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 21:20:39 2018 -0500
+
+    [set] Rename
+
+ src/hb-set.hh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit e866910579e9cdc5b1ffa2e401fd0c056d44ca6a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 18:07:59 2018 -0500
+
+    Enforce requiring null_size even if min_size is 0
+
+    This concludes null-size enforcement changes
+
+ src/hb-null.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 4d4fd64ff47da04a7008d410c92e8fb4ad970781
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 18:07:36 2018 -0500
+
+    Allow non-nullable OffsetTo<> to non-Null'able objects
+
+ src/hb-open-type.hh | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+commit fa9f585ec53bc7145d3bed1a4bd756d64dae1e55
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 17:56:51 2018 -0500
+
+    [glyf] Don't mark structs UNBOUNDED
+
+    See comments.
+
+ src/hb-ot-glyf-table.hh | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit f47a60a7543dbaf41086c25a1a22ae518d8b92a9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 17:53:29 2018 -0500
+
+    Mark UnsizedArrayOf<> as UNBOUNDED
+
+    Since min_size is 0, Null() still accepts this type.
+
+ src/hb-open-type.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 199a0f7b41b691e371487fd569c0d0146da3c3f3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 17:31:07 2018 -0500
+
+    [ot-shape] Simplify logic
+
+ src/hb-ot-shape.cc | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+commit 014e4980ed9c8c473001abdb3a44121eb73fd50d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 16:21:49 2018 -0500
+
+    Move
+
+ src/hb-ot-shape.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 62890dee18b88865a2014fb6a1322c1c9218bd49
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 16:20:29 2018 -0500
+
+    [aat] Zero mark advances if decided so even if there's cross-kerning
+
+    Cross-kerning can only take care of positioning vertically.
+    It doesn't
+    adjust mark advance...
+
+ src/hb-ot-shape.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a201fa74cd67f36a402a5c8093889c9d793e9fd5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 15:52:29 2018 -0500
+
+    [aat] Tweak fallback positioning logic when applying morx
+
+    Such that for Indic-like scripts (eg. Khmer), we don't do any
+    fallback mark
+    advance-zeroing / positioning, but we do for Latin, etc.  Reuses
+    preferences
+    of our script-specific OpenType shapers for those.
+
+    Fixes regression: https://github.com/harfbuzz/harfbuzz/issues/1393
+    Which means, fixes again:
+    https://github.com/harfbuzz/harfbuzz/issues/1264
+    While not regressing: https://github.com/harfbuzz/harfbuzz/issues/1357
+
+ src/hb-ot-shape.cc | 38 +++++++++++++++++++++++---------------
+ src/hb-ot-shape.hh |  3 +++
+ 2 files changed, 26 insertions(+), 15 deletions(-)
+
+commit fa0bd8964d110c168a918bc331dcd350c3fed8c1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 14:46:39 2018 -0500
+
+    [myanmar] Minor move
+
+ src/hb-ot-shape-complex.hh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit 7dc561984bdb1f29f09ae0793195b5fbf772522b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 14:45:46 2018 -0500
+
+    [myanmar] If there's no GSUB table, pick myanmar shaper
+
+    Needed for morx+kern mark-zeroing interaction.  All other scripts
+    work this way.
+
+ src/hb-ot-shape-complex.hh | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+commit 25f52f58c20715cc0dee2dd2885669078a128b08
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 14:41:01 2018 -0500
+
+    [myanmar] Remove myanmar_old shaper
+
+    Over time it has become the same as default shaper.  So, remove.
+
+ src/hb-ot-shape-complex-myanmar.cc | 21 ---------------------
+ src/hb-ot-shape-complex.hh         |  4 +---
+ 2 files changed, 1 insertion(+), 24 deletions(-)
+
+commit eeed802b1d0f932c61a088d3e0156ae70645b9e2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 01:53:36 2018 -0500
+
+    Fix spurious gcc warnings
+
+    ../../src/hb-null.hh:53:39: warning: enum constant in boolean context
+    [-Wint-in-bool-context]
+
+ src/hb-null.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b96ecb9971a9ad089a631d0139f05ae9d880fc55
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 01:49:12 2018 -0500
+
+    More
+
+    This makes more of the gcc spurious warning:
+
+    ../../src/hb-null.hh:53:39: warning: enum constant in boolean context
+    [-Wint-in-bool-context]
+
+    But not going to let that defeat correct code.  Type to switch
+    to clang
+    as my main compiler...
+
+ src/hb-blob.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2737aa81e5aee721e868bf0c72f19c0245c721fe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 01:44:27 2018 -0500
+
+    Fix up recent change
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1300
+
+ src/hb-null.hh          | 12 +++++++++---
+ src/hb-open-type.hh     |  5 -----
+ src/hb-ot-glyf-table.hh |  4 ++--
+ 3 files changed, 11 insertions(+), 10 deletions(-)
+
+commit fffea5aff7a631eedd13c38c1fb7ea4f5f950930
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 01:25:34 2018 -0500
+
+    Minor
+
+ src/hb-open-type.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 209b58ef731f102b92179ed76551e2fd6b5ed075
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 01:22:33 2018 -0500
+
+    Minor
+
+ src/hb-ot-kern-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3b9fd176e83bbebc4d0b5fc967c15b08fdef7015
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 01:18:55 2018 -0500
+
+    Disallow taking Null() of unbounded structs
+
+    Not sure I've marked all such structs.  To be done as we discover.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1300
+
+ src/hb-aat-layout-common.hh |  2 +-
+ src/hb-machinery.hh         |  4 ++++
+ src/hb-ot-kern-table.hh     |  2 +-
+ src/hb-ot-var-fvar-table.hh | 31 ++++++++++++++++---------------
+ 4 files changed, 22 insertions(+), 17 deletions(-)
+
+commit f2b91d6510face95008151bb0d25837723536f9f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 01:10:22 2018 -0500
+
+    Use Type::null_size for our structs in Null(), sizeof() for other
+    types
+
+ src/hb-null.hh | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+commit 7dd945a8764cbbf76f686fd9387918b63f7d2fb4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 01:05:02 2018 -0500
+
+    One more time..
+
+ src/hb-machinery.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d062ad10de6c63d94676660b76526a160cf4299e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 00:39:14 2018 -0500
+
+    Fix bots happy again, hopefully
+
+    So, our fallback static_assert cannot be had more than once per line
+    of source.
+
+ src/hb-machinery.hh | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+commit fb10c021c8a32f8dc054f008caf86af82667e109
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 22 00:21:49 2018 -0500
+
+    Revert alignof() == 1 check
+
+    Bots not happy with using "this" inside assertion...
+
+    This reverts 2656644887e77a9d814bb12374af3c26b42fd935
+
+ src/hb-machinery.hh | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+commit 8d778877b88155dec1808a994416ead0b3d98ae7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 23:46:09 2018 -0500
+
+    ..
+
+ src/hb-machinery.hh | 8 ++++++--
+ src/hb-null.hh      | 4 ++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+commit 8cfeed99486e87c3217dc141bc24b7768a460f32
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 23:42:31 2018 -0500
+
+    Minor
+
+ src/hb-machinery.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit e5d954a2fb0c390ea67e83763e3c3a47caa2eb50
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 23:30:50 2018 -0500
+
+    Minor
+
+ src/hb-machinery.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit e987059c618e03d2346c31ed64429d67ce0e367a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 23:25:06 2018 -0500
+
+    Minor
+
+ src/hb-machinery.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit a2b6d308a40d737f54a79f00bc7ace226bad5aaf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 23:23:49 2018 -0500
+
+    Remove DEFINE_SIZE_ARRAY2
+
+ src/hb-machinery.hh        | 6 ------
+ src/hb-ot-layout-common.hh | 8 ++++----
+ src/hb-ot-post-table.hh    | 6 +++---
+ 3 files changed, 7 insertions(+), 13 deletions(-)
+
+commit 2656644887e77a9d814bb12374af3c26b42fd935
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 23:23:21 2018 -0500
+
+    Check alignof() structs are 1
+
+ src/hb-machinery.hh | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+commit 6321fdf7040ce48e3de8d34fdcc57caa6433cb66
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 23:19:00 2018 -0500
+
+    Whitespace
+
+ src/hb-machinery.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit f961c1eb88af0d178e5d3431b9d57bdf79669488
+Merge: ecdceea8 264439c6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 17:27:27 2018 -0500
+
+    Merge pull request #1400 from harfbuzz/sharada-sandhi-mark
+
+    Test U+111C9 SHARADA SANDHI MARK
+
+commit 264439c6c308ac5f01c4ba4faf64daa2d642236a
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Wed Nov 21 16:33:45 2018 -0500
+
+    Test U+111C9 SHARADA SANDHI MARK
+
+ .../fonts/86cdd983c4e4c4d7f27dd405d6ceb7d4b9ed3d35.ttf    | Bin 0 ->
+ 968 bytes
+ test/shaping/data/in-house/tests/use-syllable.tests       |   1 +
+ 2 files changed, 1 insertion(+)
+
+commit ecdceea861952be003e1d435aa3282a4e3e200a9
+Merge: b89c7fd3 b3d5b0a5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 16:12:32 2018 -0500
+
+    Merge pull request #1399 from harfbuzz/sharada-sandhi-mark
+
+    Fix USE categories for U+111C9 SHARADA SANDHI MARK
+
+commit b89c7fd3dc505a958dd4b6acec0e0f8e57224fd8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Nov 21 12:32:48 2018 -0500
+
+    Allow defining HB_USE_ATEXIT to 0
+
+    That's better use of that value than requiring extra macro
+    HB_NO_ATEXIT
+
+ src/hb-common.cc    | 10 +++++-----
+ src/hb-ft.cc        | 12 ++++++------
+ src/hb-glib.cc      |  6 +++---
+ src/hb-icu.cc       |  6 +++---
+ src/hb-ot-font.cc   |  6 +++---
+ src/hb-shape.cc     |  6 +++---
+ src/hb-shaper.cc    |  6 +++---
+ src/hb-ucdn.cc      |  6 +++---
+ src/hb-uniscribe.cc |  4 ++--
+ src/hb.hh           |  5 ++++-
+ 10 files changed, 35 insertions(+), 32 deletions(-)
+
+commit b3d5b0a5d92115ca672b8103999ab7ac88e39a4a
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Wed Nov 21 11:35:44 2018 -0500
+
+    Fix USE categories for U+111C9 SHARADA SANDHI MARK
+
+ src/gen-use-table.py                 | 7 ++++++-
+ src/hb-ot-shape-complex-use-table.cc | 2 +-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+commit f48bb9a3939067f24a81007e642caaac77cc7167
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 20:40:55 2018 -0500
+
+    [var] Deprecated axis enumeration API and add new version
+
+    New version has axis flags.
+
+    New API:
+    +hb_ot_var_axis_info_t
+    +hb_ot_var_find_axis_info()
+    +hb_ot_var_get_axis_infos()
+
+    Deprecated API:
+    -HB_OT_VAR_NO_AXIS_INDEX
+    -hb_ot_var_axis_t
+    -hb_ot_var_find_axis()
+    -hb_ot_var_get_axes()
+
+ docs/harfbuzz-sections.txt  |  14 +++---
+ src/hb-deprecated.h         |  37 +++++++++++++++
+ src/hb-ot-var-fvar-table.hh | 112
+ ++++++++++++++++++++++++++++++++------------
+ src/hb-ot-var.cc            |  43 ++++++++++++++---
+ src/hb-ot-var.h             |  61 ++++++++++++------------
+ test/api/test-ot-face.c     |   2 +-
+ 6 files changed, 192 insertions(+), 77 deletions(-)
+
+commit b2d803cef6974519d5892af2c9efeb8dfba87618
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 11:42:25 2018 -0500
+
+    Remove newly-added -hb_ot_var_axis_get_flags()
+
+ src/hb-ot-var-fvar-table.hh |  6 ------
+ src/hb-ot-var.cc            | 12 ------------
+ src/hb-ot-var.h             |  4 ----
+ 3 files changed, 22 deletions(-)
+
+commit 736897d7a1410fd281fbcedc084b85bf4ba1410c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 11:40:43 2018 -0500
+
+    [var] Make sure hb_ot_var_axis_flags_t is int-sized
+
+ src/hb-ot-var.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit eab5d15f6156e771cb606b760dd170b96c5cd398
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 11:33:33 2018 -0500
+
+    [var] Move code
+
+ src/hb-ot-var.h | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
+
+commit 064f703c7ac5a28803a8221720e922ea6dbd2505
+Merge: be1828da 82951182
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 16:29:30 2018 -0500
+
+    Merge pull request #1397 from harfbuzz/small-emoji-table
+
+    Shrink the emoji table by merging adjacent ranges
+
+commit 82951182799772a642d32195dd87e6f0c116f545
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Tue Nov 20 15:41:45 2018 -0500
+
+    Shrink the emoji table by merging adjacent ranges
+
+ src/gen-emoji-table.py        |  13 +--
+ src/hb-unicode-emoji-table.hh | 189
+ ++++--------------------------------------
+ 2 files changed, 23 insertions(+), 179 deletions(-)
+
+commit be1828daaa1e1a72d971aed8d34fff54688d0f41
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 11:16:23 2018 -0500
+
+    [var] Fix type of coords returned
+
+    Ouch.  Wonder how none of the bots caught the float->int truncation.
+
+ src/hb-ot-var-fvar-table.hh | 2 +-
+ src/hb-ot-var.cc            | 2 +-
+ src/hb-ot-var.h             | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 8f3ee17ae468950a34439785d2e6ac4182efb65c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 01:38:23 2018 -0500
+
+    [travis] Update Coverity token
+
+ .travis.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f9552362986efd0973b2637d21b787edbc8479f2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 01:21:36 2018 -0500
+
+    Add codecov.io badge
+
+ README | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+commit 831ba74382e35f110006539f22bebce4d57c8502
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 01:16:08 2018 -0500
+
+    Fix Codacy "issues"
+
+ src/test-name-table.cc  |  2 +-
+ src/test-ot-color.cc    | 14 +++++++-------
+ test/api/test-buffer.c  |  5 +++--
+ test/api/test-object.c  |  2 +-
+ test/api/test-ot-name.c |  2 +-
+ 5 files changed, 13 insertions(+), 12 deletions(-)
+
+commit c49e43c1ffee0e9664da6202ace493d932b725a1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 01:06:50 2018 -0500
+
+    [travis] Another push for codecov.io after setting token
+
+ .travis.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 96b24c5124a085b7601215360eed847ce5302699
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Nov 20 01:03:42 2018 -0500
+
+    [travis] Add codecov.io
+
+ .travis.yml | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 3c7792ca326abfb989285f794d6ee71ad9f6bf89
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Sat Oct 20 15:02:26 2018 -0400
+
+    [use] Fix reordering
+
+    Fixes #1235.
+
+ src/hb-ot-shape-complex-use.cc                     |  48
+ ++++++++++++++-------
+ src/hb.hh                                          |   2 +
+ .../4afb0e8b9a86bb9bd73a1247de4e33fbe3c1fd93.ttf   | Bin 0 -> 1824 bytes
+ test/shaping/data/in-house/tests/use.tests         |   3 ++
+ 4 files changed, 38 insertions(+), 15 deletions(-)
+
+commit 587d49fc657c10c8a20f2409a04d72bf80bb361e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 19 14:27:19 2018 -0500
+
+    [fvar] Add named-instance API
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1241
+
+ docs/harfbuzz-sections.txt  |  4 ++++
+ src/hb-ot-var-fvar-table.hh | 55
+ ++++++++++++++++++++++++++++++++++++++++++---
+ src/hb-ot-var.cc            | 33 +++++++++++++++++++++++++++
+ src/hb-ot-var.h             | 32 ++++++++++++++++++++++++++
+ 4 files changed, 121 insertions(+), 3 deletions(-)
+
+commit 46c0da820fc313bad8afaf019d2cd9065fa5f514
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 19 13:32:48 2018 -0500
+
+    Fix build
+
+ src/hb-dsalgs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 56c9238d3da8c034336cf80ba37e03e33c493718
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 19 13:09:53 2018 -0500
+
+    [fvar] Rewrite sanitize
+
+ src/hb-ot-var-fvar-table.hh | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+commit 4a6a692e3ea4fab632a0162c6d513dc151054d8f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 19 13:04:43 2018 -0500
+
+    [fvar] Use hb_array_t for axes
+
+ src/hb-dsalgs.hh            |  6 ++++++
+ src/hb-ot-var-fvar-table.hh | 14 ++++----------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+commit e0097396010c40cf62641cd12ceb12dd5d79c9c7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 19 12:53:53 2018 -0500
+
+    [fvar] Minor
+
+ src/hb-ot-var-fvar-table.hh | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+commit 1a2eb108b857de9c5e84cc5de0c12c7657e04498
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 19 12:36:56 2018 -0500
+
+    [ot-var] Add hb_ot_var_axis_get_flags()
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1241
+
+    New API:
+    +hb_ot_var_axis_flags_t
+    +hb_ot_var_axis_get_flags
+
+ docs/harfbuzz-sections.txt  |  2 ++
+ src/hb-buffer.h             |  2 ++
+ src/hb-ot-var-fvar-table.hh |  9 +++++++++
+ src/hb-ot-var.cc            | 12 ++++++++++++
+ src/hb-ot-var.h             | 13 +++++++++++++
+ 5 files changed, 38 insertions(+)
+
+commit bd6b2ba1d3910cc259db7abeb6c9bd7ed9494857
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 19 11:34:56 2018 -0500
+
+    [ot-var] Add flags
+
+    Unfortunate that we don't have room in hb_ot_var_axis_t to expose
+    flags :(.
+
+ src/hb-ot-var-fvar-table.hh | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+commit c076c7b85ce4d069ae8b2b04143aca4c4f052ae9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Nov 19 11:30:40 2018 -0500
+
+    [ot-var] Use hb_ot_name_id_t
+
+ src/hb-ot-var.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 commit e3a1a8350a6a7933b0a100194985f4425ab9de19
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Nov 16 16:53:25 2018 -0800

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018  Google, Inc.
+ * Copyright © 2018  Ebrahim Byagowi
  *
  *  This is part of HarfBuzz, a text shaping library.
  *
@@ -20,48 +20,19 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE COPYRIGHT HOLDER HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *
- * Google Author(s): Behdad Esfahbod
  */
 
+#ifndef HB_AAT_H
+#define HB_AAT_H
+#define HB_AAT_H_IN
+
 #include "hb.h"
-#include "hb-ot.h"
 
-#include <stdlib.h>
-#include <stdio.h>
+#include "hb-aat-layout.h"
 
-int
-main (int argc, char **argv)
-{
-  if (argc != 2) {
-    fprintf (stderr, "usage: %s font-file\n", argv[0]);
-    exit (1);
-  }
+HB_BEGIN_DECLS
 
-  hb_blob_t *blob = hb_blob_create_from_file (argv[1]);
-  hb_face_t *face = hb_face_create (blob, 0 /* first face */);
-  hb_blob_destroy (blob);
-  blob = NULL;
+HB_END_DECLS
 
-  unsigned int count;
-  const hb_ot_name_entry_t *entries = hb_ot_name_list_names (face, &count);
-
-  for (unsigned int i = 0; i < count; i++)
-  {
-    printf ("%u	%s	",
-	    entries[i].name_id,
-	    hb_language_to_string (entries[i].language));
-
-    char buf[64];
-    unsigned int buf_size = sizeof (buf);
-    hb_ot_name_get_utf8 (face,
-			 entries[i].name_id,
-			 entries[i].language,
-			 &buf_size,
-			 buf);
-
-    printf ("%s\n", buf);
-  }
-
-  return count ? 0 : 1;
-}
+#undef HB_AAT_H_IN
+#endif /* HB_AAT_H */
