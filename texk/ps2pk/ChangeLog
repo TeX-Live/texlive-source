@@ -1,3 +1,8 @@
+2018-12-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ps2pk.c: check for missing arguments.
+	tex-k mail 1 Dec 2018 08:04:39.
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* tests/ps2pk.test: LC_ALL=LANGUAGE=C.
