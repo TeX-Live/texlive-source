@@ -159,6 +159,7 @@ tlshell/tlshell.tcl
 ulqda/ulqda.pl
 urlbst/urlbst
 vpe/vpe.pl
+xindex/xindex.lua
 yplan/yplan
 context/stubs/unix/context
 context/stubs/unix/contextjit
