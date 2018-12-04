@@ -767,9 +767,10 @@ int
 main (int argc,  string *argv)
 {
 #ifdef WIN32
+#define puts kpathsea_win32_puts
   string *av, enc;
   int ac;
-#endif
+#endif /* WIN32 */
   unsigned unfound = 0;
   kpathsea kpse = kpathsea_new();
 
@@ -796,7 +797,7 @@ main (int argc,  string *argv)
       argc = ac;
     }
   }
-#endif
+#endif /* WIN32 */
   init_more (kpse);
 
 
@@ -804,38 +805,24 @@ main (int argc,  string *argv)
 
   /* Variable expansion.  */
   if (var_to_expand)
-#ifdef WIN32
-    kpathsea_win32_puts (kpse, kpathsea_var_expand (kpse, var_to_expand));
-#else
     puts (kpathsea_var_expand (kpse, var_to_expand));
-#endif
 
   /* Brace expansion. */
   if (braces_to_expand)
-#ifdef WIN32
-    kpathsea_win32_puts (kpse, kpathsea_brace_expand (kpse, braces_to_expand));
-#else
     puts (kpathsea_brace_expand (kpse, braces_to_expand));
-#endif
 
   /* Path expansion. */
   if (path_to_expand)
-#ifdef WIN32
-    kpathsea_win32_puts (kpse, kpathsea_path_expand (kpse, path_to_expand));
-#else
     puts (kpathsea_path_expand (kpse, path_to_expand));
-#endif
 
   /* Show a search path. */
   if (path_to_show) {
     if (user_format != kpse_last_format) {
-      if (!kpse->format_info[user_format].type) /* needed if arg was numeric */
+      if (!kpse->format_info[user_format].type) {
+        /* needed if arg was numeric */
         kpathsea_init_format (kpse, user_format);
-#ifdef WIN32
-      kpathsea_win32_puts (kpse, kpse->format_info[user_format].path);
-#else
+      }
       puts (kpse->format_info[user_format].path);
-#endif
     } else {
       WARNING ("kpsewhich: Cannot show path for unknown file type");
     }
@@ -848,11 +835,7 @@ main (int argc,  string *argv)
       unfound++;
       value = "";
     }
-#ifdef WIN32
-    kpathsea_win32_puts (kpse, value);
-#else
     puts (value);
-#endif
   }
 
   if (safe_in_name) {

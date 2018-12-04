@@ -1,3 +1,8 @@
+2018-12-04  Karl Berry  <karl@freefriends.org>
+
+	* kpsewhich.c (main) [WIN32]: #define puts kpathsea_win32_puts
+	once, instead of many #ifdefs throughout function.
+
 2018-11-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* elt-dirs.c, knj.c, progname.c: Support non-ascii values
