@@ -767,7 +767,7 @@ int
 main (int argc,  string *argv)
 {
 #ifdef WIN32
-#define puts kpathsea_win32_puts
+#define puts(s) kpathsea_win32_puts(kpse, (s))
   string *av, enc;
   int ac;
 #endif /* WIN32 */
