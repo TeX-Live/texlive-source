@@ -1,3 +1,7 @@
+2018-12-05  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* mag.c, pk2bm.c: check for missing arguments.
+
 2018-12-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ps2pk.c: check for missing arguments.

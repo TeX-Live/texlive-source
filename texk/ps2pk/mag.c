@@ -104,9 +104,11 @@ int main(int argc, char *argv[]) {
       	    if (*++argv[0] == '\0') {
       	       argc--; argv++;
       	    }
+      	    if (argv[0] == '\0') goto invalid;
 	    DPI = atof(argv[0]);
 	    done = 1;
       	    break;
+invalid:
       	 default:
       	    fatal("%s: %c invalid option\n", myname, c);
       	 }
