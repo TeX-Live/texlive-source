@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*
 This is based on the patch texlive-poppler-0.59.patch <2017-09-19> at
 https://git.archlinux.org/svntogit/packages.git/plain/texlive-bin/trunk
-by Arch Linux. The poppler should be 0.71.0.
+by Arch Linux. The poppler should be 0.72.0 or newer versions.
 POPPLER_VERSION should be defined.
 */
 
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
             fprintf(stderr, "No SourceName found\n");
             exit(1);
         }
-        outname = (char *)srcName.getString()->getCString();
+        outname = (char *)srcName.getString()->c_str();
         // We cannot free srcName, as objname shares its string.
         // srcName.free();
     } else if (objnum > 0) {
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
             fprintf(stderr, "Not a Stream object\n");
             exit(1);
         }
-        sprintf(buf, "%s", fileName->getCString());
+        sprintf(buf, "%s", fileName->c_str());
         if ((p = strrchr(buf, '.')) == 0)
             p = strchr(buf, 0);
         if (objgen == 0)
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
         outname = buf;
     } else {                    // objnum < 0 means we are extracting the XRef table
         extract_xref_table = true;
-        sprintf(buf, "%s", fileName->getCString());
+        sprintf(buf, "%s", fileName->c_str());
         if ((p = strrchr(buf, '.')) == 0)
             p = strchr(buf, 0);
         sprintf(p, ".xref");

@@ -22,7 +22,7 @@ This is based on the patch texlive-poppler-0.59.patch <2017-09-19> at
 https://git.archlinux.org/svntogit/packages.git/plain/texlive-bin/trunk
 by Arch Linux. A little modifications are made to avoid a crash for
 some kind of pdf images, such as figure_missing.pdf in gnuplot.
-The poppler should be 0.71.0.
+The poppler should be 0.72.0 or newer versions.
 POPPLER_VERSION should be defined.
 */
 
@@ -427,7 +427,7 @@ static void copyFont(char *tag, Object * fontRef)
         charset = fontdesc.dictLookup("CharSet");
         if (!charset.isNull() &&
             charset.isString() && is_subsetable(fontmap))
-            epdf_mark_glyphs(fd, (char *)charset.getString()->getCString());
+            epdf_mark_glyphs(fd, (char *)charset.getString()->c_str());
         else
             embed_whole_font(fd);
         addFontDesc(fontdescRef.getRef(), fd);
@@ -566,7 +566,7 @@ static void copyObject(Object * obj)
         pdf_printf("%s", convertNumToPDF(obj->getNum()));
     } else if (obj->isString()) {
         s = (GooString *)obj->getString();
-        p = (char *)s->getCString();
+        p = (char *)s->c_str();
         l = s->getLength();
         if (strlen(p) == (unsigned int) l) {
             pdf_puts("(");

@@ -1,3 +1,9 @@
+2018-12-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftosrc-poppler0.72.0.cc, pdftoepdf-poppler0.72.0.cc:
+	Add to support system poppler-0.72.0.
+	* NEWS: Change comments on system poppler.
+
 2018-11-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftosrc-poppler0.71.0.cc, pdftoepdf-poppler0.71.0.cc:
