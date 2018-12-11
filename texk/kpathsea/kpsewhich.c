@@ -772,7 +772,7 @@ main (int argc,  string *argv)
   int ac;
 #endif /* WIN32 */
   unsigned unfound = 0;
-  kpathsea kpse = kpathsea_new();
+  kpathsea kpse = kpathsea_new ();
 
   /* Read options, then dependent initializations.  */
   read_command_line (kpse, argc, argv);
