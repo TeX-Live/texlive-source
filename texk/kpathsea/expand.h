@@ -1,6 +1,6 @@
 /* expand.h: general expansion.
 
-   Copyright 1993, 1994, 1996, 2008, 2011 Karl Berry.
+   Copyright 1993, 1994, 1996, 2008, 2011, 2018 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ extern string kpathsea_expand (kpathsea kpse, const_string s);
 
 #endif /* MAKE_KPSE_DLL */
 
-/* Do brace expansion and call `kpse_expand' on each element of the
+/* Do brace expansion and call `kpathsea_expand' on each element of the
    result; return the final expansion (always in fresh memory, even if
    no expansions were done).  We don't call `kpse_expand_default'
    because there is a whole sequence of defaults to run through; see

@@ -1,3 +1,11 @@
+2018-12-12  Karl Berry  <karl@freefriends.org>
+
+	* expand.h,
+	* pathsearch.h,
+	* cnf.c: doc fixes.
+	
+	* kpsewhich.c (main): show path when --show-path can't run.
+
 2018-12-11  Karl Berry  <karl@freefriends.org>
 
 	* kpsewhich.c (main): formatting.

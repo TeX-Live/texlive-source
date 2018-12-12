@@ -824,7 +824,8 @@ main (int argc,  string *argv)
       }
       puts (kpse->format_info[user_format].path);
     } else {
-      WARNING ("kpsewhich: Cannot show path for unknown file type");
+      WARNING1 ("kpsewhich: Unknown file type, cannot show path:",
+                path_to_show);
     }
   }
 
