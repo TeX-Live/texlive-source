@@ -1,7 +1,7 @@
 #!/usr/bin/env texlua
 
 NAME = "ptex2pdf[.lua]"
-VERSION = "20180514.0"
+VERSION = "20181212.0"
 AUTHOR = "Norbert Preining"
 AUTHOREMAIL = "norbert@preining.info"
 SHORTDESC = "Convert Japanese TeX documents to pdf"
@@ -177,6 +177,8 @@ CHANGELOG = [[
 - version 20180514.0
   Windows: for uptex use command_line_encoding=utf8, for all other turn
   it off (set to none)
+- version 20181212.0
+  support directories containing dots (thanks kn1cht)
 ]]
 
 
@@ -399,7 +401,7 @@ else
     end
   else
     -- if it has already an extension, we need to drop it to get the dvi name
-    bname = string.gsub(filename, "^(.*)%.[^.]+$", "%1")
+    bname = string.gsub(filename, "^(.*)%.[^./]+$", "%1")
   end
   -- filename may contain "/", but the intermediate output is written
   -- in current directory, so we need to drop it

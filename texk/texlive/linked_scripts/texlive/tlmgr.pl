@@ -7811,7 +7811,7 @@ checking the TL development repository.
 
 =item  B<conf [texmf|tlmgr|updmap [--conffile I<file>] [--delete] [I<key> [I<value>]]]>
 
-=item B<conf auxtrees [--conffile I<file>] [show|add|delete] [I<value>]>
+=item B<conf auxtrees [--conffile I<file>] [show|add|remove] [I<value>]>
 
 With only C<conf>, show general configuration information for TeX Live,
 including active configuration files, path settings, and more.  This is
@@ -7845,15 +7845,16 @@ additional texmf trees, completely under user control.  C<auxtrees show>
 shows the list of additional trees, C<auxtrees add> I<tree> adds a tree
 to the list, and C<auxtrees remove> I<tree> removes a tree from the list
 (if present). The trees should not contain an C<ls-R> file (or files
-might not be found if the C<ls-R> becomes stale). This works by
-manipulating the Kpathsea variable C<TEXMFAUXTREES>, in
+will not be found if the C<ls-R> becomes stale). This works by
+manipulating the Kpathsea variable C<TEXMFAUXTREES>, in (by default)
 C<ROOT/texmf.cnf>.  Example:
 
   tlmgr conf auxtrees add /quick/test/tree
   tlmgr conf auxtrees remove /quick/test/tree
 
 In all cases the configuration file can be explicitly specified via the
-option C<--conffile> I<file>, if desired.
+option C<--conffile> I<file>, e.g., if you don't want to change the
+system-wide configuration.
 
 Warning: The general facility for changing configuration values is here,
 but tinkering with settings in this way is strongly discouraged.  Again,
