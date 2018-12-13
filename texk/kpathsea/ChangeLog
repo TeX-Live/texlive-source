@@ -1,5 +1,22 @@
 2018-12-12  Karl Berry  <karl@freefriends.org>
 
+	* c-pathch.h (IS_KPSE_SEP): new macro to check for either : or ;
+	regardless of the current system.
+	* path-elt.c (element): use it when extracting the path elements,
+	so that we'll get ~ expansion on Unix in, e.g.,
+	    env FOO='/;~' ./kpsewhich --expand-braces='$FOO'
+	* kpsewhich.c (main): call kpathsea_brace_expand on the result
+	from kpathsea_var_value, so that we'll get ~ expansion in, e.g.,
+	    env FOO='/:~' ./kpsewhich --var-value=FOO
+	Original report from e-kwsm (E Kawashima),
+	https://github.com/TeX-Live/texlive-source/issues/3
+	
+	* NEWS,
+	* doc/kpathsea.texi (Auxiliary tasks): document that -var-value
+	now does brace expansion.
+
+2018-12-12  Karl Berry  <karl@freefriends.org>
+
 	* expand.h,
 	* pathsearch.h,
 	* cnf.c: doc fixes.

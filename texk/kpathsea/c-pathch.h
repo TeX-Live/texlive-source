@@ -1,7 +1,7 @@
 /* c-pathch.h: define the characters which separate components of
    filenames and environment variable paths.
 
-   Copyright 1992, 1993, 1995, 1997, 2008 Karl Berry.
+   Copyright 1992, 1993, 1995, 1997, 2008, 2018 Karl Berry.
    Copyright 1997, 1999, 2001, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -95,6 +95,15 @@
 
 #ifndef IS_ENV_SEP
 #define IS_ENV_SEP(ch) ((ch) == ENV_SEP)
+#endif
+
+/* Because paths in Kpathsea cnf files are system-independent, allowing
+   use of either ; or : regardless of the current system, sometimes we
+   need to check for either of the possible path separators.  */
+#ifndef IS_KPSE_SEP
+#define IS_KPSE_SEP(ch) ((ch) == ':' || (ch) == ';')
+/* In principle we should do it differently on VMS and VMCMS,
+   but I'm guessing no one is compiling current kpathsea sources there.  */
 #endif
 
 #endif /* not C_PATHCH_H */

@@ -493,7 +493,7 @@ to also use -engine, or nothing will be returned; in particular,\n\
 -show-path=TYPE        output search path for file type TYPE\n\
                          (list shown by -help-formats).\n\
 -subdir=STRING         only output matches whose directory ends with STRING.\n\
--var-value=STRING      output the value of variable $STRING.\n\
+-var-value=STRING      output the expanded value of variable $STRING.\n\
 -version               display version information number and exit.\n \
 "
 
@@ -824,7 +824,7 @@ main (int argc,  string *argv)
       }
       puts (kpse->format_info[user_format].path);
     } else {
-      WARNING1 ("kpsewhich: Unknown file type, cannot show path:",
+      WARNING1 ("kpsewhich: Unknown file type, cannot show path: ",
                 path_to_show);
     }
   }
@@ -836,6 +836,12 @@ main (int argc,  string *argv)
       unfound++;
       value = "";
     }
+    /* It is helpful for users to output the fully-expanded (as a
+       string, no filesystem checks) value. We can't call brace_expand
+       as part of kpathsea_var_value, though, because unfortunately it
+       is not reentrant. We use var_value in lots of places in the
+       source, and it clobbers the static buffer in the kpse structure.  */
+    value = kpathsea_brace_expand (kpse, value);
     puts (value);
   }
 

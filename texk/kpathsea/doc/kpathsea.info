@@ -37,7 +37,7 @@ Kpathsea library
 ****************
 
 This manual documents the Kpathsea library for path searching.  It
-corresponds to version 6.3.0, released in July 2018.
+corresponds to version 6.3.0, released in December 2018.
 
 * Menu:
 
@@ -62,7 +62,7 @@ File: kpathsea.info,  Node: Introduction,  Next: unixtex.ftp,  Prev: Top,  Up: T
 **************
 
 This manual corresponds to version 6.3.0 of the Kpathsea library,
-released in July 2018.
+released in December 2018.
 
    The library's fundamental purpose is to return a filename from a list
 of directories specified by the user, similar to what shells do when
@@ -725,7 +725,7 @@ File: kpathsea.info,  Node: Brace expansion,  Next: KPSE_DOT expansion,  Prev: T
      foo/{1,2}/baz
 
 expands to 'foo/1/baz:foo/2/baz'.  ':' is the path separator on the
-current system; e.g., on a DOS system, it's ';'.
+current system; e.g., on a Windows system, it's ';'.
 
    Braces can be nested; for example, 'x{A,B{1,2}}y' expands to
 'xAy:xB1y:xB2y'.
@@ -738,7 +738,7 @@ example, 'x{A,B}{1,2}y' expands to 'x{A,B}1y:x{A,B}2y', which expands to
 assigning a brace list to '$TEXMF', as mentioned in 'texmf.in'.
 
    You can also use the path separator instead of the comma.  The last
-example could have been written 'x{A:B}{1:2}y'.
+example could have been written 'x{A:B}{1:2}y' (on Unix).
 
    Brace expansion is implemented in the source file
 'kpathsea/expand.c'.
@@ -1425,8 +1425,8 @@ Kpsewhich provides some features in addition to path lookup as such:
      Set debugging options to NUM.  *Note Debugging::.
 
 '--expand-braces=STRING'
-     Output variable and brace expansion of STRING.  *Note Path
-     expansion::.
+     Output variable, tilde, and brace expansion of STRING, which is
+     assumed to be a single path element.  *Note Path expansion::.
 
 '--expand-path=STRING'
      Output the complete expansion of STRING, with each element
@@ -1444,12 +1444,12 @@ Kpsewhich provides some features in addition to path lookup as such:
           =>
 
      For one-shot uses of an arbitrary (not built in to Kpathsea) path,
-     see '--path' (*note Path searching options::)
+     see '--path' (*note Path searching options::).
 
 '--expand-var=STRING'
-     Output the variable and tilde expansion of STRING the 'mktex...'
-     scripts run 'kpsewhich --expand-var='$TEXMF'' to find the root of
-     the TeX system hierarchy.  *Note Path expansion::.
+     Output the variable and tilde expansion of STRING.  For example,
+     with the usual 'texmf.cnf', 'kpsewhich --expand-var='$TEXMF''
+     returns the TeX system hierarchy root(s).  *Note Path expansion::.
 
 '--help-formats'
      Output information about each supported format (*note Supported
@@ -1471,9 +1471,10 @@ Kpsewhich provides some features in addition to path lookup as such:
 
 '--var-value=VARIABLE'
      Outputs the value of VARIABLE (a simple identifier like 'TEXMF',
-     with no '$' or other constructs), expanding '$' (*note Variable
-     expansion:: and '~' (*note Tilde expansion::) constructs, but not
-     performing other expansions.
+     with no '$' or other constructs), expanding '{...}' (*note Brace
+     expansion::), '$' (*note Variable expansion::) and '~' (*note Tilde
+     expansion::) constructs, considered as strings, but not looking on
+     the filesystem.
 
 
 File: kpathsea.info,  Node: Standard options,  Prev: Auxiliary tasks,  Up: Invoking kpsewhich
@@ -2911,9 +2912,6 @@ running a normal input file, the problem is usually a compiler bug
 passed, problems may lurk.  Optimization occasionally causes trouble in
 programs other than TeX and Metafont themselves, too.
 
-   Insufficient swap space may also cause core dumps or other erratic
-behavior.
-
    For a workaround, if you enabled any optimization flags, it's best to
 omit optimization entirely.  In any case, the way to find the facts is
 to run the program under the debugger and see where it's failing.
@@ -2926,8 +2924,7 @@ also recommend reporting a bug to the GCC mailing list; see *note
    To report compiler bugs effectively requires perseverance and
 perspicacity: you must find the miscompiled line, and that usually
 involves delving backwards in time from the point of error, checking
-through TeX's (or whatever program's) data structures.  Things are not
-helped by all-too-common bugs in the debugger itself.  Good luck.
+through TeX's (or whatever program's) data structures.  Good luck.
 
 
 File: kpathsea.info,  Node: Index,  Prev: Reporting bugs,  Up: Top
@@ -3195,7 +3192,7 @@ Index
 * compiler bugs:                         TeX or Metafont failing.
                                                               (line   6)
 * compiler bugs, finding:                TeX or Metafont failing.
-                                                              (line  24)
+                                                              (line  21)
 * conditions for use:                    Introduction.        (line  32)
 * config files:                          Config files.        (line   6)
 * config files, for Kpathsea-using programs: Calling sequence.
@@ -3360,7 +3357,7 @@ Index
 * glyphlist.txt:                         Specially-recognized files.
                                                               (line  25)
 * GNU C compiler bugs:                   TeX or Metafont failing.
-                                                              (line  19)
+                                                              (line  16)
 * GNU General Public License:            Introduction.        (line  32)
 * group-writable directories:            Security.            (line  40)
 * GSFTOPK_DEBUG (128):                   Debugging.           (line  88)
@@ -3535,7 +3532,7 @@ Index
 * OPENTYPEFONTS:                         Supported file formats.
                                                               (line 145)
 * optimization caveat:                   TeX or Metafont failing.
-                                                              (line  15)
+                                                              (line  12)
 * options for debugging:                 Debugging.           (line   6)
 * OTPINPUTS:                             Supported file formats.
                                                               (line 151)
@@ -3669,7 +3666,7 @@ Index
 * symbolic links, and ls-R:              ls-R.                (line  38)
 * symlinks, resolving:                   Calling sequence.    (line  31)
 * system C compiler bugs:                TeX or Metafont failing.
-                                                              (line  19)
+                                                              (line  16)
 * system-dependent casefolding behavior: Casefolding rationale.
                                                               (line   6)
 * T1FONTS:                               Supported file formats.
@@ -3847,61 +3844,61 @@ Index
 
 Tag Table:
 Node: Top1480
-Node: Introduction2259
-Node: History4328
-Node: unixtex.ftp8924
-Node: Security10349
-Node: TeX directory structure12853
-Node: Path searching16901
-Node: Searching overview17628
-Node: Path sources21447
-Node: Config files22538
-Node: Path expansion26465
-Node: Default expansion27418
-Node: Variable expansion29488
-Node: Tilde expansion30889
-Node: Brace expansion31869
-Node: KPSE_DOT expansion32794
-Node: Subdirectory expansion33307
-Node: Casefolding search35661
-Node: Casefolding rationale36430
-Node: Casefolding examples37769
-Node: Filename database42819
-Node: ls-R43877
-Node: Filename aliases46772
-Node: Database format47950
-Node: Invoking kpsewhich48963
-Node: Path searching options49918
-Node: Specially-recognized files58437
-Node: Auxiliary tasks59792
-Node: Standard options62131
-Node: TeX support62487
-Node: Supported file formats63841
-Node: File lookup71506
-Node: Glyph lookup73255
-Node: Basic glyph lookup74379
-Node: Fontmap75259
-Node: Fallback font77788
-Node: Suppressing warnings78700
-Node: mktex scripts79827
-Node: mktex configuration81042
-Node: mktex script names86845
-Node: mktex script arguments88231
-Node: Programming89110
-Node: Programming overview89683
-Node: Calling sequence92544
-Node: Program-specific files99076
-Node: Programming with config files100099
-Node: Reporting bugs101411
-Node: Bug checklist102089
-Node: Mailing lists105561
-Node: Debugging106236
-Node: Logging111313
-Node: Common problems113180
-Node: Unable to find files113657
-Node: Slow path searching116067
-Node: Unable to generate fonts117442
-Node: TeX or Metafont failing119913
+Node: Introduction2263
+Node: History4336
+Node: unixtex.ftp8932
+Node: Security10357
+Node: TeX directory structure12861
+Node: Path searching16909
+Node: Searching overview17636
+Node: Path sources21455
+Node: Config files22546
+Node: Path expansion26473
+Node: Default expansion27426
+Node: Variable expansion29496
+Node: Tilde expansion30897
+Node: Brace expansion31877
+Node: KPSE_DOT expansion32816
+Node: Subdirectory expansion33329
+Node: Casefolding search35683
+Node: Casefolding rationale36452
+Node: Casefolding examples37791
+Node: Filename database42841
+Node: ls-R43899
+Node: Filename aliases46794
+Node: Database format47972
+Node: Invoking kpsewhich48985
+Node: Path searching options49940
+Node: Specially-recognized files58459
+Node: Auxiliary tasks59814
+Node: Standard options62282
+Node: TeX support62638
+Node: Supported file formats63992
+Node: File lookup71657
+Node: Glyph lookup73406
+Node: Basic glyph lookup74530
+Node: Fontmap75410
+Node: Fallback font77939
+Node: Suppressing warnings78851
+Node: mktex scripts79978
+Node: mktex configuration81193
+Node: mktex script names86996
+Node: mktex script arguments88382
+Node: Programming89261
+Node: Programming overview89834
+Node: Calling sequence92695
+Node: Program-specific files99227
+Node: Programming with config files100250
+Node: Reporting bugs101562
+Node: Bug checklist102240
+Node: Mailing lists105712
+Node: Debugging106387
+Node: Logging111464
+Node: Common problems113331
+Node: Unable to find files113808
+Node: Slow path searching116218
+Node: Unable to generate fonts117593
+Node: TeX or Metafont failing120064
 Node: Index121266
 
 End Tag Table

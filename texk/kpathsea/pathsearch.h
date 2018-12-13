@@ -1,7 +1,7 @@
 /* pathsearch.h: mostly-generic path searching.
 
    Copyright 1993, 1994, 1996, 1997, 2007, 2008, 2009, 2011, 2012,
-   2014 Karl Berry.
+   2014, 2018 Karl Berry.
    Copyright 1999-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ extern "C" {
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* If PATH is non-null, return its first element (as defined by
-   IS_ENV_SEP).  If it's NULL, return the next element in the previous
+   IS_KPSE_SEP).  If it's NULL, return the next element in the previous
    path, a la strtok.  Leading, trailing, or doubled colons result in
    the empty string.  When at the end of PATH, return NULL.  In any
    case, return a pointer to an area that may be overwritten on
@@ -47,10 +47,9 @@ extern string kpathsea_path_element (kpathsea kpse, const_string path);
    IS_DIR_SEP).  Uses same area as `kpathsea_path_element'.  */
 extern string kpathsea_filename_component (kpathsea kpse, const_string path);
 
-/*
-  This function may rewrite its argument to avoid bugs when calling
-  stat() or equivalent under Win32.  Also, it returns the index after
-  which the program should start to look for expandable constructs. */
+/* This function may rewrite its argument to avoid bugs when calling
+   stat() or equivalent under Windows.  Also, it returns the index after
+   which the program should start to look for expandable constructs. */
 extern unsigned kpathsea_normalize_path (kpathsea kpse, string elt);
 
 /* Given a path element ELT, return a pointer to a NULL-terminated list
@@ -61,8 +60,7 @@ extern unsigned kpathsea_normalize_path (kpathsea kpse, string elt);
    It's up to the caller to expand ELT.  This is because this routine is
    most likely only useful to be called from `kpathsea_path_search', which
    has already assumed expansion has been done.  */
-extern str_llist_type *kpathsea_element_dirs (kpathsea kpse,
-                                                      string elt);
+extern str_llist_type *kpathsea_element_dirs (kpathsea kpse, string elt);
 
 #endif /* MAKE_KPSE_DLL */
 

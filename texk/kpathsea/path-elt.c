@@ -1,6 +1,6 @@
 /* path-elt.c: return the stuff between colons.
 
-   Copyright 1993, 1996 2008, 2016 Karl Berry.
+   Copyright 1993, 1996, 2008, 2016, 2018 Karl Berry.
    Copyright 1997, 2001, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
    thus, we parse the same path over and over, on every lookup.  If that
    turns out to be a significant lose, it can be fixed, but I'm guessing
    disk accesses overwhelm everything else.  If ENV_P is true, use
-   IS_ENV_SEP; else use IS_DIR_SEP.  */
+   IS_KPSE_SEP; else use IS_DIR_SEP.  */
 
 static string
 element (kpathsea kpse, const_string passed_path,  boolean env_p)
@@ -49,10 +49,16 @@ element (kpathsea kpse, const_string passed_path,  boolean env_p)
   assert (kpse->path);
   p = kpse->path;
 
-  /* Find the next colon not enclosed by braces (or the end of the path).  */
+  /* Find the next path separator not enclosed by braces (or the end of
+     the path).  Here we want to check for either : or ; because we might
+     be called with the ;-using paths from the default texmf.cnf, e.g.,
+     with kpsewhich --expand-braces or kpsewhich --var-value, while on a
+     Unix system. Otherwise, the path elements are not parsed and thus ~
+     expansion (for example), does not happen except on the first element.
+     https://github.com/TeX-Live/texlive-source/issues/3 */
   brace_level = 0;
-  while (*p != 0  && !(brace_level == 0
-                       && (env_p ? IS_ENV_SEP (*p) : IS_DIR_SEP (*p)))) {
+  while (*p != 0 && !(brace_level == 0
+                      && (env_p ? IS_KPSE_SEP (*p) : IS_DIR_SEP (*p)))) {
     if (*p == '{') ++brace_level;
     else if (*p == '}') --brace_level;
 #if defined(WIN32)

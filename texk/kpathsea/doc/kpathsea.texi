@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.0
-@set month-year July 2018
+@set month-year December 2018
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -919,7 +919,7 @@ foo/@{1,2@}/baz
 @end example
 
 @noindent expands to @samp{foo/1/baz:foo/2/baz}.  @samp{:} is the path
-separator on the current system; e.g., on a DOS system, it's @samp{;}.
+separator on the current system; e.g., on a Windows system, it's @samp{;}.
 
 Braces can be nested; for example, @samp{x@{A,B@{1,2@}@}y} expands to
 @samp{xAy:xB1y:xB2y}.
@@ -934,7 +934,7 @@ assigning a brace list to @code{$TEXMF}, as mentioned in
 @file{texmf.in}.
 
 You can also use the path separator instead of the comma.  The last
-example could have been written @samp{x@{A:B@}@{1:2@}y}.
+example could have been written @samp{x@{A:B@}@{1:2@}y} (on Unix).
 
 
 @flindex expand.c
@@ -1769,8 +1769,8 @@ Set debugging options to @var{num}.  @xref{Debugging}.
 
 @item --expand-braces=@var{string}
 @opindex --expand-braces=@var{string}
-Output variable and brace expansion of @var{string}.  @xref{Path
-expansion}.
+Output variable, tilde, and brace expansion of @var{string}, which is
+assumed to be a single path element.  @xref{Path expansion}.
 
 @item --expand-path=@var{string}
 @opindex --expand-path=@var{string}
@@ -1791,14 +1791,14 @@ $ kpsewhich --expand-path '/nonesuch'
 @end example
 
 For one-shot uses of an arbitrary (not built in to Kpathsea) path, see
-@samp{--path} (@pxref{Path searching options})
+@samp{--path} (@pxref{Path searching options}).
 
 @item --expand-var=@var{string}
 @opindex --expand-var=@var{string}
-Output the variable and tilde expansion of @var{string}
-the @samp{mktex@dots{}} scripts run @samp{kpsewhich
---expand-var='$TEXMF'} to find the root of the @TeX{} system
-hierarchy.  @xref{Path expansion}.
+Output the variable and tilde expansion of @var{string}. For example,
+with the usual @file{texmf.cnf}, @samp{kpsewhich
+--expand-var='$TEXMF'} returns the @TeX{} system hierarchy root(s).
+@xref{Path expansion}.
 
 @item --help-formats
 @opindex --help-formats
@@ -1826,8 +1826,9 @@ the previous section.
 @opindex --var-value=@var{variable}
 Outputs the value of @var{variable} (a simple identifier like
 @samp{TEXMF}, with no @samp{$} or other constructs), expanding
-@samp{$} (@pxref{Variable expansion} and @samp{~} (@pxref{Tilde
-expansion}) constructs, but not performing other expansions.
+@samp{@{...@}} (@pxref{Brace expansion}), @samp{$} (@pxref{Variable
+expansion}) and @samp{~} (@pxref{Tilde expansion}) constructs,
+considered as strings, but not looking on the filesystem.
 
 @end table
 
@@ -3790,9 +3791,6 @@ running a normal input file, the problem is usually a compiler bug
 passed, problems may lurk.  Optimization occasionally causes trouble in
 programs other than @TeX{} and Metafont themselves, too.
 
-Insufficient swap space may also cause core dumps or other erratic
-behavior.
-
 @cindex optimization caveat
 For a workaround, if you enabled any optimization flags, it's best to
 omit optimization entirely.  In any case, the way to find the facts is
@@ -3809,8 +3807,7 @@ Using and Porting GNU CC}.
 To report compiler bugs effectively requires perseverance and
 perspicacity: you must find the miscompiled line, and that usually
 involves delving backwards in time from the point of error, checking
-through @TeX{}'s (or whatever program's) data structures.  Things are
-not helped by all-too-common bugs in the debugger itself.  Good luck.
+through @TeX{}'s (or whatever program's) data structures.  Good luck.
 
 
 @node Index
