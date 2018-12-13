@@ -836,12 +836,19 @@ main (int argc,  string *argv)
       unfound++;
       value = "";
     }
+
+#if 0
+/* must think about
+ selfautoloc=c:/texlive/texlive2018/bin/win32
+ kpsewhich --var-value selfautoloc
+ 
     /* It is helpful for users to output the fully-expanded (as a
        string, no filesystem checks) value. We can't call brace_expand
        as part of kpathsea_var_value, though, because unfortunately it
        is not reentrant. We use var_value in lots of places in the
        source, and it clobbers the static buffer in the kpse structure.  */
     value = kpathsea_brace_expand (kpse, value);
+#endif
     puts (value);
   }
 
