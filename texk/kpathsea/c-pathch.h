@@ -90,6 +90,10 @@
 #else
 # define ENV_SEP ':'
 # define ENV_SEP_STRING ":"
+/* Because paths in Kpathsea cnf files allow use of either ; or : separators
+   regardless of the current system, on Unix we sometimes need to check
+   for either .  */
+# define IS_KPSE_SEP(ch) ((ch) == ':' || (ch) == ';')
 #endif
 #endif /* not ENV_SEP */
 
@@ -97,13 +101,11 @@
 #define IS_ENV_SEP(ch) ((ch) == ENV_SEP)
 #endif
 
-/* Because paths in Kpathsea cnf files are system-independent, allowing
-   use of either ; or : regardless of the current system, sometimes we
-   need to check for either of the possible path separators.  */
 #ifndef IS_KPSE_SEP
-#define IS_KPSE_SEP(ch) ((ch) == ':' || (ch) == ';')
-/* In principle we should do it differently on VMS and VMCMS,
-   but I'm guessing no one is compiling current kpathsea sources there.  */
+/* But for Windows, we do not want to consider : as a path separator,
+   ever, because it is the drive separator (as in c:\tex).  So just
+   check for the regular separator (;).  */
+#define IS_KPSE_SEP(ch) (IS_ENV_SEP (ch))
 #endif
 
 #endif /* not C_PATHCH_H */
