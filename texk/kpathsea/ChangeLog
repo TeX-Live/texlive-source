@@ -1,3 +1,9 @@
+2018-12-14  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFDOTDIR): new variable, used instead of
+	literal "." in all search paths, so that it can be redefined as
+	".//". Suggestion from Linas Stonys, tex-k 4 Dec 2018 10:09:35.
+
 2018-12-12  Karl Berry  <karl@freefriends.org>
 
 	* c-pathch.h (IS_KPSE_SEP): new macro to check for either : or ;
