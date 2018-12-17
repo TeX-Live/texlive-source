@@ -1,3 +1,8 @@
+2018-12-17  Andreas Scherer  <https://ascherer.github.io>
+
+	* printversion.c (printversionandexit): Search for PROGNAME
+	in banner independent of 'This is' prefix.
+
 2018-11-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Remove unused functions for XeTeX.
