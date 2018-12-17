@@ -783,7 +783,7 @@ maininit (int ac, string *av)
   xputenv ("engine", TEXMFENGINENAME);
   
   /* Were we given a simple filename? */
-  main_input_file = get_input_file_name();
+  main_input_file = get_input_file_name ();
 
 #ifdef WIN32
   if (main_input_file == NULL) {
@@ -853,7 +853,9 @@ maininit (int ac, string *av)
     translate_filename = default_translate_filename;
   }
   /* If we're preloaded, I guess everything is set up.  I don't really
-     know any more, it's been so long since anyone preloaded.  */
+     know any more, it's been so long since anyone truly preloaded.  We
+     still use the word "preloaded" in the messages through (via the
+     original .web sources), at Knuth's request.  */
   if (readyalready != 314159) {
     /* The `ini_version' variable is declared/used in the change files.  */
     boolean virversion = false;
@@ -873,9 +875,16 @@ maininit (int ac, string *av)
 #endif /* TeX */
     }
 
+    /* If run like `tex \&foo', reasonable to guess "foo" as the fmt name.  */
+    if (!main_input_file) {
+      if (argv[1] && *argv[1] == '&') {
+        dump_name = argv[1] + 1;
+      }
+    }
+
     if (!dump_name) {
       /* If called as *vir{mf,tex,mpost} use `plain'.  Otherwise, use the
-         name we were invoked under.  */
+         name we were invoked under as our best guess.  */
       dump_name = (virversion ? "plain" : kpse_program_name);
     }
   }

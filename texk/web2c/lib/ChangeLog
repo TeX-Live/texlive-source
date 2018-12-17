@@ -1,3 +1,10 @@
+2018-12-17  Igor Liferenko  <igor.liferenko@gmail.com>
+
+	* texmfmp.c (maininit): default to guessing an explicit &dumpname
+	as the "preloaded" (not really) format, if one was specified.
+	tex-k msgs of 23 Sep 2018 12:13:06, 23 Sep 2018 18:36:52.
+	(With comment and formatting tinkering from karl.)
+
 2018-12-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* printversion.c (printversionandexit): Search for PROGNAME
