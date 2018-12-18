@@ -1469,12 +1469,33 @@ Kpsewhich provides some features in addition to path lookup as such:
      integer can be used, just as with '--format', described in the
      previous section.
 
+'--var-brace-value=VARIABLE'
+     Like '--var-value' (next), but also expands '{...}' constructs.
+     (*note Brace expansion::).  Thus, the value is assumed to possibly
+     be several path elements, and '~' is expanded at the beginning of
+     each.  The path separator is changed to that of the current system
+     in the expansion.
+
+     Example: 'FOO='.;~' kpsewhich --var-brace-value=FOO' outputs (on a
+     Unix-ish system) '.:/home/karl', supposing the latter is the
+     current user's home directory.  Note that the ';' in the source
+     value, as commonly used in 'texmf.cnf', has changed to a ':', as
+     the normal path separator on the current system.  (On a Windows-ish
+     system, the ';' would remain.)
+
 '--var-value=VARIABLE'
-     Outputs the value of VARIABLE (a simple identifier like 'TEXMF',
-     with no '$' or other constructs), expanding '{...}' (*note Brace
-     expansion::), '$' (*note Variable expansion::) and '~' (*note Tilde
-     expansion::) constructs, considered as strings, but not looking on
-     the filesystem.
+     Outputs the value of VARIABLE (a simple identifier like
+     'TEXMFDIST', with no '$' or other constructs), expanding '$' (*note
+     Variable expansion::) and '~' (*note Tilde expansion::) constructs
+     in the value.  '~' expansion happens at the beginning of the
+     overall value and at the beginning of a variable expansion, but not
+     arbitrarily within the string.  Braces are not expanded.
+
+     Example: '--var-value=texmf_casefold_search' outputs (if the
+     default is not changed) '1'.
+
+     Example to contrast with '--var-brace-value': 'FOO='.;~' kpsewhich
+     --var-value=FOO' outputs '.;~', i.e., the same as the input value.
 
 
 File: kpathsea.info,  Node: Standard options,  Prev: Auxiliary tasks,  Up: Invoking kpsewhich
@@ -2975,7 +2996,8 @@ Index
 * --show-path=NAME:                      Auxiliary tasks.     (line  51)
 * --subdir=STRING:                       Path searching options.
                                                               (line 164)
-* --var-value=VARIABLE:                  Auxiliary tasks.     (line  57)
+* --var-brace-value=VARIABLE:            Auxiliary tasks.     (line  57)
+* --var-value=VARIABLE:                  Auxiliary tasks.     (line  71)
 * --version:                             Standard options.    (line  11)
 * --with-mktextex-default:               mktex configuration. (line  12)
 * --without-mktexfmt-default:            mktex configuration. (line  12)
@@ -3871,34 +3893,34 @@ Node: Invoking kpsewhich48985
 Node: Path searching options49940
 Node: Specially-recognized files58459
 Node: Auxiliary tasks59814
-Node: Standard options62282
-Node: TeX support62638
-Node: Supported file formats63992
-Node: File lookup71657
-Node: Glyph lookup73406
-Node: Basic glyph lookup74530
-Node: Fontmap75410
-Node: Fallback font77939
-Node: Suppressing warnings78851
-Node: mktex scripts79978
-Node: mktex configuration81193
-Node: mktex script names86996
-Node: mktex script arguments88382
-Node: Programming89261
-Node: Programming overview89834
-Node: Calling sequence92695
-Node: Program-specific files99227
-Node: Programming with config files100250
-Node: Reporting bugs101562
-Node: Bug checklist102240
-Node: Mailing lists105712
-Node: Debugging106387
-Node: Logging111464
-Node: Common problems113331
-Node: Unable to find files113808
-Node: Slow path searching116218
-Node: Unable to generate fonts117593
-Node: TeX or Metafont failing120064
-Node: Index121266
+Node: Standard options63353
+Node: TeX support63709
+Node: Supported file formats65063
+Node: File lookup72728
+Node: Glyph lookup74477
+Node: Basic glyph lookup75601
+Node: Fontmap76481
+Node: Fallback font79010
+Node: Suppressing warnings79922
+Node: mktex scripts81049
+Node: mktex configuration82264
+Node: mktex script names88067
+Node: mktex script arguments89453
+Node: Programming90332
+Node: Programming overview90905
+Node: Calling sequence93766
+Node: Program-specific files100298
+Node: Programming with config files101321
+Node: Reporting bugs102633
+Node: Bug checklist103311
+Node: Mailing lists106783
+Node: Debugging107458
+Node: Logging112535
+Node: Common problems114402
+Node: Unable to find files114879
+Node: Slow path searching117289
+Node: Unable to generate fonts118664
+Node: TeX or Metafont failing121135
+Node: Index122337
 
 End Tag Table

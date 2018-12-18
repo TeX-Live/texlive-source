@@ -1,3 +1,14 @@
+2018-12-17  Karl Berry  <karl@freefriends.org>
+
+	* kpsewhich.c (--var-brace-value, var_to_brace_value): new option
+	and corresponding option.
+	(main): new case for it. For --var-value, go back to just variable
+	(kpathsea_var_value) expansion.
+	* doc/kpathsea.texi (Auxiliary tasks): document the new option,
+	try to explain the difference.
+	Follow-up report from jbglaw,
+	https://github.com/TeX-Live/texlive-source/issues/3.
+
 2018-12-14  Karl Berry  <karl@tug.org>
 
 	* c-pathch.h (IS_KPSE_SEP): check for both : and ; only on Unix.

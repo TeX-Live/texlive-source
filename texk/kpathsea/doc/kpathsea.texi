@@ -1822,13 +1822,36 @@ Show the path that would be used for file lookups of file type
 or an integer can be used, just as with @samp{--format}, described in
 the previous section.
 
+@item --var-brace-value=@var{variable}
+@opindex --var-brace-value=@var{variable}
+Like @samp{--var-value} (next), but also expands @samp{@{...@}}
+constructs.  (@pxref{Brace expansion}).  Thus, the value is assumed to
+possibly be several path elements, and @samp{~} is expanded at the
+beginning of each.  The path separator is changed to that of the
+current system in the expansion.
+
+Example: @samp{FOO='.;~' kpsewhich --var-brace-value=FOO} outputs (on
+a Unix-ish system) @samp{.:/home/karl}, supposing the latter is the
+current user's home directory.  Note that the @samp{;} in the source
+value, as commonly used in @file{texmf.cnf}, has changed to a
+@samp{:}, as the normal path separator on the current system. (On a
+Windows-ish system, the @samp{;} would remain.)
+
 @item --var-value=@var{variable}
 @opindex --var-value=@var{variable}
 Outputs the value of @var{variable} (a simple identifier like
-@samp{TEXMF}, with no @samp{$} or other constructs), expanding
-@samp{@{...@}} (@pxref{Brace expansion}), @samp{$} (@pxref{Variable
-expansion}) and @samp{~} (@pxref{Tilde expansion}) constructs,
-considered as strings, but not looking on the filesystem.
+@samp{TEXMFDIST}, with no @samp{$} or other constructs), expanding
+@samp{$} (@pxref{Variable expansion}) and @samp{~} (@pxref{Tilde
+expansion}) constructs in the value.  @samp{~} expansion happens at the
+beginning of the overall value and at the beginning of a variable
+expansion, but not arbitrarily within the string.  Braces are not expanded.
+
+Example: @samp{--var-value=texmf_casefold_search} outputs (if the
+default is not changed) @samp{1}.
+
+Example to contrast with @samp{--var-brace-value}: @samp{FOO='.;~'
+kpsewhich --var-value=FOO} outputs @samp{.;~}, i.e., the same as the
+input value.
 
 @end table
 

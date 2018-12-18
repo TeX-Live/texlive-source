@@ -31,12 +31,13 @@
 #include <kpathsea/version.h>
 
 /* For variable and path expansion.  (-expand-var, -expand-path,
-   -show-path) */
+   -show-path, etc.)  */
 string var_to_expand = NULL;
 string braces_to_expand = NULL;
 string path_to_expand = NULL;
 string path_to_show = NULL;
 string var_to_value = NULL;
+string var_to_brace_value = NULL;
 
 /* Base resolution. (-D, -dpi) */
 unsigned dpi = 600;
@@ -493,7 +494,8 @@ to also use -engine, or nothing will be returned; in particular,\n\
 -show-path=TYPE        output search path for file type TYPE\n\
                          (list shown by -help-formats).\n\
 -subdir=STRING         only output matches whose directory ends with STRING.\n\
--var-value=STRING      output the expanded value of variable $STRING.\n\
+-var-brace-value=STRING output brace-expanded value of variable $STRING.\n\
+-var-value=STRING       output variable-expanded value of variable $STRING.\n\
 -version               display version information number and exit.\n \
 "
 
@@ -607,6 +609,7 @@ static struct option long_options[]
       { "safe-out-name",        1, 0, 0 },
       { "subdir",               1, 0, 0 },
       { "show-path",            1, 0, 0 },
+      { "var-brace-value",      1, 0, 0 },
       { "var-value",            1, 0, 0 },
       { "version",              0, 0, 0 },
       { 0, 0, 0, 0 } };
@@ -694,6 +697,9 @@ read_command_line (kpathsea kpse, int argc, string *argv)
     } else if (ARGUMENT_IS ("subdir")) {
       str_list_add (&subdir_paths, optarg);
 
+    } else if (ARGUMENT_IS ("var-brace-value")) {
+      var_to_brace_value = optarg;
+
     } else if (ARGUMENT_IS ("var-value")) {
       var_to_value = optarg;
 
@@ -718,7 +724,7 @@ There is NO WARRANTY, to the extent permitted by law.\n");
 
   if (optind == argc
       && !var_to_expand && !braces_to_expand && !path_to_expand
-      && !path_to_show && !var_to_value
+      && !path_to_show && !var_to_value && !var_to_brace_value
       && !safe_in_name && !safe_out_name) {
     fputs ("Missing argument. Try `kpsewhich --help' for more information.\n",
            stderr);
@@ -829,21 +835,32 @@ main (int argc,  string *argv)
     }
   }
 
-  /* Var to value. */
+  /* Var to value.  */
   if (var_to_value) {
     const_string value = kpathsea_var_value (kpse, var_to_value);
     if (!value) {
       unfound++;
       value = "";
     }
+    puts (value);
+  }
 
-    /* It is helpful for users to output the fully-expanded (as a
-       string, no filesystem checks) value. We can't call brace_expand
-       as part of kpathsea_var_value, though, because unfortunately it
-       is not reentrant. We use var_value in lots of places in the
-       source, and it clobbers the static buffer in the kpse structure.  */
-    value = kpathsea_brace_expand (kpse, value);
-
+  /* Var to brace-expanded value. This is separate from --var-value for
+     compatibility; people use --var-value for non-path values, where
+     changing commas to colons, which brace expansion does, is not right.  */
+  if (var_to_brace_value) {
+    const_string value = kpathsea_var_value (kpse, var_to_brace_value);
+    if (!value) {
+      unfound++;
+      value = "";
+    } else {
+      /* Sometimes users want the fully-expanded (as a string, no
+         filesystem checks) value.  We can't call brace_expand as part of
+         kpathsea_var_value, though, because unfortunately it is not
+         reentrant.  We use var_value in lots of places in the source,
+         and it clobbers the static buffer in the kpse structure.  */
+      value = kpathsea_brace_expand (kpse, value);
+    }
     puts (value);
   }
 
