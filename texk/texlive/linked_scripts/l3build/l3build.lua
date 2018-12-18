@@ -1,4 +1,4 @@
-#!/usr/bin/env texlua 
+#!/usr/bin/env texlua
 
 --[[
 
@@ -65,6 +65,7 @@ build_require("unpack")
 build_require("manifest")
 build_require("manifest-setup")
 build_require("tagging")
+build_require("upload")
 build_require("stdmain")
 
 -- This has to come after stdmain(),
@@ -96,7 +97,7 @@ end
 build_require("variables")
 
 -- Ensure that directories are 'space safe'
-maindir       = escapepath(maindir) 
+maindir       = escapepath(maindir)
 docfiledir    = escapepath(docfiledir)
 sourcefiledir = escapepath(sourcefiledir)
 supportdir    = escapepath(supportdir)
@@ -125,12 +126,12 @@ check_engines()
 --
 -- Deal with multiple configs for tests
 --
- 
+
 -- When we have specific files to deal with, only use explicit configs
 -- (or just the std one)
 if options["names"] then
   checkconfigs = options["config"] or {stdconfig}
-else 
+else
   checkconfigs = options["config"] or checkconfigs
 end
 
