@@ -1,3 +1,10 @@
+2018-12-21  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvi.[ch], dvipdfmx.c, pdfdoc.[ch], pdfencrypt.[ch],
+	spc_pdfm.c: Add a new special pdf:trailerid for directly
+	specifying trailer ID.
+	* spc_tpic.c, tfm.c, tt_gsub.c: Avoid compiler warning.
+
 2018-10-12  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvipdfmx.c: Fix a bug that landscape option is not handled
