@@ -600,6 +600,7 @@ gregorio,\
 kpsewhich,\
 makeindex,\
 repstopdf,\
+rmpost,\
 texosquery-jre8,\
 
 % we'd like to allow:

@@ -1,4 +1,4 @@
-.TH MPOST 1 "16 June 2015" "Web2C @VERSION@"
+.TH MPOST 1 "21 December 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .de URL
 \\$2 \(laURL: \\$1 \(ra\\$3
@@ -22,7 +22,7 @@
 .if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-mpost \- MetaPost, a system for creating graphics
+mpost, pmpost, upmpost \- MetaPost, a system for creating graphics
 .SH SYNOPSIS
 .B mpost
 .RI [ options ]
@@ -43,7 +43,7 @@ or
 .BR troff (1)
 commands and accessing features of PostScript not found in \*(MF. 
 .PP
-\*(MP is normally used with some preloaded macros, and it 
+\*(MP is normally used with a set of basic macros, and it 
 will use its executable name as the name of the preload 
 file to use.   For example, when called as
 .B mpost
@@ -80,16 +80,32 @@ When the
 option is given, \*(MP acts as DVI-to-MPX converter only.
 See dvitomp (1) for details.
 .PP
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(MP can be found in the
+The
+.B pmpost 
+program is a variant with Japanese support, and
+.B upmpost
+has Unicode-enabled Japanese support, analogous to ptex and uptex.
+.PP
+All three variants are also installed with an `r' prefix, that is,
+.BR rmpost ,
+.BR rpmpost ,
+.BR rupmpost ,
+which implicitly specify the
+.B --restricted
+option to make MetaPost safe to run on unknown input; the tex, makempx,
+and editor commands are disabled.
+.PP
+This manual page is a mere skeleton.  For a list of all command line
+options, run
+.BR --help .
+.PP
+The main documentation for this version of \*(MP can be found in the
 User Manual that should have been installed along with the program and
-is also available from http://tug.org/metapost.
-See the FILES section below.
+is also available from https://tug.org/metapost.
 .PP
 The \*(MP language is similar to \*(MF, but the manual
 assumes no knowledge of \*(MF.  \*(MP does not have bitmap
 output commands or \*(MF's online display mechanism.
-
 .\"=====================================================================
 .SH FILES
 .TP
@@ -138,28 +154,25 @@ Addison-Wesley, 1986, ISBN 0-201-13445-4.
 .BR mf (1),
 .BR mptopdf (1),
 .BR tex (1),
-.PP
-.URL "http://foundry.supelec.fr/gf/project/metapost/" "MetaPost source code" .
 .br
-.URL "http://tug.org/metapost/" "MetaPost home page" .
+.URL "https://tug.org/metapost/" "MetaPost home page" .
 .\"=====================================================================
 .SH AUTHORS
-\*(MP was designed by John D. Hobby, incorporating algorithms from 
+\*(MP was created by John D. Hobby, incorporating algorithms from 
 \*(MF by Donald E. Knuth.  It was originally implemented on Unix,
 incorporating system-dependent routines from
 .BR web2c ,
 while not relying on it except for the actual \*(WB-to-C translator.
-.PP
-The primary author of the current \*(MP was Taco Hoekwater, with
-assistance from Hans Hagen and many others.  It is currently maintained
-by Luigi Scarso.
 .PP
 Ulrik Vieth adapted \*(MP to take advantage of the advanced path 
 searching features in more recent versions of
 .B web2c
 and worked towards fully integrating \*(MP into the canonical Unix 
 \*(TX distribution.
+.PP
+The primary author of the current \*(MP was Taco Hoekwater, with
+assistance from Hans Hagen and many others.  It is currently maintained
+by Luigi Scarso.
 .\"=====================================================================
 .SH BUGS
-The MetaPost home page is http://tug.org/metapost.
-
+The MetaPost home page is https://tug.org/metapost.

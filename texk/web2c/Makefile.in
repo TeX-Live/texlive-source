@@ -166,7 +166,9 @@ TESTS = tangle.test $(am__EXEEXT_43) ctiedir/ctie.test \
 @MP_TRUE@@WIN32_TRUE@am__append_38 = call_mpost
 @MP_TRUE@@WIN32_TRUE@am__append_39 = install-mpost-links
 @MP_TRUE@@WIN32_TRUE@am__append_40 = uninstall-mpost-links
-@MP_TRUE@@WIN32_FALSE@am__append_41 = mpost$(EXEEXT):dvitomp mpost$(EXEEXT):mfplain
+@MP_TRUE@@WIN32_FALSE@am__append_41 = mpost$(EXEEXT):dvitomp \
+@MP_TRUE@@WIN32_FALSE@	mpost$(EXEEXT):mfplain \
+@MP_TRUE@@WIN32_FALSE@	mpost$(EXEEXT):rmpost
 @MP_TRUE@am__append_42 = $(mp_tests)
 @MP_TRUE@am__append_43 = mptrap.diffs
 @MP_TRUE@am__append_44 = mptrap-clean
@@ -174,12 +176,14 @@ TESTS = tangle.test $(am__EXEEXT_43) ctiedir/ctie.test \
 @PMP_TRUE@@WIN32_TRUE@am__append_46 = call_pmpost
 @PMP_TRUE@@WIN32_TRUE@am__append_47 = install-pmpost-links
 @PMP_TRUE@@WIN32_TRUE@am__append_48 = uninstall-pmpost-links
-@PMP_TRUE@@WIN32_FALSE@am__append_49 = pmpost$(EXEEXT):pdvitomp
+@PMP_TRUE@@WIN32_FALSE@am__append_49 = pmpost$(EXEEXT):pdvitomp \
+@PMP_TRUE@@WIN32_FALSE@	pmpost$(EXEEXT):rpmpost
 @UPMP_TRUE@am__append_50 = upmpost
 @UPMP_TRUE@@WIN32_TRUE@am__append_51 = call_upmpost
 @UPMP_TRUE@@WIN32_TRUE@am__append_52 = install-upmpost-links
 @UPMP_TRUE@@WIN32_TRUE@am__append_53 = uninstall-upmpost-links
-@UPMP_TRUE@@WIN32_FALSE@am__append_54 = upmpost$(EXEEXT):updvitomp
+@UPMP_TRUE@@WIN32_FALSE@am__append_54 = upmpost$(EXEEXT):updvitomp \
+@UPMP_TRUE@@WIN32_FALSE@	upmpost$(EXEEXT):rupmpost
 @PMP_TRUE@am__append_55 = $(pmpost_tests)
 @UPMP_TRUE@am__append_56 = $(upmpost_tests)
 @ETEX_TRUE@am__append_57 = etex

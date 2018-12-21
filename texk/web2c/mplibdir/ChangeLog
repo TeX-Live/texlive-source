@@ -1,3 +1,15 @@
+2018-12-21  Karl Berry  <karl@freefriends.org>
+
+	* mplibdir/am/mplib.am,
+	* pmpostdir/am/pmpost.am (bin_links): make links at install time:
+	 ln -s mpost rmpost
+	 ln -s pmpost rpmpost
+	 ln -s upmpost rupmpost
+	which implicitly specify -restricted; these new links can be
+	included in shell_escape_commands (we hope).
+	Thread starting here:
+	https://tug.org/pipermail/tex-live/2017-May/040169.html
+
 2018-08-27  Luigi Scarso  <luigi.scarso@gmail.com>
 	* separation of mpmathbinary from the the core
 
