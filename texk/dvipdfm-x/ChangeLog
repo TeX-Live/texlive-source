@@ -4,6 +4,7 @@
 	spc_pdfm.c: Add a new special pdf:trailerid for directly
 	specifying trailer ID.
 	* spc_tpic.c, tfm.c, tt_gsub.c: Avoid compiler warning.
+	* configure.ac: Version 20181221.
 
 2018-10-12  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
