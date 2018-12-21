@@ -854,7 +854,7 @@ maininit (int ac, string *av)
   }
   /* If we're preloaded, I guess everything is set up.  I don't really
      know any more, it's been so long since anyone truly preloaded.  We
-     still use the word "preloaded" in the messages through (via the
+     still use the word "preloaded" in the messages, though (via the
      original .web sources), at Knuth's request.  */
   if (readyalready != 314159) {
     /* The `ini_version' variable is declared/used in the change files.  */
