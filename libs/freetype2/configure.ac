@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2018 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -19,14 +20,16 @@ AC_PROG_CC
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
+# pass explicit --host and --build, but nothing else?
 if test "x$host" = x; then
   config_args=
 else
   config_args="--host=$host"
-  if test "x$build" != x; then
-    config_args="$config_args --build=$build"
-  fi
 fi
+if test "x$build" != x; then
+  config_args="$config_args --build=$build"
+fi
+
 AC_SUBST([config_args])
 
 AC_SUBST([FREETYPE_TREE], [freetype-src])

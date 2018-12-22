@@ -4359,14 +4359,16 @@ else
 fi
 
 
+# pass explicit --host and --build, but nothing else?
 if test "x$host" = x; then
   config_args=
 else
   config_args="--host=$host"
-  if test "x$build" != x; then
-    config_args="$config_args --build=$build"
-  fi
 fi
+if test "x$build" != x; then
+  config_args="$config_args --build=$build"
+fi
+
 
 
 FREETYPE_TREE=freetype-src
