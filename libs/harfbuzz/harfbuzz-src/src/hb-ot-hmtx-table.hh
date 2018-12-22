@@ -56,7 +56,7 @@ struct LongMetric
 template <typename T, typename H>
 struct hmtxvmtx
 {
-  inline bool sanitize (hb_sanitize_context_t *c HB_UNUSED) const
+  bool sanitize (hb_sanitize_context_t *c HB_UNUSED) const
   {
     TRACE_SANITIZE (this);
     /* We don't check for anything specific here.  The users of the
@@ -65,7 +65,7 @@ struct hmtxvmtx
   }
 
 
-  inline bool subset_update_header (hb_subset_plan_t *plan,
+  bool subset_update_header (hb_subset_plan_t *plan,
 				    unsigned int num_hmetrics) const
   {
     hb_blob_t *src_blob = hb_sanitize_context_t ().reference_table<H> (plan->source, H::tableTag);
@@ -86,7 +86,7 @@ struct hmtxvmtx
     return result;
   }
 
-  inline bool subset (hb_subset_plan_t *plan) const
+  bool subset (hb_subset_plan_t *plan) const
   {
     typename T::accelerator_t _mtx;
     _mtx.init (plan->source);
@@ -186,22 +186,18 @@ struct hmtxvmtx
   {
     friend struct hmtxvmtx;
 
-    inline void init (hb_face_t *face,
+    void init (hb_face_t *face,
 		      unsigned int default_advance_ = 0)
     {
       default_advance = default_advance_ ? default_advance_ : hb_face_get_upem (face);
 
       bool got_font_extents = false;
-      if (T::os2Tag)
+      if (T::os2Tag != HB_TAG_NONE && face->table.OS2->is_typo_metrics ())
       {
-#define USE_TYPO_METRICS (1u<<7)
-	if (0 != (face->table.OS2->fsSelection & USE_TYPO_METRICS))
-	{
-	  ascender = abs (face->table.OS2->sTypoAscender);
-	  descender = -abs (face->table.OS2->sTypoDescender);
-	  line_gap = face->table.OS2->sTypoLineGap;
-	  got_font_extents = (ascender | descender) != 0;
-	}
+	ascender = abs (face->table.OS2->sTypoAscender);
+	descender = -abs (face->table.OS2->sTypoDescender);
+	line_gap = face->table.OS2->sTypoLineGap;
+	got_font_extents = (ascender | descender) != 0;
       }
 
       hb_blob_t *_hea_blob = hb_sanitize_context_t().reference_table<H> (face);
@@ -238,14 +234,14 @@ struct hmtxvmtx
       var_table = hb_sanitize_context_t().reference_table<HVARVVAR> (face, T::variationsTag);
     }
 
-    inline void fini (void)
+    void fini ()
     {
       table.destroy ();
       var_table.destroy ();
     }
 
     /* TODO Add variations version. */
-    inline unsigned int get_side_bearing (hb_codepoint_t glyph) const
+    unsigned int get_side_bearing (hb_codepoint_t glyph) const
     {
       if (glyph < num_advances)
         return table->longMetricZ[glyph].sb;
@@ -257,7 +253,7 @@ struct hmtxvmtx
       return bearings[glyph - num_advances];
     }
 
-    inline unsigned int get_advance (hb_codepoint_t glyph) const
+    unsigned int get_advance (hb_codepoint_t glyph) const
     {
       if (unlikely (glyph >= num_metrics))
       {
@@ -273,8 +269,8 @@ struct hmtxvmtx
       return table->longMetricZ[MIN (glyph, (uint32_t) num_advances - 1)].advance;
     }
 
-    inline unsigned int get_advance (hb_codepoint_t  glyph,
-                                     hb_font_t      *font) const
+    unsigned int get_advance (hb_codepoint_t  glyph,
+			      hb_font_t      *font) const
     {
       unsigned int advance = get_advance (glyph);
       if (likely (glyph < num_metrics))
@@ -327,14 +323,14 @@ struct hmtxvmtx
 };
 
 struct hmtx : hmtxvmtx<hmtx, hhea> {
-  static const hb_tag_t tableTag	= HB_OT_TAG_hmtx;
-  static const hb_tag_t variationsTag	= HB_OT_TAG_HVAR;
-  static const hb_tag_t os2Tag		= HB_OT_TAG_OS2;
+  enum { tableTag = HB_OT_TAG_hmtx };
+  enum { variationsTag = HB_OT_TAG_HVAR };
+  enum { os2Tag = HB_OT_TAG_OS2 };
 };
 struct vmtx : hmtxvmtx<vmtx, vhea> {
-  static const hb_tag_t tableTag	= HB_OT_TAG_vmtx;
-  static const hb_tag_t variationsTag	= HB_OT_TAG_VVAR;
-  static const hb_tag_t os2Tag		= HB_TAG_NONE;
+  enum { tableTag = HB_OT_TAG_vmtx };
+  enum { variationsTag = HB_OT_TAG_VVAR };
+  enum { os2Tag = HB_TAG_NONE };
 };
 
 struct hmtx_accelerator_t : hmtx::accelerator_t {};

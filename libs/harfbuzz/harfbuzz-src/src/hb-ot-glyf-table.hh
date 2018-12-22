@@ -45,9 +45,9 @@ struct loca
 {
   friend struct glyf;
 
-  static const hb_tag_t tableTag = HB_OT_TAG_loca;
+  enum { tableTag = HB_OT_TAG_loca };
 
-  inline bool sanitize (hb_sanitize_context_t *c HB_UNUSED) const
+  bool sanitize (hb_sanitize_context_t *c HB_UNUSED) const
   {
     TRACE_SANITIZE (this);
     return_trace (true);
@@ -71,9 +71,9 @@ struct loca
 
 struct glyf
 {
-  static const hb_tag_t tableTag = HB_OT_TAG_glyf;
+  enum { tableTag = HB_OT_TAG_glyf };
 
-  inline bool sanitize (hb_sanitize_context_t *c HB_UNUSED) const
+  bool sanitize (hb_sanitize_context_t *c HB_UNUSED) const
   {
     TRACE_SANITIZE (this);
     /* We don't check for anything specific here.  The users of the
@@ -81,7 +81,7 @@ struct glyf
     return_trace (true);
   }
 
-  inline bool subset (hb_subset_plan_t *plan) const
+  bool subset (hb_subset_plan_t *plan) const
   {
     hb_blob_t *glyf_prime = nullptr;
     hb_blob_t *loca_prime = nullptr;
@@ -153,7 +153,7 @@ struct glyf
     HBUINT16 flags;
     GlyphID  glyphIndex;
 
-    inline unsigned int get_size (void) const
+    unsigned int get_size () const
     {
       unsigned int size = min_size;
       // arg1 and 2 are int16
@@ -177,7 +177,7 @@ struct glyf
       const char *glyph_end;
       const CompositeGlyphHeader *current;
 
-      inline bool move_to_next ()
+      bool move_to_next ()
       {
 	if (current->flags & CompositeGlyphHeader::MORE_COMPONENTS)
 	{
@@ -191,7 +191,7 @@ struct glyf
 	return false;
       }
 
-      inline bool in_range (const CompositeGlyphHeader *composite) const
+      bool in_range (const CompositeGlyphHeader *composite) const
       {
 	return (const char *) composite >= glyph_start
 	  && ((const char *) composite + CompositeGlyphHeader::min_size) <= glyph_end
@@ -199,7 +199,7 @@ struct glyf
       }
     };
 
-    static inline bool get_iterator (const char * glyph_data,
+    static bool get_iterator (const char * glyph_data,
 				     unsigned int length,
 				     CompositeGlyphHeader::Iterator *iterator /* OUT */)
     {
@@ -228,7 +228,7 @@ struct glyf
 
   struct accelerator_t
   {
-    inline void init (hb_face_t *face)
+    void init (hb_face_t *face)
     {
       memset (this, 0, sizeof (accelerator_t));
 
@@ -244,7 +244,7 @@ struct glyf
       num_glyphs = MAX (1u, loca_table.get_length () / (short_offset ? 2 : 4)) - 1;
     }
 
-    inline void fini (void)
+    void fini ()
     {
       loca_table.destroy ();
       glyf_table.destroy ();
@@ -255,8 +255,8 @@ struct glyf
      * If true is returned a pointer to the composite glyph will be written into
      * composite.
      */
-    inline bool get_composite (hb_codepoint_t glyph,
-			       CompositeGlyphHeader::Iterator *composite /* OUT */) const
+    bool get_composite (hb_codepoint_t glyph,
+			CompositeGlyphHeader::Iterator *composite /* OUT */) const
     {
       if (unlikely (!num_glyphs))
 	return false;
@@ -271,15 +271,18 @@ struct glyf
     }
 
     enum simple_glyph_flag_t {
+      FLAG_ON_CURVE = 0x01,
       FLAG_X_SHORT = 0x02,
       FLAG_Y_SHORT = 0x04,
       FLAG_REPEAT = 0x08,
       FLAG_X_SAME = 0x10,
-      FLAG_Y_SAME = 0x20
+      FLAG_Y_SAME = 0x20,
+      FLAG_RESERVED1 = 0x40,
+      FLAG_RESERVED2 = 0x80
     };
 
     /* based on FontTools _g_l_y_f.py::trim */
-    inline bool remove_padding (unsigned int start_offset,
+    bool remove_padding (unsigned int start_offset,
 				unsigned int *end_offset) const
     {
       if (*end_offset - start_offset < GlyphHeader::static_size) return true;
@@ -351,7 +354,7 @@ struct glyf
       return true;
     }
 
-    inline bool get_offsets (hb_codepoint_t  glyph,
+    bool get_offsets (hb_codepoint_t  glyph,
 			     unsigned int   *start_offset /* OUT */,
 			     unsigned int   *end_offset   /* OUT */) const
     {
@@ -378,10 +381,10 @@ struct glyf
       return true;
     }
 
-    inline bool get_instruction_offsets (unsigned int start_offset,
-					 unsigned int end_offset,
-					 unsigned int *instruction_start /* OUT */,
-					 unsigned int *instruction_end /* OUT */) const
+    bool get_instruction_offsets (unsigned int start_offset,
+				  unsigned int end_offset,
+				  unsigned int *instruction_start /* OUT */,
+				  unsigned int *instruction_end /* OUT */) const
     {
       if (end_offset - start_offset < GlyphHeader::static_size)
       {
@@ -437,8 +440,7 @@ struct glyf
       return true;
     }
 
-    inline bool get_extents (hb_codepoint_t glyph,
-			     hb_glyph_extents_t *extents) const
+    bool get_extents (hb_codepoint_t glyph, hb_glyph_extents_t *extents) const
     {
       unsigned int start_offset, end_offset;
       if (!get_offsets (glyph, &start_offset, &end_offset))

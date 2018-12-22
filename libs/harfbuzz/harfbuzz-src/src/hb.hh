@@ -29,10 +29,34 @@
 #ifndef HB_HH
 #define HB_HH
 
-#define _GNU_SOURCE 1
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+/*
+ * Following added based on what AC_USE_SYSTEM_EXTENSIONS adds to
+ * config.h.in.  Copied here for the convenience of those embedding
+ * HarfBuzz and not using our build system.
+ */
+/* Enable extensions on AIX 3, Interix.  */
+#ifndef _ALL_SOURCE
+# define _ALL_SOURCE 1
+#endif
+/* Enable GNU extensions on systems that have them.  */
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE 1
+#endif
+/* Enable threading extensions on Solaris.  */
+#ifndef _POSIX_PTHREAD_SEMANTICS
+# define _POSIX_PTHREAD_SEMANTICS 1
+#endif
+/* Enable extensions on HP NonStop.  */
+#ifndef _TANDEM_SOURCE
+# define _TANDEM_SOURCE 1
+#endif
+/* Enable general extensions on Solaris.  */
+#ifndef __EXTENSIONS__
+# define __EXTENSIONS__ 1
 #endif
 
 #ifndef _POSIX_C_SOURCE
@@ -137,14 +161,14 @@ struct _hb_alignof
 
 /* https://github.com/harfbuzz/harfbuzz/issues/1127 */
 #ifndef explicit_operator
-#define explicit_operator
+#define explicit_operator operator
 #endif
 
 #else /* __cplusplus >= 201103L */
 
 /* https://github.com/harfbuzz/harfbuzz/issues/1127 */
 #ifndef explicit_operator
-#define explicit_operator explicit
+#define explicit_operator explicit operator
 #endif
 
 #endif /* __cplusplus < 201103L */
@@ -357,21 +381,21 @@ static_assert ((sizeof (hb_var_int_t) == 4), "");
   TypeName(const TypeName<T1, T2>&); \
   void operator=(const TypeName<T1, T2>&)
 #define HB_NO_CREATE_COPY_ASSIGN(TypeName) \
-  TypeName(void); \
+  TypeName(); \
   TypeName(const TypeName&); \
   void operator=(const TypeName&)
 #define HB_NO_CREATE_COPY_ASSIGN_TEMPLATE(TypeName, T) \
-  TypeName(void); \
+  TypeName(); \
   TypeName(const TypeName<T>&); \
   void operator=(const TypeName<T>&)
 #define HB_NO_CREATE_COPY_ASSIGN_TEMPLATE2(TypeName, T1, T2) \
-  TypeName(void); \
+  TypeName(); \
   TypeName(const TypeName<T1, T2>&); \
   void operator=(const TypeName<T1, T2>&)
 
 #else /* __cpluspplus >= 201103L */
 
-#define HB_NO_COPY_ASSIGN(TypeName)
+#define HB_NO_COPY_ASSIGN(TypeName) static_assert (true, "")
 #define HB_NO_COPY_ASSIGN_TEMPLATE2(TypeName, T1, T2) static_assert (true, "")
 #define HB_NO_CREATE_COPY_ASSIGN(TypeName) static_assert (true, "")
 #define HB_NO_CREATE_COPY_ASSIGN_TEMPLATE(TypeName, T) static_assert (true, "")

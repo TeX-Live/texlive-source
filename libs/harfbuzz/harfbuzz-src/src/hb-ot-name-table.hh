@@ -49,7 +49,7 @@ namespace OT {
 
 struct NameRecord
 {
-  inline hb_language_t language (hb_face_t *face) const
+  hb_language_t language (hb_face_t *face) const
   {
     unsigned int p = platformID;
     unsigned int l = languageID;
@@ -66,7 +66,7 @@ struct NameRecord
     return HB_LANGUAGE_INVALID;
   }
 
-  inline uint16_t score (void) const
+  uint16_t score () const
   {
     /* Same order as in cmap::find_best_subtable(). */
     unsigned int p = platformID;
@@ -93,7 +93,7 @@ struct NameRecord
     return UNSUPPORTED;
   }
 
-  inline bool sanitize (hb_sanitize_context_t *c, const void *base) const
+  bool sanitize (hb_sanitize_context_t *c, const void *base) const
   {
     TRACE_SANITIZE (this);
     /* We can check from base all the way up to the end of string... */
@@ -151,12 +151,13 @@ _hb_ot_name_entry_cmp (const void *pa, const void *pb)
 
 struct name
 {
-  static const hb_tag_t tableTag	= HB_OT_TAG_name;
+  enum { tableTag = HB_OT_TAG_name };
 
-  inline unsigned int get_size (void) const
-  { return min_size + count * nameRecordZ[0].min_size; }
+  unsigned int get_size () const
+  { return min_size + count * nameRecordZ.item_size; }
 
-  inline bool sanitize_records (hb_sanitize_context_t *c) const {
+  bool sanitize_records (hb_sanitize_context_t *c) const
+  {
     TRACE_SANITIZE (this);
     const void *string_pool = (this+stringOffset).arrayZ;
     unsigned int _count = count;
@@ -166,7 +167,7 @@ struct name
     return_trace (true);
   }
 
-  inline bool sanitize (hb_sanitize_context_t *c) const
+  bool sanitize (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
     return_trace (c->check_struct (this) &&
@@ -177,11 +178,11 @@ struct name
 
   struct accelerator_t
   {
-    inline void init (hb_face_t *face)
+    void init (hb_face_t *face)
     {
       this->table = hb_sanitize_context_t().reference_table<name> (face);
       assert (this->table.get_length () >= this->table->stringOffset);
-      this->pool = (this->table+this->table->stringOffset).arrayZ;
+      this->pool = (const char *) (const void *) (this->table+this->table->stringOffset);
       this->pool_len = this->table.get_length () - this->table->stringOffset;
       const hb_array_t<const NameRecord> all_names (this->table->nameRecordZ.arrayZ,
 						    this->table->count);
@@ -189,7 +190,7 @@ struct name
       this->names.init ();
       this->names.alloc (all_names.len);
 
-      for (uint16_t i = 0; i < all_names.len; i++)
+      for (unsigned int i = 0; i < all_names.len; i++)
       {
 	hb_ot_name_entry_t *entry = this->names.push ();
 
@@ -217,13 +218,13 @@ struct name
       this->names.resize (j);
     }
 
-    inline void fini (void)
+    void fini ()
     {
       this->names.fini ();
       this->table.destroy ();
     }
 
-    inline int get_index (hb_ot_name_id_t   name_id,
+    int get_index (hb_ot_name_id_t   name_id,
 			  hb_language_t     language,
 			  unsigned int     *width=nullptr) const
     {
@@ -243,16 +244,16 @@ struct name
       return entry->entry_index;
     }
 
-    inline hb_bytes_t get_name (unsigned int idx) const
+    hb_bytes_t get_name (unsigned int idx) const
     {
       const hb_array_t<const NameRecord> all_names (table->nameRecordZ.arrayZ, table->count);
       const NameRecord &record = all_names[idx];
-      const hb_array_t<const char> string_pool ((const char *) pool, pool_len);
-      return string_pool.sub_array (record.offset, record.length).as_bytes ();
+      const hb_bytes_t string_pool (pool, pool_len);
+      return string_pool.sub_array (record.offset, record.length);
     }
 
     private:
-    const void *pool;
+    const char *pool;
     unsigned int pool_len;
     public:
     hb_blob_ptr_t<name> table;

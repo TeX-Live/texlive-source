@@ -35,11 +35,12 @@
 #include "hb-map.hh"
 
 #include "hb-ot-kern-table.hh"
+#include "hb-ot-gasp-table.hh" // Just so we compile it; unused otherwise.
 #include "hb-ot-layout-gdef-table.hh"
 #include "hb-ot-layout-gsub-table.hh"
 #include "hb-ot-layout-gpos-table.hh"
-#include "hb-ot-layout-base-table.hh" // Just so we compile it; unused otherwise
-#include "hb-ot-layout-jstf-table.hh" // Just so we compile it; unused otherwise
+#include "hb-ot-layout-base-table.hh" // Just so we compile it; unused otherwise.
+#include "hb-ot-layout-jstf-table.hh" // Just so we compile it; unused otherwise.
 #include "hb-ot-name-table.hh"
 #include "hb-ot-os2-table.hh"
 
@@ -1299,7 +1300,7 @@ hb_ot_layout_feature_get_characters (hb_face_t      *face,
 struct GSUBProxy
 {
   enum { table_index = 0 };
-  static const bool inplace = false;
+  enum { inplace = false };
   typedef OT::SubstLookup Lookup;
 
   GSUBProxy (hb_face_t *face) :
@@ -1313,7 +1314,7 @@ struct GSUBProxy
 struct GPOSProxy
 {
   enum { table_index = 1 };
-  static const bool inplace = true;
+  enum { inplace = true };
   typedef OT::PosLookup Lookup;
 
   GPOSProxy (hb_face_t *face) :

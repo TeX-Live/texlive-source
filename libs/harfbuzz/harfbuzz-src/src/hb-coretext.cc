@@ -100,7 +100,7 @@ _hb_cg_font_release (void *data)
 
 
 static CTFontDescriptorRef
-get_last_resort_font_desc (void)
+get_last_resort_font_desc ()
 {
   // TODO Handle allocation failures?
   CTFontDescriptorRef last_resort = CTFontDescriptorCreateWithNameAndSize (CFSTR("LastResort"), 0);
@@ -598,7 +598,7 @@ _hb_coretext_shape (hb_shape_plan_t    *shape_plan,
       } else {
         active_feature_t *feature = active_features.find (&event->feature);
 	if (feature)
-	  active_features.remove (feature - active_features);
+	  active_features.remove (feature - active_features.arrayZ ());
       }
     }
   }
@@ -1163,20 +1163,8 @@ struct hb_coretext_aat_face_data_t {};
 hb_coretext_aat_face_data_t *
 _hb_coretext_aat_shaper_face_data_create (hb_face_t *face)
 {
-  static const hb_tag_t tags[] = {HB_CORETEXT_TAG_MORX, HB_CORETEXT_TAG_MORT, HB_CORETEXT_TAG_KERX};
-
-  for (unsigned int i = 0; i < ARRAY_LENGTH (tags); i++)
-  {
-    hb_blob_t *blob = face->reference_table (tags[i]);
-    if (hb_blob_get_length (blob))
-    {
-      hb_blob_destroy (blob);
-      return face->data.coretext ? (hb_coretext_aat_face_data_t *) HB_SHAPER_DATA_SUCCEEDED : nullptr;
-    }
-    hb_blob_destroy (blob);
-  }
-
-  return nullptr;
+  return hb_aat_layout_has_substitution (face) || hb_aat_layout_has_positioning (face) ?
+	 (hb_coretext_aat_face_data_t *) HB_SHAPER_DATA_SUCCEEDED : nullptr;
 }
 
 void

@@ -1,3 +1,2646 @@
+commit 87f7c83fffb7e64970be23c8e3c620d32a3b8f5b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 20 15:54:17 2018 -0500
+
+    [serializer] Add operator <<
+
+    Not sure if we are going to use it.  But might incentivize us to.
+
+ src/hb-machinery.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 5b70074edf1c12a9442037d54c03d3025bd93995
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 20 15:38:59 2018 -0500
+
+    Add hb_assign(obj, value)
+
+ src/hb-machinery.hh |  2 +-
+ src/hb-null.hh      | 24 +++++++++++++++++++++++-
+ src/hb-open-type.hh |  5 +++--
+ 3 files changed, 27 insertions(+), 4 deletions(-)
+
+commit 6124123393eabb77d34830c971ec463998d50aba
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 20 12:26:30 2018 -0500
+
+    [serialize] Adjust ClassDef
+
+    [skip ci]
+
+ src/hb-ot-layout-common.hh | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+commit 4220b7bdd7706622563401bf8f055c4b1482b4e5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 20 11:48:45 2018 -0500
+
+    Fix code on big-endian gcc / clang
+
+    Ouch!  We need a bigendian bot...
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1498
+
+ src/hb-machinery.hh | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit c87ee72232416099a73b563ca7aaf293b1c87b2a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 19 22:28:16 2018 -0500
+
+    Minor [skip ci]
+
+ src/hb-dsalgs.hh | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+commit 5000a59a6391d588c2cbdda132839b1fb1f75bf2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 19 21:07:53 2018 -0500
+
+    [saitnize] Minor
+
+ src/hb-machinery.hh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 3ee4ea945674c4b96c9aa6b0367bbf22dc8745d1
+Author: fanc999 <fanc999@yahoo.com.tw>
+Date:   Thu Dec 20 11:26:54 2018 +0800
+
+    Fix build on older Visual Studio versions (#1499)
+
+    * src/hb-cff-interp-dict-common.hh: Use ull for unsigned int64_t
+
+    The llu suffix does not work for older Visual Studio versions
+    (pre-2013), but ull works for all the compilers that we attempt to
+    support.
+
+    * test/api: Fix build on pre-C99 compilers
+
+    Ensure variables are declared at the top of the block.
+
+    * src/hb-dsalgs.hh: Add specialization for hb_is_signed<> for __int8
+
+    Pre-Visual Studio 2010 does not consider __int8 (which is typedef'ed
+    to
+    int8_t) to be equivilant to signed char, so the compiler cannot
+    find the
+    corresponding hb_is_signed<> specialization that is needed.
+
+    The interesting thing is unsigned __int8 is considered to be
+    equivilant
+    to unsigned char, so as the other types (short, int, long) that
+    we look
+    for here, so only the specialization for __int8 is added here.
+
+    This will fix builds on Visual Studio 2008 at least.
+
+ src/hb-cff-interp-dict-common.hh |  2 +-
+ src/hb-dsalgs.hh                 |  9 +++++++++
+ test/api/test-aat-layout.c       |  3 ++-
+ test/api/test-subset-cff1.c      | 12 ++++++++----
+ 4 files changed, 20 insertions(+), 6 deletions(-)
+
+commit a62870506d16949582bf0b54e3dc8846b9747a4a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 19 21:05:00 2018 -0500
+
+    [sanitize] Use hb_static_size instead of ::static_size
+
+    https://github.com/harfbuzz/harfbuzz/issues/1496#issuecomment-448818112
+
+ src/hb-machinery.hh | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+commit 0c9cd5d5f4d96df77e4298e16c786e67b83f9bc4
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Dec 19 21:18:30 2018 +0330
+
+    [test] Fix test-name-table.cc leak issue
+
+    Spotted it accidentally but wanted to see if is anything serious so
+    went for fixing it
+
+ src/test-name-table.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 3d9d7dc4dd4be8e746507282569504b511afa709
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 18 22:11:23 2018 -0500
+
+    [arrays] Add hb_ubytes_t for unsigned char
+
+ src/hb-array.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f1e95e40edc871c840abe8a8a695efc252af40f5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 18 16:49:08 2018 -0500
+
+    [arrays] Remove hb_supplier_t<>
+
+ src/hb-array.hh                            |  11 --
+ src/hb-cff2-interp-cs.hh                   |   2 +-
+ src/hb-face.cc                             |   6 +-
+ src/hb-open-file.hh                        |  15 +-
+ src/hb-open-type.hh                        |  18 +-
+ src/hb-ot-cmap-table.hh                    |   3 +-
+ src/hb-ot-layout-common.hh                 | 104 ++++--------
+ src/hb-ot-layout-gsub-table.hh             | 257
+ +++++++++++++----------------
+ src/hb-ot-shape-complex-arabic-fallback.hh |  23 +--
+ 9 files changed, 170 insertions(+), 269 deletions(-)
+
+commit f9417af29bd5a1d2f5b55389a1cc6f4280b347d8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 18 13:23:32 2018 -0500
+
+    [serialize] Propagate error from hb-face
+
+ src/hb-face.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 9aebfb418222427a324d911b32abfc11256ca9e3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 18 13:22:17 2018 -0500
+
+    [serialize] Streamline error propagation
+
+ src/hb-buffer.hh               |  2 ++
+ src/hb-machinery.hh            | 35 ++++++++++++++++++++++++++---------
+ src/hb-map.hh                  |  2 ++
+ src/hb-ot-layout-common.hh     |  4 ++--
+ src/hb-ot-layout-gsub-table.hh |  4 ++--
+ src/hb-set.hh                  |  2 ++
+ src/hb-subset.cc               |  2 +-
+ 7 files changed, 37 insertions(+), 14 deletions(-)
+
+commit 969ff3c7aadbe721cdd414488eb170433f10d00c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 22:43:00 2018 -0500
+
+    Remove unused hb-iter.hh
+
+    The ideas there are all part of hb-array.hh now.  To be determined
+    how we
+    want to use generic iterator patterns.
+
+ src/Makefile.sources |   1 -
+ src/hb-iter.hh       | 146
+ ---------------------------------------------------
+ src/hb-machinery.hh  |   1 -
+ 3 files changed, 148 deletions(-)
+
+commit b1094fc2d2b614c1407b502d15bd98407a5ffb56
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 22:41:04 2018 -0500
+
+    [arrays] Minor tweaks to hb_supplier_t
+
+    I think I like to keep this hb_supplier_t thing separately from
+    hb_array_t.
+
+ src/hb-array.hh | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit cf39c242057636feebafce347f8e7ac2b305112a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 22:36:23 2018 -0500
+
+    [arrays] Rename Supplier to hb_supplier_t
+
+ src/hb-array.hh                            |   6 +-
+ src/hb-face.cc                             |   2 +-
+ src/hb-open-file.hh                        |   4 +-
+ src/hb-open-type.hh                        |   4 +-
+ src/hb-ot-cmap-table.hh                    |   2 +-
+ src/hb-ot-layout-common.hh                 |  34 ++++-----
+ src/hb-ot-layout-gsub-table.hh             | 108
+ ++++++++++++++---------------
+ src/hb-ot-shape-complex-arabic-fallback.hh |  14 ++--
+ 8 files changed, 87 insertions(+), 87 deletions(-)
+
+commit 6b5eaa753047b6b0389cb7521c52efbaccf72daf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 21:55:33 2018 -0500
+
+    Hide hb_addressof()
+
+ src/hb-dsalgs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6befa75cdf83d561de69fb342f68694cd7b46f5e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 20:34:51 2018 -0500
+
+    Enable __builtin_* on clang
+
+    We'll see which old clang versions this breaks...
+
+ src/hb-dsalgs.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 8d2d41025619e24160ed80edd1c413168a2dda36
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 20:23:26 2018 -0500
+
+    Add hb_addressof() and use it to fix bug after hb_bytes_t merge
+
+    We cannot take address hb_bytes_t direction.  We need to use the
+    newly added hb_addressof(), ala std::addressof().
+
+ src/hb-dsalgs.hh        | 9 +++++++++
+ src/hb-ot-post-table.hh | 3 ++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+commit 49334f9b509fc15e8baa93d49b86886ca933de04
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 18:27:36 2018 -0500
+
+    Enable system extensions in hb.hh
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1491
+
+ configure.ac |  1 -
+ src/hb.hh    | 26 ++++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+
+commit 37c14bc7459e8b9cc0840b68223123ffb950b4cc
+Author: prrace <philip.race@oracle.com>
+Date:   Mon Dec 17 14:59:37 2018 -0800
+
+    Fix Solaris use after free (#1495)
+
+ src/hb-atomic.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 483f2491e40ccf660836ed2797738297e40bd100
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 17:56:10 2018 -0500
+
+    Remove define GNU_SOURCE
+
+    Not needed.  We get it in our config.h automatically thanks to
+    AC_USE_SYSTEM_EXTENSIONS.  Let's see whose build it breaks...
+    If we end up putting it back, we should add other things from
+    that macro and remove the macro.
+
+ src/hb.hh | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 87ff65aea117391c732d51d874964b3e32d6fa94
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 17:19:42 2018 -0500
+
+    Fix more warnings
+
+ src/hb.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f9d219a17417f61fa2c6152d2181504866583a72
+Author: prrace <philip.race@oracle.com>
+Date:   Mon Dec 17 14:18:47 2018 -0800
+
+    Fix Solaris Trailing comma in enum warnings (#1490)
+
+ src/hb-ot-color.h | 2 +-
+ src/hb-ot-name.h  | 2 +-
+ src/hb-ot-var.h   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 244a8627f7b0ed651d6010c7ee7e54fa8fcca400
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Dec 17 21:31:43 2018 +0330
+
+    Lower coretext_aat shaper priority (#1488)
+
+    Related to https://github.com/harfbuzz/harfbuzz/issues/1478
+
+ src/hb-shaper-list.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit e41200859997ccf8fd7d36fff654f3ceea3a4160
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Dec 17 21:31:01 2018 +0330
+
+    Remove redundant void from C++ sources (#1486)
+
+ src/dump-indic-data.cc           |   2 +-
+ src/dump-khmer-data.cc           |   2 +-
+ src/dump-myanmar-data.cc         |   2 +-
+ src/dump-use-data.cc             |   2 +-
+ src/hb-aat-fdsc-table.hh         |   4 +-
+ src/hb-aat-layout-common.hh      |  23 +++---
+ src/hb-aat-layout-feat-table.hh  |   8 +--
+ src/hb-aat-layout-just-table.hh  |   2 +-
+ src/hb-aat-layout-kerx-table.hh  |  21 +++---
+ src/hb-aat-layout-morx-table.hh  |  10 +--
+ src/hb-aat-layout-trak-table.hh  |   4 +-
+ src/hb-aat-layout.cc             |   6 +-
+ src/hb-aat-map.hh                |   4 +-
+ src/hb-array.hh                  |  24 +++----
+ src/hb-atomic.hh                 |  18 ++---
+ src/hb-blob.cc                   |   8 +--
+ src/hb-blob.hh                   |  33 ++++-----
+ src/hb-buffer-serialize.cc       |   2 +-
+ src/hb-buffer.cc                 |  24 +++----
+ src/hb-buffer.hh                 |  51 ++++++-------
+ src/hb-cache.hh                  |   6 +-
+ src/hb-cff-interp-common.hh      | 113 +++++++++++++----------------
+ src/hb-cff-interp-cs-common.hh   |  26 +++----
+ src/hb-cff-interp-dict-common.hh |  12 ++--
+ src/hb-cff1-interp-cs.hh         |   4 +-
+ src/hb-cff2-interp-cs.hh         |  24 +++----
+ src/hb-common.cc                 |  20 +++---
+ src/hb-coretext.cc               |   2 +-
+ src/hb-debug.hh                  |   6 +-
+ src/hb-directwrite.cc            |  16 ++---
+ src/hb-dsalgs.hh                 |   2 +-
+ src/hb-face.cc                   |   6 +-
+ src/hb-face.hh                   |   8 +--
+ src/hb-font.cc                   |   6 +-
+ src/hb-font.hh                   |   6 +-
+ src/hb-ft.cc                     |  18 ++---
+ src/hb-glib.cc                   |   8 +--
+ src/hb-gobject-enums.cc.tmpl     |   2 +-
+ src/hb-gobject-enums.h.tmpl      |   2 +-
+ src/hb-gobject-structs.cc        |   2 +-
+ src/hb-icu.cc                    |   8 +--
+ src/hb-iter.hh                   |  15 ++--
+ src/hb-machinery.hh              | 150
+ ++++++++++++++++-----------------------
+ src/hb-map.cc                    |   4 +-
+ src/hb-map.hh                    |  24 +++----
+ src/hb-mutex.hh                  |  10 +--
+ src/hb-null.hh                   |  32 ++++-----
+ src/hb-object.hh                 |  22 +++---
+ src/hb-open-file.hh              |  32 ++++-----
+ src/hb-open-type.hh              |  66 +++++++++--------
+ src/hb-ot-cff-common.hh          |  30 ++++----
+ src/hb-ot-cff1-table.cc          |  17 ++---
+ src/hb-ot-cff1-table.hh          |  52 ++++++--------
+ src/hb-ot-cff2-table.cc          |   8 +--
+ src/hb-ot-cff2-table.hh          |  34 ++++-----
+ src/hb-ot-cmap-table.hh          |  10 +--
+ src/hb-ot-color-cbdt-table.hh    |   4 +-
+ src/hb-ot-color-colr-table.hh    |   2 +-
+ src/hb-ot-color-cpal-table.hh    |  10 +--
+ src/hb-ot-color-sbix-table.hh    |  11 ++-
+ src/hb-ot-color-svg-table.hh     |   7 +-
+ src/hb-ot-face.cc                |   2 +-
+ src/hb-ot-face.hh                |   2 +-
+ src/hb-ot-font.cc                |   8 +--
+ src/hb-ot-glyf-table.hh          |   6 +-
+ src/hb-ot-hdmx-table.hh          |   4 +-
+ src/hb-ot-head-table.hh          |   8 +--
+ src/hb-ot-hmtx-table.hh          |   2 +-
+ src/hb-ot-kern-table.hh          |  20 +++---
+ src/hb-ot-layout-base-table.hh   |  10 +--
+ src/hb-ot-layout-common.hh       |  67 +++++++++--------
+ src/hb-ot-layout-gdef-table.hh   |  20 +++---
+ src/hb-ot-layout-gpos-table.hh   |  34 ++++-----
+ src/hb-ot-layout-gsub-table.hh   |  24 +++----
+ src/hb-ot-layout-gsubgpos.hh     |  92 +++++++++++-------------
+ src/hb-ot-layout-jstf-table.hh   |   8 +--
+ src/hb-ot-map.cc                 |   2 +-
+ src/hb-ot-map.hh                 |   8 +--
+ src/hb-ot-math-table.hh          |  11 ++-
+ src/hb-ot-maxp-table.hh          |   5 +-
+ src/hb-ot-name-table.hh          |   6 +-
+ src/hb-ot-os2-table.hh           |  18 ++---
+ src/hb-ot-post-table.hh          |   4 +-
+ src/hb-ot-shape.cc               |   2 +-
+ src/hb-ot-shape.hh               |   2 +-
+ src/hb-ot-tag.cc                 |   4 +-
+ src/hb-ot-var-fvar-table.hh      |   9 ++-
+ src/hb-ot-var-hvar-table.hh      |   9 +--
+ src/hb-ot-vorg-table.hh          |   2 +-
+ src/hb-set-digest.hh             |   4 +-
+ src/hb-set.cc                    |   4 +-
+ src/hb-set.hh                    |  38 +++++-----
+ src/hb-shape-plan.cc             |   2 +-
+ src/hb-shape-plan.hh             |   5 +-
+ src/hb-shape.cc                  |  10 +--
+ src/hb-shaper.cc                 |  14 ++--
+ src/hb-shaper.hh                 |   6 +-
+ src/hb-static.cc                 |   4 +-
+ src/hb-subset-cff-common.hh      |  91 +++++++++++-------------
+ src/hb-subset-cff1.cc            |  20 ++----
+ src/hb-subset-cff2.cc            |   8 +--
+ src/hb-subset-input.cc           |   2 +-
+ src/hb-subset.hh                 |   4 +-
+ src/hb-ucdn.cc                   |  10 +--
+ src/hb-unicode.cc                |  64 ++++++++---------
+ src/hb-uniscribe.cc              |  12 ++--
+ src/hb-vector.hh                 |  38 +++++-----
+ src/hb.hh                        |   6 +-
+ src/test-unicode-ranges.cc       |   4 +-
+ util/ansi-print.cc               |   6 +-
+ util/hb-fc.cc                    |   2 +-
+ util/hb-shape.cc                 |   5 +-
+ util/helper-cairo.cc             |   2 +-
+ util/helper-cairo.hh             |   2 +-
+ util/main-font-text.hh           |   2 +-
+ util/options.cc                  |   8 +--
+ util/options.hh                  |  22 +++---
+ util/view-cairo.hh               |  14 ++--
+ 118 files changed, 861 insertions(+), 1024 deletions(-)
+
+commit 7ace10078c23d00da4af0480f91b877faeed3d38
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Dec 17 20:07:04 2018 +0330
+
+    Minor, fix two more ArrayOf incorrect operator logic
+
+ src/hb-open-type.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit a1240383aa82fd88e922a1e751444d14033ae882
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 10:44:14 2018 -0500
+
+    [arrays] Minor fix
+
+ src/hb-open-type.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 381c3548e9022a421bcf88db148cc11f337f3b79
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 00:39:30 2018 -0500
+
+    [array] Add cast operator to add const to Type
+
+    In lieu of constructor removed in previous commit.
+
+ src/hb-array.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 15acf33c228e0c8e0f8cc6a04e566970164dd5f1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 00:38:13 2018 -0500
+
+    [array] Remove problematic constructor
+
+ src/hb-array.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 470369a871791b610e0c42212558e83baeb83409
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 00:20:19 2018 -0500
+
+    [array] Add arithmetic operators
+
+ src/hb-array.hh | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
+
+commit 6cd60c2f2aa17e3f02b50c19cf640b3f183f3354
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 00:09:06 2018 -0500
+
+    [array] Return Crap instead of Null if Type is not const
+
+    Ouch!
+
+ src/hb-array.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 94e72cf1c9af563fbf522efb7f2e0b1fcd616418
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 00:06:40 2018 -0500
+
+    [array] Add operator *
+
+ src/hb-array.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 68d4a5eee0f248891d20d69b897201d105951aef
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 17 00:02:42 2018 -0500
+
+    [array] Add constructor from fixed-size array
+
+ src/hb-array.hh | 1 +
+ src/hb-iter.hh  | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+commit a4354d2fd36377ec8b544c7b88a231cb1273dccd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 23:57:27 2018 -0500
+
+    [array] Organize
+
+ src/hb-array.hh | 75
+ ++++++++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 48 insertions(+), 27 deletions(-)
+
+commit 84c1865821151d83a8798ae11ebba3329a12c560
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 23:52:17 2018 -0500
+
+    [arrays] Reduce Supplier<> even further
+
+ src/hb-array.hh | 24 +++---------------------
+ 1 file changed, 3 insertions(+), 21 deletions(-)
+
+commit 1bcc4fc9f34ab518fc822c9464a73ba3e90f5f1c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 23:47:56 2018 -0500
+
+    Whitespace
+
+ src/hb-ot-shape-complex-arabic-fallback.hh | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit f85f6e815f439075f8c6f5391e5c8dfe77e0f00d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 23:45:07 2018 -0500
+
+    [array] Add operator +=
+
+ src/hb-array.hh | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+commit 7c0e3e9b2b077fced829a10f616ed3d6b51c15c4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 23:43:17 2018 -0500
+
+    [array] Add constructor from hb_array_t<const Type>
+
+ src/hb-array.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 92680361ec68734ad38e2158626feebaf18eec88
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 23:38:51 2018 -0500
+
+    [arrays] Move Supplier<> to hb-array.hh
+
+ src/hb-array.hh     | 33 +++++++++++++++++++++++++++++++++
+ src/hb-machinery.hh | 32 --------------------------------
+ 2 files changed, 33 insertions(+), 32 deletions(-)
+
+commit 2a3fa3f82ffdb778a2d21fc01e859579161237c9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 23:33:03 2018 -0500
+
+    [arrays] Remove unnecessary constructor from Supplier<>
+
+    Looks like operator hb_array_t<> from vector works here. :)
+
+ src/hb-machinery.hh | 5 -----
+ 1 file changed, 5 deletions(-)
+
+commit 507cac4943e987879b95d842fe60643abbf22efa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 23:31:19 2018 -0500
+
+    [arrays] Start moving Supplier<> to hb_array_t<>
+
+ src/hb-machinery.hh | 31 +++++++++++--------------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
+
+commit 1e2c98126e8500ace31483b05d77478afd59bab8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 22:30:44 2018 -0500
+
+    [arrays] Remove unused stride from Supplier
+
+ src/hb-machinery.hh | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+commit 0d0fe9df46c645538feaee1ec99a0108383a3669
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 22:29:40 2018 -0500
+
+    [arrays] Remove need of stride in Supplier<>
+
+ src/hb-face.cc      |  6 ++----
+ src/hb-open-file.hh | 19 +++++++++----------
+ src/hb-vector.hh    |  2 +-
+ 3 files changed, 12 insertions(+), 15 deletions(-)
+
+commit dcfa4a8d711716de88b94a370663e9564e3e7ccc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 20:40:07 2018 -0500
+
+    [array] Remove custom hb_bytes_t implementation
+
+ src/hb-array.hh         | 67
+ +++++++++++++++++--------------------------------
+ src/hb-machinery.hh     |  2 +-
+ src/hb-ot-name-table.hh |  8 +++---
+ src/hb-ot-name.cc       | 10 ++++----
+ 4 files changed, 33 insertions(+), 54 deletions(-)
+
+commit 3656f56d47cf6b89a25990d7836704fef79fa5b4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 20:35:11 2018 -0500
+
+    [arrays] Minor
+
+ src/hb-array.hh     |  3 ++-
+ src/hb-open-type.hh | 10 ++++------
+ src/hb-vector.hh    |  4 +---
+ 3 files changed, 7 insertions(+), 10 deletions(-)
+
+commit aa8f94714ee720c56be1a3406df7bacb0550158c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 20:20:35 2018 -0500
+
+    [array] Minor
+
+ src/hb-array.hh | 4 ++++
+ src/hb-iter.hh  | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+commit 5a552f75468d777d8d4bd3168e28f56a3369eafd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 20:07:44 2018 -0500
+
+    [array] Move hb_array_t and related types to hb-array.hh
+
+ src/Makefile.sources |   1 +
+ src/hb-array.hh      | 241
+ +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-dsalgs.hh     | 206 -------------------------------------------
+ src/hb-machinery.hh  |   1 +
+ src/hb-vector.hh     |   2 +-
+ 5 files changed, 244 insertions(+), 207 deletions(-)
+
+commit 01d06e34ffa746d3737df00bb692cdb1e859c1c6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 16 14:27:43 2018 -0500
+
+    Minor change to explicit_operator aesthetics
+
+ src/hb-iter.hh      | 2 +-
+ src/hb-machinery.hh | 2 +-
+ src/hb-vector.hh    | 4 ++--
+ src/hb.hh           | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+
+commit b2ebaa9afac0f57006283db92d1f3b4df3d6bd7e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Dec 16 22:38:10 2018 +0330
+
+    Remove redundant 'inline' from methods (#1483)
+
+ src/hb-aat-fdsc-table.hh         |  12 +-
+ src/hb-aat-layout-ankr-table.hh  |  12 +-
+ src/hb-aat-layout-bsln-table.hh  |  13 +-
+ src/hb-aat-layout-common.hh      | 150 +++++++-------
+ src/hb-aat-layout-feat-table.hh  |  46 ++---
+ src/hb-aat-layout-just-table.hh  |  26 +--
+ src/hb-aat-layout-kerx-table.hh  | 120 +++++------
+ src/hb-aat-layout-lcar-table.hh  |  14 +-
+ src/hb-aat-layout-morx-table.hh  | 104 +++++-----
+ src/hb-aat-layout-trak-table.hh  |  28 +--
+ src/hb-aat-layout.hh             |   2 +-
+ src/hb-aat-ltag-table.hh         |   6 +-
+ src/hb-aat-map.hh                |   7 +-
+ src/hb-atomic.hh                 |  26 +--
+ src/hb-blob.hh                   |  32 ++-
+ src/hb-buffer.hh                 |  76 ++++---
+ src/hb-cache.hh                  |  10 +-
+ src/hb-cff-interp-common.hh      | 197 +++++++++---------
+ src/hb-cff-interp-cs-common.hh   | 166 +++++++--------
+ src/hb-cff-interp-dict-common.hh |  26 +--
+ src/hb-cff1-interp-cs.hh         |  21 +-
+ src/hb-cff2-interp-cs.hh         |  48 ++---
+ src/hb-common.cc                 |  13 +-
+ src/hb-debug.hh                  |  20 +-
+ src/hb-directwrite.cc            |   2 +-
+ src/hb-dsalgs.hh                 |  84 ++++----
+ src/hb-face.cc                   |   2 +-
+ src/hb-face.hh                   |   6 +-
+ src/hb-font.hh                   | 216 ++++++++++----------
+ src/hb-ft.cc                     |   8 +-
+ src/hb-glib.cc                   |   2 +-
+ src/hb-icu.cc                    |   2 +-
+ src/hb-iter.hh                   |  18 +-
+ src/hb-kern.hh                   |   8 +-
+ src/hb-machinery.hh              | 210 +++++++++----------
+ src/hb-map.hh                    |  38 ++--
+ src/hb-mutex.hh                  |  12 +-
+ src/hb-null.hh                   |  26 +--
+ src/hb-object.hh                 |  34 ++--
+ src/hb-open-file.hh              |  92 ++++-----
+ src/hb-open-type.hh              | 253 ++++++++++++-----------
+ src/hb-ot-cff-common.hh          | 177 ++++++++--------
+ src/hb-ot-cff1-table.cc          |  32 +--
+ src/hb-ot-cff1-table.hh          | 160 +++++++--------
+ src/hb-ot-cff2-table.cc          |  16 +-
+ src/hb-ot-cff2-table.hh          |  62 +++---
+ src/hb-ot-cmap-table.hh          | 185 +++++++++--------
+ src/hb-ot-color-cbdt-table.hh    |  40 ++--
+ src/hb-ot-color-colr-table.hh    |  18 +-
+ src/hb-ot-color-cpal-table.hh    |  55 +++--
+ src/hb-ot-color-sbix-table.hh    |  48 ++---
+ src/hb-ot-color-svg-table.hh     |  20 +-
+ src/hb-ot-font.cc                |   2 +-
+ src/hb-ot-gasp-table.hh          |   6 +-
+ src/hb-ot-glyf-table.hh          |  37 ++--
+ src/hb-ot-hdmx-table.hh          |  36 ++--
+ src/hb-ot-head-table.hh          |  10 +-
+ src/hb-ot-hhea-table.hh          |   2 +-
+ src/hb-ot-hmtx-table.hh          |  18 +-
+ src/hb-ot-kern-table.hh          |  44 ++--
+ src/hb-ot-layout-base-table.hh   | 104 +++++-----
+ src/hb-ot-layout-common.hh       | 425
+ ++++++++++++++++++++-------------------
+ src/hb-ot-layout-gdef-table.hh   | 126 ++++++------
+ src/hb-ot-layout-gpos-table.hh   | 209 +++++++++----------
+ src/hb-ot-layout-gsub-table.hh   | 360 ++++++++++++++++-----------------
+ src/hb-ot-layout-gsubgpos.hh     | 353 ++++++++++++++++----------------
+ src/hb-ot-layout-jstf-table.hh   |  44 ++--
+ src/hb-ot-map.hh                 |  38 ++--
+ src/hb-ot-math-table.hh          | 142 ++++++-------
+ src/hb-ot-maxp-table.hh          |  12 +-
+ src/hb-ot-name-table.hh          |  21 +-
+ src/hb-ot-os2-table.hh           |  34 ++--
+ src/hb-ot-post-table.hh          |  26 +--
+ src/hb-ot-shape-complex-indic.cc |  10 +-
+ src/hb-ot-shape-complex-khmer.cc |  10 +-
+ src/hb-ot-shape.hh               |   6 +-
+ src/hb-ot-stat-table.hh          |  16 +-
+ src/hb-ot-var-avar-table.hh      |   8 +-
+ src/hb-ot-var-fvar-table.hh      |  55 +++--
+ src/hb-ot-var-hvar-table.hh      |  16 +-
+ src/hb-ot-var-mvar-table.hh      |  10 +-
+ src/hb-ot-vorg-table.hh          |  22 +-
+ src/hb-set-digest.hh             |  41 ++--
+ src/hb-set.hh                    | 114 +++++------
+ src/hb-shape.cc                  |  14 +-
+ src/hb-shaper.cc                 |  14 +-
+ src/hb-shaper.hh                 |  10 +-
+ src/hb-subset-cff-common.hh      | 175 ++++++++--------
+ src/hb-subset-cff1.cc            |  91 ++++-----
+ src/hb-subset-cff2.cc            |  36 ++--
+ src/hb-subset-plan.hh            |  12 +-
+ src/hb-subset.hh                 |   4 +-
+ src/hb-ucdn.cc                   |   2 +-
+ src/hb-unicode.hh                |  26 +--
+ src/hb-uniscribe.cc              |  16 +-
+ src/hb-utf.hh                    |  54 +++--
+ src/hb-vector.hh                 |  86 ++++----
+ 97 files changed, 2911 insertions(+), 2987 deletions(-)
+
+commit 7251c7729061b7df29efe2b466315e96c81ad03f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 15 21:00:55 2018 -0500
+
+    Whitespace
+
+ src/hb-buffer-serialize.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 829b56b1a22736eac49132b2e56dc480157afca2
+Author: Behdad Esfahbod <behdad@google.com>
+Date:   Sat Dec 15 13:02:13 2018 -0500
+
+    Whitespace
+
+ src/hb-ot-cff-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 42a1012562c1f020f470526a34b68ed21ad138cc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 13 19:39:59 2018 -0500
+
+    [subset] Actually subset GDEF
+
+ src/hb-subset.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit c9c746c7f6091e575fd74ba8f8cae2c4fd44a1ad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 13 18:37:37 2018 -0500
+
+    [subset] Fix up ClassDef some more
+
+ src/hb-ot-layout-common.hh | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+commit 7ee6128902333716dd8d8df6e38a8d1ebacb0a46
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 13 18:32:04 2018 -0500
+
+    [subset] Fix ClassDefFormat1 subsetting
+
+ src/hb-ot-layout-common.hh | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+commit 1b6d0c44b3067f5840d3fdac99fbc7448d0f37bf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 13 18:10:48 2018 -0500
+
+    [subset] Sketch GDEF subsetting
+
+ src/hb-ot-layout-gdef-table.hh | 20 ++++++++++++++++++++
+ src/hb-ot-layout-gsubgpos.hh   |  2 ++
+ 2 files changed, 22 insertions(+)
+
+commit 705e2f5056d60c28154004e0c5d3b0ec67fe93c8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 13 17:48:42 2018 -0500
+
+    [subset] Implement for ClassDef
+
+ src/hb-ot-layout-common.hh     | 80
+ ++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-layout-gsub-table.hh |  8 ++---
+ 2 files changed, 84 insertions(+), 4 deletions(-)
+
+commit 6e33a3955df77b9d1fda5ea44302d97b21e7871c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 13 16:40:01 2018 -0500
+
+    Minor
+
+ src/hb-machinery.hh            | 12 +++++++++---
+ src/hb-ot-cmap-table.hh        |  3 +--
+ src/hb-ot-layout-gsub-table.hh |  8 ++++----
+ 3 files changed, 14 insertions(+), 9 deletions(-)
+
+commit cc65901ca7185df926570d5067ace763a2cc759e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 13 16:01:45 2018 -0500
+
+    [serialize] Implement for ClassDef
+
+ src/hb-ot-layout-common.hh | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
+
+commit e5309e4fd8583aa5c5ad9f3934d8aa593c850468
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 13 15:57:12 2018 -0500
+
+    [serialize] Implement for ClassDefFormat2
+
+ src/hb-ot-layout-common.hh | 50
+ ++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 46 insertions(+), 4 deletions(-)
+
+commit c8b43cbe316b07507aece4dc769f38226cd706da
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 13 15:50:13 2018 -0500
+
+    [serialize] Implement for ClassDefFormat1
+
+ src/hb-ot-layout-common.hh | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+commit 576103132945c9d916514720d4034b398e099cfa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 12 21:21:26 2018 -0500
+
+    [subset] Minor
+
+ src/hb-subset.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 798e98c47bd9fa4d434487ae92e2c88ebb8a19a5
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 12 18:08:15 2018 -0800
+
+    [CFF] bad offset in Index (#1476)
+
+    * Update hb-ot-cff-common.hh
+
+    * fix bug
+
+    * bummer fix wasn't hit. refix
+
+    * additional sanity check
+
+    * Added test cases for oss-fuzz issues 11805, 11806
+
+ src/hb-ot-cff-common.hh                                   |  10
+ ++++++++--
+ ...clusterfuzz-testcase-hb-subset-fuzzer-5643036478930944 | Bin 0 ->
+ 369 bytes
+ ...clusterfuzz-testcase-hb-subset-fuzzer-5686186874503168 | Bin 0 ->
+ 962 bytes
+ 3 files changed, 8 insertions(+), 2 deletions(-)
+
+commit bcb4ecaf68c7219e89a801352bfc6a682b1581ef
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 12 17:36:01 2018 -0800
+
+    [CFF] check out of range FD index (#1477)
+
+    * add fd index checks to subr subsetter
+
+    also added oss-fuzz test case
+
+    * undid SubrSubsetParam::is_valid
+
+    because already validated by SubrClosures.valid
+
+ src/hb-subset-cff-common.hh                              |  10 ++++++++++
+ ...lusterfuzz-testcase-hb-subset-fuzzer-5762137968869376 | Bin 0 ->
+ 2037 bytes
+ 2 files changed, 10 insertions(+)
+
+commit 3f8e7a98d3cc10fefe65b9638c8abdf3ebe152cb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 12 11:32:57 2018 -0500
+
+    [util/hb-subset] Add --layout to keep GDEF/GSUB/GPOS
+
+    Will become default and option removed in the future.
+
+ util/hb-subset.cc | 1 +
+ util/options.cc   | 1 +
+ util/options.hh   | 2 ++
+ 3 files changed, 4 insertions(+)
+
+commit 2cc993e035cb37711f894968246817e53a9e823d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 12 10:07:38 2018 -0500
+
+    [dispatch] Minor
+
+ src/hb-ot-layout-gpos-table.hh | 4 +---
+ src/hb-ot-layout-gsub-table.hh | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+commit 602fbfe3c96b3f18b0109239528ba18a19be4948
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 12 09:56:47 2018 -0500
+
+    [sanitize] Fix sanitizing sublookup array
+
+ src/hb-ot-layout-common.hh | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+commit c78e4784fbe06ceb27b54a1d8908016ade071cb4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 12 09:50:18 2018 -0500
+
+    [dispatch] Minor
+
+ src/hb-machinery.hh          | 1 +
+ src/hb-ot-layout-gsubgpos.hh | 3 ---
+ src/hb-subset.hh             | 1 -
+ 3 files changed, 1 insertion(+), 4 deletions(-)
+
+commit f9d211af1d6d78d092038d263b222ec8a65cf09d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 12 09:44:30 2018 -0500
+
+    Revert "Minor fix re sanitize of Lookup subtables"
+
+    This reverts commit 7146718bef81492e13aede0a2801cda1da41ce35.
+
+    Fixing differently.
+
+ src/hb-ot-layout-common.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 7ee5c52345c122436e054062084cd51292b90ad1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Dec 12 15:14:37 2018 +0330
+
+    minor style fix, use void in methods on no argument
+
+ src/hb-aat-fdsc-table.hh        |   4 +-
+ src/hb-aat-layout-common.hh     |   6 +-
+ src/hb-aat-layout-feat-table.hh |   4 +-
+ src/hb-aat-layout-trak-table.hh |  18 +--
+ src/hb-aat-layout.cc            |   4 +-
+ src/hb-buffer.cc                |  48 +++----
+ src/hb-directwrite.cc           | 297
+ +++++++++++++++++++---------------------
+ src/hb-dsalgs.hh                |   5 +-
+ src/hb-map.hh                   |  20 +--
+ src/hb-ot-cmap-table.hh         |   2 +-
+ src/hb-ot-color-cbdt-table.hh   |   2 +-
+ src/hb-ot-color-cpal-table.hh   |   4 +-
+ src/hb-ot-color-sbix-table.hh   |  10 +-
+ src/hb-ot-color-svg-table.hh    |  15 +-
+ src/hb-ot-glyf-table.hh         |   2 +-
+ src/hb-ot-hdmx-table.hh         |   6 +-
+ src/hb-ot-layout-base-table.hh  |  11 +-
+ src/hb-ot-os2-table.hh          |  15 +-
+ 18 files changed, 211 insertions(+), 262 deletions(-)
+
+commit a33f238f8888cc969e1e393deda0518fb8dd6b13
+Merge: 7146718b 1e09add2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Dec 12 12:44:06 2018 +0330
+
+    Merge pull request #1474 from fanc999/master.msvc
+
+    Few fixes for Visual Studio builds
+
+commit 7146718bef81492e13aede0a2801cda1da41ce35
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 11 23:44:29 2018 -0500
+
+    Minor fix re sanitize of Lookup subtables
+
+    We were dereferencing Null pointers and trying to sanitize them,
+    which is not necessary...
+
+ src/hb-ot-layout-common.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit ce069d193229cde12c77a3f464fc10286bedf5f3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 11 23:07:48 2018 -0500
+
+    Minor
+
+ src/hb-open-type.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 1aea86944605e7e18acfd2c0a77ba60e62239274
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 11 22:53:58 2018 -0500
+
+    [subset] Map glyphs during SingleSubst subsetting
+
+    Ha!
+
+ src/hb-ot-layout-gsub-table.hh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit 41d1a1c10f7e5ca69a337ae164d270e09b5f93ac
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 11 22:48:27 2018 -0500
+
+    [subset] Minor
+
+ src/hb-machinery.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2aba2c6c73301396f7e0e5dee819ab6863e74900
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 11 21:18:47 2018 -0500
+
+    [serialize] Break down assert
+
+ src/hb-machinery.hh | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+commit 9844c880e280e9cd28dcbeac2e581ac923c5ddf3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 11 17:28:04 2018 -0500
+
+    Minor
+
+ test/shaping/Makefile.am | 2 ++
+ util/Makefile.am         | 2 ++
+ 2 files changed, 4 insertions(+)
+
+commit 2941208f1eedabec2715b2a67d40f058df7eb5e6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 11 12:21:24 2018 -0800
+
+    [CFF] oss-fuzz issue 11690 ASSERT: substr.offset >= opStart (#1461)
+
+    * fix oss-fuzz 11690: substr.offset >= opStart
+
+    detect recursive subroutine call & handle as error
+
+    * fix build failure
+
+    * add minimized test case for oss-fuzz 11690
+
+    * removed asserts
+
+ src/hb-cff-interp-common.hh                             |   9 ++++-----
+ src/hb-subset-cff-common.hh                             |  12
+ ++++++++++--
+ src/hb-subset-cff1.cc                                   |   4 ++--
+ src/hb-subset-cff2.cc                                   |   4 ++--
+ ...testcase-minimized-hb-subset-fuzzer-5750420593442816 | Bin 0 ->
+ 96091 bytes
+ 5 files changed, 18 insertions(+), 11 deletions(-)
+
+commit 333586245cb37668c8a29af17920474c09667f4b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 11 12:20:20 2018 -0800
+
+    minimize use of assert: removed or changed to error handling (#1467)
+
+ src/hb-ot-cff-common.hh     |  2 +-
+ src/hb-ot-cff1-table.hh     | 12 ++++++++----
+ src/hb-subset-cff-common.cc |  6 ++++--
+ src/hb-subset-cff-common.hh |  1 -
+ src/hb-subset-cff1.cc       | 22 +++++++++++++++++-----
+ src/hb-subset-cff2.cc       | 14 +++++++++++---
+ 6 files changed, 41 insertions(+), 16 deletions(-)
+
+commit f24498c1e95e816889eb7a2f8b1062bbf15bed1b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Dec 11 23:02:52 2018 +0330
+
+    [ci] Fix Travis macOS bot ICU issue (#1472)
+
+ .travis.yml | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 9f3a51ddb952e1281f9a656fde7193c3e3b8dad2
+Author: 👻 <sarabi@Corsac-Fox.local>
+Date:   Tue Dec 11 13:38:05 2018 -0500
+
+    [ucdn] Fix header
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1470
+
+ src/hb-ucdn/ucdn.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit b225593d6baf3455e1ac951efc0df5015fdf7c69
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Tue Dec 11 13:19:17 2018 -0500
+
+    Correct REPLACEMENT CHARACTER's code point to FFFD (#1471)
+
+ test/shaping/hb_test_tools.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 1e09add232e14ef61d2f222a5ee05a2105af64f0
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Wed Dec 12 01:32:01 2018 +0800
+
+    test/api: Fix building on pre-C99 compilers
+
+    Ensure variables are declared at the top of the block.
+
+ test/api/hb-test.h         |  3 ++-
+ test/api/test-aat-layout.c |  3 ++-
+ test/api/test-font.c       |  2 +-
+ test/api/test-map.c        |  9 ++++++---
+ test/api/test-ot-color.c   |  9 +++++----
+ test/api/test-ot-face.c    | 14 ++++++++------
+ test/api/test-ot-name.c    | 30 ++++++++++++++++--------------
+ test/api/test-ot-tag.c     | 11 ++++++-----
+ 8 files changed, 46 insertions(+), 35 deletions(-)
+
+commit 09b16c536d31376de771eedde54620dd6c8f39d7
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Wed Dec 12 01:23:53 2018 +0800
+
+    CMake: Fix Introspection builds
+
+    We need to add -DHB_AAT_H and -DHB_AAT_H_IN to the flags that
+    are passed
+    to g-ir-scanner, so that introspection builds can proceed normally.
+
+ CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 1683bb2c9337fa34e5e80d459ab5eab99d7a9804
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Dec 8 13:57:39 2018 +0330
+
+    [glyf] minor
+
+ src/hb-ot-glyf-table.hh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit f7cfe99815c07f82d5ad253af1e811db734bf92b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Dec 8 13:40:44 2018 +0330
+
+    [os2] Move typometrics detection logic to the table (#1465)
+
+ src/hb-ot-hmtx-table.hh | 14 +++++---------
+ src/hb-ot-os2-table.hh  |  7 ++++---
+ 2 files changed, 9 insertions(+), 12 deletions(-)
+
+commit 47cf9a9633bbff12fef1131e7179dfc351f7e5f3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Dec 8 10:20:25 2018 +0330
+
+    Apply non-controversial parts of ot-style (#1464)
+
+    Things to be used in https://github.com/harfbuzz/harfbuzz/pull/1459
+
+ src/hb-aat-fdsc-table.hh    | 29 +++++++++++++++++++++++++---
+ src/hb-aat-layout-common.hh |  1 +
+ src/hb-ot-head-table.hh     | 13 +++++++++++++
+ src/hb-ot-os2-table.hh      | 46
+ +++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-stat-table.hh     | 38 ++++++++++++++++++-------------------
+ 5 files changed, 105 insertions(+), 22 deletions(-)
+
+commit 4d809696ef4db046d11072e5433ea5ff36bd7b26
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Dec 7 20:49:39 2018 -0800
+
+    fix for issue #1447 (#1462)
+
+    Added case for OpCode_BaseFontName. This opcode in spec but
+    practically unused.
+    Added a comment for default case which can't be hit
+
+ src/hb-ot-cff1-table.hh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 1abd4fcaec31053b442525d7f240af489c5974b1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Dec 7 22:34:12 2018 +0330
+
+    [fdsc] minor
+
+ src/hb-aat-fdsc-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 59345cdef38cf1f514a6a0eb6e8852350acb6166
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Dec 6 13:36:26 2018 -0800
+
+    [CFF] Refix oss-fuzz 11714: set_blends (PR #1458) (#1460)
+
+    * pass subarray of stack to set_blends
+
+    * get_subarray to return a value, not ref
+
+    * restored error check (with tweak)
+
+ src/hb-cff-interp-common.hh |  5 +++++
+ src/hb-cff2-interp-cs.hh    | 14 +++++++++-----
+ 2 files changed, 14 insertions(+), 5 deletions(-)
+
+commit 20245f0000a0f04f2ba172b51ce69ee7ebb256aa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 6 10:27:37 2018 -0800
+
+    Fix likely check
+
+    Ouch!
+
+ src/hb-cff-interp-dict-common.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit d866e905fd555d393464ed58d5fc11ee453c7ea4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 6 10:26:32 2018 -0800
+
+    Add default value to first argument of sub_array()
+
+ src/hb-dsalgs.hh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit f1352f7486caaf6d3480ef2ac6b4719acf73e6a2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 6 10:21:06 2018 -0800
+
+    Add sub_array to hb_vector_t
+
+ src/hb-vector.hh | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+commit ca23b719357b01e98a5cf533bbf637d6706a4ec2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 6 10:19:03 2018 -0800
+
+    Add default-value for second arg of sub_array()
+
+ src/hb-dsalgs.hh    | 7 +++----
+ src/hb-open-type.hh | 8 ++++----
+ 2 files changed, 7 insertions(+), 8 deletions(-)
+
+commit 6ad3fcddaf2ba8ebc9ad49ff9e7b33b60fcad16a
+Merge: f95324a3 ae087d10
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Dec 6 10:21:00 2018 +0330
+
+    Merge pull request #1458 from harfbuzz/cff-check-blends
+
+    [CFF] oss-fuzz issue 11714: set_blends
+
+commit ae087d10c22249f3aec3239e4eac98a728f71f75
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 21:47:34 2018 -0800
+
+    add minimized test case for oss-fuzz issue 11714
+
+ ...-testcase-minimized-hb-subset-fuzzer-5710107829075968 | Bin 0 ->
+ 3660 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 1ccbdcf73bbc967f5f94c0bc7f7e869bd87d9fa0
+Merge: 14d29a10 f95324a3
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 21:37:38 2018 -0800
+
+    Merge branch 'master' into cff-check-blends
+
+commit 14d29a10437205566c4bd7bcfa2282d34d9f4f2f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 21:33:29 2018 -0800
+
+    check number of blends against args on stack
+
+ src/hb-cff2-interp-cs.hh | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit f95324a3351c1f699214ad84d073268218ea83a3
+Merge: 6727c4b6 9d8f3b0d
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Dec 6 08:33:44 2018 +0330
+
+    Merge pull request #1457 from harfbuzz/cff-varstore-sanitize
+
+    [CFF] oss-fuzz issue 11713 (CFF2VariationStore::serialize)
+
+commit 6727c4b6f0356b08803b4d5cde608ec004e3533f
+Merge: d9dabc00 34e3ef8f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 5 17:37:21 2018 -0800
+
+    Merge pull request #1456 from harfbuzz/cff-subr-sanitize
+
+    [CFF] fix oss-fuzz issue 11691 (BlendArg::set_blends)
+
+commit 9d8f3b0dfbf39f5dfa25d52f47e8af6ad318eb17
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 17:14:51 2018 -0800
+
+    add minimized test case for oss-fuzz issue 11713
+
+ ...z-testcase-minimized-hb-subset-fuzzer-5660711141769216 | Bin 0 ->
+ 383 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit c31092ab34641072606f854408eb1bea18ed2507
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 17:04:55 2018 -0800
+
+    sanitize variationStore in CFF2 against its size
+
+ src/hb-ot-cff2-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 34e3ef8ff394f281b8d7e2c08f346a9495692edc
+Merge: 72d8f763 d9dabc00
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 15:50:05 2018 -0800
+
+    Merge branch 'master' into cff-subr-sanitize
+
+commit 72d8f76368b264a42fe58438fe15811d458a7935
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 15:49:11 2018 -0800
+
+    add minimized test case for oss-fuzz issue 11691
+
+ ...z-testcase-minimized-hb-shape-fuzzer-5686369209286656 | Bin 0 ->
+ 2880 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit d9dabc00e9278a346e85538212c126da7e610d55
+Merge: 81cfd3c7 010e2ddb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 5 15:39:34 2018 -0800
+
+    Merge pull request #1454 from harfbuzz/cff-fixbcd
+
+    [CFF] fix oss-fuzz issue 11674: parse_bcd
+
+commit 81cfd3c775dbc470f57d7fe2775cc068ffa367b6
+Merge: 8394a6cb 6708c559
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 5 15:37:15 2018 -0800
+
+    Merge pull request #1455 from harfbuzz/cff-strinc_assert
+
+    [CFF] fix oss-fuzz issue 11675 (ASSERT: count <= str.len)
+
+commit 6dcfda92c17a7701479118751a8290246e9a3c05
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 15:07:46 2018 -0800
+
+    sanitize CFF1 & CFF2 global subrs
+
+ src/hb-ot-cff1-table.hh | 2 +-
+ src/hb-ot-cff2-table.hh | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit 6708c5595fc6babdae0132f8a23cbe3558a58703
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 12:51:18 2018 -0800
+
+    fix oss-fuzz issue 11675 (ASSERT: count <= str.len)
+
+    Also added an additional error check to avail ()
+
+ src/hb-cff-interp-common.hh                           |  18
+ ++++++++++++++++--
+ ...stcase-minimized-hb-subset-fuzzer-5768186323009536 | Bin 0 ->
+ 337 bytes
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+commit 010e2ddb384b5a721172fd7466aafec58dbf8063
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 12:23:58 2018 -0800
+
+    minimized test case for oss-fuzz issue 11674
+
+ ...zz-testcase-minimized-hb-subset-fuzzer-5672006905757696 | Bin 0 ->
+ 73 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 2cb9d4c183afc838ecf2ba0d47814e9eaa6f09c6
+Merge: a5fa843c 8394a6cb
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 11:25:29 2018 -0800
+
+    Merge branch 'master' into cff-fixbcd
+
+commit a5fa843c746e20aaca48ece6cff057deb8d916ca
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 11:18:16 2018 -0800
+
+    fixed a bug with fractional part in a negative value
+
+ src/hb-cff-interp-dict-common.hh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 8394a6cb252dd8b4230c2b59e8c346ec5403bf88
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Dec 5 15:23:41 2018 +0330
+
+    [os2] Make newer table fields accessible (#1452)
+
+ src/hb-ot-os2-table.hh | 88
+ +++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 66 insertions(+), 22 deletions(-)
+
+commit 5ab086ebb18112ef48bf6c913acc91b2009a9bed
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Dec 5 14:17:37 2018 +0330
+
+    [fdsc] Implement the table parsing
+
+    Related to https://github.com/harfbuzz/harfbuzz/issues/1337
+
+    May used in addition to an API related to STAT.
+
+    Lots of Apple fonts have it.
+
+ src/Makefile.sources     |   1 +
+ src/hb-aat-fdsc-table.hh | 103
+ +++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-aat-layout.cc     |   1 +
+ 3 files changed, 105 insertions(+)
+
+commit 8f80e53341a3d5bac6c2c39ab6d6973eedb0b074
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Dec 5 13:51:14 2018 +0330
+
+    [gasp] Implement the table parsing
+
+    May or may not be used in
+    https://github.com/harfbuzz/harfbuzz/pull/1432
+
+ src/Makefile.sources    |  1 +
+ src/hb-ot-gasp-table.hh | 84
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-layout.cc     |  5 +--
+ 3 files changed, 88 insertions(+), 2 deletions(-)
+
+commit 79e7e3445efef2dc57f8a10c7e355e802af08868
+Merge: cf4b7db6 78f639b8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Dec 5 13:25:18 2018 +0330
+
+    Merge pull request #1449 from harfbuzz/cff-fixcharset
+
+    [CFF] fix for oss-fuzz 11657: Charset overrun
+
+commit cf4b7db6b1e01c11d7a8a26d95cf947935a234a7
+Merge: 32cc46c7 803d2f92
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Dec 5 13:23:23 2018 +0330
+
+    Merge pull request #1448 from harfbuzz/cff-leak
+
+    [CFF] fix leak: oss-fuzz 11662
+
+commit 620d1ef588c6ce25644891cfe4b9c20fd8a9d1db
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 00:36:11 2018 -0800
+
+    fix unsigned long const
+
+ src/hb-cff-interp-dict-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 28dfb4c14280b05ad0a519f9df2b0eda41a62540
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Dec 5 00:26:03 2018 -0800
+
+    fix signed/unsigned comparison
+
+ src/hb-cff-interp-dict-common.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit f9cee08edd32182044407bf6ffde00df0feb09b7
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 23:58:26 2018 -0800
+
+    use sized int types in parse_bcd
+
+ src/hb-cff-interp-dict-common.hh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit c01a5f32a33fa875de68ca29a4672fd36a05245b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 23:23:23 2018 -0800
+
+    refix
+
+ src/hb-cff-interp-dict-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 755fefc92113e469a1aadee2546958fede156c01
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 23:18:28 2018 -0800
+
+    fix bug
+
+ src/hb-cff-interp-dict-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0e81b153aff1f2e301e73ca1a15a9bc5b2e7bb82
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 22:40:07 2018 -0800
+
+    fix typo
+
+ src/hb-cff-interp-dict-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 85d4b15cd88ce9a6ffccccf90300f9c184166058
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 22:30:33 2018 -0800
+
+    include float.h
+
+ src/hb-cff-interp-dict-common.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 5a7c371e4c6f1775ebbfe120fafe92afe402a954
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 22:24:38 2018 -0800
+
+    check overflow & clamp
+
+ src/hb-cff-interp-dict-common.hh | 36
+ +++++++++++++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
+
+commit 32cc46c75a5f163f254b7998ed9193d5bbc85e4b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 21:32:34 2018 -0800
+
+    [CFF] fix oss-fuzz issue 11670: NULL dereference (#1450)
+
+    * guard against no subr access
+
+    * code tweak
+
+    * add minimized testcase for oss-fuzz 11670 (Null deference)
+
+ src/hb-cff-interp-cs-common.hh                     |  22
+ ++++++++++++++++-----
+ src/hb-ot-cff-common.hh                            |   2 +-
+ ...ase-minimized-hb-subset-fuzzer-5672913680728064 | Bin 0 -> 861 bytes
+ 3 files changed, 18 insertions(+), 6 deletions(-)
+
+commit 78f639b8bf508ccfb27224f12442f8e8a1460e08
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 14:17:03 2018 -0800
+
+    added minimized testcase for oss-fuzz issue 11657
+
+ ...zz-testcase-minimized-hb-shape-fuzzer-5700264032468992 | Bin 0 ->
+ 648 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit d3d2f32c6e85de1d7fbbb18afef356e09110e61c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 13:51:26 2018 -0800
+
+    fix oss-fuzz 11657: buffer overrun
+
+    Check overrun in Charset1_2::get_glyph
+
+ src/hb-ot-cff1-table.hh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit d0a250a7b15f1099c2005bc2427d62e7370dcc33
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Dec 4 23:42:13 2018 +0330
+
+    Reuse hb_aat_layout_has_* logic in coretext-aat detection logic
+    (#1442)
+
+ src/hb-coretext.cc | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+commit 803d2f92dca329a84d92c224a73e13906e8b8d56
+Merge: 6ce8d10b c775adc1
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 11:01:26 2018 -0800
+
+    Merge branch 'master' into cff-leak
+
+commit 6ce8d10b45598f5f6dade38e65486f793f33d0b6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 10:39:17 2018 -0800
+
+    add unlikely to error handling
+
+ src/hb-ot-cff1-table.hh | 2 +-
+ src/hb-ot-cff2-table.hh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit b61f74f69a84f427b40deefefed429fbc915981c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 10:30:35 2018 -0800
+
+    added minimized test case for oss-fuzz issue 11662
+
+ ...testcase-minimized-hb-shape-fuzzer-5175735354916864 | Bin 0 ->
+ 354461 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 0b952e6026c8be13d16d97f464034ee477e6282f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 10:22:35 2018 -0800
+
+    more leak fixes
+
+ src/hb-ot-cff1-table.hh | 2 +-
+ src/hb-ot-cff2-table.hh | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+commit c775adc1383f72f02b1329628b3eba1dc377a0f7
+Merge: c968869f 04f2ca94
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Dec 4 21:30:07 2018 +0330
+
+    Merge pull request #1444 from harfbuzz/cff-assert
+
+    removed assert, fixes https://github.com/harfbuzz/harfbuzz/issues/1443
+
+commit 9473463f5c884fcb1de8a7ba7410da2601e6ffa8
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 09:58:48 2018 -0800
+
+    fix attempt for oss-fuzz 11662 leak
+
+ src/hb-ot-cff1-table.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 04f2ca94212983d675ed2cd36350be23ff2a6e19
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Dec 4 09:24:07 2018 -0800
+
+    removed assert
+
+ src/hb-ot-cff1-table.hh | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit c968869f212dbfcb86d42fb36049328521cbf00c
+Merge: 8c05b955 c48f53d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Dec 4 04:14:13 2018 -0500
+
+    Merge pull request #1441 from harfbuzz/cff-doublenum
+
+    use double as CFF Number implementation
+
+commit c48f53d30901dfc20b7432c2947e66642010dc4e
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Dec 3 16:59:41 2018 -0800
+
+    more double changes
+
+ src/hb-cff2-interp-cs.hh       | 4 ++--
+ test/api/test-ot-extents-cff.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 9424e8052686a6a93e0d30e38aecbe927db9d787
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Dec 3 16:18:10 2018 -0800
+
+    added minimized test cases
+
+ ...zz-testcase-minimized-hb-shape-fuzzer-5647267827023872 | Bin 0 ->
+ 655 bytes
+ ...zz-testcase-minimized-hb-shape-fuzzer-5725855502827520 | Bin 0 ->
+ 655 bytes
+ ...zz-testcase-minimized-hb-shape-fuzzer-5736657639178240 | Bin 0 ->
+ 459 bytes
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 5fff6ab0024547a8ac47723a0047f4b17416d6ce
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Dec 3 16:06:58 2018 -0800
+
+    additional precision made a difference in extents test
+
+ src/hb-cff-interp-common.hh    | 2 +-
+ src/hb-cff2-interp-cs.hh       | 2 +-
+ test/api/test-ot-extents-cff.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 9e5180cd444b6900a0fa0c3df4c8138f9a663383
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Dec 3 15:32:42 2018 -0800
+
+    more double changes
+
+ src/hb-cff-interp-common.hh      |  8 ++++----
+ src/hb-cff-interp-dict-common.hh | 10 +++++-----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+commit 9af33d7a2ad5ce88fc508bc5c6a56be4650d2621
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Dec 3 14:48:46 2018 -0800
+
+    Number to use double for all types
+
+ src/hb-cff-interp-common.hh | 84
+ +++++++--------------------------------------
+ 1 file changed, 13 insertions(+), 71 deletions(-)
+
+commit 8c05b955eb4aa088b2b5df9b6415863486eaf59c
+Merge: d19b1680 01f628cf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 3 14:30:51 2018 -0500
+
+    Merge pull request #1439 from ebraminio/tracking
+
+    [aat] Expose hb_aat_layout_has_tracking API
+
+commit 01f628cf5571b8b58108ab66cfc3e929c9840e31
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Dec 3 22:04:48 2018 +0330
+
+    [aat] Expose hb_aat_layout_has_tracking API
+
+ docs/harfbuzz-sections.txt  |   7 ++++---
+ src/hb-aat-layout.cc        |   9 ++++++++-
+ src/hb-aat-layout.h         |   8 ++++++++
+ src/hb-aat-layout.hh        |   3 ---
+ test/api/fonts/aat-morx.ttf | Bin 0 -> 1620 bytes
+ test/api/fonts/aat-trak.ttf | Bin 0 -> 2456 bytes
+ test/api/test-aat-layout.c  |  13 +++++++++++++
+ 7 files changed, 33 insertions(+), 7 deletions(-)
+
+commit d19b1680b53e54f449736432f369a676c394ebf8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 3 10:41:37 2018 -0500
+
+    [aat] Expose a couple APIs
+
+    New API:
+    +hb_aat_layout_has_substitution()
+    +hb_aat_layout_has_positioning()
+
+ docs/harfbuzz-sections.txt |  2 ++
+ src/hb-aat-layout.cc       | 20 ++++++++++++++++----
+ src/hb-aat-layout.h        | 16 ++++++++++++++++
+ src/hb-aat-layout.hh       |  6 ------
+ 4 files changed, 34 insertions(+), 10 deletions(-)
+
+commit 84efe0438e1cfc5b070e114b70e8c070be6119ca
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 2 12:38:53 2018 -0500
+
+    [aat] Fix division sign fallout
+
+    Happened after 11d2f49af8f53340134c844173f4d8655b00dea3
+    since now nClasses is unsigned int...
+
+ src/hb-aat-layout-common.hh                               |   2 +-
+ ...zz-testcase-minimized-hb-shape-fuzzer-5768046065483776 | Bin 0 ->
+ 342 bytes
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 2087f5a2a743380b36399ba8a2b4ff9e93890fcf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 1 20:04:45 2018 -0500
+
+    Add casts to hb_array_t<>
+
+ src/hb-open-type.hh | 13 ++++++++++---
+ src/hb-vector.hh    |  2 ++
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+commit 58d4d19947794aded4e966290b01e1034f216a7d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 1 19:34:18 2018 -0500
+
+    Simplify build source list
+
+ CMakeLists.txt       |  12 +--
+ src/Makefile.am      |   6 --
+ src/Makefile.sources | 231
+ ++++++++++++++++++++++++---------------------------
+ 3 files changed, 111 insertions(+), 138 deletions(-)
+
+commit 967a204ee92548163a0d19678a237dcaf3720c20
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 1 19:28:17 2018 -0500
+
+    Minor
+
+ test/api/hb-subset-test.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 11d2f49af8f53340134c844173f4d8655b00dea3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 1 13:12:21 2018 -0500
+
+    New approach to change BigEndian casts to be int-sized
+
+    Fixes spurious warnings like:
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1436
+
+ src/hb-open-type.hh | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+commit 50e0273ab18acd2fbb21bcf18ad487092e890b4e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 1 13:03:52 2018 -0500
+
+    Change hb_assert_unsigned_t<> to hb_is_signed<>
+
+ src/hb-dsalgs.hh | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+commit c3a8b047aab47e40dc107a952b3a1472068ec932
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 1 00:14:48 2018 -0500
+
+    Revert "Change BigEndian casts to be int-sized"
+
+    This reverts commit eb5ddd32bf4e458ca0af8d5784f8fd46485ad225.
+
+    Broke tests, badly.  To be investigated and reenabled.
+
+ src/hb-open-type.hh | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit be45677ab605efc711a433323d66e4051c289252
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 1 00:04:29 2018 -0500
+
+    Minor
+
+ src/hb-ot-layout-gsub-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit eb5ddd32bf4e458ca0af8d5784f8fd46485ad225
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 1 00:03:01 2018 -0500
+
+    Change BigEndian casts to be int-sized
+
+    Fixes spurious warnings like:
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1436
+
+ src/hb-open-type.hh | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit e8860fdcaa69e3452edd903f78599bc8fa9d109c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 23:38:24 2018 -0500
+
+    Fix more warning
+
+ src/hb-ot-cff-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit af349ee3487b31c2328f0a37a43d31b248ed14e5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 23:20:50 2018 -0500
+
+    Fix warning
+
+ src/hb-ot-cff-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 825df6dbc7fd013c68d7b5672f81e69b69bc14e7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 23:04:59 2018 -0500
+
+    [CFF] Change spaces to tabs
+
+ src/hb-cff-interp-common.hh      | 389 ++++++++++++++++-----------------
+ src/hb-cff-interp-cs-common.hh   | 324 ++++++++++++++--------------
+ src/hb-cff-interp-dict-common.hh | 190 ++++++++--------
+ src/hb-cff1-interp-cs.hh         |  72 +++----
+ src/hb-cff2-interp-cs.hh         |  76 +++----
+ src/hb-ot-cff-common.hh          | 128 +++++------
+ src/hb-ot-cff1-table.cc          |   4 +-
+ src/hb-ot-cff1-table.hh          | 456
+ +++++++++++++++++++--------------------
+ src/hb-ot-cff2-table.cc          |   4 +-
+ src/hb-ot-cff2-table.hh          | 216 +++++++++----------
+ src/hb-subset-cff-common.cc      |  76 +++----
+ src/hb-subset-cff-common.hh      | 384 ++++++++++++++++-----------------
+ src/hb-subset-cff1.cc            | 416
+ +++++++++++++++++------------------
+ src/hb-subset-cff1.hh            |   2 +-
+ src/hb-subset-cff2.cc            | 240 ++++++++++-----------
+ src/hb-subset-cff2.hh            |   2 +-
+ 16 files changed, 1492 insertions(+), 1487 deletions(-)
+
+commit 592f39b3c4ed04a6f6cf129020358e64782c7108
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 22:54:57 2018 -0500
+
+    [CFF] Whitespace
+
+ src/hb-cff-interp-common.hh      |  7 +++----
+ src/hb-cff-interp-cs-common.hh   |  6 +++---
+ src/hb-cff-interp-dict-common.hh |  6 +++---
+ src/hb-cff2-interp-cs.hh         |  2 +-
+ src/hb-ot-cff-common.hh          | 12 ++++++------
+ src/hb-ot-cff1-table.hh          | 30 +++++++++++++++---------------
+ src/hb-ot-cff2-table.hh          | 12 ++++++------
+ src/hb-subset-cff-common.cc      |  8 ++++----
+ src/hb-subset-cff-common.hh      | 34 +++++++++++++++++-----------------
+ src/hb-subset-cff1.cc            | 20 ++++++++++----------
+ src/hb-subset-cff2.cc            | 18 +++++++++---------
+ 11 files changed, 77 insertions(+), 78 deletions(-)
+
+commit a2e8d1d455c5d0ae22927567cf8a9a2539cd3470
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 22:54:20 2018 -0500
+
+    Minor
+
+ src/Makefile.sources | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
+
+commit e3dc47c6357813d2dd098aad312d79e9d7c2aa18
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 22:43:22 2018 -0500
+
+    Remove generated files that were accidentally added by CFF2 branch
+
+ gtk-doc.make      |  320 --
+ m4/libtool.m4     | 8369
+ -----------------------------------------------------
+ m4/ltoptions.m4   |  437 ---
+ m4/ltsugar.m4     |  124 -
+ m4/ltversion.m4   |   23 -
+ m4/lt~obsolete.m4 |   99 -
+ 6 files changed, 9372 deletions(-)
+
+commit 5e64e0f53259dbc0a3ea8e220ded15e85bbc1782
+Merge: 09096aa8 d8c69137
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 22:40:54 2018 -0500
+
+    Merge pull request #1113 from harfbuzz/cff-subset
+
+    CFF/CFF2 subsetter
+
+commit 09096aa89f1944dff94a5518bce578eba8989e74
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Sat Dec 1 10:22:49 2018 +0700
+
+    Use nullptr instead of 0/NULL. (#1435)
+
+    * Use nullptr instead of 0/NULL.
+
+    * Update test-name-table.cc
+
+ src/hb-debug.hh        | 2 +-
+ src/test-name-table.cc | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit d8c69137655fbe9678d1dfef0eb3c4172f8bbfc0
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 30 18:58:14 2018 -0800
+
+    undo 0u
+
+ src/hb-cff2-interp-cs.hh    | 2 +-
+ src/hb-ot-cff1-table.hh     | 4 ++--
+ src/hb-ot-vorg-table.hh     | 2 +-
+ src/hb-subset-cff-common.hh | 4 ++--
+ src/hb-subset-cff1.cc       | 4 ++--
+ 5 files changed, 8 insertions(+), 8 deletions(-)
+
+commit 2c859b3880868b30823eb00bed90dc0de873628b
+Merge: 9483da14 bb72de66
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 30 18:47:34 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit bb72de66ddf3ae9ae53cf68642cb228e88aa64f5
+Merge: fedd8e6c fb059082
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 21:36:35 2018 -0500
+
+    Merge pull request #1433 from harfbuzz/overload-overload
+
+    Fix ambiguous overload errors with old compilers
+
+commit fb059082138bf17a5a8616410d9a35f927f9fd85
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 20:45:40 2018 -0500
+
+    Revert ugly fixes
+
+    Now that we have 6daf45e0, revert cryptic hacks...
+
+    This reverts commit abd81ed4f5cbc5a94171747909bc6b77551cb929.
+    This reverts commit 9c6921c08c905a0cf45ba0182134e6ff910fac51.
+    This reverts commit d39760cabfe4007cefdfc45231e85e93fababac2.
+    This reverts commit fedd8e6c176dea85194693399e50243eb1c117c4.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1374
+
+ src/hb-aat-layout-morx-table.hh |  4 ++--
+ src/hb-face.cc                  |  4 ++--
+ src/hb-machinery.hh             |  4 ++--
+ src/hb-ot-color-cpal-table.hh   |  2 +-
+ src/hb-ot-kern-table.hh         |  2 +-
+ src/hb-ot-layout-gpos-table.hh  | 32 ++++++++++++++++----------------
+ src/hb-ot-layout-gsubgpos.hh    | 14 +++++++-------
+ 7 files changed, 31 insertions(+), 31 deletions(-)
+
+commit dfad19ad5aefdacecca6af81917abc2670d4416f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 19:57:12 2018 -0500
+
+    Make operator [] take signed int
+
+    The built-in operator takes signed int.  So, match it, such that
+    the built-in is never a better or equally-good match to our operator.
+    Fixes "ambiguous overload" errors from gcc 4.2 and VS 2008.
+
+    See https://github.com/harfbuzz/harfbuzz/issues/1374
+
+ src/hb-dsalgs.hh    |  3 ++-
+ src/hb-open-type.hh | 42 ++++++++++++++++++++++++++++--------------
+ src/hb-vector.hh    |  6 ++++--
+ 3 files changed, 34 insertions(+), 17 deletions(-)
+
+commit 9483da145d6da1bdfa3224fe13a5b4e9b449d19f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 30 16:59:41 2018 -0800
+
+    redo fixes
+
+ src/hb-cff2-interp-cs.hh    | 2 +-
+ src/hb-ot-cff1-table.hh     | 4 ++--
+ src/hb-subset-cff-common.hh | 6 +++---
+ src/hb-subset-cff1.cc       | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+commit 291da448237cdc0b5534fbc1ce2288e1aa8e7b8a
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 30 16:50:46 2018 -0800
+
+    yet another
+
+ src/hb-subset-cff-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b1821b9d092e4fd7fd888f4bffc341283bace461
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 30 16:31:01 2018 -0800
+
+    some more
+
+ src/hb-subset-cff-common.hh | 4 ++--
+ src/hb-subset-cff1.cc       | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 9784cff55688d1ee93275e39c2339d5a486ed78b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 30 16:07:08 2018 -0800
+
+    fix another pesky gcc error
+
+ src/hb-cff2-interp-cs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 23a797b44365ed76fc7db25be13bd9c3580a8695
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 30 15:15:31 2018 -0800
+
+    silence picky gcc errors
+
+ src/hb-ot-cff1-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 9ae954f43ad1eb703d54db98ce46157370b71a9c
+Merge: 471db3aa fedd8e6c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 30 15:00:52 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit fedd8e6c176dea85194693399e50243eb1c117c4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 16:50:30 2018 -0500
+
+    One more.........
+
+    I wonder if there's something better to do about these :(.
+
+    In file included from hb-ot-color.cc:31:
+    hb-ot-color-cpal-table.hh: In member function 'unsigned int
+    OT::CPAL::get_size() const':
+    hb-ot-color-cpal-table.hh:118: error: ISO C++ says that these are
+    ambiguous, even though the worst conversion for the first is better
+    than the worst conversion for the second:
+
+ src/hb-ot-color-cpal-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit bc5db9b0807767ac04d6e50070d69cb9c520f06e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 16:04:52 2018 -0500
+
+    One more....
+
+    hb-ot-vorg-table.hh:96: error: ISO C++ says that these are ambiguous,
+    even though the worst conversion for the first is better than the
+    worst conversion for the second:
+    hb-vector.hh:87: note: candidate 1: const Type& hb_vector_t<Type,
+    PreallocedCount>::operator[](unsigned int) const [with Type =
+    OT::VertOriginMetric, unsigned int PreallocedCount = 8u]
+    hb-ot-vorg-table.hh:96: note: candidate 2: operator[](const T*,
+    int) <built-in>
+
+ src/hb-ot-vorg-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d39760cabfe4007cefdfc45231e85e93fababac2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 15:55:30 2018 -0500
+
+    One more...
+
+    Sigh.
+
+    hb-ot-kern-table.hh: In member function 'int
+    OT::KernSubTableFormat3<KernSubTableHeader>::get_kerning(hb_codepoint_t,
+    hb_codepoint_t) const':
+    hb-ot-kern-table.hh:59: error: ambiguous overload for 'operator[]'
+    in 'kernValue[kernIndex[i]]'
+    hb-ot-kern-table.hh:59: note: candidates are: operator[](T*, int)
+    <built-in>
+    hb-dsalgs.hh:574: note:                 Type&
+    hb_array_t<Type>::operator[](unsigned int) const [with Type = const
+    OT::IntType<short int, 2u>]
+
+ src/hb-ot-kern-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9c6921c08c905a0cf45ba0182134e6ff910fac51
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 15:16:57 2018 -0500
+
+    More...
+
+    hb-ot-layout-gsubgpos.hh:1707: error: ISO C++ says that these are
+    ambiguous, even though the worst conversion for the first is better
+    than the worst conversion for the second:
+    ...
+
+ src/hb-aat-layout-morx-table.hh |  4 ++--
+ src/hb-ot-layout-gpos-table.hh  | 32 ++++++++++++++++----------------
+ src/hb-ot-layout-gsubgpos.hh    | 16 ++++++++--------
+ 3 files changed, 26 insertions(+), 26 deletions(-)
+
+commit f998bb2086342d6fdcd4295593eddea91396e0b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 12:52:21 2018 -0500
+
+    More weird fixes
+
+    In file included from hb-ot-name.cc:29:
+    hb-ot-name-table.hh: In member function 'unsigned int
+    OT::name::get_size() const':
+    hb-ot-name-table.hh:157: error: ISO C++ says that these are ambiguous,
+    even though the worst conversion for the first is better than the
+    worst conversion for the second:
+    hb-open-type.hh:354: note: candidate 1: const Type&
+    OT::UnsizedArrayOf<Type>::operator[](unsigned int) const [with Type
+    = OT::NameRecord]
+    hb-ot-name-table.hh:157: note: candidate 2: operator[](const T*,
+    int) <built-in>
+    hb-ot-name-table.hh: In member function 'void
+    OT::name::accelerator_t::init(hb_face_t*)':
+    hb-ot-name-table.hh:196: error: ISO C++ says that these are ambiguous,
+    even though the worst conversion for the first is better than the
+    worst conversion for the second:
+    hb-dsalgs.hh:574: note: candidate 1: Type&
+    hb_array_t<Type>::operator[](unsigned int) const [with Type =
+    const OT::NameRecord]
+    hb-ot-name-table.hh:196: note: candidate 2: operator[](T*, int)
+    <built-in>
+    hb-ot-name-table.hh:197: error: ISO C++ says that these are ambiguous,
+    even though the worst conversion for the first is better than the
+    worst conversion for the second:
+    hb-dsalgs.hh:574: note: candidate 1: Type&
+    hb_array_t<Type>::operator[](unsigned int) const [with Type =
+    const OT::NameRecord]
+    hb-ot-name-table.hh:197: note: candidate 2: operator[](T*, int)
+    <built-in>
+    hb-ot-name-table.hh:198: error: ISO C++ says that these are ambiguous,
+    even though the worst conversion for the first is better than the
+    worst conversion for the second:
+    hb-dsalgs.hh:574: note: candidate 1: Type&
+    hb_array_t<Type>::operator[](unsigned int) const [with Type =
+    const OT::NameRecord]
+    hb-ot-name-table.hh:198: note: candidate 2: operator[](T*, int)
+    <built-in>
+    make[4]: *** [libharfbuzz_la-hb-ot-name.lo] Error 1
+    make[3]: *** [all-recursive] Error 1
+
+ src/hb-ot-name-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 67fd94da98f950b5feb719ac805f2a45379fc935
+Merge: abd81ed4 ae79fdaa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 11:53:30 2018 -0500
+
+    Merge commit 'ae79fdaa7774d3f886a8f03926577c3bd2010b03'
+
+commit abd81ed4f5cbc5a94171747909bc6b77551cb929
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 11:51:26 2018 -0500
+
+    Umm.  Cryptic, yes
+
+    In file included from hb-face.cc:35:
+    hb-ot-cmap-table.hh: In member function 'void
+    OT::CmapSubtableFormat4::_compiles_assertion_on_line_388() const':
+    hb-ot-cmap-table.hh:388: error: ISO C++ says that these are ambiguous,
+    even though the worst conversion for the first is better than the
+    worst conversion for the second:
+    hb-open-type.hh:354: note: candidate 1: const Type&
+    OT::UnsizedArrayOf<Type>::operator[](unsigned int) const [with Type =
+    OT::IntType<short unsigned int, 2u>]
+    hb-ot-cmap-table.hh:388: note: candidate 2: operator[](const T*,
+    int) <built-in>
+    hb-ot-cmap-table.hh: In member function 'void
+    OT::CmapSubtableFormat4::_instance_assertion_on_line_388() const':
+    hb-ot-cmap-table.hh:388: error: ISO C++ says that these are ambiguous,
+    even though the worst conversion for the first is better than the
+    worst conversion for the second:
+    hb-open-type.hh:354: note: candidate 1: const Type&
+    OT::UnsizedArrayOf<Type>::operator[](unsigned int) const [with Type =
+    OT::IntType<short unsigned int, 2u>]
+    hb-ot-cmap-table.hh:388: note: candidate 2: operator[](const T*,
+    int) <built-in>
+    hb-face.cc: In function 'hb_blob_t*
+    _hb_face_builder_data_reference_blob(hb_face_builder_data_t*)':
+    hb-face.cc:650: error: ISO C++ says that these are ambiguous, even
+    though the worst conversion for the first is better than the worst
+    conversion for the second:
+    hb-vector.hh:81: note: candidate 1: Type& hb_vector_t<Type,
+    PreallocedCount>::operator[](unsigned int) [with Type =
+    hb_face_builder_data_t::table_entry_t, unsigned int PreallocedCount
+    = 32u]
+    hb-face.cc:650: note: candidate 2: operator[](T*, int) <built-in>
+    hb-face.cc:650: error: ISO C++ says that these are ambiguous, even
+    though the worst conversion for the first is better than the worst
+    conversion for the second:
+    hb-vector.hh:81: note: candidate 1: Type& hb_vector_t<Type,
+    PreallocedCount>::operator[](unsigned int) [with Type =
+    hb_face_builder_data_t::table_entry_t, unsigned int PreallocedCount
+    = 32u]
+    hb-face.cc:650: note: candidate 2: operator[](const T*, int)
+    <built-in>
+    hb-face.cc:651: error: ISO C++ says that these are ambiguous, even
+    though the worst conversion for the first is better than the worst
+    conversion for the second:
+    hb-vector.hh:81: note: candidate 1: Type& hb_vector_t<Type,
+    PreallocedCount>::operator[](unsigned int) [with Type =
+    hb_face_builder_data_t::table_entry_t, unsigned int PreallocedCount
+    = 32u]
+    hb-face.cc:651: note: candidate 2: operator[](T*, int) <built-in>
+    hb-face.cc:651: error: ISO C++ says that these are ambiguous, even
+    though the worst conversion for the first is better than the worst
+    conversion for the second:
+    hb-vector.hh:81: note: candidate 1: Type& hb_vector_t<Type,
+    PreallocedCount>::operator[](unsigned int) [with Type =
+    hb_face_builder_data_t::table_entry_t, unsigned int PreallocedCount
+    = 32u]
+    hb-face.cc:651: note: candidate 2: operator[](const T*, int)
+    <built-in>
+
+ src/hb-face.cc      | 4 ++--
+ src/hb-machinery.hh | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit ae79fdaa7774d3f886a8f03926577c3bd2010b03
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 11:51:26 2018 -0500
+
+    Umm.  Cryptic, yes
+
+    hb-face.cc:650: error: ISO C++ says that these are ambiguous, even
+    though the worst conversion for the first is better than the worst
+    conversion for the second:
+    hb-vector.hh:81: note: candidate 1: Type& hb_vector_t<Type,
+    PreallocedCount>::operator[](unsigned int) [with Type =
+    hb_face_builder_data_t::table_entry_t, unsigned int PreallocedCount
+    = 32u]
+    hb-face.cc:650: note: candidate 2: operator[](T*, int) <built-in>
+
+ src/hb-face.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0f32c95e1487ffcc37439635c3294f941eae857a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 11:31:39 2018 -0500
+
+    Fix a few more sizeof(vector[0]) errors with weird compilers
+
+ src/hb-face.cc | 4 ++--
+ src/hb-set.hh  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 88630a458b21b811075bed9e761a94c50736dc11
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 01:11:04 2018 -0500
+
+    Fix build for realz
+
+ src/hb-ot-deprecated.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 346286d04eb616c43ba8c796211fa2e5e7bf1983
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 00:44:40 2018 -0500
+
+    Fix build
+
+ src/hb-ot-deprecated.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 31f39cb41e1497a76c5838c93f9b4034089049f2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 00:38:08 2018 -0500
+
+    [post] Rename v2 to v2X
+
+ src/hb-ot-post-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit e3dd47e6025a7f082af4830ba483d90d9b44381f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Nov 30 00:32:12 2018 -0500
+
+    Move things
+
+ src/Makefile.sources   |   1 +
+ src/hb-deprecated.h    |  61 +---------------------------
+ src/hb-ot-deprecated.h | 106
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot.h            |   1 +
+ 4 files changed, 109 insertions(+), 60 deletions(-)
+
+commit 27a6b0a2f7255ed6fc7bfe1f10052c2e344e319b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 16:29:30 2018 -0500
+
+    Fix build for realz
+
+ src/hb-coretext.cc  |  2 +-
+ src/hb-uniscribe.cc | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+commit e2af4dd1ecbe398c60fe5f3f370dd35400d7e1eb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 16:03:15 2018 -0500
+
+    [uniscribe] Fix build
+
+ src/hb-uniscribe.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit bf738ba3ba80778c7feb95ece446607a250d9382
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Nov 30 00:06:40 2018 +0330
+
+    [test][aat] Remove extra --shaper ot
+
+    As run-tests.py already adds it
+
+ test/shaping/data/in-house/tests/macos.tests | 64
+ ++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
+
+commit b65645bbafb3f1f9f956df3028cf4479a4bdc265
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 29 23:57:50 2018 +0330
+
+    [ci] Re-enable llvm-gcc-4.2 bots (#1429)
+
+ .circleci/config.yml | 48
+ ++++++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
+
+commit e7bd29ea11bd6301a332b471120a4a2cd8575d09
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Nov 29 23:47:20 2018 +0330
+
+    Limit __builtin_bswap16 to GCC >= 5 as it was implemented on 4.8
+
+ src/hb-machinery.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ac0264717b949df8840b179d882a9bed2993fb74
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 15:07:44 2018 -0500
+
+    [coretext] Fix compile
+
+    Fingers crossed.
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5c4fead734b082e0168e6811bec4bcaa19acc36a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 15:04:34 2018 -0500
+
+    Convert "static const hb_tag_t" constants to enum
+
+ src/hb-aat-layout-ankr-table.hh |  2 +-
+ src/hb-aat-layout-bsln-table.hh |  2 +-
+ src/hb-aat-layout-feat-table.hh |  2 +-
+ src/hb-aat-layout-just-table.hh |  2 +-
+ src/hb-aat-layout-kerx-table.hh |  2 +-
+ src/hb-aat-layout-lcar-table.hh |  2 +-
+ src/hb-aat-layout-morx-table.hh |  6 +++---
+ src/hb-aat-layout-trak-table.hh |  2 +-
+ src/hb-aat-ltag-table.hh        |  2 +-
+ src/hb-ot-cmap-table.hh         |  2 +-
+ src/hb-ot-color-cbdt-table.hh   |  4 ++--
+ src/hb-ot-color-colr-table.hh   |  2 +-
+ src/hb-ot-color-cpal-table.hh   |  2 +-
+ src/hb-ot-color-sbix-table.hh   |  2 +-
+ src/hb-ot-color-svg-table.hh    |  2 +-
+ src/hb-ot-glyf-table.hh         |  4 ++--
+ src/hb-ot-hdmx-table.hh         |  2 +-
+ src/hb-ot-head-table.hh         |  2 +-
+ src/hb-ot-hhea-table.hh         |  4 ++--
+ src/hb-ot-hmtx-table.hh         | 14 +++++++-------
+ src/hb-ot-kern-table.hh         |  6 +++---
+ src/hb-ot-layout-base-table.hh  |  2 +-
+ src/hb-ot-layout-gdef-table.hh  |  2 +-
+ src/hb-ot-layout-gpos-table.hh  |  2 +-
+ src/hb-ot-layout-gsub-table.hh  |  2 +-
+ src/hb-ot-layout-jstf-table.hh  |  2 +-
+ src/hb-ot-math-table.hh         |  2 +-
+ src/hb-ot-maxp-table.hh         |  2 +-
+ src/hb-ot-name-table.hh         |  2 +-
+ src/hb-ot-os2-table.hh          |  2 +-
+ src/hb-ot-post-table.hh         |  2 +-
+ src/hb-ot-stat-table.hh         |  2 +-
+ src/hb-ot-var-avar-table.hh     |  2 +-
+ src/hb-ot-var-fvar-table.hh     |  2 +-
+ src/hb-ot-var-hvar-table.hh     |  8 ++++----
+ src/hb-ot-var-mvar-table.hh     |  2 +-
+ src/hb-ot-vorg-table.hh         |  2 +-
+ 37 files changed, 53 insertions(+), 53 deletions(-)
+
+commit 9e4138c82548c2b29a1ae8801d2c6c7c1f1a9c7a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 15:01:10 2018 -0500
+
+    Convert misc "static const" constants to enum
+
+ src/hb-aat-layout-kerx-table.hh |  4 ++--
+ src/hb-map.hh                   |  2 +-
+ src/hb-ot-kern-table.hh         |  4 ++--
+ src/hb-set-digest.hh            | 14 +++++++-------
+ 4 files changed, 12 insertions(+), 12 deletions(-)
+
+commit 44cbd2ea3dc36312bd80860983b6616586e78c6c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 14:53:43 2018 -0500
+
+    Convert "static const bool" constants to anonymous enum
+
+ src/hb-aat-layout-common.hh     |  4 ++--
+ src/hb-aat-layout-kerx-table.hh |  4 ++--
+ src/hb-aat-layout-morx-table.hh |  8 ++++----
+ src/hb-dsalgs.hh                | 16 ++++++++--------
+ src/hb-ot-kern-table.hh         |  4 ++--
+ src/hb-ot-layout.cc             |  4 ++--
+ 6 files changed, 20 insertions(+), 20 deletions(-)
+
+commit 861bc75349257f74c12b261abfcd5ab9e2f04863
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 14:34:44 2018 -0500
+
+    [vector] Make pointer cast explicit
+
+    Too bad this doesn't help MSVC 2008 build, as explicit operators are
+    C++11.
+
+ src/hb-machinery.hh     | 2 +-
+ src/hb-ot-cmap-table.hh | 3 ++-
+ src/hb-set.hh           | 4 ++--
+ src/hb-subset.cc        | 2 +-
+ src/hb-vector.hh        | 4 ++--
+ 5 files changed, 8 insertions(+), 7 deletions(-)
+
+commit 72955e68256806f082439d65e6f9b5cf2e35fa8a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 14:28:44 2018 -0500
+
+    Hand-hold older compilers
+
+ src/hb-set.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1a182e97ee71de0e78a70ff823ae17fa93a31830
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 12:39:52 2018 -0500
+
+    [test/text-rendering-tests] Update from upstream
+
+ .../text-rendering-tests/fonts/TestGVAR-Composite-0.ttf  | Bin 0 ->
+ 3136 bytes
+ .../fonts/TestGVAR-Composite-Missing.ttf                 | Bin 0 ->
+ 2984 bytes
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 000d4b128eba58677acdc3b361829ff2f9a257b1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 12:32:47 2018 -0500
+
+    Make shaper's override_features() override user features as well
+
+    The override_features is used to override features that are normally
+    discretionary features, but in a specific shaper are for various
+    reasons desired to be bolted on or off, because they've been used
+    for inherent shaping.  As such, it makes sense that they also
+    override user features.  Ie. if user turned 'liga' on, we don't
+    want Khmer shaping to become broken...  Or turn 'clig' off...
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1310
+
+ src/hb-ot-shape.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit a95d9d8c8465ebc927bc2194dffe4ea95542e54c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 12:30:14 2018 -0500
+
+    [khmer] Move 'clig' to overrides
+
+    Prerequisite for https://github.com/harfbuzz/harfbuzz/issues/1310
+
+ src/hb-ot-shape-complex-khmer.cc | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+commit 282ce7230b8bd8ad65c408cdaf1499504038247d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 12:18:14 2018 -0500
+
+    Fix "typename outside template" issues
+
+    Nothing an extra template class wouldn't fix...
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1419
+
+ src/hb-null.hh | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
+commit dc41ecef85b094b30c612113606597b91c55351c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Nov 29 11:53:53 2018 -0500
+
+    2.2.0
+
+ NEWS                 | 35 +++++++++++++++++++++++++++++++++++
+ configure.ac         |  2 +-
+ src/hb-aat-layout.cc |  6 +++---
+ src/hb-aat-layout.h  |  4 ++--
+ src/hb-deprecated.h  |  4 ++--
+ src/hb-ot-var.cc     |  8 ++++----
+ src/hb-ot-var.h      |  4 ++--
+ src/hb-version.h     |  6 +++---
+ 8 files changed, 52 insertions(+), 17 deletions(-)
+
 commit 7b85081be4fbd6cad75dc28ae933ce920f71b22d
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Nov 29 11:34:22 2018 -0500
@@ -24,6 +2667,22 @@ Date:   Thu Nov 29 11:36:05 2018 +0330
 
  test/shaping/data/in-house/tests/macos.tests | 12 ++++++++----
  1 file changed, 8 insertions(+), 4 deletions(-)
+
+commit 471db3aa6f963ecd4ebaf66daa81ef245d30d3b8
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 28 17:06:11 2018 -0800
+
+    workaround for issue #1417
+
+ src/hb-cff-interp-common.hh | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit 32d291ae899eb095500052bed2a22e5255a34838
+Merge: 1ecbf4d3 949655aa
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 28 16:27:45 2018 -0800
+
+    Merge branch 'master' into cff-subset
 
 commit 949655aa7853a4513af6b5247b9822be38f5d322
 Merge: 7b78d223 d3d0f15f
@@ -2248,6 +4907,13 @@ Date:   Tue Nov 20 11:33:33 2018 -0500
  src/hb-ot-var.h | 27 ++++++++++++++-------------
  1 file changed, 14 insertions(+), 13 deletions(-)
 
+commit 1ecbf4d3e3de7edc86651c6f805788747d6d89af
+Merge: 515f1a16 064f703c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Nov 20 17:19:05 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
 commit 064f703c7ac5a28803a8221720e922ea6dbd2505
 Merge: be1828da 82951182
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -2437,6 +5103,22 @@ Date:   Mon Nov 19 11:30:40 2018 -0500
  src/hb-ot-var.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+commit 515f1a16140f78c9ec379854851f77a1b44af145
+Merge: a6da9b94 e3a1a835
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 16 17:38:47 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit a6da9b9415bae43c58f12a8e43b77ba31dd432a6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 16 17:29:03 2018 -0800
+
+    fixed Charset format selection
+
+ src/hb-subset-cff1.cc | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
 commit e3a1a8350a6a7933b0a100194985f4425ab9de19
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Nov 16 16:53:25 2018 -0800
@@ -2571,6 +5253,36 @@ Date:   Fri Nov 16 14:31:05 2018 -0800
  src/hb-ot-var-fvar-table.hh     | 2 +-
  5 files changed, 5 insertions(+), 5 deletions(-)
 
+commit b6903bd6c4b0c792c821e37a8e223088ae40e5fa
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 16 13:46:58 2018 -0800
+
+    ensure fdmap initialized as identity for single-FD (non-CID) fonts
+
+ src/hb-subset-cff1.cc | 13 ++++++++++---
+ src/hb-subset-cff2.cc |  2 ++
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+commit b403be8ad98ffd2dbe95dad73e96c7ed1295d9fc
+Merge: b67a7c73 50d1a41c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 16 12:29:18 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit b67a7c731f041323c19ab245f0285c304d9ae3d2
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 16 12:28:24 2018 -0800
+
+    drop dotsection as hint along with test case
+
+ src/hb-subset-cff-common.hh             |   4 ++++
+ src/hb-subset-cff1.cc                   |   1 +
+ test/api/fonts/cff1_dotsect.nohints.otf | Bin 0 -> 3132 bytes
+ test/api/fonts/cff1_dotsect.otf         | Bin 0 -> 3220 bytes
+ test/api/test-subset-cff1.c             |  21 +++++++++++++++++++++
+ 5 files changed, 26 insertions(+)
+
 commit 50d1a41c08ad3508a94240b52df03c383ae8f1f8
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Nov 16 08:52:57 2018 -0500
@@ -2700,6 +5412,50 @@ Date:   Fri Nov 16 01:48:26 2018 -0500
  src/hb-subset-plan.cc | 13 +++++++++++++
  1 file changed, 13 insertions(+)
 
+commit 072c7aba92d3c92c84454a12578264f12439bb0d
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 15 15:41:46 2018 -0800
+
+    use 2-byte offset instead of 4-byte for local subrs
+
+    more than enough since local subrs immediately follow its
+    corresponding private dict, as the result 2-byte redunction for each
+    font dict with local subrs
+    updated api test expected subset fonts accordingly
+
+ src/hb-subset-cff-common.hh                           |   4 ++--
+ test/api/fonts/AdobeVFPrototype.abc.otf               | Bin 7460 ->
+ 7456 bytes
+ test/api/fonts/AdobeVFPrototype.ac.nohints.otf        | Bin 6780 ->
+ 6780 bytes
+ test/api/fonts/AdobeVFPrototype.ac.otf                | Bin 6996 ->
+ 6996 bytes
+ .../fonts/SourceHanSans-Regular.41,4C2E.nohints.otf   | Bin 2380 ->
+ 2376 bytes
+ test/api/fonts/SourceHanSans-Regular.41,4C2E.otf      | Bin 2576 ->
+ 2572 bytes
+ test/api/fonts/SourceSansPro-Regular.abc.otf          | Bin 1812 ->
+ 1808 bytes
+ test/api/fonts/SourceSansPro-Regular.ac.nohints.otf   | Bin 1592 ->
+ 1592 bytes
+ test/api/fonts/SourceSansPro-Regular.ac.otf           | Bin 1708 ->
+ 1704 bytes
+ test/api/fonts/cff1_seac.C0.otf                       | Bin 1604 ->
+ 1600 bytes
+ 10 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 9d0231cfe7c404da3b5bc360ad76180a7aded62c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 15 15:39:43 2018 -0800
+
+    fixed a subset bug when no font dicts reduce
+
+ src/hb-ot-cff-common.hh     | 11 +++++++++++
+ src/hb-subset-cff-common.cc | 24 +++++++++++++-----------
+ src/hb-subset-cff1.cc       | 27 ++++++---------------------
+ src/hb-subset-cff2.cc       | 25 +++++--------------------
+ 4 files changed, 35 insertions(+), 52 deletions(-)
+
 commit 11aa0468ac2c62ff734ba6b0f6eb43d1bd6f602b
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
 Date:   Thu Nov 15 23:10:56 2018 +0330
@@ -2737,6 +5493,34 @@ Date:   Thu Nov 15 23:10:49 2018 +0330
  src/hb-ot-math-table.hh | 28 ++++++++++++++--------------
  1 file changed, 14 insertions(+), 14 deletions(-)
 
+commit 13735570f051c4131cdc481939799d76c38c758b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 15 12:10:23 2018 -0800
+
+    reject nested seac
+
+ src/hb-cff1-interp-cs.hh |  4 ++++
+ src/hb-ot-cff1-table.cc  | 11 ++++++-----
+ 2 files changed, 10 insertions(+), 5 deletions(-)
+
+commit c37aecd41c5b55e5ef496f3c4cc255a1e2ce7f9f
+Merge: ecdb77f0 cabe433f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 15 11:03:46 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit ecdb77f0ae1ef9b129cf9195dbdaa9f6c4425ed5
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 15 10:54:15 2018 -0800
+
+    fixed CFF1 subset of std encoding & non-std charset combo
+
+ src/hb-ot-cff-common.hh | 2 --
+ src/hb-ot-cff1-table.hh | 2 ++
+ src/hb-subset-cff1.cc   | 5 +++--
+ 3 files changed, 5 insertions(+), 4 deletions(-)
+
 commit cabe433fbb81d314ad9e3cbed768dd13983a4477
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Nov 15 02:48:50 2018 -0500
@@ -2773,6 +5557,33 @@ Date:   Wed Nov 14 14:49:34 2018 -0500
  +++++++++++++++++++++++++++++---------------
  src/hb-ot-shape.hh          |  6 +++---
  7 files changed, 43 insertions(+), 29 deletions(-)
+
+commit 892ab37e7c9580e35b35a4d82a99e2ea73ac7b0b
+Merge: 3787c078 7867c2ba
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 14 13:54:07 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit 3787c078561f1157bd04644f092c4467f63c717c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 14 13:38:03 2018 -0800
+
+    Implemented seac for extents & subset along with API tests
+
+ gtk-doc.make                    | 321
+ +++++++++++++++++++++++++++++++++++++++-
+ src/hb-cff-interp-common.hh     |   2 +-
+ src/hb-cff-interp-cs-common.hh  |   7 +
+ src/hb-cff1-interp-cs.hh        |  29 +++-
+ src/hb-ot-cff1-table.cc         | 256 +++++++++++++++++++++++++-------
+ src/hb-ot-cff1-table.hh         |  88 ++++++++---
+ src/hb-subset-plan.cc           |  19 +++
+ test/api/fonts/cff1_seac.C0.otf | Bin 0 -> 1604 bytes
+ test/api/fonts/cff1_seac.otf    | Bin 0 -> 2260 bytes
+ test/api/test-ot-extents-cff.c  |  31 ++++
+ test/api/test-subset-cff1.c     |  19 +++
+ 11 files changed, 699 insertions(+), 73 deletions(-)
 
 commit 7867c2bad05fe48f9e4a1b776fb7da67b747fb4e
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
@@ -3164,6 +5975,41 @@ Date:   Mon Nov 12 13:01:22 2018 -0500
  69 bytes
  2 files changed, 1 insertion(+), 1 deletion(-)
 
+commit 41a8bc7fd9399def8f580b02627a77f3972cc0e9
+Merge: 0dfa584c 77bd0a64
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Nov 12 08:49:00 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit 0dfa584cb4af6be2852d038e9bd591f67ea9fc6e
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Nov 12 08:47:07 2018 -0800
+
+    changed Adobe company name
+
+ src/hb-cff-interp-common.hh      | 2 +-
+ src/hb-cff-interp-cs-common.hh   | 2 +-
+ src/hb-cff-interp-dict-common.hh | 2 +-
+ src/hb-cff1-interp-cs.hh         | 2 +-
+ src/hb-cff2-interp-cs.hh         | 2 +-
+ src/hb-ot-cff-common.hh          | 2 +-
+ src/hb-ot-cff1-table.cc          | 2 +-
+ src/hb-ot-cff1-table.hh          | 2 +-
+ src/hb-ot-cff2-table.cc          | 2 +-
+ src/hb-ot-cff2-table.hh          | 2 +-
+ src/hb-ot-vorg-table.hh          | 2 +-
+ src/hb-subset-cff-common.cc      | 2 +-
+ src/hb-subset-cff-common.hh      | 2 +-
+ src/hb-subset-cff1.cc            | 2 +-
+ src/hb-subset-cff1.hh            | 2 +-
+ src/hb-subset-cff2.cc            | 2 +-
+ src/hb-subset-cff2.hh            | 2 +-
+ test/api/test-ot-extents-cff.c   | 2 +-
+ test/api/test-subset-cff1.c      | 2 +-
+ test/api/test-subset-cff2.c      | 2 +-
+ 20 files changed, 20 insertions(+), 20 deletions(-)
+
 commit 3e284e02c2a5da758526360a45364a330b8ab8e9
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sun Nov 11 22:51:34 2018 -0500
@@ -3529,6 +6375,13 @@ Date:   Sat Nov 10 19:54:08 2018 -0500
  src/hb-ot-var-avar-table.hh    | 9 ++++-----
  5 files changed, 20 insertions(+), 13 deletions(-)
 
+commit fb2a037f54f3cd323a447925f6534eccd1c709c1
+Merge: 87984165 b4c61130
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sat Nov 10 16:23:11 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
 commit b4c61130324455bfd42095b01fa14ac901e441f1
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sat Nov 10 16:35:39 2018 -0500
@@ -3664,6 +6517,17 @@ Date:   Sat Nov 10 02:42:08 2018 +0330
  src/hb-ot-glyf-table.hh | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+commit 87984165877c90bf4e0a0418a6407e44c048335d
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 9 08:59:18 2018 -0800
+
+    fixed vstem handling (lack thereof) in check_width
+
+    bug exposed by U+2261 equivalence in SourceCodePro-Regular.otf
+
+ src/hb-cff1-interp-cs.hh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
 commit 5f97fe9956274d9de4e7813d7f2e850d9ffd8224
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Nov 9 10:01:50 2018 -0500
@@ -3733,6 +6597,22 @@ Date:   Thu Nov 8 20:48:54 2018 +0330
  src/hb-aat-layout-trak-table.hh | 12 ++++++------
  2 files changed, 12 insertions(+), 11 deletions(-)
 
+commit 26c291aaa023d31c793b6f505c76e0dd7acbff9b
+Merge: 417963dd f9042384
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 8 09:06:49 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit 417963dd9f93a316e672c77493e763978bfdbc28
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 8 09:01:20 2018 -0800
+
+    got rid of Remap::fullset() as incorrect, redundant, inefficient
+
+ src/hb-ot-cff-common.hh | 22 ----------------------
+ 1 file changed, 22 deletions(-)
+
 commit f90423847b07ff9c9f66be6dfa3b6071f9c7d9d3
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
 Date:   Thu Nov 8 19:17:02 2018 +0330
@@ -3779,6 +6659,19 @@ Date:   Wed Nov 7 21:58:04 2018 -0500
  src/hb-aat-layout.cc | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+commit 636a6833c57eb88ebaa92034c1f4722471f70781
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 7 17:58:45 2018 -0800
+
+    fixed ends_in_hint bug
+
+    subr ends in hint itself should be regarded as hint
+    this flag should propagate to its caller if the call itself is at
+    the end of the caller
+
+ src/hb-subset-cff-common.hh | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
 commit 0bf76154f1bb15aa2fc361eb725977313f103a58
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Nov 7 19:11:43 2018 -0500
@@ -3806,6 +6699,20 @@ Date:   Wed Nov 7 18:13:22 2018 -0500
  src/hb-aat-layout-kerx-table.hh | 4 ++++
  1 file changed, 4 insertions(+)
 
+commit 4d740206943ecb72e4be7cc4815e0a3aa3edaa9d
+Merge: e0c30b96 9d502769
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 7 15:09:30 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit e0c30b961de87d38bff8dd49e86785a5b74fcad3
+Merge: 0996c0ff ae8fd0db
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 7 15:08:55 2018 -0800
+
+    merge with cff-subset branch
+
 commit 006386be3a069199ebaf22bcc55fa7233c62e0d5
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Nov 7 18:04:53 2018 -0500
@@ -3818,6 +6725,34 @@ Date:   Wed Nov 7 18:04:53 2018 -0500
  ++++++++++++++++++++++++++++++-----------
  src/hb-aat-layout-kerx-table.hh | 10 -----
  2 files changed, 66 insertions(+), 34 deletions(-)
+
+commit 0996c0ff6279f377e2b14f08663df2ce82de2b14
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 7 14:48:37 2018 -0800
+
+    implented no-desubroutinize with CFF2 along with API test
+
+    replaced AdobeVFPrototype.abc.otf with a hinted (maually) &
+    subroutinized copy
+    replaced expected results as well
+
+ src/hb-cff-interp-dict-common.hh                   |   4 +-
+ src/hb-cff2-interp-cs.hh                           |  16 +-
+ src/hb-ot-cff-common.hh                            |  22 +--
+ src/hb-subset-cff-common.hh                        |  64 +++++---
+ src/hb-subset-cff2.cc                              | 180
+ ++++++++++++++++++---
+ test/api/fonts/AdobeVFPrototype.abc.nohints.otf    | Bin 7800 -> 0 bytes
+ test/api/fonts/AdobeVFPrototype.abc.otf            | Bin 7800 ->
+ 7460 bytes
+ test/api/fonts/AdobeVFPrototype.ac.nohints.otf     | Bin 7152 ->
+ 6780 bytes
+ .../fonts/AdobeVFPrototype.ac.nosubrs.nohints.otf  | Bin 0 -> 6844 bytes
+ test/api/fonts/AdobeVFPrototype.ac.nosubrs.otf     | Bin 0 -> 7060 bytes
+ test/api/fonts/AdobeVFPrototype.ac.otf             | Bin 7336 ->
+ 6996 bytes
+ test/api/test-subset-cff2.c                        |  51 +++++-
+ 12 files changed, 271 insertions(+), 66 deletions(-)
 
 commit 29c5302376ff2bc8f04b0fc0efba3ce40ef564a7
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -4170,6 +7105,25 @@ Date:   Wed Nov 7 12:16:38 2018 -0500
 
  src/hb-aat-layout-kerx-table.hh | 17 ++++++++++-------
  1 file changed, 10 insertions(+), 7 deletions(-)
+
+commit ae8fd0dbfb57afadfe815c5bde4ad4a6485fd950
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 7 09:16:12 2018 -0800
+
+    clear stack after vsindex op
+
+ src/hb-cff2-interp-cs.hh | 1 +
+ src/hb-ot-cff2-table.hh  | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit 7fed7d80f72b35900b41878ae59e38fd1cb49dc8
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Nov 7 09:09:13 2018 -0800
+
+    fixed off-by-one error in CFF1 Encoding lookup
+
+ src/hb-ot-cff1-table.hh | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 commit d5c0ca210fef315fd039e5b1825a865f36606a3f
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -4579,6 +7533,22 @@ Date:   Tue Nov 6 13:51:39 2018 -0500
  src/hb-ot-kern-table.hh         | 1 +
  2 files changed, 2 insertions(+)
 
+commit 7b21319edfd6531a444846f71e87303bc09f4621
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Nov 6 13:59:07 2018 -0800
+
+    don't reject empty Dict
+
+ src/hb-cff-interp-dict-common.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 43ee0e4d006ce7b4ade4483f2c8ec3d39723fc94
+Merge: ec6817c1 bfafe208
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Nov 6 09:57:17 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
 commit bfafe208da11817b5ebf3751f02af2dcdf57bd19
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Nov 6 12:11:45 2018 -0500
@@ -4971,6 +7941,152 @@ Date:   Mon Nov 5 12:59:32 2018 -0500
  src/hb-ot-var.cc     |  6 ++----
  7 files changed, 25 insertions(+), 27 deletions(-)
 
+commit ec6817c1bd82a60b84cb868e4d7ff4c65cb80ccc
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Nov 5 07:59:08 2018 -0800
+
+    remove build files accidentally pushed
+
+ INSTALL                 |   370 -
+ Makefile                |   954 --
+ Makefile.in             |   954 --
+ aclocal.m4              |  1496 ---
+ ar-lib                  |   270 -
+ autom4te.cache/output.0 | 23333
+ ----------------------------------------------
+ autom4te.cache/output.1 | 23333
+ ----------------------------------------------
+ autom4te.cache/output.2 | 23333
+ ----------------------------------------------
+ autom4te.cache/requests |   555 --
+ autom4te.cache/traces.0 |  3823 --------
+ autom4te.cache/traces.1 |  1229 ---
+ autom4te.cache/traces.2 |  3823 --------
+ compile                 |   347 -
+ config.guess            |  1421 ---
+ config.h                |   227 -
+ config.h.in             |   226 -
+ config.log              |  1560 ----
+ config.status           |  2420 -----
+ config.sub              |  1807 ----
+ configure               | 23333
+ ----------------------------------------------
+ depcomp                 |   791 --
+ install-sh              |   501 -
+ libtool                 | 11805 -----------------------
+ ltmain.sh               | 11147 ----------------------
+ missing                 |   215 -
+ stamp-h1                |     1 -
+ test-driver             |   148 -
+ 27 files changed, 139422 deletions(-)
+
+commit b721fdae662673ab706da897aaa1db126f8ca1a5
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sun Nov 4 16:19:15 2018 -0800
+
+    fixed leaks in CFF subr subset
+
+ src/hb-ot-cff-common.hh     | 10 +++++++++-
+ src/hb-subset-cff-common.hh | 10 +++++++++-
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+commit 85f5644e8e9fe18032e37d4153c3c928d087ac6a
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sun Nov 4 14:17:30 2018 -0800
+
+    added missing switch breaks
+
+ src/hb-subset-cff-common.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 1682d1bbecaeeddc8a1678a01c57c0e0023bf7c4
+Merge: d8fadec0 b605db2f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sun Nov 4 13:25:41 2018 -0800
+
+    Merge branch 'master' into cff-subset
+
+commit d8fadec098935335e69e46c1101da3f142824638
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sun Nov 4 13:12:20 2018 -0800
+
+    added desubroutinize full font test profiles & expected fonts
+
+    modified subset_test_suite.py to apply desubroutinize profiles to
+    CFF only (not to TT)
+
+ ...urceSansPro-Regular.default.1FC,21,41,20,62,63.otf | Bin 3640 ->
+ 3784 bytes
+ .../SourceSansPro-Regular.default.61,62,63.otf        | Bin 3400 ->
+ 3496 bytes
+ .../SourceSansPro-Regular.default.D7,D8,D9,DA,DE.otf  | Bin 3596 ->
+ 3612 bytes
+ ...sPro-Regular.desubroutinize.1FC,21,41,20,62,63.otf | Bin 0 ->
+ 3640 bytes
+ .../SourceSansPro-Regular.desubroutinize.61,62,63.otf | Bin 0 ->
+ 3400 bytes
+ ...eSansPro-Regular.desubroutinize.D7,D8,D9,DA,DE.otf | Bin 0 ->
+ 3596 bytes
+ ...eSansPro-Regular.drop-hints.1FC,21,41,20,62,63.otf | Bin 3480 ->
+ 3564 bytes
+ .../SourceSansPro-Regular.drop-hints.61,62,63.otf     | Bin 3276 ->
+ 3340 bytes
+ ...ourceSansPro-Regular.drop-hints.D7,D8,D9,DA,DE.otf | Bin 3448 ->
+ 3464 bytes
+ ...r.drop-hints.desubroutinize.1FC,21,41,20,62,63.otf | Bin 0 ->
+ 3480 bytes
+ ...Pro-Regular.drop-hints.desubroutinize.61,62,63.otf | Bin 0 ->
+ 3276 bytes
+ ...gular.drop-hints.desubroutinize.D7,D8,D9,DA,DE.otf | Bin 0 ->
+ 3448 bytes
+ ...-Regular.default.3042,3044,3046,3048,304A,304B.otf | Bin 6248 ->
+ 6324 bytes
+ ...-Regular.default.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 6432 ->
+ 6568 bytes
+ .../SourceHanSans-Regular.default.61,63,65,6B.otf     | Bin 5428 ->
+ 5500 bytes
+ ...-Regular.default.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 6552 ->
+ 6780 bytes
+ .../japanese/SourceHanSans-Regular.default.660E.otf   | Bin 5196 ->
+ 5248 bytes
+ ....otf => SourceHanSans-Regular.desubroutinize..otf} | Bin
+ ...r.desubroutinize.3042,3044,3046,3048,304A,304B.otf | Bin 0 ->
+ 6248 bytes
+ ...r.desubroutinize.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 0 ->
+ 6432 bytes
+ ...urceHanSans-Regular.desubroutinize.61,63,65,6B.otf | Bin 0 ->
+ 5428 bytes
+ ...r.desubroutinize.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 0 ->
+ 6552 bytes
+ .../SourceHanSans-Regular.desubroutinize.660E.otf     | Bin 0 ->
+ 5196 bytes
+ ...gular.drop-hints.3042,3044,3046,3048,304A,304B.otf | Bin 6076 ->
+ 6132 bytes
+ ...gular.drop-hints.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 6180 ->
+ 6304 bytes
+ .../SourceHanSans-Regular.drop-hints.61,63,65,6B.otf  | Bin 5312 ->
+ 5344 bytes
+ ...gular.drop-hints.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 6248 ->
+ 6472 bytes
+ .../SourceHanSans-Regular.drop-hints.660E.otf         | Bin 5088 ->
+ 5140 bytes
+ ...rceHanSans-Regular.drop-hints.desubroutinize..otf} | Bin
+ ...s.desubroutinize.3042,3044,3046,3048,304A,304B.otf | Bin 0 ->
+ 6076 bytes
+ ...s.desubroutinize.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 0 ->
+ 6180 bytes
+ ...-Regular.drop-hints.desubroutinize.61,63,65,6B.otf | Bin 0 ->
+ 5312 bytes
+ ...s.desubroutinize.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 0 ->
+ 6248 bytes
+ ...HanSans-Regular.drop-hints.desubroutinize.660E.otf | Bin 0 ->
+ 5140 bytes
+ test/subset/data/profiles/desubroutinize.txt          |   1 +
+ .../data/profiles/drop-hints-desubroutinize.txt       |   2 ++
+ test/subset/generate-expected-outputs.py              |   1 -
+ test/subset/subset_test_suite.py                      |   7 ++++++-
+ 38 files changed, 9 insertions(+), 2 deletions(-)
+
 commit b605db2f65e62ad6727a61481f78015933dbf207
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sun Nov 4 12:58:02 2018 -0500
@@ -5029,6 +8145,23 @@ Date:   Sun Nov 4 02:25:07 2018 -0500
  src/hb-ot-shape.cc                           | 1 -
  10 files changed, 6 insertions(+), 17 deletions(-)
 
+commit 191ca0f15b7fc9ab959e1f6472c48839687402ec
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sat Nov 3 22:42:22 2018 -0700
+
+    CFF1 no-desubr fixes
+
+    make sure charstring/subrs not ending with endchar/return handled
+    correctly
+    if no local subrs, skip serializing Subrs op in Private
+    misc fixes
+
+ src/hb-ot-cff-common.hh     | 13 +++++++++-
+ src/hb-subset-cff-common.hh | 59
+ +++++++++++++++++++++++----------------------
+ src/hb-subset-cff1.cc       | 27 +++++++++++++++------
+ 3 files changed, 62 insertions(+), 37 deletions(-)
+
 commit 4eb52460c8c6dc48af240f2254f76fae065bfa97
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sat Nov 3 21:45:39 2018 -0400
@@ -5080,6 +8213,18 @@ Date:   Sat Nov 3 20:50:56 2018 -0400
  test/api/test-ot-face.c | 94
  +++++++++++++++++++++++++++++++++++++++++++++++++
  2 files changed, 95 insertions(+)
+
+commit 1da4de7e7b71dfde734cb77ec6acb31f574585f2
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sat Nov 3 15:41:29 2018 -0700
+
+    fix for subset fuzzer failure
+
+    A called subr must be freshly parsed or completely parsed. otherwise
+    the prevoius parse must have terminated prematurely
+
+ src/hb-subset-cff1.cc | 3 +++
+ 1 file changed, 3 insertions(+)
 
 commit 0b0b38ec1e6a815a30bef98193043d255b52c4a1
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -5250,6 +8395,56 @@ Date:   Sat Nov 3 13:03:36 2018 +0330
  ...uzz-testcase-minimized-hb-shape-fuzzer-5735679418433536 | Bin 0 ->
  36 bytes
  1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 34b06d994a79124963d2a7432d0ec945e72bfdbd
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 2 16:40:20 2018 -0700
+
+    fixed FDSelect size calcluation
+
+ src/hb-ot-cff-common.hh                               |   2 +-
+ src/hb-subset-cff-common.cc                           |   6 +++---
+ test/api/fonts/SourceHanSans-Regular.41,3041,4C2E.otf | Bin 2576 ->
+ 3892 bytes
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 481fdfdc23f557400ad3aceeceeab07add78f005
+Merge: 1bc710a8 2840a104
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 2 15:28:09 2018 -0700
+
+    Merge branch 'cff-subset' of https://github.com/harfbuzz/harfbuzz
+    into cff-subset
+
+commit 1bc710a8c94fbe08ca3a3e535c7b6597a57883df
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Nov 2 15:28:01 2018 -0700
+
+    added CFF1 desubr api test cases & bug fixes
+
+ src/hb-cff1-interp-cs.hh                           |   7 --
+ src/hb-ot-cff-common.hh                            |  56 ++++++----
+ src/hb-subset-cff-common.hh                        | 100
+ +++++++++--------
+ src/hb-subset-cff1.cc                              |  53 ++++-----
+ .../fonts/SourceHanSans-Regular.41,3041,4C2E.otf   | Bin 3892 ->
+ 2576 bytes
+ .../SourceHanSans-Regular.41,4C2E.nohints.otf      | Bin 0 -> 2380 bytes
+ ...urceHanSans-Regular.41,4C2E.nosubrs.nohints.otf | Bin 0 -> 2360 bytes
+ .../SourceHanSans-Regular.41,4C2E.nosubrs.otf      | Bin 0 -> 2548 bytes
+ test/api/fonts/SourceHanSans-Regular.41,4C2E.otf   | Bin 2548 ->
+ 2576 bytes
+ test/api/fonts/SourceSansPro-Regular.abc.otf       | Bin 3412 ->
+ 1812 bytes
+ .../api/fonts/SourceSansPro-Regular.ac.nohints.otf | Bin 3228 ->
+ 1592 bytes
+ .../SourceSansPro-Regular.ac.nosubrs.nohints.otf   | Bin 0 -> 1540 bytes
+ .../api/fonts/SourceSansPro-Regular.ac.nosubrs.otf | Bin 0 -> 1632 bytes
+ test/api/fonts/SourceSansPro-Regular.ac.otf        | Bin 3332 ->
+ 1708 bytes
+ test/api/test-subset-cff1.c                        | 122
+ +++++++++++++++++++++
+ 15 files changed, 232 insertions(+), 106 deletions(-)
 
 commit 2c68f34bddbe506d0b22948562f2f59b9a5b6050
 Author: Khaled Hosny <khaledhosny@eglug.org>
@@ -5437,6 +8632,63 @@ Date:   Fri Nov 2 11:16:43 2018 -0400
  src/hb-ot-kern-table.hh | 5 +++++
  1 file changed, 5 insertions(+)
 
+commit 0b2870085ddecdde8370eebc7c2bb346b1992b93
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 1 22:43:17 2018 -0700
+
+    removed unused code
+
+ src/hb-cff-interp-common.hh | 18 ------------------
+ 1 file changed, 18 deletions(-)
+
+commit 6186dbf1be4da88d9c4f1ef5cea19fd7779f29ab
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 1 17:25:23 2018 -0700
+
+    added hb_subset_input_set_desubroutinize API
+
+    hooked up with CFF1 subroutinizer
+    a renaming
+
+ src/hb-subset-cff-common.hh |  2 +-
+ src/hb-subset-cff1.cc       |  4 ++--
+ src/hb-subset-input.cc      | 13 +++++++++++++
+ src/hb-subset.h             |  5 +++++
+ util/hb-subset.cc           |  1 +
+ util/options.cc             |  2 +-
+ 6 files changed, 23 insertions(+), 4 deletions(-)
+
+commit b1d0c589154d080ff519c3e80aea923185787b13
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 1 16:33:46 2018 -0700
+
+    removed extraneous ;s
+
+ src/hb-cff-interp-common.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 2840a104c1288af79cbda720afa9e37aec6fb29d
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 1 16:18:13 2018 -0700
+
+    tweaks to build with new merge
+
+ src/hb-cff2-interp-cs.hh    | 11 +++++++----
+ src/hb-ot-cff2-table.cc     |  9 +++++----
+ src/hb-ot-cff2-table.hh     |  7 +++----
+ src/hb-subset-cff-common.cc | 12 ++++--------
+ src/hb-subset-cff-common.hh |  3 +--
+ src/hb-subset-cff1.cc       |  3 +--
+ src/hb-subset-cff2.cc       |  3 +--
+ 7 files changed, 22 insertions(+), 26 deletions(-)
+
+commit e600e5440b3b77294df47fae947758137ea02501
+Merge: 82248b92 de96e5c8
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 1 16:13:56 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
 commit de96e5c81c7f473520df93052ecea162baa5a350
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Nov 1 18:13:58 2018 -0400
@@ -5464,6 +8716,34 @@ Date:   Thu Nov 1 18:01:26 2018 -0400
  src/hb-aat-map.hh | 2 --
  1 file changed, 2 deletions(-)
 
+commit 82248b9287e7b208c304e761393b745604a51c6e
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 1 10:36:50 2018 -0700
+
+    fix leak attempt ^2
+
+ src/hb-subset-cff2.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a9c305c2b00b7e793dc3d8333eee43d677aebd42
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 1 10:31:21 2018 -0700
+
+    fix leaks
+
+ src/hb-subset-cff1.cc | 4 ++--
+ src/hb-subset-cff2.cc | 3 +--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+commit 049ce078e51bebce50b17889f3edae3db3ea39f5
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Nov 1 08:46:21 2018 -0700
+
+    fix bogus width with --no-hinting
+
+ src/hb-cff1-interp-cs.hh | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
 commit 07ec792212063851ee41eae33792d3d90d31e6a1
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Nov 1 10:31:12 2018 -0400
@@ -5490,6 +8770,35 @@ Date:   Thu Nov 1 13:39:06 2018 +0330
 
  test/api/test-ot-color.c | 2 --
  1 file changed, 2 deletions(-)
+
+commit d56e338a903a5a7c4f8ccd0f4d983cd492243ed6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Oct 31 22:30:34 2018 -0700
+
+    CFF1 no-desubroutinize + no-hinting
+
+    no-desubroutinize option is disabled for now
+    code cleanup (esp. CFF1 width handling)
+    bug fixes & renaming
+
+ src/hb-cff-interp-common.hh      |  49 +++
+ src/hb-cff-interp-cs-common.hh   |  93 +++++-
+ src/hb-cff-interp-dict-common.hh |  45 +--
+ src/hb-cff1-interp-cs.hh         |  66 +++-
+ src/hb-cff2-interp-cs.hh         |   1 +
+ src/hb-ot-cff-common.hh          |  85 ++---
+ src/hb-ot-cff1-table.hh          |  20 +-
+ src/hb-ot-cff2-table.hh          |  25 +-
+ src/hb-subset-cff-common.hh      | 702
+ ++++++++++++++++++++++++++++++++++++---
+ src/hb-subset-cff1.cc            | 242 +++++++++++---
+ src/hb-subset-cff2.cc            |  45 +--
+ src/hb-subset-input.hh           |   1 +
+ src/hb-subset-plan.cc            |   1 +
+ src/hb-subset-plan.hh            |   1 +
+ util/options.cc                  |   2 +
+ util/options.hh                  |   2 +
+ 16 files changed, 1130 insertions(+), 250 deletions(-)
 
 commit 52a00cd87f63c8ab32413a1a9ce792a3e2ec84e2
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -8266,6 +11575,20 @@ Date:   Fri Oct 26 00:23:45 2018 +0330
  docs/harfbuzz-sections.txt | 14 ++++++++++++++
  1 file changed, 14 insertions(+)
 
+commit be746009e9b7063dcb57e30e342f9410387ef8b6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 25 13:40:40 2018 -0700
+
+    dropped support of legacy CFF CharString ops
+
+    along with test & font
+
+ src/hb-cff1-interp-cs.hh          | 135
+ +-------------------------------------
+ test/api/fonts/cff1_legacyops.otf | Bin 3104 -> 0 bytes
+ test/api/test-ot-extents-cff.c    |  23 -------
+ 3 files changed, 1 insertion(+), 157 deletions(-)
+
 commit 1cfe702872058ebc50d6cb5543daa38fb3a7ebfb
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Oct 25 13:37:08 2018 -0700
@@ -8312,6 +11635,13 @@ Date:   Thu Oct 25 13:19:34 2018 -0700
  src/hb-ot-layout-gpos-table.hh | 2 +-
  src/hb-vector.hh               | 2 +-
  5 files changed, 6 insertions(+), 6 deletions(-)
+
+commit 2ebf36010206cebdbe58bab6edf4e3bc011b6479
+Merge: 36c2c374 94e421ab
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 25 13:05:06 2018 -0700
+
+    Merge branch 'master' into cff-subset
 
 commit 94e421abbfc7ede9aaf3c8d86bb0ff9992ea3123
 Author: Ben Wagner <bungeman@chromium.org>
@@ -8458,6 +11788,18 @@ Date:   Tue Oct 23 15:45:35 2018 -0700
  src/hb-machinery.hh | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+commit 36c2c374bf9c2d0ca903e601760e69bfc3da5388
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 23 15:11:09 2018 -0700
+
+    removed unused multi_val from DictVal
+
+ src/hb-cff-interp-common.hh      | 16 ----------------
+ src/hb-cff-interp-dict-common.hh |  3 ---
+ src/hb-ot-cff1-table.hh          |  2 +-
+ src/hb-ot-cff2-table.hh          |  1 -
+ 4 files changed, 1 insertion(+), 21 deletions(-)
+
 commit f33ad6d69216a983624e832177895481549bdc07
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Oct 23 14:31:51 2018 -0700
@@ -8527,6 +11869,13 @@ Date:   Tue Oct 23 13:09:30 2018 -0700
  src/hb-ot-shape.cc | 18 ++++++++++--------
  src/hb-ot-shape.hh |  9 +++------
  2 files changed, 13 insertions(+), 14 deletions(-)
+
+commit e1241636d60a63cbfd741288716b55797a4dc8ee
+Merge: 960267fc cf92d657
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 23 11:25:51 2018 -0700
+
+    Merge branch 'master' into cff-subset
 
 commit cf92d6579e91d326598dcff93457fe85dfa962c2
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -8819,6 +12168,15 @@ Date:   Mon Oct 22 16:55:12 2018 -0700
  src/hb-ot-color.h             | 10 ++++-----
  3 files changed, 38 insertions(+), 57 deletions(-)
 
+commit 960267fc4315a138f0963e78407e3af2ec6007af
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 22 16:37:39 2018 -0700
+
+    fix build attempt ^4
+
+ src/hb-ot-cff-common.hh | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
 commit 683fad062792a199e2fe86fe161f41b9389d08c3
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Oct 22 16:35:03 2018 -0700
@@ -8908,6 +12266,39 @@ Date:   Mon Oct 22 14:43:12 2018 -0700
  src/hb-ot-color.cc            |  1 +
  2 files changed, 17 insertions(+), 16 deletions(-)
 
+commit ba055a8d53595ab49747ed3e02d90c9b6a3cf4f3
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 22 16:20:04 2018 -0700
+
+    fix build attempt ^3
+
+ test/api/test-ot-extents-cff.c | 2 +-
+ test/api/test-subset-cff1.c    | 1 +
+ test/api/test-subset-cff2.c    | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
+
+commit b11032afaefb2c84f9a4bbffe95c91f6374df802
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 22 15:52:37 2018 -0700
+
+    fix build attempt ^2
+
+ src/hb-ot-cff-common.hh        | 2 +-
+ test/api/test-ot-extents-cff.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 3d3df5575c5be0e3c69b99ca1d8df2cea1672aaf
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 22 15:23:39 2018 -0700
+
+    fix build attempt
+
+ src/hb-ot-cff-common.hh        |  5 ++++-
+ test/api/test-ot-extents-cff.c | 11 +++++------
+ test/api/test-subset-cff1.c    | 19 +++++++++----------
+ test/api/test-subset-cff2.c    | 11 +++++------
+ 4 files changed, 23 insertions(+), 23 deletions(-)
+
 commit 0babf761c986855f9cdd1a2679380ee6a02390c8
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
 Date:   Tue Oct 23 01:33:45 2018 +0330
@@ -8982,6 +12373,13 @@ Date:   Sun Oct 21 19:23:11 2018 -0700
  test/api/test-ot-color.c      | 30 ++++++++---------
  5 files changed, 85 insertions(+), 60 deletions(-)
 
+commit 570b77f7d2b41262ccb20fadbee2c6b455cd06c6
+Merge: 857c5827 d440c8d3
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 22 13:06:47 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
 commit 9085a72deb041cf10edfa61d24b7c25f947f736b
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sun Oct 21 19:08:25 2018 -0700
@@ -9029,6 +12427,13 @@ Date:   Mon Oct 22 22:07:59 2018 +0330
  test/api/hb-test.h                  |   2 +-
  test/api/test-ot-color.c            |  21 +++++++++++++++++++++
  9 files changed, 55 insertions(+), 4 deletions(-)
+
+commit 857c58279e82897ed69e8ade2f736073fa12883b
+Merge: 51fba41c b92b9d7e
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 22 09:57:20 2018 -0700
+
+    Merge branch 'master' into cff-subset
 
 commit b92b9d7e5290eaa83e94fd40cddaee71628a3c2a
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -9775,6 +13180,39 @@ Date:   Fri Oct 19 08:09:53 2018 +0330
  9410 bytes
  13 files changed, 0 insertions(+), 0 deletions(-)
 
+commit 51fba41cc958ded3afc6c1e738895b0a81993e18
+Merge: e555ed96 3d9a0306
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 18 13:08:42 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit e555ed961e86104e059861efe4245b7b146dbd3b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 18 13:04:41 2018 -0700
+
+    added flex extents test
+
+ test/api/fonts/cff1_flex.otf   | Bin 0 -> 3152 bytes
+ test/api/test-ot-extents-cff.c |  23 +++++++++++++++++++++++
+ 2 files changed, 23 insertions(+)
+
+commit 8679d02b4b3f2f9147c4ea0319eb39851c4e40e6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 18 13:04:21 2018 -0700
+
+    implement flex ops for glyph extents/subset
+
+    also removed unused CSInterpEnv::move_[xy]_with_arg
+    fixed bug a width being left over on argStack with CFF1
+
+ src/hb-cff-interp-cs-common.hh | 157
+ +++++++++++++++++++++++++++++++++++------
+ src/hb-cff1-interp-cs.hh       |   1 +
+ src/hb-subset-cff1.cc          |   4 --
+ src/hb-subset-cff2.cc          |   4 --
+ 4 files changed, 138 insertions(+), 28 deletions(-)
+
 commit 3d9a0306ebb48706778fd2c487c3cacc7d508d6c
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Oct 18 05:58:17 2018 -0700
@@ -10052,6 +13490,13 @@ Date:   Wed Oct 17 15:04:35 2018 -0700
  .../fonts/oom-6ef8c96d3710262511bcc730dce9c00e722cb653 | Bin
  .../fonts/oom-ccc61c92d589f895174cdef6ff2e3b20e9999a1a | Bin
  18 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 1f34388e8b40a77157f61c8e1a2fc7c4846c192e
+Merge: 9ade3e7b 2e7c7165
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Oct 17 09:34:48 2018 -0700
+
+    Merge branch 'master' into cff-subset
 
 commit 2e7c716511e8b2cfcd059fa2a2ed4cdd48b351bf
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -10547,6 +13992,22 @@ Date:   Mon Oct 15 19:46:45 2018 -0700
  src/hb-ot-color-cbdt-table.hh | 7 ++++---
  1 file changed, 4 insertions(+), 3 deletions(-)
 
+commit 9ade3e7bb81be43b3c0811614b9b9533127894b0
+Merge: 6420ffe0 0f85edb7
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 15 14:03:23 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit 6420ffe00fc4f4c6ffa63b80d961f70bc36c2caf
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 15 14:03:18 2018 -0700
+
+    fixed type casting bug
+
+ src/hb-cff-interp-common.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
 commit 0f85edb7781f4d5ec2de676979be75a0f6559d80
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Oct 15 11:15:54 2018 -0700
@@ -10731,6 +14192,26 @@ Date:   Sun Oct 14 14:52:17 2018 -0700
  src/hb-aat-layout-common.hh | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
+commit db0d83ddc73ecf50ec4489fc10eddf3fa5835ae2
+Merge: 9228db06 56b8dd17
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sat Oct 13 17:25:38 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit 9228db06f46908afd0e62f5964470c37c66ba91f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sat Oct 13 17:25:09 2018 -0700
+
+    added CFF1 Expert Encoding subset test & bug fixes
+
+ src/hb-ot-cff1-table.hh                     |   8 +++++++-
+ src/hb-subset-cff1.cc                       |  10 ++++++++--
+ test/api/fonts/cff1_expert.2D,F6E9,FB00.otf | Bin 0 -> 3096 bytes
+ test/api/fonts/cff1_expert.otf              | Bin 0 -> 3656 bytes
+ test/api/test-subset-cff1.c                 |  21 +++++++++++++++++++++
+ 5 files changed, 36 insertions(+), 3 deletions(-)
+
 commit 56b8dd17f677ffe97e4d917c47924e1ac7632c71
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sat Oct 13 19:03:33 2018 -0400
@@ -10855,6 +14336,17 @@ Date:   Sat Oct 13 14:00:05 2018 +0330
  src/hb-ot-shape-complex.hh   |  18 +++---
  9 files changed, 93 insertions(+), 106 deletions(-)
 
+commit b64ef69b9e3d9cd4e81a2149cea3fe6e9e371cac
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Oct 12 14:14:21 2018 -0700
+
+    from encode_int removed assert hit by fuzzer
+
+    clamp the value instead
+
+ src/hb-subset-cff-common.hh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
 commit c0a6814b49e376984a0cae9d385a6f6ba8c73579
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Oct 12 16:05:56 2018 -0400
@@ -10976,6 +14468,31 @@ Date:   Thu Oct 11 21:18:20 2018 -0400
 
  src/hb-font.cc | 4 ----
  1 file changed, 4 deletions(-)
+
+commit fc0153a1d4903a57b21974cc8d0b0a82d7bc43dc
+Merge: 7d99a6ce c5510000
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Oct 12 12:16:50 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit 7d99a6cef80ec178c10dcf0e848394614c5e6912
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Oct 12 02:16:07 2018 -0700
+
+    overhauled error handling in CFF interpreter
+
+    minimized "if (error) return false" idiom
+
+ src/hb-cff-interp-common.hh      | 138
+ +++++++++++++++++++++++----------------
+ src/hb-cff-interp-cs-common.hh   |  43 ++++++------
+ src/hb-cff-interp-dict-common.hh |  72 +++++++++++---------
+ src/hb-cff1-interp-cs.hh         |  72 +++++++++++---------
+ src/hb-cff2-interp-cs.hh         |  50 +++++++-------
+ src/hb-ot-cff1-table.hh          |  91 +++++++++++---------------
+ src/hb-ot-cff2-table.hh          |  71 +++++++++-----------
+ 7 files changed, 281 insertions(+), 256 deletions(-)
 
 commit c55100000bc20d7c8319cfc54294215a923ffc25
 Author: David Corbett <corbett.dav@husky.neu.edu>
@@ -11181,6 +14698,15 @@ Date:   Thu Oct 11 15:03:21 2018 -0400
  test/api/test-ot-tag.c | 60
  ++++++++++++++++++++++++++++++++++++++------------
  1 file changed, 46 insertions(+), 14 deletions(-)
+
+commit ca37172ee3908bac12cc3d97768b95ae571530d2
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 11 11:55:55 2018 -0700
+
+    fixed leak
+
+ test/api/test-ot-extents-cff.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 commit 4f9e36e8cf5d9d3d3e5a1ed46149355ee5f5e9fb
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -11511,6 +15037,35 @@ Date:   Thu Dec 28 22:59:29 2017 +0800
  src/hb-common.cc | 6 +++---
  2 files changed, 4 insertions(+), 4 deletions(-)
 
+commit ce6639cd27f79856466a5e8abf58f544f069e25d
+Merge: a6b6faf2 0b9d60e1
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 11 10:53:48 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit a6b6faf2b87f113fb23cf8e040f8b7875e2daf80
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 11 10:53:44 2018 -0700
+
+    Replaced CFF1 J subset font for better coverage
+
+    in api test-ot-extents-cff
+
+ test/api/fonts/SourceHanSans-Regular.41,3041,4C2E.otf | Bin 0 ->
+ 3892 bytes
+ test/api/fonts/SourceHanSans-Regular.41,3041,4E9D.otf | Bin 5864 ->
+ 0 bytes
+ test/api/fonts/SourceHanSans-Regular.41,4C2E.otf      | Bin 0 ->
+ 2548 bytes
+ test/api/fonts/SourceHanSans-Regular.41,4E9D.otf      | Bin 5500 ->
+ 0 bytes
+ test/api/test-ot-extents-cff.c                        |  15
+ +++++++++++++++
+ test/api/test-subset-cff1.c                           |  18
+ +++++++++---------
+ 6 files changed, 24 insertions(+), 9 deletions(-)
+
 commit 0b9d60e1a1c4b7867ac907bbd7c004191a14e697
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Oct 11 13:26:58 2018 -0400
@@ -11745,6 +15300,25 @@ Date:   Wed Oct 10 21:46:58 2018 -0400
 
  src/hb-aat-layout-kerx-table.hh | 15 ++++++++++-----
  1 file changed, 10 insertions(+), 5 deletions(-)
+
+commit b5aa5dbb1158a5dfba29f7b119df9b4b319e8489
+Merge: af61c3b1 ab1f30bd
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Oct 10 18:36:35 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit af61c3b10f83a00b4862cc0cb92fc9f0856e7dd6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Oct 10 18:35:12 2018 -0700
+
+    added vsindex test & fixed process_vsindex
+
+ src/hb-cff2-interp-cs.hh                    |  12 +++++-----
+ test/api/fonts/AdobeVFPrototype_vsindex.otf | Bin 0 -> 7036 bytes
+ test/api/test-ot-extents-cff.c              |  33
+ ++++++++++++++++++++++++++++
+ 3 files changed, 40 insertions(+), 5 deletions(-)
 
 commit 504cb68fc972c7f606bf9fc62015376382f78f45
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -12124,6 +15698,26 @@ Date:   Wed Oct 10 17:12:52 2018 +0330
  ++++++++++++++++++++++++++++++++-------------------
  2 files changed, 100 insertions(+), 52 deletions(-)
 
+commit c06a5dff0b0f8d1c5aba53bcfd7fb0b680f1ca92
+Merge: 83c5298f 0537a401
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 9 22:00:10 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit 83c5298f33e66cfd3d84d246297683f0de80c57d
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 9 21:59:36 2018 -0700
+
+    added cff1_legacyops.otf as test-ot-extents-cff test case
+
+    fixed roll operator bugs uncovered by the test
+
+ src/hb-cff-interp-common.hh       |   4 ++--
+ test/api/fonts/cff1_legacyops.otf | Bin 0 -> 3104 bytes
+ test/api/test-ot-extents-cff.c    |  23 +++++++++++++++++++++++
+ 3 files changed, 25 insertions(+), 2 deletions(-)
+
 commit 0537a40193e803d50a99cd6b993d6d9301e84ebf
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Oct 9 23:35:07 2018 -0400
@@ -12288,6 +15882,15 @@ Date:   Tue Oct 9 21:56:37 2018 -0400
 
  src/hb-ot-kern-table.hh | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 588518ea51b2226bdb41417946848d18c3913a67
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 9 14:48:04 2018 -0700
+
+    fixed test-ot-extents-cff failure on some platforms
+
+ test/api/test-ot-extents-cff.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
 commit be2f148da474d6dd30132c22dd467ea33a942edf
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -12488,6 +16091,13 @@ Date:   Tue Oct 9 14:12:59 2018 -0400
  src/hb-ot-shape-normalize.cc | 14 ++++----------
  1 file changed, 4 insertions(+), 10 deletions(-)
 
+commit f5f505b5120c316f06306318c6c2f0db4496ba04
+Merge: 8b349040 4035158d
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 9 10:10:35 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
 commit b314c4e9abf4236c6650a63d1287471b61f64885
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Oct 9 09:23:51 2018 -0400
@@ -12638,6 +16248,13 @@ Date:   Tue Oct 9 00:56:33 2018 -0400
  src/hb-icu.cc  | 15 ++++++---------
  src/hb-ucdn.cc | 15 ++++++---------
  3 files changed, 18 insertions(+), 27 deletions(-)
+
+commit 8b349040e92b8894a7f8a609fac8070bcb110f96
+Merge: df964a09 fc509165
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 8 21:46:23 2018 -0700
+
+    Merge branch 'master' into cff-subset
 
 commit fc50916589a300e49183b5ee598e64ca28d0bd9a
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -12803,6 +16420,52 @@ Date:   Mon Oct 8 22:26:39 2018 -0400
  src/hb-deprecated.h        | 37 +++++++++++++++++++++++++++++++++++++
  src/hb-unicode.h           | 28 ----------------------------
  3 files changed, 40 insertions(+), 30 deletions(-)
+
+commit df964a09319bbf5b0a7528b906311726d4f640d6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 8 15:38:05 2018 -0700
+
+    fixed test-subset-cff2
+
+ src/hb-cff2-interp-cs.hh | 7 +++----
+ src/hb-ot-cff2-table.cc  | 2 +-
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+commit a90fd8b9feeee3b02d139f2e7db774766d7855cb
+Merge: b51418f5 e42cd58c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 8 15:07:58 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit b51418f596097aa5d1b28fb0a02b613c36bacd8e
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 8 15:05:36 2018 -0700
+
+    added CFF2 get_extents
+
+    added source hb-ot-cff2-table.cc
+    augmented VariationData to return scalars
+    misc bug fixes, renaming, cleanup
+
+ src/Makefile.sources             |   2 +
+ src/hb-cff-interp-common.hh      |  37 ++++++-----
+ src/hb-cff-interp-cs-common.hh   | 134
+ +++++++++++++++++++-------------------
+ src/hb-cff-interp-dict-common.hh |   6 +-
+ src/hb-cff2-interp-cs.hh         | 102 ++++++++++++++++++++++++-----
+ src/hb-ot-cff1-table.hh          |   4 +-
+ src/hb-ot-cff2-table.cc          | 135
+ +++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-cff2-table.hh          |  71 ++++++++++++--------
+ src/hb-ot-face.cc                |   1 +
+ src/hb-ot-face.hh                |   1 +
+ src/hb-ot-font.cc                |   4 ++
+ src/hb-ot-layout-common.hh       |  28 +++++++-
+ src/hb-subset-cff1.cc            |   2 +-
+ src/hb-subset-cff2.cc            |   4 +-
+ test/api/test-ot-extents-cff.c   |  36 +++++++++++
+ 15 files changed, 426 insertions(+), 141 deletions(-)
 
 commit 286a45641fc6732bb7cab02f06c90396834541b1
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -13100,6 +16763,48 @@ Date:   Sun Oct 7 16:31:33 2018 +0200
  src/hb-coretext.cc | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
+commit 55942ad5c1ee999c9f590b8cc8fbde12e937aa6f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sat Oct 6 14:49:44 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+ TODO                                               |  10 +--
+ configure.ac                                       |   2 +-
+ src/hb-aat-layout-common.hh                        |   4 +-
+ src/hb-aat-layout-morx-table.hh                    |   9 +-
+ src/hb-aat-layout.cc                               |   6 ++
+ src/hb-aat-layout.hh                               |   2 +
+ src/hb-face.cc                                     |   2 +-
+ src/hb-machinery.hh                                |   2 +-
+ src/hb-ot-cmap-table.hh                            |   2 +-
+ src/hb-ot-post-table.hh                            |   2 +-
+ src/hb-ot-shape.cc                                 |  27 ++++--
+ src/hb-ot-shape.hh                                 |   5 ++
+ src/hb-set.hh                                      |   4 +-
+ src/hb-subset.cc                                   |   2 +-
+ src/hb-vector.hh                                   | 100
+ ++++++++++++++-------
+ test/shaping/data/text-rendering-tests/DISABLED    |  35 +-------
+ .../data/text-rendering-tests/Makefile.sources     |  18 ++--
+ .../data/text-rendering-tests/extract-tests.py     |  18 +++-
+ .../text-rendering-tests/fonts/TestGSUBThree.ttf   | Bin 0 -> 1504 bytes
+ .../fonts/TestMORXThirtyfive.ttf                   | Bin 0 -> 1968 bytes
+ .../fonts/TestMORXThirtyfour.ttf                   | Bin 0 -> 3608 bytes
+ .../fonts/TestMORXThirtysix.ttf                    | Bin 0 -> 1836 bytes
+ .../fonts/TestMORXThirtythree.ttf                  | Bin 0 -> 1520 bytes
+ .../fonts/TestMORXTwentyfour.ttf                   | Bin 0 -> 1828 bytes
+ .../data/text-rendering-tests/tests/GSUB-3.tests   |   1 +
+ .../data/text-rendering-tests/tests/MORX-24.tests  |   1 +
+ .../data/text-rendering-tests/tests/MORX-32.tests  |   8 +-
+ .../data/text-rendering-tests/tests/MORX-33.tests  |   3 +
+ .../data/text-rendering-tests/tests/MORX-34.tests  |   1 +
+ .../data/text-rendering-tests/tests/MORX-35.tests  |   2 +
+ .../data/text-rendering-tests/tests/MORX-36.tests  |   1 +
+ test/shaping/run-tests.py                          |  19 ++--
+ util/view-cairo.hh                                 |   2 +-
+ 33 files changed, 173 insertions(+), 115 deletions(-)
+
 commit 7ee50af8366547c382047a30a94f7f5f739aabcb
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sat Oct 6 21:31:44 2018 +0200
@@ -13209,6 +16914,36 @@ Date:   Fri Oct 5 02:49:29 2018 +0200
     identify private features."
 
  src/hb-ot-shape.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit e7a045e4db39e037badcab0ad1239c0cb56c1170
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 4 14:16:07 2018 -0700
+
+    fixed leak exposed by test-ot-extents-cff
+
+ src/hb-cff-interp-common.hh      | 3 +++
+ src/hb-cff-interp-dict-common.hh | 4 ++++
+ 2 files changed, 7 insertions(+)
+
+commit 6238edbd8b654d105bbd191dffabc7820f0a3223
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 4 13:59:36 2018 -0700
+
+    added CFF glyph extents API test
+
+ test/api/Makefile.am           |  1 +
+ test/api/test-ot-extents-cff.c | 65
+ ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 66 insertions(+)
+
+commit 0222d57c357c775f25866653700b9dcb7d5bb807
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Oct 4 09:37:57 2018 -0700
+
+    tweaked previous warning fixes
+
+ src/hb-cff-interp-common.hh | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 commit 7b3ae5ffd202346cb3742fe0f8cfafe8c36a4bd5
@@ -13390,6 +17125,32 @@ Date:   Thu Oct 4 09:24:08 2018 +0200
 
  src/hb-aat-layout-morx-table.hh | 7 ++++++-
  1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 3ef358909eb7e26ca9630e61c7ba142d9e94389e
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Oct 3 18:08:25 2018 -0700
+
+    fixed warnings
+
+ src/hb-cff-interp-common.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 1aeaee9dfc7ee3ca410919c41e55452a0b6b9bf6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Oct 3 17:44:45 2018 -0700
+
+    fixed cff2 subset test data
+
+ test/api/fonts/AdobeVFPrototype.abc.nohints.otf | Bin 0 -> 7800 bytes
+ test/api/test-subset-cff2.c                     |   4 ++--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 8be5a9186be3ca4c50c73f372be4dbad08ac1863
+Merge: d7b384ad 5de2d9cd
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Oct 3 17:06:18 2018 -0700
+
+    Merge branch 'master' into cff-subset
 
 commit 5de2d9cdbdca870901c0ba9472f5b78c48ba0a58
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
@@ -13803,6 +17564,80 @@ Date:   Wed Oct 3 12:29:56 2018 +0200
  .../shaping/data/in-house/tests/use-syllable.tests |   3 +
  7 files changed, 301 insertions(+), 245 deletions(-)
 
+commit d7b384ad0d0a3e1d35ef92a6e98a97bb9c367f48
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 2 21:08:36 2018 -0700
+
+    silence warning ^3
+
+ src/hb-subset-cff1.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e9cc71ac86bd771d9fcb2ee1eb620060db92ac1a
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 2 20:44:30 2018 -0700
+
+    silence warning ^2
+
+ src/hb-subset-cff1.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2700db9ade23cbf69d17a7a1802a7f144c25f8dc
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 2 15:05:26 2018 -0700
+
+    rm build files
+
+ build/test/api/.libs/test-collect-unicodes | Bin 14336 -> 0 bytes
+ build/test/api/.libs/test-multithread      | Bin 10936 -> 0 bytes
+ build/test/api/test-collect-unicodes       | 210
+ -----------------------------
+ build/test/api/test-multithread            | 210
+ -----------------------------
+ 4 files changed, 420 deletions(-)
+
+commit 51d5bf4ca2ebb9b8aa3b2777781e328fb93ceea7
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 2 14:38:06 2018 -0700
+
+    silence warnings
+
+ src/hb-cff-interp-cs-common.hh | 2 +-
+ src/hb-subset-cff1.cc          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 35b64dfb57cac0d949363e9b19352dd4274c2584
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 2 14:13:36 2018 -0700
+
+    silence & fix new warnings
+
+ src/hb-cff-interp-dict-common.hh | 3 ++-
+ src/hb-cff1-interp-cs.hh         | 9 +++++----
+ src/hb-ot-cff-common.hh          | 4 ++--
+ src/hb-subset-cff1.cc            | 4 ++--
+ src/hb-subset-cff2.cc            | 4 ++--
+ 5 files changed, 13 insertions(+), 11 deletions(-)
+
+commit eed7e6bbc8e7be99d59a7822a1c37bc715c379b3
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 2 13:45:14 2018 -0700
+
+    redefine OpCodes as define instead of enum
+
+    in order to eradicate duplicate enum warnings
+
+ src/hb-cff-interp-common.hh | 348
+ ++++++++++++++++++++++----------------------
+ 1 file changed, 174 insertions(+), 174 deletions(-)
+
+commit 9cdd70b344b9dc34a29aeca79028cbb5d949ca1d
+Merge: 3dd43f02 6353cc1f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Oct 2 13:43:21 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
 commit 6353cc1f83c862910860976411a1157f7ed571bc
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
 Date:   Tue Oct 2 21:39:19 2018 +0330
@@ -14192,6 +18027,13 @@ Date:   Mon Oct 1 19:09:58 2018 +0200
  src/hb-ot-shape-complex-khmer.cc         |   4 +-
  src/hb-ot-shape-complex-khmer.hh         |  99 +++++-----
  5 files changed, 270 insertions(+), 177 deletions(-)
+
+commit 3dd43f0234febd434d89927adf2ee19f0489c5a7
+Merge: ab16b24c eb1e6028
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Oct 1 10:22:06 2018 -0700
+
+    Merge branch 'master' into cff-subset
 
 commit aaaa65baa7fcfb65ae814528bdd93cc5c4ea540d
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -14927,6 +18769,31 @@ Date:   Thu Sep 27 11:53:17 2018 +0330
  .circleci/config.yml | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+commit ab16b24cc94389ac66a9353327d2a87a7c230ed4
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Sep 26 18:51:36 2018 -0700
+
+    tweaked get_fd fix
+
+ src/hb-ot-cff-common.hh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit dac70f252a84e1a255375eaacffc2cb3f3fc6e58
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Sep 26 16:30:26 2018 -0700
+
+    Added CFF1 J font subset to api test
+
+    Also fixed FDSelect3_4::get_fd
+    Fixed test_subset_cff1_strip_hints (wrong font names!)
+
+ src/hb-ot-cff-common.hh                            |   2 +-
+ .../fonts/SourceHanSans-Regular.41,3041,4E9D.otf   | Bin 0 -> 5864 bytes
+ test/api/fonts/SourceHanSans-Regular.41,4E9D.otf   | Bin 0 -> 5500 bytes
+ test/api/test-subset-cff1.c                        |  25
+ +++++++++++++++++++--
+ 4 files changed, 24 insertions(+), 3 deletions(-)
+
 commit 662f7d7e8bfa77b21ffa05e853f61dda993dcc8a
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Sep 26 18:42:37 2018 -0400
@@ -15062,6 +18929,38 @@ Date:   Tue Sep 25 09:24:35 2018 +0330
  .circleci/config.yml | 17 +++++++++++++++++
  1 file changed, 17 insertions(+)
 
+commit ae7f0e83d4417fac2455c44eaea15b3cca03d18e
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 24 22:49:44 2018 -0700
+
+    fixed memory leaks
+
+    in CFF1 & CFF2 accelerators, VORG subsetter
+
+ src/hb-ot-cff1-table.hh | 2 ++
+ src/hb-ot-cff2-table.hh | 2 ++
+ src/hb-ot-vorg-table.hh | 3 +++
+ 3 files changed, 7 insertions(+)
+
+commit 258b456566abd266657725b3fc4e70f18b370d5d
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 24 16:50:47 2018 -0700
+
+    Added CFF1 & CFF2 api tests
+
+ test/api/Makefile.am                               |   4 +
+ test/api/fonts/AdobeVFPrototype.abc.otf            | Bin 0 -> 7800 bytes
+ test/api/fonts/AdobeVFPrototype.ac.nohints.otf     | Bin 0 -> 7152 bytes
+ test/api/fonts/AdobeVFPrototype.ac.otf             | Bin 0 -> 7336 bytes
+ test/api/fonts/SourceSansPro-Regular.abc.otf       | Bin 0 -> 3412 bytes
+ .../api/fonts/SourceSansPro-Regular.ac.nohints.otf | Bin 0 -> 3228 bytes
+ test/api/fonts/SourceSansPro-Regular.ac.otf        | Bin 0 -> 3332 bytes
+ test/api/test-subset-cff1.c                        | 104
+ +++++++++++++++++++++
+ test/api/test-subset-cff2.c                        | 104
+ +++++++++++++++++++++
+ 9 files changed, 212 insertions(+)
+
 commit 8282e881b51363811078bce53fad6aa5b41f7b41
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Sep 24 19:43:01 2018 -0400
@@ -15186,6 +19085,13 @@ Date:   Mon Sep 24 13:11:34 2018 -0400
 
  src/check-static-inits.sh | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0604bf2b3846b200c56447ffe542bf69c0529a06
+Merge: 76e54d2b 45f5aa97
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 24 10:09:25 2018 -0700
+
+    Merge branch 'master' into cff-subset
 
 commit e45ba31dc723988150ef766758fa89fecd50ca03
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -15422,6 +19328,47 @@ Date:   Sat Sep 22 16:45:31 2018 +0330
  test/api/test-font.c | 1 +
  1 file changed, 1 insertion(+)
 
+commit 76e54d2bd804414183858ca198157050419dfe6c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Sep 21 12:16:36 2018 -0700
+
+    fixed subroutinized CFF2 flattening
+
+    and some code cleanup
+
+ src/hb-cff-interp-common.hh    |  2 +-
+ src/hb-cff-interp-cs-common.hh | 13 -------------
+ src/hb-cff2-interp-cs.hh       |  7 ++++---
+ 3 files changed, 5 insertions(+), 17 deletions(-)
+
+commit 321e592333014f713557e8ce8041dcb5de710218
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Sep 20 10:31:06 2018 -0700
+
+    Added desubroutinize option to generate-expected-outputs.py
+
+    Currently hb-subset always desubroutinizes CFF fonts.
+    Note that even with this option fonttools won't generate the expected
+    subset CFF fonts. They were manually created & tweaked to match
+    hb-subset output.
+
+ test/subset/generate-expected-outputs.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f212c050ad50898d5105d1d3a6ea3498f94ee462
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Sep 20 09:45:43 2018 -0700
+
+    Added VORG struct and its subsetter
+
+    new file: hb-ot-vorg-table.hh
+
+ src/Makefile.sources    |   1 +
+ src/hb-ot-vorg-table.hh | 163
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-subset.cc        |   5 +-
+ 3 files changed, 168 insertions(+), 1 deletion(-)
+
 commit 5fd8bce945e7efaa48d0c29eb8b2700027bd3c0b
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Sep 19 22:34:09 2018 -0400
@@ -15430,6 +19377,46 @@ Date:   Wed Sep 19 22:34:09 2018 -0400
 
  src/hb-aat-layout-morx-table.hh | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 1377adc8a88c627891cb8b9cea511d8f9f5324f9
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Sep 19 17:00:10 2018 -0700
+
+    Added SourceHanSans-Regular for CFF subset test
+
+    Disabled FDSelect serialization to format 0 for compatibility with
+    fonttools
+
+ src/hb-subset-cff-common.cc                          |  16
+ +++++++++++++---
+ .../japanese/SourceHanSans-Regular.default..otf      | Bin 0 ->
+ 2340 bytes
+ ...Regular.default.3042,3044,3046,3048,304A,304B.otf | Bin 0 ->
+ 6248 bytes
+ ...Regular.default.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 0 ->
+ 6432 bytes
+ .../SourceHanSans-Regular.default.61,63,65,6B.otf    | Bin 0 ->
+ 5428 bytes
+ ...Regular.default.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 0 ->
+ 6552 bytes
+ .../japanese/SourceHanSans-Regular.default.660E.otf  | Bin 0 ->
+ 5196 bytes
+ .../japanese/SourceHanSans-Regular.drop-hints..otf   | Bin 0 ->
+ 2188 bytes
+ ...ular.drop-hints.3042,3044,3046,3048,304A,304B.otf | Bin 0 ->
+ 6076 bytes
+ ...ular.drop-hints.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 0 ->
+ 6180 bytes
+ .../SourceHanSans-Regular.drop-hints.61,63,65,6B.otf | Bin 0 ->
+ 5312 bytes
+ ...ular.drop-hints.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 0 ->
+ 6248 bytes
+ .../SourceHanSans-Regular.drop-hints.660E.otf        | Bin 0 ->
+ 5088 bytes
+ test/subset/data/fonts/SourceHanSans-Regular.otf     | Bin 0 ->
+ 16427580 bytes
+ test/subset/data/tests/japanese.tests                |   1 +
+ 15 files changed, 14 insertions(+), 3 deletions(-)
 
 commit 0739b28169eb63332b31420deb5bf58b5446f154
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -15485,6 +19472,106 @@ Date:   Wed Sep 19 16:02:56 2018 -0400
  src/hb-aat-layout-morx-table.hh | 23 ++++++++++++++++++-----
  1 file changed, 18 insertions(+), 5 deletions(-)
 
+commit ebeccf3e63bff96b7a7766dea566704a9cbeae44
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 18 17:24:30 2018 -0700
+
+    fixed char widths & standard Encoding in subset CFF
+
+    also merged flush_n_args to flush_args into one
+    takes start index of the arguments on stack instead of count
+
+ src/hb-cff-interp-cs-common.hh | 20 +++++---------------
+ src/hb-cff1-interp-cs.hh       | 11 +++++++----
+ src/hb-cff2-interp-cs.hh       |  2 +-
+ src/hb-subset-cff1.cc          | 22 ++++++++++++++++------
+ src/hb-subset-cff2.cc          | 12 ++++++------
+ 5 files changed, 35 insertions(+), 32 deletions(-)
+
+commit bf4eb2e4cf8d08b674f81954e22b331cca2b3721
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 18 15:53:37 2018 -0700
+
+    Added SourceSansPro-Regular along as CFF full-font test case
+
+    derived "expected" subset fonts from fonttools then manually tweaked
+    further so they resemble hb-subset output
+
+ ...ourceSansPro-Regular.default.1FC,21,41,20,62,63.otf | Bin 0 ->
+ 3640 bytes
+ .../SourceSansPro-Regular.default.61,62,63.otf         | Bin 0 ->
+ 3400 bytes
+ .../SourceSansPro-Regular.default.D7,D8,D9,DA,DE.otf   | Bin 0 ->
+ 3596 bytes
+ ...ceSansPro-Regular.drop-hints.1FC,21,41,20,62,63.otf | Bin 0 ->
+ 3480 bytes
+ .../SourceSansPro-Regular.drop-hints.61,62,63.otf      | Bin 0 ->
+ 3276 bytes
+ ...SourceSansPro-Regular.drop-hints.D7,D8,D9,DA,DE.otf | Bin 0 ->
+ 3448 bytes
+ test/subset/data/fonts/SourceSansPro-Regular.otf       | Bin 0 ->
+ 220852 bytes
+ test/subset/data/tests/full-font.tests                 |   1 +
+ test/subset/run-tests.py                               |   4 ++--
+ test/subset/subset_test_suite.py                       |   5 +++++
+ 10 files changed, 8 insertions(+), 2 deletions(-)
+
+commit e75e7224c9c02ab99e132a51fe8801e29827cac5
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 17 15:34:39 2018 -0700
+
+    include curve control points in extents
+
+    this makes results consistent with FT
+    also optimized handling of path end points
+
+ src/hb-cff-interp-cs-common.hh |  6 +++---
+ src/hb-ot-cff1-table.cc        | 27 +++++++++++++++++++++++++--
+ 2 files changed, 28 insertions(+), 5 deletions(-)
+
+commit 98b94f8ba53276887ab583eeeb4cb097c7b84b2c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 17 13:56:39 2018 -0700
+
+    fix static_assert failure in OffsetTo<TopDict>
+
+ src/hb-ot-cff2-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d050ab8d3e73debfb414fc8c9426180459150b61
+Merge: f0a4e0c2 388ab916
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 17 13:07:29 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit f0a4e0c2ca5ee0225765590384216d5d5367de7e
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 17 12:11:56 2018 -0700
+
+    fix build attempt ^3
+
+ src/hb-ot-cff1-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f0d74971aee5ce309bdfa2a4397667f14ee15f42
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 17 12:02:12 2018 -0700
+
+    fix attempt ^2: unuse INT32_MAX/MIN
+
+ src/hb-ot-cff1-table.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 4d963a2711e6035e97e246241d8420273363f857
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 17 11:28:33 2018 -0700
+
+    fix build attempt
+
+ src/hb-ot-cff1-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 commit 388ab91642734e1ba0d7a4a4f29a17b15f1b249d
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Sep 17 19:29:34 2018 +0200
@@ -15494,6 +19581,31 @@ Date:   Mon Sep 17 19:29:34 2018 +0200
  src/hb-aat-layout-morx-table.hh | 87
  ++++++++++++++++-------------------------
  1 file changed, 33 insertions(+), 54 deletions(-)
+
+commit c0c85b852d37dad75eeef473e6dd3ec91a3b559b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 17 11:14:56 2018 -0700
+
+    implemented get_glyph_extents with CFF1
+
+    Implemented path operators in a new struct PathProc hooked up
+    to CSOpSet
+    Added current point to CSInterpEnv
+
+ src/hb-cff-interp-common.hh    |  86 ++++++++-
+ src/hb-cff-interp-cs-common.hh | 425
+ +++++++++++++++++++++++++++++++++++++++--
+ src/hb-cff1-interp-cs.hh       |  18 +-
+ src/hb-cff2-interp-cs.hh       |  10 +-
+ src/hb-null.hh                 |   2 +-
+ src/hb-ot-cff1-table.cc        |  82 ++++++++
+ src/hb-ot-cff1-table.hh        |  95 +++++----
+ src/hb-ot-face.cc              |   1 +
+ src/hb-ot-face.hh              |   1 +
+ src/hb-ot-font.cc              |   2 +
+ src/hb-subset-cff1.cc          |   4 +-
+ src/hb-subset-cff2.cc          |  10 +-
+ 12 files changed, 657 insertions(+), 79 deletions(-)
 
 commit d8d1e7df0057c79f54d855b7bfec2d21f59b09e8
 Author: David Corbett <corbett.dav@husky.neu.edu>
@@ -15764,6 +19876,13 @@ Date:   Fri Sep 14 10:58:00 2018 +0200
  src/hb-open-file.hh | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
+commit f2c4720ae696096d90493db218ef1283681561e7
+Merge: 1234a813 ca746f26
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Sep 13 12:44:00 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
 commit ca746f261e1e54cec2f9c8bc7a6f930491e19418
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Sep 13 20:35:21 2018 +0200
@@ -15814,6 +19933,16 @@ Date:   Thu Sep 13 20:21:54 2018 +0200
  src/hb-ot-layout-gsub-table.hh | 10 +++++-----
  src/hb-ot-layout-gsubgpos.hh   | 10 +++++-----
  3 files changed, 17 insertions(+), 17 deletions(-)
+
+commit 1234a8136891429bb7353f47480595f44615f322
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Sep 13 10:55:56 2018 -0700
+
+    add head table to CFF/CFF2
+
+ src/hb-ot-cff1-table.hh | 4 ++++
+ src/hb-ot-cff2-table.hh | 4 ++++
+ 2 files changed, 8 insertions(+)
 
 commit 180a88a96ce327e4103df3635c73559de65d1546
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -15949,6 +20078,116 @@ Date:   Thu Sep 13 16:29:49 2018 +0200
 
  src/hb-open-type.hh | 26 +++++++++++++++++++-------
  1 file changed, 19 insertions(+), 7 deletions(-)
+
+commit 3cae9c75153277b9cfaaba20e0de84e420aeb1eb
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Sep 12 17:23:08 2018 -0700
+
+    fixed hb_plan_subset_cff_fdselect
+
+    FDSelect3/4 sentinel size wasn't taken into account
+
+ src/hb-subset-cff-common.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0f159a38a62bbf1b7fb267694a5d91d8135da625
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Sep 12 16:08:54 2018 -0700
+
+    fixed serialize_fdselect_3_4
+
+ src/hb-ot-cff-common.hh     |  6 ++++
+ src/hb-ot-cff1-table.hh     |  6 ----
+ src/hb-subset-cff-common.cc | 68
+ ++++++++++++++++++++++++++-------------------
+ src/hb-subset-cff-common.hh | 10 +++----
+ src/hb-subset-cff1.cc       | 12 ++++----
+ src/hb-subset-cff2.cc       | 12 ++++----
+ 6 files changed, 63 insertions(+), 51 deletions(-)
+
+commit 1608481d88919ca748e367146e3a78458d5bbe8f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Sep 12 13:22:19 2018 -0700
+
+    fixed bugs in Charset serialization
+
+    also some code cleanup
+
+ src/hb-ot-cff1-table.hh |  4 ++--
+ src/hb-subset-cff1.cc   | 44 ++++++++++++++++++++------------------------
+ 2 files changed, 22 insertions(+), 26 deletions(-)
+
+commit f45ac6296add6435ea5a902f7519187414aa8092
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 11 22:41:50 2018 -0700
+
+    fixed name mixup in Remap::reset
+
+    it was causing inconsistent Strings Index subset results
+
+ src/hb-ot-cff-common.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 497e7fb264ec5cb799c038cbe693b70410b18da3
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 11 16:47:55 2018 -0700
+
+    misc bug fixes
+
+    Added OpCode_FontMatrix to TopDictOpSet (yet to parse values)
+    fixed a wrong assert in encode_int
+
+ src/hb-cff-interp-dict-common.hh | 3 +++
+ src/hb-subset-cff-common.hh      | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+commit 5b453f77f804cd8421a45d8276ed3e04041da23c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 11 16:20:39 2018 -0700
+
+    fixed off-by-one error with offSize
+
+ src/hb-ot-cff-common.hh | 5 +++--
+ src/hb-subset-cff1.cc   | 4 ++--
+ src/hb-subset-cff2.cc   | 2 +-
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+
+commit 1499029a9695e26beaf72e11287be60ad9e40cfe
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 11 13:56:52 2018 -0700
+
+    fixed a bug
+
+ src/hb-cff-interp-dict-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0bd5912a08698fb7880e1354e45bf63ef45125a5
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 11 13:24:27 2018 -0700
+
+    make parse_bcd locale free
+
+ src/hb-cff-interp-dict-common.hh | 92
+ +++++++++++++++++++++++++++++-----------
+ 1 file changed, 68 insertions(+), 24 deletions(-)
+
+commit bb38d0f66388ec37ee9b0e81176d60c66fc17a19
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 11 10:43:15 2018 -0700
+
+    Implement parse_bcd
+
+ src/hb-cff-interp-common.hh      | 15 --------------
+ src/hb-cff-interp-dict-common.hh | 44
+ ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 15 deletions(-)
+
+commit 45e564a51917475ef6481825a6efb5b99bf1912e
+Merge: c6f75c30 d5c50927
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 11 09:46:37 2018 -0700
+
+    Merge branch 'master' into cff-subset
 
 commit bd75fd45cdbd0edb24568326bb7fde59d299a82c
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -16258,6 +20497,17 @@ Date:   Thu Jan 25 14:22:03 2018 -0500
  src/hb-ot-shape.cc             |  1 +
  6 files changed, 37 insertions(+), 10 deletions(-)
 
+commit c6f75c3049685440d166bd4169b36abac2df4fdd
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 10 17:02:31 2018 -0700
+
+    fix build attempt
+
+ src/hb-ot-cff1-table.hh | 70
+ ++++++++++++++++++++++++-------------------------
+ src/hb-subset-cff1.cc   | 16 +++++------
+ 2 files changed, 43 insertions(+), 43 deletions(-)
+
 commit 96471fe8593575deceb44d3757c227f65f10a25e
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Sep 11 01:39:23 2018 +0200
@@ -16266,6 +20516,20 @@ Date:   Tue Sep 11 01:39:23 2018 +0200
 
  src/hb-uniscribe.cc | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit cc52e53cf0cb76809145ae7407a8b613e9e61153
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 10 16:27:49 2018 -0700
+
+    Removed unused subr subset code
+
+ src/hb-subset-cff-common.hh | 98
+ ++-------------------------------------------
+ src/hb-subset-cff1.cc       | 92
+ +++++-------------------------------------
+ src/hb-subset-cff2.cc       | 90
+ ++++-------------------------------------
+ 3 files changed, 22 insertions(+), 258 deletions(-)
 
 commit becd84aa2f2902ea9d2d1677b28945e103a68816
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -16324,6 +20588,27 @@ Date:   Mon Sep 10 23:29:26 2018 +0200
  src/hb-ot-name-table.hh         | 13 +++++++------
  src/hb-ot-post-table.hh         |  5 +++--
  15 files changed, 113 insertions(+), 110 deletions(-)
+
+commit 1666b89e300c86347dc82131423463cbfed8cc0f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Sep 10 16:00:20 2018 -0700
+
+    subset CFF1 String Index
+
+    Repurposed FDMap as Remap then subclassed for remapping SIDs
+    misc code cleanup
+
+ src/hb-cff-interp-common.hh      |   2 -
+ src/hb-cff-interp-dict-common.hh |  12 +-
+ src/hb-ot-cff-common.hh          |  96 +++++++++--
+ src/hb-ot-cff1-table.hh          | 251 +++++++++++++++++++----------
+ src/hb-ot-cff2-table.hh          |  12 +-
+ src/hb-subset-cff-common.cc      |  24 +--
+ src/hb-subset-cff-common.hh      |  20 ++-
+ src/hb-subset-cff1.cc            | 334
+ ++++++++++++++++++++++++++++++++-------
+ src/hb-subset-cff2.cc            |   8 +-
+ 9 files changed, 565 insertions(+), 194 deletions(-)
 
 commit 9507b05a7a65962d5d02eb424e4f5d8570976f4e
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -16518,6 +20803,13 @@ Date:   Fri Sep 7 15:02:57 2018 -0400
  src/hb-set.hh              | 12 ++++++------
  8 files changed, 18 insertions(+), 18 deletions(-)
 
+commit 1e88b1755c37eaa171c08f7bedb93f110238c80f
+Merge: 22b88632 ebe67137
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Sep 7 10:50:55 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
 commit ebe67137ab3559c2c6aaf53442ca223cb34df5af
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Sep 7 10:46:13 2018 -0400
@@ -16535,6 +20827,58 @@ Date:   Fri Sep 7 10:24:22 2018 -0400
 
  src/hb-subset.cc | 3 +++
  1 file changed, 3 insertions(+)
+
+commit 22b88632d5bd3676642b0a1d93f27e47438c140b
+Merge: 2a74536a 21bf1470
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Sep 6 22:27:44 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit 2a74536aae443a8b7f23ed018dec14a013c04dfe
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Sep 6 18:26:13 2018 -0700
+
+    fix build attempt ^2
+
+    Added hb-ot-cff1-table.cc to hb-subset sources
+    Deleted unused variable (charset)
+
+ src/Makefile.sources  | 1 +
+ src/hb-subset-cff1.cc | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 55268df9d4b287883c8266e316cda44f4011f424
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Sep 6 17:56:05 2018 -0700
+
+    fix build attempt
+
+    Added HB_INTERNAL to static funtion declarations
+
+ src/hb-ot-cff1-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit aca73c9df2054f62cf10a5c27bc5fa7823747f8b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Sep 6 17:28:15 2018 -0700
+
+    subset CFF1 Encoding & Charset
+
+    fixed misc Charset bugs
+    added source file hb-ot-cff1.table.cc
+    renamed things for clarity & consistency
+
+ src/Makefile.sources             |   1 +
+ src/hb-cff-interp-dict-common.hh |  15 +-
+ src/hb-ot-cff-common.hh          |  34 ++--
+ src/hb-ot-cff1-table.cc          | 130 +++++++++++++
+ src/hb-ot-cff1-table.hh          | 403
+ ++++++++++++++++++++++++++++++++-------
+ src/hb-ot-cff2-table.hh          |  24 +--
+ src/hb-subset-cff1.cc            | 247 ++++++++++++++++++++----
+ src/hb-subset-cff2.cc            |  30 +--
+ 8 files changed, 737 insertions(+), 147 deletions(-)
 
 commit 21bf147054f6b5bd1c430c0e02a8c4058ed229a1
 Author: Garret Rieger <grieger@google.com>
@@ -16584,6 +20928,43 @@ Date:   Mon Sep 3 20:50:11 2018 -0700
  +++++++++++++++++++++++++++++++++++-------
  src/hb-vector.hh               |  2 ++
  4 files changed, 81 insertions(+), 25 deletions(-)
+
+commit 5ea03d2951375bfcc1258c2c0b5c33efc6ebf7f8
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 4 11:29:15 2018 -0700
+
+    fix build by untemplatizing DictOpSet & DictVal
+
+    as they aren't instantiated with BlendArg (yet)
+
+ src/hb-cff-interp-dict-common.hh | 21 +++++++++------------
+ src/hb-cff2-interp-cs.hh         |  1 -
+ src/hb-ot-cff1-table.hh          |  8 ++++----
+ src/hb-ot-cff2-table.hh          | 16 ++++++++--------
+ src/hb-subset-cff-common.hh      |  4 ++--
+ 5 files changed, 23 insertions(+), 27 deletions(-)
+
+commit f2d299b0b75fd110cdc6b16de31e7212e292cc14
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Sep 4 10:25:21 2018 -0700
+
+    Drop hints from CFF2 charstrings
+
+    Templatized ArgStack so it may store the default value along with
+    blend deltas as BlendArg while parsing blend operator arguments in
+    CFF2 charstring
+    Added get_region_count() method to VarRegionList & VariationStore
+
+ src/hb-cff-interp-common.hh | 67 +++++++++++++++++++++++++++------
+ src/hb-cff1-interp-cs.hh    |  5 ++-
+ src/hb-cff2-interp-cs.hh    | 91
+ +++++++++++++++++++++++++++++++++++++++------
+ src/hb-ot-cff2-table.hh     | 22 ++++++-----
+ src/hb-ot-layout-common.hh  |  6 +++
+ src/hb-subset-cff-common.hh | 60 ++++++++++++++++--------------
+ src/hb-subset-cff1.cc       |  5 ++-
+ src/hb-subset-cff2.cc       | 54 ++++++++++++++++++++++-----
+ 8 files changed, 235 insertions(+), 75 deletions(-)
 
 commit 3f00d0b0df14d69859b15568ff28a810d08f59ea
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -16767,6 +21148,46 @@ Date:   Fri Aug 31 16:31:00 2018 -0700
  src/hb-subset.hh               | 21 +++++++++++++++++++++
  9 files changed, 31 insertions(+), 6 deletions(-)
 
+commit fcf177885b4c3d732ffeb82936da906969a269d3
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 31 16:28:47 2018 -0700
+
+    templatized ArgStack as a prep to store blends
+
+ src/hb-cff-interp-common.hh      | 46
+ +++++++++++++++++++++---------------
+ src/hb-cff-interp-cs-common.hh   | 41 ++++++++++++++++++--------------
+ src/hb-cff-interp-dict-common.hh | 35 ++++++++++++++++-----------
+ src/hb-cff1-interp-cs.hh         | 15 +++++++-----
+ src/hb-cff2-interp-cs.hh         | 14 +++++++----
+ src/hb-ot-cff1-table.hh          | 32 ++++++++++++-------------
+ src/hb-ot-cff2-table.hh          | 51
+ ++++++++++++++++++++++++++--------------
+ src/hb-subset-cff-common.hh      |  4 ++--
+ src/hb-subset-cff1.cc            |  1 -
+ src/hb-subset-cff2.cc            |  2 +-
+ 10 files changed, 142 insertions(+), 99 deletions(-)
+
+commit 968168bf0e369927cd6a7f63608d844abe123a7b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 31 13:28:16 2018 -0700
+
+    drop hints from CFF1 charstrings
+
+    renamed confusing Stack.size to Stack.count
+
+ src/hb-cff-interp-common.hh      |  43 +++++++-----
+ src/hb-cff-interp-cs-common.hh   | 140
+ +++++++++++++++++----------------------
+ src/hb-cff-interp-dict-common.hh |   4 +-
+ src/hb-cff1-interp-cs.hh         |  14 ++--
+ src/hb-cff2-interp-cs.hh         |  18 ++---
+ src/hb-ot-cff1-table.hh          |  26 ++++----
+ src/hb-ot-cff2-table.hh          |  20 +++---
+ src/hb-subset-cff1.cc            |  53 ++++++++-------
+ src/hb-subset-cff2.cc            |  69 +++++++++----------
+ 9 files changed, 190 insertions(+), 197 deletions(-)
+
 commit aba0a945c5f8724cc7bd1a9b7f7b5df1c64b03f4
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Aug 31 13:25:19 2018 -0700
@@ -16800,6 +21221,19 @@ Date:   Fri Aug 31 13:00:57 2018 -0700
  src/hb-ot-shape-complex-arabic-fallback.hh | 1 -
  1 file changed, 1 deletion(-)
 
+commit 8c5e03b5415f83312719ebb3cd284229e52a4843
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 30 17:21:56 2018 -0700
+
+    Added drop_hints to SubrFlattener
+
+ src/hb-cff-interp-cs-common.hh | 20 +++++++++++++++++++-
+ src/hb-subset-cff-common.hh    | 18 ++++++++++++++----
+ src/hb-subset-cff1.cc          | 35 ++++++++++++++++++++++------------
+ src/hb-subset-cff2.cc          | 43
+ ++++++++++++++++++++++++++----------------
+ 4 files changed, 83 insertions(+), 33 deletions(-)
+
 commit a23b892fe6cc4859a30edc7ffc003ab7624aa5f0
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Aug 29 18:28:39 2018 -0700
@@ -16827,6 +21261,22 @@ Date:   Wed Aug 29 18:24:03 2018 -0700
  test/fuzzing/hb-subset-fuzzer.cc | 10 ++++-----
  util/hb-subset.cc                |  3 +--
  9 files changed, 52 insertions(+), 49 deletions(-)
+
+commit 9fd08cc238f8e2f7be1eaefca110021382efe606
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 29 18:18:18 2018 -0700
+
+    CFF2 subroutine flattner
+
+    Factored out CFF1 & CFF2 common subsetting code in
+    hb-subset-cff-common.hh
+
+ src/hb-cff2-interp-cs.hh    |  34 +++++--
+ src/hb-subset-cff-common.hh | 154 +++++++++++++++++++++++++++++
+ src/hb-subset-cff1.cc       | 135 +++-----------------------
+ src/hb-subset-cff2.cc       | 229
+ ++++++++++++++++++--------------------------
+ 4 files changed, 285 insertions(+), 267 deletions(-)
 
 commit d237ce71810045ee400c52740cd8ab6e1113aada
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -16884,6 +21334,72 @@ Date:   Wed Aug 29 22:37:39 2018 +0100
  m4/pkg.m4 | 157
  --------------------------------------------------------------
  1 file changed, 157 deletions(-)
+
+commit b95bf075d7b62baf7d6fa1d8f0d1f16fad934975
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 29 14:41:52 2018 -0700
+
+    fix build attempt ^2
+
+ src/hb-subset-cff1.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 1d1afddfd21155ef136c2d96b1d6c286bdc8925f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 29 13:36:39 2018 -0700
+
+    corrected preprocessor guards
+
+ src/hb-cff-interp-common.hh      | 6 +++---
+ src/hb-cff-interp-cs-common.hh   | 6 +++---
+ src/hb-cff-interp-dict-common.hh | 6 +++---
+ src/hb-ot-cff-common.hh          | 6 +++---
+ src/hb-subset-cff-common.hh      | 6 +++---
+ 5 files changed, 15 insertions(+), 15 deletions(-)
+
+commit 8af9690ac7ce41fb1db878d556df5c4ee624eaa0
+Merge: 0ad081ec fee0f41c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 29 13:26:17 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+    Renamed cff "private" source/headers without the suffix
+
+commit 0ad081ec324e734cfca60d4d2c36a1be5bc8a067
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 29 12:56:48 2018 -0700
+
+    attempt to fix build failure
+
+ src/hb-subset-cff1.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit a11420b48c405e1a43e2ba62893e9a0872e5f496
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 29 12:14:30 2018 -0700
+
+    Subroutine flattener for CFF1
+
+    Subr-flattened charstrings are temporarily re-encoded in ByteStrBuff
+    during "plan" phase, then copied to hb_serialize_context_t during
+    "write" phase
+
+    CSOpSet may callback opcode processing "virtual" functions via CRTP
+
+    Numer struct may store a value as fixed optionally in addition to
+    int and float
+
+ src/hb-cff-interp-common-private.hh    |  53 ++++++++++--
+ src/hb-cff-interp-cs-common-private.hh | 109 ++++++++++++++++++-----
+ src/hb-cff1-interp-cs.hh               |  35 +++++---
+ src/hb-cff2-interp-cs.hh               |  14 +--
+ src/hb-ot-cff-common-private.hh        |  10 +--
+ src/hb-subset-cff-common-private.hh    | 102 +++++++++++++++++++++-
+ src/hb-subset-cff1.cc                  | 152
+ ++++++++++++++++++++++-----------
+ src/hb-subset-cff2.cc                  |   7 +-
+ 8 files changed, 372 insertions(+), 110 deletions(-)
 
 commit fee0f41c6c1e50621d10b07802ca36a9b295b53d
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -17629,6 +22145,230 @@ Date:   Wed Aug 15 20:12:25 2018 -0700
  src/hb-ot-var.cc                     |   4 +-
  10 files changed, 71 insertions(+), 91 deletions(-)
 
+commit 27c32d8afbdf5b587b14f3b194f79882680348ba
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 22 11:36:39 2018 -0700
+
+    fixed "Fixed" number decoding
+
+ src/hb-cff-interp-common-private.hh    | 11 ++++++++++-
+ src/hb-cff-interp-cs-common-private.hh |  4 ++--
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+commit 811a651bbd3f1bda7ed8eaee9af8e9dbbc8f80de
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Aug 20 14:04:46 2018 -0700
+
+    fixed bugs with empty CFFIndex, fullset FDMap
+
+ src/hb-ot-cff-common-private.hh | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
+
+commit 5cde2f55cd2f8917954f3a3f60bd571c86b3aa59
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 17 16:50:13 2018 -0700
+
+    drop hints from CFF & CFF2 Private
+
+ src/hb-cff-interp-dict-common-private.hh | 24 ++++++++++++++
+ src/hb-subset-cff1.cc                    | 53
+ +++++++++++++++++++++++++++---
+ src/hb-subset-cff2.cc                    | 55
+ +++++++++++++++++++++++++++++---
+ 3 files changed, 123 insertions(+), 9 deletions(-)
+
+commit cef75ea41a513a612a683bced27ced31761204b5
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 17 13:13:18 2018 -0700
+
+    Added CFF2 Subr nullifier
+
+    along with CFF2 charstring interpreter
+    factored out common code between CFF1 & CFF2 to CSInterpreter
+    moved fetch_op from Interpreter to InterpEnv
+    misc code clean up & bug fixes
+
+ src/Makefile.sources                     |  1 +
+ src/hb-cff-interp-common-private.hh      | 44 +++++++--------
+ src/hb-cff-interp-cs-common-private.hh   | 95
+ +++++++++++++++++++++++++++++--
+ src/hb-cff-interp-dict-common-private.hh |  3 +-
+ src/hb-cff1-interp-cs.hh                 | 82 ---------------------------
+ src/hb-cff2-interp-cs.hh                 | 97
+ ++++++++++++++++++++++++++++++++
+ src/hb-ot-cff-common-private.hh          |  4 ++
+ src/hb-ot-cff2-table.hh                  |  7 ++-
+ src/hb-subset-cff1.cc                    |  1 +
+ src/hb-subset-cff2.cc                    | 62 ++++++++++++++++++--
+ 10 files changed, 278 insertions(+), 118 deletions(-)
+
+commit f57d6bcbca276cec54d1e5308c308265e8e983b9
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 16 08:03:46 2018 -0700
+
+    renamed CFF::Index to CFF::CFFIndex
+
+    to avoid confusion with OT::Index
+
+ src/hb-ot-cff-common-private.hh | 38
+ +++++++++++++++++++-------------------
+ src/hb-ot-cff1-table.hh         |  4 ++--
+ src/hb-ot-cff2-table.hh         |  2 +-
+ src/hb-subset-cff2.cc           |  4 ++--
+ 4 files changed, 24 insertions(+), 24 deletions(-)
+
+commit c4ae426a3d3f9411b94d35745ca0e14677cd7bdb
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 16 00:59:46 2018 -0700
+
+    treat h/vstem the same as h/vstemhm
+
+ src/hb-cff1-interp-cs.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit e67bb3fbcf39385ea1db136aeca61291364fb75b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 16 00:25:57 2018 -0700
+
+    renamed OT::cff to OT::cff1 for consistency
+
+    along with HB_OT_TAG_cff1
+
+ src/hb-ot-cff1-table.hh | 14 +++++++-------
+ src/hb-subset-cff1.cc   | 16 ++++++++--------
+ src/hb-subset.cc        |  4 ++--
+ 3 files changed, 17 insertions(+), 17 deletions(-)
+
+commit fdbfa1848b2f279c0f7a885bc1a985fa3375cfcd
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 16 00:13:09 2018 -0700
+
+    renamed CFF version 1 structs and sources to CFF1 from CFF
+
+    "CFF" is used for shared structs & sources between CFF1 & CFF2
+    except OT:cff is for CFF version 1 table
+
+ src/Makefile.sources                              |   8 +-
+ src/{hb-cff-interp-cs.hh => hb-cff1-interp-cs.hh} |  22 ++--
+ src/{hb-ot-cff-table.hh => hb-ot-cff1-table.hh}   | 150
+ +++++++++++-----------
+ src/hb-ot-font.cc                                 |   2 +-
+ src/{hb-subset-cff.cc => hb-subset-cff1.cc}       |  86 ++++++-------
+ src/{hb-subset-cff.hh => hb-subset-cff1.hh}       |   8 +-
+ src/hb-subset.cc                                  |   2 +-
+ 7 files changed, 139 insertions(+), 139 deletions(-)
+
+commit 867f68bd8a74634ac6220bd76c8bafe3e2226041
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 15 15:53:50 2018 -0700
+
+    fix build attempt ^7
+
+ src/hb-subset-cff2.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 685db67bb07505729fdb997129ffd068bbe3c40d
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 15 15:45:17 2018 -0700
+
+    fix build attempt ^6
+
+ src/hb-subset-cff2.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 2810caafeb9a621d53653f454dab0fa3e7f5c4a3
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 15 15:30:24 2018 -0700
+
+    fix build attempt ^5
+
+ src/hb-subset-cff2.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 25b8310b2a3e074c9d1d723ab6d10a29f8d189be
+Merge: 7aa23f35 22defe09
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 15 15:00:55 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit 7aa23f3597e4783b88ad526021cc4cafc05395f2
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 15 15:00:32 2018 -0700
+
+    fix build attempt ^4
+
+ src/hb-cff-interp-cs.hh | 10 +++++-----
+ src/hb-subset-cff.cc    |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+commit 270452a44653773b3dc584729ec438ff922e2739
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 15 13:15:08 2018 -0700
+
+    fix build attempt ^3
+
+ src/hb-cff-interp-common-private.hh    | 2 --
+ src/hb-cff-interp-cs-common-private.hh | 1 +
+ src/hb-cff-interp-cs.hh                | 1 +
+ src/hb-subset-cff.cc                   | 2 +-
+ 4 files changed, 3 insertions(+), 3 deletions(-)
+
+commit c234839f25e68700c3489c55fda2773f2e00eecb
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 15 13:04:43 2018 -0700
+
+    fix build attempt ^2
+
+ src/hb-cff-interp-common-private.hh      | 2 ++
+ src/hb-cff-interp-cs-common-private.hh   | 6 +++---
+ src/hb-cff-interp-cs.hh                  | 6 +++---
+ src/hb-cff-interp-dict-common-private.hh | 6 +++---
+ src/hb-subset-cff.cc                     | 6 +++---
+ 5 files changed, 14 insertions(+), 12 deletions(-)
+
+commit eab07e713a67da2c5b368c59808f7e2db1cf0b0b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 15 12:15:55 2018 -0700
+
+    fix build
+
+ src/Makefile.sources | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 633ce88de93f5c565ee7fb8acdbd93c57779524b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 15 12:00:19 2018 -0700
+
+    CFF Subrs subsetting
+
+    Unreferenced subroutines are nullified (not removed) in a subset font
+
+    Separate Interpreter struct from hb-ot-cff-common-private.hh in a
+    set of four header files, augmented for CharString (CS):
+    hb-cff-interp-common-private.hh
+    hb-cff-interp-dict-common-private.hh
+    hb-cff-interp-cs-common-private.hh
+    hb-cff-interp-cs.hh
+
+    Interpreter runtime is separated off as a new struct InterpEnv
+    sub-classed differently for Dict and CharString (CS)
+
+ src/Makefile.sources                     |   8 +-
+ src/hb-cff-interp-common-private.hh      | 581
+ +++++++++++++++++++++++++++++++
+ src/hb-cff-interp-cs-common-private.hh   | 174 +++++++++
+ src/hb-cff-interp-cs.hh                  | 282 +++++++++++++++
+ src/hb-cff-interp-dict-common-private.hh | 183 ++++++++++
+ src/hb-ot-cff-common-private.hh          | 562
+ ++----------------------------
+ src/hb-ot-cff-table.hh                   | 165 ++++-----
+ src/hb-ot-cff2-table.hh                  | 147 ++++----
+ src/hb-subset-cff-common-private.hh      |  83 +++++
+ src/hb-subset-cff.cc                     | 118 +++++--
+ src/hb-subset-cff2.cc                    |  38 +-
+ 11 files changed, 1585 insertions(+), 756 deletions(-)
+
 commit 22defe0965adddaa09eebc13df7fa6c64e2abba3
 Author: Emil A Eklund <eae@chromium.org>
 Date:   Tue Aug 14 14:47:20 2018 -0700
@@ -17953,6 +22693,64 @@ Date:   Thu Aug 9 15:16:32 2018 +0700
  src/hb-common.cc | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+commit a3a8c85b027779365bb33e2063221b4650fbac3b
+Merge: 145f371d 652cd45c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 10 13:41:42 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit 145f371d71965b86635025c73117db0e24f2df75
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 10 13:07:53 2018 -0700
+
+    fixed TRACE build failure
+
+ src/hb-ot-cff-common-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a97ed342d18bdb262400c8ab6501df110fe4e18f
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 10 12:55:22 2018 -0700
+
+    fixed inclusion of excluded Private & local Subrs
+
+    It was bloating a multi-FD subset font unnecessarily
+    defined a wrapper struct FDMap for fdmap
+
+ src/hb-ot-cff-common-private.hh     | 34 ++++++++++++++++++++-----
+ src/hb-subset-cff-common-private.cc |  6 ++---
+ src/hb-subset-cff-common-private.hh |  4 +--
+ src/hb-subset-cff.cc                | 48
+ +++++++++++++++++++----------------
+ src/hb-subset-cff2.cc               | 50
+ ++++++++++++++++++++-----------------
+ 5 files changed, 87 insertions(+), 55 deletions(-)
+
+commit 64c541226457907ec1801a5766050ee64feb67e8
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 10 11:07:07 2018 -0700
+
+    Added CFF support
+
+    Added sources hb-ot-cff-table.hh, hb-subset-cff.cc & hh
+    Templatized Index because CFF uses 16-bit count while CFF2 uses 32-bit
+    Misc code cleanup & bug fixes
+
+ src/Makefile.sources                |   9 +-
+ src/hb-ot-cff-common-private.hh     | 477 ++++++++++++-------
+ src/hb-ot-cff-table.hh              | 919
+ ++++++++++++++++++++++++++++++++++++
+ src/hb-ot-cff2-table.hh             | 235 ++++-----
+ src/hb-ot-font.cc                   |   1 +
+ src/hb-subset-cff-common-private.cc |   6 +-
+ src/hb-subset-cff-common-private.hh |   4 +-
+ src/hb-subset-cff.cc                | 560 ++++++++++++++++++++++
+ src/hb-subset-cff.hh                |  38 ++
+ src/hb-subset-cff2.cc               | 104 ++--
+ src/hb-subset.cc                    |   4 +
+ 11 files changed, 1991 insertions(+), 366 deletions(-)
+
 commit 652cd45c650b1cdce2585dcee614e5a9cdda530c
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Aug 9 01:02:02 2018 -0700
@@ -18204,6 +23002,53 @@ Date:   Mon Aug 6 15:32:13 2018 -0700
 
  src/hb-iter-private.hh | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 161ece4c3097096f355dc5ea514320a8dc678bea
+Merge: e8d695eb 79e21984
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Aug 6 11:23:50 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit e8d695ebaa4b5d36d907042fb6930244e87b1e29
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Aug 6 11:13:06 2018 -0700
+
+    removed CMakeCache.txt
+
+ build/CMakeCache.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 9fae33b9f3fd7fce816c3db71089db4ce0c82d4c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Aug 6 10:44:12 2018 -0700
+
+    Silence Codacy
+
+ build/CMakeCache.txt                | 1 +
+ src/hb-subset-cff-common-private.cc | 8 +++++---
+ src/hb-subset-cff2.cc               | 4 +++-
+ 3 files changed, 9 insertions(+), 4 deletions(-)
+
+commit 5561b818498431adb52f958d1e9589620f0e6539
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Aug 6 10:04:53 2018 -0700
+
+    subset FDSelect and FDArray
+
+    Added a set of sources hb-subset-cff-common-private.cc & .hh for
+    FDSelect subseting code.
+    Added FDSelect format 4 (CFF2 only) support. Shared its implementation
+    with format 3 as a template.
+
+ src/Makefile.sources                |   2 +
+ src/hb-ot-cff-common-private.hh     | 130 ++++++++++++++++-------
+ src/hb-ot-cff2-table.hh             |  71 ++++++++++++-
+ src/hb-subset-cff-common-private.cc | 200
+ ++++++++++++++++++++++++++++++++++++
+ src/hb-subset-cff-common-private.hh |  54 ++++++++++
+ src/hb-subset-cff2.cc               |  71 ++++++++++---
+ 6 files changed, 476 insertions(+), 52 deletions(-)
 
 commit 79e21984b13bdb879f3007ba9a97fde47df340d3
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -18498,6 +23343,34 @@ Date:   Fri Aug 3 16:22:16 2018 -0700
  src/hb-ot-var.cc            |  4 ++--
  7 files changed, 27 insertions(+), 26 deletions(-)
 
+commit cc3f4e00aa5da1d9f0430adefe30689b3daa8282
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 3 15:00:37 2018 -0700
+
+    silence gcc
+
+ src/hb-ot-cff2-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 00970dd2420c3dcc58c25568be4abe6586c159df
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Aug 3 14:35:09 2018 -0700
+
+    Removed parsed hint fields from CFF2PrivateDictValues
+
+    Instead moved & stored uniformly in values vector (renamed from
+    opstrs)
+    This should be fine as we aren't likely going to use them as hints
+    after all
+    Templatized DictValues whether to parse them out
+    For subsetter, they aren't parsed
+
+ src/hb-ot-cff-common-private.hh | 113 ++++++++++++++----------
+ src/hb-ot-cff2-table.hh         | 185
+ ++++++++++++----------------------------
+ src/hb-subset-cff2.cc           |   2 +-
+ 3 files changed, 120 insertions(+), 180 deletions(-)
+
 commit 6a0a298aabe777e2c1ed443f100fe6142c83e3b3
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Aug 2 23:13:19 2018 -0700
@@ -18540,6 +23413,66 @@ Date:   Thu Aug 2 20:04:37 2018 -0700
 
  src/hb-ot-font.cc | 41 ++++++++++++++++++++++++++---------------
  1 file changed, 26 insertions(+), 15 deletions(-)
+
+commit 76f7397c10832b891a082e30afc74222bd5ffd7b
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 2 16:28:10 2018 -0700
+
+    templatized CFF2 accelerator for lean Private dict interpretting
+    for subset
+
+    also fixed local subrs serialization
+
+ src/hb-ot-cff-common-private.hh |   8 ++-
+ src/hb-ot-cff2-table.hh         | 119
+ ++++++++++++++++++++++++++++++++--------
+ src/hb-subset-cff2.cc           |  13 +++--
+ 3 files changed, 109 insertions(+), 31 deletions(-)
+
+commit 43040564e661fdd616d39e84fde07612d55bb785
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 2 12:23:10 2018 -0700
+
+    removed TRACE_SERIALIZE from non-member function _write_cff2
+
+ src/hb-subset-cff2.cc | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
+
+commit e2fd49e4779663e3138bd1990736a9cf850303bf
+Merge: 693ae804 d4d1bf81
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 2 11:39:22 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
+commit 693ae804743c60968d4339465fa6480e0ed8396c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 2 11:22:42 2018 -0700
+
+    more silencing fixes
+
+ src/hb-ot-cff2-table.hh | 2 +-
+ src/hb-subset-cff2.cc   | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit f6da44983178e345ddbac1bcd1691ddb330399c6
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 2 10:52:08 2018 -0700
+
+    silence archlinux
+
+ src/hb-ot-cff-common-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 58279c3db4f31bf3f9a509d1d88bca01b57c6b81
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Aug 2 10:18:01 2018 -0700
+
+    silence Codacy
+
+ src/hb-ot-cff-common-private.hh | 25 +++++++++++++++++++------
+ src/hb-ot-cff2-table.hh         | 14 +++++++-------
+ 2 files changed, 26 insertions(+), 13 deletions(-)
 
 commit 574b37e933f98e35c2bdae04458a95522bbfbb82
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -18695,6 +23628,38 @@ Date:   Wed Aug 1 17:53:30 2018 -0700
  src/hb-shaper-private.hh | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
 
+commit 19ce0b24c0173fed11104a8ab039e856cbf40924
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 1 17:34:59 2018 -0700
+
+    removed unused field OpStr::update
+
+ src/hb-ot-cff-common-private.hh |  4 +---
+ src/hb-ot-cff2-table.hh         | 22 +++++++++++-----------
+ 2 files changed, 12 insertions(+), 14 deletions(-)
+
+commit 3bda54c43b248ee2bc18a9210fb4d880bb4d82ac
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 1 16:32:27 2018 -0700
+
+    fixed Index::serialize
+
+    The bug was causing CharString of the last glyph corrupt
+
+ src/hb-ot-cff-common-private.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 16f4dc9b73a197a5ab0ad29dcf5a7ed7495ec4e1
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 1 16:06:52 2018 -0700
+
+    fixed CFF2VariationStore::serialize
+
+    also get_size
+
+ src/hb-ot-cff2-table.hh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
 commit 44d1fb37efa20852cc466c0f0bba95dbd24ce288
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Aug 1 14:51:51 2018 -0700
@@ -18761,6 +23726,24 @@ Date:   Thu Aug 2 00:11:43 2018 +0430
 
  appveyor.yml | 1 +
  1 file changed, 1 insertion(+)
+
+commit b2ff582c8c1a0fea60ee323dc820ce6fe807b063
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Aug 1 11:30:38 2018 -0700
+
+    Implemented hb_subset_cff2
+
+    Added serialize functions to CFF2 structs
+    Fixed issues & bugs & code cleanup
+    Now subsetting CFF2 table outputs something
+
+ src/hb-ot-cff-common-private.hh | 428
+ +++++++++++++++++++++++++++++++++++-----
+ src/hb-ot-cff2-table.hh         | 237 +++++++++++++++++-----
+ src/hb-private.hh               |   2 +-
+ src/hb-subset-cff2.cc           | 392
+ +++++++++++++++++++++++++++++++-----
+ 4 files changed, 914 insertions(+), 145 deletions(-)
 
 commit 1a7fed631880fff8a947ebec9c7427efff581916
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
@@ -19517,6 +24500,37 @@ Date:   Mon Jul 30 16:59:41 2018 -0700
  src/hb-machinery-private.hh | 6 ------
  1 file changed, 6 deletions(-)
 
+commit 8782f80cce147c101b605501d9fd9c7d64338314
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Jul 30 15:27:20 2018 -0700
+
+    fixed FDSelect0::sanitize
+
+ src/hb-ot-cff-common-private.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 9c4cadaef01733b32ab6190dd91552ee7145f3c3
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Jul 30 14:28:40 2018 -0700
+
+    Added sanitize functions & calls
+
+    Added sanitize functions to FDSelect
+    Added satnitize calls for FDSelect, VariationStore, FDArray, TopDict
+
+ src/hb-ot-cff-common-private.hh | 67
+ ++++++++++++++++++++++++++++++++---------
+ src/hb-ot-cff2-table.hh         | 26 +++++++++++-----
+ src/hb-subset-cff2.cc           |  2 +-
+ 3 files changed, 72 insertions(+), 23 deletions(-)
+
+commit 161b642ec5babc7e4b81d41f725d81ad2caa9330
+Merge: 3a61c3e9 5edf454a
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Jul 30 12:22:09 2018 -0700
+
+    Merge branch 'master' into cff-subset
+
 commit 5edf454aa64aad461c90bd991e7eaf27668b7e6b
 Author: Garret Rieger <grieger@google.com>
 Date:   Thu Jul 26 17:42:02 2018 -0700
@@ -19862,6 +24876,25 @@ Date:   Sat Jul 21 21:14:48 2018 +0430
  ++++++++++++++++++++++++++++++++++++++
  src/hb-ot-layout.h                 |  8 ++++
  4 files changed, 109 insertions(+)
+
+commit 3a61c3e935cf649ba65ef0cb4daa9f06ab5d3c0a
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Wed Jul 18 14:17:52 2018 -0700
+
+    first push of CFF/CFF2 work
+
+    Index, Dict structs
+    hooked up to hb-subset (takes CFF2, outputs empty CFF2)
+
+ src/Makefile.sources            |   4 +
+ src/hb-ot-cff-common-private.hh | 475
+ ++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-cff2-table.hh         | 386 ++++++++++++++++++++++++++++++++
+ src/hb-ot-font.cc               |   2 +
+ src/hb-subset-cff2.cc           | 121 ++++++++++
+ src/hb-subset-cff2.hh           |  38 ++++
+ src/hb-subset.cc                |   4 +
+ 7 files changed, 1030 insertions(+)
 
 commit 93b65d9fe331a217640069fad4159cb7c3ec35e6
 Author: Ebrahim Byagowi <ebrahim@gnu.org>

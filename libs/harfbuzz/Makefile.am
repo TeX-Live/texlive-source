@@ -38,6 +38,11 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-buffer-serialize.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer.cc \
 	@HARFBUZZ_TREE@/src/hb-cache.hh \
+	@HARFBUZZ_TREE@/src/hb-cff-interp-common.hh \
+	@HARFBUZZ_TREE@/src/hb-cff-interp-cs-common.hh \
+	@HARFBUZZ_TREE@/src/hb-cff-interp-dict-common.hh \
+	@HARFBUZZ_TREE@/src/hb-cff1-interp-cs.hh \
+	@HARFBUZZ_TREE@/src/hb-cff2-interp-cs.hh \
 	@HARFBUZZ_TREE@/src/hb-common.cc \
 	@HARFBUZZ_TREE@/src/hb-debug.hh \
 	@HARFBUZZ_TREE@/src/hb-dsalgs.hh \
@@ -45,7 +50,6 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-face.cc \
 	@HARFBUZZ_TREE@/src/hb-font.hh \
 	@HARFBUZZ_TREE@/src/hb-font.cc \
-	@HARFBUZZ_TREE@/src/hb-iter.hh \
 	@HARFBUZZ_TREE@/src/hb-kern.hh \
 	@HARFBUZZ_TREE@/src/hb-map.hh \
 	@HARFBUZZ_TREE@/src/hb-map.cc \
@@ -55,6 +59,12 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-object.hh \
 	@HARFBUZZ_TREE@/src/hb-open-file.hh \
 	@HARFBUZZ_TREE@/src/hb-open-type.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-cff-common.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-gasp-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-color-cbdt-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cmap-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-face.cc \
@@ -89,6 +99,12 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-shaper.cc \
 	@HARFBUZZ_TREE@/src/hb-static.cc \
 	@HARFBUZZ_TREE@/src/hb-string-array.hh \
+	@HARFBUZZ_TREE@/src/hb-subset-cff-common.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff-common.hh \
+	@HARFBUZZ_TREE@/src/hb-subset-cff1.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff1.hh \
+	@HARFBUZZ_TREE@/src/hb-subset-cff2.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff2.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-input.hh \
 	@HARFBUZZ_TREE@/src/hb-subset.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode.hh \
@@ -104,6 +120,7 @@ libharfbuzz_a_SOURCES =  \
 
 ## native OpenType Layout backend
 libharfbuzz_a_SOURCES += \
+	@HARFBUZZ_TREE@/src/hb-aat-fdsc-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-common.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-ankr-table.hh \
@@ -118,6 +135,7 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-aat-ltag-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-map.cc \
 	@HARFBUZZ_TREE@/src/hb-aat-map.hh \
+	@HARFBUZZ_TREE@/src/hb-array.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-font.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-base-table.hh \

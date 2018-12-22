@@ -57,28 +57,9 @@ enum
   // Reserved = 0xFFFC				/* Reserved for future use — set to zero. */
 };
 
-struct StatAxisRecord
-{
-  inline bool sanitize (hb_sanitize_context_t *c) const
-  {
-    TRACE_SANITIZE (this);
-    return_trace (likely (c->check_struct (this)));
-  }
-
-  protected:
-  Tag		axisTag;	/* A tag identifying the axis of design variation. */
-  NameID	axisNameID;	/* The name ID for entries in the 'name' table that
-				 * provide a display string for this axis. */
-  HBUINT16	axisOrdering;	/* A value that applications can use to determine
-				 * primary sorting of face names, or for ordering
-				 * of descriptors when composing family or face names. */
-  public:
-  DEFINE_SIZE_STATIC (8);
-};
-
 struct AxisValueFormat1
 {
-  inline bool sanitize (hb_sanitize_context_t *c) const
+  bool sanitize (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
     return_trace (likely (c->check_struct (this)));
@@ -101,7 +82,7 @@ struct AxisValueFormat1
 
 struct AxisValueFormat2
 {
-  inline bool sanitize (hb_sanitize_context_t *c) const
+  bool sanitize (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
     return_trace (likely (c->check_struct (this)));
@@ -128,7 +109,7 @@ struct AxisValueFormat2
 
 struct AxisValueFormat3
 {
-  inline bool sanitize (hb_sanitize_context_t *c) const
+  bool sanitize (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
     return_trace (likely (c->check_struct (this)));
@@ -153,7 +134,7 @@ struct AxisValueFormat3
 
 struct AxisValueRecord
 {
-  inline bool sanitize (hb_sanitize_context_t *c) const
+  bool sanitize (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
     return_trace (likely (c->check_struct (this)));
@@ -170,7 +151,7 @@ struct AxisValueRecord
 
 struct AxisValueFormat4
 {
-  inline bool sanitize (hb_sanitize_context_t *c) const
+  bool sanitize (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
     return_trace (likely (c->check_struct (this)));
@@ -194,7 +175,7 @@ struct AxisValueFormat4
 
 struct AxisValue
 {
-  inline bool sanitize (hb_sanitize_context_t *c) const
+  bool sanitize (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
     if (unlikely (c->check_struct (this)))
@@ -223,11 +204,30 @@ struct AxisValue
   DEFINE_SIZE_UNION (2, format);
 };
 
+struct StatAxisRecord
+{
+  bool sanitize (hb_sanitize_context_t *c) const
+  {
+    TRACE_SANITIZE (this);
+    return_trace (likely (c->check_struct (this)));
+  }
+
+  protected:
+  Tag		tag;		/* A tag identifying the axis of design variation. */
+  NameID	nameID;		/* The name ID for entries in the 'name' table that
+				 * provide a display string for this axis. */
+  HBUINT16	ordering;	/* A value that applications can use to determine
+				 * primary sorting of face names, or for ordering
+				 * of descriptors when composing family or face names. */
+  public:
+  DEFINE_SIZE_STATIC (8);
+};
+
 struct STAT
 {
-  static const hb_tag_t tableTag = HB_OT_TAG_STAT;
+  enum { tableTag = HB_OT_TAG_STAT };
 
-  inline bool sanitize (hb_sanitize_context_t *c) const
+  bool sanitize (hb_sanitize_context_t *c) const
   {
     TRACE_SANITIZE (this);
     return_trace (likely (c->check_struct (this) &&

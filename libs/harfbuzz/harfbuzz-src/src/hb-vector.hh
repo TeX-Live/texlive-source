@@ -21,7 +21,6 @@
  * ON AN "AS IS" BASIS, AND THE COPYRIGHT HOLDER HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
- * Red Hat Author(s): Behdad Esfahbod
  * Google Author(s): Behdad Esfahbod
  */
 
@@ -29,19 +28,18 @@
 #define HB_VECTOR_HH
 
 #include "hb.hh"
+#include "hb-array.hh"
 
 
 template <typename Type, unsigned int PreallocedCount=8>
 struct hb_vector_t
 {
-  static_assert ((bool) (unsigned) hb_static_size (Type), "");
-
   typedef Type ItemType;
-  enum { item_size = sizeof (Type) };
+  enum { item_size = hb_static_size (Type) };
 
   HB_NO_COPY_ASSIGN_TEMPLATE2 (hb_vector_t, Type, PreallocedCount);
-  inline hb_vector_t (void) { init (); }
-  inline ~hb_vector_t (void) { fini (); }
+  hb_vector_t ()  { init (); }
+  ~hb_vector_t () { fini (); }
 
   unsigned int len;
   private:
@@ -50,21 +48,21 @@ struct hb_vector_t
   Type static_array[PreallocedCount];
   public:
 
-  void init (void)
+  void init ()
   {
     len = 0;
     allocated = ARRAY_LENGTH (static_array);
     arrayZ_ = nullptr;
   }
 
-  inline void fini (void)
+  void fini ()
   {
     if (arrayZ_)
       free (arrayZ_);
     arrayZ_ = nullptr;
     allocated = len = 0;
   }
-  inline void fini_deep (void)
+  void fini_deep ()
   {
     Type *array = arrayZ();
     unsigned int count = len;
@@ -73,57 +71,77 @@ struct hb_vector_t
     fini ();
   }
 
-  inline Type * arrayZ (void)
-  { return arrayZ_ ? arrayZ_ : static_array; }
-  inline const Type * arrayZ (void) const
-  { return arrayZ_ ? arrayZ_ : static_array; }
+  Type * arrayZ ()             { return arrayZ_ ? arrayZ_ : static_array; }
+  const Type * arrayZ () const { return arrayZ_ ? arrayZ_ : static_array; }
 
-  inline Type& operator [] (unsigned int i)
+  Type& operator [] (int i_)
   {
+    unsigned int i = (unsigned int) i_;
     if (unlikely (i >= len))
       return Crap (Type);
     return arrayZ()[i];
   }
-  inline const Type& operator [] (unsigned int i) const
+  const Type& operator [] (int i_) const
   {
+    unsigned int i = (unsigned int) i_;
     if (unlikely (i >= len))
       return Null(Type);
     return arrayZ()[i];
   }
 
-  inline hb_array_t<Type> as_array (void)
+  hb_array_t<Type> as_array ()
   { return hb_array (arrayZ(), len); }
-  inline hb_array_t<const Type> as_array (void) const
+  hb_array_t<const Type> as_array () const
   { return hb_array (arrayZ(), len); }
 
-  inline hb_sorted_array_t<Type> as_sorted_array (void)
+  hb_array_t<const Type> sub_array (unsigned int start_offset, unsigned int count) const
+  { return as_array ().sub_array (start_offset, count);}
+  hb_array_t<const Type> sub_array (unsigned int start_offset, unsigned int *count = nullptr /* IN/OUT */) const
+  { return as_array ().sub_array (start_offset, count);}
+  hb_array_t<Type> sub_array (unsigned int start_offset, unsigned int count)
+  { return as_array ().sub_array (start_offset, count);}
+  hb_array_t<Type> sub_array (unsigned int start_offset, unsigned int *count = nullptr /* IN/OUT */)
+  { return as_array ().sub_array (start_offset, count);}
+
+  hb_sorted_array_t<Type> as_sorted_array ()
   { return hb_sorted_array (arrayZ(), len); }
-  inline hb_sorted_array_t<const Type> as_sorted_array (void) const
+  hb_sorted_array_t<const Type> as_sorted_array () const
   { return hb_sorted_array (arrayZ(), len); }
 
-  template <typename T> inline operator  T * (void) { return arrayZ(); }
-  template <typename T> inline operator const T * (void) const { return arrayZ(); }
+  hb_array_t<const Type> sorted_sub_array (unsigned int start_offset, unsigned int count) const
+  { return as_sorted_array ().sorted_sub_array (start_offset, count);}
+  hb_array_t<const Type> sorted_sub_array (unsigned int start_offset, unsigned int *count = nullptr /* IN/OUT */) const
+  { return as_sorted_array ().sorted_sub_array (start_offset, count);}
+  hb_array_t<Type> sorted_sub_array (unsigned int start_offset, unsigned int count)
+  { return as_sorted_array ().sorted_sub_array (start_offset, count);}
+  hb_array_t<Type> sorted_sub_array (unsigned int start_offset, unsigned int *count = nullptr /* IN/OUT */)
+  { return as_sorted_array ().sorted_sub_array (start_offset, count);}
 
-  inline Type * operator  + (unsigned int i) { return arrayZ() + i; }
-  inline const Type * operator  + (unsigned int i) const { return arrayZ() + i; }
+  template <typename T> explicit_operator T * () { return arrayZ(); }
+  template <typename T> explicit_operator const T * () const { return arrayZ(); }
+  operator hb_array_t<Type> ()             { return as_array (); }
+  operator hb_array_t<const Type> () const { return as_array (); }
 
-  inline Type *push (void)
+  Type * operator  + (unsigned int i) { return arrayZ() + i; }
+  const Type * operator  + (unsigned int i) const { return arrayZ() + i; }
+
+  Type *push ()
   {
     if (unlikely (!resize (len + 1)))
       return &Crap(Type);
     return &arrayZ()[len - 1];
   }
-  inline Type *push (const Type& v)
+  Type *push (const Type& v)
   {
     Type *p = push ();
     *p = v;
     return p;
   }
 
-  inline bool in_error (void) const { return allocated == 0; }
+  bool in_error () const { return allocated == 0; }
 
   /* Allocate for size but don't adjust len. */
-  inline bool alloc (unsigned int size)
+  bool alloc (unsigned int size)
   {
     if (unlikely (!allocated))
       return false;
@@ -164,7 +182,7 @@ struct hb_vector_t
     return true;
   }
 
-  inline bool resize (int size_)
+  bool resize (int size_)
   {
     unsigned int size = size_ < 0 ? 0u : (unsigned int) size_;
     if (!alloc (size))
@@ -177,13 +195,13 @@ struct hb_vector_t
     return true;
   }
 
-  inline void pop (void)
+  void pop ()
   {
     if (!len) return;
     len--;
   }
 
-  inline void remove (unsigned int i)
+  void remove (unsigned int i)
   {
     if (unlikely (i >= len))
       return;
@@ -194,7 +212,7 @@ struct hb_vector_t
     len--;
   }
 
-  inline void shrink (int size_)
+  void shrink (int size_)
   {
     unsigned int size = size_ < 0 ? 0u : (unsigned int) size_;
      if (size < len)
@@ -202,7 +220,7 @@ struct hb_vector_t
   }
 
   template <typename T>
-  inline Type *find (T v)
+  Type *find (T v)
   {
     Type *array = arrayZ();
     for (unsigned int i = 0; i < len; i++)
@@ -211,7 +229,7 @@ struct hb_vector_t
     return nullptr;
   }
   template <typename T>
-  inline const Type *find (T v) const
+  const Type *find (T v) const
   {
     const Type *array = arrayZ();
     for (unsigned int i = 0; i < len; i++)
@@ -220,26 +238,26 @@ struct hb_vector_t
     return nullptr;
   }
 
-  inline void qsort (int (*cmp)(const void*, const void*))
+  void qsort (int (*cmp)(const void*, const void*))
   { as_array ().qsort (cmp); }
-  inline void qsort (unsigned int start = 0, unsigned int end = (unsigned int) -1)
+  void qsort (unsigned int start = 0, unsigned int end = (unsigned int) -1)
   { as_array ().qsort (start, end); }
 
   template <typename T>
-  inline Type *lsearch (const T &x, Type *not_found = nullptr)
+  Type *lsearch (const T &x, Type *not_found = nullptr)
   { return as_array ().lsearch (x, not_found); }
   template <typename T>
-  inline const Type *lsearch (const T &x, const Type *not_found = nullptr) const
+  const Type *lsearch (const T &x, const Type *not_found = nullptr) const
   { return as_array ().lsearch (x, not_found); }
 
   template <typename T>
-  inline Type *bsearch (const T &x, Type *not_found = nullptr)
+  Type *bsearch (const T &x, Type *not_found = nullptr)
   { return as_sorted_array ().bsearch (x, not_found); }
   template <typename T>
-  inline const Type *bsearch (const T &x, const Type *not_found = nullptr) const
+  const Type *bsearch (const T &x, const Type *not_found = nullptr) const
   { return as_sorted_array ().bsearch (x, not_found); }
   template <typename T>
-  inline bool bfind (const T &x, unsigned int *i = nullptr,
+  bool bfind (const T &x, unsigned int *i = nullptr,
 		     hb_bfind_not_found_t not_found = HB_BFIND_NOT_FOUND_DONT_STORE,
 		     unsigned int to_store = (unsigned int) -1) const
   { return as_sorted_array ().bfind (x, i, not_found, to_store); }

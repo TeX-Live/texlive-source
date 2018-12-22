@@ -40,6 +40,9 @@
 #include "hb-ot-maxp-table.hh"
 #include "hb-ot-os2-table.hh"
 #include "hb-ot-post-table.hh"
+#include "hb-ot-cff1-table.hh"
+#include "hb-ot-cff2-table.hh"
+#include "hb-ot-vorg-table.hh"
 #include "hb-ot-layout-gsub-table.hh"
 #include "hb-ot-layout-gpos-table.hh"
 
@@ -77,10 +80,10 @@ _subset2 (hb_subset_plan_t *plan)
       return false;
     }
   retry:
-    hb_serialize_context_t serializer (buf, buf_size);
+    hb_serialize_context_t serializer ((void *) buf, buf_size);
     hb_subset_context_t c (plan, &serializer);
     result = table->subset (&c);
-    if (serializer.ran_out_of_room)
+    if (serializer.in_error ())
     {
       buf_size += (buf_size >> 1) + 32;
       DEBUG_MSG(SUBSET, nullptr, "OT::%c%c%c%c ran out of room; reallocating to %u bytes.", HB_UNTAG (tag), buf_size);
@@ -177,7 +180,18 @@ _subset_table (hb_subset_plan_t *plan,
     case HB_OT_TAG_post:
       result = _subset<const OT::post> (plan);
       break;
-
+    case HB_OT_TAG_cff1:
+      result = _subset<const OT::cff1> (plan);
+      break;
+    case HB_OT_TAG_cff2:
+      result = _subset<const OT::cff2> (plan);
+      break;
+    case HB_OT_TAG_VORG:
+      result = _subset<const OT::VORG> (plan);
+      break;
+    case HB_OT_TAG_GDEF:
+      result = _subset2<const OT::GDEF> (plan);
+      break;
     case HB_OT_TAG_GSUB:
       result = _subset2<const OT::GSUB> (plan);
       break;
@@ -210,9 +224,9 @@ _should_drop_table (hb_subset_plan_t *plan, hb_tag_t tag)
     case HB_TAG ('V', 'D', 'M', 'X'): /* hint table, fallthrough */
       return plan->drop_hints;
     // Drop Layout Tables if requested.
-    case HB_TAG ('G', 'D', 'E', 'F'): /* temporary */
-    case HB_TAG ('G', 'P', 'O', 'S'): /* temporary */
-    case HB_TAG ('G', 'S', 'U', 'B'): /* temporary */
+    case HB_OT_TAG_GDEF:
+    case HB_OT_TAG_GPOS:
+    case HB_OT_TAG_GSUB:
       return plan->drop_layout;
     // Drop these tables below by default, list pulled
     // from fontTools:

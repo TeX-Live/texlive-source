@@ -29,6 +29,7 @@
 
 #include "hb-ot-face.hh"
 #include "hb-aat-layout.hh"
+#include "hb-aat-fdsc-table.hh" // Just so we compile it; unused otherwise.
 #include "hb-aat-layout-ankr-table.hh"
 #include "hb-aat-layout-bsln-table.hh" // Just so we compile it; unused otherwise.
 #include "hb-aat-layout-feat-table.hh"
@@ -166,10 +167,8 @@ AAT::hb_aat_apply_context_t::hb_aat_apply_context_t (const hb_ot_shape_plan_t *p
   sanitizer.set_max_ops (HB_SANITIZE_MAX_OPS_MAX);
 }
 
-AAT::hb_aat_apply_context_t::~hb_aat_apply_context_t (void)
-{
-  sanitizer.end_processing ();
-}
+AAT::hb_aat_apply_context_t::~hb_aat_apply_context_t ()
+{ sanitizer.end_processing (); }
 
 void
 AAT::hb_aat_apply_context_t::set_ankr_table (const AAT::ankr *ankr_table_,
@@ -205,7 +204,14 @@ hb_aat_layout_compile_map (const hb_aat_map_builder_t *mapper,
 }
 
 
-bool
+/*
+ * hb_aat_layout_has_substitution:
+ * @face:
+ *
+ * Returns:
+ * Since: 2.3.0
+ */
+hb_bool_t
 hb_aat_layout_has_substitution (hb_face_t *face)
 {
   return face->table.morx->has_data () ||
@@ -259,9 +265,14 @@ hb_aat_layout_remove_deleted_glyphs (hb_buffer_t *buffer)
   hb_ot_layout_delete_glyphs_inplace (buffer, is_deleted_glyph);
 }
 
-
-
-bool
+/*
+ * hb_aat_layout_has_positioning:
+ * @face:
+ *
+ * Returns:
+ * Since: 2.3.0
+ */
+hb_bool_t
 hb_aat_layout_has_positioning (hb_face_t *face)
 {
   return face->table.kerx->has_data ();
@@ -284,7 +295,14 @@ hb_aat_layout_position (const hb_ot_shape_plan_t *plan,
 }
 
 
-bool
+/*
+ * hb_aat_layout_has_tracking:
+ * @face:
+ *
+ * Returns:
+ * Since: 2.3.0
+ */
+hb_bool_t
 hb_aat_layout_has_tracking (hb_face_t *face)
 {
   return face->table.trak->has_data ();
@@ -341,7 +359,9 @@ hb_aat_layout_get_feature_types (hb_face_t                    *face,
 hb_ot_name_id_t
 hb_aat_layout_feature_type_get_name_id (hb_face_t                    *face,
 					hb_aat_layout_feature_type_t  feature_type)
-{ return face->table.feat->get_feature_name_id (feature_type); }
+{
+  return face->table.feat->get_feature_name_id (feature_type);
+}
 
 /**
  * hb_aat_layout_feature_type_get_selectors:

@@ -47,6 +47,8 @@
     HB_OT_ACCELERATOR(OT, post) \
     HB_OT_TABLE(OT, kern) \
     HB_OT_ACCELERATOR(OT, glyf) \
+    HB_OT_ACCELERATOR(OT, cff1) \
+    HB_OT_ACCELERATOR(OT, cff2) \
     HB_OT_TABLE(OT, VORG) \
     HB_OT_ACCELERATOR(OT, name) \
     HB_OT_TABLE(OT, OS2) \
@@ -90,7 +92,7 @@ HB_OT_TABLES
 struct hb_ot_face_t
 {
   HB_INTERNAL void init0 (hb_face_t *face);
-  HB_INTERNAL void fini (void);
+  HB_INTERNAL void fini ();
 
 #define HB_OT_TABLE_ORDER(Namespace, Type) \
     HB_PASTE (ORDER_, HB_PASTE (Namespace, HB_PASTE (_, Type)))

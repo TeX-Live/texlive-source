@@ -224,7 +224,7 @@ hb_face_create (hb_blob_t    *blob,
  * Since: 0.9.2
  **/
 hb_face_t *
-hb_face_get_empty (void)
+hb_face_get_empty ()
 {
   return const_cast<hb_face_t *> (&Null(hb_face_t));
 }
@@ -588,7 +588,7 @@ struct hb_face_builder_data_t
 {
   struct table_entry_t
   {
-    inline int cmp (hb_tag_t t) const
+    int cmp (hb_tag_t t) const
     {
       if (t < tag) return -1;
       if (t > tag) return -1;
@@ -603,7 +603,7 @@ struct hb_face_builder_data_t
 };
 
 static hb_face_builder_data_t *
-_hb_face_builder_data_create (void)
+_hb_face_builder_data_create ()
 {
   hb_face_builder_data_t *data = (hb_face_builder_data_t *) calloc (1, sizeof (hb_face_builder_data_t));
   if (unlikely (!data))
@@ -642,18 +642,13 @@ _hb_face_builder_data_reference_blob (hb_face_builder_data_t *data)
     return nullptr;
 
   hb_serialize_context_t c (buf, face_length);
+  c.propagate_error (data->tables);
   OT::OpenTypeFontFile *f = c.start_serialize<OT::OpenTypeFontFile> ();
 
   bool is_cff = data->tables.lsearch (HB_TAG ('C','F','F',' ')) || data->tables.lsearch (HB_TAG ('C','F','F','2'));
   hb_tag_t sfnt_tag = is_cff ? OT::OpenTypeFontFile::CFFTag : OT::OpenTypeFontFile::TrueTypeTag;
 
-  Supplier<hb_tag_t>    tags_supplier  (&data->tables[0].tag, table_count, sizeof (data->tables[0]));
-  Supplier<hb_blob_t *> blobs_supplier (&data->tables[0].blob, table_count, sizeof (data->tables[0]));
-  bool ret = f->serialize_single (&c,
-				  sfnt_tag,
-				  tags_supplier,
-				  blobs_supplier,
-				  table_count);
+  bool ret = f->serialize_single (&c, sfnt_tag, data->tables.as_array ());
 
   c.end_serialize ();
 
@@ -694,7 +689,7 @@ _hb_face_builder_reference_table (hb_face_t *face HB_UNUSED, hb_tag_t tag, void 
  * Since: 1.9.0
  **/
 hb_face_t *
-hb_face_builder_create (void)
+hb_face_builder_create ()
 {
   hb_face_builder_data_t *data = _hb_face_builder_data_create ();
   if (unlikely (!data)) return hb_face_get_empty ();

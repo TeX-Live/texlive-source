@@ -34,6 +34,8 @@
 
 #include "hb-ot-cmap-table.hh"
 #include "hb-ot-glyf-table.hh"
+#include "hb-ot-cff1-table.hh"
+#include "hb-ot-cff2-table.hh"
 #include "hb-ot-hmtx-table.hh"
 #include "hb-ot-kern-table.hh"
 #include "hb-ot-os2-table.hh"
@@ -182,6 +184,10 @@ hb_ot_get_glyph_extents (hb_font_t *font,
   if (!ret)
     ret = ot_face->glyf->get_extents (glyph, extents);
   if (!ret)
+    ret = ot_face->cff1->get_extents (glyph, extents);
+  if (!ret)
+    ret = ot_face->cff2->get_extents (font, glyph, extents);
+  if (!ret)
     ret = ot_face->CBDT->get_extents (font, glyph, extents);
   // TODO Hook up side-bearings variations.
   extents->x_bearing = font->em_scale_x (extents->x_bearing);
@@ -244,12 +250,12 @@ hb_ot_get_font_v_extents (hb_font_t *font,
 }
 
 #if HB_USE_ATEXIT
-static void free_static_ot_funcs (void);
+static void free_static_ot_funcs ();
 #endif
 
 static struct hb_ot_font_funcs_lazy_loader_t : hb_font_funcs_lazy_loader_t<hb_ot_font_funcs_lazy_loader_t>
 {
-  static inline hb_font_funcs_t *create (void)
+  static hb_font_funcs_t *create ()
   {
     hb_font_funcs_t *funcs = hb_font_funcs_create ();
 
@@ -279,14 +285,14 @@ static struct hb_ot_font_funcs_lazy_loader_t : hb_font_funcs_lazy_loader_t<hb_ot
 
 #if HB_USE_ATEXIT
 static
-void free_static_ot_funcs (void)
+void free_static_ot_funcs ()
 {
   static_ot_funcs.free_instance ();
 }
 #endif
 
 static hb_font_funcs_t *
-_hb_ot_get_font_funcs (void)
+_hb_ot_get_font_funcs ()
 {
   return static_ot_funcs.get_unconst ();
 }
