@@ -7897,6 +7897,8 @@ fi
 
 done
 
+##tldbg KPSE_COMMON: dvipng ().
+##tldbg KPSE_BASIC: Remember dvipng () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -14676,11 +14678,11 @@ fi
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
-## _KPSE_INIT: Initialize TL infrastructure
+##tldbg _KPSE_INIT: Initialize TL infrastructure.
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
 
-## _KPSE_USE_LIBTOOL: Generate a libtool script for use in configure tests
+##tldbg _KPSE_USE_LIBTOOL: Generate a libtool script for use in configure tests.
 : ${CONFIG_LT=./config.lt}
 { $as_echo "$as_me:${as_lineno-$LINENO}: creating $CONFIG_LT" >&5
 $as_echo "$as_me: creating $CONFIG_LT" >&6;}
@@ -16072,7 +16074,9 @@ else
   PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
 fi
 
-## _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags
+##tldbg _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=kpathsea, libname=kpathsea, options=lt, tlincl=-IBLD/texk -ISRC/texk, tllib=BLD/texk/kpathsea/libkpathsea.la, tlextra=, rebuildsrcdeps=${top_srcdir}/../kpathsea/*.[ch], rebuildblddeps=${top_builddir}/../kpathsea/paths.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: kpathsea (kpathsea) lt.
 
 # Check whether --with-system-kpathsea was given.
 if test "${with_system_kpathsea+set}" = set; then :
@@ -16132,7 +16136,9 @@ if test "x$kpse_cv_kpse_debug" != xyes; then :
   KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
 fi
 
-## _KPSE_LIB_FLAGS: Setup zlib (-lz) flags
+##tldbg _KPSE_LIB_FLAGS: Setup zlib (-lz) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=zlib, libname=z, options=, tlincl=-IBLD/libs/zlib/include, tllib=BLD/libs/zlib/libz.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/zlib/include/zconf.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: zlib (z) .
 
 # Check whether --with-system-zlib was given.
 if test "${with_system_zlib+set}" = set; then :
@@ -16149,7 +16155,8 @@ if test "${with_zlib_libdir+set}" = set; then :
   withval=$with_zlib_libdir;
 fi
 if test "x$with_system_zlib" = xyes; then
-  if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
+  ##tldbg _KPSE_LIB_FLAGS_SYSTEM: zlib (z).
+if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
   ZLIB_INCLUDES="-I$with_zlib_includes"
 fi
 ZLIB_LIBS="-lz"
@@ -16208,7 +16215,9 @@ $as_echo "#define z_const /**/" >>confdefs.h
  ;;
 esac
 
-## _KPSE_LIB_FLAGS: Setup libpng (-lpng) flags
+##tldbg _KPSE_LIB_FLAGS: Setup libpng (-lpng) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=libpng, libname=png, options=, tlincl=-IBLD/libs/libpng/include, tllib=BLD/libs/libpng/libpng.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/libpng/include/png.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: libpng (png) .
 
 # Check whether --with-system-libpng was given.
 if test "${with_system_libpng+set}" = set; then :
@@ -16232,7 +16241,9 @@ ${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags
+##tldbg _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=freetype2, libname=freetype, options=, tlincl=-IBLD/libs/freetype2/freetype2, tllib=BLD/libs/freetype2/libfreetype.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/freetype2/freetype2/ft2build.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: freetype2 (freetype) .
 
 # Check whether --with-system-freetype2 was given.
 if test "${with_system_freetype2+set}" = set; then :
@@ -16393,7 +16404,9 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
 $as_echo "$kpse_cv_have_win32" >&6; }
 
-## _KPSE_LIB_FLAGS: Setup gd (-lgd) flags
+##tldbg _KPSE_LIB_FLAGS: Setup gd (-lgd) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=gd, libname=gd, options=, tlincl=-IBLD/libs/gd/include, tllib=BLD/libs/gd/libgd.a, tlextra=test "x$kpse_cv_have_win32" = xno || GD_INCLUDES="$GD_INCLUDES -DBGDWIN32 -DNONDLL", rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/gd/include/gd.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: gd (gd) .
 
 # Check whether --with-system-gd was given.
 if test "${with_system_gd+set}" = set; then :
@@ -16410,7 +16423,8 @@ if test "${with_gd_libdir+set}" = set; then :
   withval=$with_gd_libdir;
 fi
 if test "x$with_system_gd" = xyes; then
-  if test "x$with_gd_includes" != x && test "x$with_gd_includes" != xyes; then
+  ##tldbg _KPSE_LIB_FLAGS_SYSTEM: gd (gd).
+if test "x$with_gd_includes" != x && test "x$with_gd_includes" != xyes; then
   GD_INCLUDES="-I$with_gd_includes"
 fi
 GD_LIBS="-lgd"

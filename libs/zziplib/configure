@@ -3978,6 +3978,7 @@ else
 fi ;;
 esac
 
+##tldbg KPSE_BASIC: Remember zziplib () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -5105,7 +5106,7 @@ $as_echo "no, using $LN_S" >&6; }
 fi
 
 
-echo 'dbg:_KPSE_COMPILER_VISIBILITY called.' >&5
+echo 'tldbg:KPSE_COMPILER_VISIBILITY called.' >&5
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking CFLAGS for C to hide external symbols" >&5
 $as_echo_n "checking CFLAGS for C to hide external symbols... " >&6; }
 if ${kpse_cv_visibility_cflags+:} false; then :
@@ -6684,11 +6685,13 @@ done
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
-## _KPSE_INIT: Initialize TL infrastructure
+##tldbg _KPSE_INIT: Initialize TL infrastructure.
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
 
-## _KPSE_LIB_FLAGS: Setup zlib (-lz) flags
+##tldbg _KPSE_LIB_FLAGS: Setup zlib (-lz) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=zlib, libname=z, options=, tlincl=-IBLD/libs/zlib/include, tllib=BLD/libs/zlib/libz.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/zlib/include/zconf.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: zlib (z) .
 
 # Check whether --with-system-zlib was given.
 if test "${with_system_zlib+set}" = set; then :
@@ -6705,7 +6708,8 @@ if test "${with_zlib_libdir+set}" = set; then :
   withval=$with_zlib_libdir;
 fi
 if test "x$with_system_zlib" = xyes; then
-  if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
+  ##tldbg _KPSE_LIB_FLAGS_SYSTEM: zlib (z).
+if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
   ZLIB_INCLUDES="-I$with_zlib_includes"
 fi
 ZLIB_LIBS="-lz"

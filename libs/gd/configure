@@ -3808,6 +3808,7 @@ else
 fi ;;
 esac
 
+##tldbg KPSE_BASIC: Remember gd () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -5469,11 +5470,13 @@ fi
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
-## _KPSE_INIT: Initialize TL infrastructure
+##tldbg _KPSE_INIT: Initialize TL infrastructure.
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
 
-## _KPSE_LIB_FLAGS: Setup zlib (-lz) flags
+##tldbg _KPSE_LIB_FLAGS: Setup zlib (-lz) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=zlib, libname=z, options=, tlincl=-IBLD/libs/zlib/include, tllib=BLD/libs/zlib/libz.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/zlib/include/zconf.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: zlib (z) .
 
 # Check whether --with-system-zlib was given.
 if test "${with_system_zlib+set}" = set; then :
@@ -5490,7 +5493,8 @@ if test "${with_zlib_libdir+set}" = set; then :
   withval=$with_zlib_libdir;
 fi
 if test "x$with_system_zlib" = xyes; then
-  if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
+  ##tldbg _KPSE_LIB_FLAGS_SYSTEM: zlib (z).
+if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
   ZLIB_INCLUDES="-I$with_zlib_includes"
 fi
 ZLIB_LIBS="-lz"
@@ -5712,7 +5716,9 @@ else
   PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
 fi
 
-## _KPSE_LIB_FLAGS: Setup libpng (-lpng) flags
+##tldbg _KPSE_LIB_FLAGS: Setup libpng (-lpng) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=libpng, libname=png, options=, tlincl=-IBLD/libs/libpng/include, tllib=BLD/libs/libpng/libpng.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/libpng/include/png.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: libpng (png) .
 
 # Check whether --with-system-libpng was given.
 if test "${with_system_libpng+set}" = set; then :
@@ -5736,7 +5742,9 @@ ${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags
+##tldbg _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=freetype2, libname=freetype, options=, tlincl=-IBLD/libs/freetype2/freetype2, tllib=BLD/libs/freetype2/libfreetype.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/freetype2/freetype2/ft2build.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: freetype2 (freetype) .
 
 # Check whether --with-system-freetype2 was given.
 if test "${with_system_freetype2+set}" = set; then :

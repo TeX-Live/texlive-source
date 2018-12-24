@@ -6063,6 +6063,7 @@ else
 fi ;;
 esac
 
+##tldbg KPSE_BASIC: Remember utils () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -6419,7 +6420,7 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Utils programs to build" >&5
 $as_echo_n "checking for Utils programs to build... " >&6; }
-echo 'dbg:_KPSE_RECURSE called: list=utils, text=Utils programs, cond=test "x$enable_Kpse_pkg" = xyes, prefix=.' >&5
+echo 'tldbg:_KPSE_RECURSE called: list=utils, text=Utils programs, cond=test "x$enable_[]Kpse_pkg" = xyes, prefix=.' >&5
 MAKE_SUBDIRS=
 CONF_SUBDIRS=
 if test -x $srcdir/autosp/configure; then

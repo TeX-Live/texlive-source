@@ -8667,6 +8667,8 @@ fi
 
 done
 
+##tldbg KPSE_COMMON: web2c programs ().
+##tldbg KPSE_BASIC: Remember web2c programs () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -23236,11 +23238,11 @@ _ACEOF
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
-## _KPSE_INIT: Initialize TL infrastructure
+##tldbg _KPSE_INIT: Initialize TL infrastructure.
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
 
-## _KPSE_USE_LIBTOOL: Generate a libtool script for use in configure tests
+##tldbg _KPSE_USE_LIBTOOL: Generate a libtool script for use in configure tests.
 : ${CONFIG_LT=./config.lt}
 { $as_echo "$as_me:${as_lineno-$LINENO}: creating $CONFIG_LT" >&5
 $as_echo "$as_me: creating $CONFIG_LT" >&6;}
@@ -24816,7 +24818,9 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_link="./libtool --mode=link --tag=CC $ac_link"
 
-## _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags
+##tldbg _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=kpathsea, libname=kpathsea, options=lt, tlincl=-IBLD/texk -ISRC/texk, tllib=BLD/texk/kpathsea/libkpathsea.la, tlextra=, rebuildsrcdeps=${top_srcdir}/../kpathsea/*.[ch], rebuildblddeps=${top_builddir}/../kpathsea/paths.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: kpathsea (kpathsea) lt.
 
 # Check whether --with-system-kpathsea was given.
 if test "${with_system_kpathsea+set}" = set; then :
@@ -24876,7 +24880,9 @@ if test "x$kpse_cv_kpse_debug" != xyes; then :
   KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
 fi
 
-## _KPSE_LIB_FLAGS: Setup ptexenc (-lptexenc) flags
+##tldbg _KPSE_LIB_FLAGS: Setup ptexenc (-lptexenc) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=ptexenc, libname=ptexenc, options=lt, tlincl=-IBLD/texk/ptexenc -ISRC/texk/ptexenc, tllib=BLD/texk/ptexenc/libptexenc.la, tlextra=, rebuildsrcdeps=${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc/*.h, rebuildblddeps=.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: ptexenc (ptexenc) lt.
 
 # Check whether --with-system-ptexenc was given.
 if test "${with_system_ptexenc+set}" = set; then :
@@ -24898,7 +24904,9 @@ $(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc
 	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup zlib (-lz) flags
+##tldbg _KPSE_LIB_FLAGS: Setup zlib (-lz) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=zlib, libname=z, options=, tlincl=-IBLD/libs/zlib/include, tllib=BLD/libs/zlib/libz.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/zlib/include/zconf.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: zlib (z) .
 
 # Check whether --with-system-zlib was given.
 if test "${with_system_zlib+set}" = set; then :
@@ -24915,7 +24923,8 @@ if test "${with_zlib_libdir+set}" = set; then :
   withval=$with_zlib_libdir;
 fi
 if test "x$with_system_zlib" = xyes; then
-  if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
+  ##tldbg _KPSE_LIB_FLAGS_SYSTEM: zlib (z).
+if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
   ZLIB_INCLUDES="-I$with_zlib_includes"
 fi
 ZLIB_LIBS="-lz"
@@ -24974,7 +24983,9 @@ $as_echo "#define z_const /**/" >>confdefs.h
  ;;
 esac
 
-## _KPSE_LIB_FLAGS: Setup lua53 (-ltexlua53) flags
+##tldbg _KPSE_LIB_FLAGS: Setup lua53 (-ltexlua53) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=lua53, libname=texlua53, options=lt tree, tlincl=-IBLD/libs/lua53/include, tllib=BLD/libs/lua53/libtexlua53.la, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/lua53/include/lua.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: lua53 (texlua53) lt tree.
   LUA53_INCLUDES="-I$kpse_BLD/libs/lua53/include"
   LUA53_LIBS="$kpse_BLD/libs/lua53/libtexlua53.la"
   LUA53_DEPEND='${top_builddir}/../../libs/lua53/libtexlua53.la'
@@ -24984,7 +24995,9 @@ $(LUA53_DEPEND): ${top_builddir}/../../libs/lua53/include/lua.h
 ${top_builddir}/../../libs/lua53/include/lua.h:
 	cd ${top_builddir}/../../libs/lua53 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
-## _KPSE_LIB_FLAGS: Setup lua52 (-ltexlua52) flags
+##tldbg _KPSE_LIB_FLAGS: Setup lua52 (-ltexlua52) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=lua52, libname=texlua52, options=lt tree, tlincl=-IBLD/libs/lua52/include, tllib=BLD/libs/lua52/libtexlua52.la, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/lua52/include/lua.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: lua52 (texlua52) lt tree.
   LUA52_INCLUDES="-I$kpse_BLD/libs/lua52/include"
   LUA52_LIBS="$kpse_BLD/libs/lua52/libtexlua52.la"
   LUA52_DEPEND='${top_builddir}/../../libs/lua52/libtexlua52.la'
@@ -24994,7 +25007,9 @@ $(LUA52_DEPEND): ${top_builddir}/../../libs/lua52/include/lua.h
 ${top_builddir}/../../libs/lua52/include/lua.h:
 	cd ${top_builddir}/../../libs/lua52 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
-## _KPSE_LIB_FLAGS: Setup luajit (-ltexluajit) flags
+##tldbg _KPSE_LIB_FLAGS: Setup luajit (-ltexluajit) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=luajit, libname=texluajit, options=lt tree, tlincl=-IBLD/libs/luajit/include, tllib=BLD/libs/luajit/libtexluajit.la, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/luajit/include/luajit.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: luajit (texluajit) lt tree.
   LUAJIT_INCLUDES="-I$kpse_BLD/libs/luajit/include"
   LUAJIT_LIBS="$kpse_BLD/libs/luajit/libtexluajit.la"
   LUAJIT_DEPEND='${top_builddir}/../../libs/luajit/libtexluajit.la'
@@ -25004,7 +25019,9 @@ $(LUAJIT_DEPEND): ${top_builddir}/../../libs/luajit/include/luajit.h
 ${top_builddir}/../../libs/luajit/include/luajit.h:
 	cd ${top_builddir}/../../libs/luajit && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
-## _KPSE_LIB_FLAGS: Setup libpng (-lpng) flags
+##tldbg _KPSE_LIB_FLAGS: Setup libpng (-lpng) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=libpng, libname=png, options=, tlincl=-IBLD/libs/libpng/include, tllib=BLD/libs/libpng/libpng.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/libpng/include/png.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: libpng (png) .
 
 # Check whether --with-system-libpng was given.
 if test "${with_system_libpng+set}" = set; then :
@@ -25028,7 +25045,9 @@ ${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags
+##tldbg _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=freetype2, libname=freetype, options=, tlincl=-IBLD/libs/freetype2/freetype2, tllib=BLD/libs/freetype2/libfreetype.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/freetype2/freetype2/ft2build.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: freetype2 (freetype) .
 
 # Check whether --with-system-freetype2 was given.
 if test "${with_system_freetype2+set}" = set; then :
@@ -25143,7 +25162,9 @@ ${top_builddir}/../../libs/freetype2/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup pixman (-lpixman) flags
+##tldbg _KPSE_LIB_FLAGS: Setup pixman (-lpixman) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=pixman, libname=pixman, options=, tlincl=-IBLD/libs/pixman/include, tllib=BLD/libs/pixman/libpixman.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/pixman/include/pixman.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: pixman (pixman) .
 
 # Check whether --with-system-pixman was given.
 if test "${with_system_pixman+set}" = set; then :
@@ -25167,7 +25188,9 @@ ${top_builddir}/../../libs/pixman/include/pixman.h:
 	cd ${top_builddir}/../../libs/pixman && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup cairo (-lcairo) flags
+##tldbg _KPSE_LIB_FLAGS: Setup cairo (-lcairo) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=cairo, libname=cairo, options=, tlincl=-IBLD/libs/cairo/cairo, tllib=BLD/libs/cairo/libcairo.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/cairo/cairo/cairo.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: cairo (cairo) .
 
 # Check whether --with-system-cairo was given.
 if test "${with_system_cairo+set}" = set; then :
@@ -25191,7 +25214,9 @@ ${top_builddir}/../../libs/cairo/cairo/cairo.h:
 	cd ${top_builddir}/../../libs/cairo && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup gmp (-lgmp) flags
+##tldbg _KPSE_LIB_FLAGS: Setup gmp (-lgmp) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=gmp, libname=gmp, options=, tlincl=-IBLD/libs/gmp/include, tllib=BLD/libs/gmp/libgmp.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/gmp/include/gmp.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: gmp (gmp) .
 
 # Check whether --with-system-gmp was given.
 if test "${with_system_gmp+set}" = set; then :
@@ -25208,7 +25233,8 @@ if test "${with_gmp_libdir+set}" = set; then :
   withval=$with_gmp_libdir;
 fi
 if test "x$with_system_gmp" = xyes; then
-  if test "x$with_gmp_includes" != x && test "x$with_gmp_includes" != xyes; then
+  ##tldbg _KPSE_LIB_FLAGS_SYSTEM: gmp (gmp).
+if test "x$with_gmp_includes" != x && test "x$with_gmp_includes" != xyes; then
   GMP_INCLUDES="-I$with_gmp_includes"
 fi
 GMP_LIBS="-lgmp"
@@ -25226,7 +25252,9 @@ ${top_builddir}/../../libs/gmp/include/gmp.h:
 	cd ${top_builddir}/../../libs/gmp && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup mpfr (-lmpfr) flags
+##tldbg _KPSE_LIB_FLAGS: Setup mpfr (-lmpfr) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=mpfr, libname=mpfr, options=, tlincl=-IBLD/libs/mpfr/include, tllib=BLD/libs/mpfr/libmpfr.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/mpfr/include/mpfr.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: mpfr (mpfr) .
 
 # Check whether --with-system-mpfr was given.
 if test "${with_system_mpfr+set}" = set; then :
@@ -25243,7 +25271,8 @@ if test "${with_mpfr_libdir+set}" = set; then :
   withval=$with_mpfr_libdir;
 fi
 if test "x$with_system_mpfr" = xyes; then
-  if test "x$with_mpfr_includes" != x && test "x$with_mpfr_includes" != xyes; then
+  ##tldbg _KPSE_LIB_FLAGS_SYSTEM: mpfr (mpfr).
+if test "x$with_mpfr_includes" != x && test "x$with_mpfr_includes" != xyes; then
   MPFR_INCLUDES="-I$with_mpfr_includes"
 fi
 MPFR_LIBS="-lmpfr"
@@ -25261,7 +25290,9 @@ ${top_builddir}/../../libs/mpfr/include/mpfr.h:
 	cd ${top_builddir}/../../libs/mpfr && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup poppler (-lpoppler) flags
+##tldbg _KPSE_LIB_FLAGS: Setup poppler (-lpoppler) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=poppler, libname=poppler, options=, tlincl=-IBLD/libs/poppler/include, tllib=BLD/libs/poppler/libpoppler.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/poppler/include/Stream.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: poppler (poppler) .
 
 # Check whether --with-system-poppler was given.
 if test "${with_system_poppler+set}" = set; then :
@@ -25289,7 +25320,9 @@ ${top_builddir}/../../libs/poppler/include/Stream.h:
 fi
 test "x$kpse_cv_have_win32" = xno || POPPLER_LIBS="$POPPLER_LIBS -lgdi32"
 
-## _KPSE_LIB_FLAGS: Setup xpdf (-lxpdf) flags
+##tldbg _KPSE_LIB_FLAGS: Setup xpdf (-lxpdf) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=xpdf, libname=xpdf, options=, tlincl=-DPDF_PARSER_ONLY -IBLD/libs/xpdf -IBLD/libs/xpdf/goo -IBLD/libs/xpdf/xpdf, tllib=BLD/libs/xpdf/libxpdf.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/xpdf/xpdf/Stream.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: xpdf (xpdf) .
 
 # Check whether --with-system-xpdf was given.
 if test "${with_system_xpdf+set}" = set; then :
@@ -25317,7 +25350,9 @@ ${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
 fi
 test "x$kpse_cv_have_win32" = xno || XPDF_LIBS="$XPDF_LIBS -lgdi32"
 
-## _KPSE_LIB_FLAGS: Setup zziplib (-lzzip) flags
+##tldbg _KPSE_LIB_FLAGS: Setup zziplib (-lzzip) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=zziplib, libname=zzip, options=, tlincl=-IBLD/libs/zziplib/include, tllib=BLD/libs/zziplib/libzzip.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/zziplib/include/zzip/zzip.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: zziplib (zzip) .
 
 # Check whether --with-system-zziplib was given.
 if test "${with_system_zziplib+set}" = set; then :
@@ -25341,7 +25376,9 @@ ${top_builddir}/../../libs/zziplib/include/zzip/zzip.h:
 	cd ${top_builddir}/../../libs/zziplib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup teckit (-lTECkit) flags
+##tldbg _KPSE_LIB_FLAGS: Setup teckit (-lTECkit) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=teckit, libname=TECkit, options=, tlincl=-IBLD/libs/teckit/include, tllib=BLD/libs/teckit/libTECkit.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: teckit (TECkit) .
 
 # Check whether --with-system-teckit was given.
 if test "${with_system_teckit+set}" = set; then :
@@ -25365,14 +25402,17 @@ ${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h:
 	cd ${top_builddir}/../../libs/teckit && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags
+echo 'tldbg:KPSE_ICU_FLAGS called: more-icu-libs=, icu-config-args=.' >&5
+##tldbg _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=icu, libname=icuxxx, options=, tlincl=-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include, tllib= BLD/libs/icu/icu-build/lib/libicuuc.a BLD/libs/icu/icu-build/lib/libicudata.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/icu/include/unicode/uversion.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: icu (icuxxx) .
 
 # Check whether --with-system-icu was given.
 if test "${with_system_icu+set}" = set; then :
   withval=$with_system_icu;
 fi
 if test "x$with_system_icu" = xyes; then
-  echo 'dbg:_KPSE_ICU_SYSTEM_FLAGS called.' >&5
+  echo 'tldbg:KPSE_ICU_SYSTEM_FLAGS called.' >&5
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}icu-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}icu-config; ac_word=$2
@@ -25574,8 +25614,16 @@ $(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
 ${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
+# checking for openbsd to add -lpthread for icu.
+case $build_os in
+openbsd*)
+  eval ICUXXX_LIBS=\"$ICUXXX_LIBS -lpthread\"
+  ;;
+esac
 
-## _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags
+##tldbg _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=graphite2, libname=graphite2, options=, tlincl=-IBLD/libs/graphite2/include -DGRAPHITE2_STATIC, tllib=BLD/libs/graphite2/libgraphite2.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/graphite2/include/graphite2/Font.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: graphite2 (graphite2) .
 
 # Check whether --with-system-graphite2 was given.
 if test "${with_system_graphite2+set}" = set; then :
@@ -25599,7 +25647,9 @@ ${top_builddir}/../../libs/graphite2/include/graphite2/Font.h:
 	cd ${top_builddir}/../../libs/graphite2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup harfbuzz (-lharfbuzz) flags
+##tldbg _KPSE_LIB_FLAGS: Setup harfbuzz (-lharfbuzz) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=harfbuzz, libname=harfbuzz, options=, tlincl=-IBLD/libs/harfbuzz/include, tllib=BLD/libs/harfbuzz/libharfbuzz.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/harfbuzz/include/hb.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: harfbuzz (harfbuzz) .
 
 # Check whether --with-system-harfbuzz was given.
 if test "${with_system_harfbuzz+set}" = set; then :
@@ -25623,7 +25673,9 @@ ${top_builddir}/../../libs/harfbuzz/include/hb.h:
 	cd ${top_builddir}/../../libs/harfbuzz && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags
+##tldbg _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=graphite2, libname=graphite2, options=, tlincl=-IBLD/libs/graphite2/include -DGRAPHITE2_STATIC, tllib=BLD/libs/graphite2/libgraphite2.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/graphite2/include/graphite2/Font.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: graphite2 (graphite2) .
 
 # Check whether --with-system-graphite2 was given.
 if test "${with_system_graphite2+set}" = set; then :

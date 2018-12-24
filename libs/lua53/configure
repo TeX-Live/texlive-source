@@ -3876,6 +3876,7 @@ else
 fi ;;
 esac
 
+##tldbg KPSE_BASIC: Remember lua53 () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output

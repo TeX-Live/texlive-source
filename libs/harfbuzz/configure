@@ -4031,6 +4031,7 @@ else
 fi ;;
 esac
 
+##tldbg KPSE_BASIC: Remember harfbuzz (no-define) as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -6500,7 +6501,7 @@ $as_echo "#define HAVE_CXX11 1" >>confdefs.h
 
 
 
-echo 'dbg:_KPSE_COMPILER_VISIBILITY called.' >&5
+echo 'tldbg:KPSE_COMPILER_VISIBILITY called.' >&5
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking CFLAGS for C to hide external symbols" >&5
 $as_echo_n "checking CFLAGS for C to hide external symbols... " >&6; }
 if ${kpse_cv_visibility_cflags+:} false; then :
@@ -6597,7 +6598,7 @@ esac
 
 
 
-## _KPSE_INIT: Initialize TL infrastructure
+##tldbg _KPSE_INIT: Initialize TL infrastructure.
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
 
@@ -6764,7 +6765,9 @@ else
   PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
 fi
 
-## _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags
+##tldbg _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=graphite2, libname=graphite2, options=, tlincl=-IBLD/libs/graphite2/include -DGRAPHITE2_STATIC, tllib=BLD/libs/graphite2/libgraphite2.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/graphite2/include/graphite2/Font.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: graphite2 (graphite2) .
 
 # Check whether --with-system-graphite2 was given.
 if test "${with_system_graphite2+set}" = set; then :
@@ -6788,14 +6791,17 @@ ${top_builddir}/../../libs/graphite2/include/graphite2/Font.h:
 	cd ${top_builddir}/../../libs/graphite2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags
+echo 'tldbg:KPSE_ICU_FLAGS called: more-icu-libs=, icu-config-args=.' >&5
+##tldbg _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=icu, libname=icuxxx, options=, tlincl=-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include, tllib= BLD/libs/icu/icu-build/lib/libicuuc.a BLD/libs/icu/icu-build/lib/libicudata.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/icu/include/unicode/uversion.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: icu (icuxxx) .
 
 # Check whether --with-system-icu was given.
 if test "${with_system_icu+set}" = set; then :
   withval=$with_system_icu;
 fi
 if test "x$with_system_icu" = xyes; then
-  echo 'dbg:_KPSE_ICU_SYSTEM_FLAGS called.' >&5
+  echo 'tldbg:KPSE_ICU_SYSTEM_FLAGS called.' >&5
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}icu-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}icu-config; ac_word=$2
@@ -6997,6 +7003,12 @@ $(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
 ${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
+# checking for openbsd to add -lpthread for icu.
+case $build_os in
+openbsd*)
+  eval ICUXXX_LIBS=\"$ICUXXX_LIBS -lpthread\"
+  ;;
+esac
 
 
 # Functions and headers

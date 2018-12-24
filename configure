@@ -10754,6 +10754,8 @@ fi
 
 done
 
+##tldbg KPSE_COMMON: TeX Live top-level (tar-pax dist-xz no-dist-gzip).
+##tldbg KPSE_BASIC: Remember TeX Live top-level (tar-pax dist-xz no-dist-gzip) as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -21091,7 +21093,7 @@ fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TeX specific libraries to build" >&5
 $as_echo_n "checking for TeX specific libraries to build... " >&6; }
-echo 'dbg:_KPSE_RECURSE called: list=texlibs, text=TeX specific libraries, cond=test "x$with_system_Kpse_pkg" != xyes && test "x$need_Kpse_pkg" = xyes, prefix=texk/.' >&5
+echo 'tldbg:_KPSE_RECURSE called: list=texlibs, text=TeX specific libraries, cond=test "x$with_system_[]Kpse_pkg" != xyes && test "x$need_[]Kpse_pkg" = xyes, prefix=texk/.' >&5
 MAKE_SUBDIRS=
 CONF_SUBDIRS=
 if test -x $srcdir/texk/ptexenc/configure; then
@@ -21217,6 +21219,7 @@ elif test "x$need_ptexenc:$with_system_ptexenc" = xyes:yes; then
   as_fn_error $? "did not find ptexenc" "$LINENO" 5
 fi
 
+##tldbg _KPSE_LIB_FLAGS_SYSTEM: zlib (z).
 if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
   ZLIB_INCLUDES="-I$with_zlib_includes"
 fi
@@ -21225,6 +21228,7 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 
+##tldbg _KPSE_LIB_FLAGS_SYSTEM: libpaper (paper).
 if test "x$with_libpaper_includes" != x && test "x$with_libpaper_includes" != xyes; then
   LIBPAPER_INCLUDES="-I$with_libpaper_includes"
 fi
@@ -21338,6 +21342,7 @@ elif test "x$need_freetype2:$with_system_freetype2" = xyes:yes; then
   as_fn_error $? "did not find freetype-config required for system freetype2 library" "$LINENO" 5
 fi
 
+##tldbg _KPSE_LIB_FLAGS_SYSTEM: gd (gd).
 if test "x$with_gd_includes" != x && test "x$with_gd_includes" != xyes; then
   GD_INCLUDES="-I$with_gd_includes"
 fi
@@ -21360,6 +21365,7 @@ elif test "x$need_cairo:$with_system_cairo" = xyes:yes; then
   as_fn_error $? "did not find cairo 1.12 or better" "$LINENO" 5
 fi
 
+##tldbg _KPSE_LIB_FLAGS_SYSTEM: gmp (gmp).
 if test "x$with_gmp_includes" != x && test "x$with_gmp_includes" != xyes; then
   GMP_INCLUDES="-I$with_gmp_includes"
 fi
@@ -21368,6 +21374,7 @@ if test "x$with_gmp_libdir" != x && test "x$with_gmp_libdir" != xyes; then
   GMP_LIBS="-L$with_gmp_libdir $GMP_LIBS"
 fi
 
+##tldbg _KPSE_LIB_FLAGS_SYSTEM: mpfr (mpfr).
 if test "x$with_mpfr_includes" != x && test "x$with_mpfr_includes" != xyes; then
   MPFR_INCLUDES="-I$with_mpfr_includes"
 fi
@@ -21417,7 +21424,7 @@ elif test "x$need_teckit:$with_system_teckit" = xyes:yes; then
   as_fn_error $? "did not find teckit" "$LINENO" 5
 fi
 
-echo 'dbg:_KPSE_ICU_SYSTEM_FLAGS called.' >&5
+echo 'tldbg:KPSE_ICU_SYSTEM_FLAGS called.' >&5
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}icu-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}icu-config; ac_word=$2

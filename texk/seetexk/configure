@@ -7835,6 +7835,8 @@ fi
 
 done
 
+##tldbg KPSE_COMMON: seetexk ().
+##tldbg KPSE_BASIC: Remember seetexk () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -13529,11 +13531,11 @@ _ACEOF
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
-## _KPSE_INIT: Initialize TL infrastructure
+##tldbg _KPSE_INIT: Initialize TL infrastructure.
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
 
-## _KPSE_USE_LIBTOOL: Generate a libtool script for use in configure tests
+##tldbg _KPSE_USE_LIBTOOL: Generate a libtool script for use in configure tests.
 : ${CONFIG_LT=./config.lt}
 { $as_echo "$as_me:${as_lineno-$LINENO}: creating $CONFIG_LT" >&5
 $as_echo "$as_me: creating $CONFIG_LT" >&6;}
@@ -14925,7 +14927,9 @@ else
   PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
 fi
 
-## _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags
+##tldbg _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=kpathsea, libname=kpathsea, options=lt, tlincl=-IBLD/texk -ISRC/texk, tllib=BLD/texk/kpathsea/libkpathsea.la, tlextra=, rebuildsrcdeps=${top_srcdir}/../kpathsea/*.[ch], rebuildblddeps=${top_builddir}/../kpathsea/paths.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: kpathsea (kpathsea) lt.
 
 # Check whether --with-system-kpathsea was given.
 if test "${with_system_kpathsea+set}" = set; then :

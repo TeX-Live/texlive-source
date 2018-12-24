@@ -4360,6 +4360,7 @@ else
 fi ;;
 esac
 
+##tldbg KPSE_BASIC: Remember cairo () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -5711,7 +5712,7 @@ esac
 	esac
 
 
-echo 'dbg:_KPSE_COMPILER_VISIBILITY called.' >&5
+echo 'tldbg:KPSE_COMPILER_VISIBILITY called.' >&5
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking CFLAGS for C to hide external symbols" >&5
 $as_echo_n "checking CFLAGS for C to hide external symbols... " >&6; }
 if ${kpse_cv_visibility_cflags+:} false; then :
@@ -6403,7 +6404,7 @@ else
 fi
 
 
-## _KPSE_INIT: Initialize TL infrastructure
+##tldbg _KPSE_INIT: Initialize TL infrastructure.
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
 
@@ -6570,7 +6571,9 @@ else
   PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
 fi
 
-## _KPSE_LIB_FLAGS: Setup pixman (-lpixman) flags
+##tldbg _KPSE_LIB_FLAGS: Setup pixman (-lpixman) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=pixman, libname=pixman, options=, tlincl=-IBLD/libs/pixman/include, tllib=BLD/libs/pixman/libpixman.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/pixman/include/pixman.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: pixman (pixman) .
 
 # Check whether --with-system-pixman was given.
 if test "${with_system_pixman+set}" = set; then :

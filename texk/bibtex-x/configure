@@ -8081,6 +8081,8 @@ fi
 
 done
 
+##tldbg KPSE_COMMON: bibtex-x (no-define).
+##tldbg KPSE_BASIC: Remember bibtex-x (no-define) as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -17647,11 +17649,11 @@ fi
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
-## _KPSE_INIT: Initialize TL infrastructure
+##tldbg _KPSE_INIT: Initialize TL infrastructure.
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
 
-## _KPSE_USE_LIBTOOL: Generate a libtool script for use in configure tests
+##tldbg _KPSE_USE_LIBTOOL: Generate a libtool script for use in configure tests.
 : ${CONFIG_LT=./config.lt}
 { $as_echo "$as_me:${as_lineno-$LINENO}: creating $CONFIG_LT" >&5
 $as_echo "$as_me: creating $CONFIG_LT" >&6;}
@@ -19308,7 +19310,9 @@ else
   PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
 fi
 
-## _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags
+##tldbg _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=kpathsea, libname=kpathsea, options=lt, tlincl=-IBLD/texk -ISRC/texk, tllib=BLD/texk/kpathsea/libkpathsea.la, tlextra=, rebuildsrcdeps=${top_srcdir}/../kpathsea/*.[ch], rebuildblddeps=${top_builddir}/../kpathsea/paths.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: kpathsea (kpathsea) lt.
 
 # Check whether --with-system-kpathsea was given.
 if test "${with_system_kpathsea+set}" = set; then :
@@ -19368,14 +19372,17 @@ if test "x$kpse_cv_kpse_debug" != xyes; then :
   KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
 fi
 
-## _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags
+echo 'tldbg:KPSE_ICU_FLAGS called: more-icu-libs=icuio icui18n, icu-config-args=--ldflags-icuio.' >&5
+##tldbg _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=icu, libname=icuxxx, options=, tlincl=-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include, tllib=BLD/libs/icu/icu-build/lib/libicuio.a BLD/libs/icu/icu-build/lib/libicui18n.a BLD/libs/icu/icu-build/lib/libicuuc.a BLD/libs/icu/icu-build/lib/libicudata.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/icu/include/unicode/uversion.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: icu (icuxxx) .
 
 # Check whether --with-system-icu was given.
 if test "${with_system_icu+set}" = set; then :
   withval=$with_system_icu;
 fi
 if test "x$with_system_icu" = xyes; then
-  echo 'dbg:_KPSE_ICU_SYSTEM_FLAGS called.' >&5
+  echo 'tldbg:KPSE_ICU_SYSTEM_FLAGS called.' >&5
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}icu-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}icu-config; ac_word=$2
@@ -19577,6 +19584,12 @@ $(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
 ${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
+# checking for openbsd to add -lpthread for icu.
+case $build_os in
+openbsd*)
+  eval ICUXXX_LIBS=\"$ICUXXX_LIBS -lpthread\"
+  ;;
+esac
 
 
  if test "x$enable_bibtex8" != xno; then

@@ -8022,6 +8022,8 @@ fi
 
 done
 
+##tldbg KPSE_COMMON: web2c convert ().
+##tldbg KPSE_BASIC: Remember web2c convert () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output

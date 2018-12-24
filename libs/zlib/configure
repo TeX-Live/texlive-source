@@ -3646,6 +3646,7 @@ else
 fi ;;
 esac
 
+##tldbg KPSE_BASIC: Remember zlib () as Kpse_Package (for future messages).
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -4700,7 +4701,7 @@ $as_echo "no, using $LN_S" >&6; }
 fi
 
 
-echo 'dbg:_KPSE_COMPILER_VISIBILITY called.' >&5
+echo 'tldbg:KPSE_COMPILER_VISIBILITY called.' >&5
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking CFLAGS for C to hide external symbols" >&5
 $as_echo_n "checking CFLAGS for C to hide external symbols... " >&6; }
 if ${kpse_cv_visibility_cflags+:} false; then :
