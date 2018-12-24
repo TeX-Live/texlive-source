@@ -1,6 +1,7 @@
+# $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 1995-2009 Karl Berry <tex-live@tug.org>
-# Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 1995-2009, 2018 Karl Berry <tex-live@tug.org>
+# Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -16,7 +17,7 @@ AC_DEFUN([KPSE_LIBS_PREPARE], [])
 # Initialize infrastructure for libraries and programs in the TL tree.
 # If in the TL tree, define kpse_TL as relative path to the TL root.
 AC_DEFUN([_KPSE_INIT],
-[## $0: Initialize TL infrastructure
+[##tldbg $0: Initialize TL infrastructure.
 m4_syscmd([test -f ../../texk/kpathsea/doc/kpathsea.texi])[]dnl
 m4_if(m4_sysval, [0], [m4_define([kpse_TL], [../../])])[]dnl
 m4_ifdef([kpse_TL],
@@ -34,7 +35,7 @@ AC_DEFUN([KPSE_INIT],
 # _KPSE_USE_LIBTOOL()
 # -------------------
 AC_DEFUN([_KPSE_USE_LIBTOOL],
-[## $0: Generate a libtool script for use in configure tests
+[##tldbg $0: Generate a libtool script for use in configure tests.
 AC_PROVIDE_IFELSE([LT_INIT], ,
                   [m4_fatal([$0: requires libtool])])[]dnl
 LT_OUTPUT
@@ -79,7 +80,8 @@ AC_LANG(_AC_LANG)[]dnl
 # the TL tree).
 AC_DEFUN([_KPSE_LIB_FLAGS],
 [AC_REQUIRE([_KPSE_INIT])[]dnl
-## $0: Setup $1 (-l$2) flags
+##tldbg $0: Setup $1 (-l$2) flags.
+echo 'tldbg:[$0] called: libdir=[$1], libname=[$2], options=[$3], tlincl=[$4], tllib=[$5], tlextra=[$6], rebuildsrcdeps=[$7], rebuildblddeps=[$8].' >&AS_MESSAGE_LOG_FD
 m4_ifdef([kpse_TL],
          [_KPSE_LIB_FLAGS_TL($@)],
          [_KPSE_LIB_FLAGS_STANDALONE($@)])[]dnl
@@ -106,7 +108,8 @@ AC_DEFUN([_KPSE_TEXLIB_FLAGS],
 # --------------------------------------------------
 # Internal subroutine for use of _KPSE_LIB_FLAGS inside the TL tree.
 m4_define([_KPSE_LIB_FLAGS_TL],
-[m4_if(m4_index([ $3 ], [ lt ]), [-1], ,
+[##tldbg $0: $1 ($2) $3.
+m4_if(m4_index([ $3 ], [ lt ]), [-1], ,
        [AC_REQUIRE([_KPSE_USE_LIBTOOL])])[]dnl m4_if
 m4_if(m4_index([ $3 ], [ tree ]), [-1],
 [KPSE_]AS_TR_CPP([$1])[_OPTIONS([with-system])[]dnl
@@ -140,7 +143,8 @@ m4_if(m4_index([ $3 ], [ tree ]), [-1],
 # ----------------------------------------------------
 # Internal subroutine for standalone use of _KPSE_LIB_FLAGS.
 m4_define([_KPSE_LIB_FLAGS_STANDALONE],
-[m4_if(m4_index([ $3 ], [ tree ]), [-1],
+[##tldbg $0: $1 ($2) $3.
+m4_if(m4_index([ $3 ], [ tree ]), [-1],
 [KPSE_]AS_TR_CPP([$1])[_OPTIONS([])]dnl
 [KPSE_]AS_TR_CPP([$1])[_SYSTEM_FLAGS],
 [m4_fatal([$0: not in TL tree])])[]dnl m4_if
@@ -167,7 +171,8 @@ AC_ARG_WITH([$1-libdir],
 # ---------------------------------------
 # Internal subroutine: default flags for system library.
 m4_define([_KPSE_LIB_FLAGS_SYSTEM],
-[if test "x$with_[]AS_TR_SH($1)_includes" != x && test "x$with_[]AS_TR_SH($1)_includes" != xyes; then
+[##tldbg $0: $1 ($2).
+if test "x$with_[]AS_TR_SH($1)_includes" != x && test "x$with_[]AS_TR_SH($1)_includes" != xyes; then
   AS_TR_CPP($1)_INCLUDES="-I$with_[]AS_TR_SH($1)_includes"
 fi
 AS_TR_CPP($1)_LIBS="-l$2"
@@ -207,7 +212,8 @@ eval LIBS=\"$[]AS_TR_CPP($1)_LIBS \$LIBS\"
 # Common Autoconf code for all libraries and programs.
 #
 # Initialization of Automake, compiler warnings, etc.
-AC_DEFUN([KPSE_BASIC], [dnl Remember PACKAGE-NAME as Kpse_Package (for future messages)
+AC_DEFUN([KPSE_BASIC], [dnl
+##tldbg $0: Remember $1 ($2) as Kpse_Package (for future messages).
 m4_define([Kpse_Package], [$1])
 dnl
 AM_INIT_AUTOMAKE([foreign silent-rules subdir-objects]m4_ifval([$2], [ $2]))
@@ -234,6 +240,7 @@ KPSE_COMPILER_WARNINGS
 # Originally written by Karl Berry as texk/kpathsea/common.ac.
 #
 AC_DEFUN([KPSE_COMMON], [dnl
+##tldbg $0: $1 ($2).
 KPSE_BASIC($@)
 dnl
 LT_PREREQ([2.2.6])

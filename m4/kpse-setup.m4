@@ -1,6 +1,6 @@
 # $Id$
 # Private macros for the TeX Live (TL) tree.
-# Copyright 2017      Karl Berry <tex-live@tug.org>
+# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -275,7 +275,7 @@ m4_popdef([Kpse_add])[]dnl
 # 
 m4_define([_KPSE_RECURSE], [dnl
 AC_MSG_CHECKING([for $2 to build])
-echo 'dbg:[_KPSE_RECURSE] called: list=$1, text=$2, cond=$3, prefix=$4.' >&AS_MESSAGE_LOG_FD
+echo 'tldbg:[$0] called: list=[$1], text=[$2], cond=[$3], prefix=[$4].' >&AS_MESSAGE_LOG_FD
 MAKE_SUBDIRS=
 CONF_SUBDIRS=
 KPSE_FOR_PKGS([$1], [dnl

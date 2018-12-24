@@ -1,6 +1,6 @@
 # $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
 # Copyright 2013-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -15,7 +15,7 @@
 # them a Makefile.am must use them, e.g., in AM_CFLAGS or AM_CXXFLAGS.
 AC_DEFUN([KPSE_COMPILER_VISIBILITY],
 [dnl arrange that AC_PROG_CC uses _KPSE_VISIBILITY_CFLAGS etc.
-echo 'dbg:[_KPSE_COMPILER_VISIBILITY] called.' >&AS_MESSAGE_LOG_FD
+echo 'tldbg:[$0] called.' >&AS_MESSAGE_LOG_FD
 AC_PROVIDE_IFELSE([AC_PROG_CC],
                   [_KPSE_VISIBILITY_CFLAGS],
                   [m4_define([AC_PROG_CC],

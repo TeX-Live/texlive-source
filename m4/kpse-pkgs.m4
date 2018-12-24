@@ -7,9 +7,9 @@
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-## ------------------------------ ##
-## Define lists of sub-packages.  ##
-## ------------------------------ ##
+# ------------------------------ #
+# Define lists of sub-packages.  #
+# ------------------------------ #
 
 # Hopefully these lists are defined here and nowhere else.
 # Note: directories in these lists need not exist.
@@ -136,11 +136,9 @@ xdvik
 texlive
 ])]) # KPSE_TEXK_PKGS
 
-
-
-## ------------------------------- ##
-##  Loop over one of these lists.  ##
-## ------------------------------- ##
+# ------------------------------- #
+#  Loop over one of these lists.  #
+# ------------------------------- #
 
 # KPSE_FOR_PKGS(LIST, ACTION)
 # ---------------------------

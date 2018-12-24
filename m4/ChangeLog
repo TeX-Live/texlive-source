@@ -1,3 +1,15 @@
+2018-12-24  Karl Berry  <karl@freefriends.org>
+
+	* kpse-common.m4,
+	* kpse-pkgs.m4,
+	* kpse-setup.m4,
+	* kpse-visibility.m4: consistently use tldbg in tracing messages,
+	both in the configure scripts and the config.log transcript.
+	* kpse-icu-flags.m4 (_KPSE_ICU_FLAGS): special case to include
+	-lpthread when $build_os is openbsd. Reported by Mojca and Nelson
+	and others, e.g.,
+	https://tug.org/pipermail/tlbuild/2017q2/003799.html
+
 2018-08-27  Karl Berry  <karl@freefriends.org>
 
 	* kpse-potrace-flags.m4: remove file, again bundled with dvisvgm.

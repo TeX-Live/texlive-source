@@ -1,22 +1,24 @@
 # $Id$
-# ICU support for the TeX Live (TL) tree.
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# ICU support in the TeX Live (TL) tree.
+# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# KPSE_ICU_FLAGS([MORE-ICU-LIBS], [ICU_CONFIG_ARGS])
+# KPSE_ICU_FLAGS([MORE-ICU-LIBS], [ICU-CONFIG-ARGS])
 # --------------------------------------------------
 # Provide the configure option '--with-system-icu' (if in the TL tree).
 #
-# ICU_CONFIG_ARGS: icu-config arguments for additional icu libraries. 
+# MORE-ICU-LIBS: icu libraries from TL tree in addition to icuuc and icudata.
+# ICU-CONFIG-ARGS: icu-config arguments for additional icu libraries. 
 #
 # Set the make variables ICU_INCLUDES and ICU_LIBS to the CPPFLAGS and
 # LIBS required for the icu libraries in libs/icu/ of the TL tree.
 AC_DEFUN([KPSE_ICU_FLAGS],
-[m4_pushdef([kpse_icu_config_args], [$2])[]dnl
+[echo 'tldbg:[$0] called: more-icu-libs=[$1], icu-config-args=[$2].' >&AS_MESSAGE_LOG_FD
+m4_pushdef([kpse_icu_config_args], [$2])[]dnl
 _KPSE_ICU_FLAGS([icuxxx], [], [$1])[]dnl
 m4_popdef([kpse_icu_config_args])[]dnl
 ]) # KPSE_ICU_FLAGS
@@ -26,8 +28,7 @@ m4_popdef([kpse_icu_config_args])[]dnl
 # Internal subroutine.
 #
 # LIBNAME and OPTIONS as for _KPSE_LIB_FLAGS().
-# MORE-ICU-LIBS: icu libraries from the TL tree in addition to icuuc and
-# icudata.
+# MORE-ICU-LIBS: as above.
 m4_define([_KPSE_ICU_FLAGS], [dnl
 _KPSE_LIB_FLAGS([icu], [$1], [$2],
                 [-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include],
@@ -36,6 +37,12 @@ _KPSE_LIB_FLAGS([icu], [$1], [$2],
                              [BLD/libs/icu/icu-build/lib/libicu\1.a]),
                 [],
                 [], [${top_builddir}/../../libs/icu/include/unicode/uversion.h])[]dnl
+# checking for openbsd to add -lpthread for icu.
+case $build_os in
+openbsd*)
+  eval AS_TR_CPP($1)_LIBS=\"$[]AS_TR_CPP($1)_LIBS -lpthread\"
+  ;;
+esac
 ]) # _KPSE_ICU_FLAGS
 
 # KPSE_ICU_OPTIONS([WITH-SYSTEM])
@@ -51,7 +58,7 @@ m4_ifval([$1],
 # ---------------------
 AC_DEFUN([KPSE_ICU_SYSTEM_FLAGS], [dnl
 AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
-echo 'dbg:[_KPSE_ICU_SYSTEM_FLAGS] called.' >&AS_MESSAGE_LOG_FD
+echo 'tldbg:[$0] called.' >&AS_MESSAGE_LOG_FD
 AC_CHECK_TOOL([ICU_CONFIG], [icu-config], [false])[]dnl
 AC_CHECK_TOOL([PKG_CONFIG], [pkg-config], [false])[]dnl
 if $ICU_CONFIG --version >/dev/null 2>&1; then
