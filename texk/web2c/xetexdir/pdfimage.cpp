@@ -78,52 +78,53 @@ pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
 
 	Page*		page = doc->getCatalog()->getPage(page_num);
 
-	PDFRectangle*	r;
+	const PDFRectangle*	r;
 	switch (pdf_box) {
 		default:
 		case pdfbox_crop:
-			r = (PDFRectangle *)page->getCropBox();
+			r = page->getCropBox();
 			break;
 		case pdfbox_media:
-			r = (PDFRectangle *)page->getMediaBox();
+			r = page->getMediaBox();
 			break;
 		case pdfbox_bleed:
-			r = (PDFRectangle *)page->getBleedBox();
+			r = page->getBleedBox();
 			break;
 		case pdfbox_trim:
-			r = (PDFRectangle *)page->getTrimBox();
+			r = page->getTrimBox();
 			break;
 		case pdfbox_art:
-			r = (PDFRectangle *)page->getArtBox();
+			r = page->getArtBox();
 			break;
 	}
 
+	PDFRectangle r2 = *r;
 	int RotAngle = 0;
 	RotAngle = (int)page->getRotate() % 360;
 	if (RotAngle < 0)
 		RotAngle += 360;
 	if (RotAngle == 90 || RotAngle == 270) {
 		double tmpvalue;
-		if (r->x1 > r->x2) {
-			tmpvalue = r->x1;
-			r->x1 = r->x2;
-			r->x2 = tmpvalue;
+		if (r2.x1 > r2.x2) {
+			tmpvalue = r2.x1;
+			r2.x1 = r2.x2;
+			r2.x2 = tmpvalue;
 		}
-		if (r->y1 > r->y2) {
-			tmpvalue = r->y1;
-			r->y1 = r->y2;
-			r->y2 = tmpvalue;
+		if (r2.y1 > r2.y2) {
+			tmpvalue = r2.y1;
+			r2.y1 = r2.y2;
+			r2.y2 = tmpvalue;
 		}
 
-		tmpvalue = r->x2;
-		r->x2 = r->x1 + r->y2 - r->y1;
-		r->y2 = r->y1 + tmpvalue - r->x1;
+		tmpvalue = r2.x2;
+		r2.x2 = r2.x1 + r2.y2 - r2.y1;
+		r2.y2 = r2.y1 + tmpvalue - r2.x1;
 	}
 
-	box->x  = 72.27 / 72 * my_fmin(r->x1, r->x2);
-	box->y  = 72.27 / 72 * my_fmin(r->y1, r->y2);
-	box->wd = 72.27 / 72 * fabs(r->x2 - r->x1);
-	box->ht = 72.27 / 72 * fabs(r->y2 - r->y1);
+	box->x  = 72.27 / 72 * my_fmin(r2.x1, r2.x2);
+	box->y  = 72.27 / 72 * my_fmin(r2.y1, r2.y2);
+	box->wd = 72.27 / 72 * fabs(r2.x2 - r2.x1);
+	box->ht = 72.27 / 72 * fabs(r2.y2 - r2.y1);
 
 	delete doc;
 
