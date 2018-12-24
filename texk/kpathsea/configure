@@ -8048,6 +8048,8 @@ fi
 
 done
 
+## KPSE_COMMON: kpathsea ().
+## KPSE_BASIC: Remember kpathsea () as Kpse_Package (for future messages)
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
