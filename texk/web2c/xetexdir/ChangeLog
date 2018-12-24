@@ -1,4 +1,4 @@
-2018-12-24  Stefan Br\"uns  <stefan.bruens@rwth-aachen.de tug.org>
+2018-12-24  Stefan Br\"uns  <stefan.bruens@rwth-aachen.de>
 
 	* pdfimage.cpp: Avoid modification of internal poppler object,
 	fix compilation with poppler 0.70.0 and newer ones.
