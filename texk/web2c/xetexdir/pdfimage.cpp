@@ -68,7 +68,7 @@ pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
 		return -1;
 	}
 
-	int			pages = doc->getNumPages();
+	int	pages = doc->getNumPages();
 	if (page_num > pages)
 		page_num = pages;
 	if (page_num < 0)
