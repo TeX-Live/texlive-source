@@ -1,3 +1,7 @@
+2018-12-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfimage.cpp: Simplify the support of Rotate.
+
 2018-12-24  Stefan Br\"uns  <stefan.bruens@rwth-aachen.de>
 
 	* pdfimage.cpp: Avoid modification of internal poppler object,

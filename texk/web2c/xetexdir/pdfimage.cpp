@@ -1,7 +1,7 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
  Copyright (c) 1994-2008 by SIL International
- Copyright (c) 2009, 2017 by Jonathan Kew
+ Copyright (c) 2009, 2018 by Jonathan Kew
 
  SIL Author(s): Jonathan Kew
 
@@ -98,33 +98,19 @@ pdf_get_rect(char* filename, int page_num, int pdf_box, realrect* box)
 			break;
 	}
 
-	PDFRectangle r2 = *r;
 	int RotAngle = 0;
 	RotAngle = (int)page->getRotate() % 360;
 	if (RotAngle < 0)
 		RotAngle += 360;
 	if (RotAngle == 90 || RotAngle == 270) {
-		double tmpvalue;
-		if (r2.x1 > r2.x2) {
-			tmpvalue = r2.x1;
-			r2.x1 = r2.x2;
-			r2.x2 = tmpvalue;
-		}
-		if (r2.y1 > r2.y2) {
-			tmpvalue = r2.y1;
-			r2.y1 = r2.y2;
-			r2.y2 = tmpvalue;
-		}
-
-		tmpvalue = r2.x2;
-		r2.x2 = r2.x1 + r2.y2 - r2.y1;
-		r2.y2 = r2.y1 + tmpvalue - r2.x1;
+		box->wd = 72.27 / 72 * fabs(r->y2 - r->y1);
+		box->ht = 72.27 / 72 * fabs(r->x2 - r->x1);
+	} else {
+		box->wd = 72.27 / 72 * fabs(r->x2 - r->x1);
+		box->ht = 72.27 / 72 * fabs(r->y2 - r->y1);
 	}
-
-	box->x  = 72.27 / 72 * my_fmin(r2.x1, r2.x2);
-	box->y  = 72.27 / 72 * my_fmin(r2.y1, r2.y2);
-	box->wd = 72.27 / 72 * fabs(r2.x2 - r2.x1);
-	box->ht = 72.27 / 72 * fabs(r2.y2 - r2.y1);
+	box->x  = 72.27 / 72 * my_fmin(r->x1, r->x2);
+	box->y  = 72.27 / 72 * my_fmin(r->y1, r->y2);
 
 	delete doc;
 
