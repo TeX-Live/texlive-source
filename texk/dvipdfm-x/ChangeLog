@@ -1,3 +1,8 @@
+2018-12-27  Clerk Ma  <maqiyuan130324@vip.qq.com>
+
+	* pdfobj.c: Introduce a static variable pdf_output_file_stats
+	for LIBDPX. It does not affect (x)dvipdfmx.
+
 2018-12-21  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvi.[ch], dvipdfmx.c, pdfdoc.[ch], pdfencrypt.[ch],
