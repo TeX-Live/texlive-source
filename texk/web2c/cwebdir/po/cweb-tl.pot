@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2018\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-25 16:30+0100\n"
+"POT-Creation-Date: 2018-12-28 16:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,4 +40,8 @@ msgstr ""
 
 #: cweav-texlive.ch:33
 msgid "This is CWEAVE, Version 3.64"
+msgstr ""
+
+#: ctwill-texlive.ch:33
+msgid "This is CTWILL, Version 3.64"
 msgstr ""

@@ -1,0 +1,29 @@
+\ifx\undefined\documentclass\input ctwimac.tex
+\else\endinput\fi % LaTeX will use other macros
+
+\def\ATH{\X\kern-.5em:Pr\"äprozessor Definitionen\X}
+
+\def\A{\note{Siehe auch Abschnitt}} % xref for doubly defined section name
+\def\As{\note{Siehe auch die Abschnitte}}
+  % xref for multiply defined section name
+\def\ET{ und~} % conjunction between two section numbers
+\def\ETs{ und~} % conjunction between the last two of several section numbers
+\def\Q{\note{Dieser Programmteil wird zitiert in Abschnitt}}
+  % xref for mention of a section
+\def\Qs{\note{Dieser Programmteil wird zitiert in den Abschnitten}}
+  % xref for mentions of a section
+\def\U{\note{Dieser Programmteil wird verwendet in Abschnitt}}
+  % xref for use of a section
+\def\Us{\note{Dieser Programmteil wird verwendet in den Abschnitten}}
+  % xref for uses of a section
+
+\def\fin{\parfillskip 0pt plus 1fil
+  \let\topsecno=\nullsec
+  \message{Abschnittsnamen:}
+  \def\note##1##2.{\quad{\eightrm##1~##2.}}
+  \def\Q{\note{Zitiert in Abschnitt}} % crossref for mention of a section
+  \def\Qs{\note{Zitiert in den Abschnitten}} % crossref for mentions of a section
+  \def\U{\note{Verwendet in Abschnitt}} % crossref for use of a section
+  \def\Us{\note{Verwendet in den Abschnitten}} % crossref for uses of a section
+  \def\I{\par\hangindent 2em}\let\*=*
+  \readsections}

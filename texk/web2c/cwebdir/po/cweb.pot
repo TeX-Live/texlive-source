@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2018\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-25 16:30+0100\n"
+"POT-Creation-Date: 2018-12-28 14:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -156,6 +156,10 @@ msgstr ""
 msgid "! CWEB file ended during a change"
 msgstr ""
 
+#: cweav-twill.ch:1026
+msgid "! Cannot open aux output file "
+msgstr ""
+
 #: comm-i18n.ch:88
 msgid "! Cannot open change file "
 msgstr ""
@@ -241,6 +245,10 @@ msgstr ""
 msgid "! Filename too long\n"
 msgstr ""
 
+#: cweav-twill.ch:542
+msgid "! Identifier in meaning should be followed by space"
+msgstr ""
+
 #: cweav-i18n.ch:209
 msgid "! Illegal use of @ in comment"
 msgstr ""
@@ -285,8 +293,12 @@ msgstr ""
 msgid "! Input line too long"
 msgstr ""
 
+#: cweav-twill.ch:549
+msgid "! Location in meaning should be followed by space"
+msgstr ""
+
 #: ctang-i18n.ch:211
-msgid "! Misplaced @@h"
+msgid "! Misplaced @h"
 msgstr ""
 
 #: cweav-i18n.ch:271
@@ -317,6 +329,10 @@ msgstr ""
 msgid "! Nesting of section names not allowed"
 msgstr ""
 
+#: cweav-twill.ch:1022
+msgid "! Only @$ is allowed in aux and bux files"
+msgstr ""
+
 #: ctang-i18n.ch:277
 msgid "! Replacement string in @l too long"
 msgstr ""
@@ -339,6 +355,14 @@ msgstr ""
 
 #: comm-i18n.ch:262 comm-i18n.hch:34
 msgid "! This can't happen: "
+msgstr ""
+
+#: cweav-twill.ch:310
+msgid "! Title name didn't end"
+msgstr ""
+
+#: cweav-twill.ch:308
+msgid "! Title should be enclosed in braces or doublequotes"
 msgstr ""
 
 #: comm-i18n.ch:102
@@ -417,6 +441,11 @@ msgstr ""
 msgid "%ld scraps (out of %ld)\n"
 msgstr ""
 
+#: cweav-twill.ch:1350
+#, c-format
+msgid "%ld temp meanings (out of %ld)\n"
+msgstr ""
+
 #: cweav-i18n.ch:442
 #, c-format
 msgid "%ld texts (out of %ld)\n"
@@ -490,6 +519,10 @@ msgstr ""
 msgid "This is CWEAVE (Version 3.64 [CWEBbin 2018])"
 msgstr ""
 
+#: cweav-twill.ch:49
+msgid "This is CTWILL (Version 3.64 [CWEBbin 2018])"
+msgstr ""
+
 #: cweav-i18n.ch:301 cweav-i18n.ch:309
 msgid "buffer"
 msgstr ""
@@ -500,6 +533,14 @@ msgstr ""
 
 #: cweav-i18n.ch:25
 msgid "cross-reference"
+msgstr ""
+
+#: cweav-twill.ch:815
+msgid "find type"
+msgstr ""
+
+#: cweav-twill.ch:754
+msgid "inner"
 msgstr ""
 
 #: ctang-i18n.ch:91
@@ -534,8 +575,16 @@ msgstr ""
 msgid "stack"
 msgstr ""
 
+#: cweav-twill.ch:562
+msgid "temp meanings"
+msgstr ""
+
 #: ctang-i18n.ch:203 cweav-i18n.ch:223
 msgid "text"
+msgstr ""
+
+#: cweav-twill.ch:311
+msgid "titles"
 msgstr ""
 
 #: ctang-i18n.ch:25 ctang-i18n.ch:197
