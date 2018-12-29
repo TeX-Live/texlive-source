@@ -373,14 +373,19 @@ msgstr ""
 msgid "! Unrecognized escape sequence"
 msgstr ""
 
-#: comm-i18n.ch:279
+#: comm-i18n.ch:283
 msgid ""
 "! Usage: ctangle [options] webfile[.w] [{changefile[.ch]|-} [outfile[.c]]]\n"
 msgstr ""
 
-#: comm-i18n.ch:283
+#: comm-i18n.ch:288
 msgid ""
 "! Usage: cweave [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
+msgstr ""
+
+#: comm-i18n.ch:291
+msgid ""
+"! Usage: ctwill [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
 msgstr ""
 
 #: ctang-i18n.ch:131 cweav-i18n.ch:53 cweav-i18n.ch:117

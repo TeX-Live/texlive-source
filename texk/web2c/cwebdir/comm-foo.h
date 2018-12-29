@@ -32,11 +32,12 @@
 
 @d ctangle 0
 @d cweave 1
+@d ctwill 2
 
 @<Common code for \.{CWEAVE} and \.{CTANGLE}@>=
 typedef uint8_t eight_bits;
 typedef uint16_t sixteen_bits;
-extern boolean program; /* \.{CWEAVE} or \.{CTANGLE}? */
+extern int program; /* \.{CWEAVE} or \.{CTANGLE} or \.{CTWILL}? */
 extern int phase; /* which phase are we in? */
 
 @ @<Include files@>=

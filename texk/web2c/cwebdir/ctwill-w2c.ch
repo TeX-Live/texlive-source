@@ -298,6 +298,12 @@ char **av@t\2\2@>) /* argument values */
 @z
 
 @x
+  program=cweave;
+@y
+  program=ctwill;
+@z
+
+@x
   make_xrefs=force_lines=make_pb=1; /* controlled by command-line options */
 @y
   make_xrefs=force_lines=make_pb=indent_param_decl=order_decl_stmt=1;

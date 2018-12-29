@@ -36,8 +36,23 @@
 @z
 
 @x
-typedef short boolean;
+|program|.
+
+@d ctangle 0
+@d cweave 1
 @y
+|program|. And \.{CTWILL} adds some extra twists.
+
+@d ctangle 0
+@d cweave 1
+@d ctwill 2
+@z
+
+@x
+typedef short boolean;
+boolean program; /* \.{CWEAVE} or \.{CTANGLE}? */
+@y
+int program; /* \.{CWEAVE} or \.{CTANGLE}i or \.{CTWILL}? */
 @z
 
 @x
@@ -444,6 +459,12 @@ extern void init_p(name_pointer,eight_bits);@/
 @y
   if (byte_ptr+l>byte_mem_end) overflow(_("byte memory"));
   if (name_ptr>=name_dir_end) overflow(_("name"));
+@z
+
+@x
+  if (program==cweave) init_p(p,t);
+@y
+  if (program!=ctangle) init_p(p,t);
 @z
 
 @x
@@ -1013,7 +1034,7 @@ else fatal(
 "! Usage: cweave [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
    ,"");
 @y
-cb_usage(program==ctangle ? "ctangle" : "cweave");
+cb_usage(program==ctangle ? "ctangle" : program==cweave ? "cweave" : "ctwill");
 @.Usage:@>
 @z
 
@@ -1258,7 +1279,8 @@ kpse_set_program_name(argv[0], "cweb");
 @ Modules for dealing with help messages and version info.
 
 @<Display help message and exit@>=
-cb_usagehelp(program==ctangle ? CTANGLEHELP : CWEAVEHELP, NULL);
+cb_usagehelp(program==ctangle ? CTANGLEHELP :
+  program==cweave ? CWEAVEHELP : CTWILLHELP, NULL);
 @.--help@>
 
 @ Special variants from \Kpathsea/ for i18n/t10n.
@@ -1304,9 +1326,11 @@ static void cb_usagehelp (const_string *message, const_string bug_email)
 
 @d ctangle_banner "CTANGLE (CWEBBIN, TeX Live 2019/dev) 3.64"
 @d cweave_banner "CWEAVE (CWEBBIN, TeX Live 2019/dev) 3.64"
+@d ctwill_banner "CTWILL (CWEBBIN, TeX Live 2019/dev) 3.64"
 
 @<Display version information and exit@>={
-  puts(program==ctangle ? ctangle_banner : cweave_banner);
+  puts(program==ctangle ? ctangle_banner :
+    program==cweave ? cweave_banner : ctwill_banner);
 @.--version@>
   puts("Copyright 2019 Silvio Levy and Donald E. Knuth");
   history=spotless; exit(wrap_up());

@@ -199,7 +199,6 @@ msgid "! CWEB file ended during a change"
 msgstr "! CWEB-Datei endete während einer Änderung"
 
 #: cweav-twill.ch:1026
-#, fuzzy
 msgid "! Cannot open aux output file "
 msgstr "! Kann aux-Ausgabedatei nicht öffnen: "
 
@@ -341,8 +340,7 @@ msgid "! Location in meaning should be followed by space"
 msgstr "! Herkunftsort in Bedeutung sollte Leerzeichen folgen"
 
 #: ctang-i18n.ch:211
-#, fuzzy
-msgid "! Misplaced @@h"
+msgid "! Misplaced @h"
 msgstr "! Falsch platziertes @h"
 
 #: cweav-i18n.ch:271
@@ -374,8 +372,7 @@ msgid "! Nesting of section names not allowed"
 msgstr "! Verschachtelung von Abschnittnamen nicht erlaubt"
 
 #: cweav-twill.ch:1022
-#, fuzzy
-msgid "! Only @@$ is allowed in aux and bux files"
+msgid "! Only @$ is allowed in aux and bux files"
 msgstr "! Nur @$ ist in aux- und bux-Dateien erlaubt"
 
 #: ctang-i18n.ch:277
@@ -403,12 +400,10 @@ msgid "! This can't happen: "
 msgstr "! Das kann nicht sein: "
 
 #: cweav-twill.ch:310
-#, fuzzy
 msgid "! Title name didn't end"
 msgstr "! Titel nicht beendet"
 
 #: cweav-twill.ch:308
-#, fuzzy
 msgid "! Title should be enclosed in braces or doublequotes"
 msgstr "! Titel sollte in geschweiften Klammern oder Anführungszeichen stehen"
 
@@ -420,7 +415,7 @@ msgstr "! Zu viele verschachtelte Einfügungen"
 msgid "! Unrecognized escape sequence"
 msgstr "! Unbekannte Escape-Sequenz"
 
-#: comm-i18n.ch:279
+#: comm-i18n.ch:283
 msgid ""
 "! Usage: ctangle [options] webfile[.w] [{changefile[.ch]|-} [outfile[.c]]]\n"
 msgstr ""
@@ -431,7 +426,7 @@ msgstr ""
 "p [+] Zeige einen Zwischenbericht\n"
 "s [-] Melde die Verbrauchsstatistik\n"
 
-#: comm-i18n.ch:283
+#: comm-i18n.ch:288
 msgid ""
 "! Usage: cweave [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
 msgstr ""
@@ -444,6 +439,24 @@ msgstr ""
 "i [+] Rücke Parameterdeklarationen ein\n"
 "lX [ ] Verwende die Makros für Sprache X aus Xcwebmac.tex\n"
 "o [+] Trenne Deklarationen und Anweisungen\n"
+"p [+] Zeige einen Zwischenbericht\n"
+"s [-] Melde die Verbrauchsstatistik\n"
+"x [+] Füge Indexe und Inhaltsverzeichnisse ein\n"
+
+#: comm-i18n.ch:291
+msgid ""
+"! Usage: ctwill [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
+msgstr ""
+"! Aufruf: ctwill [Optionen] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
+"Optionen sind (+ schaltet ein, - schaltet aus, Vorgabe in Klammern):\n"
+"b [+] Gib eine Startmeldung aus\n"
+"e [-] Schließe C-Material in \\PB-Klammern ein\n"
+"f [+] Erzwinge Zeilenumbrüche nach jeder Anweisung\n"
+"h [+] Bestätige einen fehlerfreien Lauf\n"
+"i [+] Rücke Parameterdeklarationen ein\n"
+"lX [ ] Verwende die Makros für Sprache X aus Xcwebmac.tex\n"
+"o [+] Trenne Deklarationen und Anweisungen\n"
+"P [+] Benutze 'proofmac.tex' statt 'ctwimac.tex'\n"
 "p [+] Zeige einen Zwischenbericht\n"
 "s [-] Melde die Verbrauchsstatistik\n"
 "x [+] Füge Indexe und Inhaltsverzeichnisse ein\n"
@@ -507,7 +520,6 @@ msgid "%ld scraps (out of %ld)\n"
 msgstr "%ld Scraps (von %ld)\n"
 
 #: cweav-twill.ch:1350
-#, fuzzy, c-format
 msgid "%ld temp meanings (out of %ld)\n"
 msgstr "%ld temporäre Bedeutungen (von %ld)\n"
 
@@ -589,7 +601,6 @@ msgid "This is CWEAVE (Version 3.64 [CWEBbin 2018])"
 msgstr "Dies ist CWEAVE (Version 3.64 [CWEBbin 2018])"
 
 #: cweav-twill.ch:49
-#, fuzzy
 msgid "This is CTWILL (Version 3.64 [CWEBbin 2018])"
 msgstr "Dies ist CTWILL (Version 3.64 [CWEBbin 2018])"
 

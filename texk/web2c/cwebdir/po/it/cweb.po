@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2018\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-25 16:30+0100\n"
-"PO-Revision-Date: 2018-12-06 12:42+0100\n"
+"POT-Creation-Date: 2018-12-28 14:37+0100\n"
+"PO-Revision-Date: 2018-12-28 14:37+0100\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -198,6 +198,10 @@ msgstr "! @d, @f e @c sono ignorati nella parte C"
 msgid "! CWEB file ended during a change"
 msgstr "! File CWEB terminato durante un change"
 
+#: cweav-twill.ch:1026
+msgid "! Cannot open aux output file "
+msgstr "! Non posso aprire il file di output "
+
 #: comm-i18n.ch:88
 msgid "! Cannot open change file "
 msgstr "! Non posso aprire il change file "
@@ -283,6 +287,10 @@ msgstr "! Extra } nel commento"
 msgid "! Filename too long\n"
 msgstr "! Nome file troppo lungo\n"
 
+#: cweav-twill.ch:542
+msgid "! Identifier in meaning should be followed by space"
+msgstr "! Identifier in meaning should be followed by space"
+
 #: cweav-i18n.ch:209
 msgid "! Illegal use of @ in comment"
 msgstr "! Uso illegale di @ nel commento"
@@ -327,9 +335,13 @@ msgstr "! Input terminato all'interno del nome di una sezione"
 msgid "! Input line too long"
 msgstr "! Linea in input troppo lunga"
 
+#: cweav-twill.ch:549
+msgid "! Location in meaning should be followed by space"
+msgstr "! Location in meaning should be followed by space"
+
 #: ctang-i18n.ch:211
-msgid "! Misplaced @@h"
-msgstr "! Mal riposto @@h"
+msgid "! Misplaced @h"
+msgstr "! Mal riposto @h"
 
 #: cweav-i18n.ch:271
 msgid "! Missing '|' after C text"
@@ -359,6 +371,10 @@ msgstr "! Omesso } nel commento"
 msgid "! Nesting of section names not allowed"
 msgstr "! Nomi di sezioni l'uno dentro l'altro non consentiti"
 
+#: cweav-twill.ch:1022
+msgid "! Only @$ is allowed in aux and bux files"
+msgstr "! Only @$ is allowed in aux and bux files"
+
 #: ctang-i18n.ch:277
 msgid "! Replacement string in @l too long"
 msgstr "! Stringa sostitutiva in @l troppo lunga"
@@ -383,6 +399,14 @@ msgstr "! Stringa TeX dovrebbe stare solo nel testo in C"
 msgid "! This can't happen: "
 msgstr "! Questo non può avvenire: "
 
+#: cweav-twill.ch:310
+msgid "! Title name didn't end"
+msgstr "! Nome sezione non terminato"
+
+#: cweav-twill.ch:308
+msgid "! Title should be enclosed in braces or doublequotes"
+msgstr "! I doppi @ dovrebbero essere usati nel \"control text\""
+
 #: comm-i18n.ch:102
 msgid "! Too many nested includes"
 msgstr "! Troppi include annidati"
@@ -391,7 +415,7 @@ msgstr "! Troppi include annidati"
 msgid "! Unrecognized escape sequence"
 msgstr "! Sequenza di escape non riconosciuta"
 
-#: comm-i18n.ch:279
+#: comm-i18n.ch:283
 msgid ""
 "! Usage: ctangle [options] webfile[.w] [{changefile[.ch]|-} [outfile[.c]]]\n"
 msgstr ""
@@ -402,7 +426,7 @@ msgstr ""
 "p [+] mostra andamento elaborazione\n"
 "s [-] mostra statistiche\n"
 
-#: comm-i18n.ch:283
+#: comm-i18n.ch:288
 msgid ""
 "! Usage: cweave [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
 msgstr ""
@@ -415,6 +439,24 @@ msgstr ""
 "i [+] rientranza delle dichiarazioni\n"
 "lX [ ] usa macro in lingua X contenute in Xcwebmac.tex\n"
 "o [+] separa dichiarazioni e statement\n"
+"p [+] mostra andamento elaborazione\n"
+"s [-] mostra statistiche\n"
+"x [+] include indici\n"
+
+#: comm-i18n.ch:291
+msgid ""
+"! Usage: ctwill [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
+msgstr ""
+"! Uso: ctwill [Opzioni] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
+"Opzioni (+ attiva, - disattiva, default indicato tra parentesi quadre):\n"
+"b [+] stampa una riga di titoli\n"
+"e [-] C material in \\PB parentesi\n"
+"f [+] forza i line break\n"
+"h [+] stampa un messaggio di \"buon fine\"\n"
+"i [+] rientranza delle dichiarazioni\n"
+"lX [ ] usa macro in lingua X contenute in Xcwebmac.tex\n"
+"o [+] separa dichiarazioni e statement\n"
+"P [+] include 'proofmac.tex' invece di 'ctwimac.tex'\n"
 "p [+] mostra andamento elaborazione\n"
 "s [-] mostra statistiche\n"
 "x [+] include indici\n"
@@ -476,6 +518,10 @@ msgstr "%ld replacement text (fuori da %ld)\n"
 #, c-format
 msgid "%ld scraps (out of %ld)\n"
 msgstr "%ld scrap (fuori da %ld)\n"
+
+#: cweav-twill.ch:1350
+msgid "%ld temp meanings (out of %ld)\n"
+msgstr "%ld token (fuori da %ld)\n"
 
 #: cweav-i18n.ch:442
 #, c-format
@@ -554,6 +600,10 @@ msgstr "Questo è CTANGLE (Versione 3.64 [CWEBbin 2018])"
 msgid "This is CWEAVE (Version 3.64 [CWEBbin 2018])"
 msgstr "Questo è CWEAVE (Versione 3.64 [CWEBbin 2018])"
 
+#: cweav-twill.ch:49
+msgid "This is CTWILL (Version 3.64 [CWEBbin 2018])"
+msgstr "Questo è CTWILL (Versione 3.64 [CWEBbin 2018])"
+
 #: cweav-i18n.ch:301 cweav-i18n.ch:309
 msgid "buffer"
 msgstr "buffer"
@@ -565,6 +615,14 @@ msgstr "byte di memoria"
 #: cweav-i18n.ch:25
 msgid "cross-reference"
 msgstr "referimento incrociato"
+
+#: cweav-twill.ch:815
+msgid "find type"
+msgstr "find type"
+
+#: cweav-twill.ch:754
+msgid "inner"
+msgstr "inner"
 
 #: ctang-i18n.ch:91
 msgid "macro defs have strange char"
@@ -598,9 +656,17 @@ msgstr "ordinamento"
 msgid "stack"
 msgstr "stack"
 
+#: cweav-twill.ch:562
+msgid "temp meanings"
+msgstr "temp meanings"
+
 #: ctang-i18n.ch:203 cweav-i18n.ch:223
 msgid "text"
 msgstr "text"
+
+#: cweav-twill.ch:311
+msgid "titles"
+msgstr "titles"
 
 #: ctang-i18n.ch:25 ctang-i18n.ch:197 cweav-i18n.ch:173 cweav-i18n.ch:217
 #: cweav-i18n.ch:231
