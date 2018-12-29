@@ -1,0 +1,476 @@
+% standard macros for CWEB listings (in addition to plain.tex)
+% Version 3.6 --- May 2000
+% modified for pages produced by CTWILL
+% further modified for page size of the MMIXware book
+\ifx\documentstyle\undefined\else\endinput\fi % LaTeX will use other macros
+\xdef\fmtversion{\fmtversion+CTWILL3.6+LNCS}
+
+\let\:=\. % preserve a way to get the dot accent
+ % (all other accents will still work as usual)
+
+\newdimen\em \em=10pt % this "em" will not change with font size
+\parskip 0pt plus .1pt % almost no stretch between paragraphs
+\parindent 1\em % for paragraphs and for the first line of C text
+
+\newif\ifsorted
+\newread\sreffile
+\newwrite\reffile
+\ifx\norefs\def\else
+  \openin\sreffile=\jobname.sref
+  \ifeof\sreffile \immediate\openout\reffile=\jobname.ref \sortedfalse
+    \message{This is the first pass!}
+  \else \sortedtrue \message{This is the second pass!} \fi
+\fi
+
+\font\ninerm=cmr9
+\let\mc=\ninerm % medium caps
+\def\CEE/{{\mc C\spacefactor1000}}
+\def\UNIX/{{\mc U\kern-.05emNIX\spacefactor1000}}
+\def\TEX/{\TeX}
+\def\CPLUSPLUS/{{\mc C\PP\spacefactor1000}}
+\def\Cee{\CEE/} % for backward compatibility
+\def\9#1{}
+\font\eightrm=cmr8
+\font\sixrm=cmr6
+\font\ninei=cmmi9
+\font\eighti=cmmi8
+\font\sixi=cmmi6
+\skewchar\ninei='177 \skewchar\eighti='177 \skewchar\sixi='177
+\font\ninesy=cmsy9
+\font\eightsy=cmsy8
+\font\sixsy=cmsy6
+\skewchar\ninesy='60 \skewchar\eightsy='60 \skewchar\sixsy='60
+\font\ninebf=cmbx9
+\font\eightbf=cmbx8
+\font\sixbf=cmbx6
+\font\ninett=cmtt9
+\font\eighttt=cmtt8
+\hyphenchar\ninett=-1 \hyphenchar\eighttt=-1
+\font\ninesl=cmsl9
+\font\eightsl=cmsl8
+\font\nineit=cmti9
+\font\eightit=cmti8
+\font\tentex=cmtex10
+\font\ninetex=cmtex9 % TeX extended character set (used in strings)
+\font\eighttex=cmtex8
+\fontdimen7\tentex=0pt % no double space after sentences
+\fontdimen7\ninetex=0pt
+\fontdimen7\eighttex=0pt
+
+\newif\iftenpoint
+\def\tenpoint{\tenpointtrue
+ \def\rm{\fam0\tenrm}%
+  \textfont0=\tenrm \scriptfont0=\sevenrm \scriptscriptfont0=\fiverm
+  \textfont1=\teni \scriptfont1=\seveni \scriptscriptfont1=\fivei
+  \textfont2=\tensy \scriptfont2=\sevensy \scriptscriptfont2=\fivesy
+  \textfont3=\tenex \scriptfont3=\tenex \scriptscriptfont3=\tenex
+  \def\it{\fam\itfam\tenit}%
+  \textfont\itfam=\tenit
+  \def\sl{\fam\slfam\tensl}%
+  \textfont\slfam=\tensl
+  \def\bf{\fam\bffam\tenbf}%
+  \textfont\bffam=\tenbf \scriptfont\bffam=\sevenbf
+   \scriptscriptfont\bffam=\fivebf
+  \def\tt{\fam\ttfam\tentt}%
+  \textfont\ttfam=\tentt
+  \def\ttx{\tentex}%
+  \normalbaselineskip=12pt
+  \let\cmntfont=\tenrm
+  \let\mc=\ninerm
+  \let\sc=\eightrm
+  \let\big=\tenbig
+  \setbox\strutbox=\hbox{\vrule height8pt depth3pt width 0pt}%
+  \normalbaselines\rm}
+
+\def\ninepoint{\tenpointfalse
+ \def\rm{\fam0\ninerm}%
+  \textfont0=\ninerm \scriptfont0=\sixrm \scriptscriptfont0=\fiverm
+  \textfont1=\ninei \scriptfont1=\sixi \scriptscriptfont1=\fivei
+  \textfont2=\ninesy \scriptfont2=\sixsy \scriptscriptfont2=\fivesy
+  \textfont3=\tenex \scriptfont3=\tenex \scriptscriptfont3=\tenex
+  \def\it{\fam\itfam\nineit}%
+  \textfont\itfam=\nineit
+  \def\sl{\fam\slfam\ninesl}%
+  \textfont\slfam=\ninesl
+  \def\bf{\fam\bffam\ninebf}%
+  \textfont\bffam=\ninebf \scriptfont\bffam=\sixbf
+   \scriptscriptfont\bffam=\fivebf
+  \def\tt{\fam\ttfam\ninett}%
+  \textfont\ttfam=\ninett
+  \def\ttx{\ninetex}%
+  \normalbaselineskip=11pt
+  \let\cmntfont=\ninerm
+  \let\mc=\eightrm
+  \let\sc=\sevenrm
+  \let\big=\ninebig
+  \setbox\strutbox=\hbox{\vrule height8pt depth3pt width 0pt}%
+  \normalbaselines\rm}
+
+\def\eightpoint{%
+ \def\rm{\fam0\eightrm}%
+  \textfont0=\eightrm \scriptfont0=\sixrm \scriptscriptfont0=\fiverm
+  \textfont1=\eighti \scriptfont1=\sixi \scriptscriptfont1=\fivei
+  \textfont2=\eightsy \scriptfont2=\sixsy \scriptscriptfont2=\fivesy
+  \textfont3=\tenex \scriptfont3=\tenex \scriptscriptfont3=\tenex
+  \def\it{\fam\itfam\eightit}%
+  \textfont\itfam=\eightit
+  \def\sl{\fam\slfam\eightsl}%
+  \textfont\slfam=\eightsl
+  \def\bf{\fam\bffam\eightbf}%
+  \textfont\bffam=\eightbf \scriptfont\bffam=\sixbf
+   \scriptscriptfont\bffam=\fivebf
+  \def\tt{\fam\ttfam\eighttt}%
+  \textfont\ttfam=\eighttt
+  \def\ttx{\eighttex}%
+  \normalbaselineskip=9pt
+  \let\cmntfont=\eightrm
+  \let\mc=\sevenrm
+  \let\sc=\sixrm
+  \let\big=\eightbig
+  \setbox\strutbox=\hbox{\vrule height7pt depth2pt width 0pt}%
+  \normalbaselines\rm}
+
+\tenpoint
+\def\tenbig#1{{\hbox{$\left#1\vbox to8.5pt{}\right.\nulldelimiterspace=0pt$}}}
+\def\ninebig#1{{\hbox{$\textfont0=\tenrm\textfont2=\tensy
+  \left#1\vbox to7.25pt{}\right.\nulldelimiterspace=0pt$}}}
+\def\eightbig#1{{\hbox{$\textfont0=\ninerm\textfont2=\ninesy
+  \left#1\vbox to6.5pt{}\right.\nulldelimiterspace=0pt$}}}
+
+%\font\tenss=cmss10 \let\cmntfont\tenss % alternative comment font
+\font\titlefont=cmr7 scaled\magstep4 % title on the contents page
+\font\ttitlefont=cmtt10 scaled\magstep2 % typewriter type in title
+
+\def\\#1{\leavevmode\hbox{\it#1\/\kern.05em}} % italic type for identifiers
+\def\|#1{\leavevmode\hbox{$#1$}} % one-letter identifiers look better this way
+\def\&#1{\leavevmode\hbox{\bf
+  \def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
+  #1\/\kern.05em}} % boldface type for reserved words
+\def\.#1{\leavevmode\hbox{\ttx % typewriter type for strings
+  \let\\=\BS % backslash in a string
+  \let\{=\LB % left brace in a string
+  \let\}=\RB % right brace in a string
+  \let\~=\TL % tilde in a string
+  \let\ =\SP % space in a string
+  \let\_=\UL % underline in a string
+  \let\&=\AM % ampersand in a string
+  \let\^=\CF % circumflex in a string
+  #1\kern.05em}}
+\def\){{\tentex\kern-.05em}\discretionary{\hbox{\tentex\BS}}{}{}}
+\def\AT{@} % at sign for control text (not needed in versions >= 2.9)
+\def\ATL{\par\noindent\bgroup\catcode`\_=12 \postATL} % print @l in limbo
+\def\postATL#1 #2 {\bf letter \\{\uppercase{\char"#1}}
+   tangles as \tentex "#2"\egroup\par}
+\def\noATL#1 #2 {}
+\def\noatl{\let\ATL=\noATL} % suppress output from @l
+\def\ATH{\X\kern-.5em:Preprocessor definitions\X}
+\let\PB=\relax % hook for program brackets |...| in TeX part or section name
+
+\chardef\AM=`\& % ampersand character in a string
+\chardef\BS=`\\ % backslash in a string
+\chardef\LB=`\{ % left brace in a string
+\chardef\RB=`\} % right brace in a string
+\def\SP{{\tt\char`\ }} % (visible) space in a string
+\chardef\TL=`\~ % tilde in a string
+\chardef\UL=`\_ % underline character in a string
+\chardef\CF=`\^ % circumflex character in a string
+
+\newbox\PPbox % symbol for ++
+\setbox\PPbox=\hbox{\kern.5pt\raise1pt\hbox{\sevenrm+\kern-1pt+}\kern.5pt}
+\def\PP{\copy\PPbox}
+\newbox\MMbox \setbox\MMbox=\hbox{\kern.5pt\raise1pt\hbox{\sevensy\char0
+ \kern-1pt\char0}\kern.5pt}
+\def\MM{\copy\MMbox}
+\newbox\MGbox % symbol for ->
+\setbox\MGbox=\hbox{\kern-2pt\lower3pt\hbox{\teni\char'176}\kern1pt}
+\def\MG{\copy\MGbox}
+\def\MRL#1{\mathrel{\let\K==#1}}
+\let\GG=\gg
+\let\LL=\ll
+\let\NULL=\Lambda
+\mathchardef\AND="2026 % bitwise and; also \& (unary operator)
+\let\OR=\mid % bitwise or
+\let\XOR=\oplus % bitwise exclusive or
+\def\CM{{\sim}} % bitwise complement
+\newbox\MODbox \setbox\MODbox=\hbox{\eightrm\%}
+\def\MOD{\mathbin{\copy\MODbox}}
+\def\DC{\kern.1em{::}\kern.1em} % symbol for ::
+\def\PA{\mathbin{.*}} % symbol for .*
+\def\MGA{\mathbin{\MG*}} % symbol for ->*
+\def\this{\&{this}}
+
+\newbox\bak \setbox\bak=\hbox to -1\em{} % backspace one em
+\newbox\bakk\setbox\bakk=\hbox to -2\em{} % backspace two ems
+
+\newcount\ind % current indentation in ems
+\def\1{\global\advance\ind by1\hangindent\ind\em} % indent one more notch
+\def\2{\global\advance\ind by-1} % indent one less notch
+\def\3#1{\hfil\penalty#10\hfilneg} % optional break within a statement
+\def\4{\copy\bak} % backspace one notch
+\def\5{\hfil\penalty-1\hfilneg\kern2.5\em\copy\bakk\ignorespaces}% optional break
+\def\6{\ifmmode\else\par % forced break
+  \hangindent\ind\em\noindent\kern\ind\em\copy\bakk\ignorespaces\fi}
+\def\7{\Y\6} % forced break and a little extra space
+\def\8{\hskip-\ind em\hskip 2\em} % no indentation
+
+\newcount\gdepth % depth of current major group, plus one
+\newtoks\gtitle % title of current major group
+\newskip\intersecskip \intersecskip=12pt minus 3pt % space between sections
+\let\yskip=\smallskip
+\def\?{\mathrel?}
+\def\note#1#2.{\par\penalty5000
+  \Y\noindent{\hangindent2\em\baselineskip10pt\eightrm#1~#2.\par}}
+\def\lapstar{\rlap{*}}
+\def\stsec{\tenpoint\rightskip=0pt % get out of C mode (cf. \B)
+  \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
+  \noindent\strut{\bf\secno.\quad}}
+\def\startsection{\titletrue
+  \line{\smash{\titlefont\title}\quad\hrulefill}\bigskip
+  \let\startsection=\stsec\stsec}
+\def\defin#1{\global\advance\ind by 2 \1\&{#1 } } % begin `define' or `format'
+\def\A{\note{See also section}} % xref for doubly defined section name
+\def\As{\note{See also sections}} % xref for multiply defined section name
+\def\B{\iftenpoint\ninepoint\fi
+  \rightskip=0pt plus 100pt minus 10pt % go into C mode
+  \sfcode`;=3000
+  \pretolerance 10000
+  \hyphenpenalty 9999 % so strings can be broken (discretionary \ is inserted)
+  \exhyphenpenalty 10000
+  \global\ind=2 \1\ \unskip}
+\def\C#1{\5\5\quad$/\ast\,${\cmntfont #1}$\,\ast/$}
+\let\SHC\C % "// short comments" treated like "/* ordinary comments */"
+%\def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
+%\def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
+\def\D{\defin{\#define}} % macro definition
+\let\E=\equiv % equivalence sign
+\def\ET{ and~} % conjunction between two section numbers
+\def\ETs{, and~} % conjunction between the last two of several section numbers
+\def\F{\defin{format}} % format definition
+\let\G=\ge % greater than or equal sign
+% \H is long Hungarian umlaut accent
+\let\I=\ne % unequal sign
+\def\J{\.{@\&}} % TANGLE's join operation
+\let\K== % assignment operator
+%\let\K=\leftarrow % "honest" alternative to standard assignment operator
+% \L is Polish letter suppressed-L
+\outer\def\M#1{\def\secno{#1}\startsection\ignorespaces}
+\outer\def\N{\ifvoid\partialpage\lefttrue
+  \else\ifdim\ht\partialpage<\pageht \leftfalse\else\lefttrue\fi\fi\NNN}
+\outer\def\NN{\ifvoid\partialpage\leftfalse
+  \else\ifdim\ht\partialpage<\pageht \lefttrue\else\leftfalse\fi\fi\NNN}
+\outer\def\NNN#1#2#3.{\gdepth=#1\gtitle={#3}\def\secno{#2}% starred section
+  \ifleft \flushout
+    \gdef\rlhead{\let\i=I\uppercase{\ignorespaces#3}} % running left headline
+    \global\let\rrhead=\rlhead % running right headline
+  \else\global\setbox\partialpage=\vbox{
+          \vbox to\pageht{\unvbox\partialpage\vfill}\break}
+      \gdef\rrhead{\let\i=I\uppercase{\ignorespaces#3}}
+  \fi
+  \message{*\secno} % progress report
+  \startsection{\bf\ignorespaces#3.\quad}\ignorespaces}
+% \O is Scandinavian letter O-with-slash
+% \P is paragraph sign
+\def\Q{\note{This code is cited in section}} % xref for mention of a section
+\def\Qs{\note{This code is cited in sections}} % xref for mentions of a section
+\let\R=\lnot % logical not
+% \S is section sign
+\def\T#1{\leavevmode % octal, hex or decimal constant
+  \hbox{$\def\?{\kern.2em}%
+    \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant
+    \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
+    \let\~=\oct \let\^=\hex {#1}$}}
+\def\U{\note{This code is used in section}} % xref for use of a section
+\def\Us{\note{This code is used in sections}} % xref for uses of a section
+\let\V=\lor % logical or
+\let\W=\land % logical and
+\def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi % section name
+  \XX$\langle\,${\let\I=\ne#2\sevenrm\kern.5em#1}$\,\rangle$\XX}
+\def\Y{\par\yskip}
+\let\Z=\le
+\let\ZZ=\let % now you can \write the control sequence \ZZ
+\let\*=*
+
+%\def\oct{\hbox{\rm\char'23\kern-.2em\it\aftergroup\?\aftergroup}} % WEB style
+%\def\hex{\hbox{\rm\char"7D\tt\aftergroup}} % WEB style
+\def\oct{\hbox{$^\circ$\kern-.1em\it\aftergroup\?\aftergroup}}% CWEB style
+\def\hex{\hbox{$^{\scriptscriptstyle\#}$\tt\aftergroup}} % CWEB style
+\def\vb#1{\leavevmode\hbox{\kern2pt\vrule\vtop{\vbox{\hrule
+        \hbox{\strut\kern2pt\.{#1}\kern2pt}}
+      \hrule}\vrule\kern2pt}} % verbatim string
+
+\def\TeX{{\ifmmode\it\fi
+   \leavevmode\hbox{T\kern-.1667em\lower.424ex\hbox{E}\hskip-.125em X}}}
+\def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
+
+% now here's the mini-index formatting control
+\newcount\nrefs % total number of references in partial page
+\newcount\baseno % smallest section number in partial page
+\toksdef\prefs=199 % references to previous sections in current program
+\toksdef\frefs=220 % references to future sections in current program
+\toksdef\erefs=221 % references to sections in another program
+% \count and \toks registers 200--219 are also used to keep track of refs
+\catcode`\@=11
+\newcount\@n \newcount\@m \newcount\@p
+\newdimen\pageht \pageht=19cm
+\newdimen\pagewd \pagewd=13cm
+\newdimen\colwd \colwd=\pagewd
+ \advance\colwd by -2pc \divide\colwd by 3 % for three columns
+\newdimen\fullpageht \fullpageht=\pageht \advance\fullpageht by 4pc
+\newdimen\pagethresh \pagethresh=2\pageht
+\newdimen\nsize \newdimen\msize
+\newskip\intersecskip \intersecskip=8pt plus 2pt minus 3pt
+\newbox\partialpage
+\newbox\newsec
+\newtoks\newrefs
+\newtoks\ttoks
+\newdimen\ninept \ninept=9pt
+\newif\iftitle \newif\ifleft
+
+\def\flushout{\ifvoid\partialpage\else
+    \setbox0=\vsplit\partialpage to \pageht
+    \shipout\vbox{
+      \vbox to 3pc{\leftheadline\vfill}
+      \nointerlineskip\box0}
+    \global\advance\pageno 1
+    \global\let\[=\makeinref \global\let\]=\makeoutref
+    \ifsorted \let\readin=\readln \readrefs
+    \else \immediate\write\reffile{!\the\pageno}\let\readin=\readrefs \fi
+    \setbox0=\vbox{\eightpoint \hsize=\colwd
+      \rightskip=0pt plus 100pt minus 10pt
+      \pretolerance 10000
+      \hyphenpenalty 10000 \exhyphenpenalty 10000
+      \noindent\vbox to1pt{}\par % 1pt = \topskip - \ninept
+      \readin}
+    \shipout\vbox to\fullpageht{
+      \vbox to 3pc{\rightheadline\vfill}
+      \unvbox\partialpage
+      \vfill
+      \ifdim\ht0>1pt \kern11pt\hrule \hbox{%
+          \nsize=\ht0 \advance\nsize-\topskip
+          \divide\nsize by 3 \divide\nsize by\ninept
+          \multiply\nsize by\ninept \advance\nsize\topskip
+          \vsplit0 to\nsize \kern1pc
+          \msize=\ht0 \advance\msize-\topskip
+          \divide\msize by 2 \divide\msize by\ninept
+          \multiply\msize by\ninept \advance\msize\topskip
+          \vbox to\nsize{\vsplit0 to\msize\vss}\kern1pc
+          \vbox to\nsize{\box0\vss}} \fi}
+    \global\advance\pageno 1 \global\let\rlhead=\rrhead\fi
+  {\globaldefs=1
+    \@n=199 \loop \ifnum\@n<222 \toks\@n={} \count\@n=0 \advance\@n 1 \repeat
+    \nrefs=0
+    \baseno=\secno}}
+\def\leftheadline{\hbox to\pagewd{\vbox to10pt{}%
+  \iftitle\global\titlefalse\else\ninerm\title:\enspace \eightsl\rlhead\fi
+  \hfil\eightrm\folio}}
+\def\rightheadline{\hbox to\pagewd{\vbox to10pt{}%
+  \eightrm\folio\hfil\ninerm\title:\enspace \eightsl\rrhead\/}}
+
+\def\mini{\begingroup \obeylines \globaldefs=1 \newrefs=\bgroup}
+\def\FI{\@n=\secno \advance\@n-\baseno \advance\@n 200
+  \advance\nrefs-\count\@n \@n=\nrefs
+  \let\[=\countnewref \let\]=\cn \the\newrefs \endgroup
+  \nobreak\null\nobreak\vskip-\baselineskip\penalty-500\vfil\eject}
+\def\twillout{\setbox\newsec=\vbox{\unvbox255}
+  \ifnum\@n=0 \nsize=0pt
+  \else \nsize=3pt \multiply\nsize\@n \advance\nsize 1.25pc \fi
+  \ifvoid\partialpage\else\advance\nsize 5pt \advance\nsize\ht\partialpage\fi
+  \advance\nsize\ht\newsec 
+  \message{\the\nsize} % show the page break decision amount
+  \ifbr \global\brfalse \flushout \message{/\secno}\fi
+  \ifdim\nsize>\pagethresh \flushout \message{\secno}\fi
+  \addtopartialpage}
+\def\addtopartialpage{\globaldefs=1
+  \let\[=\addnewref \let\]=\addneweref \the\newrefs
+  \setbox\partialpage=\ifvoid\partialpage \box\newsec
+  \else \vbox{\unvbox\partialpage \vfilneg
+      \vskip\intersecskip \unvbox\newsec}\fi}
+\def\shortpage{\par\vskip-2\baselineskip
+  \null\vfill\penalty-5000\message{(shortpage)}}
+\newif\ifbr
+\def\forcebr{\global\brtrue}
+
+\def\countnewref #1 {\ifnum#1<\baseno \let\next\cn
+  \else\ifnum#1>\secno \let\next\cn \else\let\next\flushref\fi\fi\next#1 }
+\def\cn #1 #2 {\begintest{#1 #2}\cnr\endtest}
+
+% here's a tricky way to present \cnr with a csname unexpanded inside:
+\def\begintest#1{\def\TEST{#1}\expandafter\expandafter\expandafter}
+\def\endtest{\csname\expandafter\gobb\meaning\TEST\endcsname}
+\expandafter\def\expandafter\gobb\meaning\empty{}
+
+{\obeylines\gdef\cnr#1#2
+  {\ifx#1\relax \advance\@n 1 \fi}}
+{\obeylines\gdef\flushref#1
+  {}}
+\def\addnewref #1 {\ifnum#1<\baseno \let\next\an \@n=199
+  \else\ifnum#1>\secno \let\next\an \@n=#1 \advance\@n-\baseno
+    \advance\@n200 \ifnum\@n>219 \@n=220 \fi
+    \else\let\next\flushref\fi\fi\next#1 }
+\def\an#1 #2 {\begintest{#1 #2}\anr\endtest\[#1 #2 }
+\def\addneweref#1 #2 {\@n=221 \begintest{#1 #2}\anr\endtest\]#1 #2 }
+{\obeylines\gdef\anr#1#2
+  {\ifx#1\relax \advance\nrefs1 \advance\count\@n 1 %
+  \def#1{#2
+    }\toks\@n=\expandafter{\the\toks\@n\lmda#1}\fi}}
+\ifsorted \def\lmda#1{\global\let#1\relax}
+\else \def\lmda#1{#1\global\let#1\relax} \fi
+{\obeylines\gdef\makeinref#1 #2 #3
+  {\ifsorted\else\ttoks={\[#1 #2 #3}\immediate\write\reffile{+ \the\ttoks}\fi %
+  \hangindent=1em \noindent #2\miniform#3, \S#1.\par}}
+{\obeylines\gdef\makeoutref#1 #2 #3
+  {\ifsorted\else\ttoks={\]#1 #2 #3}\immediate\write\reffile{+ \the\ttoks}\fi %
+  \hangindent=1em \noindent #2\miniform#3, \extref#1.\par}}
+\def\miniform{\futurelet\next\miniforma}
+\def\miniforma{\ifx\next\zip
+  \else\if=\noexpand\next \let\next\gobbleq
+    \else\let\next\colon\fi\fi\next}
+\def\zip{}
+\def\gobbleq={\,=\,}
+\def\colon{: }
+\def\extref{\futurelet\next\extrefa}
+\def\extrefa{\if"\next\let\next\gobblest\else\let\next\cite\fi\next}
+\def\gobblest"#1"{{\ttx#1}}
+\def\cite#1#2.{{\sc#1}\,\S#2.}
+\def\uninitialized{???}
+
+\def\readrefs{\the\prefs \@m=\secno \advance\@m-\baseno \advance\@m200
+  {\def\lmda##1{\global\let##1\relax}\@p=200
+    \loop\ifnum\@p<\@m \the\toks\@p \advance\@p 1 \repeat}
+  \loop\ifnum\@m<222 \the\toks\@m \advance\@m 1 \repeat}
+\def\readln{\read\sreffile to\next \expandafter\next\newline \readin}
+{\obeylines\gdef\newline{\unskip\noexpand
+  }}
+\def\donewithpage#1 {\let\readin=\relax}
+\catcode`\@=12
+
+\hsize=\pagewd \vsize=\maxdimen \output={\twillout}
+
+\def\inx{\flushout\end}
+\def\fin{\parfillskip 0pt plus 1fil
+  \let\topsecno=\nullsec
+  \message{Section names:}
+  \def\note##1##2.{\quad{\eightrm##1~##2.}}
+  \def\Q{\note{Cited in section}} % crossref for mention of a section
+  \def\Qs{\note{Cited in sections}} % crossref for mentions of a section
+  \def\U{\note{Used in section}} % crossref for use of a section
+  \def\Us{\note{Used in sections}} % crossref for uses of a section
+  \def\I{\par\hangindent 2em}\let\*=*
+  \readsections}
+\def\readsections{\input \jobname.sscn}
+\def\datethis{}
+
+% To produce only a subset of pages, put the page numbers on separate
+% lines in a file called pages.tex
+\let\Shipout=\shipout
+\newread\pages \newcount\nextpage \openin\pages=pages
+\def\getnextpage{\ifeof\pages\else
+ {\endlinechar=-1\read\pages to\next
+  \ifx\next\empty % in this case we should have eof now
+  \else\global\nextpage=\next\fi}\fi}
+\ifeof\pages\else\message{OK, I'll ship only the requested pages!}
+ \getnextpage\fi
+\def\shipout{\ifeof\pages\let\next=\Shipout
+ \else\ifnum\pageno=\nextpage\getnextpage\let\next=\Shipout
+  \else\let\next=\Tosspage\fi\fi \next}
+\newbox\garbage \def\Tosspage{\deadcycles=0\setbox\garbage=}
