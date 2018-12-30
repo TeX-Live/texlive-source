@@ -200,7 +200,7 @@ msgstr "! File CWEB terminato durante un change"
 
 #: cweav-twill.ch:1026
 msgid "! Cannot open aux output file "
-msgstr "! Non posso aprire il file di output "
+msgstr "! Non posso aprire il file di aux output "
 
 #: comm-i18n.ch:88
 msgid "! Cannot open change file "
@@ -401,11 +401,11 @@ msgstr "! Questo non può avvenire: "
 
 #: cweav-twill.ch:310
 msgid "! Title name didn't end"
-msgstr "! Nome sezione non terminato"
+msgstr "! Nome titolo non terminato"
 
 #: cweav-twill.ch:308
 msgid "! Title should be enclosed in braces or doublequotes"
-msgstr "! I doppi @ dovrebbero essere usati nel \"control text\""
+msgstr "! Title should be enclosed in braces or doublequotes"
 
 #: comm-i18n.ch:102
 msgid "! Too many nested includes"
@@ -521,7 +521,7 @@ msgstr "%ld scrap (fuori da %ld)\n"
 
 #: cweav-twill.ch:1350
 msgid "%ld temp meanings (out of %ld)\n"
-msgstr "%ld token (fuori da %ld)\n"
+msgstr "%ld temp meanings (fuori da %ld)\n"
 
 #: cweav-i18n.ch:442
 #, c-format
