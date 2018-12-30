@@ -1,5 +1,5 @@
 /*84:*/
-#line 786 "cwebdir/comm-w2c.ch"
+#line 792 "cwebdir/comm-w2c.ch"
 
 /* Prototypes for functions, either
  * declared in common.w and used in ctangle.w and cweave.w, or
@@ -43,7 +43,7 @@ extern void overflow(const char*);
 #line 1175 "cwebdir/common.w"
 
 /*:65*//*83:*/
-#line 767 "cwebdir/comm-w2c.ch"
+#line 773 "cwebdir/comm-w2c.ch"
 
 extern void common_init(void);
 extern int input_ln(FILE*fp);
@@ -56,9 +56,9 @@ extern void sprint_section_name(char*dest,name_pointer p);
 extern name_pointer section_lookup(char*first,char*last,int ispref);
 #line 1417 "cwebdir/common.w"
 
-#line 782 "cwebdir/comm-w2c.ch"
+#line 788 "cwebdir/comm-w2c.ch"
 /*:83*/
-#line 790 "cwebdir/comm-w2c.ch"
+#line 796 "cwebdir/comm-w2c.ch"
 
 extern const char*versionstring;
 

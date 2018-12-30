@@ -599,6 +599,12 @@ static void
 print_cat (eight_bits c)
 @z
 
+@x l.1788
+  printf(cat_name[c]);
+@y
+  printf("%s",cat_name[c]);
+@z
+
 Section 106.
 
 @x l.2138

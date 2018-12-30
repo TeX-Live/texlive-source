@@ -1,3 +1,12 @@
+2018-12-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweave.w,
+	* common.w,
+	* common.c,
+	* ../cwebboot.cin: do not change the CWEB sources, use
+	changefile entries instead.
+	* examples: add directory (unchanged) from cweb-3.64c.tar.gz.
+
 2018-11-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctang-w2c.ch,
