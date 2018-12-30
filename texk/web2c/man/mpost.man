@@ -1,4 +1,4 @@
-.TH MPOST 1 "21 December 2018" "Web2C @VERSION@"
+.TH MPOST 1 "31 December 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .de URL
 \\$2 \(laURL: \\$1 \(ra\\$3
@@ -23,6 +23,7 @@
 .\"=====================================================================
 .SH NAME
 mpost, pmpost, upmpost \- MetaPost, a system for creating graphics
+r-mpost, r-pmpost, r-upmpost \- restricted MetaPost
 .SH SYNOPSIS
 .B mpost
 .RI [ options ]
@@ -49,8 +50,8 @@ file to use.   For example, when called as
 .B mpost
 the
 .I mpost.mp
-file is used, which is identical to
-.I plain.mp.
+file is used, which simply reads
+.IR plain.mp .
 When the
 .B --ini
 option is given, preloading does not happen.  
@@ -86,10 +87,10 @@ program is a variant with Japanese support, and
 .B upmpost
 has Unicode-enabled Japanese support, analogous to ptex and uptex.
 .PP
-All three variants are also installed with an `r' prefix, that is,
-.BR rmpost ,
-.BR rpmpost ,
-.BR rupmpost ,
+All three variants are also installed with an `r-' prefix, that is,
+.BR r-mpost ,
+.BR r-pmpost ,
+.BR r-upmpost ,
 which implicitly specify the
 .B --restricted
 option to make MetaPost safe to run on unknown input; the tex, makempx,
@@ -148,7 +149,6 @@ Addison-Wesley, 1986, ISBN 0-201-13445-4.
 (the journal of the \*(TX Users Group).
 .\"=====================================================================
 .SH "SEE ALSO"
-.PP
 .BR dvitomp (1),
 .BR epstopdf (1),
 .BR mf (1),

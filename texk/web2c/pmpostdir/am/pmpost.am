@@ -14,7 +14,7 @@ install_exe_links += install-pmpost-links
 uninstall_exe_links += uninstall-pmpost-links
 else !WIN32
 bin_links += pmpost$(EXEEXT):pdvitomp
-bin_links += pmpost$(EXEEXT):rpmpost
+bin_links += pmpost$(EXEEXT):r-pmpost
 endif !WIN32
 endif PMP
 if UPMP
@@ -25,7 +25,7 @@ install_exe_links += install-upmpost-links
 uninstall_exe_links += uninstall-upmpost-links
 else !WIN32
 bin_links += upmpost$(EXEEXT):updvitomp
-bin_links += upmpost$(EXEEXT):rupmpost
+bin_links += upmpost$(EXEEXT):r-upmpost
 endif !WIN32
 endif UPMP
 EXTRA_PROGRAMS += pmpost upmpost

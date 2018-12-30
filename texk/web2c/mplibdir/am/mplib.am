@@ -1,6 +1,6 @@
 ## texk/web2c/mplibdir/am/mplib.am: Makefile fragment for MetaPost.
 ##
-## Copyright 2018-2018 Luigi Scarso <tex-live@tug.org>
+## Copyright 2017-2018 Luigi Scarso <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -14,7 +14,7 @@ install_exe_links += install-mpost-links
 uninstall_exe_links += uninstall-mpost-links
 else !WIN32
 bin_links += mpost$(EXEEXT):dvitomp mpost$(EXEEXT):mfplain
-bin_links += mpost$(EXEEXT):rmpost
+bin_links += mpost$(EXEEXT):r-mpost
 endif !WIN32
 endif MP
 EXTRA_PROGRAMS += mpost
