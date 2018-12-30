@@ -3,7 +3,7 @@
 ## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-bin_PROGRAMS += ctie cweave ctwill tie
+bin_PROGRAMS += ctie cweave ctwill refsort twinx tie
 EXTRA_DIST += ctiedir tiedir
 NEVER_DIST += ctiedir/ctie.log ctiedir/ctie.trs tiedir/tie.log tiedir/tie.trs
 
@@ -17,11 +17,22 @@ DISTCLEANFILES += ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
 cweave.c: ctangle$(EXEEXT) cwebdir/comm-foo.h cwebdir/cweave.w cwebdir/prod.w cwebdir/cweav-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
-DISTCLEANFILES += ctwill.c
+DISTCLEANFILES += cweave.c
+
 nodist_ctwill_SOURCES = ctwill.c cweb.c
 ctwill.c: ctangle$(EXEEXT) cwebdir/comm-foo.h cwebdir/cweave.w cwebdir/prod-twill.w cwebdir/ctwill-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave ctwill-w2c ctwill.c
 DISTCLEANFILES += ctwill.c
+
+nodist_refsort_SOURCES = refsort.c
+refsort.c: ctangle$(EXEEXT) cwebdir/refsort.w
+	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) refsort
+DISTCLEANFILES += refsort.c
+
+nodist_twinx_SOURCES = twinx.c
+twinx.c: ctangle$(EXEEXT) cwebdir/twinx.w
+	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) twinx
+DISTCLEANFILES += twinx.c
 
 nodist_tie_SOURCES = tie.c
 tie_CPPFLAGS = $(AM_CPPFLAGS) -DNOT_WEB2C
@@ -37,6 +48,8 @@ TESTS += ctiedir/ctie.test cwebdir/cweave.test tiedir/tie.test
 ctiedir/ctie.log: ctie$(EXEEXT)
 cwebdir/cweave.log: cweave$(EXEEXT)
 cwebdir/ctwill.log: ctwill$(EXEEXT)
+cwebdir/refsort.log: refsort$(EXEEXT)
+cwebdir/twinx.log: twinx$(EXEEXT)
 tiedir/tie.log: tie$(EXEEXT)
 
 ## ctiedir/ctie.test
