@@ -3,7 +3,7 @@
 ## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-bin_PROGRAMS += ctie cweave tie
+bin_PROGRAMS += ctie cweave ctwill tie
 EXTRA_DIST += ctiedir tiedir
 NEVER_DIST += ctiedir/ctie.log ctiedir/ctie.trs tiedir/tie.log tiedir/tie.trs
 
@@ -17,7 +17,11 @@ DISTCLEANFILES += ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
 cweave.c: ctangle$(EXEEXT) cwebdir/comm-foo.h cwebdir/cweave.w cwebdir/prod.w cwebdir/cweav-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
-DISTCLEANFILES += cweave.c
+DISTCLEANFILES += ctwill.c
+nodist_ctwill_SOURCES = ctwill.c cweb.c
+ctwill.c: ctangle$(EXEEXT) cwebdir/comm-foo.h cwebdir/cweave.w cwebdir/prod-twill.w cwebdir/ctwill-w2c.ch
+	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave ctwill-w2c ctwill.c
+DISTCLEANFILES += ctwill.c
 
 nodist_tie_SOURCES = tie.c
 tie_CPPFLAGS = $(AM_CPPFLAGS) -DNOT_WEB2C
@@ -32,6 +36,7 @@ DISTCLEANFILES += tie.c
 TESTS += ctiedir/ctie.test cwebdir/cweave.test tiedir/tie.test
 ctiedir/ctie.log: ctie$(EXEEXT)
 cwebdir/cweave.log: cweave$(EXEEXT)
+cwebdir/ctwill.log: ctwill$(EXEEXT)
 tiedir/tie.log: tie$(EXEEXT)
 
 ## ctiedir/ctie.test

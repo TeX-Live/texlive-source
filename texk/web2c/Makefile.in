@@ -102,7 +102,8 @@ EXTRA_PROGRAMS = $(am__EXEEXT_1) tex$(EXEEXT) mf$(EXEEXT) \
 	luajittex$(EXEEXT) xetex$(EXEEXT) $(am__EXEEXT_4) \
 	aleph$(EXEEXT) synctex$(EXEEXT) md5main$(EXEEXT)
 bin_PROGRAMS = tangle$(EXEEXT) ctangle$(EXEEXT) $(am__EXEEXT_5) \
-	ctie$(EXEEXT) cweave$(EXEEXT) tie$(EXEEXT) $(am__EXEEXT_6) \
+	ctie$(EXEEXT) cweave$(EXEEXT) ctwill$(EXEECT) tie$(EXEEXT) \
+	$(am__EXEEXT_6) \
 	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9) \
 	$(am__EXEEXT_10) $(am__EXEEXT_11) $(am__EXEEXT_12) \
 	$(am__EXEEXT_13) $(am__EXEEXT_14) $(am__EXEEXT_15) \
@@ -1331,6 +1332,10 @@ nodist_cweave_OBJECTS = cweave.$(OBJEXT) cweb.$(OBJEXT)
 cweave_OBJECTS = $(nodist_cweave_OBJECTS)
 cweave_LDADD = $(LDADD)
 cweave_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
+nodist_ctwill_OBJECTS = ctwill.$(OBJEXT) cweb.$(OBJEXT)
+ctwill_OBJECTS = $(nodist_ctwill_OBJECTS)
+ctwill_LDADD = $(LDADD)
+ctwill_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 nodist_dvicopy_OBJECTS = dvicopy.$(OBJEXT)
 dvicopy_OBJECTS = $(nodist_dvicopy_OBJECTS)
 dvicopy_LDADD = $(LDADD)
@@ -1733,6 +1738,7 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	./$(DEPDIR)/call_upmpost-callexe.Po ./$(DEPDIR)/ctangle.Po \
 	./$(DEPDIR)/ctangleboot.Po ./$(DEPDIR)/ctie.Po \
 	./$(DEPDIR)/cweave.Po ./$(DEPDIR)/cweb.Po \
+	./$(DEPDIR)/ctwill.Po ./$(DEPDIR)/cweb.Po \
 	./$(DEPDIR)/cwebboot.Po ./$(DEPDIR)/dvicopy.Po \
 	./$(DEPDIR)/dvitype.Po ./$(DEPDIR)/eptex-eptex-pool.Po \
 	./$(DEPDIR)/eptex-eptex0.Po ./$(DEPDIR)/eptex-eptexini.Po \
@@ -2518,7 +2524,8 @@ SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(nodist_call_mpost_SOURCES) $(nodist_call_pmpost_SOURCES) \
 	$(nodist_call_upmpost_SOURCES) $(nodist_ctangle_SOURCES) \
 	$(nodist_ctangleboot_SOURCES) $(nodist_ctie_SOURCES) \
-	$(nodist_cweave_SOURCES) $(nodist_dvicopy_SOURCES) \
+	$(nodist_cweave_SOURCES) $(nodist_ctwill_SOURCES) \
+	$(nodist_dvicopy_SOURCES) \
 	$(nodist_dvitype_SOURCES) $(dist_eptex_SOURCES) \
 	$(nodist_eptex_SOURCES) $(dist_etex_SOURCES) \
 	$(nodist_etex_SOURCES) $(dist_euptex_SOURCES) \
@@ -3504,7 +3511,7 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	tests/xcmr10.600gf tests/xcmr10.pktyp badpl.* tests/xcmr10.tfm \
 	tests/xtexpool.typ badtfm.* tests/xcmr10*.pl badvf.* \
 	tests/xptmr*.vpl badvpl.* tests/yptmr*.* pooltype.tex ctie.c \
-	cweave.c tie.c ctie.outc ctie.outm common.tex common.scn \
+	cweave.c ctwill.c tie.c ctie.outc ctie.outm common.tex common.scn \
 	common.idx tie.outc tie.outm $(nodist_tex_SOURCES) \
 	tex-final.ch tex-web2c tex.p tex.pool tex-tangle trip.diffs \
 	write18-quote.log mftrap.diffs $(nodist_libmf_a_SOURCES) \
@@ -3593,8 +3600,10 @@ uninstall_exe_links = $(am__append_13) $(am__append_23) \
 	$(am__append_32) $(am__append_40) $(am__append_48) \
 	$(am__append_53) $(am__append_87) $(am__append_92) \
 	$(am__append_97)
-NEVER_DIST = `find . $(NEVER_NAMES)` cwebdir/cweave.log \
-	cwebdir/cweave.trs ctiedir/ctie.log ctiedir/ctie.trs \
+NEVER_DIST = `find . $(NEVER_NAMES)` \
+	cwebdir/cweave.log cwebdir/cweave.trs \
+	cwebdir/ctwill.log cwebdir/ctwill.trs \
+	ctiedir/ctie.log ctiedir/ctie.trs \
 	tiedir/tie.log tiedir/tie.trs
 NEVER_NAMES = -name .svn
 NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
@@ -3701,6 +3710,7 @@ nodist_vptovf_SOURCES = vptovf.c vptovf.h
 nodist_weave_SOURCES = weave.c weave.h
 nodist_ctie_SOURCES = ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
+nodist_ctwill_SOURCES = ctwill.c cweb.c
 nodist_tie_SOURCES = tie.c
 tie_CPPFLAGS = $(AM_CPPFLAGS) -DNOT_WEB2C
 initex_CPPFLAGS = -DEXEPROG=\"tex.exe\"
@@ -7623,6 +7633,10 @@ cweave$(EXEEXT): $(cweave_OBJECTS) $(cweave_DEPENDENCIES) $(EXTRA_cweave_DEPENDE
 	@rm -f cweave$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(cweave_OBJECTS) $(cweave_LDADD) $(LIBS)
 
+ctwill$(EXEEXT): $(ctwill_OBJECTS) $(ctwill_DEPENDENCIES) $(EXTRA_ctwill_DEPENDENCIES)
+	@rm -f ctwill$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(ctwill_OBJECTS) $(ctwill_LDADD) $(LIBS)
+
 dvicopy$(EXEEXT): $(dvicopy_OBJECTS) $(dvicopy_DEPENDENCIES) $(EXTRA_dvicopy_DEPENDENCIES) 
 	@rm -f dvicopy$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(dvicopy_OBJECTS) $(dvicopy_LDADD) $(LIBS)
@@ -8009,6 +8023,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ctangleboot.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ctie.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cweave.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ctwill.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cweb.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cwebboot.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvicopy.Po@am__quote@ # am--include-marker
@@ -19770,6 +19785,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/ctangleboot.Po
 	-rm -f ./$(DEPDIR)/ctie.Po
 	-rm -f ./$(DEPDIR)/cweave.Po
+	-rm -f ./$(DEPDIR)/ctwill.Po
 	-rm -f ./$(DEPDIR)/cweb.Po
 	-rm -f ./$(DEPDIR)/cwebboot.Po
 	-rm -f ./$(DEPDIR)/dvicopy.Po
@@ -20579,6 +20595,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/ctangleboot.Po
 	-rm -f ./$(DEPDIR)/ctie.Po
 	-rm -f ./$(DEPDIR)/cweave.Po
+	-rm -f ./$(DEPDIR)/ctwill.Po
 	-rm -f ./$(DEPDIR)/cweb.Po
 	-rm -f ./$(DEPDIR)/cwebboot.Po
 	-rm -f ./$(DEPDIR)/dvicopy.Po
@@ -21588,10 +21605,13 @@ ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
 cweave.c: ctangle$(EXEEXT) cwebdir/comm-foo.h cwebdir/cweave.w cwebdir/prod.w cwebdir/cweav-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
+ctwill.c: ctangle$(EXEEXT) cwebdir/comm-foo.h cwebdir/cweave.w cwebdir/prod-twill.w cwebdir/ctwill-w2c.ch
+	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave ctwill-w2c ctwill.c
 tie.c: ctangle$(EXEEXT) tiedir/tie.w tiedir/tie-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/tiedir $(ctangle) tie.w tie-w2c.ch
 ctiedir/ctie.log: ctie$(EXEEXT)
 cwebdir/cweave.log: cweave$(EXEEXT)
+cwebdir/ctwill.log: ctwill$(EXEEXT)
 tiedir/tie.log: tie$(EXEEXT)
 $(tex_OBJECTS): $(tex_prereq)
 
