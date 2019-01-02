@@ -1,3 +1,21 @@
+XeTeX 0.999991 (January 2019)
+
+* Merged various minor fixes from TeX Live svn sources
+* Merged new features implemented by Joseph Wright, see:
+  - https://sourceforge.net/p/xetex/code/merge-requests/1/
+    Reorder lines (internal rearrangement, no functional change)
+  - https://sourceforge.net/p/xetex/code/merge-requests/2/
+    Round out pdfTeX-derived utilities: adds pdfTeX-based primitives
+    for RNG, timer, file data, \filedump
+  - https://sourceforge.net/p/xetex/code/merge-requests/3/
+    Add \expanded to XeTeX
+  - https://sourceforge.net/p/xetex/code/merge-requests/4/
+    Extend \Ucharcat to produce \active chars
+* Fix \lastnodetype initialization bug (patch from Hironobu Yamashita)
+* Fix logic typo in discretionary-skipping (reported by Peter Williams)
+  https://sourceforge.net/p/xetex/bugs/149/
+
+==============================================================
 XeTeX 0.99999 (February 2018, for TeX Live 2018)
 
 * Fix bug that could cause text after a \discretionary{...}{...}{...}

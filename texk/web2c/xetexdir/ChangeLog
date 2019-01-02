@@ -1,3 +1,8 @@
+2019-01-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* NEWS, xetex_version.h, xetex.web: Sync with the upstream.
+	XeTeX version is 0.999991.
+
 2018-12-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfimage.cpp: Simplify the support of Rotate.
