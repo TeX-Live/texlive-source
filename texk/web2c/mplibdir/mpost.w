@@ -1386,8 +1386,11 @@ main (int argc, char **argv)
   options->print_found_names = (int)true;
   {
     const char *base = cleaned_invocation_name(argv[0]);
-    if (FILESTRCASEEQ(base, "rmpost")||FILESTRCASEEQ(base, "r-mpost")){
+    if (FILESTRCASEEQ(base, "rmpost")){
       base++;
+      restricted_mode = true;
+    } else if (FILESTRCASEEQ(base, "r-mpost")){
+      base += 2;
       restricted_mode = true;
     }
     if (FILESTRCASEEQ(base, "dvitomp"))
@@ -1423,8 +1426,10 @@ main (int argc, char **argv)
     kpse_set_program_enabled (kpse_mem_format, MAKE_TEX_FMT_BY_DEFAULT,
                               kpse_src_compile);
     kpse_set_program_name(argv[0], user_progname);
-    if (FILESTRCASEEQ(kpse_program_name, "rmpost")||FILESTRCASEEQ(kpse_program_name, "r-mpost"))
+    if (FILESTRCASEEQ(kpse_program_name, "rmpost"))
       kpse_program_name++;
+    else if (FILESTRCASEEQ(kpse_program_name, "r-mpost"))
+      kpse_program_name += 2;
   }
   @= /*@@=nullpass@@*/ @> 
   if(putenv(xstrdup("engine=metapost")))

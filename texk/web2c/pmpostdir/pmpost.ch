@@ -244,9 +244,15 @@ else
 @z
 
 @x
-    if (FILESTRCASEEQ(base, "rmpost")||FILESTRCASEEQ(base, "r-mpost")){
+    if (FILESTRCASEEQ(base, "rmpost")){
 @y
     if (FILESTRCASEEQ(base, "r"@= @>P_UP@= @>"mpost")){
+@z
+
+@x
+    } else if (FILESTRCASEEQ(base, "r-mpost")){
+@y
+    } else if (FILESTRCASEEQ(base, "r-"@= @>P_UP@= @>"mpost")){
 @z
 
 @x
@@ -279,9 +285,15 @@ else
 @z
 
 @x
-    if (FILESTRCASEEQ(kpse_program_name, "rmpost")||FILESTRCASEEQ(kpse_program_name, "r-mpost"))
+    if (FILESTRCASEEQ(kpse_program_name, "rmpost"))
 @y
     if (FILESTRCASEEQ(kpse_program_name, "r"@= @>P_UP@= @>"mpost"))
+@z
+
+@x
+    else if (FILESTRCASEEQ(kpse_program_name, "r-mpost"))
+@y
+    else if (FILESTRCASEEQ(kpse_program_name, "r-"@= @>P_UP@= @>"mpost"))
 @z
 
 @x
