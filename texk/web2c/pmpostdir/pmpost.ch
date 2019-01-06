@@ -244,7 +244,7 @@ else
 @z
 
 @x
-    if (FILESTRCASEEQ(base, "rmpost")){
+    if (FILESTRCASEEQ(base, "rmpost")||FILESTRCASEEQ(base, "r-mpost")){
 @y
     if (FILESTRCASEEQ(base, "r"@= @>P_UP@= @>"mpost")){
 @z
@@ -279,7 +279,7 @@ else
 @z
 
 @x
-    if (FILESTRCASEEQ(kpse_program_name, "rmpost"))
+    if (FILESTRCASEEQ(kpse_program_name, "rmpost")||FILESTRCASEEQ(kpse_program_name, "r-mpost"))
 @y
     if (FILESTRCASEEQ(kpse_program_name, "r"@= @>P_UP@= @>"mpost"))
 @z

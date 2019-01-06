@@ -1,7 +1,3 @@
-2018-09-18 Nick Roessler <nicholas.e.roessler@gmail.com>
-	* fonts/writet1.w (t1_check_unusual_charstring): protect against
-	buffer overflow.
-
 2018-08-27 Luigi Scarso <luigi.scarso@gmail.com>
 	* dropped dependency from gmp and mpfr
 

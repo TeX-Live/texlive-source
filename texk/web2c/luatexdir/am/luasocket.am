@@ -5,21 +5,22 @@
 
 ## luasocket
 ##
-EXTRA_LIBRARIES += libluasocket.a liblua53socket.a libluajitsocket.a
+#EXTRA_LIBRARIES += libluasocket.a liblua53socket.a libluajitsocket.a
+EXTRA_LIBRARIES += libluasocket.a libluajitsocket.a
 
 libluasocket_a_DEPENDENCIES = $(ZLIB_DEPEND)
-liblua53socket_a_DEPENDENCIES = $(ZLIB_DEPEND)
+#liblua53socket_a_DEPENDENCIES = $(ZLIB_DEPEND)
 libluajitsocket_a_DEPENDENCIES = $(ZLIB_DEPEND)
 
 $(libluasocket_a_OBJECTS): $(LUA_DEPEND)
-$(liblua53socket_a_OBJECTS): $(LUA_DEPEND)
+#$(liblua53socket_a_OBJECTS): $(LUA_DEPEND)
 $(libluajitsocket_a_OBJECTS): $(LUAJIT_DEPEND)
 
 libluasocket_a_CPPFLAGS = \
 	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_INCLUDES)
 
-liblua53socket_a_CPPFLAGS = \
-	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_LUA53_INCLUDES)
+#liblua53socket_a_CPPFLAGS = \
+#	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_LUA53_INCLUDES)
 
 libluajitsocket_a_CPPFLAGS = \
 	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUAJIT_INCLUDES)
@@ -28,7 +29,7 @@ libluasocket_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitsocket_a_CFLAGS = # $(WARNING_CFLAGS)
 
 nodist_libluasocket_a_SOURCES = $(libluasocket_sources)
-nodist_liblua53socket_a_SOURCES = $(libluasocket_sources)
+#nodist_liblua53socket_a_SOURCES = $(libluasocket_sources)
 nodist_libluajitsocket_a_SOURCES = $(libluasocket_sources)
 
 libluasocket_sources = \

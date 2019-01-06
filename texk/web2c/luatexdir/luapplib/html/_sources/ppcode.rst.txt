@@ -1,0 +1,64 @@
+Examples
+========
+
+Example 1
+---------
+
+.. literalinclude:: ../pptest1.c
+
+Example 2
+---------
+
+.. literalinclude:: ../pptest2.c
+
+Example 3
+---------
+
+.. literalinclude:: ../pptest3.c
+
+ppapi.h
+-------
+
+.. literalinclude:: ../ppapi.h
+
+
+Changes
+=======
+
+v0.97
+-----
+First release integrated with luatex sources, plus portability changes from Luigi.
+
+v0.98
+-----
+Changed references resolving in case of incremental updates; tech notes ppxref_find() in ppxref.c.
+
+v0.99
+-----
+Fixed streams handling; null characters should NOT be gobbled after "stream" keyword
+
+v1.00
+-----
+Fixed streams handling (Luigi); object streams updated before other streams
+Revised streams handling, ppstream API extended
+
+v1.01
+-----
+Fixed names handling (thanks Hans); digits after '#' weren't skipped
+
+v1.02
+-----
+Fixed page finder (thanks Luigi)
+
+v1.03
+-----
+Fixed TIFF predictor (thanks folks)
+
+v1.04
+-----
+Fixed TIFF predictor for ARM
+
+TODO
+====
+- external streams (egzotic)
+

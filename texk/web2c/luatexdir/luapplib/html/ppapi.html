@@ -1,0 +1,1028 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pplib &#8212; pplib 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="ppcode.html" />
+    <link rel="prev" title="pplib" href="pplib.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ppcode.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pplib.html" title="pplib"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="pplib.html">pplib 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="pplib.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pplib</span></code></a></li>
+<li><a class="reference internal" href="#c-api">C-API</a><ul>
+<li><a class="reference internal" href="#types">Types</a></li>
+<li><a class="reference internal" href="#object">Object</a></li>
+<li><a class="reference internal" href="#names">Names</a></li>
+<li><a class="reference internal" href="#string">String</a></li>
+<li><a class="reference internal" href="#array">Array</a></li>
+<li><a class="reference internal" href="#dict">Dict</a></li>
+<li><a class="reference internal" href="#stream">Stream</a></li>
+<li><a class="reference internal" href="#filters">Filters</a></li>
+<li><a class="reference internal" href="#ref">Ref</a></li>
+<li><a class="reference internal" href="#xref">XRef</a></li>
+<li><a class="reference internal" href="#pdf">PDF</a></li>
+<li><a class="reference internal" href="#encryption">Encryption</a></li>
+<li><a class="reference internal" href="#pages">Pages</a></li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#boxes">Boxes</a></li>
+<li><a class="reference internal" href="#transforms">Transforms</a></li>
+<li><a class="reference internal" href="#errors-handling">Errors handling</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pplib.html"
+                        title="previous chapter">pplib</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ppcode.html"
+                        title="next chapter">Examples</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ppapi.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pplib">
+<h1><code class="docutils literal notranslate"><span class="pre">pplib</span></code><a class="headerlink" href="#pplib" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">pplib</span></code> is a library for raw PDF access. It parses PDF documents and provides an interface to access document structures in C.</p>
+</div>
+<div class="section" id="c-api">
+<h1>C-API<a class="headerlink" href="#c-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="types">
+<h2>Types<a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pplib</span></code> defines several C-types to represent PDF types:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">ppint</span></code> - signed integer (<code class="docutils literal notranslate"><span class="pre">int64_t</span></code>)</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppnum</span></code> - real number (double)</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppname</span></code> - PDF name</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppstring</span></code> - PDF string</li>
+<li><code class="docutils literal notranslate"><span class="pre">pparray</span></code> - PDF array</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppdict</span></code> - PDF dict</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppstream</span></code> - PDF stream</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppref</span></code> - PDF indirect reference</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppobj</span></code> - a container of all above</li>
+</ul>
+<p>Among <code class="docutils literal notranslate"><span class="pre">ppint</span></code> and <code class="docutils literal notranslate"><span class="pre">ppnum</span></code>, we also use <code class="docutils literal notranslate"><span class="pre">ppuint</span></code> - unsigned integer (machine word, alias to <code class="docutils literal notranslate"><span class="pre">size_t</span></code>).</p>
+<p>Other API types:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">ppdoc</span></code> - PDF document</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppxref</span></code> - cross-references table</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppcontext</span></code> - … later</li>
+<li><code class="docutils literal notranslate"><span class="pre">pprect</span></code> - rectangle</li>
+<li><code class="docutils literal notranslate"><span class="pre">ppmatrix</span></code> - matrix</li>
+</ul>
+<p>Integer, number, name and string are treated as simple types.
+Names and strings are actually C-structures, but exposed to API as typedefs to <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code>.
+Other types (array, dict, stream, reference, object container, xref, PDF) are C-structures,
+and you operate it their pointers. So when you declare a simple type variable you say:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppuint</span> <span class="n">u</span><span class="p">;</span>
+<span class="n">ppnum</span> <span class="n">n</span><span class="p">;</span>
+<span class="n">ppname</span> <span class="n">name</span><span class="p">;</span>
+<span class="n">ppstring</span> <span class="n">string</span><span class="p">;</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>And when you declare a compound type you operate on pointers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppobj</span> <span class="o">*</span><span class="n">obj</span><span class="p">;</span>
+<span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">;</span>
+<span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">;</span>
+<span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">;</span>
+<span class="n">ppref</span> <span class="o">*</span><span class="n">ref</span><span class="p">;</span>
+<span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Some of those C-types are defined in library header <code class="docutils literal notranslate"><span class="pre">ppapi.h</span></code> (complete types). Some others are incomplete
+(eg. you can’t say <code class="docutils literal notranslate"><span class="pre">sizeof(ppdoc)</span></code> or <code class="docutils literal notranslate"><span class="pre">sizeof(ppxref)</span></code>). This is to avoid unnecesary dependencies in
+the header. [At some points it’s not clear to me what to hide and what to expose, will see.] The library itself
+uses <code class="docutils literal notranslate"><span class="pre">pplib.h</span></code> but for auxilary applications including a standalone <code class="docutils literal notranslate"><span class="pre">ppapi.h</span></code> header should be enough.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pplib</span></code> was designed having <strong>read-only</strong> PDF access in mind. Even if some structure is completelly exposed,
+so that you can directly access its members, you should treat them as read-only. I don’t make them <code class="docutils literal notranslate"><span class="pre">const</span></code> because
+then all variable declarations would need to be <code class="docutils literal notranslate"><span class="pre">const</span></code>, which is annoying, and I’d need some trickery in the library
+internals to unconst. Besides, nothing is really const for C type casts.</p>
+</div>
+<div class="section" id="object">
+<h2>Object<a class="headerlink" href="#object" title="Permalink to this headline">¶</a></h2>
+<p>A common container for all elementary PDF object types is <code class="docutils literal notranslate"><span class="pre">ppobj</span></code> structure. <code class="docutils literal notranslate"><span class="pre">ppobj</span></code> has a type identifier
+(integer) and union of values:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">ppobj</span> <span class="p">{</span>
+  <span class="n">ppobjtp</span> <span class="nb">type</span><span class="p">;</span>
+  <span class="n">union</span> <span class="p">{</span>
+    <span class="n">ppint</span> <span class="n">integer</span><span class="p">;</span>
+    <span class="n">ppnum</span> <span class="n">number</span><span class="p">;</span>
+    <span class="n">ppname</span> <span class="n">name</span><span class="p">;</span>
+    <span class="n">ppstring</span> <span class="n">string</span><span class="p">;</span>
+    <span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">;</span>
+    <span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">;</span>
+    <span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">;</span>
+    <span class="n">ppref</span> <span class="o">*</span><span class="n">ref</span><span class="p">;</span>
+    <span class="n">void</span> <span class="o">*</span><span class="nb">any</span><span class="p">;</span>
+  <span class="p">};</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Object type is one of constants (enum):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PPNONE</span>
+<span class="n">PPNULL</span>
+<span class="n">PPBOOL</span>
+<span class="n">PPINT</span>
+<span class="n">PPNUM</span>
+<span class="n">PPNAME</span>
+<span class="n">PPSTRING</span>
+<span class="n">PPARRAY</span>
+<span class="n">PPDICT</span>
+<span class="n">PPSTREAM</span>
+<span class="n">PPREF</span>
+</pre></div>
+</div>
+<p>The type determines the structure member you’re allowed to access:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppobj</span> <span class="o">*</span><span class="n">obj</span><span class="p">;</span>
+<span class="o">...</span>
+<span class="n">switch</span> <span class="p">(</span><span class="n">obj</span><span class="o">-&gt;</span><span class="nb">type</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">case</span> <span class="n">PPNONE</span><span class="p">:</span> <span class="o">//</span> <span class="n">shouldn</span><span class="s1">&#39;t actually happen, indicates some failure</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPNULL</span><span class="p">:</span> <span class="o">//</span> <span class="n">valid</span> <span class="n">PDF</span> <span class="n">null</span> <span class="nb">object</span><span class="p">,</span> <span class="n">no</span> <span class="n">value</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPBOOL</span><span class="p">:</span> <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="n">integer</span> <span class="p">(</span><span class="n">ppint</span><span class="p">),</span> <span class="n">value</span> <span class="mi">0</span> <span class="ow">or</span> <span class="mi">1</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPINT</span><span class="p">:</span>  <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="n">integer</span> <span class="p">(</span><span class="n">ppint</span><span class="p">)</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPNUM</span><span class="p">:</span>  <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="n">number</span> <span class="p">(</span><span class="n">ppnum</span><span class="p">)</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPNAME</span><span class="p">:</span> <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="n">name</span> <span class="p">(</span><span class="n">ppname</span><span class="p">)</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPSTRING</span><span class="p">:</span> <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="n">string</span> <span class="p">(</span><span class="n">ppstring</span><span class="p">)</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPARRAY</span><span class="p">:</span> <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="n">array</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="p">)</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPDICT</span><span class="p">:</span> <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="nb">dict</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="p">)</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPSTREAM</span><span class="p">:</span> <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="n">stream</span> <span class="p">(</span><span class="n">ppstream</span> <span class="o">*</span><span class="p">)</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPREF</span><span class="p">:</span> <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="n">ref</span> <span class="p">(</span><span class="n">ppref</span> <span class="o">*</span><span class="p">)</span>
+    <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>More often then not you know exactly what type of object value is expected, in which case
+you may use one of the following macros:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">returns</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPNULL</span>
+<span class="nb">int</span> <span class="n">ppobj_get_null</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>         \
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPBOOL</span><span class="p">,</span> <span class="n">sets</span> <span class="nb">int</span> <span class="n">v</span> <span class="n">to</span> <span class="mi">0</span> <span class="ow">or</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">returns</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span> <span class="n">otherwise</span>
+<span class="nb">int</span> <span class="n">ppobj_get_bool</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPINT</span><span class="p">,</span> <span class="n">sets</span> <span class="n">ppint</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">returns</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span> <span class="n">otherwise</span>
+<span class="nb">int</span> <span class="n">ppobj_get_int</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPINT</span> <span class="ow">and</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sets</span> <span class="n">ppuint</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">returns</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span> <span class="n">otherwise</span>
+<span class="nb">int</span> <span class="n">ppobj_get_uint</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPNUM</span> <span class="ow">or</span> <span class="n">PPINT</span><span class="p">,</span> <span class="n">sets</span> <span class="n">ppnum</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">returns</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span> <span class="n">otherwise</span>
+<span class="nb">int</span> <span class="n">ppobj_get_num</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPNAME</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">name</span><span class="p">,</span> <span class="n">NULL</span> <span class="n">otherwise</span>
+<span class="n">ppname</span> <span class="n">ppobj_get_name</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPSTRING</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">string</span><span class="p">,</span> <span class="n">NULL</span> <span class="n">otherwise</span>
+<span class="n">ppstring</span> <span class="n">ppobj_get_string</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPARRAY</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">array</span><span class="p">,</span> <span class="n">NULL</span> <span class="n">otherwise</span>
+<span class="n">pparray</span> <span class="o">*</span> <span class="n">ppobj_get_array</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPDICT</span> <span class="n">returns</span> <span class="n">the</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">NULL</span> <span class="n">otherwise</span>
+<span class="n">ppdict</span> <span class="o">*</span> <span class="n">ppobj_get_dict</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPSTREAM</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">stream</span><span class="p">,</span> <span class="n">NULL</span> <span class="n">otherwise</span>
+<span class="n">ppstream</span> <span class="o">*</span> <span class="n">ppobj_get_stream</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+<span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPREF</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">reference</span><span class="p">,</span> <span class="n">NULL</span> <span class="n">otherwise</span>
+<span class="n">ppref</span> <span class="o">*</span> <span class="n">ppobj_get_ref</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note the coercion from integer to real number, but not reverse. In practise, whenever you expect a real number,
+you should also handle integer (eg. ‘1’ used instead of ‘1.0’).</p>
+<p>It is a common case that the object is given as an indirect reference, but what you actually
+want is not the reference, but the object referred by it. Here is a helper for it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="k">if</span> <span class="n">o</span><span class="o">-&gt;</span><span class="nb">type</span> <span class="ow">is</span> <span class="n">PPREF</span><span class="p">,</span> <span class="n">returns</span> <span class="n">what</span> <span class="n">the</span> <span class="n">reference</span> <span class="n">points</span><span class="p">,</span> <span class="n">otherwise</span> <span class="n">returns</span> <span class="n">o</span>
+<span class="n">ppobj</span> <span class="o">*</span> <span class="n">ppobj_rget_obj</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Also every <code class="docutils literal notranslate"><span class="pre">ppobj_get_*</span></code> macro has <code class="docutils literal notranslate"><span class="pre">ppobj_rget_*</span></code> counterpart that makes a check
+for the expected type, but if the object is PPREF, it jumps to the target object.
+So for example <code class="docutils literal notranslate"><span class="pre">ppobj_rget_dict(obj)</span></code> will return dict if <code class="docutils literal notranslate"><span class="pre">obj</span></code> is of type PPDICT
+or if it is of type PPREF and <code class="docutils literal notranslate"><span class="pre">obj-&gt;ref</span></code> hosts an object of type PPDICT.</p>
+</div>
+<div class="section" id="names">
+<h2>Names<a class="headerlink" href="#names" title="Permalink to this headline">¶</a></h2>
+<p>PDF names are represented as <code class="docutils literal notranslate"><span class="pre">ppname</span></code>.
+I find it convenient to have <code class="docutils literal notranslate"><span class="pre">ppname</span></code> type pretending <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code>. This allows to use <code class="docutils literal notranslate"><span class="pre">ppname</span></code>
+in all C-style string functions like <code class="docutils literal notranslate"><span class="pre">printf(&quot;%s&quot;,</span> <span class="pre">name)</span></code>.</p>
+<p>Be aware, however, that <code class="docutils literal notranslate"><span class="pre">ppname</span></code> is actually a C-structure. It is perfectly ok to cast <code class="docutils literal notranslate"><span class="pre">ppname</span></code> to <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppname</span> <span class="n">name</span><span class="p">;</span>
+<span class="o">...</span>
+<span class="p">(</span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="p">)</span><span class="n">name</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>But reverse is forbidden:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">cstr</span> <span class="o">=</span> <span class="s2">&quot;cstring&quot;</span><span class="p">;</span>
+<span class="o">...</span>
+<span class="p">(</span><span class="n">ppname</span><span class="p">)</span><span class="n">cstr</span><span class="p">;</span> <span class="o">//</span> <span class="n">expect</span> <span class="n">segmentation</span> <span class="n">fault</span> <span class="n">soon</span>
+</pre></div>
+</div>
+<p>For convenient use in C, names are <code class="docutils literal notranslate"><span class="pre">'\0'</span></code> terminated. But to get the length of name better always use
+<code class="docutils literal notranslate"><span class="pre">ppname_size()</span></code> macro. <code class="docutils literal notranslate"><span class="pre">ppname</span></code> object knows its size, don’t use <code class="docutils literal notranslate"><span class="pre">strlen()</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">size_t</span> <span class="n">ppname_size</span><span class="p">(</span><span class="n">ppname</span> <span class="n">name</span><span class="p">);</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">returns</span> <span class="n">length</span> <span class="n">of</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">bytes</span>
+</pre></div>
+</div>
+<p>In current implementation names are not hashed anyhow, so name-to-name comparison is not smarter than <code class="docutils literal notranslate"><span class="pre">memcmp()</span></code>.
+Use macros:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">ppname_is</span><span class="p">(</span><span class="n">ppname</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;literal&quot;</span><span class="p">);</span>    <span class="o">//</span> <span class="n">to</span> <span class="n">compare</span> <span class="n">ppname</span> <span class="k">with</span> <span class="n">C</span><span class="o">-</span><span class="n">literal</span> <span class="n">string</span>
+<span class="nb">int</span> <span class="n">ppname_eq</span><span class="p">(</span><span class="n">ppname</span> <span class="n">name</span><span class="p">,</span> <span class="n">ppname</span> <span class="n">other</span><span class="p">);</span> <span class="o">//</span> <span class="n">to</span> <span class="n">compare</span> <span class="n">ppname</span> <span class="k">with</span> <span class="n">a</span> <span class="n">different</span> <span class="n">name</span>
+</pre></div>
+</div>
+<p>If you’ll use <code class="docutils literal notranslate"><span class="pre">pplib</span></code> to parse contents streams, you may need to distinguish names from operators
+(more precisely executable names). Names in PDF are preceeded by ‘/’, executable names aren’t. In both
+cases PDF parser will produce <code class="docutils literal notranslate"><span class="pre">ppname</span></code> but can be distingushed with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">ppname_exec</span><span class="p">(</span><span class="n">ppname</span> <span class="n">name</span><span class="p">);</span> <span class="o">//</span> <span class="n">returns</span> <span class="n">non</span><span class="o">-</span><span class="n">zero</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="n">executable</span>
+</pre></div>
+</div>
+<p>Names are kept in their raw form, with possible PDF specific escapes (in text below we call it <strong>encoded</strong> form).
+Leading ‘/’ is omitted, though. One may need a decoded name, with no PDF escapes.
+A pair of functions provides a simple interface to switch between those two forms:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppname</span> <span class="n">ppname_decoded</span> <span class="p">(</span><span class="n">ppname</span> <span class="n">name</span><span class="p">);</span> <span class="o">//</span> <span class="n">returns</span> <span class="n">decoded</span> <span class="p">(</span><span class="n">unescaped</span><span class="p">)</span> <span class="n">form</span> <span class="n">of</span> <span class="n">the</span> <span class="n">name</span>
+<span class="n">ppname</span> <span class="n">ppname_encoded</span> <span class="p">(</span><span class="n">ppname</span> <span class="n">name</span><span class="p">);</span> <span class="o">//</span> <span class="n">returns</span> <span class="n">encoded</span> <span class="p">(</span><span class="n">escaped</span><span class="p">)</span> <span class="n">form</span> <span class="n">of</span> <span class="n">the</span> <span class="n">name</span>
+</pre></div>
+</div>
+<p>In pretty most cases PDF names contains only letters (no special characters, no escapes), so decoded and encoded forms are identical.
+In that case both functions simply return the argument. It is ok to call <code class="docutils literal notranslate"><span class="pre">ppname_decoded()</span></code> on already decoded form
+and <code class="docutils literal notranslate"><span class="pre">ppname_encoded()</span></code> on already encoded form. Both forms are produced by PDF objects parser, so accessing <code class="docutils literal notranslate"><span class="pre">ppname</span></code> alter ego
+in whatever direction needs no extra decoding or allocation costs.</p>
+</div>
+<div class="section" id="string">
+<h2>String<a class="headerlink" href="#string" title="Permalink to this headline">¶</a></h2>
+<p>PDF strings have the same internal construction as names, so most of names description above applies to strings as well.
+<code class="docutils literal notranslate"><span class="pre">ppstring</span></code> is a typedef of <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code>, roughly <code class="docutils literal notranslate"><span class="pre">'\0'</span></code> terminiated C-string. To get the size of the string:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">size_t</span> <span class="n">ppstring_size</span><span class="p">(</span><span class="n">ppstring</span> <span class="n">string</span><span class="p">);</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">length</span> <span class="n">of</span> <span class="n">the</span> <span class="n">string</span> <span class="ow">in</span> <span class="nb">bytes</span>
+</pre></div>
+</div>
+<p>Strings are provided in their raw form, preserving PDF specific escapes, but with no
+<code class="docutils literal notranslate"><span class="pre">()</span></code> or <code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span></code> delims. To distinguish plain strings from hex strings:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">ppstring_hex</span><span class="p">(</span><span class="n">ppstring</span> <span class="n">string</span><span class="p">);</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">returns</span> <span class="n">non</span> <span class="n">zero</span> <span class="k">if</span> <span class="nb">hex</span> <span class="n">string</span>
+</pre></div>
+</div>
+<p>Or if you prefer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>switch (ppstring_type(string))
+{
+  case PPSTRING_PLAIN: // literal string, surrounded by ``(`` and ``)`` in PDF
+    break;
+  case PPSTRING_BASE16: // hex string, surrounded by ``&lt;`` and ``&gt;`` in PDF
+    break;
+  case PPSTRING_BASE85: // base85 string surrounded by ``&lt;~`` and ``~&gt;`` in PDF
+    break;
+}
+</pre></div>
+</div>
+<p>The last is actually Postscript specific, not used in PDF, but I think it might appear in contents streams…
+No matter how the string is given in PDF (plain or hex), here are two functions to
+switch between encoded and decoded strings forms:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppstring</span> <span class="n">ppstring_decoded</span> <span class="p">(</span><span class="n">ppstring</span> <span class="n">string</span><span class="p">);</span> <span class="o">//</span> <span class="n">returns</span> <span class="n">decoded</span> <span class="n">string</span> <span class="n">possibly</span> <span class="k">with</span> <span class="n">PDF</span> <span class="n">escapes</span>
+<span class="n">ppstring</span> <span class="n">ppstring_encoded</span> <span class="p">(</span><span class="n">ppstring</span> <span class="n">string</span><span class="p">);</span> <span class="o">//</span> <span class="n">returns</span> <span class="n">encoded</span> <span class="n">string</span> <span class="k">with</span> <span class="n">no</span> <span class="n">PDF</span> <span class="n">escapes</span>
+</pre></div>
+</div>
+<p>For hex strings, encoded form contains hex digits, while decoded form contains arbitrary bytes (the result of hex decoding).
+Plain strings usually contains printable ASCII characters, but they might contain any binary data.
+As with names, objects parser produces both forms. The raw form with PDF escapes (or raw hex form) is considered the main one.
+Eg. when you access <code class="docutils literal notranslate"><span class="pre">obj-&gt;string</span></code> you always get the encoded form. At any moment you can switch to its alter ego.</p>
+<p>No matter if the string is plain or hex, if its first two bytes (decoded) are UTF16 BOM, the string
+is considered unicode. <code class="docutils literal notranslate"><span class="pre">ppstring</span></code> object <em>knows</em> it is unicode or not:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">switch</span> <span class="p">(</span><span class="n">ppstring_utf</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
+<span class="p">{</span>
+  <span class="n">case</span> <span class="n">PPSTRING_UTF16LE</span><span class="p">:</span> <span class="o">//</span> <span class="n">unicode</span> <span class="n">string</span><span class="p">,</span> <span class="n">utf16le</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPSTRING_UTF16BE</span><span class="p">:</span> <span class="o">//</span> <span class="n">unicode</span> <span class="n">string</span><span class="p">,</span> <span class="n">utf16be</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="n">default</span><span class="p">:</span>               <span class="o">//</span> <span class="n">no</span> <span class="n">unicode</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Or simply:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">ppstring_utf</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">handle</span> <span class="n">unicode</span> <span class="n">string</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If the string is unicode, BOM remains the part of the string  – <code class="docutils literal notranslate"><span class="pre">pplib</span></code> parser does not strip it.
+Unicode or not, encoded or decoded, strings are always C-arrays of bytes and <code class="docutils literal notranslate"><span class="pre">ppstring_size()</span></code>
+always returns the size in bytes.</p>
+</div>
+<div class="section" id="array">
+<h2>Array<a class="headerlink" href="#array" title="Permalink to this headline">¶</a></h2>
+<p>PDF arrays are represented as <code class="docutils literal notranslate"><span class="pre">pparray</span></code> type, which is C-array of <code class="docutils literal notranslate"><span class="pre">ppobj</span></code> structures.
+To get the size:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">size_t</span> <span class="n">pparray_size</span><span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">)</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">array</span> <span class="n">items</span>
+</pre></div>
+</div>
+<p>To get <code class="docutils literal notranslate"><span class="pre">ppobj</span> <span class="pre">*</span></code> at a given index:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppobj</span> <span class="o">*</span> <span class="n">pparray_at</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>  <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">returns</span> <span class="n">ppobj</span> <span class="o">*</span> <span class="p">(</span><span class="n">no</span> <span class="n">index</span> <span class="n">check</span><span class="p">)</span>
+<span class="n">ppobj</span> <span class="o">*</span> <span class="n">pparray_get</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">returns</span> <span class="n">ppobj</span> <span class="o">*</span> <span class="ow">or</span> <span class="n">NULL</span> <span class="p">(</span><span class="k">with</span> <span class="n">index</span> <span class="n">check</span><span class="p">)</span>
+<span class="n">ppobj</span> <span class="o">*</span> <span class="n">pparray_get_obj</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">);</span>  <span class="o">//</span> <span class="n">function</span> <span class="n">equiv</span> <span class="n">to</span> <span class="n">pparray_get</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Iterating over array elements:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">;</span>
+<span class="n">size_t</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="p">;</span>
+<span class="n">ppobj</span> <span class="o">*</span><span class="n">obj</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="n">pparray_size</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="n">pparray_first</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">obj</span><span class="p">);</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">pparray_next</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">obj</span><span class="p">))</span>
+<span class="p">{</span>
+  <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">index</span> <span class="ow">and</span> <span class="n">obj</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>There is no magic first/next macros, just iteration over pointers. One could also use something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">array</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="o">++</span><span class="n">index</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">obj</span> <span class="o">=</span> <span class="n">pparray_at</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">index</span><span class="p">);</span>
+  <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">index</span> <span class="ow">and</span> <span class="n">obj</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>When getting values from array and expecting a result of known type, use one of the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">pparray_get_bool</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">,</span> <span class="nb">int</span> <span class="o">*</span><span class="n">v</span><span class="p">);</span>    <span class="o">//</span> <span class="n">get</span> <span class="n">boolean</span> <span class="n">value</span>
+<span class="nb">int</span> <span class="n">pparray_get_int</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">,</span> <span class="n">ppint</span> <span class="o">*</span><span class="n">v</span><span class="p">);</span>   <span class="o">//</span> <span class="n">get</span> <span class="n">ppint</span> <span class="n">value</span>
+<span class="nb">int</span> <span class="n">pparray_get_uint</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">,</span> <span class="n">ppuint</span> <span class="o">*</span><span class="n">v</span><span class="p">);</span> <span class="o">//</span> <span class="n">get</span> <span class="n">ppuint</span> <span class="n">value</span>
+<span class="nb">int</span> <span class="n">pparray_get_num</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">,</span> <span class="n">ppnum</span> <span class="o">*</span><span class="n">v</span><span class="p">);</span>   <span class="o">//</span> <span class="n">get</span> <span class="n">ppnum</span> <span class="n">value</span>
+<span class="n">ppname</span> <span class="n">pparray_get_name</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">);</span>         <span class="o">//</span> <span class="n">get</span> <span class="n">ppname</span> <span class="n">value</span>
+<span class="n">ppstring</span> <span class="n">pparray_get_string</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">);</span>     <span class="o">//</span> <span class="n">get</span> <span class="n">ppstring</span> <span class="n">value</span>
+<span class="n">pparray</span> <span class="o">*</span> <span class="n">pparray_get_array</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">);</span>     <span class="o">//</span> <span class="n">get</span> <span class="n">pparray</span> <span class="o">*</span> <span class="n">value</span>
+<span class="n">ppdict</span> <span class="o">*</span> <span class="n">pparray_get_dict</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">);</span>       <span class="o">//</span> <span class="n">get</span> <span class="n">ppdict</span> <span class="o">*</span> <span class="n">value</span>
+<span class="n">ppref</span> <span class="o">*</span> <span class="n">pparray_get_ref</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">);</span>         <span class="o">//</span> <span class="n">get</span> <span class="n">ppref</span> <span class="o">*</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>As with <code class="docutils literal notranslate"><span class="pre">ppobj_get_*</span></code> suite, numeric types getters set the value of a given type and returns 1, if the type matches.
+Otherwise sets nothing and returns 0. Other getters return the value if the type matches, or NULL.</p>
+<p>Every function from <code class="docutils literal notranslate"><span class="pre">pparray_get_*</span></code> suite have its <code class="docutils literal notranslate"><span class="pre">pparray_rget_*</span></code> counterpart that
+that dereferences indirect objects (as explained for <code class="docutils literal notranslate"><span class="pre">ppobj_rget_*</span></code> getters). Note that
+there is no <code class="docutils literal notranslate"><span class="pre">pparray_get_stream()</span></code> function, as streams in PDF are always indirect.
+To get the stream from array use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppstream</span> <span class="o">*</span> <span class="n">pparray_rget_stream</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">index</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dict">
+<h2>Dict<a class="headerlink" href="#dict" title="Permalink to this headline">¶</a></h2>
+<p>PDF dicts are represented as <code class="docutils literal notranslate"><span class="pre">ppdict</span></code> structure, which is C-array of <code class="docutils literal notranslate"><span class="pre">ppobj</span></code> with parallel
+C-array of <code class="docutils literal notranslate"><span class="pre">ppname</span></code> pointers. To get the size of a dict:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">size_t</span> <span class="n">ppdict_size</span><span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">)</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">key</span><span class="o">-</span><span class="n">val</span> <span class="n">pairs</span>
+</pre></div>
+</div>
+<p>To get the value at a given index (integer):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppobj</span> <span class="o">*</span> <span class="n">ppdict_at</span><span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">no</span> <span class="n">index</span> <span class="n">check</span>
+</pre></div>
+</div>
+<p>To get the name (key) at a given index:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppname</span> <span class="n">ppdict_key</span><span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">no</span> <span class="n">index</span> <span class="n">check</span>
+</pre></div>
+</div>
+<p>To iterate over dict key-val pairs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">;</span>
+<span class="n">ppname</span> <span class="o">*</span><span class="n">pkey</span><span class="p">;</span>
+<span class="n">ppobj</span> <span class="o">*</span><span class="n">obj</span><span class="p">;</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="n">ppdict_first</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">pkey</span><span class="p">,</span> <span class="n">obj</span><span class="p">);</span> <span class="o">*</span><span class="n">pkey</span> <span class="o">!=</span> <span class="n">NULL</span><span class="p">;</span> <span class="n">ppdict_next</span><span class="p">(</span><span class="n">pkey</span><span class="p">,</span> <span class="n">obj</span><span class="p">))</span>
+<span class="p">{</span>
+  <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="o">*</span><span class="n">pkey</span> <span class="ow">and</span> <span class="n">obj</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>There is no magic in first/next macros, just iteration through keys and values lists pointers.
+For convenient iteration, a list of keys is terminated with NULL, so in the code above <code class="docutils literal notranslate"><span class="pre">*pkey</span> <span class="pre">!=</span> <span class="pre">NULL</span></code>
+is used as the loop condition. One may also iterate via indices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">;</span>
+<span class="n">size_t</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="p">;</span>
+<span class="n">ppname</span> <span class="n">key</span><span class="p">;</span>
+<span class="n">ppobj</span> <span class="o">*</span><span class="n">obj</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">ppdict_size</span><span class="p">(</span><span class="nb">dict</span><span class="p">);</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="o">++</span><span class="n">index</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">key</span> <span class="o">=</span> <span class="n">ppdict_key</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">index</span><span class="p">);</span>
+  <span class="n">obj</span> <span class="o">=</span> <span class="n">ppdict_at</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">index</span><span class="p">);</span>
+  <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">obj</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>To get the object associated with a given name, use one of the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppobj</span> <span class="o">*</span> <span class="n">ppdict_get_obj</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+<span class="nb">int</span> <span class="n">ppdict_get_bool</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span> <span class="o">*</span><span class="n">v</span><span class="p">);</span>
+<span class="nb">int</span> <span class="n">ppdict_get_int</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">ppint</span> <span class="o">*</span><span class="n">v</span><span class="p">);</span>
+<span class="nb">int</span> <span class="n">ppdict_get_uint</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">ppuint</span> <span class="o">*</span><span class="n">v</span><span class="p">);</span>
+<span class="nb">int</span> <span class="n">ppdict_get_num</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">ppnum</span> <span class="o">*</span><span class="n">v</span><span class="p">);</span>
+<span class="n">ppname</span> <span class="n">ppdict_get_name</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+<span class="n">ppstring</span> <span class="n">ppdict_get_string</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+<span class="n">pparray</span> <span class="o">*</span> <span class="n">ppdict_get_array</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+<span class="n">ppdict</span> <span class="o">*</span> <span class="n">ppdict_get_dict</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+<span class="n">ppref</span> <span class="o">*</span> <span class="n">ppdict_get_ref</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Note that all getters accepts <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code> as key, so it is ok to say:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdict_rget_dict</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="s2">&quot;Resources&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>as well as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdic_rget_dict</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span> <span class="o">//</span> <span class="n">ppname</span> <span class="n">name</span>
+</pre></div>
+</div>
+<p>Every <code class="docutils literal notranslate"><span class="pre">ppdict_get_*</span></code> getter has <code class="docutils literal notranslate"><span class="pre">ppdict_rget_*</span></code> counterpart that dereferences
+indirect objects if necessary. Note that there is no <code class="docutils literal notranslate"><span class="pre">ppdict_get_stream()</span></code> function,
+but there is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppstream</span> <span class="o">*</span> <span class="n">ppdict_rget_stream</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>So far dicts comes with no names mapping, so by-name dict accessors perform a linear search
+through the keys list. PDF dicts are usually small, so it is fast enough.
+Building names lookup for every dict in PDF makes no sense I think, as <code class="docutils literal notranslate"><span class="pre">pplib</span></code> applications
+will query just several dicts I guess.. However, some apps may extensively query
+resources, which may refer to hundreds of objects (eg. images). So some mapping for dicts
+is still considered.</p>
+</div>
+<div class="section" id="stream">
+<h2>Stream<a class="headerlink" href="#stream" title="Permalink to this headline">¶</a></h2>
+<p>PDF streams are represented as <code class="docutils literal notranslate"><span class="pre">ppstream</span></code> objects. To get the stream dict:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdict</span> <span class="o">*</span> <span class="n">ppstream_dict</span><span class="p">(</span><span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">)</span> <span class="o">//</span> <span class="n">macro</span>
+</pre></div>
+</div>
+<p>To read the stream data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uint8_t</span> <span class="o">*</span> <span class="n">ppstream_first</span> <span class="p">(</span><span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">size_t</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="nb">int</span> <span class="n">decode</span><span class="p">);</span>
+<span class="n">uint8_t</span> <span class="o">*</span> <span class="n">ppstream_next</span> <span class="p">(</span><span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">size_t</span> <span class="o">*</span><span class="n">size</span><span class="p">);</span>
+<span class="n">void</span> <span class="n">ppstream_done</span> <span class="p">(</span><span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Both <code class="docutils literal notranslate"><span class="pre">first`</span> <span class="pre">and</span> <span class="pre">``next</span></code> functions return a chunk of stream data and sets the <code class="docutils literal notranslate"><span class="pre">size</span></code> of the chunk.
+<code class="docutils literal notranslate"><span class="pre">decode</span></code> parameter tell the reader to decompress the stream (1) or return raw (0). A call to <code class="docutils literal notranslate"><span class="pre">ppstream_next()</span></code>
+must be preceeded by <code class="docutils literal notranslate"><span class="pre">ppstream_first()</span></code>. Once you’re done with the stream, you have to call <code class="docutils literal notranslate"><span class="pre">ppstream_done()</span></code>,
+no matter if the stream has been read to the end or not. The stream data iterator in use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uint8_t</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+<span class="n">size_t</span> <span class="n">size</span><span class="p">;</span>
+<span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">;</span>
+<span class="nb">int</span> <span class="n">decode</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="o">//</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">get</span> <span class="n">decompressed</span><span class="p">,</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">get</span> <span class="n">raw</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">ppstream_first</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">,</span> <span class="n">decode</span><span class="p">);</span> <span class="n">data</span> <span class="o">!=</span> <span class="n">NULL</span><span class="p">;</span> <span class="n">data</span> <span class="o">=</span> <span class="n">ppstream_next</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">))</span>
+<span class="p">{</span>
+  <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">its</span> <span class="n">size</span>
+<span class="p">}</span>
+<span class="n">ppstream_done</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Every subsequent iterator call invalidates the previous reader output, so you have to utilize the returned chunk
+of data just after you ot that. So the following is wrong:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data1</span> <span class="o">=</span> <span class="n">ppstream_first</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">data2</span> <span class="o">=</span> <span class="n">ppstream_next</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">);</span>
+<span class="n">data3</span> <span class="o">=</span> <span class="n">ppstream_next</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">);</span>
+<span class="n">some_output</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+<span class="n">some_output</span><span class="p">(</span><span class="n">data2</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The reader calls usually return the same pointer to internal buffer, just filled with a different data.
+<code class="docutils literal notranslate"><span class="pre">pplib</span></code> allocates reasonably large buffer and fills that buffer on subsequent calls to the reader.</p>
+<p>If the source stream has no compression, using both <code class="docutils literal notranslate"><span class="pre">decode</span> <span class="pre">==</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">decode</span> <span class="pre">==</span> <span class="pre">0</span></code> should give the same result.
+You can check if the stream is actually compressed with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppstream_compressed</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">returns</span> <span class="n">non</span> <span class="n">zero</span> <span class="k">if</span> <span class="o">/</span><span class="n">Filter</span> <span class="ow">is</span> <span class="n">present</span>
+</pre></div>
+</div>
+<p>It might be necessary to load the entire stream data at once:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uint8_t</span> <span class="o">*</span> <span class="n">ppstream_all</span> <span class="p">(</span><span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">size_t</span> <span class="o">*</span><span class="n">size</span><span class="p">,</span> <span class="nb">int</span> <span class="n">decode</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If the initial buffer size is insufficient, it grows until the entire stream data is loaded. You must call
+<code class="docutils literal notranslate"><span class="pre">ppstream_done(stream)</span></code> after using returned data.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ppstream_done()</span></code> doesn’t invalidate the stream object, it just closes its internal reader.
+The stream itself remains a valid object (eg. one can read it again if necessary),
+but the reader buffer is released. It is actually not freed but kept for future the reuse with that on some other stream,
+but you still need to mark it ready for reuse to avoid allocating a separate buffer for every stream you’re going to read.</p>
+<p>Stream data readers will return <code class="docutils literal notranslate"><span class="pre">NULL</span></code> if you haven’t close the previous reader process  with <code class="docutils literal notranslate"><span class="pre">ppstream_done()</span></code>. All below is wrong:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data1</span> <span class="o">=</span> <span class="n">ppstream_all</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">data2</span> <span class="o">=</span> <span class="n">ppstream_all</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="o">//</span> <span class="n">data2</span> <span class="o">==</span> <span class="n">NULL</span>
+<span class="o">//</span> <span class="ow">or</span>
+<span class="n">data1</span> <span class="o">=</span> <span class="n">ppstream_first</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">data2</span> <span class="o">=</span> <span class="n">ppstream_first</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="o">//</span> <span class="n">data2</span> <span class="o">==</span> <span class="n">NULL</span>
+<span class="o">//</span> <span class="ow">or</span>
+<span class="n">data1</span> <span class="o">=</span> <span class="n">ppstream_first</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">data2</span> <span class="o">=</span> <span class="n">ppstream_all</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="o">//</span> <span class="n">data2</span> <span class="o">==</span> <span class="n">NULL</span>
+</pre></div>
+</div>
+<p>To avoid unnecessary dependencies, <code class="docutils literal notranslate"><span class="pre">pplib</span></code> does not support image filters (<code class="docutils literal notranslate"><span class="pre">/DCT</span></code>, <code class="docutils literal notranslate"><span class="pre">/JPX</span></code>, <code class="docutils literal notranslate"><span class="pre">/JBIG</span></code>, <code class="docutils literal notranslate"><span class="pre">/CCITT</span></code>).
+But it is ok to read the stream with <code class="docutils literal notranslate"><span class="pre">decode</span></code> set to 1 on such streams. <code class="docutils literal notranslate"><span class="pre">pplib</span></code> assumes that the image is the
+final/target stream form and just returns it as-is. Eg. in the case of JPEG (<code class="docutils literal notranslate"><span class="pre">/DCT</span></code> filtered) image both calls should
+give the same results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppstream_all</span><span class="p">(</span><span class="n">jpegstream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">jpegsize</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="o">//</span> <span class="n">don</span><span class="s1">&#39;t decode, return what&#39;</span><span class="n">s</span> <span class="n">there</span>
+<span class="n">ppstream_all</span><span class="p">(</span><span class="n">jpegstream</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">jpegsize</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="o">//</span> <span class="n">decode</span> <span class="n">but</span> <span class="n">found</span> <span class="n">image</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">effectively</span> <span class="n">the</span> <span class="n">same</span>
+</pre></div>
+</div>
+<p>A bit more about streams memory. As mentioned, <code class="docutils literal notranslate"><span class="pre">pplib</span></code> allocates buffers for stream readers. After <code class="docutils literal notranslate"><span class="pre">ppstream_done()</span></code>,
+the stream no longer <em>owns</em> the buffer space. But the buffer may remain allocated, to be reused with future readers.
+<code class="docutils literal notranslate"><span class="pre">pplib</span></code> keeps a pool of several buffers. This means, that when you use stream readers, <code class="docutils literal notranslate"><span class="pre">pplib</span></code> eats
+some memory (1MB or so) that is not freed, even if no streams are used. And even if you free all objects.
+If you suffer from this, you can optionally use a pair of functions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">ppstream_init_buffers</span> <span class="p">(</span><span class="n">void</span><span class="p">);</span>
+<span class="n">void</span> <span class="n">ppstream_free_buffers</span> <span class="p">(</span><span class="n">void</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The first initializes buffers pool, unless done so far. Currently <code class="docutils literal notranslate"><span class="pre">pplib</span></code> cares of it before opening every stream reader,
+so it is not obligatory. The second frees a pool of buffers. The intended use is to call <code class="docutils literal notranslate"><span class="pre">ppstream_init_buffers()</span></code> once
+as kind of library initializer and to call <code class="docutils literal notranslate"><span class="pre">ppstream_free_buffers()</span></code> once, as the library finalizer.</p>
+</div>
+<div class="section" id="filters">
+<h2>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h2>
+<p>In version v1.00 (20190916) <code class="docutils literal notranslate"><span class="pre">ppstream</span></code> API has been extended with filters information.
+<code class="docutils literal notranslate"><span class="pre">ppstream</span></code> knows its filter(s) and keps it as <code class="docutils literal notranslate"><span class="pre">stream-&gt;filter</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">;</span>
+<span class="n">ppstream_filter</span> <span class="o">*</span><span class="n">info</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">stream</span><span class="o">-&gt;</span><span class="nb">filter</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ppstream_filter</span></code> is the following structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
+  <span class="n">ppstreamtp</span> <span class="o">*</span><span class="n">filters</span><span class="p">;</span> <span class="o">//</span> <span class="n">c</span><span class="o">-</span><span class="n">array</span> <span class="n">of</span> <span class="nb">filter</span> <span class="n">identifiers</span> <span class="p">(</span><span class="n">enum</span> <span class="n">integers</span><span class="p">)</span>
+  <span class="n">ppdict</span> <span class="o">**</span><span class="n">params</span><span class="p">;</span>     <span class="o">//</span> <span class="n">c</span><span class="o">-</span><span class="n">array</span> <span class="n">of</span> <span class="n">ppdict</span> <span class="n">pointers</span>
+  <span class="n">size_t</span> <span class="n">count</span><span class="p">;</span>        <span class="o">//</span> <span class="n">number</span> <span class="n">of</span> <span class="n">filters</span><span class="p">,</span> <span class="n">length</span> <span class="n">of</span> <span class="n">the</span> <span class="n">arrays</span> <span class="p">(</span><span class="n">typically</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">}</span> <span class="n">ppstream_filter</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">count</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> then <code class="docutils literal notranslate"><span class="pre">filters</span></code> member is not NULL. Filters array keeps integer constants:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PPSTREAM_BASE16</span>    <span class="o">/*</span> <span class="o">/</span><span class="n">ASCIIHexDecode</span>  <span class="o">*/</span>
+<span class="n">PPSTREAM_BASE85</span>    <span class="o">/*</span> <span class="o">/</span><span class="n">ASCII85Decode</span>   <span class="o">*/</span>
+<span class="n">PPSTREAM_RUNLENGTH</span> <span class="o">/*</span> <span class="o">/</span><span class="n">RunLengthDecode</span> <span class="o">*/</span>
+<span class="n">PPSTREAM_FLATE</span>     <span class="o">/*</span> <span class="o">/</span><span class="n">FlateDecode</span>     <span class="o">*/</span>
+<span class="n">PPSTREAM_LZW</span>       <span class="o">/*</span> <span class="o">/</span><span class="n">LZWDecode</span>       <span class="o">*/</span>
+<span class="n">PPSTREAM_CCITT</span>     <span class="o">/*</span> <span class="o">/</span><span class="n">CCITTFaxDecode</span>  <span class="o">*/</span>
+<span class="n">PPSTREAM_DCT</span>       <span class="o">/*</span> <span class="o">/</span><span class="n">DCTDecode</span>       <span class="o">*/</span>
+<span class="n">PPSTREAM_JBIG2</span>     <span class="o">/*</span> <span class="o">/</span><span class="n">JBIG2Decode</span>     <span class="o">*/</span>
+<span class="n">PPSTREAM_JPX</span>       <span class="o">/*</span> <span class="o">/</span><span class="n">JPXDecode</span>       <span class="o">*/</span>
+<span class="n">PPSTREAM_CRYPT</span>     <span class="o">/*</span> <span class="o">/</span><span class="n">Crypt</span>           <span class="o">*/</span>
+</pre></div>
+</div>
+<p>Params array keeps corresponding filter parameters (<code class="docutils literal notranslate"><span class="pre">/DecodeParms</span></code>) if present. <code class="docutils literal notranslate"><span class="pre">params</span></code> member is not NULL
+if <code class="docutils literal notranslate"><span class="pre">count</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> and the stream dict has <code class="docutils literal notranslate"><span class="pre">/DecodeParms</span></code> entry. Even if <code class="docutils literal notranslate"><span class="pre">params</span></code> is there,
+for every N-th filter, <code class="docutils literal notranslate"><span class="pre">params[N]</span></code> may be NULL (corresponding to PDF <code class="docutils literal notranslate"><span class="pre">null</span></code>).</p>
+<p><code class="docutils literal notranslate"><span class="pre">stream-&gt;filter</span></code> keeps the source stream filter information, which may not correspond to the result of stream readers
+(<code class="docutils literal notranslate"><span class="pre">ppstream_first()</span></code>, <code class="docutils literal notranslate"><span class="pre">ppstream_next()</span></code>, <code class="docutils literal notranslate"><span class="pre">ppstream_all()</span></code>). The get the filters info relevant to the result from readers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">ppstream_filter_info</span> <span class="p">(</span><span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">ppstream_filter</span> <span class="o">*</span><span class="n">info</span><span class="p">,</span> <span class="nb">int</span> <span class="n">decode</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The function fills <code class="docutils literal notranslate"><span class="pre">ppstream_filter</span></code> structure according to the expected result from stream readers (example 3 shows
+how to use it to reconstruct <code class="docutils literal notranslate"><span class="pre">/Filter</span></code> and <code class="docutils literal notranslate"><span class="pre">/DecodeParms</span></code> when copying the stream to some other PDF).</p>
+<p>To convert filter identifier (<code class="docutils literal notranslate"><span class="pre">ppstreamtp</span></code>) to a corresponding PDF filter name:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span> <span class="n">ppstream_filter_name</span><span class="p">[];</span>
+</pre></div>
+</div>
+<p>To covert <code class="docutils literal notranslate"><span class="pre">ppname</span></code> to filter identifier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">ppstream_filter_type</span> <span class="p">(</span><span class="n">ppname</span> <span class="n">filtername</span><span class="p">,</span> <span class="n">ppstreamtp</span> <span class="o">*</span><span class="n">filtertype</span><span class="p">);</span>
+<span class="o">//</span> <span class="n">returns</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">sets</span> <span class="n">filtertype</span> <span class="k">if</span> <span class="n">filtername</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">proper</span> <span class="nb">filter</span> <span class="n">name</span>
+</pre></div>
+</div>
+<p>Additional information about the stream can be fetched from macros:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppstream_compressed</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span> <span class="o">/*</span> <span class="n">stream</span><span class="o">-&gt;</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">PPSTREAM_FILTER</span><span class="o">|</span><span class="n">PPSTREAM_IMAGE</span><span class="p">)</span> <span class="o">*/</span>
+<span class="n">ppstream_filtered</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>   <span class="o">/*</span> <span class="n">stream</span><span class="o">-&gt;</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">PPSTREAM_FILTER</span> <span class="o">*/</span>
+<span class="n">ppstream_image</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>      <span class="o">/*</span> <span class="n">stream</span><span class="o">-&gt;</span><span class="n">flags</span> <span class="o">*</span> <span class="n">PPSTREAM_IMAGE</span> <span class="o">*/</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">stream-&gt;flags</span></code> is a binary sum of the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PPSTREAM_FILTER</span>        <span class="o">/*</span> <span class="nb">set</span> <span class="n">iff</span> <span class="n">the</span> <span class="n">stream</span> <span class="n">filters</span> <span class="nb">list</span> <span class="n">has</span> <span class="n">one</span> <span class="n">of</span><span class="p">:</span> <span class="n">BASE16</span><span class="p">,</span> <span class="n">BASE85</span><span class="p">,</span> <span class="n">RUNLENGTH</span><span class="p">,</span> <span class="n">FLATE</span><span class="p">,</span> <span class="n">LZW</span> <span class="o">*/</span>
+<span class="n">PPSTREAM_IMAGE</span>         <span class="o">/*</span> <span class="nb">set</span> <span class="n">iff</span> <span class="n">the</span> <span class="n">stream</span> <span class="n">filters</span> <span class="nb">list</span> <span class="n">has</span> <span class="n">one</span> <span class="n">of</span><span class="p">:</span> <span class="n">CCITT</span><span class="p">,</span> <span class="n">DCT</span><span class="p">,</span> <span class="n">JBIG2</span><span class="p">,</span> <span class="n">JPX</span> <span class="o">*/</span>
+<span class="n">PPSTREAM_ENCRYPTED</span>     <span class="o">/*</span> <span class="nb">set</span> <span class="n">iff</span> <span class="n">the</span> <span class="n">stream</span> <span class="ow">is</span> <span class="n">encrypted</span> <span class="o">*/</span>
+<span class="n">PPSTREAM_ENCRYPTED_OWN</span> <span class="o">/*</span> <span class="nb">set</span> <span class="n">iff</span> <span class="n">the</span> <span class="n">stream</span> <span class="n">has</span> <span class="n">own</span> <span class="n">CRYPT</span> <span class="nb">filter</span> <span class="o">*/</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">PPSTREAM_COMPRESSED</span></code> is not there any longer, use <code class="docutils literal notranslate"><span class="pre">ppstream_compressed()</span></code> instead.
+And there is some more, see <code class="docutils literal notranslate"><span class="pre">ppapi.h</span></code>.</p>
+</div>
+<div class="section" id="ref">
+<h2>Ref<a class="headerlink" href="#ref" title="Permalink to this headline">¶</a></h2>
+<p>Indirect objects are represented as <code class="docutils literal notranslate"><span class="pre">ppref</span></code> structure. To get the object that the
+reference refers to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppobj</span> <span class="o">*</span> <span class="n">ppref_obj</span><span class="p">(</span><span class="n">ppref</span> <span class="o">*</span><span class="n">ref</span><span class="p">)</span> <span class="o">//</span> <span class="n">macro</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ppref</span></code> structure also keeps the reference number and version, a pointer to cross reference table it belongs
+to and others, but I guess you won’t need anything but the referenced object. <code class="docutils literal notranslate"><span class="pre">pplib</span></code> parser resolves references
+on-fly. So if there is a dict with indirect objects:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;&lt;</span>
+  <span class="o">/</span><span class="n">Type</span> <span class="o">/</span><span class="n">Page</span>
+  <span class="o">/</span><span class="n">Resources</span> <span class="mi">123</span> <span class="mi">0</span> <span class="n">R</span>
+  <span class="o">...</span>
+<span class="o">&gt;&gt;</span>
+</pre></div>
+</div>
+<p>the parser will produce <code class="docutils literal notranslate"><span class="pre">ppdict</span></code> with <code class="docutils literal notranslate"><span class="pre">Resources</span></code> key pointing the proper <code class="docutils literal notranslate"><span class="pre">ppref</span> <span class="pre">*</span></code> value.
+If you need more, access <code class="docutils literal notranslate"><span class="pre">ppref</span></code> members:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">ppref</span> <span class="p">{</span>
+  <span class="n">ppobj</span> <span class="nb">object</span><span class="p">;</span>           <span class="o">//</span> <span class="n">target</span> <span class="nb">object</span>
+  <span class="n">ppuint</span> <span class="n">number</span><span class="p">,</span> <span class="n">version</span><span class="p">;</span> <span class="o">//</span> <span class="n">identifiers</span>
+  <span class="n">size_t</span> <span class="n">offset</span><span class="p">;</span>          <span class="o">//</span> <span class="n">file</span> <span class="n">offset</span> <span class="p">(</span><span class="n">useless</span> <span class="k">for</span> <span class="n">you</span><span class="p">,</span> <span class="n">may</span> <span class="n">be</span> <span class="n">zero</span> <span class="k">for</span> <span class="n">compressed</span> <span class="n">objects</span><span class="p">)</span>
+  <span class="n">ppuint</span> <span class="n">length</span><span class="p">;</span>          <span class="o">//</span> <span class="n">the</span> <span class="n">length</span> <span class="n">of</span> <span class="n">the</span> <span class="n">original</span> <span class="nb">object</span> <span class="n">data</span>
+  <span class="n">ppxref</span> <span class="o">*</span><span class="n">xref</span><span class="p">;</span>           <span class="o">//</span> <span class="n">cross</span> <span class="n">reference</span> <span class="n">table</span> <span class="n">it</span> <span class="n">belongs</span> <span class="n">to</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="xref">
+<h2>XRef<a class="headerlink" href="#xref" title="Permalink to this headline">¶</a></h2>
+<p>Cross reference table is exposed as <code class="docutils literal notranslate"><span class="pre">ppxref</span></code> (incomplete type, you can only oprate on its pointer).
+To get top document xref:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppxref</span> <span class="o">*</span> <span class="n">ppdoc_xref</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To get previous (older) xref:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppxref</span> <span class="o">*</span> <span class="n">ppxref_prev</span> <span class="p">(</span><span class="n">ppxref</span> <span class="o">*</span><span class="n">xref</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To find an object of a given refnumber:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppref</span> <span class="o">*</span> <span class="n">ppxref_find</span> <span class="p">(</span><span class="n">ppxref</span> <span class="o">*</span><span class="n">xref</span><span class="p">,</span> <span class="n">ppuint</span> <span class="n">refnumber</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>[Note: since pplib v0.98 in case of documents with incremental update, <code class="docutils literal notranslate"><span class="pre">ppxref_find()</span></code> returns
+the newest available version of a given object rather than the object in a given body.]</p>
+</div>
+<div class="section" id="pdf">
+<h2>PDF<a class="headerlink" href="#pdf" title="Permalink to this headline">¶</a></h2>
+<p>PDF document is represented as <code class="docutils literal notranslate"><span class="pre">ppdoc</span></code> structure (incomplete type, you can only operate on its pointer).
+To load a document from file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdoc</span> <span class="o">*</span> <span class="n">ppdoc_load</span> <span class="p">(</span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To load a document from memory data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdoc</span> <span class="o">*</span> <span class="n">ppdoc_mem</span> <span class="p">(</span><span class="n">const</span> <span class="n">void</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">size</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The data is assumed to be a buffer allocated with <code class="docutils literal notranslate"><span class="pre">malloc</span></code> - it is freed when destroying <code class="docutils literal notranslate"><span class="pre">ppdoc</span></code>.</p>
+<p>Both loaders returns <code class="docutils literal notranslate"><span class="pre">NULL</span></code> on failure.</p>
+<p>To free <code class="docutils literal notranslate"><span class="pre">ppdoc</span></code> and all objects it refers to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">ppdoc_free</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>So far we haven’t mention about any explicit object reclaimers. There are no dedicated <code class="docutils literal notranslate"><span class="pre">free</span></code> functions
+for other objects. You don’t allocate or free objects yourself. <code class="docutils literal notranslate"><span class="pre">ppdoc</span></code> object is an owner of all
+beings it refers to. It also means that every object described so far is alive as long as the containing
+<code class="docutils literal notranslate"><span class="pre">ppdoc</span></code> is alive.</p>
+<p>To access main PDF dicts:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdict</span> <span class="o">*</span> <span class="n">ppdoc_trailer</span><span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span> <span class="o">//</span> <span class="n">returns</span> <span class="n">top</span> <span class="n">xref</span> <span class="n">trailer</span> <span class="nb">dict</span>
+<span class="n">ppdict</span> <span class="o">*</span> <span class="n">ppdoc_catalog</span><span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span> <span class="o">//</span> <span class="n">returns</span> <span class="n">catalog</span> <span class="n">referred</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">trailer</span>
+<span class="n">ppdict</span> <span class="o">*</span> <span class="n">ppdoc_info</span><span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>    <span class="o">//</span> <span class="n">returns</span> <span class="n">info</span> <span class="nb">dict</span> <span class="n">referred</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">trailer</span>
+</pre></div>
+</div>
+<p>To get the PDF version:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span> <span class="n">ppdoc_version_string</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>    <span class="o">//</span> <span class="n">version</span> <span class="n">string</span>
+<span class="nb">int</span> <span class="n">ppdoc_version_number</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">,</span> <span class="nb">int</span> <span class="o">*</span><span class="n">minor</span><span class="p">);</span> <span class="o">//</span> <span class="n">minor</span> <span class="ow">and</span> <span class="n">major</span> <span class="n">numbers</span>
+</pre></div>
+</div>
+<p>To get the file size of the source PDF document:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">size_t</span> <span class="n">ppdoc_file_size</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To get the number of objects in all xrefs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppuint</span> <span class="n">ppdoc_objects</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To get the approx usage of memory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">size_t</span> <span class="n">ppdoc_memory</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">,</span> <span class="n">size_t</span> <span class="o">*</span><span class="n">waste</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="encryption">
+<h2>Encryption<a class="headerlink" href="#encryption" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pplib</span></code> handles encrypted (password protected) documents. If a document is encrypted, most of strings and streams are ciphered.
+In that form they are unreadable and rather useless, you can’t even rewrite such strings/streams as-is to a different PDF output.
+It is a common practise to <em>protect</em> documents with an empty password. Such documents remain readable in Acrobat (just opens them without prompting
+for a password), but some features (eg. printing) may restricted by the application.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">pplib</span></code> detects encryption, it follows Acrobat approach and first tries an empty password. If it succeeds, <code class="docutils literal notranslate"><span class="pre">pplib</span></code> proceeeds normally, providing
+an access to decrypted strings and streams, as if they weren’t ciphered. If the document is protected with non-empty password, <code class="docutils literal notranslate"><span class="pre">pplib</span></code> gives
+a way to provide a password and proceed. Until you provide a password, <code class="docutils literal notranslate"><span class="pre">ppdoc</span></code> object returned by <code class="docutils literal notranslate"><span class="pre">ppdoc_load()</span></code> function has all object wntries
+set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
+<p>After loading a document you should check encryption status with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppcrypt_status</span> <span class="n">ppdoc_crypt_status</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ppcrypt_status</span></code> (integer) may have the following values:</p>
+<blockquote>
+<div><code class="docutils literal notranslate"><span class="pre">PPCRYPT_NONE</span></code> - no encryption, go ahead
+<code class="docutils literal notranslate"><span class="pre">PPCRYPT_DONE</span></code> - encryption present but password succeeded, go ahead
+<code class="docutils literal notranslate"><span class="pre">PPCRYPT_PASS</span></code> - encryption present, need non-empty password
+<code class="docutils literal notranslate"><span class="pre">PPCRYPT_FAIL</span></code> - invalid or unsupported encryption (eg. undocumented in pdf spec)</div></blockquote>
+<p>If a password is needed, you can provide one with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppcrypt_status</span> <span class="n">ppdoc_crypt_pass</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">,</span> <span class="n">const</span> <span class="n">void</span> <span class="o">*</span><span class="n">userpass</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">userpasslength</span><span class="p">,</span>
+                                             <span class="n">const</span> <span class="n">void</span> <span class="o">*</span><span class="n">ownerpass</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">ownerpasslength</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Well, yes, there are actually two passwords in encrypted documents. Relation between them is obscure to me, but enough
+to know that having one of them is enough to decrypt the document. If you know the password, you probably mean
+<code class="docutils literal notranslate"><span class="pre">userpass</span></code>, in which case you should put <code class="docutils literal notranslate"><span class="pre">NULL</span></code> as <code class="docutils literal notranslate"><span class="pre">ownerpass</span></code>. The function returns <code class="docutils literal notranslate"><span class="pre">PPCRYPT_DONE</span></code> if the password
+succeeds and the previous status otherwise. Your custom loader function may look like that:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">;</span>
+<span class="n">pdf</span> <span class="o">=</span> <span class="n">ppdoc_load</span><span class="p">(</span><span class="s2">&quot;file.pdf&quot;</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">pdf</span> <span class="o">==</span> <span class="n">NULL</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">NULL</span><span class="p">;</span>
+<span class="n">switch</span> <span class="p">(</span><span class="n">ppdoc_crypt_status</span><span class="p">(</span><span class="n">pdf</span><span class="p">))</span>
+<span class="p">{</span>
+  <span class="n">case</span> <span class="n">PPCRYPT_NONE</span><span class="p">:</span>
+  <span class="n">case</span> <span class="n">PPCRYPT_DONE</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">pdf</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPCRYPT_PASS</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ppdoc_crypt_pass</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">PPCRYPT_DONE</span> <span class="o">||</span>
+        <span class="n">ppdoc_crypt_pass</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="n">PPCRYPT_DONE</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">pdf</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;sorry, password needed</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="n">ppdoc_free</span><span class="p">(</span><span class="n">pdf</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">NULL</span><span class="p">;</span>
+  <span class="n">case</span> <span class="n">PPCRYPT_FAIL</span><span class="p">:</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;sorry, encryption failed</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="n">ppdoc_free</span><span class="p">(</span><span class="n">pdf</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">NULL</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>[If you get <code class="docutils literal notranslate"><span class="pre">PPCRYPT_FAIL</span></code> it might mean <em>I failed</em>, so treat as a bug.]</p>
+<p>If you’d like to know what permissions are given/restricted to encrypted document:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppint</span> <span class="n">ppdoc_permissions</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Returned value can be queried with the following binary flags (you can verify with Acrobat <em>File -&gt; Properties -&gt; Security</em> tab):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PPDOC_ALLOW_PRINT</span>       <span class="o">//</span> <span class="n">printing</span>
+<span class="n">PPDOC_ALLOW_MODIFY</span>      <span class="o">//</span> <span class="n">filling</span> <span class="n">form</span> <span class="n">fields</span><span class="p">,</span> <span class="n">signing</span><span class="p">,</span> <span class="n">creating</span> <span class="n">template</span> <span class="n">pages</span>
+<span class="n">PPDOC_ALLOW_COPY</span>        <span class="o">//</span> <span class="n">copying</span><span class="p">,</span> <span class="n">copying</span> <span class="k">for</span> <span class="n">accessibility</span>
+<span class="n">PPDOC_ALLOW_ANNOTS</span>      <span class="o">//</span> <span class="n">filling</span> <span class="n">form</span> <span class="n">fields</span><span class="p">,</span> <span class="n">copying</span><span class="p">,</span> <span class="n">signing</span>
+<span class="n">PPDOC_ALLOW_EXTRACT</span>     <span class="o">//</span> <span class="n">contents</span> <span class="n">copying</span> <span class="k">for</span> <span class="n">accessibility</span>
+<span class="n">PPDOC_ALLOW_ASSEMBLY</span>    <span class="o">//</span> <span class="p">(</span><span class="n">no</span> <span class="n">effect</span><span class="p">)</span>
+<span class="n">PPDOC_ALLOW_PRINT_HIRES</span> <span class="o">//</span> <span class="p">(</span><span class="n">no</span> <span class="n">effect</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">pplib</span></code> does absolutelly nothing with permissions, it cares only to decrypt the document. As mentioned, encryption applies to strings
+and streams. <code class="docutils literal notranslate"><span class="pre">pplib</span></code> decrypt strings when parsing document objects, so the result you get is <em>normal</em> (not ciphered).
+Streams are decrypted whenever you access them. Even if you ask for a raw stream data, you’ll get a raw (compressed) stream, but decrypted.
+So except the check to <code class="docutils literal notranslate"><span class="pre">ppdoc_crypt_status()</span></code>, you shouldn’t bother about encryption.</p>
+<p>In encrypted documents most of streams are encrypted. To check if a given stream is encrypted:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppstream_encrypted</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span> <span class="o">//</span> <span class="n">macro</span><span class="p">,</span> <span class="n">returns</span> <span class="n">non</span><span class="o">-</span><span class="n">zero</span> <span class="k">if</span> <span class="n">encrypted</span>
+</pre></div>
+</div>
+<p>Encryption is independent from compression, don’t confuse with <code class="docutils literal notranslate"><span class="pre">ppstream_compressed()</span></code></p>
+</div>
+<div class="section" id="pages">
+<h2>Pages<a class="headerlink" href="#pages" title="Permalink to this headline">¶</a></h2>
+<p>Several helpers to deal with pages. To get the number of pages:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppuint</span> <span class="n">ppdoc_page_count</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To access the root pages tree node:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppref</span> <span class="o">*</span> <span class="n">ppdoc_pages</span><span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To get the page reference at a given index:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppref</span> <span class="o">*</span> <span class="n">ppdoc_page</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">,</span> <span class="n">ppuint</span> <span class="n">index</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">index</span></code> is a page number. First page has number 1. For index out of bounds <code class="docutils literal notranslate"><span class="pre">ppdoc_page()</span></code> returns NULL.
+Iterating over pages using index from 1 to <code class="docutils literal notranslate"><span class="pre">ppdoc_page_count()</span></code> and calling <code class="docutils literal notranslate"><span class="pre">ppdoc_page()</span></code> on each iteration
+would be suboptimal. Here is a dedicted iterator for this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppref</span> <span class="o">*</span>  <span class="n">ppdoc_first_page</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+<span class="n">ppref</span> <span class="o">*</span> <span class="n">ppdoc_next_page</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The iterator in use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">;</span>
+<span class="n">ppref</span> <span class="o">*</span><span class="n">ref</span><span class="p">;</span>
+<span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">;</span>
+<span class="nb">int</span> <span class="n">pageno</span><span class="p">;</span>
+
+<span class="n">pdf</span> <span class="o">=</span> <span class="n">ppdoc_load</span><span class="p">(</span><span class="s2">&quot;file.pdf&quot;</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">ref</span> <span class="o">=</span> <span class="n">ppdoc_first_page</span><span class="p">(</span><span class="n">pdf</span><span class="p">),</span> <span class="n">pageno</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">ref</span> <span class="o">!=</span> <span class="n">NULL</span><span class="p">;</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">ppdoc_next_page</span><span class="p">(</span><span class="n">pdf</span><span class="p">),</span> <span class="o">++</span><span class="n">pageno</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="nb">dict</span> <span class="o">=</span> <span class="n">ppref_obj</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">dict</span><span class="p">;</span> <span class="o">//</span> <span class="n">take</span> <span class="k">for</span> <span class="n">granted</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">a</span> <span class="nb">dict</span>
+  <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">the</span> <span class="n">page</span> <span class="nb">dict</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Functions related to pages return <code class="docutils literal notranslate"><span class="pre">ppref</span> <span class="pre">*</span></code> ensured to contain dict object, so you don’t need sanity
+type checks here.</p>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<p>PDF page contents can be given as a stream or array of streams. Here is a convenience iterator over page
+contents streams:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppstream</span> <span class="o">*</span> <span class="n">ppcontents_first</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">);</span>
+<span class="n">ppstream</span> <span class="o">*</span> <span class="n">ppcontents_next</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>A complete example of contents stream parser use is given below (example 2).
+But before we get there, we need to introduce <code class="docutils literal notranslate"><span class="pre">ppcontext</span></code> object. Conceptually,
+<code class="docutils literal notranslate"><span class="pre">ppcontext</span></code> is an owner (memory handler) of objects created on demand (beyond the <code class="docutils literal notranslate"><span class="pre">ppdoc</span></code>).
+So far used only with contents stream parser, which might produce quite some data that we want
+to release just after used. To create a new context:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pcontext</span> <span class="o">*</span> <span class="n">ppcontext_new</span> <span class="p">(</span><span class="n">void</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>It initializes a new context and its internal memory heap, taking about 64kB on start. After that,
+the context is ready to produce objects (contents parsing functions below). Once objects produced
+from a given context are no longer needed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">ppcontext_done</span> <span class="p">(</span><span class="n">ppcontext</span> <span class="o">*</span><span class="n">context</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>It restores the context to its initial state, as after <code class="docutils literal notranslate"><span class="pre">ppcontext_new()</span></code>. It means that the context
+is ready to produce another bunch of beings (in the example below, all objects from the next page contents).
+Once the context is not needed anymore:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">ppcontext_free</span> <span class="p">(</span><span class="n">ppcontext</span> <span class="o">*</span><span class="n">context</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Now, contents stream parser functions take the context as an argument. Iterator form of contents stream parser
+that allows to process the contents operator by operator:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppobj</span> <span class="o">*</span> <span class="n">ppcontents_first_op</span> <span class="p">(</span><span class="n">ppcontext</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span> <span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">size_t</span> <span class="o">*</span><span class="n">psize</span><span class="p">,</span> <span class="n">ppname</span> <span class="o">*</span><span class="n">pname</span><span class="p">);</span>
+<span class="n">ppobj</span> <span class="o">*</span> <span class="n">ppcontents_next_op</span> <span class="p">(</span><span class="n">ppcontext</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span> <span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">size_t</span> <span class="o">*</span><span class="n">psize</span><span class="p">,</span> <span class="n">ppname</span> <span class="o">*</span><span class="n">pname</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Returned <code class="docutils literal notranslate"><span class="pre">ppobj</span> <span class="pre">*</span></code> is a pointer to operands list. <code class="docutils literal notranslate"><span class="pre">*psize</span></code> is the number of operands on stack.
+The operator itself is stored as <code class="docutils literal notranslate"><span class="pre">*pname</span></code>.</p>
+<p>To parse the entire contents stream at once with no stop at every operator:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppobj</span> <span class="o">*</span> <span class="n">ppcontents_parse</span> <span class="p">(</span><span class="n">ppcontext</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span> <span class="n">ppstream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">size_t</span> <span class="o">*</span><span class="n">psize</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Returns probably quite long list of all parsed objects (operands and operatos) in one piece.
+The number of objects is stored to <code class="docutils literal notranslate"><span class="pre">*psize</span></code>.</p>
+<p>[Contents may contain so called inline images, that breaks a simple scheme of operands / operator syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">BI</span> <span class="o">&lt;</span><span class="n">keyval</span> <span class="n">pairs</span><span class="o">&gt;</span> <span class="n">ID</span> <span class="o">&lt;</span><span class="n">binary</span> <span class="n">image</span> <span class="n">data</span><span class="o">&gt;</span> <span class="n">EI</span>
+</pre></div>
+</div>
+<p>Contents parser treats this genuine triplet as a single piece, producing two operands (dict and string)
+followed by <code class="docutils literal notranslate"><span class="pre">EI</span></code> operator name.]</p>
+</div>
+<div class="section" id="boxes">
+<h2>Boxes<a class="headerlink" href="#boxes" title="Permalink to this headline">¶</a></h2>
+<p>Boxes (rectangles) in PDF are roughly 4-number arrays, but with a special intent.
+<code class="docutils literal notranslate"><span class="pre">pplib</span></code> provides a basic interface for these special arrays:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
+  <span class="n">ppnum</span> <span class="n">lx</span><span class="p">,</span> <span class="n">ly</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">pprect</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This type is used only by helper functions - PDF parser is not aware of the rectangle type.
+To convert <code class="docutils literal notranslate"><span class="pre">pparray</span></code> to <code class="docutils literal notranslate"><span class="pre">pprect</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pprect</span> <span class="o">*</span> <span class="n">pparray_to_rect</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">pprect</span> <span class="o">*</span><span class="n">rect</span><span class="p">);</span> <span class="o">//</span> <span class="n">returns</span> <span class="n">rect</span> <span class="ow">or</span> <span class="n">NULL</span>
+</pre></div>
+</div>
+<p>In example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pprect</span> <span class="n">rect</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">pparray_to_rect</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">rect</span><span class="p">)</span> <span class="o">!=</span> <span class="n">NULL</span><span class="p">)</span>
+ <span class="p">;</span> <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">rect</span>
+</pre></div>
+</div>
+<p>To get some image bounding box:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pprect</span> <span class="o">*</span> <span class="n">ppdict_get_rect</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">pprect</span> <span class="o">*</span><span class="n">rect</span><span class="p">);</span>
+<span class="o">//</span> <span class="n">eg</span><span class="o">.</span> <span class="n">ppdict_get_rect</span><span class="p">(</span><span class="n">imagedict</span><span class="p">,</span> <span class="s2">&quot;BBox&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">rect</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To get some page box:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pprect</span> <span class="o">*</span> <span class="n">ppdict_get_box</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">pprect</span> <span class="o">*</span><span class="n">rect</span><span class="p">);</span>
+<span class="o">//</span> <span class="n">eg</span><span class="o">.</span> <span class="n">ppdict_get_box</span><span class="p">(</span><span class="n">pagedict</span><span class="p">,</span> <span class="s2">&quot;MediaBox&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">rect</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The later not only checks the pagedict, but also goes through parent page nodes.</p>
+</div>
+<div class="section" id="transforms">
+<h2>Transforms<a class="headerlink" href="#transforms" title="Permalink to this headline">¶</a></h2>
+<p>Transformations are given as 6-number arrays, but with a special intent.
+<code class="docutils literal notranslate"><span class="pre">pplib</span></code> provides a basic interface for these special arrays:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
+  <span class="n">ppnum</span> <span class="n">xx</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">yx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">ppmatrix</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This type is used only by helper functions - PDF parser is not aware of the matrix type.
+To convert <code class="docutils literal notranslate"><span class="pre">pparray</span></code> to <code class="docutils literal notranslate"><span class="pre">ppmatrix</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppmatrix</span> <span class="o">*</span> <span class="n">pparray_to_matrix</span> <span class="p">(</span><span class="n">pparray</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="n">ppmatrix</span> <span class="o">*</span><span class="n">matrix</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppmatrix</span> <span class="n">matrix</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">pparray_to_matrix</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">matrix</span><span class="p">)</span> <span class="o">!=</span> <span class="n">NULL</span><span class="p">)</span>
+  <span class="p">;</span> <span class="o">//</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">matrix</span>
+</pre></div>
+</div>
+<p>To get the matrix from dict:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppmatrix</span> <span class="o">*</span> <span class="n">ppdict_get_matrix</span> <span class="p">(</span><span class="n">ppdict</span> <span class="o">*</span><span class="nb">dict</span><span class="p">,</span> <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">ppmatrix</span> <span class="o">*</span><span class="n">matrix</span><span class="p">);</span>
+<span class="o">//</span> <span class="n">eg</span><span class="o">.</span> <span class="n">ppdict_get_matrix</span><span class="p">(</span><span class="n">imagedict</span><span class="p">,</span> <span class="s2">&quot;Matrix&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">matrix</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="errors-handling">
+<h2>Errors handling<a class="headerlink" href="#errors-handling" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pplib</span></code> is not verbose, but might happen that it needs to log some error message, eg. when parsing
+of some PDF boject fails due to invalid offsets. By default, <code class="docutils literal notranslate"><span class="pre">pplib</span></code> prints the message to stdout, eg.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">invalid</span> <span class="mi">123</span> <span class="mi">0</span> <span class="n">R</span> <span class="nb">object</span> <span class="n">at</span> <span class="n">offset</span> <span class="mi">123123</span>
+</pre></div>
+</div>
+<p>To replace the default logger, you can provide your own:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">pplog_callback</span> <span class="p">(</span><span class="n">pplogger_callback</span> <span class="n">logger</span><span class="p">,</span> <span class="n">void</span> <span class="o">*</span><span class="n">alien</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">pplogger_callback</span></code> is a function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">your_callback</span> <span class="p">(</span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">message</span><span class="p">,</span> <span class="n">void</span> <span class="o">*</span><span class="n">alien</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In example, to redirect messages to stderr you may define a function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">your_callback</span> <span class="p">(</span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">message</span><span class="p">,</span> <span class="n">void</span> <span class="o">*</span><span class="n">alien</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">fprintf</span><span class="p">((</span><span class="n">FILE</span> <span class="o">*</span><span class="p">)</span><span class="n">alien</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ooops: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Then set the callback somewhere before loading documents:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pplog_callback</span><span class="p">(</span><span class="n">your_callback</span><span class="p">,</span> <span class="n">stderr</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>(example 2 uses that).</p>
+<p>To set the default log messages prefix, eg. <code class="docutils literal notranslate"><span class="pre">pplib:</span></code>, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">pplog_prefix</span> <span class="p">(</span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">prefix</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Default is empty. The function succeeds if provided prefix is reasonably short (less then 32 bytes).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ppcode.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pplib.html" title="pplib"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="pplib.html">pplib 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, p.jackowski@gust.org.pl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

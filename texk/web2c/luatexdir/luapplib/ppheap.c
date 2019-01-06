@@ -7,12 +7,14 @@
 #define ppheap_head(heap) ((uint8_t *)((heap) + 1))
 
 
-#if defined __arm__ || defined __ARM__ || defined ARM || defined __ARM || defined __arm || defined __ARM_ARCH ||defined __aarch64__ 
+#if ARM_COMPLIANT
 # define PPHEAP_ARCH_ARM
 # define PPHEAP_NEED_ALIGNMENT
 #endif
 
-
+#if defined(__sun) && defined(__SVR4)
+# define PPHEAP_NEED_ALIGNMENT
+#endif
  
 #ifdef PPHEAP_NEED_ALIGNMENT 
 /* Tests has shown that long double seems to work: */
@@ -276,6 +278,10 @@ void * ppheap_take (ppheap **pheap, size_t size)
 #ifdef PPHEAP_NEED_ALIGNMENT
 	/* Todo: only if data%sizeof(aligned_data) != 0 */
 	p_aligned_data = malloc(size);
+	if (!p_aligned_data) {
+         fprintf(stderr,"! fatal error: unable to setup aligned pointer for ppheap_take\n");
+         exit(EXIT_FAILURE);
+	}
 	memcpy(p_aligned_data,data,size);
 	align_save_into_set(p_aligned_data);
 	return (void *)p_aligned_data;
@@ -410,6 +416,10 @@ void * ppheap_flush (iof *O, size_t *psize) // not from explicit ppheap ** !!!
 #ifdef PPHEAP_NEED_ALIGNMENT
   /* Todo: only if data%sizeof(aligned_data) != 0 */
   p_aligned_data = malloc(size);
+  if (!p_aligned_data) {
+    fprintf(stderr,"! fatal error: unable to setup aligned pointer for ppheap_flush\n");
+    exit(EXIT_FAILURE);
+  }
   memcpy(p_aligned_data,data,size);
   align_save_into_set(p_aligned_data);
   return (void *)p_aligned_data;

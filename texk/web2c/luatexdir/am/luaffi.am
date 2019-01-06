@@ -12,25 +12,26 @@
 ##
 
 
-EXTRA_LIBRARIES += libluaffi.a  liblua53ffi.a 
+#EXTRA_LIBRARIES += libluaffi.a  liblua53ffi.a 
+EXTRA_LIBRARIES += libluaffi.a   
 
 #libluaffi_a_DEPENDENCIES = $(ZLIB_DEPEND)
 
 $(libluaffi_a_OBJECTS): $(LUA_DEPEND)
-$(liblua53ffi_a_OBJECTS): $(LUA_LUA53_DEPEND)
+#$(liblua53ffi_a_OBJECTS): $(LUA_LUA53_DEPEND)
 
 libluaffi_a_CPPFLAGS = \
 	-I$(top_srcdir)/luatexdir/luaffi -I$(top_srcdir)/luatexdir/luaffi/dynasm $(LUA_INCLUDES)
 
-liblua53ffi_a_CPPFLAGS = \
-	-I$(top_srcdir)/luatexdir/luaffi -I$(top_srcdir)/luatexdir/luaffi/dynasm $(LUA_LUA53_INCLUDES)
+#liblua53ffi_a_CPPFLAGS = \
+#	-I$(top_srcdir)/luatexdir/luaffi -I$(top_srcdir)/luatexdir/luaffi/dynasm $(LUA_LUA53_INCLUDES)
 
 
 libluaffi_a_CFLAGS = # $(WARNING_CFLAGS)
-liblua53ffi_a_CFLAGS = # $(WARNING_CFLAGS)
+#liblua53ffi_a_CFLAGS = # $(WARNING_CFLAGS)
 
 nodist_libluaffi_a_SOURCES = $(libluaffi_sources)
-nodist_liblua53ffi_a_SOURCES = $(libluaffi_sources)
+#nodist_liblua53ffi_a_SOURCES = $(libluaffi_sources)
 
 
 libluaffi_sources = \
@@ -44,7 +45,7 @@ libluaffi_sources = \
 	luatexdir/luaffi/ffi.h \
 	luatexdir/luaffi/parser.c
 
-liblua53ffi_sources = $(libluaffi_sources)
+#liblua53ffi_sources = $(libluaffi_sources)
 ## Not used
 ##
 #EXTRA_DIST 

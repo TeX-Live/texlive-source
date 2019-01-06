@@ -5,23 +5,23 @@
 
 ## luapplib
 ##
-EXTRA_LIBRARIES += libluapplib.a liblua53pplib.a libluajitpplib.a
+#EXTRA_LIBRARIES += libluapplib.a liblua53pplib.a libluajitpplib.a
+EXTRA_LIBRARIES += libluapplib.a libluajitpplib.a
 
 libluapplib_a_DEPENDENCIES = $(ZLIB_DEPEND)
-liblua53pplib_a_DEPENDENCIES = $(ZLIB_DEPEND)
+#liblua53pplib_a_DEPENDENCIES = $(ZLIB_DEPEND)
 libluajitpplib_a_DEPENDENCIES = $(ZLIB_DEPEND)
 
 $(libluapplib_a_OBJECTS): $(LUA_DEPEND)
-$(liblua53pplib_a_OBJECTS): $(LUA_DEPEND)
+#$(liblua53pplib_a_OBJECTS): $(LUA_DEPEND)
 $(libluajitpplib_a_OBJECTS): $(LUAJIT_DEPEND)
 
-## replace -I../../libs/zlib/include $(ZLIB_INCLUDES)
 
 libluapplib_a_CPPFLAGS = \
 	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUA_INCLUDES)
 
-liblua53pplib_a_CPPFLAGS = \
-	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUA_LUA53_INCLUDES)
+#liblua53pplib_a_CPPFLAGS = \
+#	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUA_LUA53_INCLUDES)
 
 libluajitpplib_a_CPPFLAGS = \
 	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUAJIT_INCLUDES)
@@ -30,7 +30,7 @@ libluapplib_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitpplib_a_CFLAGS = # $(WARNING_CFLAGS)
 
 nodist_libluapplib_a_SOURCES = $(libluapplib_sources)
-nodist_liblua53pplib_a_SOURCES = $(libluapplib_sources)
+#nodist_liblua53pplib_a_SOURCES = $(libluapplib_sources)
 nodist_libluajitpplib_a_SOURCES = $(libluapplib_sources)
 
 libluapplib_sources = \
@@ -50,8 +50,12 @@ libluapplib_sources = \
 	luatexdir/luapplib/ppload.h \
 	luatexdir/luapplib/ppstream.c \
 	luatexdir/luapplib/ppstream.h \
+	luatexdir/luapplib/pptest1.c \
+	luatexdir/luapplib/pptest2.c \
+	luatexdir/luapplib/pptest3.c \
 	luatexdir/luapplib/ppxref.c \
 	luatexdir/luapplib/ppxref.h \
+	luatexdir/luapplib/util/utilarm.h \
 	luatexdir/luapplib/util/utilbasexx.c \
 	luatexdir/luapplib/util/utilbasexx.h \
 	luatexdir/luapplib/util/utilcrypt.c \
@@ -76,11 +80,8 @@ libluapplib_sources = \
 	luatexdir/luapplib/util/utilnumber.h \
 	luatexdir/luapplib/util/utilplat.h \
 	luatexdir/luapplib/util/utilsha.c \
-	luatexdir/luapplib/util/utilsha.h \
-	luatexdir/luapplib/zlib/zconf.h \
-	luatexdir/luapplib/zlib/zlib.h 
+	luatexdir/luapplib/util/utilsha.h
 
 
-
-liblua53pplib_sources = $(libluapplib_sources)
+#liblua53pplib_sources = $(libluapplib_sources)
 libluajitpplib_sources = $(libluapplib_sources)

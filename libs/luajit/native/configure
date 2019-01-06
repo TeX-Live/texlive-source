@@ -5142,8 +5142,11 @@ _ACEOF
 
 if test "x$ac_cv_sizeof_void_p" != "x$HOST_PTR_SIZE"; then :
   HOST_PTR_BITS=`expr 8 \* $HOST_PTR_SIZE`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: pointer size mismatch in cross-build; use a ${HOST_PTR_BITS}bit compiler BULDCC." >&5
-$as_echo "$as_me: WARNING: pointer size mismatch in cross-build; use a ${HOST_PTR_BITS}bit compiler BULDCC." >&2;}
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: pointer size mismatch in cross-build; use a ${HOST_PTR_BITS}bit compiler LUAJITCROSSCOMPILER." >&5
+$as_echo "$as_me: WARNING: pointer size mismatch in cross-build; use a ${HOST_PTR_BITS}bit compiler LUAJITCROSSCOMPILER." >&2;}
+if test "x$LUAJITCROSSCOMPILER" != x""; then :
+  CC=$LUAJITCROSSCOMPILER
+fi
 case $HOST_PTR_BITS in #(
   32|64) :
     CC="$CC -m$HOST_PTR_BITS"; { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: trying: $CC" >&5

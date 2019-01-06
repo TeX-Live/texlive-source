@@ -24,13 +24,13 @@ KPSE_LT_VERSION([lua53])
 
 LT_INIT([win32-dll])
 
-KPSE_DLL_NAME([texlua53], [texlua53])
+KPSE_DLL_NAME([texlua], [texlua])
 
 AC_CONFIG_HEADERS([config.h])[]dnl unused, to avoid zillions of -D's on command line
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-AC_SEARCH_LIBS([sqrt], [m])
+AC_SEARCH_LIBS([pow], [m])
 
 KPSE_LUA53_DEFINES
 KPSE_LARGEFILE([LUA53_DEFINES])

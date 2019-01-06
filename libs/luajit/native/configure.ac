@@ -21,7 +21,8 @@ AC_PROG_LN_S
 AC_CHECK_SIZEOF([void *])
 AS_IF([test "x$ac_cv_sizeof_void_p" != "x$HOST_PTR_SIZE"], [dnl
 HOST_PTR_BITS=`expr 8 \* $HOST_PTR_SIZE`
-AC_MSG_WARN([pointer size mismatch in cross-build; use a ${HOST_PTR_BITS}bit compiler BULDCC.])
+AC_MSG_WARN([pointer size mismatch in cross-build; use a ${HOST_PTR_BITS}bit compiler LUAJITCROSSCOMPILER.])
+AS_IF([test "x$LUAJITCROSSCOMPILER" != x""],[CC=$LUAJITCROSSCOMPILER], [])
 AS_CASE([$HOST_PTR_BITS],
         [32|64], [CC="$CC -m$HOST_PTR_BITS"; AC_MSG_WARN([trying: $CC])])])
 

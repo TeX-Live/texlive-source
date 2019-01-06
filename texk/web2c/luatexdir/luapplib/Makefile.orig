@@ -49,12 +49,13 @@ PPSTATICDEPS=$(FLATELIB)
 # test programm
 PPTEST1=$(OUTDIR)/pptest1$(EXEEXT)
 PPTEST2=$(OUTDIR)/pptest2$(EXEEXT)
+PPTEST3=$(OUTDIR)/pptest3$(EXEEXT)
 
 # includes
 INC=-I $(UTILSDIR)
 AUX=-I $(FLATEDIR)
 
-default: md $(PPSTATICLIB) $(PPTEST1) $(PPTEST2)
+default: md $(PPSTATICLIB) $(PPTEST1) $(PPTEST2) $(PPTEST3)
 
 md:
 	@[ -d $(OUTDIR) ] || mkdir -p $(OUTDIR)
@@ -79,6 +80,10 @@ $(PPTEST1): $(PPSTATICLIB) pptest1.c
 $(PPTEST2): $(PPSTATICLIB) pptest2.c
 	$(CC) $(CFLAGS) $(STATICCOPTS) -o $(OUTDIR)/pptest2$(OBJEXT) -c pptest2.c
 	$(CC) -static-libgcc $(CFLAGS) -o $(PPTEST2) $(OUTDIR)/pptest2$(OBJEXT) $(PPSTATICLIB) $(PPSTATICDEPS) $(LIBS)
+
+$(PPTEST3): $(PPSTATICLIB) pptest3.c
+	$(CC) $(CFLAGS) $(STATICCOPTS) -I util -o $(OUTDIR)/pptest3$(OBJEXT) -c pptest3.c
+	$(CC) -static-libgcc $(CFLAGS) -o $(PPTEST3) $(OUTDIR)/pptest3$(OBJEXT) $(PPSTATICLIB) $(PPSTATICDEPS) $(LIBS)
 
 clean:
 	rm -f $(OUTDIR)/*$(OBJEXT) $(OUTDIR)/*.a $(OUTDIR)/*$(EXEEXT)

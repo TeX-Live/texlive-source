@@ -33,7 +33,7 @@ KPSE_DLL_NAME([texluajit], [texluajit])
 AC_CHECK_SIZEOF([void *])
 ac_configure_args="$ac_configure_args HOST_PTR_SIZE='$ac_cv_sizeof_void_p'"
 
-AC_SEARCH_LIBS([sqrt], [m])
+AC_SEARCH_LIBS([pow], [m])
 AC_SEARCH_LIBS([dlopen], [dl])
 
 KPSE_LUAJIT_DEFINES

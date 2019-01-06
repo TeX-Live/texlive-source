@@ -41,7 +41,7 @@
 #ifdef _WIN32
 #  define i64round(a) (int64_t) win32_floor((a) + 0.5)
 #else
-#  define i64round(a) (int64_t) lround((a))
+#  define i64round(a) (int64_t) llround((a))
 #endif
 
 

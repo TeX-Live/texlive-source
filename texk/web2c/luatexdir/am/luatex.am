@@ -17,16 +17,16 @@ bin_links += luatex$(EXEEXT):texlua luatex$(EXEEXT):texluac
 endif !WIN32
 endif LUATEX
 
-if LUATEX53
-bin_PROGRAMS += luatex53
-if WIN32
-noinst_PROGRAMS += call_luatex53
-install_exe_links += install-luatex53-links
-uninstall_exe_links += uninstall-luatex53-links
-else !WIN32
-bin_links += luatex53$(EXEEXT):texlua53
-endif !WIN32
-endif LUATEX53
+#if LUATEX53
+#bin_PROGRAMS += luatex53
+#if WIN32
+#noinst_PROGRAMS += call_luatex53
+#install_exe_links += install-luatex53-links
+#uninstall_exe_links += uninstall-luatex53-links
+#else !WIN32
+#bin_links += luatex53$(EXEEXT):texlua53
+#endif !WIN32
+#endif LUATEX53
 
 if LUAJITTEX
 bin_PROGRAMS += luajittex
@@ -39,7 +39,8 @@ bin_links += luajittex$(EXEEXT):texluajit luajittex$(EXEEXT):texluajitc
 endif !WIN32
 endif LUAJITTEX
 
-EXTRA_PROGRAMS += luatex luatex53 luajittex
+#EXTRA_PROGRAMS += luatex luatex53 luajittex
+EXTRA_PROGRAMS += luatex luajittex
 
 # Force Automake to use CXXLD for linking
 #nodist_EXTRA_luatex_SOURCES = dummy.cxx
@@ -52,16 +53,16 @@ luatex_postflags += -Dextra_version_info=`date +-%Y%m%d%H`
 luatex_postflags += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
 
 luatex_CPPFLAGS = $(luatex_preflags) $(LUA_INCLUDES) $(luatex_postflags)
-luatex53_CPPFLAGS = $(luatex_preflags) $(LUA_LUA53_INCLUDES) $(luatex_postflags)
+#luatex53_CPPFLAGS = $(luatex_preflags) $(LUA_LUA53_INCLUDES) $(luatex_postflags)
 luajittex_CPPFLAGS = $(luatex_preflags) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES) $(luatex_postflags)
 luajittex_CPPFLAGS += -DLuajitTeX
 
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
-luatex53_CXXFLAGS = $(WARNING_CXXFLAGS)
+#luatex53_CXXFLAGS = $(WARNING_CXXFLAGS)
 luajittex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 luatex_LDFLAGS = -export-dynamic
-luatex53_LDFLAGS = -export-dynamic
+#luatex53_LDFLAGS = -export-dynamic
 luajittex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
 #luatex_postldadd = libmplibcore.a $(MPFR_LIBS) $(GMP_LIBS) 
@@ -71,20 +72,20 @@ luatex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
 
 luatex_LDADD = libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a libluapplib.a $(LUA_LIBS) $(luatex_postldadd)
-luatex53_LDADD = liblua53tex.a libff.a liblua53misc.a liblua53socket.a liblua53ffi.a liblua53pplib.a $(LUA_LUA53_LIBS) $(luatex_postldadd)
+#luatex53_LDADD = liblua53tex.a libff.a liblua53misc.a liblua53socket.a liblua53ffi.a liblua53pplib.a $(LUA_LUA53_LIBS) $(luatex_postldadd)
 luajittex_LDADD = libluajittex.a libff.a libluajitmisc.a libluajitsocket.a libluajitpplib.a $(LUAJIT_LIBS) $(luatex_postldadd)
 
 luatex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) libmputil.a libmd5.a
 luatex_DEPENDENCIES = $(luatex_depend) libluatex.a
-luatex53_DEPENDENCIES = $(luatex_depend) liblua53tex.a
+#luatex53_DEPENDENCIES = $(luatex_depend) liblua53tex.a
 luajittex_DEPENDENCIES = $(luatex_depend) libluajittex.a
 
 $(luatex_OBJECTS): libluatex.a
-$(luatex53_OBJECTS): liblua53tex.a
+#$(luatex53_OBJECTS): liblua53tex.a
 $(luajittex_OBJECTS): libluajittex.a
 
 nodist_luatex_SOURCES = $(luatex_sources)
-nodist_luatex53_SOURCES = $(luatex_sources)
+#nodist_luatex53_SOURCES = $(luatex_sources)
 nodist_luajittex_SOURCES = $(luatex_sources)
 
 
@@ -101,9 +102,9 @@ call_luatex_CPPFLAGS = -DEXEPROG=\"luatex.exe\"
 nodist_call_luatex_SOURCES = callexe.c
 call_luatex_LDADD =
 
-call_luatex53_CPPFLAGS = -DEXEPROG=\"luatex53.exe\"
-nodist_call_luatex53_SOURCES = callexe.c
-call_luatex53_LDADD =
+#call_luatex53_CPPFLAGS = -DEXEPROG=\"luatex53.exe\"
+#nodist_call_luatex53_SOURCES = callexe.c
+#call_luatex53_LDADD =
 
 call_luajittex_CPPFLAGS = -DEXEPROG=\"luajittex.exe\"
 nodist_call_luajittex_SOURCES = callexe.c
@@ -130,8 +131,8 @@ endif WIN32
 #
 luatex_tests = luatexdir/luatex.test luatexdir/luaimage.test
 luatexdir/luatex.log luatexdir/luaimage.log: luatex$(EXEEXT)
-luatex53_tests = luatexdir/luatex.test luatexdir/luaimage.test
-luatexdir/luatex53.log luatexdir/luaimage53.log: luatex53$(EXEEXT)
+#luatex53_tests = luatexdir/luatex.test luatexdir/luaimage.test
+#luatexdir/luatex53.log luatexdir/luaimage53.log: luatex53$(EXEEXT)
 
 
 luajittex_tests = luatexdir/luajittex.test luatexdir/luajitimage.test
@@ -142,9 +143,9 @@ EXTRA_DIST += $(luatex_tests) $(luajittex_tests)
 if LUATEX
 TESTS += $(luatex_tests)
 endif LUATEX
-if LUATEX53
-TESTS += $(luatex_tests)
-endif LUATEX53
+#if LUATEX53
+#TESTS += $(luatex_tests)
+#endif LUATEX53
 if LUAJITTEX
 TESTS += $(luajittex_tests)
 endif LUAJITTEX

@@ -8,6 +8,8 @@
 #include "utillog.h"
 #include "utiliof.h"
 
+#include "utilarm.h"
+
 /* commons */
 
 void * iof_copy_data (const void *data, size_t size)
@@ -2001,7 +2003,7 @@ void iof_filters_free (void)
   iof_filters_heap = NULL;
 }
 
-#if defined __arm__ || defined __ARM__ || defined ARM || defined __ARM || defined __arm || defined __ARM_ARCH ||defined __aarch64__ 
+#if ARM_COMPLIANT
 #define iof_heap_get(hp, ghost, data, siz) \
  (ghost = (iof_heap_ghost *)((void*)((hp)->pos)), \
   ghost->heap = hp, \
