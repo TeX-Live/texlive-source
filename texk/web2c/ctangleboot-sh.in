@@ -12,7 +12,7 @@
 target=$1; shift
 base=$1
 case $base in
-  common) file=cweb; exts='c h';;
+  common) file=cweb; exts=c;;
   ctangle) file=ctangle; exts=c;;
   *) echo "Usage: $0 TARGET {common|ctangle} [CHANGEFILE]" >&2; exit 1;;
 esac
@@ -64,7 +64,6 @@ for ext in $exts; do
   src=$file.$ext
   dst=@srcdir@/${file}boot.${ext}in
   sed -e 's,@srcdir@/cwebdir,cwebdir,' \
-      -e 's,^#include "cweb.h",#include "cwebboot.h",' \
       $src >$stamp.tmp
   if cmp -s $stamp.tmp $dst; then
     rm -f $stamp.tmp

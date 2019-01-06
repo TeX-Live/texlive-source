@@ -1,0 +1,319 @@
+% macros for index produced by twinx
+
+\let\:=\. % preserve a way to get the dot accent
+ % (all other accents will still work as usual)
+\def\TeX{{\ifmmode\it\fi
+   \hbox{T\kern-.1667em\lower.424ex\hbox{E}\hskip-.125em X}}}
+\def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
+\let\mc=\ninerm % medium caps
+\def\CEE/{{\mc C\spacefactor1000}}
+\def\UNIX/{{\mc U\kern-.05emNIX\spacefactor1000}}
+\def\TEX/{\TeX}
+\def\CPLUSPLUS/{{\mc C\PP\spacefactor1000}}
+\def\9#1{}
+
+\newdimen\em \em=10pt % this "em" will not change with font size
+\parskip 0pt plus .1pt % almost no stretch between paragraphs
+\parindent 1\em % for paragraphs and for the first line of C text
+
+\font\ninerm=cmr9
+\font\eightrm=cmr8
+\font\sixrm=cmr6
+\font\ninei=cmmi9
+\font\eighti=cmmi8
+\font\sixi=cmmi6
+\skewchar\ninei='177 \skewchar\eighti='177 \skewchar\sixi='177
+\font\ninesy=cmsy9
+\font\eightsy=cmsy8
+\font\sixsy=cmsy6
+\skewchar\ninesy='60 \skewchar\eightsy='60 \skewchar\sixsy='60
+\font\ninebf=cmbx9
+\font\eightbf=cmbx8
+\font\sixbf=cmbx6
+\font\ninett=cmtt9
+\font\eighttt=cmtt8
+\hyphenchar\ninett=-1 \hyphenchar\eighttt=-1
+\font\ninesl=cmsl9
+\font\eightsl=cmsl8
+\font\nineit=cmti9
+\font\eightit=cmti8
+\font\tentex=cmtex10
+\font\ninetex=cmtex9 % TeX extended character set (used in strings)
+\font\eighttex=cmtex8
+\fontdimen7\tentex=0pt % no double space after sentences
+\fontdimen7\ninetex=0pt
+\fontdimen7\eighttex=0pt
+
+\newif\iftenpoint
+\def\tenpoint{\tenpointtrue
+ \def\rm{\fam0\tenrm}%
+  \textfont0=\tenrm \scriptfont0=\sevenrm \scriptscriptfont0=\fiverm
+  \textfont1=\teni \scriptfont1=\seveni \scriptscriptfont1=\fivei
+  \textfont2=\tensy \scriptfont2=\sevensy \scriptscriptfont2=\fivesy
+  \textfont3=\tenex \scriptfont3=\tenex \scriptscriptfont3=\tenex
+  \def\it{\fam\itfam\tenit}%
+  \textfont\itfam=\tenit
+  \def\sl{\fam\slfam\tensl}%
+  \textfont\slfam=\tensl
+  \def\bf{\fam\bffam\tenbf}%
+  \textfont\bffam=\tenbf \scriptfont\bffam=\sevenbf
+   \scriptscriptfont\bffam=\fivebf
+  \def\tt{\fam\ttfam\tentt}%
+  \textfont\ttfam=\tentt
+  \def\ttx{\tentex}%
+  \normalbaselineskip=12pt
+  \let\mc=\ninerm
+  \let\sc=\eightrm
+  \let\big=\tenbig
+  \setbox\strutbox=\hbox{\vrule height8pt depth3pt width 0pt}%
+  \normalbaselines\rm}
+
+\def\ninepoint{\tenpointfalse
+ \def\rm{\fam0\ninerm}%
+  \textfont0=\ninerm \scriptfont0=\sixrm \scriptscriptfont0=\fiverm
+  \textfont1=\ninei \scriptfont1=\sixi \scriptscriptfont1=\fivei
+  \textfont2=\ninesy \scriptfont2=\sixsy \scriptscriptfont2=\fivesy
+  \textfont3=\tenex \scriptfont3=\tenex \scriptscriptfont3=\tenex
+  \def\it{\fam\itfam\nineit}%
+  \textfont\itfam=\nineit
+  \def\sl{\fam\slfam\ninesl}%
+  \textfont\slfam=\ninesl
+  \def\bf{\fam\bffam\ninebf}%
+  \textfont\bffam=\ninebf \scriptfont\bffam=\sixbf
+   \scriptscriptfont\bffam=\fivebf
+  \def\tt{\fam\ttfam\ninett}%
+  \textfont\ttfam=\ninett
+  \def\ttx{\ninetex}%
+  \normalbaselineskip=11pt
+  \let\mc=\eightrm
+  \let\sc=\sevenrm
+  \let\big=\ninebig
+  \setbox\strutbox=\hbox{\vrule height8pt depth3pt width 0pt}%
+  \normalbaselines\rm}
+
+\def\eightpoint{%
+ \def\rm{\fam0\eightrm}%
+  \textfont0=\eightrm \scriptfont0=\sixrm \scriptscriptfont0=\fiverm
+  \textfont1=\eighti \scriptfont1=\sixi \scriptscriptfont1=\fivei
+  \textfont2=\eightsy \scriptfont2=\sixsy \scriptscriptfont2=\fivesy
+  \textfont3=\tenex \scriptfont3=\tenex \scriptscriptfont3=\tenex
+  \def\it{\fam\itfam\eightit}%
+  \textfont\itfam=\eightit
+  \def\sl{\fam\slfam\eightsl}%
+  \textfont\slfam=\eightsl
+  \def\bf{\fam\bffam\eightbf}%
+  \textfont\bffam=\eightbf \scriptfont\bffam=\sixbf
+   \scriptscriptfont\bffam=\fivebf
+  \def\tt{\fam\ttfam\eighttt}%
+  \textfont\ttfam=\eighttt
+  \def\ttx{\eighttex}%
+  \normalbaselineskip=9pt
+  \let\mc=\sevenrm
+  \let\sc=\sixrm
+  \let\big=\eightbig
+  \setbox\strutbox=\hbox{\vrule height7pt depth2pt width 0pt}%
+  \normalbaselines\rm}
+
+\tenpoint
+\def\tenbig#1{{\hbox{$\left#1\vbox to8.5pt{}\right.\nulldelimiterspace=0pt$}}}
+\def\ninebig#1{{\hbox{$\textfont0=\tenrm\textfont2=\tensy
+  \left#1\vbox to7.25pt{}\right.\nulldelimiterspace=0pt$}}}
+\def\eightbig#1{{\hbox{$\textfont0=\ninerm\textfont2=\ninesy
+  \left#1\vbox to6.5pt{}\right.\nulldelimiterspace=0pt$}}}
+
+\def\Cee{{\mc C\spacefactor1000}}
+\def\UNIX{{\mc UNIX\spacefactor1000}}
+\font\titlefont=cmr7 scaled\magstep4 % title on the contents page
+\font\ttitlefont=cmtt10 scaled\magstep2 % typewriter type in title
+
+\def\\#1{\leavevmode\hbox{\it#1\/\kern.05em}} % italic type for identifiers
+\def\|#1{\leavevmode\hbox{$#1$}} % one-letter identifiers look better this way
+\def\&#1{\leavevmode\hbox{\bf
+  \def\_{\kern.04em\vbox{\hrule width.3em height .6pt}\kern.08em}%
+  #1\/\kern.05em}} % boldface type for reserved words
+\def\.#1{\leavevmode\hbox{\ttx % typewriter type for strings
+  \let\\=\BS % backslash in a string
+  \let\{=\LB % left brace in a string
+  \let\}=\RB % right brace in a string
+  \let\~=\TL % tilde in a string
+  \let\ =\SP % space in a string
+  \let\_=\UL % underline in a string
+  \let\&=\AM % ampersand in a string
+  \let\^=\CF % circumflex in a string
+  #1\kern.2em}}
+\def\){\discretionary{\hbox{\tentex\BS}}{}{}}
+\def\AT{@} % at sign for control text
+
+\chardef\AM=`\& % ampersand character in a string
+\chardef\BS=`\\ % backslash in a string
+\chardef\LB=`\{ % left brace in a string
+\chardef\RB=`\} % right brace in a string
+\def\SP{{\tt\char`\ }} % (visible) space in a string
+\chardef\TL=`\~ % tilde in a string
+\chardef\UL=`\_ % underline character in a string
+\chardef\CF=`\^ % circumflex character in a string
+
+\newbox\PPbox % symbol for ++
+\setbox\PPbox=\hbox{\kern.5pt\raise1pt\hbox{\sevenrm+\kern-1pt+}\kern.5pt}
+\def\PP{\copy\PPbox}
+\newbox\MMbox \setbox\MMbox=\hbox{\kern.5pt\raise1pt\hbox{\sevensy\char0
+ \kern-1pt\char0}\kern.5pt}
+\def\MM{\copy\MMbox}
+\newbox\MGbox % symbol for ->
+\setbox\MGbox=\hbox{\kern-2pt\lower3pt\hbox{\teni\char'176}\kern1pt}
+\def\MG{\copy\MGbox}
+\let\GG=\gg
+\let\LL=\ll
+\let\NULL=\Lambda
+\mathchardef\AND="2026 % bitwise and; also \& (unary operator)
+\let\OR=\mid % bitwise or
+\let\XOR=\oplus % bitwise exclusive or
+\def\CM{{\sim}} % bitwise complement
+\newbox\MODbox \setbox\MODbox=\hbox{\eightrm\%}
+\def\MOD{\mathbin{\copy\MODbox}}
+
+\newbox\bak \setbox\bak=\hbox to -1\em{} % backspace one em
+\newbox\bakk\setbox\bakk=\hbox to -2\em{} % backspace two ems
+
+\newcount\ind % current indentation in ems
+\def\1{\global\advance\ind by1\hangindent\ind \em} % indent one more notch
+\def\2{\global\advance\ind by-1} % indent one less notch
+\def\3#1{\hfil\penalty#10\hfilneg} % optional break within a statement
+\def\4{\copy\bak} % backspace one notch
+\def\5{\hfil\penalty-1\hfilneg\kern2.5\em\copy\bakk\ignorespaces}% optional break
+\def\6{\ifmmode\else\par % forced break
+  \hangindent\ind \em\noindent\kern\ind \em\copy\bakk\ignorespaces\fi}
+\def\7{\Y\6} % forced break and a little extra space
+\def\8{\hskip-\ind \em\hskip 2\em} % no indentation
+
+\let\yskip=\smallskip
+\def\?{\mathrel?}
+\def\note#1#2.{\par\penalty5000
+  \Y\noindent{\hangindent2\em\baselineskip10pt\eightrm#1~#2.\par}}
+\def\lapstar{\rlap{*}}
+\def\stsec{\tenpoint
+  \rightskip=0pt % get out of C mode (cf. \B)
+  \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
+  \noindent\strut{\bf\modno.\quad}}
+\let\startsection=\stsec
+\def\defin#1{\global\advance\ind by 2 \1\&{#1 } } % begin `define' or `format'
+\def\A{\note{See also section}} % xref for doubly defined section name
+\def\As{\note{See also sections}} % xref for multiply defined section name
+\def\B{\iftenpoint\ninepoint\fi
+  \rightskip=0pt plus 100pt minus 10pt % go into C mode
+  \sfcode`;=3000
+  \pretolerance 10000
+  \hyphenpenalty 9999 % so strings can be broken (discretionary \ is inserted)
+  \exhyphenpenalty 10000
+  \global\ind=2 \1\ \unskip}
+\def\C#1{\5\5\quad$/\ast\,$#1$\,\ast/$}
+\def\D{\defin{\#define}} % macro definition
+\let\E=\equiv % equivalence sign
+\def\ET{ and~} % conjunction between two section numbers
+\def\ETs{, and~} % conjunction between the last two of several section numbers
+\def\F{\defin{format}} % format definition
+\let\G=\ge % greater than or equal sign
+% \H is long Hungarian umlaut accent
+\let\I=\ne % unequal sign
+\def\J{\.{@\&}} % TANGLE's join operation
+\let\K== % can be changed to left arrow, if desired
+% \L is Polish letter suppressed-L; we have no shorthand for \le
+% \O is Scandinavian letter O-with-slash
+% \P is paragraph sign
+% \Q is not used
+\let\R=\lnot % logical not
+% \S is section sign
+\def\T#1{\leavevmode % octal, hex or decimal constant
+  \hbox{${\def\?{\kern.2em}%
+    \def\${\ell}% long constant
+    \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
+    \let\~=\oct \let\^=\hex #1}$}}
+\def\U{\note{This code is used in section}} % xref for use of a section
+\def\Us{\note{This code is used in sections}} % xref for uses of a section
+\let\V=\lor % logical or
+\let\W=\land % logical and
+\def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi % section name
+  \XX$\langle\,${#2\sevenrm\kern.5em#1}$\,\rangle$\XX}
+\def\Y{\par\yskip}
+\let\Z=\let % now you can \send the control sequence \Z
+\let\*=*
+
+%\def\oct{\hbox{\rm\char'23\kern-.2em\it\aftergroup\?\aftergroup}} % WEB style
+%\def\hex{\hbox{\rm\char"7D\tt\aftergroup}} % WEB style
+\def\oct{\hbox{$^\circ$\kern-.1em\it\aftergroup\?\aftergroup}}% CWEB style
+\def\hex{\hbox{$^{\scriptscriptstyle\#}$\tt\aftergroup}} % CWEB style
+\def\vb#1{\leavevmode\hbox{\kern2pt\vrule\vtop{\vbox{\hrule
+        \hbox{\strut\kern2pt\.{#1}\kern2pt}}
+      \hrule}\vrule\kern2pt}} % verbatim string
+
+\def\normaloutput#1{\shipout\vbox{
+      \vbox to 3pc{\ifodd\pageno\rightheadline\else\leftheadline\fi\vfill}
+    \nointerlineskip#1}
+  \global\advance\pageno 1 }
+\def\page{\box255 }
+
+\newif\ifpagesaved \newif\iftitle
+\def\leftheadline{\hbox to\pagewd{\vbox to10pt{}%
+  \iftitle\global\titlefalse\else\ninesl\rhead\fi
+  \hfil\eightrm\folio}}
+\def\rightheadline{\hbox to\pagewd{\vbox to10pt{}%
+  \eightrm\folio\hfil\ninesl\rhead\/}}
+\def\rhead{MASTER INDEX}
+\newbox\sbox % saved box preceding the index
+\newbox\lbox % lefthand column in the index
+
+\newdimen\pageht \pageht=19cm
+\newdimen\pagewd \pagewd=13cm
+\newdimen\colwd \colwd=\pagewd
+ \advance\colwd by -1pc \divide\colwd by 2 % for two columns
+
+% Usually some text will be inserted at the beginning, preceded by
+% \preinx and followed by \inx
+\def\preinx{\tenpoint \hsize=\pagewd
+  \output{\ifpagesaved\normaloutput{\box\sbox}\fi
+    \global\setbox\sbox=\page \global\pagesavedtrue}
+  \rightskip0pt \tolerance 200
+  \pagesavedfalse \parindent=20pt}
+\def\inx{\parindent=0pt
+  \vskip 15pt plus 1fil
+  \eject\setbox\sbox\vbox{\unvbox\sbox} % take text out of its box
+  \vsize=\pageht \advance\vsize by -\ht\sbox % the remaining height
+  \rightskip0pt plus 2.5em \tolerance 10000
+  \hsize=\colwd
+  \parfillskip 0pt plus .6\hsize % try to avoid almost empty lines
+  \output{\twocolout} \eightpoint}
+\vsize=\pageht
+\eightpoint
+\def\lr{L} % this tells whether the left or right column is next
+\def\twocolout{\if L\lr\global\setbox\lbox=\page \gdef\lr{R}
+  \else\normaloutput{\vbox to\pageht{\box\sbox\vss
+      \hbox to\pagewd{\box\lbox\hfil\page}}}
+  \global\vsize=\pageht\gdef\lr{L}\global\pagesavedfalse\fi}
+\output{\twocolout}
+\parskip 0pt plus .5pt
+\outer\def\I#1\unskip, {\par\hangindent2em\noindent#1:\kern1em} % index entry
+\def\[#1]{$\underline{#1}$} % underlined index item
+\rm \rightskip0pt plus 2.5em \tolerance 10000
+\hyphenpenalty 10000
+\parindent0pt
+\def\fin{\par\vfill\eject % this is done when we are ending the index
+  \ifpagesaved\null\vfill\eject\fi % output a null index column
+  \if L\lr\else\null\vfill\eject\fi % finish the current page
+  \end}
+
+\input twinx-startup % custom IDs, \preinx copy, etc.
+
+% To produce only a subset of pages, put the page numbers on separate
+% lines in a file called pages.tex
+\let\Shipout=\shipout
+\newread\pages \newcount\nextpage \openin\pages=pages
+\def\getnextpage{\ifeof\pages\else
+ {\endlinechar=-1\read\pages to\next
+  \ifx\next\empty % in this case we should have eof now
+  \else\global\nextpage=\next\fi}\fi}
+\ifeof\pages\else\message{OK, I'll ship only the requested pages!}
+ \getnextpage\fi
+\def\shipout{\ifeof\pages\let\next=\Shipout
+ \else\ifnum\pageno=\nextpage\getnextpage\let\next=\Shipout
+  \else\let\next=\Tosspage\fi\fi \next}
+\newbox\garbage \def\Tosspage{\deadcycles=0\setbox\garbage=}

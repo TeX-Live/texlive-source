@@ -1,3 +1,30 @@
+2019-01-06  Andreas Scherer  <https://ascherer.github.io>
+
+	Integration of CWEBbin as the new CWEB in TeX Live,
+	https://github.com/ascherer/cwebbin.
+	
+	Purge cweb.h and cwebboot.h[in] from CWEB build process.
+	* am/bootstrap.am (cweb.h): no longer created at common-ctangle.
+	(DISTCLEANFILES): do not remove cweb.h or cwebboot.h.
+	$(ctangleboot_OBJECTS): do not depend on cwebboot.h.
+	(EXTRA_DIST): omit no-longer-created cwebboot.hin.
+	(ctangle.c),
+	* am/cweb.am (cweave.c): depend on new file cwebdir/comm-w2c.h,
+	instead of common.h.
+	$(cweave_OBJECTS): remove rule.
+	* ctangleboot-sh.in <common>: only generate .c, not .h;
+	don't try to #include cwebboot.h.
+	* ctangleboot.cin,
+	* cwebboot.cin: regenerate.
+	* cwebboot.hin: delete.
+	* help.h (CTWILLHELP): new help string.
+	(CTANGLEHELP, CWEAVEHELP): update.
+	
+	Add CTWILL material on top of CWEAVE.
+	* am/bootstrap.am (NEVER_DIST): omit {ctwill,refsort,twinx}.{log,trs}.
+	* am/cweb.am (bin_programs): add ctwill, ctwill-refsort, ctwill-twinx,
+	with related targets and dependencies.
+
 2018-12-30  Karl Berry  <karl@tug.org>
 
 	* mplibdir/am/mplib.am,

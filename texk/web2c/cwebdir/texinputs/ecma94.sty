@@ -1,0 +1,205 @@
+%
+% TEX/LATEX $VER: ECMA94.STY 1.11 (10.07.2017)
+%
+% SYNOPSIS:
+%    Conversion of umlauts and special characters of the
+%    ECMA-94/ISO-Latin-1/ISO-8859-1 charset for plain TeX
+%    with the encoding of Computer Modern Font.  ISO-8859-1
+%    seems to be a standard charset for many conputers and
+%    printers (https://en.m.wikipedia.org/wiki/ISO/IEC_8859-1).
+%    Some (but not all) characters with codes higher than
+%    code 127 are replaced by their TeX equivalents.
+%    This encoding is *different* to the DC encoding, which
+%    is very popular in the international TeX community.
+%
+% DATE OF CREATION:
+%    11.01.94: Derived from AMIGA.TEX by Georg He{\ss}mann (V1.0)
+%
+% AUTHOR:
+%    Andreas Scherer <https://ascherer.github.io/>
+%
+% Please send suggestions (pull requests) and bug reports (issues)
+% to https://github.com/ascherer/cwebbin
+%
+% CHANGES:
+%    12.01.1994: Portable encoding with ^^xx notation for all systems
+%                relying on ECMA-94/ISO-Latin-1.  Intermediate systems
+%                won't destroy its usability. (V1.1)
+%    14.01.1994: $^1$ added for ^^b9 (V1.2)
+%    15.03.1994: `\Cstringchars' implemented for use with
+%                the CWEB macros (V1.3)
+%    27.07.1994: Two `\lccode' and `\uccode' bugs fixed.  (V1.4)
+%    25.10.1994: Renamed for LaTeX package support.  (V1.5)
+%    24.12.1994: Some more characters added.  (V1.6)
+%    03.01.1995: Works with LaTeX again.  Several modifications
+%                according to Alain Aubord's `codepage' package.  (V1.7)
+%    25.03.1996: New postal address.  (V1.8)
+%    13.08.1998: New e-mail address.  (V1.9)
+%    18.08.2011: New postal address.  (V1.10)
+%    10.07.2017: Complete overhaul.  (V1.11)
+%
+% COPYRIGHT:
+%    There is no restriction to the usage of this file.
+%
+% if not(TeX >= 3.0) do_nothing, else ...
+\ifx\undefined\inputlineno \else
+\ifnum\inputlineno=-1 \else
+
+\newif\ifTeX % plain TeX or LaTeX?
+\ifx\undefined\documentclass\TeXtrue\else\TeXfalse\fi
+
+\message{ECMA94-to-TeX conversion}
+
+\lccode`^^a0=`^^a0 \uccode`^^a0=`^^a0 \catcode`^^a0=\active \def ^^a0{~}
+\lccode`^^a1=`^^a1 \uccode`^^a1=`^^a1 \catcode`^^a1=\active \def ^^a1{{!`}}
+% ^^a2 would be ¢
+\lccode`^^a3=`^^a3 \uccode`^^a3=`^^a3 \catcode`^^a3=\active
+  \def ^^a3{\ifTeX{\it\$}\else\pounds\fi}
+
+\lccode`^^a7=`^^a7 \uccode`^^a7=`^^a7 \catcode`^^a7=\active \def ^^a7{{\S}}
+\lccode`^^a8=`^^a8 \uccode`^^a8=`^^a8 \catcode`^^a8=\active \def ^^a8{\"{}}
+\lccode`^^a9=`^^a9 \uccode`^^a9=`^^a9 \catcode`^^a9=\active \def ^^a9{{\copyright}}
+\lccode`^^aa=`^^aa \uccode`^^aa=`^^aa \catcode`^^aa=\active
+  \def ^^aa{\ifmmode
+    {}^{\hbox{\ifTeX\sevenrm\else\small\fi\b{a}}}\else
+    $^{\hbox{\ifTeX\sevenrm\else\small\fi\b{a}}}$\fi}
+% ^^ab would be closing guillemet («)
+\lccode`^^ac=`^^ac \uccode`^^ac=`^^ac \catcode`^^ac=\active
+  \def ^^ac{\ifmmode\lnot\else$\lnot$\fi}
+\lccode`^^ad=`^^ad \uccode`^^ad=`^^ad \catcode`^^ad=\active \def ^^ad{--}
+% ^^ae would be 'registered trade mark' (circled R)
+\lccode`^^af=`^^af \uccode`^^af=`^^af \catcode`^^af=\active \def ^^af{\={}}
+
+\lccode`^^b0=`^^b0 \uccode`^^b0=`^^b0 \catcode`^^b0=\active
+  \def ^^b0{\ifmmode^\circ\else$^\circ$\fi}
+\lccode`^^b1=`^^b1 \uccode`^^b1=`^^b1 \catcode`^^b1=\active
+  \def ^^b1{\ifmmode\pm\else$\pm$\fi}
+\lccode`^^b2=`^^b2 \uccode`^^b2=`^^b2 \catcode`^^b2=\active
+  \def ^^b2{\ifmmode{}^2\else$^2$\fi}
+\lccode`^^b3=`^^b3 \uccode`^^b3=`^^b3 \catcode`^^b3=\active
+  \def ^^b3{\ifmmode{}^3\else$^3$\fi}
+\lccode`^^b4=`^^b4 \uccode`^^b4=`^^b4 \catcode`^^b4=\active \def ^^b4{\'{}}
+\lccode`^^b5=`^^b5 \uccode`^^b5=`^^b5 \catcode`^^b5=\active
+  \def ^^b5{\ifmmode\mu\else$\mu$\fi}
+\lccode`^^b6=`^^b6 \uccode`^^b6=`^^b6 \catcode`^^b6=\active \def ^^b6{{\P}}
+\lccode`^^b7=`^^b7 \uccode`^^b7=`^^b7 \catcode`^^b7=\active
+  \def ^^b7{\ifmmode\cdot\else$\cdot$\fi}
+\lccode`^^b8=`^^b8 \uccode`^^b8=`^^b8 \catcode`^^b8=\active \def ^^b8{\c{}}
+\lccode`^^b9=`^^b9 \uccode`^^b9=`^^b9 \catcode`^^b9=\active
+  \def ^^b9{\ifmmode{}^1\else$^1$\fi}
+\lccode`^^ba=`^^ba \uccode`^^ba=`^^ba \catcode`^^ba=\active
+  \def ^^ba{\ifmmode
+    {}^{\hbox{\ifTeX\sevenrm\else\small\fi\b{o}}}\else
+    $^{\hbox{\ifTeX\sevenrm\else\small\fi\b{o}}}$\fi}
+% ^^bb would be opening guillemet (»)
+
+\def\Fraction#1#2{\ifmmode\ifTeX{#1\over#2}\else\frac{#1}{#2}\fi\else
+  \ifTeX$#1\over#2$\else$\frac{#1}{#2}$\fi\fi}
+
+\lccode`^^bc=`^^bc \uccode`^^bc=`^^bc \catcode`^^bc=\active
+  \def ^^bc{\Fraction{1}{4}}
+\lccode`^^bd=`^^bd \uccode`^^bd=`^^bd \catcode`^^bd=\active
+  \def ^^bd{\Fraction{1}{2}}
+\lccode`^^be=`^^be \uccode`^^be=`^^be \catcode`^^be=\active
+  \def ^^be{\Fraction{3}{4}}
+\lccode`^^bf=`^^bf \uccode`^^bf=`^^bf \catcode`^^bf=\active \def ^^bf{{?`}}
+
+\lccode`^^c0=`^^e0 \uccode`^^c0=`^^c0 \catcode`^^c0=\active \def ^^c0{\`A}
+\lccode`^^c1=`^^e1 \uccode`^^c1=`^^c1 \catcode`^^c1=\active \def ^^c1{\'A}
+\lccode`^^c2=`^^e2 \uccode`^^c2=`^^c2 \catcode`^^c2=\active \def ^^c2{\^A}
+\lccode`^^c3=`^^e3 \uccode`^^c3=`^^c3 \catcode`^^c3=\active \def ^^c3{\~A}
+\lccode`^^c4=`^^e4 \uccode`^^c4=`^^c4 \catcode`^^c4=\active \def ^^c4{\"A}
+\lccode`^^c5=`^^e5 \uccode`^^c5=`^^c5 \catcode`^^c5=\active \def ^^c5{{\AA}}
+\lccode`^^c6=`^^e6 \uccode`^^c6=`^^c6 \catcode`^^c6=\active \def ^^c6{{\AE}}
+\lccode`^^c7=`^^e7 \uccode`^^c7=`^^c7 \catcode`^^c7=\active \def ^^c7{\c{C}}
+\lccode`^^c8=`^^e8 \uccode`^^c8=`^^c8 \catcode`^^c8=\active \def ^^c8{\`E}
+\lccode`^^c9=`^^e9 \uccode`^^c9=`^^c9 \catcode`^^c9=\active \def ^^c9{\'E}
+\lccode`^^ca=`^^ea \uccode`^^ca=`^^ca \catcode`^^ca=\active \def ^^ca{\^E}
+\lccode`^^cb=`^^eb \uccode`^^cb=`^^cb \catcode`^^cb=\active \def ^^cb{\"E}
+\lccode`^^cc=`^^ec \uccode`^^cc=`^^cc \catcode`^^cc=\active \def ^^cc{\`I}
+\lccode`^^cd=`^^ed \uccode`^^cd=`^^cd \catcode`^^cd=\active \def ^^cd{\'I}
+\lccode`^^ce=`^^ee \uccode`^^ce=`^^ce \catcode`^^ce=\active \def ^^ce{\^I}
+\lccode`^^cf=`^^ef \uccode`^^cf=`^^cf \catcode`^^cf=\active \def ^^cf{\"I}
+
+% ^^d0 would be capital 'eth'
+\lccode`^^d1=`^^f1 \uccode`^^d1=`^^d1 \catcode`^^d1=\active \def ^^d1{\~N}
+\lccode`^^d2=`^^f2 \uccode`^^d2=`^^d2 \catcode`^^d2=\active \def ^^d2{\`O}
+\lccode`^^d3=`^^f3 \uccode`^^d3=`^^d3 \catcode`^^d3=\active \def ^^d3{\'O}
+\lccode`^^d4=`^^f4 \uccode`^^d4=`^^d4 \catcode`^^d4=\active \def ^^d4{\^O}
+\lccode`^^d5=`^^f5 \uccode`^^d5=`^^d5 \catcode`^^d5=\active \def ^^d5{\~O}
+\lccode`^^d6=`^^f6 \uccode`^^d6=`^^d6 \catcode`^^d6=\active \def ^^d6{\"O}
+\lccode`^^d7=`^^d7 \uccode`^^d7=`^^d7 \catcode`^^d7=\active
+  \def ^^d7{\ifmmode\times\else$\times$\fi}
+\lccode`^^d8=`^^f8 \uccode`^^d8=`^^d8 \catcode`^^d8=\active \def ^^d8{{\O}}
+\lccode`^^d9=`^^f9 \uccode`^^d9=`^^d9 \catcode`^^d9=\active \def ^^d9{\`U}
+\lccode`^^da=`^^fa \uccode`^^da=`^^da \catcode`^^da=\active \def ^^da{\'U}
+\lccode`^^db=`^^fb \uccode`^^db=`^^db \catcode`^^db=\active \def ^^db{\^U}
+\lccode`^^dc=`^^fc \uccode`^^dc=`^^dc \catcode`^^dc=\active \def ^^dc{\"U}
+\lccode`^^dd=`^^fd \uccode`^^dd=`^^dd \catcode`^^dd=\active \def ^^dd{\'Y}
+% ^^de would be capital 'thorn'
+\lccode`^^df=`^^df \uccode`^^df=`^^df \catcode`^^df=\active \def ^^df{{\ss}}
+
+\lccode`^^e0=`^^e0 \uccode`^^e0=`^^c0 \catcode`^^e0=\active \def ^^e0{\`a}
+\lccode`^^e1=`^^e1 \uccode`^^e1=`^^c1 \catcode`^^e1=\active \def ^^e1{\'a}
+\lccode`^^e2=`^^e2 \uccode`^^e2=`^^c2 \catcode`^^e2=\active \def ^^e2{\^a}
+\lccode`^^e3=`^^e3 \uccode`^^e3=`^^c3 \catcode`^^e3=\active \def ^^e3{\~a}
+\lccode`^^e4=`^^e4 \uccode`^^e4=`^^c4 \catcode`^^e4=\active \def ^^e4{\"a}
+\lccode`^^e5=`^^e5 \uccode`^^e5=`^^c5 \catcode`^^e5=\active \def ^^e5{{\aa}}
+\lccode`^^e6=`^^e6 \uccode`^^e6=`^^c6 \catcode`^^e6=\active \def ^^e6{{\ae}}
+\lccode`^^e7=`^^e7 \uccode`^^e7=`^^c7 \catcode`^^e7=\active \def ^^e7{\c{c}}
+\lccode`^^e8=`^^e8 \uccode`^^e8=`^^c8 \catcode`^^e8=\active \def ^^e8{\`e}
+\lccode`^^e9=`^^e9 \uccode`^^e9=`^^c9 \catcode`^^e9=\active \def ^^e9{\'e}
+\lccode`^^ea=`^^ea \uccode`^^ea=`^^ca \catcode`^^ea=\active \def ^^ea{\^e}
+\lccode`^^eb=`^^eb \uccode`^^eb=`^^cb \catcode`^^eb=\active \def ^^eb{\"e}
+\lccode`^^ec=`^^ec \uccode`^^ec=`^^cc \catcode`^^ec=\active \def ^^ec{{\`\i}}
+\lccode`^^ed=`^^ed \uccode`^^ed=`^^cd \catcode`^^ed=\active \def ^^ed{{\'\i}}
+\lccode`^^ee=`^^ee \uccode`^^ee=`^^ce \catcode`^^ee=\active \def ^^ee{{\^\i}}
+\lccode`^^ef=`^^ef \uccode`^^ef=`^^cf \catcode`^^ef=\active \def ^^ef{{\"\i}}
+
+% ^^f0 would be miniscule 'eth'
+\lccode`^^f1=`^^f1 \uccode`^^f1=`^^d1 \catcode`^^f1=\active \def ^^f1{\~n}
+\lccode`^^f2=`^^f2 \uccode`^^f2=`^^d2 \catcode`^^f2=\active \def ^^f2{\`o}
+\lccode`^^f3=`^^f3 \uccode`^^f3=`^^d3 \catcode`^^f3=\active \def ^^f3{\'o}
+\lccode`^^f4=`^^f4 \uccode`^^f4=`^^d4 \catcode`^^f4=\active \def ^^f4{\^o}
+\lccode`^^f5=`^^f5 \uccode`^^f5=`^^d5 \catcode`^^f5=\active \def ^^f5{\~o}
+\lccode`^^f6=`^^f6 \uccode`^^f6=`^^d6 \catcode`^^f6=\active \def ^^f6{\"o}
+\lccode`^^f7=`^^f7 \uccode`^^f7=`^^f7 \catcode`^^f7=\active
+  \def ^^f7{\ifmmode\div\else$\div$\fi}
+\lccode`^^f8=`^^f8 \uccode`^^f8=`^^d8 \catcode`^^f8=\active \def ^^f8{{\o}}
+\lccode`^^f9=`^^f9 \uccode`^^f9=`^^d9 \catcode`^^f9=\active \def ^^f9{\`u}
+\lccode`^^fa=`^^fa \uccode`^^fa=`^^da \catcode`^^fa=\active \def ^^fa{\'u}
+\lccode`^^fb=`^^fb \uccode`^^fb=`^^db \catcode`^^fb=\active \def ^^fb{\^u}
+\lccode`^^fc=`^^fc \uccode`^^fc=`^^dc \catcode`^^fc=\active \def ^^fc{\"u}
+\lccode`^^fd=`^^fd \uccode`^^fd=`^^dd \catcode`^^fd=\active \def ^^fd{\'y}
+% ^^fe would be miniscule 'thorn'
+\lccode`^^ff=`^^ff \uccode`^^ff=`^^ff   \catcode`^^ff=\active \def ^^ff{\"y}
+
+% The following macro supports 8-bit characters in "strings".
+% Not all definitions above are repeated, so you can't use
+% all text characters in strings.
+
+\def\Cstringchars{% Avoid any whitespace!
+  \def ^^a1{{\tt !`}}\def ^^bf{{\tt ?`}}\def ^^c0{{\tt\`A}}%
+  \def ^^c1{{\tt\'A}}\def ^^c2{{\tt\^A}}\def ^^c3{{\tt\~A}}%
+  \def ^^c4{{\tt\"A}}\def ^^c5{{\tt\AA}}\def ^^c6{{\tt\AE}}%
+  \def ^^c7{{\tt\c{C}}}\def ^^c8{{\tt\`E}}\def ^^c9{{\tt\'E}}%
+  \def ^^ca{{\tt\^E}}\def ^^cb{{\tt\"E}}\def ^^cc{{\tt\`I}}%
+  \def ^^cd{{\tt\'I}}\def ^^ce{{\tt\^I}}\def ^^cf{{\tt\"I}}%
+  \def ^^d1{{\tt\~N}}\def ^^d2{{\tt\`O}}\def ^^d3{{\tt\'O}}%
+  \def ^^d4{{\tt\^O}}\def ^^d5{{\tt\~O}}\def ^^d6{{\tt\"O}}%
+  \def ^^d8{{\tt\O}}\def ^^d9{{\tt\`U}}\def ^^da{{\tt\'U}}%
+  \def ^^db{{\tt\^U}}\def ^^dc{{\tt\"U}}\def ^^dd{{\tt\'Y}}%
+  \def ^^df{{\tt\ss}}\def ^^e0{{\tt\`a}}\def ^^e1{{\tt\'a}}%
+  \def ^^e2{{\tt\^a}}\def ^^e3{{\tt\~a}}\def ^^e4{{\tt\"a}}%
+  \def ^^e5{{\tt\aa}}\def ^^e6{{\tt\ae}}\def ^^e7{{\tt\c{c}}}%
+  \def ^^e8{{\tt\`e}}\def ^^e9{{\tt\'e}}\def ^^ea{{\tt\^e}}%
+  \def ^^eb{{\tt\"e}}\def ^^ec{{\tt\`\i}}\def ^^ed{{\tt\'\i}}%
+  \def ^^ee{{\tt\^\i}}\def ^^ef{{\tt\"\i}}\def ^^f1{{\tt\~n}}%
+  \def ^^f2{{\tt\`o}}\def ^^f3{{\tt\'o}}\def ^^f4{{\tt\^o}}%
+  \def ^^f5{{\tt\~o}}\def ^^f6{{\tt\"o}}\def ^^f8{{\tt\o}}%
+  \def ^^f9{{\tt\`u}}\def^^fa{{\tt\'u}}\def ^^fb{{\tt\^u}}%
+  \def ^^fc{{\tt\"u}}\def ^^fd{{\tt\'y}}\def ^^ff{{\tt\"y}}}%
+
+\fi\fi
+
+\endinput

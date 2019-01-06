@@ -1,24 +1,22 @@
-.TH CWEB 1 "28 October 2018" "Web2C @VERSION@"
+.TH CWEB 1 "6 January 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .SH NAME
 ctangle, cweave \- translate CWEB to C and/or TeX
 .\"=====================================================================
 .SH SYNOPSIS
-.na
 .B ctangle
-.RB [ \-bhp ]
-.RB [ +s ]
+.RB [ +bhps ]
 .IR webfile [ \fB.w\fP ]
 .RI [{ changefile [ \fB.ch\fP ]| \fB\-\fP }
 .RI [ outfile [ \fB.c\fP ]]]
 .br
 .B cweave
-.RB [ \-befhpx ]
-.RB [ +s ]
+.RB [ \-fiox ]
+.RB [ \-lX | +lX ]
+.RB [ +behps ]
 .IR webfile [ \fB.w\fP ]
 .RI [{ changefile [ \fB.ch\fP ]| \fB\-\fP }
 .RI [ outfile [ \fB.tex\fP ]]]
-.ad
 .\"=====================================================================
 .SH DESCRIPTION
 The
@@ -72,27 +70,26 @@ default).
 In fact, the options are processed from left to right,
 so a sequence like -f\ +f corresponds to +f (which is the default).
 .PP
+Both programs operate silently by default (as of 2019).
+.PP
 The
-.B \-b
-option suppresses the banner line that normally appears on your terminal
+.B +b
+option prints the banner line on your terminal
 when ctangle or cweave begins.
 The
-.B \-h
-option suppresses the happy message that normally appears if the processing
+.B +h
+option prints the happy message if the processing
 was successful.
 The
-.B \-p
-option suppresses progress reports (starred module numbers) as the processing
+.B +p
+option prints progress reports (starred module numbers) as the processing
 takes place.
-If you say
-.BR \-bhp ,
-you get nothing but error messages.
 .PP
 The
 .B +s
 option prints statistics about memory usage at the end of a run.
 .PP
-There are three other options applicable to
+There are six other options applicable to
 .B cweave
 only:
 .B \-f
@@ -106,6 +103,14 @@ Such brackets are normally inserted so that special hooks
 can be used by
 .I cweb-latex
 and similar programs.
+.B \-i
+suppresses the indentation of parameter declarations.
+.B \-lX
+(or
+.B +lX
+) uses macros for language X\ from Xcwebmac.tex.
+.B \-o
+suppresses the visual separation of declarations and statements.
 .B \-x
 means omit the index and table of contents.
 .\"=====================================================================
@@ -144,8 +149,11 @@ and the source code listings).
 .\"=====================================================================
 .SH AUTHORS
 Don Knuth wrote WEB for TeX and Pascal.
+.br
 Silvio Levy designed and developed CWEB
 by adapting the WEB conventions to\ C and by recoding everything in CWEB.
 Knuth began using CWEB and made further refinements.
 Many other helpers are acknowledged in the CWEB manual.
-
+.br
+Andreas Scherer developed the extended CWEBbin version. As of 2019, the
+CWEB system in TeX Live is CWEBbin; see https://github.com/ascherer/cwebbin.

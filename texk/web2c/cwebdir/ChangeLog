@@ -1,3 +1,29 @@
+2019-01-05  Andreas Scherer  <https://ascherer.github.io>
+
+	Integration of CWEBbin as the new CWEB in TeX Live,
+	https://github.com/ascherer/cwebbin.
+	
+	Purge cwebboot.h[in] from CWEB build process;
+	see ../ChangeLog for more changes in ../am/, etc.
+	
+	* comm-w2c.h: new file.
+	* ctang-w2c.ch,
+	* cweav-w2c.ch: cwebbin changes for translations and everything else.
+	
+	* ctproofmac.tex,
+	* cttwinxmac.tex,
+	* ctwimac.tex: new macro files.
+	
+	* po/: new subdirectory for translations.
+	* cwebinputs,
+	* texinputs: new subdirs to include entire original cweb distribution.
+	
+	Add CTWILL material on top of CWEAVE.
+	* prod-twill.w,
+	* refsort.w,
+	* twinx.w,
+	* ctwill-w2c.ch: new files.
+
 2018-12-30  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweave.w,

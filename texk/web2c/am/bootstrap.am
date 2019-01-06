@@ -56,36 +56,38 @@ EXTRA_DIST += tangleboot.pin
 DISTCLEANFILES += tangleboot.c tangleboot.h tangleboot.p tangleboot-web2c
 
 # Bootstrapping ctangle requires making it with itself.  We use the opportunity
-# to create an up-to-date ctangleboot.cin and cwebboot.[ch]in as well.
+# to create an up-to-date ctangleboot.cin and cwebboot.cin as well.
 bin_PROGRAMS += ctangle
 nodist_ctangle_SOURCES = ctangle.c cweb.c
-$(ctangle_OBJECTS): cweb.h
-# ctangle.c and cweb.[ch] are special cases, since they are needed to compile
+# ctangle.c and cweb.c are special cases, since they are needed to compile
 # themselves.  We depend on ctangleboot, even though we might not use it.
 ctangleboot = AM_V_P=$(AM_V_P) $(SHELL) ./ctangleboot-sh $@
-ctangle.c: ctangleboot$(EXEEXT) cwebdir/common.h cwebdir/ctangle.w cwebdir/ctang-w2c.ch ctangleboot-sh
+ctangle.c: ctangleboot$(EXEEXT) cwebdir/comm-w2c.h cwebdir/ctangle.w cwebdir/ctang-w2c.ch ctangleboot-sh
 	@$(ctangleboot) ctangle ctang-w2c
-cweb.c cweb.h: common-ctangle
+cweb.c: common-ctangle
 	@$(ctangleboot) common comm-w2c cweb.c
 common-ctangle: ctangleboot$(EXEEXT) cwebdir/common.w cwebdir/comm-w2c.ch ctangleboot-sh
 	@$(ctangleboot) common comm-w2c cweb.c
 EXTRA_DIST += cwebdir
 NEVER_DIST += cwebdir/cweave.log cwebdir/cweave.trs
+NEVER_DIST += cwebdir/ctwill.log cwebdir/ctwill.trs
+NEVER_DIST += cwebdir/refsort.log cwebdir/refsort.trs
+NEVER_DIST += cwebdir/twinx.log cwebdir/twinx.trs
 ## We install man/cweb.man, not cwebdir/cweb.1
 ## nodist_man_MANS += cwebdir/cweb.1
-DISTCLEANFILES += ctangle.c cweb.c cweb.h common-ctangle
+DISTCLEANFILES += ctangle.c cweb.c common-ctangle
 
 noinst_PROGRAMS += ctangleboot
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
-$(ctangleboot_OBJECTS): cwebboot.h $(ctangleboot_DEPENDENCIES)
-# ctangleboot.cin and cwebboot.[ch]in are in the distribution
+$(ctangleboot_OBJECTS): $(ctangleboot_DEPENDENCIES)
+# ctangleboot.cin and cwebboot.cin are in the distribution
 .cin.c:
 	$(cp_silent)cp -f $< $@
 .hin.h:
 	$(cp_silent)cp -f $< $@
 ctangleboot_DEPENDENCIES = $(default_dependencies)
-EXTRA_DIST += ctangleboot.cin cwebboot.cin cwebboot.hin
-DISTCLEANFILES += ctangleboot.c cwebboot.c cwebboot.h
+EXTRA_DIST += ctangleboot.cin cwebboot.cin
+DISTCLEANFILES += ctangleboot.c cwebboot.c
 
 ## Tests
 ##

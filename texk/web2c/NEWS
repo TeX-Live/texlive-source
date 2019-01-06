@@ -3,10 +3,13 @@ This file records noteworthy changes.  (Public domain.)
 BibTeX: subsidiary .aux files are looked for in the directory of the
 main .aux file, if not found as-is (to work better with -output-directory).
 
+CWEB: now comes from the CWEBbin package
+(https://github.com/ascherer/cwebbin), with translation capabilities,
+more language support, and more.
+
 
 2018 (for TeX Live 2018, 14 April 2018)
 * Directories in the -output-directory do not mask files by the same name.
-
 
 2017 (for TeX Live 2017, 19 May 2017)
 2016 (for TeX Live 2016, 21 May 2016)

@@ -10,7 +10,7 @@
    thing, the messages have a lot in common, so it's nice to have them
    in one place.)
 
-Copyright 1995, 1996, 2009, 2011, 2012 Karl Berry.
+Copyright 1995, 1996, 2009, 2011-2019 Karl Berry.
 Copyright 2008 Taco Hoekwater.
 Copyright 2001, 2003, 2004 Olaf Weber.
 
@@ -56,9 +56,9 @@ const_string CTANGLEHELP[] = {
     "  unless otherwise specified by OUTFILE; in this case, '-' specifies",
     "  a null CHANGEFILE.",
     "",
-    "-b          suppress banner line on terminal",
-    "-h          suppress success message on completion",
-    "-p          suppress progress report messages",
+    "+b          print banner line on terminal",
+    "+h          print success message on completion",
+    "+p          print progress report messages",
     "+s          print usage statistics",
     "--help      display this help and exit",
     "--version   output version information and exit",
@@ -73,12 +73,39 @@ const_string CWEAVEHELP[] = {
     "  unless otherwise specified by OUTFILE; in this case, '-' specifies",
     "  a null CHANGEFILE.",
     "",
-    "-b          suppress banner line on terminal",
+    "+b          print banner line on terminal",
     "-f          do not force a newline after every C statement in output",
-    "-h          suppress success message on completion",
-    "-p          suppress progress report messages",
+    "+h          print success message on completion",
+    "-i          suppress indentation of parameter declarations",
+    "-o          suppress separation of declarations and statements",
+    "+p          print progress report messages",
     "-x          omit indices, section names, table of contents",
     "+e          enclose C material in \\PB{...}",
+    "+lX         use macros for language X as of Xcwebmac.tex",
+    "+s          print usage statistics",
+    "--help      display this help and exit",
+    "--version   output version information and exit",
+    NULL
+};
+
+const_string CTWILLHELP[] = {
+    "Usage: ctwill [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]",
+    "  Weave WEBFILE with CHANGEFILE into a TeX document with mini-indexes.",
+    "  Default CHANGEFILE is " DEV_NULL ";",
+    "  TeX output goes to the basename of WEBFILE extended with `.tex'",
+    "  unless otherwise specified by OUTFILE; in this case, '-' specifies",
+    "  a null CHANGEFILE.",
+    "",
+    "+b          print banner line on terminal",
+    "-f          do not force a newline after every C statement in output",
+    "+h          print success message on completion",
+    "-i          suppress indentation of parameter declarations",
+    "-o          suppress separation of declarations and statements",
+    "+P          \\input proofmac.tex instead of ctwimac.tex",
+    "+p          print progress report messages",
+    "-x          omit indices, section names, table of contents",
+    "+e          enclose C material in \\PB{...}",
+    "+lX         use macros for language X as of Xcwebmac.tex",
     "+s          print usage statistics",
     "--help      display this help and exit",
     "--version   output version information and exit",

@@ -1,0 +1,40 @@
+% In case `german.sty' has been loaded, we have to redefine the `\3'
+% macro for an optional break within a statement.  This should be the
+% first command after `\input german.sty' in your CWEB source.
+\def\originalthree{\def\3##1{\hfil\penalty##10\hfilneg}}
+
+\def\ATH{{\acrofalse\X\kern-.5em:Pr\"aprozessor Definitionen\X}}
+
+\def\A{\note{Siehe auch Abschnitt}} % xref for doubly defined section name
+\def\As{\note{Siehe auch die Abschnitte}}
+  % xref for multiply defined section name
+
+\def\ET{ und~} % conjunction between two section numbers
+\def\ETs{ und~} % conjunction between the last two of several section numbers
+
+\def\Q{\note{Dieser Programmteil wird zitiert in Abschnitt}}
+  % xref for mention of a section
+\def\Qs{\note{Dieser Programmteil wird zitiert in den Abschnitten}}
+  % xref for mentions of a section
+
+\def\U{\note{Dieser Programmteil wird verwendet in Abschnitt}}
+  % xref for use of a section
+\def\Us{\note{Dieser Programmteil wird verwendet in den Abschnitten}}
+  % xref for uses of a section
+
+\def\ch{\note{Die folgenden Abschnitte sind vom Change-File ver\"andert worden:}
+  \let\*=\relax}
+
+\def\redeffin{\message{Abschnittsnamen:}
+  \def\grouptitle{ABSCHNITTSNAMEN}
+  \def\outsecname{Abschnittsnamen}
+  \def\Q{\note{Zitiert in Abschnitt}} % crossref for mention of a section
+  \def\Qs{\note{Zitiert in den Abschnitten}} % crossref for mentions of a section
+  \def\U{\note{Verwendet in Abschnitt}} % crossref for use of a section
+  \def\Us{\note{Verwendet in den Abschnitten}} % crossref for uses of a section
+}
+
+\def\redefcon{\message{Inhaltsverzeichnis:}
+  \def\grouptitle{INHALTSVERZEICHNIS:}
+  \def\headerline{\hfil Abschnitt\hbox to3em{\hss Seite}}
+}
