@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2019 Free Software Foundation, Inc.
 
-timestamp='2019-01-01'
+timestamp='2019-01-04'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -111,6 +111,7 @@ case $# in
 esac
 
 # Split fields of configuration type
+# shellcheck disable=SC2162
 IFS="-" read field1 field2 field3 field4 <<EOF
 $1
 EOF
@@ -918,6 +919,7 @@ case $basic_machine in
 		;;
 
 	*-*)
+		# shellcheck disable=SC2162
 		IFS="-" read cpu vendor <<EOF
 $basic_machine
 EOF
@@ -1189,7 +1191,7 @@ case $cpu-$vendor in
 			| microblaze | microblazeel \
 			| mips | mipsbe | mipseb | mipsel | mipsle \
 			| mips16 \
-			| mips64 | mips64el \
+			| mips64 | mips64eb | mips64el \
 			| mips64octeon | mips64octeonel \
 			| mips64orion | mips64orionel \
 			| mips64r5900 | mips64r5900el \
