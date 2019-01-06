@@ -1,0 +1,13 @@
+diff -bur lj_alloc.c.orig lj_alloc.c 
+--- lj_alloc.c.orig	2018-10-27 20:24:05.499136144 +0200
++++ lj_alloc.c	2018-10-27 20:24:28.790707009 +0200
+@@ -343,7 +343,7 @@
+ }
+ #endif
+ 
+-#if (defined(__FreeBSD__) || defined(__FreeBSD_kernel__)) && !LJ_TARGET_PS4
++#if ((defined(__FreeBSD__) && __FreeBSD__ < 10) || defined(__FreeBSD_kernel__)) && !LJ_TARGET_PS4
+ 
+ #include <sys/resource.h>
+ 
+
