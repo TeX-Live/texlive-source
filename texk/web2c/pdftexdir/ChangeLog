@@ -1,3 +1,11 @@
+2019-01-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* tounicode.c (deftounicode): suppress a warning:
+	format specifies type 'unsigned int' but the argument has
+	type 'long' [-Wformat]
+	* writet3.c (writet3): suppress a warning:
+	add explicit braces to avoid dangling else [-Wdangling-else]
+
 2018-12-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftosrc-poppler0.72.0.cc, pdftoepdf-poppler0.72.0.cc:
