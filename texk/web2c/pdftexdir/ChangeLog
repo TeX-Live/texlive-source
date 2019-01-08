@@ -1,3 +1,7 @@
+2019-01-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftosrc-poppler0.73.0.cc: Add to support poppler-0.73.0.
+
 2019-01-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tounicode.c (deftounicode): suppress a compiler warning:
