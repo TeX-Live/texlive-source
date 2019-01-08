@@ -72,14 +72,21 @@ public:
     
     void TestVariantParsing(void);
 
-   /* Test getting keyword enumeratin */
+   /* Test getting keyword enumeration */
    void TestKeywordVariants(void);
+   void TestCreateUnicodeKeywords(void);
 
    /* Test getting keyword values */
    void TestKeywordVariantParsing(void);
+   void TestCreateKeywordSet(void);
+   void TestCreateUnicodeKeywordSet(void);
+   void TestGetKeywordValueStdString(void);
+   void TestGetUnicodeKeywordValueStdString(void);
 
    /* Test setting keyword values */
    void TestSetKeywordValue(void);
+   void TestSetKeywordValueStringPiece(void);
+   void TestSetUnicodeKeywordValueStringPiece(void);
 
    /* Test getting the locale base name */
    void TestGetBaseName(void);
@@ -106,6 +113,18 @@ public:
     void TestIsRightToLeft();
     void TestBug11421();
     void TestBug13277();
+    void TestBug13554();
+
+    void TestAddLikelySubtags();
+    void TestMinimizeSubtags();
+
+    void TestForLanguageTag();
+    void TestToLanguageTag();
+
+    void TestMoveAssign();
+    void TestMoveCtor();
+
+    void TestBug13417VeryLongLanguageTag();
 
 private:
     void _checklocs(const char* label,

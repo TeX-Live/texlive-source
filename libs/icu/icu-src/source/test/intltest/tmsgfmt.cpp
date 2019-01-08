@@ -71,6 +71,7 @@ TestMessageFormat::runIndexedTest(int32_t index, UBool exec,
     TESTCASE_AUTO(TestSelectOrdinal);
     TESTCASE_AUTO(TestDecimals);
     TESTCASE_AUTO(TestArgIsPrefixOfAnother);
+    TESTCASE_AUTO(TestMessageFormatNumberSkeleton);
     TESTCASE_AUTO_END;
 }
 
@@ -999,8 +1000,7 @@ void TestMessageFormat::testSetLocale()
     UnicodeString compareStrGer = "At <time> on 08.08.1997, you made a deposit of ";
     compareStrGer += "456,83";
     compareStrGer += (UChar) 0x00a0;
-    compareStrGer += (UChar) 0x00a4;
-    compareStrGer += ".";
+    compareStrGer += "XXX.";
 
     MessageFormat msg( formatStr, err);
     result = "";
@@ -1014,13 +1014,15 @@ void TestMessageFormat::testSetLocale()
 
     logln(result);
     if (result != compareStrEng) {
-        dataerrln("***  MSG format err. - %s", u_errorName(err));
+        char bbuf[96];
+        result.extract(0, result.length(), bbuf, sizeof(bbuf));
+        dataerrln("***  MSG format err. - %s; result was %s", u_errorName(err), bbuf);
     }
 
     msg.setLocale(Locale::getEnglish());
     UBool getLocale_ok = TRUE;
     if (msg.getLocale() != Locale::getEnglish()) {
-        errln("*** MSG getLocal err.");
+        errln("*** MSG getLocale err.");
         getLocale_ok = FALSE;
     }
 
@@ -1800,11 +1802,11 @@ void TestMessageFormat::testCoverage(void) {
 void TestMessageFormat::testGetFormatNames() {
     IcuTestErrorCode errorCode(*this, "testGetFormatNames");
     MessageFormat msgfmt("Hello, {alice,number} {oops,date,full}  {zip,spellout} World.", Locale::getRoot(), errorCode);
-    if(errorCode.logDataIfFailureAndReset("MessageFormat() failed")) {
+    if(errorCode.errDataIfFailureAndReset("MessageFormat() failed")) {
         return;
     }
     LocalPointer<StringEnumeration> names(msgfmt.getFormatNames(errorCode));
-    if(errorCode.logIfFailureAndReset("msgfmt.getFormatNames() failed")) {
+    if(errorCode.errIfFailureAndReset("msgfmt.getFormatNames() failed")) {
         return;
     }
     const UnicodeString *name;
@@ -1846,7 +1848,7 @@ void TestMessageFormat::TestTrimArgumentName() {
     // ICU 4.8 allows and ignores white space around argument names and numbers.
     IcuTestErrorCode errorCode(*this, "TestTrimArgumentName");
     MessageFormat m("a { 0 , number , '#,#'#.0 } z", Locale::getEnglish(), errorCode);
-    if (errorCode.logDataIfFailureAndReset("Unable to instantiate MessageFormat")) {
+    if (errorCode.errDataIfFailureAndReset("Unable to instantiate MessageFormat")) {
         return;
     }
     Formattable args[1] = { (int32_t)2 };
@@ -1871,7 +1873,7 @@ void TestMessageFormat::TestSelectOrdinal() {
         "{0,plural,one{1 file}other{# files}}, "
         "{0,selectordinal,one{#st file}two{#nd file}few{#rd file}other{#th file}}",
         Locale::getEnglish(), errorCode);
-    if (errorCode.logDataIfFailureAndReset("Unable to instantiate MessageFormat")) {
+    if (errorCode.errDataIfFailureAndReset("Unable to instantiate MessageFormat")) {
         return;
     }
     Formattable args[1] = { (int32_t)21 };
@@ -1892,7 +1894,7 @@ void TestMessageFormat::TestSelectOrdinal() {
     assertEquals("plural-and-ordinal format(3) failed", "3 files, 3rd file",
                  m.format(args, 1, result.remove(), ignore, errorCode), TRUE);
 
-    errorCode.logDataIfFailureAndReset("");
+    errorCode.errDataIfFailureAndReset("");
 }
 
 void TestMessageFormat::TestDecimals() {
@@ -1991,6 +1993,40 @@ void TestMessageFormat::TestArgIsPrefixOfAnother() {
     // Ticket #12172
     MessageFormat mf3("{aa} {aaa}", Locale::getEnglish(), errorCode);
     assertEquals("aa aaa", "AB ABC", mf3.format(argNames + 1, args + 1, 2, result.remove(), errorCode));
+}
+
+void TestMessageFormat::TestMessageFormatNumberSkeleton() {
+    IcuTestErrorCode status(*this, "TestMessageFormatNumberSkeleton");
+
+    static const struct TestCase {
+        const char16_t* messagePattern;
+        const char* localeName;
+        double arg;
+        const char16_t* expected;
+    } cases[] = {
+            { u"{0,number,::percent}", "en", 50, u"50%" },
+            { u"{0,number,::percent scale/100}", "en", 0.5, u"50%" },
+            { u"{0,number,   ::   percent   scale/100   }", "en", 0.5, u"50%" },
+            { u"{0,number,::currency/USD}", "en", 23, u"$23.00" },
+            { u"{0,number,::precision-integer}", "en", 514.23, u"514" },
+            { u"{0,number,::.000}", "en", 514.23, u"514.230" },
+            { u"{0,number,::.}", "en", 514.23, u"514" },
+            { u"{0,number,::}", "fr", 514.23, u"514,23" },
+            { u"Cost: {0,number,::currency/EUR}.", "en", 4.3, u"Cost: €4.30." },
+            { u"{0,number,'::'0.00}", "en", 50, u"::50.00" }, // pattern literal
+    };
+
+    for (auto& cas : cases) {
+        status.setScope(cas.messagePattern);
+        MessageFormat msgf(cas.messagePattern, cas.localeName, status);
+        UnicodeString sb;
+        FieldPosition fpos(0);
+        Formattable argsArray[] = {{cas.arg}};
+        Formattable args(argsArray, 1);
+        msgf.format(args, sb, status);
+
+        assertEquals(cas.messagePattern, cas.expected, sb);
+    }
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

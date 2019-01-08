@@ -243,6 +243,9 @@ class UnicodeStringAppendable;  // unicode/appendable.h
  * than other ICU APIs. In particular:
  * - If indexes are out of bounds for a UnicodeString object
  *   (<0 or >length()) then they are "pinned" to the nearest boundary.
+ * - If the buffer passed to an insert/append/replace operation is owned by the
+ *   target object, e.g., calling str.append(str), an extra copy may take place
+ *   to ensure safety.
  * - If primitive string pointer values (e.g., const char16_t * or char *)
  *   for input strings are NULL, then those input string parameters are treated
  *   as if they pointed to an empty string.
@@ -1892,7 +1895,7 @@ public:
   UnicodeString &fastCopyFrom(const UnicodeString &src);
 
   /**
-   * Move assignment operator, might leave src in bogus state.
+   * Move assignment operator; might leave src in bogus state.
    * This string will have the same contents and state that the source string had.
    * The behavior is undefined if *this and src are the same object.
    * @param src source string
@@ -1905,7 +1908,7 @@ public:
 
   // do not use #ifndef U_HIDE_DRAFT_API for moveFrom, needed by non-draft API
   /**
-   * Move assignment, might leave src in bogus state.
+   * Move assignment; might leave src in bogus state.
    * This string will have the same contents and state that the source string had.
    * The behavior is undefined if *this and src are the same object.
    *
@@ -3314,7 +3317,7 @@ public:
   UnicodeString(const UnicodeString& that);
 
   /**
-   * Move constructor, might leave src in bogus state.
+   * Move constructor; might leave src in bogus state.
    * This string will have the same contents and state that the source string had.
    * @param src source string
    * @stable ICU 56

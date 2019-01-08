@@ -3,9 +3,10 @@
 
 #include "unicode/utypes.h"
 
-#if !UCONFIG_NO_FORMATTING && !UPRV_INCOMPLETE_CPP11_SUPPORT
+#if !UCONFIG_NO_FORMATTING
 
 #include "numbertest.h"
+#include "number_microprops.h"
 #include "number_patternmodifier.h"
 
 void PatternModifierTest::runIndexedTest(int32_t index, UBool exec, const char *&name, char *) {
@@ -28,9 +29,11 @@ void PatternModifierTest::testBasic() {
     mod.setPatternInfo(&patternInfo);
     mod.setPatternAttributes(UNUM_SIGN_AUTO, false);
     DecimalFormatSymbols symbols(Locale::getEnglish(), status);
-    CurrencyUnit currency(u"USD", status);
-    assertSuccess("Spot 2", status);
-    mod.setSymbols(&symbols, currency, UNUM_UNIT_WIDTH_SHORT, nullptr);
+    CurrencySymbols currencySymbols({u"USD", status}, "en", status);
+    if (!assertSuccess("Spot 2", status, true)) {
+        return;
+    }
+    mod.setSymbols(&symbols, &currencySymbols, UNUM_UNIT_WIDTH_SHORT, nullptr);
 
     mod.setNumberProperties(1, StandardPlural::Form::COUNT);
     assertEquals("Pattern a0b", u"a", getPrefix(mod, status));
@@ -88,9 +91,11 @@ void PatternModifierTest::testPatternWithNoPlaceholder() {
     mod.setPatternInfo(&patternInfo);
     mod.setPatternAttributes(UNUM_SIGN_AUTO, false);
     DecimalFormatSymbols symbols(Locale::getEnglish(), status);
-    CurrencyUnit currency(u"USD", status);
-    assertSuccess("Spot 2", status);
-    mod.setSymbols(&symbols, currency, UNUM_UNIT_WIDTH_SHORT, nullptr);
+    CurrencySymbols currencySymbols({u"USD", status}, "en", status);
+    if (!assertSuccess("Spot 2", status, true)) {
+        return;
+    }
+    mod.setSymbols(&symbols, &currencySymbols, UNUM_UNIT_WIDTH_SHORT, nullptr);
     mod.setNumberProperties(1, StandardPlural::Form::COUNT);
 
     // Unsafe Code Path
@@ -129,10 +134,10 @@ void PatternModifierTest::testMutableEqualsImmutable() {
     mod.setPatternInfo(&patternInfo);
     mod.setPatternAttributes(UNUM_SIGN_AUTO, false);
     DecimalFormatSymbols symbols(Locale::getEnglish(), status);
-    CurrencyUnit currency(u"USD", status);
+    CurrencySymbols currencySymbols({u"USD", status}, "en", status);
     assertSuccess("Spot 2", status);
     if (U_FAILURE(status)) { return; }
-    mod.setSymbols(&symbols, currency, UNUM_UNIT_WIDTH_SHORT, nullptr);
+    mod.setSymbols(&symbols, &currencySymbols, UNUM_UNIT_WIDTH_SHORT, nullptr);
     DecimalQuantity fq;
     fq.setToInt(1);
 
@@ -165,14 +170,14 @@ void PatternModifierTest::testMutableEqualsImmutable() {
 UnicodeString PatternModifierTest::getPrefix(const MutablePatternModifier &mod, UErrorCode &status) {
     NumberStringBuilder nsb;
     mod.apply(nsb, 0, 0, status);
-    int32_t prefixLength = mod.getPrefixLength(status);
+    int32_t prefixLength = mod.getPrefixLength();
     return UnicodeString(nsb.toUnicodeString(), 0, prefixLength);
 }
 
 UnicodeString PatternModifierTest::getSuffix(const MutablePatternModifier &mod, UErrorCode &status) {
     NumberStringBuilder nsb;
     mod.apply(nsb, 0, 0, status);
-    int32_t prefixLength = mod.getPrefixLength(status);
+    int32_t prefixLength = mod.getPrefixLength();
     return UnicodeString(nsb.toUnicodeString(), prefixLength, nsb.length() - prefixLength);
 }
 

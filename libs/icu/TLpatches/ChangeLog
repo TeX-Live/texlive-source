@@ -1,3 +1,7 @@
+2019-01-08  Karl Berry  <karl@freefriends.org>
+
+	* update for icu-63.1; no substantive changes.
+
 2018-01-16  Karl Berry  <karl@freefriends.org>
 
 	* patch-19-netbsd [__NetBSD__]: new patch, defining _ISOC99_SOURCE.

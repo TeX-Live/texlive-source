@@ -633,6 +633,29 @@ BasicNormalizerTest::TestPreviousNext(const UChar *src, int32_t srcLength,
                                       const char *moves,
                                       UNormalizationMode mode,
                                       const char *name) {
+    // Sanity check non-iterative normalization.
+    {
+        IcuTestErrorCode errorCode(*this, "TestPreviousNext");
+        UnicodeString result;
+        Normalizer::normalize(UnicodeString(src, srcLength), mode, 0, result, errorCode);
+        if (errorCode.isFailure()) {
+            dataerrln("error: non-iterative normalization of %s failed: %s",
+                      name, errorCode.errorName());
+            errorCode.reset();
+            return;
+        }
+        // UnicodeString::fromUTF32(expect, expectLength)
+        // would turn unpaired surrogates into U+FFFD.
+        for (int32_t i = 0, j = 0; i < result.length(); ++j) {
+            UChar32 c = result.char32At(i);
+            if (c != expect[j]) {
+                errln("error: non-iterative normalization of %s did not yield the expected result",
+                      name);
+            }
+            i += U16_LENGTH(c);
+        }
+    }
+
     // iterators
     Normalizer iter(src, srcLength, mode);
 
@@ -1394,7 +1417,7 @@ BasicNormalizerTest::TestSkippable() {
     skipSets[UNORM_NFKD].applyPattern(UNICODE_STRING_SIMPLE("[:NFKD_Inert:]"), errorCode);
     skipSets[UNORM_NFC].applyPattern(UNICODE_STRING_SIMPLE("[:NFC_Inert:]"), errorCode);
     skipSets[UNORM_NFKC].applyPattern(UNICODE_STRING_SIMPLE("[:NFKC_Inert:]"), errorCode);
-    if(errorCode.logDataIfFailureAndReset("UnicodeSet(NF..._Inert) failed")) {
+    if(errorCode.errDataIfFailureAndReset("UnicodeSet(NF..._Inert) failed")) {
         return;
     }
 
@@ -1432,9 +1455,14 @@ struct StringPair { const char *input, *expected; };
 void
 BasicNormalizerTest::TestCustomComp() {
     static const StringPair pairs[]={
-        { "\\uD801\\uE000\\uDFFE", "" },
-        { "\\uD800\\uD801\\uE000\\uDFFE\\uDFFF", "\\uD7FF\\uFFFF" },
-        { "\\uD800\\uD801\\uDFFE\\uDFFF", "\\uD7FF\\U000107FE\\uFFFF" },
+        // ICU 63 normalization with UCPTrie requires inert surrogate code points.
+        // { "\\uD801\\uE000\\uDFFE", "" },
+        // { "\\uD800\\uD801\\uE000\\uDFFE\\uDFFF", "\\uD7FF\\uFFFF" },
+        // { "\\uD800\\uD801\\uDFFE\\uDFFF", "\\uD7FF\\U000107FE\\uFFFF" },
+        { "\\uD801\\uE000\\uDFFE", "\\uD801\\uDFFE" },
+        { "\\uD800\\uD801\\uE000\\uDFFE\\uDFFF", "\\uD800\\uD801\\uDFFE\\uDFFF" },
+        { "\\uD800\\uD801\\uDFFE\\uDFFF", "\\uD800\\U000107FE\\uDFFF" },
+
         { "\\uE001\\U000110B9\\u0345\\u0308\\u0327", "\\uE002\\U000110B9\\u0327\\u0345" },
         { "\\uE010\\U000F0011\\uE012", "\\uE011\\uE012" },
         { "\\uE010\\U000F0011\\U000F0011\\uE012", "\\uE011\\U000F0010" },
@@ -1445,7 +1473,7 @@ BasicNormalizerTest::TestCustomComp() {
     const Normalizer2 *customNorm2=
         Normalizer2::getInstance(loadTestData(errorCode), "testnorm",
                                  UNORM2_COMPOSE, errorCode);
-    if(errorCode.logDataIfFailureAndReset("unable to load testdata/testnorm.nrm")) {
+    if(errorCode.errDataIfFailureAndReset("unable to load testdata/testnorm.nrm")) {
         return;
     }
     for(int32_t i=0; i<UPRV_LENGTHOF(pairs); ++i) {
@@ -1462,9 +1490,14 @@ BasicNormalizerTest::TestCustomComp() {
 void
 BasicNormalizerTest::TestCustomFCC() {
     static const StringPair pairs[]={
-        { "\\uD801\\uE000\\uDFFE", "" },
-        { "\\uD800\\uD801\\uE000\\uDFFE\\uDFFF", "\\uD7FF\\uFFFF" },
-        { "\\uD800\\uD801\\uDFFE\\uDFFF", "\\uD7FF\\U000107FE\\uFFFF" },
+        // ICU 63 normalization with UCPTrie requires inert surrogate code points.
+        // { "\\uD801\\uE000\\uDFFE", "" },
+        // { "\\uD800\\uD801\\uE000\\uDFFE\\uDFFF", "\\uD7FF\\uFFFF" },
+        // { "\\uD800\\uD801\\uDFFE\\uDFFF", "\\uD7FF\\U000107FE\\uFFFF" },
+        { "\\uD801\\uE000\\uDFFE", "\\uD801\\uDFFE" },
+        { "\\uD800\\uD801\\uE000\\uDFFE\\uDFFF", "\\uD800\\uD801\\uDFFE\\uDFFF" },
+        { "\\uD800\\uD801\\uDFFE\\uDFFF", "\\uD800\\U000107FE\\uDFFF" },
+
         // The following expected result is different from CustomComp
         // because of only-contiguous composition.
         { "\\uE001\\U000110B9\\u0345\\u0308\\u0327", "\\uE001\\U000110B9\\u0327\\u0308\\u0345" },
@@ -1477,7 +1510,7 @@ BasicNormalizerTest::TestCustomFCC() {
     const Normalizer2 *customNorm2=
         Normalizer2::getInstance(loadTestData(errorCode), "testnorm",
                                  UNORM2_COMPOSE_CONTIGUOUS, errorCode);
-    if(errorCode.logDataIfFailureAndReset("unable to load testdata/testnorm.nrm")) {
+    if(errorCode.errDataIfFailureAndReset("unable to load testdata/testnorm.nrm")) {
         return;
     }
     for(int32_t i=0; i<UPRV_LENGTHOF(pairs); ++i) {
@@ -1537,7 +1570,7 @@ void
 BasicNormalizerTest::TestNormalizeUTF8WithEdits() {
     IcuTestErrorCode errorCode(*this, "TestNormalizeUTF8WithEdits");
     const Normalizer2 *nfkc_cf=Normalizer2::getNFKCCasefoldInstance(errorCode);
-    if(errorCode.logDataIfFailureAndReset("Normalizer2::getNFKCCasefoldInstance() call failed")) {
+    if(errorCode.errDataIfFailureAndReset("Normalizer2::getNFKCCasefoldInstance() call failed")) {
         return;
     }
     static const char *const src =
@@ -1641,7 +1674,7 @@ BasicNormalizerTest::TestLowMappingToEmpty_D() {
     IcuTestErrorCode errorCode(*this, "TestLowMappingToEmpty_D");
     const Normalizer2 *n2 = Normalizer2::getInstance(
         nullptr, "nfkc_cf", UNORM2_DECOMPOSE, errorCode);
-    if (errorCode.logDataIfFailureAndReset("Normalizer2::getInstance() call failed")) {
+    if (errorCode.errDataIfFailureAndReset("Normalizer2::getInstance() call failed")) {
         return;
     }
     checkLowMappingToEmpty(*n2);
@@ -1663,7 +1696,7 @@ BasicNormalizerTest::TestLowMappingToEmpty_FCD() {
     IcuTestErrorCode errorCode(*this, "TestLowMappingToEmpty_FCD");
     const Normalizer2 *n2 = Normalizer2::getInstance(
         nullptr, "nfkc_cf", UNORM2_FCD, errorCode);
-    if (errorCode.logDataIfFailureAndReset("Normalizer2::getInstance() call failed")) {
+    if (errorCode.errDataIfFailureAndReset("Normalizer2::getInstance() call failed")) {
         return;
     }
     checkLowMappingToEmpty(*n2);
@@ -1690,7 +1723,7 @@ void
 BasicNormalizerTest::TestNormalizeIllFormedText() {
     IcuTestErrorCode errorCode(*this, "TestNormalizeIllFormedText");
     const Normalizer2 *nfkc_cf = Normalizer2::getNFKCCasefoldInstance(errorCode);
-    if(errorCode.logDataIfFailureAndReset("Normalizer2::getNFKCCasefoldInstance() call failed")) {
+    if(errorCode.errDataIfFailureAndReset("Normalizer2::getNFKCCasefoldInstance() call failed")) {
         return;
     }
     // Normalization behavior for ill-formed text is not defined.
@@ -1733,7 +1766,7 @@ BasicNormalizerTest::TestComposeJamoTBase() {
     // which is not a conjoining Jamo Trailing consonant.
     IcuTestErrorCode errorCode(*this, "TestComposeJamoTBase");
     const Normalizer2 *nfkc = Normalizer2::getNFKCInstance(errorCode);
-    if(errorCode.logDataIfFailureAndReset("Normalizer2::getNFKCInstance() call failed")) {
+    if(errorCode.errDataIfFailureAndReset("Normalizer2::getNFKCInstance() call failed")) {
         return;
     }
     UnicodeString s(u"\u1100\u1161\u11A7\u1100\u314F\u11A7가\u11A7");
@@ -1759,7 +1792,7 @@ void
 BasicNormalizerTest::TestComposeBoundaryAfter() {
     IcuTestErrorCode errorCode(*this, "TestComposeBoundaryAfter");
     const Normalizer2 *nfkc = Normalizer2::getNFKCInstance(errorCode);
-    if(errorCode.logDataIfFailureAndReset("Normalizer2::getNFKCInstance() call failed")) {
+    if(errorCode.errDataIfFailureAndReset("Normalizer2::getNFKCInstance() call failed")) {
         return;
     }
     // U+02DA and U+FB2C do not have compose-boundaries-after.

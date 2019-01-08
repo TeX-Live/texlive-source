@@ -172,7 +172,7 @@ public:
      * @return *this
      */
     LocalMemory<T> &moveFrom(LocalMemory<T> &src) U_NOEXCEPT {
-        delete[] LocalPointerBase<T>::ptr;
+        uprv_free(LocalPointerBase<T>::ptr);
         LocalPointerBase<T>::ptr=src.ptr;
         src.ptr=NULL;
         return *this;
@@ -279,6 +279,10 @@ inline T *LocalMemory<T>::allocateInsteadAndCopy(int32_t newCapacity, int32_t le
  *
  * Unlike LocalMemory and LocalArray, this class never adopts
  * (takes ownership of) another array.
+ *
+ * WARNING: MaybeStackArray only works with primitive (plain-old data) types.
+ * It does NOT know how to call a destructor! If you work with classes with
+ * destructors, consider LocalArray in localpointer.h.
  */
 template<typename T, int32_t stackCapacity>
 class MaybeStackArray {
@@ -299,6 +303,14 @@ public:
      * Destructor deletes the array (if owned).
      */
     ~MaybeStackArray() { releaseArray(); }
+    /**
+     * Move constructor: transfers ownership or copies the stack array.
+     */
+    MaybeStackArray(MaybeStackArray<T, stackCapacity> &&src) U_NOEXCEPT;
+    /**
+     * Move assignment: transfers ownership or copies the stack array.
+     */
+    MaybeStackArray<T, stackCapacity> &operator=(MaybeStackArray<T, stackCapacity> &&src) U_NOEXCEPT;
     /**
      * Returns the array capacity (number of T items).
      * @return array capacity
@@ -376,6 +388,11 @@ private:
             uprv_free(ptr);
         }
     }
+    void resetToStackArray() {
+        ptr=stackArray;
+        capacity=stackCapacity;
+        needToRelease=FALSE;
+    }
     /* No comparison operators with other MaybeStackArray's. */
     bool operator==(const MaybeStackArray & /*other*/) {return FALSE;}
     bool operator!=(const MaybeStackArray & /*other*/) {return TRUE;}
@@ -397,6 +414,34 @@ private:
     // static void * U_EXPORT2 operator new(size_t, void *ptr);
 #endif
 };
+
+template<typename T, int32_t stackCapacity>
+icu::MaybeStackArray<T, stackCapacity>::MaybeStackArray(
+        MaybeStackArray <T, stackCapacity>&& src) U_NOEXCEPT
+        : ptr(src.ptr), capacity(src.capacity), needToRelease(src.needToRelease) {
+    if (src.ptr == src.stackArray) {
+        ptr = stackArray;
+        uprv_memcpy(stackArray, src.stackArray, sizeof(T) * src.capacity);
+    } else {
+        src.resetToStackArray();  // take ownership away from src
+    }
+}
+
+template<typename T, int32_t stackCapacity>
+inline MaybeStackArray <T, stackCapacity>&
+MaybeStackArray<T, stackCapacity>::operator=(MaybeStackArray <T, stackCapacity>&& src) U_NOEXCEPT {
+    releaseArray();  // in case this instance had its own memory allocated
+    capacity = src.capacity;
+    needToRelease = src.needToRelease;
+    if (src.ptr == src.stackArray) {
+        ptr = stackArray;
+        uprv_memcpy(stackArray, src.stackArray, sizeof(T) * src.capacity);
+    } else {
+        ptr = src.ptr;
+        src.resetToStackArray();  // take ownership away from src
+    }
+    return *this;
+}
 
 template<typename T, int32_t stackCapacity>
 inline T *MaybeStackArray<T, stackCapacity>::resize(int32_t newCapacity, int32_t length) {
@@ -447,9 +492,7 @@ inline T *MaybeStackArray<T, stackCapacity>::orphanOrClone(int32_t length, int32
         uprv_memcpy(p, ptr, (size_t)length*sizeof(T));
     }
     resultCapacity=length;
-    ptr=stackArray;
-    capacity=stackCapacity;
-    needToRelease=FALSE;
+    resetToStackArray();
     return p;
 }
 

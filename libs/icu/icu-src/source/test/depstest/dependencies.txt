@@ -18,7 +18,7 @@ system_symbols:
     # C
     PIC system_misc system_debug malloc_functions ubsan
     c_strings c_string_formatting
-    floating_point trigonometry
+    int_functions floating_point trigonometry
     stdlib_qsort
     pthread system_locale
     stdio_input stdio_output file_io readlink_function dir_io mmap_functions dlfcn
@@ -58,8 +58,11 @@ group: c_string_formatting
     # Additional symbols in an optimized build.
     __sprintf_chk
 
+group: int_functions
+    div
+
 group: floating_point
-    abs fabs floor ceil modf fmod log pow round sqrt
+    abs fabs floor ceil modf fmod log pow round sqrt trunc
 
 group: trigonometry
     acos asin atan atan2 cos sin tan
@@ -154,13 +157,12 @@ library: common
     unistr_props unistr_case unistr_case_locale unistr_titlecase_brkiter unistr_cnv
     cstr
     uniset_core uniset_props uniset_closure usetiter uset uset_props
+    static_unicode_sets
     uiter edits
     ucasemap ucasemap_titlecase_brkiter script_runs
-    uprops ubidi_props ucase uscript uscript_props
+    uprops ubidi_props ucase uscript uscript_props characterproperties
     ubidi ushape ubiditransform
-    listformatter
     resourcebundle service_registration resbund_cnv ures_cnv icudataver ucat
-    loclikely
     currency
     locale_display_names2
     conversion converter_selector ucnv_set ucnvdisp
@@ -171,7 +173,7 @@ library: common
     ucharstriebuilder ucharstrieiterator
     bytestriebuilder bytestrieiterator
     hashtable uhash uvector uvector32 uvector64 ulist
-    propsvec utrie2 utrie2_builder
+    propsvec utrie2 utrie2_builder ucptrie umutablecptrie utrie_swap
     sort
     uinit utypes errorcode
     icuplug
@@ -203,7 +205,7 @@ group: breakiterator
   deps
     resourcebundle service_registration
     schriter utext uniset_core uniset_props
-    uhash ustack utrie
+    uhash ustack utrie2_builder
     ucharstrie bytestrie
     ucharstriebuilder  # for filteredbrk.o
     normlzr  # for dictbe.o, should switch to Normalizer2
@@ -253,7 +255,7 @@ group: stringprep
   deps
     unorm  # could change to use filterednormalizer2 directly for Unicode 3.2 normalization
     normalizer2
-    ubidi_props
+    ubidi_props utrie
 
 group: canonical_iterator
     caniter.o
@@ -271,7 +273,8 @@ group: normalizer2
   deps
     uniset_core
     bytestream bytesinkutil  # for UTF-8 output
-    utrie2_builder  # for building CanonIterData & FCD
+    umutablecptrie  # for building CanonIterData & FCD
+    utrie_swap  # TODO(ICU-20170): move unorm2_swap() to a separate file
     uvector  # for building CanonIterData
     uhash  # for the instance cache
     udata
@@ -280,6 +283,11 @@ group: punycode
     punycode.o
   deps
     platform
+
+group: static_unicode_sets
+    static_unicode_sets.o
+  deps
+    resourcebundle uniset_props
 
 group: uset_props
     uset_props.o
@@ -299,7 +307,7 @@ group: uniset_closure
 group: uniset_props
     uniset_props.o ruleiter.o
   deps
-    uniset_core uprops unistr_case
+    uniset_core uprops unistr_case characterproperties
     parsepos
     resourcebundle
     propname unames
@@ -374,7 +382,7 @@ group: cstr
 group: uscript
     uscript.o  # uscript_getCode() accepts a locale ID and loads its script code data
   deps
-    propname loclikely
+    propname resourcebundle
 
 group: uscript_props  # script metadata properties
     uscript_props.o
@@ -389,6 +397,12 @@ group: uprops
     ubidi_props
     unistr_case ustring_case  # only for case folding
     ucase
+
+group: characterproperties
+    characterproperties.o
+  deps
+    uprops
+    uniset_core
 
 group: propname
     propname.o
@@ -475,6 +489,8 @@ group: ustr_titlecase_brkiter
 group: edits
     edits.o
   deps
+    # Edits::Iterator::toString() calls ICU_Utility::appendNumber()
+    icu_utility
     platform
 
 group: ucasemap_titlecase_brkiter
@@ -514,7 +530,7 @@ group: uinit
 group: converter_selector
     ucnvsel.o
   deps
-    conversion propsvec utrie2_builder uset ucnv_set
+    conversion propsvec utrie2_builder utrie_swap uset ucnv_set
 
 group: ucnvdisp  # ucnv_getDisplayName()
     ucnvdisp.o
@@ -549,11 +565,6 @@ group: service_registration
     locale_display_names resourcebundle
     hashtable uvector
 
-group: listformatter
-    listformatter.o ulistformatter.o
-  deps
-    resourcebundle simpleformatter
-
 group: ucat  # message-catalog-like API
     ucat.o
   deps
@@ -572,18 +583,14 @@ group: locale_display_names2
 group: currency
     ucurr.o
   deps
-    loclikely resourcebundle ulist ustring_case_locale
+    resourcebundle ulist ustring_case_locale
     stdlib_qsort  # for ucurr.o (which does not use ICU's uarrsort.o)
+    static_unicode_sets usetiter
 
 group: icudataver  # u_getDataVersion()
     icudataver.o
   deps
     resourcebundle
-
-group: loclikely
-    loclikely.o
-  deps
-    resourcebundle uscript_props propname
 
 group: locresdata
     # This was intended to collect locale functions that load resource bundle data.
@@ -619,9 +626,12 @@ group: resourcebundle
     locid.o locmap.o wintz.o
     # Do we need class LocaleBased? http://bugs.icu-project.org/trac/ticket/8608
     locbased.o
+    loclikely.o
   deps
     udata ucol_swp
     sort stringenumeration uhash uvector
+    uscript_props propname
+    bytesinkutil
 
 group: udata
     udata.o ucmndata.o udatamem.o
@@ -676,20 +686,34 @@ group: propsvec
   deps
     sort utrie2_builder
 
+group: utrie_swap
+    utrie_swap.o
+  deps
+    udata
+
+group: umutablecptrie
+    umutablecptrie.o
+  deps
+    ucptrie
+
+group: ucptrie
+    ucptrie.o
+  deps
+    platform
+
 group: utrie2_builder
     utrie2_builder.o
   deps
     platform
     utrie2
     utrie  # for utrie2_fromUTrie()
-    ucol_swp  # for utrie_swap()
 
-group: utrie2
+group: utrie2  # Try to switch users to ucptrie.
     utrie2.o
   deps
     platform
 
-group: utrie  # Callers should use utrie2 instead.
+group: utrie  # Callers should use ucptrie instead.
     utrie.o
   deps
     platform
@@ -758,7 +782,7 @@ group: icuplug
 group: ucol_swp
     ucol_swp.o
   deps
-    utrie2  # Format version 4 uses UTrie2.
+    utrie_swap
 
 group: errorcode  # ErrorCode base class
     errorcode.o
@@ -803,8 +827,9 @@ library: i18n
     region localedata genderinfo charset_detector spoof_detection
     alphabetic_index collation collation_builder string_search
     dayperiodrules
+    listformatter
     formatting formattable_cnv regex regex_cnv translit
-    double_conversion numberformatter
+    double_conversion number_representation numberformatter numberparser
     universal_time_scale
     uclean_i18n
 
@@ -820,7 +845,6 @@ group: localedata
   deps
     uniset_props resourcebundle
     uset_props  # TODO: change to using C++ UnicodeSet, remove this dependency
-    loclikely
 
 group: genderinfo
     gender.o
@@ -859,7 +883,7 @@ group: collation
     ucol_res.o ucol_sit.o ucoleitr.o
   deps
     bytestream normalizer2 resourcebundle service_registration unifiedcache
-    ucharstrieiterator uiter ulist uset usetiter uvector32 uvector64
+    ucharstrieiterator uiter ulist uset usetiter uvector32 uvector64 utrie2
     uclean_i18n propname
 
 group: collation_builder
@@ -878,42 +902,66 @@ group: dayperiodrules
   deps
     resourcebundle uclean_i18n
 
+group: listformatter
+    listformatter.o ulistformatter.o
+  deps
+    resourcebundle simpleformatter format uclean_i18n
+
 group: double_conversion
     double-conversion.o double-conversion-bignum.o double-conversion-bignum-dtoa.o
     double-conversion-cached-powers.o double-conversion-diy-fp.o
-    double-conversion-fast-dtoa.o
+    double-conversion-fast-dtoa.o double-conversion-strtod.o
   deps
     platform
 
+group: number_representation
+    number_decimalquantity.o number_stringbuilder.o numparse_stringsegment.o number_utils.o
+  deps
+    decnumber double_conversion
+    # for data loading; that could be split off
+    resourcebundle
+    int_functions
+    ucase uniset_core
+
 group: numberformatter
     # ICU 60+ NumberFormatter API
-    number_affixutils.o number_compact.o number_decimalquantity.o
-    number_decimfmtprops.o number_fluent.o number_formatimpl.o
+    number_affixutils.o number_asformat.o
+    number_capi.o number_compact.o number_currencysymbols.o
+    number_decimfmtprops.o
+    number_fluent.o number_formatimpl.o
     number_grouping.o number_integerwidth.o number_longnames.o
-    number_modifiers.o number_notation.o number_padding.o
+    number_mapper.o number_modifiers.o number_multiplier.o
+    number_notation.o number_padding.o
     number_patternmodifier.o number_patternstring.o number_rounding.o
-    number_scientific.o number_stringbuilder.o
+    number_scientific.o number_skeletons.o
+    currpinf.o dcfmtsym.o numsys.o
+    numrange_fluent.o numrange_impl.o
+    # pluralrules
+    standardplural.o plurrule.o
   deps
-    digitlist formattable format units
-    # TODO: fix: dependency on formatting needed for circular dependency pluralrules <-> decimfmt.o
-    # We should be able to have a small pluralrules group and depend on that here.
-    formatting
+    decnumber double_conversion formattable format units
+    number_representation
     uclean_i18n common
+
+group: numberparser
+    numparse_affixes.o numparse_compositions.o numparse_currency.o
+    numparse_decimal.o numparse_impl.o numparse_parsednumber.o
+    numparse_scientific.o numparse_symbols.o
+    numparse_validators.o
+  deps
+    numberformatter
 
 group: formatting
     # TODO: Try to subdivide this ball of wax.
     # currencyformat
-    curramt.o currfmt.o currpinf.o
+    curramt.o currfmt.o
+    # pluralrules C API
+    upluralrules.o
     # decimalformat
-    dcfmtsym.o numsys.o unumsys.o
-    affixpatternparser.o decimfmtimpl.o digitaffix.o digitaffixesandpadding.o
-    digitformatter.o digitgrouping.o digitinterval.o
-    pluralaffix.o precision.o smallintformatter.o valueformatter.o
-    decfmtst.o decimfmt.o decimalformatpattern.o compactdecimalformat.o
+    unumsys.o
+    decimfmt.o compactdecimalformat.o
     numfmt.o unum.o
     winnmfmt.o
-    # pluralrules
-    standardplural.o plurrule.o upluralrules.o
     # scientificnumberformatter - would depend on dcfmtsym, so would be circular.
     scientificnumberformatter.o
     # rbnf
@@ -923,6 +971,7 @@ group: formatting
     # dateformat
     astro.o buddhcal.o calendar.o cecal.o chnsecal.o coptccal.o dangical.o ethpccal.o
     gregocal.o gregoimp.o hebrwcal.o indiancal.o islamcal.o japancal.o persncal.o taiwncal.o
+    erarules.o  # mostly for Japanese eras
     ucal.o
     basictz.o olsontz.o rbtz.o simpletz.o timezone.o tzrule.o tztrans.o
     vtzone.o vzone.o wintzimpl.o zonemeta.o zrule.o ztrans.o
@@ -934,7 +983,8 @@ group: formatting
     # messageformat
     choicfmt.o msgfmt.o plurfmt.o selfmt.o umsg.o
   deps
-    digitlist formattable format units
+    decnumber formattable format units numberformatter numberparser
+    listformatter
     dayperiodrules
     collation collation_builder  # for rbnf
     common
@@ -953,8 +1003,8 @@ group: units
   deps
     stringenumeration
 
-group: digitlist
-    digitlst.o decContext.o decNumber.o visibledigits.o
+group: decnumber
+    decContext.o decNumber.o
   deps
     double_conversion uclean_i18n
 
@@ -962,7 +1012,7 @@ group: formattable
     fmtable.o
     measure.o
   deps
-    digitlist
+    decnumber number_representation
 
 group: formattable_cnv
     fmtable_cnv.o

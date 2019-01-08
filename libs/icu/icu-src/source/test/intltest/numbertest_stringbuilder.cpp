@@ -3,7 +3,7 @@
 
 #include "unicode/utypes.h"
 
-#if !UCONFIG_NO_FORMATTING && !UPRV_INCOMPLETE_CPP11_SUPPORT
+#if !UCONFIG_NO_FORMATTING
 
 #include "putilimp.h"
 #include "numbertest.h"
@@ -77,7 +77,7 @@ void NumberStringBuilderTest::testInsertAppendUnicodeString() {
 }
 
 void NumberStringBuilderTest::testSplice() {
-    const struct TestCase {
+    static const struct TestCase {
         const char16_t* input;
         const int32_t startThis;
         const int32_t endThis;
@@ -191,7 +191,7 @@ void NumberStringBuilderTest::testFields() {
         // Very basic FieldPosition test. More robust tests happen in NumberFormatTest.
         // Let NumberFormatTest also take care of FieldPositionIterator material.
         FieldPosition fp(UNUM_CURRENCY_FIELD);
-        sb.populateFieldPosition(fp, 0, status);
+        sb.nextFieldPosition(fp, status);
         assertSuccess("Populating the FieldPosition", status);
         assertEquals("Currency start position", str.length(), fp.getBeginIndex());
         assertEquals("Currency end position", str.length() * 2, fp.getEndIndex());

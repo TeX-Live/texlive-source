@@ -1,6 +1,6 @@
 Changes applied to the icu tree as obtained from:
-	http://download.icu-project.org/files/icu4c/61.1/icu4c-61_1-src.tgz
-        and icu4c-61_1-data.zip
+	http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz
+        and icu4c-63_1-data.zip
 
 cd $Build/source/libs/icu       # for whatever $Build directory
 # update version.ac
@@ -30,7 +30,7 @@ cp -p $aux/config.guess $aux/config.sub $aux/install-sh source
 
 # autoreconf in the TL directory (Build/source/libs/icu); don't run
 # autoreconf in the icu-src/source/ directory, it fails due to missing
-# pkg-config prerequisites. (Thus we must patch configure, not just
+# pkg-config prerequisites. (Thus we patch configure, not just
 # configure.ac; not worth more effort for our small change of preferring gcc.)
 # 
 # rebuild; must rerun configure (not just config.status),
@@ -40,9 +40,9 @@ cp -p $aux/config.guess $aux/config.sub $aux/install-sh source
 # Assuming all seems ok, reduce size of source/data/in/icudt*.dat
 # to decrease data segment size, e.g., for old BSD.  First, check
 # that we successfully built the full .dat:
-srcdat=$Build/source/libs/icu/icu-src/source/data/in/icudt60l.dat 
-cd $Work/libs/icu/icu-build/data/out/build/icudt61l
-indat=../../tmp/icudt61l.dat
+srcdat=$Build/source/libs/icu/icu-src/source/data/in/icudt63l.dat 
+cd $Work/libs/icu/icu-build/data/out/build/icudt63l
+indat=../../tmp/icudt63l.dat
 diff $srcdat $indat
 # should be identical, amazingly enough.
 
@@ -52,7 +52,7 @@ icupkg="env LD_LIBRARY_PATH=$gnu/lib ../../../../bin/icupkg"
 
 # then remove some elements unused by the icu clients in our tree, which are
 # bibtexu (in texk/bibtex-x), upmendex, and xetex (in texk/web2c/xetexdir).
-outdat=icudt61l.dat
+outdat=icudt63l.dat
 $icupkg -r 'curr/*' $indat $outdat && \mv $outdat $indat
 $icupkg -r 'lang/*' $indat $outdat && \mv $outdat $indat
 $icupkg -r 'region/*' $indat $outdat && \mv $outdat $indat

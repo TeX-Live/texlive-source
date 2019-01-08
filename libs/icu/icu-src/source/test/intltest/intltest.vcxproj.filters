@@ -72,7 +72,7 @@
     </ClCompile>
     <ClCompile Include="rbbimonkeytest.cpp">
       <Filter>break iteration</Filter>
-      </ClCompile>
+    </ClCompile>
     <ClCompile Include="itspoof.cpp">
       <Filter>spoof detection</Filter>
     </ClCompile>
@@ -256,9 +256,6 @@
     <ClCompile Include="numberformattesttuple.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
-    <ClCompile Include="numberformat2test.cpp">
-      <Filter>formatting</Filter>
-    </ClCompile>
     <ClCompile Include="numbertest_affixutils.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
@@ -266,9 +263,6 @@
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="numbertest_decimalquantity.cpp">
-      <Filter>formatting</Filter>
-    </ClCompile>
-    <ClCompile Include="numbertest_doubleconversion.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="numbertest_modifiers.cpp">
@@ -283,7 +277,25 @@
     <ClCompile Include="numbertest_stringbuilder.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
+    <ClCompile Include="numbertest_stringsegment.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_parse.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_doubleconversion.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_skeletons.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_range.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
     <ClCompile Include="numfmtst.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numfmtdatadriventest.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="numrgts.cpp">
@@ -317,6 +329,9 @@
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="simpleformattertest.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="static_unisets_test.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="tchcfmt.cpp">
@@ -519,6 +534,9 @@
     </ClCompile>
     <ClCompile Include="ucharstrietest.cpp">
       <Filter>data &amp; memory</Filter>
+    </ClCompile>
+    <ClCompile Include="erarulestest.cpp">
+      <Filter>formatting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -901,6 +919,9 @@
       <Filter>formatting</Filter>
     </ClInclude>
     <ClInclude Include="listformattertest.h">
+      <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="erarulestest.h">
       <Filter>formatting</Filter>
     </ClInclude>
   </ItemGroup>

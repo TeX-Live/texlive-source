@@ -308,14 +308,14 @@ static void TestBreakIteratorCAPI()
 
 
     log_verbose("\nTesting the functions for sentence\n");
-    ubrk_first(sentence);
+    pos = ubrk_first(sentence);
     pos = ubrk_current(sentence);
     log_verbose("Current(sentence) = %d\n", (int32_t)pos);
        pos = ubrk_last(sentence);
     if(pos!=49)
         log_err("error ubrk_last for sentence did not return 49\n");
     log_verbose("Last (sentence) = %d\n", (int32_t)pos);
-    ubrk_first(sentence);
+    pos = ubrk_first(sentence);
     to = ubrk_following( sentence, 0 );
     if (to == 0) log_err("ubrk_following returned 0\n");
     to = ubrk_preceding( sentence, to );
@@ -784,15 +784,18 @@ static const int32_t heTestOffs_heFwd[] = {  1,  5,  7,  9, 12, 14,     19,     
 /*static const int32_t heTestOffs_enRev[] = { 22, 19, 17, 14, 12,  9,  7,  5,  1,  0 };*/
 static const int32_t heTestOffs_heRev[] = {     19,     14, 12,  9,  7,  5,  1,  0 };
 
-/* Finnish line break tailoring, for cldrbug 3029 */
+/* Finnish line break tailoring, for cldrbug 3029.
+ * As of ICU 63, Finnish tailoring moved to root, Finnish and English should be the same. */
 static const UChar fiTest[] = { /* 00 */ 0x0020, 0x002D, 0x0031, 0x0032, 0x0020,
                                 /* 05 */ 0x0061, 0x002D, 0x006B, 0x0020,
                                 /* 09 */ 0x0061, 0x0300, 0x2010, 0x006B, 0x0020,
                                 /* 14 */ 0x0061, 0x0020, 0x002D, 0x006B, 0x0020,
                                 /* 19 */ 0x0061, 0x0300, 0x0020, 0x2010, 0x006B, 0x0020, 0 };
-static const int32_t fiTestOffs_enFwd[] =  {  1,  5,  7,  9, 12, 14, 16, 17, 19, 22, 23, 25 };
+//static const int32_t fiTestOffs_enFwd[] =  {  1,  5,  7,  9, 12, 14, 16, 17, 19, 22, 23, 25 };
+static const int32_t fiTestOffs_enFwd[] =  {  1,  5,  7,  9, 12, 14, 16,     19, 22,     25 };
 static const int32_t fiTestOffs_fiFwd[] =  {  1,  5,  7,  9, 12, 14, 16,     19, 22,     25 };
-static const int32_t fiTestOffs_enRev[] =  { 23, 22, 19, 17, 16, 14, 12,  9,  7,  5,  1,  0 };
+//static const int32_t fiTestOffs_enRev[] =  { 23, 22, 19, 17, 16, 14, 12,  9,  7,  5,  1,  0 };
+static const int32_t fiTestOffs_enRev[] =  {     22, 19,     16, 14, 12,  9,  7,  5,  1,  0 };
 static const int32_t fiTestOffs_fiRev[] =  {     22, 19,     16, 14, 12,  9,  7,  5,  1,  0 };
 
 /* Khmer dictionary-based work break, for ICU ticket #8329 */

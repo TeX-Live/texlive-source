@@ -55,7 +55,7 @@ void PluralFormatTest::pluralFormatBasicTest(/*char *par*/)
     PluralFormat* plFmt[8];
     Locale        locale = Locale::getDefault();
     UnicodeString otherPattern = UnicodeString("other{#}");
-    UnicodeString message=UnicodeString("ERROR: PluralFormat basic test");
+    UnicodeString message=UnicodeString("PluralFormat basic test");
 
     // ========= Test constructors
     logln(" Testing PluralFormat constructors ...");
@@ -630,21 +630,21 @@ PluralFormatTest::ordinalFormatTest(void) {
     IcuTestErrorCode errorCode(*this, "ordinalFormatTest");
     UnicodeString pattern("one{#st file}two{#nd file}few{#rd file}other{#th file}");
     PluralFormat pf(Locale::getEnglish(), UPLURAL_TYPE_ORDINAL, pattern, errorCode);
-    if (errorCode.logDataIfFailureAndReset("PluralFormat(en, UPLURAL_TYPE_ORDINAL, pattern) failed")) {
+    if (errorCode.errDataIfFailureAndReset("PluralFormat(en, UPLURAL_TYPE_ORDINAL, pattern) failed")) {
       return;
     }
     UnicodeString result = pf.format((int32_t)321, errorCode);
-    if (!errorCode.logIfFailureAndReset("PluralFormat.format(321) failed") &&
+    if (!errorCode.errIfFailureAndReset("PluralFormat.format(321) failed") &&
         result != UNICODE_STRING_SIMPLE("321st file")) {
       errln(UnicodeString("PluralFormat.format(321) wrong result string: ") + result);
     }
     result = pf.format((int32_t)22, errorCode);
-    if (!errorCode.logIfFailureAndReset("PluralFormat.format(22) failed") &&
+    if (!errorCode.errIfFailureAndReset("PluralFormat.format(22) failed") &&
         result != UNICODE_STRING_SIMPLE("22nd file")) {
       errln(UnicodeString("PluralFormat.format(22) wrong result string: ") + result);
     }
     result = pf.format((int32_t)3, errorCode);
-    if (!errorCode.logIfFailureAndReset("PluralFormat.format(3) failed") &&
+    if (!errorCode.errIfFailureAndReset("PluralFormat.format(3) failed") &&
         result != UNICODE_STRING_SIMPLE("3rd file")) {
       errln(UnicodeString("PluralFormat.format(3) wrong result string: ") + result);
     }
@@ -652,16 +652,16 @@ PluralFormatTest::ordinalFormatTest(void) {
     // Code coverage: Use the other new-for-UPluralType constructor as well.
     PluralFormat pf2(Locale::getEnglish(), UPLURAL_TYPE_ORDINAL, errorCode);
     pf2.applyPattern(pattern, errorCode);
-    if (errorCode.logIfFailureAndReset("PluralFormat(en, UPLURAL_TYPE_ORDINAL, pattern) failed")) {
+    if (errorCode.errIfFailureAndReset("PluralFormat(en, UPLURAL_TYPE_ORDINAL, pattern) failed")) {
       return;
     }
     result = pf2.format((int32_t)456, errorCode);
-    if (!errorCode.logIfFailureAndReset("PluralFormat.format(456) failed") &&
+    if (!errorCode.errIfFailureAndReset("PluralFormat.format(456) failed") &&
         result != UNICODE_STRING_SIMPLE("456th file")) {
       errln(UnicodeString("PluralFormat.format(456) wrong result string: ") + result);
     }
     result = pf2.format((int32_t)111, errorCode);
-    if (!errorCode.logIfFailureAndReset("PluralFormat.format(111) failed") &&
+    if (!errorCode.errIfFailureAndReset("PluralFormat.format(111) failed") &&
         result != UNICODE_STRING_SIMPLE("111th file")) {
       errln(UnicodeString("PluralFormat.format(111) wrong result string: ") + result);
     }
@@ -685,7 +685,7 @@ PluralFormatTest::TestDecimals() {
 }
 
 void
-PluralFormatTest::numberFormatTest(PluralFormat* plFmt, 
+PluralFormatTest::numberFormatTest(PluralFormat* plFmt,
                                    NumberFormat *numFmt,
                                    int32_t start,
                                    int32_t end,
@@ -723,12 +723,15 @@ PluralFormatTest::numberFormatTest(PluralFormat* plFmt,
                 }
             }
         }
-        if ( (numResult!=plResult) || U_FAILURE(status) ) {
+        if (U_FAILURE(status)) {
+            assertSuccess(*message + " in numberFormatTest", status);
+        }
+        if (numResult!=plResult) {
             if ( message == NULL ) {
                 errln("ERROR: Unexpected plural format - got:"+plResult+ UnicodeString("  expecting:")+numResult);
             }
             else {
-                errln( *message+UnicodeString("  got:")+plResult+UnicodeString("  expecting:")+numResult);
+                assertEquals(*message + " in numberFormatTest", numResult, plResult);
             }
         }
     }
