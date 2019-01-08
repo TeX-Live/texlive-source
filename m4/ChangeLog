@@ -1,3 +1,7 @@
+2019-01-08  Karl Berry  <karl@tug.org>
+
+	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): lua52 gone.
+
 2018-12-24  Karl Berry  <karl@freefriends.org>
 
 	* kpse-common.m4,

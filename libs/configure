@@ -5398,9 +5398,6 @@ fi
 ## libs/luajit/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/luajit/
 ## configure options and TL libraries required for luajit
 
-## libs/lua52/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua52/
-## configure options and TL libraries required for lua52
-
 ## libs/lua53/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua53/
 ## configure options and TL libraries required for lua53
 
@@ -6486,10 +6483,6 @@ fi
 if test -x $srcdir/luajit/configure; then
   test "x$with_system_luajit" != xyes && test "x$need_luajit" = xyes && MAKE_SUBDIRS="luajit $MAKE_SUBDIRS"
   CONF_SUBDIRS="luajit $CONF_SUBDIRS"
-fi
-if test -x $srcdir/lua52/configure; then
-  test "x$with_system_lua52" != xyes && test "x$need_lua52" = xyes && MAKE_SUBDIRS="lua52 $MAKE_SUBDIRS"
-  CONF_SUBDIRS="lua52 $CONF_SUBDIRS"
 fi
 if test -x $srcdir/lua53/configure; then
   test "x$with_system_lua53" != xyes && test "x$need_lua53" = xyes && MAKE_SUBDIRS="lua53 $MAKE_SUBDIRS"

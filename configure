@@ -6368,9 +6368,6 @@ fi
 ## libs/luajit/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/luajit/
 ## configure options and TL libraries required for luajit
 
-## libs/lua52/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua52/
-## configure options and TL libraries required for lua52
-
 ## libs/lua53/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua53/
 ## configure options and TL libraries required for lua53
 
