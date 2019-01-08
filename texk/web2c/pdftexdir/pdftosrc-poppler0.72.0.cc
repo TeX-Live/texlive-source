@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
                 Object objStr, obj1, obj2;
                 int nObjects, first, n;
                 int localOffset = 0;
-                Guint firstOffset;
+                unsigned int firstOffset;
 
                 objStr = xref->fetch(e->offset, 0);
                 assert(objStr.isStream());

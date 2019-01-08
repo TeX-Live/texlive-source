@@ -25,8 +25,7 @@ pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
   Provide new files:
   pdftosrc-newpoppler.cc for poppler-0.59.0 upto poppler-0.70.1.
   pdftosrc-poppler0.71.0 for poppler-0.71.0.
-  pdftosrc-poppler0.72.0 for poppler-0.72.0.
-  pdftosrc-poppler0.73.0 for poppler-0.73.0 and newer.
+  pdftosrc-poppler0.72.0 for poppler-0.72.0 and newer.
   pdftoepdf-poppler0.68.0.cc for poppler-0.59.0 upto poppler-0.68.0.
   pdftoepdf-poppler0.69.0.cc for poppler-0.69.0.
   pdftoepdf-poppler0.70.0.cc for poppler-0.70.0 and poppler-0.70.1.
