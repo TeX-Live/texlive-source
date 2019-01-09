@@ -21,7 +21,12 @@ bin_PROGRAMS = autosp tex2aspc
 # must use @... here or subdir $(... (literally) is created for .deps.
 autosp_SOURCES = \
 	@AUTOSP_TREE@/autosp.c \
-	@AUTOSP_TREE@/utils.c
+	@AUTOSP_TREE@/utils.c \
+	@AUTOSP_TREE@/process_score.c \
+	@AUTOSP_TREE@/process_command.c \
+	@AUTOSP_TREE@/status.c \
+	@AUTOSP_TREE@/spacing_note.c \
+	@AUTOSP_TREE@/xtuplet.c
 
 tex2aspc_SOURCES = \
 	@AUTOSP_TREE@/tex2aspc.c \

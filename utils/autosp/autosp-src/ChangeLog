@@ -1,5 +1,13 @@
 AUTOSP
 
+2019-01-08
+
+  adjust cspacing for new beaming after first collective beam note
+  beaming[i] = 0 for \tqq and \tqqq (but not \nqq \nqqq)
+  checking for EOF after fgets, missing output format
+  output_rests for conventional notes commands
+  refactor source code
+
 2018-02-23
 
   Avoid aborting for \endvolta... 

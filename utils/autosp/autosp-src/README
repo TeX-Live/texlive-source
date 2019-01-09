@@ -1,5 +1,5 @@
 This is the README for the autosp package, 
-version 2018-02-23.
+version 2019-01-08.
 
 autosp is a preprocessor that generates note-spacing
 commands for MusiXTeX scores. It simplifies the creation

@@ -106,7 +106,12 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_autosp_OBJECTS = @AUTOSP_TREE@/autosp.$(OBJEXT) \
-	@AUTOSP_TREE@/utils.$(OBJEXT)
+	@AUTOSP_TREE@/utils.$(OBJEXT) \
+	@AUTOSP_TREE@/process_score.$(OBJEXT) \
+	@AUTOSP_TREE@/process_command.$(OBJEXT) \
+	@AUTOSP_TREE@/status.$(OBJEXT) \
+	@AUTOSP_TREE@/spacing_note.$(OBJEXT) \
+	@AUTOSP_TREE@/xtuplet.$(OBJEXT)
 autosp_OBJECTS = $(am_autosp_OBJECTS)
 autosp_LDADD = $(LDADD)
 am_tex2aspc_OBJECTS = @AUTOSP_TREE@/tex2aspc.$(OBJEXT) \
@@ -129,8 +134,13 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = @AUTOSP_TREE@/$(DEPDIR)/autosp.Po \
+	@AUTOSP_TREE@/$(DEPDIR)/process_command.Po \
+	@AUTOSP_TREE@/$(DEPDIR)/process_score.Po \
+	@AUTOSP_TREE@/$(DEPDIR)/spacing_note.Po \
+	@AUTOSP_TREE@/$(DEPDIR)/status.Po \
 	@AUTOSP_TREE@/$(DEPDIR)/tex2aspc.Po \
-	@AUTOSP_TREE@/$(DEPDIR)/utils.Po
+	@AUTOSP_TREE@/$(DEPDIR)/utils.Po \
+	@AUTOSP_TREE@/$(DEPDIR)/xtuplet.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -508,7 +518,12 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 # must use @... here or subdir $(... (literally) is created for .deps.
 autosp_SOURCES = \
 	@AUTOSP_TREE@/autosp.c \
-	@AUTOSP_TREE@/utils.c
+	@AUTOSP_TREE@/utils.c \
+	@AUTOSP_TREE@/process_score.c \
+	@AUTOSP_TREE@/process_command.c \
+	@AUTOSP_TREE@/status.c \
+	@AUTOSP_TREE@/spacing_note.c \
+	@AUTOSP_TREE@/xtuplet.c
 
 tex2aspc_SOURCES = \
 	@AUTOSP_TREE@/tex2aspc.c \
@@ -611,6 +626,17 @@ clean-binPROGRAMS:
 	@AUTOSP_TREE@/$(DEPDIR)/$(am__dirstamp)
 @AUTOSP_TREE@/utils.$(OBJEXT): @AUTOSP_TREE@/$(am__dirstamp) \
 	@AUTOSP_TREE@/$(DEPDIR)/$(am__dirstamp)
+@AUTOSP_TREE@/process_score.$(OBJEXT): @AUTOSP_TREE@/$(am__dirstamp) \
+	@AUTOSP_TREE@/$(DEPDIR)/$(am__dirstamp)
+@AUTOSP_TREE@/process_command.$(OBJEXT):  \
+	@AUTOSP_TREE@/$(am__dirstamp) \
+	@AUTOSP_TREE@/$(DEPDIR)/$(am__dirstamp)
+@AUTOSP_TREE@/status.$(OBJEXT): @AUTOSP_TREE@/$(am__dirstamp) \
+	@AUTOSP_TREE@/$(DEPDIR)/$(am__dirstamp)
+@AUTOSP_TREE@/spacing_note.$(OBJEXT): @AUTOSP_TREE@/$(am__dirstamp) \
+	@AUTOSP_TREE@/$(DEPDIR)/$(am__dirstamp)
+@AUTOSP_TREE@/xtuplet.$(OBJEXT): @AUTOSP_TREE@/$(am__dirstamp) \
+	@AUTOSP_TREE@/$(DEPDIR)/$(am__dirstamp)
 
 autosp$(EXEEXT): $(autosp_OBJECTS) $(autosp_DEPENDENCIES) $(EXTRA_autosp_DEPENDENCIES) 
 	@rm -f autosp$(EXEEXT)
@@ -630,8 +656,13 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/autosp.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/process_command.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/process_score.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/spacing_note.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/status.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/tex2aspc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/utils.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@AUTOSP_TREE@/$(DEPDIR)/xtuplet.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1130,8 +1161,13 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f @AUTOSP_TREE@/$(DEPDIR)/autosp.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/process_command.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/process_score.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/spacing_note.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/status.Po
 	-rm -f @AUTOSP_TREE@/$(DEPDIR)/tex2aspc.Po
 	-rm -f @AUTOSP_TREE@/$(DEPDIR)/utils.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/xtuplet.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1180,8 +1216,13 @@ maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f @AUTOSP_TREE@/$(DEPDIR)/autosp.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/process_command.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/process_score.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/spacing_note.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/status.Po
 	-rm -f @AUTOSP_TREE@/$(DEPDIR)/tex2aspc.Po
 	-rm -f @AUTOSP_TREE@/$(DEPDIR)/utils.Po
+	-rm -f @AUTOSP_TREE@/$(DEPDIR)/xtuplet.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

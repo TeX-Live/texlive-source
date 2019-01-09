@@ -1,6 +1,6 @@
-char version[12] = "2017-12-15";
+char version[12] = "2019-01-08";
 
-/*  Copyright (C) 2017 R. D. Tennent School of Computing,
+/*  Copyright (C) 2017-19 R. D. Tennent School of Computing,
  *  Queen's University, rdt@cs.queensu.ca
  *  
  *  This program is free software; you can redistribute it
@@ -101,6 +101,8 @@ void analyze_notes (char **ln)
       char *nl;
       if (fgets (new_line, LINE_LEN, infile) == NULL)
         error ("Unexpected EOF.");
+      if (strlen (new_line) == LINE_LEN-1) 
+        error ("Line too long.");
       nl = new_line;
       while (*nl == ' ') nl++;  /* avoid spaces */
       t = strpbrk (s, "\n%");
@@ -246,7 +248,10 @@ void process_score ()
   while ( c != EOF )
   {
     ungetc (c, infile);
-    fgets(line, LINE_LEN, infile); 
+    if ( fgets(line, LINE_LEN, infile) == NULL)  
+      error ("Unexpected EOF.");
+    if (strlen (line) == LINE_LEN-1) 
+      error ("Line too long.");
     lineno++;
     process_line ();
     c = getc (infile);

@@ -1,9 +1,12 @@
 #! /bin/sh -vx
 
+#! /bin/sh -vx
+
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
 
 if test -z "$test_srcdir"; then
   # If not set, then we are not running from `make check'.
@@ -21,8 +24,8 @@ echo && echo "*** tex2aspc --version"
 echo && echo "*** tex2aspc  (missing infile)"
 ./tex2aspc  && exit 1
 
-echo && echo "*** tex2aspc quod2.tex quod4.aspc"
-cp "$test_srcdir"/tests/quod2.tex quod4.tex
+echo && echo "*** tex2aspc quod4.tex quod4.aspc"
+cp "$test_srcdir"/tests/quod4.tex quod4.tex
 rm -f quod4.aspc
 ./tex2aspc quod4.tex quod4.aspc || exit 1
 

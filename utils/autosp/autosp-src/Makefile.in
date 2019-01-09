@@ -95,7 +95,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_autosp_OBJECTS = utils.$(OBJEXT) autosp.$(OBJEXT)
+am_autosp_OBJECTS = utils.$(OBJEXT) autosp.$(OBJEXT) \
+	process_score.$(OBJEXT) process_command.$(OBJEXT) \
+	status.$(OBJEXT) spacing_note.$(OBJEXT) xtuplet.$(OBJEXT)
 autosp_OBJECTS = $(am_autosp_OBJECTS)
 autosp_LDADD = $(LDADD)
 am_rebar_OBJECTS = utils.$(OBJEXT) rebar.$(OBJEXT)
@@ -469,14 +471,16 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-autosp_SOURCES = utils.h utils.c autosp.c 
+autosp_SOURCES = utils.h utils.c autosp.h autosp.c process_score.h process_score.c \
+  process_command.h process_command.c status.c spacing_note.c xtuplet.c
+
 rebar_SOURCES = utils.h utils.c rebar.c
 tex2aspc_SOURCES = utils.h utils.c tex2aspc.c
-AM_CFLAGS = -O4 -ansi -Wall -Wextra -pedantic-errors
+AM_CFLAGS = -O4 -ansi -Wall -Wextra -pedantic-errors -Werror
 dist_man_MANS = autosp.1 rebar.1 tex2aspc.1
 TESTS = autosp.test rebar.test tex2aspc.test
 EXTRA_DIST = $(TESTS) tests/quod2.aspc tests/quod2.tex \
-	tests/quod3.aspc tests/quod4.aspc
+	tests/quod3.aspc tests/quod4.tex tests/quod4.aspc
 DISTCLEANFILES = quod2.* quod3.* quod4.*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -594,9 +598,14 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autosp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/process_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/process_score.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rebar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spacing_note.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/status.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tex2aspc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xtuplet.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
