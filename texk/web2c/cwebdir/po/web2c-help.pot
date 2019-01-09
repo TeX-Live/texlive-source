@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2019\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-01 15:41+0100\n"
+"POT-Creation-Date: 2019-01-07 17:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "  Tangle WEBFILE with CHANGEFILE into a C/C++ program."
 msgstr ""
 
-#: help.h:54 help.h:71 help.h:94
+#: help.h:54 help.h:73 help.h:98
 msgid "  Default CHANGEFILE is /dev/null;"
 msgstr ""
 
@@ -34,84 +34,92 @@ msgstr ""
 msgid "  C output goes to the basename of WEBFILE extended with `.c'"
 msgstr ""
 
-#: help.h:56 help.h:73 help.h:96
+#: help.h:56 help.h:75 help.h:100
 msgid "  unless otherwise specified by OUTFILE; in this case, '-' specifies"
 msgstr ""
 
-#: help.h:57 help.h:74 help.h:97
+#: help.h:57 help.h:76 help.h:101
 msgid "  a null CHANGEFILE."
 msgstr ""
 
-#: help.h:59 help.h:76 help.h:99
+#: help.h:59 help.h:78 help.h:103
 msgid "+b          print banner line on terminal"
 msgstr ""
 
-#: help.h:60 help.h:78 help.h:101
+#: help.h:60 help.h:80 help.h:105
 msgid "+h          print success message on completion"
 msgstr ""
 
-#: help.h:61 help.h:81 help.h:105
+#: help.h:61 help.h:83 help.h:109
 msgid "+p          print progress report messages"
 msgstr ""
 
-#: help.h:62 help.h:85 help.h:109
+#: help.h:62 help.h:87 help.h:113
 msgid "+s          print usage statistics"
 msgstr ""
 
-#: help.h:63 help.h:86 help.h:110
+#: help.h:63 help.h:88 help.h:114
 msgid "--help      display this help and exit"
 msgstr ""
 
-#: help.h:64 help.h:87 help.h:111
+#: help.h:64 help.h:89 help.h:114
 msgid "--version   output version information and exit"
 msgstr ""
 
-#: help.h:69
+#: help.h:65 help.h:90 help.h:116
+msgid "--quiet     combined '-bhp'"
+msgstr ""
+
+#: help.h:66 help.h:91 help.h:117
+msgid "--verbose   combined '+bhp'"
+msgstr ""
+
+#: help.h:71
 msgid ""
 "Usage: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
 msgstr ""
 
-#: help.h:70
+#: help.h:72
 msgid "  Weave WEBFILE with CHANGEFILE into a TeX document."
 msgstr ""
 
-#: help.h:72 help.h:96
+#: help.h:74 help.h:99
 msgid "  TeX output goes to the basename of WEBFILE extended with `.tex'"
 msgstr ""
 
-#: help.h:77 help.h:100
+#: help.h:79 help.h:104
 msgid "-f          do not force a newline after every C statement in output"
 msgstr ""
 
-#: help.h:79 help.h:102
+#: help.h:81 help.h:106
 msgid "-i          suppress indentation of parameter declarations"
 msgstr ""
 
-#: help.h:80 help.h:103
+#: help.h:82 help.h:107
 msgid "-o          suppress separation of declarations and statements"
 msgstr ""
 
-#: help.h:82 help.h:106
+#: help.h:84 help.h:110
 msgid "-x          omit indices, section names, table of contents"
 msgstr ""
 
-#: help.h:83 help.h:107
+#: help.h:85 help.h:111
 msgid "+e          enclose C material in \\PB{...}"
 msgstr ""
 
-#: help.h:84 help.h:108
+#: help.h:86 help.h:112
 msgid "+lX         use macros for language X as of Xcwebmac.tex"
 msgstr ""
 
-#: help.h:92
+#: help.h:96
 msgid ""
 "Usage: ctwill [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
 msgstr ""
 
-#: help.h:93
+#: help.h:97
 msgid "  Weave WEBFILE with CHANGEFILE into a TeX document with mini-indexes."
 msgstr ""
 
-#: help.h:104
+#: help.h:108
 msgid "+P          \\input proofmac.tex instead of ctwimac.tex"
 msgstr ""

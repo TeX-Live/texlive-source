@@ -226,9 +226,10 @@ if ((found_filename=kpse_find_cweb(web_file_name))==NULL || @|
     (web_file=fopen(found_filename,"r"))==NULL) {
   fatal(_("! Cannot open input file "), web_file_name);
 } else if (strlen(found_filename) < max_file_name_length) {
+  /* Copy name for |#line| directives. */
   if (strcmp(web_file_name, found_filename))
     strcpy(web_file_name, found_filename +
-      ((found_filename[0]=='.' && found_filename[1]=='/') ? 2 : 0));
+      ((strncmp(found_filename,"./",2)==0) ? 2 : 0));
   free(found_filename);
 } else fatal(_("! Filename too long\n"), found_filename);
 @z
@@ -241,9 +242,10 @@ if ((found_filename=kpse_find_cweb(change_file_name))==NULL || @|
     (change_file=fopen(found_filename,"r"))==NULL) {
   fatal(_("! Cannot open change file "), change_file_name);
 } else if (strlen(found_filename) < max_file_name_length) {
+  /* Copy name for |#line| directives. */
   if (strcmp(change_file_name, found_filename))
     strcpy(change_file_name, found_filename +
-      ((found_filename[0]=='.' && found_filename[1]=='/') ? 2 : 0));
+      ((strncmp(found_filename,"./",2)==0) ? 2 : 0));
   free(found_filename);
 } else fatal(_("! Filename too long\n"), found_filename);
 @z
@@ -327,7 +329,7 @@ The remainder of the \.{@@i} line after the file name is ignored.
     if (strlen(found_filename) < max_file_name_length) {
       if (strcmp(cur_file_name, found_filename))
         strcpy(cur_file_name, found_filename +
-          ((found_filename[0]=='.' && found_filename[1]=='/') ? 2 : 0));
+          ((strncmp(found_filename,"./",2)==0) ? 2 : 0));
       free(found_filename);
     } else fatal(_("! Filename too long\n"), found_filename);
 @z
@@ -849,35 +851,9 @@ overflow(
 @z
 
 @x
-the names of those files. Most of the 128 flags are undefined but available
-for future extensions.
-@y
-the names of those files. Most of the 128 flags are undefined but available
-for future extensions.
-
-We use `kpathsea' library functions to find literate sources.  When the files
-you expect are not found, the thing to do is to enable `kpathsea' runtime
-debugging by assigning to the |kpathsea_debug| variable a small number via the
-`\.{-d}' option. The meaning of this number is shown below. To set more than
-one debugging option, simply sum the corresponding numbers.
-$$\halign{\hskip5em\tt\hfil#&&\qquad\tt#\cr
- 1&report `\.{stat}' calls\cr
- 2&report lookups in all hash tables\cr
- 4&report file openings and closings\cr
- 8&report path information\cr
-16&report directory list\cr
-32&report on each file search\cr
-64&report values of variables being looked up\cr}$$
-Debugging output is always written to |stderr|, and begins with the string
-`\.{kdebug:}'.
-@z
-
-@x
 @d show_happiness flags['h'] /* should lack of errors be announced? */
 @y
 @d show_happiness flags['h'] /* should lack of errors be announced? */
-@d show_kpathsea_debug flags['d']
-  /* should results of file searching be shown? */
 @d make_xrefs flags['x'] /* should cross references be output? */
 @z
 
@@ -1018,11 +994,23 @@ the other arrays for the argument.
 {
   if (strcmp("-help",*argv)==0 || strcmp("--help",*argv)==0)
 @.--help@>
-    @<Display help message and exit@>@;
+    @<Display help message and |exit|@>@;
   if (strcmp("-version",*argv)==0 || strcmp("--version",*argv)==0)
 @.--version@>
-    @<Display version information and exit@>@;
+    @<Display version information and |exit|@>@;
+  if (strcmp("-verbose",*argv)==0 || strcmp("--verbose",*argv)==0)
+@.--verbose@>
+  { show_banner=show_progress=show_happiness=1; continue; }
+  if (strcmp("-quiet",*argv)==0 || strcmp("--quiet",*argv)==0)
+@.--quiet@>
+  { show_banner=show_progress=show_happiness=0; continue; }
   for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++)
+    if (*dot_pos=='v') {
+      show_banner=show_progress=show_happiness=1;
+    } else
+    if (*dot_pos=='q') {
+      show_banner=show_progress=show_happiness=0;
+    } else
     if (*dot_pos=='d') {
       if (sscanf(*argv+2,"%u",&kpathsea_debug)!=1) @<Print usage error...@>@;
     } else
@@ -1039,6 +1027,7 @@ the other arrays for the argument.
 @z
 
 @x
+{
 if (program==ctangle)
   fatal(
 "! Usage: ctangle [options] webfile[.w] [{changefile[.ch]|-} [outfile[.c]]]\n"
@@ -1047,6 +1036,7 @@ if (program==ctangle)
 else fatal(
 "! Usage: cweave [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
    ,"");
+}
 @y
 cb_usage(program==ctangle ? "ctangle" : program==cweave ? "cweave" : "ctwill");
 @.Usage:@>
@@ -1172,11 +1162,11 @@ static void check_change(void);@/
 static void prime_the_change_buffer(void);@/
 
 @* Standard C library interfaces.  This updated version of \.{CWEB} uses
-standard C types for pointers, boolean values, and objects with fixed sizes.
+standard C types for boolean values, pointers, and objects with fixed sizes.
 
 @<Include files@>=
-#include <stddef.h> /* type definition of |ptrdiff_t| */
 #include <stdbool.h> /* type definition of |bool| */
+#include <stddef.h> /* type definition of |ptrdiff_t| */
 #include <stdint.h> /* type definition of |uint8_t| et al. */
 
 @ The |scan_args| and |cb_show_banner| routines need a few extra variables.
@@ -1258,14 +1248,15 @@ searched for files, if they could not be found in the current directory.
 
 This version uses the \Kpathsea/ mechanism for searching files.
 The directories to be searched for come from three sources:
-
- (a)~a user-set environment variable \.{CWEBINPUTS}
-    (overriden by \.{CWEBINPUTS\_cweb});\par
- (b)~a line in \Kpathsea/ configuration file \.{texmf.cnf},\hfil\break
+\smallskip
+{\parindent5em
+\item{(a)} a user-set environment variable \.{CWEBINPUTS}
+    (overriden by \.{CWEBINPUTS\_cweb});
+\item{(b)} a line in \Kpathsea/ configuration file \.{texmf.cnf},\hfil\break
     e.g. \.{CWEBINPUTS=.:\$TEXMF/texmf/cweb//}
-    or \.{CWEBINPUTS.cweb=.:\$TEXMF/texmf/cweb//};\hangindent=2\parindent\par
- (c)~compile-time default directories \.{.:\$TEXMF/texmf/cweb//}
-    (specified in \.{texmf.in}).
+    or \.{CWEBINPUTS.cweb=.:\$TEXMF/texmf/cweb//};
+\item{(c)} compile-time default directories \.{.:\$TEXMF/texmf/cweb//}
+    (specified in \.{texmf.in}).}
 
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 
@@ -1293,11 +1284,32 @@ different search paths.
 @<Set up |PROGNAME| feature and initialize the search path mechanism@>=
 kpse_set_program_name(argv[0], "cweb");
 
+@ When the files you expect are not found, the thing to do is to enable
+`kpathsea' runtime debugging by assigning to the |kpathsea_debug| variable a
+small number via the `\.{-d}' option. The meaning of this number is shown
+below. To set more than one debugging option, simply sum the corresponding
+numbers.
+\medskip
+\halign{\hskip5em\tt\hfil#&&\qquad\rm#\hfil\cr
+ 1&report `\.{stat}' calls\cr
+ 2&report lookups in all hash tables\cr
+ 4&report file openings and closings\cr
+ 8&report path information\cr
+16&report directory list\cr
+32&report on each file search\cr
+64&report values of variables being looked up\cr}
+\medskip
+Debugging output is always written to |stderr|, and begins with the string
+`\.{kdebug:}'.
+
+@d show_kpathsea_debug flags['d']
+  /* should results of file searching be shown? */
+
 @* System dependent changes. The most volatile stuff comes at the very end.
 
 @ Modules for dealing with help messages and version info.
 
-@<Display help message and exit@>=
+@<Display help message and |exit|@>=
 cb_usagehelp(program==ctangle ? CTANGLEHELP :
   program==cweave ? CWEAVEHELP : CTWILLHELP, NULL);
 @.--help@>
@@ -1314,6 +1326,7 @@ static void cb_usagehelp (const_string *message, const_string bug_email);@/
 @c
 void cb_show_banner (void)
 {
+  assert(cb_banner[0]!='\0');
   textdomain("cweb-tl");
 @.cweb-tl.mo@>
   printf("%s%s\n", cb_banner, versionstring);
@@ -1353,7 +1366,7 @@ static void cb_usagehelp (const_string *message, const_string bug_email)
 
 @ The version information will not be translated.
 
-@<Display version information and exit@>=
+@<Display version information and |exit|@>=
 printversionandexit(cb_banner,
   program == ctwill ? "Donald E. Knuth" : "Silvio Levy and Donald E. Knuth",
   NULL, NULL);
