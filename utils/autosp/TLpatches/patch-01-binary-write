@@ -31,6 +31,36 @@ diff -ur autosp-2019-01-08/rebar.c autosp-src/rebar.c
      if (outfile == NULL)
      { fprintf (stderr,"Can't open %s\n", outfilename);
        exit (EXIT_FAILURE);
+diff -ur autosp-2019-01-08/spacing_note.c autosp-src/spacing_note.c
+--- autosp-2019-01-08/spacing_note.c	Wed May 16 22:35:31 2018
++++ autosp-src/spacing_note.c	Thu Jan 10 08:29:36 2019
+@@ -30,7 +30,7 @@
+     update_global_skip (n);
+       /* commas will be discarded by filter_output (i) */
+     if (*s == '.' && new_beaming == 0 && !dottedbeamnotes) 
+-      spacing = spacing * 1.50; 
++      spacing = (int)(spacing * 1.50); 
+     else if ( (*s == '^' || *s == '_' || *s == '=' || *s == '>') 
+               && !vspacing_active[i]  /* is additional spacing needed? */
+             )
+@@ -532,7 +532,7 @@
+    || prefix ("\\qbpp", s) 
+    || prefix ("\\dspp", s) 
+    || doubledotted  )
+-  { spacing *= 1.75; doubledotted = false;}
++  { spacing = (int)(spacing * 1.75); doubledotted = false;}
+   else 
+   if (prefix ("\\whp", s)
+    || prefix ("\\hup", s)
+@@ -556,7 +556,7 @@
+    || prefix ("\\qbp", s) 
+    || prefix ("\\dsp", s) 
+     || dotted  ) 
+-  { spacing *= 1.5; dotted = false; }
++  { spacing = (int)(spacing * 1.5); dotted = false; }
+ 
+   t = strpbrk (s+1, "{\\&|$"); /* collective coding?  */
+   if (*t == '{')  /*  {...}  */
 diff -ur autosp-2019-01-08/tex2aspc.c autosp-src/tex2aspc.c
 --- autosp-2019-01-08/tex2aspc.c	Tue Jan 08 22:28:57 2019
 +++ autosp-src/tex2aspc.c	Thu Jan 10 07:39:45 2019

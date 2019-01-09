@@ -30,7 +30,7 @@ int collective_note (int i)
     update_global_skip (n);
       /* commas will be discarded by filter_output (i) */
     if (*s == '.' && new_beaming == 0 && !dottedbeamnotes) 
-      spacing = spacing * 1.50; 
+      spacing = (int)(spacing * 1.50); 
     else if ( (*s == '^' || *s == '_' || *s == '=' || *s == '>') 
               && !vspacing_active[i]  /* is additional spacing needed? */
             )
@@ -532,7 +532,7 @@ int spacing_note (int i)
    || prefix ("\\qbpp", s) 
    || prefix ("\\dspp", s) 
    || doubledotted  )
-  { spacing *= 1.75; doubledotted = false;}
+  { spacing = (int)(spacing * 1.75); doubledotted = false;}
   else 
   if (prefix ("\\whp", s)
    || prefix ("\\hup", s)
@@ -556,7 +556,7 @@ int spacing_note (int i)
    || prefix ("\\qbp", s) 
    || prefix ("\\dsp", s) 
     || dotted  ) 
-  { spacing *= 1.5; dotted = false; }
+  { spacing = (int)(spacing * 1.5); dotted = false; }
 
   t = strpbrk (s+1, "{\\&|$"); /* collective coding?  */
   if (*t == '{')  /*  {...}  */
