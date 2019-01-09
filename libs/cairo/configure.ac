@@ -66,7 +66,7 @@ dnl
 [1, [mime surface]],
 [1, [observer surface]],
 [1, [recording surface]],
-[0, [pdf surface]],
+[1, [pdf surface]],
 [0, [ps surface]],
 [0, [quartz surface]],
 [0, [script surface]],

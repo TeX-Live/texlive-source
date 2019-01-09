@@ -6260,12 +6260,12 @@ else
   CAIRO_HAS_RECORDING_SURFACE_FALSE=
 fi
 
-if test "x0" = x1; then
+if test "x1" = x1; then
 
 $as_echo "#define CAIRO_HAS_PDF_SURFACE 1" >>confdefs.h
 
 fi
- if test "x0" = x1; then
+ if test "x1" = x1; then
   CAIRO_HAS_PDF_SURFACE_TRUE=
   CAIRO_HAS_PDF_SURFACE_FALSE='#'
 else
