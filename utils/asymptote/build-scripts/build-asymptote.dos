@@ -44,7 +44,7 @@ make MSDOS=1 install-asy DESTDIR="$BUILD/" docdir="$BUILD/"
 cp asy.ico README LICENSE* $BUILD
 pushd $BUILD
 mv usr/local/bin/* .
-mv usr/local/share/asymptote/GUI/*.py .
+mv usr/local/share/asymptote/GUI .
 rm -rf usr/local/share/asymptote/GUI
 mv usr/local/share/asymptote/* .
 cp $SHARED/asydoc/*.pdf .
@@ -59,7 +59,7 @@ ls -p1 $BUILD \
 if [ $MACHINE == i686 ]; then
 sed asymptote.nsi -e 's/$PROGRAMFILES64/$PROGRAMFILES/g' > asymptote32.nsi
 /cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe asymptote32.nsi
-SUFFIX=-i386
+SUFFIX=-i386_32
 else
 /cygdrive/c/Program\ Files\ \(x86\)/NSIS/makensis.exe asymptote.nsi
 SUFFIX=

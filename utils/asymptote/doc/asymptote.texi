@@ -384,7 +384,7 @@ The @code{ImageMagick} package from
 @noindent
 is required to support output formats other than @acronym{EPS},
 @acronym{PDF}, @acronym{SVG}, and @acronym{PNG} (@pxref{convert}).
-The @code{Python 2} interpreter from @url{http://www.python.org} is only required
+The @code{Python 3} interpreter from @url{http://www.python.org} is only required
 if you wish to try out the graphical user interface (@pxref{GUI}).
 
 @noindent
@@ -947,7 +947,7 @@ terminated with an arrowhead:
 @center @image{quartercircle}
 @noindent
 Here the directions @code{up} and @code{left} in braces specify the
-incoming and outgoing directions at the points @code{(1,0)} and
+outgoing and incoming directions at the points @code{(1,0)} and
 @code{(0,1)}, respectively.
 
 In general, a path is specified as a list of points (or other paths)
@@ -2812,6 +2812,12 @@ interval [0,1], with 0.0 denoting black and 1.0 denoting white.
 This produces an @acronym{RGB} color, where each of the red, green,
 and blue intensities @code{r}, @code{g}, @code{b}, lies in the interval [0,1].
 
+@item pen RGB(int r, int g, int b);
+@cindex @code{rgb}
+This produces an @acronym{RGB} color, where each of the red, green,
+and blue intensities @code{r}, @code{g}, @code{b}, lies in the
+interval [0,255].
+
 @item pen cmyk(real c, real m, real y, real k);
 @cindex @code{cmyk}
 This produces a @acronym{CMYK} color, where each of the cyan, magenta,
@@ -3262,7 +3268,7 @@ integer power with the @code{^} operator.
 The built-in transforms are:
 
 @table @code
-@item transform identity();
+@item transform identity;
 @cindex @code{identity}
 the identity transform;
 @item transform shift(pair z);
@@ -3292,6 +3298,9 @@ rotates by @code{angle} in degrees about @code{z};
 @item transform reflect(pair a, pair b);
 @cindex @code{reflect}
 reflects about the line @code{a--b}.
+@item transform zeroTransform;
+@cindex @code{zeroTransform}
+the zero transform;
 @end table
 
 @cindex @code{shift}
@@ -5100,6 +5109,8 @@ each iteration are printed if @code{verbose=true}.
 If the iteration fails after the maximum allowed number of loops
 (@code{iterations}), @code{realMax} is returned.
 
+@cindex integral
+@cindex integrate
 @cindex @code{simpson}
 @item @code{real simpson(real f(real), real a, real b, real acc=realEpsilon, real dxmax=b-a)}
 returns the integral of @code{f} from @code{a} to @code{b} using adaptive Simpson integration.
@@ -5353,9 +5364,12 @@ pete    7
 @end verbatim
 
 @cindex @code{sort}
-@item T[] sort(T[] a, bool less(T i, T j))
-returns a copy of @code{a} stably sorted in ascending order such that
-element @code{i} precedes element @code{j} if @code{less(i,j)} is true.
+@item T[] sort(T[] a, bool less(T i, T j), bool stable=true)
+returns a copy of @code{a} sorted in ascending order such that
+element @code{i} precedes element @code{j} if @code{less(i,j)} is
+true, subject to (if @code{stable} is @code{true}) the stability constraint
+that the original order of elements @code{i} and @code{j} is preserved if
+@code{less(i,j)} and @code{less(j,i)} are both @code{false}.
 
 @cindex @code{transpose}
 @item T[][] transpose(T[][] a)
@@ -8441,6 +8455,9 @@ which is the determinant
 |c.x c.y c.z 1|
 |d.x d.y d.z 1|
 @end verbatim
+The result is negative (positive) if @code{a}, @code{b}, @code{c} appear in
+counterclockwise (clockwise) order when viewed from @code{d} or zero
+if all four points are coplanar.
  
 The routine
 @cindex @code{insphere}
@@ -9445,7 +9462,7 @@ The file @code{asymptote.py} in the @code{Asymptote} system directory
 provides an alternative way of entering @code{Asymptote} commands
 interactively, coupled with the full power of @code{Python}. Copy this
 file to your @code{Python path} and then execute from within
-@code{Python} the commands 
+@code{Python 3} the commands 
 @verbatim
 from asymptote import *
 g=asy()
@@ -9482,39 +9499,33 @@ The modified figure can then be saved as a normal @code{Asymptote} file.
 @cindex GUI installation
 
 As @code{xasy} is written in the interactive scripting language
-@code{Python/TK}, it requires @code{Python} (@url{http://www.python.org}),
-the @code{Pillow} fork of the @code{Python Imaging Library},and the
-@code{tkinter} package (included with @code{Python} under
-@code{Microsoft Windows}). @code{Fedora Linux} users can
-either install @code{tkinter} and @code{Pillow} with the commands
-@verbatim
-dnf install tkinter
-dnf install tk-devel
-dnf install python-pillow-tk
-@end verbatim
-@noindent
-or manually install the @code{tkinter}, @code{tix}, @code{tk},
-and @code{tk-devel} packages.
+@code{Python/Qt}, it requires @code{Python} (@url{http://www.python.org}),
+along with the @code{Python} packages @code{pyqt5}, @code{cson}, and
+@code{numpy}:
 
-Pictures are deconstructed into the @acronym{PNG} image format, which
-supports full alpha channel transparency. Under @code{Microsoft Windows},
-this requires @code{Python 2.7.4} or later and version @code{3.1.0} of the
-@code{Pillow} fork of the @code{Python Imaging Library}, available from
-@quotation
-@url{http://pypi.python.org/pypi/Pillow}
-@end quotation
+@verbatim
+pip3 install pyqt5 cson numpy
+@end verbatim
+
+Pictures are deconstructed into the @acronym{SVG} image format.
+Since @code{Qt5} does not suport @code{SVG} clipping, you will need
+the @code{rsvg-convert} utility, which is part of the
+@code{librsvg2-tools} package on @code{UNIX} systems; under
+@code{Microsoft Windows}, it is available as
+
+@url{https://sourceforge.net/projects/tumagcc/files/rsvg-convert-2.40.20.7z}
 
 @node GUI usage,  , GUI installation, GUI
 @section GUI usage
 @cindex GUI usage
+@cindex arrow keys
+@cindex mouse wheel
 @cindex @code{deconstruct}
-
-A wheel mouse is convenient for raising and lowering objects within
-@code{xasy}, to expose the object to be moved. If a wheel mouse is not
-available, mouse @code{Button-2} can be used to repeatedly lower an
-object instead. When run from the command line, @code{xasy} accepts
-a command line option @code{-x n}, which sets the initial magnification
-to @code{n}.
+The arrow keys (or mouse wheel) are convenient for temporarily
+raising and lowering objects within @code{xasy}, allowing an object to
+be selected. Pressing the arrow keys will pan while the shift key is held
+and zoom while the control key is held. The mouse wheel will pan while
+the alt or shift keys is held and zoom while the control key is held.
 
 Deconstruction of compound objects (such as arrows) can be prevented 
 by enclosing them within the commands

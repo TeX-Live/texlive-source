@@ -114,7 +114,7 @@
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #undef HAVE_PTRDIFF_T
 
-/* Define if you have a working <rpc/rpc.h> header file */
+/* Define if you have a working <tirpc/rpc/rpc.h> header file */
 #undef HAVE_RPC_RPC_H
 
 /* Define to 1 if you have the `sqrt' function. */

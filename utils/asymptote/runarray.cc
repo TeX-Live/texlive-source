@@ -1100,23 +1100,25 @@ void arrayFunction(stack *Stack)
 #line 911 "runarray.in"
 void arraySort(stack *Stack)
 {
+  bool stable=vm::pop<bool>(Stack,true);
   callable * less=vm::pop<callable *>(Stack);
   array * a=vm::pop<array *>(Stack);
 #line 912 "runarray.in"
   array *c=copyArray(a);
   compareFunc=less;
   FuncStack=Stack;
-  stable_sort(c->begin(),c->end(),compareFunction);
+  if(stable) stable_sort(c->begin(),c->end(),compareFunction);
+  else sort(c->begin(),c->end(),compareFunction);
   {Stack->push<array*>(c); return;}
 }
 
-#line 920 "runarray.in"
+#line 921 "runarray.in"
 void arraySearch(stack *Stack)
 {
   callable * less=vm::pop<callable *>(Stack);
   item key=vm::pop(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 921 "runarray.in"
+#line 922 "runarray.in"
   size_t size=a->size();
   compareFunc=less;
   FuncStack=Stack;
@@ -1134,12 +1136,12 @@ void arraySearch(stack *Stack)
   {Stack->push<Int>(0); return;}
 }
 
-#line 939 "runarray.in"
+#line 940 "runarray.in"
 // bool all(boolarray *a);
 void gen_runarray38(stack *Stack)
 {
   boolarray * a=vm::pop<boolarray *>(Stack);
-#line 940 "runarray.in"
+#line 941 "runarray.in"
   size_t size=checkArray(a);
   bool c=true;
   for(size_t i=0; i < size; i++)
@@ -1147,12 +1149,12 @@ void gen_runarray38(stack *Stack)
   {Stack->push<bool>(c); return;}
 }
 
-#line 948 "runarray.in"
+#line 949 "runarray.in"
 // boolarray* !(boolarray* a);
 void gen_runarray39(stack *Stack)
 {
   boolarray* a=vm::pop<boolarray*>(Stack);
-#line 949 "runarray.in"
+#line 950 "runarray.in"
   size_t size=checkArray(a);
   array *c=new array(size);
   for(size_t i=0; i < size; i++)
@@ -1160,12 +1162,12 @@ void gen_runarray39(stack *Stack)
   {Stack->push<boolarray*>(c); return;}
 }
 
-#line 957 "runarray.in"
+#line 958 "runarray.in"
 // Int sum(boolarray *a);
 void gen_runarray40(stack *Stack)
 {
   boolarray * a=vm::pop<boolarray *>(Stack);
-#line 958 "runarray.in"
+#line 959 "runarray.in"
   size_t size=checkArray(a);
   Int sum=0;
   for(size_t i=0; i < size; i++)
@@ -1173,11 +1175,11 @@ void gen_runarray40(stack *Stack)
   {Stack->push<Int>(sum); return;}
 }
 
-#line 966 "runarray.in"
+#line 967 "runarray.in"
 void arrayConcat(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 967 "runarray.in"
+#line 968 "runarray.in"
   // a is an array of arrays to be concatenated together.
   // The signature is
   //   T[] concat(... T[][] a);
@@ -1204,11 +1206,11 @@ void arrayConcat(stack *Stack)
   {Stack->push<array*>(result); return;}
 }
 
-#line 994 "runarray.in"
+#line 995 "runarray.in"
 void array2Transpose(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 995 "runarray.in"
+#line 996 "runarray.in"
   size_t asize=checkArray(a);
   array *c=new array(0);
   for(size_t i=0; i < asize; i++) {
@@ -1235,12 +1237,12 @@ void array2Transpose(stack *Stack)
 // permutation  (021 or 120, etc; original is 012).
 // Transpose by sending respective members to the permutated locations:
 // return the array obtained by putting a[i][j][k] into position perm{ijk}. 
-#line 1022 "runarray.in"
+#line 1023 "runarray.in"
 void array3Transpose(stack *Stack)
 {
   array * perm=vm::pop<array *>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 1023 "runarray.in"
+#line 1024 "runarray.in"
   const size_t DIM=3;
 
   if(checkArray(perm) != DIM) {
@@ -1324,13 +1326,13 @@ void array3Transpose(stack *Stack)
 
 // Find the index of the nth true value in a boolean array or -1 if not found.
 // If n is negative, search backwards.
-#line 1107 "runarray.in"
+#line 1108 "runarray.in"
 // Int find(boolarray *a, Int n=1);
 void gen_runarray44(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack,1);
   boolarray * a=vm::pop<boolarray *>(Stack);
-#line 1108 "runarray.in"
+#line 1109 "runarray.in"
   size_t size=checkArray(a);
   Int j=-1;
   if(n > 0)
@@ -1347,12 +1349,12 @@ void gen_runarray44(stack *Stack)
 }
 
 // Find all indices of true values in a boolean array. 
-#line 1125 "runarray.in"
+#line 1126 "runarray.in"
 // Intarray* findall(boolarray *a);
 void gen_runarray45(stack *Stack)
 {
   boolarray * a=vm::pop<boolarray *>(Stack);
-#line 1126 "runarray.in"
+#line 1127 "runarray.in"
   size_t size=checkArray(a);
   array *b=new array(0);
   for(size_t i=0; i < size; i++) {
@@ -1365,13 +1367,13 @@ void gen_runarray45(stack *Stack)
 
 // construct vector obtained by replacing those elements of b for which the
 // corresponding elements of a are false by the corresponding element of c.
-#line 1139 "runarray.in"
+#line 1140 "runarray.in"
 void arrayConditional(stack *Stack)
 {
   array * c=vm::pop<array *>(Stack);
   array * b=vm::pop<array *>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 1140 "runarray.in"
+#line 1141 "runarray.in"
   size_t size=checkArray(a);
   array *r=new array(size);
   if(b && c) {
@@ -1395,22 +1397,22 @@ void arrayConditional(stack *Stack)
 }
 
 // Return an n x n identity matrix.
-#line 1164 "runarray.in"
+#line 1165 "runarray.in"
 // realarray2* identity(Int n);
 void gen_runarray47(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
-#line 1165 "runarray.in"
+#line 1166 "runarray.in"
   {Stack->push<realarray2*>(Identity(n)); return;}
 }
 
 // Return the inverse of an n x n matrix a using Gauss-Jordan elimination.
-#line 1170 "runarray.in"
+#line 1171 "runarray.in"
 // realarray2* inverse(realarray2 *a);
 void gen_runarray48(stack *Stack)
 {
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 1171 "runarray.in"
+#line 1172 "runarray.in"
   size_t n=checkArray(a);
   double *A;
   copyArray2C(A,a,true,0,NoGC);
@@ -1423,14 +1425,14 @@ void gen_runarray48(stack *Stack)
 // Solve the linear equation ax=b by LU decomposition, returning the
 // solution x, where a is an n x n matrix and b is an array of length n.
 // If no solution exists, return an empty array.
-#line 1184 "runarray.in"
+#line 1185 "runarray.in"
 // realarray* solve(realarray2 *a, realarray *b, bool warn=true);
 void gen_runarray49(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   realarray * b=vm::pop<realarray *>(Stack);
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 1185 "runarray.in"
+#line 1186 "runarray.in"
   size_t n=checkArray(a);
   
   if(n == 0) {Stack->push<realarray*>(new array(0)); return;}
@@ -1482,14 +1484,14 @@ void gen_runarray49(stack *Stack)
 // Solve the linear equation ax=b by LU decomposition, returning the
 // solution x, where a is an n x n matrix and b is an n x m matrix.
 // If no solution exists, return an empty array.
-#line 1237 "runarray.in"
+#line 1238 "runarray.in"
 // realarray2* solve(realarray2 *a, realarray2 *b, bool warn=true);
 void gen_runarray50(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   realarray2 * b=vm::pop<realarray2 *>(Stack);
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 1238 "runarray.in"
+#line 1239 "runarray.in"
   size_t n=checkArray(a);
   
   if(n == 0) {Stack->push<realarray2*>(new array(0)); return;}
@@ -1551,12 +1553,12 @@ void gen_runarray50(stack *Stack)
 }
 
 // Compute the determinant of an n x n matrix.
-#line 1300 "runarray.in"
+#line 1301 "runarray.in"
 // real determinant(realarray2 *a);
 void gen_runarray51(stack *Stack)
 {
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 1301 "runarray.in"
+#line 1302 "runarray.in"
   real *A;
   copyArray2C(A,a);
   size_t n=checkArray(a);
@@ -1571,13 +1573,13 @@ void gen_runarray51(stack *Stack)
   {Stack->push<real>(det); return;}
 }
 
-#line 1316 "runarray.in"
+#line 1317 "runarray.in"
 // realarray* *(realarray2 *a, realarray *b);
 void gen_runarray52(stack *Stack)
 {
   realarray * b=vm::pop<realarray *>(Stack);
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 1317 "runarray.in"
+#line 1318 "runarray.in"
   size_t n=checkArray(a);
   size_t m=checkArray(b);
   array *c=new array(n);
@@ -1595,13 +1597,13 @@ void gen_runarray52(stack *Stack)
   {Stack->push<realarray*>(c); return;}
 }
 
-#line 1335 "runarray.in"
+#line 1336 "runarray.in"
 // realarray* *(realarray *a, realarray2 *b);
 void gen_runarray53(stack *Stack)
 {
   realarray2 * b=vm::pop<realarray2 *>(Stack);
   realarray * a=vm::pop<realarray *>(Stack);
-#line 1336 "runarray.in"
+#line 1337 "runarray.in"
   size_t n=checkArray(a);
   if(n != checkArray(b)) error(incommensurate);
   real *A;
@@ -1629,62 +1631,62 @@ void gen_runarray53(stack *Stack)
   {Stack->push<realarray*>(c); return;}
 }
 
-#line 1364 "runarray.in"
+#line 1365 "runarray.in"
 // Intarray2* *(Intarray2 *a, Intarray2 *b);
 void gen_runarray54(stack *Stack)
 {
   Intarray2 * b=vm::pop<Intarray2 *>(Stack);
   Intarray2 * a=vm::pop<Intarray2 *>(Stack);
-#line 1365 "runarray.in"
+#line 1366 "runarray.in"
   {Stack->push<Intarray2*>(mult<Int>(a,b)); return;}
 }
 
-#line 1369 "runarray.in"
+#line 1370 "runarray.in"
 // realarray2* *(realarray2 *a, realarray2 *b);
 void gen_runarray55(stack *Stack)
 {
   realarray2 * b=vm::pop<realarray2 *>(Stack);
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 1370 "runarray.in"
+#line 1371 "runarray.in"
   {Stack->push<realarray2*>(mult<real>(a,b)); return;}
 }
 
-#line 1374 "runarray.in"
+#line 1375 "runarray.in"
 // pairarray2* *(pairarray2 *a, pairarray2 *b);
 void gen_runarray56(stack *Stack)
 {
   pairarray2 * b=vm::pop<pairarray2 *>(Stack);
   pairarray2 * a=vm::pop<pairarray2 *>(Stack);
-#line 1375 "runarray.in"
+#line 1376 "runarray.in"
   {Stack->push<pairarray2*>(mult<pair>(a,b)); return;}
 }
 
-#line 1379 "runarray.in"
+#line 1380 "runarray.in"
 // triple *(realarray2 *t, triple v);
 void gen_runarray57(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
   realarray2 * t=vm::pop<realarray2 *>(Stack);
-#line 1380 "runarray.in"
+#line 1381 "runarray.in"
   {Stack->push<triple>(*t*v); return;}
 }
 
-#line 1384 "runarray.in"
+#line 1385 "runarray.in"
 // realarray2* AtA(realarray2 *a);
 void gen_runarray58(stack *Stack)
 {
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 1385 "runarray.in"
+#line 1386 "runarray.in"
   {Stack->push<realarray2*>(AtA<real>(a)); return;}
 }
 
-#line 1389 "runarray.in"
+#line 1390 "runarray.in"
 // pair project(triple v, realarray2 *t);
 void gen_runarray59(stack *Stack)
 {
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   triple v=vm::pop<triple>(Stack);
-#line 1390 "runarray.in"
+#line 1391 "runarray.in"
   size_t n=checkArray(t);
   if(n != 4) error(incommensurate);
   array *t0=read<array*>(t,0);
@@ -1709,13 +1711,13 @@ void gen_runarray59(stack *Stack)
 }
 
 // Compute the dot product of vectors a and b.
-#line 1415 "runarray.in"
+#line 1416 "runarray.in"
 // real dot(realarray *a, realarray *b);
 void gen_runarray60(stack *Stack)
 {
   realarray * b=vm::pop<realarray *>(Stack);
   realarray * a=vm::pop<realarray *>(Stack);
-#line 1416 "runarray.in"
+#line 1417 "runarray.in"
   size_t n=checkArrays(a,b);
   real sum=0.0;
   for(size_t i=0; i < n; ++i)
@@ -1724,13 +1726,13 @@ void gen_runarray60(stack *Stack)
 }
 
 // Compute the complex dot product of vectors a and b.
-#line 1425 "runarray.in"
+#line 1426 "runarray.in"
 // pair dot(pairarray *a, pairarray *b);
 void gen_runarray61(stack *Stack)
 {
   pairarray * b=vm::pop<pairarray *>(Stack);
   pairarray * a=vm::pop<pairarray *>(Stack);
-#line 1426 "runarray.in"
+#line 1427 "runarray.in"
   size_t n=checkArrays(a,b);
   pair sum=zero;
   for(size_t i=0; i < n; ++i)
@@ -1745,7 +1747,7 @@ void gen_runarray61(stack *Stack)
 // [      a[2] b[2] c[2]        ]
 // [                ...         ]
 // [ c[n-1]       a[n-1] b[n-1] ]
-#line 1441 "runarray.in"
+#line 1442 "runarray.in"
 // realarray* tridiagonal(realarray *a, realarray *b, realarray *c, realarray *f);
 void gen_runarray62(stack *Stack)
 {
@@ -1753,7 +1755,7 @@ void gen_runarray62(stack *Stack)
   realarray * c=vm::pop<realarray *>(Stack);
   realarray * b=vm::pop<realarray *>(Stack);
   realarray * a=vm::pop<realarray *>(Stack);
-#line 1442 "runarray.in"
+#line 1443 "runarray.in"
   size_t n=checkArrays(a,b);
   checkEqual(n,checkArray(c));
   checkEqual(n,checkArray(f));
@@ -1850,7 +1852,7 @@ void gen_runarray62(stack *Stack)
 }
 
 // Root solve by Newton-Raphson
-#line 1539 "runarray.in"
+#line 1540 "runarray.in"
 // real newton(Int iterations=100, callableReal *f, callableReal *fprime, real x,            bool verbose=false);
 void gen_runarray63(stack *Stack)
 {
@@ -1859,7 +1861,7 @@ void gen_runarray63(stack *Stack)
   callableReal * fprime=vm::pop<callableReal *>(Stack);
   callableReal * f=vm::pop<callableReal *>(Stack);
   Int iterations=vm::pop<Int>(Stack,100);
-#line 1541 "runarray.in"
+#line 1542 "runarray.in"
   static const real fuzz=1000.0*DBL_EPSILON;
   Int i=0;
   size_t oldPrec=0;
@@ -1905,7 +1907,7 @@ void gen_runarray63(stack *Stack)
 
 // Root solve by Newton-Raphson bisection
 // cf. routine rtsafe (Press et al.,  Numerical Recipes, 1991).
-#line 1587 "runarray.in"
+#line 1588 "runarray.in"
 // real newton(Int iterations=100, callableReal *f, callableReal *fprime, real x1,            real x2, bool verbose=false);
 void gen_runarray64(stack *Stack)
 {
@@ -1915,7 +1917,7 @@ void gen_runarray64(stack *Stack)
   callableReal * fprime=vm::pop<callableReal *>(Stack);
   callableReal * f=vm::pop<callableReal *>(Stack);
   Int iterations=vm::pop<Int>(Stack,100);
-#line 1589 "runarray.in"
+#line 1590 "runarray.in"
   static const real fuzz=1000.0*DBL_EPSILON;
   size_t oldPrec=0;
   if(verbose) 
@@ -2001,7 +2003,7 @@ void gen_runarray64(stack *Stack)
 // In this implementation, the binary search is interleaved
 // with a modified version of quadratic interpolation.
 // This is a C++ port of the Asymptote routine written by Charles Staats III.
-#line 1675 "runarray.in"
+#line 1676 "runarray.in"
 // real _findroot(callableReal *f, real a, real b, real tolerance,               real fa, real fb);
 void gen_runarray65(stack *Stack)
 {
@@ -2011,7 +2013,7 @@ void gen_runarray65(stack *Stack)
   real b=vm::pop<real>(Stack);
   real a=vm::pop<real>(Stack);
   callableReal * f=vm::pop<callableReal *>(Stack);
-#line 1677 "runarray.in"
+#line 1678 "runarray.in"
   if(fa == 0.0) {Stack->push<real>(a); return;}
   if(fb == 0.0) {Stack->push<real>(b); return;}
   
@@ -2103,7 +2105,7 @@ void gen_runarray65(stack *Stack)
   {Stack->push<real>(a-(b-a)/(fb-fa)*fa); return;}
 }
 
-#line 1769 "runarray.in"
+#line 1770 "runarray.in"
 // real simpson(callableReal *f, real a, real b, real acc=DBL_EPSILON,             real dxmax=0);
 void gen_runarray66(stack *Stack)
 {
@@ -2112,7 +2114,7 @@ void gen_runarray66(stack *Stack)
   real b=vm::pop<real>(Stack);
   real a=vm::pop<real>(Stack);
   callableReal * f=vm::pop<callableReal *>(Stack);
-#line 1771 "runarray.in"
+#line 1772 "runarray.in"
   real integral;
   if(dxmax <= 0) dxmax=fabs(b-a);
   callable *oldFunc=Func;
@@ -2125,13 +2127,13 @@ void gen_runarray66(stack *Stack)
 }
 
 // Compute the fast Fourier transform of a pair array
-#line 1784 "runarray.in"
+#line 1785 "runarray.in"
 // pairarray* fft(pairarray *a, Int sign=1);
 void gen_runarray67(stack *Stack)
 {
   Int sign=vm::pop<Int>(Stack,1);
   pairarray * a=vm::pop<pairarray *>(Stack);
-#line 1785 "runarray.in"
+#line 1786 "runarray.in"
 #ifdef HAVE_LIBFFTW3
   unsigned n=(unsigned) checkArray(a);
   array *c=new array(n);
@@ -2160,12 +2162,12 @@ void gen_runarray67(stack *Stack)
   {Stack->push<pairarray*>(c); return;}
 }
 
-#line 1814 "runarray.in"
+#line 1815 "runarray.in"
 // Intarray2* triangulate(pairarray *z);
 void gen_runarray68(stack *Stack)
 {
   pairarray * z=vm::pop<pairarray *>(Stack);
-#line 1815 "runarray.in"
+#line 1816 "runarray.in"
   size_t nv=checkArray(z);
 // Call robust version of Gilles Dumoulin's port of Paul Bourke's
 // triangulation code.
@@ -2199,12 +2201,12 @@ void gen_runarray68(stack *Stack)
   {Stack->push<Intarray2*>(t); return;}
 }
 
-#line 1849 "runarray.in"
+#line 1850 "runarray.in"
 // real norm(realarray *a);
 void gen_runarray69(stack *Stack)
 {
   realarray * a=vm::pop<realarray *>(Stack);
-#line 1850 "runarray.in"
+#line 1851 "runarray.in"
   size_t n=checkArray(a);
   real M=0.0;
   for(size_t i=0; i < n; ++i) {
@@ -2214,12 +2216,12 @@ void gen_runarray69(stack *Stack)
   {Stack->push<real>(M); return;}
 }
 
-#line 1860 "runarray.in"
+#line 1861 "runarray.in"
 // real norm(realarray2 *a);
 void gen_runarray70(stack *Stack)
 {
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 1861 "runarray.in"
+#line 1862 "runarray.in"
   size_t n=checkArray(a);
   real M=0.0;
   for(size_t i=0; i < n; ++i) {
@@ -2233,12 +2235,12 @@ void gen_runarray70(stack *Stack)
   {Stack->push<real>(M); return;}
 }
 
-#line 1875 "runarray.in"
+#line 1876 "runarray.in"
 // real norm(triplearray2 *a);
 void gen_runarray71(stack *Stack)
 {
   triplearray2 * a=vm::pop<triplearray2 *>(Stack);
-#line 1876 "runarray.in"
+#line 1877 "runarray.in"
   size_t n=checkArray(a);
   real M=0.0;
   for(size_t i=0; i < n; ++i) {
@@ -2252,12 +2254,12 @@ void gen_runarray71(stack *Stack)
   {Stack->push<real>(sqrt(M)); return;}
 }
 
-#line 1890 "runarray.in"
+#line 1891 "runarray.in"
 // real change2(triplearray2 *a);
 void gen_runarray72(stack *Stack)
 {
   triplearray2 * a=vm::pop<triplearray2 *>(Stack);
-#line 1891 "runarray.in"
+#line 1892 "runarray.in"
   size_t n=checkArray(a);
   if(n == 0) {Stack->push<real>(0.0); return;}
   
@@ -2278,13 +2280,13 @@ void gen_runarray72(stack *Stack)
   {Stack->push<real>(M); return;}
 }
 
-#line 1912 "runarray.in"
+#line 1913 "runarray.in"
 // triple minbezier(triplearray2 *P, triple b);
 void gen_runarray73(stack *Stack)
 {
   triple b=vm::pop<triple>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
-#line 1913 "runarray.in"
+#line 1914 "runarray.in"
   size_t N;
   real *A=copyTripleArray2Components(P,N);
   bound_double *B=bounddouble(N);
@@ -2295,13 +2297,13 @@ void gen_runarray73(stack *Stack)
   {Stack->push<triple>(b); return;}
 }
 
-#line 1924 "runarray.in"
+#line 1925 "runarray.in"
 // triple maxbezier(triplearray2 *P, triple b);
 void gen_runarray74(stack *Stack)
 {
   triple b=vm::pop<triple>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
-#line 1925 "runarray.in"
+#line 1926 "runarray.in"
   size_t N;
   real *A=copyTripleArray2Components(P,N);
   bound_double *B=bounddouble(N);
@@ -2312,13 +2314,13 @@ void gen_runarray74(stack *Stack)
   {Stack->push<triple>(b); return;}
 }
 
-#line 1936 "runarray.in"
+#line 1937 "runarray.in"
 // pair minratio(triplearray2 *P, pair b);
 void gen_runarray75(stack *Stack)
 {
   pair b=vm::pop<pair>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
-#line 1937 "runarray.in"
+#line 1938 "runarray.in"
   size_t N;
   triple *A=copyTripleArray2C(P,N);
   real fuzz=sqrtFuzz*norm(A,N);
@@ -2329,13 +2331,13 @@ void gen_runarray75(stack *Stack)
   {Stack->push<pair>(b); return;}
 }
 
-#line 1948 "runarray.in"
+#line 1949 "runarray.in"
 // pair maxratio(triplearray2 *P, pair b);
 void gen_runarray76(stack *Stack)
 {
   pair b=vm::pop<pair>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
-#line 1949 "runarray.in"
+#line 1950 "runarray.in"
   size_t N;
   triple *A=copyTripleArray2C(P,N);
   bound_triple *B=boundtriple(N);
@@ -2346,11 +2348,11 @@ void gen_runarray76(stack *Stack)
   {Stack->push<pair>(b); return;}
 }
 
-#line 1960 "runarray.in"
+#line 1961 "runarray.in"
 // realarray* _projection();
 void gen_runarray77(stack *Stack)
 {
-#line 1961 "runarray.in"
+#line 1962 "runarray.in"
 #ifdef HAVE_GL
   array *a=new array(14);
   gl::projection P=gl::camera();
@@ -2461,87 +2463,87 @@ void gen_runarray_venv(venv &ve)
   REGISTER_BLTIN(run::arrayFunction,"arrayFunction");
 #line 911 "runarray.in"
   REGISTER_BLTIN(run::arraySort,"arraySort");
-#line 920 "runarray.in"
+#line 921 "runarray.in"
   REGISTER_BLTIN(run::arraySearch,"arraySearch");
-#line 939 "runarray.in"
+#line 940 "runarray.in"
   addFunc(ve, run::gen_runarray38, primBoolean(), SYM(all), formal(booleanArray(), SYM(a), false, false));
-#line 948 "runarray.in"
+#line 949 "runarray.in"
   addFunc(ve, run::gen_runarray39, booleanArray(), SYM_LOGNOT, formal(booleanArray(), SYM(a), false, false));
-#line 957 "runarray.in"
+#line 958 "runarray.in"
   addFunc(ve, run::gen_runarray40, primInt(), SYM(sum), formal(booleanArray(), SYM(a), false, false));
-#line 966 "runarray.in"
+#line 967 "runarray.in"
   REGISTER_BLTIN(run::arrayConcat,"arrayConcat");
-#line 994 "runarray.in"
+#line 995 "runarray.in"
   REGISTER_BLTIN(run::array2Transpose,"array2Transpose");
-#line 1018 "runarray.in"
+#line 1019 "runarray.in"
   REGISTER_BLTIN(run::array3Transpose,"array3Transpose");
-#line 1105 "runarray.in"
+#line 1106 "runarray.in"
   addFunc(ve, run::gen_runarray44, primInt(), SYM(find), formal(booleanArray(), SYM(a), false, false), formal(primInt(), SYM(n), true, false));
-#line 1124 "runarray.in"
+#line 1125 "runarray.in"
   addFunc(ve, run::gen_runarray45, IntArray(), SYM(findall), formal(booleanArray(), SYM(a), false, false));
-#line 1137 "runarray.in"
+#line 1138 "runarray.in"
   REGISTER_BLTIN(run::arrayConditional,"arrayConditional");
-#line 1163 "runarray.in"
+#line 1164 "runarray.in"
   addFunc(ve, run::gen_runarray47, realArray2(), SYM(identity), formal(primInt(), SYM(n), false, false));
-#line 1169 "runarray.in"
+#line 1170 "runarray.in"
   addFunc(ve, run::gen_runarray48, realArray2(), SYM(inverse), formal(realArray2(), SYM(a), false, false));
-#line 1181 "runarray.in"
+#line 1182 "runarray.in"
   addFunc(ve, run::gen_runarray49, realArray(), SYM(solve), formal(realArray2(), SYM(a), false, false), formal(realArray(), SYM(b), false, false), formal(primBoolean(), SYM(warn), true, false));
-#line 1234 "runarray.in"
+#line 1235 "runarray.in"
   addFunc(ve, run::gen_runarray50, realArray2(), SYM(solve), formal(realArray2(), SYM(a), false, false), formal(realArray2(), SYM(b), false, false), formal(primBoolean(), SYM(warn), true, false));
-#line 1299 "runarray.in"
+#line 1300 "runarray.in"
   addFunc(ve, run::gen_runarray51, primReal(), SYM(determinant), formal(realArray2(), SYM(a), false, false));
-#line 1316 "runarray.in"
+#line 1317 "runarray.in"
   addFunc(ve, run::gen_runarray52, realArray(), SYM_TIMES, formal(realArray2(), SYM(a), false, false), formal(realArray(), SYM(b), false, false));
-#line 1335 "runarray.in"
+#line 1336 "runarray.in"
   addFunc(ve, run::gen_runarray53, realArray(), SYM_TIMES, formal(realArray(), SYM(a), false, false), formal(realArray2(), SYM(b), false, false));
-#line 1364 "runarray.in"
+#line 1365 "runarray.in"
   addFunc(ve, run::gen_runarray54, IntArray2(), SYM_TIMES, formal(IntArray2(), SYM(a), false, false), formal(IntArray2(), SYM(b), false, false));
-#line 1369 "runarray.in"
+#line 1370 "runarray.in"
   addFunc(ve, run::gen_runarray55, realArray2(), SYM_TIMES, formal(realArray2(), SYM(a), false, false), formal(realArray2(), SYM(b), false, false));
-#line 1374 "runarray.in"
+#line 1375 "runarray.in"
   addFunc(ve, run::gen_runarray56, pairArray2(), SYM_TIMES, formal(pairArray2(), SYM(a), false, false), formal(pairArray2(), SYM(b), false, false));
-#line 1379 "runarray.in"
+#line 1380 "runarray.in"
   addFunc(ve, run::gen_runarray57, primTriple(), SYM_TIMES, formal(realArray2(), SYM(t), false, false), formal(primTriple(), SYM(v), false, false));
-#line 1384 "runarray.in"
+#line 1385 "runarray.in"
   addFunc(ve, run::gen_runarray58, realArray2(), SYM(AtA), formal(realArray2(), SYM(a), false, false));
-#line 1389 "runarray.in"
+#line 1390 "runarray.in"
   addFunc(ve, run::gen_runarray59, primPair(), SYM(project), formal(primTriple(), SYM(v), false, false), formal(realArray2(), SYM(t), false, false));
-#line 1414 "runarray.in"
+#line 1415 "runarray.in"
   addFunc(ve, run::gen_runarray60, primReal(), SYM(dot), formal(realArray(), SYM(a), false, false), formal(realArray(), SYM(b), false, false));
-#line 1424 "runarray.in"
+#line 1425 "runarray.in"
   addFunc(ve, run::gen_runarray61, primPair(), SYM(dot), formal(pairArray(), SYM(a), false, false), formal(pairArray(), SYM(b), false, false));
-#line 1434 "runarray.in"
+#line 1435 "runarray.in"
   addFunc(ve, run::gen_runarray62, realArray(), SYM(tridiagonal), formal(realArray(), SYM(a), false, false), formal(realArray(), SYM(b), false, false), formal(realArray(), SYM(c), false, false), formal(realArray(), SYM(f), false, false));
-#line 1538 "runarray.in"
+#line 1539 "runarray.in"
   addFunc(ve, run::gen_runarray63, primReal(), SYM(newton), formal(primInt(), SYM(iterations), true, false), formal(realRealFunction(), SYM(f), false, false), formal(realRealFunction(), SYM(fprime), false, false), formal(primReal(), SYM(x), false, false), formal(primBoolean(), SYM(verbose), true, false));
-#line 1585 "runarray.in"
+#line 1586 "runarray.in"
   addFunc(ve, run::gen_runarray64, primReal(), SYM(newton), formal(primInt(), SYM(iterations), true, false), formal(realRealFunction(), SYM(f), false, false), formal(realRealFunction(), SYM(fprime), false, false), formal(primReal(), SYM(x1), false, false), formal(primReal(), SYM(x2), false, false), formal(primBoolean(), SYM(verbose), true, false));
-#line 1667 "runarray.in"
+#line 1668 "runarray.in"
   addFunc(ve, run::gen_runarray65, primReal(), SYM(_findroot), formal(realRealFunction(), SYM(f), false, false), formal(primReal(), SYM(a), false, false), formal(primReal(), SYM(b), false, false), formal(primReal(), SYM(tolerance), false, false), formal(primReal(), SYM(fa), false, false), formal(primReal(), SYM(fb), false, false));
-#line 1769 "runarray.in"
+#line 1770 "runarray.in"
   addFunc(ve, run::gen_runarray66, primReal(), SYM(simpson), formal(realRealFunction(), SYM(f), false, false), formal(primReal(), SYM(a), false, false), formal(primReal(), SYM(b), false, false), formal(primReal(), SYM(acc), true, false), formal(primReal(), SYM(dxmax), true, false));
-#line 1783 "runarray.in"
+#line 1784 "runarray.in"
   addFunc(ve, run::gen_runarray67, pairArray(), SYM(fft), formal(pairArray(), SYM(a), false, false), formal(primInt(), SYM(sign), true, false));
-#line 1814 "runarray.in"
+#line 1815 "runarray.in"
   addFunc(ve, run::gen_runarray68, IntArray2(), SYM(triangulate), formal(pairArray(), SYM(z), false, false));
-#line 1849 "runarray.in"
+#line 1850 "runarray.in"
   addFunc(ve, run::gen_runarray69, primReal(), SYM(norm), formal(realArray(), SYM(a), false, false));
-#line 1860 "runarray.in"
+#line 1861 "runarray.in"
   addFunc(ve, run::gen_runarray70, primReal(), SYM(norm), formal(realArray2(), SYM(a), false, false));
-#line 1875 "runarray.in"
+#line 1876 "runarray.in"
   addFunc(ve, run::gen_runarray71, primReal(), SYM(norm), formal(tripleArray2(), SYM(a), false, false));
-#line 1890 "runarray.in"
+#line 1891 "runarray.in"
   addFunc(ve, run::gen_runarray72, primReal(), SYM(change2), formal(tripleArray2(), SYM(a), false, false));
-#line 1912 "runarray.in"
+#line 1913 "runarray.in"
   addFunc(ve, run::gen_runarray73, primTriple(), SYM(minbezier), formal(tripleArray2(), SYM(p), false, false), formal(primTriple(), SYM(b), false, false));
-#line 1924 "runarray.in"
+#line 1925 "runarray.in"
   addFunc(ve, run::gen_runarray74, primTriple(), SYM(maxbezier), formal(tripleArray2(), SYM(p), false, false), formal(primTriple(), SYM(b), false, false));
-#line 1936 "runarray.in"
+#line 1937 "runarray.in"
   addFunc(ve, run::gen_runarray75, primPair(), SYM(minratio), formal(tripleArray2(), SYM(p), false, false), formal(primPair(), SYM(b), false, false));
-#line 1948 "runarray.in"
+#line 1949 "runarray.in"
   addFunc(ve, run::gen_runarray76, primPair(), SYM(maxratio), formal(tripleArray2(), SYM(p), false, false), formal(primPair(), SYM(b), false, false));
-#line 1960 "runarray.in"
+#line 1961 "runarray.in"
   addFunc(ve, run::gen_runarray77, realArray(), SYM(_projection));
 }
 

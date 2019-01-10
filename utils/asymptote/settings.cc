@@ -98,7 +98,7 @@ string defaultPDFViewer="open";
 string defaultPDFViewer="acroread";
 #endif  
 string defaultGhostscript="gs";
-string defaultGhostscriptLibrary="/usr/lib/libgs.so";
+string defaultGhostscriptLibrary="";
 string defaultDisplay="display";
 string defaultAnimate="animate";
 void queryRegistry() {}
@@ -184,7 +184,7 @@ string getEntry(const string& key)
 
 void queryRegistry()
 {
-  defaultGhostscriptLibrary=getEntry("GPL Ghostscript/*/GS_DLL");
+  string defaultGhostscriptLibrary=getEntry("GPL Ghostscript/*/GS_DLL");
   if(defaultGhostscriptLibrary.empty())
     defaultGhostscriptLibrary=getEntry("AFPL Ghostscript/*/GS_DLL");
   
@@ -1231,6 +1231,8 @@ void initSettings() {
                               ".."));
   addOption(new boolSetting("multiline", 0,
                             "Input code over multiple lines at the prompt"));
+  addOption(new boolSetting("xasy", 0,
+                            "Special interactive mode for xasy"));
 
   addOption(new boolSetting("wait", 0,
                             "Wait for child processes to finish before exiting"));
@@ -1330,7 +1332,7 @@ void setInteractive()
 {
   if(numArgs() == 0 && !getSetting<bool>("listvariables") && 
      getSetting<string>("command").empty() &&
-     (isatty(STDIN_FILENO) || getSetting<Int>("inpipe") >= 0))
+     (isatty(STDIN_FILENO) || getSetting<Int>("xasy")))
     interact::interactive=true;
   
   if(getSetting<bool>("localhistory"))

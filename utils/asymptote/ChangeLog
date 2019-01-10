@@ -1,3 +1,2172 @@
+commit 67f0c4b2d24adc346d7b616b13298903433c5910
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 30 23:23:47 2018 +0200
+
+    Minor optimization.
+
+commit 541b4014c2ad7fd63d845c3ffb6a33a6459c12eb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 30 23:07:55 2018 +0200
+
+    Fix scaling (allow second variable in Simplex method to be negative).
+
+commit 28bc9c75a1393cceb0cb719881804615ec09f05f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 30 11:23:04 2018 +0200
+
+    Generate EPS only for single-page documents.
+
+commit 89d2c88c2945096e5d765e3d9fe76163f8f553e2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 30 10:02:53 2018 +0200
+
+    Remove .vscode from releases.
+
+commit 39454327d81d169aa48fc25f6397afa0bba83be4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 30 09:57:43 2018 +0200
+
+    Remove unused files.
+
+commit 2157692a4b640473b188cdee545a431fea67e15b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 30 05:42:26 2018 +0200
+
+    Fix uptodate flag; remove spurious directory.
+
+commit aba57e58c0292a3298bc132298671814aeb67fc4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 30 04:42:23 2018 +0200
+
+    Fix URL in README.
+
+commit fa2aa36e9cea341aad6ab0e3bf49db93001069c5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 30 04:33:10 2018 +0200
+
+    Fix bsp module.
+
+commit 22d2b8d37da35bf1d0d6a1ddf75e1db32885ede0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 29 13:22:04 2018 -0600
+
+    Increment version to 2.47.
+
+commit 4eee33bc01e444c03242eefbce091bed40d3f835
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 29 11:29:27 2018 -0600
+
+    Fix relative alignment under picture rotation.
+
+commit 9edc023b2c37d0ea50972c1ab784ee9e1e100d55
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 29 01:42:29 2018 -0600
+
+    Fix commit 451a260ae50d02867c1e54726a68d8af2c55761d.
+
+commit 451a260ae50d02867c1e54726a68d8af2c55761d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 28 09:35:16 2018 -0600
+
+    Fix shipout issues.
+
+commit ae6d9d312ab21212216960f56122ffe8e0c7fa2a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 28 06:24:46 2018 -0600
+
+    Account for pen width in bbox.
+
+commit 3ea27282e2a79139cd5600ee31b8e1b451eb2d03
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 27 02:02:17 2018 -0600
+
+    Don't use defaultGhostscriptLibrary location in MSWindows registry since TeXLive dvisvgm requires 32-bit version, even on 64-bit platforms.
+
+commit 3b49296799c14832747db90150d23067f946683a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 21 18:00:11 2018 -0600
+
+    Increment version to 2.46.
+
+commit 19dd6cc8027597d5e2ca25b07db2851d9771f03c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 21 15:37:27 2018 -0600
+
+    Revert "Update path."
+    
+    This reverts commit f63df996a86c935c51e09c47fe9c0aa2a8d7dc2d.
+
+commit f63df996a86c935c51e09c47fe9c0aa2a8d7dc2d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 20 23:09:03 2018 -0600
+
+    Update path.
+
+commit 1734e7af6a018f27240fddd4e7bf14f569a09522
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 20 21:33:54 2018 -0600
+
+    Improve error message when rsvg-convert is missing.
+
+commit abd6347aea2faaa2862e3ebe34c7f85dd820c77d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 19 15:10:59 2018 -0600
+
+    Remove obsolete uuid code.
+
+commit b46eed584fea0e625f2cde3dab23c2522d3d2486
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 19 15:09:10 2018 -0600
+
+    Fix saveLocation.
+
+commit 87c39ea72263c68d5548da4941eda639f37fce22
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 19 14:59:32 2018 -0600
+
+    Use class instead of instance on item not existing.
+
+commit 721cc5cc84abe2351211262670f5091e66f33b7c
+Merge: ec53a266 5f95aa82
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 19 14:56:15 2018 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit ec53a266a170edcd94c8a070f4d5b4a028eba964
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 19 14:56:11 2018 -0600
+
+    Revert venn.
+
+commit b88d3d9df356db299150e59d4ee0ef0f5adf82bb
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 19 14:55:10 2018 -0600
+
+    Fix script not updating.
+
+commit 5f95aa8246f7976dfc17a522b66da4a4179833c1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 19 14:52:25 2018 -0600
+
+    Simplify build script.
+
+commit 779b1b60d7b7fcfa35d48a946fa421db1be54a82
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 19 14:37:25 2018 -0600
+
+    Only write transformation if the rest of transf is not Id.
+
+commit 63f054012ad1716c8c0de04521ac0e66b81afadb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 19 14:28:51 2018 -0600
+
+    Remove 'x' key prefix.
+
+commit 0e351c95efca60034ec5d9397ab7924bf415f6ca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 19 14:13:42 2018 -0600
+
+    Don't apply xmap without an explicit corresponding key.
+
+commit a7026b70bb0793696075d53f1a0dd683073acf82
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 19 14:01:43 2018 -0600
+
+    Update xasy documentation.
+
+commit 7e9954d1ab1043f03b5082266b1cef7a44091c89
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 19 13:58:41 2018 -0600
+
+    Fix zooming sign inversion.
+
+commit bd333b65cf24379797188e00c961cda229727e0e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 19 13:39:10 2018 -0600
+
+    Add zooming on arrow keys.
+
+commit 183b47c0f305f829cacaff28222bd1cf40523130
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 19 13:10:15 2018 -0600
+
+    Hook up/down to selection.
+
+commit 7a49eda58677c8d26fa8efbd8f946d80ac560c1a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 18 14:58:59 2018 -0600
+
+    Transform directly from asy to image coordinates.
+
+commit 65f66b98a91f4dff78c1f6e769005c20b53e926c
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jul 16 15:01:00 2018 -0600
+
+    Disable fill on open curve.
+
+commit 98d364235fdf5073c1dcf2f51c478f21e492de56
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jul 16 14:26:53 2018 -0600
+
+    Fix repeated asyfying.
+
+commit 0ad7327a11094d336057f6d21d99e1385e685c6c
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 15 22:30:36 2018 -0600
+
+    Fix line shift by xmap.
+
+commit 360e165e00f0c304600a2371af6b5ffefeff89f8
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 15 21:00:02 2018 -0600
+
+    Revert venn.
+
+commit 42b192057a798825b8e1f5cf0939072cb4f2c116
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 15 20:58:31 2018 -0600
+
+    Only do change of basis if transform is not Id.
+
+commit ef89f277409805f8a7e65ba7b735b9ddb9bee93d
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 15 20:49:13 2018 -0600
+
+    Fix transf on different basis.
+
+commit 76d1e66db7ecc1a550c73326b4ea34e65a2e4630
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 15 20:40:36 2018 -0600
+
+    Fix key load bug.
+
+commit 574c0d96364ccbea81810fcda44cff5b68a35dc6
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 15 20:23:50 2018 -0600
+
+    Fix add label not working.
+
+commit 7d6cff54d91e978bd700188d09af2e3da1d66ead
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 15 17:20:15 2018 -0600
+
+    Force cleanup asy.
+
+commit 815e72d73eaa2af714ce157dc8cbc3363ad92cd5
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 15 17:14:41 2018 -0600
+
+    Fix duplicate key problem.
+
+commit b85a7d3b9e8ab18806ceb0ef39cc4f983a55f348
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 15 14:28:34 2018 -0600
+
+    Fix array bounds.
+
+commit 2c15d93e8ca19ea73ed1fb4186b3b3fc93520050
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 15 14:28:16 2018 -0600
+
+    Remove duplicate option.
+
+commit a070e8a6f9e3a3bef91a09fb0b9e192541a2a6bb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 15 12:33:42 2018 -0600
+
+    Force dvisvgm to be silent.
+
+commit a8a7fea89b9ad8f7dbd02dac898301cfb0592257
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 14 11:31:58 2018 -0600
+
+    Don't resize 3D pictures.
+
+commit c928c92f88c8b3b0942dc9c12bc8244233045e11
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 14 10:38:34 2018 -0600
+
+    Finish xasy port to MSDOS.
+
+commit cd700b4bb9db2b80f77aae8a316a99dd3476c7b4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 14 10:38:06 2018 -0600
+
+    Redirect cerr to cout again when outpipe=2.
+
+commit f0bc292dd796329fdd39679b1852a6bff1159335
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 14 10:34:17 2018 -0600
+
+    Fix segmentation fault.
+
+commit e1f68286465d275a5677860950e266288ade44a1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 12 15:13:59 2018 -0600
+
+    Port xasy to MSDOS.
+
+commit 7133ef53816e97ddb3b8e0870ffbfba9b95423b7
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 17:05:36 2018 -0600
+
+    Enable cycle control points.
+
+commit 1c444f8695301ae16bd8beb20778bd7fc14cc9cf
+Merge: 92d1e727 93a679de
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 11 16:13:33 2018 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 93a679de2f2902618546bf86884217c4e8da9041
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 16:13:20 2018 -0600
+
+    Set line width inversely proportional to mag.
+
+commit 92d1e7272842f751bd3952f13efb365e2d100121
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 11 16:12:30 2018 -0600
+
+    Rename config files and commandPalette default keymap.
+
+commit cc93cbe1e79774062ab9fd741469c41e39600959
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 16:04:13 2018 -0600
+
+    Correctly fixes scaling with zoom.
+
+commit afad348e03eaf2e73cd606e4f008d7316bc52627
+Merge: 7f2a28a6 ad6faf30
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 16:02:35 2018 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 7f2a28a6042a401e314b2d865a16d03f02e91687
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 16:02:32 2018 -0600
+
+    Make selection scale with magnification.
+
+commit ad6faf30e81d3ea2f58c92536b967f8d7491c4e8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 11 15:55:52 2018 -0600
+
+    Fix spelling.
+
+commit 1f383b4b5301c358b4867b692a26a2c3076e6268
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 15:51:31 2018 -0600
+
+    Fix typo again.
+
+commit 893f7fc2ee2e044395ead6215e1e53f195c8d82a
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 15:51:20 2018 -0600
+
+    Fix spelling error.
+
+commit 38f428fa9fe837bca5a00df56b94dbf2f842c235
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 15:49:34 2018 -0600
+
+    Make filename a little more clear.
+
+commit a3f98621376f1c45988dff32191e6da5ad1b53b7
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 15:37:32 2018 -0600
+
+    Fix segfault again (?).
+
+commit ecb5b2db65438e7ba9c626014925ac291f5c1941
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 15:33:59 2018 -0600
+
+    Fix segfault (?).
+
+commit ab12f523ac4e6e52e312cd66e9f869c762779e46
+Merge: 2d24c9aa feefafd6
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jul 11 15:29:04 2018 -0600
+
+    Merge in changes.
+
+commit feefafd64fdd5abdff99fdbdad523a1687ca34f1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 11 13:55:32 2018 -0600
+
+    Fix asymptote.spec.
+
+commit 935f81064cf10fa83ad49303b0d74ad50cf9856b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 11 13:49:33 2018 -0600
+
+    Fix asymptote.spec.
+
+commit e65e004ca8c75e168c6c1ac3a44c609a34754f73
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 11 13:45:59 2018 -0600
+
+    Use install-notexhash for building RPMs.
+
+commit bb1cf672f4d99dc1ecdad8826adefd916f1cc9f7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 11 12:09:12 2018 -0600
+
+    Clean up icons; fix installation problems; port asymptote.py to Python 3.
+
+commit 2d24c9aadb12e6a35e7a840b07f20ced68c8e4a6
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Jul 10 14:34:39 2018 -0600
+
+    Remove even more unnessecary code.
+
+commit 3cd990f8d5f9bea582c34cb36eaf8da538046ab0
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Jul 10 14:19:08 2018 -0600
+
+    Generate -- instead of.. when using polygon.
+
+commit 7edcc2f34fcb7551d23a272d7f1bd0b03d940ee7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 10 00:56:06 2018 -0600
+
+    Fix duplicate QPainter warning.
+
+commit d1dfb2a8af1c4c5a186a5e622cdc2e2fd9c0b90e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 9 17:29:42 2018 -0600
+
+    Reset fileChanged on erase.
+
+commit bff496158e93e677e7839e056f5da52129e11e55
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jul 9 17:19:43 2018 -0600
+
+    Add check before reopening file.
+
+commit 2ecb76750fe0ebc120684a076ac3a5b4ab9ce810
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 21:32:22 2018 -0600
+
+    Fix asymptote.spec.
+
+commit d67ec7242352fd97059022795846394ae36f5cbf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 21:09:06 2018 -0600
+
+    Specify python3 explicitly.
+
+commit a2f95654b4deb7cbf779e8068090f201aa3468b5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 20:46:48 2018 -0600
+
+    Read in xasy version.
+
+commit 94d4cd52647d433b1d13e5a96641c89f07203ebe
+Merge: de430749 770eea72
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 17:06:00 2018 -0600
+
+    Merge branch 'qthup'.
+
+commit 770eea7237d039ee13b9f4b5adaa4a61e8e9297f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 15:27:45 2018 -0600
+
+    Erase canvas before opening new file.
+
+commit 6dba36575965266b3783f5a2bde8f5a65ab32451
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 8 13:06:47 2018 -0600
+
+    Automatically determine recomputation mode.
+
+commit 869d617084192cf799f0ec033b9ea31f74d6e07a
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 8 12:59:14 2018 -0600
+
+    Preserve Edit Bezier Mode.
+
+commit e8bc45d003f489ccc50fc4461aa19d56da314421
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 8 12:55:02 2018 -0600
+
+    Update .gitignore
+
+commit eed85abcd5e3c2347d4ad1ab86a3d8e550cd3f72
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 12:40:09 2018 -0600
+
+    Improve informational messages.
+
+commit d5de0e972bf7242d2572c2a5a7ff0ded40f85a1e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 11:08:24 2018 -0600
+
+    Remove unused code.
+
+commit 63be5fe78ea461d3350277799528a78d01069189
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 11:01:25 2018 -0600
+
+    Standardize labels.
+
+commit 618439764c892c9b9b3b0ecbfc52358d3e0a2646
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 02:39:58 2018 -0600
+
+    Add missing actions; remove obsolete code; adjust layout.
+
+commit c2a3daa2e8a95ce104f7a8d828a4237274bd0188
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 8 00:11:27 2018 -0600
+
+    Add remaining icons.
+
+commit 2f894a654d48bf5479331dfb7b176605b8df0eb5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 7 17:30:04 2018 -0600
+
+    Add fill bucket icons.
+
+commit ae34291ff7f91f19a5b29e8d145600096c1d186f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 7 10:49:30 2018 -0600
+
+    Rerender only when dpi exceeds previous maximum dpi.
+
+commit 326766200c3deffe4392d737a92dadbf9591b0d3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 6 16:38:38 2018 -0600
+
+    Fix clip flag.
+
+commit 1797d5f89eaa554d94d34d908e86858ae0d0fdb9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 6 16:29:02 2018 -0600
+
+    Make rsvg-convert read directly from file.
+
+commit 4fdad9b276f93f32164d1ff4da30164720e97b11
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 6 15:54:11 2018 -0600
+
+    Remove unused code.
+
+commit cde402ba0d3a491f235b75390fa6232d019eaada
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jul 6 15:47:13 2018 -0600
+
+    Switch from cairo to rsvg.
+
+commit 365189781fe14a3b74662a24d7c37424648893f2
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jul 6 15:16:39 2018 -0600
+
+    Reset current position when click.
+
+commit 8d89b3ad95c45507ab958eee08e50cb7a71d6de1
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jul 6 14:25:35 2018 -0600
+
+    Add more icons.
+
+commit e52e4040874c315a50baeaee22858527197e758e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 5 21:02:59 2018 -0600
+
+    Fix recenter not recognizing magnification.
+
+commit 54ad8477ed4821a59a8cd08eac741554152f124e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 5 20:53:48 2018 -0600
+
+    Fix zooming transform.
+
+commit 9f52c34396577ced844734728ac67278ea2dd21e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 5 17:18:41 2018 -0600
+
+    Fix tooltips.
+
+commit c961cabc5ec05e7b0475d54557f298feae6b8dca
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 5 17:00:26 2018 -0600
+
+    Remove add widget upon addmode deletion.
+
+commit 8543e26542f78f2d334b0eb6580d80cca3bca45e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 5 16:55:29 2018 -0600
+
+    Add remaining icons.
+
+commit 2ac5c23f2e1b32103ab49eae7b6797aaa5017512
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 5 15:32:49 2018 -0600
+
+    Enable pan-sensitive zooming.
+
+commit bf3cc0b9f763f4bf40cdc569db4d61d3f96a4f35
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 5 14:51:07 2018 -0600
+
+    Enables math mode detection in label.
+
+commit b8c2663e0fa1f0b0dc4c6cf41aec6af7aa9cc89e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 5 14:34:54 2018 -0600
+
+    Add centering pan.
+
+commit 388907330408dae455768900739219e4a9b3b42f
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jul 5 13:48:16 2018 -0600
+
+    Add svg files.
+
+commit 7e9efcd61dcbe7cd0f45f437610e376fa9b4e2f3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 4 19:36:24 2018 -0600
+
+    Add index entries integral and integration.
+
+commit 405ee9a7bc6eb61e0268fc23177eacbcf6563154
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jul 3 23:40:02 2018 -0600
+
+    Enable centering pan option.
+
+commit 046b50a837798f4fa406adb434e2794f5c260a5f
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jul 3 23:33:57 2018 -0600
+
+    Add fuzz to small bounding boxes.
+
+commit 15e7d80a69049825de0a8e0c5f88e0aac2076462
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jul 3 23:24:57 2018 -0600
+
+    Copy text to advanced editor.
+
+commit ddc3fd7c15507fa42a9aea8ef0ea4a5d95776b6c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 3 16:40:36 2018 -0600
+
+    Improve and enable Cairo clip-path bug workaround.
+
+commit af49fa9dd676f2453ed65aefe6fa6106eab2de9e
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jul 3 15:08:38 2018 -0600
+
+    Round points to 10e6 precision.
+
+commit a1086f1f2141a0ed5ca1ee23c0c982cca50d0a50
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jul 3 14:58:15 2018 -0600
+
+    Add fontsize for label.
+
+commit ccc3b79d26559b18d86a95e5bcf02478c1051f33
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jul 3 14:24:51 2018 -0600
+
+    Enable removal of unneeded clips.
+
+commit b6a25e25e9f586a39d9af6b287b0373a4b703dd1
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jul 3 14:01:18 2018 -0600
+
+    Remove unnessecary braces from label editor.
+
+commit b0b8525c6e71cb2643e0c3a96aaea35f2df6ed1d
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jul 3 13:57:46 2018 -0600
+
+    Improve scaling on small labels.
+
+commit d21d7c005dee4968a3af58a1de68bb26e0e4ead6
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jul 2 15:21:02 2018 -0600
+
+    Only insert non-identity keys.
+
+commit bd259097ea0c45835110d7d627a0eea174c0d38a
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jul 2 14:59:31 2018 -0600
+
+    Fix label location and more QoL improvments.
+
+commit a8c22de51d598fff1b008b8b89ae702d8e0dfd15
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 2 11:35:44 2018 -0600
+
+    Switch xmap to asy coordinates.
+
+commit 9ec81262cff36972c91e523dfdc0fdc5a529e3c5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 2 08:52:24 2018 -0600
+
+    Fix comment.
+
+commit 5a0588a23082a406cd718a71c6267d78cb9b4a0b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 1 21:33:03 2018 -0600
+
+    Fix missing KEYs.
+
+commit 89ecbf116ccee69453179cdab48b0b633a5ff8bb
+Merge: 4463b94c 67c86cd4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 1 19:08:33 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit 4463b94c5c887de3f8c1f269c33d2bc60dfa1979
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 1 17:12:32 2018 -0600
+
+    Resize to initial xasy transform.
+
+commit 67c86cd4113f13b275c87d890f5ab48f457808a7
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Jul 1 14:11:25 2018 -0600
+
+    Should fix key not writing.
+
+commit 716f8065bfb6d5ce0f0b52f3956df0f92787bb99
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 1 10:38:24 2018 -0600
+
+    Make SaveAs default to current directory. Add Save action.
+
+commit 9763a3e172d35b1cb7c093695fcaededd29ca391
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 1 10:38:24 2018 -0600
+
+    Make SaveAs default to current directory. Add Save action.
+
+commit 7a2ff7f7017abf753579216bfa1ecd4b429e6576
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 1 02:52:17 2018 -0600
+
+    Handle empty objects.
+
+commit 1f35ec3deb126f3e3d4e4b7bbea823336ecd958e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 1 02:43:25 2018 -0600
+
+    Remove obsolete redirection.
+
+commit 81d9ab652ce2eb7fb052d0a96f9ea63acc55d21a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 1 02:39:26 2018 -0600
+
+    Update bsp.
+
+commit 44ba3d7a149ff97144335ef13a53741a51107272
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 1 02:30:33 2018 -0600
+
+    Handle null simplex problems.
+
+commit 943110ab88bb0af227c85cc906777908876888c0
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 30 21:10:45 2018 -0600
+
+    More QoL fixes.
+
+commit 6701d59cda39aba6ac5e228401e31b8e2879ab91
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Sat Jun 30 21:07:07 2018 -0600
+
+    Delete Icon
+
+commit 5077b81969160b377b0af26f711350531ef19edf
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Sat Jun 30 21:06:59 2018 -0600
+
+    Delete Icon
+
+commit 97f26873569db365d0f9e5127d362580bbcdabb3
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Sat Jun 30 21:06:50 2018 -0600
+
+    Delete Icon
+
+commit be93a35d25f89a4ca801527912a6b21bb24759bb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 30 20:16:41 2018 -0600
+
+    Suppress dvisvgm warnings; use dvisvgm --pdf when available.
+
+commit 3bbab66ea27fe2aeecca64b53abd150ab787dee1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 30 18:22:54 2018 -0600
+
+    Use direct conversion to svg for proper bounding box.
+
+commit 92d74369e228512b2270616f79562741856e0b85
+Merge: ea4fed15 25fab655
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 30 15:42:20 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit 25fab655437d0128451bae9506d15052fb9a2394
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Sat Jun 30 14:39:58 2018 -0600
+
+    Enable right clicking for ending curve.
+
+commit c911d8acd1eb4bb21c452838f3ee7249c80b0e63
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Sat Jun 30 13:53:16 2018 -0600
+
+    Fix Undo/Redo buttons not consistent.
+
+commit 11ba4c2c0bcd2938aea757afc10ea5056745f2e4
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Sat Jun 30 13:48:32 2018 -0600
+
+    Update mouse coordinate label unconditionally.
+
+commit f92a2da0266970f12e785e07f27a4add2f067850
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Sat Jun 30 13:45:06 2018 -0600
+
+    Hide anchor when not using custom anchor.
+
+commit ea4fed159acd44095bce42fc306e64550a42eac6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 30 12:30:59 2018 -0600
+
+    Remove obsolete code.
+
+commit bdb83475c13af0e41909f97af0389148757558b0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 30 09:46:40 2018 -0600
+
+    Rename _fout to _outpipe and move declaration to plain_shipout.asy.
+
+commit 2d49cb19dbbbd5cac38260a32c2df75cd4d2fd10
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Fri Jun 29 22:21:51 2018 -0600
+
+    Fix bezier edit not resetting.
+
+commit ede9f4906ed0c82e39833f9d57562c3c9c8b6d25
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Fri Jun 29 22:08:11 2018 -0600
+
+    Save file with asy coords.
+
+commit 79c2ce6d847f470760faa70fd5a2e211dcfd5033
+Merge: f0d35d4f 731251c7
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Fri Jun 29 21:57:28 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit 731251c7301c1f65f4daa50e75e69aec75a150a1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 29 18:32:13 2018 -0600
+
+    Use ctrl-D to terminate xasy-to-asy communication.
+
+commit f0d35d4fbbf46572baf776b2667e7856c87c8d25
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Fri Jun 29 17:39:53 2018 -0600
+
+    Fix key count missing.
+
+commit 14a9a432836617d7282cd6f4aff7b7bb883d35dd
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Fri Jun 29 17:35:49 2018 -0600
+
+    Other QoL improvements.
+
+commit a8c22c228fdd82347c55a260b38a56ca97d26159
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Fri Jun 29 17:12:35 2018 -0600
+
+    Save file as asy coords instead of postscript.
+
+commit 21981780fa0e5237b1b92b7ec39ac8da8f8711ea
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Thu Jun 28 15:45:55 2018 -0600
+
+    Add option for editing settings.
+
+commit 00347340d591d11e386bf42eadc3496b5d5b2b53
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Thu Jun 28 15:06:10 2018 -0600
+
+    Add experimental antialiasing (may not work at all).
+
+commit 36df0f26c942fa3aa994541b6e6c0fdc2748eef0
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Thu Jun 28 14:33:37 2018 -0600
+
+    Add legacy xasy bezier mode.
+
+commit 905f58f2c64703371a72641d78465179671c919a
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Thu Jun 28 14:07:24 2018 -0600
+
+    Fix cairo dpi bug.
+
+commit f2601b75e126b6ee659b75cdd78f12d369d51b7a
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Thu Jun 28 13:53:02 2018 -0600
+
+    Make the default linewidth 0.5.
+
+commit de430749dfa385b81ad457ed8a3390dad28cf952
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 28 12:46:35 2018 -0600
+
+     Avoid modifying input arrays in rationalSimplex.asy.
+
+commit 06aee1b86106f39835889a72a2248ab7c02d3cd7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 28 12:45:39 2018 -0600
+
+    Overload operator !=.
+
+commit 1e39a91779ea25645acb1f6fc20f2b1480e5c8e7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 28 11:22:33 2018 -0600
+
+    Avoid modifying input arrays.
+
+commit ee333cb2e837962b26305dc9e65e306e232c9d3f
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Wed Jun 27 17:30:26 2018 -0600
+
+    Add workaround for bounding box flip.
+
+commit 6e91ddbe19f4b01649b33dfb4a05c36e029f57a6
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Wed Jun 27 17:20:51 2018 -0600
+
+    Change clip detection to asy.
+
+commit 1dedb3885815058ee3067f6402529b6b93a4e0a7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 27 16:57:25 2018 -0600
+
+    Detect clip; invert images.
+
+commit 1b55335147fc4eebe9676c864c9e5e2937c57d67
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Wed Jun 27 16:28:25 2018 -0600
+
+    Enable DPI checking for magnification.
+
+commit bfbfafbc406d8e93166468f1058e57a8a7891086
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Wed Jun 27 13:14:17 2018 -0600
+
+    Add custom dpi support.
+
+commit b1d540c919da0ec7cb53616e22f84f3de723f997
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Wed Jun 27 12:43:26 2018 -0600
+
+    Add temporary workaround for svg noclip.
+
+commit 6c12f7777edb0a2064ae206ea37661461e96a0ec
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Wed Jun 27 02:08:51 2018 -0600
+
+    Remove debug messages.
+
+commit 999210c14c41ba6737ea31fa03a7c7e003940997
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Wed Jun 27 02:07:47 2018 -0600
+
+    Add svg support dependent on QtSvg.
+
+commit 19efab230370f14552d1d17930dd33373f59220d
+Merge: 96031ea2 50fb809f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 27 00:19:54 2018 -0600
+
+    Merge branch 'master' into qthup.
+
+commit 50fb809fdaf2383385f09884174262964a046156
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 27 00:17:35 2018 -0600
+
+    Use system ghostscript library by default for dvisvgm.
+
+commit 96031ea2614dee2a470525ba87d921fbe0291056
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 26 17:56:19 2018 -0600
+
+    Deconstruct to svg format.
+
+commit f07fc294bfcf278d72c4cbe14ee95b9c13e22768
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jun 26 15:23:09 2018 -0600
+
+    Add scrolling functionality.
+
+commit c27d0994645a395185aad3cdeb85579e830f45c0
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Tue Jun 26 13:50:31 2018 -0600
+
+    Terminate asy on exit.
+
+commit e1f540d4a86fc432b091cff538703a4e2d1eb180
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jun 25 17:37:55 2018 -0600
+
+    No longer uses asy for zoom.
+
+commit a13447f744ec9677e62e5ec09626ec84865068c8
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jun 25 16:49:42 2018 -0600
+
+    Fix Custom Anchor inconsistency.
+
+commit 91c0c648ea8e2384be530380836edd6a0fc563ae
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jun 25 14:37:10 2018 -0600
+
+    Add undo for object creation.
+
+commit 4fe6ebb5f7b263aa97358a11d9f24d5f0c6432ac
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jun 25 12:52:11 2018 -0600
+
+    Add Scale mode to bezier editing.
+
+commit 0c1a59da64db42d1d961210f9e464cab24ebd6b9
+Merge: 4b55a597 cf2e8c9d
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jun 25 12:12:57 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit 4b55a597110461af90b9082a8e1a1caa1dd40b7b
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jun 25 12:12:54 2018 -0600
+
+    More QoL improvements for bezier editor.
+
+commit db447ef6ae109bd7c6f3f6b8c74d0513fec7969d
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jun 25 12:12:43 2018 -0600
+
+    Simplify string management.
+
+commit cf2e8c9df1b1665b48b85815028b8990d2cc97f3
+Merge: 5e612b5d b757219e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 25 11:19:56 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit 5e612b5dc66928fa4c9f5152e3a47d3544ed1196
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 25 11:19:51 2018 -0600
+
+    Remove unused prompt.
+
+commit b757219e235127134448516c47ad3104e86dc100
+Merge: f01a9f11 aa4ee7b7
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jun 25 11:03:26 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup.
+
+commit f01a9f11564532c05d21ac131d4ada7bfff723e1
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Mon Jun 25 11:00:26 2018 -0600
+
+    Change spacing to one for each object.
+
+commit aa4ee7b78186e49b35a3a1ed0417f2695be88c1a
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 23 16:11:02 2018 -0600
+
+    Delete unneeded files.
+
+commit bf52e9ef5c6b2d2bfc34b7f4a3d86d9e4895a6b5
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 23 16:10:54 2018 -0600
+
+    Add early bezier editing mode button.
+
+commit 92c3d17e2a059014ddb13ce8ef50a626f396bfe7
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 23 16:10:25 2018 -0600
+
+    Add setup.py file.
+
+commit 068d75ce11365caf064cc5e2c8a76e7a3c7a15bf
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 23 15:24:24 2018 -0600
+
+    Edit some build files.
+
+commit 8f7217ac8df4d721127b6f7487874396f5843c6f
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 23 15:24:15 2018 -0600
+
+    Add icon files for easier editing.
+
+commit e70d99640450c984344c605a35dae157a58ed264
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 23 01:33:36 2018 -0600
+
+    Remove bounding box in example until xasy support is implemented.
+
+commit 3abe5e672a6f9255f382a09b16ed1ee29769ccdd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 23 01:21:36 2018 -0600
+
+    Detect xasy with settings.xasy; reinstate bounding box in example.
+
+commit 401cf60f89dcddfb6993f7bd25a86b144ec5f3ad
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 23 00:33:18 2018 -0600
+
+    Replace restricted simplex method with general simplex solver.
+
+commit 77c3c2bbc8496a1b53bf3b0e5af27501be05b50c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 22 16:48:33 2018 -0600
+
+    Fix xasy mode and keys.
+
+commit 0e31fa8c29737941d559bf4e42162212f5f85bb5
+Merge: 10d30131 60a35767
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 22 15:04:58 2018 -0600
+
+    Merge branch 'master' into qthup.
+
+commit 5ff20563472ab9361826bea32cd4a2635a346550
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 22 14:53:17 2018 -0600
+
+    Force make clean to remove GSL symbols.
+
+commit 10d30131851c3e8936f4c0fe62097d6dccaa3b64
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Fri Jun 22 13:59:59 2018 -0600
+
+    Allow for new key replacement.
+
+commit febc76cb94e3de54b8f3d01da29f6eb71bf76e25
+Merge: 8aeec7ce 69aaf4fc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 22 11:36:36 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit 8aeec7ce7debb2469d2e21efd237123e9943c3b6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 22 11:09:14 2018 -0600
+
+    Implement interactive xasy mode.
+
+commit 728f50856129f4cdcc8f2d30b253aeee243ed6ac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 22 08:31:54 2018 -0600
+
+    Test new xasy mode.
+
+commit 69aaf4fca1d01254a43d78b9bed4755990c052a7
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Thu Jun 21 22:47:48 2018 -0600
+
+    Add more bezier editing features.
+
+commit a890ec75dd31b8aacc4adcea8f138fafe0b9d504
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Thu Jun 21 16:51:19 2018 -0600
+
+    Add control point editing.
+
+commit 7ce567731e2eab843ef2ea5789435d82dc65c69c
+Author: Supakorn <rassamee@ualberta.ca>
+Date:   Thu Jun 21 16:26:57 2018 -0600
+
+    Allow saving of edited beziers.
+
+commit 60a35767c5becaf6f8a5fcd72584a9d3d316b028
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 21 00:42:08 2018 -0600
+
+    Force dvips to respect EPS requirements.
+
+commit d36d513b7e060ad476208f2ab9552b4323c45a05
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 20 15:49:30 2018 -0600
+
+    Add early bezier editing.
+
+commit b2c25d8ae46ce3ccf9c5e9689dc682ec647780ab
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 19 13:13:49 2018 -0600
+
+    Update keydata.
+
+commit c6b4d4b1ef81305d4973e3848673f2a77e476c4c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 19 11:20:11 2018 -0600
+
+    Add a flag to identify a user-specified key.
+
+commit 88de674b7daeb9efc3e59a1300e4cd3928f22ceb
+Merge: 3040e29d 74393725
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 18 23:41:42 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit 743937250a7c67dc414ddbd60ee8e2f59c62147d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 18 23:41:30 2018 -0600
+
+    Revert to using interactive mode for xasy.
+
+commit 0f044019bdc7c7947c6f58db9ba7d34703c49048
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 18 23:24:59 2018 -0600
+
+    Remove unnessecary icon residues.
+
+commit 3040e29d15c97e526faeba5bbbad00f1ec436c17
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 18 17:05:05 2018 -0600
+
+    Revert "Remove obsolete code."
+    
+    This reverts commit 28e91cfec416a135e1a9ba5a32486507e59bf5ec.
+
+commit 97ab025569e6cc765d7c4f88a96e49f2628d2930
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 18 15:21:37 2018 -0600
+
+    Unify asymptote process.
+
+commit 5e2123d1358e2e34a3149d3d281365c2e43c8dec
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 18 13:37:01 2018 -0600
+
+    Add initial bezier curve detailed view.
+
+commit c049ce0c2f21c4c9eb86ffaa7bb5b6b163cbc0a8
+Merge: e4a169a5 9d0f460a
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 18 12:50:47 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit e4a169a5a79b7e6499b61ecc852551246a38869e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 18 12:45:44 2018 -0600
+
+    Fix moveMove.
+
+commit 9d0f460a251cbad4a2a5ebebf33ebc68633ffcac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 15 18:25:34 2018 -0600
+
+    Fix mouse interaction.
+
+commit 3f6584a1fe2f71c754f2e5b8f34f1f2db9b81f24
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jun 15 16:44:55 2018 -0600
+
+    Minor type hinting.
+
+commit 91410b0bb179411ca1245f3f82056f1b4e3eae0f
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jun 15 16:18:28 2018 -0600
+
+    Move export option to menu.
+
+commit 8be30f41855c222604a20e771b16d737e907c279
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jun 15 15:02:19 2018 -0600
+
+    Set fill to disable open buttons.
+
+commit 8369f1d2552ca0739444b071804c55d4930d497b
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jun 15 14:55:46 2018 -0600
+
+    Add More modes.
+
+commit 2feb57922220320c2167f42cb6194b6fb4daaea6
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jun 15 14:21:27 2018 -0600
+
+    Fix labels adding.
+
+commit fa522058317c2a685b4983dc243319c6a87b33a5
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jun 15 13:33:47 2018 -0600
+
+    Fix anchor not updating.
+
+commit 1fc16f12cabf5a3cec16a6899676b5fd1ead61f0
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jun 14 17:52:09 2018 -0600
+
+    Add custom anchor.
+
+commit bbfb89044d5e4b2e8d5d86e1bddac594e35e72ad
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jun 14 17:04:12 2018 -0600
+
+    Check for mouse down first.
+
+commit 6fb39b6dac1ea61f053d98273cf1dd11e984f74a
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jun 14 16:53:04 2018 -0600
+
+    Add hover delete.
+
+commit c106bffce3b1c034a251b6a53745b16ddb7bc431
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jun 14 16:46:27 2018 -0600
+
+    Add hover deletion.
+
+commit 2cffe89eaff1b30b797dac3e267b65c60cca94c8
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jun 14 16:34:51 2018 -0600
+
+    Even more xasy changes.
+
+commit ad33e4b69f848af0e4cbaaacfe81b9006a3fd5cb
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jun 14 15:44:47 2018 -0600
+
+    Recompute control points for all nodes.
+
+commit 01ac796f6a9ff2ae89622e3faa050c8bcb386549
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jun 14 14:04:53 2018 -0600
+
+    Other minor bug changes.
+
+commit eeba4902c2fc1425351d6a53bd129c67c616fb6c
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jun 14 13:39:15 2018 -0600
+
+    Add more anchor mode.
+
+commit 6df104d6060fe5400e9d7618462026f11767bbd8
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 18:13:56 2018 -0600
+
+    Add support for hard deletion undo.
+
+commit 100ac43d7b9d762e7c5f2b732f7fb47529e666b2
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 16:57:17 2018 -0600
+
+    Remove closed path option.
+
+commit 0c2b40391218e0923f145d50aacc834fd575fde5
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 16:45:00 2018 -0600
+
+    Add some bezier keymaps.
+
+commit d6c70960f272c439d6f8e2220e12756194878875
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 15:55:39 2018 -0600
+
+    Make code objects a little more informative.
+
+commit 86b8a207600a33d509002f6cae016e5551316e53
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 15:42:35 2018 -0600
+
+    Update Editor argument system.
+
+commit ddb1a2c604eacd69509685e228d4e487ffe48a4e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 15:05:20 2018 -0600
+
+    Restore venn.
+
+commit c74ca307377f24073973137830bfbb064125ee67
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 15:05:00 2018 -0600
+
+    Put back shipout.
+
+commit 19e31f55e7f12bcee0b584d21d47e3e4b3e52243
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 15:04:22 2018 -0600
+
+    Change arguments to old xasy.
+
+commit c8d73f5f33c4c94ccee4397a876906c8eb1558cf
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 14:52:33 2018 -0600
+
+    Bind delete to delete object.
+
+commit b9f5e41419d978c5084870beed3efa21a2a9e09d
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 14:43:10 2018 -0600
+
+    Update .gitignore
+
+commit 9d59dca9b470251e336d63f6df7fa7a2d64603f9
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 13 14:42:26 2018 -0600
+
+    Revamp options system.
+
+commit c2827f039043d9077aed43d15604d451a0f79b81
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Jun 12 22:51:09 2018 -0600
+
+    Change deletion mode.
+
+commit bd6d4cf68a80d4e335274b2caa32f7045f7591c0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 12 16:59:37 2018 -0600
+
+    Omit deleted objects on deconstruction.
+
+commit 8fcb2b769bf595380360ad7a3aebe1680da53ef1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 12 15:37:58 2018 -0600
+
+    Ignore EINTR on read from pipe.
+
+commit 97f7d0ca87d4d2db1c522a59532cc2b0f7758630
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 11 18:16:23 2018 -0600
+
+    Optimize deletion and options.
+
+commit 5a7a08e173fff7a77727aa3236b323a5069c2af3
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 11 16:39:36 2018 -0600
+
+    Add CSON support and basic deletion.
+
+commit c639a6b9b0142e5bea61d087a9c22a7eb38bb335
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 9 13:33:22 2018 -0600
+
+    Update three and slide modules.
+
+commit ae8f7b0bc3a001fb6dc8a72598f4342979117eb8
+Merge: 6cb432ef de2c27e0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 8 22:23:39 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit 6cb432ef307bb52184196bc95a386f960a392aa5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 8 22:23:32 2018 -0600
+
+    Rename map to xmap.
+
+commit de2c27e042780e860e4848995241484b2c255602
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jun 8 22:15:53 2018 -0600
+
+    Allow for top-layer draw for selected objects.
+
+commit 55b9c779cf36d7757eb145f2028bb8c328a4ce1e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jun 8 17:25:34 2018 -0600
+
+    Add map/xmap switching and key counter.
+
+commit f54e57e5b8a05da8ddfa1b5a8eb4aa1f939768f9
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jun 8 16:42:57 2018 -0600
+
+    Add mouse wheel selection modifying.
+
+commit 01db5e39b2969fb10142a3b9b9e90c1a9f8826d5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 8 15:15:10 2018 -0600
+
+    Add identity and zero transform constants.
+
+commit 9b065e65c5b42b9fb0aba00ff2874e92d2ae368f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 8 14:38:16 2018 -0600
+
+    Implement RGB(int,int,int) function.
+
+commit e3dc24a6810bf35c7a5ae1fb176961b873ed92fd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 7 21:42:37 2018 -0600
+
+    Renenable object deletion.
+
+commit 018e17a2e1caeec6552eefd94737b1e24715ee5f
+Merge: 7b06be2c 594473ef
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 7 21:20:50 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup.
+
+commit 7b06be2c7e0334081b5540e80e29248afa81cfd3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 7 21:20:44 2018 -0600
+
+    Support bbox in xasy mode again.
+
+commit 594473ef65e616be969e0e212f7c24b201c9aec2
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jun 7 14:28:38 2018 -0600
+
+    Remove writing of identity transformations.
+
+commit dab676e5a6d8182e8958e8d705ce01f90d542d6f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 6 21:03:56 2018 -0600
+
+    Fix KEY order.
+
+commit b2197a0e1c094e16b7d06c5cd1492b5898af57ac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 6 19:16:34 2018 -0600
+
+    Remove unwanted spaces.
+
+commit 7cef83b715c5dca65178b6f64c717a066c45f981
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 6 16:25:50 2018 -0600
+
+    Cleanup code and add terminal option.
+
+commit 027cfb6ebdeeb4af66567a06d2490ce3ae506d27
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Jun 6 15:42:35 2018 -0600
+
+    Change mapping behavior when save.
+
+commit 356ec304168863f178e37314cbcca272d8eb3f0e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 6 14:21:32 2018 -0600
+
+    Add default transform to map.
+
+commit 9f4c4c60239faa7da04fa177f5dd5e3ec97974a5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 6 14:04:12 2018 -0600
+
+    Draw xasy objects onto currentpicture in PostScript coordinates.
+
+commit 0645b41d5f88085b16f0ba1814e85dd60dce445c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 6 11:04:22 2018 -0600
+
+    Draw xasy objects on a separate frame.
+
+commit 8b006fb0b29c6a9da2ac0bc53c03fdd51223f634
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Jun 5 17:14:43 2018 -0600
+
+    Add support for exporting files and other changes.
+
+commit 30bd410fad4be3b71ab26e4eddbc64f39b49773f
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 4 17:26:19 2018 -0600
+
+    Add early magnification support.
+
+commit 41613fa98512a44487c6b5ac687b88f3852e9102
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 4 13:44:57 2018 -0600
+
+    Fix selection issue.
+
+commit 3d1ca05ccaaf934a42df038e5b8c5ab098a299b8
+Merge: cf276195 93f367bb
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 4 13:32:05 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit cf27619534b2f5eec07fda1ec58110ea2d8c11a9
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jun 4 13:31:04 2018 -0600
+
+    Move transforms to dict[list] model.
+
+commit 93f367bba491d01706e656821ccb748067ad2773
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 3 20:32:07 2018 -0600
+
+    Finish passing KEY to transformed elements.
+
+commit 34ce667325ce323de441d0bea58b47c0f05751d2
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 31 19:31:45 2018 -0600
+
+    Show key in status bar message (for debug).
+
+commit 75397a5488c0ec3de9d9d24f75e8479b91cc3a14
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 31 19:28:01 2018 -0600
+
+    Groups objects with the same key.
+
+commit 761e3f3275da938a83c7c2ff4c6cd164dd47b134
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 31 17:50:19 2018 -0600
+
+    Begin passing KEY to transformed elements.
+
+commit 221fda26e204542d88a2df73f4392adbaec29f54
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 31 16:49:38 2018 -0600
+
+    Fix tuple loading of xasy2asy.
+
+commit 771bd937375c8a6888873c0acb68b337bea744f9
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 31 14:44:31 2018 -0600
+
+    Add more functionality for toggle visibility, code adding.
+
+commit 308fceb60033262814b6fa843a46f3580f2a4d02
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 30 17:27:51 2018 -0600
+
+    Add functionality for delete, change order.
+
+commit 0a05fccf9e9035568247d3e628d373d9b245ccc0
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 30 16:45:42 2018 -0600
+
+    Update add bezier mode and file loading.
+
+commit 0b08348102fd6be4c4a2b62945b17c46aeb5f978
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 29 13:13:07 2018 -0600
+
+    Add key support on asy side.
+
+commit aed03a1f8db344aa133b3abd7a7d6a386e6f31f3
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue May 29 11:17:10 2018 -0600
+
+    Add more bezier options.
+
+commit d10a4f89efc4c3a7cf2552425a19cb62a1861491
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 28 16:00:55 2018 -0600
+
+    Add in-place bezier curve interface.
+
+commit 90f82d4a91d7eabf3e13bd034a95df14cfd85fa9
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 28 15:32:19 2018 -0600
+
+    Update .gitignore.
+
+commit 99155d3edc967ce06cfbd7c6c8d892502b2eee82
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 28 12:52:57 2018 -0600
+
+    Add filling to circles and polygons.
+
+commit d04cac4bf67abb52bde752204d76cecec1f3a422
+Merge: c489474d 560f683d
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 25 18:52:52 2018 -0600
+
+    Merge branch 'qthup' of github.com:vectorgraphics/asymptote into qthup
+
+commit c489474da753207bad06b414df2a36d41efa62c3
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 25 18:52:39 2018 -0600
+
+    Modify xasyFillShape for qt.
+
+commit 560f683d7d089a25ea21bb9b240f7cb34650d878
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 25 17:12:47 2018 -0600
+
+    Remove obsolete code.
+
+commit 17c40ba170f7c359fd6ae3943b6d2a17b4baffd6
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 25 14:44:52 2018 -0600
+
+    Fix add shape transform bug.
+
+commit ac69fc4d0deab73dbfeef21fb88a6e0007b2fec1
+Merge: baf37589 f01b1baf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 25 14:24:58 2018 -0600
+
+    Merge branch 'master' into qthup.
+
+commit f01b1baf546ed20bf49e5fd56aac4b43b4a1a5e7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 25 14:24:19 2018 -0600
+
+    Fix quiet flag.
+
+commit baf37589eed095c896099e7cd51e4dfdc1c916a2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 25 04:27:17 2018 -0600
+
+    Fix outpipe communication by turning off quiet mode.
+
+commit 4deafa3b4a9368d2a8463917eb009bd29b5d5658
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 24 18:09:46 2018 -0600
+
+    Handshake via pipe.
+
+commit 5016356832b2b5939bd45711ae48b95113f27489
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 24 16:58:31 2018 -0600
+
+    Clean up initial hand shake.
+
+commit f78ac62b79949992271c7f893f559ce4b7b77f39
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 24 15:38:44 2018 -0600
+
+    Change drawing backend to use ordered lists.
+
+commit 4f947b99fe88f5e0fc2fed4b42d73a5f914c2a7e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 23 15:06:54 2018 -0600
+
+    Manually add back labelEditor changes.
+
+commit 0bd402f7ffc30fc1f3dd4979965ced0b36c29499
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 23 14:22:59 2018 -0600
+
+    Manually merge back xasy2asy.py.
+
+commit 5caafee6c63ee66473663038ed2bea655dc304b3
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 23 14:02:22 2018 -0600
+
+    Add back xasyUtils.py.
+
+commit fe3482ec33738e7f6d89fda409082d05f6b585cc
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 23 12:58:33 2018 -0600
+
+    Get xasy to wait for asy to start.
+
+commit 82cb3f48c6ed3c81af5d62e870adbc6cda27e9d5
+Merge: fb2bd13e 4425e5c5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 23 11:22:07 2018 -0600
+
+    Merge branch 'master' into qthup.
+
+commit fb2bd13e326e9a040bc578b533a36f23b64ed33c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 21 15:09:11 2018 -0600
+
+    Remove obsolete code.
+
+commit 2d72f98a9316dc49cd55737e8a9b23fc91d5736d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 20 22:27:42 2018 -0600
+
+    Implement xasyKEY for 3D objects.
+
+commit b137bfb6c542ecc1d0341475511e02b8a67849ff
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 20 22:17:09 2018 -0600
+
+    Fix key generation.
+
+commit b3e1dc3c0d5fe2bd19936fe1f25e815c0203d2ba
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 20 10:57:05 2018 -0600
+
+    Simplify code.
+
+commit 4425e5c5aca12f87fc3f90151913733f8b771834
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 19 23:44:45 2018 -0600
+
+    Transition from rpc to tirpc library.
+
+commit 1c46c6547e63006cfaa49ad9b70846a12b44ea8e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 19 11:36:12 2018 -0600
+
+    Inhibit exit on pipe EOF only when inpipe is specified (for xasy).
+
+commit 28e91cfec416a135e1a9ba5a32486507e59bf5ec
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 19 11:26:34 2018 -0600
+
+    Remove obsolete code.
+
+commit a0b453d97991205a8b9a78b0f44b2aa9c10c63b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 19 06:00:26 2018 -0600
+
+    Simplify code.
+
+commit 697537dee813ce9523382e4b44a6941b7d55f091
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 19 05:57:49 2018 -0600
+
+    Use SIGHUP to signal EOF.
+
+commit 8c982663371957021be663d6796bbf0db52317c0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 18 23:48:49 2018 -0600
+
+    Use a direct pipe read for xasy instead of interactive mode.
+
+commit 6082601320a25abd0a9976550707b9eaf67cf9c6
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 18 13:48:29 2018 -0600
+
+    Preserve pan translation in resize.
+
+commit df4c903e109a9ef2a812605526bb93d118921f03
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 18 12:30:34 2018 -0600
+
+    Allow for flexible resizing.
+
+commit a05bdea1a260b0fe86c46e55731ed561d7f6eaae
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 17 19:27:54 2018 -0600
+
+    Fix a critical output dir bug.
+
+commit ff19d78558783ec53ac2ba2aaacd0d3916866dbc
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 17 17:19:33 2018 -0600
+
+    Add early label editor preview.
+
+commit 442a81ca4147a98535507b097e38bc587bb34ce4
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 17 12:46:59 2018 -0600
+
+    Migrate asymptote process engine to a contained class.
+
+commit 6a6bb0e1126dd02ac45603a75db1f642570d7c48
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 17 12:18:01 2018 -0600
+
+    Add early translation foundation.
+
+commit 0971e4dd2d12705bf92adff52e326246fa65a4cf
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 16 15:27:07 2018 -0600
+
+    Fix align mode in label widget.
+
+commit f698e26621b500d06d46731dc8c9865b06a247c2
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 16 14:50:17 2018 -0600
+
+    Add advanced label editor.
+
+commit d03660d2fbcff4dc1ed48b99ea1353db2c3e1db3
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue May 15 17:34:23 2018 -0600
+
+    Optimize string concatenation to use mutable string.
+
+commit 46b7b040f0a0d00f99da26718f7d3cc797826e05
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue May 15 16:09:59 2018 -0600
+
+    Add early label adding.
+
+commit d0860eb41adf13170079ae0f60da21f9f0ea58e4
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue May 15 14:34:03 2018 -0600
+
+    Add test label support.
+
+commit 14e8314dd7425874f36780e4109626cec2589b72
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 14 18:56:13 2018 -0600
+
+    Early migration to key-based transform (incomplete).
+
+commit cb034388031e39a6e7aeb07f31fb8744a5406b74
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 11 16:15:10 2018 -0600
+
+    Add argument support.
+
+commit 37f670816e7fc8ba23ea041d7ce18ebf16d35d8f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 11 14:43:37 2018 -0600
+
+    Disable startScript and endScript.
+
+commit 436b50fe3b73a5191f0679a9666d899da35697d2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 11 14:41:26 2018 -0600
+
+    Revert test code.
+
+commit 4acdd9ab9a524ec148c7fa8d75edf3652f354de4
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 11 13:51:41 2018 -0600
+
+    Update .gitignore.
+
+commit 05287cec1a12e77fd35a58a7dc534798add32735
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 11 13:51:06 2018 -0600
+
+    Remove asydev.
+
+commit 872ceac1642c01f3fe9370170bdaee654c1113cc
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 11 13:50:15 2018 -0600
+
+    Update .gitignore.
+
+commit de30993530af475d8fde3484d5bbe4f7c1dce339
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 11 13:42:44 2018 -0600
+
+    Remove unwanted file.
+
+commit 198d8589a70618071340969ae76d0c2c9534ea12
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 11 00:38:26 2018 -0600
+
+    Simplify code; move global variables to processDataStruct.
+
+commit f718e5eaaeca1a0938068b0dcfc97af2bc5cc912
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 10 16:52:51 2018 -0600
+
+    Adding some testing flags.
+
+commit fae1d6192b61f3c5a2e5dca553d5b45dd240e030
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 10 16:03:15 2018 -0600
+
+    Add preliminary trasnform migration to key.
+
+commit f0d593d9953ee3fa69f3fee6a2336a56a5cd02e9
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 10 15:21:01 2018 -0600
+
+    Add basic key recognition.
+
+commit 9ebbcfaa7cc3f57d18432ef11c6746569f057754
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 9 19:19:01 2018 -0600
+
+    Write KEY to outpipe.
+
+commit db66c57b242c83541abea7eb0201f87d13a648dc
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 9 17:34:09 2018 -0600
+
+    Add preliminary key support (Still a hot mess...)
+
+commit c46f5b3886e0285a5eb535ffa2d3ebf44644dd89
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 9 14:44:05 2018 -0600
+
+    Add virtual KEY argument to all functions for xasy.
+
+commit 0103b665ebdca12c348886c18eafd751fe6901b4
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 7 16:35:13 2018 -0600
+
+    More Quality of life improvements for color dialog.
+
+commit 345ba41986af818577cf60dc61e8aeb26a35bc1b
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 7 15:30:11 2018 -0600
+
+    Update gitignore.
+
+commit 67cbfd41508f79b79a91f2fca693e1ec5cdd95e0
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 7 15:19:20 2018 -0600
+
+    Add pen support.
+
+commit ab412a711d8836fb47399fd4380665288502de8f
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 7 14:52:21 2018 -0600
+
+    Add color support.
+
+commit b52cf9dc210c9d48fd1d20182d667a11dc013c47
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 7 13:26:33 2018 -0600
+
+    Fix inscribed polygon mode.
+
+commit d86e0ad3ec666f2d0516b97d72c0b5e7710dd3ca
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 4 18:24:35 2018 -0600
+
+    Add preliminary options for Polygon adding.
+
+commit 234483ccc8a13b8d318b7d09c3e38dfe353f696f
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 4 15:27:08 2018 -0600
+
+    Update UI for more options.
+
+commit 82cdb14e492e428b3e83c3aa489a448f31a8a746
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri May 4 14:56:44 2018 -0600
+
+    Add in-place preliminary polygon adding.
+
+commit 51bd11364219e7503622704ae297e3f7f0643cac
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 3 16:39:23 2018 -0600
+
+    Add interface for polygon adding.
+
+commit 3b1f8f08d7404b2143015468b0b0bcdd51bae93b
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu May 3 15:38:11 2018 -0600
+
+    Add preliminary in-screen object creation.
+
+commit 003d2fa4b41bb1c12c9de1503083267395d4ff5e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 2 16:25:43 2018 -0600
+
+    Add exscribed (right word?) polygon handling
+
+commit 27470ffb04cc5b446e906e327dab976713c94309
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 2 15:43:09 2018 -0600
+
+    Add support for primtive polygons.
+
+commit 34a182db3e5f611f794319ef6c2485594f3487a6
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed May 2 15:10:29 2018 -0600
+
+    Add adding circles.
+
+commit 8258bb93752a2d888e583f307d13bb4ef727aee6
+Merge: 7c18f2ea d09e7fce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 2 08:28:05 2018 -0600
+
+    Merge pull request #70 from rgxgr/patch-1
+    
+    Correct words order to avoid confusing
+
+commit d09e7fce20722e2e7d65692b915c4cef9a33bb2c
+Author: rgxgr <33611071+rgxgr@users.noreply.github.com>
+Date:   Wed May 2 20:08:14 2018 +0800
+
+    Correct words order to avoid confusing
+
+commit 7f758672b3c9d39707379d030f9d8c7bc33a48cc
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue May 1 17:09:33 2018 -0600
+
+    Merge settings management into original Shardt code.
+
+commit b9754484ce5ef55fb9415731512362615a431778
+Merge: 75b22704 7c18f2ea
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 1 12:03:43 2018 -0600
+
+    Merge branch 'master' into qt.
+
+commit 7c18f2ea15c289fbdd6e4f91c69110f5a0c159b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 28 12:08:11 2018 -0600
+
+    Rename i386 to i386_32 to give preference to 64-bit binary.
+
+commit 9079934b3424157942736bbe1a15afd1dbf5836c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 28 11:39:48 2018 -0600
+
+    Do not modify system path.
+
+commit 799bf2dfc67869606056633c3a8ce4313b45d058
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 28 11:10:47 2018 -0600
+
+    Revert "Workaround NSIS EnvVarUpdate bug that truncates long paths."
+    
+    This reverts commit 8e932eb10a822d4e927b3b9dbecb313e135ee267.
+
+commit 8e932eb10a822d4e927b3b9dbecb313e135ee267
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 27 16:22:08 2018 -0600
+
+    Workaround NSIS EnvVarUpdate bug that truncates long paths.
+
+commit 21e497260a55dbe4e4b111198aa26115564669ce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 14 08:31:47 2018 -0600
+
+    Fix sort.
+
+commit 2bfec3147f4308fa6e206ec624574e3156f43fd2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 13 10:11:31 2018 -0600
+
+    Add option to use unstable sort in favour of less(T i, T j) ordering.
+
+commit 20ff31c0444c901c2b0486127f3c4df2b9832df8
+Merge: 1a50ee63 2fd03c66
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Apr 11 17:51:11 2018 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 1a50ee634cb58dbb4d9395ba90d7a795e63512d1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Apr 11 17:49:52 2018 -0600
+
+    Update README
+
+commit 2fd03c6695627387db19f993ac93e926b9b63eb7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 8 12:26:42 2018 -0600
+
+    Fix uninitialized counter.
+
+commit 4d0771442074af020b7fc929e929629e0bcbbdee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 7 23:51:06 2018 -0600
+
+    Increment version to 2.45.
+
 commit 878f944b9ee540c77c83f2cc61d6a97c22298553
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Apr 7 20:56:45 2018 -0600
@@ -334,6 +2503,48 @@ Date:   Thu Jan 4 22:30:21 2018 -0700
 
     Update CYGWIN port for 64-bit build.
 
+commit 75b227048bf39a8f2bd9288d1a4e076119d0e612
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Jan 4 15:07:17 2018 -0700
+
+    Add Polar Grid Form.
+
+commit 77ba04a37dd8affd267a267df256326fb42f6f1b
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Jan 2 15:03:01 2018 -0700
+
+    Add basic guide drawing system.
+
+commit 109a43611f3e2f9da5f5dae5502d8a5b8b299a6a
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Dec 29 21:10:25 2017 -0700
+
+    Add basic grid snapping.
+
+commit aefccb8c568f772feb2bc59f009da9da3e8a3ff3
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Dec 29 16:13:31 2017 -0700
+
+    Add basic grid toggling
+
+commit 0fa0e5ca0c3709c3d3e0722c35ae45a412ea10d4
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Dec 27 16:53:51 2017 -0700
+
+    Add basic grid rendering.
+
+commit 6f6b6b1f7ef8393096a57c8c0b370275c11b2270
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Dec 27 15:22:28 2017 -0700
+
+    Update deletion of Bezier points.
+
+commit 187e6113e92669d0cb724971694eaa8d7768178e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Dec 22 21:44:13 2017 -0700
+
+    Fix rotationBug - xasy2 now checks if custom anchor is defined or not.
+
 commit 005aef0a8c45c8625910363e1159fedcd9fa31b6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Dec 18 14:51:43 2017 -0700
@@ -450,17 +2661,266 @@ Date:   Fri Sep 22 15:20:17 2017 -0600
 
     Implement findall.
 
+commit 1d87c4b421c6e1950280eb26681ad229fe98313c
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Mon Sep 4 16:23:21 2017 -0600
+
+    Add preliminary keymap & settings support.
+
+commit 8e8a2349800a1d245779e023ecc5ede7da38b239
+Merge: c4aa7ded e9584ed2
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Fri Sep 1 15:28:23 2017 -0600
+
+    Merge branch 'qt' of github.com:vectorgraphics/asymptote into qt
+
+commit c4aa7dedffc4a7782a75416c787dc7f607a308ea
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Fri Sep 1 15:28:18 2017 -0600
+
+    Fix Beizer -> Bezier spelling
+
+commit e9584ed2fbaa6ba2bbf98fe78166c4e91a139da4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 1 15:27:42 2017 -0600
+
+    Update Makefile.
+
+commit e76d689c599a22a4441ae7111164bae7ac8f4f60
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 1 15:27:11 2017 -0600
+
+    Update GUI.
+
+commit c5e57f4d961d136c4b547ea63026795790bd125e
+Merge: 355f99d4 15fe0eb7
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Fri Sep 1 15:26:49 2017 -0600
+
+    Merge branch 'qt' of github.com:vectorgraphics/asymptote into qt
+
+commit 355f99d469f725e0086313bb27ab66b66d4d48cd
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Fri Sep 1 15:26:43 2017 -0600
+
+    Fix merge conflict.
+
+commit 15fe0eb716b5f0d92ab8fe7063ca55124a623260
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 1 15:16:29 2017 -0600
+
+    Update.
+
+commit 65e540f590ae0a9b552d31fec8eef5980e0f59c9
+Merge: 7be28a23 093568e2
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Fri Sep 1 15:09:10 2017 -0600
+
+    Fix merge conflict.
+
+commit 7be28a23c991a0356792adf6304a5e58e0d8f492
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Fri Sep 1 15:06:29 2017 -0600
+
+    Add Point Editor.
+
+commit 093568e25e61c860b896497264b19ea4f078c0ac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 1 15:04:39 2017 -0600
+
+    Fix spelling.
+
+commit fa2c10cf89b3b2564ee53bc48d46dd6919ba6105
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 1 14:33:27 2017 -0600
+
+    Remove obsolete file.
+
+commit 7404f0bca98908521bccdfe9fe5fc84582869deb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 1 14:31:47 2017 -0600
+
+    Add ui entry.
+
+commit 0ea7b7aca30f5f0b2e0c17bac97093c797ff3397
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Tue Aug 29 13:00:50 2017 -0600
+
+    Add Beizer Curve Editor.
+
+commit 8fde617cc64cdfe44f61e6cc5ef6197ef2cc633c
+Merge: d664d887 f1092a70
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Tue Aug 29 13:00:01 2017 -0600
+
+    Merge remote-tracking branch 'origin/qt' into qt
+
+commit d664d887042bdbf4fd0a38d34834c6d4282acfd3
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Tue Aug 29 12:59:42 2017 -0600
+
+    Add undo/redo stack.
+
+commit f1092a70a211994ddf6bafe488427628e71341a0
+Merge: 1ed21e9e 1eafa765
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 26 23:39:00 2017 -0600
+
+    Merge branch 'qt' of github.com:vectorgraphics/asymptote into qt
+
+commit 1ed21e9e55effe8fb917d4a3c9903f07cdd6e228
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 26 23:38:43 2017 -0600
+
+    Add pyUIClass support to Makefile.
+
+commit 1eafa765e69ddb869237532ec7e9e828b30993c6
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Sat Aug 26 23:14:43 2017 -0600
+
+    Add Custom Anchor dialog.
+
+commit d4e29b99c50c481bd67a46de08da95598730c72f
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Sat Aug 26 23:13:24 2017 -0600
+
+    Add panning, added screen transformation layer, custom commands
+    input dialog.
+
+commit ade0b6c36cbca1bce9bfc51edefc7657e46d31c6
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Fri Aug 25 12:58:54 2017 -0600
+
+    De-Asyfy transformation, fix local coordinates (temporary),
+    updated matrix dialog.
+
+commit 477fdd587d86bb57d8a8080a5a89401f80e6e128
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Wed Aug 23 14:16:58 2017 -0600
+
+    Add icon resource files, Matrix Transform Dialog.
+
+commit c460dce5689f9c992e0a80b150b2c67238a39c2e
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Tue Aug 22 17:10:59 2017 -0600
+
+    Add quick rendering, toggling of grids, more tooltips.
+
+commit 64d74954ef499b36329c5fb958dab4a38c932b52
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Tue Aug 22 15:54:52 2017 -0600
+
+    Add custom Transformation.
+
+commit 2f9674524c1d2231b58252b4daafd14aee478b27
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Mon Aug 21 16:45:27 2017 -0600
+
+    Fix translation & Update README.
+
+commit fd330a08614549c1497bd969f230837abcec8d7e
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Mon Aug 21 16:40:56 2017 -0600
+
+    Transition to final UI, add basic translation, scaling, rotation.
+
+commit ab2c346a05cd13fcc6e5c36ec2e9b0a100779e23
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Sat Aug 19 16:40:07 2017 -0600
+
+    Move to new, Final User interface.
+
+commit efc9a0013f20fcc39872bbf42b8b1cbdbec91d35
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Sat Aug 19 15:32:34 2017 -0600
+
+    Temporarily remove preCanvasPixmap (as mainCanvas
+    transparency is not wokring for some reason), add grid outline.
+
+commit 8988458f8d4f14bfb7b5e85074e7dd18d90fdc31
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Fri Aug 18 21:32:58 2017 -0600
+
+    Add mouse detection, drag translation & deferred buffers.
+
 commit f7231be3e560fa40f43e298e4b69b5c03ca0a141
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Aug 18 14:31:44 2017 -0600
 
     Remove redundant vbox.
 
+commit 7c5ba009606fe64da1757bdfebed51f0776a9941
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Wed Aug 16 15:42:29 2017 -0600
+
+    Change PIL to QImage.
+
+commit b69b6093485c4b42f03c26134099f54f02b497f8
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Tue Aug 15 14:42:19 2017 -0600
+
+    Rename xasyQt to xasy and original xasy to xasyTk.
+
+commit 52b8a33a6129219acb608abcc36248f27596965e
+Merge: fd134d02 67fe29eb
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Tue Aug 15 14:40:50 2017 -0600
+
+    Merge branch 'qt' of github.com:vectorgraphics/asymptote into qt
+
+commit fd134d02224c30893fc99a993643b641a6025999
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Tue Aug 15 14:40:44 2017 -0600
+
+    added final ui draft
+
+commit 27beaff43db806d9169f27ad0e10dd41f2a61299
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Mon Aug 14 01:00:36 2017 -0600
+
+    Add generalized Affine Transform.
+
+commit 67fe29eb902d87a6f34b6fbdd01c2a302a6b028c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 13 21:51:17 2017 -0600
+
+    Fix xasyQt.
+
+commit c66360fc91837ac6b226ccef33c5bb95bff31bc3
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Sun Aug 13 16:31:59 2017 -0600
+
+    Refractor to have the raw image flipped (for native asy coordinates).
+
+commit ad49f711ce684ef85b260cb02c0f51b0558e55ec
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Sun Aug 13 15:56:30 2017 -0600
+
+    Add rotation and translation.
+
+commit 81434d3f20caec72ebad1ac758958c3ca2d13481
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Wed Aug 9 00:11:55 2017 -0600
+
+    Update .gitignore and move generated files to a separate folder
+
+commit 03617244274132af1cad89cf8c3b1617cd2d1f91
+Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
+Date:   Tue Aug 8 16:06:18 2017 -0600
+
+    Add initial qt xasy.
+
 commit 84f4ea3ff0a564698282af8eeb1afae14907e2fe
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Aug 4 15:33:03 2017 -0600
 
     Improve equation support in module slide.
+
+commit da7e0f8adee99fadb59623bc3065acae4c523e9b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 4 16:25:15 2017 -0600
+
+    Test of Qt5.
 
 commit 1b9692fae4a4f7bd58ea09f37178f7ed598f277d
 Author: John Bowman <bowman@ualberta.ca>

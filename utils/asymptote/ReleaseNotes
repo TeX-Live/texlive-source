@@ -1,3 +1,28 @@
+Release Notes for Version 2.47
+
+Further shipout and scaling problems were fixed. Unused files were removed.
+Multiple-page documents now produce PS instead of EPS output.
+
+Release Notes for Version 2.46
+
+The pen width is now accounted for in the bbox function. The relative
+alignment of a label to a path now transforms correctly with picture
+rotation. Various shipout issues were fixed. The ghostscript library
+location from the MSWindows registry is now ignored for compatibility
+with TeXLive.
+
+Release Notes for Version 2.45
+
+The xasy graphical front end for Asymptote has been rewritten to
+support code reordering, using Qt5 and scalable vector graphics.
+An uninitialized counter was fixed. A stable=true option was added to sort.
+The restricted simplex method has been replaced by a complete simplex
+solver that handles general size constraints. The rpc library has been
+replaced by the tirpc library. The dvips utility is forced to respect
+EPS requirements again. The system ghostscript library is now used by
+default for dvisvgm. Make clean now removes GSL symbols. The MSWindows
+system path is no longer modified by the installer. A CLZ bug was fixed.
+
 Release Notes for Version 2.44
 
 Floating point exceptions are masked again under CYGWIN, pending strtod bug fix

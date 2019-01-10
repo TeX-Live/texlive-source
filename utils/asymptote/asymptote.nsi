@@ -14,7 +14,6 @@ XPStyle On
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
 !include "LogicLib.nsh"
-!include "EnvVarUpdate.nsh"
 !include "lnkX64IconFix.nsh"
 
 ; MUI Settings
@@ -72,7 +71,6 @@ ShowUnInstDetails show
 
 Section "Asymptote" SEC01
   SetOutPath "$INSTDIR"
-  ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR"
   SetOverwrite try
   File /r build-${PRODUCT_VERSION}\*
 
@@ -112,8 +110,8 @@ Section "Asymptote" SEC01
   ${lnkX64IconFix} "$SMPROGRAMS\$ICONS_GROUP\Asymptote.lnk"
   CreateShortCut "$DESKTOP\Asymptote.lnk" "$INSTDIR\asy.bat" "" "$INSTDIR\asy.ico"
   ${lnkX64IconFix} "$DESKTOP\Asymptote.lnk"
-  CreateShortCut "$DESKTOP\Xasy.lnk" "$INSTDIR\xasy.py"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Xasy.lnk" "$INSTDIR\xasy.py"
+  CreateShortCut "$DESKTOP\Xasy.lnk" "$INSTDIR\GUI\xasy.py"
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Xasy.lnk" "$INSTDIR\GUI\xasy.py"
   SetOutPath "$INSTDIR"
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -163,7 +161,6 @@ Section Uninstall
   Delete "$INSTDIR\uninst.exe"
   !include AsymptoteUninstallList.nsi
   Delete "$INSTDIR\asy.bat"
-  ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR"   
   RMDir "$INSTDIR"
   
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"

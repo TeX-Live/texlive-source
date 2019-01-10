@@ -248,6 +248,16 @@ bool picture::havepng()
   return false;
 }
 
+bool picture::havenewpage()
+{
+  for(nodelist::iterator p=nodes.begin(); p != nodes.end(); ++p) {
+    assert(*p);
+    if((*p)->isnewpage())
+      return true;
+  }
+  return false;
+}
+
 bbox picture::bounds()
 {
   size_t n=nodes.size();
@@ -440,7 +450,7 @@ bool picture::texprocess(const string& texname, const string& outname,
       if(svg) {
         cmd.push_back(getSetting<string>("dvisvgm"));
         cmd.push_back("-n");
-        cmd.push_back("--verbosity=3");
+        cmd.push_back("-v0");
         string libgs=getSetting<string>("libgs");
         if(!libgs.empty())
           cmd.push_back("--libgs="+libgs);
@@ -485,10 +495,14 @@ bool picture::texprocess(const string& texname, const string& outname,
           cmd.push_back("-Pdownload35");
           cmd.push_back("-D600");
           cmd.push_back("-O"+String(hoffset)+"bp,"+String(voffset)+"bp");
-          cmd.push_back("-T"+String(getSetting<double>("paperwidth"))+"bp,"+
-                        String(paperHeight)+"bp");
+          bool ps=havenewpage();
+          if(ps)
+            cmd.push_back("-T"+String(getSetting<double>("paperwidth"))+"bp,"+
+                          String(paperHeight)+"bp");
+          else
+            cmd.push_back("-E");
           push_split(cmd,getSetting<string>("dvipsOptions"));
-          if(getSetting<string>("papertype") != "")
+          if(ps && getSetting<string>("papertype") != "")
             cmd.push_back("-t"+papertype);
           if(verbose <= 1) cmd.push_back("-q");
           cmd.push_back("-o"+psname);
@@ -514,7 +528,7 @@ bool picture::texprocess(const string& texname, const string& outname,
                   continue;
 
                 if(s.find("%!PS-Adobe-") == 0) {
-                  fout.header();
+                  fout.header(!ps);
                   continue;
                 }
 
@@ -656,7 +670,7 @@ bool picture::reloadPDF(const string& Viewer, const string& outname) const
     needReload=false;
     string texengine=getSetting<string>("tex");
     Setting("tex")=string("pdflatex");
-    haveReload=f.shipout(NULL,reloadprefix,"pdf",0.0,false,false);
+    haveReload=f.shipout(NULL,reloadprefix,"pdf",false,false);
     Setting("tex")=texengine;
   }
   if(haveReload) {
@@ -671,9 +685,46 @@ bool picture::reloadPDF(const string& Viewer, const string& outname) const
   return true;
 }               
   
-  
+int picture::epstosvg(const string& epsname, const string& outname)
+{  
+  mem::vector<string> cmd;
+  cmd.push_back(getSetting<string>("dvisvgm"));
+  cmd.push_back("-n");
+  cmd.push_back("-E");
+  cmd.push_back("--verbosity=3");
+  string libgs=getSetting<string>("libgs");
+  if(!libgs.empty())
+    cmd.push_back("--libgs="+libgs);
+  push_split(cmd,getSetting<string>("dvisvgmOptions"));
+  cmd.push_back("-o"+outname);
+  cmd.push_back(epsname);
+  int status=System(cmd,2,true,"dvisvgm");
+  if(!getSetting<bool>("keep"))
+    unlink(epsname.c_str());
+  return status;
+}
+
+int picture::pdftosvg(const string& pdfname, const string& outname)
+{  
+  mem::vector<string> cmd;
+  cmd.push_back(getSetting<string>("dvisvgm"));
+  cmd.push_back("-n");
+  cmd.push_back("--pdf");
+  cmd.push_back("--verbosity=3");
+  string libgs=getSetting<string>("libgs");
+  if(!libgs.empty())
+    cmd.push_back("--libgs="+libgs);
+  push_split(cmd,getSetting<string>("dvisvgmOptions"));
+  cmd.push_back("-o"+outname);
+  cmd.push_back(pdfname);
+  int status=System(cmd,2,true,"dvisvgm");
+  if(status == 0 && !getSetting<bool>("keep"))
+    unlink(pdfname.c_str());
+  return status;
+}
+
 bool picture::postprocess(const string& prename, const string& outname,
-                          const string& outputformat, double magnification,
+                          const string& outputformat,
                           bool wait, bool view, bool pdftex, 
                           bool epsformat, bool svg)
 {
@@ -692,21 +743,13 @@ bool picture::postprocess(const string& prename, const string& outname,
       } else status=epstopdf(prename,outname);
     } else if(epsformat) {
       if(svg) {
-        string epsname=stripExt(prename)+".eps";
-        status=pdftoeps(prename,epsname);
-        cmd.push_back(getSetting<string>("dvisvgm"));
-        cmd.push_back("-n");
-        cmd.push_back("-E");
-        cmd.push_back("--verbosity=3");
-        string libgs=getSetting<string>("libgs");
-        if(!libgs.empty())
-          cmd.push_back("--libgs="+libgs);
-        push_split(cmd,getSetting<string>("dvisvgmOptions"));
-        cmd.push_back("-o"+outname);
-        cmd.push_back(epsname);
-        status=System(cmd,0,true,"dvisvgm");
-        if(!getSetting<bool>("keep"))
-          unlink(epsname.c_str());
+        status=pdftosvg(prename,outname);
+        if(status != 0) { // Dvisvgm version < 2.4 doesn't support --pdf
+          string epsname=stripExt(prename)+".eps";
+          status=pdftoeps(prename,epsname);
+          if(status != 0) return false;
+          status=epstosvg(epsname,outname);
+        }
         epsformat=false;
       } else 
         status=pdftoeps(prename,outname);
@@ -730,7 +773,7 @@ bool picture::postprocess(const string& prename, const string& outname,
         cmd.push_back("-sOutputFile="+outname);
         cmd.push_back(prename);
         status=System(cmd,0,true,"gs","Ghostscript");
-      } else if(!svg) {
+      } else if(!svg && !getSetting<bool>("xasy")) {
         double expand=antialias;
         if(expand < 2.0) expand=1.0;
         res *= expand;
@@ -820,8 +863,7 @@ string Outname(const string& prefix, const string& outputformat,
 }
 
 bool picture::shipout(picture *preamble, const string& Prefix,
-                      const string& format, double magnification,
-                      bool wait, bool view)
+                      const string& format, bool wait, bool view)
 {
   b=bounds();
   
@@ -846,22 +888,25 @@ bool picture::shipout(picture *preamble, const string& Prefix,
     else dvi=true;
   }
   
-  bool xobject=magnification > 0;
   string outname=Outname(prefix,outputformat,standardout);
   string epsname=epsformat ? (standardout ? "" : outname) :
     auxname(prefix,"eps");
   
   bool Labels=labels || TeXmode;
   
-  if(b.empty && !Labels) { // Output a null file
+  bool empty=b.empty;
+  if(outputformat == "png" && (b.right-b.left < 1.0 || b.top-b.bottom < 1.0))
+    empty=true;
+
+  if(empty && !Labels) { // Output a null file
     bbox b;
     b.left=b.bottom=0;
-    b.right=b.top=xobject ? 18 : 1;
+    b.right=b.top=1;
     psfile out(epsname,false);
     out.prologue(b);
     out.epilogue();
     out.close();
-    return postprocess(epsname,outname,outputformat,1.0,wait,view,false,
+    return postprocess(epsname,outname,outputformat,wait,view,false,
                        epsformat,false);
   }
   
@@ -873,13 +918,6 @@ bool picture::shipout(picture *preamble, const string& Prefix,
   string prename=((epsformat && !pdf) || !Labels) ? epsname : 
     auxname(prefix,preformat);
   
-  if(xobject) {
-    double fuzz=0.5/magnification;
-    b.top += fuzz;
-    b.right += fuzz;
-    b.bottom -= fuzz;
-  }
-    
   SetPageDimensions();
   
   pair aligndir=getSetting<pair>("aligndir");
@@ -1023,7 +1061,7 @@ bool picture::shipout(picture *preamble, const string& Prefix,
           buf << prefix << "_" << svgcount;
           ++svgcount;
           string pngname=buildname(buf.str(),"png");
-          f->shipout(preamble,buf.str(),"png",0.0,false,false);
+          f->shipout(preamble,buf.str(),"png",false,false);
           pair m=f->bounds().Min();
           pair M=f->bounds().Max();
           delete f;
@@ -1102,17 +1140,12 @@ bool picture::shipout(picture *preamble, const string& Prefix,
         }
       }
       if(status) {
-        if(xobject) {
-          if(pdf || transparency)
-            status=(epstopdf(prename,Outname(prefix,"pdf",standardout)) == 0);
-        } else {
-          if(context) prename=stripDir(prename);
-          status=postprocess(prename,outname,outputformat,magnification,wait,
-                             view,pdf && Labels,epsformat,svg);
-          if(pdfformat && !getSetting<bool>("keep")) {
-            unlink(auxname(prefix,"m9").c_str());
-            unlink(auxname(prefix,"pbsdat").c_str());
-          }
+        if(context) prename=stripDir(prename);
+        status=postprocess(prename,outname,outputformat,wait,
+                           view,pdf && Labels,epsformat,svg);
+        if(pdfformat && !getSetting<bool>("keep")) {
+          unlink(auxname(prefix,"m9").c_str());
+          unlink(auxname(prefix,"pbsdat").c_str());
         }
       }
     }
