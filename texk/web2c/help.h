@@ -110,9 +110,9 @@ const_string CTWILLHELP[] = {
     "-i          suppress indentation of parameter declarations",
     "-o          suppress separation of declarations and statements",
     "-x          omit indices, section names, table of contents",
-    "+lX         use macros for language X as of Xcwebmac.tex",
-    "+s          print usage statistics",
     "+P          \\input proofmac.tex instead of ctwimac.tex",
+    "+/-lX       use macros for language X as of Xct{wi|proof}mac.tex",
+    "+s          print usage statistics",
     "--help      display this help and exit",
     "--version   output version information and exit",
     NULL

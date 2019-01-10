@@ -1,4 +1,4 @@
-.TH CWEB 1 "6 January 2018" "Web2C @VERSION@"
+.TH CWEB 1 "10 January 2018" "Web2C @VERSION@"
 .\"=====================================================================
 .SH NAME
 ctangle, cweave \- translate CWEB to C and/or TeX
@@ -11,9 +11,9 @@ ctangle, cweave \- translate CWEB to C and/or TeX
 .RI [ outfile [ \fB.c\fP ]]]
 .br
 .B cweave
-.RB [ \-fiox ]
+.RB [ +bhps ]
+.RB [ \-efiox ]
 .RB [ \-lX | +lX ]
-.RB [ +behps ]
 .IR webfile [ \fB.w\fP ]
 .RI [{ changefile [ \fB.ch\fP ]| \fB\-\fP }
 .RI [ outfile [ \fB.tex\fP ]]]
@@ -64,11 +64,11 @@ extension
 or
 .BR .tex .
 .PP
-Options in the command line may be either turned off with\ \-
-(if they are on by default) or turned on with\ + (if they are off by
+Options in the command line may be either turned off with\ '\-'
+(if they are on by default) or turned on with\ '+' (if they are off by
 default).
 In fact, the options are processed from left to right,
-so a sequence like -f\ +f corresponds to +f (which is the default).
+so a sequence like '-f\ +f' corresponds to '+f' (which is the default).
 .PP
 Both programs operate silently by default (as of 2019).
 .PP
@@ -92,23 +92,25 @@ option prints statistics about memory usage at the end of a run.
 There are six other options applicable to
 .B cweave
 only:
-.B \-f
-means do not force a newline after every statement in the formatted output.
 .B \-e
 inhibits the enclosure of C\ material formatted by
-.I cweave
-in brackets
-\ePB{.\|.\|.}.
+.B cweave
+in
+\ePB{.\|.\|.}
+brackets.
 Such brackets are normally inserted so that special hooks
 can be used by
 .I cweb-latex
 and similar programs.
+By default,
+\ePB{.\|.\|.}.
+is defined as a no-op.
+.B \-f
+means do not force a newline after every statement in the formatted output.
 .B \-i
 suppresses the indentation of parameter declarations.
 .B \-lX
-(or
-.B +lX
-) uses macros for language X\ from Xcwebmac.tex.
+(or +lX) uses macros for language X\ from Xcwebmac.tex.
 .B \-o
 suppresses the visual separation of declarations and statements.
 .B \-x
@@ -155,5 +157,6 @@ by adapting the WEB conventions to\ C and by recoding everything in CWEB.
 Knuth began using CWEB and made further refinements.
 Many other helpers are acknowledged in the CWEB manual.
 .br
-Andreas Scherer developed the extended CWEBbin version. As of 2019, the
-CWEB system in TeX Live is CWEBbin; see https://github.com/ascherer/cwebbin.
+As of 2019, the CWEB system in TeX Live is based on the CWEBbin extension
+that collects ideas and improvements from numerous contributors;
+see https://github.com/ascherer/cwebbin.

@@ -1,3 +1,13 @@
+2019-01-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man: New manpage for CTWILL and its tools.
+	* Makefile.am (bootstrap_man_sources): add ctwill.man.
+	(man1_links): add ctwill-refsort and ctwill-twinx as ctwill aliases.
+
+2019-01-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweb.man: editorial changes.
+
 2019-01-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweb.man: update for CWEBbin options, etc.

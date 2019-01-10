@@ -6,10 +6,11 @@
 ##
 man_sources = $(bootstrap_man_sources)
 EXTRA_DIST = $(bootstrap_man_sources)
-bootstrap_man_sources = ctie.man cweb.man tangle.man tie.man
+bootstrap_man_sources = ctie.man cweb.man ctwill.man tangle.man tie.man
 
 # Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
 man1_links = cweb:ctangle cweb:cweave
+man1_links += ctwill:ctwill-refsort ctwill:ctwill-twinx
 
 if WEB
 man_sources += $(web_man_sources)
