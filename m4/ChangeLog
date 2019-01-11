@@ -1,3 +1,9 @@
+2019-01-10  Karl Berry  <karl@freefriends.org>
+
+	* kpse-luajit-flags.m4 (KPSE_LUAJIT_FLAGS): check for
+	-lc++abi -lpthread, needed with clang on openbsd.
+	Test from Mojca.
+
 2019-01-08  Karl Berry  <karl@tug.org>
 
 	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): lua52 gone.

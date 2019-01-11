@@ -25007,6 +25007,7 @@ $(LUA52_DEPEND): ${top_builddir}/../../libs/lua52/include/lua.h
 ${top_builddir}/../../libs/lua52/include/lua.h:
 	cd ${top_builddir}/../../libs/lua52 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
+echo 'tldbg:KPSE_LUAJIT_FLAGS called.' >&5
 ##tldbg _KPSE_LIB_FLAGS: Setup luajit (-ltexluajit) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=luajit, libname=texluajit, options=lt tree, tlincl=-IBLD/libs/luajit/include, tllib=BLD/libs/luajit/libtexluajit.la, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/luajit/include/luajit.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: luajit (texluajit) lt tree.
@@ -25018,6 +25019,76 @@ $(LUAJIT_DEPEND): ${top_builddir}/../../libs/luajit/include/luajit.h
 	cd ${top_builddir}/../../libs/luajit && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/luajit/include/luajit.h:
 	cd ${top_builddir}/../../libs/luajit && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+#
+# checking for openbsd for additional jit libraries needed, which is the
+# case for clang; no point in going to the trouble elsewhere since no
+# other system needs it.
+case $build_os in
+openbsd*)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking on openbsd if additional jit libraries are needed" >&5
+$as_echo_n "checking on openbsd if additional jit libraries are needed... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include "stdint.h"
+      typedef struct _Unwind_Context _Unwind_Context;
+      extern uintptr_t _Unwind_GetCFA(_Unwind_Context *);
+int
+main ()
+{
+_Unwind_Context *ctx;
+      _Unwind_GetCFA(ctx);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+else
+
+    jitlibs="-lc++abi -lpthread"
+    save_LIBS=$LIBS
+    LIBS="$LIBS $jitlibs"
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include "stdint.h"
+          typedef struct _Unwind_Context _Unwind_Context;
+          extern uintptr_t _Unwind_GetCFA(_Unwind_Context *);
+int
+main ()
+{
+_Unwind_Context *ctx;
+          _Unwind_GetCFA(ctx);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: \"$jitlibs\"" >&5
+$as_echo "\"$jitlibs\"" >&6; }
+        LUAJIT_LIBS="$LUAJIT_LIBS $jitlibs"
+
+else
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "luajit could not be linked
+See \`config.log' for more details" "$LINENO" 5; }
+
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+    LIBS=$save_LIBS
+
+
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  ;;
+esac
+echo 'tldbg:KPSE_LUAJIT_FLAGS done.' >&5
 
 ##tldbg _KPSE_LIB_FLAGS: Setup libpng (-lpng) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=libpng, libname=png, options=, tlincl=-IBLD/libs/libpng/include, tllib=BLD/libs/libpng/libpng.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/libpng/include/png.h.' >&5
