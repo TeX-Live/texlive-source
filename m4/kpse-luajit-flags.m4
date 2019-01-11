@@ -49,7 +49,7 @@ AC_LINK_IFELSE(
       )],
       [
         AC_MSG_RESULT(["$jitlibs"])
-        LUAJIT_LIBS="$LUAJIT_LIBS $jitlibs"
+        LIBLUAJIT_LDEXTRA="$LIBLUAJIT_LDEXTRA $jitlibs"
       ],
       [AC_MSG_FAILURE([luajit could not be linked])]
     )

@@ -25069,7 +25069,7 @@ if ac_fn_c_try_link "$LINENO"; then :
 
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: \"$jitlibs\"" >&5
 $as_echo "\"$jitlibs\"" >&6; }
-        LUAJIT_LIBS="$LUAJIT_LIBS $jitlibs"
+        LIBLUAJIT_LDEXTRA="$LIBLUAJIT_LDEXTRA $jitlibs"
 
 else
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5

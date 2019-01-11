@@ -1,3 +1,9 @@
+2019-01-11  Karl Berry  <karl@freefriends.org>
+
+	* kpse-luajit-flags.m4 (KPSE_LUAJIT_FLAGS): try LIBLUAJIT_LDEXTRA,
+	following (sort of):
+	https://github.com/TeX-Live/luatex/commit/273de1c6308ab9378905a5e1929b19207e2765af
+
 2019-01-10  Karl Berry  <karl@freefriends.org>
 
 	* kpse-luajit-flags.m4 (KPSE_LUAJIT_FLAGS): check for
