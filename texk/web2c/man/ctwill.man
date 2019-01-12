@@ -132,11 +132,11 @@ leave out the \f[B]happy message\f[R] (\f[B]\-h\f[R]).
 .IP \[bu] 2
 \f[B]\-x\f[R]: omit indices, section names, table of contents
 .IP \[bu] 2
-\f[B]+P\f[R]: \f[B]\[rs]input proofmac.tex\f[R] instead of
+\f[B]+P\f[R]: \f[B]\[rs]input ctproofmac.tex\f[R] instead of
 \f[B]ctwimac.tex\f[R]
 .IP \[bu] 2
 \f[B]+lX\f[R]/\f[B]\-lX\f[R]: use macros for language \f[I]X\f[R] as of
-\f[I]X\f[R]\f[B]ct\f[R]{\f[B]wi\f[R]|\f[B]proof\f[R]}\f[B]mac.tex\f[R]
+\f[I]X\f[R]{\f[B]ctwimac\f[R]|\f[B]ctproofmac\f[R]}\f[B].tex\f[R]
 .IP \[bu] 2
 \f[B]+s\f[R]: print usage statistics
 .IP \[bu] 2
