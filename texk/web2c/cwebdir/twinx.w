@@ -404,7 +404,7 @@ properly, especially in the ``custom'' format when they must become
 
 @<Output the main list in suitable \TeX\ format@>=
 {@+register node *x;
-  printf("\\input twinxmac\n");
+  printf("\\input cttwinxmac\n");
   for (x=header.next;x!=&header;x=x->next) {
     printf("\\I");
     @<Output |x->id| in suitable \TeX\ format@>;
