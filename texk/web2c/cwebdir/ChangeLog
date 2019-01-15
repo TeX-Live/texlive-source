@@ -1,3 +1,7 @@
+2019-01-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Provisional 'bindtextdomain' lookup in TDS.
+
 2019-01-05  Andreas Scherer  <https://ascherer.github.io>
 
 	Integration of CWEBbin as the new CWEB in TeX Live,
