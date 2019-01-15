@@ -3,6 +3,7 @@
 	* comm-w2c.ch: Provisional 'bindtextdomain' lookup in TDS.
 	* cwebinputs/texinputs: Add prefix 'cweb_' to TeX macros
 	and transliteration files.
+	* po/cweb-tl.pot: Realign NLS modules with texlive changes.
 
 2019-01-05  Andreas Scherer  <https://ascherer.github.io>
 

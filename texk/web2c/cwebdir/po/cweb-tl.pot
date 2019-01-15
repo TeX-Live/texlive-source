@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2019\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-01 15:41+0100\n"
+"POT-Creation-Date: 2019-01-15 09:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,31 +17,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: comm-texlive.ch:416
+#: comm-texlive.ch:496
 #, c-format
 msgid "%s: Need one to three file arguments.\n"
 msgstr ""
 
-#: comm-texlive.ch:417
+#: comm-texlive.ch:497
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: comm-texlive.ch:436
+#: comm-texlive.ch:516
 #, c-format
 msgid ""
 "\n"
 "Email bug reports to %s.\n"
 msgstr ""
 
-#: ctang-texlive.ch:33
+#: ctang-texlive.ch:29
 msgid "This is CTANGLE, Version 3.64"
 msgstr ""
 
-#: cweav-texlive.ch:33
+#: cweav-texlive.ch:29
 msgid "This is CWEAVE, Version 3.64"
 msgstr ""
 
-#: ctwill-texlive.ch:33
+#: ctwill-texlive.ch:29
 msgid "This is CTWILL, Version 3.64"
 msgstr ""

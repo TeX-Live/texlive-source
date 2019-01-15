@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2018\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-01 15:41+0100\n"
-"PO-Revision-Date: 2018-12-28 16:20+0100\n"
+"POT-Creation-Date: 2019-01-15 09:55+0100\n"
+"PO-Revision-Date: 2019-01-15 09:55+0100\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -17,17 +17,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: comm-texlive.ch:416
+#: comm-texlive.ch:496
 #, c-format
 msgid "%s: Need one to three file arguments.\n"
 msgstr "%s: Benötige ein bis drei Dateiargumente.\n"
 
-#: comm-texlive.ch:417
+#: comm-texlive.ch:497
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Versuche `%s --help' für weitere Informationen.\n"
 
-#: comm-texlive.ch:436
+#: comm-texlive.ch:516
 #, c-format
 msgid ""
 "\n"
@@ -36,15 +36,14 @@ msgstr ""
 "\n"
 "Sende Fehler per Email an %s.\n"
 
-#: ctang-texlive.ch:33
+#: ctang-texlive.ch:29
 msgid "This is CTANGLE, Version 3.64"
 msgstr "Dies ist CTANGLE, Version 3.64"
 
-#: cweav-texlive.ch:33
+#: cweav-texlive.ch:29
 msgid "This is CWEAVE, Version 3.64"
 msgstr "Dies ist CWEAVE, Version 3.64"
 
-#: ctwill-texlive.ch:33
-#, fuzzy
+#: ctwill-texlive.ch:29
 msgid "This is CTWILL, Version 3.64"
 msgstr "Dies ist CTWILL, Version 3.64"
