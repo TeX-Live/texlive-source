@@ -1,5 +1,5 @@
 %
-% CWEB/INCLUDE $VER: HP8.W 1.5 (10.07.2017)
+% CWEB/INCLUDE $VER: CWEB_HP8.W 1.6 (13.01.2019)
 %
 % SYNOPSIS:
 %    Transliteration table for umlauts and special characters
@@ -22,8 +22,9 @@
 %    August 13, 1998: New e-mail address.  (V1.3)
 %    June 11, 2000: Include matching TeX macros.  (V1.4)
 %    July 10, 2017: Complete overhaul.  (V1.5)
+%    January 13, 2019: Non-generic names.  (V1.6)
 
-\input hp8.sty
+\input cweb_hp8.sty
 \noatl
 
 @q a0 @>   @l a1 A    @l a2 A    @l a3 E    @l a4 E    @l a5 Ee

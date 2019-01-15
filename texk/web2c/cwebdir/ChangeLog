@@ -1,6 +1,8 @@
 2019-01-15  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch: Provisional 'bindtextdomain' lookup in TDS.
+	* cwebinputs/texinputs: Add prefix 'cweb_' to TeX macros
+	and transliteration files.
 
 2019-01-05  Andreas Scherer  <https://ascherer.github.io>
 
