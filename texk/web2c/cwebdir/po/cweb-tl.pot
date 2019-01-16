@@ -17,17 +17,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: comm-texlive.ch:496
+#: comm-texlive.ch:494
 #, c-format
 msgid "%s: Need one to three file arguments.\n"
 msgstr ""
 
-#: comm-texlive.ch:497
+#: comm-texlive.ch:495
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: comm-texlive.ch:516
+#: comm-texlive.ch:514
 #, c-format
 msgid ""
 "\n"

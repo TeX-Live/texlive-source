@@ -17,17 +17,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: comm-texlive.ch:496
+#: comm-texlive.ch:494
 #, c-format
 msgid "%s: Need one to three file arguments.\n"
 msgstr "%s: Benötige ein bis drei Dateiargumente.\n"
 
-#: comm-texlive.ch:497
+#: comm-texlive.ch:495
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Versuche `%s --help' für weitere Informationen.\n"
 
-#: comm-texlive.ch:516
+#: comm-texlive.ch:514
 #, c-format
 msgid ""
 "\n"

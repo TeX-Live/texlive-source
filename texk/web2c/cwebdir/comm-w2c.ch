@@ -1012,7 +1012,9 @@ the other arrays for the argument.
       show_banner=show_progress=show_happiness=0;
     } else
     if (*dot_pos=='d') {
-      if (sscanf(*argv+2,"%u",&kpathsea_debug)!=1) @<Print usage error...@>@;
+      if (sscanf(++dot_pos,"%u",&kpathsea_debug)!=1) @<Print usage error...@>@;
+      while (isdigit(*dot_pos)) dot_pos++; /* skip numeric part */
+      dot_pos--; /* reset to final digit */
     } else
     if(*dot_pos=='l') {
        use_language=++dot_pos;
@@ -1175,7 +1177,6 @@ argument string need a few extra variables.
 @s string int
 
 @d max_banner 50
-@d max_path_length (BUFSIZ-2)
 
 @d PATH_SEPARATOR   separators[0]
 @d DIR_SEPARATOR    separators[1]
@@ -1183,7 +1184,6 @@ argument string need a few extra variables.
 
 @<Other...@>=
 char cb_banner[max_banner];@/
-char locale_path[max_path_length]="/usr/share/locale/";@/
 string texmf_locale;@/
 #ifndef SEPARATORS
 #define SEPARATORS "://"
@@ -1239,19 +1239,17 @@ system by checking out the sources and translating the strings in files
 \.{cweb.pot}, \.{cweb-tl.pot}, and \.{web2c-help.pot}, and submitting the
 resulting \.{*.po} files to the maintainers at \.{tex-k@@tug.org}.
 
+@d TEXMF_LOCALE "$TEXMFLOCALEFILES"
+
 @<Set locale...@>=
 setlocale(LC_MESSAGES, setlocale(LC_CTYPE, ""));
-texmf_locale = kpse_var_expand ("$TEXMFLOCALEFILES");
-if (texmf_locale) {
-  if (strlen(texmf_locale) < max_path_length)
-    sprintf(locale_path,"%s",texmf_locale);
-  else err_print("! Include path too long");
-@.Include path too long@>
-  free(texmf_locale);
-}
-bindtextdomain("cweb", locale_path);
-bindtextdomain("cweb-tl", locale_path);
-bindtextdomain("web2c-help", locale_path);
+texmf_locale = kpse_var_expand (TEXMF_LOCALE);
+bindtextdomain("cweb",
+  bindtextdomain("cweb-tl",
+    bindtextdomain("web2c-help",
+      strcmp(texmf_locale, TEXMF_LOCALE) ?
+        texmf_locale : "/usr/share/locale")));
+free(texmf_locale);
 textdomain("cweb"); /* the majority of |"strings"| come from ``plain \.{CWEB}'' */
 @.cweb.mo@>
 
