@@ -2,7 +2,7 @@
 # Attempt to guess a canonical system name.
 #   Copyright 1992-2019 Free Software Foundation, Inc.
 
-timestamp='2019-01-03'
+timestamp='2019-01-15'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -385,20 +385,7 @@ case "$UNAME_MACHINE:$UNAME_SYSTEM:$UNAME_RELEASE:$UNAME_VERSION" in
 	echo sparc-hal-solaris2"`echo "$UNAME_RELEASE"|sed -e 's/[^.]*//'`"
 	exit ;;
     sun4*:SunOS:5.*:* | tadpole*:SunOS:5.*:*)
-	set_cc_for_build
-	SUN_ARCH=sparc
-	# If there is a compiler, see if it is configured for 64-bit objects.
-	# Note that the Sun cc does not turn __LP64__ into 1 like gcc does.
-	# This test works for both compilers.
-	if [ "$CC_FOR_BUILD" != no_compiler_found ]; then
-	    if (echo '#ifdef __sparcv9'; echo IS_64BIT_ARCH; echo '#endif') | \
-		(CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) | \
-		grep IS_64BIT_ARCH >/dev/null
-	    then
-		SUN_ARCH=sparcv9
-	    fi
-	fi
-	echo "$SUN_ARCH"-sun-solaris2"`echo "$UNAME_RELEASE"|sed -e 's/[^.]*//'`"
+	echo sparc-sun-solaris2"`echo "$UNAME_RELEASE" | sed -e 's/[^.]*//'`"
 	exit ;;
     i86pc:AuroraUX:5.*:* | i86xen:AuroraUX:5.*:*)
 	echo i386-pc-auroraux"$UNAME_RELEASE"
