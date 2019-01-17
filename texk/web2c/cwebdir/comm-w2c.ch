@@ -1246,7 +1246,7 @@ setlocale(LC_MESSAGES, setlocale(LC_CTYPE, ""));
 texmf_locale = kpse_var_expand (TEXMF_LOCALE);
 bindtextdomain("cweb",
   bindtextdomain("cweb-tl",
-    bindtextdomain("web2c-help",
+    bindtextdomain("web2c-help", @|
       strcmp(texmf_locale, TEXMF_LOCALE) ?
         texmf_locale : "/usr/share/locale")));
 free(texmf_locale);
@@ -1283,16 +1283,16 @@ typedef bool boolean;
 #define CWEB
 #include "help.h"
 
-@ The simple file searching is replaced by the ``path searching'' mechanism
-that the \Kpathsea/ library provides.
+@q The simple file searching is replaced by the ``path searching'' mechanism @>
+@q that the \Kpathsea/ library provides.@>
 
-We set |kpse_program_name| to `\.{cweb}'.  This means if the variable
+@ We set |kpse_program_name| to `\.{cweb}'.  This means if the variable
 \.{CWEBINPUTS.cweb} is present in \.{texmf.cnf} (or \.{CWEBINPUTS\_cweb}
 in the environment) its value will be used as the search path for
 filenames.  This allows different flavors of \.{CWEB} to have
 different search paths.
 
-\&{FIXME}: Not sure this is the best way to go about this.
+@q \&{FIXME}: Not sure this is the best way to go about this. @>
 
 @<Set up |PROGNAME| feature and initialize the search path mechanism@>=
 kpse_set_program_name(argv[0], "cweb");
@@ -1342,7 +1342,7 @@ void cb_show_banner (void)
   assert(cb_banner[0]!='\0');
   textdomain("cweb-tl");
 @.cweb-tl.mo@>
-  printf("%s%s\n", cb_banner, versionstring);
+  printf("%s%s\n", _(cb_banner), versionstring);
   textdomain("cweb");
 @.cweb.mo@>
 }

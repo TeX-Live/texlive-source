@@ -93,7 +93,7 @@ reprinted in {\sl Digital Typography\/} (1999), 225--245.
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 modified. The version number parallels the corresponding version of \.{CWEAVE}.
 
-@d banner _("This is CTWILL, Version 3.64")
+@d banner "This is CTWILL, Version 3.64"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 

@@ -33,7 +33,7 @@
 /*:62*/
 #line 65 "cwebdir/ctangle.w"
 
-#define banner _("This is CTANGLE, Version 3.64")  \
+#define banner "This is CTANGLE, Version 3.64" \
  \
 
 #define max_bytes 1000000 \

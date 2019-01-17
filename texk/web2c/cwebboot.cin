@@ -59,6 +59,9 @@ typedef bool boolean;
 #define CWEB
 #include "help.h"
 
+
+
+
 /*:90*/
 #line 59 "cwebdir/common.w"
 
@@ -1641,7 +1644,7 @@ void cb_show_banner(void)
 assert(cb_banner[0]!='\0');
 textdomain("cweb-tl");
 
-printf("%s%s\n",cb_banner,versionstring);
+printf("%s%s\n",_(cb_banner),versionstring);
 textdomain("cweb");
 
 }

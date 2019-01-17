@@ -35,7 +35,7 @@
 @x
 @d banner "This is CWEAVE (Version 3.64)\n"
 @y
-@d banner _("This is CWEAVE, Version 3.64")
+@d banner "This is CWEAVE, Version 3.64"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
