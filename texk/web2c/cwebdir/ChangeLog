@@ -1,3 +1,8 @@
+2019-01-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* po/cweb.pot, po/de/cweb.po, po/it/cweb.po:
+	Update NLS references for TP notification.
+
 2019-01-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch, comm-w2c.h,

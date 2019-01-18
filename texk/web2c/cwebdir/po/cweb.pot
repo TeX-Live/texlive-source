@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2019\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-01 15:41+0100\n"
+"POT-Creation-Date: 2019-01-18 16:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -156,7 +156,7 @@ msgstr ""
 msgid "! CWEB file ended during a change"
 msgstr ""
 
-#: cweav-twill.ch:1026
+#: cweav-twill.ch:1033
 msgid "! Cannot open aux output file "
 msgstr ""
 
@@ -176,7 +176,7 @@ msgstr ""
 msgid "! Cannot open input file "
 msgstr ""
 
-#: comm-i18n.ch:300 comm-i18n.ch:306 ctang-i18n.ch:83 ctang-i18n.ch:307
+#: comm-i18n.ch:300 comm-i18n.ch:308 ctang-i18n.ch:83 ctang-i18n.ch:307
 #: cweav-i18n.ch:457
 msgid "! Cannot open output file "
 msgstr ""
@@ -241,11 +241,11 @@ msgstr ""
 msgid "! Extra } in comment"
 msgstr ""
 
-#: comm-i18n.ch:292
+#: comm-i18n.ch:300
 msgid "! Filename too long\n"
 msgstr ""
 
-#: cweav-twill.ch:542
+#: cweav-twill.ch:550
 msgid "! Identifier in meaning should be followed by space"
 msgstr ""
 
@@ -273,7 +273,7 @@ msgstr ""
 msgid "! Include file name too long"
 msgstr ""
 
-#: comm-i18n.ch:312
+#: comm-i18n.ch:320
 msgid "! Include path too long"
 msgstr ""
 
@@ -293,7 +293,7 @@ msgstr ""
 msgid "! Input line too long"
 msgstr ""
 
-#: cweav-twill.ch:549
+#: cweav-twill.ch:550
 msgid "! Location in meaning should be followed by space"
 msgstr ""
 
@@ -329,7 +329,7 @@ msgstr ""
 msgid "! Nesting of section names not allowed"
 msgstr ""
 
-#: cweav-twill.ch:1022
+#: cweav-twill.ch:1029
 msgid "! Only @$ is allowed in aux and bux files"
 msgstr ""
 
@@ -353,15 +353,15 @@ msgstr ""
 msgid "! TeX string should be in C text only"
 msgstr ""
 
-#: comm-i18n.ch:262 comm-i18n.hch:34
+#: comm-i18n.ch:262 comm-i18n.hch:33
 msgid "! This can't happen: "
 msgstr ""
 
-#: cweav-twill.ch:310
+#: cweav-twill.ch:316
 msgid "! Title name didn't end"
 msgstr ""
 
-#: cweav-twill.ch:308
+#: cweav-twill.ch:314
 msgid "! Title should be enclosed in braces or doublequotes"
 msgstr ""
 
@@ -378,17 +378,17 @@ msgid ""
 "! Usage: ctangle [options] webfile[.w] [{changefile[.ch]|-} [outfile[.c]]]\n"
 msgstr ""
 
-#: comm-i18n.ch:288
+#: comm-i18n.ch:287
 msgid ""
 "! Usage: cweave [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
 msgstr ""
 
-#: comm-i18n.ch:291
+#: comm-i18n.ch:290
 msgid ""
 "! Usage: ctwill [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
 msgstr ""
 
-#: ctang-i18n.ch:131 cweav-i18n.ch:53 cweav-i18n.ch:117
+#: ctang-i18n.ch:131 cweav-i18n.ch:53 cweav-i18n.ch:119
 msgid "! Use @l in limbo only"
 msgstr ""
 
@@ -446,7 +446,7 @@ msgstr ""
 msgid "%ld scraps (out of %ld)\n"
 msgstr ""
 
-#: cweav-twill.ch:1350
+#: cweav-twill.ch:1346
 #, c-format
 msgid "%ld temp meanings (out of %ld)\n"
 msgstr ""
@@ -477,7 +477,7 @@ msgstr ""
 msgid "(That was a fatal error, my friend.)"
 msgstr ""
 
-#: comm-i18n.ch:244
+#: comm-i18n.ch:224
 #, c-format
 msgid ". (l. %d of change file)\n"
 msgstr ""
@@ -524,7 +524,7 @@ msgstr ""
 msgid "This is CWEAVE (Version 3.64 [CWEBbin 2019])"
 msgstr ""
 
-#: cweav-twill.ch:49
+#: cweav-twill.ch:68
 msgid "This is CTWILL (Version 3.64 [CWEBbin 2019])"
 msgstr ""
 
@@ -540,11 +540,11 @@ msgstr ""
 msgid "cross-reference"
 msgstr ""
 
-#: cweav-twill.ch:815
+#: cweav-twill.ch:822
 msgid "find type"
 msgstr ""
 
-#: cweav-twill.ch:754
+#: cweav-twill.ch:761
 msgid "inner"
 msgstr ""
 
@@ -580,7 +580,7 @@ msgstr ""
 msgid "stack"
 msgstr ""
 
-#: cweav-twill.ch:562
+#: cweav-twill.ch:570
 msgid "temp meanings"
 msgstr ""
 
@@ -588,7 +588,7 @@ msgstr ""
 msgid "text"
 msgstr ""
 
-#: cweav-twill.ch:311
+#: cweav-twill.ch:317
 msgid "titles"
 msgstr ""
 
