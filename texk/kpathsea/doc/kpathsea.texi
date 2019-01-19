@@ -3,12 +3,12 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.0
-@set month-year December 2018
+@set month-year January 2019
 
 @copying
 This file documents the Kpathsea library for path searching.
 
-Copyright @copyright{} 1996--2018 Karl Berry & Olaf Weber.
+Copyright @copyright{} 1996--2019 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -1795,10 +1795,12 @@ For one-shot uses of an arbitrary (not built in to Kpathsea) path, see
 
 @item --expand-var=@var{string}
 @opindex --expand-var=@var{string}
-Output the variable and tilde expansion of @var{string}. For example,
+Output the variable and tilde expansion of @var{string}.  For example,
 with the usual @file{texmf.cnf}, @samp{kpsewhich
 --expand-var='$TEXMF'} returns the @TeX{} system hierarchy root(s).
-@xref{Path expansion}.
+@xref{Path expansion}.  The specified @var{string} can contain
+anything, though, not just variable references.  This calls
+@code{kpse_var_expand} (@pxref{Programming with config files}).
 
 @item --help-formats
 @opindex --help-formats
@@ -3264,18 +3266,24 @@ installers by keeping all configuration in one place.
 @findex kpathsea_var_value
 @flindex variable.h
 @vindex shell_escape@r{, example for code}
-To retrieve a value @var{var} from config files, the best way is to call
-@code{kpathsea_var_value} on the string @code{@var{var}}.  This will look
-first for an environment variable @var{var}, then a config file value.
-The result will be the value found or @samp{NULL}.  This function is
-declared in @file{kpathsea/variable.h}.  For an example, see the
+To retrieve a value for a configuration variable @var{var}, the best
+way is to call @code{kpathsea_var_value} on the string
+@code{@var{var}}.  This will look first for an environment variable
+@var{var}, then a config file value.  The result will be the value
+found or @samp{NULL}.  This function is declared in
+@file{kpathsea/variable.h}.  For an example, see the
 @code{shell_escape} code in @file{web2c/lib/texmfmp.c}.
 
-The routine to do variable expansion in the context of a search path (as
-opposed to simply retrieving a value) is @code{kpathsea_var_expand}, also
-declared in @file{kpathsea/variable.h}.  It's generally only necessary
-to set the search path structure components as explained in the previous
-section, rather than using this yourself.
+The routine to do full variable and tilde expansion of an arbitrary
+string in the context of a search path (as opposed to simply
+retrieving a value) is @code{kpathsea_var_expand}, also declared in
+@file{kpathsea/variable.h}.  However, it's generally only necessary to
+set the search path structure components as explained in the previous
+section instead of using this directly.  Because of its usage with any
+input string, undefined @code{$FOO} constructs in the argument to
+@code{kpathsea_var_expand} are returned literally (@code{"$FOO"}),
+while undefined @code{$@{FOO@}} constructs are expanded to the empty
+string.
 
 @findex kpathsea_cnf_get
 @flindex cnf.h

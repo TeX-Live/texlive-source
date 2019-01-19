@@ -1,6 +1,6 @@
 /* variable.h: declare variable expander.
 
-   Copyright 1993, 1995, 2008 Karl Berry.
+   Copyright 1993, 1995, 2008, 2019 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,9 @@ extern KPSEDLL string kpathsea_var_value (kpathsea kpse, const_string var);
 
    In any case, ``expansion'' means calling `getenv'; if the variable is not
    set, look in texmf.cnf files for a definition.  If not set there, either,
-   the expansion is the empty string (no error).  */
+   the expansion of a $FOO construct is its literal text ("$FOO"), while
+   the expansion of a ${BAR} construct is the empty string.  This is so
+   at least some file names containing $ characters will work.  */
 extern KPSEDLL string kpathsea_var_expand (kpathsea kpse, const_string src);
 
 #if defined (KPSE_COMPAT_API)

@@ -1,3 +1,13 @@
+2019-01-19  Karl Berry  <karl@freefriends.org>
+
+	* variable.h (kpathsea_var_expand): returns string "$FOO" if FOO
+	is not defined, not the empty string; whereas ${FOO} does return
+	the empty string. Maybe not the ideal interface, but seems
+	undesirable to change now.
+	* doc/kpathsea.texi (Programming with config files),
+	(Auxiliary tasks): document this.
+	Noted by Andreas Scherer, r49726.
+
 2019-01-19  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFLOCALEDIR): define as $TEXMFMAIN/locale,
