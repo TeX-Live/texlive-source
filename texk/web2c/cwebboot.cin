@@ -48,7 +48,7 @@
 #endif
 
 /*:88*//*90:*/
-#line 1276 "cwebdir/comm-w2c.ch"
+#line 1301 "cwebdir/comm-w2c.ch"
 
 typedef bool boolean;
 #define HAVE_BOOLEAN
@@ -58,9 +58,6 @@ typedef bool boolean;
 
 #define CWEB
 #include "help.h"
-
-
-
 
 /*:90*/
 #line 59 "cwebdir/common.w"
@@ -185,9 +182,6 @@ err_print(_("! Include file name too long") ) ;goto restart;} \
 #define TEXMF_LOCALE "$TEXMFLOCALEFILES" \
 
 #define kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)  \
-
-#define show_kpathsea_debug flags['d'] \
- \
 
 
 #line 60 "cwebdir/common.w"
@@ -430,14 +424,14 @@ static void extend_section_name(name_pointer,char*,char*,int);
 static void check_change(void);
 static void prime_the_change_buffer(void);
 
-/*:84*//*95:*/
-#line 1332 "cwebdir/comm-w2c.ch"
+/*:84*//*98:*/
+#line 1402 "cwebdir/comm-w2c.ch"
 
-void cb_show_banner(void);
 static void cb_usage(const_string str);
 static void cb_usagehelp(const_string*message,const_string bug_email);
+void cb_show_banner(void);
 
-/*:95*/
+/*:98*/
 #line 63 "cwebdir/common.w"
 
 
@@ -471,7 +465,7 @@ root= NULL;
 #line 72 "cwebdir/comm-w2c.ch"
 
 /*91:*/
-#line 1297 "cwebdir/comm-w2c.ch"
+#line 1316 "cwebdir/comm-w2c.ch"
 
 kpse_set_program_name(argv[0],"cweb");
 
@@ -479,7 +473,7 @@ kpse_set_program_name(argv[0],"cweb");
 #line 73 "cwebdir/comm-w2c.ch"
 
 /*89:*/
-#line 1244 "cwebdir/comm-w2c.ch"
+#line 1269 "cwebdir/comm-w2c.ch"
 
 setlocale(LC_MESSAGES,setlocale(LC_CTYPE,""));
 texmf_locale= kpse_var_expand(TEXMF_LOCALE);
@@ -1435,7 +1429,7 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*74:*/
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 
 /*94:*/
-#line 1325 "cwebdir/comm-w2c.ch"
+#line 1341 "cwebdir/comm-w2c.ch"
 
 cb_usagehelp(program==ctangle?CTANGLEHELP:
 program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
@@ -1446,15 +1440,15 @@ program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
 
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
-/*97:*/
-#line 1382 "cwebdir/comm-w2c.ch"
+/*96:*/
+#line 1383 "cwebdir/comm-w2c.ch"
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
 NULL,NULL);
 
 
-/*:97*/
+/*:96*/
 #line 1000 "cwebdir/comm-w2c.ch"
 
 if(strcmp("-verbose",*argv)==0||strcmp("--verbose",*argv)==0)
@@ -1636,18 +1630,8 @@ cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 }
 
 #line 953 "cwebdir/comm-w2c.ch"
-/*:70*//*96:*/
-#line 1339 "cwebdir/comm-w2c.ch"
-
-void cb_show_banner(void)
-{
-assert(cb_banner[0]!='\0');
-textdomain("cweb-tl");
-
-printf("%s%s\n",_(cb_banner),versionstring);
-textdomain("cweb");
-
-}
+/*:70*//*95:*/
+#line 1349 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str)
 {
@@ -1679,4 +1663,17 @@ textdomain("cweb");
 history= spotless;exit(wrap_up());
 }
 
-/*:96*/
+/*:95*//*97:*/
+#line 1391 "cwebdir/comm-w2c.ch"
+
+void cb_show_banner(void)
+{
+assert(cb_banner[0]!='\0');
+textdomain("cweb-tl");
+
+printf("%s%s\n",_(cb_banner),versionstring);
+textdomain("cweb");
+
+}
+
+/*:97*/
