@@ -179,7 +179,7 @@ err_print(_("! Include file name too long") ) ;goto restart;} \
 
 #define _(STRING) gettext(STRING)  \
 
-#define TEXMF_LOCALE "$TEXMFLOCALEFILES" \
+#define TEXMF_LOCALE "$TEXMFLOCALEDIR" \
 
 #define kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)  \
 

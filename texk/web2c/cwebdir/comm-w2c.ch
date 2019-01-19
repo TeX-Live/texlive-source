@@ -1250,21 +1250,21 @@ place in the file system.
 
 Plans for \TeX~Live are to store NLS catalogs inside the ``\TeX\ Directory
 Structure'' (TDS) and look them up with the help of the configuration variable
-``|TEXMFLOCALEFILES|'' (subject to change in the final setup).  Below we use
-the \Kpathsea/ function |kpse_var_expand| to evaluate this variable from
-various origins and redirect the ``GNU~gettext utilities'' to a possibly
-different location than the canonical \.{/usr/share/locale}.
+``|TEXMFLOCALEDIR|,'' which should contain a single absolute path definition.
+Below we use the \Kpathsea/ function |kpse_var_expand| to evaluate this
+variable from various origins and redirect the ``GNU~gettext utilities''
+to a possibly different location than the canonical \.{/usr/share/locale}.
 
-There are several ways to set |TEXMFLOCALEFILES|:
+There are several ways to set |TEXMFLOCALEDIR|:
 \smallskip
 {\parindent5em
-\item{(a)} a user-set environment variable \.{TEXMFLOCALEFILES}\hfil\break
-    (overridden by \.{TEXMFLOCALEFILES\_cweb});
+\item{(a)} a user-set environment variable \.{TEXMFLOCALEDIR}\hfil\break
+    (overridden by \.{TEXMFLOCALEDIR\_cweb});
 \item{(b)} a line in \Kpathsea/ configuration file \.{texmf.cnf},\hfil\break
-    e.g., \.{TEXMFLOCALEFILES=\$TEXMFDIST/locale}\hfil\break
-    or \.{TEXMFLOCALEFILES.cweb=\$TEXMFDIST/locale}.\par}
+    e.g., \.{TEXMFLOCALEDIR=\$TEXMFMAIN/locale}\hfil\break
+    or \.{TEXMFLOCALEDIR.cweb=\$TEXMFMAIN/locale}.\par}
 
-@d TEXMF_LOCALE "$TEXMFLOCALEFILES"
+@d TEXMF_LOCALE "$TEXMFLOCALEDIR"
 
 @<Set locale...@>=
 setlocale(LC_MESSAGES, setlocale(LC_CTYPE, ""));
