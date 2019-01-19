@@ -1,3 +1,10 @@
+2019-01-19  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]20 for TL19.
+
 2019-01-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftosrc-poppler0.72.0.cc: Support poppler-0.73.0.
