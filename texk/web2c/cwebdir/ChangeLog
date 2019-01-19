@@ -1,6 +1,7 @@
 2019-01-19  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch: Extended notes about NLS activation.
+	* po/web2c-help.pot, po/de/web2c-help.po: Fix typos.
 
 2019-01-18  Andreas Scherer  <https://ascherer.github.io>
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2018\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-12 10:45+0100\n"
-"PO-Revision-Date: 2019-01-12 10:45+0100\n"
+"POT-Creation-Date: 2019-01-19 23:24+0100\n"
+"PO-Revision-Date: 2019-01-19 23:24+0100\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -71,7 +71,7 @@ msgstr "--help      zeige diesen Hilfetext und ende"
 
 #: help.h:66 help.h:91 help.h:117
 msgid "--version   output version information and exit"
-msgstr "--version   zeige de Versionsinformation und ende"
+msgstr "--version   zeige die Versionsinformation und ende"
 
 #: help.h:71
 msgid "Usage: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
@@ -118,8 +118,8 @@ msgid "  Weave WEBFILE with CHANGEFILE into a TeX document with mini-indexes."
 msgstr "  Verwebe WEBFILE mit CHANGEFILE in ein TeX Dokument mit Miniindexen."
 
 #: help.h:113
-msgid "+P          \\input proofmac.tex instead of ctwimac.tex"
-msgstr "+P          \\input proofmac.tex an Stelle von ctwimac.tex"
+msgid "+P          \\input ctproofmac.tex instead of ctwimac.tex"
+msgstr "+P          \\input ctproofmac.tex an Stelle von ctwimac.tex"
 
 #: help.h:114
 msgid "+/-lX       use macros for language X as of Xct{wi|proof}mac.tex"
