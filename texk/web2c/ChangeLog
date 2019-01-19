@@ -1,3 +1,7 @@
+2019-01-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* help.h: Fix CTWILL '--help' text.
+
 2019-01-15  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebboot.cin: Provisional 'bindtextdomain' lookup in TDS.
