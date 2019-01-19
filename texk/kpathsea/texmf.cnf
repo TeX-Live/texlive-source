@@ -430,6 +430,11 @@ FC_CACHEDIR = $TEXMFSYSVAR/fonts/cache
 TEXDOCS = $TEXMF/doc//
 TEXSOURCES = $TEXMFDOTDIR;$TEXMF/source//
 
+% Top-level directory for any string translations for the binaries, in
+% the same structure as the usual system locale/ directories. This is a
+% single directory, not a path.
+TEXMFLOCALEDIR = $TEXMFMAIN/locale
+
 % Web and CWeb input paths.
 WEBINPUTS = $TEXMFDOTDIR;$TEXMF/web//
 CWEBINPUTS = $TEXMFDOTDIR;$TEXMF/cweb//
