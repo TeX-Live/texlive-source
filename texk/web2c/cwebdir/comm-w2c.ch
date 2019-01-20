@@ -1264,16 +1264,16 @@ There are several ways to set |TEXMFLOCALEDIR|:
     e.g., \.{TEXMFLOCALEDIR=\$TEXMFMAIN/locale}\hfil\break
     or \.{TEXMFLOCALEDIR.cweb=\$TEXMFMAIN/locale}.\par}
 
-@d TEXMF_LOCALE "$TEXMFLOCALEDIR"
-
 @<Set locale...@>=
 setlocale(LC_MESSAGES, setlocale(LC_CTYPE, ""));
-texmf_locale = kpse_var_expand (TEXMF_LOCALE);
+texmf_locale = kpse_var_expand ("${TEXMFLOCALEDIR}");
+
 bindtextdomain("cweb",
   bindtextdomain("cweb-tl",
     bindtextdomain("web2c-help", @|
-      strcmp(texmf_locale, TEXMF_LOCALE) ?
+      strcmp(texmf_locale, "") ?
         texmf_locale : "/usr/share/locale")));
+
 free(texmf_locale);
 textdomain("cweb"); /* the majority of |"strings"| come from ``plain \.{CWEB}'' */
 @.cweb.mo@>

@@ -1,3 +1,7 @@
+2019-01-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Use braced evaluation and save a macro variable.
+
 2019-01-19  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch: Extended notes about NLS activation.

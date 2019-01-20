@@ -179,8 +179,6 @@ err_print(_("! Include file name too long") ) ;goto restart;} \
 
 #define _(STRING) gettext(STRING)  \
 
-#define TEXMF_LOCALE "$TEXMFLOCALEDIR" \
-
 #define kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)  \
 
 
@@ -473,15 +471,17 @@ kpse_set_program_name(argv[0],"cweb");
 #line 73 "cwebdir/comm-w2c.ch"
 
 /*89:*/
-#line 1269 "cwebdir/comm-w2c.ch"
+#line 1267 "cwebdir/comm-w2c.ch"
 
 setlocale(LC_MESSAGES,setlocale(LC_CTYPE,""));
-texmf_locale= kpse_var_expand(TEXMF_LOCALE);
+texmf_locale= kpse_var_expand("${TEXMFLOCALEDIR}");
+
 bindtextdomain("cweb",
 bindtextdomain("cweb-tl",
 bindtextdomain("web2c-help",
-strcmp(texmf_locale,TEXMF_LOCALE)?
+strcmp(texmf_locale,"")?
 texmf_locale:"/usr/share/locale")));
+
 free(texmf_locale);
 textdomain("cweb");
 
