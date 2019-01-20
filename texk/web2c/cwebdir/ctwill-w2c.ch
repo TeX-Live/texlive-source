@@ -1188,14 +1188,15 @@ out_ptr=out_buf+1; out_line=1; active_file=tex_file;
 beginning of phase two. We initialize the output variables in a slightly
 tricky way so that the first line of the output file will be dependent of
 the user language set by the `\.{+l}' option and its argument.  If you call
-\.{CWEAVE} with `\.{+lX}' (or `\.{-lX}' as well), where `\.X' is the
-(possibly empty) string of characters to the right of~`\.l', `\.X'~will be
-prepended to `\.{cwebmac.tex}', e.g., if you call \.{CWEAVE} with
-`\.{+ldeutsch}', you will receive the line `\.{\\input deutschcwebmac}'.
+\.{CTWILL} with `\.{+lX}' (or `\.{-lX}' as well), where `\.X' is the
+(possibly empty) string of characters to the right of~`\.l', `\.X'~will
+be prepended to `\.{ctwimac.tex}', e.g., if you call \.{CTWILL} with
+`\.{+ldeutsch}', you will receive the line `\.{\\input deutschctwimac}'.
 Without this option the first line of the output file will be
 `\.{\\input ctwimac}'. Or, if the user has specified proofing by
-saying \.{+P} on the command line, it's `\.{\\input ctproofmac}',
-a set of macros used when debugging mini-index entries.
+saying \.{+P} on the command line, it's `\.{\\input ctproofmac}' (resp.\
+\.{\\input Xctproofmac} with option \.{+lX}), a set of macros used when
+debugging mini-index entries.
 
 @d proofing flags['P']
 
