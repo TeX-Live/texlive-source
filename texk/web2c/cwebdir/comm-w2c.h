@@ -41,7 +41,8 @@ typedef uint16_t sixteen_bits;
 extern int program; /* \.{CWEAVE} or \.{CTANGLE} or \.{CTWILL}? */
 extern int phase; /* which phase are we in? */
 
-@ @<Include files@>=
+@ @d _(STRING) gettext(STRING)
+@<Include files@>=
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT 0
 #endif
@@ -144,7 +145,6 @@ extern void sprint_section_name(char *,name_pointer);@/
 @d fatal_message 3 /* |history| value when we had to stop prematurely */
 @d mark_harmless {if (history==spotless) history=harmless_message;}
 @d mark_error history=error_message
-@d _(STRING) gettext(STRING)
 @d confusion(s) fatal(_("! This can't happen: "),s)
 
 @<Common...@>=
