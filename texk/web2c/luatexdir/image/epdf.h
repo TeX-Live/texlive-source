@@ -37,6 +37,7 @@
 #  include <stdio.h>
 #  include <string.h>
 #  include <kpathsea/c-ctype.h>
+#  include <kpathsea/simpletypes.h>
 #  include <sys/stat.h>
 #  include <dirent.h>
 
@@ -50,7 +51,7 @@ typedef enum { FE_FAIL, FE_RETURN_NULL } file_error_mode;
 
 /* the following code is extremly ugly but needed for including web2c/config.h */
 
-typedef const char *const_string;   /* including kpathsea/types.h doesn't work on some systems */
+/*typedef const char *const_string;*/   /* including kpathsea/types.h doesn't work on some systems */
 
 #  define KPATHSEA_CONFIG_H     /* avoid including other kpathsea header files */
 
