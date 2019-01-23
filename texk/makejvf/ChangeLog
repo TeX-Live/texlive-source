@@ -1,3 +1,7 @@
+2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* makejvf.1: Add fallback TeX and LaTeX logos.
+
 2018-08-18  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tfmread.c: Do not check GLUEKERN table in non-enhanced mode.

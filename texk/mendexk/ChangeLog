@@ -1,8 +1,11 @@
+2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* mendex.1, mendex.1.ja: Add fallback TeX and LaTeX logos.
+
 2018-07-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* README.md: Added.
-	* mendex.1, mendex.1.ja:
-	Sync with upstream.
+	* mendex.1, mendex.1.ja: Sync with upstream.
 
 2018-06-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
