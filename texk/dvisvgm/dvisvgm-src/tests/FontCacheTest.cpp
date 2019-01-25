@@ -2,7 +2,7 @@
 ** FontCacheTest.cpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2018 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2019 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -84,11 +84,6 @@ static string toSVG (const Glyph &glyph) {
 	ostringstream oss;
 	glyph.writeSVG(oss, false);
 	return oss.str();
-}
-
-
-static bool operator == (const Glyph &glyph1, const Glyph &glyph2) {
-	return toSVG(glyph1) == toSVG(glyph2);
 }
 
 

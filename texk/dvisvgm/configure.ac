@@ -10,12 +10,12 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl  Adapted for TeX Live from original dvisvgm configure.ac
-dnl  Copyright 2005-2018 Martin Gieseking
+dnl  Copyright 2005-2019 Martin Gieseking
 dnl
 AC_PREREQ([2.65])
 m4_include([version.ac])[] dnl define dvisvgm_version
 AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
-DATE="October 2018"
+DATE="January 2019"
 AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([../../m4])dnl not just _DIR
@@ -200,8 +200,20 @@ AM_CONDITIONAL([CODE_COVERAGE_ENABLED], false)
 CODE_COVERAGE_RULES=
 AC_SUBST([CODE_COVERAGE_RULES])
 
+# TL: the original configure calls pkg_check_modules,
+# which calls ac_arg_var on the _cflags and _libs for various libraries,
+# which calls ac_subst. we'll just ac_subst them to get initial (empty)
+# definitions, so we can retain the += used by the original lib/defs.am.
+# (init brotli)
+AC_SUBST(BROTLI_CFLAGS)
+AC_SUBST(BROTLI_LIBS)
+# (init woff2)
+AC_SUBST(WOFF2_CFLAGS)
+AC_SUBST(WOFF2_LIBS)
+
 AC_SUBST([DVISVGM_TREE], [dvisvgm-src])
 
+AC_SUBST([dvisvgm_srcdir], ['$(top_srcdir)/dvisvgm-src'])
 AC_SUBST(DATE)
 AC_SUBST(AM_CPPFLAGS)
 AC_SUBST(AM_LDFLAGS)
