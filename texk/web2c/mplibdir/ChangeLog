@@ -1,3 +1,10 @@
+2019-01-26  Luigi Scarso  <luigi.scarso@gmail.com>
+	* Fixed bisection algorithm (overflow of number of bisections in decimal mode with  low precision)
+	* Added 2 levels to the bisection algorithm for cubic intersection. Need testing.
+	* Fixed a buffer overflow on command line; for consistency with mp_reallocate_buffer, 
+	  now accepting input from command line  of at most  0xFFFFFFF bytes.
+
+
 2019-01-06  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Added r-mpost as an alias for mpost --restricted 
 
