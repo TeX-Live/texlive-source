@@ -1,3 +1,9 @@
+2019-01-27  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_pdfm.c: Supress warning on tounicode special.
+	Dvipdfmx had been giving a wrong warning when an optional
+	argument to tounicode special is not supplied.
+
 2018-12-27  Clerk Ma  <maqiyuan130324@vip.qq.com>
 
 	* pdfobj.c: Introduce a static variable pdf_output_file_stats
