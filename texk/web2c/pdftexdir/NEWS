@@ -1,8 +1,10 @@
 pdfTeX 3.14159265-2.6-1.40.20 (TeX Live 2019)
 - changes:
   - new primitive \expanded (from unreleased pdftex 1.50 branch + luatex).
-  - the /CharSet string is now always omitted from the PDF output, since
-    it cannot feasibly be guaranteed correct, but the standard requires this.
+  - new primitive parameter \pdfincludecharset; zero by default to omit
+    the /CharSet string from the PDF output, since it cannot feasibly be
+    guaranteed correct as the PDF/A-2 and /A-3 standards require; setting
+    to 1 includes it again, as required by PDF/A-1.
 
 pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
 - changes:
@@ -10,7 +12,7 @@ pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
     (pdftex r782).
   - allow encoding vectors for bitmap PK fonts (r790).
   - when a non-PDF special is ignored, output a (leading substring of the)
-  special, preceded by "<special> ".
+    special, preceded by "<special> ".
 
 - bugfixes:
   - \pdfprimitive does nothing, rather than give an error, when given a

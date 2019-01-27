@@ -1,3 +1,13 @@
+2014-02-14  Karl Berry  <karl@gnu.org>
+
+	* pdftex.web (pdf_include_charset_code, pdf_include_charset):
+	new primitive parameter \pdfincludecharset.
+	(print_param): print_esc it.
+	(Put each...): insert in hash table.
+	(get_pdf_include_charset): new fn to get its value.
+	* writefont.c (write_fontdescriptor): check it before outputting
+	CharSet.
+
 2019-01-19  Karl Berry  <karl@tug.org>
 
         * NEWS,
@@ -495,7 +505,7 @@
 	* pdftex.web (pdf_suppress_warning_page_group): new primitive
 	parameter \pdfsuppresswarningpagegroup.
 	(get_pdf_suppress_warning_page_group): new fn to get its value.
-	* pdftopdf.cc (write_epdf): check it before issuing warning.
+	* pdftoepdf.cc (write_epdf): check it before issuing warning.
 
 2014-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
