@@ -1102,7 +1102,7 @@ stored in the \MP\ instance, this will be taken as the first line of
 input.
 
 @d command_line_size 256
-@d max_commad_line_size 0xFFFFFFF /* should be the same of |max_halfword| (see |mp_reallocate_buffer|) */
+@d max_command_line_size 0xFFFFFFF /* should be the same of |max_halfword| (see |mp_reallocate_buffer|) */
 
 @<Copy the rest of the command line@>=
 {
@@ -1116,7 +1116,7 @@ input.
       buflen +=(strlen(argv[optind_aux])+1); /* reserve space for ' ' as separator */
     }
     /* Last char is ' ', no need to reserve space for final '\0' */
-    if (buflen > max_commad_line_size) {
+    if (buflen > max_command_line_size) {
         fprintf(stderr,"length of command line too long!\n");
     	exit(EXIT_FAILURE);
     }
