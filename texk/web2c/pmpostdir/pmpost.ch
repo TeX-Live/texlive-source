@@ -263,7 +263,7 @@ else
 
 @x
   if (dvitomp_only) {
-    @<Read and set dvitomp command line options@>;
+    @<Read and set \.{dvitomp} command line options@>;
   } else {
 @y
   kanjioption[0] = '\0';
@@ -280,7 +280,7 @@ else
 #endif
 
   if (dvitomp_only) {
-    @<Read and set dvitomp command line options@>;
+    @<Read and set \.{dvitomp} command line options@>;
   } else {
 @z
 
