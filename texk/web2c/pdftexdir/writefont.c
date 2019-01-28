@@ -484,7 +484,7 @@ static void write_fontdescriptor(fd_entry * fd)
     pdf_printf("/Flags %i\n", fd_flags);
     write_fontmetrics(fd);
     if (fd->ff_found) {
-        if (getpdfincludecharset() > 0 && is_subsetted(fd->fm) && is_type1(fd->fm)) {
+        if (getpdfomitcharset() == 0 && is_subsetted(fd->fm) && is_type1(fd->fm)) {
             /* We don't get CharSet right. For some PDF standards,
                CharSet is optional, but if it appears, it must be
                correct. Unfortunately, there seems to be no practical

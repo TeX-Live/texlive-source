@@ -1,4 +1,13 @@
-2014-02-14  Karl Berry  <karl@gnu.org>
+2019-01-27  Karl Berry  <karl@gnu.org>
+
+	* pdftex.web (pdf_omit_charset_code, pdf_omit_charset
+	print_param,
+	<Put each...>,
+	get_pdf_omit_charset)
+	* writefont.c (write_fontdescriptor): reverse sense and name
+	to \pdfomitcharset.
+
+2019-01-27  Karl Berry  <karl@gnu.org>
 
 	* pdftex.web (pdf_include_charset_code, pdf_include_charset):
 	new primitive parameter \pdfincludecharset.

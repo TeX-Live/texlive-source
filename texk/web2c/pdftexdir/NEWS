@@ -1,10 +1,10 @@
 pdfTeX 3.14159265-2.6-1.40.20 (TeX Live 2019)
 - changes:
   - new primitive \expanded (from unreleased pdftex 1.50 branch + luatex).
-  - new primitive parameter \pdfincludecharset; zero by default to omit
-    the /CharSet string from the PDF output, since it cannot feasibly be
-    guaranteed correct as the PDF/A-2 and /A-3 standards require; setting
-    to 1 includes it again, as required by PDF/A-1.
+  - new primitive parameter \pdfomitcharset; zero by default to include
+    the /CharSet value from the PDF output as usual; setting to 1 omits
+    it, since it cannot feasibly be guaranteed correct as the PDF/A-2
+    and /A-3 standards require.
 
 pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
 - changes:
