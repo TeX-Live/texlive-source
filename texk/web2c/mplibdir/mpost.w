@@ -14,18 +14,25 @@
 \def\[#1]{#1.}
 \pdfoutput=1
 
+@s line normal
+
+@s MP int
+@s MPX int
+@s MP_options int
 @s boolean int
+@s const_string int
+@s mpx_options int
 @s option int
 @s string int
-@s line normal
+@s timeb int
+@s timeval int
 
 @*\MP\ executable.
 
 Now that all of \MP\ is a library, a separate program is needed to 
 have our customary command-line interface. 
 
-@ First, here are the \CEE/ includes. \.{avl.h} is needed because of an
-|avl_allocator| that is defined in \.{mplib.h}.
+@ First, here are the \CEE/ includes.
 
 @d true 1
 @d false 0
@@ -60,8 +67,8 @@ static int ini_version_test = false;
 string output_directory;     /* Defaults to |NULL|.  */
 static boolean restricted_mode = false;
 
-@<getopt structures@>;
-@<Declarations@>;
+@<Structures for |getopt|@>@;
+@<Declarations@>@;
 
 @ Allocating a bit of memory, with error detection:
 
@@ -810,9 +817,8 @@ static void *mpost_open_file(MP mp, const char *fname, const char *fmode, int ft
 if (!nokpse)
   options->open_file = mpost_open_file;
 
-@  
-@<getopt structures@>=
-#define ARGUMENT_IS(a) STREQ (mpost_options[optionid].name, a)
+@ @d ARGUMENT_IS(a) STREQ (mpost_options[optionid].name, a)
+@<Structures for |getopt|@>=
 
 /* SunOS cc can't initialize automatic structs, so make this static.  */
 static struct option mpost_options[]
@@ -957,9 +963,8 @@ static struct option mpost_options[]
   options->ini_version = (int)ini_version_test;
 }
 
-@  
-@<getopt structures@>=
-#define option_is(a) STREQ (dvitomp_options[optionid].name, a)
+@ @d option_is(a) STREQ (dvitomp_options[optionid].name, a)
+@<Structures for |getopt|@>=
 
 /* SunOS cc can't initialize automatic structs, so make this static.  */
 static struct option dvitomp_options[]
@@ -973,7 +978,7 @@ static struct option dvitomp_options[]
 
 
 @ 
-@<Read and set dvitomp command line options@>=
+@<Read and set \.{dvitomp} command line options@>=
 {
   int g;   /* `|getopt|' return code.  */
   int optionid;
@@ -1392,7 +1397,8 @@ DLLPROC (int argc, char **argv)
 #else
 main (int argc, char **argv)
 #endif
-{ /* |start_here| */
+@;
+{ @t\1@> /* |start_here| */
   int k; /* index into buffer */
   int history; /* the exit status */
   MP mp; /* a metapost instance */
@@ -1414,7 +1420,7 @@ main (int argc, char **argv)
       dvitomp_only=1;
   }
   if (dvitomp_only) {
-    @<Read and set dvitomp command line options@>;
+    @<Read and set \.{dvitomp} command line options@>;
   } else {
     @<Read and set command line options@>;
   }
@@ -1479,6 +1485,7 @@ main (int argc, char **argv)
 	exit(history);
   else
      exit(0);
+@t\8@>
 }
 
 @* Index.
