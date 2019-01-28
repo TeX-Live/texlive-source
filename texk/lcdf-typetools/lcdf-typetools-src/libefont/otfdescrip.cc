@@ -1,6 +1,6 @@
 /* otfdescrip.cc -- descriptions for OpenType tags
  *
- * Copyright (c) 2002-2018 Eddie Kohler
+ * Copyright (c) 2002-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

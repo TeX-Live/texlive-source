@@ -4,6 +4,7 @@
 #include <efont/cff.hh>
 #include "setting.hh"
 class Metrics;
+class Secondary;
 class Transform;
 namespace Efont { class TrueTypeBoundsCharstringProgram; }
 
@@ -69,31 +70,39 @@ struct FontInfo {
 
 };
 
+class SettingSet {
+public:
+    inline SettingSet(Secondary* s, Metrics& m);
+    inline SettingSet& push_back(Setting s);
+    inline SettingSet& push_back(int op, int x = 0, int y = 0);
+    inline SettingSet& move(int x, int y = 0);
+    SettingSet& show(int uni);
+    inline SettingSet& kernx(bool is_kernx);
+    inline bool check();
+    inline void checkpoint();
+    inline Metrics& metrics() const;
+    inline const Vector<Setting>& settings() const;
+private:
+    Secondary* s_;
+    Vector<Setting> v_;
+    int original_size_;
+    Metrics& metrics_;
+    int kern_type_;
+    bool ok_;
+    typedef Efont::OpenType::Glyph Glyph;
+};
+
 class Secondary { public:
     Secondary(const FontInfo& finfo)    : _finfo(finfo), _next(0) { }
     virtual ~Secondary();
     void set_next(Secondary *s)         { _next = s; }
     typedef Efont::OpenType::Glyph Glyph;
-    bool encode_uni(int code, PermString name, const uint32_t *uni_begin, const uint32_t *uni_end, Metrics &metrics, ErrorHandler *errh);
-    virtual bool encode_uni(int code, PermString name, uint32_t uni, Metrics &, ErrorHandler *);
-    virtual int setting(uint32_t uni, Vector<Setting> &, Metrics &, ErrorHandler *);
+    bool encode_uni(int code, PermString name, const uint32_t* uni_first, const uint32_t* uni_last, Metrics &metrics, ErrorHandler *errh);
+    inline bool encode_uni(int code, PermString name, uint32_t uni, Metrics& m, ErrorHandler* errh);
+    virtual int setting(uint32_t uni, SettingSet&, ErrorHandler *);
   protected:
     const FontInfo& _finfo;
 
-    class SettingSet { public:
-        inline SettingSet(Secondary* s, Vector<Setting>& v, Metrics& m);
-        inline SettingSet& kern(int kern_type);
-        SettingSet& show(int uni);
-        inline bool ok() const;
-    private:
-        Secondary* s_;
-        Vector<Setting>& v_;
-        int original_size_;
-        Metrics& m_;
-        int kern_type_;
-        bool ok_;
-    };
-    inline SettingSet set(Vector<Setting>& v, Metrics& m);
     friend class SettingSet;
   private:
     Secondary *_next;
@@ -101,8 +110,7 @@ class Secondary { public:
 
 class T1Secondary : public Secondary { public:
     T1Secondary(const FontInfo &, const String &font_name, const String &otf_file_name);
-    bool encode_uni(int code, PermString name, uint32_t uni, Metrics &, ErrorHandler *);
-    int setting(uint32_t uni, Vector<Setting> &, Metrics &, ErrorHandler *);
+    int setting(uint32_t uni, SettingSet&, ErrorHandler *);
   private:
     String _font_name;
     String _otf_file_name;
@@ -119,22 +127,51 @@ bool char_bounds(double bounds[4], double& width, const FontInfo &,
 double char_one_bound(const FontInfo &, const Transform &,
                       int dimen, bool max, double best, int uni, ...);
 
-inline Secondary::SettingSet::SettingSet(Secondary* s, Vector<Setting>& v, Metrics& m)
-    : s_(s), v_(v), original_size_(v.size()), m_(m), kern_type_(Setting::KERN),
-      ok_(true) {
+inline SettingSet::SettingSet(Secondary* s, Metrics& m)
+    : s_(s), original_size_(0), metrics_(m),
+      kern_type_(Setting::KERN), ok_(true) {
 }
 
-inline Secondary::SettingSet& Secondary::SettingSet::kern(int kern_type) {
-    kern_type_ = kern_type;
+inline SettingSet& SettingSet::kernx(bool is_kernx) {
+    kern_type_ = is_kernx ? Setting::KERNX : Setting::KERN;
     return *this;
 }
 
-inline bool Secondary::SettingSet::ok() const {
-    return ok_;
+inline SettingSet& SettingSet::push_back(Setting s) {
+    if (ok_)
+        v_.push_back(s);
+    return *this;
 }
 
-inline Secondary::SettingSet Secondary::set(Vector<Setting>& v, Metrics& m) {
-    return SettingSet(this, v, m);
+inline SettingSet& SettingSet::push_back(int op, int x, int y) {
+    return push_back(Setting(op, x, y));
+}
+
+inline SettingSet& SettingSet::move(int x, int y) {
+    return push_back(Setting(Setting::MOVE, x, y));
+}
+
+inline bool SettingSet::check() {
+    bool ok = ok_;
+    ok_ = true;
+    return ok;
+}
+
+inline void SettingSet::checkpoint() {
+    assert(ok_);
+    original_size_ = v_.size();
+}
+
+inline Metrics& SettingSet::metrics() const {
+    return metrics_;
+}
+
+inline const Vector<Setting>& SettingSet::settings() const {
+    return v_;
+}
+
+inline bool Secondary::encode_uni(int code, PermString name, uint32_t uni, Metrics& m, ErrorHandler* errh) {
+    return encode_uni(code, name, &uni, &uni + 1, m, errh);
 }
 
 #endif

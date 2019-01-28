@@ -2,7 +2,7 @@
 
 /* cff.{cc,hh} -- Compact Font Format fonts
  *
- * Copyright (c) 1998-2018 Eddie Kohler
+ * Copyright (c) 1998-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -326,17 +326,11 @@ static const uint8_t default_dict_cff_data[] = {
     0, 0
 };
 
-static const Cff::Dict &
+static const Cff::Dict&
 default_dict()
 {
-    static Cff *cff;
-    static Cff::Font *cfffont;
-    if (!cfffont) {
-        cff = new Cff(String::make_stable((const char *) default_dict_cff_data, sizeof(default_dict_cff_data)),
-                      0, ErrorHandler::default_handler());
-        cfffont = (Cff::Font *) cff->font();
-    }
-    return cfffont->top_dict();
+    static Cff cff(String::make_stable((const char*) default_dict_cff_data, sizeof(default_dict_cff_data)), 0, ErrorHandler::default_handler());
+    return static_cast<Cff::Font*>(cff.font())->top_dict();
 }
 
 
@@ -360,6 +354,8 @@ Cff::~Cff()
 {
     for (int i = 0; i < _gsubrs_cs.size(); i++)
         delete _gsubrs_cs[i];
+    for (int i = 0; i < _fonts.size(); ++i)
+        delete _fonts[i];
 }
 
 /*
@@ -500,25 +496,6 @@ Cff::sid_permstring(int sid) const
     }
 }
 
-int
-Cff::font_offset(int findex, int &offset, int &length) const
-{
-    if (findex < 0 || findex >= nfonts())
-        return -ENOENT;
-    offset = _top_dict_index[findex] - _data;
-    length = _top_dict_index[findex + 1] - _top_dict_index[findex];
-    return 0;
-}
-
-int
-Cff::font_offset(PermString name, int &offset, int &length) const
-{
-    for (int i = 0; i < _name_index.size(); i++)
-        if (_name_index[i] == name && name)
-            return font_offset(i, offset, length);
-    return -ENOENT;
-}
-
 Cff::FontParent *
 Cff::font(PermString font_name, ErrorHandler *errh)
 {
@@ -529,24 +506,39 @@ Cff::font(PermString font_name, ErrorHandler *errh)
         return errh->error("invalid CFF"), (FontParent *) 0;
 
     // search for a font named 'font_name'
-    for (int i = 0; i < _name_index.size(); i++)
-        if (_name_index[i] && (!font_name || font_name == _name_index[i])) {
-            int td_offset = _top_dict_index[i] - _data;
-            int td_length = _top_dict_index[i + 1] - _top_dict_index[i];
-            Dict top_dict(this, td_offset, td_length, errh, "Top DICT");
-            if (!top_dict.ok())
-                return 0;
-            else if (top_dict.has_first(oROS))
-                return new Cff::CIDFont(this, _name_index[i], top_dict, errh);
-            else
-                return new Cff::Font(this, _name_index[i], top_dict, errh);
-        }
+    int findex;
+    for (findex = 0; findex < _name_index.size(); ++findex) {
+        if (_name_index[findex]
+            && (!font_name || font_name == _name_index[findex]))
+            break;
+    }
+    if (findex >= _name_index.size()) {
+        if (!font_name)
+            errh->error("no fonts in CFF");
+        else
+            errh->error("font %<%s%> not found", font_name.c_str());
+        return 0;
+    }
 
-    if (!font_name)
-        errh->error("no fonts in CFF");
+    // return font
+    for (int i = 0; i < _fonts.size(); ++i)
+        if (_fonts[i]->_font_index == findex)
+            return _fonts[i];
+
+    int td_offset = _top_dict_index[findex] - _data;
+    int td_length = _top_dict_index[findex + 1] - _top_dict_index[findex];
+    Dict top_dict(this, td_offset, td_length, errh, "Top DICT");
+    if (!top_dict.ok())
+        return 0;
+
+    Cff::FontParent* fp;
+    if (top_dict.has_first(oROS))
+        fp = new Cff::CIDFont(this, _name_index[findex], top_dict, errh);
     else
-        errh->error("font %<%s%> not found", font_name.c_str());
-    return 0;
+        fp = new Cff::Font(this, _name_index[findex], top_dict, errh);
+    fp->_font_index = findex;
+    _fonts.push_back(fp);
+    return fp;
 }
 
 static inline int

@@ -1,6 +1,13 @@
 LCDF Typetools NEWS
 ===================
 
+## Version 2.108 – 27.Jan.2019
+
+* Handle more fonts.
+
+* `otftotfm -a`: Run `updmap-sys` by default.
+
+
 ## Version 2.107 – 22.Feb.2018
 
 * Some corrections to output of `--math-spacing`.
@@ -645,7 +652,7 @@ LCDF Typetools NEWS
   `--clear-subs` options (inspired by patch from Achim Blumensath).
 
 * otftotfm: Update documentation and behavior for newer teTeX
-  installations.  For instance, run the system 'updmap' by default (unless
+  installations.  For instance, run the system `updmap` by default (unless
   you give the `--no-updmap` option).  This makes automatic mode much
   easier to set up.
 

@@ -99,7 +99,7 @@ named `FONTNAME.afm` -- `MyriadMM-LightCn.afm`, for example.
 Copyright and license
 ---------------------
 
-All source code is Copyright (c) 1997-2018 Eddie Kohler.
+All source code is Copyright (c) 1997-2019 Eddie Kohler.
 
 This code is distributed under the GNU General Public License, Version 2
 (and only Version 2). The GNU General Public License is available via the

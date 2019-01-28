@@ -1,6 +1,6 @@
 /* metrics.{cc,hh} -- an encoding during and after OpenType features
  *
- * Copyright (c) 2003-2018 Eddie Kohler
+ * Copyright (c) 2003-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -667,15 +667,19 @@ Metrics::apply_ligature(const Vector<Code> &in, const Substitution *s, int looku
 
 void
 Metrics::apply_simple_context_ligature(const Vector<Code> &codes,
-                        const Substitution *s, int lookup, ChangedContext &ctx)
+             const Substitution *s, int lookup, ChangedContext &ctx,
+             const GlyphFilter &glyph_filter,
+             const Vector<PermString>& glyph_names)
 {
     int nleft = s->left_nglyphs(), nin = s->in_nglyphs();
     assert(codes.size() >= 2);
 
     // check if context allows substitutions
-    for (const Code *inp = codes.begin(); inp < codes.end(); ++inp)
-        if (!ctx.allowed(*inp, inp - codes.begin() < nleft))
+    for (int i = 0; i < codes.size(); ++i) {
+        if (!ctx.allowed(codes[i], i < nleft)
+            || !glyph_filter.allow_substitution(s->in_glyph(i), glyph_names, unicode(codes[i])))
             return;
+    }
 
     // check if any part of the combination has already changed
     int ncheck = nleft + (nin > 2 ? 2 : nin);
@@ -734,7 +738,7 @@ Metrics::apply(const Vector<Substitution>& sv, bool allow_single, int lookup, co
                 if (is_apply_single)
                     apply_single(codes[0], s, lookup, ctx, glyph_filter, glyph_names);
                 else
-                    apply_simple_context_ligature(codes, s, lookup, ctx);
+                    apply_simple_context_ligature(codes, s, lookup, ctx, glyph_filter, glyph_names);
             }
         } else
             failures++;

@@ -1,6 +1,6 @@
 /* secondary.{cc,hh} -- code for generating fake glyphs
  *
- * Copyright (c) 2003-2018 Eddie Kohler
+ * Copyright (c) 2003-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -53,7 +53,6 @@ enum {
     U_DBLBRACKETLEFT = 0x27E6,  // U+27E6 MATHEMATICAL LEFT WHITE SQUARE BRACKET
     U_DBLBRACKETRIGHT = 0x27E7, // U+27E7 MATHEMATICAL RIGHT WHITE SQUARE BRACKET
     U_INTERROBANGDOWN = 0x2E18, // U+2E18 INVERTED INTERROBANG
-    U_EMPTYSLOT = 0xD801,       // invalid Unicode (not handled by Secondary)
     U_ALTSELECTOR = 0xD802,     // invalid Unicode
     U_CAPITALCWM = 0xD809,      // invalid Unicode
     U_ASCENDERCWM = 0xD80A,     // invalid Unicode
@@ -71,7 +70,6 @@ enum {
     U_FFLSMALL = 0xD808,        // invalid Unicode
     // END BACKWARDS COMPATIBILITY
 
-    U_USE_KERNX = 0xD80E,       // invalid Unicode, not in maps
     U_VS1 = 0xFE00,
     U_VS16 = 0xFE0F,
     U_VS17 = 0xE0100,
@@ -125,7 +123,6 @@ FontInfo::~FontInfo()
 {
     delete cmap;
     delete cff_file;
-    delete cff;
     delete post;
     delete name;
     delete _ttb_program;
@@ -234,8 +231,10 @@ double FontInfo::x_height(const Transform& font_xform) const {
         } catch (Efont::OpenType::Bounds) {
         }
     static bool warned = false;
-    if (_override_x_height == x_height_auto && x1 >= 0 && x2 >= 0
-        && fabs(x1 - x2) > units_per_em() / 100.) {
+    if (_override_x_height == x_height_auto
+        && x1 >= 0
+        && x2 >= 0
+        && fabs(x1 - x2) > units_per_em() / 50.) {
         if (!warned) {
             ErrorHandler* errh = ErrorHandler::default_handler();
             errh->warning("font x-height and height of %<x%> differ by %d%%", (int) (fabs(x1 - x2) * 100 / units_per_em()));
@@ -256,43 +255,38 @@ Secondary::~Secondary()
 
 bool
 Secondary::encode_uni(int code, PermString name,
-                      const uint32_t *uni_begin, const uint32_t *uni_end,
+                      const uint32_t* uni_begin, const uint32_t* uni_end,
                       Metrics &metrics, ErrorHandler *errh)
 {
+    uint32_t uni = 0;
     if (uni_begin + 1 == uni_end)
-        return encode_uni(code, name, *uni_begin, metrics, errh);
-    else {
-        Vector<Setting> v;
-        int max_s = 0;
-        while (uni_begin != uni_end) {
-            Vector<Setting> subv;
-            int s = setting(*uni_begin, subv, metrics, errh);
-            if (s == 0)
-                return false;
-            if (subv.size() && v.size())
-                v.push_back(Setting(Setting::KERN));
-            for (Vector<Setting>::const_iterator it = subv.begin();
-                 it != subv.end(); ++it)
-                v.push_back(*it);
-            max_s = (max_s > s ? max_s : s);
-            ++uni_begin;
-        }
-        metrics.encode_virtual(code, name, 0, v, max_s > 1);
-        return true;
-    }
-}
+        uni = *uni_begin;
 
-bool
-Secondary::encode_uni(int code, PermString name, uint32_t uni, Metrics &metrics, ErrorHandler *errh)
-{
-    Vector<Setting> v;
-    if (int s = setting(uni, v, metrics, errh)) {
-        metrics.encode_virtual(code, name, uni, v, s > 1);
-        return true;
-    } else if (_next)
-        return _next->encode_uni(code, name, uni, metrics, errh);
-    else
-        return false;
+    SettingSet set(this, metrics);
+    int max_s = 0;
+    while (uni_begin != uni_end) {
+        int s = setting(*uni_begin, set, errh);
+        if (s == 0)
+            return false;
+        max_s = (max_s > s ? max_s : s);
+        ++uni_begin;
+        set.checkpoint();
+    }
+
+    if (uni == U_ALTSELECTOR
+        || (uni >= U_VS1 && uni <= U_VS16)
+        || (uni >= U_VS17 && uni <= U_VS256)) {
+        int selector = 0;
+        if (uni >= U_VS1 && uni <= U_VS16)
+            selector = uni - U_VS1 + 1;
+        else if (uni >= U_VS17 && uni <= U_VS256)
+            selector = uni - U_VS17 + 17;
+        metrics.add_altselector_code(code, selector);
+        name = selector ? permprintf("<vs%d>", selector) : PermString("<altselector>");
+    }
+
+    metrics.encode_virtual(code, name, 0, set.settings(), max_s > 1);
+    return true;
 }
 
 T1Secondary::T1Secondary(const FontInfo &finfo, const String &font_name,
@@ -308,22 +302,22 @@ T1Secondary::T1Secondary(const FontInfo &finfo, const String &font_name,
 }
 
 int
-Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHandler *errh)
+Secondary::setting(uint32_t uni, SettingSet& set, ErrorHandler *errh)
 {
     if (_next)
-        return _next->setting(uni, v, metrics, errh);
+        return _next->setting(uni, set, errh);
     else
         return 0;
 }
 
-Secondary::SettingSet& Secondary::SettingSet::show(int uni) {
+SettingSet& SettingSet::show(int uni) {
     if (!ok_)
         return *this;
-    int code = m_.unicode_encoding(uni);
+    int code = metrics_.unicode_encoding(uni);
     if (code < 0) {
         Glyph glyph = s_->_finfo.cmap->map_uni(uni);
         if (glyph != 0)
-            code = m_.force_encoding(glyph);
+            code = metrics_.force_encoding(glyph);
     }
     if (code < 0) {
         ok_ = false;
@@ -334,25 +328,9 @@ Secondary::SettingSet& Secondary::SettingSet::show(int uni) {
             && v_.back().op == Setting::SHOW
             && kern_type_)
             v_.push_back(Setting(kern_type_));
-        v_.push_back(Setting(Setting::SHOW, code, m_.base_glyph(code)));
+        v_.push_back(Setting(Setting::SHOW, code, metrics_.base_glyph(code)));
     }
     return *this;
-}
-
-bool
-T1Secondary::encode_uni(int code, PermString name, uint32_t uni, Metrics &metrics, ErrorHandler *errh)
-{
-    if (uni == U_ALTSELECTOR
-        || (uni >= U_VS1 && uni <= U_VS16)
-        || (uni >= U_VS17 && uni <= U_VS256)) {
-        Vector<Setting> v;
-        setting(uni, v, metrics, errh);
-        int which = (uni == U_ALTSELECTOR ? 0 : (uni <= U_VS16 ? uni - U_VS1 + 1 : uni - U_VS17 + 17));
-        metrics.encode_virtual(code, (which ? permprintf("<vs%d>", which) : PermString("<altselector>")), uni, v, false);
-        metrics.add_altselector_code(code, which);
-        return true;
-    } else
-        return Secondary::encode_uni(code, name, uni, metrics, errh);
 }
 
 
@@ -444,89 +422,88 @@ T1Secondary::dotlessj_font(Metrics &metrics, ErrorHandler *errh, Glyph &dj_glyph
 }
 
 int
-T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHandler *errh)
+T1Secondary::setting(uint32_t uni, SettingSet& set, ErrorHandler *errh)
 {
     Transform xform;
-    int vsize = v.size();
     extern int letterspace;
 
-    if (set(v, metrics).show(uni).ok())
+    if (set.show(uni).check())
         return 1;
 
     switch (uni) {
 
       case U_CWM:
       case U_ALTSELECTOR:
-        v.push_back(Setting(Setting::RULE, 0, _xheight));
+        set.push_back(Setting::RULE, 0, _xheight);
         return 1;
 
       case U_CAPITALCWM:
-        v.push_back(Setting(Setting::RULE, 0, font_cap_height(_finfo, xform)));
+        set.push_back(Setting::RULE, 0, font_cap_height(_finfo, xform));
         return 1;
 
       case U_ASCENDERCWM:
-        v.push_back(Setting(Setting::RULE, 0, font_ascender(_finfo, xform)));
+        set.push_back(Setting::RULE, 0, font_ascender(_finfo, xform));
         return 1;
 
     case U_VISIBLESPACE: {
         int sb = (int) (0.050 * _units_per_em), h = (int) (0.150 * _units_per_em),
             lw = (int) (0.040 * _units_per_em);
-        v.push_back(Setting(Setting::MOVE, sb, -h));
-        v.push_back(Setting(Setting::RULE, lw, h));
-        v.push_back(Setting(Setting::RULE, _spacewidth, lw));
-        v.push_back(Setting(Setting::RULE, lw, h));
-        v.push_back(Setting(Setting::MOVE, sb, h));
+        set.move(sb, -h);
+        set.push_back(Setting::RULE, lw, h);
+        set.push_back(Setting::RULE, _spacewidth, lw);
+        set.push_back(Setting::RULE, lw, h);
+        set.move(sb, h);
         return 2;
     }
 
     case U_SS:
-        if (set(v, metrics).show('S').show('S').ok())
+        if (set.show('S').show('S').check())
             return 1;
         break;
 
     case U_SSSMALL:
-        if (set(v, metrics).show(U_SSMALL).show(U_SSMALL).ok()
-            || set(v, metrics).show('s').show('s').ok())
+        if (set.show(U_SSMALL).show(U_SSMALL).check()
+            || set.show('s').show('s').check())
             return 1;
         break;
 
       case U_FFSMALL:
-        if (set(v, metrics).show(U_FSMALL).show(U_FSMALL).ok()
-            || set(v, metrics).show('f').show('f').ok())
+        if (set.show(U_FSMALL).show(U_FSMALL).check()
+            || set.show('f').show('f').check())
             return 1;
         break;
 
       case U_FISMALL:
-        if (set(v, metrics).show(U_FSMALL).show(U_ISMALL).ok()
-            || set(v, metrics).show('f').show('i').ok())
+        if (set.show(U_FSMALL).show(U_ISMALL).check()
+            || set.show('f').show('i').check())
             return 1;
         break;
 
       case U_FLSMALL:
-        if (set(v, metrics).show(U_FSMALL).show(U_LSMALL).ok()
-            || set(v, metrics).show('f').show('l').ok())
+        if (set.show(U_FSMALL).show(U_LSMALL).check()
+            || set.show('f').show('l').check())
             return 1;
         break;
 
       case U_FFISMALL:
-        if (set(v, metrics).show(U_FSMALL).show(U_FSMALL).show(U_ISMALL).ok()
-            || set(v, metrics).show('f').show('f').show('i').ok())
+        if (set.show(U_FSMALL).show(U_FSMALL).show(U_ISMALL).check()
+            || set.show('f').show('f').show('i').check())
             return 1;
         break;
 
       case U_FFLSMALL:
-        if (set(v, metrics).show(U_FSMALL).show(U_FSMALL).show(U_LSMALL).ok()
-            || set(v, metrics).show('f').show('f').show('l').ok())
+        if (set.show(U_FSMALL).show(U_FSMALL).show(U_LSMALL).check()
+            || set.show('f').show('f').show('l').check())
             return 1;
         break;
 
       case U_IJ:
-        if (set(v, metrics).show('I').show('J').ok())
+        if (set.show('I').show('J').check())
             return 1;
         break;
 
       case U_ij:
-        if (set(v, metrics).show('i').show('j').ok())
+        if (set.show('i').show('j').check())
             return 1;
         break;
 
@@ -534,45 +511,45 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
       case U_DOTLESSJ_2:
       case U_MATHDOTLESSJ: {
           Glyph dj_glyph;
-          int which = dotlessj_font(metrics, errh, dj_glyph);
+          int which = dotlessj_font(set.metrics(), errh, dj_glyph);
           if (which >= 0) {
-              v.push_back(Setting(Setting::FONT, which));
-              v.push_back(Setting(Setting::SHOW, 'j', dj_glyph));
+              set.push_back(Setting::FONT, which);
+              set.push_back(Setting::SHOW, 'j', dj_glyph);
               return 2;
-          } else if (which == J_NODOT && set(v, metrics).show('j').ok())
+          } else if (which == J_NODOT && set.show('j').check())
               return 1;
           break;
       }
 
       case U_DBLBRACKETLEFT:
-        if (set(v, metrics).show('[').ok()) {
+        if (set.show('[').check()) {
             if (!_finfo.is_fixed_pitch()) {
                 double d = char_one_bound(_finfo, xform, 4, true, 0, '[', 0);
-                v.push_back(Setting(Setting::MOVE, (int) (-0.666 * d - letterspace), 0));
+                set.move((int) (-0.666 * d - letterspace));
             }
-            set(v, metrics).show('[');
+            set.show('[');
             return 1;
         }
         break;
 
       case U_DBLBRACKETRIGHT:
-        if (set(v, metrics).show(']').ok()) {
+        if (set.show(']').check()) {
             if (!_finfo.is_fixed_pitch()) {
                 double d = char_one_bound(_finfo, xform, 4, true, 0, ']', 0);
-                v.push_back(Setting(Setting::MOVE, (int) (-0.666 * d - letterspace), 0));
+                set.move((int) (-0.666 * d - letterspace));
             }
-            set(v, metrics).show(']');
+            set.show(']');
             return 1;
         }
         break;
 
       case U_BARDBL:
-        if (set(v, metrics).show('|').ok()) {
+        if (set.show('|').check()) {
             if (!_finfo.is_fixed_pitch()) {
                 double d = char_one_bound(_finfo, Transform(), 4, true, 0, '|', 0);
-                v.push_back(Setting(Setting::MOVE, (int) (-0.333 * d - letterspace), 0));
+                set.move((int) (-0.333 * d - letterspace));
             }
-            set(v, metrics).show('|');
+            set.show('|');
             return 1;
         }
         break;
@@ -584,39 +561,37 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
               dropdown += std::max(bounds[3], 0.) + std::min(bounds[1], 0.);
           if (char_bounds(bounds, bounds[4], _finfo, xform, '('))
               dropdown -= std::max(bounds[3], 0.) + std::min(bounds[1], 0.);
-          v.push_back(Setting(Setting::MOVE, 0, (int) (-dropdown / 2)));
-          if (set(v, metrics).show('*').ok()) {
-              v.push_back(Setting(Setting::MOVE, 0, -(int) (-dropdown / 2)));
+          int dy = (int) (-dropdown / 2);
+          if (set.move(0, dy).show('*').move(0, -dy).check())
               return 1;
-          }
           break;
       }
 
       case U_TWELVEUDASH:
-        if (set(v, metrics).show(U_ENDASH).ok()) {
+        if (set.show(U_ENDASH).check()) {
             if (!_finfo.is_fixed_pitch()) {
                 double d = char_one_bound(_finfo, xform, 4, true, 0, U_ENDASH, 0);
-                v.push_back(Setting(Setting::MOVE, (int) (_units_per_em * 0.667 - 2 * d - letterspace), 0));
+                set.move((int) (_units_per_em * 0.667 - 2 * d - letterspace));
             }
-            set(v, metrics).show(U_ENDASH);
+            set.show(U_ENDASH);
             return 1;
         }
         break;
 
       case U_THREEQUARTERSEMDASH:
-        if (set(v, metrics).show(U_ENDASH).ok()) {
+        if (set.show(U_ENDASH).check()) {
             if (!_finfo.is_fixed_pitch()) {
                 double d = char_one_bound(_finfo, xform, 4, true, 0, U_ENDASH, 0);
-                v.push_back(Setting(Setting::MOVE, (int) (_units_per_em * 0.750 - 2 * d - letterspace), 0));
+                set.move((int) (_units_per_em * 0.750 - 2 * d - letterspace));
             }
-            set(v, metrics).show(U_ENDASH);
+            set.show(U_ENDASH);
             return 1;
         }
         break;
 
       case U_CENTIGRADE:
         // TODO: set italic correction to that of a 'C'
-        if (set(v, metrics).kern(Setting::KERNX).show(U_DEGREE).show('C').ok())
+        if (set.show(U_DEGREE).kernx(true).show('C').kernx(false).check())
             return 1;
         break;
 
@@ -625,13 +600,9 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
               (char_one_bound(_finfo, xform, 4, true, 0, '?', 0)
                - char_one_bound(_finfo, xform, 4, true, 0, '!', 0)) * 0.5
               + 0.050 * _units_per_em;
-          v.push_back(Setting(Setting::PUSH));
-          v.push_back(Setting(Setting::MOVE, (int) exclam_offset, 0));
-          if (set(v, metrics).show('!').ok()) {
-              v.push_back(Setting(Setting::POP));
-              if (set(v, metrics).show('?').ok())
-                  return 1;
-          }
+          if (set.push_back(Setting::PUSH).move((int) exclam_offset)
+              .show('!').push_back(Setting::POP).show('?').check())
+              return 1;
           break;
       }
 
@@ -640,19 +611,15 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
               (char_one_bound(_finfo, xform, 4, true, 0, U_QUESTIONDOWN, 0)
                - char_one_bound(_finfo, xform, 4, true, 0, U_EXCLAMDOWN, 0)) * 0.5
               + 0.050 * _units_per_em;
-          v.push_back(Setting(Setting::PUSH));
-          v.push_back(Setting(Setting::MOVE, (int) exclam_offset, 0));
-          if (set(v, metrics).show(U_EXCLAMDOWN).ok()) {
-              v.push_back(Setting(Setting::POP));
-              if (set(v, metrics).show(U_QUESTIONDOWN).ok())
-                  return 1;
-          }
+          if (set.push_back(Setting::PUSH).move((int) exclam_offset)
+              .show(U_EXCLAMDOWN).push_back(Setting::POP).show(U_QUESTIONDOWN).check())
+              return 1;
           break;
       }
 
       case U_PERTENTHOUSAND:
-        if (set(v, metrics).kern(Setting::KERNX).show(0xF661).show(U_FRACTION)
-            .show(0xF655).show(0xF655).show(0xF655).ok())
+        if (set.show(0xF661).kernx(true).show(U_FRACTION)
+            .show(0xF655).show(0xF655).show(0xF655).kernx(false).check())
             return 1;
         break;
 
@@ -666,9 +633,7 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
           }
           if (A_width > -_units_per_em && ring_width > -_units_per_em) {
               int offset = (A_width - ring_width) / 2;
-              v.push_back(Setting(Setting::MOVE, offset, 0));
-              if (set(v, metrics).show(ring_char).ok()) {
-                  v.push_back(Setting(Setting::MOVE, A_width - ring_width - offset, 0));
+              if (set.move(offset).show(ring_char).move(A_width - ring_width - offset).check()) {
                   return 1;
               }
           }
@@ -677,16 +642,12 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 
     }
 
-    // didn't find a good setting, restore v to pristine state
-    while (v.size() > vsize)
-        v.pop_back();
-
     // variant selectors get the same setting as ALTSELECTOR
     if ((uni >= U_VS1 && uni <= U_VS16) || (uni >= U_VS17 && uni <= U_VS256))
-        return setting(U_ALTSELECTOR, v, metrics, errh);
+        return setting(U_ALTSELECTOR, set, errh);
 
     // otherwise, try other secondaries
-    return Secondary::setting(uni, v, metrics, errh);
+    return Secondary::setting(uni, set, errh);
 }
 
 

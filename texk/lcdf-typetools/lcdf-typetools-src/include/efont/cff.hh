@@ -31,7 +31,7 @@ class Cff { public:
 
     int nfonts() const                  { return _name_index.size(); }
     PermString font_name(int i) const   { return _name_index[i]; }
-    FontParent *font(PermString = PermString(), ErrorHandler * = 0);
+    FontParent* font(PermString = PermString(), ErrorHandler* = 0);
 
     enum { NSTANDARD_STRINGS = 391, MAX_SID = 64999 };
     int max_sid() const                 { return NSTANDARD_STRINGS - 1 + _strings.size(); }
@@ -125,13 +125,12 @@ class Cff { public:
     mutable HashMap<PermString, int> _strings_map;
 
     IndexIterator _gsubrs_index;
-    Vector<Charstring *> _gsubrs_cs;
+    Vector<Charstring*> _gsubrs_cs;
+    Vector<FontParent*> _fonts;
 
     unsigned _units_per_em;
 
     int parse_header(ErrorHandler *);
-    int font_offset(int, int &, int &) const;
-    int font_offset(PermString, int &, int &) const;
 
     enum { HEADER_SIZE = 4 };
 
@@ -238,12 +237,14 @@ class Cff::FontParent : public CharstringProgram { public:
     Cff* _cff;
     int _charstring_type;
     int _error;
+    int _font_index;
 
     FontParent(const FontParent &);
     FontParent &operator=(const FontParent &);
 
     Charstring *charstring(const IndexIterator &, int) const;
 
+    friend class Cff;
     friend class Cff::Font;
     friend class Cff::CIDFont;
     friend class Cff::ChildFont;

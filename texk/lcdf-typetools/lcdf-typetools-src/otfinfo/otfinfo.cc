@@ -1,6 +1,6 @@
 /* otfinfo.cc -- driver for reporting information about OpenType fonts
  *
- * Copyright (c) 2003-2018 Eddie Kohler
+ * Copyright (c) 2003-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -645,7 +645,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("otfinfo (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2003-2018 Eddie Kohler\n\
+	    printf("Copyright (C) 2003-2019 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
@@ -721,5 +721,6 @@ particular purpose.\n");
 	    do_info(otf, &cerrh, result_errh);
     }
 
+    Clp_DeleteParser(clp);
     return (errh->nerrors() == 0 ? 0 : 1);
 }

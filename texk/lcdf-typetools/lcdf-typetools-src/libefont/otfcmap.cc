@@ -2,7 +2,7 @@
 
 /* otfcmap.{cc,hh} -- OpenType cmap table
  *
- * Copyright (c) 2002-2018 Eddie Kohler
+ * Copyright (c) 2002-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -26,6 +26,7 @@
 #define USHORT_AT(d)            (Data::u16_aligned(d))
 #define SHORT_AT(d)             (Data::s16_aligned(d))
 #define ULONG_AT(d)             (Data::u32_aligned(d))
+#define ULONG_AT2(d)            (Data::u32_aligned16(d))
 
 namespace Efont { namespace OpenType {
 
@@ -80,9 +81,9 @@ Cmap::parse_header(ErrorHandler *errh)
             language = USHORT_AT(data + offset + 4);
         } else if (format == F_HIBYTE32 || format == F_TRIMMED32
                    || format == F_SEGMENTED32) {
-            if (offset + 12 > (uint32_t) len || ULONG_AT(data + offset + 4) < 12)
+            if (offset + 12 > (uint32_t) len || ULONG_AT2(data + offset + 4) < 12)
                 goto length_error;
-            language = ULONG_AT(data + offset + 8);
+            language = ULONG_AT2(data + offset + 8);
         } else
             continue;
         if (!(platform > last_platform
@@ -90,7 +91,7 @@ Cmap::parse_header(ErrorHandler *errh)
                   && (encoding > last_encoding
                       || (encoding == last_encoding
                           && language > last_language)))))
-            return errh->error("subtables out of order at entry %d", i);
+            errh->warning("unsorted cmap encoding records at entry %d (%d,%d,%d follows %d,%d,%d)", i, platform, encoding, language, last_platform, last_encoding, last_language);
         if ((platform == 0 || (platform == 3 && encoding == 1))
             && _first_unicode_table < 0)
             _first_unicode_table = i;
@@ -331,17 +332,17 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
     }
 
     case F_SEGMENTED32: {
-        uint32_t nGroups = ULONG_AT(data + 12);
+        uint32_t nGroups = ULONG_AT2(data + 12);
         uint32_t l = 0, r = nGroups;
         const uint8_t *groups = data + 16;
         while (l < r) {
             uint32_t m = l + (r - l) / 2;
-            uint32_t startCharCode = ULONG_AT(groups + m * 12);
-            uint32_t endCharCode = ULONG_AT(groups + m * 12 + 4);
+            uint32_t startCharCode = ULONG_AT2(groups + m * 12);
+            uint32_t endCharCode = ULONG_AT2(groups + m * 12 + 4);
             if (uni < startCharCode)
                 r = m;
             else if (uni <= endCharCode)
-                return ULONG_AT(groups + m * 12 + 8) + uni - startCharCode;
+                return ULONG_AT2(groups + m * 12 + 8) + uni - startCharCode;
             else
                 l = m + 1;
         }
@@ -428,12 +429,12 @@ Cmap::dump_table(int t, Vector<std::pair<uint32_t, Glyph> > &ugp, ErrorHandler *
     }
 
     case F_SEGMENTED32: {
-        uint32_t nGroups = ULONG_AT(data + 12);
+        uint32_t nGroups = ULONG_AT2(data + 12);
         const uint8_t *groups = data + 16;
         for (uint32_t i = 0; i < nGroups; i++, groups += 12) {
-            uint32_t startCharCode = ULONG_AT(groups);
-            uint32_t nCharCodes = ULONG_AT(groups + 4) - startCharCode;
-            Glyph startGlyphID = ULONG_AT(groups + 8);
+            uint32_t startCharCode = ULONG_AT2(groups);
+            uint32_t nCharCodes = ULONG_AT2(groups + 4) - startCharCode;
+            Glyph startGlyphID = ULONG_AT2(groups + 8);
             for (uint32_t i = 0; i <= nCharCodes; i++)
                 ugp.push_back(std::make_pair(startCharCode + i, startGlyphID + i));
         }

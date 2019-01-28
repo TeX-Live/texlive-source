@@ -2,7 +2,7 @@
 
 /* ttfhead.{cc,hh} -- TrueType head table
  *
- * Copyright (c) 2007-2018 Eddie Kohler
+ * Copyright (c) 2007-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

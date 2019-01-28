@@ -1,6 +1,6 @@
 /* otftotfm.cc -- driver for translating OpenType fonts to TeX metrics
  *
- * Copyright (c) 2003-2018 Eddie Kohler
+ * Copyright (c) 2003-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -143,10 +143,12 @@ using namespace Efont;
 #define NO_TYPE1_OPT            (NO_OUTPUT_OPTS + G_TYPE1)
 #define NO_DOTLESSJ_OPT         (NO_OUTPUT_OPTS + G_DOTLESSJ)
 #define NO_UPDMAP_OPT           (NO_OUTPUT_OPTS + G_UPDMAP)
+#define UPDMAP_SYS_OPT          (NO_OUTPUT_OPTS + G_UPDMAP_USER)
 
 #define YES_OUTPUT_OPTS         2000
 #define TRUETYPE_OPT            (YES_OUTPUT_OPTS + G_TRUETYPE)
 #define TYPE42_OPT              (YES_OUTPUT_OPTS + G_TYPE42)
+#define UPDMAP_USER_OPT         (YES_OUTPUT_OPTS + G_UPDMAP_USER)
 
 #define CHAR_OPTTYPE            (Clp_ValFirstUser)
 
@@ -202,6 +204,8 @@ static Clp_Option options[] = {
     { "no-type1", 0, NO_TYPE1_OPT, 0, 0 },
     { "no-dotlessj", 0, NO_DOTLESSJ_OPT, 0, 0 },
     { "no-updmap", 0, NO_UPDMAP_OPT, 0, 0 },
+    { "updmap-sys", 0, UPDMAP_SYS_OPT, 0, 0 },
+    { "updmap-user", 0, UPDMAP_USER_OPT, 0, 0 },
     { "truetype", 0, TRUETYPE_OPT, 0, Clp_Negate },
     { "type42", 0, TYPE42_OPT, 0, Clp_Negate },
     { "map-file", 0, MAP_FILE_OPT, Clp_ValString, Clp_Negate },
@@ -373,8 +377,9 @@ Automatic mode options:\n\
       --typeface=NAME          Set typeface name for TDS [<font family>].\n\
       --no-type1               Do not generate Type 1 fonts.\n\
       --no-dotlessj            Do not generate dotless-j fonts.\n\
-      --no-updmap              Do not run updmap.\n\
       --no-truetype            Do not install TrueType-flavored input fonts.\n\
+      --no-updmap              Do not run updmap.\n\
+      --updmap-user            Run `updmap-user` instead of `updmap-sys`.\n\
 \n\
 Output options:\n\
   -n, --name=NAME              Generated font name is NAME.\n\
@@ -744,20 +749,30 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
     // don't print KRN x after printing LIG x
     uint32_t used[8];
     bool any_ligs = false;
+    StringAccum omitted_clig_sa;
     for (int i = 0; i <= 256; i++)
         if (metrics.glyph(i) && minimum_kern < 10000) {
             int any_lig = metrics.ligatures(i, lig_code2, lig_outcode, lig_context);
             int any_kern = metrics.kerns(i, kern_code2, kern_amt);
             if (any_lig || any_kern) {
                 StringAccum kern_sa;
-                memset(&used[0], 0, 32);
+                memset(used, 0, sizeof(used));
                 for (int j = 0; j < lig_code2.size(); j++) {
-                    kern_sa << "   (" << lig_context_str(lig_context[j])
-                            << ' ' << glyph_ids[lig_code2[j]]
-                            << ' ' << glyph_ids[lig_outcode[j]]
-                            << ')' << glyph_comments[lig_code2[j]]
-                            << glyph_comments[lig_outcode[j]] << '\n';
-                    used[lig_code2[j] >> 5] |= (1 << (lig_code2[j] & 0x1F));
+                    if (lig_outcode[j] < 257) {
+                        kern_sa << "   (" << lig_context_str(lig_context[j])
+                                << ' ' << glyph_ids[lig_code2[j]]
+                                << ' ' << glyph_ids[lig_outcode[j]]
+                                << ')' << glyph_comments[lig_code2[j]]
+                                << glyph_comments[lig_outcode[j]] << '\n';
+                        used[lig_code2[j] >> 5] |= (1 << (lig_code2[j] & 0x1F));
+                    } else {
+                        omitted_clig_sa << "(COMMENT omitted "
+                                << lig_context_str(lig_context[j])
+                                << ' ' << metrics.code_name(i)
+                                << ' ' << metrics.code_name(lig_code2[j])
+                                << ' ' << metrics.code_name(lig_outcode[j])
+                                << ")\n";
+                    }
                 }
                 for (Vector<int>::const_iterator k2 = kern_code2.begin(); k2 < kern_code2.end(); k2++)
                     if (!(used[*k2 >> 5] & (1 << (*k2 & 0x1F)))) {
@@ -776,6 +791,8 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
             }
         }
     fprintf(f, "   )\n");
+    if (omitted_clig_sa)
+        fprintf(f, "%s\n", omitted_clig_sa.c_str());
 
     // CHARACTERs
     Vector<Setting> settings;
@@ -1868,6 +1885,7 @@ main(int argc, char *argv[])
     GlyphFilter current_substitution_filter;
     GlyphFilter current_alternate_filter;
     GlyphFilter* current_filter_ptr = &null_filter;
+    Vector<GlyphFilter*> allocated_filters;
 
     while (1) {
         int opt = Clp_Next(clp);
@@ -1899,8 +1917,10 @@ main(int argc, char *argv[])
               else if (feature_filters[t])
                   usage_error(errh, "feature %<%s%> included twice", t.text().c_str());
               else {
-                  if (!current_filter_ptr)
+                  if (!current_filter_ptr) {
                       current_filter_ptr = new GlyphFilter(current_substitution_filter + current_alternate_filter);
+                      allocated_filters.push_back(current_filter_ptr);
+                  }
                   interesting_features.push_back(t);
                   feature_filters.insert(t, current_filter_ptr);
               }
@@ -2032,8 +2052,10 @@ main(int argc, char *argv[])
               else if (altselector_feature_filters[t])
                   usage_error(errh, "altselector feature %<%s%> included twice", t.text().c_str());
               else {
-                  if (!current_filter_ptr)
+                  if (!current_filter_ptr) {
                       current_filter_ptr = new GlyphFilter(current_substitution_filter + current_alternate_filter);
+                      allocated_filters.push_back(current_filter_ptr);
+                  }
                   altselector_features.push_back(t);
                   altselector_feature_filters.insert(t, current_filter_ptr);
               }
@@ -2094,12 +2116,14 @@ main(int argc, char *argv[])
         case NO_TYPE1_OPT:
         case NO_DOTLESSJ_OPT:
         case NO_UPDMAP_OPT:
+        case UPDMAP_SYS_OPT:
             output_flags &= ~(opt - NO_OUTPUT_OPTS);
             specified_output_flags |= opt - NO_OUTPUT_OPTS;
             break;
 
         case TRUETYPE_OPT:
         case TYPE42_OPT:
+        case UPDMAP_USER_OPT:
             if (!clp->negated)
                 output_flags |= (opt - YES_OUTPUT_OPTS);
             else
@@ -2243,7 +2267,7 @@ main(int argc, char *argv[])
 
           case VERSION_OPT:
             printf("otftotfm (LCDF typetools) %s\n", VERSION);
-            printf("Copyright (C) 2002-2018 Eddie Kohler\n\
+            printf("Copyright (C) 2002-2019 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
@@ -2302,8 +2326,10 @@ particular purpose.\n");
 
     // set up feature filters
     if (!altselector_features.size()) {
-        if (!current_filter_ptr)
+        if (!current_filter_ptr) {
             current_filter_ptr = new GlyphFilter(current_substitution_filter + current_alternate_filter);
+            allocated_filters.push_back(current_filter_ptr);
+        }
         altselector_features.push_back(OpenType::Tag("dlig"));
         altselector_feature_filters.insert(OpenType::Tag("dlig"), current_filter_ptr);
         altselector_features.push_back(OpenType::Tag("salt"));
@@ -2389,7 +2415,6 @@ particular purpose.\n");
                     dvipsenc.encode(i, (*t1e)[i]);
             } else
                 errh->fatal("font has no encoding, specify one explicitly");
-            delete font;
         }
 
         // apply default ligkern commands
@@ -2417,5 +2442,8 @@ particular purpose.\n");
         errh->error("unhandled exception %<%s%>", e.description.c_str());
     }
 
+    for (int i = 0; i < allocated_filters.size(); ++i)
+        delete allocated_filters[i];
+    Clp_DeleteParser(clp);
     return (errh->nerrors() == 0 ? 0 : 1);
 }

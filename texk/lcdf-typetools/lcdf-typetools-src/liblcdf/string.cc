@@ -4,7 +4,7 @@
  * Eddie Kohler
  *
  * Copyright (c) 1999-2000 Massachusetts Institute of Technology
- * Copyright (c) 2001-2018 Eddie Kohler
+ * Copyright (c) 2001-2019 Eddie Kohler
  * Copyright (c) 2008-2009 Meraki, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

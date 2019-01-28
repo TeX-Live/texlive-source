@@ -4,7 +4,7 @@
  * Eddie Kohler
  *
  * Copyright (c) 1999-2000 Massachusetts Institute of Technology
- * Copyright (c) 2001-2018 Eddie Kohler
+ * Copyright (c) 2001-2019 Eddie Kohler
  * Copyright (c) 2008 Meraki, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -585,6 +585,7 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 	case 'd':
 	case 'i':
 	    flags |= cf_signed;
+            /* fallthru */
 	case 'u':
 	number: {
 	    // protect numbuf from overflow
@@ -666,6 +667,7 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 
 	case 'X':
 	    flags |= cf_uppercase;
+            /* fallthru */
 	case 'x':
 	    base = 16;
 	    goto number;

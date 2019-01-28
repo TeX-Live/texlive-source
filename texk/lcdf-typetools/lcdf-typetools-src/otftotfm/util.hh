@@ -11,7 +11,7 @@ extern bool force;
 
 enum { G_ENCODING = 1, G_METRICS = 2, G_VMETRICS = 4, G_TYPE1 = 8,
        G_PSFONTSMAP = 16, G_BINARY = 32, G_ASCII = 64, G_DOTLESSJ = 128,
-       G_UPDMAP = 256, G_TRUETYPE = 512, G_TYPE42 = 1024 };
+       G_UPDMAP = 256, G_TRUETYPE = 512, G_TYPE42 = 1024, G_UPDMAP_USER = 2048 };
 
 extern unsigned output_flags;
 

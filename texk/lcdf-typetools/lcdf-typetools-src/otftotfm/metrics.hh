@@ -182,7 +182,9 @@ class Metrics { public:
                 ChangedContext &ctx, const GlyphFilter &glyph_filter,
                 const Vector<PermString> &glyph_names);
     void apply_simple_context_ligature(const Vector<Code> &codes,
-                const Substitution *s, int lookup, ChangedContext &ctx);
+                const Substitution *s, int lookup, ChangedContext &ctx,
+                const GlyphFilter &glyph_filter,
+                const Vector<PermString> &glyph_names);
     void apply_alternates_single(Code cin, const Substitution *s, int lookup,
                 const GlyphFilter &glyph_filter,
                 const Vector<PermString> &glyph_names);

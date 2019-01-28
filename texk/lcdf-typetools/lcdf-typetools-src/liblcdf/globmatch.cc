@@ -2,7 +2,7 @@
 
 /* globmatch.{cc,hh} -- glob_match() function for shell globbing
  *
- * Copyright (c) 2000-2018 Eddie Kohler
+ * Copyright (c) 2000-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

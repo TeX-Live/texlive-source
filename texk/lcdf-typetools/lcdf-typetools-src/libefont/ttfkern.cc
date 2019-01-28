@@ -2,7 +2,7 @@
 
 /* ttfkern.{cc,hh} -- TrueType kern table
  *
- * Copyright (c) 2009-2018 Eddie Kohler
+ * Copyright (c) 2009-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

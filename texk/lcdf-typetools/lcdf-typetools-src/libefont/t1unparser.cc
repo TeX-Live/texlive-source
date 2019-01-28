@@ -2,7 +2,7 @@
 
 /* t1unparser.{cc,hh} -- debug printing of Type 1 fonts
  *
- * Copyright (c) 1998-2018 Eddie Kohler
+ * Copyright (c) 1998-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

@@ -1,6 +1,6 @@
 /* automatic.{cc,hh} -- code for automatic mode and interfacing with kpathsea
  *
- * Copyright (c) 2003-2018 Eddie Kohler
+ * Copyright (c) 2003-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -39,10 +39,8 @@
 #include <algorithm>
 
 #ifdef WIN32
-#ifdef _MSC_VER
 # include <io.h>
 # include <direct.h>
-#endif
 # define mkdir(dir, access) _mkdir(dir)
 # define COPY_CMD "copy"
 # define CMD_SEP "&"
@@ -712,12 +710,14 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 
 #if HAVE_KPATHSEA && !WIN32
         // run 'updmap' if present
+        String updmap_prog = output_flags & G_UPDMAP_USER ? "updmap-user" : "updmap-sys";
         String updmap_dir, updmap_file;
         if (automatic && (output_flags & G_UPDMAP))
             updmap_dir = getodir(O_MAP_PARENT, errh);
-        if (updmap_dir && (updmap_file = updmap_dir + "/updmap")
+        if (updmap_dir
+            && (updmap_file = updmap_dir + "/" + updmap_prog)
             && access(updmap_file.c_str(), X_OK) >= 0) {
-            // want to run 'updmap' from its directory, can't use system()
+            // want to run `updmap` from its directory, can't use system()
             if (verbose)
                 errh->message("running %s", updmap_file.c_str());
 
@@ -728,7 +728,9 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
                 // change to updmap directory, run it
                 if (chdir(updmap_dir.c_str()) < 0)
                     errh->fatal("%s: %s during chdir", updmap_dir.c_str(), strerror(errno));
-                if (execl("./updmap", updmap_file.c_str(), (const char*) 0) < 0)
+                if (execl(output_flags & G_UPDMAP_USER ? "./updmap-user" : "./updmap-sys",
+                          updmap_file.c_str(),
+                          (const char*) 0) < 0)
                     errh->fatal("%s: %s during exec", updmap_file.c_str(), strerror(errno));
                 exit(1);        // should never get here
             }
@@ -771,7 +773,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 #endif
             String option = "--enable Map ";
             String command = "updmap --nomkmap " + option  + shell_quote(filename) + redirect
-                + CMD_SEP " updmap" + redirect;
+                + CMD_SEP " " + updmap_prog + redirect;
             int retval = mysystem(command.c_str(), errh);
             if (retval == 127)
                 errh->warning("could not run %<%s%>", command.c_str());

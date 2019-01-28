@@ -1,6 +1,6 @@
 /* t1rawafm.cc -- driver for generating a raw AFM file from a font
  *
- * Copyright (c) 2008-2018 Eddie Kohler
+ * Copyright (c) 2008-2019 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -315,7 +315,7 @@ main(int argc, char *argv[])
 
           case VERSION_OPT:
             printf("t1rawafm (LCDF typetools) %s\n", VERSION);
-            printf("Copyright (C) 2008-2018 Eddie Kohler\n\
+            printf("Copyright (C) 2008-2019 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
