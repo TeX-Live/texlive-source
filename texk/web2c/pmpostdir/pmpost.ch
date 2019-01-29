@@ -104,7 +104,7 @@ char kanjioption[16];
         }
         strcpy(kanjioption, optarg);
         if (!set_enc_string(optarg, optarg)) {
-          fprintf(stderr,"Ignoring unknown argument `%s' to --kanji", optarg);
+          fprintf(stderr,"Ignoring unknown argument `%s' to --kanji\n", optarg);
         }
       }
 
@@ -131,7 +131,7 @@ char kanjioption[16];
         }
         strcpy (kanjioption, optarg);
         if (!set_enc_string(optarg, optarg)) {
-          fprintf(stderr,"Ignoring unknown argument `%s' to --kanji", optarg);
+          fprintf(stderr,"Ignoring unknown argument `%s' to --kanji\n", optarg);
         }
       }
 @z
@@ -244,8 +244,10 @@ else
 @z
 
 @x
+@<Declarations@>=
 #define DLLPROC dllmpostmain
 @y
+@<Declarations@>=
 #ifdef UPMP
 #define DLLPROC dllupmpostmain
 #else
