@@ -1,4 +1,8 @@
-2019-01-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2019-01-30  Akira Kakuto  <kakuto@w32tex.org>
+
+	* patch-03-w32: Remove wrong changes.
+
+2019-01-28  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import lcdf-typetools-2.108.
 	* patch-02-mingw64, patch-03-w32: Adapted.

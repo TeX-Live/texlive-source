@@ -1,6 +1,6 @@
 diff -ur lcdf-typetools-2.108/liblcdf/filename.cc lcdf-typetools-src/liblcdf/filename.cc
 --- lcdf-typetools-2.108/liblcdf/filename.cc	Mon Jan 28 03:39:19 2019
-+++ lcdf-typetools-src/liblcdf/filename.cc	Mon Jan 28 08:02:02 2019
++++ lcdf-typetools-src/liblcdf/filename.cc	Thu Jan 31 06:16:24 2019
 @@ -126,5 +126,5 @@
      if (_actual || !_path)
  	return _actual;
@@ -10,7 +10,7 @@ diff -ur lcdf-typetools-2.108/liblcdf/filename.cc lcdf-typetools-src/liblcdf/fil
  }
 diff -ur lcdf-typetools-2.108/otftotfm/automatic.cc lcdf-typetools-src/otftotfm/automatic.cc
 --- lcdf-typetools-2.108/otftotfm/automatic.cc	Mon Jan 28 03:39:20 2019
-+++ lcdf-typetools-src/otftotfm/automatic.cc	Mon Jan 28 08:19:16 2019
++++ lcdf-typetools-src/otftotfm/automatic.cc	Thu Jan 31 06:35:14 2019
 @@ -39,7 +39,9 @@
  #include <algorithm>
  
@@ -55,7 +55,7 @@ diff -ur lcdf-typetools-2.108/otftotfm/automatic.cc lcdf-typetools-src/otftotfm/
          // look for mktexupd script
          if (!mktexupd_tried) {
 +#ifdef _WIN32
-+	    mktexupd = "mktexupd";
++            mktexupd = "mktexupd.exe";
 +#else
              mktexupd = kpsei_string(kpsei_find_file("mktexupd", KPSEI_FMT_WEB2C));
 +#endif
@@ -71,27 +71,9 @@ diff -ur lcdf-typetools-2.108/otftotfm/automatic.cc lcdf-typetools-src/otftotfm/
                  fd = fileno(f);
              }
  
-@@ -746,7 +763,16 @@
-             if (slash >= 0)
-                 filename = filename.substring(slash + 1);
-             String redirect = verbose ? " 1>&2" : " >" DEV_NULL " 2>&1";
--            String command = updmap_prog + " --nomkmap --enable Map " + shell_quote(filename) + redirect
-+#if defined(W32TEX)
-+// jtex_filetype is defined only in W32TeX
-+            char *p = kpsei_var_value("jtex_filetype");
-+            if (p != NULL) { // W32TeX
-+                free(p);
-+                String option = "--add ";
-+            } else // TeXLive
-+#endif
-+            String option = "--enable Map ";
-+            String command = "updmap --nomkmap " + option  + shell_quote(filename) + redirect
-                 + CMD_SEP " " + updmap_prog + redirect;
-             int retval = mysystem(command.c_str(), errh);
-             if (retval == 127)
 diff -ur lcdf-typetools-2.108/otftotfm/kpseinterface.c lcdf-typetools-src/otftotfm/kpseinterface.c
 --- lcdf-typetools-2.108/otftotfm/kpseinterface.c	Mon Jan 28 03:39:20 2019
-+++ lcdf-typetools-src/otftotfm/kpseinterface.c	Mon Jan 28 08:21:16 2019
++++ lcdf-typetools-src/otftotfm/kpseinterface.c	Thu Jan 31 06:37:34 2019
 @@ -21,6 +21,9 @@
  #include <kpathsea/expand.h>
  #include <kpathsea/c-pathch.h>
@@ -116,7 +98,7 @@ diff -ur lcdf-typetools-2.108/otftotfm/kpseinterface.c lcdf-typetools-src/otftot
 +#endif
 diff -ur lcdf-typetools-2.108/otftotfm/kpseinterface.h lcdf-typetools-src/otftotfm/kpseinterface.h
 --- lcdf-typetools-2.108/otftotfm/kpseinterface.h	Thu Jun 23 21:25:52 2016
-+++ lcdf-typetools-src/otftotfm/kpseinterface.h	Mon Jan 28 08:22:18 2019
++++ lcdf-typetools-src/otftotfm/kpseinterface.h	Thu Jan 31 06:38:40 2019
 @@ -13,6 +13,10 @@
  char* kpsei_find_file(const char* name, int format);
  void kpsei_set_debug_flags(unsigned flags);
@@ -130,7 +112,7 @@ diff -ur lcdf-typetools-2.108/otftotfm/kpseinterface.h lcdf-typetools-src/otftot
  #endif
 diff -ur lcdf-typetools-2.108/otftotfm/otftotfm.cc lcdf-typetools-src/otftotfm/otftotfm.cc
 --- lcdf-typetools-2.108/otftotfm/otftotfm.cc	Mon Jan 28 03:39:20 2019
-+++ lcdf-typetools-src/otftotfm/otftotfm.cc	Mon Jan 28 08:25:14 2019
++++ lcdf-typetools-src/otftotfm/otftotfm.cc	Thu Jan 31 06:40:59 2019
 @@ -63,6 +63,9 @@
  #ifdef HAVE_FCNTL_H
  # include <fcntl.h>
@@ -161,7 +143,7 @@ diff -ur lcdf-typetools-2.108/otftotfm/otftotfm.cc lcdf-typetools-src/otftotfm/o
  
 diff -ur lcdf-typetools-2.108/t1dotlessj/t1dotlessj.cc lcdf-typetools-src/t1dotlessj/t1dotlessj.cc
 --- lcdf-typetools-2.108/t1dotlessj/t1dotlessj.cc	Mon Jan 28 03:39:20 2019
-+++ lcdf-typetools-src/t1dotlessj/t1dotlessj.cc	Mon Jan 28 08:29:20 2019
++++ lcdf-typetools-src/t1dotlessj/t1dotlessj.cc	Thu Jan 31 06:43:35 2019
 @@ -410,10 +410,10 @@
      // write it to output
      if (!outputf)
@@ -177,7 +159,7 @@ diff -ur lcdf-typetools-2.108/t1dotlessj/t1dotlessj.cc lcdf-typetools-src/t1dotl
      } else {
 diff -ur lcdf-typetools-2.108/t1rawafm/t1rawafm.cc lcdf-typetools-src/t1rawafm/t1rawafm.cc
 --- lcdf-typetools-2.108/t1rawafm/t1rawafm.cc	Mon Jan 28 03:39:20 2019
-+++ lcdf-typetools-src/t1rawafm/t1rawafm.cc	Mon Jan 28 08:30:38 2019
++++ lcdf-typetools-src/t1rawafm/t1rawafm.cc	Thu Jan 31 06:44:47 2019
 @@ -359,6 +359,9 @@
          if (!outf)
              errh->fatal("%s: %s", output_file, strerror(errno));
@@ -190,7 +172,7 @@ diff -ur lcdf-typetools-2.108/t1rawafm/t1rawafm.cc lcdf-typetools-src/t1rawafm/t
  
 diff -ur lcdf-typetools-2.108/t1reencode/t1reencode.cc lcdf-typetools-src/t1reencode/t1reencode.cc
 --- lcdf-typetools-2.108/t1reencode/t1reencode.cc	Mon Jan 28 03:39:20 2019
-+++ lcdf-typetools-src/t1reencode/t1reencode.cc	Mon Jan 28 08:32:09 2019
++++ lcdf-typetools-src/t1reencode/t1reencode.cc	Thu Jan 31 06:46:38 2019
 @@ -1094,10 +1094,10 @@
  	if (!outf)
  	    errh->fatal("%s: %s", output_file, strerror(errno));
@@ -206,7 +188,7 @@ diff -ur lcdf-typetools-2.108/t1reencode/t1reencode.cc lcdf-typetools-src/t1reen
      } else {
 diff -ur lcdf-typetools-2.108/t1testpage/t1testpage.cc lcdf-typetools-src/t1testpage/t1testpage.cc
 --- lcdf-typetools-2.108/t1testpage/t1testpage.cc	Mon Jan 28 03:39:20 2019
-+++ lcdf-typetools-src/t1testpage/t1testpage.cc	Mon Jan 28 08:33:12 2019
++++ lcdf-typetools-src/t1testpage/t1testpage.cc	Thu Jan 31 06:47:51 2019
 @@ -665,6 +665,9 @@
  	if (!outf)
  	    errh->fatal("%s: %s", output_file, strerror(errno));
@@ -216,4 +198,3 @@ diff -ur lcdf-typetools-2.108/t1testpage/t1testpage.cc lcdf-typetools-src/t1test
 +#endif
  
      //font->undo_synthetic();
- 

@@ -337,7 +337,7 @@ update_odir(int o, String file, ErrorHandler *errh)
         // look for mktexupd script
         if (!mktexupd_tried) {
 #ifdef _WIN32
-	    mktexupd = "mktexupd";
+            mktexupd = "mktexupd.exe";
 #else
             mktexupd = kpsei_string(kpsei_find_file("mktexupd", KPSEI_FMT_WEB2C));
 #endif
@@ -763,16 +763,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
             if (slash >= 0)
                 filename = filename.substring(slash + 1);
             String redirect = verbose ? " 1>&2" : " >" DEV_NULL " 2>&1";
-#if defined(W32TEX)
-// jtex_filetype is defined only in W32TeX
-            char *p = kpsei_var_value("jtex_filetype");
-            if (p != NULL) { // W32TeX
-                free(p);
-                String option = "--add ";
-            } else // TeXLive
-#endif
-            String option = "--enable Map ";
-            String command = "updmap --nomkmap " + option  + shell_quote(filename) + redirect
+            String command = updmap_prog + " --nomkmap --enable Map " + shell_quote(filename) + redirect
                 + CMD_SEP " " + updmap_prog + redirect;
             int retval = mysystem(command.c_str(), errh);
             if (retval == 127)
