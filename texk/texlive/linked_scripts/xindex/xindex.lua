@@ -8,7 +8,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.06
+ local version = 0.06b
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -45,6 +45,7 @@ local args = require ('xindex-lapp') [[
     -n,--noheadings 
     -o,--output (default "")
     -l,--language (default en)
+    -p,--prefix  (default "")
     <input> (string)
 ]]
 
@@ -58,6 +59,18 @@ local args = require ('xindex-lapp') [[
 
 vlevel = not args.v[1] and 0 or #args.v
 not_quiet = not args["quiet"]
+
+local luaVersion = _VERSION
+if (luaVersion < "Lua 5.3") then
+  print("=========================================")
+  print("Sorry. but we need at least LuaTeX 1.09")
+  print("Leaving program xindex")
+  print("=========================================")
+  os.exit()
+end
+
+--local inspect = require 'inspect' 
+--print(inspect(args))
 
 --[[
 if args.h then
@@ -128,6 +141,9 @@ if vlevel > 0 then
 end
 
 writeLog(2,"Using input file: "..inFile.."\n",0)
+
+labelPrefix = args.prefix
+writeLog(2,"Label prefix: "..labelPrefix.."\n",-1)
 
 writeLog(2,"Loading common config file ".."xindex-cfg-common\n",1)
 Config_File_Common = kpse.find_file("xindex-cfg-common.lua") 
