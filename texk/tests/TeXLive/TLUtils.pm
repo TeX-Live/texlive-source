@@ -1,11 +1,12 @@
+# $Id: TLUtils.pm 49855 2019-01-28 22:47:02Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007-2018 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2019 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 49226 $';
+my $svnrev = '$Revision: 49855 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -3475,12 +3476,13 @@ sub tlwarn {
 
 =item C<tldie ($str1, $str2, ...)>
 
-Uses C<tlwarn> to issue a warning, then exits with exit code 1.
+Uses C<tlwarn> to issue a warning for @_ preceded by a newline, then
+exits with exit code 1.
 
 =cut
 
 sub tldie {
-  tlwarn(@_);
+  tlwarn("\n", @_);
   if ($::gui_mode) {
     Tk::exit(1);
   } else {

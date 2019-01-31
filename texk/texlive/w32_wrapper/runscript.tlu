@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 48877 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2018-10-10 09:25:30 +0200 (Wed, 10 Oct 2018) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 49485 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2018-12-23 16:28:08 +0100 (Sun, 23 Dec 2018) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -31,11 +31,12 @@ local helpstr = [[
     installed packages.  This should minimize problems when using them 
     with TeX Live. 
     
-    First, make sure that there is an interpreter program available on 
-    your system for the script you want to use.  Interpreters for Perl 
-    and Lua are bundled with TeX Live, all others have to be installed 
-    independently.  Lua scripts are the most efficient to run, so if you
-    consider writing a new script, that would be the recommended choice.
+    First, make sure that there is an interpreter program available
+    on your system for the script you want to use.  Interpreters for
+    Perl, Lua and Tcl/Tk (GUI scripts only) are bundled with TeX
+    Live, all others have to be installed independently.  Lua
+    scripts are the most efficient to run, so if you consider
+    writing a new script, that would be the recommended choice.
     
     The following script types and their file extensions are currently 
     supported and searched in that order:
@@ -44,7 +45,7 @@ local helpstr = [[
       Perl     (.pl)               --  included
       Ruby     (.rb)               --  requires installation
       Python   (.py)               --  requires installation
-      Tcl      (.tcl)              --  requires installation
+      Tcl      (.tcl)              --  included (GUI scripts only)
       Java     (.jar)              --  requires installation
       VBScript (.vbs)              --  part of Windows
       JScript  (.js)               --  part of Windows
@@ -120,7 +121,7 @@ local docstr = [[
     batch scripts, of course).  If the located script happens to be 
     a (tex)lua script, it is loaded and called internally from within 
     this script, i.e. no new process is spawned.  Execution is done 
-    using a protected call, so any compile or runtime errors are catched.
+    using a protected call, so any compile or runtime errors are caught.
     
   Source files
   
@@ -272,10 +273,28 @@ local docstr = [[
           https://tug.org/pipermail/tex-live/2018-June/041922.html
     2018/10/10
         - support cluttex scripts
+    2018/11/08
+        - use included tcltk interpreter
 
 ]]
 
 -- HELPER SUBROUTINES --
+
+local TEXDIR
+local guimode
+
+local function show_error(msg)
+  if guimode then
+    os.setenv('RUNSCRIPT_ERROR_MESSAGE', msg)
+    if lfs.isfile(TEXDIR..'/tlpkg/tltcl/tclkit.exe') and
+        lfs.isfile(TEXDIR..'/tlpkg/tltcl/gui_err.tcl') then
+      os.spawn{TEXDIR..'/tlpkg/tltcl/tclkit.exe',
+          TEXDIR..'/tlpkg/tltcl/gui_err.tcl'}
+    end
+  else
+    io.stderr:write(msg, '\n')
+  end
+end
 
 -- quotes string with spaces
 local function _q(str)
@@ -421,13 +440,13 @@ local function gettexmfdist()
   str = string.gsub(str, "\\","/")
   str = string.reverse(str)
   local a, b
--- remove /runscript.dll
+-- remove '/runscript.dll'
   a, b = string.find(str, '/', 1, true)
   str = string.sub(str,a+1)
--- remove /win32
+-- remove '/win32'
   a, b = string.find(str, '/', 1, true)
   str = string.sub(str,a+1)
--- remove /bin
+-- remove '/bin'
   a, b = string.find(str, '/', 1, true)
   str = string.sub(str,a+1)
   str = string.reverse(str)
@@ -461,13 +480,57 @@ end
 
 local function MAIN_CHUNK()
 
+--[[
+
+OVERVIEW OF MAIN_CHUNK
+
+We start out with a lot of housekeeping, especially with respect to
+perl and ghostscript: if we are going to use the built-in versions,
+then the search path and other environment variables must be set or
+unset to make these findable and working right.
+
+Next we compose an ARGV table for os.spawn, unless the script turns
+out to be a [tex]lua script; see further down this comment block.
+
+The parameter table ARGV can have the following elements (see the
+luatex manual on os.exec and os.spawn):
+
+- ARGV[0]: the full path to the interpreter
+- ARGV[1]: the filename part of the interpreter. The interpreter choice
+  depends on the detected script extension and also on gui mode.
+- ARGV[2]: progfulname, the full path to the script
+- ARGV[3]: argline, i.e. the unparsed arguments for the script.
+  This is normally the last argument passed to runscript.tlu.
+  See the actual code for when this is not the case.
+
+ARGV[0] gets priority over ARGV[1] if it is present.
+
+After everything has been set up, a call os.spawn(ARGV) runs the
+right program with the right arguments.
+
+But in case the script to be run is a texlua script, we run the script
+in the current texlua process using the dofile function. The original arg
+argument table may have been modified before then.
+
+Some variables:
+
+- ARGV, see above
+- arg, the texlua argument table of runscript.tlu
+- progname, the name under which [w]runscript.exe was called
+- progfullname, the full path of the script to be run. This variable
+  is introduced only after some special cases have been dealt with.
+- argline, unparsed arguments to the script; may get modified
+
+--]]
+
 -- set the system-default value for LC_CTYPE
 -- http://tug.org/pipermail/tex-live/2018-May/041628.html
 os.setlocale("", "ctype")
 
--- preprocess arguments
+-- preprocess arguments: arg[-1] => texlua.exe, arg[0] => scriptname
 
-local guimode = false
+-- guimode already declared local
+guimode = false
 local argline = ''
 -- check for the sentinel argment coming from the .exe stub 
 if arg[#arg-2] and ( string.sub(arg[#arg-2], -1) == '\n' ) then
@@ -546,7 +609,8 @@ local lua_binary = arg[k]
 kpse.set_program_name(lua_binary, progname)
 
 -- various dir-vars
-local TEXDIR = kpse.var_value('SELFAUTOPARENT')
+-- TEXDIR already declared local
+TEXDIR = kpse.var_value('SELFAUTOPARENT')
 -- local TEXMFDIST = kpse.var_value('TEXMFDIST')
 -- use a new function to obtain TEXMFDIST
 local TEXMFDIST = gettexmfdist()
@@ -660,18 +724,18 @@ end
 -- Adobe Reader crash case: make sure USERPROFILE is not "slashed"
 os.setenv("USERPROFILE", os.getenv("USERPROFILE"):gsub('/', '\\'))
 
--- extension to interpeter mapping
+-- extension to interpreter mapping
 
--- the extension is mapped to argv table
--- the command to execute is given as the first element of the table  
--- (it can be a whitespace separated list of names to try)
+-- the extension is mapped to an argument table.
+-- the command to execute is given as the first element of the table,
+-- which can be a whitespace separated list of names to try.
 local extension_map = {
   ['.bat'] = {'cmd', '/c', 'call'},
   ['.jar'] = {'java.exe', '-jar'},
   ['.pl' ] = {'perl.exe'},
   ['.py' ] = {'python.exe'},
   ['.rb' ] = {'ruby.exe'},
-  ['.tcl'] = {'tclsh.exe tclsh85.exe tclsh84.exe'},
+  ['.tcl'] = {'tclsh.exe tclsh86.exe tclsh85.exe tclkitsh.exe'},
   ['.vbs'] = {'cscript.exe', '-nologo'},
 }
 if guimode then
@@ -680,13 +744,14 @@ if guimode then
   extension_map['.pl' ][1] = 'wperl.exe '   .. extension_map['.pl' ][1]
   extension_map['.py' ][1] = 'pythonw.exe ' .. extension_map['.py' ][1]
   extension_map['.rb' ][1] = 'rubyw.exe '   .. extension_map['.rb' ][1]
-  extension_map['.tcl'][1] = 'wish.exe wish85.exe wish84.exe ' .. extension_map['.tcl'][1]
+  -- gui tcl shares no interpreters with non-gui tcl
+  extension_map['.tcl'] = {'wish.exe wish86.exe wish85.exe tclkit.exe'}
   extension_map['.vbs'][1] = 'wscript.exe ' .. extension_map['.vbs'][1]
 end
 extension_map['.cmd'] = extension_map['.bat']
 extension_map['.js']  = extension_map['.vbs']
 
--- set up argv table
+-- set up ARGV table
 
 local ARGV = nil
 
@@ -782,15 +847,40 @@ if not ARGV then
                        find_texmfscript(progname, extlist)
   os.setenv('TEXMF', nil)
   if progfullname == nil then
--- scripts in $TEXMFLOCAL etc. can't be found without the following
--- line !!
+    -- scripts in $TEXMFLOCAL etc. can't be found without the following
+    -- line !!
     kpse.set_program_name('runscript')
     progfullname = assert(find_texmfscript(progname, extlist))
   end
   local ext = string.match(string.lower(progfullname), '%.[^\\/.]*$') or ''
   if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then -- lua script
     arg[0] = progfullname
-  else
+  elseif (ext == '.tcl' and guimode) then -- tcl script; use built-in tclkit?
+    local try_extern_tcl =
+        (kpse.var_value('TEXLIVE_WINDOWS_TRY_EXTERNAL_TCL') == '1') and
+        not is_restricted_progname
+    local TCLEXENAME, TCLEXE
+    if try_extern_tcl then
+      TCLEXENAME, TCLEXE = check_command(extension_map['.tcl'][1], PATH)
+    end
+    if try_extern_tcl and not TCLEXENAME then
+      local exttcl_warn = [[
+External Tcl missing or outdated. Please install a recent Tcl, or configure
+TeX Live to always use the builtin Tcl for gui scripts:
+  tlmgr conf texmf TEXLIVE_WINDOWS_TRY_EXTERNAL_TCL 0
+Meanwhile, continuing with built-in Tcl...
+]]
+      show_error(exttcl_warn)
+    else -- did find something
+      ARGV = {[0]=TCLEXE, TCLEXENAME}
+    end
+    if not TCLEXENAME then
+      ARGV = {[0]=TEXDIR..'/tlpkg/tltcl/tclkit.exe', 'tclkit.exe'}
+      PATH = prepend_path(PATH, TEXDIR:gsub('/','\\')..'\\tlpkg\\tltcl')
+    end
+    table.insert(ARGV, _q(progfullname:gsub('/','\\')))
+    if (argline and argline ~= '') then argline = '-- '..argline end
+  else -- not gui tcl or not tcl at all
     ARGV = extension_map[ext] or assert(shebang_to_argv(progfullname)) 
     -- [w|c]script, for one, mistakes a forward-slashed UNC script path
     -- for an option even when quoted
@@ -807,7 +897,7 @@ if ARGV then
   table.insert(ARGV, argline) -- pass through original arguments
   if string.find (table.concat(ARGV, ' '), 'perl.exe') and extperl_warn then
 
-    io.stderr:write(extperl_warn)
+    show_error(extperl_warn)
   end
   local ret = assert(os.spawn(ARGV))
   if ret ~= 0 then
@@ -815,8 +905,7 @@ if ARGV then
     local errormsg = string.format("%s:%d: command failed with exit code %d:\n%s",  
                                    dbginfo.short_src, dbginfo.currentline - 2, 
                                    ret, table.concat(ARGV, ' ') )
-    os.setenv('RUNSCRIPT_ERROR_MESSAGE', errormsg)
-    io.stderr:write(errormsg, '\n')
+    show_error(errormsg)
   end
   os.exit(ret)
 else -- must be a lua script
