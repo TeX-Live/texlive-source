@@ -1,3 +1,2176 @@
+commit fe532923101586e316b300d419a337d357cd93da
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 28 20:47:58 2019 -0500
+
+    [CI] Peg CircleCI badge link to master branch
+
+    [skip ci]
+
+ README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9569819e24f72926a5b26e4c8a86d815c0132745
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 28 20:43:43 2019 -0500
+
+    [ci] Peg build status badges to master branch
+
+    [skip ci]
+
+ README.md | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 1e29906a77c275c34a440a416654a514810485e1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 28 20:38:15 2019 -0500
+
+    Switch README / README.md
+
+    [skip ci]
+
+ README    | 19 +------------------
+ README.md | 19 ++++++++++++++++++-
+ 2 files changed, 19 insertions(+), 19 deletions(-)
+
+commit 9a1df82e3f13fbd4488ee9955814bbb5d0957074
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 28 14:15:18 2019 -0500
+
+    [uniscribe] Whitelist function type cast
+
+ src/hb-uniscribe.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 6e1c3eaf7005d06c89f0807f693aadd835aa0468
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 28 14:12:41 2019 -0500
+
+    Fix sign comparison error
+
+ src/hb-open-file.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 9db7a7da6339eacbb6c699fa1939bbd7e9e148f5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 28 14:09:59 2019 -0500
+
+    Fix warning
+
+    c:\projects\harfbuzz\src\hb-ot-color-cbdt-table.hh(59): warning C4146:
+    unary minus operator applied to unsigned type, result still unsigned
+    [C:\projects\harfbuzz\build\harfbuzz.vcxproj]
+
+ src/hb-ot-color-cbdt-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 51b584880e550545ced3aa8ba4ccad3cf79bb53e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 28 14:09:45 2019 -0500
+
+    [pragma] Silence MSVC unknown-pragma warning
+
+ src/hb.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 60022ecced202760daa7f75516bba6a4689a49de
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 26 14:04:51 2019 +0100
+
+    Fix -Wcast-function-type warnings in util/ with gcc 4.8
+
+ src/hb.hh       | 1 +
+ util/options.hh | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+commit a9321cb5f88cae1dafbd623b8bf7c68a82a3c211
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 25 16:11:45 2019 +0100
+
+    Fix mac test
+
+ test/shaping/data/in-house/tests/macos.tests | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit f39809752909f193a9c60f4357a88ea1c3ce1162
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 25 16:08:25 2019 +0100
+
+    More static constexpr
+
+ src/hb-machinery.hh  | 10 +++++-----
+ src/hb-set-digest.hh | 14 +++++++-------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+commit 06358ae9746ae72c0917e8a5f294d14fd695f380
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 25 15:11:47 2019 +0100
+
+    [AAT] Add test for recent Ligature stack fix, using Zapfino on Mac
+
+ test/shaping/data/in-house/tests/macos.tests | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit e970de48bcbdccd29350f331288c0a98f7846c16
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 18:16:17 2019 +0100
+
+    [AAT] Minor sign
+
+ src/hb-aat-layout-morx-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit a371a28cda23805cbea22867e0a3ed53ecb811ed
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 18:12:25 2019 +0100
+
+    [AAT] Use a ring buffer for ligature stack
+
+    I think Apple does very similarly, but probably with a stack size
+    of 16.
+    We do it with a stack size that is currently set to 64.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1531
+
+ src/hb-aat-layout-morx-table.hh | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+commit 7886b1578fceee368ae5afe206ff98f50e1c42e3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 18:06:17 2019 +0100
+
+    Whitespace
+
+ src/hb-aat-layout-morx-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b976940243bf1f174bd6abb85955789ef2631d24
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 18:01:07 2019 +0100
+
+    [AAT] Handle transition errors during machine operation
+
+    Before we used to give up.  Now, just ignore error and continue
+    processing.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1531
+
+ src/hb-aat-layout-common.hh     |  3 +--
+ src/hb-aat-layout-kerx-table.hh | 21 +++++++--------------
+ src/hb-aat-layout-morx-table.hh | 34 +++++++++++++---------------------
+ 3 files changed, 21 insertions(+), 37 deletions(-)
+
+commit e234bb6a428cd6c8ddf57eb078cd51b9d1f25ba8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 17:23:11 2019 +0100
+
+    [AAT] Ignore machine errors and continue
+
+ src/hb-aat-layout-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1ec90514f69efc329691186466f62373efa863b1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 17:21:41 2019 +0100
+
+    [AAT] Minor
+
+ src/hb-aat-layout-common.hh     | 12 ++++----
+ src/hb-aat-layout-kerx-table.hh | 38 +++++++++++------------
+ src/hb-aat-layout-morx-table.hh | 68
+ ++++++++++++++++++++---------------------
+ 3 files changed, 59 insertions(+), 59 deletions(-)
+
+commit 299eca0c3b28c99add006420bc667431d874fb2e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 17:17:00 2019 +0100
+
+    [AAT] Handle out-of-bounds classes
+
+ src/hb-aat-layout-common.hh | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+commit c4623db4a3f963394db940449007fa3312460993
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 17:10:12 2019 +0100
+
+    [AAT] Minor
+
+ src/hb-aat-layout-common.hh | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+commit c4e36f97b6df1eb5fba588b09ae1630bb5c49589
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 17:06:16 2019 +0100
+
+    [AAT] Minor
+
+ src/hb-aat-layout-common.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit f60282c5bff4a317ba3180e3519274963c6e8849
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 16:29:09 2019 +0100
+
+    More pragma control
+
+    Fixes https://bugs.chromium.org/p/chromium/issues/detail?id=924848
+
+ src/hb.hh | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+commit fd0889f903ac1ba2da06e77eed8424395ea85a90
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 16:12:52 2019 +0100
+
+    Comment
+
+ src/hb-ot-shape.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 00f06d1aa61e9a6d01b5943ce55ba2b0c40237ee
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 16:11:05 2019 +0100
+
+    Fix test
+
+ test/shaping/data/in-house/tests/cluster.tests | 1 -
+ test/shaping/data/in-house/tests/emoji.tests   | 3 ++-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 9f314177336f9551756944e0e555614c9189c7a5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 16:08:33 2019 +0100
+
+    Form cluster for Emoji sub-region tag sequences
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1556
+
+ src/hb-ot-shape.cc                                       |  13
+ +++++++++++++
+ .../fonts/8d9c4b193808b8bde94389ba7831c1fc6f9e794e.ttf   | Bin 0 ->
+ 1548 bytes
+ test/shaping/data/in-house/tests/cluster.tests           |   1 +
+ 3 files changed, 14 insertions(+)
+
+commit 5034f8f2ab8f53eb0395e6f6ce2f8da69a08460d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 12:50:38 2019 +0100
+
+    Fix macos tests with previous commit
+
+ test/shaping/data/in-house/tests/macos.tests | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 3ecda71041a7239ca37ec7b888809efe8f595a19
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 24 12:08:23 2019 +0100
+
+    Adjust mark offsets when zeroing from fallback mark positioning code
+
+    Adjust tests.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1532
+
+ src/hb-ot-shape-fallback.cc                        | 31
+ +++++++++++++++-------
+ src/hb-ot-shape-fallback.hh                        |  3 ++-
+ src/hb-ot-shape.cc                                 |  3 ++-
+ .../in-house/tests/arabic-fallback-shaping.tests   |  2 +-
+ test/shaping/data/in-house/tests/cluster.tests     |  2 +-
+ .../data/in-house/tests/fallback-positioning.tests |  4 +--
+ 6 files changed, 30 insertions(+), 15 deletions(-)
+
+commit 36fb2b4da9718a86978fa07c99ba4345f7ca9b4b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 23 20:53:57 2019 +0100
+
+    [AAT] In InsertionChain, set mark to previous-position if inserting
+
+    Fixes MORX-31
+
+ src/hb-aat-layout-morx-table.hh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit cbe0ed117ac86179183c389977d15981d26524f7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 23 20:45:18 2019 +0100
+
+    [AAT] Re-enable tests MORX-31 and MORX-41
+
+ test/shaping/data/text-rendering-tests/DISABLED         | 3 ---
+ test/shaping/data/text-rendering-tests/Makefile.sources | 2 ++
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+commit baf4d6a68a031bf65e17ccd5dac15fe7d0df33b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 23 20:36:07 2019 +0100
+
+    [AAT] Remove mark_set from InsertionChain
+
+ src/hb-aat-layout-morx-table.hh | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+commit 410731d3fb678365c07a4d1745b72b6bb3142b70
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 23 20:30:48 2019 +0100
+
+    [test/text-rendering-tests] Update from upstream
+
+ test/shaping/data/text-rendering-tests/extract-tests.py    | 2 +-
+ test/shaping/data/text-rendering-tests/tests/MORX-14.tests | 2 +-
+ test/shaping/data/text-rendering-tests/tests/MORX-32.tests | 8 ++++----
+ test/shaping/data/text-rendering-tests/tests/MORX-41.tests | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+commit 0b2fa342de88bbe609b2147444e56c94680cbd38
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 16:36:00 2019 +0100
+
+    More of previous
+
+ src/hb-subset-cff1.cc | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+commit a5e5dd8b42b40c3647e06e6bb62580af77bed42b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 16:30:07 2019 +0100
+
+    Fix sign-compare error resulted from promoting unsigned integers to
+    signed larger ints
+
+    Clang and gcc know not to warn in these cases, but not nonmainstream
+    compilers
+
+ src/hb-subset-cff2.cc | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+commit 32379bbf10726bb7ed2e507d0a6b5917c350e056
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:55:29 2019 +0100
+
+    Cast HB_UNTAG results to uint8_t
+
+ src/hb-common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 83d4aa5ca9a39dbe66db9b81b34f5b568503bd7e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:52:23 2019 +0100
+
+    More -Wcast-error fix
+
+ src/hb-dsalgs.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 447323b85a7b68bd41561a87c91431cd05227b97
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:45:40 2019 +0100
+
+    Better fix for -Wcast-align errors
+
+ src/hb-font.cc          | 33 +++++++++------------------------
+ src/hb-ft.cc            | 14 ++++----------
+ src/hb-machinery.hh     | 16 ++++++++++++++++
+ src/hb-ot-cmap-table.hh |  7 ++-----
+ src/hb-ot-font.cc       | 14 ++++----------
+ 5 files changed, 35 insertions(+), 49 deletions(-)
+
+commit 81ec543d800c4a94b5e608fd87e84d33d7dae8ac
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:43:12 2019 +0100
+
+    More -Wcast-error fixes
+
+ src/hb-font.cc    | 8 ++++----
+ src/hb-ft.cc      | 2 +-
+ src/hb-ot-font.cc | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 90772725493108c79487a67620f0240e5d68f4ee
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:40:18 2019 +0100
+
+    pragma GCC diagnostic error   "-Wsign-compare"
+
+ src/hb.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8d05bf7dc0094e75be07ca1f7ef852a1e45d0687
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:34:05 2019 +0100
+
+    Fix cast-align error
+
+    If compiler doesn't inline StructAtOffset, this was an error since we
+    only disable cast-align at call-site.  So, move the cast out.
+
+    ../src/hb-machinery.hh: In instantiation of 'const Type&
+    StructAtOffset(const void*, unsigned int) [with Type = unsigned int]':
+    ../src/hb-font.cc:146:85:   required from here
+    ../src/hb-machinery.hh:63:12: error: cast from 'const char*' to
+    'const unsigned int*' increases required alignment of target type
+    [-Werror=cast-align]
+     { return * reinterpret_cast<const Type*> ((const char *) P +
+     offset); }
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ../src/hb-machinery.hh: In instantiation of 'Type&
+    StructAtOffset(void*, unsigned int) [with Type = unsigned int]':
+    ../src/hb-font.cc:147:79:   required from here
+    ../src/hb-machinery.hh:66:12: error: cast from 'char*' to 'unsigned
+    int*' increases required alignment of target type [-Werror=cast-align]
+     { return * reinterpret_cast<Type*> ((char *) P + offset); }
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ src/hb-font.cc          | 8 ++++----
+ src/hb-ft.cc            | 6 +++---
+ src/hb-ot-cmap-table.hh | 4 ++--
+ src/hb-ot-font.cc       | 4 ++--
+ 4 files changed, 11 insertions(+), 11 deletions(-)
+
+commit b270cee6c5800c019aafb55e9ca9d7e92a92d3ec
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:29:05 2019 +0100
+
+    [CI] Remove gcc 4.2 bots
+
+    We don't support that version anymore.
+
+ .circleci/config.yml | 25 -------------------------
+ 1 file changed, 25 deletions(-)
+
+commit 70a52d6bd8c45630ca90e945fc4d716fe9114010
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:15:23 2019 +0100
+
+    Convert all other enum class consts to static constexpr
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1553
+
+ src/hb-cff-interp-common.hh |  2 +-
+ src/hb-iter.hh              |  2 +-
+ src/hb-machinery.hh         | 12 ++++++------
+ src/hb-open-type.hh         |  8 ++++----
+ src/hb-set-digest.hh        |  4 ++--
+ src/hb-set.hh               | 10 +++++-----
+ src/hb-vector.hh            |  2 +-
+ 7 files changed, 20 insertions(+), 20 deletions(-)
+
+commit 5d4b0377b99ddc4112b8ffb2b787eac0b383081c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:11:24 2019 +0100
+
+    Convert unsigned enum class consts to static constexpr
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1553
+
+ src/hb-aat-layout-common.hh     | 6 +++---
+ src/hb-aat-layout-kerx-table.hh | 2 +-
+ src/hb-buffer.hh                | 2 +-
+ src/hb-open-type.hh             | 2 +-
+ src/hb-ot-kern-table.hh         | 4 ++--
+ src/hb-ot-layout-common.hh      | 2 +-
+ src/hb-ot-layout.cc             | 4 ++--
+ 7 files changed, 11 insertions(+), 11 deletions(-)
+
+commit ef00654962204ae706b276871e2b6758fbbf69e0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:08:57 2019 +0100
+
+    Convert tag enum class consts to static constexpr
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1553
+
+ src/hb-aat-fdsc-table.hh        |  2 +-
+ src/hb-aat-layout-ankr-table.hh |  2 +-
+ src/hb-aat-layout-bsln-table.hh |  2 +-
+ src/hb-aat-layout-feat-table.hh |  2 +-
+ src/hb-aat-layout-just-table.hh |  2 +-
+ src/hb-aat-layout-kerx-table.hh |  2 +-
+ src/hb-aat-layout-lcar-table.hh |  2 +-
+ src/hb-aat-layout-morx-table.hh |  6 +++---
+ src/hb-aat-layout-trak-table.hh |  2 +-
+ src/hb-aat-ltag-table.hh        |  2 +-
+ src/hb-ot-cff1-table.hh         |  2 +-
+ src/hb-ot-cff2-table.hh         |  2 +-
+ src/hb-ot-cmap-table.hh         |  2 +-
+ src/hb-ot-color-cbdt-table.hh   |  4 ++--
+ src/hb-ot-color-colr-table.hh   |  2 +-
+ src/hb-ot-color-cpal-table.hh   |  2 +-
+ src/hb-ot-color-sbix-table.hh   |  2 +-
+ src/hb-ot-color-svg-table.hh    |  2 +-
+ src/hb-ot-gasp-table.hh         |  2 +-
+ src/hb-ot-glyf-table.hh         |  4 ++--
+ src/hb-ot-hdmx-table.hh         |  2 +-
+ src/hb-ot-head-table.hh         |  2 +-
+ src/hb-ot-hhea-table.hh         |  4 ++--
+ src/hb-ot-hmtx-table.hh         | 12 ++++++------
+ src/hb-ot-kern-table.hh         |  6 +++---
+ src/hb-ot-layout-base-table.hh  |  2 +-
+ src/hb-ot-layout-gdef-table.hh  |  2 +-
+ src/hb-ot-layout-gpos-table.hh  |  2 +-
+ src/hb-ot-layout-gsub-table.hh  |  2 +-
+ src/hb-ot-layout-jstf-table.hh  |  2 +-
+ src/hb-ot-math-table.hh         |  2 +-
+ src/hb-ot-maxp-table.hh         |  2 +-
+ src/hb-ot-name-table.hh         |  2 +-
+ src/hb-ot-os2-table.hh          |  2 +-
+ src/hb-ot-post-table.hh         |  2 +-
+ src/hb-ot-stat-table.hh         |  2 +-
+ src/hb-ot-var-avar-table.hh     |  2 +-
+ src/hb-ot-var-fvar-table.hh     |  2 +-
+ src/hb-ot-var-hvar-table.hh     |  8 ++++----
+ src/hb-ot-var-mvar-table.hh     |  2 +-
+ src/hb-ot-vorg-table.hh         |  2 +-
+ 41 files changed, 56 insertions(+), 56 deletions(-)
+
+commit 39e1b6d03f71ccb8f18d64dfbff64acfaf02970b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:07:43 2019 +0100
+
+    Convert boolean enum class consts to static constexpr
+
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1553
+
+ src/hb-aat-layout-common.hh     |  4 ++--
+ src/hb-aat-layout-kerx-table.hh |  4 ++--
+ src/hb-aat-layout-morx-table.hh |  8 ++++----
+ src/hb-dsalgs.hh                | 16 ++++++++--------
+ src/hb-ot-kern-table.hh         |  4 ++--
+ src/hb-ot-layout.cc             |  4 ++--
+ 6 files changed, 20 insertions(+), 20 deletions(-)
+
+commit 271cb7c1c0f49c7af786daa5d5310b9f08142148
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:05:35 2019 +0100
+
+    Make some enum constants unsigned
+
+ src/hb-aat-layout-common.hh | 6 +++---
+ src/hb-buffer.hh            | 2 +-
+ src/hb-ot-layout.cc         | 8 ++++----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+commit 3d9a6e62662fb769e0f785fa7a43df806988d2a2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:02:06 2019 +0100
+
+    Whitespace
+
+ src/hb-ot-layout-gsubgpos.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c81f02fd06fcbc4426c9e3255833f8d7057cc97a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 22 12:00:44 2019 +0100
+
+    pragma GCC diagnostic error   "-Wvla"
+
+ src/hb.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ff98109455bfbf92f7633262bc570b05d15d5d01
+Author: Alfie John <alfie@alfie.wtf>
+Date:   Tue Jan 22 19:58:36 2019 +1100
+
+    Fix grammar
+
+ docs/usermanual-clusters.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e9c0f5e714cc62bcf6349b86b13e1c031f9bb764
+Author: Alfie John <alfie@alfie.wtf>
+Date:   Tue Jan 22 00:03:02 2019 +0000
+
+    Grammar fix
+
+ docs/usermanual-clusters.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 789396ed6bf2c76c1bb955e80efb43f75e3c61d2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 20 20:09:10 2019 -0500
+
+    Remove wrongly added files
+
+ test/api/test-ot-extents-cff                        | Bin 8574336 ->
+ 0 bytes
+ .../test-ot-extents-cff.dSYM/Contents/Info.plist    |  20
+ --------------------
+ .../Contents/Resources/DWARF/test-ot-extents-cff    | Bin 7650053 ->
+ 0 bytes
+ 3 files changed, 20 deletions(-)
+
+commit 380c3cffb9353083913a3bb505c2c62367613096
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 20 19:51:08 2019 -0500
+
+    Use enum for class constant
+
+ src/hb-cff-interp-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6d042a18e7079e07a2b2f465a6a56483a42ef189
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 20 19:49:59 2019 -0500
+
+    [CFF] Use enum for tableTag
+
+ src/hb-ot-cff1-table.hh | 2 +-
+ src/hb-ot-cff2-table.hh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit c1cbbb94595641f0609cc8d2dbe8415540c10f77
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 20 19:47:52 2019 -0500
+
+    Use static constexpr for large class constants
+
+ src/hb-map.hh | 2 +-
+ src/hb-set.hh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 30ae62779f1a68c5657ab27bc7e77496ba8a906c
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Mon Jan 21 16:44:48 2019 +0200
+
+    Regular spaces will do
+
+ docs/usermanual-getting-started.xml | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit ed62551d67ac5bb8dbfaf3fa5eb51013157b214a
+Author: Alfie John <alfie@alfie.wtf>
+Date:   Mon Jan 21 05:00:01 2019 +0000
+
+    Adding leading space for code example
+
+ docs/usermanual-getting-started.xml | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit 3e332544db35ca08de767ecab01b489a9905c559
+Author: Alfie John <alfie@alfie.wtf>
+Date:   Mon Jan 21 04:54:27 2019 +0000
+
+    Fix description of example
+
+ docs/usermanual-getting-started.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2144ca9f01d01b6de386d17ada73a288372ee553
+Author: Alfie John <alfie@alfie.wtf>
+Date:   Mon Jan 21 04:47:05 2019 +0000
+
+    Added option to build docs to docs
+
+ docs/usermanual-install-harfbuzz.xml | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+commit 043b610fa698ed247347dfaa042f032f3fd3f572
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 19 09:20:46 2019 -0500
+
+    Fix sign compare warnings
+
+    ../../third_party/harfbuzz-ng/src/src/hb-map.hh(56,45):  warning:
+    comparison of integers of different signs: 'const hb_codepoint_t'
+    (aka 'const unsigned int') and 'hb_map_t::(anonymous enum
+    at ../../third_party/harfbuzz-ng/src/src/hb-map.hh:169:3)'
+    [-Wsign-compare]
+        bool is_unused () const    { return key == INVALID; }
+
+ src/hb-map.hh | 2 +-
+ src/hb-set.hh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit ce317d032061d81c520180a338172ce38b427135
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 19 09:18:03 2019 -0500
+
+    Fix warning
+
+    warning: '_WIN64' is not defined, evaluates to 0 [-Wundef]
+
+ src/hb-dsalgs.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0c2bd1b160fda4e77919889ac80f9460967fa251
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Jan 19 16:30:07 2019 +0330
+
+    [dwrite] Fix delete-non-virtual-dtor warning (#1550)
+
+ src/hb-directwrite.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 89bcfb204c736f5962d377896af2c1350f179882
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 14:59:18 2019 -0500
+
+    Remove TRACE_COLLECT_GLYPHS
+
+ src/hb-debug.hh                | 13 -------------
+ src/hb-ot-layout-gpos-table.hh | 26 ++++----------------------
+ src/hb-ot-layout-gsub-table.hh | 21 +++------------------
+ src/hb-ot-layout-gsubgpos.hh   | 12 +-----------
+ 4 files changed, 8 insertions(+), 64 deletions(-)
+
+commit f13b6786f0aefd2060ca976f7e42db7387b49450
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 14:53:54 2019 -0500
+
+    [pragma] Only add if GCC or clang
+
+ src/hb.hh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit c2ea7a9da463c567d321233b23813c59762841bb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 13:45:33 2019 -0500
+
+    [directwrite] More fix
+
+ src/hb-directwrite.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 9714d3ec5c45b2fe460fa6b21bdb3487c62029d3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jan 18 21:55:21 2019 +0330
+
+    [dwrite] Try to fix delete-non-virtual-dtor warnings
+
+    Fixes #1548 hopefully
+
+ src/hb-directwrite.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0772c06f96c3f5a319485c390416531b8125251b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 12:53:06 2019 -0500
+
+    Remove tracing from closure
+
+ src/hb-debug.hh                | 13 -------------
+ src/hb-ot-layout-gsub-table.hh | 15 ++-------------
+ src/hb-ot-layout-gsubgpos.hh   | 14 +-------------
+ 3 files changed, 3 insertions(+), 39 deletions(-)
+
+commit d9f6be3a61edfe9e1bce01ea9b11e2bcb16f9618
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 12:48:01 2019 -0500
+
+    Fix -Wundef errors with __GNUC__
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1549
+
+ src/hb-common.h |  4 ++--
+ src/hb.hh       | 10 +++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 28917e58f973e5875d3ef3004c16e1ee1a5a973c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Jan 18 09:43:51 2019 -0800
+
+    init interp_env_t::hintmask_size
+
+    fixes issue #1547
+
+ src/hb-cff-interp-cs-common.hh                      |   1 +
+ test/api/test-ot-extents-cff                        | Bin 0 ->
+ 8574336 bytes
+ .../test-ot-extents-cff.dSYM/Contents/Info.plist    |  20
+ ++++++++++++++++++++
+ .../Contents/Resources/DWARF/test-ot-extents-cff    | Bin 0 ->
+ 7650053 bytes
+ 4 files changed, 21 insertions(+)
+
+commit 9b4e51b2e44d7dea026b1f9201d2f83277bab1cf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 12:23:02 2019 -0500
+
+    [pragma] Enable error -Wdelete-non-virtual-dtor
+
+    Currently fails directwrite backend.
+
+ src/hb.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit e65272281c71d416f0ff886a55536597665b9dc3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 12:22:07 2019 -0500
+
+    [directwrite] Fix error
+
+    hb-directwrite.cc: In constructor 'TextAnalysis::TextAnalysis(const
+    wchar_t*, uint32_t, const wchar_t*, DWRITE_READING_DIRECTION)':
+    hb-directwrite.cc:489:18: error: 'TextAnalysis::mText' will be
+    initialized after [-Werror=reorder]
+       const wchar_t* mText;
+                      ^~~~~
+    hb-directwrite.cc:488:12: error:   'uint32_t
+    TextAnalysis::mTextLength' [-Werror=reorder]
+       uint32_t mTextLength;
+                ^~~~~~~~~~~
+    hb-directwrite.cc:282:3: error:   when initialized here
+    [-Werror=reorder]
+       TextAnalysis (const wchar_t* text, uint32_t textLength,
+       ^~~~~~~~~~~~
+    hb-directwrite.cc: In function 'hb_bool_t
+    _hb_directwrite_shape_full(hb_shape_plan_t*, hb_font_t*, hb_buffer_t*,
+    const hb_feature_t*, unsigned int, float)':
+
+ src/hb-directwrite.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b900f78088abb87ebec263474b2802593afa0264
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 10:08:23 2019 -0500
+
+    [pragma] More cast-align whitelist
+
+ src/hb-font.cc          | 20 +++++++++++++++-----
+ src/hb-ft.cc            |  6 ++++++
+ src/hb-ot-cmap-table.hh |  3 +++
+ src/hb-ot-font.cc       |  6 ++++++
+ 4 files changed, 30 insertions(+), 5 deletions(-)
+
+commit 0d8b931bbeee9743d2e3bd37dd2fa9dffb807eaa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 10:03:43 2019 -0500
+
+    [pragma] Allow cast-align in hb-font.cc
+
+    ../src/hb-machinery.hh: In instantiation of 'const Type&
+    StructAtOffset(const void*, unsigned int) [with Type = unsigned int]':
+    ../src/hb-font.cc:144:85:   required from here
+    ../src/hb-machinery.hh:63:12: error: cast from 'const char*' to
+    'const unsigned int*' increases required alignment of target type
+    [-Werror=cast-align]
+     { return * reinterpret_cast<const Type*> ((const char *) P +
+     offset); }
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ../src/hb-machinery.hh: In instantiation of 'Type&
+    StructAtOffset(void*, unsigned int) [with Type = unsigned int]':
+    ../src/hb-font.cc:145:79:   required from here
+    ../src/hb-machinery.hh:66:12: error: cast from 'char*' to 'unsigned
+    int*' increases required alignment of target type [-Werror=cast-align]
+     { return * reinterpret_cast<Type*> ((char *) P + offset); }
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ../src/hb-machinery.hh: In instantiation of 'Type&
+    StructAtOffset(void*, unsigned int) [with Type = int]':
+
+ src/hb-font.cc | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit a25174a56b8fc334a050aa63be3654f53a7d8893
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 09:59:36 2019 -0500
+
+    [pragma] GCC diagnostic error   "-Wreorder"
+
+ src/hb.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 4660090569efbf64d3acc99ef6fa33e01abc9701
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 09:53:16 2019 -0500
+
+    [pragma] GCC diagnostic warning "-Wmaybe-uninitialized"
+
+ src/hb.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 7a634d7d5b859eb1121acd0b17c727c541a7f540
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 09:49:14 2019 -0500
+
+    [pragma] Massage more
+
+ src/hb.hh | 106
+ ++++++++++++++++++++++++++++++++------------------------------
+ 1 file changed, 55 insertions(+), 51 deletions(-)
+
+commit 16e5ba85b1822ff9d2b2f85f45ddd44f1a05f4b1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 09:46:17 2019 -0500
+
+    [pragma] More
+
+ src/hb.hh | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+commit 2bd530d59883cce437a5093323625f94b9618d89
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 09:28:22 2019 -0500
+
+    [pragma] Reorg again
+
+    https://github.com/harfbuzz/harfbuzz/issues/1546
+
+ src/hb.hh | 91
+ ++++++++++++++++++++++++++++++++-------------------------------
+ 1 file changed, 46 insertions(+), 45 deletions(-)
+
+commit c04272fac81cac48b6310182d58d54569117f298
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 18 08:49:45 2019 -0500
+
+    [pragma] GCC diagnostic ignored "-Wunknown-warning-option"
+
+    Try at fixing https://github.com/harfbuzz/harfbuzz/issues/1546
+
+ src/hb.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 4d3c8f9685b1744077ab264ffc0e0457d63c4b9a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 19:58:54 2019 -0500
+
+    [uniscribe] More warnings
+
+ src/hb-uniscribe.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 6a5d2b21d8457001a59537e85596461feba3dbd5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 19:57:17 2019 -0500
+
+    [uniscribe] Fix warnings
+
+ src/hb-uniscribe.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 5b13e458c34d16fef6540a9389225e0597a99df5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 19:52:32 2019 -0500
+
+    Fix build
+
+ src/hb-directwrite.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit a77bd6bb8960ecff35aac07f221653c65d08e58e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 19:33:41 2019 -0500
+
+    [pragma] GCC diagnostic ignored "-Wclass-memaccess"
+
+ src/hb.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e1302842d9c589ccbed90d29c953fea503d3901f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 19:12:07 2019 -0500
+
+    [ci] Remove unnecessary warning declarations
+
+    clang -Weverything still left to be ported to pragmas
+
+ .circleci/config.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 436c7b294ab12ae338aaa879fe4280caae6c6155
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 19:03:33 2019 -0500
+
+    [pragma] ignored -Wunsafe-loop-optimizations // TODO fix
+
+ src/hb.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit e3b3181e9ddd8b76428d7eaca64a3e03a99fcdd5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 19:02:06 2019 -0500
+
+    [pragma] error -Wclass-memaccess
+
+ src/hb.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 1a6b97a491f2ba4f84e52c89517b7a02faa70cc3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 18:55:03 2019 -0500
+
+    [pragma] More
+
+ src/hb.hh | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+commit 06e8091661352873c4d6040fd06a940136497e6f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 18:47:32 2019 -0500
+
+    [pragma] More
+
+ src/hb.hh | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+commit 1077e40bf12f998976df4bf509c69df9f9e2a590
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 18:36:10 2019 -0500
+
+    [pragma] Flesh out more
+
+ src/hb.hh | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+commit 7e6bd510fc695c423a7fa6b25c15805482f7d185
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 18:24:18 2019 -0500
+
+    Use NNOffsetTo<> in rest of places
+
+ src/hb-aat-layout-common.hh     |  8 ++++----
+ src/hb-aat-layout-kerx-table.hh | 22 +++++++++++-----------
+ src/hb-aat-layout-morx-table.hh | 10 +++++-----
+ 3 files changed, 20 insertions(+), 20 deletions(-)
+
+commit b1152d5e66d7463a30af8ca2a485f75e0c8e6ffd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 18:17:04 2019 -0500
+
+    Use NNOffsetTo<>
+
+ src/hb-aat-layout-ankr-table.hh |  6 +++---
+ src/hb-aat-layout-trak-table.hh |  2 +-
+ src/hb-aat-ltag-table.hh        |  2 +-
+ src/hb-open-file.hh             | 10 +++++-----
+ src/hb-ot-cff2-table.hh         |  6 +++---
+ src/hb-ot-color-cbdt-table.hh   |  2 +-
+ src/hb-ot-color-colr-table.hh   |  4 ++--
+ src/hb-ot-color-cpal-table.hh   |  8 ++++----
+ src/hb-ot-color-svg-table.hh    |  2 +-
+ src/hb-ot-name-table.hh         |  2 +-
+ src/hb-ot-stat-table.hh         |  4 ++--
+ 11 files changed, 24 insertions(+), 24 deletions(-)
+
+commit 205d72a198805ba276c1d0e63b1ca313c7bd517f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 18:10:38 2019 -0500
+
+    Add NNOffsetTo<>
+
+ src/hb-open-type.hh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit c99d13d860e3d34e16cd2c070070d4f5d7d58cf4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 17:56:27 2019 -0500
+
+    [AAT] Comment
+
+ src/hb-aat-layout-common.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f39b5603ffa0452528b2366f8641e7e770960847
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 17:49:55 2019 -0500
+
+    Comment
+
+ src/hb-ot-layout-gpos-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 347ad454b88b89fc4bc30fca86c9ca37bea0be5b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 17:47:29 2019 -0500
+
+    [AAT] Remove unused code
+
+ src/hb-aat-layout-ankr-table.hh |  3 +--
+ src/hb-aat-layout-common.hh     |  3 +--
+ src/hb-aat-layout-kerx-table.hh |  6 ++----
+ src/hb-aat-layout.cc            | 14 +++-----------
+ 4 files changed, 7 insertions(+), 19 deletions(-)
+
+commit b344d4385af5bc9adac2a24850cb963929d4ae9e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 17:44:39 2019 -0500
+
+    [AAT] Allow null in ankr lookupTable offset
+
+ src/hb-aat-layout-ankr-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 14a560a245109376b7314c949895968d0a54452c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 17:42:44 2019 -0500
+
+    [pragma GCC] Ignore -Wtype-limits
+
+ src/hb.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 41b4312e936a0dfc396e6f0ef13c2c691dac6e40
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 16:07:27 2019 -0500
+
+    [ci] Remove -Werror from Travis
+
+    hb-machinery.hh:111:37: warning: comparison of unsigned expression >=
+    0 is always true [-Wtype-limits]
+
+    Also ignore -Wtype-limits.
+
+ .travis.yml | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 3f2daae63073bd536bceb1ae71dffd3187afce11
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 15:27:31 2019 -0500
+
+    More GCC pragmas
+
+ src/hb.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit d6c5473e1f86cae7f1060abe18f73ccb8e536d6c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 15:22:46 2019 -0500
+
+    Rename macro
+
+ src/hb.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a9946b7cfef185d53304e804169d6e53e9d522a0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 15:22:28 2019 -0500
+
+    Add more GCC warning pragmas
+
+ src/hb.hh | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 868b0c0c2e2f1a2dea9b0d3c8eb6e56ded8b1a14
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 15:08:36 2019 -0500
+
+    Move -Wcast-align to hb.hh
+
+ configure.ac | 3 ---
+ src/hb.hh    | 4 ++++
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+commit 8874eef8ff70de6416266d719fa74eec39e5d8f9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 15:04:44 2019 -0500
+
+    Add pragram GCC diagnostic ignored "-Wunused-macros"
+
+ src/gen-indic-table.py                 | 3 +++
+ src/gen-use-table.py                   | 3 +++
+ src/hb-blob.cc                         | 3 +++
+ src/hb-ot-shape-complex-indic-table.cc | 3 +++
+ src/hb-ot-shape-complex-use-table.cc   | 3 +++
+ 5 files changed, 15 insertions(+)
+
+commit cc8e9a436fa408a1c63f4b9afb7643cea76a079c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 14:54:32 2019 -0500
+
+    [AAT] Fully sanitize ankr table at sanitize time
+
+    Third try to fix access. Followup
+    6879efc2c1596d11a6a6ad296f80063b558d5e0f
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=12532
+    Fixes https://bugs.chromium.org/p/chromium/issues/detail?id=922303
+
+ src/hb-aat-layout-ankr-table.hh | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+commit 6879efc2c1596d11a6a6ad296f80063b558d5e0f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 14:06:37 2019 -0500
+
+    [AAT] Fix anchor bound checking, again
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=12532
+    Fixes https://bugs.chromium.org/p/chromium/issues/detail?id=922303
+
+ src/hb-aat-layout-ankr-table.hh                           |   3 ++-
+ ...zz-testcase-minimized-harfbuzz_fuzzer-5166320261529600 | Bin 0 ->
+ 393 bytes
+ ...zz-testcase-minimized-hb-shape-fuzzer-5667182741028864 | Bin 0 ->
+ 407 bytes
+ 3 files changed, 2 insertions(+), 1 deletion(-)
+
+commit a262eb3d0b7009aabd9e0beebc77e5c0a2a65548
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 17 14:06:32 2019 -0500
+
+    [aat] Minor
+
+ src/hb-aat-layout-kerx-table.hh | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit c986ca15a6320d78471adf950394f391e8729b15
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 15 13:58:19 2019 -0500
+
+    Improve overflow avoidance
+
+    Better fix for 480406cd3ef9e5ab8476ddfa04498bf23906c508
+    This way we behave the same on 32bit and 64bit archs.
+
+ src/hb-machinery.hh | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+commit 0d2727f4fe734af146785df10a44e3505e410ba1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 14 18:23:17 2019 -0800
+
+    fix FDSelect fuzzing bug (#1539)
+
+    Rewrote struct FDSelect3_4.ranges as ArrayOf
+    Updated FDSelect3_4::sanitize () to call ranges.sanitize ()
+    nRanges now a function to return a reference to ranges.len
+
+ src/hb-ot-cff-common.hh     | 29 +++++++++++++++--------------
+ src/hb-subset-cff-common.cc |  2 +-
+ 2 files changed, 16 insertions(+), 15 deletions(-)
+
+commit 9f6172d669d53abbf3bf2a3546429cb5036e3d5f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 14 20:45:31 2019 -0500
+
+    Move _POSIX_SOURCE definition
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1308
+
+ src/hb-blob.cc | 9 +++++++++
+ src/hb.hh      | 4 ----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+commit 91d774712fa76dd26c441526712bddddca5b4bdd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 14 15:31:31 2019 -0500
+
+    [test] Add test for previous commit
+
+ ...uzz-testcase-minimized-harfbuzz_fuzzer-5662548265009152 | Bin 0 ->
+ 28 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 480406cd3ef9e5ab8476ddfa04498bf23906c508
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 14 15:27:34 2019 -0500
+
+    Fix assertion on address overflow
+
+    Fixes https://bugs.chromium.org/p/chromium/issues/detail?id=917031
+
+ src/hb-machinery.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 7a6686a589ed6bf17a5af0b8012501e4d4ee2ded
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 14 15:09:14 2019 -0500
+
+    [AAT] Fix mort ContextualSubtable offset access
+
+    Fixes https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=12312
+
+ src/hb-aat-layout-morx-table.hh                           |   3 ++-
+ ...zz-testcase-minimized-hb-shape-fuzzer-5631444412530688 | Bin 0 ->
+ 336 bytes
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit a3fa7d33360a58df5333dbbd121328e580f08849
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 14 14:37:36 2019 -0500
+
+    [AAT] Fix ankr table access
+
+    Fixes https://bugs.chromium.org/p/chromium/issues/detail?id=918340
+
+ src/hb-aat-layout-ankr-table.hh                          |   7 ++++---
+ ...z-testcase-minimized-harfbuzz_fuzzer-5126525414014976 | Bin 0 ->
+ 1141 bytes
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+commit 760303d411b1561533f8f08c7c15db331c71ece8
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Jan 11 15:27:35 2019 -0800
+
+    deleted a duplicate fontdicts_mod.fini() call (#1538)
+
+ src/hb-subset-cff1.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 5110f3da9a4711a35bfb780ea06cda677cc00209
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jan 9 16:01:11 2019 +0330
+
+    Add an initial .clang-format config
+
+    There are things can be improved on clang-format side I guess before
+    the full assertion, but is the best we can get for now I guess.
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1536
+
+ .clang-format | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+commit 099bca6d406af9c8e12a66b93fcc9a38ff7914f9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jan 9 15:56:32 2019 +0330
+
+    Minor, hack .editorconfig for vscode use
+
+    As VSCode and Atom https://github.com/Microsoft/vscode/issues/44438
+    don't support it
+
+ .editorconfig | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+commit 7b48641aa8551115d21c534940ac4fb364e5ab92
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Jan 8 12:37:48 2019 -0800
+
+    fix leak in subset_enc_supp_codes (#1537)
+
+    oss-fuzz issue 12310
+
+ src/hb-subset-cff1.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 97f67a3c3d499959d33e66aeed449e2957a14bc6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jan 4 23:10:39 2019 +0330
+
+    [ci] Enable more of GCC compile warnings (#1533)
+
+ .circleci/config.yml      | 16 ++++++++--------
+ src/hb-gobject-structs.cc |  4 ++--
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+commit ad954870383a880262edcd01acd8e171c4614a68
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Mon Dec 3 12:49:44 2018 -0600
+
+    Usermanual: small formatting and wording fixes.
+
+ docs/usermanual-getting-started.xml  |  3 +++
+ docs/usermanual-install-harfbuzz.xml | 30 ++++++++++++++----------------
+ docs/usermanual-what-is-harfbuzz.xml | 11 ++++++-----
+ 3 files changed, 23 insertions(+), 21 deletions(-)
+
+commit ed13caddf2de68312608e12c37d0e6287c1ac0a0
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Wed Nov 28 13:48:38 2018 -0600
+
+    Usermanual: small updates.
+
+ ...anual-buffers-language-script-and-direction.xml |   7 +-
+ docs/usermanual-clusters.xml                       | 279
+ ++++++++++++++++-----
+ docs/usermanual-getting-started.xml                |  91 ++++++-
+ docs/usermanual-install-harfbuzz.xml               |   3 +-
+ docs/usermanual-shaping-concepts.xml               |  11 +-
+ 5 files changed, 314 insertions(+), 77 deletions(-)
+
+commit 26c5b54fb09fb45e02c9c4618bcea4958c698953
+Author: cclauss <cclauss@me.com>
+Date:   Mon Dec 31 04:30:43 2018 +0100
+
+    CircleCI: Test for Python 3 syntax errors and undefined names (#1522)
+
+    Catch missing imports and errors like #1520 and #1521
+
+    __E901,E999,F821,F822,F823__ are the "_showstopper_"
+    [flake8](http://flake8.pycqa.org) issues that can halt the runtime
+    with a SyntaxError, NameError, etc. Most other flake8 issues are
+    merely "style violations" -- useful for readability but they do not
+    effect runtime safety.
+    * F821: undefined name `name`
+    * F822: undefined name `name` in `__all__`
+    * F823: local variable name referenced before assignment
+    * E901: SyntaxError or IndentationError
+    * E999: SyntaxError -- failed to compile a file into an Abstract
+    Syntax Tree
+
+ .circleci/config.yml             | 3 ++-
+ src/gen-use-table.py             | 4 +++-
+ test/subset/subset_test_suite.py | 2 +-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+
+commit 686e6f2e40da378e031b4c9871a471599c6d61cf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 30 11:27:42 2018 -0500
+
+    Fix automake warnings
+
+    [skip ci]
+
+ test/api/Makefile.am         | 1 -
+ test/subset/data/Makefile.am | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+commit b5c12b9f4d2c32a5013c340f7e40649cb5f2b41a
+Author: cclauss <cclauss@me.com>
+Date:   Sun Dec 30 13:07:28 2018 +0100
+
+    print() is a function in Python 3 (#1520)
+
+ test/subset/generate-expected-outputs.py | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit f4da28b1f153ccf293b367363a1a4d83c056e4e1
+Author: cclauss <cclauss@me.com>
+Date:   Sun Dec 30 12:58:34 2018 +0100
+
+    Python 3 fixes to gen-os2-unicode-ranges.py (#1521)
+
+    In Python 3, __reload()__ was moved and __sys.setdefaultencoding()__
+    because the default is already utf-8.  Also __Error()__ is an
+    _undefined name_ and __Exception()__ creates a generic exception.
+
+ src/gen-os2-unicode-ranges.py | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+commit e5989e0962309b27b2486d8fd20f3cbc05c3d79a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Dec 30 10:23:47 2018 +0330
+
+    [cmake] Enable C++11 on CMake (#1519)
+
+ CMakeLists.txt | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+commit d092fb27198f24423e51ce07375ebd6d486f64d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 30 01:53:03 2018 -0500
+
+    Ouch! Fix build on C++<11
+
+ src/hb.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 89949ed28db96edabeb09433fcc09f28168163d2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 30 01:52:19 2018 -0500
+
+    Fix ubsan with passing nullptr to qsort()
+
+ src/hb-array.hh | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+commit 357a0a7ad344caf898eb1697fcdb859d118b7a13
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 27 18:29:23 2018 -0500
+
+    Fix build on C++ < 11
+
+ src/hb.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 54c0a1731069a17ae4f3b79b419af75709f03f5b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 27 18:27:36 2018 -0500
+
+    [vector] Fix warning
+
+ src/hb-vector.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 1043ddbee878a14df0ad8d83fbaa893370ef5a75
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 27 18:27:11 2018 -0500
+
+    [aat] Minor
+
+ src/hb-aat-layout-morx-table.hh | 2 +-
+ src/hb-aat-map.hh               | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 71da9ca62fa87bd3e0fa9d40924bb4c220313a03
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 27 18:01:06 2018 -0500
+
+    [vector] Remove use of arrayZ() by using casts
+
+ src/hb-ot-name-table.hh | 2 +-
+ src/hb-ot-name.cc       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit fa333e34d6230210bc73a88b0ba6df2102dcda51
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 27 17:56:22 2018 -0500
+
+    [vector] Remove static_array
+
+    Was good idea, but with C++ types with constructor/destructor,
+    was getting in
+    the way as compiler was destructing those items where it was not
+    desired.
+    Since C++ does not allow zero-sized arrays, just remove it...
+
+ src/hb-aat-map.hh            |  4 ++--
+ src/hb-cff-interp-common.hh  |  2 +-
+ src/hb-face.cc               |  2 +-
+ src/hb-object.hh             |  2 +-
+ src/hb-ot-cff-common.hh      |  2 +-
+ src/hb-ot-layout-gsubgpos.hh |  2 +-
+ src/hb-ot-map.hh             | 10 +++++-----
+ src/hb-ot-post-table.hh      |  2 +-
+ src/hb-set.hh                |  4 ++--
+ src/hb-vector.hh             | 34 +++++++++++-----------------------
+ src/hb.hh                    |  3 +++
+ 11 files changed, 29 insertions(+), 38 deletions(-)
+
+commit ab2258a419abbace9ff27916143b46f88e8ccef3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 27 17:45:05 2018 -0500
+
+    [vector] Use allocated = -1 to signify failure
+
+ src/hb-vector.hh | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+commit 09fa536d89d969998fe6bbe274a9964c73d1d982
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Thu Dec 27 08:33:09 2018 -0800
+
+    fix lealk with cff2::accelerator_templ_t::topDict (#1517)
+
+ src/hb-ot-cff2-table.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 3b81442cd5c11099ae9245074d24ef679b4473fa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 24 11:31:04 2018 -0500
+
+    [vector] Change pre-alloced count from 8 to 2
+
+    I'm thinking about dropping it to zero, but that needs slight code
+    changes.
+
+ src/hb-vector.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d25a2f1496d13846ddaea123ac6fb9807dc5669a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 23 20:19:52 2018 -0500
+
+    Fix a few warnings
+
+ src/hb-aat-layout-common.hh | 12 ++++++------
+ src/hb-iter.hh              |  8 ++++----
+ src/hb-null.hh              |  2 +-
+ src/hb-ot-cff1-table.hh     |  2 +-
+ src/hb-ot-cff2-table.hh     |  2 +-
+ src/hb-subset-cff-common.hh |  3 ++-
+ src/hb.hh                   |  3 ++-
+ 7 files changed, 17 insertions(+), 15 deletions(-)
+
+commit 85003b594b3aa1f6638e274bc89f18999a5de9f5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 22 16:19:10 2018 -0500
+
+    [iter] Fix warning
+
+ src/hb-iter.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e4355b1ca177200db6769136ead1ee25da86ec85
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 22 16:11:22 2018 -0500
+
+    [set] Add iter_t as alias to const_iter_t
+
+ src/hb-set.hh    | 6 ++++--
+ src/test-iter.cc | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+commit 33f8de61863efa538c488121c476fd0e907020d0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 22 15:10:18 2018 -0500
+
+    [set] Change to const_iter
+
+ src/hb-set.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit f88fed5cd8787e3deeec05dac4353337dc02abdd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Dec 22 11:11:10 2018 -0500
+
+    [set] Cache length in iterator
+
+ src/hb-set.hh | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+commit d0a706c7fdb72a1d224b4a5bdbad0fb8c90e3186
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Dec 22 19:47:48 2018 +0330
+
+    Minor, remove redundant inline
+
+ src/hb-ot-layout.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit ae6e348d642194585543f0d548fb94d210575fe4
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Dec 22 19:47:29 2018 +0330
+
+    Minor, tweak spaces
+
+ src/hb-ot-glyf-table.hh     |  8 ++++----
+ src/hb-subset-cff-common.hh | 15 ++++++---------
+ 2 files changed, 10 insertions(+), 13 deletions(-)
+
+commit 29f0b6bce7da4c599f54066f7e7f6000f10d2f29
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Sat Dec 22 07:47:04 2018 -0800
+
+    CFF renaming (#1507)
+
+    * reimplement ByteStr as byte_str_t based on hb_ubytes_t
+
+    Unuse start_embed<ByteStr>
+    Also renamed SubByteStr to byte_str_ref_t
+    More renaming to come
+
+    * substr renamed to str_ref in line with its type byte_str_ref_t
+
+    * uncamelize non-table struct names
+
+    * uncamelized non-struct types OpCode etc
+
+    * add byte_str_t copy ctor
+
+    * test
+
+    * test2
+
+    * undo tests
+
+    * fix bot failure
+
+    * undo the previous change
+
+    * fixed tabs, added inline
+
+    * Revert "fixed tabs, added inline"
+
+    This reverts commit 21163c30e9d18759414f7fe2518628241599f039.
+
+    * fix tabs
+
+ src/hb-cff-interp-common.hh      | 215 +++++++++++++++------------------
+ src/hb-cff-interp-cs-common.hh   | 250
+ +++++++++++++++++++--------------------
+ src/hb-cff-interp-dict-common.hh |  64 +++++-----
+ src/hb-cff1-interp-cs.hh         |  26 ++--
+ src/hb-cff2-interp-cs.hh         |  56 ++++-----
+ src/hb-ot-cff-common.hh          |  59 ++++-----
+ src/hb-ot-cff1-table.cc          |  56 ++++-----
+ src/hb-ot-cff1-table.hh          | 147 ++++++++++++-----------
+ src/hb-ot-cff2-table.cc          |  28 ++---
+ src/hb-ot-cff2-table.hh          | 128 ++++++++++----------
+ src/hb-subset-cff-common.cc      |  10 +-
+ src/hb-subset-cff-common.hh      | 232
+ ++++++++++++++++++------------------
+ src/hb-subset-cff1.cc            | 244
+ +++++++++++++++++++-------------------
+ src/hb-subset-cff2.cc            | 100 ++++++++--------
+ 14 files changed, 796 insertions(+), 819 deletions(-)
+
+commit 89d04129e2f4dedb865635dcb8f0fd020e4218c2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 20:07:52 2018 -0500
+
+    [set] Actually derive iterator from hb_sorted_iter_t<>
+
+ src/hb-set.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fc35919d015c5b8d231933d6bc6ea640c83af6b2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 20:06:17 2018 -0500
+
+    [set] Implement unified iterator
+
+ src/hb-set.hh | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+commit 4911e67d2d2188ee9bdc0315e121e51d9967b567
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 20:00:52 2018 -0500
+
+    [set] Mark some internals protected
+
+ src/hb-set.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 954b985422a8964f6e7da9f71ab7a68074017111
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 19:55:02 2018 -0500
+
+    [iter] Add hb_sorted_iter_t<>
+
+ src/hb-array.hh |  2 +-
+ src/hb-iter.hh  | 11 +++++++++++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+commit b205105c9e1c6295b17cfd88ffb8ca7d963ef173
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 19:48:21 2018 -0500
+
+    [iter] Change operator[] operand to be signed
+
+    To fix older compilers again (this was the case in hb_array_t).
+
+    hb-ot-layout-common.hh:1353: note: candidate 2: operator[](T*,
+    int) <built-in>
+    hb-ot-layout-common.hh:1354: error: ISO C++ says that these are
+    ambiguous, even though the worst conversion for the first is better
+    than the worst conversion for the second:
+    hb-iter.hh:63: note: candidate 1: Item& hb_iter_t<Iter,
+    Item>::operator[](unsigned int) const [with Iter = hb_array_t<const
+    OT::IntType<short unsigned int, 2u> >, Item = const OT::IntType<short
+    unsigned int, 2u>]
+    hb-ot-layout-common.hh:1354: note: candidate 2: operator[](T*,
+    int) <built-in>
+    hb-ot-layout-common.hh: In member function 'bool
+    OT::ClassDef::serialize(hb_serialize_context_t*, hb_array_t<const
+    OT::IntType<short unsigned int, 2u> >, hb_array_t<const
+    OT::IntType<short unsigned int, 2u> >)':
+    hb-ot-layout-common.hh:1490: error: ISO C++ says that these are
+    ambiguous, even though the worst conversion for the first is better
+    than the worst conversion for the second:
+    hb-iter.hh:63: note: candidate 1: Item& hb_iter_t<Iter,
+    Item>::operator[](unsigned int) const [with Iter = hb_array_t<const
+    OT::IntType<short unsigned int, 2u> >, Item = const OT::IntType<short
+    unsigned int, 2u>]
+    hb-ot-layout-common.hh:1490: note: candidate 2: operator[](T*,
+    int) <built-in>
+
+ src/hb-iter.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 25786f49c1df36fdb5f78681055a1f4aa4b17f86
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 19:29:00 2018 -0500
+
+    [array] Port to hb_iter_t<>
+
+    hb_array_t is its own iterator...
+
+ src/hb-array.hh | 75
+ +++++++++++++++++++++++++--------------------------------
+ src/hb-iter.hh  |  5 ++--
+ 2 files changed, 36 insertions(+), 44 deletions(-)
+
+commit 2a33ab0560a13cb8fef5983bfe0f6d68dfd47b14
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 18:49:27 2018 -0500
+
+    [iter] Change __more__ to fallback to __len__
+
+ src/hb-iter.hh   | 15 ++++++---------
+ src/test-iter.cc |  1 -
+ 2 files changed, 6 insertions(+), 10 deletions(-)
+
+commit 474a12058d681f2d7cef84db0cf20f9f784fa400
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 18:46:51 2018 -0500
+
+    [array/vector] Rename len to length
+
+ src/hb-aat-layout-feat-table.hh |  5 ++-
+ src/hb-aat-layout-lcar-table.hh |  2 +-
+ src/hb-aat-map.cc               |  4 +--
+ src/hb-array.hh                 | 72
+ ++++++++++++++++++++---------------------
+ src/hb-cff-interp-common.hh     | 10 +++---
+ src/hb-cff2-interp-cs.hh        |  6 ++--
+ src/hb-coretext.cc              | 12 +++----
+ src/hb-face.cc                  |  4 +--
+ src/hb-object.hh                | 23 +++++++------
+ src/hb-open-file.hh             |  4 +--
+ src/hb-open-type.hh             |  8 ++---
+ src/hb-ot-cff-common.hh         | 38 +++++++++++-----------
+ src/hb-ot-cff1-table.hh         | 28 ++++++++--------
+ src/hb-ot-cmap-table.hh         | 24 +++++++-------
+ src/hb-ot-color-colr-table.hh   |  6 ++--
+ src/hb-ot-hdmx-table.hh         |  6 ++--
+ src/hb-ot-hmtx-table.hh         |  8 ++---
+ src/hb-ot-layout-common.hh      | 32 +++++++++---------
+ src/hb-ot-layout-gdef-table.hh  |  4 +--
+ src/hb-ot-layout-gsub-table.hh  | 24 +++++++-------
+ src/hb-ot-layout-gsubgpos.hh    |  2 +-
+ src/hb-ot-layout.cc             |  2 +-
+ src/hb-ot-map.cc                | 22 ++++++-------
+ src/hb-ot-map.hh                |  4 +--
+ src/hb-ot-math-table.hh         |  4 +--
+ src/hb-ot-maxp-table.hh         |  2 +-
+ src/hb-ot-name-table.hh         |  8 ++---
+ src/hb-ot-name.cc               |  4 +--
+ src/hb-ot-post-table.hh         |  8 ++---
+ src/hb-ot-var-fvar-table.hh     |  2 +-
+ src/hb-ot-vorg-table.hh         | 10 +++---
+ src/hb-set.hh                   | 36 ++++++++++-----------
+ src/hb-subset-cff-common.cc     |  8 ++---
+ src/hb-subset-cff-common.hh     | 50 ++++++++++++++--------------
+ src/hb-subset-cff1.cc           | 48 +++++++++++++--------------
+ src/hb-subset-cff2.cc           | 16 ++++-----
+ src/hb-subset-glyf.cc           | 14 ++++----
+ src/hb-subset-plan.cc           |  2 +-
+ src/hb-uniscribe.cc             | 26 +++++++--------
+ src/hb-vector.hh                | 56 ++++++++++++++++----------------
+ src/test-iter.cc                |  4 +--
+ 41 files changed, 325 insertions(+), 323 deletions(-)
+
+commit 2fc1860a5b40f5deba720c0c1099fdd0450b77c0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 18:09:45 2018 -0500
+
+    [iter] Split hb_iter_t<> into hb_iter_t<> and hb_iter_mixin_t<>
+
+ src/hb-iter.hh   | 31 ++++++++++++++++++++-----------
+ src/test-iter.cc |  2 +-
+ 2 files changed, 21 insertions(+), 12 deletions(-)
+
+commit 865deeb3be1cb40efe3d7c42db48b0cdf977de47
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 17:35:58 2018 -0500
+
+    Adjust internal header dependencies
+
+ src/hb-array.hh            |  5 ++++-
+ src/hb-dsalgs.hh           |  1 -
+ src/hb-iter.hh             |  1 +
+ src/hb-vector.hh           |  1 +
+ src/hb.hh                  | 15 +++++++++------
+ src/test-iter.cc           |  1 +
+ src/test-unicode-ranges.cc |  1 +
+ 7 files changed, 17 insertions(+), 8 deletions(-)
+
+commit 8e5c2bc60bd9a800dacc96cc29c6ff831a852ae3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 17:29:11 2018 -0500
+
+    [Makefile.am] Minor
+
+ src/Makefile.am | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+commit f419cef4174c5447bf5031e771483f3274ae4dce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 17:22:09 2018 -0500
+
+    [iter] Include from hb.hh
+
+ src/hb.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 7557e34872c846433c2465b21b99bf7c5f961673
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 17:21:19 2018 -0500
+
+    [iter] Move hb_fill() and hb_copy() to hb-iter.hh
+
+ src/hb-iter.hh   | 18 ++++++++++++++++++
+ src/test-iter.cc | 16 ----------------
+ 2 files changed, 18 insertions(+), 16 deletions(-)
+
+commit 5e1840e031cff1127842fc5cc8ee93e5959f02d5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 16:39:57 2018 -0500
+
+    [iter] Disallow copy-construction or assignment of hb_iter_t<>
+
+    Should only be done by subclass.
+
+ src/hb-iter.hh | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit 65e8bd56ad26912636fbdc400a83cc48db2a13ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 16:20:30 2018 -0500
+
+    [iter] Fix hb_copy() return value
+
+ src/test-iter.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 40d71211a8969ec4414d2476a209e60d0a3525d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 16:19:44 2018 -0500
+
+    [iter] Add const_iter_t / const_iter()
+
+ src/hb-iter.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit aaddfaa57a841726a8b49653af3f8b702831da1b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 16:04:38 2018 -0500
+
+    [iter] Make hb_fill() take collection type, not iter
+
+    Starting to get the hang of when take which.
+
+ src/test-iter.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 7b4eea853c36fd59db6e5d68bbef9b8cebad760e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 16:02:16 2018 -0500
+
+    [array] Add more hb_array() / hb_sorted_array() variants
+
+ src/hb-array.hh | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+commit 09740148e310021a4a690666c2e2836c2005353d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 15:56:01 2018 -0500
+
+    [serialize] Use component_list by reference, as a supplier
+
+ src/hb-ot-layout-gsub-table.hh | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 3dbe1e364c19d82ab436b9ea7b41c9754d43e923
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 15:53:09 2018 -0500
+
+    [iter] Add .random_access()
+
+ src/hb-iter.hh   | 4 ++++
+ src/test-iter.cc | 1 +
+ 2 files changed, 5 insertions(+)
+
+commit 20f14b4aa6311d8fb2ed80c47bb15e8d87d2f6b3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 15:19:22 2018 -0500
+
+    [iter] Fix __end__()
+
+ src/hb-iter.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 95265aeab7da54f31d4f68590af7730054b6be16
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 15:12:55 2018 -0500
+
+    [array] Remove copy constructor
+
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1502
+
+ src/hb-array.hh | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 69d232eaea323b8c42e5fa1788553ac4e8bf3a50
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 15:08:06 2018 -0500
+
+    Fix bot
+
+      C:\projects\harfbuzz\src\hb-uniscribe.cc(709): error C2666:
+      'hb_vector_t<OPENTYPE_FEATURE_RECORD,8>::operator
+      +': 3 overloads have similar conversions
+      [C:\projects\harfbuzz\build\harfbuzz.vcxproj]
+
+ src/hb-uniscribe.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b9a51f531009ce201b86a0326aff662fd19a68a1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 15:05:00 2018 -0500
+
+    Minor
+
+ src/hb-ot-layout-gpos-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit bdb6da72267c8fa4802a2183ba69a1535653378b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 11:20:27 2018 -0500
+
+    [iter] Fix test again
+
+ src/test-iter.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit e9520752489298e0ce1a08da10ec3d439f9356d9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 11:15:16 2018 -0500
+
+    Minor
+
+ src/Makefile.am  | 6 +++---
+ src/test-iter.cc | 1 -
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+commit 35503d7d7324293162b605ffe0bd712656dd52b8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 03:03:46 2018 -0500
+
+    [iter] More prototyping
+
+ src/test-iter.cc | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+commit 73c7a896d1395539e3c9e71b073ce5094c835aa0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 02:48:28 2018 -0500
+
+    [iter] Make hb_fill() and hb_copy() take iterators
+
+    I'm still going back and force...
+
+ src/test-iter.cc | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+commit 12e506fda4bfd82d67e4beede29ae7dbc02ad8f4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 02:47:04 2018 -0500
+
+    [iter] Add hb_fill()
+
+ src/test-iter.cc | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+commit ad3ed58de5297930826c67d18b99991b93d29654
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 02:12:55 2018 -0500
+
+    [iter] Start prototyping hb_copy()
+
+ src/test-iter.cc | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+commit 44af738d19486095c0fbc2ef2b359a298126ac2b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 01:59:37 2018 -0500
+
+    [iter] Showcase implicit casts
+
+ src/test-iter.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 879faa2aee74e237594901426096ceeb78a716a4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 01:57:40 2018 -0500
+
+    Rename
+
+ src/hb-array.hh     | 2 +-
+ src/hb-open-type.hh | 4 ++--
+ src/hb-vector.hh    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit aeb696a91cd1cdc73bf5b87e56163c7f64778616
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 01:57:02 2018 -0500
+
+    [iter] Rename
+
+ src/hb-iter.hh | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+commit 8001e00a470ad06f0307002b4cade5612ee7b521
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 01:53:27 2018 -0500
+
+    [iter] First sample use
+
+ src/Makefile.am  |  5 ++++-
+ src/hb-iter.hh   | 25 +++++++++++--------------
+ src/test-iter.cc | 25 ++++++++++++++++++++-----
+ 3 files changed, 35 insertions(+), 20 deletions(-)
+
+commit 19d2b5013d8ac7aa45b3b8e8c61ad90773c86925
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 01:17:35 2018 -0500
+
+    [iter] Add bidirectionality
+
+ src/hb-iter.hh | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+commit 314d8698d0746416efd332f5fae45aecb26df7ee
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 00:54:55 2018 -0500
+
+    [iter] Sketch new iterator design
+
+ src/hb-iter.hh   | 154
+ +++++++++++++++++++------------------------------------
+ src/test-iter.cc |  16 ++++++
+ 2 files changed, 69 insertions(+), 101 deletions(-)
+
+commit f6d5f1e91ced2b6b1114ad765f568f799dd3612f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 00:23:34 2018 -0500
+
+    [iter] Add empty test
+
+ src/Makefile.am            |  7 +++++--
+ src/hb-machinery.hh        |  1 -
+ src/test-iter.cc           | 33 +++++++++++++++++++++++++++++++++
+ src/test-unicode-ranges.cc |  2 --
+ 4 files changed, 38 insertions(+), 5 deletions(-)
+
+commit b80b97b549dacc10d314bf8b5fd4ace596ccdfe1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 21 00:08:05 2018 -0500
+
+    Revert "Remove unused hb-iter.hh"
+
+    This reverts commit 969ff3c7aadbe721cdd414488eb170433f10d00c.
+
+ src/Makefile.sources |   1 +
+ src/hb-iter.hh       | 146
+ +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-machinery.hh  |   1 +
+ 3 files changed, 148 insertions(+)
+
+commit a728c63a98281fd4a0661e17fc01171bc3205b27
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 20 23:15:49 2018 -0500
+
+    [vector] Add operator bool
+
+ src/hb-vector.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit bd369773921b4891996bd21f325702e490f47ca4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 20 23:14:24 2018 -0500
+
+    Rename
+
+ src/hb-array.hh     | 2 +-
+ src/hb-open-type.hh | 4 ++--
+ src/hb-vector.hh    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit e6ebc9b6f89e62d888b3bcf926afd624f16f3e95
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 20 23:13:36 2018 -0500
+
+    Remove unused typedef
+
+ src/hb-machinery.hh | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit 4941e95f10fe0fe658752134a42b58896fb19c42
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Dec 20 21:48:57 2018 -0500
+
+    2.3.0
+
+ NEWS                 | 15 +++++++++++++++
+ configure.ac         |  2 +-
+ src/hb-aat-layout.cc |  6 +++---
+ src/hb-version.h     |  4 ++--
+ 4 files changed, 21 insertions(+), 6 deletions(-)
+
 commit 87f7c83fffb7e64970be23c8e3c620d32a3b8f5b
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Dec 20 15:54:17 2018 -0500

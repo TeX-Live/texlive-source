@@ -50,6 +50,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-face.cc \
 	@HARFBUZZ_TREE@/src/hb-font.hh \
 	@HARFBUZZ_TREE@/src/hb-font.cc \
+	@HARFBUZZ_TREE@/src/hb-iter.hh \
 	@HARFBUZZ_TREE@/src/hb-kern.hh \
 	@HARFBUZZ_TREE@/src/hb-map.hh \
 	@HARFBUZZ_TREE@/src/hb-map.cc \
