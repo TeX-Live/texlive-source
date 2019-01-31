@@ -1,3 +1,11 @@
+2019-01-31  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (man_MANS): install dvisvgm.1.
+
+2019-01-25  Karl Berry  <karl@freefriends.org>
+
+	* version.ac: 2.6.2; import new tree, update patches.
+	
 2018-10-29  Karl Berry  <karl@freefriends.org>
 
 	* version.ac: now 2.6.1. Import new upstream source tree.

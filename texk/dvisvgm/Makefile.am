@@ -18,6 +18,10 @@ EXTRA_DIST = $(DVISVGM_TREE)
 ## Patches applied to the original source tree
 EXTRA_DIST += TLpatches
 
+# We want to install the man page, but the upstream doc/Makefile.am
+# does lots of other stuff.
+man_MANS = $(dvisvgm_srcdir)/doc/dvisvgm.1
+
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
 NEVER_NAMES += $(NEVER_NAMES_SUB)
@@ -33,5 +37,5 @@ DISTCLEANFILES = config.force CXXLD.sh
 ## Tests (our trivial one, not the original full test suite).
 ##
 TESTS = tests/dvisvgm.test
-tests/dvisvgm.log: dvisvgm-src/src/dvisvgm$(EXEEXT)
+tests/dvisvgm.log: $(DVISVGM_TREE)/src/dvisvgm$(EXEEXT)
 EXTRA_DIST += $(TESTS)
