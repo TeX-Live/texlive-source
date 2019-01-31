@@ -10,7 +10,7 @@
 .sp
 .fi
 ..
-.TH "DVIPDFMX" "1" "7 March 2016"
+.TH "DVIPDFMX" "1" "24 December 2018"
 .SH NAME
 dvipdfmx, xdvipdfmx, dvipdfm \- produce PDF files directly from DVI files
 .SH SYNOPSIS
@@ -38,7 +38,7 @@ possible.
 
 In addition,
 .B xdvipdfmx
-is yet another incarnation.  It is used as the back end for
+is another incarnation.  It is used as the back end for
 .BR xetex (1)
 and is not intended to be invoked directly.
 
@@ -56,25 +56,41 @@ to mimic the behavior of
 where possible, so that many macro packages produced for use with
 .B dvips
 will also work with 
-.B dvipdfmx.
+.BR dvipdfmx .
 In addition,
-.B Dvipdfmx 
+.B dvipdfmx 
 understands its own specific
 .B \especial
 commands to allow access to PDF features such as annotations and
 bookmarks.
+
+As of December 2018, one such special specific to
+.B dvipdfmx
+is
+.IR pdf:trailerid ,
+which specifies the /ID in the PDF trailer.
+It is used like this (from the TeX level):
+.br
+\especial{pdf:trailerid [ (0123456789abcdef) (01234567890abcdef) ]}
+.br
+That is, the special takes an array (the square brackets) of two 16-byte
+PDF strings (the parentheses). This is the same syntax as LuaTeX's
+.IR "\epdfvariable trailerid" ,
+while different from pdfTeX's
+.IR \epdftrailerid .
+It must appear on the first output page, otherwise it is ignored.
 
 Unrecognized specials will generate warning messages. Packages that may need a 
 .B dvipdfm 
 or
 .B dvipdfmx 
 driver option include 
-.I geometry,
-.I hyperref,
-.I bookmark,
-.I graphicx,
+.IR geometry ,
+.IR hyperref ,
+.IR bookmark ,
+.IR graphicx ,
 and
-.I xcolor.
+.IR xcolor .
 
 For issues related to bounding boxes (and hence image sizes), see
 .BR extractbb (1).
@@ -321,16 +337,17 @@ The location of this file may be found by typing
 .B kpsewhich texmf.cnf
 .fi
 .SH "SEE ALSO"
-.BR dvipdft "(1), "
-.BR extractbb "(1), "
-.BR tex "(1), " dvips "(1), " groff "(1), " grodvi "(1), " pic "(1), "
-and the
-.I "Kpathsea library"
-Info documentation (http://tug.org/kpathsea).
+dvipdft(1), extractbb(1),
+.br
+tex(1), luatex(1), xetex(1), dvips(1),
+.br
+groff(1), grodvi(1), pic(1),
+the Kpathsea library Info documentation (http://tug.org/kpathsea),
+and the Dvipdfmx User's Manual (in the distribution).
 .SH AUTHOR
 Primarily Mark A. Wicks; dvipdfmx extensions primarily by Jin-Hwan Cho,
 Shunsaku Hirata, and Matthias Franz.  For the version in TeX Live, all
 bugs and other reports should go to the
 .B dvipdfmx
 maintainers at tex-k (at) tug.org.  This man page edited for TeX Live
-by Bob Tennent and others.
+by Bob Tennent and others.  This man page is public domain.
