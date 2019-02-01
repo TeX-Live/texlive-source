@@ -5,7 +5,7 @@ See https://gcc.gnu.org/ml/gcc/2006-06/msg00691.html,
 https://gcc.gnu.org/onlinedocs/gcc/Decimal-Float.html,
 and TR 24732 <http://www.open-std.org/jtc1/sc22/wg14/www/projects#24732>.
 
-Copyright 2006-2018 Free Software Foundation, Inc.
+Copyright 2006-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -22,7 +22,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #define MPFR_NEED_LONGLONG_H
@@ -425,7 +425,7 @@ mpfr_set_decimal64 (mpfr_ptr r, _Decimal64 d, mpfr_rnd_t rnd_mode)
                       1 character for terminating \0. */
 
   decimal64_to_string (s, d);
-  return mpfr_set_str (r, s, 10, rnd_mode);
+  return mpfr_strtofr (r, s, NULL, 10, rnd_mode);
 }
 
 #endif /* MPFR_WANT_DECIMAL_FLOATS */

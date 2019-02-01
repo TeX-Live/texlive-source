@@ -4,7 +4,7 @@ dnl WARNING! C code starting with # (preprocessor directives) must not
 dnl be indented!
 
 AC_COPYRIGHT([
-Copyright 1999-2018 Free Software Foundation, Inc.
+Copyright 1999-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -21,12 +21,12 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 ])
 
 dnl Add check-news when it checks for more than 15 lines
-AC_INIT([MPFR],[4.0.1])
+AC_INIT([MPFR],[4.0.2])
 
 dnl Older Automake versions than 1.13 may still be supported, but no longer
 dnl tested, and many things have changed in 1.13. Moreover the INSTALL file
@@ -167,8 +167,8 @@ AC_ARG_ENABLE(shared-cache,
                           for all MPFR constants.  It usually makes MPFR
                           dependent on PTHREAD [[default=no]]],
    [ case $enableval in
-      yes) mpfr_want_shared_cache=yes
-         AC_DEFINE([WANT_SHARED_CACHE],1,[Want shared cache]) ;;
+      yes)
+         AC_DEFINE([MPFR_WANT_SHARED_CACHE],1,[Want shared cache]) ;;
       no)  ;;
       *) AC_MSG_ERROR([bad value for --enable-shared-cache: yes or no]) ;;
      esac])
@@ -203,6 +203,30 @@ AC_ARG_ENABLE(tune-for-coverage,
       yes)  AC_DEFINE([MPFR_TUNE_COVERAGE], 1, [tune for coverage]) ;;
       *)    AC_MSG_ERROR([bad value for --enable-tune-for-coverage]) ;;
      esac])
+
+dnl First, detect incompatibilities between the above configure options.
+AC_MSG_CHECKING([whether configure options are compatible])
+if test "$enable_logging" = yes; then
+  if test "$enable_thread_safe" = yes; then
+    AC_MSG_RESULT([no])
+    AC_MSG_ERROR([enable either logging or thread-safe, not both])
+  fi
+dnl The following test is done only to output a specific error message,
+dnl as there would otherwise be an error due to enable_thread_safe=no.
+  if test "$enable_shared_cache" = yes; then
+    AC_MSG_RESULT([no])
+    AC_MSG_ERROR([shared cache does not work with logging support])
+  fi
+  enable_thread_safe=no
+fi
+if test "$enable_shared_cache" = yes; then
+  if test "$enable_thread_safe" = no; then
+    AC_MSG_RESULT([no])
+    AC_MSG_ERROR([shared cache needs thread-safe support])
+  fi
+  enable_thread_safe=yes
+fi
+AC_MSG_RESULT([yes])
 
 
 dnl
@@ -246,11 +270,9 @@ if test -z "$GMP_CC$GMP_CFLAGS" ; then
      # Get CFLAGS
      echo "#include \"gmp.h\"" >  conftest.c
      echo "MPFR_OPTION __GMP_CFLAGS" >> conftest.c
-     unset rmpedantic
-     [test "$enable_logging" = yes && rmpedantic='s/[ "]-pedantic[ "]/ /g;']
      $cpp $CPPFLAGS conftest.c 2> /dev/null > conftest.txt
      test $? -ne 0 && continue
-     GMP_CFLAGS=`$EGREP MPFR_OPTION conftest.txt | $SED -e "$rmpedantic"'s/MPFR_OPTION //g;s/ *" *//g'`
+     [GMP_CFLAGS=`$EGREP MPFR_OPTION conftest.txt | $SED -e 's/[ "]-pedantic[ "]/ /g;s/MPFR_OPTION //g;s/ *" *//g'`]
      break
    done
    rm -f conftest*
@@ -435,8 +457,13 @@ error
  CFLAGS="-fp_port -mieee-fp -wd1572 -wd265 -wd186 -wd239 $CFLAGS"
 ],[AC_MSG_RESULT(no)])
 
-dnl If compiler is gcc, then use some specific flags.
-dnl But don't touch user other flags.
+dnl If CFLAGS has not been set explicitly and the compiler is GCC, then
+dnl use some specific flags. But don't touch user other flags.
+dnl Note: This is done even when CFLAGS has been set from GMP's CFLAGS
+dnl (__GMP_CFLAGS macro in gmp.h) above. The consequence is that this
+dnl might yield a compilation failure if the -Werror option appears in
+dnl __GMP_CFLAGS. But in this case, since -Werror is not used by default,
+dnl one may expect that the user would also set CFLAGS for MPFR.
 if test "$test_CFLAGS" != set && test -n "$GCC"; then
   CFLAGS="-Wpointer-arith $CFLAGS"
   AC_MSG_CHECKING(whether the selected language is C++)
@@ -447,7 +474,7 @@ error
 #endif
   ]], [[]])],[
     AC_MSG_RESULT(no)
-    CFLAGS="-Wmissing-prototypes $CFLAGS"
+    CFLAGS="-Wmissing-prototypes -Wc++-compat $CFLAGS"
   ],[
     AC_MSG_RESULT(yes)
     CFLAGS="-Wmissing-declarations -Wno-sign-compare $CFLAGS"
@@ -708,7 +735,8 @@ if test -z "$enable_mini_gmp" ; then
    [AC_MSG_RESULT(yes)
     MPFR_CHECK_GMP
     MPFR_CHECK_DBL2INT_BUG
-    MPFR_CHECK_PRINTF_SPEC],
+    MPFR_CHECK_PRINTF_SPEC
+    MPFR_CHECK_PRINTF_GROUPFLAG],
    [AC_MSG_RESULT(no)
     AC_MSG_WARN([==========================================================])
     AC_MSG_WARN(['gmp.h' and 'libgmp' seem to have different versions or])

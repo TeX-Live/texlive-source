@@ -1,6 +1,6 @@
 /* Utilities for MPFR developers, not exported.
 
-Copyright 1999-2018 Free Software Foundation, Inc.
+Copyright 1999-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #ifndef __MPFR_IMPL_H__
@@ -83,7 +83,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 /* For the definition of MPFR_THREAD_ATTR. GCC/ICC detection macros are
    no longer used, as they sometimes gave incorrect information about
    the support of thread-local variables. A configure check is now done. */
-#if defined (WANT_SHARED_CACHE)
+#if defined(MPFR_WANT_SHARED_CACHE)
 # define MPFR_NEED_THREAD_LOCK 1
 #endif
 #include "mpfr-thread.h"
@@ -207,12 +207,16 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 extern "C" {
 #endif
 
-#if defined(WANT_SHARED_CACHE)
+#if defined(MPFR_WANT_SHARED_CACHE)
 # define MPFR_CACHE_ATTR
 #else
 # define MPFR_CACHE_ATTR MPFR_THREAD_ATTR
 #endif
 
+/* Note: The following structure and types depend on the MPFR build options
+   (including compiler options), due to the various locking methods affecting
+   MPFR_DEFERRED_INIT_SLAVE_DECL and MPFR_LOCK_DECL. But since this is only
+   internal, that's OK. */
 struct __gmpfr_cache_s {
   mpfr_t x;
   int inexact;
@@ -766,7 +770,7 @@ __MPFR_DECLSPEC long double
 # endif
 #endif
 
-/* Some special case for IEEE_EXT Litle Endian */
+/* Some special case for IEEE_EXT Little Endian */
 #if HAVE_LDOUBLE_IEEE_EXT_LITTLE
 
 typedef union {
@@ -864,6 +868,12 @@ union ieee_double_decimal64 { double d; _Decimal64 d64; };
    nonnegative. */
 #define MPFR_UEXP(X) (MPFR_ASSERTD ((X) >= 0), (mpfr_uexp_t) (X))
 
+/* Define mpfr_eexp_t, mpfr_ueexp_t and MPFR_EXP_FSPEC.
+   Warning! MPFR_EXP_FSPEC is the length modifier associated with
+   these types mpfr_eexp_t / mpfr_ueexp_t, not with mpfr_exp_t.
+   (Should we change that, or is this safer to detect bugs, e.g.
+   in the context of an expression with computations with long?)
+*/
 #if _MPFR_EXP_FORMAT <= 3
 typedef long mpfr_eexp_t;
 typedef unsigned long mpfr_ueexp_t;
@@ -1415,15 +1425,15 @@ do {                                                                  \
 #define mpfr_get_d1(x) mpfr_get_d(x,__gmpfr_default_rounding_mode)
 
 /* Store in r the size in bits of the mpz_t z */
-#define MPFR_MPZ_SIZEINBASE2(r, z)              \
-  do {                                          \
-   int _cnt;                                    \
-   mp_size_t _size;                             \
-   MPFR_ASSERTD (mpz_sgn (z) != 0);             \
-   _size = ABSIZ(z);                            \
-   MPFR_ASSERTD (_size >= 1);                   \
-   count_leading_zeros (_cnt, PTR(z)[_size-1]); \
-   (r) = _size * GMP_NUMB_BITS - _cnt;          \
+#define MPFR_MPZ_SIZEINBASE2(r, z)                      \
+  do {                                                  \
+    int _cnt;                                           \
+    mp_size_t _size;                                    \
+    MPFR_ASSERTD (mpz_sgn (z) != 0);                    \
+    _size = ABSIZ(z);                                   \
+    MPFR_ASSERTD (_size >= 1);                          \
+    count_leading_zeros (_cnt, PTR(z)[_size-1]);        \
+    (r) = (mp_bitcnt_t) _size * GMP_NUMB_BITS - _cnt;   \
   } while (0)
 
 /* MPFR_LCONV_DPTS can also be forced to 0 or 1 by the user. */

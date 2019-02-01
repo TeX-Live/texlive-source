@@ -1,6 +1,6 @@
 /* __gmpfr_invert_limb -- implement GMP's invert_limb (which is not in GMP API)
 
-Copyright 2016-2018 Free Software Foundation, Inc.
+Copyright 2016-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #define MPFR_NEED_LONGLONG_H
@@ -123,7 +123,7 @@ static const mp_limb_t invert_limb_table2[256] =
       _e = - _v2 * _d63 + ((_v2 & -_d0) >> 1);                          \
       umul_hi (_h, _v2, _e);                                            \
       _v3 = (_v2 << 31) + (_h >> 1);                                    \
-      umul_ppmm (_h, _l, _v3, d);                                       \
+      umul_ppmm (_h, _l, _v3, _d);                                      \
       /* v3 is too small iff (h+d)*2^64+l+d < 2^128 */                  \
       add_ssaaaa(_h, _l, _h, _l, _d, _d);                               \
       MPFR_ASSERTD(_h == MPFR_LIMB_ZERO || -_h == MPFR_LIMB_ONE);       \
@@ -223,7 +223,7 @@ static const mp_limb_t invert_limb_table[512] =
       _e = - _v1 * _d31 + ((_v1 & - _d0) >> 1);                         \
       umul_ppmm (_h, _l, _v1, _e);                                      \
       _v2 = (_v1 << 15) + (_h >> 1);                                    \
-      umul_ppmm (_h, _l, _v2, d);                                       \
+      umul_ppmm (_h, _l, _v2, _d);                                      \
       /* v2 is too small iff (h+d)*2^32+l+d < 2^64 */                   \
       add_ssaaaa(_h, _l, _h, _l, _d, _d);                               \
       MPFR_ASSERTD(_h == MPFR_LIMB_ZERO || -_h == MPFR_LIMB_ONE);       \

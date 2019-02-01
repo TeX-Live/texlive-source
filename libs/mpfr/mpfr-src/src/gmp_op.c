@@ -1,6 +1,6 @@
 /* Implementations of operations between mpfr and mpz/mpq data
 
-Copyright 2001, 2003-2018 Free Software Foundation, Inc.
+Copyright 2001, 2003-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #define MPFR_NEED_LONGLONG_H
@@ -452,11 +452,15 @@ mpfr_cmp_q (mpfr_srcptr x, mpq_srcptr q)
   mpfr_prec_t p;
   MPFR_SAVE_EXPO_DECL (expo);
 
-  if (MPFR_UNLIKELY (mpq_denref (q) == 0))
+  if (MPFR_UNLIKELY (mpz_sgn (mpq_denref (q)) == 0))
     {
       /* q is an infinity or NaN */
-      mpfr_init2 (t, 2);
+      mpfr_flags_t old_flags;
+
+      mpfr_init2 (t, MPFR_PREC_MIN);
+      old_flags = __gmpfr_flags;
       mpfr_set_q (t, q, MPFR_RNDN);
+      __gmpfr_flags = old_flags;
       res = mpfr_cmp (x, t);
       mpfr_clear (t);
       return res;

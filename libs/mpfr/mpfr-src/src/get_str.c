@@ -1,6 +1,6 @@
 /* mpfr_get_str -- output a floating-point number to a string
 
-Copyright 1999-2018 Free Software Foundation, Inc.
+Copyright 1999-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #define MPFR_NEED_LONGLONG_H
@@ -2233,6 +2233,7 @@ mpfr_ceil_mul (mpfr_exp_t e, int beta, int i)
    exponent in e.
    x is rounded with direction rnd, m is the number of digits of the mantissa,
    |b| is the given base (2 <= b <= 62 or -36 <= b <= -2).
+   This follows GMP's mpf_get_str specification.
 
    Return value:
    if s=NULL, allocates a string to store the mantissa, with
@@ -2325,15 +2326,12 @@ mpfr_get_str (char *s, mpfr_exp_t *e, int b, size_t m, mpfr_srcptr x,
       */
       m = 1 +
         mpfr_ceil_mul (IS_POW2(b) ? MPFR_PREC(x) - 1 : MPFR_PREC(x), b, 1);
-      if (m < 2)
-        m = 2;
     }
 
   MPFR_LOG_MSG (("m=%zu\n", m));
 
-  /* The code below for non-power-of-two bases works for m=1;
-     this is important for the internal use of mpfr_get_str. */
-  MPFR_ASSERTN (m >= 2 || (!IS_POW2(b) && m >= 1));
+  /* The code below works for m=1, both for power-of-two and non-power-of-two
+     bases; this is important for the internal use of mpfr_get_str. */
 
   /* x is a floating-point number */
 
@@ -2376,6 +2374,8 @@ mpfr_get_str (char *s, mpfr_exp_t *e, int b, size_t m, mpfr_srcptr x,
 
       /* the first digit will contain only r bits */
       prec = (m - 1) * pow2 + r; /* total number of bits */
+      /* if m=1 then 1 <= prec <= pow2, and since prec=1 is now valid in MPFR,
+         the power-of-two code also works for m=1 */
       n = MPFR_PREC2LIMBS (prec);
 
       MPFR_TMP_MARK (marker);

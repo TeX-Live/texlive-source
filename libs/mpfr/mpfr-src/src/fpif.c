@@ -1,7 +1,7 @@
 /* mpfr_fpif -- Binary export & import of MPFR numbers
    (floating-point interchange format)
 
-Copyright 2012-2018 Free Software Foundation, Inc.
+Copyright 2012-2019 Free Software Foundation, Inc.
 Contributed by Olivier Demengeon.
 
 This file is part of the GNU MPFR Library.
@@ -18,7 +18,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #include "mpfr-impl.h"
@@ -522,7 +522,7 @@ mpfr_fpif_read_limbs (mpfr_t x, unsigned char *buffer, size_t *buffer_size)
 
 /* External Function */
 /*
- * fh : IN : file hander
+ * fh : IN : file handler
  * x : IN : MPFR number to put in the file
  * return 0 if successful
  */
@@ -587,7 +587,7 @@ mpfr_fpif_export (FILE *fh, mpfr_t x)
 /*
  * x : IN/OUT : MPFR number extracted from the file, its precision is reset to
  *              be able to hold the number
- * fh : IN : file hander
+ * fh : IN : file handler
  * Return 0 if the import was successful.
  */
 int

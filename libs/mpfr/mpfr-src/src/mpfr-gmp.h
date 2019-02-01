@@ -1,6 +1,6 @@
 /* Uniform Interface to GMP.
 
-Copyright 2004-2018 Free Software Foundation, Inc.
+Copyright 2004-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #ifndef __GMPFR_GMP_H__
@@ -310,7 +310,7 @@ __MPFR_DECLSPEC void *mpfr_tmp_allocate (struct tmp_marker **,
                                          size_t);
 __MPFR_DECLSPEC void mpfr_tmp_free (struct tmp_marker *);
 
-/* Can be overriden at configure time. Useful for checking buffer overflow. */
+/* Can be overridden at configure time. Useful for checking buffer overflow. */
 #ifndef MPFR_ALLOCA_MAX
 # define MPFR_ALLOCA_MAX 16384
 #endif

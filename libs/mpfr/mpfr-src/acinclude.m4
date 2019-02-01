@@ -1,6 +1,6 @@
 dnl  MPFR specific autoconf macros
 
-dnl  Copyright 2000, 2002-2018 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002-2019 Free Software Foundation, Inc.
 dnl  Contributed by the AriC and Caramba projects, INRIA.
 dnl
 dnl  This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ dnl  License for more details.
 dnl
 dnl  You should have received a copy of the GNU Lesser General Public License
 dnl  along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-dnl  http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+dnl  https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 dnl  51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 dnl  autoconf 2.60 is necessary because of the use of AC_PROG_SED.
@@ -43,6 +43,66 @@ AC_REQUIRE([MPFR_CHECK_LIBM])
 AC_REQUIRE([MPFR_CHECK_LIBQUADMATH])
 AC_REQUIRE([AC_HEADER_TIME])
 AC_REQUIRE([AC_CANONICAL_HOST])
+
+dnl Features for the MPFR shared cache. This needs to be done
+dnl quite early since this may change CC, CFLAGS and LIBS, which
+dnl may affect the other tests.
+
+if test "$enable_shared_cache" = yes; then
+
+dnl Prefer ISO C11 threads (as in mpfr-thread.h).
+  MPFR_CHECK_C11_THREAD()
+
+  if test "$mpfr_c11_thread_ok" != yes; then
+dnl Check for POSIX threads. Since the AX_PTHREAD macro is not standard
+dnl (it is provided by autoconf-archive), we need to detect whether it
+dnl is left unexpanded, otherwise the configure script won't fail and
+dnl "make distcheck" won't give any error, yielding buggy tarballs!
+dnl The \b is necessary to avoid an error with recent ax_pthread.m4
+dnl (such as with Debian's autoconf-archive 20160320-1), which contains
+dnl AX_PTHREAD_ZOS_MISSING, etc. It is not documented, but see:
+dnl   https://lists.gnu.org/archive/html/autoconf/2015-03/msg00011.html
+dnl
+dnl Note: each time a change is done in m4_pattern_forbid, autogen.sh
+dnl should be tested with and without ax_pthread.m4 availability (in
+dnl the latter case, there should be an error).
+    m4_pattern_forbid([AX_PTHREAD\b])
+    AX_PTHREAD([])
+    if test "$ax_pthread_ok" = yes; then
+      CC="$PTHREAD_CC"
+      CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+      LIBS="$LIBS $PTHREAD_LIBS"
+dnl Do a compilation test, as this is currently not done by AX_PTHREAD.
+dnl Moreover, MPFR needs pthread_rwlock_t, which is conditionally defined
+dnl in glibc's bits/pthreadtypes.h (via <pthread.h>), not sure why...
+      AC_MSG_CHECKING([for pthread_rwlock_t])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <pthread.h>
+]], [[
+pthread_rwlock_t lock; (void) lock;
+]])],
+        [AC_MSG_RESULT([yes])
+         mpfr_pthread_ok=yes],
+        [AC_MSG_RESULT([no])
+         mpfr_pthread_ok=no])
+    else
+      mpfr_pthread_ok=no
+    fi
+  fi
+
+  AC_MSG_CHECKING(if shared cache can be supported)
+  if test "$mpfr_c11_thread_ok" = yes; then
+    AC_MSG_RESULT([yes, with ISO C11 threads])
+  elif test "$mpfr_pthread_ok" = yes; then
+    AC_MSG_RESULT([yes, with pthread])
+  else
+    AC_MSG_RESULT(no)
+    AC_MSG_ERROR([shared cache needs C11 threads or pthread support])
+  fi
+
+fi
+
+dnl End of features for the MPFR shared cache.
 
 AC_CHECK_HEADER([limits.h],, AC_MSG_ERROR([limits.h not found]))
 AC_CHECK_HEADER([float.h],,  AC_MSG_ERROR([float.h not found]))
@@ -205,24 +265,6 @@ fi
 
 dnl Check for attribute constructor and destructor
 MPFR_CHECK_CONSTRUCTOR_ATTR()
-
-dnl Check for POSIX Thread. Since the AX_PTHREAD macro is not standard
-dnl (it is provided by autoconf-archive), we need to detect whether it
-dnl is left unexpanded, otherwise the configure script won't fail and
-dnl "make distcheck" won't give any error, yielding buggy tarballs!
-dnl The \b is necessary to avoid an error with recent ax_pthread.m4
-dnl (such as with Debian's autoconf-archive 20160320-1), which contains
-dnl AX_PTHREAD_ZOS_MISSING, etc. It is not documented, but see:
-dnl   https://lists.gnu.org/archive/html/autoconf/2015-03/msg00011.html
-dnl
-dnl Note: each time a change is done in m4_pattern_forbid, autogen.sh
-dnl should be tested with and without ax_pthread.m4 availability (in
-dnl the latter case, there should be an error).
-m4_pattern_forbid([AX_PTHREAD\b])
-AX_PTHREAD([])
-
-dnl Check for ISO C11 Thread
-MPFR_CHECK_C11_THREAD()
 
 dnl Check for fesetround
 AC_CACHE_CHECK([for fesetround], mpfr_cv_have_fesetround, [
@@ -504,14 +546,6 @@ LIBS="$saved_LIBS"
 dnl Now try to check the long double format
 MPFR_C_LONG_DOUBLE_FORMAT
 
-if test "$enable_logging" = yes; then
-  if test "$enable_thread_safe" = yes; then
-    AC_MSG_ERROR([enable either `Logging' or `thread-safe', not both])
-  else
-    enable_thread_safe=no
-  fi
-fi
-
 dnl Check if thread-local variables are supported.
 dnl At least two problems can occur in practice:
 dnl 1. The compilation fails, e.g. because the compiler doesn't know
@@ -635,9 +669,19 @@ fi
 dnl Check if __float128 is available. We also require the compiler
 dnl to support C99 constants (this prevents the __float128 support
 dnl with GCC's -std=c90, but who cares?).
+dnl Note: We use AC_LINK_IFELSE instead of AC_COMPILE_IFELSE since an
+dnl error may occur only at link time, such as under NetBSD:
+dnl   https://mail-index.netbsd.org/pkgsrc-users/2018/02/02/msg026220.html
+dnl   https://mail-index.netbsd.org/pkgsrc-users/2018/02/05/msg026238.html
+dnl By using volatile and making the exit code depend on the value of
+dnl this variable, we also make sure that optimization doesn't make
+dnl the "undefined reference" error disappear.
 if test "$enable_float128" != no; then
-   AC_MSG_CHECKING(if compiler knows __float128 with C99 constants)
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[__float128 x = 0x1.fp+16383q;]])],
+   AC_MSG_CHECKING(if __float128 with hex constants is supported)
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[
+volatile __float128 x = 0x1.fp+16383q;
+return x == 0;
+]])],
       [AC_MSG_RESULT(yes)
        AC_DEFINE([MPFR_WANT_FLOAT128],1,[Build float128 functions])],
       [AC_MSG_RESULT(no)
@@ -678,11 +722,6 @@ CPPFLAGS="$saved_CPPFLAGS"
 
 if test "$enable_lto" = "yes" ; then
    MPFR_LTO
-fi
-
-dnl Check if the shared cache was requested and its requirements are ok.
-if test "$mpfr_want_shared_cache" = yes ;then
-   MPFR_CHECK_SHARED_CACHE()
 fi
 
 ])
@@ -909,11 +948,13 @@ else
 /* "before" is 16 bytes to ensure there's no padding between it and "x".
    We're not expecting any "long double" bigger than 16 bytes or with
    alignment requirements stricter than 16 bytes.  */
-struct {
+typedef struct {
   char         before[16];
   long double  x;
   char         after[8];
-} foo = {
+} foo_t;
+
+foo_t foo = {
   { '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0',
     '\001', '\043', '\105', '\147', '\211', '\253', '\315', '\357' },
   -123456789.0,
@@ -1423,6 +1464,31 @@ MPFR_FUNC_GMP_PRINTF_SPEC([td], [ptrdiff_t], [
     [AC_DEFINE([NPRINTF_T], 1, [gmp_printf cannot read ptrdiff_t])])
 ])
 
+dnl MPFR_CHECK_PRINTF_GROUPFLAG
+dnl ---------------------------
+dnl Check the support of the group flag for native integers, which is
+dnl a Single UNIX Specification extension.
+dnl This will be used to enable some tests, as the implementation of
+dnl the P length modifier for mpfr_*printf relies on this support.
+
+AC_DEFUN([MPFR_CHECK_PRINTF_GROUPFLAG], [
+AC_MSG_CHECKING(if gmp_printf supports the ' group flag)
+AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+#include <string.h>
+#include <gmp.h>
+]], [[
+  char s[256];
+
+  if (gmp_sprintf (s, "%'d", 17) == -1) return 1;
+  return (strcmp (s, "17") != 0);
+]])],
+  [AC_MSG_RESULT(yes)
+   AC_DEFINE([PRINTF_GROUPFLAG], 1, [Define if gmp_printf supports the ' group flag])],
+  [AC_MSG_RESULT(no)],
+  [AC_MSG_RESULT(cannot test, assume no)])
+])
+])
+
 dnl MPFR_LTO
 dnl --------
 dnl To be representative, we need:
@@ -1480,32 +1546,6 @@ mpfr_compile_and_link()
 rm -f conftest*
 ])
 
-dnl MPFR_CHECK_SHARED_CACHE
-dnl ----------------------
-dnl Check if the conditions for the shared cache are met:
-dnl  * either pthread / C11 are available.
-dnl  * either constructor or once.
-AC_DEFUN([MPFR_CHECK_SHARED_CACHE], [
-  AC_MSG_CHECKING(if shared cache is supported)
-  if test "$enable_logging" = yes ; then
-    AC_MSG_RESULT(no)
-    AC_MSG_ERROR([shared cache does not work with logging support.])
-dnl because logging support disables threading support
-  elif test "$enable_thread_safe" != yes ; then
-    AC_MSG_RESULT(no)
-    AC_MSG_ERROR([shared cache needs thread attribute.])
-  elif test "$ax_pthread_ok" != yes && "$mpfr_c11_thread_ok" != yes ; then
-    AC_MSG_RESULT(no)
-    AC_MSG_ERROR([shared cache needs pthread/C11 library.])
-  else
-    AC_MSG_RESULT(yes)
-    if test "$ax_pthread_ok" = yes ; then
-        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-        LIBS="$LIBS $PTHREAD_LIBS"
-    fi
-  fi
-])
-
 dnl MPFR_CHECK_CONSTRUCTOR_ATTR
 dnl ---------------------------
 dnl Check for constructor/destructor attributes to function.
@@ -1547,7 +1587,7 @@ AC_DEFUN([MPFR_CHECK_C11_THREAD], [
 AC_MSG_CHECKING([for ISO C11 thread support])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <assert.h>
-#include <thread.h>
+#include <threads.h>
  mtx_t lock;
  once_flag once = ONCE_FLAG_INIT;
  thrd_t thd_idx;

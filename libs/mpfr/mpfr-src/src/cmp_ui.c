@@ -1,7 +1,7 @@
 /* mpfr_cmp_ui_2exp -- compare a floating-point number with an unsigned
 machine integer multiplied by a power of 2
 
-Copyright 1999, 2001-2004, 2006-2018 Free Software Foundation, Inc.
+Copyright 1999, 2001-2004, 2006-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -18,7 +18,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #define MPFR_NEED_LONGLONG_H

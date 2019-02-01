@@ -1,6 +1,6 @@
 /* mpfr.h -- Include file for mpfr.
 
-Copyright 1999-2018 Free Software Foundation, Inc.
+Copyright 1999-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #ifndef __MPFR_H
@@ -26,8 +26,8 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 /* Define MPFR version number */
 #define MPFR_VERSION_MAJOR 4
 #define MPFR_VERSION_MINOR 0
-#define MPFR_VERSION_PATCHLEVEL 1
-#define MPFR_VERSION_STRING "4.0.1"
+#define MPFR_VERSION_PATCHLEVEL 2
+#define MPFR_VERSION_STRING "4.0.2"
 
 /* User macros:
    MPFR_USE_FILE:        Define it to make MPFR define functions dealing
@@ -1019,7 +1019,7 @@ __MPFR_DECLSPEC int    mpfr_custom_get_kind (mpfr_srcptr);
 
 
 /* Check if <stdint.h> / <inttypes.h> is included or if the user
-   explicitly wants intmax_t. Automatical detection is done by
+   explicitly wants intmax_t. Automatic detection is done by
    checking:
      - INTMAX_C and UINTMAX_C, but not if the compiler is a C++ one
        (as suggested by Patrick Pelissier) because the test does not

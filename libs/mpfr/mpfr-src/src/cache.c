@@ -1,6 +1,6 @@
 /* mpfr_cache -- cache interface for multiple-precision constants in MPFR.
 
-Copyright 2004-2018 Free Software Foundation, Inc.
+Copyright 2004-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #include "mpfr-impl.h"
@@ -144,7 +144,7 @@ mpfr_cache (mpfr_ptr dest, mpfr_cache_t cache, mpfr_rnd_t rnd)
                      mpfr_overflow (dest, rnd, sign);
                   );
 
-  /* Rather a likely, this is a 100% succes rate for
+  /* Rather a likely, this is a 100% success rate for
      all constants of MPFR */
   if (MPFR_LIKELY (cache->inexact != 0))
     {

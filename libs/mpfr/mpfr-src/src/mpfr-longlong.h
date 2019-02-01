@@ -1,6 +1,6 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2018 Free Software Foundation, Inc.
+Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2019 Free Software Foundation, Inc.
 
 This file is part of the GNU MPFR Library and has been copied from
 GNU MP 6.1.0 (the FIXME's come from GNU MP), except the parts marked
@@ -18,7 +18,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 /* You have to define the following before including this file:
@@ -410,23 +410,25 @@ long __MPN(count_leading_zeros) (UDItype);
 #define COUNT_LEADING_ZEROS_0 32
 #endif /* __a29k__ */
 
+/* MPFR: changed "J" constraint to "Cal" constraint
+   (https://sympa.inria.fr/sympa/arc/mpfr/2018-10/msg00010.html) */
 #if defined (__arc__)
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("add.f\t%1, %4, %5\n\tadc\t%0, %2, %3"			\
 	   : "=r" (sh),							\
 	     "=&r" (sl)							\
 	   : "r"  ((USItype) (ah)),					\
-	     "rIJ" ((USItype) (bh)),					\
+	     "rICal" ((USItype) (bh)),					\
 	     "%r" ((USItype) (al)),					\
-	     "rIJ" ((USItype) (bl)))
+	     "rICal" ((USItype) (bl)))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("sub.f\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
 	   : "=r" (sh),							\
 	     "=&r" (sl)							\
 	   : "r" ((USItype) (ah)),					\
-	     "rIJ" ((USItype) (bh)),					\
+	     "rICal" ((USItype) (bh)),					\
 	     "r" ((USItype) (al)),					\
-	     "rIJ" ((USItype) (bl)))
+	     "rICal" ((USItype) (bl)))
 #endif
 
 #if defined (__arm__) && (defined (__thumb2__) || !defined (__thumb__)) \
@@ -2103,7 +2105,7 @@ extern __longlong_h_C UWtype mpn_udiv_qrnnd_r (UWtype, UWtype, UWtype, UWtype *)
     (q) = __MPN(udiv_w_sdiv) (&__r, nh, nl, d);				\
     (r) = __r;								\
   } while (0)
-__GMP_DECLSPEC UWtype __MPN(udiv_w_sdiv) (UWtype *, UWtype, UWtype, UWtype);
+__MPFR_DECLSPEC UWtype __MPN(udiv_w_sdiv) (UWtype *, UWtype, UWtype, UWtype);
 #endif
 
 /* If udiv_qrnnd was not defined for this processor, use __udiv_qrnnd_c.  */
@@ -2147,7 +2149,7 @@ __GMP_DECLSPEC UWtype __MPN(udiv_w_sdiv) (UWtype *, UWtype, UWtype, UWtype);
 #endif
 
 #ifdef COUNT_LEADING_ZEROS_NEED_CLZ_TAB
-extern const unsigned char __GMP_DECLSPEC __clz_tab[129];
+extern const unsigned char __MPFR_DECLSPEC __clz_tab[129];
 #endif
 
 #if !defined (count_trailing_zeros)

@@ -1,4 +1,4 @@
-# Copyright 2000-2018 Free Software Foundation, Inc.
+# Copyright 2000-2019 Free Software Foundation, Inc.
 # This Makefile.am is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -81,7 +81,7 @@ libmpfr_la_LIBADD = @LIBOBJS@
 #        3.0.x    4:x:0
 #        3.1.x    5:x:1
 #        4.0.x    6:x:0
-libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 6:1:0
+libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 6:2:0
 
 # Important note: If for some reason, srcdir is read-only at build time
 # (and you use objdir != srcdir), then you need to rebuild get_patches.c
@@ -134,12 +134,12 @@ check-gmp-symbols: $(LTLIBRARIES)
 # For instance, with r11968, and
 #   ./configure --with-gmp-build=... CC=tcc
 # the symbol __gmpn_clz_tab is defined, which is wrong.
-# Note: the "grep -v '@plt$$'" below is for tcc.
+# Note: the "$(GREP) -v '@plt$$'" below is for tcc.
 check-exported-symbols: $(LTLIBRARIES)
 	if [ -f "$(LIBMPFRSO)" ]; then \
 	  gsymbols=`$(NM) -gP "$(LIBMPFRSO)" | perl -ne \
 	    '/^(__gmp[a-z]?_[_0-9A-Za-z]*) +[A-TV-Z]/ and print " $$1"' | \
-	    grep -v '@plt$$'`; \
+	    { $(GREP) -v '@plt$$' || true ; }`; \
 	  if [ -n "$$gsymbols" ]; then \
 	    echo "MPFR defines symbols with a GMP reserved prefix:$$gsymbols"; \
 	    exit 1; \

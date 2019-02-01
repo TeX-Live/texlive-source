@@ -1,7 +1,7 @@
 /* mpfr_vasnprintf_aux -- helper function for the formatted output functions
    (printf functions family).
 
-Copyright 2007-2018 Free Software Foundation, Inc.
+Copyright 2007-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -18,7 +18,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 /* If the number of output characters is larger than INT_MAX, the
@@ -33,11 +33,22 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
    So, for the time being, we return a negative value and set the erange
    flag, and set errno to EOVERFLOW in POSIX system. */
 
-/* Note: Due to limitations from the C standard and GMP, if
-   size_t < unsigned int (which is allowed by the C standard but unlikely
-   to occur on any platform), the behavior is undefined for output that
-   would reach SIZE_MAX = (size_t) -1 (if the result cannot be delivered,
-   there should be an assertion failure, but this could not be tested). */
+/* Notes about limitations on some platforms:
+
+   Due to limitations from the C standard and GMP, if size_t < unsigned int
+   (which is allowed by the C standard but unlikely to occur on any
+   platform), the behavior is undefined for output that would reach
+   SIZE_MAX = (size_t) -1 (if the result cannot be delivered, there should
+   be an assertion failure, but this could not be tested).
+
+   The stdarg(3) Linux man page says:
+      On some systems, va_end contains a closing '}' matching a '{' in
+      va_start, so that both macros must occur in the same function,
+      and in a way that allows this.
+   However, the only requirement from ISO C is that both macros must be
+   invoked in the same function (MPFR uses va_copy instead of va_start,
+   but the requirement is the same). Here, MPFR just follows ISO C.
+*/
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -248,6 +259,8 @@ specinfo_is_valid (struct printf_spec spec)
     }
 }
 
+/* Note: additional flags should be added to the MPFR_PREC_ARG code
+   for gmp_asprintf (when supported). */
 static const char *
 parse_flags (const char *format, struct printf_spec *specinfo)
 {
@@ -683,13 +696,23 @@ buffer_sandwich (struct string_buffer *b, char *str, size_t len,
   else
     {
       const size_t step = 3;
-      const size_t size = len + tz;
-      const size_t r = size % step == 0 ? step : size % step;
-      const size_t q = size % step == 0 ? size / step - 1 : size / step;
-      const size_t fullsize = size + q;
-      size_t i;
+      size_t size, q, r, fullsize;
 
+      /* check that len + tz does not overflow */
+      if (len > (size_t) -1 - tz)
+        return 1;
+
+      size = len + tz;              /* number of digits */
       MPFR_ASSERTD (size > 0);
+
+      q = (size - 1) / step;        /* number of separators C */
+      r = ((size - 1) % step) + 1;  /* number of digits in the leftmost block */
+
+      /* check that size + q does not overflow */
+      if (size > (size_t) -1 - q)
+        return 1;
+
+      fullsize = size + q;          /* number of digits and separators */
 
       if (buffer_incr_len (b, fullsize))
         return 1;
@@ -697,6 +720,7 @@ buffer_sandwich (struct string_buffer *b, char *str, size_t len,
       if (b->size != 0)
         {
           char *oldcurr;
+          size_t i;
 
           MPFR_ASSERTD (*b->curr == '\0');
           MPFR_ASSERTN (b->size < ((size_t) -1) - fullsize);
@@ -705,11 +729,21 @@ buffer_sandwich (struct string_buffer *b, char *str, size_t len,
 
           MPFR_DBGRES (oldcurr = b->curr);
 
-          /* first R significant digits */
-          memcpy (b->curr, str, r);
+          /* first r significant digits (leftmost block) */
+          if (r <= len)
+            {
+              memcpy (b->curr, str, r);
+              str += r;
+              len -= r;
+            }
+          else
+            {
+              MPFR_ASSERTD (r > len);
+              memcpy (b->curr, str, len);
+              memset (b->curr + len, '0', r - len);
+              len = 0;
+            }
           b->curr += r;
-          str += r;
-          len -= r;
 
           /* blocks of thousands. Warning: STR might end in the middle of a block */
           for (i = 0; i < q; ++i)
@@ -722,6 +756,7 @@ buffer_sandwich (struct string_buffer *b, char *str, size_t len,
                     {
                       memcpy (b->curr, str, step);
                       len -= step;
+                      str += step;
                     }
                   else
                     /* last digits in STR, fill up thousand block with zeros */
@@ -736,7 +771,6 @@ buffer_sandwich (struct string_buffer *b, char *str, size_t len,
                 memset (b->curr, '0', step);
 
               b->curr += step;
-              str += step;
             }
 
           MPFR_ASSERTD (b->curr - oldcurr == fullsize);
@@ -1920,8 +1954,14 @@ sprnt_fp (struct string_buffer *buf, mpfr_srcptr p,
   /* integral part (may also be "nan" or "inf") */
   MPFR_ASSERTN (np.ip_ptr != NULL); /* never empty */
   if (MPFR_UNLIKELY (np.thousands_sep))
-    buffer_sandwich (buf, np.ip_ptr, np.ip_size, np.ip_trailing_zeros,
-                     np.thousands_sep);
+    {
+      if (buffer_sandwich (buf, np.ip_ptr, np.ip_size, np.ip_trailing_zeros,
+                           np.thousands_sep))
+        {
+          buf->len = -1;
+          goto clear_and_exit;
+        }
+    }
   else
     {
       buffer_cat (buf, np.ip_ptr, np.ip_size);
@@ -1978,7 +2018,7 @@ mpfr_vasnprintf_aux (char **ptr, char *Buf, size_t size, const char *fmt,
   struct string_buffer buf;
   int nbchar;
 
-  /* informations on the conversion specification filled by the parser */
+  /* information on the conversion specification filled by the parser */
   struct printf_spec spec;
   /* flag raised when previous part of fmt need to be processed by
      gmp_vsnprintf */
@@ -2182,7 +2222,7 @@ mpfr_vasnprintf_aux (char **ptr, char *Buf, size_t size, const char *fmt,
         /* output mpfr_prec_t variable */
         {
           char *s;
-          char format[MPFR_PREC_FORMAT_SIZE + 6]; /* see examples below */
+          char format[MPFR_PREC_FORMAT_SIZE + 12]; /* e.g. "%0#+ -'*.*ld\0" */
           size_t length;
           mpfr_prec_t prec;
 
@@ -2194,14 +2234,14 @@ mpfr_vasnprintf_aux (char **ptr, char *Buf, size_t size, const char *fmt,
           start = fmt;
 
           /* construct format string, like "%*.*hd" "%*.*d" or "%*.*ld" */
-          format[0] = '%';
-          format[1] = '*';
-          format[2] = '.';
-          format[3] = '*';
-          format[4] = '\0';
-          strcat (format, MPFR_PREC_FORMAT_TYPE);
-          format[4 + MPFR_PREC_FORMAT_SIZE] = spec.spec;
-          format[5 + MPFR_PREC_FORMAT_SIZE] = '\0';
+          sprintf (format, "%%%s%s%s%s%s%s*.*" MPFR_PREC_FORMAT_TYPE "%c",
+                   spec.pad == '0' ? "0" : "",
+                   spec.alt ? "#" : "",
+                   spec.showsign ? "+" : "",
+                   spec.space ? " " : "",
+                   spec.left ? "-" : "",
+                   spec.group ? "'" : "",
+                   spec.spec);
           length = gmp_asprintf (&s, format, spec.width, spec.prec, prec);
           MPFR_ASSERTN (length >= 0);  /* guaranteed by GMP 6 */
           buffer_cat (&buf, s, length);
@@ -2246,44 +2286,42 @@ mpfr_vasnprintf_aux (char **ptr, char *Buf, size_t size, const char *fmt,
 
   va_end (ap2);
 
-  if (buf.len > INT_MAX)  /* overflow */
-    buf.len = -1;
+  if (buf.len == -1 || buf.len > INT_MAX)  /* overflow */
+    goto overflow;
 
-  if (buf.len != -1)
+  nbchar = buf.len;
+  MPFR_ASSERTD (nbchar >= 0);
+
+  if (ptr != NULL)  /* implement mpfr_vasprintf */
     {
-      nbchar = buf.len;
-      MPFR_ASSERTD (nbchar >= 0);
-
-      if (ptr != NULL)  /* implement mpfr_vasprintf */
+      MPFR_ASSERTD (nbchar == strlen (buf.start));
+      *ptr = (char *) mpfr_reallocate_func (buf.start, buf.size, nbchar + 1);
+    }
+  else if (size != 0)  /* implement mpfr_vsnprintf */
+    {
+      if (nbchar < size)
         {
-          MPFR_ASSERTD (nbchar == strlen (buf.start));
-          *ptr = (char *)
-            mpfr_reallocate_func (buf.start, buf.size, nbchar + 1);
+          strncpy (Buf, buf.start, nbchar);
+          Buf[nbchar] = '\0';
         }
-      else if (size > 0)  /* implement mpfr_vsnprintf */
+      else
         {
-          if (nbchar < size)
-            {
-              strncpy (Buf, buf.start, nbchar);
-              Buf[nbchar] = '\0';
-            }
-          else
-            {
-              strncpy (Buf, buf.start, size - 1);
-              Buf[size-1] = '\0';
-            }
-          mpfr_free_func (buf.start, buf.size);
+          strncpy (Buf, buf.start, size - 1);
+          Buf[size-1] = '\0';
         }
-
-      MPFR_SAVE_EXPO_FREE (expo);
-      return nbchar; /* return the number of characters that would have
-                        been written had 'size' been sufficiently large,
-                        not counting the terminating null character */
+      mpfr_free_func (buf.start, buf.size);
     }
 
+  MPFR_SAVE_EXPO_FREE (expo);
+  return nbchar; /* return the number of characters that would have
+                    been written had 'size' been sufficiently large,
+                    not counting the terminating null character */
+
  error:
+  va_end (ap2);
   if (buf.len == -1)  /* overflow */
     {
+    overflow:
       MPFR_LOG_MSG (("Overflow\n", 0));
       MPFR_SAVE_EXPO_UPDATE_FLAGS (expo, MPFR_FLAGS_ERANGE);
 #ifdef EOVERFLOW
@@ -2293,8 +2331,10 @@ mpfr_vasnprintf_aux (char **ptr, char *Buf, size_t size, const char *fmt,
     }
 
   MPFR_SAVE_EXPO_FREE (expo);
-  *ptr = NULL;
-  mpfr_free_func (buf.start, buf.size);
+  if (ptr != NULL)  /* implement mpfr_vasprintf */
+    *ptr = NULL;
+  if (ptr != NULL || size != 0)
+    mpfr_free_func (buf.start, buf.size);
 
   return -1;
 }

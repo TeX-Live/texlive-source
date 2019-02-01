@@ -1,4 +1,4 @@
-Copyright 1999-2018 Free Software Foundation, Inc.
+Copyright 1999-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -15,7 +15,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
@@ -28,8 +28,8 @@ reporting a bug, in particular Section "In case of problem" below. Some
 problems are due to bad configuration on the user side (not specific to
 MPFR).
 
-0. You first need to install GMP. See <http://www.gnu.org/software/gmp/>.
-   MPFR requires GMP version 4.1 or later.
+0. You first need to install GMP. See <https://gmplib.org/>.
+   MPFR requires GMP version 5.0.0 or later.
 
 1. Extract the files from the archive.
 
@@ -37,17 +37,17 @@ MPFR).
    not been done yet and if patches are available. You can check
    on the release page:
 
-     http://www.mpfr.org/mpfr-4.0.1/
+     https://www.mpfr.org/mpfr-4.0.2/
 
    which may have additional information. The patches can be applied
    with commands like:
 
-     wget http://www.mpfr.org/mpfr-4.0.1/allpatches
+     wget https://www.mpfr.org/mpfr-4.0.2/allpatches
      patch -N -Z -p1 < allpatches
 
    or
 
-     curl http://www.mpfr.org/mpfr-4.0.1/allpatches | patch -N -Z -p1
+     curl https://www.mpfr.org/mpfr-4.0.2/allpatches | patch -N -Z -p1
 
    (Those instructions are for the GNU patch command, for example
    /usr/bin/gpatch on Solaris.)
@@ -238,13 +238,19 @@ specific architecture.
 
 [1] http://permalink.gmane.org/gmane.comp.gnu.libtool.patches/10111
 
-Note: By default, the configure script tries to set CC/CFLAGS to GMP's
-ones (this feature needs GMP 4.3.0 or later, or the --with-gmp-build
-option). However this is not guaranteed to work as the configure script
-does some compiler tests earlier, and the change may be too late. Also,
-the values obtained from GMP may be incorrect if GMP has been built
-on a different machine. In such a case, the user may need to specify
-CC/CFLAGS as explained below.
+Note: By default, the configure script tries to set CC / CFLAGS to GMP's
+ones from gmp.h (__GMP_CC / __GMP_CFLAGS) in order to ensure that MPFR is
+built with the same ABI as GMP. The reason is that when GMP is built, it
+may set CC / CFLAGS to select an ABI that is not the default one in order
+to have a better performance. The -pedantic option in GMP's CFLAGS, when
+present (which is the case by default), is removed, because the MPFR
+build system uses some C extensions (when this script detects that they
+are supported) and -pedantic yields too many useless warnings. However,
+this setting from GMP is not guaranteed to work as the configure script
+does some compiler tests earlier, and a conflict may arise. Also, the
+values obtained from GMP may be incorrect for the MPFR build if GMP has
+been built on a different machine; in such a case, the user may need to
+specify CC / CFLAGS, as explained below.
 
 Moreover, even without --with-gmp-build and --enable-gmp-internals,
 MPFR might use some GMP internals by mistake. This would be a bug,
@@ -361,9 +367,9 @@ First, look for any warning message in the configure output.
 Several documents may help you to solve the problem:
   * this INSTALL file, in particular information given below;
   * the FAQ (either the FAQ.html file distributed with MPFR, or the
-    on-line version <http://www.mpfr.org/faq.html>, which may be more
+    on-line version <https://www.mpfr.org/faq.html>, which may be more
     up-to-date);
-  * the MPFR web page for this version <http://www.mpfr.org/mpfr-4.0.1/>,
+  * the MPFR web page for this version <https://www.mpfr.org/mpfr-4.0.2/>,
     which lists bugs found in this version and provides some patches.
 
 If the "configure" fails, please check that the C compiler and its

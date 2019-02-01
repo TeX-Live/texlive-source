@@ -1,6 +1,6 @@
 /* mpfr_atan -- arc-tangent of a floating-point number
 
-Copyright 2001-2018 Free Software Foundation, Inc.
+Copyright 2001-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #define MPFR_NEED_LONGLONG_H
@@ -177,7 +177,7 @@ mpfr_atan_aux (mpfr_ptr y, mpz_ptr p, unsigned long r, int m, mpz_t *tab)
       /* main loop */
       n = 1UL << m;
       MPFR_ASSERTN (n != 0);  /* no overflow */
-      /* the ith term being X^i/(2i+1) with X=p/2^r, we can stop when
+      /* the i-th term being X^i/(2i+1) with X=p/2^r, we can stop when
          p^i/2^(r*i) < 2^(-precy), i.e. r*i > precy + log2(p^i) */
       for (i = k = done = 0; (i < n) && (done == 0); i += 2, k ++)
         {
@@ -209,7 +209,7 @@ mpfr_atan_aux (mpfr_ptr y, mpz_ptr p, unsigned long r, int m, mpz_t *tab)
             }
         }
     }
-  else /* special case p=1: the ith term being X^i/(2i+1) with X=1/2^r,
+  else /* special case p=1: the i-th term being X^i/(2i+1) with X=1/2^r,
           we can stop when r*i > precy i.e. i > precy/r */
     {
       n = 1UL << m;
@@ -284,7 +284,7 @@ mpfr_atan (mpfr_ptr atan, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   mpfr_exp_t exptol;
   mpfr_prec_t prec, realprec, est_lost, lost;
   unsigned long twopoweri, log2p, red;
-  int comparaison, inexact;
+  int comparison, inexact;
   int i, n0, oldn0;
   MPFR_GROUP_DECL (group);
   MPFR_SAVE_EXPO_DECL (expo);
@@ -339,8 +339,8 @@ mpfr_atan (mpfr_ptr atan, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   MPFR_SAVE_EXPO_MARK (expo);
 
   /* Other simple case arctan(-+1)=-+pi/4 */
-  comparaison = mpfr_cmp_ui (xp, 1);
-  if (MPFR_UNLIKELY (comparaison == 0))
+  comparison = mpfr_cmp_ui (xp, 1);
+  if (MPFR_UNLIKELY (comparison == 0))
     {
       int neg = MPFR_IS_NEG (x);
       inexact = mpfr_const_pi (atan, MPFR_IS_POS (x) ? rnd_mode
@@ -401,7 +401,7 @@ mpfr_atan (mpfr_ptr atan, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
          MPFR_SAVE_EXPO_MARK, but let's check that for maintainability. */
       MPFR_ASSERTD (__gmpfr_emax <= 1 - __gmpfr_emin);
 
-      if (comparaison > 0) /* use atan(xp) = Pi/2 - atan(1/xp) */
+      if (comparison > 0) /* use atan(xp) = Pi/2 - atan(1/xp) */
         mpfr_ui_div (sk, 1, xp, MPFR_RNDN);
       else
         mpfr_set (sk, xp, MPFR_RNDN);
@@ -418,7 +418,7 @@ mpfr_atan (mpfr_ptr atan, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
           mpfr_add_ui (tmp, tmp, 1, MPFR_RNDN);
           mpfr_sqrt (tmp, tmp, MPFR_RNDN);
           mpfr_sub_ui (tmp, tmp, 1, MPFR_RNDN);
-          if (red == 0 && comparaison > 0)
+          if (red == 0 && comparison > 0)
             /* use xp = 1/sk */
             mpfr_mul (sk, tmp, xp, MPFR_RNDN);
           else
@@ -488,7 +488,7 @@ mpfr_atan (mpfr_ptr atan, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       /* argument reduction */
       mpfr_mul_2exp (arctgt, arctgt, red, MPFR_RNDN);
 
-      if (comparaison > 0)
+      if (comparison > 0)
         { /* atan(x) = Pi/2-atan(1/x) for x > 0 */
           mpfr_const_pi (tmp, MPFR_RNDN);
           mpfr_div_2ui (tmp, tmp, 1, MPFR_RNDN);

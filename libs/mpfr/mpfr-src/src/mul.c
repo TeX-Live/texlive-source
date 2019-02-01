@@ -1,6 +1,6 @@
 /* mpfr_mul -- multiply two floating-point numbers
 
-Copyright 1999-2018 Free Software Foundation, Inc.
+Copyright 1999-2019 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -17,7 +17,7 @@ License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
+https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #define MPFR_NEED_LONGLONG_H
@@ -180,10 +180,17 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
     }
   else if (! mpfr_equal_p (ta, a) || ! SAME_SIGN (inexact1, inexact2))
     {
+      /* We do not have MPFR_PREC_FSPEC, so let's use mpfr_eexp_t and
+         MPFR_EXP_FSPEC since mpfr_prec_t values are guaranteed to be
+         representable in mpfr_exp_t, thus in mpfr_eexp_t. */
       fprintf (stderr, "mpfr_mul return different values for %s\n"
-               "Prec_a = %lu, Prec_b = %lu, Prec_c = %lu\nb = ",
+               "Prec_a = %" MPFR_EXP_FSPEC "d, "
+               "Prec_b = %" MPFR_EXP_FSPEC "d, "
+               "Prec_c = %" MPFR_EXP_FSPEC "d\nb = ",
                mpfr_print_rnd_mode (rnd_mode),
-               MPFR_PREC (a), MPFR_PREC (b), MPFR_PREC (c));
+               (mpfr_eexp_t) MPFR_PREC (a),
+               (mpfr_eexp_t) MPFR_PREC (b),
+               (mpfr_eexp_t) MPFR_PREC (c));
       mpfr_fdump (stderr, b);
       fprintf (stderr, "c = ");
       mpfr_fdump (stderr, c);
