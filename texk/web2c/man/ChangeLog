@@ -1,3 +1,10 @@
+2019-02-01  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man,
+	* cweb.man: Recompile manpages with Pandoc 2.6.  This un-escapes
+	'-', because it was rendered as "unicode minus"; see release page
+	https://github.com/jgm/pandoc/releases/tag/2.6
+
 2019-01-28  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man,
