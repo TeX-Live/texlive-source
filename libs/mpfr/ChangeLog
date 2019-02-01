@@ -1,7 +1,7 @@
 2019-02-01  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import mpfr-4.0.2.
-	* version.ac: Adjust.
+	* Makefile.am, version.ac: Adjust.
 
 2018-02-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

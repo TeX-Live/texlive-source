@@ -163,6 +163,7 @@ nodist_libmpfr_a_OBJECTS = @MPFR_TREE@/src/abort_prec_max.$(OBJEXT) \
 	@MPFR_TREE@/src/isinteger.$(OBJEXT) \
 	@MPFR_TREE@/src/isnum.$(OBJEXT) \
 	@MPFR_TREE@/src/isqrt.$(OBJEXT) @MPFR_TREE@/src/log.$(OBJEXT) \
+	@MPFR_TREE@/src/min_prec.$(OBJEXT) \
 	@MPFR_TREE@/src/mpfr-gmp.$(OBJEXT) \
 	@MPFR_TREE@/src/mpn_exp.$(OBJEXT) \
 	@MPFR_TREE@/src/mp_clz_tab.$(OBJEXT) \
@@ -279,6 +280,7 @@ am__depfiles_remade = ./$(DEPDIR)/mpfrtest-mpfrtest.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/isnum.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/isqrt.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/log.Po \
+	@MPFR_TREE@/src/$(DEPDIR)/min_prec.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/mp_clz_tab.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/mpfr-gmp.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/mpn_exp.Po \
@@ -819,6 +821,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/isnum.c \
 	@MPFR_TREE@/src/isqrt.c \
 	@MPFR_TREE@/src/log.c \
+	@MPFR_TREE@/src/min_prec.c \
 	@MPFR_TREE@/src/mpfr-gmp.c \
 	@MPFR_TREE@/src/mpn_exp.c \
 	@MPFR_TREE@/src/mp_clz_tab.c \
@@ -1191,6 +1194,8 @@ clean-noinstLIBRARIES:
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/log.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@MPFR_TREE@/src/min_prec.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
+	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/mpfr-gmp.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/mpn_exp.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
@@ -1363,6 +1368,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/isnum.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/isqrt.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/log.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/min_prec.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/mp_clz_tab.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/mpfr-gmp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/mpn_exp.Po@am__quote@ # am--include-marker
@@ -2009,6 +2015,7 @@ distclean: distclean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/isnum.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/isqrt.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/log.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/min_prec.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mp_clz_tab.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mpfr-gmp.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mpn_exp.Po
@@ -2157,6 +2164,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/isnum.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/isqrt.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/log.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/min_prec.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mp_clz_tab.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mpfr-gmp.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mpn_exp.Po

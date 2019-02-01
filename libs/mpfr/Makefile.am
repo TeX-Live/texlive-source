@@ -79,6 +79,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/isnum.c \
 	@MPFR_TREE@/src/isqrt.c \
 	@MPFR_TREE@/src/log.c \
+	@MPFR_TREE@/src/min_prec.c \
 	@MPFR_TREE@/src/mpfr-gmp.c \
 	@MPFR_TREE@/src/mpn_exp.c \
 	@MPFR_TREE@/src/mp_clz_tab.c \
