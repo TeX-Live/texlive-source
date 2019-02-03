@@ -2363,7 +2363,7 @@ by either a space or '='.
      _path_ are copied over to 'bin/custom/' under your installation
      directory and this 'bin/custom/' directory is what will be added to
      the path for the post-install actions.  To install multiple custom
-     binary sets, manaully rename 'custom' before doing each.
+     binary sets, manually rename 'custom' before doing each.
 
      For more information on custom binaries, see
      <http://tug.org/texlive/custom-bin.html>.  For general information
