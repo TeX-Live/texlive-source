@@ -277,7 +277,7 @@ Modifying source files induces more requirements, as one might expect:
 @itemize
 @item
 Modification of any @code{.y} or @code{.l} source files requires
-@file{bison} or @file{flex} to updatete the corresponding C sources.
+@file{bison} or @file{flex} to update the corresponding C sources.
 
 @item
 Modification of the sources for @code{.info} files requires
@@ -745,7 +745,7 @@ scripts'', @pxref{Linked scripts}) in
 and Info files in @code{@var{infodir}}.
 
 The values of these directories are determined by @code{configure}
-and can be specified explictly as options such as
+and can be specified explicitly as options such as
 @code{--prefix=@var{prefix}} or @code{--bindir=@var{bindir}};
 otherwise, they are given by their usual Autoconf defaults:
 
@@ -848,7 +848,7 @@ BSD operating system distribution.
 @cindex shared libraries, using vs.@: avoiding
 The native TL distribution uses shared libraries only when absolutely
 necessary (@file{libc}, @file{libm}, X11 libraries, and
-@file{libfontconfig}).  In constrast, a distro typically wants to use
+@file{libfontconfig}).  In contrast, a distro typically wants to use
 as many shared libraries as possible from elsewhere on the system,
 including @TeX{}-specific libraries such as @file{libkpathsea} (even
 though Kpathsea has never officially been released as a shared
@@ -922,7 +922,7 @@ files.
 * Autoconf macros::         TL-specific Autoconf macros.
 * Library modules::         Handling libraries, with examples.
 * Program modules::         Handling programs, with examples.
-* Extending @TL{}::      Adding a new module.
+* Extending @TL{}::         Adding a new module.
 @end menu
 
 
@@ -1796,7 +1796,7 @@ top level.
 
 @cindex environment variables, for @code{configure}
 The help text also mentions several influential environment variables,
-but for @TL{} it is better to specify them as assigments on the
+but for @TL{} it is better to specify them as assignments on the
 command line.
 
 The @file{./Build} script used to make the binaries shipped with @TL{}
@@ -2521,7 +2521,7 @@ fully specify @code{const}, but this has not been checked recently.
 @cindex discards qualifiers warning
 The GCC compiler warnings ``assignment discards qualifiers@dots{}''
 and analogous warnings for ``initialization'', ``passing arg'', or
-``return'' must be strenously avoided in our own code.  The only
+``return'' must be strenuously avoided in our own code.  The only
 exception is when they are caused by X11 declarations or other third
 party code.
 

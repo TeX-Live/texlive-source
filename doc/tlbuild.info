@@ -199,7 +199,7 @@ Lacking the required tools, building these programs must avoided, e.g.,
 expect:
 
    * Modification of any '.y' or '.l' source files requires 'bison' or
-     'flex' to updatete the corresponding C sources.
+     'flex' to update the corresponding C sources.
 
    * Modification of the sources for '.info' files requires 'makeinfo'.
 
@@ -578,7 +578,7 @@ Running 'make install' (or 'make install-strip') installs executables in
 'INFODIR'.
 
    The values of these directories are determined by 'configure' and can
-be specified explictly as options such as '--prefix=PREFIX' or
+be specified explicitly as options such as '--prefix=PREFIX' or
 '--bindir=BINDIR'; otherwise, they are given by their usual Autoconf
 defaults:
 
@@ -654,7 +654,7 @@ operating system distribution.
 
    The native TL distribution uses shared libraries only when absolutely
 necessary ('libc', 'libm', X11 libraries, and 'libfontconfig').  In
-constrast, a distro typically wants to use as many shared libraries as
+contrast, a distro typically wants to use as many shared libraries as
 possible from elsewhere on the system, including TeX-specific libraries
 such as 'libkpathsea' (even though Kpathsea has never officially been
 released as a shared library).  In addition, the installation paths
@@ -1425,7 +1425,7 @@ also displays the 'lcdf-typetools' specific options, which are not shown
 at the top level.
 
    The help text also mentions several influential environment
-variables, but for TeX Live it is better to specify them as assigments
+variables, but for TeX Live it is better to specify them as assignments
 on the command line.
 
    The './Build' script used to make the binaries shipped with TeX Live
@@ -2056,7 +2056,7 @@ What must be avoided with 'const'
 
 The GCC compiler warnings "assignment discards qualifiers..." and
 analogous warnings for "initialization", "passing arg", or "return" must
-be strenously avoided in our own code.  The only exception is when they
+be strenuously avoided in our own code.  The only exception is when they
 are caused by X11 declarations or other third party code.
 
 What should be avoided with 'const'
