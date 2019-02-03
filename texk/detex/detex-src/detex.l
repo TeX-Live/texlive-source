@@ -1,4 +1,5 @@
 %option never-interactive
+%option nounput
 
 %top{
 /*
@@ -70,10 +71,16 @@
 #include <strings.h>
 #define	strrchr rindex
 #endif
-#ifndef MAXPATHLEN
+
+#ifdef HAVE_LIMITS_H
+#include <limits.h>
+#else
 #include <sys/param.h>
-#endif
+#ifndef PATH_MAX /* for old BSD */
 #define PATH_MAX MAXPATHLEN
+#endif
+#endif /* HAVE_LIMITS_H */
+
 #ifdef OS2
 #include <stdlib.h>
 #endif
@@ -105,6 +112,7 @@
 void AddInclude(char *sbFile);
 void ErrorExit(const char *sb1);
 void UsageExit(void);
+void VersionExit(void);
 void IncludeFile(char *sbFile);
 void InputFile(char *sbFile);
 void SetEnvIgnore(const char *sbEnvList);
@@ -566,6 +574,9 @@ main(int cArgs, char *rgsbArgs[])
 			case CHREPLACE:
 			fReplace = 1;
 			break;
+			case CHVERSIONOPT:
+			VersionExit();
+			break;
 		    default:
 			sbBadOpt[0] = *pch;
 			sbBadOpt[1] = '\0';
@@ -979,7 +990,7 @@ ErrorExit(const char *sb1)
 }
 
 /******
-** UsageExit -- print OS/2 usage message and exit.
+** UsageExit -- print usage message and exit.
 ******/
 
 void
@@ -994,6 +1005,19 @@ UsageExit(void)
 -r  replace math with \"noun\" and \"noun verbs noun\" to preserve grammar\n  \
 -s  replace control sequences with space\n  \
 -t  force tex mode\n  \
--w  word only output");
+-w  word only output\n  \
+-v  show program version and exit");
+	exit(0);
+}
+
+/******
+** VersionExit -- print version and exit.
+******/
+
+void
+VersionExit(void)
+{
+	(void)printf("\nOpenDetex version %s\nhttps://github.com/pkubowicz/opendetex\n",
+		VERSION);
 	exit(0);
 }

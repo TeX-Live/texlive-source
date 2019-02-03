@@ -184,3 +184,9 @@ Stoped generating additional spaces after commands (#41). Thanks to Martin Nowac
 Fixed space missing in output when two newlines follow a macro (#42). Thanks to sgerwk.
 
 Started treating newlines in inline math as spaces (#45). Thanks to sgerwk.
+
+(Version 2.8.5) -- January, 2019
+
+Fixed man page on macOS (#47). Thanks to FX Coudert.
+
+Added -v option for showing version.
