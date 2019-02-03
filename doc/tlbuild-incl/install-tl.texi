@@ -194,7 +194,7 @@ the current system are present.  The installation will continue as
 usual, but at the end all files from @emph{path} are copied over to
 @code{bin/custom/} under your installation directory and this @code{bin/custom/}
 directory is what will be added to the path for the post-install
-actions.  To install multiple custom binary sets, manully rename
+actions.  To install multiple custom binary sets, manually rename
 @code{custom} before doing each.
 
 For more information on custom binaries, see
