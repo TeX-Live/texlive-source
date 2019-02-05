@@ -143,9 +143,10 @@ def PutUnsigned(q):
   return (0, PutByte(q))
 
 def PutSigned(q):
-  if 0 <= q < 0x800000:               return PutUnsigned(q)
   if q < -0x800000 or q >= 0x800000:  return (3, PutSignedQuad(q))
+  if q >= 0x8000:                     return (2, Put3Bytes(q))
   if q < -0x8000:     q += 0x1000000; return (2, Put3Bytes(q))
+  if q >= 0x80:                       return (1, Put2Bytes(q))
   if q < -0x80:       q += 0x10000;   return (1, Put2Bytes(q))
   return (0, PutByte(q))
 
@@ -904,8 +905,8 @@ class DVI(object):
     for e in sorted(self.font_def.keys()):
       fp.write("fntdef: %s" % self.font_def[e]['name'])
       if self.font_def[e]['design_size'] != self.font_def[e]['scaled_size']:
-        fp.write(" (%s) " % self.by_pt_conv(self.font_def[e]['design_size']))
-      fp.write(" at %s\n" % self.by_pt_conv(self.font_def[e]['scaled_size']))
+        fp.write(" (%s) " % self.byconv(self.font_def[e]['design_size']))
+      fp.write(" at %s\n" % self.byconv(self.font_def[e]['scaled_size']))
     # DumpPages
     for page in self.pages:
       fp.write("\n[page" + (" %d"*10 % tuple(page['count'])) + "]\n")
@@ -941,8 +942,8 @@ class DVI(object):
           if IsFontChanged(f, z):
             fp.write("fnt: %s " % cur_font)
             if self.font_def[cmd[1]]['design_size'] != self.font_def[cmd[1]]['scaled_size']:
-              fp.write("(%s) " % self.by_pt_conv(self.font_def[cmd[1]]['design_size']))
-            fp.write("at %s\n" % self.by_pt_conv(cur_ssize))
+              fp.write("(%s) " % self.byconv(self.font_def[cmd[1]]['design_size']))
+            fp.write("at %s\n" % self.byconv(cur_ssize))
         elif cmd[0] == GLYPHS:
           fp.write("setglyphs: %s\n" % self.DumpGlyphs(cmd[1][0], cmd[1][1]))
         elif cmd[0] == TEXT_GLYPHS:
@@ -1129,7 +1130,7 @@ binary format. It is fully documented at
 http://tug.org/TUGboat/Articles/tb28-2/tb89cho.pdf 
 http://ajt.ktug.kr/assets/2008/5/1/0201cho.pdf"""
 
-  version = """This is %prog-20171216 by Jin-Hwan Cho (Korean TeX Society)
+  version = """This is %prog-20190202 by Jin-Hwan Cho (Korean TeX Society)
   
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>

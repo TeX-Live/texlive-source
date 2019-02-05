@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 49408 2018-12-13 23:12:47Z karl $
+# $Id: tlmgr.pl 49885 2019-01-31 19:27:00Z karl $
 #
-# Copyright 2008-2018 Norbert Preining
+# Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 49408 $';
-my $datrev = '$Date: 2018-12-14 00:12:47 +0100 (Fri, 14 Dec 2018) $';
+my $svnrev = '$Revision: 49885 $';
+my $datrev = '$Date: 2019-01-31 11:27:00 -0800 (Thu, 31 Jan 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5108,7 +5108,7 @@ The Perl/Tk module is not shipped with the TeX Live installation.
 You have to install it to get the tlmgr GUI working.
 (INC = @INC)
 
-See http://tug.org/texlive/distro.html#perltk for more details.
+See https://tug.org/texlive/distro.html#perltk for more details.
 Goodbye.
 ";
       }
@@ -6378,7 +6378,7 @@ sub action_shell {
     if ($cmd eq "protocol") {
       print "protocol $protocol\n";
     } elsif ($cmd eq "help") {
-      print "Please see tlmgr help or http://tug.org/texlive/tlmgr.html.\n";
+      print "Please see tlmgr help or https://tug.org/texlive/tlmgr.html.\n";
     } elsif ($cmd eq "version") {
       print give_version();
     } elsif ($cmd =~ m/^(quit|end|bye(bye)?)$/i) {
@@ -6875,7 +6875,7 @@ but found a local copy so using that.
 
 You may want to try specifying an explicit or different CTAN mirror;
 see the information and examples for the -repository option at
-http://tug.org/texlive/doc/install-tl.html
+https://tug.org/texlive/doc/install-tl.html
 (or in the output of install-tl --help).
 
 END_NO_INTERNET
@@ -7003,7 +7003,7 @@ TeX Live $TeXLive::TLConfig::ReleaseYear is frozen forever and will no
 longer be updated.  This happens in preparation for a new release.
 
 If you're interested in helping to pretest the new release (when
-pretests are available), please read http://tug.org/texlive/pretest.html.
+pretests are available), please read https://tug.org/texlive/pretest.html.
 Otherwise, just wait, and the new release will be ready in due time.
 FROZEN
     # don't die here, we want to allow updates even if tlnet is frozen!
@@ -7433,11 +7433,11 @@ tlmgr [I<option>...] I<action> [I<option>...] [I<operand>...]
 
 B<tlmgr> manages an existing TeX Live installation, both packages and
 configuration options.  For information on initially downloading and
-installing TeX Live, see L<http://tug.org/texlive/acquire.html>.
+installing TeX Live, see L<https://tug.org/texlive/acquire.html>.
 
 The most up-to-date version of this documentation (updated nightly from
 the development sources) is available at
-L<http://tug.org/texlive/tlmgr.html>, along with procedures for updating
+L<https://tug.org/texlive/tlmgr.html>, along with procedures for updating
 C<tlmgr> itself and information about test versions.
 
 TeX Live is organized into a few top-level I<schemes>, each of which is
@@ -7447,7 +7447,7 @@ files.  Schemes typically contain a mix of collections and packages, but
 each package is included in exactly one collection, no more and no less.
 A TeX Live installation can be customized and managed at any level.
 
-See L<http://tug.org/texlive/doc> for all the TeX Live documentation
+See L<https://tug.org/texlive/doc> for all the TeX Live documentation
 available.
 
 =head1 EXAMPLES
@@ -7517,7 +7517,7 @@ like this:
 
 Of course a real hostname and its particular top-level CTAN directory
 have to be specified.  The list of CTAN mirrors is available at
-L<http://ctan.org/mirrors>.
+L<https://ctan.org/mirrors>.
 
 Here's an example of using a local directory:
 
@@ -7542,7 +7542,7 @@ Equivalent ways of specifying a local directory.
 
 Pick a CTAN mirror automatically, trying for one that is both nearby and
 up-to-date. The chosen mirror is used for the entire download. The bare
-C<ctan> is merely an alias for the full url. (See L<http://ctan.org> for
+C<ctan> is merely an alias for the full url. (See L<https://ctan.org> for
 more about CTAN and its mirrors.)
 
 =item C<http://server/path/to/tlnet>
@@ -7551,7 +7551,7 @@ Standard HTTP. If the (default) LWP method is used, persistent
 connections are supported. TL can also use C<curl> or C<wget> to do the
 downloads, or an arbitrary user-specified program, as described in the
 C<tlmgr> documentation
-(L<http://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES>).
+(L<https://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES>).
 
 =item C<https://server/path/to/tlnet>
 
@@ -7691,7 +7691,7 @@ revision number for the loaded TeX Live Perl modules are shown, too.
 =head2 help
 
 Display this help information and exit (same as C<--help>, and on the
-web at L<http://tug.org/texlive/doc/tlmgr.html>).  Sometimes the
+web at L<https://tug.org/texlive/doc/tlmgr.html>).  Sometimes the
 C<perldoc> and/or C<PAGER> programs on the system have problems,
 resulting in control characters being literally output.  This can't
 always be detected, but you can set the C<NOPERLDOC> environment
@@ -7922,7 +7922,7 @@ The TeX Live installer and C<tlmgr> routinely call C<generate> for
 all of these files.
 
 For managing your own fonts, please read the C<updmap --help>
-information and/or L<http://tug.org/fonts/fontinstall.html>.
+information and/or L<https://tug.org/fonts/fontinstall.html>.
 
 For managing your own formats, please read the C<fmtutil --help>
 information.
@@ -8966,8 +8966,8 @@ a possibly different hash), it's harmless to delete them.
 
 =head1 CONFIGURATION FILE FOR TLMGR
 
-There are two configuration files for C<tlmgr>: One is system-wide in
-C<TEXMFSYSCONFIG/tlmgr/config>, and the other is user-specific in
+C<tlmgr> reads two configuration files: one is system-wide, in
+C<TEXMFSYSCONFIG/tlmgr/config>, and the other is user-specific, in
 C<TEXMFCONFIG/tlmgr/config>.  The user-specific one is the default for
 the C<conf tlmgr> action.  (Run C<kpsewhich
 -var-value=TEXMFSYSCONFIG> or C<... TEXMFCONFIG ...> to see the actual
@@ -9038,8 +9038,8 @@ disables this process.
 
 The checksum algorithm is SHA-512.  Your system must have one of (looked
 for in this order) the Perl C<Digest::SHA> module, the C<openssl>
-program (L<http://openssl.org>), the C<sha512sum> program (from GNU
-Coreutils, L<http://www.gnu.org/software/coreutils>), or finally the
+program (L<https://openssl.org>), the C<sha512sum> program (from GNU
+Coreutils, L<https://www.gnu.org/software/coreutils>), or finally the
 C<shasum> program (just to support old Macs).  If none of these are
 available, a warning is issued and C<tlmgr> proceeds without checking
 checksums.  (Incidentally, other SHA implementations, such as the pure
@@ -9275,10 +9275,10 @@ A summary of the C<tlmgr pinning> actions is given above.
 =head1 GUI FOR TLMGR
 
 The graphical user interface for C<tlmgr> requires Perl/Tk
-L<http://search.cpan.org/search?query=perl%2Ftk>.  For Windows the
+L<https://search.cpan.org/search?query=perl%2Ftk>.  For Windows the
 necessary modules are shipped within TeX Live, for all other (i.e.,
 Unix-based) systems Perl/Tk (as well as Perl of course) has to be
-installed outside of TL.  L<http://tug.org/texlive/distro.html#perltk>
+installed outside of TL.  L<https://tug.org/texlive/distro.html#perltk>
 has a list of invocations for some distros.
 
 The GUI is started with the invocation C<tlmgr gui>; assuming Tk is
@@ -9464,7 +9464,7 @@ on Windows).
 =item C<Help menu>
 
 Provides access to the TeX Live manual (also on the web at
-L<http://tug.org/texlive/doc.html>) and the usual ``About'' box.
+L<https://tug.org/texlive/doc.html>) and the usual ``About'' box.
 
 =back
 
@@ -9501,7 +9501,7 @@ Pass the arbitrary X resource string I<xresource>.
 =back
 
 A few other obscure options are recognized but not mentioned here.  See
-the Perl/Tk documentation (L<http://search.cpan.org/perldoc?Tk>) for the
+the Perl/Tk documentation (L<https://search.cpan.org/perldoc?Tk>) for the
 complete list, and any X documentation for general information.
 
 =head1 MACHINE-READABLE OUTPUT
@@ -9758,10 +9758,10 @@ regardless of any setting.
 =head1 AUTHORS AND COPYRIGHT
 
 This script and its documentation were written for the TeX Live
-distribution (L<http://tug.org/texlive>) and both are licensed under the
+distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 49408 2018-12-13 23:12:47Z karl $
+$Id: tlmgr.pl 49885 2019-01-31 19:27:00Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
