@@ -5,6 +5,20 @@
 	* tests/control_symbol.tex: More test cases.
 	* ptex_version.h: pTeX version p3.8.2.
 
+2019-02-03  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+	and Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: Change the behavior of \inhibitglue. See
+	  https://github.com/texjporg/tex-jp-build/issues/28.
+	  - \inhibitglue becomes ineffective when it encounters a node.
+	    (former commit on 2014-05-06 was still insufficient.)
+	  - non-expandable tokens without node (e.g. \relax, assignment)
+	    becomes transparent.
+	  - \inhibitglue inside a list does not affect another list.
+	  - Add new primitive \disinhibitglue to reset the inhibit glue
+	    flag explicitly.
+	* tests/inhibitglue.tex: Added.
+
 2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Add dump_kanji and undump_kanji.
