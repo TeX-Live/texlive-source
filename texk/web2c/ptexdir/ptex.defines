@@ -28,4 +28,6 @@
 @define function calcpos ();
 @define function kcatcodekey ();
 
+@define procedure dumpkanji ();
 @define procedure initkanji;
+@define procedure undumpkanji ();

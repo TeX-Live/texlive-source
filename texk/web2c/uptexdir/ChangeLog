@@ -1,3 +1,9 @@
+2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* kanji_dump.c: Throw a warning when kanji internal encoding
+	is incompatible with the preloaded format.
+	https://github.com/texjporg/tex-jp-build/issues/55
+
 2018-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* upbibtex.ch: Fix bug of substring$

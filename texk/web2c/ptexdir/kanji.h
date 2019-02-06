@@ -39,6 +39,7 @@ extern integer calc_pos (integer c);
 #define calcpos calc_pos
 extern integer kcatcodekey (integer c);
 
+extern void init_kanji (const_string file_str, const_string internal_str);
 extern void init_default_kanji (const_string file_str, const_string internal_str);
 #ifdef PBIBTEX
 /* pBibTeX is EUC only */
@@ -62,5 +63,10 @@ extern void init_default_kanji (const_string file_str, const_string internal_str
 #else
 #define inputline2(fp,buff,pos,size) input_line2(fp,buff,pos,size,NULL)
 #endif
+
+extern void dump_kanji (FILE *fp);
+extern void undump_kanji (FILE *fp);
+#define dumpkanji dump_kanji
+#define undumpkanji undump_kanji
 
 #endif /* not KANJI_H */

@@ -6144,6 +6144,20 @@ show_code: @<Show the current meaning of a token, then |goto common_ending|@>;
 show_mode: @<Show the current japanese processing mode@>;
 @z
 
+@x
+libc_free(format_engine);@/
+@y
+libc_free(format_engine);@/
+dump_kanji(fmt_file);
+@z
+
+@x
+libc_free(format_engine);
+@y
+libc_free(format_engine);
+undump_kanji(fmt_file);
+@z
+
 @x l.24982
 font_info:=xmalloc_array(fmemory_word, font_mem_size);
 @y

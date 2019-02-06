@@ -72,18 +72,23 @@ integer kcatcodekey(integer c)
     return Hi(toDVI(c));
 }
 
-void init_default_kanji (const_string file_str, const_string internal_str)
+void init_kanji (const_string file_str, const_string internal_str)
 {
-    char *p;
-
-    enable_UPTEX (false); /* disable */
-
     if (!set_enc_string (file_str, internal_str)) {
         fprintf (stderr, "Bad kanji encoding \"%s\" or \"%s\".\n",
                  file_str ? file_str  : "NULL",
                  internal_str ? internal_str : "NULL");
         uexit(1);
     }
+}
+
+void init_default_kanji (const_string file_str, const_string internal_str)
+{
+    char *p;
+
+    enable_UPTEX (false); /* disable */
+
+    init_kanji (file_str, internal_str);
 
     p = getenv ("PTEX_KANJI_ENC");
     if (p) {

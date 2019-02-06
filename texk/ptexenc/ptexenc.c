@@ -49,7 +49,7 @@ static int     file_enc = ENC_UNKNOWN;
 static int internal_enc = ENC_UNKNOWN;
 static int terminal_enc = ENC_UNKNOWN;
 
-static const_string enc_to_string(int enc)
+const_string enc_to_string(int enc)
 {
     switch (enc) {
     case ENC_JIS:  return "jis";
@@ -114,7 +114,7 @@ static int get_file_enc(void)
     return file_enc;
 }
 
-static int get_internal_enc(void)
+int get_internal_enc(void)
 {
     if (internal_enc == ENC_UNKNOWN) set_internal_enc(get_default_enc());
     return internal_enc;

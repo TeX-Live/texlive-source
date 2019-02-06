@@ -550,7 +550,8 @@ am_libff_a_OBJECTS = luatexdir/luafontloader/fontforge/fontforge/libff_a-autohin
 libff_a_OBJECTS = $(am_libff_a_OBJECTS)
 libkanji_a_AR = $(AR) $(ARFLAGS)
 libkanji_a_LIBADD =
-am_libkanji_a_OBJECTS = ptexdir/libkanji_a-kanji.$(OBJEXT)
+am_libkanji_a_OBJECTS = ptexdir/libkanji_a-kanji.$(OBJEXT) \
+	ptexdir/libkanji_a-kanji_dump.$(OBJEXT)
 libkanji_a_OBJECTS = $(am_libkanji_a_OBJECTS)
 libluaffi_a_AR = $(AR) $(ARFLAGS)
 libluaffi_a_LIBADD =
@@ -2063,6 +2064,7 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	pdftexdir/regex/$(DEPDIR)/libpdftex_a-regex_internal.Po \
 	pdftexdir/regex/$(DEPDIR)/libpdftex_a-regexec.Po \
 	ptexdir/$(DEPDIR)/libkanji_a-kanji.Po \
+	ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Po \
 	ptexdir/$(DEPDIR)/ptex-ptexextra.Po \
 	synctexdir/$(DEPDIR)/eptex-synctex.Po \
 	synctexdir/$(DEPDIR)/etex-synctex.Po \
@@ -3626,7 +3628,7 @@ ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependenc
 p_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 pweb_programs = pbibtex pdvitype ppltotf ptftopl
 pproglib = lib/libp.a
-libkanji_a_SOURCES = ptexdir/kanji.c ptexdir/kanji.h
+libkanji_a_SOURCES = ptexdir/kanji.c ptexdir/kanji.h ptexdir/kanji_dump.c
 libkanji_a_CPPFLAGS = $(ptex_cppflags)
 ptex_CPPFLAGS = $(ptex_cppflags) $(am__append_121)
 
@@ -5291,6 +5293,8 @@ ptexdir/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ptexdir/$(DEPDIR)
 	@: > ptexdir/$(DEPDIR)/$(am__dirstamp)
 ptexdir/libkanji_a-kanji.$(OBJEXT): ptexdir/$(am__dirstamp) \
+	ptexdir/$(DEPDIR)/$(am__dirstamp)
+ptexdir/libkanji_a-kanji_dump.$(OBJEXT): ptexdir/$(am__dirstamp) \
 	ptexdir/$(DEPDIR)/$(am__dirstamp)
 
 libkanji.a: $(libkanji_a_OBJECTS) $(libkanji_a_DEPENDENCIES) $(EXTRA_libkanji_a_DEPENDENCIES) 
@@ -7737,6 +7741,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@pdftexdir/regex/$(DEPDIR)/libpdftex_a-regex_internal.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@pdftexdir/regex/$(DEPDIR)/libpdftex_a-regexec.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@ptexdir/$(DEPDIR)/libkanji_a-kanji.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@ptexdir/$(DEPDIR)/ptex-ptexextra.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/eptex-synctex.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@synctexdir/$(DEPDIR)/etex-synctex.Po@am__quote@ # am--include-marker
@@ -8407,6 +8412,20 @@ ptexdir/libkanji_a-kanji.obj: ptexdir/kanji.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ptexdir/kanji.c' object='ptexdir/libkanji_a-kanji.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ptexdir/libkanji_a-kanji.obj `if test -f 'ptexdir/kanji.c'; then $(CYGPATH_W) 'ptexdir/kanji.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/kanji.c'; fi`
+
+ptexdir/libkanji_a-kanji_dump.o: ptexdir/kanji_dump.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ptexdir/libkanji_a-kanji_dump.o -MD -MP -MF ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Tpo -c -o ptexdir/libkanji_a-kanji_dump.o `test -f 'ptexdir/kanji_dump.c' || echo '$(srcdir)/'`ptexdir/kanji_dump.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Tpo ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ptexdir/kanji_dump.c' object='ptexdir/libkanji_a-kanji_dump.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ptexdir/libkanji_a-kanji_dump.o `test -f 'ptexdir/kanji_dump.c' || echo '$(srcdir)/'`ptexdir/kanji_dump.c
+
+ptexdir/libkanji_a-kanji_dump.obj: ptexdir/kanji_dump.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ptexdir/libkanji_a-kanji_dump.obj -MD -MP -MF ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Tpo -c -o ptexdir/libkanji_a-kanji_dump.obj `if test -f 'ptexdir/kanji_dump.c'; then $(CYGPATH_W) 'ptexdir/kanji_dump.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/kanji_dump.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Tpo ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ptexdir/kanji_dump.c' object='ptexdir/libkanji_a-kanji_dump.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ptexdir/libkanji_a-kanji_dump.obj `if test -f 'ptexdir/kanji_dump.c'; then $(CYGPATH_W) 'ptexdir/kanji_dump.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/kanji_dump.c'; fi`
 
 luatexdir/luaffi/libluaffi_a-call.o: luatexdir/luaffi/call.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaffi_a_CPPFLAGS) $(CPPFLAGS) $(libluaffi_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaffi/libluaffi_a-call.o -MD -MP -MF luatexdir/luaffi/$(DEPDIR)/libluaffi_a-call.Tpo -c -o luatexdir/luaffi/libluaffi_a-call.o `test -f 'luatexdir/luaffi/call.c' || echo '$(srcdir)/'`luatexdir/luaffi/call.c
@@ -17086,6 +17105,7 @@ distclean: distclean-recursive
 	-rm -f pdftexdir/regex/$(DEPDIR)/libpdftex_a-regex_internal.Po
 	-rm -f pdftexdir/regex/$(DEPDIR)/libpdftex_a-regexec.Po
 	-rm -f ptexdir/$(DEPDIR)/libkanji_a-kanji.Po
+	-rm -f ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Po
 	-rm -f ptexdir/$(DEPDIR)/ptex-ptexextra.Po
 	-rm -f synctexdir/$(DEPDIR)/eptex-synctex.Po
 	-rm -f synctexdir/$(DEPDIR)/etex-synctex.Po
@@ -17737,6 +17757,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f pdftexdir/regex/$(DEPDIR)/libpdftex_a-regex_internal.Po
 	-rm -f pdftexdir/regex/$(DEPDIR)/libpdftex_a-regexec.Po
 	-rm -f ptexdir/$(DEPDIR)/libkanji_a-kanji.Po
+	-rm -f ptexdir/$(DEPDIR)/libkanji_a-kanji_dump.Po
 	-rm -f ptexdir/$(DEPDIR)/ptex-ptexextra.Po
 	-rm -f synctexdir/$(DEPDIR)/eptex-synctex.Po
 	-rm -f synctexdir/$(DEPDIR)/etex-synctex.Po

@@ -1082,20 +1082,6 @@ if (t<cs_token_flag+single_base)and(not check_kanji(t)) then
 @z
 
 @x
-libc_free(format_engine);@/
-@y
-libc_free(format_engine);@/
-dump_kanji(fmt_file);
-@z
-
-@x
-libc_free(format_engine);
-@y
-libc_free(format_engine);
-undump_kanji(fmt_file);
-@z
-
-@x
 @d set_auto_xspacing_code=3
 @y
 @d set_auto_xspacing_code=3

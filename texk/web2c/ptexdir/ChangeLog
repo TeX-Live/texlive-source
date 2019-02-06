@@ -1,3 +1,17 @@
+2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: Add dump_kanji and undump_kanji.
+	* ptex.defines: Add dumpkanji and undumpkanji.
+	* kanji.c: Factor out init_kanji().
+	* kanji_dump.c: New file for dumping/undumping kanji encoding.
+	* kanji.h: Add init_kanji(), dump_kanji(), and undump_kanji().
+	* am/ptex.am (libkanji_a_SOURCES): Add kanji_dump.c.
+	(all changes based on tl r23753 of upTeX, dated 2011-08-29.)
+
+	* kanji_dump.c: Throw a warning when kanji internal encoding
+	is incompatible with the preloaded format.
+	https://github.com/texjporg/tex-jp-build/issues/55
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* ptriptest.test: LC_ALL=LANGUAGE=C.

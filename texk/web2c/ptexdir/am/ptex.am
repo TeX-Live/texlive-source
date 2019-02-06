@@ -21,7 +21,7 @@ $(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
 ## libkanji.a for pTeX and e-pTeX
 ##
 EXTRA_LIBRARIES += libkanji.a
-libkanji_a_SOURCES = ptexdir/kanji.c ptexdir/kanji.h
+libkanji_a_SOURCES = ptexdir/kanji.c ptexdir/kanji.h ptexdir/kanji_dump.c
 libkanji_a_CPPFLAGS = $(ptex_cppflags)
 
 ## pTeX

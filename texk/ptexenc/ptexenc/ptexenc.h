@@ -39,6 +39,10 @@ extern PTENCDLL boolean set_enc_string(const_string file, const_string inter);
 #define getencstring  get_enc_string
 #define setencstring  set_enc_string
 
+/* get internal Kanji encode (used in kanji_dump.c) */
+extern PTENCDLL const_string enc_to_string(int enc);
+extern PTENCDLL int get_internal_enc(void);
+
 /* decide if internal Kanji encode is SJIS/UPTEX or not */
 extern PTENCDLL boolean  is_internalSJIS(void);
 extern PTENCDLL boolean  is_internalEUC(void);

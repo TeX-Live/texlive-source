@@ -1,3 +1,8 @@
+2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptexenc.c, ptexenc/ptexenc.h: define enc_to_string() and
+	get_internal_enc() as extern.
+
 2018-06-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexenc.c, ptexenc/ptexenc.h: remove sjisterminal (w32 only).

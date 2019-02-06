@@ -1,3 +1,7 @@
+2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* eptex.defines: Add dumpkanji and undumpkanji.
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* eptriptest.test,

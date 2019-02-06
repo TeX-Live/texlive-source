@@ -1,5 +1,5 @@
 /*
- *  Dump/undump Kanji encoding for (e)upTeX.
+ *  Dump/undump Kanji encoding for (e)ptex.
  */
 
 #include "kanji.h"
