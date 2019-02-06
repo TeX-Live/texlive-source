@@ -1,3 +1,8 @@
+2019-02-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* kanji.h: Use fputs2() to benefit from kanji encoding conversion.
+	https://github.com/texjporg/tex-jp-build/issues/34
+
 2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* kanji_dump.c: Throw a warning when kanji internal encoding

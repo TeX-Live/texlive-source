@@ -454,7 +454,7 @@ begin
       print_nl("Unknown encoding `");
       case selector of
       term_and_log: begin wterm(stringcast(name_of_file + 1));
-	wlog(stringcast(name_of_file + 1)); end;
+        wlog(stringcast(name_of_file + 1)); end;
       log_only:  wlog(stringcast(name_of_file + 1));
       term_only: wterm(stringcast(name_of_file + 1));
       endcases;

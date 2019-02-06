@@ -58,6 +58,11 @@ extern void init_default_kanji (const_string file_str, const_string internal_str
 #define putc(c,fp) putc2(c,fp)
 #endif /* !PRESERVE_PUTC */
 
+#ifndef PRESERVE_FPUTS
+#undef fputs
+#define fputs(c,fp) fputs2(c,fp)
+#endif /* !PRESERVE_FPUTS */
+
 #ifdef PBIBTEX
 #define inputline2(fp,buff,pos,size,ptr) input_line2(fp,buff,pos,size,ptr)
 #else

@@ -19,6 +19,11 @@
 	    flag explicitly.
 	* tests/inhibitglue.tex: Added.
 
+2019-02-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* kanji.h: Use fputs2() to benefit from kanji encoding conversion.
+	https://github.com/texjporg/tex-jp-build/issues/34
+
 2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Add dump_kanji and undump_kanji.
