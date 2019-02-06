@@ -1,0 +1,12 @@
+\documentclass[dvipdfmx]{tarticle}
+\setlength{\pdfpagewidth}{\paperwidth}
+\setlength{\pdfpageheight}{\paperheight}
+% 以下二行をコメントアウトしたりしなかったりして試してみる．
+\special{papersize=\the\paperwidth,\the\paperheight}% (a)
+\AtBeginDvi{\special{papersize=\the\paperwidth, \the\paperheight}}% (b)
+\begin{document}
+A\pdfsavepos
+\newpage
+\message{pdflatexpos = \the\dimexpr\pdflastxpos sp, pdflastypos = \the\dimexpr\pdflastypos sp,
+  pdfpagewidth = \the\pdfpagewidth, pdfpageheight = \the\pdfpageheight}
+\end{document}

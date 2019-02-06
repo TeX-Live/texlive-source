@@ -1,3 +1,11 @@
+2019-01-31  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfutils.ch: Improve \pdfsavepos when papersize special
+	at the middle of shipout procedure is involved.
+	Pointed out by N. Abe.
+	https://oku.edu.mie-u.ac.jp/tex/mod/forum/discuss.php?d=2564
+	* tests/pdfsavepos.tex: Added.
+
 2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* eptex.defines: Add dumpkanji and undumpkanji.
