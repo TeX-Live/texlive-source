@@ -1,3 +1,10 @@
+2019-02-03  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Ignore newline char after Japanese control
+	symbol. https://github.com/texjporg/tex-jp-build/issues/37
+	* tests/control_symbol.tex: More test cases.
+	* ptex_version.h: pTeX version p3.8.2.
+
 2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Add dump_kanji and undump_kanji.

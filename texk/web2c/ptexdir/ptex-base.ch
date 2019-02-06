@@ -74,8 +74,8 @@
 @y
 @d pTeX_version=3
 @d pTeX_minor_version=8
-@d pTeX_revision==".1"
-@d pTeX_version_string=='-p3.8.1' {current \pTeX\ version}
+@d pTeX_revision==".2"
+@d pTeX_version_string=='-p3.8.2' {current \pTeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.14159265',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
@@ -1741,6 +1741,7 @@ else  begin k:=loc; cur_chr:=buffer[k]; incr(k);
 start_cs:
   if (cat=letter)or(cat=kanji)or(cat=kana) then state:=skip_blanks
   else if cat=spacer then state:=skip_blanks
+  else if cat=other_kchar then state:=mid_kanji
   else state:=mid_line;
   if cat=other_kchar then
     begin cur_cs:=id_lookup(loc,k-loc); loc:=k; goto found;
