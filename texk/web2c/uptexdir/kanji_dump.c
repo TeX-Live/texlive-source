@@ -42,7 +42,7 @@ void undump_kanji (FILE *fp)
     /* Now BUFFER and P are the file and internal encoding strings.  */
     init_kanji (NULL, p);
     if (get_internal_enc() != i) {
-        fprintf (stderr, "Option --kanji-internal invalid when a format file is loaded.\n", p);
+        fprintf (stderr, "Kanji internal encoding incompatible with the preloaded format.\n", p);
         fprintf (stderr, "I'll stick to %s.\n", enc_to_string(get_internal_enc()));
     }
 }
