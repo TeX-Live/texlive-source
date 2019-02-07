@@ -3,6 +3,7 @@
 	* chkdvifont.c: Detect new JFM spec.
 	* chkdvifont.man, dvispc.man: Add fallback TeX and LaTeX logos.
 	* configure.ac: Version 20190206.
+	* Makefile.am: Adjusted for new tests.
 
 2018-11-25  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 

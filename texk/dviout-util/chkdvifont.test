@@ -40,12 +40,23 @@ cp $testdir/oldindep.dvi . && \
 
 echo M | ./chkdvifont && echo || exit 0
 
-# VF format is not supported by old version written by SHIMA.
+# the following tests will not pass for old version written by SHIMA.
 # that version can be distinguished from the new version by
 # exit code 250 for usage with stdin M. (the above line did it!)
 
+# check VF format
 ./chkdvifont -c $testdir/upjisr-h.vf > xupjisr-h.cfn && \
   diff $diffoptCRLF $testdir/upjisr-h.cfn xupjisr-h.cfn && echo || exit 5
+
+# detect new JFM format
+./chkdvifont -c $testdir/uparse.tfm > xuparse.cfn && \
+  diff $diffoptCRLF $testdir/uparse.cfn xuparse.cfn && echo || exit 6
+./chkdvifont -c $testdir/skipjfmp.tfm > xskipjfmp.cfn && \
+  diff $diffoptCRLF $testdir/skipjfmp.cfn xskipjfmp.cfn && echo || exit 7
+./chkdvifont -c $testdir/upphirakakuw3-h.tfm > xupp3-h.cfn && \
+  diff $diffoptCRLF $testdir/upphirakakuw3-h.cfn xupp3-h.cfn && echo || exit 8
+./chkdvifont -c $testdir/upphirakakuw6-h.tfm > xupp6-h.cfn && \
+  diff $diffoptCRLF $testdir/upphirakakuw6-h.cfn xupp6-h.cfn && echo || exit 9
 
 
 exit 0

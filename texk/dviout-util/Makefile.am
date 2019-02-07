@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dviout-util/
 ##
-## Copyright (C) 2018 Japanese TeX Development Community <issue@texjp.org>
+## Copyright (C) 2018-2019 Japanese TeX Development Community <issue@texjp.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA -DPTEXENC
@@ -64,8 +64,14 @@ EXTRA_DIST += tests/oldindep.cfn \
 	tests/jis.tfm tests/jis.cfn \
 	tests/eufm10.tfm tests/eufm10.cfn \
 	tests/cmr10.pk tests/cmr10.cfn \
-	tests/upjisr-h.vf tests/upsjir-h.cfn
+	tests/upjisr-h.vf tests/upsjir-h.cfn \
+	tests/uparse.tfm tests/uparse.cfn \
+	tests/skipjfmp.tfm tests/skipjfmp.cfn \
+	tests/upphirakakuw3-h.tfm tests/upphirakakuw3-h.cfn \
+	tests/upphirakakuw6-h.tfm tests/upphirakakuw6-h.cfn
 DISTCLEANFILES += oldindep.dvi xoldindep.cfn \
 	xjis.cfn xeufm10.cfn xeufm10.ed.cfn \
-	xcmr10.cfn xupjisr-h.cfn
+	xcmr10.cfn xupjisr-h.cfn \
+	xuparse.cfn xskipjfmp.cfn \
+	xupp3-h.cfn xupp6-h.cfn
 
