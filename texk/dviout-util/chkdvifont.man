@@ -1,6 +1,11 @@
-.if t .ds TX T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
-.if t .ds LX L\\h'-0.36m'\\v'-0.15v'\\s-2A\\s+2\\h'-0.15m'\\v'0.15v'T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
 .TH CHKDVIFONT 1
+\"=====================================================================
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+\"=====================================================================
 .SH NAME
 chkdvifont \- CHecK DVI/tfm/font file and tell informations of FONTs
 .SH SYNOPSIS
