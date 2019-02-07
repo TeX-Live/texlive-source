@@ -931,10 +931,11 @@ void tfm_define(FILE * fp)
             read_long(fp);
         for (i = 0; i < nw+nh+nd+ni; i++)   /* width, height, depth, italic */
             read_long(fp);
-        for (i = 0; i < nl; i++)            /* glue_kern */
+        for (i = 0; i < nl; i++){            /* glue_kern */
             x = read_byte(fp); read_n(fp,3);
             if (x>0 && x<128) tfmver |= 2;      /* SKIP command */
             if (x>128 && x<=255) tfmver |= 4;   /* rearrangement */
+        }
     }
     fclose(fp);
 
