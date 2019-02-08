@@ -2,8 +2,8 @@
 
 -- Copyright 2016-2018 Brian Dunn
 
-printversion = "v0.65"
-requiredconfversion = "1" -- also at *lwarpmk.conf
+printversion = "v0.66"
+requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -103,6 +103,8 @@ end
 -- Additional defaults:
 confversion = "0"
 opsystem = "Unix"
+imagesdirectory = "lateximages"
+imagesname = "image-"
 latexmk = "false"
 printlatexcmd = ""
 HTMLlatexcmd = ""
@@ -164,6 +166,8 @@ elseif ( cvarname == "opsystem" ) then
 elseif ( cvarname == "sourcename" ) then sourcename = cvalue
 elseif ( cvarname == "homehtmlfilename" ) then homehtmlfilename = cvalue
 elseif ( cvarname == "htmlfilename" ) then htmlfilename = cvalue
+elseif ( cvarname == "imagesdirectory" ) then imagesdirectory = cvalue
+elseif ( cvarname == "imagesname" ) then imagesname = cvalue
 elseif ( cvarname == "latexmk" ) then latexmk = cvalue
 elseif ( cvarname == "printlatexcmd" ) then printlatexcmd = cvalue
 elseif ( cvarname == "HTMLlatexcmd" ) then HTMLlatexcmd = cvalue
@@ -379,34 +383,33 @@ end -- checkhtmlpdfexists
 
 function warnlimages ()
 --
--- Warning of a missing lateximages.txt file:
---
+-- Warning of a missing <sourcename>-images.txt file:
     print ("lwarpmk: ===")
-    print ("lwarpmk: \"lateximages.txt\" does not exist.")
+    print ("lwarpmk: \"" .. sourcename .. "-images.txt\" does not exist.")
     print ("lwarpmk: Your project does not use SVG math or other lateximages,")
     print ("lwarpmk: or the file has been deleted somehow.")
     print ("lwarpmk: Use \"lwarpmk html\" to recompile your project")
-    print ("lwarpmk: and recreate \"lateximages.txt\".")
+    print ("lwarpmk: and recreate \"" .. sourcename .. "-images.txt\".")
     print ("lwarpmk: If your project does not use SVG math or other lateximages,")
-    print ("lwarpmk: then \"lateximages.txt\" will never exist, and")
+    print ("lwarpmk: then \"" .. sourcename .. "-images.txt\" will never exist, and")
     print ("lwarpmk: \"lwarpmk limages\" will not be necessary.")
     print ("lwarpmk: ===")
 end -- warnlimages
 
 function checklimages ()
 --
--- Check lateximages.txt to see if need to recompile first.
+-- Check <sourcename>.txt to see if need to recompile first.
 -- If any entry has a page number of zero, then there were incorrect images.
 --
-print ("lwarpmk: Checking for a valid lateximages.txt file.")
-local limagesfile = io.open("lateximages.txt", "r")
+print ("lwarpmk: Checking for a valid " .. sourcename .. "-images.txt file.")
+local limagesfile = io.open(sourcename .. "-images.txt", "r")
 if ( limagesfile == nil ) then
     warnlimages ()
     os.exit(1)
 end
 -- Track warning to recompile if find a page 0
 local pagezerowarning = false
--- Scan lateximages.txt
+-- Scan <sourcename>.txt
 for line in limagesfile:lines() do
     -- lwimgpage is the page number in the PDF which has the image
     -- lwimghash is true if this filename is a hash
@@ -439,20 +442,20 @@ executecheckerror (
     cmdgroupopenname ..
     "pdfseparate -f " .. lwimgpage .. " -l " .. lwimgpage .. " " ..
         sourcename .."_html.pdf " ..
-        "lateximages" .. dirslash .."lateximagetemp-%d" .. ".pdf" ..
+        imagesdirectory .. dirslash .."lateximagetemp-%d" .. ".pdf" ..
         seqname ..
     -- Crop the image:
-    "pdfcrop  --hires  lateximages" .. dirslash .. "lateximagetemp-" ..
+    "pdfcrop  --hires  " .. imagesdirectory .. dirslash .. "lateximagetemp-" ..
         lwimgpage .. ".pdf " ..
-        "lateximages" .. dirslash .. lwimgname .. ".pdf" ..
+        imagesdirectory .. dirslash .. lwimgname .. ".pdf" ..
         seqname ..
     -- Convert the image to svg:
-    "pdftocairo -svg  -noshrink  lateximages" .. dirslash .. lwimgname .. ".pdf " ..
-        "lateximages" .. dirslash .. lwimgname ..".svg" ..
+    "pdftocairo -svg  -noshrink  " .. imagesdirectory .. dirslash .. lwimgname .. ".pdf " ..
+        imagesdirectory .. dirslash .. lwimgname ..".svg" ..
         seqname ..
     -- Remove the temporary files:
-    rmname .. " lateximages" .. dirslash .. lwimgname .. ".pdf" .. seqname ..
-    rmname .. " lateximages" .. dirslash .. "lateximagetemp-" .. lwimgpage .. ".pdf" ..
+    rmname .. " " .. imagesdirectory .. dirslash .. lwimgname .. ".pdf" .. seqname ..
+    rmname .. " " .. imagesdirectory .. dirslash .. "lateximagetemp-" .. lwimgpage .. ".pdf" ..
     cmdgroupclosename .. " >/dev/null " .. bgname
     ,
     "File error trying to convert " .. lwimgfullname
@@ -495,7 +498,7 @@ end -- createwindowsimage
 
 function createonelateximage ( line )
 --
--- Given the next line of lateximages.txt, convert a single image.
+-- Given the next line of <sourcename>.txt, convert a single image.
 --
 -- lwimgpage is the page number in the PDF which has the image
 -- lwimghash is true if this filename is a hash
@@ -508,7 +511,7 @@ if ( (i~=nil) ) then
         pagezerowarning = true
     else
         -- Skip is this image is hashed and already exists:
-        local lwimgfullname = "lateximages" .. dirslash .. lwimgname .. ".svg"
+        local lwimgfullname = imagesdirectory .. dirslash .. lwimgname .. ".svg"
         if (
             (lwimghash ~= "true") or
             (lfs.attributes(lwimgfullname,"mode")==nil) -- file not exists
@@ -534,7 +537,7 @@ end -- createonelateximage
 
 function createlateximages ()
 --
--- Create lateximages based on lateximages.txt:
+-- Create lateximages based on <sourcename>.txt:
 --
 -- See if the document must be recompiled first:
 checklimages ()
@@ -542,13 +545,13 @@ checklimages ()
 checkhtmlpdfexists ()
 -- Attempt to create the lateximages:
 print ("lwarpmk: Creating lateximages.")
-local limagesfile = io.open("lateximages.txt", "r")
+local limagesfile = io.open(sourcename .. "-images.txt", "r")
 if ( limagesfile == nil ) then
-    warnlateximages ()
+    warnlimages ()
     os.exit(1)
 end
 -- Create the lateximages directory, ignore error if already exists
-err = os.execute("mkdir lateximages")
+err = os.execute("mkdir " .. imagesdirectory)
 -- For Windows, create lwarp_one_limage.cmd from lwarp_one_limage.txt:
 if opsystem=="Windows" then
     executecheckerror (
@@ -560,7 +563,7 @@ end -- create lwarp_one_limage.cmd
 numimageprocesses = 0
 -- Track warning to recompile if find a page 0
 pagezerowarning = false
--- Scan lateximages.txt
+-- Scan <sourcename>.txt
 for line in limagesfile:lines() do
     createonelateximage ( line )
 end -- do
@@ -758,7 +761,7 @@ os.execute(glossarycmd .. " " .. sourcename .. "_html")
 updateanddone ()
 
 -- lwarpmk limages:
--- Scan the lateximages.txt file to create lateximages.
+-- Scan the <sourcename>.txt file to create lateximages.
 
 elseif arg[1] == "limages" then
 loadconf ()
@@ -796,11 +799,11 @@ os.execute ( rmname .. " " ..
 print ("lwarpmk: Done.")
 
 -- lwarpmk cleanlimages
--- Remove images from the lateximages directory.
+-- Remove images from the imagesdirectory.
 
 elseif arg[1] == "cleanlimages" then
 loadconf ()
-os.execute ( rmname .. " lateximages/*" )
+os.execute ( rmname .. " " .. imagesdirectory .. dirslash .. "*" )
 print ("lwarpmk: Done.")
 
 -- lwarpmk epstopdf <list of file names>
