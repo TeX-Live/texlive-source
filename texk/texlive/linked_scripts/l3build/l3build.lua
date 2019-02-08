@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2018-11-08"
+release_date = "2019-02-06"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -37,6 +37,7 @@ local ipairs           = ipairs
 local insert           = table.insert
 local lookup           = kpse.lookup
 local match            = string.match
+local gsub             = string.gsub
 local next             = next
 local print            = print
 local select           = select
@@ -174,7 +175,7 @@ end
 if #checkconfigs == 1 and
    checkconfigs[1] ~= "build" and
    (options["target"] == "check" or options["target"] == "save") then
-   local config = "./" .. checkconfigs[1] .. ".lua"
+   local config = "./" .. gsub(checkconfigs[1],".lua$","") .. ".lua"
    if fileexists(config) then
      dofile(config)
      testdir = testdir .. "-" .. checkconfigs[1]
