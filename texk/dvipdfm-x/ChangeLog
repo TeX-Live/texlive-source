@@ -4,7 +4,7 @@
 
 2019-01-27  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
-	* spc_pdfm.c: Supress warning on tounicode special.
+	* spc_pdfm.c: Suppress a warning in tounicode special.
 	Dvipdfmx had been giving a wrong warning when an optional
 	argument to tounicode special is not supplied.
 
