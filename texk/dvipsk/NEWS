@@ -1,6 +1,9 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
+dvips 5.999 (TeX Live 2019):
+  Buffer overflows.
+
 dvips 5.998 (TeX Live 2018):
   New JFM (Japanese font metrics) spec supported; compiler portability fixes.
 
