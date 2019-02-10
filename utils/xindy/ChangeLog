@@ -1,3 +1,8 @@
+2019-02-10  Karl Berry  <karl@tug.org>
+
+	* ac/withenable.ac (KPSE_ENABLE_PROG): just disable,
+	cross-compilation is possible if clisp is built (per Luigi).
+
 2017-11-13  Karl Berry  <karl@tug.org>
 
 	* xindy-src/make-rules/inputenc/make-inp-rules.pl: must use \{
