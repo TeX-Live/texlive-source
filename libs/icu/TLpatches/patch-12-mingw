@@ -30,3 +30,15 @@
   #SH### copied from Makefile.inc
   #SH## for icu-config to test with
 --- 71,77 ----
+
+--- source/i18n/unicode/numberrangeformatter.h	(revision 49992)
++++ source/i18n/unicode/numberrangeformatter.h	(working copy)
+@@ -185,7 +185,7 @@
+  * Export an explicit template instantiation. See datefmt.h
+  * (When building DLLs for Windows this is required.)
+  */
+-#if U_PF_WINDOWS <= U_PLATFORM && U_PLATFORM <= U_PF_CYGWIN && !defined(U_IN_DOXYGEN)
++#if U_PF_WINDOWS <= U_PLATFORM && U_PLATFORM < U_PF_MINGW && !defined(U_IN_DOXYGEN) && defined(X)
+ template struct U_I18N_API std::atomic<impl::NumberRangeFormatterImpl*>;
+ #endif
+ /** \endcond */

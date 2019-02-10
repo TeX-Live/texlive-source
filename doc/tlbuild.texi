@@ -696,9 +696,9 @@ compilation of programs written in (C)WEB requires sufficiently recent
 installed versions of @file{tangle}, @file{ctangle}, @file{otangle},
 and @file{tie}.
 
-@cindex @code{xindy} cross compiling impossible
-Building @code{xindy} requires running the host system @file{clisp}
-binary, thus cross compilation is not possible.
+@cindex @code{xindy} cross compiling requires @code{clisp}
+Building @code{xindy} requires running the host system @code{clisp}
+binary, thus cross compilation is painful, but possible.
 
 @node Installing
 @chapter Installing
@@ -1519,19 +1519,19 @@ The @code{xindy} build requires a @file{make} that supports a
 @code{xindy/ac/withenable.ac} contains
 
 @example
-KPSE_ENABLE_PROG([xindy], , [disable native])
+KPSE_ENABLE_PROG([xindy], , [disable])
 m4_include(kpse_TL[utils/xindy/ac/xindy.ac])
 m4_include(kpse_TL[utils/xindy/ac/clisp.ac])
 @end example
 
 @noindent where @code{disable} in the third argument indicates that
 @code{xindy} is only built if explicitly enabled by the user with
-@code{configure --enable-xindy} (the need for @code{clisp} is too
-painful to require by default), and @code{native} disallows cross
-compilation.  The additional fragments @file{ac/xindy.ac} and
-@file{ac/clisp.ac} specify more @code{configure} options to be seen at
-the top level, with @file{ac/xindy.ac} also included by
-@file{configure.ac}.
+@code{configure --enable-xindy} (the need for @code{clisp} makes it
+too painful to enable by default).
+
+The additional fragments @file{ac/xindy.ac} and @file{ac/clisp.ac}
+specify more @code{configure} options to be seen at the top level,
+with @file{ac/xindy.ac} also included by @file{configure.ac}.
 
 
 @node @code{xdvik} package

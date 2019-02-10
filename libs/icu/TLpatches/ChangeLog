@@ -1,3 +1,8 @@
+2019-02-10  Karl Berry  <karl@tug.org>
+
+	* patch-12-mingw: also patch numberrangeformatter.h
+	for NumberRangeFormatterImpl* on mingw.
+
 2019-01-08  Karl Berry  <karl@freefriends.org>
 
 	* update for icu-63.1; no substantive changes.
