@@ -88,7 +88,7 @@ LDADD = icu-build/lib/libicuuc.a
 if cross
 LDADD += icu-build/lib/libicuuc.a
 else
-icu-build/lib/libicudata.a 
+LDADD += icu-build/lib/libicudata.a 
 endif
 LDADD += $(ICU_LIBS_EXTRA)
 
