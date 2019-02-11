@@ -2772,8 +2772,8 @@ package main;
 #================================================= BEGIN
 use Encode qw(encode decode);
 my $prog_name = 'jfmutil';
-my $version = '1.2.1';
-my $mod_date = '2019/02/08';
+my $version = '1.2.2';
+my $mod_date = '2019/02/09';
 #use Data::Dump 'dump';
 #
 my ($sw_hex, $sw_uptool, $sw_noencout, $inenc, $exenc, $sw_lenient);
@@ -2916,9 +2916,9 @@ sub read_option {
   $sw_hex = 1; $sw_uptool = 0;
   while ($ARGV[0] =~ m/^-/) {
     $opt = shift(@ARGV);
-    if ($opt =~ m/--?h(elp)?/) {
+    if ($opt =~ m/^--?h(elp)?$/) {
       show_usage();
-    } elsif ($opt =~ m/-(?:V|-version)?/) {
+    } elsif ($opt =~ m/^-(?:V|-version)?$/) {
       show_version();
     } elsif ($opt eq '--hex') {
       $sw_hex = 1;
@@ -3159,9 +3159,9 @@ sub read_option {
   $op_zero = 0; $op_uptex = 0; $op_quiet = 0;
   while ($ARGV[0] =~ m/^-/) {
     my $opt = shift(@ARGV);
-    if ($opt =~ m/--?h(elp)?/) {
+    if ($opt =~ m/^--?h(elp)?$/) {
       main::show_usage();
-    } elsif ($opt =~ m/-(?:V|-version)?/) {
+    } elsif ($opt =~ m/^-(?:V|-version)?$/) {
       main::show_version();
     } elsif ($opt eq '-z' || $opt eq '--zero') {
       $op_zero = 1;
