@@ -8,6 +8,7 @@ CWEB: now comes from the CWEBbin package
 more language support, and more.
 
 
+2019 (for TeX Live 2019)
 2018 (for TeX Live 2018, 14 April 2018)
 * Directories in the -output-directory do not mask files by the same name.
 

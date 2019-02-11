@@ -4377,7 +4377,7 @@ $as_echo "$as_me: Assuming \`--enable-vlna=$enable_vlna'" >&6;}
     ;;
 esac
 
-# $Id$
+# $Id: withenable.ac 49993 2019-02-10 19:14:27Z karl $
 # utils/xindy/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
 ## configure options and TL libraries required for xindy
 # Check whether --enable-xindy was given.
@@ -24811,11 +24811,11 @@ msg_compiling="$msg_compiling
 test "x$srcdir" = x. || msg_compiling="$msg_compiling
       from sources in $kpse_src"
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:
-** Configuration summary for $PACKAGE_STRING (2019/dev$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2019$with_banner_add):
 
    $msg_compiling" >&5
 $as_echo "
-** Configuration summary for $PACKAGE_STRING (2019/dev$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2019$with_banner_add):
 
    $msg_compiling" >&6; }
 case $kpse_src$kpse_bld in

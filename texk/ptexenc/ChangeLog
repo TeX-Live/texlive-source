@@ -1,3 +1,7 @@
+2019-02-11  Karl Berry  <karl@tug.org>
+
+	* version.ac: no /dev for TL'19.
+
 2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptexenc.c, ptexenc/ptexenc.h: define enc_to_string() and

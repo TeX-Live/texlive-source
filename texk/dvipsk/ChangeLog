@@ -1,3 +1,10 @@
+2019-02-11  Karl Berry  <karl@tug.org>
+
+	* dvips.texi,
+	* dvips.h,
+	* configure.ac,
+	* afm2tfm.c: 5.999 for TL'19.
+
 2018-10-24  Karl Berry  <karl@tug.org>
 
 	* writet1.c (t1_check_unusual_charstring): don't call

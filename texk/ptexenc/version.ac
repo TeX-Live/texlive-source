@@ -1,23 +1,13 @@
 dnl $Id$
-dnl   Copyright 2016-2018 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2016-2019 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-dnl --------------------------------------------------------
-dnl Keep ptexenc package and shared library versions the same:
-dnl   Only bug fixes:
-dnl     a.b.c => a.b.c+1
-dnl   Adding new interfaces (backwards compatible)
-dnl     a.b.c => a.b+1.0
-dnl   Modifying or revoking interfaces (not backwards compatible)
-dnl     a.b.c => a+1.0.0
+dnl Keep package and shared library versions the same;
+dnl see kpathsea/vesion.ac.
 dnl
-dnl   After a release:
-dnl     append "dev", to distinguish binaries built between releases.
-dnl --------------------------------------------------------
-dnl
-dnl  this file is m4-included from configure.ac
-m4_define([ptexenc_version], [1.3.7/dev])
+dnl This file is m4-included from configure.ac.
+m4_define([ptexenc_version], [1.3.7])

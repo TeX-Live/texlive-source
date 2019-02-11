@@ -83,10 +83,10 @@ TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
 TEXMFHOME = ~/texmf
 
 % TEXMFVAR, where texconfig/updmap/fmtutil store cached runtime data.
-TEXMFVAR = ~/.texlive2018/texmf-var
+TEXMFVAR = ~/.texlive2019/texmf-var
 
 % TEXMFCONFIG, where texconfig/updmap/fmtutil store configuration data.
-TEXMFCONFIG = ~/.texlive2018/texmf-config
+TEXMFCONFIG = ~/.texlive2019/texmf-config
 
 % This is the value manipulated by tlmgr's auxtrees subcommand in the
 % root texmf.cnf. Kpathsea warns about a literally empty string for a

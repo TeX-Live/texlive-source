@@ -1,3 +1,10 @@
+2019-02-11  Karl Berry  <karl@tug.org>
+
+	* version.ac,
+	* texmf.cnf,
+	* kpsewhich.c,
+	* doc/kpathsea.texi: 6.3.1 for TL'19.
+
 2019-01-19  Karl Berry  <karl@freefriends.org>
 
 	* variable.h (kpathsea_var_expand): returns string "$FOO" if FOO
