@@ -87,7 +87,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 @PNG_ARM_NEON_TRUE@am__append_1 = @LIBPNG_TREE@/arm/arm_init.c\
-@PNG_ARM_NEON_TRUE@	@LIBPNG_TREE@/arm/filter_neon.S @LIBPNG_TREE@/arm/filter_neon_intrinsics.c
+@PNG_ARM_NEON_TRUE@	@LIBPNG_TREE@/arm/filter_neon.S @LIBPNG_TREE@/arm/filter_neon_intrinsics.c \
+@PNG_ARM_NEON_TRUE@	@LIBPNG_TREE@/arm/palette_neon_intrinsics.c
 
 @build_TRUE@check_PROGRAMS = pngtest$(EXEEXT)
 subdir = .
@@ -121,7 +122,8 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @PNG_ARM_NEON_TRUE@am__objects_1 =  \
 @PNG_ARM_NEON_TRUE@	@LIBPNG_TREE@/arm/arm_init.$(OBJEXT) \
 @PNG_ARM_NEON_TRUE@	@LIBPNG_TREE@/arm/filter_neon.$(OBJEXT) \
-@PNG_ARM_NEON_TRUE@	@LIBPNG_TREE@/arm/filter_neon_intrinsics.$(OBJEXT)
+@PNG_ARM_NEON_TRUE@	@LIBPNG_TREE@/arm/filter_neon_intrinsics.$(OBJEXT) \
+@PNG_ARM_NEON_TRUE@	@LIBPNG_TREE@/arm/palette_neon_intrinsics.$(OBJEXT)
 nodist_libpng_a_OBJECTS = @LIBPNG_TREE@/png.$(OBJEXT) \
 	@LIBPNG_TREE@/pngerror.$(OBJEXT) \
 	@LIBPNG_TREE@/pngget.$(OBJEXT) @LIBPNG_TREE@/pngmem.$(OBJEXT) \
@@ -174,7 +176,8 @@ am__depfiles_remade = @LIBPNG_TREE@/$(DEPDIR)/png.Po \
 	@LIBPNG_TREE@/$(DEPDIR)/pngwutil.Po \
 	@LIBPNG_TREE@/arm/$(DEPDIR)/arm_init.Po \
 	@LIBPNG_TREE@/arm/$(DEPDIR)/filter_neon.Po \
-	@LIBPNG_TREE@/arm/$(DEPDIR)/filter_neon_intrinsics.Po
+	@LIBPNG_TREE@/arm/$(DEPDIR)/filter_neon_intrinsics.Po \
+	@LIBPNG_TREE@/arm/$(DEPDIR)/palette_neon_intrinsics.Po
 am__mv = mv -f
 CPPASCOMPILE = $(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS)
@@ -744,6 +747,9 @@ clean-noinstLIBRARIES:
 @LIBPNG_TREE@/arm/filter_neon_intrinsics.$(OBJEXT):  \
 	@LIBPNG_TREE@/arm/$(am__dirstamp) \
 	@LIBPNG_TREE@/arm/$(DEPDIR)/$(am__dirstamp)
+@LIBPNG_TREE@/arm/palette_neon_intrinsics.$(OBJEXT):  \
+	@LIBPNG_TREE@/arm/$(am__dirstamp) \
+	@LIBPNG_TREE@/arm/$(DEPDIR)/$(am__dirstamp)
 
 libpng.a: $(libpng_a_OBJECTS) $(libpng_a_DEPENDENCIES) $(EXTRA_libpng_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libpng.a
@@ -783,6 +789,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/arm/$(DEPDIR)/arm_init.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/arm/$(DEPDIR)/filter_neon.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/arm/$(DEPDIR)/filter_neon_intrinsics.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@LIBPNG_TREE@/arm/$(DEPDIR)/palette_neon_intrinsics.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1351,6 +1358,7 @@ distclean: distclean-recursive
 	-rm -f @LIBPNG_TREE@/arm/$(DEPDIR)/arm_init.Po
 	-rm -f @LIBPNG_TREE@/arm/$(DEPDIR)/filter_neon.Po
 	-rm -f @LIBPNG_TREE@/arm/$(DEPDIR)/filter_neon_intrinsics.Po
+	-rm -f @LIBPNG_TREE@/arm/$(DEPDIR)/palette_neon_intrinsics.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -1417,6 +1425,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @LIBPNG_TREE@/arm/$(DEPDIR)/arm_init.Po
 	-rm -f @LIBPNG_TREE@/arm/$(DEPDIR)/filter_neon.Po
 	-rm -f @LIBPNG_TREE@/arm/$(DEPDIR)/filter_neon_intrinsics.Po
+	-rm -f @LIBPNG_TREE@/arm/$(DEPDIR)/palette_neon_intrinsics.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

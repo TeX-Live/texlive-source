@@ -45,7 +45,8 @@ nodist_libpng_a_SOURCES = \
 
 if PNG_ARM_NEON
 nodist_libpng_a_SOURCES += @LIBPNG_TREE@/arm/arm_init.c\
-	@LIBPNG_TREE@/arm/filter_neon.S @LIBPNG_TREE@/arm/filter_neon_intrinsics.c
+	@LIBPNG_TREE@/arm/filter_neon.S @LIBPNG_TREE@/arm/filter_neon_intrinsics.c \
+	@LIBPNG_TREE@/arm/palette_neon_intrinsics.c
 endif
 
 $(libpng_a_OBJECTS): config.force
