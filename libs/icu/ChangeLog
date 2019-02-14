@@ -1,3 +1,8 @@
+2019-02-14  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (icubuild): cp icudt.a to icudata.a
+	and libicuin.a libicui18n.a, for mingw cross compile, per Luigi.
+
 2019-02-10  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (LDADD) [cross]: icu-native/lib/icudt.a per Luigi.

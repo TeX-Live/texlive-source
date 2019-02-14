@@ -57,6 +57,10 @@ if cross
 	cd icu-native && $(MAKE) $(AM_MAKEFLAGS) all
 endif cross
 	cd icu-build && $(MAKE) $(AM_MAKEFLAGS) all
+# these two cp commands are a kludge for mingw cross compilation.
+	cd icu-build/lib && (test ! -r icudt.a || cp icudt.a libicudata.a)
+	cd icu-build/lib && (test ! -r libicuin.a || cp libicuin.a libicui18n.a)
+#
 	cd include/unicode && $(MAKE) $(AM_MAKEFLAGS) all
 
 check-makeflags:
