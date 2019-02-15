@@ -748,7 +748,7 @@ static int infile_enc[NOFILE]; /* ENC_UNKNOWN (=0): not determined
 long input_line2(FILE *fp, unsigned char *buff, long pos,
                  const long buffsize, int *lastchar)
 {
-    long i;
+    long i = 0;
     static boolean injis = false;
     const int fd = fileno(fp);
 
