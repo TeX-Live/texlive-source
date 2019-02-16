@@ -1,3 +1,7 @@
+2019-02-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebinputs/c++1xlib.w: Add some C++1x class names.
+
 2019-01-20  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch: Use braced evaluation and save a macro variable.

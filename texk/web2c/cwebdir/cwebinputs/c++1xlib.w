@@ -20,3 +20,18 @@
 @s unordered_multimap int
 @s thread int
 @s path int
+
+@q add more std::classes from (some) C++1x headers @>
+
+@s integral_constant int
+@s bool_constant int
+@s function int
+@s mem_fn int
+@s bad_function_call int
+@s is_bind_expression int
+@s is_placeholder int
+@s reference_wrapper int
+@s hash int
+@s unique_ptr int
+@s shared_ptr int
+@s weak_ptr int
