@@ -62,11 +62,11 @@ static void fprint_euc_char(FILE *fp, const char a, const char b)
 		int chr = (unsigned char)a<<8 | (unsigned char)b;
 		chr = (chr==0xffff) ? U_REPLACEMENT_CHARACTER : JIStoUCS2(chr & 0x7f7f);
 		chr = UCStoUTF8(chr);
-		/* if (BYTE1(chr) != 0) str[k++] = BYTE1(chr); */  /* do not happen */
-		if (BYTE2(chr) != 0) str[k++] = BYTE2(chr);
-		if (BYTE3(chr) != 0) str[k++] = BYTE3(chr);
-		                     str[k++] = BYTE4(chr);
-		                     str[k++] = '\0';
+		/* if (BYTE1(chr) != 0){ str[k++] = BYTE1(chr); } */  /* do not happen */
+		if (BYTE2(chr) != 0){ str[k++] = BYTE2(chr); }
+		if (BYTE3(chr) != 0){ str[k++] = BYTE3(chr); }
+		                      str[k++] = BYTE4(chr);
+		                      str[k++] = '\0';
 		fprintf(fp,"%s",str);
 	}
 	else
@@ -97,7 +97,7 @@ void warn_printf(FILE *fp, const char *format, ...)
     vsnprintf(print_buff, sizeof print_buff, format, argptr);
     va_end(argptr);
 
-    warn++;    
+    warn++;
     fputs(print_buff, stderr);
     if (fp!=stderr) fputs(print_buff, fp);
 }
@@ -195,13 +195,16 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				break;
 
 			case 2:
-				SAPPENDF(lbuff,"%s%s",item_x1,ind[i].idx[1]);
+				SAPPENDF(lbuff,"%s",item_x1);
+				SAPPENDF(lbuff,"%s",ind[i].idx[1]);
 				SAPPENDF(lbuff,"%s",delim_1);
 				break;
 
 			case 3:
-				SAPPENDF(lbuff,"%s%s",item_x1,ind[i].idx[1]);
-				SAPPENDF(lbuff,"%s%s",item_x2,ind[i].idx[2]);
+				SAPPENDF(lbuff,"%s",item_x1);
+				SAPPENDF(lbuff,"%s",ind[i].idx[1]);
+				SAPPENDF(lbuff,"%s",item_x2);
+				SAPPENDF(lbuff,"%s",ind[i].idx[2]);
 				SAPPENDF(lbuff,"%s",delim_2);
 				break;
 
@@ -249,12 +252,16 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 
 			switch (ind[i].words) {
 			case 1:
-				SAPPENDF(lbuff,"%s%s%s",item_0,ind[i].idx[0],delim_0);
+				SAPPENDF(lbuff,"%s",item_0);
+				SAPPENDF(lbuff,"%s",ind[i].idx[0]);
+				SAPPENDF(lbuff,"%s",delim_0);
 				break;
 
 			case 2:
 				if (strcmp(ind[i-1].idx[0],ind[i].idx[0])!=0 || strcmp(ind[i-1].dic[0],ind[i].dic[0])!=0) {
-					SAPPENDF(lbuff,"%s%s%s",item_0,ind[i].idx[0],item_x1);
+					SAPPENDF(lbuff,"%s",item_0);
+					SAPPENDF(lbuff,"%s",ind[i].idx[0]);
+					SAPPENDF(lbuff,"%s",item_x1);
 				}
 				else {
 					if (ind[i-1].words==1) {
@@ -270,20 +277,28 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 
 			case 3:
 				if (strcmp(ind[i-1].idx[0],ind[i].idx[0])!=0 || strcmp(ind[i-1].dic[0],ind[i].dic[0])!=0) {
-					SAPPENDF(lbuff,"%s%s",item_0,ind[i].idx[0]);
-					SAPPENDF(lbuff,"%s%s%s",item_x1,ind[i].idx[1],item_x2);
+					SAPPENDF(lbuff,"%s",item_0);
+					SAPPENDF(lbuff,"%s",ind[i].idx[0]);
+					SAPPENDF(lbuff,"%s",item_x1);
+					SAPPENDF(lbuff,"%s",ind[i].idx[1]);
+					SAPPENDF(lbuff,"%s",item_x2);
 				}
 				else if (ind[i-1].words==1) {
-					SAPPENDF(lbuff,"%s%s%s",item_01,ind[i].idx[1],item_x2);
+					SAPPENDF(lbuff,"%s",item_01);
+					SAPPENDF(lbuff,"%s",ind[i].idx[1]);
+					SAPPENDF(lbuff,"%s",item_x2);
 				}
 				else if (strcmp(ind[i-1].idx[1],ind[i].idx[1])!=0 || strcmp(ind[i-1].dic[1],ind[i].dic[1])!=0) {
-					if (ind[i-1].words==2) SAPPENDF(lbuff,"%s%s%s",item_1,ind[i].idx[1],item_12);
-					else SAPPENDF(lbuff,"%s%s%s",item_1,ind[i].idx[1],item_x2);
+					SAPPENDF(lbuff,"%s",item_1);
+					SAPPENDF(lbuff,"%s",ind[i].idx[1]);
+					if (ind[i-1].words==2) SAPPENDF(lbuff,"%s",item_12);
+					else                   SAPPENDF(lbuff,"%s",item_x2);
 				}
 				else {
 					SAPPENDF(lbuff,"%s",item_2);
 				}
-				SAPPENDF(lbuff,"%s%s",ind[i].idx[2],delim_2);
+				SAPPENDF(lbuff,"%s",ind[i].idx[2]);
+				SAPPENDF(lbuff,"%s",delim_2);
 				break;
 
 			default:
@@ -323,16 +338,20 @@ static void printpage(struct index *ind, FILE *fp, int num, char *lbuff)
 				SPRINTF(buff,"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
 			}
 			if (strlen(suffix_3p)>0 && (pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])-pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0]))==2) {
-				SAPPENDF(buff,"%s%s",ind[num].p[j].page,suffix_3p);
+				SAPPENDF(buff,"%s",ind[num].p[j].page);
+				SAPPENDF(buff,"%s",suffix_3p);
 			}
 			else if (strlen(suffix_mp)>0 && (pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])-pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0]))>=2) {
-				SAPPENDF(buff,"%s%s",ind[num].p[j].page,suffix_mp);
+				SAPPENDF(buff,"%s",ind[num].p[j].page);
+				SAPPENDF(buff,"%s",suffix_mp);
 			}
 			else if (strlen(suffix_2p)>0 && (pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])-pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0]))==1) {
-				SAPPENDF(buff,"%s%s",ind[num].p[j].page,suffix_2p);
+				SAPPENDF(buff,"%s",ind[num].p[j].page);
+				SAPPENDF(buff,"%s",suffix_2p);
 			}
 			else {
-				SAPPENDF(buff,"%s%s",ind[num].p[j].page,delim_r);
+				SAPPENDF(buff,"%s",ind[num].p[j].page);
+				SAPPENDF(buff,"%s",delim_r);
 				SAPPENDF(buff,"%s",ind[num].p[cc].page);
 			}
 			SAPPENDF(tmpbuff,"%s",buff);
@@ -354,42 +373,60 @@ static void printpage(struct index *ind, FILE *fp, int num, char *lbuff)
 /* normal encap */
 			if (ind[num].p[j].enc[0]==range_close) {
 				SPRINTF(errbuff,"Warning: Unmatched range closing operator \'%c\',",range_close);
-				for (i=0;i<ind[num].words;i++) SAPPENDF(errbuff,"%s.",ind[num].idx[i]);
+				for (i=0;i<ind[num].words;i++) {
+					SAPPENDF(errbuff,"%s",ind[num].idx[i]);
+					SAPPENDF(errbuff,".");
+				}
 				warn_printf(efp, "%s\n", errbuff);
 				ind[num].p[j].enc++;
 			}
 			if (strlen(ind[num].p[j].enc)>0) {
-				SAPPENDF(tmpbuff,"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
-				SAPPENDF(tmpbuff,"%s%s%s",ind[num].p[j].page,encap_suffix,delim_n);
+				SAPPENDF(tmpbuff,"%s",encap_prefix);
+				SAPPENDF(tmpbuff,"%s",ind[num].p[j].enc);
+				SAPPENDF(tmpbuff,"%s",encap_infix);
+				SAPPENDF(tmpbuff,"%s",ind[num].p[j].page);
+				SAPPENDF(tmpbuff,"%s",encap_suffix);
+				SAPPENDF(tmpbuff,"%s",delim_n);
 				linecheck(lbuff,tmpbuff);
 			}
 			else {
-				SAPPENDF(tmpbuff,"%s%s",ind[num].p[j].page,delim_n);
+				SAPPENDF(tmpbuff,"%s",ind[num].p[j].page);
+				SAPPENDF(tmpbuff,"%s",delim_n);
 				linecheck(lbuff,tmpbuff);
 			}
 		}
 		else {
 /* no encap */
-			SAPPENDF(tmpbuff,"%s%s",ind[num].p[j].page,delim_n);
+			SAPPENDF(tmpbuff,"%s",ind[num].p[j].page);
+			SAPPENDF(tmpbuff,"%s",delim_n);
 			linecheck(lbuff,tmpbuff);
 		}
 	}
 
 	if (ind[num].p[j].enc[0]==range_open) {
 		SPRINTF(errbuff,"Warning: Unmatched range opening operator \'%c\',",range_open);
-		for (k=0;k<ind[num].words;k++) SAPPENDF(errbuff,"%s.",ind[num].idx[k]);
+		for (k=0;k<ind[num].words;k++) {
+			SAPPENDF(errbuff,"%s",ind[num].idx[k]);
+			SAPPENDF(errbuff,".");
+		}
 		warn_printf(efp, "%s\n", errbuff);
 		ind[num].p[j].enc++;
 	}
 	else if (ind[num].p[j].enc[0]==range_close) {
 		SPRINTF(errbuff,"Warning: Unmatched range closing operator \'%c\',",range_close);
-		for (k=0;k<ind[num].words;k++) SAPPENDF(errbuff,"%s.",ind[num].idx[k]);
+		for (k=0;k<ind[num].words;k++) {
+			SAPPENDF(errbuff,"%s",ind[num].idx[k]);
+			SAPPENDF(errbuff,".");
+		}
 		warn_printf(efp, "%s\n", errbuff);
 		ind[num].p[j].enc++;
 	}
 	if (strlen(ind[num].p[j].enc)>0) {
-		SAPPENDF(tmpbuff,"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
-		SAPPENDF(tmpbuff,"%s%s",ind[num].p[j].page,encap_suffix);
+		SAPPENDF(tmpbuff,"%s",encap_prefix);
+		SAPPENDF(tmpbuff,"%s",ind[num].p[j].enc);
+		SAPPENDF(tmpbuff,"%s",encap_infix);
+		SAPPENDF(tmpbuff,"%s",ind[num].p[j].page);
+		SAPPENDF(tmpbuff,"%s",encap_suffix);
 	}
 	else {
 		SAPPENDF(tmpbuff,"%s",ind[num].p[j].page);
@@ -410,7 +447,8 @@ static int range_check(struct index ind, int count, char *lbuff)
 	for (i=count;i<ind.num+1;i++) {
 		if (ind.p[i].enc[0]==range_close) {
 			SPRINTF(errbuff,"Warning: Unmatched range closing operator \'%c\',",range_close);
-			SAPPENDF(errbuff,"%s.",ind.idx[0]);
+			SAPPENDF(errbuff,"%s",ind.idx[0]);
+			SAPPENDF(errbuff,".");
 			warn_printf(efp, "%s\n", errbuff);
 			ind.p[i].enc++;
 		}
@@ -427,20 +465,26 @@ static int range_check(struct index ind, int count, char *lbuff)
 					}
 					else if (j!=i && ind.p[j].enc[0]==range_open) {
 						SPRINTF(errbuff,"Warning: Unmatched range opening operator \'%c\',",range_open);
-						for (k=0;k<ind.words;k++) SAPPENDF(errbuff,"%s.",ind.idx[k]);
+						for (k=0;k<ind.words;k++) {
+							SAPPENDF(errbuff,"%s",ind.idx[k]);
+							SAPPENDF(errbuff,".");
+						}
 						warn_printf(efp, "%s\n", errbuff);
 						ind.p[j].enc++;
 					}
 					if (strlen(ind.p[j].enc)>0) {
-						SPRINTF(tmpbuff,"%s%s%s",encap_prefix,ind.p[j].enc,encap_infix);
-						SAPPENDF(tmpbuff,"%s%s%s",ind.p[j].page,encap_suffix,delim_n);
+						SPRINTF(tmpbuff,"%s%s%s%s%s%s",encap_prefix,ind.p[j].enc,encap_infix
+						                              ,ind.p[j].page,encap_suffix,delim_n);
 						linecheck(lbuff,tmpbuff);
 					}
 				}
 			}
 			if (j==ind.num+1) {
 					SPRINTF(errbuff,"Warning: Unmatched range opening operator \'%c\',",range_open);
-					for (k=0;k<ind.words;k++) SAPPENDF(errbuff,"%s.",ind.idx[k]);
+					for (k=0;k<ind.words;k++) {
+						SAPPENDF(errbuff,"%s",ind.idx[k]);
+						SAPPENDF(errbuff,".");
+					}
 					warn_printf(efp, "%s\n", errbuff);
 			}
 			i=j-1;
@@ -472,7 +516,9 @@ static int range_check(struct index ind, int count, char *lbuff)
 static void linecheck(char *lbuff, char *tmpbuff)
 {
 	if (line_length+strlen(tmpbuff)>line_max) {
-		SAPPENDF(lbuff,"\n%s%s",indent_space,tmpbuff);
+		SAPPENDF(lbuff,"\n");
+		SAPPENDF(lbuff,"%s",indent_space);
+		SAPPENDF(lbuff,"%s",tmpbuff);
 		line_length=indent_length+strlen(tmpbuff);
 		tmpbuff[0]='\0';
 	}
@@ -493,7 +539,7 @@ static void crcheck(char *lbuff, FILE *fp)
 			strncpy(buff,lbuff,i+1);
 			buff[i+1]='\0';
 			fputs(buff,fp);
-			strcpy(buff,&lbuff[i+1]);
+			strncpy(buff,&lbuff[i+1],BUFFERLEN-1);
 			strcpy(lbuff,buff);
 			break;
 		}

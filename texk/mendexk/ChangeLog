@@ -1,3 +1,14 @@
+2019-02-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* main.c, configure.ac, configure:
+	Version 3.1 [17-Feb-2019].
+	* main.c, COPYRIGHT: Update copyright year.
+	* fread.c: Fix typo. It seems a bug.
+	* {convert,fread,fwrite,kp,main}.c:
+	Avoid compiler warnings.
+	Thanks to @ngothan for a report by covscan.
+	https://github.com/TeX-Live/texlive-source/issues/11
+
 2019-01-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* mendex.1, mendex.1.ja: Add fallback TeX and LaTeX logos.

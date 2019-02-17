@@ -19,7 +19,7 @@ char *styfile,*idxfile[256],*indfile,*dicfile,*logfile;
 #endif
 KpathseaSupportInfo kp_ist,kp_dict;
 
-#define VERSION "version 3.0 [15-May-2018]"
+#define VERSION "version 3.1 [17-Feb-2019]"
 
 int main(int argc, char **argv)
 {
@@ -189,7 +189,7 @@ int main(int argc, char **argv)
 
 			default:
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);
-				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS.\n");
+				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2017-2019 Japanese TeX Development Community\n");
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% mendex [-ilqrcgfEJS"
 #ifdef WIN32
@@ -221,10 +221,8 @@ int main(int argc, char **argv)
 			}
 		}
 		else {
-			cc=strlen(argv[i]);
-			if (cc<4) cc+=4;
-			else if (strcmp(&argv[i][cc-4],".idx")) cc+=4;
-			idxfile[j]=xmalloc(cc+1);
+			cc=strlen(argv[i])+6;
+			idxfile[j]=xmalloc(cc);
 			strcpy(idxfile[j++],argv[i]);
 		}
 	}
@@ -294,10 +292,10 @@ int main(int argc, char **argv)
 	case 0:
 	case 1:
 		if (gflg==1) {
-			strcpy(atama,akasatana);
+			strncpy(atama,akasatana,2048);
 		}
 		else {
-			strcpy(atama,aiueo);
+			strncpy(atama,aiueo,2048);
 		}
 		break;
 

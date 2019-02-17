@@ -51,7 +51,7 @@ int idxread(char *filename, int start)
 
 	for (i=start,n=1;;i++,n++) {
 		if (!(i%100))
-			ind=(struct index *)realloc(ind,sizeof(struct index)*(i+100));
+			ind=(struct index *)xrealloc(ind,sizeof(struct index)*(i+100));
 LOOP:
 		ind[i].lnum=n;
 		if (mfgets(buff,sizeof(buff)-1,fp)==NULL) break;
@@ -293,7 +293,7 @@ LOOP:
 						else tmp1=ind[i].idx[m];
 
 						if (ind[l].org[m]!=NULL) tmp2=ind[l].org[m];
-						else tmp2=ind[i].idx[m];
+						else tmp2=ind[l].idx[m];
 
 						verb_printf(efp,"\nWarning: Sort key \"%s\" is different from previous key \"%s\" for same index \"%s\" in %s, line %d.",tmp1, tmp2, ind[i].idx[m], filename,ind[i].lnum);
 						warn++;
@@ -349,11 +349,11 @@ LOOP:
 
 				if (k>ind[l].num) {
 					ind[l].num++;
-					if (!((ind[l].num)%16)) ind[l].p=(struct page *)realloc(ind[l].p,sizeof(struct page)*((int)((ind[l].num)/16)+1)*16);
+					if (!((ind[l].num)%16)) ind[l].p=(struct page *)xrealloc(ind[l].p,sizeof(struct page)*((int)((ind[l].num)/16)+1)*16);
 
-					ind[l].p[ind[l].num].page=xstrdup(table);	
+					ind[l].p[ind[l].num].page=xstrdup(table);
 
-					ind[l].p[ind[l].num].enc=xstrdup(estr);	
+					ind[l].p[ind[l].num].enc=xstrdup(estr);
 					chkpageattr(&ind[l].p[ind[l].num]);
 				}
 			}
@@ -383,15 +383,15 @@ LOOP:
 						nest++;
 					if (buff[j]==arg_close) {
 						if (nest==0) {
-							table[k]='\0';	
-							ind[i].p[0].page=xstrdup(table);	
+							table[k]='\0';
+							ind[i].p[0].page=xstrdup(table);
 							break;
 						}
 						else nest--;
 					}
 					copy_multibyte_char(buff, table, &j, &k);
 				}
-				ind[l].p[0].enc=xstrdup(estr);	
+				ind[l].p[0].enc=xstrdup(estr);
 				chkpageattr(&ind[i].p[0]);
 			}
 		}

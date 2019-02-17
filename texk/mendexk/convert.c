@@ -14,6 +14,8 @@
 
 #include "kp.h"
 
+#define BUFFERLEN 4096
+
 struct dictionary{
 char* dic[2];
 };
@@ -67,7 +69,7 @@ int dicread(const char *filename)
 {
 	int i,ecount=0;
 	const char *envfile;
-	char buff[4096];
+	char buff[BUFFERLEN];
 	FILE *fp;
 
 	if (filename!=NULL) {
@@ -83,7 +85,7 @@ int dicread(const char *filename)
 		verb_printf(efp,"Scanning dictionary file %s.",filename);
 
 		for (i=0;;i++) {
-			if (mfgets(buff,4095,fp)==NULL) break;
+			if (mfgets(buff,BUFFERLEN-1,fp)==NULL) break;
 			if ((buff[0]=='\r')||(buff[0]=='\n')||(buff[0]=='\0')) i--;
 		}
 		nkf_close(fp);
@@ -199,7 +201,7 @@ static int dcomp(const void *bf1, const void *bf2)
 int convert(char *buff1, char *buff2)
 {
 	int i=0,j=0,k,l;
-	char errbuff[4096];
+	char errbuff[BUFFERLEN];
 	int chr,wclen;
 	char buff3[3];
 
