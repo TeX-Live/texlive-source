@@ -51,7 +51,7 @@ int idxread(char *filename, int start)
 
 	for (i=start,n=1;;i++,n++) {
 		if (!(i%100))
-			ind=(struct index *)realloc(ind,sizeof(struct index)*(i+100));
+			ind=(struct index *)xrealloc(ind,sizeof(struct index)*(i+100));
 LOOP:
 		ind[i].lnum=n;
 		if (fgets(buff,sizeof(buff)-1,fp)==NULL) break;
@@ -293,7 +293,7 @@ LOOP:
 						else tmp1=ind[i].idx[m];
 
 						if (ind[l].org[m]!=NULL) tmp2=ind[l].org[m];
-						else tmp2=ind[i].idx[m];
+						else tmp2=ind[l].idx[m];
 
 						widechar_to_multibyte(wbuff,BUFSIZE,tmp1);
 						verb_printf(efp,"\nWarning: Sort key \"%s\"",wbuff);
@@ -354,7 +354,7 @@ LOOP:
 
 				if (k>ind[l].num) {
 					ind[l].num++;
-					if (!((ind[l].num)%16)) ind[l].p=(struct page *)realloc(ind[l].p,sizeof(struct page)*((int)((ind[l].num)/16)+1)*16);
+					if (!((ind[l].num)%16)) ind[l].p=(struct page *)xrealloc(ind[l].p,sizeof(struct page)*((int)((ind[l].num)/16)+1)*16);
 
 					ind[l].p[ind[l].num].page=xstrdup(table);	
 

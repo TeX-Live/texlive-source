@@ -13,10 +13,10 @@
  */
 static const char *KP_get_path(const char *var, const char *def_val)
 {
-  char avar[50];
+  char avar[264];
   const char *p;
   strcpy(avar, "${");
-  strcat(avar, var);
+  strncat(avar, var, 260);
   strcat(avar, "}");
   p = kpse_path_expand(avar);
   return (p && *p) ? p : def_val;

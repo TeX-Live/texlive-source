@@ -1,3 +1,13 @@
+2019-02-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.52  Beta version.
+	* main.c, COPYRIGHT: Update copyright year.
+	* fread.c: Fix typo. It seems a bug.
+	* {convert,fread,fwrite,kp,sort,styfile}.c, {hanzi,mendex}.h:
+	Avoid compiler warnings.
+	Thanks to @ngothan for a report by covscan.
+	https://github.com/TeX-Live/texlive-source/issues/11
+
 2017-04-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* main.c: Avoid access violation.
