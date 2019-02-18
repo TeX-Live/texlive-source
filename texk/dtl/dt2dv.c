@@ -73,7 +73,7 @@ Line dtl_line = {0, 0, 0, MAXLINE, linebuf};
 
 /* maximum expected length of a DTL token */
 #define MAXTOKLEN 255
-typedef char Token[MAXTOKLEN+1];
+typedef char Token[MAXTOKLEN+2];
 
 typedef unsigned char Byte;
 typedef char Boolean;

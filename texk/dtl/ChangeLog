@@ -1,3 +1,9 @@
+2019-02-18  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dt2dv.c: Expand buffer size.
+	Thanks to @ngothan for a report by covscan.
+	https://github.com/TeX-Live/texlive-source/issues/11
+
 2015-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dt2dv.c: Fixed typo in program name ("dv2dt" => "dt2dv").
