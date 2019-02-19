@@ -1,6 +1,7 @@
 2019-02-19  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
-	* tfmread.c, tool.c: Avoid compiler warnings.
+	* tfmread.c, tool.c: Avoid compiler warnings for fgetc().
+	* tfmread.c, write.c: Security fix for too long file names.
 	* write.c (writevfu): Removed unnecessary conditionals.
 	Thanks to @ngothan for a report by covscan.
 	https://github.com/TeX-Live/texlive-source/issues/11

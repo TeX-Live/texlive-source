@@ -96,6 +96,10 @@ int tfmget(char *name)
 	char nbuff[1024];
 	FILE *fp;
 
+	if (strlen(name) >= 1020) { /* <buffer size> - ".tfm" */
+		fprintf(stderr,"Too long input file name.\n");
+		exit(1);
+	}
 	strcpy(nbuff,name);
 	fp = fopen(nbuff,"rb");
 	if (fp == NULL) {
@@ -103,7 +107,7 @@ int tfmget(char *name)
 		fp = fopen(nbuff,"rb");
 		if (fp == NULL) {
 			fprintf(stderr,"%s is not found.\n",name);
-			exit(0);
+			exit(1);
 		}
 	}
 

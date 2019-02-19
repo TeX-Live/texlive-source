@@ -794,6 +794,10 @@ void maketfm(char *name)
 	FILE *fp;
 	int i;
 
+	if (strlen(name) >= 252) { /* <buffer size> - ".tfm" */
+		fprintf(stderr,"Too long output file name.\n");
+		exit(1);
+	}
 	strcpy(nbuf,name);
 	strcat(nbuf,".tfm");
 	fp = fopen(nbuf,"wb");
