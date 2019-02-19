@@ -1,3 +1,8 @@
+2019-02-18  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* kpse-win32.m4 (KPSE_COND_WIN32_WRAP): if w64 and mingw,
+	use different wrapper.
+
 2019-01-11  Karl Berry  <karl@freefriends.org>
 
 	* kpse-luajit-flags.m4 (KPSE_LUAJIT_FLAGS): try LIBLUAJIT_LDEXTRA,

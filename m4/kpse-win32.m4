@@ -1,5 +1,7 @@
+# $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 2016-2019 Karl Berry <tex-live@tug.org>
+# Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -51,7 +53,9 @@ AC_CACHE_CHECK([for WIN64],
                                   [kpse_cv_have_win64=yes],
                                   [kpse_cv_have_win64=no])])
 AS_CASE([$kpse_cv_have_win64],
-        [yes], [WIN_WRAPPER=w64_wrapper],
+        [yes], [AS_IF([test "x$kpse_cv_have_win32=xmingw"],
+                      [WIN_WRAPPER=w64_mingw_wrapper],
+                      [WIN_WRAPPER=w64_wrapper])],
                [WIN_WRAPPER=w32_wrapper])
 AC_SUBST([WIN_WRAPPER])
 AM_CONDITIONAL([WIN32_WRAP],

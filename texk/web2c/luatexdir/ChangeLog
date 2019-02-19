@@ -1,3 +1,7 @@
+2019-02-19 Luigi Scarso <luigi.scarso@gmail.com>
+	* am/luatex.am ([un]install-lua[jit]tex-links) [MINGW32]:
+	different commands for mingw.
+
 2018-08-27 Luigi Scarso <luigi.scarso@gmail.com>
 	* dropped dependency from gmp and mpfr
 

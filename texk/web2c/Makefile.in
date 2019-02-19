@@ -18718,18 +18718,31 @@ $(luajittex_OBJECTS): libluajittex.a
 
 .PHONY: install-luatex-links uninstall-luatex-links
 .PHONY: install-luajittex-links uninstall-luajittex-links
-@WIN32_TRUE@install-luatex-links: call_luatex$(EXEEXT)
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
-@WIN32_TRUE@uninstall-luatex-links:
-@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
-@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
-@WIN32_TRUE@install-luajittex-links: call_luajittex$(EXEEXT)
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
-@WIN32_TRUE@uninstall-luajittex-links:
-@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
-@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+
+@MINGW32_TRUE@@WIN32_TRUE@install-luatex-links: .libs/luatex$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@       $(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@       $(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@uninstall-luatex-links:
+@MINGW32_TRUE@@WIN32_TRUE@       rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@       rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@install-luajittex-links: .libs/luajittex$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@       $(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@       $(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@uninstall-luajittex-links:
+@MINGW32_TRUE@@WIN32_TRUE@       rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@       rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@install-luatex-links: call_luatex$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@uninstall-luatex-links:
+@MINGW32_FALSE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@install-luajittex-links: call_luajittex$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@uninstall-luajittex-links:
+@MINGW32_FALSE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+@MINGW32_FALSE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
 luatexdir/luatex.log luatexdir/luaimage.log: luatex$(EXEEXT)
 luatexdir/luajittex.log luatexdir/luajitimage.log: luajittex$(EXEEXT)
 $(xetex_OBJECTS): $(xetex_prereq)

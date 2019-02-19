@@ -112,7 +112,22 @@ call_luajittex_LDADD =
 
 .PHONY: install-luatex-links uninstall-luatex-links
 .PHONY: install-luajittex-links uninstall-luajittex-links
+
 if WIN32
+if MINGW32
+install-luatex-links: .libs/luatex$(EXEEXT)
+       $(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+       $(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+uninstall-luatex-links:
+       rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+       rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+install-luajittex-links: .libs/luajittex$(EXEEXT)
+       $(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+       $(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+uninstall-luajittex-links:
+       rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+       rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+else !MINGW32
 install-luatex-links: call_luatex$(EXEEXT)
 	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
 	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
@@ -125,6 +140,7 @@ install-luajittex-links: call_luajittex$(EXEEXT)
 uninstall-luajittex-links:
 	rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+endif !MINGW32
 endif WIN32
 
 # LuaTeX/LuaJITTeX Tests
