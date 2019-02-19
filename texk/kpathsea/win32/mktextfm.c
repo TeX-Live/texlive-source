@@ -1,6 +1,6 @@
 /* mktextfm.c
 
-   Copyright 2000, 2016 Akira Kakuto.
+   Copyright 2000, 2019 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -25,8 +25,6 @@
 #endif
 #include "mktex.h"
 
-#define LBUF 512
-#define SBUF 512
 #define TBUF 512
 
 char *progname;
@@ -71,16 +69,16 @@ relmem (char **v)
 int
 main (int ac, char **av)
 {
-  char rbuff[LBUF];
-  char buff[SBUF];
-  char savebuff[SBUF];
-  char cmd[LBUF];
+  char rbuff[TBUF];
+  char buff[TBUF];
+  char savebuff[TBUF];
+  char cmd[TBUF];
   char mffile[TBUF];
   char *arg[4];
-  static char execfile[SBUF];
+  static char execfile[TBUF];
 
-  char kpsedot[SBUF];
-  char currdir[SBUF];
+  char kpsedot[TBUF];
+  char currdir[TBUF];
   char *tmp;
   int cdrive, tdrive;
 
@@ -89,10 +87,10 @@ main (int ac, char **av)
   int i, savo, savi;
   char *p, *fp, *fpp;
   int issetdest;
-  char fontname[SBUF];
+  char fontname[TBUF];
 
-  char texbindir[512];
-  char fullbin[512];
+  char texbindir[TBUF];
+  char fullbin[TBUF];
 
   kpse_set_program_name (av[0], NULL);
   progname = kpse_program_name;
@@ -159,7 +157,7 @@ issetdest = 2 : current directory
   }
 
   for (i = 0; i < 4; i++)
-    arg[i] = (char *) malloc (SBUF);
+    arg[i] = (char *) malloc (TBUF);
 
   if ((!strcmp (av[1], "--destdir")) || (!strcmp (av[1], "-destdir"))) {
     if (ac != 4) {
@@ -169,6 +167,10 @@ issetdest = 2 : current directory
       return (100);
     }
     issetdest = 1;
+    if (strlen(av[2]) > TBUF - 1 || strlen(av[3]) > TBUF - 1) {
+      fprintf (stderr, "Too long a string.\n");
+      return (100);
+    }
     strcpy (buff, av[2]);
     strcpy (fontname, av[3]);
     for (p = buff; *p; p++) {
@@ -178,6 +180,10 @@ issetdest = 2 : current directory
         *p = '/';
     }
   } else {
+    if (strlen(av[1]) > TBUF - 1) {
+      fprintf (stderr, "Too long a string.\n");
+      return (100);
+    }
     strcpy (fontname, av[1]);
   }
 
@@ -209,7 +215,7 @@ issetdest = 2 : current directory
     return (100);
   }
 
-  fpp = _getcwd (currdir, SBUF);
+  fpp = _getcwd (currdir, TBUF);
   if (!fpp) {
     fprintf (stderr, "Failed to get current working directory.\n");
     relmem (arg);
@@ -352,7 +358,7 @@ issetdest = 2 : current directory
     return (100);
   }
 
-  while ((i = (int)fread (rbuff, 1, LBUF, fr)))
+  while ((i = (int)fread (rbuff, 1, TBUF, fr)))
     fwrite (rbuff, 1, i, fw);
   fclose (fr);
   fclose (fw);
@@ -390,7 +396,7 @@ issetdest = 2 : current directory
         free(tmp);
         return (100);
       }
-      while ((i = (int)fread (rbuff, 1, LBUF, fr)))
+      while ((i = (int)fread (rbuff, 1, TBUF, fr)))
         fwrite (rbuff, 1, i, fw);
       fclose (fr);
       fclose (fw);

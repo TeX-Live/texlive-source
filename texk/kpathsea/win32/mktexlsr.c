@@ -1,6 +1,6 @@
 /* mktexlsr.c
 
-   Copyright 2000, 2016 Akira Kakuto.
+   Copyright 2000, 2019 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@
 #define HDL "%% ls-R -- filename database for kpathsea; do not change this line.\n"
 
 #define VARTEXFONTS "c:/var/tex/fonts/ls-R"
+#define TBUF 512
 
 FILE *ls_R;
 
@@ -36,7 +37,7 @@ search(char *name)
 {
   DIR *dp;
   struct dirent *de;
-  char   buff[256];
+  char   buff[TBUF];
   int    len;
 
   normalize (name);
@@ -103,7 +104,7 @@ char first_name[] = "./";
 int main(int ac, char **av)
 {
   int cdrive, tdrive;
-  char ls_R_name[512];
+  char ls_R_name[TBUF];
   int i, numtree;
   size_t len;
   char *progname;
@@ -151,6 +152,10 @@ int main(int ac, char **av)
   }
 
   for(i = 0; i < numtree; i++) {
+    if (strlen(pathbuff[i]) > (TBUF - 6)) {
+      fprintf (stderr, "Too long a directory name.\n");
+      exit (100);
+    }
     strcpy(ls_R_name, pathbuff[i]);
     len = strlen(ls_R_name);
     if(ls_R_name[len-1] != '/') strcat(ls_R_name, "/");

@@ -1,6 +1,6 @@
 /* mktexupdmain.c
 
-   Copyright 2000, 2016 Akira Kakuto.
+   Copyright 2000, 2019 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,17 +19,23 @@
 #include <kpathsea/kpathsea.h>
 #include "mktex.h"
 
+#define TBUF 512
+
 int main(int argc, char **argv)
 {
-  char dir[256];
-  char file[256];
-  char path[256];
+  char dir[TBUF];
+  char file[TBUF];
+  char path[TBUF];
   size_t i;
 
   kpse_set_program_name (argv[0], NULL);
   if(argc != 3) {
     fprintf(stderr, "%s:: usage: %s DIR FILE\n", argv[0], argv[0]);
     return 1;
+  }
+  if (strlen(argv[1]) + strlen(argv[2]) > TBUF - 2) {
+    fprintf (stderr, "Too long a string.\n");
+    exit (100);
   }
   strcpy(dir, argv[1]);
   strcpy(file, argv[2]);

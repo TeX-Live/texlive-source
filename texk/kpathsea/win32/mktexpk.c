@@ -1,6 +1,6 @@
 /* mktexpk.c
 
-   Copyright 2000, 2016 Akira Kakuto.
+   Copyright 2000, 2019 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -49,9 +49,6 @@
 #endif
 #include "mktex.h"
 
-#define LLBUF 1024
-#define LBUF  512
-#define SBUF  512
 #define TBUF  512
 
 /*
@@ -216,10 +213,10 @@ get_designsize(char *tfname, char *dsiz)
 int
 main (int ac, char **av)
 {
-  static char execfile[SBUF];
-  char rbuff[LBUF];
-  char buff[LBUF];
-  char cmd[LBUF];
+  static char execfile[TBUF];
+  char rbuff[TBUF];
+  char buff[TBUF];
+  char cmd[TBUF];
   char mfname[TBUF];
   char tfname[TBUF];
   char pkname[TBUF];
@@ -230,13 +227,13 @@ main (int ac, char **av)
   char bdpi[TBUF];
   char mag[TBUF];
   char mode[TBUF];
-  char destdir[SBUF];
+  char destdir[TBUF];
   char designsize[64];
 
   char *arg[4];
 
-  char currdir[SBUF];
-  char kpsedot[SBUF];
+  char currdir[TBUF];
+  char kpsedot[TBUF];
   char *tmp;
   int cdrive, tdrive;
 
@@ -304,7 +301,7 @@ main (int ac, char **av)
   normalize (tmp);
 
   for (i = 0; i < 4; i++)
-    arg[i] = (char *) malloc (SBUF);
+    arg[i] = (char *) malloc (TBUF);
 
   kpse_set_program_name (av[0], NULL);
   progname = kpse_program_name;
@@ -664,7 +661,7 @@ main (int ac, char **av)
   if ((p[0] == '.') && (p[1] == '/') && (issetdest != 1))
     issetdest = 2;
 
-  fpp = _getcwd (currdir, SBUF);
+  fpp = _getcwd (currdir, TBUF);
   if (!fpp) {
     fprintf (stderr, "Failed to get current working directory.\n");
     relmem (arg);
@@ -902,7 +899,7 @@ main (int ac, char **av)
       goto do_ps2pk;
     }
 
-    while (fgets (rbuff, SBUF, fr)) {
+    while (fgets (rbuff, TBUF, fr)) {
       if (rbuff[0] == '%' || rbuff[0] == '#' || rbuff[0] == '\n')
         continue;
       texname[0] = pfbname[0] = slant[0] = extend[0] = encname[0] = '\0';
@@ -942,10 +939,10 @@ main (int ac, char **av)
     goto do_ps2pk;
   } else {
     char *q;
-    char a[SBUF];
-    char b[SBUF];
-    char psname[SBUF];
-    char pscommand[SBUF];
+    char a[TBUF];
+    char b[TBUF];
+    char psname[TBUF];
+    char pscommand[TBUF];
     double slantval, extendval;
 
     texname[0] = pfbname[0] = encname[0] = '\0';
@@ -967,7 +964,7 @@ main (int ac, char **av)
       tpkerr ("Cannot open ps2pk.map to read.");
       goto do_ps2pk;
     }
-    while ((ret=ffgets (rbuff, LBUF, fr)) != FFILE_END) {
+    while ((ret=ffgets (rbuff, TBUF, fr)) != FFILE_END) {
       if(ret == BBUFF_FUL) {
         fprintf(stderr, "A line in ps2pk.map seems to be too long.\n");
         fprintf(stderr, "I try to continue. But something may be wrong.\n");
@@ -1289,7 +1286,7 @@ skip flag
     return (100);
   }
 
-  while ((i = (int)fread (rbuff, 1, LBUF, fr)))
+  while ((i = (int)fread (rbuff, 1, TBUF, fr)))
     fwrite (rbuff, 1, i, fw);
 
   fclose (fr);
