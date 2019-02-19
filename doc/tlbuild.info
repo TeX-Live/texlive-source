@@ -1,4 +1,4 @@
-This is tlbuild.info, produced by makeinfo version 6.5 from
+This is tlbuild.info, produced by makeinfo version 6.6 from
 tlbuild.texi.
 
 This file documents the TeX Live build system and more.
@@ -749,7 +749,7 @@ many extra hassles, so don't do that, tempting as it may be.
      flex 2.6.0
      ltmain.sh (GNU libtool) 2.4.6
      m4 (GNU M4) 1.4.18
-     makeinfo (GNU texinfo) 6.5
+     makeinfo (GNU texinfo) 6.6
 
    These versions should be used to update the generated files (e.g.,
 'configure' or 'Makefile.in') in all or parts of the TL tree after their
