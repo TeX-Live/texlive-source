@@ -138,15 +138,15 @@ int tfmidx(FILE *fp)
 
 		header = xmalloc(lh*4);
 		for (i = 0 ; i < lh*4 ; i++) {
-			header[i] = fgetc(fp);
+			header[i] = (char)fgetc(fp);
 		}
 		char_type = xmalloc(nt*4);
 		for (i = 0 ; i < nt*4 ; i++) {
-			char_type[i] = fgetc(fp);
+			char_type[i] = (char)fgetc(fp);
 		}
 		char_info = xmalloc((ec+1)*4);
 		for (i = 0 ; i < (ec+1)*4 ; i++) {
-			char_info[i] = fgetc(fp);
+			char_info[i] = (char)fgetc(fp);
 		}
 		width = xmalloc(nw*sizeof(int));
 		for (i = 0 ; i < nw ; i++) {
@@ -166,7 +166,7 @@ int tfmidx(FILE *fp)
 		}
 		glue_kern = xmalloc(nl*4);
 		for (i = 0 ; i < nl*4 ; i++) {
-			glue_kern[i] = fgetc(fp);
+			glue_kern[i] = (char)fgetc(fp);
 		}
 		kern = xmalloc(nk*sizeof(int));
 		for (i = 0 ; i < nk ; i++) {

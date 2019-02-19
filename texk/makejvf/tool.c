@@ -106,7 +106,7 @@ int fquad(FILE *fp)
 	unsigned char fchar[4];
 
 	for (i = 0 ; i < 4 ; i++)
-		fchar[i] = fgetc(fp);
+		fchar[i] = (char)fgetc(fp);
 
 	cc = mquad(fchar);
 	return cc;
@@ -120,7 +120,7 @@ unsigned int uftri(FILE *fp)
 
 	fchar[0] = 0;
 	for (i = 1 ; i < 4 ; i++)
-		fchar[i] = fgetc(fp);
+		fchar[i] = (char)fgetc(fp);
 
 	cc = mquad(fchar);
 
@@ -134,9 +134,9 @@ int ftri(FILE *fp)
 	int i,cc;
 	unsigned char fchar[4];
 
-	fchar[0]=0;
-	for (i=1;i<4;i++)
-		fchar[i]=fgetc(fp);
+	fchar[0] = 0;
+	for (i = 1 ; i < 4 ; i++)
+		fchar[i] = (char)fgetc(fp);
 
 	cc = mquad(fchar);
 
@@ -153,7 +153,7 @@ unsigned int ufpair(FILE *fp)
 
 	fchar[0] = fchar[1] = 0;
 	for (i = 2 ; i < 4 ; i++)
-		fchar[i] = fgetc(fp);
+		fchar[i] = (char)fgetc(fp);
 
 	cc = mquad(fchar);
 
@@ -167,7 +167,7 @@ int fpair(FILE *fp)
 
 	fchar[0] = fchar[1] = 0;
 	for (i = 2 ; i < 4 ; i++)
-		fchar[i] = fgetc(fp);
+		fchar[i] = (char)fgetc(fp);
 
 	cc = mquad(fchar);
 

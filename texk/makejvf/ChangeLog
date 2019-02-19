@@ -1,3 +1,10 @@
+2019-02-19  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* tfmread.c, tool.c: Avoid compiler warnings.
+	* write.c (writevfu): Removed unnecessary conditionals.
+	Thanks to @ngothan for a report by covscan.
+	https://github.com/TeX-Live/texlive-source/issues/11
+
 2019-02-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uniblock.c: Update references Unicode blocks Blocks-12.0.0.txt
