@@ -18720,17 +18720,17 @@ $(luajittex_OBJECTS): libluajittex.a
 .PHONY: install-luajittex-links uninstall-luajittex-links
 
 @MINGW32_TRUE@@WIN32_TRUE@install-luatex-links: .libs/luatex$(EXEEXT)
-@MINGW32_TRUE@@WIN32_TRUE@       $(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
-@MINGW32_TRUE@@WIN32_TRUE@       $(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@	$(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@	$(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
 @MINGW32_TRUE@@WIN32_TRUE@uninstall-luatex-links:
-@MINGW32_TRUE@@WIN32_TRUE@       rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
-@MINGW32_TRUE@@WIN32_TRUE@       rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
 @MINGW32_TRUE@@WIN32_TRUE@install-luajittex-links: .libs/luajittex$(EXEEXT)
-@MINGW32_TRUE@@WIN32_TRUE@       $(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
-@MINGW32_TRUE@@WIN32_TRUE@       $(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@	$(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@	$(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
 @MINGW32_TRUE@@WIN32_TRUE@uninstall-luajittex-links:
-@MINGW32_TRUE@@WIN32_TRUE@       rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
-@MINGW32_TRUE@@WIN32_TRUE@       rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+@MINGW32_TRUE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
 @MINGW32_FALSE@@WIN32_TRUE@install-luatex-links: call_luatex$(EXEEXT)
 @MINGW32_FALSE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
 @MINGW32_FALSE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
