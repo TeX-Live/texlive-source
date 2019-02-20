@@ -116,17 +116,17 @@ call_luajittex_LDADD =
 if WIN32
 if MINGW32
 install-luatex-links: .libs/luatex$(EXEEXT)
-       $(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
-       $(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+	$(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+	$(INSTALL_PROGRAM) .libs/luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
 uninstall-luatex-links:
-       rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
-       rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
 install-luajittex-links: .libs/luajittex$(EXEEXT)
-       $(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
-       $(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+	$(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+	$(INSTALL_PROGRAM) .libs/luajittex$(EXEEXT) $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
 uninstall-luajittex-links:
-       rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
-       rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
 else !MINGW32
 install-luatex-links: call_luatex$(EXEEXT)
 	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
