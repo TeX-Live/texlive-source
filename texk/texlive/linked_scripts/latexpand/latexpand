@@ -28,6 +28,8 @@ my $fatal;
 my $version;
 my $makeatletter;
 my $inside_import;
+my $in_enc = "bytes";
+my $out_enc = "bytes";
 
 GetOptions (
 	'h' => \$help,
@@ -45,6 +47,8 @@ GetOptions (
 	'fatal' => \$fatal,
 	'version' => \$version,
         'makeatletter' => \$makeatletter,
+	'in-encoding=s' => \$in_enc,
+	'out-encoding=s' => \$out_enc,
 ) or pod2usage_wrapper(2);
 version() if $version;
 pod2usage_wrapper(0) if $help;
@@ -76,7 +80,7 @@ sub get_version
 {
 	# $VERSION's value will be substituted by 'make dist', but the
 	# next line won't (the string has to be broken to avoid it).
-	my $VERSION = 'v1.4-1-gb32a776';
+	my $VERSION = 'v1.5';
 	if ($VERSION eq '@LATEXPAND' . '_VERSION@') {
 		my($vol,$dir,$file) = File::Spec->splitpath($0);
 		chdir($dir);
@@ -114,6 +118,8 @@ sub say
 
 my $makeatletter_found;
 my $in_preamble;
+
+use open IN  => ":$in_enc", OUT => ":$out_enc";
 
 foreach my $file (@ARGV)
 {
@@ -159,18 +165,26 @@ sub process_line
 {
 	my ($line, $prefix, $commented_newline, $file) = @_;
 	$_ = $line;
-	if ($$commented_newline && /^\s*$/) {
-		# Deal with:
-		#
-		# Line 1 % comment
-		#
-		# Line 2
-		#
-		# The newline after Line 1 is commented, but we still
-		# want a new paragraph. We strip the comment together
-		# with its newline, but re-add a newline to chnge
-		# paragraph here if needed:
-		print "\n";
+	if ($$commented_newline) {
+		# Leading whitespaces after a comment is ignored.
+		# There's no space in:
+		# Line 1%
+		#    Line 2.
+		# Match just space and tabs (\s would match \n)
+		s/^[ \t]*//;
+		if (/^$/) {
+			# Deal with:
+			#
+			# Line 1 % comment
+			#
+			# Line 2
+			#
+			# The newline after Line 1 is commented, but we still
+			# want a new paragraph. We strip the comment together
+			# with its newline, but re-add a newline to chnge
+			# paragraph here if needed:
+			print "\n";
+		}
 	}
 	$$commented_newline = 0;
 	# Consider \makeatletter only in preamble, because we do want
@@ -187,6 +201,12 @@ sub process_line
 		print STDERR "Warning: $file.\n";
 		print STDERR "Warning: consider using --makeatletter if the result is not compilable.\n";
 	}
+
+        # non-comment is a sequence of:
+        # - escaped character (\\.), including \% and \\
+        # - neither '%' nor '\'.
+        my $NON_COMMENT = '([^\\\\%]|\\\\.)*';
+
 	unless ($keep_comments) {
 		if (!$empty_comments) {
 			# Include \n in pattern to avoid matching
@@ -197,23 +217,26 @@ sub process_line
 				$$commented_newline = 1;
 			}
 
-			# remove only the comment if the line has actual content
-			if (s/([^\\])%.*\n/$1/) {
+			# Special-case commands at end of line. We
+			# don't want "\\foo%\nbar" to become
+			# "\\foobar"
+			if (s/^($NON_COMMENT\\[[:alpha:]@]+)%.*\n/$1 /) {
+				$$commented_newline = 1;
+			} elsif (s/^($NON_COMMENT)%.*\n/$1/) {
+				# remove only the comment if the line has actual content
 				$$commented_newline = 1;
 			}
 		}
 		# Apply the "empty comments" treatment unconditionally
-		# for end-of-files comments not matched above (it
-		# doesn't harm to keep an empty comment sometimes, but
-		# it may harm to leave a real comment if the goal was
-		# to strip them).
-		s/^%.*$/%/;
-		s/([^\\])%.*$/$1%/;
+		# for comments not matched above (it doesn't harm to
+		# keep an empty comment sometimes, but it may harm to
+		# leave a real comment if the goal was to strip them).
+		s/^(([^\\%]|\\.)*)%.*$/$1%/;
 	}
 
 	unless ($keep_includes) {
 		if (my ($before, $ignored, $full_filename, $after)
-		    = /^(([^%]|[^\\]%)*)\\include[{\s]+(.*?)[\s}](.*)$/) {
+		    = /^($NON_COMMENT)\\include[{\s]+(.*?)[\s}](.*)$/) {
 			$full_filename = find_tex_file($full_filename . ".tex");
 			if ($full_filename) {
 				say $prefix . "Found include for file: $full_filename\n";
@@ -231,7 +254,7 @@ sub process_line
 				$_ = "";
 			}
 		} elsif (my ($before, $ignored, $full_filename, $after)
-			 = /^(([^%]|[^\\]%)*)\\input[{\s]+(.*?)[\s}](.*)$/) {
+			 = /^($NON_COMMENT)\\input[{\s]+(.*?)[\s}](.*)$/) {
                         if ($inside_import) {
                               $full_filename = $inside_import . $full_filename;
                         }
@@ -255,7 +278,7 @@ sub process_line
 				$_ = "";
 			}
 		} elsif (my ($before, $ignored, $dir, $full_filename, $after)
-			 = /^(([^%]|[^\\]%)*)\\(?:sub)?import[{\s]+(.*?)[\s}][{\s]+(.*?)[\s}](.*)$/) {
+			 = /^($NON_COMMENT)\\(?:sub)?import[{\s]+(.*?)[\s}][{\s]+(.*?)[\s}](.*)$/) {
                         if ($explain) {
                               print "% dir " . $dir ."\n";
                               print "% full_filename " . $full_filename ."\n";
@@ -290,7 +313,7 @@ sub process_line
 				$_ = "";
 			}
 		} elsif (my ($before, $ignored, $args, $full_filename, $after)
-			 = /^(([^%]|[^\\]%)*)\\includegraphics[\[\s]+(.*?)[\s\]][{\s]+(.*?)[\s}](.*)$/) {
+			 = /^($NON_COMMENT)\\includegraphics[\[\s]+(.*?)[\s\]][{\s]+(.*?)[\s}](.*)$/) {
                         if ($explain) {
                                 print "% inside_import " . $inside_import ."\n";
                                 print "% before " . $before ."\n";
@@ -305,7 +328,7 @@ sub process_line
                                 $_ = "";
                         }
 		} elsif (my ($before, $ignored, $args, $full_filename, $after)
-			 = /^(([^%]|[^\\]%)*)\\lstinputlisting[\[\s]+(.*?)[\s\]][{\s]+(.*?)[\s}](.*)$/) {
+			 = /^($NON_COMMENT)\\lstinputlisting[\[\s]+(.*?)[\s\]][{\s]+(.*?)[\s}](.*)$/) {
                         if ($explain) {
                                 print "% inside_import " . $inside_import ."\n";
                                 print "% before " . $before ."\n";
@@ -461,6 +484,12 @@ latexpand [options] FILE...
 	                 rare cases it may break your document, but it
 	                 may help fixing bad interactions between
 	                 @-commands and inclusion (see BUGS section).
+	--in-encoding FMT, --out-encoding FMT
+			 File encoding used by input and output files.
+			 This uses the same syntax as PerlIO's layers.
+			 Example:
+			 --in-encoding 'encoding(UTF-8)'
+			 The default is 'bytes' and should always work.
 
 =head1 USES
 
@@ -548,4 +577,4 @@ https://lacl.fr/~caubert/notes/portabilite-du-tex.html#dependances
 
 =head1 VERSION
 
-This is latexpand version v1.4-1-gb32a776.
+This is latexpand version v1.5.

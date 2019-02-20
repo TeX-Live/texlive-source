@@ -27,13 +27,14 @@ if {$::tcl_platform(platform) ne "windows"} {
   unset texbin
   unset savedir
   unset dirs
-  # now is a good time to ask tlmgr for the _TL_ name of our platform
-  set ::our_platform [exec tlmgr print-platform]
 }
 
 # declarations and utilities shared with install-tl-gui.tcl
 set ::instroot [exec kpsewhich -var-value=TEXMFROOT]
 source [file join $::instroot "tlpkg" "tltcl" "tltcl.tcl"]
+
+# now is a good time to ask tlmgr for the _TL_ name of our platform
+set ::our_platform [exec -ignorestderr tlmgr print-platform]
 
 # searchpath and locale:
 # windows: most scripts run via [w]runscript, which adjusts the searchpath
@@ -144,7 +145,7 @@ proc long_message {str type {p "."}} {
   if {$type eq "yesnocancel"} {
     ttk::button .tlmg.yes -text [__ "Yes"] -command "end_dlg \"yes\" .tlmg"
     ppack .tlmg.yes -in .tlmg.bts -side right
-    ttk::button .tlmg.no -text [__ "no"] -command "end_dlg \"no\" .tlmg"
+    ttk::button .tlmg.no -text [__ "No"] -command "end_dlg \"no\" .tlmg"
     ppack .tlmg.no -in .tlmg.bts -side right
   }
   if {$type eq "yesnocancel" || $type eq "okcancel"} {
@@ -743,7 +744,7 @@ proc get_packages_info_remote {} {
   }
   get_platforms
   set ::have_remote 1
-  .topf.loaded configure -text "Loaded" -foreground black
+  .topf.loaded configure -text [__ "Loaded"] -foreground black
   update_globals
   return 1
 } ; # get_packages_info_remote
@@ -1594,8 +1595,10 @@ proc install_pkgs {sel_opt {pk ""}} {
     }
   }
   if {[llength $deps] > 0} {
-    set ans [any_message \
-        [__ "Also installing dependencies\n\n$deps.\n\nContinue?"] "okcancel"]
+    set ans \
+        [any_message \
+             [__ "Also installing dependencies\n\n%s" $deps] \
+             "okcancel"]
     if {$ans eq "cancel"} return
   }
   run_cmd "install $todo" 1
@@ -1989,14 +1992,14 @@ proc populate_main {} {
   menu .mn.opt
   set inx -1
   incr inx
-  .mn.opt add command -label "[__ "Repositories"]..." \
+  .mn.opt add command -label "[__ "Repositories"] ..." \
       -command repository_dialog
 
   incr inx
-  .mn.opt add cascade -label [__ "Paper"] -menu .mn.opt.paper
+  .mn.opt add cascade -label [__ "Paper ..."] -menu .mn.opt.paper
   incr inx
   menu .mn.opt.paper
-  foreach p [list a4 letter] {
+  foreach p [list A4 letter] {
     .mn.opt.paper add command -label $p -command "set_paper $p"
   }
 
@@ -2013,7 +2016,7 @@ proc populate_main {} {
   if {$::tcl_platform(platform) ne "windows"} {
     incr inx
     set ::inx_platforms $inx
-    .mn.opt add command -label "[__ "Platforms"]..." -command platforms_select
+    .mn.opt add command -label "[__ "Platforms"] ..." -command platforms_select
   }
 
   .mn add cascade -label [__ "Help"] -menu .mn.help -underline 0
@@ -2129,7 +2132,7 @@ Implemented in Tcl/Tk
   pgrid .mrk_rem -in .pkfilter -column 4 -row $rw -sticky ew
   if $::do_restore {
     incr rw
-    ttk::button .mrk_rest -text [__ "Restore from backup..."] -command \
+    ttk::button .mrk_rest -text "[__ "Restore from backup"] ..." -command \
         restore_backups_dialog
     pgrid .mrk_rest -in .pkfilter -column 4 -row $rw -sticky ew
   }
@@ -2162,8 +2165,8 @@ Implemented in Tcl/Tk
       -yscrollcommand {.pkvsb set}
   .pkglist heading mk -text "" -anchor w
   .pkglist heading name -text [__ "Name"] -anchor w
-  .pkglist heading localrev -text [__ "Local Rev. (ver.)"] -anchor w
-  .pkglist heading remoterev -text [__ "Remote Rev. (ver.)"] -anchor w
+  .pkglist heading localrev -text [__ "Local rev. (ver.)"] -anchor w
+  .pkglist heading remoterev -text [__ "Remote rev. (ver.)"] -anchor w
   .pkglist heading shortdesc -text [__ "Description"] -anchor w
   .pkglist column mk -width [expr {$::cw * 3}] -stretch 0
   .pkglist column name -width [expr {$::cw * 25}] -stretch 1
