@@ -1348,7 +1348,7 @@ return {
 end
 package.preload["texrunner.handleoption"] = function(...)
 local COPYRIGHT_NOTICE = [[
-Copyright (C) 2016,2018  ARATA Mizuki
+Copyright (C) 2016,2018-2019  ARATA Mizuki
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1410,6 +1410,7 @@ Options:
       --color=WHEN             Make ClutTeX's message colorful. WHEN is one of
                                  `always', `auto', or `never'.  [default: auto]
       --includeonly=NAMEs      Insert '\includeonly{NAMEs}'.
+      --make-depends=FILE      Write dependencies as a Makefile rule.
 
       --[no-]shell-escape
       --shell-restricted
@@ -1476,6 +1477,10 @@ local option_spec = {
   {
     long = "includeonly",
     param = true,
+  },
+  {
+    long = "make-depends",
+    param = true
   },
   -- Options for TeX
   {
@@ -1646,6 +1651,10 @@ local function handle_cluttex_options(arg)
       assert(options.includeonly == nil, "multiple --includeonly options")
       options.includeonly = param
 
+    elseif name == "make-depends" then
+      assert(options.make_depends == nil, "multiple --make-depends options")
+      options.make_depends = param
+
       -- Options for TeX
     elseif name == "synctex" then
       assert(options.synctex == nil, "multiple --synctex options")
@@ -1785,27 +1794,6 @@ package.preload["texrunner.isatty"] = function(...)
 ]]
 
 if os.type == "unix" then
-  -- Try luaposix
-  local succ, M = pcall(function()
-      local isatty = require "posix.unistd".isatty
-      local fileno = require "posix.stdio".fileno
-      return {
-        isatty = function(file)
-          return isatty(fileno(file)) == 1
-        end,
-      }
-  end)
-  if succ then
-    if CLUTTEX_VERBOSITY >= 3 then
-      io.stderr:write("ClutTeX: isatty found via luaposix\n")
-    end
-    return M
-  else
-    if CLUTTEX_VERBOSITY >= 3 then
-      io.stderr:write("ClutTeX: luaposix not found: ", M, "\n")
-    end
-  end
-
   -- Try LuaJIT-like FFI
   local succ, M = pcall(function()
       local ffi = require "ffi"
@@ -1833,6 +1821,27 @@ int fileno(void *stream);
     end
   end
 
+  -- Try luaposix
+  local succ, M = pcall(function()
+      local isatty = require "posix.unistd".isatty
+      local fileno = require "posix.stdio".fileno
+      return {
+        isatty = function(file)
+          return isatty(fileno(file)) == 1
+        end,
+      }
+  end)
+  if succ then
+    if CLUTTEX_VERBOSITY >= 3 then
+      io.stderr:write("ClutTeX: isatty found via luaposix\n")
+    end
+    return M
+  else
+    if CLUTTEX_VERBOSITY >= 3 then
+      io.stderr:write("ClutTeX: luaposix not found: ", M, "\n")
+    end
+  end
+
 else
   -- Try LuaJIT
   -- TODO: Try to detect MinTTY using GetFileInformationByHandleEx
@@ -1854,6 +1863,7 @@ DWORD GetFileType(void *hFile);
 BOOL GetFileInformationByHandleEx(void *hFile, FILE_INFO_BY_HANDLE_CLASS fic, void *fileinfo, DWORD dwBufferSize);
 BOOL GetConsoleMode(void *hConsoleHandle, DWORD* lpMode);
 BOOL SetConsoleMode(void *hConsoleHandle, DWORD dwMode);
+DWORD GetLastError();
 ]]
       local isatty = assert(ffi.C._isatty, "_isatty not found")
       local fileno = assert(ffi.C._fileno, "_fileno not found")
@@ -1862,6 +1872,7 @@ BOOL SetConsoleMode(void *hConsoleHandle, DWORD dwMode);
       local GetFileInformationByHandleEx = assert(ffi.C.GetFileInformationByHandleEx, "GetFileInformationByHandleEx not found")
       local GetConsoleMode = assert(ffi.C.GetConsoleMode, "GetConsoleMode not found")
       local SetConsoleMode = assert(ffi.C.SetConsoleMode, "SetConsoleMode not found")
+      local GetLastError = assert(ffi.C.GetLastError, "GetLastError not found")
       local function wide_to_narrow(array, length)
         local t = {}
         for i = 0, length - 1 do
@@ -1875,7 +1886,7 @@ BOOL SetConsoleMode(void *hConsoleHandle, DWORD dwMode);
         if filetype ~= 0x0003 then -- not FILE_TYPE_PIPE (0x0003)
           -- mintty must be a pipe
           if CLUTTEX_VERBOSITY >= 4 then
-            io.stderr:write("ClutTeX: not a pipe\n")
+            io.stderr:write("ClutTeX: is_mintty: not a pipe\n")
           end
           return false
         end
@@ -1885,18 +1896,16 @@ BOOL SetConsoleMode(void *hConsoleHandle, DWORD dwMode);
           local filename = wide_to_narrow(nameinfo.FileName, math.floor(nameinfo.FileNameLength / 2))
           -- \(cygwin|msys)-<hex digits>-pty<N>-(from|to)-master
           if CLUTTEX_VERBOSITY >= 4 then
-            io.stderr:write("ClutTeX: GetFileInformationByHandleEx returned ", filename, "\n")
+            io.stderr:write("ClutTeX: is_mintty: GetFileInformationByHandleEx returned ", filename, "\n")
           end
           local a, b = string.match(filename, "^\\(%w+)%-%x+%-pty%d+%-(%w+)%-master$")
-          if (a == "cygwin" or a == "msys") and (b == "from" or b == "to") then
-            return true
-          end
+          return (a == "cygwin" or a == "msys") and (b == "from" or b == "to")
         else
           if CLUTTEX_VERBOSITY >= 4 then
-            io.stderr:write("ClutTeX: GetFileInformationByHandleEx failed\n")
+            io.stderr:write("ClutTeX: is_mintty: GetFileInformationByHandleEx failed\n")
           end
+          return false
         end
-        return false
       end
       return {
         isatty = function(file)
@@ -1904,25 +1913,52 @@ BOOL SetConsoleMode(void *hConsoleHandle, DWORD dwMode);
           local fd = fileno(file)
           return isatty(fd) ~= 0 or is_mintty(fd)
         end,
-        enable_console_colors = function(file)
+        enable_virtual_terminal = function(file)
           local fd = fileno(file)
-          if isatty(fd) ~= 0 then
-            local handle = get_osfhandle(fd)
-            local modePtr = ffi.new("DWORD[1]")
-            local result = GetConsoleMode(handle, modePtr)
-            if result ~= 0 then
+          if is_mintty(fd) then
+            -- MinTTY
+            if CLUTTEX_VERBOSITY >= 4 then
+              io.stderr:write("ClutTeX: Detected MinTTY\n")
+            end
+            return true
+          elseif isatty(fd) ~= 0 then
+            -- Check for ConEmu or ansicon
+            if os.getenv("ConEmuANSI") == "ON" or os.getenv("ANSICON") then
+              if CLUTTEX_VERBOSITY >= 4 then
+                io.stderr:write("ClutTeX: Detected ConEmu or ansicon\n")
+              end
+              return true
+            else
+              -- Try native VT support on recent Windows
+              local handle = get_osfhandle(fd)
+              local modePtr = ffi.new("DWORD[1]")
+              local result = GetConsoleMode(handle, modePtr)
+              if result == 0 then
+                if CLUTTEX_VERBOSITY >= 3 then
+                  local err = GetLastError()
+                  io.stderr:write(string.format("ClutTeX: GetConsoleMode failed (0x%08X)\n", err))
+                end
+                return false
+              end
               local ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
               result = SetConsoleMode(handle, bitlib.bor(modePtr[0], ENABLE_VIRTUAL_TERMINAL_PROCESSING))
               if result == 0 then
+                -- SetConsoleMode failed: Command Prompt on older Windows
                 if CLUTTEX_VERBOSITY >= 3 then
-                  io.stderr:write("ClutTeX: SetConsoleMode failed\n")
+                  local err = GetLastError()
+                  -- Typical error code: ERROR_INVALID_PARAMETER (0x57)
+                  io.stderr:write(string.format("ClutTeX: SetConsoleMode failed (0x%08X)\n", err))
                 end
+                return false
               end
-            else
-              if CLUTTEX_VERBOSITY >= 3 then
-                io.stderr:write("ClutTeX: GetConsoleMode failed\n")
+              if CLUTTEX_VERBOSITY >= 4 then
+                io.stderr:write("ClutTeX: Detected recent Command Prompt\n")
               end
+              return true
             end
+          else
+            -- Not a TTY
+            return false
           end
         end,
       }
@@ -1970,21 +2006,27 @@ local use_colors = false
 local function set_colors(mode)
   local M
   if mode == "always" then
-    use_colors = true
     M = require "texrunner.isatty"
-    if M.enable_console_colors then
-      M.enable_console_colors(io.stderr)
+    use_colors = true
+    if use_colors and M.enable_virtual_terminal then
+      local succ = M.enable_virtual_terminal(io.stderr)
+      if not succ and CLUTTEX_VERBOSITY >= 2 then
+        io.stderr:write("ClutTeX: Failed to enable virtual terminal\n")
+      end
     end
-  elseif mode == "never" then
-    use_colors = false
   elseif mode == "auto" then
     M = require "texrunner.isatty"
     use_colors = M.isatty(io.stderr)
+    if use_colors and M.enable_virtual_terminal then
+      use_colors = M.enable_virtual_terminal(io.stderr)
+      if not use_colors and CLUTTEX_VERBOSITY >= 2 then
+        io.stderr:write("ClutTeX: Failed to enable virtual terminal\n")
+      end
+    end
+  elseif mode == "never" then
+    use_colors = false
   else
     error "The value of --color option must be one of 'auto', 'always', or 'never'."
-  end
-  if use_colors and M.enable_console_colors then
-    M.enable_console_colors(io.stderr)
   end
 end
 
@@ -2083,7 +2125,7 @@ return {
 }
 end
 --[[
-  Copyright 2016,2018 ARATA Mizuki
+  Copyright 2016,2018-2019 ARATA Mizuki
 
   This file is part of ClutTeX.
 
@@ -2101,7 +2143,7 @@ end
   along with ClutTeX.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-CLUTTEX_VERSION = "v0.1"
+CLUTTEX_VERSION = "v0.2"
 
 -- Standard libraries
 local coroutine = coroutine
@@ -2517,6 +2559,23 @@ local function do_typeset_c()
     if synctex_ext then
       coroutine.yield(fsutil.copy_command(path_in_output_directory(synctex_ext), pathutil.replaceext(options.output, synctex_ext)))
     end
+  end
+
+  -- Write dependencies file
+  if options.make_depends then
+    local filelist, filemap = reruncheck.parse_recorder_file(recorderfile, options)
+    if engine.is_luatex and fsutil.isfile(recorderfile2) then
+      filelist, filemap = reruncheck.parse_recorder_file(recorderfile2, options, filelist, filemap)
+    end
+    local f = assert(io.open(options.make_depends, "w"))
+    f:write(options.output, ":")
+    for _,fileinfo in ipairs(filelist) do
+      if fileinfo.kind == "input" then
+        f:write(" ", fileinfo.path)
+      end
+    end
+    f:write("\n")
+    f:close()
   end
 end
 
