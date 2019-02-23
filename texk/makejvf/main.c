@@ -27,7 +27,6 @@ int main(int argc, char ** argv)
 	while ((c = getopt (argc, argv, "k:K:Ca:b:mu:3J:U:Hiet:")) != -1)
 		switch (c) {
 
-
 		case 'k':
 			kanatume = atoi(optarg);
 			break;
@@ -111,25 +110,78 @@ int main(int argc, char ** argv)
 		exit(0);
 	}
 
-	atfmname = xmalloc(strlen(argv[optind])+4);
-	strcpy(atfmname, argv[optind]);
+	atfmname = xstrdup(argv[optind]);
+	if (FILESTRCASEEQ(&atfmname[strlen(atfmname)-4], ".tfm")) {
+		atfmname[strlen(atfmname)-4] = '\0';
+	}
 
-	{
-		const char *p = xbasename(argv[optind]);
-		vfname = xmalloc(strlen(p)+4);
-		strcpy(vfname, p);
-	}
-	if (FILESTRCASEEQ(&vfname[strlen(vfname)-4], ".tfm")) {
-		vfname[strlen(vfname)-4] = '\0';
-	}
+	const char *atfmname_base = xbasename(atfmname);
+	vfname = xmalloc(strlen(atfmname_base)+4);
+	strcpy(vfname, atfmname_base);
 	strcat(vfname,".vf");
 
 	vtfmname = xstrdup(argv[optind+1]);
 	if (FILESTRCASEEQ(&vtfmname[strlen(vtfmname)-4], ".tfm")) {
 		vtfmname[strlen(vtfmname)-4] = '\0';
 	}
+	if (FILESTRCASEEQ(&vtfmname[0], &atfmname_base[0])) {
+		fprintf(stderr,"Invalid usage: input TFM and output TFM must be different.\n");
+		exit(100);
+	}
 
-	tfmget(atfmname);
+	if (kanatfm) {
+		if (FILESTRCASEEQ(&kanatfm[strlen(kanatfm)-4], ".tfm")) {
+			kanatfm[strlen(kanatfm)-4] = '\0';
+		}
+		if (FILESTRCASEEQ(&kanatfm[0], &atfmname_base[0])) {
+			fprintf(stderr,"Invalid usage: input TFM and output TFM must be different.\n");
+			exit(100);
+		}
+	}
+
+	if (!ucs) {
+		if (jistfm) {
+			fprintf(stderr,"[Warning] Option -J invalid in non-UCS mode, ignored.\n");
+			jistfm = NULL;
+		}
+		if (ucsqtfm) {
+			fprintf(stderr,"[Warning] Option -U invalid in non-UCS mode, ignored.\n");
+			ucsqtfm = NULL;
+		}
+		if (useset3) {
+			fprintf(stderr,"[Warning] Option -3 invalid in non-UCS mode, ignored.\n");
+			useset3 = 0;
+		}
+		if (hankana) {
+			fprintf(stderr,"[Warning] Option -H invalid in non-UCS mode, ignored.\n");
+			hankana = 0;
+		}
+	}
+
+	if (jistfm && ucsqtfm) {
+		fprintf(stderr,"Options -J and -U at the same time? I'm confused.\n");
+		exit(100);
+	}
+
+	if (jistfm) {
+		if (FILESTRCASEEQ(&jistfm[strlen(jistfm)-4], ".tfm")) {
+			jistfm[strlen(jistfm)-4] = '\0';
+		}
+		if (FILESTRCASEEQ(&jistfm[0], &atfmname_base[0])) {
+			fprintf(stderr,"Invalid usage: input TFM and output TFM must be different.\n");
+			exit(100);
+		}
+	}
+
+	if (ucsqtfm) {
+		if (FILESTRCASEEQ(&ucsqtfm[strlen(ucsqtfm)-4], ".tfm")) {
+			ucsqtfm[strlen(ucsqtfm)-4] = '\0';
+		}
+		if (FILESTRCASEEQ(&ucsqtfm[0], &atfmname_base[0])) {
+			fprintf(stderr,"Invalid usage: input TFM and output TFM must be different.\n");
+			exit(100);
+		}
+	}
 
 	if (usertable) {
 		get_usertable(usertable);
@@ -143,6 +195,8 @@ int main(int argc, char ** argv)
 		fprintf(stderr,"No custom charset definition in usertable.\n");
 		exit(101);
 	}
+
+	tfmget(atfmname);
 
 	vfp = vfopen(vfname);
 
@@ -164,9 +218,6 @@ int main(int argc, char ** argv)
 	vfclose(vfp);
 
 	if (kanatfm) {
-		if (FILESTRCASEEQ(&kanatfm[strlen(kanatfm)-4], ".tfm")) {
-			kanatfm[strlen(kanatfm)-4] = '\0';
-		}
 		maketfm(kanatfm);
 		pstfm_nt=1; /* already done*/
 	}
@@ -174,19 +225,9 @@ int main(int argc, char ** argv)
 	maketfm(vtfmname);
 	pstfm_nt=1; /* already done*/
 
-	if (jistfm) {
-		if (FILESTRCASEEQ(&jistfm[strlen(jistfm)-4], ".tfm")) {
-			jistfm[strlen(jistfm)-4] = '\0';
-		}
-		maketfm(jistfm);
-	}
+	if (jistfm) maketfm(jistfm);
 
-	if (ucsqtfm) {
-		if (FILESTRCASEEQ(&ucsqtfm[strlen(ucsqtfm)-4], ".tfm")) {
-			ucsqtfm[strlen(ucsqtfm)-4] = '\0';
-		}
-		maketfm(ucsqtfm);
-	}
+	if (ucsqtfm) maketfm(ucsqtfm);
 
 	exit(0);
 }

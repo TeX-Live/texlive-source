@@ -93,20 +93,17 @@ int jfmread(int kcode)
 
 int tfmget(char *name)
 {
-	char nbuff[1024];
+	char *nbuff;
 	FILE *fp;
 
-	if (strlen(name) >= 1020) { /* <buffer size> - ".tfm" */
-		fprintf(stderr,"Too long input file name.\n");
-		exit(1);
-	}
+	nbuff = xmalloc(strlen(name)+4);
 	strcpy(nbuff,name);
+	strcat(nbuff,".tfm");
 	fp = fopen(nbuff,"rb");
 	if (fp == NULL) {
-		strcat(nbuff,".tfm");
-		fp = fopen(nbuff,"rb");
+		fp = fopen(name,"rb"); /* just in case ... */
 		if (fp == NULL) {
-			fprintf(stderr,"%s is not found.\n",name);
+			fprintf(stderr,"Cannot open %s for input.\n",nbuff);
 			exit(1);
 		}
 	}

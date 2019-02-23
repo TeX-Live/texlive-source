@@ -1,3 +1,14 @@
+2019-02-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* main.c, tfmread.c: Forbid invalid usages.
+	  - Make sure the output TFM does not have the same
+	    basename as the input TFM.
+	  - Options -J, -U, -3, -H are useless in non-UCS mode,
+	    throw a warning and ignore.
+	  - Options -J and -U cannot be used at the same time,
+	    throw an error.
+	* version.h: Bump version.
+
 2019-02-19  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tfmread.c, tool.c: Avoid compiler warnings for fgetc().
