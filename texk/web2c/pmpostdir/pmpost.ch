@@ -103,7 +103,7 @@ char kanjioption[16];
           optarg[15] = '\0';
         }
         strcpy(kanjioption, optarg);
-        if (!set_enc_string(optarg, optarg)) {
+        if (!set_enc_string(optarg, NULL)) {
           fprintf(stderr,"Ignoring unknown argument `%s' to --kanji\n", optarg);
         }
       }
@@ -130,7 +130,7 @@ char kanjioption[16];
           optarg[15] = '\0';
         }
         strcpy (kanjioption, optarg);
-        if (!set_enc_string(optarg, optarg)) {
+        if (!set_enc_string(optarg, NULL)) {
           fprintf(stderr,"Ignoring unknown argument `%s' to --kanji\n", optarg);
         }
       }
