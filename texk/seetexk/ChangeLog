@@ -1,3 +1,8 @@
+2019-02-22  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dviconcat.c: Set DVI ID to 3 if at least one input DVI file
+	contains opcode 255.
+
 2017-06-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c, error.h:

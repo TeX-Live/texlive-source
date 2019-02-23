@@ -388,9 +388,6 @@ doit(const char *name, FILE *fp)
 {
 	static int started;
 
-#ifdef	ASCIIPTEX
-	ptexdvi = 0;
-#endif
 	DVIFileName = name;
 	inf = fp;
 	if (HandlePreAmble(started ? 0 : 1))
@@ -459,6 +456,9 @@ usage:
 	if ((FontFinder = SCreate(sizeof(struct fontinfo *))) == 0)
 		error(1, 0, "cannot create font finder (out of memory?)");
 	StartOfLastPage = -1;
+#ifdef	ASCIIPTEX
+	ptexdvi = 0;
+#endif
 
 	/*
 	 * Concatenate the named input file(s).
