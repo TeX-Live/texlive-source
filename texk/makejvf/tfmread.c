@@ -96,7 +96,7 @@ int tfmget(char *name)
 	char *nbuff;
 	FILE *fp;
 
-	nbuff = xmalloc(strlen(name)+4);
+	nbuff = xmalloc(strlen(name)+4+1);
 	strcpy(nbuff,name);
 	strcat(nbuff,".tfm");
 	fp = fopen(nbuff,"rb");
@@ -111,6 +111,8 @@ int tfmget(char *name)
 	tfmidx(fp);
 
 	fclose(fp);
+
+	free(nbuff);
 
 	return 0;
 }

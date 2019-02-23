@@ -20,6 +20,7 @@ int main(int argc, char ** argv)
 	int i,j;
 	int c;
 	long ch,ch_max;
+	const char *atfmname_base;
 
 	kpse_set_program_name(argv[0], "makejvf");
 	set_enc_string("sjis", "euc");
@@ -115,7 +116,7 @@ int main(int argc, char ** argv)
 		atfmname[strlen(atfmname)-4] = '\0';
 	}
 
-	const char *atfmname_base = xbasename(atfmname);
+	atfmname_base = xbasename(atfmname);
 	vfname = xmalloc(strlen(atfmname_base)+4);
 	strcpy(vfname, atfmname_base);
 	strcat(vfname,".vf");

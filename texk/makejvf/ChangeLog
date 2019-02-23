@@ -1,3 +1,8 @@
+2019-02-23  Akira Kakuto  <kakuto@w32tex.org>
+
+	* main.c: Support old compiler.
+	* tfmread.c: Allocate one more byte for nbuff in tfmget().
+
 2019-02-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* main.c, tfmread.c: Forbid invalid usages.
