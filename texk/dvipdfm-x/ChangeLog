@@ -1,3 +1,9 @@
+2019-02-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* tt_post.c (tt_lookup_post_table): Fix a bug that the loop
+	exceeds post->numberOfGlyphs (= the size of post->glyphNamePtr).
+	https://github.com/texjporg/tex-jp-build/issues/74
+
 2019-02-11  Karl Berry  <karl@tug.org>
 
 	* configure.ac,
