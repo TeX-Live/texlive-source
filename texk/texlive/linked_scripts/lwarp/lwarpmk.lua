@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2018 Brian Dunn
 
-printversion = "v0.66"
+printversion = "v0.67"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -537,7 +537,7 @@ end -- createonelateximage
 
 function createlateximages ()
 --
--- Create lateximages based on <sourcename>.txt:
+-- Create lateximages based on <sourcename>-images.txt:
 --
 -- See if the document must be recompiled first:
 checklimages ()
