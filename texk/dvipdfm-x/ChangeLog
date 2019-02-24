@@ -1,3 +1,10 @@
+2019-02-25  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_post.c: Since OpenType ver. 1.7, PostScript glyph names
+	more than 32767 are allowed for version 2.0 post table. Some
+	minore fixes in chek of valid index range.
+	* configure.ac: Version 20190225.
+
 2019-02-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tt_post.c (tt_lookup_post_table): Fix a bug that the loop
