@@ -13,6 +13,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include <ctype.h>
 #include "gmem.h"
 #include "gmempp.h"
 #include "parseargs.h"
@@ -30,12 +31,18 @@
 #include "CharTypes.h"
 #include "UnicodeMap.h"
 #include "TextString.h"
+#include "UTF8.h"
+#include "Zoox.h"
 #include "Error.h"
 #include "config.h"
 
-static void printInfoString(Dict *infoDict, const char *key, const char *text,
+static void printInfoString(Object *infoDict, const char *infoKey,
+			    ZxDoc *xmp, const char *xmpKey1,
+			    const char *xmpKey2,
+			    const char *text, GBool parseDate,
 			    UnicodeMap *uMap);
-static void printInfoDate(Dict *infoDict, const char *key, const char *text);
+static GString *parseInfoDate(GString *s);
+static GString *parseXMPDate(GString *s);
 static void printBox(const char *text, PDFRectangle *box);
 
 static int firstPage = 1;
@@ -84,7 +91,7 @@ static ArgDesc argDesc[] = {
 
 int main(int argc, char *argv[]) {
   PDFDoc *doc;
-  GString *fileName;
+  char *fileName;
   GString *ownerPW, *userPW;
   UnicodeMap *uMap;
   Page *page;
@@ -94,6 +101,7 @@ int main(int argc, char *argv[]) {
   double w, h, wISO, hISO;
   FILE *f;
   GString *metadata;
+  ZxDoc *xmp;
   GBool ok;
   int exitCode;
   int pg, i;
@@ -102,6 +110,7 @@ int main(int argc, char *argv[]) {
   exitCode = 99;
 
   // parse args
+  fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc != 2 || printVersion || printHelp) {
     fprintf(stderr, "pdfinfo version %s\n", xpdfVersion);
@@ -111,7 +120,7 @@ int main(int argc, char *argv[]) {
     }
     goto err0;
   }
-  fileName = new GString(argv[1]);
+  fileName = argv[1];
 
   // read config file
   globalParams = new GlobalParams(cfgFileName);
@@ -122,7 +131,6 @@ int main(int argc, char *argv[]) {
   // get mapping to output encoding
   if (!(uMap = globalParams->getTextEncoding())) {
     error(errConfig, -1, "Couldn't get text encoding");
-    delete fileName;
     goto err1;
   }
 
@@ -165,24 +173,23 @@ int main(int argc, char *argv[]) {
 
   // print doc info
   doc->getDocInfo(&info);
-  if (info.isDict()) {
-    printInfoString(info.getDict(), "Title",        "Title:          ", uMap);
-    printInfoString(info.getDict(), "Subject",      "Subject:        ", uMap);
-    printInfoString(info.getDict(), "Keywords",     "Keywords:       ", uMap);
-    printInfoString(info.getDict(), "Author",       "Author:         ", uMap);
-    printInfoString(info.getDict(), "Creator",      "Creator:        ", uMap);
-    printInfoString(info.getDict(), "Producer",     "Producer:       ", uMap);
-    if (rawDates) {
-      printInfoString(info.getDict(), "CreationDate", "CreationDate:   ",
-		      uMap);
-      printInfoString(info.getDict(), "ModDate",      "ModDate:        ",
-		      uMap);
-    } else {
-      printInfoDate(info.getDict(),   "CreationDate", "CreationDate:   ");
-      printInfoDate(info.getDict(),   "ModDate",      "ModDate:        ");
-    }
+  if ((metadata = doc->readMetadata())) {
+    xmp = ZxDoc::loadMem(metadata->getCString(), metadata->getLength());
+  } else {
+    xmp = NULL;
   }
+  printInfoString(&info, "Title",        xmp, "dc:title",        NULL,              "Title:          ", gFalse,    uMap);
+  printInfoString(&info, "Subject",      xmp, "dc:description",  NULL,              "Subject:        ", gFalse,    uMap);
+  printInfoString(&info, "Keywords",     xmp, "pdf:Keywords",    NULL,              "Keywords:       ", gFalse,    uMap);
+  printInfoString(&info, "Author",       xmp, "dc:creator",      NULL,              "Author:         ", gFalse,    uMap);
+  printInfoString(&info, "Creator",      xmp, "xmp:CreatorTool", NULL,              "Creator:        ", gFalse,    uMap);
+  printInfoString(&info, "Producer",     xmp, "pdf:Producer",    NULL,              "Producer:       ", gFalse,    uMap);
+  printInfoString(&info, "CreationDate", xmp, "xap:CreateDate",  "xmp:CreateDate",  "CreationDate:   ", !rawDates, uMap);
+  printInfoString(&info, "ModDate",      xmp, "xap:ModifyDate",  "xmp:ModifyDate",  "ModDate:        ", !rawDates, uMap);
   info.free();
+  if (xmp) {
+    delete xmp;
+  }
 
   // print tagging info
   printf("Tagged:         %s\n",
@@ -276,11 +283,7 @@ int main(int argc, char *argv[]) {
   }
 
   // print file size
-#ifdef VMS
-  f = fopen(fileName->getCString(), "rb", "ctx=stm");
-#else
-  f = fopen(fileName->getCString(), "rb");
-#endif
+  f = openFile(fileName, "rb");
   if (f) {
     gfseek(f, 0, SEEK_END);
     printf("File size:      %u bytes\n", (Guint)gftell(f));
@@ -294,10 +297,13 @@ int main(int argc, char *argv[]) {
   printf("PDF version:    %.1f\n", doc->getPDFVersion());
 
   // print the metadata
-  if (printMetadata && (metadata = doc->readMetadata())) {
+  if (printMetadata && metadata) {
     fputs("Metadata:\n", stdout);
     fputs(metadata->getCString(), stdout);
     fputc('\n', stdout);
+  }
+
+  if (metadata) {
     delete metadata;
   }
 
@@ -318,72 +324,218 @@ int main(int argc, char *argv[]) {
   return exitCode;
 }
 
-static void printInfoString(Dict *infoDict, const char *key, const char *text,
+static void printInfoString(Object *infoDict, const char *infoKey,
+			    ZxDoc *xmp, const char *xmpKey1,
+			    const char *xmpKey2,
+			    const char *text, GBool parseDate,
 			    UnicodeMap *uMap) {
   Object obj;
   TextString *s;
   Unicode *u;
+  Unicode uu;
   char buf[8];
+  GString *value, *tmp;
+  ZxElement *rdf, *elem, *child;
+  ZxNode *node, *node2;
   int i, n;
 
-  if (infoDict->lookup(key, &obj)->isString()) {
-    fputs(text, stdout);
-    s = new TextString(obj.getString());
-    u = s->getUnicode();
-    for (i = 0; i < s->getLength(); ++i) {
-      n = uMap->mapUnicode(u[i], buf, sizeof(buf));
-      fwrite(buf, 1, n, stdout);
+  value = NULL;
+
+  //-- check the info dictionary
+  if (infoDict->isDict()) {
+    if (infoDict->dictLookup(infoKey, &obj)->isString()) {
+      if (!parseDate || !(value = parseInfoDate(obj.getString()))) {
+	s = new TextString(obj.getString());
+	u = s->getUnicode();
+	value = new GString();
+	for (i = 0; i < s->getLength(); ++i) {
+	  n = uMap->mapUnicode(u[i], buf, sizeof(buf));
+	  value->append(buf, n);
+	}
+	delete s;
+      }
     }
-    fputc('\n', stdout);
-    delete s;
+    obj.free();
   }
-  obj.free();
+
+  //-- check the XMP metadata
+  if (xmp) {
+    rdf = xmp->getRoot();
+    if (rdf->isElement("x:xmpmeta")) {
+      rdf = rdf->findFirstChildElement("rdf:RDF");
+    }
+    if (rdf && rdf->isElement("rdf:RDF")) {
+      for (node = rdf->getFirstChild(); node; node = node->getNextChild()) {
+	if (node->isElement("rdf:Description")) {
+	  if (!(elem = node->findFirstChildElement(xmpKey1)) && xmpKey2) {
+	    elem = node->findFirstChildElement(xmpKey2);
+	  }
+	  if (elem) {
+	    if ((child = elem->findFirstChildElement("rdf:Alt")) ||
+		(child = elem->findFirstChildElement("rdf:Seq"))) {
+	      if ((node2 = child->findFirstChildElement("rdf:li"))) {
+		node2 = node2->getFirstChild();
+	      }
+	    } else {
+	      node2 = elem->getFirstChild();
+	    }
+	    if (node2 && node2->isCharData()) {
+	      if (value) {
+		delete value;
+	      }
+	      if (!parseDate ||
+		  !(value = parseXMPDate(((ZxCharData *)node2)->getData()))) {
+		tmp = ((ZxCharData *)node2)->getData();
+		int i = 0;
+		value = new GString();
+		while (getUTF8(tmp, &i, &uu)) {
+		  n = uMap->mapUnicode(uu, buf, sizeof(buf));
+		  value->append(buf, n);
+		}
+	      }
+	    }
+	    break;
+	  }
+	}
+      }
+    }
+  }
+
+  if (value) {
+    fputs(text, stdout);
+    fwrite(value->getCString(), 1, value->getLength(), stdout);
+    fputc('\n', stdout);
+    delete value;
+  }
 }
 
-static void printInfoDate(Dict *infoDict, const char *key, const char *text) {
-  Object obj;
-  char *s;
+static GString *parseInfoDate(GString *s) {
   int year, mon, day, hour, min, sec, n;
   struct tm tmStruct;
   char buf[256];
+  char *p;
 
-  if (infoDict->lookup(key, &obj)->isString()) {
-    fputs(text, stdout);
-    s = obj.getString()->getCString();
-    if (s[0] == 'D' && s[1] == ':') {
-      s += 2;
-    }
-    if ((n = sscanf(s, "%4d%2d%2d%2d%2d%2d",
-		    &year, &mon, &day, &hour, &min, &sec)) >= 1) {
-      switch (n) {
-      case 1: mon = 1;
-      case 2: day = 1;
-      case 3: hour = 0;
-      case 4: min = 0;
-      case 5: sec = 0;
-      }
-      tmStruct.tm_year = year - 1900;
-      tmStruct.tm_mon = mon - 1;
-      tmStruct.tm_mday = day;
-      tmStruct.tm_hour = hour;
-      tmStruct.tm_min = min;
-      tmStruct.tm_sec = sec;
-      tmStruct.tm_wday = -1;
-      tmStruct.tm_yday = -1;
-      tmStruct.tm_isdst = -1;
-      // compute the tm_wday and tm_yday fields
-      if (mktime(&tmStruct) != (time_t)-1 &&
-	  strftime(buf, sizeof(buf), "%c", &tmStruct)) {
-	fputs(buf, stdout);
-      } else {
-	fputs(s, stdout);
-      }
-    } else {
-      fputs(s, stdout);
-    }
-    fputc('\n', stdout);
+  p = s->getCString();
+  if (p[0] == 'D' && p[1] == ':') {
+    p += 2;
   }
-  obj.free();
+  if ((n = sscanf(p, "%4d%2d%2d%2d%2d%2d",
+		  &year, &mon, &day, &hour, &min, &sec)) < 1) {
+    return NULL;
+  }
+  switch (n) {
+  case 1: mon = 1;
+  case 2: day = 1;
+  case 3: hour = 0;
+  case 4: min = 0;
+  case 5: sec = 0;
+  }
+  tmStruct.tm_year = year - 1900;
+  tmStruct.tm_mon = mon - 1;
+  tmStruct.tm_mday = day;
+  tmStruct.tm_hour = hour;
+  tmStruct.tm_min = min;
+  tmStruct.tm_sec = sec;
+  tmStruct.tm_wday = -1;
+  tmStruct.tm_yday = -1;
+  tmStruct.tm_isdst = -1;
+  // compute the tm_wday and tm_yday fields
+  if (!(mktime(&tmStruct) != (time_t)-1 &&
+	strftime(buf, sizeof(buf), "%c", &tmStruct))) {
+    return NULL;
+  }
+  return new GString(buf);
+}
+
+static GString *parseXMPDate(GString *s) {
+  int year, mon, day, hour, min, sec, tz;
+  struct tm tmStruct;
+  char buf[256];
+  char *p;
+
+  p = s->getCString();
+  if (isdigit(p[0]) && isdigit(p[1]) && isdigit(p[2]) && isdigit(p[3])) {
+    buf[0] = p[0];
+    buf[1] = p[1];
+    buf[2] = p[2];
+    buf[3] = p[3];
+    buf[4] = '\0';
+    year = atoi(buf);
+    p += 4;
+  } else {
+    return NULL;
+  }
+  mon = day = 1;
+  hour = min = sec = 0;
+  tz = 2000;
+  if (p[0] == '-' && isdigit(p[1]) && isdigit(p[2])) {
+    buf[0] = p[1];
+    buf[1] = p[2];
+    buf[2] = '\0';
+    mon = atoi(buf);
+    p += 3;
+    if (p[0] == '-' && isdigit(p[1]) && isdigit(p[2])) {
+      buf[0] = p[1];
+      buf[1] = p[2];
+      buf[2] = '\0';
+      day = atoi(buf);
+      p += 3;
+      if (p[0] == 'T' && isdigit(p[1]) && isdigit(p[2]) &&
+	  p[3] == ':' && isdigit(p[4]) && isdigit(p[5])) {
+	buf[0] = p[1];
+	buf[1] = p[2];
+	buf[2] = '\0';
+	hour = atoi(buf);
+	buf[0] = p[4];
+	buf[1] = p[5];
+	buf[2] = '\0';
+	min = atoi(buf);
+	p += 6;
+	if (p[0] == ':' && isdigit(p[1]) && isdigit(p[2])) {
+	  buf[0] = p[1];
+	  buf[1] = p[2];
+	  buf[2] = '\0';
+	  sec = atoi(buf);
+	  if (p[0] == '.' && isdigit(p[1])) {
+	    p += 2;
+	  }
+	}
+	if ((p[0] == '+' || p[0] == '-') &&
+	    isdigit(p[1]) && isdigit(p[2]) && p[3] == ':' &&
+	    isdigit(p[4]) && isdigit(p[5])) {
+	  buf[0] = p[1];
+	  buf[1] = p[2];
+	  buf[2] = '\0';
+	  tz = atoi(buf);
+	  buf[0] = p[4];
+	  buf[1] = p[5];
+	  buf[2] = '\0';
+	  tz = tz * 60 + atoi(buf);
+	  tz = tz * 60;
+	  if (p[0] == '-') {
+	    tz = -tz;
+	  }
+	}
+      }
+    }
+  }
+
+  tmStruct.tm_year = year - 1900;
+  tmStruct.tm_mon = mon - 1;
+  tmStruct.tm_mday = day;
+  tmStruct.tm_hour = hour;
+  tmStruct.tm_min = min;
+  tmStruct.tm_sec = sec;
+  tmStruct.tm_wday = -1;
+  tmStruct.tm_yday = -1;
+  tmStruct.tm_isdst = -1;
+  // compute the tm_wday and tm_yday fields
+  //~ this ignores the timezone
+  if (!(mktime(&tmStruct) != (time_t)-1 &&
+	strftime(buf, sizeof(buf), "%c", &tmStruct))) {
+    return NULL;
+  }
+  return new GString(buf);
 }
 
 static void printBox(const char *text, PDFRectangle *box) {

@@ -151,6 +151,7 @@ am__objects_3 = @XPDF_TREE@/xpdf/AcroForm.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/OptionalContent.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Outline.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/OutputDev.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/PDF417Barcode.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/PDFDoc.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/PDFDocEncoding.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/PSTokenizer.$(OBJEXT) \
@@ -160,6 +161,7 @@ am__objects_3 = @XPDF_TREE@/xpdf/AcroForm.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Stream.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/TextString.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/UnicodeMap.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/UnicodeRemapping.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/UTF8.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/XFAForm.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/XRef.$(OBJEXT) \
@@ -223,6 +225,7 @@ am__depfiles_remade = @XPDF_TREE@/fofi/$(DEPDIR)/FoFiBase.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/OptionalContent.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/Outline.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/OutputDev.Po \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/PDF417Barcode.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/PDFDoc.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/PDFDocEncoding.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/PSTokenizer.Po \
@@ -233,6 +236,7 @@ am__depfiles_remade = @XPDF_TREE@/fofi/$(DEPDIR)/FoFiBase.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/TextString.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeRemapping.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po
@@ -518,6 +522,7 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/OptionalContent.cc \
 	@XPDF_TREE@/xpdf/Outline.cc \
 	@XPDF_TREE@/xpdf/OutputDev.cc \
+	@XPDF_TREE@/xpdf/PDF417Barcode.cc \
 	@XPDF_TREE@/xpdf/PDFDoc.cc \
 	@XPDF_TREE@/xpdf/PDFDocEncoding.cc \
 	@XPDF_TREE@/xpdf/PSTokenizer.cc \
@@ -527,6 +532,7 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/Stream.cc \
 	@XPDF_TREE@/xpdf/TextString.cc \
 	@XPDF_TREE@/xpdf/UnicodeMap.cc \
+	@XPDF_TREE@/xpdf/UnicodeRemapping.cc \
 	@XPDF_TREE@/xpdf/UTF8.cc \
 	@XPDF_TREE@/xpdf/XFAForm.cc \
 	@XPDF_TREE@/xpdf/XRef.cc \
@@ -710,6 +716,9 @@ clean-noinstLIBRARIES:
 @XPDF_TREE@/xpdf/OutputDev.$(OBJEXT):  \
 	@XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/PDF417Barcode.$(OBJEXT):  \
+	@XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/PDFDoc.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/PDFDocEncoding.$(OBJEXT):  \
@@ -731,6 +740,9 @@ clean-noinstLIBRARIES:
 	@XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/UnicodeMap.$(OBJEXT):  \
+	@XPDF_TREE@/xpdf/$(am__dirstamp) \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/xpdf/UnicodeRemapping.$(OBJEXT):  \
 	@XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/UTF8.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
@@ -797,6 +809,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/OptionalContent.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Outline.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/OutputDev.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/PDF417Barcode.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/PDFDoc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/PDFDocEncoding.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/PSTokenizer.Po@am__quote@ # am--include-marker
@@ -807,6 +820,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/TextString.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeRemapping.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po@am__quote@ # am--include-marker
@@ -1222,6 +1236,7 @@ distclean: distclean-recursive
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/OptionalContent.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Outline.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/OutputDev.Po
+	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/PDF417Barcode.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/PDFDoc.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/PDFDocEncoding.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/PSTokenizer.Po
@@ -1232,6 +1247,7 @@ distclean: distclean-recursive
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/TextString.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po
+	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeRemapping.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po
@@ -1323,6 +1339,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/OptionalContent.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Outline.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/OutputDev.Po
+	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/PDF417Barcode.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/PDFDoc.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/PDFDocEncoding.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/PSTokenizer.Po
@@ -1333,6 +1350,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/TextString.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po
+	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeRemapping.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po

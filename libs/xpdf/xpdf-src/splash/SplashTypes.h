@@ -141,4 +141,5 @@ struct SplashScreenParams {
 
 typedef int SplashError;
 
+
 #endif

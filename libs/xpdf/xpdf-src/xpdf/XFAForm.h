@@ -58,13 +58,24 @@ private:
 
   XFAForm(PDFDoc *docA, int nPagesA, ZxDoc *xmlA,
 	  Object *resourceDictA, GBool fullXFAA);
-  void scanNamedNode(ZxElement *elem, GString *name, GString *fullName,
-		     GBool inPageSet, XFATableInfo *tableInfo);
+  void scanNode(ZxElement *elem,
+		GString *parentName, GString *parentFullName,
+		GBool inPageSet, XFATableInfo *tableInfo,
+		GHash *nameCount, GHash *nameIdx,
+		GHash *fullNameCount, GHash *fullNameIdx,
+		Catalog *catalog);
   void scanNames(ZxElement *elem, GHash *nameCount);
-  void scanFields(ZxElement *elem, GString *parentName,
-		  GString *parentFullName, GBool inPageSet,
-		  XFATableInfo *tableInfo,
-		  GHash *siblingNameCount, GHash *siblingNameIdx);
+  void scanFullNames(ZxElement *elem, GHash *fullNameCount);
+  void scanField(ZxElement *elem, GString *name, GString *fullName,
+		 GBool inPageSet,
+		 XFATableInfo *tableInfo, int colSpan,
+		 Catalog *catalog);
+  void scanNonField(ZxElement *elem, GString *name, GString *fullName,
+		    GBool inPageSet,
+		    XFATableInfo *tableInfo, int colSpan,
+		    GHash *nameCount, GHash *nameIdx,
+		    GHash *fullNameCount, GHash *fullNameIdx,
+		    Catalog *catalog);
   GString *getNodeName(ZxElement *elem);
   GString *getNodeFullName(ZxElement *elem);
   GBool nodeIsBindGlobal(ZxElement *elem);

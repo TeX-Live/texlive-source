@@ -85,6 +85,8 @@ public:
   OCUsageState getPrintState() { return printState; }
   GBool getState() { return state; }
   void setState(GBool stateA) { state = stateA; }
+  GBool getInViewUsageAppDict() { return inViewUsageAppDict; }
+  void setInViewUsageAppDict() { inViewUsageAppDict = gTrue; }
 
 private:
 
@@ -96,6 +98,8 @@ private:
   OCUsageState viewState,	// suggested state when viewing
                printState;	// suggested state when printing
   GBool state;			// current state (on/off)
+  GBool inViewUsageAppDict;	// true if this OCG is listed in a
+				//   usage app dict with Event=View
 
   friend class OCDisplayNode;
 };

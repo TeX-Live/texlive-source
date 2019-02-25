@@ -74,7 +74,7 @@ static ArgDesc argDesc[] = {
 
 int main(int argc, char *argv[]) {
   PDFDoc *doc;
-  GString *fileName;
+  char *fileName;
   char *imgRoot;
   GString *ownerPW, *userPW;
   ImageOutputDev *imgOut;
@@ -84,6 +84,7 @@ int main(int argc, char *argv[]) {
   exitCode = 99;
 
   // parse args
+  fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc != 3 || printVersion || printHelp) {
     fprintf(stderr, "pdfimages version %s\n", xpdfVersion);
@@ -93,7 +94,7 @@ int main(int argc, char *argv[]) {
     }
     goto err0;
   }
-  fileName = new GString(argv[1]);
+  fileName = argv[1];
   imgRoot = argv[2];
 
   // read config file

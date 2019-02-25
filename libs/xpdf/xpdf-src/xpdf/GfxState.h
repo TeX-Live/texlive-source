@@ -22,6 +22,8 @@
 class Array;
 class GfxFont;
 class PDFRectangle;
+class GfxDeviceNColorSpace;
+class GfxSeparationColorSpace;
 class GfxShading;
 class GfxState;
 
@@ -80,15 +82,29 @@ static inline double colToDbl(GfxColorComp x) {
 
 static inline GfxColorComp byteToCol(Guchar x) {
   // (x / 255) << 16  =  (0.0000000100000001... * x) << 16
-  //                  =  ((x << 8) + (x) + (x >> 8) + ...) << 16
+  //                  =  ((x << 8) + (x) + (x >> 8) + ...)
   //                  =  (x << 8) + (x) + (x >> 7)
   //                                      [for rounding]
   return (GfxColorComp)((x << 8) + x + (x >> 7));
 }
 
+static inline GfxColorComp wordToCol(Gushort x) {
+  // (x / 65535) << 16  =  (0.0000000000000001... * x) << 16
+  //                    =  x + (x >> 15)
+  //                           [for rounding]
+  return (GfxColorComp)(x + (x >> 15));
+}
+
 static inline Guchar colToByte(GfxColorComp x) {
-  // 255 * x + 0.5  =  256 * x - x + 0x8000
+  // 255 * x + 0.5  =  256 * x - x + 0.5
+  //                =  [256 * (x << 16) - (x << 16) + (1 << 15)] >> 16
   return (Guchar)(((x << 8) - x + 0x8000) >> 16);
+}
+
+static inline Gushort colToWord(GfxColorComp x) {
+  // 65535 * x + 0.5  =  65536 * x - x + 0.5
+  //                  =  [65536 * (x << 16) - (x << 16) + (1 << 15)] >> 16
+  return (Gushort)(((x << 16) - x + 0x8000) >> 16);
 }
 
 //------------------------------------------------------------------------
@@ -122,6 +138,7 @@ struct GfxRGB {
 struct GfxCMYK {
   GfxColorComp c, m, y, k;
 };
+
 
 
 
@@ -918,7 +935,8 @@ class GfxImageColorMap {
 public:
 
   // Constructor.
-  GfxImageColorMap(int bitsA, Object *decode, GfxColorSpace *colorSpaceA);
+  GfxImageColorMap(int bitsA, Object *decode, GfxColorSpace *colorSpaceA,
+		   int maxAllowedBits = 8);
 
   // Destructor.
   ~GfxImageColorMap();
@@ -1165,6 +1183,7 @@ public:
   void getUserClipBBox(double *xMin, double *yMin, double *xMax, double *yMax);
   double getLineX() { return lineX; }
   double getLineY() { return lineY; }
+  GBool getInCachedT3Char() { return inCachedT3Char; }
 
   // Is there a current point/path?
   GBool isCurPt() { return path->isCurPt(); }
@@ -1260,6 +1279,9 @@ public:
     { lineX = tx; lineY = ty; textTransform(tx, ty, &curX, &curY); }
   void textShift(double tx, double ty);
   void shift(double dx, double dy);
+  
+  // Cached Type 3 char status.
+  void setInCachedT3Char(GBool in) { inCachedT3Char = in; }
 
   // Push/pop GfxState on/off stack.
   GfxState *save();
@@ -1321,6 +1343,8 @@ private:
 
   double clipXMin, clipYMin,	// bounding box for clip region
          clipXMax, clipYMax;
+
+  GBool inCachedT3Char;		// in a cached (uncolored) Type 3 char
 
   GfxState *saved;		// next GfxState on stack
 

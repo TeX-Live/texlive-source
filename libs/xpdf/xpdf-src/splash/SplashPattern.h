@@ -35,6 +35,7 @@ public:
   // Return the color value for a specific pixel.
   virtual void getColor(int x, int y, SplashColorPtr c) = 0;
 
+
   // Returns true if this pattern object will return the same color
   // value for all pixels.
   virtual GBool isStatic() = 0;
@@ -63,5 +64,6 @@ private:
 
   SplashColor color;
 };
+
 
 #endif

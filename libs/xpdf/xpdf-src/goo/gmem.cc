@@ -10,6 +10,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
+// older compilers won't define SIZE_MAX in stdint.h without this
+#define __STDC_LIMIT_MACROS 1
+#include <stdint.h>
 #include <string.h>
 #include <limits.h>
 #if MULTITHREADED && defined(_WIN32)
@@ -21,8 +24,8 @@
 
 typedef struct _GMemHdr {
   unsigned int magic;
-  int size;
   int index;
+  size_t size;
   struct _GMemHdr *next, *prev;
 } GMemHdr;
 
@@ -39,15 +42,18 @@ typedef struct _GMemHdr {
 
 /* round data size so trailer will be aligned */
 #define gMemDataSize(size) \
-  ((((size) + gMemTrlSize - 1) / gMemTrlSize) * gMemTrlSize)
+  (int)(((((size) + gMemTrlSize - 1) / gMemTrlSize) * gMemTrlSize))
+
+#define gMemDataSize64(size) \
+  (size_t)(((((size) + gMemTrlSize - 1) / gMemTrlSize) * gMemTrlSize))
 
 static GMemHdr *gMemHead = NULL;
 static GMemHdr *gMemTail = NULL;
 
 static int gMemIndex = 0;
 static int gMemAlloc = 0;
-static int gMemInUse = 0;
-static int gMaxMemInUse = 0;
+static size_t gMemInUse = 0;
+static size_t gMaxMemInUse = 0;
 
 #if MULTITHREADED
 #  ifdef _WIN32
@@ -161,7 +167,7 @@ void *grealloc(void *p, int size) GMEM_EXCEP {
   }
   if (p) {
     hdr = (GMemHdr *)((char *)p - gMemHdrSize);
-    oldSize = hdr->size;
+    oldSize = (int)hdr->size;
     q = gmalloc(size);
     memcpy(q, p, size < oldSize ? size : oldSize);
     gfree(p);
@@ -206,6 +212,80 @@ void *gmallocn(int nObjs, int objSize) GMEM_EXCEP {
   return gmalloc(n);
 }
 
+#ifdef DEBUG_MEM
+void *gmalloc64(size_t size, int ignore) GMEM_EXCEP {
+  size_t size1;
+  char *mem;
+  GMemHdr *hdr;
+  void *data;
+  unsigned long *trl, *p;
+
+  gMemInitMutex;
+  if (size == 0) {
+    return NULL;
+  }
+  size1 = gMemDataSize64(size);
+  if (!(mem = (char *)malloc(size1 + gMemHdrSize + gMemTrlSize))) {
+    gMemError("Out of memory");
+  }
+  hdr = (GMemHdr *)mem;
+  data = (void *)(mem + gMemHdrSize);
+  trl = (unsigned long *)(mem + gMemHdrSize + size1);
+  hdr->magic = gMemMagic;
+  hdr->size = size;
+  if (ignore) {
+    hdr->index = -1;
+  } else {
+    hdr->index = gMemIndex++;
+  }
+  gMemLock;
+  if (gMemTail) {
+    gMemTail->next = hdr;
+    hdr->prev = gMemTail;
+    gMemTail = hdr;
+  } else {
+    hdr->prev = NULL;
+    gMemHead = gMemTail = hdr;
+  }
+  hdr->next = NULL;
+  ++gMemAlloc;
+  gMemInUse += size;
+  if (gMemInUse > gMaxMemInUse) {
+    gMaxMemInUse = gMemInUse;
+  }
+  gMemUnlock;
+  for (p = (unsigned long *)data; p <= trl; ++p) {
+    *p = gMemDeadVal;
+  }
+  return data;
+}
+#else
+void *gmalloc64(size_t size) GMEM_EXCEP {
+  void *p;
+
+  if (size == 0) {
+    return NULL;
+  }
+  if (!(p = malloc(size))) {
+    gMemError("Out of memory");
+  }
+  return p;
+}
+#endif
+
+void *gmallocn64(int nObjs, size_t objSize) GMEM_EXCEP {
+  size_t n;
+
+  if (nObjs == 0) {
+    return NULL;
+  }
+  n = nObjs * objSize;
+  if (nObjs < 0 || (size_t)nObjs >= SIZE_MAX / objSize) {
+    gMemError("Bogus memory allocation size");
+  }
+  return gmalloc64(n);
+}
+
 void *greallocn(void *p, int nObjs, int objSize) GMEM_EXCEP {
   int n;
 
@@ -224,7 +304,7 @@ void *greallocn(void *p, int nObjs, int objSize) GMEM_EXCEP {
 
 void gfree(void *p) {
 #ifdef DEBUG_MEM
-  int size;
+  size_t size;
   GMemHdr *hdr;
   unsigned long *trl, *clr;
 
@@ -247,7 +327,7 @@ void gfree(void *p) {
       --gMemAlloc;
       gMemInUse -= hdr->size;
       gMemUnlock;
-      size = gMemDataSize(hdr->size);
+      size = gMemDataSize64(hdr->size);
       trl = (unsigned long *)((char *)hdr + gMemHdrSize + size);
       if (*trl != gMemDeadVal) {
 	fprintf(stderr, "Overwrite past end of block %d at address %p\n",
@@ -284,7 +364,7 @@ void gMemReport(FILE *f) {
   int left;
 
   fprintf(f, "%d memory allocations in all\n", gMemIndex);
-  fprintf(f, "maximum memory in use: %d bytes\n", gMaxMemInUse);
+  fprintf(f, "maximum memory in use: %zd bytes\n", gMaxMemInUse);
   left = 0;
   if (gMemAlloc > 0) {
     for (p = gMemHead; p; p = p->next) {
@@ -295,7 +375,7 @@ void gMemReport(FILE *f) {
 	  fprintf(f, "-------- --------\n");
 	  left = 1;
 	}
-	fprintf(f, "%8d %8d\n", p->index, p->size);
+	fprintf(f, "%8d %8zd\n", p->index, p->size);
       }
     }
   }

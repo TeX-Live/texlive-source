@@ -673,25 +673,23 @@ void PDFCore::scrollToRightEdge() {
 }
 
 void PDFCore::scrollToTopEdge() {
-  scrollTo(state->getScrollX(), tileMap->getPageTopY(tileMap->getFirstPage()));
+  scrollTo(state->getScrollX(),
+	   tileMap->getPageTopY(tileMap->getFirstPage()));
 }
 
 void PDFCore::scrollToBottomEdge() {
-  int horizMax, vertMax;
-
-  tileMap->getScrollLimits(&horizMax, &vertMax);
-  scrollTo(state->getScrollX(), vertMax - state->getWinH());
+  scrollTo(state->getScrollX(),
+	   tileMap->getPageBottomY(tileMap->getLastPage()));
 }
 
 void PDFCore::scrollToTopLeft() {
-  scrollTo(0, tileMap->getPageTopY(tileMap->getFirstPage()));
+  scrollTo(tileMap->getPageLeftX(tileMap->getFirstPage()),
+	   tileMap->getPageTopY(tileMap->getFirstPage()));
 }
 
 void PDFCore::scrollToBottomRight() {
-  int horizMax, vertMax;
-
-  tileMap->getScrollLimits(&horizMax, &vertMax);
-  scrollTo(horizMax - state->getWinW(), vertMax - state->getWinH());
+  scrollTo(tileMap->getPageRightX(tileMap->getLastPage()),
+	   tileMap->getPageBottomY(tileMap->getLastPage()));
 }
 
 void PDFCore::setZoom(double zoom) {
@@ -897,6 +895,10 @@ void PDFCore::setSelectMode(SelectMode mode) {
     selectMode = mode;
     clearSelection();
   }
+}
+
+SplashColorPtr PDFCore::getSelectionColor() {
+  return state->getSelectColor();
 }
 
 void PDFCore::setSelectionColor(SplashColor color) {
@@ -1646,6 +1648,11 @@ FormField *PDFCore::getFormField(int idx) {
     return NULL;
   }
   return doc->getCatalog()->getForm()->getField(idx);
+}
+
+GBool PDFCore::overText(int pg, double x, double y) {
+  loadText(pg);
+  return text->checkPointInside(x, y);
 }
 
 void PDFCore::forceRedraw() {

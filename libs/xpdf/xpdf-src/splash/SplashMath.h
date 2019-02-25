@@ -347,8 +347,12 @@ static inline void splashStrokeAdjust(SplashCoord xMin, SplashCoord xMax,
     }
 #endif
   }
-  if (x1 == x0) {
-    ++x1;
+  if (x0 == x1) {
+    if (xMin + xMax < 2 * x0) {
+      --x0;
+    } else {
+      ++x1;
+    }
   }
   *xMinI = x0;
   *xMaxI = x1;

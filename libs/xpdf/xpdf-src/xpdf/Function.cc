@@ -1169,7 +1169,7 @@ GString *PostScriptFunction::getToken(Stream *str) {
       delete s;
       return NULL;
     }
-    codeString->append(c);
+    codeString->append((char)c);
     if (comment) {
       if (c == '\x0a' || c == '\x0d') {
 	comment = gFalse;
@@ -1190,7 +1190,7 @@ GString *PostScriptFunction::getToken(Stream *str) {
 	break;
       }
       str->getChar();
-      codeString->append(c);
+      codeString->append((char)c);
     }
   } else {
     while (1) {
@@ -1200,7 +1200,7 @@ GString *PostScriptFunction::getToken(Stream *str) {
 	break;
       }
       str->getChar();
-      codeString->append(c);
+      codeString->append((char)c);
     }
   }
   return s;

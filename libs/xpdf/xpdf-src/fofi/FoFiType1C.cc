@@ -2000,9 +2000,9 @@ void FoFiType1C::cvtGlyph(int offset, int nBytes, GString *charBuf,
   if (top) {
     r2 = 4330;
     for (i = start; i < charBuf->getLength(); ++i) {
-      byte = charBuf->getChar(i) ^ (r2 >> 8);
+      byte = (Guchar)(charBuf->getChar(i) ^ (r2 >> 8));
       charBuf->setChar(i, byte);
-      r2 = (byte + r2) * 52845 + 22719;
+      r2 = (Gushort)((byte + r2) * 52845 + 22719);
     }
   }
 }
@@ -2112,8 +2112,8 @@ void FoFiType1C::eexecWrite(Type1CEexecBuf *eb, const char *s) {
   Guchar x;
 
   for (p = (Guchar *)s; *p; ++p) {
-    x = *p ^ (eb->r1 >> 8);
-    eb->r1 = (x + eb->r1) * 52845 + 22719;
+    x = *p ^ (Guchar)(eb->r1 >> 8);
+    eb->r1 = (Gushort)((x + eb->r1) * 52845 + 22719);
     if (eb->ascii) {
       (*eb->outputFunc)(eb->outputStream, &hexChars[x >> 4], 1);
       (*eb->outputFunc)(eb->outputStream, &hexChars[x & 0x0f], 1);
@@ -2135,8 +2135,8 @@ void FoFiType1C::eexecWriteCharstring(Type1CEexecBuf *eb,
 
   // eexec encryption
   for (i = 0; i < n; ++i) {
-    x = s[i] ^ (eb->r1 >> 8);
-    eb->r1 = (x + eb->r1) * 52845 + 22719;
+    x = s[i] ^ (Guchar)(eb->r1 >> 8);
+    eb->r1 = (Gushort)((x + eb->r1) * 52845 + 22719);
     if (eb->ascii) {
       (*eb->outputFunc)(eb->outputStream, &hexChars[x >> 4], 1);
       (*eb->outputFunc)(eb->outputStream, &hexChars[x & 0x0f], 1);
@@ -2163,14 +2163,14 @@ void FoFiType1C::writePSString(char *s, FoFiOutputFunc outputFunc,
     c = *p & 0xff;
     if (c == '(' || c == ')' || c == '\\') {
       buf[i++] = '\\';
-      buf[i++] = c;
+      buf[i++] = (char)c;
     } else if (c < 0x20 || c >= 0x80) {
       buf[i++] = '\\';
-      buf[i++] = '0' + ((c >> 6) & 7);
-      buf[i++] = '0' + ((c >> 3) & 7);
-      buf[i++] = '0' + (c & 7);
+      buf[i++] = (char)('0' + ((c >> 6) & 7));
+      buf[i++] = (char)('0' + ((c >> 3) & 7));
+      buf[i++] = (char)('0' + (c & 7));
     } else {
-      buf[i++] = c;
+      buf[i++] = (char)c;
     }
     if (i >= 64) {
       buf[i++] = '\\';
@@ -2596,7 +2596,7 @@ void FoFiType1C::readFDSelect() {
 	  return;
 	}
 	for (j = gid0; j < gid1; ++j) {
-	  fdSelect[j] = fd;
+	  fdSelect[j] = (Guchar)fd;
 	}
 	gid0 = gid1;
       }

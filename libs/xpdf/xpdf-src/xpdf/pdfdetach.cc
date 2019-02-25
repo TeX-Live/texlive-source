@@ -61,7 +61,7 @@ static ArgDesc argDesc[] = {
 };
 
 int main(int argc, char *argv[]) {
-  GString *fileName;
+  char *fileName;
   UnicodeMap *uMap;
   GString *ownerPW, *userPW;
   PDFDoc *doc;
@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
   exitCode = 99;
 
   // parse args
+  fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if ((doList ? 1 : 0) +
       ((saveNum != 0) ? 1 : 0) +
@@ -90,7 +91,7 @@ int main(int argc, char *argv[]) {
     }
     goto err0;
   }
-  fileName = new GString(argv[1]);
+  fileName = argv[1];
 
   // read config file
   globalParams = new GlobalParams(cfgFileName);
@@ -101,7 +102,6 @@ int main(int argc, char *argv[]) {
   // get mapping to output encoding
   if (!(uMap = globalParams->getTextEncoding())) {
     error(errConfig, -1, "Couldn't get text encoding");
-    delete fileName;
     goto err1;
   }
 

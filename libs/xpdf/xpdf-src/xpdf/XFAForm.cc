@@ -24,6 +24,7 @@
 #include "Gfx.h"
 #include "GfxFont.h"
 #include "Zoox.h"
+#include "PDF417Barcode.h"
 #include "XFAForm.h"
 
 #ifdef _WIN32
@@ -377,8 +378,13 @@ XFAForm *XFAForm::load(PDFDoc *docA, Catalog *catalog,
   GString *data;
   GBool fullXFAA;
   GString *name, *fullName;
+  GHash *nameCount, *nameIdx, *fullNameCount, *fullNameIdx;
   char buf[4096];
   int n, i;
+
+  if (catalog->getNumPages() == 0) {
+    return NULL;
+  }
 
   docA->getXRef()->getCatalog(&catDict);
   catDict.dictLookup("NeedsRendering", &obj1);
@@ -430,11 +436,21 @@ XFAForm *XFAForm::load(PDFDoc *docA, Catalog *catalog,
 
   if (xfaForm->xml->getRoot()) {
     if ((tmpl = xfaForm->xml->getRoot()->findFirstChildElement("template"))) {
-      name = new GString("form");
-      fullName = new GString("form");
       xfaForm->curPageNum = 0;
       xfaForm->curXOffset = xfaForm->curYOffset = 0;
-      xfaForm->scanNamedNode(tmpl, name, fullName, gFalse, NULL);
+      name = new GString();
+      fullName = new GString();
+      nameCount = new GHash();
+      nameIdx = new GHash();
+      fullNameCount = new GHash();
+      fullNameIdx = new GHash();
+      xfaForm->scanNode(tmpl, name, fullName, gFalse, NULL,
+			nameCount, nameIdx, fullNameCount, fullNameIdx,
+			catalog);
+      delete nameCount;
+      delete nameIdx;
+      delete fullNameCount;
+      delete fullNameIdx;
       delete name;
       delete fullName;
 
@@ -488,95 +504,64 @@ XFAForm::~XFAForm() {
   gfree(pageOffsetY);
 }
 
-// Scan all children of <elem>, which is a named internal (non-field)
-// node, with the specified name.
-void XFAForm::scanNamedNode(ZxElement *elem, GString *name, GString *fullName,
-			    GBool inPageSet, XFATableInfo *tableInfo) {
-  GHash *childNameCount, *childNameIdx;
-  ZxNode *child;
+//~ need to handle exclGroup
+//~ - fields in an exclGroup may/must(?) not have names
+//~ - each field has an items element with the the value when that
+//~   field is selected
 
-  childNameCount = new GHash();
-  for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
-    if (child->isElement()) {
-      scanNames((ZxElement *)child, childNameCount);
-    }
-  }
-  childNameIdx = new GHash();
-  for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
-    if (child->isElement()) {
-      scanFields((ZxElement *)child, name, fullName, inPageSet,
-		 tableInfo, childNameCount, childNameIdx);
-    }
-  }
-  delete childNameIdx;
-  delete childNameCount;
-}
-
-// Traverse all children of <elem>, incrementing nameCount[name] for
-// each named child.  Traversal stops at each named child.
-void XFAForm::scanNames(ZxElement *elem, GHash *nameCount) {
-  ZxNode *child;
-  GString *childName;
-
-  if ((childName = getNodeName(elem))) {
-    if (nodeIsBindGlobal(elem)) {
-      nameCount->replace(childName, 1);
-    } else {
-      nameCount->replace(childName, nameCount->lookupInt(childName) + 1);
-    }
-  } else {
-    for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
-      if (child->isElement()) {
-	scanNames((ZxElement *)child, nameCount);
-      }
-    }
-  }
-}
-
-// Create fields for <elem> and its children.  <parentName> is the
-// name of <elem>'s parent.  <siblingNameCount> contains the number of
-// occurrences of the siblings' (parent's childrens') names.
-// <siblingNameIdx> contains the number of occurrences of each name
-// used so far.
-void XFAForm::scanFields(ZxElement *elem, GString *parentName,
-			 GString *parentFullName, GBool inPageSet,
-			 XFATableInfo *tableInfo,
-			 GHash *siblingNameCount, GHash *siblingNameIdx) {
-  XFATableInfo *newTableInfo;
-  ZxElement *brk, *contentArea;
-  ZxNode *child;
+// Scan <elem>.  Constructs the node's name and full name.  If <elem>
+// is a field, creates an XFAFormField; else scans <elem>'s children.
+void XFAForm::scanNode(ZxElement *elem,
+		       GString *parentName, GString *parentFullName,
+		       GBool inPageSet, XFATableInfo *tableInfo,
+		       GHash *nameCount, GHash *nameIdx,
+		       GHash *fullNameCount, GHash *fullNameIdx,
+		       Catalog *catalog) {
   ZxAttr *attr;
-  GString *elemName, *elemFullName, *name, *fullName;
-  double xSubOffset, ySubOffset, columnWidth, rowHeight;
-  int savedPageNum;
+  GString *name, *fullName, *namePart, *fullNamePart;
+  GHash *childNameCount, *childNameIdx, *childFullNameCount, *childFullNameIdx;
   int colSpan, i;
 
-  //~ need to handle exclGroup
-  //~ - fields in an exclGroup may/must(?) not have names
-  //~ - each field has an items element with the the value when that
-  //~   field is selected
-
-  if ((elemName = getNodeName(elem))) {
-    name = GString::format("{0:t}.{1:t}", parentName, elemName);
+  if (elem->isElement("template")) {
+    name = new GString("form");
+    fullName = new GString("form");
+    childNameCount = new GHash();
+    scanNames(elem, childNameCount);
+    childNameIdx = new GHash();
+    childFullNameCount = new GHash();
+    scanFullNames(elem, childFullNameCount);
+    childFullNameIdx = new GHash();
   } else {
-    name = parentName;
-  }
-
-  if ((elemFullName = getNodeFullName(elem))) {
-    fullName = GString::format("{0:t}.{1:t}", parentFullName, elemFullName);
-  } else {
-    fullName = parentFullName;
-  }
-
-  //~ do we need a separate siblingNameCount/siblingNameIndex for
-  //~   elemName and elemFullName?
-  if (elemFullName && siblingNameCount->lookupInt(elemFullName) > 1) {
-    i = siblingNameIdx->lookupInt(elemFullName);
-    fullName->appendf("[{0:d}]", i);
-    if (elemName) {
-      name->appendf("[{0:d}]", i);
+    if ((namePart = getNodeName(elem))) {
+      name = GString::format("{0:t}.{1:t}", parentName, namePart);
+      if (nameCount->lookupInt(namePart) > 1) {
+	i = nameIdx->lookupInt(namePart);
+	name->appendf("[{0:d}]", i);
+	nameIdx->replace(namePart, i + 1);
+      }
+      childNameCount = new GHash();
+      scanNames(elem, childNameCount);
+      childNameIdx = new GHash();
+    } else {
+      name = parentName->copy();
+      childNameCount = nameCount;
+      childNameIdx = nameIdx;
     }
-    siblingNameIdx->replace(elemFullName, i + 1);
+    if ((fullNamePart = getNodeFullName(elem))) {
+      fullName = GString::format("{0:t}.{1:t}", parentFullName, fullNamePart);
+      if (fullNameCount->lookupInt(fullNamePart) > 1) {
+	i = fullNameIdx->lookupInt(fullNamePart);
+	fullName->appendf("[{0:d}]", i);
+	fullNameIdx->replace(fullNamePart, i + 1);
+      }
+      childFullNameCount = new GHash();
+      scanFullNames(elem, childFullNameCount);
+      childFullNameIdx = new GHash();
+    } else {
+      fullName = parentFullName->copy();
+      childFullNameCount = fullNameCount;
+      childFullNameIdx = fullNameIdx;
+    }
   }
 
   if (tableInfo && (elem->isElement("field") || elem->isElement("draw"))) {
@@ -590,126 +575,230 @@ void XFAForm::scanFields(ZxElement *elem, GString *parentName,
   }
 
   if (elem->isElement("field")) {
-    if (curPageNum == 0) {
-      curPageNum = 1;
-    }
-    xSubOffset = ySubOffset = 0;
-    columnWidth = rowHeight = 0;
-    if (tableInfo) {
-      if (tableInfo->columnIdx > 0 &&
-	  tableInfo->columnIdx <= tableInfo->nColumns) {
-	xSubOffset = tableInfo->columnRight[tableInfo->columnIdx - 1];
-      }
-      if (tableInfo->columnIdx + colSpan <= tableInfo->nColumns) {
-	columnWidth = tableInfo->columnRight[tableInfo->columnIdx + colSpan - 1]
-	              - xSubOffset;
-      }
-      ySubOffset = tableInfo->rowTop;
-      rowHeight = tableInfo->rowHeight;
-      curXOffset += xSubOffset;
-      curYOffset += ySubOffset;
-    }
-    fields->append(new XFAFormField(this, elem, name->copy(), fullName->copy(),
-				    curPageNum, curXOffset, curYOffset,
-				    columnWidth, rowHeight));
-    if (tableInfo) {
-      curXOffset -= xSubOffset;
-      curYOffset -= ySubOffset;
-    }
+    scanField(elem, name, fullName, inPageSet, tableInfo, colSpan, catalog);
   } else {
-    newTableInfo = tableInfo;
-    if (elem->isElement("subform")) {
-      if (((brk = elem->findFirstChildElement("breakBefore")) &&
-	   (attr = brk->findAttr("targetType")) &&
-	   !attr->getValue()->cmp("pageArea")) ||
-	  ((brk = elem->findFirstChildElement("break")) &&
-	   (attr = brk->findAttr("before")) &&
-	   !attr->getValue()->cmp("pageArea"))) {
-	if (curPageNum < nPages) {
-	  ++curPageNum;
-	}
-      }
-      if ((attr = elem->findAttr("layout"))) {
-	if (!attr->getValue()->cmp("table")) {
-	  newTableInfo = new XFATableInfo(elem->findAttr("columnWidths"));
-	  newTableInfo->rowIdx = -1;
-	  newTableInfo->columnIdx = 0;
-	} else if (tableInfo && !attr->getValue()->cmp("row")) {
-	  ++tableInfo->rowIdx;
-	  tableInfo->columnIdx = 0;
-	  tableInfo->rowTop += tableInfo->rowHeight;
-	  tableInfo->computeRowHeight(elem);
-	}
-      }
-      xSubOffset = XFAFormField::getMeasurement(elem->findAttr("x"), 0);
-      ySubOffset = XFAFormField::getMeasurement(elem->findAttr("y"), 0);
-      curXOffset += xSubOffset;
-      curYOffset += ySubOffset;
-    } else if (elem->isElement("area")) {
-      xSubOffset = XFAFormField::getMeasurement(elem->findAttr("x"), 0);
-      ySubOffset = XFAFormField::getMeasurement(elem->findAttr("y"), 0);
-      curXOffset += xSubOffset;
-      curYOffset += ySubOffset;
-    } else {
-      xSubOffset = ySubOffset = 0;
-    }
-    savedPageNum = curPageNum;
-    if (elem->isElement("pageSet")) {
-      inPageSet = gTrue;
-      curPageNum = 0;
-    } else if (elem->isElement("pageArea")) {
-      if (inPageSet) {
-	if (curPageNum < nPages) {
-	  ++curPageNum;
-	}
-	if ((contentArea = elem->findFirstChildElement("contentArea"))) {
-	  pageOffsetX[curPageNum - 1] =
-	      XFAFormField::getMeasurement(contentArea->findAttr("x"), 0);
-	  pageOffsetY[curPageNum - 1] =
-	      XFAFormField::getMeasurement(contentArea->findAttr("y"), 0);
-	  // looks like the contentArea offset (pageOffsetX/Y) should
-	  // not be added to fields defined inside the pageArea
-	  // element (?)
-	  xSubOffset -= pageOffsetX[curPageNum - 1];
-	  ySubOffset -= pageOffsetY[curPageNum - 1];
-	  curXOffset -= pageOffsetX[curPageNum - 1];
-	  curYOffset -= pageOffsetY[curPageNum - 1];
-	}
-      }
-    }
-    if (elemName) {
-      scanNamedNode(elem, name, fullName, inPageSet, newTableInfo);
-    } else {
-      for (child = elem->getFirstChild();
-	   child;
-	   child = child->getNextChild()) {
-	if (child->isElement()) {
-	  scanFields((ZxElement *)child, name, fullName, inPageSet,
-		     newTableInfo, siblingNameCount, siblingNameIdx);
-	}
-      }
-    }
-    curXOffset -= xSubOffset;
-    curYOffset -= ySubOffset;
-    if (newTableInfo != tableInfo) {
-      delete newTableInfo;
-    }
-    if (elem->isElement("pageSet")) {
-      pageSetNPages = curPageNum;
-      curPageNum = savedPageNum;
-      inPageSet = gFalse;
-    }
+    scanNonField(elem, name, fullName, inPageSet, tableInfo, colSpan,
+		 childNameCount, childNameIdx,
+		 childFullNameCount, childFullNameIdx,
+		 catalog);
   }
 
   if (tableInfo) {
     tableInfo->columnIdx += colSpan;
   }
 
-  if (name != parentName) {
-    delete name;
+  delete name;
+  delete fullName;
+  if (childNameCount != nameCount) {
+    delete childNameCount;
   }
-  if (fullName != parentFullName) {
-    delete fullName;
+  if (childNameIdx != nameIdx) {
+    delete childNameIdx;
+  }
+  if (childFullNameCount != fullNameCount) {
+    delete childFullNameCount;
+  }
+  if (childFullNameIdx != fullNameIdx) {
+    delete childFullNameIdx;
+  }
+}
+
+// Traverse all children of <elem>, incrementing nameCount[name] for
+// each named child.  Traversal stops at each named child.
+void XFAForm::scanNames(ZxElement *elem, GHash *nameCount) {
+  ZxNode *node;
+  ZxElement *child;
+  GString *namePart;
+
+  for (node = elem->getFirstChild(); node; node = node->getNextChild()) {
+    if (node->isElement()) {
+      child = (ZxElement *)node;
+      if ((namePart = getNodeName(child))) {
+	if (nodeIsBindGlobal(child)) {
+	  nameCount->replace(namePart, 1);
+	} else {
+	  nameCount->replace(namePart, nameCount->lookupInt(namePart) + 1);
+	}
+      } else {
+	scanNames(child, nameCount);
+      }
+    }
+  }
+}
+
+// Traverse all children of <elem>, incrementing fullNameCount[name]
+// for each full-named child.  Traversal stops at each full-named
+// child.
+void XFAForm::scanFullNames(ZxElement *elem, GHash *fullNameCount) {
+  ZxNode *node;
+  ZxElement *child;
+  GString *fullNamePart;
+
+  for (node = elem->getFirstChild(); node; node = node->getNextChild()) {
+    if (node->isElement()) {
+      child = (ZxElement *)node;
+      if ((fullNamePart = getNodeFullName(child))) {
+	if (nodeIsBindGlobal(child)) {
+	  fullNameCount->replace(fullNamePart, 1);
+	} else {
+	  fullNameCount->replace(fullNamePart,
+				 fullNameCount->lookupInt(fullNamePart) + 1);
+	}
+      } else {
+	scanFullNames(child, fullNameCount);
+      }
+    }
+  }
+}
+
+void XFAForm::scanField(ZxElement *elem, GString *name, GString *fullName,
+			GBool inPageSet,
+			XFATableInfo *tableInfo, int colSpan,
+			Catalog *catalog) {
+  double xSubOffset, ySubOffset, columnWidth, rowHeight;
+
+  if (curPageNum == 0) {
+    curPageNum = 1;
+  }
+
+  xSubOffset = ySubOffset = 0;
+  columnWidth = rowHeight = 0;
+  if (tableInfo) {
+    if (tableInfo->columnIdx > 0 &&
+	tableInfo->columnIdx <= tableInfo->nColumns) {
+      xSubOffset = tableInfo->columnRight[tableInfo->columnIdx - 1];
+    }
+    if (tableInfo->columnIdx + colSpan <= tableInfo->nColumns) {
+      columnWidth = tableInfo->columnRight[tableInfo->columnIdx + colSpan - 1]
+	            - xSubOffset;
+    }
+    ySubOffset = tableInfo->rowTop;
+    rowHeight = tableInfo->rowHeight;
+    curXOffset += xSubOffset;
+    curYOffset += ySubOffset;
+  }
+
+  fields->append(new XFAFormField(this, elem, name->copy(), fullName->copy(),
+				  curPageNum, curXOffset, curYOffset,
+				  columnWidth, rowHeight));
+
+  if (tableInfo) {
+    curXOffset -= xSubOffset;
+    curYOffset -= ySubOffset;
+  }
+}
+
+void XFAForm::scanNonField(ZxElement *elem, GString *name, GString *fullName,
+			   GBool inPageSet,
+			   XFATableInfo *tableInfo, int colSpan,
+			   GHash *nameCount, GHash *nameIdx,
+			   GHash *fullNameCount, GHash *fullNameIdx,
+			   Catalog *catalog) {
+  XFATableInfo *newTableInfo;
+  ZxElement *brk, *contentArea;
+  ZxNode *child;
+  ZxAttr *attr;
+  PDFRectangle *box;
+  double xSubOffset, ySubOffset;
+  int savedPageNum;
+
+  newTableInfo = tableInfo;
+
+  if (elem->isElement("subform")) {
+
+    // update page number
+    if (((brk = elem->findFirstChildElement("breakBefore")) &&
+	 (attr = brk->findAttr("targetType")) &&
+	 !attr->getValue()->cmp("pageArea")) ||
+	((brk = elem->findFirstChildElement("break")) &&
+	 (attr = brk->findAttr("before")) &&
+	 !attr->getValue()->cmp("pageArea")) ||
+	(curPageNum < nPages &&
+	 (attr = elem->findAttr("w")) &&
+	 (box = catalog->getPage(curPageNum + 1)->getMediaBox()) &&
+	 XFAFormField::getMeasurement(attr, 0) == box->x2 - box->x1 &&
+	 (attr = elem->findAttr("h")) &&
+	 XFAFormField::getMeasurement(attr, 0) == box->y2 - box->y1)) {
+      if (curPageNum < nPages) {
+	++curPageNum;
+      }
+    }
+
+    // update tableInfo
+    if ((attr = elem->findAttr("layout"))) {
+      if (!attr->getValue()->cmp("table")) {
+	newTableInfo = new XFATableInfo(elem->findAttr("columnWidths"));
+	newTableInfo->rowIdx = -1;
+	newTableInfo->columnIdx = 0;
+      } else if (tableInfo && !attr->getValue()->cmp("row")) {
+	++tableInfo->rowIdx;
+	tableInfo->columnIdx = 0;
+	tableInfo->rowTop += tableInfo->rowHeight;
+	tableInfo->computeRowHeight(elem);
+      }
+    }
+
+    // update position
+    xSubOffset = XFAFormField::getMeasurement(elem->findAttr("x"), 0);
+    ySubOffset = XFAFormField::getMeasurement(elem->findAttr("y"), 0);
+    curXOffset += xSubOffset;
+    curYOffset += ySubOffset;
+
+  } else if (elem->isElement("area")) {
+    xSubOffset = XFAFormField::getMeasurement(elem->findAttr("x"), 0);
+    ySubOffset = XFAFormField::getMeasurement(elem->findAttr("y"), 0);
+    curXOffset += xSubOffset;
+    curYOffset += ySubOffset;
+
+  } else {
+    xSubOffset = ySubOffset = 0;
+  }
+
+  savedPageNum = curPageNum;
+  if (elem->isElement("pageSet")) {
+    inPageSet = gTrue;
+    curPageNum = 0;
+
+  } else if (elem->isElement("pageArea")) {
+    if (inPageSet) {
+      if (curPageNum < nPages) {
+	++curPageNum;
+      }
+      if ((contentArea = elem->findFirstChildElement("contentArea"))) {
+	pageOffsetX[curPageNum - 1] =
+	    XFAFormField::getMeasurement(contentArea->findAttr("x"), 0);
+	pageOffsetY[curPageNum - 1] =
+	    XFAFormField::getMeasurement(contentArea->findAttr("y"), 0);
+	// looks like the contentArea offset (pageOffsetX/Y) should
+	// not be added to fields defined inside the pageArea
+	// element (?)
+	xSubOffset -= pageOffsetX[curPageNum - 1];
+	ySubOffset -= pageOffsetY[curPageNum - 1];
+	curXOffset -= pageOffsetX[curPageNum - 1];
+	curYOffset -= pageOffsetY[curPageNum - 1];
+      }
+    }
+  }
+
+  for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
+    if (child->isElement()) {
+      scanNode((ZxElement *)child, name, fullName, inPageSet,
+	       newTableInfo, nameCount, nameIdx, fullNameCount, fullNameIdx,
+	       catalog);
+    }
+  }
+
+  curXOffset -= xSubOffset;
+  curYOffset -= ySubOffset;
+
+  if (newTableInfo != tableInfo) {
+    delete newTableInfo;
+  }
+
+  if (elem->isElement("pageSet")) {
+    pageSetNPages = curPageNum;
+    curPageNum = savedPageNum;
+    inPageSet = gFalse;
   }
 }
 
@@ -987,6 +1076,7 @@ void XFAFormField::draw(int pageNumA, Gfx *gfx, GBool printing,
 			GfxFontDict *fontDict) {
   ZxElement *uiElem;
   ZxNode *node;
+  ZxAttr *attr;
   GString *appearBuf;
   MemStream *appearStream;
   Object appearDict, appearance, resourceDict, resourceSubdict;
@@ -999,6 +1089,14 @@ void XFAFormField::draw(int pageNumA, Gfx *gfx, GBool printing,
 
   if (pageNumA != pageNum) {
     return;
+  }
+
+  // check the 'presence' attribute
+  if ((attr = xml->findAttr("presence"))) {
+    if (!attr->getValue()->cmp("hidden") ||
+	!attr->getValue()->cmp("invisible")) {
+      return;
+    }
   }
 
   getRectangle(&xfaX, &xfaY, &xfaW, &xfaH, &pdfX, &pdfY, &pdfW, &pdfH, &rot3);
@@ -1239,7 +1337,7 @@ void XFAFormField::getRectangle(double *xfaX, double *xfaY,
     }
   }
 
-  // look for <para> -- add the margin
+  // look for <para> -- add the margins
   if ((paraElem = xml->findFirstChildElement("para"))) {
     if ((attr = paraElem->findAttr("marginLeft"))) {
       t = getMeasurement(attr, 0);
@@ -1249,6 +1347,15 @@ void XFAFormField::getRectangle(double *xfaX, double *xfaY,
     if ((attr = paraElem->findAttr("marginRight"))) {
       t = getMeasurement(attr, 0);
       *xfaW -= t;
+    }
+    if ((attr = paraElem->findAttr("spaceAbove"))) {
+      t = getMeasurement(attr, 0);
+      *xfaY += t;
+      *xfaH -= t;
+    }
+    if ((attr = paraElem->findAttr("spaceBelow"))) {
+      t = getMeasurement(attr, 0);
+      *xfaH -= t;
     }
   }
 
@@ -1507,57 +1614,16 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
   ZxAttr *attr;
   GString *value, *value2, *barcodeType, *textLocation, *fontName, *s1, *s2;
   XFAVertAlign textAlign;
-  double wideNarrowRatio, fontSize;
+  double wideNarrowRatio, moduleWidth, moduleHeight, fontSize;
   double yText, wText, yBarcode, hBarcode, wNarrow, xx;
   GBool doText;
-  int dataLength, checksum;
+  int dataLength, errorCorrectionLevel, checksum;
   GBool bold, italic;
   char *p;
   int i, j, c;
 
   //--- get field value
   if (!(value = getFieldValue("text"))) {
-    return;
-  }
-
-  //--- get field attributes
-  barcodeType = NULL;
-  wideNarrowRatio = 3;
-  dataLength = 0;
-  textLocation = NULL;
-  if ((uiElem = xml->findFirstChildElement("ui")) &&
-      (barcodeElem = uiElem->findFirstChildElement("barcode"))) {
-    if ((attr = barcodeElem->findAttr("type"))) {
-      barcodeType = attr->getValue();
-    }
-    if ((attr = barcodeElem->findAttr("wideNarrowRatio"))) {
-      s1 = attr->getValue();
-      if ((p = strchr(s1->getCString(), ':'))) {
-	s2 = new GString(s1, 0, (int)(p - s1->getCString()));
-	wideNarrowRatio = atof(p + 1);
-	if (wideNarrowRatio == 0) {
-	  wideNarrowRatio = 1;
-	}
-	wideNarrowRatio = atof(s2->getCString()) / wideNarrowRatio;
-	delete s2;
-      } else {
-	wideNarrowRatio = atof(s1->getCString());
-      }
-    }
-    if ((attr = barcodeElem->findAttr("dataLength"))) {
-      dataLength = atoi(attr->getValue()->getCString());
-    }
-    if ((attr = barcodeElem->findAttr("textLocation"))) {
-      textLocation = attr->getValue();
-    }
-  }
-  if (!barcodeType) {
-    error(errSyntaxError, -1, "Missing 'type' attribute in XFA barcode field");
-    return;
-  }
-  if (!dataLength) {
-    error(errSyntaxError, -1,
-	  "Missing 'dataLength' attribute in XFA barcode field");
     return;
   }
 
@@ -1586,6 +1652,55 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
   }
   if (!fontName) {
     fontName = new GString("Courier");
+  }
+
+  //--- get field attributes
+  barcodeType = NULL;
+  wideNarrowRatio = 3;
+  moduleWidth = 0;
+  moduleHeight = 0;
+  dataLength = 0;
+  errorCorrectionLevel = 0;
+  textLocation = NULL;
+  if ((uiElem = xml->findFirstChildElement("ui")) &&
+      (barcodeElem = uiElem->findFirstChildElement("barcode"))) {
+    if ((attr = barcodeElem->findAttr("type"))) {
+      barcodeType = attr->getValue();
+    }
+    if ((attr = barcodeElem->findAttr("wideNarrowRatio"))) {
+      s1 = attr->getValue();
+      if ((p = strchr(s1->getCString(), ':'))) {
+	s2 = new GString(s1, 0, (int)(p - s1->getCString()));
+	wideNarrowRatio = atof(p + 1);
+	if (wideNarrowRatio == 0) {
+	  wideNarrowRatio = 1;
+	}
+	wideNarrowRatio = atof(s2->getCString()) / wideNarrowRatio;
+	delete s2;
+      } else {
+	wideNarrowRatio = atof(s1->getCString());
+      }
+    }
+    if ((attr = barcodeElem->findAttr("moduleWidth"))) {
+      moduleWidth = getMeasurement(attr, (0.25 / 25.4) * 72.0); // 0.25mm
+    }
+    if ((attr = barcodeElem->findAttr("moduleHeight"))) {
+      moduleHeight = getMeasurement(attr, (0.5 / 25.4) * 72.0); // 0.5mm
+    }
+    if ((attr = barcodeElem->findAttr("dataLength"))) {
+      dataLength = atoi(attr->getValue()->getCString());
+    }
+    if ((attr = barcodeElem->findAttr("errorCorrectionLevel"))) {
+      errorCorrectionLevel = atoi(attr->getValue()->getCString());
+    }
+    if ((attr = barcodeElem->findAttr("textLocation"))) {
+      textLocation = attr->getValue();
+    }
+  }
+  if (!barcodeType) {
+    error(errSyntaxError, -1, "Missing 'type' attribute in XFA barcode field");
+    delete fontName;
+    return;
   }
 
   //--- compute the embedded text type position
@@ -1631,6 +1746,11 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
 
   //--- draw the bar code
   if (!barcodeType->cmp("code3Of9")) {
+    if (!dataLength) {
+      error(errSyntaxError, -1,
+	    "Missing 'dataLength' attribute in XFA barcode field");
+      goto err;
+    }
     appearBuf->append("0 g\n");
     wNarrow = w / ((7 + 3 * wideNarrowRatio) * (dataLength + 2));
     xx = 0;
@@ -1652,6 +1772,11 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
     // center the text on the drawn barcode (not the max length barcode)
     wText = (value2->getLength() + 2) * (7 + 3 * wideNarrowRatio) * wNarrow;
   } else if (!barcodeType->cmp("code128B")) {
+    if (!dataLength) {
+      error(errSyntaxError, -1,
+	    "Missing 'dataLength' attribute in XFA barcode field");
+      goto err;
+    }
     appearBuf->append("0 g\n");
     wNarrow = w / (11 * (dataLength + 3) + 2);
     xx = 0;
@@ -1688,9 +1813,14 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
 		       xx, yBarcode, 2 * wNarrow, hBarcode);
     // center the text on the drawn barcode (not the max length barcode)
     wText = (11 * (value2->getLength() + 3) + 2) * wNarrow;
+  } else if (!barcodeType->cmp("pdf417")) {
+    drawPDF417Barcode(w, h, moduleWidth, moduleHeight, errorCorrectionLevel,
+		      value2, appearBuf);
+    doText = gFalse;
   } else {
     error(errSyntaxError, -1,
-	  "Unimplemented barcode type in XFA barcode field");
+	  "Unimplemented barcode type '{0:t}' in XFA barcode field",
+	  barcodeType);
   }
   //~ add other barcode types here
 
@@ -1702,6 +1832,8 @@ void XFAFormField::drawBarCode(GfxFontDict *fontDict,
 	     xfaHAlignCenter, textAlign, 0, yText, wText, h, gTrue,
 	     fontDict, appearBuf);
   }
+
+ err:
   delete fontName;
   delete value2;
 }
@@ -2011,11 +2143,11 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
 	c = text->getChar(i) & 0xff;
 	if (c == '(' || c == ')' || c == '\\') {
 	  appearBuf->append('\\');
-	  appearBuf->append(c);
+	  appearBuf->append((char)c);
 	} else if (c < 0x20 || c >= 0x80) {
 	  appearBuf->appendf("\\{0:03o}", c);
 	} else {
-	  appearBuf->append(c);
+	  appearBuf->append((char)c);
 	}
       }
       appearBuf->append(") Tj\n");
@@ -2066,7 +2198,7 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     for (i = 0; i < text->getLength(); ++i) {
       c = text->getChar(i) & 0xff;
       if (font && !font->isCIDFont()) {
-	charWidth = fontSize * ((Gfx8BitFont *)font)->getWidth(c);
+	charWidth = fontSize * ((Gfx8BitFont *)font)->getWidth((Guchar)c);
 	appearBuf->appendf("1 0 0 1 {0:.4f} {1:.4f} Tm\n",
 			   xx + i * tw + 0.5 * (tw - charWidth), yy);
       } else {
@@ -2076,11 +2208,11 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
       appearBuf->append('(');
       if (c == '(' || c == ')' || c == '\\') {
 	appearBuf->append('\\');
-	appearBuf->append(c);
+	appearBuf->append((char)c);
       } else if (c < 0x20 || c >= 0x80) {
 	appearBuf->appendf("{0:.4f} 0 Td\n", w);
       } else {
-	appearBuf->append(c);
+	appearBuf->append((char)c);
       }
       appearBuf->append(") Tj\n");
     }
@@ -2136,11 +2268,11 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
       c = text->getChar(i) & 0xff;
       if (c == '(' || c == ')' || c == '\\') {
 	appearBuf->append('\\');
-	appearBuf->append(c);
+	appearBuf->append((char)c);
       } else if (c < 0x20 || c >= 0x80) {
 	appearBuf->appendf("\\{0:03o}", c);
       } else {
-	appearBuf->append(c);
+	appearBuf->append((char)c);
       }
     }
     appearBuf->append(") Tj\n");
@@ -2322,7 +2454,7 @@ void XFAFormField::getNextLine(GString *text, int start,
       break;
     }
     if (font && !font->isCIDFont()) {
-      dw = ((Gfx8BitFont *)font)->getWidth(c) * fontSize;
+      dw = ((Gfx8BitFont *)font)->getWidth((Guchar)c) * fontSize;
     } else {
       // otherwise, make a crude estimate
       dw = 0.5 * fontSize;

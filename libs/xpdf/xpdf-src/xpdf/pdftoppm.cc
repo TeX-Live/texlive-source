@@ -92,7 +92,7 @@ static ArgDesc argDesc[] = {
 
 int main(int argc, char *argv[]) {
   PDFDoc *doc;
-  GString *fileName;
+  char *fileName;
   char *ppmRoot;
   GString *ppmFile;
   GString *ownerPW, *userPW;
@@ -114,13 +114,14 @@ int main(int argc, char *argv[]) {
   // more info)
   fpu_control_t cw;
   _FPU_GETCW(cw);
-  cw = (cw & ~_FPU_EXTENDED) | _FPU_DOUBLE;
+  cw = (fpu_control_t)((cw & ~_FPU_EXTENDED) | _FPU_DOUBLE);
   _FPU_SETCW(cw);
 #endif
 
   exitCode = 99;
 
   // parse args
+  fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   n = 0;
   n += mono ? 1 : 0;
@@ -139,7 +140,7 @@ int main(int argc, char *argv[]) {
     }
     goto err0;
   }
-  fileName = new GString(argv[1]);
+  fileName = argv[1];
   ppmRoot = argv[2];
 
   // read config file
@@ -218,7 +219,7 @@ int main(int argc, char *argv[]) {
   } else if (cmyk) {
     paperColor[0] = paperColor[1] = paperColor[2] = paperColor[3] = 0;
     splashOut = new SplashOutputDev(splashModeCMYK8, 1, gFalse, paperColor);
-#endif
+#endif // SPLASH_CMYK
   } else {
     paperColor[0] = paperColor[1] = paperColor[2] = 0xff;
     splashOut = new SplashOutputDev(splashModeRGB8, 1, gFalse, paperColor);

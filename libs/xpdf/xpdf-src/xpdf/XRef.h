@@ -52,7 +52,8 @@ struct XRefCacheEntry {
 
 #define xrefCacheSize 16
 
-#define objStrCacheSize 4
+#define objStrCacheSize 128
+#define objStrCacheTimeout 1000
 
 class XRef {
 public:
@@ -144,6 +145,10 @@ private:
   int streamEndsLen;		// number of valid entries in streamEnds
   ObjectStream *		// cached object streams
     objStrs[objStrCacheSize];
+  int objStrCacheLength;	// number of valid entries in objStrs[]
+  Guint				// time of last use for each obj stream
+    objStrLastUse[objStrCacheSize];
+  Guint objStrTime;		// current time for the obj stream cache
 #if MULTITHREADED
   GMutex objStrsMutex;
 #endif
@@ -169,6 +174,7 @@ private:
   GBool getObjectStreamObject(int objStrNum, int objIdx,
 			      int objNum, Object *obj);
   ObjectStream *getObjectStream(int objStrNum);
+  void cleanObjectStreamCache();
   GFileOffset strToFileOffset(char *s);
 };
 

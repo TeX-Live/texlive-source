@@ -165,7 +165,7 @@ GBool Decrypt::makeFileKey(int encVersion, int encRevision, int keyLength,
 	memcpy(test2, ownerKey->getCString(), 32);
 	for (i = 19; i >= 0; --i) {
 	  for (j = 0; j < keyLength; ++j) {
-	    tmpKey[j] = test[j] ^ i;
+	    tmpKey[j] = (Guchar)(test[j] ^ i);
 	  }
 	  rc4InitKey(tmpKey, keyLength, fState);
 	  fx = fy = 0;
@@ -274,10 +274,10 @@ GBool Decrypt::makeFileKey2(int encVersion, int encRevision, int keyLength,
     memcpy(buf, passwordPad, 32);
   }
   memcpy(buf + 32, ownerKey->getCString(), 32);
-  buf[64] = permissions & 0xff;
-  buf[65] = (permissions >> 8) & 0xff;
-  buf[66] = (permissions >> 16) & 0xff;
-  buf[67] = (permissions >> 24) & 0xff;
+  buf[64] = (Guchar)(permissions & 0xff);
+  buf[65] = (Guchar)((permissions >> 8) & 0xff);
+  buf[66] = (Guchar)((permissions >> 16) & 0xff);
+  buf[67] = (Guchar)((permissions >> 24) & 0xff);
   memcpy(buf + 68, fileID->getCString(), fileID->getLength());
   len = 68 + fileID->getLength();
   if (!encryptMetadata) {
@@ -305,7 +305,7 @@ GBool Decrypt::makeFileKey2(int encVersion, int encRevision, int keyLength,
     memcpy(test, userKey->getCString(), 32);
     for (i = 19; i >= 0; --i) {
       for (j = 0; j < keyLength; ++j) {
-	tmpKey[j] = fileKey[j] ^ i;
+	tmpKey[j] = (Guchar)(fileKey[j] ^ i);
       }
       rc4InitKey(tmpKey, keyLength, fState);
       fx = fy = 0;
@@ -348,22 +348,22 @@ DecryptStream::DecryptStream(Stream *strA, Guchar *fileKeyA,
   }
   switch (algo) {
   case cryptRC4:
-    objKey[keyLength] = objNum & 0xff;
-    objKey[keyLength + 1] = (objNum >> 8) & 0xff;
-    objKey[keyLength + 2] = (objNum >> 16) & 0xff;
-    objKey[keyLength + 3] = objGen & 0xff;
-    objKey[keyLength + 4] = (objGen >> 8) & 0xff;
+    objKey[keyLength] = (Guchar)(objNum & 0xff);
+    objKey[keyLength + 1] = (Guchar)((objNum >> 8) & 0xff);
+    objKey[keyLength + 2] = (Guchar)((objNum >> 16) & 0xff);
+    objKey[keyLength + 3] = (Guchar)(objGen & 0xff);
+    objKey[keyLength + 4] = (Guchar)((objGen >> 8) & 0xff);
     md5(objKey, keyLength + 5, objKey);
     if ((objKeyLength = keyLength + 5) > 16) {
       objKeyLength = 16;
     }
     break;
   case cryptAES:
-    objKey[keyLength] = objNum & 0xff;
-    objKey[keyLength + 1] = (objNum >> 8) & 0xff;
-    objKey[keyLength + 2] = (objNum >> 16) & 0xff;
-    objKey[keyLength + 3] = objGen & 0xff;
-    objKey[keyLength + 4] = (objGen >> 8) & 0xff;
+    objKey[keyLength] = (Guchar)(objNum & 0xff);
+    objKey[keyLength + 1] = (Guchar)((objNum >> 8) & 0xff);
+    objKey[keyLength + 2] = (Guchar)((objNum >> 16) & 0xff);
+    objKey[keyLength + 3] = (Guchar)(objGen & 0xff);
+    objKey[keyLength + 4] = (Guchar)((objGen >> 8) & 0xff);
     objKey[keyLength + 5] = 0x73; // 's'
     objKey[keyLength + 6] = 0x41; // 'A'
     objKey[keyLength + 7] = 0x6c; // 'l'
@@ -516,22 +516,22 @@ void rc4InitKey(Guchar *key, int keyLen, Guchar *state) {
   int i;
 
   for (i = 0; i < 256; ++i)
-    state[i] = i;
+    state[i] = (Guchar)i;
   index1 = index2 = 0;
   for (i = 0; i < 256; ++i) {
-    index2 = (key[index1] + state[i] + index2) % 256;
+    index2 = (Guchar)(key[index1] + state[i] + index2);
     t = state[i];
     state[i] = state[index2];
     state[index2] = t;
-    index1 = (index1 + 1) % keyLen;
+    index1 = (Guchar)((index1 + 1) % keyLen);
   }
 }
 
 Guchar rc4DecryptByte(Guchar *state, Guchar *x, Guchar *y, Guchar c) {
   Guchar x1, y1, tx, ty;
 
-  x1 = *x = (*x + 1) % 256;
-  y1 = *y = (state[*x] + *y) % 256;
+  x1 = *x = (Guchar)(*x + 1);
+  y1 = *y = (Guchar)(state[*x] + *y);
   tx = state[x1];
   ty = state[y1];
   state[x1] = ty;
@@ -672,7 +672,7 @@ static inline void invShiftRows(Guchar *state) {
 static inline Guchar mul02(Guchar s) {
   Guchar s2;
 
-  s2 = (s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1);
+  s2 = (Guchar)((s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1));
   return s2;
 }
 
@@ -680,7 +680,7 @@ static inline Guchar mul02(Guchar s) {
 static inline Guchar mul03(Guchar s) {
   Guchar s2;
 
-  s2 = (s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1);
+  s2 = (Guchar)((s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1));
   return s ^ s2;
 }
 
@@ -688,9 +688,9 @@ static inline Guchar mul03(Guchar s) {
 static inline Guchar mul09(Guchar s) {
   Guchar s2, s4, s8;
 
-  s2 = (s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1);
-  s4 = (s2 & 0x80) ? ((s2 << 1) ^ 0x1b) : (s2 << 1);
-  s8 = (s4 & 0x80) ? ((s4 << 1) ^ 0x1b) : (s4 << 1);
+  s2 = (Guchar)((s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1));
+  s4 = (Guchar)((s2 & 0x80) ? ((s2 << 1) ^ 0x1b) : (s2 << 1));
+  s8 = (Guchar)((s4 & 0x80) ? ((s4 << 1) ^ 0x1b) : (s4 << 1));
   return s ^ s8;
 }
 
@@ -698,9 +698,9 @@ static inline Guchar mul09(Guchar s) {
 static inline Guchar mul0b(Guchar s) {
   Guchar s2, s4, s8;
 
-  s2 = (s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1);
-  s4 = (s2 & 0x80) ? ((s2 << 1) ^ 0x1b) : (s2 << 1);
-  s8 = (s4 & 0x80) ? ((s4 << 1) ^ 0x1b) : (s4 << 1);
+  s2 = (Guchar)((s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1));
+  s4 = (Guchar)((s2 & 0x80) ? ((s2 << 1) ^ 0x1b) : (s2 << 1));
+  s8 = (Guchar)((s4 & 0x80) ? ((s4 << 1) ^ 0x1b) : (s4 << 1));
   return s ^ s2 ^ s8;
 }
 
@@ -708,9 +708,9 @@ static inline Guchar mul0b(Guchar s) {
 static inline Guchar mul0d(Guchar s) {
   Guchar s2, s4, s8;
 
-  s2 = (s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1);
-  s4 = (s2 & 0x80) ? ((s2 << 1) ^ 0x1b) : (s2 << 1);
-  s8 = (s4 & 0x80) ? ((s4 << 1) ^ 0x1b) : (s4 << 1);
+  s2 = (Guchar)((s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1));
+  s4 = (Guchar)((s2 & 0x80) ? ((s2 << 1) ^ 0x1b) : (s2 << 1));
+  s8 = (Guchar)((s4 & 0x80) ? ((s4 << 1) ^ 0x1b) : (s4 << 1));
   return s ^ s4 ^ s8;
 }
 
@@ -718,9 +718,9 @@ static inline Guchar mul0d(Guchar s) {
 static inline Guchar mul0e(Guchar s) {
   Guchar s2, s4, s8;
 
-  s2 = (s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1);
-  s4 = (s2 & 0x80) ? ((s2 << 1) ^ 0x1b) : (s2 << 1);
-  s8 = (s4 & 0x80) ? ((s4 << 1) ^ 0x1b) : (s4 << 1);
+  s2 = (Guchar)((s & 0x80) ? ((s << 1) ^ 0x1b) : (s << 1));
+  s4 = (Guchar)((s2 & 0x80) ? ((s2 << 1) ^ 0x1b) : (s2 << 1));
+  s8 = (Guchar)((s4 & 0x80) ? ((s4 << 1) ^ 0x1b) : (s4 << 1));
   return s2 ^ s4 ^ s8;
 }
 
@@ -761,10 +761,10 @@ static inline void invMixColumnsW(Guint *w) {
   Guchar s0, s1, s2, s3;
 
   for (c = 0; c < 4; ++c) {
-    s0 = w[c] >> 24;
-    s1 = w[c] >> 16;
-    s2 = w[c] >> 8;
-    s3 = w[c];
+    s0 = (Guchar)(w[c] >> 24);
+    s1 = (Guchar)(w[c] >> 16);
+    s2 = (Guchar)(w[c] >> 8);
+    s3 = (Guchar)w[c];
     w[c] = ((mul0e(s0) ^ mul0b(s1) ^ mul0d(s2) ^ mul09(s3)) << 24)
            | ((mul09(s0) ^ mul0e(s1) ^ mul0b(s2) ^ mul0d(s3)) << 16)
            | ((mul0d(s0) ^ mul09(s1) ^ mul0e(s2) ^ mul0b(s3)) << 8)
@@ -776,10 +776,10 @@ static inline void addRoundKey(Guchar *state, Guint *w) {
   int c;
 
   for (c = 0; c < 4; ++c) {
-    state[c] ^= w[c] >> 24;
-    state[4+c] ^= w[c] >> 16;
-    state[8+c] ^= w[c] >> 8;
-    state[12+c] ^= w[c];
+    state[c] ^= (Guchar)(w[c] >> 24);
+    state[4+c] ^= (Guchar)(w[c] >> 16);
+    state[8+c] ^= (Guchar)(w[c] >> 8);
+    state[12+c] ^= (Guchar)w[c];
   }
 }
 
@@ -993,22 +993,22 @@ static inline Gulong rotateLeft(Gulong x, int r) {
 }
 
 static inline Gulong md5Round1(Gulong a, Gulong b, Gulong c, Gulong d,
-			       Gulong Xk,  Gulong s, Gulong Ti) {
+			       Gulong Xk, int s, Gulong Ti) {
   return b + rotateLeft((a + ((b & c) | (~b & d)) + Xk + Ti), s);
 }
 
 static inline Gulong md5Round2(Gulong a, Gulong b, Gulong c, Gulong d,
-			       Gulong Xk,  Gulong s, Gulong Ti) {
+			       Gulong Xk, int s, Gulong Ti) {
   return b + rotateLeft((a + ((b & d) | (c & ~d)) + Xk + Ti), s);
 }
 
 static inline Gulong md5Round3(Gulong a, Gulong b, Gulong c, Gulong d,
-			       Gulong Xk,  Gulong s, Gulong Ti) {
+			       Gulong Xk, int s, Gulong Ti) {
   return b + rotateLeft((a + (b ^ c ^ d) + Xk + Ti), s);
 }
 
 static inline Gulong md5Round4(Gulong a, Gulong b, Gulong c, Gulong d,
-			       Gulong Xk,  Gulong s, Gulong Ti) {
+			       Gulong Xk, int s, Gulong Ti) {
   return b + rotateLeft((a + (c ^ (b | ~d)) + Xk + Ti), s);
 }
 

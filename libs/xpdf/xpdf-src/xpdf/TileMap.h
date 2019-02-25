@@ -122,6 +122,10 @@ public:
   // this just returns zero.)
   int getPageLeftX(int page);
 
+  // Return the scrollX setting that would place the right side of
+  // <page> at the right side of the window.
+  int getPageRightX(int page);
+
   // In continuous modes: return the lowest page number visible
   // anywhere in the window; in non-continuous modes: return the
   // current page.

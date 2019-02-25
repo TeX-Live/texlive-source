@@ -285,10 +285,11 @@ void SplashState::setTransfer(Guchar *red, Guchar *green, Guchar *blue,
   memcpy(grayTransfer, gray, 256);
 #if SPLASH_CMYK
   for (i = 0; i < 256; ++i) {
-    cmykTransferC[i] = 255 - rgbTransferR[255 - i];
-    cmykTransferM[i] = 255 - rgbTransferG[255 - i];
-    cmykTransferY[i] = 255 - rgbTransferB[255 - i];
-    cmykTransferK[i] = 255 - grayTransfer[255 - i];
+    cmykTransferC[i] = (Guchar)(255 - rgbTransferR[255 - i]);
+    cmykTransferM[i] = (Guchar)(255 - rgbTransferG[255 - i]);
+    cmykTransferY[i] = (Guchar)(255 - rgbTransferB[255 - i]);
+    cmykTransferK[i] = (Guchar)(255 - grayTransfer[255 - i]);
   }
 #endif
 }
+

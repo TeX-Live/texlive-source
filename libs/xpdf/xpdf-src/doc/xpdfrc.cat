@@ -3,7 +3,7 @@ xpdfrc(5)                     File Formats Manual                    xpdfrc(5)
 
 
 NAME
-       xpdfrc - configuration file for Xpdf tools (version 4.00)
+       xpdfrc - configuration file for Xpdf tools (version 4.01)
 
 DESCRIPTION
        All  of the Xpdf tools read a single configuration file.  If you have a
@@ -216,18 +216,13 @@ POSTSCRIPT CONTROL
               defaults to "no".
 
        psNeverRasterize yes | no
-              If set to "yes", PostScript output  will  never  be  rasterized.
-              This  will  likely result in incorrect output for PDF files that
-              use transparency.  (If both psAlwaysRasterize and psNeverRaster-
-              ize are set to "yes", the psAlwaysRasterize setting wins.)  This
+              Pdftops rasterizes an pages that use transparency (because Post-
+              Script  doesn't  support  transparency).  If psNeverRasterize is
+              set to "yes", rasterization is disabled:  pages  will  never  be
+              rasterized, even if they contain transparency.  This will likely
+              result in incorrect output for PDF files that use  transparency,
+              and  a  warning  message  to  that effect will be printed.  This
               defaults to "no".
-
-       psFile file-or-command
-              Sets the default PostScript file  or  print  command  for  xpdf.
-              Commands  start  with  a '|' character; anything else is a file.
-              If the file name or command contains spaces it must  be  quoted.
-              This  defaults  to unset, which tells xpdf to generate a name of
-              the form <file>.ps for a PDF file <file>.pdf.
 
        fontDir dir
               See the description above, in the DISPLAY FONTS section.
@@ -305,11 +300,23 @@ TEXT CONTROL AND CHARACTER MAPPING
               indexes.  Each occurrence of in-hex will  be  converted  to  the
               specified output sequence.
 
+       unicodeRemapping remap-file
+              Remap Unicode characters when doing text extraction.  This spec-
+              ifies a file that maps from a particular Unicode index  to  zero
+              or  more  replacement  Unicode  indexes.  Each line of the remap
+              file represents one Unicode character:
+
+                  in-hex out-hex1 out-hex2 ...
+
+              Any Unicode characters not listed will be left unchanged.   This
+              function  is  typically  used  to remap things like non-breaking
+              spaces, soft hyphens, ligatures, etc.
+
        unicodeMap encoding-name map-file
-              Specifies  the  file with mapping from Unicode to encoding-name.
+              Specifies the file with mapping from Unicode  to  encoding-name.
               These encodings are used for text output (see below).  Each line
-              of  a  unicodeMap file represents a range of one or more Unicode
-              characters which maps linearly to a range in the  output  encod-
+              of a unicodeMap file represents a range of one or  more  Unicode
+              characters  which  maps linearly to a range in the output encod-
               ing:
 
                    in-start-hex in-end-hex out-start-hex
@@ -318,53 +325,61 @@ TEXT CONTROL AND CHARACTER MAPPING
 
                    in-hex out-hex
 
-              The  in-start-hex  and  in-end-hex  fields (or the single in-hex
-              field) specify the Unicode range.  The out-start-hex  field  (or
-              the  out-hex  field)  specifies the start of the output encoding
-              range.  The length of  the  out-start-hex  (or  out-hex)  string
+              The in-start-hex and in-end-hex fields  (or  the  single  in-hex
+              field)  specify  the Unicode range.  The out-start-hex field (or
+              the out-hex field) specifies the start of  the  output  encoding
+              range.   The  length  of  the  out-start-hex (or out-hex) string
               determines the length of the output characters (e.g., UTF-8 uses
-              different numbers of bytes to represent characters in  different
-              ranges).   Entries  must  be  given in increasing Unicode order.
-              Only one file is allowed per encoding; the last  specified  file
-              is  used.   The Latin1, ASCII7, Symbol, ZapfDingbats, UTF-8, and
+              different  numbers of bytes to represent characters in different
+              ranges).  Entries must be given  in  increasing  Unicode  order.
+              Only  one  file is allowed per encoding; the last specified file
+              is used.  The Latin1, ASCII7, Symbol, ZapfDingbats,  UTF-8,  and
               UCS-2 encodings are predefined.
 
        cMapDir registry-ordering dir
-              Specifies a search  directory,  dir,  for  CMaps  for  the  reg-
-              istry-ordering  character  collection.   There  can  be multiple
-              directories for a particular collection.  There are  no  default
+              Specifies  a  search  directory,  dir,  for  CMaps  for the reg-
+              istry-ordering character  collection.   There  can  be  multiple
+              directories  for  a particular collection.  There are no default
               CMap directories.
 
        toUnicodeDir dir
-              Specifies  a  search directory, dir, for ToUnicode CMaps.  There
-              can be multiple ToUnicode directories.   There  are  no  default
+              Specifies a search directory, dir, for ToUnicode  CMaps.   There
+              can  be  multiple  ToUnicode  directories.  There are no default
               ToUnicode directories.
 
        mapNumericCharNames yes | no
-              If  set  to  "yes",  the  Xpdf tools will attempt to map various
+              If set to "yes", the Xpdf tools  will  attempt  to  map  various
               numeric character names sometimes used in font subsets.  In some
-              cases  this leads to usable text, and in other cases it leads to
+              cases this leads to usable text, and in other cases it leads  to
               gibberish -- there is no way for Xpdf to tell.  This defaults to
               "yes".
 
        mapUnknownCharNames yes | no
-              If  set  to  "yes",  and mapNumericCharNames is set to "no", the
-              Xpdf tools will apply a  simple  pass-through  mapping  (Unicode
-              index  = character code) for all unrecognized glyph names.  (For
-              CID fonts, setting mapNumericCharNames to "no" is  unnecessary.)
-              In  some cases, this leads to usable text, and in other cases it
-              leads to gibberish -- there is no way for Xpdf  to  tell.   This
+              If set to "yes", and mapNumericCharNames is  set  to  "no",  the
+              Xpdf  tools  will  apply  a simple pass-through mapping (Unicode
+              index = character code) for all unrecognized glyph names.   (For
+              CID  fonts, setting mapNumericCharNames to "no" is unnecessary.)
+              In some cases, this leads to usable text, and in other cases  it
+              leads  to  gibberish  -- there is no way for Xpdf to tell.  This
               defaults to "no".
 
        mapExtTrueTypeFontsViaUnicode yes | no
               When rasterizing text using an external TrueType font, there are
-              two options for handling character  codes.   If  mapExtTrueType-
-              FontsViaUnicode  is  set to "yes", Xpdf will use the font encod-
-              ing/ToUnicode info to map character codes to Unicode,  and  then
-              use  the font's Unicode cmap to map Unicode to GIDs.  If mapExt-
-              TrueTypeFontsViaUnicode is set to "no",  Xpdf  will  assume  the
-              character  codes are GIDs (i.e., use an identity mapping).  This
+              two  options  for  handling character codes.  If mapExtTrueType-
+              FontsViaUnicode is set to "yes", Xpdf will use the  font  encod-
+              ing/ToUnicode  info  to map character codes to Unicode, and then
+              use the font's Unicode cmap to map Unicode to GIDs.  If  mapExt-
+              TrueTypeFontsViaUnicode  is  set  to  "no", Xpdf will assume the
+              character codes are GIDs (i.e., use an identity mapping).   This
               defaults to "yes".
+
+       dropFont font-name
+              Drop  all  text drawn in the specified font.  To drop text drawn
+              in unnamed fonts, use:
+
+                  dropFont ""
+
+              There can be any number of dropFont commands.
 
 RASTERIZER SETTINGS
        enableFreeType yes | no
@@ -403,6 +418,11 @@ RASTERIZER SETTINGS
               the same original width will always have the same adjusted width
               (at the expense of allowing gaps and overlaps  between  adjacent
               lines).  This defaults to "yes".
+
+       forceAccurateTiling yes | no
+              If  this is set to "yes", the TilingType is forced to 2 (no dis-
+              tortion) for all tiling patterns, regardless of the  setting  in
+              the pattern dictionary.  This defaults to "no".
 
        screenType dispersed | clustered | stochasticClustered
               Sets  the halftone screen type, which will be used when generat-
@@ -476,7 +496,7 @@ VIEWER SETTINGS
        initialSidebarState yes | no
               If set to "yes", xpdf opens with  the  sidebar  (tabs,  outline,
               etc.)   visible.   If  set  to "no", xpdf opens with the sidebar
-              collapsed.  The default is "no".
+              collapsed.  The default is "yes".
 
        paperColor color
               Set the "paper color", i.e., the background of the page display.
@@ -528,6 +548,9 @@ VIEWER SETTINGS
               Sets  the command executed when you click on a movie annotation.
               The string "%s" will be replaced with the movie file name.  This
               has no default value.
+
+       defaultPrinter printer
+              Sets the default printer used in the viewer's print dialog.
 
        bind modifiers-key context command ...
               Add  a  key  or  mouse button binding.  Modifiers can be zero or
@@ -595,26 +618,30 @@ VIEWER SETTINGS
               "any" context, and you want to create new key bindings for  mul-
               tiple contexts).
 
+       tabStateFile path
+              Sets the file used by the loadTabState and saveTabState commands
+              (see the xpdf(1) man page for more information).
+
 MISCELLANEOUS SETTINGS
        drawAnnotations yes | no
-              If  set  to "no", annotations will not be drawn or printed.  The
+              If set to "no", annotations will not be drawn or  printed.   The
               default value is "yes".
 
        drawFormFields yes | no
-              If set to "no", form fields will not be drawn or  printed.   The
+              If  set  to "no", form fields will not be drawn or printed.  The
               default value is "yes".
 
        enableXFA yes | no
-              If  set  to  "yes", an XFA form (if present) will be rendered in
-              place of an AcroForm.  If "no", an XFA form will never  be  ren-
+              If set to "yes", an XFA form (if present) will  be  rendered  in
+              place  of  an AcroForm.  If "no", an XFA form will never be ren-
               dered.  This defaults to "yes".
 
        printCommands yes | no
-              If  set  to  "yes", drawing commands are printed as they're exe-
+              If set to "yes", drawing commands are printed  as  they're  exe-
               cuted (useful for debugging).  This defaults to "no".
 
        errQuiet yes | no
-              If set to "yes", this suppresses all error and warning  messages
+              If  set to "yes", this suppresses all error and warning messages
               from all of the Xpdf tools.  This defaults to "no".
 
 EXAMPLES
@@ -654,7 +681,6 @@ EXAMPLES
        psLevel              level2
        psEmbedType1Fonts    yes
        psEmbedTrueTypeFonts yes
-       psFile               "| lpr -Pprinter5"
 
        # assume that the PostScript printer has the Univers and
        # Univers-Bold fonts
@@ -668,12 +694,11 @@ EXAMPLES
        # misc options
        enableFreeType  yes
        launchCommand   viewer-script
-       urlCommand      "netscape -remote 'openURL(%s)'"
 
 
 FILES
        /usr/local/etc/xpdfrc
-              This  is  the default location for the system-wide configuration
+              This is the default location for the  system-wide  configuration
               file.  Depending on build options, it may be placed elsewhere.
 
        $HOME/.xpdfrc
@@ -681,14 +706,14 @@ FILES
               read in place of the system-wide file.
 
 AUTHOR
-       The  Xpdf  software  and  documentation are copyright 1996-2017 Glyph &
+       The Xpdf software and documentation are  copyright  1996-2019  Glyph  &
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1),  pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),   pdf-
+       xpdf(1),   pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),  pdf-
        fonts(1), pdfdetach(1), pdftoppm(1), pdftopng(1), pdfimages(1)
        http://www.xpdfreader.com/
 
 
 
-                                  10 Aug 2017                        xpdfrc(5)
+                                  18 Feb 2019                        xpdfrc(5)

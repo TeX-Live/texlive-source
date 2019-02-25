@@ -1,17 +1,17 @@
 Xpdf
 ====
 
-version 4.00
-2017-aug-10
+version 4.01
+2019-feb-18
 
 The Xpdf software and documentation are
-copyright 1996-2017 Glyph & Cog, LLC.
+copyright 1996-2019 Glyph & Cog, LLC.
 
 Email: xpdf@xpdfreader.com
 WWW: http://www.xpdfreader.com/
 
 The PDF data structures, operators, and specification are
-documented in ISO 32000-1:2008.
+documented in ISO 32000-2:2017.
 
 
 What is Xpdf?
@@ -196,21 +196,6 @@ pdftex project:
 References
 ----------
 
-Adobe Systems Inc., ISO 32000-1:2008, Document Management - Portable
-document format - Part 1: PDF 1.7.
-http://www.adobe.com/devnet/pdf/pdf_reference.html
-[The manual for PDF version 1.7.]
-
-Adobe Systems Inc., Adobe Supplement to the ISO 32000, BaseVersion
-1.7, ExtensionLevel 3, June 2008.
-http://www.adobe.com/devnet/pdf/pdf_reference.html
-[Additions to the PDF 1.7 spec.]
-
-Adobe Systems Inc., Adobe Supplement to ISO 32000-1, BaseVersion 1.7,
-ExtensionLevel 5, June 2009.
-http://www.adobe.com/devnet/pdf/pdf_reference.html
-[Additions to the PDF 1.7 spec.]
-
 Adobe Systems Inc., _PostScript Language Reference_, 3rd ed.
 Addison-Wesley, 1999, ISBN 0-201-37922-8.
 [The official PostScript manual.]
@@ -339,6 +324,10 @@ http://webstore.ansi.org/
 spec is available from http://www.jpeg.org/JPEG2000.html, but there
 were changes made to the bitstream format between that draft and the
 published spec.]
+
+ISO, International Standard -- Document Management - Portable document
+format - Part 2: PDF 2.0.  ISO 32000-2:2017.
+[The manual for PDF version 2.0.]
 
 ITU, "Standardization of Group 3 facsimile terminals for document
 transmission", ITU-T Recommendation T.4, 1999.

@@ -947,7 +947,7 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
   GfxColor backdropColor;
   GBool haveBackdropColor;
   GfxColorSpace *blendingColorSpace;
-  GBool alpha, isolated, knockout;
+  GBool alpha, knockout;
   double opac;
   int i;
 
@@ -1041,22 +1041,37 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
 
   // fill/stroke overprint, overprint mode
   if ((haveFillOP = (obj1.dictLookup("op", &obj2)->isBool()))) {
-    state->setFillOverprint(obj2.getBool());
-    out->updateFillOverprint(state);
+    if (!state->getInCachedT3Char()) {
+      state->setFillOverprint(obj2.getBool());
+      out->updateFillOverprint(state);
+    } else {
+      error(errSyntaxWarning, getPos(),
+	    "Ignoring overprint setting in cached Type 3 character");
+    }
   }
   obj2.free();
   if (obj1.dictLookup("OP", &obj2)->isBool()) {
-    state->setStrokeOverprint(obj2.getBool());
-    out->updateStrokeOverprint(state);
-    if (!haveFillOP) {
-      state->setFillOverprint(obj2.getBool());
-      out->updateFillOverprint(state);
+    if (!state->getInCachedT3Char()) {
+      state->setStrokeOverprint(obj2.getBool());
+      out->updateStrokeOverprint(state);
+      if (!haveFillOP) {
+	state->setFillOverprint(obj2.getBool());
+	out->updateFillOverprint(state);
+      }
+    } else {
+      error(errSyntaxWarning, getPos(),
+	    "Ignoring overprint setting in cached Type 3 character");
     }
   }
   obj2.free();
   if (obj1.dictLookup("OPM", &obj2)->isInt()) {
-    state->setOverprintMode(obj2.getInt());
-    out->updateOverprintMode(state);
+    if (!state->getInCachedT3Char()) {
+      state->setOverprintMode(obj2.getInt());
+      out->updateOverprintMode(state);
+    } else {
+      error(errSyntaxWarning, getPos(),
+	    "Ignoring overprint setting in cached Type 3 character");
+    }
   }
   obj2.free();
 
@@ -1072,32 +1087,40 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
     obj2.free();
     obj1.dictLookup("TR", &obj2);
   }
-  if (obj2.isName("Default") ||
-      obj2.isName("Identity")) {
-    funcs[0] = funcs[1] = funcs[2] = funcs[3] = NULL;
-    state->setTransfer(funcs);
-    out->updateTransfer(state);
-  } else if (obj2.isArray() && obj2.arrayGetLength() == 4) {
-    for (i = 0; i < 4; ++i) {
-      obj2.arrayGet(i, &obj3);
-      funcs[i] = Function::parse(&obj3);
-      obj3.free();
-      if (!funcs[i]) {
-	break;
+  if (!obj2.isNull()) {
+    if (!state->getInCachedT3Char()) {
+      if (obj2.isName("Default") ||
+	  obj2.isName("Identity")) {
+	funcs[0] = funcs[1] = funcs[2] = funcs[3] = NULL;
+	state->setTransfer(funcs);
+	out->updateTransfer(state);
+      } else if (obj2.isArray() && obj2.arrayGetLength() == 4) {
+	for (i = 0; i < 4; ++i) {
+	  obj2.arrayGet(i, &obj3);
+	  funcs[i] = Function::parse(&obj3);
+	  obj3.free();
+	  if (!funcs[i]) {
+	    break;
+	  }
+	}
+	if (i == 4) {
+	  state->setTransfer(funcs);
+	  out->updateTransfer(state);
+	}
+      } else if (obj2.isName() || obj2.isDict() || obj2.isStream()) {
+	if ((funcs[0] = Function::parse(&obj2))) {
+	  funcs[1] = funcs[2] = funcs[3] = NULL;
+	  state->setTransfer(funcs);
+	  out->updateTransfer(state);
+	}
+      } else {
+	error(errSyntaxError, getPos(),
+	      "Invalid transfer function in ExtGState");
       }
+    } else {
+      error(errSyntaxWarning, getPos(),
+	    "Ignoring transfer function setting in cached Type 3 character");
     }
-    if (i == 4) {
-      state->setTransfer(funcs);
-      out->updateTransfer(state);
-    }
-  } else if (obj2.isName() || obj2.isDict() || obj2.isStream()) {
-    if ((funcs[0] = Function::parse(&obj2))) {
-      funcs[1] = funcs[2] = funcs[3] = NULL;
-      state->setTransfer(funcs);
-      out->updateTransfer(state);
-    }
-  } else if (!obj2.isNull()) {
-    error(errSyntaxError, getPos(), "Invalid transfer function in ExtGState");
   }
   obj2.free();
 
@@ -1145,14 +1168,10 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
       if (obj2.dictLookup("G", &obj3)->isStream()) {
 	if (obj3.streamGetDict()->lookup("Group", &obj4)->isDict()) {
 	  blendingColorSpace = NULL;
-	  isolated = knockout = gFalse;
+	  knockout = gFalse;
 	  if (!obj4.dictLookup("CS", &obj5)->isNull()) {
 	    blendingColorSpace = GfxColorSpace::parse(&obj5
 						      );
-	  }
-	  obj5.free();
-	  if (obj4.dictLookup("I", &obj5)->isBool()) {
-	    isolated = obj5.getBool();
 	  }
 	  obj5.free();
 	  if (obj4.dictLookup("K", &obj5)->isBool()) {
@@ -1170,8 +1189,11 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
 	    }
 	  }
 	  obj2.dictLookupNF("G", &objRef3);
+	  // it doesn't make sense for softmasks to be non-isolated,
+	  // because they're blended with a backdrop color, rather
+	  // than the original backdrop
 	  doSoftMask(&obj3, &objRef3, alpha, blendingColorSpace,
-		     isolated, knockout, funcs[0], &backdropColor);
+		     gTrue, knockout, funcs[0], &backdropColor);
 	  objRef3.free();
 	  if (funcs[0]) {
 	    delete funcs[0];
@@ -1268,6 +1290,11 @@ void Gfx::doSoftMask(Object *str, Object *strRef, GBool alpha,
 void Gfx::opSetRenderingIntent(Object args[], int numArgs) {
   GfxRenderingIntent ri;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring rendering intent setting in cached Type 3 character");
+    return;
+  }
   ri = parseRenderingIntent(args[0].getName());
   state->setRenderingIntent(ri);
   out->updateRenderingIntent(state);
@@ -1293,6 +1320,11 @@ GfxRenderingIntent Gfx::parseRenderingIntent(const char *name) {
 void Gfx::opSetFillGray(Object args[], int numArgs) {
   GfxColor color;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color setting in cached Type 3 character");
+    return;
+  }
   state->setFillPattern(NULL);
   state->setFillColorSpace(GfxColorSpace::create(csDeviceGray));
   out->updateFillColorSpace(state);
@@ -1304,6 +1336,11 @@ void Gfx::opSetFillGray(Object args[], int numArgs) {
 void Gfx::opSetStrokeGray(Object args[], int numArgs) {
   GfxColor color;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color setting in cached Type 3 character");
+    return;
+  }
   state->setStrokePattern(NULL);
   state->setStrokeColorSpace(GfxColorSpace::create(csDeviceGray));
   out->updateStrokeColorSpace(state);
@@ -1316,6 +1353,11 @@ void Gfx::opSetFillCMYKColor(Object args[], int numArgs) {
   GfxColor color;
   int i;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color setting in cached Type 3 character");
+    return;
+  }
   state->setFillPattern(NULL);
   state->setFillColorSpace(GfxColorSpace::create(csDeviceCMYK));
   out->updateFillColorSpace(state);
@@ -1330,6 +1372,11 @@ void Gfx::opSetStrokeCMYKColor(Object args[], int numArgs) {
   GfxColor color;
   int i;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color setting in cached Type 3 character");
+    return;
+  }
   state->setStrokePattern(NULL);
   state->setStrokeColorSpace(GfxColorSpace::create(csDeviceCMYK));
   out->updateStrokeColorSpace(state);
@@ -1344,6 +1391,11 @@ void Gfx::opSetFillRGBColor(Object args[], int numArgs) {
   GfxColor color;
   int i;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color setting in cached Type 3 character");
+    return;
+  }
   state->setFillPattern(NULL);
   state->setFillColorSpace(GfxColorSpace::create(csDeviceRGB));
   out->updateFillColorSpace(state);
@@ -1358,6 +1410,11 @@ void Gfx::opSetStrokeRGBColor(Object args[], int numArgs) {
   GfxColor color;
   int i;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color setting in cached Type 3 character");
+    return;
+  }
   state->setStrokePattern(NULL);
   state->setStrokeColorSpace(GfxColorSpace::create(csDeviceRGB));
   out->updateStrokeColorSpace(state);
@@ -1373,6 +1430,11 @@ void Gfx::opSetFillColorSpace(Object args[], int numArgs) {
   GfxColorSpace *colorSpace;
   GfxColor color;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color space setting in cached Type 3 character");
+    return;
+  }
   state->setFillPattern(NULL);
   res->lookupColorSpace(args[0].getName(), &obj);
   if (obj.isNull()) {
@@ -1399,6 +1461,11 @@ void Gfx::opSetStrokeColorSpace(Object args[], int numArgs) {
   GfxColorSpace *colorSpace;
   GfxColor color;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color space setting in cached Type 3 character");
+    return;
+  }
   state->setStrokePattern(NULL);
   res->lookupColorSpace(args[0].getName(), &obj);
   if (obj.isNull()) {
@@ -1424,6 +1491,11 @@ void Gfx::opSetFillColor(Object args[], int numArgs) {
   GfxColor color;
   int i;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color setting in cached Type 3 character");
+    return;
+  }
   if (numArgs != state->getFillColorSpace()->getNComps()) {
     error(errSyntaxError, getPos(),
 	  "Incorrect number of arguments in 'sc' command");
@@ -1459,7 +1531,17 @@ void Gfx::opSetFillColorN(Object args[], int numArgs) {
   GfxPattern *pattern;
   int i;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color setting in cached Type 3 character");
+    return;
+  }
   if (state->getFillColorSpace()->getMode() == csPattern) {
+    if (numArgs == 0 || !args[numArgs-1].isName()) {
+      error(errSyntaxError, getPos(),
+	    "Invalid arguments in 'scn' command");
+      return;
+    }
     if (numArgs > 1) {
       if (!((GfxPatternColorSpace *)state->getFillColorSpace())->getUnder() ||
 	  numArgs - 1 != ((GfxPatternColorSpace *)state->getFillColorSpace())
@@ -1476,8 +1558,7 @@ void Gfx::opSetFillColorN(Object args[], int numArgs) {
       state->setFillColor(&color);
       out->updateFillColor(state);
     }
-    if (args[numArgs-1].isName() &&
-	(pattern = res->lookupPattern(args[numArgs-1].getName()
+    if ((pattern = res->lookupPattern(args[numArgs-1].getName()
 				      ))) {
       state->setFillPattern(pattern);
     }
@@ -1504,7 +1585,17 @@ void Gfx::opSetStrokeColorN(Object args[], int numArgs) {
   GfxPattern *pattern;
   int i;
 
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring color setting in cached Type 3 character");
+    return;
+  }
   if (state->getStrokeColorSpace()->getMode() == csPattern) {
+    if (numArgs == 0 || !args[numArgs-1].isName()) {
+      error(errSyntaxError, getPos(),
+	    "Invalid arguments in 'SCN' command");
+      return;
+    }
     if (numArgs > 1) {
       if (!((GfxPatternColorSpace *)state->getStrokeColorSpace())
 	       ->getUnder() ||
@@ -1522,8 +1613,7 @@ void Gfx::opSetStrokeColorN(Object args[], int numArgs) {
       state->setStrokeColor(&color);
       out->updateStrokeColor(state);
     }
-    if (args[numArgs-1].isName() &&
-	(pattern = res->lookupPattern(args[numArgs-1].getName()
+    if ((pattern = res->lookupPattern(args[numArgs-1].getName()
 				      ))) {
       state->setStrokePattern(pattern);
     }
@@ -2247,6 +2337,12 @@ void Gfx::opShFill(Object args[], int numArgs) {
   GfxShading *shading;
   GfxState *savedState;
   double xMin, yMin, xMax, yMax;
+
+  if (state->getInCachedT3Char()) {
+    error(errSyntaxWarning, getPos(),
+	  "Ignoring shaded fill in cached Type 3 character");
+    return;
+  }
 
   if (!out->needNonText()) {
     return;
@@ -3715,6 +3811,12 @@ void Gfx::doShowText(GString *s) {
   font = state->getFont();
   wMode = font->getWMode();
 
+  if (globalParams->isDroppedFont(font->getName()
+				    ? font->getName()->getCString() : "")) {
+    doIncCharCount(s);
+    return;
+  }
+
   if (out->useDrawChar()) {
     out->beginString(state, s);
   }
@@ -4294,7 +4396,7 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
 	delete colorMap;
 	maskObj.free();
 	smaskObj.free();
-	goto err1;
+	goto err2;
       }
       maskColorSpace = new GfxDeviceGrayColorSpace();
       obj1.free();
@@ -4432,14 +4534,18 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
     }
 
     // if drawing is disabled, skip over inline image data
-    if (!ocState) {
-      str->reset();
-      n = height * ((width * colorMap->getNumPixelComps() *
-		     colorMap->getBits() + 7) / 8);
-      for (i = 0; i < n; ++i) {
-	str->getChar();
+    if (state->getInCachedT3Char() || !ocState) {
+      if (state->getInCachedT3Char()) {
+	error(errSyntaxWarning, getPos(),
+	      "Ignoring image in cached Type 3 character");
       }
-      str->close();
+      if (inlineImg) {
+	str->reset();
+	n = height * ((width * colorMap->getNumPixelComps() *
+		       colorMap->getBits() + 7) / 8);
+	str->discardChars(n);
+	str->close();
+      }
 
     // draw it
     } else {
@@ -4829,6 +4935,7 @@ void Gfx::opSetCharWidth(Object args[], int numArgs) {
 }
 
 void Gfx::opSetCacheDevice(Object args[], int numArgs) {
+  state->setInCachedT3Char(gTrue);
   out->type3D1(state, args[0].getNum(), args[1].getNum(),
 	       args[2].getNum(), args[3].getNum(),
 	       args[4].getNum(), args[5].getNum());

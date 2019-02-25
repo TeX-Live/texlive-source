@@ -82,7 +82,7 @@ static int writeToFile(void *file, const char *data, int size) {
 
 int main(int argc, char *argv[]) {
   PDFDoc *doc;
-  GString *fileName;
+  char *fileName;
   char *htmlDir;
   GString *ownerPW, *userPW;
   HTMLGen *htmlGen;
@@ -94,6 +94,7 @@ int main(int argc, char *argv[]) {
   exitCode = 99;
 
   // parse args
+  fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc != 3 || printVersion || printHelp) {
     fprintf(stderr, "pdftohtml version %s\n", xpdfVersion);
@@ -103,7 +104,7 @@ int main(int argc, char *argv[]) {
     }
     goto err0;
   }
-  fileName = new GString(argv[1]);
+  fileName = argv[1];
   htmlDir = argv[2];
 
   // read config file

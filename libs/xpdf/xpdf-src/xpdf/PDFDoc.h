@@ -40,12 +40,20 @@ public:
 
   PDFDoc(GString *fileNameA, GString *ownerPassword = NULL,
 	 GString *userPassword = NULL, PDFCore *coreA = NULL);
+
 #ifdef _WIN32
   PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword = NULL,
 	 GString *userPassword = NULL, PDFCore *coreA = NULL);
 #endif
+
+  // This version takes a UTF-8 file name (which is only relevant on
+  // Windows).
+  PDFDoc(char *fileNameA, GString *ownerPassword = NULL,
+	 GString *userPassword = NULL, PDFCore *coreA = NULL);
+
   PDFDoc(BaseStream *strA, GString *ownerPassword = NULL,
 	 GString *userPassword = NULL, PDFCore *coreA = NULL);
+
   ~PDFDoc();
 
   // Was PDF document successfully opened?
@@ -185,6 +193,7 @@ public:
 
 private:
 
+  void init(PDFCore *coreA);
   GBool setup(GString *ownerPassword, GString *userPassword);
   GBool setup2(GString *ownerPassword, GString *userPassword,
 	       GBool repairXRef);

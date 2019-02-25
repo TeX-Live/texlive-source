@@ -108,7 +108,7 @@ SplashError SplashPath::lineTo(SplashCoord x, SplashCoord y) {
   if (noCurrentPoint()) {
     return splashErrNoCurPt;
   }
-  flags[length-1] &= ~splashPathLast;
+  flags[length-1] &= (Guchar)~splashPathLast;
   grow(1);
   pts[length].x = x;
   pts[length].y = y;
@@ -123,7 +123,7 @@ SplashError SplashPath::curveTo(SplashCoord x1, SplashCoord y1,
   if (noCurrentPoint()) {
     return splashErrNoCurPt;
   }
-  flags[length-1] &= ~splashPathLast;
+  flags[length-1] &= (Guchar)~splashPathLast;
   grow(3);
   pts[length].x = x1;
   pts[length].y = y1;

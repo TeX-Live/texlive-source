@@ -242,7 +242,7 @@ void ImageOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
       i = size < (int)sizeof(buf) ? size : (int)sizeof(buf);
       n = str->getBlock(buf, i);
       for (j = 0; j < n; ++j) {
-	buf[j] ^= 0xff;
+	buf[j] = (char)(buf[j] ^ 0xff);
       }
       fwrite(buf, 1, n, f);
       if (n < i) {

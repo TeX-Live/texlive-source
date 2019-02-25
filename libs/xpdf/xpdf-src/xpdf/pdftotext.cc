@@ -111,13 +111,12 @@ static ArgDesc argDesc[] = {
 
 int main(int argc, char *argv[]) {
   PDFDoc *doc;
-  GString *fileName;
+  char *fileName;
   GString *textFileName;
   GString *ownerPW, *userPW;
   TextOutputControl textOutControl;
   TextOutputDev *textOut;
   UnicodeMap *uMap;
-  Object info;
   GBool ok;
   char *p;
   int exitCode;
@@ -133,13 +132,14 @@ int main(int argc, char *argv[]) {
   // more info)
   fpu_control_t cw;
   _FPU_GETCW(cw);
-  cw = (cw & ~_FPU_EXTENDED) | _FPU_DOUBLE;
+  cw = (fpu_control_t)((cw & ~_FPU_EXTENDED) | _FPU_DOUBLE);
   _FPU_SETCW(cw);
 #endif
 
   exitCode = 99;
 
   // parse args
+  fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc < 2 || argc > 3 || printVersion || printHelp) {
     fprintf(stderr, "pdftotext version %s\n", xpdfVersion);
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
     }
     goto err0;
   }
-  fileName = new GString(argv[1]);
+  fileName = argv[1];
 
   // read config file
   globalParams = new GlobalParams(cfgFileName);
@@ -171,7 +171,6 @@ int main(int argc, char *argv[]) {
   // get mapping to output encoding
   if (!(uMap = globalParams->getTextEncoding())) {
     error(errConfig, -1, "Couldn't get text encoding");
-    delete fileName;
     goto err1;
   }
 
@@ -210,12 +209,11 @@ int main(int argc, char *argv[]) {
   if (argc == 3) {
     textFileName = new GString(argv[2]);
   } else {
-    p = fileName->getCString() + fileName->getLength() - 4;
-    if (!strcmp(p, ".pdf") || !strcmp(p, ".PDF")) {
-      textFileName = new GString(fileName->getCString(),
-				 fileName->getLength() - 4);
+    p = fileName + strlen(fileName) - 4;
+    if (strlen(fileName) > 4 && (!strcmp(p, ".pdf") || !strcmp(p, ".PDF"))) {
+      textFileName = new GString(fileName, (int)strlen(fileName) - 4);
     } else {
-      textFileName = fileName->copy();
+      textFileName = new GString(fileName);
     }
     textFileName->append(".txt");
   }

@@ -54,10 +54,6 @@
 
 #----- PostScript output control
 
-# Set the default PostScript file or command.
-
-#psFile			"|lpr -Pmyprinter"
-
 # Set the default PostScript paper size -- this can be letter, legal,
 # A4, or A3.  You can also specify a paper size as width and height
 # (in points).
@@ -88,4 +84,3 @@
 # clicked.
 
 #launchCommand  viewer-script
-#urlCommand	"netscape -remote 'openURL(%s)'"

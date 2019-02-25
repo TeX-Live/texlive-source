@@ -103,6 +103,7 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/OptionalContent.cc \
 	@XPDF_TREE@/xpdf/Outline.cc \
 	@XPDF_TREE@/xpdf/OutputDev.cc \
+	@XPDF_TREE@/xpdf/PDF417Barcode.cc \
 	@XPDF_TREE@/xpdf/PDFDoc.cc \
 	@XPDF_TREE@/xpdf/PDFDocEncoding.cc \
 	@XPDF_TREE@/xpdf/PSTokenizer.cc \
@@ -112,6 +113,7 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/Stream.cc \
 	@XPDF_TREE@/xpdf/TextString.cc \
 	@XPDF_TREE@/xpdf/UnicodeMap.cc \
+	@XPDF_TREE@/xpdf/UnicodeRemapping.cc \
 	@XPDF_TREE@/xpdf/UTF8.cc \
 	@XPDF_TREE@/xpdf/XFAForm.cc \
 	@XPDF_TREE@/xpdf/XRef.cc \

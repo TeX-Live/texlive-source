@@ -113,8 +113,9 @@ SplashScreen::SplashScreen(SplashScreenParams *params) {
     white = 255;
   }
   for (i = 0; i < size * size; ++i) {
-    u = splashRound((SplashCoord)255.0 *
-		    splashPow((SplashCoord)mat[i] / 255.0, params->gamma));
+    u = (Guchar)splashRound((SplashCoord)255.0 *
+			    splashPow((SplashCoord)mat[i] / 255.0,
+				      params->gamma));
     if (u < black) {
       u = (Guchar)black;
     } else if (u >= white) {
@@ -133,7 +134,8 @@ void SplashScreen::buildDispersedMatrix(int i, int j, int val,
 					int delta, int offset) {
   if (delta == 0) {
     // map values in [1, size^2] --> [1, 255]
-    mat[(i << log2Size) + j] = 1 + (254 * (val - 1)) / (size * size - 1);
+    mat[(i << log2Size) + j] =
+        (Guchar)(1 + (254 * (val - 1)) / (size * size - 1));
   } else {
     buildDispersedMatrix(i, j,
 			 val, delta / 2, 4*offset);
@@ -203,9 +205,9 @@ void SplashScreen::buildClusteredMatrix() {
       }
     }
     // map values in [0, 2*size*size2-1] --> [1, 255]
-    val = 1 + (254 * (2*i)) / (2*size*size2 - 1);
+    val = (Guchar)(1 + (254 * (2*i)) / (2*size*size2 - 1));
     mat[(y1 << log2Size) + x1] = val;
-    val = 1 + (254 * (2*i+1)) / (2*size*size2 - 1);
+    val = (Guchar)(1 + (254 * (2*i+1)) / (2*size*size2 - 1));
     if (y1 < size2) {
       mat[((y1 + size2) << log2Size) + x1 + size2] = val;
     } else {
@@ -354,7 +356,8 @@ void SplashScreen::buildSCDMatrix(int r) {
 #endif
     for (j = 0; j < n; ++j) {
       // map values in [0 .. n-1] --> [255 .. 1]
-      mat[(pts[j].y << log2Size) + pts[j].x] = 255 - (254 * j) / (n - 1);
+      mat[(pts[j].y << log2Size) + pts[j].x] =
+	  (Guchar)(255 - (254 * j) / (n - 1));
     }
   }
 

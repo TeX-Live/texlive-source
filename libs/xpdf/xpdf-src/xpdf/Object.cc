@@ -46,7 +46,7 @@ const char *objTypeNames[numObjTypes] = {
 #if MULTITHREADED
 GAtomicCounter Object::numAlloc[numObjTypes] =
 #else
-int Object::numAlloc[numObjTypes] =
+long Object::numAlloc[numObjTypes] =
 #endif
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #endif
@@ -226,7 +226,7 @@ void Object::print(FILE *f) {
 void Object::memCheck(FILE *f) {
 #ifdef DEBUG_MEM
   int i;
-  int t;
+  long t;
 
   t = 0;
   for (i = 0; i < numObjTypes; ++i)

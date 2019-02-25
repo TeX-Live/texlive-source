@@ -58,6 +58,17 @@ extern void *gmallocn(int nObjs, int objSize) GMEM_EXCEP;
 extern void *greallocn(void *p, int nObjs, int objSize) GMEM_EXCEP;
 
 /*
+ * Same as gmalloc and gmallocn, but allow a 64-bit size on 64-bit
+ * systems.
+ */
+#ifdef DEBUG_MEM
+extern void *gmalloc64(size_t size, int ignore = 0) GMEM_EXCEP;
+#else
+extern void *gmalloc64(size_t size) GMEM_EXCEP;
+#endif
+extern void *gmallocn64(int nObjs, size_t objSize) GMEM_EXCEP;
+
+/*
  * Same as free, but checks for and ignores NULL pointers.
  */
 extern void gfree(void *p);

@@ -289,12 +289,28 @@ void PreScanOutputDev::beginTransparencyGroup(
 void PreScanOutputDev::check(GfxState *state,
 			     GfxColorSpace *colorSpace, GfxColor *color,
 			     double opacity, GfxBlendMode blendMode) {
+  GfxGray gr;
+  GfxCMYK cmyk;
   GfxRGB rgb;
 
   if (colorSpace->getMode() == csPattern) {
     mono = gFalse;
     gray = gFalse;
     gdi = gFalse;
+  } else if (colorSpace->getMode() == csDeviceGray ||
+	     colorSpace->getMode() == csCalGray) {
+    colorSpace->getGray(color, &gr, state->getRenderingIntent());
+    if (!(gr == 0 || gr == gfxColorComp1)) {
+      mono = gFalse;
+    }
+  } else if (colorSpace->getMode() == csDeviceCMYK) {
+    colorSpace->getCMYK(color, &cmyk, state->getRenderingIntent());
+    if (cmyk.c != 0 || cmyk.m != 0 || cmyk.y != 0) {
+      mono = gFalse;
+      gray = gFalse;
+    } else if (!(cmyk.k == 0 || cmyk.k == gfxColorComp1)) {
+      mono = gFalse;
+    }
   } else {
     colorSpace->getRGB(color, &rgb, state->getRenderingIntent());
     if (rgb.r != rgb.g || rgb.g != rgb.b || rgb.b != rgb.r) {

@@ -44,7 +44,6 @@ static GBool level3Gray = gFalse;
 static GBool level3Sep = gFalse;
 static GBool doEPS = gFalse;
 static GBool doForm = gFalse;
-static GBool forceMono = gFalse;
 #if OPI_SUPPORT
 static GBool doOPI = gFalse;
 #endif
@@ -95,8 +94,6 @@ static ArgDesc argDesc[] = {
    "generate Encapsulated PostScript (EPS)"},
   {"-form",       argFlag,     &doForm,         0,
    "generate a PostScript form"},
-  {"-mono",       argFlag,     &forceMono,      0,
-   "force monochrome (grayscale) output"},
 #if OPI_SUPPORT
   {"-opi",        argFlag,     &doOPI,          0,
    "generate OPI comments"},
@@ -154,7 +151,7 @@ static ArgDesc argDesc[] = {
 
 int main(int argc, char *argv[]) {
   PDFDoc *doc;
-  GString *fileName;
+  char *fileName;
   GString *psFileName;
   PSLevel level;
   PSOutMode mode;
@@ -175,13 +172,14 @@ int main(int argc, char *argv[]) {
   // more info)
   fpu_control_t cw;
   _FPU_GETCW(cw);
-  cw = (cw & ~_FPU_EXTENDED) | _FPU_DOUBLE;
+  cw = (fpu_control_t)((cw & ~_FPU_EXTENDED) | _FPU_DOUBLE);
   _FPU_SETCW(cw);
 #endif
 
   exitCode = 99;
 
   // parse args
+  fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc < 2 || argc > 3 || printVersion || printHelp) {
     fprintf(stderr, "pdftops version %s\n", xpdfVersion);
@@ -230,7 +228,7 @@ int main(int argc, char *argv[]) {
   mode = doEPS ? psModeEPS
                : doForm ? psModeForm
                         : psModePS;
-  fileName = new GString(argv[1]);
+  fileName = argv[1];
 
   // read config file
   globalParams = new GlobalParams(cfgFileName);
@@ -240,7 +238,6 @@ int main(int argc, char *argv[]) {
   if (paperSize[0]) {
     if (!globalParams->setPSPaperSize(paperSize)) {
       fprintf(stderr, "Invalid paper size\n");
-      delete fileName;
       goto err0;
     }
   } else {
@@ -332,12 +329,11 @@ int main(int argc, char *argv[]) {
   if (argc == 3) {
     psFileName = new GString(argv[2]);
   } else {
-    p = fileName->getCString() + fileName->getLength() - 4;
-    if (!strcmp(p, ".pdf") || !strcmp(p, ".PDF")) {
-      psFileName = new GString(fileName->getCString(),
-			       fileName->getLength() - 4);
+    p = fileName + strlen(fileName) - 4;
+    if (strlen(fileName) > 4 && (!strcmp(p, ".pdf") || !strcmp(p, ".PDF"))) {
+      psFileName = new GString(fileName, (int)strlen(fileName) - 4);
     } else {
-      psFileName = fileName->copy();
+      psFileName = new GString(fileName);
     }
     psFileName->append(doEPS ? ".eps" : ".ps");
   }

@@ -41,3 +41,4 @@ SplashSolidColor::~SplashSolidColor() {
 void SplashSolidColor::getColor(int x, int y, SplashColorPtr c) {
   splashColorCopy(c, color);
 }
+

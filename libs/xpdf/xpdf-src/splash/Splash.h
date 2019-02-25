@@ -34,13 +34,14 @@ struct SplashPipe;
 // Retrieves the next line of pixels in an image mask.  Normally,
 // fills in *<line> and returns true.  If the image stream is
 // exhausted, returns false.
-typedef GBool (*SplashImageMaskSource)(void *data, SplashColorPtr pixel);
+typedef GBool (*SplashImageMaskSource)(void *data, Guchar *pixel);
 
 // Retrieves the next line of pixels in an image.  Normally, fills in
 // *<line> and returns true.  If the image stream is exhausted,
 // returns false.
 typedef GBool (*SplashImageSource)(void *data, SplashColorPtr colorLine,
 				   Guchar *alphaLine);
+
 
 //------------------------------------------------------------------------
 
@@ -258,6 +259,7 @@ public:
   void setInShading(GBool sh) { inShading = sh; }
 #endif
 
+
 private:
 
   void pipeInit(SplashPipe *pipe, SplashPattern *pattern,
@@ -409,6 +411,7 @@ private:
 			int w, int h);
   void dumpPath(SplashPath *path);
   void dumpXPath(SplashXPath *path);
+
 
   static SplashPipeResultColorCtrl pipeResultColorNoAlphaBlend[];
   static SplashPipeResultColorCtrl pipeResultColorAlphaNoBlend[];

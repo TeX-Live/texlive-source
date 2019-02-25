@@ -231,7 +231,8 @@ void TileCompositor::forceRedraw() {
 // BGR8 color modes.
 void TileCompositor::clearBitmap() {
   SplashColorPtr data, row, p;
-  int rowSize, w, h, x, y;
+  SplashBitmapRowSize rowSize;
+  int w, h, x, y;
 
   w = bitmap->getWidth();
   h = bitmap->getHeight();
@@ -299,7 +300,9 @@ void TileCompositor::blit(SplashBitmap *srcBitmap, int xSrc, int ySrc,
   SplashColorPtr paperColor;
   Guchar *alphaData, *alphaP;
   Guchar alpha, alpha1;
-  int srcRowSize, destRowSize, alphaRowSize, x, y;
+  SplashBitmapRowSize srcRowSize, destRowSize;
+  size_t alphaRowSize;
+  int x, y;
 
   srcData = srcBitmap->getDataPtr();
   srcRowSize = srcBitmap->getRowSize();
@@ -307,7 +310,7 @@ void TileCompositor::blit(SplashBitmap *srcBitmap, int xSrc, int ySrc,
   destRowSize = destBitmap->getRowSize();
 
   if (compositeWithPaper && (alphaData = srcBitmap->getAlphaPtr())) {
-    alphaRowSize = srcBitmap->getWidth();
+    alphaRowSize = srcBitmap->getAlphaRowSize();
     paperColor = state->getPaperColor();
     for (y = 0; y < h; ++y) {
       destP = &destData[(yDest + y) * destRowSize + 3 * xDest];
@@ -325,7 +328,7 @@ void TileCompositor::blit(SplashBitmap *srcBitmap, int xSrc, int ySrc,
 	  destP[1] = paperColor[1];
 	  destP[2] = paperColor[2];
 	} else {
-	  alpha1 = 255 - alpha;
+	  alpha1 = (Guchar)(255 - alpha);
 	  destP[0] = div255(alpha1 * paperColor[0] + alpha * srcP[0]);
 	  destP[1] = div255(alpha1 * paperColor[1] + alpha * srcP[1]);
 	  destP[2] = div255(alpha1 * paperColor[2] + alpha * srcP[2]);
@@ -349,7 +352,8 @@ void TileCompositor::fill(int xDest, int yDest, int w, int h,
 			  SplashColorPtr color) {
   SplashColorPtr data, p;
   Guchar c0, c1, c2;
-  int rowSize, x, y;
+  SplashBitmapRowSize rowSize;
+  int x, y;
 
   if (xDest < 0) {
     w += xDest;
@@ -399,7 +403,8 @@ void TileCompositor::applySelection(int xDest, int yDest, int w, int h,
 				    SplashColorPtr color) {
   SplashColorPtr data, p;
   Guchar c0, c1, c2;
-  int rowSize, x, y;
+  SplashBitmapRowSize rowSize;
+  int x, y;
 
   if (xDest < 0) {
     w += xDest;
@@ -435,9 +440,9 @@ void TileCompositor::applySelection(int xDest, int yDest, int w, int h,
   for (y = 0; y < h; ++y) {
     p = &data[(yDest + y) * rowSize + 3 * xDest];
     for (x = 0; x < w; ++x) {
-      p[0] = (3 * p[0] + c0) / 4;
-      p[1] = (3 * p[1] + c1) / 4;
-      p[2] = (3 * p[2] + c2) / 4;
+      p[0] = (Guchar)((3 * p[0] + c0) / 4);
+      p[1] = (Guchar)((3 * p[1] + c1) / 4);
+      p[2] = (Guchar)((3 * p[2] + c2) / 4);
       p += 3;
     }
   }

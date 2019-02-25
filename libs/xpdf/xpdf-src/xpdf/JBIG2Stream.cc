@@ -494,8 +494,8 @@ int JBIG2MMRDecoder::get2DCode() {
     ++nBytesRead;
     ++byteCounter;
     p = &twoDimTab1[(buf >> 1) & 0x7f];
-  } else if (bufLen == 8) {
-    p = &twoDimTab1[(buf >> 1) & 0x7f];
+  } else if (bufLen >= 7) {
+    p = &twoDimTab1[(buf >> (bufLen - 7)) & 0x7f];
   } else {
     p = &twoDimTab1[(buf << (7 - bufLen)) & 0x7f];
     if (p->bits < 0 || p->bits > (int)bufLen) {
@@ -684,9 +684,9 @@ public:
     { return (x < 0 || x >= w || y < 0 || y >= h) ? 0 :
              (data[y * line + (x >> 3)] >> (7 - (x & 7))) & 1; }
   void setPixel(int x, int y)
-    { data[y * line + (x >> 3)] |= 1 << (7 - (x & 7)); }
+    { data[y * line + (x >> 3)] |= (Guchar)(1 << (7 - (x & 7))); }
   void clearPixel(int x, int y)
-    { data[y * line + (x >> 3)] &= 0x7f7f >> (x & 7); }
+    { data[y * line + (x >> 3)] &= (Guchar)(0x7f7f >> (x & 7)); }
   void getPixelPtr(int x, int y, JBIG2BitmapPtr *ptr);
   int nextPixel(JBIG2BitmapPtr *ptr);
   void duplicateRow(int yDest, int ySrc);
@@ -825,7 +825,8 @@ void JBIG2Bitmap::combine(JBIG2Bitmap *bitmap, int x, int y,
 			  Guint combOp) {
   int x0, x1, y0, y1, xx, yy;
   Guchar *srcPtr, *destPtr;
-  Guint src0, src1, src, dest, s1, s2, m1, m2, m3;
+  Guchar dest, src0, src1, src, m1, m2, m3;
+  Guint s1, s2;
   GBool oneByte;
 
   // check for the pathological case where y = -2^31
@@ -861,9 +862,9 @@ void JBIG2Bitmap::combine(JBIG2Bitmap *bitmap, int x, int y,
 
   s1 = x & 7;
   s2 = 8 - s1;
-  m1 = 0xff >> (x1 & 7);
-  m2 = 0xff << (((x1 & 7) == 0) ? 0 : 8 - (x1 & 7));
-  m3 = (0xff >> s1) & m2;
+  m1 = (Guchar)(0xff >> (x1 & 7));
+  m2 = (Guchar)(0xff << (((x1 & 7) == 0) ? 0 : 8 - (x1 & 7)));
+  m3 = (Guchar)((0xff >> s1) & m2);
 
   oneByte = x0 == ((x1 - 1) & ~7);
 
@@ -878,19 +879,19 @@ void JBIG2Bitmap::combine(JBIG2Bitmap *bitmap, int x, int y,
 	src1 = *srcPtr;
 	switch (combOp) {
 	case 0: // or
-	  dest |= (src1 >> s1) & m2;
+	  dest |= (Guchar)((src1 >> s1) & m2);
 	  break;
 	case 1: // and
-	  dest &= ((0xff00 | src1) >> s1) | m1;
+	  dest &= (Guchar)(((0xff00 | src1) >> s1) | m1);
 	  break;
 	case 2: // xor
-	  dest ^= (src1 >> s1) & m2;
+	  dest ^= (Guchar)((src1 >> s1) & m2);
 	  break;
 	case 3: // xnor
-	  dest ^= ((src1 ^ 0xff) >> s1) & m2;
+	  dest ^= (Guchar)(((src1 ^ 0xff) >> s1) & m2);
 	  break;
 	case 4: // replace
-	  dest = (dest & ~m3) | ((src1 >> s1) & m3);
+	  dest = (Guchar)((dest & ~m3) | ((src1 >> s1) & m3));
 	  break;
 	}
 	*destPtr = dest;
@@ -931,19 +932,19 @@ void JBIG2Bitmap::combine(JBIG2Bitmap *bitmap, int x, int y,
 	dest = *destPtr;
 	switch (combOp) {
 	case 0: // or
-	  dest |= src1 >> s1;
+	  dest |= (Guchar)(src1 >> s1);
 	  break;
 	case 1: // and
-	  dest &= (0xff00 | src1) >> s1;
+	  dest &= (Guchar)((0xff00 | src1) >> s1);
 	  break;
 	case 2: // xor
-	  dest ^= src1 >> s1;
+	  dest ^= (Guchar)(src1 >> s1);
 	  break;
 	case 3: // xnor
-	  dest ^= (src1 ^ 0xff) >> s1;
+	  dest ^= (Guchar)((src1 ^ 0xff) >> s1);
 	  break;
 	case 4: // replace
-	  dest = (dest & (0xff << s2)) | (src1 >> s1);
+	  dest = (Guchar)((dest & (0xff << s2)) | (src1 >> s1));
 	  break;
 	}
 	*destPtr++ = dest;
@@ -960,7 +961,7 @@ void JBIG2Bitmap::combine(JBIG2Bitmap *bitmap, int x, int y,
 	dest = *destPtr;
 	src0 = src1;
 	src1 = *srcPtr++;
-	src = (((src0 << 8) | src1) >> s1) & 0xff;
+	src = (Guchar)(((src0 << 8) | src1) >> s1);
 	switch (combOp) {
 	case 0: // or
 	  dest |= src;
@@ -989,7 +990,7 @@ void JBIG2Bitmap::combine(JBIG2Bitmap *bitmap, int x, int y,
       dest = *destPtr;
       src0 = src1;
       src1 = *srcPtr++;
-      src = (((src0 << 8) | src1) >> s1) & 0xff;
+      src = (Guchar)(((src0 << 8) | src1) >> s1);
       switch (combOp) {
       case 0: // or
 	dest |= src & m2;
@@ -1710,6 +1711,12 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
 	(dh > 0 && (Guint)dh > UINT_MAX - symHeight)) {
       error(errSyntaxError, getPos(),
 	    "Bad delta-height value in JBIG2 symbol dictionary");
+      goto syntaxError;
+    }
+    // sanity check to avoid extremely long run-times with damaged streams
+    if (dh > 1000000) {
+      error(errSyntaxError, getPos(),
+	    "Bogus delta-height value in JBIG2 symbol dictionary");
       goto syntaxError;
     }
     symHeight += dh;
@@ -2814,17 +2821,17 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
   if (mmr) {
 
     mmrDecoder->reset();
-    if (w > INT_MAX - 2) {
+    if (w > INT_MAX - 3) {
       error(errSyntaxError, getPos(), "Bad width in JBIG2 generic bitmap");
       // force a call to gmalloc(-1), which will throw an exception
-      w = -3;
+      w = -4;
     }
     // 0 <= codingLine[0] < codingLine[1] < ... < codingLine[n] = w
     // ---> max codingLine size = w + 1
-    // refLine has one extra guard entry at the end
-    // ---> max refLine size = w + 2
+    // refLine has two extra guard entries at the end
+    // ---> max refLine size = w + 3
     codingLine = (int *)gmallocn(w + 1, sizeof(int));
-    refLine = (int *)gmallocn(w + 2, sizeof(int));
+    refLine = (int *)gmallocn(w + 3, sizeof(int));
     codingLine[0] = w;
 
     for (y = 0; y < h; ++y) {
@@ -2833,6 +2840,7 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
       for (i = 0; codingLine[i] < w; ++i) {
 	refLine[i] = codingLine[i];
       }
+      refLine[i++] = w;
       refLine[i++] = w;
       refLine[i] = w;
 
@@ -3125,7 +3133,9 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
 		atBuf3 |= *atP3++;
 	      }
 	    }
-	    for (x1 = 0, mask = 0x80; x1 < 8 && x < w; ++x1, ++x, mask >>= 1) {
+	    for (x1 = 0, mask = 0x80;
+		 x1 < 8 && x < w;
+		 ++x1, ++x, mask = (Guchar)(mask >> 1)) {
 
 	      // build the context
 	      cx0 = (buf0 >> 14) & 0x07;
@@ -3182,7 +3192,9 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
 	      }
 	      buf2 |= *p2++;
 	    }
-	    for (x1 = 0, mask = 0x80; x1 < 8 && x < w; ++x1, ++x, mask >>= 1) {
+	    for (x1 = 0, mask = 0x80;
+		 x1 < 8 && x < w;
+		 ++x1, ++x, mask = (Guchar)(mask >> 1)) {
 
 	      // build the context
 	      cx0 = (buf0 >> 14) & 0x07;
@@ -3258,7 +3270,9 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
 		atBuf0 |= *atP0++;
 	      }
 	    }
-	    for (x1 = 0, mask = 0x80; x1 < 8 && x < w; ++x1, ++x, mask >>= 1) {
+	    for (x1 = 0, mask = 0x80;
+		 x1 < 8 && x < w;
+		 ++x1, ++x, mask = (Guchar)(mask >> 1)) {
 
 	      // build the context
 	      cx0 = (buf0 >> 13) & 0x0f;
@@ -3300,7 +3314,9 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
 	      }
 	      buf2 |= *p2++;
 	    }
-	    for (x1 = 0, mask = 0x80; x1 < 8 && x < w; ++x1, ++x, mask >>= 1) {
+	    for (x1 = 0, mask = 0x80;
+		 x1 < 8 && x < w;
+		 ++x1, ++x, mask = (Guchar)(mask >> 1)) {
 
 	      // build the context
 	      cx0 = (buf0 >> 13) & 0x0f;
@@ -3373,7 +3389,9 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
 		atBuf0 |= *atP0++;
 	      }
 	    }
-	    for (x1 = 0, mask = 0x80; x1 < 8 && x < w; ++x1, ++x, mask >>= 1) {
+	    for (x1 = 0, mask = 0x80;
+		 x1 < 8 && x < w;
+		 ++x1, ++x, mask = (Guchar)(mask >> 1)) {
 
 	      // build the context
 	      cx0 = (buf0 >> 14) & 0x07;
@@ -3415,7 +3433,9 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
 	      }
 	      buf2 |= *p2++;
 	    }
-	    for (x1 = 0, mask = 0x80; x1 < 8 && x < w; ++x1, ++x, mask >>= 1) {
+	    for (x1 = 0, mask = 0x80;
+		 x1 < 8 && x < w;
+		 ++x1, ++x, mask = (Guchar)(mask >> 1)) {
 
 	      // build the context
 	      cx0 = (buf0 >> 14) & 0x07;
@@ -3478,7 +3498,9 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
 		atBuf0 |= *atP0++;
 	      }
 	    }
-	    for (x1 = 0, mask = 0x80; x1 < 8 && x < w; ++x1, ++x, mask >>= 1) {
+	    for (x1 = 0, mask = 0x80;
+		 x1 < 8 && x < w;
+		 ++x1, ++x, mask = (Guchar)(mask >> 1)) {
 
 	      // build the context
 	      cx1 = (buf1 >> 14) & 0x1f;
@@ -3515,7 +3537,9 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
 	      }
 	      buf2 |= *p2++;
 	    }
-	    for (x1 = 0, mask = 0x80; x1 < 8 && x < w; ++x1, ++x, mask >>= 1) {
+	    for (x1 = 0, mask = 0x80;
+		 x1 < 8 && x < w;
+		 ++x1, ++x, mask = (Guchar)(mask >> 1)) {
 
 	      // build the context
 	      cx1 = (buf1 >> 14) & 0x1f;

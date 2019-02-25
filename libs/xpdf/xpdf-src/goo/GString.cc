@@ -656,7 +656,7 @@ void GString::formatDouble(double x, char *buf, int bufSize, int prec,
     x2 = floor(0.1 * (x + 0.5));
     d = (int)floor(x - 10 * x2 + 0.5);
     if (started || d != 0) {
-      buf[--i] = '0' + d;
+      buf[--i] = (char)('0' + d);
       started = gTrue;
     }
     x = x2;
@@ -668,7 +668,7 @@ void GString::formatDouble(double x, char *buf, int bufSize, int prec,
     do {
       x2 = floor(0.1 * (x + 0.5));
       d = (int)floor(x - 10 * x2 + 0.5);
-      buf[--i] = '0' + d;
+      buf[--i] = (char)('0' + d);
       x = x2;
     } while (i > 1 && x);
   }
@@ -757,7 +757,7 @@ GString *GString::upperCase() {
 
   for (i = 0; i < length; ++i) {
     if (islower(s[i] & 0xff)) {
-      s[i] = toupper(s[i] & 0xff);
+      s[i] = (char)toupper(s[i] & 0xff);
     }
   }
   return this;
@@ -768,7 +768,7 @@ GString *GString::lowerCase() {
 
   for (i = 0; i < length; ++i) {
     if (isupper(s[i] & 0xff)) {
-      s[i] = tolower(s[i] & 0xff);
+      s[i] = (char)tolower(s[i] & 0xff);
     }
   }
   return this;

@@ -336,6 +336,12 @@ public:
   int *getCIDToGID() { return cidToGID; }
   int getCIDToGIDLen() { return cidToGIDLen; }
 
+  // Returns true if this font uses the Identity-H encoding (cmap),
+  // and the Adobe-Identity character collection, and does not have a
+  // CIDToGIDMap.  When this is true for a CID TrueType font, Adobe
+  // appears to treat char codes as raw GIDs.
+  GBool usesIdentityEncoding() { return identityEnc; }
+
   virtual GBool problematicForUnicode();
 
 private:
@@ -355,6 +361,7 @@ private:
   int cidToGIDLen;
   GBool hasKnownCollection;
   GBool hasIdentityCIDToGID;
+  GBool identityEnc;
 };
 
 //------------------------------------------------------------------------

@@ -95,7 +95,7 @@ static int seenObjsSize;
 
 int main(int argc, char *argv[]) {
   PDFDoc *doc;
-  GString *fileName;
+  char *fileName;
   GString *ownerPW, *userPW;
   GBool ok;
   Page *page;
@@ -109,6 +109,7 @@ int main(int argc, char *argv[]) {
   exitCode = 99;
 
   // parse args
+  fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc != 2 || printVersion || printHelp) {
     fprintf(stderr, "pdffonts version %s\n", xpdfVersion);
@@ -118,7 +119,7 @@ int main(int argc, char *argv[]) {
     }
     goto err0;
   }
-  fileName = new GString(argv[1]);
+  fileName = argv[1];
 
   // read config file
   globalParams = new GlobalParams(cfgFileName);

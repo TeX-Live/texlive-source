@@ -10,6 +10,7 @@
 
 include(CheckFunctionExists)
 include(CheckCXXSourceCompiles)
+include(GNUInstallDirs)
 
 enable_language(CXX)
 
@@ -18,6 +19,8 @@ enable_language(CXX)
 if (CMAKE_GENERATOR STREQUAL "Unix Makefiles")
   if (CYGWIN)
     set(PIC_FLAG "")
+  elseif (CMAKE_HOST_SYSTEM_NAME MATCHES "AIX")
+    set(PIC_FLAG "-qPIC")
   else ()
     set(PIC_FLAG "-fPIC")
   endif ()
@@ -78,21 +81,17 @@ option(MULTITHREADED "include support for multithreading" ON)
 option(USE_EXCEPTIONS "use C++ exceptions" ON)
 option(USE_FIXEDPOINT "use fixed point (instead of floating point) arithmetic" OFF)
 option(SPLASH_CMYK "include support for CMYK rasterization" OFF)
-option(SPLASH_DEVICEN "include support for DeviceN rasterization" OFF)
-if (SPLASH_DEVICEN)
-  set(SPLASH_CMYK ON)
-endif ()
-option(USE_LCMS "enable color management using lcms2" OFF)
-option(HIGHLIGHTED_REGIONS "include support for highlighted regions" OFF)
 option(SYSTEM_XPDFRC "full path for system-wide xpdfrc file" "")
 if (SYSTEM_XPDFRC)
   set(SYSTEM_XPDFRC_DEFINE "#define SYSTEM_XPDFRC \"${SYSTEM_XPDFRC}\"")
 else ()
   set(SYSTEM_XPDFRC_DEFINE "/* #undef SYSTEM_XPDFRC */")
 endif ()
-option(XPDFWIDGET_PRINTING "include printing support in XpdfWidget" OFF)
-option(EVAL_MODE "enable evaluation mode" OFF)
-option(BUILDING_XPDFREADER "enable closed source XpdfReader build" OFF)
+if (WIN32)
+  option(XPDFWIDGET_PRINTING "include printing support in XpdfWidget" OFF)
+else ()
+  option(XPDFWIDGET_PRINTING "include printing support in XpdfWidget" ON)
+endif ()
 
 #--- check for various library functions
 check_function_exists(mkstemp HAVE_MKSTEMP)
@@ -178,11 +177,6 @@ if (HAVE_FREETYPE_H)
   set(HAVE_SPLASH TRUE)
 endif ()
 
-#--- look for D-Type
-if (DTYPE_INCLUDE_DIR AND DTYPE_LIBRARY)
-  set(HAVE_DTYPE4_H TRUE)
-  message(STATUS "Found D-Type: ${DTYPE_LIBRARY}")
-endif ()
 
 #--- look for zlib
 find_package(ZLIB)
@@ -190,42 +184,13 @@ find_package(ZLIB)
 #--- look for libpng
 find_package(PNG)
 
-#--- look for libjpeg
-find_package(JPEG)
 
-#--- look for libtiff
-find_package(TIFF)
 
-#--- look for lcms2
-if (USE_LCMS)
-  find_path(LCMS_INCLUDE_DIR lcms2.h
-    HINTS
-    ${LCMS_DIR}
-    PATHS
-    /usr/local/include
-    /usr/freeware/include
-    PATH_SUFFIXES include
-  )
-  find_library(LCMS_LIBRARY
-    NAMES lcms2 liblcms2
-    HINTS
-    ${LCMS_DIR}
-    PATHS
-    /usr/local
-    /usr/freeware
-  )
-endif ()
-if (USE_LCMS AND LCMS_INCLUDE_DIR AND LCMS_LIBRARY)
-  set(HAVE_LCMS TRUE)
-  message(STATUS "Found lcms2: ${LCMS_LIBRARY}")
-else ()
-  set(HAVE_LCMS FALSE)
-  message(STATUS "lcms2 not found")
-endif ()
 
 #--- look for Qt
 find_package(Qt5Widgets QUIET)
 if (Qt5Widgets_FOUND)
+  find_package(Qt5Network)
   find_package(Qt5PrintSupport)
 else ()
   find_package(Qt4)
@@ -233,19 +198,19 @@ endif ()
 if(Qt5Widgets_FOUND)
   message(STATUS "Qt5 found")
   if (XPDFWIDGET_PRINTING)
-    set(QT_INCLUDES "${Qt5Widgets_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS}")
-    set(QT_DEFINITIONS "${Qt5Widgets_DEFINITIONS} ${Qt5PrintSupport_DEFINITIONS}")
+    set(QT_INCLUDES "${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS}")
+    set(QT_DEFINITIONS "${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS} ${Qt5PrintSupport_DEFINITIONS}")
     if (APPLE)
-      set(QT_LIBRARIES Qt5::Widgets Qt5::PrintSupport "-framework ApplicationServices")
+      set(QT_LIBRARIES Qt5::Widgets Qt5::Network Qt5::PrintSupport "-framework ApplicationServices")
     elseif (UNIX)
-      set(QT_LIBRARIES Qt5::Widgets Qt5::PrintSupport cups)
+      set(QT_LIBRARIES Qt5::Widgets Qt5::Network Qt5::PrintSupport cups)
     else ()
-      set(QT_LIBRARIES Qt5::Widgets Qt5::PrintSupport)
+      set(QT_LIBRARIES Qt5::Widgets Qt5::Network Qt5::PrintSupport)
     endif ()
   else ()
-    set(QT_INCLUDES "${Qt5Widgets_INCLUDE_DIRS}")
-    set(QT_DEFINITIONS "${Qt5Widgets_DEFINITIONS}")
-    set(QT_LIBRARIES Qt5::Widgets)
+    set(QT_INCLUDES "${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS}")
+    set(QT_DEFINITIONS "${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS}")
+    set(QT_LIBRARIES Qt5::Widgets Qt5::Network)
   endif ()
   if (XPDFWIDGET_PRINTING)
     if (APPLE)
@@ -258,10 +223,6 @@ if(Qt5Widgets_FOUND)
   endif ()
   # remove "-fPIE" here because we added "-fPIC" above
   string(REPLACE "-fPIE" "" QT_CFLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-  if (POLICY CMP0020)
-    # do not link to qtmain.lib
-    cmake_policy(SET CMP0020 OLD)
-  endif ()
 elseif(QT4_FOUND)
   message(STATUS "Qt4 found")
   if (XPDFWIDGET_PRINTING)
@@ -278,10 +239,16 @@ else()
 endif()
 
 #--- look for libpaper
-find_library(HAVE_PAPER_H
+find_library(PAPER_LIBRARY
              NAMES paper libpaper
              PATH_SUFFIXES lib64 lib
 )
+if (PAPER_LIBRARY)
+  set(HAVE_PAPER_H TRUE)
+else ()
+  set(HAVE_PAPER_H FALSE)
+  set(PAPER_LIBRARY "")
+endif ()
 
 #--- look for pthreads
 find_package(Threads)

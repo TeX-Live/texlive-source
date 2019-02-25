@@ -259,6 +259,8 @@ public:
   virtual void psXObject(Stream *psStream, Stream *level1Stream);
 
   //----- miscellaneous
+  void setImageableArea(int imgLLXA, int imgLLYA, int imgURXA, int imgURYA)
+    { imgLLX = imgLLXA; imgLLY = imgLLYA; imgURX = imgURXA; imgURY = imgURYA; }
   void setOffset(double x, double y)
     { tx0 = x; ty0 = y; }
   void setScale(double x, double y)
@@ -307,6 +309,8 @@ private:
 					       int fontNum,
 					       GBool needVerticalMetrics);
   PSFontFileInfo *setupEmbeddedOpenTypeCFFFont(GfxFont *font, Ref *id);
+  PSFontFileInfo *setupExternalOpenTypeCFFFont(GfxFont *font,
+					       GString *fileName);
   PSFontFileInfo *setupType3Font(GfxFont *font, Dict *parentResDict);
   GString *makePSFontName(GfxFont *font, Ref *id);
   GString *fixType1Font(GString *font, int length1, int length2);
@@ -320,8 +324,9 @@ private:
   GString *copyType1PFA(Guchar *font, int fontSize);
   GString *copyType1PFB(Guchar *font, int fontSize);
   void renameType1Font(GString *font, GString *name);
+  void setupDefaultFont();
   void setupImages(Dict *resDict);
-  void setupImage(Ref id, Stream *stream, GBool mask);
+  void setupImage(Ref id, Stream *str, GBool mask, Array *colorKeyMask);
   void setupForms(Dict *resDict);
   void setupForm(Object *strRef, Object *strObj);
   void addProcessColor(double c, double m, double y, double k);
@@ -455,8 +460,7 @@ private:
   Ref *formIDs;			// list of IDs for predefined forms
   int formIDLen;		// number of entries in formIDs array
   int formIDSize;		// size of formIDs array
-  GList *xobjStack;		// stack of XObject dicts currently being
-				//   processed
+  char *visitedResources;	// vector of resource objects already visited
   GBool noStateChanges;		// true if there have been no state changes
 				//   since the last save
   GList *saveStack;		// "no state changes" flag for each

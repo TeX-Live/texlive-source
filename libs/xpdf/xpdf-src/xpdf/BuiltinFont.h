@@ -25,6 +25,7 @@ class BuiltinFontWidths;
 struct BuiltinFont {
   const char *name;
   const char **defaultBaseEnc;
+  short missingWidth;
   short ascent;
   short descent;
   short bbox[4];

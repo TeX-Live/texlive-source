@@ -1287,11 +1287,11 @@ void Annot::drawText(GString *text, GString *da, int quadding, double margin,
     c = text2->getChar(i) & 0xff;
     if (c == '(' || c == ')' || c == '\\') {
       appearBuf->append('\\');
-      appearBuf->append(c);
+      appearBuf->append((char)c);
     } else if (c < 0x20 || c >= 0x80) {
       appearBuf->appendf("\\{0:03o}", c);
     } else {
-      appearBuf->append(c);
+      appearBuf->append((char)c);
     }
   }
   appearBuf->append(") Tj\n");

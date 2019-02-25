@@ -248,6 +248,7 @@ private:
   int imgIdx;			// current index in imgLine
 };
 
+
 //------------------------------------------------------------------------
 // StreamPredictor
 //------------------------------------------------------------------------
@@ -574,6 +575,7 @@ private:
   int nextCol;			// next column to read
   int a0i;			// index into codingLine
   GBool err;			// error on current line
+  int nErrors;			// number of errors so far in this stream
 
   void addPixels(int a1, int blackPixels);
   void addPixelsNeg(int a1, int blackPixels);
@@ -726,7 +728,7 @@ private:
   int readHuffSym(DCTHuffTable *table);
   int readAmp(int size);
   int readBit();
-  GBool readHeader();
+  GBool readHeader(GBool frame);
   GBool readBaselineSOF();
   GBool readProgressiveSOF();
   GBool readScanInfo();

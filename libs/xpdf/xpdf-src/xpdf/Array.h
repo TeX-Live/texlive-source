@@ -37,11 +37,11 @@ public:
 
   // Reference counting.
 #if MULTITHREADED
-  int incRef() { return gAtomicIncrement(&ref); }
-  int decRef() { return gAtomicDecrement(&ref); }
+  long incRef() { return gAtomicIncrement(&ref); }
+  long decRef() { return gAtomicDecrement(&ref); }
 #else
-  int incRef() { return ++ref; }
-  int decRef() { return --ref; }
+  long incRef() { return ++ref; }
+  long decRef() { return --ref; }
 #endif
 
   // Get number of elements.
@@ -51,7 +51,7 @@ public:
   void add(Object *elem);
 
   // Accessors.
-  Object *get(int i, Object *obj);
+  Object *get(int i, Object *obj, int recursion = 0);
   Object *getNF(int i, Object *obj);
 
 private:
@@ -63,7 +63,7 @@ private:
 #if MULTITHREADED
   GAtomicCounter ref;		// reference count
 #else
-  int ref;			// reference count
+  long ref;			// reference count
 #endif
 };
 

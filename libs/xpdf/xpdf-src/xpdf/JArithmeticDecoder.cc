@@ -48,7 +48,7 @@ void JArithmeticDecoderStats::copyFrom(JArithmeticDecoderStats *stats) {
 }
 
 void JArithmeticDecoderStats::setEntry(Guint cx, int i, int mps) {
-  cxTab[cx] = (i << 1) + mps;
+  cxTab[cx] = (Guchar)((i << 1) + mps);
 }
 
 //------------------------------------------------------------------------
@@ -202,13 +202,13 @@ int JArithmeticDecoder::decodeBit(Guint context,
       if (a < qe) {
 	bit = 1 - mpsCX;
 	if (switchTab[iCX]) {
-	  stats->cxTab[context] = (nlpsTab[iCX] << 1) | (1 - mpsCX);
+	  stats->cxTab[context] = (Guchar)((nlpsTab[iCX] << 1) | (1 - mpsCX));
 	} else {
-	  stats->cxTab[context] = (nlpsTab[iCX] << 1) | mpsCX;
+	  stats->cxTab[context] = (Guchar)((nlpsTab[iCX] << 1) | mpsCX);
 	}
       } else {
 	bit = mpsCX;
-	stats->cxTab[context] = (nmpsTab[iCX] << 1) | mpsCX;
+	stats->cxTab[context] = (Guchar)((nmpsTab[iCX] << 1) | mpsCX);
       }
       // RENORMD
       do {
@@ -225,13 +225,13 @@ int JArithmeticDecoder::decodeBit(Guint context,
     // LPS_EXCHANGE
     if (a < qe) {
       bit = mpsCX;
-      stats->cxTab[context] = (nmpsTab[iCX] << 1) | mpsCX;
+      stats->cxTab[context] = (Guchar)((nmpsTab[iCX] << 1) | mpsCX);
     } else {
       bit = 1 - mpsCX;
       if (switchTab[iCX]) {
-	stats->cxTab[context] = (nlpsTab[iCX] << 1) | (1 - mpsCX);
+	stats->cxTab[context] = (Guchar)((nlpsTab[iCX] << 1) | (1 - mpsCX));
       } else {
-	stats->cxTab[context] = (nlpsTab[iCX] << 1) | mpsCX;
+	stats->cxTab[context] = (Guchar)((nlpsTab[iCX] << 1) | mpsCX);
       }
     }
     a = qe;

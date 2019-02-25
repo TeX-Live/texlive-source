@@ -29,6 +29,7 @@
 #include "Error.h"
 #include "GlobalParams.h"
 #include "UnicodeMap.h"
+#include "UnicodeRemapping.h"
 #include "UnicodeTypeTable.h"
 #include "GfxState.h"
 #include "Link.h"
@@ -155,6 +156,8 @@
 // rectangles, in order to work around flakey ascent values in fonts.
 #define selectionAscent 0.8
 
+#define maxUnicodeLen 16
+
 //------------------------------------------------------------------------
 // TextChar
 //------------------------------------------------------------------------
@@ -243,7 +246,7 @@ int TextChar::cmpX(const void *p1, const void *p2) {
   } else if (ch1->xMin > ch2->xMin) {
     return 1;
   } else {
-    return 0;
+    return ch1->charPos - ch2->charPos;
   }
 }
 
@@ -256,7 +259,7 @@ int TextChar::cmpY(const void *p1, const void *p2) {
   } else if (ch1->yMin > ch2->yMin) {
     return 1;
   } else {
-    return 0;
+    return ch1->charPos - ch2->charPos;
   }
 }
 
@@ -547,7 +550,7 @@ TextFontInfo::TextFontInfo(GfxState *state) {
     for (code = 0; code < 256; ++code) {
       if ((name = ((Gfx8BitFont *)gfxFont)->getCharName(code)) &&
 	  name[0] == 'm' && name[1] == '\0') {
-	mWidth = ((Gfx8BitFont *)gfxFont)->getWidth(code);
+	mWidth = ((Gfx8BitFont *)gfxFont)->getWidth((Guchar)code);
 	break;
       }
     }
@@ -811,7 +814,20 @@ TextLine::~TextLine() {
 }
 
 double TextLine::getBaseline() {
-  return ((TextWord *)words->get(0))->getBaseline();
+  TextWord *word0;
+
+  word0 = (TextWord *)words->get(0);
+  switch (rot) {
+  case 0:
+  default:
+    return yMax + fontSize * word0->font->descent;
+  case 1:
+    return xMin - fontSize * word0->font->descent;
+  case 2:
+    return yMin - fontSize * word0->font->descent;
+  case 3:
+    return xMax + fontSize * word0->font->descent;
+  }
 }
 
 int TextLine::cmpX(const void *p1, const void *p2) {
@@ -994,6 +1010,9 @@ int TextPosition::operator>(TextPosition pos) {
 
 TextPage::TextPage(TextOutputControl *controlA) {
   control = *controlA;
+  remapping = globalParams->getUnicodeRemapping();
+  uBufSize = 16;
+  uBuf = (Unicode *)gmallocn(uBufSize, sizeof(Unicode));
   pageWidth = pageHeight = 0;
   charPos = 0;
   curFont = NULL;
@@ -1031,6 +1050,7 @@ TextPage::~TextPage() {
   if (findCols) {
     deleteGList(findCols, TextColumn);
   }
+  gfree(uBuf);
 }
 
 void TextPage::startPage(GfxState *state) {
@@ -1122,20 +1142,21 @@ void TextPage::updateFont(GfxState *state) {
 	letterCode = code;
       }
       if (anyCode < 0 && name &&
-	  ((Gfx8BitFont *)gfxFont)->getWidth(code) > 0) {
+	  ((Gfx8BitFont *)gfxFont)->getWidth((Guchar)code) > 0) {
 	anyCode = code;
       }
     }
     if (mCode >= 0 &&
-	(w = ((Gfx8BitFont *)gfxFont)->getWidth(mCode)) > 0) {
+	(w = ((Gfx8BitFont *)gfxFont)->getWidth((Guchar)mCode)) > 0) {
       // 0.6 is a generic average 'm' width -- yes, this is a hack
       curFontSize *= w / 0.6;
     } else if (letterCode >= 0 &&
-	       (w = ((Gfx8BitFont *)gfxFont)->getWidth(letterCode)) > 0) {
+	       (w = ((Gfx8BitFont *)gfxFont)->getWidth((Guchar)letterCode))
+	         > 0) {
       // even more of a hack: 0.5 is a generic letter width
       curFontSize *= w / 0.5;
     } else if (anyCode >= 0 &&
-	       (w = ((Gfx8BitFont *)gfxFont)->getWidth(anyCode)) > 0) {
+	       (w = ((Gfx8BitFont *)gfxFont)->getWidth((Guchar)anyCode)) > 0) {
       // better than nothing: 0.5 is a generic character width
       curFontSize *= w / 0.5;
     }
@@ -1184,7 +1205,7 @@ void TextPage::addChar(GfxState *state, double x, double y,
   GfxRGB rgb;
   double alpha;
   GBool clipped, rtl;
-  int i, j;
+  int uBufLen, i, j;
 
   // if we're in an ActualText span, save the position info (the
   // ActualText chars will be added by TextPage::endActualText()).
@@ -1246,16 +1267,26 @@ void TextPage::addChar(GfxState *state, double x, double y,
     return;
   }
 
+  // remap Unicode
+  uBufLen = 0;
+  for (i = 0; i < uLen; ++i) {
+    if (uBufSize - uBufLen < 8 && uBufSize < 20000) {
+      uBufSize *= 2;
+      uBuf = (Unicode *)greallocn(uBuf, uBufSize, sizeof(Unicode));
+    }
+    uBufLen += remapping->map(u[i], uBuf + uBufLen, uBufSize - uBufLen);
+  }
+
   // add the characters
-  if (uLen > 0) {
+  if (uBufLen > 0) {
 
     // handle right-to-left ligatures: if there are multiple Unicode
     // characters, and they're all right-to-left, insert them in
     // right-to-left order
-    if (uLen > 1) {
+    if (uBufLen > 1) {
       rtl = gTrue;
-      for (i = 0; i < uLen; ++i) {
-	if (!unicodeTypeR(u[i])) {
+      for (i = 0; i < uBufLen; ++i) {
+	if (!unicodeTypeR(uBuf[i])) {
 	  rtl = gFalse;
 	  break;
 	}
@@ -1265,11 +1296,11 @@ void TextPage::addChar(GfxState *state, double x, double y,
     }
 
     // compute the bounding box
-    w1 /= uLen;
-    h1 /= uLen;
+    w1 /= uBufLen;
+    h1 /= uBufLen;
     ascent = curFont->ascent * curFontSize;
     descent = curFont->descent * curFontSize;
-    for (i = 0; i < uLen; ++i) {
+    for (i = 0; i < uBufLen; ++i) {
       x2 = x1 + i * w1;
       y2 = y1 + i * h1;
       switch (curRot) {
@@ -1320,11 +1351,12 @@ void TextPage::addChar(GfxState *state, double x, double y,
 	alpha = state->getFillOpacity();
       }
       if (rtl) {
-	j = uLen - 1 - i;
+	j = uBufLen - 1 - i;
       } else {
 	j = i;
       }
-      chars->append(new TextChar(u[j], charPos, nBytes, xMin, yMin, xMax, yMax,
+      chars->append(new TextChar(uBuf[j], charPos, nBytes,
+				 xMin, yMin, xMax, yMax,
 				 curRot, clipped,
 				 state->getRender() == 3 || alpha < 0.001,
 				 curFont, curFontSize,
@@ -1405,7 +1437,7 @@ void TextPage::write(void *outputStream, TextOutputFunc outputFunc) {
     break;
   case eolDOS:
     eolLen = uMap->mapUnicode(0x0d, eol, sizeof(eol));
-    eolLen += uMap->mapUnicode(0x0a, eol + eolLen, sizeof(eol) - eolLen);
+    eolLen += uMap->mapUnicode(0x0a, eol + eolLen, (int)sizeof(eol) - eolLen);
     break;
   case eolMac:
     eolLen = uMap->mapUnicode(0x0d, eol, sizeof(eol));
@@ -4358,7 +4390,7 @@ GString *TextPage::getText(double xMin, double yMin,
     break;
   case eolDOS:
     eolLen = uMap->mapUnicode(0x0d, eol, sizeof(eol));
-    eolLen += uMap->mapUnicode(0x0a, eol + eolLen, sizeof(eol) - eolLen);
+    eolLen += uMap->mapUnicode(0x0a, eol + eolLen, (int)sizeof(eol) - eolLen);
     break;
   case eolMac:
     eolLen = uMap->mapUnicode(0x0d, eol, sizeof(eol));
@@ -4495,6 +4527,28 @@ GBool TextPage::findCharRange(int pos, int length,
   *xMax = xMax2;
   *yMax = yMax2;
   return gTrue;
+}
+
+GBool TextPage::checkPointInside(double x, double y) {
+  TextColumn *col;
+  int colIdx;
+
+  buildFindCols();
+
+  //~ this doesn't handle RtL, vertical, or rotated text
+  //~ this doesn't handle drop caps
+
+  for (colIdx = 0; colIdx < findCols->getLength(); ++colIdx) {
+    col = (TextColumn *)findCols->get(colIdx);
+    if (col->getRotation() != 0) {
+      continue;
+    }
+    if (x >= col->getXMin() && x <= col->getXMax() &&
+	y >= col->getYMin() && y <= col->getYMax()) {
+      return gTrue;
+    }
+  }
+  return gFalse;
 }
 
 GBool TextPage::findPointInside(double x, double y, TextPosition *pos) {
@@ -4708,6 +4762,37 @@ void TextPage::buildFindCols() {
 }
 
 TextWordList *TextPage::makeWordList() {
+  return makeWordListForChars(chars);
+}
+
+TextWordList *TextPage::makeWordListForRect(double xMin, double yMin,
+					    double xMax, double yMax) {
+  TextWordList *words;
+  GList *chars2;
+  TextChar *ch;
+  double xx, yy;
+  int i;
+
+  // get all chars in the rectangle
+  // (i.e., all chars whose center lies inside the rectangle)
+  chars2 = new GList();
+  for (i = 0; i < chars->getLength(); ++i) {
+    ch = (TextChar *)chars->get(i);
+    xx = 0.5 * (ch->xMin + ch->xMax);
+    yy = 0.5 * (ch->yMin + ch->yMax);
+    if (xx > xMin && xx < xMax && yy > yMin && yy < yMax) {
+      chars2->append(ch);
+    }
+  }
+
+  words = makeWordListForChars(chars2);
+
+  delete chars2;
+
+  return words;
+}
+
+TextWordList *TextPage::makeWordListForChars(GList *charList) {
   TextBlock *tree;
   GList *columns;
   TextColumn *col;
@@ -4718,12 +4803,18 @@ TextWordList *TextPage::makeWordList() {
   GBool primaryLR;
   int rot, colIdx, parIdx, lineIdx, wordIdx;
 
-  rot = rotateChars(chars);
-  primaryLR = checkPrimaryLR(chars);
-  tree = splitChars(chars);
+#if 0 //~debug
+  dumpCharList(charList);
+#endif
+  rot = rotateChars(charList);
+  primaryLR = checkPrimaryLR(charList);
+  tree = splitChars(charList);
+#if 0 //~debug
+  dumpTree(tree);
+#endif
   if (!tree) {
     // no text
-    unrotateChars(chars, rot);
+    unrotateChars(charList, rot);
     return new TextWordList(new GList(), gTrue);
   }
   columns = buildColumns(tree, primaryLR);
@@ -4731,7 +4822,7 @@ TextWordList *TextPage::makeWordList() {
   dumpColumns(columns, gTrue);
 #endif
   delete tree;
-  unrotateChars(chars, rot);
+  unrotateChars(charList, rot);
   if (control.html) {
     rotateUnderlinesAndLinks(rot);
     generateUnderlinesAndLinks(columns);
@@ -4791,9 +4882,9 @@ void TextPage::dumpChars(GList *charsA) {
 
   for (i = 0; i < charsA->getLength(); ++i) {
     ch = (TextChar *)charsA->get(i);
-    printf("char: U+%04x '%c' xMin=%g yMin=%g xMax=%g yMax=%g fontSize=%g rot=%d charPos=%d charLen=%d\n",
+    printf("char: U+%04x '%c' xMin=%g yMin=%g xMax=%g yMax=%g fontSize=%g rot=%d charPos=%d charLen=%d spaceAfter=%d\n",
 	   ch->c, ch->c & 0xff, ch->xMin, ch->yMin, ch->xMax, ch->yMax,
-	   ch->fontSize, ch->rot, ch->charPos, ch->charLen);
+	   ch->fontSize, ch->rot, ch->charPos, ch->charLen, ch->spaceAfter);
   }
 }
 
@@ -5178,6 +5269,11 @@ GBool TextOutputDev::findCharRange(int pos, int length,
 
 TextWordList *TextOutputDev::makeWordList() {
   return text->makeWordList();
+}
+
+TextWordList *TextOutputDev::makeWordListForRect(double xMin, double yMin,
+						 double xMax, double yMax) {
+  return text->makeWordListForRect(xMin, yMin, xMax, yMax);
 }
 
 TextPage *TextOutputDev::takeText() {

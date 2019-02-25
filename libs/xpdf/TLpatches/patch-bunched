@@ -1,6 +1,6 @@
-diff -ur xpdf-4.00/goo/gfile.cc xpdf-src/goo/gfile.cc
---- xpdf-4.00/goo/gfile.cc	Wed Aug 09 08:22:50 2017
-+++ xpdf-src/goo/gfile.cc	Wed Oct 03 00:39:16 2018
+diff -ur xpdf-4.01/goo/gfile.cc xpdf-src/goo/gfile.cc
+--- xpdf-4.01/goo/gfile.cc	Tue Feb 19 03:24:19 2019
++++ xpdf-src/goo/gfile.cc	Mon Feb 25 11:09:32 2019
 @@ -7,6 +7,9 @@
  // Copyright 1996-2003 Glyph & Cog, LLC
  //
@@ -11,7 +11,7 @@ diff -ur xpdf-4.00/goo/gfile.cc xpdf-src/goo/gfile.cc
  
  #include <aconf.h>
  
-@@ -51,7 +54,11 @@
+@@ -52,7 +55,11 @@
    char *s;
    GString *ret;
  
@@ -23,7 +23,7 @@ diff -ur xpdf-4.00/goo/gfile.cc xpdf-src/goo/gfile.cc
      ret = new GString(s);
    else
      ret = new GString(".");
-@@ -400,6 +407,7 @@
+@@ -401,6 +408,7 @@
  #endif
  }
  
@@ -31,11 +31,11 @@ diff -ur xpdf-4.00/goo/gfile.cc xpdf-src/goo/gfile.cc
  GBool openTempFile(GString **name, FILE **f,
  		   const char *mode, const char *ext) {
  #if defined(_WIN32)
-@@ -514,10 +522,11 @@
+@@ -515,10 +523,11 @@
    return gTrue;
  #endif
  }
-+#endif
++#endif /* !PDF_PARSER_ONLY */
  
  GBool createDir(char *path, int mode) {
  #ifdef _WIN32
@@ -44,26 +44,51 @@ diff -ur xpdf-4.00/goo/gfile.cc xpdf-src/goo/gfile.cc
  #else
    return !mkdir(path, mode);
  #endif
-@@ -571,6 +580,8 @@
+@@ -572,6 +581,8 @@
  
  FILE *openFile(const char *path, const char *mode) {
- #ifdef _WIN32
+ #if defined(_WIN32)
 +  return fopen(path, mode);
 +#if 0
    OSVERSIONINFO version;
    wchar_t wPath[_MAX_PATH + 1];
    char nPath[_MAX_PATH + 1];
-@@ -627,6 +638,7 @@
+@@ -628,6 +639,7 @@
      nPath[i] = '\0';
      return fopen(nPath, mode);
    }
 +#endif /* 0 */
+ #elif defined(VMS)
+   return fopen(path, mode, "ctx=stm");
  #else
-   return fopen(path, mode);
+@@ -688,6 +700,7 @@
  #endif
-diff -ur xpdf-4.00/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
---- xpdf-4.00/xpdf/GlobalParams.cc	Wed Aug 09 08:22:50 2017
-+++ xpdf-src/xpdf/GlobalParams.cc	Sun Aug 13 13:51:38 2017
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ void fixCommandLine(int *argc, char **argv[]) {
+ #ifdef _WIN32
+   int argcw;
+@@ -713,3 +726,4 @@
+   LocalFree(argvw);
+ #endif
+ }
++#endif /* !PDF_PARSER_ONLY */
+diff -ur xpdf-4.01/goo/gfile.h xpdf-src/goo/gfile.h
+--- xpdf-4.01/goo/gfile.h	Tue Feb 19 03:24:19 2019
++++ xpdf-src/goo/gfile.h	Mon Feb 25 11:07:26 2019
+@@ -114,6 +114,8 @@
+ 
+ // On Windows, this gets the Unicode command line and converts it to
+ // UTF-8.  On other systems, this is a nop.
++#ifndef PDF_PARSER_ONLY
+ extern void fixCommandLine(int *argc, char **argv[]);
++#endif /* !PDF_PARSER_ONLY */
+ 
+ #endif
+diff -ur xpdf-4.01/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
+--- xpdf-4.01/xpdf/GlobalParams.cc	Tue Feb 19 03:24:19 2019
++++ xpdf-src/xpdf/GlobalParams.cc	Mon Feb 25 08:01:11 2019
 @@ -5,6 +5,9 @@
  // Copyright 2001-2003 Glyph & Cog, LLC
  //
@@ -74,7 +99,7 @@ diff -ur xpdf-4.00/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
  
  #include <aconf.h>
  
-@@ -38,8 +41,12 @@
+@@ -39,8 +42,12 @@
  #include "GlobalParams.h"
  
  #ifdef _WIN32
@@ -89,7 +114,7 @@ diff -ur xpdf-4.00/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
  #endif
  
  #if MULTITHREADED
-@@ -677,6 +684,7 @@
+@@ -684,6 +691,7 @@
    f = NULL;
    fileName = NULL;
    if (cfgFileName && cfgFileName[0]) {
@@ -97,7 +122,7 @@ diff -ur xpdf-4.00/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
      fileName = new GString(cfgFileName);
      if (!(f = fopen(fileName->getCString(), "r"))) {
        delete fileName;
-@@ -709,6 +717,7 @@
+@@ -716,6 +724,7 @@
      parseFile(fileName, f);
      delete fileName;
      fclose(f);
@@ -105,7 +130,7 @@ diff -ur xpdf-4.00/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
    }
  }
  
-@@ -2105,8 +2114,11 @@
+@@ -2092,8 +2101,11 @@
  				   base14->fontNum,
  				   displayFontTab[i].obliqueFactor));
        } else {
@@ -117,9 +142,9 @@ diff -ur xpdf-4.00/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
        }
      }
    }
-diff -ur xpdf-4.00/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
---- xpdf-4.00/xpdf/GlobalParams.h	Wed Aug 09 08:22:50 2017
-+++ xpdf-src/xpdf/GlobalParams.h	Sun Aug 13 16:14:54 2017
+diff -ur xpdf-4.01/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
+--- xpdf-4.01/xpdf/GlobalParams.h	Tue Feb 19 03:24:19 2019
++++ xpdf-src/xpdf/GlobalParams.h	Mon Feb 25 08:02:36 2019
 @@ -5,6 +5,9 @@
  // Copyright 2001-2003 Glyph & Cog, LLC
  //
@@ -130,7 +155,7 @@ diff -ur xpdf-4.00/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
  
  #ifndef GLOBALPARAMS_H
  #define GLOBALPARAMS_H
-@@ -217,7 +220,7 @@
+@@ -218,7 +221,7 @@
  
    // Initialize the global parameters by attempting to read a config
    // file.
@@ -139,28 +164,49 @@ diff -ur xpdf-4.00/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
  
    ~GlobalParams();
  
-diff -ur xpdf-4.00/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
---- xpdf-4.00/xpdf/PDFDoc.cc	Wed Aug 09 08:22:50 2017
-+++ xpdf-src/xpdf/PDFDoc.cc	Wed Oct 03 00:39:16 2018
-@@ -147,13 +147,17 @@
+diff -ur xpdf-4.01/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
+--- xpdf-4.01/xpdf/PDFDoc.cc	Tue Feb 19 03:24:19 2019
++++ xpdf-src/xpdf/PDFDoc.cc	Mon Feb 25 08:16:35 2019
+@@ -147,20 +147,25 @@
  
-   // try to open file
-   // NB: _wfopen is only available in NT
+ PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
+ 	       GString *userPassword, PDFCore *coreA) {
 +/*
-   version.dwOSVersionInfoSize = sizeof(version);
-   GetVersionEx(&version);
+ #ifdef _WIN32
+   OSVERSIONINFO version;
+ #endif
++*/
+   Object obj;
++/*
+ #ifdef _WIN32
+   Unicode u;
+   int n, i, j;
+ #endif
++*/
+ 
+   init(coreA);
+ 
+   fileName = new GString(fileNameA);
+ 
+ #if defined(_WIN32)
++#if 0
+   n = 0;
+   i = 0;
+   while (getUTF8(fileName, &i, &u)) {
+@@ -178,8 +183,12 @@
    if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
      file = _wfopen(fileNameU, L"rb");
    } else {
-+*/
++#endif /* 0 */
      file = fopen(fileName->getCString(), "rb");
-+/*
++#if 0
    }
-+*/
-   if (!file) {
-     error(errIO, -1, "Couldn't open file '{0:t}'", fileName);
-     errCode = errOpenFile;
-@@ -535,6 +539,7 @@
++#endif /* 0 */
++
+ #elif defined(VMS)
+   file = fopen(fileName->getCString(), "rb", "ctx=stm");
+ #else
+@@ -571,6 +580,7 @@
    GBool ret;
  
    // NB: _wfopen is only available in NT
@@ -168,7 +214,7 @@ diff -ur xpdf-4.00/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
    version.dwOSVersionInfoSize = sizeof(version);
    GetVersionEx(&version);
    if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
-@@ -544,12 +549,15 @@
+@@ -580,12 +590,15 @@
      path2w[i] = 0;
      f = _wfopen(path2w, L"wb");
    } else {
@@ -184,9 +230,9 @@ diff -ur xpdf-4.00/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
    if (!f) {
      return gFalse;
    }
-diff -ur xpdf-4.00/xpdf/Page.cc xpdf-src/xpdf/Page.cc
---- xpdf-4.00/xpdf/Page.cc	Wed Aug 09 08:22:50 2017
-+++ xpdf-src/xpdf/Page.cc	Sun Aug 13 13:24:08 2017
+diff -ur xpdf-4.01/xpdf/Page.cc xpdf-src/xpdf/Page.cc
+--- xpdf-4.01/xpdf/Page.cc	Tue Feb 19 03:24:19 2019
++++ xpdf-src/xpdf/Page.cc	Mon Feb 25 08:19:00 2019
 @@ -480,9 +480,9 @@
    delete links;
  }
@@ -205,10 +251,10 @@ diff -ur xpdf-4.00/xpdf/Page.cc xpdf-src/xpdf/Page.cc
 -}
  #endif
 +}
-diff -ur xpdf-4.00/xpdf/XFAForm.cc xpdf-src/xpdf/XFAForm.cc
---- xpdf-4.00/xpdf/XFAForm.cc	Wed Aug 09 08:22:50 2017
-+++ xpdf-src/xpdf/XFAForm.cc	Sun Aug 13 14:28:34 2017
-@@ -27,8 +27,10 @@
+diff -ur xpdf-4.01/xpdf/XFAForm.cc xpdf-src/xpdf/XFAForm.cc
+--- xpdf-4.01/xpdf/XFAForm.cc	Tue Feb 19 03:24:19 2019
++++ xpdf-src/xpdf/XFAForm.cc	Mon Feb 25 08:20:00 2019
+@@ -28,8 +28,10 @@
  #include "XFAForm.h"
  
  #ifdef _WIN32
@@ -221,9 +267,9 @@ diff -ur xpdf-4.00/xpdf/XFAForm.cc xpdf-src/xpdf/XFAForm.cc
  #endif
  
  //------------------------------------------------------------------------
-diff -ur xpdf-4.00/xpdf/config.h xpdf-src/xpdf/config.h
---- xpdf-4.00/xpdf/config.h	Wed Aug 09 08:22:50 2017
-+++ xpdf-src/xpdf/config.h	Sun Aug 13 16:14:54 2017
+diff -ur xpdf-4.01/xpdf/config.h xpdf-src/xpdf/config.h
+--- xpdf-4.01/xpdf/config.h	Tue Feb 19 03:24:19 2019
++++ xpdf-src/xpdf/config.h	Mon Feb 25 08:21:02 2019
 @@ -78,11 +78,6 @@
  // popen
  //------------------------------------------------------------------------

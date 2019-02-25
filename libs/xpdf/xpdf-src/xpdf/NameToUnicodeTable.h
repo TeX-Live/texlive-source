@@ -2785,6 +2785,7 @@ static struct {
   {0x30ce, "nokatakana"},
   {0xff89, "nokatakanahalfwidth"},
   {0x00a0, "nonbreakingspace"},
+  {0x00a0, "nobreakspace"},
   {0x0e13, "nonenthai"},
   {0x0e19, "nonuthai"},
   {0x0646, "noonarabic"},

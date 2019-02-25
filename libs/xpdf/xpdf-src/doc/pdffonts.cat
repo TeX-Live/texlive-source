@@ -3,7 +3,7 @@ pdffonts(1)                 General Commands Manual                pdffonts(1)
 
 
 NAME
-       pdffonts - Portable Document Format (PDF) font analyzer (version 4.00)
+       pdffonts - Portable Document Format (PDF) font analyzer (version 4.01)
 
 SYNOPSIS
        pdffonts [options] [PDF-file]
@@ -105,7 +105,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdffonts software and documentation are copyright 1996-2017 Glyph &
+       The pdffonts software and documentation are copyright 1996-2019 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -115,4 +115,4 @@ SEE ALSO
 
 
 
-                                  10 Aug 2017                      pdffonts(1)
+                                  18 Feb 2019                      pdffonts(1)

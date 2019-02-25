@@ -195,7 +195,7 @@ void FoFiType1::parse() {
   char buf[256];
   char c;
   int n, code, base, i, j;
-  GBool gotMatrix;
+  GBool gotMatrix, startsWithDup, endsWithDup;
 
   gotMatrix = gFalse;
   for (i = 1, line = (char *)file;
@@ -231,9 +231,14 @@ void FoFiType1::parse() {
 	strncpy(buf, line, n);
 	buf[n] = '\0';
 	for (p = buf; *p == ' ' || *p == '\t'; ++p) ;
-	if (!strncmp(p, "dup", 3)) {
-	  while (1) {
+	endsWithDup = !strncmp(line - 4, "dup\x0a", 4) ||
+	              !strncmp(line - 5, "dup\x0d", 4);
+	startsWithDup = !strncmp(p, "dup", 3);
+	if (endsWithDup || startsWithDup) {
+	  if (startsWithDup) {
 	    p += 3;
+	  }
+	  while (1) {
 	    for (; *p == ' ' || *p == '\t'; ++p) ;
 	    code = 0;
 	    if (*p == '8' && p[1] == '#') {
@@ -268,6 +273,7 @@ void FoFiType1::parse() {
 	    if (strncmp(p, "dup", 3)) {
 	      break;
 	    }
+	    p += 3;
 	  }
 	} else {
 	  if (strtok(buf, " \t") &&

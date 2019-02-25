@@ -4,7 +4,7 @@ pdftops(1)                  General Commands Manual                 pdftops(1)
 
 NAME
        pdftops  - Portable Document Format (PDF) to PostScript converter (ver-
-       sion 4.00)
+       sion 4.01)
 
 SYNOPSIS
        pdftops [options] [PDF-file [PS-file]]
@@ -201,7 +201,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The  pdftops software and documentation are copyright 1996-2017 Glyph &
+       The  pdftops software and documentation are copyright 1996-2019 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -211,4 +211,4 @@ SEE ALSO
 
 
 
-                                  10 Aug 2017                       pdftops(1)
+                                  18 Feb 2019                       pdftops(1)

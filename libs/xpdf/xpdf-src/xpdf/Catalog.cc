@@ -453,8 +453,13 @@ GBool Catalog::readPageTree(Object *catDict) {
   }
   if (topPagesObj.dictLookup("Count", &countObj)->isInt()) {
     numPages = countObj.getInt();
-    if (numPages == 0) {
-      // Acrobat apparently scans the page tree if it sees a zero count
+    if (numPages == 0 || numPages > 50000) {
+      // 1. Acrobat apparently scans the page tree if it sees a zero
+      //    count.
+      // 2. Absurdly large page counts result in very slow loading,
+      //    because other code tries to fetch pages 1 through n.
+      // In both cases: ignore the given page count and scan the tree
+      // instead.
       numPages = countPageTree(&topPagesObj);
     }
   } else {

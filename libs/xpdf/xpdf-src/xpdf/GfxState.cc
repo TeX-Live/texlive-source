@@ -94,6 +94,7 @@ static const char *gfxColorSpaceModeNames[] = {
 
 
 
+
 //------------------------------------------------------------------------
 // GfxColorSpace
 //------------------------------------------------------------------------
@@ -233,6 +234,7 @@ void GfxDeviceGrayColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
 }
 
 
+
 void GfxDeviceGrayColorSpace::getDefaultColor(GfxColor *color) {
   color->c[0] = 0;
 }
@@ -319,8 +321,8 @@ void GfxCalGrayColorSpace::getGray(GfxColor *color, GfxGray *gray,
   *gray = clip01(color->c[0]);
 }
 
- void GfxCalGrayColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
-				   GfxRenderingIntent ri) {
+void GfxCalGrayColorSpace::getRGB(GfxColor *color, GfxRGB *rgb,
+				  GfxRenderingIntent ri) {
   rgb->r = rgb->g = rgb->b = clip01(color->c[0]);
 }
 
@@ -329,6 +331,7 @@ void GfxCalGrayColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
   cmyk->c = cmyk->m = cmyk->y = 0;
   cmyk->k = clip01(gfxColorComp1 - color->c[0]);
 }
+
 
 
 void GfxCalGrayColorSpace::getDefaultColor(GfxColor *color) {
@@ -386,6 +389,7 @@ void GfxDeviceRGBColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
   cmyk->y = y - k;
   cmyk->k = k;
 }
+
 
 
 void GfxDeviceRGBColorSpace::getDefaultColor(GfxColor *color) {
@@ -534,6 +538,7 @@ void GfxCalRGBColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
 }
 
 
+
 void GfxCalRGBColorSpace::getDefaultColor(GfxColor *color) {
   color->c[0] = 0;
   color->c[1] = 0;
@@ -636,6 +641,7 @@ void GfxDeviceCMYKColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
   cmyk->y = clip01(color->c[2]);
   cmyk->k = clip01(color->c[3]);
 }
+
 
 
 void GfxDeviceCMYKColorSpace::getDefaultColor(GfxColor *color) {
@@ -834,6 +840,7 @@ void GfxLabColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
 }
 
 
+
 void GfxLabColorSpace::getDefaultColor(GfxColor *color) {
   color->c[0] = 0;
   if (aMin > 0) {
@@ -989,6 +996,7 @@ void GfxICCBasedColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
 }
 
 
+
 void GfxICCBasedColorSpace::getDefaultColor(GfxColor *color) {
   int i;
 
@@ -1097,6 +1105,9 @@ GfxColorSpace *GfxIndexedColorSpace::parse(Array *arr,
 	  error(errSyntaxError, -1,
 		"Bad Indexed color space (lookup table stream too short)");
 	  cs->indexHigh = indexHighA = i - 1;
+	  if (cs->indexHigh < 0) {
+	    goto err3;
+	  }
 	}
 	cs->lookup[i*n + j] = (Guchar)x;
       }
@@ -1107,6 +1118,9 @@ GfxColorSpace *GfxIndexedColorSpace::parse(Array *arr,
       error(errSyntaxError, -1,
 	    "Bad Indexed color space (lookup table string too short)");
       cs->indexHigh = indexHighA = obj1.getString()->getLength() / n - 1;
+      if (cs->indexHigh < 0) {
+	goto err3;
+      }
     }
     s = obj1.getString()->getCString();
     for (i = 0; i <= indexHighA; ++i) {
@@ -1171,6 +1185,7 @@ void GfxIndexedColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
 
   base->getCMYK(mapColorToBase(color, &color2), cmyk, ri);
 }
+
 
 
 void GfxIndexedColorSpace::getDefaultColor(GfxColor *color) {
@@ -1238,7 +1253,7 @@ GfxColorSpace *GfxSeparationColorSpace::parse(Array *arr,
   GString *nameA;
   GfxColorSpace *altA;
   Function *funcA;
-  Object obj1;
+  Object obj1, obj2;
 
   if (arr->getLength() != 4) {
     error(errSyntaxError, -1, "Bad Separation color space");
@@ -1251,6 +1266,13 @@ GfxColorSpace *GfxSeparationColorSpace::parse(Array *arr,
   nameA = new GString(obj1.getName());
   obj1.free();
   arr->get(2, &obj1);
+  // some PDF generators use an ICC profile stream here; Adobe
+  // apparently looks at the /Alternate entry in the stream dictionary
+  if (obj1.isStream() &&
+      !obj1.streamGetDict()->lookup("Alternate", &obj2)->isNull()) {
+    obj1.free();
+    obj1 = obj2;
+  }
   if (!(altA = GfxColorSpace::parse(&obj1,
 				    recursion + 1))) {
     error(errSyntaxError, -1,
@@ -1321,6 +1343,7 @@ void GfxSeparationColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
   }
   alt->getCMYK(&color2, cmyk, ri);
 }
+
 
 
 void GfxSeparationColorSpace::getDefaultColor(GfxColor *color) {
@@ -1438,6 +1461,13 @@ GfxColorSpace *GfxDeviceNColorSpace::parse(Array *arr,
   }
   obj1.free();
   arr->get(2, &obj1);
+  // some PDF generators use an ICC profile stream here; Adobe
+  // apparently looks at the /Alternate entry in the stream dictionary
+  if (obj1.isStream() &&
+      !obj1.streamGetDict()->lookup("Alternate", &obj2)->isNull()) {
+    obj1.free();
+    obj1 = obj2;
+  }
   if (!(altA = GfxColorSpace::parse(&obj1,
 				    recursion + 1))) {
     error(errSyntaxError, -1,
@@ -1521,6 +1551,7 @@ void GfxDeviceNColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
 }
 
 
+
 void GfxDeviceNColorSpace::getDefaultColor(GfxColor *color) {
   int i;
 
@@ -1593,6 +1624,7 @@ void GfxPatternColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk,
   cmyk->c = cmyk->m = cmyk->y = 0;
   cmyk->k = 1;
 }
+
 
 
 void GfxPatternColorSpace::getDefaultColor(GfxColor *color) {
@@ -3448,25 +3480,26 @@ void GfxPatchMeshShading::getColor(double *in, GfxColor *out) {
 //------------------------------------------------------------------------
 
 GfxImageColorMap::GfxImageColorMap(int bitsA, Object *decode,
-				   GfxColorSpace *colorSpaceA) {
+				   GfxColorSpace *colorSpaceA,
+				   int maxAllowedBits) {
   GfxIndexedColorSpace *indexedCS;
   GfxSeparationColorSpace *sepCS;
   int maxPixel, indexHigh;
   Guchar *indexedLookup;
   Function *sepFunc;
   Object obj;
-  double x[gfxColorMaxComps];
-  double y[gfxColorMaxComps];
+  double defaultLow[gfxColorMaxComps], defaultRange[gfxColorMaxComps];
+  double x[gfxColorMaxComps], y[gfxColorMaxComps];
   int i, j, k;
 
   ok = gTrue;
 
   // bits per component and color space
   bits = bitsA;
-  if (bits <= 8) {
+  if (bits <= maxAllowedBits) {
     maxPixel = (1 << bits) - 1;
   } else {
-    maxPixel = 0xff;
+    maxPixel = (1 << maxAllowedBits) - 1;
   }
   colorSpace = colorSpaceA;
 
@@ -3477,9 +3510,13 @@ GfxImageColorMap::GfxImageColorMap(int bitsA, Object *decode,
   }
 
   // get decode map
+  colorSpace->getDefaultRanges(defaultLow, defaultRange, maxPixel);
   if (decode->isNull()) {
     nComps = colorSpace->getNComps();
-    colorSpace->getDefaultRanges(decodeLow, decodeRange, maxPixel);
+    for (i = 0; i < nComps; ++i) {
+      decodeLow[i] = defaultLow[i];
+      decodeRange[i] = defaultRange[i];
+    }
   } else if (decode->isArray()) {
     nComps = decode->arrayGetLength() / 2;
     if (nComps < colorSpace->getNComps()) {
@@ -3514,8 +3551,13 @@ GfxImageColorMap::GfxImageColorMap(int bitsA, Object *decode,
     lookup[k] = (GfxColorComp *)gmallocn(maxPixel + 1,
 					 sizeof(GfxColorComp));
     for (i = 0; i <= maxPixel; ++i) {
-      lookup[k][i] = dblToCol(decodeLow[k] +
-			      (i * decodeRange[k]) / maxPixel);
+      double t = decodeLow[k] + (i * decodeRange[k]) / maxPixel;
+      if (t < defaultLow[k]) {
+	t = defaultLow[k];
+      } else if (t > defaultLow[k] + defaultRange[k]) {
+	t = defaultLow[k] + defaultRange[k];
+      }
+      lookup[k][i] = dblToCol(t);
     }
   }
 
@@ -3560,7 +3602,13 @@ GfxImageColorMap::GfxImageColorMap(int bitsA, Object *decode,
 					    sizeof(GfxColorComp));
     }
     for (i = 0; i <= maxPixel; ++i) {
-      x[0] = decodeLow[0] + (i * decodeRange[0]) / maxPixel;
+      double t = decodeLow[0] + (i * decodeRange[0]) / maxPixel;
+      if (t < defaultLow[0]) {
+	t = defaultLow[0];
+      } else if (t > defaultLow[0] + defaultRange[0]) {
+	t = defaultLow[0] + defaultRange[0];
+      }
+      x[0] = t;
       sepFunc->transform(x, y);
       for (k = 0; k < nComps2; ++k) {
 	lookup2[k][i] = dblToCol(y[k]);
@@ -3682,15 +3730,10 @@ void GfxImageColorMap::getCMYK(Guchar *x, GfxCMYK *cmyk,
 
 
 void GfxImageColorMap::getColor(Guchar *x, GfxColor *color) {
-  int maxPixel, i;
+  int i;
 
-  if (bits <= 8) {
-    maxPixel = (1 << bits) - 1;
-  } else {
-    maxPixel = 0xff;
-  }
   for (i = 0; i < nComps; ++i) {
-    color->c[i] = dblToCol(decodeLow[i] + (x[i] * decodeRange[i]) / maxPixel);
+    color->c[i] = lookup[i][x[i]];
   }
 }
 
@@ -3778,6 +3821,7 @@ void GfxImageColorMap::getCMYKByteLine(Guchar *in, Guchar *out, int n,
     }
   }
 }
+
 
 //------------------------------------------------------------------------
 // GfxSubpath and GfxPath
@@ -4077,6 +4121,8 @@ GfxState::GfxState(double hDPIA, double vDPIA, PDFRectangle *pageBox,
   clipYMin = 0;
   clipXMax = pageWidth;
   clipYMax = pageHeight;
+
+  inCachedT3Char = gFalse;
 
   saved = NULL;
 }

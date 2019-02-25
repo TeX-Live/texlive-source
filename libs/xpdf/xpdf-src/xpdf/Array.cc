@@ -51,7 +51,7 @@ void Array::add(Object *elem) {
   ++length;
 }
 
-Object *Array::get(int i, Object *obj) {
+Object *Array::get(int i, Object *obj, int recursion) {
   if (i < 0 || i >= length) {
 #ifdef DEBUG_MEM
     abort();
@@ -59,7 +59,7 @@ Object *Array::get(int i, Object *obj) {
     return obj->initNull();
 #endif
   }
-  return elems[i].fetch(xref, obj);
+  return elems[i].fetch(xref, obj, recursion);
 }
 
 Object *Array::getNF(int i, Object *obj) {

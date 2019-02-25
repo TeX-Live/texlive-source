@@ -32,6 +32,7 @@
 #    include <unixlib.h>
 #  endif
 #endif // _WIN32
+#include "gmem.h"
 #include "gmempp.h"
 #include "GString.h"
 #include "gfile.h"
@@ -291,7 +292,7 @@ GString *grabPath(char *fileName) {
   char *p;
 
   if ((p = strrchr(fileName, '/')))
-    return new GString(fileName, p - fileName);
+    return new GString(fileName, (int)(p - fileName));
   return new GString();
 #endif
 }
@@ -372,12 +373,12 @@ GString *makePathAbsolute(GString *path) {
 #else
       for (p2 = p1; *p2 && *p2 != '/'; ++p2) ;
 #endif
-      if ((n = p2 - p1) > PATH_MAX)
+      if ((n = (int)(p2 - p1)) > PATH_MAX)
 	n = PATH_MAX;
       strncpy(buf, p1, n);
       buf[n] = '\0';
       if ((pw = getpwnam(buf))) {
-	path->del(0, p2 - p1 + 1);
+	path->del(0, (int)(p2 - p1 + 1));
 	path->insert(0, pw->pw_dir);
       }
     }
@@ -488,7 +489,7 @@ GBool openTempFile(GString **name, FILE **f,
       *name = new GString("/tmp");
     }
     (*name)->append("/XXXXXX")->append(ext);
-    fd = mkstemps((*name)->getCString(), strlen(ext));
+    fd = mkstemps((*name)->getCString(), (int)strlen(ext));
 #else
     if (!(s = tmpnam(NULL))) {
       return gFalse;
@@ -522,7 +523,7 @@ GBool openTempFile(GString **name, FILE **f,
   return gTrue;
 #endif
 }
-#endif
+#endif /* !PDF_PARSER_ONLY */
 
 GBool createDir(char *path, int mode) {
 #ifdef _WIN32
@@ -579,7 +580,7 @@ GString *fileNameToUTF8(wchar_t *path) {
 #endif
 
 FILE *openFile(const char *path, const char *mode) {
-#ifdef _WIN32
+#if defined(_WIN32)
   return fopen(path, mode);
 #if 0
   OSVERSIONINFO version;
@@ -612,7 +613,7 @@ FILE *openFile(const char *path, const char *mode) {
       }
     }
     wPath[i] = (wchar_t)0;
-    for (i = 0; mode[i] && i < sizeof(mode) - 1; ++i) {
+    for (i = 0; mode[i] && i < sizeof(wMode) - 1; ++i) {
       wMode[i] = (wchar_t)(mode[i] & 0xff);
     }
     wMode[i] = (wchar_t)0;
@@ -639,6 +640,8 @@ FILE *openFile(const char *path, const char *mode) {
     return fopen(nPath, mode);
   }
 #endif /* 0 */
+#elif defined(VMS)
+  return fopen(path, mode, "ctx=stm");
 #else
   return fopen(path, mode);
 #endif
@@ -696,3 +699,31 @@ GFileOffset gftell(FILE *f) {
   return ftell(f);
 #endif
 }
+
+#ifndef PDF_PARSER_ONLY
+void fixCommandLine(int *argc, char **argv[]) {
+#ifdef _WIN32
+  int argcw;
+  wchar_t **argvw;
+  GString *arg;
+  int i;
+
+  argvw = CommandLineToArgvW(GetCommandLineW(), &argcw);
+  if (!argvw || argcw < 0) {
+    return;
+  }
+
+  *argc = argcw;
+
+  *argv = (char **)gmallocn(argcw + 1, sizeof(char *));
+  for (i = 0; i < argcw; ++i) {
+    arg = fileNameToUTF8(argvw[i]);
+    (*argv)[i] = copyString(arg->getCString());
+    delete arg;
+  }
+  (*argv)[argcw] = NULL;
+
+  LocalFree(argvw);
+#endif
+}
+#endif /* !PDF_PARSER_ONLY */

@@ -37,11 +37,11 @@ public:
 
   // Reference counting.
 #if MULTITHREADED
-  int incRef() { return gAtomicIncrement(&ref); }
-  int decRef() { return gAtomicDecrement(&ref); }
+  long incRef() { return gAtomicIncrement(&ref); }
+  long decRef() { return gAtomicDecrement(&ref); }
 #else
-  int incRef() { return ++ref; }
-  int decRef() { return --ref; }
+  long incRef() { return ++ref; }
+  long decRef() { return --ref; }
 #endif
 
   // Get number of entries.
@@ -78,7 +78,7 @@ private:
 #if MULTITHREADED
   GAtomicCounter ref;		// reference count
 #else
-  int ref;			// reference count
+  long ref;			// reference count
 #endif
 
   DictEntry *find(const char *key);

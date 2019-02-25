@@ -989,7 +989,6 @@ int TileMap::getPageLeftX(int page) {
     }
     offsetX2 = offsetX + pageW1 + sideBySidePageSpacing;
     return (page == leftPage) ? offsetX : offsetX2;
-    return 0;
   case displaySideBySideContinuous:
     leftPage = ((page - 1) & ~1) + 1;
     rightPage = leftPage + 1;
@@ -1005,6 +1004,68 @@ int TileMap::getPageLeftX(int page) {
     return (page == leftPage) ? offsetX : offsetX2;
   case displayHorizontalContinuous:
     return pageX[page - 1];
+  }
+}
+
+int TileMap::getPageRightX(int page) {
+  int leftPage, rightPage, pageW1, pageW2, offsetX, offsetX2;
+
+  if (!state->getDoc() || !state->getDoc()->getNumPages()) {
+    return 0;
+  }
+
+  updatePageParams();
+  updateContinuousModeParams();
+
+  switch (state->getDisplayMode()) {
+  case displaySingle:
+  default:
+    return pageW[page - 1] - state->getWinW();
+  case displayContinuous:
+    return (maxW + pageW[page - 1]) / 2 - state->getWinW();
+  case displaySideBySideSingle:
+    leftPage = ((page - 1) & ~1) + 1;
+    rightPage = leftPage + 1;
+    pageW1 = pageW[leftPage - 1];
+    if (rightPage <= state->getDoc()->getNumPages()) {
+      pageW2 = pageW[rightPage - 1];
+    } else {
+      // display a single page as though there were a blank facing
+      // page of the same size
+      pageW2 = pageW1;
+    }
+    if (pageW1 + sideBySidePageSpacing + pageW2 < state->getWinW()) {
+      offsetX = (state->getWinW() -
+		 (pageW1 + sideBySidePageSpacing + pageW2)) / 2;
+    } else {
+      offsetX = 0;
+    }
+    offsetX2 = offsetX + pageW1 + sideBySidePageSpacing;
+    return (page == leftPage) ? offsetX + pageW1 - state->getWinW()
+                              : offsetX2 + pageW2 - state->getWinW();
+  case displaySideBySideContinuous:
+    leftPage = ((page - 1) & ~1) + 1;
+    rightPage = leftPage + 1;
+    pageW1 = pageW[leftPage - 1];
+    if (rightPage <= state->getDoc()->getNumPages()) {
+      pageW2 = pageW[rightPage - 1];
+    } else {
+      // display a single page as though there were a blank facing
+      // page of the same size
+      pageW2 = pageW1;
+    }
+    if (maxW + sideBySidePageSpacing + maxW2 < state->getWinW()) {
+      offsetX = (state->getWinW() -
+		 (maxW + sideBySidePageSpacing + maxW2)) / 2;
+    } else {
+      offsetX = 0;
+    }
+    offsetX += maxW - pageW1;
+    offsetX2 = offsetX + pageW1 + sideBySidePageSpacing;
+    return (page == leftPage) ? offsetX + pageW1 - state->getWinW()
+                              : offsetX2 + pageW2 - state->getWinW();
+  case displayHorizontalContinuous:
+    return pageX[page - 1] + pageW[page - 1] - state->getWinW();
   }
 }
 

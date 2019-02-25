@@ -292,8 +292,13 @@ int HTMLGen::convertPage(
   png_destroy_write_struct(&png, &pngInfo);
 
   // page size
-  pageW = doc->getPageCropWidth(pg);
-  pageH = doc->getPageCropHeight(pg);
+  if (doc->getPageRotate(pg) == 90 || doc->getPageRotate(pg) == 270) {
+    pageW = doc->getPageCropHeight(pg);
+    pageH = doc->getPageCropWidth(pg);
+  } else {
+    pageW = doc->getPageCropWidth(pg);
+    pageH = doc->getPageCropHeight(pg);
+  }
 
   // get the PDF text
   doc->displayPage(textOut, pg, 72, 72, 0, gFalse, gTrue, gFalse);
@@ -563,27 +568,27 @@ void HTMLGen::appendUTF8(Unicode u, GString *s) {
     s->append((char)(0xc0 + (u >> 6)));
     s->append((char)(0x80 + (u & 0x3f)));
   } else if (u <= 0xffff) {
-    s->append((char)0xe0 + (u >> 12));
-    s->append((char)0x80 + ((u >> 6) & 0x3f));
-    s->append((char)0x80 + (u & 0x3f));
+    s->append((char)(0xe0 + (u >> 12)));
+    s->append((char)(0x80 + ((u >> 6) & 0x3f)));
+    s->append((char)(0x80 + (u & 0x3f)));
   } else if (u <= 0x1fffff) {
-    s->append((char)0xf0 + (u >> 18));
-    s->append((char)0x80 + ((u >> 12) & 0x3f));
-    s->append((char)0x80 + ((u >> 6) & 0x3f));
-    s->append((char)0x80 + (u & 0x3f));
+    s->append((char)(0xf0 + (u >> 18)));
+    s->append((char)(0x80 + ((u >> 12) & 0x3f)));
+    s->append((char)(0x80 + ((u >> 6) & 0x3f)));
+    s->append((char)(0x80 + (u & 0x3f)));
   } else if (u <= 0x3ffffff) {
-    s->append((char)0xf8 + (u >> 24));
-    s->append((char)0x80 + ((u >> 18) & 0x3f));
-    s->append((char)0x80 + ((u >> 12) & 0x3f));
-    s->append((char)0x80 + ((u >> 6) & 0x3f));
-    s->append((char)0x80 + (u & 0x3f));
+    s->append((char)(0xf8 + (u >> 24)));
+    s->append((char)(0x80 + ((u >> 18) & 0x3f)));
+    s->append((char)(0x80 + ((u >> 12) & 0x3f)));
+    s->append((char)(0x80 + ((u >> 6) & 0x3f)));
+    s->append((char)(0x80 + (u & 0x3f)));
   } else if (u <= 0x7fffffff) {
-    s->append((char)0xfc + (u >> 30));
-    s->append((char)0x80 + ((u >> 24) & 0x3f));
-    s->append((char)0x80 + ((u >> 18) & 0x3f));
-    s->append((char)0x80 + ((u >> 12) & 0x3f));
-    s->append((char)0x80 + ((u >> 6) & 0x3f));
-    s->append((char)0x80 + (u & 0x3f));
+    s->append((char)(0xfc + (u >> 30)));
+    s->append((char)(0x80 + ((u >> 24) & 0x3f)));
+    s->append((char)(0x80 + ((u >> 18) & 0x3f)));
+    s->append((char)(0x80 + ((u >> 12) & 0x3f)));
+    s->append((char)(0x80 + ((u >> 6) & 0x3f)));
+    s->append((char)(0x80 + (u & 0x3f)));
   }
 }
 

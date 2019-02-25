@@ -92,7 +92,7 @@ static void finishPNG(png_structp *png, png_infop *pngInfo);
 
 int main(int argc, char *argv[]) {
   PDFDoc *doc;
-  GString *fileName;
+  char *fileName;
   char *pngRoot;
   GString *pngFile;
   GString *ownerPW, *userPW;
@@ -108,6 +108,7 @@ int main(int argc, char *argv[]) {
   exitCode = 99;
 
   // parse args
+  fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (mono && gray) {
     fprintf(stderr, "Specify one of -mono or -gray\n");
@@ -125,7 +126,7 @@ int main(int argc, char *argv[]) {
     }
     goto err0;
   }
-  fileName = new GString(argv[1]);
+  fileName = argv[1];
   pngRoot = argv[2];
 
   // read config file

@@ -2454,3 +2454,88 @@ Fixed a security hole in SecurityHandler.cc (uninitialized variables).
 Fixed a security hole in Function.cc (write past end of array).
 Fixed a security hole with the use of d0/d1 operators outside of a
   Type3 CharProc [CVE-2016-9027].
+
+4.01 (2019-feb-18)
+------------------
+Added remote server mode back into xpdf.
+Add support for Unicode file names for the command line tools on
+  Windows.
+Added the tabStateFile setting, the saveTabState/loadTabState
+  commands, and the "-tabstate" switch to xpdf.  [Thanks to Christian
+  Barthel for the suggestion.]
+Added the defaultPrinter xpdfrc setting.
+Removed the psFile xpdfrc option (should have been removed in the 4.00
+  release).
+Tweaked the TrueType encoding/cmap code again, to get closer to the
+  PDF 2.0 spec, and to fix a problem (difference between Xpdf and
+  Adobe) with a specific PDF file.
+Optimized transparency group rasterization: only composite the part of
+  the group bitmap that was modified.
+If vector antialiasing is disabled, use the narrow stroke code for
+  lines less than one pixel wide.
+Do not map through Unicode for non-embedded CID TrueType fonts with
+  encoding = Identity-H and char collection = Adobe-Identity -- this
+  matches Adobe's behavior on a somewhat common case.
+The CCITTFax decoder now aborts after 1000 error messages, avoiding
+  problems with huge data expansion for badly corrupted CCITTFax
+  streams.
+The xref loop detection code was only looking at xref tables, and not
+  xref streams.  (CVE-2018-7174)  [Thanks to skysider for the bug
+  report.]
+The JPX decoder wasn't checking to make sure the number of components
+  is non-zero.  (CVE-2018-7175)  [Thanks to skysider for the bug
+  report.]
+Modify the lexer to accept leading '+' signs on numbers.
+Pdftohtml wasn't setting the background image width/height attributes
+  correctly for rotated pages.
+Ignore color-setting operators in cached Type 3 characters.
+Support color-key masking in Level3Gray PS output with preload.
+Xpdf was crashing on zero-page PDF files.
+Added the unicodeRemapping xpdfrc option.
+Change the cursor when the mouse is over text (in linear selection
+  mode).
+Support external OpenType CFF fonts for PostScript output.
+Handle choice-type AcroForm fields that have separate display values
+  and export values.
+Increased the supported PDF version from 1.7 to 2.0.  (This isn't a
+  change in functionality.  The code was already in place -- I just
+  forgot to bump the PDF version number.)
+Added the dropFont xpdfrc option.
+Added support for PDF417 barcodes in XFA forms.
+Modified pdfinfo to look at both the Info dict and the XML metadata.
+Check for invalid line cap/join values.  [Thanks to
+  fish@360TeamSeri0us for the bug report.]
+Modified the object stream cache to hold onto more object streams, if
+  they're being used.
+Don't look at the "DV" (default value) key in AcroForm fields -- that
+  should only be used when a form is explicitly reset.
+Accept 8-byte values in xref streams.
+Two DCTStream bugs: don't allow SOF headers between progressive scans;
+  check for invalid Huffman table indexes.  [Thanks to
+  fish@360TeamSeri0us for the bug reports.]
+Check for uses of the scn/SCN operators with no arguments.  [Thanks to
+  fish@360TeamSeri0us for the bug report.]
+Correctly handle indexed color spaces with empty lookup tables.
+  [Thanks to fish@360TeamSeri0us for the bug report.]
+Support large bitmaps (>4GB) on 64-bit systems.
+Soft masks are always isolated.
+When "undoing" preblended image/softmask data, clip the resulting
+  color values to avoid problems with incorrect data.
+Set the default text encoding to UCS-2 in Xpdf, so that copying to the
+  clipboard works as expected.
+Added a sanity check for JBIG2 symbol height.  (CVE-2018-7173)
+  [Reported by skysider.]
+Check for uninitialized value in JPXStream::fillReadBuf.
+  (CVE-2018-7452)  [Thanks to skysider for the bug report.]
+Don't try to load an XFAForm if the PDF file has zero pages.
+  (CVE-2018-7454)  [Thanks to skysider for the bug report.]
+Check for invalid line cap/join values.  (CVE-2018-16368)  [Thanks to
+  fish@360TeamSeri0us for the bug report.]
+If the page count is greater than 50k, rescan the page tree and count
+  the pages.  This prevents long load times where various tools try to
+  read pages 1 through n.  (CVE-2018-18651)  [Thanks to krace for the
+  bug report.]
+Handle a null font name in PSOutputDev::setupEmbeddedType1Font.
+  [Thanks to r4xis for the bug report.]
+Check for invalid quant table indexes in the DCT decoder.  [Thanks to
+  r4xis for the bug report.]

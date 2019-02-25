@@ -168,7 +168,7 @@ public:
   // Array accessors.
   int arrayGetLength();
   void arrayAdd(Object *elem);
-  Object *arrayGet(int i, Object *obj);
+  Object *arrayGet(int i, Object *obj, int recursion = 0);
   Object *arrayGetNF(int i, Object *obj);
 
   // Dict accessors.
@@ -239,8 +239,8 @@ inline int Object::arrayGetLength()
 inline void Object::arrayAdd(Object *elem)
   { array->add(elem); }
 
-inline Object *Object::arrayGet(int i, Object *obj)
-  { return array->get(i, obj); }
+inline Object *Object::arrayGet(int i, Object *obj, int recursion)
+  { return array->get(i, obj, recursion); }
 
 inline Object *Object::arrayGetNF(int i, Object *obj)
   { return array->getNF(i, obj); }

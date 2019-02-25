@@ -86,6 +86,7 @@ public:
   // Set the transfer function.
   void setTransfer(Guchar *red, Guchar *green, Guchar *blue, Guchar *gray);
 
+
 private:
 
   SplashState(SplashState *state);
@@ -124,6 +125,7 @@ private:
 #endif
   Guint overprintMask;
   GBool enablePathSimplification;
+
 
   SplashState *next;		// used by Splash class
 

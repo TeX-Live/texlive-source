@@ -130,48 +130,56 @@ SplashFTFont::SplashFTFont(SplashFTFontFile *fontFileA, SplashCoord *matA,
 #else // USE_FIXEDPOINT
   // transform the four corners of the font bounding box -- the min
   // and max values form the bounding box of the transformed font
-  x = (int)((mat[0] * face->bbox.xMin + mat[2] * face->bbox.yMin) /
+  x = (int)((mat[0] * (SplashCoord)face->bbox.xMin
+	     + mat[2] * (SplashCoord)face->bbox.yMin) /
 	    (div * face->units_per_EM));
   xMin = xMax = x;
-  y = (int)((mat[1] * face->bbox.xMin + mat[3] * face->bbox.yMin) /
+  y = (int)((mat[1] * (SplashCoord)face->bbox.xMin
+	     + mat[3] * (SplashCoord)face->bbox.yMin) /
 	    (div * face->units_per_EM));
   yMin = yMax = y;
-  x = (int)((mat[0] * face->bbox.xMin + mat[2] * face->bbox.yMax) /
+  x = (int)((mat[0] * (SplashCoord)face->bbox.xMin
+	     + mat[2] * (SplashCoord)face->bbox.yMax) /
 	    (div * face->units_per_EM));
   if (x < xMin) {
     xMin = x;
   } else if (x > xMax) {
     xMax = x;
   }
-  y = (int)((mat[1] * face->bbox.xMin + mat[3] * face->bbox.yMax) /
+  y = (int)((mat[1] * (SplashCoord)face->bbox.xMin
+	     + mat[3] * (SplashCoord)face->bbox.yMax) /
 	    (div * face->units_per_EM));
   if (y < yMin) {
     yMin = y;
   } else if (y > yMax) {
     yMax = y;
   }
-  x = (int)((mat[0] * face->bbox.xMax + mat[2] * face->bbox.yMin) /
+  x = (int)((mat[0] * (SplashCoord)face->bbox.xMax
+	     + mat[2] * (SplashCoord)face->bbox.yMin) /
 	    (div * face->units_per_EM));
   if (x < xMin) {
     xMin = x;
   } else if (x > xMax) {
     xMax = x;
   }
-  y = (int)((mat[1] * face->bbox.xMax + mat[3] * face->bbox.yMin) /
+  y = (int)((mat[1] * (SplashCoord)face->bbox.xMax
+	     + mat[3] * (SplashCoord)face->bbox.yMin) /
 	    (div * face->units_per_EM));
   if (y < yMin) {
     yMin = y;
   } else if (y > yMax) {
     yMax = y;
   }
-  x = (int)((mat[0] * face->bbox.xMax + mat[2] * face->bbox.yMax) /
+  x = (int)((mat[0] * (SplashCoord)face->bbox.xMax
+	     + mat[2] * (SplashCoord)face->bbox.yMax) /
 	    (div * face->units_per_EM));
   if (x < xMin) {
     xMin = x;
   } else if (x > xMax) {
     xMax = x;
   }
-  y = (int)((mat[1] * face->bbox.xMax + mat[3] * face->bbox.yMax) /
+  y = (int)((mat[1] * (SplashCoord)face->bbox.xMax
+	     + mat[3] * (SplashCoord)face->bbox.yMax) /
 	    (div * face->units_per_EM));
   if (y < yMin) {
     yMin = y;
@@ -260,7 +268,10 @@ GBool SplashFTFont::makeGlyph(int c, int xFrac, int yFrac,
   //   seems to be very rare (Type 1 fonts are mostly used for
   //   substitution, in which case the full font is being used, which
   //   means we have the glyph names)
-  flags = FT_LOAD_NO_BITMAP;
+  // This also sets the "pedantic" flag, running the FreeType hinter
+  // in paranoid mode.  If that triggers any errors, we disable
+  // hinting below.
+  flags = FT_LOAD_NO_BITMAP | FT_LOAD_PEDANTIC;
   if (ff->engine->flags & splashFTNoHinting) {
     flags |= FT_LOAD_NO_HINTING;
   } else if (ff->fontType == splashFontType1) {

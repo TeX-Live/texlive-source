@@ -26,54 +26,53 @@
 SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPad,
 			   SplashColorMode modeA, GBool alphaA,
 			   GBool topDown) {
+  // NB: this code checks that rowSize fits in a signed 32-bit
+  // integer, because some code (outside this class) makes that
+  // assumption
   width = widthA;
   height = heightA;
   mode = modeA;
   switch (mode) {
   case splashModeMono1:
-    if (width > 0) {
-      rowSize = (width + 7) >> 3;
-    } else {
-      rowSize = -1;
+    if (width <= 0) {
+      gMemError("invalid bitmap width");
     }
+    rowSize = (width + 7) >> 3;
     break;
   case splashModeMono8:
-    if (width > 0) {
-      rowSize = width;
-    } else {
-      rowSize = -1;
+    if (width <= 0) {
+      gMemError("invalid bitmap width");
     }
+    rowSize = width;
     break;
   case splashModeRGB8:
   case splashModeBGR8:
-    if (width > 0 && width <= INT_MAX / 3) {
-      rowSize = width * 3;
-    } else {
-      rowSize = -1;
+    if (width <= 0 || width > INT_MAX / 3) {
+      gMemError("invalid bitmap width");
     }
+    rowSize = (SplashBitmapRowSize)width * 3;
     break;
 #if SPLASH_CMYK
   case splashModeCMYK8:
-    if (width > 0 && width <= INT_MAX / 4) {
-      rowSize = width * 4;
-    } else {
-      rowSize = -1;
+    if (width <= 0 || width > INT_MAX / 4) {
+      gMemError("invalid bitmap width");
     }
+    rowSize = (SplashBitmapRowSize)width * 4;
     break;
 #endif
   }
-  if (rowSize > 0) {
-    rowSize += rowPad - 1;
-    rowSize -= rowSize % rowPad;
-  }
-  data = (SplashColorPtr)gmallocn(height, rowSize);
+  rowSize += rowPad - 1;
+  rowSize -= rowSize % rowPad;
+  data = (SplashColorPtr)gmallocn64(height, rowSize);
   if (!topDown) {
     data += (height - 1) * rowSize;
     rowSize = -rowSize;
   }
   if (alphaA) {
-    alpha = (Guchar *)gmallocn(width, height);
+    alphaRowSize = width;
+    alpha = (Guchar *)gmallocn64(height, alphaRowSize);
   } else {
+    alphaRowSize = 0;
     alpha = NULL;
   }
 }
@@ -231,7 +230,7 @@ void SplashBitmap::getPixel(int x, int y, SplashColorPtr pixel) {
 }
 
 Guchar SplashBitmap::getAlpha(int x, int y) {
-  return alpha[y * width + x];
+  return alpha[y * (size_t)width + x];
 }
 
 SplashColorPtr SplashBitmap::takeData() {
@@ -241,3 +240,4 @@ SplashColorPtr SplashBitmap::takeData() {
   data = NULL;
   return data2;
 }
+

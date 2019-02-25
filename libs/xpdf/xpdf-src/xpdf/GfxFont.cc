@@ -421,8 +421,6 @@ void GfxFont::readFontDescriptor(XRef *xref, Dict *fontDict) {
   // assume Times-Roman by default (for substitution purposes)
   flags = fontSerif;
 
-  missingWidth = 0;
-
   if (fontDict->lookup("FontDescriptor", &obj1)->isDict()) {
 
     // get flags
@@ -933,6 +931,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
 
   // default ascent/descent values
   if (builtinFont) {
+    missingWidth = builtinFont->missingWidth;
     ascent = 0.001 * builtinFont->ascent;
     descent = 0.001 * builtinFont->descent;
     fontBBox[0] = 0.001 * builtinFont->bbox[0];
@@ -940,6 +939,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
     fontBBox[2] = 0.001 * builtinFont->bbox[2];
     fontBBox[3] = 0.001 * builtinFont->bbox[3];
   } else {
+    missingWidth = 0;
     ascent = 0.75;
     descent = -0.25;
     fontBBox[0] = fontBBox[1] = fontBBox[2] = fontBBox[3] = 0;
@@ -1094,7 +1094,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
   // copy the base encoding
   for (i = 0; i < 256; ++i) {
     enc[i] = (char *)baseEnc[i];
-    if ((encFree[i] = baseEncFromFontFile) && enc[i]) {
+    if ((encFree[i] = (char)baseEncFromFontFile) && enc[i]) {
       enc[i] = copyString(baseEnc[i]);
     }
   }
@@ -1394,7 +1394,7 @@ int *Gfx8BitFont::getCodeToGIDMap(FoFiTrueType *ff) {
   int *map;
   int cmapPlatform, cmapEncoding;
   int unicodeCmap, macRomanCmap, msSymbolCmap, cmap;
-  GBool useMacRoman, useUnicode;
+  GBool nonsymbolic, useMacRoman, useUnicode;
   char *charName;
   Unicode u;
   int code, i, n;
@@ -1404,32 +1404,9 @@ int *Gfx8BitFont::getCodeToGIDMap(FoFiTrueType *ff) {
     map[i] = 0;
   }
 
-  // To match up with the Adobe-defined behaviour, we choose a cmap
-  // like this:
-  // 1. If the PDF font has an encoding:
-  //    1a. If the PDF font specified MacRomanEncoding and the
-  //        TrueType font has a Macintosh Roman cmap, use it, and
-  //        reverse map the char names through MacRomanEncoding to
-  //        get char codes.
-  //    1b. If the PDF font is not symbolic or the PDF font is not
-  //        embedded, and the TrueType font has a Microsoft Unicode
-  //        cmap or a non-Microsoft Unicode cmap, use it, and use the
-  //        Unicode indexes, not the char codes.
-  //    1c. If the PDF font is symbolic and the TrueType font has a
-  //        Microsoft Symbol cmap, use it, and use char codes
-  //        directly (possibly with an offset of 0xf000).
-  //    1d. If the TrueType font has a Macintosh Roman cmap, use it,
-  //        as in case 1a.
-  // 2. If the PDF font does not have an encoding or the PDF font is
-  //    symbolic:
-  //    2a. If the TrueType font has a Macintosh Roman cmap, use it,
-  //        and use char codes directly (possibly with an offset of
-  //        0xf000).
-  //    2b. If the TrueType font has a Microsoft Symbol cmap, use it,
-  //        and use char codes directly (possible with an offset of
-  //        0xf000).
-  // 3. If none of these rules apply, use the first cmap and hope for
-  //    the best (this shouldn't happen).
+  // This is based on the cmap/encoding selection algorithm in the PDF
+  // 2.0 spec, but with some differences to match up with Adobe's
+  // behavior.
   unicodeCmap = macRomanCmap = msSymbolCmap = -1;
   for (i = 0; i < ff->getNumCmaps(); ++i) {
     cmapPlatform = ff->getCmapPlatform(i);
@@ -1443,31 +1420,29 @@ int *Gfx8BitFont::getCodeToGIDMap(FoFiTrueType *ff) {
       msSymbolCmap = i;
     }
   }
-  cmap = 0;
   useMacRoman = gFalse;
   useUnicode = gFalse;
-  if (hasEncoding) {
-    if (usesMacRomanEnc && macRomanCmap >= 0) {
-      cmap = macRomanCmap;
-      useMacRoman = gTrue;
-    } else if ((!(flags & fontSymbolic) || embFontID.num < 0) &&
-	       unicodeCmap >= 0) {
-      cmap = unicodeCmap;
-      useUnicode = gTrue;
-    } else if ((flags & fontSymbolic) && msSymbolCmap >= 0) {
-      cmap = msSymbolCmap;
-    } else if ((flags & fontSymbolic) && macRomanCmap >= 0) {
-      cmap = macRomanCmap;
-    } else if (macRomanCmap >= 0) {
-      cmap = macRomanCmap;
-      useMacRoman = gTrue;
-    }
+  nonsymbolic = !(flags & fontSymbolic);
+  if (usesMacRomanEnc && macRomanCmap >= 0) {
+    cmap = macRomanCmap;
+    useMacRoman = gTrue;
+  } else if (embFontID.num < 0 && hasEncoding && unicodeCmap >= 0) { 
+    cmap = unicodeCmap;
+    useUnicode = gTrue;
+  } else if (nonsymbolic && unicodeCmap >= 0) {
+    cmap = unicodeCmap;
+    useUnicode = gTrue;
+  } else if (nonsymbolic && macRomanCmap >= 0) {
+    cmap = macRomanCmap;
+    useMacRoman = gTrue;
+  } else if (msSymbolCmap >= 0) {
+    cmap = msSymbolCmap;
+  } else if (unicodeCmap >= 0) {
+    cmap = unicodeCmap;
+  } else if (macRomanCmap >= 0) {
+    cmap = macRomanCmap;
   } else {
-    if (msSymbolCmap >= 0) {
-      cmap = msSymbolCmap;
-    } else if (macRomanCmap >= 0) {
-      cmap = macRomanCmap;
-    }
+    cmap = 0;
   }
 
   // reverse map the char names through MacRomanEncoding, then map the
@@ -1613,6 +1588,7 @@ GfxCIDFont::GfxCIDFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
   int c1, c2;
   int excepsSize, i, j, k, n;
 
+  missingWidth = 0;
   ascent = 0.95;
   descent = -0.35;
   fontBBox[0] = fontBBox[1] = fontBBox[2] = fontBBox[3] = 0;
@@ -1723,6 +1699,12 @@ GfxCIDFont::GfxCIDFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
   if (!(cMap = CMap::parse(NULL, collection, &obj1))) {
     goto err2;
   }
+
+  // check for fonts that use the Identity-H encoding (cmap), and the
+  // Adobe-Identity character collection
+  identityEnc = obj1.isName("Identity-H") &&
+                !collection->cmp("Adobe-Identity");
+
   obj1.free();
 
   // CIDToGIDMap
@@ -1745,6 +1727,7 @@ GfxCIDFont::GfxCIDFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
       cidToGID[cidToGIDLen++] = (c1 << 8) + c2;
     }
     obj1.streamClose();
+    identityEnc = gFalse;
   } else if (obj1.isName("Identity")) {
     hasIdentityCIDToGID = gTrue;
   } else if (!obj1.isNull()) {
@@ -1868,7 +1851,7 @@ GfxCIDFont::GfxCIDFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
 		      excepsSize, sizeof(GfxFontCIDWidthExcepV));
 	}
 	j = obj2.getInt();
-	for (k = 0; k < obj3.arrayGetLength(); k += 3) {
+	for (k = 0; k + 2 < obj3.arrayGetLength(); k += 3) {
 	  if (obj3.arrayGet(k, &obj4)->isNum() &&
 	      obj3.arrayGet(k+1, &obj5)->isNum() &&
 	      obj3.arrayGet(k+2, &obj6)->isNum()) {

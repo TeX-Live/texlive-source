@@ -4,7 +4,7 @@ pdftopng(1)                 General Commands Manual                pdftopng(1)
 
 NAME
        pdftopng  - Portable Document Format (PDF) to Portable Network Graphics
-       (PNG) converter (version 4.00)
+       (PNG) converter (version 4.01)
 
 SYNOPSIS
        pdftopng [options] PDF-file PNG-root
@@ -87,7 +87,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdftopng software and documentation are copyright 1996-2017 Glyph &
+       The pdftopng software and documentation are copyright 1996-2019 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -97,4 +97,4 @@ SEE ALSO
 
 
 
-                                  10 Aug 2017                      pdftopng(1)
+                                  18 Feb 2019                      pdftopng(1)

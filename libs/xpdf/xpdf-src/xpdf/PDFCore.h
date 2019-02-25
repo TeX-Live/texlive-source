@@ -164,6 +164,7 @@ public:
   void setSelectMode(SelectMode mode);
 
   // Selection color.
+  SplashColorPtr getSelectionColor();
   void setSelectionColor(SplashColor color);
 
   // Modify the selection.  These functions use device coordinates.
@@ -242,6 +243,7 @@ public:
   FormField *findFormField(int pg, double x, double y);
   int findFormFieldIdx(int pg, double x, double y);
   FormField *getFormField(int idx);
+  GBool overText(int pg, double x, double y);
   void forceRedraw();
   void setTileDoneCbk(void (*cbk)(void *data), void *data);
 
