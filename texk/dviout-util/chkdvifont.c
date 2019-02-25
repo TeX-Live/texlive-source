@@ -320,6 +320,11 @@ int main(int argc, char **argv)
         }
     }
 
+    if(strlen(argv[argc-1]) >= MAXPATH) {
+        fprintf(stderr, "Too long filename\n");
+        exit(255);
+    }
+
     /* check file extension */
     if (!f_t){
         pt = argv[argc-1];
