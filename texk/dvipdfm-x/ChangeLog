@@ -1,3 +1,10 @@
+2019-02-25  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* tt_cmap.c (is_PUA_or_presentation):
+	Skip also CJK Radicals Supplement, to lower the priority for
+	double encoded glyphs. This does not break tounicode entries
+	for glyphs which are only encoded in this region.
+
 2019-02-25  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* tt_post.c: Since OpenType ver. 1.7, PostScript glyph names
