@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 49855 2019-01-28 22:47:02Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2019 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 49855 $';
+my $svnrev = '$Revision: 50107 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -1137,10 +1136,14 @@ sub copy {
     $outfile = "$destdir/$filename";
   }
 
-  mkdirhier ($destdir) unless -d "$destdir";
+  if (! -d $destdir) {
+    my ($ret,$err) = mkdirhier ($destdir);
+    die "mkdirhier($destdir) failed: $err\n" if ! $ret;
+  }
 
   if (-l "$infile") {
-    symlink (readlink $infile, "$destdir/$filename");
+    symlink (readlink $infile, "$destdir/$filename")
+    || die "symlink(readlink $infile, $destdir/$filename) failed: $!";
   } else {
     if (! open (IN, $infile)) {
       warn "open($infile) failed, not copying: $!";
@@ -1148,13 +1151,13 @@ sub copy {
     }
     binmode IN;
 
-    $mode = (-x "$infile") ? oct("0777") : oct("0666");
+    $mode = (-x $infile) ? oct("0777") : oct("0666");
     $mode &= ~umask;
 
     open (OUT, ">$outfile") || die "open(>$outfile) failed: $!";
     binmode OUT;
 
-    chmod $mode, "$outfile";
+    chmod ($mode, $outfile) || warn "chmod($mode,$outfile) failed: $!";
 
     while ($read = sysread (IN, $buffer, $blocksize)) {
       die "read($infile) failed: $!" unless defined $read;
@@ -1167,8 +1170,9 @@ sub copy {
       }
     }
     close (OUT) || warn "close($outfile) failed: $!";
-    close IN || warn "close($infile) failed: $!";;
-    @stat = lstat ("$infile");
+    close (IN) || warn "close($infile) failed: $!";;
+    @stat = lstat ($infile);
+    die "lstat($infile) failed: $!" if ! @stat;
     utime ($stat[8], $stat[9], $outfile);
   }
 }
@@ -2224,7 +2228,8 @@ sub unpack {
     # we can remove it afterwards
     $remove_containerfile = 1;
   }
-  if (!system_pipe($decompressor, $containerfile, $tarfile, $remove_container, @decompressorArgs)
+  if (!system_pipe($decompressor, $containerfile, $tarfile,
+                   $remove_containerfile, @decompressorArgs)
       ||
       ! -f $tarfile) {
     unlink($tarfile, $containerfile);

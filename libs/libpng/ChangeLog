@@ -1,6 +1,6 @@
 2019-02-14  Johannes Hielscher  <jhielscher@posteo.de>
 
-	* Makefile.am (nodist_libpng_a_SOURCES) [PNG_ARM_NEON]: include
+	* Makefile.am (nodist_libpng_a_SOURCES) [PNG_ARM_NEON]: add
 	@LIBPNG_TREE@/arm/palette_neon_intrinsics.c.
 	tlbuild 12 Feb 2019 00:07:11.
 
