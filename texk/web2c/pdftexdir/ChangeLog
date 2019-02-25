@@ -269,9 +269,9 @@
 	pdftosrc-newpoppler.cc, respectively, in order to use these
 	files.
 	The current pdftoepdf.cc and pdftosrc.cc support
-	xpdf-4.00 by default, xpdf-3.04 if XPDF304 is defined, and
-	poppler 0.57.0 or older versions if POPPLER_VERSION is
-	defined.
+	xpdf-4.00 or newer by default, xpdf-3.04 if XPDF304 is
+	defined, and poppler 0.57.0 or older versions if
+	POPPLER_VERSION is defined.
 
 2017-10-10  Shreevatsa R <shreevatsa.public@gmail.com>
 
