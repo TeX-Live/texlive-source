@@ -1,3 +1,9 @@
+2019-02-25  Karl Berry  <karl@freefriends.org>
+
+	* patch-08-makefiles (AM_CXXFLAGS): use WARNING_CXXFLAGS,
+	omit -Wno-mismatched-tags. From Vojta and Scherer,
+	tlbuild 24 Feb 2019 11:48:55.
+
 2018-08-30  Karl Berry  <karl@freefriends.org>
 
 	* patch-08-makefiles: adapt to 2.5.

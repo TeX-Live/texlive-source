@@ -625,8 +625,8 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.cpp \
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
 AM_CFLAGS = $(WARNING_CFLAGS) $(ZLIB_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
 	$(am__append_9)
-AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
-	-Wno-mismatched-tags -I$(dvisvgm_srcdir)/libs/clipper \
+AM_CXXFLAGS = $(WARNING_CXXFLAGS) -Wnon-virtual-dtor \
+	-I$(dvisvgm_srcdir)/libs/clipper \
 	-I$(dvisvgm_srcdir)/libs/variant/include $(POTRACE_CFLAGS) \
 	$(XXHASH_CFLAGS) $(am__append_10) $(am__append_11) \
 	$(am__append_12) $(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) \
