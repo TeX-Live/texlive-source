@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-02-16.14}
+\def\texinfoversion{2019-02-23.16}
 
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
@@ -11191,20 +11191,13 @@ directory should work if nowhere else does.}
    \relax
 }
 
-% define all Unicode characters we know about, for the sake of @U.
+% Define all Unicode characters we know about.  This makes UTF-8 the default
+% input encoding and allows @U to work.
 \iftxinativeunicodecapable
   \nativeunicodechardefsatu
 \else
   \utfeightchardefs
 \fi
-
-
-% Make non-ASCII characters printable again for compatibility with
-% existing Texinfo documents that may use them, even without declaring a
-% document encoding.
-%
-\setnonasciicharscatcode \other
-
 
 \message{formatting,}
 
