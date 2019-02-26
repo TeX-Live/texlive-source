@@ -117,9 +117,17 @@ main(int argc, char *argv[])
       collection = atoi(optarg);
       break;
     case 'i':
+      if(strlen(optarg) >= MAXLEN) {
+        fprintf(stderr, "Too long input file name\n");
+        exit(EXIT_FAILURE);
+      }
       strcpy(ttfname, optarg);
       break;
     case 'o':
+      if(strlen(optarg) >= MAXLEN) {
+        fprintf(stderr, "Too long output file name\n");
+        exit(EXIT_FAILURE);
+      }
       strcpy(dumpname, optarg);
       break;
     case 'h':
@@ -133,6 +141,10 @@ main(int argc, char *argv[])
   /* processing ttf file if -i flag is not given */
   if (*ttfname == 0 && optind < argc)
   {
+    if(strlen(argv[optind]) >= MAXLEN) {
+      fprintf(stderr, "Too long input file name\n");
+      exit(EXIT_FAILURE);
+    }
     strcpy(ttfname, argv[optind]);
   }
 

@@ -1,3 +1,7 @@
+2019-02-26  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* afm2tfm.c: Forbid too long file name.
+
 2019-02-11  Karl Berry  <karl@tug.org>
 
 	* dvips.texi,
