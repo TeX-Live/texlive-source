@@ -1,8 +1,8 @@
 
 #line 145 "./tex4ht-t4ht.tex"
 
-/* t4ht.c (2018-06-28-11:26), generated from tex4ht-t4ht.tex
-   Copyright (C) 2009-2012 TeX Users Group
+/* t4ht.c (2018-07-04-14:25), generated from tex4ht-t4ht.tex
+   Copyright (C) 2009-2018 TeX Users Group
    Copyright (C) 1998-2009 Eitan M. Gurari
 
 #line 1 "./tex4ht-t4ht.tex"
@@ -53,7 +53,7 @@
     (uncommented | command line)                *
 ----------------------------------------------- */
 
-#line 3233 "./tex4ht-t4ht.tex"
+#line 3237 "./tex4ht-t4ht.tex"
 
 #ifndef ENVFILE
 
@@ -171,7 +171,7 @@
 #endif
 
 
-#line 3974 "./tex4ht-t4ht.tex"
+#line 3978 "./tex4ht-t4ht.tex"
 
 #include <signal.h>
 
@@ -180,11 +180,11 @@
 #line 542 "./tex4ht-t4ht.tex"
 
 
-#line 3496 "./tex4ht-t4ht.tex"
+#line 3500 "./tex4ht-t4ht.tex"
 
 #ifndef __DJGPP__
 
-#line 3530 "./tex4ht-t4ht.tex"
+#line 3534 "./tex4ht-t4ht.tex"
 
 #ifndef F_OK
 #ifdef DOS_WIN32
@@ -226,11 +226,11 @@
 #include <setjmp.h>
 #endif 
 
-#line 3507 "./tex4ht-t4ht.tex"
+#line 3511 "./tex4ht-t4ht.tex"
 
 #ifdef __DJGPP__
 
-#line 3530 "./tex4ht-t4ht.tex"
+#line 3534 "./tex4ht-t4ht.tex"
 
 #ifndef F_OK
 #ifdef DOS_WIN32
@@ -284,7 +284,7 @@
 #endif
 
 
-#line 3789 "./tex4ht-t4ht.tex"
+#line 3793 "./tex4ht-t4ht.tex"
 
 #if defined(DOS_WIN32) || defined(__MSDOS__)
 #define READ_BIN_FLAGS "rb"
@@ -362,14 +362,14 @@ struct empty_pic_struct{
 };
 
 
-#line 1497 "./tex4ht-t4ht.tex"
+#line 1501 "./tex4ht-t4ht.tex"
 
 #ifndef HTFDIR
 #define HTFDIR      ""
 #endif
 
 
-#line 2035 "./tex4ht-t4ht.tex"
+#line 2039 "./tex4ht-t4ht.tex"
 
 struct files_rec{
   FILE* file;
@@ -387,7 +387,7 @@ struct files_rec{
 #define Set_op    6
 
 
-#line 2177 "./tex4ht-t4ht.tex"
+#line 2181 "./tex4ht-t4ht.tex"
 
 struct env_c_rec{
   Q_CHAR *option;
@@ -395,7 +395,7 @@ struct env_c_rec{
 };
 
 
-#line 2307 "./tex4ht-t4ht.tex"
+#line 2311 "./tex4ht-t4ht.tex"
 
 struct sys_call_rec{
   Q_CHAR * filter;
@@ -403,7 +403,7 @@ struct sys_call_rec{
 };
 
 
-#line 2357 "./tex4ht-t4ht.tex"
+#line 2361 "./tex4ht-t4ht.tex"
 
 struct htf_struct{
   Q_CHAR *key,  *body, *media;
@@ -411,7 +411,7 @@ struct htf_struct{
 };
 
 
-#line 3088 "./tex4ht-t4ht.tex"
+#line 3092 "./tex4ht-t4ht.tex"
 
 struct script_struct{
   Q_CHAR *command;
@@ -419,33 +419,33 @@ struct script_struct{
 };
 
 
-#line 3107 "./tex4ht-t4ht.tex"
+#line 3111 "./tex4ht-t4ht.tex"
 
 #define NULL_SCRIPT (struct script_struct *) 0
 
 
-#line 3718 "./tex4ht-t4ht.tex"
+#line 3722 "./tex4ht-t4ht.tex"
 
 #define LG_EXT ".lg"
 
 
-#line 3850 "./tex4ht-t4ht.tex"
+#line 3854 "./tex4ht-t4ht.tex"
 
 #define bad_arg            err_arg(0)
 #define bad_mem             err_i(1)
 
 
-#line 4201 "./tex4ht-t4ht.tex"
+#line 4205 "./tex4ht-t4ht.tex"
 
 #define eq_str(x,y) (!strcmp(x,y))
 
 
-#line 4255 "./tex4ht-t4ht.tex"
+#line 4259 "./tex4ht-t4ht.tex"
 
 #define m_alloc(typ,n) (typ *) malloc_chk((int) ((n) * sizeof(typ)))
 
 
-#line 4490 "./tex4ht-t4ht.tex"
+#line 4494 "./tex4ht-t4ht.tex"
 
 #ifndef TRUE
 #define TRUE 1
@@ -458,7 +458,7 @@ struct script_struct{
 #endif
 
 
-#line 4504 "./tex4ht-t4ht.tex"
+#line 4508 "./tex4ht-t4ht.tex"
 
 #define eq_str(x,y) (!strcmp(x,y))
 
@@ -493,36 +493,36 @@ static Q_CHAR *noreuse = Q_NULL;
 U_CHAR *HOME_DIR;
 
 
-#line 2184 "./tex4ht-t4ht.tex"
+#line 2188 "./tex4ht-t4ht.tex"
 
 static struct env_c_rec *envChoice
        = (struct env_c_rec*) 0;
 
 
-#line 2315 "./tex4ht-t4ht.tex"
+#line 2319 "./tex4ht-t4ht.tex"
 
 static BOOL system_yes;
 static struct sys_call_rec *system_calls = (struct sys_call_rec *) 0;
 
 
-#line 2352 "./tex4ht-t4ht.tex"
+#line 2356 "./tex4ht-t4ht.tex"
 
 static struct htf_struct *htf_rec = (struct htf_struct *) 0;
 
 
-#line 2601 "./tex4ht-t4ht.tex"
+#line 2605 "./tex4ht-t4ht.tex"
 
 static BOOL status;
 
 
-#line 2815 "./tex4ht-t4ht.tex"
+#line 2819 "./tex4ht-t4ht.tex"
 
 static char *Font_css_base = NULL,
             *Font_css_mag = NULL;
 static int base_font_size = 10;
 
 
-#line 3095 "./tex4ht-t4ht.tex"
+#line 3099 "./tex4ht-t4ht.tex"
 
 static struct script_struct
     * dvigif_script = NULL_SCRIPT,
@@ -531,13 +531,13 @@ static struct script_struct
     * empty_fig_script = NULL_SCRIPT,
     * copy_script = NULL_SCRIPT,
     * 
-#line 2235 "./tex4ht-t4ht.tex"
+#line 2239 "./tex4ht-t4ht.tex"
 
 file_script
 
  = NULL_SCRIPT,
     * 
-#line 2171 "./tex4ht-t4ht.tex"
+#line 2175 "./tex4ht-t4ht.tex"
 
 ext_script
 
@@ -545,16 +545,16 @@ ext_script
     * chmod_script = NULL_SCRIPT;
 
 
-#line 3769 "./tex4ht-t4ht.tex"
+#line 3773 "./tex4ht-t4ht.tex"
 
 static FILE* lg_file;
 static long  begin_lg_file;
 
 
-#line 3919 "./tex4ht-t4ht.tex"
+#line 3923 "./tex4ht-t4ht.tex"
 
 static const C_CHAR *warn_err_mssg[]={ 
-#line 3841 "./tex4ht-t4ht.tex"
+#line 3845 "./tex4ht-t4ht.tex"
 
 
 #line 843 "./tex4ht-t4ht.tex"
@@ -582,7 +582,7 @@ static const C_CHAR *warn_err_mssg[]={
 ,                            
 "Insufficient memory\n",                                
 
-#line 3835 "./tex4ht-t4ht.tex"
+#line 3839 "./tex4ht-t4ht.tex"
 
 "Illegal storage address\n", 
 "Floating-point\n",          
@@ -594,23 +594,23 @@ static const C_CHAR *warn_err_mssg[]={
  "" };
 
 
-#line 4127 "./tex4ht-t4ht.tex"
+#line 4131 "./tex4ht-t4ht.tex"
 
 static Q_CHAR command[255];
 static int system_return;
 
 
-#line 4138 "./tex4ht-t4ht.tex"
+#line 4142 "./tex4ht-t4ht.tex"
 
 static BOOL system_yes;
 
 
-#line 4191 "./tex4ht-t4ht.tex"
+#line 4195 "./tex4ht-t4ht.tex"
 
 static BOOL always_call_sys = FALSE;
 
 
-#line 4376 "./tex4ht-t4ht.tex"
+#line 4380 "./tex4ht-t4ht.tex"
 
 static Q_CHAR* match[10];
 static int   max_match[10];
@@ -635,63 +635,63 @@ static void execute_script(
   ARG_V(struct script_struct*,const Q_CHAR *,const Q_CHAR *,const Q_CHAR *,const Q_CHAR *) );
 
 
-#line 1531 "./tex4ht-t4ht.tex"
+#line 1535 "./tex4ht-t4ht.tex"
 
 static struct script_struct  * filterGifScript(
         ARG_II( struct script_struct  *, Q_CHAR *) );
 
 
-#line 1605 "./tex4ht-t4ht.tex"
+#line 1609 "./tex4ht-t4ht.tex"
 
 void free_script(
         ARG_I( struct script_struct  *) );
 
 
-#line 2152 "./tex4ht-t4ht.tex"
+#line 2156 "./tex4ht-t4ht.tex"
 
 static BOOL strpre( ARG_II(char *,char *) );
 
 
-#line 3051 "./tex4ht-t4ht.tex"
+#line 3055 "./tex4ht-t4ht.tex"
 
 static struct script_struct * add_script( ARG_I(struct script_struct *) );
 
 
-#line 3627 "./tex4ht-t4ht.tex"
+#line 3631 "./tex4ht-t4ht.tex"
 
 static FILE* f_open( ARG_II(const char*,const char*) );
 
 
-#line 3648 "./tex4ht-t4ht.tex"
+#line 3652 "./tex4ht-t4ht.tex"
 
 static FILE* f_home_open( ARG_II(const char*,const char*) );
 
 
-#line 3678 "./tex4ht-t4ht.tex"
+#line 3682 "./tex4ht-t4ht.tex"
 
 static FILE* open_file( ARG_II(const C_CHAR *, const C_CHAR *) );
 
 
-#line 3860 "./tex4ht-t4ht.tex"
+#line 3864 "./tex4ht-t4ht.tex"
 
 static void err_i( ARG_I(int) );
 
 
-#line 3876 "./tex4ht-t4ht.tex"
+#line 3880 "./tex4ht-t4ht.tex"
 
 static void err_arg( ARG_I(int) );
 
 
-#line 3894 "./tex4ht-t4ht.tex"
+#line 3898 "./tex4ht-t4ht.tex"
 
 static void warn_i_str( ARG_II(int,const Q_CHAR *) );
 
 
-#line 3978 "./tex4ht-t4ht.tex"
+#line 3982 "./tex4ht-t4ht.tex"
 
 static void
 
-#line 4019 "./tex4ht-t4ht.tex"
+#line 4023 "./tex4ht-t4ht.tex"
 
 #ifdef CDECL
 CDECL
@@ -701,49 +701,49 @@ CDECL
 sig_err(ARG_I(int));
 
 
-#line 4105 "./tex4ht-t4ht.tex"
+#line 4109 "./tex4ht-t4ht.tex"
 
 #ifdef KWIN32
 static BOOL sigint_handler(ARG_I(DWORD));
 #endif
 
 
-#line 4169 "./tex4ht-t4ht.tex"
+#line 4173 "./tex4ht-t4ht.tex"
 
 static void call_sys(ARG_I(Q_CHAR *));
 
 
-#line 4212 "./tex4ht-t4ht.tex"
+#line 4216 "./tex4ht-t4ht.tex"
 
 static void strct( ARG_II(C_CHAR *, const C_CHAR *) );
 
 
-#line 4232 "./tex4ht-t4ht.tex"
+#line 4236 "./tex4ht-t4ht.tex"
 
 static long int get_long_int( ARG_I(Q_CHAR *) );
 
 
-#line 4261 "./tex4ht-t4ht.tex"
+#line 4265 "./tex4ht-t4ht.tex"
 
 static void* malloc_chk(ARG_I(int));
 
 
-#line 4278 "./tex4ht-t4ht.tex"
+#line 4282 "./tex4ht-t4ht.tex"
 
 static void* r_alloc(ARG_II(void *, size_t));
 
 
-#line 4342 "./tex4ht-t4ht.tex"
+#line 4346 "./tex4ht-t4ht.tex"
 
 static BOOL scan_until_end_str( ARG_IV(const C_CHAR *, int, BOOL, FILE *) );
 
 
-#line 4392 "./tex4ht-t4ht.tex"
+#line 4396 "./tex4ht-t4ht.tex"
 
 static BOOL scan_until_str( ARG_IV(const C_CHAR *, int, BOOL, FILE *) );
 
 
-#line 4430 "./tex4ht-t4ht.tex"
+#line 4434 "./tex4ht-t4ht.tex"
 
 static BOOL scan_str( ARG_III(const C_CHAR *, BOOL, FILE *) );
 
@@ -847,10 +847,10 @@ static void execute_script
                                  Q_CHAR *p, *q;
                                  const Q_CHAR *t;
   
-#line 1458 "./tex4ht-t4ht.tex"
+#line 1462 "./tex4ht-t4ht.tex"
 
 #ifdef KPATHSEA
-const char * texmf = kpse_var_value( "SELFAUTOPARENT" );
+const char * texmf = kpse_var_value( "TEXMFDIST" );
 #endif
 
 
@@ -881,7 +881,7 @@ while( *p != '\0' ){
       case '4':{  t = match_4;
             while( *t != '\0' ){ *(q++) = *(t++); }  break; }
       case '~':{ 
-#line 1464 "./tex4ht-t4ht.tex"
+#line 1468 "./tex4ht-t4ht.tex"
 
 #ifdef KPATHSEA
    if( texmf ){
@@ -903,7 +903,7 @@ while( *p != '\0' ){
 
       if( (command[0] != '\0') && !system_return ){
          
-#line 4162 "./tex4ht-t4ht.tex"
+#line 4166 "./tex4ht-t4ht.tex"
 
 (IGNORED) call_sys(command);
 
@@ -912,7 +912,7 @@ while( *p != '\0' ){
 }  }
 
 
-#line 1536 "./tex4ht-t4ht.tex"
+#line 1540 "./tex4ht-t4ht.tex"
 
 
 static struct script_struct * filterGifScript
@@ -943,7 +943,7 @@ static struct script_struct * filterGifScript
    command = old_script->command;
    if( *command != '.' ){
       
-#line 1559 "./tex4ht-t4ht.tex"
+#line 1563 "./tex4ht-t4ht.tex"
 
 new_script = NULL_SCRIPT;
 while( old_script != NULL_SCRIPT ){
@@ -965,10 +965,10 @@ return filtered_script;
 
    } else {
       
-#line 1578 "./tex4ht-t4ht.tex"
+#line 1582 "./tex4ht-t4ht.tex"
 
 
-#line 1598 "./tex4ht-t4ht.tex"
+#line 1602 "./tex4ht-t4ht.tex"
 
 ext = file;
 while( *ext != '\0' ){ ext++; }
@@ -990,7 +990,7 @@ while( TRUE ){
   }
 }
 
-#line 1559 "./tex4ht-t4ht.tex"
+#line 1563 "./tex4ht-t4ht.tex"
 
 new_script = NULL_SCRIPT;
 while( old_script != NULL_SCRIPT ){
@@ -1016,7 +1016,7 @@ return filtered_script;
 }
 
 
-#line 1610 "./tex4ht-t4ht.tex"
+#line 1614 "./tex4ht-t4ht.tex"
 
 
 void free_script
@@ -1043,7 +1043,7 @@ void free_script
 }
 
 
-#line 2156 "./tex4ht-t4ht.tex"
+#line 2160 "./tex4ht-t4ht.tex"
 
 
 static BOOL strpre
@@ -1070,7 +1070,7 @@ static BOOL strpre
 }
 
 
-#line 3055 "./tex4ht-t4ht.tex"
+#line 3059 "./tex4ht-t4ht.tex"
 
 
 static struct script_struct * add_script
@@ -1108,11 +1108,11 @@ static struct script_struct * add_script
 }
 
 
-#line 3576 "./tex4ht-t4ht.tex"
+#line 3580 "./tex4ht-t4ht.tex"
 
 #if defined(__MSDOS__)
 
-#line 3582 "./tex4ht-t4ht.tex"
+#line 3586 "./tex4ht-t4ht.tex"
 
 
 static char *get_env_dir
@@ -1150,7 +1150,7 @@ static char *get_env_dir
 #endif
 
 
-#line 3631 "./tex4ht-t4ht.tex"
+#line 3635 "./tex4ht-t4ht.tex"
 
 
 static FILE* f_open
@@ -1177,7 +1177,7 @@ static FILE* f_open
 }
 
 
-#line 3652 "./tex4ht-t4ht.tex"
+#line 3656 "./tex4ht-t4ht.tex"
 
 
 static FILE* f_home_open
@@ -1210,7 +1210,7 @@ static FILE* f_home_open
 }
 
 
-#line 3682 "./tex4ht-t4ht.tex"
+#line 3686 "./tex4ht-t4ht.tex"
 
 
 static FILE* open_file
@@ -1250,7 +1250,7 @@ static FILE* open_file
 }
 
 
-#line 3864 "./tex4ht-t4ht.tex"
+#line 3868 "./tex4ht-t4ht.tex"
 
 
 static void err_i
@@ -1273,7 +1273,7 @@ static void err_i
 }
 
 
-#line 3880 "./tex4ht-t4ht.tex"
+#line 3884 "./tex4ht-t4ht.tex"
 
 
 static void err_arg
@@ -1296,7 +1296,7 @@ static void err_arg
 }
 
 
-#line 3898 "./tex4ht-t4ht.tex"
+#line 3902 "./tex4ht-t4ht.tex"
 
 
 static void warn_i_str
@@ -1322,12 +1322,12 @@ static void warn_i_str
 }
 
 
-#line 3987 "./tex4ht-t4ht.tex"
+#line 3991 "./tex4ht-t4ht.tex"
 
 
 static void
 
-#line 4019 "./tex4ht-t4ht.tex"
+#line 4023 "./tex4ht-t4ht.tex"
 
 #ifdef CDECL
 CDECL
@@ -1369,7 +1369,7 @@ sig_err
 }
 
 
-#line 4111 "./tex4ht-t4ht.tex"
+#line 4115 "./tex4ht-t4ht.tex"
 
 #ifdef KWIN32
 
@@ -1392,7 +1392,7 @@ static BOOL sigint_handler
 #endif
 
 
-#line 4176 "./tex4ht-t4ht.tex"
+#line 4180 "./tex4ht-t4ht.tex"
 
 
 static void call_sys
@@ -1418,7 +1418,7 @@ static void call_sys
 }
 
 
-#line 4216 "./tex4ht-t4ht.tex"
+#line 4220 "./tex4ht-t4ht.tex"
 
 
 static void strct
@@ -1445,7 +1445,7 @@ static void strct
 }
 
 
-#line 4236 "./tex4ht-t4ht.tex"
+#line 4240 "./tex4ht-t4ht.tex"
 
 
 static long int get_long_int
@@ -1472,7 +1472,7 @@ static long int get_long_int
 }
 
 
-#line 4265 "./tex4ht-t4ht.tex"
+#line 4269 "./tex4ht-t4ht.tex"
 
 
 static void* malloc_chk
@@ -1493,7 +1493,7 @@ static void* malloc_chk
 }
 
 
-#line 4282 "./tex4ht-t4ht.tex"
+#line 4286 "./tex4ht-t4ht.tex"
 
 
 static void* r_alloc
@@ -1518,7 +1518,7 @@ static void* r_alloc
 }
 
 
-#line 4346 "./tex4ht-t4ht.tex"
+#line 4350 "./tex4ht-t4ht.tex"
 
 
 static BOOL  scan_until_end_str
@@ -1562,7 +1562,7 @@ static BOOL  scan_until_end_str
 }
 
 
-#line 4396 "./tex4ht-t4ht.tex"
+#line 4400 "./tex4ht-t4ht.tex"
 
 
 static BOOL  scan_until_str
@@ -1607,7 +1607,7 @@ static BOOL  scan_until_str
 }
 
 
-#line 4434 "./tex4ht-t4ht.tex"
+#line 4438 "./tex4ht-t4ht.tex"
 
 
 static BOOL  scan_str
@@ -1645,7 +1645,7 @@ static BOOL  scan_str
 
 
 int 
-#line 4019 "./tex4ht-t4ht.tex"
+#line 4023 "./tex4ht-t4ht.tex"
 
 #ifdef CDECL
 CDECL
@@ -1673,13 +1673,13 @@ CDECL
 struct empty_pic_struct *empty_pic;
 
 
-#line 3555 "./tex4ht-t4ht.tex"
+#line 3559 "./tex4ht-t4ht.tex"
 
 Q_CHAR * tex4ht_env_file = (Q_CHAR *) 0;
 Q_CHAR * dos_env_file =
 #if defined(__MSDOS__)
   
-#line 3572 "./tex4ht-t4ht.tex"
+#line 3576 "./tex4ht-t4ht.tex"
 
 get_env_dir(argv[0])
 
@@ -1692,7 +1692,7 @@ get_env_dir(argv[0])
 
 
    
-#line 3923 "./tex4ht-t4ht.tex"
+#line 3927 "./tex4ht-t4ht.tex"
 
 #ifdef WIN32
   /* See comments in tex4ht */
@@ -1741,7 +1741,7 @@ get_env_dir(argv[0])
 
 
    
-#line 4028 "./tex4ht-t4ht.tex"
+#line 4032 "./tex4ht-t4ht.tex"
 
 
 #ifdef SIGSEGV
@@ -1750,7 +1750,7 @@ get_env_dir(argv[0])
   (void) signal(SIGFPE,sig_err);
 #ifdef KWIN32
   
-#line 4051 "./tex4ht-t4ht.tex"
+#line 4055 "./tex4ht-t4ht.tex"
 
 SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 
@@ -1768,15 +1768,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2018-06-28-11:26 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2018-07-04-14:25 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2018-06-28-11:26)\n");
+   (IGNORED) printf("t4ht.c (2018-07-04-14:25)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2018-06-28-11:26 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2018-07-04-14:25 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2018-06-28-11:26 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2018-07-04-14:25 kpathsea)\n");
 #endif
 #endif
 
@@ -1826,11 +1826,11 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 HOME_DIR = getenv("HOME");
 
 
-#line 4142 "./tex4ht-t4ht.tex"
+#line 4146 "./tex4ht-t4ht.tex"
 
 {                   C_CHAR   *yes = NULL;
   system_yes = (
-#line 4154 "./tex4ht-t4ht.tex"
+#line 4158 "./tex4ht-t4ht.tex"
 
 #ifdef SYSTEM_FUNCTION_OK
 0
@@ -1842,7 +1842,7 @@ system( yes ) != 0
 }
 
 
-#line 4382 "./tex4ht-t4ht.tex"
+#line 4386 "./tex4ht-t4ht.tex"
 
 {          int i;
   for( i=0;  i<=9; i++){
@@ -1890,7 +1890,7 @@ if( (int) strlen((char *)  argv[i] ) == 2 ){
 switch( *(p+1) ){
   case 'M':{ ch_mod = q;  newchmod = TRUE; break; }
   case 'S':{ 
-#line 2279 "./tex4ht-t4ht.tex"
+#line 2283 "./tex4ht-t4ht.tex"
 
 {     struct sys_call_rec *q;
   q = m_alloc(struct sys_call_rec, 1);
@@ -1903,7 +1903,7 @@ switch( *(p+1) ){
   case 'X':{ Xfield = q;  break;}
   case 'b':{ bitmaps_no_dm = q-1;  break;}
   case 'c':{ 
-#line 2190 "./tex4ht-t4ht.tex"
+#line 2194 "./tex4ht-t4ht.tex"
 
 struct env_c_rec *temp = (struct env_c_rec*)
                    m_alloc(struct env_c_rec, (int) 1);
@@ -1914,7 +1914,7 @@ envChoice = temp;
   break;}
   case 'd':{ dir = (*q=='~')? abs_addr(q,NULL) : q;  break; }
   case 'e':{ 
-#line 3482 "./tex4ht-t4ht.tex"
+#line 3486 "./tex4ht-t4ht.tex"
 
 tex4ht_env_file = q;
 
@@ -1982,18 +1982,18 @@ lg_name++;
 #line 92 "./tex4ht-t4ht.tex"
 
 
-#line 2910 "./tex4ht-t4ht.tex"
+#line 2914 "./tex4ht-t4ht.tex"
 
 {                                FILE* file;
                                  U_CHAR  env_loc[512];
    env_loc[0] = '\0';
    
-#line 3164 "./tex4ht-t4ht.tex"
+#line 3168 "./tex4ht-t4ht.tex"
 
 {         Q_CHAR  str[512],
                                                       *TEX4HTENV;
    
-#line 3449 "./tex4ht-t4ht.tex"
+#line 3453 "./tex4ht-t4ht.tex"
 
 if( tex4ht_env_file ){
    if( debug ){
@@ -2011,7 +2011,7 @@ if( debug && file ){
 
 
    
-#line 3152 "./tex4ht-t4ht.tex"
+#line 3156 "./tex4ht-t4ht.tex"
 
 if( !file ) {
    if( debug ){
@@ -2025,7 +2025,7 @@ if( !file ) {
 
 
    
-#line 3203 "./tex4ht-t4ht.tex"
+#line 3207 "./tex4ht-t4ht.tex"
 
 #ifndef DOS_WIN32
    if( !file ) {
@@ -2041,7 +2041,7 @@ if( !file ) {
 
 
    
-#line 3186 "./tex4ht-t4ht.tex"
+#line 3190 "./tex4ht-t4ht.tex"
 
 if( !file ){
   TEX4HTENV = getenv("TEX4HTENV");
@@ -2055,11 +2055,11 @@ if( !file ){
 
 
    
-#line 3390 "./tex4ht-t4ht.tex"
+#line 3394 "./tex4ht-t4ht.tex"
 
 if( !file ){
   if( HOME_DIR ){ (IGNORED) sprintf(str,
-#line 3429 "./tex4ht-t4ht.tex"
+#line 3433 "./tex4ht-t4ht.tex"
 
 #if defined(DOS_WIN32) || defined(__DJGPP__)
   is_forward_slash(HOME_DIR)?  "%s/tex4ht.env" :  "%s\\tex4ht.env"
@@ -2105,7 +2105,7 @@ if( !file ){
 
 
    
-#line 3217 "./tex4ht-t4ht.tex"
+#line 3221 "./tex4ht-t4ht.tex"
 
 #ifdef ENVFILE
    if( !file ) {
@@ -2121,7 +2121,7 @@ if( !file ){
 
 
    if( !file ) { 
-#line 3465 "./tex4ht-t4ht.tex"
+#line 3469 "./tex4ht-t4ht.tex"
 
 if( dos_env_file ){
    if( debug ){
@@ -2135,14 +2135,14 @@ if( dos_env_file ){
 
  }
    
-#line 3253 "./tex4ht-t4ht.tex"
+#line 3257 "./tex4ht-t4ht.tex"
 
 
 #ifdef KPATHSEA
 if( !file )  {               U_CHAR * envfile;
                              char *arch, *p, str[256];
    
-#line 3280 "./tex4ht-t4ht.tex"
+#line 3284 "./tex4ht-t4ht.tex"
 
 p = arch = (char *) kpse_var_value( "SELFAUTOLOC" );
 while( *p != '\0' ){
@@ -2155,7 +2155,7 @@ while( *p != '\0' ){
 
    envfile = (char *) 0;
    
-#line 3291 "./tex4ht-t4ht.tex"
+#line 3295 "./tex4ht-t4ht.tex"
 
 if( arch ){
   (IGNORED) sprintf(str,"%s%ctex4ht.env", arch+1, *arch);
@@ -2168,7 +2168,7 @@ if( arch ){
 
 
    if ( !envfile ){ 
-#line 3303 "./tex4ht-t4ht.tex"
+#line 3307 "./tex4ht-t4ht.tex"
 
 if( debug ){
   (IGNORED) printf(
@@ -2178,11 +2178,11 @@ envfile= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
 
  }
    if ( !envfile ){ 
-#line 3357 "./tex4ht-t4ht.tex"
+#line 3361 "./tex4ht-t4ht.tex"
 
 if( system("kpsewhich --progname=tex4ht tex4ht.env > tex4ht.tmp") == 0 ){
    
-#line 3370 "./tex4ht-t4ht.tex"
+#line 3374 "./tex4ht-t4ht.tex"
 
 char fileaddr [256];
 int loc = 0;
@@ -2211,7 +2211,7 @@ if( file ){
 if( debug ){
                        U_CHAR *p, *q;
   
-#line 3322 "./tex4ht-t4ht.tex"
+#line 3326 "./tex4ht-t4ht.tex"
 
 p = (U_CHAR *) kpse_var_value( "T4HTINPUTS" );
 if( p ){
@@ -2231,7 +2231,7 @@ if( !p && !q ){
 
 
    if( !file ) warn_i_str( 5, 
-#line 3241 "./tex4ht-t4ht.tex"
+#line 3245 "./tex4ht-t4ht.tex"
 
 #ifdef  DOS_WIN32
    "tex4ht.env"
@@ -2246,7 +2246,7 @@ if( !p && !q ){
 
    if( file ){
       
-#line 2927 "./tex4ht-t4ht.tex"
+#line 2931 "./tex4ht-t4ht.tex"
 
 eoln_ch = (int) 'x';
 while( eoln_ch != EOF ) {                Q_CHAR ch;
@@ -2256,7 +2256,7 @@ while( eoln_ch != EOF ) {                Q_CHAR ch;
      if( status ){
        switch( ch ){
          case 'A':{ 
-#line 2992 "./tex4ht-t4ht.tex"
+#line 2996 "./tex4ht-t4ht.tex"
 
 if( debug ){
       (IGNORED) printf(".......'A' script\n"); }
@@ -2264,7 +2264,7 @@ chmod_script = add_script(chmod_script);
 
   break;}
          case 'C':{ 
-#line 2967 "./tex4ht-t4ht.tex"
+#line 2971 "./tex4ht-t4ht.tex"
 
 if( debug ){
       (IGNORED) printf(".......'C' script\n"); }
@@ -2272,7 +2272,7 @@ copy_script = add_script(copy_script);
 
   break;}
          case 'E':{ 
-#line 2998 "./tex4ht-t4ht.tex"
+#line 3002 "./tex4ht-t4ht.tex"
 
 if( debug ){
       (IGNORED) printf(".......'E' script\n"); }
@@ -2280,7 +2280,7 @@ empty_fig_script = add_script(empty_fig_script);
 
   break;}
          case 'F':{ 
-#line 2953 "./tex4ht-t4ht.tex"
+#line 2957 "./tex4ht-t4ht.tex"
 
 if( debug ){
       (IGNORED) printf(".......'F' script\n"); }
@@ -2295,7 +2295,7 @@ dvigif_script = add_script(dvigif_script);
 
    break;}
          case 'M':{ 
-#line 2960 "./tex4ht-t4ht.tex"
+#line 2964 "./tex4ht-t4ht.tex"
 
 if( debug ){
       (IGNORED) printf(".......'M' script\n"); }
@@ -2303,7 +2303,7 @@ move_script = add_script(move_script);
 
   break;}
          case 'S':{ 
-#line 2266 "./tex4ht-t4ht.tex"
+#line 2270 "./tex4ht-t4ht.tex"
 
 {     struct sys_call_rec *q;
   q = m_alloc(struct sys_call_rec, 1);
@@ -2318,17 +2318,17 @@ if( debug ){
 
   break;}
          case 'X':{ 
-#line 2977 "./tex4ht-t4ht.tex"
+#line 2981 "./tex4ht-t4ht.tex"
 
 if( debug ){
       (IGNORED) printf(".......'X' script\n"); }
 
-#line 2235 "./tex4ht-t4ht.tex"
+#line 2239 "./tex4ht-t4ht.tex"
 
 file_script
 
  = add_script(
-#line 2235 "./tex4ht-t4ht.tex"
+#line 2239 "./tex4ht-t4ht.tex"
 
 file_script
 
@@ -2336,17 +2336,17 @@ file_script
 
   break;}
          case '.':{ 
-#line 2983 "./tex4ht-t4ht.tex"
+#line 2987 "./tex4ht-t4ht.tex"
 
 if( debug ){
       (IGNORED) printf(".......'.' script\n"); }
 
-#line 2171 "./tex4ht-t4ht.tex"
+#line 2175 "./tex4ht-t4ht.tex"
 
 ext_script
 
  = add_script(
-#line 2171 "./tex4ht-t4ht.tex"
+#line 2175 "./tex4ht-t4ht.tex"
 
 ext_script
 
@@ -2354,7 +2354,7 @@ ext_script
 
   break;}
          case '<':{ 
-#line 3009 "./tex4ht-t4ht.tex"
+#line 3013 "./tex4ht-t4ht.tex"
 
 if( *(match[1]) != '/' ){
                          U_CHAR *p;
@@ -2364,7 +2364,7 @@ if( *(match[1]) != '/' ){
       p++ ){}
   if( *p == '>' ){ *p = '\0'; }
   
-#line 2198 "./tex4ht-t4ht.tex"
+#line 2202 "./tex4ht-t4ht.tex"
 
 if( envChoice == (struct env_c_rec*) 0  ){
   env_skip = !eq_str(match[1], "default" );
@@ -2378,7 +2378,7 @@ if( envChoice == (struct env_c_rec*) 0  ){
 
   if( env_skip ){
      
-#line 3030 "./tex4ht-t4ht.tex"
+#line 3034 "./tex4ht-t4ht.tex"
 
                          U_CHAR cur_block[90];
 if( debug ){
@@ -2419,16 +2419,16 @@ while( !status && (eoln_ch != EOF) ){
 lg_file = open_file(lg_name,LG_EXT);
 if( lg_file ) {
    
-#line 3755 "./tex4ht-t4ht.tex"
+#line 3759 "./tex4ht-t4ht.tex"
 
 begin_lg_file = ftell(lg_file);
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
@@ -2451,19 +2451,19 @@ if( check_tex4ht_c_err ){
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 1700 "./tex4ht-t4ht.tex"
+#line 1704 "./tex4ht-t4ht.tex"
 
 {     
-#line 2052 "./tex4ht-t4ht.tex"
+#line 2056 "./tex4ht-t4ht.tex"
 
 Q_CHAR *file_name, file_mode[5];
 int i, start_loc, end_loc, addr = 0;
@@ -2493,7 +2493,7 @@ BOOL write_on;
                     ( eq_str(match[2],"Skip ")?  Skip_op :
                       ( eq_str(match[2],"Cont ")?  Cont_op : No_op )));
          if( rec_op == No_op ){ 
-#line 1736 "./tex4ht-t4ht.tex"
+#line 1740 "./tex4ht-t4ht.tex"
 
 ch = match[2];
 if( (ch[0]=='S') && (ch[1]=='e') && (ch[2]=='t') ){
@@ -2513,14 +2513,14 @@ if( rec_op != No_op ){
                       match[1], match[2], match[3], match[4], match[5]);
          } else {
             
-#line 1998 "./tex4ht-t4ht.tex"
+#line 2002 "./tex4ht-t4ht.tex"
 
 file_name = match[1];
 *(file_name + (int) strlen((char *) file_name) - 1) = '\0';
 strcpy((char *) file_mode, WRITE_TEXT_FLAGS);
 for(i=1; i<=2; i++){
   
-#line 2017 "./tex4ht-t4ht.tex"
+#line 2021 "./tex4ht-t4ht.tex"
 
 for( p = opened_files; p != (struct files_rec*) 0;  p = p->right ){
    if( eq_str(file_name,p->name) ) { break; }
@@ -2540,7 +2540,7 @@ to_rec = from_rec;  from_rec = p;
 
   file_name = match[5];
   strcpy((char *) file_mode, 
-#line 4305 "./tex4ht-t4ht.tex"
+#line 4309 "./tex4ht-t4ht.tex"
 
 READ_BIN_FLAGS
 
@@ -2549,11 +2549,11 @@ READ_BIN_FLAGS
 
 
             
-#line 1959 "./tex4ht-t4ht.tex"
+#line 1963 "./tex4ht-t4ht.tex"
 
 if( to_rec->down == (struct files_rec*) 0 ){
   
-#line 1973 "./tex4ht-t4ht.tex"
+#line 1977 "./tex4ht-t4ht.tex"
 
 to_rec->down = p = m_alloc(struct files_rec, 1);
 p->up = to_rec;
@@ -2574,7 +2574,7 @@ to_rec = p;
   }
   if( to_rec->from_rec != from_rec ){
     
-#line 1985 "./tex4ht-t4ht.tex"
+#line 1989 "./tex4ht-t4ht.tex"
 
 to_rec->right = p = m_alloc(struct files_rec, 1);
 p->left = to_rec;
@@ -2591,11 +2591,11 @@ to_rec = p;
 
 
             
-#line 1913 "./tex4ht-t4ht.tex"
+#line 1917 "./tex4ht-t4ht.tex"
 
 if( to_rec->down == (struct files_rec*) 0 ){
   
-#line 1929 "./tex4ht-t4ht.tex"
+#line 1933 "./tex4ht-t4ht.tex"
 
 to_rec->down = p = m_alloc(struct files_rec, 1);
 p->up = to_rec;
@@ -2618,7 +2618,7 @@ to_rec = p;
   }
   if( !eq_str(to_rec->group,match[3]) ){
     
-#line 1943 "./tex4ht-t4ht.tex"
+#line 1947 "./tex4ht-t4ht.tex"
 
 to_rec->right = p = m_alloc(struct files_rec, 1);
 p->left = to_rec;
@@ -2637,7 +2637,7 @@ to_rec = p;
 
 
             
-#line 1900 "./tex4ht-t4ht.tex"
+#line 1904 "./tex4ht-t4ht.tex"
 
 p = m_alloc(struct files_rec, 1);
 p->down = to_rec->down;  to_rec->down = p;
@@ -2652,7 +2652,7 @@ p->label = addr;
 
 
             
-#line 1782 "./tex4ht-t4ht.tex"
+#line 1786 "./tex4ht-t4ht.tex"
 
 if( rec_op == Until_op ){
   for( p = to_rec->down;
@@ -2661,7 +2661,7 @@ if( rec_op == Until_op ){
   }
   if( p == (struct files_rec*) 0 ){
     
-#line 1882 "./tex4ht-t4ht.tex"
+#line 1886 "./tex4ht-t4ht.tex"
 
 (IGNORED) fprintf(stderr,"%sMissing `CopyTo From':\n", "--- warning --- ");
 for( p = to_rec->down; p != (struct files_rec*) 0;  p = p->down ){
@@ -2679,21 +2679,21 @@ for( p = to_rec->down; p != (struct files_rec*) 0;  p = p->down ){
 
   } else {
     
-#line 1800 "./tex4ht-t4ht.tex"
+#line 1804 "./tex4ht-t4ht.tex"
 
 in_file = from_rec->file;
 out_file = to_rec->file;
 start_loc = from_op->loc;
 write_on = TRUE;
 (IGNORED) fseek(in_file, (long) start_loc, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 for( p= from_op;  p != to_rec; p = p->up ){
   switch( p->op ){
     case Until_op:{ 
-#line 1817 "./tex4ht-t4ht.tex"
+#line 1821 "./tex4ht-t4ht.tex"
 
 if( write_on ){
    end_loc = p->loc;
@@ -2703,7 +2703,7 @@ if( write_on ){
 
  break; }
     case  Skip_op:{ 
-#line 1826 "./tex4ht-t4ht.tex"
+#line 1830 "./tex4ht-t4ht.tex"
 
 if( write_on ){
    end_loc = p->loc;
@@ -2715,7 +2715,7 @@ write_on = FALSE;
 
   break; }
     case  Cont_op:{ 
-#line 1837 "./tex4ht-t4ht.tex"
+#line 1841 "./tex4ht-t4ht.tex"
 
 end_loc = p->loc;
 if( write_on ){
@@ -2725,7 +2725,7 @@ if( write_on ){
 } else {
    start_loc = end_loc;
    (IGNORED) fseek(in_file, (long) end_loc, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
@@ -2734,7 +2734,7 @@ write_on = TRUE;
 
   break; }
     case   Set_op:{ 
-#line 1851 "./tex4ht-t4ht.tex"
+#line 1855 "./tex4ht-t4ht.tex"
 
 addr = -1;
 for( p1 = from_op->up; p1 != to_rec;  p1 = p1->up ){
@@ -2749,7 +2749,7 @@ if( addr != -1 ){ (p->up)->loc = addr; }
 
 
     
-#line 1861 "./tex4ht-t4ht.tex"
+#line 1865 "./tex4ht-t4ht.tex"
 
 to_rec->down = from_op->down;
 if( from_op->down != (struct files_rec*) 0){
@@ -2777,21 +2777,21 @@ if( to_rec->down == (struct files_rec*) 0){
 
    }  }  }
    
-#line 1749 "./tex4ht-t4ht.tex"
+#line 1753 "./tex4ht-t4ht.tex"
 
 for( p = opened_files; p != (struct files_rec*) 0; ){
    (IGNORED) fclose(p->file);
    free((void *)  p->name);
    
-#line 1758 "./tex4ht-t4ht.tex"
+#line 1762 "./tex4ht-t4ht.tex"
 
 for( p1 = p->down; p1 != (struct files_rec*) 0; ){
    
-#line 1765 "./tex4ht-t4ht.tex"
+#line 1769 "./tex4ht-t4ht.tex"
 
 for( p2 = p1->down; p2 != (struct files_rec*) 0; ){
    
-#line 1772 "./tex4ht-t4ht.tex"
+#line 1776 "./tex4ht-t4ht.tex"
 
 for( p3 = p2->down; p3 != (struct files_rec*) 0; ){
   p4 = p3; p3 = p3->down; free((void *)  p4);
@@ -2814,16 +2814,16 @@ for( p3 = p2->down; p3 != (struct files_rec*) 0; ){
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2368 "./tex4ht-t4ht.tex"
+#line 2372 "./tex4ht-t4ht.tex"
 
 {                     struct htf_struct *last_rec, *p;
    last_rec = (struct htf_struct *) 0;
@@ -2832,7 +2832,7 @@ for( p3 = p2->down; p3 != (struct files_rec*) 0; ){
       status = scan_str("htfcss: ", TRUE, lg_file);
       status = scan_until_end_str("", 1, status, lg_file);
       
-#line 2383 "./tex4ht-t4ht.tex"
+#line 2387 "./tex4ht-t4ht.tex"
 
 if( status ){
             Q_CHAR *s, *t;
@@ -2850,12 +2850,12 @@ if( status ){
       if( status ){            Q_CHAR *key, *body, *media;
          media = body = key = match[1];
          
-#line 2400 "./tex4ht-t4ht.tex"
+#line 2404 "./tex4ht-t4ht.tex"
 
 while( *body && (*body != ' ') ){ body++; }
 if( *body == ' ' ){ media = body; *(body++) = '\0'; }
 
-#line 2412 "./tex4ht-t4ht.tex"
+#line 2416 "./tex4ht-t4ht.tex"
 
 if( (int) strlen((char *) body) > 6 ){
    if(     (*(body) == '@')
@@ -2876,7 +2876,7 @@ if( (int) strlen((char *) body) > 6 ){
 
 if( *body ){
   if( *key ){ 
-#line 2430 "./tex4ht-t4ht.tex"
+#line 2434 "./tex4ht-t4ht.tex"
 
 p = m_alloc(struct htf_struct, 1);
 p->next =  (struct htf_struct *) 0;
@@ -2898,7 +2898,7 @@ if( debug ){
  }
 #if 0 /* unreachable */
   else if( last_rec ){ 
-#line 2449 "./tex4ht-t4ht.tex"
+#line 2453 "./tex4ht-t4ht.tex"
 
 last_rec->body = (Q_CHAR *)  r_alloc((void *) last_rec->body,
       (size_t) strlen((char *) last_rec->body)
@@ -2920,16 +2920,16 @@ if( debug ){
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2471 "./tex4ht-t4ht.tex"
+#line 2475 "./tex4ht-t4ht.tex"
 
 eoln_ch = (int) 'x';
 while( eoln_ch != EOF ) {
@@ -2940,7 +2940,7 @@ while( eoln_ch != EOF ) {
       key = match[1];
       *(key + (int) strlen((char *) key) - 1) = '\0';
       
-#line 2486 "./tex4ht-t4ht.tex"
+#line 2490 "./tex4ht-t4ht.tex"
 
 if( (*key != '\0') && (*key != '\n') ) {
                             struct htf_struct *p;
@@ -2960,10 +2960,10 @@ if( (*key != '\0') && (*key != '\n') ) {
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
@@ -3013,10 +3013,10 @@ last->n = get_long_int(match[1]);
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
@@ -3169,7 +3169,7 @@ status = scan_until_end_str("", 1, status, lg_file);
 
  }
         } else { 
-#line 1643 "./tex4ht-t4ht.tex"
+#line 1647 "./tex4ht-t4ht.tex"
 
 status = scan_until_end_str(" ignore ---", 2, status, lg_file);
 if( status ){
@@ -3184,23 +3184,23 @@ if( status ){
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2534 "./tex4ht-t4ht.tex"
+#line 2538 "./tex4ht-t4ht.tex"
 
 {
                                Q_CHAR   css_name[255];
                                FILE   *css_file, *tmp_file;
                                BOOL   css_sty;
    
-#line 2578 "./tex4ht-t4ht.tex"
+#line 2582 "./tex4ht-t4ht.tex"
 
 (IGNORED) strcpy((char *)  css_name, (char *) job_name);
 (IGNORED) strct(css_name, ".css");
@@ -3213,7 +3213,7 @@ css_file = fopen(css_name, READ_TEXT_FLAGS);
       if( !tmp_file ) {
          (IGNORED) warn_i_str(5,tmp_name);
       } else { 
-#line 2568 "./tex4ht-t4ht.tex"
+#line 2572 "./tex4ht-t4ht.tex"
 
                    int ch;
 while( (ch = getc(css_file)) != EOF ) {
@@ -3231,14 +3231,14 @@ while( (ch = getc(css_file)) != EOF ) {
          (IGNORED) warn_i_str(5,css_name);
       } else {
         
-#line 2590 "./tex4ht-t4ht.tex"
+#line 2594 "./tex4ht-t4ht.tex"
 
 css_sty = FALSE;
 eoln_ch = (int) 'x';
 while( eoln_ch != EOF ) {
   status = scan_until_end_str("", 1, TRUE, tmp_file);
   
-#line 2607 "./tex4ht-t4ht.tex"
+#line 2611 "./tex4ht-t4ht.tex"
 
 {                          Q_CHAR *p, *q;
                            int  n;
@@ -3259,20 +3259,20 @@ while( eoln_ch != EOF ) {
 
         if( css_sty ){
            
-#line 2624 "./tex4ht-t4ht.tex"
+#line 2628 "./tex4ht-t4ht.tex"
 
 (IGNORED) fprintf(css_file, "/* start css.sty */\n");
 
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2797 "./tex4ht-t4ht.tex"
+#line 2801 "./tex4ht-t4ht.tex"
 
 eoln_ch = (int) 'x';
 while( eoln_ch != EOF ) {
@@ -3289,16 +3289,16 @@ while( eoln_ch != EOF ) {
 
 
 
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2682 "./tex4ht-t4ht.tex"
+#line 2686 "./tex4ht-t4ht.tex"
 
 eoln_ch = (int) 'x';
 while( eoln_ch != EOF ) {
@@ -3310,16 +3310,16 @@ while( eoln_ch != EOF ) {
 
 
 
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2711 "./tex4ht-t4ht.tex"
+#line 2715 "./tex4ht-t4ht.tex"
 
 eoln_ch = (int) 'x';
 while( eoln_ch != EOF ) {
@@ -3341,7 +3341,7 @@ while( eoln_ch != EOF ) {
       p = match[4];
       *(p + (int) strlen((char *) p) - 2) = '\0';
       
-#line 2759 "./tex4ht-t4ht.tex"
+#line 2763 "./tex4ht-t4ht.tex"
 
 {                                                  Q_CHAR *p;
    second =   (int)
@@ -3356,7 +3356,7 @@ while( eoln_ch != EOF ) {
      p++;
    }
    
-#line 2779 "./tex4ht-t4ht.tex"
+#line 2783 "./tex4ht-t4ht.tex"
 
 if(  (int) (  (double) get_long_int(match[2])
             / (int) get_long_int(match[4])
@@ -3372,14 +3372,14 @@ if(  (int) (  (double) get_long_int(match[2])
 
 
       
-#line 2740 "./tex4ht-t4ht.tex"
+#line 2744 "./tex4ht-t4ht.tex"
 
 font_sty = htf_rec;
 while ( font_sty  ) {
   if( eq_str(font_sty->key,match[1]) ){
       if( *(font_sty->media) == '\0'  ){
          
-#line 2823 "./tex4ht-t4ht.tex"
+#line 2827 "./tex4ht-t4ht.tex"
 
 (IGNORED) fprintf(css_file,
    (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
@@ -3402,7 +3402,7 @@ if( font_sty  ) {
          second = 100;
       } else {
          
-#line 2843 "./tex4ht-t4ht.tex"
+#line 2847 "./tex4ht-t4ht.tex"
 
 (IGNORED) fprintf(css_file, "@media %s{", font_sty->media);
 (IGNORED) fprintf(css_file,
@@ -3425,7 +3425,7 @@ if( font_sty  ) {
   font_sty = font_sty->next;
 }
 if( second != 100 ){ 
-#line 2823 "./tex4ht-t4ht.tex"
+#line 2827 "./tex4ht-t4ht.tex"
 
 (IGNORED) fprintf(css_file,
    (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
@@ -3451,21 +3451,21 @@ if( font_sty  ) {
 
 
 
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2867 "./tex4ht-t4ht.tex"
+#line 2871 "./tex4ht-t4ht.tex"
 
 {            char  *font_class [256];
              int last_class;
    
-#line 2886 "./tex4ht-t4ht.tex"
+#line 2890 "./tex4ht-t4ht.tex"
 
 last_class = 0;
 eoln_ch = (int) 'x';
@@ -3479,10 +3479,10 @@ while( eoln_ch != EOF ) {
       match[1] = (Q_CHAR *) malloc(7);  max_match[1] = 7;
 }  }
 
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
@@ -3504,16 +3504,16 @@ while( eoln_ch != EOF ) {
 
 
 
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2663 "./tex4ht-t4ht.tex"
+#line 2667 "./tex4ht-t4ht.tex"
 
 eoln_ch = (int) 'x';
 while( eoln_ch != EOF ) {
@@ -3528,13 +3528,13 @@ while( eoln_ch != EOF ) {
 
 
            
-#line 2645 "./tex4ht-t4ht.tex"
+#line 2649 "./tex4ht-t4ht.tex"
 
 eoln_ch = (int) 'x';
 while( eoln_ch != EOF ) {
   status = scan_until_end_str("", 1, TRUE, tmp_file);
   
-#line 2607 "./tex4ht-t4ht.tex"
+#line 2611 "./tex4ht-t4ht.tex"
 
 {                          Q_CHAR *p, *q;
                            int  n;
@@ -3562,19 +3562,19 @@ while( eoln_ch != EOF ) {
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2082 "./tex4ht-t4ht.tex"
+#line 2086 "./tex4ht-t4ht.tex"
 
 if( 
-#line 2171 "./tex4ht-t4ht.tex"
+#line 2175 "./tex4ht-t4ht.tex"
 
 ext_script
 
@@ -3592,13 +3592,13 @@ ext_script
         while( *(--ext) != '.' ){ ; }
         *ext = '\0'; ext++;
         
-#line 2104 "./tex4ht-t4ht.tex"
+#line 2108 "./tex4ht-t4ht.tex"
 
 {
             struct script_struct *cur, *add, *temp;
             Q_CHAR extPlus[256];
   cur = 
-#line 2171 "./tex4ht-t4ht.tex"
+#line 2175 "./tex4ht-t4ht.tex"
 
 ext_script
 
@@ -3606,7 +3606,7 @@ ext_script
   add = cur_script = NULL_SCRIPT;
   while( cur ){
      
-#line 2125 "./tex4ht-t4ht.tex"
+#line 2129 "./tex4ht-t4ht.tex"
 
 (IGNORED) strcpy((char *) extPlus, (char *) ext);
 /*
@@ -3619,7 +3619,7 @@ ext_script
 
      if( strpre(extPlus, cur->command) ){
         
-#line 2135 "./tex4ht-t4ht.tex"
+#line 2139 "./tex4ht-t4ht.tex"
 
 temp = (struct script_struct *)
             m_alloc(struct script_struct, (int) 1);
@@ -3641,7 +3641,7 @@ temp->next =  NULL_SCRIPT;
         (void) execute_script(cur_script,
                  match[1], Dotfield? Dotfield : "", "", "");
         
-#line 2144 "./tex4ht-t4ht.tex"
+#line 2148 "./tex4ht-t4ht.tex"
 
 while(  cur_script != (struct script_struct*) 0 ){
                           struct script_struct *temp;
@@ -3653,19 +3653,19 @@ while(  cur_script != (struct script_struct*) 0 ){
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2217 "./tex4ht-t4ht.tex"
+#line 2221 "./tex4ht-t4ht.tex"
 
 if( 
-#line 2235 "./tex4ht-t4ht.tex"
+#line 2239 "./tex4ht-t4ht.tex"
 
 file_script
 
@@ -3687,10 +3687,10 @@ file_script
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
@@ -3723,16 +3723,16 @@ while( eoln_ch != EOF ) {
 
 
    
-#line 3759 "./tex4ht-t4ht.tex"
+#line 3763 "./tex4ht-t4ht.tex"
 
 (IGNORED)  fseek(lg_file, begin_lg_file, 
-#line 3763 "./tex4ht-t4ht.tex"
+#line 3767 "./tex4ht-t4ht.tex"
 
 0
 );
 
   
-#line 2245 "./tex4ht-t4ht.tex"
+#line 2249 "./tex4ht-t4ht.tex"
 
 eoln_ch = (int) 'x';
 while( eoln_ch != EOF ) {              Q_CHAR *command, ch;
@@ -3746,7 +3746,7 @@ while( eoln_ch != EOF ) {              Q_CHAR *command, ch;
       command = match[2];
       *(command + (int) strlen((char *) command) - 5) = '\0';
       
-#line 2289 "./tex4ht-t4ht.tex"
+#line 2293 "./tex4ht-t4ht.tex"
 
 flag = FALSE;
 p = system_calls;
@@ -3767,7 +3767,7 @@ while( p ){
 
       if( flag ){
         
-#line 4162 "./tex4ht-t4ht.tex"
+#line 4166 "./tex4ht-t4ht.tex"
 
 (IGNORED) call_sys(command);
 

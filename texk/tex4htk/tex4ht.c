@@ -1,7 +1,7 @@
 
 #line 231 "./tex4ht-c.tex"
 
-/* tex4ht.c (2018-06-30-15:36), generated from tex4ht-c.tex
+/* tex4ht.c (2018-07-03-10:36), generated from tex4ht-c.tex
    Copyright 2009-2018 TeX Users Group
    Copyright 1996-2009 Eitan M. Gurari
 
@@ -7357,15 +7357,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2018-06-30-15:36 %s)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2018-07-03-10:36 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2018-06-30-15:36)\n");
+   (IGNORED) printf("tex4ht.c (2018-07-03-10:36)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2018-06-30-15:36 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2018-07-03-10:36 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2018-06-30-15:36 kpathsea)\n");
+   (IGNORED) printf("tex4ht.c (2018-07-03-10:36 kpathsea)\n");
 #endif
 #endif
 for(i=0; i<argc; i++){

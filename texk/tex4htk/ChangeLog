@@ -1,3 +1,9 @@
+2019-02-28  Karl Berry  <karl@freefriends.org>
+
+	* t4ht.c: expand %%~ to $TEXMFDIST instead of $SELFAUTOPARENT
+	(tex4ht r418, 3jul18).
+	* tex4ht.c: regenerate, version change only.
+
 2018-06-30  Karl Berry  <karl@freefriends.org>
 
 	* tex4ht-c.tex (close tex4ht file): don't try to dereference
