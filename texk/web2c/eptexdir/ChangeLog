@@ -1,3 +1,8 @@
+2019-03-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* eptex.ech: Fix \show\savinghyphcodes. (Bug introduced in
+	2018-09-01).
+
 2019-01-31  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfutils.ch: Improve \pdfsavepos when papersize special

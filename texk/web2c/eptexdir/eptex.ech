@@ -511,6 +511,7 @@ primitive("readpapersizespecial",assign_int,int_base+read_papersize_special_code
 @x
 saving_hyph_codes_code:print_esc("savinghyphcodes");
 @y
+saving_hyph_codes_code:print_esc("savinghyphcodes");
 read_papersize_special_code:print_esc("readpapersizespecial");
 @z
 @x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306
