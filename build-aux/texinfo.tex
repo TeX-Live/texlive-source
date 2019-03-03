@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-02-23.16}
+\def\texinfoversion{2019-02-28.20}
 
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
@@ -5216,11 +5216,12 @@ end
   {%
     \requireopenindexfile{#1}%
     % Store the main index entry text (including the third arg).
-    \toks0 = {#2}%
     % If third arg is present, precede it with a space.
     \def\thirdarg{#3}%
-    \ifx\thirdarg\empty \else
-      \toks0 = \expandafter{\the\toks0 \space #3}%
+    \ifx\thirdarg\empty
+      \def\indextext{#2}%
+    \else
+      \def\indextext{#2\space#3}%
     \fi
     %
     \edef\writeto{\csname#1indfile\endcsname}%
@@ -5255,13 +5256,9 @@ end
 }
 
 % Definition for writing index entry text.
-\def\sortas#1{\ignorespaces}%
+\def\sortas#1{}%
 
-% Definition for writing index entry sort key.  Should occur at the at
-% the beginning of the index entry, like
-%     @cindex @sortas{september} \september
-% The \ignorespaces takes care of following space, but there's no way
-% to remove space before it.
+% Definition for writing index entry sort key.
 {
 \catcode`\-=13
 \gdef\indexwritesortas{%
@@ -5297,10 +5294,9 @@ end
    \indexnonalnumdisappear
    \xdef\indexsortkey{}%
    \let\sortas=\indexwritesortas
-   \edef\temp{\the\toks0}%
-   \setbox\dummybox = \hbox{\temp}% Make sure to execute any \sortas
+   \setbox\dummybox = \hbox{\indextext}% Execute any \sortas
    \ifx\indexsortkey\empty
-     \xdef\indexsortkey{\temp}%
+     \xdef\indexsortkey{\indextext}%
      \ifx\indexsortkey\empty\xdef\indexsortkey{ }\fi
    \fi
   }%
@@ -5310,6 +5306,11 @@ end
   % three arguments to \entry to the .?? file (four in the
   % subentry case), texindex reduces to two when writing the .??s
   % sorted result.
+  %
+  % Fully expand the text of the index entry and trim spaces.
+  \edef\indextext{\indextext}%
+  \edef\indextext{\expandafter\eatspaces\expandafter{\indextext}}%
+  \toks0=\expandafter{\indextext}%
   \edef\temp{%
     \write\writeto{%
       \string\entry{\indexsortkey}{\noexpand\folio}{\the\toks0}}%
@@ -5417,11 +5418,6 @@ end
 \def\vindex {\vrindex}
 \def\tindex {\tpindex}
 \def\pindex {\pgindex}
-
-\def\cindexsub {\begingroup\obeylines\cindexsub}
-{\obeylines %
-\gdef\cindexsub "#1" #2^^M{\endgroup %
-\dosubind{cp}{#2}{#1}}}
 
 % Define the macros used in formatting output of the sorted index material.
 
