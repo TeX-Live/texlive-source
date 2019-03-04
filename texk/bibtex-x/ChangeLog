@@ -1,10 +1,17 @@
 2019-03-04  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
+	Both BibTeX8 and BibTeXu:
+	* bibtex-2.c: Add trace for sorting. (There is no related
+	code in the original BibTeX, but can be useful.)
+	Suppress compiler warnings.
 	* bibtex.c, utils.c: Print ICU version in BibTeXu.
+
+	BibTeXu only:
+	* bibtex-2.c: Use u_strFromUTF8() instead of icu_toUChars()
+	while sorting for BibTeXu. Close UConverter properly.
+	* bibtex-4.c: Fix x_purify() for BibTeXu.
 	* utils.c: Default to Flag_8bit in BibTeXu. We should NOT
 	read any csf file in BibTeXu. (BibTeX8 is unaffected)
-	* bibtex-4.c: Fix x_purify() for BibTeXu.
-	* bibtex-2.c: Suppress compiler warnings.
 
 2017-04-27  Karl Berry  <karl@tug.org>
 
