@@ -1564,9 +1564,10 @@ BEGIN
 	DO_NOTHING;
       END
     END
-    else if (scan2_white (COMMA, RIGHT_BRACE));
+    else if (scan2_white (COMMA, RIGHT_BRACE))
     BEGIN
       DO_NOTHING;
+    END
 
 /***************************************************************************
  * WEB section number:	267
@@ -1794,7 +1795,6 @@ Cite_Already_Set_Label: DO_NOTHING;
       END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 267 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-    END
   END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 266 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -3315,7 +3315,7 @@ BEGIN
 	      if ((ex_buf[ex_buf_ptr + 1] == 'd')
 		    || (ex_buf[ex_buf_ptr + 1] == 'D'))
               BEGIN
-	        if ((lex_class[ex_buf[ex_buf_ptr + 2]] == WHITE_SPACE))
+	        if (lex_class[ex_buf[ex_buf_ptr + 2]] == WHITE_SPACE)
                 BEGIN
                   ex_buf_ptr = ex_buf_ptr + 2;
                   and_found = TRUE;
