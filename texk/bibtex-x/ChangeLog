@@ -1,5 +1,6 @@
 2019-03-04  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
+	* bibtex.c, utils.c: Print ICU version in BibTeXu.
 	* bibtex-2.c: Suppress compiler warnings.
 
 2017-04-27  Karl Berry  <karl@tug.org>
