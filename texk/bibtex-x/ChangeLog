@@ -5,6 +5,7 @@
 	code in the original BibTeX, but can be useful.)
 	Suppress compiler warnings.
 	* bibtex.c, utils.c: Print ICU version in BibTeXu.
+	* version.h: Bump version (04 mar 2019).
 
 	BibTeXu only:
 	* bibtex-2.c: Use u_strFromUTF8() instead of icu_toUChars()
