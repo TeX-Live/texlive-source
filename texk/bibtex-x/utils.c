@@ -986,7 +986,11 @@ void parse_cmd_line (int argc, char **argv)
     int                 no_files;
 
     Flag_7bit = FALSE;
+#ifdef UTF_8
+    Flag_8bit = TRUE;
+#else
     Flag_8bit = FALSE;
+#endif
     Flag_big = FALSE;
     Flag_debug = FALSE;
     Flag_huge = FALSE;
