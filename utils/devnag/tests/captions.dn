@@ -16,7 +16,7 @@
 \def\captionsmodernhindi{%
 \def\abstractname{{\dn saaraa.m"sa}}%
 \def\appendixname{{\dn pari"si.s.ta}}%
-\def\bibname{{\dn sa.mdar"sa grantha}}% (?)
+\def\bibname{{\dn sa.mdarbha grantha}}%
 \def\ccname{}%
 \def\chaptername{{\dn adhyaaya}}%
 \def\contentsname{{\dn vi.saya-suucii}}%
