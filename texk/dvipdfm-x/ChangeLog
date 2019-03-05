@@ -1,3 +1,8 @@
+2019-03-05  Clerk Ma  <maqiyuan130324@vip.qq.com>
+
+	* tt_table.c: Fix 'null character(s)' warning which caused by
+	fonts like Roboto (Android) or YuMincho (Windows 10).
+
 2019-02-25  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tt_cmap.c (is_PUA_or_presentation):
