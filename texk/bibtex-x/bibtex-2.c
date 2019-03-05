@@ -2984,7 +2984,7 @@ So I use u_strFromUTF8WithSub() by replacing 0xffffffff --> 0xfffd.
   if (!U_SUCCESS(err1)) {
     uchlen1 = icu_toUChars(entry_strs, (ptr1 * (ENT_STR_SIZE+1)), lenk1, uch1, ucap);
     uchlen2 = icu_toUChars(entry_strs, (ptr2 * (ENT_STR_SIZE+1)), lenk2, uch2, ucap);
-  err1 = U_ZERO_ERROR;
+    err1 = U_ZERO_ERROR;
   }
 
   if(Flag_location)
