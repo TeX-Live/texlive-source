@@ -1,3 +1,7 @@
+2019-03-05  Akira Kakuto  <kakuto@w32tex.org>
+
+	* bibtex-2.c: Avoid access violation on Windows.
+
 2019-03-04  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	Both BibTeX8 and BibTeXu:

@@ -2969,6 +2969,21 @@ icu_toUChars() seems not working here, using u_strFromUTF8 instead. (04/mar/2019
   u_strFromUTF8(uch1, ucap, &uchlen1, (char *)&ENTRY_STRS(ptr1, 0), lenk1, &err1);
   u_strFromUTF8(uch2, ucap, &uchlen2, (char *)&ENTRY_STRS(ptr2, 0), lenk2, &err1);
 
+/*
+   In my Windows build, the above fails: err1 != U_ZERO_ERROR, which
+   gives access violation in ucol_open(). Maybe my ICU build is wrong.
+   In this case I use the original functions which seem not working,
+   only to avoid a crash by access violation. Thus I cannot support
+   correct behavior for bibtexu on Windows.  -- A. Kakuto 2019/03/05
+*/
+
+  if (!U_SUCCESS(err1)) {
+    uchlen1 = icu_toUChars(entry_strs, (ptr1 * (ENT_STR_SIZE+1)), lenk1, uch1, ucap);
+    uchlen2 = icu_toUChars(entry_strs, (ptr2 * (ENT_STR_SIZE+1)), lenk2, uch2, ucap);
+  }
+
+  err1 = U_ZERO_ERROR;
+
   if(Flag_location)
     ucol1 = ucol_open(Str_location, &err1);
   else
