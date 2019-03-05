@@ -1,6 +1,11 @@
 2019-03-05  Akira Kakuto  <kakuto@w32tex.org>
 
-	* bibtex-2.c: Avoid access violation on Windows.
+	* bibtex-2.c: Change U_SENTINEL to 0xfffd in
+	u_strFromUTF8WithSub(a, b, c, d, e, U_SENTINEL, NULL, f)
+	which is
+	u_strFromUTF8(a, b, c, d, e, f)
+	where U_SENTINEL is -1, because it works also for my
+	build of ICU.
 
 2019-03-04  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
