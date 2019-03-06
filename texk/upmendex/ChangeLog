@@ -1,3 +1,7 @@
+2019-03-06  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	Fix a bug in multibytelen().
+
 2019-02-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version 0.52  Beta version.

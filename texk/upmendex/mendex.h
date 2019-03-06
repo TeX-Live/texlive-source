@@ -90,7 +90,7 @@ void verb_printf(FILE *fp, const char *format, ...);
 struct index;
 void indwrite(char *filename, struct index *ind, int pagenum);
 
-#define  multibytelen(a)  ((a)<0xc2 ? 1 : ((a)<0xc2 ? -2 : ((a)<0xe0 ? 2 : ((a)<0xf0 ? 3 : ((a)<0xf5 ? 4 : -1)))))
+#define  multibytelen(a)  ((a)<0x80 ? 1 : ((a)<0xc2 ? -2 : ((a)<0xe0 ? 2 : ((a)<0xf0 ? 3 : ((a)<0xf5 ? 4 : -1)))))
 #define  is_surrogate_pair(a)   (U16_IS_LEAD(*(a)) && U16_IS_TRAIL(*(a+1)))
 
 #ifdef WIN32
