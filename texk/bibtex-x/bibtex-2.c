@@ -2966,6 +2966,7 @@ icu_toUChars() seems not working here, using u_strFromUTF8 instead. (04/mar/2019
 /*
 Use u_strFromUTF8WithSub() with a substitution character 0xfffd,
 instead of u_strFromUTF8(). (05/mar/2019)
+If err1 != U_ZERO_ERROR, the original functions are used. (06/mar/2019)
 */
 
 /*
@@ -2973,14 +2974,15 @@ instead of u_strFromUTF8(). (05/mar/2019)
   uchlen2 = icu_toUChars(entry_strs, (ptr2 * (ENT_STR_SIZE+1)), lenk2, uch2, ucap);
 */
   u_strFromUTF8WithSub(uch1, ucap, &uchlen1, (char *)&ENTRY_STRS(ptr1, 0), lenk1, 0xfffd, NULL, &err1);
-  u_strFromUTF8WithSub(uch2, ucap, &uchlen2, (char *)&ENTRY_STRS(ptr2, 0), lenk2, 0xfffd, NULL, &err1);
-
-/*
-  If err1 != U_ZERO_ERROR, we use the original functions.
-*/
 
   if (!U_SUCCESS(err1)) {
     uchlen1 = icu_toUChars(entry_strs, (ptr1 * (ENT_STR_SIZE+1)), lenk1, uch1, ucap);
+    err1 = U_ZERO_ERROR;
+  }
+
+  u_strFromUTF8WithSub(uch2, ucap, &uchlen2, (char *)&ENTRY_STRS(ptr2, 0), lenk2, 0xfffd, NULL, &err1);
+
+  if (!U_SUCCESS(err1)) {
     uchlen2 = icu_toUChars(entry_strs, (ptr2 * (ENT_STR_SIZE+1)), lenk2, uch2, ucap);
     err1 = U_ZERO_ERROR;
   }
