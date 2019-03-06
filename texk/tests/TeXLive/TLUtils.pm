@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 50107 $';
+my $svnrev = '$Revision: 50202 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -321,7 +321,7 @@ sub platform_name {
     # We don't use uname numbers here.)
     #
     # this changes each year, per above:
-    my $mactex_darwin = 10;  # lowest minor rev supported by x86_64-darwin.
+    my $mactex_darwin = 12;  # lowest minor rev supported by x86_64-darwin.
     #
     # Most robust approach is apparently to check sw_vers (os version,
     # returns "10.x" values), and sysctl (processor hardware).
@@ -397,8 +397,8 @@ sub platform_desc {
     'universal-darwin' => 'MacOSX universal binaries',
     'win32'            => 'Windows',
     'x86_64-cygwin'    => 'Cygwin on x86_64',
-    'x86_64-darwin'       => 'MacOSX current (10.10-) on x86_64',
-    'x86_64-darwinlegacy' => 'MacOSX legacy (10.6-10.9) on x86_64',
+    'x86_64-darwin'       => 'MacOSX current (10.12-) on x86_64',
+    'x86_64-darwinlegacy' => 'MacOSX legacy (10.6-) on x86_64',
     'x86_64-linux'     => 'GNU/Linux on x86_64',
     'x86_64-linuxmusl' => 'GNU/Linux on x86_64 with musl',
     'x86_64-solaris'   => 'Solaris on x86_64',

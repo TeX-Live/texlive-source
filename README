@@ -47,7 +47,7 @@ i386-openbsd, amd64-openbsd:
   e.g., see CONFIGURE_ARGS in the Makefile in
   http://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/print/texlive/base/
 
-i386-solaris, x86_64-solaris, sparc-solaris:
+i386-solaris, x86_64-solaris:
   Solaris 10, gcc 5.5.  See doc/README.solaris.
 
 i386-cygwin, x86_64-cygwin: gcc-4.8.2, cygwin-1.7.29.

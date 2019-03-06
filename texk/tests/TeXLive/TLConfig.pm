@@ -5,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 48727 $';
+my $svnrev = '$Revision: 50190 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -55,7 +55,7 @@ BEGIN {
 
 # the year of our release, will be used in the location of the
 # network packages, and in menu names, and other places.
-$ReleaseYear = 2018;
+$ReleaseYear = 2019;
 
 # users can upgrade from this year to the current year; might be the
 # same as the release year, or any number of releases earlier.
@@ -126,7 +126,7 @@ our $DefaultCompressorFormat = "xz";
 our %Compressors = (
   "lz4" => {
     "decompress_args" => ["-dcf"],
-    "compress_args"   => ["-zfmq", "--rm"],
+    "compress_args"   => ["-zfmq"],
     "extension"       => "lz4",
     "priority"        => 10,
   },
