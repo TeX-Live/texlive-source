@@ -127,6 +127,7 @@ typedef int boolean;
 typedef int integer;
 #define MPOST_ABS abs
 #else
+#ifndef _MSC_VER
 /* See source/texk/web2c/w2c/config.h */
 #if INTEGER_TYPE == long 
 #ifdef HAVE_LABS
@@ -137,6 +138,9 @@ typedef int integer;
 #else
 #define MPOST_ABS abs
 #endif /* if INTEGER_TYPE == long */
+#else /* _MSC_VER */
+#define MPOST_ABS abs
+#endif /* !_MSC_VER */
 #endif /* ifndef INTEGER_TYPE */
 
 
