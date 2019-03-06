@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2018 Brian Dunn
 
-printversion = "v0.67"
+printversion = "v0.68"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -396,6 +396,15 @@ function warnlimages ()
     print ("lwarpmk: ===")
 end -- warnlimages
 
+function warnlimagesrecompile ()
+-- Warning if must recompile before creating limages:
+    print ("")
+    print ("lwarpmk: ===")
+    print ("lwarpmk: The document must be recompiled before creating the lateximages.")
+    print ("lwarpmk: Enter \"lwarpmk html\" again, then try \"lwarpmk limages\" again.")
+    print ("lwarpmk: ===")
+end --warnlimagesrecompile
+
 function checklimages ()
 --
 -- Check <sourcename>.txt to see if need to recompile first.
@@ -424,12 +433,14 @@ for line in limagesfile:lines() do
         end
     end -- if i~=nil
 end -- do
+-- The last line should be |end|end|end|.
+-- If not, the compile must have aborted, and the images are incomplete.
+if ( lwimgpage ~= "end" ) then
+    warnlimagesrecompile()
+    os.exit(1) ;
+end
 if ( pagezerowarning ) then
-    print ("")
-    print ("lwarpmk: ===")
-    print ("lwarpmk: The document must be recompiled before creating the lateximages.")
-    print ("lwarpmk: Enter \"lwarpmk html\" again, then try \"lwarpmk limages\" again.")
-    print ("lwarpmk: ===")
+    warnlimagesrecompile()
     os.exit(1) ;
 end -- pagezerowarning
 end -- checklimages
@@ -509,6 +520,8 @@ if ( (i~=nil) ) then
     -- Skip if the page number is 0:
     if ( lwimgpage == "0" ) then
         pagezerowarning = true
+    -- Skip if the page number is "end":
+    else if ( lwimgpage == "end" ) then
     else
         -- Skip is this image is hashed and already exists:
         local lwimgfullname = imagesdirectory .. dirslash .. lwimgname .. ".svg"
@@ -531,6 +544,7 @@ if ( (i~=nil) ) then
                 createwindowsimage (lwimgfullname)
             end
         end -- not hashed or not exists
+    end -- not page "end"
     end -- not page 0
 end -- not nil
 end -- createonelateximage
