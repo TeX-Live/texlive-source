@@ -2964,10 +2964,8 @@ icu_toUChars() seems not working here, using u_strFromUTF8 instead. (04/mar/2019
 */
 
 /*
-On Windows, u_strFromUTF8() fails but u_strFromUTF8WithSub()
-with U_SENTINEL (-1) ---> 0xfffd works.
-So I use u_strFromUTF8WithSub() by replacing 0xffffffff --> 0xfffd.
---ak (05/mar/2019)
+Use u_strFromUTF8WithSub() with a substitution character 0xfffd,
+instead of u_strFromUTF8(). (05/mar/2019)
 */
 
 /*
