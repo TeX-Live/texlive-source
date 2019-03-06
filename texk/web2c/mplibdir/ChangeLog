@@ -1,8 +1,6 @@
-2019-03-06  Akira Kakuto  <kakuto@w32tex.org>
+2019-03-06  Luigi Scarso  <luigi.scarso@gmail.com>
+        * Code clean-up.
 
-	* mp.w: Avoid C1017 error in the case of MSC.
-	The preprocessor macro #if INTEGER_TYPE == long
-	is OK in gcc, but gives C1017 error in MSC.
 
 2019-01-28  Andreas Scherer  <https://ascherer.github.io>
 	* mpost.w: TeXnical nitpicking.
