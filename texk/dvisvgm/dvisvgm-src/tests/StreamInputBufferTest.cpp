@@ -19,15 +19,15 @@
 *************************************************************************/
 
 #include <gtest/gtest.h>
+#include <map>
 #include <sstream>
 #include <string>
-#include <unordered_map>
 #include "InputBuffer.hpp"
 #include "InputReader.hpp"
 
 using std::istringstream;
+using std::map;
 using std::string;
-using std::unordered_map;
 
 TEST(StreamInputBufferTest, get) {
 	istringstream iss("abcdefghijklmnopqrstuvwxyz");
@@ -184,7 +184,7 @@ TEST(StreamInputBufferTest, attribs) {
 	istringstream iss("aaa=1 bbb=2 ccc=3 d e");
 	StreamInputBuffer buffer(iss, 10);
 	BufferInputReader in(buffer);
-	unordered_map<string,string> attr;
+	map<string,string> attr;
 	int s = in.parseAttributes(attr);
 	EXPECT_EQ(s, 3);
 	EXPECT_EQ(attr["aaa"], "1");
@@ -216,13 +216,14 @@ TEST(StreamInputBufferTest, find) {
 
 
 TEST(StreamInputBufferTest, getString) {
-	istringstream iss("abcd efgh \"ijklm\"n abcdef 01234");
+	istringstream iss("abcd efgh \"ij'klm\"n abcdef '012\"34'xyz");
 	StreamInputBuffer buffer(iss);
 	BufferInputReader reader(buffer);
 	EXPECT_EQ(reader.getString(), "abcd");
 	EXPECT_EQ(reader.getString(), "efgh");
-	EXPECT_EQ(reader.getQuotedString('"'), "ijklm");
-	EXPECT_EQ(reader.getQuotedString('"'), "");
+	EXPECT_EQ(reader.getQuotedString("\""), "ij'klm");
+	EXPECT_EQ(reader.getQuotedString("\""), "");
 	EXPECT_EQ(reader.getString(4), "n ab");
 	EXPECT_EQ(reader.getQuotedString(0), "cdef");
+	EXPECT_EQ(reader.getQuotedString("\"'"), "012\"34");
 }

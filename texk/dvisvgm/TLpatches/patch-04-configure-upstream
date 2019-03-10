@@ -1,4 +1,4 @@
-	These are the (extensive) changes from the previous upstream
+	These are the (extensive) changes from the upstream
 	dvisvgm configure.ac to the current one in TL. For reference
 	only, won't apply to a new version as is. See also
 	patch-04-configure-tl.
@@ -8,21 +8,21 @@
 	TL builds, we want to use the versions of those which are in the
 	TL source tree.
 
---- dvisvgm-2.6.2/configure.ac	2019-01-15 06:08:19.000000000 -0800
-+++ configure.ac	2019-01-25 15:10:14.747210950 -0800
-@@ -1,27 +1,41 @@
+--- dvisvgm-2.6.3/configure.ac	2019-03-09 04:13:38.000000000 -0800
++++ configure.ac	2019-03-10 11:06:11.763261566 -0700
+@@ -1,78 +1,63 @@
 -# This file is part of dvisvgm
 -# Copyright (C) 2005-2019 Martin Gieseking <martin.gieseking@uos.de>
 -#
 -# Process this file with autoconf to produce a configure script.
 -
 -AC_PREREQ(2.59)
--AC_INIT([dvisvgm],[2.6.2],[martin.gieseking@uos.de])
-+# $Id: configure.ac 49020 2018-10-29 22:11:07Z karl $
+-AC_INIT([dvisvgm],[2.6.3],[martin.gieseking@uos.de])
++# $Id: configure.ac 49819 2019-01-25 23:20:32Z karl $
 +dnl Process this file with autoconf to produce a configure script
 +dnl for dvisvgm in TeX Live.
 +dnl
-+dnl   Copyright 2015-2018 Karl Berry <tex-live@tug.org>
++dnl   Copyright 2015-2019 Karl Berry <tex-live@tug.org>
 +dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 +dnl
 +dnl   This file is free software; the copyright holder
@@ -35,7 +35,7 @@
 +AC_PREREQ([2.65])
 +m4_include([version.ac])[] dnl define dvisvgm_version
 +AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
- DATE="January 2019"
+ DATE="March 2019"
 -AC_CONFIG_SRCDIR(src)
 +AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
  AC_CONFIG_HEADERS([config.h])
@@ -66,7 +66,10 @@
 +KPSE_CXX_HACK
  
  AC_PROG_RANLIB
-@@ -31,46 +45,18 @@
+ AC_LANG(C)
+ 
+-AX_CHECK_COMPILE_FLAG([-Wmismatched-tags -Wno-mismatched-tags], [CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"])
+ AC_CHECK_HEADERS([sys/time.h sys/timeb.h xlocale.h])
  AC_HEADER_TIOCGWINSZ
  
 -CPPFLAGS_SAVE="$CPPFLAGS"
@@ -127,7 +130,9 @@
 +else
  have_libgs=yes
  AC_CHECK_HEADER([ghostscript/iapi.h],
-@@ -82,66 +68,85 @@
+ 	[AC_CHECK_LIB(gs, gsapi_revision,, [have_libgs=no])],
+@@ -82,68 +67,87 @@
+ 	[AC_CHECK_LIB(dl, dlopen,,
  		[AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])]
  		[AC_MSG_WARN(PostScript support disabled)])])
 +fi
@@ -270,7 +275,9 @@
 +# emacs-page
  # Check for header files.
  AC_HEADER_DIRENT
-@@ -158,77 +163,72 @@
+ AC_HEADER_STDC
+@@ -158,79 +162,73 @@
+ AC_FUNC_STAT
  AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
  
 -# add options for selection of "optional" library locations
@@ -390,6 +397,7 @@
 -	libs/variant/Makefile
 -	libs/woff2/Makefile
 -	libs/xxHash/Makefile
+-	m4/Makefile
 -	src/Makefile
 -	src/version.hpp
 -	tests/Makefile

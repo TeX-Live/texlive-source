@@ -4,8 +4,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[2.6.2],[martin.gieseking@uos.de])
-DATE="January 2019"
+AC_INIT([dvisvgm],[2.6.3],[martin.gieseking@uos.de])
+DATE="March 2019"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -27,6 +27,7 @@ LT_INIT
 AC_PROG_RANLIB
 AC_LANG(C)
 
+AX_CHECK_COMPILE_FLAG([-Wmismatched-tags -Wno-mismatched-tags], [CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"])
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h xlocale.h])
 AC_HEADER_TIOCGWINSZ
 
@@ -226,6 +227,7 @@ AC_CONFIG_FILES([
 	libs/variant/Makefile
 	libs/woff2/Makefile
 	libs/xxHash/Makefile
+	m4/Makefile
 	src/Makefile
 	src/version.hpp
 	tests/Makefile

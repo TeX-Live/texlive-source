@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 01/15/2019
+.\"      Date: 03/09/2019
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 2.6.2
+.\"    Source: dvisvgm 2.6.3
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "01/15/2019" "dvisvgm 2\&.6\&.2" "dvisvgm Manual"
+.TH "DVISVGM" "1" "03/09/2019" "dvisvgm 2\&.6\&.3" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -193,7 +193,12 @@ below for further information\&.
 .RS 4
 By default, dvisvgm exclusively uses RGB values of the form
 \fI#RRGGBB\fR
-to represent colors in the SVG file\&. According to the SVG standard, it\(cqs also possible to use color names (like
+or
+\fI#RGB\fR
+to represent colors in the SVG file\&. The latter is a short form for colors whose RGB components each consist of two identical hex digits, e\&.g\&.
+\fI#123\fR
+equals
+\fI#112233\fR\&. According to the SVG standard, it\(cqs also possible to use color names (like
 \fBblack\fR
 and
 \fBdarkblue\fR) for a limited number of predefined colors\&. In order to apply these color names rather than their RGB values, call dvisvgm with option

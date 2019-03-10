@@ -1,18 +1,16 @@
 	See ./TL-Changes.
 
-diff -u2r dvisvgm-2.6.2/Makefile.am dvisvgm-src/Makefile.am
---- dvisvgm-2.6.2/Makefile.am	2019-01-15 06:04:43.000000000 -0800
-+++ dvisvgm-src/Makefile.am	2019-01-25 11:23:04.983398741 -0800
+--- dvisvgm-2.6.3/Makefile.am	2019-03-09 04:09:01.000000000 -0800
++++ dvisvgm-src/Makefile.am	2019-03-10 11:06:34.614937057 -0700
 @@ -6,5 +6,5 @@
  AUTOMAKE_OPTIONS = foreign
  EXTRA_DIST = COPYING
--SUBDIRS = libs src tests doc
+-SUBDIRS = libs m4 src tests doc
 +SUBDIRS = libs src #not for TL: tests doc
  ACLOCAL_AMFLAGS = -I m4
  
-diff -u2r dvisvgm-2.6.2/src/Makefile.am dvisvgm-src/src/Makefile.am
---- dvisvgm-2.6.2/src/Makefile.am	2019-01-15 06:04:44.000000000 -0800
-+++ dvisvgm-src/src/Makefile.am	2019-01-25 11:24:16.836002925 -0800
+--- dvisvgm-2.6.3/src/Makefile.am	2019-03-09 04:09:01.000000000 -0800
++++ dvisvgm-src/src/Makefile.am	2019-03-10 11:08:14.712515629 -0700
 @@ -16,9 +16,6 @@
  	$(noinst_LIBRARIES) \
  	../libs/clipper/libclipper.a \
@@ -47,7 +45,7 @@ diff -u2r dvisvgm-2.6.2/src/Makefile.am dvisvgm-src/src/Makefile.am
 +	$(ZLIB_INCLUDES) \
  	$(CODE_COVERAGE_CFLAGS)
  
--AM_CXXFLAGS = -Wall -Wnon-virtual-dtor -Wno-mismatched-tags \
+-AM_CXXFLAGS = -Wall -Wnon-virtual-dtor \
 +AM_CXXFLAGS = $(WARNING_CXXFLAGS) -Wnon-virtual-dtor \
  	-I$(dvisvgm_srcdir)/libs/clipper \
 -	-I$(dvisvgm_srcdir)/libs/variant/include \

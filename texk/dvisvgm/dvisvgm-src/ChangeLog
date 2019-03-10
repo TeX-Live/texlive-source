@@ -1,3 +1,116 @@
+2019-03-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  imgfile: improved and simplifed code
+  - compute transformation matrix only once (for image and bbox)
+  - compute and update bbox only if necessary 
+
+  * .appveyor.yml, .travis.yml, configure.ac, src/Doxyfile, src/version.hpp: 
+  set version to 2.6.3 
+
+2019-03-07  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/dvisvgm.cpp: 
+  option --bbox: check validity of paper format arguments corretcly 
+
+  * src/PsSpecialHandler.cpp: 
+  ensure forward slashes in file paths passed to PS oparator 'run' 
+
+  * src/PsSpecialHandler.cpp, src/psdefs.cpp: 
+  ensure forward slashes in file paths passed to PS oparator 'run' 
+
+2019-02-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * m4/Makefile.am: 
+  add ax_check_compile_flag.m4 to distributed source archives 
+
+2019-02-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * configure.ac, m4/ax_check_compile_flag.m4, src/Makefile.am: 
+  add -Wno-mismatched-tags only if compiler supports 
+  -Wmismatched-tags
+(closes #101) 
+
+2019-02-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Calculator.hpp, src/HtmlSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.hpp, src/InputReader.cpp, src/InputReader.hpp, 
+    src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp, 
+    tests/StreamInputBufferTest.cpp: 
+  replaced some unordered maps with ordered ones 
+
+  * src/HtmlSpecialHandler.cpp, src/InputReader.cpp, src/InputReader.hpp, 
+    src/MapLine.cpp, src/PsSpecialHandler.cpp, 
+    tests/StreamInputBufferTest.cpp: 
+  accept alternative bounding chars in getQuotedString() 
+
+2019-02-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/XMLNode.cpp, src/XMLNode.hpp, tests/DvisvgmSpecialTest.cpp, 
+    tests/EmSpecialTest.cpp, tests/TpicSpecialTest.cpp: 
+  store attributes in vectors instead of maps 
+
+2019-02-15  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/Color.cpp, tests/ColorSpecialTest.cpp, 
+    tests/ColorTest.cpp, tests/EmSpecialTest.cpp, tests/ShadingPatchTest.cpp, 
+    tests/TensorProductPatchTest.cpp, tests/TpicSpecialTest.cpp, 
+    tests/TriangularPatchTest.cpp: 
+  use short RGB hex values if possible 
+
+2019-02-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontEngine.cpp, src/Ghostscript.cpp: 
+  replaced C casts with const_cast 
+
+2019-02-07  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README.md: 
+  added some links to README 
+
+2019-01-31  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/gtest/include/gtest/gtest-death-test.h, 
+    tests/gtest/include/gtest/gtest-message.h, 
+    tests/gtest/include/gtest/gtest-param-test.h, 
+    tests/gtest/include/gtest/gtest-printers.h, 
+    tests/gtest/include/gtest/gtest-spi.h, 
+    tests/gtest/include/gtest/gtest-test-part.h, 
+    tests/gtest/include/gtest/gtest-typed-test.h, 
+    tests/gtest/include/gtest/gtest.h, 
+    tests/gtest/include/gtest/gtest_pred_impl.h, 
+    tests/gtest/include/gtest/gtest_prod.h, 
+    tests/gtest/include/gtest/internal/custom/gtest-port.h, 
+    tests/gtest/include/gtest/internal/custom/gtest-printers.h, 
+    tests/gtest/include/gtest/internal/custom/gtest.h, 
+    tests/gtest/include/gtest/internal/gtest-death-test-internal.h, 
+    tests/gtest/include/gtest/internal/gtest-filepath.h, 
+    tests/gtest/include/gtest/internal/gtest-internal.h, 
+    tests/gtest/include/gtest/internal/gtest-linked_ptr.h, 
+    tests/gtest/include/gtest/internal/gtest-param-util-generated.h, 
+    tests/gtest/include/gtest/internal/gtest-param-util.h, 
+    tests/gtest/include/gtest/internal/gtest-port-arch.h, 
+    tests/gtest/include/gtest/internal/gtest-port.h, 
+    tests/gtest/include/gtest/internal/gtest-string.h, 
+    tests/gtest/include/gtest/internal/gtest-tuple.h, 
+    tests/gtest/include/gtest/internal/gtest-type-util.h, 
+    tests/gtest/src/gtest-all.cc, tests/gtest/src/gtest-death-test.cc, 
+    tests/gtest/src/gtest-filepath.cc, tests/gtest/src/gtest-internal-inl.h, 
+    tests/gtest/src/gtest-port.cc, tests/gtest/src/gtest-printers.cc, 
+    tests/gtest/src/gtest-test-part.cc, tests/gtest/src/gtest-typed-test.cc, 
+    tests/gtest/src/gtest.cc, tests/gtest/src/gtest_main.cc: 
+  updated gtest to version 1.8.1 
+
+2019-01-28  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  put struct PatchVertex in corresponding method 
+
+2019-01-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * Makefile.am, configure.ac, m4/Makefile.am: 
+  add m4 files to source tarball 
+
 2019-01-22  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS, README, README.md: 
