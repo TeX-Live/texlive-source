@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-03-03.15}
+\def\texinfoversion{2019-03-07.19}
 
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
@@ -388,13 +388,7 @@
     % before the \shipout runs.
     %
     \indexdummies         % don't expand commands in the output.
-    \normalturnoffactive  % \ in index entries must not stay \, e.g., if
-               % the page break happens to be in the middle of an example.
-               % We don't want .vr (or whatever) entries like this:
-               % \entry{{\indexbackslash }acronym}{32}{\code {\acronym}}
-               % "\acronym" won't work when it's read back in;
-               % it needs to be
-               % {\code {{\backslashcurfont }acronym}
+    \turnoffactive
     \shipout\vbox{%
       % Do this early so pdf references go to the beginning of the page.
       \ifpdfmakepagedest \pdfdest name{\the\pageno} xyz\fi
@@ -4862,7 +4856,6 @@ end
 % expansion of Texinfo commands that can appear in an index entry.
 %
 \def\indexdummies{%
-  \escapechar = `\\     % use backslash in output files.
   \definedummyletter\@%
   \definedummyletter\ %
   %
@@ -4872,6 +4865,7 @@ end
   %
   % Do the redefinitions.
   \definedummies
+  \otherbackslash
 }
 
 % Used for the aux and toc files, where @ is the escape character.
@@ -5070,11 +5064,9 @@ end
   \commondummyword\xref
 }
 
-% This does nothing, but for a time it was recommended to use
-% \usebracesinindexestrue to be able to use braces in index entries.
-
 \let\indexlbrace\relax
 \let\indexrbrace\relax
+\let\indexatchar\relax
 
 {\catcode`\@=0
 \catcode`\\=13
@@ -5108,10 +5100,8 @@ end
   }
 
   \gdef\indexnonalnumreappear{%
-    \useindexbackslash
     \let-\normaldash
     \let<\normalless
-    \def\@{@}%
   }
 }
 
@@ -5255,13 +5245,6 @@ end
 \fi}
 \def\indexisfl{fl}
 
-% Output \ as {\indexbackslash}, because \ is an escape character in
-% the index files.
-\let\indexbackslash=\relax
-{\catcode`\@=0 \catcode`\\=\active
-  @gdef@useindexbackslash{@def\{{@indexbackslash}}}
-}
-
 % Definition for writing index entry sort key.
 {
 \catcode`\-=13
@@ -5308,6 +5291,8 @@ end
       \def\rbracechar{{\indexrbrace}}%
       \let\{=\lbracechar
       \let\}=\rbracechar
+      \def\@{{\indexatchar}}%
+      \def\atchar##1{\@}%
       %
       \let\indexsortkey\empty
       % Execute the segment and throw away the typeset output.  This executes
@@ -5345,8 +5330,6 @@ end
   %
   % Remember, we are within a group.
   \indexdummies % Must do this here, since \bf, etc expand at this stage
-  \useindexbackslash % \indexbackslash isn't defined now so it will be output 
-                     % as is; and it will print as backslash.
   %
   % Split the entry into primary entry and any subentries, and get the index 
   % sort key.
@@ -5479,14 +5462,10 @@ end
   \plainfrenchspacing
   \everypar = {}% don't want the \kern\-parindent from indentation suppression.
   %
-  % See if the index file exists and is nonempty.
-  % Change catcode of @ here so that if the index file contains
-  % \initial {@}
-  % as its first line, TeX doesn't complain about mismatched braces
-  % (because it thinks @} is a control sequence).
-  \catcode`\@ = 12
   % See comment in \requireopenindexfile.
   \def\indexname{#1}\ifx\indexname\indexisfl\def\indexname{f1}\fi
+  %
+  % See if the index file exists and is nonempty.
   \openin 1 \jobname.\indexname s
   \ifeof 1
     % \enddoublecolumns gets confused if there is no text in the index,
@@ -5496,8 +5475,6 @@ end
     \putwordIndexNonexistent
     \typeout{No file \jobname.\indexname s.}%
   \else
-    \catcode`\\ = 0
-    %
     % If the index file exists but is empty, then \openin leaves \ifeof
     % false.  We have to make TeX try to read something from the file, so
     % it can discover if there is anything in it.
@@ -5505,35 +5482,47 @@ end
     \ifeof 1
       \putwordIndexIsEmpty
     \else
-      % Index files are almost Texinfo source, but we use \ as the escape
-      % character.  It would be better to use @, but that's too big a change
-      % to make right now.
-      \def\indexbackslash{\ttbackslash}%
-      \let\indexlbrace\{   % Likewise, set these sequences for braces
-      \let\indexrbrace\}   % used in the sort key.
-      \begindoublecolumns
-      \let\dotheinsertentrybox\dotheinsertentryboxwithpenalty
-      %
-      % Read input from the index file line by line.
-      \loopdo
-        \ifeof1 \else
-          \read 1 to \nextline
-        \fi
-        %
-        \indexinputprocessing
-        \thisline
-        %
-        \ifeof1\else
-        \let\thisline\nextline
-      \repeat
-      %%
-      \enddoublecolumns
+      \expandafter\printindexzz\thisline\relax\relax\finish%
     \fi
   \fi
   \closein 1
 \endgroup}
 \def\loopdo#1\repeat{\def\body{#1}\loopdoxxx}
 \def\loopdoxxx{\let\next=\relax\body\let\next=\loopdoxxx\fi\next}
+
+% If the index file starts with a backslash, forgo reading the index
+% file altogether.  If somebody upgrades texinfo.tex they may still have
+% old index files using \ as the escape character.  Reading this would
+% at best lead to typesetting garbage, at worst a TeX syntax error.
+\def\printindexzz#1#2\finish{%
+  % NB this won't work if the index file starts with a group...
+  \uccode`\~=`\\ \uppercase{\if\noexpand~}\noexpand#1
+    \message{skipping sorted index file}%
+    (Skipped sorted index file in obsolete format)
+  \else
+    \printindexzzz
+  \fi
+}
+
+\def\printindexzzz{%
+   \begindoublecolumns
+   \let\dotheinsertentrybox\dotheinsertentryboxwithpenalty
+   %
+   % Read input from the index file line by line.
+   \loopdo
+     \ifeof1 \else
+       \read 1 to \nextline
+     \fi
+     %
+     \indexinputprocessing
+     \thisline
+     %
+     \ifeof1\else
+     \let\thisline\nextline
+   \repeat
+   %%
+   \enddoublecolumns
+}
 
 \def\indexinputprocessing{%
   \ifeof1
@@ -5554,12 +5543,18 @@ end
 \catcode`\|=13 \catcode`\<=13 \catcode`\>=13 \catcode`\+=13 \catcode`\"=13
 \catcode`\$=3
 \gdef\initialglyphs{%
+  % special control sequences used in the index sort key
+  \let\indexlbrace\{%
+  \let\indexrbrace\}%
+  \let\indexatchar\@%
+  %
   % Some changes for non-alphabetic characters.  Using the glyphs from the
   % math fonts looks more consistent than the typewriter font used elsewhere
   % for these characters.
-  \def\indexbackslash{\math{\backslash}}%
-  \let\\=\indexbackslash
+  \uccode`\~=`\\ \uppercase{\def~{\math{\backslash}}}
   %
+  % In case @\ is used for backslash
+  \uppercase{\let\\=~}
   % Can't get bold backslash so don't use bold forward slash
   \catcode`\/=13
   \def/{{\secrmnotbold \normalslash}}%

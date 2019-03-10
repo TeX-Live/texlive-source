@@ -985,22 +985,50 @@ EOF
 	exit ;;
     mips:Linux:*:* | mips64:Linux:*:*)
 	set_cc_for_build
+	IS_GLIBC=0
+	test x"${LIBC}" = xgnu && IS_GLIBC=1
 	sed 's/^	//' << EOF > "$dummy.c"
 	#undef CPU
-	#undef ${UNAME_MACHINE}
-	#undef ${UNAME_MACHINE}el
+	#undef mips
+	#undef mipsel
+	#undef mips64
+	#undef mips64el
+	#if ${IS_GLIBC} && defined(_ABI64)
+	LIBCABI=gnuabi64
+	#else
+	#if ${IS_GLIBC} && defined(_ABIN32)
+	LIBCABI=gnuabin32
+	#else
+	LIBCABI=${LIBC}
+	#endif
+	#endif
+
+	#if ${IS_GLIBC} && defined(__mips64) && defined(__mips_isa_rev) && __mips_isa_rev>=6
+	CPU=mipsisa64r6
+	#else
+	#if ${IS_GLIBC} && !defined(__mips64) && defined(__mips_isa_rev) && __mips_isa_rev>=6
+	CPU=mipsisa32r6
+	#else
+	#if defined(__mips64)
+	CPU=mips64
+	#else
+	CPU=mips
+	#endif
+	#endif
+	#endif
+
 	#if defined(__MIPSEL__) || defined(__MIPSEL) || defined(_MIPSEL) || defined(MIPSEL)
-	CPU=${UNAME_MACHINE}el
+	MIPS_ENDIAN=el
 	#else
 	#if defined(__MIPSEB__) || defined(__MIPSEB) || defined(_MIPSEB) || defined(MIPSEB)
-	CPU=${UNAME_MACHINE}
+	MIPS_ENDIAN=
 	#else
-	CPU=
+	MIPS_ENDIAN=
 	#endif
 	#endif
 EOF
-	eval "`$CC_FOR_BUILD -E "$dummy.c" 2>/dev/null | grep '^CPU'`"
-	test "x$CPU" != x && { echo "$CPU-unknown-linux-$LIBC"; exit; }
+	eval "`$CC_FOR_BUILD -E "$dummy.c" 2>/dev/null | grep '^CPU\|^MIPS_ENDIAN\|^LIBCABI'`"
+	test "x$CPU" != x && { echo "$CPU${MIPS_ENDIAN}-unknown-linux-$LIBCABI"; exit; }
 	;;
     mips64el:Linux:*:*)
 	echo "$UNAME_MACHINE"-unknown-linux-"$LIBC"
