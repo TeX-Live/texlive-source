@@ -1,1 +1,1 @@
-#define MFLUA_VERSION "0.9"
+#define MFLUA_VERSION "0.9.1"

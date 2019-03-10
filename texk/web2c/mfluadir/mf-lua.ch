@@ -19,7 +19,7 @@
 @y
 @d METAFONT_banner=='This is METAFONT, Version 2.7182818' {printed when \MF\ starts}
 @#
-@d MFLua_version_string=='-0.9'
+@d MFLua_version_string=='-0.9.1'
 @#
 @d MFLua_banner=='This is MFLua, Version 2.7182818', MFLua_version_string
   {printed when MFLua starts}
@@ -518,9 +518,10 @@ begin
    buffer[first]:=so(str_pool[j]); {print(so(str\_pool[j]));} incr(j); incr(first);
   end;
   buffer[limit]:="%"; first:=limit+1; loc:=start; 
-  {delete_str_ref(lua_cur_exp);}
+  delete_str_ref(lua_cur_exp);
 end;
 delete_str_ref(lua_cur_exp);
+{flush_string(lua_cur_exp);}
 flush_cur_exp(0);
 end
 @* \[51] System-dependent changes.
