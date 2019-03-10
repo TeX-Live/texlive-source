@@ -1,3 +1,7 @@
+2019-03-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man: Fix non-macro '\\PB'.
+
 2019-02-01  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man,
