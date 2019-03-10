@@ -1,6 +1,7 @@
 2019-03-10  Andreas Scherer  <https://ascherer.github.io>
 
-	* ctwill.man: Fix non-macro '\\PB'.
+	* ctwill.man: Fix non-macro '\\PB';
+	add reference to 'Digital Typography' with full example.
 
 2019-02-01  Andreas Scherer  <https://ascherer.github.io>
 

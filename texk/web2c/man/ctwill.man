@@ -101,6 +101,9 @@ you can check that your specifications are correct.
 More details how to use \f[B]ctwill\f[R] can be found in the first
 sections of its source code, respectively the change file
 \f[B]cweav-twill.ch\f[R] applicable to the \f[B]cweave.w\f[R] source.
+A complete example with all bells and whistles is described in
+\f[B]Mini-Indexes for Literate Programs\f[R], pages 225\[en]245 of
+Knuth\[cq]s \f[B]Digital Typography\f[R].
 .SH DIFFERENCES TO ORIGINAL CTWILL
 .PP
 The present incarnation of \f[B]ctwill\f[R] and its utilities tries hard
@@ -220,6 +223,8 @@ The CWEB System of Structured Documentation: by Donald E.\ Knuth and
 Silvio Levy (hardcopy version of \f[B]cwebman.tex\f[R] and the source
 code listings of \f[B]common.w\f[R], \f[B]ctangle.w\f[R], and
 \f[B]cweave.w\f[R]).
+.IP \[bu] 2
+Digital Typography: by D.\ E.\ Knuth.
 .IP \[bu] 2
 Literate Programming: by D.\ E.\ Knuth.
 .IP \[bu] 2
