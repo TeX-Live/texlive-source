@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
 
+## [5.2.0] - 2019-03-10
+### Fixed
+- `latin` is now supported as a valid language name.  This brings Latin into line with other languages where both titlecased and lowercased version of the language name (e.g. `English` and `english`) are both allowed.
+
+### Added
+- Added support for two and three letter language codes for supported languages. [This list of codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) (and language names) was used for this support.  No new languages are supported as a result of this change, just different ways of specifying the existing names.
+- A non-rotated diamond-shaped variant of the punctum inclinatum.  Append a `2` in gabc to the capitalized note pitch letter to force gregorio to use this shape.  Otherwise, gregorio will try to use it when a string of these notes is at the unison within a syllable.  See [#1425](https://github.com/gregorio-project/gregorio/issues/1425).
+- Support for an eighth bar (nicknamed divisio "minimis") by using `^` in gabc (see [#1424](https://github.com/gregorio-project/gregorio/issues/1424)).
+- 8 new St. Gall neume glyphs have been added to the `gregall` font.
+
 ## [5.1.1] - 2018-03-25
 ### Fixed
 - Various issues with the documentation.

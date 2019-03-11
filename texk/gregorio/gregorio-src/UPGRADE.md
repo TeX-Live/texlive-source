@@ -2,6 +2,10 @@
 
 This file contains instructions to upgrade to a new release of Gregorio.  These instructions are cumulative; meaning that you should apply the instructions from all versions between the one you are upgrading from and the current version.
 
+## Unreleased
+
+Gregorio will now use an "upright" punctum inclinatum shape for a series of unison punctum inclinatum notes over a given syllable.  When there is a single punctum inclinatum, Gregorio will use a heuristic to choose a shape.  In any of these cases, if the result is not satisfactory, especially in context with nearby syllables, you may select a different shape by using `0` (for the descending shape) or `1` (for the ascending shape) after the capitalized letter indicating the punctum inclinatum.  Forced selection of the upright shape is also possible by using `2` after the capitalized letter indicating the punctum inclinatum.
+
 ## 5.1
 
 No additional steps are needed to upgrade from 5.0 to 5.1.

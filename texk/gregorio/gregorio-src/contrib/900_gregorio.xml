@@ -3,7 +3,7 @@
  XML file for using gregorio inside scribus.
  Copyright (C) 2009 Pierre Couderc <pierre@couderc.eu>.
  Copyright (C) 2010 Elie Roux <elie.roux@telecom-bretagne.eu>
- Copyright (C) 2015-2018 The Gregorio Project (see CONTRIBUTORS.md)
+ Copyright (C) 2015-2019 The Gregorio Project (see CONTRIBUTORS.md)
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -22,73 +22,42 @@
  See the different comments in the file to change the default configuration.
 -->
 <editorsettings description="gregorio" icon="gregorio.png">
-    <executable command="texlua"/>
+    <executable command="lualatex --shell-escape --interaction nonstopmode" />
     <imagefile extension=".pdf"/>
     <highlighter>
         <rule name="gabc header" regex="[a-zA-Z]+:" color="blue" minimal="true"/>
         <rule name="gabc delimiter" regex="%%" color="green" minimal="true"/>
         <rule name="gabc notes" regex="\([^)]*\)" color="red" minimal="true"/>
     </highlighter>
-    <empty-frame-text>name: myscore;
-%%
-(c3) Pó(eh/hi)pu(h)lus(h) Si(hi)on,(hgh.)
+    <empty-frame-text>
+        name: myscore;
+        %%
+        (c3) Pó(eh/hi)pu(h)lus(h) Si(hi)on,(hgh.)
     </empty-frame-text>
-    <!-- you can change the basic headers there -->
-    <preamble>data_from_scribus = [==========[% Generated from Scribus
-\documentclass[a4paper,$scribus_grefontsize$]{extarticle}
-\usepackage[left=0cm,top=0cm,right=0cm,bottom=0cm,nohead,nofoot]{geometry}
-\usepackage{color}
-\title{Scribus-Latex-gregorio-File}
-$scribus_additionalgreheaders$
-\usepackage{gregoriotex}
-\author{Scribus}
-\pagestyle{empty}
-\setlength{\textwidth}{$scribus_realwidth$ pt}
-\begin{document}
-$scribus_greconf$
-%%% BEGIN GABC %%%
-</preamble>
-    <postamble>]==========]
-require"lfs"
+    <!-- you can change the basic headers here -->
+    <preamble>
+		    \documentclass[$scribus_grefontsize$]{extarticle}
+		    \usepackage[paperwidth=$scribus_realwidth$ pt,
+		                paperheight=$scribus_realheight$ pt,
+          					left=0cm,top=0cm,right=0cm,bottom=0cm,nohead,nofoot]{geometry}
+        \usepackage[autocompile]{gregoriotex}
+        \usepackage{filecontents}
+    		\title{Scribus-Latex-File}
+    		$scribus_additionalgreheaders$
+    		\author{Scribus}
+		    \pagestyle{empty}
+    		\setlength{\textwidth}{$scribus_realwidth$ pt}
 
-local latexmkbin = "latexmk"
-local lualatexbin = "lualatex"
+        \begin{filecontents}{scribus_file-score.gabc}
+    </preamble>
+    <postamble>
+        \end{filecontents}
 
-local function basename(name)
-  return name and string.match(name,"^.+[/\\](.-)$") or name
-end
-
-local f = basename(arg[0])
-
-local texfile = io.open(f .. ".tex", "w")
-local gabcfile = io.open(f .. "-score.gabc", "w")
-local in_tex = true
-local l
-for l in string.gmatch(data_from_scribus, "[^\r\n]+") do
-  if l == "%%% BEGIN GABC %%%" then
-    in_tex = false
-  elseif in_tex then
-    texfile:write(l .. '\n')
-  else
-    gabcfile:write(l .. '\n')
-  end
-end
-
-local format = string.format
-
-texfile:write("\n\\gregorioscore[f]{" .. f .. "-score}\n\\end{document}\n")
-texfile:close()
-gabcfile:close()
-
-print("calling "..latexmkbin.."\n")
-os.exec({
-    latexmkbin,
-    '-g',
-    '-pdf',
-    '-pdflatex=' .. lualatexbin .. ' --interaction=nonstopmode --shell-escape',
-    f
-})
-</postamble>
+        \begin{document}
+        $scribus_greconf$
+        \gregorioscore{scribus_file-score}
+        \end{document}
+    </postamble>
     <tab type="settings">
         <title>
             <i18n>

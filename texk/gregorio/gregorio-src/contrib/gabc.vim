@@ -11,11 +11,11 @@ syn match gabcAttributeName /^[^:]*:/
 syn match gabcAttributeEnd ";"
 syn match gabcNoteError "." contained
 syn match gabcBasicNote "[a-np]" contained
-syn match gabcBasicNote "[A-NP][01]\?" contained
-syn match gabcAlteration "[\<\>~xy#vVwWqQR\-Ss\.+]" contained
-syn match gabcAlteration "_[0-5]*" contained
-syn match gabcAlteration "[oO'\.][01]\?" contained
-syn match gabcAlteration "r[0-8]\?" contained
+syn match gabcBasicNote "[A-NP][012]\?" contained
+syn match gabcNoteShape "[\<\>~xy#vVwWqQR\-Ss\.+]" contained
+syn match gabcNoteShape "_[0-5]*" contained
+syn match gabcNoteShape "[oO'\.][01]\?" contained
+syn match gabcNoteShape "r[0-8]\?" contained
 syn match gabcClef "[cf]b\?[1-5]" contained
 syn match gabcTextMarkup "</\?e>" contained
 syn match gabcTextMarkup "</\?b>" contained
@@ -32,7 +32,7 @@ syn match gabcFuseEnd "\]" contained
 syn match gabcBar ":?\?" contained
 syn match gabcBar ";[1-8]\?" contained
 syn match gabcBar ",[0-8]\?" contained
-syn match gabcBar "`0\?" contained
+syn match gabcBar "[`^]0\?" contained
 syn match gabcSpace "[! ]" contained
 syn match gabcSpace "/0\?" contained
 syn match gabcSpace "z[-+0]\?" contained
@@ -51,7 +51,7 @@ syn region gabcSpecial matchgroup=gabcTextMarkup start="<sp>" end="</sp>"
 syn region gabcVerbatim matchgroup=gabcTextMarkup start="<v>" end="</v>"
             \ contained
 syn region gabcNabc matchgroup=gabcNabcCut start="|" end="[|)]" keepend
-syn cluster gabcFusible contains=gabcBasicNote,gabcAlteration,gabcBar,gabcSpace,
+syn cluster gabcFusible contains=gabcBasicNote,gabcNoteShape,gabcBar,gabcSpace,
             \gabcComment,gabcCommand,gabcNoteError,gabcFuse,
             \gabcTextOrNoteMarkup,gabcClef,gabcNabc,gabcBracket
 syn region gabcFuseGroup matchGroup=gabcFuseGroup start="@\[" end="\]"
@@ -79,7 +79,7 @@ hi def link gabcVerbatim            Constant
 hi def link gabcAlt                 Constant
 hi def link gabcClef                Statement
 hi def link gabcBasicNote           Statement
-hi def link gabcAlteration          PreProc
+hi def link gabcNoteShape           PreProc
 hi def link gabcCommand             Type
 hi def link gabcBar                 Special
 hi def link gabcSpace               Special

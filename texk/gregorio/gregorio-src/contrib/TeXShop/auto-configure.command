@@ -21,23 +21,38 @@ if [ ! -d "$ENGINEDIR" ]; then
     exit 1
 fi
 SOURCE="/Users/Shared/Gregorio/contrib/TeXShop/LuaLaTeX+se.engine"
-if [ -e "$SOURCE" ]; then
-    echo "Copying LuaLaTeX+se.engine into TeXShop configuration"
-    cp "$SOURCE" "$ENGINEDIR"
-else
-    echo "Cannot find LuaLaTeX+se.engine"
-    echo "Please try running the Gregorio intaller again"
-    exit 1
+if [ ! -e "$SOURCE" ]; then
+    SOURCE="$PWD/LuaLaTeX+se.engine"
+    if [ ! -e "$SOURCE" ]; then
+        DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+        SOURCE="$DIR/LuaLaTeX+se.engine"
+    else
+        echo "Cannot find LuaLaTeX+se.engine"
+        echo "Please try running the Gregorio intaller again"
+        exit 1
+    fi
 fi
+echo "Copying LuaLaTeX+se.engine into TeXShop configuration"
+cp "$SOURCE" "$ENGINEDIR"
+
 SOURCE="/Users/Shared/Gregorio/contrib/TeXShop/LuaTeX+se.engine"
-if [ -e "$SOURCE" ]; then
-    echo "Copying LuaTeX+se.engine into TeXShop configuration"
-    cp "$SOURCE" "$ENGINEDIR"
-else
-    echo "Cannot find LuaTeX+se.engine"
-    echo "Please try running the Gregorio intaller again"
-    exit 1
+if [ ! -e "$SOURCE" ]; then
+    SOURCE="$PWD/LuaTeX+se.engine"
+    if [ ! -e "$SOURCE" ]; then
+        DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+        SOURCE="$DIR/LuaTeX+se.engine"
+    else
+        echo "Cannot find LuaTeX+se.engine"
+        echo "Please try running the Gregorio intaller again"
+        exit 1
+    fi
 fi
+echo "Copying LuaTeX+se.engine into TeXShop configuration"
+cp "$SOURCE" "$ENGINEDIR"
+
+#double check the execution bits
+chmod +x "$ENGINEDIR/LuaLaTeX+se.engine"
+chmod +x "$ENGINEDIR/LuaTeX+se.engine"
 
 echo "Configuration complete"
 exit 0

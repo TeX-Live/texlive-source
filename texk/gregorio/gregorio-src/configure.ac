@@ -1,5 +1,5 @@
 dnl Gregorio
-dnl Copyright (C) 2006-2018 The Gregorio Project (see CONTRIBUTORS.md)
+dnl Copyright (C) 2006-2019 The Gregorio Project (see CONTRIBUTORS.md)
 dnl
 dnl This file is part of Gregorio.
 dnl
@@ -16,8 +16,8 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([gregorio],[5.1.1],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
-FILENAME_VERSION="5_1_1"
+AC_INIT([gregorio],[5.2.0],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
+FILENAME_VERSION="5_2_0"
 AC_SUBST(FILENAME_VERSION)
 AC_DEFINE_UNQUOTED(FILENAME_VERSION, "$FILENAME_VERSION", [version suitable for file names])
 MK=""
@@ -52,6 +52,7 @@ AX_CHECK_COMPILE_FLAG([-Wstrict-prototypes], [CFLAGS+=" -Wstrict-prototypes"])
 AX_CHECK_COMPILE_FLAG([-Wdeclaration-after-statement], [CFLAGS+=" -Wdeclaration-after-statement"])
 AX_CHECK_COMPILE_FLAG([-Wall], [CFLAGS+=" -Wall"])
 AX_CHECK_COMPILE_FLAG([-Wextra], [CFLAGS+=" -Wextra"])
+AX_CHECK_COMPILE_FLAG([-Wno-gnu-statement-expression], [CFLAGS+=" -Wno-gnu-statement-expression"])
 AX_CHECK_LINK_FLAG([-Wl,-z,relro], [LDFLAGS+=" -Wl,-z,relro"])
 AX_CHECK_LINK_FLAG([-Wl,-z,now], [LDFLAGS+=" -Wl,-z,now"])
 AX_CHECK_LINK_FLAG([-fPIE], [LDFLAGS+=" -fPIE"])

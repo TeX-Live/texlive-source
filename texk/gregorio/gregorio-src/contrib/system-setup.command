@@ -225,7 +225,7 @@ echo "ran this script.  Please email it to gregorio-users@googlegroups.com as"
 echo "part of your bug report."
 echo ""
 echo "You can also create an issue at "
-echo "http://github.org/gregorio-project/gregorio/issues"
+echo "http://github.com/gregorio-project/gregorio/issues"
 echo "and copy-paste the content of this file into the description."
 echo ""
 exit 0

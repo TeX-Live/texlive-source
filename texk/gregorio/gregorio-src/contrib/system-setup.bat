@@ -105,7 +105,7 @@ for %%G in (%files%) do (
 		set loc=%%H
 		set loc=!loc:/=\!
 		echo !loc! >> %output%
-		for /f "delims=" %%I in ('findstr /r "GREGORIO_VERSION" !loc!') do set ver=%%I
+		for /f "delims=" %%I in ('findstr /r "GREGORIO_VERSION" "!loc!"') do set ver=%%I
 		set ver=!ver:*{=!
 		set ver=!ver:*{=!
 		set trash=}!ver:*}=!
@@ -126,7 +126,7 @@ for %%G in (%files%) do (
 		set loc=%%H
 		set loc=!loc:/=\!
 		echo !loc! >> %output%
-		for /f "delims=" %%I in ('findstr /r "GREGORIO_VERSION" !loc!') do set ver=%%I
+		for /f "delims=" %%I in ('findstr /r "GREGORIO_VERSION" "!loc!"') do set ver=%%I
 		set ver=!ver:*N =!
 		echo !ver! >> %output% 2>&1
 		set ver=
@@ -142,7 +142,7 @@ for %%G in (%files%) do (
 		set loc=%%H
 		set loc=!loc:/=\!
 		echo !loc! >> %output%
-		for /f "delims=" %%I in ('findstr /r "GREGORIO_VERSION" !loc!') do set ver=%%I
+		for /f "delims=" %%I in ('findstr /r "GREGORIO_VERSION" "!loc!"') do set ver=%%I
 		set ver=!ver:*'=!
 		set trash='!ver:*'=!
 		call set ver=%%ver:!trash!=%%
@@ -161,7 +161,7 @@ for %%G in (%files%) do (
 		set loc=%%H
 		set loc=!loc:/=\!
 		echo !loc! >> %output%
-		for /f "delims=" %%I in ('findstr /r "PARSE_VERSION_DATE_LTX" !loc!') do set ver=%%I
+		for /f "delims=" %%I in ('findstr /r "PARSE_VERSION_DATE_LTX" "!loc!"') do set ver=%%I
 		set ver=!ver:*v=!
 		set trash=G!ver:*G=!
 		call set ver=%%ver:!trash!=%%
@@ -240,7 +240,7 @@ echo Please save the file to a convenient location and email it to
 echo gregorio-users@googlegroups.com as part of your bug report.
 echo.
 echo You can also create an issue at
-echo http://github.org/gregorio-project/gregorio/issues
+echo http://github.com/gregorio-project/gregorio/issues
 echo and copy-paste the content of this file into the description.
 echo.
 pause
