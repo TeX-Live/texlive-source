@@ -1,3 +1,8 @@
+2019-03-11  Karl Berry  <karl@tug.org>
+
+	* ac/web2c.ac (kpse_tex_progs) <luatex53>: remove.
+	<luatex>: depend on lua53, not lua52.
+
 2019-01-19  Andreas Scherer  <https://ascherer.github.io>
 
 	* help.h: Fix CTWILL '--help' text.
