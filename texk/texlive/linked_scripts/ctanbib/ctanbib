@@ -15,17 +15,23 @@ kpse.set_program_name("luatex")
 -- 
 -- The Current Maintainer of this work is Michal Hoftich
 
+local bibtype = "manual"
 if #arg < 1 or arg[1]=="--help" or arg[1]=="-h" then
-  print [[ctanbib - convert ctan package information to bibtex format
-  Usage:
-  texlua ctanbib <package name>
-
-  This command will bibtex entry to the terminal output
-  ]]
+  print([[ctanbib - convert ctan package information to bibtex format
+Usage:
+ctanbib [options] <package name>
+Available options:
+  -c,--ctan       Use @ctan type instead of @manual
+  -h,--help       Print this message
+  -v,--version    Print version info
+  ]])
   os.exit(1)
 elseif arg[1]=="--version" or arg[1]=="-v" then
-  print "ctanbib version v0.1a"
+  print "ctanbib version v0.1b"
   os.exit(1)
+elseif arg[1]=="--ctan" or arg[1]=="-c" then
+  table.remove(arg, 1)
+  bibtype = "ctan"
 end
 
 local pkgname = arg[1]
@@ -61,13 +67,26 @@ local load_xml =  function(url)
   return dom.parse(info)
 end
 
+local bibtex_escape = function(a)
+  local a = a or ""
+  return a:gsub("([%$%{%}%\\])", function(x) 
+    if x == "\\" then return "\\textbackslash  " end
+    return '\\'..x 
+  end)
+end
+
 local get_authors = function(a)
   local retrieved_authors = {}
   for _, author in ipairs(a) do
     local current = {}
     current[#current+1] = author:get_attribute("familyname")
     current[#current+1] = author:get_attribute("givenname")
-    table.insert(retrieved_authors, table.concat(current, ", "))
+    -- the author is an organization
+    if #current == 1 then
+      table.insert(retrieved_authors, "{" .. current[1] .. "}")
+    else
+      table.insert(retrieved_authors, table.concat(current, ", "))
+    end
   end
   return table.concat(retrieved_authors," and ")
 end
@@ -80,7 +99,7 @@ local get_title = function(record)
   else
     title = pkgname
   end
-  return string.format(titleformat, title)
+  return string.format(titleformat, bibtex_escape(title))
 end
 
 
@@ -92,7 +111,7 @@ end
 
 local get_caption = function(record)
   local caption = record:query_selector("caption")[1]
-  if caption then return caption:get_text() end
+  if caption then return bibtex_escape(caption:get_text()) end
   return nil
 end
 
@@ -103,14 +122,18 @@ local get_version = function(record)
   end
 end
 
-local bibtex_escape = function(a)
-  local a = a or ""
-  return a:gsub("([%$%{%}])", function(x) return '\\'..x end)
+local ctan_url = function(record)
+  local ctan = record:query_selector("ctan")[1] 
+  -- some package don't contain the CTAN path
+  if not ctan then return get_url(record) end
+  local path = ctan:get_attribute("path")
+  return path
 end
+
 
 local compile = function(template, records)
   return template:gsub("$([a-z]+)", function(a) 
-    return bibtex_escape(records[a]) or ""
+    return records[a] or ""
   end)
 end
 
@@ -131,9 +154,15 @@ e.package = pkgname
 e.title = get_title(record)
 e.subtitle = get_caption(record)
 e.url = get_url(record)
+-- use the CTAN path as url for the CTAN type
+if bibtype == "ctan" then
+  e.url = ctan_url(record)
+end
 e.version, e.date = get_version(record)
 e.urldate = os.date("%Y-%m-%d")
 
 local result = compile(bibtexformat, e)
+-- update the bibliography type
+result = result:gsub("^@manual", "@" .. bibtype)
 
 print(result)
