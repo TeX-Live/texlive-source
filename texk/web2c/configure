@@ -18592,7 +18592,7 @@ fi
 
 # Include additional code for web2c.
 
-# $Id: web2c.ac 50336 2019-03-11 16:22:18Z karl $
+# $Id: web2c.ac 50341 2019-03-11 22:04:24Z karl $
 # texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options for TeX and MF
 
@@ -18904,7 +18904,7 @@ case $enable_mflua_nowin in #(
 esac
 
 test "x$enable_web2c:$enable_mflua" = xyes:yes && {
-  need_lua52=yes
+  need_lua53=yes
 }
 # Check whether --enable-mfluajit was given.
 if test "${enable_mfluajit+set}" = set; then :
