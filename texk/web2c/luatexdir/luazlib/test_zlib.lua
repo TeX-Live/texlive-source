@@ -54,7 +54,7 @@ print('updated crc: '..crc)
 
 line(' deflate/inflate')
 local us
-f = io.open('lzlib.c') -- f = io.open('../all.tar')
+f = io.open('test_zlib.lua') -- f = io.open('../all.tar')
 us = f:read('*a')
 f:close()
 
