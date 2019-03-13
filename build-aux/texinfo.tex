@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-03-09.13}
+\def\texinfoversion{2019-03-10.13}
 
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
@@ -2838,7 +2838,7 @@ end
 
 % @t, explicit typewriter.
 \def\t#1{%
-  {\tt \rawbackslash \plainfrenchspacing #1}%
+  {\tt \plainfrenchspacing #1}%
   \null
 }
 
@@ -2865,7 +2865,6 @@ end
     % Turn off hyphenation.
     \nohyphenation
     %
-    \rawbackslash
     \plainfrenchspacing
     #1%
   }%
@@ -5475,59 +5474,27 @@ end
     \ifeof 1
       \putwordIndexIsEmpty
     \else
-      \expandafter\printindexzz\thisline\relax\relax\finish%
+      \expandafter\printindexzz{#1}\thisline\relax\relax\finish%
     \fi
   \fi
   \closein 1
 \endgroup}
-\def\loopdo#1\repeat{\def\body{#1}\loopdoxxx}
-\def\loopdoxxx{\let\next=\relax\body\let\next=\loopdoxxx\fi\next}
 
 % If the index file starts with a backslash, forgo reading the index
 % file altogether.  If somebody upgrades texinfo.tex they may still have
 % old index files using \ as the escape character.  Reading this would
 % at best lead to typesetting garbage, at worst a TeX syntax error.
-\def\printindexzz#1#2\finish{%
+\def\printindexzz#1#2#3\finish{%
   % NB this won't work if the index file starts with a group...
-  \uccode`\~=`\\ \uppercase{\if\noexpand~}\noexpand#1
+  \uccode`\~=`\\ \uppercase{\if\noexpand~}\noexpand#2
     \message{skipping sorted index file}%
     (Skipped sorted index file in obsolete format)
   \else
-    \printindexzzz
+    \begindoublecolumns
+    \input \jobname.#1s
+    \enddoublecolumns
   \fi
 }
-
-\def\printindexzzz{%
-   \begindoublecolumns
-   \let\dotheinsertentrybox\dotheinsertentryboxwithpenalty
-   %
-   % Read input from the index file line by line.
-   \loopdo
-     \ifeof1 \else
-       \read 1 to \nextline
-     \fi
-     %
-     \indexinputprocessing
-     \thisline
-     %
-     \ifeof1\else
-     \let\thisline\nextline
-   \repeat
-   %%
-   \enddoublecolumns
-}
-
-\def\indexinputprocessing{%
-  \ifeof1
-    \let\firsttoken\relax
-  \else
-    \edef\act{\gdef\noexpand\firsttoken{\getfirsttoken\nextline}}%
-    \act
-  \fi
-}
-\def\getfirsttoken#1{\expandafter\getfirsttokenx#1\endfirsttoken}
-\long\def\getfirsttokenx#1#2\endfirsttoken{\noexpand#1}
-
 
 % These macros are used by the sorted index file itself.
 % Change them to control the appearance of the index.
@@ -5607,12 +5574,6 @@ end
 \def\entry{%
   \begingroup
     %
-    % For pdfTeX and XeTeX.
-    % The redefinition of \domark stops marks being added in \pdflink to 
-    % preserve coloured links across page boundaries.  Otherwise the marks
-    % would get in the way of \lastbox in \insertentrybox.
-    \let\domark\relax
-    %
     % Start a new paragraph if necessary, so our assignments below can't
     % affect previous text.
     \par
@@ -5671,9 +5632,8 @@ end
     \fi
     \egroup % end \boxA
     \ifdim\wd\boxB = 0pt
-      \global\setbox\entrybox=\vbox{\unhbox\boxA}%
-    \else
-    \global\setbox\entrybox=\vbox\bgroup
+      \unhbox\boxA
+    \else\bgroup
       % We want the text of the entries to be aligned to the left, and the
       % page numbers to be aligned to the right.
       %
@@ -5739,54 +5699,10 @@ end
     \egroup % The \vbox
     \fi
   \endgroup
-  \dotheinsertentrybox
 }}
 
 \newskip\thinshrinkable
 \skip\thinshrinkable=.15em minus .15em
-
-\newbox\entrybox
-\def\insertentrybox{%
-  \ourunvbox\entrybox
-}
-
-% default definition
-\let\dotheinsertentrybox\insertentrybox
-
-% Use \lastbox to take apart vbox box by box, and add each sub-box
-% to the current vertical list.
-\def\ourunvbox#1{%
-\bgroup % for local binding of \delayedbox
-  % Remove the last box from box #1
-  \global\setbox#1=\vbox{%
-    \unvbox#1%
-    \unskip % remove any glue
-    \unpenalty
-    \global\setbox\interbox=\lastbox
-  }%
-  \setbox\delayedbox=\box\interbox
-  \ifdim\ht#1=0pt\else
-    \ourunvbox#1 % Repeat on what's left of the box
-    \nobreak
-  \fi
-  \box\delayedbox
-\egroup
-}
-\newbox\delayedbox
-\newbox\interbox
-
-% Used from \printindex.  \firsttoken should be the first token
-% after the \entry.  If it's not another \entry, we are at the last
-% line of a group of index entries, so insert a penalty to discourage
-% widowed index entries.
-\def\dotheinsertentryboxwithpenalty{%
-  \ifx\firsttoken\isentry
-  \else
-    \penalty 9000
-  \fi
-  \insertentrybox
-}
-\def\isentry{\entry}%
 
 % Like plain.tex's \dotfill, except uses up at least 1 em.
 % The filll stretch here overpowers both the fil and fill stretch to push
@@ -8152,12 +8068,14 @@ end
 \def\macroargctxt{%
   \scanctxt
   \catcode`\ =\active
+  \catcode`\@=\other
   \catcode`\^^M=\other
   \catcode`\\=\active
 }
 
 \def\macrolineargctxt{% used for whole-line arguments without braces
   \scanctxt
+  \catcode`\@=\other
   \catcode`\{=\other
   \catcode`\}=\other
 }
@@ -11506,11 +11424,9 @@ directory should work if nowhere else does.}
 % \backslashcurfont outputs one backslash character in current font,
 % as in \char`\\.
 \global\chardef\backslashcurfont=`\\
-\global\let\rawbackslashxx=\backslashcurfont  % let existing .??s files work
 
-% \realbackslash is an actual character `\' with catcode other, and
-% \doublebackslash is two of them (for the pdf outlines).
-{\catcode`\\=\other @gdef@realbackslash{\} @gdef@doublebackslash{\\}}
+% \realbackslash is an actual character `\' with catcode other.
+{\catcode`\\=\other @gdef@realbackslash{\}}
 
 % In Texinfo, backslash is an active character; it prints the backslash
 % in fixed width font.
@@ -11528,10 +11444,8 @@ directory should work if nowhere else does.}
 @def@ttbackslash{{@tt @ifmmode @mathchar29020 @else @backslashcurfont @fi}}
 @let@backslashchar = @ttbackslash % @backslashchar{} is for user documents.
 
-% \rawbackslash defines an active \ to do \backslashcurfont.
 % \otherbackslash defines an active \ to be a literal `\' character with
-% catcode other.  We switch back and forth between these.
-@gdef@rawbackslash{@let\=@backslashcurfont}
+% catcode other.
 @gdef@otherbackslash{@let\=@realbackslash}
 
 % Same as @turnoffactive except outputs \ as {\tt\char`\\} instead of
