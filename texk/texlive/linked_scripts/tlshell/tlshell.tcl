@@ -1660,7 +1660,7 @@ proc update_pkgs {sel_opt {pk ""}} {
         }
         if {[llength $deps] > 0} {
           set ans [any_message \
-              [__ "Updating hard dependencies %s anyway. Continue?" $deps] \
+              [__ "Updating some dependencies %s anyway. Continue?" $deps] \
                        "okcancel"]
           if {$ans eq "cancel"} return
         }
@@ -1726,7 +1726,7 @@ proc remove_pkgs {sel_opt {pk ""}} {
         }
         if {[llength $deps] > 0} {
           set ans [any_message \
-              [__ "Removing hard dependencies %s anyway. Continue?" $deps] \
+              [__ "Removing some dependencies %s anyway. Continue?" $deps] \
                        "okcancel"]
           if {$ans eq "cancel"} return
         }

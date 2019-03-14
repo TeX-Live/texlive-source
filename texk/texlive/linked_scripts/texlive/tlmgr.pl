@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 49997 2019-02-10 23:50:35Z karl $
+# $Id: tlmgr.pl 50333 2019-03-11 01:55:52Z preining $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 49997 $';
-my $datrev = '$Date: 2019-02-11 00:50:35 +0100 (Mon, 11 Feb 2019) $';
+my $svnrev = '$Revision: 50333 $';
+my $datrev = '$Date: 2019-03-11 02:55:52 +0100 (Mon, 11 Mar 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -3518,6 +3518,8 @@ sub action_update {
   if (!win32() && $restart_tlmgr && !$opts{"dry-run"} && !$opts{"list"}) {
     info ("Restarting tlmgr to complete update ...\n");
     debug("restarting tlmgr @::SAVEDARGV\n");
+    # cleanup temp files before re-exec-ing tlmgr
+    File::Temp::cleanup();
     exec("tlmgr", @::SAVEDARGV);
     # we need warn here, otherwise perl gives warnings!
     warn ("$prg: cannot restart tlmgr, please retry update\n");
@@ -9761,7 +9763,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 49997 2019-02-10 23:50:35Z karl $
+$Id: tlmgr.pl 50333 2019-03-11 01:55:52Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
