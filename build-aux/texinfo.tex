@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-03-10.13}
+\def\texinfoversion{2019-03-11.20}
 
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
@@ -9116,19 +9116,6 @@ end
   \catcode`\^^]=\other
   \catcode`\^^^=\other
   \catcode`\^^_=\other
-  % It was suggested to set the catcode of ^ to 7, which would allow ^^e4 etc.
-  % in xref tags, i.e., node names.  But since ^^e4 notation isn't
-  % supported in the main text, it doesn't seem desirable.  Furthermore,
-  % that is not enough: for node names that actually contain a ^
-  % character, we would end up writing a line like this: 'xrdef {'hat
-  % b-title}{'hat b} and \xrdef does a \csname...\endcsname on the first
-  % argument, and \hat is not an expandable control sequence.  It could
-  % all be worked out, but why?  Either we support ^^ or we don't.
-  %
-  % The other change necessary for this was to define \auxhat:
-  % \def\auxhat{\def^{'hat }}% extra space so ok if followed by letter
-  % and then to call \auxhat in \setq.
-  %
   \catcode`\^=\other
   %
   % Special characters.  Should be turned off anyway, but...
@@ -9146,14 +9133,7 @@ end
   \catcode`\%=\other
   \catcode`+=\other % avoid \+ for paranoia even though we've turned it off
   %
-  % This is to support \ in node names and titles, since the \
-  % characters end up in a \csname.  It's easier than
-  % leaving it active and making its active definition an actual \
-  % character.  What I don't understand is why it works in the *value*
-  % of the xrdef.  Seems like it should be a catcode12 \, and that
-  % should not typeset properly.  But it works, so I'm moving on for
-  % now.  --karl, 15jan04.
-  \catcode`\\=\other
+  \catcode`\\=\active
   %
   % @ is our escape character in .aux files, and we need braces.
   \catcode`\{=1
