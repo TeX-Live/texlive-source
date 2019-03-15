@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-03-11.20}
+\def\texinfoversion{2019-03-12.20}
 
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
@@ -7063,11 +7063,7 @@ end
 
 % @cartouche ... @end cartouche: draw rectangle w/rounded corners around
 % environment contents.
-\font\circle=lcircle10
-\newdimen\circthick
-\newdimen\cartouter\newdimen\cartinner
-\newskip\normbskip\newskip\normpskip\newskip\normlskip
-\circthick=\fontdimen8\circle
+
 %
 \def\ctl{{\circle\char'013\hskip -6pt}}% 6pt from pl file: 1/2charwidth
 \def\ctr{{\hskip 6pt\circle\char'010}}
@@ -7082,7 +7078,18 @@ end
 %
 \newskip\lskip\newskip\rskip
 
+% only require the font if @cartouche is actually used
+\def\cartouchefontdefs{%
+  \font\circle=lcircle10\relax
+  \circthick=\fontdimen8\circle
+}
+\newdimen\circthick
+\newdimen\cartouter\newdimen\cartinner
+\newskip\normbskip\newskip\normpskip\newskip\normlskip
+
+
 \envdef\cartouche{%
+  \cartouchefontdefs
   \ifhmode\par\fi  % can't be in the midst of a paragraph.
   \startsavinginserts
   \lskip=\leftskip \rskip=\rightskip
