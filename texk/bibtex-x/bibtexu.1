@@ -1,0 +1,64 @@
+.TH BIBTEXU "1" "March 2019" "bibtexu 3.71" "User Commands"
+.SH NAME
+bibtexu \- UTF-8 Big BibTeX
+.SH SYNOPSIS
+.B bibtexu
+[\fIoptions\fR] \fIaux-file\fR
+.SH DESCRIPTION
+.PP
+.B BibTeXu
+is the Unicode-compliant version of BibTeX.
+It is largely based on Niel Kempson's BibTeX8, and it provides
+a better support for UTF-8 by integrating ICU library.  Therefore,
+.B BibTeXu
+no longer requires the Codepage and Sort order ("CS") file; instead,
+the method of sorting and case-changing can be controled via
+command-line options.
+.SH OPTIONS
+.TP
+\fB\-?\fR  \fB\-\-help\fR
+display some brief help text.
+.TP
+\fB\-d\fR  \fB\-\-debug\fR TYPE
+report debugging information.  TYPE is one
+or more of all, csf, io, mem, misc, search.
+.TP
+\fB\-s\fR  \fB\-\-statistics\fR
+report internal statistics.
+.TP
+\fB\-t\fR  \fB\-\-trace\fR
+report execution tracing.
+.TP
+\fB\-v\fR  \fB\-\-version\fR
+report BibTeX version.
+.TP
+\fB\-l\fR  \fB\-\-language\fR LANG
+use language LANG to convert strings to low case.
+This argument is passed to ICU library.
+.TP
+\fB\-o\fR  \fB\-\-location\fR LANG
+use language LANG for sorting.
+This argument is passed to ICU library.
+.TP
+\fB\-B\fR  \fB\-\-big\fR
+set large BibTeX capacity.
+.TP
+\fB\-H\fR  \fB\-\-huge\fR
+set huge BibTeX capacity.
+.TP
+\fB\-W\fR  \fB\-\-wolfgang\fR
+set really huge BibTeX capacity for Wolfgang.
+.TP
+\fB\-M\fR  \fB\-\-min_crossrefs\fR ##
+set min_crossrefs to ##.
+.TP
+\fB\-\-mstrings\fR ##
+allow ## unique strings.
+.SH SEE ALSO
+More detailed description of
+.B BibTeXu
+is available at $TEXMFDIST/doc/bibtexu/README.
+.SH AUTHORS
+.B BibTeXu 
+was written by Yannis Haralambous and his students.
+This manpage was written for TeX Live.

@@ -1,3 +1,8 @@
+2019-03-15  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* Makefile.am: Add bibtex8.1 and bibtexu.1.
+	* bibtex8.1, bibtexu.1: New man pages.
+
 2019-03-06  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* bibtex-2.c: Check error status for every call of

@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/bibtex-x/
 ##
-## Copyright 2017  Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017-2019 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -45,6 +45,8 @@ nodist_EXTRA_bibtexu_SOURCES = dummy.cxx
 bibtexu_CPPFLAGS = $(AM_CPPFLAGS) $(ICU_INCLUDES) -DUTF_8
 $(bibtexu_OBJECTS): $(KPATHSEA_DEPEND) $(ICU_DEPEND)
 bibtexu_LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) $(ICU_LIBS_EXTRA)
+
+dist_man1_MANS = bibtex8.1 bibtexu.1
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
