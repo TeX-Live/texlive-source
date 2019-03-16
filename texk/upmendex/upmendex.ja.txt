@@ -2,7 +2,8 @@ upmendex - 索引整形ツール
 
 使用法
 
-    upmendex [-ilqrcg] [-s sty] [-d dic] [-o ind] [-d dic] [-t log] [-p no] [--] [idx0 idx1 idx2 ...]
+    upmendex [-ilqrcgf] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [--] [idx0 idx1 idx2 ...]
+    upmendex --help
 
 
 解説
@@ -54,6 +55,8 @@ upmendex - 索引整形ツール
            を参照することにより any (最終ページの次のページから)、odd (最終ペー
            ジの次の奇数ページから)、even (最終ページの次の偶数ページから)といっ
            た指定も可能です。
+
+   --help  オプションの要約を表示します。
 
    --      以降はオプション文字列と解釈しません。
 
@@ -153,12 +156,12 @@ upmendex - 索引整形ツール
       ""
       lethead_suffixと同じ。
 
-   lethead_flag  <文字列>
+   lethead_flag  <数値>
       0
       頭文字の出力のフラグ。0のとき出力しない。1のときは英字を大文字で、
       -1のときは小文字で、2のときはタイトルケースで出力する。
 
-   heading_flag  <文字列>
+   heading_flag  <数値>
       0
       lethead_flagと同じ。
 
@@ -316,7 +319,7 @@ upmendex - 索引整形ツール
       ( Ref. http://userguide.icu-project.org/collation/customization
              http://www.unicode.org/reports/tr35/tr35-collation.html#Rules )
       UTF-8のUnicode文字及び、以下のエスケープ文字列が使用可能である:
-      \uhhhh (16進数[0-9A-Fa-f]を4桁), \Uhhhhhhhh (16進数を8桁),
+      \Uhhhhhhhh (16進数[0-9A-Fa-f]を8桁), \uhhhh (16進数を4桁),
       \xhh (16進数を2桁), \x{h...} (16進数を1〜8桁), \ooo (8進数[0-7]を3桁)。
       空文字列(デフォルト)のときは、localeによる照合順序のルールに従う。
       (upmendex専用)

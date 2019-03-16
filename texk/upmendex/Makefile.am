@@ -51,7 +51,7 @@ EXTRA_DIST = \
 ##
 EXTRA_DIST += \
 	indexsty \
-	upmendex.doc
+	upmendex.ja.txt
 
 ## Tests
 ##

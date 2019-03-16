@@ -601,7 +601,7 @@ upmendex_SOURCES = \
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_upmendex_SOURCES = dummy.cxx
 LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) $(ICU_LIBS_EXTRA)
-EXTRA_DIST = COPYRIGHT indexsty upmendex.doc $(TESTS) tests/foo.idx \
+EXTRA_DIST = COPYRIGHT indexsty upmendex.ja.txt $(TESTS) tests/foo.idx \
 	tests/foo.ind tests/uni.idx tests/uni.dict tests/uni.ist \
 	tests/uni.ind
 TESTS = tests/upmendex.test

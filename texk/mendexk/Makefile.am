@@ -29,7 +29,7 @@ mendex_SOURCES = \
 
 $(mendex_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 
-LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS)	
+LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS)
 
 ## Rebuild libkpathsea & libptexenc
 @KPATHSEA_RULE@
@@ -46,7 +46,7 @@ EXTRA_DIST = \
 ##
 EXTRA_DIST += \
 	indexsty \
-	mendex.doc mendex.1 mendex.1.ja
+	mendex.ja.txt mendex.1 mendex.1.ja
 
 ## Tests
 ##

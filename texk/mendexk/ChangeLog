@@ -1,3 +1,7 @@
+2019-03-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* mendex.ja.txt: Rename from mendex.doc
+
 2019-02-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* main.c, configure.ac, configure:
