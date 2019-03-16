@@ -159,6 +159,7 @@ tlshell/tlshell.tcl
 ulqda/ulqda.pl
 urlbst/urlbst
 vpe/vpe.pl
+webquiz/webquiz.py
 xindex/xindex.lua
 yplan/yplan
 context/stubs/unix/context

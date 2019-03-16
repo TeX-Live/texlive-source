@@ -215,6 +215,7 @@ texmf_other_scripts = \
 	ulqda/ulqda.pl \
 	urlbst/urlbst \
 	vpe/vpe.pl \
+	webquiz/webquiz.py \
 	xindex/xindex.lua \
 	yplan/yplan
 texmf_context_scripts = \
