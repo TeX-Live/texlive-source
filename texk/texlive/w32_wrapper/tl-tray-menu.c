@@ -4,6 +4,10 @@ Simple tray menu
 
 Originally written in 2011 by Tomasz M. Trzeciak, Public Domain
 
+2019 updates, by Siep Kroonenberg:
+- added option to open data files with default application
+- updated menu content
+
 compiling with gcc (size optimized):
 echo 1 ICON "tl-tray-menu.ico">tl-tray-menu.rc
 windres tl-tray-menu.rc tl-tray-menu-rc.o
@@ -14,6 +18,7 @@ gcc -Os -s -mwindows -o tl-tray-menu.exe tl-tray-menu-rc.o tl-tray-menu.c
 #define _WIN32_IE 0X0500 // minimum support for tray baloon (IE5)
 
 #include <windows.h>
+#include <shellapi.h>
 #include <process.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -45,16 +50,14 @@ char *menuLabels[MAX_MENU_ENTRIES] = {
 "&Package Manager",
 "&Documentation",
 "&Editor", 
-"PostScript/PDF &Viewer",
 "&Command Prompt",
 NULL };
 
 // default menu commands
 char *menuCommands[MAX_MENU_ENTRIES] = {
-"bin\\win32\\tlmgr-gui.exe",
-"bin\\win32\\texdoctk.exe",
+"bin\\win32\\tlshell.exe",
+"index.html",
 "bin\\win32\\texworks.exe",
-"bin\\win32\\psv.exe",
 "tlpkg\\installer\\tl-cmd.bat",
 NULL };
 
@@ -64,6 +67,31 @@ For an example and instructions see:\n";
 
 HMENU hPopMenu;
 NOTIFYICONDATA nid;
+
+// has s executable extension according to PATHEXT?
+int is_exe ( char * s ) {
+  int i, j, extl;
+  char * pathext, * ext, * t, * t1;
+  if ( !s || !(*s)) DIE( "is_exe invoked with NULL or empty string" );
+  pathext = getenv( "PATHEXT" );
+  if (!pathext) return 1;
+  ext = strrchr( s, '.' );
+  if (!ext) return 1;
+  extl = strlen( ext );
+  t = s;
+  while ( 1 ) {
+    t1 = strchr( t, ';' );
+    if ( !t1 ) t1 = s + strlen( s );
+    if ( t1 - t == extl && !_strnicmp( ext, t, extl )) {
+      return 1;
+    } else if ( *t1 ) {
+      t = ++t1;
+    } else {
+      return 0;
+    }
+  }
+  return 0;
+}
 
 LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -116,32 +144,39 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
         default:
         {
-          STARTUPINFO si;
-          PROCESS_INFORMATION pi;
-          ZeroMemory( &si, sizeof(si) );
-          si.cb = sizeof(si);
-          //si.dwFlags = STARTF_USESHOWWINDOW;
-          //si.wShowWindow = SW_HIDE ;
-          ZeroMemory( &pi, sizeof(pi) );
-          if( !CreateProcess(
-            NULL,     // module name (uses command line if NULL)
-            menuCommands[LOWORD(wParam)],     // command line
-            NULL,     // process security atrributes
-            NULL,     // thread security atrributes
-            TRUE,     // handle inheritance
-            0,        // creation flags, e.g. CREATE_NO_WINDOW, DETACHED_PROCESS
-            NULL,     // pointer to environment block (uses parent if NULL)
-            NULL,     // starting directory (uses parent if NULL)
-            &si,      // STARTUPINFO structure
-            &pi )     // PROCESS_INFORMATION structure
-          ) DIE( "Failed to spawn command (error code %d):\n%s", 
-                 GetLastError(), menuCommands[LOWORD(wParam)] );
+          if (is_exe( menuCommands[LOWORD(wParam )])) {
+            STARTUPINFO si;
+            PROCESS_INFORMATION pi;
+            ZeroMemory( &si, sizeof(si) );
+            si.cb = sizeof(si);
+            //si.dwFlags = STARTF_USESHOWWINDOW;
+            //si.wShowWindow = SW_HIDE ;
+            ZeroMemory( &pi, sizeof(pi) );
+            if( !CreateProcess(
+              NULL,     // module name (uses command line if NULL)
+              menuCommands[LOWORD(wParam)],     // command line
+              NULL,     // process security atrributes
+              NULL,     // thread security atrributes
+              TRUE,     // handle inheritance
+              0,        // creation flags, e.g. CREATE_NO_WINDOW,
+                        // DETACHED_PROCESS
+              NULL,     // pointer to environment block (uses parent if NULL)
+              NULL,     // starting directory (uses parent if NULL)
+              &si,      // STARTUPINFO structure
+              &pi )     // PROCESS_INFORMATION structure
+            ) DIE( "Failed to spawn command (error code %d):\n%s", 
+                   GetLastError(), menuCommands[LOWORD(wParam)] );
+          } else {
+            // data file; try to open with default application
+            ShellExecute( NULL, NULL, menuCommands[LOWORD(wParam)],
+                NULL, NULL, SW_SHOWNORMAL );
+          }
         }
       }
     }
     break;
 
-    default:                 
+    default:
       return DefWindowProc( hWnd, msg, wParam, lParam );
 
   }
@@ -175,6 +210,9 @@ int APIENTRY WinMain(
   // prepend bin/win32 to PATH
   
   strcpy( strBuf, dirSelf );
+  if ( strlen( dirSelf ) + strlen( "\\bin\\win32;" )
+      + strlen( getenv( "PATH" )) >= MAX_STR )
+    DIE( "Path getting too long" );
   strcat( strBuf, "\\bin\\win32;" );
   strcat( strBuf, getenv( "PATH" ) );
   SetEnvironmentVariable( "PATH", strBuf );
