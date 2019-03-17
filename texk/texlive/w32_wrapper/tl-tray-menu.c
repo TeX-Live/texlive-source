@@ -56,7 +56,7 @@ NULL };
 // default menu commands
 char *menuCommands[MAX_MENU_ENTRIES] = {
 "bin\\win32\\tlshell.exe",
-"index.html",
+"doc.html",
 "bin\\win32\\texworks.exe",
 "tlpkg\\installer\\tl-cmd.bat",
 NULL };
