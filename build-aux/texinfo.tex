@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-03-12.20}
+\def\texinfoversion{2019-03-16.20}
 
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
@@ -1124,6 +1124,16 @@ where each line of input produces a line of output.}
     \fi
   \fi
 \fi
+
+\newif\ifpdforxetex
+\pdforxetexfalse
+\ifpdf
+  \pdforxetextrue
+\fi
+\ifx\XeTeXrevision\thisisundefined\else
+  \pdforxetextrue
+\fi
+
 
 % PDF uses PostScript string constants for the names of xref targets,
 % for display in the outlines, and in other places.  Thus, we have to
@@ -3105,7 +3115,7 @@ end
 % So now @email is just like @uref, unless we are pdf.
 %
 %\def\email#1{\angleleft{\tt #1}\angleright}
-\ifpdf
+\ifpdforxetex
   \def\email#1{\doemail#1,,\finish}
   \def\doemail#1,#2,#3\finish{\begingroup
     \unsepspaces
@@ -3115,18 +3125,7 @@ end
     \endlink
   \endgroup}
 \else
-  \ifx\XeTeXrevision\thisisundefined
-    \let\email=\uref
-  \else
-    \def\email#1{\doemail#1,,\finish}
-    \def\doemail#1,#2,#3\finish{\begingroup
-      \unsepspaces
-      \pdfurl{mailto:#1}%
-      \setbox0 = \hbox{\ignorespaces #2}%
-      \ifdim\wd0>0pt\unhbox0\else\code{#1}\fi
-      \endlink
-    \endgroup}
-  \fi
+  \let\email=\uref
 \fi
 
 % @kbdinputstyle -- arg is `distinct' (@kbd uses slanted tty font always),
@@ -5237,17 +5236,25 @@ end
   \xdef\indexsortkey{#1}\endgroup}
 }
 
-% The default definition
+\def\indexwriteseealso#1{
+  \gdef\pagenumbertext{@seealso{#1}}%
+}
+
+% The default definitions
 \def\sortas#1{}%
+\def\seealso#1{\i{\putwordSeeAlso}\ #1}% for sorted index file only
+\def\putwordSeeAlso{see also}
 
 % Given index entry text like "aaa @subentry bbb @sortas{ZZZ}":
 %   * Set \bracedtext to "{aaa}{bbb}"
 %   * Set \fullindexsortkey to "aaa @subentry ZZZ"
+%   * If @seealso occurs, set \pagenumbertext
 %
 \def\splitindexentry#1{%
   \gdef\fullindexsortkey{}%
   \xdef\bracedtext{}%
   \def\sep{}%
+  \def\seealso##1{}%
   \expandafter\doindexsegment#1\subentry\finish\subentry
 }
 
@@ -5268,6 +5275,7 @@ end
     % font commands turned off.
     \bgroup
       \let\sortas\indexwritesortas
+      \let\seealso\indexwriteseealso
       \indexnofonts
       % The braces around the commands are recognized by texindex.
       \def\lbracechar{{\indexlbrace}}%
@@ -5278,8 +5286,9 @@ end
       \def\atchar##1{\@}%
       %
       \let\indexsortkey\empty
+      \global\let\pagenumbertext\empty
       % Execute the segment and throw away the typeset output.  This executes
-      % any @sortas commands in this segment.
+      % any @sortas or @seealso commands in this segment.
       \setbox\dummybox = \hbox{\segment}%
       \ifx\indexsortkey\empty{%
         \indexnonalnumdisappear
@@ -5327,7 +5336,9 @@ end
   %
   \edef\temp{%
     \write\writeto{%
-      \string\entry{\fullindexsortkey}{\noexpand\folio}\bracedtext}%
+      \string\entry{\fullindexsortkey}%
+        {\ifx\pagenumbertext\empty\noexpand\folio\else\pagenumbertext\fi}%
+        \bracedtext}%
   }%
   \temp
 }
@@ -5427,9 +5438,14 @@ end
 %  \entry {topic}{pagelist}
 %     for a topic that is used without subtopics
 %  \primary {topic}
+%  \entry {topic}{}
 %     for the beginning of a topic that is used with subtopics
 %  \secondary {subtopic}{pagelist}
 %     for each subtopic.
+%  \secondary {subtopic}{}
+%     for a subtopic with sub-subtopics
+%  \tertiary {subtopic}{subsubtopic}{pagelist}
+%     for each sub-subtopic.
 
 % Define the user-accessible indexing commands
 % @findex, @vindex, @kindex, @cindex.
@@ -5474,7 +5490,7 @@ end
     \ifeof 1
       \putwordIndexIsEmpty
     \else
-      \expandafter\printindexzz{#1}\thisline\relax\relax\finish%
+      \expandafter\printindexzz\thisline\relax\relax\finish%
     \fi
   \fi
   \closein 1
@@ -5484,14 +5500,14 @@ end
 % file altogether.  If somebody upgrades texinfo.tex they may still have
 % old index files using \ as the escape character.  Reading this would
 % at best lead to typesetting garbage, at worst a TeX syntax error.
-\def\printindexzz#1#2#3\finish{%
+\def\printindexzz#1#2\finish{%
   % NB this won't work if the index file starts with a group...
-  \uccode`\~=`\\ \uppercase{\if\noexpand~}\noexpand#2
+  \uccode`\~=`\\ \uppercase{\if\noexpand~}\noexpand#1
     \message{skipping sorted index file}%
     (Skipped sorted index file in obsolete format)
   \else
     \begindoublecolumns
-    \input \jobname.#1s
+    \input \jobname.\indexname s
     \enddoublecolumns
   \fi
 }
@@ -5606,33 +5622,30 @@ end
 \gdef\finishentry#1{%
     \egroup % end box A
     \dimen@ = \wd\boxA % Length of text of entry
-    \global\setbox\boxA=\hbox\bgroup\unhbox\boxA
-    % #1 is the page number.
-    %
-    % Get the width of the page numbers, and only use
-    % leaders if they are present.
-    \global\setbox\boxB = \hbox{#1}%
-    \ifdim\wd\boxB = 0pt
-      \null\nobreak\hfill\ %
-    \else
+    \global\setbox\boxA=\hbox\bgroup
+      \unhbox\boxA
+      % #1 is the page number.
       %
-      \null\nobreak\indexdotfill % Have leaders before the page number.
-      %
-      \ifpdf
-        \pdfgettoks#1.%
-        \hskip\skip\thinshrinkable\the\toksA
+      % Get the width of the page numbers, and only use
+      % leaders if they are present.
+      \global\setbox\boxB = \hbox{#1}%
+      \ifdim\wd\boxB = 0pt
+        \null\nobreak\hfill\ %
       \else
-        \ifx\XeTeXrevision\thisisundefined
-          \hskip\skip\thinshrinkable #1%
-        \else
+        %
+        \null\nobreak\indexdotfill % Have leaders before the page number.
+        %
+        \ifpdforxetex
           \pdfgettoks#1.%
           \hskip\skip\thinshrinkable\the\toksA
+        \else
+          \hskip\skip\thinshrinkable #1%
         \fi
       \fi
-    \fi
     \egroup % end \boxA
     \ifdim\wd\boxB = 0pt
-      \unhbox\boxA
+      \noindent\unhbox\boxA\par
+      \nobreak
     \else\bgroup
       % We want the text of the entries to be aligned to the left, and the
       % page numbers to be aligned to the right.
@@ -5713,24 +5726,15 @@ end
 
 \def\primary #1{\line{#1\hfil}}
 
-\newskip\secondaryindent \secondaryindent=0.5cm
-\def\secondary#1#2{{%
-  \parfillskip=0in
-  \parskip=0in
-  \hangindent=1in
-  \hangafter=1
-  \noindent\hskip\secondaryindent\hbox{#1}\indexdotfill
-  \ifpdf
-    \pdfgettoks#2.\ \the\toksA % The page number ends the paragraph.
-  \else
-    \ifx\XeTeXrevision\thisisundefined
-      #2
-    \else
-      \pdfgettoks#2.\ \the\toksA % The page number ends the paragraph.
-    \fi
-  \fi
-  \par
-}}
+\def\secondary{\indententry{0.5cm}}
+\def\tertiary{\indententry{1cm}}
+
+\def\indententry#1#2#3{%
+  \bgroup
+  \leftskip=#1
+  \entry{#2}{#3}%
+  \egroup
+}
 
 % Define two-column mode, which we use to typeset indexes.
 % Adapted from the TeXbook, page 416, which is to say,
@@ -6694,13 +6698,8 @@ end
   % 1 and 2 (the page numbers aren't printed), and so are the first
   % two pages of the document.  Thus, we'd have two destinations named
   % `1', and two named `2'.
-  \ifpdf
+  \ifpdforxetex
     \global\pdfmakepagedesttrue
-  \else
-    \ifx\XeTeXrevision\thisisundefined
-    \else
-      \global\pdfmakepagedesttrue
-    \fi
   \fi
 }
 
