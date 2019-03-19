@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20180328.0
+# Version 20190318.0
 #
 # formerly known as updmap-setup-kanji
 #
 # Copyright 2004-2006 by KOBAYASHI R. Taizo for the shell version (updmap-otf)
-# Copyright 2011-2018 by PREINING Norbert
-# Copyright 2016-2018 by Japanese TeX Development Community
+# Copyright 2011-2019 by PREINING Norbert
+# Copyright 2016-2019 by Japanese TeX Development Community
 #
 # This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
@@ -22,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20180328.0';
+my $version = '20190318.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -131,6 +131,7 @@ if ($opt_help) {
 # representatives of support font families
 #
 my %representatives;
+my %ai0flags;
 my @databaselist = "ptex-fontmaps-data.dat";
 push @databaselist, "ptex-fontmaps-macos-data.dat" if (macosx_new());
 
@@ -228,6 +229,7 @@ EOF
 
 sub InitDatabase {
   %representatives = ();
+  %ai0flags = ();
 }
 
 sub ReadDatabase {
@@ -268,6 +270,30 @@ sub ReadDatabase {
       if ($l =~ m/^KO\((\d+)\):\s*(.*):\s*(.*)$/) {
         $representatives{'ko'}{$2}{'priority'} = $1;
         $representatives{'ko'}{$2}{'file'} = $3;
+        next;
+      }
+      if ($l =~ m/^JA-AI0:\s*(.*):\s*(.*)$/) {
+        $representatives{'ja'}{$1}{'priority'} = 9999; # lowest
+        $representatives{'ja'}{$1}{'file'} = $2;
+        $ai0flags{'ja'}{$1} = 1;
+        next;
+      }
+      if ($l =~ m/^SC-AI0:\s*(.*):\s*(.*)$/) {
+        $representatives{'sc'}{$1}{'priority'} = 9999; # lowest
+        $representatives{'sc'}{$1}{'file'} = $2;
+        $ai0flags{'sc'}{$1} = 1;
+        next;
+      }
+      if ($l =~ m/^TC-AI0:\s*(.*):\s*(.*)$/) {
+        $representatives{'tc'}{$1}{'priority'} = 9999; # lowest
+        $representatives{'tc'}{$1}{'file'} = $2;
+        $ai0flags{'tc'}{$1} = 1;
+        next;
+      }
+      if ($l =~ m/^KO-AI0:\s*(.*):\s*(.*)$/) {
+        $representatives{'ko'}{$1}{'priority'} = 9999; # lowest
+        $representatives{'ko'}{$1}{'file'} = $2;
+        $ai0flags{'ko'}{$1} = 1;
         next;
       }
       # we are still here??
@@ -322,6 +348,19 @@ sub check_mapfile {
   }
 }
 
+sub gen_mapfile {
+  my $opt_mode = shift;
+  my $map_base = shift;
+  # returns a representative map file name
+  # ptex-${map_base}.map also exists for Japanese AI0 fonts,
+  # but it is a stub so we use uptex-${map_base}.map instead
+  return ($opt_mode eq "ja" ?
+            ($ai0flags{$opt_mode}{$map_base} ?
+               "uptex-${map_base}.map" :
+               "ptex-${map_base}.map") :
+            "uptex-${opt_mode}-${map_base}.map");
+}
+
 sub GetStatus {
   my $opt_mode = shift;
   my $val = `$updmap_real --quiet --showoption ${opt_mode}Embed`;
@@ -332,19 +371,23 @@ sub GetStatus {
     die "Cannot find status of current ${opt_mode}Embed setting via updmap --showoption!\n";
   }
 
-  my $testmap = ($opt_mode eq "ja" ? "ptex-$STATUS.map" : "uptex-${opt_mode}-$STATUS.map");
+  my $testmap = gen_mapfile($opt_mode, $STATUS);
   if (check_mapfile($testmap)) {
-    print "CURRENT family for $opt_mode: $STATUS\n";
+    print "CURRENT family for $opt_mode: $STATUS";
+    print " (AI0)" if ($ai0flags{$opt_mode}{$STATUS});
+    print "\n";
   } else {
     print STDERR "WARNING: Currently selected map file for $opt_mode cannot be found: $testmap\n";
   }
 
   for my $k (sort keys %{$representatives{$opt_mode}}) {
-    my $MAPFILE = ($opt_mode eq "ja" ? "ptex-$k.map" : "uptex-${opt_mode}-$k.map");
+    my $MAPFILE = gen_mapfile($opt_mode, $k);
     next if ($MAPFILE eq $testmap);
     if (check_mapfile($MAPFILE)) {
       if ($representatives{$opt_mode}{$k}{'available'}) {
-        print "Standby family : $k\n";
+        print "Standby family : $k";
+        print " (AI0)" if ($ai0flags{$opt_mode}{$k});
+        print "\n";
       }
     }
   }
@@ -358,14 +401,16 @@ sub GetStatus {
 sub SetupMapFile {
   my $opt_mode = shift;
   my $rep = shift;
-  my $MAPFILE = ($opt_mode eq "ja" ? "ptex-$rep.map" : "uptex-${opt_mode}-$rep.map");
+  my $MAPFILE = gen_mapfile($opt_mode, $rep);
   if (check_mapfile($MAPFILE)) {
-    print "Setting up ... $MAPFILE\n";
-    system("$updmap --quiet --nomkmap --nohash -setoption ${opt_mode}Embed $rep");
+    print "Setting up ... $rep";
+    print " (AI0)" if ($ai0flags{$opt_mode}{$rep});
+    print " for $opt_mode\n";
+    system("$updmap --quiet --nomkmap --nohash --setoption ${opt_mode}Embed $rep");
     if ($opt_jis) {
-      system("$updmap --quiet --nomkmap --nohash -setoption jaVariant -04");
+      system("$updmap --quiet --nomkmap --nohash --setoption jaVariant -04");
     } else {
-      system("$updmap --quiet --nomkmap --nohash -setoption jaVariant \"\"");
+      system("$updmap --quiet --nomkmap --nohash --setoption jaVariant \"\"");
     }
   } else {
     die "NOT EXIST $MAPFILE\n";
@@ -377,21 +422,21 @@ sub SetupReplacement {
   my $rep = shift;
   if (defined($representatives{$opt_mode}{$rep})) {
     if ($representatives{$opt_mode}{$rep}{'available'}) {
-      SetupMapFile($opt_mode, $rep);
+      return SetupMapFile($opt_mode, $rep);
     } else {
       printf STDERR "$rep not available, falling back to auto!\n";
-      SetupReplacement($opt_mode, "auto");
+      return SetupReplacement($opt_mode, "auto");
     }
   } else {
     if ($rep eq "nofont") {
-      SetupMapFile($opt_mode, "noEmbed");
+      return SetupMapFile($opt_mode, "noEmbed");
     } elsif ($rep eq "auto") {
       my $STATUS = GetStatus($opt_mode);
       # first check if we have a status set and the font is installed
       # in this case don't change anything, just make sure
       if (defined($representatives{$opt_mode}{$STATUS}) &&
           $representatives{$opt_mode}{$STATUS}{'available'}) {
-        SetupMapFile($opt_mode, $STATUS);
+        return SetupMapFile($opt_mode, $STATUS);
       } else {
         if (!($STATUS eq "noEmbed" || $STATUS eq "")) {
           # some unknown setting is set up currently, overwrite, but warn
@@ -404,15 +449,15 @@ sub SetupReplacement {
                           $representatives{$opt_mode}{$b}{'priority'} }
                         keys %{$representatives{$opt_mode}}) {
           if ($representatives{$opt_mode}{$i}{'available'}) {
-            SetupMapFile($opt_mode, $i);
+            return SetupMapFile($opt_mode, $i);
           }
         }
         # still here, no map file found!
-        SetupMapFile($opt_mode, "noEmbed");
+        return SetupMapFile($opt_mode, "noEmbed");
       }
     } else {
       # anything else is treated as a map file name
-      SetupMapFile($opt_mode, $rep);
+      return SetupMapFile($opt_mode, $rep);
     }
   }
 }

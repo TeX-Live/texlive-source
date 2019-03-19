@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 44331 2017-05-14 02:15:43Z preining $
+# $Id: updmap.pl 50442 2019-03-18 11:35:23Z hironobu $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2011-2017 Norbert Preining
+# Copyright 2011-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 44331 2017-05-14 02:15:43Z preining $';
+my $svnid = '$Id: updmap.pl 50442 2019-03-18 11:35:23Z hironobu $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2017-05-14 04:15:43 +0200 (Sun, 14 May 2017) $';
+my $lastchdate = '$Date: 2019-03-18 12:35:23 +0100 (Mon, 18 Mar 2019) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 44331 $';
+my $svnrev = '$Revision: 50442 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -845,9 +845,18 @@ sub cidx2dvips {
     chomp;
     # save the line for warnings
     my $l = $_;
-    # first check whether a PSname is given
-    my $psname;
     #
+    my $psname;
+    my $fbname;
+    #
+    # special case for pre-defined fallback from unicode encoded font
+    if ($_ =~ m/%!DVIPSFB\s\s*([0-9A-Za-z-_!,][0-9A-Za-z-_!,]*)/) {
+      $fbname = $1;
+      # minimal adjustment
+      $fbname =~ s/^!//;
+      $fbname =~ s/,Bold//;
+    }
+    # first check whether a PSname is given
     # the matching on \w* is greedy, so will take all the word chars available
     # that means we do not need to test for end of word
     if ($_ =~ m/%!PS\s\s*([0-9A-Za-z-_][0-9A-Za-z-_]*)/) {
@@ -875,7 +884,8 @@ sub cidx2dvips {
     # make everything single spaced
     s/\s\s*/ /g;
     # unicode encoded fonts are not supported
-    next if (m!^\w\w* unicode !);
+    # but if a fallback font is pre-defined, we can use it
+    next if (!defined($fbname) && (m!^[0-9A-Za-z-_][0-9A-Za-z-_]* unicode !));
     # now we have the following format
     #  <word> <word> <word> some options like -e or -s
     if ($_ !~ m/([^ ][^ ]*) ([^ ][^ ]*) ([^ ][^ ]*)( (.*))?$/) {
@@ -911,13 +921,17 @@ sub cidx2dvips {
       $opts .= " \"$italicmax SlantFont\"";
     }
     # print out the result
-    if (defined($psname)) {
-      push @d, "$tfmname $psname-$cid$opts\n";
+    if (defined($fbname)) {
+      push @d, "$tfmname $fbname\n";
     } else {
-      if (defined($fname_psname{$fname})) {
-        push @d, "$tfmname $fname_psname{$fname}-$cid$opts\n";
+      if (defined($psname)) {
+        push @d, "$tfmname $psname-$cid$opts\n";
       } else {
-        push @d, "$tfmname $fname-$cid$opts\n";
+        if (defined($fname_psname{$fname})) {
+          push @d, "$tfmname $fname_psname{$fname}-$cid$opts\n";
+        } else {
+          push @d, "$tfmname $fname-$cid$opts\n";
+        }
       }
     }
   }

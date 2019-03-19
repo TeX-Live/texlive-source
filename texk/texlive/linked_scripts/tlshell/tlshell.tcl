@@ -2022,7 +2022,7 @@ proc populate_main {} {
   .mn add cascade -label [__ "Help"] -menu .mn.help -underline 0
   menu .mn.help
   .mn.help add command -label [__ "About"] -command {
-    tk_messageBox -message [__ "\u00a9 2017, 2018 Siep Kroonenberg
+    tk_messageBox -message [__ "Copyright 2017, 2018 Siep Kroonenberg
 
 GUI interface for TeX Live Manager
 Implemented in Tcl/Tk
