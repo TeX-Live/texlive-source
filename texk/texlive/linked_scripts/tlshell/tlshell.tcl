@@ -1,6 +1,6 @@
 #!/usr/bin/env wish
 
-# Copyright 2017, 2018 Siep Kroonenberg
+# Copyright 2017-2019 Siep Kroonenberg
 
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -10,8 +10,7 @@ package require Tk
 # security: disable send
 catch {rename send {}}
 
-# unix: make sure TL comes first on process searchpath
-# on windows, runscript takes care of this.
+# make sure TL comes first on process searchpath
 if {$::tcl_platform(platform) ne "windows"} {
   set texbin [file dirname [file normalize [info script]]]
   set savedir [pwd]
@@ -132,6 +131,7 @@ proc long_message {str type {p "."}} {
     err_exit "Unsupported type $type for long_message"
   }
   create_dlg .tlmg $p
+  wm title .tlmg ""
 
   # wallpaper frame; see populate_main
   pack [ttk::frame .tlmg.bg] -fill both -expand 1
@@ -523,18 +523,6 @@ proc run_cmd_waiting {cmd} {
 # display_packages_info is mostly invoked by collect_filtered, but
 # also when the search term or the search option changes.
 
-proc check_tlmgr_updatable {} {
-  run_cmd_waiting "update --self --list"
-  foreach l $::out_log {
-    if [regexp {^total-bytes[ \t]+([0-9]+)$} $l m b] {
-      do_debug "matches, $b"
-      set ::need_update_tlmgr [expr {$b > 0 ? 1 : 0}]
-      return
-    }
-  }
-  do_debug "check_tlmgr_uptodate: should not get here"
-} ; # check_tlmgr_uptodate
-
 proc is_updatable {nm} {
   set pk [dict get $::pkgs $nm]
   set lr [dict get $pk localrev]
@@ -548,7 +536,7 @@ proc update_globals {} {
   foreach nm [dict keys $::pkgs] {
     if [is_updatable $nm] {incr ::n_updates}
   }
-  check_tlmgr_updatable
+  set ::need_update_tlmgr [is_updatable texlive.infra]
   set ::tlshell_updatable [is_updatable tlshell]
 
   # also update displayed status info
@@ -843,7 +831,7 @@ proc show_logs {} {
   # collect pages in notebook widget
   pack [ttk::notebook .tllg.logs] -in .tllg.bg -side top -fill both -expand 1
   .tllg.logs add .tllg.log -text [__ "Output"]
-  .tllg.logs add .tllg.err -text [__ "Errors"]
+  .tllg.logs add .tllg.err -text [__ "Other"]
   if $::ddebug {
     .tllg.logs add .tllg.dbg -text "Debug"
     raise .tllg.dbg .tllg.logs
@@ -1209,6 +1197,7 @@ proc repository_dialog {} {
   ppack .tlr.abort -in .tlr.closebuttons -side right
   bind .tlr <Escape> {.tlr.abort invoke}
 
+  wm protocol .tlr WM_DELETE_WINDOW {.tlr.abort invoke}
   wm resizable .tlr 1 0
   place_dlg .tlr .
 } ; # repository_dialog
@@ -1522,6 +1511,13 @@ proc update_tlmgr {} {
     tk_messageBox -message [__ "Nothing to do!"]
     return
   }
+  if {$::tcl_platform(platform) eq "windows"} {
+    set ans [tk_messageBox -type okcancel -icon info -message \
+        [string cat [__ "If update fails, try on a command-line:"] \
+           "\ntlmgr update --self\n" \
+             [__ "Use an admininstative command prompt for an admin install."]]]
+    if {$ans eq "cancel"} return
+  }
   run_cmd "update --self" 1
   vwait ::done_waiting
   # tlmgr restarts itself automatically
@@ -1829,7 +1825,7 @@ proc set_paper {p} {
   run_cmd "paper paper $p" 1
 }
 
-proc set_language {l} {
+proc set_language_no_restart {l} {
   set ok 1
   if [catch {exec kpsewhich -var-value "TEXMFCONFIG"} d] {set ok 0}
   if $ok {
@@ -1861,12 +1857,16 @@ proc set_language {l} {
     }
     catch {chan close $fid}
   }
-  if $ok {
+  return $ok
+} ; # set_language_no_restart
+
+proc set_language {l} {
+  if [set_language_no_restart $l] {
     restart_self
   } else {
     tk_messageBox -message [__ "Cannot set default GUI language"] -icon error
   }
-} ; # set_language
+}
 
 ##### running external commands #####
 
@@ -2022,11 +2022,9 @@ proc populate_main {} {
   .mn add cascade -label [__ "Help"] -menu .mn.help -underline 0
   menu .mn.help
   .mn.help add command -label [__ "About"] -command {
-    tk_messageBox -message [__ "Copyright 2017, 2018 Siep Kroonenberg
+    tk_messageBox -message [string cat "\u00a9 2017-2019 Siep Kroonenberg
 
-GUI interface for TeX Live Manager
-Implemented in Tcl/Tk
-"]}
+" [__ "GUI interface for TeX Live Manager\nImplemented in Tcl/Tk"]]}
   .mn.help add command -label [__ "tlmgr help"] -command show_help
 
   # wallpaper frame
@@ -2070,7 +2068,8 @@ Implemented in Tcl/Tk
   ttk::label .topf.luptodate -text [__ "Unknown"] -anchor w
   pgrid .topf.luptodate -row 2 -column 1 -sticky w
 
-  ttk::label .topf.llcmd -anchor w -text [__ "Last tlmgr command:"] -anchor w
+  ttk::label .topf.llcmd -anchor w -text [__ "Last tlmgr command:"] -anchor w \
+      -wraplength [expr {60*$::cw}] -justify left
   pgrid .topf.llcmd -row 3 -column 0 -sticky w
   ttk::label .topf.lcmd -anchor w -textvariable ::last_cmd -anchor w
   pgrid .topf.lcmd -row 3 -column 1 -sticky w
@@ -2249,6 +2248,9 @@ proc initialize {} {
                  [file join $::instroot "tlpkg" "translations"] *.po] {
     lappend ::langs [string range [file tail $l] 0 end-3]
   }
+
+  # store language in tlmgr configuration
+  set_language_no_restart $::lang
 
   # in case we are going to do something with json:
   # add json subdirectory to auto_path, but at low priority
