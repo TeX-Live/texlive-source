@@ -1,3 +1,7 @@
+2019-03-21  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pdftosrc-poppler0.75.0.cc: Support poppler-0.75.0.
+
 2019-01-27  Karl Berry  <karl@gnu.org>
 
 	* pdftex.web (pdf_omit_charset_code, pdf_omit_charset
