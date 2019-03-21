@@ -1,4 +1,13 @@
-TODO notes from Tom.  (Public domain.)
+TODO for dvips(k).  (Public domain.)
+
+- see dvips items on tug.org/help (lots! both doc and code).
+- use snprintf, not sprintf, if any question.
+- comment line break http://groups.google.com/group/comp.text.tex/browse_thread/thread/b8ed25cc6153d5c
+- \special{map: ...} a la \pdfmapline (reinhardk 30dec06)
+- maybe stuff from dvipsfnt.txt from yy
+- dvips +ufoobar.map -> no error?
+
+From Tom:
 
 To document:
    Landscape mfmode

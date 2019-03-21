@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 50202 $';
+my $svnrev = '$Revision: 50427 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -376,7 +376,7 @@ sub platform_desc {
     'amd64-kfreebsd'   => 'GNU/kFreeBSD on x86_64',
     'amd64-netbsd'     => 'NetBSD on x86_64',
     'armel-linux'      => 'GNU/Linux on ARM',
-    'armhf-linux'      => 'GNU/Linux on ARMhf',
+    'armhf-linux'      => 'GNU/Linux on ARMv6 (RPi)',
     'hppa-hpux'        => 'HP-UX',
     'i386-cygwin'      => 'Cygwin on Intel x86',
     'i386-darwin'      => 'MacOSX legacy (10.5-10.6) on Intel x86',
@@ -880,7 +880,7 @@ sub mkdirhier {
     # from the UNC path, since (! -d //servername/) tests true
     $subdir = $& if ( win32() && ($tree =~ s!^//[^/]+/!!) );
 
-    @dirs = split (/\//, $tree);
+    @dirs = split (/[\/\\]/, $tree);
     for my $dir (@dirs) {
       $subdir .= "$dir/";
       if (! -d $subdir) {
@@ -893,7 +893,7 @@ sub mkdirhier {
         } else {
           if (! mkdir ($subdir)) {
             $ret = 0;
-            $reterror = "mkdir($subdir) failed: $!";
+            $reterror = "mkdir($subdir) failed for tree $tree: $!";
             last;
           }
         }
