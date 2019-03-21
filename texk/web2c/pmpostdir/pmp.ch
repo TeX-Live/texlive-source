@@ -13,7 +13,7 @@
 %
 
 @x
-@d default_banner "This is MetaPost, Version 2.000" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 2.00" /* printed when \MP\ starts */
 @y
 @z
 
