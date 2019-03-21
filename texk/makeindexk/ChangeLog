@@ -1,3 +1,8 @@
+2019-03-21  Karl Berry  <karl@tug.org>
+
+	* mkind.h (ARGUMENT_MAX): increase to 10240 from 1024,
+	since can be used with glossaries, etc. Found by Nicola Talbot.
+
 2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
