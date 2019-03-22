@@ -1515,7 +1515,7 @@ proc update_tlmgr {} {
     set ans [tk_messageBox -type okcancel -icon info -message \
         [string cat [__ "If update fails, try on a command-line:"] \
            "\ntlmgr update --self\n" \
-             [__ "Use an admininstative command prompt for an admin install."]]]
+             [__ "Use an administrative command prompt for an admin install."]]]
     if {$ans eq "cancel"} return
   }
   run_cmd "update --self" 1
