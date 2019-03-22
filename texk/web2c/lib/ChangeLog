@@ -1,3 +1,10 @@
+2019-03-23  Akira Kakuto  <kakuto@w32tex.org>
+
+	* texmfmp.c: On windows, xetex and pdftex did not record
+	texmf.cnf in the case of --recorder because of special
+	initializations. Fix this bug. It is not needed to rebuild
+	in other platforms.
+
 2019-01-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* printversion.c: Update copyright year.
