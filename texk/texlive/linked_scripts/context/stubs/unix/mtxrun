@@ -194,7 +194,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-lua"] = package.loaded["l-lua"] or true
 
--- original size: 6281, stripped down to: 2863
+-- original size: 6330, stripped down to: 2831
 
 if not modules then modules={} end modules ['l-lua']={
  version=1.001,
@@ -312,7 +312,6 @@ elseif not ffi.number then
  ffi.number=tonumber
 end
 if LUAVERSION>5.3 then
- collectgarbage("generational")
 end
 
 
@@ -3766,7 +3765,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-os"] = package.loaded["l-os"] or true
 
--- original size: 19347, stripped down to: 10258
+-- original size: 18916, stripped down to: 10126
 
 if not modules then modules={} end modules ['l-os']={
  version=1.001,
@@ -3932,16 +3931,6 @@ local launchers={
 }
 function os.launch(str)
  execute(format(launchers[os.name] or launchers.unix,str))
-end
-if not os.times then
- function os.times()
-  return {
-   utime=os.gettimeofday(),
-   stime=0,
-   cutime=0,
-   cstime=0,
-  }
- end
 end
 local gettimeofday=os.gettimeofday or os.clock
 os.gettimeofday=gettimeofday
@@ -4218,7 +4207,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-file"] = package.loaded["l-file"] or true
 
--- original size: 21804, stripped down to: 9980
+-- original size: 21984, stripped down to: 10148
 
 if not modules then modules={} end modules ['l-file']={
  version=1.001,
@@ -4398,39 +4387,44 @@ local reslasher=lpeg.replacer(P("\\"),"/")
 function file.reslash(str)
  return str and lpegmatch(reslasher,str)
 end
-function file.is_writable(name)
- if not name then
- elseif lfs.isdir(name) then
-  name=name.."/m_t_x_t_e_s_t.tmp"
-  local f=io.open(name,"wb")
-  if f then
-   f:close()
-   os.remove(name)
-   return true
+if lfs.isreadablefile and lfs.iswritablefile then
+ file.is_readable=lfs.isreadablefile
+ file.is_writable=lfs.iswritablefile
+else
+ function file.is_writable(name)
+  if not name then
+  elseif lfs.isdir(name) then
+   name=name.."/m_t_x_t_e_s_t.tmp"
+   local f=io.open(name,"wb")
+   if f then
+    f:close()
+    os.remove(name)
+    return true
+   end
+  elseif lfs.isfile(name) then
+   local f=io.open(name,"ab")
+   if f then
+    f:close()
+    return true
+   end
+  else
+   local f=io.open(name,"ab")
+   if f then
+    f:close()
+    os.remove(name)
+    return true
+   end
   end
- elseif lfs.isfile(name) then
-  local f=io.open(name,"ab")
-  if f then
-   f:close()
-   return true
-  end
- else
-  local f=io.open(name,"ab")
-  if f then
-   f:close()
-   os.remove(name)
-   return true
-  end
- end
- return false
-end
-local readable=P("r")*Cc(true)
-function file.is_readable(name)
- if name then
-  local a=attributes(name)
-  return a and lpegmatch(readable,a.permissions) or false
- else
   return false
+ end
+ local readable=P("r")*Cc(true)
+ function file.is_readable(name)
+  if name then
+   local a=attributes(name)
+   return a and lpegmatch(readable,a.permissions) or false
+  else
+   return false
+  end
  end
 end
 file.isreadable=file.is_readable 
@@ -5062,7 +5056,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-dir"] = package.loaded["l-dir"] or true
 
--- original size: 18002, stripped down to: 10681
+-- original size: 18253, stripped down to: 10816
 
 if not modules then modules={} end modules ['l-dir']={
  version=1.001,
@@ -5127,13 +5121,15 @@ local function glob_pattern_function(path,patt,recurse,action)
   end
   local dirs
   local nofdirs=0
-  for name in walkdir(usedpath) do
+  for name,mode,size,time in walkdir(usedpath) do
    if name~="." and name~=".." then
     local full=path..name
-    local mode=attributes(full,'mode')
+    if mode==nil then
+     mode=attributes(full,'mode')
+    end
     if mode=='file' then
      if not patt or find(full,patt) then
-      action(full)
+      action(full,size,time)
      end
     elseif recurse and mode=="directory" then
      if dirs then
@@ -5169,10 +5165,12 @@ local function glob_pattern_table(path,patt,recurse,result)
  local dirs
  local nofdirs=0
  local noffiles=#result
- for name,a in walkdir(usedpath) do
+ for name,mode in walkdir(usedpath) do
   if name~="." and name~=".." then
    local full=path..name
-   local mode=attributes(full,'mode')
+   if mode==nil then
+    mode=attributes(full,'mode')
+   end
    if mode=='file' then
     if not patt or find(full,patt) then
      noffiles=noffiles+1
@@ -5223,7 +5221,7 @@ local function collectpattern(path,patt,recurse,result)
   if not find(path,"/$") then
    path=path..'/'
   end
-  for name in scanner,first do
+  for name in scanner,first do 
    if name=="." then
    elseif name==".." then
    else
@@ -5314,10 +5312,12 @@ local function globfiles(path,recurse,func,files)
  end
  files=files or {}
  local noffiles=#files
- for name in walkdir(path) do
+ for name,mode in walkdir(path) do
   if find(name,"^%.") then
   else
-   local mode=attributes(name,'mode')
+   if mode==nil then
+    mode=attributes(name,'mode')
+   end
    if mode=="directory" then
     if recurse then
      globfiles(path.."/"..name,recurse,func,files)
@@ -5340,10 +5340,12 @@ local function globdirs(path,recurse,func,files)
  end
  files=files or {}
  local noffiles=#files
- for name in walkdir(path) do
+ for name,mode in walkdir(path) do
   if find(name,"^%.") then
   else
-   local mode=attributes(name,'mode')
+   if mode==nil then
+    mode=attributes(name,'mode')
+   end
    if mode=="directory" then
     if not func or func(name) then
      noffiles=noffiles+1
@@ -5524,8 +5526,7 @@ local stack={}
 function dir.push(newdir)
  local curdir=currentdir()
  insert(stack,curdir)
- if newdir and newdir~="" then
-  chdir(newdir)
+ if newdir and newdir~="" and chdir(newdir) then
   return newdir
  else
   return curdir
@@ -6466,7 +6467,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-str"] = package.loaded["util-str"] or true
 
--- original size: 43538, stripped down to: 21641
+-- original size: 43488, stripped down to: 21595
 
 if not modules then modules={} end modules ['util-str']={
  version=1.001,
@@ -6481,7 +6482,6 @@ local strings=utilities.strings
 local format,gsub,rep,sub,find=string.format,string.gsub,string.rep,string.sub,string.find
 local load,dump=load,string.dump
 local tonumber,type,tostring,next,setmetatable=tonumber,type,tostring,next,setmetatable
-local unpack,concat=table.unpack,table.concat
 local unpack,concat=table.unpack,table.concat
 local P,V,C,S,R,Ct,Cs,Cp,Carg,Cc=lpeg.P,lpeg.V,lpeg.C,lpeg.S,lpeg.R,lpeg.Ct,lpeg.Cs,lpeg.Cp,lpeg.Carg,lpeg.Cc
 local patterns,lpegmatch=lpeg.patterns,lpeg.match
@@ -7307,7 +7307,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-tab"] = package.loaded["util-tab"] or true
 
--- original size: 28810, stripped down to: 16134
+-- original size: 28866, stripped down to: 16134
 
 if not modules then modules={} end modules ['util-tab']={
  version=1.001,
@@ -7971,7 +7971,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-fil"] = package.loaded["util-fil"] or true
 
--- original size: 8607, stripped down to: 6727
+-- original size: 11530, stripped down to: 9007
 
 if not modules then modules={} end modules ['util-fil']={
  version=1.001,
@@ -8180,6 +8180,32 @@ if bit32 then
   local b=char(n%256)
   f:write(b,a)
  end
+ function files.writecardinal4(f,n)
+  local a=char(n%256)
+  n=rshift(n,8)
+  local b=char(n%256)
+  n=rshift(n,8)
+  local c=char(n%256)
+  n=rshift(n,8)
+  local d=char(n%256)
+  f:write(d,c,b,a)
+ end
+ function files.writecardinal2le(f,n)
+  local a=char(n%256)
+  n=rshift(n,8)
+  local b=char(n%256)
+  f:write(a,b)
+ end
+ function files.writecardinal4le(f,n)
+  local a=char(n%256)
+  n=rshift(n,8)
+  local b=char(n%256)
+  n=rshift(n,8)
+  local c=char(n%256)
+  n=rshift(n,8)
+  local d=char(n%256)
+  f:write(a,b,c,d)
+ end
 else
  local floor=math.floor
  function files.writecardinal2(f,n)
@@ -8188,16 +8214,32 @@ else
   local b=char(n%256)
   f:write(b,a)
  end
-end
-function files.writecardinal4(f,n)
- local a=char(n%256)
- n=rshift(n,8)
- local b=char(n%256)
- n=rshift(n,8)
- local c=char(n%256)
- n=rshift(n,8)
- local d=char(n%256)
- f:write(d,c,b,a)
+ function files.writecardinal4(f,n)
+  local a=char(n%256)
+  n=floor(n/256)
+  local b=char(n%256)
+  n=floor(n/256)
+  local c=char(n%256)
+  n=floor(n/256)
+  local d=char(n%256)
+  f:write(d,c,b,a)
+ end
+ function files.writecardinal2le(f,n)
+  local a=char(n%256)
+  n=floor(n/256)
+  local b=char(n%256)
+  f:write(a,b)
+ end
+ function files.writecardinal4le(f,n)
+  local a=char(n%256)
+  n=floor(n/256)
+  local b=char(n%256)
+  n=floor(n/256)
+  local c=char(n%256)
+  n=floor(n/256)
+  local d=char(n%256)
+  f:write(a,b,c,d)
+ end
 end
 function files.writestring(f,s)
  f:write(char(byte(s,1,#s)))
@@ -8210,10 +8252,18 @@ if fio and fio.readcardinal1 then
  files.readcardinal2=fio.readcardinal2
  files.readcardinal3=fio.readcardinal3
  files.readcardinal4=fio.readcardinal4
+ files.readcardinal1le=fio.readcardinal1le or files.readcardinal1le
+ files.readcardinal2le=fio.readcardinal2le or files.readcardinal2le
+ files.readcardinal3le=fio.readcardinal3le or files.readcardinal3le
+ files.readcardinal4le=fio.readcardinal4le or files.readcardinal4le
  files.readinteger1=fio.readinteger1
  files.readinteger2=fio.readinteger2
  files.readinteger3=fio.readinteger3
  files.readinteger4=fio.readinteger4
+ files.readinteger1le=fio.readinteger1le or files.readinteger1le
+ files.readinteger2le=fio.readinteger2le or files.readinteger2le
+ files.readinteger3le=fio.readinteger3le or files.readinteger3le
+ files.readinteger4le=fio.readinteger4le or files.readinteger4le
  files.readfixed2=fio.readfixed2
  files.readfixed4=fio.readfixed4
  files.read2dot14=fio.read2dot14
@@ -8233,6 +8283,24 @@ if fio and fio.readcardinal1 then
  function files.skiplong(f,n)
   skipposition(f,4*(n or 1))
  end
+end
+if fio and fio.writecardinal1 then
+ files.writecardinal1=fio.writecardinal1
+ files.writecardinal2=fio.writecardinal2
+ files.writecardinal3=fio.writecardinal3
+ files.writecardinal4=fio.writecardinal4
+ files.writecardinal1le=fio.writecardinal1le
+ files.writecardinal2le=fio.writecardinal2le
+ files.writecardinal3le=fio.writecardinal3le
+ files.writecardinal4le=fio.writecardinal4le
+ files.writeinteger1=fio.writeinteger1 or fio.writecardinal1
+ files.writeinteger2=fio.writeinteger2 or fio.writecardinal2
+ files.writeinteger3=fio.writeinteger3 or fio.writecardinal3
+ files.writeinteger4=fio.writeinteger4 or fio.writecardinal4
+ files.writeinteger1le=files.writeinteger1le or fio.writecardinal1le
+ files.writeinteger2le=files.writeinteger2le or fio.writecardinal2le
+ files.writeinteger3le=files.writeinteger3le or fio.writecardinal3le
+ files.writeinteger4le=files.writeinteger4le or fio.writecardinal4le
 end
 if fio and fio.readcardinaltable then
  files.readcardinaltable=fio.readcardinaltable
@@ -8271,7 +8339,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-sac"] = package.loaded["util-sac"] or true
 
--- original size: 11065, stripped down to: 8209
+-- original size: 11332, stripped down to: 8420
 
 if not modules then modules={} end modules ['util-sac']={
  version=1.001,
@@ -8294,6 +8362,11 @@ end
 function streams.openstring(f,zerobased)
  if f then
   return { f,1,#f,zerobased or false }
+ end
+end
+function streams.getstring(f)
+ if f then
+  return f[1]
  end
 end
 function streams.close()
@@ -8386,7 +8459,7 @@ function streams.readcardinal2(f)
  local a,b=byte(f[1],i,j)
  return 0x100*a+b
 end
-function streams.readcardinal2LE(f)
+function streams.readcardinal2le(f)
  local i=f[2]
  local j=i+1
  f[2]=j+1
@@ -8456,6 +8529,13 @@ function streams.readcardinal4(f)
  local j=i+3
  f[2]=j+1
  local a,b,c,d=byte(f[1],i,j)
+ return 0x1000000*a+0x10000*b+0x100*c+d
+end
+function streams.readcardinal4le(f)
+ local i=f[2]
+ local j=i+3
+ f[2]=j+1
+ local d,c,b,a=byte(f[1],i,j)
  return 0x1000000*a+0x10000*b+0x100*c+d
 end
 function streams.readinteger4(f)
@@ -9545,13 +9625,13 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-soc-imp-socket"] = package.loaded["util-soc-imp-socket"] or true
 
--- original size: 4870, stripped down to: 3527
+-- original size: 4905, stripped down to: 3562
 
 
 local type,tostring,setmetatable=type,tostring,setmetatable
 local min=math.min
 local format=string.format
-local socket=require("socket.core")
+local socket=socket or package.loaded.socket or require("socket.core")
 local connect=socket.connect
 local tcp4=socket.tcp4
 local tcp6=socket.tcp6
@@ -10734,12 +10814,12 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-soc-imp-mime"] = package.loaded["util-soc-imp-mime"] or true
 
--- original size: 2328, stripped down to: 1874
+-- original size: 2373, stripped down to: 1931
 
 
 local type,tostring=type,tostring
-local mime=require("mime.core")
-local ltn12=ltn12 or require("ltn12")
+local mime=mime  or package.loaded.mime  or require("mime.core")
+local ltn12=ltn12 or package.loaded.ltn12 or require("ltn12")
 local filtercycle=ltn12.filter.cycle
 local function report(fmt,first,...)
  if logs then
@@ -12691,7 +12771,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["trac-log"] = package.loaded["trac-log"] or true
 
--- original size: 32608, stripped down to: 20925
+-- original size: 32618, stripped down to: 20935
 
 if not modules then modules={} end modules ['trac-log']={
  version=1.001,
@@ -12736,7 +12816,7 @@ local function ignore() end
 setmetatableindex(logs,function(t,k) t[k]=ignore;return ignore end)
 local report,subreport,status,settarget,setformats,settranslations
 local direct,subdirect,writer,pushtarget,poptarget,setlogfile,settimedlog,setprocessor,setformatters,newline
-if runningtex then
+if runningtex and texio then
  if texio.setescape then
   texio.setescape(0) 
  end
@@ -15607,6 +15687,468 @@ environment.filenames=setmetatable({},{
   return #environment.files
  end,
 } )
+
+
+end -- of closure
+
+do -- create closure to overcome 200 locals limit
+
+package.loaded["util-zip"] = package.loaded["util-zip"] or true
+
+-- original size: 18645, stripped down to: 11291
+
+if not modules then modules={} end modules ['util-zip']={
+ version=1.001,
+ author="Hans Hagen, PRAGMA-ADE, Hasselt NL",
+ copyright="PRAGMA ADE / ConTeXt Development Team",
+ license="see context related readme files"
+}
+local type,tostring,tonumber=type,tostring,tonumber
+local sort=table.sort
+local find,format,sub,gsub=string.find,string.format,string.sub,string.gsub
+local osdate,ostime=os.date,os.time
+local ioopen=io.open
+local loaddata,savedata=io.loaddata,io.savedata
+local filejoin,isdir,dirname,mkdirs=file.join,lfs.isdir,file.dirname,dir.mkdirs
+local files=utilities.files
+local openfile=files.open
+local closefile=files.close
+local readstring=files.readstring
+local readcardinal2=files.readcardinal2le
+local readcardinal4=files.readcardinal4le
+local setposition=files.setposition
+local getposition=files.getposition
+local band=bit32.band
+local rshift=bit32.rshift
+local lshift=bit32.lshift
+local decompress,calculatecrc
+if flate then
+ decompress=flate.flate_decompress
+ calculatecrc=flate.update_crc32
+else
+ local zlibdecompress=zlib.decompress
+ local zlibchecksum=zlib.crc32
+ decompress=function(source,targetsize)
+  local target=zlibdecompress(source,-15)
+  if target then
+   return target
+  else
+   return false,1
+  end
+ end
+ calculatecrc=function(buffer,initial)
+  return zlibchecksum(initial or 0,buffer)
+ end
+end
+local zipfiles={}
+utilities.zipfiles=zipfiles
+local openzipfile,closezipfile,unzipfile,foundzipfile,getziphash,getziplist  do
+ function openzipfile(name)
+  return {
+   name=name,
+   handle=openfile(name,0),
+  }
+ end
+ local function collect(z)
+  if not z.list then
+   local list={}
+   local hash={}
+   local position=0
+   local index=0
+   local handle=z.handle
+   while true do
+    setposition(handle,position)
+    local signature=readstring(handle,4)
+    if signature=="PK\3\4" then
+     local version=readcardinal2(handle)
+     local flag=readcardinal2(handle)
+     local method=readcardinal2(handle)
+     local filetime=readcardinal2(handle)
+     local filedate=readcardinal2(handle)
+     local crc32=readcardinal4(handle)
+     local compressed=readcardinal4(handle)
+     local uncompressed=readcardinal4(handle)
+     local namelength=readcardinal2(handle)
+     local extralength=readcardinal2(handle)
+     local filename=readstring(handle,namelength)
+     local descriptor=band(flag,8)~=0
+     local encrypted=band(flag,1)~=0
+     local acceptable=method==0 or method==8
+     local skipped=0
+     local size=0
+     if encrypted then
+      size=readcardinal2(handle)
+      skipbytes(size)
+      skipped=skipped+size+2
+      skipbytes(8)
+      skipped=skipped+8
+      size=readcardinal2(handle)
+      skipbytes(size)
+      skipped=skipped+size+2
+      size=readcardinal4(handle)
+      skipbytes(size)
+      skipped=skipped+size+4
+      size=readcardinal2(handle)
+      skipbytes(size)
+      skipped=skipped+size+2
+     end
+     position=position+30+namelength+extralength+skipped
+     if descriptor then
+      setposition(handle,position+compressed)
+      crc32=readcardinal4(handle)
+      compressed=readcardinal4(handle)
+      uncompressed=readcardinal4(handle)
+     end
+     if acceptable then
+      index=index+1
+      local data={
+       filename=filename,
+       index=index,
+       position=position,
+       method=method,
+       compressed=compressed,
+       uncompressed=uncompressed,
+       crc32=crc32,
+       encrypted=encrypted,
+      }
+      hash[filename]=data
+      list[index]=data
+     else
+     end
+     position=position+compressed
+    else
+     break
+    end
+    z.list=list
+    z.hash=hash
+   end
+  end
+ end
+ function getziplist(z)
+  local list=z.list
+  if not list then
+   collect(z)
+  end
+  return z.list
+ end
+ function getziphash(z)
+  local hash=z.hash
+  if not hash then
+   collect(z)
+  end
+  return z.hash
+ end
+ function foundzipfile(z,name)
+  return getziphash(z)[name]
+ end
+ function closezipfile(z)
+  local f=z.handle
+  if f then
+   closefile(f)
+   z.handle=nil
+  end
+ end
+ function unzipfile(z,filename,check)
+  local hash=z.hash
+  if not hash then
+   hash=zipfiles.hash(z)
+  end
+  local data=hash[filename] 
+  if not data then
+  end
+  if data then
+   local handle=z.handle
+   local position=data.position
+   local compressed=data.compressed
+   if compressed>0 then
+    setposition(handle,position)
+    local result=readstring(handle,compressed)
+    if data.method==8 then
+     result=decompress(result,data.uncompressed)
+    end
+    if check and data.crc32~=calculatecrc(result) then
+     print("checksum mismatch")
+     return ""
+    end
+    return result
+   else
+    return ""
+   end
+  end
+ end
+ zipfiles.open=openzipfile
+ zipfiles.close=closezipfile
+ zipfiles.unzip=unzipfile
+ zipfiles.hash=getziphash
+ zipfiles.list=getziplist
+ zipfiles.found=foundzipfile
+end
+if flate then do
+ local writecardinal1=files.writebyte
+ local writecardinal2=files.writecardinal2le
+ local writecardinal4=files.writecardinal4le
+ local logwriter=logs.writer
+ local globpattern=dir.globpattern
+ local compress=flate.flate_compress
+ local checksum=flate.update_crc32
+ local function fromdostime(dostime,dosdate)
+  return ostime {
+   year=rshift(dosdate,9)+1980,
+   month=band(rshift(dosdate,5),0x0F),
+   day=band((dosdate   ),0x1F),
+   hour=band(rshift(dostime,11)    ),
+   min=band(rshift(dostime,5),0x3F),
+   sec=band((dostime   ),0x1F),
+  }
+ end
+ local function todostime(time)
+  local t=osdate("*t",time)
+  return
+   lshift(t.year-1980,9)+lshift(t.month,5)+t.day,
+   lshift(t.hour,11)+lshift(t.min,5)+rshift(t.sec,1)
+ end
+ local function openzip(filename,level,comment,verbose)
+  local f=ioopen(filename,"wb")
+  if f then
+   return {
+    filename=filename,
+    handle=f,
+    list={},
+    level=tonumber(level) or 3,
+    comment=tostring(comment),
+    verbose=verbose,
+    uncompressed=0,
+    compressed=0,
+   }
+  end
+ end
+ local function writezip(z,name,data,level,time)
+  local f=z.handle
+  local list=z.list
+  local level=tonumber(level) or z.level or 3
+  local method=8
+  local zipped=compress(data,level)
+  local checksum=checksum(data)
+  local verbose=z.verbose
+  if not zipped then
+   method=0
+   zipped=data
+  end
+  local start=f:seek()
+  local compressed=#zipped
+  local uncompressed=#data
+  z.compressed=z.compressed+compressed
+  z.uncompressed=z.uncompressed+uncompressed
+  if verbose then
+   local pct=100*compressed/uncompressed
+   if pct>=100 then
+    logwriter(format("%10i        %s",uncompressed,name))
+   else
+    logwriter(format("%10i  %02.1f  %s",uncompressed,pct,name))
+   end
+  end
+  f:write("\x50\x4b\x03\x04")
+  writecardinal2(f,0)   
+  writecardinal2(f,0)   
+  writecardinal2(f,method)    
+  writecardinal2(f,0)   
+  writecardinal2(f,0)   
+  writecardinal4(f,checksum)  
+  writecardinal4(f,compressed)   
+  writecardinal4(f,uncompressed) 
+  writecardinal2(f,#name)  
+  writecardinal2(f,0)
+  f:write(name)      
+  f:write(zipped)
+  list[#list+1]={ #zipped,#data,name,checksum,start,time or 0 }
+ end
+ local function closezip(z)
+  local f=z.handle
+  local list=z.list
+  local comment=z.comment
+  local verbose=z.verbose
+  local count=#list
+  local start=f:seek()
+  for i=1,count do
+   local l=list[i]
+   local compressed=l[1]
+   local uncompressed=l[2]
+   local name=l[3]
+   local checksum=l[4]
+   local start=l[5]
+   local time=l[6]
+   local date,time=todostime(time)
+   f:write('\x50\x4b\x01\x02')
+   writecardinal2(f,0)   
+   writecardinal2(f,0)   
+   writecardinal2(f,0)   
+   writecardinal2(f,8)   
+   writecardinal2(f,time)   
+   writecardinal2(f,date)   
+   writecardinal4(f,checksum)  
+   writecardinal4(f,compressed)   
+   writecardinal4(f,uncompressed) 
+   writecardinal2(f,#name)  
+   writecardinal2(f,0)   
+   writecardinal2(f,0)   
+   writecardinal2(f,0)   
+   writecardinal2(f,0)   
+   writecardinal4(f,0)   
+   writecardinal4(f,start)  
+   f:write(name)      
+  end
+  local stop=f:seek()
+  local size=stop-start
+  f:write('\x50\x4b\x05\x06')
+  writecardinal2(f,0)   
+  writecardinal2(f,0)   
+  writecardinal2(f,count)  
+  writecardinal2(f,count)  
+  writecardinal4(f,size)   
+  writecardinal4(f,start)  
+  if type(comment)=="string" and comment~="" then
+   writecardinal2(f,#comment) 
+   f:write(comment)     
+  else
+   writecardinal2(f,0)
+  end
+  if verbose then
+   local compressed=z.compressed
+   local uncompressed=z.uncompressed
+   local filename=z.filename
+   local pct=100*compressed/uncompressed
+   logwriter("")
+   if pct>=100 then
+    logwriter(format("%10i        %s",uncompressed,filename))
+   else
+    logwriter(format("%10i  %02.1f  %s",uncompressed,pct,filename))
+   end
+  end
+  f:close()
+ end
+ local function zipdir(zipname,path,level,verbose)
+  if type(zipname)=="table" then
+   verbose=zipname.verbose
+   level=zipname.level
+   path=zipname.path
+   zipname=zipname.zipname
+  end
+  if not zipname or zipname=="" then
+   return
+  end
+  if not path or path=="" then
+   path="."
+  end
+  if not isdir(path) then
+   return
+  end
+  path=gsub(path,"\\+","/")
+  path=gsub(path,"/+","/")
+  local list={}
+  local count=0
+  globpattern(path,"",true,function(name,size,time)
+   count=count+1
+   list[count]={ name,time }
+  end)
+  sort(list,function(a,b)
+   return a[1]<b[1]
+  end)
+  local zipf=openzip(zipname,level,comment,verbose)
+  if zipf then
+   local p=#path+2
+   for i=1,count do
+    local li=list[i]
+    local name=li[1]
+    local time=li[2]
+    local data=loaddata(name)
+    local name=sub(name,p,#name)
+    writezip(zipf,name,data,level,time,verbose)
+   end
+   closezip(zipf)
+  end
+ end
+ local function unzipdir(zipname,path,verbose)
+  if type(zipname)=="table" then
+   verbose=zipname.verbose
+   path=zipname.path
+   zipname=zipname.zipname
+  end
+  if not zipname or zipname=="" then
+   return
+  end
+  if not path or path=="" then
+   path="."
+  end
+  local z=openzipfile(zipname)
+  if z then
+   local list=getziplist(z)
+   if list then
+    local total=0
+    local count=#list
+    local step=number.idiv(count,10)
+    local done=0
+    for i=1,count do
+     local l=list[i]
+     local n=l.filename
+     local d=unzipfile(z,n) 
+     local p=filejoin(path,n)
+     if mkdirs(dirname(p)) then
+      if verbose=="steps" then
+       total=total+#d
+       done=done+1
+       if done>=step then
+        done=0
+        logwriter(format("%4i files of %4i done, %10i bytes",i,count,total))
+       end
+      elseif verbose then
+       logwriter(n)
+      end
+      savedata(p,d)
+     end
+    end
+    if verbose=="steps" then
+     logwriter(format("%4i files of %4i done, %10i bytes",count,count,total))
+    end
+    closezipfile(z)
+    return true
+   else
+    closezipfile(z)
+   end
+  end
+ end
+ zipfiles.zipdir=zipdir
+ zipfiles.unzipdir=unzipdir
+end end
+if flate then
+ local streams=utilities.streams
+ local openfile=streams.open
+ local closestream=streams.close
+ local setposition=streams.setposition
+ local getsize=streams.size
+ local readcardinal4=streams.readcardinal4le
+ local getstring=streams.getstring
+ local decompress=flate.gz_decompress
+ function zipfiles.gunzipfile(filename)
+  local strm=openfile(filename)
+  if strm then
+   setposition(strm,getsize(strm)-4+1)
+   local size=readcardinal4(strm)
+   local data=decompress(getstring(strm),size)
+   closestream(strm)
+   return data
+  end
+ end
+elseif gzip then
+ local openfile=gzip.open
+ function zipfiles.gunzipfile(filename)
+  local g=openfile(filename,"rb")
+  if g then
+   local d=g:read("*a")
+   d:close()
+   return d
+  end
+ end
+end
 
 
 end -- of closure
@@ -20103,7 +20645,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-exp"] = package.loaded["data-exp"] or true
 
--- original size: 18105, stripped down to: 10389
+-- original size: 18154, stripped down to: 10416
 
 if not modules then modules={} end modules ['data-exp']={
  version=1.001,
@@ -20310,9 +20852,11 @@ local function scan(files,remap,spec,path,n,m,r,onlyone,tolerant)
  local pattern=tolerant and lessweird or weird
  local filelist={}
  local noffiles=0
- for name in directory(full) do
+ for name,mode in directory(full) do
   if not lpegmatch(pattern,name) then
-   local mode=attributes(full..name,"mode")
+   if not mode then
+    mode=attributes(full..name,"mode")
+   end
    if mode=="file" then
     n=n+1
     noffiles=noffiles+1
@@ -20793,7 +21337,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-tmp"] = package.loaded["data-tmp"] or true
 
--- original size: 16116, stripped down to: 10782
+-- original size: 16284, stripped down to: 10938
 
 if not modules then modules={} end modules ['data-tmp']={
  version=1.100,
@@ -20833,6 +21377,7 @@ caches.force=true
 caches.ask=false
 caches.relocate=false
 caches.defaults={ "TMPDIR","TEMPDIR","TMP","TEMP","HOME","HOMEPATH" }
+directives.register("system.caches.fast",function(v) caches.fast=true end)
 local writable,readables,usedreadables=nil,{},{}
 local function identify()
  local texmfcaches=resolvers.cleanpathlist("TEXMFCACHE") 
@@ -21066,7 +21611,9 @@ local saveoptions={ compact=true }
 function caches.savedata(filepath,filename,data,raw)
  local tmaname,tmcname=caches.setluanames(filepath,filename)
  data.cache_uuid=os.uuid()
- if caches.direct then
+ if caches.fast then
+  file.savedata(tmaname,table.fastserialize(data,true))
+ elseif caches.direct then
   file.savedata(tmaname,table.serialize(data,true,saveoptions))
  else
   table.tofile(tmaname,data,true,saveoptions)
@@ -23400,7 +23947,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-zip"] = package.loaded["data-zip"] or true
 
--- original size: 8700, stripped down to: 6313
+-- original size: 10263, stripped down to: 7556
 
 if not modules then modules={} end modules ['data-zip']={
  version=1.001,
@@ -23419,6 +23966,65 @@ local archives=zip.archives or {}
 zip.archives=archives
 local registeredfiles=zip.registeredfiles or {}
 zip.registeredfiles=registeredfiles
+local zipfiles=utilities.zipfiles
+local openzip,closezip,validfile,wholefile,filehandle,traversezip
+if zipfiles then
+ local ipairs=ipairs
+ openzip=zipfiles.open
+ closezip=zipfiles.close
+ validfile=zipfiles.found
+ wholefile=zipfiles.unzip
+ traversezip=function(zfile)
+  return ipairs(zipfiles.list(zfile))
+ end
+ local streams=utilities.streams
+ local openstream=streams.open
+ local readstring=streams.readstring
+ local streamsize=streams.size
+ local metatable={
+  close=streams.close,
+  read=function(stream,n)
+   readstring(stream,n=="*a" and streamsize(stream) or n)
+  end
+ }
+ filehandle=function(zfile,queryname)
+  local data=wholefile(zfile,queryname)
+  if data then
+   local stream=openstream(data)
+   if stream then
+    return setmetatableindex(stream,metatable)
+   end
+  end
+ end
+else
+ openzip=zip.open
+ closezip=zip.close
+ validfile=function(zfile,queryname)
+  local dfile=zfile:open(queryname)
+  if dfile then
+   dfile:close()
+   return true
+  end
+  return false
+ end
+ traversezip=function(zfile)
+  return z:files()
+ end
+ wholefile=function(zfile,queryname)
+  local dfile=zfile:open(queryname)
+  if dfile then
+   local s=dfile:read("*all")
+   dfile:close()
+   return s
+  end
+ end
+ filehandle=function(zfile,queryname)
+  local dfile=zfile:open(queryname)
+  if dfile then
+   return dfile
+  end
+ end
+end
 local function validzip(str) 
  if not find(str,"^zip://") then
   return "zip:///"..str
@@ -23433,7 +24039,7 @@ function zip.openarchive(name)
   local arch=archives[name]
   if not arch then
      local full=resolvers.findfile(name) or ""
-     arch=full~="" and zip.open(full) or false
+     arch=full~="" and openzip(full) or false
      archives[name]=arch
   end
     return arch
@@ -23441,7 +24047,7 @@ function zip.openarchive(name)
 end
 function zip.closearchive(name)
  if not name or (name=="" and archives[name]) then
-  zip.close(archives[name])
+  closezip(archives[name])
   archives[name]=nil
  end
 end
@@ -23482,9 +24088,7 @@ function resolvers.finders.zip(specification)
     if trace_locating then
      report_zip("finder: archive %a found",archive)
     end
-    local dfile=zfile:open(queryname)
-    if dfile then
-     dfile:close()
+    if validfile(zfile,queryname) then
      if trace_locating then
       report_zip("finder: file %a found",queryname)
      end
@@ -23514,12 +24118,12 @@ function resolvers.openers.zip(specification)
     if trace_locating then
      report_zip("opener; archive %a opened",archive)
     end
-    local dfile=zfile:open(queryname)
-    if dfile then
+    local handle=filehandle(zfile,queryname)
+    if handle then
      if trace_locating then
       report_zip("opener: file %a found",queryname)
      end
-     return resolvers.openers.helpers.textopener('zip',original,dfile)
+     return resolvers.openers.helpers.textopener('zip',original,handle)
     elseif trace_locating then
      report_zip("opener: file %a not found",queryname)
     end
@@ -23545,15 +24149,13 @@ function resolvers.loaders.zip(specification)
     if trace_locating then
      report_zip("loader: archive %a opened",archive)
     end
-    local dfile=zfile:open(queryname)
-    if dfile then
+    local data=wholefile(zfile,queryname)
+    if data then
      logs.show_load(original)
      if trace_locating then
       report_zip("loader; file %a loaded",original)
      end
-     local s=dfile:read("*all")
-     dfile:close()
-     return true,s,#s
+     return true,data,#data
     elseif trace_locating then
      report_zip("loader: file %a not found",queryname)
     end
@@ -23600,7 +24202,7 @@ function resolvers.registerzipfile(z,tree)
  if trace_locating then
   report_zip("registering: using filter %a",filter)
  end
- for i in z:files() do
+ for i in traversezip(z) do
   local filename=i.filename
   local path,name=match(filename,filter)
   if not path then
@@ -24734,7 +25336,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["luat-fmt"] = package.loaded["luat-fmt"] or true
 
--- original size: 9418, stripped down to: 7087
+-- original size: 9637, stripped down to: 7253
 
 if not modules then modules={} end modules ['luat-fmt']={
  version=1.001,
@@ -24800,6 +25402,13 @@ local runners={
  luatex=sandbox.registerrunner {
   name="make luatex format",
   program="luatex",
+  template=template,
+  checkers=checkers,
+  reporter=report_format,
+ },
+ luametatex=sandbox.registerrunner {
+  name="make luametatex format",
+  program="luametatex",
   template=template,
   checkers=checkers,
   reporter=report_format,
@@ -24971,10 +25580,10 @@ end
 
 end -- of closure
 
--- used libraries    : l-bit32.lua l-lua.lua l-macro.lua l-sandbox.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-sha.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-fil.lua util-sac.lua util-sto.lua util-prs.lua util-fmt.lua util-soc-imp-reset.lua util-soc-imp-socket.lua util-soc-imp-copas.lua util-soc-imp-ltn12.lua util-soc-imp-mime.lua util-soc-imp-url.lua util-soc-imp-headers.lua util-soc-imp-tp.lua util-soc-imp-http.lua util-soc-imp-ftp.lua util-soc-imp-smtp.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-tpl.lua util-sbx.lua util-mrg.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
+-- used libraries    : l-bit32.lua l-lua.lua l-macro.lua l-sandbox.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-sha.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-fil.lua util-sac.lua util-sto.lua util-prs.lua util-fmt.lua util-soc-imp-reset.lua util-soc-imp-socket.lua util-soc-imp-copas.lua util-soc-imp-ltn12.lua util-soc-imp-mime.lua util-soc-imp-url.lua util-soc-imp-headers.lua util-soc-imp-tp.lua util-soc-imp-http.lua util-soc-imp-ftp.lua util-soc-imp-smtp.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-tpl.lua util-sbx.lua util-mrg.lua util-env.lua luat-env.lua util-zip.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 995501
--- stripped bytes    : 395318
+-- original bytes    : 1019480
+-- stripped bytes    : 403728
 
 -- end library merge
 
@@ -25054,6 +25663,8 @@ local ownlibs = { -- order can be made better
 
     'util-env.lua',
     'luat-env.lua', -- can come before inf (as in mkiv)
+
+    'util-zip.lua',
 
     'lxml-tab.lua',
     'lxml-lpt.lua',
