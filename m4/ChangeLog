@@ -1,3 +1,8 @@
+2019-03-25  Karl Berry  <karl@freefriends.org>
+
+	* kpse-freetype2-flags.m4 (KPSE_FREETYPE2_SYSTEM_FLAGS): try
+	pkg-config if freetype-config is not available. From Debian.
+
 2019-02-18  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* kpse-win32.m4 (KPSE_COND_WIN32_WRAP): if w64 and mingw,
