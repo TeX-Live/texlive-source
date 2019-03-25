@@ -4,6 +4,8 @@
 # Copyright (C) 2000-2004  Thomas Ruedas
 # Updated in 2010 by Manuel Pegourie-Gonnard
 # Trivial non-code updates in 2012 by Karl Berry
+# Patch from Debian for "texdoctk-warn-missing-perltk" installed in 2019
+#   by Karl Berry.
 # (This program is looking for a maintainer, email tex-live@tug.org.)
 # 
 # This program is provided under the GNU Public License; see the texdoctk
@@ -12,7 +14,6 @@
 ###############################################################################
 my ($version, $date) = ("0.6.1", "2012-12-23");
 use strict;
-use Tk;
 use Getopt::Long;
 Getopt::Long::config('bundling');
 use File::Basename;
@@ -29,6 +30,20 @@ if ($IsWin32) {
 #    &something
 #  ));
 }
+
+eval { require Tk; };
+if ($@) {
+  if (-x "/usr/bin/xmessage") {
+    `xmessage -center -buttons Quit "The program texdoctk needs the package perl-tk, please install it!"`;
+  } else {
+    printf STDERR "The program texdoctk needs the package perl-tk, please install it!\n";
+  }
+  exit(1);
+  # that didn't work out, so warn the user and continue with text mode
+} else {
+  Tk->import;
+}
+
 
 # initialization of some internal variables
 $|=1;
@@ -255,7 +270,7 @@ if ($special == 0) {
 for ($i=0,$j=5; $i<@catg; ++$i,++$j) {
     $tlwins{'mainwindow'}{'buttons'}[$j]=$catg[$i];
 }
-MainLoop;
+MainLoop();
 
 ########## SUBROUTINES ########################################################
 # toplevel for selecting a topic of a category for viewing or printing
@@ -1754,7 +1769,7 @@ sub fatalmsg {
 				-width=>$msgwidth)->pack(-side=>'top');
     $message->insert('end',$msg);
     $message->configure(-state=>'disabled');
-    MainLoop;
+    MainLoop();
 }
 
 if ($IsWin32) {

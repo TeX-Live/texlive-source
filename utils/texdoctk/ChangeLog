@@ -1,3 +1,9 @@
+2019-03-25  Karl Berry  <karl@tug.org>
+
+	* texdoctk.pl: warn if perltk not installed. From Debian.
+	* texdocrc.defaults,
+	* texdocrc-win32.defaults (TDCOLORS): define, Debian#835153.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
