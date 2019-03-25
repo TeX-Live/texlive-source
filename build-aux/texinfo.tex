@@ -3,8 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-03-16.20}
-
+\def\texinfoversion{2019-03-23.00}
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
 %
@@ -449,11 +448,10 @@
   }%
 }
 
-% First remove any @comment, then any @c comment.  Also remove a @texinfoc
-% comment (see \scanmacro for details).  Pass the result on to \argcheckspaces.
+% First remove any @comment, then any @c comment.  Pass the result on to 
+% \argcheckspaces.
 \def\argremovecomment#1\comment#2\ArgTerm{\argremovec #1\c\ArgTerm}
-\def\argremovec#1\c#2\ArgTerm{\argremovetexinfoc #1\texinfoc\ArgTerm}
-\def\argremovetexinfoc#1\texinfoc#2\ArgTerm{\argcheckspaces#1\^^M\ArgTerm}
+\def\argremovec#1\c#2\ArgTerm{\argcheckspaces#1\^^M\ArgTerm}
 
 % Each occurrence of `\^^M' or `<space>\^^M' is replaced by a single space.
 %
@@ -6042,11 +6040,9 @@ end
 
 % @raisesections: treat @section as chapter, @subsection as section, etc.
 \def\raisesections{\global\advance\secbase by -1}
-\let\up=\raisesections % original BFox name
 
 % @lowersections: treat @chapter as section, @section as subsection, etc.
 \def\lowersections{\global\advance\secbase by 1}
-\let\down=\lowersections % original BFox name
 
 % we only have subsub.
 \chardef\maxseclevel = 3
@@ -7960,9 +7956,6 @@ end
   }
 \fi
 
-% alias because \c means cedilla in @tex or @math
-\let\texinfoc=\c
-
 % Used at the time of macro expansion.
 % Argument is macro body with arguments substituted
 \def\scanmacro#1{%
@@ -7970,10 +7963,11 @@ end
   \def\xeatspaces{\eatspaces}%
   %
   % Process the macro body under the current catcode regime.
-  \scantokens{#1@texinfoc}%
+  \scantokens{#1@comment}%
   %
-  % The \texinfoc is to remove the \newlinechar added by \scantokens, and
-  % can be noticed by \parsearg.
+  % The \comment is to remove the \newlinechar added by \scantokens, and
+  % can be noticed by \parsearg.  Note \c isn't used because this means cedilla 
+  % in math mode.
 }
 
 % Used for copying and captions
@@ -8645,9 +8639,21 @@ end
 % also remove a trailing comma, in case of something like this:
 % @node Help-Cross,  ,  , Cross-refs
 \def\donode#1 ,#2\finishnodeparse{\dodonode #1,\finishnodeparse}
-\def\dodonode#1,#2\finishnodeparse{\gdef\lastnode{#1}}
+\def\dodonode#1,#2\finishnodeparse{\gdef\lastnode{#1}\omittopnode}
 
-\let\nwnode=\node
+% Used so that the @top node doesn't have to be wrapped in an @ifnottex
+% conditional.
+% \doignore goes to more effort to skip nested conditionals but we don't need 
+% that here.
+\def\omittopnode{%
+   \ifx\lastnode\wordTop
+   \expandafter\ignorenode\fi
+}
+\def\wordTop{Top}
+
+% Divert output to a box that is not output until the next @node command.
+\def\ignorenode{\setbox\dummybox\vbox\bgroup\def\node{\egroup\node}}
+
 \let\lastnode=\empty
 
 % Write a cross-reference definition for the current node.  #1 is the
@@ -11503,7 +11509,7 @@ directory should work if nowhere else does.}
   @ifx\@eatinput @let\ = @ttbackslash @fi
   @catcode13=5 % regular end of line
   @enableemergencynewline
-  @let@c=@texinfoc
+  @let@c=@comment
   @let@parsearg@originalparsearg
   % Also turn back on active characters that might appear in the input
   % file name, in case not using a pre-dumped format.
