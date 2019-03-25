@@ -822,7 +822,7 @@ if MODE == "gm" then
     ULANGUAGE="&language=" .. LANGUAGE
   end
   UOFILE = OFILE .. "." .. IMAGETYPE
-  IMGURL = GMURL .. "?" .. ULOCATION .. USIZE .. UZOOM .. UMARKERS .. UTYPE .. USCALE .. UIMAGETYPE .. UVISIBLE .. UIPATH .. UFPATH .. ULANGUAGE .. "&sensor=false"
+  IMGURL = GMURL .. "?" .. ULOCATION .. USIZE .. UZOOM .. UMARKERS .. UTYPE .. USCALE .. UIMAGETYPE .. UVISIBLE .. UIPATH .. UFPATH .. ULANGUAGE .. "&sensor=false&key=AIzaSyDXlmAP7TENopGqgCkW9Ec3Wymno3a2cBg"
 elseif MODE == "gsv" then
   ULOCATION = "location=" .. url_escape(LOCATION)
   USIZE = "&size=" .. url_escape(SIZE)
@@ -830,7 +830,7 @@ elseif MODE == "gsv" then
   UFOV = "&fov=" .. url_escape(FOV)
   UPITCH = "&pitch=" .. url_escape(PITCH)
   UOFILE = OFILE .. ".jpg"
-  IMGURL = GSVURL .. "?" .. ULOCATION .. USIZE .. UHEADING .. UFOV .. UPITCH .. "&sensor=false"
+  IMGURL = GSVURL .. "?" .. ULOCATION .. USIZE .. UHEADING .. UFOV .. UPITCH .. "&sensor=false&key=AIzaSyDXlmAP7TENopGqgCkW9Ec3Wymno3a2cBg"
 elseif MODE == "osm" then
   UKEY = "?key=" .. url_escape(KEY)
   ULOCATION = "&location=" .. url_escape(LOCATION)
