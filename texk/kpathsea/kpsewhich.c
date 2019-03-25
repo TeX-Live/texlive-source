@@ -632,7 +632,7 @@ read_command_line (kpathsea kpse, int argc, string *argv)
     assert (g == 0); /* We have no short option names.  */
 
     if (ARGUMENT_IS ("casefold-search")) {
-      /* We can't just a boolean for casefold-search because we want to
+      /* We can't use a boolean for casefold-search because we want to
          distinguish it being set with an option vs. leaving the default
          (by default).  */
       xputenv ("texmf_casefold_search", "1");      

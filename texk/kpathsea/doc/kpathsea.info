@@ -1,4 +1,4 @@
-This is kpathsea.info, produced by makeinfo version 6.5 from
+This is kpathsea.info, produced by makeinfo version 6.6 from
 kpathsea.texi.
 
 This file documents the Kpathsea library for path searching.
@@ -37,7 +37,7 @@ Kpathsea library
 ****************
 
 This manual documents the Kpathsea library for path searching.  It
-corresponds to version 6.3.1, released in February 2019.
+corresponds to version 6.3.1, released in March 2019.
 
 * Menu:
 
@@ -62,7 +62,7 @@ File: kpathsea.info,  Node: Introduction,  Next: unixtex.ftp,  Prev: Top,  Up: T
 **************
 
 This manual corresponds to version 6.3.1 of the Kpathsea library,
-released in February 2019.
+released in March 2019.
 
    The library's fundamental purpose is to return a filename from a list
 of directories specified by the user, similar to what shells do when
@@ -989,9 +989,13 @@ File: kpathsea.info,  Node: ls-R,  Next: Filename aliases,  Up: Filename databas
 
 As mentioned above, you must name the main filename database 'ls-R'.
 You can put one at the root of each TeX installation hierarchy you wish
-to search ('$TEXMF' by default); most sites have only one hierarchy.
-Kpathsea looks for 'ls-R' files along the 'TEXMFDBS' path, so that
-should presumably match the list of hierarchies.
+to search ('$TEXMF' by default, which expands to a braced list of
+several hierarchies in TeX Live).
+
+   Kpathsea looks for 'ls-R' files along the 'TEXMFDBS' path.  It is
+best for this to contain all and only those hierarchies from '$TEXMF'
+which are specified with '!!'--and also to specify them with '!!' in
+'TEXMFDBS'.  (See the end of this section for more on '!!'.)
 
    The recommended way to create and maintain 'ls-R' is to run the
 'mktexlsr' script, which is installed in '$(bindir)' ('/usr/local/bin'
@@ -1012,7 +1016,9 @@ definition of the file format, see *note Database format::.
    Regardless of whether you use the supplied script or your own, you
 will almost certainly want to invoke it via 'cron', so when you make
 changes in the installed files (say if you install a new LaTeX package),
-'ls-R' will be automatically updated.
+'ls-R' will be automatically updated.  However, for those using TeX Live
+or system distributions, the package managers should run 'mktexlsr' as
+needed.
 
    The '-A' option to 'ls' includes files beginning with '.' (except for
 '.' and '..'), such as the file '.tex' included with the LaTeX tools
@@ -1032,14 +1038,24 @@ instead of 'ls -LR ./' or 'ls -R /YOUR/TEXMF/ROOT'.  Another possibility
 is some system directory name starting with a '.' (perhaps if you are
 using AFS); Kpathsea ignores everything under such directories.
 
-   Because the database may be out-of-date for a particular run, if a
-file is not found in the database, by default Kpathsea goes ahead and
-searches the disk.  If a particular path element begins with '!!',
-however, _only_ the database will be searched for that element, never
-the disk.  If the database does not exist, nothing will be searched.
-Because this can surprise users ("I see the font 'foo.tfm' when I do an
-'ls'; why can't Dvips find it?"), it is not in any of the default search
-paths.
+   If a particular path element begins with '!!', _only_ the database
+will be searched for that element, never the disk; and if the database
+does not exist, nothing at all will be searched.  In TeX Live, most of
+the trees are specified with '!!'.
+
+   For path elements that do not begin with '!!', if the database
+exists, it will be used, and the disk will not be searched.  However, in
+this case, if the database does not exist, the disk will be searched.
+In TeX Live, the most notable case of this is the 'TEXMFHOME' tree, to
+allow users to add and remove files from their own tree without having
+to worry about 'ls-R'.
+
+   (Aside: there are uncommon cases where a '!!' tree will be searched
+on disk even if the 'ls-R' file exists; they are too obscure to try to
+explain here.  See 'pathsearch.c' in the source if you need to know.)
+
+   To sum up: do not create an 'ls-R' file unless you also take care to
+keep it up to date.  Otherwise newly-installed files will not be found.
 
 
 File: kpathsea.info,  Node: Filename aliases,  Next: Database format,  Prev: ls-R,  Up: Filename database
@@ -2963,13 +2979,16 @@ Index
  [index ]
 * Menu:
 
-* !! in path specifications:             ls-R.                (line  51)
+* !! and casefolding:                    Casefolding examples.
+                                                              (line  57)
+* !! in path specifications:             ls-R.                (line  57)
+* !! in TEXMFDBS:                        ls-R.                (line  11)
 * $ expansion:                           Variable expansion.  (line   6)
 * --all:                                 Path searching options.
                                                               (line  12)
 * --casefold-search:                     Path searching options.
                                                               (line  19)
-* --color=tty:                           ls-R.                (line  21)
+* --color=tty:                           ls-R.                (line  25)
 * --debug=NUM:                           Auxiliary tasks.     (line   9)
 * --dpi=NUM:                             Path searching options.
                                                               (line  28)
@@ -3014,14 +3033,14 @@ Index
 * --without-mktexpk-default:             mktex configuration. (line  12)
 * --without-mktextfm-default:            mktex configuration. (line  12)
 * -1 debugging value:                    Debugging.           (line  23)
-* -A option to ls:                       ls-R.                (line  33)
+* -A option to ls:                       ls-R.                (line  39)
 * -D NUM:                                Path searching options.
                                                               (line  28)
 * -iname, find predicate:                Casefolding examples.
                                                               (line  78)
-* -L option to ls:                       ls-R.                (line  38)
-* . directories, ignored:                ls-R.                (line  33)
-* . files:                               ls-R.                (line  33)
+* -L option to ls:                       ls-R.                (line  44)
+* . directories, ignored:                ls-R.                (line  39)
+* . files:                               ls-R.                (line  39)
 * .2602gf:                               Unable to generate fonts.
                                                               (line  36)
 * .afm:                                  Supported file formats.
@@ -3105,7 +3124,7 @@ Index
                                                               (line  42)
 * .tex:                                  Supported file formats.
                                                               (line 180)
-* .tex file, included in ls-R:           ls-R.                (line  33)
+* .tex file, included in ls-R:           ls-R.                (line  39)
 * .tfm:                                  Supported file formats.
                                                               (line 199)
 * .ttc:                                  Supported file formats.
@@ -3126,7 +3145,7 @@ Index
                                                               (line   6)
 * /etc/profile:                          Unable to find files.
                                                               (line  14)
-* /etc/profile and aliases:              ls-R.                (line  21)
+* /etc/profile and aliases:              ls-R.                (line  25)
 * /var/tmp/texfonts:                     mktex configuration. (line 113)
 * 2602gf:                                Unable to generate fonts.
                                                               (line  36)
@@ -3164,7 +3183,7 @@ Index
                                                               (line   6)
 * argv[0]:                               Calling sequence.    (line  14)
 * autoconf, recommended:                 Calling sequence.    (line 117)
-* automounter, and ls-R:                 ls-R.                (line  40)
+* automounter, and ls-R:                 ls-R.                (line  46)
 * auxiliary tasks:                       Auxiliary tasks.     (line   6)
 * Bach, Johann Sebastian:                Default expansion.   (line  41)
 * backslash-newline:                     Config files.        (line  37)
@@ -3266,13 +3285,13 @@ Index
                                                               (line   6)
 * disabling mktex scripts:               mktex configuration. (line   6)
 * disk search:                           Searching overview.  (line  22)
-* disk searching, avoiding:              ls-R.                (line  51)
+* disk searching, avoiding:              ls-R.                (line  57)
 * disk usage, reducing:                  Logging.             (line   6)
 * doc files:                             Supported file formats.
                                                               (line 185)
 * DOS compatible names:                  mktex configuration. (line  68)
 * dosnames:                              mktex configuration. (line  67)
-* dot files:                             ls-R.                (line  33)
+* dot files:                             ls-R.                (line  39)
 * doubled colons:                        Default expansion.   (line   6)
 * dpiNNN directories:                    mktex configuration. (line  68)
 * DVILJMAKEPK:                           mktex script names.  (line  32)
@@ -3471,7 +3490,7 @@ Index
 * ls-R:                                  Supported file formats.
                                                               (line  91)
 * ls-R database file:                    ls-R.                (line   6)
-* ls-R, simplest build:                  ls-R.                (line  18)
+* ls-R, simplest build:                  ls-R.                (line  22)
 * Mac filesystem, case-insensitive:      Casefolding rationale.
                                                               (line   6)
 * MacKenzie, David:                      History.             (line  44)
@@ -3544,7 +3563,7 @@ Index
 * must exist:                            Searching overview.  (line  31)
 * names for mktex scripts:               mktex script names.  (line   6)
 * Neumann, Gustaf:                       History.             (line  56)
-* NFS and ls-R:                          ls-R.                (line  40)
+* NFS and ls-R:                          ls-R.                (line  46)
 * nomfdrivers:                           mktex configuration. (line  92)
 * nomode:                                mktex configuration. (line  97)
 * none:                                  Suppressing warnings.
@@ -3692,7 +3711,7 @@ Index
                                                               (line   6)
 * symbolic links not found:              Unable to find files.
                                                               (line  21)
-* symbolic links, and ls-R:              ls-R.                (line  38)
+* symbolic links, and ls-R:              ls-R.                (line  44)
 * symlinks, resolving:                   Calling sequence.    (line  31)
 * system C compiler bugs:                TeX or Metafont failing.
                                                               (line  16)
@@ -3765,7 +3784,7 @@ Index
 * TEXMFCNF:                              Config files.        (line   6)
 * TEXMFCNF <1>:                          Supported file formats.
                                                               (line  49)
-* TEXMFDBS:                              ls-R.                (line   6)
+* TEXMFDBS:                              ls-R.                (line  11)
 * TEXMFDBS <1>:                          Supported file formats.
                                                               (line  91)
 * TEXMFINI:                              Supported file formats.
@@ -3827,7 +3846,7 @@ Index
 * unreadable file warnings:              Suppressing warnings.
                                                               (line  27)
 * unreadable files:                      Searching overview.  (line  63)
-* unusable ls-R warning:                 ls-R.                (line  45)
+* unusable ls-R warning:                 ls-R.                (line  51)
 * usage patterns, finding:               Logging.             (line   6)
 * USERPROFILE, as ~ expansion:           Tilde expansion.     (line   6)
 * USE_TEXMFVAR:                          mktex configuration. (line 128)
@@ -3845,7 +3864,7 @@ Index
                                                               (line 219)
 * Vojta, Paul:                           History.             (line  30)
 * Walsh, Norman:                         History.             (line  56)
-* warning about unusable ls-R:           ls-R.                (line  45)
+* warning about unusable ls-R:           ls-R.                (line  51)
 * warning, about missing texmf.cnf:      Config files.        (line  18)
 * warnings, file access:                 Searching overview.  (line  63)
 * warnings, suppressing:                 Suppressing warnings.
@@ -3873,61 +3892,61 @@ Index
 
 Tag Table:
 Node: Top1480
-Node: Introduction2263
-Node: History4336
-Node: unixtex.ftp8932
-Node: Security10357
-Node: TeX directory structure12861
-Node: Path searching16909
-Node: Searching overview17636
-Node: Path sources21455
-Node: Config files22546
-Node: Path expansion26473
-Node: Default expansion27426
-Node: Variable expansion29496
-Node: Tilde expansion30897
-Node: Brace expansion31877
-Node: KPSE_DOT expansion32816
-Node: Subdirectory expansion33329
-Node: Casefolding search35683
-Node: Casefolding rationale36452
-Node: Casefolding examples37791
-Node: Filename database42841
-Node: ls-R43899
-Node: Filename aliases46794
-Node: Database format47972
-Node: Invoking kpsewhich48985
-Node: Path searching options49940
-Node: Specially-recognized files58459
-Node: Auxiliary tasks59814
-Node: Standard options63520
-Node: TeX support63876
-Node: Supported file formats65230
-Node: File lookup72895
-Node: Glyph lookup74644
-Node: Basic glyph lookup75768
-Node: Fontmap76648
-Node: Fallback font79177
-Node: Suppressing warnings80089
-Node: mktex scripts81216
-Node: mktex configuration82431
-Node: mktex script names88234
-Node: mktex script arguments89620
-Node: Programming90499
-Node: Programming overview91072
-Node: Calling sequence93933
-Node: Program-specific files100465
-Node: Programming with config files101488
-Node: Reporting bugs103075
-Node: Bug checklist103753
-Node: Mailing lists107225
-Node: Debugging107900
-Node: Logging112977
-Node: Common problems114844
-Node: Unable to find files115321
-Node: Slow path searching117731
-Node: Unable to generate fonts119106
-Node: TeX or Metafont failing121577
-Node: Index122779
+Node: Introduction2260
+Node: History4330
+Node: unixtex.ftp8926
+Node: Security10351
+Node: TeX directory structure12855
+Node: Path searching16903
+Node: Searching overview17630
+Node: Path sources21449
+Node: Config files22540
+Node: Path expansion26467
+Node: Default expansion27420
+Node: Variable expansion29490
+Node: Tilde expansion30891
+Node: Brace expansion31871
+Node: KPSE_DOT expansion32810
+Node: Subdirectory expansion33323
+Node: Casefolding search35677
+Node: Casefolding rationale36446
+Node: Casefolding examples37785
+Node: Filename database42835
+Node: ls-R43893
+Node: Filename aliases47569
+Node: Database format48747
+Node: Invoking kpsewhich49760
+Node: Path searching options50715
+Node: Specially-recognized files59234
+Node: Auxiliary tasks60589
+Node: Standard options64295
+Node: TeX support64651
+Node: Supported file formats66005
+Node: File lookup73670
+Node: Glyph lookup75419
+Node: Basic glyph lookup76543
+Node: Fontmap77423
+Node: Fallback font79952
+Node: Suppressing warnings80864
+Node: mktex scripts81991
+Node: mktex configuration83206
+Node: mktex script names89009
+Node: mktex script arguments90395
+Node: Programming91274
+Node: Programming overview91847
+Node: Calling sequence94708
+Node: Program-specific files101240
+Node: Programming with config files102263
+Node: Reporting bugs103850
+Node: Bug checklist104528
+Node: Mailing lists108000
+Node: Debugging108675
+Node: Logging113752
+Node: Common problems115619
+Node: Unable to find files116096
+Node: Slow path searching118506
+Node: Unable to generate fonts119881
+Node: TeX or Metafont failing122352
+Node: Index123554
 
 End Tag Table

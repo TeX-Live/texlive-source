@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.1
-@set month-year February 2019
+@set month-year March 2019
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -1138,6 +1138,7 @@ searches the disk in the big system directory, the casefolding is not
 done, and a search for @samp{stix-regular.otf} will fail (on
 case-sensitive systems), as it always has.
 
+@kindex !! @r{and casefolding}
 The caveat about not searching the disk amounts to saying that
 casefolding does not happen in the trees specified with @samp{!!}
 (@pxref{ls-R}), that is, where only database (@file{ls-R}) searching
@@ -1224,14 +1225,19 @@ source file @file{kpathsea/db.c}.
 @subsection @file{ls-R}
 
 @flindex ls-R @r{database file}
-@vindex TEXMFDBS
 
 As mentioned above, you must name the main filename database
 @file{ls-R}.  You can put one at the root of each @TeX{} installation
-hierarchy you wish to search (@code{$TEXMF} by default); most sites have
-only one hierarchy.  Kpathsea looks for @file{ls-R} files along the
-@code{TEXMFDBS} path, so that should presumably match the list of
-hierarchies.
+hierarchy you wish to search (@code{$TEXMF} by default, which expands
+to a braced list of several hierarchies in @TeX{} Live). 
+
+@vindex TEXMFDBS
+@kindex !! @r{in @code{TEXMFDBS}}
+Kpathsea looks for @file{ls-R} files along the @code{TEXMFDBS}
+path. It is best for this to contain all and only those hierarchies
+from @code{$TEXMF} which are specified with @code{!!}---and also to
+specify them with @code{!!} in @code{TEXMFDBS}. (See the end of this
+section for more on @code{!!}.)
 
 The recommended way to create and maintain @samp{ls-R} is to run the
 @code{mktexlsr} script, which is installed in @samp{$(bindir)}
@@ -1256,10 +1262,12 @@ Also presuming your @code{ls} hasn't been aliased in a system file
 generating @file{ls-R}.  For the precise definition of the file format,
 see @ref{Database format}.
 
-Regardless of whether you use the supplied script or your own, you will
-almost certainly want to invoke it via @code{cron}, so when you make
-changes in the installed files (say if you install a new La@TeX{}
-package), @file{ls-R} will be automatically updated.
+Regardless of whether you use the supplied script or your own, you
+will almost certainly want to invoke it via @code{cron}, so when you
+make changes in the installed files (say if you install a new @LaTeX{}
+package), @file{ls-R} will be automatically updated.  However, for
+those using @TeX{} Live or system distributions, the package managers
+should run @code{mktexlsr} as needed.
 
 @opindex -A @r{option to @code{ls}}
 @cindex dot files
@@ -1268,7 +1276,7 @@ package), @file{ls-R} will be automatically updated.
 @flindex .tex @r{file, included in @file{ls-R}}
 The @samp{-A} option to @code{ls} includes files beginning with @samp{.}
 (except for @file{.} and @file{..}), such as the file @file{.tex}
-included with the La@TeX{} tools package.  (On the other hand,
+included with the @LaTeX{} tools package.  (On the other hand,
 @emph{directories} whose names begin with @samp{.} are always ignored.)
 
 @cindex symbolic links, and @file{ls-R}
@@ -1293,14 +1301,27 @@ ignores everything under such directories.
 
 @kindex !! @r{in path specifications}
 @cindex disk searching, avoiding
-Because the database may be out-of-date for a particular run, if a file
-is not found in the database, by default Kpathsea goes ahead and
-searches the disk. If a particular path element begins with @samp{!!},
-however, @emph{only} the database will be searched for that element,
-never the disk.  If the database does not exist, nothing will be
-searched.  Because this can surprise users (``I see the font
-@file{foo.tfm} when I do an @code{ls}; why can't Dvips find it?''), it
-is not in any of the default search paths.
+If a particular path element begins with @samp{!!}, @emph{only} the
+database will be searched for that element, never the disk; and if the
+database does not exist, nothing at all will be searched.  In @TeX{}
+Live, most of the trees are specified with @samp{!!}.
+
+For path elements that do not begin with @samp{!!}, if the database
+exists, it will be used, and the disk will not be searched.  However,
+in this case, if the database does not exist, the disk will be
+searched.  In @TeX{} Live, the most notable case of this is the
+@code{TEXMFHOME} tree, to allow users to add and remove files from
+their own tree without having to worry about @code{ls-R}.
+
+(Aside: there are uncommon cases where a @samp{!!} tree will be
+searched on disk even if the @code{ls-R} file exists; they are too
+obscure to try to explain here.  See @file{pathsearch.c} in the source
+if you need to know.)
+
+To sum up: do not create an @code{ls-R} file unless you also take care
+to keep it up to date. Otherwise newly-installed files will not be
+found.
+
 
 
 @node Filename aliases

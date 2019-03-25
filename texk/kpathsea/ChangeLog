@@ -1,3 +1,11 @@
+2019-03-25  Karl Berry  <karl@freefriends.org>
+
+	* texmf.cnf (TEXMFDBS),
+	* doc/kpathsea.texi (ls-R): attempt to describe the lack of
+	disk searching when ls-R is present, regardless of !!, more clearly.
+	Report from Yann Salmon, tex-k thread of 27 Feb 2019 21:00:46.
+	* kpsewhich.c: doc fix.
+
 2019-02-11  Karl Berry  <karl@tug.org>
 
 	* version.ac,
