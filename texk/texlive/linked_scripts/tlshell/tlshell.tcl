@@ -367,14 +367,8 @@ proc start_tlmgr {{args ""}} {
 } ; # start_tlmgr
 
 proc close_tlmgr {} {
-  if {[catch {chan close $::tlshl}] || [catch {chan close $::err}]} {
-    tk_messageBox -message [get_stacktrace]
-    return 0
-  } else {
-    set ::perlpid 0
-    return 1
-  }
-}; # close_tlmgr
+  run_cmd_waiting "quit"
+}
 
 # read a line of tlmgr output
 proc read_line {} {
@@ -382,12 +376,20 @@ proc read_line {} {
   # if it wants to wait for the command to finish
   set l "" ; # will contain the line to be read
   if {([catch {chan gets $::tlshl l} len] || [chan eof $::tlshl])} {
-    #do_debug "read_line: failing to read "
-    puts stderr "Read failure; tlmgr command was $::last_cmd"
-    if {! [catch {chan close $::tlshl}]} {set ::perlpid 0}
-    # note. the right way to terminate is terminating the GUI shell.
-    # This closes stdin of tlmgr shell.
-    err_exit
+    if [chan eof $::tlshl] {
+      catch {chan close $::tlshl}
+      catch {chan close $:err}
+      unset -nocomplain ::tlshl
+      unset -nocomplain ::err
+      set ::perlpid 0
+      set ::done_waiting 1
+    } else {
+      #do_debug "read_line: failing to read "
+      puts stderr "Read failure; tlmgr command was $::last_cmd"
+      # note. the normal way to terminate is terminating the GUI shell.
+      # This closes stdin of tlmgr shell.
+      err_exit
+    }
   } elseif {$len >= 0} {
     # do_debug "read: $l"
     if $::ddebug {puts $::flid $l}
@@ -1527,7 +1529,7 @@ proc update_self_q {} {
   set ans [tk_messageBox -type okcancel -icon info -message \
       [string cat [__ "If update fails, try on a command-line:"] \
          "\ntlmgr update --self\n" \
-         [__ "Use an admininstrative command prompt for an admin install."]]]
+         [__ "Use an administrative command prompt for an admin install."]]]
   return [$ans eq ok]
 }
 
@@ -2029,8 +2031,12 @@ proc populate_main {} {
     .mn.opt add cascade -label [__ "GUI language (restarts tlshell)"] \
         -menu .mn.opt.lang
     menu .mn.opt.lang
-    foreach l $::langs {
-      .mn.opt.lang add command -label $l -command "set_language $l"
+    foreach l [lsort $::langs] {
+      if {$l eq $::lang} {
+        .mn.opt.lang add command -label "$l *"
+      } else {
+        .mn.opt.lang add command -label "$l" -command "set_language $l"
+      }
     }
   }
 
@@ -2065,9 +2071,9 @@ proc populate_main {} {
       -in .endbuttons -side right
   ppack [ttk::button .r -text [__ "Restart self"] -command restart_self] \
       -in .endbuttons -side right
-  # ppack [ttk::button .t -text [__ "Restart tlmgr"] \
-  #            -command {close_tlmgr; start_tlmgr}] \
-  #     -in .endbuttons -side right
+  ppack [ttk::button .t -text [__ "Restart tlmgr"] \
+             -command {close_tlmgr; start_tlmgr}] \
+      -in .endbuttons -side right
   ttk::button .showlogs -text [__ "Show logs"] -command show_logs
   ppack .showlogs -in .endbuttons -side right
 
@@ -2097,8 +2103,8 @@ proc populate_main {} {
 
   # right frame
   ppack [ttk::frame .topfr] -in .topf -side right -anchor ne
-  pack [ttk::label .topfr.linfra -text "some"] -side top -anchor e
-  pack [ttk::label .topfr.lshell -text "more"] -side top -anchor e
+  pack [ttk::label .topfr.linfra] -side top -anchor e
+  pack [ttk::label .topfr.lshell] -side top -anchor e
 
   pack [ttk::separator .sp -orient horizontal] \
       -in .bg -side top -fill x -pady 6
