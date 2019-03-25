@@ -1,4 +1,4 @@
-.TH GFTODVI 1 "16 June 2015" "Web2C @VERSION@"
+.TH GFTODVI 1 "25 March 2019" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -60,7 +60,7 @@ and
 respectively; there is no default slant font.
 .PP
 To change the default fonts, you can give
-.BR special
+.B special
 commands in your
 \*(MF source file, or you can change the fonts online. An online dialog
 ensues if you end the

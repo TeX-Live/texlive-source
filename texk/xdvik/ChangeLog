@@ -1,3 +1,8 @@
+2019-03-25  Karl Berry  <karl@freefriends.org>
+
+	* xdvi.1.in: omit unused second font letter for option names.
+	From Debian.
+
 2018-01-17  Karl Berry  <karl@freefriends.org>
 
 	* xdvi.1.in: remove trailing whitespace to placate Debian.
