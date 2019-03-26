@@ -502,7 +502,7 @@ libfontforge_a_SOURCES = \
 	inc/utype.h
 
 EXTRA_DIST = LICENSE
-AM_CFLAGS = -I$(srcdir)/inc -I$(srcdir)/fontforge
+AM_CFLAGS = -I$(srcdir)/inc -I$(srcdir)/fontforge $(ZLIB_INCLUDES)
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
