@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-03-23.00}
+\def\texinfoversion{2019-03-23.11}
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
 %
@@ -4657,19 +4657,6 @@ end
   }
 }
 
-% We have this subroutine so that we can handle at least some @value's
-% properly in indexes (we call \makevalueexpandable in \indexdummies).
-% The command has to be fully expandable (if the variable is set), since
-% the result winds up in the index file.  This means that if the
-% variable's value contains other Texinfo commands, it's almost certain
-% it will fail (although perhaps we could fix that with sufficient work
-% to do a one-level expansion on the result, instead of complete).
-% 
-% Unfortunately, this has the consequence that when _ is in the *value*
-% of an @set, it does not print properly in the roman fonts (get the cmr
-% dot accent at position 126 instead).  No fix comes to mind, and it's
-% been this way since 2003 or earlier, so just ignore it.
-% 
 \def\expandablevalue#1{%
   \expandafter\ifx\csname SET#1\endcsname\relax
     {[No value for ``#1'']}%
@@ -4698,7 +4685,7 @@ end
 % if possible, otherwise sort late.
 \def\indexnofontsvalue#1{%
   \expandafter\ifx\csname SET#1\endcsname\relax
-    ZZZZZZZ
+    ZZZZZZZ%
   \else
     \csname SET#1\endcsname
   \fi
@@ -5749,17 +5736,6 @@ end
   % Grab any single-column material above us.
   \output = {%
     \savetopmark
-    %
-    % Here is a possibility not foreseen in manmac: if we accumulate a
-    % whole lot of material, we might end up calling this \output
-    % routine twice in a row (see the doublecol-lose test, which is
-    % essentially a couple of indexes with @setchapternewpage off).  In
-    % that case we just ship out what is in \partialpage with the normal
-    % output routine.  Generally, \partialpage will be empty when this
-    % runs and this will be a no-op.  See the indexspread.tex test case.
-    \ifvoid\partialpage \else
-      \onepageout{\pagecontents\partialpage}%
-    \fi
     %
     \global\setbox\partialpage = \vbox{%
       % Unvbox the main output page.
