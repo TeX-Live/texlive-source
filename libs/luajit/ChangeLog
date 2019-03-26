@@ -1,3 +1,8 @@
+2019-03-26  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (LIBLUAJIT_LDEXTRA): -lc++abi -lpthread for
+	openbsd:*:clang, from Luigi.
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* lutjiterr.test: LC_ALL=LANGUAGE=C.
@@ -106,4 +111,3 @@
 
 	Import LuaJIT-2.0.2/ from
 	  http://luajit.org/download/LuaJIT-2.0.2.tar.gz.
-

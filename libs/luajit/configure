@@ -14372,6 +14372,14 @@ case $host_os:$host_cpu in #(
   *) :
      ;;
 esac
+case $host_os:$host_cpu:$CC in #(
+  *openbsd*:x86_64:clang* | *openbsd*:x86_64:cc) :
+    LIBLUAJIT_LDEXTRA='-lc++abi -lpthread' ;; #(
+  *openbsd*:i386:clang* | *openbsd*:i386:cc) :
+    LIBLUAJIT_LDEXTRA='-lc++abi -lpthread' ;; #(
+  *) :
+     ;;
+esac
 
 
  if test "x$enable_build" != xno; then
