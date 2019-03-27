@@ -1,3 +1,835 @@
+commit 54570f91bb95d024cd1ba37e46593f909edf0c62
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 27 00:35:12 2019 -0600
+
+    Update examples.
+
+commit 7250a9576345bf7c1abac146871a18e1eaf9b06d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 27 00:28:18 2019 -0600
+
+    Fix fuzz usage.
+
+commit cc5346e91bbfa7f81178e04d22d9771157ed189b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 26 22:11:24 2019 -0600
+
+    Apply further workaround for broken MSWindows drivers for Intel GPU.
+
+commit f66446d81dd2aa529ed8eb8a8c164e7f7ad4a478
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 26 20:34:57 2019 -0600
+
+    Fix portability issues.
+
+commit 8f8011e03b60829a75a5aff6fe0348a07cb318ed
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 25 02:27:16 2019 -0600
+
+    Fix Makefile.
+
+commit 78eb88e287cb9e7897146c259920ac3832553612
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 24 15:43:55 2019 -0600
+
+    Support --disable-gc again.
+
+commit fd5b45ad85d63886f3b72540997acb8bf05f99a5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 24 15:30:48 2019 -0600
+
+    Document material buffer sizes.
+
+commit 26a677733ff91348219775e89542c65130cdf200
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 24 15:16:17 2019 -0600
+
+    Reduce number of shader recompilations.
+
+commit 6539c75e327241401bcd532be89250d96179a47b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 24 15:09:55 2019 -0600
+
+    Rename shader files.
+
+commit 1833dcf8a1e8c80c27c64a975a23f9b06278105d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 24 12:22:50 2019 -0600
+
+    Fix lighting and material limits.
+
+commit 92ab2cf7bbf55e16c4e64cf0c67bb5bd12bff3f9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 23 10:38:42 2019 -0600
+
+    Fix segmentation fault.
+
+commit 5ccc69edaae8b06db323a7db5d4812d89310ed1f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 22 16:43:38 2019 -0600
+
+    Improve example.
+
+commit 6e2f7c547a6a0c634e55f7508b4ea4d5325aab72
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 21 16:52:13 2019 -0600
+
+    Fix bug in f82e7672184f0b0ff91efd57a74a60269cd43ca2: update fuzz-dependent quantities.
+
+commit 4997b77e6d00dda91adef3741574b7bb41e09d87
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 24 11:37:54 2019 -0700
+
+    Simplify code.
+
+commit 1cf5fcb7316084d1d71d12719d75364a0474bc9b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 8 23:15:37 2019 -0700
+
+    Fix deletion of artifical variables; always use Bland's rule.
+
+commit a30061c913e099879a1c5250bc65cd7e718bcbce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 5 06:36:35 2019 +1100
+
+    Workaround broken MSWindows drivers for Intel GPU.
+
+commit 126a405dccfa51e6c1f1158c2f0084d54013ddc2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 5 06:33:02 2019 +1100
+
+    Fix drawpath3.
+
+commit 649ae913c25ee87dc0ce6226146e063703ddfc9f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 5 02:02:40 2019 +1100
+
+    Place temporary cap on Nmaterials.
+
+commit d306a51bb1732cc420b9f1bdea0bc5a75ce820e5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 3 19:25:24 2019 -0700
+
+    Fix MSDOS configuration.
+
+commit f8f4c113dd5ea56c1a3b47b3ad8926fda1792dd6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 3 00:26:23 2019 -0700
+
+    Implement maxvertices for working around OpenGL queueing limitations.
+
+commit b644f8df7bf867991fba1b4bfea3460db564affb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 2 12:01:17 2019 -0700
+
+    Simplify code.
+
+commit fe761482993f4c6e0dc22e68a8bb5e8cea553f23
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 2 11:39:15 2019 -0700
+
+    Simplify code.
+
+commit f82e7672184f0b0ff91efd57a74a60269cd43ca2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 27 22:08:40 2019 -0700
+
+    Speed up min, max, minratio, maxratio, and intersection calculations by increasing fuzz as depth decreases.
+
+commit e4283310b3fc84b838f233ee06b0c2b301264cc4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 27 20:45:15 2019 -0700
+
+    Fix Nmaterials.
+
+commit f8cd7d09dd1d3b6a0215338a71909deac4deecc2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 27 14:52:01 2019 -0700
+
+    Clear material buffer before it reaches GL_MAX_UNIFORM_BLOCK_SIZE.
+
+commit 0d057d35cb30d52f33db9f155c880ed8f8a1d7d2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 27 14:49:57 2019 -0700
+
+    Suppress spurious SIGTERM.
+
+commit 8a2f965e64db8d2368abdb9ccd0a176b657b0c76
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 26 21:21:36 2019 -0700
+
+    Restore examples.
+
+commit 2a69ec434b6924ef42b2338563b391e763b13ff0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 26 21:17:54 2019 -0700
+
+    Fix tiling.
+
+commit e7519239b74773e1757acf277df9a4f00c50880a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 26 20:48:41 2019 -0700
+
+    Integrate tesselation into batch drawing routine.
+
+commit 6673503f8b31a7d0ae9d840176d9a5dbe6dc7248
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 26 17:22:40 2019 -0700
+
+    Sort and draw transparent triangles in one batch.
+
+commit 20dd8537d4a48b966c3b81367beaf098e2ce277e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 26 14:13:57 2019 -0700
+
+    Pack explicit shader colors.
+
+commit ce1afeef0b1b6ce824ab81a50c1d3a6679fd5285
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 26 08:51:28 2019 -0700
+
+    Implement material index.
+
+commit 4fd60c4218faca42ae38fab86b50d56a0ff021a0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 23 23:48:50 2019 -0700
+
+    Simplify code.
+
+commit d27ff2af8eabf82418005a24d5f07fffb502355b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 23 23:38:25 2019 -0700
+
+    Remove hard-coded number of lights.
+
+commit a0f18816ee21a814ef8b16e0b0f717c72a37f327
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 23 22:15:21 2019 -0700
+
+    Remove GL_ARB_gpu_shader5 requirement.
+
+commit 786f615ea087e0f542f9697c20ad460d5a0fac5b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 23 20:46:19 2019 -0700
+
+    Downgrade to GLSL 1.30.
+
+commit 8506a29977e9437851759a59087b433a39f1c44a
+Merge: 1eb6fd84 f106987c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 23 19:30:40 2019 -0700
+
+    Merge branch 'master' into gl330.
+
+commit f106987c917bcb2f8b34cfc912fee88112b09bfd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 23 19:25:23 2019 -0700
+
+    Port to MSDOS.
+
+commit da5f9d09aa48aabc16ac3aa9c3b5c5632805339d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 22 20:19:13 2019 -0700
+
+    Require OpenGL 4.30.
+
+commit 1eb6fd84f009dc32af52802d0445a4442a54a709
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 22 13:02:50 2019 -0700
+
+    Backport to OpenGL 3.3.
+
+commit a56ab24fb1fd8092bd67aaf03b29763045bfc19e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 21 22:35:22 2019 -0700
+
+    Update build-asymptote.dos.
+
+commit 26e6e567dd6a6d56538e76a1bc426f33ed29d20c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 21 22:11:51 2019 -0700
+
+    Add CYGWIN freeglut-3.0.0 patch.
+
+commit f66a3427010389d31135ef0e12a2c11f90952c7e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 21 21:34:47 2019 -0700
+
+    Install and check for shaders.
+
+commit fdaeeb5d054b9c9faca7718fd5f695c1baeec722
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 21 06:40:16 2019 -0700
+
+    Port shader to MSDOS.
+
+commit 8393599bed33a1063411b9eeffb63b91898a468a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 21 00:03:42 2019 -0700
+
+    Port to MSDOS.
+
+commit 8b7207a65f759e98d9b6001aab3660e6670099ec
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 20 23:01:52 2019 -0500
+
+    Port to MSDOS.
+
+commit 59d7b37b61e628a9daa33dc9d79a74cceee40193
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 19 10:33:58 2019 -0700
+
+    Check for GLEW library during configuration.
+
+commit 37943204fdbbcefc995d7d6340e0bd17a3681c84
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 15 22:45:01 2019 -0700
+
+    More portability fixes.
+
+commit 652fb33c5c603caf77c9003d7badab95398e30dc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 15 21:47:06 2019 -0700
+
+    Require only c++-11.
+
+commit 45edbf3b4a7fcece700576a00f5c46d275154c34
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 15 17:51:58 2019 -0700
+
+    Remove unused code.
+
+commit b2b77e004ab3784e6ecc6dbefdeffa50eccb55e3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 15 17:40:51 2019 -0700
+
+    Remove unused code.
+
+commit c9a6a08e1821480670fd8748b91f827c87af2e75
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 15 17:36:24 2019 -0700
+
+    Remove unused include.
+
+commit 6ee6e8a6640158b7c85da16ea82e852e0fccebc5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 15 15:26:45 2019 -0700
+
+    Update asymptote.spec.
+
+commit 9b1407e65518be9e8493dfe1a802b18d3052bfdb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 15 13:17:24 2019 -0700
+
+    Update build scripts to Boehm gc 8.0.2.
+
+commit 12b3a085dc52b79da46fa9cd6fb7b843980a4a32
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 15 13:14:02 2019 -0700
+
+    Update to Boehm gc 8.0.2.
+
+commit abd3f7616ff00e5cc19fb9ebee0ed7f11d4c4367
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 13 22:00:48 2019 -0700
+
+    Use static attributes.
+
+commit b7c3a5ec50cf30be6edfc87bfafd1815fd7f16f4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 13 21:40:47 2019 -0700
+
+    Fix lighting model. Specify all lights in viewport frame. Remove unused code.
+
+commit a2fb848f5944c8acca7a3425a5c14d1eaf3526fe
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 13 14:50:08 2019 -0700
+
+    Remove dependence on deprecated GLU library.
+
+commit ca9a12aac5107ffb21901569289a4e45fa8ff6c7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 13 11:13:31 2019 -0700
+
+    Implement tesellation (many triangles) in new shader.
+
+commit cf60d572922a9708443683b8ffa610063bbca800
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 12 20:43:02 2019 -0700
+
+    Move lighting code out of setUniforms.
+
+commit 5126dd3e6eb1432ba0b60214b4a26de7f379e69e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 12 19:55:08 2019 -0700
+
+    Simplify code.
+
+commit 16213b13921e57381a87fd2f047c7e1c59458387
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 12 19:41:29 2019 -0700
+
+    Simplify code.
+
+commit c95d3ea1deed86a9b0af8db7b9ff81facab00d4c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 12 19:09:35 2019 -0700
+
+    Remove arbitrary limit on number of lights.
+
+commit 2caa67789a014fd206bc55fab2587be538f739e0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 10 21:06:14 2019 -0700
+
+    Fix pixel object.
+
+commit 52267dc8b614bbb8138ae6195efb4ceeba1e2e66
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 9 23:38:04 2019 -0700
+
+    Port pixel to new shader.
+
+commit 8eacd6dc8b15fe1db7d1fb914f80d6887d9a74df
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 9 21:26:13 2019 -0700
+
+    Fix segmentation fault.
+
+commit 626521dbed9479d9db083a0b6671acf8c8418282
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 9 21:16:58 2019 -0700
+
+    Move pixel code to drawpath3.
+
+commit db3a151d0b71d26c7134b604d972b095ff28adfb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 9 20:20:23 2019 -0700
+
+    Delete buffers on clear.
+
+commit 079c558a1f93f6cbff44fe80dfe57b1f4b7e4750
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 9 15:56:48 2019 -0700
+
+    Fix transparency.
+
+commit 9d9a790b03f5f276c5241503f2644942e6bc24b9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 7 21:22:31 2019 -0700
+
+    Remove unused code.
+
+commit 0f58cdd6947cffce536a1aa2a96160baf3ea3aca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 7 21:17:07 2019 -0700
+
+    Simplify code.
+
+commit e26920c6ac62d6f335daae081428ff334a720c4f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 7 21:11:49 2019 -0700
+
+    Remove unused code.
+
+commit 1048f4d87638aaca0793bb8a5c20be1cd630de54
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 7 20:41:23 2019 -0700
+
+    Simplify code.
+
+commit ddeca77682ea6ef4da0fddbe7295c11e26b5286b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 5 22:53:28 2019 -0700
+
+    Use Phong-Blinn lighting model in shader.
+
+commit 0f43602199fca48d353477504f881acfdb1f426e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 5 22:52:07 2019 -0700
+
+    Update documentation.
+
+commit 29f0d3ccfbbbf8d7b0bc1bf81aa95859593288cf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 5 16:34:20 2019 -0700
+
+    Remove unused code.
+
+commit 9671ef6f9c6d2ad6f78dc2c0e276fe5012c9509d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 4 20:11:00 2019 -0700
+
+    Remove menu due to incompatibility with new shader.
+
+commit d4048f9224de194a6587908b2fb3f01912e0d8ad
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 4 18:49:55 2019 -0700
+
+    Port Bezier curves to new shader.
+
+commit e13aa6c6c840e6cd45b2e39dace8bba8528a7714
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 4 12:37:38 2019 -0700
+
+    Reinstate sorting of transparent triangles.
+
+commit eb8fe25a71efa3ec8cba807bfd1d30078bdc85c1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 4 08:44:26 2019 -0700
+
+    Update documentation.
+
+commit 28bfc3a3b786de71c0e93069f0d2f3c18d2e7324
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 4 07:26:00 2019 -0700
+
+    Fix tiling.
+
+commit 7b1fe1f3f4c173029f1759a5b1c337540e85437f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 4 07:00:07 2019 -0700
+
+    Remove remaining GL_MODELVIEW_MATRIX usages.
+
+commit 67873c000568b82a1caa4df5c748dc57bafa878b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 3 21:04:43 2019 -0700
+
+    Remove unused code.
+
+commit 6836efe332e30b94c8c41e63899fac3a319a2f16
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 3 20:57:21 2019 -0700
+
+    Do camera calculations in double precision.
+
+commit 60d2c0e07174e2050af00236e286bdfac9c191ca
+Merge: 6d6a6535 aa08fb34
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 1 21:32:41 2019 -0700
+
+    Merge branch 'master' into glupdate.
+
+commit aa08fb34573824b7fa939cfaeddce802d8990e03
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 1 21:27:40 2019 -0700
+
+    Disable experimental offscreen rendering by default due to NVIDIA conflicts.
+
+commit 44f31905cdaafd6cd64d94be4a487eb4d24b401c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Dec 28 02:20:16 2018 -0700
+
+    Fix ghostscript arguments.
+
+commit 60acb54ca61ba808d64aa0e28c1c64c853380083
+Merge: d98f3793 5fb1fecb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Dec 28 01:40:44 2018 -0700
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote.
+
+commit d98f3793c4df96dcae238312aac889502912872d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Dec 28 01:40:11 2018 -0700
+
+    Implement workaround for Ghostscript transparency extension -dSAFER bug.
+
+commit 5fb1fecb5fa11508c216d2fa39cf4eac247f5254
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Dec 24 16:44:56 2018 -0700
+
+    Add EOL marker.
+
+commit 6d6a65354125d6beef1e7115b4f9127f09ee559c
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Dec 21 15:45:15 2018 -0700
+
+    Fix last commit on struct data.
+
+commit 5655f851d3762a80c559078bba9c9899c37f9c90
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Dec 21 15:44:52 2018 -0700
+
+    Centralize render data exchange.
+
+commit 25ccee4d0fb257c223f786bfd151583a32c1aa2b
+Merge: 25668b72 924bd6b1
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Dec 21 15:15:25 2018 -0700
+
+    Merge branch 'glupdate' of github.com:vectorgraphics/asymptote into glupdate
+
+commit 25668b728a8b77c54fa428fb23ceec106e6c2562
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Dec 21 15:15:21 2018 -0700
+
+    Update modelViewMatrix linkage.
+
+commit 924bd6b1d9586ff8c2ce15a070826c20a1660be4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Dec 21 13:12:43 2018 -0700
+
+    Use standard asy search path to locate shaders.
+
+commit 0a42fbde8f86592dc888ecc58abf37c4c4d3bc3b
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Dec 20 17:03:58 2018 -0700
+
+    Fix ModelView Matrix.
+
+commit d1fbe2c9df2b00d7556309a8fd53866fa75a9e8d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Dec 20 16:15:00 2018 -0700
+
+    Fix dual simplex exit conditions.
+
+commit 32b00922c75c6c4221b58ed91ff50a2f7ae1cbd0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Dec 15 19:10:04 2018 -0700
+
+    Add missing dual argument.
+
+commit 4da31b4727444458a041c36e9e36ad772614b87c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Dec 15 19:09:09 2018 -0700
+
+    Fix phase1=false and dual modes.
+
+commit 634f7476ea373a8dac95c537436fbcf73c7cfdbd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Dec 15 10:32:46 2018 -0700
+
+    Fix phase1=false optimization. Add support for dual simplex method.
+
+commit 64f568fe2ef00b8873ff06405d708502a6273d19
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Dec 13 20:31:27 2018 -0700
+
+    Improve diagnostics.
+
+commit 3c6736096056c8c26d092c5d71d0987a17b66b41
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Dec 13 15:38:20 2018 -0700
+
+    Fix position of diagnostic.
+
+commit 280d717c9c870cf66f01f324472d2de1424aeeab
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Dec 14 07:52:02 2018 +1100
+
+    Drive artificial variables out of basis.
+
+commit 2113adb6f8ba236eb7ce08d76a464f52e3b3bb3b
+Merge: 494cf1d0 f3da29c7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Dec 4 15:58:18 2018 -0700
+
+    Merge branch 'glupdate' of github.com:vectorgraphics/asymptote into glupdate
+
+commit f3da29c7a4ab507d998fdb2977956ecdb764c22f
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Dec 4 15:49:49 2018 -0700
+
+    Remove glext.h and add GLEW library.
+
+commit ffabb72fdf2df5753e9d60535a9eb13fe23534f8
+Merge: 0dbed3fc 632607db
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Dec 2 14:17:53 2018 -0700
+
+    Merge branch 'master' into glupdate.
+
+commit 494cf1d0dc9f567d758377a1dab6f93617d63d10
+Merge: 0dbed3fc c69fb7d6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 27 14:12:14 2018 -0700
+
+    Merge branch 'master' into glupdate.
+
+commit 0dbed3fc839e868febbecc278ef0d4672aa92314
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Nov 22 17:18:40 2018 -0700
+
+    Reinstate Rotate matrix.
+
+commit c69fb7d6f4f9d058c18996b5fb4c6d9f3212b94c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Nov 14 13:30:52 2018 -0700
+
+    Add pivot diagnostics support in rationalSimplex.asy.
+
+commit 632607db0ce948d3502d75274e8a12014f0e8aa1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 6 10:46:11 2018 -0700
+
+    Add diagnostics to rationalSimplex; use Bland's rule.
+
+commit 85000d2ee926bae8dbfd79d6b2daa11231fd112f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 4 09:17:42 2018 -0700
+
+    Fix phase1=false for standard-form interface.
+
+commit 4867651a75934de3a664acf4ffe14b34d4ee19e4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 4 00:48:37 2018 -0600
+
+    Update documentation.
+
+commit 8e109fe1136926bc48f81a6ea3f44b96e9602967
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 4 00:46:18 2018 -0600
+
+    Fix and re-enable phase1 optimization; add missing rational operators.
+
+commit 38a59370dc5ac720c29e1424614a10f7384b943f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 3 07:24:39 2018 -0600
+
+    Port to gc-7.6.8.
+
+commit 743dcbd36624b682958c6e6fa5de808b0c871bd7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 27 17:16:32 2018 -0600
+
+    Fix stroke=true bug.
+
+commit 5379d0cec0d774b532bd389c6268711adf2067a5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 27 16:25:36 2018 -0600
+
+    Minor documentation edits.
+
+commit d9ee7b4bfe23f5355f9d62701599af00b242bc79
+Merge: c172ffeb 1b22b181
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 26 08:12:35 2018 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit c172ffeb32e1dad161688bac45fd96fe927dafa5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 26 08:12:24 2018 -0600
+
+    Handle zero counts.
+
+commit 1b22b1813f11bb9f9a2a9de7b70ad61eaffd136b
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Sep 12 22:09:19 2018 -0600
+
+    Fix latexmkrc for Windows and add author's name.
+
+commit e86ee4696b6fb87c3e2cb8da76138867da789409
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Sep 8 17:39:14 2018 -0600
+
+    Fix latexmkrc URL.
+
+commit c2e37f99ab05001964c0271c9e693ac86fe88f54
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Sep 3 19:42:14 2018 -0600
+
+    Remove transformations from light direction.
+
+commit cf3f4d1e199cd8a9a460f9614446d2675b7fcbbe
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Sep 3 19:20:22 2018 -0600
+
+    Add basic blinn/phong model.
+
+commit c0640d76ee67f3266a2347e5b2f2bf142a4705e3
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Sep 3 16:53:03 2018 -0600
+
+    Pass in material to GLSL.
+
+commit 427ff0d076dbc3f2edd6755d7b667c266a48d35b
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Sep 2 19:35:08 2018 -0600
+
+    Add material struct.
+
+commit f52101d84f23e7111fc104f77f4e39213ce3a27c
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Sep 2 18:47:27 2018 -0600
+
+    Fix trace ignore.
+
+commit b335d897196d24aaccdde3e99723e8d212c0d356
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Sep 1 22:26:17 2018 -0600
+
+    Finally add VAO as a requirement.
+
+commit d2996cbcac12ed9f5299e25f317d968c0c6e2e3e
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Sep 1 21:27:38 2018 -0600
+
+    Fix VBO/EBO binding.
+
+commit 1fd9c7d384475bec22098a8e9fac39cb77e43f56
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Sep 1 17:16:25 2018 -0600
+
+    Allow for proper buffer data transfer.
+
+commit adbb32fdd380304839cb401c76ea2ab662edfe65
+Merge: 23c4bd2d df015058
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 31 17:57:46 2018 -0600
+
+    Merge branch 'webgl'.
+
+commit df015058a329bc2c50898673fb77ab63cb684239
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 31 17:56:58 2018 -0600
+
+    Rename webgl files.
+
+commit 23c4bd2d53cdc577eeed0cac28d73439eb4f3e84
+Merge: c41bc347 48fc03cf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 31 17:33:40 2018 -0600
+
+    Merge branch 'webgl'.
+
+commit c41bc347ba6303190d0f5293507640eff7cc7a62
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 31 17:28:21 2018 -0600
+
+    Create index.html
+
+commit 48fc03cf2cd9bb8d12de45fdc414daf9dc1e0ca0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 31 17:20:41 2018 -0600
+
+    Add WebGL files.
+
+commit a08121dc7deeda1a1cd3cbacbe52f95deba69ce0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 31 12:23:44 2018 -0600
+
+    Work around dvisvgm bound box lower threshold.
+
+commit fd66ec5e916f1c750ef7cfa7c40fda372fd1ab53
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 30 17:50:24 2018 -0600
+
+    Make rotation use glm::matx.
+
+commit 28ea1444cbe53b6e8be16597cb424f76b8a7d131
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 30 00:35:00 2018 -0600
+
+    Get basic shader working.
+
+commit 1753e2fcf110add939514c4a743b7612045827bc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 31 00:47:07 2018 +0200
+
+    Increment version to 2.48.
+
 commit 67f0c4b2d24adc346d7b616b13298903433c5910
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Jul 30 23:23:47 2018 +0200

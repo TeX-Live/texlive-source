@@ -1067,14 +1067,14 @@ void initSettings() {
 // ALT LEFT: pan
   const char *leftbutton[]={"rotate","zoom","shift","pan",NULL};
   
-// MIDDLE: menu (must be unmodified; ignores Shift, Ctrl, and Alt)
-  const char *middlebutton[]={"menu",NULL};
+// MIDDLE:
+  const char *middlebutton[]={NULL};
   
-// RIGHT: zoom/menu (must be unmodified)
+// RIGHT: zoom
 // SHIFT RIGHT: rotateX
 // CTRL RIGHT: rotateY
 // ALT RIGHT: rotateZ
-  const char *rightbutton[]={"zoom/menu","rotateX","rotateY","rotateZ",NULL};
+  const char *rightbutton[]={"zoom","rotateX","rotateY","rotateZ",NULL};
   
 // WHEEL_UP: zoomin
   const char *wheelup[]={"zoomin",NULL};
@@ -1269,6 +1269,7 @@ void initSettings() {
   addOption(new userSetting("user", 'u', "string",
                             "General purpose user string"));
   
+  addOption(new IntSetting("maxvertices", 0, "n", "Maximum number of vertices to queue", 0));
   addOption(new realSetting("zoomfactor", 0, "factor", "Zoom step factor",
                             1.05));
   addOption(new realSetting("zoomstep", 0, "step", "Mouse motion zoom step",
@@ -1357,15 +1358,10 @@ bool view()
 
 bool trap()
 {
-#ifdef __CYGWIN__
-// Disable until broken strtod exception is fixed.
-  return false;
-#else
   if (interact::interactive)
     return !getSetting<bool>("interactiveMask");
   else
     return !getSetting<bool>("batchMask");
-#endif  
 }
 
 string outname() 

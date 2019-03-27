@@ -9,9 +9,6 @@
 /* System directory for global .asy files */
 #undef ASYMPTOTE_SYSDIR
 
-/* Define if gluNurbsCallback expects a variadic function. */
-#undef GLU_TESS_CALLBACK_TRIPLEDOT
-
 /* Define to 1 if you have the <curses.h> header file. */
 #undef HAVE_CURSES_H
 
@@ -51,8 +48,11 @@
 /* Define to 1 if you have the `GL' library (-lGL). */
 #undef HAVE_LIBGL
 
-/* Define to 1 if you have the `GLU' library (-lGLU). */
-#undef HAVE_LIBGLU
+/* Define if you have the `GLEW' library (-lGLEW). */
+#undef HAVE_LIBGLEW
+
+/* Define if you have the `OpenGL Mathematics' library. */
+#undef HAVE_LIBGLM
 
 /* Define to 1 if you have the `glut' library (-lglut). */
 #undef HAVE_LIBGLUT

@@ -1,3 +1,15 @@
+Release Notes for Version 2.48
+
+The OpenGL code was modernized to use GLSL shaders. Transparent
+triangles of different materials are now sorted before drawing.
+The viewport option from the light function was removed.
+A workaround was implemented for the Ghostscript transparency extension
+-dSAFER bug. Bugs in the simplex method were fixed. Experimental
+offscreen rendering is now disabled by default due to NVIDIA conflicts.
+The min, max, minratio, maxratio, and intersection calculations were
+accelerated. A workaround was implemented for broken Intel GPU drivers
+under MSWindows.
+
 Release Notes for Version 2.47
 
 Further shipout and scaling problems were fixed. Unused files were removed.

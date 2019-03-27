@@ -2290,9 +2290,9 @@ void gen_runarray73(stack *Stack)
   size_t N;
   real *A=copyTripleArray2Components(P,N);
   bound_double *B=bounddouble(N);
-  b=triple(B(A,::min,b.getx(),sqrtFuzz*norm(A,N),maxdepth),
-           B(A+N,::min,b.gety(),sqrtFuzz*norm(A+N,N),maxdepth),
-           B(A+2*N,::min,b.getz(),sqrtFuzz*norm(A+2*N,N),maxdepth));
+  b=triple(B(A,::min,b.getx(),Fuzz*norm(A,N),maxdepth),
+           B(A+N,::min,b.gety(),Fuzz*norm(A+N,N),maxdepth),
+           B(A+2*N,::min,b.getz(),Fuzz*norm(A+2*N,N),maxdepth));
   delete[] A;
   {Stack->push<triple>(b); return;}
 }
@@ -2307,9 +2307,9 @@ void gen_runarray74(stack *Stack)
   size_t N;
   real *A=copyTripleArray2Components(P,N);
   bound_double *B=bounddouble(N);
-  b=triple(B(A,::max,b.getx(),sqrtFuzz*norm(A,N),maxdepth),
-           B(A+N,::max,b.gety(),sqrtFuzz*norm(A+N,N),maxdepth),
-           B(A+2*N,::max,b.getz(),sqrtFuzz*norm(A+2*N,N),maxdepth));
+  b=triple(B(A,::max,b.getx(),Fuzz*norm(A,N),maxdepth),
+           B(A+N,::max,b.gety(),Fuzz*norm(A+N,N),maxdepth),
+           B(A+2*N,::max,b.getz(),Fuzz*norm(A+2*N,N),maxdepth));
   delete[] A;
   {Stack->push<triple>(b); return;}
 }
@@ -2323,7 +2323,7 @@ void gen_runarray75(stack *Stack)
 #line 1938 "runarray.in"
   size_t N;
   triple *A=copyTripleArray2C(P,N);
-  real fuzz=sqrtFuzz*norm(A,N);
+  real fuzz=Fuzz*norm(A,N);
   bound_triple *B=boundtriple(N);
   b=pair(B(A,::min,xratio,b.getx(),fuzz,maxdepth),
          B(A,::min,yratio,b.gety(),fuzz,maxdepth));
@@ -2341,7 +2341,7 @@ void gen_runarray76(stack *Stack)
   size_t N;
   triple *A=copyTripleArray2C(P,N);
   bound_triple *B=boundtriple(N);
-  real fuzz=sqrtFuzz*norm(A,N);
+  real fuzz=Fuzz*norm(A,N);
   b=pair(B(A,::max,xratio,b.getx(),fuzz,maxdepth),
          B(A,::max,yratio,b.gety(),fuzz,maxdepth));
   delete[] A;

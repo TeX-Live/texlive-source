@@ -1,8 +1,9 @@
 %{!?_texmf: %global _texmf %(eval "echo `kpsewhich -expand-var '$TEXMFLOCAL'`")}
 %global _python_bytecompile_errors_terminate_build 0
+%global __python %{__python3}
 
 Name:           asymptote
-Version:        2.47
+Version:        2.48
 Release:        1%{?dist}
 Summary:        Descriptive vector graphics language
 
@@ -25,6 +26,7 @@ BuildRequires:  ImageMagick
 Requires:       tetex-latex
 Requires:       tkinter
 Requires:       freeglut-devel >= 3.0.0
+Requires:       glew-devel
 Requires(post): /usr/bin/texhash /sbin/install-info
 Requires(postun): /usr/bin/texhash /sbin/install-info
 
