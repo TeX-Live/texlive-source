@@ -1,3 +1,14 @@
+2019-03-30  Akira Kakuto  <kakuto@w32tex.org>
+
+	* spc_xtx.c: "ap->curptr" was copied to "buffer" without
+	length validation. Fix this security problem.
+	* spc_pdfm.c: "ap->curptr" was copied to "buffer" without
+	length validation. Fix this security problem.
+	* specials.c: Error message was written using vsprintf(),
+	which has no length limitation. Use vsnprintf() instead.
+
+	Report from Andy Nguyen of ETH Zurich.
+
 2019-03-05  Clerk Ma  <maqiyuan130324@vip.qq.com>
 
 	* tt_table.c: Fix 'null character(s)' warning caused by
