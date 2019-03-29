@@ -744,9 +744,16 @@ maininit (int ac, string *av)
      after the start of kpathsea due to special initializations.
      Therefore we record texmf.cnf here. */
   if (recorder_enabled) {
-    string p = kpse_find_file ("texmf.cnf", kpse_cnf_format, 0);
-    if (p)
-      recorder_record_input (p);
+    string *p = kpse_find_file_generic ("texmf.cnf", kpse_cnf_format, 0, 1);
+    if (p && *p) {
+      string *pp = p;
+      while (*p) {
+        recorder_record_input (*p);
+        free (*p);
+        p++;
+      }
+      free (pp);
+    }
   }
 #endif /* IS_pTeX || (...) */
 

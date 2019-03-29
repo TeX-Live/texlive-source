@@ -43,7 +43,7 @@ static int fsyscp_rename(char *s1, char *s2)
   return ret;
 }
 
-static FILE *f_fsyscp_fopen(const char *filename, const char *mode)
+FILE *f_fsyscp_fopen(const char *filename, const char *mode)
 {
   if(!file_system_codepage)
     return fopen(filename, mode);
@@ -51,7 +51,7 @@ static FILE *f_fsyscp_fopen(const char *filename, const char *mode)
   return fsyscp_fopen(filename, mode);
 }
 
-static FILE *f_fsyscp_xfopen(const char *filename, const char *mode)
+FILE *f_fsyscp_xfopen(const char *filename, const char *mode)
 {
   if(!file_system_codepage)
     return xfopen(filename, mode);
