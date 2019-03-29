@@ -11,4 +11,4 @@ for tst in overflow-color-push overflow-epsfile overflow-psbox; do
   fi
 done
 
-exit 1
+exit 0
