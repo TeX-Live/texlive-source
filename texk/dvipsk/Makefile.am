@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/dvipsk/
 ##
-## Copyright 2017      Karl Berry <tex-live@tug.org>
+## Copyright 2017-2019 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -113,9 +113,11 @@ TEST_EXTENSIONS = .pl .test
 TESTS = afm2tfm-test.pl
 afm2tfm-test.log: afm2tfm$(EXEEXT)
 TESTS += beginfontk1.test eepic-nan.test pfbincl.test \
-	quotecmd-test.pl same-name.test test-dvips.test
+	quotecmd-test.pl same-name.test test-dvips.test \
+	test-overflow-buffers.test
 beginfontk1.log eepic-nan.log pfbincl.log \
-	quotecmd-test.log same-name.log test-dvips.log: dvips$(EXEEXT)
+	quotecmd-test.log same-name.log test-dvips.log \
+	test-overflow-buffers.log: dvips$(EXEEXT)
 
 AM_TESTS_ENVIRONMENT  = TEXMFCNF=$(srcdir)/../kpathsea; export TEXMFCNF;
 AM_TESTS_ENVIRONMENT += TEXCONFIG=$(srcdir)/testdata; export TEXCONFIG;
@@ -138,6 +140,7 @@ EXTRA_DIST += \
 	testdata/cmsy10.tfm \
 	testdata/cmtt10.pfb \
 	testdata/cmtt10.tfm \
+	testdata/color.pro \
 	testdata/config.pdf \
 	testdata/config.ps \
 	testdata/psfonts.map \
@@ -171,6 +174,11 @@ DISTCLEANFILES += same-name.out
 ## test-dvips
 EXTRA_DIST += testdata/dvipstst.tex testdata/dvipstst.xdv testdata/dvipstst.xps
 DISTCLEANFILES += dvipstst.ps missfont.log mtest.ps
+## test-overflow-buffers
+EXTRA_DIST += overflow-color-push.dvi overflow-color-push.tex \
+              overflow-epsfile.dvi overflow-epsfile.tex \
+              overflow-psbox.dvi overflow-psbox.tex
+DISTCLEANFILES += overflow-color-push.ps overflow-epsfile.ps overflow-psbox.ps
 
 EXTRA_DIST += \
 	NEWS \

@@ -714,7 +714,8 @@ info_TEXINFOS = dvips.texi
 dvips_TEXINFOS = contrib/config.proto dvips.help
 DISTCLEANFILES = $(DVIS) $(PSS) afmtest.tfm beginfontk1.ps \
 	eepic-nan.ps pfbincl.ps *badnews* same-name.out dvipstst.ps \
-	missfont.log mtest.ps
+	missfont.log mtest.ps overflow-color-push.ps \
+	overflow-epsfile.ps overflow-psbox.ps
 prolog_DATA = $(prologues)
 dist_prologues = \
 	color.lpro \
@@ -733,28 +734,32 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	testdata/cmex10.tfm testdata/cmmi10.pfb testdata/cmmi10.tfm \
 	testdata/cmr10.pfb testdata/cmr10.tfm testdata/cmsy10.pfb \
 	testdata/cmsy10.tfm testdata/cmtt10.pfb testdata/cmtt10.tfm \
-	testdata/config.pdf testdata/config.ps testdata/psfonts.map \
-	testdata/ptmbi.vf testdata/ptmbi8r.tfm testdata/ptmr.vf \
-	testdata/ptmr8r.tfm testdata/ptmri.vf testdata/ptmri8r.tfm \
-	testdata/special.pro testdata/tex.pro testdata/texc.pro \
-	testdata/texps.pro testdata/beginfontk1.dvi \
+	testdata/color.pro testdata/config.pdf testdata/config.ps \
+	testdata/psfonts.map testdata/ptmbi.vf testdata/ptmbi8r.tfm \
+	testdata/ptmr.vf testdata/ptmr8r.tfm testdata/ptmri.vf \
+	testdata/ptmri8r.tfm testdata/special.pro testdata/tex.pro \
+	testdata/texc.pro testdata/texps.pro testdata/beginfontk1.dvi \
 	testdata/beginfontk1.eps testdata/beginfontk1.tex \
 	testdata/eepic-nan.dvi testdata/eepic-nan.tex \
 	testdata/pfbincl.eps testdata/pfbincl.tex testdata/pfbincl.xdv \
 	testdata/pfbincl.xps testdata/quotecmd.dvi \
 	testdata/quotecmd.tex testdata/dvipstst.tex \
-	testdata/dvipstst.xdv testdata/dvipstst.xps NEWS TODO \
-	testdata/intoverflow.dvi testdata/vfnameoverflow.dvi atari \
-	cmfonts.map config.ps contrib/afm-extra contrib/colorsep.lpro \
-	contrib/configs contrib/crop.lpr contrib/latex209 \
-	contrib/treen.sh contrib/treen2.sh contrib/volker \
-	contrib/whichinpath cyrfonts.map eufonts.map flib.c \
-	hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map makefont.c \
-	mvs psfonts.map tex vmcms vms
+	testdata/dvipstst.xdv testdata/dvipstst.xps \
+	overflow-color-push.dvi overflow-color-push.tex \
+	overflow-epsfile.dvi overflow-epsfile.tex overflow-psbox.dvi \
+	overflow-psbox.tex NEWS TODO testdata/intoverflow.dvi \
+	testdata/vfnameoverflow.dvi atari cmfonts.map config.ps \
+	contrib/afm-extra contrib/colorsep.lpro contrib/configs \
+	contrib/crop.lpr contrib/latex209 contrib/treen.sh \
+	contrib/treen2.sh contrib/volker contrib/whichinpath \
+	cyrfonts.map eufonts.map flib.c hps/CHANGES_HPS.txt \
+	hps/README_HPS.txt lafonts.map makefont.c mvs psfonts.map tex \
+	vmcms vms
 CLEANFILES = $(prologues) texc.lpro
 TEST_EXTENSIONS = .pl .test
 TESTS = afm2tfm-test.pl beginfontk1.test eepic-nan.test pfbincl.test \
-	quotecmd-test.pl same-name.test test-dvips.test
+	quotecmd-test.pl same-name.test test-dvips.test \
+	test-overflow-buffers.test
 AM_TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea; export \
 	TEXMFCNF; TEXCONFIG=$(srcdir)/testdata; export TEXCONFIG; \
 	TEXFONTS=$(srcdir)/testdata; export TEXFONTS; \
@@ -1955,7 +1960,8 @@ squeeze/stamp-squeeze:
 	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
 afm2tfm-test.log: afm2tfm$(EXEEXT)
 beginfontk1.log eepic-nan.log pfbincl.log \
-	quotecmd-test.log same-name.log test-dvips.log: dvips$(EXEEXT)
+	quotecmd-test.log same-name.log test-dvips.log \
+	test-overflow-buffers.log: dvips$(EXEEXT)
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 

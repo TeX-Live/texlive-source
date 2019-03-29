@@ -1,4 +1,4 @@
-/*
+/* $Id$
  *   This routine handles special commands;
  *   predospecial() is for the prescan, dospecial() for the real thing.
  */
@@ -585,7 +585,9 @@ maccess(char *s)
 
 const char *tasks[] = { 0, "iff2ps", "tek2ps" };
 
-static char psfile[511];
+#define PSFILESIZ 511
+static char psfile[PSFILESIZ];
+
 void
 dospecial(integer numbytes)
 {
@@ -646,9 +648,20 @@ case 'e':
 /* added for dvi2ps special */
    if (strncmp(p, "epsfile=", 8)==0) {  /* epsf.sty for dvi2ps-j */
       float llx, lly, urx, ury;
+      unsigned psfilelen = 0;
 
       p += 8;
-      sscanf(p, "%s", psfile);
+      while (!isspace((unsigned char)*p)) {
+        if (psfilelen < PSFILESIZ) {
+          psfile[psfilelen] = *p;
+          psfilelen++;
+        } else {
+          sprintf(errbuf, "! epsfile= argument longer than %d characters",
+                  PSFILESIZ);
+          error(errbuf);
+        }
+      }
+      psfile[psfilelen] = 0;
       p += strlen(psfile);
       fgetboundingbox(psfile, &llx, &lly, &urx, &ury);
       hvpos();
@@ -752,6 +765,16 @@ case 'p':
    if (strncmp(p, "postscriptbox", 13)==0) { /* epsbox.sty for jdvi2kps */
       float w, h;
       float llx, lly, urx, ury;
+      if (strlen(p)-13-6 >= PSFILESIZ) { /* -6 for the braces */
+         /* We're not allowing as long a name as we could, since however
+            many characters the two {%fpt} arguments consume is not
+            taken into account. But parsing it all so we know the
+            character length is too much work for this obscure special. */
+         sprintf(errbuf,
+                 "! postscriptbox{} arguments longer than %d characters",
+                 PSFILESIZ);
+         error(errbuf);
+      }
       if (sscanf(p+13, "{%fpt}{%fpt}{%[^}]}", &w, &h, psfile) != 3)
          break;
       fgetboundingbox(psfile, &llx, &lly, &urx, &ury);

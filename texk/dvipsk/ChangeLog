@@ -1,3 +1,19 @@
+2019-03-29  Karl Berry  <karl@freefriends.org>
+
+	* color.c (colorcmdout),
+	* dospecial.c (dospecial) <epsfile>, <postscriptbox>: check for
+	buffer overflows.
+	* test-overflow-buffers.test,
+	* testdata/color.pro,
+	* testdata/overflow-color-push.dvi,
+	* testdata/overflow-color-push.tex,
+	* testdata/overflow-epsfile.dvi,
+	* testdata/overflow-epsfile.tex,
+	* testdata/overflow-psbox.dvi,
+	* testdata/overflow-psbox.tex: new test files and support.
+	* Makefile.am (TESTS, EXTRA_DIST, DISTCLEANFILES): add new tests.
+	Report from Andy Nguyen of ETH Zurich.
+
 2019-02-26  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* afm2tfm.c: Forbid too long file name.

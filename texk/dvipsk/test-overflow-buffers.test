@@ -1,0 +1,14 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain. Various buffer overflows, reported by
+# Andy Nguyen of ETH Zurich. The program should detect and abort.
+
+for tst in overflow-color-push overflow-epsfile overflow-psbox; do
+  :
+  if ./dvips $srcdir/testdata/$tst.dvi -o; then
+    echo "$0: test $tst should have failed." >&2
+    exit 1
+  fi
+done
+
+exit 1
