@@ -1807,8 +1807,11 @@ spc_handler_pdfm_mapline (struct spc_env *spe, struct spc_arg *ap)
       *q++ = *p++;
       count++;
     }
-    if (count == THEBUFFLENGTH - 1)
-      spc_warn(spe, "Too long a fontmap line.");
+    if (count == THEBUFFLENGTH - 1) {
+      spc_warn(spe, "Invalid fontmap line: Too long a line.");
+      *q = 0;
+      return -1;
+    }
     *q = '\0';
     mrec = NEW(1, fontmap_rec);
     pdf_init_fontmap_record(mrec);
