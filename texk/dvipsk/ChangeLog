@@ -1,8 +1,12 @@
 2019-03-29  Karl Berry  <karl@freefriends.org>
 
+	* dospecial.c (dospecial) <bare psfile>: reverse sense of maccess
+	test, as intended; check for buffer overflow.
+	(maccess): add doc.
+
 	* color.c (colorcmdout),
-	* dospecial.c (dospecial) <epsfile>, <postscriptbox>: check for
-	buffer overflows.
+	* dospecial.c (dospecial) <epsfile>, <postscriptbox>, <psfile>:
+	check for buffer overflows.
 	* test-overflow-buffers.test,
 	* testdata/color.pro,
 	* testdata/overflow-color-push.dvi,

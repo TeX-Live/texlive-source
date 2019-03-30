@@ -574,13 +574,15 @@ default:
       scanfontcomments(ValStr);
 }
 
+/* Return 1 if S is readable along figpath, 0 if not. */
 static int
 maccess(char *s)
 {
    FILE *f = search(figpath, s, "r");
-   if (f)
+   int found = (f != 0);
+   if (found)
       (*close_file) (f);
-   return (f != 0);
+   return found;
 }
 
 const char *tasks[] = { 0, "iff2ps", "tek2ps" };
@@ -651,15 +653,21 @@ case 'e':
       unsigned psfilelen = 0;
 
       p += 8;
-      while (!isspace((unsigned char)*p)) {
+      while (*p && !isspace((unsigned char)*p)) {
         if (psfilelen < PSFILESIZ) {
           psfile[psfilelen] = *p;
           psfilelen++;
+          p++;
         } else {
-          sprintf(errbuf, "! epsfile= argument longer than %d characters",
-                  PSFILESIZ);
+          psfile[psfilelen] = 0; /* should not strictly be necessary */
+          sprintf(errbuf,
+                  "! epsfile=%.20s... argument longer than %d characters",
+                  psfile, PSFILESIZ);
           error(errbuf);
         }
+      }
+      if (psfilelen == 0) {
+        error ("! epsfile= argument empty");
       }
       psfile[psfilelen] = 0;
       p += strlen(psfile);
@@ -936,18 +944,23 @@ default:
 
    while( (p=GetKeyVal(p,&j)) != NULL )
       switch (j) {
- case -1: /* for compatability with old conventions, we allow a file name
+ case -1: /* for compatibility with old conventions, we allow a file name
            * to be given without the 'psfile=' keyword */
-         if (!psfile[0] && maccess(KeyStr)==0) /* yes we can read it */
+         if (!psfile[0] && maccess(KeyStr)==1) { /* yes we can read it */
+             if (strlen(KeyStr) >= PSFILESIZ) {
+               sprintf(errbuf, 
+           "! Bare filename (%.20s...) in \\special longer than %d characters",
+                       KeyStr, PSFILESIZ);
+             }
              strcpy(psfile,KeyStr);
-         else {
+         } else {
            if (strlen(KeyStr) < 40) {
               sprintf(errbuf,
                       "Unknown keyword (%s) in \\special will be ignored",
                               KeyStr);
            } else {
               sprintf(errbuf,
-                      "Unknown keyword (%.40s...) in \\special will be ignored",
+                     "Unknown keyword (%.40s...) in \\special will be ignored",
                               KeyStr);
            }
            specerror(errbuf);
@@ -955,11 +968,18 @@ default:
          break;
  case 0: case 1: case 2: /* psfile */
          if (psfile[0]) {
-           sprintf(errbuf, "More than one \\special %s given; %s ignored",
-                    "psfile",  ValStr);
+           sprintf(errbuf, "More than one \\special %s given; %.40s ignored",
+                    "psfile", ValStr);
            specerror(errbuf);
+         } else {
+           if (strlen(ValStr) >= PSFILESIZ) {
+               sprintf(errbuf, 
+           "! PS filename (%.20s...) in \\special longer than %d characters",
+                       ValStr, PSFILESIZ);
+	       error(errbuf);
+           }
+           strcpy(psfile, ValStr);
          }
-         else strcpy(psfile,ValStr);
          task = tasks[j];
          break;
  default: /* most keywords are output as PostScript procedure calls */
