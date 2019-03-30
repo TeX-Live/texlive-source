@@ -129,7 +129,7 @@ fgetboundingbox(char *f, float *llx_p, float *lly_p, float *urx_p, float *ury_p)
       }
       fclose(fp);
    }
-   sprintf(errbuf, "Couldn't get BoundingBox of %s: assuming full A4 size", f);
+   sprintf(errbuf, "Couldn't get BoundingBox of %.500s: assuming full A4 size", f);
    specerror(errbuf);
    *llx_p = 0.0;
    *lly_p = 0.0;
@@ -329,7 +329,7 @@ found: *tno = i;
    switch (KeyTab[i].Type) {
  case Integer:
       if(sscanf(ValStr,"%ld",&ValInt)!=1) {
-          sprintf(errbuf,"Non-integer value (%s) given for keyword %s",
+          sprintf(errbuf,"Non-integer value (%.500s) given for keyword %.500s",
               ValStr, KeyStr);
           specerror(errbuf);
           ValInt = 0;
@@ -338,7 +338,7 @@ found: *tno = i;
  case Number:
  case Dimension:
       if(sscanf(ValStr,"%f",&ValNum)!=1) {
-          sprintf(errbuf,"Non-numeric value (%s) given for keyword %s",
+          sprintf(errbuf,"Non-numeric value (%.500s) given for keyword %.500s",
               ValStr, KeyStr);
           specerror(errbuf);
           ValNum = 0.0;
@@ -702,7 +702,8 @@ case 'e':
                cmdout("@rhi");
                break;
             default:
-               sprintf(errbuf, "Unknown keyword `%s' in \\special{epsfile=%s...} will be ignored\n", KeyStr, psfile);
+               sprintf(errbuf, "Unknown keyword `%.500s' in \\special{epsfile=%.500s...} will be ignored\n",
+               KeyStr, psfile);
                specerror(errbuf);
                break;
          }

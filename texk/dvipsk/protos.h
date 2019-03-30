@@ -380,7 +380,7 @@ extern Boolean noprocset;
 #endif
 
 /* global variables from loadfont.c */
-extern char errbuf[1000];
+extern char errbuf[1500];
 extern int lastresortsizes[40];
 extern FILE *pkfile;
 

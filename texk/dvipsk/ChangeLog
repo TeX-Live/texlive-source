@@ -1,5 +1,15 @@
 2019-03-29  Karl Berry  <karl@freefriends.org>
 
+	* loadfont.c (errbuf),
+	* protos.h (errbuf): increase to 1500.
+	* dospecial.c,
+	* flib.c,
+	* makefont.c,
+	* output.c,
+	* pprescan.c,
+	* scanpage.c,
+	* tfmload.c: limit sprintf %s arguments into buffers.
+
 	* dospecial.c (dospecial) <bare psfile>: reverse sense of maccess
 	test, as intended; check for buffer overflow.
 	(maccess): add doc.
