@@ -66,7 +66,8 @@ int get_fn_objnum(fd_entry * fd)
  * 2. mark glyphs directly there
  *
  * Input charset from xpdf is a string of glyph names including
- * leading slashes, but without blanks between them, like: /a/b/c
+ * leading slashes, with optional spaces or tabs preceding or between
+   them: /a/b/c or /a /b /c or /a/b   /c, etc.
 ***********************************************************************/
 
 void epdf_mark_glyphs(fd_entry * fd, char *charset)
