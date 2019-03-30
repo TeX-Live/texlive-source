@@ -55,8 +55,10 @@ EXTRA_DIST += $(pdftex_man_sources)
 if PTEX
 man_sources += ptex.man
 man1_links += ptex:eptex ptex:euptex ptex:uptex
+man_sources += ppltotf.man ptftopl.man
+man1_links += ppltotf:uppltotf ptftopl:uptftopl
 endif PTEX
-EXTRA_DIST += ptex.man
+EXTRA_DIST += ptex.man ppltotf.man ptftopl.man
 
 if LUATEX
 man_sources += luatex.man

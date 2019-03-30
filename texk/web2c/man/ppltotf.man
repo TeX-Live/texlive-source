@@ -1,0 +1,96 @@
+.TH PPLTOTF 1 "15 March 2019" "Web2C @VERSION@"
+.\"=====================================================================
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP\"
+.el .ds OX TeX\"
+.\" BX definition must follow TX so BX can use TX
+.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if n .ds BX BibTeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+.\"=====================================================================
+.SH NAME
+ppltotf, uppltotf \- Create Japanese p\*(TX font metric (JFM)
+.SH SYNOPSIS
+.B ppltotf
+.RI [ options ]
+.IR pl_file_name [ \fB.pl\fP ]
+.RI [ tfm_file_name [ \fB.tfm\fP ]]
+.\"=====================================================================
+.SH DESCRIPTION
+The
+.B ppltotf
+program translates a Japanese property list (JPL) file to a Japanese
+p\*(TX font metric (JFM) file.
+The resulting JFM file can be used with p\*(TX and e-p\*(TX.
+.PP
+The
+.B uppltotf
+program is a Unicode-enabled version of ppltotf.
+The resulting JFM file can be used with up\*(TX and e-up\*(TX.
+.PP
+In the following sections, we refer to these programs as
+.BR (u)ppltotf .
+.PP
+.B (u)ppltotf
+is upper compatible with
+.BR pltotf ;
+if the input PL file is for roman fonts, it is translated into an
+ordinary \*(TX font metric (TFM) file.
+The difference between
+.B ppltotf
+and
+.B uppltotf
+lies in the output encoding:
+.B ppltotf
+always outputs JIS-encoded JFM; on the other hand,
+.B uppltotf
+outputs Unicode-encoded JFM by default.
+.\"=====================================================================
+.SH OPTIONS
+Compared to pltotf, the following option is added to
+.BR (u)ppltotf .
+.TP
+.BI -kanji \ string
+Sets the input Japanese \fIKanji\fR code.  The
+.I string
+can be one of the followings:
+.IR euc \ (EUC-JP),
+.IR jis \ (ISO-2022-JP),
+.IR sjis \ (Shift_JIS),
+.IR utf8 \ (UTF-8),
+.IR uptex \ (UTF-8;
+.B uppltotf
+only).
+.PP
+When one of
+.IR euc ,
+.IR jis ,
+.I sjis
+or
+.I utf8
+is specified, both
+.B ppltotf
+and
+.B uppltotf
+output a JIS-encoded JFM.
+When
+.I uptex
+is specified with
+.BR uppltotf ,
+it outputs a Unicode-encoded JFM.
+.\"=====================================================================
+.SH "SEE ALSO"
+.BR ptex (1).
+.\"=====================================================================
+.SH AUTHORS
+.B (u)ppltotf
+is maintained by
+Japanese \*(TX Development Community <https://texjp.org>.
+For bug reports, open an issue at
+GitHub repository <https://github.com/texjporg/tex-jp-build>,
+or send an e-mail to <issue@texjp.org>.
+.PP
+This manual page was written by Hironobu Yamashita.
