@@ -1,3 +1,9 @@
+2019-04-01  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfencoding.c: Fix a bug that dvipdfmx wrongly tries to
+	create ToUnicode CMap even when there is no valid mapping
+	entry. It just results in "Invalid CMap" warning.
+
 2019-03-30  Akira Kakuto  <kakuto@w32tex.org>
 
 	* spc_xtx.c: "ap->curptr" was copied to "buffer" without
