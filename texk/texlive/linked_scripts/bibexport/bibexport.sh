@@ -7,7 +7,7 @@
 ##
 ## bibexport.dtx  (with options: `script')
 ## 
-## (c) 2016/03/02 Nicolas Markey <bibexport at markey dot fr>
+## (c) 2019/03/30 Nicolas Markey <bibexport at markey dot fr>
 ## 
 ## This work may  be distributed and/or modified under  the conditions of
 ## the LaTeX Project  Public License, either version 1.3  of this license
@@ -58,6 +58,8 @@ Basic options:
 --------------
  -a, --all                  export the entire .bib files
  -o bib, --output-file bib  write output to file       [default: bibexport.bib]
+ -ns, --nosave              overwrite output file without keeping a copy
+ -p, --preamble             write a preamble at beginning of output
  -t, --terse                operate silently
  -h, --help                 print this message and exit
  -v, --version              print version number and exit
@@ -70,25 +72,24 @@ Advanced options:
  -e bib, --extra bib        extra .bib file to be used (crossrefs and strings)
  -es bib, --extras bib      extra .bib file to be used (for strings)
  -ec bib, --extrac bib      extra .bib file to be used (for crossrefs)
- -p, --preamble             write a preamble at beginning of output
  -r bib, --replace bib      replace .bib file(s) in the .aux file
  -d, --debug                create intermediate files but don't run BibTeX";
 exit 0;
 }
 function opttoolate()
 {
-if [ ${TOOLATE} -ne 0 ]; then
-    echo "No option is allowed after the input files";
+if [ ! -z "${TOOLATE}" ]; then
+    echo "No options are allowed after the input files";
     exit 0;
 fi
 }
 ## Version number
-VERSION="3.02";
+VERSION="3.03";
 ## Release date
-VDATE="2016/03/02";
+VDATE="2019/03/30";
 
 # ALL is a flag set to 1 when '-a' is given
-ALL="0";
+ALL="";
 # FILE will be the main input file(s) (.aux or .bib, depending on '-a')
 FILE="";
 # EXT is the extension of the input file(s) (.aux, or .bib if '-a')
@@ -99,15 +100,17 @@ EXTRA="";
 EXTRABIB="";
 # REPLACEBIB ('-r') is set to 1 when the \bibdata of the .aux input file
 # must be ignores (then '-e' must be used)
-REPLACEBIB="0";
+REPLACEBIB="";
 # NEWBIB will contain the argument given to -r
 NEWBIB="";
 # BST is the .bst file to be used (default to export.bst)
 BST="export";
 # TERSE will be set to '-terse' if '-t' is given
 TERSE="";
+# NOSAVE if no need to save file before overwriting it
+NOSAVE=""
 # BANNER is used to turn on or off the preamble informations in the output
-BANNER="false";
+BANNER="";
 # CREF is the number of citations of crossrefs from which the crossref'd entry
 # must be included.
 CREF="0";
@@ -115,7 +118,7 @@ CREF="0";
 # SPACE will be either ' ' or ','
 SPACE="";
 # TOOLATE is used to prevent extra options after the main file
-TOOLATE="0";
+TOOLATE="";
 # DEBUG is used to create files but not run BibTeX.
 DEBUG="";
 
@@ -130,7 +133,7 @@ while [ $# != 0 ]; do
             ## - export all entries in the input file(s)
             ## - the input files are BibTeX files
             opttoolate;
-            EXT=""; SPACE=""; ALL=1;
+            EXT=""; SPACE=""; ALL="a";
             shift ;;
         -b|--bst)
             ## - specifies the .bst file to use (default to 'export.bst')
@@ -146,14 +149,14 @@ while [ $# != 0 ]; do
             ## - debug mode: we create files but do not run bibtex
             ## - instead, we print what we would have done...
             opttoolate;
-            DEBUG="echo";
+            DEBUG="a";
             shift ;;
         -e|--extra)
             ## - extra input files (containing crossrefs or strings)
             ## - they will be included twice: once before the main file(s)
             ##   (for @string's), once after (for crossrefs). We fool BibTeX
             ##   by naming the first one 'file.bib' and the second one
-            ##   'file.bib.bib', to avoid complains.
+            ##   'file.bib.bib', to avoid complaints.
             opttoolate;
             if [ "`dirname $2`" = "." ]; then
                 DOLLARTWO="`basename $2 .bib`";
@@ -215,7 +218,7 @@ while [ $# != 0 ]; do
             ## - to replace the file(s) given in \bibdata in the .aux file with
             ##   (a) new one(s).
             opttoolate;
-            REPLACEBIB="1";
+            REPLACEBIB="a";
             if [ "`dirname $2`" = "." ]; then
                 DOLLARTWO="`basename $2 .bib`";
             else
@@ -225,8 +228,11 @@ while [ $# != 0 ]; do
             shift 2;;
         -v|--version)
             echo "This is bibexport v${VERSION} (released ${VDATE})"; exit 0;;
+        -ns|--nosave|--no-save)
+            NOSAVE="a";
+            shift ;;
         -p|--preamble|--with-preamble)
-            BANNER="true";
+            BANNER="a";
             shift ;;
         -t|--terse|--silent)
             TERSE=" -terse ";
@@ -236,17 +242,17 @@ while [ $# != 0 ]; do
         *)
             ## - list of input files
             ## - we ensure that no extra option is given later...
-            TOOLATE="1";
+            TOOLATE="a";
             if [ "`dirname $1`" = "." ]; then
                 DOLLARONE="`basename $1 ${EXT}`";
             else
                 DOLLARONE="`dirname $1`/`basename $1 ${EXT}`";
             fi
             FILE="${FILE}${SPACE}${DOLLARONE}${EXT}";
-            if [ ${ALL} -eq 1 ]; then
-                SPACE=",";
-            else
+            if [ -z "${ALL}" ]; then
                 SPACE=" ";
+            else
+                SPACE=",";
             fi;
             shift;;
     esac
@@ -280,23 +286,27 @@ EOF
 EOF
     fi
 else ## we only export entries listed in the given .aux file:
-  if [ ! "x${REPLACEBIB}" = "x1" ]; then
+  if [ -z "${REPLACEBIB}" ]; then
     cat ${FILE} | sed -e "s/bibstyle{.*}/bibstyle{${BST}}/" > ${TMPFILE}.aux;
   else
     cat ${FILE} | sed -e "s/bibstyle{.*}/bibstyle{${BST}}/" \
-      -e "s/bibdata{.*}/bibdata{${EXTRA}${NEWBIB%,}${EXTRABIB}}/" > ${TMPFILE}.aux;
+      -e "s|bibdata{.*}|bibdata{${EXTRA}${NEWBIB%,}${EXTRABIB}}|" > ${TMPFILE}.aux;
   fi
 fi
 if [ -z "$DEBUG" ]; then
     bibtex -min-crossrefs=${CREF} ${TERSE} ${TMPFILE};
-    if [ -e ${FINALFILE} ]; then
+    if [ -e ${FINALFILE} ] && [ -z "${NOSAVE}" ]; then
         mv ${FINALFILE} ${FINALFILE}-save-`date "+%Y.%m.%d:%H.%M.%S"`
     fi
     echo "" > ${FINALFILE}
 else
     echo "bibtex -min-crossrefs=${CREF} ${TERSE} ${TMPFILE};"
+    if [ -e ${FINALFILE} ] && [ -z "${NOSAVE}" ]; then
+        echo "mv ${FINALFILE} ${FINALFILE}-save-`date \"+%Y.%m.%d:%H.%M.%S\"`"
+    fi
+    echo "echo \"\" > ${FINALFILE}"
 fi
-if [ ! "${BANNER}" = "false" ]; then
+if [ ! -z "${BANNER}" ]; then
     ## list of cited entries
     if [ -z "$DEBUG" ]; then
         sed -i -e "s/\\\bibstyle{.*}/\\\bibstyle{expcites}/" ${TMPFILE}.aux
@@ -309,8 +319,8 @@ if [ ! "${BANNER}" = "false" ]; then
             echo -ne "  source files:\t\t${FILETAB}\t\t\t${EXTRABIBTAB}\n" >> ${FINALFILE}; \
                 fi
         cat ${TMPFILE}-cites.bbl >> ${FINALFILE};
-        echo -ne "  bibexport-version:\tv${VERSION} (${VDATE})\n" >> ${FINALFILE};
-        echo -ne "  bibexport-maintainer:\tmarkey(at)lsv.ens-cachan.fr\n" >> ${FINALFILE};
+        #echo -ne "  bibexport-version:\tv${VERSION} (${VDATE})\n" >> ${FINALFILE};
+        #echo -ne "  bibexport-maintainer:\tNicolas Markey <bibexport(at)markey.fr>\n" >> ${FINALFILE};
         sed -i -e "s/}/)/g" ${FINALFILE};
         echo -n -e "}\n\n\n" >> ${FINALFILE};
         rm -f ${TMPFILE}-cites.bbl ${TMPFILE}-cites.aux ${TMPFILE}-cites.blg
