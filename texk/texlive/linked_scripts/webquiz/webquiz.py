@@ -42,7 +42,7 @@ except subprocess.CalledProcessError:
     try:
         metadata = webquiz_util.MetaData(ini_file, debugging=False)
     except (FileNotFoundError, subprocess.CalledProcessError):
-        print('webquiz installation error: unable to find webquiz.ini -> {}'.format(ini_file))
+        print(webquiz_templates.missing_webquiz_ini.format(ini_file))
         sys.exit(1)
 
 # ---------------------------------------------------------------------------------------
@@ -71,7 +71,8 @@ def preprocess_with_pst2pdf(options, quiz_file):
         # pst2pdf converts pspicture environments to svg images and makes a
         # new latex file quiz_file+'-pdf' that includes these
         cmd = 'pst2pdf --svg --imgdir={q_file} {q_file}.tex'.format(q_file=quiz_file)
-        options.run(cmd)
+        # pst2pdf is missing a #!-header so we need shell=True
+        options.run(cmd, shell=True)
     except OSError as err:
         if err.errno == errno.ENOENT:
             webquiz_util.webquiz_error(options.debugging, 'pst2pdf not found. You need to install pst2pdf to use the pst2pdf option', err)
@@ -226,12 +227,16 @@ class WebQuizSettings:
 
         # define user and system rc file and load the ones that exist
 
-        self.system_rcfile = os.path.join(webquiz_util.kpsewhich('-var TEXMFLOCAL'),
-                                           'tex',
-                                           'latex',
-                                           'webquiz',
-                                           'webquizrc'
-        )
+        TEXMFLOCAL=''
+        try:
+            TEXMFLOCAL = webquiz_util.kpsewhich('-var-value TEXMFLOCAL')
+        except subprocess.CalledProcessError:
+            pass
+
+        if TEXMFLOCAL == '':
+            TEXMFLOCAL = webquiz_util.kpsewhich('-var-value TEXMFMAIN')
+
+        self.system_rcfile = os.path.join(TEXMFLOCAL, 'tex', 'latex', 'webquiz', 'webquizrc')
         self.read_webquizrc(self.system_rcfile)
 
         # the user rc file defaults to:
@@ -378,9 +383,8 @@ class WebQuizSettings:
         Print the non-default settings for webquiz from the webquizrc
         '''
         if not hasattr(self, 'rcfile'):
-            print(
-                'Please initialise WebQuiz using the command: webquiz --initialise\n'
-            )
+            print(webquiz_templates.initialise_settings)
+            sys.exit(1)
 
         if setting not in ['all', 'verbose', 'help']:
             setting = setting.replace('-', '_')
@@ -440,7 +444,7 @@ class WebQuizSettings:
             default_root = '/Library/WebServer/Documents/WebQuiz'
             platform = 'Mac OSX'
         elif sys.platform.startswith('win'):
-            default_root = ' c:\inetpub\wwwroot\WebQuiz'
+            default_root = 'c:\inetpub\wwwroot\WebQuiz'
             platform = 'Windows'
         else:
             default_root = '/var/www/html/WebQuiz'
@@ -496,7 +500,7 @@ class WebQuizSettings:
                     # if texdoc failed then try using TEXMFMAIN
                     if webquiz_doc=='':
                         try:
-                            webquiz_doc = os.path.join(webquiz_util.kpsewhich('-var TEXMFMAIN'), 'doc','latex', 'webquiz')
+                            webquiz_doc = os.path.join(webquiz_util.kpsewhich('-var-value TEXMFMAIN'), 'doc','latex', 'webquiz')
                         except subprocess.CalledProcessError:
                             pass
 
@@ -648,7 +652,7 @@ class WebQuizSettings:
         Undocumented feature - useful for debugging initialisation routine
         '''
         webquiz_top = os.path.abspath(webquiz_util.webquiz_file('..'))
-        texmf = webquiz_util.kpsewhich('-var TEXMFMAIN')
+        texmf = webquiz_util.kpsewhich('-var-value TEXMFMAIN')
         for (src, target) in [('scripts', 'scripts'),
                          ('latex', 'tex/latex'),
                          ('doc', 'doc/latex')]:
@@ -665,8 +669,17 @@ class WebQuizSettings:
         try:
 
             # add a link to webquiz.py
-            texbin = os.path.dirname(webquiz_util.shell_command('which pdflatex').split()[-1])
-            os.symlink(os.path.join(texmf,'scripts','webquiz','webquiz.py'), os.path.join(texbin, 'webquiz'))
+            texbin = os.path.dirname(shutil.which('pdflatex'))
+            if sys.platform.startswith('win'):
+                shutil.copyfile(
+                    os.path.join(texmf,'scripts','webquiz','webquiz.bat'), 
+                    os.path.join(texbin, 'webquiz.bat')
+                )
+            else:
+                os.symlink(
+                    os.path.join(texmf,'scripts','webquiz','webquiz.py'), 
+                    os.path.join(texbin, 'webquiz')
+                )
             subprocess.call('mktexlsr', shell=True)
 
         except (FileExistsError,FileNotFoundError):
@@ -677,8 +690,7 @@ class WebQuizSettings:
             sys.exit(1)
 
         except subprocess.CalledProcessError as err:
-            print('There was a problem running mktexlsr')
-            sys.exit(1)
+            self.webquiz_error('There was a problem running mktexlsr', err)
 
     def tex_uninstall(self):
         r'''
@@ -692,7 +704,7 @@ class WebQuizSettings:
         Undocumented feature - useful for debugging initialisation routine
         '''
         webquiz_top = os.path.abspath(webquiz_util.webquiz_file('..'))
-        texmf = webquiz_util.kpsewhich('-var TEXMFMAIN')
+        texmf = webquiz_util.kpsewhich('-var-value TEXMFMAIN')
         for target in ['scripts', 'tex/latex', 'doc/latex']:
             try:
                 shutil.rmtree(os.path.join(texmf, target, 'webquiz'))
@@ -706,8 +718,11 @@ class WebQuizSettings:
 
         try:
             # remove link from texbin to webquiz.py
-            texbin = os.path.dirname(webquiz_util.shell_command('which pdflatex').split()[-1])
-            os.remove(os.path.join(texbin, 'webquiz'))
+            texbin = os.path.dirname(shutil.which('pdflatex'))
+            if sys.platform.startswith('win'):
+                os.remove(os.path.join(texbin, 'webquiz.bat'))
+            else:
+                os.remove(os.path.join(texbin, 'webquiz'))
 
         except (FileExistsError,FileNotFoundError):
             pass
@@ -729,12 +744,16 @@ class WebQuizSettings:
             sys.exit(1)
 
         # remove link to webquiz.py
-        texbin = os.path.dirname(webquiz_util.shell_command('which pdflatex').split()[-1])
-        webquiz = os.path.join(texbin,'webquiz')
+        texbin = os.path.dirname(shutil.which('pdflatex'))
         try:
-            target = os.readlink(webquiz)
-            if target==os.path.join(texmf,'scripts','webquiz','webquiz.py'):
+            if sys.platform.startswith('win'):
+                webquiz = os.path.join(texbin, 'webquiz.bat')
                 os.remove(webquiz)
+            else:
+                webquiz = os.path.join(texbin,'webquiz')
+                target = os.readlink(webquiz)
+                if target==os.path.join(texmf,'scripts','webquiz','webquiz.py'):
+                    os.remove(webquiz)
 
         except (FileExistsError,FileNotFoundError):
             pass
@@ -852,6 +871,7 @@ if __name__ == '__main__':
         settings_parser.add_argument(
             '-i',
             '--initialise',
+            '--initialize',
             action='store_true',
             default=False,
             help='Install web components of webquiz')
@@ -1001,41 +1021,50 @@ if __name__ == '__main__':
         #       - we need to use shell=True because otherwise pst2pdf gives an error
         # options.talk() is a shorthand for letting the user know what is happening
         if options.quiet == 0:
-            options.run = lambda cmd: subprocess.call(cmd, shell=True)
+            options.run = webquiz_util.run
             options.talk = lambda msg: print(msg)
         elif options.quiet == 1:
-            options.run  = lambda cmd: subprocess.call(cmd, shell=True, stdout=open(os.devnull, 'wb'))
+            options.run  = webquiz_util.quiet_run
             options.talk = lambda msg: print(msg)
         else:
-            options.run  = lambda cmd: subprocess.call(cmd, shell=True, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))
+            options.run  = webquiz_util.silent_run
             options.talk = lambda msg: None
 
         # run through the list of quizzes and make them
         for quiz_file in options.quiz_file:
             if len(options.quiz_file) > 1 and options.quiet < 3:
                 print('Making web page for {}'.format(quiz_file))
+
+            quiz_name, ext = os.path.splitext(quiz_file)  # extract filename and extension
             # quiz_file is assumed to be a tex file if no extension is given
-            if not '.' in quiz_file:
-                quiz_file += '.tex'
+            if ext=='':
+                ext = '.tex'
+                quiz_file += ext
+ 
+            # windows likes adding a prefix of '.\\'to filename and this causes havoc with latex
+            if os.path.dirname(quiz_file)=='.':
+                quiz_file = os.path.basename(quiz_file)
+
+            if ext not in ['.tex', '.xml']:
+                    webquiz_util.webquiz_error(True, 'unrecognised file extension {}'.format(ext))
 
             if not os.path.isfile(quiz_file):
-                print('WebQuiz error: cannot read file {}'.format(quiz_file))
+                webquiz_util.webquiz+error(True, 'WebQuiz error: cannot read file {}'.format(quiz_file))
 
-            else:
+            # the quiz name and the quiz_file will be different if pst2pdf is used
+            quiz_name = quiz_file
+            if options.quiet < 2:
+                print('WebQuiz generating web page for {}'.format(quiz_file))
 
-                # the quiz name and the quiz_file will be if pst2pdf is used
-                quiz_name = quiz_file
-                if options.quiet < 2:
-                    print('WebQuiz generating web page for {}'.format(quiz_file))
-
-                # If the pst2podf option is used then we need to preprocess
+            options.pst2pdf = False
+            if ext==".tex":
+                # If the pst2pdf option is used then we need to preprocess
                 # the latex file BEFORE passing it to MakeWebQuiz. Set
                 # options.pst2pdf = True if pst2pdf is given as an option to
                 # the webquiz documentclass
                 with codecs.open(quiz_file, 'r', encoding='utf8') as q_file:
                     doc = q_file.read()
 
-                options.pst2pdf = False
                 try:
                     brac = doc.index(r'\documentclass[') + 15  # start of class options
                     if 'pst2pdf' in [
@@ -1049,46 +1078,46 @@ if __name__ == '__main__':
                 except ValueError:
                     pass
 
-                # the file exists and is readable so make the quiz
-                webquiz_makequiz.MakeWebQuiz(quiz_name, quiz_file, options, settings, metadata)
+            # the file exists and is readable so make the quiz
+            webquiz_makequiz.MakeWebQuiz(quiz_name, quiz_file, options, settings, metadata)
 
-                quiz_name = quiz_name[:quiz_name.index('.')]  # remove the extension
+            quiz_name, ext = os.path.splitext(quiz_name)  # extract filename and extension
 
-                # move the css file into the directory for the quiz
-                css_file = os.path.join(quiz_name, quiz_name + '.css')
-                if os.path.isfile(quiz_name + '.css'):
-                    if os.path.isfile(css_file):
-                        os.remove(css_file)
-                    shutil.move(quiz_name + '.css', css_file)
+            # move the css file into the directory for the quiz
+            css_file = os.path.join(quiz_name, quiz_name + '.css')
+            if os.path.isfile(quiz_name + '.css'):
+                if os.path.isfile(css_file):
+                    os.remove(css_file)
+                shutil.move(quiz_name + '.css', css_file)
 
-                # now clean up unless debugging
-                if not options.debugging:
-                    for ext in ['4ct', '4tc', 'dvi', 'idv', 'lg', 'log',
-                        'ps', 'pdf', 'tmp', 'xml', 'xref'
+            # now clean up unless debugging
+            if not options.debugging:
+                for ext in ['4ct', '4tc', 'dvi', 'idv', 'lg', 'log',
+                    'ps', 'pdf', 'tmp', 'xml', 'xref'
+                ]:
+                    if os.path.isfile(quiz_name + '.' + ext):
+                        os.remove(quiz_name + '.' + ext)
+
+                # files created when using pst2pdf
+                if options.pst2pdf:
+                    for file in glob.glob(quiz_name + '-pdf.*'):
+                        os.remove(file)
+                    for file in glob.glob(quiz_name + '-pdf-fixed.*'):
+                        os.remove(file)
+                    for extention in ['.preamble', '.plog', '-tmp.tex',
+                            '-pst.tex', '-fig.tex'
                     ]:
-                        if os.path.isfile(quiz_name + '.' + ext):
-                            os.remove(quiz_name + '.' + ext)
+                        if os.path.isfile(quiz_name + extention):
+                            os.remove(quiz_name + extention)
+                    if os.path.isdir(os.path.join(quiz_name, quiz_name)):
+                        shutil.rmtree(os.path.join(quiz_name, quiz_name))
 
-                    # files created when using pst2pdf
-                    if options.pst2pdf:
-                        for file in glob.glob(quiz_name + '-pdf.*'):
-                            os.remove(file)
-                        for file in glob.glob(quiz_name + '-pdf-fixed.*'):
-                            os.remove(file)
-                        for extention in ['.preamble', '.plog', '-tmp.tex',
-                                '-pst.tex', '-fig.tex'
-                        ]:
-                            if os.path.isfile(quiz_name + extention):
-                                os.remove(quiz_name + extention)
-                        if os.path.isdir(os.path.join(quiz_name, quiz_name)):
-                            shutil.rmtree(os.path.join(quiz_name, quiz_name))
-
-        if settings.initialise_warning != '':
+        if settings.initialise_warning != '' and not settings.have_initialised:
             print(webquiz_templates.text_initialise_warning)
 
     except Exception as err:
 
-        # there is a small chance that there is an error before we the
+        # there is a small chance that there is an error before the
         # settings.debugging flag has been set
         webquiz_util.webquiz_error(settings.debugging if 'settings' in globals() else True,
             'unknown problem.\n\nIf you think this is a bug please report it by creating an issue at\n    {}\n'
