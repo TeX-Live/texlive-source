@@ -528,7 +528,7 @@ read_papersize_special_code:print_esc("readpapersizespecial");
   end;
 @y
   if font_dir[q]<>dir_default then {Japanese font}
-    begin if cur_val>=256 then {Japanese Character}
+    begin if is_char_kanji(cur_val) then {Japanese Character}
       begin cur_val:=get_jfm_pos(KANJI(cur_val),q);
       i:=orig_char_info(q)(qi(cur_val));
       case m of

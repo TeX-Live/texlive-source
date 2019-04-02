@@ -1,3 +1,8 @@
+2019-04-02  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* eptex.ech: \fontcharwd etc. for Japanese fonts correctly
+	returns a dimension for all kanji codes.
+
 2019-03-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* eptex.ech: Fix \show\savinghyphcodes. (Bug introduced in
