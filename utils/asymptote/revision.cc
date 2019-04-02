@@ -1,1 +1,1 @@
-const char *REVISION="2.48";
+const char *REVISION="2.49";

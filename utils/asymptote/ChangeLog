@@ -1,3 +1,73 @@
+commit c53b4ef0bb51b4c022c580f912bbdfe3f2cb7c0b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 2 10:01:46 2019 -0600
+
+    Update build script.
+
+commit 74dc51a9d28eefcc1d628aa580da443ceed015c9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 2 09:54:01 2019 -0600
+
+    Fix fuzz and soccerball example.
+
+commit 1f92dbaf87bf93635fdb67f83e57268893707cec
+Merge: 211c791b 6fad4a32
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 31 23:48:48 2019 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 211c791b7d64ff6c6c3060519b3a8d151835acc8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 31 13:10:44 2019 -0600
+
+    Update to Boehm gc-8.0.4.
+
+commit 6fad4a32d4b786782504b3368d0aa1ce13fbd4d5
+Merge: 819de76a d1d56093
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 31 10:23:57 2019 -0600
+
+    Merge pull request #92 from mojca/whitespace
+    
+    Convert tabs to spaces in configure.ac.
+
+commit 819de76a7e70a382320efa7d0e3f32ee9255c3f4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 31 10:08:27 2019 -0600
+
+    Remove unused code.
+
+commit 2df557185b5b5b335cc7a87cce3dd379cbfcf79a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 30 10:46:15 2019 -0600
+
+    Fix portablity issues; remove unused code.
+
+commit d1d560934374c253363567c8f36f2694cd3126c7
+Author: Mojca Miklavec <mojca.miklavec.lists@gmail.com>
+Date:   Fri Mar 29 21:21:40 2019 +0100
+
+    Convert tabs to spaces in configure.ac.
+
+commit 404eda801e7f182649a37879c3aa2b7e60b2f143
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 28 13:26:04 2019 -0600
+
+    Address portability issue.
+
+commit 6d26cbff78572fe2cb4236eb57f65d59b6c44f31
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 28 12:53:54 2019 -0600
+
+    Fix portabiliity issues.
+
+commit ecc393f7e8929beced0d903ca07c12262d27fbaf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 27 01:33:28 2019 -0600
+
+    Increment version to 2.49.
+
 commit 54570f91bb95d024cd1ba37e46593f909edf0c62
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Mar 27 00:35:12 2019 -0600

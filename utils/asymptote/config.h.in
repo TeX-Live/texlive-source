@@ -45,6 +45,9 @@
 /* Define to 1 if you have the `fftw3' library (-lfftw3). */
 #undef HAVE_LIBFFTW3
 
+/* Define to 1 if you have the `gccpp' library (-lgccpp). */
+#undef HAVE_LIBGCCPP
+
 /* Define to 1 if you have the `GL' library (-lGL). */
 #undef HAVE_LIBGL
 

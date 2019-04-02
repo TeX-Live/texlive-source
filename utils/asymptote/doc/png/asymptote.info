@@ -1,11 +1,11 @@
 This is asymptote.info, produced by makeinfo version 6.5 from
 asymptote.texi.
 
-This file documents 'Asymptote', version 2.48.
+This file documents 'Asymptote', version 2.49.
 
    <http://asymptote.sourceforge.net>
 
-   Copyright (C) 2004-18 Andy Hammerlindl, John Bowman, and Tom Prince.
+   Copyright (C) 2004-19 Andy Hammerlindl, John Bowman, and Tom Prince.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Lesser General Public License
@@ -22,11 +22,11 @@ File: asymptote.info,  Node: Top,  Next: Description,  Prev: (dir),  Up: (dir)
 Asymptote
 *********
 
-This file documents 'Asymptote', version 2.48.
+This file documents 'Asymptote', version 2.49.
 
    <http://asymptote.sourceforge.net>
 
-   Copyright (C) 2004-18 Andy Hammerlindl, John Bowman, and Tom Prince.
+   Copyright (C) 2004-19 Andy Hammerlindl, John Bowman, and Tom Prince.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Lesser General Public License
@@ -484,9 +484,9 @@ tar -xf asymptote-x.xx.src.tar
 cd asymptote-x.xx
    By default the system version of the Boehm garbage collector will be
 used; if it is old we recommend first putting
-<http://hboehm.info/gc/gc_source/gc-7.4.2.tar.gz>
-<http://www.ivmaisoft.com/_bin/atomic_ops/libatomic_ops-7.4.2.tar.gz> in
-the 'Asymptote' source directory.
+<https://github.com/ivmai/bdwgc/releases/download/v8.0.4/gc-8.0.4.tar.gz>
+<https://www.ivmaisoft.com/_bin/atomic_ops/libatomic_ops-7.6.10.tar.gz>
+in the 'Asymptote' source directory.
 
    On 'UNIX' platforms (other than 'MacOS X'), we recommend using
 version '3.0.0' of the 'freeglut' library.  To compile 'freeglut',
@@ -10119,142 +10119,142 @@ Node: Microsoft Windows13828
 Node: Configuring15032
 Node: Search paths19178
 Node: Compiling from UNIX source20017
-Node: Editing modes23051
-Node: Git25472
-Node: Uninstall25872
-Node: Tutorial26218
-Node: Drawing in batch mode27106
-Node: Drawing in interactive mode27981
-Node: Figure size29013
-Node: Labels30605
-Node: Paths31432
-Ref: unitcircle32047
-Node: Drawing commands33947
-Node: draw35662
-Ref: arrows36844
-Node: fill42093
-Ref: gradient shading43139
-Node: clip47646
-Node: label48233
-Ref: Label48833
-Node: Bezier curves54678
-Node: Programming58575
-Ref: array iteration60328
-Node: Data types60495
-Ref: format71157
-Node: Paths and guides75603
-Ref: circle75857
-Ref: extension85564
-Node: Pens92373
-Ref: fillrule100062
-Ref: basealign100966
-Ref: transparency103800
-Ref: makepen107380
-Ref: overwrite108263
-Node: Transforms109477
-Node: Frames and pictures111309
-Ref: envelope112467
-Ref: size113560
-Ref: unitsize114547
-Ref: shipout115620
-Ref: filltype117971
-Ref: add121143
-Ref: add about122149
-Ref: tex125178
-Node: Files126074
-Ref: cd127061
-Ref: scroll131746
-Node: Variable initializers134664
-Node: Structures137381
-Node: Operators144883
-Node: Arithmetic & logical145197
-Node: Self & prefix operators147568
-Node: User-defined operators148362
-Node: Implicit scaling149275
-Node: Functions149838
-Ref: stack overflow152981
-Node: Default arguments153263
-Node: Named arguments154019
-Node: Rest arguments156589
-Node: Mathematical functions159711
-Node: Arrays164374
-Ref: sort171482
-Ref: tridiagonal174107
-Ref: solve175338
-Node: Slices179477
-Node: Casts183385
-Node: Import185652
-Node: Static190910
-Node: LaTeX usage193803
-Node: Base modules200318
-Node: plain202875
-Node: simplex203549
-Node: math203823
-Node: interpolate206532
-Node: geometry206811
-Node: trembling207405
-Node: stats207674
-Node: patterns207934
-Node: markers208170
-Node: tree210030
-Node: binarytree210215
-Node: drawtree210881
-Node: syzygy211082
-Node: feynman211356
-Node: roundedpath211631
-Node: animation211914
-Ref: animate212335
-Node: embed213452
-Node: slide214407
-Node: MetaPost214748
-Node: unicode215467
-Node: latin1216341
-Node: babel216710
-Node: labelpath216940
-Node: labelpath3217761
-Node: annotate218072
-Node: CAD218542
-Node: graph218853
-Ref: ticks226014
-Ref: pathmarkers239806
-Ref: marker240277
-Ref: markuniform240631
-Ref: errorbars242439
-Ref: automatic scaling246913
-Node: palette258660
-Ref: images258778
-Ref: image262952
-Ref: logimage263472
-Ref: penimage264577
-Ref: penfunctionimage264839
-Node: three265610
-Ref: PostScript3D292628
-Node: obj294366
-Node: graph3294615
-Ref: GaussianSurface299895
-Node: grid3301044
-Node: solids301828
-Node: tube302820
-Node: flowchart305054
-Node: contour309662
-Node: contour3314977
-Node: smoothcontour3315290
-Node: slopefield317011
-Node: ode318500
-Node: Options318757
-Ref: configuration file325049
-Ref: settings325049
-Ref: texengines326292
-Ref: convert326292
-Node: Interactive mode329616
-Ref: history331766
-Node: GUI333072
-Node: GUI installation333623
-Node: GUI usage334315
-Node: PostScript to Asymptote335231
-Node: Help335989
-Node: Debugger337643
-Node: Credits339399
-Node: Index340416
+Node: Editing modes23077
+Node: Git25498
+Node: Uninstall25898
+Node: Tutorial26244
+Node: Drawing in batch mode27132
+Node: Drawing in interactive mode28007
+Node: Figure size29039
+Node: Labels30631
+Node: Paths31458
+Ref: unitcircle32073
+Node: Drawing commands33973
+Node: draw35688
+Ref: arrows36870
+Node: fill42119
+Ref: gradient shading43165
+Node: clip47672
+Node: label48259
+Ref: Label48859
+Node: Bezier curves54704
+Node: Programming58601
+Ref: array iteration60354
+Node: Data types60521
+Ref: format71183
+Node: Paths and guides75629
+Ref: circle75883
+Ref: extension85590
+Node: Pens92399
+Ref: fillrule100088
+Ref: basealign100992
+Ref: transparency103826
+Ref: makepen107406
+Ref: overwrite108289
+Node: Transforms109503
+Node: Frames and pictures111335
+Ref: envelope112493
+Ref: size113586
+Ref: unitsize114573
+Ref: shipout115646
+Ref: filltype117997
+Ref: add121169
+Ref: add about122175
+Ref: tex125204
+Node: Files126100
+Ref: cd127087
+Ref: scroll131772
+Node: Variable initializers134690
+Node: Structures137407
+Node: Operators144909
+Node: Arithmetic & logical145223
+Node: Self & prefix operators147594
+Node: User-defined operators148388
+Node: Implicit scaling149301
+Node: Functions149864
+Ref: stack overflow153007
+Node: Default arguments153289
+Node: Named arguments154045
+Node: Rest arguments156615
+Node: Mathematical functions159737
+Node: Arrays164400
+Ref: sort171508
+Ref: tridiagonal174133
+Ref: solve175364
+Node: Slices179503
+Node: Casts183411
+Node: Import185678
+Node: Static190936
+Node: LaTeX usage193829
+Node: Base modules200344
+Node: plain202901
+Node: simplex203575
+Node: math203849
+Node: interpolate206558
+Node: geometry206837
+Node: trembling207431
+Node: stats207700
+Node: patterns207960
+Node: markers208196
+Node: tree210056
+Node: binarytree210241
+Node: drawtree210907
+Node: syzygy211108
+Node: feynman211382
+Node: roundedpath211657
+Node: animation211940
+Ref: animate212361
+Node: embed213478
+Node: slide214433
+Node: MetaPost214774
+Node: unicode215493
+Node: latin1216367
+Node: babel216736
+Node: labelpath216966
+Node: labelpath3217787
+Node: annotate218098
+Node: CAD218568
+Node: graph218879
+Ref: ticks226040
+Ref: pathmarkers239832
+Ref: marker240303
+Ref: markuniform240657
+Ref: errorbars242465
+Ref: automatic scaling246939
+Node: palette258686
+Ref: images258804
+Ref: image262978
+Ref: logimage263498
+Ref: penimage264603
+Ref: penfunctionimage264865
+Node: three265636
+Ref: PostScript3D292654
+Node: obj294392
+Node: graph3294641
+Ref: GaussianSurface299921
+Node: grid3301070
+Node: solids301854
+Node: tube302846
+Node: flowchart305080
+Node: contour309688
+Node: contour3315003
+Node: smoothcontour3315316
+Node: slopefield317037
+Node: ode318526
+Node: Options318783
+Ref: configuration file325075
+Ref: settings325075
+Ref: texengines326318
+Ref: convert326318
+Node: Interactive mode329642
+Ref: history331792
+Node: GUI333098
+Node: GUI installation333649
+Node: GUI usage334341
+Node: PostScript to Asymptote335257
+Node: Help336015
+Node: Debugger337669
+Node: Credits339425
+Node: Index340442
 
 End Tag Table
