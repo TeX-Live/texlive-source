@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2018 Brian Dunn
 
-printversion = "v0.69"
+printversion = "v0.70"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -388,7 +388,7 @@ function warnlimages ()
     print ("lwarpmk: \"" .. sourcename .. "-images.txt\" does not exist.")
     print ("lwarpmk: Your project does not use SVG math or other lateximages,")
     print ("lwarpmk: or the file has been deleted somehow.")
-    print ("lwarpmk: Use \"lwarpmk html\" to recompile your project")
+    print ("lwarpmk: Use \"lwarpmk html1\" to recompile your project")
     print ("lwarpmk: and recreate \"" .. sourcename .. "-images.txt\".")
     print ("lwarpmk: If your project does not use SVG math or other lateximages,")
     print ("lwarpmk: then \"" .. sourcename .. "-images.txt\" will never exist, and")
@@ -400,8 +400,9 @@ function warnlimagesrecompile ()
 -- Warning if must recompile before creating limages:
     print ("")
     print ("lwarpmk: ===")
+    print ("lwarpmk: Cross-references are not yet correct.")
     print ("lwarpmk: The document must be recompiled before creating the lateximages.")
-    print ("lwarpmk: Enter \"lwarpmk html\" again, then try \"lwarpmk limages\" again.")
+    print ("lwarpmk: Enter \"lwarpmk html1\" again, then try \"lwarpmk limages\" again.")
     print ("lwarpmk: ===")
 end --warnlimagesrecompile
 

@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 50333 2019-03-11 01:55:52Z preining $
+# $Id: tlmgr.pl 50692 2019-04-01 15:01:10Z preining $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 50333 $';
-my $datrev = '$Date: 2019-03-11 02:55:52 +0100 (Mon, 11 Mar 2019) $';
+my $svnrev = '$Revision: 50692 $';
+my $datrev = '$Date: 2019-04-01 17:01:10 +0200 (Mon, 01 Apr 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -6906,6 +6906,12 @@ END_NO_INTERNET
         # TODO should we die here? Probably yes because one of 
         # checksum file or signature file has changed!
         tldie("$prg: verification of checksum for $location failed: $msg\n");
+      } elsif ($ret == $VS_EXPKEYSIG) {
+        # do nothing, try to get new tlpdb and hope sig is better?
+        debug("$prg: good signature bug gpg key expired, continuing anyway!\n");
+      } elsif ($ret == $VS_REVKEYSIG) {
+        # do nothing, try to get new tlpdb and hope sig is better?
+        debug("$prg: good signature but from revoked gpg key, continuing anyway!\n");
       } elsif ($ret == $VS_VERIFIED) {
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
@@ -9763,7 +9769,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 50333 2019-03-11 01:55:52Z preining $
+$Id: tlmgr.pl 50692 2019-04-01 15:01:10Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

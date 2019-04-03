@@ -11,7 +11,7 @@ package require Tk
 catch {rename send {}}
 
 # unix: make sure TL comes first on process searchpath
-# on windows, runscript takes care of this.
+# on windows, a wrapper takes care of this.
 if {$::tcl_platform(platform) ne "windows"} {
   set texbin [file dirname [file normalize [info script]]]
   set savedir [pwd]
@@ -27,18 +27,6 @@ if {$::tcl_platform(platform) ne "windows"} {
   unset texbin
   unset savedir
   unset dirs
-} else {
-  # until we have a better wrapper, just hardcode stuff
-  set texbin [file dirname [file normalize [info script]]]
-  set texbin "$texbin\\..\\..\\..\\bin\\win32"
-  set texbin [file normalize $texbin]
-  set texbin [string map {/ \\} $texbin]
-  set dirs [split $::env(PATH) ";"]
-  if {[lindex $dirs 0] ne $texbin} {
-    set ::env(PATH) "${texbin};$::env(PATH)"
-  }
-  unset texbin
-  unset dirs
 }
 
 # declarations and utilities shared with install-tl-gui.tcl
@@ -49,9 +37,9 @@ source [file join $::instroot "tlpkg" "tltcl" "tltcl.tcl"]
 set ::our_platform [exec -ignorestderr tlmgr print-platform]
 
 # searchpath and locale:
-# windows: most scripts run via [w]runscript, which adjusts the searchpath
+# windows: tlshell runs via a wrapper which adjusts the searchpath
 # for the current process.
-# tlshell.tcl should  be run via a symlink in a directory
+# others: tlshell.tcl should  be run via a symlink in a directory
 # which also contains (a symlink to) kpsewhich.
 # This directory will be prepended to the searchpath.
 # kpsewhich should disentangle symlinks.
@@ -1530,7 +1518,7 @@ proc update_self_q {} {
       [string cat [__ "If update fails, try on a command-line:"] \
          "\ntlmgr update --self\n" \
          [__ "Use an administrative command prompt for an admin install."]]]
-  return [$ans eq ok]
+  return [expr {$ans eq "ok"}]
 }
 
 proc update_tlmgr {} {
