@@ -3,7 +3,7 @@
 
 % ========================================================================
 %
-% Copyright (c) 1993-1998  Paul Vojta
+% Copyright (c) 1993-2019  Paul Vojta
 %
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to
@@ -214,10 +214,29 @@ def
 
 % Get arguments.
 
-shellarguments not
-  {
-    (You must provide arguments to the shell!\n) fatal
-  }
+%
+% shellarguments is renamed as .shellarguments in gs-9.27 (early 2019)
+% The following works for gs-9.27 and gs-9.26 or older ones.
+%
+/.shellarguments where
+{
+  pop
+  .shellarguments not
+    {
+      (You must provide arguments to the shell!\n) fatal
+    }
+  if
+}
+if
+/shellarguments where
+{
+  pop
+  shellarguments not
+    {
+      (You must provide arguments to the shell!\n) fatal
+    }
+  if
+}
 if
 
 /dpi exch cvr def
