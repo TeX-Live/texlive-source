@@ -654,7 +654,7 @@ case 'e':
 
       p += 8;
       while (*p && !isspace((unsigned char)*p)) {
-        if (psfilelen < PSFILESIZ) {
+        if (psfilelen < PSFILESIZ - 1) {
           psfile[psfilelen] = *p;
           psfilelen++;
           p++;

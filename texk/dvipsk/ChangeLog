@@ -1,3 +1,8 @@
+2019-04-05  Karl Berry  <karl@tug.org>
+
+	* dospecial.c (dospecial): off by one with PSFILESIZ.
+	Report from Andy Nguyen of ETH Zurich.
+
 2019-03-30  Karl Berry  <karl@freefriends.org>
 
 	* emspecial.c (bmpgraph): avoid writing after isblack
