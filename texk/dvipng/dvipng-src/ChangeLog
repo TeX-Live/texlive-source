@@ -1,3 +1,12 @@
+2019-04-04  Karl Berry  <karl@freefriends.org>
+
+	* tfm.c (ReadTFM): check for reading outside file bounds.
+	Report from Andy Nguyen of ETH Zurich.
+	
+	* dvi.c (DVIGetCommand): check for (unsigned value) overflow
+	so we don't fail to realloc buffer if needed.
+	Report from Andy Nguyen of ETH Zurich, found using afl-fuzz.
+
 2015-03-01  Jan-Åke Larsson  <jan-ake.larsson@liu.se>
 
 	* RELEASE: Release 1.15
