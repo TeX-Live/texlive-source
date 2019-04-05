@@ -383,6 +383,11 @@ void InitPK(struct font_entry * tfontp)
   tcharptr->length = packet_length;
   tcharptr->pkdata = position;
   tfontp->chr[c]=tcharptr;
+  if (tfontp->fmmap.size
+      < (char *)position-tfontp->fmmap.data + packet_length) {
+    Fatal("file too short (%u) to read past packet_length %u",
+          tfontp->fmmap.size, packet_length);
+  }
   position += packet_length;
   position = skip_specials(position);
   }
