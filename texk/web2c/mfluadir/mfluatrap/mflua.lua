@@ -1,3 +1,7 @@
+print("MFLua version: " .. mflua.MFbuiltin.mflua_version())
+print("MFLua banner:  ".. mflua.MFbuiltin.mflua_banner())
+
+local function PRINTDBG(s) print(tostring(s)) end
 local function PRINTDBG(s) end
 local function chMF(t,k) if t[k] then print(k.." already inserted") os.exit(1) end end 
 
@@ -875,7 +879,6 @@ local function printedges(s,nuline,x_off,y_off)
    -- 
    -- local management of y, xq, xr 
    --
-   --f = mflua.print_specification.outfile1
    index = (0+print_int(MFbuiltin.char_code())) +  (0+print_int(MFbuiltin.char_ext()))*256
    char = chartable[index] or {}
    --print("#xq=".. #xq)
@@ -1237,6 +1240,7 @@ local function print_specification(c,h)
    -- f = mflua.print_specification.outfile1
    -- f:write("\n%%POST START\n".. res .. "\n%%POST END\n")
    --f:close()
+   return res
 end
 mflua.MF.print_specification = print_specification 
 
@@ -1563,7 +1567,7 @@ local function _postprocessing_contour()
    index = (0+print_int(MFbuiltin.char_code())) +  (0+print_int(MFbuiltin.char_ext()))*256
    res = res .. "%% postprocessing contour for " .. index ..";\n"
    res = res .. "path p[];\n"
-   print("CHAR " .. index)
+   --print("\n_postprocessing_contour CHAR " .. index)
    bezier_octant_contour = mflua.do_add_to.bezier_octant_contour[#mflua.do_add_to.bezier_octant_contour]
    
    path_cnt = 1
@@ -1600,7 +1604,7 @@ local function _postprocessing_contour()
    char['contour'] = char['contour'] or {}
    char['contour'][#char['contour']+1] = bezier_octant_contour
    char['res']     =   char['res']  or "" 
-   char['res']     =   char['res']  .. res 
+   char['res']     =   char['res']  .. res ; 
    char['index'] = index
    chartable[index] = char 
   return 0
@@ -1619,16 +1623,7 @@ mflua.do_add_to._postprocessing_contour = _postprocessing_contour
 local function _store_current_cycle(hs) 
    local res, current_cycle 
    res, current_cycle = mflua.do_add_to._get_cycle(hs)
-   --print( mflua_print_path(hs) )
    if res=='cycle' then 
-      -- for i=0,(#current_cycle/3)-1 do 
-      --    local l = current_cycle
-      --    local base = i*3
-      --    local p,c1,c2,q = _circular_list_geti(l,base+1) , _circular_list_geti(l,base+2),_circular_list_geti(l,base+3),_circular_list_geti(l,base+4)    
-      --    print (string.format("%d/%d (%f,%f) .. controls (%f,%f) and (%f,%f) .. (%f,%f) ",(i-1)%3,#current_cycle,
-      -- 				 p[1],p[2],c1[1],c1[2],c2[1],c2[2],q[1],q[2]))
-       
-      -- end  
      local index = (0+print_int(MFbuiltin.char_code())) +  (0+print_int(MFbuiltin.char_ext()))*256
      local char = mflua.chartable[index] or {}
      char['cycle'] = char['cycle'] or  {}
@@ -1649,6 +1644,7 @@ end
 
 local function POST_make_spec_rhs(rhs)
    PRINTDBG("POST_make_spec_rhs")
+   --mflua.do_add_to._store_current_cycle(rhs)
    --print("post rhs MFbuiltin.turning_number=",MFbuiltin.turning_number() ) ;
 end 
 
@@ -1660,7 +1656,8 @@ end
 
 local function POST_make_spec_lhs(lhs)
   PRINTDBG("PRE_make_spec_lhs")
-  print("post lhs MFbuiltin.turning_number=",MFbuiltin.turning_number() ) ;
+  --mflua.do_add_to._store_current_cycle(lhs) 
+  --print("post lhs MFbuiltin.turning_number=",MFbuiltin.turning_number() ) ;
 end 
 
 local function PRE_fill_envelope_rhs(rhs)
@@ -2101,9 +2098,7 @@ mflua.end_program			 = end_program
 mflua.max_recursion_level = 32
 
 
-
 mflua.bit = 7					 -- should be 4 
-mflua.pen = {}					 -- collect bezier curves of the pens
 
 mflua.pi = 2*math.atan2(1,0)
 mflua.print_specification = mflua.print_specification or {}
@@ -2140,9 +2135,7 @@ mflua.mflua_exe = 'mflua'
 mflua.turningnumber_file='mflua_tn'
 mflua.fill_envelope = {}
 mflua.fill_envelope.temp_transition = ""
-mflua.pen = {}
-
-
+mflua.pen = {}					 -- collect bezier curves of the pens
 
 --
 
@@ -2187,6 +2180,7 @@ function mflua.angle(p,q)
       return math.acos(dot(p,q)/(math.sqrt(dot(p,p))*math.sqrt(dot(q,q))))
    end 
 end
+
 -- function mflua.vec(a,w,b1) if b1 == nil then b=w else b = b1 end ; return {b[1]-a[1],b[2]-a[2]} end
 -- mflua.vec(a,b) == mflua.vec(a,'->',b)
 function mflua.round(p)
@@ -2249,13 +2243,11 @@ function mflua.approx_curve_lenght(p,c1,c2,q)
 end
 
 
--- to permit multiple instances of mflua
-if io.open('LOCK1')==nil and io.open('LOCK_ELLIPSE')==nil then 
-   mflua.print_specification.filename  = "envelope.tex"
-   mflua.print_specification.outfile1  = io.open(mflua.print_specification.filename,'w')
-end
-
-
+-- for multiple instances of mflua one can define a LOCK like this 
+-- if io.open('LOCK1')==nil and io.open('LOCK_ELLIPSE')==nil then 
+--    mflua.print_specification.filename  = "envelope.tex"
+--    mflua.print_specification.outfile1  = io.open(mflua.print_specification.filename,'w')
+-- end
 
 
 
@@ -2498,9 +2490,13 @@ tfm.getface =
 
 tfm.printfloat =
    function(d,p)
-      local d,p = tostring(d), tonumber(p) or 6
-      local f = string.format("%%.%df",p)
-      return string.format(f,d)
+      if d then
+       local d,p = d, tonumber(p) or 6
+       local f = string.format("%%.%df",p)
+       return string.format(f,d)
+      else 
+        return tostring(d)
+      end
    end 
 
 tfm.array = {}
@@ -2667,7 +2663,7 @@ tfm.build.all =
       tfm.array.param     = tfm.build.param(1,np,w)
    end
 
-tfm.debug = 1
+tfm.debug = 0
 tfm.printdebug = 
    function()
       if tfm.debug==1 then
@@ -2697,7 +2693,7 @@ tfm.font = {}
 tfm.run=
    function(name)
       local name = name
-      local _print = tfm.printdebug
+      local _print = tfm.printdebug()
       local header    ={}        
       local char_info ={}    
       local width     ={}    
@@ -2813,7 +2809,7 @@ tfm.run=
 	 tfm.chars[current_char].depth  = depth[depth_index]
 	 tfm.chars[current_char].italic = italic[italic_index]
 	 tfm.chars[current_char].tag    = tag
-	 _print(i,string.format("O %o",current_char),string.char(current_char),
+	 _print(string.format("O %o",current_char),string.char(current_char),
 	       'WIDTH='.._pf(width[width_index]), 
 	       'HEIGHT='.._pf(height[height_index]),
 	       'DEPTH='.._pf(depth[depth_index]),
@@ -2824,6 +2820,7 @@ tfm.run=
 	    local kern_program = tfm.dump.kernprogram(remainder,current_char)
 	 end
       end
+
       tfm.font.slant = param[1]
       _print("SLANT=".._pf(tfm.font.slant))
 
@@ -2971,7 +2968,7 @@ do
 
    local function readuntileof()
       if gfdata_index>gfdata_len then 
-	 GF.warning("wrong index")
+	 GF.warning("wrong index: gfdata_index="..tostring(gfdata_index).."> gfdata_len="..tostring(gfdata_len) )
 	 return nil
       end
       local s = sub(gfdata,gfdata_index,gfdata_len)
@@ -3510,12 +3507,14 @@ do
 	 GF.error("error post_post_1 "..pad223)
 	 return error.post_post
       end
-      local s = readuntileof()
-      local ctr223 = rep('\223',len(s))
-      if ctr223 ~= s then
+      if gfdata_index <=gfdata_len then 
+       local s = readuntileof()
+       local ctr223 = rep('\223',len(s))
+        if ctr223 ~= s then
 	 GF.error("error post_post_2 "..pad223)
 	 return error.post_post
-      end
+	end
+      end	 
       chars.GF_format_post = i
       return error.ok
    end

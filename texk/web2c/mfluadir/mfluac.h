@@ -1,6 +1,7 @@
 #ifndef MFLUAC_H
 #define MFLUAC_H
 
+#include <mfluadir/mflua_version.h> 
 extern int mfluabeginprogram(void);
 extern int mfluaPREstartofMF(void);
 extern int mfluaPREmaincontrol(void);

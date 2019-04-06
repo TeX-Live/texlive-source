@@ -454,6 +454,19 @@ static int priv_mfweb_LUAGLOBALGET_boundary_char(lua_State *L)
   return 1;
 }
 
+static int priv_mflua_version(lua_State *L)
+{
+  lua_pushstring(L,MFLUA_VERSION);
+  return 1;
+}
+
+static int priv_mflua_banner(lua_State *L)
+{
+  lua_pushstring(L,BANNER);
+  return 1;
+}
+
+
 
 
 /**************************************************************/
@@ -496,6 +509,8 @@ static const struct luaL_Reg MFbuiltin_l[] = {
   {"turning_check", priv_mfweb_LUAGLOBALGET_turning_check},
   {"boundary_char", priv_mfweb_LUAGLOBALGET_boundary_char},
   {"turning_number", priv_mfweb_LUAGLOBALGET_turning_number},
+  {"mflua_version",priv_mflua_version},
+  {"mflua_banner",priv_mflua_banner},
   {NULL, NULL}                /* sentinel */
 };
 
