@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 49485 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2018-12-23 16:28:08 +0100 (Sun, 23 Dec 2018) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 50675 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2019-03-31 21:31:37 +0200 (Sun, 31 Mar 2019) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -642,7 +642,7 @@ local scripts4tlperl = {
   ['fmtutil-sys'] = true, 
 }
 local try_extern_perl = (kpse.var_value('TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL') == '1') and 
-                        not (guimode or is_restricted_progname or scripts4tlperl[progname])
+                        not (is_restricted_progname or scripts4tlperl[progname])
 local PERLEXE = try_extern_perl and search_path('perl.exe', PATH)
 local extperl_warn
 if not PERLEXE then

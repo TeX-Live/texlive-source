@@ -29,8 +29,9 @@ if {$::tcl_platform(platform) ne "windows"} {
   unset dirs
 }
 
-# declarations and utilities shared with install-tl-gui.tcl
 set ::instroot [exec kpsewhich -var-value=TEXMFROOT]
+
+# declarations and utilities shared with install-tl-gui.tcl
 source [file join $::instroot "tlpkg" "tltcl" "tltcl.tcl"]
 
 # now is a good time to ask tlmgr for the _TL_ name of our platform
@@ -216,6 +217,9 @@ proc selective_dis_enable {} {
   } elseif $::need_update_tlmgr {
     foreach b [list .mrk_inst .mrk_upd] {
       $b state disabled
+    }
+    if {$::tcl_platform(platform) eq "windows"} {
+      .upd_all state disabled
     }
   } elseif {!$::need_update_tlmgr} {
     .upd_tlmgr state disabled
@@ -1513,12 +1517,16 @@ proc restore_backups_dialog {} {
 
 ##### package-related #####
 
-proc update_self_q {} {
-  set ans [tk_messageBox -type okcancel -icon info -message \
-      [string cat [__ "If update fails, try on a command-line:"] \
-         "\ntlmgr update --self\n" \
-         [__ "Use an administrative command prompt for an admin install."]]]
-  return [expr {$ans eq "ok"}]
+proc update_self_w32 {} {
+  if $::multiuser {
+    set mess \
+        [__ "Close this shell and run in an administrative command-prompt:"]
+  } else {
+    set mess [__ "Close this shell and run in a command-prompt:"]
+  }
+  set mess [string cat $mess "\n\ntlmgr update --self"]
+  tk_messageBox -message $mess
+  return
 }
 
 proc update_tlmgr {} {
@@ -1526,7 +1534,10 @@ proc update_tlmgr {} {
     tk_messageBox -message [__ "Nothing to do!"]
     return
   }
-  if {$::tcl_platform(platform) eq "windows" && ! [update_self_q]} return
+  if {$::tcl_platform(platform) eq "windows"} {
+    update_self_w32
+    return
+  }
   run_cmd "update --self" 1
   vwait ::done_waiting
   # tlmgr restarts itself automatically
@@ -1539,6 +1550,9 @@ proc update_tlmgr {} {
 proc update_all {} {
   set updated_tlmgr 0
   if $::need_update_tlmgr {
+    if {$::tcl_platform(platform) eq "windows"} {
+      return ; # just to be sure; 'update all' button should be disabled
+    }
     run_cmd "update --self" 1
     vwait ::done_waiting
     # tlmgr restarts itself automatically
@@ -2091,6 +2105,11 @@ proc populate_main {} {
 
   # right frame
   ppack [ttk::frame .topfr] -in .topf -side right -anchor ne
+  if {$::tcl_platform(platform) eq "windows"} {
+    pack [ttk::label .topfr.ladmin] -side top -anchor e
+  }
+  pack [ttk::label .topfr.lroot] -side top -anchor e
+  .topfr.lroot configure -text [__ "Root at %s" $::instroot]
   pack [ttk::label .topfr.linfra] -side top -anchor e
   pack [ttk::label .topfr.lshell] -side top -anchor e
 
@@ -2284,7 +2303,24 @@ proc initialize {} {
 
   populate_main
 
+  # testing writablilty earlier led to sizing problems
+  if {! [file writable $::instroot]} {
+    set ans [tk_messageBox -type yesno -icon warning -message \
+         [__ "%s is not writable. You can probably not do much.
+  Are you sure you want to continue?" $::instroot]]
+    if {$ans ne "yes"} {exit}
+  }
+
   start_tlmgr
+  if {$::tcl_platform(platform) eq "windows"} {
+    run_cmd_waiting "option multiuser"
+    set ::multiuser 0
+    foreach l $::out_log {
+      if [regexp {^\s*multiuser\s+([01])\s*$} $l d ::multiuser] break
+    }
+    .topfr.ladmin configure -text \
+        [expr {$::multiuser ? [__ "Multi-user"] : [__ "Single-user"]}]
+  }
   get_repos_from_tlmgr
   .topfl.lrepos configure -text [print_repos]
   get_packages_info_local
