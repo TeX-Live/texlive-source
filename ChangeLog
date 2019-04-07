@@ -1,3 +1,7 @@
+2019-04-07  Karl Berry  <karl@freefriends.org>
+
+	* tardate.ac (tex_live_tardate): let's hope for 2019-04-07.
+
 2018-10-02  Karl Berry  <karl@tug.org>
 
 	* Build: TL_MAKE_VERBOSE=VERBOSE=1 by default,

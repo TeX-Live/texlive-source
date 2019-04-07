@@ -1,3 +1,7 @@
+2019-04-07  Karl Berry  <karl@freefriends.org>
+
+	* TeX Live 2019.
+
 2019-03-11  Karl Berry  <karl@tug.org>
 
 	* ac/web2c.ac (kpse_tex_progs) <luatex53>: remove.
