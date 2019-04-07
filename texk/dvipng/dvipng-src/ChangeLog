@@ -1,10 +1,8 @@
-2019-04-05  Karl Berry  <karl@freefriends.org>
+2019-04-06  Jan-Åke Larsson  <jan-ake.larsson@liu.se>
 
 	* pk.c (InitPK): check for packet_length reading outside file bounds.
 	Report from Andy Nguyen of ETH Zurich.
 	
-2019-04-04  Karl Berry  <karl@freefriends.org>
-
 	* tfm.c (ReadTFM): check for reading outside file bounds.
 	Report from Andy Nguyen of ETH Zurich.
 	
