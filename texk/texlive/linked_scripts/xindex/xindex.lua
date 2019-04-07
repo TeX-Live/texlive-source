@@ -8,7 +8,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.09
+ local version = 0.10
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -43,9 +43,10 @@ local args = require ('xindex-lapp') [[
     -c,--config (default cfg)
     -e,--escapechar (default ")
     -n,--noheadings 
+    -a,--no_casesensitive
     -o,--output (default "")
     -l,--language (default en)
-    -p,--prefix  (default "")
+    -p,--prefix (default L)
     <input> (string)
 ]]
 
@@ -170,6 +171,13 @@ index_header = indexheader[language]
 if vlevel > 0 then for i=1,#index_header do writeLog(2,index_header[i].."\n",1) end end
 page_folium = folium[language]
 
+
+no_caseSensitive = args["no_casesensitive"]
+if no_caseSensitive then
+  writeLog(1,"Sorting will be no case sensitive\n",1)
+else
+  writeLog(1,"Sorting will be case sensitive\n",1)
+end
 
 no_headings = args["noheadings"]
 if no_headings then
