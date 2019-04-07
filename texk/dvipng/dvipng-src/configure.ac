@@ -23,7 +23,7 @@
 #************************************************************************
 
 # Process this file with autoconf to produce a configure script.
-AC_INIT([dvipng], [1.15], [dvipng@nongnu.org])
+AC_INIT([dvipng], [1.16], [dvipng@nongnu.org])
 AC_CONFIG_SRCDIR([dvipng.c])
 
 AC_ARG_ENABLE(debug,
@@ -67,7 +67,8 @@ AC_CHECK_LIB([png], [png_read_image],,
              [AC_MSG_ERROR([cannot find/use libpng])])
 AC_CHECK_LIB([gd], [gdImageCreate],,
              [AC_MSG_ERROR([cannot find/use libgd
-This drawing library can be downloaded at http://www.boutell.com/gd])])
+This drawing library can be downloaded at
+https://bitbucket.org/libgd/gd-libgd/downloads])])
 AC_CHECK_LIB([kpathsea], [kpse_set_program_name],,
              AC_MSG_ERROR([cannot find/use libkpathsea]))
 
@@ -78,7 +79,8 @@ AC_CHECK_HEADERS([gd.h png.h kpathsea/kpathsea.h],,
 AC_CHECK_HEADERS([libgen.h])
 PSFONTS_O=""
 AC_SUBST(PSFONTS_O)
-AC_CHECK_FT2(,[CFLAGS="$FT2_CFLAGS $CFLAGS"
+PKG_CHECK_MODULES([FT2], [freetype2 >= 6.1.0],
+	[CFLAGS="$FT2_CFLAGS $CFLAGS"
 	LIBS="$FT2_LIBS $LIBS"
 	PSFONTS_O="sfd.o ft.o enc.o fontmap.o tfm.o"
 	AC_DEFINE(HAVE_FT2, 1, [Define to 1 if you have freetype2])
@@ -122,7 +124,7 @@ AC_FUNC_MMAP
 # AC_FUNC_REALLOC
 AC_FUNC_STRTOD
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([dup2 memset munmap pow putenv strchr strrchr strtol strstr])
+AC_CHECK_FUNCS([dup2 memset munmap pow putenv strchr strrchr strtol strstr strncasecmp])
 if test "$enable_timing" = "yes"; then
   AC_CHECK_FUNCS([ftime gettimeofday])
 fi
@@ -132,6 +134,7 @@ if test "$ac_cv_func_gdImageGif" = "yes"; then
 else
    INSTALL_BIN_TARGET="install-dvipng"
 fi
+AC_CHECK_FUNCS([texlive_gs_init])
 AC_SUBST(INSTALL_BIN_TARGET)
 
 # Documentation-related checks
@@ -212,6 +215,7 @@ AC_MSG_RESULT([
      (dvigif):                              $ac_cv_func_gdImageGif
    FreeType font rendering available:       $ac_have_freetype2
    Support for subfonts (CJK-LaTeX):        $ac_have_freetype2
+   Building within TeX Live:                $ac_cv_func_texlive_gs_init
 ])
 
 AC_CONFIG_HEADER([config.h])

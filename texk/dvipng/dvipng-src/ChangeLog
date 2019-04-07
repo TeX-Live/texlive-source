@@ -1,14 +1,39 @@
 2019-04-06  Jan-흆e Larsson  <jan-ake.larsson@liu.se>
 
-	* pk.c (InitPK): check for packet_length reading outside file bounds.
-	Report from Andy Nguyen of ETH Zurich.
-	
-	* tfm.c (ReadTFM): check for reading outside file bounds.
-	Report from Andy Nguyen of ETH Zurich.
-	
-	* dvi.c (DVIGetCommand): check for (unsigned value) overflow
-	so we don't fail to realloc buffer if needed.
-	Report from Andy Nguyen of ETH Zurich, found using afl-fuzz.
+    Release 1.16
+
+2019-04-06  Jan-흆e Larsson  <jan-ake.larsson@liu.se>
+
+    Check for a possible integer addition overflow
+    Check bounds for mmap access
+    Update copyright notice
+    Check bounds for mmap access
+    Update copyright notice
+
+2019-02-26  Jan-흆e Larsson  <jan-ake.larsson@liu.se>
+
+    Add sentence on disabling Freetype for identical output on different platforms.
+    Amend FT2 test, move remaining local scripts to acinclude.m4, regenerate aclocal.m4
+
+2015-03-28  Jan-흆e Larsson  <jan-ake.larsson@liu.se>
+
+    Add const where needed
+    Don't re-define pipe and snprintf
+    Test for and use texlive_gs_init()
+    Use WIN32 _spawnlp
+    Use char* in debug printout calculations
+    Don't use basename, ignore case, and use correct directory delimiter
+
+2015-03-05  Jan-흆e Larsson  <jan-ake.larsson@liu.se>
+
+    Change libgd download address
+
+2015-03-02  Jan-흆e Larsson  <jan-ake.larsson@liu.se>
+
+    Remove datarootdir configure warning, adjust distclean target
+    Remove texi2pod.pl, we only use that for building the man page
+    Remove cvs remnants
+    Adjust distclean target
 
 2015-03-01  Jan-흆e Larsson  <jan-ake.larsson@liu.se>
 

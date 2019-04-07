@@ -1,4 +1,4 @@
-This is dvipng.info, produced by makeinfo version 6.3 from dvipng.texi.
+This is dvipng.info, produced by makeinfo version 6.6 from dvipng.texi.
 
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
@@ -15,7 +15,7 @@ dvipng
 This manual documents dvipng, a program to translate a DVI (DeVice
 Independent) file into PNG (Portable Network Graphics).
 
-   This file documents dvipng version 1.15
+   This file documents dvipng version 1.16
 
    Corrections or perhaps rewrites of sections are _very welcome_.
 
@@ -113,11 +113,11 @@ File: dvipng.info,  Node: Prerequisites,  Next: Configure,  Up: Installation
    * The GD Graphics Draw library, libgd
 
      The drawing library 'libgd' is necessary, and is downloadable at
-     <http://www.boutell.com/gd>, and there are binary packages for most
-     operating systems from their respective distributors.  In any case,
-     the latest version of the library installs using 'autoconf' so it
-     should not be difficult for you to install it from source, and then
-     proceed with installing dvipng.
+     <https://bitbucket.org/libgd/gd-libgd/downloads>, and there are
+     binary packages for most operating systems from their respective
+     distributors.  In any case, the library installs using 'autoconf'
+     so it should not be difficult for you to install it from source,
+     and then proceed with installing dvipng.
 
    * The path-searching library kpathsea
 
@@ -315,7 +315,7 @@ File: dvipng.info,  Node: Option summary,  Next: Option details,  Up: Command-li
 Here is a handy summary of the options; it is printed out when you run
 dvipng with no arguments or with the standard '--help' option.
 
-     This is ./dvipng (TeX Live) 1.15 Copyright 2002-2015 Jan-Ake Larsson
+     This is ./dvipng 1.16 Copyright 2002-2015, 2019 Jan-Ake Larsson
 
      Usage: ./dvipng [OPTION]... FILENAME[.dvi]
      Options are chosen to be similar to dvips' options where possible:
@@ -472,7 +472,11 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
      PostScript versions of Computer Modern installed, there will be no
      need to generate bitmapped (PK) variants on disk of these.  Then,
      you can render images at different (and unusual) resolutions
-     without cluttering the disk with lots of bitmapped fonts.
+     without cluttering the disk with lots of bitmapped fonts.  One
+     reason to disable FreeType font rendering would be to generate
+     identical output on different platforms, since FreeType uses the
+     native renderer and therefore can give slightly different output on
+     each platform.
 
 '--gamma NUM'
      Control the interpolation of colors in the greyscale anti-aliasing
@@ -958,7 +962,7 @@ Bernhard Simon, Bob McElrath, Georg Schwarz, Jason Farmer, Brian V.
 Smith, Samuel Hathaway, Thomas R. Shemanske, Stephen Gibson, Christian
 Ridderstro"m, Ezra Peisach, William H Wheeler, Thomas Klausner, Harald
 Koenig, Adrian Bunk, Kevin Smith, Jason Riedy, Wolfram Krause, Reinhard
-Kotucha, Takeshi Abe, and Waldeck Schutzer.
+Kotucha, Takeshi Abe, Waldeck Schutzer, and Andy Nguyen.
 
 
 File: dvipng.info,  Node: Copying,  Next: Index,  Prev: Credits,  Up: Top
@@ -982,7 +986,7 @@ License along with this program.  If not, see
 
 
 
-Copyright (C) 2002-2015 Jan-AAke Larsson
+Copyright (C) 2002-2015, 2019 Jan-AAke Larsson
 
 
 File: dvipng.info,  Node: Index,  Prev: Copying,  Up: Top
@@ -993,78 +997,78 @@ Index
  [index ]
 * Menu:
 
-* -dSAFER:                               Option details.      (line 163)
-* absolute page number, and -l:          Option details.      (line 137)
-* absolute page number, and -p:          Option details.      (line 190)
-* antialiasing levels, number of:        Option details.      (line 243)
+* -dSAFER:                               Option details.      (line 167)
+* absolute page number, and -l:          Option details.      (line 141)
+* absolute page number, and -p:          Option details.      (line 194)
+* antialiasing levels, number of:        Option details.      (line 247)
 * background color (option):             Option details.      (line  40)
 * base resolution, setting:              Option details.      (line  33)
 * baseline reporting:                    Option details.      (line  76)
-* baseline reporting <1>:                Option details.      (line 129)
+* baseline reporting <1>:                Option details.      (line 133)
 * color specifications:                  Color specifications.
                                                               (line   6)
 * command-line options:                  Command-line options.
                                                               (line   6)
 * compilation:                           Installation.        (line   6)
-* compression:                           Option details.      (line 295)
+* compression:                           Option details.      (line 299)
 * configuration, of dvipng:              Installation.        (line   6)
-* dark fonts:                            Option details.      (line 116)
+* dark fonts:                            Option details.      (line 120)
 * debugging:                             Option details.      (line  54)
 * debugging <1>:                         Diagnosing problems. (line   6)
 * depth reporting:                       Option details.      (line  76)
-* exit on erroneous images:              Option details.      (line 254)
-* first page printed:                    Option details.      (line 190)
+* exit on erroneous images:              Option details.      (line 258)
+* first page printed:                    Option details.      (line 194)
 * follow mode:                           Option details.      (line  97)
-* font generation, avoiding:             Option details.      (line 155)
-* forcing palette output:                Option details.      (line 199)
+* font generation, avoiding:             Option details.      (line 159)
+* forcing palette output:                Option details.      (line 203)
 * foreground color (option):             Option details.      (line  91)
 * FreeType font rendering:               Option details.      (line 105)
-* fuzzy images:                          Option details.      (line 116)
-* gamma:                                 Option details.      (line 116)
-* GhostScript and -dSAFER:               Option details.      (line 163)
-* GhostScript, turning off:              Option details.      (line 159)
-* GIF image format:                      Option details.      (line 122)
-* height reporting:                      Option details.      (line 129)
+* fuzzy images:                          Option details.      (line 120)
+* gamma:                                 Option details.      (line 120)
+* GhostScript and -dSAFER:               Option details.      (line 167)
+* GhostScript, turning off:              Option details.      (line 163)
+* GIF image format:                      Option details.      (line 126)
+* height reporting:                      Option details.      (line 133)
 * installation, of dvipng:               Installation.        (line   6)
 * invoking dvipng:                       Basic usage.         (line   6)
-* last page printed:                     Option details.      (line 137)
-* light fonts:                           Option details.      (line 116)
-* magnification, overriding DVI:         Option details.      (line 285)
-* Metafont mode, specifying:             Option details.      (line 146)
-* mktexpk, avoiding:                     Option details.      (line 155)
-* mode name, specifying:                 Option details.      (line 146)
-* no erroneous images:                   Option details.      (line 208)
-* offset pages:                          Option details.      (line 184)
+* last page printed:                     Option details.      (line 141)
+* light fonts:                           Option details.      (line 120)
+* magnification, overriding DVI:         Option details.      (line 289)
+* Metafont mode, specifying:             Option details.      (line 150)
+* mktexpk, avoiding:                     Option details.      (line 159)
+* mode name, specifying:                 Option details.      (line 150)
+* no erroneous images:                   Option details.      (line 212)
+* offset pages:                          Option details.      (line 188)
 * option, details of:                    Option details.      (line   6)
 * options, dvipng:                       Command-line options.
                                                               (line   6)
 * options, reading from standard input:  Option details.      (line  11)
 * options, summary:                      Option summary.      (line   6)
 * output resolution, setting:            Option details.      (line  60)
-* output, redirecting:                   Option details.      (line 177)
-* page range:                            Option details.      (line 221)
-* page, first printed:                   Option details.      (line 190)
-* page, last printed:                    Option details.      (line 137)
-* physical page number, and -l:          Option details.      (line 137)
-* physical page number, and -p:          Option details.      (line 190)
-* PNG image format:                      Option details.      (line 217)
+* output, redirecting:                   Option details.      (line 181)
+* page range:                            Option details.      (line 225)
+* page, first printed:                   Option details.      (line 194)
+* page, last printed:                    Option details.      (line 141)
+* physical page number, and -l:          Option details.      (line 141)
+* physical page number, and -p:          Option details.      (line 194)
+* PNG image format:                      Option details.      (line 221)
 * PostScript inclusion problems:         Encapsulated PostScript.
                                                               (line  21)
 * PostScript, turning off raw PostScript specials: Option details.
-                                                              (line 171)
+                                                              (line 175)
 * problems:                              Diagnosing problems. (line   6)
-* quality:                               Option details.      (line 243)
-* quiet operation:                       Option details.      (line 239)
-* reverse pagination:                    Option details.      (line 250)
-* silent operation:                      Option details.      (line 239)
+* quality:                               Option details.      (line 247)
+* quiet operation:                       Option details.      (line 243)
+* reverse pagination:                    Option details.      (line 254)
+* silent operation:                      Option details.      (line 243)
 * standard input, reading options from:  Option details.      (line  11)
-* standard output, output to:            Option details.      (line 177)
+* standard output, output to:            Option details.      (line 181)
 * transparent border fallback color:     Option details.      (line  23)
 * transparent border width:              Option details.      (line  23)
 * trouble:                               Diagnosing problems. (line   6)
-* truecolor output:                      Option details.      (line 271)
-* warnings, suppressing:                 Option details.      (line 239)
-* width reporting:                       Option details.      (line 282)
+* truecolor output:                      Option details.      (line 275)
+* warnings, suppressing:                 Option details.      (line 243)
+* width reporting:                       Option details.      (line 286)
 
 
 
@@ -1073,26 +1077,26 @@ Node: Top296
 Node: Introduction1191
 Node: Installation3436
 Node: Prerequisites3783
-Node: Configure5823
-Node: Build/install7870
-Node: Installation outside the texmf tree8338
-Node: Advice for non-privileged users9048
-Node: Basic usage10059
-Node: Command-line options11203
-Node: Option summary11626
-Node: Option details14000
-Node: Graphics28938
-Node: Encapsulated PostScript29693
-Node: Bitmapped graphics31043
-Node: Raw PostScript32271
-Node: Color34524
-Node: Color specifications34913
-Node: Color specials36016
-Node: Diagnosing problems37433
-Node: Contact information37917
-Node: Debug options38645
-Node: Credits39634
-Node: Copying40840
-Node: Index41621
+Node: Configure5822
+Node: Build/install7869
+Node: Installation outside the texmf tree8337
+Node: Advice for non-privileged users9047
+Node: Basic usage10058
+Node: Command-line options11202
+Node: Option summary11625
+Node: Option details13994
+Node: Graphics29168
+Node: Encapsulated PostScript29923
+Node: Bitmapped graphics31273
+Node: Raw PostScript32501
+Node: Color34754
+Node: Color specifications35143
+Node: Color specials36246
+Node: Diagnosing problems37663
+Node: Contact information38147
+Node: Debug options38875
+Node: Credits39864
+Node: Copying41083
+Node: Index41870
 
 End Tag Table

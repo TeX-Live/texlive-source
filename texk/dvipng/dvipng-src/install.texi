@@ -28,11 +28,11 @@ Installing dvipng should be simple: merely @code{./configure},
 @item The GD Graphics Draw library, libgd
 
 The drawing library @samp{libgd} is necessary, and is downloadable at
-@uref{http://www.boutell.com/gd}, and there are binary packages for
-most operating systems from their respective distributors. In any
-case, the latest version of the library installs using @samp{autoconf}
-so it should not be difficult for you to install it from source, and
-then proceed with installing dvipng.
+@uref{https://bitbucket.org/libgd/gd-libgd/downloads}, and there are
+binary packages for most operating systems from their respective
+distributors. In any case, the library installs using @samp{autoconf} so
+it should not be difficult for you to install it from source, and then
+proceed with installing dvipng.
 
 @item The path-searching library kpathsea
 
@@ -190,5 +190,5 @@ This program is released under the GNU Lesser General Public License
 version 3, see the COPYING file in the dvipng distribution or
 @url{http://www.gnu.org/licenses/}.
 
-Copyright @copyright{} 2002-2015 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2015, 2019 Jan-@AA{}ke Larsson
 @end ifset

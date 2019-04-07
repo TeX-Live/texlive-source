@@ -1,4 +1,4 @@
-This is ./dvipng (TeX Live) 1.15 Copyright 2002-2015 Jan-Ake Larsson
+This is ./dvipng 1.16 Copyright 2002-2015, 2019 Jan-Ake Larsson
 
 Usage: ./dvipng [OPTION]... FILENAME[.dvi]
 Options are chosen to be similar to dvips' options where possible:

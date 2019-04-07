@@ -9,8 +9,8 @@ dvipng [options] [filename] -
 @c man end
 @end ifset
 
-@set version 1.15
-@set month-year February 2015
+@set version 1.16
+@set month-year April 2019
 
 @c Put everything in one index (arbitrarily chosen to be the concept index).
 @syncodeindex fn cp
@@ -39,7 +39,7 @@ dvipng [options] [filename] -
 @author by Jan-@AA{}ke Larsson.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2002-2015 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2015, 2019 Jan-@AA{}ke Larsson
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -346,7 +346,10 @@ for rendering the fonts. If you have PostScript versions of Computer
 Modern installed, there will be no need to generate bitmapped (PK)
 variants on disk of these. Then, you can render images at different (and
 unusual) resolutions without cluttering the disk with lots of bitmapped
-fonts.
+fonts. 
+One reason to disable FreeType font rendering would be to generate 
+identical output on different platforms, since FreeType uses the native 
+renderer and therefore can give slightly different output on each platform.
 
 @item --gamma @var{num}
 @cindex gamma
@@ -934,8 +937,8 @@ Tollak Munkejord, James Longstreet, Bernhard Simon, Bob McElrath,
 Georg Schwarz, Jason Farmer, Brian V. Smith, Samuel Hathaway, Thomas
 R. Shemanske, Stephen Gibson, Christian Ridderstr@"om, Ezra Peisach,
 William H Wheeler, Thomas Klausner, Harald Koenig, Adrian Bunk, Kevin
-Smith, Jason Riedy, Wolfram Krause, Reinhard Kotucha, Takeshi Abe, and
-Waldeck Schutzer.
+Smith, Jason Riedy, Wolfram Krause, Reinhard Kotucha, Takeshi Abe, 
+Waldeck Schutzer, and Andy Nguyen.
 
 @ifset man
 @c man begin NOTES
@@ -949,7 +952,7 @@ This program is released under the GNU Lesser General Public License
 version 3, see the COPYING file in the dvipng distribution or
 @url{http://www.gnu.org/licenses/gpl.html}.
 
-Copyright @copyright{} 2002-2015 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2015, 2019 Jan-@AA{}ke Larsson
 @c man end
 @end ifset
 
@@ -972,7 +975,7 @@ License along with this program. If not, see
 
 @sp 2
 @noindent
-Copyright @copyright{} 2002-2015 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2015, 2019 Jan-@AA{}ke Larsson
 
 @node Index
 @unnumbered Index

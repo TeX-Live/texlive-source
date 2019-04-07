@@ -1,5 +1,6 @@
 dnl
-dnl   Copyright (C) 2013-2015 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2016-2019 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2013-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -8,4 +9,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current dvipng version
-m4_define([dvipng_version], [1.15])
+m4_define([dvipng_version], [1.16])
