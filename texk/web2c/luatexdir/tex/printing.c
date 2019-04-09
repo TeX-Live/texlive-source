@@ -416,7 +416,11 @@ void tprint(const char *sss)
 {
     char *buffer = NULL;
     int i = 0;
-    int newlinechar = new_line_char_par;
+    int newlinechar;
+    if (lua_only == 1)
+        newlinechar = 10;
+    else
+        newlinechar = new_line_char_par;
     int dolog = 0;
     int doterm = 0;
     switch (selector) {
