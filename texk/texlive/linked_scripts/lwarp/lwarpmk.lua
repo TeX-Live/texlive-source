@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2018 Brian Dunn
 
-printversion = "v0.70"
+printversion = "v0.71"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -78,6 +78,20 @@ function cvalueerror ( line, linenum , cvalue )
 --    printconf () ;
     os.exit(1) ;
 end
+
+function printhowtorecompile ()
+-- Tells the user how to recompile to regenerate the configuration files.
+    print ("lwarpmk: The configuration files lwarpmk.conf and "..sourcename..".lwarpmkconf" )
+    print ("lwarpmk:   must be updated.  To do so, recompile" )
+    print ("lwarpmk:   " , sourcename..".tex" )
+    if ( printlatexcmd == "" ) then
+        print ("lwarpmk:   using xe/lua/pdflatex," )
+    else
+        print ("lwarpmk:   using the command:")
+        print ("lwarpmk:   " , printlatexcmd )
+    end
+    print ("lwarpmk:   then use lwarpmk again.")
+end -- printhowtorecompile
 
 function ignoreconf ()
 -- Global argument index
@@ -240,19 +254,14 @@ end --- for Windows
 if ( (package.config:sub(1,1)) ~= dirslash ) then
     print ("lwarpmk: ===")
     print ("lwarpmk: It appears that lwarpmk.conf is for a different operating system." )
-    print ("lwarpmk: To adjust lwarpmk.conf for the current operating system," )
-    print ("lwarpmk:   recompile the original document using xe/lua/pdflatex." )
-    print ("lwarpmk: ")
-    print ("lwarpmk: lwarpmk shall attempt to continue...")
+    printhowtorecompile ()
     print ("lwarpmk: ===")
+    os.exit(1)
 end
 -- Error if the configuration file's version is not current:
 if ( confversion ~= requiredconfversion ) then
     print ("lwarpmk: ===")
-    print ("lwarpmk: The configuration files lwarpmk.conf and "..sourcename..".lwarpmkconf" )
-    print ("lwarpmk:   must be updated.  To update the configuration files," )
-    print ("lwarpmk:   recompile "..sourcename..".tex using xe/lua/pdflatex," )
-    print ("lwarpmk:   then use lwarpmk again.")
+    printhowtorecompile ()
     print ("lwarpmk: ===")
     os.exit(1)
 end
@@ -556,7 +565,7 @@ function createlateximages ()
 --
 -- See if the document must be recompiled first:
 checklimages ()
--- See if the print version exists:
+-- See if the HTML version exists:
 checkhtmlpdfexists ()
 -- Attempt to create the lateximages:
 print ("lwarpmk: Creating lateximages.")
