@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2013 Marc Penninga.
+    Copyright (C) 2005-2019 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -34,12 +34,24 @@ use strict;
 use warnings;
 
 use integer;
+use Getopt::Long ();
 use List::Util @List::Util::EXPORT_OK;
 use Pod::Usage;
 
-our ($NUM_GLYPHS, $UNITS_PER_EM, %KPX);
+our ($NUM_GLYPHS, $UNITS_PER_EM, %kern);
 
 sub main {
+    %ARGV = (
+        print_func  =>  \&print_kpx,
+    );
+
+    Getopt::Long::GetOptions(
+        'help|?'    =>  sub { pod2usage(-verbose => 0); },
+        'doc'       =>  sub { pod2usage(-verbose => 2); },
+        'afm'       =>  sub { $ARGV{print_func} = \&print_kpx; },
+        'kpx'       =>  sub { $ARGV{print_func} = \&print_kpx; },
+        'lua'       =>  sub { $ARGV{print_func} = \&print_lua; },
+    ) or pod2usage(-verbose => 0);
     pod2usage(-verbose => 0) if @ARGV != 1;
 
     my %font = OTF::get_tables($ARGV[0]);
@@ -65,7 +77,7 @@ sub main {
 
         for my $subtable (@subtables) {
             my $pos_format = unpack 'n', $subtable;
-            if ($pos_format == 1) { 
+            if ($pos_format == 1) {
                 OTF::GPOS::parse_pos_format_1($subtable);
             }
             elsif ($pos_format == 2) {
@@ -77,20 +89,56 @@ sub main {
         }
     }
 
-    my $num_kernpairs = sum map { scalar keys %{$KPX{$_}} } keys %KPX;
-    print "StartKernData\nStartKernPairs $num_kernpairs\n";
-    for my $first (sort { $a <=> $b } keys %KPX) {
-        my $first_glyph = $glyph_name[$first];
-        for my $second (sort { $a <=> $b } keys %{$KPX{$first}}) {
-            print "KPX $first_glyph $glyph_name[$second] ",
-                  "$KPX{$first}{$second}\n";
-        }
-    }
-    print "EndKernPairs\nEndKernData\n";
-
+    &{$ARGV{print_func}}( \%kern, \@glyph_name );
     return;
 }
 
+# ------------------------------------------------------------------------
+# Print kerning data in Adobe's KPX format
+# ------------------------------------------------------------------------
+sub print_kpx {
+    my %kern = %{ shift @_; };
+    my @glyph = @{ shift @_; };
+
+    my $num_kernpairs = sum map { scalar keys %{$kern{$_}} } keys %kern;
+    print "StartKernData\nStartKernPairs $num_kernpairs\n";
+    for my $l (sort { $glyph[$a] cmp $glyph[$b] } keys %kern) {
+        my $l_glyph = $glyph[$l];
+        for my $r (sort { $glyph[$a] cmp $glyph[$b] } keys %{$kern{$l}}) {
+            print "KPX $l_glyph $glyph[$r] ",
+                  "$kern{$l}{$r}\n";
+        }
+    }
+    print "EndKernPairs\nEndKernData\n";
+}
+
+# ------------------------------------------------------------------------
+# Print kerning data as a Luatex custom font feature
+# ------------------------------------------------------------------------
+sub print_lua {
+    my %kern = %{ shift @_; };
+    my @glyph = @{ shift @_; };
+
+    print <<'END_FEATURE_PREFIX';
+fonts.handlers.otf.addfeature {
+    name = 'kern',
+    type = 'kern',
+    data = {
+END_FEATURE_PREFIX
+
+    for my $l ( sort { $glyph[$a] cmp $glyph[$b] } keys %kern ) {
+        print ' ' x 8, "[ '$glyph[$l]' ] = {";
+        for my $r ( sort { $glyph[$a] cmp $glyph[$b] } keys %{$kern{$l}} ) {
+            print "\n", ' ' x 12, "[ '$glyph[$r]' ] = $kern{$l}{$r},";
+        }
+        print " },\n";
+    }
+
+    print <<'END_FEATURE_POSTFIX';
+    }
+}
+END_FEATURE_POSTFIX
+}
 
 ########################################################################
 
@@ -467,7 +515,7 @@ sub get_subtables {
 }
 
 #-----------------------------------------------------------------------
-# Parse subtable in PairPosFormat 1, store kern pairs in global %KPX
+# Parse subtable in PairPosFormat 1, store kern pairs in global %kern
 #-----------------------------------------------------------------------
 sub parse_pos_format_1 {
     my $subtable = shift;
@@ -495,7 +543,7 @@ sub parse_pos_format_1 {
             my ($second, $value)
                 = unpack "n\@${value_offset}s>", $pair_value_record;
             next if $value == 0;
-            $KPX{$first}{$second} ||= 1000 * $value / $UNITS_PER_EM;
+            $kern{$first}{$second} ||= 1000 * $value / $UNITS_PER_EM;
         }
     }
 
@@ -503,7 +551,7 @@ sub parse_pos_format_1 {
 }
 
 #-----------------------------------------------------------------------
-# Parse subtable in PairPosFormat 2, store kern pairs in global %KPX
+# Parse subtable in PairPosFormat 2, store kern pairs in global %kern
 #-----------------------------------------------------------------------
 sub parse_pos_format_2 {
     my $subtable = shift;
@@ -540,7 +588,7 @@ sub parse_pos_format_2 {
 
             for my $first (@first) {
                 for my $second (@second) {
-                    $KPX{$first}{$second} ||= $value;
+                    $kern{$first}{$second} ||= $value;
                 }
             }
         }
@@ -631,7 +679,7 @@ sub _get_coverage {
 package OTF::Kern;
 
 #-----------------------------------------------------------------------
-# Parse "kern"table, store kern pairs in global %KPX
+# Parse "kern"table, store kern pairs in global %kern
 #-----------------------------------------------------------------------
 sub parse_kerntable {
     my $kern = shift;
@@ -653,7 +701,7 @@ sub parse_kerntable {
             my ($first, $second, $value) = unpack 'nns>', $kern_pair;
             next if $value == 0;
 
-            $KPX{$first}{$second} ||= 1000 * $value / $UNITS_PER_EM;
+            $kern{$first}{$second} ||= 1000 * $value / $UNITS_PER_EM;
         }
     }
 
@@ -688,28 +736,33 @@ ot2kpx - extract kerning information from OpenType fonts
 
 =head1 SYNOPSIS
 
-=over 8
-
-=item B<ot2kpx>
-
-B<fontfile>
-
-=back
+B<ot2kpx> [ I<-afm> | I<-kpx> | I<-lua> ] B<fontfile>
 
 
 =head1 DESCRIPTION
 
-B<ot2kpx> extract the kerning data from OpenType fonts (both F<otf>
-and F<ttf> formats) and prints it (in F<afm> format) to C<stdout>.
+B<ot2kpx> extract the kerning data from OpenType fonts and prints it
+to C<stdout>, either in Adobe's KPX format (for adding to an F<afm> file)
+or as a Luatex custom feature, for use with the C<\directlua> command.
 
 
 =head1 OPTIONS AND ARGUMENTS
 
 =over 4
 
+=item B<-afm>, B<-kpx>
+
+Output the kerning data in Adobe's KPX format, as used in F<afm> files.
+This is the default output format.
+
+=item B<-lua>
+
+Output the kerning data as a Luatex custom font feature,
+to be included in a C<\directlua> command.
+
 =item B<fontfile>
 
-The OpenType font (in either F<otf> or F<ttf> format).
+The OpenType font (both F<otf> and F<ttf> format are supported).
 
 =back
 
@@ -771,7 +824,7 @@ Marc Penninga <marcpenninga@gmail.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2013 Marc Penninga.
+Copyright (C) 2005-2019 Marc Penninga.
 
 
 =head1 LICENSE
@@ -797,6 +850,11 @@ See the GNU General Public License for more details.
 (See the source code for the rest of the story.)
 
 =over 12
+
+=item I<2019-04-15>
+
+Added the -lua command-line option to get output in Luatex's
+custom feature format.
 
 =item I<2013-08-07>
 
