@@ -1,3 +1,9 @@
+2019-05-03  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dvips.c, output.c, search.c: Support non-ascii file names
+	in default code page of OS irrespective of values of a
+	variable 'command_line_encoding' (Windows only).
+
 2019-04-30  Karl Berry  <karl@tug.org>
 
 	* dosection.c (dosection): close PostScript string constant
