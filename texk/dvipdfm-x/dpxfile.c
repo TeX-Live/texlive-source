@@ -1,5 +1,5 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
-    Copyright (C) 2007-2018 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2019 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -159,6 +159,10 @@ miktex_find_psheader_file (const char *filename, char *buf)
 static char  _tmpbuf[PATH_MAX+1];
 #endif /* MIKTEX */
 
+#if defined(WIN32)
+extern int utf8name_failed;
+#endif /* WIN32 */
+
 static int exec_spawn (char *cmd)
 {
   char **cmdv, **qv;
@@ -240,15 +244,32 @@ static int exec_spawn (char *cmd)
   ret = _spawnvp(_P_WAIT, *cmdv, (const char* const*)cmdv); 
 #else
   cmdvw = xcalloc (i + 2, sizeof (wchar_t *));
-  qv = cmdv;
-  qvw = cmdvw;
-  while (*qv) {
-    *qvw = get_wstring_from_fsyscp(*qv, *qvw=NULL);
-    qv++;
-    qvw++;
+  if (utf8name_failed == 0) {
+    qv = cmdv;
+    qvw = cmdvw;
+    while (*qv) {
+      *qvw = get_wstring_from_fsyscp(*qv, *qvw=NULL);
+      qv++;
+      qvw++;
+    }
+    *qvw = NULL;
+    ret = _wspawnvp (_P_WAIT, *cmdvw, (const wchar_t* const*) cmdvw);
+  } else {
+    int tmpcp;
+    tmpcp = file_system_codepage;
+    file_system_codepage = win32_codepage;
+    qv = cmdv;
+    qvw = cmdvw;
+    while (*qv) {
+      *qvw = get_wstring_from_fsyscp(*qv, *qvw=NULL);
+      qv++;
+      qvw++;
+    }
+    *qvw = NULL;
+    file_system_codepage = tmpcp;
+    utf8name_failed = 0;
+    ret = _wspawnvp (_P_WAIT, *cmdvw, (const wchar_t* const*) cmdvw);
   }
-  *qvw = NULL;
-  ret = _wspawnvp (_P_WAIT, *cmdvw, (const wchar_t* const*) cmdvw);
   if (cmdvw) {
     qvw = cmdvw;
     while (*qvw) {
@@ -1242,3 +1263,21 @@ qcheck_filetype (const char *fqpn, dpx_res_type type)
 
   return  r;
 }
+
+#if defined(WIN32)
+FILE *generic_fsyscp_fopen (const char *filename, const char *mode)
+{
+  FILE *f;
+
+  f = fsyscp_fopen (filename, mode);
+
+  if (f == NULL && file_system_codepage != win32_codepage) {
+    int tmpcp = file_system_codepage;
+    file_system_codepage = win32_codepage;
+    f = fsyscp_fopen (filename, mode);
+    file_system_codepage = tmpcp;
+  }
+
+  return f;
+}
+#endif /* WIN32 */

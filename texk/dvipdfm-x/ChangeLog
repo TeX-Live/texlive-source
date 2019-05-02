@@ -1,3 +1,9 @@
+2019-05-03  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dpxfile.c, mfileio.h, pdfximage.c: Support non-ascii file
+	names in default code page of OS irrespective of values of a
+	variable 'command_line_encoding' (Windows only).
+
 2019-05-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfobj.c, pdfobj.h: Add support for ASCIIHex and ASCII85
