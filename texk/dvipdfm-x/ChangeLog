@@ -1,3 +1,14 @@
+2019-05-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfobj.c, pdfobj.h: Add support for ASCIIHex and ASCII85
+	decode filter. Support for decoding stream data with multiple
+	filters applied. Remove unused function.
+	* tt_cmap.c, tt_gsub.[ch]: Revise ToUnicode CMap creation for
+	OpenType. Use GSUB for mapping unencoded glyphs to Unicode
+	(XeTeX support), lowering priority of CJK compatibility
+	ideographs.
+	* configure.ac: Version 20190503.
+
 2019-04-07  Karl Berry  <karl@freefriends.org>
 
 	* TeX Live 2019.
