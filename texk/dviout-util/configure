@@ -13476,7 +13476,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-$as_echo "#define TL_VERSION \"TeX Live 2019\"" >>confdefs.h
+$as_echo "#define TL_VERSION \"TeX Live 2020/dev\"" >>confdefs.h
 
 
 kpse_save_CPPFLAGS=$CPPFLAGS

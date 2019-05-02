@@ -1,3 +1,7 @@
+2019-05-03  Karl Berry  <karl@tug.org>
+
+	* version.ac: 2020/dev.
+
 2019-04-07  Karl Berry  <karl@freefriends.org>
 
 	* tardate.ac (tex_live_tardate): let's hope for 2019-04-07.
