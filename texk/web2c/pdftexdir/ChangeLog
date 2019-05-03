@@ -1,3 +1,8 @@
+2019-05-03  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pdftosrc-poppler0.76.0.cc, pdftoepdf-poppler0.76.0.cc:
+	Added to support system poppler 0.76.[01].
+
 2019-04-07  Karl Berry  <karl@freefriends.org>
 
 	* TeX Live 2019.

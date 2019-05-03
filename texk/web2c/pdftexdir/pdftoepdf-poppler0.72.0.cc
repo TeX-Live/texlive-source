@@ -23,6 +23,7 @@ https://git.archlinux.org/svntogit/packages.git/plain/texlive-bin/trunk
 by Arch Linux. A little modifications are made to avoid a crash for
 some kind of pdf images, such as figure_missing.pdf in gnuplot.
 The poppler should be 0.72.0 or newer versions.
+It is tested upto the poppler 0.74.0.
 POPPLER_VERSION should be defined.
 */
 
