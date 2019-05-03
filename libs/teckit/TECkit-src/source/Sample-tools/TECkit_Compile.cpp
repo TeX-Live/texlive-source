@@ -36,7 +36,7 @@ errFunc(void* /* userData */, const char* msg, const char* param, UInt32 line)
 	if (param != 0)
 		fprintf(stderr, ": \"%s\"", param);
 	if (line != 0)
-		fprintf(stderr, " at line %lu", (unsigned long)line);
+		fprintf(stderr, " at line %lu", static_cast<unsigned long>(line));
 	fprintf(stderr, "\n");
 }
 
@@ -114,7 +114,7 @@ Usage: %s [-u] [-x] [-z] mapping_description [-o compiled_table]\n\
 
 	if (tecFileName == 0) {
 		int	x = strlen(mapFileName);
-		tecFileName = (char*)malloc(x + 5);
+		tecFileName = static_cast<char*>(malloc(x + 5));
 		if (tecFileName == 0)
 			return 1;	// unlikely!
 		strcpy(tecFileName, mapFileName);
@@ -143,7 +143,7 @@ Usage: %s [-u] [-x] [-z] mapping_description [-o compiled_table]\n\
 		
 		if (inFile == 0) {
 			// try adding .map
-			char*	mapFileName2 = (char*)malloc(strlen(mapFileName) + 5);
+			char*	mapFileName2 = static_cast<char*>(malloc(strlen(mapFileName) + 5));
 			if (mapFileName2 == 0)
 				return 1;
 			strcpy(mapFileName2, mapFileName);
@@ -159,7 +159,7 @@ Usage: %s [-u] [-x] [-z] mapping_description [-o compiled_table]\n\
 		len = ftell(inFile);
 		fseek(inFile, 0, SEEK_SET);
 		
-		txt = (char*)malloc(len);
+		txt = static_cast<char*>(malloc(len));
 		if (txt == 0) {
 			fprintf(stderr, "not enough memory to read mapping file\n");
 			return 1;	// not enough memory
@@ -194,7 +194,7 @@ Usage: %s [-u] [-x] [-z] mapping_description [-o compiled_table]\n\
 			TECkit_DisposeCompiled(compiledTable);
 		}
 		else {
-			fprintf(stderr, "compilation failed: status = %d\n", (int)status);
+			fprintf(stderr, "compilation failed: status = %d\n", int(status));
 			return 1;
 		}
 		

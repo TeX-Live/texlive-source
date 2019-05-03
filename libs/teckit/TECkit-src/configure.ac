@@ -1,5 +1,5 @@
 AC_PREREQ(2.54)
-AC_INIT(teckit, 2.5.8, nrsi@sil.org)
+AC_INIT(teckit, 2.5.9, wstech@sil.org)
 AM_CONFIG_HEADER([config.h])
 AC_CONFIG_SRCDIR([source/UnicodeNames.cpp])
 AC_CONFIG_MACRO_DIR([m4])
@@ -111,7 +111,7 @@ noexpat_CFLAGS="$CFLAGS"
 noexpat_LIBS="$LIBS"
 AC_CHECK_LIB(expat, XML_ExpatVersion)
 AM_CONDITIONAL(SYSTEM_EXPAT, test x$ac_cv_lib_expat_XML_ExpatVersion = xyes)
-expat_CFLAGS="$CFLAGS"
+expat_CFLAGS=""
 expat_LIBS="$LIBS"
 CFLAGS="$noexpat_CFLAGS"
 LIBS="$noexpat_LIBS"

@@ -76,8 +76,8 @@ doConversion(TECkit_Converter cnv, FILE* inFile, FILE* outFile, UInt32 opts)
 		}
 
 		if (inAvail > 0) {
-			status = TECkit_ConvertBufferOpt(cnv, (Byte*)inPtr, inAvail, &inUsed,
-											(Byte*)outBuffer, kOutBufLen, &outUsed, opts, &lookahead);
+			status = TECkit_ConvertBufferOpt(cnv, reinterpret_cast<Byte*>(inPtr), inAvail, &inUsed,
+											reinterpret_cast<Byte*>(outBuffer), kOutBufLen, &outUsed, opts, &lookahead);
 			fwrite(outBuffer, 1, outUsed, outFile);
 			
 			switch (status & kStatusMask_Basic) {
@@ -93,7 +93,7 @@ doConversion(TECkit_Converter cnv, FILE* inFile, FILE* outFile, UInt32 opts)
 
 				case kStatus_UnmappedChar:
 					fprintf(stderr, "processing aborted at unmappable character, within %lu characters before file offset %lu\n",
-								(unsigned long)lookahead, (unsigned long)(offset - amountToRead + inUsed));
+								static_cast<unsigned long>(lookahead), static_cast<unsigned long>(offset - amountToRead + inUsed));
 					break;
 
 				default:
@@ -105,7 +105,7 @@ doConversion(TECkit_Converter cnv, FILE* inFile, FILE* outFile, UInt32 opts)
 		if ((status & kStatusMask_Basic) != kStatus_UnmappedChar) {
 			// flush the converter
 			do {
-				status = TECkit_FlushOpt(cnv, (Byte*)outBuffer, kOutBufLen, &outUsed, opts, &lookahead);
+				status = TECkit_FlushOpt(cnv, reinterpret_cast<Byte*>(outBuffer), kOutBufLen, &outUsed, opts, &lookahead);
 				fwrite(outBuffer, 1, outUsed, outFile);
 				savedLen -= inUsed;
 				inPtr += inUsed;
@@ -113,7 +113,7 @@ doConversion(TECkit_Converter cnv, FILE* inFile, FILE* outFile, UInt32 opts)
 			} while ((status & kStatusMask_Basic) == kStatus_OutputBufferFull);
 
 			if ((status & kStatusMask_Basic) == kStatus_UnmappedChar)
-				fprintf(stderr, "processing aborted at unmappable character, within %lu characters before end of input\n", (unsigned long)lookahead);
+				fprintf(stderr, "processing aborted at unmappable character, within %lu characters before end of input\n", static_cast<unsigned long>(lookahead));
 			else if ((status & kStatusMask_Basic) != kStatus_NoError)
 				fprintf(stderr, "bad returned status from TECkit_Flush: %ld\n", status);
 		}
@@ -340,7 +340,7 @@ Usage: %s -i inFile -o outFile [-t tecFile] [-r] [-if inForm] [-of outForm] [-no
 		len = ftell(tecFile);
 		fseek(tecFile, 0, SEEK_SET);
 
-		table = (char*)malloc(len);
+		table = static_cast<char*>(malloc(len));
 		if (table == 0) {
 			fprintf(stderr, "out of memory!\n");
 			fclose(tecFile);
@@ -351,8 +351,8 @@ Usage: %s -i inFile -o outFile [-t tecFile] [-r] [-if inForm] [-of outForm] [-no
 		fclose(tecFile);
 
 		status = forward
-			? TECkit_GetMappingFlags((Byte*)table, len, &sourceFlags, &targetFlags)
-			: TECkit_GetMappingFlags((Byte*)table, len, &targetFlags, &sourceFlags);
+			? TECkit_GetMappingFlags(reinterpret_cast<Byte*>(table), len, &sourceFlags, &targetFlags)
+			: TECkit_GetMappingFlags(reinterpret_cast<Byte*>(table), len, &targetFlags, &sourceFlags);
 		if (status != kStatus_NoError) {
 			fprintf(stderr, "couldn't get encoding flags from mapping\n");
 			return 1;
@@ -510,7 +510,7 @@ Usage: %s -i inFile -o outFile [-t tecFile] [-r] [-if inForm] [-of outForm] [-no
 
 	// OK, we have figured out the input and output encoding forms we want to use;
 	// now at last we can instantiate a converter
-	status = TECkit_CreateConverter((Byte*)table, len, forward, inForm, outForm | normForm, &cnv);
+	status = TECkit_CreateConverter(reinterpret_cast<Byte*>(table), len, forward, inForm, outForm | normForm, &cnv);
 	if (table != 0)
 		free(table);
 	if (status != kStatus_NoError) {

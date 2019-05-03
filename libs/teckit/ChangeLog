@@ -1,3 +1,8 @@
+2019-05-03  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import TECkit-2.5.9.
+	* version.ac: Adjust.
+
 2018-07-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import TECkit-2.5.8.

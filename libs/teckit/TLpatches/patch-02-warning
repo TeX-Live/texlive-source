@@ -1,9 +1,9 @@
 	Avoid compiler warning.
 
-diff -ur teckit-2.5.8/source/Compiler.h teckit-src/source/Compiler.h
---- teckit-2.5.8/source/Compiler.h	Tue Dec 05 07:20:20 2017
-+++ teckit-src/source/Compiler.h	Tue Jul 24 07:21:23 2018
-@@ -230,7 +230,7 @@
+diff -ur teckit-2.5.9/source/Compiler.h teckit-src/source/Compiler.h
+--- teckit-2.5.9/source/Compiler.h	Tue Mar 19 00:23:12 2019
++++ teckit-src/source/Compiler.h	Tue Mar 19 07:02:47 2019
+@@ -229,7 +229,7 @@
  		vector<UInt32>		byteClassLines;
  		vector<UInt32>		uniClassLines;
  

@@ -20,8 +20,7 @@ Changes:
 
 -------------------------------------------------------------------------*/
 
-#ifndef __Compiler_H__
-#define __Compiler_H__
+#pragma once
 
 #ifdef HAVE_CONFIG_H
 #	include "config.h"	/* a Unix-ish setup where we have config.h available */
@@ -274,7 +273,7 @@ protected:
 	bool			GetNextToken();
 	bool			ExpectToken(tokenType type, const char* errMsg);
 	bool			ExpectToken(char c, const char* errMsg)
-						{ return ExpectToken((tokenType)c, errMsg); }
+						{ return ExpectToken(tokenType(c), errMsg); }
 	void			Error(const char* errMsg, const char* s = 0, UInt32 line = 0xffffffff);
 	void			StartDefaultPass();
 	void			AppendLiteral(UInt32 val, bool negate = false);
@@ -284,7 +283,7 @@ protected:
 	void			AppendToRule(const Item& item);
 	bool			tagExists(bool rhs, const string& tag);
 	void			AssignTag(const string& tag);
-	void			SetMinMax(int repeatMin, int repeatMax);
+	void			SetMinMax(UInt32 repeatMin, UInt32 repeatMax);
 	void			FinishPass();
 	string			asUTF8(const string32 s);
 	void			ReadNameString(UInt16 nameID);
@@ -307,19 +306,18 @@ protected:
 	long			uniClassIndex(UInt32 charCode, UInt32 classIndex);
 	long			byteClassIndex(UInt8 charCode, UInt32 classIndex);
 	bool			isSingleCharRule(const Rule& rule);
-	void			appendMatchElem(string& packedRule, Item& item, int index,
+	void			appendMatchElem(string& packedRule, Item& item, unsigned int index,
 									vector<MatClass>& matchClasses);
 	void			appendReplaceElem(string& packedRule, Item& item,
 									vector<Item>& matchStr, vector<RepClass>& repClasses);
 	void			appendToTable(string& s, const char* ptr, UInt32 len);
 	template <class T>
 		void		appendToTable(string& table, T x) {
+			const char*	xp = reinterpret_cast<const char*>(&x);
 #ifdef WORDS_BIGENDIAN
-			const char*	xp = (const char*)&x;
 			table.append(xp, sizeof(x));
 #else
 			/* split into separate statements to work around VC++6 problems */
- 			const char*	xp = (const char*)&x;
  			xp = xp + sizeof(T);
  			for (unsigned int i = 0; i < sizeof(T); ++i) {
 				xp = xp - 1;
@@ -329,7 +327,7 @@ protected:
 	}
 
 	vector<Item>	reverseContext(const vector<Item>& ctx);
-	void			align(string& table, int alignment);
+	void			align(string& table, string::size_type alignment);
 	
 	void			xmlOut(const char* s);
 	void			xmlOut(const string& s);
@@ -345,5 +343,3 @@ extern "C" {
 	};
 	extern CharName	gUnicodeNames[];
 }
-
-#endif	/* __Compiler_H__ */
