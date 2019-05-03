@@ -2539,3 +2539,14 @@ Handle a null font name in PSOutputDev::setupEmbeddedType1Font.
   [Thanks to r4xis for the bug report.]
 Check for invalid quant table indexes in the DCT decoder.  [Thanks to
   r4xis for the bug report.]
+
+4.01.01 (2019-mar-14)
+---------------------
+The PDFDoc(BaseStream) initializer wasn't working correctly.
+Fixed a missing array bounds check in PSOutputDev.  [Thanks to
+  Loginsoft for the bug report.]
+If the "U" string used for RC4 decryption is short, Adobe apparently
+  zero-pads it, so Xpdf now does the same.
+Pdffonts now checks more carefully for loops between objects.
+Fixed a problem parsing large real numbers.  [Thanks to Loginsoft for
+  the bug report.]

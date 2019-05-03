@@ -179,7 +179,9 @@ Object *Lexer::getObj(Object *obj) {
       if (isdigit(c)) {
 	getChar();
 	xi = xi * 10 + (c - '0');
-	xf = xf * 10 + (c - '0');
+	if (xf < 1e20) {
+	  xf = xf * 10 + (c - '0');
+	}
       } else if (c == '.') {
 	getChar();
 	goto doReal;

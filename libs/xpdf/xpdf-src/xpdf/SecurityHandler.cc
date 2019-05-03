@@ -235,7 +235,7 @@ StandardSecurityHandler::StandardSecurityHandler(PDFDoc *docA,
     if (ownerKeyObj.getString()->getLength() != 32 ||
 	userKeyObj.getString()->getLength() != 32) {
       error(errSyntaxError, -1, "Invalid encryption key length");
-      goto done;
+      // this is non-fatal -- see below
     }
   } else if (encRevision <= 6) {
     // the spec says 48 bytes, but Acrobat pads them out longer
@@ -252,6 +252,16 @@ StandardSecurityHandler::StandardSecurityHandler(PDFDoc *docA,
   permFlags = permObj.getInt();
   ownerKey = ownerKeyObj.getString()->copy();
   userKey = userKeyObj.getString()->copy();
+  if (encRevision <= 4) {
+    // Adobe apparently zero-pads the U value (and maybe the O value?)
+    // if it's short
+    while (ownerKey->getLength() < 32) {
+      ownerKey->append((char)0x00);
+    }
+    while (userKey->getLength() < 32) {
+      userKey->append((char)0x00);
+    }
+  }
   if (encVersion >= 1 && encVersion <= 2 &&
       encRevision >= 2 && encRevision <= 3) {
     if (fileIDObj.isArray()) {

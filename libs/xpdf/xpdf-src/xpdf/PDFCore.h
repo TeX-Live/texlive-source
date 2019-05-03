@@ -148,6 +148,8 @@ public:
   virtual void scrollToBottomEdge();
   virtual void scrollToTopLeft();
   virtual void scrollToBottomRight();
+  // Scroll so that (page, x, y) is centered in the window.
+  virtual void scrollToCentered(int page, double x, double y);
   virtual void setZoom(double zoom);
   virtual void zoomToRect(int page, double ulx, double uly,
 			  double lrx, double lry);

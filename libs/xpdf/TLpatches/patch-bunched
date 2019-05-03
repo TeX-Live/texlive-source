@@ -1,5 +1,5 @@
-diff -ur xpdf-4.01/goo/gfile.cc xpdf-src/goo/gfile.cc
---- xpdf-4.01/goo/gfile.cc	Tue Feb 19 03:24:19 2019
+diff -ur xpdf-4.01.01/goo/gfile.cc xpdf-src/goo/gfile.cc
+--- xpdf-4.01.01/goo/gfile.cc	Fri Mar 15 06:01:02 2019
 +++ xpdf-src/goo/gfile.cc	Mon Feb 25 11:09:32 2019
 @@ -7,6 +7,9 @@
  // Copyright 1996-2003 Glyph & Cog, LLC
@@ -74,8 +74,8 @@ diff -ur xpdf-4.01/goo/gfile.cc xpdf-src/goo/gfile.cc
  #endif
  }
 +#endif /* !PDF_PARSER_ONLY */
-diff -ur xpdf-4.01/goo/gfile.h xpdf-src/goo/gfile.h
---- xpdf-4.01/goo/gfile.h	Tue Feb 19 03:24:19 2019
+diff -ur xpdf-4.01.01/goo/gfile.h xpdf-src/goo/gfile.h
+--- xpdf-4.01.01/goo/gfile.h	Fri Mar 15 06:01:02 2019
 +++ xpdf-src/goo/gfile.h	Mon Feb 25 11:07:26 2019
 @@ -114,6 +114,8 @@
  
@@ -86,8 +86,8 @@ diff -ur xpdf-4.01/goo/gfile.h xpdf-src/goo/gfile.h
 +#endif /* !PDF_PARSER_ONLY */
  
  #endif
-diff -ur xpdf-4.01/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
---- xpdf-4.01/xpdf/GlobalParams.cc	Tue Feb 19 03:24:19 2019
+diff -ur xpdf-4.01.01/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
+--- xpdf-4.01.01/xpdf/GlobalParams.cc	Fri Mar 15 06:01:02 2019
 +++ xpdf-src/xpdf/GlobalParams.cc	Mon Feb 25 08:01:11 2019
 @@ -5,6 +5,9 @@
  // Copyright 2001-2003 Glyph & Cog, LLC
@@ -142,8 +142,8 @@ diff -ur xpdf-4.01/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
        }
      }
    }
-diff -ur xpdf-4.01/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
---- xpdf-4.01/xpdf/GlobalParams.h	Tue Feb 19 03:24:19 2019
+diff -ur xpdf-4.01.01/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
+--- xpdf-4.01.01/xpdf/GlobalParams.h	Fri Mar 15 06:01:02 2019
 +++ xpdf-src/xpdf/GlobalParams.h	Mon Feb 25 08:02:36 2019
 @@ -5,6 +5,9 @@
  // Copyright 2001-2003 Glyph & Cog, LLC
@@ -164,9 +164,9 @@ diff -ur xpdf-4.01/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
  
    ~GlobalParams();
  
-diff -ur xpdf-4.01/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
---- xpdf-4.01/xpdf/PDFDoc.cc	Tue Feb 19 03:24:19 2019
-+++ xpdf-src/xpdf/PDFDoc.cc	Mon Feb 25 08:16:35 2019
+diff -ur xpdf-4.01.01/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
+--- xpdf-4.01.01/xpdf/PDFDoc.cc	Fri Mar 15 06:01:02 2019
++++ xpdf-src/xpdf/PDFDoc.cc	Sun Mar 17 08:59:43 2019
 @@ -147,20 +147,25 @@
  
  PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
@@ -206,7 +206,7 @@ diff -ur xpdf-4.01/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
  #elif defined(VMS)
    file = fopen(fileName->getCString(), "rb", "ctx=stm");
  #else
-@@ -571,6 +580,7 @@
+@@ -572,6 +581,7 @@
    GBool ret;
  
    // NB: _wfopen is only available in NT
@@ -214,7 +214,7 @@ diff -ur xpdf-4.01/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
    version.dwOSVersionInfoSize = sizeof(version);
    GetVersionEx(&version);
    if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
-@@ -580,12 +590,15 @@
+@@ -581,12 +591,15 @@
      path2w[i] = 0;
      f = _wfopen(path2w, L"wb");
    } else {
@@ -230,8 +230,8 @@ diff -ur xpdf-4.01/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
    if (!f) {
      return gFalse;
    }
-diff -ur xpdf-4.01/xpdf/Page.cc xpdf-src/xpdf/Page.cc
---- xpdf-4.01/xpdf/Page.cc	Tue Feb 19 03:24:19 2019
+diff -ur xpdf-4.01.01/xpdf/Page.cc xpdf-src/xpdf/Page.cc
+--- xpdf-4.01.01/xpdf/Page.cc	Fri Mar 15 06:01:02 2019
 +++ xpdf-src/xpdf/Page.cc	Mon Feb 25 08:19:00 2019
 @@ -480,9 +480,9 @@
    delete links;
@@ -251,8 +251,8 @@ diff -ur xpdf-4.01/xpdf/Page.cc xpdf-src/xpdf/Page.cc
 -}
  #endif
 +}
-diff -ur xpdf-4.01/xpdf/XFAForm.cc xpdf-src/xpdf/XFAForm.cc
---- xpdf-4.01/xpdf/XFAForm.cc	Tue Feb 19 03:24:19 2019
+diff -ur xpdf-4.01.01/xpdf/XFAForm.cc xpdf-src/xpdf/XFAForm.cc
+--- xpdf-4.01.01/xpdf/XFAForm.cc	Fri Mar 15 06:01:02 2019
 +++ xpdf-src/xpdf/XFAForm.cc	Mon Feb 25 08:20:00 2019
 @@ -28,8 +28,10 @@
  #include "XFAForm.h"
@@ -267,9 +267,9 @@ diff -ur xpdf-4.01/xpdf/XFAForm.cc xpdf-src/xpdf/XFAForm.cc
  #endif
  
  //------------------------------------------------------------------------
-diff -ur xpdf-4.01/xpdf/config.h xpdf-src/xpdf/config.h
---- xpdf-4.01/xpdf/config.h	Tue Feb 19 03:24:19 2019
-+++ xpdf-src/xpdf/config.h	Mon Feb 25 08:21:02 2019
+diff -ur xpdf-4.01.01/xpdf/config.h xpdf-src/xpdf/config.h
+--- xpdf-4.01.01/xpdf/config.h	Fri Mar 15 06:01:02 2019
++++ xpdf-src/xpdf/config.h	Sun Mar 17 16:09:03 2019
 @@ -78,11 +78,6 @@
  // popen
  //------------------------------------------------------------------------

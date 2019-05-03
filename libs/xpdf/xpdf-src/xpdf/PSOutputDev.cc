@@ -1924,8 +1924,12 @@ void PSOutputDev::setupResources(Dict *resDict) {
       skip = gFalse;
       if ((xObjDict.dictGetValNF(i, &xObjRef)->isRef())) {
 	ref0 = xObjRef.getRef();
-	skip = (GBool)visitedResources[ref0.num];
-	visitedResources[ref0.num] = 1;
+	if (ref0.num < 0 || ref0.num >= xref->getNumObjects()) {
+	  skip = gTrue;
+	} else {
+	  skip = (GBool)visitedResources[ref0.num];
+	  visitedResources[ref0.num] = 1;
+	}
       }
       if (!skip) {
 
@@ -1956,8 +1960,12 @@ void PSOutputDev::setupResources(Dict *resDict) {
       skip = gFalse;
       if ((patDict.dictGetValNF(i, &patRef)->isRef())) {
 	ref0 = patRef.getRef();
-	skip = (GBool)visitedResources[ref0.num];
-	visitedResources[ref0.num] = 1;
+	if (ref0.num < 0 || ref0.num >= xref->getNumObjects()) {
+	  skip = gTrue;
+	} else {
+	  skip = (GBool)visitedResources[ref0.num];
+	  visitedResources[ref0.num] = 1;
+	}
       }
       if (!skip) {
 
@@ -1988,8 +1996,12 @@ void PSOutputDev::setupResources(Dict *resDict) {
       skip = gFalse;
       if ((gsDict.dictGetValNF(i, &gsRef)->isRef())) {
 	ref0 = gsRef.getRef();
-	skip = (GBool)visitedResources[ref0.num];
-	visitedResources[ref0.num] = 1;
+	if (ref0.num < 0 || ref0.num >= xref->getNumObjects()) {
+	  skip = gTrue;
+	} else {
+	  skip = (GBool)visitedResources[ref0.num];
+	  visitedResources[ref0.num] = 1;
+	}
       }
       if (!skip) {
 

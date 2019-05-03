@@ -692,6 +692,24 @@ void PDFCore::scrollToBottomRight() {
 	   tileMap->getPageBottomY(tileMap->getLastPage()));
 }
 
+void PDFCore::scrollToCentered(int page, double x, double y) {
+  int wx, wy, sx, sy;
+
+  startUpdate();
+
+  // scroll to the requested page
+  state->setScrollPosition(page, tileMap->getPageLeftX(page),
+			   tileMap->getPageTopY(page));
+
+  // scroll the requested point to the center of the window
+  cvtUserToWindow(page, x, y, &wx, &wy);
+  sx = state->getScrollX() + wx - state->getWinW() / 2;
+  sy = state->getScrollY() + wy - state->getWinH() / 2;
+  state->setScrollPosition(page, sx, sy);
+
+  finishUpdate(gTrue, gFalse);
+}
+
 void PDFCore::setZoom(double zoom) {
   int page;
 

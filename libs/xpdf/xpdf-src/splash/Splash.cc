@@ -4567,7 +4567,8 @@ void Splash::upscaleImage(SplashImageSource src, void *srcData,
   SplashCoord xMin, yMin, xMax, yMax, t;
   SplashCoord mi0, mi1, mi2, mi3, mi4, mi5, det;
   SplashCoord ix, iy, sx, sy, pix0, pix1;
-  int rowSize, xMinI, yMinI, xMaxI, yMaxI, x, y, x0, y0, x1, y1, tt, i;
+  SplashBitmapRowSize rowSize;
+  int xMinI, yMinI, xMaxI, yMaxI, x, y, x0, y0, x1, y1, tt, i;
 
   // compute the bbox of the target quadrilateral
   xMin = xMax = mat[4];
@@ -4653,7 +4654,7 @@ void Splash::upscaleImage(SplashImageSource src, void *srcData,
   } else {
     rowSize = srcWidth * nComps;
   }
-  unscaledImage = (SplashColorPtr)gmallocn(srcHeight, rowSize);
+  unscaledImage = (SplashColorPtr)gmallocn64(srcHeight, rowSize);
   if (srcAlpha) {
     unscaledAlpha = (Guchar *)gmallocn(srcHeight, srcWidth);
     for (y = 0, p = unscaledImage, alphaPtr = unscaledAlpha;
@@ -4663,7 +4664,7 @@ void Splash::upscaleImage(SplashImageSource src, void *srcData,
     }
   } else {
     unscaledAlpha = NULL;
-    for (y = 0, p = unscaledImage; y < srcHeight; ++y, p += srcWidth * nComps) {
+    for (y = 0, p = unscaledImage; y < srcHeight; ++y, p += rowSize) {
       (*src)(srcData, p, NULL);
     }
   }
@@ -4698,10 +4699,10 @@ void Splash::upscaleImage(SplashImageSource src, void *srcData,
 	  if (y1 >= srcHeight) {
 	    y1 = srcHeight - 1;
 	  }
-	  q00 = &unscaledImage[(y0 * srcWidth + x0) * nComps];
-	  q01 = &unscaledImage[(y0 * srcWidth + x1) * nComps];
-	  q10 = &unscaledImage[(y1 * srcWidth + x0) * nComps];
-	  q11 = &unscaledImage[(y1 * srcWidth + x1) * nComps];
+	  q00 = &unscaledImage[y0 * rowSize + (SplashBitmapRowSize)x0 * nComps];
+	  q01 = &unscaledImage[y0 * rowSize + (SplashBitmapRowSize)x1 * nComps];
+	  q10 = &unscaledImage[y1 * rowSize + (SplashBitmapRowSize)x0 * nComps];
+	  q11 = &unscaledImage[y1 * rowSize + (SplashBitmapRowSize)x1 * nComps];
 	  for (i = 0; i < nComps; ++i) {
 	    pix0 = ((SplashCoord)1 - sx) * (int)*q00++ + sx * (int)*q01++;
 	    pix1 = ((SplashCoord)1 - sx) * (int)*q10++ + sx * (int)*q11++;
@@ -4730,7 +4731,7 @@ void Splash::upscaleImage(SplashImageSource src, void *srcData,
 	x0 = splashFloor(ix);
 	y0 = splashFloor(iy);
 	if (x0 >= 0 && x0 < srcWidth && y0 >= 0 && y0 < srcHeight) {
-	  q = &unscaledImage[(y0 * srcWidth + x0) * nComps];
+	  q = &unscaledImage[y0 * rowSize + (SplashBitmapRowSize)x0 * nComps];
 	  for (i = 0; i < nComps; ++i) {
 	    *p++ = *q++;
 	  }
