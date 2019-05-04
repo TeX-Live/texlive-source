@@ -1,3 +1,10 @@
+2019-05-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfdoc.c: g option affects only annotations created by
+	"pdf:bann/eann" and html "a link" specials.
+	Report from Joseph Wright:
+	https://tug.org/pipermail/tex-live/2019-May/043612.html
+
 2019-05-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* specials.c: transformation applied to current point was not
