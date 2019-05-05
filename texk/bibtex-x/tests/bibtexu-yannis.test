@@ -1,0 +1,18 @@
+#! /bin/sh -vx
+# $Id: bibtexu-yannis.test 45809 2017-11-15 00:36:56Z karl $
+# Copyright 2019 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+# Test file prepared by Yannis in 2009.
+
+test -d tests || mkdir -p tests
+
+cp $srcdir/tests/yannis.aux tests/xyannis.aux
+
+TEXMFCNF=$srcdir/../kpathsea \
+  BSTINPUTS=$srcdir/../web2c/tests \
+  BIBINPUTS=$srcdir/tests \
+  ./bibtexu -l fr -o fr tests/xyannis || exit 1
+
+diff $srcdir/tests/yannis.bbl tests/xyannis.bbl || exit 1
+

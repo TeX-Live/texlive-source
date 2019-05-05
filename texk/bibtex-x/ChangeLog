@@ -1,3 +1,9 @@
+2019-05-05  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* bibtexu-yannis.test, yannis.aux, yannis.bib, yannis.bbl:
+	New test files for BibTeXu.
+	* Makefile.am: Add the new test.
+
 2019-03-15  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Makefile.am: Add bibtex8.1 and bibtexu.1.
