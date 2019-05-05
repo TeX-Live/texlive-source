@@ -232,7 +232,7 @@ show_usage (void)
   printf ("Papersize is specified by paper format (e.g., \"a4\")\n");
   printf ("\tor by w<unit>,h<unit> (e.g., \"20cm,30cm\").\n");
   printf ("\n");
-  printf ("Email bug reports to tex-k@tug.org.\n");
+  printf ("Email bug reports to dvipdfmx@tug.org.\n");
 }
 
 static void
