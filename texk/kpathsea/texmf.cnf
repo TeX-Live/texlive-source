@@ -4,8 +4,9 @@
 % If you modify this original file, YOUR CHANGES WILL BE LOST when it is
 % updated.  Instead, put your changes -- and only your changes, not an
 % entire copy! -- in ../../texmf.cnf.  That is, if this file is
-% installed in /some/path/to/texlive/2018/texmf-dist/web2c/texmf.cnf,
-% add your custom settings to /some/path/to/texlive/2018/texmf.cnf.
+% installed in /some/path/to/texlive/2019/texmf-dist/web2c/texmf.cnf,
+% add your custom settings to /some/path/to/texlive/2019/texmf.cnf.
+% (Below, we use YYYY in place of the specific year.)
 % 
 % What follows is a super-summary of what this .cnf file can
 % contain. Please read the Kpathsea manual for more information.
