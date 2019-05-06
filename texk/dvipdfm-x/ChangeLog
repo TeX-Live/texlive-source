@@ -1,3 +1,9 @@
+2019-05-07  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_cmap.c: Fix a  bug that CFF charset data was not read.
+	* unicode.c: Fix a  bug that end-of-buffer calculation was
+	wrong.
+
 2019-05-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfdoc.c: g option affects only annotations created by

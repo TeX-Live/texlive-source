@@ -640,7 +640,6 @@ create_GIDToCIDMap (uint16_t *GIDToCIDMap, uint16_t num_glyphs, cff_font *cffont
 
   memset(GIDToCIDMap, 0, num_glyphs*sizeof(uint16_t));
 
-  cff_read_charsets(cffont);
   charset = cffont->charsets;
   if (!charset)
     return;
@@ -939,6 +938,7 @@ create_ToUnicode_cmap (tt_cmap    *ttcmap,
       ULONG offset;
       offset = sfnt_find_table_pos(sfont, "CFF ");
       cffont = cff_open(sfont->stream, offset, 0);
+      cff_read_charsets(cffont);   
     }
     is_cidfont = cffont && (cffont->flag & FONTTYPE_CIDFONT);
 
@@ -1440,6 +1440,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
         csi.ordering   = cff_get_string(cffont, ord);
         csi.supplement = (int) cff_dict_get(cffont->topdict, "ROS", 2);
       }
+      cff_read_charsets(cffont);
       create_GIDToCIDMap(GIDToCIDMap, num_glyphs, cffont);
     }
     cff_close(cffont);
@@ -1559,7 +1560,9 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
             src[0] = (cid >> 8) & 0xff;
             src[1] =  cid & 0xff;
             len = UC_UTF16BE_encode_char(ch, &p, endptr);
-            CMap_add_bfchar(tounicode, src, 2, dst, len);
+            if (len > 0) {
+              CMap_add_bfchar(tounicode, src, 2, dst, len);
+            }
           }
         }
       }
@@ -1700,6 +1703,7 @@ otf_try_load_GID_to_CID_map (const char *map_name, int ttc_index, int wmode)
         csi.ordering   = cff_get_string(cffont, ord);
         csi.supplement = (int) cff_dict_get(cffont->topdict, "ROS", 2);
       }
+      cff_read_charsets(cffont);     
       GIDToCIDMap = NEW(num_glyphs, uint16_t);
       memset(GIDToCIDMap, 0, num_glyphs*sizeof(uint16_t));      
       create_GIDToCIDMap(GIDToCIDMap, num_glyphs, cffont);
