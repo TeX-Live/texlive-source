@@ -39,6 +39,8 @@
 % (2018-01-21) HK   Added \uptexversion primitive and co.
 % (2018-02-24) TTK  upTeX u1.23
 % (2019-02-23) TTK  upTeX u1.24
+% (2019-05-06) HK   Hironori Kitagawa fixed a bug in \if.
+% (2019-05-06) TTK  upTeX u1.25
 
 @x upTeX: banner
   {printed when \pTeX\ starts}
@@ -142,6 +144,7 @@ if (kcode_pos=1)or((kcode_pos>=@'11)and(kcode_pos<=@'12))
 @d max_quarterword=255 {largest allowable value in a |quarterword|}
 @d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
 @d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
+@d max_cjk_val=@"10000
 @y
 @d min_quarterword=0 {smallest allowable value in a |quarterword|}
 @d max_quarterword=@"FFFF {largest allowable value in a |quarterword|}
@@ -699,16 +702,24 @@ uptex_revision_code: print(upTeX_revision);
 
 @x
 if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
+  begin n:=cur_chr; m:=kcat_code(kcatcodekey(n));
+  end
 @y
 if (cur_cmd>=kanji)and(cur_cmd<=hangul) then
+  begin m:=cur_cmd; n:=cur_chr;
+  end
 @z
 
 @x
 get_x_token_or_active_char;
 if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
+  begin cur_cmd:=kcat_code(kcatcodekey(cur_chr));
+  end
 @y
 get_x_token_or_active_char;
 if (cur_cmd>=kanji)and(cur_cmd<=hangul) then
+  begin cur_cmd:=cur_cmd;
+  end {dummy}
 @z
 
 @x

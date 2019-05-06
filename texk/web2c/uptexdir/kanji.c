@@ -444,7 +444,7 @@ integer kcatcodekey(integer c)
                || (LATIN_SMALL_LETTER_O_WITH_STROKE  <=c && c<=LATIN_SMALL_LETTER_Y_WITH_DIAERESIS  ) )
             return 0x1FD;
         }
-        if (block==0xa0) {
+        if (block==0xa1) {
             /* Fullwidth ASCII variants  except for U+FF01..FF0F, U+FF1A..FF20, U+FF3B..FF40, U+FF5B..FF5E */
             if (  (FULLWIDTH_DIGIT_0  <=c && c<=FULLWIDTH_DIGIT_9  )
                || (FULLWIDTH_CAPITAL_A<=c && c<=FULLWIDTH_CAPITAL_Z)
@@ -485,8 +485,6 @@ void init_default_kanji (const_string file_str, const_string internal_str)
 {
     char *p;
 
-    enable_UPTEX (true); /* enable */
-
     init_kanji (file_str, internal_str);
 
     p = getenv ("PTEX_KANJI_ENC");
@@ -503,4 +501,34 @@ void init_default_kanji (const_string file_str, const_string internal_str)
         free(p);
     }
 #endif
+}
+
+void init_default_kanji_select(void)
+{
+    char *base;
+
+    base = kpse_program_basename (argv[0]);
+
+    if (FILESTRNCASEEQ(base, "p", 1) || FILESTRNCASEEQ(base, "ep", 2)) {
+
+        enable_UPTEX (false); /* disable */
+#if defined(WIN32)
+/* pBibTeX is EUC only */
+        if (FILESTRNCASEEQ(base, "pbibtex", 7)) {
+            init_default_kanji(NULL, "euc");
+        } else {
+/* for pTeX, e-pTeX, pDVItype, pPLtoTF, and pTFtoPL */
+            init_default_kanji(NULL, "sjis");
+        }
+#else
+        init_default_kanji(NULL, "euc");
+#endif
+
+    } else {
+
+/* for upTeX, e-upTeX, upBibTeX, upDVItype, upPLtoTF, and upTFtoPL */
+        enable_UPTEX (true);  /* enable */
+        init_default_kanji ("utf8", "uptex");
+
+    }
 }

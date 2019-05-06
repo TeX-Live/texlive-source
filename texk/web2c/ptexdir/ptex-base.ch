@@ -324,6 +324,13 @@ else
   wterm(')');
 @z
 
+@x
+@d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
+@y
+@d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
+@d max_cjk_val=@"10000
+@z
+
 @x [8.111] l.2436 - pTeX: check hi/ho
   (mem_top+sup_main_memory>=max_halfword) then bad:=14;
 @y
@@ -2533,19 +2540,19 @@ if (cur_cmd>active_char)or(cur_chr>255) then
   end;
 @y
 if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
-  begin m:=cur_cmd; n:=cur_chr;
+  begin n:=cur_chr; m:=kcat_code(kcatcodekey(n));
   end
 else if (cur_cmd>active_char)or(cur_chr>255) then
-  begin m:=relax; n:=256;
+  begin m:=relax; n:=max_cjk_val;
   end
 else  begin m:=cur_cmd; n:=cur_chr;
   end;
 get_x_token_or_active_char;
 if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
-  begin cur_cmd:=cur_cmd;
-  end {dummy}
+  begin cur_cmd:=kcat_code(kcatcodekey(cur_chr));
+  end
 else if (cur_cmd>active_char)or(cur_chr>255) then
-  begin cur_cmd:=relax; cur_chr:=256;
+  begin cur_cmd:=relax; cur_chr:=max_cjk_val;
   end;
 @z
 
