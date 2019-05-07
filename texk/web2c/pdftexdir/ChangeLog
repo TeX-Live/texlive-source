@@ -1,3 +1,10 @@
+2019-05-08  Akira Kakuto  <kakuto@w32tex.org>
+
+	* writeimg.c: Use a new function find_input_file() to find
+	an image file.
+	A report in tex-k list:
+	https://tug.org/pipermail/tex-k/2019-May/003014.html
+
 2019-05-03  Akira Kakuto  <kakuto@w32tex.org>
 
 	* pdftosrc-poppler0.76.0.cc, pdftoepdf-poppler0.76.0.cc:

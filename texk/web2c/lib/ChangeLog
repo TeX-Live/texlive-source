@@ -1,3 +1,11 @@
+2019-05-08  Akira Kakuto  <kakuto@w32tex.org>
+
+	* texmfmp.c: Introduce a new function find_input_file(s)
+	to fix a bug that in special cases getfilesize() etc. for
+	image files saved in "output-directory" do not work.
+	A report in tex-k list:
+	https://tug.org/pipermail/tex-k/2019-May/003014.html
+
 2019-03-30  Akira Kakuto  <kakuto@w32tex.org>
 
 	* texmfmp.c: Improve to record texmf.cnf. (ptex and friends,

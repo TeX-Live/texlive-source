@@ -126,6 +126,7 @@ extern void pdftex_fail(const char *fmt, ...);
 #endif
 extern char start_time_str[];
 extern void initstarttime(void);
+extern string find_input_file(integer s);
 #if !defined(XeTeX)
 extern char *makecstring(integer s);
 extern char *makecfilename(integer s);
