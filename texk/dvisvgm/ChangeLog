@@ -1,3 +1,8 @@
+2019-05-07  Karl Berry  <karl@tug.org>
+
+	* configure.ac (HAVE_LIBGS): reinstate setting for non-TL builds.
+	From Ken Brown, tlbuild 21 Apr 2019 12:15:51.
+
 2019-03-26  Karl Berry  <karl@freefriends.org>
 
 	* dvisvgm-src/libs/ff-woff/Makefile.am (AM_CFLAGS): add ZLIB_INCLUDES.

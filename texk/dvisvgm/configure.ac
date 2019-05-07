@@ -62,6 +62,9 @@ have_libgs=yes
 AC_CHECK_HEADER([ghostscript/iapi.h],
 	[AC_CHECK_LIB(gs, gsapi_revision,, [have_libgs=no])],
 	[have_libgs=no])
+if test "x$have_libgs" = xyes; then
+  HAVE_LIBGS=1
+fi
 AS_IF([test "x$have_libgs" = "xno"],
 	# Ghostscript not found, check for dlopen
 	[AC_CHECK_LIB(dl, dlopen,,

@@ -21960,6 +21960,9 @@ else
 fi
 
 
+if test "x$have_libgs" = xyes; then
+  HAVE_LIBGS=1
+fi
 if test "x$have_libgs" = "xno"; then :
   # Ghostscript not found, check for dlopen
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
