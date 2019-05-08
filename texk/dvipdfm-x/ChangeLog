@@ -1,3 +1,7 @@
+2019-05-08  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dpxfile.c: Avoid buffer overflow.
+
 2019-05-08  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_pdfm.c: Transformation also applies to annotations

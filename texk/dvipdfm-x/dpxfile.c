@@ -163,11 +163,13 @@ static char  _tmpbuf[PATH_MAX+1];
 extern int utf8name_failed;
 #endif /* WIN32 */
 
+#define CMDBUFSIZ 1024
 static int exec_spawn (char *cmd)
 {
   char **cmdv, **qv;
   char *p, *pp;
-  char buf[1024];
+  char buf[CMDBUFSIZ];
+  int  charcnt;
   int  i, ret = -1;
 #ifdef WIN32
   wchar_t **cmdvw, **qvw;
@@ -186,11 +188,12 @@ static int exec_spawn (char *cmd)
       i++;
     p++;
   }
-  cmdv = xcalloc (i + 2, sizeof (char *));
+  cmdv = xcalloc (i + 4, sizeof (char *));
   p = cmd;
   qv = cmdv;
   while (*p) {
     pp = buf;
+    charcnt = 0;
     if (*p == '"') {
       p++;
       while (*p != '"') {
@@ -198,6 +201,10 @@ static int exec_spawn (char *cmd)
           goto done;
         }
         *pp++ = *p++;
+        charcnt++;
+        if (charcnt > CMDBUFSIZ - 1) {
+          ERROR("Too long a command line.");
+        }
       }
       p++;
     } else if (*p == '\'') {
@@ -207,6 +214,10 @@ static int exec_spawn (char *cmd)
           goto done;
         }
         *pp++ = *p++;
+        charcnt++;
+        if (charcnt > CMDBUFSIZ - 1) {
+          ERROR("Too long a command line.");
+        }
       }
       p++;
     } else {
@@ -218,10 +229,18 @@ static int exec_spawn (char *cmd)
                  goto done;
              }
              *pp++ = *p++;
+             charcnt++;
+             if (charcnt > CMDBUFSIZ - 1) {
+               ERROR("Too long a command line.");
+             }
           }
           p++;
         } else {
           *pp++ = *p++;
+          charcnt++;
+          if (charcnt > CMDBUFSIZ - 1) {
+            ERROR("Too long a command line.");
+          }
         }
       }
     }
@@ -239,11 +258,13 @@ static int exec_spawn (char *cmd)
       p++;
     qv++;
   }
+  *qv = NULL;
+
 #ifdef WIN32
 #if defined(MIKTEX)
   ret = _spawnvp(_P_WAIT, *cmdv, (const char* const*)cmdv); 
 #else
-  cmdvw = xcalloc (i + 2, sizeof (wchar_t *));
+  cmdvw = xcalloc (i + 4, sizeof (wchar_t *));
   if (utf8name_failed == 0) {
     qv = cmdv;
     qvw = cmdvw;
