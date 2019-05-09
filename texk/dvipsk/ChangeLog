@@ -1,3 +1,9 @@
+2019-04-30  Karl Berry  <karl@tug.org>
+
+	* dosection.c (dosection): close PostScript string constant
+	for long filenames. tex-k mail from Arnaud Blouin,
+	24 Apr 2019 13:54:10.
+
 2019-04-07  Karl Berry  <karl@freefriends.org>
 
 	* TeX Live 2019.
