@@ -1,9 +1,17 @@
 dvipdfmx and xdvipdfmx for TeX Live
 ===================================
 
+This package is released under the GNU GPL, version 2, or (at your
+option) any later version.
+
+dvipdfmx is now maintained as part of TeX Live.
+
+Mailing list for bug reports and all discussion:
+https://lists.tug.org/dvipdfmx; anyone can join the list, but it is not
+necessary to join to post. Archives are public.
+
 xdvipdfmx
 =========
-
 xdvipdfmx is an extended version of dvipdfmx, and is now incorporated in
 the same sources.
 
@@ -15,8 +23,6 @@ Like its direct ancestor dvipdfmx, this is free software and may be
 redistributed under the terms of the GNU General Public License,
 version 2 or (at your option) any later version.
 
-There is a hope to merge xdvipdfmx into dvipdfmx.
-
 Jonathan Kew mentions that in the past, XeTeX used a Mac-specific
 program xdv2pdf as the backend instead of xdvipdfmx.  xdv2pdf supported
 a couple of special effects that are not yet available through
@@ -26,18 +32,8 @@ things.  It would be nice for those things to continue to be supported,
 if anyone is looking for some nontrivial but not-impossible job and
 happens across this file.
 
-The dvipdfmx Project
-====================
-
-Copyright (C) 2002-2014 by Jin-Hwan Cho, Shunsaku Hirata, 
-Matthias Franz, and the dvipdfmx project team.  This package is released
-under the GNU GPL, version 2, or (at your option) any later version.
-
-dvipdfmx is now maintained as part of TeX Live.
-
 Contents
 --------
-
 1. Introduction
 
 2. Installation

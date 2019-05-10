@@ -1,3 +1,47 @@
+2019-05-08  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dpxfile.c: Avoid buffer overflow.
+
+2019-05-08  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_pdfm.c: Transformation also applies to annotations
+	created by pdf:ann.
+
+2019-05-07  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_cmap.c: Fix a bug that CFF charset data were not read.
+	* unicode.c: Fix a bug that end-of-buffer calculation was
+	wrong.
+
+2019-05-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfdoc.c: g option affects only annotations created by
+	"pdf:bann/eann" and html "a link" specials.
+	Report from Joseph Wright:
+	https://tug.org/pipermail/tex-live/2019-May/043612.html
+
+2019-05-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* specials.c: transformation applied to current point was not
+	done properly.
+
+2019-05-03  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dpxfile.c, mfileio.h, pdfximage.c: Support non-ascii file
+	names in default code page of OS irrespective of values of a
+	variable 'command_line_encoding' (Windows only).
+
+2019-05-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfobj.c, pdfobj.h: Add support for ASCIIHex and ASCII85
+	decode filter. Support for decoding stream data with multiple
+	filters applied. Remove unused function.
+	* tt_cmap.c, tt_gsub.[ch]: Revise ToUnicode CMap creation for
+	OpenType. Use GSUB for mapping unencoded glyphs to Unicode
+	(XeTeX support), lowering priority of CJK compatibility
+	ideographs.
+	* configure.ac: Version 20190503.
+
 2019-04-07  Karl Berry  <karl@freefriends.org>
 
 	* TeX Live 2019.
