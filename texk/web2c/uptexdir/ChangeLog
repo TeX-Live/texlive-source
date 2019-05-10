@@ -2,7 +2,7 @@
 
 	* uptex-m.ch, upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch,
 	uptex_version.h: upTeX version u1.25.
-	* kanji.c:
+	* kanji.c, kanji.h:
 	Fix bug of kcatcode at Fullwidth ASCII variants and
 	Halfwidth Katakana variants from Yusuke Terada san:
 	https://github.com/texjporg/tex-jp-build/pull/79
