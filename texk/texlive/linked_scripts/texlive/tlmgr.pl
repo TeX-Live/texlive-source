@@ -6988,10 +6988,11 @@ do not include the version of the local installation
     # of the main remote repository, then
     # warn that one needs to call update-tlmgr-latest.sh --update
     if ($is_main && $TeXLive::TLConfig::ReleaseYear < $texlive_release_year) {
-      return (undef, "Remote repository is newer than local ($TeXLive::TLConfig::ReleaseYear < $texlive_release_year)\n"
+      return (undef, "Local TeX Live ($TeXLive::TLConfig::ReleaseYear)"
+              . " is older than remote repository ($texlive_release_year).\n"
               . "Cross release updates are only supported with\n"
               . "  update-tlmgr-latest(.sh/.exe) --update\n"
-              . "Please see https://tug.org/texlive/upgrade.html for details.")
+              . "See https://tug.org/texlive/upgrade.html for details.")
     }
   } else {
     # $texlive_minrelease not defined, so only one year is valid
@@ -7472,9 +7473,13 @@ with C<tlmgr>:
 Tell C<tlmgr> to use a nearby CTAN mirror for future updates; useful if
 you installed TeX Live from the DVD image and want to have continuing
 updates.  The two commands are equivalent; C<ctan> is just an alias for
-the given url.  Caveat: C<mirror.ctan.org> resolves to many different
-hosts, and they are not perfectly synchronized; we recommend updating
-only daily (at most), and not more often.
+the given url.
+
+Caveat: C<mirror.ctan.org> resolves to many different hosts, and they
+are not perfectly synchronized; we recommend updating only daily (at
+most), and not more often. You can choose a particular mirror if
+problems; the list of all CTAN mirrors with the status of each is at
+L<https://ctan.org/mirrors/mirmon>.
 
 =item C<tlmgr update --list>
 
@@ -7525,7 +7530,7 @@ like this:
 
 Of course a real hostname and its particular top-level CTAN directory
 have to be specified.  The list of CTAN mirrors is available at
-L<https://ctan.org/mirrors>.
+L<https://ctan.org/mirrors/mirmon>.
 
 Here's an example of using a local directory:
 
@@ -8126,8 +8131,8 @@ with C<--usertree>.  See L<USER MODE> below.
 =head2 install [I<option>...] I<pkg>...
 
 Install each I<pkg> given on the command line, if it is not already
-installed.  (It does not touch existing packages; see the C<update>
-action for how to get the latest version of a package.)
+installed.  It does not touch existing packages; see the C<update>
+action for how to get the latest version of a package.
 
 By default this also installs all packages on which the given I<pkg>s are
 dependent.  Options:
@@ -8188,6 +8193,10 @@ C<--reinstall>, as in (using the C<fontspec> package as the example):
   tlmgr install --reinstall --with-doc --with-src fontspec
 
 =back
+
+This action does not automatically add new symlinks in system
+directories; you need to run C<tlmgr path add> (L</path>) yourself if
+you are using this feature and want new symlinks added.
 
 =head2 key
 
@@ -8371,10 +8380,12 @@ settings.
 
 =item B<path [--w32mode=user|admin] remove>
 
-On Unix, merely adds or removes symlinks for binaries, man pages, and
-info pages in the system directories specified by the respective options
-(see the L</option> description above).  Does not change any
-initialization files, either system or personal.
+On Unix, adds or removes symlinks for executables, man pages, and info
+pages in the system directories specified by the respective options (see
+the L</option> description above). Does not change any initialization
+files, either system or personal. Furthermore, any executables added or
+removed by future updates are not taken care of automatically; this
+command must be rerun as needed.
 
 On Windows, the registry part where the binary directory is added or
 removed is determined in the following way:
@@ -8576,6 +8587,10 @@ Nothing is actually removed; instead, the actions to be performed are
 written to the terminal.
 
 =back
+
+This action does not automatically remove symlinks to executables from
+system directories; you need to run C<tlmgr path remove> (L</path>)
+yourself if you are using this feature and want stale symlinks removed.
 
 =head2 repository
 
@@ -8881,7 +8896,6 @@ supported in these circumstances.
 This option can also be set permanently in the tlmgr config file with 
 the key C<update-exclude>.
 
-
 =item B<--no-auto-remove> [I<pkg>...]
 
 By default, C<tlmgr> tries to remove packages which have disappeared on
@@ -8976,6 +8990,10 @@ C<tlpkg/texlive.tlpdb.>I<long-hash-string>.  These can be useful for
 fallback information, but if you don't like them accumulating (e.g.,
 C<mirror.ctan.org> resolves to many different hosts, each resulting in
 a possibly different hash), it's harmless to delete them.
+
+This action does not automatically add or remove new symlinks in system
+directories; you need to run C<tlmgr> L</path> yourself if you are using
+this feature and want new symlinks added.
 
 =head1 CONFIGURATION FILE FOR TLMGR
 

@@ -2552,6 +2552,7 @@ commit pushed is tested on Travis-CI.
 * Transfer from Subversion to Github::
 * Automatic update of the Git mirror::
 * CI testing on Travis-CI::
+* Releases on Github::
 @end menu
 
 
@@ -2633,6 +2634,22 @@ Travis-CI.
 
 If changes have been pushed via the cron job above, Travis-CI will
 automatically checkout the last pushed commit and try building it.
+
+@node Releases on Github
+@section Releases on Github
+
+Given a git checkout of @code{texlive-source}:
+
+@example
+git pull
+git tag build-svnNNNN
+git push --tags
+@end example
+
+@noindent and the result will appear at
+@url{https://github.com/TeX-Live/texlive-source/releases}.
+Releases can also be made manually from that web page (see
+@code{tl-update-bindir} for hints).
 
 @c made from pod doc.
 @include tlbuild-incl/install-tl.texi
