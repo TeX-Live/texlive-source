@@ -600,14 +600,14 @@ sub cleanup {
             = @{$item}{qw(font style shape encoding)};
 
         # make unique copy of fontdata, since we're modifying it;
-        # otherwise, the mergesmallcaps only works for
+        # otherwise, the mergesmallcaps option only works for
         # the first encoding in the list
         my %font = %$font;
         $font = $item->{font} = \%font;
 
         # handle fonts that put small caps fonts into separate family
         if ($ARGV{mergesmallcaps}) {
-            if ($font->{family} =~ s/smallcaps$//xmsi) {
+            if ($font->{family} =~ s/(?: smallcaps | sc )$//xmsi) {
                 $shape = $item->{shape} = 'smallcaps';
             }
         }
@@ -2533,6 +2533,11 @@ GNU General Public License for more details.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2019-05-11>
+
+Separate small caps families are now also recognised when the family name
+ends with "SC" (previously B<autoinst> only looked for "SmallCaps").
 
 =item I<2019-04-22>
 

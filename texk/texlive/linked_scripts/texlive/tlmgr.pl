@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 50796 2019-04-05 22:43:08Z karl $
+# $Id: tlmgr.pl 51076 2019-05-10 22:23:09Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 50796 $';
-my $datrev = '$Date: 2019-04-06 00:43:08 +0200 (Sat, 06 Apr 2019) $';
+my $svnrev = '$Revision: 51076 $';
+my $datrev = '$Date: 2019-05-11 00:23:09 +0200 (Sat, 11 May 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -9798,7 +9798,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 50796 2019-04-05 22:43:08Z karl $
+$Id: tlmgr.pl 51076 2019-05-10 22:23:09Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
