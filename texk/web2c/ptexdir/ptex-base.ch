@@ -59,6 +59,7 @@
 % (2017-09-07) HK  pTeX p3.7.2 More restrictions on direction change commands.
 % (2018-01-21) HK  Added \ptexversion primitive and co. pTeX p3.8.
 % (2018-04-14) HK  pTeX p3.8.1 Bug fix for discontinuous KINSOKU table.
+% (2019-02-03) HK  pTeX p3.8.2 Change \inhibitglue, add \disinhibitglue.
 %
 
 @x

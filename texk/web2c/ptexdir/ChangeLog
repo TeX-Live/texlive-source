@@ -1,8 +1,10 @@
 2019-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch:
-	Make appropreate comparison of U+0100 by \if in upTeX.
+	Make appropriate comparison of U+0100 by \if in upTeX.
 	https://github.com/texjporg/tex-jp-build/issues/68
+	Re-eval kcatcode of Japanese character token in \if and \ifcat.
+	https://github.com/texjporg/ptex-manual/issues/4
 
 2019-02-03  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
