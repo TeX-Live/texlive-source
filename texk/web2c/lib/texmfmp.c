@@ -147,7 +147,7 @@ char *generic_synctex_get_current_name (void)
 }
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #if !IS_pTeX
 FILE *Poptr;
 #endif
@@ -162,11 +162,34 @@ int fsyscp_stat(const char *path, struct stat *buffer)
   int     ret;
   wpath = get_wstring_from_mbstring(file_system_codepage,
           path, wpath = NULL);
+  if (wpath == NULL)
+    return -1;
   ret = _wstat(wpath, buffer);
   free(wpath);
   return ret;
 }
-#endif /* WIN32 */
+#include <sys/stat.h>
+int fsyscp_dir_p(char *path)
+{
+  struct stat stats;
+  int    ret;
+
+  ret = fsyscp_stat(path, &stats) == 0 && S_ISDIR (stats.st_mode);
+  return ret;
+}
+int fsyscp_access(const char *path, int mode)
+{
+  wchar_t *wpath;
+  int     ret;
+  wpath = get_wstring_from_mbstring(file_system_codepage,
+          path, wpath = NULL);
+  if (wpath == NULL)
+    return -1;
+  ret = _waccess(wpath, mode);
+  free(wpath);
+  return ret;
+}
+#endif /* _WIN32 */
 
 #if defined(TeX) || (defined(MF) && defined(WIN32))
 static int
@@ -3093,6 +3116,13 @@ void initstarttime(void)
         }
     }
 }
+
+#if defined(_WIN32)
+#undef access
+#undef dir_p
+#define access fsyscp_access
+#define dir_p fsyscp_dir_p
+#endif /* _WIN32 */
 
 /* Search for an input file. If -output-directory is specified look
    there first. If that fails, do the regular kpse search. */
