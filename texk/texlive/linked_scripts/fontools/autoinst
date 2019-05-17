@@ -868,6 +868,9 @@ my %SCHEME = (
 sub make_cmdline {
     my $item = shift;
 
+    if ( !$ARGV{ligatures} ) {
+        @{$item->{features}} = grep { $_ ne 'liga' } @{$item->{features}};
+    }
     return join ' ', 'otftotfm',
                      ($ARGV{manual} ? '--pl' : '--automatic'),
                      "--encoding=$item->{encoding}[0]",
@@ -1005,7 +1008,7 @@ END_USAGE
     inferiors       => 'none',  # possible values: none, auto, subs, sinf, dnom
     ornaments       => '1',     # 0 = no, 1 = yes
     fractions       => '0',     # 0 = no, 1 = yes
-    ligatures       => '0',     # 0 = no, 1 = yes
+    ligatures       => '2',     # 0 = no, 1 = yes, 2 = (nfss ne 'tt' ? yes : no)
     nfss            => 'rm',
     fig_height      => 'lnum',
     fig_width       => 'tnum',
@@ -1113,6 +1116,11 @@ sub parse_options {
         delete $SHAPE{textcomp};
     }
 
+    # If the user didn't explicitly say anything about ligatures,
+    # activate them unless the font is a typewriter font.
+    if ($ARGV{ligatures} == 2) {
+        $ARGV{ligatures} = $ARGV{nfss} ne 'tt' ? 1 : 0;
+    }
     # Fix the %STYLE table to take 'default' figure styles into account.
     $STYLE_DEFAULTS{$ARGV{fig_height}}();
     $STYLE_DEFAULTS{$ARGV{fig_width}}();
@@ -2354,9 +2362,10 @@ Some fonts create glyphs for the standard f-ligatures (ff, fi, fl, ffi, ffl),
 but don't provide a "liga" feature to access these.
 This option tells B<autoinst> to add extra C<LIGKERN> rules to
 the generated fonts to enable the use of these ligatures.
-Since this option is rarely necessary
-(most fonts with f-ligatures do provide the matching "liga" feature),
-the default is B<-noligatures>.
+The default is B<-ligatures>, unless the user specified the I<ligatures> option.
+
+Specify B<-noligatures> to disable the generation of ligatures even for fonts
+that do contain a "liga" feature.
 
 =item B<-defaultlining> / B<-defaultoldstyle>
 
@@ -2534,6 +2543,12 @@ GNU General Public License for more details.
 
 =over 12
 
+=item I<2019-05-17>
+
+Changed the way the F<-ligatures> option works:
+F<-ligatures> enables f-ligatures (even without a "liga" feature),
+F<-noligatures> now disables f-ligatures (overriding a "liga" feature).
+
 =item I<2019-05-11>
 
 Separate small caps families are now also recognised when the family name
@@ -2553,7 +2568,7 @@ Added the <-mergesmallcaps> option, to handle cases where
 the small caps fonts are in separate font families.
 Titling shape is now treated as a separate family instead of a distinct shape;
 it is generated only for fonts with the 'titl' feature.
-Only add f-ligatures to fonts when explicitly asked to (<-fligatures>).
+Only add f-ligatures to fonts when explicitly asked to (I<-ligatures>).
 
 =item I<2019-04-11>
 

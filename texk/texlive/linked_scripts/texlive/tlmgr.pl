@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 51076 2019-05-10 22:23:09Z karl $
+# $Id: tlmgr.pl 51141 2019-05-16 11:18:52Z preining $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 51076 $';
-my $datrev = '$Date: 2019-05-11 00:23:09 +0200 (Sat, 11 May 2019) $';
+my $svnrev = '$Revision: 51141 $';
+my $datrev = '$Date: 2019-05-16 13:18:52 +0200 (Thu, 16 May 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -4545,6 +4545,27 @@ sub action_repository {
     $localtlpdb->save;
     return ($F_OK);
   }
+  if ($what eq "status") {
+    if (!defined($remotetlpdb)) {
+      init_tlmedia_or_die();
+    }
+    if (!$remotetlpdb->is_virtual) {
+      my $verstat = $remotetlpdb->verification_status;
+      print "main ", $remotetlpdb->location, " ", 
+        ($::machinereadable ? "$verstat " : ""),
+        $VerificationStatusDescription{$verstat}, "\n";
+      return ($F_OK);
+    } else {
+      for my $t ($remotetlpdb->virtual_get_tags()) {
+        my $tlpdb = $remotetlpdb->virtual_get_tlpdb($t);
+        my $verstat = $tlpdb->verification_status;
+        print "$t ", $tlpdb->location, " ",
+          ($::machinereadable ? "$verstat " : ""),
+          $VerificationStatusDescription{$verstat}, "\n";
+      }
+      return($F_OK);
+    }
+  }
   # we are still here, unknown command to repository
   tlwarn("$prg: unknown subaction for tlmgr repository: $what\n");
   return ($F_ERROR);
@@ -8606,6 +8627,8 @@ yourself if you are using this feature and want stale symlinks removed.
 
 =item B<repository set I<path>[#I<tag>] [I<path>[#I<tag>] ...]>
 
+=item B<repository status>
+
 This action manages the list of repositories.  See L<MULTIPLE
 REPOSITORIES> below for detailed explanations.
 
@@ -8620,8 +8643,17 @@ package the available platforms (if any) are listed, too.
 The third form (C<add>) adds a repository
 (optionally attaching a tag) to the list of repositories.  The forth
 form (C<remove>) removes a repository, either by full path/url, or by
-tag.  The last form (C<set>) sets the list of repositories to the items
-given on the command line, not keeping previous settings
+tag.  The fifth form (C<set>) sets the list of repositories to the items
+given on the command line, not keeping previous settings.
+
+The last form (C<status>) reports the verification status of the
+loaded repositories in the following format: One repository per line with
+4 fields separated with a single space: The tag (which can be the same 
+as the URL), the URL, the verification code (a number), and the
+verbal description of the verification status (last field extending to
+the end of line). This format is valid under machine readable output,
+while in normal output the third field (numeric verification status)
+is not present.
 
 In all cases, one of the repositories must be tagged as C<main>;
 otherwise, all operations will fail!
@@ -9798,7 +9830,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 51076 2019-05-10 22:23:09Z karl $
+$Id: tlmgr.pl 51141 2019-05-16 11:18:52Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
