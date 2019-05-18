@@ -1,3 +1,11 @@
+2019-05-18  Karl Berry  <karl@freefriends.org>
+
+	* patgen.ch (trie_size),
+	(triec_size): increase to maximum values 110021182 and 55000006
+	as reported by Keno Wehr,
+	(print_real calls): reorder parentheses to avoid overflow.
+	https://tug.org/pipermail/tex-live/2019-May/043679.html.
+
 2019-05-08  Akira Kakuto  <kakuto@w32tex.org>
 
 	* texmfmp.h: Define a new function find_input_file(integer s).

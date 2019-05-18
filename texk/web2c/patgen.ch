@@ -72,14 +72,14 @@ begin
 @!text_char=ASCII_code; {the data type of characters in text files}
 @z
 
-@x Increase constants.
+@x Maximum constant values from Keno Wehr, 17 May 2019 16:03:00 on tex-live.
 @!trie_size=55000; {space for pattern trie}
 @!triec_size=26000; {space for pattern count trie, must be less than
  |trie_size| and greater than the number of occurrences of any pattern in
  the dictionary}
 @y
-@!trie_size=10000000; {space for pattern trie}
-@!triec_size=5000000; {space for pattern count trie, must be less than
+@!trie_size=110021182; {max space for pattern trie}
+@!triec_size=54677566; {max space for pattern count trie, must be less than
  |trie_size| and greater than the number of occurrences of any pattern in
  the dictionary}
 @z
@@ -146,18 +146,18 @@ reset (dictionary, f_name);
     filnam[7]:=xdig[hyph_level];
 @z
 
-@x Work around floating point I/O deficiency.
+@x Work around floating point I/O deficiency; reorder to avoid overflow.
   if (good_count+miss_count)>0 then
     print_ln((100*good_count/(good_count+miss_count)):1:2,' %, ',
       (100*bad_count/(good_count+miss_count)):1:2,' %, ',
       (100*miss_count/(good_count+miss_count)):1:2,' %');
 @y
   if (good_count+miss_count)>0 then
-  begin print_real((100*good_count/(good_count+miss_count)),1,2);
+  begin print_real((100*(good_count/(good_count+miss_count))),1,2);
     print(' %, ');
-    print_real((100*bad_count/(good_count+miss_count)),1,2);
+    print_real((100*(bad_count/(good_count+miss_count))),1,2);
     print(' %, ');
-    print_real((100*miss_count/(good_count+miss_count)),1,2);
+    print_real((100*(miss_count/(good_count+miss_count))),1,2);
     print_ln(' %');
   end;
 @z
