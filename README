@@ -25,6 +25,7 @@ that document).
 
 
 Build information for some of the platforms.
+See also Master/tlpkg/bin/tl-update-bindir
 
 aarch64-linux:
   aarch64 Debian GNU/Linux 9 (stretch)
@@ -39,7 +40,8 @@ i386-netbsd, amd64-netbsd:
   ./Build --enable-xindy CLISP=/usr/local/bin/clisp
 
 i386-freebsd, amd64-freebsd:
-  http://anthesphoria.net/FreeBSD/TeXLive-2018/ has all details.
+  http://anthesphoria.net/FreeBSD/TeXLive-2018/ has details for 2018.
+  2019 built on contextgarden, see below.
 
 i386-linux: see travis below.
 
@@ -48,6 +50,7 @@ i386-openbsd, amd64-openbsd:
   http://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/print/texlive/base/
 
 i386-solaris, x86_64-solaris:
+  Built on contextgarden, see below.
   Solaris 10, gcc 5.5.  See doc/README.solaris.
 
 i386-cygwin, x86_64-cygwin: gcc-4.8.2, cygwin-1.7.29.
@@ -68,32 +71,3 @@ x86_64-linuxmusl:
   Binaries are taken from the CI testing on travis-ci
   see the source/.travis.yaml file for details on how to build,
   and tlpkg/bin/tl-update-bindir for updating binaries (in general).
-
-x86_64-linux-glibc2.12, on CentOS6:
-#!/bin/sh -x
-# Public domain.
-# in ~/.subversion/config: use-commit-times=yes
-# mkdir /usr/local/src/tl
-# cd !$
-# svn -q co svn://tug.org/texlive/branches/branch2018/Build/source
-# rm -rf source/libs/icu source/libs/poppler # to avoid configuring them
-#
-cd /usr/local/src/tl || exit 1
-#
-debug=-g # for debugging, no optimization
-#
-./Build \
-  $debug \
-  -C \
-  --disable-xetex \
-  --disable-luatex \
-  --disable-luajittex \
-  --disable-luatex53 \
-  --disable-dvisvgm \
-  --disable-bibtexu \
-  --disable-upmendex \
-  --disable-poppler \
-  --without-system-icu \
-  --without-system-poppler \
-  --enable-native-texlive-build \
-exit $?
