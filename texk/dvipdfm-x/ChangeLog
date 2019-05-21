@@ -1,3 +1,12 @@
+2019-05-22  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_gsub.c: Fix a bug that otl_gsub_read_alternate() and
+	otl_gsub_read_ligature() exit loops wrongly for erroneous
+	data, which leads to uninitialized values.
+	Reported by Chih-Hsuan Yen:
+	https://tug.org/pipermail/dvipdfmx/2019-May/000004.html.
+	* configure.ac: Version 20190522.
+
 2019-05-08  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dpxfile.c: Avoid buffer overflow.
