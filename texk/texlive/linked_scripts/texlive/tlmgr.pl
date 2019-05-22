@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 51141 2019-05-16 11:18:52Z preining $
+# $Id: tlmgr.pl 51173 2019-05-21 16:35:34Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 51141 $';
-my $datrev = '$Date: 2019-05-16 13:18:52 +0200 (Thu, 16 May 2019) $';
+my $svnrev = '$Revision: 51173 $';
+my $datrev = '$Date: 2019-05-21 18:35:34 +0200 (Tue, 21 May 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -8619,7 +8619,7 @@ yourself if you are using this feature and want stale symlinks removed.
 
 =item B<repository list>
 
-=item B<repository list I<path|tag>>
+=item B<repository list I<path|url|tag>>
 
 =item B<repository add I<path> [I<tag>]>
 
@@ -8632,28 +8632,41 @@ yourself if you are using this feature and want stale symlinks removed.
 This action manages the list of repositories.  See L<MULTIPLE
 REPOSITORIES> below for detailed explanations.
 
-The first form (C<list>) lists all configured repositories and the
-respective tags if set. If a path, url, or tag is given after the
-C<list> keyword, it is interpreted as source from where to 
-initialize a TeX Live Database and lists the contained packages.
-This can also be an up-to-now not used repository, both locally
-and remote. If one pass in addition C<--with-platforms>, for each
-package the available platforms (if any) are listed, too.
+The first form, C<repository list>, lists all configured repositories
+and the respective tags if set. If a path, url, or tag is given after
+the C<list> keyword, it is interpreted as the source from which to
+initialize a TL database and lists the contained packages. This can also
+be an otherwise-unused repository, either local or remote. If the option
+C<--with-platforms> is spcified in addition, for each package the
+available platforms (if any) are also listed.
 
-The third form (C<add>) adds a repository
-(optionally attaching a tag) to the list of repositories.  The forth
-form (C<remove>) removes a repository, either by full path/url, or by
-tag.  The fifth form (C<set>) sets the list of repositories to the items
-given on the command line, not keeping previous settings.
+The form C<repository add> adds a repository (optionally attaching a
+tag) to the list of repositories, while C<repository remove> removes a
+repository, either by full path/url, or by tag.
 
-The last form (C<status>) reports the verification status of the
-loaded repositories in the following format: One repository per line with
-4 fields separated with a single space: The tag (which can be the same 
-as the URL), the URL, the verification code (a number), and the
-verbal description of the verification status (last field extending to
-the end of line). This format is valid under machine readable output,
-while in normal output the third field (numeric verification status)
-is not present.
+The form C<repository set> sets the list of available repositories to
+the items given on the command line, overwriting previous settings.
+
+The form C<repository status> reports the verification status of the
+loaded repositories with the format of one repository per line
+with fields separated by a single space:
+
+=over 4
+
+=item The tag (which can be the same as the url);
+
+= the url;
+
+= iff machine-readable output is specified, the verification code (a
+number);
+
+= a textual description of the verification status, as the last field
+extending to the end of line.
+
+=back 
+
+That is, in normal (not machine-readable) output, the third field
+(numeric verification status) is not present.
 
 In all cases, one of the repositories must be tagged as C<main>;
 otherwise, all operations will fail!
@@ -9830,7 +9843,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 51141 2019-05-16 11:18:52Z preining $
+$Id: tlmgr.pl 51173 2019-05-21 16:35:34Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

@@ -9,8 +9,8 @@
 
 local ProvidesLuaModule = { 
     name          = "luaotfload-tool",
-    version       = "2.96",       --TAGVERSION
-    date          = "2019-02-14", --TAGDATE
+    version       = "2.97",       --TAGVERSION
+    date          = "2019-05-18", --TAGDATE
     description   = "luaotfload-tool / database functionality",
     license       = "GPL v2.0"
 }
@@ -70,7 +70,7 @@ do
     local minimum         = luaotfload.min_luatex_version
     local actual          = { 0, 0, 0 }
     if stats then
-        local major    = stats.luatex_version / 100
+        local major    = stats.luatex_version // 100
         local minor    = stats.luatex_version % 100
         local revision = stats.luatex_revision --[[ : string ]]
         local revno    = tonumber (revision)
@@ -152,7 +152,7 @@ require "fontloader-basics-gen.lua"
 texio.write, texio.write_nl          = backup.write, backup.write_nl
 utilities                            = backup.utilities
 
-pdf = pdf or { } --- for font-tfm
+pdf = pdf or { } --- for fonts-tfm
 
 require "fontloader-data-con"
 require "fontloader-font-ini"
@@ -162,6 +162,7 @@ require "fontloader-font-cid"
 require "fontloader-font-map"
 require "fontloader-font-oti"
 require "fontloader-font-otr"
+require "fontloader-font-ott"
 require "fontloader-font-cff"
 require "fontloader-font-ttf"
 require "fontloader-font-dsp"
@@ -628,7 +629,7 @@ local display_feature_set = function (set)
 end
 
 local display_features_type = function (id, feat)
-    if next (feat) then
+    if feat and next (feat) then
         print_heading(id, 3)
         display_feature_set(feat)
         return true
@@ -640,10 +641,19 @@ local display_features = function (features)
     texiowrite_nl ""
     print_heading("Features", 2)
 
-    if not display_features_type ("GSUB Features", features.gsub)
-    or not display_features_type ("GPOS Features", features.gpos)
-    then
+    local status = 0
+    if not display_features_type ("GSUB Features", features.gsub) then
+        status = status + 1
+    end
+    if not display_features_type ("GPOS Features", features.gpos) then
+        status = status + 2
+    end
+    if status == 3 then
         texiowrite_nl("font defines neither gsub nor gpos features")
+    elseif status == 2 then
+        texiowrite_nl("font defines no gpos feature")
+    elseif status == 1 then
+        texiowrite_nl("font defines no gsub feature")
     end
 end
 
@@ -1188,8 +1198,8 @@ actions.query = function (job)
         end
     elseif tmpspec.lookup == "file" then
         needle  = tmpspec.name
-        subfont = tmpspec.sub
     end
+    subfont = tmpspec.sub
 
     if needle then
         foundname, _, success = fonts.names.lookup_font_file (tmpspec.name)
