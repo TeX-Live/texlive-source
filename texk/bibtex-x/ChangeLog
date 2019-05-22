@@ -1,5 +1,6 @@
 2019-05-22  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
+	* bibtex-2.c, bibtex-3.c: Better error messages for debug.
 	* bibtex-3.c (icu_strToUpper): React to Str_language.
 
 2019-05-05  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>

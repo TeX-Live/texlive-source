@@ -3143,7 +3143,7 @@ BEGIN
 	UErrorCode err1 = U_ZERO_ERROR;
 	if (!U_SUCCESS(err1))
 	BEGIN
-		printf("3there is a error: U_ZERO_ERROR");
+		printf("Error in icu_strToUpper?\n");
 	END
 	if (Flag_language)
 	{
@@ -3155,7 +3155,7 @@ BEGIN
 	}
 	if (!U_SUCCESS(err1))
 	BEGIN
-		printf("4there is a error: U_ZERO_ERROR");
+		printf("Error in icu_strToUpper.\n");
 	END
 
 	return tulen;
