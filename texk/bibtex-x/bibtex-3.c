@@ -3156,6 +3156,10 @@ BEGIN
 	if (!U_SUCCESS(err1))
 	BEGIN
 		printf("Error in icu_strToUpper.\n");
+#ifdef TRACE
+		if (Flag_trace)
+			TRACE_PR_LN ("Error in icu_strToUpper");
+#endif                      			/* TRACE */
 	END
 
 	return tulen;

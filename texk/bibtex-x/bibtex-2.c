@@ -2977,6 +2977,10 @@ If err1 != U_ZERO_ERROR, the original functions are used. (06/mar/2019)
   u_strFromUTF8WithSub(uch1, ucap, &uchlen1, (char *)&ENTRY_STRS(ptr1, 0), lenk1, 0xfffd, NULL, &err1);
   if (!U_SUCCESS(err1)) {
     printf("Error in u_strFromUTF8WithSub 1.\n");
+#ifdef TRACE
+    if (Flag_trace)
+      TRACE_PR_LN ("Error in u_strFromUTF8WithSub 1");
+#endif                      			/* TRACE */
     uchlen1 = icu_toUChars(entry_strs, (ptr1 * (ENT_STR_SIZE+1)), lenk1, uch1, ucap);
     err1 = U_ZERO_ERROR;
   }
@@ -2984,6 +2988,10 @@ If err1 != U_ZERO_ERROR, the original functions are used. (06/mar/2019)
   u_strFromUTF8WithSub(uch2, ucap, &uchlen2, (char *)&ENTRY_STRS(ptr2, 0), lenk2, 0xfffd, NULL, &err1);
   if (!U_SUCCESS(err1)) {
     printf("Error in u_strFromUTF8WithSub 2.\n");
+#ifdef TRACE
+    if (Flag_trace)
+      TRACE_PR_LN ("Error in u_strFromUTF8WithSub 2");
+#endif                      			/* TRACE */
     uchlen2 = icu_toUChars(entry_strs, (ptr2 * (ENT_STR_SIZE+1)), lenk2, uch2, ucap);
     err1 = U_ZERO_ERROR;
   }
@@ -3163,6 +3171,10 @@ BEGIN
 	if (!U_SUCCESS(err1))
 	BEGIN
 		printf("Error in icu_toUChars.\n");
+#ifdef TRACE
+		if (Flag_trace)
+			TRACE_PR_LN ("Error in icu_toUChars");
+#endif                      			/* TRACE */
 	END
 	ucnv_close(ucon1);
 	
@@ -3192,6 +3204,10 @@ BEGIN
 	BEGIN
 		int16_t i=0;
 		printf("Error in icu_strToLower.\n");
+#ifdef TRACE
+		if (Flag_trace)
+			TRACE_PR_LN ("Error in icu_strToLower");
+#endif                      			/* TRACE */
 		for (i=0;i<tarlen;i++)
 		BEGIN
 			printf("%X", target[i]);
@@ -3225,6 +3241,10 @@ BEGIN
 	if (!U_SUCCESS(err2))
 	BEGIN
 		printf("Error in icu_fromUChars.\n");
+#ifdef TRACE
+		if (Flag_trace)
+			TRACE_PR_LN ("Error in icu_fromUChars");
+#endif                      			/* TRACE */
 	END
 	
 	return tblen;
