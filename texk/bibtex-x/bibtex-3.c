@@ -3145,7 +3145,14 @@ BEGIN
 	BEGIN
 		printf("3there is a error: U_ZERO_ERROR");
 	END
-	tulen=u_strToUpper(tarup,tucap, target,tarlen,NULL,&err1);
+	if (Flag_language)
+	{
+		tulen=u_strToUpper(tarup,tucap, target,tarlen,Str_language,&err1);
+	}
+	else
+	{
+		tulen=u_strToUpper(tarup,tucap, target,tarlen,NULL,&err1);
+	}
 	if (!U_SUCCESS(err1))
 	BEGIN
 		printf("4there is a error: U_ZERO_ERROR");

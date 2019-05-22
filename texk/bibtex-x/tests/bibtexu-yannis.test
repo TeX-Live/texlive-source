@@ -1,5 +1,5 @@
 #! /bin/sh -vx
-# $Id: bibtexu-yannis.test 45809 2017-11-15 00:36:56Z karl $
+# $Id$
 # Copyright 2019 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
