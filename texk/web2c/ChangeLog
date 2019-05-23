@@ -1,3 +1,9 @@
+2019-05-23  Karl Berry  <karl@tug.org>
+
+	* patgen.ch (trie_size),
+	(triec_size): reduce to 100000000/50000000 to avoid
+	the same linking problems on netbsd. We'll see.
+
 2019-05-18  Karl Berry  <karl@freefriends.org>
 
 	* patgen.ch (trie_size),
