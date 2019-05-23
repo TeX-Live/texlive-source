@@ -38,6 +38,8 @@ use Getopt::Long ();
 use List::Util @List::Util::EXPORT_OK;
 use Pod::Usage;
 
+my $VERSION = "20190522";
+
 our ($NUM_GLYPHS, $UNITS_PER_EM, %kern);
 
 sub main {
@@ -47,6 +49,7 @@ sub main {
 
     Getopt::Long::GetOptions(
         'help|?'    =>  sub { pod2usage(-verbose => 0); },
+        'version'   =>  sub { print "$VERSION\n"; exit; },
         'doc'       =>  sub { pod2usage(-verbose => 2); },
         'afm'       =>  sub { $ARGV{print_func} = \&print_kpx; },
         'kpx'       =>  sub { $ARGV{print_func} = \&print_kpx; },
@@ -750,6 +753,14 @@ or as a Luatex custom feature, for use with the C<\directlua> command.
 
 =over 4
 
+=item B<-help>
+
+Print a short help text and exit.
+
+=item B<-version>
+
+Print B<ot2kpx>'s version and exit.
+
 =item B<-afm>, B<-kpx>
 
 Output the kerning data in Adobe's KPX format, as used in F<afm> files.
@@ -845,16 +856,32 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 
+=head1 VERSION
+
+This document describes B<ot2kpx> version 20190522.
+
+
 =head1 RECENT CHANGES
 
 (See the source code for the rest of the story.)
 
 =over 12
 
+=item I<2019-05-20>
+
+Added the I<-version> option.
+
 =item I<2019-04-15>
 
-Added the -lua command-line option to get output in Luatex's
+Added the I<-lua> command-line option to get output in Luatex's
 custom feature format.
+
+=back
+
+
+=begin Really_old_history
+
+=over 12
 
 =item I<2013-08-07>
 
@@ -865,13 +892,6 @@ to avoid warnings about experimental features in Perl 5.18 and later.
 
 Refactored the code, and fixed a number of bugs in the process.
 Updated the documentation.
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2005-01-10>
 

@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2013 Marc Penninga.
+    Copyright (C) 2005-2019 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -36,6 +36,8 @@ use warnings;
 use File::Basename;
 use Getopt::Long;
 use Pod::Usage;
+
+my $VERSION = "20190522";
 
 parse_commandline();
 
@@ -72,7 +74,8 @@ print_mapentry($afm->{fontinfo}, , $enc->{scheme})
 #-----------------------------------------------------------------------
 sub parse_commandline {
     Getopt::Long::GetOptions(
-        'help|?'     => sub { pod2usage(-verbose => 1) },
+        'help|?'     =>  sub { pod2usage(-verbose => 1) },
+        'version'    =>  sub { print "$VERSION\n"; exit; },
         'encoding=s' => \$ARGV{encoding},
         'kpx=s'      => \$ARGV{kpx},
         'output=s'   => \$ARGV{output},
@@ -123,14 +126,14 @@ sub read_kpx {
     my ($filename, $kpx) = @_;
     open my $kpxfile, '<', $filename
         or die "[ERROR] can't open '$filename': $!";
-        
+
     my %seen = map { ($_ => 1) } @$kpx;
     for (<$kpxfile>) {
         if (m/\A\s* KPX \s/xms) { push @$kpx, $_ unless $seen{$_}++ }
     }
-    
+
     close $kpxfile;
-    
+
     return $kpx;
 }
 
@@ -317,6 +320,7 @@ afm2afm - reencode an F<afm> file
 =item B<afm2afm>
 
 [B<-help>]
+[B<-version>]
 [B<-encoding> I<encodingfile>]
 [B<-kpx> I<kpxfile>]
 [B<-output> I<outputfile>]
@@ -334,8 +338,8 @@ chosen encoding are excluded from the output, which resuls in
 (potentially much) smaller files.
 
 Additional kerning pairs can be added to the output file.
-If you don't specify an encoding file, 
-the F<afm> file isn't re-encoded; 
+If you don't specify an encoding file,
+the F<afm> file isn't re-encoded;
 however, all unused (unencoded) data is still pruned.
 
 The program also generates an entry for a F<dvips>-style map file,
@@ -352,6 +356,10 @@ the output was written to file
 
 Print a short description of the syntax
 
+=item B<-version>
+
+Print version number and exit
+
 =item B<-encoding> I<encodingfile>
 
 Re-encode to the enconding in I<encodingfile>
@@ -359,14 +367,14 @@ Re-encode to the enconding in I<encodingfile>
 =item B<-kpx> I<kpxfile>
 
 Read additional kerning pairs from I<kpxfile> and add these to the output.
-This option cannot be used to override values from the input F<afm> file, 
+This option cannot be used to override values from the input F<afm> file,
 since B<afm2afm> will write both old and new values to the output!
 
 The I<kpxfile> should contain kerning data in standard F<afm> format,
 i.e. for each kerning pair there should be a line
 
     KPX <left_glyph> <right_glyph> <amount>
-    
+
 All other lines in the I<kpxfile> are ignored.
 
 =item B<-output> I<outputfile>
@@ -390,7 +398,7 @@ Marc Penninga <marcpenninga@gmail.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2013 Marc Penninga.
+Copyright (C) 2005-2019 Marc Penninga.
 
 
 =head1 LICENSE
@@ -411,9 +419,25 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 
+=head1 VERSION
+
+This document describes B<afm2afm> version 20190522.
+
+
 =head1 RECENT CHANGES
 
 (See the source code for the rest of the story.)
+
+=over 12
+
+=item I<2019-05-20>
+
+Added the I<-version> option.
+
+=back
+
+
+=begin Really_old_history
 
 =over 12
 
@@ -427,13 +451,6 @@ to avoid warnings about experimental features in Perl 5.18 and later.
 
 Refactored the code; added the "no re-encoding, only pruning"
 functionality.
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2005-01-10>
 

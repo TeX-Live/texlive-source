@@ -40,6 +40,8 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
+my $VERSION = '20190522';
+
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
 
@@ -716,7 +718,7 @@ sub create_logfile {
 ############################################################################
 
 
-@{[ POSIX::strftime("[%F %T]", localtime time) ]}  $0
+@{[ POSIX::strftime("[%F %T]", localtime time) ]}  $0, version $VERSION
 
 
     "$ARGV{cmdline}"
@@ -775,7 +777,7 @@ END_ARGUMENTS
     }
     printf {$LOG} "\n";
 
-    return if $ARGV{verbose} < 1;
+    return if $ARGV{Verbose} < 1;
 
     my ($prevfn, $prevsty, $prevenc) = ('') x 3;
     my @cmds;
@@ -818,7 +820,7 @@ END_FONTINFO
         push @cmds, $item->{cmdline};
     }
 
-    return if $ARGV{verbose} < 2;
+    return if $ARGV{Verbose} < 2;
     print {$LOG} join "\n\n", @cmds;
     print {$LOG} "\n";
     close $LOG;
@@ -986,8 +988,9 @@ Possible options:
     -doc                    Print the complete documentation and exit
     -dryrun                 Don't generate fonts, only log what would be done
     -logfile="FILE"         Write log data to "FILE" (default: <fontfamily>.log)
-    -verbose                Print more data to log file
+    -Verbose                Print more data to log file
                             (repeat for even higher verbosity)
+    -version                Print version number and exit
     font[s]                 The fonts (.otf or .ttf format) to install.
 
 Please report any bugs or suggestions to <marcpenninga@gmail.com>.
@@ -1023,7 +1026,7 @@ END_USAGE
     figurekern      => '1',     # 0 = no, 1 = yes
     mergewidths     => '1',     # 0 = no, 1 = yes
     mergesmallcaps  => '1',     # 0 = no, 1 = yes
-    verbose         => 0,
+    Verbose         => 0,
 );
 
 #-----------------------------------------------------------------------
@@ -1034,7 +1037,8 @@ sub parse_options {
 
     Getopt::Long::GetOptions(
         'help|?'              =>  sub { print $USAGE; exit; },
-        'doc'                 =>  sub { Pod::Usage::pod2usage(-verbose => 2); },
+        'version'             =>  sub { print "$VERSION\n"; exit; },
+        'doc'                 =>  sub { Pod::Usage::pod2usage(-Verbose => 2); },
         'encoding=s'          => \$ARGV{encoding},
         'ts1!'                => \$ARGV{textcomp},
         'lining!'             => \$ARGV{lining},
@@ -1067,7 +1071,7 @@ sub parse_options {
         'mergewidths!'        => \$ARGV{mergewidths},
         'mergesmallcaps!'     => \$ARGV{mergesmallcaps},
         'logfile=s'           => \$ARGV{logfile},
-        'verbose+'            => \$ARGV{verbose},
+        'Verbose+'            => \$ARGV{Verbose},
         'nfssweight=s%'       => sub {
                                      my ( $ignored, $key, $values ) = @_;
                                      my @values = split m/,/, lc $values;
@@ -1670,6 +1674,12 @@ END_STY_XKEYVAL
             "\\DeclareOptionX{proportional}{\\edef\\$fam\@figurealign{}}\n";
     }
 
+    print {$STY} <<"END_STY_MAINFONT";
+\\DeclareOptionX{mainfont}{
+    \\renewcommand{\\familydefault}{\\$ARGV{nfss}default}
+}
+END_STY_MAINFONT
+
     my $defaults
         = $seen{OsF}  ? 'oldstyle,proportional'
         : $seen{TOsF} ? 'oldstyle,tabular'
@@ -1706,7 +1716,6 @@ END_STY_XKEYVAL
 \\renewcommand*
     {\\$ARGV{nfss}default}
     {$fam-\\$fam\@figurealign\\$fam\@figurestyle}
-\\renewcommand*{\\familydefault}{\\$ARGV{nfss}default}
 
 \\endinput
 END_STYLE_REST
@@ -1756,7 +1765,9 @@ sub write_fdfile {
     \\edef\\${fam}\@\@scale{s*[\\csname ${fam}\@scale\\endcsname]}%
 \\fi
 
-\\DeclareFontFamily{${enc}}{${fam}-${sty}}{}
+\\DeclareFontFamily{${enc}}{${fam}-${sty}}{@{[
+    $ARGV{nfss} eq 'tt' ? '\hyphenchar\font=-1' : ""
+]}}
 
 END_FD_HEADER
 
@@ -2027,7 +2038,7 @@ but this choice can be overridden by the user;
 see the I<-logfile> command-line option in L</"COMMAND-LINE OPTIONS"> below.
 If this log file already exists, B<autoinst> will append its data to the end
 rather than overwrite it.
-Use the I<-verbose> command-line option to ask for more detailed info.
+Use the I<-Verbose> command-line option to ask for more detailed info.
 
 
 =head2 A note for MiKTeX users
@@ -2074,6 +2085,15 @@ to the preamble of your document.
 This style file defines a number of options:
 
 =over 4
+
+=item C<mainfont>
+
+Redefine C<\familydefault> to make this font the main font
+for the document.
+This is a no-op if the font is installed as a serif font;
+but if the font is installed as a sanserif or typewriter font,
+this option saves you from having to redefine C<\familydefault>
+yourself.
 
 =item C<lining>, C<oldstyle>, C<tabular>, C<proportional>
 
@@ -2162,20 +2182,6 @@ Other encodings can be chosen using the I<-encoding> option
 
 =head2 NFSS codes
 
-I<< B<CAVEAT>: this functionality was almost completely rewritten
-in release 2019-03-14.
-Older versions tried to map all fonts directly to short NFSS codes,
-but often had to invent non-standard codes in order to deal with the
-many different weights and widths that occur in the wild.
-Such non-standard NFSS codes will no longer
-work for fonts installed with newer versions; for those you'll have to either
-use the long names or stick to the standard NFSS codes.
-(This change mainly concerns very light or very heavy weights
-and very condensed widths;
-for more moderate weights and widths,
-existing code will very probably continue to work.)
->>
-
 LaTeX's New Font Selection System (NFSS)
 identifies fonts by a combination of family,
 series (the concatenation of weight and width), shape and size.
@@ -2254,18 +2260,26 @@ but B<-e> is ambiguous (it may mean either B<-encoding> or B<-extra>)).
 
 =over 4
 
+=item B<-version>
+
+Print B<autoinst>'s version number and exit.
+
+=item B<-help>
+
+Print a (relatively) short help text and exit.
+
 =item B<-dryrun>
 
 Don't generate output; just parse input fonts and write
-a log file saying what it would have done.
+a log file saying what B<autoinst> would have done.
 
 =item B<-logfile>=I<filename>
 
 Write log data to F<filename> instead of the default F<< <fontfamily>.log >>.
-If the file already exist, B<autoinst> appends to it;
+If the file already exists, B<autoinst> appends to it;
 it doesn't overwrite an existing file.
 
-=item B<-verbose>
+=item B<-Verbose> (I<note:> uppercase 'V'!)
 
 Add more details to the log file. Repeat this option for even more info.
 
@@ -2290,13 +2304,19 @@ Control the creation of TS1-encoded fonts. The default is B<-ts1>
 if the text encodings (see I<-encoding> above) include T1,
 B<-nots1> otherwise.
 
-=item B<-serif>, B<-sanserif>, B<-typewriter>
+=item B<-serif> / B<-sanserif> / B<-typewriter>
 
 Install the font as a serif, sanserif or typewriter font, respectively.
-This changes how you access the font in LaTeX: with C<\rmfamily>/C<\textrm>,
-C<\sffamily>/C<\textsf> or C<\ttfamily>/C<\texttt>.
-The generated style file redefines C<\familydefault>,
-so including it will still make this font the default text font.
+This changes how you access the font in LaTeX:
+with C<\rmfamily>/C<\textrm>, C<\sffamily>/C<\textsf>
+or C<\ttfamily>/C<\texttt>.
+
+Installing the font as a typewriter font will cause two further changes:
+it will - by default - turn off the use of f-ligatures
+(though this can be overridden with the I<-ligatures> option),
+and it will disable hyphenation for this font.
+This latter effect cannot be disabled in B<autoinst>;
+if you want typewriter text to be hyphenated, use the F<hyphenat> package.
 
 =item B<-lining> / B<-nolining>
 
@@ -2344,7 +2364,7 @@ as inferiors or subscripts: "Subscripts" (OpenType feature "subs"),
 This option allows the user to determine which of these styles B<autoinst>
 should use for the inferior characters.
 Alternatively, the value "auto" tells B<autoinst> to use the first value
-in the list "subs", "sinf" or "dnom" that is supported by the fonts.
+in "subs", "sinf" or "dnom" that is supported by the font.
 The default value is "none".
 
 I<< If you specify a style of inferiors that isn't present in the font,
@@ -2508,7 +2528,7 @@ Marc Penninga (F<marcpenninga@gmail.com>)
 
 When sending a bug report, please give as much relevant information as possible;
 this usually includes (but may not be limited to) the log file
-(please add the I<-verbose> command-line option, for extra info).
+(please add the I<-Verbose> command-line option, for extra info).
 If you see any error messages, please include these I<verbatim>;
 don't paraphase.
 
@@ -2536,12 +2556,23 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 
+=head1 VERSION
+
+This document describes B<autoinst> version 20190522.
+
 
 =head1 RECENT CHANGES
 
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2019-05-22>
+
+Added the I<mainfont> option to the generated F<sty> files.
+Prevented hyphenation for typewriter fonts
+(added C<\hyphenchar\font=-1> to the C<\DeclareFontFamily> declarations).
+Added the I<-version> option, and renamed I<-verbose> to I<-Verbose>.
 
 =item I<2019-05-17>
 
@@ -2594,8 +2625,6 @@ to tell B<autoinst> to use whatever inferior characters are available.
 
 =item I<2019-03-14>
 
-(never released to CTAN)
-
 Overhauled the mapping of fonts (more specifically of weights and widths;
 the mapping of shapes didn't change) to NFSS codes.
 Instead of inventing our own codes to deal with every possible weight
@@ -2605,6 +2634,13 @@ Then we add "ssub" rules to the F<fd> files to map the standard NFSS codes
 to our fancy names (see the section B<NFSS codes>;
 based on discussions with Frank Mittelbach and Bob Tennent).
 
+=back
+
+
+=begin Really_old_history
+
+=over 12
+
 =item I<2018-08-10>
 
 Added encoding files for LGR and T2A/B/C to I<fontools>.
@@ -2612,13 +2648,6 @@ Added encoding files for LGR and T2A/B/C to I<fontools>.
 =item I<2018-03-26>
 
 Added the I<-(no)mergewidths> option; tried to improve the documentation.
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2018-03-26>
 
@@ -2803,7 +2832,7 @@ Tweaked the font info parsing to work around a bug in the naming of
 some FontFont fonts, where every font is in a family of its own.
 Added the "scaled" option (including the loading of F<xkeyval>)
 to the generated style file.
-Extended the output of the I<-verbose> option.
+Extended the output of the I<-Verbose> option.
 
 =item I<2007-02-08>
 
@@ -2881,7 +2910,7 @@ changed the generated style
 file to include an interface for the ornaments and to load Lehman's NFSS
 extensions F<nfssext.sty> if this is installed; corrected the "fontname" codes
 for OT1, T1, LY1 and user-specific encodings; extended the output generated by
-the I<-verbose> option; and rewrote and extended the documentation.
+the I<-Verbose> option; and rewrote and extended the documentation.
 
 =item I<2005-06-16>
 
