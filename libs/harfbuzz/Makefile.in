@@ -130,7 +130,6 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-face.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-ot-name-language.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-name.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-tag.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-set.$(OBJEXT) \
@@ -141,6 +140,7 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-cff-common.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-cff1.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ucd.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-warning.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-fallback-shape.$(OBJEXT) \
@@ -214,7 +214,6 @@ am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-math.Po \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name-language.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po \
@@ -241,6 +240,7 @@ am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po
 am__mv = mv -f
@@ -714,7 +714,8 @@ AM_CPPFLAGS = -DHB_NO_MT -DHB_NO_UNICODE_FUNCS -DHAVE_FALLBACK=1 \
 	-I$(top_srcdir)/$(HARFBUZZ_SRC) $(ICU_INCLUDES) \
 	$(GRAPHITE2_INCLUDES)
 libharfbuzz_dependencies = $(ICU_DEPEND) $(GRAPHITE2_DEPEND)
-libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic.hh \
+libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
+	@HARFBUZZ_TREE@/src/hb-atomic.hh \
 	@HARFBUZZ_TREE@/src/hb-blob.hh @HARFBUZZ_TREE@/src/hb-blob.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-serialize.cc \
@@ -726,14 +727,16 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic.hh \
 	@HARFBUZZ_TREE@/src/hb-cff1-interp-cs.hh \
 	@HARFBUZZ_TREE@/src/hb-cff2-interp-cs.hh \
 	@HARFBUZZ_TREE@/src/hb-common.cc \
+	@HARFBUZZ_TREE@/src/hb-config.hh \
 	@HARFBUZZ_TREE@/src/hb-debug.hh \
-	@HARFBUZZ_TREE@/src/hb-dsalgs.hh \
+	@HARFBUZZ_TREE@/src/hb-dispatch.hh \
 	@HARFBUZZ_TREE@/src/hb-face.hh @HARFBUZZ_TREE@/src/hb-face.cc \
 	@HARFBUZZ_TREE@/src/hb-font.hh @HARFBUZZ_TREE@/src/hb-font.cc \
 	@HARFBUZZ_TREE@/src/hb-iter.hh @HARFBUZZ_TREE@/src/hb-kern.hh \
 	@HARFBUZZ_TREE@/src/hb-map.hh @HARFBUZZ_TREE@/src/hb-map.cc \
 	@HARFBUZZ_TREE@/src/hb-machinery.hh \
-	@HARFBUZZ_TREE@/src/hb-mutex.hh @HARFBUZZ_TREE@/src/hb-null.hh \
+	@HARFBUZZ_TREE@/src/hb-meta.hh @HARFBUZZ_TREE@/src/hb-mutex.hh \
+	@HARFBUZZ_TREE@/src/hb-null.hh \
 	@HARFBUZZ_TREE@/src/hb-object.hh \
 	@HARFBUZZ_TREE@/src/hb-open-file.hh \
 	@HARFBUZZ_TREE@/src/hb-open-type.hh \
@@ -754,17 +757,20 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-hmtx-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-kern-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-maxp-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-name-language-static.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-name-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-stat-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-name-language.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-name-language.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-name.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-os2-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-os2-unicode-ranges.hh \
+	@HARFBUZZ_TREE@/src/hb-pool.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-post-macroman.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-post-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-tag.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-tag-table.hh \
+	@HARFBUZZ_TREE@/src/hb-sanitize.hh \
+	@HARFBUZZ_TREE@/src/hb-serialize.hh \
 	@HARFBUZZ_TREE@/src/hb-set-digest.hh \
 	@HARFBUZZ_TREE@/src/hb-set.hh @HARFBUZZ_TREE@/src/hb-set.cc \
 	@HARFBUZZ_TREE@/src/hb-shape.cc \
@@ -784,6 +790,8 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-input.hh \
 	@HARFBUZZ_TREE@/src/hb-subset.hh \
+	@HARFBUZZ_TREE@/src/hb-ucd-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ucd.cc \
 	@HARFBUZZ_TREE@/src/hb-unicode.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode.cc \
 	@HARFBUZZ_TREE@/src/hb-unicode-emoji-table.hh \
@@ -983,9 +991,6 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-ot-face.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@HARFBUZZ_TREE@/src/hb-ot-name-language.$(OBJEXT):  \
-	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-name.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1014,6 +1019,9 @@ clean-noinstLIBRARIES:
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-subset-cff2.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ucd.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT):  \
@@ -1139,7 +1147,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-math.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name-language.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po@am__quote@ # am--include-marker
@@ -1166,6 +1173,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po@am__quote@ # am--include-marker
 
@@ -1781,7 +1789,6 @@ distclean: distclean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-math.Po
-	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name-language.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po
@@ -1808,6 +1815,7 @@ distclean: distclean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po
 	-rm -f Makefile
@@ -1879,7 +1887,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-math.Po
-	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name-language.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po
@@ -1906,6 +1913,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po
 	-rm -f Makefile

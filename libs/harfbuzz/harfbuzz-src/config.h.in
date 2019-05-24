@@ -15,6 +15,9 @@
 /* Have Core Text backend */
 #undef HAVE_CORETEXT
 
+/* define if the compiler supports basic C++11 syntax */
+#undef HAVE_CXX11
+
 /* Define to 1 if you have the declaration of `round', and to 0 if you don't.
    */
 #undef HAVE_DECL_ROUND
@@ -135,9 +138,6 @@
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
-
-/* Have UCDN Unicode functions */
-#undef HAVE_UCDN
 
 /* Have Uniscribe library */
 #undef HAVE_UNISCRIBE
