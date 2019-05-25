@@ -1,4 +1,4 @@
-% This is a change file for upTeX u1.24
+% This is a change file for upTeX u1.25
 % By Takuji Tanaka.
 %
 % (02/26/2007) TTK  upTeX u0.01
@@ -48,8 +48,8 @@
   {printed when \pTeX\ starts}
 @#
 @d upTeX_version=1
-@d upTeX_revision==".24"
-@d upTeX_version_string=='-u1.24' {current u\pTeX\ version}
+@d upTeX_revision==".25"
+@d upTeX_version_string=='-u1.25' {current u\pTeX\ version}
 @#
 @d upTeX_banner=='This is upTeX, Version 3.14159265',pTeX_version_string,upTeX_version_string
 @d upTeX_banner_k==upTeX_banner
