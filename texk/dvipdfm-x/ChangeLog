@@ -1,3 +1,11 @@
+2019-05-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cmap_write.c, dvipdfmx.c, pdfdev.c, pdfdev.h, pdfdoc.c
+	spc_dvips.c, spc_pdfm.c, truetype.c, xbb.c:
+	Fix for compiler warnings.
+	* tt_post.c: Add missing "*/" in a deactivated section.
+	* system.h: "pragma warning" only when _MSC_VER is defined.
+
 2019-05-22  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* tt_gsub.c: Fix a bug that otl_gsub_read_alternate() and
