@@ -7,6 +7,9 @@ case "$arch" in
   *-linuxmusl)
     prepcmd="apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev"
     ;;
+  amd64-freebsd)
+    prepcmd="pkg update; pkg install sudo bash rsync subversion gmake gtar ca_root_nss fontconfig wget iconv xorg-minimal libX11 libXaw"
+    ;;
   *)
     echo "Unsupported arch=$arch found!" >&2
     exit 1

@@ -56,6 +56,7 @@ env:
     - arch=x86_64-linux dockerimg=debian:jessie  package=texlive-bin-x86_64-linux.tar.gz
     - arch=i386-linux   dockerimg=i386/debian:jessie package=texlive-bin-i386-linux.tar.gz
     - arch=x86_64-linuxmusl dockerimg=alpine:3.2 package=texlive-bin-x86_64-musl.tar.gz
+    - arch=amd64-freebsd dockerimg=auchida/freebsd:10 package=texlive-bin-amd64-freebsd.tar.gz
 
 script:
   - .travis/run-docker
