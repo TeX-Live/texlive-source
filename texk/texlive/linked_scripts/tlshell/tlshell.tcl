@@ -59,6 +59,9 @@ set ddebug 0
 # menus: disable tearoff feature
 option add *Menu.tearOff 0
 
+# for busy/idle indicators
+set ::busy [__ "Idle"]
+
 proc search_nocase {needle haystack} {
   if {$needle eq ""} {return -1}
   if {$haystack eq ""} {return -1}
@@ -89,6 +92,8 @@ proc do_debug {s} {
     }
   }
 } ; # do_debug
+
+### temporary files and directories #########################
 
 proc maketemp {ext} {
   set fname ""
@@ -236,14 +241,15 @@ proc selective_dis_enable {} {
 }; # selective_dis_enable
 
 proc total_dis_enable {y_n} {
-  # to be invoked when tlmgr becomes busy or idle,, i.e.
+  # to be invoked when tlmgr becomes busy or idle, i.e.
   # if it starts with a tlmgr command through run_cmds
   # or read_line notices the command(s) ha(s|ve) ended.
   # This proc should cover all active interface elements of the main window.
-  # But if actions are initiated via a dialog, the main window can be
-  # deactivated by a grab and focus on the dialog instead.
+  # But if actions are initiated via a dialog, the main window can instead
+  # be deactivated by a grab and focus on the dialog.
 
-  if {!$y_n} {
+  if {!$y_n} { ; # disable
+    set ::busy [__ "Running"]
     . configure -menu .mn_empty
     foreach c [winfo children .] {
       if {$c ne ".showlogs" && [winfo class $c] in \
@@ -253,7 +259,7 @@ proc total_dis_enable {y_n} {
       }
     }
     set ::busy [__ "Running"]
-  } else {
+  } else { ; # enable
     . configure -menu .mn
     foreach c [winfo children .] {
       if {[winfo class $c] in \
@@ -291,7 +297,7 @@ set ::need_update_tlmgr 0
 set ::n_updates 0
 set ::tlshell_updatable 0
 
-## data to be displayed ##
+## package data to be displayed ##
 
 # sorted display data for packages; package data stored as lists
 set ::filtered [dict create]
@@ -511,6 +517,12 @@ proc run_cmd_waiting {cmd} {
 # update button/menu states are set at initialization and updated
 # by update_globals, both via the selective_dis_enable proc
 
+# The repositories play a small part in this front end. Tlmgr mostly works
+# with a virtual repository, which is the combined set of repositories,
+# with pinning applied. But get_packages_info_remote must invoke
+# show_repositories to display updated verification info.
+# This proc is also invoked by initialize.
+
 # get_packages_info_local is invoked only once, at initialization.  After
 # installations and removals, the collected information is updated by
 # update_local_revnumbers.
@@ -520,7 +532,7 @@ proc run_cmd_waiting {cmd} {
 # ::have_remote is false. Afterwards, ::have_remote will be true, and
 # therefore get_packages_info_remote will not be called again.
 # get_packages_info_remot also invokes get_platforms
-# get_packages_info_remote invokes update_globals.
+# get_packages_info_remote invokes update_globals and show_repos.
 
 # update_local_revnumbers will be invoked after any updates. It also
 # invokes update_globals.
@@ -552,11 +564,11 @@ proc update_globals {} {
 
   # also update displayed status info
   if {$::have_remote && $::need_update_tlmgr} {
-    .topfl.luptodate configure -text [__ "Needs updating"]
+    .topfll.luptodate configure -text [__ "Needs updating"]
   } elseif $::have_remote {
-    .topfl.luptodate configure -text [__ "Up to date"]
+    .topfll.luptodate configure -text [__ "Up to date"]
   } else {
-    .topfl.luptodate configure -text [__ "Unknown"]
+    .topfll.luptodate configure -text [__ "Unknown"]
   }
   # ... and status of update buttons
   selective_dis_enable
@@ -741,10 +753,11 @@ proc get_packages_info_remote {} {
       dict set ::pkgs $nm "shortdesc" $pdescr
     }
   }
-  get_platforms
+  get_platforms ; # derive from $::pkgs
+
   set ::have_remote 1
-  .topfl.loaded configure -text [__ "Loaded"] -foreground black
   update_globals
+  show_repos
   return 1
 } ; # get_packages_info_remote
 
@@ -793,6 +806,7 @@ proc show_logs {} {
   ppack .tllg.close -in .tllg.bottom -side right -anchor e
   ppack [ttk::label .tllg.status -anchor w] -in .tllg.bottom -side left
   bind .tllg <Escape> {.tllg.close invoke}
+  wm protocol .tllg WM_DELETE_WINDOW {.tllg.close invoke}
 
   # notebook pages and scrollbars
   ttk::frame .tllg.log
@@ -872,7 +886,7 @@ proc read_mirrors {} {
     do_debug "cannot open mirror list"
     return 0
   }
-    set re_geo {^\s*'([^']+)' => \{\s*$}
+  set re_geo {^\s*'([^']+)' => \{\s*$}
   set re_url {^\s*'(.*)' => ([0-9]+)}
   set re_clo {^\s*\},?\s*$}
   set starting 1
@@ -959,31 +973,32 @@ proc read_mirrors {} {
 
 proc pick_local_repo {} {
   set tail "tlpkg/texlive.tlpdb"
-  set nrep [.tlr.cur cget -text]
-  if {! [file exists [file join $nrep $tail]]} {
-    # not local, try originally configured $::repos(main)
-    set nrep $::repos(main)
-    if {! [file exists [file join $nrep $tail]]} {
+  set nw_repo [.tlr.cur cget -text]
+  if {! [file exists [file join $nw_repo $tail]]} {
+    # not local, try originally configured main repository
+    set nw_repo $::repos(main)
+    if {! [file exists [file join $nw_repo $tail]]} {
       # again, not local
-      set nrep $::env(HOME) ; # HOME also o.k. for windows
+      set nw_repo $::env(HOME) ; # HOME also o.k. for windows
     }
   }
   while 1 {
-    set nrep [browse4dir $nrep .tlr]
-    if {$nrep ne "" && ! [file exists [file join $nrep $tail]]} {
-      tk_messageBox -message [__ "%s not a repository" $nrep] -parent .tlr
+    set nw_repo [browse4dir $nw_repo .tlr]
+    if {$nw_repo ne "" && ! [file exists [file join $nw_repo $tail]]} {
+      tk_messageBox -message [__ "%s not a repository" $nw_repo] -parent .tlr
       continue
     } else {
       break
     }
   }
-  if {$nrep ne ""} {
+  if {$nw_repo ne ""} {
     .tlr.new delete 0 end
-    .tlr.new insert end $nrep
+    .tlr.new insert end $nw_repo
   }
 } ; # pick_local_repo
 
 proc get_repos_from_tlmgr {} {
+  #puts stderr "get_repos start"
   array unset ::repos
   run_cmd_waiting "option repository"
   set rps ""
@@ -1011,12 +1026,16 @@ proc get_repos_from_tlmgr {} {
       array unset ::repos
     }
   }
+  #puts stderr "get_repos end"
 }; # get_repos_from_tlmgr
 
 proc set_repos_in_tlmgr {} {
   # tlmgr has no command to replace a single repository;
-  # we need to compose opt_location ourselves from $::repos.
-  set nr [llength [array names ::repos]]
+  # we need to compose a string for opt_location ourselves from $::repos.
+  # a single repository should not get a tag.
+  # apparently, we can safely ignore bogus pinning data.
+  #puts stderr "set_repos start"
+  set nr [array size ::repos]
   set opt_repos ""
   set rp ""
   foreach nm [array names ::repos] {
@@ -1024,6 +1043,8 @@ proc set_repos_in_tlmgr {} {
       if {$nm ne "main"} {
         err_exit "Internal error"
       } else {
+        # pinning only supported for multiple repositories
+        run_cmd_waiting "pinning remove $nm --all"
         set rp $::repos(main)
       }
     } else {
@@ -1040,33 +1061,87 @@ proc set_repos_in_tlmgr {} {
     append opt_repos " $rp"
   }
   run_cmd_waiting "repository set [string range $opt_repos 1 end]"
+  #puts stderr [string range $opt_repos 1 end]
+  #puts stderr "set_repos end"
 }; # set_repos_in_tlmgr
 
-proc print_repos {} {
+proc show_repos {} {
+  #puts stderr "show_repos start"
+  set w .toprepo
+  foreach ch [winfo children $w] {destroy $ch}
   set nms [array names ::repos]
   set c [llength $nms]
+  grid [ttk::label $w.head -font TkHeadingFont] \
+      -row 0 -column 0 -columnspan 2 -sticky w
   if {$c <= 0} {
-    return ""
+    $w.head configure -text [__ "No repositories"]
+     return
   } elseif {$c == 1} {
-    set nm [lindex $nms 0]
-    return $::repos($nm)
+    $w.head configure -text [__ "Repository"]
   } else {
-    set s [__ "multiple repositories"]
-    set s "($s)"
-    foreach nm $nms {
-      append s "\n$::repos($nm)"
-      if {$nm ne $::repos($nm)} {append s " ($nm)"}
-    }
-    return $s
+    $w.head configure -text [__ "Multiple repositories"]
   }
-} ; # print_repos
+  if {! $::have_remote} {
+    pgrid [ttk::label $w.load -text [__ "Not loaded"]] \
+        -sticky nw -row 0 -column 1
+  }
+  set do_veri 0
+  if {$::have_remote && [dict get $::pkgs texlive.infra localrev] >= 51140} {
+    set do_veri 1
+  }
+  set repodict [dict create]
+  if $do_veri {
+    run_cmd_waiting "repository status"
+    set re {^(\S+) (\S+)/tlpkg/texlive.tlpdb (-?\d+) (.*)$}
+    foreach l $::out_log {
+      #puts stderr $l
+      if [regexp $re $l dum nm rp n d] {
+        # dummy tag repository verification_code description
+        #puts stderr "scanning..."
+        # restore spaces and percent characters in nm and rp
+        set nm [string map {"%20" " "} $nm]
+        set nm [string map {"%25" "%"} $nm]
+        set rp [string map {"%20" " "} $rp]
+        set rp [string map {"%25" "%"} $rp]
+        dict set repodict $nm "url" $rp
+        dict set repodict $nm "vericode" $n
+        dict set repodict $nm "veridescr" $d
+        #puts stderr "${nm}: $rp"
+      }
+    }
+  } else {
+    #puts stderr "No veri"
+  }
+  set rw 0
+  foreach nm [array names ::repos] {
+    incr rw
+    pgrid [ttk::label $w.u$nm -text $::repos($nm) -justify left] \
+        -sticky nw -row $rw -column 0
+    if {$::repos($nm) eq $::any_mirror && $do_veri} {
+      set s $::repos($nm)
+      append s "\n[__ "Actual repository"]:\n"
+      append s [dict get $repodict $nm "url"]
+      $w.u$nm configure -text $s
+    }
+    if {[array size ::repos] > 1 && $nm ne $::repos($nm)} {
+      pgrid [ttk::label $w.n$nm -text "($nm)"] \
+        -sticky nw -row $rw -column 1
+    }
+    if $do_veri {
+      pgrid [ttk::label $w.v$nm -text \
+                "verification: [dict get $repodict $nm "veridescr"]"] \
+            -sticky nw -row $rw -column 2
+    }
+  }
+  #puts stderr "show_repos end"
+} ; # show_repos
 
 proc repos_commit {} {
+  #puts stderr "repos_commit start"
   set changes 0
-  # first remove pinning if appropriate
-  # then set repositories
-  # then add pinning if appropriate
+  # set repositories then add pinning if appropriate
   if {! [regexp {^\s*$} [.tlr.new get]]} {
+    # repository entry widget non-empty: retrieve it
     if {$::repos(main) ne [.tlr.new get]} {
       set ::repos(main) [.tlr.new get]
       set changes 1
@@ -1075,11 +1150,12 @@ proc repos_commit {} {
   set had_contrib 0
   if $::toggle_contrib {
     set changes 1
+    #puts stderr "handle tlcontrib"
     foreach nm [array names ::repos] {
       if {$::repos($nm) eq $::tlcontrib} {
         set had_contrib 1
-        run_cmd "pinning remove $nm --all" 0
-        run_cmd "pinning remove $::repos($nm) --all" 0
+        run_cmds [list "pinning remove $nm --all" \
+                      "pinning remove $::repos($nm) --all"] 0
         vwait ::done_waiting
         array unset ::repos $nm
       }
@@ -1090,17 +1166,18 @@ proc repos_commit {} {
   }
   if $changes {
     set_repos_in_tlmgr
-    .topfl.lrepos configure -text [print_repos]
     close_tlmgr
     start_tlmgr
-    # reload remote package information
     if {$::toggle_contrib && ! $had_contrib} {
       run_cmd_waiting "pinning add tlcontrib \"*\""
     }
+    # reload remote package information
     set ::have_remote 0
     get_packages_info_remote
     collect_filtered
+    #puts stderr "done committing"
   }
+  #puts stderr "really done committing"
 } ; # repos_commit
 
 # main repository dialog
@@ -1199,16 +1276,17 @@ proc repository_dialog {} {
   # two ways to close the dialog
   pack [ttk::frame .tlr.closebuttons] -pady [list 10 0] -in .tlr.bg -fill x
   ttk::button .tlr.save -text [__ "Save and Load"] -command {
-    #set ::repos(main) [.tlr.new get]
+    #puts stderr "save and load invoked"
     repos_commit
     end_dlg "" .tlr
+    #puts stderr "save and load done"
   }
   ppack .tlr.save -in .tlr.closebuttons -side right
   ttk::button .tlr.abort -text [__ "Abort"] -command {end_dlg "" .tlr}
   ppack .tlr.abort -in .tlr.closebuttons -side right
   bind .tlr <Escape> {.tlr.abort invoke}
 
-  wm protocol .tlr WM_DELETE_WINDOW {.tlr.abort invoke}
+  #wm protocol .tlr WM_DELETE_WINDOW {.tlr.abort invoke}
   wm resizable .tlr 1 0
   place_dlg .tlr .
 } ; # repository_dialog
@@ -1930,14 +2008,6 @@ proc show_help {} {
   long_message [exec tlmgr --help] ok
 }
 
-proc run_entry {} {
-  # TODO: some validation of $cmd
-  set cmd [.tlcust.e get]
-  if {$cmd eq ""} return
-  run_cmd $cmd 1
-  end_dlg "" .tlcust
-}
-
 ## arbitrary commands: no way to know what data have to be updated
 #proc custom_command {} {
 #  create_dlg .tlcust .
@@ -1964,6 +2034,8 @@ proc populate_main {} {
 
   # width of '0', as a rough estimate of average character width
   set ::cw [font measure TkTextFont "0"]
+
+  ## menu ##
 
   # dummy empty menu to replace the real menu .mn in disabled states.
   # the "File" cascade should ensure that the dummy menu
@@ -2056,6 +2128,8 @@ proc populate_main {} {
 " [__ "GUI interface for TeX Live Manager\nImplemented in Tcl/Tk"]]}
   .mn.help add command -label [__ "tlmgr help"] -command show_help
 
+  ## menu end
+
   # wallpaper frame
   # it is possible to set a background color for a toplevel, but on
   # MacOS I did not find a way to determine the right $::default_bg
@@ -2079,29 +2153,28 @@ proc populate_main {} {
   ttk::button .showlogs -text [__ "Show logs"] -command show_logs
   ppack .showlogs -in .endbuttons -side right
 
-  # various info
+  # top of main window
   ppack [ttk::frame .topf] -in .bg -side top -anchor w -fill x
 
   # left frame
-  ppack [ttk::frame .topfl] -in .topf -side left -anchor nw
+  pack [ttk::frame .topfl] -in .topf -side left -anchor nw
 
-  ttk::label .topfl.llrepo -text [__ "Default repositories"] -anchor w
-  pgrid .topfl.llrepo -row 0 -column 0 -sticky nw
-  ttk::label .topfl.lrepos -text "" -justify left -anchor w
-  pgrid .topfl.lrepos -row 0 -column 1 -sticky nw
-  ttk::label .topfl.loaded -text [__ "Not loaded"] -foreground red -anchor w
-  pgrid .topfl.loaded -row 1 -column 1 -sticky w
+  # subframe for repositories, to be filled by show_repos
+  pack [ttk::frame .toprepo] -in .topfl -side top -anchor w
 
-  ttk::label .topfl.lluptodate -text [__ "TL Manager up to date?"] -anchor w
-  pgrid .topfl.lluptodate -row 2 -column 0 -sticky w
-  ttk::label .topfl.luptodate -text [__ "Unknown"] -anchor w
-  pgrid .topfl.luptodate -row 2 -column 1 -sticky w
+  # various info
+  pack [ttk::frame .topfll] -in .topfl -side top -anchor nw -pady [list 6 0]
+  ttk::label .topfll.lluptodate -text [__ "TL Manager up to date?"] -anchor w
+  pgrid .topfll.lluptodate -row 2 -column 0 -sticky w
+  ttk::label .topfll.luptodate -text [__ "Unknown"] -anchor w
+  pgrid .topfll.luptodate -row 2 -column 1 -sticky w
 
-  ttk::label .topfl.llcmd -text [__ "Last tlmgr command:"] -anchor w \
-      -wraplength [expr {60*$::cw}] -justify left
-  pgrid .topfl.llcmd -row 3 -column 0 -sticky w
-  ttk::label .topfl.lcmd -textvariable ::last_cmd -anchor w
-  pgrid .topfl.lcmd -row 3 -column 1 -sticky w
+  ttk::label .topfll.llcmd -text [__ "Last tlmgr command:"] -anchor w \
+
+  pgrid .topfll.llcmd -row 3 -column 0 -sticky w
+  ttk::label .topfll.lcmd -textvariable ::last_cmd \
+      -wraplength [expr {60*$::cw}] -justify left -anchor w
+  pgrid .topfll.lcmd -row 3 -column 1 -sticky w
 
   # right frame
   ppack [ttk::frame .topfr] -in .topf -side right -anchor ne
@@ -2321,9 +2394,9 @@ proc initialize {} {
     .topfr.ladmin configure -text \
         [expr {$::multiuser ? [__ "Multi-user"] : [__ "Single-user"]}]
   }
-  get_repos_from_tlmgr
-  .topfl.lrepos configure -text [print_repos]
   get_packages_info_local
+  get_repos_from_tlmgr
+  show_repos
   # svns for  tlmgr and tlshell
   .topfr.linfra configure -text \
       "tlmgr: r[dict get $::pkgs texlive.infra localrev]"

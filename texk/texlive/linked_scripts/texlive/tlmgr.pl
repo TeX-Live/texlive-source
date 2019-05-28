@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 51173 2019-05-21 16:35:34Z karl $
+# $Id: tlmgr.pl 51217 2019-05-24 21:47:41Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 51173 $';
-my $datrev = '$Date: 2019-05-21 18:35:34 +0200 (Tue, 21 May 2019) $';
+my $svnrev = '$Revision: 51217 $';
+my $datrev = '$Date: 2019-05-24 23:47:41 +0200 (Fri, 24 May 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5493,13 +5493,14 @@ sub check_runfiles {
   # check if duplicates are different files.
   foreach my $f (@duplicates) {
     # assume tex4ht, xdy, afm stuff is ok, and don't worry about
-    # Changes, README et al.  Other per-format versions.
+    # Changes, README et al.  Other per-format versions, etc.
     next if $f =~ /\.(afm|cfg|dll|exe|4hf|htf|pm|xdy)$/;
     next if $f
       =~ /^((czech|slovak)\.sty
             |Changes
             |Makefile
             |README.*
+            |a_.*\.enc
             |cid2code\.txt
             |etex\.src
             |fithesis.*
@@ -5519,6 +5520,10 @@ sub check_runfiles {
             |texutil\.rb
             |tlmgrgui\.pl
            )$/x;
+    # For the a_.* line above: source*pro has .enc files which differ
+    # only in comments, hence the otftotfm-hashed name is the same.
+    # Seems like it could happen more or at random with other fonts too.
+    # Just have to accept ...
     #
     my @copies = grep (/\/$f$/, @runtime_files);
     # map files can be duplicated between (but not within) formats.
@@ -9843,7 +9848,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 51173 2019-05-21 16:35:34Z karl $
+$Id: tlmgr.pl 51217 2019-05-24 21:47:41Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
