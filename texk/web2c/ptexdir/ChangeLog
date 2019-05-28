@@ -1,3 +1,9 @@
+2019-05-28  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* am/ptex.am: Add a new test.
+	* pver.test: New test file for version number consistency.
+	* tests/pver1.tex, ptexdir/tests/pver2.tex: New.
+
 2019-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch:

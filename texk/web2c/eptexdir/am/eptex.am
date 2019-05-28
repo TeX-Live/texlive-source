@@ -81,9 +81,10 @@ EXTRA_DIST += \
 
 # e-pTeX Tests
 #
-eptex_tests = eptexdir/eptriptest.test eptexdir/pdfprimitive.test
+eptex_tests = eptexdir/eptriptest.test eptexdir/pdfprimitive.test eptexdir/epver.test
 eptexdir/eptriptest.log: eptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 eptexdir/pdfprimitive.log: eptex$(EXEEXT)
+eptexdir/epver.log: eptex$(EXEEXT)
 
 EXTRA_DIST += $(eptex_tests)
 

@@ -3676,7 +3676,7 @@ ptftopl_DEPENDENCIES = $(ptex_dependencies)
 
 # pTeX Tests
 #
-ptex_tests = ptexdir/ptriptest.test
+ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test
 pweb_tests = ptexdir/pbibtex.test ptexdir/pdvitype.test \
 	ptexdir/ppltotf.test ptexdir/ptftopl.test \
 	ptexdir/pbibtex-openout-test.pl \
@@ -3721,7 +3721,7 @@ eptex_ch_srcs = \
 
 # e-pTeX Tests
 #
-eptex_tests = eptexdir/eptriptest.test eptexdir/pdfprimitive.test
+eptex_tests = eptexdir/eptriptest.test eptexdir/pdfprimitive.test eptexdir/epver.test
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 uptex_ldadd = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
 uptex_dependencies = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
@@ -3776,7 +3776,7 @@ uptftopl_LDADD = $(uptex_ldadd)
 uptftopl_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX Tests
-uptex_tests = uptexdir/uptriptest.test
+uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test
 upweb_tests = \
 	uptexdir/upbibtex.test \
 	uptexdir/updvitype.test \
@@ -3830,7 +3830,7 @@ euptex_ch_srcs = \
 
 # e-upTeX Tests
 #
-euptex_tests = euptexdir/euptriptest.test euptexdir/pdfprimitive.test
+euptex_tests = euptexdir/euptriptest.test euptexdir/pdfprimitive.test euptexdir/eupver.test
 libpdftex_a_CPPFLAGS = $(REGEX_INCLUDES) $(pdftex_cppflags)
 libpdftex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
 libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
@@ -18494,6 +18494,7 @@ ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
 ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 	$(tie_m) tftopl.web tftopl.ch
 ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+ptexdir/pver.log: ptex$(EXEEXT)
 ptexdir/pbibtex.log ptexdir/pbibtex-openout-test.log ptexdir/pbibtex-longline-test.log \
 	ptexdir/pbibtex-mem.log ptexdir/nissya.log: pbibtex$(EXEEXT)
 ptexdir/pdvitype.log ptexdir/sample.log: pdvitype$(EXEEXT)
@@ -18536,6 +18537,7 @@ eptex.ch: tie$(EXEEXT) eptex.web $(eptex_ch_srcs)
 	$(tie_c) eptex.web $(eptex_ch_srcs)
 eptexdir/eptriptest.log: eptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 eptexdir/pdfprimitive.log: eptex$(EXEEXT)
+eptexdir/epver.log: eptex$(EXEEXT)
 eptrip.diffs: eptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: eptrip-clean
@@ -18602,6 +18604,7 @@ uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
 uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch
 	$(tie_m) tftopl.web tftopl.ch ptexdir/ptftopl.ch
 uptexdir/uptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+uptexdir/upver.log: uptex$(EXEEXT)
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
@@ -18640,6 +18643,7 @@ euptex.ch: tie$(EXEEXT) euptex.web $(euptex_ch_srcs)
 	$(tie_c) euptex.web $(euptex_ch_srcs)
 euptexdir/euptriptest.log: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 euptexdir/pdfprimitive.log: euptex$(EXEEXT)
+euptexdir/eupver.log: euptex$(EXEEXT)
 euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: euptrip-clean

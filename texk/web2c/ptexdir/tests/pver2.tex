@@ -1,0 +1,13 @@
+% for INITEX
+\catcode`\{=1
+\catcode`\}=2
+\def\space{ }
+\edef\NAME{Engine \ifx\eTeXversion\undefined\else e-\fi
+  \ifx\enablecjktoken\undefined\else u\fi
+  pTeX p\the\ptexversion.\the\ptexminorversion\ptexrevision
+  \ifx\enablecjktoken\undefined\else -u\the\uptexversion\uptexrevision\fi
+  \ifx\epTeXversion\undefined\else -\the\epTeXversion
+  -\the\eTeXversion\eTeXrevision\fi
+  \space (dummy)}
+\write16{\NAME}
+\relax\end

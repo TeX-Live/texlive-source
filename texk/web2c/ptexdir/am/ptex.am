@@ -167,8 +167,9 @@ EXTRA_DIST += \
 
 # pTeX Tests
 #
-ptex_tests = ptexdir/ptriptest.test
+ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test
 ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+ptexdir/pver.log: ptex$(EXEEXT)
 pweb_tests = \
 	ptexdir/pbibtex.test \
 	ptexdir/pdvitype.test \
