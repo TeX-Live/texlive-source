@@ -124,7 +124,7 @@ use warnings;
 #   Test for already running previewer gets wrong answer if another
 #     process has the viewed file in its command line
 
-## Copyright John Collins 1998-2018
+## Copyright John Collins 1998-2019
 ##           (username jcc8 at node psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -162,6 +162,16 @@ use warnings;
 ##
 ## 12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+## 21 May 2019 John Collins  Fix incorrect listings by -rules and by -deps
+## 21 May 2019 John Collins  V. 4.64a.
+## 20,21 May 2019 John Collins Fix problem with not always running dvipdf,
+##                             dvips, xdvpdf because of missing information
+##                             on source files.  Do this by adding a
+##                             source_rule hash to each rule and adding a
+##                             pass-based criterion for out-of-dateness
+## 20 May 2019 John Collins  V. 4.64.
+## 17 Mar 2019 John Collins  V. 4.63c.
+## 18 Mar 2019 John Collins  Update copyright date
 ## 17 Mar 2019 John Collins  Further test for problems when linking rules
 ## 17 Mar 2019 John Collins  V. 4.63b.
 ## 17 Mar 2019 John Collins  Fix problem revealed by bibtopic package
@@ -221,8 +231,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.63b';
-$version_details = "$My_name, John Collins, 17 March 2019";
+$version_num = '4.64a';
+$version_details = "$My_name, John Collins, 21 May 2019";
 
 use Config;
 use File::Basename;
@@ -1514,12 +1524,6 @@ $allow_switch = 1;  # Allow switch of rule structure to accommodate
                     #     default_extra_generated is a reference to an array
                     #       of specifications of extra generated files (beyond
                     #       the main dest file.  Standard place holders are used.
-                    #     active (1 or 0) is whether the rule is currently active
-                    #       and hence accessed in recursion and linked to
-                    #
-                    #       Example ['%Y%R.log'] for (pdf)latex, and ['%R.blg'] 
-                    #          for bibtex.  (There's no need for '%R.aux', here,
-                    #          since such generated files are detected dynamically.)
                     #   1: {Hash sourcefile -> [source-file data] }
                     # Source-file data array: 
                     #   0: time
@@ -1551,6 +1555,28 @@ $allow_switch = 1;  # Allow switch of rule structure to accommodate
                     #   2: {Hash generated_file -> 1 }
                     #      This lists all generated files; the values
                     #          are currently unused, only the keys
+                    #   3: {Hash source_rule -> last_pass }
+                    #      This lists rules that are to be considered source
+                    #      rules for the current rule, separately from the 
+                    #      from_rules of the source files. It maps the name
+                    #      of each of these rules to the pass number of the
+                    #      current rule when it was last run. The current rule
+                    #      is out-of-date if the last_pass for a source rule
+                    #      is less than the pass number for the rule.
+                    #      The purpose of this is when the source file list
+                    #      is expected to be inaccurate, because the source
+                    #      files are hard to determine.  Typical needs are
+                    #      for rules applied to dvi and xdv files, when
+                    #      graphics files are involved.  Their names are coded
+                    #      inside the dvi/xdv file, but not the contents.
+                    #      It would need parsing of the contents of the file
+                    #      to determine the actual source files.
+                    #      An implication of using a source_rule is that this
+                    #      rule passes files to the current rule and that the
+                    #      current rule can be considered out-of-date whenever
+                    #      the source_rule has been run.  Effectively these 
+                    #      files are unconditionallyconsidered changed when
+                    #      the source_rule runs.
 
 %fdb_current = ();  # Hash of information for all files used.
                     # It maps filename to a reference to an array
@@ -2385,7 +2411,9 @@ foreach $filename ( @file_list )
     &set_names;
     # For use under error conditions:
     @default_includes = ($texfile_name, $aux_main);
-    local %rule_db = ();
+    # N.B. Do **not** apply local %rule_db here.  It might appear appropriate,
+    #      but %rule_db is needed in the continue block, which is not in the
+    #      scope of a local declaration here.
     &rdb_initialize_rules;
     
     if ( $cleanup_mode > 0 ) {
@@ -3028,8 +3056,7 @@ sub rdb_make_links {
 #  it doesn't exist.  Later a rule is created by latexmk to make that
 #  file.  Then the rule's main destination file should have priority
 #  over non-main generated files from other rules.
-   
-
+    local %from_rules_old = %from_rules;
     &rdb_cache_generated;
     rdb_for_actives( 
         0,
@@ -3045,8 +3072,32 @@ sub rdb_make_links {
             }
         }
         );
+    rdb_for_actives( \&rdb_set_source_rules );
 #    &rdb_show;
 } # END rdb_make_links
+
+#************************************************************
+
+sub rdb_set_source_rules {
+    # This applies to rules whose source file is a dvi or xdv file
+    # Uses rule context
+    my ($base, $path, $ext) = fileparseA( $$Psource );
+    if ( ($ext eq '.dvi') || ($ext eq '.dviF') || ($ext eq '.xdv') ) {
+        my $old_rule = $from_rules_old{$$Psource};
+        my $new_rule = $from_rules{$$Psource};
+        if ( defined $old_rule
+             && defined $new_rule
+             && ($old_rule eq $new_rule)
+             && defined $$PHsource_rules{$new_rule}
+            )
+        {  # Nothing to do: source rule is correct.
+        }
+        else {
+            if ( defined $old_rule ) { delete $$PHsource_rules{$old_rule}; }
+            if ( defined $new_rule ) { $$PHsource_rules{$new_rule} = 0; }
+        }
+    }
+}
 
 #************************************************************
 
@@ -3393,6 +3444,7 @@ sub find_basename {
 
 sub make_preview_continuous {
     local @changed = ();
+    local %changed_rules = ();
     local @changed_user = ();
     local @disappeared = ();
     local @no_dest = ();       # Non-existent destination files
@@ -6871,6 +6923,7 @@ sub rdb_target_hash {
 sub rdb_accessible {
     # Call: &rdb_accessible
     # Returns array of rules accessible from target rules and rules to make target files
+
     local %accessible_rules = &rdb_target_hash;
     rdb_recurse( [keys %accessible_rules], sub{ $accessible_rules{$rule} = 1; } );
     return keys %accessible_rules;
@@ -7031,9 +7084,13 @@ sub rdb_make {
     local $switched_primary_output = 0;
     my $retry_msg = 0;         # Did I earlier say I was going to attempt 
                                # another pass after a failure?
-    foreach my $rule (keys %rule_db) {
-        $pass{$rule} = 0;
-    }
+    rdb_for_some ( [keys %rule_db],
+                   sub{ $pass{$rule} = 0; 
+                        foreach (keys %$PHsource_rules) {
+                            $$PHsource_rules{$_} = 0;
+                        }
+                   }
+                 );
     PASS:
     while (1==1) {
         # Exit condition at end of body of loop.
@@ -7130,6 +7187,13 @@ sub rdb_make {
             print "$My_name: All targets (@dests) are up-to-date\n";
         }
     }
+    rdb_for_some ( [keys %rule_db],
+                   sub{ 
+                        foreach my $s_rule (keys %$PHsource_rules) {
+                            $$PHsource_rules{$s_rule} = $pass{$s_rule};
+                        }
+                   }
+                );
     return $failure;
 } #END rdb_make
 
@@ -7363,6 +7427,9 @@ sub rdb_make1 {
         }
 # !!??        $failure_msg = $$Plast_message;
         
+    }
+    foreach ( keys %$PHsource_rules ) {
+        $$PHsource_rules{$_} = $pass{$_};
     }
 }  #END rdb_make1
 
@@ -7915,6 +7982,7 @@ sub rdb_primary_run {
 sub rdb_clear_change_record {
     # Initialize diagnostics for reasons for running rule.
     @changed = ();
+    %changed_rules = ();
     @changed_user = ();
     @disappeared = ();
     @no_dest = ();          # We are not now using this
@@ -7940,6 +8008,15 @@ sub rdb_flag_changes_here {
     local $dest_mtime = 0;
     $dest_mtime = get_mtime($$Pdest) if ($$Pdest);
     rdb_do_files( \&rdb_file_change1);
+    while ( my ($s_rule, $l_pass) = each %$PHsource_rules ) {
+        if ( defined $pass{$s_rule}
+             && ($pass{$s_rule} > $l_pass)
+            )
+        {
+            $changed_rules{$s_rule} = $rule;
+            $$Pout_of_date = 1;
+        }
+    }
     if ($$Pout_of_date) {
         push @rules_to_apply, $rule;
     }
@@ -8033,7 +8110,7 @@ sub rdb_diagnose_changes {
         warn "${heading}Rules & subrules not known to be previously run:\n";
         foreach (@rules_never_run) { warn "   $_\n"; }
     }
-    if ( ($#changed >= 0) || ($#disappeared >= 0) || ($#no_dest >= 0) ) {
+    if ( ($#changed >= 0) || (keys %changed_rules > 0) || ($#disappeared >= 0) || ($#no_dest >= 0) ) {
         warn "${heading}File changes, etc:\n";
         if ( $#changed >= 0 ) {
             warn "   Changed files, or newly in use since previous run(s):\n";
@@ -8046,6 +8123,12 @@ sub rdb_diagnose_changes {
         if ( $#no_dest >= 0 ) {
             warn "   Non-existent destination files:\n";
             foreach (uniqs(@no_dest)) { warn "      '$_'\n"; }
+        }
+        if ( keys %changed_rules > 0 ) {
+            warn "   Rule(s) that have been run and require run of dependent rule:\n";
+            while (my ($s_rule, $d_rule) = each %changed_rules) {
+                warn "      '$s_rule' which requires run of '$d_rule'\n";
+            }
         }
     }
     elsif ($#rules_to_apply >=0) {
@@ -8307,7 +8390,7 @@ sub rdb_one_rule {
 #??    &R1;
     if ( (! $rule) || ! rdb_rule_exists($rule) ) { return; }
 
-    local ( $PArule_data, $PHsource, $PHdest ) = @{$rule_db{$rule}};
+    local ( $PArule_data, $PHsource, $PHdest, $PHsource_rules ) = @{$rule_db{$rule}};
     local ($Pcmd_type, $Pext_cmd, $PAint_cmd, $Ptest_kind, 
            $Psource, $Pdest, $Pbase,
            $Pout_of_date, $Pout_of_date_user, $Prun_time, $Pcheck_time,
@@ -8463,6 +8546,7 @@ sub rdb_create_rule {
             $source, $dest, $base,
             $needs_making, 0, $run_time, $check_time, $changed,
             -1, '', $PA_extra_gen ],
+           {},
            {},
            {}
         ];
