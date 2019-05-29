@@ -1,3 +1,7 @@
+2019-05-29  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebboot.cin: Rebuild after recent changes.
+
 2019-05-23  Karl Berry  <karl@tug.org>
 
 	* patgen.ch (trie_size),
