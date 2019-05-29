@@ -2,7 +2,7 @@
 # Attempt to guess a canonical system name.
 #   Copyright 1992-2019 Free Software Foundation, Inc.
 
-timestamp='2019-04-28'
+timestamp='2019-05-28'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -1325,11 +1325,11 @@ EOF
 	echo "$UNAME_MACHINE"-apple-rhapsody"$UNAME_RELEASE"
 	exit ;;
     *:Darwin:*:*)
-	UNAME_PROCESSOR=`uname -p` || UNAME_PROCESSOR=unknown
 	set_cc_for_build
-	if test "$UNAME_PROCESSOR" = unknown ; then
-	    UNAME_PROCESSOR=powerpc
-	fi
+	UNAME_PROCESSOR=`uname -p`
+	case $UNAME_PROCESSOR in
+	    unknown) UNAME_PROCESSOR=powerpc ;;
+	esac
 	if test "`echo "$UNAME_RELEASE" | sed -e 's/\..*//'`" -le 10 ; then
 	    if [ "$CC_FOR_BUILD" != no_compiler_found ]; then
 		if (echo '#ifdef __LP64__'; echo IS_64BIT_ARCH; echo '#endif') | \
