@@ -1,3 +1,7 @@
+2019-05-29  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch, comm-w2c.h: Minor changes.
+
 2019-02-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebinputs/c++1xlib.w: Add some C++1x class names.

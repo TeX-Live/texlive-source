@@ -15,7 +15,7 @@
 % entire resulting derived work is distributed under the terms of a
 % permission notice identical to this one.
 
-% Amendments to 'common.h' resulting in this extended 'comm-foo.h' were
+% Amendments to 'common.h' resulting in this extended 'comm-w2c.h' were
 % created by numerous collaborators over the course of many years.
 
 % Please send comments, suggestions, etc. to tex-k@@tug.org.
