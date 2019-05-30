@@ -37,12 +37,6 @@
 /* Use gthread2 library */
 #undef HAVE_GTHREAD
 
-/* Use ICU library */
-#undef HAVE_ICU
-
-/* ICU support is not a seperate library */
-#undef HAVE_ICU_BUILTIN
-
 /* Use Intel __sync_* atomic primitives */
 #undef HAVE_INTEL_ATOMIC_PRIMITIVES
 

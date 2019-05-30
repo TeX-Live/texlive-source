@@ -92,7 +92,6 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-graphite2-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
 	$(top_srcdir)/../../m4/kpse-visibility.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
@@ -161,10 +160,6 @@ HB_VERSION = @HB_VERSION@
 HB_VERSION_MAJOR = @HB_VERSION_MAJOR@
 HB_VERSION_MICRO = @HB_VERSION_MICRO@
 HB_VERSION_MINOR = @HB_VERSION_MINOR@
-ICU_CONFIG = @ICU_CONFIG@
-ICU_DEPEND = @ICU_DEPEND@
-ICU_INCLUDES = @ICU_INCLUDES@
-ICU_LIBS = @ICU_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -262,7 +257,7 @@ hdr_links = $(HARFBUZZ_SRC)/hb.h $(HARFBUZZ_SRC)/hb-aat-layout.h \
 	$(HARFBUZZ_SRC)/hb-ot-font.h $(HARFBUZZ_SRC)/hb-ot-layout.h \
 	$(HARFBUZZ_SRC)/hb-ot-math.h $(HARFBUZZ_SRC)/hb-ot-name.h \
 	$(HARFBUZZ_SRC)/hb-ot-shape.h $(HARFBUZZ_SRC)/hb-ot-var.h \
-	$(HARFBUZZ_SRC)/hb-icu.h $(HARFBUZZ_SRC)/hb-graphite2.h
+	$(HARFBUZZ_SRC)/hb-graphite2.h
 all: all-am
 
 .SUFFIXES:

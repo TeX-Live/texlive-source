@@ -41,9 +41,6 @@ hdr_links += \
 	$(HARFBUZZ_SRC)/hb-ot-shape.h \
 	$(HARFBUZZ_SRC)/hb-ot-var.h
 
-## ICU library
-hdr_links += $(HARFBUZZ_SRC)/hb-icu.h
-
 ## Graphite library
 hdr_links += $(HARFBUZZ_SRC)/hb-graphite2.h
 
