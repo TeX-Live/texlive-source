@@ -1,3 +1,8 @@
+2019-05-30  Khaled Hosny  <dr.khaled.hosny@gmail.com>
+
+	* XeTeXLayoutInterface.cpp: Do not use hb-icu if HarfBuzz
+	version is 2.5.0 or newer.
+
 2019-01-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* NEWS, xetex_version.h, xetex.web: Sync with the upstream.
