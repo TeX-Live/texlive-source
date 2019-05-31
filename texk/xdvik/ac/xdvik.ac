@@ -1,10 +1,11 @@
 ## texk/xdvik/ac/xdvik.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
 dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright 2019 Karl Berry <tex-live@tug.org>
+dnl Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options for xdvik
 AC_ARG_WITH([xdvi-x-toolkit],
             AS_HELP_STRING([--with-xdvi-x-toolkit=KIT],
-                           [Use toolkit KIT (motif/xaw/xaw3d/neXtaw) for xdvi
-                           @<:@default: Motif if available, else Xaw@:>@]))
+                           [Use toolkit KIT (xaw/motif/xaw3d/neXtaw) for xdvi
+                           @<:@default: Xaw@:>@]))

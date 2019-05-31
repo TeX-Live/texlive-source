@@ -1496,8 +1496,8 @@ Optional Packages:
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
   --with-xdvi-x-toolkit=KIT
-                          Use toolkit KIT (motif/xaw/xaw3d/neXtaw) for xdvi
-                          [default: Motif if available, else Xaw]
+                          Use toolkit KIT (xaw/motif/xaw3d/neXtaw) for xdvi
+                          [default: Xaw]
   --with-ps=PS            Use PostScript (PS=no/yes/gs/dps/news, default gs)
   --with-x                use the X Window System
   --with-iconv            Use an iconv library [default=check]
