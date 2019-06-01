@@ -142,7 +142,7 @@ struct RecordListOf : RecordArrayOf<Type>
     if (unlikely (!out)) return_trace (false);
     unsigned int count = this->len;
     for (unsigned int i = 0; i < count; i++)
-      out->get_offset (i).serialize_subset (c, (*this)[i], out);
+      out->get_offset (i).serialize_subset (c, this->get_offset (i), this, out);
     return_trace (true);
   }
 
@@ -279,10 +279,10 @@ struct Script
     TRACE_SUBSET (this);
     auto *out = c->serializer->embed (*this);
     if (unlikely (!out)) return_trace (false);
-    out->defaultLangSys.serialize_copy (c->serializer, this+defaultLangSys, out);
+    out->defaultLangSys.serialize_copy (c->serializer, defaultLangSys, this, out);
     unsigned int count = langSys.len;
     for (unsigned int i = 0; i < count; i++)
-      out->langSys.arrayZ[i].offset.serialize_copy (c->serializer, this+langSys[i].offset, out);
+      out->langSys.arrayZ[i].offset.serialize_copy (c->serializer, langSys[i].offset, this, out);
     return_trace (true);
   }
 
@@ -732,7 +732,7 @@ struct Lookup
     OffsetArrayOf<TSubTable>& out_subtables = out->get_subtables<TSubTable> ();
     unsigned int count = subTable.len;
     for (unsigned int i = 0; i < count; i++)
-      out_subtables[i].serialize_subset (c, this+subtables[i], out, get_type ());
+      out_subtables[i].serialize_subset (c, subtables[i], this, out, get_type ());
 
     return_trace (true);
   }

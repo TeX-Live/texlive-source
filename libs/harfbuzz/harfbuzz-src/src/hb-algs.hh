@@ -167,10 +167,21 @@ template <unsigned Pos=1, typename Appl, typename V>
 auto hb_partial (Appl&& a, V&& v) HB_AUTO_RETURN
 (( hb_partial_t<Pos, Appl, V> (a, v) ))
 
+/* The following hacky replacement version is to make Visual Stuiod build:. */ \
+/* https://github.com/harfbuzz/harfbuzz/issues/1730 */ \
+#ifdef _MSC_VER
 #define HB_PARTIALIZE(Pos) \
   template <typename _T> \
-  auto operator () (_T&& _v) const HB_AUTO_RETURN (hb_partial<Pos> (this, hb_forward<_T> (_v))) \
+  decltype(auto) operator () (_T&& _v) const \
+  { return hb_partial<Pos> (this, hb_forward<_T> (_v)); } \
   static_assert (true, "")
+#else
+#define HB_PARTIALIZE(Pos) \
+  template <typename _T> \
+  auto operator () (_T&& _v) const HB_AUTO_RETURN \
+  (hb_partial<Pos> (this, hb_forward<_T> (_v))) \
+  static_assert (true, "")
+#endif
 
 
 struct
@@ -807,7 +818,7 @@ struct hb_bitwise_and
   static constexpr bool passthru_left = false;
   static constexpr bool passthru_right = false;
   template <typename T> auto
-   operator () (const T &a, const T &b) const HB_AUTO_RETURN (a & b)
+  operator () (const T &a, const T &b) const HB_AUTO_RETURN (a & b)
 }
 HB_FUNCOBJ (hb_bitwise_and);
 struct hb_bitwise_or
@@ -815,7 +826,7 @@ struct hb_bitwise_or
   static constexpr bool passthru_left = true;
   static constexpr bool passthru_right = true;
   template <typename T> auto
-   operator () (const T &a, const T &b) const HB_AUTO_RETURN (a | b)
+  operator () (const T &a, const T &b) const HB_AUTO_RETURN (a | b)
 }
 HB_FUNCOBJ (hb_bitwise_or);
 struct hb_bitwise_xor
@@ -823,7 +834,7 @@ struct hb_bitwise_xor
   static constexpr bool passthru_left = true;
   static constexpr bool passthru_right = true;
   template <typename T> auto
-   operator () (const T &a, const T &b) const HB_AUTO_RETURN (a ^ b)
+  operator () (const T &a, const T &b) const HB_AUTO_RETURN (a ^ b)
 }
 HB_FUNCOBJ (hb_bitwise_xor);
 struct hb_bitwise_sub
@@ -831,7 +842,7 @@ struct hb_bitwise_sub
   static constexpr bool passthru_left = true;
   static constexpr bool passthru_right = false;
   template <typename T> auto
-   operator () (const T &a, const T &b) const HB_AUTO_RETURN (a & ~b)
+  operator () (const T &a, const T &b) const HB_AUTO_RETURN (a & ~b)
 }
 HB_FUNCOBJ (hb_bitwise_sub);
 

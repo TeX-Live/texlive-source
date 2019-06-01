@@ -151,14 +151,14 @@ typedef struct hb_ot_math_glyph_variant_t {
  * Since: 1.3.3
  */
 typedef enum { /*< flags >*/
-  HB_MATH_GLYPH_PART_FLAG_EXTENDER	= 0x00000001u  /* Extender glyph */
+  HB_OT_MATH_GLYPH_PART_FLAG_EXTENDER	= 0x00000001u  /* Extender glyph */
 } hb_ot_math_glyph_part_flags_t;
 
 /**
  * hb_ot_math_glyph_part_t:
  * @glyph: The glyph index of the variant part
  * @start_connector_length: The length of the connector on the starting side of the variant part
- * @end_connection_length: The length of the conector on the ending side of the variant part
+ * @end_connection_length: The length of the connector on the ending side of the variant part
  * @full_advance: The total advance of the part
  * @flags: #hb_ot_math_glyph_part_flags_t flags for the part
  * 

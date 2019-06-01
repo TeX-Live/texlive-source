@@ -10,11 +10,11 @@ if len (sys.argv) != 2:
 
 
 # https://github.com/harfbuzz/packtab
-# https://github.com/harfbuzz/youseedy
-import youseedy, packTab
+import packTab
+import packTab.ucdxml
 
-ucdxml = youseedy.load_ucdxml(sys.argv[1])
-ucd = youseedy.ucdxml_get_repertoire(ucdxml)
+ucdxml = packTab.ucdxml.load_ucdxml(sys.argv[1])
+ucd = packTab.ucdxml.ucdxml_get_repertoire(ucdxml)
 
 
 gc = [u['gc'] for u in ucd]
@@ -88,9 +88,9 @@ print('#include "hb.hh"')
 print()
 
 code = packTab.Code('_hb_ucd')
-sc_array, _, _ = code.addArray('hb_script_t', 'sc_map', sc_array)
-dm1_array, _, _ = code.addArray('hb_codepoint_t', 'dm1_map', dm1_array)
-dm2_array, _, _ = code.addArray('uint64_t', 'dm2_map', dm2_array)
+sc_array, _ = code.addArray('hb_script_t', 'sc_map', sc_array)
+dm1_array, _ = code.addArray('hb_codepoint_t', 'dm1_map', dm1_array)
+dm2_array, _ = code.addArray('uint64_t', 'dm2_map', dm2_array)
 code.print_c(linkage='static inline')
 
 for compression in (DEFAULT, COMPACT):

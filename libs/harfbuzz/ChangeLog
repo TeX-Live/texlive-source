@@ -1,3 +1,8 @@
+2019-06-01  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.5.1.
+	* version.ac: Adjusted.
+
 2019-05-30  Khaled Hosny  <dr.khaled.hosny@gmail.com>
 
 	* Makefile.am: Fix missing Unicode functions with

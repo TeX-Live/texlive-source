@@ -87,8 +87,7 @@ struct SingleSubstFormat1
   }
 
   template<typename Iterator,
-	   hb_requires (hb_is_sorted_source_of (Iterator,
-						hb_codepoint_t))>
+	   hb_requires (hb_is_sorted_source_of (Iterator, hb_codepoint_t))>
   bool serialize (hb_serialize_context_t *c,
 		  Iterator glyphs,
 		  unsigned delta)
@@ -181,7 +180,7 @@ struct SingleSubstFormat2
 
   template<typename Iterator,
 	   hb_requires (hb_is_sorted_source_of (Iterator,
-						const hb_codepoint_pair_t))>
+						hb_codepoint_pair_t))>
   bool serialize (hb_serialize_context_t *c,
 		  Iterator it)
   {
@@ -339,8 +338,10 @@ struct Sequence
     return_trace (true);
   }
 
+  template <typename Iterator,
+	    hb_requires (hb_is_source_of (Iterator, hb_codepoint_t))>
   bool serialize (hb_serialize_context_t *c,
-		  hb_array_t<const GlyphID> subst)
+		  Iterator subst)
   {
     TRACE_SERIALIZE (this);
     return_trace (substitute.serialize (c, subst));
@@ -515,8 +516,10 @@ struct AlternateSet
     return_trace (true);
   }
 
+  template <typename Iterator,
+	    hb_requires (hb_is_source_of (Iterator, hb_codepoint_t))>
   bool serialize (hb_serialize_context_t *c,
-		  hb_array_t<const GlyphID> alts)
+		  Iterator alts)
   {
     TRACE_SERIALIZE (this);
     return_trace (alternates.serialize (c, alts));
@@ -729,9 +732,11 @@ struct Ligature
     return_trace (true);
   }
 
+  template <typename Iterator,
+	    hb_requires (hb_is_source_of (Iterator, hb_codepoint_t))>
   bool serialize (hb_serialize_context_t *c,
 		  GlyphID ligature,
-		  hb_array_t<const GlyphID> components /* Starting from second */)
+		  Iterator components /* Starting from second */)
   {
     TRACE_SERIALIZE (this);
     if (unlikely (!c->extend_min (*this))) return_trace (false);
@@ -1282,7 +1287,7 @@ struct SubstLookup : Lookup
   HB_INTERNAL static bool apply_recurse_func (hb_ot_apply_context_t *c, unsigned int lookup_index);
 
   SubTable& serialize_subtable (hb_serialize_context_t *c,
-				       unsigned int i)
+				unsigned int i)
   { return get_subtables<SubTable> ()[i].serialize (c, this); }
 
   bool serialize_single (hb_serialize_context_t *c,
@@ -1292,9 +1297,8 @@ struct SubstLookup : Lookup
   {
     TRACE_SERIALIZE (this);
     if (unlikely (!Lookup::serialize (c, SubTable::Single, lookup_props, 1))) return_trace (false);
-
-    return_trace (serialize_subtable (c, 0).u.single
-		  .serialize (c, hb_zip (glyphs, substitutes)));
+    return_trace (serialize_subtable (c, 0).u.single.
+		  serialize (c, hb_zip (glyphs, substitutes)));
   }
 
   bool serialize_multiple (hb_serialize_context_t *c,
@@ -1305,10 +1309,11 @@ struct SubstLookup : Lookup
   {
     TRACE_SERIALIZE (this);
     if (unlikely (!Lookup::serialize (c, SubTable::Multiple, lookup_props, 1))) return_trace (false);
-    return_trace (serialize_subtable (c, 0).u.multiple.serialize (c,
-								  glyphs,
-								  substitute_len_list,
-								  substitute_glyphs_list));
+    return_trace (serialize_subtable (c, 0).u.multiple.
+		  serialize (c,
+			     glyphs,
+			     substitute_len_list,
+			     substitute_glyphs_list));
   }
 
   bool serialize_alternate (hb_serialize_context_t *c,
@@ -1319,10 +1324,11 @@ struct SubstLookup : Lookup
   {
     TRACE_SERIALIZE (this);
     if (unlikely (!Lookup::serialize (c, SubTable::Alternate, lookup_props, 1))) return_trace (false);
-    return_trace (serialize_subtable (c, 0).u.alternate.serialize (c,
-								   glyphs,
-								   alternate_len_list,
-								   alternate_glyphs_list));
+    return_trace (serialize_subtable (c, 0).u.alternate.
+		  serialize (c,
+			     glyphs,
+			     alternate_len_list,
+			     alternate_glyphs_list));
   }
 
   bool serialize_ligature (hb_serialize_context_t *c,
@@ -1335,12 +1341,13 @@ struct SubstLookup : Lookup
   {
     TRACE_SERIALIZE (this);
     if (unlikely (!Lookup::serialize (c, SubTable::Ligature, lookup_props, 1))) return_trace (false);
-    return_trace (serialize_subtable (c, 0).u.ligature.serialize (c,
-								  first_glyphs,
-								  ligature_per_first_glyph_count_list,
-								  ligatures_list,
-								  component_count_list,
-								  component_list));
+    return_trace (serialize_subtable (c, 0).u.ligature.
+		  serialize (c,
+			     first_glyphs,
+			     ligature_per_first_glyph_count_list,
+			     ligatures_list,
+			     component_count_list,
+			     component_list));
   }
 
   template <typename context_t>

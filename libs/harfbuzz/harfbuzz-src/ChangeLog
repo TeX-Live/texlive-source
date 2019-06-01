@@ -1,3 +1,469 @@
+commit 93c455567fe3d92a7efe65bf0e9ac2af794e2c4f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 22:53:27 2019 -0700
+
+    2.5.1
+
+ NEWS             | 11 +++++++++++
+ configure.ac     |  2 +-
+ src/hb-version.h |  4 ++--
+ 3 files changed, 14 insertions(+), 3 deletions(-)
+
+commit 10e3cb9246ab3d288af4effe484f4d8beb2243d6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 22:56:37 2019 -0700
+
+    [docs] Fix dist
+
+ docs/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 619f5f1eb9e5e2a4f326f89c9e3e05b01f9c042f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 22:31:35 2019 -0700
+
+    Fourth try at building VS bots
+    
+    Based on https://github.com/harfbuzz/harfbuzz/issues/1730#issuecomment-497151210
+
+ src/hb-algs.hh | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+commit f387a09742bd8e4a7a8da6db954339609839a113
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 22:12:23 2019 -0700
+
+    [ci] Disable VS 2013
+    
+    That one doesn't even understand constexpr.
+
+ appveyor.yml | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit aba3888d933474a874d2f3ff02397b523846466c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 22:11:27 2019 -0700
+
+    Third try at fixing VS build
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1730
+
+ src/hb-algs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8aaecbb5832568135f6149254ed9e17ac4310341
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 21:41:40 2019 -0700
+
+    Second VS fix try
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1730
+
+ src/hb-algs.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 5a1b5c0a8b91a2291e7327e84acba2406a14414e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 21:08:39 2019 -0700
+
+    Try fixing VS builds
+    
+    Hopefully fixes https://github.com/harfbuzz/harfbuzz/issues/1730
+
+ src/hb-algs.hh | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 66381fb73f21e8e3c1c14b196e64d1004be303c7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 20:20:43 2019 -0700
+
+    [ci] Enable other versions of Visual Studio
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1730
+
+ appveyor.yml | 44 ++++++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
+
+commit 92fde3dea282d308fad2b8e93cd638aa813c6f2a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 20:16:25 2019 -0700
+
+    Whitespace
+
+ src/hb-algs.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 49879adbfc57c3173a25bbc55afc0796ee71b6da
+Author: rsheeter <rsheeter@google.com>
+Date:   Fri May 31 15:14:44 2019 -0700
+
+    [subset] Correct calculation of max offset; fixes bug where loca would erroneously be short
+
+ src/hb-ot-glyf-table.hh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 2ad4ba7bc04fbbd886a2da6fbc55a4e13468d878
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 15:48:54 2019 -0700
+
+    [gsub] Minor
+
+ src/hb-ot-layout-gsub-table.hh | 40 +++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 19 deletions(-)
+
+commit 2dbdec66a17af94fffc50949e4712465aada9a68
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 15:38:11 2019 -0700
+
+    [gsub] Porting serialize to iterators
+
+ src/hb-ot-layout-gsub-table.hh | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+commit 1834cf86d40abfbb536db1edb366c90318ba49fc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 14:39:32 2019 -0700
+
+    [serialize] Pass offset to serialize_subset()
+
+ src/hb-open-type.hh            | 14 +++++++++-----
+ src/hb-ot-layout-common.hh     |  4 ++--
+ src/hb-ot-layout-gdef-table.hh | 12 ++++++------
+ src/hb-ot-layout-gsubgpos.hh   |  7 ++++---
+ 4 files changed, 21 insertions(+), 16 deletions(-)
+
+commit 926044162472aeca8f5032b11b544d38be587110
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 31 14:34:34 2019 -0700
+
+    [serialize] Pass offset to serialize_copy()
+
+ src/hb-open-type.hh          | 12 ++++++++----
+ src/hb-ot-layout-common.hh   |  4 ++--
+ src/hb-ot-layout-gsubgpos.hh |  2 +-
+ src/hb-ot-name-table.hh      |  2 +-
+ 4 files changed, 12 insertions(+), 8 deletions(-)
+
+commit 87dd4bff1c42f1845fb3d11477e5de210121d48e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu May 30 11:26:17 2019 -0400
+
+    [math] Rename HB_MATH_GLYPH_PART_FLAG_EXTENDER
+    
+    To HB_OT_MATH_GLYPH_PART_FLAG_EXTENDER.  Added a deprecated macro.
+    
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1734
+
+ src/hb-ot-deprecated.h  |  4 ++++
+ src/hb-ot-math-table.hh |  2 +-
+ src/hb-ot-math.h        |  2 +-
+ test/api/test-ot-math.c | 16 ++++++++--------
+ 4 files changed, 14 insertions(+), 10 deletions(-)
+
+commit 88f9dab366491af144da316384991e74af443226
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed May 29 01:55:31 2019 +0430
+
+    [ci] Clean up and add disabled bots of other msvc versions (#1733)
+
+ appveyor.yml | 41 ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 30 insertions(+), 11 deletions(-)
+
+commit da9d43171ba4ae0a78c92e9de83498fd2f513c8b
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Tue May 28 21:50:17 2019 +0700
+
+    Fix some typos.
+
+ docs/usermanual-clusters.xml        | 4 ++--
+ docs/usermanual-fonts-and-faces.xml | 2 +-
+ src/hb-ot-math.h                    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 8a133718472d152fa1f69ec52862b019b71b371f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue May 28 13:54:45 2019 +0430
+
+    [test] minor, fix copyright
+    
+    nothing important, fixing a copy paste error inconsistency
+
+ test/api/test-aat-layout.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 13316ac5d435f11c2c65fd2d762841a819afb639
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue May 28 13:48:39 2019 +0430
+
+    [test] minor style improve
+
+ test/subset/run-tests.py | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+commit d64fb9db520d77eb7bb40ceda4e20be5e602bf91
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Sun May 26 11:05:54 2019 -0400
+
+    [use] Allow U+1A60 TAI THAM SIGN SAKOT after vowel
+
+ src/gen-use-table.py                               |   7 +-
+ src/hb-ot-shape-complex-use-machine.hh             | 609 +++++++++++----------
+ src/hb-ot-shape-complex-use-machine.rl             |  20 +-
+ src/hb-ot-shape-complex-use-table.cc               |   4 +-
+ src/hb-ot-shape-complex-use.cc                     |   3 +
+ src/hb-ot-shape-complex-use.hh                     |   2 +
+ .../3cc01fede4debd4b7794ccb1b16cdb9987ea7571.ttf   | Bin 0 -> 1144 bytes
+ .../fd565cabd5208d345d0ed4fda7ae742917d846a5.ttf   | Bin 1056 -> 0 bytes
+ .../shaping/data/in-house/tests/use-syllable.tests |   5 +-
+ 9 files changed, 351 insertions(+), 299 deletions(-)
+
+commit 179570d4cae9aefcd91d540b8865a81d569b3358
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 27 13:08:07 2019 -0400
+
+    [atomic] Fix warning, second time
+    
+    Fixes https://bugzilla.mozilla.org/show_bug.cgi?id=1554306
+
+ src/hb-atomic.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ad17a8bdd571c7b275f9735e3602a8068f12934f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 16:33:21 2019 -0400
+
+    [ucd] Update for latest packTab
+
+ src/gen-ucd-table.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 771712b3ca97035ba5690e65bd7e63a852286159
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 15:58:45 2019 -0400
+
+    [ucd] Update for recent packTab
+    
+    No need for separate youseedy package.
+
+ src/gen-ucd-table.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 52aa6c57c5a4b18807a1329549dface90b148f22
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat May 25 22:55:06 2019 +0430
+
+    [ci] minor
+
+ .circleci/config.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 9b75da4299adb5487519ddf96e99949b1dad2d5c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat May 25 22:46:10 2019 +0430
+
+    [ci] minor
+
+ .circleci/config.yml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 9158cab3f9f9e1a4941c1dbf0aa71455ceb00da6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat May 25 22:33:02 2019 +0430
+
+    [ci] Store dist-win result instead
+
+ .circleci/config.yml | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+commit 85b68a42af541bc91f2851389ac09b012a6d3aa1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 12:59:01 2019 -0400
+
+    [atomic] Fix warnings
+    
+    https://bugzilla.mozilla.org/show_bug.cgi?id=1554306
+
+ src/hb-atomic.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 941c1b6d711b8528d0f5faa5655b09ea74f7dfb4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 12:52:16 2019 -0400
+
+    [mingw] Update instructions
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1728
+
+ RELEASING.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 210f93c143d0fa2a7b293a6ffd138b3e01cab7c0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 12:49:20 2019 -0400
+
+    [mutex] Prefer pthread over windows
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1728
+
+ src/hb-mutex.hh | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+commit a5d1b0bdaa0183e2bd310640f5867426096e0b18
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 12:45:40 2019 -0400
+
+    Look for pthread even if win32
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1728
+
+ configure.ac | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit f3b132187fc734cbb3705b405361c8bad9a72582
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 12:42:38 2019 -0400
+
+    [mingw] Some more tweaks
+    
+    It now survives ./config.status --recheck as well.
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1728
+
+ mingw-configure.sh | 37 ++++++++++++++++++-------------------
+ mingw32.sh         |  2 +-
+ mingw64.sh         |  2 +-
+ 3 files changed, 20 insertions(+), 21 deletions(-)
+
+commit c41ed54b169c16fb9862e88ddf127ae68c1561e9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 12:35:09 2019 -0400
+
+    [mingw] Add "make dist-win" to toplevel Makefile
+
+ Makefile.am | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+commit a0a75a7c701932f4533b104eeb3c6087d01aa2ae
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 12:16:28 2019 -0400
+
+    [mingw] More
+
+ Makefile.am        |  8 +++++++-
+ mingw-configure.sh | 29 +++++++++++++++++++++++++++++
+ mingw32.sh         | 25 ++-----------------------
+ mingw64.sh         | 25 ++-----------------------
+ 4 files changed, 40 insertions(+), 47 deletions(-)
+
+commit 309a9d8ffb499f89738864acef596685ca495150
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat May 25 20:40:03 2019 +0430
+
+    [ci] Remove --without-icu now that we have it in ./mingw{32,64} scripts
+
+ .circleci/config.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit ccfe642c0cdc9fbc8280669e3e8b01dc5eb682d8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 12:08:05 2019 -0400
+
+    [mingw] Force off ICU
+    
+    If cross-compiled ICU is not available, we might end up finding the
+    native ICU via icu-config.  That's distracting.
+
+ mingw32.sh | 2 +-
+ mingw64.sh | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 0e6b7f7cd51d7376f21a422881cb4eb542360b0b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat May 25 20:27:29 2019 +0430
+
+    [ci] Build mingw on Fedora and store .exe outputs
+
+ .circleci/config.yml | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+commit 7b716cbbe6de2902ca6b1f67024b3f8cdb41340c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 11:37:23 2019 -0400
+
+    [ming2] Update instructions
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1728
+    
+    Only left to write how to create a win32 bundle.
+
+ README.mingw.md | 44 ++++++++++++++++++++++++++------------------
+ RELEASING.md    | 54 ++++++------------------------------------------------
+ 2 files changed, 32 insertions(+), 66 deletions(-)
+
+commit 77a1b6b7c3bd5490ffa5bb48a8b52d9c4c18e669
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 11:18:40 2019 -0400
+
+    [mingw] Rename README.wine
+
+ Makefile.am                       | 2 +-
+ README.wine.md => README.mingw.md | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit c68b4264880c0f99bcb579345e51ce54e799655b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 11:17:56 2019 -0400
+
+    [mingw] Update for recent change
+
+ README.wine.md | 2 +-
+ RELEASING.md   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 5cf2e648a67e1af20a23e010c86e8812a74ff7a4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat May 25 11:15:15 2019 -0400
+
+    [mingw] Update for Fedora mingw installation location
+    
+    Also adds --with-uniscribe by default.
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1728
+
+ mingw32.sh | 9 +++++----
+ mingw64.sh | 9 +++++----
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+commit e7ed85de95d3ccdb674ec5a30ae66d53cea74b3a
+Merge: f93a5e6a 97ba206b
+Author: n8willis <n8willis@users.noreply.github.com>
+Date:   Sat May 25 16:05:07 2019 +0100
+
+    Merge pull request #1691 from n8willis/usermanual-shaping
+    
+    Usermanual: Add new chapters.
+
+commit 97ba206bed341dc7c915a86531512b1e0617303d
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Sat May 25 12:26:50 2019 +0100
+
+    Usermanual; minor.
+
+ ...usermanual-buffers-language-script-and-direction.xml |  2 +-
+ docs/usermanual-opentype-features.xml                   | 17 ++++++++++-------
+ 2 files changed, 11 insertions(+), 8 deletions(-)
+
+commit f93a5e6a7dad4fde2bf61c241bf32da678525c8b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri May 24 17:02:38 2019 -0400
+
+    [win] Add mingw-ldd.py
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1728
+
+ mingw-ldd.py | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
 commit 5fd3ece5237ac6a4ee95b2665b5e20102ed176bb
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri May 24 15:56:15 2019 -0400
@@ -19,6 +485,15 @@ Date:   Fri May 24 15:41:34 2019 -0400
  src/hb-common.cc | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
+commit dd5ad6b6b5aed3db62bc03b89acf90c68795edb4
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Fri May 24 20:30:22 2019 +0100
+
+    Usermanual-buffers-chapter: trim out fallback-of-ufuncs talk and just mention that stuff exists if you care to go find it.
+
+ docs/usermanual-buffers-language-script-and-direction.xml | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
 commit e1a5ce6aa661251e998df7b3612a1d5d39e28827
 Author: Qunxin Liu <qxliu@google.com>
 Date:   Fri May 24 10:58:52 2019 -0700
@@ -32,6 +507,15 @@ Date:   Fri May 24 10:58:52 2019 -0700
  ...estcase-minimized-hb-subset-fuzzer-5077547978588160 | Bin 0 -> 339602 bytes
  ...estcase-minimized-hb-subset-fuzzer-5761434614497280 | Bin 0 -> 532 bytes
  3 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 240540ff9a463cf386ae5755471a5621b94290df
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Fri May 24 20:13:35 2019 +0100
+
+    Usermanual-buffers-chapter: explain ICU fallback for Ufuncs.
+
+ docs/usermanual-buffers-language-script-and-direction.xml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 commit d100ccad02b038719472b2cc733940ffb0374cd1
 Author: David Corbett <corbett.dav@husky.neu.edu>
@@ -1749,6 +2233,24 @@ Date:   Sat May 11 18:48:41 2019 -0400
 
  test/fuzzing/main.cc | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit a29b1de55abca2e90733caff7423e5251d72e03c
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Sat May 11 20:56:55 2019 +0100
+
+    Usermanual, fix up userfeatures example code in OpenType features section of shaping chapter.
+
+ docs/usermanual-opentype-features.xml | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+commit 78fcb14db9041af0e0d5ea209cf0cb1977f6dcc3
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Sat May 11 20:56:02 2019 +0100
+
+    Usermanual, minor: flesh out invisible-glyph discussion in buffers chapter.
+
+ ...ermanual-buffers-language-script-and-direction.xml | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
 commit 25531a30394c451a7a2aee77928e0a550015b803
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
@@ -4264,6 +4766,52 @@ Date:   Tue Apr 30 13:35:50 2019 -0400
  src/gen-use-table.py               | 6 +++---
  src/hb-ot-shape-complex-myanmar.hh | 2 +-
  3 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 68749e996aedbae9b1c4553f5672f74e1727b850
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Tue Apr 30 17:23:55 2019 +0100
+
+    [Docs] Usermanual; update XML manifest for new chapters.
+
+ docs/Makefile.am       | 4 ++--
+ docs/harfbuzz-docs.xml | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 30d7d1064ee339ca216699851030f9bae8c07c68
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Tue Apr 30 17:23:19 2019 +0100
+
+    [Docs] Usermanual; add Utilities chapter.
+
+ docs/usermanual-utilities.xml | 244 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 244 insertions(+)
+
+commit d0f5a05aef73293fe21ddb022084166a7a095862
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Tue Apr 30 17:22:54 2019 +0100
+
+    [Docs] Usermanual; add Shaping, Features, and Plans.
+
+ docs/usermanual-opentype-features.xml | 279 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 277 insertions(+), 2 deletions(-)
+
+commit 8354c99fbee2887cb71440f4e25ad1e6f46b2592
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Tue Apr 30 17:22:08 2019 +0100
+
+    [Docs] Usermanual; add Fonts And Faces chapter.
+
+ docs/usermanual-fonts-and-faces.xml | 445 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 437 insertions(+), 8 deletions(-)
+
+commit 3b301c5ac6b15728f858cb6f5de8dfc6a77209fa
+Author: Nathan Willis <nwillis@glyphography.com>
+Date:   Tue Apr 30 17:21:33 2019 +0100
+
+    [Docs] Usermanual; fill out Buffers chapter.
+
+ ...anual-buffers-language-script-and-direction.xml | 358 +++++++++++++++++++--
+ 1 file changed, 335 insertions(+), 23 deletions(-)
 
 commit 6d9a86ae7535ea8e3c108a49c6da877a78cdac26
 Author: Nathan Willis <nwillis@glyphography.com>
