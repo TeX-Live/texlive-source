@@ -1,3 +1,7 @@
+2019-06-01  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* unicode.c: Fix a bug that end of buffer check was wrong.
+
 2019-05-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cmap_write.c, dvipdfmx.c, pdfdev.c, pdfdev.h, pdfdoc.c
