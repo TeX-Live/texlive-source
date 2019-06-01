@@ -1,3 +1,7 @@
+2019-06-01  Karl Berry  <karl@freefriends.org>
+
+	* patch-10-psdefs: from Akira.
+
 2019-03-26  Karl Berry  <karl@freefriends.org>
 
 	* patch-09-woff-zlib: new file. From Mojca and Martin,
