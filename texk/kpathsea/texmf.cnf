@@ -224,8 +224,8 @@ TEXINPUTS.luajitlatex   = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic
 TEXINPUTS.dvilualatex   = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 
 % HarfTeX.
-TEXINPUTS.harftex       = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
-TEXINPUTS.harflatex     = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
+TEXINPUTS.harftex       = $TEXMFDOTDIR;$TEXMF/tex/{harftex,luatex,plain,generic,}//
+TEXINPUTS.harflatex     = $TEXMFDOTDIR;$TEXMF/tex/{harflatex,harftex,lualatex,latex,luatex,generic,}//
 
 % XeTeX.
 TEXINPUTS.xelatex       = $TEXMFDOTDIR;$TEXMF/tex/{xelatex,latex,xetex,generic,}//

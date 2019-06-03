@@ -1,6 +1,7 @@
 2019-06-02  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.harf{,la}tex): new engine.
+	Turns out we want harf{,la}tex/ directories.
 
 2019-05-05  Karl Berry  <karl@tug.org>
 
