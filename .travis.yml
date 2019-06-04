@@ -28,6 +28,10 @@ sudo: required
 services:
   - docker
 
+cache:
+  directories:
+  - /tmp/ccache
+
 before_script:
   - find . -name \*.info -exec touch '{}' \;
   - touch ./texk/detex/detex-src/detex.c
@@ -67,8 +71,15 @@ jobs:
       env:
         - arch=x86_64-darwin
         - package=texlive-bin-x86_64-darwin.tar.gz
-      before_script:
-      script: ./Build -C
+      before_script: |
+        brew update
+        export HOMEBREW_NO_AUTO_UPDATE=1
+        brew install ccache
+      script: |
+        export CCACHE_DIR="/tmp/ccache/${tldir}"
+        export CC="ccache cc"
+        export CXX="ccache c++"
+        ./Build -C
 
 # somehow all binaries are always put into x86_64-pc-linux-gnu, probably because
 # this is the architecture travis-ci is running on.

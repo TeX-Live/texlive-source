@@ -2,13 +2,13 @@
 
 case "$arch" in
   *-linux)
-    prepcmd="apt-get update; apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential"
+    prepcmd="apt-get update; apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev ccache build-essential"
     ;;
   *-linuxmusl)
-    prepcmd="apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev"
+    prepcmd="apk update; apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev ccache"
     ;;
   amd64-freebsd)
-    prepcmd="pkg update; pkg install sudo bash rsync subversion gmake gtar ca_root_nss fontconfig wget iconv xorg-minimal libX11 libXaw"
+    prepcmd="pkg update; pkg install sudo bash rsync subversion gmake gtar ca_root_nss fontconfig wget iconv xorg-minimal libX11 libXaw ccache"
     ;;
   *)
     echo "Unsupported arch=$arch found!" >&2
@@ -17,6 +17,9 @@ case "$arch" in
 esac
 
 docker run -e TL_MAKE_FLAGS="${TL_MAKE_FLAGS}" \
+	   -e CC="ccache cc" -e CXX="ccache c++" \
+	   -e CCACHE_DIR="/tmp/ccache/${arch}" \
+	   -v "/tmp/ccache/${arch}":"/tmp/ccache/${arch}" \
            -v ${TRAVIS_BUILD_DIR}:/texlive -w /texlive \
 	   -it --rm $dockerimg sh -c "$prepcmd ; ./Build -C"
 
