@@ -71,9 +71,6 @@ if test "x$1" = x--debug || test "x$1" = x-g; then
   TL_BUILD_ENV="$c $cxx $objcxx $TL_BUILD_ENV"
 fi
 
-# allow override of configure location.
-: ${TL_CONFIGURE=../configure}
-
 # allow for changing the banner identification, e.g.,
 # --with-banner-add='/SomeDistro'; see the build doc.
 : ${TL_CONF_BANNER=} 
@@ -90,6 +87,9 @@ fi
 
 # allow override of xdvi toolkit, default to standard xaw.
 : ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
+
+# allow override of configure location.
+: ${TL_CONFIGURE=../configure}
 
 # allow adding arbitrary other configure args, after all the others.
 : ${TL_CONFIGURE_ARGS=}
@@ -109,11 +109,32 @@ cd $TL_WORKDIR || exit 1
 # failure at either step.
 {
   echo "starting TeX Live build at `date`"
-  echo "on `uname -a`"
-  echo "in `pwd`"
-  echo "$0 $*"
+  echo "uname: `uname -a`"
+  test -s /etc/issue && echo "/etc/issue: `sed 1q /etc/issue`"
+  echo "pwd: `pwd`"
+  echo "cmdline: $0 $*"
   echo
   env | sort >buildenv.log
+  #
+  # Export the interesting TL_* variables that might be set,
+  # so they can be logged by build-info.
+  TL_BUILD_COMMAND_LINE="$0 $*"; export TL_BUILD_COMMAND_LINE
+  test -z "$TL_BUILD_ENV" || export TL_BUILD_ENV 
+  test -z "$TL_COMPILER_GFLAGS" || export TL_COMPILER_GFLAGS
+  test -z "$TL_CONF_BANNER" || export TL_CONF_BANNER
+  test -z "$TL_CONF_LARGEFILE" || export TL_CONF_LARGEFILE
+  test -z "$TL_CONF_MISSING" || export TL_CONF_MISSING
+  test -z "$TL_CONF_SHARED" || export TL_CONF_SHARED
+  test -z "$TL_CONF_XDVI_TOOLKIT" || export TL_CONF_XDVI_TOOLKIT
+  test -z "$TL_CONFIGURE" || export TL_CONFIGURE
+  test -z "$TL_CONFIGURE_ARGS" || export TL_CONFIGURE_ARGS
+  test -z "$TL_INSTALL_DEST" || export TL_INSTALL_DEST
+  test -z "$TL_MAKE" || export TL_MAKE
+  test -z "$TL_MAKE_FLAGS" || export TL_MAKE_FLAGS 
+  test -z "$TL_MAKE_VERBOSE" || export TL_MAKE_VERBOSE
+  test -z "$TL_POSTCONFIGURE" || export TL_POSTCONFIGURE
+  test -z "$TL_TARGET" || export TL_TARGET
+  test -z "$TL_WORKDIR" || export TL_WORKDIR
   #
   set -vx  # show the configure and make commands in the log.
 

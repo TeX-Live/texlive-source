@@ -1,3 +1,12 @@
+2019-06-06  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (world): make build-info.
+	(build-info): new target to invoke doc/build-info.sh.
+	(build_info_target): new variable.
+	* Build: export TL_* variables so build-info.sh can report them.
+	* doc/build-info.sh: new script to report compiler versions,
+	dump environment, config.status, etc.
+
 2019-05-03  Karl Berry  <karl@tug.org>
 
 	* version.ac: 2020/dev.
