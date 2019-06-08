@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 50442 2019-03-18 11:35:23Z hironobu $
+# $Id: updmap.pl 51338 2019-06-07 16:36:59Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 50442 2019-03-18 11:35:23Z hironobu $';
+my $svnid = '$Id: updmap.pl 51338 2019-06-07 16:36:59Z karl $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2019-03-18 12:35:23 +0100 (Mon, 18 Mar 2019) $';
+my $lastchdate = '$Date: 2019-06-07 18:36:59 +0200 (Fri, 07 Jun 2019) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 50442 $';
+my $svnrev = '$Revision: 51338 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -2075,7 +2075,12 @@ sub read_map_files {
   my @fullpath = `kpsewhich --format=map @maps`;
   chomp @fullpath;
   foreach my $map (@maps) {
-    my ($ff) = grep /\/$map(\.map)?$/, @fullpath;
+    # in case they give an absolute path (not needed/desired, but ...);
+    # Windows not supported.
+    my $dirsep = ($map =~ m!^/!) ? "" : "/";
+    # quotemeta the map string to avoid perl regexp warning, e.g.,
+    # if map name contains "\Users", the "\U" should be literal.
+    my ($ff) = grep /$dirsep\Q$map\E(\.map)?$/, @fullpath;
     if ($ff) {
       $alldata->{'maps'}{$map}{'fullpath'} = $ff;
     } else {
