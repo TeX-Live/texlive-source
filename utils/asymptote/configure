@@ -7438,7 +7438,7 @@ fi
 
 
 esac
-   if test "x$enable_offscreen" == "xyes"; then
+   if test "x$enable_offscreen" = "xyes"; then
            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OSMesaCreateContext in -lOSMesa" >&5
 $as_echo_n "checking for OSMesaCreateContext in -lOSMesa... " >&6; }
 if ${ac_cv_lib_OSMesa_OSMesaCreateContext+:} false; then :
