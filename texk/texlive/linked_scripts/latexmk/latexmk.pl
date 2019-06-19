@@ -162,6 +162,8 @@ use warnings;
 ##
 ## 12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+## 28 Jun 2019 John Collins  Try to deal with log file parsing problems
+##                           V. 4.65
 ## 21 May 2019 John Collins  Fix incorrect listings by -rules and by -deps
 ## 21 May 2019 John Collins  V. 4.64a.
 ## 20,21 May 2019 John Collins Fix problem with not always running dvipdf,
@@ -231,8 +233,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.64a';
-$version_details = "$My_name, John Collins, 21 May 2019";
+$version_num = '4.65';
+$version_details = "$My_name, John Collins, 18 June 2019";
 
 use Config;
 use File::Basename;
@@ -4714,11 +4716,24 @@ LINE:
             # Latex error/warning, etc.
             next LINE;
         }
-        elsif ( /^\\openout\d+\s*=\s*\`([^\']+)\'\.$/ ) {
-                #  When (pdf)latex is run with an -output-directory 
-                #    or an -aux_directory, the file name does not contain
-                #    the output path; fix this, after removing quotes:
-            $generated_log{normalize_force_directory( $aux_dir1, $1 )} = 1;
+        elsif ( /^\\openout\d+\s*=\s*(.*)\s*$/ ) {
+            # \openout followed by filename followed by line end.
+            # pdflatex and xelatex quote it and wrap,
+            # lualatex leaves filename as is, and doesn't wrap.
+            my $cand = $1;
+            if ( $cand =~ /\`\"([^\'\"]+)\"\'\.$/ ) {
+                # One form of quoting by pdflatex, xelatex: `"..."'.
+                $cand = $1;
+            }
+            elsif ( $cand =~ /\`([^\']+)\'\.$/ ) {
+                # Another form of quoting by pdflatex, xelatex: `...'.
+                $cand = $1;
+            }
+            if ( $cand =~ /[\`\'\"]/){
+                # Bad quotes: e.g., incomplete wrapped line
+                next LINE;
+            }
+            $generated_log{normalize_force_directory( $aux_dir1, $cand )} = 1;
             next LINE;
         }
         # Test for conversion produced by package:
@@ -4934,6 +4949,11 @@ LINE:
                # Quoted file name, as from MikTeX
                 $quoted = 1;
             }
+            elsif ( /^\"/ ) {
+                # Incomplete quoted file, as in wrapped line before appending
+                # next line
+                next LINE;
+            }
             elsif ( /^([^\(^\)]*?)\s+[\[\{\<]/ ) {
                 # Terminator: space then '[' or '{' or '<'
                 # Use *? in condition: to pick up first ' [' (etc) 
@@ -4952,11 +4972,19 @@ LINE:
             $_ = $';       # Put $_ equal to the unmatched tail of string '
             my $include_candidate = $1;
             $include_candidate =~ s/\s*$//;   # Remove trailing space.
-            if ( !$quoted && ($include_candidate =~ /(\S+)\s/ ) ){
+            if ($quoted) {
+            # Remove quotes around filename.
+                $include_candidate =~ s/^\"(.*)\"$/$1/;
+            }
+            elsif ( !$quoted && ($include_candidate =~ /(\S+)\s/ ) ){
                 # Non-space-containing filename-candidate
                 # followed by space followed by message
                 # (Common)
                 push @new_includes, $1;
+            }
+            if ($include_candidate =~ /[\"\'\`]/) {
+                # Quote inside filename.  Probably misparse.
+                next INCLUDE_CANDIDATE;
             }
             if ( $include_candidate eq "[]" ) {
                 # Part of overfull hbox message
@@ -4966,9 +4994,6 @@ LINE:
                 # Part of font message
                 next INCLUDE_CANDIDATE;
             }
-            # Remove quotes around filename, as for MikTeX.  I've already
-            # treated this as a special case.  For safety check here:
-            $include_candidate =~ s/^\"(.*)\"$/$1/;
 
             push @new_includes, $include_candidate;
             if ( $include_candidate =~ /^(.+)\[([^\]]+)\]$/ ) {
@@ -4987,6 +5012,10 @@ LINE:
 
     INCLUDE_NAME:
         foreach my $include_name (@new_includes) {
+            if ($include_name =~ /[\"\'\`]/) {
+                # Quote inside filename.  Probably misparse.
+                next INCLUDE_NAME;
+            }
             $include_name = normalize_filename( $include_name, @pwd_log );
             my ($base, $path, $ext) = fileparseB( $include_name );
             if ( ($path eq './') || ($path eq '.\\') ) {
@@ -8517,10 +8546,13 @@ sub rdb_create_rule {
         if (! defined $_) { $_ = ''; }
     }
     if ( ($source =~ /\"/) || ($dest =~ /\"/) || ($base =~ /\"/) ) {
-        die "$My_name: Error. In rdb_create_rule there is a double quote in one of\n",
-            "  source, destination or base parameters:\n",
-            "    '$source', '$dest', '$base'\n",
-            "  I cannot handle this.\n";
+        die "$My_name: Error. In rdb_create_rule to create rule\n",
+            "    '$rule',\n",
+            "  there is a double quote in one of source, destination or base parameters:\n",
+            "    '$source'\n",
+            "    '$dest'\n",
+            "    '$base'\n",
+            "  I cannot handle this.  Cause is probably a latexmk bug.  Please report it.\n";
     }
     foreach ( $needs_making, $run_time, $check_time, $test_kind ) {
         if (! defined $_) { $_ = 0; }
