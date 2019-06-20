@@ -18,10 +18,6 @@
 /* define if the compiler supports basic C++11 syntax */
 #undef HAVE_CXX11
 
-/* Define to 1 if you have the declaration of `round', and to 0 if you don't.
-   */
-#undef HAVE_DECL_ROUND
-
 /* Have DirectWrite library */
 #undef HAVE_DIRECTWRITE
 
@@ -30,9 +26,6 @@
 
 /* Define to 1 if you have the <dwrite.h> header file. */
 #undef HAVE_DWRITE_H
-
-/* Have simple TrueType Layout backend */
-#undef HAVE_FALLBACK
 
 /* Have fontconfig library */
 #undef HAVE_FONTCONFIG
@@ -88,17 +81,11 @@
 /* Define to 1 if you have the `newlocale' function. */
 #undef HAVE_NEWLOCALE
 
-/* Define to 1 if you have the `posix_memalign' function. */
-#undef HAVE_POSIX_MEMALIGN
-
 /* Have POSIX threads */
 #undef HAVE_PTHREAD
 
 /* Have PTHREAD_PRIO_INHERIT. */
 #undef HAVE_PTHREAD_PRIO_INHERIT
-
-/* Define to 1 if you have the `round' function. */
-#undef HAVE_ROUND
 
 /* Define to 1 if you have the <sched.h> header file. */
 #undef HAVE_SCHED_H

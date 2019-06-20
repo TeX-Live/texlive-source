@@ -1,3 +1,1365 @@
+commit 6b44bf85382146b355a5a3cbbfde48166721ce52
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jun 20 11:57:19 2019 -0700
+
+    2.5.2
+
+ NEWS             | 12 ++++++++++++
+ configure.ac     |  2 +-
+ src/hb-version.h |  4 ++--
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+
+commit e9f7b338ef599b9cbffa125fe594a9939b8517cb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jun 20 11:48:44 2019 -0700
+
+    [config] Adjust description of HB_LEAN
+    
+    https://github.com/harfbuzz/harfbuzz/commit/d84932ba50482b3b47e393714eb77b19173d1f14
+
+ CONFIG.md | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit fce3bf8127321bb53b14eb8a5528a2347cd9be8a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 20:34:29 2019 -0700
+
+    [config] Add HB_NO_LAYOUT_COLLECT_GLYPHS
+    
+    Part of
+
+ src/hb-config.hh    | 1 +
+ src/hb-ot-layout.cc | 2 ++
+ 2 files changed, 3 insertions(+)
+
+commit 6c725c7799bf4870fb8b4f896a537a2c0f7a1ccc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 20:12:25 2019 -0700
+
+    [config] Add HB_NO_LAYOUT_FEATURE_PARAMS
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-config.hh           | 1 +
+ src/hb-ot-layout-common.hh | 7 +++++--
+ src/hb-ot-layout.cc        | 6 ++----
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
+commit 27de7c44fe80e69c527578c99c26280ba9f26c15
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 20:07:02 2019 -0700
+
+    [config] Add HB_NO_FACE_COLLECT_UNICODES
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-config.hh             | 1 +
+ src/hb-face.cc               | 5 ++---
+ src/hb-ot-face-table-list.hh | 2 ++
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+commit 3caa32d737e7c2b4fe6ccd10950760998524f573
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 19:50:54 2019 -0700
+
+    [config] Add HB_NO_CMAP_LEGACY_SUBTABLES
+    
+    Part of https://vimeo.com/331852453/06eec89c65
+
+ src/hb-config.hh        |  1 +
+ src/hb-ot-cmap-table.hh | 16 ++++++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
+commit 8e3cde67dfa4aa17c0f1156b4a4acd0c95bdbe6f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 19:58:24 2019 -0700
+
+    Fix MSVC build
+    
+    MSVC warning:
+    
+    c:\projects\harfbuzz\src\hb-ot-layout-gsubgpos.hh(2732): error C2121: '#': invalid character: possibly the result of a macro expansion [C:\projects\harfbuzz\build\harfbuzz.vcxproj]
+    
+    Clang warning for it:
+    
+    ./hb-ot-layout-gsubgpos.hh:2729:2: error: embedding a directive within macro arguments has undefined behavior [-Werror,-Wembedded-directive]
+
+ src/hb-ot-layout-gsubgpos.hh | 18 +++++++++++-------
+ src/hb.hh                    |  1 +
+ 2 files changed, 12 insertions(+), 7 deletions(-)
+
+commit c8f529a07eca06acf2216935921377e7cad8436f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 19:33:15 2019 -0700
+
+    [config] Add HB_NO_HINTING, enabled by HB_TINY
+    
+    Disables HintingDevice tables and Anchors addressing contour points.
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-config.hh               | 3 ++-
+ src/hb-ot-layout-common.hh     | 6 ++++++
+ src/hb-ot-layout-gpos-table.hh | 7 +++++++
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+
+commit a849873124efea6577b4938b23501d9e4f4af2f4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 19:26:22 2019 -0700
+
+    [config] Add HB_NO_VAR to disable variations support, enabled by HB_TINY
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-config.hh             |  1 +
+ src/hb-font.cc               |  3 ++-
+ src/hb-ot-face-table-list.hh |  2 ++
+ src/hb-ot-layout-common.hh   | 34 ++++++++++++++++++++++++++++------
+ src/hb-ot-layout-gsubgpos.hh | 18 +++++++++++++++---
+ src/hb-ot-var.cc             |  7 ++++++-
+ src/hb-subset-plan.cc        |  2 ++
+ 7 files changed, 56 insertions(+), 11 deletions(-)
+
+commit 230adf2c417bbb6b5f367eb857dd6f98bea3ef26
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 18:49:52 2019 -0700
+
+    [config] Add HB_NO_OT_FONT_GLYPH_NAMES
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-config.hh             | 1 +
+ src/hb-ot-face-table-list.hh | 4 +++-
+ src/hb-ot-font.cc            | 5 ++++-
+ 3 files changed, 8 insertions(+), 2 deletions(-)
+
+commit b0debc32f6cedfa76a4851aa391f88ed1860955d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 18:42:39 2019 -0700
+
+    [subset] Simplify collect_name_ids
+
+ src/hb-subset-plan.cc | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
+
+commit a5897463d4d0b83cb1bfe4ae1477dac4e3851252
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 18:36:35 2019 -0700
+
+    [config] Add HB_NO_STAT
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-config.hh             | 1 +
+ src/hb-ot-face-table-list.hh | 2 ++
+ src/hb-subset-plan.cc        | 2 ++
+ 3 files changed, 5 insertions(+)
+
+commit ffc2b8d56e5d35b4dc19499c830d8fc4b643213a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 18:33:29 2019 -0700
+
+    [config] Don't include name table in face if HB_NO_NAME
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-face-table-list.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 1432df102ebf206592f92677f48bb950871675b3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 18:32:40 2019 -0700
+
+    [config] Disable hb-ot-font code if HB_NO_OT_FONT
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-font.cc | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit b1a2384a5244ea3ea63ca94eb095c4add2cd451d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 17:34:12 2019 -0700
+
+    [ucd] Print out table sizes
+
+ src/gen-ucd-table.py | 27 +++++++++++++++++++--------
+ src/hb-ucd-table.hh  |  1 -
+ 2 files changed, 19 insertions(+), 9 deletions(-)
+
+commit f4de0c775408e34474a688361fa319251e1a9c18
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 17:08:26 2019 -0700
+
+    [config] Disable AAT map
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-aat-map.cc  | 15 +++++++--------
+ src/hb-ot-shape.cc |  6 ++++++
+ 2 files changed, 13 insertions(+), 8 deletions(-)
+
+commit d8bf6723a1176ca26e97e8015044c8829ec77c36
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 17:04:16 2019 -0700
+
+    [config] Disable more legacy kerning
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-shape.cc | 4 +++-
+ src/hb-ot-shape.hh | 8 ++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+commit 43d7048d59b1a0af62b80bd914805bdec74a29d2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 17:02:32 2019 -0700
+
+    [config] More trak disabling
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-shape.cc | 4 +++-
+ src/hb-ot-shape.hh | 8 ++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+commit d84932ba50482b3b47e393714eb77b19173d1f14
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 16:57:48 2019 -0700
+
+    [config] add HB_NO_OT_SHAPE_FRACTIONS, enabled in HB_LEAN
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-config.hh   |  1 +
+ src/hb-ot-shape.cc |  9 +++++++++
+ src/hb-ot-shape.hh | 10 ++++++++++
+ 3 files changed, 20 insertions(+)
+
+commit eaf4a7364c28663720a9da57bf4d576b6009e17d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 16:51:13 2019 -0700
+
+    [config] Minor trak disable
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-shape.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 971330c0588307bcd73934e44c6343db55b1f5b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 16:37:35 2019 -0700
+
+    [config] Add HB_NO_LANGUAGE_PRIVATE_SUBTAG
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-config.hh | 1 +
+ src/hb-ot-tag.cc | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+commit f642a5fa6c42b145574593a0e18815dc74d3c617
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 16:36:09 2019 -0700
+
+    Restructure code
+
+ src/hb-ot-tag.cc | 44 ++++++++++++++++++++------------------------
+ 1 file changed, 20 insertions(+), 24 deletions(-)
+
+commit d2ff73b256599a655e4ddedbe1ca75abdf837d23
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 16:28:08 2019 -0700
+
+    [config] Remove remaining AAT context bits if HB_NO_OT_KERN
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-aat-layout.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 588697afd0ddf411e8201866ade1f593ccb61aab
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 16:24:51 2019 -0700
+
+    [config] Add HB_NO_OT_KERN, enabled by HB_MINI / HB_NO_LEGACY
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-config.hh             |  1 +
+ src/hb-ot-face-table-list.hh |  6 +++++-
+ src/hb-ot-layout.cc          |  4 ++--
+ src/hb-ot-shape.cc           | 16 ++++++++++++++--
+ src/hb-ot-shape.hh           |  4 ++++
+ 5 files changed, 26 insertions(+), 5 deletions(-)
+
+commit 2e3e929d2b0fa6026c55eb92f91de0498fb22646
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 15:50:13 2019 -0700
+
+    Fix build
+
+ src/hb-ot-face-table-list.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 631da9d816da381c5fd4b3cc640c41fda736a96f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 19 15:36:14 2019 -0700
+
+    [config] Remove tables from hb_face_t for disabled features
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/Makefile.sources         |   1 +
+ src/hb-ot-face-table-list.hh | 112 +++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-face.cc            |   8 +---
+ src/hb-ot-face.hh            |  52 ++------------------
+ src/hb-ot-layout.cc          |   2 +
+ 5 files changed, 120 insertions(+), 55 deletions(-)
+
+commit e710888188ff3285a162c25c89d886d9535d9f02
+Author: Misty De Meo <mistydemeo@gmail.com>
+Date:   Tue Jun 18 15:20:38 2019 -0700
+
+    coretext: remove trailing macro from SCRATCH_RESTORE
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 10bac21bb5b25cf20c2198934e99e444625dfd97
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 15:15:06 2019 -0700
+
+    [coretext/uniscribe/directwrite] Remove extra semicolons
+    
+    Fixes https://github.com/harfbuzz/harfbuzz/pull/1783
+
+ src/hb-coretext.cc    | 2 +-
+ src/hb-directwrite.cc | 2 +-
+ src/hb-uniscribe.cc   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit f0b0fd4e78e94315c9d01b9232ebfb09bbfef556
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 14:40:24 2019 -0700
+
+    Remove dead code
+
+ src/hb-ot-layout.cc | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+commit d7e27cd65a085a76c85cddd93cea48ce4b7be03f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 14:38:05 2019 -0700
+
+    [config] Don't use VORG table if HB_NO_OT_FONT_CFF
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-font.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 37f8ebff5f1973423c7e4ed9dea88881d0642b61
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 14:33:49 2019 -0700
+
+    [config] Fixup for AAT ltag table access
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-aat-layout.hh    | 8 --------
+ src/hb-ot-name-table.hh | 2 +-
+ 2 files changed, 1 insertion(+), 9 deletions(-)
+
+commit f08066ce9a41469e2a7396f0accd61e1c02e5649
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 14:29:27 2019 -0700
+
+    [config] One more morx disabling
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-layout.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 231d0257883ec9e8904afae1adfd73f3c225f177
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 14:25:52 2019 -0700
+
+    [config] Don't compile AAT API if HB_NO_AAT
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-aat-layout.cc | 131 ++++++++++++++++-----------------------------------
+ src/hb-ot-shape.cc   |  19 ++++++--
+ 2 files changed, 56 insertions(+), 94 deletions(-)
+
+commit bf9424a9a198b99d49c005536a10f27387630064
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 13:31:35 2019 -0700
+
+    [config] Don't compile unused layout API if HB_NO_LAYOUT_UNUSED
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-layout.cc | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+commit eb9798ef733da53e69966054b67752cd8937eb7b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 13:29:55 2019 -0700
+
+    [config] Dont' compile buffer message API if HB_NO_BUFFER_MESSAGE
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-buffer.cc | 2 ++
+ src/hb-buffer.hh | 5 ++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+commit be1c0ab2186a728eabdf6666632a9f759474f901
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 13:26:03 2019 -0700
+
+    [config] Don't compile buffer serialize API if HB_NO_BUFFER_SERIALIZE
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-buffer-serialize.cc   | 19 +++++++------------
+ src/test-buffer-serialize.cc |  7 ++++++-
+ 2 files changed, 13 insertions(+), 13 deletions(-)
+
+commit bdbabd110cfdb4c59cf24bd500ce63073a5213e4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 13:21:25 2019 -0700
+
+    Minor header include cleanup
+
+ src/hb-aat-layout.cc | 1 -
+ src/hb-ot-math.cc    | 3 ---
+ src/hb-ot-name.cc    | 1 -
+ src/hb-ot-var.cc     | 4 ++--
+ 4 files changed, 2 insertions(+), 7 deletions(-)
+
+commit 83de3a60ab7383cf3ee25c1f8c33a45a7778d003
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 13:18:15 2019 -0700
+
+    [config] Don't compile color API if HB_NO_COLOR
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-color.cc   | 55 +++++++++-------------------------------------------
+ src/test-ot-color.cc |  9 ++++++++-
+ 2 files changed, 17 insertions(+), 47 deletions(-)
+
+commit 350f98ea47aaf0fe008065b92c8b6fe2bc519fa7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 13:11:41 2019 -0700
+
+    [config] Don't compile name table API if HB_NO_NAME
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-name.cc   | 25 +++++--------------------
+ src/test-ot-name.cc |  5 ++++-
+ 2 files changed, 9 insertions(+), 21 deletions(-)
+
+commit da51a2cb0efae664d4ee83c6036f29a21621e993
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 13:09:22 2019 -0700
+
+    [config] Don't compile math API if HB_NO_MATH
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/hb-ot-math.cc | 47 +++++++----------------------------------------
+ 1 file changed, 7 insertions(+), 40 deletions(-)
+
+commit 737436d3f8aacfd0bd586cd54d7034bae3afc4e1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 13:07:44 2019 -0700
+
+    Streamline HB_NO_CFF
+
+ src/hb-ot-cff1-table.cc     | 7 +++++--
+ src/hb-ot-cff2-table.cc     | 7 +++++--
+ src/hb-subset-cff-common.cc | 7 +++++++
+ src/hb-subset-cff1.cc       | 7 +++++--
+ src/hb-subset-cff2.cc       | 7 +++++--
+ 5 files changed, 27 insertions(+), 8 deletions(-)
+
+commit 60653a7adbbd8143d187b3edf33cb7a2dddadf74
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 13:01:11 2019 -0700
+
+    Remove HB_VECTOR_SIZE
+    
+    It was cumbersome to get it to work reliably, for dubious performance
+    gain, mostly in the subsetter maybe...
+    
+    Life is easier without.  It was disabled forever anyway.
+
+ src/hb-algs.hh   | 36 +++++++++---------------------------
+ src/hb-null.hh   |  4 ++--
+ src/hb-static.cc |  4 ++--
+ src/hb.hh        | 32 --------------------------------
+ 4 files changed, 13 insertions(+), 63 deletions(-)
+
+commit 24060d3aa77f1e1a18960cc61c3d1ac241875507
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 12:50:42 2019 -0700
+
+    Add hb_bitwise_neg
+
+ src/hb-algs.hh | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
+
+commit 7cf9169078f35299ec0633a7b212256acdd71661
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 12:44:03 2019 -0700
+
+    Remove accidentally left cruft
+
+ src/hb-algs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6172ec5d879653c536d7cb3d3b3760fbb6d0f3f3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 18 12:41:56 2019 -0700
+
+    Remove (unused) posix_memalign fallback
+    
+    Was wrong.  The returned pointer couldn't be passed to free().  Ouch!
+
+ configure.ac |  2 +-
+ src/hb.hh    | 34 ----------------------------------
+ 2 files changed, 1 insertion(+), 35 deletions(-)
+
+commit eb28d6e48b02a8c49875cfcd084a16c1c66c367e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jun 18 12:14:10 2019 +0430
+
+    [ci] Test no build system builds
+    
+    Introduced in aa3450c, let's preserve it
+
+ .circleci/config.yml | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit efef672911dd6c3b80e53294f3fcd59dbb64597a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 22:57:51 2019 -0700
+
+    Fix cmake build
+    
+    Hopefullly.
+
+ CMakeLists.txt | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit aa3450cac148280f747fb88864b6fcc4ec70cc51
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 22:41:49 2019 -0700
+
+    [config] Don't compile disabled features
+    
+    This makes it possible to include all .cc files into build, even if not
+    building CoreText, Uniscribe, etc.
+    
+    This was mostly to help custom builders.  But also means that we can
+    include all files in our own build system.  Not sure if we should.
+    Definitely simplifies things, but slightly only.
+
+ src/Makefile.am              | 1 +
+ src/hb-coretext.cc           | 6 ++++++
+ src/hb-directwrite.cc        | 6 ++++++
+ src/hb-ft.cc                 | 5 +++++
+ src/hb-glib.cc               | 5 +++++
+ src/hb-gobject-enums.cc.tmpl | 7 +++++++
+ src/hb-gobject-structs.cc    | 5 +++++
+ src/hb-graphite2.cc          | 7 +++++++
+ src/hb-icu.cc                | 5 +++++
+ src/hb-uniscribe.cc          | 4 ++++
+ 10 files changed, 51 insertions(+)
+
+commit 33d8b76e74579a27b06fa788d0bf696a9dd44cc4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 21:54:20 2019 -0700
+
+    [config] Flesh out CONFIG.md
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ CONFIG.md | 87 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 84 insertions(+), 3 deletions(-)
+
+commit 23ccd00a3d5033b812f2bebcc5b793a4415b252b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 20:35:04 2019 -0700
+
+    Minor
+
+ src/hb-config.hh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 23768a99e08cbe691772b7514c023d3184989ff8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 20:29:29 2019 -0700
+
+    [config] Replace HAVE_FALLBACK with HB_NO_FALLBACK_SHAPE
+    
+    This disables fallback shaper in tiny builds.  Projects that don't
+    use our build system and want to disable fallback shaper (eg. Firefox)
+    should define HB_NO_FALLBACK_SHAPE now.
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ CMakeLists.txt           | 2 --
+ configure.ac             | 8 --------
+ src/Makefile.am          | 4 ----
+ src/Makefile.sources     | 5 +----
+ src/hb-config.hh         | 1 +
+ src/hb-fallback-shape.cc | 3 +++
+ src/hb-shaper-list.hh    | 2 +-
+ 7 files changed, 6 insertions(+), 19 deletions(-)
+
+commit 3a9394635ffd663d8acd0715236dd01d9f22f3b8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 20:10:36 2019 -0700
+
+    Add CONFIG.md
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ CONFIG.md   | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ Makefile.am |  1 +
+ README.md   |  2 ++
+ 3 files changed, 54 insertions(+)
+
+commit 1c56b5d1d8307efd12519556e41fc50c5371f136
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 14:23:04 2019 -0700
+
+    [serialize] Fix copy() calling operator=
+    
+    https://github.com/googlefonts/harfbuzz/commit/9f610ae239a11e86f94621e26bc15849b65ce41b#commitcomment-33944686
+
+ src/hb-serialize.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6492b2345cd913223b0eb931e9e11f7e5ad33049
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 14:19:13 2019 -0700
+
+    Minor
+
+ src/hb-open-type.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8938dd23c64f80dbd31f87133d9df88cd0c98c1a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 14:12:11 2019 -0700
+
+    Use injected class name
+
+ src/hb-open-type.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit bfb5569d530a2b65dafd0d9be45d594af9e742ce
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 14:06:04 2019 -0700
+
+    Disable non-OpenType kerning with hb-ft in HB_TINY
+
+ src/hb-ft.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 0819f3ca863af520fe546e6ef0596300e9e28b01
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 14:02:47 2019 -0700
+
+    Deprecate v_kerning callback again
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1682
+
+ docs/harfbuzz-sections.txt |  6 +++---
+ src/hb-deprecated.h        | 23 +++++++++++++++++++++++
+ src/hb-font.cc             |  7 +++----
+ src/hb-font.h              | 20 --------------------
+ src/hb-font.hh             |  2 +-
+ 5 files changed, 30 insertions(+), 28 deletions(-)
+
+commit eb2825c7f140185f41922a371434873a0114ef67
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 13:42:53 2019 -0700
+
+    Minor
+
+ src/hb-ot-font.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 896416bd4c6ac486eb4e1926eaa09d5a9b693763
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 13:39:49 2019 -0700
+
+    Partially revert "[ft/ot] Remove implementation of deprecated kerning funcs"
+    
+    This reverts commit 47030b1855f04c0d75899ffb6f5021fea3c19b90.
+    
+    Reverts only the hb-ft part, to reinstate non-OpenType kerning with
+    FreeType.
+    
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1682
+
+ src/hb-ft.cc | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+commit 2682efb02df72fb254c819cb76fc23592c30fc45
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 17 13:38:08 2019 -0700
+
+    Revert "Deprecate font kern API"
+    
+    This reverts commit d219f899f4b2fb4b39ebc1dff9fb648fc5d6d112.
+    
+    API change: Un-deprecate font kern API.
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1682
+    
+    We should document that this API is only necessary to hook up
+    non-OpenType kerning.  hb-ot-font will continue to NOT implement them.
+
+ docs/harfbuzz-sections.txt | 16 +++++++-------
+ src/hb-deprecated.h        | 54 ----------------------------------------------
+ src/hb-font.cc             |  3 ---
+ src/hb-font.h              | 51 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 59 insertions(+), 65 deletions(-)
+
+commit d6cb244f7d63338e0cbfa774c2a32e6e7e06f15b
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Sat Jun 15 21:38:27 2019 -0400
+
+    Canonically reorder U+0C55 and U+0C56
+
+ src/hb-unicode.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 82d4bfb8f3ac30fecce41f8abe59f58ad64ba98a
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Fri Jun 14 10:49:42 2019 -0700
+
+    enable cff subset tests
+    
+    add Unicode UCS-4 cmap
+    fix Unicode bits in OS/2
+    add Unicode cmap sub-table in SourceHanSans-Regular_subset.otf
+    regenerate cff subset test expected results
+
+ src/hb-ot-cmap-table.hh                            |  73 +++++++++++++++++----
+ src/hb-ot-os2-table.hh                             |  10 ++-
+ test/subset/data/Makefile.am                       |   2 +
+ test/subset/data/Makefile.sources                  |   2 +
+ ...subroutinize-retain-gids.1FC,21,41,20,62,63.otf | Bin 32124 -> 20000 bytes
+ ...Regular.desubroutinize-retain-gids.61,62,63.otf | Bin 29688 -> 2196 bytes
+ ...r.desubroutinize-retain-gids.D7,D8,D9,DA,DE.otf | Bin 33316 -> 30412 bytes
+ ...subroutinize-retain-gids.1FC,21,41,20,62,63.otf | Bin 31960 -> 19840 bytes
+ ...p-hints-desubroutinize-retain-gids.61,62,63.otf | Bin 29564 -> 2072 bytes
+ ...s-desubroutinize-retain-gids.D7,D8,D9,DA,DE.otf | Bin 33168 -> 30264 bytes
+ ...r.drop-hints-retain-gids.1FC,21,41,20,62,63.otf | Bin 32052 -> 19932 bytes
+ ...Pro-Regular.drop-hints-retain-gids.61,62,63.otf | Bin 29632 -> 2108 bytes
+ ...gular.drop-hints-retain-gids.D7,D8,D9,DA,DE.otf | Bin 33180 -> 30276 bytes
+ ...sPro-Regular.retain-gids.1FC,21,41,20,62,63.otf | Bin 32276 -> 20152 bytes
+ .../SourceSansPro-Regular.retain-gids.61,62,63.otf | Bin 29788 -> 2264 bytes
+ ...eSansPro-Regular.retain-gids.D7,D8,D9,DA,DE.otf | Bin 33332 -> 30428 bytes
+ ...ubset.default.3042,3044,3046,3048,304A,304B.otf | Bin 3028 -> 3036 bytes
+ ...ubset.default.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 3240 -> 3248 bytes
+ ...eHanSans-Regular_subset.default.61,63,65,6B.otf | Bin 2200 -> 2208 bytes
+ ...ubset.default.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 3460 -> 3468 bytes
+ .../SourceHanSans-Regular_subset.default.660E.otf  | Bin 1920 -> 1928 bytes
+ ...e-retain-gids.3042,3044,3046,3048,304A,304B.otf | Bin 90956 -> 8932 bytes
+ ...e-retain-gids.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 125820 -> 116080 bytes
+ ...bset.desubroutinize-retain-gids.61,63,65,6B.otf | Bin 88392 -> 3016 bytes
+ ...e-retain-gids.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 126004 -> 116264 bytes
+ ...ular_subset.desubroutinize-retain-gids.660E.otf | Bin 103780 -> 50224 bytes
+ ...esubroutinize.3042,3044,3046,3048,304A,304B.otf | Bin 2952 -> 2960 bytes
+ ...esubroutinize.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 3136 -> 3144 bytes
+ ...s-Regular_subset.desubroutinize.61,63,65,6B.otf | Bin 2132 -> 2140 bytes
+ ...esubroutinize.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 3256 -> 3264 bytes
+ ...eHanSans-Regular_subset.desubroutinize.660E.otf | Bin 1896 -> 1904 bytes
+ ...e-retain-gids.3042,3044,3046,3048,304A,304B.otf | Bin 90656 -> 8672 bytes
+ ...e-retain-gids.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 125468 -> 115768 bytes
+ ...ints-desubroutinize-retain-gids.61,63,65,6B.otf | Bin 88156 -> 2892 bytes
+ ...e-retain-gids.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 125584 -> 115884 bytes
+ ....drop-hints-desubroutinize-retain-gids.660E.otf | Bin 103556 -> 50040 bytes
+ ...esubroutinize.3042,3044,3046,3048,304A,304B.otf | Bin 2792 -> 2800 bytes
+ ...esubroutinize.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 2896 -> 2904 bytes
+ ...ubset.drop-hints-desubroutinize.61,63,65,6B.otf | Bin 2028 -> 2036 bytes
+ ...esubroutinize.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 2964 -> 2972 bytes
+ ...gular_subset.drop-hints-desubroutinize.660E.otf | Bin 1804 -> 1812 bytes
+ ...s-retain-gids.3042,3044,3046,3048,304A,304B.otf | Bin 90724 -> 8740 bytes
+ ...s-retain-gids.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 125560 -> 115864 bytes
+ ...r_subset.drop-hints-retain-gids.61,63,65,6B.otf | Bin 88196 -> 2852 bytes
+ ...s-retain-gids.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 125780 -> 116084 bytes
+ ...-Regular_subset.drop-hints-retain-gids.660E.otf | Bin 103572 -> 50060 bytes
+ ...et.drop-hints.3042,3044,3046,3048,304A,304B.otf | Bin 2848 -> 2856 bytes
+ ...et.drop-hints.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 2988 -> 2996 bytes
+ ...nSans-Regular_subset.drop-hints.61,63,65,6B.otf | Bin 2060 -> 2068 bytes
+ ...et.drop-hints.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 3164 -> 3172 bytes
+ ...ourceHanSans-Regular_subset.drop-hints.660E.otf | Bin 1824 -> 1832 bytes
+ ...t.retain-gids.3042,3044,3046,3048,304A,304B.otf | Bin 91040 -> 9016 bytes
+ ...t.retain-gids.3042,3044,3046,73E0,5EA6,8F38.otf | Bin 125924 -> 116184 bytes
+ ...Sans-Regular_subset.retain-gids.61,63,65,6B.otf | Bin 88468 -> 3012 bytes
+ ...t.retain-gids.660E,6975,73E0,5EA6,8F38,6E05.otf | Bin 126208 -> 116468 bytes
+ ...urceHanSans-Regular_subset.retain-gids.660E.otf | Bin 103800 -> 50244 bytes
+ .../data/fonts/SourceHanSans-Regular_subset.otf    | Bin 2707728 -> 2707736 bytes
+ 57 files changed, 70 insertions(+), 17 deletions(-)
+
+commit 6bcbe495bff221169f8c0769dde1b4b2c165a211
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Jun 13 15:04:51 2019 +0430
+
+    [cff] minor format (#1774)
+
+ src/hb-subset-cff-common.cc | 104 ++++++++++++++++++++------------------------
+ 1 file changed, 48 insertions(+), 56 deletions(-)
+
+commit 4f37c0db9bf4e3d536a50126d17b36009b12f9cb
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Tue Jun 11 17:55:31 2019 -0400
+
+    Remove 'mym3'
+
+ src/hb-ot-tag.cc       | 4 +++-
+ test/api/test-ot-tag.c | 2 +-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+commit 90872a29ee5d0bef6df1c2900f7001c11106c4da
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Tue Jun 11 12:28:30 2019 -0700
+
+    change assert(false) to failure
+
+ src/hb-subset-cff-common.cc                               |   2 +-
+ ...z-testcase-minimized-hb-subset-fuzzer-5680398559870976 | Bin 0 -> 145 bytes
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit 0c5da57d1aab91d7677a5c6517a3da254d53267f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 10 14:06:25 2019 -0700
+
+    Fix typo :)
+
+ src/hb-blob.cc   | 3 ++-
+ src/hb-config.hh | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+commit 19b8eb08e5457cd643aee5f9b9ad1c80b2243895
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jun 11 01:33:30 2019 +0430
+
+    Move HB_NO_SETLOCALE to closer place to its to unbreak HB_TINY build (#1768)
+
+ src/hb-common.cc | 3 +++
+ src/hb.hh        | 4 ----
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+commit b4a5a69ad8625e3b90eb907a1b70e3ed24d4ff97
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jun 11 01:33:09 2019 +0430
+
+    Add HB_NO_OEPN (#1767)
+
+ src/hb-blob.cc   | 3 +++
+ src/hb-config.hh | 2 ++
+ 2 files changed, 5 insertions(+)
+
+commit a36ff941710b5a5f7e464e6d72aff36cf5549a91
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 10 15:48:28 2019 +0430
+
+    Add HB_NO_SETLOCALE
+
+ src/hb-config.hh | 1 +
+ src/hb.hh        | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+commit c4cae81a26a816979f3206418c47856b5ed2d8bb
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 10 15:32:54 2019 +0430
+
+    Remove round polyfill
+    
+    Added in 01dff1e and 19256bef, this was targeted at older
+    msvc versions that don't support C99 but now as we require
+    C++11 we don't target places those envs thus removing this.
+
+ CMakeLists.txt |  2 +-
+ configure.ac   |  6 ------
+ src/hb.hh      | 14 --------------
+ 3 files changed, 1 insertion(+), 21 deletions(-)
+
+commit ff9b9b1c89d5529fafc74ce84c0acb71b5d6031b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 10 12:48:25 2019 -0700
+
+    Simplify HB_PARTIALIZE impl
+    
+    +this works on gcc 4.8 as well as default code path.
+
+ src/hb-algs.hh | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
+
+commit 451edbd4d063a4b43c1ca3d2b60c7392602ae7b7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 10 12:46:54 2019 -0700
+
+    Revert "Test new solution for HB_PARTIALIZE"
+    
+    This reverts commit a0c4900799c26e4ff34180842a5ff21048fe31a0.
+
+ src/hb-algs.hh | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+commit a0c4900799c26e4ff34180842a5ff21048fe31a0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 10 12:33:23 2019 -0700
+
+    Test new solution for HB_PARTIALIZE
+    
+    Just testing bots.  Will finish based on results.
+
+ src/hb-algs.hh | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
+
+commit 4a2b58555f173b692b767c933d280a51142926dd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 10 08:16:51 2019 -0700
+
+    [ci] Use HB_OPTIMIZE_SIZE instead of __OPTIMIZE_SIZE__
+
+ .circleci/config.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a228bb5f1d471a334bc9727f5d4f5b59dbe829ff
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 10 15:56:36 2019 +0430
+
+    [ci] Test -Os and optimize size in Alpine bot
+    
+    __OPTIMIZE_SIZE__ should be defined whenever -Os but some Internet thread
+    indicate may not so lets do that ourselves as that is the main intention
+
+ .circleci/config.yml | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit 9407ef8d4bb96346b1f8b07757d79d3f8cc61cf7
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 10 15:17:43 2019 +0430
+
+    minor, add HB_USE_INTERNAL_QSORT
+    
+    The only thing I need for a working wasm in a minimum libc,
+    otherwise I have to provide the very same qsort inside that libc
+
+ src/hb-algs.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 801d93fc58aa13082dea86fb2c3821bc6362f593
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 10 14:53:14 2019 +0430
+
+    [ci] remove wine from fedora bot
+    
+    We are not testing Windows exes in fedora mingw bot, we don't have to as
+    probably won't go that smoothly and we have real Windows bots anyway
+    and as wine installation itself is time taking let's remove it
+
+ .circleci/config.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7dcfc5357df879491f847bd7d2941645e58f268c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 9 11:58:08 2019 +0430
+
+    [stat] minor format
+
+ src/hb-ot-stat-table.hh | 72 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
+
+commit 2646c7149ce49d3b6cf90e354658df35254bcce0
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 9 11:51:58 2019 +0430
+
+    [stat] minor
+
+ src/hb-ot-stat-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit c4669fda7890bc741ef934ebc360e366eba94866
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 9 11:50:36 2019 +0430
+
+    [algs] minor
+
+ src/hb-algs.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 9b853f755dd05ccef3429d3d3d0d561a99cc4c2d
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 9 11:49:25 2019 +0430
+
+    [cff] Use switch on multi-format structs (#1762)
+
+ src/hb-cff-interp-cs-common.hh   |   4 +-
+ src/hb-cff-interp-dict-common.hh |  12 +--
+ src/hb-ot-cff-common.hh          | 135 ++++++++++++------------
+ src/hb-ot-cff1-table.hh          | 215 ++++++++++++++++++++++-----------------
+ src/hb-ot-cff2-table.hh          |  68 +++++++------
+ src/hb-subset-cff1.cc            |   2 +-
+ src/hb-subset-cff2.cc            |   2 +-
+ 7 files changed, 233 insertions(+), 205 deletions(-)
+
+commit eff579f743a91c0b1c543f4b69ab33580cae6392
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jun 7 12:58:09 2019 +0430
+
+    Update and use internal qsort everywhere
+
+ src/hb-algs.hh          | 210 +++++++++++++++++++++++++++++++++++-------------
+ src/hb-array.hh         |   6 +-
+ src/hb-ot-post-table.hh |   2 +-
+ 3 files changed, 158 insertions(+), 60 deletions(-)
+
+commit 5074d665a8b0980f202a5986bda52808674cfb54
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 7 14:20:45 2019 -0700
+
+    [ucd] Save another 1.5kb
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/gen-ucd-table.py |  8 +++++---
+ src/hb-ucd-table.hh  | 37 +++++++++++++++++++++----------------
+ src/hb-ucd.cc        | 12 +++++++++---
+ 3 files changed, 35 insertions(+), 22 deletions(-)
+
+commit 6d58b45782833f8c6c8efd9426e2785c78e6462a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Jun 8 00:40:18 2019 +0430
+
+    [ci] use trusty for its gcc 4.8 again
+
+ .travis.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 973699c49b905e142ecc5cefd1f4fa15aad8e309
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 7 12:49:06 2019 -0700
+
+    Disable clang gcc impersonator
+
+ src/hb-algs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e4e518f33d933a02058bad86a6aae714e59814db
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 7 12:41:09 2019 -0700
+
+    Fix build on gcc 4.8
+    
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1724
+
+ src/hb-algs.hh | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
+
+commit 3c240bd3dc0aaca38154da555d0aef350da62ee6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 7 10:56:24 2019 -0700
+
+    Downgrade double-promotion from error to warning
+    
+    https://github.com/harfbuzz/harfbuzz/issues/1740
+
+ src/hb.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 385e436692e94588fc4cb3a7afbeb862035db09b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jun 7 10:44:53 2019 -0700
+
+    Minor, fix gcc maybe-uninitialized complain
+    
+    I guess all of its field will be initialized anyway here but lets make it more defensive
+
+ src/hb-ot-glyf-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1bada656a86e9cb27d4a6b9fcc50748f0bd9c1d9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jun 7 02:01:27 2019 +0430
+
+    Minor, remove unnecessary semicolon
+    
+    Causing -Wextra-semi-stmt build error when no primitive has chosen
+    Interesting that nobody has noticed it yet.
+
+ src/hb-mutex.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f9b1ae73360054d9f121a2d36820377909888b35
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Jun 5 17:40:59 2019 -0700
+
+    [subset] Move OS/2 to subset2.
+
+ src/hb-ot-os2-table.hh | 32 ++++++++++++++++----------------
+ src/hb-subset.cc       |  2 +-
+ 2 files changed, 17 insertions(+), 17 deletions(-)
+
+commit 93d592e0e181f436ea47038fef419134007208aa
+Author: Qunxin Liu <qxliu@google.com>
+Date:   Wed Jun 5 16:51:31 2019 -0700
+
+    [subset] post table to use _subset2
+
+ src/hb-ot-post-table.hh | 31 +++++++++++++++----------------
+ src/hb-subset.cc        |  2 +-
+ 2 files changed, 16 insertions(+), 17 deletions(-)
+
+commit db938479d7b1e3ec35a39a9ad31c945e09e6d5e5
+Author: Qunxin Liu <qxliu@google.com>
+Date:   Tue Jun 4 10:30:53 2019 -0700
+
+    [subset] maxp table to use _subset2
+
+ src/hb-ot-maxp-table.hh | 48 ++++++++++++++++++++++--------------------------
+ src/hb-subset.cc        |  2 +-
+ 2 files changed, 23 insertions(+), 27 deletions(-)
+
+commit d5e5f378329b6ce21944b79b568369ea7bc36cf3
+Author: Eli Zaretskii <eliz@gnu.org>
+Date:   Wed Jun 5 22:20:03 2019 +0300
+
+    This makes minor changes to allow building HarfBuzz with
+    mingw.org's MinGW.
+    
+    src/hb-algs.hh: Don't compile _BitScanForward and _BitScanReverse
+    for GCC >= 4.  mingw.org's MinGW doesn't have these functions.
+    
+    src/hb-atomic.hh: MemoryBarrier does exist in mingw.org's MinGW,
+    but it is not a macro, it is an inline function.  __MINGW32_VERSION
+    is a macro that exists only in mingw.org's MinGW, so conditioning
+    on it should not affect MinGW64, where MemoryBarrier is a macro.
+    
+    src/hb-uniscribe.cc: Define E_NOT_SUFFICIENT_BUFFER if it is not
+    defined (mingw.org's MinGW doesn't).
+    
+    src/hb.hh: Don't include intrin.h for mingw.org's MinGW, since that
+    header is not available; instead, include windows.h.  Conditioned
+    on __MINGW32_VERSION to avoid affecting MinGW64.
+
+ src/hb-algs.hh      | 4 ++--
+ src/hb-atomic.hh    | 2 +-
+ src/hb-uniscribe.cc | 4 ++++
+ src/hb.hh           | 7 +++++++
+ 4 files changed, 14 insertions(+), 3 deletions(-)
+
+commit c7439d4e3a76d596845aad4e4bc860bd61ee47e3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 5 12:13:49 2019 -0700
+
+    Slightly massage buffer-messaging commit
+    
+    Saves a few bytes.
+
+ src/hb-buffer.cc | 3 ---
+ src/hb-buffer.hh | 8 +++++++-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+commit 4b1b0bf2f51f806d3285a7e7dec378b9eab9333e
+Merge: 659eeddb 815f002b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jun 5 12:57:28 2019 +0430
+
+    Merge pull request #1755 from ebraminio/slim
+    
+    Don't use vsnprintf when HB_NO_BUFFER_MESSAGE is defined
+
+commit 815f002bb9230a52768a165383497cc98c58eadb
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Jun 5 10:38:06 2019 +0430
+
+    Don't use vsnprintf when HB_NO_BUFFER_MESSAGE is defined
+
+ src/hb-buffer.cc | 5 ++++-
+ src/hb-config.hh | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+commit 659eeddb2df5b97cc01bd39e106381f65c9f41f1
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Mon Jun 3 22:31:50 2019 +0700
+
+    Use C++11 override keyword.
+
+ util/hb-ot-shape-closure.cc |  2 +-
+ util/options.hh             | 30 +++++++++++++++---------------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
+
+commit 2e16593b70688dfcee1788f38c6af03c5a589f6e
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Sat Jun 1 20:54:46 2019 -0400
+
+    [myanmar] Make medial_group match the OT spec
+    
+    Sometime between [July 2018] and [January 2019], the OpenType Myanmar
+    grammar changed: one asat is now allowed after a medial ya, before any
+    other medial consonant.
+    
+    [July 2018]: http://web.archive.org/web/20180711011550/https://docs.microsoft.com/en-us/typography/script-development/myanmar
+    [January 2019]: http://web.archive.org/web/20190115044451/https://docs.microsoft.com/en-us/typography/script-development/myanmar
+    
+    This also reverts commit 439b05867c0856a81fa8f9bea3a7465b4b4bdd91, which
+    allowed an asat immediately after a medial ra.
+
+ src/hb-ot-shape-complex-myanmar-machine.hh | 249 +++++++++++++++--------------
+ src/hb-ot-shape-complex-myanmar-machine.rl |   2 +-
+ 2 files changed, 129 insertions(+), 122 deletions(-)
+
+commit 209491fc37c46281e063c3e6707d686d5f2b2ba4
+Author: Qunxin Liu <qxliu@google.com>
+Date:   Wed May 29 14:03:17 2019 -0700
+
+    [subset] Hmtx/vmtx tables to use subset2 and new iterator frameworks
+
+ src/hb-ot-hmtx-table.hh | 115 +++++++++++++++++++++++-------------------------
+ src/hb-subset.cc        |   6 +--
+ 2 files changed, 59 insertions(+), 62 deletions(-)
+
+commit 89a7a880a1d5cd5e585d43fdde6d44c6dba559cf
+Merge: 760eb1bf 12febd68
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jun 4 10:52:16 2019 +0430
+
+    Merge pull request #1747 from harfbuzz/cff2-fdselect-fix
+    
+    fixed faulty FDSelect::sanitize
+
+commit 12febd68d694cc1bae44b0b672d88bf9fbe8568d
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Jun 3 16:40:03 2019 -0700
+
+    added parentheses to FDSelect::sanitize as well
+
+ src/hb-ot-cff-common.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 65e66a2d371f42d018b1a22f31a6428d19a90284
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Jun 3 16:31:41 2019 -0700
+
+    added test data
+
+ ...zz-testcase-minimized-harfbuzz_fuzzer-6252118652092416 | Bin 0 -> 126 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit be82a2fc0c7ad3553f2e6dc8082a3255cb6c917c
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Jun 3 15:52:23 2019 -0700
+
+    parenthesized cond-exp in CFF2FDSelect::sanitize
+
+ src/hb-ot-cff2-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 760eb1bf9398bd37103ca879e825fad9bef4bfdd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Jun 3 05:48:04 2019 -0700
+
+    Reapply possible bsearch overflow fix
+    
+    Originally introduced in 21ede86 (#1314) but as it wasn't applied to hb_bsearch
+    accidentally removed while merging hb_bsearch_r to it.
+
+ src/hb-algs.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5846884f86cae61c1b0c369c81427712fb97ed83
+Author: Bruce Mitchener <bruce.mitchener@gmail.com>
+Date:   Mon Jun 3 15:00:25 2019 +0700
+
+    test: Use nullptr in C++ code. (#1744)
+
+ src/test-ot-color.cc             | 8 ++++----
+ test/fuzzing/hb-shape-fuzzer.cc  | 6 +++---
+ test/fuzzing/hb-subset-fuzzer.cc | 2 +-
+ util/options-subset.cc           | 2 +-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
+
+commit 7c14b9014587e1423ef7481058e48dae84a65fce
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 2 13:51:26 2019 +0430
+
+    [ci] revert to xenial
+    
+    It should've done in a branch
+
+ .travis.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8278ff7dce41e6694eba15a7c94a0c0eb3bca427
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 2 00:36:30 2019 +0430
+
+    minor
+
+ src/hb-algs.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 33d38e793e2e4882337e5f42fbbae7d00d343940
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 2 00:19:57 2019 +0430
+
+    Use a unified bsearch (#1741)
+    
+    A part of #593
+
+ src/hb-aat-layout.cc        | 10 +++++-----
+ src/hb-algs.hh              | 29 ++++-------------------------
+ src/hb-ot-post-table.hh     |  4 ++--
+ src/hb-ot-var-mvar-table.hh |  6 +++---
+ 4 files changed, 14 insertions(+), 35 deletions(-)
+
+commit 97b92685775983a280f335423263a6a8d82c3941
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Jun 1 21:25:09 2019 +0430
+
+    [ci] Downgrade Travis distribution upon Behdad request
+
+ .travis.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit faf69e03f5ab9f3926442525f6c6e30fbc7a93d5
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Jun 1 11:02:25 2019 +0430
+
+    [ci] Install ragel on appveyor mingw bots
+    
+    Hopefully autotools timestamps issues will go
+
+ appveyor.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c91f3fa3eaf77fa255292c779f88da4feaaae8a0
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Jun 1 10:55:37 2019 +0430
+
+    [dwrite] Replace REPLACEME with release version the symbol had
+
+ src/hb-directwrite.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 commit 93c455567fe3d92a7efe65bf0e9ac2af794e2c4f
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri May 31 22:53:27 2019 -0700

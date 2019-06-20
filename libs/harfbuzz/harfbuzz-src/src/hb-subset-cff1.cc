@@ -24,6 +24,10 @@
  * Adobe Author(s): Michiharu Ariza
  */
 
+#include "hb.hh"
+
+#ifndef HB_NO_SUBSET_CFF
+
 #include "hb-open-type.hh"
 #include "hb-ot-cff1-table.hh"
 #include "hb-set.h"
@@ -31,8 +35,6 @@
 #include "hb-subset-plan.hh"
 #include "hb-subset-cff-common.hh"
 #include "hb-cff1-interp-cs.hh"
-
-#ifndef HB_NO_SUBSET_CFF
 
 using namespace CFF;
 
@@ -1040,7 +1042,7 @@ static inline bool _write_cff1 (const cff_subset_plan &plan,
       bool result;
       cff_private_dict_op_serializer_t privSzr (plan.desubroutinize, plan.drop_hints);
       /* N.B. local subrs immediately follows its corresponding private dict. i.e., subr offset == private dict size */
-      unsigned int  subroffset = (plan.offsets.localSubrsInfos[i].size > 0)? priv_size: 0;
+      unsigned int subroffset = (plan.offsets.localSubrsInfos[i].size > 0) ? priv_size : 0;
       result = pd->serialize (&c, acc.privateDicts[i], privSzr, subroffset);
       if (unlikely (!result))
       {
@@ -1120,5 +1122,6 @@ hb_subset_cff1 (hb_subset_plan_t *plan,
 
   return result;
 }
+
 
 #endif

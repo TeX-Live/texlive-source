@@ -741,6 +741,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cmap-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-face.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-face.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-face-table-list.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-glyf-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-hdmx-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-head-table.hh \

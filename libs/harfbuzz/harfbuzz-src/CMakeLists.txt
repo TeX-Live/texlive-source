@@ -88,8 +88,6 @@ include_directories(AFTER
   ${PROJECT_BINARY_DIR}/src
 )
 
-add_definitions(-DHAVE_FALLBACK)
-
 # We need PYTHON_EXECUTABLE to be set for running the tests...
 include (FindPythonInterp)
 
@@ -108,7 +106,7 @@ endmacro ()
 if (UNIX)
   list(APPEND CMAKE_REQUIRED_LIBRARIES m)
 endif ()
-check_funcs(atexit mprotect sysconf getpagesize mmap isatty newlocale strtod_l round)
+check_funcs(atexit mprotect sysconf getpagesize mmap isatty newlocale strtod_l)
 check_include_file(unistd.h HAVE_UNISTD_H)
 if (${HAVE_UNISTD_H})
   add_definitions(-DHAVE_UNISTD_H)
@@ -163,8 +161,6 @@ extract_make_variable(HB_BASE_sources ${SRCSOURCES})
 add_prefix_to_list(HB_BASE_sources "${PROJECT_SOURCE_DIR}/src/")
 extract_make_variable(HB_BASE_headers ${SRCSOURCES})
 add_prefix_to_list(HB_BASE_headers "${PROJECT_SOURCE_DIR}/src/")
-extract_make_variable(HB_FALLBACK_sources ${SRCSOURCES})
-add_prefix_to_list(HB_FALLBACK_sources "${PROJECT_SOURCE_DIR}/src/")
 
 extract_make_variable(HB_SUBSET_sources ${SRCSOURCES})
 add_prefix_to_list(HB_SUBSET_sources "${PROJECT_SOURCE_DIR}/src/")
@@ -231,8 +227,6 @@ set (HB_VERSION_MICRO ${CMAKE_MATCH_4})
 set (project_sources
   ${HB_BASE_sources}
   ${HB_BASE_RAGEL_GENERATED_sources}
-
-  ${HB_FALLBACK_sources}
 )
 
 set (subset_project_sources

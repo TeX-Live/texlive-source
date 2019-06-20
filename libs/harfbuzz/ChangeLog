@@ -1,3 +1,8 @@
+2019-06-21  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.5.2.
+	* version.ac, Makefile.am: Adjusted.
+
 2019-06-01  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import harfbuzz-2.5.1.
