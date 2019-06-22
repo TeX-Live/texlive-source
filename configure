@@ -1745,8 +1745,8 @@ Optional Packages:
   --with-mf-x-toolkit     use X toolkit for METAFONT
   --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
   --with-xdvi-x-toolkit=KIT
-                          Use toolkit KIT (motif/xaw/xaw3d/neXtaw) for xdvi
-                          [default: Motif if available, else Xaw]
+                          Use toolkit KIT (xaw/motif/xaw3d/neXtaw) for xdvi
+                          [default: Xaw]
   --with-system-harfbuzz  use installed harfbuzz headers and library (requires
                           pkg-config)
   --with-system-icu       use installed ICU headers and libraries (requires

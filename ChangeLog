@@ -1,3 +1,14 @@
+2019-06-22  Karl Berry  <karl@freefriends.org>
+
+	* doc/buildinfo.sh: rename from build-info.sh;
+	forget /etc/issue;
+	allow option to omit config.status output;
+	do not dump environment;
+	run lsb_release -a. We'll see ...
+	* Build: use buildinfo.sh instead of inline commands (mostly).
+	* Makefile.am (buildinfo): make dependency of all-recursive
+	so that it runs first; rename from build-info; remove from world.
+
 2019-06-06  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (world): make build-info.

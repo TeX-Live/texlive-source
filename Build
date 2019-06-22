@@ -109,16 +109,16 @@ cd $TL_WORKDIR || exit 1
 # failure at either step.
 {
   echo "starting TeX Live build at `date`"
-  echo "uname: `uname -a`"
-  test -s /etc/issue && echo "/etc/issue: `sed 1q /etc/issue`"
-  echo "pwd: `pwd`"
-  echo "cmdline: $0 $*"
+  printf 'CMDLINE\t"%s"\n' "$0 $*"
+  printf 'PWD\t"%s"\n'     "`pwd`"
+  #
+  # output system info (will also be done by make, to buildinfo.log).
+  $mydir/doc/buildinfo.sh --no-config-status
+  echo "See also buildenv.log and buildinfo.log in `pwd`"
   echo
-  env | sort >buildenv.log
   #
   # Export the interesting TL_* variables that might be set,
-  # so they can be logged by build-info.
-  TL_BUILD_COMMAND_LINE="$0 $*"; export TL_BUILD_COMMAND_LINE
+  # so they can be dumped to buildenv.log.
   test -z "$TL_BUILD_ENV" || export TL_BUILD_ENV 
   test -z "$TL_COMPILER_GFLAGS" || export TL_COMPILER_GFLAGS
   test -z "$TL_CONF_BANNER" || export TL_CONF_BANNER
@@ -135,6 +135,7 @@ cd $TL_WORKDIR || exit 1
   test -z "$TL_POSTCONFIGURE" || export TL_POSTCONFIGURE
   test -z "$TL_TARGET" || export TL_TARGET
   test -z "$TL_WORKDIR" || export TL_WORKDIR
+  env | sort >buildenv.log
   #
   set -vx  # show the configure and make commands in the log.
 
