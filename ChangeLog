@@ -1,3 +1,10 @@
+2019-06-23  Karl Berry  <karl@freefriends.org>
+
+	* doc/buildinfo.sh: output the compiler/other names
+	that we pass from the buildinfo target.
+	* Makefile.am (buildinfo): pass OBJCXX, not OBJC.
+	* Build: more maintainable exports of TL_*.
+
 2019-06-22  Karl Berry  <karl@freefriends.org>
 
 	* doc/buildinfo.sh: rename from build-info.sh;

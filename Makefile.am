@@ -67,7 +67,7 @@ buildinfo:
 	-env MAKE="$(MAKE)" LDFLAGS="$(LDFLAGS)" \
 	    CC="$(CC)" CFLAGS="$(CFLAGS)" \
 	    CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" \
-	    OBJC="$(OBJC)" OBJCXXFLAGS="$(OBJCXXFLAGS)" \
+	    OBJCXX="$(OBJCXX)" OBJCXXFLAGS="$(OBJCXXFLAGS)" \
 	$(srcdir)/doc/buildinfo.sh >buildinfo.log
 
 # should be harmless to run it, but just in case:

@@ -16,7 +16,8 @@ LANG=C; export LANG
 mydir=`dirname $0`
 cd $mydir || exit 1
 
-: ${TL_WORKDIR=Work}
+# We export the TL_* variables so that they can be dumped to buildenv.log.
+: ${TL_WORKDIR=Work}; export TL_WORKDIR
 
 # allow override of install destination.
 if test -z "$TL_INSTALL_DEST"; then
@@ -24,6 +25,7 @@ if test -z "$TL_INSTALL_DEST"; then
   test -d inst || mkdir -p inst/texmf  # avoid configure warnings
   TL_INSTALL_DEST=$H/inst
 fi
+export TL_INSTALL_DEST
 
 # allow override of the make program.
 # The idea is to use TL_MAKE if that is defined (and set MAKE),
@@ -39,14 +41,14 @@ else
   TL_MAKE=make
   MAKE=make
 fi
-export MAKE
+export MAKE; export TL_MAKE
 
 # make flags
-: ${TL_MAKE_FLAGS=}
-: ${TL_MAKE_VERBOSE=VERBOSE=1}
+: ${TL_MAKE_FLAGS=}; export TL_MAKE_FLAGS
+: ${TL_MAKE_VERBOSE=VERBOSE=1}; export TL_MAKE_VERBOSE
 
 # allow override of make target.
-: ${TL_TARGET=world}
+: ${TL_TARGET=world}; export TL_TARGTE
 
 if test "x$1" = x--no-clean; then
   shift
@@ -56,7 +58,7 @@ else
 fi
 
 # allow adding environment setting for build.
-: ${TL_BUILD_ENV=}
+: ${TL_BUILD_ENV=}; export TL_BUILD_ENV
 if test "x$1" = x--debug || test "x$1" = x-g; then
   shift
   # The idea is that with Build -g, you can set TL_COMPILER_GFLAGS in
@@ -64,7 +66,7 @@ if test "x$1" = x--debug || test "x$1" = x-g; then
   # not necessarily anything to do with debugging, e.g., -mcpu=sparvc9.
   # Or you can set TL_{C,CXX,OBJCXX}FLAGS for per-language flags,
   # notably TL_CFLAGS=-Wdeclaration-after-statement.
-  : ${TL_COMPILER_GFLAGS=-g}
+  : ${TL_COMPILER_GFLAGS=-g}; export TL_COMPILER_CFLAGS
   c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS'"
   cxx="CXXFLAGS='$TL_COMPILER_GFLAGS $TL_CXXFLAGS'"
   objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS $TL_OBJCXXFLAGS'" # only for macs
@@ -73,33 +75,34 @@ fi
 
 # allow for changing the banner identification, e.g.,
 # --with-banner-add='/SomeDistro'; see the build doc.
-: ${TL_CONF_BANNER=} 
+: ${TL_CONF_BANNER=}; export TL_CONF_BANNER
 
 # default to supporting large files as much as possible;
 # see comments at --disable-largefile in README.config.
-: ${TL_CONF_LARGEFILE=--enable-largefile}
+: ${TL_CONF_LARGEFILE=--enable-largefile}; export TL_CONF_LARGEFILE
 
 # default to terminate if requested programs or features must be disabled.
-: ${TL_CONF_MISSING=--disable-missing}
+: ${TL_CONF_MISSING=--disable-missing}; export TL_CONF_MISSING
 
 # default to static linking.
-: ${TL_CONF_SHARED=--disable-shared}
+: ${TL_CONF_SHARED=--disable-shared}; export TL_CONF_SHARED
 
 # allow override of xdvi toolkit, default to standard xaw.
 : ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
+export TL_CONF_XDVI_TOOLKIT
 
 # allow override of configure location.
-: ${TL_CONFIGURE=../configure}
+: ${TL_CONFIGURE=../configure}; export TL_CONFIGURE
 
 # allow adding arbitrary other configure args, after all the others.
-: ${TL_CONFIGURE_ARGS=}
+: ${TL_CONFIGURE_ARGS=}; export TL_CONFIGURE_ARGS
 
 # allow for doing stuff betwen configure and make.
-: ${TL_POSTCONFIGURE=true} 
+: ${TL_POSTCONFIGURE=true}; export TL_POSTCONFIGURE
 
 # Kpathsea is not going to be able to find its cnf files during the
 # build, so omit the warning about it.
-: ${KPATHSEA_WARNING=0}
+: ${KPATHSEA_WARNING=0}; export KPATHSEA_WARNING
 
 # make our working directory.
 test -d $TL_WORKDIR || mkdir $TL_WORKDIR
@@ -114,28 +117,9 @@ cd $TL_WORKDIR || exit 1
   #
   # output system info (will also be done by make, to buildinfo.log).
   $mydir/doc/buildinfo.sh --no-config-status
+  env | sort >buildenv.log
   echo "See also buildenv.log and buildinfo.log in `pwd`"
   echo
-  #
-  # Export the interesting TL_* variables that might be set,
-  # so they can be dumped to buildenv.log.
-  test -z "$TL_BUILD_ENV" || export TL_BUILD_ENV 
-  test -z "$TL_COMPILER_GFLAGS" || export TL_COMPILER_GFLAGS
-  test -z "$TL_CONF_BANNER" || export TL_CONF_BANNER
-  test -z "$TL_CONF_LARGEFILE" || export TL_CONF_LARGEFILE
-  test -z "$TL_CONF_MISSING" || export TL_CONF_MISSING
-  test -z "$TL_CONF_SHARED" || export TL_CONF_SHARED
-  test -z "$TL_CONF_XDVI_TOOLKIT" || export TL_CONF_XDVI_TOOLKIT
-  test -z "$TL_CONFIGURE" || export TL_CONFIGURE
-  test -z "$TL_CONFIGURE_ARGS" || export TL_CONFIGURE_ARGS
-  test -z "$TL_INSTALL_DEST" || export TL_INSTALL_DEST
-  test -z "$TL_MAKE" || export TL_MAKE
-  test -z "$TL_MAKE_FLAGS" || export TL_MAKE_FLAGS 
-  test -z "$TL_MAKE_VERBOSE" || export TL_MAKE_VERBOSE
-  test -z "$TL_POSTCONFIGURE" || export TL_POSTCONFIGURE
-  test -z "$TL_TARGET" || export TL_TARGET
-  test -z "$TL_WORKDIR" || export TL_WORKDIR
-  env | sort >buildenv.log
   #
   set -vx  # show the configure and make commands in the log.
 
@@ -152,7 +136,7 @@ cd $TL_WORKDIR || exit 1
   && eval $TL_POSTCONFIGURE \
   && eval $TL_BUILD_ENV $TL_MAKE $TL_MAKE_FLAGS $TL_MAKE_VERBOSE $TL_TARGET
   
-  # Too arcane to try to propagate the exit status through a pipeline.
+  # Too arcane to propagate the exit status through a pipeline.
   # Just use a temp file.
   echo $? >exitstatus.txt
 } 2>&1 | tee build.log
@@ -167,7 +151,7 @@ if test -d "$bindir"; then
     echo "$0: $count executables in $bindir."
   else
     echo "$0: Build failed, no executables under $bindir."
-    echo "$0: Full log in `pwd`/build.log."
+    echo "$0: Full log in: `pwd`/build.log"
     exit 1
   fi | tee -a build.log
 # if no bindir, perhaps they specified --prefix; don't worry.

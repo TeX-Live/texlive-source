@@ -1053,7 +1053,7 @@ buildinfo:
 	-env MAKE="$(MAKE)" LDFLAGS="$(LDFLAGS)" \
 	    CC="$(CC)" CFLAGS="$(CFLAGS)" \
 	    CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" \
-	    OBJC="$(OBJC)" OBJCXXFLAGS="$(OBJCXXFLAGS)" \
+	    OBJCXX="$(OBJCXX)" OBJCXXFLAGS="$(OBJCXXFLAGS)" \
 	$(srcdir)/doc/buildinfo.sh >buildinfo.log
 
 # run buildinfo first.
