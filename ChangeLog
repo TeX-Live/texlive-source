@@ -1,3 +1,8 @@
+2019-06-24  Karl Berry  <karl@freefriends.org>
+
+	* doc/buildinfo.sh (compiler_version): new shell function;
+	 ignore useless first "Configured:" line for gcc->cc on Macs.
+
 2019-06-23  Karl Berry  <karl@freefriends.org>
 
 	* doc/buildinfo.sh: output the compiler/other names
