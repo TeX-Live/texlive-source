@@ -15,6 +15,7 @@ LANG=C; export LANG
 # cd to our source directory.
 mydir=`dirname $0`
 cd $mydir || exit 1
+mydir=`pwd` # make absolute
 
 # We export the TL_* variables so that they can be dumped to buildenv.log.
 : ${TL_WORKDIR=Work}; export TL_WORKDIR
@@ -114,9 +115,7 @@ cd $TL_WORKDIR || exit 1
   echo "starting TeX Live build at `date`"
   printf 'CMDLINE\t"%s"\n' "$0 $*"
   printf 'PWD\t"%s"\n'     "`pwd`"
-  #
-  # output system info (will also be done by make, to buildinfo.log).
-  $mydir/doc/buildinfo.sh --no-config-status
+  printf 'UNAME\t"%s"\n'   "`uname`"
   env | sort >buildenv.log
   echo "See also buildenv.log and buildinfo.log in `pwd`"
   echo

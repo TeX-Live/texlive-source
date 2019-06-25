@@ -1,3 +1,8 @@
+2019-06-25  Karl Berry  <karl@freefriends.org>
+
+	* Build: don't call buildinfo from here, the output when the CC
+	etc. envvars are not set is too misleading. Just write UNAME.
+
 2019-06-24  Karl Berry  <karl@freefriends.org>
 
 	* doc/buildinfo.sh (compiler_version): new shell function;
