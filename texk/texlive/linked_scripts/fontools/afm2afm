@@ -37,7 +37,7 @@ use File::Basename;
 use Getopt::Long;
 use Pod::Usage;
 
-my $VERSION = "20190522";
+my $VERSION = "20190625";
 
 parse_commandline();
 
@@ -75,7 +75,7 @@ print_mapentry($afm->{fontinfo}, , $enc->{scheme})
 sub parse_commandline {
     Getopt::Long::GetOptions(
         'help|?'     =>  sub { pod2usage(-verbose => 1) },
-        'version'    =>  sub { print "$VERSION\n"; exit; },
+        'version'    =>  sub { print "$VERSION\n"; exit },
         'encoding=s' => \$ARGV{encoding},
         'kpx=s'      => \$ARGV{kpx},
         'output=s'   => \$ARGV{output},
@@ -321,10 +321,10 @@ afm2afm - reencode an F<afm> file
 
 [B<-help>]
 [B<-version>]
-[B<-encoding> I<encodingfile>]
-[B<-kpx> I<kpxfile>]
-[B<-output> I<outputfile>]
-B<afmfile>
+[B<-encoding>=I<< <encodingfile> >>]
+[B<-kpx>=I<< <kpxfile> >>]
+[B<-output>=I<< <outputfile> >>]
+B<< <afmfile> >>
 
 =back
 
@@ -360,28 +360,28 @@ Print a short description of the syntax
 
 Print version number and exit
 
-=item B<-encoding> I<encodingfile>
+=item B<-encoding>=I<< <encodingfile> >>
 
-Re-encode to the enconding in I<encodingfile>
+Re-encode to the enconding in I<< <encodingfile> >>
 
-=item B<-kpx> I<kpxfile>
+=item B<-kpx>=I<< <kpxfile> >>
 
-Read additional kerning pairs from I<kpxfile> and add these to the output.
+Read additional kerning pairs from I<< <kpxfile> >> and add these to the output.
 This option cannot be used to override values from the input F<afm> file,
 since B<afm2afm> will write both old and new values to the output!
 
-The I<kpxfile> should contain kerning data in standard F<afm> format,
+The I<< <kpxfile> >> should contain kerning data in standard F<afm> format,
 i.e. for each kerning pair there should be a line
 
     KPX <left_glyph> <right_glyph> <amount>
 
-All other lines in the I<kpxfile> are ignored.
+All other lines in the I<< <kpxfile> >> are ignored.
 
-=item B<-output> I<outputfile>
+=item B<-output>=I<< <outputfile> >>
 
-Write the result to I<outputfile> instead of C<stdout>.
+Write the result to I<< <outputfile> >> instead of C<stdout>.
 
-=item B<afmfile>
+=item B<< <afmfile> >>
 
 The F<afm> file to be re-encoded.
 
@@ -421,7 +421,7 @@ See the GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<afm2afm> version 20190522.
+This document describes B<afm2afm> version 20190625.
 
 
 =head1 RECENT CHANGES

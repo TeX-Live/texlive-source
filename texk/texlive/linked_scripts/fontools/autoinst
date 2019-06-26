@@ -40,7 +40,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20190522';
+my $VERSION = '20190625';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -50,34 +50,48 @@ my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
     Some fontnames contain abbreviated words for width, weight and/or shape;
     we unabbreviate these using the following table.
 
+    To avoid having to have this information in multiple places,
+    we also build a reversed table %ABBREV that maps 'full' forms
+    to all known abbreviations; we then inject these abbreviations into
+    the %NFSS_WEIGHT, %NFSS_WIDTH and %NFSS_SHAPE tables below,
+    so that they recognise the abbreviated forms as well as the full ones.
+
 =end Comment
 
 =cut
 
 my %UNABBREVIATE = (
-    demi    =>  'demibold',
-    hair    =>  'hairline',
-    ultra   =>  'ultrablack',
     cmp     =>  'compressed',
     comp    =>  'compressed',
     cond    =>  'condensed',
+    demi    =>  'demibold',
+    extcond =>  'extracondensed',
+    hair    =>  'hairline',
+    incline =>  'inclined',
     it      =>  'italic',
     ita     =>  'italic',
+    md      =>  'medium',
     slant   =>  'slanted',
-    incline =>  'inclined',
+    ultra   =>  'ultrablack',
 );
+my %ABBREV;
+while ( my ($k, $v) = each %UNABBREVIATE ) {
+    push @{$ABBREV{$v}}, $k;
+}
+for my $full (keys %ABBREV) {
+    push @{$ABBREV{$full}}, $full;
+}
 
 =begin Comment
 
-    LaTeX's NFSS contains a limited number of standard codes for weight and width:
+    LaTeX's NFSS contains a number of standard codes for weight and width:
     - weight: ul, el, l, sl, m, sb, b, eb, ub
     - width:  uc, ec, c, sc, m, sx, x, ex, ux
 
-    These codes are not always a good match with the weights and widths
-    actually present in a font family; some families (especially sans-serif ones)
-    contain too many weights and widths, and the naming of those weights and
-    widths isn't always consistent between font families.
-
+    These codes are not always a perfect match with the weights and widths
+    present in a font family; some families (especially sanserif ones)
+    contain more or different weights and widths, and the naming of those
+    weights and widths isn't always consistent between font families.
     To handle this situation, we use a two-tiered approach:
     1.  We install all fonts using a "series" name that is the concatenation
         of whatever the font designer has chosen to call the weight and width
@@ -94,91 +108,75 @@ my %UNABBREVIATE = (
 
         sc  =>  [ qw( semicondensed narrow ) ],
 
-    This should be read as follows: the NFSS code "sc" is mapped to the *first*
-    width on the right hand side that is present in the current font family.
+    This should be read as follows: the NFSS code "sc" is mapped to
+    the *first* width on the right hand side present in the current family.
 
-    Please note that the tables contain empty keys instead of "m" for
-    the regular weight and width. NFSS actually combines weight and width
-    into a single "series" attribute; a weight or width of "m" is left out of
+    Please note that the tables contain empty keys instead of "m" for the
+    regular weight and width. NFSS actually combines weight and width into
+    a single "series" attribute; a weight or width of "m" is left out of
     this combination (unless *both* weight and width are equal to "m"; then
     the series becomes "m", but that's a special case we deal with later on).
 
     In addition to the mapping of NFSS codes, the two mentioned tables are
-    also used in parsing the font's metadata to determine its weight and width:
-    any string that occurs on the right hand side is considered a possible name
-    to be searched for.
+    also used in parsing the font's metadata to determine its weight and
+    width: any string that occurs on the right hand side is considered a
+    possible name to be searched for.
 
-    These tables can be extended to teach autoinst about new weights or widths.
-    Suppose your font family contains a "Hemibold" weight. Then add the name
-    "hemibold" to the right hand side of the "sb" entry in the NFSS_WEIGHT
-    table:
+    These tables can be extended to teach autoinst about new weights or
+    widths.  Suppose your font family contains a "Hemibold" weight, that
+    you want mapped to the "sb" code. Then add the name "hemibold" to
+    the right hand side of the "sb" entry in the NFSS_WEIGHT table:
 
         sb  =>  [ qw( semibold demi demibold medium hemibold ) ],
 
-    In this case, since it's in last position, it's only mapped to "sb" if none of
-    the other fonts are present. Put it earlier in the list to give it higher
-    priority (or put it in another entry if you'd rather see it mapped to another
-    NFSS code).
+    In this case, since it's in last position, it's only mapped to "sb"
+    if none of the other fonts are present. Put it earlier in the list
+    to give it higher priority.
 
-    Note that autoinst converts all metadata to lowercase to avoid inconsistent
-    capitalization; so all entries in these tables should be *lowercase* as well.
+    Note that autoinst converts all metadata to lowercase to avoid
+    inconsistent capitalization; so all entries in these tables should
+    be *lowercase* as well.
 
-    Technical note:
-    We define NFSS_WEIGHT and NFSS_WIDTH first as arrays and then as hashtables;
-    this allows us to use the array-variants as an *ordered* list of keys.
-
-
-    Finally, some random remarks about these tables:
-    - Poster and Super aren't just "very heavy" weights; in most cases, they're
-        more like separate designs. The same holds for the Compact width.
-        I added them for completeness.
-    - Two, Four and Eight are (experimental) weights that only occur in Fira Sans.
-    - Some families (Helvetica, Univers) treat Thin as a synonym for Extralight;
-        mostly, however, it is a very light weight below Ultralight.
-    - Semilight weights are virtually nonexistent, except for Thesis
-        (which contains a Semilight weight) and Arnhem (which has Blond).
-    - Book is usually slightly lighter than Regular, but sometimes
-        (mainly in fonts from DTL and FontFont/FSI) slightly *heavier*.
-    - Likewise, Medium can really be two different things:
-        - a synonym for Semibold
-        - (especially in newer fonts) an extra step between Regular and Semibold
-        I treat it as if it's always the first.
-    - Heavy can mean very different things; it's often heavier than Black,
-        but sometimes it's a synonym for Extrabold, and in Futura it's even
-        lighter than Bold. I treat it here as "very black".
-    - Font families that have both Condensed and Compressed widths
-        seem to define Compressed as narrower than Condensed.
-    - In Basic Sans and Input (which are the only families I know with both
-        Narrow and Condensed), Narrow is a bit wider than Condensed.
-        So I mapped Narrow to "sc".
-    - Extended and Expanded seem to be used interchangeably.
-    - I have never seen any (Extra-,Ultra)(Extended,Expanded,Wide) fonts,
-        so the ex and ux entries are currently empty.
+    Technical notes:
+    -   We define NFSS_WEIGHT and NFSS_WIDTH first as arrays
+        and then as hashtables; this allows us to use the array-variants
+        as an *ordered* (by weight/width) list of values.
+    -   We exclude the Medium and Regular weights and widths
+        from the @WEIGHTS and @WIDTHS arrays to avoid false positives;
+        see the comments in the parse_basicinfo() function.
 
 =end Comment
 
 =cut
 
 my @NFSS_WEIGHT = (
-    ul  =>  [ qw( ultralight thin hair hairline eight four two ) ],
+    ul  =>  [ qw( ultralight thin hairline eight four two ) ],
     el  =>  [ qw( extralight ) ],
     l   =>  [ qw( light ) ],
     sl  =>  [ qw( semilight blond ) ],
     ''  =>  [ qw( regular text book ) ],
-    sb  =>  [ qw( semibold demi demibold medium ) ],
+    sb  =>  [ qw( semibold demibold medium ) ],
     b   =>  [ qw( bold ) ],
     eb  =>  [ qw( extrabold ) ],
-    ub  =>  [ qw( ultrabold black heavy extrablack ultra ultrablack ultraheavy
-                  poster super ) ],
+    ub  =>  [ qw( ultrabold black heavy extrablack ultrablack
+                  ultraheavy poster super ) ],
 );
 my %NFSS_WEIGHT = @NFSS_WEIGHT;
 @NFSS_WEIGHT = grep { !ref } @NFSS_WEIGHT;
-my @WEIGHTS = map { @{$_} } values %NFSS_WEIGHT;
+
+# Add abbreviated forms, using the %ABBREV table constructed earlier
+for my $code (@NFSS_WEIGHT) {
+    $NFSS_WEIGHT{$code}
+        = [ map { @{ $ABBREV{$_} // [$_] } } @{$NFSS_WEIGHT{$code}} ];
+}
+
+my @WEIGHTS = grep { $_ !~ m/ regular | medium /xms }
+                   map { @{$_} } values %NFSS_WEIGHT;
 
 my @NFSS_WIDTH = (
     uc  =>  [ qw( ultracondensed extracompressed ultracompressed ) ],
-    ec  =>  [ qw( extracondensed cmp comp compressed compact ) ],
-    c   =>  [ qw( cond condensed ) ],
+    ec  =>  [ qw( extracondensed compressed compact ) ],
+    c   =>  [ qw( condensed ) ],
     sc  =>  [ qw( semicondensed narrow ) ],
     ''  =>  [ qw( regular ) ],
     sx  =>  [ qw( semiextended semiexpanded ) ],
@@ -188,7 +186,14 @@ my @NFSS_WIDTH = (
 );
 my %NFSS_WIDTH = @NFSS_WIDTH;
 @NFSS_WIDTH = grep { !ref } @NFSS_WIDTH;
-my @WIDTHS = map { @{$_} } values %NFSS_WIDTH;
+
+# Add abbreviated forms, using the %ABBREV table constructed earlier
+for my $code (@NFSS_WIDTH) {
+    $NFSS_WIDTH{$code}
+        = [ map { @{ $ABBREV{$_} // [$_] } } @{$NFSS_WIDTH{$code}} ];
+}
+
+my @WIDTHS = grep { $_ ne 'regular' } map { @{$_} } values %NFSS_WIDTH;
 
 =begin Comment
 
@@ -200,8 +205,8 @@ my @WIDTHS = map { @{$_} } values %NFSS_WIDTH;
     we might have multiple weighs or widths mapping to the same code,
     and we need a way to prioritise some weights/widths over others.
 
-    For shapes, that's not the case; font families don't have both Slanted and
-    Oblique shapes, since these are just different names for the same thing.
+    For shapes, that's not the case; font families don't have both Slanted
+    and Oblique shapes, since these are different names for the same thing.
 
     Like in the other NFSS_* tables, entries may be added to teach autoinst
     about new shapes.
@@ -214,19 +219,22 @@ my @NFSS_SHAPE = (
     roman       =>  'n',
     upright     =>  'n',
     italic      =>  'it',
-    ita         =>  'it',
-    it          =>  'it',
     cursive     =>  'it',
     kursiv      =>  'it',
     inclined    =>  'sl',
-    incline     =>  'sl',
     oblique     =>  'sl',
     slanted     =>  'sl',
-    slant       =>  'sl',
-    romani      =>  'n',    # Silentium Pro has two roman shapes, but no italic;
-    romanii     =>  'it',   # so we cheat by mapping the second roman shape to 'it'
+    romani      =>  'n',    # Silentium has two roman shapes, but no italic;
+    romanii     =>  'it',   # so we cheat by mapping the second roman to 'it'
 );
 my %NFSS_SHAPE = @NFSS_SHAPE;
+for my $full (keys %ABBREV) {
+    if (defined $NFSS_SHAPE{$full}) {
+        for my $abbrev ( @{$ABBREV{$full}} ) {
+            $NFSS_SHAPE{$abbrev} = $NFSS_SHAPE{$full};
+        }
+    }
+}
 
 =begin Comment
 
@@ -319,8 +327,8 @@ my %SSUB_SHAPE = (
 
     Each key in this table names a figure style; the corresponding
     value is an anonymous hash with four key/value pairs:
-        reqd    A list of required OpenType features;
-                this style is built if the font supports *all* these features.
+        reqd    A list of required OpenType features; this style is built
+                if the font supports *all* these features.
         nice    A list of optional OpenType features;
                 these are used if the font supports them, but don't
                 prevent this style from being built when missing.
@@ -458,6 +466,8 @@ sub main {
     ARGV::parse_options();
 
     my @fonts = map { Fontinfo::parse_fontinfo($_) } @ARGV;
+
+    create_logfile(@fonts);
     Fontinfo::assert_unique(@fonts);
 
     # We can only handle the '-inferiors=auto' option now,
@@ -489,7 +499,7 @@ sub main {
     # Decide to which weights and widths we'll map the standard NFSS codes
     decide_nfss_mappings(@fonts);
 
-    create_logfile(@worklist);
+    log_worklist(@worklist);
 
     if (!$ARGV{dryrun}) {
         # Create the LaTeX support files
@@ -513,8 +523,8 @@ sub main {
 # Return a list with all unique entries from the input
 #-----------------------------------------------------------------------
 sub uniq {
-    my %tmp = map { ($_ => 1) } @_;
-    return keys %tmp;
+    my %seen;
+    return grep { !$seen{$_}++ } @_;
 }
 
 #-----------------------------------------------------------------------
@@ -597,20 +607,20 @@ sub expand_encodings {
 sub cleanup {
     my @worklist = @_;
 
+    WORKITEM:
     for my $item (@worklist) {
         my ($font, $style, $shape, $encoding)
             = @{$item}{qw(font style shape encoding)};
 
-        # make unique copy of fontdata, since we're modifying it;
-        # otherwise, the mergesmallcaps option only works for
-        # the first encoding in the list
-        my %font = %$font;
-        $font = $item->{font} = \%font;
-
-        # handle fonts that put small caps fonts into separate family
-        if ($ARGV{mergesmallcaps}) {
-            if ($font->{family} =~ s/(?: smallcaps | sc )$//xmsi) {
-                $shape = $item->{shape} = 'smallcaps';
+        # don't generate smallcaps version of TS1-encoded fonts,
+        # as these contain the same glyphs as the regular version
+        if ($font->{is_smallcaps}) {
+            if ($shape eq 'textcomp') {
+                $item = 0;
+                next WORKITEM;
+            }
+            else {
+                $shape = 'smallcaps';
             }
         }
 
@@ -637,13 +647,14 @@ sub cleanup {
         $item->{features} = [ sort keys %feature ];
 
         # add finishing touches to name and NFSS code of encoding
-        $item->{encoding}[0] =~ s/\A (ot1|t1|ly1|lgr|t2[abc]) \z/fontools_$1/xms;
+        $item->{encoding}[0]
+            =~ s/\A (ot1|t1|ly1|lgr|t2[abc]|t3|ts3) \z/fontools_$1/xms;
         $item->{encoding}[1] = uc $item->{encoding}[1];
 
         $item->{cmdline} = make_cmdline($item);
     }
 
-    return @worklist;
+    return grep { $_ } @worklist;
 }
 
 #-----------------------------------------------------------------------
@@ -652,35 +663,63 @@ sub cleanup {
 sub decide_nfss_mappings {
     my ( %weight, %width );
     for my $font (@_) {
-        $weight{ $font->{weight} } = 1;
-        $width{ $font->{width} } = 1;
+        $weight{ $font->{weight} } //= $font->{weight_class};
+        $width{ $font->{width} } //= $font->{width_class};
     }
 
     NFSSWEIGHT:
     for my $nfssweight (@NFSS_WEIGHT) {
-        for my $weight ( @{$NFSS_WEIGHT{$nfssweight}} ) {
-            if ( $weight{$weight} ) {
-                $NFSS_WEIGHT{$nfssweight} = [ $weight ];
-                next NFSSWEIGHT;
-            }
-        }
-        $NFSS_WEIGHT{$nfssweight} = [];
+        $NFSS_WEIGHT{$nfssweight}
+            = [ grep { $weight{$_} } @{$NFSS_WEIGHT{$nfssweight}} ];
     }
+
+    # Some trickery to handle the case where the ul/ub codes are mapped
+    # but the el/eb codes are still empty. We try two things:
+    # 1.  if there is a Thin (Heavy) weight and this is less extreme
+    #     than the weight mapped to ul (ub), we map Thin (Heavy) to ul (ub)
+    # 2.  otherwise we move the ul/ub weight to the el/eb position,
+    #     unless that weight is the Ultralight/Ultrabold weight
     if ( !$ARGV{el} and !$ARGV{ul} ) {
-        if ( @{$NFSS_WEIGHT{ul}}
-                and $NFSS_WEIGHT{ul}[0] ne 'ultralight'
-                and !@{$NFSS_WEIGHT{el}} ) {
-            $NFSS_WEIGHT{el} = $NFSS_WEIGHT{ul};
-            $NFSS_WEIGHT{ul} = [];
+        if ( @{$NFSS_WEIGHT{ul}} and !@{$NFSS_WEIGHT{el}} ) {
+            if ( $weight{thin}
+                    and $weight{thin} > $weight{$NFSS_WEIGHT{ul}[0]} ) {
+                $NFSS_WEIGHT{el} = [ 'thin', ];
+            }
+            elsif ( $NFSS_WEIGHT{ul}[0] ne 'ultralight' ) {
+                $NFSS_WEIGHT{el} = [ shift @{$NFSS_WEIGHT{ul}} ];
+            }
         }
     }
     if ( !$ARGV{eb} and !$ARGV{ub} ) {
-        if ( @{$NFSS_WEIGHT{ub}}
-                and $NFSS_WEIGHT{ub}[0] ne 'ultrabold'
-                and !@{$NFSS_WEIGHT{eb}} ) {
-            $NFSS_WEIGHT{eb} = $NFSS_WEIGHT{ub};
-            $NFSS_WEIGHT{ub} = [];
+        if ( @{$NFSS_WEIGHT{ub}} and !@{$NFSS_WEIGHT{eb}} ) {
+            if (    $weight{heavy}
+                and $weight{heavy} < $weight{$NFSS_WEIGHT{ub}[0]}
+            ) {
+                $NFSS_WEIGHT{eb} = [ 'heavy', ]
+                    unless @{$NFSS_WEIGHT{b}}
+                       and $weight{$NFSS_WEIGHT{b}[0]} > $weight{heavy};
+            }
+            elsif ( $NFSS_WEIGHT{ub}[0] ne 'ultrabold' ) {
+                $NFSS_WEIGHT{eb} = [ shift @{$NFSS_WEIGHT{ub}} ];
+            }
         }
+    }
+
+    # Special case: if we don't have Regular but we *do* have Medium,
+    # move Medium from the "sb" list to the "m" (i.e., Regular) one.
+    if ( !@{$NFSS_WEIGHT{''}} and $weight{medium} ) {
+        $NFSS_WEIGHT{''} = [ 'medium' ];
+        $NFSS_WEIGHT{sb}
+            = [ grep { $_ ne 'medium' } @{$NFSS_WEIGHT{medium}} ];
+    }
+
+    # Some more trickery to map the sl code to Book or Text (but of course
+    # only if sl is empty and Book/Text is lighter than Regular)
+    if ( !@{$NFSS_WEIGHT{sl}} ) {
+        $NFSS_WEIGHT{sl}
+            = [ grep { $weight{$_} < $weight{$NFSS_WEIGHT{''}[0]} }
+                     @{$NFSS_WEIGHT{''}}
+            ];
     }
 
     NFSSWIDTH:
@@ -696,18 +735,14 @@ sub decide_nfss_mappings {
 }
 
 #-----------------------------------------------------------------------
-# Dump all relevant info to the logfile
+# Log all fonts, styles, encodings etc. we're  going to create
 #-----------------------------------------------------------------------
 sub create_logfile {
-    my @worklist
-        = sort { $a->{font}{filename} cmp $b->{font}{filename}
-                    || $a->{encoding}[1] cmp $b->{encoding}[1]
-                    || $a->{style} cmp $b->{style}
-               } @_;
+    my @fonts = @_;
 
     if (-e $ARGV{logfile}) {
-        print "[INFO]: file '$ARGV{logfile}' already exists;\n" .
-              "        appending new log data to end\n\n";
+        print "[INFO] file '$ARGV{logfile}' already exists;\n" .
+              "       appending new log data to end\n\n";
     }
     open my $LOG, '>>', $ARGV{logfile}
         or die "$0: cannot create $ARGV{logfile}: $!";
@@ -720,12 +755,9 @@ sub create_logfile {
 
 @{[ POSIX::strftime("[%F %T]", localtime time) ]}  $0, version $VERSION
 
-
     "$ARGV{cmdline}"
 
-
 ----------------------------------------------------------------------------
-
 
 I'm using the following options:
 
@@ -755,17 +787,74 @@ I'm using the following options:
     target:             $ARGV{target}
     extra:              @{[ $ARGV{extra} || '<empty>' ]}
 
-    figurekern:         @{[ $ARGV{figurekern}       ? 'no action' : 'remove' ]}
-    mergewidths:        @{[ $ARGV{mergewidths}      ? 'yes' : 'no' ]}
-    mergesmallcaps:     @{[ $ARGV{mergesmallcaps}   ? 'yes' : 'no' ]}
+    figurekern:         @{[ $ARGV{figurekern}   ? 'keep' : 'remove' ]}
+    mergewidths:        @{[ $ARGV{mergewidths}  ? 'yes' : 'no' ]}
+    mergeweights:       @{[ $ARGV{mergeweights} ? 'yes' : 'no' ]}
+    mergeshapes:        @{[ $ARGV{mergeshapes}  ? 'yes' : 'no' ]}
 
-
-    font files:
-        @{[ join "\n        ", @ARGV ]}
+    nfssweight:         @{[ join q{, }, @{$ARGV{nfssweight}} or '-' ]}
+    nfsswidth:          @{[ join q{, }, @{$ARGV{nfsswidth}}  or '-' ]}
 
 END_ARGUMENTS
 
-    printf {$LOG} "\n" . '-' x 76 . "\n\n\nNFSS mappings:\n\n";
+    my %fontfamilies = map { ( $_->{family} => 1 ) } @fonts;
+    my @fontfamilies = keys %fontfamilies;
+    if (scalar @fontfamilies > 1) {
+        warn <<"END_WARNING_MULTIPLE_FAMILIES";
+[WARNING] Your fonts seem to belong to multiple families:
+
+          @{[ join( "\n" . q{ } x 10, sort @fontfamilies ) ]}
+
+          "autoinst" performs best when installing one family at a time.
+          If you think your fonts should all be in the same family,
+          you might have found a bug in autoinst's font info parsing.
+
+          Please see the log file $ARGV{logfile} for details on how
+          the fonts' families, weights, widths and shapes were parsed.
+
+END_WARNING_MULTIPLE_FAMILIES
+
+        # increase verbosity if necessary, to log all relevant info
+        if ($ARGV{verbose} < 1) {
+            $ARGV{verbose} = 1;
+        }
+    }
+
+    $ARGV{logfile} = $LOG;
+
+    return if $ARGV{verbose} < 1;
+
+    print {$LOG} '-' x 76 . "\n\nResults of font info parsing:\n";
+
+    for my $font (@fonts) {
+        print {$LOG} <<"END_PARSE_FONT";
+
+    $font->{filename}
+        Name:       $font->{name}
+        Family:     $font->{family}
+        Weight:     $font->{weight} ($font->{weight_class})
+        Width:      $font->{width}
+        Shape:      $font->{shape} @{[ $font->{is_smallcaps}
+                                            ? '(smallcaps)' : '' ]}
+        Size:       $font->{minsize}-$font->{maxsize}
+        Features:   @{[ join ', ', sort keys %{$font->{feature}} ]}
+END_PARSE_FONT
+    }
+}
+
+#-----------------------------------------------------------------------
+# Log all fonts, styles, encodings etc. we're  going to create
+#-----------------------------------------------------------------------
+sub log_worklist {
+    my @worklist
+        = sort { $a->{font}{filename} cmp $b->{font}{filename}
+                    || $a->{encoding}[1] cmp $b->{encoding}[1]
+                    || $a->{style} cmp $b->{style}
+               } @_;
+
+    my $LOG = $ARGV{logfile};
+
+    print {$LOG} "\n" . '-' x 76 . "\n\nNFSS mappings:\n\n";
     for my $weight (@NFSS_WEIGHT) {
         printf {$LOG} "    %-3s =>  %s\n",
                 $weight || 'm', $NFSS_WEIGHT{$weight}[0] || '';
@@ -777,7 +866,7 @@ END_ARGUMENTS
     }
     printf {$LOG} "\n";
 
-    return if $ARGV{Verbose} < 1;
+    return if $ARGV{verbose} < 1;
 
     my ($prevfn, $prevsty, $prevenc) = ('') x 3;
     my @cmds;
@@ -788,15 +877,6 @@ END_ARGUMENTS
     ------------------------------------------------------------------------
 
     $item->{font}{filename}
-        Name:       $item->{font}{name}
-        Family:     $item->{font}{family}
-        Subfamily:  $item->{font}{subfamily}
-        Width:      $item->{font}{width}
-        Weight:     $item->{font}{weight}
-        Shape:      $item->{font}{shape}
-        Size:       $item->{font}{minsize}-$item->{font}{maxsize}
-        Features:   @{[ join ', ', sort keys %{$item->{font}{feature}} ]}
-
 
         Generating these encodings, figure styles and shapes:
 
@@ -808,11 +888,11 @@ END_FONTINFO
             print {$LOG} "\n";
         }
         printf {$LOG} "        %-3s     %-4s    %-4s    %s\n",
-                            $item->{encoding}[1],
-                            $item->{style},
-                            $item->{fdshape},
-                            join(', ', @{$item->{features}}),
-                            ;
+                      $item->{encoding}[1],
+                      $item->{style},
+                      $item->{fdshape},
+                      join(', ', @{$item->{features}}),
+                      ;
         $prevfn  = $item->{font}{filename};
         $prevsty = $item->{style};
         $prevenc = $item->{encoding}[1];
@@ -820,7 +900,7 @@ END_FONTINFO
         push @cmds, $item->{cmdline};
     }
 
-    return if $ARGV{Verbose} < 2;
+    return if $ARGV{verbose} < 2;
     print {$LOG} join "\n\n", @cmds;
     print {$LOG} "\n";
     close $LOG;
@@ -845,7 +925,14 @@ sub make_commands {
     }
     else {
         if (grep { system $_ } @commands) {
-            warn "[WARNING] 'otftotfm' returned non-zero; something's wrong!\n";
+            warn <<"END_OTFTOTFM_WARNING";
+[WARNING] one or more calls to 'otftotfm' failed;
+          please see the messages above.
+
+          Note that you can safely ignore any warnings
+              "bad UNICODING (‘germandbls’ has no encoding)"
+          or  "bad ligature (‘ff’ has no encoding)"
+END_OTFTOTFM_WARNING
         }
     }
 
@@ -862,6 +949,8 @@ my %SCHEME = (
     fontools_t2a => 'TEX CYRILLIC FONT ENCODING - T2A',
     fontools_t2b => 'TEX CYRILLIC FONT ENCODING - T2B',
     fontools_t2c => 'TEX CYRILLIC FONT ENCODING - T2C',
+    fontools_t3  => 'TEX IPA ENCODING',
+    fontools_ts3 => 'TEX IPA SYMBOL ENCODING',
 );
 
 #-----------------------------------------------------------------------
@@ -955,6 +1044,7 @@ Possible options:
     -(no)swash              Toggle creation of swash shape
     -(no)titling            Toggle creation of titling shape
     -(no)superiors          Toggle creation of fonts with superior characters
+    -noinferiors
     -inferiors=[none|auto|subs|sinf|dnom]
                             Use this style for subscripts (see docs)
     -(no)ornaments          Toggle creation of ornament fonts
@@ -978,8 +1068,9 @@ Possible options:
     -manual                 Manual mode (see documentation)
 
     -(no)figurekern         Keep or remove kerns between tabular figures
-    -(no)mergewidths        Merge Condended/Extended subfamilies with main family
-    -(no)mergesmallcaps     Merge small caps subfamilies with main family
+    -(no)mergewidths        Merge Condended/Extended subfamilies with main
+    -(no)mergeweights       Merge separate weights with main family
+    -(no)mergeshapes        Merge separate shapes with main family
 
     -nfssweight=xx=yyyy     Map the "xx" NFSS code to the "yyyy" weight
     -nfsswidth=xx=yyyy      Map the "xx" NFSS code to the "yyyy" width
@@ -987,8 +1078,8 @@ Possible options:
     -help                   Print this text and exit
     -doc                    Print the complete documentation and exit
     -dryrun                 Don't generate fonts, only log what would be done
-    -logfile="FILE"         Write log data to "FILE" (default: <fontfamily>.log)
-    -Verbose                Print more data to log file
+    -logfile="FILE"         Write log to "FILE" (default: <fontfamily>.log)
+    -verbose                Print more data to log file
                             (repeat for even higher verbosity)
     -version                Print version number and exit
     font[s]                 The fonts (.otf or .ttf format) to install.
@@ -999,7 +1090,7 @@ END_USAGE
 # Default values for the command-line arguments
 %ARGV = (
     encoding        => 'OT1,T1,LY1',
-    textcomp        => '2',     # 0 = no, 1 = yes, 2 = (enc eq 'T1' ? yes : no)
+    textcomp        => '2',     # 0 = no, 1 = yes, 2 = ('T1' ? yes : no)
     lining          => '1',     # 0 = no, 1 = yes
     oldstyle        => '1',     # 0 = no, 1 = yes
     proportional    => '1',     # 0 = no, 1 = yes
@@ -1008,11 +1099,11 @@ END_USAGE
     swash           => '1',     # 0 = no, 1 = yes
     titling         => '1',     # 0 = no, 1 = yes
     superiors       => '1',     # 0 = no, 1 = yes
-    inferiors       => 'none',  # possible values: none, auto, subs, sinf, dnom
+    inferiors       => 'none',  # values: none, auto, subs, sinf, dnom
     ornaments       => '1',     # 0 = no, 1 = yes
     fractions       => '0',     # 0 = no, 1 = yes
-    ligatures       => '2',     # 0 = no, 1 = yes, 2 = (nfss ne 'tt' ? yes : no)
-    nfss            => 'rm',
+    ligatures       => '2',     # 0 = no, 1 = yes, 2 = ('tt' ? no : yes)
+    nfss            => '',
     fig_height      => 'lnum',
     fig_width       => 'tnum',
     extra           => '',
@@ -1025,8 +1116,11 @@ END_USAGE
     logfile         => '',
     figurekern      => '1',     # 0 = no, 1 = yes
     mergewidths     => '1',     # 0 = no, 1 = yes
-    mergesmallcaps  => '1',     # 0 = no, 1 = yes
-    Verbose         => 0,
+    mergeweights    => '1',     # 0 = no, 1 = yes
+    mergeshapes     => '1',     # 0 = no, 1 = yes
+    verbose         => 0,
+    nfsswidth       => [],
+    nfssweight      => [],
 );
 
 #-----------------------------------------------------------------------
@@ -1036,9 +1130,9 @@ sub parse_options {
     $ARGV{cmdline} = join ' ', ($0, @ARGV);
 
     Getopt::Long::GetOptions(
-        'help|?'              =>  sub { print $USAGE; exit; },
-        'version'             =>  sub { print "$VERSION\n"; exit; },
-        'doc'                 =>  sub { Pod::Usage::pod2usage(-Verbose => 2); },
+        'help|?'              =>  sub { print $USAGE; exit },
+        'version'             =>  sub { print "$VERSION\n"; exit },
+        'doc'                 =>  sub { Pod::Usage::pod2usage(-verbose => 2) },
         'encoding=s'          => \$ARGV{encoding},
         'ts1!'                => \$ARGV{textcomp},
         'lining!'             => \$ARGV{lining},
@@ -1049,7 +1143,8 @@ sub parse_options {
         'swash!'              => \$ARGV{swash},
         'titling!'            => \$ARGV{titling},
         'superiors!'          => \$ARGV{superiors},
-        'inferiors=s'         => \$ARGV{inferiors},
+        'noinferiors'         =>  sub { $ARGV{inferiors} = 'none' },
+        'inferiors:s'         => \$ARGV{inferiors},
         'ornaments!'          => \$ARGV{ornaments},
         'fractions!'          => \$ARGV{fractions},
         'ligatures!'          => \$ARGV{ligatures},
@@ -1069,19 +1164,29 @@ sub parse_options {
         'manual'              => \$ARGV{manual},
         'figurekern!'         => \$ARGV{figurekern},
         'mergewidths!'        => \$ARGV{mergewidths},
-        'mergesmallcaps!'     => \$ARGV{mergesmallcaps},
+        'mergeweights!'       => \$ARGV{mergeweights},
+        'mergeshapes!'        => \$ARGV{mergeshapes},
+        'mergesmallcaps!'     => \$ARGV{mergeshapes},
         'logfile=s'           => \$ARGV{logfile},
-        'Verbose+'            => \$ARGV{Verbose},
+        'verbose+'            => \$ARGV{verbose},
         'nfssweight=s%'       => sub {
                                      my ( $ignored, $key, $values ) = @_;
+                                     push @{$ARGV{nfssweight}},
+                                          "$key=$values";
                                      my @values = split m/,/, lc $values;
-                                     $NFSS_WEIGHT{$key} = \@values;
+                                     $key = q{} if $key eq 'm';
+                                     $NFSS_WEIGHT{$key}
+                                         = [ @values, @{$NFSS_WEIGHT{$key}} ];
                                      $ARGV{$key} = 'user-defined';
                                  },
         'nfsswidth=s%'        => sub {
                                      my ( $ignored, $key, $values ) = @_;
                                      my @values = split m/,/, lc $values;
-                                     $NFSS_WIDTH{$key} = \@values;
+                                     push @{$ARGV{nfsswidth}},
+                                          "$key=$values";
+                                     $key = q{} if $key eq 'm';
+                                     $NFSS_WIDTH{$key}
+                                         = [ @values, @{$NFSS_WIDTH{$key}} ];
                                      $ARGV{$key} = 'user-defined';
                                  },
     )
@@ -1096,6 +1201,7 @@ sub parse_options {
     delete $STYLE{Sup}           unless $ARGV{superiors};
     delete $STYLE{Orn}           unless $ARGV{ornaments};
     delete @STYLE{qw(Numr Dnom)} unless $ARGV{fractions};
+    $ARGV{inferiors} ||= 'auto';
     if    ($ARGV{inferiors} eq 'auto') { $STYLE{Inf}{reqd} = ['auto'] }
     elsif ($ARGV{inferiors} eq 'subs') { $STYLE{Inf}{reqd} = ['subs'] }
     elsif ($ARGV{inferiors} eq 'sinf') { $STYLE{Inf}{reqd} = ['sinf'] }
@@ -1118,6 +1224,25 @@ sub parse_options {
              or $ARGV{textcomp} == 1 )
     {
         delete $SHAPE{textcomp};
+    }
+
+    # Determine NFSS classification of this family, if the user
+    # didn't explicitly specify it
+    if ( !$ARGV{nfss} ) {
+        # EXPERIMENTAL: parse "post" table to see if font is fixed-width
+        open my $otfinfo, '-|:raw', qq(otfinfo --dump-table 'post' "$ARGV[0]")
+            or die "[ERROR] could not fork(): $!";
+        my $post_table = do { local $/; <$otfinfo> };
+        close $otfinfo
+            or die "[ERROR] 'otfinfo --dump-table post $ARGV[0]' failed";
+
+        my $is_fixed_pitch = unpack '@12N', $post_table;
+
+        $ARGV{nfss} = $is_fixed_pitch                 ? 'tt'
+                    : $ARGV[0] =~ m/mono(?!type)/xmsi ? 'tt'
+                    : $ARGV[0] =~ m/sans/xmsi         ? 'sf'
+                    :                                   'rm'
+                    ;
     }
 
     # If the user didn't explicitly say anything about ligatures,
@@ -1205,12 +1330,13 @@ sub parse_fontinfo {
     my ($filename) = @_;
 
     my $info = {
-        filename  => $filename,
-        width     => 'regular',
-        weight    => 'regular',
-        shape     => 'roman',
-        minsize   => 0,
-        maxsize   => 0,
+        filename     => $filename,
+        width        => 'regular',
+        weight       => 'regular',
+        shape        => 'roman',
+        minsize      => 0,
+        maxsize      => 0,
+        is_smallcaps => 0,
     };
 
     parse_basicinfo($info);
@@ -1230,14 +1356,15 @@ sub parse_basicinfo {
     my $info = shift;
 
     open my $otfinfo, '-|', qq(otfinfo --info "$info->{filename}")
-        or die "[ERROR] 'otfinfo --info $info->{filename}' failed";
+        or die "[ERROR] could not fork(): $!";
     my %data = map { my ($k,$v) = m/\A\s* ([^:]+?) \s*:\s* ([^\r\n]+)/xms;
                      $k =~ s/\s+//xmsg;
                      $v =~ s/\s+//xmsg;
                      (lc $k => $v);
                    }
                    grep { m/\A\s* [^:]+? \s*:\s* [^\r\n]+/xms } <$otfinfo>;
-    close $otfinfo;
+    close $otfinfo
+        or die "[ERROR] 'otfinfo --info $info->{filename}' failed";
 
     $data{family}    =  $data{preferredfamily} || $data{family};
     $data{subfamily} =  $data{preferredsubfamily} || $data{subfamily};
@@ -1246,33 +1373,47 @@ sub parse_basicinfo {
 
     # clean up family name (it's used in LaTeX command names)
     $data{family}    =~ s/\A(?: Adobe | DTL | FF | ITC | LT | MT)//xms;
+    $data{family}    =~ s/(?: LT | MT)(?: Std | Pro )\z//xms;
+    $data{family}    =~ s/(?<= Kievit ) OT//xms;
+    $data{family}    =~ s/ Std \z//xms;
     $data{family}    =~ s/(\d)/$DIGITS[$1]/xmsge;
     $data{family}    =~ s/[^A-Za-z]+//xmsg;
 
-    my $fullinfo =  lc "$data{subfamily} | $data{fullname}";
+    # Sometimes the relevant info is in Fullname, sometimes in Subfamily;
+    # so we need to test against both
+    my $fullinfo = lc "$data{subfamily} | $data{fullname}";
 
     # We need to be careful when parsing the font info; in particular
     # we must parse 'UltraCondensed' as 'Regular' weight
     # and 'UltraCondensed' width, not as 'Ultra' weight and 'Condensed' width.
-    # The following two rules should prevent accidents:
+    # The following rules should prevent accidents:
     # 1.  Search for matching widths before matching weights
     #     (as none of the widths is a proper substring of some weight)
     # 2.  Remove any recognised search string from the 'fullinfo'
+    # 3.  Test the weights 'medium' and 'regular' *last*, since these strings
+    #     may also occur in Subfamily without indicating the weight;
+    #     so we only take them to mean weight if we find no other hit.
     for my $width ( mqrs(@WIDTHS) ) {
-        if ($fullinfo =~ s/${width}//gxmsi) {
+        if ($fullinfo =~ m/${width}/xms) {
             $info->{width} = $width;
+            my $widths = join '|', mqrs(@WIDTHS);
+            $fullinfo =~ s/${widths}//gxmsi;
             last;
         }
     }
-    for my $weight ( mqrs(@WEIGHTS) ) {
-        if ($fullinfo =~ s/${weight}//gxmsi) {
+    for my $weight ( mqrs(@WEIGHTS), qw(medium regular) ) {
+        if ($fullinfo =~ m/${weight}/xms) {
             $info->{weight} = $weight;
+            my $weights = join '|', mqrs(@WEIGHTS), qw(medium regular);
+            $fullinfo =~ s/${weights}//gxmsi;
             last;
         }
     }
     for my $shape ( mqrs( keys %NFSS_SHAPE ) ) {
-        if ($fullinfo =~ s/${shape}//gxmsi) {
+        if ($fullinfo =~ m/${shape}/xms) {
             $info->{shape} = $shape;
+            my $shapes = join '|', mqrs( keys %NFSS_SHAPE );
+            $fullinfo =~ s/${shapes}//gxmsi;
             last;
         }
     }
@@ -1284,25 +1425,9 @@ sub parse_basicinfo {
     $data{subfamily} =~ s/$info->{weight}//xmsi;
     $data{subfamily} =~ s/$info->{shape}//xmsi;
 
-
     $info->{name}      = $data{postscriptname};
     $info->{family}    = $data{family};
     $info->{subfamily} = $data{subfamily};
-
-    if ( !$ARGV{logfile} ) {
-        $ARGV{logfile} = sprintf "%s.log", lc $info->{family}
-    }
-    # Some font families put condensed or extended widths into separate families;
-    # we provide an option to merge these with the 'main' font family.
-    if ($ARGV{mergewidths}) {
-        my $widths = join '|', mqrs(@WIDTHS);
-        if ($info->{width} eq 'regular'
-            && $info->{family} =~ m/(.+?) [ ]* (${widths})$/xmsi)
-        {
-            $info->{family} = $1;
-            $info->{width}  = lc $2;
-        }
-    }
 
     # Take care to unabbreviate weight and width; CondensedUltra fonts
     # might end up as 'ultracondensed' instead of 'ultrablackcondensed'!
@@ -1316,15 +1441,80 @@ sub parse_basicinfo {
         $info->{shape} = $UNABBREVIATE{ $info->{shape} };
     }
 
+    if ($ARGV{mergeshapes}) {
+        my $shapes = join '|', mqrs( qw(it italic) );
+        if ( $info->{family} =~ m/(.+?) (${shapes}) \z/xmsi
+                and ( $info->{shape} eq 'regular'
+                   or $info->{shape} eq ( $UNABBREVIATE{ lc($2) } // lc($2) )
+                )
+        ) {
+            $info->{family} = $1;
+            $info->{shape}  = $UNABBREVIATE{ lc($2) } // lc($2);
+        }
+
+        $shapes = join '|', mqrs( qw(sc smallcaps) );
+        if ( $info->{family} =~ m/(.+?) (${shapes}) \z/xmsi ) {
+            $info->{family}       = $1;
+            $info->{is_smallcaps} = 1;
+        }
+    }
+
+    # Some font families put different widths into separate families;
+    # we provide an option to merge these with the 'main' font family.
+    if ($ARGV{mergewidths}) {
+        my $widths = join '|', mqrs(@WIDTHS);
+        if ( $info->{family} =~ m/(.+?) (${widths}) \z/xmsi
+                and ( $info->{width} eq 'regular'
+                   or $info->{width} eq ( $UNABBREVIATE{ lc($2) } // lc($2) )
+                )
+        ) {
+            $info->{family} = $1;
+            $info->{width}  = $UNABBREVIATE{ lc($2) } // lc($2);
+        }
+    }
+
+    # Some font families put extreme weights into separate families;
+    # we provide an option to merge these with the 'main' font family.
+    if ($ARGV{mergeweights}) {
+        my $weights = join '|', mqrs(@WEIGHTS), qw(medium regular);
+        if ( $info->{family} =~ m/(.+?) (${weights}) \z/xmsi
+                and ( $info->{weight} eq 'regular'
+                   or $info->{weight} eq ( $UNABBREVIATE{ lc($2) } // lc($2) )
+                )
+        ) {
+            $info->{family} = $1;
+            $info->{weight} = $UNABBREVIATE{ lc($2) } // lc($2);
+        }
+    }
+
+    # Fix confusion about "Text": weight vs part of familyname.
+    # In the latter case, we strip it off anyway.
+    $info->{family} =~ s/text \z//xmsi;
+
+    if ( !$ARGV{logfile} ) {
+        $ARGV{logfile} = sprintf "%s.log", lc $info->{family}
+    }
+
     $info->{basicshape} = $NFSS_SHAPE{$info->{shape}};
 
-    # We define 'series' as 'weight + width'. This matches NFSS, but contradicts
-    # how most fonts are named (which is 'width + weight').
+    # We define 'series' as 'weight + width'. This matches NFSS,
+    # but contradicts how most fonts are named (which is 'width + weight').
     $info->{series}
-        = ($info->{width} eq 'regular')  ? $info->{weight}
+        = ($info->{width}  eq 'regular') ? $info->{weight}
         : ($info->{weight} eq 'regular') ? $info->{width}
         :                                  $info->{weight} . $info->{width}
         ;
+
+    # EXPERIMENTAL: we extract the usWeightClass and usWidthClass
+    # properties from the font's OS/2 table
+    open $otfinfo,
+         '-|:raw',
+         qq(otfinfo --dump-table 'OS/2' "$info->{filename}")
+        or die "[ERROR] could not fork(): $!";
+    my $os2_table = do { local $/; <$otfinfo> };
+    close $otfinfo
+        or die "[ERROR] 'otfinfo --dump-table $info->{filename}' failed";
+    @{$info}{qw(weight_class width_class)} = unpack '@4n @6n', $os2_table;
 
     return;
 }
@@ -1332,7 +1522,8 @@ sub parse_basicinfo {
 #-----------------------------------------------------------------------
 # Re-order argument list so that longer strings come before shorter ones
 #
-# This is needed when matching a string against a list of patterns;
+# This is needed when matching a string against a list of patterns
+# where some of the patterns may be substrings of other patterns;
 # then we want the *longest* matching pattern, so we test the patterns
 # in descending order of length.
 #-----------------------------------------------------------------------
@@ -1348,14 +1539,16 @@ sub parse_features {
     my $info = shift;
 
     open my $otfinfo, '-|', qq(otfinfo --features "$info->{filename}")
-        or die "[ERROR] 'otfinfo --features $info->{filename}' failed";
+        or die "[ERROR] could not fork(): $!";
     %{$info->{feature}} = map { (substr($_, 0, 4) => 1) } <$otfinfo>;
-    close $otfinfo;
+    close $otfinfo
+        or die "[ERROR] 'otfinfo --features $info->{filename}' failed";
 
     open $otfinfo, '-|', qq(otfinfo --tables "$info->{filename}")
-        or die "[ERROR] 'otfinfo --tables $info->{filename}' failed";
+        or die "[ERROR] could not fork(): $!";
     $info->{feature}{kern} = 1 if grep { m/\d+ \s+ kern/xms } <$otfinfo>;
-    close $otfinfo;
+    close $otfinfo
+        or die "[ERROR] 'otfinfo --tables $info->{filename}' failed";
 
     return;
 }
@@ -1368,11 +1561,12 @@ sub parse_sizeinfo {
     my $info = shift;
 
     open my $otfinfo, '-|', qq(otfinfo --optical-size "$info->{filename}")
-        or die "[ERROR] 'otfinfo --optical-size $info->{filename}' failed";
+        or die "[ERROR] could not fork(): $!";
 
-    if (my ($minsize, $maxsize) = <$otfinfo> =~ m/[(] ([\d.]+) \s* pt, \s*
-                                              ([\d.]+) \s* pt  \s* []]/xms )
-    {
+    if (my ($minsize, $maxsize)
+        = <$otfinfo> =~ m/[(] ([\d.]+) \s* pt, \s*
+                              ([\d.]+) \s* pt  \s* []]/xms
+    ) {
     # fix some known bugs
         if ($info->{name} eq 'GaramondPremrPro-It'
             && $minsize == 6 && $maxsize == 8.9)
@@ -1400,7 +1594,8 @@ sub parse_sizeinfo {
 
         @{$info}{qw(minsize maxsize)} = ($minsize, $maxsize);
     }
-    close $otfinfo;
+    close $otfinfo
+        or die "[ERROR] 'otfinfo --optical-size $info->{filename}' failed";
 
     return;
 }
@@ -1441,7 +1636,8 @@ sub assert_unique {
     my @fonts = @_;
 
     # These attributes should uniquely identify each font
-    my @attributes = qw(family weight width shape minsize maxsize);
+    my @attributes
+        = qw(family weight width shape minsize maxsize is_smallcaps);
 
     my (%seen, $err_details);
     for my $font (@fonts) {
@@ -1479,10 +1675,11 @@ sub get_orn {
         # Default ornament names: 'orn.' plus three digits
         my @encoding = map { sprintf "orn.%03d", $_ } 1 .. 256;
 
-        open my $OTFINFO, '-|', qq(otfinfo --glyphs "$font->{filename}")
+        open my $otfinfo, '-|', qq(otfinfo --glyphs "$font->{filename}")
+            or die "[ERROR] could not fork(): $!";
+        chop(my @glyphnames = <$otfinfo>);
+        close $otfinfo
             or die "[ERROR] 'otfinfo --glyphs $font->{filename}' failed";
-        chop(my @glyphnames = <$OTFINFO>);
-        close $OTFINFO;
 
         # Test for some known alternative names (probably not exhaustive)
         my @ornaments
@@ -1907,8 +2104,9 @@ B<autoinst> will create several LaTeX font families:
 
 =item -
 
-Four text families (with lining and oldstyle digits, each in both tabular
-and proportional variants), all with the following shapes:
+Four text families (with lining and oldstyle digits,
+each in both tabular and proportional variants),
+all with the following shapes:
 
 =over 2
 
@@ -1944,8 +2142,8 @@ Swash
 
 =item -
 
-For each T1-encoded text family: a family of TS1-encoded symbol fonts,
-in roman, italic and slanted shapes.
+For each T1-encoded text family:
+a family of TS1-encoded symbol fonts, in roman, italic and slanted shapes.
 
 =item -
 
@@ -1954,7 +2152,8 @@ in roman, italic and slanted shapes.
 
 =item -
 
-Families with "Titling" characters; these "... replace the default glyphs
+Families with "Titling" characters;
+these "... replace the default glyphs
 with corresponding forms designed specifically for titling.
 These may be all-capital and/or larger on the body,
 and adjusted for viewing at larger sizes"
@@ -2038,16 +2237,16 @@ but this choice can be overridden by the user;
 see the I<-logfile> command-line option in L</"COMMAND-LINE OPTIONS"> below.
 If this log file already exists, B<autoinst> will append its data to the end
 rather than overwrite it.
-Use the I<-Verbose> command-line option to ask for more detailed info.
+Use the I<-verbose> command-line option to ask for more detailed info.
 
 
 =head2 A note for MiKTeX users
 
 Automatically installing the fonts into a suitable TEXMF tree
-(as B<autoinst> tries to do by default) only works for TeX-installations that use
-the F<kpathsea> library; with TeX distributions that implement their
-own directory searching (such as MiKTeX), B<autoinst> will complain that
-it cannot find the F<kpsewhich> program and move all generated files
+(as B<autoinst> tries to do by default) only works for TeX-installations
+that use the F<kpathsea> library; with TeX distributions that implement
+their own directory searching (such as MiKTeX), B<autoinst> will complain
+that it cannot find the F<kpsewhich> program and move all generated files
 into a subdirectory C<./autoinst_output/> of the current directory.
 If you use such a TeX distribution, you should either move these files
 to their correct destinations by hand, or use the I<-target> option
@@ -2061,11 +2260,11 @@ and TeXLive (F<http://tug.org/texlive>) don't seem to have this problem.
 
 =head2 A note for MacTeX users
 
-By default, B<autoinst> will try to install all files into the $TEXMFLOCAL tree;
-when this directory isn't user-writable, it will use the $TEXMFHOME tree instead.
-Unfortunately, MacTeX's version of C<updmap-sys>
-(which is called behind the scenes) doesn't search in $TEXMFHOME,
-and hence MacTeX will not find the new fonts.
+By default, B<autoinst> will try to install all generated files into
+the $TEXMFLOCAL tree; when this directory isn't user-writable,
+it will use the $TEXMFHOME tree instead.  Unfortunately, MacTeX's version
+of C<updmap-sys> (which is called behind the scenes) doesn't search
+in $TEXMFHOME, and hence MacTeX will not find the new fonts.
 
 To remedy this, either run B<autoinst> as root (so that it can install
 everything into $TEXMFLOCAL) or manually run C<updmap -user> to tell
@@ -2077,8 +2276,8 @@ see F<https://tug.org/texlive/scripts-sys-user.html>.
 =head2 Using the fonts in your LaTeX documents
 
 B<autoinst> generates a style file for using the fonts in LaTeX documents,
-named F<< <FontFamily>.sty >>. This style file also takes care of loading the
-F<fontenc> and F<textcomp> packages.
+named F<< <FontFamily>.sty >>. This style file also takes care of loading
+the F<fontenc> and F<textcomp> packages.
 To use the fonts, add the command C<<< \usepackage{I<< <FontFamily> >>} >>>
 to the preamble of your document.
 
@@ -2125,7 +2324,7 @@ The previous two groups of options will only work if
 you have the F<mweights> package installed.
 
 The style file will also try to load the F<fontaxes> package
-(available on CTAN), which gives easy access to various font shapes and styles.
+(on CTAN), which gives easy access to various font shapes and styles.
 Using the machinery set up by F<fontaxes>, the generated style file
 defines a number of commands (which take the text to be typeset as argument)
 and declarations (which don't take arguments, but affect all text up to
@@ -2141,8 +2340,8 @@ characters:
 
 
 In addition, the C<\swshape> and C<\textsw> commands are redefined to place
-swash on F<fontaxes>' secondary shape axis (F<fontaxes> places it on the primary
-shape axis) to make them behave properly when nested, so that
+swash on F<fontaxes>' secondary shape axis (F<fontaxes> places it on the
+primary shape axis) to make them behave properly when nested, so that
 C<\swshape\upshape> will give upright swash.
 
 There are no commands for accessing the numerator and denominator
@@ -2159,8 +2358,8 @@ LaTeX installation) and supplying the name of the ornament font.
 To access ornament glyphs, B<autoinst> creates a font-specific encoding file
 F<< <FontFamily>_orn.enc >>,
 but only if that file doesn't yet exist in the current directory.
-This is a deliberate feature that allows you to provide your own
-encoding vector, e.g. if your fonts use non-standard glyph names for ornaments.
+This is a deliberate feature that allows you to provide your own encoding
+vector, e.g. if your fonts use non-standard glyph names for ornaments.
 
 These commands are only generated for existing shapes and number styles;
 no commands are generated for shapes and styles that don't exist,
@@ -2226,7 +2425,7 @@ uc, ec, c, sc, m, sx, x, ex and ux for widths) to actual fonts.
 Of course, not all 81 combinations of these NFSS weights and widths will map
 to existing fonts;
 and conversely it may not be possible to assign every existing font
-a unique code in a sane way (especially on the weight axis, some font families
+a unique code in a sane way (especially for the weights, some font families
 offer more choices or finer granularity than NFSS's codes can handle;
 e.g., Fira Sans contains fifteen(!) different weights,
 including an additional "Medium" weight between Regular and Semibold).
@@ -2279,7 +2478,7 @@ Write log data to F<filename> instead of the default F<< <fontfamily>.log >>.
 If the file already exists, B<autoinst> appends to it;
 it doesn't overwrite an existing file.
 
-=item B<-Verbose> (I<note:> uppercase 'V'!)
+=item B<-verbose>
 
 Add more details to the log file. Repeat this option for even more info.
 
@@ -2294,17 +2493,17 @@ so the I<last> one will become the default text encoding of your document.
 The default choice of encodings is "OT1,T1,LY1".
 For each encoding, a file F<< <encoding>.enc >> (in all I<lowercase>!)
 should be somewhere where F<otftotfm> can find it. Suitable encoding files
-for OT1, T1/TS1, LY1, LGR and T2A/B/C come with B<autoinst>. (These files are
-called F<fontools_ot1.enc> etc. to avoid name clashes with other packages;
-the "fontools_" prefix may be omitted.)
+for OT1, T1/TS1, LY1, LGR, T2A/B/C and T3/TS3 come with B<autoinst>.
+(These files are called F<fontools_ot1.enc> etc. to avoid name clashes
+with other packages; the "fontools_" prefix may be omitted.)
 
-=item B<-ts1> / B<-nots1>
+=item B<-ts1>/B<-nots1>
 
 Control the creation of TS1-encoded fonts. The default is B<-ts1>
 if the text encodings (see I<-encoding> above) include T1,
 B<-nots1> otherwise.
 
-=item B<-serif> / B<-sanserif> / B<-typewriter>
+=item B<-serif>/B<-sanserif>/B<-typewriter>
 
 Install the font as a serif, sanserif or typewriter font, respectively.
 This changes how you access the font in LaTeX:
@@ -2318,45 +2517,54 @@ and it will disable hyphenation for this font.
 This latter effect cannot be disabled in B<autoinst>;
 if you want typewriter text to be hyphenated, use the F<hyphenat> package.
 
-=item B<-lining> / B<-nolining>
+If none of these options is specified, B<autoinst> tries to guess:
+if the font's filename contains the string "mono"
+or if the field C<isFixedPitch> in the font's I<post> table is True,
+it will select B<-typewriter>;
+else if the filename contains "sans" it selects B<-sanserif>;
+and otherwise it will opt for B<-serif>.
+
+=item B<-lining>/B<-nolining>
 
 Control the creation of fonts with lining figures. The default is
 B<-lining>.
 
-=item B<-oldstyle> / B<-nooldstyle>
+=item B<-oldstyle>/B<-nooldstyle>
 
 Control the creation of fonts with oldstyle figures. The default is
 B<-oldstyle>.
 
-=item B<-proportional> / B<-noproportional>
+=item B<-proportional>/B<-noproportional>
 
 Control the creation of fonts with proportional figures. The default is
 B<-proportional>.
 
-=item B<-tabular> / B<-notabular>
+=item B<-tabular>/B<-notabular>
 
 Control the creation of fonts with tabular figures. The default is
 B<-tabular>.
 
-=item B<-smallcaps> / B<-nosmallcaps>
+=item B<-smallcaps>/B<-nosmallcaps>
 
 Control the creation of small caps fonts. The default is
 B<-smallcaps>.
 
-=item B<-swash> / B<-noswash>
+=item B<-swash>/B<-noswash>
 
 Control the creation of swash fonts. The default is B<-swash>.
 
-=item B<-titling> / B<-notitling>
+=item B<-titling>/B<-notitling>
 
 Control the creation of titling families. The default is B<-titling>.
 
-=item B<-superiors> / B<-nosuperiors>
+=item B<-superiors>/B<-nosuperiors>
 
 Control the creation of fonts with superior characters.
 The default is B<-superiors>.
 
-=item B<-inferiors>=[ B<none> | B<auto> | B<subs> | B<sinf> | B<dnom> ]
+=item B<-noinferiors>
+
+=item B<-inferiors> [= B<none> | B<auto> | B<subs> | B<sinf> | B<dnom> ]
 
 The OpenType standard defines several kinds of digits that might be used
 as inferiors or subscripts: "Subscripts" (OpenType feature "subs"),
@@ -2365,31 +2573,33 @@ This option allows the user to determine which of these styles B<autoinst>
 should use for the inferior characters.
 Alternatively, the value "auto" tells B<autoinst> to use the first value
 in "subs", "sinf" or "dnom" that is supported by the font.
-The default value is "none".
+Saying just B<-inferiors> is equivalent to B<-inferiors=auto>;
+otherwise the default is B<-noinferiors>.
 
 I<< If you specify a style of inferiors that isn't present in the font,
 B<autoinst> will fall back to its default behaviour of not creating fonts
 with inferiors at all; it won't try to substitute one of the other styles. >>
 
-=item B<-fractions> / B<-nofractions>
+=item B<-fractions>/B<-nofractions>
 
 Control the creation of fonts with numerators and denominators.
 The default is B<-nofractions>.
 
-=item B<-ligatures> / B<-noligatures>
+=item B<-ligatures>/B<-noligatures>
 
 Some fonts create glyphs for the standard f-ligatures (ff, fi, fl, ffi, ffl),
 but don't provide a "liga" feature to access these.
 This option tells B<autoinst> to add extra C<LIGKERN> rules to
 the generated fonts to enable the use of these ligatures.
-The default is B<-ligatures>, unless the user specified the I<ligatures> option.
+The default is B<-ligatures>,
+unless the user specified the I<ligatures> option.
 
 Specify B<-noligatures> to disable the generation of ligatures even for fonts
 that do contain a "liga" feature.
 
-=item B<-defaultlining> / B<-defaultoldstyle>
+=item B<-defaultlining>/B<-defaultoldstyle>
 
-=item B<-defaulttabular> / B<-defaultproportional>
+=item B<-defaulttabular>/B<-defaultproportional>
 
 Tell B<autoinst> which figure style is the current font family's default
 (i.e., which figures you get when you don't specify any OpenType features).
@@ -2410,21 +2620,18 @@ to the commands for I<otftotfm> to suppress such kerns.
 Note that this option leads to very long commands (it adds
 one hundred I< --ligkern> options), which may cause problems on some systems.
 
-=item B<-mergewidths> / B<-nomergewidths>
+=item B<-mergewidths>/B<-nomergewidths>,
+B<-mergeweights>/B<-nomergeweights>,
+B<-mergeshapes>/B<-nomergeshapes>
 
-Some font families put their Condensed, Narrow, Extended etc. widths
-in separate families;
-this option tells B<autoinst> to merge those separate families into
+Some font put different widths, weights or shapes (e.g., small caps)
+in separate families.
+These options tell B<autoinst> to merge those separate families into
 the main family.
-The default is B<-mergewidths>.
+Since this is usually desirable, they are all enabled by default.
 
-=item B<-mergesmallcaps> / B<-nomergesmallcaps>
-
-Even more annoyingly, some font families put their small caps fonts
-in a separate family;
-this option tells B<autoinst> to merge the small caps fonts into
-the main family.
-The default is B<-mergesmallcaps>.
+In earlier versions, B<-mergeshapes> was called B<-mergesmallcaps>;
+for reasons of backward compatibility, that option is still supported.
 
 =item B<-nfssweight>=I<code>=I<weight>, B<-nfsswidth>=I<code>=I<width>
 
@@ -2432,20 +2639,22 @@ Map the NFSS code I<code> to the given weight or width,
 overriding the built-in tables.
 Each of these options may be given multiple times,
 to override more than one NFSS code.
-Example: to map the "ul" code to the "Thin" weight, use C<-nfssweight=ul=thin>.
-To inhibit the use of the "ul" code completely, use C<-nfssweight=ul=>.
+Example: to map the "ul" code to the "Thin" weight,
+use C<-nfssweight=ul=thin>.
+To inhibit the use of the "ul" code completely,
+use C<-nfssweight=ul=>.
 
 =item B<-extra>=I<text>
 
 Append I<text> as extra options to the command lines for I<otftotfm>.
-To prevent I<text> from accidentily being interpreted as options to B<autoinst>,
-it should be properly quoted.
+To prevent I<text> from accidentily being interpreted as options
+to B<autoinst>, it should be properly quoted.
 
 =item B<-manual>
 
-Manual mode; for users who want to post-process the generated files and commands.
-By default, B<autoinst> immediately executes all F<otftotfm> commands
-it generates;
+Manual mode; for users who want to post-process the generated files
+and commands. By default, B<autoinst> immediately executes all
+F<otftotfm> commands it generates;
 in manual mode, these are instead written to a file F<autoinst.bat>.
 Furthermore it tells F<otftotfm> to generate human readable (and editable)
 F<pl/vpl> files instead of the default F<tfm/vf> ones,
@@ -2457,19 +2666,19 @@ B<autoinst> has finished:
 
 =over 2
 
-=item B<-> run F<pltotf> and F<vptovf> on the generated F<pl> and F<vf> files,
+=item - run F<pltotf> and F<vptovf> on the generated F<pl> and F<vf> files,
 to convert them to F<tfm/vf> format;
 
-=item B<-> move all generated files to a proper TEXMF tree,
+=item - move all generated files to a proper TEXMF tree,
 and, if necessary, update the filename database;
 
-=item B<-> tell TeX about the new F<map> file
+=item - tell TeX about the new F<map> file
 (usually by running C<updmap> or similar).
 
 =back
 
-Note that some options (I<-target>, I<-vendor> and I<-typeface>, I<-[no]updmap>)
-are meaningless, and hence ignored, in manual mode.
+Note that some options (I<-target>, I<-vendor> and I<-typeface>,
+I<-[no]updmap>) are meaningless, and hence ignored, in manual mode.
 
 =item B<-target>=I<DIRECTORY>
 
@@ -2482,7 +2691,8 @@ If B<autoinst> cannot find such a user-writable directory
 it will print a warning message and put all files into the subdirectory
 C<./autoinst_output/> of the current directory.
 It's then up to the user to move the generated files to a better location
-and update all relevant databases (usually by calling F<texhash> and F<updmap>).
+and update all relevant databases
+(usually by calling F<texhash> and F<updmap>).
 
 =item B<-vendor>=I<VENDOR>
 
@@ -2496,7 +2706,7 @@ The default values are "lcdftools" and the font's FontFamily name.
 Note that these options change I<only> directory names,
 not the names of any generated files.
 
-=item B<-updmap> / B<-noupdmap>
+=item B<-updmap>/B<-noupdmap>
 
 Control whether or not F<updmap> is called after the last call to F<otftotfm>.
 The default is B<-updmap>.
@@ -2513,22 +2723,23 @@ it is included in most Linux distributions.
 For Windows, try ActivePerl (F<http://www.activestate.com>)
 or Strawberry Perl (F<http://strawberryperl.com>).
 
-B<XeTeX> (F<http://www.tug.org/xetex>) and B<LuaTeX> (F<http://www.luatex.org>)
+B<XeTeX> (F<http://www.tug.org/xetex>) and
+B<LuaTeX> (F<http://www.luatex.org>)
 are Unicode-aware TeX engines that can use OpenType fonts directly,
 without any (La)TeX-specific support files.
 
 The B<FontPro> project (F<https://github.com/sebschub/FontPro>)
-offers very complete LaTeX support (even for typesetting maths) for Adobe's
-Minion Pro, Myriad Pro and Cronos Pro font families.
+offers very complete LaTeX support (even for typesetting maths) for
+Adobe's Minion Pro, Myriad Pro and Cronos Pro font families.
 
 
 =head1 AUTHOR
 
 Marc Penninga (F<marcpenninga@gmail.com>)
 
-When sending a bug report, please give as much relevant information as possible;
-this usually includes (but may not be limited to) the log file
-(please add the I<-Verbose> command-line option, for extra info).
+When sending a bug report, please give as much relevant information as
+possible; this usually includes (but may not be limited to) the log file
+(please add the I<-verbose> command-line option, for extra info).
 If you see any error messages, please include these I<verbatim>;
 don't paraphase.
 
@@ -2558,7 +2769,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20190522.
+This document describes B<autoinst> version 20190625.
 
 
 =head1 RECENT CHANGES
@@ -2567,12 +2778,56 @@ This document describes B<autoinst> version 20190522.
 
 =over 12
 
+=item I<2019-06-25>
+
+=over 3
+
+=item -
+
+Added the I<-mergeweights> and I<-mergeshapes> options,
+and improved I<-mergewidths>.
+
+=item -
+
+Improved the parsing of fonts' widths and weights.
+
+=item -
+
+Improved the mapping of widths and weights to NFSS codes.
+
+=item -
+
+Changed logging code so that that results of font info parsing
+are always logged, even (especially!) when parsing fails.
+
+=item -
+
+Added a warning when installing fonts from multiple families.
+
+=item -
+
+Added simple recognition for sanserif and typewriter fonts.
+
+=item -
+
+Fixed error checking after calls to F<otfinfo>
+(B<autoinst> previously only checked whether C<fork()> was successful,
+not whether the actual call to F<otfinfo> worked).
+
+=item -
+
+Fixed a bug in the I<-inferiors> option;
+when used without a (supposedly optional) value,
+it would silently gobble the next option instead.
+
+=back
+
 =item I<2019-05-22>
 
 Added the I<mainfont> option to the generated F<sty> files.
 Prevented hyphenation for typewriter fonts
 (added C<\hyphenchar\font=-1> to the C<\DeclareFontFamily> declarations).
-Added the I<-version> option, and renamed I<-verbose> to I<-Verbose>.
+Added the I<-version> option.
 
 =item I<2019-05-17>
 
@@ -2832,7 +3087,7 @@ Tweaked the font info parsing to work around a bug in the naming of
 some FontFont fonts, where every font is in a family of its own.
 Added the "scaled" option (including the loading of F<xkeyval>)
 to the generated style file.
-Extended the output of the I<-Verbose> option.
+Extended the output of the I<-verbose> option.
 
 =item I<2007-02-08>
 
@@ -2910,7 +3165,7 @@ changed the generated style
 file to include an interface for the ornaments and to load Lehman's NFSS
 extensions F<nfssext.sty> if this is installed; corrected the "fontname" codes
 for OT1, T1, LY1 and user-specific encodings; extended the output generated by
-the I<-Verbose> option; and rewrote and extended the documentation.
+the I<-verbose> option; and rewrote and extended the documentation.
 
 =item I<2005-06-16>
 
