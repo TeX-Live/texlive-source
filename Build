@@ -49,7 +49,7 @@ export MAKE; export TL_MAKE
 : ${TL_MAKE_VERBOSE=VERBOSE=1}; export TL_MAKE_VERBOSE
 
 # allow override of make target.
-: ${TL_TARGET=world}; export TL_TARGTE
+: ${TL_TARGET=world}; export TL_TARGET
 
 if test "x$1" = x--no-clean; then
   shift
