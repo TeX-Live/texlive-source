@@ -1,3 +1,9 @@
+2019-06-26  Karl Berry  <karl@freefriends.org>
+
+	* kpse-harfbuzz-flags.m4 (KPSE_HARFBUZZ_FLAGS): omit KPSE_ICU_FLAGS.
+	(KPSE_HARFBUZZ_SYSTEM_FLAGS): call pkg-config harfbuzz,
+	not harfbuzz-icu.
+
 2019-03-25  Karl Berry  <karl@freefriends.org>
 
 	* kpse-freetype2-flags.m4 (KPSE_FREETYPE2_SYSTEM_FLAGS): try
