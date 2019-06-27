@@ -33,6 +33,7 @@ libharfbuzz_dependencies =
 libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-atomic.hh \
+	@HARFBUZZ_TREE@/src/hb-bimap.hh \
 	@HARFBUZZ_TREE@/src/hb-blob.hh \
 	@HARFBUZZ_TREE@/src/hb-blob.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer.hh \

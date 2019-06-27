@@ -54,7 +54,7 @@ hb_plan_subset_cff_fdselect (const hb_subset_plan_t *plan,
 			     unsigned int &subset_fdselect_size /* OUT */,
 			     unsigned int &subset_fdselect_format /* OUT */,
 			     hb_vector_t<code_pair_t> &fdselect_ranges /* OUT */,
-			     remap_t &fdmap /* OUT */)
+			     hb_inc_bimap_t &fdmap /* OUT */)
 {
   subset_fd_count = 0;
   subset_fdselect_size = 0;
@@ -102,17 +102,13 @@ hb_plan_subset_cff_fdselect (const hb_subset_plan_t *plan,
     else
     {
       /* create a fdmap */
-      if (!fdmap.reset (fdCount))
-      {
-	hb_set_destroy (set);
-	return false;
-      }
+      fdmap.reset ();
 
       hb_codepoint_t fd = CFF_UNDEF_CODE;
       while (set->next (&fd))
 	fdmap.add (fd);
       hb_set_destroy (set);
-      if (unlikely (fdmap.get_count () != subset_fd_count))
+      if (unlikely (fdmap.get_population () != subset_fd_count))
       	return false;
     }
 

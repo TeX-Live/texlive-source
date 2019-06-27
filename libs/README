@@ -25,7 +25,7 @@ graphite2 1.3.13 - checked 21dec18
   http://sourceforge.net/projects/silgraphite/files/graphite2/
   (requires C++11)
 
-harfbuzz 2.5.2 - checked 21jun19
+harfbuzz 2.5.3 - checked 27jun19
   http://www.freedesktop.org/software/harfbuzz/release/
 
 icu 63.1 - checked 8jan19

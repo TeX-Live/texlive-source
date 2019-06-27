@@ -25,7 +25,13 @@
 
 #include "hb.hh"
 
-#ifndef HB_NO_COLOR
+#include <cairo.h>
+
+#ifdef HB_NO_OPEN
+#define hb_blob_create_from_file(x)  hb_blob_get_empty ()
+#endif
+
+#if !defined(HB_NO_COLOR) && defined(CAIRO_HAS_SVG_SURFACE)
 
 #include "hb-ot.h"
 
@@ -35,7 +41,6 @@
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
-#include <cairo.h>
 #include <cairo-ft.h>
 #include <cairo-svg.h>
 

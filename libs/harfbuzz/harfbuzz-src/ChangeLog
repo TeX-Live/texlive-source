@@ -1,3 +1,249 @@
+commit b14e413fae8f14b75c5956e9b38e413c878ded0c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jun 26 10:44:10 2019 -0700
+
+    2.5.3
+
+ NEWS             | 7 +++++++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 3 files changed, 10 insertions(+), 3 deletions(-)
+
+commit 3bfa878c98cceeaae074d81c14329e358bea8912
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jun 25 19:07:07 2019 -0700
+
+    [gen-ucd] Protect against accidents like previous commit
+    
+    https://github.com/harfbuzz/harfbuzz/pull/1796
+
+ src/gen-ucd-table.py | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+commit f4ea1a9afb4849e7cfb7a5eb9e81e4f656c3f89e
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Tue Jun 25 21:08:14 2019 -0400
+
+    [ucd] Include scripts added in Unicode 10 or later
+
+ src/gen-ucd-table.py |   2 +-
+ src/hb-ucd-table.hh  | 970 +++++++++++++++++++++++++++------------------------
+ 2 files changed, 511 insertions(+), 461 deletions(-)
+
+commit 10bd6b8d913a57260b35c1ef830db37c06eebd18
+Author: Michiharu Ariza <ariza@typekit.com>
+Date:   Thu Jun 20 16:22:08 2019 -0700
+
+    minor
+
+ src/hb-bimap.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f3ee2bd020f8ca313fae783cc49a374f1377e877
+Author: Michiharu Ariza <ariza@typekit.com>
+Date:   Thu Jun 20 14:33:09 2019 -0700
+
+    add ops & methods to hb_bimap_t making it more like hb_map_t
+    moved has () to hb_bimap_t from hb_inc_bimap_t
+    moved identity () to hb_inc_bimap_t
+    removed forward()
+
+ src/hb-bimap.hh             | 38 ++++++++++++++++++++++++--------------
+ src/hb-ot-cff-common.hh     |  2 +-
+ src/hb-ot-cff1-table.hh     |  4 ++--
+ src/hb-subset-cff-common.cc |  2 +-
+ src/hb-subset-cff-common.hh |  4 ++--
+ src/hb-subset-cff1.cc       |  4 ++--
+ src/hb-subset-cff2.cc       |  2 +-
+ 7 files changed, 33 insertions(+), 23 deletions(-)
+
+commit 094966959f96d9a41fb612fd0b870f5ae8f5a954
+Author: Michiharu Ariza <ariza@adobe.com>
+Date:   Mon Jun 17 22:12:40 2019 -0700
+
+    add hb_bimap_t, subclass hb_inc_bimap_t replacing CFF::remap_t
+
+ src/Makefile.sources        |   1 +
+ src/hb-bimap.hh             | 129 ++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-cff-common.hh     |  64 +++-------------------
+ src/hb-ot-cff1-table.hh     |  16 +++---
+ src/hb-subset-cff-common.cc |  12 ++---
+ src/hb-subset-cff-common.hh |  40 ++++++--------
+ src/hb-subset-cff1.cc       |  26 ++++-----
+ src/hb-subset-cff2.cc       |  31 +++++------
+ 8 files changed, 191 insertions(+), 128 deletions(-)
+
+commit 0660175dc82d82bbb38c45b9cb53190e06f55750
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Tue Jun 25 10:14:03 2019 -0400
+
+    Categorize U+1133B for use in Tamil
+
+ src/hb-ot-shape-complex-indic.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit fb0df17b2701c1c5623198440aa88a676985bd4f
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Mon Jun 24 21:54:26 2019 -0400
+
+    Correct "nonunihan" to "nounihan"
+
+ src/gen-ucd-table.py | 4 ++--
+ src/hb-ucd-table.hh  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit bb4cdf8e0bcc98a036c22cfd44242502b107fb32
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Jun 25 01:42:42 2019 +0430
+
+    Replace create_from_file with empty blob if HB_NO_OPEN is defined
+
+ src/main.cc                       | 4 ++++
+ src/test-buffer-serialize.cc      | 4 ++++
+ src/test-gpos-size-params.cc      | 4 ++++
+ src/test-gsub-would-substitute.cc | 4 ++++
+ src/test-ot-color.cc              | 4 ++++
+ src/test-ot-name.cc               | 4 ++++
+ src/test.cc                       | 4 ++++
+ 7 files changed, 28 insertions(+)
+
+commit ccf1448238c91da3cba8370ee527229013f6d362
+Author: GaryQian <garyq@google.com>
+Date:   Mon Jun 24 12:57:13 2019 -0700
+
+    Cast long->size_t to ensure comparison of similar types
+
+ src/hb-common.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ec8e635e0c1a8e5c631a90820be68cf07c52c1a0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jun 24 12:37:23 2019 -0700
+
+    [ucd] Use custom encoding to shrink composition data
+    
+    Saves another 2.5kb.
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/gen-ucd-table.py |  22 +-
+ src/hb-algs.hh       |   5 +
+ src/hb-ucd-table.hh  | 963 ++++++++++++++++++++++++++++++++++-----------------
+ src/hb-ucd.cc        |  49 ++-
+ 4 files changed, 704 insertions(+), 335 deletions(-)
+
+commit 9c933acaa443889bc2484dbe3ef3e990b299cd52
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jun 23 17:14:27 2019 -0700
+
+    [ucd] Save a few more bytes
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ src/gen-ucd-table.py | 11 ++++++-----
+ src/hb-ucd-table.hh  | 34 +++++++++++++++++-----------------
+ src/hb-ucd.cc        | 12 ++++++------
+ 3 files changed, 29 insertions(+), 28 deletions(-)
+
+commit 9bd8d66c2ba97aec57597ff85e059a7618260a1c
+Author: Qunxin Liu <qxliu@google.com>
+Date:   Wed Jun 12 11:02:48 2019 -0700
+
+    [subset] VORG table to use _subset2 method and new iterator frameworks
+
+ src/hb-ot-vorg-table.hh | 128 ++++++++++++++----------------------------------
+ src/hb-subset.cc        |   2 +-
+ 2 files changed, 39 insertions(+), 91 deletions(-)
+
+commit 8062979990d348671b465c877e4dd672e1337665
+Merge: ad97ec95 c2d7dfc6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Jun 23 11:19:48 2019 +0430
+
+    Merge pull request #1788 from jameshilliard/configure-svg
+    
+    Add missing cairo-svg dependency to test-ot-color
+
+commit c2d7dfc68ffcb389c9f73b5ef94da7b270bdcf9e
+Author: James Hilliard <james.hilliard1@gmail.com>
+Date:   Sat Jun 22 19:38:48 2019 -0600
+
+    Add missing cairo-svg dependency to test-ot-color
+
+ src/test-ot-color.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit ad97ec95019b1e5170d00953d4dfe392cfb4abb0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 21 00:44:29 2019 -0700
+
+    [config/ucd] Add HB_NO_UNICODE_UNASSIGNED and activate in HB_TINY
+    
+    Saves another 12kb:
+    
+    $ python ./gen-ucd-table.py ucd.nounihan.grouped.zip > hb-ucd-table.hh && make -j5 CPPFLAGS='-Os -DHB_TINY' -C ~/hb/build/src/  && size ~/hb/build/src/.libs/libharfbuzz_la-hb-ucd.o
+    INFO: Loading UCDXML...
+    INFO: Preparing data tables...
+    INFO: Generating output...
+    INFO:   Compression=1:
+    INFO:       Dataset=gc       FullCost=18612
+    INFO:       Dataset=ccc      FullCost=3550
+    INFO:       Dataset=bmg      FullCost=1548
+    INFO:       Dataset=sc       FullCost=17765
+    INFO:       Dataset=dm       FullCost=13325
+    INFO:   Compression=3:
+    INFO:       Dataset=gc       FullCost=10726
+    INFO:       Dataset=ccc      FullCost=2389
+    INFO:       Dataset=bmg      FullCost=1052
+    INFO:       Dataset=sc       FullCost=13669
+    INFO:       Dataset=dm       FullCost=7780
+    INFO:   Compression=5:
+    INFO:       Dataset=gc       FullCost=8274
+    INFO:       Dataset=ccc      FullCost=2055
+    INFO:       Dataset=bmg      FullCost=908
+    INFO:       Dataset=sc       FullCost=4073
+    INFO:       Dataset=dm       FullCost=7780
+    INFO: Done.
+    
+    Part of https://github.com/harfbuzz/harfbuzz/issues/1652
+
+ CONFIG.md            |    3 +-
+ src/gen-ucd-table.py |   27 +-
+ src/hb-config.hh     |    1 +
+ src/hb-ucd-table.hh  | 1161 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 1185 insertions(+), 7 deletions(-)
+
+commit ccea7fa119d139b6a3a429b3b81fac8448f3bab1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jun 21 00:42:06 2019 -0700
+
+    [config] Make test build under HB_TINY
+
+ src/test-gpos-size-params.cc | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+commit 12cec6c12ec1856e483097e702126214dd25a34a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Jun 21 22:39:42 2019 +0430
+
+    Don't define hb_blob_create_from_file if HB_NO_OPEN is defined
+
+ src/hb-blob.cc | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+commit 7f3b409e85897ff267f1b6a5ce1b5cdafbfe7afe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jun 20 14:24:43 2019 -0700
+
+    Fix build with -O0
+    
+    message_impl was not defined.  That causes trouble if compiler didn't
+    optimize the unreachable call out...
+
+ src/hb-buffer.cc | 1 -
+ src/hb-buffer.hh | 4 ++++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
 commit 6b44bf85382146b355a5a3cbbfde48166721ce52
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Jun 20 11:57:19 2019 -0700
