@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2019 Free Software Foundation, Inc.
 
-timestamp='2019-05-23'
+timestamp='2019-06-26'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -337,16 +337,13 @@ case $1 in
 				basic_machine=m88k-harris
 				os=sysv3
 				;;
-			hp300)
+			hp300 | hp300hpux)
 				basic_machine=m68k-hp
+				os=hpux
 				;;
 			hp300bsd)
 				basic_machine=m68k-hp
 				os=bsd
-				;;
-			hp300hpux)
-				basic_machine=m68k-hp
-				os=hpux
 				;;
 			hppaosf)
 				basic_machine=hppa1.1-hp
@@ -359,10 +356,6 @@ case $1 in
 			i386mach)
 				basic_machine=i386-mach
 				os=mach
-				;;
-			vsta)
-				basic_machine=i386-pc
-				os=vsta
 				;;
 			isi68 | isi)
 				basic_machine=m68k-isi
@@ -611,6 +604,10 @@ case $1 in
 			vms)
 				basic_machine=vax-dec
 				os=vms
+				;;
+			vsta)
+				basic_machine=i386-pc
+				os=vsta
 				;;
 			vxworks960)
 				basic_machine=i960-wrs
