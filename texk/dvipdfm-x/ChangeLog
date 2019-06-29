@@ -1,3 +1,13 @@
+2019-06-30  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfdev.c: Fix a bug that fake-bold is not handled properly
+	in some situations as reported in
+	https://tug.org/pipermail/dvipdfmx/2019-June/000014.html.
+	When text rendering mode is changed within a text block which
+	is enclosed by q and Q, the change does not affect subsequent
+	text blocks. Current implementation of text handling is not
+	robust so we may need to reconsider it.
+
 2019-06-01  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* unicode.c: Fix a bug that end of buffer check was wrong.
