@@ -200,9 +200,10 @@ EXTRA_DIST += \
 # XeTeX Tests
 #
 xetex_tests = \
+	xetexdir/xetex-filedump.test \
 	xetexdir/xetex-bug73.test \
 	xetexdir/xetex.test
-xetexdir/xetex-bug73.log xetexdir/xetex.log: xetex$(EXEEXT)
+xetexdir/xetex-filedump.log xetexdir/xetex-bug73.log xetexdir/xetex.log: xetex$(EXEEXT)
 
 EXTRA_DIST += $(xetex_tests)
 
@@ -213,3 +214,7 @@ endif XETEX
 ## xetex-bug73.test
 EXTRA_DIST += xetexdir/tests/bug73.log xetexdir/tests/bug73.tex
 DISTCLEANFILES += bug73.fmt bug73.log bug73.out bug73.tex
+
+## xetex-filedump.test
+EXTRA_DIST += xetexdir/tests/filedump.log xetexdir/tests/filedump.tex
+DISTCLEANFILES += filedump.log filedump.out filedump.tex

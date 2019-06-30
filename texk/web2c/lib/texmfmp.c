@@ -3274,7 +3274,8 @@ void getfiledump(integer s, int offset, int length)
     FILE *f;
     int read, i;
 #if defined(XeTeX)
-    char *readbuffer, strbuf[3];
+    unsigned char *readbuffer;
+    char strbuf[3];
     int j, k;
 #else
     poolpointer data_ptr;
@@ -3318,7 +3319,7 @@ void getfiledump(integer s, int offset, int length)
         return;
     }
 #if defined(XeTeX)
-    readbuffer = (char *)xmalloc (length + 1);
+    readbuffer = (unsigned char *)xmalloc (length + 1);
     read = fread(readbuffer, sizeof(char), length, f);
     fclose(f);
     for (j = 0; j < read; j++) {
