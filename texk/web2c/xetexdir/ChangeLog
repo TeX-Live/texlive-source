@@ -1,3 +1,8 @@
+2019-06-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* xetex-filedump.test, filedump.tex, filedump.log: New tests.
+	* am/xetex.am: Adjusted for new test.
+
 2019-05-30  Khaled Hosny  <dr.khaled.hosny@gmail.com>
 
 	* XeTeXLayoutInterface.cpp: Do not use hb-icu if HarfBuzz

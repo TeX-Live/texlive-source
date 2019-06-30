@@ -1,3 +1,10 @@
+2019-06-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* texmfmp.c (getfiledump): Change readbuffer to unsigned char*.
+	Without this change, xetexdir/tests/filedump.tex ends up with
+	"!error: snprintf failed: file ../../../texk/web2c/lib/texmfmp.c"
+	(XeTeX only).
+
 2019-05-14  Akira Kakuto  <kakuto@w32tex.org>
 
 	* texmfmp.c: Support non-ascii file names in special cases
