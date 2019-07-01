@@ -1,3 +1,7 @@
+2019-07-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* texmfmp.c (getcreationdate): Fix a wrong conditional (XeTeX only).
+
 2019-06-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* texmfmp.c (getfiledump): Change readbuffer to unsigned char*.
