@@ -3226,8 +3226,8 @@ void getcreationdate(void)
         strpool[poolptr++] = (uint16_t)start_time_str[i];
 #else
     memcpy(&strpool[poolptr], start_time_str, len);
-#endif
     poolptr += len;
+#endif
 }
 
 void getfilemoddate(integer s)
