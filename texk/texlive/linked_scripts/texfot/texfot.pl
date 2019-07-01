@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.37 2017/07/25 15:06:53 karl Exp $
+# $Id: texfot,v 1.38 2019/06/30 22:59:39 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -8,7 +8,7 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.37 2017/07/25 15:06:53 karl Exp $';
+my $ident = '$Id: texfot,v 1.38 2019/06/30 22:59:39 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -226,12 +226,12 @@ value is that of I<texcmd>.  Examples:
   # Sample basic invocation:
   texfot pdflatex file.tex
   
-  # Ordinarily all output is copied to /tmp/fot before filtering;
-  # that can be omitted:
-  texfot pdflatex --tee=/dev/null file.tex
+  # Ordinarily all output is copied to /tmp/fot before filtering,
+  # but that can be omitted:
+  texfot --tee=/dev/null lualatex file.tex
   
   # Example of more complex engine invocation:
-  texfot lualatex --recorder '\nonstopmode\input file'
+  texfot xelatex --recorder '\nonstopmode\input file'
 
 Aside from its own options, described below, C<texfot> just runs the
 given command with the given arguments (same approach to command line
@@ -279,9 +279,9 @@ Otherwise, if the line matches the list of regexps to show, show it.
 =item 5.
 
 Otherwise, the default: if the line came from stdout, ignore it; if the
-line came from stderr, print it (to stdout).  (This distinction is made
+line came from stderr, print it (to stdout).  This distinction is made
 because TeX engines write relatively few messages to stderr, and it's
-not unlikely that any such should be considered.
+likely that any such should be considered.
 
 It would be easy to add more options to allow for user additions to the
 various regex lists, if that ever seems useful.  Or email me (see end).
@@ -346,7 +346,11 @@ is never entered.  Giving C<--interactive> allows interaction to happen.
 =item C<--no-quiet>
 
 By default, the TeX command being invoked is reported on standard output.
-C<--quiet> omits that reporting.
+C<--quiet> omits that reporting. To get a completely silent run,
+redirect standard output: S<C<texfot ... E<gt>/dev/null>>. (The only
+messages to standard error should be errors from C<texfot> itself, so it
+shouldn't be necessary to redirect that, but of course that can be done
+as well.)
 
 =item C<--stderr>
 
@@ -377,12 +381,12 @@ Display this help and exit successfully.
 =head1 RATIONALE
 
 I wrote this because, in my work as a TUGboat editor
-(L<http://tug.org/TUGboat>, journal submissions always welcome!), I end
-up running and rerunning many papers, many times each.  It was too easy
-to lose warnings I needed to see in the mass of unvarying and
-uninteresting output from TeX, such as style files being read and fonts
-being used.  I wanted to see all and only those messages which needed
-some action by me.
+(L<http://tug.org/TUGboat>, journal submissions always welcome!), I run
+and rerun many documents, many times each. It was too easy to lose
+warnings I needed to see in the mass of unvarying and uninteresting
+output from TeX, such as style files being read and fonts being used. I
+wanted to see all and only those messages which needed some action by
+me.
 
 I found some other programs of a similar nature, the LaTeX package
 C<silence>, and plenty of other (La)TeX wrappers, but it seemed none of
@@ -394,12 +398,10 @@ complicated).  Hence I wrote this.
 
 Here are some keywords if you want to explore other options:
 texloganalyser, pydflatex, logfilter, latexmk, rubber, arara, and
-searching for C<log> at L<http://ctan.org/search>.
+searching for C<log> at L<https://ctan.org/search>.
 
 C<texfot> is written in Perl, and runs on Unix, and does not work on
-Windows.  (If by some chance anyone wants to use this program on
-Windows, please make your own fork; I'm not interested in supporting
-that os.)
+Windows.
 
 The name comes from the C<trip.fot> and C<trap.fot> files that are part
 of Knuth's trip and trap torture tests, which record the online output
@@ -412,6 +414,6 @@ the present S<case :).>
 This script and its documentation were written by Karl Berry and both
 are released to the public domain.  Email C<karl@freefriends.org> with
 bug reports.  It has no home page beyond the package on CTAN:
-L<http://www.ctan.org/pkg/texfot>.
+L<https://ctan.org/pkg/texfot>.
 
 =cut
