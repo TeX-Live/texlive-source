@@ -8,9 +8,15 @@
 #
 # See http://purl.org/nxg/dist/urlbst for documentation
 #
-# $Id$
+# Copyright 2002-03, 2005-12, 2014, 2019, Norman Gray <http://nxg.me.uk>
+#
+# This program is distributed under the terms of the
+# GNU General Public Licence, v2.0.
+# The modifications to the input .bst files are asserted as Copyright 2002-03, 2005-12, 2014, 2019, Norman Gray,
+# and distributed under the terms of the LaTeX Project Public Licence.
+# See the package README for further dicussion of licences.
 
-$version = '0.7';
+$version = '0.8';
 ($progname = $0) =~ s/.*\///;
 $mymarker = "% $progname";
 $mymarkerend = "% ...$progname to here";
@@ -26,7 +32,7 @@ $eprinturl = 'http://arxiv.org/abs/';
 
 $adddoiresolver = 1;
 $literals{doiprefix} = 'doi:';
-$doiurl = 'http://dx.doi.org/';
+$doiurl = 'https://doi.org/';
 
 $addpubmedresolver = 1;
 $literals{pubmedprefix} = 'PMID:';
@@ -195,6 +201,9 @@ open (OUT, ">$outfile") || die "Can't open $outfile to write";
 
 print OUT "%%% Modification of BibTeX style file ", ($infile eq '-' ? '<stdin>' : $infile), "\n";
 print OUT "%%% ... by $progname, version $version (marked with \"$mymarker\")\n%%% See <$myurl>\n";
+print OUT "%%% Modifications Copyright 2002-03, 2005-12, 2014, 2019, Norman Gray,\n";
+print OUT "%%% and distributed under the terms of the LPPL; see README for discussion.\n";
+print OUT "%%%\n";
 print OUT "%%% Added webpage entry type, and url and lastchecked fields.\n";
 print OUT "%%% Added eprint support.\n"   if ($addeprints);
 print OUT "%%% Added DOI support.\n"      if ($adddoiresolver);
@@ -211,6 +220,11 @@ $found{finentry} = 0;
 $found{formatdate} = 0;
 $found{formattitle} = 0;
 $found{newblock} = 0;
+# The following are initialised negative, which Perl treats as true,
+# so the simple test 'if ($found{formateprint}) ...' will be true.
+$found{formateprint} = -1;
+$found{formatdoi} = -1;
+$found{formatpubmed} = -1;
 
 while (<IN>) {
     /^ *%/ && do {
@@ -329,6 +343,24 @@ EOD
 
     /^ *FUNCTION *\{new.block\}/ && do {
         $found{newblock} = 1;
+    };
+
+    /^ *FUNCTION *\{format.doi\}/ && do {
+        #print STDERR "$progname: style file $infile already supports DOIs; urlbst format.doi disabled\n(see generated .bst style: you may need to make edits near \$adddoiresolver)\n";
+        $found{formatdoi} = 1;
+        $adddoiresolver = 0;
+    };
+
+    /^ *FUNCTION *\{format.eprint\}/ && do {
+        #print STDERR "$progname: style file $infile already supports eprints; urlbst format.eprint disabled\n(see generated .bst style: you may need to make edits near \$addeprints)\n";
+        $found{formateprint} = 1;
+        $addeprints = 0;
+    };
+
+    /^ *FUNCTION *\{format.pubmed\}/ && do {
+        #print STDERR "$progname: style file $infile already supports Pubmed; urlbst format.pubmed disabled\n(see generated .bst style: you may need to make edits near \$addpubmedresolver)\n";
+        $found{formatpubmed} = 1;
+        $addpubmedresolver = 0;
     };
 
     /^ *FUNCTION *{output\.nonnull}/ && do {
@@ -585,28 +617,48 @@ FUNCTION {format.url}
    }
   if$
 }
+EOD
 
+    $formateprintfunction = <<'EOD';
 FUNCTION {format.eprint}
 { eprint empty$
     { "" }
     { eprintprefix eprint * eprinturl eprint * make.href }
   if$
 }
+EOD
+    output_replacement_function($found{formateprint},
+                                'format.eprint',
+                                'addeprints',
+                                $formateprintfunction);
 
+    $formatdoifunction = <<'EOD';
 FUNCTION {format.doi}
 { doi empty$
     { "" }
     { doiprefix doi * doiurl doi * make.href }
   if$
 }
+EOD
+    output_replacement_function($found{formatdoi},
+                                'format.doi',
+                                'adddoiresolver',
+                                $formatdoifunction);
 
+    $formatpubmedfunction = <<'EOD';
 FUNCTION {format.pubmed}
 { pubmed empty$
     { "" }
     { pubmedprefix pubmed * pubmedurl pubmed * make.href }
   if$
 }
+EOD
+    output_replacement_function($found{formatpubmed},
+                                'format.pubmed',
+                                'addpubmedresolver',
+                                $formatpubmedfunction);
 
+    print OUT <<'EOD';
 % Output a URL.  We can't use the more normal idiom (something like
 % `format.url output'), because the `inbrackets' within
 % format.lastchecked applies to everything between calls to `output',
@@ -627,8 +679,17 @@ FUNCTION {output.web.refs}
   new.block
   inlinelinks
     'skip$ % links were inline -- don't repeat them
-    {
-      output.url
+    { % If the generated DOI will be the same as the URL,
+      % then don't print the URL (thanks to Joseph Wright for this code,
+      % at http://tex.stackexchange.com/questions/5660)
+      adddoiresolver 
+          doiurl doi empty$ { "X" } { doi } if$ * % DOI URL to be generated
+          url empty$ { "Y" } { url } if$          % the URL, or "Y" if empty
+          =                                       % are the strings equal?
+          and
+        'skip$
+        { output.url }
+      if$
       addeprints eprint empty$ not and
         { format.eprint output.nonnull }
         'skip$
@@ -717,6 +778,30 @@ EOD
     print OUT "$mymarkerend\n\n\n";
 }
 
+
+sub output_replacement_function {
+    my $emit_function = $_[0];
+    my $function_name = $_[1];
+    my $disabling_variable = $_[2];
+    my $function_definition_string = $_[3];
+
+    if ($emit_function > 0) {
+        print OUT <<"EOD";
+%%% The style file $infile already supports $function_name,
+%%% but it might not do so in the same way as urlbst expects.
+%%% I've therefore left $infile 's function unchanged,
+%%% and disabled urlbst's version; proceed with some caution.
+EOD
+
+        print STDERR "$progname: WARNING: style file $infile already includes a $function_name function;\nyou may need to disable the urlbst version by setting \$$disabling_variable to zero.\nYou might want to edit the output file (search for $function_name).\n";
+
+        ($t = $function_definition_string) =~ s/\n/\n%%% /g;
+        print OUT "%%% " . $t . "$mymarker\n";
+    } else {
+        print OUT $function_definition_string;
+    }
+    print OUT "\n";
+}
 
 sub print_missing_functions {
     # We've got to the bit of the file which handles the entry
