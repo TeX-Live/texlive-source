@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 51217 2019-05-24 21:47:41Z karl $
+# $Id: tlmgr.pl 51555 2019-07-04 22:23:27Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 51217 $';
-my $datrev = '$Date: 2019-05-24 23:47:41 +0200 (Fri, 24 May 2019) $';
+my $svnrev = '$Revision: 51555 $';
+my $datrev = '$Date: 2019-07-05 00:23:27 +0200 (Fri, 05 Jul 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -2782,7 +2782,7 @@ sub action_update {
     next if ($pkg =~ m/^00texlive/);
     for my $ep (@excluded_pkgs) {
       if ($pkg eq $ep || $pkg =~ m/^$ep\./) {
-        info("Skipping excluded package $pkg\n");
+        info("$prg: skipping excluded package: $pkg\n");
         next TODO;
       }
     }
@@ -2805,7 +2805,7 @@ sub action_update {
             # $pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag, $lcv, $rcv
             machine_line("-ret", $pkg, $FLAG_FORCIBLE_REMOVED);
         } else {
-          info("skipping forcibly removed package $pkg\n");
+          info("$prg: skipping forcibly removed package: $pkg\n");
         }
         next;
       } elsif ($newpkg_coll) {
@@ -3762,11 +3762,11 @@ sub action_install {
     my $tlp = $remotetlpdb->get_package($pkg);
     my $rctanvers = $tlp->cataloguedata->{'version'};
     if (!defined($tlp)) {
-      info("Unknown package $pkg\n");
+      info("$prg: unknown package: $pkg\n");
       next;
     }
     if (!$tlp->relocated && $opts{"usermode"}) {
-      info("Package $pkg is not relocatable, cannot install it in user mode!\n");
+      info("$prg: package $pkg is not relocatable, cannot install it in user mode!\n");
       next;
     }
     my $lctanvers;
@@ -4835,11 +4835,11 @@ sub action_platform {
     my @todoarchs;
     foreach my $a (@ARGV) {
       if (TeXLive::TLUtils::member($a, @already_installed_arch)) {
-        info("Platform $a is already installed\n");
+        info("$prg: platform already installed: $a\n");
         next;
       }
       if (!TeXLive::TLUtils::member($a, @available_arch)) {
-        info("Platform $a not available; see tlmgr platform list\n");
+        info("$prg: platform `$a' not available; see tlmgr platform list\n");
         next;
       }
       push @todoarchs, $a;
@@ -4897,7 +4897,7 @@ sub action_platform {
         next;
       }
       if ($currentarch eq $a) {
-        info("You are running on platform $a, you cannot remove that one!\n");
+        info("$prg: You are running on platform $a, you cannot remove that one!\n");
         $ret |= $F_WARNING;
         next;
       }
@@ -5238,7 +5238,7 @@ sub action_recreate_tlpdb {
     next unless -d "$Master/bin/$dirent";
     if (-r "$Master/bin/$dirent/kpsewhich" || -r "$Master/bin/$dirent/kpsewhich.exe") {
       push @archs, $dirent;
-      debug("Skipping directory $Master/bin/$dirent, no kpsewhich there\n");
+      debug("$prg: skipping directory $Master/bin/$dirent, no kpsewhich there\n");
     }
   }
   push @deps, "setting_available_architectures:" . join(" ",@archs);
@@ -6135,21 +6135,21 @@ sub action_conf {
                  . "from $fn\n"); 
             $cf->delete_key($key);
           } else {
-            info("$arg $key not defined, cannot remove ($fn)\n");
+            info("$prg: $arg $key not defined, cannot remove ($fn)\n");
             $ret = $F_WARNING;
           }
         } else {
           if (defined($cf->value($key))) {
-            info("$arg $key value: " . $cf->value($key) . " ($fn)\n");
+            info("$prg: $arg $key value: " . $cf->value($key) . " ($fn)\n");
           } else {
-            info("$key not defined in $arg config file ($fn)\n");
+            info("$prg: $key not defined in $arg config file ($fn)\n");
             if ($arg eq "texmf") {
               # not in user-specific file, show anything kpsewhich gives us.
               chomp (my $defval = `kpsewhich -var-value $key`);
               if ($? != 0) {
-                info("$arg $key default value is unknown");
+                info("$prg: $arg $key default value is unknown");
               } else {
-                info("$arg $key default value: $defval");
+                info("$prg: $arg $key default value: $defval");
               }
               info(" (from kpsewhich -var-value)\n");
             }
@@ -6160,7 +6160,7 @@ sub action_conf {
           tlwarn("$arg --delete and value for key $key given, don't know what to do!\n");
           $ret = $F_ERROR;
         } else {
-          info("setting $arg $key to $val (in $fn)\n");
+          info("$prg: setting $arg $key to $val (in $fn)\n");
           $cf->value($key, $val);
         }
       }
@@ -6267,17 +6267,17 @@ sub action_key {
       my ($out, $ret) = 
           TeXLive::TLUtils::run_cmd("$::gpg --primary-keyring repository-keys.gpg --delete-key \"$what\" 2>&1");
       if ($ret == 0) {
-        info("key successfully removed\n");
+        info("$prg: key successfully removed\n");
         return $F_OK;
       } else {
-        tlwarn("key removal failed, output:\n$out\n");
+        tlwarn("$prg: key removal failed, output:\n$out\n");
         return $F_ERROR;
       }
       
     } elsif ($arg eq 'add') {
       my $what = shift @ARGV;
       if (!$what) {
-        tlwarn("missing argument to `key add'\n");
+        tlwarn("$prg: missing argument to `key add'\n");
         return $F_ERROR;
       }
       # we need to make sure that $local_keyring is existent!
@@ -6289,18 +6289,18 @@ sub action_key {
       my ($out, $ret) = 
           TeXLive::TLUtils::run_cmd("$::gpg --primary-keyring repository-keys.gpg  --import \"$what\" 2>&1");
       if ($ret == 0) {
-        info("key successfully imported\n");
+        info("$prg: key successfully imported\n");
         return $F_OK;
       } else {
-        tlwarn("key import failed, output:\n$out\n");
+        tlwarn("$prg: key import failed, output:\n$out\n");
         return $F_ERROR;
       }
     } else {
-      tldie("should not be reached: tlmgr key $arg\n");
+      tldie("$prg: should not be reached: tlmgr key $arg\n");
     }
     
   } else {
-    tlwarn("unknown directive `$arg' to action `key'\n");
+    tlwarn("$prg: unknown directive `$arg' to action `key'\n");
     return $F_ERROR;
   }
   return $F_OK;
@@ -9848,7 +9848,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 51217 2019-05-24 21:47:41Z karl $
+$Id: tlmgr.pl 51555 2019-07-04 22:23:27Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
