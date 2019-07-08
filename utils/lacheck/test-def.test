@@ -1,0 +1,14 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2019 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+testname=test-def
+input=$testname.tex
+./lacheck $srcdir/$input \
+| sed -e "s!$srcdir/$input!./$input!g" >$testname.out || exit 1
+
+diff $srcdir/$testname.xout $testname.out || exit 1
+

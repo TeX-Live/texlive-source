@@ -1,3 +1,12 @@
+2019-07-08  Karl Berry  <karl@freefriends.org>
+
+	* lacheck.l: separate patterns for handling \def and \newcommand.
+	Report from Zayd Hammoudeh,
+	https://tug.org/pipermail/tex-live/2019-January/043083.html.
+	* test-def.test,
+	* test-def.tex: new test.
+	* Makefile.am (TESTS, EXTRA_DIST, CLEANFILES): run/clean the test.
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* lacheck.test: LC_ALL=LANGUAGE=C.
