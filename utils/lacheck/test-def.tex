@@ -1,0 +1,47 @@
+% $Id$
+% This file is public domain.
+
+\documentclass{report}
+\newcommand{\defaultleftmargin}{0.25in}
+\setlength{\oddsidemargin}{\defaultleftmargin}
+\providecommand{\defaultmargin}{0.25in}\def\defx{\defy}
+\begin{document}
+\end{document}
+ 
+% BTW, to remake in the build directory even though maintainer mode is
+% enabled (where $xu is the texk/utils source directory):
+% cd Work/utils/lacheck && make am__skiplex= all \
+% && ./lacheck $xu/lacheck/test-def.tex # or make check, etc.
+
+% [https://tug.org/pipermail/tex-live/2019-January/043083.html]
+% 
+% Date: Thu, 24 Jan 2019 19:11:18 -0800
+% From: Zayd Hammoudeh <hammoudeh@gmail.com>
+% To: <tex-live@tug.org>
+% Subject: [tex-live] Possible lacheck Bug Report
+% 
+% [...]
+% 
+% In the simple LaTeX file:
+% \documentclass{report}
+%  
+% \newcommand{\defaultleftmargin}{0.25in}
+%  
+% \begin{document}
+% \end{document}
+%  
+% I get the following errors with lacheck:
+% "hw01.tex", line 5: <- unmatched "end of file hw01.tex"
+% "hw01.tex", line 2: -> unmatched "{"
+% 
+% This is reported by Vim's syntastic running lacheck ver. $Id:
+% lacheck.lex,v 1.26 1998/03/07 07:46:45 abraham Exp $ on MacOS High
+% Sierra. The issue only seems to arise when \newcommand is followed by
+% {\def*} (where * is zero or more other characters). Removal of the curly
+% brackets around \def* or any term other than def causes the issue to go away.
+% 
+% [...]
+% 
+% Edit: The issue appears to not be limited to newcommand. I get the same
+% error for the line:
+% \setlength{\oddsidemargin}{\defaultleftmargin} 

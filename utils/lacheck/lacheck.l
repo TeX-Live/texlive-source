@@ -1,9 +1,10 @@
-/*                    -*- Mode: C -*-
+/* $Id$
  * 
  * lacheck.lex - A consistency checker checker for LaTeX documents
  *	
  * Copyright (C) 1991, 1992 Kresten Krab Thorup.
  * Copyright (C) 1993 --- 1998 Per Abrahamsen.
+ * Copyright (C) 2019 Karl Berry.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +17,19 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Please send bugs, suggestions, and queries to auc-tex_mgr@sunsite.auc.dk.
  * 
- * $Revision: 1.26 $
+ * original Revision: 1.26 $
  * Author          : Kresten Krab Thorup
  * Created On      : Sun May 26 18:11:58 1991
  * 
  * HISTORY
+ * 08-Jul-2019          Karl Berry
+ *    Separate patterns for \def vs. \newcommand. Report from Zayd Hammoudeh,
+ *    https://tug.org/pipermail/tex-live/2019-January/043083.html.
+ *    Update version number, contact info.
  * 07-Mar-1998		Per Abrahamsen
  *    Added return to yywrap.  Patch by Fabrice POPINEAU 
  *    <popineau@esemetz.ese-metz.fr>.
@@ -371,7 +375,26 @@ symbol ("$"("\\"{atoz}+|.)"$"|"\\#"|"\\$"|"\\%"|"\\ref")
     BEGIN(INITIAL); 
   }}
 
-"\\"[exg]?(def|newcommand)[^\n\{]+ 	BEGIN(DEF);
+  /* \def can be followed by whitespace, then the \ to start the control
+     sequence, then more or less anything up to the { starting the
+     replacement text, which we assume is on the same line. (All this
+     could be changed in TeX, with catcodes etc., but we can't try to
+     handle that.) */
+"\\"[exg]?def[ \t\n]*"\\"[^\n{]+\{	BEGIN(DEF);
+
+  /* \newcommand{\foo}{...} or \newcommand\foo{...}
+       (or \renewcommand or \providecommand).
+     To allow for arbitrary control sequence names, we match
+       the braced name as anything not containing a }.
+     To handle optional argument specifications, we assume the { is on
+       the same line as the csname.
+     We don't do anything with the definitions; the only purpose is to
+       count braces. */
+"\\"(provide|(re)?newcommand)[ \t\n]*(\{\\[^}]+\}|\\)[^{]*\{	BEGIN(DEF);
+
+  /* Pre-2019 rule was (see test-def.tex):
+     "\\"[exg]?(def|newcommand)[^\n\{]+ 	BEGIN(DEF);
+  */
 
 <DEF>{b_group} { ++def_count; }
 
@@ -794,15 +817,19 @@ int main(int argc, char *argv[])
 		     f_checkend(file_name);
 		 }
 		 else
-		     fprintf(stderr,
-			     "%s: Could not open : %s\n",PROGNAME, argv[1]);
+		 {
+		     fprintf(stderr, "%s: Could not open ",PROGNAME);
+		     perror(argv[1]);
+		     exit(1);
+		 }
 	     }
+        /* printf("%s checked.\n", argv[1]); */
     }
     else
     {
 	printf("\n* %s *\n\n",PROGNAME);
 	printf("\t...a consistency checker for LaTeX documents.\n");
-	printf("$Id: lacheck.lex,v 1.26 1998/03/07 07:46:45 abraham Exp $\n\n");
+	printf("$Id$\n\n");
 
 	printf("Usage:\n\tlacheck filename[.tex] <return>\n\n\n");
 
@@ -1091,4 +1118,3 @@ void linecount(void)
     if(yytext[i] == '\n')
       line_count++;
 }
-
