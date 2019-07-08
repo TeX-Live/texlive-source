@@ -18600,7 +18600,7 @@ fi
 
 # Include additional code for web2c.
 
-# $Id: web2c.ac 50341M 2019-07-07 22:53:58Z (local) $
+# $Id: web2c.ac 51577 2019-07-08 06:07:11Z lscarso $
 # texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options for TeX and MF
 
