@@ -1,10 +1,13 @@
 2019-03-06  Luigi Scarso  <luigi.scarso@gmail.com>
-        * Code clean-up.
+	* Code clean-up.
+
+
+2019-02-06: Taco Hoekwater <taco@elvenkind.com>
+	* New primitive void: convert a suffix to a boolean. Work in progress.
 
 
 2019-01-28  Andreas Scherer  <https://ascherer.github.io>
 	* mpost.w: TeXnical nitpicking.
-
 
 2019-01-26  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Fixed bisection algorithm (overflow of number of bisections in decimal mode with  low precision)

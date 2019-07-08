@@ -2975,6 +2975,7 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
             size_t l = (last_cid / 8) + 1;
             char *stream = xmalloc(l);
             memset(stream, 0, l);
+            stream[0] |= 1 << 7; /*tex Force |.notdef| into the map. */
             for (cid = 1; cid <= (long) last_cid; cid++) {
                 if (CIDToGIDMap[2 * cid] || CIDToGIDMap[2 * cid + 1]) {
                     stream[(cid / 8)] |= (1 << (7 - (cid % 8)));

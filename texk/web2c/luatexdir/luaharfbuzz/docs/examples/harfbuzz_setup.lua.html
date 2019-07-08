@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>luaharfbuzz Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>luaharfbuzz</h1>
+
+
+
+
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/core_types.lua.html">core_types.lua</a></li>
+  <li><a href="../examples/custom_callbacks.lua.html">custom_callbacks.lua</a></li>
+  <li><strong>harfbuzz_setup.lua</strong></li>
+  <li><a href="../examples/ot_font_loader.lua.html">ot_font_loader.lua</a></li>
+  <li><a href="../examples/package_path_searcher.lua.html">package_path_searcher.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../index.html">harfbuzz</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>harfbuzz_setup.lua</h2>
+<pre>
+<span class="comment">-- Allow external Lua modules to be loaded.
+</span><span class="global">dofile</span> <span class="string">'package_path_searcher.lua'</span>
+
+<span class="comment">-- Attach a OpenType font loader to define_font callback.
+</span><span class="global">require</span> <span class="string">'ot_font_loader'</span>
+
+<span class="comment">-- Disable some callbacks, and attach debug logging to others.
+</span><span class="global">require</span> <span class="string">'custom_callbacks'</span>
+
+<span class="comment">-- List all callbacks
+</span><span class="keyword">local</span> serpent = <span class="global">require</span> <span class="string">'serpent'</span>
+texio.write_nl(serpent.block(callback.list()))
+
+<span class="comment">-- Load luaharfbuzz
+</span><span class="keyword">local</span> harfbuzz = <span class="global">require</span> <span class="string">'harfbuzz'</span>
+
+<span class="keyword">local</span> lt_to_hb_dir = { TLT = <span class="string">"ltr"</span>, TRT = <span class="string">"rtl"</span> }
+<span class="comment">-- local hb_to_lt_dir = { ltr = "TLT", rtl = "TRT" }
+</span>
+<span class="keyword">local</span> <span class="keyword">function</span> upem_to_sp(v,font)
+  <span class="keyword">return</span> <span class="global">math</span>.floor(v / font.units_per_em * font.size)
+<span class="keyword">end</span>
+
+<span class="comment">-- Print the contents of a nodelist.
+</span><span class="comment">-- Glyph nodes are printed as UTF-8 characters, while other nodes are printed
+</span><span class="comment">-- by calling node.type on it, along with the subtype of the node.
+</span><span class="keyword">local</span> <span class="keyword">function</span> show_nodes (head, raw)
+  <span class="keyword">local</span> nodes = <span class="string">''</span>
+  <span class="keyword">for</span> item <span class="keyword">in</span> node.traverse(head) <span class="keyword">do</span>
+    <span class="keyword">local</span> i = item.id
+    <span class="keyword">if</span> i == node.id(<span class="string">"glyph"</span>) <span class="keyword">then</span>
+      <span class="keyword">if</span> raw <span class="keyword">then</span> i = <span class="global">string</span>.format(<span class="string">'&lt;glyph %d&gt;'</span>, item.char) <span class="keyword">else</span> i = unicode.utf8.char(item.char) <span class="keyword">end</span>
+    <span class="keyword">else</span>
+      i = <span class="global">string</span>.format(<span class="string">'&lt;%s%s&gt;'</span>, node.<span class="global">type</span>(i), ( item.subtype <span class="keyword">and</span> (<span class="string">"("</span>.. item.subtype .. <span class="string">")"</span>) <span class="keyword">or</span> <span class="string">''</span>))
+    <span class="keyword">end</span>
+    nodes = nodes .. i .. <span class="string">' '</span>
+  <span class="keyword">end</span>
+  texio.write_nl(nodes)
+  <span class="keyword">return</span> <span class="keyword">true</span>
+<span class="keyword">end</span>
+
+<span class="comment">-- Process a paragraph nodelist and shape it with Harfbuzz.
+</span><span class="comment">-- Only works for the most simple paragraphs. Check the assertions in the code
+</span><span class="comment">-- to understand what kind of nodes the shaping routine is expecting at
+</span><span class="comment">-- any point.
+</span><span class="keyword">local</span> <span class="keyword">function</span> process_nodes(head)
+  <span class="comment">-- Pointer to traverse head nodelist
+</span>  <span class="keyword">local</span> head_slider = head
+
+  <span class="comment">-- First node is a local_par
+</span>  <span class="global">assert</span>(head_slider.id == node.id(<span class="string">"local_par"</span>), <span class="string">"local_par expected"</span>)
+
+  <span class="comment">-- Get direction
+</span>  <span class="keyword">local</span> dir = head_slider.dir
+  texio.write_nl(<span class="string">"direction is: "</span>..dir)
+
+
+  <span class="comment">-- Second node is indentation
+</span>  head_slider = head_slider.<span class="global">next</span>
+  <span class="global">assert</span>(head_slider.id == node.id(<span class="string">"hlist"</span>) <span class="keyword">and</span> head_slider.subtype == <span class="number">3</span>, <span class="string">"parindent hlist expected"</span>)
+
+  <span class="comment">-- Check if font can be shaped by Harfbuzz
+</span>  <span class="keyword">local</span> fontid = head_slider.<span class="global">next</span>.font
+  texio.write_nl(<span class="string">"fontid is "</span>..fontid)
+  <span class="keyword">local</span> font = font.getfont(fontid)
+  <span class="keyword">if</span> <span class="keyword">not</span> font.harfbuzz <span class="keyword">then</span> <span class="keyword">return</span> head <span class="keyword">end</span>
+  texio.write_nl(<span class="string">"paragraph can be shaped by Harfbuzz"</span>)
+
+  <span class="comment">-- Initialise new head
+</span>  <span class="keyword">local</span> new_head = node.copy_list(head, head_slider.<span class="global">next</span>)
+  <span class="global">assert</span>(node.length(new_head) == <span class="number">2</span>, <span class="string">"expected two nodes in new_head"</span>)
+
+  <span class="comment">-- Pointer to traverse new heade nodelist
+</span>  <span class="keyword">local</span> new_head_slider = node.slide(new_head)
+
+  <span class="comment">-- Build text
+</span>  <span class="keyword">local</span> codepoints = { }
+  <span class="keyword">while</span> head_slider.<span class="global">next</span>.id ~= node.id(<span class="string">"penalty"</span>) <span class="keyword">do</span>
+    head_slider = head_slider.<span class="global">next</span>
+    <span class="keyword">if</span> head_slider.id == node.id(<span class="string">"glyph"</span>) <span class="keyword">then</span>
+      <span class="global">table</span>.insert(codepoints, head_slider.char)
+    <span class="keyword">elseif</span> head_slider.id == node.id(<span class="string">"glue"</span>) <span class="keyword">and</span> head_slider.subtype == <span class="number">13</span> <span class="keyword">then</span>
+      <span class="global">table</span>.insert(codepoints, <span class="number">0x20</span>)
+    <span class="keyword">else</span>
+      <span class="global">error</span>(<span class="global">string</span>.format(<span class="string">"Cant handle node of type %s, subtype %s"</span>, node.<span class="global">type</span>(head_slider.id), <span class="global">tostring</span>(head_slider.subtype)))
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+
+  <span class="comment">-- Initialise new tail at the last penalty node.
+</span>  <span class="keyword">local</span> new_tail = head_slider.<span class="global">next</span>
+
+  <span class="comment">-- Skip over penalty node
+</span>  head_slider = head_slider.<span class="global">next</span>.<span class="global">next</span>
+
+  <span class="comment">-- Last node is a \parfillskip
+</span>  <span class="global">assert</span>(head_slider.id == node.id(<span class="string">"glue"</span>) <span class="keyword">and</span> head_slider.subtype == <span class="number">15</span>, <span class="string">"\\parfillskip expected"</span>)
+  <span class="global">assert</span>(<span class="keyword">not</span> head_slider.<span class="global">next</span>, <span class="string">"Expected this to be the last node."</span>)
+
+  <span class="comment">-- Shape text
+</span>  <span class="keyword">local</span> buf = harfbuzz.Buffer.new()
+  buf:set_cluster_level(harfbuzz.Buffer.HB_BUFFER_CLUSTER_LEVEL_CHARACTERS)
+  buf:add_codepoints(codepoints)
+  harfbuzz.shape(font.harfbuzz.font,buf, { direction = lt_to_hb_dir[dir] })
+
+  <span class="comment">-- Create new nodes from shaped text
+</span>  <span class="keyword">if</span> dir == <span class="string">'TRT'</span> <span class="keyword">then</span> buf:reverse() <span class="keyword">end</span>
+  <span class="keyword">local</span> glyphs = buf:get_glyph_infos_and_positions()
+
+  <span class="keyword">for</span> _, v <span class="keyword">in</span> <span class="global">ipairs</span>(glyphs) <span class="keyword">do</span>
+    <span class="keyword">local</span> n,k <span class="comment">-- Node and (optional) Kerning
+</span>    <span class="keyword">local</span> char = font.backmap[v.codepoint]
+    <span class="keyword">if</span> codepoints[v.cluster+<span class="number">1</span>] == <span class="number">0x20</span> <span class="keyword">then</span>
+      <span class="global">assert</span>(char == <span class="number">0x20</span> <span class="keyword">or</span> char == <span class="number">0xa0</span>, <span class="string">"Expected char to be 0x20 or 0xa0"</span>)
+      n = node.new(<span class="string">"glue"</span>)
+      n.subtype = <span class="number">0</span>
+      n.width = font.parameters.space
+      n.stretch = font.parameters.space_stretch
+      n.shrink = font.parameters.space_shrink
+      new_head_slider.<span class="global">next</span> = n
+    <span class="keyword">else</span>
+      <span class="comment">-- Create glyph node
+</span>      n = node.new(<span class="string">"glyph"</span>)
+      n.font = fontid
+      n.char = char
+      n.subtype = <span class="number">1</span>
+
+      <span class="comment">-- Set offsets from Harfbuzz data
+</span>      n.yoffset = upem_to_sp(v.y_offset, font)
+      n.xoffset = upem_to_sp(v.x_offset, font)
+      <span class="keyword">if</span> dir == <span class="string">'TRT'</span> <span class="keyword">then</span> n.xoffset = n.xoffset * -<span class="number">1</span> <span class="keyword">end</span>
+
+      <span class="comment">-- Adjust kerning if Harfbuzz’s x_advance does not match glyph width
+</span>      <span class="keyword">local</span> x_advance = upem_to_sp(v.x_advance, font)
+      <span class="keyword">if</span>  <span class="global">math</span>.abs(x_advance - n.width) &gt; <span class="number">1</span> <span class="keyword">then</span> <span class="comment">-- needs kerning
+</span>        k = node.new(<span class="string">"kern"</span>)
+        k.kern = (x_advance - n.width)
+      <span class="keyword">end</span>
+
+      <span class="comment">-- Insert glyph node into new list,
+</span>      <span class="comment">-- adjusting for direction and kerning.
+</span>      <span class="keyword">if</span> k <span class="keyword">then</span>
+        <span class="keyword">if</span> dir == <span class="string">'TRT'</span> <span class="keyword">then</span> <span class="comment">-- kerning goes before glyph
+</span>          k.<span class="global">next</span> = n
+          new_head_slider.<span class="global">next</span> = k
+        <span class="keyword">else</span> <span class="comment">-- kerning goes after glyph
+</span>          n.<span class="global">next</span> = k
+          new_head_slider.<span class="global">next</span> = n
+        <span class="keyword">end</span>
+      <span class="keyword">else</span> <span class="comment">-- no kerning
+</span>        new_head_slider.<span class="global">next</span> = n
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    new_head_slider = node.slide(new_head_slider)
+  <span class="keyword">end</span>
+
+  new_head_slider.<span class="global">next</span> = new_tail
+  texio.write_nl(<span class="string">"No. of nodes after shaping: "</span>..node.length(new_head))
+  show_nodes(new_head, <span class="keyword">true</span>)
+  <span class="keyword">return</span> new_head
+<span class="keyword">end</span>
+
+<span class="comment">-- Callback function
+</span><span class="keyword">local</span> <span class="keyword">function</span> show_and_process_nodes(head)
+  texio.write_nl(<span class="string">"No. of nodes: "</span>..node.length(head))
+  show_nodes(head)
+  <span class="keyword">return</span> process_nodes(head)
+<span class="keyword">end</span>
+
+<span class="comment">-- Register shaping callback
+</span>callback.register(<span class="string">"pre_linebreak_filter"</span>, show_and_process_nodes)</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.5</a></i>
+<i style="float:right;">Last updated 2016-08-31 21:59:58 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

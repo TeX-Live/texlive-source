@@ -1,0 +1,9 @@
+project = 'luaharfbuzz'
+description = 'Lua bindings to Harfbuzz'
+full_description = 'The documentation is available on the @{https://github.com/deepakjois/luaharfbuzz/wiki|wiki}'
+use_markdown_titles = true
+backtick_references = false
+title = 'luaharfbuzz Documentation'
+file = 'src/harfbuzz.luadoc'
+examples = 'examples'
+format = 'markdown'

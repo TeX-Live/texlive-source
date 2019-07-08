@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>luaharfbuzz Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>luaharfbuzz</h1>
+
+
+
+
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/core_types.lua.html">core_types.lua</a></li>
+  <li><a href="../examples/custom_callbacks.lua.html">custom_callbacks.lua</a></li>
+  <li><a href="../examples/harfbuzz_setup.lua.html">harfbuzz_setup.lua</a></li>
+  <li><strong>ot_font_loader.lua</strong></li>
+  <li><a href="../examples/package_path_searcher.lua.html">package_path_searcher.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../index.html">harfbuzz</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>ot_font_loader.lua</h2>
+<pre>
+<span class="keyword">local</span> harfbuzz = <span class="global">require</span>(<span class="string">'harfbuzz'</span>)
+
+<span class="comment">-- Load OpenType font.
+</span><span class="comment">-- https://tug.org/TUGboat/tb33-1/tb103isambert.pdf
+</span><span class="keyword">local</span> <span class="keyword">function</span> read_font (name, size, fontid)
+  <span class="keyword">if</span> size &lt; <span class="number">0</span> <span class="keyword">then</span>
+    size = size * tex.sp(<span class="string">"10pt"</span>) / -<span class="number">1000</span>
+  <span class="keyword">end</span>
+
+  <span class="comment">-- Load file using fontloader.open
+</span>  <span class="keyword">local</span> f = fontloader.open (name)
+  <span class="keyword">local</span> fonttable = fontloader.to_table(f)
+  fontloader.close(f)
+
+  <span class="keyword">local</span> metrics = {
+    name = fonttable.fontname,
+    fullname = fonttable.fontname..fontid,
+    psname = fonttable.fontname,
+    <span class="global">type</span> = <span class="string">"real"</span>,
+    filename = name,
+    format = <span class="global">string</span>.match(<span class="global">string</span>.lower(name), <span class="string">"otf$"</span>) <span class="keyword">and</span> <span class="string">"opentype"</span> <span class="keyword">or</span> <span class="global">string</span>.match(<span class="global">string</span>.lower(name), <span class="string">"ttf$"</span>) <span class="keyword">and</span> <span class="string">"truetype"</span>,
+    embedding = <span class="string">'subset'</span>,
+    size = size,
+    designsize = fonttable.design_size*<span class="number">6553.6</span>,
+    cidinfo = fonttable.cidinfo,
+    units_per_em = fonttable.units_per_em
+  }
+
+  <span class="comment">-- Scaling for font metrics
+</span>  <span class="keyword">local</span> mag = size / fonttable.units_per_em
+
+  <span class="comment">-- Find glyph for 0x20, and get width for spacing glue.
+</span>  <span class="keyword">local</span> space_glyph = fonttable.map.map[<span class="number">0x20</span>]
+  <span class="keyword">local</span> space_glyph_table = fonttable.glyphs[space_glyph]
+  <span class="keyword">local</span> space_glyph_width = space_glyph_table.width * mag
+
+  metrics.parameters = {
+    slant = <span class="number">0</span>,
+    space = space_glyph_width,
+    space_stretch = <span class="number">1.5</span> * space_glyph_width,
+    space_shrink = <span class="number">0.5</span> * space_glyph_width,
+    x_height = fonttable.pfminfo.os2_xheight * mag,
+    quad = <span class="number">1.0</span> * size,
+    extra_space = <span class="number">0</span>
+  }
+
+  <span class="comment">-- Save backmap in TeX font, so we can get char code from glyph index
+</span>  <span class="comment">-- obtainded from Harfbuzz
+</span>  metrics.backmap = fonttable.map.backmap
+
+  metrics.characters = { }
+  <span class="keyword">for</span> char, glyph <span class="keyword">in</span> <span class="global">pairs</span>(fonttable.map.map) <span class="keyword">do</span>
+    <span class="keyword">local</span> glyph_table = fonttable.glyphs[glyph]
+    metrics.characters[char] = {
+      index = glyph,
+      width = glyph_table.width * mag,
+      name = glyph_table.name,
+    }
+    <span class="keyword">if</span> glyph_table.boundingbox[<span class="number">4</span>] <span class="keyword">then</span>
+      metrics.characters[char].height = glyph_table.boundingbox[<span class="number">4</span>] * mag
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> glyph_table.boundingbox[<span class="number">2</span>] <span class="keyword">then</span>
+      metrics.characters[char].depth = -glyph_table.boundingbox[<span class="number">2</span>] * mag
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+
+  <span class="comment">-- Store Harfbuzz data in the font to retrieve it in the shaping routine.
+</span>  <span class="keyword">local</span> face = harfbuzz.Face.new(name)
+  metrics.harfbuzz = {
+    face = face,
+    font = harfbuzz.Font.new(face)
+  }
+
+  <span class="keyword">return</span> metrics
+<span class="keyword">end</span>
+
+<span class="comment">-- Register OpenType font loader in define_font callback.
+</span>callback.register(<span class="string">'define_font'</span>, read_font, <span class="string">"font loader"</span>)</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.5</a></i>
+<i style="float:right;">Last updated 2016-08-31 21:59:58 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

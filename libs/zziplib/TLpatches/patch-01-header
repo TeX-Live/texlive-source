@@ -1,0 +1,11 @@
+diff -ur lib.h.orig lib.h 
+--- lib.h.orig	2018-06-26 21:16:01.758253475 +0200
++++ lib.h	2018-06-26 21:16:15.786252900 +0200
+@@ -16,6 +16,7 @@
+ #include <zzip/zzip.h>
+ #include <zzip/plugin.h>
+ #include <zzip/stdint.h>
++#include <zzip/zzip32.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {

@@ -1,0 +1,77 @@
+## texk/web2c/luatexdir/am/luaharfbuzz.am: Makefile fragment for luaharfbuzz.
+##
+## Copyright (C) 2019 Khaled Hosny
+## You may freely use, modify and/or distribute this file.
+
+## luaharfbuzz
+##
+EXTRA_LIBRARIES += libluaharfbuzz.a libluajitharfbuzz.a
+
+libluaharfbuzz_a_DEPENDENCIES = $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND)
+libluajitharfbuzz_a_DEPENDENCIES = $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND)
+
+$(libluaharfbuzz_a_OBJECTS): $(LUA_DEPEND)
+$(libluajitharfbuzz_a_OBJECTS): $(LUAJIT_DEPEND)
+
+
+libluaharfbuzz_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) $(HARFBUZZ_INCLUDES) $(GRAPHITE2_INCLUDES)
+libluajitharfbuzz_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) $(HARFBUZZ_INCLUDES) $(GRAPHITE2_INCLUDES)
+libluajitharfbuzz_a_CPPFLAGS += -DLuajitTeX
+
+libluaharfbuzz_a_CFLAGS = # $(WARNING_CFLAGS)
+libluajitharfbuzz_a_CFLAGS = # $(WARNING_CFLAGS)
+
+libluaharfbuzz_a_SOURCES = \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/blob.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/buffer.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/class_utils.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/direction.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/face.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/feature.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/font.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/language.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/luaharfbuzz.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/luaharfbuzz.h \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/ot.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/script.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/tag.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/unicode.c
+
+libluajitharfbuzz_a_SOURCES = $(libluaharfbuzz_a_SOURCES)
+
+## Not used
+##
+EXTRA_DIST += \
+	luatexdir/luaharfbuzz/docs/examples/core_types.lua.html \
+	luatexdir/luaharfbuzz/docs/examples/custom_callbacks.lua.html \
+	luatexdir/luaharfbuzz/docs/examples/harfbuzz_setup.lua.html \
+	luatexdir/luaharfbuzz/docs/examples/ot_font_loader.lua.html \
+	luatexdir/luaharfbuzz/docs/examples/package_path_searcher.lua.html \
+	luatexdir/luaharfbuzz/docs/index.html \
+	luatexdir/luaharfbuzz/docs/ldoc.css \
+	luatexdir/luaharfbuzz/examples/core_types.lua \
+	luatexdir/luaharfbuzz/fixtures/amiri-regular_123.json \
+	luatexdir/luaharfbuzz/fixtures/amiri-regular_123_numr.json \
+	luatexdir/luaharfbuzz/fixtures/AppleGothic_korean_issue_22.json \
+	luatexdir/luaharfbuzz/fixtures/notonastaliq_U06CC_U06C1.json \
+	luatexdir/luaharfbuzz/fonts/amiri-regular.ttf \
+	luatexdir/luaharfbuzz/fonts/notonastaliq.ttf \
+	luatexdir/luaharfbuzz/fonts/Rajdhani-Regular.ttf \
+	luatexdir/luaharfbuzz/scripts/generate_harfbuzz_api_list.sh \
+	luatexdir/luaharfbuzz/scripts/generate_hb_shape_json.sh \
+	luatexdir/luaharfbuzz/spec/buffer_spec.lua \
+	luatexdir/luaharfbuzz/spec/harfbuzz_spec.lua \
+	luatexdir/luaharfbuzz/spec/shaping_spec.lua \
+	luatexdir/luaharfbuzz/src/harfbuzz.lua \
+	luatexdir/luaharfbuzz/src/harfbuzz.luadoc \
+	luatexdir/luaharfbuzz/status/done.txt \
+	luatexdir/luaharfbuzz/status/full_api.txt \
+	luatexdir/luaharfbuzz/config.ld \
+	luatexdir/luaharfbuzz/LICENSE \
+	luatexdir/luaharfbuzz/luaharfbuzz-1.0.0-1.rockspec \
+	luatexdir/luaharfbuzz/luaharfbuzz-scm-1.rockspec \
+	luatexdir/luaharfbuzz/Makefile \
+	luatexdir/luaharfbuzz/README.md \
+	luatexdir/luaharfbuzz/README-win.md \
+	luatexdir/luaharfbuzz/THANKS
+

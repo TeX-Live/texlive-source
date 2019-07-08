@@ -1,3 +1,7 @@
+2019-07-06 Luigi Scarso <luigi.scarso@gmail.com>
+	* Integration of harfbuzz. 
+	* Splitting of exe into *hbtex variants.
+
 2019-02-19 Luigi Scarso <luigi.scarso@gmail.com>
 	* am/luatex.am ([un]install-lua[jit]tex-links) [MINGW32]:
 	different commands for mingw.
