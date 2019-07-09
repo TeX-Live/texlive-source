@@ -1996,7 +1996,7 @@ goto find_rule; \
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "../../../utils/lacheck/lacheck.l"
-/* $Id$
+/* $Id: lacheck.l 51585 2019-07-08 22:23:38Z karl $
  * 
  * lacheck.lex - A consistency checker checker for LaTeX documents
  *	
@@ -2017,8 +2017,6 @@ char *yytext;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Please send bugs, suggestions, and queries to auc-tex_mgr@sunsite.auc.dk.
- * 
  * original Revision: 1.26 $
  * Author          : Kresten Krab Thorup
  * Created On      : Sun May 26 18:11:58 1991
@@ -2027,7 +2025,7 @@ char *yytext;
  * 08-Jul-2019          Karl Berry
  *    Separate patterns for \def vs. \newcommand. Report from Zayd Hammoudeh,
  *    https://tug.org/pipermail/tex-live/2019-January/043083.html.
- *    Update version number, contact info.
+ *    Update version number (now 1.29), contact info.
  * 07-Mar-1998		Per Abrahamsen
  *    Added return to yywrap.  Patch by Fabrice POPINEAU 
  *    <popineau@esemetz.ese-metz.fr>.
@@ -2114,7 +2112,7 @@ char *yytext;
  * 26-May-1991  Kresten Krab Thorup
  *    Initial distribution version.
  */
-#line 123 "../../../utils/lacheck/lacheck.l"
+#line 121 "../../../utils/lacheck/lacheck.l"
 
 #include <stdio.h>
 #include <string.h>
@@ -2187,7 +2185,7 @@ int def_count = 0;
 
 
 
-#line 2191 "../../../utils/lacheck/lacheck.c"
+#line 2189 "../../../utils/lacheck/lacheck.c"
 
 #define INITIAL 0
 #define B_ENVIRONMENT 1
@@ -2426,10 +2424,10 @@ YY_DECL
 		}
 
 	{
-#line 238 "../../../utils/lacheck/lacheck.l"
+#line 236 "../../../utils/lacheck/lacheck.l"
 
 
-#line 2433 "../../../utils/lacheck/lacheck.c"
+#line 2431 "../../../utils/lacheck/lacheck.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -2512,45 +2510,45 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 240 "../../../utils/lacheck/lacheck.l"
+#line 238 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 242 "../../../utils/lacheck/lacheck.l"
+#line 240 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 244 "../../../utils/lacheck/lacheck.l"
+#line 242 "../../../utils/lacheck/lacheck.l"
 { line_count++; }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 246 "../../../utils/lacheck/lacheck.l"
+#line 244 "../../../utils/lacheck/lacheck.l"
 { line_count++; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 248 "../../../utils/lacheck/lacheck.l"
+#line 246 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 250 "../../../utils/lacheck/lacheck.l"
+#line 248 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 252 "../../../utils/lacheck/lacheck.l"
+#line 250 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 254 "../../../utils/lacheck/lacheck.l"
+#line 252 "../../../utils/lacheck/lacheck.l"
 {  
   if (CG_TYPE != 4 && CG_TYPE != 5) {
     if (!(CG_TYPE == 2 && strstr(CG_NAME, "array"))) {
@@ -2565,12 +2563,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 266 "../../../utils/lacheck/lacheck.l"
+#line 264 "../../../utils/lacheck/lacheck.l"
 {  push( "{", 0, line_count);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 268 "../../../utils/lacheck/lacheck.l"
+#line 266 "../../../utils/lacheck/lacheck.l"
 {  
   {
     int italic = CG_ITALIC;
@@ -2583,12 +2581,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 278 "../../../utils/lacheck/lacheck.l"
+#line 276 "../../../utils/lacheck/lacheck.l"
 {  g_checkend(0); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 280 "../../../utils/lacheck/lacheck.l"
+#line 278 "../../../utils/lacheck/lacheck.l"
 {
  {
    if (!CG_ITALIC)
@@ -2602,7 +2600,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 291 "../../../utils/lacheck/lacheck.l"
+#line 289 "../../../utils/lacheck/lacheck.l"
 {
  {
    if (CG_ITALIC)
@@ -2621,7 +2619,7 @@ YY_LINENO_REWIND_TO(yy_cp - 2);
 (yy_c_buf_p) = yy_cp -= 2;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 302 "../../../utils/lacheck/lacheck.l"
+#line 300 "../../../utils/lacheck/lacheck.l"
 {
   {
    linecount();
@@ -2640,7 +2638,7 @@ YY_LINENO_REWIND_TO(yy_cp - 2);
 (yy_c_buf_p) = yy_cp -= 2;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 313 "../../../utils/lacheck/lacheck.l"
+#line 311 "../../../utils/lacheck/lacheck.l"
 {
   {
    linecount();
@@ -2654,17 +2652,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 324 "../../../utils/lacheck/lacheck.l"
+#line 322 "../../../utils/lacheck/lacheck.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 326 "../../../utils/lacheck/lacheck.l"
+#line 324 "../../../utils/lacheck/lacheck.l"
 { BEGIN(ICOR); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 328 "../../../utils/lacheck/lacheck.l"
+#line 326 "../../../utils/lacheck/lacheck.l"
 {
   {
     printf("\"%s\", line %d: double \\/ found \"%s\"\n",
@@ -2680,7 +2678,7 @@ YY_LINENO_REWIND_TO(yy_cp - 1);
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 336 "../../../utils/lacheck/lacheck.l"
+#line 334 "../../../utils/lacheck/lacheck.l"
 { CG_ITALIC = 1; }
 	YY_BREAK
 case 20:
@@ -2690,7 +2688,7 @@ YY_LINENO_REWIND_TO(yy_bp + 12);
 (yy_c_buf_p) = yy_cp = yy_bp + 12;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 338 "../../../utils/lacheck/lacheck.l"
+#line 336 "../../../utils/lacheck/lacheck.l"
 {
   {
     if(CG_ITALIC)
@@ -2707,7 +2705,7 @@ YY_LINENO_REWIND_TO(yy_bp + 12);
 (yy_c_buf_p) = yy_cp = yy_bp + 12;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 347 "../../../utils/lacheck/lacheck.l"
+#line 345 "../../../utils/lacheck/lacheck.l"
 { CG_ITALIC = 0; }
 	YY_BREAK
 case 22:
@@ -2717,7 +2715,7 @@ YY_LINENO_REWIND_TO(yy_bp + 3);
 (yy_c_buf_p) = yy_cp = yy_bp + 3;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 349 "../../../utils/lacheck/lacheck.l"
+#line 347 "../../../utils/lacheck/lacheck.l"
 {
   {
     if(CG_ITALIC)
@@ -2734,12 +2732,12 @@ YY_LINENO_REWIND_TO(yy_bp + 3);
 (yy_c_buf_p) = yy_cp = yy_bp + 3;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 358 "../../../utils/lacheck/lacheck.l"
+#line 356 "../../../utils/lacheck/lacheck.l"
 { CG_ITALIC = !CG_ITALIC; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 360 "../../../utils/lacheck/lacheck.l"
+#line 358 "../../../utils/lacheck/lacheck.l"
 {
  {
     printf("\"%s\", line %d: do not use \\/ before \"%s\"\n",
@@ -2751,17 +2749,17 @@ YY_RULE_SETUP
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 368 "../../../utils/lacheck/lacheck.l"
+#line 366 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 370 "../../../utils/lacheck/lacheck.l"
+#line 368 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 372 "../../../utils/lacheck/lacheck.l"
+#line 370 "../../../utils/lacheck/lacheck.l"
 { 
   {
     unput(yytext[0]);
@@ -2776,7 +2774,7 @@ YY_RULE_SETUP
 case 28:
 /* rule 28 can match eol */
 YY_RULE_SETUP
-#line 383 "../../../utils/lacheck/lacheck.l"
+#line 381 "../../../utils/lacheck/lacheck.l"
 BEGIN(DEF);
 	YY_BREAK
 /* \newcommand{\foo}{...} or \newcommand\foo{...}
@@ -2790,7 +2788,7 @@ BEGIN(DEF);
 case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
-#line 393 "../../../utils/lacheck/lacheck.l"
+#line 391 "../../../utils/lacheck/lacheck.l"
 BEGIN(DEF);
 	YY_BREAK
 /* Pre-2019 rule was (see test-def.tex):
@@ -2798,46 +2796,46 @@ BEGIN(DEF);
   */
 case 30:
 YY_RULE_SETUP
-#line 399 "../../../utils/lacheck/lacheck.l"
+#line 397 "../../../utils/lacheck/lacheck.l"
 { ++def_count; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 401 "../../../utils/lacheck/lacheck.l"
+#line 399 "../../../utils/lacheck/lacheck.l"
 { --def_count;
 		 if(def_count == 0)
 		     BEGIN(INITIAL); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 405 "../../../utils/lacheck/lacheck.l"
+#line 403 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 407 "../../../utils/lacheck/lacheck.l"
+#line 405 "../../../utils/lacheck/lacheck.l"
 BEGIN(ENV_DEF);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 409 "../../../utils/lacheck/lacheck.l"
+#line 407 "../../../utils/lacheck/lacheck.l"
 { ++def_count; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 411 "../../../utils/lacheck/lacheck.l"
+#line 409 "../../../utils/lacheck/lacheck.l"
 { --def_count;
 		 if(def_count == 0)
 		     BEGIN(DEF); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 415 "../../../utils/lacheck/lacheck.l"
+#line 413 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 417 "../../../utils/lacheck/lacheck.l"
+#line 415 "../../../utils/lacheck/lacheck.l"
 {
     if(CG_TYPE == 4 || CG_TYPE == 5)
 	print_bad_match(yytext,4);
@@ -2848,12 +2846,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 425 "../../../utils/lacheck/lacheck.l"
+#line 423 "../../../utils/lacheck/lacheck.l"
 {  g_checkend(4); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 427 "../../../utils/lacheck/lacheck.l"
+#line 425 "../../../utils/lacheck/lacheck.l"
 {
     if(CG_TYPE == 4 || CG_TYPE == 5)
 	print_bad_match(yytext,5);
@@ -2864,12 +2862,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 436 "../../../utils/lacheck/lacheck.l"
+#line 434 "../../../utils/lacheck/lacheck.l"
 {  g_checkend(5);     BEGIN(AFTER_DISPLAY);}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 438 "../../../utils/lacheck/lacheck.l"
+#line 436 "../../../utils/lacheck/lacheck.l"
 { 
 
     printf( "\"%s\", line %d: punctuation mark \"%s\" should be placed before end of displaymath\n", 
@@ -2881,7 +2879,7 @@ YY_RULE_SETUP
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 446 "../../../utils/lacheck/lacheck.l"
+#line 444 "../../../utils/lacheck/lacheck.l"
 { unput(yytext[0]); BEGIN(INITIAL); }
 	YY_BREAK
 case 43:
@@ -2889,7 +2887,7 @@ case 43:
 (yy_c_buf_p) = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 448 "../../../utils/lacheck/lacheck.l"
+#line 446 "../../../utils/lacheck/lacheck.l"
 { if (CG_TYPE == 4)
        {
 	 printf( "\"%s\", line %d: punctuation mark \"%s\" should be placed after end of math mode\n", 
@@ -2900,7 +2898,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 456 "../../../utils/lacheck/lacheck.l"
+#line 454 "../../../utils/lacheck/lacheck.l"
 {
 
     if(CG_TYPE == 5)
@@ -2918,7 +2916,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 472 "../../../utils/lacheck/lacheck.l"
+#line 470 "../../../utils/lacheck/lacheck.l"
 {
 
     if(CG_TYPE == 4)
@@ -2942,7 +2940,7 @@ YY_LINENO_REWIND_TO(yy_bp + 11);
 (yy_c_buf_p) = yy_cp = yy_bp + 11;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 488 "../../../utils/lacheck/lacheck.l"
+#line 486 "../../../utils/lacheck/lacheck.l"
 {
  {
     push("\\begingroup", 1, line_count); 
@@ -2955,7 +2953,7 @@ YY_LINENO_REWIND_TO(yy_bp + 9);
 (yy_c_buf_p) = yy_cp = yy_bp + 9;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 494 "../../../utils/lacheck/lacheck.l"
+#line 492 "../../../utils/lacheck/lacheck.l"
 {
  {
     g_checkend(1);
@@ -2963,7 +2961,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 500 "../../../utils/lacheck/lacheck.l"
+#line 498 "../../../utils/lacheck/lacheck.l"
 { BEGIN(B_ENVIRONMENT); }
 	YY_BREAK
 case 49:
@@ -2973,7 +2971,7 @@ YY_LINENO_REWIND_TO(yy_cp - 1);
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 502 "../../../utils/lacheck/lacheck.l"
+#line 500 "../../../utils/lacheck/lacheck.l"
 { 
  {
     
@@ -2984,7 +2982,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 510 "../../../utils/lacheck/lacheck.l"
+#line 508 "../../../utils/lacheck/lacheck.l"
 { 
  {
     if (strcmp( yytext, "verbatim" ) == 0 )
@@ -3011,12 +3009,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 534 "../../../utils/lacheck/lacheck.l"
+#line 532 "../../../utils/lacheck/lacheck.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 536 "../../../utils/lacheck/lacheck.l"
+#line 534 "../../../utils/lacheck/lacheck.l"
 {
      printf("\"%s\", line %d: TAB character in verbatim environment\n",
 	   file_name, line_count) ;
@@ -3025,18 +3023,18 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 542 "../../../utils/lacheck/lacheck.l"
+#line 540 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
-#line 544 "../../../utils/lacheck/lacheck.l"
+#line 542 "../../../utils/lacheck/lacheck.l"
 { ++line_count; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 547 "../../../utils/lacheck/lacheck.l"
+#line 545 "../../../utils/lacheck/lacheck.l"
 { 
           verb_char = yytext[yyleng-1];
 	  BEGIN(VERB); 
@@ -3045,7 +3043,7 @@ YY_RULE_SETUP
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 552 "../../../utils/lacheck/lacheck.l"
+#line 550 "../../../utils/lacheck/lacheck.l"
 {
   printf("\"%s\", line %d: \\verb should not contain end of line characters\n",
 	 file_name, line_count) ;
@@ -3054,7 +3052,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 558 "../../../utils/lacheck/lacheck.l"
+#line 556 "../../../utils/lacheck/lacheck.l"
 {
   if ( *yytext == verb_char )
     BEGIN(INITIAL); 
@@ -3062,7 +3060,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 564 "../../../utils/lacheck/lacheck.l"
+#line 562 "../../../utils/lacheck/lacheck.l"
 { BEGIN(E_ENVIRONMENT); }
 	YY_BREAK
 case 59:
@@ -3072,7 +3070,7 @@ YY_LINENO_REWIND_TO(yy_cp - 1);
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 566 "../../../utils/lacheck/lacheck.l"
+#line 564 "../../../utils/lacheck/lacheck.l"
 { 
  {
     printf("\"%s\", line %d: {argument} missing for \\end\n",
@@ -3082,7 +3080,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 574 "../../../utils/lacheck/lacheck.l"
+#line 572 "../../../utils/lacheck/lacheck.l"
 { 
  {
     e_checkend(2, yytext);
@@ -3094,7 +3092,7 @@ YY_RULE_SETUP
 case 61:
 /* rule 61 can match eol */
 YY_RULE_SETUP
-#line 583 "../../../utils/lacheck/lacheck.l"
+#line 581 "../../../utils/lacheck/lacheck.l"
 { 
  {
     linecount();
@@ -3107,7 +3105,7 @@ YY_RULE_SETUP
 case 62:
 /* rule 62 can match eol */
 YY_RULE_SETUP
-#line 592 "../../../utils/lacheck/lacheck.l"
+#line 590 "../../../utils/lacheck/lacheck.l"
 { 
  {
     printf( "\"%s\", line %d: missing `\\ ' after \"%s\"\n", 
@@ -3119,7 +3117,7 @@ YY_RULE_SETUP
 case 63:
 /* rule 63 can match eol */
 YY_RULE_SETUP
-#line 600 "../../../utils/lacheck/lacheck.l"
+#line 598 "../../../utils/lacheck/lacheck.l"
 { 
  {
    linecount();
@@ -3132,7 +3130,7 @@ YY_RULE_SETUP
 case 64:
 /* rule 64 can match eol */
 YY_RULE_SETUP
-#line 609 "../../../utils/lacheck/lacheck.l"
+#line 607 "../../../utils/lacheck/lacheck.l"
 { 
 
     printf("\"%s\", line %d: double space at \"%s\"\n",
@@ -3145,7 +3143,7 @@ YY_RULE_SETUP
 case 65:
 /* rule 65 can match eol */
 YY_RULE_SETUP
-#line 618 "../../../utils/lacheck/lacheck.l"
+#line 616 "../../../utils/lacheck/lacheck.l"
 {
 	printf("\"%s\", line %d: \\ldots should be \\cdots in \"%s\"\n",
 	   file_name, line_count, yytext); 
@@ -3156,7 +3154,7 @@ YY_RULE_SETUP
 case 66:
 /* rule 66 can match eol */
 YY_RULE_SETUP
-#line 625 "../../../utils/lacheck/lacheck.l"
+#line 623 "../../../utils/lacheck/lacheck.l"
 {
 	printf("\"%s\", line %d: \\cdots should be \\ldots in \"%s\"\n",
 	   file_name, line_count, yytext); 
@@ -3168,7 +3166,7 @@ YY_RULE_SETUP
 case 67:
 /* rule 67 can match eol */
 YY_RULE_SETUP
-#line 633 "../../../utils/lacheck/lacheck.l"
+#line 631 "../../../utils/lacheck/lacheck.l"
 {
 	printf("\"%s\", line %d: Dots should be \\cdots in \"%s\"\n",
 	   file_name, line_count, yytext); 
@@ -3179,7 +3177,7 @@ YY_RULE_SETUP
 case 68:
 /* rule 68 can match eol */
 YY_RULE_SETUP
-#line 640 "../../../utils/lacheck/lacheck.l"
+#line 638 "../../../utils/lacheck/lacheck.l"
 {
 	printf("\"%s\", line %d: Dots should be \\ldots in \"%s\"\n",
 	   file_name, line_count, yytext); 
@@ -3190,7 +3188,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 649 "../../../utils/lacheck/lacheck.l"
+#line 647 "../../../utils/lacheck/lacheck.l"
 { 
     printf("\"%s\", line %d: Dots should be ellipsis \"%s\"\n",
 	   file_name, line_count, yytext); 
@@ -3201,7 +3199,7 @@ YY_RULE_SETUP
 case 70:
 /* rule 70 can match eol */
 YY_RULE_SETUP
-#line 656 "../../../utils/lacheck/lacheck.l"
+#line 654 "../../../utils/lacheck/lacheck.l"
 {
     linecount();
     printf("\"%s\", line %d: bad character in label \"%s\", see C.10.2\n",
@@ -3215,7 +3213,7 @@ YY_LINENO_REWIND_TO(yy_cp - 1);
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 662 "../../../utils/lacheck/lacheck.l"
+#line 660 "../../../utils/lacheck/lacheck.l"
 {
     linecount();
     BEGIN(INITIAL);
@@ -3228,7 +3226,7 @@ YY_LINENO_REWIND_TO(yy_cp - 1);
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 667 "../../../utils/lacheck/lacheck.l"
+#line 665 "../../../utils/lacheck/lacheck.l"
 {
     linecount();
     printf("\"%s\", line %d: perhaps you should insert a `~' before \"%s\"\n",
@@ -3243,7 +3241,7 @@ YY_LINENO_REWIND_TO(yy_cp - 1);
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 674 "../../../utils/lacheck/lacheck.l"
+#line 672 "../../../utils/lacheck/lacheck.l"
 {
     linecount();
     printf("\"%s\", line %d: whitespace before footnote in \"%s\"\n",
@@ -3258,7 +3256,7 @@ YY_LINENO_REWIND_TO(yy_cp - 1);
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 682 "../../../utils/lacheck/lacheck.l"
+#line 680 "../../../utils/lacheck/lacheck.l"
 {
  {
     printf("\"%s\", line %d: Don't use \"%s\" in LaTeX documents\n", 
@@ -3269,19 +3267,19 @@ YY_RULE_SETUP
 case 75:
 /* rule 75 can match eol */
 YY_RULE_SETUP
-#line 689 "../../../utils/lacheck/lacheck.l"
+#line 687 "../../../utils/lacheck/lacheck.l"
 { linecount() ;}
 	YY_BREAK
 case 76:
 /* rule 76 can match eol */
 YY_RULE_SETUP
-#line 690 "../../../utils/lacheck/lacheck.l"
+#line 688 "../../../utils/lacheck/lacheck.l"
 {	linecount(); }
 	YY_BREAK
 case 77:
 /* rule 77 can match eol */
 YY_RULE_SETUP
-#line 692 "../../../utils/lacheck/lacheck.l"
+#line 690 "../../../utils/lacheck/lacheck.l"
 { 
  {
    linecount();
@@ -3294,7 +3292,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 702 "../../../utils/lacheck/lacheck.l"
+#line 700 "../../../utils/lacheck/lacheck.l"
 { 
  {
     printf("\"%s\", line %d: Do not use @ in LaTeX macro names. \"%s\"\n", 
@@ -3305,7 +3303,7 @@ YY_RULE_SETUP
 case 79:
 /* rule 79 can match eol */
 YY_RULE_SETUP
-#line 709 "../../../utils/lacheck/lacheck.l"
+#line 707 "../../../utils/lacheck/lacheck.l"
 { 
  {
    linecount();
@@ -3317,7 +3315,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 718 "../../../utils/lacheck/lacheck.l"
+#line 716 "../../../utils/lacheck/lacheck.l"
 { 
  {
     printf("\"%s\", line %d: Use ' to end quotation, not ` \"%s\"\n", 
@@ -3329,7 +3327,7 @@ YY_RULE_SETUP
 case 81:
 /* rule 81 can match eol */
 YY_RULE_SETUP
-#line 727 "../../../utils/lacheck/lacheck.l"
+#line 725 "../../../utils/lacheck/lacheck.l"
 { 
  {
     printf("\"%s\", line %d: Whitespace before punctation mark in \"%s\"\n", 
@@ -3341,28 +3339,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 736 "../../../utils/lacheck/lacheck.l"
+#line 734 "../../../utils/lacheck/lacheck.l"
 { BEGIN(COMMENT); }
 	YY_BREAK
 case 83:
 /* rule 83 can match eol */
 YY_RULE_SETUP
-#line 738 "../../../utils/lacheck/lacheck.l"
+#line 736 "../../../utils/lacheck/lacheck.l"
 { BEGIN(INITIAL); ++line_count; }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 740 "../../../utils/lacheck/lacheck.l"
+#line 738 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 743 "../../../utils/lacheck/lacheck.l"
+#line 741 "../../../utils/lacheck/lacheck.l"
 { BEGIN(INCLUDE); }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 745 "../../../utils/lacheck/lacheck.l"
+#line 743 "../../../utils/lacheck/lacheck.l"
 {
  {
 	if ( strstr(yytext,".sty") == NULL )
@@ -3387,7 +3385,7 @@ case 87:
 YY_LINENO_REWIND_TO(yy_bp + 9);
 (yy_c_buf_p) = yy_cp = yy_bp + 9;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
-#line 764 "../../../utils/lacheck/lacheck.l"
+#line 762 "../../../utils/lacheck/lacheck.l"
 YY_RULE_SETUP
 case YY_STATE_EOF(INITIAL):
 YY_RULE_SETUP
@@ -3414,7 +3412,7 @@ YY_RULE_SETUP
 case YY_STATE_EOF(ICOR):
 YY_RULE_SETUP
 case YY_STATE_EOF(GETICOR):
-#line 764 "../../../utils/lacheck/lacheck.l"
+#line 762 "../../../utils/lacheck/lacheck.l"
 { 
 	  if (--istackp < 0)
 		  yyterminate(); 
@@ -3435,15 +3433,15 @@ case YY_STATE_EOF(GETICOR):
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 783 "../../../utils/lacheck/lacheck.l"
+#line 781 "../../../utils/lacheck/lacheck.l"
 { ; }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 784 "../../../utils/lacheck/lacheck.l"
+#line 782 "../../../utils/lacheck/lacheck.l"
 ECHO;
 	YY_BREAK
-#line 3447 "../../../utils/lacheck/lacheck.c"
+#line 3445 "../../../utils/lacheck/lacheck.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -4419,8 +4417,31 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 784 "../../../utils/lacheck/lacheck.l"
+#line 782 "../../../utils/lacheck/lacheck.l"
 
+
+static void print_version (void)
+{
+	printf("%s (TeX Live) %s\n", PROGNAME, "1.29");
+	puts("$Id: lacheck.l 51585 2019-07-08 22:23:38Z karl $");
+	printf("License GPLv1+: GNU GPL version 1 or later");
+	puts(" <https://gnu.org/licenses/gpl.html>.");
+	puts("This is free software: you are free to change and redistribute it.");
+	puts("There is NO WARRANTY, to the extent permitted by law.");
+	puts("Written by Kresten Krab Thorup and Per Abrahamsen.");
+}
+
+static void print_help (void)
+{
+	printf("Usage: lacheck FILENAME[.tex]\n");
+	printf("A consistency checker for LaTeX documents.\n\n");
+	printf("Document context is displayed in \"double quotes\".\n");
+	printf("All messages are only warnings!\n");
+	printf("Your document may be right even though LaCheck says");
+	printf(" otherwise.\n\n");
+	print_version();
+	printf("\nEmail bug reports to tex-live@tug.org.\n");
+}
 
 int main(int argc, char *argv[])
 {
@@ -4432,11 +4453,18 @@ int main(int argc, char *argv[])
 	exit(3);
     }
 	
-    if(argc > 1)
+    if (argc == 2)
     {
+        if (strcmp(argv[1], "--help") == 0) {
+            print_help();
+            exit(0);
+        } else if (strcmp(argv[1], "--version") == 0) {
+            print_version();
+            exit(0);
+        }
         if ( (file_name = (char*) malloc(strlen(argv[1]) + 5)) == NULL ) {
-		fprintf(stderr, "%s: out of memory\n", PROGNAME);
-		exit(3);
+	    fprintf(stderr, "%s: out of memory\n", PROGNAME);
+	    exit(3);
 	}
 	
 	strcpy(file_name, argv[1]);
@@ -4467,19 +4495,9 @@ int main(int argc, char *argv[])
     }
     else
     {
-	printf("\n* %s *\n\n",PROGNAME);
-	printf("\t...a consistency checker for LaTeX documents.\n");
-	printf("$Id: lacheck.lex,v 1.26 1998/03/07 07:46:45 abraham Exp $\n\n");
-
-	printf("Usage:\n\tlacheck filename[.tex] <return>\n\n\n");
-
-	printf("\tFrom within Emacs:\n\n");
-	printf("\tM-x compile RET lacheck filename[.tex] RET\n\n");
-	printf("\tUse C-x ` to step through the messages.\n\n");
-	printf("\n\tThe found context is displayed in \"double quotes\"\n\n");
-	printf("Remark:\n\tAll messages are only warnings!\n\n");
-	printf("\tYour document may be right even though LaCheck says ");
-	printf("something else.\n\n");
+	printf("Usage: lacheck FILENAME[.tex]\n");
+	printf("Try 'lacheck --help' for more information.\n");
+	exit(1);
     }
     return(0);
 }

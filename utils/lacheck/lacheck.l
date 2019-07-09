@@ -19,8 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Please send bugs, suggestions, and queries to auc-tex_mgr@sunsite.auc.dk.
- * 
  * original Revision: 1.26 $
  * Author          : Kresten Krab Thorup
  * Created On      : Sun May 26 18:11:58 1991
@@ -29,7 +27,7 @@
  * 08-Jul-2019          Karl Berry
  *    Separate patterns for \def vs. \newcommand. Report from Zayd Hammoudeh,
  *    https://tug.org/pipermail/tex-live/2019-January/043083.html.
- *    Update version number, contact info.
+ *    Update version number (now 1.29), contact info.
  * 07-Mar-1998		Per Abrahamsen
  *    Added return to yywrap.  Patch by Fabrice POPINEAU 
  *    <popineau@esemetz.ese-metz.fr>.
@@ -782,6 +780,29 @@ symbol ("$"("\\"{atoz}+|.)"$"|"\\#"|"\\$"|"\\%"|"\\ref")
 
 . { ; }
 %%
+static void print_version (void)
+{
+	printf("%s (TeX Live) %s\n", PROGNAME, "1.29");
+	puts("$Id$");
+	printf("License GPLv1+: GNU GPL version 1 or later");
+	puts(" <https://gnu.org/licenses/gpl.html>.");
+	puts("This is free software: you are free to change and redistribute it.");
+	puts("There is NO WARRANTY, to the extent permitted by law.");
+	puts("Written by Kresten Krab Thorup and Per Abrahamsen.");
+}
+
+static void print_help (void)
+{
+	printf("Usage: lacheck FILENAME[.tex]\n");
+	printf("A consistency checker for LaTeX documents.\n\n");
+	printf("Document context is displayed in \"double quotes\".\n");
+	printf("All messages are only warnings!\n");
+	printf("Your document may be right even though LaCheck says");
+	printf(" otherwise.\n\n");
+	print_version();
+	printf("\nEmail bug reports to tex-live@tug.org.\n");
+}
+
 int main(int argc, char *argv[])
 {
     /* allocate initial stacks */
@@ -792,11 +813,18 @@ int main(int argc, char *argv[])
 	exit(3);
     }
 	
-    if(argc > 1)
+    if (argc == 2)
     {
+        if (strcmp(argv[1], "--help") == 0) {
+            print_help();
+            exit(0);
+        } else if (strcmp(argv[1], "--version") == 0) {
+            print_version();
+            exit(0);
+        }
         if ( (file_name = (char*) malloc(strlen(argv[1]) + 5)) == NULL ) {
-		fprintf(stderr, "%s: out of memory\n", PROGNAME);
-		exit(3);
+	    fprintf(stderr, "%s: out of memory\n", PROGNAME);
+	    exit(3);
 	}
 	
 	strcpy(file_name, argv[1]);
@@ -827,19 +855,9 @@ int main(int argc, char *argv[])
     }
     else
     {
-	printf("\n* %s *\n\n",PROGNAME);
-	printf("\t...a consistency checker for LaTeX documents.\n");
-	printf("$Id$\n\n");
-
-	printf("Usage:\n\tlacheck filename[.tex] <return>\n\n\n");
-
-	printf("\tFrom within Emacs:\n\n");
-	printf("\tM-x compile RET lacheck filename[.tex] RET\n\n");
-	printf("\tUse C-x ` to step through the messages.\n\n");
-	printf("\n\tThe found context is displayed in \"double quotes\"\n\n");
-	printf("Remark:\n\tAll messages are only warnings!\n\n");
-	printf("\tYour document may be right even though LaCheck says ");
-	printf("something else.\n\n");
+	printf("Usage: lacheck FILENAME[.tex]\n");
+	printf("Try 'lacheck --help' for more information.\n");
+	exit(1);
     }
     return(0);
 }

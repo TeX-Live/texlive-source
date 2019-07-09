@@ -1,6 +1,6 @@
-.TH "LaCheck" "1" "2015-01-10" "Release @REV@"
+.TH "LaCheck" "1" "2019-07-09" "Release @REV@ (TeX Live)"
 .SH NAME
-lacheck - A consistency checker for LaTeX documents.
+lacheck - a consistency checker for LaTeX documents
 .SH SYNOPSIS
 .B lacheck 
 .IR filename [ \fB.tex\fP ]
@@ -46,8 +46,7 @@ LaCheck will read files that are input using \\input or \\include.
 Files with suffix \`.sty\' are omitted, as they probably will cause
 LaCheck to crash.
 .LP 
-LaCheck may be invoked from within Emacs(1) using compile:
-
+LaCheck may be invoked from within emacs(1) using M-x compile.
 To run:  
 .B "M-x compile RET lacheck RET"
 , and then 
@@ -83,10 +82,9 @@ with something that LaCheck thinks is an abbreviation an missing \`\\
 \' error may also occur, if the following sentence begins with a
 lowercase letter.
 .LP
-A mismatch error may cause more to follow, due to the chosen
-algorithm. In such cases just correct the
-.I "first"
-error and run LaCheck again
+A mismatch error may cause more to follow, due to the lack of good
+error recovery. In such cases, just correct the first
+error and run LaCheck again.
 .LP
 Braces, environments and math mode must be balanced within a file.
 .LP
@@ -104,4 +102,4 @@ Ideas for improvements and bug reports are very welcome.  Such
 should be directed to the maintainers; please email tex-live@tug.org.
 .SH AUTHOR
 Kresten Krab Thorup with modifications by Per Abrahamsen.
-Currently maintained as part of TeX Live (http://tug.org/texlive).
+Currently maintained as part of TeX Live (https://tug.org/texlive).
