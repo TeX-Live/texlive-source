@@ -1,3 +1,11 @@
+2019-07-09  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (lacheck_version): 1.29.
+	* lacheck.man: wording.
+	* lacheck.l (print_version),
+	(print_help): new fns.
+	(main): rearrange parsing to support --help and --version.
+
 2019-07-08  Karl Berry  <karl@freefriends.org>
 
 	* lacheck.l: separate patterns for handling \def and \newcommand.
