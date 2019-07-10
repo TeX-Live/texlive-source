@@ -72,14 +72,17 @@ begin
 @!text_char=ASCII_code; {the data type of characters in text files}
 @z
 
-@x Maximum constant values from Keno Wehr, 17 May 2019 16:03:00 on tex-live.
+% Maximum constant values from Keno Wehr, 17 May 2019 16:03:00,
+% and then reduced due to failures on other machines, latest from
+% Johannes Hielscher, 10 Jul 2019 00:00:03.
+@x
 @!trie_size=55000; {space for pattern trie}
 @!triec_size=26000; {space for pattern count trie, must be less than
  |trie_size| and greater than the number of occurrences of any pattern in
  the dictionary}
 @y
-@!trie_size=100000000; {max space for pattern trie}
-@!triec_size=50000000; {max space for pattern count trie, must be less than
+@!trie_size =76000000; {max space for pattern trie}
+@!triec_size=38000000; {max space for pattern count trie, must be less than
  |trie_size| and greater than the number of occurrences of any pattern in
  the dictionary}
 @z
