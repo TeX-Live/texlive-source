@@ -1434,7 +1434,7 @@ proc restore_backups_dialog {} {
   }
   set pwd0 [pwd]
   cd $bdir
-  set backups [lsort [glob *.tar.xz]]
+  set backups [lsort [glob -nocomplain *.tar.xz]]
   if {[llength $backups] == 0} {
     tk_messageBox -message [__ "No backups found in $bdir"]
     return
