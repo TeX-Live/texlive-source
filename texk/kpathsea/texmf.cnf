@@ -218,9 +218,13 @@ TEXINPUTS.pdfetex       = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,}//
 % LuaTeX.
 TEXINPUTS.luatex        = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
 TEXINPUTS.luajittex     = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
+TEXINPUTS.luahbtex      = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
+TEXINPUTS.luajithbtex   = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
 TEXINPUTS.dviluatex     = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
 TEXINPUTS.lualatex      = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 TEXINPUTS.luajitlatex   = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
+TEXINPUTS.luahblatex    = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
+TEXINPUTS.luajithblatex = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 TEXINPUTS.dvilualatex   = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 
 % HarfTeX.

@@ -1,3 +1,8 @@
+2019-07-11  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXINPUTS.lua{,jit}hb{,la}tex): four new engines,
+	luahbtex with/without jit, with/without latex. Same path as non-hb.
+
 2019-06-02  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.harf{,la}tex): new engine.
