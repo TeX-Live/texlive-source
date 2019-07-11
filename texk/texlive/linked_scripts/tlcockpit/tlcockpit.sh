@@ -1,8 +1,12 @@
-#!/bin/sh
-# Public domain. Originally written by Norbert Preining and Karl Berry, 2018.
+#!/bin/bash
+# Public domain. Originally written by Norbert Preining and Karl Berry, 2018-2019.
 
 scriptname=`basename "$0"`
-jar="$scriptname.jar"
+javaVersion=$(java -version 2>&1 | head -1)
+case "$javaVersion" in
+  *"1.8"*) jar="$scriptname-jdk8".jar ;;
+  *) jar="$scriptname.jar" ;;
+esac
 jarpath=`kpsewhich --progname="$scriptname" --format=texmfscripts "$jar"`
 
 kernel=`uname -s 2>/dev/null`
