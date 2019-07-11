@@ -1996,7 +1996,7 @@ goto find_rule; \
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "../../../utils/lacheck/lacheck.l"
-/* $Id: lacheck.l 51585 2019-07-08 22:23:38Z karl $
+/* $Id: lacheck.l 51590 2019-07-09 15:26:51Z karl $
  * 
  * lacheck.lex - A consistency checker checker for LaTeX documents
  *	
@@ -4423,7 +4423,7 @@ void yyfree (void * ptr )
 static void print_version (void)
 {
 	printf("%s (TeX Live) %s\n", PROGNAME, "1.29");
-	puts("$Id: lacheck.l 51585 2019-07-08 22:23:38Z karl $");
+	puts("$Id: lacheck.l 51590 2019-07-09 15:26:51Z karl $");
 	printf("License GPLv1+: GNU GPL version 1 or later");
 	puts(" <https://gnu.org/licenses/gpl.html>.");
 	puts("This is free software: you are free to change and redistribute it.");
