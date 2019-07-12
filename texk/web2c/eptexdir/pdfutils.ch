@@ -24,6 +24,9 @@
 %%
 %% \pdfelapsedtime and \pdfresettimer
 %%
+%% \expanded
+%%
+%% \ifincsname
 
 @x
 @* \[8] Packed data.
@@ -620,6 +623,27 @@ no_expand: if chr_code=0 then print_esc("noexpand")
    else print_esc("pdfprimitive");
 @z
 
+@x \ifincsname
+var t:halfword; {token that is being ``expanded after''}
+@!p,@!q,@!r:pointer; {for list manipulation}
+@y
+var t:halfword; {token that is being ``expanded after''}
+@!b:boolean; {keep track of nested csnames}
+@!p,@!q,@!r:pointer; {for list manipulation}
+@z
+
+@x
+@ @<Expand a nonmacro@>=
+@y
+@ @<Glob...@>=
+@!is_in_csname: boolean;
+
+@ @<Set init...@>=
+is_in_csname := false;
+
+@ @<Expand a nonmacro@>=
+@z
+
 @x
 no_expand:@<Suppress expansion of the next token@>;
 @y
@@ -713,6 +737,22 @@ else begin
   end;
 goto restart;
 end
+@z
+
+@x
+begin r:=get_avail; p:=r; {head of the list of characters}
+repeat get_x_token;
+@y
+begin r:=get_avail; p:=r; {head of the list of characters}
+b := is_in_csname; is_in_csname := true;
+repeat get_x_token;
+@z
+
+@x
+@<Look up the characters of list |r| in the hash table, and set |cur_cs|@>;
+@y
+is_in_csname := b;
+@<Look up the characters of list |r| in the hash table, and set |cur_cs|@>;
 @z
 
 @x scan_keyword
@@ -1032,12 +1072,13 @@ uniform_deviate_code:     print_int(unif_rand(cur_val));
 normal_deviate_code:      print_int(norm_rand);
 @z
 
-@x \[if]pdfprimitive
-@d if_mbox_code=if_dbox_code+1 { `\.{\\ifmbox}' }
+@x e-pTeX: if primitives - leave room for \ifincsname
+@d if_tdir_code=if_case_code+4 { `\.{\\iftdir}' }
 @y
-@d if_mbox_code=if_dbox_code+1 { `\.{\\ifmbox}' }
+@d if_in_csname_code=20 { `\.{\\ifincsname}';  |if_font_char_code| + 1 }
+@d if_pdfprimitive_code=21 { `\.{\\ifpdfprimitive}' }
 @#
-@d if_pdfprimitive_code=if_mbox_code+1 { `\.{\\ifpdfprimitive}' }
+@d if_tdir_code=if_pdfprimitive_code+1 { `\.{\\iftdir}' }
 @z
 
 @x \[if]pdfprimitive
@@ -1045,6 +1086,15 @@ normal_deviate_code:      print_int(norm_rand);
 @y
   if_mbox_code:print_esc("ifmbox");
   if_pdfprimitive_code:print_esc("ifpdfprimitive");
+@z
+
+@x \ifincsname
+var b:boolean; {is the condition true?}
+@!r:"<"..">"; {relation to be evaluated}
+@y
+var b:boolean; {is the condition true?}
+@!e:boolean; {keep track of nested csnames}
+@!r:"<"..">"; {relation to be evaluated}
 @z
 
 @x \[if]pdfprimitive
@@ -1292,6 +1342,46 @@ pdf_shell_escape_code:
   end;
 elapsed_time_code: cur_val := get_microinterval;
 random_seed_code:  cur_val := random_seed;
+@z
+
+@x
+primitive("iffontchar",if_test,if_font_char_code);
+@!@:if_font_char_}{\.{\\iffontchar} primitive@>
+@y
+primitive("iffontchar",if_test,if_font_char_code);
+@!@:if_font_char_}{\.{\\iffontchar} primitive@>
+primitive("ifincsname",if_test,if_in_csname_code);
+@!@:if_in_csname_}{\.{\\ifincsname} primitive@>
+@z
+
+@x
+if_font_char_code:print_esc("iffontchar");
+@y
+if_font_char_code:print_esc("iffontchar");
+if_in_csname_code:print_esc("ifincsname");
+@z
+
+@x
+if_cs_code:begin n:=get_avail; p:=n; {head of the list of characters}
+  repeat get_x_token;
+@y
+if_cs_code:begin n:=get_avail; p:=n; {head of the list of characters}
+ e := is_in_csname; is_in_csname := true;
+  repeat get_x_token;
+@z
+
+@x
+  b:=(eq_type(cur_cs)<>undefined_cs);
+@y
+  b:=(eq_type(cur_cs)<>undefined_cs);
+  is_in_csname := e;
+@z
+
+@x
+if_font_char_code:begin scan_font_ident; n:=cur_val;
+@y
+if_in_csname_code: b := is_in_csname;
+if_font_char_code:begin scan_font_ident; n:=cur_val;
 @z
 
 @x

@@ -1,0 +1,61 @@
+%#!eptex
+
+\catcode`\_=12 \catcode`\@=11
+\def\typeout{\immediate\write17}
+\begingroup
+  \catcode`\P=12 \catcode`\T=12
+  \lowercase{
+	\gdef\rem@pt#1.#2PT{#1\ifnum#2>\z@.#2\fi}
+  }
+\endgroup
+\def\strip@pt{\expandafter\rem@pt\the}
+
+\def\TFC#1{\typeout{code #1: \iffontchar\jfont#1 T\else F\fi}}
+\def\TFT#1#2{\typeout{type \the\numexpr-#1-1\relax:
+  \iffontchar#2#1
+	(\strip@pt\fontcharht#2#1+\strip@pt\fontchardp#2#1)*\strip@pt\fontcharwd#2#1
+  \else F\fi
+}}
+
+\TFC{"A1A1}
+\TFC{"FEFE}
+\TFC{"E0A1}
+\TFC{"FCFC}
+\TFC{"8140}
+\TFC{"9FFC}
+
+\typeout{TEST: \string\jfont: \fontname\sevenmin}
+\sevenmin
+\count@=-1
+\loop \ifnum\count@>-15
+  \TFT\count@\jfont\advance\count@\m@ne
+\repeat
+
+\typeout{TEST: \string\tfont: \fontname\tfont}
+\count@=-1
+\loop \ifnum\count@>-15
+  \TFT\count@\tfont\advance\count@\m@ne
+\repeat
+
+\protected\def\NEXT{\ten=1
+  \loop\ifnum\ten<95
+    \ifdim\fontcharwd\zs\kuten\numexpr\ku*256+\ten=10pt
+	  \global\count@=\kuten\numexpr\ku*256+\ten
+	  \global\count0\ku \global\count2\ten
+	  \global\ku=95 \ten=95
+	\fi
+    \advance\ten1
+  \repeat}
+\count@=0
+\jfont\zs=zero_search
+\newcount\ku
+\newcount\ten
+\ku=1
+\loop\ifnum\ku<95
+  {\ifnum11=\ifnum\ku>8 1\else0\fi\ifnum\ku<16 1\else 0\fi\else\NEXT\fi}%
+  \advance\ku1
+\repeat
+\kansujichar1=\count@
+\typeout{\kansuji1(internal code: \the\count@, \the\count0-ku \the\count2-ten)}
+
+\bye

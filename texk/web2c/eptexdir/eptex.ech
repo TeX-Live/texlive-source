@@ -26,8 +26,8 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-190131'
-@d epTeX_version_number==190131
+@d epTeX_version_string=='-190709'
+@d epTeX_version_number==190709
 @z
 
 @x e-pTeX: banner
@@ -173,14 +173,14 @@ begin if ((type(tx)=glue_node) and (subtype(tx)=jfm_skip+1))
   tx:=last_jchr
 else if (type(tx)=kern_node) and (subtype(tx)=normal) then
   begin r:=head; q:=link(head);
-  while q<>tx do 
-    begin r:=q; 
+  while q<>tx do
+    begin r:=q;
     if is_char_node(q) then if font_dir[font(q)]<>dir_default then q:=link(q);
     q:=link(q);
     end;
   if ((type(r)=penalty_node) and (subtype(r)=kinsoku_pena)) then tx:=last_jchr else tx:=r;
   end;
-if not is_char_node(tx) then 
+if not is_char_node(tx) then
   begin if type(tx)=ligature_node then
     begin r:=lig_ptr(tx);
     while link(r)<>null do r:=link(r);
@@ -213,12 +213,12 @@ end
     begin cur_val_level:=int_val; cur_val:=-1;
     end
   else cur_val_level:=cur_chr;
-  if (cur_chr=last_node_char_code)and(is_char_node(tx))and(tx<>head) then 
+  if (cur_chr=last_node_char_code)and(is_char_node(tx))and(tx<>head) then
   { |tx| might be ``second node'' of a KANJI character; so we need to look the node before |tx| }
   begin r:=head; q:=head;
     while q<>tx do begin r:=q; q:=link(q); end; { |r| is the node just before |tx| }
     if (r<>head)and is_char_node(r) then if font_dir[font(r)]<>dir_default then tx:=r;
-    find_last_char; 
+    find_last_char;
     end;
 @z
 
@@ -514,7 +514,9 @@ saving_hyph_codes_code:print_esc("savinghyphcodes");
 saving_hyph_codes_code:print_esc("savinghyphcodes");
 read_papersize_special_code:print_esc("readpapersizespecial");
 @z
+
 @x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306
+font_char_ic_code: begin scan_font_ident; q:=cur_val; scan_char_num;
   if (font_bc[q]<=cur_val)and(font_ec[q]>=cur_val) then
     begin i:=char_info(q)(qi(cur_val));
     case m of
@@ -527,9 +529,20 @@ read_papersize_special_code:print_esc("readpapersizespecial");
   else cur_val:=0;
   end;
 @y
+font_char_ic_code: begin scan_font_ident; q:=cur_val;
   if font_dir[q]<>dir_default then {Japanese font}
-    begin if is_char_kanji(cur_val) then {Japanese Character}
-      begin cur_val:=get_jfm_pos(KANJI(cur_val),q);
+    begin scan_int;
+    if cur_val>=0 then
+      begin if is_char_kanji(cur_val) then {Japanese Character}
+        cur_val:=get_jfm_pos(KANJI(cur_val),q)
+      else cur_val:=-1
+      end
+    else begin
+      cur_val:=-(cur_val+1);
+      if (font_bc[q]>cur_val)or(font_ec[q]<cur_val) then cur_val:=-1
+    end;
+    if cur_val<>-1 then
+      begin
       i:=orig_char_info(q)(qi(cur_val));
       case m of
       font_char_wd_code: cur_val:=char_width(q)(i);
@@ -540,16 +553,18 @@ read_papersize_special_code:print_esc("readpapersizespecial");
       end
     else cur_val:=0;
     end
-  else if (font_bc[q]<=cur_val)and(font_ec[q]>=cur_val) then
-    begin i:=orig_char_info(q)(qi(cur_val));
-    case m of
-    font_char_wd_code: cur_val:=char_width(q)(i);
-    font_char_ht_code: cur_val:=char_height(q)(height_depth(i));
-    font_char_dp_code: cur_val:=char_depth(q)(height_depth(i));
-    font_char_ic_code: cur_val:=char_italic(q)(i);
-    end; {there are no other cases}
+  else begin scan_char_num;
+    if (font_bc[q]<=cur_val)and(font_ec[q]>=cur_val) then
+      begin i:=orig_char_info(q)(qi(cur_val));
+      case m of
+      font_char_wd_code: cur_val:=char_width(q)(i);
+      font_char_ht_code: cur_val:=char_height(q)(height_depth(i));
+      font_char_dp_code: cur_val:=char_depth(q)(height_depth(i));
+      font_char_ic_code: cur_val:=char_italic(q)(i);
+      end; {there are no other cases}
+      end
+    else cur_val:=0;
     end
-  else cur_val:=0;
   end;
 @z
 
@@ -624,9 +639,28 @@ othercases goto next_p
 @z
 
 @x e-pTeX: if_font_char_code l.28633
+if_font_char_code:begin scan_font_ident; n:=cur_val; scan_char_num;
+  if (font_bc[n]<=cur_val)and(font_ec[n]>=cur_val) then
     b:=char_exists(char_info(n)(qi(cur_val)))
+  else b:=false;
+  end;
 @y
-    b:=char_exists(orig_char_info(n)(qi(cur_val)))
+if_font_char_code:begin scan_font_ident; n:=cur_val;
+  if font_dir[n]<>dir_default then
+    begin scan_int;
+    if cur_val>=0 then b:=is_char_kanji(cur_val)
+    { In u\pTeX, $\hbox{|is_char_kanji|} = \lambda x\mathpunct{.} x\ge 0$ }
+    else begin
+      cur_val:=-(cur_val+1);
+      b:=(font_bc[n]<=cur_val)and(font_ec[n]>=cur_val)
+      end
+    end
+  else begin scan_char_num;
+    if (font_bc[n]<=cur_val)and(font_ec[n]>=cur_val) then @/
+      b:=char_exists(orig_char_info(n)(qi(cur_val)))
+    else b:=false;
+    end;
+  end;
 @z
 
 @x

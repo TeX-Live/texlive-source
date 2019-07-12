@@ -1,0 +1,72 @@
+%#!luatex
+\input luatexja.sty
+
+\catcode\endlinechar=12
+\catcode`\ =12
+\catcode`\%=12
+\catcode`\#=12
+\directlua{
+local f = io.open("zero_search.pl", "w")
+if f then
+  function OUT(s) f:write(s .. string.char(10)) end
+else
+  function OUT(s) end
+end
+local jisx0208 = luatexja.base.load_cache('ltj-jisx0208',
+  function() return false end)
+local utf = unicode.utf8
+OUT([[
+(COMMENT THIS IS A KANJI FORMAT FILE)
+(DESIGNSIZE R 10.0)
+(COMMENT DESIGNSIZE IS IN POINTS)
+(COMMENT OTHER SIZES ARE MULTIPLES OF DESIGNSIZE)
+(CHECKSUM O 0)
+(FONTDIMEN
+   (SLANT R 0.0)
+   (SPACE R 0.0)
+   (STRETCH R 0.0)
+   (SHRINK R 0.0)
+   (XHEIGHT R 1.0)
+   (QUAD R 1.0)
+   (EXTRASPACE R 0.0)
+   (EXTRASTRETCH R 0.0)
+   (EXTRASHRINK R 0.0)
+   )]])
+local CNT=96
+local r = {}
+for i=1,94 do
+  for j=1,94 do
+    if not ((i>0x08 and i<0x10) or i>0x54) then
+      local t = math.random( ((i>0x40) and 0 or 1), CNT-1)
+	  r[t] = r[t] or {}
+	  table.insert(r[t],0x2020+i*256+j)
+	end
+  end
+end
+local floor = math.floor
+for i=1,CNT-1 do
+  if #(r[i])>0 then
+    table.sort(r[i])
+	OUT("(CHARSINTYPE D " .. tostring(i))
+    local s, k = "   ", 0
+	for j=1,#(r[i]) do
+	  local f = r[i][j]
+	  k, s = k+1, s .. 'J ' .. string.format("%04X",f)
+	  if k%10==0 then OUT(s); s = "   " else s = s .. " " end
+	end
+	if k%10>0 then OUT(s) end
+	OUT("   )")
+  end
+end
+for i=0,CNT-1 do
+  if #(r[i])>0 then
+    OUT("(TYPE D " .. tostring(i))
+	OUT("   (CHARWD R " .. tostring(1+i/100) .. ")")
+	OUT("   (CHARHT R 0.88)")
+	OUT("   (CHARDP R 0.12)")
+	OUT("   )")
+  end
+end
+f:close()
+}
+\bye
