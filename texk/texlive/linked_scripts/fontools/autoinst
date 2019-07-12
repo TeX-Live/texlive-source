@@ -40,7 +40,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20190625';
+my $VERSION = '20190712';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -782,8 +782,8 @@ I'm using the following options:
     fractions:          @{[ $ARGV{fractions}    ? 'yes' : 'no' ]}
     ligatures:          @{[ $ARGV{ligatures}    ? 'yes' : 'no' ]}
 
-    dry run/real:       @{[ $ARGV{dryrun}       ? 'dry run'   : 'real'   ]}
-    auto/manual:        @{[ $ARGV{manual}       ? 'manual'    : 'auto'   ]}
+    dry run/real:       @{[ $ARGV{dryrun}       ? 'dry run' : 'real' ]}
+    auto/manual:        @{[ $ARGV{manual}       ? 'manual'  : 'auto' ]}
     target:             $ARGV{target}
     extra:              @{[ $ARGV{extra} || '<empty>' ]}
 
@@ -1228,22 +1228,25 @@ sub parse_options {
 
     # Determine NFSS classification of this family, if the user
     # didn't explicitly specify it
-    if ( !$ARGV{nfss} ) {
-        # EXPERIMENTAL: parse "post" table to see if font is fixed-width
-        open my $otfinfo, '-|:raw', qq(otfinfo --dump-table 'post' "$ARGV[0]")
-            or die "[ERROR] could not fork(): $!";
-        my $post_table = do { local $/; <$otfinfo> };
-        close $otfinfo
-            or die "[ERROR] 'otfinfo --dump-table post $ARGV[0]' failed";
+    eval {
+        if ( !$ARGV{nfss} ) {
+            # EXPERIMENTAL: parse "post" table to see if font is fixed-width
+            my $cmd = qq(otfinfo --dump-table "post" "$ARGV[0]");
+            open my $otfinfo, '-|:raw', $cmd
+                or die "could not fork(): $!";
+            my $post_table = do { local $/; <$otfinfo> };
+            close $otfinfo
+                or die "'$cmd' failed";
 
-        my $is_fixed_pitch = unpack '@12N', $post_table;
+            my $is_fixed_pitch = unpack '@12N', $post_table;
 
-        $ARGV{nfss} = $is_fixed_pitch                 ? 'tt'
-                    : $ARGV[0] =~ m/mono(?!type)/xmsi ? 'tt'
-                    : $ARGV[0] =~ m/sans/xmsi         ? 'sf'
-                    :                                   'rm'
-                    ;
-    }
+            $ARGV{nfss} = $is_fixed_pitch                 ? 'tt'
+                        : $ARGV[0] =~ m/mono(?!type)/xmsi ? 'tt'
+                        : $ARGV[0] =~ m/sans/xmsi         ? 'sf'
+                        :                                   'rm'
+                        ;
+        }
+    } or warn "[WARNING] $@";
 
     # If the user didn't explicitly say anything about ligatures,
     # activate them unless the font is a typewriter font.
@@ -1337,6 +1340,8 @@ sub parse_fontinfo {
         minsize      => 0,
         maxsize      => 0,
         is_smallcaps => 0,
+        weight_class => 0,
+        width_class  => 0,
     };
 
     parse_basicinfo($info);
@@ -1355,7 +1360,8 @@ my @DIGITS = qw(Zero One Two Three Four Five Six Seven Eight Nine);
 sub parse_basicinfo {
     my $info = shift;
 
-    open my $otfinfo, '-|', qq(otfinfo --info "$info->{filename}")
+    my $cmd = qq(otfinfo --info "$info->{filename}");
+    open my $otfinfo, '-|', $cmd
         or die "[ERROR] could not fork(): $!";
     my %data = map { my ($k,$v) = m/\A\s* ([^:]+?) \s*:\s* ([^\r\n]+)/xms;
                      $k =~ s/\s+//xmsg;
@@ -1364,7 +1370,7 @@ sub parse_basicinfo {
                    }
                    grep { m/\A\s* [^:]+? \s*:\s* [^\r\n]+/xms } <$otfinfo>;
     close $otfinfo
-        or die "[ERROR] 'otfinfo --info $info->{filename}' failed";
+        or die "[ERROR] '$cmd' failed";
 
     $data{family}    =  $data{preferredfamily} || $data{family};
     $data{subfamily} =  $data{preferredsubfamily} || $data{subfamily};
@@ -1507,14 +1513,15 @@ sub parse_basicinfo {
 
     # EXPERIMENTAL: we extract the usWeightClass and usWidthClass
     # properties from the font's OS/2 table
-    open $otfinfo,
-         '-|:raw',
-         qq(otfinfo --dump-table 'OS/2' "$info->{filename}")
-        or die "[ERROR] could not fork(): $!";
-    my $os2_table = do { local $/; <$otfinfo> };
-    close $otfinfo
-        or die "[ERROR] 'otfinfo --dump-table $info->{filename}' failed";
-    @{$info}{qw(weight_class width_class)} = unpack '@4n @6n', $os2_table;
+    eval {
+        my $cmd = qq(otfinfo --dump-table "OS/2" "$info->{filename}");
+        open $otfinfo, '-|:raw', $cmd
+            or die "could not fork(): $!";
+        my $os2_table = do { local $/; <$otfinfo> };
+        close $otfinfo
+            or die "'$cmd' failed";
+        @{$info}{qw(weight_class width_class)} = unpack '@4n @6n', $os2_table;
+    } or warn "[WARNING] $@";
 
     return;
 }
@@ -1538,17 +1545,19 @@ sub mqrs {
 sub parse_features {
     my $info = shift;
 
-    open my $otfinfo, '-|', qq(otfinfo --features "$info->{filename}")
+    my $cmd = qq(otfinfo --features "$info->{filename}");
+    open my $otfinfo, '-|', $cmd
         or die "[ERROR] could not fork(): $!";
     %{$info->{feature}} = map { (substr($_, 0, 4) => 1) } <$otfinfo>;
     close $otfinfo
-        or die "[ERROR] 'otfinfo --features $info->{filename}' failed";
+        or die "[ERROR] '$cmd' failed";
 
-    open $otfinfo, '-|', qq(otfinfo --tables "$info->{filename}")
+    $cmd = qq(otfinfo --tables "$info->{filename}");
+    open $otfinfo, '-|', $cmd
         or die "[ERROR] could not fork(): $!";
     $info->{feature}{kern} = 1 if grep { m/\d+ \s+ kern/xms } <$otfinfo>;
     close $otfinfo
-        or die "[ERROR] 'otfinfo --tables $info->{filename}' failed";
+        or die "[ERROR] '$cmd' failed";
 
     return;
 }
@@ -1560,7 +1569,8 @@ sub parse_features {
 sub parse_sizeinfo {
     my $info = shift;
 
-    open my $otfinfo, '-|', qq(otfinfo --optical-size "$info->{filename}")
+    my $cmd = qq(otfinfo --optical-size "$info->{filename}");
+    open my $otfinfo, '-|', $cmd
         or die "[ERROR] could not fork(): $!";
 
     if (my ($minsize, $maxsize)
@@ -1595,7 +1605,7 @@ sub parse_sizeinfo {
         @{$info}{qw(minsize maxsize)} = ($minsize, $maxsize);
     }
     close $otfinfo
-        or die "[ERROR] 'otfinfo --optical-size $info->{filename}' failed";
+        or die "[ERROR] '$cmd' failed";
 
     return;
 }
@@ -1675,11 +1685,12 @@ sub get_orn {
         # Default ornament names: 'orn.' plus three digits
         my @encoding = map { sprintf "orn.%03d", $_ } 1 .. 256;
 
-        open my $otfinfo, '-|', qq(otfinfo --glyphs "$font->{filename}")
+        my $cmd = qq(otfinfo --glyphs "$font->{filename}");
+        open my $otfinfo, '-|', $cmd
             or die "[ERROR] could not fork(): $!";
         chop(my @glyphnames = <$otfinfo>);
         close $otfinfo
-            or die "[ERROR] 'otfinfo --glyphs $font->{filename}' failed";
+            or die "[ERROR] '$cmd' failed";
 
         # Test for some known alternative names (probably not exhaustive)
         my @ornaments
@@ -1741,7 +1752,8 @@ sub write_stylefile {
         $ARGV{target}, 'tex', 'latex', $ARGV{typeface} || $fam);
     File::Path::make_path($dir);
     $fn = File::Spec->catfile($dir, $fn);
-    open my $STY, '>', $fn or die "[ERROR] Can't create '$fn': $!";
+    open my $STY, '>', $fn
+        or die "[ERROR] Can't create '$fn': $!";
 
     print {$STY} <<"END_STY_HEADER";
 %% Generated by autoinst on $TODAY
@@ -1948,7 +1960,8 @@ sub write_fdfile {
         $ARGV{target}, 'tex', 'latex', $ARGV{typeface} || $fam);
     File::Path::make_path($dir);
     $fn = File::Spec->catfile($dir, $fn);
-    open my $FD, '>', $fn or die "[ERROR] Can't create '$fn': $!";
+    open my $FD, '>', $fn
+        or die "[ERROR] Can't create '$fn': $!";
 
     print {$FD} <<"END_FD_HEADER";
 %% Generated by autoinst on $TODAY
@@ -2769,7 +2782,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20190625.
+This document describes B<autoinst> version 20190712.
 
 
 =head1 RECENT CHANGES
@@ -2777,6 +2790,11 @@ This document describes B<autoinst> version 20190625.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2019-07-12>
+
+Replaced single quotes in calls to F<otfinfo> with double quotes,
+as they caused problems on Windows 10.
 
 =item I<2019-06-25>
 
