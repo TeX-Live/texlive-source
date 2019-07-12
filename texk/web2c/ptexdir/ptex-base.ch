@@ -2275,8 +2275,16 @@ if cur_tok<cs_token_flag then
   end
 else if cur_tok<cs_token_flag+single_base then
   cur_val:=cur_tok-cs_token_flag-active_base
-else cur_val:=cur_tok-cs_token_flag-single_base;
-if (cur_val>255)and((cur_cmd<kanji)or(cur_cmd>max_char_code)) then
+else
+  { the token is a CS;
+    * if |kanji|<=|cur_cmd|<=|max_char_code|, then CS is let-equal to |wchar_token|
+    * if |max_char_code|<|cur_cmd|, then CS is a multibyte CS
+      => both case should raise "Improper ..." error
+    * otherwise it should be a single-character CS with |cur_val|<=255 }
+  begin if not (cur_cmd<kanji) then cur_cmd:=invalid_char;
+  cur_val:=cur_tok-cs_token_flag-single_base;
+  end;
+if (cur_val>255)and(cur_cmd<kanji) then
   begin print_err("Improper alphabetic or KANJI constant");
 @.Improper alphabetic constant@>
   help2("A one-character control sequence belongs after a ` mark.")@/
