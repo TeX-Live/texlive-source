@@ -1,3 +1,9 @@
+2019-06-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: 'Improper alphabetic or KANJI constant' error
+	should be raised for multibyte CS.
+	* tests/let_char_token.tex: Added.
+
 2019-05-28  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* am/ptex.am: Add a new test.
