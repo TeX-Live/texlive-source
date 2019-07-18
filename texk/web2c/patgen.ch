@@ -74,7 +74,9 @@ begin
 
 % Maximum constant values from Keno Wehr, 17 May 2019 16:03:00,
 % and then reduced due to failures on other machines, latest from
-% Johannes Hielscher, 10 Jul 2019 00:00:03.
+% Johannes Hielscher, 10 Jul 2019 00:00:03. If the values here are still
+% too big, you can probably get it to work by adding swap or zram; or
+% write a patch to allocate the arrays dynamically.
 @x
 @!trie_size=55000; {space for pattern trie}
 @!triec_size=26000; {space for pattern count trie, must be less than

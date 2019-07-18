@@ -1,7 +1,11 @@
+2019-07-19  Karl Berry  <karl@tug.org>
+
+	* patgen.ch: mention adding swap/zram to deal with larger tries.
+
 2019-07-10  Karl Berry  <karl@freefriends.org>
 
 	* patgen.ch (trie_size),
-	(trie_size): reduce again to 76,000,000 and 38,000,000,
+	(triec_size): reduce again to 76,000,000 and 38,000,000,
 	per Johannes Hielscher, 10 Jul 2019 00:00:03.
 
 2019-06-26  Karl Berry  <karl@freefriends.org>
