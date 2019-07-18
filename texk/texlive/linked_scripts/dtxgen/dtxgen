@@ -1,28 +1,28 @@
 #!/bin/bash
 
-version=1.07
-myname=$(basename "$0")
+Version=1.08
+Myname="${0##*/}"
 
-<<'DOC'
+:<<'DOC'
 = dtxgen - generate template for LaTeX self-extracting .dtx file
 
 = Synopsis
 dtxgen [options] basename.[sty,cls]	
 
-Options:
+== Options
 -h,--help	print short help and exit
 -H,--Help	print full documentation via less and exit
 -V,--version	print version and exit
 -s,--short	short, one-liner, package description
 -d,--date	initial version's date. Default: current date 
--m,--mail	your email address. Default: $MAIL
--n,--name	your name. Default: $NAME
+-m,--mail	your email address. Default: |$EMAIL|
+-n,--name	your name. Default: |$NAME|
 -c,--class	(class packs only) class to be preloaded. Default: article
 -q,--quiet	run quietly
 
 = Description
 dtxgen creates a template for a self-extracting .dtx file, based on the model described by
-U{www.texdev.net/2009/10/06/a-model-dtx-file/}{Joseph Wright}. It is useful for
+[Joseph Wright](www.texdev.net/2009/10/06/a-model-dtx-file/). It is useful for
 those who plan to create a new Documented LaTeX Source (.dtx) file.
 
 Usage example:
@@ -94,21 +94,20 @@ inst		install in the user's TeX tree,
 install		install in the local TeX tree (uses sudo)
 zip		produce a zip file ready for upload to CTAN
 
-= Author and copyright
-Author	Wybo Dekker
-Email	U{Wybo@dekkerdocumenten.nl}{wybo@dekkerdocumenten.nl}
-License	Released under the U{www.gnu.org/copyleft/gpl.html}{GNU General Public License}
+= Author
+[Wybo Dekker](wybo@dekkerdocumenten.nl)
+
+= Copyright
+Released under the [GNU General Public License](www.gnu.org/copyleft/gpl.html)
 DOC
 
-    die() { echo -e "$myname: $Err${*}$Nor" 1>&2; exit 1; }
-   help() { sed -n '/^= Synopsis/,/^= /p' "$0"|sed '1s/.*/Usage:/;/^= /d'; exit; }
-helpall() { sed -n '/^<<.DOC.$/,/^DOC$/p' "$0"|sed -n '1d;$d;p'|less; exit; }
-version() { echo $version; exit; }
-install() { which instscript>&/dev/null && instscript --zip --pdf --markdown "$myname"; exit; }
-
-Nor='\e[0m'    # reset color	]
-Err='\e[31;1m' # light red	]
-[[ ${BASH_VERSINFO[0]} -ge 4 ]] || die "Need bash version >= 4 (you have $BASH_VERSION)"
+# check executables and versions of bash and getopt
+((BASH_VERSINFO>=4)) || die "Need bash version >= 4"
+for i in getopt make; do
+   command -v "$i" &> /dev/null || die "$i: command not found"
+done
+i=$(getopt -T)
+{ (($?==4)) && [[ -z $i ]]; } || die "Your getopt is not GNU"
 
 # using the label in arg 2, read template from my self, filter it
 # through the script in arg 1, and write the output to the file in arg 3.
@@ -116,11 +115,22 @@ Err='\e[31;1m' # light red	]
 function createfile {
    file=$3
    test "$file" = "" && file=$2
-   sed -n "/^<<'$2'/,/^$2/p" "$0" |tail -n +2 |head -n -1 |sed "$1" >"$file"
+   sed -n "/^:<<'$2'/,/^$2/p" "$0" |tail -n +2 |head -n -1 |sed "$1" >"$file"
 }
 
+REd='\e[38;5;9m'
+    die() { local i; for i; do echo -e "$Myname: $REd$i"; done 1>&2; exit 1; }
+helpsrt() { sed -n '/^= Synopsis/,/^= /p' "$0"|sed '1d;$d'; exit; }
+instscr() { instscript --zip --pdf "$Myname"; exit; }
+
+# shellcheck disable=SC2154
+helpall() { sed -n "/^:<<'DOC'$/,/^DOC/p" "$0"|sed -n '1d;$d;p'|
+            less -Ps"$Myname-${Version/./·} documentation - type h for help, q to quit."
+		exit
+	  }
+
 if ! options=$(getopt \
-   -n "$myname" \
+   -n "$Myname" \
    -o s:n:m:c:d:hHVqI \
    -l short:,name:,mail:,class:,date:,help,Help,version,quiet -- "$@"
 ); then exit 1; fi
@@ -129,13 +139,14 @@ eval set -- "$options"
 while [ $# -gt 0 ]; do
    case $1 in
    (-h|--help)    # print short help and exit
-                  help
+                  helpsrt
                   ;;
    (-H|--Help)    # print full documentation via less and exit
                   helpall
                   ;;      
    (-V|--version) # print version and exit
-                  version
+                  echo $Version
+		  exit
                   ;;
    (-s|--short)   # short, one-liner, package description
                   short=$2
@@ -145,7 +156,7 @@ while [ $# -gt 0 ]; do
                   date=$2
                   shift 2
                   ;;
-   (-m|--mail)    # your email address. Default: $MAIL
+   (-m|--mail)    # your email address. Default: $EMAIL
                   mail=$2
                   shift 2
                   ;;
@@ -161,7 +172,7 @@ while [ $# -gt 0 ]; do
                   quiet=--quiet
                   shift
                   ;;
-   (-I)           install
+   (-I)           instscr
                   ;;
    (--)           shift
                   break
@@ -206,7 +217,7 @@ esac
 shrt=$(sed 's/\\[[:alpha:]]\\+{\\([^}]*\\)}/\\1/g;s/\\//g' <<<"$short")
 
 # Any \'s in the short description need to be duplicated for the script:
-short=$(sed 's/\\/\\\\/g' <<<"$short")
+short="${short//\\/\\\\}"
 
 test -z "$mail" && die "author's email not set - use option or environment variable EMAIL"
 test -z "$name" && die "author's name not set - use option or environment variable NAME"
@@ -224,20 +235,16 @@ declare -A rm=(
       [See]='http://www.latex-project.org/lppl.txt'
 )
 
-readme=()
-
 for i in $kopl $base Author E-mail License See; do
-   readme+="$(printf "%*s:| %s°"  $colw "$i" "${rm[$i]}")"
+  readme+="$(printf "%*s:| %s\\\\n"  $colw "$i" "${rm[$i]}")"
 done
 
 # make sed script replacing the variables in the templates:
 sedscript=''
-for i in readme base year ext mail use typ Typ name date short shrt lcl; do
-  eval v="\$$i"
-  test $quiet || echo "$i	$v"|sed 's/\\\\/\\/g;s=°=\n=g'
-  sedscript="${sedscript}s=%$i%=$v=g;"
+for i in base year ext mail use typ Typ name date short shrt lcl readme; do
+  test $quiet || eval "echo -e \"$i	\$$i\""|sed 's/\\\\/\\/g'
+  eval "sedscript+=\"s=%$i%=\$$i=g;\""
 done
-sedscript+='s=°=\n=g'
 
 createfile "$sedscript" Makefile
 createfile "$sedscript" DTX "$base.dtx"
@@ -245,7 +252,7 @@ make $quiet
 exit 0
 
 # ---- TEMPLATES: ----
-<<'Makefile'
+:<<'Makefile'
 NAME  = %base%
 SHELL = bash
 PWD   = $(shell pwd)
@@ -280,7 +287,7 @@ zip: all
 	rm $(NAME)
 Makefile
 
-<<'DTX'
+:<<'DTX'
 % \iffalse meta-comment
 % vim: textwidth=75
 %<*internal>
