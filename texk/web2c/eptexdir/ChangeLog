@@ -1,3 +1,9 @@
+2019-07-21  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* eptex.ech: More compatible with original e-TeX, because
+	'\fontchar??' and '\iffontchar' for Latin font is effective
+	only for 0--255.
+
 2019-07-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfutils.ch: Add primitive \ifincsname.
