@@ -553,7 +553,7 @@ font_char_ic_code: begin scan_font_ident; q:=cur_val;
       end
     else cur_val:=0;
     end
-  else begin scan_char_num;
+  else begin scan_ascii_num;
     if (font_bc[q]<=cur_val)and(font_ec[q]>=cur_val) then
       begin i:=orig_char_info(q)(qi(cur_val));
       case m of
@@ -646,7 +646,7 @@ if_font_char_code:begin scan_font_ident; n:=cur_val; scan_char_num;
   end;
 @y
 if_font_char_code:begin scan_font_ident; n:=cur_val;
-  if font_dir[n]<>dir_default then
+  if font_dir[n]<>dir_default then {Japanese font}
     begin scan_int;
     if cur_val>=0 then b:=is_char_kanji(cur_val)
     { In u\pTeX, $\hbox{|is_char_kanji|} = \lambda x\mathpunct{.} x\ge 0$ }
@@ -655,7 +655,7 @@ if_font_char_code:begin scan_font_ident; n:=cur_val;
       b:=(font_bc[n]<=cur_val)and(font_ec[n]>=cur_val)
       end
     end
-  else begin scan_char_num;
+  else begin scan_ascii_num;
     if (font_bc[n]<=cur_val)and(font_ec[n]>=cur_val) then @/
       b:=char_exists(orig_char_info(n)(qi(cur_val)))
     else b:=false;
