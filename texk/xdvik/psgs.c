@@ -561,7 +561,8 @@ initGS(void)
 	">> setuserparams .locksafe "
 	"} stopped pop\n";
     static const char str1[] =
-	"/xdvi$run {$error /newerror false put {currentfile cvx execute} stopped pop} "
+        "/xdvi$run "
+        "{$error /newerror false put currentfile cvx stopped {handleerror} if} "
 	"def "
 	"/xdvi$ack (\347\310\376) def "
 	"/xdvi$dslen countdictstack def "
