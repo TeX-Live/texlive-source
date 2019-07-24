@@ -1,3 +1,8 @@
+2019-07-24  Akira Kakuto  <kakuto@w32tex.org>
+
+	* texmf.cnf: Define command_line_encoding = utf-8 for
+	Windows only.
+
 2019-07-11  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.lua{,jit}hb{,la}tex): four new engines,

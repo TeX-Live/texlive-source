@@ -845,3 +845,23 @@ max_cols.gftype = 8191
 % Guess input encoding (SJIS vs. Unicode, etc.) in pTeX and friends?
 % Default is 1, to guess. Used on Windows only.
 guess_input_kanji_encoding = 1
+
+% command_line_encoding
+%
+% This variable is used on Windows only, and affects 4 TeX engines:
+% uptex, euptex, pdftex, xetex, and 2 drivers: dvips, [x]dvipdfmx.
+% Several applications also are affected by the variable:
+% dvi2tty.exe, disdvi.exe, dvibook.exe, dviconcat.exe, dviselect.exe,
+% dvitodvi.exe, and dvidvi.exe.
+% Only values utf8 or utf-8 are meaningful. Other values are simply
+% ignored. If file names in sources and DVI or XDV files are ASCII
+% only, the value of command_line_encoding is irrelevant.
+% If command_line_encoding = utf8 or command_line_encoding = utf-8,
+% file names in sources and DVI or XDV files are assumed to be UTF-8.
+% Default is utf-8, from 2019-07-24, to assume UTF-8 file names.
+% In order to switch off the function, define an environment variable:
+% set command_line_encoding=none
+% or write a line:
+% command_line_encoding = none
+% in a texmf.cnf prefered, for example $TEXMFLOCAL/web2c/texmf.cnf.
+command_line_encoding = utf-8
