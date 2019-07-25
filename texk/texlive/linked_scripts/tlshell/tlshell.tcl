@@ -756,28 +756,68 @@ proc abort_load {} {
 # it should disappear if loading finishes
 proc splash_loading {} {
 
-  #toplevel .loading
   create_dlg .loading .
 
-  wm title .loading ""
+  wm title .loading [__ "Loading"]
 
   # wallpaper
   pack [ttk::frame .loading.bg -padding 3] -fill both -expand 1
 
-  set lbl [__ "Trying to load %s.
+  set ::do_track_loading \
+      [expr {[dict get $::pkgs texlive.infra localrev] >= 51676}]
+
+  if $::do_track_loading {
+    set lbl [__ \
+                 "If loading takes too long, press Abort and choose another repository."]
+  } else {
+    set lbl [__ "Trying to load %s.
 
 If this takes too long, press Abort and choose another repository." \
               $::repos(main)]
+  }
   append lbl "\n([__ "Options"] \/ [__ "Repositories"] ...)"
   ppack [ttk::label .loading.l0 -text $lbl \
              -wraplength [expr {60*$::cw}] -justify left] \
       -in .loading.bg -anchor w
+
+  if $::do_track_loading {
+    pack [ttk::frame .loading.tfr] -in .loading.bg -expand 1 -fill x
+    pack [ttk::scrollbar .loading.scroll -command ".loading.tx yview"] \
+        -in .loading.tfr -side right -fill y
+    ppack [text .loading.tx -height 5 -wrap word \
+              -yscrollcommand ".loading.scroll set"] \
+        -in .loading.tfr -expand 1 -fill both
+  }
   pack [ttk::frame .loading.buttons] -in .loading.bg -expand 1 -fill x
-  ttk::button .loading.y -text [__ "Abort"] -command abort_load
-  ppack .loading.y -in .loading.buttons -side right
+  if $::do_track_loading {
+    ttk::button .loading.close -text [__ "Close"] -command {end_dlg "" .loading}
+    ppack .loading.close -in .loading.buttons -side right
+    .loading.close configure -state disabled
+  }
+  ttk::button .loading.abo -text [__ "Abort"] -command abort_load
+  ppack .loading.abo -in .loading.buttons -side right
   wm resizable .loading 0 0
   place_dlg .loading .
 } ; # splash_loading
+
+proc track_err {} {
+  if $::do_track_loading {
+    set inx0 [llength $::err_log]
+    #puts stderr "track_err: $inx0"
+    read_err_tempfile
+    .loading.tx configure -state normal
+    for {set i $inx0} {$i < [llength $::err_log]} {incr i} {
+      .loading.tx insert end "[lindex $::err_log $i]\n"
+    }
+    .loading.tx configure -state disabled
+    if {![info exists ::loaded]} {
+      after 500 track_err
+    } else {
+      .loading.close state !disabled
+      .loading.abo state disabled
+    }
+  }
+}
 
 # remote: preserve information on installed packages
 proc get_packages_info_remote {} {
@@ -792,6 +832,9 @@ proc get_packages_info_remote {} {
   set ::tlshell_updatable 0
 
   splash_loading
+
+  unset -nocomplain ::loaded
+  track_err ; # is a no-op unless $::do_track_loading
   if [catch {run_cmd \
     "info --data name,localrev,remoterev,cat-version,category,shortdesc"}] {
     do_debug [get_stacktrace]
@@ -799,7 +842,10 @@ proc get_packages_info_remote {} {
     return 0
   }
   vwait ::done_waiting
-  destroy .loading
+  set ::loaded 1
+  if {! $::do_track_loading} {
+    destroy .loading
+  } ; # otherwise, .loading destroyed by close button of track_err
   set re {^([^,]+),([0-9]+),([0-9]+),([^,]*),([^,]*),(.*)$}
   foreach l $::out_log {
     if [regexp $re $l m nm lrev rrev rcatv catg pdescr] {

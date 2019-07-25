@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 51555 2019-07-04 22:23:27Z karl $
+# $Id: tlmgr.pl 51716 2019-07-24 04:58:04Z preining $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 51555 $';
-my $datrev = '$Date: 2019-07-05 00:23:27 +0200 (Fri, 05 Jul 2019) $';
+my $svnrev = '$Revision: 51716 $';
+my $datrev = '$Date: 2019-07-24 06:58:04 +0200 (Wed, 24 Jul 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -4798,7 +4798,8 @@ sub action_platform {
                            dviout.win32 wintools.win32/;
   if ($^O =~ /^MSWin/i) {
     warn("action `platform' not supported on Windows\n");
-    return ($F_WARNING);
+    # return an error here so that we don't go into post-actions
+    return ($F_ERROR);
   }
   if ($opts{"usermode"}) {
     tlwarn("$prg: action `platform' not supported in usermode\n");
@@ -6877,6 +6878,7 @@ sub setup_one_remotetlpdb {
   # - if that does not work assume we are offline or target not reachable,
   #   so warn the user and use saved, but note that installation will
   #   not work
+  info("start load $location\n") if ($::machinereadable);
 
   my $local_copy_tlpdb_used = 0;
   if ($location =~ m;^(https?|ftp)://;) {
@@ -6959,9 +6961,11 @@ END_NO_INTERNET
     }
   }
   if (!defined($remotetlpdb)) {
+    info("fail load $location\n") if ($::machinereadable);
     return(undef, $loadmediasrcerror . $location);
   }
   if ($opts{"require-verification"} && !$remotetlpdb->is_verified) {
+    info("fail load $location\n") if ($::machinereadable);
     tldie("Remote TeX Live database ($location) is not verified, exiting.\n");
   }
 
@@ -6981,6 +6985,7 @@ END_NO_INTERNET
   my $texlive_minrelease = $remotetlpdb->config_minrelease;
   my $rroot = $remotetlpdb->root;
   if (!defined($texlive_release)) {
+    info("fail load $location\n") if ($::machinereadable);
     return(undef, "The installation repository ($rroot) does not specify a "
           . "release year for which it was prepared, goodbye.");
   }
@@ -6988,6 +6993,7 @@ END_NO_INTERNET
   my $texlive_release_year = $texlive_release;
   $texlive_release_year =~ s/^(....).*$/$1/;
   if ($texlive_release_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
+    info("fail load $location\n") if ($::machinereadable);
     return(undef, "The installation repository ($rroot) does not specify a "
           . "valid release year, goodbye: $texlive_release");
   }
@@ -6997,12 +7003,14 @@ END_NO_INTERNET
     my $texlive_minrelease_year = $texlive_minrelease;
     $texlive_minrelease_year =~ s/^(....).*$/$1/;
     if ($texlive_minrelease_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
+      info("fail load $location\n") if ($::machinereadable);
       return(undef, "The installation repository ($rroot) does not specify a "
             . "valid minimal release year, goodbye: $texlive_minrelease");
     }
     # ok, all numeric and fine, check for range
     if ($TeXLive::TLConfig::ReleaseYear < $texlive_minrelease_year
         || $TeXLive::TLConfig::ReleaseYear > $texlive_release_year) {
+      info("fail load $location\n") if ($::machinereadable);
       return (undef, "The TeX Live versions supported by the repository
 $rroot
   ($texlive_minrelease_year--$texlive_release_year)
@@ -7014,6 +7022,7 @@ do not include the version of the local installation
     # of the main remote repository, then
     # warn that one needs to call update-tlmgr-latest.sh --update
     if ($is_main && $TeXLive::TLConfig::ReleaseYear < $texlive_release_year) {
+      info("fail load $location\n") if ($::machinereadable);
       return (undef, "Local TeX Live ($TeXLive::TLConfig::ReleaseYear)"
               . " is older than remote repository ($texlive_release_year).\n"
               . "Cross release updates are only supported with\n"
@@ -7023,6 +7032,7 @@ do not include the version of the local installation
   } else {
     # $texlive_minrelease not defined, so only one year is valid
     if ($texlive_release_year != $TeXLive::TLConfig::ReleaseYear) {
+      info("fail load $location\n") if ($::machinereadable);
       return(undef, "The TeX Live versions of the local installation
 and the repository are not compatible:
       local: $TeXLive::TLConfig::ReleaseYear
@@ -7065,6 +7075,7 @@ FROZEN
     }
   }
 
+  info("finish load $location\n") if ($::machinereadable);
   return($remotetlpdb);
 }
 
@@ -9848,7 +9859,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 51555 2019-07-04 22:23:27Z karl $
+$Id: tlmgr.pl 51716 2019-07-24 04:58:04Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
