@@ -1,3 +1,8 @@
+2019-07-26  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXINPUTS.latex-dev, *-dev): new -dev format
+	names for LaTeX pre-release testing.
+
 2019-07-24  Akira Kakuto  <kakuto@w32tex.org>
 
 	* texmf.cnf: Define command_line_encoding = utf-8 for
