@@ -1,5 +1,9 @@
 2019-07-26  Karl Berry  <karl@tug.org>
 
+	* texmf.cnf (TEXINPUTS, etc.): include explicit latex,
+	element at end so that files under latex/ are preferred to those
+	under latex-dev/. From Ulrike Fischer.
+
 	* texmf.cnf (TEXINPUTS.latex-dev, *-dev): new -dev format
 	names for LaTeX pre-release testing.
 

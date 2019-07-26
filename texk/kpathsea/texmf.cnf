@@ -168,24 +168,28 @@ TEXMFDOTDIR = .
 % formats, past or present.  Not all of them are built these days.
 
 % Plain TeX.  Have the command tex check all directories as a last
-% resort, we may have plain-compatible stuff anywhere.
-TEXINPUTS.tex           = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,}//
+% resort, we may have plain-compatible stuff anywhere.  Prefer
+% latex/ to latex-dev/, implying that we have to add a latex, element to
+% every TEXINPUTS tree that recursively searches $TEXMF/tex//, which is
+% all of them except ConTeXt.
+TEXINPUTS.tex           = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,latex,}//
 
 % Fontinst needs to read afm files.
 TEXINPUTS.fontinst      = $TEXMFDOTDIR;$TEXMF/{tex,fonts/afm}//
 
 % Other plain-based formats.
-TEXINPUTS.amstex        = $TEXMFDOTDIR;$TEXMF/tex/{amstex,plain,generic,}//
-TEXINPUTS.csplain       = $TEXMFDOTDIR;$TEXMF/tex/{csplain,plain,generic,}//
-TEXINPUTS.eplain        = $TEXMFDOTDIR;$TEXMF/tex/{eplain,plain,generic,}//
-TEXINPUTS.ftex          = $TEXMFDOTDIR;$TEXMF/tex/{formate,plain,generic,}//
-TEXINPUTS.mex           = $TEXMFDOTDIR;$TEXMF/tex/{mex,plain,generic,}//
-TEXINPUTS.texinfo       = $TEXMFDOTDIR;$TEXMF/tex/{texinfo,plain,generic,}//
+TEXINPUTS.amstex        = $TEXMFDOTDIR;$TEXMF/tex/{amstex,plain,generic,latex,}//
+TEXINPUTS.csplain       = $TEXMFDOTDIR;$TEXMF/tex/{csplain,plain,generic,latex,}//
+TEXINPUTS.eplain        = $TEXMFDOTDIR;$TEXMF/tex/{eplain,plain,generic,latex,}//
+TEXINPUTS.ftex          = $TEXMFDOTDIR;$TEXMF/tex/{formate,plain,generic,latex,}//
+TEXINPUTS.mex           = $TEXMFDOTDIR;$TEXMF/tex/{mex,plain,generic,latex,}//
+TEXINPUTS.texinfo       = $TEXMFDOTDIR;$TEXMF/tex/{texinfo,plain,generic,latex,}//
 
-% LaTeX 2e specific macros are stored in latex/, macros that can only be
+% LaTeX2e specific macros are stored in latex/, macros that can only be
 % used with 2.09 in latex209/.  In addition, we look in the directory
 % latex209, useful for macros that were written for 2.09 and do not
-% mention 2e at all, but can be used with 2e.
+% mention 2e at all, but can be used with 2e.  The latex-dev/ subtree
+% may contain release candidates for testing.
 TEXINPUTS.cslatex       = $TEXMFDOTDIR;$TEXMF/tex/{cslatex,csplain,latex,generic,}//
 TEXINPUTS.latex         = $TEXMFDOTDIR;$TEXMF/tex/{latex,generic,}//
 TEXINPUTS.latex-dev     = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,latex,generic,}//
@@ -194,35 +198,35 @@ TEXINPUTS.olatex        = $TEXMFDOTDIR;$TEXMF/tex/{latex,generic,}//
 
 % MLTeX.
 TEXINPUTS.frlatex       = $TEXMFDOTDIR;$TEXMF/tex/{french,latex,generic,}//
-TEXINPUTS.frtex         = $TEXMFDOTDIR;$TEXMF/tex/{french,plain,generic,}//
+TEXINPUTS.frtex         = $TEXMFDOTDIR;$TEXMF/tex/{french,plain,generic,latex,}//
 TEXINPUTS.mllatex       = $TEXMFDOTDIR;$TEXMF/tex/{latex,generic,}//
-TEXINPUTS.mltex         = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,}//
+TEXINPUTS.mltex         = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,latex,}//
 
 % e-TeX.
 TEXINPUTS.elatex        = $TEXMFDOTDIR;$TEXMF/tex/{latex,generic,}//
-TEXINPUTS.etex          = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,}//
+TEXINPUTS.etex          = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,latex,}//
 
 % pdfTeX.
 TEXINPUTS.pdfcslatex    = $TEXMFDOTDIR;$TEXMF/tex/{cslatex,csplain,latex,generic,}//
-TEXINPUTS.pdfcsplain    = $TEXMFDOTDIR;$TEXMF/tex/{csplain,plain,generic,}//
+TEXINPUTS.pdfcsplain    = $TEXMFDOTDIR;$TEXMF/tex/{csplain,plain,generic,latex,}//
 TEXINPUTS.pdflatex      = $TEXMFDOTDIR;$TEXMF/tex/{latex,generic,}//
-TEXINPUTS.pdflatex-dev  = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,generic,}//
-TEXINPUTS.pdfmex        = $TEXMFDOTDIR;$TEXMF/tex/{mex,plain,generic,}//
-TEXINPUTS.utf8mex       = $TEXMFDOTDIR;$TEXMF/tex/{mex,plain,generic,}//
-TEXINPUTS.pdftex        = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,}//
-TEXINPUTS.pdftexinfo    = $TEXMFDOTDIR;$TEXMF/tex/{texinfo,plain,generic,}//
-TEXINPUTS.pdfamstex     = $TEXMFDOTDIR;$TEXMF/tex/{amstex,plain,generic,}//
+TEXINPUTS.pdflatex-dev  = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,latex,generic,}//
+TEXINPUTS.pdfmex        = $TEXMFDOTDIR;$TEXMF/tex/{mex,plain,generic,latex,}//
+TEXINPUTS.utf8mex       = $TEXMFDOTDIR;$TEXMF/tex/{mex,plain,generic,latex,}//
+TEXINPUTS.pdftex        = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,latex,}//
+TEXINPUTS.pdftexinfo    = $TEXMFDOTDIR;$TEXMF/tex/{texinfo,plain,generic,latex,}//
+TEXINPUTS.pdfamstex     = $TEXMFDOTDIR;$TEXMF/tex/{amstex,plain,generic,latex,}//
 
 % pdfeTeX.
 TEXINPUTS.pdfelatex     = $TEXMFDOTDIR;$TEXMF/tex/{latex,generic,}//
-TEXINPUTS.pdfetex       = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,}//
+TEXINPUTS.pdfetex       = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,latex,}//
 
 % LuaTeX.
-TEXINPUTS.luatex          = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
-TEXINPUTS.luajittex       = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
-TEXINPUTS.luahbtex        = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
-TEXINPUTS.luajithbtex     = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
-TEXINPUTS.dviluatex       = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,}//
+TEXINPUTS.luatex          = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,latex,}//
+TEXINPUTS.luajittex       = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,latex,}//
+TEXINPUTS.luahbtex        = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,latex,}//
+TEXINPUTS.luajithbtex     = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,latex,}//
+TEXINPUTS.dviluatex       = $TEXMFDOTDIR;$TEXMF/tex/{luatex,plain,generic,latex,}//
 TEXINPUTS.lualatex        = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 TEXINPUTS.lualatex-dev    = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,lualatex,latex,luatex,generic,}//
 TEXINPUTS.luajitlatex     = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
@@ -233,41 +237,42 @@ TEXINPUTS.dvilualatex     = $TEXMFDOTDIR;$TEXMF/tex/{lualatex,latex,luatex,gener
 TEXINPUTS.dvilualatex-dev = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,lualatex,latex,luatex,generic,}//
 
 % HarfTeX.
-TEXINPUTS.harftex       = $TEXMFDOTDIR;$TEXMF/tex/{harftex,luatex,plain,generic,}//
+TEXINPUTS.harftex       = $TEXMFDOTDIR;$TEXMF/tex/{harftex,luatex,plain,generic,latex,}//
 TEXINPUTS.harflatex     = $TEXMFDOTDIR;$TEXMF/tex/{harflatex,harftex,lualatex,latex,luatex,generic,}//
+TEXINPUTS.harflatex-dev = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,harflatex,harftex,lualatex,latex,luatex,generic,}//
 
 % XeTeX.
 TEXINPUTS.xelatex       = $TEXMFDOTDIR;$TEXMF/tex/{xelatex,latex,xetex,generic,}//
 TEXINPUTS.xelatex-dev   = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,xelatex,latex,xetex,generic,}//
-TEXINPUTS.xeplain       = $TEXMFDOTDIR;$TEXMF/tex/{xeplain,eplain,plain,xetex,generic,}//
-TEXINPUTS.xetex         = $TEXMFDOTDIR;$TEXMF/tex/{xetex,plain,generic,}//
+TEXINPUTS.xeplain       = $TEXMFDOTDIR;$TEXMF/tex/{xeplain,eplain,plain,xetex,generic,latex,}//
+TEXINPUTS.xetex         = $TEXMFDOTDIR;$TEXMF/tex/{xetex,plain,generic,latex,}//
 
 % Omega / Aleph.
-TEXINPUTS.aleph         = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,}//
+TEXINPUTS.aleph         = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,latex,}//
 TEXINPUTS.elambda       = $TEXMFDOTDIR;$TEXMF/tex/{lambda,latex,generic,}//
-TEXINPUTS.eomega        = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,}//
+TEXINPUTS.eomega        = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,latex,}//
 TEXINPUTS.lambda        = $TEXMFDOTDIR;$TEXMF/tex/{lambda,latex,generic,}//
 TEXINPUTS.lamed         = $TEXMFDOTDIR;$TEXMF/tex/{lambda,latex,generic,}//
-TEXINPUTS.omega         = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,}//
+TEXINPUTS.omega         = $TEXMFDOTDIR;$TEXMF/tex/{plain,generic,latex,}//
 
 % p(La)TeX.
-TEXINPUTS.ptex          = $TEXMFDOTDIR;$TEXMF/tex/{ptex,plain,generic,}//
+TEXINPUTS.ptex          = $TEXMFDOTDIR;$TEXMF/tex/{ptex,plain,generic,latex,}//
 TEXINPUTS.platex        = $TEXMFDOTDIR;$TEXMF/tex/{platex,latex,generic,}//
 TEXINPUTS.platex-dev    = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,platex,latex,generic,}//
 
-% epTeX, and for pmpost.
-TEXINPUTS.eptex         = $TEXMFDOTDIR;$TEXMF/tex/{ptex,plain,generic,}//
+% epTeX, and use that engine for pmpost.
+TEXINPUTS.eptex         = $TEXMFDOTDIR;$TEXMF/tex/{ptex,plain,generic,latex,}//
 TEX.pmpost = eptex
 
 % p(La)TeX-ng
-TEXINPUTS.ptex-ng   = $TEXMFDOTDIR;$TEXMF/tex/{uptex,ptex,plain,generic,}//
+TEXINPUTS.ptex-ng   = $TEXMFDOTDIR;$TEXMF/tex/{uptex,ptex,plain,generic,latex,}//
 TEXINPUTS.platex-ng = $TEXMFDOTDIR;$TEXMF/tex/{uplatex,platex,latex,generic,}//
 
 % (e)up(La)TeX, and for upmpost
 TEXINPUTS.uplatex     = $TEXMFDOTDIR;$TEXMF/tex/{uplatex,platex,latex,generic,}//
 TEXINPUTS.uplatex-dev = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,uplatex,platex,latex,generic,}//
-TEXINPUTS.uptex   = $TEXMFDOTDIR;$TEXMF/tex/{uptex,ptex,plain,generic,}//
-TEXINPUTS.euptex  = $TEXMFDOTDIR;$TEXMF/tex/{uptex,ptex,plain,generic,}//
+TEXINPUTS.uptex   = $TEXMFDOTDIR;$TEXMF/tex/{uptex,ptex,plain,generic,latex,}//
+TEXINPUTS.euptex  = $TEXMFDOTDIR;$TEXMF/tex/{uptex,ptex,plain,generic,latex,}//
 TEX.upmpost = euptex
 
 % pBibTeX bibliographies and style files.
@@ -282,21 +287,21 @@ BSTINPUTS.upbibtex      = $TEXMFDOTDIR;$TEXMF/{upbibtex,pbibtex,bibtex}/bst//
 TEXINPUTS.context       = $TEXMFDOTDIR;$TEXMF/tex/{context,plain,generic,}//
 
 % jadetex.
-TEXINPUTS.jadetex       = $TEXMFDOTDIR;$TEXMF/tex/{jadetex,latex,generic,}//
-TEXINPUTS.pdfjadetex    = $TEXMFDOTDIR;$TEXMF/tex/{jadetex,latex,generic,}//
+TEXINPUTS.jadetex       = $TEXMFDOTDIR;$TEXMF/tex/{jadetex,latex,generic,latex,}//
+TEXINPUTS.pdfjadetex    = $TEXMFDOTDIR;$TEXMF/tex/{jadetex,latex,generic,latex,}//
 
 % XMLTeX.
 TEXINPUTS.xmltex        = $TEXMFDOTDIR;$TEXMF/tex/{xmltex,latex,generic,}//
 TEXINPUTS.pdfxmltex     = $TEXMFDOTDIR;$TEXMF/tex/{xmltex,latex,generic,}//
 
 % Miscellany, no longer built.
-TEXINPUTS.lamstex       = $TEXMFDOTDIR;$TEXMF/tex/{lamstex,plain,generic,}//
-TEXINPUTS.lollipop      = $TEXMFDOTDIR;$TEXMF/tex/{lollipop,plain,generic,}//
+TEXINPUTS.lamstex       = $TEXMFDOTDIR;$TEXMF/tex/{lamstex,plain,generic,latex,}//
+TEXINPUTS.lollipop      = $TEXMFDOTDIR;$TEXMF/tex/{lollipop,plain,generic,latex,}//
 TEXINPUTS.frpdflatex    = $TEXMFDOTDIR;$TEXMF/tex/{french,latex,generic,}//
-TEXINPUTS.frpdftex      = $TEXMFDOTDIR;$TEXMF/tex/{french,plain,generic,}//
+TEXINPUTS.frpdftex      = $TEXMFDOTDIR;$TEXMF/tex/{french,plain,generic,latex,}//
 
 % Earlier entries override later ones, so put this generic one last.
-TEXINPUTS               = $TEXMFDOTDIR;$TEXMF/tex/{$progname,generic,}//
+TEXINPUTS               = $TEXMFDOTDIR;$TEXMF/tex/{$progname,generic,latex,}//
 
 % ttf2tfm.
 TTF2TFMINPUTS =                 $TEXMFDOTDIR;$TEXMF/ttf2pk//
@@ -486,16 +491,23 @@ DVIPDFMXINPUTS = $TEXMF/dvipdfmx
 % But we can't simply use $TEXINPUTS, since then if TEXINPUTS is set in
 % the environment with a colon, say, TEXINPUTS=/some/dir:, the intended
 % default expansion of TEXINPUTS will not happen and .lua files under
-% the /tex/ will not be found.
+% the /tex/ tree will not be found.
 % 
 % So, duplicate the TEXINPUTS.*lualatex values as LUAINPUTS.*lualatex.
 % The default LUAINPUTS suffices for luatex and dviluatex.
 %
 LUAINPUTS.lualatex        = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 LUAINPUTS.lualatex-dev    = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{latex-dev,lualatex,latex,luatex,generic,}//
+TEXINPUTS.luahblatex      = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
+TEXINPUTS.luahblatex-dev  = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{latex-dev,lualatex,latex,luatex,generic,}//
 LUAINPUTS.dvilualatex     = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 LUAINPUTS.dvilualatex-dev = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{latex-dev,lualatex,latex,luatex,generic,}//
-LUAINPUTS = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{luatex,plain,generic,}//
+%
+LUAINPUTS.harftex       = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{harftex,luatex,plain,generic,latex,}//
+LUAINPUTS.harflatex     = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{harflatex,harftex,lualatex,latex,luatex,generic,}//
+LUAINPUTS.harflatex-dev = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{latex-dev,harflatex,harftex,lualatex,latex,luatex,generic,}//
+%
+LUAINPUTS = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{luatex,plain,generic,latex,}//
 
 % Lua needs to look for binary lua libraries distributed with packages.
 CLUAINPUTS = $TEXMFDOTDIR;$SELFAUTOLOC/lib/{$progname,$engine,}/lua//
