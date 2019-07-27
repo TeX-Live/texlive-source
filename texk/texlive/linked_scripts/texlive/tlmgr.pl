@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 51716 2019-07-24 04:58:04Z preining $
+# $Id: tlmgr.pl 51740 2019-07-26 17:39:35Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 51716 $';
-my $datrev = '$Date: 2019-07-24 06:58:04 +0200 (Wed, 24 Jul 2019) $';
+my $svnrev = '$Revision: 51740 $';
+my $datrev = '$Date: 2019-07-26 19:39:35 +0200 (Fri, 26 Jul 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5458,14 +5458,15 @@ sub check_files {
 sub check_runfiles {
   my $Master = $localtlpdb->root;
 
-  # build a list of all runtime files associated to 'normal' packages
-  (my $non_normal = `ls "$Master/bin"`) =~ s/\n/\$|/g; # binaries
-  $non_normal .= '^0+texlive|^bin-|^collection-|^scheme-|^texlive-|^texworks';
-  $non_normal .= '|^pgf$';  # has lots of intentionally duplicated .lua
+  # build a list of all runtime files associated with normal packages.
+  (my $omit_pkgs = `ls "$Master/bin"`) =~ s/\n/\$|/g; # binaries
+  $omit_pkgs .= '^0+texlive|^bin-|^collection-|^scheme-|^texlive-|^texworks';
+  $omit_pkgs .= '|^pgf$';           # intentionally duplicated .lua
+  $omit_pkgs .= '|^latex-.*-dev$';  # intentionally duplicated base latex
   my @runtime_files = ();
   #
   foreach my $tlpn ($localtlpdb->list_packages) {
-    next if ($tlpn =~ /$non_normal/);
+    next if $tlpn =~ /$omit_pkgs/;
     #
     my $tlp = $localtlpdb->get_package($tlpn);
     my @files = $tlp->runfiles;
@@ -9859,7 +9860,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 51716 2019-07-24 04:58:04Z preining $
+$Id: tlmgr.pl 51740 2019-07-26 17:39:35Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
