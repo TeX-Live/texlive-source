@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2019-06-27"
+release_date = "2019-07-30"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")

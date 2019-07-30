@@ -29,8 +29,8 @@ $^W=1; # turn warning on
 my $prj         = 'pdfatfi';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "2.7";
-my $date        = "2016/05/16";
+my $version     = "2.9";
+my $date        = "2019/07/24";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2005-2010, 2012 by $author.";
 #
@@ -39,6 +39,7 @@ my $copyright   = "Copyright (c) 2005-2010, 2012 by $author.";
 #   2006/08/16 v2.2: Included in DTX file of attachfile2.dtx.
 #   2010/09/27 v2.6: Keys ModDateTZ and CreationDateTZ added.
 #   2016/05/16 v2.8: Option --version added.
+#   2019/07/24 v2.9: adapted version to attachfile2 version.
 #
 
 use POSIX qw(strftime); # %z is used (GNU)
