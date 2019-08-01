@@ -123,7 +123,7 @@ integer maxsecsize = 0;       /* the maximum size of a section */
 integer firstboploc;         /* where the first bop is */
 Boolean sepfiles;            /* each section in its own file? */
 int numcopies;               /* number of copies of each page to print */
-const char *oname;           /* output file name */
+char *oname;           /* output file name */
 char *iname;                 /* dvi file name */
 char *fulliname;             /* same, with current working directory */
 char *strings;               /* strings for program */
