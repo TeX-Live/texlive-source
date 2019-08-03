@@ -1,3 +1,11 @@
+2019-08-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_gsub.c: Fix a bug that OTL coverage data were not read and
+	were initialized to wrong values when LigatureSetCount was 0.
+	Similar issue is found also in alternate substitution.
+	Reported by Jens Adam:
+	https://tug.org/pipermail/tex-live/2019-August/043983.html
+
 2019-06-30  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfdev.c: Fix a bug that fake-bold is not handled properly
