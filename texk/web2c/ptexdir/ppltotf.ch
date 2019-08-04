@@ -520,7 +520,7 @@ end;
 @ @<Read a kanji property@>=
 begin get_name;
 if cur_code=comment_code then skip_to_end_of_item
-else if (cur_code<char_wd_code)and(cur_code>char_ic_code) then
+else if (cur_code<char_wd_code)or(cur_code>char_ic_code) then
   flush_error('This property name doesn''t belong in a TYPE list')
 else  begin case cur_code of
   char_wd_code: char_wd[c]:=sort_in(width,get_fix);

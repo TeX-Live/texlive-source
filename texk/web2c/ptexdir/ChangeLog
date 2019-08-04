@@ -1,3 +1,8 @@
+2019-08-04  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ppltotf.ch: 'This property name doesn't belong in a TYPE list'
+	was never available.
+
 2019-06-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: 'Improper alphabetic or KANJI constant' error
