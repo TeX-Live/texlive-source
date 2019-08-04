@@ -1,4 +1,4 @@
-This is web2c.info, produced by makeinfo version 6.5 from web2c.texi.
+This is web2c.info, produced by makeinfo version 6.6 from web2c.texi.
 
 This file documents the installation and use of the programs in Web2c,
 an implementation of Donald Knuth's TeX system.
@@ -58,7 +58,7 @@ Web2c
 
 This document describes how to install and use the programs in the Web2c
 implementation of the TeX system, especially for Unix systems.  It
-corresponds to Web2c version 2019, released in February 2019.
+corresponds to Web2c version 2019, released in August 2019.
 
 * Menu:
 
@@ -82,7 +82,7 @@ File: web2c.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
 1 Introduction
 **************
 
-This manual corresponds to version 2019 of Web2c, released in February
+This manual corresponds to version 2019 of Web2c, released in August
 2019.
 
    "Web2c" is the name of a TeX implementation, originally for Unix, but
@@ -1485,9 +1485,10 @@ Otherwise it is not.  In any case, a message is written to the log file.
 
    The 'shell_escape_commands' value is a comma-separated list of words.
 Whitespace is significant, and typically should not be present.  The
-default definition looks like this, but with more commands included:
+default definition in 'texmf.cnf' looks like this, but with more
+commands included:
 
-     shell_escape_commands = bibtex,dvips,epstopdf,...,tex
+     shell_escape_commands = bibtex,kpsewhich,repstopdf,...
 
    pdfTeX and luaTeX support reading (via '\input' and '\openin') and
 writing (via '\openout') from pipes if the first character is '|'.  The
@@ -3571,14 +3572,14 @@ Index
 * \fontdimen:                            tftopl invocation.   (line  99)
 * \immediate\write18:                    Shell escapes.       (line   6)
 * \input filenames:                      \input filenames.    (line   6)
-* \input, and pipes:                     Shell escapes.       (line  63)
+* \input, and pipes:                     Shell escapes.       (line  64)
 * \mag:                                  dvicopy invocation.  (line  20)
 * \mag <1>:                              dvitype invocation.  (line  28)
-* \openin, and pipes:                    Shell escapes.       (line  63)
+* \openin, and pipes:                    Shell escapes.       (line  64)
 * \openout and security:                 tex invocation.      (line  48)
-* \openout, and pipes:                   Shell escapes.       (line  63)
+* \openout, and pipes:                   Shell escapes.       (line  64)
 * \output routine, and \write:           Shell escapes.       (line  28)
-* \pdfshellescape:                       Shell escapes.       (line  63)
+* \pdfshellescape:                       Shell escapes.       (line  64)
 * \string:                               \input filenames.    (line  59)
 * \tracingcharsubdef and MLTeX:          \tracingcharsubdef.  (line   6)
 * \tracinglostchars and MLTeX:           \tracingcharsubdef.  (line  11)
@@ -4088,7 +4089,7 @@ Index
 * pfaedit:                               Font utilities available elsewhere.
                                                               (line  30)
 * PiCTeX, increasing memory for:         Runtime options.     (line  20)
-* pipes, reading and writing:            Shell escapes.       (line  63)
+* pipes, reading and writing:            Shell escapes.       (line  64)
 * pixel height:                          pktype invocation.   (line  62)
 * pixel width:                           pktype invocation.   (line  62)
 * PK bitmaps from PostScript:            Font utilities available elsewhere.
@@ -4341,7 +4342,7 @@ Index
 * vptovf:                                vptovf invocation.   (line   6)
 * weave:                                 weave invocation.    (line   6)
 * WEB:                                   WEB.                 (line   6)
-* web environments, and security:        Shell escapes.       (line  70)
+* web environments, and security:        Shell escapes.       (line  71)
 * WEB pool files, displaying:            pooltype invocation. (line   6)
 * WEB programs, compiling:               tangle invocation.   (line   6)
 * WEB programs, typesetting:             weave invocation.    (line   6)
@@ -4390,74 +4391,74 @@ Index
 
 Tag Table:
 Node: Top2754
-Node: Introduction3752
-Node: Installation6913
-Node: configure options9015
-Node: Compile-time options11037
-Node: Additional targets12139
-Node: Triptrap13416
-Node: Runtime options14943
-Node: Commonalities16701
-Node: Option conventions17302
-Node: Common options18525
-Node: Path searching22905
-Node: Output file location23877
-Node: Three programs25202
-Node: Initial and virgin25956
-Node: Memory dumps26885
-Node: Creating memory dumps27341
-Node: Determining the memory dump to use28552
-Node: Hardware and memory dumps30133
-Node: Editor invocation32583
-Node: \input filenames33450
-Node: TeX36443
-Node: tex invocation37594
-Node: Initial TeX44497
-Node: Formats45861
-Node: Languages and hyphenation48787
-Node: MLTeX49217
-Node: \charsubdef50705
-Node: \tracingcharsubdef53028
-Node: TCX files53603
-Node: patgen invocation59043
-Node: Shell escapes59749
-Node: IPC and TeX63313
-Node: TeX extensions63883
-Node: Metafont65014
-Node: mf invocation66302
-Node: Initial Metafont70139
-Node: Modes71769
-Node: Online Metafont graphics74019
-Node: gftodvi invocation77444
-Node: mft invocation80264
-Node: MetaPost84262
-Node: mpost invocation85024
-Node: Initial MetaPost90200
-Node: dvitomp invocation91122
-Node: BibTeX91787
-Node: bibtex invocation92148
-Node: Basic BibTeX style files94622
-Node: WEB95952
-Node: tangle invocation97161
-Node: weave invocation99284
-Node: pooltype invocation100691
-Node: DVI utilities101821
-Node: dvicopy invocation102753
-Node: dvitype invocation104036
-Node: dvitype output example106365
-Node: Font utilities109416
-Node: Font file formats110596
-Node: gftopk invocation113865
-Node: pktogf invocation115056
-Node: pktype invocation116222
-Node: gftype invocation119045
-Node: tftopl invocation123548
-Node: pltotf invocation128141
-Node: vftovp invocation129192
-Node: vptovf invocation131427
-Node: Font utilities available elsewhere132454
-Node: Legalisms134834
-Node: References136988
-Node: Index141555
+Node: Introduction3750
+Node: Installation6909
+Node: configure options9011
+Node: Compile-time options11033
+Node: Additional targets12135
+Node: Triptrap13412
+Node: Runtime options14939
+Node: Commonalities16697
+Node: Option conventions17298
+Node: Common options18521
+Node: Path searching22901
+Node: Output file location23873
+Node: Three programs25198
+Node: Initial and virgin25952
+Node: Memory dumps26881
+Node: Creating memory dumps27337
+Node: Determining the memory dump to use28548
+Node: Hardware and memory dumps30129
+Node: Editor invocation32579
+Node: \input filenames33446
+Node: TeX36439
+Node: tex invocation37590
+Node: Initial TeX44493
+Node: Formats45857
+Node: Languages and hyphenation48783
+Node: MLTeX49213
+Node: \charsubdef50701
+Node: \tracingcharsubdef53024
+Node: TCX files53599
+Node: patgen invocation59039
+Node: Shell escapes59745
+Node: IPC and TeX63325
+Node: TeX extensions63895
+Node: Metafont65026
+Node: mf invocation66314
+Node: Initial Metafont70151
+Node: Modes71781
+Node: Online Metafont graphics74031
+Node: gftodvi invocation77456
+Node: mft invocation80276
+Node: MetaPost84274
+Node: mpost invocation85036
+Node: Initial MetaPost90212
+Node: dvitomp invocation91134
+Node: BibTeX91799
+Node: bibtex invocation92160
+Node: Basic BibTeX style files94634
+Node: WEB95964
+Node: tangle invocation97173
+Node: weave invocation99296
+Node: pooltype invocation100703
+Node: DVI utilities101833
+Node: dvicopy invocation102765
+Node: dvitype invocation104048
+Node: dvitype output example106377
+Node: Font utilities109428
+Node: Font file formats110608
+Node: gftopk invocation113877
+Node: pktogf invocation115068
+Node: pktype invocation116234
+Node: gftype invocation119057
+Node: tftopl invocation123560
+Node: pltotf invocation128153
+Node: vftovp invocation129204
+Node: vptovf invocation131439
+Node: Font utilities available elsewhere132466
+Node: Legalisms134846
+Node: References137000
+Node: Index141567
 
 End Tag Table

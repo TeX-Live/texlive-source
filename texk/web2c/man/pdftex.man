@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "4 May 2016" "Web2C @VERSION@"
+.TH PDFTEX 1 "4 August 2019" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -45,16 +45,11 @@ it is usually better to use the
 .I format
 option instead.
 .PP
-pdf\*(TX is a version of \*(TX, with the e-\*(TX extensions, that can create
-.I PDF
-files as well as
-.I DVI
-files.
+pdf\*(TX is a version of \*(TX, with the e-\*(TX extensions, that can
+create PDF files as well as DVI files.
 .PP
-In
-.I DVI
-mode, pdf\*(TX can be used as a complete replacement for the \*(TX
-engine.
+In DVI mode, pdf\*(TX can be used as a complete replacement for the
+\*(TX engine.
 .PP
 The typical use of pdf\*(TX is with a pregenerated formats for which
 PDF output has been enabled.  The
@@ -79,9 +74,7 @@ links to the
 .B pdftex
 executable.
 .PP
-In
-.I PDF
-mode, pdf\*(TX can natively handle the
+In PDF mode, pdf\*(TX can natively handle the
 .IR PDF ,
 .IR JPG ,
 .IR JBIG2 ,
@@ -94,6 +87,10 @@ pdf\*(TX's handling of its command-line arguments is similar to that of
 of the other \*(TX programs in the
 .I web2c
 implementation.
+.PP
+Starting with version 1.40, pdf\*(TX incorporates the e-\*(TX
+extensions, and pdfe\*(TX is just a copy of pdf\*(TX.  See 
+.BR etex (1).
 .\"=====================================================================
 .SH OPTIONS
 This version of pdf\*(TX understands the following command line options.
@@ -208,16 +205,10 @@ or
 .IR tfm .
 .TP
 .BI -output-comment \ string
-In
-.I DVI
-mode, use
+In DVI mode, use
 .I string
-for the
-.I DVI
-file comment instead of the date.  This option is ignored
-in
-.I PDF
-mode.
+for the DVI file comment instead of the date. This option is ignored in
+PDF mode.
 .TP
 .BI -output-directory \ directory
 Write output files in
@@ -258,7 +249,7 @@ in a file with extension
 .TP
 .B -shell-escape
 Enable the
-.BI \ewrite18{ command }
+.RI \ewrite18{ command }
 construct.  The
 .I command
 can be any shell command.  This construct is normally
@@ -266,29 +257,23 @@ disallowed for security reasons.
 .TP
 .B -no-shell-escape
 Disable the
-.BI \ewrite18{ command }
+.RI \ewrite18{ command }
 construct, even if it is enabled in the
 .I texmf.cnf
 file.
 .TP
+.B -shell-restricted
+Enable restricted \ewrite18{}, as explained in the ``Shell escapes''
+section of the Web2c Texinfo manual.
+.TP
 .B -src-specials
-In
-.I DVI
-mode, insert source specials into the
-.I DVI
-file.
-This option is ignored in
-.I PDF
-mode.
+In DVI mode, insert source specials into the DVI file. This option is
+ignored in PDF mode.
 .TP
 .BI -src-specials \ where
-In
-.I DVI
-mode, insert source specials in certain placed of the
-.I DVI
-file.
+In DVI mode, insert source specials in certain places of the DVI file. The
 .I where
-is a comma-separated value list:
+argument is a comma-separated value list:
 .IR cr ,
 .IR display ,
 .IR hbox ,
@@ -297,9 +282,12 @@ is a comma-separated value list:
 .IR parent ,
 or
 .IR vbox .
-This option is ignored in
-.I PDF
-mode.
+This option is ignored in PDF mode.
+.TP
+.BI -synctex \ NUMBER
+generate SyncTeX data for previewers according to bits of NUMBER. See the
+.I synctex
+manual page for details.
 .TP
 .BI -translate-file \ tcxname
 Use the
@@ -316,6 +304,9 @@ line can overrule this setting.
 .TP
 .B -version
 Print version information and exit.
+.TP
+.B -8bit
+make all characters printable by default.
 .\"=====================================================================
 .SH ENVIRONMENT
 See the Kpathsea library documentation (e.g., the `Path specifications'
@@ -325,9 +316,9 @@ The
 utility can be used to query the values of the variables.
 .PP
 One caveat: In most pdf\*(TX formats, you cannot use ~ in a filename you
-give directly to pdf\*(TX, because ~ is an active character, and hence is
-expanded, not taken as part of the filename.  Other programs, such as
-\*(MF, do not have this problem.
+give directly to pdf\*(TX, because ~ is an active character in \*(TX,
+and hence is expanded, not taken as part of the filename. Other
+programs, such as \*(MF, do not have this problem.
 .PP
 .TP
 .B TEXMFOUTPUT
@@ -354,7 +345,7 @@ Search path for
 and
 .I \eopenin
 files.
-This should start with ``.'', so
+This normally starts with ``.'', so
 that user files are found before system files.  An empty path
 component will be replaced with the paths defined in the
 .I texmf.cnf
@@ -409,26 +400,14 @@ Metric files for pdf\*(TX's fonts.
 .TP
 .I *.fmt
 Predigested pdf\*(TX format (.\|fmt) files.
-.br
 .\"=====================================================================
 .SH NOTES
-Starting with version 1.40, pdf\*(TX incorporates the e-\*(TX
-extensions, and pdfe\*(TX is just a copy of pdf\*(TX.  See 
-.BR etex (1).
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of pdf\*(TX can be found in the 
-.IR "pdf\*(TX manual"
-and the info manual
-.IR "Web2C: A TeX implementation" .
 .\"=====================================================================
 .SH BUGS
 This version of pdf\*(TX fails to trap arithmetic overflow when
 dimensions are added or subtracted.  Cases where this occurs are rare,
 but when it does the generated
-.I DVI
-file will be invalid.  Whether a generated
-.I PDF
-file would be usable is unknown.
+DVI or PDF file will be invalid.  
 .\"=====================================================================
 .SH AVAILABILITY
 pdf\*(TX is available for a large variety of machine architectures
@@ -437,13 +416,20 @@ pdf\*(TX is part of all major \*(TX distributions.
 .br
 The pdf\*(TX home page: http://www.pdftex.org.
 .br
-pdf\*(TX on CTAN: http://www.ctan.org/pkg/pdftex.
+pdf\*(TX on CTAN: https://ctan.org/pkg/pdftex.
 .br
-pdf\*(TX mailing list for all discussion: http://lists.tug.org/pdftex.
+pdf\*(TX mailing list for all discussion: https://lists.tug.org/pdftex.
 .\"=====================================================================
 .SH "SEE ALSO"
-The full pdf\*(TX manual can be accessed from the home page or CTAN page.
-Same for the Web2C, Kpathsea, and other manuals.
+This manual page is not meant to be exhaustive.  The complete
+documentation for this version of pdf\*(TX can be found in the 
+.IR "pdf\*(TX user manual"
+and the Texinfo manuals
+.IR "Kpathsea library" ,
+.IR "Web2C: A TeX implementation" .
+These manuals, and more, can be accessed from the pdfTeX or CTAN web
+pages given above.
+.PP
 Some related programs:
 .BR epstopdf (1),
 .BR etex (1),
@@ -465,6 +451,5 @@ The version now offered with the Unix \*(TX distribution is that
 generated by the \*(WB to C system
 .RB ( web2c ),
 originally written by Tomas Rokicki and Tim Morgan.
-.PP
 The enc\*(TX extensions were written by Petr Olsak.
 .\" vim: syntax=nroff

@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2019
-@set month-year February 2019
+@set month-year August 2019
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -1667,11 +1667,11 @@ the log file.
 
 The @code{shell_escape_commands} value is a comma-separated list of
 words.  Whitespace is significant, and typically should not be
-present.  The default definition looks like this, but with more
-commands included:
+present.  The default definition in @file{texmf.cnf} looks like this,
+but with more commands included:
 
 @example
-shell_escape_commands = bibtex,dvips,epstopdf,...,tex
+shell_escape_commands = bibtex,kpsewhich,repstopdf,...
 @end example
 
 @cindex pipes, reading and writing

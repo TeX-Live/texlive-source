@@ -1,3 +1,7 @@
+2019-08-04  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi (Shell escapes): default value no longer as stated.
+
 2019-07-19  Karl Berry  <karl@tug.org>
 
 	* patgen.ch: mention adding swap/zram to deal with larger tries.
