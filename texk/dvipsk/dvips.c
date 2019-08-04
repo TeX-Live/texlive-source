@@ -1292,7 +1292,7 @@ default:
  *   or slash.
  */
       {
-         const char *p = NAME_BEGINS_WITH_DEVICE(oname) ? oname + 2 : oname;
+         char *p = NAME_BEGINS_WITH_DEVICE(oname) ? oname + 2 : oname;
 
          for (oname=p; *p && p[1]; p++)
             if (IS_DIR_SEP(*p))
