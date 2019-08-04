@@ -1,3 +1,16 @@
+2019-08-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfobj.c: Ignore zlib error while uncompressing data.
+	Z_DATA_ERROR is ignored when avail_in is 0.
+	Accepting some incorrectly written compressed data.
+	Reported by Jens Adam:
+	https://tug.org/pipermail/tex-live/2019-August/043983.html
+	* dvipdfmx.c: Fix a bug that 'm' option was broken.
+	This option must be processed before dvi_init().
+	Bug reported to TUG mailing list:
+	https://tug.org/pipermail/dvipdfmx/2019-July/000019.html
+	* configure.ac: Version 20190805.
+
 2019-08-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* tt_gsub.c: Fix a bug that OTL coverage data were not read and
