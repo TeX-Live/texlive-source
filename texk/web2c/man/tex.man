@@ -1,4 +1,4 @@
-.TH TEX 1 "16 June 2015" "Web2C @VERSION@"
+.TH TEX 1 "6 August 2019" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -181,6 +181,13 @@ EOF character (usually control-D).
 .\"=====================================================================
 .SH OPTIONS
 This version of \*(TX understands the following command line options.
+.TP
+.BI -cnf-line \ string
+Parse
+.I string
+as a
+.I texmf.cnf
+configuration line.  See the Kpathsea manual.
 .TP
 .B -enc
 Enable the enc\*(TX extensions.  This option is only effective in
@@ -488,7 +495,7 @@ Addison-Wesley, 1985, ISBN 0-201-15790-X.
 .br
 K. Berry,
 .IR "Eplain: Expanded plain \*(TX" ,
-ftp://ftp.cs.umb.edu/pub/tex/eplain/doc.
+https://tug.org/eplain
 .br
 Michael Spivak,
 .IR "The Joy of \*(OX" ,
@@ -496,6 +503,7 @@ Michael Spivak,
 .br
 .I TUGboat
 (the journal of the \*(TX Users Group).
+https://tug.org/TUGboat
 .\"=====================================================================
 .SH TRIVIA
 \*(TX, pronounced properly, rhymes with ``blecchhh.''  The proper

@@ -1,4 +1,4 @@
-.TH ETEX 1 "27 May 2018" "Web2C @VERSION@"
+.TH ETEX 1 "6 August 2019" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -68,7 +68,15 @@ the other \*(TX programs in the
 implementation.
 .\"=====================================================================
 .SH OPTIONS
-This version of e-\*(TX understands the following command line options.
+Run etex --help to see the complete list of options; this is not
+exhaustive.
+.TP
+.BI -cnf-line \ string
+Parse
+.I string
+as a
+.I texmf.cnf
+configuration line.  See the Kpathsea manual.
 .TP
 .BI -fmt \ format
 Use

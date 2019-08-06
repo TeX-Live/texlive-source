@@ -14,6 +14,7 @@
 
 #include <kpathsea/config.h>
 #include <kpathsea/c-ctype.h>
+#include <kpathsea/cnf.h>
 #include <kpathsea/line.h>
 #include <kpathsea/readable.h>
 #include <kpathsea/variable.h>
@@ -663,6 +664,10 @@ int argc;
 /* If the user overrides argv[0] with -progname.  */
 static const_string user_progname;
 
+/* Array and count of values given with --config-line.  */
+static string *user_cnf_lines = NULL;
+static unsigned user_cnf_nlines = 0;
+
 /* The C version of the jobname, if given. */
 static const_string c_job_name;
 
@@ -813,6 +818,15 @@ maininit (int ac, string *av)
   /* FIXME: gather engine names in a single spot. */
   xputenv ("engine", TEXMFENGINENAME);
   
+  if (user_cnf_lines) {
+    unsigned i;
+    for (i = 0; i < user_cnf_nlines; i++) {
+      /* debug printf ("ucnf%d: %s\n", i, user_cnf_lines[i]); */
+      kpathsea_cnf_line_env_progname (kpse_def, user_cnf_lines[i]);
+      free (user_cnf_lines[i]);
+    }
+  }
+
   /* Were we given a simple filename? */
   main_input_file = get_input_file_name ();
 
@@ -998,6 +1012,7 @@ maininit (int ac, string *av)
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
 
+ 
 int
 #if defined(DLLPROC)
 DLLPROC (int ac, string *av)
@@ -1633,17 +1648,18 @@ get_input_file_name (void)
 static struct option long_options[]
   = { { DUMP_OPTION,                 1, 0, 0 },
 #ifdef TeX
-      /* FIXME: Obsolete -- for backward compatibility only. */
+      /* Obsolete -- for backward compatibility only. */
       { "efmt",                      1, 0, 0 },
 #endif
+      { "cnf-line",                  1, 0, 0 },
       { "help",                      0, 0, 0 },
       { "ini",                       0, &iniversion, 1 },
       { "interaction",               1, 0, 0 },
       { "halt-on-error",             0, &haltonerrorp, 1 },
       { "kpathsea-debug",            1, 0, 0 },
       { "progname",                  1, 0, 0 },
-      { "version",                   0, 0, 0 },
       { "recorder",                  0, &recorder_enabled, 1 },
+      { "version",                   0, 0, 0 },
 #ifdef TeX
 #ifdef IPC
       { "ipc",                       0, &ipcon, 1 },
@@ -1739,6 +1755,17 @@ parse_options (int argc, string *argv)
 
     } else if (ARGUMENT_IS ("progname")) {
       user_progname = optarg;
+
+    } else if (ARGUMENT_IS ("cnf-line")) {
+      if (user_cnf_lines == NULL) {
+        user_cnf_nlines = 1;
+        user_cnf_lines = xmalloc (sizeof (const_string));
+      } else {
+        user_cnf_nlines++;
+        user_cnf_lines = xrealloc (user_cnf_lines,
+                                   user_cnf_nlines * sizeof (const_string));
+      }
+      user_cnf_lines[user_cnf_nlines-1] = xstrdup (optarg);
 
     } else if (ARGUMENT_IS ("jobname")) {
 #ifdef XeTeX

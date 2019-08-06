@@ -1,3 +1,10 @@
+2019-08-06  Karl Berry  <karl@freefriends.org>
+
+	* tests/cnfline.test,
+	* tests/cnfline.tex: new files.
+	* am/pdftex.am (pdftex_tests): add pdftexdir/tests/cnfline.test.
+	(cnfline.log): depend on pdftex$(EXEEXT).
+
 2019-05-08  Akira Kakuto  <kakuto@w32tex.org>
 
 	* writeimg.c: Use a new function find_input_file() to find

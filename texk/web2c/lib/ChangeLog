@@ -1,3 +1,13 @@
+2019-08-06  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp.c (long_options): new option --cnf-line.
+	(user_cnf_lines, user_cnf_nlines): new globals.
+	(maininit): call kpathsea_cnf_line_env_progname
+	on each specified --cnf-line.
+	(parse_options): recognize it and save each arg.
+	Following suggestion from Pavel Sanda on ntg-pdftex,
+	15 Jun 2019 19:02:11.
+
 2019-07-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* texmfmp.c (getcreationdate): Fix a wrong conditional (XeTeX only).

@@ -1,6 +1,6 @@
 /* The help messages for TeX & MF family of programs.
 
-Copyright 1995, 1996, 2008-2016 Karl Berry.
+Copyright 1995, 1996, 2008-2019 Karl Berry.
 Copyright 2001-05 Olaf Weber.
 
 This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@ const_string ALEPHHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "-etex                   enable e-TeX extensions",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-fmt=FMTNAME            use FMTNAME instead of program name or a %& line",
@@ -95,6 +96,7 @@ const_string EPTEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
 #if defined(WIN32)
@@ -159,6 +161,7 @@ const_string ETEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "-enc                    enable encTeX extensions such as \\mubyte",
     "-etex                   enable e-TeX extensions",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
@@ -222,6 +225,7 @@ const_string EUPTEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
 #if defined(WIN32)
@@ -289,6 +293,7 @@ const_string MFHELP[] = {
     "  If no arguments or options are specified, prompt for input.",
     "",
     "-base=BASENAME          use BASENAME instead of program name or a %& line",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-halt-on-error          stop processing at the first error",
     "-ini                    be inimf, for dumping bases; this is implicitly",
@@ -421,6 +426,7 @@ const_string PDFTEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "-draftmode              switch on draft mode (generates no output PDF)",
     "-enc                    enable encTeX extensions such as \\mubyte",
     "-etex                   enable e-TeX extensions",
@@ -489,6 +495,7 @@ const_string PTEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "-fmt=NAME               use NAME instead of program name or %&format.",
 #if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
@@ -552,6 +559,7 @@ const_string TEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "-enc                    enable encTeX extensions such as \\mubyte",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-fmt=FMTNAME            use FMTNAME instead of program name or a %& line",
@@ -614,6 +622,7 @@ const_string UPTEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "-fmt=NAME               use NAME instead of program name or %&format.",
 #if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
@@ -677,6 +686,7 @@ const_string XETEXHELP[] = {
     "",
     "  If no arguments or options are specified, prompt for input.",
     "",
+    "-cnf-line=STRING        parse STRING as a configuration file line",
     "-etex                   enable e-TeX extensions",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-fmt=FMTNAME            use FMTNAME instead of program name or a %& line",

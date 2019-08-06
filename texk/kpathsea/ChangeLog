@@ -1,3 +1,25 @@
+2019-08-06  Karl Berry  <karl@freefriends.org>
+
+	* kpsewhich.c (USAGE, read_command_line): new option --cnf-line.
+	(user_cnf_lines, user_cnf_nlines): new variables to store the args.
+	(init_more): call kpathsea_cnf_line_env_progname on each line.
+
+	* cnf.h (kpathsea_cnf_line_env_progname): declare new fn.
+	* cnf.c (do_line): new argument ENV_PROGNAME,
+	to insert settings in the environment instead of the hash table.
+	(kpathsea_cnf_line_env_progname): entry point to call do_line
+	with env_progname=true.
+	(read_all_cnf): change do_line call to have env_progname=false.
+	Also, don't create cnf_hash here, instead ...
+	(kpathsea_cnf_get): ... here (if needed).
+
+	* tests/cnfline.test: new test for --cnf-line.
+	* tests/cnfline/texmf.cnf: new directory/file for cnfline.test.
+	* Makefile.am (tests),
+	(tests/cnfline.log),
+	(EXTRA_DIST): add new test.
+	* doc/kpathsea.texi (Path sources, Path searching options): doc.
+
 2019-07-26  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS, etc.): include explicit latex,
@@ -1288,7 +1310,7 @@
 
 2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	Avoid 'the address of XXX will always evaluate as true' warnings.
+	Avoid 'the address of X will always evaluate as true' warnings.
 	* lib.h (STREQ): Test '(s) != NULL' instead of '(s)'.
 	Gcc >=4.3 produces identical code but -Wall yields no warning.
 

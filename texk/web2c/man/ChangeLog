@@ -1,3 +1,11 @@
+2019-08-06  Karl Berry  <karl@freefriends.org>
+
+	* aleph.man,
+	* etex.man,
+	* mf.man,
+	* pdftex.man,
+	* tex.man: mention --cnf-line.
+	
 2019-08-04  Karl Berry  <karl@freefriends.org>
 
 	* pdftex.man (-synctex, -8bit): add per https://bugs.debian.org/772928.

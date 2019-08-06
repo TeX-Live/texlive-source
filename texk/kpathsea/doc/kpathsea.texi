@@ -2,8 +2,8 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 6.3.1
-@set month-year March 2019
+@set version 6.3.2
+@set month-year August 2019
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -570,6 +570,11 @@ In the order in which Kpathsea looks for them:
 
 @enumerate
 @item
+@opindex @samp{--cnf-line}, source for path
+A command-line option such as @code{--cnf-line}, available in
+@file{kpsewhich} and most @TeX{} engines.  @xref{Path searching
+options}. 
+
 @cindex environment variable, source for path
 A user-set environment variable, e.g., @code{TEXINPUTS}.
 Environment variables with an underscore and the program name appended
@@ -1473,6 +1478,28 @@ become case-sensitive when the underlying (file)system is
 case-insensitive, it merely means that Kpathsea does not do any
 casefolding itself.
 
+@item --cnf-line=@var{str}
+@opindex --cnf-line
+Parse @var{str} as if it were a line in the @file{texmf.cnf}
+configuration file (@pxref{Config files}), overriding settings in the
+actual configuration files, and also in the environment (@pxref{Path
+sources}).  This is implemented by making any settings from @var{str}
+in the environment, overwriting any value already there.  Thus, an
+extra colon in a @samp{--cnf-line} value will refer to the value from
+a configuration file, not a user-set environment variable.
+
+Furthermore, any variable set from @var{str} will also be set with the
+program name suffix.  For example, @code{pdftex
+--cnf-line=TEXINPUTS=/foo:} will set both @code{TEXINPUTS} and
+@code{TEXINPUTS_pdftex} in the environment (and the value will be
+@file{/foo} followed by the setting from @file{texmf.cnf}, ignoring
+any user-set @code{TEXINPUTS}).
+
+This behavior is desirable because, in practice, many variables in the
+distributed @file{texmf.cnf} are program-specific, and the intuitive
+behavior is for values set on the command line with @code{--cnf-line}
+to override them.
+
 @item --dpi=@var{num}
 @opindex --dpi=@var{num}
 @opindex -D @var{num}
@@ -1857,8 +1884,8 @@ Example: @samp{FOO='.;~' kpsewhich --var-brace-value=FOO} outputs (on
 a Unix-ish system) @samp{.:/home/karl}, supposing the latter is the
 current user's home directory.  Note that the @samp{;} in the source
 value, as commonly used in @file{texmf.cnf}, has changed to a
-@samp{:}, as the normal path separator on the current system. (On a
-Windows-ish system, the @samp{;} would remain.)
+@samp{:}, as the normal path separator on the current system.  On a
+Windows-ish system, the @samp{;} would remain.
 
 @item --var-value=@var{variable}
 @opindex --var-value=@var{variable}
@@ -1874,7 +1901,7 @@ default is not changed) @samp{1}.
 
 Example to contrast with @samp{--var-brace-value}: @samp{FOO='.;~'
 kpsewhich --var-value=FOO} outputs @samp{.;~}, i.e., the same as the
-input value.
+input value, on all systems.
 
 @end table
 

@@ -759,7 +759,7 @@ top_srcdir = @top_srcdir@
 SUBDIRS = . doc man $(am__append_6)
 #
 EXTRA_DIST = PROJECTS putenv.c bsnl.awk cnf-to-paths.awk $(TESTS) \
-	tests/cnfnewline/texmf.cnf mktex.cnf
+	tests/cnfnewline/texmf.cnf tests/cnfline/texmf.cnf mktex.cnf
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 lib_LTLIBRARIES = libkpathsea.la
@@ -866,7 +866,7 @@ bin_links = mktexlsr:texhash
 AM_TESTS_ENVIRONMENT = LN_S='$(LN_S)'; export LN_S; \
 	LT_OBJDIR='$(LT_OBJDIR)'; export LT_OBJDIR;
 #
-TESTS = tests/cnfnewline.test tests/kpseaccess.test \
+TESTS = tests/cnfline.test tests/cnfnewline.test tests/kpseaccess.test \
 	tests/kpsereadlink.test tests/kpsestat.test \
 	tests/kpsewhich.test
 
@@ -2533,7 +2533,7 @@ install-exec-hook: install-bin-links
 
 uninstall-hook: uninstall-bin-links
 #
-tests/cnfnewline.log tests/kpsewhich.log: kpsewhich$(EXEEXT)
+tests/cnfline.log tests/cnfnewline.log tests/kpsewhich.log: kpsewhich$(EXEEXT)
 tests/kpseaccess.log: kpseaccess$(EXEEXT)
 tests/kpsereadlink.log: kpsereadlink$(EXEEXT)
 tests/kpsestat.log: kpsestat$(EXEEXT)

@@ -1,7 +1,7 @@
 /* cnf.c: read config files.
 
    Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012, 2016,
-   2017, 2018 Karl Berry.
+   2017, 2018, 2019 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -42,17 +42,23 @@
 #define CNF_NAME "texmf.cnf"
 
 
-/* Do a single line in a cnf file: if it's blank or a comment or
+/* Do a single line LINE in a cnf file: if it's blank or a comment or
    erroneous, skip it.  Otherwise, parse
      <variable>[.<program>] [=] <value>
-   Do this even if the <variable> is already set in the environment,
-   since the envvalue might contain a trailing :, in which case we'll be
-   looking for the cnf value.
+   and insert it either into the cnf_hash structure in KPSE (if
+   ENV_PROGNAME is false), or in the environment (if ENV_PROGNAME is true).
+   
+   Furthermore, if ENV_PROGNAME is true, and there is no .<program> in
+   LINE, then also insert <variable> "_" `kpse->program_name' with <value>
+   into the environment; see kpathsea_cnf_line_env_progname in cnf.h.
+
+   The name without _<progname> will usually never be looked up, but
+   just in case the program name changes, or whatever.
    
    We return NULL if ok, an error string otherwise.  */
 
 static string
-do_line (kpathsea kpse, string line)
+do_line (kpathsea kpse, string line, boolean env_progname)
 {
   unsigned len;
   string start;
@@ -157,26 +163,58 @@ do_line (kpathsea kpse, string line)
       }
   }
 
-  /* We want TEXINPUTS.prog to override plain TEXINPUTS.  The simplest
-     way is to put both in the hash table (so we don't have to write
-     hash_delete and hash_replace, and keep track of values' sources),
-     and then look up the .prog version first in `kpse_cnf_get'.  */
-  if (prog) {
-    string lhs = concat3 (var, ".", prog);
-    free (var);
-    free (prog);
-    var = lhs;
+  /* If we're supposed to make the setting in the environment ... */
+  if (env_progname) {
+    string this_prog = prog ? prog : kpse->program_name; /* maybe with .prog */
+    /* last-ditch debug */
+    /* fprintf (stderr, "kpse/cnf.c xputenv(%s,%s)\n", var, value); */
+    xputenv (var, value);
+    /* Use the .prog name on the input line if specified. Otherwise,
+       although kpse->program_name should always be set at this point,
+       check just in case.  */
+    if (this_prog) {
+      string var_prog = concat3 (var, "_", this_prog);
+      /* fprintf (stderr, "kpse/cnf.c xputenv(%s,%s) [implicit]\n",
+               var_prog, value); */
+      xputenv (var_prog, value);
+      free (var_prog); /* xputenv allocates its own */
+    }
+    free (var); /* again, xputenv allocated a copy */
+
+  } else {
+    /* Normal case of not ENV_PROGNAME, insert in cnf_hash, with .prog
+       if specified, which will override non-.prog.  */
+    string lhs = prog ? concat3 (var, ".", prog) : var;
+    /* last-ditch debug */
+    /* fprintf (stderr, "kpse/cnf.c hash_insert(%s,%s)\n", lhs, value); */
+    hash_insert (&(kpse->cnf_hash), lhs, value);
+    if (prog) {  /* the lhs string is new memory if we had .prog */
+      free (var);
+      /* If there was no .prog on the line, the original `var' memory gets
+         inserted into the hash table, so do not free.  */
+    }
   }
-  /* last-ditch debug */
-  /* fprintf (stderr, "kpse/cnf.c hash_insert(%s,%s)\n", var, value); */
-  hash_insert (&(kpse->cnf_hash), var, value);
 
   /* We should check that anything remaining is preceded by a comment
      character, but we don't.  Sorry.  */
   return NULL;
 }
+
 
-/* Read all the configuration files in the path.  */
+/* Just passing along env_progname = true to do_line.  */
+
+void
+kpathsea_cnf_line_env_progname (kpathsea kpse, string line)
+{
+  string msg = do_line (kpse, line, /* env_progname = */ true);
+  if (msg) {
+    WARNING2 ("command line (kpathsea): %s in argument: %s",
+              msg, line);
+  }
+}
+
+
+/* Read all the kpathsea configuration files in the path.  */
 
 static void
 read_all_cnf (kpathsea kpse)
@@ -184,8 +222,6 @@ read_all_cnf (kpathsea kpse)
   string *cnf_files;
   string *cnf;
   const_string cnf_path = kpathsea_init_format (kpse, kpse_cnf_format);
-
-  kpse->cnf_hash = hash_create (CNF_HASH_SIZE);
 
   cnf_files = kpathsea_all_path_search (kpse, cnf_path, CNF_NAME);
   if (cnf_files && *cnf_files) {
@@ -223,7 +259,7 @@ read_all_cnf (kpathsea kpse)
           }
         }
 
-        msg = do_line (kpse, line);
+        msg = do_line (kpse, line, /* env_progname= */ false);
         if (msg) {
           WARNING4 ("%s:%d: (kpathsea) %s on line: %s",
                     *cnf, lineno, msg, line);
@@ -255,15 +291,15 @@ kpathsea_cnf_get (kpathsea kpse, const_string name)
   const_string ret, *ret_list;
 
   /* When we expand the compile-time value for DEFAULT_TEXMFCNF,
-     we end up needing the value for TETEXDIR and other variables,
-     so kpse_var_expand ends up calling us again.  No good.  Except this
-     code is not sufficient, somehow the ls-R path needs to be
-     computed when initializing the cnf path.  Better to ensure that the
-     compile-time path does not contain variable references.  */
+     we end up needing the value for assorted variables,
+     so kpse_var_expand ends up calling us again.  Just return.  */
   if (kpse->doing_cnf_init)
     return NULL;
 
+  /* If no cnf hash yet, initialize.  */
   if (kpse->cnf_hash.size == 0) {
+    kpse->cnf_hash = hash_create (CNF_HASH_SIZE);
+    
     /* Read configuration files and initialize databases.  */
     kpse->doing_cnf_init = true;
     read_all_cnf (kpse);
@@ -303,4 +339,3 @@ kpse_cnf_get (const_string name)
     return kpathsea_cnf_get(kpse_def, name);
 }
 #endif
-

@@ -1,5 +1,9 @@
 This file records noteworthy changes.  (Public domain.)
 
+
+* New cross-engine option -cnf-line=STR.
+
+2019 (for TeX Live 2019,  7 April 2019)
 BibTeX: subsidiary .aux files are looked for in the directory of the
 main .aux file, if not found as-is (to work better with -output-directory).
 
@@ -8,7 +12,6 @@ CWEB: now comes from the CWEBbin package
 more language support, and more.
 
 
-2019 (for TeX Live 2019,  7 April 2019)
 2018 (for TeX Live 2018, 14 April 2018)
 * Directories in the -output-directory do not mask files by the same name.
 
@@ -16,8 +19,6 @@ more language support, and more.
 2016 (for TeX Live 2016, 21 May 2016)
 2015 (for TeX Live 2015, 21 May 2015)
 2014 (for TeX Live 2014, 24 May 2014)
-* Ditto.
-
 2013 (for TeX Live 2013, 30 May 2013)
 * Doc changes and bug fixes.
 

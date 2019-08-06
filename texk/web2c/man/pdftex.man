@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "4 August 2019" "Web2C @VERSION@"
+.TH PDFTEX 1 "6 August 2019" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -95,6 +95,13 @@ extensions, and pdfe\*(TX is just a copy of pdf\*(TX.  See
 .SH OPTIONS
 This version of pdf\*(TX understands the following command line options.
 .TP
+.BI -cnf-line \ string
+Parse
+.I string
+as a
+.I texmf.cnf
+configuration line.  See the Kpathsea manual.
+.TP
 .B -draftmode
 Sets \epdfdraftmode so pdf\*(TX doesn't write a PDF and doesn't read any
 included images, thus speeding up execution.
@@ -104,7 +111,7 @@ Enable the enc\*(TX extensions.  This option is only effective in
 combination with
 .BR -ini .
 For documentation of the enc\*(TX extensions see
-.BR http://www.olsak.net/enctex.html .
+http://www.olsak.net/enctex.html.
 .TP
 .B -etex
 Enable the e-\*(TX extensions.  This option is only effective in

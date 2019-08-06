@@ -19,6 +19,7 @@
 #include <kpathsea/config.h>
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/c-pathch.h>
+#include <kpathsea/cnf.h>
 #include <kpathsea/expand.h>
 #include <kpathsea/getopt.h>
 #include <kpathsea/line.h>
@@ -39,10 +40,14 @@ string path_to_show = NULL;
 string var_to_value = NULL;
 string var_to_brace_value = NULL;
 
+/* Array/count of cnf lines from the command line. (--cnf-line) */
+static string *user_cnf_lines = NULL;
+static unsigned user_cnf_nlines = 0;
+
 /* Base resolution. (-D, -dpi) */
 unsigned dpi = 600;
 
-/* The engine name, for '$engine' construct in texmf.cnf.  (-engine) */
+/* The engine name, for `$engine' construct in texmf.cnf.  (-engine) */
 string engine = NULL;
 
 /* Interactively ask for names to look up?  (-interactive) */
@@ -474,6 +479,7 @@ to also use -engine, or nothing will be returned; in particular,\n\
 \n\
 -all                   output all matches, one per line (no effect with pk/gf).\n\
 [-no]-casefold-search  fall back to case-insensitive search if no exact match.\n\
+-cnf-line=STRING       parse STRING as a configuration file line.\n\
 -debug=NUM             set debugging flags.\n\
 -D, -dpi=NUM           use a base resolution of NUM; default 600.\n\
 -engine=STRING         set engine name to STRING.\n\
@@ -588,6 +594,7 @@ static struct option long_options[]
   = { { "D",                    1, 0, 0 },
       { "all",                  0, (int *) &show_all, 1 },
       { "casefold-search",      0, 0, 0 },
+      { "cnf-line",             1, 0, 0 },
       { "debug",                1, 0, 0 },
       { "dpi",                  1, 0, 0 },
       { "engine",               1, 0, 0 },
@@ -636,6 +643,17 @@ read_command_line (kpathsea kpse, int argc, string *argv)
          distinguish it being set with an option vs. leaving the default
          (by default).  */
       xputenv ("texmf_casefold_search", "1");      
+
+    } else if (ARGUMENT_IS ("cnf-line")) {
+      if (user_cnf_lines == NULL) {
+        user_cnf_nlines = 1;
+        user_cnf_lines = xmalloc (sizeof (const_string));
+      } else {
+        user_cnf_nlines++;
+        user_cnf_lines = xrealloc (user_cnf_lines,
+                                   user_cnf_nlines * sizeof (const_string));
+      }
+      user_cnf_lines[user_cnf_nlines-1] = xstrdup (optarg);
 
     } else if (ARGUMENT_IS ("debug")) {
       kpse->debug |= atoi (optarg);
@@ -741,6 +759,15 @@ init_more (kpathsea kpse)
 {
   if (engine)
     kpathsea_xputenv (kpse, "engine", engine);
+
+  /* We want config lines from the command line to override config files.  */
+  if (user_cnf_lines) {
+    unsigned i;
+    for (i = 0; i < user_cnf_nlines; i++) {
+      kpathsea_cnf_line_env_progname (kpse, user_cnf_lines[i]);
+      free (user_cnf_lines[i]);
+    }
+  }
 
   /* Disable all mktex programs unless they were explicitly enabled on our
      command line.  */

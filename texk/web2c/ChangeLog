@@ -1,3 +1,10 @@
+2019-08-06  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp-help.h (ALEPHHELP, EPTEXHELP, ETEXHELP, EUPTEXHELP,
+	MFHELP, PDFTEXHELP, PTEXHELP, TEXHELP, UPTEXHELP, XETEXHELP):
+	add -cnf-line. (I.e., everything but the lua-based engines,
+	as they do not share the common source.)
+
 2019-08-04  Karl Berry  <karl@freefriends.org>
 
 	* doc/web2c.texi (Shell escapes): default value no longer as stated.
