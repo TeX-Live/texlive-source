@@ -15,7 +15,7 @@ if grep 'those hyphens are' cnfline.log >/dev/null; then
   : # ok, all ended up on one line
 else
   echo "log message got broken despite max_print_line" >&2
-  cat cnflinelog >&2
+  cat cnfline.log >&2
   exit 1
 fi
 
