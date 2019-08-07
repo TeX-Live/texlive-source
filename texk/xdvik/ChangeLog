@@ -1,3 +1,8 @@
+2019-07-22  Karl Berry  <karl@freefriends.org>
+
+	* psgs.c (initGS): don't use now-gone-from-ghostscript execute
+	operator; from Paul Vojta.
+
 2019-05-31  Karl Berry  <karl@freefriends.org>
 
 	* ac/xdvik.ac (xdvi-x-toolkit): the default is always xaw,
