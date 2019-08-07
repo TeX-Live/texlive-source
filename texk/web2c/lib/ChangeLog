@@ -1,3 +1,9 @@
+2019-08-07  Akira Kakuto  <kakuto@w32tex.org>
+
+	* texmfmp.c: Improve support of non-ascii path names in
+	synctex. Support -cnf-line=command_line_encoding=value.
+	These changes are for Windows only.
+
 2019-08-06  Karl Berry  <karl@freefriends.org>
 
 	* texmfmp.c (long_options): new option --cnf-line.

@@ -131,9 +131,18 @@
    --output-directory option is given.
    Borrowed from LuaTeX.
 */
+#if defined(_WIN32)
+#if defined(pdfTeX) || defined(upTeX) || defined(eupTeX) || defined(XeTeX) || defined(LuaTeX) || defined(LuajitTeX)
+#define W32USYNCTEX 1
+#endif
+#endif
+
 char *generic_synctex_get_current_name (void)
 {
   char *pwdbuf, *ret;
+#if defined(W32USYNCTEX)
+  wchar_t *wpwd;
+#endif /* W32USYNCTEX */
   if (!fullnameoffile) {
     ret = xstrdup("");
     return ret;
@@ -142,6 +151,14 @@ char *generic_synctex_get_current_name (void)
      return xstrdup(fullnameoffile);
   }
   pwdbuf = xgetcwd();
+#if defined(W32USYNCTEX)
+  if (file_system_codepage != 0 && file_system_codepage != win32_codepage) {
+     wpwd = get_wstring_from_mbstring(win32_codepage, pwdbuf, wpwd=NULL);
+     free (pwdbuf);
+     pwdbuf = get_mbstring_from_wstring(file_system_codepage, wpwd, pwdbuf=NULL);
+     free (wpwd);
+  }
+#endif /* W32USYNCTEX */
   ret = concat3(pwdbuf, DIR_SEP_STRING, fullnameoffile);
   free(pwdbuf) ;
   return ret;
@@ -750,6 +767,30 @@ maininit (int ac, string *av)
   kpse_set_program_name (argv[0], NULL);
 #endif
 #if (IS_upTeX || defined(XeTeX) || defined(pdfTeX)) && defined(WIN32)
+/* 
+   -cnf-line=command_line_encoding=value cannot give effect because
+   command_line_encoding is read here before parsing the command
+   line. So we add the following.
+*/
+  { /* support old compilers which are incompatible with C99 */
+    int n;
+    for (n = 1; n < ac; n++) {
+      if (!strncasecmp (av[n], "-cnf-line=command_line_encoding=", 32)) {
+        putenv (av[n] + 10);
+        break;
+      }
+      if (!strncasecmp (av[n], "--cnf-line=command_line_encoding=", 33)) {
+        putenv (av[n] + 11);
+        break;
+      }
+      if (n < ac - 1 && (!strncasecmp (av[n], "-cnf-line", 9) ||
+          !strncasecmp (av[n], "--cnf-line", 10)) &&
+          !strncasecmp (av[n+1], "command_line_encoding=", 22)) {
+        putenv (av[n+1]);
+        break;
+      }
+    }
+  }
   enc = kpse_var_value("command_line_encoding");
   get_command_line_args_utf8(enc, &argc, &argv);
 #endif
