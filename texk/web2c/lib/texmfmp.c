@@ -132,7 +132,7 @@
    Borrowed from LuaTeX.
 */
 #if defined(_WIN32)
-#if defined(pdfTeX) || defined(upTeX) || defined(eupTeX) || defined(XeTeX) || defined(LuaTeX) || defined(LuajitTeX)
+#if defined(pdfTeX) || defined(upTeX) || defined(eupTeX) || defined(XeTeX)
 #define W32USYNCTEX 1
 #endif
 #endif

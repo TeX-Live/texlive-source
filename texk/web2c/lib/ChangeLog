@@ -1,3 +1,7 @@
+2019-08-08  Akira Kakuto  <kakuto@w32tex.org>
+
+	* texmfmp.c: This file is not used in lua[jit]tex.
+
 2019-08-07  Akira Kakuto  <kakuto@w32tex.org>
 
 	* texmfmp.c: Improve support of non-ascii path names in
