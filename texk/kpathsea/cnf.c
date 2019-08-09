@@ -336,6 +336,6 @@ kpathsea_cnf_get (kpathsea kpse, const_string name)
 const_string
 kpse_cnf_get (const_string name)
 {
-    return kpathsea_cnf_get(kpse_def, name);
+  return kpathsea_cnf_get(kpse_def, name);
 }
 #endif

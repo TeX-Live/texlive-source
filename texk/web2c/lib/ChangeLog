@@ -1,3 +1,8 @@
+2019-08-09  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp.c: doc fixes; most "fixme"s were nothing that we ever
+	need to fix at this late date.
+
 2019-08-08  Akira Kakuto  <kakuto@w32tex.org>
 
 	* texmfmp.c: This file is not used in lua[jit]tex.

@@ -1,3 +1,10 @@
+2019-08-09  Karl Berry  <karl@freefriends.org>
+
+	* cnf.c,
+	* progname.h,
+	* tex-file.c,
+	* types.h: doc/formatting fixes.
+
 2019-08-06  Karl Berry  <karl@freefriends.org>
 
 	* kpsewhich.c (USAGE, read_command_line): new option --cnf-line.

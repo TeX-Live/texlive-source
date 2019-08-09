@@ -1,7 +1,7 @@
 /* tex-file.c: high-level file searching by format.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010, 2011
-             2012, 2014, 2016, 2017 Karl Berry.
+             2012, 2014, 2016, 2017, 2019 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -1429,7 +1429,7 @@ kpse_open_file (const_string name,  kpse_file_format_type type)
    the paths for kpse_cnf_format and kpse_db_format are not cleared.
 
    This function is defined here, and not in progname.c, because it
-   need format_info, and would cause all of tex-file to be pulled
+   needs format_info, and would cause all of tex-file to be pulled
    in by programs that do not need it. */
 
 void
@@ -1445,14 +1445,14 @@ kpathsea_reset_program_name (kpathsea kpse, const_string progname)
 
   free (kpse->program_name);
   kpse->program_name = xstrdup (progname);
-  kpathsea_xputenv(kpse, "progname", kpse->program_name);
+  kpathsea_xputenv (kpse, "progname", kpse->program_name);
 
-  /* Clear paths -- do we want the db path to be cleared? */
+  /* Go through all paths ...  */
   for (i = 0; i != kpse_last_format; ++i) {
-    /* Do not erase the cnf of db paths.  This means that the filename
+    /* Do not erase the cnf or db paths.  This means that the filename
        database is not rebuilt, nor are different configuration files
        searched.  The alternative is to tolerate a memory leak of up
-       to 100k if this function is called. */
+       to 100k if this function is called.  */
     if (i == kpse_cnf_format || i == kpse_db_format)
       continue;
     /* Wipe the path (it is tested) and the cnf_path because their
@@ -1461,14 +1461,13 @@ kpathsea_reset_program_name (kpathsea kpse, const_string progname)
       free (kpse->format_info[i].path);
       kpse->format_info[i].path = NULL;
     }
-    /* We cannot free the cnf_path: it points into the cnf hash, which
-       means all hell will break loose if we did. */
+    /* We cannot free cnf_path: it points into the cnf hash.  */
     if (kpse->format_info[i].cnf_path != NULL) {
       kpse->format_info[i].cnf_path = NULL;
     }
     /* We do not wipe the override_path at this point, though arguably
        we should provide new values.  It is not likely to matter for
-       the programs that call this function. */
+       the programs that call this function.  */
   }
 }
 

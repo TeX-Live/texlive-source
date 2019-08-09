@@ -1,6 +1,6 @@
 /* progname.h: Declarations for argv[0] equivalents.
 
-   Copyright 1994, 1996, 2008, 2010-2013 Karl Berry.
+   Copyright 1994, 1996, 2008, 2010-2019 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -33,20 +33,20 @@ extern "C" {
 extern KPSEDLL string kpathsea_selfdir (kpathsea kpse, const_string argv0);
 #endif
 
-/* Set the first two variables above (if they're not predefined) to a copy
-   of ARGV0 and everything in ARGV0 after the last directory separator,
-   respectively.  Set kpse_program_name to a copy of PROGNAME or the
-   value of kpse_invocation_short_name if PROGNAME is NULL.
-   This function also determines the AUTO* variables. */
+/* Set the two members `invocation_name' and `invocation_short_name'
+   in the KPSE instance to a copy of ARGV0 and everything in ARGV0 after
+   the last directory separator, respectively. Set `program_name' (also in
+   the KPSE instance) to a copy of PROGNAME or the value of
+   kpse_invocation_short_name if PROGNAME is NULL. This function also
+   sets the SELFAUTO* environment variables.  */
 
 extern KPSEDLL void kpathsea_set_program_name (kpathsea kpse,
                             const_string argv0, const_string progname);
 
-/* See also `kpathsea_reset_program_name' which is defined in tex-file.c
-
+/* See also `kpathsea_reset_program_name', which is defined in tex-file.c.
    That function is to be used to set kpse->program_name to a different
    value.  It clears the path searching information, to ensure that
-   the search paths are appropriate to the new name. */
+   the search paths are appropriate to the new name.  */
 
 
 #if defined (KPSE_COMPAT_API)

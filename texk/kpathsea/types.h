@@ -1,6 +1,6 @@
 /* types.h: general types for kpathsea.
 
-   Copyright 1993, 1995, 1996, 2005, 2008-2014, 2016 Karl Berry.
+   Copyright 1993, 1995, 1996, 2005, 2008-2014, 2016, 2019 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,10 @@
 /* Our string, boolean, etc.  */
 #include <kpathsea/simpletypes.h>
 
-/* Required until all programs use the new API, if ever.  */
+/* Required forever for any normal build, since we will never want to
+   remove the original interface.  But to check that a program
+   only uses the new-style declarations, that is, is thread-safe,
+   could be useful to undefine.  */
 #define KPSE_COMPAT_API 1
 
 #include <stdio.h> /* for FILE* */

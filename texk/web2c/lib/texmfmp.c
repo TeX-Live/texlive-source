@@ -5,7 +5,7 @@
    
    This file is public domain.  */
 
-/* This file is included from, e.g., texextra,c after
+/* This file is included from, e.g., texextra.c after
       #define EXTERN
       #include <texd.h>
    to instantiate data from texd.h here.  The ?d.h file is what
@@ -727,8 +727,10 @@ static string
 normalize_quotes (const_string name, const_string mesg);
 #endif /* WIN32 */
 
-/* The entry point: set up for reading the command line, which will
-   happen in `topenin', then call the main body.  */
+/* maininit, called from main() - this is most of the main routine,
+   including our C-level option handling and concomitant kpse setup.
+   The original TeX/MF code for handling first lines is still live, and
+   we set up for that in `topenin' (which is called from the .web).  */
 
 void
 maininit (int ac, string *av)
@@ -842,21 +844,19 @@ maininit (int ac, string *av)
 
 #if defined(MF)
 #if defined(MFLua)
-  /* If the program name is "mflua-nowin", then reset the name as "mflua". */
+  /* Reset mf*-nowin program names.  */
   if (strncasecmp (kpse_invocation_name, "mflua-nowin", 11) == 0)
     kpse_reset_program_name ("mflua");
 #elif defined(MFLuaJIT)
-  /* If the program name is "mfluajit-nowin", then reset the name as "mfluajit". */
   if (strncasecmp (kpse_invocation_name, "mfluajit-nowin", 14) == 0)
     kpse_reset_program_name ("mfluajit");
 #else
-  /* If the program name is "mf-nowin", then reset the name as "mf". */
   if (strncasecmp (kpse_invocation_name, "mf-nowin", 8) == 0)
     kpse_reset_program_name ("mf");
 #endif
 #endif
 
-  /* FIXME: gather engine names in a single spot. */
+  /* Make the given engine name available in the variable `engine'.  */
   xputenv ("engine", TEXMFENGINENAME);
   
   if (user_cnf_lines) {
@@ -934,7 +934,6 @@ maininit (int ac, string *av)
   }
   /* Check whether there still is no translate_filename known.  If so,
      use the default_translate_filename. */
-  /* FIXME: deprecated. */
   if (!translate_filename) {
     translate_filename = default_translate_filename;
   }
@@ -1050,9 +1049,9 @@ maininit (int ac, string *av)
 #endif /* TeX */
 }
 
-/* The entry point: set up for reading the command line, which will
-   happen in `topenin', then call the main body.  */
-
+/* main: Set up for reading the command line, which will happen in
+   `maininit' and `topenin', then call the main body, plus
+   special Windows/Kanji initializations.  */
  
 int
 #if defined(DLLPROC)
@@ -1488,8 +1487,6 @@ tcx_get_num (int upb,
    tex.pool.  If no suffix in FNAME, use .tcx (don't bother trying to
    support extension-less names for these files).  */
 
-/* FIXME: A new format ought to be introduced for these files. */
-
 void
 readtcxfile (void)
 {
@@ -1778,7 +1775,6 @@ parse_options (int argc, string *argv)
       break;
 
     if (g == '?') { /* Unknown option.  */
-      /* FIXME: usage (argv[0]); replaced by continue. */
       continue;
     }
 
@@ -1820,7 +1816,7 @@ parse_options (int argc, string *argv)
       dumpoption = true;
 
 #ifdef TeX
-    /* FIXME: Obsolete -- for backward compatibility only. */
+    /* For backward compatibility only. */
     } else if (ARGUMENT_IS ("efmt")) {
       dump_name = optarg;
       dumpoption = true;
@@ -2076,7 +2072,6 @@ parse_first_line (const_string filename)
           s = *parse+16;
         }
         /* Just set the name, no sanity checks here. */
-        /* FIXME: remove trailing spaces. */
         if (s && *s) {
           translate_filename = xstrdup(s);
         }
@@ -2840,7 +2835,7 @@ do_undump (char *p, int item_size, int nitems, FILE *in_file)
 #endif
 }
 
-/* FIXME -- some (most?) of this can/should be moved to the Pascal/WEB side. */
+/* Some (most?) of this could be moved to the WEB side, but oh well.  */
 #if defined(TeX) || defined(MF)
 #if !defined(pdfTeX)
 static void
