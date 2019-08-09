@@ -709,8 +709,10 @@ static void parse_options (int, string *);
 /* Try to figure out if we have been given a filename. */
 static string get_input_file_name (void);
 
-/* Get a true/false value for a variable from texmf.cnf and the environment. */
-static boolean
+/* Get a true/false value for a variable from texmf.cnf and the
+   environment.  Not static because we call it from tex.ch.  */
+
+boolean
 texmf_yesno(const_string var)
 {
   string value = kpse_var_value (var);

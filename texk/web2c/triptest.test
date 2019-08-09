@@ -20,7 +20,6 @@ mkdir a b
 cat >filter <<-\_EOF
 	s,^\*\*(\./trip\.tex ##,** \&trip  trip \
 	(trip.tex ##,
-	/^\\openout.*/,/^$/d
 	s/ (TeX Live 20[^)]*)//
 	s/(preloaded format=tex)/(INITEX)/
 	s/format=trip [^)][^)]*)/format=trip)/

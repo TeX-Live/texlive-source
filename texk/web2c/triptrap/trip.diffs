@@ -44,62 +44,57 @@
 < (trip.tex ##
 ---
 > (./trip.tex ##
-58a59,62
-> \openout0 = `8terminal.tex'.
-> 
-> \openout10 = `tripos.tex'.
-> 
-1405c1409
+1405c1405
 < \vbox(16383.99998+0.0)x1000.0, glue set 16342.0fil
 ---
 > \vbox(16383.99998+0.0)x1000.0, glue set 16341.99998fil
-1954c1958
+1954c1954
 < (tripos.tex
 ---
 > (./tripos.tex
-2018c2022
+2018c2018
 < \vbox(16383.99998+1.0)x100.0, glue set 16239.0fil
 ---
 > \vbox(16383.99998+1.0)x100.0, glue set 16238.99998fil
-2533c2537
+2533c2533
 < \vbox(16383.99998+0.0)x20.0, glue set 16331.0fil
 ---
 > \vbox(16383.99998+0.0)x20.0, glue set 16330.99998fil
-3326c3330
+3326c3326
 < \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
 ---
 > \vbox(10000.0+2.0)x28.0, glue set 9737.58742fil
-3864c3868
+3864c3864
 < \vbox(16383.99998+2.0)x100.0, glue set 16318.0fil
 ---
 > \vbox(16383.99998+2.0)x100.0, glue set 16317.99997fil
-4034c4038
+4034c4034
 < \vbox(16383.99998+0.0)x8236.0, glue set 16344.0fil
 ---
 > \vbox(16383.99998+0.0)x8236.0, glue set 16343.99998fil
-4420c4424
+4420c4420
 < \vbox(16383.99998+0.0)x100.0, glue set 16332.0fil
 ---
 > \vbox(16383.99998+0.0)x100.0, glue set 16331.99998fil
-4742c4746
+4742c4742
 < \vbox(16383.99998+0.0)x205.12613, glue set 16344.0fil
 ---
 > \vbox(16383.99998+0.0)x205.12613, glue set 16343.99998fil
-6380c6384
+6380c6380
 < (tripos.tex
 ---
 > (./tripos.tex
-7296,7297c7300,7301
+7296,7297c7296,7297
 <  47 strings out of 1674
 <  253 string characters out of 8354
 ---
 >  44 strings out of 1629
->  261 string characters out of 15394
-7299c7303
+>  261 string characters out of 15395
+7299c7299
 <  372 multiletter control sequences out of 2100
 ---
 >  372 multiletter control sequences out of 15000+0
-7301c7305
+7301c7301
 <  2 hyphenation exceptions out of 307
 ---
 >  1 hyphenation exception out of 659

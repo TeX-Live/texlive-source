@@ -285,6 +285,7 @@ typedef const unsigned char *const_w2custring;
 #define kpsesrccompile	kpse_src_compile
 #define recorderchangefilename	recorder_change_filename
 #define recorderenabled	recorder_enabled
+#define texmfyesno      texmf_yesno
 
 /* We need a new type for the argument parsing, too.  */
 typedef struct option getoptstruct;

@@ -33,6 +33,7 @@
 @define function roundfraction ();
 @define function roundunscaled ();
 @define function runsystem ();
+@define function texmfyesno ();
 @define function wopenin ();
 @define function wopenout ();
 

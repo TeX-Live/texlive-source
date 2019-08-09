@@ -1,5 +1,8 @@
 2019-08-09  Karl Berry  <karl@freefriends.org>
 
+	* texmfmp.c (texmf_yesno): no longer static, since we call it
+	from tex.ch.
+
 	* texmfmp.c: doc fixes; most "fixme"s were nothing that we ever
 	need to fix at this late date.
 

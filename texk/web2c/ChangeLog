@@ -1,3 +1,12 @@
+2019-08-09  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch (53.1374): only log \openout files if the log_openout
+	config value is true. Report from David Fuchs.
+	* cpascal.h (texmfyes): #define texmf_yesno, for web visibility.
+	* triptest.test: no need to remove \openout lines since they are
+	no longer written.
+	* triptrap/trip.diffs: update.
+
 2019-08-06  Karl Berry  <karl@freefriends.org>
 
 	* texmfmp-help.h (ALEPHHELP, EPTEXHELP, ETEXHELP, EUPTEXHELP,

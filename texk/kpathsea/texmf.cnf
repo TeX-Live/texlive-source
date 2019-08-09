@@ -695,6 +695,12 @@ parse_first_line = t
 parse_first_line.tex = f
 parse_first_line.initex = f
 
+% Normally we mention files created by \openout in the log file,
+% but again, trip-compatibility forbids this for (ini)tex.
+log_openout = t
+log_openout.tex = f
+log_openout.initex = f
+
 % Control file:line:error style messages.
 file_line_error_style = f
 

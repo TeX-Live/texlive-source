@@ -1,3 +1,7 @@
+2019-08-09  Karl Berry  <karl@freefriends.org>
+
+	* web2c.defines (texmfyes): new function.
+
 2018-11-11  Andreas Scherer  <https://ascherer.github.io>
 
 	* fixwrites.c (main): check return value from fgets.
