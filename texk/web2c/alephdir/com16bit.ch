@@ -2705,7 +2705,7 @@ var j:small_number; {write stream number}
         prompt_file_name("output file name",".tex");
       write_open[j]:=true;
       {If on first line of input, log file is not ready yet, so don't log.}
-      if log_opened then begin
+      if log_opened and texmf_yesno('log_openout') then begin
         old_setting:=selector;
         if (tracing_online<=0) then
           selector:=log_only  {Show what we're doing in the log file.}
