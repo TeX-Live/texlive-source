@@ -13,9 +13,13 @@
 #include <cstring>
 #include <sys/time.h>
 
+
 #include "common.h"
 #include "locate.h"
 #include "seconds.h"
+#include "statistics.h"
+#include "bezierpatch.h"
+#include "beziercurve.h"
 
 #ifdef HAVE_GL
 
@@ -52,6 +56,10 @@
 #include "shaders.h"
 #include "material.h"
 
+#ifdef HAVE_LIBOPENIMAGEIO
+#include <OpenImageIO/imageio.h>
+#endif
+
 using settings::locateFile;
 using camp::Material;
 using camp::Maxmaterials;
@@ -61,8 +69,11 @@ using utils::seconds;
 
 namespace camp {
 billboard BB;
-GLint noColorShader;
+GLint materialShader;
 GLint colorShader;
+GLint noNormalShader;
+GLint pixelShader;
+
 size_t Maxmaterials;
 size_t Nmaterials=1;
 size_t nmaterials=48;
@@ -102,6 +113,8 @@ int oldWidth,oldHeight;
 bool Xspin,Yspin,Zspin;
 bool Animate;
 bool Step;
+bool remesh;
+bool forceRemesh=false;
 
 bool queueScreen=false;
 
@@ -154,9 +167,9 @@ static const double radians=1.0/degrees;
 double Background[4];
 size_t Nlights=1; // Maximum number of lights compiled in shader
 size_t nlights; // Actual number of lights
+size_t nlights0;
 triple *Lights; 
 double *Diffuse;
-double *Ambient;
 double *Specular;
 bool antialias;
 
@@ -178,8 +191,41 @@ dmat4 dprojMat;
 dmat4 dviewMat;
 dmat4 drotateMat; 
 
+using utils::statistics;
+statistics S;
+
 ModelView modelView;
 
+#ifdef HAVE_LIBOPENIMAGEIO
+GLuint envMapBuf;
+
+GLuint initHDR() {
+  GLuint tex;
+  glGenTextures(1, &tex);
+
+  auto imagein = OIIO::ImageInput::open(locateFile("res/studio006.hdr").c_str());
+  OIIO::ImageSpec const& imspec = imagein->spec();
+
+  // uses GL_TEXTURE1 for now.
+  glActiveTexture(GL_TEXTURE1);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glBindTexture(GL_TEXTURE_2D, tex);
+  std::vector<float> pixels(imspec.width*imspec.height*3);
+  imagein->read_image(pixels.data());
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imspec.width, imspec.height, 0, 
+    GL_RGB, GL_FLOAT, pixels.data());
+
+  glGenerateMipmap(GL_TEXTURE_2D);
+  imagein->close();
+
+  glActiveTexture(GL_TEXTURE0);
+  return tex;
+}
+
+#endif 
 void updateModelViewData()
 {
   // Like Fortran, OpenGL uses transposed (column-major) format!
@@ -318,7 +364,7 @@ void setProjection()
 #endif
 }
 
-void drawscene(double Width, double Height)
+void drawscene(int Width, int Height)
 {
 #ifdef HAVE_PTHREAD
   static bool first=true;
@@ -337,14 +383,22 @@ void drawscene(double Width, double Height)
   
   double size2=hypot(Width,Height);
   
+  if(remesh) {
+    camp::BezierPatch::clear();
+    camp::BezierPatch::Clear();
+    camp::BezierPatch::tClear();
+    camp::BezierCurve::clear();
+    camp::Pixel::clear();
+  }
+  
   // Render opaque objects
-  Picture->render(size2,m,M,perspective,false);
+  Picture->render(size2,m,M,perspective,false,remesh);
   
   // Enable transparency
   glDepthMask(GL_FALSE);
   
   // Render transparent objects
-  Picture->render(size2,m,M,perspective,true);
+  Picture->render(size2,m,M,perspective,true,remesh);
   glDepthMask(GL_TRUE);
 }
 
@@ -449,6 +503,7 @@ void home()
   Rotate=value_ptr(drotateMat);
   updateModelViewData();
 
+  remesh=true;
   lastzoom=Zoom=Zoom0;
   setDimensions(Width,Height,0,0);
   glClearColor(Background[0],Background[1],Background[2],Background[3]);
@@ -508,18 +563,21 @@ void quit()
   
 void mode() 
 {
+  remesh=true;
   switch(Mode) {
-    case 0:
+    case 0: // wireframe -> regular
       outlinemode=false;
+      nlights=nlights0;
       glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
       ++Mode;
       break;
-    case 1:
+    case 1: // regular -> outline
       outlinemode=true;
+      nlights=0;
       glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
       ++Mode;
       break;
-    case 2:
+    case 2: // outline -> wireframe
       outlinemode=false;
       Mode=0;
       break;
@@ -679,11 +737,16 @@ void display()
   if(fps) seconds();
   drawscene(Width,Height);
   if(fps) {
+    glFinish();
     double s=seconds();
-    if(s > 0.0)
-      cout << "FPS=" << 1.0/s << endl;
+    if(s > 0.0) {
+      double rate=1.0/s;
+      S.add(rate);
+      cout << "FPS=" << rate << "\t" << S.mean() << " +/- " << S.stdev() << endl;
+    }
   }
   glutSwapBuffers();
+
 #ifdef HAVE_PTHREAD
   if(glthread && Animate) {
     queueExport=false;
@@ -718,8 +781,8 @@ void update()
   glutDisplayFunc(display);
   Animate=getSetting<bool>("autoplay");
   glutShowWindow();
+  if(Zoom != lastzoom) remesh=true;
   lastzoom=Zoom;
-  glLoadIdentity();
   double cz=0.5*(zmin+zmax);
   
   dviewMat=translate(translate(dmat4(1.0),dvec3(cx,cy,cz))*drotateMat,
@@ -766,6 +829,7 @@ void reshape(int width, int height)
     glutReshapeWindow(width,height);
  
   reshape0(width,height);
+  remesh=true;
 }
   
 void shift(int x, int y)
@@ -802,6 +866,8 @@ void capzoom()
   if(Zoom <= minzoom) Zoom=minzoom;
   if(Zoom >= maxzoom) Zoom=maxzoom;
   
+  if(Zoom != lastzoom) remesh=true;
+  lastzoom=Zoom;
 }
 
 void zoom(int x, int y)
@@ -816,7 +882,6 @@ void zoom(int x, int y)
       if(fabs(s) < limit) {
         Zoom *= pow(zoomFactor,s);
         capzoom();
-        lastzoom=Zoom;
         y0=y;
         setProjection();
         glutPostRedisplay();
@@ -834,7 +899,6 @@ void mousewheel(int wheel, int direction, int x, int y)
     else
       Zoom /= zoomFactor;
     capzoom();
-    lastzoom=Zoom;
     setProjection();
     glutPostRedisplay();
   }
@@ -1262,15 +1326,11 @@ void init()
   char **argv=args(cmd,true);
   int argc=cmd.size();
 
-//  glutInitContextVersion(4,3);
 #ifndef __APPLE__
   glutInitContextProfile(GLUT_CORE_PROFILE);
 #endif  
-  //glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
 
   glutInit(&argc,argv);
-  // NOTE: Change version if needed. 
-
   screenWidth=glutGet(GLUT_SCREEN_WIDTH);
   screenHeight=glutGet(GLUT_SCREEN_HEIGHT);
   
@@ -1332,51 +1392,51 @@ void initshader()
     exit(-1);
   }
 
-  vertShader=createShaderFile(vs.c_str(),GL_VERTEX_SHADER,Nlights,
-                              Nmaterials);
-  fragShader=createShaderFile(fs.c_str(),GL_FRAGMENT_SHADER,Nlights,
-                              Nmaterials);
-  glAttachShader(shaderProg,vertShader);
-  glAttachShader(shaderProg,fragShader);
-    
-  shaderProgColor=glCreateProgram();
-  vertShaderCol=createShaderFile(vs.c_str(),
-                                 GL_VERTEX_SHADER,Nlights,Nmaterials,true);
-  fragShaderCol=createShaderFile(fs.c_str(),
-                                 GL_FRAGMENT_SHADER,Nlights,Nmaterials,true);
-  glAttachShader(shaderProgColor,vertShaderCol);
-  glAttachShader(shaderProgColor,fragShaderCol);
+  std::vector<std::string> shaderParams;
 
-  camp::noColorShader=shaderProg;
-  camp::colorShader=shaderProgColor;
+#if HAVE_LIBOPENIMAGEIO
+  if (getSetting<bool>("envmap")) {
+    shaderParams.push_back("ENABLE_TEXTURE");
+    envMapBuf=initHDR();
+  }
+#endif
+
+  std::vector<ShaderfileModePair> shaders;
+  shaders.push_back(ShaderfileModePair(vs.c_str(),GL_VERTEX_SHADER));
+  shaders.push_back(ShaderfileModePair(fs.c_str(),GL_FRAGMENT_SHADER));
     
-  glLinkProgram(shaderProg);
-  glDetachShader(shaderProg,vertShader);
-  glDetachShader(shaderProg,fragShader);
-  glDeleteShader(vertShader);
-  glDeleteShader(fragShader);
-    
-  glLinkProgram(shaderProgColor);
-  glDetachShader(shaderProgColor,vertShaderCol);
-  glDetachShader(shaderProgColor,fragShaderCol);
-  glDeleteShader(vertShaderCol);
-  glDeleteShader(fragShaderCol);
+  camp::noNormalShader=compileAndLinkShader(shaders,Nlights,Nmaterials,
+                                            shaderParams);
+
+  shaderParams.push_back("WIDTH");
+  camp::pixelShader=compileAndLinkShader(shaders,Nlights,Nmaterials,
+                                         shaderParams);
+  shaderParams.pop_back();
+  
+  shaderParams.push_back("NORMAL");
+  camp::materialShader=compileAndLinkShader(shaders,Nlights,Nmaterials,
+                                            shaderParams);
+
+  shaderParams.push_back("EXPLICIT_COLOR");
+  camp::colorShader=compileAndLinkShader(shaders,Nlights,Nmaterials,
+                                         shaderParams);
 }
 
 void deleteshader() 
 {
-  glDeleteProgram(camp::noColorShader);
+  glDeleteProgram(camp::materialShader);
   glDeleteProgram(camp::colorShader);
+  glDeleteProgram(camp::noNormalShader);
 }
   
 // angle=0 means orthographic.
 void glrender(const string& prefix, const picture *pic, const string& format,
               double width, double height, double angle, double zoom,
               const triple& m, const triple& M, const pair& shift, double *t,
-              double *background, size_t nlights0, triple *lights,
-              double *diffuse, double *ambient, double *specular,
-              bool view, int oldpid)
+              double *background, size_t nlightsin, triple *lights,
+              double *diffuse, double *specular, bool view, int oldpid)
 {
+  remesh=true;
   bool offscreen=getSetting<bool>("offscreen");
   Iconify=getSetting<bool>("iconify");
 
@@ -1396,11 +1456,10 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   for(int i=0; i < 4; ++i)
     Background[i]=background[i];
   
-  nlights=min(nlights0,(size_t) GL_MAX_LIGHTS);
+  nlights0=nlights=nlightsin;
   
   Lights=lights;
   Diffuse=diffuse;
-  Ambient=ambient;
   Specular=specular;
   View=view;
   Angle=angle*radians;
@@ -1501,6 +1560,10 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   unsigned int displaymode=GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH;
 #endif  
   
+#ifdef __APPLE__
+  displaymode |= GLUT_3_2_CORE_PROFILE;
+#endif  
+  
   camp::clearMaterialBuffer();
   
 #ifdef HAVE_PTHREAD
@@ -1574,8 +1637,6 @@ void glrender(const string& prefix, const picture *pic, const string& format,
 #endif // HAVE_LIBGLUT
   initialized=true;
 
-  glewExperimental = GL_TRUE;
-
   int result = glewInit();
 
   if (result != GLEW_OK) {
@@ -1609,6 +1670,7 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   
   glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
   mode();
@@ -1621,6 +1683,7 @@ void glrender(const string& prefix, const picture *pic, const string& format,
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
+    glutDisplayFunc(display);
   
     glutMainLoop();
 #endif // HAVE_LIBGLUT
@@ -1695,15 +1758,20 @@ void setUniforms(GLint shader)
                 (GLfloat) gl::Diffuse[i4+2],(GLfloat) gl::Diffuse[i4+3]);
       
     glUniform4f(glGetUniformLocation(shader,
-                                     getLightIndex(i,"ambient").c_str()),
-                (GLfloat) gl::Ambient[i4],(GLfloat) gl::Ambient[i4+1],
-                (GLfloat) gl::Ambient[i4+2],(GLfloat) gl::Ambient[i4+3]);
-      
-    glUniform4f(glGetUniformLocation(shader,
                                      getLightIndex(i,"specular").c_str()),
                 (GLfloat) gl::Specular[i4],(GLfloat) gl::Specular[i4+1],
                 (GLfloat) gl::Specular[i4+2],(GLfloat) gl::Specular[i4+3]);
   }
+
+#if HAVE_LIBOPENIMAGEIO
+  // textures
+  if (settings::getSetting<bool>("envmap")) { 
+    glActiveTexture(GL_TEXTURE1);
+    glBindBuffer(GL_TEXTURE_2D, gl::envMapBuf);
+    glUniform1i(glGetUniformLocation(shader, "environmentMap"), 1);
+    glActiveTexture(GL_TEXTURE0);
+  }
+#endif
 }
 
 }

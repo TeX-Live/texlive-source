@@ -86,7 +86,11 @@ defaultrender.labelfill=true;
 defaultrender.partnames=false;
 defaultrender.defaultnames=true;
 
-real defaultshininess=0.25;
+real defaultshininess=0.7;
+real defaultmetallic=0.0;
+real defaultfresnel0=0.04;
+
+
 
 real angleprecision=1e-5; // Precision for centering perspective projections.
 int maxangleiterations=25;
@@ -2885,7 +2889,7 @@ object embed(string prefix=outprefix(), string label=prefix,
              P.infinity ? 0 : 2aTan(Tan(0.5*P.angle)*P.zoom),
              P.zoom,m,M,P.viewportshift,
              tinv*inv*shift(0,0,zcenter),Light.background(),Light.position,
-             Light.diffuse,Light.ambient,Light.specular,
+             Light.diffuse,Light.specular,
              view && !preview);
     if(!preview) return F;
   }

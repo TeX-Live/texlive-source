@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 6.5 from
 asymptote.texi.
 
-This file documents 'Asymptote', version 2.49.
+This file documents 'Asymptote', version 2.52.
 
    <http://asymptote.sourceforge.net>
 
@@ -22,7 +22,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Prev: (dir),  Up: (dir)
 Asymptote
 *********
 
-This file documents 'Asymptote', version 2.49.
+This file documents 'Asymptote', version 2.52.
 
    <http://asymptote.sourceforge.net>
 
@@ -521,7 +521,7 @@ done as the root user.  To install without root privileges, change the
 with './configure --disable-gc'.  For a list of other configuration
 options, say './configure --help'.  For example, one can tell configure
 to look for header files and libraries in nonstandard locations:
-./configure CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib
+./configure CPPFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib
 
    If you are compiling 'Asymptote' with 'gcc', you will need a
 relatively recent version (e.g. 3.4.4 or later).  For full interactive
@@ -961,25 +961,28 @@ point on a picture 'dest' using 'add' or 'attach' (*note add about::).
 'dot' command defined in the module 'plain' draws a dot having a
 diameter equal to an explicit pen line width or the default line width
 magnified by 'dotfactor' (6 by default), using the specified filltype
-(*note filltype::):
+(*note filltype::) or 'dotfilltype' ('Fill' by default):
+void dot(frame f, pair z, pen p=currentpen, filltype filltype=dotfilltype);
 void dot(picture pic=currentpicture, pair z, pen p=currentpen,
-         filltype filltype=Fill);
+         filltype filltype=dotfilltype);
 void dot(picture pic=currentpicture, Label L, pair z, align align=NoAlign,
-         string format=defaultformat, pen p=currentpen, filltype filltype=Fill);
+         string format=defaultformat, pen p=currentpen, filltype filltype=dotfilltype);
 void dot(picture pic=currentpicture, Label[] L=new Label[], pair[] z,
          align align=NoAlign, string format=defaultformat, pen p=currentpen,
-         filltype filltype=Fill)
+         filltype filltype=dotfilltype);
+void dot(picture pic=currentpicture, path[] g, pen p=currentpen,
+         filltype filltype=dotfilltype);
 void dot(picture pic=currentpicture, Label L, pen p=currentpen,
-         filltype filltype=Fill);
+         filltype filltype=dotfilltype);
 
-   If the variable 'Label' is given as the 'Label' argument to the
-second routine, the 'format' argument will be used to format a string
-based on the dot location (here 'defaultformat' is '"$%.4g$"').  The
-third routine draws a dot at every point of a pair array 'z'.  One can
-also draw a dot at every node of a path:
+   If the variable 'Label' is given as the 'Label' argument to the third
+routine, the 'format' argument will be used to format a string based on
+the dot location (here 'defaultformat' is '"$%.4g$"').  The fourth
+routine draws a dot at every point of a pair array 'z'.  One can also
+draw a dot at every node of a path:
 void dot(picture pic=currentpicture, Label[] L=new Label[],
-         path g, align align=RightSide, string format=defaultformat,
-         pen p=currentpen, filltype filltype=Fill);
+         explicit path g, align align=RightSide, string format=defaultformat,
+         pen p=currentpen, filltype filltype=dotfilltype);
    See *note pathmarkers:: and *note markers:: for more general methods
 for marking path nodes.
 
@@ -1711,7 +1714,7 @@ user-defined types):
           using the 'defaultseparator="\!\times\!";';
 
      'int hex(string s);'
-          casts a hexidecimal string 's' to an integer;
+          casts a hexadecimal string 's' to an integer;
 
      'int ascii(string s);'
           returns the ASCII code for the first character of string 's';
@@ -2276,10 +2279,10 @@ with one or more color components equal to 1.
      'colorless(pen=currentpen)' returns a copy of its argument with the
      color attributes stripped (to avoid color mixing).
 
-     A 6-character RGB hexidecimal string can be converted to a pen with
+     A 6-character RGB hexadecimal string can be converted to a pen with
      the routine
      pen rgb(string s);
-     A pen can be converted to a hexidecimal string with
+     A pen can be converted to a hexadecimal string with
    * string hex(pen p);
 
      Various shades and mixtures of the grayscale primary colors 'black'
@@ -6796,7 +6799,7 @@ drawing optional mesh lines for each Bezier patch.  The optional 'name'
 parameter is used as a prefix for naming the surface patches in the PRC
 model tree.  Here material is a structure defined in 'three_light.asy':
 struct material {
-  pen[] p; // diffusepen,ambientpen,emissivepen,specularpen
+  pen[] p; // diffusepen,emissivepen,specularpen
   real opacity;
   real shininess;  
 ...
@@ -8072,6 +8075,7 @@ Options (negate by replacing - with -no):
 -divisor n             Garbage collect using purge(divisor=n) [2]
 -doubleclick ms        Emulated double-click timeout [200]
 -embed                 Embed rendered preview image [true]
+-envmap                Enable environment map image-based lighting (Experimental) [false]
 -exitonEOF             Exit interactive mode on EOF [true]
 -fitscreen             Fit rendered image to screen [true]
 -framedelay ms         Additional frame delay [0]
@@ -8374,8 +8378,9 @@ pip3 install cson numpy pyqt5 PyQt5.sip
 
    Pictures are deconstructed into the SVG image format.  Since 'Qt5'
 does not suport 'SVG' clipping, you will need the 'rsvg-convert'
-utility, which is part of the 'librsvg2-tools' package on 'UNIX'
-systems; under 'Microsoft Windows', it is available as
+utility, which is part of the 'librsvg2-tools' package on 'UNIX' systems
+and the 'librsvg' package on 'MacOS'; under 'Microsoft Windows', it is
+available as
 
    <https://sourceforge.net/projects/tumagcc/files/rsvg-convert-2.40.20.7z>
 
@@ -8590,9 +8595,9 @@ Index
 * ---:                                   Bezier curves.      (line   84)
 * -=:                                    Self & prefix operators.
                                                              (line    6)
-* -c:                                    Options.            (line  185)
-* -l:                                    Options.            (line  204)
-* -u:                                    Options.            (line  195)
+* -c:                                    Options.            (line  186)
+* -l:                                    Options.            (line  205)
+* -u:                                    Options.            (line  196)
 * -V:                                    Configuring.        (line    6)
 * -V <1>:                                Drawing in batch mode.
                                                              (line   16)
@@ -8665,7 +8670,7 @@ Index
 * alias:                                 Structures.         (line   62)
 * alias <1>:                             Arrays.             (line  174)
 * Align:                                 label.              (line   12)
-* aligndir:                              Options.            (line  177)
+* aligndir:                              Options.            (line  178)
 * all:                                   Arrays.             (line  325)
 * Allow:                                 Pens.               (line  347)
 * and:                                   Bezier curves.      (line   56)
@@ -8679,7 +8684,7 @@ Index
 * animation <1>:                         animation.          (line    6)
 * annotate:                              annotate.           (line    6)
 * antialias:                             three.              (line  192)
-* antialias <1>:                         Options.            (line  148)
+* antialias <1>:                         Options.            (line  149)
 * append:                                Files.              (line   36)
 * append <1>:                            Arrays.             (line   39)
 * arc:                                   Paths and guides.   (line   24)
@@ -8731,7 +8736,7 @@ Index
 * asyinclude:                            LaTeX usage.        (line   45)
 * asymptote.sty:                         LaTeX usage.        (line    6)
 * asymptote.xml:                         Editing modes.      (line   48)
-* ASYMPTOTE_CONFIG:                      Options.            (line  119)
+* ASYMPTOTE_CONFIG:                      Options.            (line  120)
 * atan:                                  Mathematical functions.
                                                              (line    6)
 * aTan:                                  Mathematical functions.
@@ -8746,7 +8751,7 @@ Index
 * attach <1>:                            LaTeX usage.        (line   50)
 * attach <2>:                            graph.              (line  407)
 * autoadjust:                            three.              (line  339)
-* autoimport:                            Options.            (line  115)
+* autoimport:                            Options.            (line  116)
 * automatic scaling:                     graph.              (line  691)
 * automatic scaling <1>:                 graph.              (line  691)
 * axialshade:                            fill.               (line   43)
@@ -8899,13 +8904,13 @@ Index
 * conditional <1>:                       Arithmetic & logical.
                                                              (line   61)
 * config:                                Configuring.        (line   64)
-* config <1>:                            Options.            (line  119)
+* config <1>:                            Options.            (line  120)
 * configuration file:                    Configuring.        (line   21)
-* configuration file <1>:                Options.            (line  119)
+* configuration file <1>:                Options.            (line  120)
 * configuring:                           Configuring.        (line    6)
 * conj:                                  Data types.         (line   62)
 * constructors:                          Structures.         (line   91)
-* context:                               Options.            (line  148)
+* context:                               Options.            (line  149)
 * continue:                              Programming.        (line   48)
 * continue <1>:                          Debugger.           (line   31)
 * contour:                               contour.            (line    6)
@@ -8916,8 +8921,8 @@ Index
 * convert:                               Configuring.        (line   64)
 * convert <1>:                           Files.              (line  155)
 * convert <2>:                           animation.          (line    6)
-* convert <3>:                           Options.            (line  148)
-* convertOptions:                        Options.            (line  134)
+* convert <3>:                           Options.            (line  149)
+* convertOptions:                        Options.            (line  135)
 * Coons shading:                         fill.               (line   77)
 * copy:                                  Arrays.             (line  167)
 * cos:                                   Mathematical functions.
@@ -9017,7 +9022,7 @@ Index
 * draw:                                  Drawing commands.   (line   31)
 * draw <1>:                              draw.               (line    6)
 * Draw:                                  draw.               (line   26)
-* draw <2>:                              draw.               (line  109)
+* draw <2>:                              draw.               (line  112)
 * Draw <1>:                              Frames and pictures.
                                                              (line  160)
 * draw <3>:                              three.              (line  114)
@@ -9025,10 +9030,10 @@ Index
 * drawline:                              math.               (line    9)
 * drawtree:                              drawtree.           (line    6)
 * dvips:                                 Configuring.        (line   64)
-* dvipsOptions:                          Options.            (line  134)
+* dvipsOptions:                          Options.            (line  135)
 * dvisvgm:                               Configuring.        (line   64)
-* dvisvgm <1>:                           Options.            (line  153)
-* dvisvgmOptions:                        Options.            (line  134)
+* dvisvgm <1>:                           Options.            (line  154)
+* dvisvgmOptions:                        Options.            (line  135)
 * E:                                     Labels.             (line   18)
 * E <1>:                                 Mathematical functions.
                                                              (line   48)
@@ -9069,7 +9074,7 @@ Index
 * eol:                                   Files.              (line   93)
 * eol <1>:                               Arrays.             (line  339)
 * EPS:                                   label.              (line   78)
-* EPS <1>:                               Options.            (line  148)
+* EPS <1>:                               Options.            (line  149)
 * erase:                                 Drawing in interactive mode.
                                                              (line   11)
 * erase <1>:                             Data types.         (line  256)
@@ -9124,7 +9129,7 @@ Index
 * file:                                  Files.              (line    6)
 * file <1>:                              Debugger.           (line   44)
 * Fill:                                  draw.               (line   26)
-* fill:                                  draw.               (line  114)
+* fill:                                  draw.               (line  117)
 * fill <1>:                              fill.               (line    6)
 * fill <2>:                              fill.               (line   17)
 * Fill <1>:                              Frames and pictures.
@@ -9157,7 +9162,7 @@ Index
 * fontsize:                              Pens.               (line  192)
 * for:                                   Programming.        (line   26)
 * format:                                Data types.         (line  289)
-* format <1>:                            Options.            (line  148)
+* format <1>:                            Options.            (line  149)
 * forum:                                 Help.               (line    6)
 * frame:                                 Frames and pictures.
                                                              (line    7)
@@ -9182,7 +9187,7 @@ Index
 * gettriple:                             Files.              (line  118)
 * git:                                   Git.                (line    6)
 * glOptions:                             three.              (line  192)
-* glOptions <1>:                         Options.            (line  134)
+* glOptions <1>:                         Options.            (line  135)
 * GNU Scientific Library:                Mathematical functions.
                                                              (line   48)
 * gouraudshade:                          fill.               (line   62)
@@ -9203,7 +9208,7 @@ Index
                                                              (line   63)
 * gsl:                                   Mathematical functions.
                                                              (line   48)
-* gsOptions:                             Options.            (line  134)
+* gsOptions:                             Options.            (line  135)
 * GUI:                                   GUI.                (line    6)
 * GUI installation:                      GUI installation.   (line    6)
 * GUI usage:                             GUI usage.          (line    6)
@@ -9218,8 +9223,8 @@ Index
 * Hermite(splinetype splinetype:         graph.              (line   36)
 * hex:                                   Data types.         (line  305)
 * hex <1>:                               Pens.               (line   64)
-* hexidecimal:                           Data types.         (line  305)
-* hexidecimal <1>:                       Pens.               (line   62)
+* hexadecimal:                           Data types.         (line  305)
+* hexadecimal <1>:                       Pens.               (line   62)
 * hidden surface removal:                three.              (line  588)
 * histogram:                             Mathematical functions.
                                                              (line   39)
@@ -9229,7 +9234,7 @@ Index
 * HookHead:                              draw.               (line   26)
 * HookHead3:                             three.              (line  547)
 * Horizontal:                            flowchart.          (line   77)
-* hyperrefOptions:                       Options.            (line  134)
+* hyperrefOptions:                       Options.            (line  135)
 * hypot:                                 Mathematical functions.
                                                              (line    6)
 * I:                                     Mathematical functions.
@@ -9247,7 +9252,7 @@ Index
 * image <1>:                             palette.            (line   58)
 * ImageMagick:                           Configuring.        (line   64)
 * ImageMagick <1>:                       animation.          (line    6)
-* ImageMagick <2>:                       Options.            (line  148)
+* ImageMagick <2>:                       Options.            (line  149)
 * images:                                palette.            (line    6)
 * implicit casts:                        Casts.              (line    6)
 * implicit linear solver:                MetaPost.           (line   10)
@@ -9339,7 +9344,7 @@ Index
 * k_scaled:                              Mathematical functions.
                                                              (line   48)
 * label:                                 Labels.             (line    6)
-* Label:                                 draw.               (line   97)
+* Label:                                 draw.               (line  100)
 * label <1>:                             label.              (line    6)
 * Label <1>:                             label.              (line   14)
 * Label <2>:                             graph.              (line  330)
@@ -9352,7 +9357,7 @@ Index
                                                              (line  104)
 * lastcut:                               Paths and guides.   (line  266)
 * lasy-mode:                             Editing modes.      (line    6)
-* latex:                                 Options.            (line  148)
+* latex:                                 Options.            (line  149)
 * LaTeX fonts:                           Pens.               (line  206)
 * LaTeX usage:                           LaTeX usage.        (line    6)
 * latexmk:                               LaTeX usage.        (line   30)
@@ -9384,7 +9389,7 @@ Index
 * lexorder:                              math.               (line   67)
 * lexorder <1>:                          math.               (line   70)
 * libgs:                                 Configuring.        (line   64)
-* libgs <1>:                             Options.            (line  153)
+* libgs <1>:                             Options.            (line  154)
 * libm routines:                         Mathematical functions.
                                                              (line    6)
 * libsigsegv:                            Functions.          (line  100)
@@ -9416,8 +9421,8 @@ Index
 * longdashed:                            Pens.               (line  102)
 * longitude:                             Data types.         (line  168)
 * loop:                                  Programming.        (line   26)
-* lualatex:                              Options.            (line  148)
-* luatex:                                Options.            (line  148)
+* lualatex:                              Options.            (line  149)
+* luatex:                                Options.            (line  149)
 * MacOS X binary distributions:          MacOS X binary distributions.
                                                              (line    6)
 * makepen:                               Pens.               (line  322)
@@ -9513,7 +9518,7 @@ Index
 * None <1>:                              draw.               (line   26)
 * none:                                  Files.              (line   61)
 * normal:                                three.              (line  467)
-* nosafe:                                Options.            (line  172)
+* nosafe:                                Options.            (line  173)
 * NOT:                                   Arithmetic & logical.
                                                              (line   68)
 * notaknot:                              graph.              (line   36)
@@ -9534,7 +9539,7 @@ Index
 * obliqueZ:                              three.              (line  299)
 * ode:                                   ode.                (line    6)
 * offset:                                Pens.               (line  123)
-* offset <1>:                            Options.            (line  177)
+* offset <1>:                            Options.            (line  178)
 * OmitTick:                              graph.              (line  223)
 * OmitTickInterval:                      graph.              (line  223)
 * OmitTickIntervals:                     graph.              (line  223)
@@ -9565,7 +9570,7 @@ Index
 * outprefix:                             Frames and pictures.
                                                              (line   91)
 * output:                                Files.              (line   36)
-* output <1>:                            Options.            (line  148)
+* output <1>:                            Options.            (line  149)
 * OutTicks:                              graph3.             (line   35)
 * overloading functions:                 Functions.          (line   55)
 * overwrite:                             Pens.               (line  344)
@@ -9595,11 +9600,11 @@ Index
 * path[]:                                Paths.              (line   23)
 * patterns:                              Pens.               (line  255)
 * patterns <1>:                          patterns.           (line    6)
-* PDF:                                   Options.            (line  148)
-* pdflatex:                              Options.            (line  148)
-* pdfreloadOptions:                      Options.            (line  134)
+* PDF:                                   Options.            (line  149)
+* pdflatex:                              Options.            (line  149)
+* pdfreloadOptions:                      Options.            (line  135)
 * pdfviewer:                             Configuring.        (line    6)
-* pdfviewerOptions:                      Options.            (line  134)
+* pdfviewerOptions:                      Options.            (line  135)
 * pen:                                   Pens.               (line    6)
 * PenMargin:                             draw.               (line   42)
 * PenMargin2:                            three.              (line  563)
@@ -9653,7 +9658,7 @@ Index
 * pstoedit:                              PostScript to Asymptote.
                                                              (line    6)
 * psviewer:                              Configuring.        (line    6)
-* psviewerOptions:                       Options.            (line  134)
+* psviewerOptions:                       Options.            (line  135)
 * pt:                                    Figure size.        (line   18)
 * public:                                Structures.         (line    6)
 * push:                                  Arrays.             (line   39)
@@ -9706,7 +9711,7 @@ Index
 * rename:                                Files.              (line  152)
 * render:                                three.              (line   46)
 * render <1>:                            three.              (line  142)
-* render <2>:                            Options.            (line  148)
+* render <2>:                            Options.            (line  149)
 * replace:                               Data types.         (line  269)
 * resetdefaultpen:                       Pens.               (line  371)
 * rest arguments:                        Rest arguments.     (line    6)
@@ -9745,7 +9750,7 @@ Index
 * runtime imports:                       Import.             (line   97)
 * Russian:                               unicode.            (line    7)
 * S:                                     Labels.             (line   18)
-* safe:                                  Options.            (line  172)
+* safe:                                  Options.            (line  173)
 * save:                                  Frames and pictures.
                                                              (line  285)
 * saveline:                              Files.              (line  135)
@@ -9777,7 +9782,7 @@ Index
                                                              (line    6)
 * sequence:                              Arrays.             (line  118)
 * settings:                              Configuring.        (line   21)
-* settings <1>:                          Options.            (line  119)
+* settings <1>:                          Options.            (line  120)
 * sgn:                                   Mathematical functions.
                                                              (line   26)
 * shading:                               fill.               (line   32)
@@ -9820,7 +9825,7 @@ Index
 * size <4>:                              Frames and pictures.
                                                              (line   74)
 * size <5>:                              three.              (line  481)
-* size <6>:                              Options.            (line  148)
+* size <6>:                              Options.            (line  149)
 * size3:                                 three.              (line  241)
 * Slant:                                 label.              (line   42)
 * slant:                                 Transforms.         (line   38)
@@ -9886,9 +9891,9 @@ Index
 * surface <1>:                           three.              (line   88)
 * surface <2>:                           three.              (line  102)
 * surface <3>:                           graph3.             (line   99)
-* SVG:                                   Options.            (line  153)
+* SVG:                                   Options.            (line  154)
 * system:                                Data types.         (line  353)
-* system <1>:                            Options.            (line  172)
+* system <1>:                            Options.            (line  173)
 * syzygy:                                syzygy.             (line    6)
 * tab:                                   Files.              (line   61)
 * tab completion:                        Drawing in interactive mode.
@@ -9909,7 +9914,7 @@ Index
 * tessellation:                          three.              (line  114)
 * tex:                                   Frames and pictures.
                                                              (line  302)
-* tex <1>:                               Options.            (line  148)
+* tex <1>:                               Options.            (line  149)
 * TeX fonts:                             Pens.               (line  215)
 * TeX string:                            Data types.         (line  207)
 * texcommand:                            Configuring.        (line   64)
@@ -10048,7 +10053,7 @@ Index
 * xasy:                                  GUI.                (line    6)
 * xaxis3:                                graph3.             (line    7)
 * xdr:                                   Files.              (line   76)
-* xelatex:                               Options.            (line  148)
+* xelatex:                               Options.            (line  149)
 * XEquals:                               graph.              (line  265)
 * xequals:                               graph.              (line  278)
 * xlimits:                               graph.              (line  640)
@@ -10132,129 +10137,129 @@ Ref: unitcircle32073
 Node: Drawing commands33973
 Node: draw35688
 Ref: arrows36870
-Node: fill42119
-Ref: gradient shading43165
-Node: clip47672
-Node: label48259
-Ref: Label48859
-Node: Bezier curves54704
-Node: Programming58601
-Ref: array iteration60354
-Node: Data types60521
-Ref: format71183
-Node: Paths and guides75629
-Ref: circle75883
-Ref: extension85590
-Node: Pens92399
-Ref: fillrule100088
-Ref: basealign100992
-Ref: transparency103826
-Ref: makepen107406
-Ref: overwrite108289
-Node: Transforms109503
-Node: Frames and pictures111335
-Ref: envelope112493
-Ref: size113586
-Ref: unitsize114573
-Ref: shipout115646
-Ref: filltype117997
-Ref: add121169
-Ref: add about122175
-Ref: tex125204
-Node: Files126100
-Ref: cd127087
-Ref: scroll131772
-Node: Variable initializers134690
-Node: Structures137407
-Node: Operators144909
-Node: Arithmetic & logical145223
-Node: Self & prefix operators147594
-Node: User-defined operators148388
-Node: Implicit scaling149301
-Node: Functions149864
-Ref: stack overflow153007
-Node: Default arguments153289
-Node: Named arguments154045
-Node: Rest arguments156615
-Node: Mathematical functions159737
-Node: Arrays164400
-Ref: sort171508
-Ref: tridiagonal174133
-Ref: solve175364
-Node: Slices179503
-Node: Casts183411
-Node: Import185678
-Node: Static190936
-Node: LaTeX usage193829
-Node: Base modules200344
-Node: plain202901
-Node: simplex203575
-Node: math203849
-Node: interpolate206558
-Node: geometry206837
-Node: trembling207431
-Node: stats207700
-Node: patterns207960
-Node: markers208196
-Node: tree210056
-Node: binarytree210241
-Node: drawtree210907
-Node: syzygy211108
-Node: feynman211382
-Node: roundedpath211657
-Node: animation211940
-Ref: animate212361
-Node: embed213478
-Node: slide214433
-Node: MetaPost214774
-Node: unicode215493
-Node: latin1216367
-Node: babel216736
-Node: labelpath216966
-Node: labelpath3217787
-Node: annotate218098
-Node: CAD218568
-Node: graph218879
-Ref: ticks226040
-Ref: pathmarkers239832
-Ref: marker240303
-Ref: markuniform240657
-Ref: errorbars242465
-Ref: automatic scaling246939
-Node: palette258686
-Ref: images258804
-Ref: image262978
-Ref: logimage263498
-Ref: penimage264603
-Ref: penfunctionimage264865
-Node: three265636
-Ref: PostScript3D292654
-Node: obj294392
-Node: graph3294641
-Ref: GaussianSurface299921
-Node: grid3301070
-Node: solids301854
-Node: tube302846
-Node: flowchart305080
-Node: contour309688
-Node: contour3315003
-Node: smoothcontour3315316
-Node: slopefield317037
-Node: ode318526
-Node: Options318783
-Ref: configuration file325075
-Ref: settings325075
-Ref: texengines326318
-Ref: convert326318
-Node: Interactive mode329642
-Ref: history331792
-Node: GUI333098
-Node: GUI installation333649
-Node: GUI usage334341
-Node: PostScript to Asymptote335257
-Node: Help336015
-Node: Debugger337669
-Node: Credits339425
-Node: Index340442
+Node: fill42383
+Ref: gradient shading43429
+Node: clip47936
+Node: label48523
+Ref: Label49123
+Node: Bezier curves54968
+Node: Programming58865
+Ref: array iteration60618
+Node: Data types60785
+Ref: format71447
+Node: Paths and guides75893
+Ref: circle76147
+Ref: extension85854
+Node: Pens92663
+Ref: fillrule100352
+Ref: basealign101256
+Ref: transparency104090
+Ref: makepen107670
+Ref: overwrite108553
+Node: Transforms109767
+Node: Frames and pictures111599
+Ref: envelope112757
+Ref: size113850
+Ref: unitsize114837
+Ref: shipout115910
+Ref: filltype118261
+Ref: add121433
+Ref: add about122439
+Ref: tex125468
+Node: Files126364
+Ref: cd127351
+Ref: scroll132036
+Node: Variable initializers134954
+Node: Structures137671
+Node: Operators145173
+Node: Arithmetic & logical145487
+Node: Self & prefix operators147858
+Node: User-defined operators148652
+Node: Implicit scaling149565
+Node: Functions150128
+Ref: stack overflow153271
+Node: Default arguments153553
+Node: Named arguments154309
+Node: Rest arguments156879
+Node: Mathematical functions160001
+Node: Arrays164664
+Ref: sort171772
+Ref: tridiagonal174397
+Ref: solve175628
+Node: Slices179767
+Node: Casts183675
+Node: Import185942
+Node: Static191200
+Node: LaTeX usage194093
+Node: Base modules200608
+Node: plain203165
+Node: simplex203839
+Node: math204113
+Node: interpolate206822
+Node: geometry207101
+Node: trembling207695
+Node: stats207964
+Node: patterns208224
+Node: markers208460
+Node: tree210320
+Node: binarytree210505
+Node: drawtree211171
+Node: syzygy211372
+Node: feynman211646
+Node: roundedpath211921
+Node: animation212204
+Ref: animate212625
+Node: embed213742
+Node: slide214697
+Node: MetaPost215038
+Node: unicode215757
+Node: latin1216631
+Node: babel217000
+Node: labelpath217230
+Node: labelpath3218051
+Node: annotate218362
+Node: CAD218832
+Node: graph219143
+Ref: ticks226304
+Ref: pathmarkers240096
+Ref: marker240567
+Ref: markuniform240921
+Ref: errorbars242729
+Ref: automatic scaling247203
+Node: palette258950
+Ref: images259068
+Ref: image263242
+Ref: logimage263762
+Ref: penimage264867
+Ref: penfunctionimage265129
+Node: three265900
+Ref: PostScript3D292907
+Node: obj294645
+Node: graph3294894
+Ref: GaussianSurface300174
+Node: grid3301323
+Node: solids302107
+Node: tube303099
+Node: flowchart305333
+Node: contour309941
+Node: contour3315256
+Node: smoothcontour3315569
+Node: slopefield317290
+Node: ode318779
+Node: Options319036
+Ref: configuration file325418
+Ref: settings325418
+Ref: texengines326661
+Ref: convert326661
+Node: Interactive mode329985
+Ref: history332135
+Node: GUI333441
+Node: GUI installation333992
+Node: GUI usage334721
+Node: PostScript to Asymptote335637
+Node: Help336395
+Node: Debugger338049
+Node: Credits339805
+Node: Index340822
 
 End Tag Table

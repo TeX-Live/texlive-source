@@ -18,31 +18,28 @@
 
 #ifdef __MSDOS__
 #define GLEW_STATIC
-#include <windows.h>
-#define CALLBACK __stdcall
-typedef void (APIENTRY* _GLUfuncptr)();
+#define _WIN32
 #endif
 
+#include "GL/glew.h"
+
 #ifdef __APPLE__
-#include <OpenGL/glew.h>
+#define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl.h>
 #ifdef HAVE_LIBGLUT
 #include <GLUT/glut.h>
 #endif
 #ifdef HAVE_LIBOSMESA
-#include <OpenGL/osmesa.h>
+#include <GL/osmesa.h>
 #endif
 #else
-#include <GL/glew.h>
 #ifdef __MSDOS__
+#undef _WIN32
+#include <GL/gl.h>
 #include <GL/wglew.h>
 #include <GL/wglext.h>
 #endif
 #ifdef HAVE_LIBGLUT
-#ifdef __MSDOS__
-#define FREEGLUT_STATIC
-#define APIENTRY
-#endif
 #include <GL/glut.h>
 #endif
 #ifdef HAVE_LIBOSMESA
@@ -80,7 +77,9 @@ inline void store(GLfloat *control, const triple& v, double weight)
 namespace gl {
 
 extern bool outlinemode;
+extern bool wireframeMode;
 extern Int maxvertices;
+extern bool forceRemesh;
 
 struct projection 
 {
@@ -101,6 +100,8 @@ public:
     zoom(zoom), angle(angle), viewportshift(viewportshift) {}
 };
 
+GLuint initHDR();
+
 projection camera(bool user=true);
 
 void glrender(const string& prefix, const camp::picture* pic,
@@ -108,7 +109,7 @@ void glrender(const string& prefix, const camp::picture* pic,
               double zoom, const camp::triple& m, const camp::triple& M,
               const camp::pair& shift, double *t, double *background,
               size_t nlights, camp::triple *lights, double *diffuse,
-              double *ambient, double *specular, bool view, int oldpid=0);
+              double *specular, bool view, int oldpid=0);
 
 struct ModelView {
   double T[16];

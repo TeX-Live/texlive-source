@@ -23,6 +23,7 @@ using namespace prc;
 using gl::modelView;
 
 BezierCurve drawPath3::R;
+Pixel drawPixel::R;
 #endif
 
 bool drawPath3::write(prcfile *out, unsigned int *, double, groupsmap&)
@@ -94,7 +95,7 @@ void drawPath3::render(double size2, const triple& b, const triple& B,
     return;
   
   RGBAColour Black(0.0,0.0,0.0,color.A);
-  setcolors(false,Black,Black,color,Black,1.0);
+  setcolors(false,Black,color,Black,1.0,0.0,0.04);
   
   if(billboard) {
     for(Int i=0; i < n; ++i) {
@@ -111,7 +112,11 @@ void drawPath3::render(double size2, const triple& b, const triple& B,
       R.queue(controls,straight,size3.length()/size2,m,M);
     }
   }
-  R.draw();
+  if(BezierCurve::vertexbuffer.size() >= (unsigned) gl::maxvertices) {
+    R.draw();
+    BezierCurve::clear();
+    gl::forceRemesh=true;
+  }
 #endif
 }
 
@@ -217,19 +222,7 @@ void drawNurbsPath3::render(double, const triple&, const triple&,
   if(invisible || ((color.A < 1.0) ^ transparent))
     return;
   
-  GLfloat Diffuse[]={0.0,0.0,0.0,(GLfloat) color.A};
-  glMaterialfv(GL_FRONT,GL_DIFFUSE,Diffuse);
-  
-  static GLfloat Black[]={0.0,0.0,0.0,1.0};
-  glMaterialfv(GL_FRONT,GL_AMBIENT,Black);
-    
-  GLfloat Emissive[]={(GLfloat) color.R,(GLfloat) color.G,(GLfloat) color.B,
-		      (GLfloat) color.A};
-  glMaterialfv(GL_FRONT,GL_EMISSION,Emissive);
-    
-  glMaterialfv(GL_FRONT,GL_SPECULAR,Black);
-  
-  glMaterialf(GL_FRONT,GL_SHININESS,128.0);
+// TODO: implement NURBS renderer
 #endif
 }
 
@@ -276,11 +269,15 @@ void drawPixel::render(double size2, const triple& b, const triple& B,
     return;
   
   RGBAColour Black(0.0,0.0,0.0,color.A);
-  setcolors(false,color,Black,color,Black,1.0);
+  setcolors(false,color,color,Black,1.0,0.0,0.04);
   
-  glPointSize(1.0+width);
-  R.draw(v);
-  glPointSize(1.0);
+  R.queue(v,width);
+  
+  if(Pixel::vertexbuffer.size() >= (unsigned) gl::maxvertices) {
+    R.draw();
+    Pixel::clear();
+    gl::forceRemesh=true;
+  }
 #endif
 }
 

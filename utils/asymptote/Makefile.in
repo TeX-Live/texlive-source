@@ -69,6 +69,7 @@ ASY = ./asy -dir base -config "" -render=0
 DEFS = @DEFS@ @OPTIONS@ @PTHREAD_CFLAGS@ -DFFTWPP_SINGLE_THREAD
 CFLAGS = @CFLAGS@
 OPTS = $(DEFS) @CPPFLAGS@ @CXXFLAGS@ $(CFLAGS)
+GLEWOPTS = $(DEFS) @CPPFLAGS@ $(CFLAGS) -D GLEW_NO_GLU
 
 # Options for compiling the object files for the shared library.
 # gc has to be configured with the option --disable-threads in order to make a
@@ -79,9 +80,9 @@ SHAREDOPTS = $(filter-out -DUSEGC, $(OPTS)) -fPIC -DFOR_SHARED
 CXX = @CXX@ -Wall
 CC = @CC@ -Wall
 MAKEDEPEND = $(OPTS) -O0 -M -DDEPEND
-BISON = bison
-PYRCC = pyrcc5
-PYUIC = pyuic5
+BISON ?= bison
+PYRCC ?= pyrcc5
+PYUIC ?= pyuic5
 LEX = @LEX@
 
 prefix = @prefix@
@@ -112,7 +113,7 @@ endif
 
 export prefix docdir exampledir mandir infodir INSTALL MAKE DESTDIR TEXI2DVI
 
-asy:	version
+asy:	version glew.o
 	if test -n "$(MSDOS)"; then \
           $(CXX) $(OPTS) -o $(NAME) $(FILES:=.o) revision.o asy.o $(DOSLIBS); \
 	else \
@@ -252,7 +253,7 @@ install-asy: asy sty
 		asy-keywords.el $(asydir)
 	${INSTALL} -p -m 755 GUI/*.py $(GUIdir)
 	${INSTALL} -p -m 755 base/shaders/*.glsl $(shaderdir)
-	${INSTALL} -p -m 644 GUI/pyUIClass/*.py $(GUIdir)/pyUIClass
+	-${INSTALL} -p -m 644 GUI/pyUIClass/*.py $(GUIdir)/pyUIClass
 	${INSTALL} -p -m 644 GUI/configs/*.cson $(GUIdir)/configs
 	${INSTALL} -p -m 644 GUI/res/icons.qrc $(GUIdir)/res
 	${INSTALL} -p -m 644 GUI/res/icons/*.svg $(GUIdir)/res/icons
@@ -335,6 +336,13 @@ check: test
 check-all: asy FORCE
 	./wce
 	$(MAKE) -C tests all
+
+glew.o: glew.c GL/glew.h
+	if test -n "$(MSDOS)"; then \
+	  $(CC) -I. $(GLEWOPTS) -o glew.o -D_WIN32 -D GLEW_BUILD -c glew.c; \
+	else \
+	  $(CC) -I. $(GLEWOPTS) -o glew.o -c glew.c; \
+	fi
 
 .SUFFIXES: .c .cc .o .d .ui .py
 %.o: %.cc

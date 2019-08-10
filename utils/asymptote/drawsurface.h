@@ -26,12 +26,13 @@ protected:
   triple center;
   bool straight; // True iff Bezier patch is planar and has straight edges.
   prc::RGBAColour diffuse;
-  prc::RGBAColour ambient;
   prc::RGBAColour emissive;
   prc::RGBAColour specular;
   prc::RGBAColour *colors;
   double opacity;
   double shininess;
+  double metallic;
+  double fresnel0;
   double PRCshininess;
   bool invisible;
   Interaction interaction;
@@ -51,12 +52,12 @@ public:
   
   drawSurface(const vm::array& g, size_t ncontrols, triple center,
               bool straight, const vm::array&p, double opacity,
-              double shininess, double PRCshininess, const vm::array &pens,
+              double shininess, double metallic, double fresnel0, double PRCshininess, const vm::array &pens,
               Interaction interaction, bool prc, const string& key="") :
     drawElement(key), ncontrols(ncontrols), center(center), straight(straight),
-    opacity(opacity), shininess(shininess), PRCshininess(PRCshininess),
+    opacity(opacity), shininess(shininess), metallic(metallic), fresnel0(fresnel0), PRCshininess(PRCshininess),
     interaction(interaction), prc(prc) {
-    if(checkArray(&g) != 4 || checkArray(&p) != 4)
+    if(checkArray(&g) != 4 || checkArray(&p) != 3)
       reportError(wrongsize());
     
     size_t k=0;
@@ -74,9 +75,8 @@ public:
     invisible=surfacepen.invisible();
     
     diffuse=rgba(surfacepen);
-    ambient=rgba(vm::read<camp::pen>(p,1));
-    emissive=rgba(vm::read<camp::pen>(p,2));
-    specular=rgba(vm::read<camp::pen>(p,3));
+    emissive=rgba(vm::read<camp::pen>(p,1));
+    specular=rgba(vm::read<camp::pen>(p,2));
     
     size_t nodes=(ncontrols == 16 ? 4 : 3);
     size_t size=checkArray(&pens);
@@ -90,10 +90,11 @@ public:
   
   drawSurface(const double* t, const drawSurface *s) :
     drawElement(s->KEY), ncontrols(s->ncontrols), straight(s->straight),
-    diffuse(s->diffuse), ambient(s->ambient), emissive(s->emissive),
+    diffuse(s->diffuse), emissive(s->emissive),
     specular(s->specular), colors(s->colors), opacity(s->opacity),
-    shininess(s->shininess), PRCshininess(s->PRCshininess),
-    invisible(s->invisible), interaction(s->interaction), prc(s->prc) { 
+    shininess(s->shininess),  metallic(s->metallic), fresnel0(s->fresnel0),
+    PRCshininess(s->PRCshininess), invisible(s->invisible),
+    interaction(s->interaction), prc(s->prc) { 
     
     if(s->controls) {
       controls=new(UseGC) triple[ncontrols];
@@ -119,10 +120,11 @@ public:
   
   drawBezierPatch(const vm::array& g, triple center, bool straight,
               const vm::array&p, double opacity, double shininess,
+              double metallic, double fresnel0,
               double PRCshininess, const vm::array &pens,
               Interaction interaction, bool prc) : 
-    drawSurface(g,16,center,straight,p,opacity,shininess,PRCshininess,pens,
-                interaction,prc) {}
+    drawSurface(g,16,center,straight,p,opacity,
+                shininess,metallic,fresnel0,PRCshininess,pens,interaction,prc) {}
 
   drawBezierPatch(const double* t, const drawBezierPatch *s) :
     drawSurface(t,s) {
@@ -148,10 +150,11 @@ public:
   
   drawBezierTriangle(const vm::array& g, triple center, bool straight,
               const vm::array&p, double opacity, double shininess,
+              double metallic, double fresnel0,
               double PRCshininess, const vm::array &pens,
               Interaction interaction, bool prc) : 
-    drawSurface(g,10,center,straight,p,opacity,shininess,PRCshininess,
-                pens,interaction,prc) {}
+    drawSurface(g,10,center,straight,p,opacity,shininess,metallic,fresnel0,
+                PRCshininess,pens,interaction,prc) {}
   
   drawBezierTriangle(const double* t, const drawBezierTriangle *s) :
     drawSurface(t,s) {
@@ -177,11 +180,12 @@ protected:
   double *weights;
   double *uknots, *vknots;
   prc::RGBAColour diffuse;
-  prc::RGBAColour ambient;
   prc::RGBAColour emissive;
   prc::RGBAColour specular;
   double opacity;
   double shininess;
+  double metallic;
+  double fresnel0;
   double PRCshininess;
   triple normal;
   bool invisible;
@@ -198,16 +202,16 @@ protected:
 public:
   drawNurbs(const vm::array& g, const vm::array* uknot, const vm::array* vknot,
             const vm::array* weight, const vm::array&p, double opacity,
-            double shininess, double PRCshininess, const vm::array &pens,
+            double shininess, double metallic, double fresnel0, double PRCshininess, const vm::array &pens,
             const string& key="") 
     : drawElement(key), opacity(opacity), shininess(shininess),
-      PRCshininess(PRCshininess) {
+    metallic(metallic), fresnel0(fresnel0), PRCshininess(PRCshininess) {
     size_t weightsize=checkArray(weight);
     
     const string wrongsize="Inconsistent NURBS data";
     nu=checkArray(&g);
     
-    if(nu == 0 || (weightsize != 0 && weightsize != nu) || checkArray(&p) != 4)
+    if(nu == 0 || (weightsize != 0 && weightsize != nu) || checkArray(&p) != 3)
       reportError(wrongsize);
     
     vm::array *g0=vm::read<vm::array*>(g,0);
@@ -253,9 +257,8 @@ public:
     invisible=surfacepen.invisible();
     
     diffuse=rgba(surfacepen);
-    ambient=rgba(vm::read<camp::pen>(p,1));
-    emissive=rgba(vm::read<camp::pen>(p,2));
-    specular=rgba(vm::read<camp::pen>(p,3));
+    emissive=rgba(vm::read<camp::pen>(p,1));
+    specular=rgba(vm::read<camp::pen>(p,2));
     
 #ifdef HAVE_GL
     Controls=NULL;
@@ -274,7 +277,7 @@ public:
   drawNurbs(const double* t, const drawNurbs *s) :
     drawElement(s->KEY), udegree(s->udegree), vdegree(s->vdegree), nu(s->nu),
     nv(s->nv), weights(s->weights), uknots(s->uknots), vknots(s->vknots),
-    diffuse(s->diffuse), ambient(s->ambient),
+    diffuse(s->diffuse),
     emissive(s->emissive), specular(s->specular), opacity(s->opacity),
     shininess(s->shininess), PRCshininess(s->PRCshininess), 
     invisible(s->invisible) {
@@ -312,7 +315,6 @@ public:
 class drawPRC : public drawElementLC {
 protected:
   prc::RGBAColour diffuse;
-  prc::RGBAColour ambient;
   prc::RGBAColour emissive;
   prc::RGBAColour specular;
   double opacity;
@@ -323,21 +325,20 @@ public:
           double shininess) : 
     drawElementLC(t), opacity(opacity), shininess(shininess) {
 
-    string needfourpens="array of 4 pens required";
-    if(checkArray(&p) != 4)
-      reportError(needfourpens);
+    string needthreepens="array of 3 pens required";
+    if(checkArray(&p) != 3)
+      reportError(needthreepens);
     
     pen surfacepen=vm::read<camp::pen>(p,0);
     invisible=surfacepen.invisible();
     
     diffuse=rgba(surfacepen);
-    ambient=rgba(vm::read<camp::pen>(p,1));
-    emissive=rgba(vm::read<camp::pen>(p,2));
-    specular=rgba(vm::read<camp::pen>(p,3));
+    emissive=rgba(vm::read<camp::pen>(p,1));
+    specular=rgba(vm::read<camp::pen>(p,2));
   }
   
   drawPRC(const double* t, const drawPRC *s) :
-    drawElementLC(t,s), diffuse(s->diffuse), ambient(s->ambient),
+    drawElementLC(t,s), diffuse(s->diffuse),
     emissive(s->emissive), specular(s->specular), opacity(s->opacity),
     shininess(s->shininess), invisible(s->invisible) {
   }
@@ -412,7 +413,6 @@ protected:
   path3 center;
   path3 g;
   prc::RGBAColour diffuse;
-  prc::RGBAColour ambient;
   prc::RGBAColour emissive;
   prc::RGBAColour specular;
   double opacity;
@@ -422,23 +422,22 @@ public:
   drawTube(path3 center, path3 g, const vm::array&p, double opacity,
            double shininess) : 
     center(center), g(g), opacity(opacity), shininess(shininess) {
-    string needfourpens="array of 4 pens required";
-    if(checkArray(&p) != 4)
-      reportError(needfourpens);
+    string needthreepens="array of 3 pens required";
+    if(checkArray(&p) != 3)
+      reportError(needthreepens);
     
     pen surfacepen=vm::read<camp::pen>(p,0);
     invisible=surfacepen.invisible();
     
     diffuse=rgba(surfacepen);
-    ambient=rgba(vm::read<camp::pen>(p,1));
-    emissive=rgba(vm::read<camp::pen>(p,2));
-    specular=rgba(vm::read<camp::pen>(p,3));
+    emissive=rgba(vm::read<camp::pen>(p,1));
+    specular=rgba(vm::read<camp::pen>(p,2));
   }
   
   drawTube(const double* t, const drawTube *s) :
     drawElement(s->KEY), center(camp::transformed(t,s->center)),
     g(camp::transformed(t,s->g)), 
-    diffuse(s->diffuse), ambient(s->ambient), emissive(s->emissive),
+    diffuse(s->diffuse), emissive(s->emissive),
     specular(s->specular), opacity(s->opacity),
     shininess(s->shininess), invisible(s->invisible) {
   }
@@ -563,11 +562,12 @@ class drawTriangles : public drawBaseTriangles {
    
   // Asymptote material data
   prc::RGBAColour diffuse;
-  prc::RGBAColour ambient;
   prc::RGBAColour emissive;
   prc::RGBAColour specular;
   double opacity;
   double shininess;
+  double metallic;
+  double fresnel0;
   double PRCshininess;
   bool invisible;
    
@@ -575,13 +575,15 @@ public:
   drawTriangles(const vm::array& v, const vm::array& vi,
                 const vm::array& n, const vm::array& ni,
                 const vm::array&p, double opacity, double shininess,
+                double metallic, double fresnel0,
                 double PRCshininess, const vm::array& c, const vm::array& ci) :
     drawBaseTriangles(v,vi,n,ni),
-    opacity(opacity), shininess(shininess), PRCshininess(PRCshininess) {
+    opacity(opacity),shininess(shininess),metallic(metallic),
+    fresnel0(fresnel0),PRCshininess(PRCshininess) {
 
-    const string needfourpens="array of 4 pens required";
-    if(checkArray(&p) != 4)
-      reportError(needfourpens);
+    const string needthreepens="array of 3 pens required";
+    if(checkArray(&p) != 3)
+      reportError(needthreepens);
       
     const pen surfacepen=vm::read<camp::pen>(p,0);
     invisible=surfacepen.invisible();
@@ -609,17 +611,16 @@ public:
         }
       }
     } else {
-      ambient=rgba(vm::read<camp::pen>(p,1));
-      emissive=rgba(vm::read<camp::pen>(p,2));
+      emissive=rgba(vm::read<camp::pen>(p,1));
     }
-    specular=rgba(vm::read<camp::pen>(p,3));
+    specular=rgba(vm::read<camp::pen>(p,2));
   }
   
   drawTriangles(const double* t, const drawTriangles *s) :
     drawBaseTriangles(t,s), nC(s->nC),
-    diffuse(s->diffuse), ambient(s->ambient), emissive(s->emissive),
-    specular(s->specular), opacity(s->opacity),
-    shininess(s->shininess), PRCshininess(s->PRCshininess),
+    diffuse(s->diffuse), emissive(s->emissive),
+    specular(s->specular), opacity(s->opacity), shininess(s->shininess), 
+    metallic(s->metallic), fresnel0(s->fresnel0), PRCshininess(s->PRCshininess),
     invisible(s->invisible) {
     
     if(nC) {

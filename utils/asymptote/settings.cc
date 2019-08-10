@@ -91,10 +91,11 @@ bool msdos=false;
 string HOME="HOME";
 string docdir=ASYMPTOTE_DOCDIR;
 const char pathSeparator=':';
-string defaultPSViewer="gv";
 #ifdef __APPLE__
+string defaultPSViewer="open";
 string defaultPDFViewer="open";
 #else  
+string defaultPSViewer="gv";
 string defaultPDFViewer="acroread";
 #endif  
 string defaultGhostscript="gs";
@@ -1111,6 +1112,10 @@ void initSettings() {
                             "Show 3D toolbar in PDF output", true));
   addOption(new boolSetting("axes3", 0,
                             "Show 3D axes in PDF output", true));
+  addOption(new boolSetting("envmap", 0,
+                            "Enable environment map image-based lighting (Experimental)", false));
+                            
+                            
   addOption(new realSetting("render", 0, "n",
                             "Render 3D graphics using n pixels per bp (-1=auto)",
                             havegl ? -1.0 : 0.0));

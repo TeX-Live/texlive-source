@@ -33,13 +33,13 @@
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO
 
-/* Define if getopt.h is the GNU version */
+/* Define to 1 if you have . GNU <getopt.h> */
 #undef HAVE_GNU_GETOPT_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `curses' library (-lcurses). */
+/* Define to 1 if you have the `ncurses' library (-lncurses). */
 #undef HAVE_LIBCURSES
 
 /* Define to 1 if you have the `fftw3' library (-lfftw3). */
@@ -48,19 +48,16 @@
 /* Define to 1 if you have the `gccpp' library (-lgccpp). */
 #undef HAVE_LIBGCCPP
 
-/* Define to 1 if you have the `GL' library (-lGL). */
+/* Define to 1 if you have the `' library (-l). GL */
 #undef HAVE_LIBGL
 
-/* Define if you have the `GLEW' library (-lGLEW). */
-#undef HAVE_LIBGLEW
-
-/* Define if you have the `OpenGL Mathematics' library. */
+/* Define to 1 if you have . the <glm/glm.hpp> header */
 #undef HAVE_LIBGLM
 
 /* Define to 1 if you have the `glut' library (-lglut). */
 #undef HAVE_LIBGLUT
 
-/* Define to 1 if you have the `gsl' library (-lgsl). */
+/* Define to 1 if you have the `' library (-l). gsl */
 #undef HAVE_LIBGSL
 
 /* Define to 1 if you have the <libintl.h> header file. */
@@ -68,6 +65,12 @@
 
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
+
+/* Define to 1 if you have the `ncurses' library (-lncurses). */
+#undef HAVE_LIBNCURSES
+
+/* Define to 1 if you have the `OpenImageIO' library (-lOpenImageIO). */
+#undef HAVE_LIBOPENIMAGEIO
 
 /* Define to 1 if you have the `OSMesa' library (-lOSMesa). */
 #undef HAVE_LIBOSMESA
@@ -80,6 +83,9 @@
 
 /* Define to 1 if you have the `sigsegv' library (-lsigsegv). */
 #undef HAVE_LIBSIGSEGV
+
+/* Define to 1 if you have the `tinfo' library (-ltinfo). */
+#undef HAVE_LIBTINFO
 
 /* Define to 1 if you have the `z' library (-lz). */
 #undef HAVE_LIBZ
@@ -117,7 +123,7 @@
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #undef HAVE_PTRDIFF_T
 
-/* Define if you have a working <tirpc/rpc/rpc.h> header file */
+/* Define to 1 if you have . a working <tirpc/rpc/rpc.h> header */
 #undef HAVE_RPC_RPC_H
 
 /* Define to 1 if you have the `sqrt' function. */
@@ -159,13 +165,13 @@
 /* Define to 1 if you have the `tgamma' function. */
 #undef HAVE_TGAMMA
 
-/* Define to 1 if you have tr1/unordered_map */
+/* Define to 1 if you have . <tr1/unordered_map> */
 #undef HAVE_TR1_UNORDERED_MAP
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have unordered_map */
+/* Define to 1 if you have . <unordered_map> */
 #undef HAVE_UNORDERED_MAP
 
 /* Define to 1 if you have the `vfork' function. */

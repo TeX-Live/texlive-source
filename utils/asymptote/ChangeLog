@@ -1,3 +1,797 @@
+commit c1db74235565570e829b865756794a0c5ab0f5fb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 9 02:23:28 2019 -0600
+
+    Fix xasy permissions; update old code.
+
+commit b14c49397f59c29929cd21a9da855b1f89b5566a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 9 01:44:11 2019 -0600
+
+    Fix spelling of default.
+
+commit 6506b94d5b6d97191ce9e26018c414d4d010e6fa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 9 01:36:02 2019 -0600
+
+    Revert "Prevent xasy menubar from disappearing under MacOS X."
+    
+    This reverts commit 40407fc4644a21e04ad77680939ab48281ad34d8.
+
+commit 27d51ec09bb95fe5c18181a807174b65ebbdd487
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 9 01:33:44 2019 -0600
+
+    Support VISUAL, EDITOR, and os-specific xasy editor overrides.
+
+commit deebce8021396aa35fb95786099e55c0ee24072c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 9 01:31:17 2019 -0600
+
+    Update documentation.
+
+commit b7586ef668e8701b5358da1a1d5ab29e226525fb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 9 01:30:40 2019 -0600
+
+    Use open as default PostScript previewer under MacOS X.
+
+commit 40407fc4644a21e04ad77680939ab48281ad34d8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 9 01:04:54 2019 -0600
+
+    Prevent xasy menubar from disappearing under MacOS X.
+
+commit 4f11b34a79a5a95ee6df1cc160502eca1d80ac04
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 8 19:50:11 2019 -0600
+
+    Fix spelling of hexadecimal.
+
+commit c79584995e095c4736fae67060618577285f253d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 8 18:45:05 2019 -0600
+
+    Fix GLSL shader initialization on MacOS X.
+
+commit 03f7b5ac9e6a814bb5dd720209f68c5eb76933a2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 8 18:18:05 2019 -0600
+
+    Remove obsolete code.
+
+commit 887964b07bc000c7d840d18370cded3561bdd263
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 7 10:38:46 2019 -0600
+
+    Don't attempt to install GUI files if unavailable (due to lack of pyuic5 and pyrcc5).
+
+commit c258b9a21580aeb09e68b9109977ee1382b2b3ba
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 6 23:58:18 2019 -0600
+
+    Remove obsolete assignment.
+
+commit 8a4f415210836d1893e9eb51b0afeebc37c63711
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 6 19:24:18 2019 -0600
+
+    Request OpenGL core profile under MacOS X.
+
+commit 6ee0cb2f03140555c09d5a0d9af62c51acd21d33
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 6 06:00:03 2019 -0600
+
+    Remove obsolete code from tr.cc.
+
+commit e36a9fc91abe8e9fd55997c86a26d68f16084c03
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 17:02:26 2019 -0600
+
+    Increment version to 2.52.
+
+commit e0b0d417fb075bc210ce7ddc9f192912e8bab4dd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 16:05:15 2019 -0600
+
+    Fix warning messages during MSDOS glew build.
+
+commit 5aca47b4bf18d804339f3179680ff564161ec0a2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 15:37:31 2019 -0600
+
+    Update documentation.
+
+commit 18385f310b42ae623c16445c6d9fd0cb3d04b986
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 15:06:20 2019 -0600
+
+    Pass CPPFLAGS to glew compilation.
+
+commit 9427bc84b0bc526a7243a878c4177e7d3d68abfc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 14:25:58 2019 -0600
+
+    LONG_LONG_MAX is now called LLONG_MAX.
+
+commit 68d5e6143a5a79c1b1f8ec3489cb826ca9a263cc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 14:02:28 2019 -0600
+
+    Conditionally compile glew.c without modifying original source.
+
+commit 514c2c899382e17095a1fcda124400da6f539d7c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 13:57:41 2019 -0600
+
+    Revert "Conditionally compile glew.c."
+    
+    This reverts commit 2c499e90ee421b20dd2a53382396bcb4dc8818f1.
+
+commit 50546458facf5c8d09f3fbf41ddfd2d3e5b6bef2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 13:57:28 2019 -0600
+
+    Upgrade CTAN version to -std=c++11.
+
+commit 2c499e90ee421b20dd2a53382396bcb4dc8818f1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 12:14:31 2019 -0600
+
+    Conditionally compile glew.c.
+
+commit 0f332f7a20509a269f5037e74973803079d72714
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 11:51:47 2019 -0600
+
+    Fix glew compilation.
+
+commit 04bce42baea1592ecd8a7155915bc4cf5176a267
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 5 11:41:08 2019 -0600
+
+    Add further portability tweaks.
+
+commit 0054ed2dc46f367a6c5f516d2b472c92107fb0d5
+Author: Mojca Miklavec <mojca@macports.org>
+Date:   Mon Aug 5 18:14:46 2019 +0200
+
+    Allow overriding binaries in Makefile (#106)
+
+commit 45b349053b50d2f7478599b1a81724d0a8974edb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 4 12:13:03 2019 -0600
+
+    Simplify code.
+
+commit ce79ba79dc84aa6a5f31ce8fb0239b3ea302f35f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 4 12:02:55 2019 -0600
+
+    Fix OpenImageIO configuration.
+
+commit 4c4de50a1dd5fa6e07d0a7893b4bc93719bedf3c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 4 02:26:07 2019 -0600
+
+    Increment version to 2.51.
+
+commit a1c421bbf65f1443829a422a8fe2dc329fba7072
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 4 01:26:38 2019 -0600
+
+    Add support for OpenGL under 32-bit MSWindows.
+
+commit 85db520f0e8b0bc1ed6d2cad21e8b94c33b001ff
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 4 00:09:18 2019 -0600
+
+    Remove unused code.
+
+commit 9a473b89f9131170c3c403f16a351083ad8f7e1f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 23:58:56 2019 -0600
+
+    Remove ambientpen from example.
+
+commit 1720b45b628b0b8ae49370ac27a260317dddf009
+Author: Ivan Kokan <ivan.kokan@gmail.com>
+Date:   Sun Aug 4 07:41:34 2019 +0200
+
+    Configurable filltype for dot (#43)
+    
+    Add global dotfilltype; update documentation.
+
+commit ae3f32685507a92dc1cd26f6d154500a30cd38e7
+Author: Ivan Kokan <ivan.kokan@gmail.com>
+Date:   Sun Aug 4 07:39:09 2019 +0200
+
+    Dot rendering details (#55)
+    
+    Handle zero-sized dot radii.
+
+commit a98cceebf82a2cee9a3526a909fc1435888e81bc
+Merge: 69218e14 4bfc7889
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 21:10:42 2019 -0600
+
+    Merge pull request #86 from fahasch/master
+    
+    Palettes from matplotlib
+
+commit 69218e14b92b8070f87ec9460f982673c8974c65
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 13:57:23 2019 -0600
+
+    Fix typo.
+
+commit 781e34f265e0b47ca4a3a3444cf01d2e669db833
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 13:49:44 2019 -0600
+
+    Port to CYGWIN.
+
+commit b4ae8b40c452cad712f1ffbf9f00751a48fa77db
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 13:12:12 2019 -0600
+
+    Add glm-devel dependency.
+
+commit fe965b2a2e81c778a5d0c11b9dfdd0c180796922
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 13:10:08 2019 -0600
+
+    Check for pow but don't provide a subsittute.
+
+commit 1748a5633a987093f2d410199eebfd2cd999cdf3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 13:08:27 2019 -0600
+
+    Remove spurious diagnostic.
+
+commit 2be1ec77c239257f8ccf3a7fa7013dabec4d5b63
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 13:05:44 2019 -0600
+
+    Remove incomplete pow substitute.
+
+commit 78a4b62302fa4386560c3b3968cabb15c7585a0f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 12:15:54 2019 -0600
+
+    Make GC_ATTR_EXPLICIT work around conditional on clang not FreeBSD.
+
+commit 743334a0dedbd5b6c8e743cb0c54545fb30c4bfb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 10:07:14 2019 -0600
+
+    Work around Boehm gc issue 273 under FreeBSD.
+
+commit 359b90a299cc19fcb3c503c3d593e0f2dc5aa4e4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 02:43:00 2019 -0600
+
+    Remove unused code.
+
+commit 9d8e1801af9cb433ac179de5462609f1a34922fe
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 02:42:13 2019 -0600
+
+    Workaround gc and signal issues on FreeBSD.
+
+commit ca40beada902c965d53badfb33bd99b1f5459f9d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 02:18:33 2019 -0600
+
+    Fix interactive mode.
+
+commit a10490793d6c0baffd8dd1fcd8718f45b4158d64
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 2 21:36:34 2019 -0600
+
+    Missing glm header now triggers lack of OpenGL configuration notification.
+
+commit 3261c4bd2ea33923376d14611394921d799e2368
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 2 20:18:29 2019 -0600
+
+    Fix pow workaround.
+
+commit 059db65f5b5c756fcad8ddf1ad8332358ae41c1d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 3 10:26:27 2019 +1000
+
+    Configuring with --enable-static first tests to see if static library is available.
+
+commit cebae1a87628c7ee4f619c9e0e2df85895d98fd7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 2 17:02:29 2019 +1000
+
+    Remove dependency on glew-devel.
+
+commit 06c1776ad3d58440af99aac0e2cc7aaf515aaa13
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 2 17:00:13 2019 +1000
+
+    Add missing GL/glxew.h header.
+
+commit f65ed736157ecf58bf395fb622fefd5ca0a0924b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 2 16:47:51 2019 +1000
+
+    Update glew.h references.
+
+commit 05a21753fe720d24dc55396e93a3d64a650ae59e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 2 00:43:57 2019 -0600
+
+    Fix glew header location.
+
+commit fa1e8192e86b2f364d3d320e144fb1fcde2631cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 2 00:23:13 2019 -0600
+
+    Add missing glew dependency.
+
+commit 5158adb4045d55e72fc0fb3fc99953a688d2f07d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 2 00:14:24 2019 -0600
+
+    Fix detection of glut library.
+
+commit fc3d2d13dad21602bddb1bd172113589f50d9f3d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 2 00:12:22 2019 -0600
+
+    Ship version 2.1.0 of glew with asy.
+
+commit 2e9bda8a8c6a9b625d73262d1adbc60c6df33054
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 1 00:28:02 2019 -0600
+
+    Fix typo.
+
+commit ea5fe75642a3c1a929b70fc1507f628b7c62ab41
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 1 00:21:40 2019 -0600
+
+    Fix missing config.h symbols.
+
+commit 273442954154c540bd73d7c906e9a4fed05629b3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 31 12:31:31 2019 -0600
+
+    Enable static linking of libGLEW.
+
+commit 8300225a30975fe61b6ef43c29e8b56b400cfe09
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 31 12:12:27 2019 -0600
+
+    Add option for linking against certain static libraries.
+
+commit 3a87ccaf58bc2d3c3875f687fa0725d51d0ee89b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 30 09:37:25 2019 -0600
+
+    Fix confusing signature.
+
+commit 714371587643f770febae01cd9a81f87818e28e7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 29 23:32:29 2019 -0600
+
+    Remove obsolete ambient parameter.
+
+commit 2aad7c815d6712bc1c617600c48bfb57f7ae2b8d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 29 22:39:33 2019 -0600
+
+    Fix portability issues.
+
+commit 22a23a6c4acb1105653f2b140be20eb5e57a16c6
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jul 29 19:44:51 2019 -0600
+
+    Fix fragment shader.
+
+commit 486071f481eb83fc1f93cff9d2c3d0b97bc4df8e
+Merge: ffd8ced7 37ca4019
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 29 19:30:14 2019 -0600
+
+    Merge in glpbr.
+
+commit 37ca40193bf67f729e0d95a0cdf8b7d5747a98e1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 30 11:08:43 2019 +1000
+
+    Simplify code.
+
+commit 48ef58767aa980cf9fe609c7e2fe14b4b6e8ee6f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 30 11:04:34 2019 +1000
+
+    Implement pixel shader.
+
+commit c0584280340c6c7ec1809827246ede7e04b12cd5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 30 10:23:48 2019 +1000
+
+    Add NORMAL option to shaders.
+
+commit 9ceffe0a758b07ace814256a3ee8eeafb7b0de1d
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jul 26 19:31:36 2019 -0600
+
+    Clean up shaders (from b18d965e22d159346c6454f18e80f00ea72418fc).
+
+commit 2363fce1f65c43d3c28674ad157a027b8d65a51e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 30 09:20:21 2019 +1000
+
+    Simplify shaders.
+
+commit 21016830d75d4313c62cafd972cbe6c6317ceed0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 27 17:53:03 2019 -0600
+
+    Batch multiple pixels.
+
+commit a6494727f7a7f7f8cc371b16d94f7179871325c5
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Jul 26 20:19:21 2019 -0600
+
+    Remesh when reshape.
+
+commit ec62821d7b599cc405400893ca245815a111343c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 27 09:15:10 2019 +1000
+
+     Remesh only when needed.
+
+commit bc17bfd12f778ec540ea1374506394b226878b2d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 27 09:13:55 2019 +1000
+
+    Update URL.
+
+commit 077e196557106919b5926e8753abda2541b83d3a
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Jul 22 14:55:42 2019 -0600
+
+    Set explicit ambient and emissive to zero.
+
+commit ecd523060fa7c09ea40226ccb322d1cd0c804ca2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 19 15:39:32 2019 -0600
+
+    Make FPS diagnostic display running mean and standard deviation.
+
+commit 76c05aae9ae5f551578d9fd9dea909f025b55527
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 28 09:38:52 2019 -0600
+
+    Remove unused code.
+
+commit 42d66ed8c0873583f555cb9c34c3eb741fa9ec48
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 27 00:27:48 2019 -0600
+
+    Fix vertex shading.
+
+commit 26e629266fbd885ea86566c2a346e8adc9ce6cd0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 27 00:23:24 2019 -0600
+
+    Move normMat back to vertex.glsl.
+
+commit ffd8ced79178129cf9f463ff96c046d15f0162f3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 27 00:18:52 2019 -0600
+
+    Move normMat back to vertex.glsl.
+
+commit bcbb081d26b4d865cf694edf36147947f21f3f9b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 26 18:08:01 2019 -0600
+
+    Improve numerical precision of normal calculation.
+
+commit d75eece8df0b13903d5f544a95ee35638773ac41
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 26 17:36:22 2019 -0600
+
+    Improve numerical precision of normal calculation.
+
+commit 7fa7340544d8611647e482b8dbf1209cf9027838
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 22 14:36:51 2019 -0600
+
+    Add outline shaders.
+
+commit a31a2e97e9377e87d4a310877f66388a02b235ad
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 22 13:37:02 2019 -0600
+
+    Use twosided checking on fragment shader.
+
+commit a98ee44c0e9ab87f2a3cb8cc420ca98f856b3d9a
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 22 13:15:21 2019 -0600
+
+    Add basic geometry shader.
+
+commit bdbadd2a72ca8816932c235f49f4c574cba2dd05
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 14 08:24:53 2019 -0600
+
+    Avoid duplicate definition of RANDOM_MAX.
+
+commit b8f24cec48954a3d6ecddf67cfbd3579a4700102
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 10 08:48:16 2019 -0600
+
+    Fix typo in configure.ac.
+
+commit df9b9879723ddf19b5c60cb8c7f33cacb80429da
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 7 14:39:18 2019 -0600
+
+    Increase default shininess.
+
+commit 9548fca8a3209525e7e2aa3f9b2f5569df0a4137
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 4 18:19:24 2019 -0600
+
+    Re-enable transparency.
+
+commit 5ccced67c49c7bee57bf794fd1c643b8b7ce3604
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 4 18:10:08 2019 -0600
+
+    Update fragment shader material.
+
+commit 76ec999c4bf3606cbccfa1721ebc20a2ab4f8a04
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 4 17:57:55 2019 -0600
+
+    Simplify code.
+
+commit a20bfae054ca67b1567531de952a80608955d777
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 4 17:47:49 2019 -0600
+
+    Pack material floats in a vec4.
+
+commit 8fd7f10e9590568224daffcff34abee98d8cc0f2
+Merge: 81bba72d 549c3665
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Jun 4 17:46:18 2019 -0600
+
+    Merge branch 'glupdate' of github.com:vectorgraphics/asymptote into glupdate
+
+commit 81bba72df18e0c389b97da1543956295f67692be
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Jun 4 17:45:52 2019 -0600
+
+    Fix material color argument order.
+
+commit 549c3665c073877d5a619d4d82b57a3695e6ab1b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 4 17:07:58 2019 -0600
+
+    Fix padding.
+
+commit 356e8d01b8066ef014e777c9ec0e41a0997995e8
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat Jun 1 14:58:22 2019 -0600
+
+    Minor updates; tried Beckmann NDF.
+
+commit 24ccec91a0632d1b8799572339f8805065472f55
+Merge: ea6f3787 71f10dc1
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue May 28 14:43:14 2019 -0600
+
+    Merge pull request #97 from vectorgraphics/master.
+    
+    Update glupdate branch from master.
+
+commit ea6f3787c17b1fa600093edc27b5823e682d6924
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue May 28 13:34:17 2019 -0600
+
+    Update todo.
+
+commit 63213532057c29df34b022cdbf2951e8364b9345
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 27 20:03:58 2019 -0600
+
+    Add in metallic/F0 option.
+
+commit 71f10dc1f8ebd3e696f87c220c3e9918ff3b80c1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 26 22:56:21 2019 +1000
+
+    Detect gamma instead of sqrt function in libm.
+
+commit cc9be83022f3506b4adfc2c8face25532f40880f
+Merge: f4784eac b4884e1a
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 25 15:43:46 2019 -0600
+
+    Fix merge.
+
+commit f4784eac5f2a6da00a0d7d9b573eedbf836a8fa1
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 25 15:35:07 2019 -0600
+
+    Minor fix on ndef.
+
+commit b4884e1a06b14803332d771fda79d1724ede5882
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 25 15:40:13 2019 -0600
+
+    Fix matching braces.
+
+commit 848beeeaaf30a4323f250113c88bfbdcdc45875b
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 25 15:35:07 2019 -0600
+
+    Make environment map explicit.
+
+commit b66b16a184fe1177b2f66b8fbcd9626e2f8858c6
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 25 15:22:56 2019 -0600
+
+    Minor fixes in OIIO.
+
+commit fbc06f15929c395b3714323a67e0e5311e10682b
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 25 15:17:16 2019 -0600
+
+    Enable checking texture flag and experimental IBL.
+
+commit 5fcefde8e8d991c74f7d5962776d4a8fc1b9bee9
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 18 16:30:22 2019 -0600
+
+    Add usegl4 option.
+
+commit 06e51e8299f101628d1662fa363cd128a5fb7482
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 18 15:22:03 2019 -0600
+
+    Add in some notes on image files.
+
+commit a2092901986f6453aed451d2849107ad912f9e86
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 18 14:56:22 2019 -0600
+
+    Add the correct angle formula.
+
+commit b61333827cc39a20de3f1abbb032dd3b832c76c2
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun May 12 15:31:12 2019 -0600
+
+    Add loading texture.
+
+commit 1a35d3c9b5bd8ad9c5f3e74e9da91e9eab4593e3
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun May 12 14:51:25 2019 -0600
+
+    Add OpenImageIO library.
+
+commit b642331477ce96d38a0cb7b212acbcf2c7291c1a
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun May 12 14:35:20 2019 -0600
+
+    Add C++ property settings.
+
+commit 271020803bbea7704e4325cc618723d4381ef472
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun May 12 14:34:25 2019 -0600
+
+    Modify settings.
+
+commit d8d814cb6e54dc45532c8c1a896bfe797ca097e6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 9 22:10:26 2019 -0600
+
+    Remove unused code.
+
+commit 5e9613851a98037de0317b2d5dd30680a594eb55
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue May 7 19:36:56 2019 -0600
+
+    Change metallic back to 0.
+
+commit ef4d2df309af70ac30e9c4a5659a2bdf9594cd84
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue May 7 19:35:53 2019 -0600
+
+    Fix normal flip in double-sided rendering.
+
+commit 7767056d25e35bf70f437d1134d5a52e64a81d3e
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 6 20:59:02 2019 -0600
+
+    Add some notes on material changes.
+
+commit 29369d96d32424b1bd16f1f0a60e4d883e82c45f
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 6 20:49:30 2019 -0600
+
+    Remove some variables.
+
+commit ab452eb2b668f22509c2ff57674c0bc286cbb8aa
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon May 6 20:44:14 2019 -0600
+
+    Add first version of PBR.
+
+commit e02cdd23128913a992e996cc2a7b7070568bc618
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sat May 4 23:35:07 2019 -0600
+
+    Add debug configuration.
+
+commit e37826c1f792a6ba04254eeff56fe63258e293c2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 2 16:38:07 2019 -0600
+
+    Fix warning messages.
+
+commit 6c6b5c8b02278de815b4351a18d99393b78bd16a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 2 16:35:25 2019 -0600
+
+    Fix warning messages.
+
+commit 7382b5a8016981d5503a3d3442903ac9ddf17e6f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 2 16:28:45 2019 -0600
+
+    Update fftw++; fix warning message.
+
+commit 8f641c83362c04460251f884493b1c3536274192
+Merge: abd3f761 43b43ae8
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Apr 26 12:35:50 2019 -0600
+
+    Merge pull request #94 from vectorgraphics/master
+    
+    Merge master branch into glupdate.
+
+commit 43b43ae8fe3b4558a9086bd8343b490502acde4e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 11 08:28:47 2019 -0600
+
+    Improve missing garbage collector instructions.
+
+commit 9eed805451ffaff7833ca86bd4a5dbea92cdf9d6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 5 06:58:06 2019 -0600
+
+    Simplify code.
+
+commit 649e87c9a6ad587bf92c6aaf6bd16f2a2153a182
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Apr 4 18:07:56 2019 -0600
+
+    Update GLEW and OSMesa paths for MacOSX.
+
+commit 1c8809563ba9f92f560f8da3284994a26c9c6c51
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 2 11:39:43 2019 -0600
+
+    Update build script.
+
+commit ead3d5e9ae1e325738606d9f2420b39dfe48e4e0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 2 11:11:56 2019 -0600
+
+    Increment version to 2.50.
+
 commit c53b4ef0bb51b4c022c580f912bbdfe3f2cb7c0b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Apr 2 10:01:46 2019 -0600
@@ -199,6 +993,14 @@ Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Feb 2 11:39:15 2019 -0700
 
     Simplify code.
+
+commit 4bfc78893a05e83d6698b349b24c3390872e903d
+Author: fahasch <fahasch@yahoo.de>
+Date:   Sat Feb 2 12:02:42 2019 +0100
+
+    Palettes from matplotlib
+    
+    For high quality density plots it is very important to have many well designed colormaps at hand. This module offer over 50 new colormaps. It has sequential colormaps, diverging colormaps, and cyclic colormaps.
 
 commit f82e7672184f0b0ff91efd57a74a60269cd43ca2
 Author: John Bowman <bowman@ualberta.ca>
