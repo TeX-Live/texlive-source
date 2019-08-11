@@ -4,8 +4,10 @@
 */
 
 #include <mfluadir/mflua_version.h> /* for MFLUA_VERSION */
-
+#ifdef  BANNER 
+#undef  BANNER
 #define BANNER "This is MFLuaJIT, Version 2.7182818-" MFLUA_VERSION
+#endif 
 #define COPYRIGHT_HOLDER "L. Scarso"
 #define AUTHOR NULL
 #define PROGRAM_HELP MFLUAJITHELP
