@@ -234,11 +234,11 @@ Automake/Autoconf output in general) work with any reasonable
 @cindex C++11, required
 A C++11 compiler is similarly required because of the third-party
 libraries ICU and Poppler; the program @code{dvisvgm} also requires
-C++11. It is possible to build everything else with older compilers;
-@url{https://tug.org/texlive/custom-bin.html} links to a build script
-for doing this.
+C++11.  It is possible to build everything else with older compilers,
+but you have to remove the C++11-dependent sources.  @xref{Build one
+package}.
 
-However, a few programs in the tree have additional requirements:
+A few programs in the tree have additional requirements:
 
 @table @file
 @item web2c
@@ -248,7 +248,7 @@ requires @code{perl} for some tests run by @code{make check}.
 @item xdvik
 @itemx xpdfopen
 @cindex X11 development, required by X clients
-require X11 headers and libraries, often in ``development'' packages
+require X11 headers and libraries, typically in ``development'' packages
 that are not installed by default.
 
 @item xetex
@@ -264,7 +264,7 @@ frameworks.
 @cindex @code{libsigsegv}, required by @code{xindy}
 requires GNU @code{clisp}, @code{libsigsegv}, and @code{libiconv};
 additionally, to build the rules and/or documentation: @code{perl},
-@code{latex}, and @code{pdflatex}
+@code{latex}, @code{pdflatex}.
 
 @end table
 
@@ -440,17 +440,9 @@ However, the @file{Makefile}s still contain all build rules and
 dependencies and can be invoked to build an individual program or
 library, first building any required libraries.
 
-This ``build-on-demand'' procedure is used, e.g., in the upstream
-Lua@TeX{} repository to build Lua@TeX{}, from a subset of the complete
-@TL{} source tree.  As another example, when building the original
-e-@TeX{} has been disabled (as it is by default), one can run
-@code{make etex} (or @code{make etex.exe}) in @file{texk/web2c/} to
-build e-@TeX{} (although there is no comparably simple way to
-@emph{install} e-@TeX{}).
-
-If you want to work on a single program within the TL sources, this is
-the recommended way to do it.  Here is an example from start to
-finish for working on @code{dvipdfm-x}.
+Here is an example from start to finish for working on
+@code{dvipdfm-x}.  (Unfortunately, this does not suffice for building
+one, or a subset, of the @TeX{} engines; see the next section.)
 
 @example
 mkdir mydir && cd mydir  # new working directory
@@ -492,7 +484,6 @@ tweak as desired; check the output from @code{configure --help}.  It
 is also a good idea to run @code{make check} after making any changes,
 to ensure that whatever tests have been written still pass.
 
-
 @cindex size of source tree
 Finally, the above retrieves the entire TL source tree (several
 hundred megabytes). It is natural to ask if this is really necessary.
@@ -506,12 +497,23 @@ in the @code{pdftex} development source (details at
 @url{http://pdftex.org}), which is indeed such a cut-down TL source
 tree.
 
+@cindex C++11, removing dependent sources
+Some libraries and programs require C++11.  If you want to build with
+an older compiler lacking such support, you need to (re)move those
+source directories; specifying @code{--disable} for them does not
+suffice, unfortunately.  Specifically, before running @code{configure}:
+
+@example
+rm -rf libs/icu libs/poppler libs/graphite2 texk/dvisvgm
+@end example
+
 @vindex --enable-missing @r{to ignore dependencies}
-Even with @code{--disable-all-pkgs}, dependencies will be checked.
-For instance, if a (non-MacOSX) system does not have
-@code{fontconfig}, Xe@TeX{} cannot be built (@pxref{Prerequisites})
-and @code{configure} will terminate.  To proceed without such
-dependencies, specify @code{--enable-missing} also.
+Also, even with @code{--disable-all-pkgs}, dependencies are (currently)
+checked.  For instance, if a (non-MacOSX) system does not have
+@code{fontconfig}, Xe@TeX{} cannot be built (@pxref{Prerequisites}),
+and @code{configure} will terminate even with @code{--disable-xetex}.
+To proceed without such dependencies, specify @code{--enable-missing}
+also.  (Patches to improve this would be most welcome.)
 
 @vindex CC=@var{c-compiler}
 @vindex CXX=@var{c++-compiler}
@@ -546,8 +548,9 @@ make luatex                     # specify target
 
 This works because the @code{make} automatically runs @code{configure}
 as necessary for the dependencies and target.  Furthermore, the source
-tree can be cut down to just what is needed for the given engine (as
-the separate pdf@TeX{} and Lua@TeX{} source repositories do).
+tree can be cut down to just what is needed for the given engine
+(the separate pdf@TeX{} and Lua@TeX{} source repositories do this, if
+you want to peruse examples).
 
 We hope to improve the situation in the future.  Patches are welcome.
 
@@ -974,7 +977,6 @@ bugs). For this to be reflected by their timestamps in your checkout,
 be sure to set @file{use-commit-times=yes} in
 @file{~/.subversion/config} or the equivalent.
 
-
 @cindex touching files to avoid rerunning
 @pindex make -t
 If timestamps are wrong, you may also be able to avoid unnecessary
@@ -983,7 +985,7 @@ runs of @code{bison}, @code{flex}, or @code{makeinfo} with
 files.  With @code{--enable-maintainer-mode} it may also be necessary
 to @code{touch} first @file{aclocal.m4}, then @file{configure} and
 @file{config.h.in} (or @file{c-auto.in}), and finally all
-@file{Makefile.in} files.  Perhaps @code{make -t} will help.
+@file{Makefile.in} files.
 
 
 @node Top-level directories
@@ -2031,7 +2033,7 @@ enabled.  This is useful when one wants to work on only a single
 program, which is specified with an additional @code{--enable} option,
 e.g., @code{--enable-dvipdfm-x}.  It's still simplest to check out and
 configure the whole source tree, but at least only the program you are
-interested in, and its dependencies, are built. @xref{Build one package}.
+interested in, and its dependencies, are built.  @xref{Build one package}.
 
 Without this option, all modules are built except those that are
 explicitly disabled or specify @code{disable} in their
