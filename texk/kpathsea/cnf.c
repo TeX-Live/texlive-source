@@ -103,7 +103,7 @@ do_line (kpathsea kpse, string line, boolean env_progname)
   strncpy (var, start, len);
   var[len] = 0;
 
-  /* If the variable is qualified with a program name, find out which. */
+  /* If the variable is qualified with a program name, extract it.  */
   while (*line && ISSPACE (*line))
     line++;
   if (*line == '.') {
@@ -115,12 +115,30 @@ do_line (kpathsea kpse, string line, boolean env_progname)
     while (*line && !ISSPACE (*line) && *line != '=')
       line++;
 
-    /* It's annoying to repeat all this, but making a tokenizing
-       subroutine would be just as long and annoying.  */
+    /* The program name is what's in between.  */
     len = line - start;
     prog = (string) xmalloc (len + 1);
     strncpy (prog, start, len);
     prog[len] = 0;
+    /* If the name is empty, or contains one of our usual special
+       characters, it's probably a mistake.  For instance, a cnf line
+         foo .;bar
+       is interpreted as a program name ";bar", because the = between
+       the variable name and value is optional.  We don't try to guess
+       the user's intentions, but just give a warning.  */
+    if (len == 0) {
+      return ("Empty program name qualifier");
+    } else {
+      unsigned i;
+      for (i = 0; i < len; i++) {
+        if (prog[i] == '$' || prog[i] == '{' || prog[i] == '}'
+            || IS_KPSE_SEP (prog[i])) {
+          string msg = xmalloc (50);
+          sprintf (msg, "Unlikely character %c in program name", prog[i]);
+          return msg;
+        }
+      }
+    }
   }
 
   /* Skip whitespace, an optional =, more whitespace.  */

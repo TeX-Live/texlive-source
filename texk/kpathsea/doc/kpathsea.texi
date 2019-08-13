@@ -647,7 +647,7 @@ mentions most features.  The format of @file{texmf.cnf} files follows:
 @cindex comments, in @file{texmf.cnf}
 Comments start with @samp{%}, either at the beginning of a line or
 preceded by whitespace, and continue to the end of the line.  That is,
-as with most shells, a @samp{%} in the ``middle'' of a value does not
+similar to most shells, a @samp{%} in the ``middle'' of a value does not
 start a comment.  Examples:
 
 @example
@@ -681,11 +681,13 @@ lines is not ignored.
 The @var{variable} name may contain any character other than whitespace,
 @samp{=}, or @samp{.}, but sticking to @samp{A-Za-z_} is safest.
 
-@item If @samp{.@var{progname}} is present, the definition only
-applies if the program that is running is named (i.e., the last
-component of @code{argv[0]} is) @var{progname} or
-@file{@var{progname}.@{exe,bat,cmd,...@}}.  Most notably, this allows
-different flavors of @TeX{} to have different search paths.
+@item If @samp{.@var{progname}} is present (preceding spaces are
+ignored), the definition only applies if the program that is running
+is named (i.e., the last component of @code{argv[0]} is)
+@var{progname} or @file{@var{progname}.@{exe,bat,cmd,...@}}.  Most
+notably, this allows different flavors of @TeX{} to have different
+search paths.  The @var{progname} value is used literally, without
+variable or other expansions.
 
 @item
 @cindex right-hand side of variable assignments
@@ -726,6 +728,16 @@ could be run through the shell.  However, there seemed little
 advantage in this, since all the information would have to passed back
 to Kpathsea and parsed there anyway, since the @code{sh} process
 couldn't affect its parent's environment.
+
+The combination of spaces being ignored before the @code{.} of a
+program name qualifer and the optional @samp{=} for the assignment has
+an unexpected consequence: if the value begins with a literal @samp{.}
+and the @samp{=} is omitted, the intended value is interpreted as a
+program name.  For example, a line @code{var .;/some/path} is taken as
+an empty value for @code{var} running under the program named
+@samp{;/some/path}.  To diagnose this, Kpathsea warns if the program
+name contains a path separator or other special character.  The
+simplest way to avoid the problem is to use the @code{=}.
 
 @flindex cnf.c
 The implementation of all this is in @file{kpathsea/cnf.c}.

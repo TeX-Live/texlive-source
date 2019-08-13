@@ -1,3 +1,14 @@
+2019-08-13  Karl Berry  <karl@freefriends.org>
+
+	* cnf.c (do_line): warn about a program name qualifier which is
+	empty or contains one of our usual special characters: .{}$;:
+	since it is probably a misparsing, especially if the = is omitted.
+	Report from Johannes Kunde, 1 Aug 2019 20:57:14.
+	* Makefile.am (TESTS): new tests/cnfprog.test
+	(cnfprog.log): another target for kpsewhich.
+	(EXTRA_DIST): add tests/cnfprog/texmf.cnf.
+	* doc/kpathsea.texi (Config files): mention example of above.
+
 2019-08-09  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (log_openout): new configuration variable, true

@@ -1,0 +1,23 @@
+#!/bin/sh -vx
+# $Id$
+# Copyright 2019 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+# Test strange program name qualifiers which should give warnings.
+
+cnf_dir=$srcdir/tests/cnfprog
+
+# But for the rest, just use the environment, to keep things simpler.
+TEXMFCNF=$cnf_dir; export TEXMFCNF
+
+# Make sure we get expected values from the test texmf.cnf.
+errfile=cnfprog.err
+val=`./kpsewhich --var-value=noequals 2>$errfile`
+
+# the vaiable should not have any value.
+test -z "$val" || exit 1
+
+grep 'Empty program name qualifier' $errfile || exit 1
+grep 'Unlikely character ;' $errfile || exit 1
+grep 'Unlikely character \$' $errfile || exit 1
+
+exit 0

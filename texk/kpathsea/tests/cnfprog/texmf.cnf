@@ -1,0 +1,13 @@
+# $Id$
+# Public domain. This tiny texmf.cnf is for kpathsea/tests/cnfprog.test.
+
+# An empty program name is warned about (as of August 2019).
+justdot. = dval
+
+# Contrary to appearances, this is interpreted as a program name ";val",
+# with no value.  A warning is issued.
+noequals .;qval
+
+# Similarly, the "${var}" is a literal string here, not expanded.
+# Again, a warning is issued.
+braceprog.${var} = bval

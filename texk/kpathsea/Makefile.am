@@ -307,17 +307,20 @@ uninstall-hook: uninstall-bin-links
 AM_TESTS_ENVIRONMENT  = LN_S='$(LN_S)'; export LN_S;
 AM_TESTS_ENVIRONMENT += LT_OBJDIR='$(LT_OBJDIR)'; export LT_OBJDIR;
 #
-TESTS  = tests/cnfline.test tests/cnfnewline.test tests/kpseaccess.test
+TESTS  = tests/cnfline.test tests/cnfnewline.test tests/cnfprog.test
+TESTS += tests/kpseaccess.test
 TESTS += tests/kpsereadlink.test tests/kpsestat.test tests/kpsewhich.test
 #
-tests/cnfline.log tests/cnfnewline.log tests/kpsewhich.log: kpsewhich$(EXEEXT)
+tests/cnfline.log tests/cnfnewline.log tests/cnfprog.log \
+  tests/kpsewhich.log: kpsewhich$(EXEEXT)
 tests/kpseaccess.log: kpseaccess$(EXEEXT)
 tests/kpsereadlink.log: kpsereadlink$(EXEEXT)
 tests/kpsestat.log: kpsestat$(EXEEXT)
 #
 EXTRA_DIST += $(TESTS)
-EXTRA_DIST += tests/cnfnewline/texmf.cnf
 EXTRA_DIST += tests/cnfline/texmf.cnf
+EXTRA_DIST += tests/cnfnewline/texmf.cnf
+EXTRA_DIST += tests/cnfprog/texmf.cnf
 
 # Rebuild
 rebuild_prereq =

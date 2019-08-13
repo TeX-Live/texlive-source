@@ -522,8 +522,8 @@ mentions most features.  The format of 'texmf.cnf' files follows:
 
    * Comments start with '%', either at the beginning of a line or
      preceded by whitespace, and continue to the end of the line.  That
-     is, as with most shells, a '%' in the "middle" of a value does not
-     start a comment.  Examples:
+     is, similar to most shells, a '%' in the "middle" of a value does
+     not start a comment.  Examples:
 
           % this is a comment
           var = a%b  % but the value of var will be "a%b".
@@ -543,11 +543,12 @@ mentions most features.  The format of 'texmf.cnf' files follows:
    * The VARIABLE name may contain any character other than whitespace,
      '=', or '.', but sticking to 'A-Za-z_' is safest.
 
-   * If '.PROGNAME' is present, the definition only applies if the
-     program that is running is named (i.e., the last component of
-     'argv[0]' is) PROGNAME or 'PROGNAME.{exe,bat,cmd,...}'.  Most
-     notably, this allows different flavors of TeX to have different
-     search paths.
+   * If '.PROGNAME' is present (preceding spaces are ignored), the
+     definition only applies if the program that is running is named
+     (i.e., the last component of 'argv[0]' is) PROGNAME or
+     'PROGNAME.{exe,bat,cmd,...}'.  Most notably, this allows different
+     flavors of TeX to have different search paths.  The PROGNAME value
+     is used literally, without variable or other expansions.
 
    * VALUE may contain any characters except '%' and '@'.  (These
      restrictions are only necessary because of the processing done on
@@ -578,6 +579,16 @@ rid of the '.NAME' convention, and it could be run through the shell.
 However, there seemed little advantage in this, since all the
 information would have to passed back to Kpathsea and parsed there
 anyway, since the 'sh' process couldn't affect its parent's environment.
+
+   The combination of spaces being ignored before the '.' of a program
+name qualifer and the optional '=' for the assignment has an unexpected
+consequence: if the value begins with a literal '.' and the '=' is
+omitted, the intended value is interpreted as a program name.  For
+example, a line 'var .;/some/path' is taken as an empty value for 'var'
+running under the program named ';/some/path'.  To diagnose this,
+Kpathsea warns if the program name contains a path separator or other
+special character.  The simplest way to avoid the problem is to use the
+'='.
 
    The implementation of all this is in 'kpathsea/cnf.c'.
 
@@ -3256,7 +3267,7 @@ Index
                                                               (line  46)
 * cmr10, as fallback font:               Fallback font.       (line  15)
 * cmr10.vf:                              Searching overview.  (line  31)
-* cnf.c:                                 Config files.        (line  86)
+* cnf.c:                                 Config files.        (line  97)
 * cnf.h:                                 Programming with config files.
                                                               (line  27)
 * comments, in fontmap files:            Fontmap.             (line  27)
@@ -3285,7 +3296,7 @@ Index
 * config.status:                         Bug checklist.       (line  27)
 * configuration bugs:                    Bug checklist.       (line  27)
 * configuration file, source for path:   Path sources.        (line  20)
-* configuration files as shell scripts.: Config files.        (line  79)
+* configuration files as shell scripts.: Config files.        (line  80)
 * configuration of mktex scripts:        mktex configuration. (line   6)
 * configure options for mktex scripts:   mktex configuration. (line  12)
 * context diff:                          Bug checklist.       (line  52)
@@ -3676,7 +3687,7 @@ Index
                                                               (line  49)
 * resolutions, last-resort:              Fallback font.       (line   6)
 * retrieving TeX:                        unixtex.ftp.         (line   6)
-* right-hand side of variable assignments: Config files.      (line  56)
+* right-hand side of variable assignments: Config files.      (line  57)
 * RISINPUTS:                             Supported file formats.
                                                               (line 173)
 * Rokicki, Tom:                          History.             (line  12)
@@ -3700,7 +3711,7 @@ Index
 * setgid scripts:                        Security.            (line  40)
 * SFDFONTS:                              Supported file formats.
                                                               (line 177)
-* shell scripts as configuration files:  Config files.        (line  79)
+* shell scripts as configuration files:  Config files.        (line  80)
 * shell variables:                       Variable expansion.  (line  17)
 * shell_escape, example for code:        Programming with config files.
                                                               (line  10)
@@ -3929,52 +3940,52 @@ Node: Path searching16905
 Node: Searching overview17632
 Node: Path sources21451
 Node: Config files22677
-Node: Path expansion26604
-Node: Default expansion27557
-Node: Variable expansion29627
-Node: Tilde expansion31028
-Node: Brace expansion32008
-Node: KPSE_DOT expansion32947
-Node: Subdirectory expansion33460
-Node: Casefolding search35814
-Node: Casefolding rationale36583
-Node: Casefolding examples37922
-Node: Filename database42972
-Node: ls-R44030
-Node: Filename aliases47706
-Node: Database format48884
-Node: Invoking kpsewhich49897
-Node: Path searching options50852
-Node: Specially-recognized files60450
-Node: Auxiliary tasks61805
-Node: Standard options65530
-Node: TeX support65886
-Node: Supported file formats67240
-Node: File lookup74905
-Node: Glyph lookup76654
-Node: Basic glyph lookup77778
-Node: Fontmap78658
-Node: Fallback font81187
-Node: Suppressing warnings82099
-Node: mktex scripts83226
-Node: mktex configuration84441
-Node: mktex script names90244
-Node: mktex script arguments91630
-Node: Programming92509
-Node: Programming overview93082
-Node: Calling sequence95943
-Node: Program-specific files102475
-Node: Programming with config files103498
-Node: Reporting bugs105085
-Node: Bug checklist105763
-Node: Mailing lists109235
-Node: Debugging109910
-Node: Logging114987
-Node: Common problems116854
-Node: Unable to find files117331
-Node: Slow path searching119741
-Node: Unable to generate fonts121116
-Node: TeX or Metafont failing123587
-Node: Index124789
+Node: Path expansion27283
+Node: Default expansion28236
+Node: Variable expansion30306
+Node: Tilde expansion31707
+Node: Brace expansion32687
+Node: KPSE_DOT expansion33626
+Node: Subdirectory expansion34139
+Node: Casefolding search36493
+Node: Casefolding rationale37262
+Node: Casefolding examples38601
+Node: Filename database43651
+Node: ls-R44709
+Node: Filename aliases48385
+Node: Database format49563
+Node: Invoking kpsewhich50576
+Node: Path searching options51531
+Node: Specially-recognized files61129
+Node: Auxiliary tasks62484
+Node: Standard options66209
+Node: TeX support66565
+Node: Supported file formats67919
+Node: File lookup75584
+Node: Glyph lookup77333
+Node: Basic glyph lookup78457
+Node: Fontmap79337
+Node: Fallback font81866
+Node: Suppressing warnings82778
+Node: mktex scripts83905
+Node: mktex configuration85120
+Node: mktex script names90923
+Node: mktex script arguments92309
+Node: Programming93188
+Node: Programming overview93761
+Node: Calling sequence96622
+Node: Program-specific files103154
+Node: Programming with config files104177
+Node: Reporting bugs105764
+Node: Bug checklist106442
+Node: Mailing lists109914
+Node: Debugging110589
+Node: Logging115666
+Node: Common problems117533
+Node: Unable to find files118010
+Node: Slow path searching120420
+Node: Unable to generate fonts121795
+Node: TeX or Metafont failing124266
+Node: Index125468
 
 End Tag Table
