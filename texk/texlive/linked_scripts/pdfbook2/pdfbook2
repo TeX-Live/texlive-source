@@ -47,7 +47,6 @@ def booklify( name, opts ):
                                name, tmpFile],
                              stdout = subprocess.PIPE,
                              stderr = subprocess.PIPE )
-        p.wait()
         out, err = p.communicate()
         if len( err ) != 0:
             print err
@@ -89,7 +88,6 @@ def booklify( name, opts ):
                                tmpFile],
                              stdout = subprocess.PIPE,
                              stderr = subprocess.PIPE )
-        p.wait()
         out, err = p.communicate()
         if len( err ) != 0:
             print err
@@ -121,7 +119,6 @@ def booklify( name, opts ):
         p = subprocess.Popen( ["kpsewhich", "everyshi.sty"],
                          stdout = subprocess.PIPE,
                          stderr = subprocess.PIPE )
-        p.wait()
         out, err = p.communicate()
         if len( out ) == 0:
             print "\n\nABORT: The everyshi.sty latex package is needed for short-edge."
@@ -131,10 +128,10 @@ def booklify( name, opts ):
             pdfJamCallList.append( r"\usepackage{everyshi}\makeatletter\EveryShipout{\ifodd\c@page\pdfpageattr{/Rotate 180}\fi}\makeatother" )
 
     # run call to pdfJam to make booklet
-    p = subprocess.Popen( pdfJamCallList,
-                         stdout = subprocess.PIPE,
-                         stderr = subprocess.PIPE )
-    p.wait()
+    p = subprocess.Popen( pdfJamCallList, 
+                          stdout = subprocess.PIPE, 
+                          stderr = subprocess.PIPE )
+    out, err = p.communicate()
 
     #-------------------------------------------- move file and remove temp file
     os.rename( tmpFile[:-4] + "-book.pdf", name[:-4] + "-book.pdf" )
@@ -174,7 +171,7 @@ if __name__ == "__main__":
     #------------------------------------------------------------ useful strings
     usageString = "Usage: %prog [options] file1 [file2 ...]"
     versionString = """
-    %prog v1.2
+    %prog v1.3 (https://github.com/jenom/pdfbook2)
     (c) 2015 Johannes Neumann (http://www.neumannjo.de)
     licensed under GPLv3 (http://www.gnu.org/licenses/gpl-3.0)
     based on pdfbook by David Firth with help from Marco Pessotto\n"""
