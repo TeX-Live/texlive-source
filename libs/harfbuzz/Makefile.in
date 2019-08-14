@@ -150,6 +150,8 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-color.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-map.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-math.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-meta.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-metrics.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-default.$(OBJEXT) \
@@ -210,6 +212,8 @@ am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-math.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-meta.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-metrics.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po \
@@ -804,6 +808,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-kerx-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-lcar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-morx-table.hh \
+	@HARFBUZZ_TREE@/src/hb-aat-layout-opbd-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-trak-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-ltag-table.hh \
@@ -829,6 +834,10 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-map.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-math.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-math-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-meta-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-meta.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-metrics.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-metrics.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
@@ -1046,6 +1055,12 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-ot-math.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-meta.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-metrics.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-shape.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1135,6 +1150,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-math.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-meta.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-metrics.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po@am__quote@ # am--include-marker
@@ -1776,6 +1793,8 @@ distclean: distclean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-math.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-meta.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-metrics.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po
@@ -1873,6 +1892,8 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-math.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-meta.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-metrics.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-name.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po
