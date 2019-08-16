@@ -1,3 +1,11 @@
+2019-08-17  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfdoc.c, spc_pdfm.c: Workaround for some problems reported
+	in https://tug.org/pipermail/dvipdfmx/2019-August/000021.html.
+	Try to deref page resource dictionary when adding page resources.
+	Allow direct objects for page resources.
+	* configure.ac: Version 20190817.
+
 2019-08-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfobj.c: Ignore zlib error while uncompressing data.
