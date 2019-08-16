@@ -39,7 +39,7 @@ use Cwd 'abs_path';
 use strict;
 
 (my $prg = basename($0)) =~ s/\.pl$//;
-my $version = '20190303.0';
+my $version = '20190816.0';
 
 if (win32()) {
   # conversion between internal (utf-8) and console (cp932):
@@ -346,6 +346,12 @@ my %user_aliases;
 if ($opt_help || $opt_markdown) {
   Usage();
   exit(0);
+}
+
+# check for the existence of kpsewhich, otherwise we cannot do anything
+if (system("kpsewhich --version >$nul 2>&1 <$nul" ) != 0) {
+  print_error("We need `kpsewhich' being installed! Exiting.\n");
+  exit(1);
 }
 
 if ($opt_debug >= 2) {
@@ -676,15 +682,15 @@ sub do_nonotf_fonts {
     if $opt_texmflink;
   for my $k (sort keys %fontdb) {
     if ($fontdb{$k}{'available'} && $fontdb{$k}{'type'} eq 'TTF') {
-      generate_font_snippet($fontdest,
-        $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
+    # generate_font_snippet($fontdest,
+    #   $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
       $outp .= generate_cidfmap_entry($k, $fontdb{$k}{'class'}, $fontdb{$k}{'ttfname'}, -1);
       link_font($fontdb{$k}{'target'}, $cidfsubst, $fontdb{$k}{'ttfname'});
       link_font($fontdb{$k}{'target'}, "$opt_texmflink/$ttf_pathpart", $fontdb{$k}{'ttfname'})
         if $opt_texmflink;
     } elsif ($fontdb{$k}{'available'} && $fontdb{$k}{'type'} eq 'TTC') {
-      generate_font_snippet($fontdest,
-        $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
+    # generate_font_snippet($fontdest,
+    #   $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
       $outp .= generate_cidfmap_entry($k, $fontdb{$k}{'class'}, $fontdb{$k}{'ttcname'}, $fontdb{$k}{'subfont'});
       link_font($fontdb{$k}{'target'}, $cidfsubst, $fontdb{$k}{'ttcname'});
       link_font($fontdb{$k}{'target'}, "$opt_texmflink/$ttf_pathpart", $fontdb{$k}{'ttcname'})
@@ -1439,6 +1445,7 @@ sub check_for_files {
             $bname = $b;
             last;
           }
+          $actualpsname =~ s/[\r\n]+\z//; # perl's chomp() on git-bash cannot strip CR of CRLF ??
           if ($actualpsname ne $k) {
             print_debug("... PSName returned by otfinfo ($actualpsname) is\n");
             print_debug("different from our database ($k), discarding!\n");
@@ -2030,6 +2037,9 @@ This script searches a list of directories for CJK fonts, and makes
 them available to an installed Ghostscript. In the simplest case with
 sufficient privileges, a run without arguments should effect in a
 complete setup of Ghostscript.
+Search is done using the kpathsea library, in particular `kpsewhich`
+program. To run this script, you will need some TeX distribution in
+your system.
 ";
 
 my $operation = "
