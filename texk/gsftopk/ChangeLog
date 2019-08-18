@@ -1,3 +1,11 @@
+2019-08-18  Akira Kakuto  <kakuto@w32tex.org>
+
+	* gsftopk.c: Add an option -dNOSAFER for Ghostscript.
+	Otherwise gs-9.28 fails with:
+	"gs: Last OS error: Permission denied".
+	gs-9.28 is not released yet, and the above is noticed by
+	testing with gs-9.28rc1.
+
 2019-04-05  Paul Vojta <vojta@math.berkeley.edu>
 
 	* render.ps (shellarguments): check for /.shellarguments

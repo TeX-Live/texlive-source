@@ -299,19 +299,20 @@ HANDLE hGsDataIn = 0, hGsDataOut = 0; /* Events to synchronize threads */
 /* Arguments to gs dll */
 const
 char *gs_argv[] = { "rungs.exe",		/* 0, dummy */
-		    "-dNOGC",			/* 1, */
-		    "-dNODISPLAY",		/* 2, */
-		    NULL,			/* 3, substarg */
-		    "-q",			/* 4, */
-		    "--",			/* 5, */
-		    NULL,			/* 6, searchpath */
-		    NULL,			/* 7, PSname */
-		    NULL,	       /* 8, dlstring != NULL ? dlstring : "" */
-		    NULL,			/* 9, specinfo */
-		    NULL,			/* 10, dpistr */
-		    NULL			/* 11, NULL terminator */
+		    "-dNODISPLAY",		/* 1, */
+		    "-dNOGC",			/* 2, */
+		    "-dNOSAFER",		/* 3, */
+		    NULL,			/* 4, substarg */
+		    "-q",			/* 5, */
+		    "--",			/* 6, */
+		    NULL,			/* 7, searchpath */
+		    NULL,			/* 8, PSname */
+		    NULL,			/* 9, dlstring != NULL ? dlstring : "" */
+		    NULL,			/* 10, specinfo */
+		    NULL,			/* 11, dpistr */
+		    NULL			/* 12, NULL terminator */
   };
-int gs_argc = 11;
+int gs_argc = 12;
 
 char *buffer_stdin; /* This is the buffer from where data are taken. */
 
@@ -2259,7 +2260,9 @@ Author of gsftopk: Paul Vojta.");
 
 #if defined(WIN32)
        /* TeXLive uses its own Ghostscript */  
+#if !defined(_WIN64)
         texlive_gs_init();
+#endif
 #endif
 
 #endif
@@ -2507,7 +2510,7 @@ Author of gsftopk: Paul Vojta.");
 	if (in && out) {
 	    int error;
 	    char *cmd;
-	    char formatstr[] = "%s -dNODISPLAY -dNOGC -sSUBSTFONT=\"%s\" -q -- \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"";
+	    char formatstr[] = "%s -dNODISPLAY -dNOGC -dNOSAFER -sSUBSTFONT=\"%s\" -q -- \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"";
 	    unsigned int len;
 
 	    len = sizeof formatstr + strlen(gspath) + strlen(searchpath)
@@ -2581,7 +2584,7 @@ Author of gsftopk: Paul Vojta.");
 	    close(std_out[0]);
 	    dup2(std_out[1], 1);
 	    close(std_out[1]);
-	    execlp(gspath, "gs", "-dNODISPLAY", "-dNOGC", substarg, "-q", "--",
+	    execlp(gspath, "gs", "-dNODISPLAY", "-dNOGC", "-dNOSAFER", substarg, "-q", "--",
 		/* render.ps */ searchpath,
 		PSname,
 		dlstring != NULL ? dlstring : "", specinfo, dpistr, NULL);
@@ -2659,12 +2662,12 @@ Author of gsftopk: Paul Vojta.");
 	hGsDataIn = CreateEvent(&sa, FALSE, FALSE, "gsDataIn");
 	hGsDataOut = CreateEvent(&sa, FALSE, FALSE, "gsDataOut");
 
-	gs_argv[3] = substarg;
-	gs_argv[6] = searchpath;
-	gs_argv[7] = PSname;
-	gs_argv[8] = dlstring != NULL ? dlstring : "";
-	gs_argv[9] = specinfo;
-	gs_argv[10] = dpistr;
+	gs_argv[4] = substarg;
+	gs_argv[7] = searchpath;
+	gs_argv[8] = PSname;
+	gs_argv[9] = dlstring != NULL ? dlstring : "";
+	gs_argv[10] = specinfo;
+	gs_argv[11] = dpistr;
 
 	buffer_stdin = concat(designstr, charlist);
 
