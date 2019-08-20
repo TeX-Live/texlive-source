@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2019-06-01.23}
+\def\texinfoversion{2019-08-18.20}
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
 %
@@ -4675,7 +4675,7 @@ end
 % NB flag names containing - or _ may not work here.
 \def\dummyvalue#1{%
   \expandafter\ifx\csname SET#1\endcsname\relax
-    \noexpand\value{#1}%
+    \string\value{#1}%
   \else
     \csname SET#1\endcsname
   \fi
