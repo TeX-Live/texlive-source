@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id$
+# $Id: updmap-user.sh 51911 2019-08-19 20:59:22Z karl $
 # updmap-user - arrange for updmap to affect user directories.
 # Maintained in Master/texmf-dist/scripts/texlive/
 # Public domain.  Originally written by Thomas Esser.
