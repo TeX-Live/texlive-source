@@ -692,7 +692,7 @@ return {
 end
 package.preload["texrunner.tex_engine"] = function(...)
 --[[
-  Copyright 2016 ARATA Mizuki
+  Copyright 2016,2019 ARATA Mizuki
 
   This file is part of ClutTeX.
 
@@ -719,7 +719,7 @@ local shellutil = require "texrunner.shellutil"
 --[[
 engine.name: string
 engine.type = "onePass" or "twoPass"
-engine:build_command(inputfile, options)
+engine:build_command(inputline, options)
   options:
     halt_on_error: boolean
     interaction: string
@@ -733,7 +733,6 @@ engine:build_command(inputfile, options)
     output_format: "pdf" or "dvi"
     draftmode: boolean (pdfTeX / XeTeX / LuaTeX)
     fmt: string
-    tex_injection: string
     lua_initialization_script: string (LuaTeX only)
 engine.executable: string
 engine.supports_pdf_generation: boolean
@@ -745,8 +744,9 @@ engine.is_luatex: true or nil
 local engine_meta = {}
 engine_meta.__index = engine_meta
 engine_meta.dvi_extension = "dvi"
-function engine_meta:build_command(inputfile, options)
-  local command = {self.executable, "-recorder"}
+function engine_meta:build_command(inputline, options)
+  local executable = options.engine_executable or self.executable
+  local command = {executable, "-recorder"}
   if options.fmt then
     table.insert(command, "-fmt=" .. options.fmt)
   end
@@ -783,11 +783,7 @@ function engine_meta:build_command(inputfile, options)
       table.insert(command, v)
     end
   end
-  if type(options.tex_injection) == "string" then
-    table.insert(command, shellutil.escape(options.tex_injection .. "\\input " .. inputfile)) -- TODO: what if filename contains spaces?
-  else
-    table.insert(command, shellutil.escape(inputfile))
-  end
+  table.insert(command, shellutil.escape(inputline))
   return table.concat(command, " ")
 end
 
@@ -1404,6 +1400,9 @@ Options:
                                      xelatex, xetex, latex, etex, tex,
                                      platex, eptex, ptex,
                                      uplatex, euptex, uptex,
+      --engine-executable=COMMAND+OPTIONs
+                               The actual TeX command to use.
+                                 [default: ENGINE]
   -o, --output=FILE            The name of output file.
                                  [default: JOBNAME.pdf or JOBNAME.dvi]
       --fresh                  Clean intermediate files before running TeX.
@@ -1419,17 +1418,24 @@ Options:
       --dvipdfmx-option[s]=OPTION[s]  Same for dvipdfmx.
       --makeindex=COMMAND+OPTIONs  Command to generate index, such as
                                      `makeindex' or `mendex'.
-      --bibtex=COMMAND+OPTIONs  Command for BibTeX, such as
+      --bibtex=COMMAND+OPTIONs     Command for BibTeX, such as
                                      `bibtex' or `pbibtex'.
-      --biber[=COMMAND+OPTIONs]  Command for Biber.
+      --biber[=COMMAND+OPTIONs]    Command for Biber.
       --makeglossaries[=COMMAND+OPTIONs]  Command for makeglossaries.
   -h, --help                   Print this message and exit.
   -v, --version                Print version information and exit.
   -V, --verbose                Be more verbose.
-      --color=WHEN             Make ClutTeX's message colorful. WHEN is one of
-                                 `always', `auto', or `never'.  [default: auto]
+      --color[=WHEN]           Make ClutTeX's message colorful. WHEN is one of
+                                 `always', `auto', or `never'.
+                                 [default: `auto' if --color is omitted,
+                                           `always' if WHEN is omitted]
       --includeonly=NAMEs      Insert '\includeonly{NAMEs}'.
       --make-depends=FILE      Write dependencies as a Makefile rule.
+      --print-output-directory  Print the output directory and exit.
+      --package-support=PKG1[,PKG2,...]
+                               Enable special support for some shell-escaping
+                                 packages.
+                               Currently supported: minted, epstopdf
 
       --[no-]shell-escape
       --shell-restricted
@@ -1451,6 +1457,10 @@ local option_spec = {
   {
     short = "e",
     long = "engine",
+    param = true,
+  },
+  {
+    long = "engine-executable",
     param = true,
   },
   {
@@ -1499,6 +1509,13 @@ local option_spec = {
   },
   {
     long = "make-depends",
+    param = true
+  },
+  {
+    long = "print-output-directory",
+  },
+  {
+    long = "package-support",
     param = true
   },
   -- Options for TeX
@@ -1615,6 +1632,7 @@ local function handle_cluttex_options(arg)
   local options = {
     tex_extraoptions = {},
     dvipdfmx_extraoptions = {},
+    package_support = {},
   }
   CLUTTEX_VERBOSITY = 0
   for _,option in ipairs(option_and_params) do
@@ -1624,6 +1642,10 @@ local function handle_cluttex_options(arg)
     if name == "engine" then
       assert(options.engine == nil, "multiple --engine options")
       options.engine = param
+
+    elseif name == "engine-executable" then
+      assert(options.engine_executable == nil, "multiple --engine-executable options")
+      options.engine_executable = param
 
     elseif name == "output" then
       assert(options.output == nil, "multiple --output options")
@@ -1673,6 +1695,19 @@ local function handle_cluttex_options(arg)
     elseif name == "make-depends" then
       assert(options.make_depends == nil, "multiple --make-depends options")
       options.make_depends = param
+
+    elseif name == "print-output-directory" then
+      assert(options.print_output_directory == nil, "multiple --print-output-directory options")
+      options.print_output_directory = true
+
+    elseif name == "package-support" then
+      local known_packages = {["minted"] = true, ["epstopdf"] = true}
+      for pkg in string.gmatch(param, "[^,%s]+") do
+        options.package_support[pkg] = true
+        if not known_packages[pkg] and CLUTTEX_VERBOSITY >= 1 then
+          message.warn("ClutTeX provides no special support for '"..pkg.."'.")
+        end
+      end
 
       -- Options for TeX
     elseif name == "synctex" then
@@ -2560,6 +2595,70 @@ return {
   new = new_watcher,
 }
 end
+package.preload["texrunner.safename"] = function(...)
+--[[
+  Copyright 2019 ARATA Mizuki
+
+  This file is part of ClutTeX.
+
+  ClutTeX is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  ClutTeX is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with ClutTeX.  If not, see <http://www.gnu.org/licenses/>.
+]]
+
+local string = string
+local table = table
+
+local function dounsafechar(c)
+  if c == " " then
+    return "_"
+  else
+    return string.format("_%02x", c:byte(1))
+  end
+end
+
+local function escapejobname(name)
+  return (string.gsub(name, "[%s\"$%%&'();<>\\^`|]", dounsafechar))
+end
+
+local function handlespecialchar(s)
+  return (string.gsub(s, "[%\\%%^%{%}%~%#]", "~\\%1"))
+end
+
+local function handlespaces(s)
+  return (string.gsub(s, "  +", function(s) return string.rep(" ", #s, "~") end))
+end
+
+local function handlenonascii(s)
+  return (string.gsub(s, "[\x80-\xFF]+", "\\detokenize{%1}"))
+end
+
+local function safeinput(name, engine)
+  local escaped = handlespaces(handlespecialchar(name))
+  if engine.name == "pdftex" or engine.name == "pdflatex" then
+    escaped = handlenonascii(escaped)
+  end
+  if name == escaped then
+    return string.format("\\input\"%s\"", name)
+  else
+    return string.format("\\begingroup\\escapechar-1\\let~\\string\\edef\\x{\"%s\" }\\expandafter\\endgroup\\expandafter\\input\\x", escaped)
+  end
+end
+
+return {
+  escapejobname = escapejobname,
+  safeinput = safeinput,
+}
+end
 --[[
   Copyright 2016,2018-2019 ARATA Mizuki
 
@@ -2579,7 +2678,7 @@ end
   along with ClutTeX.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-CLUTTEX_VERSION = "v0.3"
+CLUTTEX_VERSION = "v0.4"
 
 -- Standard libraries
 local coroutine = coroutine
@@ -2598,6 +2697,7 @@ local reruncheck  = require "texrunner.reruncheck"
 local luatexinit  = require "texrunner.luatexinit"
 local recoverylib = require "texrunner.recovery"
 local message     = require "texrunner.message"
+local safename    = require "texrunner.safename"
 local extract_bibtex_from_aux_file = require "texrunner.auxfile".extract_bibtex_from_aux_file
 local handle_cluttex_options = require "texrunner.handleoption".handle_cluttex_options
 
@@ -2618,7 +2718,15 @@ end
 
 local inputfile, engine, options = handle_cluttex_options(arg)
 
-local jobname = options.jobname or pathutil.basename(pathutil.trimext(inputfile))
+local jobname_for_output
+if options.jobname == nil then
+  local basename = pathutil.basename(pathutil.trimext(inputfile))
+  options.jobname = safename.escapejobname(basename)
+  jobname_for_output = basename
+else
+  jobname_for_output = options.jobname
+end
+local jobname = options.jobname
 assert(jobname ~= "", "jobname cannot be empty")
 
 if options.output_format == nil then
@@ -2632,13 +2740,13 @@ else
 end
 
 if options.output == nil then
-  options.output = jobname .. "." .. output_extension
+  options.output = jobname_for_output .. "." .. output_extension
 end
 
 -- Prepare output directory
 if options.output_directory == nil then
   local inputfile_abs = pathutil.abspath(inputfile)
-  options.output_directory = genOutputDirectory(inputfile_abs, jobname, options.engine)
+  options.output_directory = genOutputDirectory(inputfile_abs, jobname, options.engine_executable or options.engine)
 
   if not fsutil.isdir(options.output_directory) then
     assert(fsutil.mkdir_rec(options.output_directory))
@@ -2656,6 +2764,12 @@ if options.output_directory == nil then
 elseif options.fresh then
   message.error("--fresh and --output-directory cannot be used together.")
   os.exit(1)
+end
+
+-- --print-output-directory
+if options.print_output_directory then
+  io.write(options.output_directory, "\n")
+  os.exit(0)
 end
 
 local pathsep = ":"
@@ -2696,6 +2810,7 @@ local recorderfile = path_in_output_directory("fls")
 local recorderfile2 = path_in_output_directory("cluttex-fls")
 
 local tex_options = {
+  engine_executable = options.engine_executable,
   interaction = options.interaction,
   file_line_error = options.file_line_error,
   halt_on_error = options.halt_on_error,
@@ -2722,7 +2837,7 @@ end
 -- should_rerun, newauxstatus = single_run([auxstatus])
 -- This function should be run in a coroutine.
 local function single_run(auxstatus, iteration)
-  local minted = false
+  local minted, epstopdf = false, false
   local bibtex_aux_hash = nil
   local mainauxfile = path_in_output_directory("aux")
   if fsutil.isfile(recorderfile) then
@@ -2735,7 +2850,9 @@ local function single_run(auxstatus, iteration)
     for _,fileinfo in ipairs(filelist) do
       if string.match(fileinfo.path, "minted/minted%.sty$") then
         minted = true
-        break
+      end
+      if string.match(fileinfo.path, "epstopdf%.sty$") then
+        epstopdf = true
       end
     end
     if options.bibtex then
@@ -2754,13 +2871,37 @@ local function single_run(auxstatus, iteration)
   end
   --local timestamp = os.time()
 
+  local tex_injection = ""
+
   if options.includeonly then
-    tex_options.tex_injection = string.format("%s\\includeonly{%s}", tex_options.tex_injection or "", options.includeonly)
+    tex_injection = string.format("%s\\includeonly{%s}", tex_options.tex_injection or "", options.includeonly)
   end
 
-  if minted and not (tex_options.tex_injection and string.find(tex_options.tex_injection,"minted") == nil) then
-    tex_options.tex_injection = string.format("%s\\PassOptionsToPackage{outputdir=%s}{minted}", tex_options.tex_injection or "", options.output_directory)
+  if minted or options.package_support["minted"] then
+    local outdir = options.output_directory
+    if os.type == "windows" then
+      outdir = string.gsub(outdir, "\\", "/") -- Use forward slashes
+    end
+    tex_injection = string.format("%s\\PassOptionsToPackage{outputdir=%s}{minted}", tex_injection or "", outdir)
+    if not options.package_support["minted"] then
+      message.diag("You may want to use --package-support=minted option.")
+    end
   end
+  if epstopdf or options.package_support["epstopdf"] then
+    local outdir = options.output_directory
+    if os.type == "windows" then
+      outdir = string.gsub(outdir, "\\", "/") -- Use forward slashes
+    end
+    if string.sub(outdir, -1, -1) ~= "/" then
+      outdir = outdir.."/" -- Must end with a directory separator
+    end
+    tex_injection = string.format("%s\\PassOptionsToPackage{outdir=%s}{epstopdf}", tex_injection or "", outdir)
+    if not options.package_support["epstopdf"] then
+      message.diag("You may want to use --package-support=epstopdf option.")
+    end
+  end
+
+  local inputline = tex_injection .. safename.safeinput(inputfile, engine)
 
   local current_tex_options, lightweight_mode = tex_options, false
   if iteration == 1 and options.start_with_draft then
@@ -2778,7 +2919,7 @@ local function single_run(auxstatus, iteration)
     current_tex_options.draftmode = false
   end
 
-  local command = engine:build_command(inputfile, current_tex_options)
+  local command = engine:build_command(inputline, current_tex_options)
 
   local execlog -- the contents of .log file
 
@@ -3048,6 +3189,88 @@ end
 
 if options.watch then
   -- Watch mode
+
+  local fswatcherlib
+  if os.type == "windows" then
+    -- Windows: Try built-in filesystem watcher
+    local succ, result = pcall(require, "texrunner.fswatcher_windows")
+    if not succ and CLUTTEX_VERBOSITY >= 1 then
+      message.warn("Failed to load texrunner.fswatcher_windows: " .. result)
+    end
+    fswatcherlib = result
+  end
+
+  local do_watch
+  if fswatcherlib then
+    if CLUTTEX_VERBOSITY >= 2 then
+      message.info("Using built-in filesystem watcher for Windows")
+    end
+    do_watch = function(files)
+      local watcher = assert(fswatcherlib.new())
+      for _,path in ipairs(files) do
+        assert(watcher:add_file(path))
+      end
+      local result = assert(watcher:next())
+      if CLUTTEX_VERBOSITY >= 2 then
+        message.info(string.format("%s %s", result.action, result.path))
+      end
+      watcher:close()
+      return true
+    end
+  elseif shellutil.has_command("fswatch") then
+    if CLUTTEX_VERBOSITY >= 2 then
+      message.info("Using `fswatch' command")
+    end
+    do_watch = function(files)
+      local fswatch_command = {"fswatch", "--one-event", "--event=Updated", "--"}
+      for _,path in ipairs(files) do
+        table.insert(fswatch_command, shellutil.escape(path))
+      end
+      local fswatch_command_str = table.concat(fswatch_command, " ")
+      if CLUTTEX_VERBOSITY >= 1 then
+        message.exec(fswatch_command_str)
+      end
+      local fswatch = assert(io.popen(fswatch_command_str, "r"))
+      for l in fswatch:lines() do
+        for _,path in ipairs(files) do
+          if l == path then
+            fswatch:close()
+            return true
+          end
+        end
+      end
+      return false
+    end
+  elseif shellutil.has_command("inotifywait") then
+    if CLUTTEX_VERBOSITY >= 2 then
+      message.info("Using `inotifywait' command")
+    end
+    do_watch = function(files)
+      local inotifywait_command = {"inotifywait", "--event=modify", "--event=attrib", "--format=%w", "--quiet"}
+      for _,path in ipairs(files) do
+        table.insert(inotifywait_command, shellutil.escape(path))
+      end
+      local inotifywait_command_str = table.concat(inotifywait_command, " ")
+      if CLUTTEX_VERBOSITY >= 1 then
+        message.exec(inotifywait_command_str)
+      end
+      local inotifywait = assert(io.popen(inotifywait_command_str, "r"))
+      for l in inotifywait:lines() do
+        for _,path in ipairs(files) do
+          if l == path then
+            inotifywait:close()
+            return true
+          end
+        end
+      end
+      return false
+    end
+  else
+    message.error("Could not watch files because neither `fswatch' nor `inotifywait' was installed.")
+    message.info("See ClutTeX's manual for details.")
+    os.exit(1)
+  end
+
   local success, status = do_typeset()
   -- TODO: filenames here can be UTF-8 if command_line_encoding=utf-8
   local filelist, filemap = reruncheck.parse_recorder_file(recorderfile, options)
@@ -3060,87 +3283,23 @@ if options.watch then
       table.insert(input_files_to_watch, fileinfo.abspath)
     end
   end
-  local fswatcherlib
-  if os.type == "windows" then
-    -- Windows: Try built-in filesystem watcher
-    local succ, result = pcall(require, "texrunner.fswatcher_windows")
-    if not succ and CLUTTEX_VERBOSITY >= 1 then
-      message.warn("Failed to load texrunner.fswatcher_windows: " .. result)
-    end
-    fswatcherlib = result
-  end
-  if fswatcherlib then
-    if CLUTTEX_VERBOSITY >= 2 then
-      message.info("Using built-in filesystem watcher for Windows")
-    end
-    local watcher = assert(fswatcherlib.new())
-    for _,path in ipairs(input_files_to_watch) do
-      assert(watcher:add_file(path))
-    end
-    while true do
-      local result = assert(watcher:next())
-      if CLUTTEX_VERBOSITY >= 2 then
-        message.info(string.format("%s %s"), result.action, result.path)
+
+  while do_watch(input_files_to_watch) do
+    local success, status = do_typeset()
+    if not success then
+      -- error
+    else
+      local filelist, filemap = reruncheck.parse_recorder_file(recorderfile, options)
+      if engine.is_luatex and fsutil.isfile(recorderfile2) then
+        filelist, filemap = reruncheck.parse_recorder_file(recorderfile2, options, filelist, filemap)
       end
-      local success, status = do_typeset()
-      if not success then
-        -- Not successful
-      end
-    end
-  elseif shellutil.has_command("fswatch") then
-    local fswatch_command = {"fswatch", "--event=Updated", "--"}
-    for _,path in ipairs(input_files_to_watch) do
-      table.insert(fswatch_command, shellutil.escape(path))
-    end
-    local fswatch_command_str = table.concat(fswatch_command, " ")
-    if CLUTTEX_VERBOSITY >= 1 then
-      message.exec(fswatch_command_str)
-    end
-    local fswatch = assert(io.popen(fswatch_command_str, "r"))
-    for l in fswatch:lines() do
-      local found = false
-      for _,path in ipairs(input_files_to_watch) do
-        if l == path then
-          found = true
-          break
-        end
-      end
-      if found then
-        local success, status = do_typeset()
-        if not success then
-          -- Not successful
+      input_files_to_watch = {}
+      for _,fileinfo in ipairs(filelist) do
+        if fileinfo.kind == "input" then
+          table.insert(input_files_to_watch, fileinfo.abspath)
         end
       end
     end
-  elseif shellutil.has_command("inotifywait") then
-    local inotifywait_command = {"inotifywait", "--monitor", "--event=modify", "--event=attrib", "--format=%w", "--quiet"}
-    for _,path in ipairs(input_files_to_watch) do
-      table.insert(inotifywait_command, shellutil.escape(path))
-    end
-    local inotifywait_command_str = table.concat(inotifywait_command, " ")
-    if CLUTTEX_VERBOSITY >= 1 then
-      message.exec(inotifywait_command_str)
-    end
-    local inotifywait = assert(io.popen(inotifywait_command_str, "r"))
-    for l in inotifywait:lines() do
-      local found = false
-      for _,path in ipairs(input_files_to_watch) do
-        if l == path then
-          found = true
-          break
-        end
-      end
-      if found then
-        local success, status = do_typeset()
-        if not success then
-          -- Not successful
-        end
-      end
-    end
-  else
-    message.error("Could not watch files because neither `fswatch' nor `inotifywait' was installed.")
-    message.info("See ClutTeX's manual for details.")
-    os.exit(1)
   end
 
 else
