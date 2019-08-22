@@ -2,9 +2,16 @@
 
 	* gsftopk.c: Add an option -dNOSAFER for Ghostscript.
 	Otherwise gs-9.28 fails with:
-	"gs: Last OS error: Permission denied".
-	gs-9.28 is not released yet, and the above is noticed by
+	"Error: /invalidfileaccess in --run--".
+	gs-9.28 is not released yet, and the above is found by
 	testing with gs-9.28rc1.
+	The gsftopk requires to execute a PostScript code
+	"(absolute path) run" such as
+	"(/texlive/2019/texmf-dist/fonts/enc/dvips/base/8r.enc) run"
+	which is not allowed in SAFER mode of Ghostscript.
+	In the upcoming gs-9.28, SAFER mode becomes default even
+	if -dSAFER is not set in a command line. Thus an explicit
+	-dNOSAFER is necessary for the gsftopk.
 
 2019-04-05  Paul Vojta <vojta@math.berkeley.edu>
 
