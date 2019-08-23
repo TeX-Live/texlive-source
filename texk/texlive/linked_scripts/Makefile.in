@@ -315,6 +315,7 @@ texmf_other_scripts = \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
 	cjk-gs-integrate/cjk-gs-integrate.pl \
+	clojure-pamphlet/pamphletangler \
 	cluttex/cluttex.lua \
 	context/perl/mptopdf.pl \
 	convbkmk/convbkmk.rb \

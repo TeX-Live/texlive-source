@@ -1,6 +1,7 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2019 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -101,6 +102,7 @@ texmf_other_scripts = \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
 	cjk-gs-integrate/cjk-gs-integrate.pl \
+	clojure-pamphlet/pamphletangler \
 	cluttex/cluttex.lua \
 	context/perl/mptopdf.pl \
 	convbkmk/convbkmk.rb \

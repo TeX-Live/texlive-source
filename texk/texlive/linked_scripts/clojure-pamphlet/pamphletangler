@@ -1,0 +1,191 @@
+#!/usr/bin/perl -w
+
+=head1 NAME
+
+pamphletangler - Extract code bits from LaTeX pamphlet files.
+
+=cut
+
+=head1 SYNOPSIS
+
+B<pamphletangler> [OPTION...] I<FILE> I<CHUNKNAME>
+
+=cut
+
+=head1 DESCRIPTION
+
+The  clojure  pamphlet  system is a system based on the clojure literate
+system.  In the clojure's pamphlet system you have your main LaTeX file, which
+can be compiled regularly. This file contains documentation and source code
+(just like in other forms of literate programming). This code snippets are
+wrapped in the 'chunk' environment, hence they can be recognized by the tangler
+in order  to  extract  them.  Chunks can be included inside each other by the
+'getchunk' command (which will be typesetted acordingly). Finally, you run your
+LaTeX file through the tangler and get your desired chunk of code.
+
+=cut
+
+=head1 OPTIONS
+
+=over 29
+
+=item -L, --line=linetext
+
+If set, this text will be inserted after jumps of lines, changing the string
+inside "changetext" for the line number. This is used so that error report
+refers to pamphlet line number instead of output line number
+
+=item -C, --change=changetext
+
+Defaults to "{}" this is the text that will be replaced with the line number if
+the linetext option is specified
+
+=item -?, --help
+
+Give this help list
+
+=item --usage
+
+Give a short usage message
+
+=item --man
+
+Print manual page
+
+=item -V, --version
+
+Print program version
+
+=back
+
+=head1 LICENSE
+
+Copyright (C) 2019 Ernesto Lanchares Sanchez.
+
+   The clojure-pamphlet tagler is free software; you can redistribute
+   it and/or modify it under the terms of the GNU Lesser General
+   Public License as published by the Free Software Foundation;
+   either version 3 of the License, or (at your option) any later
+   version.
+
+  The clojure-pamphlet tangler is distributed in the hope that it
+  will be useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, see
+  L<http://www.gnu.org/licenses/>.
+
+
+=head1 AUTHOR
+
+Ernesto Lanchares <e.lancha98@gmail.com>
+
+=head1 BUGS
+
+Report bugs to e.lancha98@gmail.com
+
+=cut
+
+use strict;
+use warnings;
+use Getopt::Long;
+use Pod::Usage qw(pod2usage);
+use vars qw/$VERSION/;
+
+BEGIN { $VERSION = '1.2' }
+
+my $linetext = "";
+my $changetext = "{}";
+my $filename;
+my $chunkname;
+
+OPTS: {
+    GetOptions(
+        'usage' => sub { pod2usage( -verbose => 99, -sections => [ qw(SYNOPSIS) ]); },
+        'help|?' => sub { pod2usage( -verbose => 99, -sections => [ qw(SYNOPSIS DESCRIPTION OPTIONS BUGS) ]); },
+        'man' => sub { pod2usage( -verbose => 2) },
+        'version|V' => sub { print "$VERSION\n"; exit; },
+        'line|L=s' => \$linetext,
+        'change|C=s' => \$changetext
+    );
+
+
+#pod
+    while ( my ($option, $value, $pretty) = Getopt::Mixed::nextOption() ) {
+        $linetext = $value if $option eq 'L';
+        if( $option eq 'V' ) {
+            print "$VERSION\n";
+            exit;
+        }
+        if ($option eq '?') {
+            pod2usage( -verbose => 99, -sections => [ qw(SYNOPSIS OPTIONS BUGS) ]);
+            exit;
+        }
+        if ($option eq 'man') {
+            pod2usage( -verbose => 2 );
+            exit;
+        }
+        $linetext = $value if $option eq 'L';
+        $changetext = $value if $option eq 'C';
+    }
+#cut
+
+    pod2usage( -message => "[ERROR]: Invalid number of arguments." )
+        if scalar(@ARGV) != 2;
+    $filename = shift;
+    $chunkname = shift;
+}
+
+open(my $file, "<", $filename) or die "Can't open $filename: $!";
+
+my $file_contents = do { local $/; <$file> };
+my %codeblocks;
+
+while ($file_contents =~ /\\begin\{chunk\}\{([\w.]+)\}[\s\h\t]*\n?(.*?)\n?[\s\t\h]*\\end\{chunk\}/sg) {
+    $codeblocks{$1} = { source => $2, printing => undef };
+}
+
+open($file, "<", $filename) or die "Can't open $filename: $!";
+my $index = 1;
+while (my $line = <$file>) {
+    while ($line =~ /\\begin\{chunk\}\{([\w.]+)\}/g) {
+        $codeblocks{$1}{line} = $index+1;
+    }
+    $index++;
+}
+
+sub printchunk {
+    my ($chunk, $indent) = @_;
+
+    die "Chunk $chunk not found." if (!exists($codeblocks{$chunk}));
+
+    die "Cyclic reference found: $chunk" if $codeblocks{$chunk}{printing};
+    $codeblocks{$chunk}{printing} = 1;
+
+    my $localines = 1;
+    print $linetext =~ s/$changetext/$codeblocks{$chunk}{line}/gr, "\n";
+    foreach my $line (split(/\n/, $codeblocks{$chunk}{source})) {
+        if ($line =~ /([\s\t\h]*)\\getchunk\{([\w.]+)\}/) {
+            eval {
+                printchunk($2, $1); #$1 contains indent and $2 contains chunkname
+                print $linetext =~ s/$changetext/@{[$codeblocks{$chunk}{line} + $localines]}/gr, "\n";
+                1;
+            } or do {
+                if (rindex($@, "Cyclic reference found:", 0) == 0) {
+                    $@ =~ /(.+?)( at .*)/s;
+                    die "$1 <- $chunk";
+                }
+                die $@;
+            }
+        } else {
+            print $indent, $line, "\n";
+        }
+        $localines++;
+    }
+
+    $codeblocks{$chunk}{printing} = undef;
+    return 0;
+}
+printchunk($chunkname, "");
