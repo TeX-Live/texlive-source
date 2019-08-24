@@ -1,3 +1,279 @@
+commit be97e9d678017d4ec66625fa2b17ef3485552cad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 22 15:52:24 2019 -0700
+
+    2.6.1
+
+ NEWS             | 11 +++++++++++
+ configure.ac     |  2 +-
+ src/hb-version.h |  4 ++--
+ 3 files changed, 14 insertions(+), 3 deletions(-)
+
+commit d304d60e4d49df14ed85d6646680085f27bafbf2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 21 12:30:22 2019 -0700
+
+    [ot-font] Prefer symbol cmap subtable if found
+    
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1918
+    
+    Hopefully doesn't break anyone...
+
+ src/hb-ot-cmap-table.hh | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+commit 2a3d4987a75fb2cd51ccf4c1d08baba383ceda7b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 21 03:02:01 2019 +0430
+
+    Remove hb_directwrite_shape_experimental_width public API
+    
+    I had specially exposed the API as I didn't know how to embed harfbuzz
+    easily elsewhere but now with harfbuzz.cc it has become very easy
+    and I don't like to see its use anywhere as it has a bad naming and
+    its Kashida adding is bogus and only useful to check where it should
+    be added, not visually useful however.
+
+ src/hb-directwrite.cc | 29 ++++++-----------------------
+ src/hb-directwrite.h  |  5 -----
+ 2 files changed, 6 insertions(+), 28 deletions(-)
+
+commit 163a66dc737645852d7515381304d69706688e16
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 20 14:22:57 2019 -0700
+
+    [test] Add test for aaa85931f3542639cd9d0dfb92fd6baab5b0298d
+
+ test/api/test-shape.c | 48 ++++++++++++++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 18 deletions(-)
+
+commit aaa85931f3542639cd9d0dfb92fd6baab5b0298d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 20 13:06:10 2019 -0700
+
+    [font] Update multipliers when creating sub_font
+    
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1910
+
+ src/hb-font.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit bbad1b8298125d78c159ed7fdd7bde6a3f3fff56
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Aug 20 14:46:48 2019 +0430
+
+    [trak] minor, use roundf instead round to normalize the use
+    
+    The change to `round` wasn't intended
+
+ src/hb-aat-layout-trak-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit e67cb500e9c5f6717d0d1cd152de84d88ec7370e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Aug 20 13:30:34 2019 +0430
+
+    [readme] add oss-fuzz badge
+    
+    Related:
+    https://github.com/google/oss-fuzz/pull/2513
+    https://github.com/systemd/systemd/commit/ce2098b7e9443cd6f31fb70af7f72308cd2962a3
+
+ README.md | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit d59d89b28128cf644d76098c709b9309b834eb09
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Aug 20 13:07:17 2019 +0430
+
+    [test] Rebase 10.14 trak related test
+
+ test/shaping/data/in-house/tests/macos.tests | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 20b1a27c8a319d43a582c3efa8233b9f2c3cc73e
+Merge: 5ee1e451 37de38ad
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Aug 20 13:04:51 2019 +0430
+
+    Merge remove-coretext-96dpi-assumption, @drott
+    
+    Remove assumption about Core Text working in 96 DPI
+
+commit 37de38adeae48e1855c2431a39639db873a74554
+Merge: f401f85a 5ee1e451
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Aug 20 12:59:33 2019 +0430
+
+    Merge branch 'master' into remove-coretext-96dpi-assumption
+
+commit 5ee1e451cfc75dc6ddbc3ae300ba7394a0cd560e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 19 14:23:17 2019 -0700
+
+    Minor touch-up for recent change
+
+ src/hb-ot-var-avar-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 33489928444b94bdd2cc523dac14707eb29d667e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 7 20:07:58 2019 +0430
+
+    [avar] Implement inverse map, unmap
+
+ src/hb-ot-var-avar-table.hh | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+commit 981f5a54c3cbc1de45ba941fdf5315c62d86b6f3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 7 18:45:39 2019 +0430
+
+    [fvar] Implement inverse normalize, unnormalize
+
+ src/hb-ot-var-fvar-table.hh | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+commit dcb4cd400fb44172872a20ba54baa011d748b61d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 19 11:35:37 2019 -0700
+
+    Minor
+
+ src/hb-font.cc | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit ca54440324745afc388edac40ad1047e92567fdb
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Aug 18 11:58:04 2019 +0430
+
+    Remove continuous development helper script
+    
+    Not have used it personally for a long time, lets remove it
+
+ src/dev-run.sh | 99 ----------------------------------------------------------
+ 1 file changed, 99 deletions(-)
+
+commit 40aef1b473f63701ab901880d764e33682f13414
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Fri Aug 16 01:00:30 2019 +0200
+
+    [ot-shape] Keep horizontal_features array sorted
+
+ src/hb-ot-shape.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit da5118da77898ae4778af1ace4af52334b210dd6
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Fri Aug 16 00:48:26 2019 +0200
+
+    [ot-shape] Enable abvm/blwm features by default
+    
+    Core Text seems to apply them to Latin text, but Uniscribe doesn’t.
+    
+    See https://github.com/harfbuzz/harfbuzz/pull/1908#issuecomment-521819343
+
+ src/hb-ot-shape-complex-indic.cc                   |   9 ---------
+ src/hb-ot-shape-complex-khmer.cc                   |   9 ---------
+ src/hb-ot-shape-complex-myanmar.cc                 |  21 ---------------------
+ src/hb-ot-shape-complex-use.cc                     |  14 --------------
+ src/hb-ot-shape.cc                                 |   2 ++
+ test/shaping/data/in-house/Makefile.sources        |   2 +-
+ .../ea3f63620511b2097200d23774ffef197e829e69.ttf   | Bin 0 -> 1804 bytes
+ .../f79eb71df4e4c9c273b67b89a06e5ff9e3c1f834.ttf   | Bin 0 -> 1860 bytes
+ test/shaping/data/in-house/tests/dist.tests        |   1 -
+ .../data/in-house/tests/positioning-features.tests |   3 +++
+ 10 files changed, 6 insertions(+), 55 deletions(-)
+
+commit 2164bd6f29df265acdc04b84f5f94cf63b2cea8a
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Fri Aug 16 00:28:41 2019 +0200
+
+    [ot-shape] Enable dist feature by default (#1908)
+    
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/1907
+
+ src/hb-ot-shape-complex-indic.cc                         |   2 --
+ src/hb-ot-shape-complex-khmer.cc                         |   2 --
+ src/hb-ot-shape-complex-myanmar.cc                       |   1 -
+ src/hb-ot-shape-complex-use.cc                           |   1 -
+ src/hb-ot-shape.cc                                       |   1 +
+ test/shaping/data/in-house/Makefile.sources              |   1 +
+ .../fonts/53a91c20e33a596f2be17fb68b382d6b7eb85d5c.ttf   | Bin 0 -> 2020 bytes
+ test/shaping/data/in-house/tests/dist.tests              |   1 +
+ 8 files changed, 3 insertions(+), 6 deletions(-)
+
+commit bc27f86ffef537835f6c9dbbecbc2ee6792cb127
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 14 22:37:00 2019 +0430
+
+    Move HB_NO_VAR to a better place in hb-font.cc
+    
+    Needed for other works
+
+ src/hb-font.cc | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit 1cc844da66ab527991ff96efdf10d97f6b626bfe
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 14 19:10:02 2019 +0430
+
+    minor
+    
+    Use hb_font_t coords directly
+
+ src/hb-ot-cff2-table.cc | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+commit 6a194b6876db12f083ae5391ca01972168d4e68a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 14 18:49:57 2019 +0430
+
+    Minor, remove trailing spaces in hb-font.{cc,h} as .editorconfig
+
+ src/hb-font.cc | 338 ++++++++++++++++++++++++++++-----------------------------
+ src/hb-font.h  |  26 ++---
+ 2 files changed, 182 insertions(+), 182 deletions(-)
+
+commit 3ae44645d60fe8271ad18b004434d475eaeb7ad6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 14 14:34:55 2019 +0430
+
+    Fix caret_count value when AAT is disabled
+    
+    Set caret_count to zero as that is what we want to happen inside lcar when
+    there is no result.
+
+ src/hb-ot-layout.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit a5aa67b9f288687e21ca7a9887483f7fe1cbce54
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 14 14:29:01 2019 +0430
+
+    [lcar] Use multiformat convention
+
+ src/hb-aat-layout-lcar-table.hh | 115 +++++++++++++++++++++++++++++++---------
+ 1 file changed, 90 insertions(+), 25 deletions(-)
+
+commit bfffe85dd7d7557e10ec9f9886b86fe0d8b4a7a2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 14 13:55:49 2019 +0430
+
+    [opbd] Use multiformat convention on the table
+
+ src/hb-aat-layout-opbd-table.hh | 116 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 89 insertions(+), 27 deletions(-)
+
+commit d6206dbcc4e4ef8c034ee714e74d3a76c5333a12
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Aug 14 11:24:06 2019 +0430
+
+    [opbd] Turn OpticalBounds fields to FWORD
+
+ src/hb-aat-layout-opbd-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
 commit 6461143b44f81a4190d3f1cb02238750536f08e4
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Aug 13 22:20:54 2019 -0700
@@ -15660,6 +15936,49 @@ Date:   Tue Jan 15 13:58:19 2019 -0500
 
  src/hb-machinery.hh | 10 +++-------
  1 file changed, 3 insertions(+), 7 deletions(-)
+
+commit f401f85a5a3ec4ab9c28012a0bfe713d7ee96951
+Author: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+Date:   Mon Dec 17 00:48:35 2018 +0100
+
+    Remove assumption about Core Text working in 96 DPI
+    
+    Core Text doesn't actually have a concept of DPI internally, as it
+    doesn't rasterize anything by itself, it just generates vector paths
+    that get passed along to Core Graphics.
+    
+    In practice this means Core Text operates in the classical macOS
+    logical DPI of 72, with one typographic point corresponding to one
+    point in the Core Graphics coordinate system, which for a normal
+    bitmap context then corresponds to one pixel -- or two pixels for
+    a "retina" context with a 2x scale transform.
+    
+    Scaling the font point sizes given to HarfBuzz to an assumed DPI
+    of 96 is problematic with this in mind, as fonts with optical
+    features such as 'trak' tables for tracking, or color glyphs,
+    will then base the metrics off of the wrong point size compared
+    to what the client asked for.
+    
+    This in turn causes mismatches between the metrics of the shaped
+    text and the actual rasterization, which doesn't include the 72
+    to 96 DPI scaling.
+    
+    If a 96 DPI is needed, such as on the Web, the scaling should be
+    done outside of HarfBuzz, allowing the client to keep the DPI of
+    the shaping in sync with the rasterization.
+    
+    The recommended way to do that is by scaling the font point size,
+    not by applying a transform to the target Core Graphics context,
+    to let Core Text choose the right optical features of the target
+    point size, as described in WWDC 2015 session 804:
+    
+      https://developer.apple.com/videos/play/wwdc2015/804/
+
+ src/hb-aat-layout-trak-table.hh                 | 11 ++---------
+ src/hb-coretext.cc                              | 25 ++++---------------------
+ test/shaping/data/in-house/tests/aat-trak.tests | 14 +++++++-------
+ test/shaping/data/in-house/tests/macos.tests    |  4 ++--
+ 4 files changed, 15 insertions(+), 39 deletions(-)
 
 commit 0d2727f4fe734af146785df10a44e3505e410ba1
 Author: Behdad Esfahbod <behdad@behdad.org>
