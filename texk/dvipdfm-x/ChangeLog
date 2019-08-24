@@ -1,3 +1,13 @@
+2019-08-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dpxutil.c: Timezone offset is incremented by 1 hour if
+	tm_isdst > 0, as suggested in
+	https://tug.org/pipermail/dvipdfmx/2019-July/000017.html
+	* pdfcolor.c: Always output color change instruction when color
+	push/pop is invoked. Fix for the issue reported in
+	https://tug.org/pipermail/dvipdfmx/2019-August/000029.html
+	* configure.ac: Version 20190824.
+
 2019-08-17  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfdoc.c, spc_pdfm.c: Workaround for some problems reported
