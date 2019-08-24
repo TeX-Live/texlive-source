@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-use v5.24;
+use v5.26;
 use File::Basename;
 use Getopt::Long qw(:config bundling_values require_order no_ignore_case);
 use File::Temp qw(tempdir);
@@ -21,16 +21,16 @@ my $null    = devnull();
 
 ### Program identification
 my $program   = "LTXimg";
-my $nv        = 'v1.6';
+my $nv        = 'v1.7';
 my $copyright = <<END_COPYRIGHT ;
-[2019-07-13] (c) 2013-2019 by Pablo Gonzalez, pablgonz<at>yahoo.com
+[2019-08-24] (c) 2013-2019 by Pablo Gonzalez, pablgonz<at>yahoo.com
 END_COPYRIGHT
 
 ### Default values
-my $prefix   = 'fig';          # defaul prefix for extract files 
+my $prefix   = 'fig';          # defaul prefix for extract files
 my $skiptag  = 'noltximg';     # internal tag for regex
 my $extrtag  = 'ltximg';       # internal tag for regex
-my $imageDir = "images";       # dir for images 
+my $imageDir = "images";       # dir for images
 my $verbcmd  = "myverb";       # set \myverb command
 my $margins  = "0";            # margins for pdfcrop
 my $DPI      = "150";          # dpi for image formats
@@ -267,10 +267,10 @@ END_LICENSE
 my $title = "$program $nv $copyright";
 my $usage = <<"END_OF_USAGE";
 ${title}** Description **
-   LTXimg is a "perl" script that automates the process of extracting and 
+   LTXimg is a "perl" script that automates the process of extracting and
    converting "environments" provided by tikz, pstricks and other packages
-   from LaTeX file to image formats in "individual files" using ghostscript 
-   and poppler-utils. Generates a one file with only extracted environments 
+   from LaTeX file to image formats in "individual files" using ghostscript
+   and poppler-utils. Generates a one file with only extracted environments
    and other with all extracted environments converted to \\includegraphics.
 
 ** Syntax **
@@ -281,11 +281,11 @@ ${title}** Description **
  \$ ltximg --arara [<options>] <file.tex>
  \$ ltximg [<options>] <file.tex>
  \$ ltximg <file.tex>
-   
+
    If used without [<compiler>] and [<options>] the extracted environments
    are converted to pdf image format and saved in the "/images" directory
-   using "pdflatex" and "preview" package. Relative or absolute paths for 
-   directories and files is not supported. If the last option take a list 
+   using "pdflatex" and "preview" package. Relative or absolute paths for
+   directories and files is not supported. If the last option take a list
    separated by commas, you need -- at the end.
 
 ** Default environments extract **
@@ -306,26 +306,26 @@ ${title}** Description **
 -g, --gray            Gray scale for images using ghostscript       [off]
 -f, --force           Capture "\\psset" and "\\tikzset" to extract    [off]
 -n, --noprew          Create images files whitout "preview" package [off]
--d <integer>, --dpi <integer>          
+-d <integer>, --dpi <integer>
                       Dots per inch resolution for images           [150]
--m <integer>, --margin <integer>       
+-m <integer>, --margin <integer>
                       Set margins for pdfcrop                       [0]
 --imgdir <dirname>    Set name of directory to save images          [images]
 --zip                 Compress files generated in .zip format       [off]
 --tar                 Compress files generated in .tar.gz format    [off]
--o <filename>, --output <filename>   
+-o <filename>, --output <filename>
                       Create output file                            [off]
 --verbose             Verbose printing                              [off]
 --srcenv              Create files whit only code environment       [off]
 --subenv              Create files whit preamble and code           [off]
---latex               Using latex>dvips>ps2pdf for compiler input 
+--latex               Using latex>dvips>ps2pdf for compiler input
                       and pdflatex for compiler output              [off]
---dvips               Using latex>dvips>ps2pdf for compiler input 
-                      and latex>dvips>ps2pdf for compiler output    [off] 
+--dvips               Using latex>dvips>ps2pdf for compiler input
+                      and latex>dvips>ps2pdf for compiler output    [off]
 --arara               Use arara for compiler input and output       [off]
 --xetex               Using xelatex for compiler input and output   [off]
 --dvipdf              Using dvipdfmx for compiler input and output  [off]
---luatex              Using lualatex for compiler input and output  [off] 
+--luatex              Using lualatex for compiler input and output  [off]
 --prefix <string>     Set prefix append to each image file          [off]
 --norun               Run script, but no create images files        [off]
 --nopdf               Don't create a ".pdf" image files             [off]
@@ -342,17 +342,17 @@ ${title}** Description **
 ** Example **
  \$ ltximg --latex -e -p --srcenv --imgdir=mypics -o test-out test-in.ltx
  \$ ltximg --latex -ep --srcenv --imgdir mypics -o test-out  test-in.ltx
- 
+
    Create a "/mypics" directory whit all extracted environments converted to
    image formats (.pdf, .eps, .png), individual files whit source code (.tex)
-   for all extracted environments, a file "test-out.ltx" whit all extracted 
-   environments converted to \\includegraphics and file "test-in-fig-all.tex" 
-   with only the extracted environments using latex>dvips>ps2pdf and preview 
+   for all extracted environments, a file "test-out.ltx" whit all extracted
+   environments converted to \\includegraphics and file "test-in-fig-all.tex"
+   with only the extracted environments using latex>dvips>ps2pdf and preview
    package for <input file> and pdflatex for <output file>.
 
 ** Documentation **
    For extended documentation use:
- \$ texdoc ltximg 
+ \$ texdoc ltximg
 END_OF_USAGE
 
 ### Error in command line
@@ -408,7 +408,7 @@ my $result=GetOptions (
     'debug!'         => \$debug,   # debug mode
     'verbose!'       => \$verbose, # debug mode,
     ) or die $usage;
-    
+
 ### Remove white space and '=' in array captured from command line
 s/^\s*(\=):?|\s*//mg foreach @extr_env_tmp;
 s/^\s*(\=):?|\s*//mg foreach @skip_env_tmp;
@@ -529,8 +529,8 @@ push (@verb_env_tmp, @verb_tmp);
 
 ### Default verbatim write environment
 my @verbw_tmp = qw (
-   filecontents tcboutputlisting tcbexternal tcbwritetmp extcolorbox extikzpicture
-   VerbatimOut verbatimwrite PSTexample filecontentsdef filecontentshere
+   scontents filecontents tcboutputlisting tcbexternal tcbwritetmp extcolorbox extikzpicture
+   VerbatimOut verbatimwrite PSTexample filecontentsdef filecontentshere filecontentsdefmacro
    );
 
 push (@verw_env_tmp, @verbw_tmp);
@@ -867,13 +867,14 @@ my $del    = $no_del;
 my $llaves      = qr/\{ .+? \}                                                          /x;
 my $no_llaves   = qr/(?: $llaves )?                                                     /x;
 my $corchetes   = qr/\[ .+? \]                                                          /x;
-my $nestedbr    = qr/(\{(?:[^\{\}]++|(?1))*\})                                          /x;
+my $nestedbr    = qr/(\{(?>[^\{\}\\]++|\\.|(?R))*+\})                                   /x;
 my $delimitador = qr/\{ (?<del>.+?) \}                                                  /x;
+my $scontents   = qr/Scontents [*]? $no_corchete                                        /ix;
 my $verb        = qr/(?:((spv|(?:q|f)?v|V)erb|$verbcmd)[*]?)                            /ix;
 my $lst         = qr/(?:(lst|pyg)inline)(?!\*) $no_corchete                             /ix;
 my $mint        = qr/(?: $mintline |SaveVerb) (?!\*) $no_corchete $no_llaves $llaves    /ix;
 my $no_mint     = qr/(?: $mintline) (?!\*) $no_corchete                                 /ix;
-my $marca       = qr/\\ (?:$verb | $lst | $mint |$no_mint) (?:\s*)? (\S) .+? \g{-1}     /x;
+my $marca       = qr/\\ (?:$verb | $lst |$scontents | $mint |$no_mint) (?:\s*)? (\S) .+? \g{-1}     /sx;
 my $comentario  = qr/^ \s* \%+ .+? $                                                    /mx;
 my $definedel   = qr/\\ (?: DefineShortVerb | lstMakeShortInline| MakeSpecialShortVerb ) [*]? $no_corchete $delimitador /ix;
 my $indefinedel = qr/\\ (?: (Undefine|Delete)ShortVerb | lstDeleteShortInline) $llaves  /ix;
@@ -907,10 +908,10 @@ while ($document =~
 ### Regex for verbatim inline whit braces {...}
 my $fvextra    = qr /\\ (?: (Save|Esc)Verb [*]?) $no_corchete                     /x;
 my $mintedbr   = qr /\\ (?:$mintline|pygment) (?!\*) $no_corchete $no_llaves      /x;
-my $tcbxverb   = qr /\\ (?: tcboxverb [*]?|$verbcmd [*]?|lstinline)  $no_corchete /x;
+my $tcbxverb   = qr /\\ (?: tcboxverb [*]?| Scontents [*]? |$verbcmd [*]?|lstinline) $no_corchete /x;
 my $verb_brace = qr /   (?:$tcbxverb|$mintedbr|$fvextra) (?:\s*)? $nestedbr      /x;
 
-### Changue \verb*{code} for verbatim inline 
+### Changue \verb*{code} for verbatim inline
 while ($document =~ /$verb_brace/pgmx) {
         my ($pos_inicial, $pos_final) = ($-[0], $+[0]);
         my  $encontrado = ${^MATCH};
@@ -948,7 +949,7 @@ my $delenv = join "|", map quotemeta, sort { length $a <=> length $b } @delt_env
 ### Split file by lines
 my @lineas = split /\n/, $document;
 
-### Hash and Regex for changues 
+### Hash and Regex for changues
 my %replace = (%change_verb_env,%changes_in,%document);
 my $find    = join "|", map {quotemeta} sort { length($a)<=>length($b) } keys %replace;
 
@@ -1144,7 +1145,7 @@ for (@lineas) {
 ### Join lines in $preamble
 $preamble = join("\n", @lineas);
 
-### Change back betwen \begin{preview} ... \end{preview} 
+### Change back betwen \begin{preview} ... \end{preview}
 @lineas = split /\n/, $bodydoc;
 
 for (@lineas) {
@@ -1223,7 +1224,7 @@ if (exists $opts_file{options}{output}){
     $output = $opts_file{options}{output};
 }
 
-### Validate output file name 
+### Validate output file name
 if (defined $output) {
 # Not contain - at begin
 if ($output =~ /(^\-|^\.).*?/) {
@@ -1237,7 +1238,7 @@ if ($output eq "$name$ext") { $output = "$name-out$ext"; }
 
 # Remove .ltx or .tex extension
 if ($output =~ /.*?$ext/) { $output =~ s/(.+?)$ext/$1/gms;}
-} # close  check 
+} # close  check
 
 ### If output name are ok, then $outfile = 1
 if (defined($output)) { $outfile = 1; }
@@ -1507,7 +1508,7 @@ my $format = join " ",grep { defined $format{$_} } keys %format;
 if ($run) {
 opendir(my $DIR, $tempDir);
 while (readdir $DIR) {
-### PDF/PNG/JPG/BMP/TIFF format suported by ghostscript 
+### PDF/PNG/JPG/BMP/TIFF format suported by ghostscript
 if (/(?<name>$name-$prefix(-exa)?)(?<type>-all\.pdf)/) {
 for my $var (qw(pdf png jpg bmp tif)) {
     if (defined $opts_cmd{$var}) {
@@ -1518,7 +1519,7 @@ for my $var (qw(pdf png jpg bmp tif)) {
     }# close for
 } # close if m/.../
 
-### EPS/PPM/SVG format suported by poppler-utils 
+### EPS/PPM/SVG format suported by poppler-utils
 if (/(?<name>$name-$prefix)(?<type>-all\.pdf)/) {
 for my $var (qw(eps ppm svg)) {
     if (defined $opts_cmd{$var}) {
@@ -1565,7 +1566,7 @@ say "Creating the file $output$ext, convert extracted environments to \\includeg
 ### Convert extracted environments to \includegraphics
 my $grap  =  "\\includegraphics[scale=1]{$name-$prefix-";
 my $close =  '}';
-my $imgNo =  1; 
+my $imgNo =  1;
 $bodydoc  =~ s/$BP.+?$EP/$grap@{[$imgNo++]}$close/msg; # changes
 
 ### Constant
@@ -1622,7 +1623,7 @@ $preamble =~ s/\%<\*ltximgverw> .+?\%<\/ltximgverw>(*SKIP)(*F)|
                \\SpecialCoor(?:[\t ]*(?:\r?\n|\r))+//gmsx;
 } # close clean{pst}
 
-### Delete empty package line \usepackage{} 
+### Delete empty package line \usepackage{}
 $preamble =~ s/^\\usepackage\{\}(?:[\t ]*(?:\r?\n|\r))+/\n/gmsx;
 
 ### Append graphicx to end of preamble
@@ -1779,7 +1780,7 @@ foreach my $tmpfile (@delfiles) { move("$tmpfile", "$tempDir"); }
 } # close clean tmp files
 
 ### Compress images dir whit generated files
-if ($zip or $tar) { 
+if ($zip or $tar) {
 my $stamp = strftime "%F", localtime;
 my $archivetar = "$imageDir-$stamp";
 
@@ -1790,24 +1791,24 @@ sub zip_tar{
     if (-f $filesto && $filesto =~ m/$name-$prefix-.+?$/) { # buscamos
         push @savetozt, $File::Find::name;
     }
-} 
-# Write compressed zip file 
-if ($zip) { 
+}
+# Write compressed zip file
+if ($zip) {
     say "Creating a file $workdir/$archivetar.zip";
-    zip \@savetozt => "$archivetar.zip"; 
+    zip \@savetozt => "$archivetar.zip";
     }
 
 # Write compressed tar.gz file
-if ($tar) { 
+if ($tar) {
     say "Creating a file $workdir/$archivetar.tar.gz";
     my $imgdirtar = Archive::Tar->new();
     $imgdirtar->add_files( @savetozt );
-    $imgdirtar->write( "$archivetar.tar.gz" , 9 );    
+    $imgdirtar->write( "$archivetar.tar.gz" , 9 );
     }
 } #close compress
 
 ### End of script process
-if ($run) { say "Finish, image formats: $format are in $workdir/$imageDir/"; } 
-     else { say "Done"; } 
+if ($run) { say "Finish, image formats: $format are in $workdir/$imageDir/"; }
+     else { say "Done"; }
 
 __END__
