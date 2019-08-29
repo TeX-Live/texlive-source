@@ -24,6 +24,7 @@ void process_score ()
     staffs[i] = 1; 
     active[i] = true;
     bar_rest[i] = false;
+    append (instrument_size[i], NULL, "\\normalvalue", SHORT_LEN);
   }
   spacing = MAX_SPACING;
   restbars = 0;
@@ -31,6 +32,7 @@ void process_score ()
   nstaffs = 1;                /* number of staffs                   */
   nastaffs = 1;               /* number of active staffs;           */
   old_spacing = MAX_SPACING;
+  oldspacing_staff = 0;
   Changeclefs = false; /* output \Changeclefs after \def\atnextbar */
   
   TransformNotes2[0] = '\0';      

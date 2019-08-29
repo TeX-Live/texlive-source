@@ -16,9 +16,12 @@ int ninstr;                 /* number of instruments              */
 int nstaffs;                /* number of staffs                   */
 int nastaffs;               /* number of active staffs;           */
 int old_spacing;
+int oldspacing_staff;
 bool Changeclefs;               /* output \Changeclefs after \def\atnextbar */
 char TransformNotes2[SHORT_LEN];      /* 2nd argument of \TransformNotes    */
 bool TransformNotesDefined;
+char instrument_size[MAX_STAFFS][SHORT_LEN];
+     /* instrument size as set by setsize or by default ("\\@one") */
 
 char line[LINE_LEN];            /* line of input                      */
 

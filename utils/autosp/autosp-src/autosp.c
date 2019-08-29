@@ -1,4 +1,4 @@
-char version[12] = "2019-01-08";
+char version[12] = "2019-08-26";
 
 /*  Copyright (C) 2014-19 R. D. Tennent School of Computing,
  *  Queen's University, rdt@cs.queensu.ca
@@ -108,7 +108,7 @@ int main (int argc, char *argv[])
   };
   
   printf ("This is autosp, version %s.\n", version);
-  printf ("Copyright (C) 2014-18  R. D. Tennent\n" );
+  printf ("Copyright (C) 2014-19  R. D. Tennent\n" );
   printf ("School of Computing, Queen's University, rdt@cs.queensu.ca\n" );
   printf ("License GNU GPL version 2 or later <http://gnu.org/licences/gpl.html>.\n" );
   printf ("There is NO WARRANTY, to the extent permitted by law.\n\n" );

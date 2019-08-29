@@ -1,5 +1,10 @@
 AUTOSP
 
+2019-08-26
+
+  scale notes when \setsize instrument has the spacing staff
+  allow for \startmuflex\startpiece...
+
 2019-01-08
 
   adjust cspacing for new beaming after first collective beam note

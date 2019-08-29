@@ -7,7 +7,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([autosp_version], [2019-01-08])[]dnl using unmodified autosp source
+m4_define([autosp_version], [2019-08-26])[]dnl using unmodified autosp source
 AC_INIT([autosp (TeX Live)], autosp_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([autosp-src/autosp.c])

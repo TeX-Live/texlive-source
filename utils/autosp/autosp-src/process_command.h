@@ -32,6 +32,8 @@ int beaming[MAX_STAFFS];        /* spacing for beamed notes           */
 int new_beaming;
 int semiauto_beam_notes[MAX_STAFFS]; /* semi-automatic beam notes     */
 
+int spacing_staff;              /* staff that determines current spacing  */
+
 /* save-restore state for a staff; used in process_xtuplet */
 int beamingi;  
 char *currenti;
@@ -54,6 +56,8 @@ int global_skip;
    /* = 6 for six commas                                                    */
 
 
+char s[SHORT_LEN];  /* string for ps()  */
+char *s_n;
 char *ps(int spacing);
 void note_segment (char *s);
 void status (int i);

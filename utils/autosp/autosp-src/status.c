@@ -2,10 +2,7 @@
 
 char *ps(int spacing)
 /* convert spacing value to note value(s)  */
-{ char *s = malloc(SHORT_LEN);
-  char *s_n;
-  if (s == NULL) error ("Not enough memory");
-  s_n = s; 
+{ s_n = s; 
   *s = '\0';
   if (spacing == MAX_SPACING) 
     sprintf(s, "MAX_SPACING");
@@ -57,6 +54,8 @@ status_spacing (void)
 {
   fprintf (logfile, "spacing=%s\n", ps(spacing));
   fprintf (logfile, "old_spacing=%s\n", ps(old_spacing));
+  fprintf (logfile, "spacing_staff=%d\n", spacing_staff);
+  fprintf (logfile, "oldspacing_staff=%d\n", oldspacing_staff);
 }
 
 void

@@ -30,7 +30,7 @@ int collective_note (int i)
     update_global_skip (n);
       /* commas will be discarded by filter_output (i) */
     if (*s == '.' && new_beaming == 0 && !dottedbeamnotes) 
-      spacing = (int)(spacing * 1.50); 
+      spacing = (int)(spacing * 1.50);
     else if ( (*s == '^' || *s == '_' || *s == '=' || *s == '>') 
               && !vspacing_active[i]  /* is additional spacing needed? */
             )

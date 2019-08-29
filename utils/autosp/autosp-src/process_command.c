@@ -212,13 +212,23 @@ output_rests (void)
 }
 
 void initialize_notes ()
-{ int i;
+{ int i;  int instrument = 0; int staff = 0;
   if (debug)
   { fprintf (logfile, "\nEntering initialize_notes\n");
     status_all ();
   }
   if ( nastaffs == 1 && spacing != MAX_SPACING && restbars > 0) 
     output_rests ();
+
+  fprintf (outfile, "\\scale");
+  do  /* determine instrument for spacing_staff */
+  {
+    instrument++; 
+    staff = staff + staffs[instrument];
+  }
+  while (staff < spacing_staff );  
+  fprintf (outfile, "%s\n", instrument_size[instrument]);
+  oldspacing_staff = spacing_staff;
 
   if (spacing == MAX_SPACING)
     fprintf (outfile, "\\znotes");
@@ -383,8 +393,9 @@ void generate_notes ()
 { int i;
   bool xtuplet_flag;
   while (true)
-  { old_spacing = spacing;
+  { old_spacing = spacing; 
     spacing = MAX_SPACING;
+    spacing_staff = 0;
     global_skip = 0;
     nonvirtual_notes = false;
     if (debug)
@@ -396,7 +407,12 @@ void generate_notes ()
       {
         spacings[i] = spacing_note (i);
         if (spacings[i] < spacing)
+        {
           spacing = spacings[i];
+          spacing_staff = i;
+        }
+        else if (spacings[i] == spacing && vspacing[spacing_staff] > 0) 
+          spacing_staff = i;
       }
     if (appoggiatura)
     {
@@ -410,8 +426,10 @@ void generate_notes ()
       process_xtuplet ();
       continue;
     }
-    if (spacing != old_spacing || spacing == MAX_SPACING)  
-    { if (old_spacing < MAX_SPACING) 
+    
+    if (spacing != old_spacing || spacing == MAX_SPACING || spacing_staff != oldspacing_staff)  
+    { 
+      if (old_spacing < MAX_SPACING) 
         terminate_notes ();
       if (spacing == MAX_SPACING || nonvirtual_notes == false) 
       {
@@ -483,16 +501,38 @@ void process_command (char **ln)
     while (*ln <= s) { putc (**ln, outfile); (*ln)++;}
   }
 
+  else if ( prefix("\\setsize", *ln) )
+  { int n; char *p;
+    s = strpbrk (*ln, "123456789");
+    if ( s == NULL ) error ("\\setsize command unreadable.");
+    n = (int)(*s) - (int)('0'); /* instrument number  */
+    s++;
+    if (*s == '}') s++;
+    if (*s == '{') s++;
+    t = strpbrk (s, " }\n");
+    if ( t == NULL ) error ("\\setsize command unreadable.");
+    instrument_size[n][0] = '\0';
+    p = instrument_size[n];
+    while (s < t) 
+    { *p = *s;
+       p++; s++;
+    }
+    *p = '\0';
+    if (debug)
+      fprintf (logfile, "instrument_size[%d] = %s\n", n, instrument_size[n]); 
+    while (*ln <= s) { putc (**ln, outfile); (*ln)++;}
+  }
+
   else if ( prefix("\\startpiece", *ln) )
   { 
     if (!TransformNotesDefined) /* create default TransformNotes2:  */
     { int i, j;
       t = TransformNotes2;
-      nstaffs = 1;
+      nstaffs = 1; 
       sprintf (t, "#%1i", nstaffs+1); t = t+2; 
       for (j=2; j <= staffs[1]; j++)
       {  nstaffs++; sprintf (t, "|#%1i", nstaffs+1); t = t+3; 
-         active[nstaffs] = true;
+         active[nstaffs] = true; 
       }
       for (i=2; i <= ninstr; i++) 
       { nstaffs++; sprintf (t, "&#%1i", nstaffs+1); t = t+3; 
@@ -956,12 +996,18 @@ void process_command (char **ln)
 
   else if ( prefix ("\\end ", *ln) 
          || prefix ("\\end%", *ln) 
+         || prefix ("\\end\n", *ln) 
          || prefix ("\\end{document}", *ln) )
   {
     fprintf (outfile, "%s", *ln);
     exit(0);
   }
 
+  else if ( prefix ("\\startmuflex", *ln) )
+  {
+    fputs ("\\startmuflex", outfile);
+    *ln = *ln + 12;
+  }
 
   else  /* everything else */
   { 
