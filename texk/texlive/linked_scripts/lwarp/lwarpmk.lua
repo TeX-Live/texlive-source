@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2019 Brian Dunn
 
-printversion = "v0.73"
+printversion = "v0.74"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -32,7 +32,8 @@ lwarpmk pdftohtml [-p project]:
 lwarpmk pdftosvg <list of file names>: Converts each PDF file to SVG.
 lwarpmk epstopdf <list of file names>: Converts each EPS file to PDF.
 lwarpmk clean [-p project]: Remove *.aux, *.toc, *.lof/t,
-    *.idx, *.ind, *.log, *_html_inc.*, .gl*
+    *.idx, *.ind, *.log, *_html_inc.*, .gl*,
+    *_html.pdf, *_html.html, *_html.sidetoc
 lwarpmk cleanall [-p project]: Remove auxiliary files, project.pdf, *.html
 lwarpmk cleanlimages: Removes all images from the "lateximages" directory.
 lwarpmk -h: Print this help message.
@@ -40,6 +41,23 @@ lwarpmk --help: Print this help message.
 
 ]] )
 -- printconf ()
+end
+
+function splitfilename ( pathandfilename )
+--
+-- Separates out the path and extension from a filename.
+-- Returns path, filename with extension, and extension.
+-- Ex: thispath, thisfilename, thisextension = splitfilename ("path/to/filename.ext")
+--
+-- https://www.fhug.org.uk/wiki/wiki/doku.php?id=plugins:code_snippets:
+--      split_filename_in_to_path_filename_and_extension
+--
+    if lfs.attributes(pathandfilename,"mode") == "directory" then
+        local strPath = pathandfilename:gsub("[\\/]$","") -- $ (syntax highlighting)
+        return strPath.."\\","",""
+    end
+    pathandfilename = pathandfilename.."."
+    return pathandfilename:match("^(.-)([^\\/]-)%.([^\\/%.]-)%.?$")
 end
 
 function splitfile (destfile,sourcefile)
@@ -358,6 +376,8 @@ function removeaux ()
 --
 -- Remove auxiliary files:
 -- All .aux files are removed since there may be many bbl*.aux files.
+-- Also removes sourcename_html.pdf, sourcename_html.html,
+-- and sourcename_html.sidetoc.
 --
 os.execute ( rmname .. " *.aux " ..
     sourcename ..".toc " .. sourcename .. "_html.toc " ..
@@ -368,6 +388,9 @@ os.execute ( rmname .. " *.aux " ..
     sourcename ..".ps " .. sourcename .."_html.ps " ..
     sourcename ..".log " .. sourcename .. "_html.log " ..
     sourcename ..".gl* " .. sourcename .. "_html.gl* " ..
+    sourcename .. "_html.pdf " ..
+    sourcename .. "_html.html " ..
+    sourcename .. "_html.sidetoc " ..
     " *_html_inc.* "
     )
 end
@@ -609,7 +632,7 @@ function convertepstopdf ()
 --
 -- Converts EPS files to PDF files.
 -- The filenames are arg[argindex] and up.
--- arg[1] is the command "pdftosvg".
+-- arg[1] is the command "epstopdf".
 --
 ignoreconf ()
 for i = argindex , #arg do
@@ -617,7 +640,16 @@ for i = argindex , #arg do
         print ("lwarpmk: File \"" .. arg[i] .. "\" does not exist.")
     else
         print ("lwarpmk: Converting \"" .. arg[i] .. "\"")
-        os.execute ( "epstopdf " .. arg[i] )
+        thispath, thisfilename, thisextension = splitfilename(arg[i])
+        if ( thispath == nil ) then
+            os.execute ( "epstopdf " .. arg[i] )
+        else
+            os.execute (
+                "epstopdf " ..
+                thispath .. thisfilename .. "." .. thisextension .. " " ..
+                thispath .. thisfilename .. ".pdf"
+            )
+        end
     end -- if
 end -- do
 end --function
@@ -634,7 +666,16 @@ for i = argindex , #arg do
         print ("lwarpmk: File \"" .. arg[i] .. "\" does not exist.")
     else
         print ("lwarpmk: Converting \"" .. arg[i] .. "\"")
-        os.execute ( "pdftocairo -svg " .. arg[i] )
+        thispath, thisfilename, thisextension = splitfilename(arg[i])
+        if ( thispath == nil ) then
+            os.execute ( "pdftocairo -svg " .. arg[i] )
+        else
+            os.execute (
+                "pdftocairo -svg " ..
+                thispath .. thisfilename .. "." .. thisextension .. " " ..
+                thispath .. thisfilename .. ".svg"
+            )
+        end
     end -- if
 end -- do
 end --function
