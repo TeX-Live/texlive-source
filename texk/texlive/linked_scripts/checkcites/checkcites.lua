@@ -485,7 +485,7 @@ print("|  _|   | -_|  _| '_|  _| |  _| -_|_ -|")
 print("|___|_|_|___|___|_,_|___|_|_| |___|___|")
 print()
   print(wrap('checkcites.lua -- a reference ' ..
-             'checker script (v2.1)', 74))
+             'checker script (v2.4)', 74))
   print(wrap('Copyright (c) 2012, 2019, ' ..
              'Enrico Gregorio, Paulo ' ..
              'Roberto Massa Cereda', 74))
@@ -670,8 +670,8 @@ local function checkcites(args)
   if keys['version'] or keys['help'] then
     if keys['version'] then
       print()
-      print(wrap('checkcites.lua, version 2.3 (dated September ' ..
-                 '1, 2019)', 74))
+      print(wrap('checkcites.lua, version 2.4 (dated September ' ..
+                 '3, 2019)', 74))
 
       print(pad('-', 74))
       print(wrap('You can find more details about this ' ..
