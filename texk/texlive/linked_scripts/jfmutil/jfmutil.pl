@@ -12,8 +12,8 @@ use strict;
 
 #------------------------------------------------- ZRTeXtor module
 package ZRTeXtor;
-our $VERSION = 1.005_00;
-our $mod_date = "2018/01/21";
+our $VERSION = 1.007_00;
+our $mod_date = "2019/09/02";
 use Encode qw(encode decode);
 
 # Here follows excerpt from ZRTeXtor.pm
@@ -255,15 +255,17 @@ sub x_captured_exec
 # Wrapper for 'tftopl' command.
 sub x_tftopl
 {
-  my ($tfm, $cmd) = @_; my ($ftmp, $ftfm, $cout, $cerr);
+  my ($tfm, $cmd) = @_; my ($ftmp, $ftfm, $fpl, $cout, $cerr);
   if (!defined $cmd) { $cmd = $cmd_name{tftopl}; }
   if ($tfm =~ m/\.tfm$/i && $tfm !~ /\0/) { $ftfm = $tfm; }
   else {
     $ftfm = $ftmp = get_temp_name() . ".tfm";
     (write_whole_file($ftmp, $tfm, 1)) or return;
   }
-  ($cout, $cerr) = x_captured_exec("$cmd $ftfm");
+  $fpl = get_temp_name() . ".pl";
+  ($cout, $cerr) = x_captured_exec("$cmd $ftfm $fpl");
   if (defined $ftmp) { unlink($ftmp); }
+  $cout = read_whole_file($fpl); unlink($fpl);
   if ($cout eq '' || $cout =~ /CHANGED!\)\s*$/) {
     return error("tftopl failed: $ftfm");
   }
@@ -480,6 +482,9 @@ sub pl_adjust_lit_paren
       else {
         if ($lin =~ m/\(/) { $lins[$_] =~ s/\(/X0028/g; $repl = 1; }
         if ($lin =~ m/\)/) { $lins[$_] =~ s/\)/X0029/g; $repl = 1; }
+        if ($lin =~ m/\bU [\dA-F]{4}/) {
+          $lins[$_] =~ s/\bU ([\dA-F]{4})/U$1/g; $repl = 1;
+        }
       }
     }
     if ($lin =~ m/^\(CHARSINTYPE /) { $mod = 1; }
@@ -1944,6 +1949,7 @@ sub vf_divide_zvp
   (defined $cspc) or $cspc = jfm_charlist('GL94DB');
   # Next I check consistency about existence of entries
   # (e.g. CIT 4 should exist iff TYPE 4 exists).
+  ($#cist >= 0 && $#cit < 0) and $#cit = 0;
   (defined $tydsc[0])
     or return error("no TYPE for type 0");
   (vf_check_match("TYPE", \@tydsc, "CIT", \@cit, 1, "type"))
@@ -2242,8 +2248,11 @@ sub vf_analyze_dimap
   # coderange consistency
   @fs = sort { $a <=> $b } (keys %$typ);
   foreach $cc (@fs) {
-    (defined $chdsc->{$cc}) or return error(
-      sprintf("charpacket missing in VF: code %04X", $cc));
+    (defined $chdsc->{$cc}) and next;
+    if ($vf_strict) {
+      return error(sprintf("charpacket missing in VF: code %04X", $cc));
+    }
+    delete $typ->{$cc};
   }
   #
   @ccs = sort { $a <=> $b } (keys %$chdsc);
@@ -2772,8 +2781,8 @@ package main;
 #================================================= BEGIN
 use Encode qw(encode decode);
 my $prog_name = 'jfmutil';
-my $version = '1.2.2';
-my $mod_date = '2019/02/09';
+my $version = '1.2.3';
+my $mod_date = '2019/09/02';
 #use Data::Dump 'dump';
 #
 my ($sw_hex, $sw_uptool, $sw_noencout, $inenc, $exenc, $sw_lenient);
