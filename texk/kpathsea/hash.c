@@ -1,6 +1,6 @@
 /* hash.c: hash table operations.
 
-   Copyright 1994-2000, 2002, 2005, 2008, 2012, 2016, 2017
+   Copyright 1994-2000, 2002, 2005, 2008, 2012, 2016, 2017-2019
    Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -63,7 +63,7 @@ hash_normalized (hash_table_type table,  const_string key)
 hash_table_type
 hash_create (unsigned size)
 {
-  /* The was "static ..." since Oct3, 1997 to work around a gcc
+  /* There was "static ..." since Oct3, 1997 to work around a gcc
      optimizer bug for Alpha. That particular optimization bug
      should be gone by now (Mar4, 2009).
   */

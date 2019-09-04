@@ -1,3 +1,7 @@
+2019-09-04  Akira Kakuto  <kakuto@w32tex.org>
+
+	* hash.c: Typo in a comment.
+
 2019-08-13  Karl Berry  <karl@freefriends.org>
 
 	* cnf.c (do_line): warn about a program name qualifier which is
