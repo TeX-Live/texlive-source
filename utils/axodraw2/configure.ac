@@ -7,7 +7,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([axohelp (TeX Live)], [1.1], [jcc8@psu.edu])
+AC_INIT([axohelp (TeX Live)], [1.3], [jcc8@psu.edu])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([axodraw2-src/axohelp.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

@@ -30,3 +30,8 @@
 	axodraw2 package [v. 2.1.1 2018/02/20]
 	axodraw2.sty [v. 2.1.1 2018/02/15]
 	axohelp [v. 1.2 2018/02/20]
+2019/07/30
+	axohelp: Exit code on error is 1, not -1 (unsigned is more OS-independent)
+	axohelp: Clean up CleanupOutput subroutine
+	axohelp: Fix bug in use of identification line
+	axohelp: Fix stack overflow bugs in subroutine DoOneObject

@@ -76,7 +76,7 @@ University Park, Pennsylvania 16802, USA} \\
 Science Park 105, 1098 XG Amsterdam, The Netherlands} \\
 \texttt{t68 at nikhef dot nl} \\
 \vspace{1.0cm}
-(15 February 2018)
+(2 September 2019)
 \end{center}
 \vspace{5mm}
 
@@ -397,22 +397,18 @@ more.
 At the moment that this document was updated (January 2018), axodraw2
 was part of both the main \TeX{} distributions, TeXLive and MiKTeX.
 The easiest way to install axodraw2 is therefore from the package
-manager of your \TeX{} distribution.  (There is one complication
-concerning the \program{axohelp} program --- see below.)
+manager of your \TeX{} distribution.
 
 You can also obtain axodraw2 from CTAN at
 \url{http://ctan.org/pkg/axodraw2}, and install it manually, following
 the instructions in Sec.\ \ref{sec:manual.install} below.
 
 \paragraph{\program{axohelp} in TeXLive}
-In TeXLive 2017, a binary executable for the \program{axohelp} was not
-provided, even though the rest of the axodraw2 package was provided.
-Thus you could use axodraw2 with the \program{latex} but not with
-\program{pdflatex} unless you compiled and installed the program
-\program{axohelp} yourself following the instructions below.  This is
-planned to be changed in TeXLive 2018, when \program{axohelp} should
-be provided as part of the distribution when the package axodraw2 is
-installed from the package manager.
+In TeXLive 2018 and later, a binary executable for the
+\program{axohelp} is provided, as part of the \program{axodraw2}
+package.  So \program{axohelp} is available provided that the
+\program{axodraw2} package is installed..
+
 
 \paragraph{\program{axohelp} in MiKTeX}
 The axodraw2 package including an executable \program{axohelp.exe} was
@@ -454,44 +450,49 @@ operations as an administrative user (e.g., root), possibly
 supplemented by running the relevant commands with the \program{sudo}
 program.
 
-But note that if you later install the axodraw2 package from the
-package manager of you \TeX{} distribution, it's a good idea to delete
-the files you installed manually.  Otherwise when you use axodraw2 in
-a document, then the wrong version of \file{axodraw2.sty} may get
-used.  This is a particularly important issue after possible future
-updates to axodraw2 get installed by the package manager.
+If you later install the axodraw2 package from the package manager of
+your \TeX{} distribution, it's a good idea to delete the files you
+installed manually.  Otherwise when you use axodraw2 in a document,
+then the wrong version of \file{axodraw2.sty} may get used.  This is a
+particularly important issue after possible future updates to axodraw2
+get installed by the package manager.
 
 %--
 \subsubsection{Helper program \program{axohelp}}
 \label{sec:axohelp}
 
-If you wish to use axodraw2 with \program{pdflatex}, \program{lualatex},
-or \program{xelatex}., then you need to install the \program{axohelp}
-program.
+If you wish to use axodraw2 with \program{pdflatex},
+\program{lualatex}, or \program{xelatex}, then you need to install the
+\program{axohelp} program.  \emph{(It is useful to reiterate here that
+  the standard distributions of \TeX{} currently supply the
+  \program{axohelp} program.  So the steps described here are only
+  necessary if for some reason you wish to do a manual installation.
+  One possible reason is to use a recent update of \program{axohelp},
+  since TeXLive normally only supplies updated versions of binary
+  executable files with the initial release of one of TeXLive's yearly
+  versions.)}
 
-On a Unix-like system (e.g., linux or OS-X), you first need to compile
-the program by a C compiler.  An appropriate shell command to do this
-is
+To install \program{axohelp} manually, you will first need to compile
+the program by a C compiler.  Under a Unix-like operating system
+(linux or macOS) an appropriate shell command is
 \begin{verbatim}
    cc -o axohelp -O3 axohelp.c -lm
 \end{verbatim}
 (Note that this is a C compiler, \emph{not} a C++ compiler.)  Most linux
 systems have the program \program{cc} already installed.  This also applies to
-OS-X at versions below 10.7.  But on OS-X version 10.7 and higher, you
+macOS(OS-X) at versions below 10.7.  But on macOS version 10.7 and higher, you
 will need to install a compiler, which can be done by installing XCode
 and the associated command-line utilities.  If you have the GNU
 compilers installed, you might need to use the command \program{gcc}
 instead of \program{cc}.
 
-For Microsoft Windows, if you do not have a C compiler available, you
-can use the Windows binary \file{axohelp.exe} we have provided.  It
-was compiled on Windows 10, and should work with at least that version
-of Windows.
+For Microsoft Windows, you will need to have installed a C compiler,
+and use it to compile \file{axohelp.c}.
 
-In any case once you have the executable (named \program{axohelp} on
-unix-like systems, or \program{axohelp.exe} on a Microsoft system), put
-it in a directory where it will be found when you run programs from
-the command line.
+Once you have the executable (named \program{axohelp} on Unix-like
+systems, or \program{axohelp.exe} on a Microsoft system), put it in a
+directory where it will be found when you run programs from the
+command line.
 
 
 %--

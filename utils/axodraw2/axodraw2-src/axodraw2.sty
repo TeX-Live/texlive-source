@@ -69,7 +69,7 @@
 %
 %		#] About folds : 
 %
-\ProvidesPackage{axodraw2}[2018/02/15 v2.1.1]
+\ProvidesPackage{axodraw2}[2018/10/10 v2.1.2]
 %
 %   axodraw.sty file, both for .tex -> .dvi -> .ps and for .tex -> .pdf
 %
@@ -3127,7 +3127,12 @@
         % Left on stack: dr = length of line
         3 index 3 index translate
         2 index sub exch 3 index sub
-        2 copy atan rotate
+%        2 copy atan rotate
+        2 copy
+        2 copy 0 ne exch 0 ne or
+        {atan rotate}
+        {pop pop}
+        ifelse
         dup mul exch dup mul add sqrt
         3 1 roll pop pop
     } def

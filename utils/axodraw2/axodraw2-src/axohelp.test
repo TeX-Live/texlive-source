@@ -6,6 +6,9 @@
 # This test is a rudimentary test of axohelp in a form suitable for
 # use in TeXLive builds.
 
+# Prevent errors from sed if it encounters non-UTF-8 strings in utf-8 locale
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
 if test -z "$test_srcdir"; then
   # If not set, then we are not running from `make check'.
   test_srcdir=`echo "$0" | sed -e 's,/[^\\/]*$,,'`  # == dirname $0
