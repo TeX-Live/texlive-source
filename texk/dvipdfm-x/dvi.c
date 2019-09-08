@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2018 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2019 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 2012-2015 by Khaled Hosny <khaledhosny@eglug.org>
@@ -921,8 +921,15 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
         WARN(">> Please check if kpathsea library can find this font: %s", mrec1->font_name);
       }
     } else if (mrec && !mrec->map_name) {
-      WARN(">> This font is mapped to a physical font \"%s\".", mrec->font_name);
-      WARN(">> Please check if kpathsea library can find this font: %s", mrec->font_name);
+      char *finaldot = strrchr(mrec->font_name, '.');
+      if (finaldot && strcasecmp(finaldot, ".pfa") == 0) {
+        /* type1 fonts with pfa format are not supported */
+        WARN("This font is mapped to a physical font \"%s\".", mrec->font_name);
+        ERROR("Sorry, pfa format not supported; please convert the font to pfb, e.g., with t1binary.");
+      } else {
+        WARN(">> This font is mapped to a physical font \"%s\".", mrec->font_name);
+        WARN(">> Please check if kpathsea library can find this font: %s", mrec->font_name);
+      }
     } else {
       WARN(">> There are no valid font mapping entry for this font.");
       WARN(">> Font file name \"%s\" was assumed but failed to locate that font.", tfm_name);
