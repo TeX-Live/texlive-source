@@ -7,7 +7,7 @@
 
 ########################################################################
 # bundledoc                                                            #
-# Copyright (C) 2018 Scott Pakin                                       #
+# Copyright (C) 2018-2019 Scott Pakin                                  #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -24,8 +24,8 @@
 # in the Files section of the associated README file.                  #
 ########################################################################
 
-use 5.006;             # Fail gracefully if we're not using Perl v5.6.0.
-our $VERSION = "3.3";  # Specify the version of bundledoc.
+use 5.006;             # Fail gracefully if we're not using Perl v5.6.0+.
+our $VERSION = "3.4";  # Specify the version of bundledoc.
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions qw(abs2rel catfile devnull rel2abs rootdir updir);
@@ -87,8 +87,7 @@ sub executecmd ($)
     my $retval;
 
     if ($verbose) {
-        print "EXECUTING: $command\n";
-        print "           (BDINPUTS = $ENV{BDINPUTS})\n";
+        print "EXECUTING $command WITH BDINPUTS = $ENV{BDINPUTS}\n";
     }
     if ($pathsep eq "\\") {
         # Dirty trick to work around idiotic "\" --> "/" conversion
@@ -100,12 +99,65 @@ sub executecmd ($)
     die "${progname}: $!.  Failing command was:\n\t$command\n" if $retval;
 }
 
+# Append ".dep" to the dependency file if necessary.
+sub find_dependency_file ($)
+{
+    my $depfile = $_[0];
+
+    # Return the file as is if it exists.
+    return $depfile if -e $depfile || $depfile =~ /\.dep$/;
+
+    # Return the file with ".dep" appended if that exists.
+    return "${depfile}.dep" if -e "${depfile}.dep";
+
+    # Give up and return the file as specified.
+    return $depfile;
+}
+
+# Try hard to find a configuration file.  Return the name of the actual file we
+# located.
+sub find_config_file ($)
+{
+    my $configfile = $_[0];
+    no warnings;   # Don't complain if kpsewhich isn't found.
+
+    # Attempt 1: See if the file exists as named.
+    return $configfile if -e $configfile;
+
+    # Attempt 2: Append ".cfg" if it's not already there.
+    my $config_cfg = $configfile;
+    if ($config_cfg !~ /\.cfg$/) {
+        $config_cfg = "${configfile}.cfg";
+        return $config_cfg if -e $config_cfg;
+    }
+
+    # Attempt 3: Use kpsewhich to find the file with ".cfg" appended.  (We
+    # don't search for it without ".cfg" because kpsewhich may find a version
+    # with ".tex" appended.)
+    my $kpfound = `kpsewhich $config_cfg`;
+    if (defined $kpfound) {
+        chomp $kpfound;
+        return $kpfound if -e $kpfound;
+    }
+
+    # Give up.  Return the file name as specified.
+    return $configfile;
+}
+
 # Read a configuration file, and set %uservariable accordingly.
 sub process_config_file ($)
 {
-    my $configfile = $_[0];
+    my $configfile = find_config_file $_[0];
+    printf("CONFIGURATION FILE: %s\n", rel2abs($configfile)) if $verbose;
     my $prevline = "";
-    open (CONFIGFILE, "<$configfile") || die "${progname}: $! ($configfile)\n";
+    open (CONFIGFILE, "<", $configfile) || do {
+	my $configlist = $configfile;
+	if (! -e $configfile) {
+	    # Error is "file not found".  List the files we considered.
+	    $configlist .= "; also considered ${configfile}.cfg" if $configfile !~ /\.cfg$/;
+	}
+	die "${progname}: $! ($configlist)\n";
+    };
     while (my $oneline=<CONFIGFILE>) {
         # Read a line and trim it.
         chomp $oneline;
@@ -222,7 +274,7 @@ sub find_dependencies ()
     my $numextras = 0;
     foreach my $include_glob (@include_files) {
         foreach my $include_file (glob $include_glob) {
-            push @dependencies, $include_file;
+            push @dependencies, qualifyname $include_file;
             $numextras++;
         }
     }
@@ -255,6 +307,7 @@ my $showhelp = "";
 $keepdirs = 0;
 $verbose = 0;
 $localonly = 0;
+my $configfile;
 Getopt::Long::Configure("bundling");
 GetOptions ('texfile=s' => \$texfile,
             'directory=s' => \$docdirname,
@@ -263,7 +316,7 @@ GetOptions ('texfile=s' => \$texfile,
             'localonly!' => \$localonly,
             'exclude=s' => \@exclude_files,
             'include=s' => \@include_files,
-            'config=s' => sub { process_config_file($_[1]) },
+            'config=s' => \$configfile,
             'v|verbose!' => \$verbose,
             'listdeps=s' => \@listdeps,
             'V|version' => sub { print "bundledoc $VERSION\n"; exit -1 },
@@ -276,7 +329,8 @@ pod2usage (-message => "(For more detailed help, enter \"$0 --help --verbose\".)
 pod2usage (-message => "${progname}: Too few arguments",
            -exitval => 1,
            -verbose => 0) if $#ARGV==-1;
-$depfile = shift;                # Dependencies from snapshot.sty
+$depfile = find_dependency_file shift;      # Dependencies from snapshot.sty
+process_config_file $configfile if defined $configfile;
 ($texfile = $depfile) =~ s/\.[^.]*$/.tex/ if !$texfile;   # Main LaTeX source file
 ($docdirname = basename($depfile)) =~ s/\.[^.]*$// if !$docdirname;     # Name to use for the document directory
 ($ENV{"BDBASE"} = rel2abs($depfile)) =~ s/\.[^.]*$//;   # May be needed by user-defined variables
@@ -370,7 +424,7 @@ bundledoc
 [B<--version>]
 [B<--help>]
 [B<-->[B<no>]B<verbose>]
-[B<--texfile>=I<file>]
+[B<--texfile>=I<file.tex>]
 [B<--directory>=I<directory>]
 [B<-->[B<no>]B<localonly>]
 [B<--exclude>=I<string>]
@@ -378,8 +432,8 @@ bundledoc
 [B<--manifest>=I<file>]
 [B<-->B<listdeps>=[yes|no|only|rel]...]
 [B<-->[B<no>]B<keepdirs>]
-[B<--config>=I<file>]
-I<.dep file>
+[B<--config>=I<file.cfg>]
+I<file.dep>
 
 
 =head1 DESCRIPTION
@@ -414,8 +468,9 @@ In the following descriptions, I<somefile> refers to the name of your
 main LaTeX document (no extension).
 
 B<bundledoc> requires the name of the dependency file produced by
-B<snapshot> (normally I<somefile>F<.dep>).  The following options may
-also be given:
+B<snapshot>, normally I<somefile>F<.dep>).  (For convenience, the file
+can be specified without its F<.dep> extension.)  The following
+options may also be given:
 
 =over 4
 
@@ -561,7 +616,8 @@ The C<--config> option is used to point B<bundledoc> to the
 appropriate configuration (F<.cfg>) file for your TeX distribution and
 operating system.  B<bundledoc> comes with a few configuration files
 and it's easy to write more.  See L<"CONFIGURATION FILES"> (below) for
-a description of the configuration file format.
+a description of the configuration file format.  For convenience, the
+file can be specified without its F<.cfg> extension.
 
 =back
 
@@ -654,8 +710,9 @@ distribution running on Microsoft Windows:
 
     bundledoc --config=miktex.cfg myfile.dep
 
-(In practice, it's probably necessary to specify to C<--config> the
-complete path to B<bundledoc>'s F<miktex.cfg> configuration file.)
+This can be abbreviated to
+
+    bundledoc --config=miktex myfile
 
 The following builds a F<.tar.gz> archive with the TeX Live
 distribution running on a Unix-like operating system.  B<bundledoc>
@@ -830,8 +887,11 @@ other common font formats, as well.
 
 Thanks to Fabien Vignes-Tourneret for suggesting what became the
 C<--localonly> option and for a discussion that led to the
-C<--exclude> and C<--include> options; and to Marius Kleiner for
-updating B<bundledoc> to properly handle document subdirectories.
+C<--exclude> and C<--include> options; to Marius Kleiner for updating
+B<bundledoc> to properly handle document subdirectories; and to Frank
+Mittelbach for suggesting using Kpathsea to help find F<.cfg> files
+and to automatically append F<.cfg> and F<.dep> extensions if
+necessary.
 
 
 =head1 SEE ALSO
