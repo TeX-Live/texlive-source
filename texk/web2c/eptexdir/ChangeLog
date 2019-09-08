@@ -1,3 +1,7 @@
+2019-09-08  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech: \readline correctly handles Japanese characters.
+
 2019-07-21  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* eptex.ech: More compatible with original e-TeX, because

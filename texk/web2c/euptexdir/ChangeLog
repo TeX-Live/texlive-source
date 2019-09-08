@@ -1,3 +1,7 @@
+2019-09-08  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* euptex.ch1: Adapt to changes in eptexdir/.
+
 2019-05-28  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* am/euptex.am: Add a new test.

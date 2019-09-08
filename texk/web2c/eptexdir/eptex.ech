@@ -26,8 +26,8 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-190709'
-@d epTeX_version_number==190709
+@d epTeX_version_string=='-190908'
+@d epTeX_version_number==190908
 @z
 
 @x e-pTeX: banner
@@ -627,6 +627,25 @@ othercases goto next_p
     mem[r+7]:=mem[p+7];
     mem[r+6]:=mem[p+6]; mem[r+5]:=mem[p+5]; {copy the last three words}
     add_glue_ref(space_ptr(r)); add_glue_ref(xspace_ptr(r));
+@z
+
+@x e-pTeX: \readline
+@ @<Handle \.{\\readline} and |goto done|@>=
+if j=1 then
+  begin while loc<=limit do {current line not yet finished}
+    begin cur_chr:=buffer[loc]; incr(loc);
+    if cur_chr=" " then cur_tok:=space_token
+    @+else cur_tok:=cur_chr+other_token;
+@y
+@ @<Handle \.{\\readline} and |goto done|@>=
+if j=1 then
+  begin while loc<=limit do {current line not yet finished}
+    begin cur_chr:=buffer[loc]; incr(loc);
+    if multistrlen(ustringcast(buffer), limit+1, loc-1)=2 then
+      begin cur_tok:=fromBUFF(ustringcast(buffer),  limit+1, loc-1); incr(loc);
+      end
+    else if cur_chr=" " then cur_tok:=space_token
+    @+else cur_tok:=cur_chr+other_token;
 @z
 
 @x e-pTeX: ifcsname l.28620
