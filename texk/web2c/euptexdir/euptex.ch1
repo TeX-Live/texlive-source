@@ -32,6 +32,34 @@ if font_dir[font(tx)]<>dir_default then cur_val:=KANJI(info(link(tx))) mod max_c
   uptex_version_code: cur_val:=upTeX_version;
 @z
 
+@x
+@ @<Handle \.{\\readline} and |goto done|@>=
+if j=1 then
+  begin while loc<=limit do {current line not yet finished}
+    begin cur_chr:=buffer[loc]; incr(loc);
+    if multistrlen(ustringcast(buffer), limit+1, loc-1)=2 then
+      begin cur_tok:=fromBUFF(ustringcast(buffer),  limit+1, loc-1); incr(loc);
+      end
+    else if cur_chr=" " then cur_tok:=space_token
+    @+else cur_tok:=cur_chr+other_token;
+@y
+@ @<Handle \.{\\readline} and |goto done|@>=
+if j=1 then
+  begin while loc<=limit do {current line not yet finished}
+    begin cur_chr:=fromBUFF(ustringcast(buffer), limit+1, loc);
+    cur_tok:=kcat_code(kcatcodekey(cur_chr));
+    if (multistrlen(ustringcast(buffer), limit+1,loc)>1)and
+         check_kcat_code(cur_tok) then
+      begin if (cur_tok=not_cjk) then cur_tok:=other_kchar;
+	  cur_tok:=cur_chr+cur_tok*max_cjk_val;
+	  loc:=loc+multistrlen(ustringcast(buffer), limit+1,loc);
+      end
+    else begin cur_chr:=buffer[loc]; incr(loc);
+      if cur_chr=" " then cur_tok:=space_token
+      else cur_tok:=cur_chr+other_token;
+    end;
+@z
+
 @x e-pTeX: ifcsname l.28620
     begin buffer[m]:=Hi(info(p)); incr(m);
     end;
