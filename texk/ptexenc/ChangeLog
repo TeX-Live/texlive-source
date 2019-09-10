@@ -1,3 +1,13 @@
+2019-09-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptexenc.c: Fix a bug that size of buf was insufficient, when
+	converting the file name from UTF-8 to the internal encoding.
+	This bug could cause "Abort trap: 6".
+	https://github.com/texjporg/tex-jp-build/issues/89
+	* ptexenc.c: Avoid to collapse some invalid UTF-8 sequences into
+	a "Japanese" character U+0027 (1-2-15 in JIS X 0213).
+	https://github.com/texjporg/tex-jp-build/pull/90
+
 2019-05-03  Karl Berry  <karl@tug.org>
 
 	* version.ac: 1.3.8/dev since TL'19 is released.
