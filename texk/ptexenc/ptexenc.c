@@ -673,7 +673,7 @@ static void get_utf8(int i, FILE *fp)
         break;
     }
 
-    j = toBUFF(fromUCS(u));
+    j = (u != 0) ? toBUFF(fromUCS(u)) : 0;
     if (j == 0) { /* can't represent (typically umlaut o in EUC) */
         write_hex(i);
         if (i2 != EOF) write_hex(i2);
@@ -924,12 +924,12 @@ int nkf_close(FILE *fp) {
     return fclose(fp);
 }
 
-
+#define break_if_bad_utf8_second(k) if ((k<0x80)||(k>0xBF)) { i--; k='\0'; break; }
 unsigned char *ptenc_from_utf8_string_to_internal_enc(const unsigned char *is)
 {
     int i;
     long u = 0, j, len;
-    int i1 = EOF, i2 = EOF, i3 = EOF, i4 = EOF;
+    int i1, i2, i3, i4;
     unsigned char *buf, *buf_bak;
     long first_bak, last_bak;
 
@@ -943,28 +943,28 @@ unsigned char *ptenc_from_utf8_string_to_internal_enc(const unsigned char *is)
     first = last = 0;
 
     for (i=0; i<strlen(is); i++) {
-        i1 = is[i];
+        i1 = is[i]; i2 = i3 = i4 = '\0';
         switch (UTF8length(i1)) {
         case 1:
             buffer[last++] = i1; /* ASCII */
             if (i1 == '\0') goto end;
             continue;
         case 2:
-            i2 = is[++i]; if (i2 == '\0') break;
+            i2 = is[++i]; break_if_bad_utf8_second(i2);
             u = UTF8BtoUCS(i1, i2);
             break;
         case 3:
-            i2 = is[++i]; if (i2 == '\0') break;
-            i3 = is[++i]; if (i3 == '\0') break;
+            i2 = is[++i]; break_if_bad_utf8_second(i2);
+            i3 = is[++i]; break_if_bad_utf8_second(i3);
             u = UTF8CtoUCS(i1, i2, i3);
             if (u == U_BOM) continue; /* just ignore */
             if (u == U_VOICED      && combin_voiced_sound(false)) continue;
             if (u == U_SEMI_VOICED && combin_voiced_sound(true))  continue;
             break;
         case 4:
-            i2 = is[++i]; if (i2 == '\0') break;
-            i3 = is[++i]; if (i3 == '\0') break;
-            i4 = is[++i]; if (i4 == '\0') break;
+            i2 = is[++i]; break_if_bad_utf8_second(i2);
+            i3 = is[++i]; break_if_bad_utf8_second(i3);
+            i4 = is[++i]; break_if_bad_utf8_second(i4);
             u = UTF8DtoUCS(i1, i2, i3, i4);
             break;
         default:
@@ -972,9 +972,9 @@ unsigned char *ptenc_from_utf8_string_to_internal_enc(const unsigned char *is)
             break;
         }
 
-        j = toBUFF(fromUCS(u));
+        j = (u != 0) ? toBUFF(fromUCS(u)) : 0;
         if (j == 0) { /* can't represent in EUC/SJIS */
-            if (last+4>=len) buffer = xrealloc(buffer, len=last+64);
+            if (last+16>=len) buffer = buf = xrealloc(buffer, len=last+64);
             write_hex(i1);
             if (i2 != '\0') write_hex(i2);
             if (i3 != '\0') write_hex(i3);
@@ -982,7 +982,6 @@ unsigned char *ptenc_from_utf8_string_to_internal_enc(const unsigned char *is)
         } else {
             write_multibyte(j);
         }
-        i2 = i3 = i4 = '\0';
     }
     buffer[last] = '\0';
  end:
