@@ -94,7 +94,7 @@ use Getopt::Long;
 use Pod::Usage qw(pod2usage);
 use vars qw/$VERSION/;
 
-BEGIN { $VERSION = '1.2' }
+BEGIN { $VERSION = '1.3' }
 
 my $linetext = "";
 my $changetext = "{}";
@@ -110,27 +110,6 @@ OPTS: {
         'line|L=s' => \$linetext,
         'change|C=s' => \$changetext
     );
-
-
-#pod
-    while ( my ($option, $value, $pretty) = Getopt::Mixed::nextOption() ) {
-        $linetext = $value if $option eq 'L';
-        if( $option eq 'V' ) {
-            print "$VERSION\n";
-            exit;
-        }
-        if ($option eq '?') {
-            pod2usage( -verbose => 99, -sections => [ qw(SYNOPSIS OPTIONS BUGS) ]);
-            exit;
-        }
-        if ($option eq 'man') {
-            pod2usage( -verbose => 2 );
-            exit;
-        }
-        $linetext = $value if $option eq 'L';
-        $changetext = $value if $option eq 'C';
-    }
-#cut
 
     pod2usage( -message => "[ERROR]: Invalid number of arguments." )
         if scalar(@ARGV) != 2;
