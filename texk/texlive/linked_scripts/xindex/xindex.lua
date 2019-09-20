@@ -8,7 +8,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.13
+ local version = 0.14
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -159,10 +159,12 @@ writeLog(2," ... done\n",0)
 local esc_char = args.escapechar
 writeLog(2,"Escapechar = "..esc_char.."\n",1)
 escape_chars = { -- by default " is the escape char
-  {esc_char..'"', '//escapedquote//', '\\"{}' },
-  {esc_char..'@', '//escapedat//',    '@'    },
-  {esc_char..'|', '//escapedvert//',  "|"    },
-  {esc_char..'!', '//scapedexcl//',  '!'    }
+  {esc_char..'"', '//escapedquote//',     '\\"{}' },
+  {esc_char..'@', '//escapedat//',        '@'    },
+  {esc_char..'|', '//escapedvert//',      '|'    },
+  {esc_char..'!', '//scapedexcl//',       '!'    },
+  {esc_char..'(', '//escapedparenleft//', '('    },
+  {esc_char..')', '//escapedparenright//',')'    }
 }
 
 language = string.lower(args["language"])

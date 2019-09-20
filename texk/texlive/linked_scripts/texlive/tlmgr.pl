@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 52045 2019-09-07 05:32:39Z preining $
+# $Id: tlmgr.pl 52123 2019-09-19 18:18:41Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 52045 $';
-my $datrev = '$Date: 2019-09-07 07:32:39 +0200 (Sat, 07 Sep 2019) $';
+my $svnrev = '$Revision: 52123 $';
+my $datrev = '$Date: 2019-09-19 20:18:41 +0200 (Thu, 19 Sep 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -6948,14 +6948,14 @@ sub setup_one_remotetlpdb {
         = TeXLive::TLCrypto::verify_checksum($loc_copy_of_remote_tlpdb, $path);
       if ($ret == $VS_CONNECTION_ERROR) {
         info(<<END_NO_INTERNET);
-No connection to the internet.
 Unable to download the checksum of the remote TeX Live database,
-but found a local copy so using that.
+but found a local copy, so using that.
 
-You may want to try specifying an explicit or different CTAN mirror;
+You may want to try specifying an explicit or different CTAN mirror,
+or maybe you need to specify proxy information if you're behind a firewall;
 see the information and examples for the -repository option at
 https://tug.org/texlive/doc/install-tl.html
-(or in the output of install-tl --help).
+(and in the output of install-tl --help).
 
 END_NO_INTERNET
         # above text duplicated in install-tl
@@ -9908,7 +9908,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 52045 2019-09-07 05:32:39Z preining $
+$Id: tlmgr.pl 52123 2019-09-19 18:18:41Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
