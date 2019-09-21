@@ -27,7 +27,7 @@ Available options:
   ]])
   os.exit(1)
 elseif arg[1]=="--version" or arg[1]=="-v" then
-  print "ctanbib version v0.1c"
+  print "ctanbib version 0.1d"
   os.exit(1)
 elseif arg[1]=="--ctan" or arg[1]=="-c" then
   table.remove(arg, 1)
@@ -35,7 +35,8 @@ elseif arg[1]=="--ctan" or arg[1]=="-c" then
 end
 
 local pkgname = arg[1]
-local url = "https://www.ctan.org/xml/pkg/" .. pkgname
+local url = "https://www.ctan.org/xml/2.0/pkg/" .. pkgname .. "?author-name=true"
+local authors_url = "https://ctan.org/xml/2.0/authors"
 
 -- change that for different title scheme
 local titleformat = "The %s package"
@@ -76,18 +77,52 @@ local bibtex_escape = function(a)
   end)
 end
 
+-- we need to use this method temporarily because of a bug in
+-- CTAN API
+local author_list
+local fetch_author_list = function()
+  if author_list then return author_list end
+  local authors = load_xml(authors_url)
+  author_list = {}
+  for _, author in ipairs(authors:query_selector("author")) do
+    -- save all authors under they ID 
+    local id = author:get_attribute("id")
+    author_list[id] = author
+  end
+  return author_list
+end
+
+local process_author = function(author)
+  local current = {}
+  current[#current+1] = author:get_attribute("familyname")
+  current[#current+1] = author:get_attribute("givenname")
+  -- the author is an organization
+  if #current == 1 then
+    return "{" .. current[1] .. "}"
+  elseif #current > 1 then
+    return table.concat(current, ", ")
+  end
+  return nil -- no author
+end
+
+-- get the author name and surname
+local get_author = function(author)
+  local name = process_author(author)
+  if name then return name end
+  -- if the package XML doesn't contain author name,
+  -- we need to fetch the authors list from CTAN and find
+  -- it here
+  local author_list =  fetch_author_list()
+  local id = author:get_attribute("id")
+  -- try to find the author id in list of authors
+  -- if everything fails, just return an empty group
+  return process_author(author_list[id]) or "{}"
+end
+
 local get_authors = function(a)
   local retrieved_authors = {}
   for _, author in ipairs(a) do
-    local current = {}
-    current[#current+1] = author:get_attribute("familyname")
-    current[#current+1] = author:get_attribute("givenname")
-    -- the author is an organization
-    if #current == 1 then
-      table.insert(retrieved_authors, "{" .. current[1] .. "}")
-    else
-      table.insert(retrieved_authors, table.concat(current, ", "))
-    end
+    table.insert(retrieved_authors, get_author(author))
   end
   return table.concat(retrieved_authors," and ")
 end
