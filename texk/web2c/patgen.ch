@@ -72,19 +72,26 @@ begin
 @!text_char=ASCII_code; {the data type of characters in text files}
 @z
 
-% Maximum constant values from Keno Wehr, 17 May 2019 16:03:00,
-% and then reduced due to failures on other machines, latest from
-% Johannes Hielscher, 10 Jul 2019 00:00:03. If the values here are still
-% too big, you can probably get it to work by adding swap or zram; or
-% write a patch to allocate the arrays dynamically.
+% Much larger values requested from Keno Wehr, 17 May 2019 16:03:00,
+% but reduced (76000000/38000000) due to lack of memory on other
+% machines, from Johannes Hielscher, 10 Jul 2019 00:00:03 (tex-live list),
+% and later from Mojca Miklavec, 23 Sep 2019 21:21:42.
+% It seems hopeless, so went back to the original values (10000000/500000).
+% 
+% The real solution is to provide a way to allocate the arrays
+% dynamically, so that the large arrays can be used by those who need
+% them but other are not affected.
+% 
+% If the values here are still too big, you can probably get it to work
+% by adding swap or zram; or write a patch to allocate the arrays dynamically.
 @x
 @!trie_size=55000; {space for pattern trie}
 @!triec_size=26000; {space for pattern count trie, must be less than
  |trie_size| and greater than the number of occurrences of any pattern in
  the dictionary}
 @y
-@!trie_size =76000000; {max space for pattern trie}
-@!triec_size=38000000; {max space for pattern count trie, must be less than
+@!trie_size=10000000; {space for pattern trie}
+@!triec_size=5000000; {space for pattern count trie, must be less than
  |trie_size| and greater than the number of occurrences of any pattern in
  the dictionary}
 @z
