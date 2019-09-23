@@ -15,7 +15,7 @@
 #
 # This is a generated file.
 #
-# Copyright (C) 2010 Scott Pakin <scott+pt@pakin.org>
+# Copyright (C) 2003-2019 Scott Pakin <scott+pt@pakin.org>
 #
 # This file may be distributed and/or modified under the conditions
 # of the LaTeX Project Public License, either version 1.3c of this
