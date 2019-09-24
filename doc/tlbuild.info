@@ -1,4 +1,4 @@
-This is tlbuild.info, produced by makeinfo version 6.6 from
+This is tlbuild.info, produced by makeinfo version 6.7 from
 tlbuild.texi.
 
 This file documents the TeX Live build system and more.
@@ -747,11 +747,11 @@ many extra hassles, so don't do that, tempting as it may be.
 
      autoconf (GNU Autoconf) 2.69
      automake (GNU automake) 1.16.1
-     bison (GNU Bison) 3.3.1
+     bison (GNU Bison) 3.4.2
      flex 2.6.0
      ltmain.sh (GNU libtool) 2.4.6
      m4 (GNU M4) 1.4.18
-     makeinfo (GNU texinfo) 6.6
+     makeinfo (GNU texinfo) 6.7
 
    These versions should be used to update the generated files (e.g.,
 'configure' or 'Makefile.in') in all or parts of the TL tree after their
@@ -5978,3 +5978,8 @@ Node: tlmgr AUTHORS AND COPYRIGHT191228
 Node: Index191627
 
 End Tag Table
+
+
+Local Variables:
+coding: utf-8
+End:
