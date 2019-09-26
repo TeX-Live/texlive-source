@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2019-09-18"
+release_date = "2019-09-25"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -174,7 +174,7 @@ if options["target"] == "check" then
 end
 if #checkconfigs == 1 and
    checkconfigs[1] ~= "build" and
-   (options["target"] == "check" or options["target"] == "save") then
+   (options["target"] == "check" or options["target"] == "save" or options["target"] == "clean") then
    local config = "./" .. gsub(checkconfigs[1],".lua$","") .. ".lua"
    if fileexists(config) then
      dofile(config)
