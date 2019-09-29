@@ -4,7 +4,7 @@ pdftotext(1)                General Commands Manual               pdftotext(1)
 
 NAME
        pdftotext  -  Portable Document Format (PDF) to text converter (version
-       4.01)
+       4.02)
 
 SYNOPSIS
        pdftotext [options] [PDF-file [text-file]]
@@ -102,6 +102,26 @@ OPTIONS
        -bom   Insert a Unicode byte order marker (BOM) at  the  start  of  the
               text output.
 
+       -marginl number
+              Specifies  the  left margin, in points.  Text in the left margin
+              (i.e., within that many points of the left edge of the page)  is
+              discarded.  The default value is zero.
+
+       -marginr number
+              Specifies the right margin, in points.  Text in the right margin
+              (i.e., within that many points of the right edge of the page) is
+              discarded.  The default value is zero.
+
+       -margint number
+              Specifies  the  top  margin,  in points.  Text in the top margin
+              (i.e., within that many points of the top edge of the  page)  is
+              discarded.  The default value is zero.
+
+       -marginb number
+              Specifies the bottom margin, in points.  Text in the bottom mar-
+              gin (i.e., within that many points of the  bottom  edge  of  the
+              page) is discarded.  The default value is zero.
+
        -opw password
               Specify  the  owner  password  for the PDF file.  Providing this
               will bypass all security restrictions.
@@ -148,4 +168,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                     pdftotext(1)
+                                  25 Sep 2019                     pdftotext(1)

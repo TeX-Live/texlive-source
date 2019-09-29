@@ -1,8 +1,8 @@
 .\" Copyright 1997-2019 Glyph & Cog, LLC
-.TH pdftotext 1 "18 Feb 2019"
+.TH pdftotext 1 "25 Sep 2019"
 .SH NAME
 pdftotext \- Portable Document Format (PDF) to text converter
-(version 4.01)
+(version 4.02)
 .SH SYNOPSIS
 .B pdftotext
 [options]
@@ -124,6 +124,26 @@ Don't insert page breaks (form feed characters) between pages.
 .B \-bom
 Insert a Unicode byte order marker (BOM) at the start of the text
 output.
+.TP
+.BI \-marginl " number"
+Specifies the left margin, in points.  Text in the left margin (i.e.,
+within that many points of the left edge of the page) is discarded.
+The default value is zero.
+.TP
+.BI \-marginr " number"
+Specifies the right margin, in points.  Text in the right margin
+(i.e., within that many points of the right edge of the page) is
+discarded.  The default value is zero.
+.TP
+.BI \-margint " number"
+Specifies the top margin, in points.  Text in the top margin (i.e.,
+within that many points of the top edge of the page) is discarded.
+The default value is zero.
+.TP
+.BI \-marginb " number"
+Specifies the bottom margin, in points.  Text in the bottom margin
+(i.e., within that many points of the bottom edge of the page) is
+discarded.  The default value is zero.
 .TP
 .BI \-opw " password"
 Specify the owner password for the PDF file.  Providing this will

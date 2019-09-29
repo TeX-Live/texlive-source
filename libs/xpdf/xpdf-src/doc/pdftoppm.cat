@@ -4,7 +4,7 @@ pdftoppm(1)                 General Commands Manual                pdftoppm(1)
 
 NAME
        pdftoppm - Portable Document Format (PDF) to Portable Pixmap (PPM) con-
-       verter (version 4.01)
+       verter (version 4.02)
 
 SYNOPSIS
        pdftoppm [options] PDF-file PPM-root
@@ -96,4 +96,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                      pdftoppm(1)
+                                  25 Sep 2019                      pdftoppm(1)

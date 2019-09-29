@@ -63,11 +63,11 @@ private:
 		GBool inPageSet, XFATableInfo *tableInfo,
 		GHash *nameCount, GHash *nameIdx,
 		GHash *fullNameCount, GHash *fullNameIdx,
-		Catalog *catalog);
+		GString *exclGroupName, Catalog *catalog);
   void scanNames(ZxElement *elem, GHash *nameCount);
   void scanFullNames(ZxElement *elem, GHash *fullNameCount);
   void scanField(ZxElement *elem, GString *name, GString *fullName,
-		 GBool inPageSet,
+		 GString *exclGroupName, GBool inPageSet,
 		 XFATableInfo *tableInfo, int colSpan,
 		 Catalog *catalog);
   void scanNonField(ZxElement *elem, GString *name, GString *fullName,
@@ -102,7 +102,7 @@ class XFAFormField: public FormField {
 public:
 
   XFAFormField(XFAForm *xfaFormA, ZxElement *xmlA,
-	       GString *nameA, GString *fullNameA,
+	       GString *nameA, GString *fullNameA, GString *exclGroupNameA,
 	       int pageNumA, double xOffsetA, double yOffsetA,
 	       double columnWidthA, double rowHeightA);
 
@@ -166,6 +166,7 @@ private:
   ZxElement *xml;
   GString *name;
   GString *fullName;
+  GString *exclGroupName;
   int pageNum;
   double xOffset, yOffset;
   double columnWidth;		// column width, if this field is in a

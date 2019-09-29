@@ -4,7 +4,7 @@ pdftohtml(1)                General Commands Manual               pdftohtml(1)
 
 NAME
        pdftohtml  -  Portable Document Format (PDF) to HTML converter (version
-       4.01)
+       4.02)
 
 SYNOPSIS
        pdftohtml [options] PDF-file HTML-dir
@@ -107,4 +107,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                     pdftohtml(1)
+                                  25 Sep 2019                     pdftohtml(1)

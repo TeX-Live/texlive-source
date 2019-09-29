@@ -44,7 +44,7 @@ public:
   // upside-down, i.e., with the last row first in memory.
   SplashBitmap(int widthA, int heightA, int rowPad,
 	       SplashColorMode modeA, GBool alphaA,
-	       GBool topDown = gTrue);
+	       GBool topDown, SplashBitmap *parentA);
 
   ~SplashBitmap();
 
@@ -78,6 +78,14 @@ private:
   SplashColorPtr data;		// pointer to row zero of the color data
   Guchar *alpha;		// pointer to row zero of the alpha data
 				//   (always top-down)
+
+  // save the last-allocated (large) bitmap data and reuse if possible
+  SplashBitmap *parent;
+  SplashColorPtr oldData;
+  Guchar *oldAlpha;
+  SplashBitmapRowSize oldRowSize;
+  size_t oldAlphaRowSize;
+  int oldHeight;
 
   friend class Splash;
 };

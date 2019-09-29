@@ -14,6 +14,8 @@
 #include <aconf.h>
 
 #ifdef _WIN32
+#  undef WIN32_LEAN_AND_MEAN
+#  include <windows.h>
 #  include <time.h>
 #  include <direct.h>
 #else
@@ -613,7 +615,7 @@ FILE *openFile(const char *path, const char *mode) {
       }
     }
     wPath[i] = (wchar_t)0;
-    for (i = 0; mode[i] && i < sizeof(wMode) - 1; ++i) {
+    for (i = 0; mode[i] && i < sizeof(wMode)/sizeof(wchar_t) - 1; ++i) {
       wMode[i] = (wchar_t)(mode[i] & 0xff);
     }
     wMode[i] = (wchar_t)0;

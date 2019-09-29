@@ -838,6 +838,9 @@ void JBIG2Bitmap::combine(JBIG2Bitmap *bitmap, int x, int y,
   } else {
     y0 = 0;
   }
+  if (y > INT_MAX - bitmap->h) {
+    return;
+  }
   if (y + bitmap->h > h) {
     y1 = h - y;
   } else {
@@ -1202,10 +1205,13 @@ Stream *JBIG2Stream::copy() {
 }
 
 void JBIG2Stream::reset() {
-  // read the globals stream
+  GList *t;
+
+  segments = new GList();
   globalSegments = new GList();
+
+  // read the globals stream
   if (globalsStream.isStream()) {
-    segments = globalSegments;
     curStr = globalsStream.getStream();
     curStr->reset();
     arithDecoder->setStream(curStr);
@@ -1213,10 +1219,13 @@ void JBIG2Stream::reset() {
     mmrDecoder->setStream(curStr);
     readSegments();
     curStr->close();
+    // swap the newly read segments list into globalSegments
+    t = segments;
+    segments = globalSegments;
+    globalSegments = t;
   }
 
   // read the main stream
-  segments = new GList();
   curStr = str;
   curStr->reset();
   arithDecoder->setStream(curStr);
@@ -1280,7 +1289,8 @@ int JBIG2Stream::getBlock(char *blk, int size) {
   return n;
 }
 
-GString *JBIG2Stream::getPSFilter(int psLevel, const char *indent) {
+GString *JBIG2Stream::getPSFilter(int psLevel, const char *indent,
+				  GBool okToReadStream) {
   return NULL;
 }
 
@@ -1506,7 +1516,7 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
   Guint symHeight, symWidth, totalWidth, x, symID;
   int dh, dw, refAggNum, refDX, refDY, bmSize;
   GBool ex;
-  int run, cnt;
+  int run, prevRun, cnt;
   Guint i, j, k;
 
   symWidths = NULL;
@@ -1853,11 +1863,20 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
   // exported symbol list
   i = j = 0;
   ex = gFalse;
+  prevRun = 1;
   while (i < numInputSyms + numNewSyms) {
     if (huff) {
       huffDecoder->decodeInt(&run, huffTableA);
     } else {
       arithDecoder->decodeInt(&run, iaexStats);
+    }
+    if (run == 0 && prevRun == 0) {
+      // this avoids infinite loops with damaged files (consecutive
+      // zero runs are never useful)
+      error(errSyntaxError, getPos(),
+	    "Invalid exported symbol list in JBIG2 symbol dictionary");
+      delete symbolDict;
+      goto syntaxError;
     }
     if (i + run > numInputSyms + numNewSyms ||
 	(ex && j + run > numExSyms)) {
@@ -1874,6 +1893,7 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
       i += run;
     }
     ex = !ex;
+    prevRun = run;
   }
   if (j != numExSyms) {
     error(errSyntaxError, getPos(), "Too few symbols in JBIG2 symbol dictionary");
@@ -2143,18 +2163,23 @@ void JBIG2Stream::readTextRegionSeg(Guint segNum, GBool imm,
       runLengthTab[i].val = i;
       runLengthTab[i].prefixLen = huffDecoder->readBits(4);
       runLengthTab[i].rangeLen = 0;
+      runLengthTab[i].prefix = 0;
     }
     runLengthTab[32].val = 0x103;
     runLengthTab[32].prefixLen = huffDecoder->readBits(4);
     runLengthTab[32].rangeLen = 2;
+    runLengthTab[32].prefix = 0;
     runLengthTab[33].val = 0x203;
     runLengthTab[33].prefixLen = huffDecoder->readBits(4);
     runLengthTab[33].rangeLen = 3;
+    runLengthTab[33].prefix = 0;
     runLengthTab[34].val = 0x20b;
     runLengthTab[34].prefixLen = huffDecoder->readBits(4);
     runLengthTab[34].rangeLen = 7;
+    runLengthTab[34].prefix = 0;
     runLengthTab[35].prefixLen = 0;
     runLengthTab[35].rangeLen = jbig2HuffmanEOT;
+    runLengthTab[35].prefix = 0;
     huffDecoder->buildTable(runLengthTab, 35);
     symCodeTab = (JBIG2HuffmanTable *)gmallocn(numSyms + 1,
 					       sizeof(JBIG2HuffmanTable));
@@ -2170,6 +2195,12 @@ void JBIG2Stream::readTextRegionSeg(Guint segNum, GBool imm,
 	  symCodeTab[i++].prefixLen = 0;
 	}
       } else if (j > 0x100) {
+	if (i == 0) {
+	  error(errSyntaxError, getPos(), "Invalid code in JBIG2 text region");
+	  gfree(syms);
+	  gfree(symCodeTab);
+	  return;
+	}
 	for (j -= 0x100; j && i < numSyms; --j) {
 	  symCodeTab[i].prefixLen = symCodeTab[i-1].prefixLen;
 	  ++i;
@@ -2226,8 +2257,8 @@ void JBIG2Stream::readTextRegionSeg(Guint segNum, GBool imm,
 
  codeTableError:
   error(errSyntaxError, getPos(), "Missing code table in JBIG2 text region");
-  gfree(codeTables);
-  delete syms;
+  delete codeTables;
+  gfree(syms);
   return;
 
  eofError:

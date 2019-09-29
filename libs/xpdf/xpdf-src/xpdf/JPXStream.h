@@ -230,10 +230,11 @@ struct JPXTile {
 				//   in any component in this tile
 
   //----- progression order loop counters
-  Guint comp;			//   component
-  Guint res;			//   resolution level
-  Guint precinct;		//   precinct
-  Guint layer;			//   layer
+  Guint comp;			// component
+  Guint res;			// resolution level
+  Guint precinct;		// precinct
+  Guint layer;			// layer
+  GBool done;			// set when this tile is done
 
   //----- tile part info
   Guint nextTilePart;		// next expected tile-part
@@ -253,9 +254,6 @@ struct JPXImage {
         yTileOffset;
   Guint xSizeR, ySizeR;		// size of reference grid >> reduction
   Guint xOffsetR, yOffsetR;	// image offset >> reduction
-  Guint xTileSizeR, yTileSizeR;	// size of tiles >> reduction
-  Guint xTileOffsetR,		// offset of first tile >> reduction
-        yTileOffsetR;
   Guint nComps;			// number of components
 
   //----- computed
@@ -287,7 +285,8 @@ public:
   virtual void close();
   virtual int getChar();
   virtual int lookChar();
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
   virtual void getImageParams(int *bitsPerComponent,
 			      StreamColorSpaceMode *csMode);

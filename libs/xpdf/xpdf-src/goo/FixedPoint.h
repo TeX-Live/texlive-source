@@ -36,7 +36,7 @@ public:
   FixedPoint(const FixedPoint &x) { val = x.val; }
   FixedPoint(double x) { val = (int)(x * (1 << fixptShift) + 0.5); }
   FixedPoint(int x) { val = x << fixptShift; }
-  FixedPoint(long x) { val = x << fixptShift; }
+  FixedPoint(long x) { val = (int)x << fixptShift; }
 
   operator float()
     { return (float) val * ((float)1 / (float)(1 << fixptShift)); }

@@ -4,7 +4,7 @@ pdftops(1)                  General Commands Manual                 pdftops(1)
 
 NAME
        pdftops  - Portable Document Format (PDF) to PostScript converter (ver-
-       sion 4.01)
+       sion 4.02)
 
 SYNOPSIS
        pdftops [options] [PDF-file [PS-file]]
@@ -211,4 +211,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                       pdftops(1)
+                                  25 Sep 2019                       pdftops(1)

@@ -89,6 +89,59 @@ EmbeddedFile::~EmbeddedFile() {
 }
 
 //------------------------------------------------------------------------
+// PageLabelNode
+//------------------------------------------------------------------------
+
+class PageLabelNode {
+public:
+
+  PageLabelNode(int firstPageA, Dict *dict);
+  ~PageLabelNode();
+
+  int firstPage;		// first page number covered by this node
+  int lastPage;			// last page number covered by this node
+  TextString *prefix;		// label prefix (may be empty)
+  int start;			// value of the numeric portion of this
+				//   label for the first page in the range
+  char style;			// page label style
+};
+
+PageLabelNode::PageLabelNode(int firstPageA, Dict *dict) {
+  Object prefixObj, styleObj, startObj;
+
+  // convert page index to page number
+  firstPage = firstPageA + 1;
+
+  // lastPage will be filled in later
+  lastPage = -1;
+
+  if (dict->lookup("P", &prefixObj)->isString()) {
+    prefix = new TextString(prefixObj.getString());
+  } else {
+    prefix = new TextString();
+  }
+  prefixObj.free();
+
+  style = '\0';
+  if (dict->lookup("S", &styleObj)->isName()) {
+    if (strlen(styleObj.getName()) == 1) {
+      style = styleObj.getName()[0];
+    }
+  }
+  styleObj.free();
+
+  start = 1;
+  if (dict->lookup("St", &startObj)->isInt()) {
+    start = startObj.getInt();
+  }
+  startObj.free();
+}
+
+PageLabelNode::~PageLabelNode() {
+  delete prefix;
+}
+
+//------------------------------------------------------------------------
 // Catalog
 //------------------------------------------------------------------------
 
@@ -185,6 +238,15 @@ Catalog::Catalog(PDFDoc *docA) {
   // get the list of embedded files
   readEmbeddedFileList(catDict.getDict());
 
+  // get the ViewerPreferences object
+  catDict.dictLookupNF("ViewerPreferences", &viewerPrefs);
+
+  pageLabels = NULL;
+  if (catDict.dictLookup("PageLabels", &obj)->isDict()) {
+    readPageLabelTree(&obj);
+  }
+  obj.free();
+
   catDict.free();
   return;
 
@@ -229,6 +291,10 @@ Catalog::~Catalog() {
   if (embeddedFiles) {
     deleteGList(embeddedFiles, EmbeddedFile);
   }
+  if (pageLabels) {
+    deleteGList(pageLabels, PageLabelNode);
+  }
+  viewerPrefs.free();
 }
 
 Page *Catalog::getPage(int i) {
@@ -833,107 +899,45 @@ Object *Catalog::getEmbeddedFileStreamObj(int idx, Object *strObj) {
   return strObj;
 }
 
-TextString *Catalog::getPageLabel(int pageNum) {
-  Object catDict, node, pageLabelObj, start, prefix, style;
-  GString *label, *s;
-  TextString *ts;
-  int firstPageIndex, pageRangeNum;
+void Catalog::readPageLabelTree(Object *root) {
+  PageLabelNode *label0, *label1;
+  int i;
 
-  if (!xref->getCatalog(&catDict)->isDict()) {
-    catDict.free();
-    return NULL;
+  pageLabels = new GList();
+  readPageLabelTree2(root);
+
+  if (pageLabels->getLength() == 0) {
+    deleteGList(pageLabels, PageLabelNode);
+    pageLabels = NULL;
+    return;
   }
 
-  label = NULL;
-  catDict.dictLookup("PageLabels", &node);
-  if (findPageLabel(&node, pageNum - 1, &pageLabelObj, &firstPageIndex)) {
-    if (pageLabelObj.isDict()) {
-      if (pageLabelObj.dictLookup("P", &prefix)->isString()) {
-	label = prefix.getString()->copy();
-      } else {
-	label = new GString();
-      }
-      prefix.free();
-
-      pageRangeNum = pageNum - firstPageIndex;
-      if (pageLabelObj.dictLookup("St", &start)->isInt()) {
-	pageRangeNum += start.getInt() - 1;
-      }
-      start.free();
-
-      if (pageLabelObj.dictLookup("S", &style)->isName()) {
-	if (style.isName("D")) {
-	  label->appendf("{0:d}", pageRangeNum);
-	} else if (style.isName("R")) {
-	  s = makeRomanNumeral(pageRangeNum, gTrue);
-	  label->append(s);
-	  delete s;
-	} else if (style.isName("r"))  {
-	  s = makeRomanNumeral(pageRangeNum, gFalse);
-	  label->append(s);
-	  delete s;
-	} else if (style.isName("A"))  {
-	  s = makeLetterLabel(pageRangeNum, gTrue);
-	  label->append(s);
-	  delete s;
-	} else if (style.isName("a"))  {
-	  s = makeLetterLabel(pageRangeNum, gFalse);
-	  label->append(s);
-	  delete s;
-	}
-      }
-      style.free();
-    }
-    pageLabelObj.free();
+  // set lastPage in each node
+  label0 = (PageLabelNode *)pageLabels->get(0);
+  for (i = 1; i < pageLabels->getLength(); ++i) {
+    label1 = (PageLabelNode *)pageLabels->get(i);
+    label0->lastPage = label1->firstPage - 1;
+    label0 = label1;
   }
-  node.free();
-  catDict.free();
-
-  ts = new TextString(label);
-  delete label;
-  return ts;
+  label0->lastPage = numPages;
 }
 
-GBool Catalog::findPageLabel(Object *node, int pageIndex,
-			     Object *pageLabelObj, int *firstPageIndex) {
-  Object limits, limit, nums, num, kids, kid;
+void Catalog::readPageLabelTree2(Object *node) {
+  Object nums, num, labelObj, kids, kid;
   int i;
 
   if (!node->isDict()) {
-    return gFalse;
+    return;
   }
-
-  // we only check the lower limit because page labels are organized
-  // into ranges based on their first page number -- the Nums and Kids
-  // arrays are searched backward for the same reason
-  if (node->dictLookup("Limits", &limits)->isArray() &&
-      limits.arrayGetLength() == 2)  {
-    if (limits.arrayGet(0, &limit)->isInt()) {
-      if (pageIndex < limit.getInt()) {
-	limit.free();
-	limits.free();
-	return gFalse;
-      }
-    }
-    limit.free();
-  }
-  limits.free();
 
   if (node->dictLookup("Nums", &nums)->isArray()) {
-    for (i = nums.arrayGetLength() / 2 - 1; i >= 0; --i) {
-      if (nums.arrayGet(2*i, &num)->isInt()) {
-	if (num.getInt() <= pageIndex) {
-	  nums.arrayGet(2*i + 1, pageLabelObj);
-	  *firstPageIndex = num.getInt();
-	  num.free();
-	  nums.free();
-	  return gTrue;
+    for (i = 0; i < nums.arrayGetLength() - 1; i += 2) {
+      if (nums.arrayGet(i, &num)->isInt()) {
+	if (nums.arrayGet(i+1, &labelObj)->isDict()) {
+	  pageLabels->append(new PageLabelNode(num.getInt(),
+					       labelObj.getDict()));
 	}
-      } else {
-	error(errSyntaxError, -1, "Invalid key in page label number tree");
-	num.free();
-	nums.free();
-	return gFalse;
+	labelObj.free();
       }
       num.free();
     }
@@ -941,20 +945,61 @@ GBool Catalog::findPageLabel(Object *node, int pageIndex,
   nums.free();
 
   if (node->dictLookup("Kids", &kids)->isArray()) {
-    for (i = kids.arrayGetLength() - 1; i >= 0; --i) {
-      if (kids.arrayGet(i, &kid)->isDict()) {
-	if (findPageLabel(&kid, pageIndex, pageLabelObj, firstPageIndex)) {
-	  kid.free();
-	  kids.free();
-	  return gTrue;
-	}
-      }
+    for (i = 0; i < kids.arrayGetLength(); ++i) {
+      kids.arrayGet(i, &kid);
+      readPageLabelTree2(&kid);
       kid.free();
     }
   }
   kids.free();
+}
 
-  return gFalse;
+TextString *Catalog::getPageLabel(int pageNum) {
+  PageLabelNode *label;
+  TextString *ts;
+  int pageRangeNum;
+  GString *suffix;
+
+  if (!pageLabels || !(label = findPageLabel(pageNum))) {
+    return NULL;
+  }
+
+  ts = new TextString(label->prefix);
+
+  pageRangeNum = label->start + (pageNum - label->firstPage);
+
+  suffix = NULL;
+  if (label->style == 'D') {
+    suffix = GString::format("{0:d}", pageRangeNum);
+  } else if (label->style == 'R') {
+    suffix = makeRomanNumeral(pageRangeNum, gTrue);
+  } else if (label->style == 'r') {
+    suffix = makeRomanNumeral(pageRangeNum, gFalse);
+  } else if (label->style == 'A') {
+    suffix = makeLetterLabel(pageRangeNum, gTrue);
+  } else if (label->style == 'a') {
+    suffix = makeLetterLabel(pageRangeNum, gFalse);
+  }
+  if (suffix) {
+    ts->append(suffix);
+    delete suffix;
+  }
+
+  return ts;
+}
+
+PageLabelNode *Catalog::findPageLabel(int pageNum) {
+  PageLabelNode *label;
+  int i;
+
+  //~ this could use a binary search
+  for (i = 0; i < pageLabels->getLength(); ++i) {
+    label = (PageLabelNode *)pageLabels->get(i);
+    if (pageNum >= label->firstPage && pageNum <= label->lastPage) {
+      return label;
+    }
+  }
+  return NULL;
 }
 
 GString *Catalog::makeRomanNumeral(int num, GBool uppercase) {
@@ -1021,4 +1066,132 @@ GString *Catalog::makeLetterLabel(int num, GBool uppercase) {
     s->append((char)((uppercase ? 'A' : 'a') + n));
   }
   return s;
+}
+
+int Catalog::getPageNumFromPageLabel(TextString *pageLabel) {
+  PageLabelNode *label;
+  int pageNum, prefixLength, i, n;
+
+  if (!pageLabels) {
+    return -1;
+  }
+  for (i = 0; i < pageLabels->getLength(); ++i) {
+    label = (PageLabelNode *)pageLabels->get(i);
+    prefixLength = label->prefix->getLength();
+    if (pageLabel->getLength() < prefixLength ||
+	memcmp(pageLabel->getUnicode(), label->prefix->getUnicode(),
+	       prefixLength * sizeof(Unicode))) {
+      continue;
+    }
+    if (label->style == '\0' && pageLabel->getLength() == prefixLength) {
+      return label->firstPage;
+    }
+    if (!convertPageLabelToInt(pageLabel, prefixLength, label->style, &n)) {
+      continue;
+    }
+    if (n < label->start) {
+      continue;
+    }
+    pageNum = label->firstPage + n - label->start;
+    if (pageNum <= label->lastPage) {
+      return pageNum;
+    }
+  }
+  return -1;
+}
+
+// Attempts to convert pageLabel[prefixLength .. end] to an integer,
+// following the specified page label style.  If successful, sets *n
+// and returns true; else returns false.
+GBool Catalog::convertPageLabelToInt(TextString *pageLabel, int prefixLength,
+				     char style, int *n) {
+  Unicode *u;
+  Unicode delta;
+  int len, i;
+
+  len = pageLabel->getLength();
+  if (len <= prefixLength) {
+    return gFalse;
+  }
+  u = pageLabel->getUnicode();
+  if (style == 'D') {
+    *n = 0;
+    for (i = prefixLength; i < len; ++i) {
+      if (u[i] < (Unicode)'0' || u[i] > (Unicode)'9') {
+	return gFalse;
+      }
+      *n = *n * 10 + (u[i] - (Unicode)'0');
+    }
+    return gTrue;
+  } else if (style == 'R' || style == 'r') {
+    delta = style - 'R';
+    *n = 0;
+    i = prefixLength;
+    while (i < len && u[i] == (Unicode)'M' + delta) {
+      *n += 1000;
+      ++i;
+    }
+    if (i+1 < len && u[i] == (Unicode)'C' + delta &&
+	u[i+1] == (Unicode)'M' + delta) {
+      *n += 900;
+      i += 2;
+    } else if (i < len && u[i] == (Unicode)'D' + delta) {
+      *n += 500;
+      ++i;
+    } else if (i+1 < len && u[i] == (Unicode)'C' + delta &&
+	       u[i+1] == (Unicode)'D' + delta) {
+      *n += 400;
+      i += 2;
+    }
+    while (i < len && u[i] == (Unicode)'C' + delta) {
+      *n += 100;
+      ++i;
+    }
+    if (i+1 < len && u[i] == (Unicode)'X' + delta &&
+	u[i+1] == (Unicode)'C' + delta) {
+      *n += 90;
+      i += 2;
+    } else if (i < len && u[i] == (Unicode)'L' + delta) {
+      *n += 50;
+      ++i;
+    } else if (i+1 < len && u[i] == (Unicode)'X' + delta &&
+	       u[i+1] == (Unicode)'L' + delta) {
+      *n += 40;
+      i += 2;
+    }
+    while (i < len && u[i] == (Unicode)'X' + delta) {
+      *n += 10;
+      ++i;
+    }
+    if (i+1 < len && u[i] == (Unicode)'I' + delta &&
+	u[i+1] == (Unicode)'X' + delta) {
+      *n += 9;
+      i += 2;
+    } else if (i < len && u[i] == (Unicode)'V' + delta) {
+      *n += 5;
+      ++i;
+    } else if (i+1 < len && u[i] == (Unicode)'I' + delta &&
+	       u[i+1] == (Unicode)'V' + delta) {
+      *n += 4;
+      i += 2;
+    }
+    while (i < len && u[i] == (Unicode)'I' + delta) {
+      *n += 1;
+      ++i;
+    }
+    return i == len;
+  } else if (style == 'A' || style == 'a') {
+    if (u[prefixLength] < (Unicode)style ||
+	u[prefixLength] > (Unicode)style + 25) {
+      return gFalse;
+    }
+    for (i = prefixLength + 1; i < len; ++i) {
+      if (u[i] != u[prefixLength]) {
+	return gFalse;
+      }
+    }
+    *n = (len - prefixLength - 1) * 26 + (u[i] - (Unicode)style) + 1;
+    return gTrue;
+  }
+  return gFalse;
 }

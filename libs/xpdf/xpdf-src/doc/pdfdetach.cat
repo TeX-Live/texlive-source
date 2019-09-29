@@ -4,7 +4,7 @@ pdfdetach(1)                General Commands Manual               pdfdetach(1)
 
 NAME
        pdfdetach  -  Portable  Document  Format  (PDF)  document embedded file
-       extractor (version 4.01)
+       extractor (version 4.02)
 
 SYNOPSIS
        pdfdetach [options] [PDF-file]
@@ -89,4 +89,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                     pdfdetach(1)
+                                  25 Sep 2019                     pdfdetach(1)

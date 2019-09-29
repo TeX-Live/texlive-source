@@ -2550,3 +2550,99 @@ If the "U" string used for RC4 decryption is short, Adobe apparently
 Pdffonts now checks more carefully for loops between objects.
 Fixed a problem parsing large real numbers.  [Thanks to Loginsoft for
   the bug report.]
+
+4.02 (2019-sep-25)
+------------------
+Pdftohtml now extracts embedded fonts (TrueType and CFF only).
+Added the margin settings (-marginl -marginr -margint -marginb) to
+  pdftotext.
+Various user interface tweaks:
+  - added a toolbar button to toggle (show/hide) the sidebar
+  - added view menu items to toggle (show/hide) the sidebar and
+    toolbar
+  - added the 'showToolbar', 'hideToolbar', 'toggleToolbar',
+    'expandSidebar', and 'shrinkSidebar' commands
+  - added the 'initialDisplayMode', 'initialToolbarState', and
+    'initialSelectMode' xpdfrc settings
+  - rearranged the xpdf toolbar
+Implemented drag-and-drop, so that PDF files can be drag-and-dropped
+  onto an already-open xpdf window.
+Added the option to display page labels, rather than page numbers.
+Implemented the missing 'openInNewWin' command.
+Added the 'openFileIn', 'openFileAtDestIn', 'openFileAtPageIn', and
+  'openIn' commands; removed the 'openInNewWin' command.
+Added the '-open' switch to xpdf.
+Added the reverseVideoInvertImages setting.
+Page-up and page-down now "snap" to the nearest page, if it's within a
+  few pixels.  This avoids annoying behavior when the window is a tiny
+  bit too short or too tall for a page.
+Properly handle overprint in non-isolated transparency groups.
+Missing null check in Gfx::opSetExtGState().  [Thanks to
+  pwd@360TeamSeri0us for the bug report.]
+The DCT decoder doesn't handle a sampling factor of 3 -- check for
+  this and report an error.  [Thanks for Agostino Sarubbo of Gentoo
+  for the bug report.]
+Check for images with a Pattern color space, and report an error.
+  [Thanks to TeamSeri0us for the bug report.]
+Check that the Width, Height, and BitsPerComponent are valid in image
+  soft masks.  [Thanks to TeamSeri0us for the bug report.]
+Check for zero page width/height in PSOutputDev.  [Thanks to
+  TeamSeri0us for the bug report.]
+Check for divide-by-zero in PostScript functions.  [Thanks to
+  TeamSeri0us for the bug report.]
+Properly handle overprint in shading pattern strokes.
+The "save image" feature in Xpdf wasn't getting the user-specified
+  page number correctly.
+PostScript doesn't support progressive or non-interleaved DCT (JPEG)
+  streams, so check for those and re-encode them in PS output.
+Splash now caches the most recent scaled image, in case it is
+  immediately reused -- this results in a significant speedup in
+  certain cases.
+Fixed a problem with parsing the TrueType loca table.  [Thanks to
+  Pangu Lab for the bug report.]
+Fixed a problem with int overflow on image bounds.  [Thanks to
+  Pangu Lab for the bug report.]
+Fixed a problem with TrueType font parsing where there is gibberish in
+  the TrueType table directory.  [Thanks to Pangu Lab for the bug
+  report.]
+Fixed a problem with JPX image resolution reduction.  [Thanks to Pangu
+  Lab for the bug report.]
+Fixed a problem with non-isolated transparency groups in 1-bit
+  monochrome mode.  [Thanks to Pangu Lab for the bug report.]
+Fixed various bugs in FoFi.  [Thanks to Pangu Lab for the bug
+  reports.]
+Added a missing bounds check to Annot::setFillColor().  [Thanks to
+  Pangu Lab for the bug report.]
+Added a check on the DCT quant table selector.  [Thanks to Pangu Lab
+  for the bug report.]
+Fixed a problem with the Type 3 font cache running out of entries.
+  [Thanks to Pangu Lab for the bug report.]
+Fixed an integer overflow bug in SampledFunction.  [Thanks to Pangu
+  Lab for the bug report.]
+Fixed an integer overflow bug in the tiling pattern size.  [Thanks to
+  Martin Muskens at Ergosoft for the bug report.]
+Fixed a read-past-end-of-buffer in the Type 1 font parser.  [Thanks to
+  Pangu Lab for the bug report.]
+Fixed an int overflow bug in the JBIG2 decoder.  [Thanks to
+  TeamSeri0us for the bug report.]
+Added a missing bounds check to GfxPatchMeshShading::parse().  [Thanks
+  to TeamSeri0us for the bug report.]
+JPEG 2000 tile indexes were being computed incorrectly.  [Thanks to
+  TeamSeri0us for the bug report.]
+Large sample separation values in a JPX stream were resulting in
+  zero-width/height tiles, which caused problems.  [Thanks to Pangu
+  Lab for the bug report.]
+The XFA parser now looks for "ancestor matches" when searching for
+  data to fill a form field.
+Fixed an uninitialized variable in BuiltinFontWidths::getWidth().
+  [Thanks to Martin Muskens at Ergosoft for the bug report.]
+If there are no popupMenuCmd instances, construct a popup menu with
+  basic instructions pointing to 'popupMenuCmd'.
+Ignore color operators in uncolored tiling patterns.  [Thanks to
+  Martin Muskens at Ergosoft for the bug report.]
+Pdftotext raw mode output looks for space characters.
+Increased the width of the font name column in the pdffonts output.
+Function objects weren't checking their input/output counts properly.
+  [Thanks to Pangu Lab for the bug report.]
+TextPage::findGaps() wasn't checking the x/y min/max values for int
+  overflow.  [Thanks to Taolaw for the bugf report.]

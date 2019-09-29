@@ -171,6 +171,7 @@ Guint FoFiBase::getUVarBE(int pos, int size, GBool *ok) {
 
 GBool FoFiBase::checkRegion(int pos, int size) {
   return pos >= 0 &&
-         pos + size >= pos &&
+         size >= 0 &&
+         size <= INT_MAX - pos &&
          pos + size <= len;
 }

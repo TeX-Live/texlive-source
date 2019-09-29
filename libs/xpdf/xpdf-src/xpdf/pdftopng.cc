@@ -352,6 +352,7 @@ static void writePNGData(png_structp png, SplashBitmap *bitmap) {
 
 
 
+
 static void finishPNG(png_structp *png, png_infop *pngInfo) {
   if (setjmp(png_jmpbuf(*png))) {
     exit(2);

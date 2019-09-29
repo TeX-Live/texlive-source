@@ -164,7 +164,8 @@ GfxFontLoc::~GfxFontLoc() {
 // GfxFont
 //------------------------------------------------------------------------
 
-GfxFont *GfxFont::makeFont(XRef *xref, char *tagA, Ref idA, Dict *fontDict) {
+GfxFont *GfxFont::makeFont(XRef *xref, const char *tagA,
+			   Ref idA, Dict *fontDict) {
   GString *nameA;
   Ref embFontIDA;
   GfxFontType typeA;
@@ -197,7 +198,7 @@ GfxFont *GfxFont::makeFont(XRef *xref, char *tagA, Ref idA, Dict *fontDict) {
   return font;
 }
 
-GfxFont::GfxFont(char *tagA, Ref idA, GString *nameA,
+GfxFont::GfxFont(const char *tagA, Ref idA, GString *nameA,
 		 GfxFontType typeA, Ref embFontIDA) {
   ok = gFalse;
   tag = new GString(tagA);
@@ -541,6 +542,7 @@ CharCodeToUnicode *GfxFont::readToUnicodeCMap(Dict *fontDict, int nBits,
 GfxFontLoc *GfxFont::locateFont(XRef *xref, GBool ps) {
   GfxFontLoc *fontLoc;
   SysFontType sysFontType;
+  FoFiIdentifierType fft;
   GString *path, *base14Name, *substName;
   PSFontParam16 *psFont16;
   Object refObj, embFontObj;
@@ -635,32 +637,43 @@ GfxFontLoc *GfxFont::locateFont(XRef *xref, GBool ps) {
   //----- system font
   if (name && (path = globalParams->findSystemFontFile(name, &sysFontType,
 						       &fontNum))) {
+    fontLoc = new GfxFontLoc();
+    fontLoc->locType = gfxFontLocExternal;
+    fontLoc->path = path;
+    fontLoc->fontNum = fontNum;
     if (isCIDFont()) {
       if (sysFontType == sysFontTTF || sysFontType == sysFontTTC) {
-	fontLoc = new GfxFontLoc();
-	fontLoc->locType = gfxFontLocExternal;
 	fontLoc->fontType = fontCIDType2;
-	fontLoc->path = path;
-	fontLoc->fontNum = fontNum;
 	return fontLoc;
+      } else if (sysFontType == sysFontOTF) {
+	fft = FoFiIdentifier::identifyFile(fontLoc->path->getCString());
+	if (fft == fofiIdOpenTypeCFFCID) {
+	  fontLoc->fontType = fontCIDType0COT;
+	  return fontLoc;
+	} else if (fft == fofiIdTrueType) {
+	  fontLoc->fontType = fontCIDType2;
+	  return fontLoc;
+	}
       }
     } else {
       if (sysFontType == sysFontTTF || sysFontType == sysFontTTC) {
-	fontLoc = new GfxFontLoc();
-	fontLoc->locType = gfxFontLocExternal;
 	fontLoc->fontType = fontTrueType;
-	fontLoc->path = path;
-	fontLoc->fontNum = fontNum;
 	return fontLoc;
       } else if (sysFontType == sysFontPFA || sysFontType == sysFontPFB) {
-	fontLoc = new GfxFontLoc();
-	fontLoc->locType = gfxFontLocExternal;
 	fontLoc->fontType = fontType1;
-	fontLoc->path = path;
 	return fontLoc;
+      } else if (sysFontType == sysFontOTF) {
+	fft = FoFiIdentifier::identifyFile(fontLoc->path->getCString());
+	if (fft == fofiIdOpenTypeCFF8Bit) {
+	  fontLoc->fontType = fontType1COT;
+	  return fontLoc;
+	} else if (fft == fofiIdTrueType) {
+	  fontLoc->fontType = fontTrueTypeOT;
+	  return fontLoc;
+	}
       }
     }
-    delete path;
+    delete fontLoc;
   }
 
   if (!isCIDFont()) {
@@ -863,7 +876,7 @@ char *GfxFont::readEmbFontFile(XRef *xref, int *len) {
 // Gfx8BitFont
 //------------------------------------------------------------------------
 
-Gfx8BitFont::Gfx8BitFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
+Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
 			 GfxFontType typeA, Ref embFontIDA, Dict *fontDict):
   GfxFont(tagA, idA, nameA, typeA, embFontIDA)
 {
@@ -1490,6 +1503,33 @@ int *Gfx8BitFont::getCodeToGIDMap(FoFiTrueType *ff) {
   return map;
 }
 
+int *Gfx8BitFont::getCodeToGIDMap(FoFiType1C *ff) {
+  int *map;
+  GHash *nameToGID;
+  int i, gid;
+
+  map = (int *)gmallocn(256, sizeof(int));
+  for (i = 0; i < 256; ++i) {
+    map[i] = 0;
+  }
+
+  nameToGID = ff->getNameToGIDMap();
+  for (i = 0; i < 256; ++i) {
+    if (!enc[i]) {
+      continue;
+    }
+    gid = nameToGID->lookupInt(enc[i]);
+    if (gid < 0 || gid >= 65536) {
+      continue;
+    }
+    map[i] = gid;
+  }
+
+  delete nameToGID;
+
+  return map;
+}
+
 Dict *Gfx8BitFont::getCharProcs() {
   return charProcs.isDict() ? charProcs.getDict() : (Dict *)NULL;
 }
@@ -1575,7 +1615,7 @@ GBool Gfx8BitFont::problematicForUnicode() {
 // GfxCIDFont
 //------------------------------------------------------------------------
 
-GfxCIDFont::GfxCIDFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
+GfxCIDFont::GfxCIDFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
 		       GfxFontType typeA, Ref embFontIDA, Dict *fontDict):
   GfxFont(tagA, idA, nameA, typeA, embFontIDA)
 {
@@ -1999,6 +2039,13 @@ CharCodeToUnicode *GfxCIDFont::getToUnicode() {
 
 GString *GfxCIDFont::getCollection() {
   return cMap ? cMap->getCollection() : (GString *)NULL;
+}
+
+double GfxCIDFont::getWidth(CID cid) {
+  double w;
+
+  getHorizontalMetrics(cid, &w);
+  return w;
 }
 
 GBool GfxCIDFont::problematicForUnicode() {

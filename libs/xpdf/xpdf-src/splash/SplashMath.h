@@ -47,17 +47,13 @@ static inline int splashFloor(SplashCoord x) {
   // NB: 64-bit x86 guarantees availability of SSE2.
 
   __m128d m1, m2;
-  __m128i m3;
-  int s, i;
+  int i, s;
 
-  m1 = _mm_set_sd(x);		// m1 = x
-  i = _mm_cvttsd_si32(m1);	// i = trunc(x)
-  m2 = _mm_cvtsi32_sd(m1, i);	// m2 = (double)trunc(x)
-  m1 = _mm_sub_sd(m1, m2);	// m1 = x - trunc(x)
-  m3 = _mm_castpd_si128(m1); 	// m3 = m1 (as 64-bit int)
-  m3 = _mm_srli_epi64(m3, 63);	// m3 = m3 >> 63
-  s = _mm_cvtsi128_si32(m3);	// s = m3 = sign bit of x - trunc(x)
-  return i - s;			// trunc(x) - sign bit
+  m1 = _mm_set_sd(x);
+  i = _mm_cvttsd_si32(m1);
+  m2 = _mm_cvtsi32_sd(m1, i);
+  s = _mm_ucomigt_sd(m2, m1);
+  return i - s;
 
 #elif defined(__GNUC__) && defined(__i386__) && !defined(__APPLE__)
 
@@ -123,17 +119,13 @@ static inline int splashCeil(SplashCoord x) {
   // NB: 64-bit x86 guarantees availability of SSE2.
 
   __m128d m1, m2;
-  __m128i m3;
-  int s, i;
+  int i, s;
 
-  m1 = _mm_set_sd(x);		// m1 = x
-  i = _mm_cvttsd_si32(m1);	// i = trunc(x)
-  m2 = _mm_cvtsi32_sd(m1, i);	// m2 = (double)trunc(x)
-  m2 = _mm_sub_sd(m2, m1);	// m2 = trunc(x) - x
-  m3 = _mm_castpd_si128(m2); 	// m3 = m2 (as 64-bit int)
-  m3 = _mm_srli_epi64(m3, 63);	// m3 = m3 >> 63
-  s = _mm_cvtsi128_si32(m3);	// s = m3 = sign bit of x - trunc(x)
-  return i + s;			// trunc(x) + sign bit
+  m1 = _mm_set_sd(x);
+  i = _mm_cvttsd_si32(m1);
+  m2 = _mm_cvtsi32_sd(m1, i);
+  s = _mm_ucomilt_sd(m2, m1);
+  return i + s;
 
 #elif defined(__GNUC__) && defined(__i386__) && !defined(__APPLE__)
 
@@ -314,6 +306,31 @@ static inline void splashStrokeAdjust(SplashCoord xMin, SplashCoord xMax,
 				      SplashStrokeAdjustMode strokeAdjMode,
 				      SplashCoord w = -1) {
   int x0, x1;
+
+  // make sure the coords fit in 32-bit ints
+#if USE_FIXEDPOINT
+  if (xMin < -32767) {
+    xMin = -32767;
+  } else if (xMin > 32767) {
+    xMin = 32767;
+  }
+  if (xMax < -32767) {
+    xMax = -32767;
+  } else if (xMax > 32767) {
+    xMax = 32767;
+  }
+#else
+  if (xMin < -1e9) {
+    xMin = -1e9;
+  } else if (xMin > 1e9) {
+    xMin = 1e9;
+  }
+  if (xMax < -1e9) {
+    xMax = -1e9;
+  } else if (xMax > 1e9) {
+    xMax = 1e9;
+  }
+#endif
 
   // this will never be called with strokeAdjMode == splashStrokeAdjustOff
   if (strokeAdjMode == splashStrokeAdjustCAD) {

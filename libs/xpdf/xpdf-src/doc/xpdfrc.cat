@@ -3,7 +3,7 @@ xpdfrc(5)                     File Formats Manual                    xpdfrc(5)
 
 
 NAME
-       xpdfrc - configuration file for Xpdf tools (version 4.01)
+       xpdfrc - configuration file for Xpdf tools (version 4.02)
 
 DESCRIPTION
        All  of the Xpdf tools read a single configuration file.  If you have a
@@ -493,10 +493,23 @@ VIEWER SETTINGS
               window  at  this  zoom factor (which must be a percentage).  The
               default value is based on the screen resolution.
 
+       initialDisplayMode single | continuous | sideBySideSingle | sideBySide-
+       Continuous | horizontalContinuous
+              Sets the initial display mode.  The default setting is "continu-
+              ous".
+
+       initialToolbarState yes | no
+              If set to "yes", xpdf opens with the toolbar visible.  If set to
+              "no", xpdf opens with the toolbar hidden.  The default is "yes".
+
        initialSidebarState yes | no
-              If set to "yes", xpdf opens with  the  sidebar  (tabs,  outline,
-              etc.)   visible.   If  set  to "no", xpdf opens with the sidebar
+              If  set  to  "yes",  xpdf opens with the sidebar (tabs, outline,
+              etc.)  visible.  If set to "no", xpdf  opens  with  the  sidebar
               collapsed.  The default is "yes".
+
+       initialSelectMode block | linear
+              Sets  the  initial selection mode.  The default setting is "lin-
+              ear".
 
        paperColor color
               Set the "paper color", i.e., the background of the page display.
@@ -512,6 +525,11 @@ VIEWER SETTINGS
        fullScreenMatteColor color
               Set  the  matte  color  for  full-screen mode.  The color can be
               #RRGGBB (hexadecimal) or a named color.
+
+       reverseVideoInvertImages yes | no
+              If set to "no", xpdf's reverse-video mode inverts text and  vec-
+              tor  graphic  content,  but  not  images.  If set to "yes", xpdf
+              inverts images as well.  The default is "no".
 
        popupMenuCmd title command ...
               Add a command to the popup menu.  Title is the text to  be  dis-
@@ -716,4 +734,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                        xpdfrc(5)
+                                  25 Sep 2019                        xpdfrc(5)

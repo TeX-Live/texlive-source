@@ -320,6 +320,7 @@ FoFiTrueType::FoFiTrueType(char *fileA, int lenA, GBool freeFileDataA,
   nCmaps = 0;
   nameToGID = NULL;
   isDfont = isDfontA;
+  isTTC = gFalse;
   parsedOk = gFalse;
 
   parse(fontNum, allowHeadlessCFF);
@@ -985,7 +986,8 @@ void FoFiTrueType::convertToType0(char *psName, int *cidMap, int nCIDs,
 
 GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
 			     void *outputStream, char *name,
-			     int *codeToGID) {
+			     int *codeToGID, Guchar *replacementCmapTable,
+			     int replacementCmapTableLen) {
   // this substitute cmap table maps char code ffff to glyph 0,
   // with tables for MacRoman and MS Unicode
   static char cmapTab[44] = {
@@ -1188,7 +1190,7 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
   if (!missingCmap && !missingName && !missingPost && !missingOS2 &&
       !unsortedLoca && !emptyCmap && !badCmapLen && !abbrevHMTX &&
       nZeroLengthTables == 0 && nBogusTables == 0 &&
-      !name && !codeToGID && !isDfont) {
+      !name && !codeToGID && !replacementCmapTable && !isDfont && !isTTC) {
     (*outputFunc)(outputStream, (char *)file, len);
     gfree(locaTable);
     return gFalse;
@@ -1306,7 +1308,7 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
   }
 
   // construct the new cmap table
-  if (codeToGID) {
+  if (codeToGID && !replacementCmapTable) {
     newCmapLen = 44 + 256 * 2;
     newCmapTab = (char *)gmalloc(newCmapLen);
     newCmapTab[0] = 0;		// table version number = 0
@@ -1435,8 +1437,15 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
 	  // don't include the file checksum
 	  newTables[j].checksum -= getU32BE(tables[i].offset + 8, &ok);
 	}
+      } else {
+	// we'll write four zero bytes for this table
+	newTables[j].len = 4;
       }
-      if (newTables[j].tag == cmapTag && codeToGID) {
+      if (newTables[j].tag == cmapTag && replacementCmapTable) {
+	newTables[j].len = replacementCmapTableLen;
+	newTables[j].checksum = computeTableChecksum(replacementCmapTable,
+						     replacementCmapTableLen);
+      } else if (newTables[j].tag == cmapTag && codeToGID) {
 	newTables[j].len = newCmapLen;
 	newTables[j].checksum = computeTableChecksum((Guchar *)newCmapTab,
 						     newCmapLen);
@@ -1470,7 +1479,11 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
   }
   if (missingCmap) {
     newTables[j].tag = cmapTag;
-    if (codeToGID) {
+    if (replacementCmapTable) {
+      newTables[j].checksum = computeTableChecksum(replacementCmapTable,
+						   replacementCmapTableLen);
+      newTables[j].len = replacementCmapTableLen;
+    } else if (codeToGID) {
       newTables[j].checksum = computeTableChecksum((Guchar *)newCmapTab,
 						   newCmapLen);
       newTables[j].len = newCmapLen;
@@ -1588,6 +1601,9 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
 	  (*outputFunc)(outputStream, "\0", 1);
 	}
       }
+    } else if (newTables[i].tag == cmapTag && replacementCmapTable) {
+      (*outputFunc)(outputStream, (char *)replacementCmapTable,
+		    newTables[i].len);
     } else if (newTables[i].tag == cmapTag && codeToGID) {
       (*outputFunc)(outputStream, newCmapTab, newTables[i].len);
     } else if (newTables[i].tag == cmapTag && missingCmap) {
@@ -1816,7 +1832,8 @@ void FoFiTrueType::cvtSfnts(FoFiOutputFunc outputFunc,
     } else {
       locaTable[i].origOffset = 2 * getU16BE(pos + i*2, &ok);
     }
-    if (locaTable[i].origOffset > glyfTableLen) {
+    if (locaTable[i].origOffset < 0 ||
+	locaTable[i].origOffset > glyfTableLen) {
       locaTable[i].origOffset = glyfTableLen;
     }
   }
@@ -2172,7 +2189,9 @@ void FoFiTrueType::parse(int fontNum, GBool allowHeadlessCFF) {
     tables[j].checksum = getU32BE(offset + pos + 4, &parsedOk);
     tables[j].offset = offset + (int)getU32BE(offset + pos + 8, &parsedOk);
     tables[j].len = (int)getU32BE(offset + pos + 12, &parsedOk);
-    if (tables[j].offset + tables[j].len >= tables[j].offset &&
+    if (tables[j].offset >= 0 &&
+	tables[j].len >= 0 &&
+	tables[j].offset + tables[j].len >= tables[j].offset &&
 	tables[j].offset + tables[j].len <= len) {
       // ignore any bogus entries in the table directory
       ++j;
@@ -2274,6 +2293,7 @@ void FoFiTrueType::parse(int fontNum, GBool allowHeadlessCFF) {
 void FoFiTrueType::parseTTC(int fontNum, int *pos) {
   int nFonts;
 
+  isTTC = gTrue;
   nFonts = getU32BE(8, &parsedOk);
   if (!parsedOk) {
     return;

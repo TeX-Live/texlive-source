@@ -55,7 +55,8 @@ enum SysFontType {
   sysFontPFA,
   sysFontPFB,
   sysFontTTF,
-  sysFontTTC
+  sysFontTTC,
+  sysFontOTF
 };
 
 //------------------------------------------------------------------------
@@ -283,7 +284,10 @@ public:
   GBool getTextKeepTinyChars();
   GString *getInitialZoom();
   int getDefaultFitZoom();
+  GString *getInitialDisplayMode();
+  GBool getInitialToolbarState();
   GBool getInitialSidebarState();
+  GString *getInitialSelectMode();
   int getMaxTileWidth();
   int getMaxTileHeight();
   int getTileCacheSize();
@@ -308,6 +312,7 @@ public:
   GString *getPaperColor();
   GString *getMatteColor();
   GString *getFullScreenMatteColor();
+  GBool getReverseVideoInvertImages();
   GString *getLaunchCommand() { return launchCommand; }
   GString *getMovieCommand() { return movieCommand; }
   GString *getDefaultPrinter();
@@ -322,6 +327,8 @@ public:
   GString *getTabStateFile();
   GBool getPrintCommands();
   GBool getErrQuiet();
+  GString *getDebugLogFile();
+  void debugLogPrintf(char *fmt, ...);
 
   CharCodeToUnicode *getCIDToUnicode(GString *collection);
   CharCodeToUnicode *getUnicodeToUnicode(GString *fontName);
@@ -509,8 +516,13 @@ private:
   GString *initialZoom;		// initial zoom level
   int defaultFitZoom;		// default zoom factor if initialZoom is
 				//   'page' or 'width'.
+  GString *initialDisplayMode;	// initial display mode (single,
+				//   continuous, etc.)
+  GBool initialToolbarState;	// initial toolbar state - open (true)
+				//   or closed (false)
   GBool initialSidebarState;	// initial sidebar state - open (true)
 				//   or closed (false)
+  GString *initialSelectMode;	// initial selection mode (block or linear)
   int maxTileWidth;		// maximum rasterization tile width
   int maxTileHeight;		// maximum rasterization tile height
   int tileCacheSize;		// number of rasterization tiles in cache
@@ -536,6 +548,7 @@ private:
   GString *paperColor;		// paper (page background) color
   GString *matteColor;		// matte (background outside of page) color
   GString *fullScreenMatteColor; // matte color in full-screen mode
+  GBool reverseVideoInvertImages; // invert images in reverse video mode
   GString *launchCommand;	// command executed for 'launch' links
   GString *movieCommand;	// command executed for movie annotations
   GString *defaultPrinter;	// default printer (for interactive printing
@@ -551,6 +564,7 @@ private:
   GString *tabStateFile;	// path for the tab state save file
   GBool printCommands;		// print the drawing commands
   GBool errQuiet;		// suppress error messages?
+  GString *debugLogFile;	// path for debug log file
 
   CharCodeToUnicodeCache *cidToUnicodeCache;
   CharCodeToUnicodeCache *unicodeToUnicodeCache;

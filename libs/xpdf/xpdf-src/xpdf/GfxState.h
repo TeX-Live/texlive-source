@@ -1183,7 +1183,7 @@ public:
   void getUserClipBBox(double *xMin, double *yMin, double *xMax, double *yMax);
   double getLineX() { return lineX; }
   double getLineY() { return lineY; }
-  GBool getInCachedT3Char() { return inCachedT3Char; }
+  GBool getIgnoreColorOps() { return ignoreColorOps; }
 
   // Is there a current point/path?
   GBool isCurPt() { return path->isCurPt(); }
@@ -1280,8 +1280,9 @@ public:
   void textShift(double tx, double ty);
   void shift(double dx, double dy);
   
-  // Cached Type 3 char status.
-  void setInCachedT3Char(GBool in) { inCachedT3Char = in; }
+  // Ignore color operators (in cached/uncolored Type 3 chars, and
+  // uncolored tiling patterns).  Cached Type 3 char status.
+  void setIgnoreColorOps(GBool ignore) { ignoreColorOps = ignore; }
 
   // Push/pop GfxState on/off stack.
   GfxState *save();
@@ -1344,7 +1345,9 @@ private:
   double clipXMin, clipYMin,	// bounding box for clip region
          clipXMax, clipYMax;
 
-  GBool inCachedT3Char;		// in a cached (uncolored) Type 3 char
+  GBool ignoreColorOps;		// ignore color ops (in cached/uncolored
+				//   Type 3 chars, and uncolored tiling
+				//   patterns)
 
   GfxState *saved;		// next GfxState on stack
 

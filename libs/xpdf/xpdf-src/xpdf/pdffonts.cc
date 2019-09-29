@@ -159,11 +159,11 @@ int main(int argc, char *argv[]) {
 
   // scan the fonts
   if (showFontLoc || showFontLocPS) {
-    printf("name                                 type              emb sub uni prob object ID location\n");
-    printf("------------------------------------ ----------------- --- --- --- ---- --------- --------\n");
+    printf("name                                           type              emb sub uni prob object ID location\n");
+    printf("---------------------------------------------- ----------------- --- --- --- ---- --------- --------\n");
   } else {
-    printf("name                                 type              emb sub uni prob object ID\n");
-    printf("------------------------------------ ----------------- --- --- --- ---- ---------\n");
+    printf("name                                           type              emb sub uni prob object ID\n");
+    printf("---------------------------------------------- ----------------- --- --- --- ---- ---------\n");
   }
   fonts = NULL;
   fontsLen = fontsSize = 0;
@@ -302,7 +302,7 @@ static void scanFonts(Dict *resDict, PDFDoc *doc) {
   resDict->lookupNF("ExtGState", &gsDict1);
   if (checkObject(&gsDict1, &gsDict2) && gsDict2.isDict()) {
     for (i = 0; i < gsDict2.dictGetLength(); ++i) {
-      gsDict1.dictGetValNF(i, &gs1);
+      gsDict2.dictGetValNF(i, &gs1);
       if (checkObject(&gs1, &gs2) && gs2.isDict()) {
 	gs2.dictLookupNF("SMask", &smask1);
 	if (checkObject(&smask1, &smask2) && smask2.isDict()) {
@@ -375,7 +375,7 @@ static void scanFont(GfxFont *font, PDFDoc *doc) {
   }
 
   // print the font info
-  printf("%-36s %-17s %-3s %-3s %-3s %-4s",
+  printf("%-46s %-17s %-3s %-3s %-3s %-4s",
 	 name ? name->getCString() : "[none]",
 	 fontTypeNames[font->getType()],
 	 emb ? "yes" : "no",

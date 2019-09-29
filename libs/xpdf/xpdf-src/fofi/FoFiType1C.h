@@ -18,6 +18,7 @@
 #include "gtypes.h"
 #include "FoFiBase.h"
 
+class GHash;
 class GString;
 
 //------------------------------------------------------------------------
@@ -169,6 +170,10 @@ public:
   int getNumGlyphs() { return nGlyphs; }
   GString *getGlyphName(int gid);
 
+  // Returns a hash mapping glyph names to GIDs.  This is only useful
+  // with 8-bit fonts.
+  GHash *getNameToGIDMap();
+
   // Return the mapping from CIDs to GIDs, and return the number of
   // CIDs in *<nCIDs>.  This is only useful for CID fonts.
   int *getCIDToGIDMap(int *nCIDs);
@@ -208,6 +213,13 @@ public:
   void convertToType0(char *psName, int *codeMap, int nCodes,
 		      FoFiOutputFunc outputFunc, void *outputStream);
 
+  // Write an OpenType file, encapsulating the CFF font.  <widths>
+  // provides the glyph widths (in design units) for <nWidths> glyphs.
+  // The cmap table must be supplied by the caller.
+  void convertToOpenType(FoFiOutputFunc outputFunc, void *outputStream,
+			 int nWidths, Gushort *widths,
+			 Guchar *cmapTable, int cmapTableLen);
+
 private:
 
   FoFiType1C(char *fileA, int lenA, GBool freeFileDataA);
@@ -224,6 +236,7 @@ private:
   void eexecWrite(Type1CEexecBuf *eb, const char *s);
   void eexecWriteCharstring(Type1CEexecBuf *eb, Guchar *s, int n);
   void writePSString(char *s, FoFiOutputFunc outputFunc, void *outputStream);
+  Guint computeOpenTypeTableChecksum(Guchar *data, int length);
   GBool parse();
   void readTopDict();
   void readFD(int offset, int length, Type1CPrivateDict *pDict);

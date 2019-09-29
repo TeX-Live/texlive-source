@@ -247,14 +247,14 @@ GBool SplashXPath::strokeAdjust(SplashXPathPoint *pts,
     x2 = pts[hint->ctrl1    ].x;    y2 = pts[hint->ctrl1    ].y;
     x3 = pts[hint->ctrl1 + 1].x;    y3 = pts[hint->ctrl1 + 1].y;
     w = -1;
-    if (x0 == x1 && x2 == x3) {
+    if (splashAbs(x0 - x1) < 0.01 && splashAbs(x2 - x3) < 0.01) {
       adjusts[i].vert = gTrue;
       adj0 = x0;
       adj1 = x2;
       if (hint->projectingCap) {
 	w = splashAbs(y1 - y0);
       }
-    } else if (y0 == y1 && y2 == y3) {
+    } else if (splashAbs(y0 - y1) < 0.01 && splashAbs(y2 - y3) < 0.01) {
       adjusts[i].vert = gFalse;
       adj0 = y0;
       adj1 = y2;

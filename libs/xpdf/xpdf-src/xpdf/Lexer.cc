@@ -112,7 +112,7 @@ int Lexer::lookChar() {
 Object *Lexer::getObj(Object *obj) {
   char *p;
   int c, c2;
-  GBool comment, neg, doubleMinus, done;
+  GBool comment, neg, doubleMinus, done, invalid;
   int numParen;
   int xi;
   double xf, scale;
@@ -343,6 +343,7 @@ Object *Lexer::getObj(Object *obj) {
     p = tokBuf;
     n = 0;
     s = NULL;
+    invalid = gFalse;
     while ((c = lookChar()) != EOF && !specialChars[c]) {
       getChar();
       if (c == '#') {
@@ -370,6 +371,9 @@ Object *Lexer::getObj(Object *obj) {
 	  goto notEscChar;
 	}
 	getChar();
+	if (c == 0) {
+	  invalid = gTrue;
+	}
       }
      notEscChar:
       // the PDF spec claims that names are limited to 127 chars, but
@@ -385,7 +389,13 @@ Object *Lexer::getObj(Object *obj) {
 	s->append((char)c);
       }
     }
-    if (n < tokBufSize) {
+    if (invalid) {
+      error(errSyntaxError, getPos(), "Null character in name");
+      obj->initError();
+      if (s) {
+	delete s;
+      }
+    } else if (n < tokBufSize) {
       *p = '\0';
       obj->initName(tokBuf);
     } else {

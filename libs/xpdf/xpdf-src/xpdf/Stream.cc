@@ -121,7 +121,8 @@ Guint Stream::discardChars(Guint n) {
   return count;
 }
 
-GString *Stream::getPSFilter(int psLevel, const char *indent) {
+GString *Stream::getPSFilter(int psLevel, const char *indent,
+			     GBool okToReadStream) {
   return new GString();
 }
 
@@ -132,15 +133,15 @@ Stream *Stream::addFilters(Object *dict, int recursion) {
   int i;
 
   str = this;
-  dict->dictLookup("Filter", &obj);
+  dict->dictLookup("Filter", &obj, recursion);
   if (obj.isNull()) {
     obj.free();
-    dict->dictLookup("F", &obj);
+    dict->dictLookup("F", &obj, recursion);
   }
-  dict->dictLookup("DecodeParms", &params);
+  dict->dictLookup("DecodeParms", &params, recursion);
   if (params.isNull()) {
     params.free();
-    dict->dictLookup("DP", &params);
+    dict->dictLookup("DP", &params, recursion);
   }
   if (obj.isName()) {
     str = makeFilter(obj.getName(), str, &params, recursion);
@@ -1096,13 +1097,14 @@ int ASCIIHexStream::lookChar() {
   return buf;
 }
 
-GString *ASCIIHexStream::getPSFilter(int psLevel, const char *indent) {
+GString *ASCIIHexStream::getPSFilter(int psLevel, const char *indent,
+				     GBool okToReadStream) {
   GString *s;
 
   if (psLevel < 2) {
     return NULL;
   }
-  if (!(s = str->getPSFilter(psLevel, indent))) {
+  if (!(s = str->getPSFilter(psLevel, indent, okToReadStream))) {
     return NULL;
   }
   s->append(indent)->append("/ASCIIHexDecode filter\n");
@@ -1181,13 +1183,14 @@ int ASCII85Stream::lookChar() {
   return b[index];
 }
 
-GString *ASCII85Stream::getPSFilter(int psLevel, const char *indent) {
+GString *ASCII85Stream::getPSFilter(int psLevel, const char *indent,
+				    GBool okToReadStream) {
   GString *s;
 
   if (psLevel < 2) {
     return NULL;
   }
-  if (!(s = str->getPSFilter(psLevel, indent))) {
+  if (!(s = str->getPSFilter(psLevel, indent, okToReadStream))) {
     return NULL;
   }
   s->append(indent)->append("/ASCII85Decode filter\n");
@@ -1408,13 +1411,14 @@ int LZWStream::getCode() {
   return code;
 }
 
-GString *LZWStream::getPSFilter(int psLevel, const char *indent) {
+GString *LZWStream::getPSFilter(int psLevel, const char *indent,
+				GBool okToReadStream) {
   GString *s;
 
   if (psLevel < 2 || pred) {
     return NULL;
   }
-  if (!(s = str->getPSFilter(psLevel, indent))) {
+  if (!(s = str->getPSFilter(psLevel, indent, okToReadStream))) {
     return NULL;
   }
   s->append(indent)->append("<< ");
@@ -1474,13 +1478,14 @@ int RunLengthStream::getBlock(char *blk, int size) {
   return n;
 }
 
-GString *RunLengthStream::getPSFilter(int psLevel, const char *indent) {
+GString *RunLengthStream::getPSFilter(int psLevel, const char *indent,
+				      GBool okToReadStream) {
   GString *s;
 
   if (psLevel < 2) {
     return NULL;
   }
-  if (!(s = str->getPSFilter(psLevel, indent))) {
+  if (!(s = str->getPSFilter(psLevel, indent, okToReadStream))) {
     return NULL;
   }
   s->append(indent)->append("/RunLengthDecode filter\n");
@@ -2012,7 +2017,7 @@ GBool CCITTFaxStream::readRow() {
 	lookBits(1);
 	eatBits(1);
       }
-      if (encoding >= 0) {
+      if (encoding > 0) {
 	for (i = 0; i < 4; ++i) {
 	  code1 = lookBits(12);
 	  if (code1 != 0x001) {
@@ -2260,14 +2265,15 @@ short CCITTFaxStream::lookBits(int n) {
   return (short)((inputBuf >> (inputBits - n)) & (0xffffffff >> (32 - n)));
 }
 
-GString *CCITTFaxStream::getPSFilter(int psLevel, const char *indent) {
+GString *CCITTFaxStream::getPSFilter(int psLevel, const char *indent,
+				     GBool okToReadStream) {
   GString *s;
   char s1[50];
 
   if (psLevel < 2) {
     return NULL;
   }
-  if (!(s = str->getPSFilter(psLevel, indent))) {
+  if (!(s = str->getPSFilter(psLevel, indent, okToReadStream))) {
     return NULL;
   }
   s->append(indent)->append("<< ");
@@ -2382,6 +2388,11 @@ void DCTStream::reset() {
 
   // start up the decompression process
   jpeg_start_decompress(&decomp);
+}
+
+GBool DCTStream::checkSequentialInterleaved() {
+  //~ this is unimplemented
+  return gTrue;
 }
 
 void DCTStream::close() {
@@ -2752,6 +2763,28 @@ void DCTStream::reset() {
     restartMarker = 0xd0;
     restart();
   }
+}
+
+GBool DCTStream::checkSequentialInterleaved() {
+  GBool headerOk;
+
+  str->reset();
+
+  progressive = interleaved = gFalse;
+  width = height = 0;
+  numComps = 0;
+  numQuantTables = 0;
+  numDCHuffTables = 0;
+  numACHuffTables = 0;
+  gotJFIFMarker = gFalse;
+  gotAdobeMarker = gFalse;
+  restartInterval = 0;
+
+  headerOk = readHeader(gTrue);
+
+  FilterStream::close();
+
+  return headerOk && !progressive && interleaved;
 }
 
 void DCTStream::close() {
@@ -3755,7 +3788,7 @@ int DCTStream::readBit() {
 
 GBool DCTStream::readHeader(GBool frame) {
   GBool doScan;
-  int n;
+  int n, i;
   int c = 0;
 
   // read headers
@@ -3850,6 +3883,13 @@ GBool DCTStream::readHeader(GBool frame) {
     }
   }
 
+  for (i = 0; i < numComps; ++i) {
+    if (compInfo[i].quantTable >= numQuantTables) {
+      error(errSyntaxError, getPos(), "Invalid DCT quant table selector");
+      return gFalse;
+    }
+  }
+
   return gTrue;
 }
 
@@ -3878,8 +3918,14 @@ GBool DCTStream::readBaselineSOF() {
     compInfo[i].hSample = (c >> 4) & 0x0f;
     compInfo[i].vSample = c & 0x0f;
     compInfo[i].quantTable = str->getChar();
-    if (compInfo[i].hSample < 1 || compInfo[i].hSample > 4 ||
-	compInfo[i].vSample < 1 || compInfo[i].vSample > 4) {
+    // a sampling factor of 3 is allowed by the spec, but requires
+    // messy upsampling, and appears not to be used in practice
+    if (!(compInfo[i].hSample == 1 ||
+	  compInfo[i].hSample == 2 ||
+	  compInfo[i].hSample == 4) ||
+	!(compInfo[i].vSample == 1 ||
+	  compInfo[i].vSample == 2 ||
+	  compInfo[i].vSample == 4)) {
       error(errSyntaxError, getPos(), "Bad DCT sampling factor");
       return gFalse;
     }
@@ -3917,8 +3963,14 @@ GBool DCTStream::readProgressiveSOF() {
     compInfo[i].hSample = (c >> 4) & 0x0f;
     compInfo[i].vSample = c & 0x0f;
     compInfo[i].quantTable = str->getChar();
-    if (compInfo[i].hSample < 1 || compInfo[i].hSample > 4 ||
-	compInfo[i].vSample < 1 || compInfo[i].vSample > 4) {
+    // a sampling factor of 3 is allowed by the spec, but requires
+    // messy upsampling, and appears not to be used in practice
+    if (!(compInfo[i].hSample == 1 ||
+	  compInfo[i].hSample == 2 ||
+	  compInfo[i].hSample == 4) ||
+	!(compInfo[i].vSample == 1 ||
+	  compInfo[i].vSample == 2 ||
+	  compInfo[i].vSample == 4)) {
       error(errSyntaxError, getPos(), "Bad DCT sampling factor");
       return gFalse;
     }
@@ -4182,13 +4234,19 @@ int DCTStream::read16() {
 
 #endif // HAVE_JPEGLIB
 
-GString *DCTStream::getPSFilter(int psLevel, const char *indent) {
+GString *DCTStream::getPSFilter(int psLevel, const char *indent,
+				GBool okToReadStream) {
   GString *s;
 
   if (psLevel < 2) {
     return NULL;
   }
-  if (!(s = str->getPSFilter(psLevel, indent))) {
+  if (!(s = str->getPSFilter(psLevel, indent, okToReadStream))) {
+    return NULL;
+  }
+  if (okToReadStream && !checkSequentialInterleaved()) {
+    // PostScript does not allow progressive or interleaved JPEG
+    delete s;
     return NULL;
   }
   s->append(indent)->append("<< >> /DCTDecode filter\n");
@@ -4982,13 +5040,14 @@ int FlateStream::getBlock(char *blk, int size) {
   return n;
 }
 
-GString *FlateStream::getPSFilter(int psLevel, const char *indent) {
+GString *FlateStream::getPSFilter(int psLevel, const char *indent,
+				  GBool okToReadStream) {
   GString *s;
 
   if (psLevel < 3 || pred) {
     return NULL;
   }
-  if (!(s = str->getPSFilter(psLevel, indent))) {
+  if (!(s = str->getPSFilter(psLevel, indent, okToReadStream))) {
     return NULL;
   }
   s->append(indent)->append("<< >> /FlateDecode filter\n");

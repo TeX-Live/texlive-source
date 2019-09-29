@@ -95,6 +95,9 @@ public:
   // for OpenType CFF fonts.)
   void getFontMatrix(double *mat);
 
+  // Return the number of glyphs in the font.
+  int getNumGlyphs() { return nGlyphs; }
+
   // Returns true if this looks like a CJK font that uses bytecode
   // instructions to assemble glyphs.
   GBool checkForTrickyCJK();
@@ -154,10 +157,15 @@ public:
   // various other errors.  If <name> is non-NULL, the font is renamed
   // to <name>.  If <codeToGID> is non-NULL, the font is re-encoded,
   // using a Windows Unicode cmap.  If <name> is NULL and the font is
-  // complete and correct, it will be written unmodified.  (Not useful
-  // for OpenType CFF fonts.)  Returns true if the font was modified.
+  // complete and correct, it will be written unmodified.  If
+  // <replacementCmapTable> is non-NULL it will be used as the cmap
+  // table in the written font (overriding any existing cmap table
+  // and/or the codeToGID arg).  (Not useful for OpenType CFF fonts.)
+  // Returns true if the font was modified.
   GBool writeTTF(FoFiOutputFunc outputFunc, void *outputStream,
-		 char *name = NULL, int *codeToGID = NULL);
+		 char *name = NULL, int *codeToGID = NULL,
+		 Guchar *replacementCmapTable = NULL,
+		 int replacementCmapTableLen = 0);
 
   // Returns a pointer to the CFF font embedded in this OpenType font.
   // If successful, sets *<start> and *<length>, and returns true.
@@ -200,6 +208,7 @@ private:
   GBool openTypeCFF;
   GBool headlessCFF;
   GBool isDfont;
+  GBool isTTC;
 
   GBool parsedOk;
 };

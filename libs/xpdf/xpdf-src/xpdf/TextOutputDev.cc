@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <math.h>
+#include <limits.h>
 #include <ctype.h>
 #ifdef _WIN32
 #include <fcntl.h> // for O_BINARY
@@ -111,7 +112,7 @@
 
 // In simple layout mode, lines are broken at gaps larger than this
 // value multiplied by font size.
-#define simpleLayoutGapThreshold 0.4
+#define simpleLayoutGapThreshold 0.7
 
 // Table cells (TextColumns) are allowed to overlap by this much
 // in table layout mode (as a fraction of cell width or height).
@@ -407,18 +408,51 @@ void TextBlock::updateBounds(int childIdx) {
 }
 
 //------------------------------------------------------------------------
-// TextGap
+// TextGaps
 //------------------------------------------------------------------------
 
-class TextGap {
+struct TextGap {
+  double x;			// center of gap: x for vertical gaps,
+				//   y for horizontal gaps
+  double w;			// width/height of gap
+};
+
+class TextGaps {
 public:
 
-  TextGap(double aXY, double aW): xy(aXY), w(aW) {}
+  TextGaps();
+  ~TextGaps();
+  void addGap(double x, double w);
+  int getLength() { return length; }
+  double getX(int idx) { return gaps[idx].x; }
+  double getW(int idx) { return gaps[idx].w; }
 
-  double xy;			// center of gap: x for vertical gaps,
-				//   y for horizontal gaps
-  double w;			// width of gap
+private:
+
+  int length;
+  int size;
+  TextGap *gaps;
 };
+
+TextGaps::TextGaps() {
+  length = 0;
+  size = 16;
+  gaps = (TextGap *)gmallocn(size, sizeof(TextGap));
+}
+
+TextGaps::~TextGaps() {
+  gfree(gaps);
+}
+
+void TextGaps::addGap(double x, double w) {
+  if (length == size) {
+    size *= 2;
+    gaps = (TextGap *)greallocn(gaps, size, sizeof(TextGap));
+  }
+  gaps[length].x = x;
+  gaps[length].w = w;
+  ++length;
+}
 
 //------------------------------------------------------------------------
 // TextSuperLine
@@ -508,6 +542,10 @@ TextOutputControl::TextOutputControl() {
   discardInvisibleText = gFalse;
   discardClippedText = gFalse;
   insertBOM = gFalse;
+  marginLeft = 0;
+  marginRight = 0;
+  marginTop = 0;
+  marginBottom = 0;
 }
 
 
@@ -1136,9 +1174,11 @@ void TextPage::updateFont(GfxState *state) {
       if (name && name[0] == 'm' && name[1] == '\0') {
 	mCode = code;
       }
-      if (letterCode < 0 && name && name[1] == '\0' &&
+      if (letterCode < 0 &&
+	  name &&
 	  ((name[0] >= 'A' && name[0] <= 'Z') ||
-	   (name[0] >= 'a' && name[0] <= 'z'))) {
+	   (name[0] >= 'a' && name[0] <= 'z')) &&
+	  name[1] == '\0') {
 	letterCode = code;
       }
       if (anyCode < 0 && name &&
@@ -1239,9 +1279,12 @@ void TextPage::addChar(GfxState *state, double x, double y,
   // throw away chars that aren't inside the page bounds
   // (and also do a sanity check on the character size)
   state->transform(x, y, &x1, &y1);
-  if (x1 + w1 < 0 || x1 > pageWidth ||
-      y1 + h1 < 0 || y1 > pageHeight ||
-      w1 > pageWidth || h1 > pageHeight) {
+  if (x1 + w1 < control.marginLeft ||
+      x1 > pageWidth - control.marginRight ||
+      y1 + h1 < control.marginTop ||
+      y1 > pageHeight - control.marginBottom ||
+      w1 > pageWidth ||
+      h1 > pageHeight) {
     charPos += nBytes;
     return;
   }
@@ -1876,8 +1919,9 @@ void TextPage::writeRaw(void *outputStream,
 	  if (fabs(ch2->yMin - ch->yMin) > rawModeLineDelta * ch->fontSize ||
 	      ch2->xMin - ch->xMax < -rawModeCharOverlap * ch->fontSize) {
 	    s->append(eol, eolLen);
-	  } else if (ch2->xMin - ch->xMax >
-		     rawModeWordSpacing * ch->fontSize) {
+	  } else if (ch->spaceAfter ||
+		     ch2->xMin - ch->xMax >
+		       rawModeWordSpacing * ch->fontSize) {
 	    s->append(space, spaceLen);
 	  }
 	  break;
@@ -1885,8 +1929,9 @@ void TextPage::writeRaw(void *outputStream,
 	  if (fabs(ch->xMax - ch2->xMax) > rawModeLineDelta * ch->fontSize ||
 	      ch2->yMin - ch->yMax < -rawModeCharOverlap * ch->fontSize) {
 	    s->append(eol, eolLen);
-	  } else if (ch2->yMin - ch->yMax >
-		     rawModeWordSpacing * ch->fontSize) {
+	  } else if (ch->spaceAfter ||
+		     ch2->yMin - ch->yMax >
+		       rawModeWordSpacing * ch->fontSize) {
 	    s->append(space, spaceLen);
 	  }
 	  break;
@@ -1894,8 +1939,9 @@ void TextPage::writeRaw(void *outputStream,
 	  if (fabs(ch->yMax - ch2->yMax) > rawModeLineDelta * ch->fontSize ||
 	      ch->xMin - ch2->xMax  < -rawModeCharOverlap * ch->fontSize) {
 	    s->append(eol, eolLen);
-	  } else if (ch->xMin - ch2->xMax >
-		     rawModeWordSpacing * ch->fontSize) {
+	  } else if (ch->spaceAfter ||
+		     ch->xMin - ch2->xMax >
+		       rawModeWordSpacing * ch->fontSize) {
 	    s->append(space, spaceLen);
 	  }
 	  break;
@@ -1903,8 +1949,9 @@ void TextPage::writeRaw(void *outputStream,
 	  if (fabs(ch2->xMin - ch->xMin) > rawModeLineDelta * ch->fontSize ||
 	      ch->yMin - ch2->yMax  < -rawModeCharOverlap * ch->fontSize) {
 	    s->append(eol, eolLen);
-	  } else if (ch->yMin - ch2->yMax >
-		     rawModeWordSpacing * ch->fontSize) {
+	  } else if (ch->spaceAfter ||
+		     ch->yMin - ch2->yMax >
+		       rawModeWordSpacing * ch->fontSize) {
 	    s->append(space, spaceLen);
 	  }
 	  break;
@@ -2693,12 +2740,11 @@ TextBlock *TextPage::splitChars(GList *charsA) {
 TextBlock *TextPage::split(GList *charsA, int rot) {
   TextBlock *blk;
   GList *chars2, *chars3;
-  GList *horizGaps, *vertGaps;
-  TextGap *gap;
+  TextGaps *horizGaps, *vertGaps;
   TextChar *ch;
   double xMin, yMin, xMax, yMax, avgFontSize;
   double horizGapSize, vertGapSize, minHorizChunkWidth, minVertChunkWidth;
-  double nLines, vertGapThreshold, minChunk;
+  double gap, nLines, vertGapThreshold, minChunk;
   double largeCharSize;
   double x0, x1, y0, y1;
   int nHorizGaps, nVertGaps, nLargeChars;
@@ -2707,8 +2753,8 @@ TextBlock *TextPage::split(GList *charsA, int rot) {
 
   //----- find all horizontal and vertical gaps
 
-  horizGaps = new GList();
-  vertGaps = new GList();
+  horizGaps = new TextGaps();
+  vertGaps = new TextGaps();
   findGaps(charsA, rot, &xMin, &yMin, &xMax, &yMax, &avgFontSize,
 	   horizGaps, vertGaps);
 
@@ -2716,16 +2762,16 @@ TextBlock *TextPage::split(GList *charsA, int rot) {
 
   horizGapSize = 0;
   for (i = 0; i < horizGaps->getLength(); ++i) {
-    gap = (TextGap *)horizGaps->get(i);
-    if (gap->w > horizGapSize) {
-      horizGapSize = gap->w;
+    gap = horizGaps->getW(i);
+    if (gap > horizGapSize) {
+      horizGapSize = gap;
     }
   }
   vertGapSize = 0;
   for (i = 0; i < vertGaps->getLength(); ++i) {
-    gap = (TextGap *)vertGaps->get(i);
-    if (gap->w > vertGapSize) {
-      vertGapSize = gap->w;
+    gap = vertGaps->getW(i);
+    if (gap > vertGapSize) {
+      vertGapSize = gap;
     }
   }
 
@@ -2736,14 +2782,14 @@ TextBlock *TextPage::split(GList *charsA, int rot) {
   if (horizGaps->getLength() > 0) {
     y0 = yMin;
     for (i = 0; i < horizGaps->getLength(); ++i) {
-      gap = (TextGap *)horizGaps->get(i);
-      if (gap->w > horizGapSize - splitGapSlack * avgFontSize) {
+      gap = horizGaps->getW(i);
+      if (gap > horizGapSize - splitGapSlack * avgFontSize) {
 	++nHorizGaps;
-	y1 = gap->xy - 0.5 * gap->w;
+	y1 = horizGaps->getX(i) - 0.5 * gap;
 	if (y1 - y0 < minHorizChunkWidth) {
 	  minHorizChunkWidth = y1 - y0;
 	}
-	y0 = y1 + gap->w;
+	y0 = y1 + gap;
       }
     }
     y1 = yMax;
@@ -2756,14 +2802,14 @@ TextBlock *TextPage::split(GList *charsA, int rot) {
   if (vertGaps->getLength() > 0) {
     x0 = xMin;
     for (i = 0; i < vertGaps->getLength(); ++i) {
-      gap = (TextGap *)vertGaps->get(i);
-      if (gap->w > vertGapSize - splitGapSlack * avgFontSize) {
+      gap = vertGaps->getW(i);
+      if (gap > vertGapSize - splitGapSlack * avgFontSize) {
 	++nVertGaps;
-	x1 = gap->xy - 0.5 * gap->w;
+	x1 = vertGaps->getX(i) - 0.5 * gap;
 	if (x1 - x0 < minVertChunkWidth) {
 	  minVertChunkWidth = x1 - x0;
 	}
-	x0 = x1 + gap->w;
+	x0 = x1 + gap;
       }
     }
     x1 = xMax;
@@ -2881,9 +2927,8 @@ TextBlock *TextPage::split(GList *charsA, int rot) {
     printf("vert split xMin=%g yMin=%g xMax=%g yMax=%g small=%d\n",
 	   xMin, pageHeight - yMax, xMax, pageHeight - yMin, smallSplit);
     for (i = 0; i < vertGaps->getLength(); ++i) {
-      gap = (TextGap *)vertGaps->get(i);
-      if (gap->w > vertGapSize - splitGapSlack * avgFontSize) {
-	printf("    x=%g\n", gap->xy);
+      if (vertGaps->getW(i) > vertGapSize - splitGapSlack * avgFontSize) {
+	printf("    x=%g\n", vertGaps->getX(i));
       }
     }
 #endif
@@ -2891,9 +2936,8 @@ TextBlock *TextPage::split(GList *charsA, int rot) {
     blk->smallSplit = smallSplit;
     x0 = xMin - 1;
     for (i = 0; i < vertGaps->getLength(); ++i) {
-      gap = (TextGap *)vertGaps->get(i);
-      if (gap->w > vertGapSize - splitGapSlack * avgFontSize) {
-	x1 = gap->xy;
+      if (vertGaps->getW(i) > vertGapSize - splitGapSlack * avgFontSize) {
+	x1 = vertGaps->getX(i);
 	chars2 = getChars(charsA, x0, yMin - 1, x1, yMax + 1);
 	blk->addChild(split(chars2, rot));
 	delete chars2;
@@ -2910,9 +2954,8 @@ TextBlock *TextPage::split(GList *charsA, int rot) {
     printf("horiz split xMin=%g yMin=%g xMax=%g yMax=%g small=%d\n",
 	   xMin, pageHeight - yMax, xMax, pageHeight - yMin, smallSplit);
     for (i = 0; i < horizGaps->getLength(); ++i) {
-      gap = (TextGap *)horizGaps->get(i);
-      if (gap->w > horizGapSize - splitGapSlack * avgFontSize) {
-	printf("    y=%g\n", pageHeight - gap->xy);
+      if (horizGaps->getW(i) > horizGapSize - splitGapSlack * avgFontSize) {
+	printf("    y=%g\n", pageHeight - horizGaps->getX(i));
       }
     }
 #endif
@@ -2920,9 +2963,8 @@ TextBlock *TextPage::split(GList *charsA, int rot) {
     blk->smallSplit = smallSplit;
     y0 = yMin - 1;
     for (i = 0; i < horizGaps->getLength(); ++i) {
-      gap = (TextGap *)horizGaps->get(i);
-      if (gap->w > horizGapSize - splitGapSlack * avgFontSize) {
-	y1 = gap->xy;
+      if (horizGaps->getW(i) > horizGapSize - splitGapSlack * avgFontSize) {
+	y1 = horizGaps->getX(i);
 	chars2 = getChars(charsA, xMin - 1, y0, xMax + 1, y1);
 	blk->addChild(split(chars2, rot));
 	delete chars2;
@@ -2966,8 +3008,8 @@ TextBlock *TextPage::split(GList *charsA, int rot) {
     }
   }
 
-  deleteGList(horizGaps, TextGap);
-  deleteGList(vertGaps, TextGap);
+  delete horizGaps;
+  delete vertGaps;
 
   tagBlock(blk);
 
@@ -3001,11 +3043,12 @@ void TextPage::findGaps(GList *charsA, int rot,
 			double *xMinOut, double *yMinOut,
 			double *xMaxOut, double *yMaxOut,
 			double *avgFontSizeOut,
-			GList *horizGaps, GList *vertGaps) {
+			TextGaps *horizGaps, TextGaps *vertGaps) {
   TextChar *ch;
-  int *horizProfile, *vertProfile;
+  char *horizProfile, *vertProfile;
   double xMin, yMin, xMax, yMax, w;
-  double minFontSize, avgFontSize, splitPrecision, ascentAdjust, descentAdjust;
+  double minFontSize, avgFontSize, splitPrecision, invSplitPrecision;
+  double ascentAdjust, descentAdjust;
   int xMinI, yMinI, xMaxI, yMaxI, xMinI2, yMinI2, xMaxI2, yMaxI2;
   int start, x, y, i;
 
@@ -3037,6 +3080,7 @@ void TextPage::findGaps(GList *charsA, int rot,
   if (splitPrecision < minSplitPrecision) {
     splitPrecision = minSplitPrecision;
   }
+  invSplitPrecision = 1 / splitPrecision;
   *xMinOut = xMin;
   *yMinOut = yMin;
   *xMaxOut = xMax;
@@ -3045,59 +3089,65 @@ void TextPage::findGaps(GList *charsA, int rot,
 
   //----- compute the horizontal and vertical profiles
 
+  if (xMin * invSplitPrecision < 0.5 * INT_MIN ||
+      xMax * invSplitPrecision > 0.5 * INT_MAX ||
+      yMin * invSplitPrecision < 0.5 * INT_MIN ||
+      xMax * invSplitPrecision > 0.5 * INT_MAX) {
+    return;
+  }
   // add some slack to the array bounds to avoid floating point
   // precision problems
-  xMinI = (int)floor(xMin / splitPrecision) - 1;
-  yMinI = (int)floor(yMin / splitPrecision) - 1;
-  xMaxI = (int)floor(xMax / splitPrecision) + 1;
-  yMaxI = (int)floor(yMax / splitPrecision) + 1;
-  horizProfile = (int *)gmallocn(yMaxI - yMinI + 1, sizeof(int));
-  vertProfile = (int *)gmallocn(xMaxI - xMinI + 1, sizeof(int));
-  memset(horizProfile, 0, (yMaxI - yMinI + 1) * sizeof(int));
-  memset(vertProfile, 0, (xMaxI - xMinI + 1) * sizeof(int));
+  xMinI = (int)floor(xMin * invSplitPrecision) - 1;
+  yMinI = (int)floor(yMin * invSplitPrecision) - 1;
+  xMaxI = (int)floor(xMax * invSplitPrecision) + 1;
+  yMaxI = (int)floor(yMax * invSplitPrecision) + 1;
+  horizProfile = (char *)gmalloc(yMaxI - yMinI + 1);
+  vertProfile = (char *)gmalloc(xMaxI - xMinI + 1);
+  memset(horizProfile, 0, yMaxI - yMinI + 1);
+  memset(vertProfile, 0, xMaxI - xMinI + 1);
   for (i = 0; i < charsA->getLength(); ++i) {
     ch = (TextChar *)charsA->get(i);
     // yMinI2 and yMaxI2 are adjusted to allow for slightly overlapping lines
     switch (rot) {
     case 0:
     default:
-      xMinI2 = (int)floor(ch->xMin / splitPrecision);
-      xMaxI2 = (int)floor(ch->xMax / splitPrecision);
+      xMinI2 = (int)floor(ch->xMin * invSplitPrecision);
+      xMaxI2 = (int)floor(ch->xMax * invSplitPrecision);
       ascentAdjust = ascentAdjustFactor * (ch->yMax - ch->yMin);
-      yMinI2 = (int)floor((ch->yMin + ascentAdjust) / splitPrecision);
+      yMinI2 = (int)floor((ch->yMin + ascentAdjust) * invSplitPrecision);
       descentAdjust = descentAdjustFactor * (ch->yMax - ch->yMin);
-      yMaxI2 = (int)floor((ch->yMax - descentAdjust) / splitPrecision);
+      yMaxI2 = (int)floor((ch->yMax - descentAdjust) * invSplitPrecision);
       break;
     case 1:
       descentAdjust = descentAdjustFactor * (ch->xMax - ch->xMin);
-      xMinI2 = (int)floor((ch->xMin + descentAdjust) / splitPrecision);
+      xMinI2 = (int)floor((ch->xMin + descentAdjust) * invSplitPrecision);
       ascentAdjust = ascentAdjustFactor * (ch->xMax - ch->xMin);
-      xMaxI2 = (int)floor((ch->xMax - ascentAdjust) / splitPrecision);
-      yMinI2 = (int)floor(ch->yMin / splitPrecision);
-      yMaxI2 = (int)floor(ch->yMax / splitPrecision);
+      xMaxI2 = (int)floor((ch->xMax - ascentAdjust) * invSplitPrecision);
+      yMinI2 = (int)floor(ch->yMin * invSplitPrecision);
+      yMaxI2 = (int)floor(ch->yMax * invSplitPrecision);
       break;
     case 2:
-      xMinI2 = (int)floor(ch->xMin / splitPrecision);
-      xMaxI2 = (int)floor(ch->xMax / splitPrecision);
+      xMinI2 = (int)floor(ch->xMin * invSplitPrecision);
+      xMaxI2 = (int)floor(ch->xMax * invSplitPrecision);
       descentAdjust = descentAdjustFactor * (ch->yMax - ch->yMin);
-      yMinI2 = (int)floor((ch->yMin + descentAdjust) / splitPrecision);
+      yMinI2 = (int)floor((ch->yMin + descentAdjust) * invSplitPrecision);
       ascentAdjust = ascentAdjustFactor * (ch->yMax - ch->yMin);
-      yMaxI2 = (int)floor((ch->yMax - ascentAdjust) / splitPrecision);
+      yMaxI2 = (int)floor((ch->yMax - ascentAdjust) * invSplitPrecision);
       break;
     case 3:
       ascentAdjust = ascentAdjustFactor * (ch->xMax - ch->xMin);
-      xMinI2 = (int)floor((ch->xMin + ascentAdjust) / splitPrecision);
+      xMinI2 = (int)floor((ch->xMin + ascentAdjust) * invSplitPrecision);
       descentAdjust = descentAdjustFactor * (ch->xMax - ch->xMin);
-      xMaxI2 = (int)floor((ch->xMax - descentAdjust) / splitPrecision);
-      yMinI2 = (int)floor(ch->yMin / splitPrecision);
-      yMaxI2 = (int)floor(ch->yMax / splitPrecision);
+      xMaxI2 = (int)floor((ch->xMax - descentAdjust) * invSplitPrecision);
+      yMinI2 = (int)floor(ch->yMin * invSplitPrecision);
+      yMaxI2 = (int)floor(ch->yMax * invSplitPrecision);
       break;
     }
     for (y = yMinI2; y <= yMaxI2; ++y) {
-      ++horizProfile[y - yMinI];
+      horizProfile[y - yMinI] = 1;
     }
     for (x = xMinI2; x <= xMaxI2; ++x) {
-      ++vertProfile[x - xMinI];
+      vertProfile[x - xMinI] = 1;
     }
   }
 
@@ -3112,8 +3162,7 @@ void TextPage::findGaps(GList *charsA, int rot,
     } else {
       if (horizProfile[y + 1 - yMinI]) {
 	w = (y - start) * splitPrecision;
-	horizGaps->append(new TextGap((start + 1) * splitPrecision + 0.5 * w,
-				      w));
+	horizGaps->addGap((start + 1) * splitPrecision + 0.5 * w, w);
       }
     }
   }
@@ -3129,8 +3178,7 @@ void TextPage::findGaps(GList *charsA, int rot,
     } else {
       if (vertProfile[x + 1 - xMinI]) {
 	w = (x - start) * splitPrecision;
-	vertGaps->append(new TextGap((start + 1) * splitPrecision + 0.5 * w,
-				     w));
+	vertGaps->addGap((start + 1) * splitPrecision + 0.5 * w, w);
       }
     }
   }
@@ -3818,18 +3866,27 @@ double TextPage::computeWordSpacingThreshold(GList *charsA, int rot) {
     minGap = 0;
   }
 
-  // if spacing is nearly uniform (minGap is close to maxGap), use the
-  // SpGap/AdjGap values if available, otherwise assume it's a single
-  // word (technically it could be either "ABC" or "A B C", but it's
-  // essentially impossible to tell)
+  // if spacing is nearly uniform (minGap is close to maxGap), there
+  // are three cases:
+  // (1) if the SpGap and AdjGap values are both available and
+  //     sensible, use them
+  // (2) if only the SpGap values are available, meaning that every
+  //     character in the line had a space after it, split after every
+  //     character
+  // (3) otherwise assume it's a single word (technically it could be
+  //     either "ABC" or "A B C", but it's essentially impossible to
+  //     tell)
   if (maxGap - minGap < uniformSpacing * avgFontSize) {
-    if (minAdjGap <= maxAdjGap &&
-	minSpGap <= maxSpGap &&
-	minSpGap - maxAdjGap > 0.01) {
-      return 0.5 * (maxAdjGap + minSpGap);
-    } else {
-      return maxGap + 1;
+    if (minSpGap <= maxSpGap) {
+      if (minAdjGap <= maxAdjGap &&
+	  minSpGap - maxAdjGap > 0.01) {
+	return 0.5 * (maxAdjGap + minSpGap);
+      } else if (minAdjGap > maxAdjGap &&
+		 maxSpGap - minSpGap < uniformSpacing * avgFontSize) {
+	return minSpGap - 1;
+      }
     }
+    return maxGap + 1;
 
   // if there is some variation in spacing, but it's small, assume
   // there are some inter-word spaces
@@ -4033,8 +4090,8 @@ void TextPage::assignSimpleLayoutPositions(GList *superLines,
 					   UnicodeMap *uMap) {
   GList *lines;
   TextLine *line0, *line1;
-  double xMin;
-  int px, sp, i, j;
+  double xMin, xMax;
+  int px, px2, sp, i, j;
 
   // build a list of lines and sort by x
   lines = new GList();
@@ -4048,21 +4105,25 @@ void TextPage::assignSimpleLayoutPositions(GList *superLines,
   for (i = 0; i < lines->getLength(); ++i) {
     line0 = (TextLine *)lines->get(i);
     computeLinePhysWidth(line0, uMap);
-    line0->px = (int)((line0->xMin - xMin) / (0.5 * line0->fontSize));
+    px = 0;
+    xMax = xMin;
     for (j = 0; j < i; ++j) {
       line1 = (TextLine *)lines->get(j);
       if (line0->xMin > line1->xMax) {
-	sp = (int)((line0->xMin - line1->xMax) /
-		   (0.5 * line0->fontSize) + 0.5);
-	if (sp < 1) {
-	  sp = 1;
+	if (line1->xMax > xMax) {
+	  xMax = line1->xMax;
 	}
-	px = line1->px + line1->pw + sp;
-	if (px > line0->px) {
-	  line0->px = px;
+	px2 = line1->px + line1->pw;
+	if (px2 > px) {
+	  px = px2;
 	}
       }
     }
+    sp = (int)((line0->xMin - xMax) / (0.5 * line0->fontSize) + 0.5);
+    if (sp < 1 && xMax > xMin) {
+      sp = 1;
+    }
+    line0->px = px + sp;
   }
 
   delete lines;

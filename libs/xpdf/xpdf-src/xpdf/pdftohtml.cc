@@ -171,6 +171,7 @@ int main(int argc, char *argv[]) {
   htmlGen->setZoom(zoom);
   htmlGen->setDrawInvisibleText(!skipInvisible);
   htmlGen->setAllTextInvisible(allInvisible);
+  htmlGen->setExtractFontFiles(gTrue);
   htmlGen->startDoc(doc);
 
   // convert the pages
@@ -191,7 +192,7 @@ int main(int argc, char *argv[]) {
       goto err2;
     }
     pngURL = GString::format("page{0:d}.png", pg);
-    err = htmlGen->convertPage(pg, pngURL->getCString(),
+    err = htmlGen->convertPage(pg, pngURL->getCString(), htmlDir,
 			       &writeToFile, htmlFile,
 			       &writeToFile, pngFile);
     delete pngURL;

@@ -14,14 +14,14 @@
 //------------------------------------------------------------------------
 
 // xpdf version
-#define xpdfVersion          "4.01.01"
-#define xpdfVersionNum       4.01
+#define xpdfVersion          "4.02"
+#define xpdfVersionNum       4.02
 #define xpdfMajorVersion     4
-#define xpdfMinorVersion     1
-#define xpdfUpdateVersion    1
+#define xpdfMinorVersion     2
+#define xpdfUpdateVersion    0
 #define xpdfMajorVersionStr  "4"
-#define xpdfMinorVersionStr  "1"
-#define xpdfUpdateVersionStr "1"
+#define xpdfMinorVersionStr  "2"
+#define xpdfUpdateVersionStr "0"
 
 // supported PDF version
 #define supportedPDFVersionStr "2.0"
@@ -31,7 +31,7 @@
 #define xpdfCopyright "Copyright 1996-2019 Glyph & Cog, LLC"
 
 // Windows resource file stuff
-#define winxpdfVersion "WinXpdf 4.01.01"
+#define winxpdfVersion "WinXpdf 4.02"
 #define xpdfCopyrightAmp "Copyright 1996-2019 Glyph && Cog, LLC"
 
 //------------------------------------------------------------------------

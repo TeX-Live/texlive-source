@@ -11,6 +11,7 @@
 #ifndef GFILE_H
 #define GFILE_H
 
+#include <aconf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>

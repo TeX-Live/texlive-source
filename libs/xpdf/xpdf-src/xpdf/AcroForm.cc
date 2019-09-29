@@ -1542,10 +1542,11 @@ void AcroFormField::drawText(GString *text, GString *da, GfxFontDict *fontDict,
     fontSize = atof(tok->getCString());
   } else {
     error(errSyntaxError, -1, "Missing 'Tf' operator in field's DA string");
-    fontSize = 10;
+    fontSize = 0;
     if (!daToks) {
       daToks = new GList();
     }
+    tfPos = daToks->getLength();
     daToks->append(new GString("/xpdf_default_font"));
     daToks->append(new GString("10"));
     daToks->append(new GString("Tf"));
@@ -1583,7 +1584,7 @@ void AcroFormField::drawText(GString *text, GString *da, GfxFontDict *fontDict,
 
     // compute font autosize
     if (fontSize == 0) {
-      for (fontSize = 20; fontSize > 1; --fontSize) {
+      for (fontSize = 10; fontSize > 1; --fontSize) {
 	y = dy - 3;
 	w2 = 0;
 	i = 0;
@@ -1596,7 +1597,7 @@ void AcroFormField::drawText(GString *text, GString *da, GfxFontDict *fontDict,
 	  y -= fontSize;
 	}
 	// approximate the descender for the last line
-	if (y >= 0.33 * fontSize) {
+	if (y >= 0.33 * fontSize && w <= wMax) {
 	  break;
 	}
       }
@@ -1697,6 +1698,9 @@ void AcroFormField::drawText(GString *text, GString *da, GfxFontDict *fontDict,
 	  fontSize = w;
 	}
 	fontSize = floor(fontSize);
+	if (fontSize > 10) {
+	  fontSize = 10;
+	}
 	if (tfPos >= 0) {
 	  tok = (GString *)daToks->get(tfPos + 1);
 	  tok->clear();
@@ -1783,6 +1787,9 @@ void AcroFormField::drawText(GString *text, GString *da, GfxFontDict *fontDict,
 	  fontSize = fontSize2;
 	}
 	fontSize = floor(fontSize);
+	if (fontSize > 10) {
+	  fontSize = 10;
+	}
 	if (tfPos >= 0) {
 	  tok = (GString *)daToks->get(tfPos + 1);
 	  tok->clear();
@@ -1936,6 +1943,9 @@ void AcroFormField::drawListBox(GString **text, GBool *selection,
       fontSize = fontSize2;
     }
     fontSize = floor(fontSize);
+    if (fontSize > 10) {
+      fontSize = 10;
+    }
     if (tfPos >= 0) {
       tok = (GString *)daToks->get(tfPos + 1);
       tok->clear();

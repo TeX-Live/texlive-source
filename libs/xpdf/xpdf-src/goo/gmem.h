@@ -20,7 +20,11 @@ public:
   ~GMemException() {}
 };
 
-#define GMEM_EXCEP throw(GMemException)
+// This used to be:
+//   #define GMEM_EXCEP throw(GMemException)
+// but the throw decl was never really very useful, and is deprecated
+// as of C++11 and illegal as of C++17.
+#define GMEM_EXCEP
 
 #else // USE_EXCEPTIONS
 

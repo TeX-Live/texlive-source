@@ -51,6 +51,7 @@ GBool BuiltinFontWidths::getWidth(const char *name, Gushort *width) {
       return gTrue;
     }
   }
+  *width = 0;
   return gFalse;
 }
 

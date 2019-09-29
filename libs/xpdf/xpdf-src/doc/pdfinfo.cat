@@ -4,7 +4,7 @@ pdfinfo(1)                  General Commands Manual                 pdfinfo(1)
 
 NAME
        pdfinfo - Portable Document Format (PDF) document information extractor
-       (version 4.01)
+       (version 4.02)
 
 SYNOPSIS
        pdfinfo [options] [PDF-file]
@@ -114,4 +114,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                       pdfinfo(1)
+                                  25 Sep 2019                       pdfinfo(1)

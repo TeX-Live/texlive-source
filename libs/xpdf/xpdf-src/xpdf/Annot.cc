@@ -845,7 +845,7 @@ GBool Annot::setFillColor(Object *colorObj) {
   if (!colorObj->isArray()) {
     return gFalse;
   }
-  for (i = 0; i < colorObj->arrayGetLength(); ++i) {
+  for (i = 0; i < colorObj->arrayGetLength() && i < 4; ++i) {
     if (colorObj->arrayGet(i, &obj)->isNum()) {
       color[i] = obj.getNum();
     } else {

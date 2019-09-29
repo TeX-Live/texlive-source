@@ -4,7 +4,7 @@ pdftopng(1)                 General Commands Manual                pdftopng(1)
 
 NAME
        pdftopng  - Portable Document Format (PDF) to Portable Network Graphics
-       (PNG) converter (version 4.01)
+       (PNG) converter (version 4.02)
 
 SYNOPSIS
        pdftopng [options] PDF-file PNG-root
@@ -97,4 +97,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                      pdftopng(1)
+                                  25 Sep 2019                      pdftopng(1)

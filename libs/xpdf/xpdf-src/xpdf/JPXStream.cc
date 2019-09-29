@@ -414,18 +414,17 @@ void JPXStream::fillReadBuf() {
     if (curY >= (img.ySize >> reduction)) {
       return;
     }
-    tileIdx = ((curY - img.yTileOffsetR) / img.yTileSizeR) * img.nXTiles
-              + (curX - img.xTileOffsetR) / img.xTileSizeR;
+    tileIdx = (((curY << reduction) - img.yTileOffset) / img.yTileSize)
+                * img.nXTiles
+              + ((curX << reduction) - img.xTileOffset) / img.xTileSize;
 #if 1 //~ ignore the palette, assume the PDF ColorSpace object is valid
     tileComp = &img.tiles[tileIdx].tileComps[curComp];
 #else
     tileComp = &img.tiles[tileIdx].tileComps[havePalette ? 0 : curComp];
 #endif
-    //~ can curX/curY be less than x/yTileOffsetR?
-    //~ if yes, we need to use tx = max(0, ....)
-    tx = jpxFloorDiv((curX - img.xTileOffsetR) % img.xTileSizeR,
+    tx = jpxFloorDiv(curX - jpxCeilDivPow2(img.tiles[tileIdx].x0, reduction),
 		     tileComp->hSep);
-    ty = jpxFloorDiv((curY - img.yTileOffsetR) % img.yTileSizeR,
+    ty = jpxFloorDiv(curY - jpxCeilDivPow2(img.tiles[tileIdx].y0, reduction),
 		     tileComp->vSep);
     pix = (int)tileComp->data[ty * tileComp->w + tx];
     pixBits = tileComp->prec;
@@ -463,7 +462,8 @@ void JPXStream::fillReadBuf() {
   } while (readBufLen < 8);
 }
 
-GString *JPXStream::getPSFilter(int psLevel, const char *indent) {
+GString *JPXStream::getPSFilter(int psLevel, const char *indent,
+				GBool okToReadStream) {
   return NULL;
 }
 
@@ -960,10 +960,6 @@ JPXDecodeResult JPXStream::readCodestream(Guint len) {
       img.ySizeR = jpxCeilDivPow2(img.ySize, reduction);
       img.xOffsetR = jpxCeilDivPow2(img.xOffset, reduction);
       img.yOffsetR = jpxCeilDivPow2(img.yOffset, reduction);
-      img.xTileSizeR = jpxCeilDivPow2(img.xTileSize, reduction);
-      img.yTileSizeR = jpxCeilDivPow2(img.yTileSize, reduction);
-      img.xTileOffsetR = jpxCeilDivPow2(img.xTileOffset, reduction);
-      img.yTileOffsetR = jpxCeilDivPow2(img.yTileOffset, reduction);
       img.nXTiles = (img.xSize - img.xTileOffset + img.xTileSize - 1)
 	            / img.xTileSize;
       img.nYTiles = (img.ySize - img.yTileOffset + img.yTileSize - 1)
@@ -1449,8 +1445,7 @@ JPXDecodeResult JPXStream::readCodestream(Guint len) {
   ok = gTrue;
   while (1) {
     if (!readTilePart()) {
-      ok = gFalse;
-      break;
+      return jpxDecodeFatalError;
     }
     if (!readMarkerHdr(&segType, &segLen)) {
       error(errSyntaxError, getPos(), "Error in JPX codestream");
@@ -1913,6 +1908,7 @@ GBool JPXStream::readTilePart() {
     tile->res = 0;
     tile->precinct = 0;
     tile->layer = 0;
+    tile->done = gFalse;
     tile->maxNDecompLevels = 0;
     for (comp = 0; comp < img.nComps; ++comp) {
       tileComp = &tile->tileComps[comp];
@@ -1925,8 +1921,15 @@ GBool JPXStream::readTilePart() {
       tileComp->y1 = jpxCeilDiv(tile->y1, tileComp->vSep);
       tileComp->cbW = 1 << tileComp->codeBlockW;
       tileComp->cbH = 1 << tileComp->codeBlockH;
-      tileComp->w = jpxCeilDivPow2(tileComp->x1 - tileComp->x0, reduction);
-      tileComp->h = jpxCeilDivPow2(tileComp->y1 - tileComp->y0, reduction);
+      tileComp->w = jpxCeilDivPow2(tileComp->x1, reduction)
+	            - jpxCeilDivPow2(tileComp->x0, reduction);
+      tileComp->h = jpxCeilDivPow2(tileComp->y1, reduction)
+	            - jpxCeilDivPow2(tileComp->y0, reduction);
+      if (tileComp->w == 0 || tileComp->h == 0) {
+	error(errSyntaxError, getPos(),
+	      "Invalid tile size or sample separation in JPX stream");
+	return gFalse;
+      }
       tileComp->data = (int *)gmallocn(tileComp->w * tileComp->h, sizeof(int));
       if (tileComp->x1 - tileComp->x0 > tileComp->y1 - tileComp->y0) {
 	n = tileComp->x1 - tileComp->x0;
@@ -1942,13 +1945,20 @@ GBool JPXStream::readTilePart() {
 	resLevel->y0 = jpxCeilDivPow2(tileComp->y0, k);
 	resLevel->x1 = jpxCeilDivPow2(tileComp->x1, k);
 	resLevel->y1 = jpxCeilDivPow2(tileComp->y1, k);
+	// the JPEG 2000 spec says that packets for empty res levels
+	// should all be present in the codestream (B.6, B.9, B.10),
+	// but it appears that encoders drop packets if the res level
+	// AND the subbands are all completely empty
+	resLevel->empty = resLevel->x0 == resLevel->x1 ||
+	                  resLevel->y0 == resLevel->y1;
 	if (r == 0) {
 	  resLevel->bx0[0] = resLevel->x0;
 	  resLevel->by0[0] = resLevel->y0;
 	  resLevel->bx1[0] = resLevel->x1;
 	  resLevel->by1[0] = resLevel->y1;
-	  resLevel->empty = resLevel->bx0[0] == resLevel->bx1[0] ||
-	                    resLevel->by0[0] == resLevel->by1[0];
+	  resLevel->empty = resLevel->empty &&
+	                    (resLevel->bx0[0] == resLevel->bx1[0] ||
+			     resLevel->by0[0] == resLevel->by1[0]);
 	} else {
 	  resLevel->bx0[0] = jpxCeilDivPow2(tileComp->x0 - (1 << (k-1)), k);
 	  resLevel->by0[0] = resLevel->y0;
@@ -1962,7 +1972,8 @@ GBool JPXStream::readTilePart() {
 	  resLevel->by0[2] = jpxCeilDivPow2(tileComp->y0 - (1 << (k-1)), k);
 	  resLevel->bx1[2] = jpxCeilDivPow2(tileComp->x1 - (1 << (k-1)), k);
 	  resLevel->by1[2] = jpxCeilDivPow2(tileComp->y1 - (1 << (k-1)), k);
-	  resLevel->empty = (resLevel->bx0[0] == resLevel->bx1[0] ||
+	  resLevel->empty = resLevel->empty &&
+	                    (resLevel->bx0[0] == resLevel->bx1[0] ||
 			     resLevel->by0[0] == resLevel->by1[0]) &&
 	                    (resLevel->bx0[1] == resLevel->bx1[1] ||
 			     resLevel->by0[1] == resLevel->by1[1]) &&
@@ -2116,6 +2127,12 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
   int level;
 
   tile = &img.tiles[tileIdx];
+
+  // if the tile is finished, just skip this tile part
+  if (tile->done) {
+    bufStr->discardChars(tilePartLen);
+    return gTrue;
+  }
 
   // read all packets from this tile-part
   while (1) {
@@ -2373,6 +2390,7 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
 	  tile->res = 0;
 	  if (++tile->layer == tile->nLayers) {
 	    tile->layer = 0;
+	    tile->done = gTrue;
 	  }
 	}
       }
@@ -2385,6 +2403,7 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
 	  tile->layer = 0;
 	  if (++tile->res == tile->maxNDecompLevels + 1) {
 	    tile->res = 0;
+	    tile->done = gTrue;
 	  }
 	}
       }
@@ -2398,6 +2417,7 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
 	  tile->comp = 0;
 	  if (++tile->res == tile->maxNDecompLevels + 1) {
 	    tile->res = 0;
+	    tile->done = gTrue;
 	  }
 	}
       }
@@ -2411,6 +2431,7 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
 	  tile->res = 0;
 	  if (++tile->comp == img.nComps) {
 	    tile->comp = 0;
+	    tile->done = gTrue;
 	  }
 	}
       }
@@ -2424,6 +2445,7 @@ GBool JPXStream::readTilePartData(Guint tileIdx,
 	  tile->res = 0;
 	  if (++tile->comp == img.nComps) {
 	    tile->comp = 0;
+	    tile->done = gTrue;
 	  }
 	}
       }

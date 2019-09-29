@@ -12,6 +12,7 @@
 #ifndef GMUTEX_H
 #define GMUTEX_H
 
+#include <aconf.h>
 #ifdef _WIN32
 #  include <windows.h>
 #  include <intrin.h>

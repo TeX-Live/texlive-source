@@ -1281,7 +1281,7 @@ GfxColorSpace *GfxSeparationColorSpace::parse(Array *arr,
   }
   obj1.free();
   arr->get(3, &obj1);
-  if (!(funcA = Function::parse(&obj1))) {
+  if (!(funcA = Function::parse(&obj1, 1, altA->getNComps()))) {
     goto err4;
   }
   obj1.free();
@@ -1476,7 +1476,7 @@ GfxColorSpace *GfxDeviceNColorSpace::parse(Array *arr,
   }
   obj1.free();
   arr->get(3, &obj1);
-  if (!(funcA = Function::parse(&obj1))) {
+  if (!(funcA = Function::parse(&obj1, nCompsA, altA->getNComps()))) {
     goto err4;
   }
   obj1.free();
@@ -2117,14 +2117,14 @@ GfxFunctionShading *GfxFunctionShading::parse(Dict *dict
     }
     for (i = 0; i < nFuncsA; ++i) {
       obj1.arrayGet(i, &obj2);
-      if (!(funcsA[i] = Function::parse(&obj2))) {
+      if (!(funcsA[i] = Function::parse(&obj2, 2, 1))) {
 	goto err2;
       }
       obj2.free();
     }
   } else {
     nFuncsA = 1;
-    if (!(funcsA[0] = Function::parse(&obj1))) {
+    if (!(funcsA[0] = Function::parse(&obj1, 2, -1))) {
       goto err1;
     }
   }
@@ -2137,6 +2137,16 @@ GfxFunctionShading *GfxFunctionShading::parse(Dict *dict
     delete shading;
     return NULL;
   }
+
+  for (i = 0; i < shading->nFuncs; ++i) {
+    if (shading->funcs[i]->getOutputSize()
+	!= shading->getColorSpace()->getNComps()) {
+      error(errSyntaxError, -1, "Invalid function in shading dictionary");
+      delete shading;
+      return NULL;
+    }
+  }
+
   return shading;
 
  err2:
@@ -2274,7 +2284,7 @@ GfxAxialShading *GfxAxialShading::parse(Dict *dict
     }
     for (i = 0; i < nFuncsA; ++i) {
       obj1.arrayGet(i, &obj2);
-      if (!(funcsA[i] = Function::parse(&obj2))) {
+      if (!(funcsA[i] = Function::parse(&obj2, 1, 1))) {
 	obj1.free();
 	obj2.free();
 	goto err1;
@@ -2283,7 +2293,7 @@ GfxAxialShading *GfxAxialShading::parse(Dict *dict
     }
   } else {
     nFuncsA = 1;
-    if (!(funcsA[0] = Function::parse(&obj1))) {
+    if (!(funcsA[0] = Function::parse(&obj1, 1, -1))) {
       obj1.free();
       goto err1;
     }
@@ -2307,6 +2317,16 @@ GfxAxialShading *GfxAxialShading::parse(Dict *dict
     delete shading;
     return NULL;
   }
+
+  for (i = 0; i < shading->nFuncs; ++i) {
+    if (shading->funcs[i]->getOutputSize()
+	!= shading->getColorSpace()->getNComps()) {
+      error(errSyntaxError, -1, "Invalid function in shading dictionary");
+      delete shading;
+      return NULL;
+    }
+  }
+
   return shading;
 
  err1:
@@ -2446,7 +2466,7 @@ GfxRadialShading *GfxRadialShading::parse(Dict *dict
     }
     for (i = 0; i < nFuncsA; ++i) {
       obj1.arrayGet(i, &obj2);
-      if (!(funcsA[i] = Function::parse(&obj2))) {
+      if (!(funcsA[i] = Function::parse(&obj2, 1, 1))) {
 	obj1.free();
 	obj2.free();
 	goto err1;
@@ -2455,7 +2475,7 @@ GfxRadialShading *GfxRadialShading::parse(Dict *dict
     }
   } else {
     nFuncsA = 1;
-    if (!(funcsA[0] = Function::parse(&obj1))) {
+    if (!(funcsA[0] = Function::parse(&obj1, 1, -1))) {
       obj1.free();
       goto err1;
     }
@@ -2479,6 +2499,16 @@ GfxRadialShading *GfxRadialShading::parse(Dict *dict
     delete shading;
     return NULL;
   }
+
+  for (i = 0; i < shading->nFuncs; ++i) {
+    if (shading->funcs[i]->getOutputSize()
+	!= shading->getColorSpace()->getNComps()) {
+      error(errSyntaxError, -1, "Invalid function in shading dictionary");
+      delete shading;
+      return NULL;
+    }
+  }
+
   return shading;
 
  err1:
@@ -2719,7 +2749,7 @@ GfxGouraudTriangleShading *GfxGouraudTriangleShading::parse(
       }
       for (i = 0; i < nFuncsA; ++i) {
 	obj1.arrayGet(i, &obj2);
-	if (!(funcsA[i] = Function::parse(&obj2))) {
+	if (!(funcsA[i] = Function::parse(&obj2, 1, 1))) {
 	  obj1.free();
 	  obj2.free();
 	  goto err1;
@@ -2728,7 +2758,7 @@ GfxGouraudTriangleShading *GfxGouraudTriangleShading::parse(
       }
     } else {
       nFuncsA = 1;
-      if (!(funcsA[0] = Function::parse(&obj1))) {
+      if (!(funcsA[0] = Function::parse(&obj1, 1, -1))) {
 	obj1.free();
 	goto err1;
       }
@@ -2832,6 +2862,16 @@ GfxGouraudTriangleShading *GfxGouraudTriangleShading::parse(
     delete shading;
     return NULL;
   }
+
+  for (i = 0; i < shading->nFuncs; ++i) {
+    if (shading->funcs[i]->getOutputSize()
+	!= shading->getColorSpace()->getNComps()) {
+      error(errSyntaxError, -1, "Invalid function in shading dictionary");
+      delete shading;
+      return NULL;
+    }
+  }
+
   return shading;
 
  err2:
@@ -3017,7 +3057,7 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
       }
       for (i = 0; i < nFuncsA; ++i) {
 	obj1.arrayGet(i, &obj2);
-	if (!(funcsA[i] = Function::parse(&obj2))) {
+	if (!(funcsA[i] = Function::parse(&obj2, 1, 1))) {
 	  obj1.free();
 	  obj2.free();
 	  goto err1;
@@ -3026,7 +3066,7 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
       }
     } else {
       nFuncsA = 1;
-      if (!(funcsA[0] = Function::parse(&obj1))) {
+      if (!(funcsA[0] = Function::parse(&obj1, 1, -1))) {
 	obj1.free();
 	goto err1;
       }
@@ -3043,6 +3083,12 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
   while (1) {
     if (!bitBuf->getBits(flagBits, &flag)) {
       break;
+    }
+    flag &= 3;
+    if (flag != 0 && nPatchesA == 0) {
+      error(errSyntaxError, -1, "Invalid patch in patch mesh shading");
+      delete bitBuf;
+      goto err1;
     }
     if (typeA == 6) {
       switch (flag) {
@@ -3445,6 +3491,16 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
     delete shading;
     return NULL;
   }
+
+  for (i = 0; i < shading->nFuncs; ++i) {
+    if (shading->funcs[i]->getOutputSize()
+	!= shading->getColorSpace()->getNComps()) {
+      error(errSyntaxError, -1, "Invalid function in shading dictionary");
+      delete shading;
+      return NULL;
+    }
+  }
+
   return shading;
 
  err2:
@@ -4122,7 +4178,7 @@ GfxState::GfxState(double hDPIA, double vDPIA, PDFRectangle *pageBox,
   clipXMax = pageWidth;
   clipYMax = pageHeight;
 
-  inCachedT3Char = gFalse;
+  ignoreColorOps = gFalse;
 
   saved = NULL;
 }

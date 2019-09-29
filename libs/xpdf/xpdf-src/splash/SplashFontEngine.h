@@ -68,14 +68,14 @@ public:
 #else
 				 char *fileName, GBool deleteFile,
 #endif
-				 const char **enc);
+				 int *codeToGID, const char **enc);
   SplashFontFile *loadOpenTypeT1CFont(SplashFontFileID *idA,
 #if LOAD_FONTS_FROM_MEM
 				      GString *fontBuf,
 #else
 				      char *fileName, GBool deleteFile,
 #endif
-				      const char **enc);
+				      int *codeToGID, const char **enc);
   SplashFontFile *loadCIDFont(SplashFontFileID *idA,
 #if LOAD_FONTS_FROM_MEM
 			      GString *fontBuf,

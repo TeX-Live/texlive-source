@@ -4,7 +4,7 @@ pdfimages(1)                General Commands Manual               pdfimages(1)
 
 NAME
        pdfimages  -  Portable  Document  Format (PDF) image extractor (version
-       4.01)
+       4.02)
 
 SYNOPSIS
        pdfimages [options] PDF-file image-root
@@ -95,4 +95,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                     pdfimages(1)
+                                  25 Sep 2019                     pdfimages(1)

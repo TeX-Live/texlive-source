@@ -135,13 +135,13 @@ public:
   virtual GBool goBackward();
   virtual void scrollLeft(int nCols = 16);
   virtual void scrollRight(int nCols = 16);
-  virtual void scrollUp(int nLines = 16);
+  virtual void scrollUp(int nLines = 16, GBool snapToPage = gFalse);
   virtual void scrollUpPrevPage(int nLines = 16);
-  virtual void scrollDown(int nLines = 16);
+  virtual void scrollDown(int nLines = 16, GBool snapToPage = gFalse);
   virtual void scrollDownNextPage(int nLines = 16);
   virtual void scrollPageUp();
   virtual void scrollPageDown();
-  virtual void scrollTo(int x, int y);
+  virtual void scrollTo(int x, int y, GBool snapToPage = gFalse);
   virtual void scrollToLeftEdge();
   virtual void scrollToRightEdge();
   virtual void scrollToTopEdge();

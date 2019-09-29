@@ -1,7 +1,7 @@
 .\" Copyright 2002-2019 Glyph & Cog, LLC
-.TH xpdfrc 5 "18 Feb 2019"
+.TH xpdfrc 5 "25 Sep 2019"
 .SH NAME
-xpdfrc \- configuration file for Xpdf tools (version 4.01)
+xpdfrc \- configuration file for Xpdf tools (version 4.02)
 .SH DESCRIPTION
 All of the Xpdf tools read a single configuration file.  If you have a
 .I .xpdfrc
@@ -537,10 +537,20 @@ be chosen such that exactly one page will fit in the window at this
 zoom factor (which must be a percentage).  The default value is
 based on the screen resolution.
 .TP
+.BR initialDisplayMode " single | continuous | sideBySideSingle | sideBySideContinuous | horizontalContinuous"
+Sets the initial display mode.  The default setting is "continuous".
+.TP
+.BI initialToolbarState " yes | no"
+If set to "yes", xpdf opens with the toolbar visible.  If set to "no",
+xpdf opens with the toolbar hidden.  The default is "yes".
+.TP
 .BI initialSidebarState " yes | no"
 If set to "yes", xpdf opens with the sidebar (tabs, outline, etc.)
 visible.  If set to "no", xpdf opens with the sidebar collapsed.  The
 default is "yes".
+.TP
+.BR initialSelectMode " block | linear"
+Sets the initial selection mode.  The default setting is "linear".
 .TP
 .BI paperColor " color"
 Set the "paper color", i.e., the background of the page display.  The
@@ -556,6 +566,11 @@ color.
 .BI fullScreenMatteColor " color"
 Set the matte color for full-screen mode.  The color can be #RRGGBB
 (hexadecimal) or a named color.
+.TP
+.BI reverseVideoInvertImages " yes | no"
+If set to "no", xpdf's reverse-video mode inverts text and vector
+graphic content, but not images.  If set to "yes", xpdf inverts images
+as well.  The default is "no".
 .TP
 .BI popupMenuCmd " title command ..."
 Add a command to the popup menu.

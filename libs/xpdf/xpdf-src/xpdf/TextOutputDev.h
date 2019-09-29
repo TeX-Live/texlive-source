@@ -26,6 +26,7 @@ class UnicodeRemapping;
 
 class TextBlock;
 class TextChar;
+class TextGaps;
 class TextLink;
 class TextPage;
 
@@ -69,6 +70,10 @@ public:
   GBool discardClippedText;	// discard all clipped characters
   GBool insertBOM;		// insert a Unicode BOM at the start of
 				//   the text output
+  double marginLeft,		// characters outside the margins are
+         marginRight,		//   discarded
+         marginTop,
+         marginBottom;
 };
 
 //------------------------------------------------------------------------
@@ -502,7 +507,7 @@ private:
 		double *xMinOut, double *yMinOut,
 		double *xMaxOut, double *yMaxOut,
 		double *avgFontSizeOut,
-		GList *horizGaps, GList *vertGaps);
+		TextGaps *horizGaps, TextGaps *vertGaps);
   void tagBlock(TextBlock *blk);
   void insertLargeChars(GList *largeChars, TextBlock *blk);
   void insertLargeCharsInFirstLeaf(GList *largeChars, TextBlock *blk);

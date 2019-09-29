@@ -77,6 +77,7 @@ static const char *prolog[] = {
   "    put",
   "  } for",
   "~123ngs",
+  "/bdef { bind def } bind def",
   "/pdfSetup {",
   "  /pdfDuplex exch def",
   "  /setpagedevice where {",
@@ -393,9 +394,9 @@ static const char *prolog[] = {
   "/f { fCol fill } def",
   "/f* { fCol eofill } def",
   "% clipping operators",
-  "/W { clip newpath } def",
-  "/W* { eoclip newpath } def",
-  "/Ws { strokepath clip newpath } def",
+  "/W { clip newpath } bdef",
+  "/W* { eoclip newpath } bdef",
+  "/Ws { strokepath clip newpath } bdef",
   "% text state operators",
   "/Tc { /pdfCharSpacing exch def } def",
   "/Tf { dup /pdfFontSize exch def",
@@ -985,7 +986,9 @@ public:
     { return (bufIdx >= bufSize && !fillBuf()) ? EOF : buf[bufIdx++]; }
   virtual int lookChar()
     { return (bufIdx >= bufSize && !fillBuf()) ? EOF : buf[bufIdx]; }
-  virtual GString *getPSFilter(int psLevel, const char *indent) { return NULL; }
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
+    { return NULL; }
   virtual GBool isBinary(GBool last = gTrue) { return gTrue; }
   virtual GBool isEncoder() { return gTrue; }
 
@@ -1084,7 +1087,9 @@ public:
     { return (bufIdx >= width && !fillBuf()) ? EOF : buf[bufIdx++]; }
   virtual int lookChar()
     { return (bufIdx >= width && !fillBuf()) ? EOF : buf[bufIdx]; }
-  virtual GString *getPSFilter(int psLevel, const char *indent) { return NULL; }
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
+    { return NULL; }
   virtual GBool isBinary(GBool last = gTrue) { return gTrue; }
   virtual GBool isEncoder() { return gTrue; }
 
@@ -1167,7 +1172,9 @@ public:
     { return (bufIdx >= bufSize && !fillBuf()) ? EOF : buf[bufIdx++]; }
   virtual int lookChar()
     { return (bufIdx >= bufSize && !fillBuf()) ? EOF : buf[bufIdx]; }
-  virtual GString *getPSFilter(int psLevel, const char *indent) { return NULL; }
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
+    { return NULL; }
   virtual GBool isBinary(GBool last = gTrue) { return gTrue; }
   virtual GBool isEncoder() { return gTrue; }
 
@@ -3841,7 +3848,7 @@ void PSOutputDev::setupImage(Ref id, Stream *str, GBool mask,
       useLZW = useRLE = gFalse;
       useCompressed = gFalse;
     } else {
-      s = str->getPSFilter(level < psLevel3 ? 2 : 3, "");
+      s = str->getPSFilter(level < psLevel3 ? 2 : 3, "", gTrue);
       if (s) {
 	useLZW = useRLE = gFalse;
 	useCompressed = gTrue;
@@ -4191,7 +4198,13 @@ GBool PSOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
     }
     sliceX = sliceY = 0;
     sliceW = (int)((box.x2 - box.x1) * hDPI2 / 72.0);
+    if (sliceW == 0) {
+      sliceW = 1;
+    }
     sliceH = (int)((box.y2 - box.y1) * vDPI2 / 72.0);
+    if (sliceH == 0) {
+      sliceH = 1;
+    }
   }
   nStripes = (int)ceil(((double)sliceW * (double)sliceH) /
 		       (double)globalParams->getPSRasterSliceSize());
@@ -5223,6 +5236,7 @@ void PSOutputDev::tilingPatternFillL2(GfxState *state, Gfx *gfx,
 
   // set the pattern
   if (paintType == 2) {
+    writePS("fCol\n");
     writePS("currentcolor ");
   }
   writePSFmt("xpdfTile{0:d} setpattern\n", numTilingPatterns);
@@ -6315,7 +6329,7 @@ void PSOutputDev::doImageL2(Object *ref, GfxState *state,
     useASCII = gFalse;
   } else {
     s = str->getPSFilter(level < psLevel2 ? 1 : level < psLevel3 ? 2 : 3,
-			 "    ");
+			 "    ", !inlineImg);
     if ((colorMap && (colorMap->getColorSpace()->getMode() == csDeviceN ||
 		      level == psLevel2Gray || level == psLevel3Gray)) ||
 	inlineImg || !s) {
@@ -6790,7 +6804,7 @@ void PSOutputDev::doImageL3(Object *ref, GfxState *state,
       maskUseCompressed = gFalse;
       maskUseASCII = gFalse;
     } else {
-      s = maskStr->getPSFilter(3, "  ");
+      s = maskStr->getPSFilter(3, "  ", !inlineImg);
       if (!s) {
 	if (globalParams->getPSLZW()) {
 	  maskUseLZW = gTrue;
@@ -7018,7 +7032,7 @@ void PSOutputDev::doImageL3(Object *ref, GfxState *state,
     useCompressed = gFalse;
     useASCII = gFalse;
   } else {
-    s = str->getPSFilter(3, "    ");
+    s = str->getPSFilter(3, "    ", !inlineImg);
     if ((colorMap && level == psLevel3Gray) || inlineImg || !s) {
       if (globalParams->getPSLZW()) {
 	useLZW = gTrue;
@@ -7557,19 +7571,13 @@ GString *PSOutputDev::createDeviceNTintFunc(GfxDeviceNColorSpace *cs) {
       }
       obj1.free();
       sepCSObj.arrayGet(3, &funcObj);
-      if (!(func = Function::parse(&funcObj))) {
+      if (!(func = Function::parse(&funcObj, 1, 4))) {
 	funcObj.free();
 	sepCSObj.free();
 	colorants.free();
 	return NULL;
       }
       funcObj.free();
-      if (func->getInputSize() != 1 || func->getOutputSize() != 4) {
-	delete func;
-	sepCSObj.free();
-	colorants.free();
-	return NULL;
-      }
       sepIn = 1;
       func->transform(&sepIn, cmyk[i]);
       delete func;

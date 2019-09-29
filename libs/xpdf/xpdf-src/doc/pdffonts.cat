@@ -3,7 +3,7 @@ pdffonts(1)                 General Commands Manual                pdffonts(1)
 
 
 NAME
-       pdffonts - Portable Document Format (PDF) font analyzer (version 4.01)
+       pdffonts - Portable Document Format (PDF) font analyzer (version 4.02)
 
 SYNOPSIS
        pdffonts [options] [PDF-file]
@@ -115,4 +115,4 @@ SEE ALSO
 
 
 
-                                  18 Feb 2019                      pdffonts(1)
+                                  25 Sep 2019                      pdffonts(1)

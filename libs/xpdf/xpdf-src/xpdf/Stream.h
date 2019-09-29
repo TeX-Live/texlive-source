@@ -117,7 +117,8 @@ public:
   virtual void setPos(GFileOffset pos, int dir = 0) = 0;
 
   // Get PostScript command for the filter(s).
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
 
   // Does this stream type potentially contain non-printable chars?
   virtual GBool isBinary(GBool last = gTrue) = 0;
@@ -422,7 +423,8 @@ public:
   virtual int getChar()
     { int c = lookChar(); buf = EOF; return c; }
   virtual int lookChar();
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
 
 private:
@@ -446,7 +448,8 @@ public:
   virtual int getChar()
     { int ch = lookChar(); ++index; return ch; }
   virtual int lookChar();
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
 
 private:
@@ -474,7 +477,8 @@ public:
   virtual int lookChar();
   virtual int getRawChar();
   virtual int getBlock(char *blk, int size);
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
 
 private:
@@ -520,7 +524,8 @@ public:
   virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
   virtual int getBlock(char *blk, int size);
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
 
 private:
@@ -552,7 +557,8 @@ public:
   virtual int getChar();
   virtual int lookChar();
   virtual int getBlock(char *blk, int size);
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
 
 private:
@@ -650,11 +656,14 @@ public:
   virtual int getChar();
   virtual int lookChar();
   virtual int getBlock(char *blk, int size);
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
   Stream *getRawStream() { return str; }
 
 private:
+
+  GBool checkSequentialInterleaved();
 
 #if HAVE_JPEGLIB
 
@@ -785,7 +794,8 @@ public:
   virtual int lookChar();
   virtual int getRawChar();
   virtual int getBlock(char *blk, int size);
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
 
 private:
@@ -840,7 +850,8 @@ public:
   virtual int getChar() { return EOF; }
   virtual int lookChar() { return EOF; }
   virtual int getBlock(char *blk, int size) { return 0; }
-  virtual GString *getPSFilter(int psLevel, const char *indent)
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
     { return NULL; }
   virtual GBool isBinary(GBool last = gTrue) { return gFalse; }
 };
@@ -859,7 +870,8 @@ public:
   virtual void reset();
   virtual int getChar();
   virtual int lookChar();
-  virtual GString *getPSFilter(int psLevel, const char *indent)
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
     { return NULL; }
   virtual GBool isBinary(GBool last = gTrue);
 
@@ -885,7 +897,8 @@ public:
   virtual void reset();
   virtual int getChar();
   virtual int lookChar();
-  virtual GString *getPSFilter(int psLevel, const char *indent)
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
     { return NULL; }
   virtual GBool isBinary(GBool last = gTrue);
   virtual GBool isEncoder() { return gTrue; }
@@ -912,7 +925,8 @@ public:
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  virtual GString *getPSFilter(int psLevel, const char *indent)
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
     { return NULL; }
   virtual GBool isBinary(GBool last = gTrue) { return gFalse; }
   virtual GBool isEncoder() { return gTrue; }
@@ -944,7 +958,8 @@ public:
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  virtual GString *getPSFilter(int psLevel, const char *indent)
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
     { return NULL; }
   virtual GBool isBinary(GBool last = gTrue) { return gFalse; }
   virtual GBool isEncoder() { return gTrue; }
@@ -976,7 +991,8 @@ public:
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  virtual GString *getPSFilter(int psLevel, const char *indent)
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
     { return NULL; }
   virtual GBool isBinary(GBool last = gTrue) { return gTrue; }
   virtual GBool isEncoder() { return gTrue; }
@@ -1012,7 +1028,8 @@ public:
   virtual void reset();
   virtual int getChar();
   virtual int lookChar();
-  virtual GString *getPSFilter(int psLevel, const char *indent)
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream)
     { return NULL; }
   virtual GBool isBinary(GBool last = gTrue) { return gTrue; }
   virtual GBool isEncoder() { return gTrue; }

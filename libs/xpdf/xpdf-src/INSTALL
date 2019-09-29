@@ -1,8 +1,8 @@
 Xpdf
 ====
 
-version 4.01.01
-2019-mar-14
+version 4.02
+2019-sep-25
 
 The Xpdf software and documentation are
 copyright 1996-2019 Glyph & Cog, LLC.
@@ -97,6 +97,11 @@ different systems.
         Enables support for generation of OPI (Open Prepress
         Interface) comments with pdftops.
 
+    -DNO_FONTCONFIG=ON
+        Disables use of libfontconfig, which is used to locate system
+        fonts on Linux/Unix systems.  The default is to search for the
+        library, and to use it if found.
+
     -DMULTITHREADED=0
         Disables multithreading, which also disables building the GUI
         viewer (xpdf).  This does not affect the command line tools.
@@ -104,13 +109,18 @@ different systems.
         building with a compiler other than gcc, clang, or Microsoft
         Visual Studio.
 
+    -DXPDFWIDGET_PRINTING=OFF
+        Disable printing support.
+
     -DSYSTEM_XPDFRC="/etc/xpdfrc"
         Look for a system-wide xpdfrc config file in this directory.
 
      -DCMAKE_DISABLE_FIND_PACKAGE_Qt4=1
      -DCMAKE_DISABLE_FIND_PACKAGE_Qt5Widgets=1
         Do not search for the Qt4/Qt5 libraries.  This will disable
-        building the GUI viewer (xpdf).
+        building the GUI viewer (xpdf).  Cmake will look for a "qmake"
+        binary -- make sure the first qmake binary on your executable
+        search path matches the desired version of Qt.
 
      -DCMAKE_C_FLAGS="..."
      -DCMAKE_CXX_FLAGS="..."

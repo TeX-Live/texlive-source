@@ -34,9 +34,11 @@
 #include "GList.h"
 #include "SplashBitmap.h"
 #include "PDFDoc.h"
+#include "GfxFont.h"
 #include "TextOutputDev.h"
 #include "SplashOutputDev.h"
 #include "ErrorCodes.h"
+#include "WebFont.h"
 #include "HTMLGen.h"
 
 #ifdef _WIN32
@@ -62,11 +64,14 @@ static FontStyleTagInfo fontStyleTags[] = {
   {"CondensedBold",           13, gTrue,  gFalse},
   {"CondensedLight",          14, gFalse, gFalse},
   {"SemiBold",                 8, gTrue,  gFalse},
+  {"BoldItalicMT",            12, gTrue,  gTrue},
   {"BoldItalic",              10, gTrue,  gTrue},
   {"Bold_Italic",             11, gTrue,  gTrue},
   {"BoldOblique",             11, gTrue,  gTrue},
   {"Bold_Oblique",            12, gTrue,  gTrue},
+  {"BoldMT",                   6, gTrue,  gFalse},
   {"Bold",                     4, gTrue,  gFalse},
+  {"ItalicMT",                 8, gFalse, gTrue},
   {"Italic",                   6, gFalse, gTrue},
   {"Oblique",                  7, gFalse, gTrue},
   {"Light",                    5, gFalse, gFalse},
@@ -171,6 +176,26 @@ static const char *vertAlignNames[] = {
 
 //------------------------------------------------------------------------
 
+class HTMLGenFontDefn {
+public:
+
+  HTMLGenFontDefn(Ref fontIDA, GString *fontFaceA, GString *fontSpecA,
+		  double scaleA)
+    : fontID(fontIDA), fontFace(fontFaceA), fontSpec(fontSpecA)
+    , scale(scaleA), used(gFalse) {}
+  ~HTMLGenFontDefn() { delete fontFace; delete fontSpec; }
+  GBool match(Ref fontIDA)
+    { return fontIDA.num == fontID.num && fontIDA.gen == fontID.gen; }
+
+  Ref fontID;
+  GString *fontFace;		// NULL for substituted fonts
+  GString *fontSpec;
+  double scale;
+  GBool used;			// set when used (per page)
+};
+
+//------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------
 
@@ -184,6 +209,7 @@ HTMLGen::HTMLGen(double backgroundResolutionA) {
   zoom = 1.0;
   drawInvisibleText = gTrue;
   allTextInvisible = gFalse;
+  extractFontFiles = gFalse;
 
   // set up the TextOutputDev
   textOutControl.mode = textOutReadingOrder;
@@ -196,16 +222,27 @@ HTMLGen::HTMLGen(double backgroundResolutionA) {
   // set up the SplashOutputDev
   paperColor[0] = paperColor[1] = paperColor[2] = 0xff;
   splashOut = new SplashOutputDev(splashModeRGB8, 1, gFalse, paperColor);
+
+  fontDefns = NULL;
 }
 
 HTMLGen::~HTMLGen() {
   delete textOut;
   delete splashOut;
+  if (fontDefns) {
+    deleteGList(fontDefns, HTMLGenFontDefn);
+  }
 }
 
 void HTMLGen::startDoc(PDFDoc *docA) {
   doc = docA;
   splashOut->startDoc(doc->getXRef());
+
+  if (fontDefns) {
+    deleteGList(fontDefns, HTMLGenFontDefn);
+  }
+  fontDefns = new GList();
+  nextFontFaceIdx = 0;
 }
 
 static inline int pr(int (*writeFunc)(void *stream, const char *data, int size),
@@ -240,7 +277,7 @@ static void pngWriteFunc(png_structp png, png_bytep data, png_size_t size) {
 }
 
 int HTMLGen::convertPage(
-		 int pg, const char *pngURL,
+		 int pg, const char *pngURL, const char *htmlDir,
 		 int (*writeHTML)(void *stream, const char *data, int size),
 		 void *htmlStream,
 		 int (*writePNG)(void *stream, const char *data, int size),
@@ -257,6 +294,7 @@ int HTMLGen::convertPage(
   TextColumn *col;
   TextParagraph *par;
   TextLine *line;
+  HTMLGenFontDefn *fontDefn;
   GString *s;
   double base;
   int primaryDir, spanDir;
@@ -269,7 +307,7 @@ int HTMLGen::convertPage(
 		   0, gFalse, gTrue, gFalse);
   bitmap = splashOut->getBitmap();
   if (!(png = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-				       NULL, NULL, NULL)) ||
+				      NULL, NULL, NULL)) ||
       !(pngInfo = png_create_info_struct(png))) {
     return errFileIO;
   }
@@ -314,11 +352,19 @@ int HTMLGen::convertPage(
   pr(writeHTML, htmlStream, ".txt { white-space:nowrap; }\n");
   fonts = text->getFonts();
   fontScales = (double *)gmallocn(fonts->getLength(), sizeof(double));
+  for (i = 0; i < fontDefns->getLength(); ++i) {
+    fontDefn = (HTMLGenFontDefn *)fontDefns->get(i);
+    fontDefn->used = gFalse;
+  }
   for (i = 0; i < fonts->getLength(); ++i) {
     font = (TextFontInfo *)fonts->get(i);
-    s = getFontDefn(font, &fontScales[i]);
-    pf(writeHTML, htmlStream, "#f{0:d} {{ {1:t} }}\n", i, s);
-    delete s;
+    fontDefn = getFontDefn(font, htmlDir);
+    if (!fontDefn->used && fontDefn->fontFace) {
+      pr(writeHTML, htmlStream, fontDefn->fontFace->getCString());
+    }
+    pf(writeHTML, htmlStream, "#f{0:d} {{ {1:t} }}\n", i, fontDefn->fontSpec);
+    fontScales[i] = fontDefn->scale;
+    fontDefn->used = gTrue;
   }
   pr(writeHTML, htmlStream, "</style>\n");
   pr(writeHTML, htmlStream, "</head>\n");
@@ -592,7 +638,112 @@ void HTMLGen::appendUTF8(Unicode u, GString *s) {
   }
 }
 
-GString *HTMLGen::getFontDefn(TextFontInfo *font, double *scale) {
+HTMLGenFontDefn *HTMLGen::getFontDefn(TextFontInfo *font,
+				      const char *htmlDir) {
+  Ref id;
+  HTMLGenFontDefn *fontDefn;
+  int i;
+
+  // check the existing font defns
+  id = font->getFontID();
+  if (id.num >= 0) {
+    for (i = 0; i < fontDefns->getLength(); ++i) {
+      fontDefn = (HTMLGenFontDefn *)fontDefns->get(i);
+      if (fontDefn->match(id)) {
+	return fontDefn;
+      }
+    }
+  }
+
+  // try to extract a font file
+  if (!extractFontFiles ||
+      !(fontDefn = getFontFile(font, htmlDir))) {
+
+    // get a substitute font
+    fontDefn = getSubstituteFont(font);
+  }
+
+  fontDefns->append(fontDefn);
+  return fontDefn;
+}
+
+HTMLGenFontDefn *HTMLGen::getFontFile(TextFontInfo *font,
+				      const char *htmlDir) {
+  Ref id;
+  HTMLGenFontDefn *fontDefn;
+  Object fontObj;
+  GfxFont *gfxFont;
+  WebFont *webFont;
+  GString *fontFile, *fontPath, *fontFace, *fontSpec;
+  const char *family, *weight, *style;
+  double scale;
+
+  id = font->getFontID();
+  if (id.num < 0) {
+    return NULL;
+  }
+
+  doc->getXRef()->fetch(id.num, id.gen, &fontObj);
+  if (!fontObj.isDict()) {
+    fontObj.free();
+    return NULL;
+  }
+
+  gfxFont = GfxFont::makeFont(doc->getXRef(), "F", id, fontObj.getDict());
+  webFont = new WebFont(gfxFont, doc->getXRef());
+  fontDefn = NULL;
+
+  if (webFont->canWriteTTF()) {
+    fontFile = GString::format("{0:d}.ttf", nextFontFaceIdx);
+    fontPath = GString::format("{0:s}/{1:t}", htmlDir, fontFile);
+    if (webFont->writeTTF(fontPath->getCString())) {
+      fontFace = GString::format("@font-face {{ font-family: ff{0:d}; src: url(\"{1:t}\"); }}\n",
+				 nextFontFaceIdx, fontFile);
+      getFontDetails(font, &family, &weight, &style, &scale);
+      fontSpec = GString::format("font-family:ff{0:d},{1:s}; font-weight:{2:s}; font-style:{3:s};",
+				 nextFontFaceIdx, family, weight, style);
+      ++nextFontFaceIdx;
+      fontDefn = new HTMLGenFontDefn(id, fontFace, fontSpec, 1.0);
+    }
+    delete fontPath;
+    delete fontFile;
+
+  } else if (webFont->canWriteOTF()) {
+    fontFile = GString::format("{0:d}.otf", nextFontFaceIdx);
+    fontPath = GString::format("{0:s}/{1:t}", htmlDir, fontFile);
+    if (webFont->writeOTF(fontPath->getCString())) {
+      fontFace = GString::format("@font-face {{ font-family: ff{0:d}; src: url(\"{1:t}\"); }}\n",
+				  nextFontFaceIdx, fontFile);
+      getFontDetails(font, &family, &weight, &style, &scale);
+      fontSpec = GString::format("font-family:ff{0:d},{1:s}; font-weight:{2:s}; font-style:{3:s};",
+				 nextFontFaceIdx, family, weight, style);
+      fontDefn = new HTMLGenFontDefn(id, fontFace, fontSpec, 1.0);
+    }
+    delete fontPath;
+    delete fontFile;
+  }
+
+  delete webFont;
+  delete gfxFont;
+  fontObj.free();
+
+  return fontDefn;
+}
+
+HTMLGenFontDefn *HTMLGen::getSubstituteFont(TextFontInfo *font) {
+  const char *family, *weight, *style;
+  double scale;
+  GString *fontSpec;
+
+  getFontDetails(font, &family, &weight, &style, &scale);
+  fontSpec = GString::format("font-family:{0:s}; font-weight:{1:s}; font-style:{2:s};",
+			     family, weight, style);
+  return new HTMLGenFontDefn(font->getFontID(), NULL, fontSpec, scale);
+}
+
+void HTMLGen::getFontDetails(TextFontInfo *font, const char **family,
+			     const char **weight, const char **style,
+			     double *scale) {
   GString *fontName;
   char *fontName2;
   FontStyleTagInfo *fst;
@@ -666,11 +817,7 @@ GString *HTMLGen::getFontDefn(TextFontInfo *font, double *scale) {
     }
   }
 
-  // generate the CSS markup
-  return GString::format("font-family:{0:s}; font-weight:{1:s}; font-style:{2:s};",
-			 fixedWidth ? "monospace"
-			            : serif ? "serif"
-			                    : "sans-serif",
-			 bold ? "bold" : "normal",
-			 italic ? "italic" : "normal");
+  *family = fixedWidth ? "monospace" : serif ? "serif" : "sans-serif";
+  *weight = bold ? "bold" : "normal";
+  *style = italic ? "italic" : "normal";
 }

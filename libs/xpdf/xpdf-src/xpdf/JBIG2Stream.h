@@ -42,7 +42,8 @@ public:
   virtual int getChar();
   virtual int lookChar();
   virtual int getBlock(char *blk, int size);
-  virtual GString *getPSFilter(int psLevel, const char *indent);
+  virtual GString *getPSFilter(int psLevel, const char *indent,
+			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
 
 private:

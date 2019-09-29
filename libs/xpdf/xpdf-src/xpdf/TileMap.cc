@@ -592,6 +592,11 @@ GBool TileMap::cvtWindowToDev(int xw, int yw,
       offsetY = 0;
     }
     *pg = findContinuousPage(yw - offsetY + state->getScrollY());
+    if (*pg < 1 || *pg > state->getDoc()->getNumPages()) {
+      *pg = 0;
+      *xd = *yd = 0;
+      return gFalse;
+    }
     pageW1 = pageW[*pg - 1];
     pageH1 = pageH[*pg - 1];
     if (maxW < state->getWinW()) {
@@ -655,6 +660,11 @@ GBool TileMap::cvtWindowToDev(int xw, int yw,
       offsetY = 0;
     }
     *pg = findSideBySideContinuousPage(yw - offsetY + state->getScrollY());
+    if (*pg < 1 || *pg > state->getDoc()->getNumPages()) {
+      *pg = 0;
+      *xd = *yd = 0;
+      return gFalse;
+    }
     pageW1 = pageW[*pg - 1];
     pageH1 = pageH[*pg - 1];
     if (*pg + 1 <= state->getDoc()->getNumPages()) {
@@ -693,6 +703,11 @@ GBool TileMap::cvtWindowToDev(int xw, int yw,
       offsetX = 0;
     }
     *pg = findHorizContinuousPage(xw - offsetX + state->getScrollX());
+    if (*pg < 1 || *pg > state->getDoc()->getNumPages()) {
+      *pg = 0;
+      *xd = *yd = 0;
+      return gFalse;
+    }
     pageW1 = pageW[*pg - 1];
     pageH1 = pageH[*pg - 1];
     if (maxH < state->getWinH()) {

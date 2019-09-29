@@ -279,6 +279,7 @@ private:
   static GBool softMaskMatteImageSrc(void *data,
 				     SplashColorPtr colorLine,
 				     Guchar *alphaLine);
+  GString *makeImageTag(Object *ref);
   void reduceImageResolution(Stream *str, double *mat,
 			     int *width, int *height);
   void clearMaskRegion(GfxState *state,
@@ -295,6 +296,7 @@ private:
   GBool allowAntialias;
   GBool vectorAntialias;
   GBool reverseVideo;		// reverse video mode
+  GBool reverseVideoInvertImages;
   SplashColor paperColor;	// paper color
   SplashScreenParams screenParams;
   GBool skipHorizText;

@@ -11,7 +11,9 @@
 #include <stdlib.h>
 #include <stddef.h>
 // older compilers won't define SIZE_MAX in stdint.h without this
-#define __STDC_LIMIT_MACROS 1
+#ifndef __STDC_LIMIT_MACROS
+#  define __STDC_LIMIT_MACROS 1
+#endif
 #include <stdint.h>
 #include <string.h>
 #include <limits.h>
@@ -107,12 +109,12 @@ void *gmalloc(int size, int ignore) GMEM_EXCEP {
   trl = (unsigned long *)(mem + gMemHdrSize + size1);
   hdr->magic = gMemMagic;
   hdr->size = size;
+  gMemLock;
   if (ignore) {
     hdr->index = -1;
   } else {
     hdr->index = gMemIndex++;
   }
-  gMemLock;
   if (gMemTail) {
     gMemTail->next = hdr;
     hdr->prev = gMemTail;
@@ -233,12 +235,12 @@ void *gmalloc64(size_t size, int ignore) GMEM_EXCEP {
   trl = (unsigned long *)(mem + gMemHdrSize + size1);
   hdr->magic = gMemMagic;
   hdr->size = size;
+  gMemLock;
   if (ignore) {
     hdr->index = -1;
   } else {
     hdr->index = gMemIndex++;
   }
-  gMemLock;
   if (gMemTail) {
     gMemTail->next = hdr;
     hdr->prev = gMemTail;

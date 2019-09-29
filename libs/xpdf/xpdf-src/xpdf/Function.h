@@ -38,8 +38,11 @@ public:
 
   virtual ~Function();
 
-  // Construct a function.  Returns NULL if unsuccessful.
-  static Function *parse(Object *funcObj, int recursion = 0);
+  // Construct a function, with [expectedInputs] inputs and
+  // [expectedOutputs] outputs.  [expectedOutputs] can be -1 to
+  // indicate unknown.  Returns NULL if unsuccessful.
+  static Function *parse(Object *funcObj, int expectedInputs,
+			 int expectedOutputs, int recursion = 0);
 
   // Initialize the entries common to all function types.
   GBool init(Dict *dict);
@@ -86,9 +89,9 @@ protected:
 class IdentityFunction: public Function {
 public:
 
-  IdentityFunction();
+  IdentityFunction(int nInputs);
   virtual ~IdentityFunction();
-  virtual Function *copy() { return new IdentityFunction(); }
+  virtual Function *copy() { return new IdentityFunction(m); }
   virtual int getType() { return -1; }
   virtual void transform(double *in, double *out);
   virtual GBool isOk() { return gTrue; }
@@ -173,7 +176,8 @@ private:
 class StitchingFunction: public Function {
 public:
 
-  StitchingFunction(Object *funcObj, Dict *dict, int recursion);
+  StitchingFunction(Object *funcObj, Dict *dict, int expectedInputs,
+		    int expectedOutputs, int recursion);
   virtual ~StitchingFunction();
   virtual Function *copy() { return new StitchingFunction(this); }
   virtual int getType() { return 3; }

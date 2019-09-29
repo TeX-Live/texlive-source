@@ -50,6 +50,10 @@ static char textEncName[128] = "";
 static char textEOL[16] = "";
 static GBool noPageBreaks = gFalse;
 static GBool insertBOM = gFalse;
+static double marginLeft = 0;
+static double marginRight = 0;
+static double marginTop = 0;
+static double marginBottom = 0;
 static char ownerPassword[33] = "\001";
 static char userPassword[33] = "\001";
 static GBool quiet = gFalse;
@@ -88,6 +92,14 @@ static ArgDesc argDesc[] = {
    "don't insert page breaks between pages"},
   {"-bom",     argFlag,     &insertBOM,     0,
    "insert a Unicode BOM at the start of the text file"},
+  {"-marginl", argFP,       &marginLeft,    0,
+   "left page margin"},
+  {"-marginr", argFP,       &marginRight,   0,
+   "right page margin"},
+  {"-margint", argFP,       &marginTop,     0,
+   "top page margin"},
+  {"-marginb", argFP,       &marginBottom,  0,
+   "bottom page margin"},
   {"-opw",     argString,   ownerPassword,  sizeof(ownerPassword),
    "owner password (for encrypted files)"},
   {"-upw",     argString,   userPassword,   sizeof(userPassword),
@@ -247,6 +259,10 @@ int main(int argc, char *argv[]) {
   textOutControl.clipText = clipText;
   textOutControl.discardDiagonalText = discardDiag;
   textOutControl.insertBOM = insertBOM;
+  textOutControl.marginLeft = marginLeft;
+  textOutControl.marginRight = marginRight;
+  textOutControl.marginTop = marginTop;
+  textOutControl.marginBottom = marginBottom;
   textOut = new TextOutputDev(textFileName->getCString(), &textOutControl,
 			      gFalse);
   if (textOut->isOk()) {

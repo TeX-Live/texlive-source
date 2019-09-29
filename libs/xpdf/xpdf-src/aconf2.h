@@ -28,4 +28,14 @@
 #  endif
 #endif
 
+/*
+ * Speed up Windows compilation.  This will only work for the command
+ * line tools.
+ */
+/*
+ *#ifdef _WIN32
+ *#  define WIN32_LEAN_AND_MEAN
+ *#endif
+ */
+
 #endif

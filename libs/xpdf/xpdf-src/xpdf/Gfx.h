@@ -330,7 +330,7 @@ private:
 
   // XObject operators
   void opXObject(Object args[], int numArgs);
-  void doImage(Object *ref, Stream *str, GBool inlineImg);
+  GBool doImage(Object *ref, Stream *str, GBool inlineImg);
   void doForm(Object *strRef, Object *str);
 
   // in-line image operators

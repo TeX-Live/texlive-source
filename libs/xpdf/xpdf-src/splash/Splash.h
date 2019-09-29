@@ -18,6 +18,7 @@
 #include "SplashTypes.h"
 #include "SplashClip.h"
 
+class GString;
 class Splash;
 class SplashBitmap;
 struct SplashGlyphBitmap;
@@ -65,6 +66,34 @@ enum SplashPipeResultColorCtrl {
 };
 
 //------------------------------------------------------------------------
+// SplashImageCache
+//------------------------------------------------------------------------
+
+// This holds a cached image, and is shared by multiple Splash objects
+// in the same thread.
+class SplashImageCache {
+public:
+
+  SplashImageCache();
+  ~SplashImageCache();
+  void incRefCount();
+  void decRefCount();
+
+  GString *tag;
+  GBool isMask;
+  int width;
+  int height;
+  SplashColorMode mode;
+  GBool alpha;
+  GBool interpolate;
+  GBool vertFlip;
+  GBool horizFlip;
+  SplashBitmap *image;
+
+  int refCount;
+};
+
+//------------------------------------------------------------------------
 // Splash
 //------------------------------------------------------------------------
 
@@ -73,9 +102,10 @@ public:
 
   // Create a new rasterizer object.
   Splash(SplashBitmap *bitmapA, GBool vectorAntialiasA,
+	 SplashImageCache *imageCacheA,
 	 SplashScreenParams *screenParams = NULL);
   Splash(SplashBitmap *bitmapA, GBool vectorAntialiasA,
-	 SplashScreen *screenA);
+	 SplashImageCache *imageCacheA, SplashScreen *screenA);
 
   ~Splash();
 
@@ -173,7 +203,8 @@ public:
   // Note that the Splash y axis points downward, and the image source
   // is assumed to produce pixels in raster order, starting from the
   // top line.
-  SplashError fillImageMask(SplashImageMaskSource src, void *srcData,
+  SplashError fillImageMask(GString *imageTag,
+			    SplashImageMaskSource src, void *srcData,
 			    int w, int h, SplashCoord *mat,
 			    GBool glyphMode, GBool interpolate);
 
@@ -191,7 +222,8 @@ public:
   //    BGR8         RGB8
   //    CMYK8        CMYK8
   // The matrix behaves as for fillImageMask.
-  SplashError drawImage(SplashImageSource src, void *srcData,
+  SplashError drawImage(GString *imageTag,
+			SplashImageSource src, void *srcData,
 			SplashColorMode srcMode, GBool srcAlpha,
 			int w, int h, SplashCoord *mat,
 			GBool interpolate);
@@ -255,6 +287,8 @@ public:
   // Toggle debug mode on or off.
   void setDebugMode(GBool debugModeA) { debugMode = debugModeA; }
 
+  SplashImageCache *getImageCache() { return imageCache; }
+
 #if 1 //~tmp: turn off anti-aliasing temporarily
   void setInShading(GBool sh) { inShading = sh; }
 #endif
@@ -303,6 +337,16 @@ private:
   void pipeRunAACMYK8(SplashPipe *pipe, int x0, int x1, int y,
 		      Guchar *shapePtr, SplashColorPtr cSrcPtr);
 #endif
+  void pipeRunNonIsoMono8(SplashPipe *pipe, int x0, int x1, int y,
+			  Guchar *shapePtr, SplashColorPtr cSrcPtr);
+  void pipeRunNonIsoRGB8(SplashPipe *pipe, int x0, int x1, int y,
+			 Guchar *shapePtr, SplashColorPtr cSrcPtr);
+  void pipeRunNonIsoBGR8(SplashPipe *pipe, int x0, int x1, int y,
+			 Guchar *shapePtr, SplashColorPtr cSrcPtr);
+#if SPLASH_CMYK
+  void pipeRunNonIsoCMYK8(SplashPipe *pipe, int x0, int x1, int y,
+			  Guchar *shapePtr, SplashColorPtr cSrcPtr);
+#endif
   void transform(SplashCoord *matrix, SplashCoord xi, SplashCoord yi,
 		 SplashCoord *xo, SplashCoord *yo);
   void updateModX(int x);
@@ -331,11 +375,13 @@ private:
 		   int srcWidth, int srcHeight,
 		   SplashCoord *mat, GBool glyphMode,
 		   GBool interpolate);
-  void arbitraryTransformMask(SplashImageMaskSource src, void *srcData,
+  void arbitraryTransformMask(GString *imageTag,
+			      SplashImageMaskSource src, void *srcData,
 			      int srcWidth, int srcHeight,
 			      SplashCoord *mat, GBool glyphMode,
 			      GBool interpolate);
-  SplashBitmap *scaleMask(SplashImageMaskSource src, void *srcData,
+  SplashBitmap *scaleMask(GString *imageTag,
+			  SplashImageMaskSource src, void *srcData,
 			  int srcWidth, int srcHeight,
 			  int scaledWidth, int scaledHeight,
 			  GBool interpolate);
@@ -365,12 +411,14 @@ private:
 		    SplashColorMode srcMode, int nComps,
 		    GBool srcAlpha, int srcWidth, int srcHeight,
 		    SplashCoord *mat, GBool interpolate);
-  void arbitraryTransformImage(SplashImageSource src, void *srcData,
+  void arbitraryTransformImage(GString *imageTag,
+			       SplashImageSource src, void *srcData,
 			       SplashColorMode srcMode, int nComps,
 			       GBool srcAlpha,
 			       int srcWidth, int srcHeight,
 			       SplashCoord *mat, GBool interpolate);
-  SplashBitmap *scaleImage(SplashImageSource src, void *srcData,
+  SplashBitmap *scaleImage(GString *imageTag,
+			   SplashImageSource src, void *srcData,
 			   SplashColorMode srcMode, int nComps,
 			   GBool srcAlpha, int srcWidth, int srcHeight,
 			   int scaledWidth, int scaledHeight,
@@ -432,6 +480,8 @@ private:
   GBool vectorAntialias;
   GBool inShading;
   GBool debugMode;
+
+  SplashImageCache *imageCache;
 };
 
 #endif

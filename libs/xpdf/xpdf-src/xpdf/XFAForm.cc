@@ -25,6 +25,7 @@
 #include "GfxFont.h"
 #include "Zoox.h"
 #include "PDF417Barcode.h"
+#include "UTF8.h"
 #include "XFAForm.h"
 
 #ifdef _WIN32
@@ -446,7 +447,7 @@ XFAForm *XFAForm::load(PDFDoc *docA, Catalog *catalog,
       fullNameIdx = new GHash();
       xfaForm->scanNode(tmpl, name, fullName, gFalse, NULL,
 			nameCount, nameIdx, fullNameCount, fullNameIdx,
-			catalog);
+			NULL, catalog);
       delete nameCount;
       delete nameIdx;
       delete fullNameCount;
@@ -504,11 +505,6 @@ XFAForm::~XFAForm() {
   gfree(pageOffsetY);
 }
 
-//~ need to handle exclGroup
-//~ - fields in an exclGroup may/must(?) not have names
-//~ - each field has an items element with the the value when that
-//~   field is selected
-
 // Scan <elem>.  Constructs the node's name and full name.  If <elem>
 // is a field, creates an XFAFormField; else scans <elem>'s children.
 void XFAForm::scanNode(ZxElement *elem,
@@ -516,7 +512,7 @@ void XFAForm::scanNode(ZxElement *elem,
 		       GBool inPageSet, XFATableInfo *tableInfo,
 		       GHash *nameCount, GHash *nameIdx,
 		       GHash *fullNameCount, GHash *fullNameIdx,
-		       Catalog *catalog) {
+		       GString *exclGroupName, Catalog *catalog) {
   ZxAttr *attr;
   GString *name, *fullName, *namePart, *fullNamePart;
   GHash *childNameCount, *childNameIdx, *childFullNameCount, *childFullNameIdx;
@@ -575,7 +571,8 @@ void XFAForm::scanNode(ZxElement *elem,
   }
 
   if (elem->isElement("field")) {
-    scanField(elem, name, fullName, inPageSet, tableInfo, colSpan, catalog);
+    scanField(elem, name, fullName, exclGroupName,
+	      inPageSet, tableInfo, colSpan, catalog);
   } else {
     scanNonField(elem, name, fullName, inPageSet, tableInfo, colSpan,
 		 childNameCount, childNameIdx,
@@ -652,7 +649,7 @@ void XFAForm::scanFullNames(ZxElement *elem, GHash *fullNameCount) {
 }
 
 void XFAForm::scanField(ZxElement *elem, GString *name, GString *fullName,
-			GBool inPageSet,
+			GString *exclGroupName, GBool inPageSet,
 			XFATableInfo *tableInfo, int colSpan,
 			Catalog *catalog) {
   double xSubOffset, ySubOffset, columnWidth, rowHeight;
@@ -679,6 +676,8 @@ void XFAForm::scanField(ZxElement *elem, GString *name, GString *fullName,
   }
 
   fields->append(new XFAFormField(this, elem, name->copy(), fullName->copy(),
+				  exclGroupName ? exclGroupName->copy()
+				                : (GString *)NULL,
 				  curPageNum, curXOffset, curYOffset,
 				  columnWidth, rowHeight));
 
@@ -699,6 +698,7 @@ void XFAForm::scanNonField(ZxElement *elem, GString *name, GString *fullName,
   ZxNode *child;
   ZxAttr *attr;
   PDFRectangle *box;
+  GString *exclGroupName;
   double xSubOffset, ySubOffset;
   int savedPageNum;
 
@@ -744,7 +744,8 @@ void XFAForm::scanNonField(ZxElement *elem, GString *name, GString *fullName,
     curXOffset += xSubOffset;
     curYOffset += ySubOffset;
 
-  } else if (elem->isElement("area")) {
+  } else if (elem->isElement("area") ||
+	     elem->isElement("exclGroup")) {
     xSubOffset = XFAFormField::getMeasurement(elem->findAttr("x"), 0);
     ySubOffset = XFAFormField::getMeasurement(elem->findAttr("y"), 0);
     curXOffset += xSubOffset;
@@ -780,11 +781,17 @@ void XFAForm::scanNonField(ZxElement *elem, GString *name, GString *fullName,
     }
   }
 
+  if (elem->isElement("exclGroup")) {
+    exclGroupName = name;
+  } else {
+    exclGroupName = NULL;
+  }
+
   for (child = elem->getFirstChild(); child; child = child->getNextChild()) {
     if (child->isElement()) {
       scanNode((ZxElement *)child, name, fullName, inPageSet,
 	       newTableInfo, nameCount, nameIdx, fullNameCount, fullNameIdx,
-	       catalog);
+	       exclGroupName, catalog);
     }
   }
 
@@ -871,12 +878,14 @@ FormField *XFAForm::getField(int idx) {
 
 XFAFormField::XFAFormField(XFAForm *xfaFormA, ZxElement *xmlA,
 			   GString *nameA, GString *fullNameA,
+			   GString *exclGroupNameA,
 			   int pageNumA, double xOffsetA, double yOffsetA,
 			   double columnWidthA, double rowHeightA) {
   xfaForm = xfaFormA;
   xml = xmlA;
   name = nameA;
   fullName = fullNameA;
+  exclGroupName = exclGroupNameA;
   pageNum = pageNumA;
   xOffset = xOffsetA;
   yOffset = yOffsetA;
@@ -887,6 +896,9 @@ XFAFormField::XFAFormField(XFAForm *xfaFormA, ZxElement *xmlA,
 XFAFormField::~XFAFormField() {
   delete name;
   delete fullName;
+  if (exclGroupName) {
+    delete exclGroupName;
+  }
 }
 
 int XFAFormField::getPageNum() {
@@ -943,7 +955,9 @@ Unicode *XFAFormField::getValue(int *length) {
 	s = getFieldValue("text");
 	break;
       } else if (node->isElement("checkButton")) {
-	s = getFieldValue("integer");
+	if (!(s = getFieldValue("integer"))) {
+	  s = getFieldValue("text");
+	}
 	break;
       } else if (node->isElement("barcode")) {
 	s = getFieldValue("text");
@@ -1921,6 +1935,22 @@ GString *XFAFormField::getFieldValue(const char *valueChildType) {
       }
     }
   }
+  if (exclGroupName) {
+    p = exclGroupName->getCString();
+    if (xfaForm->xml->getRoot() && !strncmp(p, "form.",  5)) {
+      if ((datasets =
+	   xfaForm->xml->getRoot()->findFirstChildElement("xfa:datasets")) &&
+	  (data = datasets->findFirstChildElement("xfa:data"))) {
+	elem = findFieldInDatasets(data, p + 5);
+	if (elem &&
+	    elem->getFirstChild() &&
+	    elem->getFirstChild()->isCharData() &&
+	    ((ZxCharData *)elem->getFirstChild())->getData()->getLength() > 0) {
+	  return ((ZxCharData *)elem->getFirstChild())->getData();
+	}
+      }
+    }
+  }
 
   // check the <form> element
   p = fullName->getCString();
@@ -1955,7 +1985,9 @@ GString *XFAFormField::getFieldValue(const char *valueChildType) {
 
 ZxElement *XFAFormField::findFieldInDatasets(ZxElement *elem, char *partName) {
   ZxNode *node;
+  ZxElement *result;
   GString *nodeName;
+  char *next;
   int curIdx, idx, n;
 
   curIdx = 0;
@@ -1976,11 +2008,21 @@ ZxElement *XFAFormField::findFieldInDatasets(ZxElement *elem, char *partName) {
 	if (!partName[n]) {
 	  return (ZxElement *)node;
 	} else if (partName[n] == '.') {
-	  return findFieldInDatasets((ZxElement *)node, partName + n + 1);
+	  if ((result = findFieldInDatasets((ZxElement *)node,
+					    partName + n + 1))) {
+	    return result;
+	  }
+	  break;
 	}
       }
     }
   }
+
+  // search for an "ancestor match"
+  if ((next = strchr(partName, '.'))) {
+    return findFieldInDatasets(elem, next + 1);
+  }
+
   return NULL;
 }
 
@@ -2054,14 +2096,26 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
 			    double x, double y, double w, double h,
 			    GBool whiteBackground,
 			    GfxFontDict *fontDict, GString *appearBuf) {
+  GString *text2;
   GfxFont *font;
   const char *fontTag;
   GString *s;
+  Unicode u;
   double yTop, xx, yy, tw, charWidth, lineHeight;
   double ascent, descent, rectX, rectY, rectW, rectH, blkH;
   int nLines, line, i, j, k, c, rectI;
 
-  //~ deal with Unicode text (is it UTF-8?)
+  // convert UTF-8 to Latin1
+  //~ this currently drops all non-Latin1 characters
+  text2 = new GString();
+  i = 0;
+  while (getUTF8(text, &i, &u)) {
+    if (u <= 0xff) {
+      text2->append((char)u);
+    } else {
+      text2->append('?');
+    }
+  }
 
   // find the font
   if ((font = findFont(fontDict, fontName, bold, italic))) {
@@ -2093,8 +2147,8 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     if (vAlign == xfaVAlignBottom || vAlign == xfaVAlignMiddle) {
       nLines = 0;
       i = 0;
-      while (i < text->getLength()) {
-	getNextLine(text, i, font, fontSize, w, &j, &tw, &k);
+      while (i < text2->getLength()) {
+	getNextLine(text2, i, font, fontSize, w, &j, &tw, &k);
 	++nLines;
 	i = k;
       }
@@ -2114,9 +2168,9 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     // write a series of lines of text
     line = 0;
     i = 0;
-    while (i < text->getLength()) {
+    while (i < text2->getLength()) {
 
-      getNextLine(text, i, font, fontSize, w, &j, &tw, &k);
+      getNextLine(text2, i, font, fontSize, w, &j, &tw, &k);
       if (tw > rectW) {
 	rectW = tw;
       }
@@ -2140,7 +2194,7 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
       appearBuf->appendf("1 0 0 1 {0:.4f} {1:.4f} Tm\n", xx, yy);
       appearBuf->append('(');
       for (; i < j; ++i) {
-	c = text->getChar(i) & 0xff;
+	c = text2->getChar(i) & 0xff;
 	if (c == '(' || c == ')' || c == '\\') {
 	  appearBuf->append('\\');
 	  appearBuf->append((char)c);
@@ -2172,13 +2226,13 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
       xx = x;
       break;
     case xfaHAlignCenter:
-      xx = x + (int)(0.5 * (combCells - text->getLength())) * tw;
+      xx = x + (int)(0.5 * (combCells - text2->getLength())) * tw;
       break;
     case xfaHAlignRight:
-      xx = x + w - text->getLength() * tw;
+      xx = x + w - text2->getLength() * tw;
       break;
     }
-    rectW = text->getLength() * tw;
+    rectW = text2->getLength() * tw;
     switch (vAlign) {
     case xfaVAlignTop:
     default:
@@ -2195,8 +2249,8 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     rectH = ascent - descent;
 
     // write the text string
-    for (i = 0; i < text->getLength(); ++i) {
-      c = text->getChar(i) & 0xff;
+    for (i = 0; i < text2->getLength(); ++i) {
+      c = text2->getChar(i) & 0xff;
       if (font && !font->isCIDFont()) {
 	charWidth = fontSize * ((Gfx8BitFont *)font)->getWidth((Guchar)c);
 	appearBuf->appendf("1 0 0 1 {0:.4f} {1:.4f} Tm\n",
@@ -2223,12 +2277,12 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     // compute string width
     if (font && !font->isCIDFont()) {
       tw = 0;
-      for (i = 0; i < text->getLength(); ++i) {
-	tw += ((Gfx8BitFont *)font)->getWidth(text->getChar(i));
+      for (i = 0; i < text2->getLength(); ++i) {
+	tw += ((Gfx8BitFont *)font)->getWidth(text2->getChar(i));
       }
     } else {
       // otherwise, make a crude estimate
-      tw = text->getLength() * 0.5;
+      tw = text2->getLength() * 0.5;
     }
     tw *= fontSize;
     rectW = tw;
@@ -2264,8 +2318,8 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
 
     // write the text string
     appearBuf->append('(');
-    for (i = 0; i < text->getLength(); ++i) {
-      c = text->getChar(i) & 0xff;
+    for (i = 0; i < text2->getLength(); ++i) {
+      c = text2->getChar(i) & 0xff;
       if (c == '(' || c == ')' || c == '\\') {
 	appearBuf->append('\\');
 	appearBuf->append((char)c);
@@ -2304,6 +2358,8 @@ void XFAFormField::drawText(GString *text, GBool multiLine, int combCells,
     appearBuf->insert(rectI, s);
     delete s;
   }
+
+  delete text2;
 }
 
 // Searches <fontDict> for a font matching(<fontName>, <bold>,
@@ -2734,7 +2790,7 @@ GString *XFAFormField::pictureFormatDateTime(GString *value, GString *picture) {
 	      u <<= 4;
 	      if (c >= '0' && c <= '9') {
 		u += c - '0';
-	      } else if (c >= 'a' && c <= 'F') {
+	      } else if (c >= 'a' && c <= 'f') {
 		u += c - 'a' + 10;
 	      } else if (c >= 'A' && c <= 'F') {
 		u += c - 'A' + 10;
