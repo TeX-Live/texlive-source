@@ -64,6 +64,9 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-meta.hh \
 	@HARFBUZZ_TREE@/src/hb-mutex.hh \
 	@HARFBUZZ_TREE@/src/hb-null.hh \
+	@HARFBUZZ_TREE@/src/hb-number-parser.hh \
+	@HARFBUZZ_TREE@/src/hb-number.cc \
+	@HARFBUZZ_TREE@/src/hb-number.hh \
 	@HARFBUZZ_TREE@/src/hb-object.hh \
 	@HARFBUZZ_TREE@/src/hb-open-file.hh \
 	@HARFBUZZ_TREE@/src/hb-open-type.hh \
