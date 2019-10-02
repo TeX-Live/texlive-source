@@ -118,9 +118,14 @@ if (($pattern eq '')||($Help)) {
     @files = glob "$pattern" ;
 }
 
+# this patch was send via debian but is not tested by me
+
 foreach my $file (@files) {
     $_ = $file ;
-    if (s/\.(\d+|mps)$// && -e $file) {
+  # if (s/\.(\d+|mps)$// && -e $file) {
+    if (s/\.(\d+|mps|ps)$// && -e $file) {
+        my $suffix = $1 ;
+        my $pdf = basename($_).".pdf" ;
         if ($miktex) {
             $command = "pdftex -undump=mptopdf" ;
         } else {
@@ -136,15 +141,22 @@ foreach my $file (@files) {
             print "\n$program : error while processing tex file\n" ;
             exit 1 ;
         }
-        my $pdfsrc = basename($_).".pdf";
-        rename ($pdfsrc, "$_-$1.pdf") ;
-        if (-e $pdfsrc) {
-            CopyFile ($pdfsrc, "$_-$1.pdf") ;
+      # my $pdfsrc = basename($_).".pdf";
+      # rename ($pdfsrc, "$_-$1.pdf") ;
+      # if (-e $pdfsrc) {
+      #     CopyFile ($pdfsrc, "$_-$1.pdf") ;
+        if ($suffix =~ m/\.\d+$/) {
+            rename ($pdf, "$_-$suffix.pdf") ;
+            if (-e $pdf) {
+                CopyFile ($pdf, "$_-$suffix.pdf") ;
+            }
+            $pdf = "$_-$suffix.pdf" ;
         }
         if ($done) {
             $report .= " +" ;
         }
-        $report .= " $_-$1.pdf" ;
+      # $report .= " $_-$1.pdf" ;
+        $report .= " $pdf" ;
         ++$done  ;
     }
 }

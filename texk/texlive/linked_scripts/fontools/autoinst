@@ -37,10 +37,11 @@ use Cwd ();
 use File::Path ();
 use File::Spec ();
 use Getopt::Long ();
+use IPC::Open3 ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20190712';
+my $VERSION = '20191001';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -516,6 +517,8 @@ sub main {
         make_commands(@worklist);
     }
 
+    close $ARGV{logfile};
+
     return;
 }
 
@@ -741,8 +744,8 @@ sub create_logfile {
     my @fonts = @_;
 
     if (-e $ARGV{logfile}) {
-        print "[INFO] file '$ARGV{logfile}' already exists;\n" .
-              "       appending new log data to end\n\n";
+        print "[WARNING]   File '$ARGV{logfile}' already exists;\n" .
+              "            appending new log data to end.\n";
     }
     open my $LOG, '>>', $ARGV{logfile}
         or die "$0: cannot create $ARGV{logfile}: $!";
@@ -801,17 +804,16 @@ END_ARGUMENTS
     my @fontfamilies = keys %fontfamilies;
     if (scalar @fontfamilies > 1) {
         warn <<"END_WARNING_MULTIPLE_FAMILIES";
-[WARNING] Your fonts seem to belong to multiple families:
+[WARNING]   Your fonts seem to belong to multiple families:
 
-          @{[ join( "\n" . q{ } x 10, sort @fontfamilies ) ]}
+            @{[ join( "\n" . q{ } x 12, sort @fontfamilies ) ]}
 
-          "autoinst" performs best when installing one family at a time.
-          If you think your fonts should all be in the same family,
-          you might have found a bug in autoinst's font info parsing.
+            "autoinst" performs best when installing one family at a time.
+            If you think your fonts should all be in the same family,
+            you might have found a bug in autoinst's font info parsing.
 
-          Please see the log file $ARGV{logfile} for details on how
-          the fonts' families, weights, widths and shapes were parsed.
-
+            Please see the log file $ARGV{logfile} for details on how
+            the fonts' families, weights, widths and shapes were parsed.
 END_WARNING_MULTIPLE_FAMILIES
 
         # increase verbosity if necessary, to log all relevant info
@@ -903,7 +905,6 @@ END_FONTINFO
     return if $ARGV{verbose} < 2;
     print {$LOG} join "\n\n", @cmds;
     print {$LOG} "\n";
-    close $LOG;
 }
 
 #-----------------------------------------------------------------------
@@ -919,19 +920,36 @@ sub make_commands {
 
     if ($ARGV{manual}) {
         open my $BAT, '>', 'autoinst.bat'
-            or die "[ERROR] Can't create 'autoinst.bat': $!";
+            or die "[ERROR]     Can't create 'autoinst.bat': $!";
         print {$BAT} "$_\n" for @commands;
         close $BAT;
     }
     else {
-        if (grep { system $_ } @commands) {
-            warn <<"END_OTFTOTFM_WARNING";
-[WARNING] one or more calls to 'otftotfm' failed;
-          please see the messages above.
+        my $oops = 0;
+        $| = 1;     # turn on autoflush, to make a poor man's progress bar
+        print "[INFO]      Generating fonts ";
+        for my $command (@commands) {
+            print '.';
+            my ($child_in, $child_out, $child_err);
+            my $pid = IPC::Open3::open3(
+                $child_in, $child_out, $child_err, $command
+            );
+            close $child_in;
+            waitpid($pid, 0);
 
-          Note that you can safely ignore any warnings
-              "bad UNICODING (‘germandbls’ has no encoding)"
-          or  "bad ligature (‘ff’ has no encoding)"
+            if ($?) {
+                my $msg = "$command\n" . do { local $/; <$child_err> } . "\n";
+                warn $msg;
+                print {$ARGV{logfile}} $msg;
+                $oops = 1;
+            }
+        }
+        print "\n";
+        $| = 0;
+        if ($oops) {
+            warn <<"END_OTFTOTFM_WARNING";
+[ERROR]     One or more calls to 'otftotfm' failed;
+            please see the error messages in the log file.
 END_OTFTOTFM_WARNING
         }
     }
@@ -1012,9 +1030,10 @@ sub set_targetdirs {
 
     File::Path::make_path(values %dir) unless $ARGV{dryrun};
 
-    my $result = join ' ', map { "--${_}-directory=$dir{$_}" } @FILETYPES;
-    $result .= " --encoding-directory=$dir{enc} --map-file="
-                . File::Spec->catfile($dir{map}, "${family}.map");
+    my $result = join ' ', map { qq(--${_}-directory="$dir{$_}") } @FILETYPES;
+    $result .= qq( --encoding-directory="$dir{enc}" --map-file=")
+                . File::Spec->catfile($dir{map}, "${family}.map")
+                . '"';
 
     return $result;
 }
@@ -1246,7 +1265,7 @@ sub parse_options {
                         :                                   'rm'
                         ;
         }
-    } or warn "[WARNING] $@";
+    } or warn "[WARNING]   $@";
 
     # If the user didn't explicitly say anything about ligatures,
     # activate them unless the font is a typewriter font.
@@ -1264,7 +1283,7 @@ sub parse_options {
 
     my $localtarget = File::Spec->catdir( Cwd->getcwd(), 'autoinst_output' );
     if ($ARGV{manual}) {
-        warn "[WARNING] option '-target' overridden by '-manual'!\n"
+        warn "[WARNING]   Option '-target' overridden by '-manual'!\n"
             if $ARGV{target};
         $ARGV{target} = $localtarget;
         $ARGV{updmap} = 0;
@@ -1275,12 +1294,11 @@ sub parse_options {
         };
         if (!$kpsepath) {
             warn <<"END_WARNING_KPSEWHICH";
-[WARNING] Call to "kpsewhich" failed.
-          Maybe your TeX system doesn't use the kpathsea library?
+[WARNING]   Call to "kpsewhich" failed.
+            Maybe your TeX system doesn't use the kpathsea library?
 
-          Consider using the "-target" command line option
-          to specify a TEXMF tree where autoinst should install all files.
-
+            Consider using the "-target" command line option
+            to specify a TEXMF tree where autoinst should install all files.
 END_WARNING_KPSEWHICH
         }
         else {
@@ -1297,14 +1315,25 @@ END_WARNING_KPSEWHICH
         $ARGV{target} = $localtarget;
         $ARGV{updmap} = 0;
         warn <<"END_WARNING_DUMPING_FILES";
-[WARNING] No user-writable TEXMF-tree found!
+[WARNING]   No user-writable TEXMF-tree found!
 
-          I'm putting all generated files in "$ARGV{target}".
+            I'm putting all generated files in "$ARGV{target}".
 
-          Please install these files into a suitable TEXMF directory,
-          update the filename database and run 'updmap' (or similar);
-          see your TeX installation's documentation.
+            Please install these files into a suitable TEXMF directory,
+            update the filename database and run 'updmap' (or similar);
+            see your TeX installation's documentation.
 END_WARNING_DUMPING_FILES
+    }
+
+    if ($ARGV{target} =~ m/[ ]/xms) {
+        warn <<"END_WARNING_SPACES_IN_PATHS";
+[WARNING]   The pathname of your target directory contains spaces:
+                "$ARGV{target}"
+
+            I'll do my best to work around this. Fingers crossed!
+            If you do experience any problems, try to re-run autoinst
+            with a target directory without spaces in its name.
+END_WARNING_SPACES_IN_PATHS
     }
 
     if (!$ARGV{figurekern}) {
@@ -1362,7 +1391,7 @@ sub parse_basicinfo {
 
     my $cmd = qq(otfinfo --info "$info->{filename}");
     open my $otfinfo, '-|', $cmd
-        or die "[ERROR] could not fork(): $!";
+        or die "[ERROR]     Could not fork(): $!";
     my %data = map { my ($k,$v) = m/\A\s* ([^:]+?) \s*:\s* ([^\r\n]+)/xms;
                      $k =~ s/\s+//xmsg;
                      $v =~ s/\s+//xmsg;
@@ -1370,7 +1399,7 @@ sub parse_basicinfo {
                    }
                    grep { m/\A\s* [^:]+? \s*:\s* [^\r\n]+/xms } <$otfinfo>;
     close $otfinfo
-        or die "[ERROR] '$cmd' failed";
+        or die "[ERROR]     '$cmd' failed.";
 
     $data{family}    =  $data{preferredfamily} || $data{family};
     $data{subfamily} =  $data{preferredsubfamily} || $data{subfamily};
@@ -1521,7 +1550,7 @@ sub parse_basicinfo {
         close $otfinfo
             or die "'$cmd' failed";
         @{$info}{qw(weight_class width_class)} = unpack '@4n @6n', $os2_table;
-    } or warn "[WARNING] $@";
+    } or warn "[WARNING]   $@";
 
     return;
 }
@@ -1547,17 +1576,17 @@ sub parse_features {
 
     my $cmd = qq(otfinfo --features "$info->{filename}");
     open my $otfinfo, '-|', $cmd
-        or die "[ERROR] could not fork(): $!";
+        or die "[ERROR]     Could not fork(): $!";
     %{$info->{feature}} = map { (substr($_, 0, 4) => 1) } <$otfinfo>;
     close $otfinfo
-        or die "[ERROR] '$cmd' failed";
+        or die "[ERROR]     '$cmd' failed.";
 
     $cmd = qq(otfinfo --tables "$info->{filename}");
     open $otfinfo, '-|', $cmd
-        or die "[ERROR] could not fork(): $!";
+        or die "[ERROR]     Could not fork(): $!";
     $info->{feature}{kern} = 1 if grep { m/\d+ \s+ kern/xms } <$otfinfo>;
     close $otfinfo
-        or die "[ERROR] '$cmd' failed";
+        or die "[ERROR]     '$cmd' failed.";
 
     return;
 }
@@ -1571,7 +1600,7 @@ sub parse_sizeinfo {
 
     my $cmd = qq(otfinfo --optical-size "$info->{filename}");
     open my $otfinfo, '-|', $cmd
-        or die "[ERROR] could not fork(): $!";
+        or die "[ERROR]     Could not fork(): $!";
 
     if (my ($minsize, $maxsize)
         = <$otfinfo> =~ m/[(] ([\d.]+) \s* pt, \s*
@@ -1605,7 +1634,7 @@ sub parse_sizeinfo {
         @{$info}{qw(minsize maxsize)} = ($minsize, $maxsize);
     }
     close $otfinfo
-        or die "[ERROR] '$cmd' failed";
+        or die "[ERROR]     '$cmd' failed.";
 
     return;
 }
@@ -1613,30 +1642,29 @@ sub parse_sizeinfo {
 
 # Error messages, used in assert_unique()
 my $ERR_DETAIL =<<'END_ERR_DETAIL';
-[ERROR] I've parsed both %s
-                     and %s as
+[ERROR]     I've parsed both %s
+                         and %s as
 
-        Family:     %s
-        Weight:     %s
-        Width:      %s
-        Shape:      %s
-        Size:       %s-%s
+            Family:     %s
+            Weight:     %s
+            Width:      %s
+            Shape:      %s
+            Size:       %s-%s
 
 END_ERR_DETAIL
 
 my $ERR_PARSE =<<'END_ERR_PARSE';
-[ERROR] I failed to parse all fonts in a unique way;
-        presumably some fonts have unusual widths, weights or shapes.
+[ERROR]     I failed to parse all fonts in a unique way;
+            presumably some fonts have unusual widths, weights or shapes.
 
-        Try one of the following:
-        -   Run 'autoinst' on a smaller set of fonts,
-            omitting the ones that weren't parsed correctly;
-        -   Add the missing widths, weights or shapes to the tables
-            'NFSS_WIDTH', 'NFSS_WEIGHT' or 'NFSS_SHAPE' near the top
-            of the source code;
+            Try one of the following:
+            -   Run 'autoinst' on a smaller set of fonts,
+                omitting the ones that weren't parsed correctly;
+            -   Add the missing widths, weights or shapes to the tables
+                'NFSS_WIDTH', 'NFSS_WEIGHT' or 'NFSS_SHAPE' near the top
+                of the source code;
 
-        Please also send a bug report to the author.
-
+            Please also send a bug report to the author.
 END_ERR_PARSE
 
 #-----------------------------------------------------------------------
@@ -1666,6 +1694,7 @@ sub assert_unique {
 
     # Die with detailed error message if the font infos aren't unique
     if ($err_details) {
+        print {$ARGV{logfile}} $err_details, $ERR_PARSE;
         die $err_details, $ERR_PARSE;
     }
 
@@ -1687,10 +1716,10 @@ sub get_orn {
 
         my $cmd = qq(otfinfo --glyphs "$font->{filename}");
         open my $otfinfo, '-|', $cmd
-            or die "[ERROR] could not fork(): $!";
+            or die "[ERROR]     Could not fork(): $!";
         chop(my @glyphnames = <$otfinfo>);
         close $otfinfo
-            or die "[ERROR] '$cmd' failed";
+            or die "[ERROR]     '$cmd' failed.";
 
         # Test for some known alternative names (probably not exhaustive)
         my @ornaments
@@ -1702,7 +1731,7 @@ sub get_orn {
         @encoding[0 .. $#ornaments] = @ornaments;
 
         open my $ORN, '>', "$enc_name.enc"
-            or die "[ERROR] Can't create '$enc_name.enc': $!";
+            or die "[ERROR]     Can't create '$enc_name.enc': $!";
 
         print {$ORN} "/$font->{family}OrnamentEncoding [\n";
         map { print {$ORN} "    /$_\n" } @encoding[0 .. 255];
@@ -1753,7 +1782,7 @@ sub write_stylefile {
     File::Path::make_path($dir);
     $fn = File::Spec->catfile($dir, $fn);
     open my $STY, '>', $fn
-        or die "[ERROR] Can't create '$fn': $!";
+        or die "[ERROR]     Can't create '$fn': $!";
 
     print {$STY} <<"END_STY_HEADER";
 %% Generated by autoinst on $TODAY
@@ -1894,7 +1923,7 @@ END_STY_MAINFONT
         : $seen{TOsF} ? 'oldstyle,tabular'
         : $seen{LF}   ? 'lining,proportional'
         : $seen{TLF}  ? 'lining,tabular'
-        :               die "[ERROR] Internal bug, please report!";
+        :               die "[ERROR]     Internal bug, please report!";
 
     my $default_bold;
     for my $series (qw(heavy black extrabold demibold semibold bold)) {
@@ -1961,7 +1990,7 @@ sub write_fdfile {
     File::Path::make_path($dir);
     $fn = File::Spec->catfile($dir, $fn);
     open my $FD, '>', $fn
-        or die "[ERROR] Can't create '$fn': $!";
+        or die "[ERROR]     Can't create '$fn': $!";
 
     print {$FD} <<"END_FD_HEADER";
 %% Generated by autoinst on $TODAY
@@ -2605,7 +2634,7 @@ but don't provide a "liga" feature to access these.
 This option tells B<autoinst> to add extra C<LIGKERN> rules to
 the generated fonts to enable the use of these ligatures.
 The default is B<-ligatures>,
-unless the user specified the I<ligatures> option.
+unless the user specified the I<-typewriter> option.
 
 Specify B<-noligatures> to disable the generation of ligatures even for fonts
 that do contain a "liga" feature.
@@ -2782,7 +2811,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20190712.
+This document describes B<autoinst> version 20191001.
 
 
 =head1 RECENT CHANGES
@@ -2790,6 +2819,11 @@ This document describes B<autoinst> version 20190712.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2019-10-01>
+
+Handle I<-target> directories with spaces in their path names.
+Tweaked messages and logs to make them more useful to the user.
 
 =item I<2019-07-12>
 
