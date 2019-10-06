@@ -34,6 +34,9 @@ description, see the Info files.
 .B \-V,\-View             
 View output; command-line only.
 .TP
+.B \-absolute            
+Use absolute WebGL dimensions [false].
+.TP
 .B \-a,\-align C|B|T|Z    
 Center, Bottom, Top, or Zero page alignment [C].
 .TP
@@ -42,9 +45,6 @@ Directional page alignment (overrides align) [(0,0)].
 .TP
 .B \-antialias n         
 Antialiasing width for rasterized output [2].
-.TP
-.B \-arcballradius pixels
-Arcball radius [750].
 .TP
 .B \-auto3D              
 Automatically activate 3D scene [true].
@@ -91,11 +91,11 @@ Conserve memory at the expense of speed [false].
 .B \-d,\-debug            
 Enable debugging messages [false].
 .TP
+.B \-digits n            
+Default output file precision [6].
+.TP
 .B \-divisor n           
 Garbage collect using purge(divisor=n) [2].
-.TP
-.B \-doubleclick ms      
-Emulated double-click timeout [200].
 .TP
 .B \-embed               
 Embed rendered preview image [true].
@@ -184,6 +184,9 @@ View output from multiple batch-mode files [false].
 .B \-multisample n       
 Multisampling width for screen images [4].
 .TP
+.B \-offline             
+Produce offline html files [false].
+.TP
 .B \-offscreen           
 Use offscreen rendering [false].
 .TP
@@ -238,6 +241,12 @@ Disable system call [true].
 .B \-scroll n            
 Scroll standard output n lines at a time [0].
 .TP
+.B \-shiftHoldDistance n 
+WebGL touch screen distance limit for shift mode [20].
+.TP
+.B \-shiftWaitTime ms    
+WebGL touch screen shift mode delay [200].
+.TP
 .B \-spinstep deg/s      
 Spin speed [60].
 .TP
@@ -280,6 +289,12 @@ Increase verbosity level (can specify multiple times) [0].
 .B \-version             
 Show version; command-line only.
 .TP
+.B \-vibrateTime ms      
+WebGL shift mode vibrate duration [25].
+.TP
+.B \-viewportmargin pair 
+Horizontal and vertical 3D viewport margin [(0.5,0.5)].
+.TP
 .B \-wait                
 Wait for child processes to finish before exiting [false].
 .TP
@@ -291,6 +306,12 @@ Show where listed variables are declared [false].
 .TP
 .B \-xasy                
 Special interactive mode for xasy [false].
+.TP
+.B \-zoomPinchCap limit  
+WebGL maximum zoom pinch [100].
+.TP
+.B \-zoomPinchFactor n   
+WebGL zoom pinch sensitivity [10].
 .TP
 .B \-zoomfactor factor   
 Zoom step factor [1.05].

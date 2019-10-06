@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.52],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.56],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
@@ -126,11 +126,17 @@ AC_DEFUN([DEFINE_LIB],[
 Define to 1 if you have the `$1' library (-l$1).
 ])
 
-AC_CHECK_HEADER(unordered_map,AC_DEFINE(HAVE_UNORDERED_MAP,1,
-                              DEFINE[<unordered_map>]),
-        [AC_CHECK_HEADER(tr1/unordered_map,AC_DEFINE(HAVE_TR1_UNORDERED_MAP,1,
-                              DEFINE[<tr1/unordered_map>]),
-        [AC_CHECK_HEADER(ext/hash_map,,OPTIONS=$OPTIONS"-DNOHASH ")])])
+AC_CHECK_HEADER(tr1/unordered_map)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+    [#include <tr1/unordered_map>]
+    [std::tr1::unordered_map<int,int> map;]
+  )],
+  AC_DEFINE(HAVE_TR1_UNORDERED_MAP,1,
+  DEFINE([<tr1/unordered_map>])),
+  [
+  AC_CHECK_HEADER(unordered_map,AC_DEFINE(HAVE_UNORDERED_MAP,1,
+                   DEFINE([<unordered_map>])),
+  [AC_CHECK_HEADER(ext/hash_map,,OPTIONS=$OPTIONS"-DNOHASH ")])])
 
 GCVERSION=8.0.4
 ATOMICVERSION=7.6.10
@@ -221,14 +227,14 @@ AC_ARG_ENABLE(gc-full-debug,
 
 INCL=$INCL" -I/usr/include/tirpc"
 
-if test "$OSTYPE" = "msdos"; then
-CPPFLAGS=$CPPFLAGS" -D__MSDOS__ -DCALLBACK=__stdcall $INCL"
+if test "$OSTYPE" = "cygwin"; then
+CPPFLAGS=$CPPFLAGS" -D__MSDOS__ -I/usr/include/w32api -I/usr/include -DCALLBACK=__stdcall $INCL"
 else
 CPPFLAGS=$CPPFLAGS" $INCL"
 fi
 
 AC_CHECK_FUNC(getopt_long_only, AC_DEFINE(HAVE_GNU_GETOPT_H, 1,
-                           DEFINE[GNU <getopt.h>]),
+                           DEFINE([GNU <getopt.h>])),
                            getopt="getopt getopt1",)
 
 AC_SUBST(getopt)
@@ -241,7 +247,7 @@ AC_SUBST(INCL)
 AC_SUBST(OPTIONS)
 
 # Checks for libraries.
-AC_CHECK_LIB([m], [gamma],,
+AC_SEARCH_LIBS([lgamma],[m c],,
 AC_MSG_ERROR([*** Please install libm on your system ***]))
 AC_CHECK_LIB([z], [deflate],,
 AC_MSG_ERROR([*** Please install libz or zlib-devel on your system ***]))
@@ -339,7 +345,7 @@ AC_CHECK_FUNCS([feenableexcept])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include "xstream.h"])],
                    [AC_SEARCH_LIBS([xdrstdio_create],[nsl tirpc])
                     AC_DEFINE(HAVE_RPC_RPC_H,1,
-                   DEFINE[a working <tirpc/rpc/rpc.h> header])],
+                   DEFINE([a working <tirpc/rpc/rpc.h> header]))],
    AC_MSG_WARN([*** Broken rpc headers; XDR support disabled ***]))
 
 AC_ARG_ENABLE(gsl,
@@ -359,17 +365,23 @@ AC_ARG_ENABLE(gl,
 AC_ARG_ENABLE(offscreen,
 [AS_HELP_STRING(--enable-offscreen[[[=no]]],enable experimental offscreen rendering using OSMesa library)])
 
-if test "x$enable_gl" != "xno"; then
+AC_ARG_ENABLE(OpenImageIO,
+[AS_HELP_STRING(--enable-openimageio[[[=no]]],enable experimental OpenImageIO Library)])
+
             AC_CHECK_HEADER(glm/glm.hpp,
                        [AC_DEFINE(HAVE_LIBGLM,1,
-                    DEFINE[the <glm/glm.hpp> header])],AC_MSG_NOTICE([*** Could not find glm header files: will compile without OpenGL support ***]))
+                    DEFINE([the <glm/glm.hpp> header]))],AC_MSG_NOTICE([*** Could not find glm header files: will compile without WebGL or OpenGL support ***]))
+
+if test "x$enable_gl" != "xno"; then
                     AC_CHECK_HEADERS([ncurses/curses.h ncurses.h curses.h],[break])
+if test "x$enable_openimageio" = "xyes"; then
             AC_CHECK_HEADER([OpenEXR/ImathVec.h],
                 AC_CHECK_HEADER([OpenImageIO/imageio.h],
                         AC_CHECK_LIB([OpenImageIO],[open])))
+fi
 
 case "$OSTYPE" in
-     msdos)
+     cygwin)
               AC_CHECK_LIB([gccpp],[GC_throw_bad_alloc])
               AC_CHECK_HEADER(GL/glut.h,
                                   [AC_DEFINE(HAVE_LIBGLUT,1,
@@ -386,7 +398,7 @@ case "$OSTYPE" in
               AC_CHECK_LIB([gccpp],[GC_throw_bad_alloc])
               AC_CHECK_HEADER(OpenGL/gl.h,
                              [AC_DEFINE(HAVE_LIBGL,1,
-                             DEFINE[<gl.h> header])])
+                             DEFINE([<gl.h> header]))])
               AC_CHECK_HEADER(GLUT/glut.h, [AC_DEFINE(HAVE_LIBGLUT,1,
                    DEFINE_LIB[GLUT])
                            LIBS=$LIBS"-framework GLUT -framework OpenGL -framework Cocoa glew.o "],
@@ -395,10 +407,10 @@ case "$OSTYPE" in
      *)
          AC_CHECK_LIB([gccpp],[GC_throw_bad_alloc])
           AC_CHECK_LIB([glut], [glutMainLoop],,
-                       AC_MSG_NOTICE([*** Could not find libglut: will compile without GLUT support ***]))
+                       AC_MSG_NOTICE([*** Could not find libglut: will compile without OpenGL support ***]))
          AC_CHECK_LIB([GL], [glDepthMask],
                                  [AC_DEFINE(HAVE_LIBGL,1,
-                             DEFINE_LIB[GL])
+                             DEFINE_LIB([GL]))
                              LIBS=$LIBS"-lGL glew.o "],
                                    AC_MSG_NOTICE([*** Could not find libGL: will compile without OpenGL support ***]))
 esac
@@ -424,7 +436,7 @@ AC_DEFUN([ac_FUNC_STRPTIME], [
 
 # Checks for library functions.
 AC_FUNC_FORK
-AC_CHECK_FUNCS([dup2 floor memset pow sqrt strchr tgamma memrchr])
+AC_CHECK_FUNCS([dup2 floor memset strchr tgamma lgamma memrchr])
 AC_FUNC_STRFTIME
 ac_FUNC_STRPTIME
 AC_FUNC_ERROR_AT_LINE

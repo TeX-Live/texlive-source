@@ -1,3 +1,35 @@
+Release Notes for Version 2.56
+
+An array bounds error was fixed. WebGL output now supports background
+colors, including transparent backgrounds. Preprocessor conditionals were
+fixed. Scrolling of webgl images is now disabled within the viewport.
+
+Release Notes for Version 2.55
+
+An initialization bug in the OpenGL renderer and portability issues were
+fixed. 
+
+Release Notes for Version 2.54
+
+Support for generating and embedding interactive 3D WebGL vector graphics
+within an HTML file has been added, allowing Asymptote figures
+to be displayed on modern mobile and desktop browsers. The OpenGL rendering
+routines were further optimized, yielding higher frame rates and
+lower memory usage. The view position for perspective projection was fixed.
+The default value of file word() was fixed. Installation issues were
+addressed. A new digits setting controls the default output file precision.
+A hanging pipe was fixed. The popcount function was extended to
+systems that lack 64-bit integers. The order of PRC quad colours was fixed.
+If lighting is enabled, vertex colors are now ignored in PRC images;
+when drawing a surface s, use draw(s,prc() ? nolight : currentlight);
+to disable lighting manually and recover the old behaviour.
+
+Release Notes for Version 2.53
+
+A memory leak and antialiasing artifacts in the 3D rendering engine were fixed.
+For PRC content, oblique projections are now converted to orthographic
+projections. Portability issues were addressed.
+
 Release Notes for Version 2.52
 
 Under MacOS X, 3D rendering is supported again, the xasy menubar is

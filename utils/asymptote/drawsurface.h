@@ -13,9 +13,13 @@
 #include "beziercurve.h"
 #include "bezierpatch.h"
 
+namespace run {
+void inverse(double *a, size_t n);
+}
+
 namespace camp {
 
-#ifdef HAVE_GL
+#ifdef HAVE_LIBGLM
 void storecolor(GLfloat *colors, int i, const vm::array &pens, int j);
 #endif  
 
@@ -36,13 +40,16 @@ protected:
   double PRCshininess;
   bool invisible;
   Interaction interaction;
+  bool billboard;
+  size_t centerIndex;  
   
   triple Min,Max;
   bool prc;
   
 public:
 #ifdef HAVE_GL
-  static BezierCurve C;
+  BezierCurve C;
+  bool transparent;
 #endif  
   
   string wrongsize() {
@@ -50,13 +57,22 @@ public:
       string(" array of triples and array of 4 pens required");
   }
   
+  void init() {
+    billboard=interaction == BILLBOARD &&
+      !settings::getSetting<bool>("offscreen");
+    centerIndex=0;
+  }
+  
   drawSurface(const vm::array& g, size_t ncontrols, triple center,
               bool straight, const vm::array&p, double opacity,
-              double shininess, double metallic, double fresnel0, double PRCshininess, const vm::array &pens,
+              double shininess, double metallic, double fresnel0,
+              double PRCshininess, const vm::array &pens,
               Interaction interaction, bool prc, const string& key="") :
     drawElement(key), ncontrols(ncontrols), center(center), straight(straight),
-    opacity(opacity), shininess(shininess), metallic(metallic), fresnel0(fresnel0), PRCshininess(PRCshininess),
-    interaction(interaction), prc(prc) {
+    opacity(opacity), shininess(shininess), metallic(metallic),
+    fresnel0(fresnel0), PRCshininess(PRCshininess), interaction(interaction),
+    prc(prc) {
+    init();
     if(checkArray(&g) != 4 || checkArray(&p) != 3)
       reportError(wrongsize());
     
@@ -81,7 +97,7 @@ public:
     size_t nodes=(ncontrols == 16 ? 4 : 3);
     size_t size=checkArray(&pens);
     if(size > 0) {
-      if(size != nodes) reportError("4 vertex pens required");
+      if(size != nodes) reportError("one vertex pen required per node");
       colors=new(UseGC) prc::RGBAColour[nodes];
       for(size_t i=0; i < nodes; ++i)
       colors[i]=rgba(vm::read<camp::pen>(pens,i));
@@ -96,15 +112,14 @@ public:
     PRCshininess(s->PRCshininess), invisible(s->invisible),
     interaction(s->interaction), prc(s->prc) { 
     
+    init();
     if(s->controls) {
       controls=new(UseGC) triple[ncontrols];
       for(unsigned int i=0; i < ncontrols; ++i)
         controls[i]=t*s->controls[i];
     } else controls=NULL;
   
-#ifdef HAVE_GL
     center=t*s->center;
-#endif    
   }
   
   virtual ~drawSurface() {}
@@ -115,7 +130,7 @@ public:
 class drawBezierPatch : public drawSurface {
 public:  
 #ifdef HAVE_GL
-  static BezierPatch S;
+  BezierPatch S;
 #endif  
   
   drawBezierPatch(const vm::array& g, triple center, bool straight,
@@ -124,28 +139,33 @@ public:
               double PRCshininess, const vm::array &pens,
               Interaction interaction, bool prc) : 
     drawSurface(g,16,center,straight,p,opacity,
-                shininess,metallic,fresnel0,PRCshininess,pens,interaction,prc) {}
+                shininess,metallic,fresnel0,PRCshininess,pens,interaction,prc)  {}
 
   drawBezierPatch(const double* t, const drawBezierPatch *s) :
-    drawSurface(t,s) {
-  }
+    drawSurface(t,s) {}
   
   void bounds(const double* t, bbox3& b);
   
   void ratio(const double* t, pair &b, double (*m)(double, double),
              double fuzz, bool &first);
   
-  bool write(prcfile *out, unsigned int *, double, groupsmap&);
+  void meshinit() {
+    if(billboard)
+      centerIndex=centerindex(center);
+  }
   
-  void render(double, const triple& Min, const triple& Max,
-              double perspective, bool transparent);
+  bool write(prcfile *out, unsigned int *, double, groupsmap&);
+  bool write(jsfile *out);
+  
+  void render(double, const triple& b, const triple& B,
+              double perspective, bool remesh);
   drawElement *transformed(const double* t);
 };
   
 class drawBezierTriangle : public drawSurface {
 public:
 #ifdef HAVE_GL
-  static BezierTriangle S;
+  BezierTriangle S;
 #endif  
   
   drawBezierTriangle(const vm::array& g, triple center, bool straight,
@@ -157,18 +177,23 @@ public:
                 PRCshininess,pens,interaction,prc) {}
   
   drawBezierTriangle(const double* t, const drawBezierTriangle *s) :
-    drawSurface(t,s) {
-  }
+    drawSurface(t,s) {}
   
   void bounds(const double* t, bbox3& b);
   
   void ratio(const double* t, pair &b, double (*m)(double, double),
              double fuzz, bool &first);
   
-  bool write(prcfile *out, unsigned int *, double, groupsmap&);
+  void meshinit() {
+    if(billboard)
+      centerIndex=centerindex(center);
+  }
   
-  void render(double, const triple& Min, const triple& Max,
-              double perspective, bool transparent);
+  bool write(prcfile *out, unsigned int *, double, groupsmap&);
+  bool write(jsfile *out);
+  
+  void render(double, const triple& b, const triple& B,
+              double perspective, bool remesh);
   drawElement *transformed(const double* t);
 };
   
@@ -192,7 +217,7 @@ protected:
   
   triple Min,Max;
   
-#ifdef HAVE_GL
+#ifdef HAVE_LIBGLM
   GLfloat *colors;
   GLfloat *Controls;
   GLfloat *uKnots;
@@ -260,7 +285,7 @@ public:
     emissive=rgba(vm::read<camp::pen>(p,1));
     specular=rgba(vm::read<camp::pen>(p,2));
     
-#ifdef HAVE_GL
+#ifdef HAVE_LIBGLM
     Controls=NULL;
     int size=checkArray(&pens);
     if(size > 0) {
@@ -287,7 +312,7 @@ public:
     for(unsigned int i=0; i < n; ++i)
       controls[i]=t*s->controls[i];
     
-#ifdef HAVE_GL
+#ifdef HAVE_LIBGLM
     Controls=NULL;
     colors=s->colors;
 #endif    
@@ -305,8 +330,8 @@ public:
   void ratio(const double* t, pair &b, double (*m)(double, double), double,
              bool &first);
 
-  void render(double size2, const triple& Min, const triple& Max,
-              double perspective, bool transparent);
+  void render(double size2, const triple& b, const triple& B,
+              double perspective, bool remesh);
     
   drawElement *transformed(const double* t);
 };
@@ -454,6 +479,7 @@ class drawBaseTriangles : public drawElement {
 protected:
 #ifdef HAVE_GL
   Triangles R;
+  bool transparent;
 #endif  
   
   size_t nP;
@@ -461,6 +487,7 @@ protected:
   size_t nN;
   triple* N;
   size_t nI;
+  size_t Ni;
   uint32_t (*PI)[3];
   uint32_t (*NI)[3];
   
@@ -496,24 +523,29 @@ public:
       for(size_t i=0; i < nN; ++i)
         N[i]=vm::read<triple>(n,i);
     
-      if(checkArray(&ni) != nI)
-        reportError("Index arrays have different lengths");
-      NI=new(UseGC) uint32_t[nI][3];
-      for(size_t i=0; i < nI; ++i) {
-        vm::array *nii=vm::read<vm::array*>(ni,i);
-        if(checkArray(nii) != 3) reportError(wrongsize);
-        uint32_t *NIi=NI[i];
-        for(size_t j=0; j < 3; ++j) {
-          size_t index=unsignedcast(vm::read<Int>(nii,j));
-          if(index >= nN) reportError(outofrange);
-          NIi[j]=index;
+      Ni=checkArray(&ni);
+      if(Ni == 0 && nN == nP)
+        NI=PI;
+      else {
+        if(Ni != nI)
+          reportError("Index arrays have different lengths");
+        NI=new(UseGC) uint32_t[nI][3];
+        for(size_t i=0; i < nI; ++i) {
+          vm::array *nii=vm::read<vm::array*>(ni,i);
+          if(checkArray(nii) != 3) reportError(wrongsize);
+          uint32_t *NIi=NI[i];
+          for(size_t j=0; j < 3; ++j) {
+            size_t index=unsignedcast(vm::read<Int>(nii,j));
+            if(index >= nN) reportError(outofrange);
+            NIi[j]=index;
+          }
         }
       }
-    }
+    } else Ni=0;
   }
 
   drawBaseTriangles(const double* t, const drawBaseTriangles *s) :
-    drawElement(s->KEY), nP(s->nP), nN(s->nN), nI(s->nI) {
+    drawElement(s->KEY), nP(s->nP), nN(s->nN), nI(s->nI), Ni(s->Ni) {
     P=new(UseGC) triple[nP];
     for(size_t i=0; i < nP; i++)
       P[i]=t*s->P[i];
@@ -528,15 +560,28 @@ public:
 
     if(nN) {
       N=new(UseGC) triple[nN];
-      for(size_t i=0; i < nN; i++)
-        N[i]=transformNormal(t,s->N[i]);
-    
-      NI=new(UseGC) uint32_t[nI][3];
-      for(size_t i=0; i < nI; ++i) {
-        uint32_t *NIi=NI[i];
-        uint32_t *sNIi=s->NI[i];
-        for(size_t j=0; j < 3; ++j)
-          NIi[j]=sNIi[j];
+      if(t == NULL) {
+        for(size_t i=0; i < nN; i++)
+          N[i]=s->N[i];
+      } else {
+        double T[]={t[0],t[1],t[2],
+                    t[4],t[5],t[6],
+                    t[8],t[9],t[10]};
+        run::inverse(T,3);
+        for(size_t i=0; i < nN; i++)
+          N[i]=unit(Transform3(s->N[i],T));
+      }
+
+      if(Ni == 0) {
+        NI=PI;
+      } else {
+        NI=new(UseGC) uint32_t[nI][3];
+        for(size_t i=0; i < nI; ++i) {
+          uint32_t *NIi=NI[i];
+          uint32_t *sNIi=s->NI[i];
+          for(size_t j=0; j < 3; ++j)
+            NIi[j]=sNIi[j];
+        }
       }
     }
   }
@@ -559,6 +604,7 @@ class drawTriangles : public drawBaseTriangles {
   size_t nC;
   prc::RGBAColour*C;
   uint32_t (*CI)[3];
+  size_t Ci;
    
   // Asymptote material data
   prc::RGBAColour diffuse;
@@ -597,17 +643,22 @@ public:
     
       size_t nI=checkArray(&vi);
     
-      if(checkArray(&ci) != nI)
-        reportError("Index arrays have different lengths");
-      CI=new(UseGC) uint32_t[nI][3];
-      for(size_t i=0; i < nI; ++i) {
-        vm::array *cii=vm::read<vm::array*>(ci,i);
-        if(checkArray(cii) != 3) reportError(wrongsize);
-        uint32_t *CIi=CI[i];
-        for(size_t j=0; j < 3; ++j) {
-          size_t index=unsignedcast(vm::read<Int>(cii,j));
-          if(index >= nC) reportError(outofrange);
-          CIi[j]=index;
+      Ci=checkArray(&ci);
+      if(Ci == 0 && nC == nP)
+        CI=PI;
+      else {
+        if(Ci != nI)
+          reportError("Index arrays have different lengths");
+        CI=new(UseGC) uint32_t[nI][3];
+        for(size_t i=0; i < nI; ++i) {
+          vm::array *cii=vm::read<vm::array*>(ci,i);
+          if(checkArray(cii) != 3) reportError(wrongsize);
+          uint32_t *CIi=CI[i];
+          for(size_t j=0; j < 3; ++j) {
+            size_t index=unsignedcast(vm::read<Int>(cii,j));
+            if(index >= nC) reportError(outofrange);
+            CIi[j]=index;
+          }
         }
       }
     } else {
@@ -620,8 +671,8 @@ public:
     drawBaseTriangles(t,s), nC(s->nC),
     diffuse(s->diffuse), emissive(s->emissive),
     specular(s->specular), opacity(s->opacity), shininess(s->shininess), 
-    metallic(s->metallic), fresnel0(s->fresnel0), PRCshininess(s->PRCshininess),
-    invisible(s->invisible) {
+    metallic(s->metallic), fresnel0(s->fresnel0),
+    PRCshininess(s->PRCshininess), invisible(s->invisible) {
     
     if(nC) {
       C=new(UseGC) prc::RGBAColour[nC];
@@ -640,10 +691,11 @@ public:
  
   virtual ~drawTriangles() {}
  
-  void render(double size2, const triple& Min, const triple& Max,
-              double perspective, bool transparent);
+  void render(double size2, const triple& b, const triple& B,
+              double perspective, bool remesh);
  
   bool write(prcfile *out, unsigned int *, double, groupsmap&);
+  bool write(jsfile *out);
  
   drawElement *transformed(const double* t) {
     return new drawTriangles(t,this);

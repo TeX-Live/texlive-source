@@ -50,15 +50,10 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "tr.h"
 #ifdef WIN32
 #include <windows.h>
 #endif
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
-#include "tr.h"
 
 #define DEFAULT_TILE_WIDTH  256
 #define DEFAULT_TILE_HEIGHT 256

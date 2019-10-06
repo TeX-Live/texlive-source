@@ -14,24 +14,25 @@
 #include "shaders.h"
 
 GLuint compileAndLinkShader(std::vector<ShaderfileModePair> const& shaders, 
-                            size_t NLights, size_t NMaterials,
+                            size_t Nlights, size_t NMaterials,
                             std::vector<std::string> const& defineflags)
 {
   GLuint mainShader = glCreateProgram();
   std::vector<GLuint> compiledShaders;
 
-  for (auto const& shaderInfo : shaders) {
-    GLint newshader=createShaderFile(shaderInfo.first,shaderInfo.second,
-                                     NLights,NMaterials,defineflags);
+  size_t n=shaders.size();
+  for(size_t i=0; i < n; ++i) {
+    GLint newshader=createShaderFile(shaders[i].first,shaders[i].second,
+                                     Nlights,NMaterials,defineflags);
     glAttachShader(mainShader,newshader);
     compiledShaders.push_back(newshader);
   }
 
   glLinkProgram(mainShader);
 
-  for (auto const& compiledShader : compiledShaders) {
-    glDetachShader(mainShader,compiledShader);
-    glDeleteShader(compiledShader);
+  for(size_t i=0; i < n; ++i) {
+    glDetachShader(mainShader,compiledShaders[i]);
+    glDeleteShader(compiledShaders[i]);
   }
 
   return mainShader;
@@ -85,11 +86,10 @@ GLuint createShaderFile(std::string file, int shaderType, size_t Nlights,
   shaderSrc << "#version " << GLSL_VERSION << "\r\n";
   shaderSrc << "#extension GL_ARB_uniform_buffer_object : enable"
             << "\r\n";
-  shaderSrc << "#extension GL_ARB_shading_language_packing : enable"
-            << "\r\n";
 
-  for (std::string const& flag : defineflags) {
-    shaderSrc << "#define " << flag << "\r\n";
+  size_t n=defineflags.size();
+  for(size_t i=0; i < n; ++i) {
+    shaderSrc << "#define " << defineflags[i] << "\r\n";
   }
 
   shaderSrc << "const int Nlights=" << Nlights << ";\r\n";

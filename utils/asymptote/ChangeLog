@@ -1,3 +1,1648 @@
+commit be2e06c3b0c223338cb8b88906ff84db67690e71
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 3 10:41:51 2019 -0600
+
+    Remove suffix argument from build-script.
+
+commit b2558d9e829450fee2baa7c5017c505e99c1a53a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 3 09:49:13 2019 -0600
+
+    Update required dvisgm version in documentation.
+
+commit 09715350e4873b76339f06de179fb45868037553
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 2 15:51:20 2019 -0600
+
+    Update documentation and example.
+
+commit 7614a954e5f4f81ff8dd004475afb2486c5a4fd4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 2 00:49:42 2019 -0600
+
+    Document physically based rendering and transparent background option for WebGL.
+
+commit 499ae43068ae3cb8c31e3e4a94dd0b10a9bae77a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 2 00:01:03 2019 -0600
+
+    Remove unused code.
+
+commit c8238140ab01cbe3c960fb55b36d17ba01c98d82
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 1 22:58:29 2019 -0600
+
+    Fix array bounds.
+
+commit 6a3d04c27ac85cb862bbe4d9ae7968941da9785b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 1 21:56:04 2019 -0600
+
+    Disable scrolling within viewport.
+
+commit 76aebefd6557f5590e61dfbe32b5391176e2e935
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 1 21:55:25 2019 -0600
+
+    Update asygl.
+
+commit 0b49c13bfd465d55bdd96baf9ac273ffe98fe10b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 1 14:46:58 2019 -0600
+
+    Update asygl.
+
+commit 437223b1a10947e0496a7cf810796d3081cfb2f9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 1 14:38:09 2019 -0600
+
+    Allow transparent background in webgl.
+
+commit f35a22b836d0c4b2fa3f4182ff852c8aeb3cb44d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 1 09:54:28 2019 -0600
+
+    Implement background color in webgl.
+
+commit c3b7f41f9be0dcbca35296aa8ff172a99c63c2f8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 1 09:54:05 2019 -0600
+
+    Update asygl.
+
+commit 451be75316e09552b424bf11612db9a0404bbd9f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 30 23:54:36 2019 -0600
+
+    Fix handling of missing glm library.
+
+commit 17694a76cfac4212110f5d9ae271e66222f7d2d4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 16:21:30 2019 -0600
+
+    Increment version to 2.56.
+
+commit a8198d8ff1c6742469d0b913adaa6645628fc005
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 15:53:20 2019 -0600
+
+    Fix MSDOS portability issue.
+
+commit 48f83b023681d7d4bbe7364dab146cb5128c520f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 14:58:32 2019 -0600
+
+    Fix compilation without OpenGL.
+
+commit 74c3182f0b704858a6557da909d7722129aa7042
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 14:41:41 2019 -0600
+
+    Fix test for tr1/unordered_map.
+
+commit bd1c855c82d1bd19a1b88724d2511a3fa5d6ae34
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 13:51:56 2019 -0600
+
+    Tighten up test for std::tr1::unordered_map on legacy systems.
+
+commit f6cd098b98fb8c1be1ac1795cc515a734cd8f20b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 12:41:25 2019 -0600
+
+    Fix viewMat initialization.
+
+commit b13df4e01c8a015f8937e86adf788e6683fccd08
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 04:37:49 2019 -0600
+
+    Increment version to 2.55.
+
+commit 1c26011ea8a7fdfba9725ae52ac308970bf2df24
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 03:04:36 2019 -0600
+
+    Silence Apple's OpenGL deprecation warning.
+
+commit bd6cef0ac6a2e4bce49c92a8ecc792473286b7d9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 03:02:07 2019 -0600
+
+    Silence Apple's OpenGL deprecation warning.
+
+commit 908bfa8c1114af3098367b8a87866f3a08951d02
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 02:41:34 2019 -0600
+
+    If lighting is enabled, ignore specified vertex colors for PRC. To override
+    this backwards incompatibility and recover the previous behaviour,
+    manually disable lighting when drawing a surface s:
+    draw(s,prc() ? nolight : currentlight);
+
+commit 5beec3197c5692b45dfe487d55a1d6eaddeb0a6f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 29 01:22:14 2019 -0600
+
+    Ignore null surfaces; restore example.
+
+commit 7e2cf9efabb7506649c401ece5f80c4178177b73
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 28 23:09:43 2019 -0600
+
+    Port to MSDOS.
+
+commit bcf31e3f3e9ed3fb876312f793d89543f2e70d17
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 28 02:42:53 2019 -0600
+
+    Install webgl files; clean up GUI files on uninstall.
+
+commit 1b6150e70bc601c65af304d12f286cc64363557f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 28 01:54:30 2019 -0600
+
+    Document WebGL interface.
+
+commit 8c94986e48dcb1d4ec88ff7c0c87f4ac4d5757d3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 28 00:13:44 2019 -0600
+
+    Use aspect ratio for fitting; adjust arcball radius to account for viewportmargin; make interaction constants asy settings.
+
+commit 5c5ce0424f990db9fa8da644bab334b4b74cbe0c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 28 00:13:16 2019 -0600
+
+    Update asygl.
+
+commit 3d1242fc2f31aac1d4e5e297feb403b8e1ca1a51
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 27 18:12:02 2019 -0600
+
+    Define absolute in gl.js.
+
+commit 77deba7f33213ae0cba2c34b0d26878d0baf28ce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 27 18:10:49 2019 -0600
+
+    Update asygl.
+
+commit 9c4690bf1114f9d0526c72619826176c74ad82da
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 27 17:47:01 2019 -0600
+
+    Reduce size of asygl by including only required subset of gl-matrix.
+
+commit 1208b33104c5b5b7a2a6fc3f3ad9165dfea92909
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 27 17:43:13 2019 -0600
+
+    Update asygl.
+
+commit 77206a8af882bd1f7388df810c9c9c30e6b56f06
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 27 13:04:09 2019 -0600
+
+    Expand webgl viewport to fit window; remove webglscale; rename devicepixel to absolute; add WindowTrim.
+
+commit 0ca3d60f01986f0ea89ccfd328bf361f29d73680
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 27 13:02:49 2019 -0600
+
+    Update asygl.
+
+commit 34977d2b4808156d276bcbb976ed9c9ec5a8b97b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 27 02:55:05 2019 -0600
+
+    Add webglscale and devicepixels options; implement shrink/expand viewport keys.
+
+commit 1ddada67255f9e61349bb5d7f2ce667108bba9db
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 27 02:54:17 2019 -0600
+
+    Update asygl.
+
+commit 9b0f5a6ae6cd37d337ae2637d1c71d289f239c15
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 26 03:32:37 2019 -0600
+
+    Avoid dvipdf dependency for building documentation.
+
+commit ff4b38c9e101ece6d2c6ba21e93bc1f7d8c15364
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 26 03:10:01 2019 -0600
+
+    Support --disable-gl again; ignore settings.render for WebGL output; account for devicePixelRatio; increase default viewportmargin to 0.5.
+
+commit ff25ef4b12699218459b62273c775b421f8f0fe9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 26 03:06:38 2019 -0600
+
+    Update asygl.
+
+commit 19528ced5dec8cdb502fcb63ffa6ae0b457b2f04
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 25 22:52:43 2019 -0600
+
+    Replace arcball with simpler version backported from webgl; fix RotateX and Y.
+
+commit b1f630df463467db272330d9136915681bf1e30c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 25 21:06:36 2019 -0600
+
+    Fix segmentation fault.
+
+commit b232cc52137473a9db16f56c2d275c96b9d7f748
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 25 19:22:57 2019 -0600
+
+    Change rotation matrix back to 4x4.
+
+commit 848376cb50be96143325607f05e0d7a081f0867c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 25 11:45:33 2019 -0600
+
+    Move webgl files to base directory.
+
+commit 0224793b9a347e5d2ca7985e76783bdee2bb598b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 25 11:15:59 2019 -0600
+
+    Fix vector length in normMouse; improve build-asygl.
+
+commit 8388736d5dffa20d4a10886de99a08a3e18dc6b5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 25 03:32:59 2019 -0600
+
+    Add offline WebGL option.
+
+commit 37425ee28f676e2da11d9be7052b0dab28ea4c36
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 25 03:03:22 2019 -0600
+
+    Combine javascript libaries for faster loading; remove obsolete files;
+    add asygl environment variable to specify asygl library.
+
+commit 9e815e6e659fa873ae5b665566ae3691c8caa57f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 25 02:59:36 2019 -0600
+
+    Add LGPL license; avoid multiple matrix creations; simplify arcball.
+
+commit 0f30a12889852d3d9dc83437ed0e19d048128230
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 24 14:48:39 2019 -0600
+
+    Simplify webgl output of indexed triangles.
+
+commit 994c14bb4ac4c6bc00b986b5297c267cdb98bb92
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 24 10:43:25 2019 -0600
+
+    By default, use vertex indices for normal and color indices of indexed triangles.
+
+commit f5c79f97e5dc64a3183e1e6fd0a8f2a7417c1f7b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 24 01:06:04 2019 -0600
+
+    Include html comments.
+
+commit ca37df6f334784f278ac0edf708670c2bdcf49b9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 24 00:12:45 2019 -0600
+
+    Add viewportmargin setting.
+
+commit e2aca7045e65c11e4a1250f99eb9002803ebcdf9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 23 23:20:01 2019 -0600
+
+    Add missing offscreen checks.
+
+commit 6defe942af805b4ff7659f56ea43784a5193ef7b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 23 23:03:31 2019 -0600
+
+    Simplify code.
+
+commit 6fe7fc69fe8e49eed45b6acaa59bc2b1dee7ddc2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 23 22:48:09 2019 -0600
+
+    Add offscreen detection to indexed triangles.
+
+commit a8bc5263f72d87ca005d3d97f2a13037770b56ee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 23 21:54:04 2019 -0600
+
+    Simplify code.
+
+commit 25b87d0dedc04180e36678963f59d6d0ed075cd2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 23 21:37:21 2019 -0600
+
+    Fix tiling.
+
+commit 1c442690870ffe6499012f799b97a41f6f6a8efc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 23 21:23:17 2019 -0600
+
+    Implement webgl indexed triangles.
+
+commit a05450337791d59966d12fedecb19e73bebc2415
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 23 03:11:35 2019 -0600
+
+    Implement faster WebGL and OpenGL rendering, with improved offscreen detection.
+
+commit 07ee50be15e9968de2e1a6f70c00392785bb5028
+Merge: 4dcd549b 5e911430
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 23 01:27:26 2019 -0600
+
+    Merge branch 'master' into webgl.
+
+commit 5e91143045a807b6c6ba60a125b4220dad6a65bd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 23 01:11:37 2019 -0600
+
+    Fix default value of file word() and documentation.
+
+commit 4dcd549b91ff8afe8855ddc20e6756b1e9c9d42e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 20 23:01:28 2019 -0600
+
+    Simplify code.
+
+commit fe2cab3b8086e3de638efc1008f69325f6bac8de
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 20 22:57:39 2019 -0600
+
+    Minor optimization.
+
+commit 6c30c8662563b66a724a1a0dddae20e60bd497ad
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 20 08:11:05 2019 -0600
+
+    Don't test for pow and sqrt which are sometimes implemented in hardware.
+
+commit 150d007d0a0c9e5fc40fd85f660a0377aab67b1f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 19 10:19:21 2019 -0600
+
+    Simplify code.
+
+commit 902fc9bf7e01b270492a2f51260646b3fdef06f1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 19 09:32:18 2019 -0600
+
+    Optimize bbox2; rename norender to remesh and add missing return value.
+
+commit 077d8fd4e631da44cc93fb4a8c94f55841989dac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 19 02:49:28 2019 -0600
+
+    Fix offscreen detection; discard rendered data once it goes offscreen.
+
+commit 49e21b13812931778e1385d82412373723b3b1bf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 17 23:39:07 2019 -0600
+
+    Shrink nonbillboard material buffer by 7%.
+
+commit 9177fba6a47e79f9e2c21c5f1f76c483e55a4d02
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 16 16:46:26 2019 -0600
+
+    Conditionally view html file.
+
+commit a2bb8be9c68dc825477dd03db772b9a0abbeae02
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 16 16:18:43 2019 -0600
+
+    Optimize bounding box computation.
+
+commit a0f04aa0c2971e89161e6c459829edb0aefdca7d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 16 13:52:35 2019 -0600
+
+    Improve OpenGL straight optimization for curves.
+
+commit 25a04e41dc579c5a2ef66110500aea587abd09b6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 16 13:21:21 2019 -0600
+
+    Fix order of PRC and webgl quad colors.
+
+commit 73b8974d343dc370ec459acf0bc2718165313b71
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 16 00:03:39 2019 -0600
+
+    Optimize offscreen in bezierpatch.h; remove unused code.
+
+commit b9866ef6ab0faa0c713cab7b03fe276257cb5217
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 15 22:24:41 2019 -0600
+
+    Add interface to html viewer.
+
+commit 24a3e54cd3e06d89869444eb6c8e07487dafe911
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 15 21:43:45 2019 -0600
+
+    Reformat webgl header and footer.
+
+commit 573369c22e52e2b4d3424ef1e0e8e4607572f7b4
+Merge: e6580bf3 221e1542
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 15 18:52:46 2019 -0600
+
+    Merge branch 'webgl'.
+
+commit 221e154209664025595ab423df0220649c084b5f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 15 18:50:45 2019 -0600
+
+    Optimize straight webgl lines.
+
+commit 7b36db5c4d07a7632a613c9652e5480ecaf022cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 15 18:33:14 2019 -0600
+
+    Fix webgl quad normal.
+
+commit 712af1c6a75d2d19d85e8b5a4cd71604bc5feb33
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 15 18:14:40 2019 -0600
+
+    Add straight optimization to webgl.
+
+commit a33ade59a16fea0df08ee9b7bbc1d06440b0b859
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 15 16:28:34 2019 -0600
+
+    Implement webgl pixel shader.
+
+commit 75ec09fc0bb7195580b57e40657ec0e00d46064e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 15 12:20:22 2019 -0600
+
+    Remove duplicate code.
+
+commit e6580bf30d1ecd8f96a4b7e48adfcaa2a5d24fd5
+Merge: f40bd919 cc4115dd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 15 01:03:28 2019 -0600
+
+    Merge branch 'webgl'.
+
+commit cc4115dd23fd4fb69951d5053ce615551b07cc86
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 14 23:50:33 2019 -0600
+
+    Pass asy lighting parameters; don't composite canvas with background.
+
+commit f55f0def02b723db059ddc790d29db077986e1ea
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 14 23:46:31 2019 -0600
+
+    Use 4x4 viewMat again (for correct lighting under rotation).
+
+commit a9146b8722a727d1daa11580609189e2ba3a8bf0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 14 18:17:41 2019 -0600
+
+    Fix ViewPosition; use a 3x3 view matrix.
+
+commit 31d49e55e82774285ac015b16f8969579c43d7c3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 14 11:09:55 2019 -0600
+
+    Add settings.digits to control default output file precision.
+
+commit bd8cd4877ebb7c73cb83a767721dfc858dfe8d57
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 14 01:00:33 2019 -0600
+
+    Standardize matrix names.
+
+commit 5ea4aaeae21c21e86535e5d5552a181be7222552
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 14 00:51:19 2019 -0600
+
+    Replace var by let.
+
+commit a1fdac350066487d3ffd66733ca59ce6dc11f6ea
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 14 00:49:53 2019 -0600
+
+    Further optimize Split3.
+
+commit a1a7a736a2e5ea3baaf66eec2d4df27984b2ba36
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 14 00:46:40 2019 -0600
+
+    Optimize split.
+
+commit 8b46c31c8ae3d5d681f49d546e1bc8165ac96f0c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 14 00:31:23 2019 -0600
+
+    Add webgl support for Bezier curves.
+
+commit 3975ba5416d9708e4c208ef508490571e7bdf985
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 13 17:42:45 2019 -0600
+
+    Detect navigator.vibrate.
+
+commit 381f82e9a2e7f220945d83b721832c157d4f4ac6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 13 02:51:20 2019 -0600
+
+    Indicate shift mode with vibration.
+
+commit 9d8b6c4f188ccc7539fb1ab4a6db2439e78567de
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 12 09:59:01 2019 -0600
+
+    Remove unused arguments.
+
+commit f40bd919b1a2772f8ea696c0004b447ef6f21b11
+Merge: a6b55307 76978127
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 12 09:08:25 2019 -0600
+
+    Merge branch 'webgl'.
+
+commit 76978127a7d8b3dd68eb44e10ecf5c9c05c53972
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 12 09:07:57 2019 -0600
+
+    Allow for negative dot product.
+
+commit a6b5530720e91c8aa3b8ef2798ac24b0e814afec
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 12 00:58:34 2019 -0600
+
+    Restore example.
+
+commit 56936ea472caf20f8e3d5e5420f35e8d35d62451
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 12 00:48:50 2019 -0600
+
+    Fix arcball radius; improve mobile interaction.
+
+commit 3b3b1b2efae71b494eadb4eb4b41fd0f1476d353
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 12 00:26:20 2019 -0600
+
+    Fix arcball numerical precision issues.
+
+commit e519ea37e36e4c1027b1b296b28a8d2e946c9f1d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 11 23:16:09 2019 -0600
+
+    Add mobile shift; fix arcball normalization.
+
+commit 79abc5f0b321befc032d4eb7d15b75329d202b3a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 11 19:34:02 2019 -0600
+
+    Improve zoom.
+
+commit 25e234d15a8ce05874f0951952aed0122532def8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 11 11:32:34 2019 -0600
+
+    Override scroll bar.
+
+commit 86de97f2460dc8a125e18772c31e750251481b22
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 11 11:08:39 2019 -0600
+
+    Implement pinch zoom.
+
+commit a9069b5771cf62effa2b6a5f46ac30b5766eb4ca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 11 00:20:36 2019 -0600
+
+    Fix initial projection.
+
+commit f37794e9c12fbdd588f9afa8e2400f4c4cae3acd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 23:59:16 2019 -0600
+
+    Disable mobile scaling.
+
+commit 605c952986ab864f2d6ca8bea0b11fc5cd4ccb0f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 23:58:03 2019 -0600
+
+    Disable mobile scaling.
+
+commit 2d0ed08cb4fabff9f7b5621feb3853902865d422
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 11:20:46 2019 -0600
+
+    Remove scroll bar.
+
+commit a3a319b856e16a71b228090ecf24dc735cc7248e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 10:44:59 2019 -0600
+
+    Remove webgl directory prefix from link to gl.js; add symbolic link.
+
+commit fcc609805e810ffe8e4775cc114297c60319a1de
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 10:03:32 2019 -0600
+
+    Implement Bezier triangles in webgl.
+
+commit c532199499eec51b79c33a8a23d19daddceeeb93
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 08:42:02 2019 -0600
+
+    Fix epsilon; move derivative and normal into BezierPatch.
+
+commit fa59a4840c2dcbdb54e8188f905460a32745576d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 08:27:53 2019 -0600
+
+    Fix undefined variable.
+
+commit 1341bf7f83a82780b98826c83f1619794a08a027
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 08:25:53 2019 -0600
+
+    Factor code.
+
+commit 99b00e26147feae6aff24b94ae83a5ac99c817e7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 01:20:07 2019 -0600
+
+    Begin porting Bezier triangle code to webgl.
+
+commit 033ba1eb3a0aca3a46de957c89fad9c33ce8da4b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 00:45:52 2019 -0600
+
+    Fix lighting after mode change.
+
+commit 2a174661224adc2fbc229b786baef60924761d74
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 10 00:12:22 2019 -0600
+
+    Accumulate onscreen and partially offscreen triangles separately to avoid duplicate rendering.
+
+commit 49ea03ddbf861df3edcb3dcdae3922761cb5d785
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 9 19:40:59 2019 -0600
+
+    Clear buffers on construction.
+
+commit e3bd396ed745dae9171e44b89d2554ce67e5b0cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 9 18:30:00 2019 -0600
+
+    Simplify code.
+
+commit 5b1b569f3fb253000e7728419d2f9f9612fdc7e8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 9 14:07:35 2019 -0600
+
+    Fix transparency bug; optimize colorShader and implement generalSHader.
+
+commit 61049a4ccd87e0aacd7498dd5c4d3c84960a7d18
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 9 11:51:27 2019 -0600
+
+    Sort transparent webgl triangles (based on centroid; to be improved).
+
+commit 0ec8f1841797c62a9a1ea83372f4fcb0880f3c00
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 9 09:34:28 2019 -0600
+
+    Fix missing initialization.
+
+commit 40ab227ba04a7e8ea1464af6864a074860e6fc3d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 9 09:22:53 2019 -0600
+
+    Add transparent buffers.
+
+commit a401de1b5d3532f6d30c133eed0f4d07a0d8b182
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 23:40:43 2019 -0600
+
+    Fix webgl billboard labels.
+
+commit 503ba73bb4605ba5030f3d78c71f378ce654031b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 23:17:56 2019 -0600
+
+    Avoid depth check in offscreen computations.
+
+commit 5c4dcb69f3908b57333ee90af3408cbe857b891a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 21:50:08 2019 -0600
+
+    Optimize transpose away.
+
+commit a6132b5e1d7a93c43c37d4eb2e238900bc93ff0e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 17:47:34 2019 -0600
+
+    Update temporary hard-wired teapot light parameters.
+
+commit f2ffc7b52ed3d4a7e375d66fc827f25973afac39
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 17:29:20 2019 -0600
+
+    Standardize code.
+
+commit f008f017aa1cfce1bb9bb34d91ca8857a20cea7b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 16:12:12 2019 -0600
+
+    Remove unwanted code.
+
+commit f8c22220b7dee93b97bca2a793df59e6e83ef664
+Merge: 4972f905 f1254f8d
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Sep 8 14:39:32 2019 -0600
+
+    Merge branch 'webgl' of github.com:vectorgraphics/asymptote into webgl
+
+commit 4972f90530c591c09030ae84e1f3118dff2d047d
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Sep 8 14:39:27 2019 -0600
+
+    Clean up gl.js again.
+
+commit f1254f8d7fa19053fc483231053d16103679a2e9
+Merge: cc7eb276 bad6b6d5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 14:34:04 2019 -0600
+
+    Merge branch 'webgl' of github.com:vectorgraphics/asymptote into webgl.
+
+commit cc7eb276596404eba061fee63da9440db518ad03
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 14:28:30 2019 -0600
+
+    Optimize bounding box computation; simplify code.
+
+commit bad6b6d57c23cddbe4fd823d6ca480997dab65c6
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Sun Sep 8 14:25:09 2019 -0600
+
+    Minor fixes to norm matrix.
+
+commit 0c1da0e0dad92876e6254fec9d4625afb09c9614
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 02:36:18 2019 -0600
+
+    Batch calls to drawElements.
+
+commit 2106227eb55336e1189d99092258730b7583d403
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 8 01:03:59 2019 -0600
+
+    Prepare for batch drawing.
+
+commit 108509b7b304267883ac24081f8c7b8149773bab
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 7 21:11:57 2019 -0600
+
+    Fix -noautobillboard.
+
+commit a9e980f35e2955ec58891850bac3258bb7b9b880
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 7 20:47:42 2019 -0600
+
+    Fix typos.
+
+commit 7ffa52cafeed9ff412a4c8dd79f894f6c001de5d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 7 19:23:48 2019 -0600
+
+    Use separate material and center index for each vertex again (to support batch drawing and sorting).
+
+commit 17566e437c18c5cba8af049b03e064a0471006a3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 7 14:24:13 2019 -0600
+
+    Use a 3x3 rotation matrix.
+
+commit b57b6298818cb7c561258c5f8f8e8d4724b1f0b2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 7 03:52:50 2019 -0600
+
+    Simply billboard code and port to webgl.
+
+commit 9c34d1e914fc8033f0dce670db80017c40244f66
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 6 15:08:28 2019 -0600
+
+    Enable webgl keyboard input.
+
+commit 4cddee557a7ee99117398522b64d532f8e34e9fc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 6 14:31:46 2019 -0600
+
+    Standardize code.
+
+commit 3ad3e9447237dba8d2cbd643ecec931ce1c88aef
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 6 13:05:09 2019 -0600
+
+    Fix conditional.
+
+commit b157bb70ab46e4e67060c838a7aa986c96a9a8a1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 6 12:59:21 2019 -0600
+
+    Change shaders only when needed; remove duplicate code; improve OpenGL framerate calculation.
+
+commit 2b5a4e583a912357b95dd922a414590eae1ec421
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 6 10:57:51 2019 -0600
+
+    Remove extension requirement.
+
+commit 52e3053c3b2d9a78e54d24a456b5ac74f1f7f71b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 6 10:56:36 2019 -0600
+
+    Simplify code.
+
+commit 309bfd90f3d274d7763de078772faacd7151292a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 6 03:27:03 2019 -0600
+
+    Reduce size of webgl data buffers.
+
+commit c33716757576e0534bad2615b1a608bed98059f8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 5 10:24:18 2019 -0600
+
+    Fix material index for explicit colors; standardize code.
+
+commit 1bd14971f286c5c83e0f1732523923d3da08b37f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 5 03:02:03 2019 -0600
+
+    Simplify code.
+
+commit f40c3eda4725acecd410cac7243e84053a78d233
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 5 02:53:35 2019 -0600
+
+    Support vertex shading.
+
+commit f2e5df6d331708c01f374feef5f70f0d75999c7d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 4 18:19:47 2019 -0600
+
+    Optimize webgl buffers.
+
+commit ef1cd85d7183d8399e150fdd8d4633fa8cb7adfd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 3 22:09:30 2019 -0600
+
+    Simplify and optimize code.
+
+commit 7b3cd7101983c837c866eaa5540f26718b797d76
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 3 18:58:12 2019 -0600
+
+    Recompute offscreen limits at every render.
+
+commit ee547cbd9facf472ea5ef6a504f7103f1aaec51b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 3 08:26:47 2019 -0600
+
+    Optimize shader communication.
+
+commit 68f921caf3a603603616f82175916eb768c2161b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 3 01:11:20 2019 -0600
+
+    Reimplement billboard labels to allow remesh suppression.
+
+commit 1e2d7c8f77dcd4dbf9cc0e3f7147ef1c492b51f6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Sep 3 01:02:10 2019 -0600
+
+    Fix typo.
+
+commit 7192656cca9bb3607ed5b62b7330e6a7e4e0e97e
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Sep 2 15:19:19 2019 -0600
+
+    Fix almost all problem, except for offscreen glitch.
+
+commit 173a2c40056c9a23470d2ad8e931a97251471a6e
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Sep 2 14:17:37 2019 -0600
+
+    Also reset ship.
+
+commit 1bde5bc6489562642c4eaf6e68ac92413ef4fcae
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Sep 2 14:16:54 2019 -0600
+
+    Fix zoom clipping issue alongside translation.
+
+commit fe8e538c7109073442967cb638af94279788fc86
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Mon Sep 2 14:01:30 2019 -0600
+
+    Add in revised zoom from asy.
+
+commit 78044058c643aa5e66bed5c70b0db55a5953b919
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 1 23:50:54 2019 -0600
+
+    Simplify code.
+
+commit 144f4615291a6486fdd7c2f16026240f18216538
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 1 22:02:22 2019 -0600
+
+    Output field-of-view angle.
+
+commit 1c116f53a002b66b43b315fd2e2730dc1eed6d3e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 1 20:10:49 2019 -0600
+
+    Add missing offscreen code.
+
+commit c255024cc0a6d66dd3ce2e5279e1a65fb0b0e828
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 1 11:57:17 2019 -0600
+
+    Compute pMatrix from b and B bounds.
+
+commit faf496185b9b48688f9e68b0882f16ec01d5b806
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 1 11:36:40 2019 -0600
+
+    Fix duplicate multiply.
+
+commit eb75489e0f7d739b6f2ce707ae3ae7a9176ded19
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 1 11:35:04 2019 -0600
+
+    Port offscreen code to webgl.
+
+commit 7a2fe8d7e409f33d19f860083ee71060866d8304
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 1 03:53:55 2019 -0600
+
+    Re-enable remesh suppression with offscreen check.
+
+commit fb3e1aa648c78d0c8f3c156b8f68971049c77085
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 31 19:14:37 2019 -0600
+
+    Improve zoom.
+
+commit aa2f9e5bcdb6aaf4fc960a0448bbd04c6c174e53
+Merge: 11577411 11b7f3b4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 31 14:21:25 2019 -0600
+
+    Merge branch 'master' into webgl.
+
+commit 11b7f3b4400f6c648ad2ccabe9ab06c275fd1f3f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 31 14:21:16 2019 -0600
+
+    Fix pipeclose (cf. 0d057d35cb30d52f33db9f155c880ed8f8a1d7d2).
+
+commit 115774110bd39a7609620600999c63eb0823ffb9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 31 13:17:52 2019 -0600
+
+    Remove unused argument.
+
+commit 389543c6b829bab8b8aa1c3f852263d41101079c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 31 12:57:29 2019 -0600
+
+    Optimize and simplify OpenGL shaders.
+
+commit 9ce5cfef9a1c6ea054b1d141d8b7d766c0b8f3cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 31 03:13:24 2019 -0600
+
+    Port to webgl1.0.
+
+commit 26f329d066b8b291adf7b63b61301b6f69e288a0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 31 00:45:49 2019 -0600
+
+    Remove duplicate constants.
+
+commit 16a912ce5563f6436094a0f8e2bbb878cadccd9b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 31 00:39:34 2019 -0600
+
+    Support rendering on mobile devices.
+
+commit d0e14808336642f9eabc38d66d357bbf13486f4d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 30 14:38:21 2019 -0600
+
+    Fix normals.
+
+commit cbccb294ccc2f27a4d0924b3f7337c432e3b98b0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 30 14:04:45 2019 -0600
+
+    Standardize code.
+
+commit 3d4ded0b3b871a6331dd14ae3479ebb1c15ceb8f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 30 13:40:45 2019 -0600
+
+    Simplify normal code.
+
+commit b5a083516a854317e9e88e7def584a3f9a907c57
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 30 01:35:03 2019 -0600
+
+    Update normal code.
+
+commit 78e4ac384d904e09c05684da6d0eb723878f73bb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 30 01:18:09 2019 -0600
+
+    Remove unused variable.
+
+commit 699dd53413ad111d211ed2f616bab85f6162f0cc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 30 01:16:47 2019 -0600
+
+    Update subdivision crack code.
+
+commit 9958d795eead1be55e3014fec378695682b5b202
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 30 00:05:08 2019 -0600
+
+    Support webgl output with -V -threads.
+
+commit 385c61e1b211b019641c5cd50ce54b71551f7943
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 29 21:33:58 2019 -0600
+
+    Simplify code.
+
+commit 35442f0834befc227b88c26ed7deb79e14f7628a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 29 21:12:10 2019 -0600
+
+    Fix nMaterials; remove generated file.
+
+commit 1839307bfa3cb7521293ccdd05ec1507cf7ebe53
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 29 19:47:01 2019 -0600
+
+    Revert broken commit "Add back nMaterials."
+    
+    This reverts commit ef0b19a7d1ccd37b80705c0cbaf42f8eb5470b1c.
+
+commit ef0b19a7d1ccd37b80705c0cbaf42f8eb5470b1c
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 19:24:02 2019 -0600
+
+    Add back nMaterials.
+
+commit 71d59116a67658e8bb078c79f6f1e59fcf6e1060
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 19:15:54 2019 -0600
+
+    Update Author's name.
+
+commit 8964dd0782bff658a3f2d475e10c3c38964ef607
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 19:14:55 2019 -0600
+
+    Add in authors names.
+
+commit afc2a146dd755fc19adbdba7f7aa28aab5a9b45d
+Merge: 04feea56 306f6df4
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 19:08:19 2019 -0600
+
+    Merge branch 'webgl' of github.com:vectorgraphics/asymptote into webgl
+
+commit 04feea5687b53250825e77356b5aad4961f17884
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 19:08:14 2019 -0600
+
+    Fix vViewPosition.
+
+commit 306f6df4e77d854c9890d4a14f8679e7e16f4ebf
+Merge: 63fb75af ff8cc6d3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 29 19:07:05 2019 -0600
+
+    Merge branch 'webgl' of github.com:vectorgraphics/asymptote into webgl
+
+commit 63fb75aff713b84b005076aa50d141b2c7d88f3d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 29 19:06:55 2019 -0600
+
+    Move further parameters into BezierPatch class; fix index.
+
+commit ff8cc6d326d163de250f28a2557f61701788037c
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 19:05:07 2019 -0600
+
+    Add in orthographic/persp view directions.
+
+commit acb3196c4d37930b0ef6d3fb2bee214222789593
+Merge: 60dd5701 ce412f94
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 18:49:49 2019 -0600
+
+    Merge conflict.
+
+commit 60dd5701d70540245e36d6f3d39594db39f2def6
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 18:49:15 2019 -0600
+
+    Make res per class.
+
+commit ce412f946f8b4736bcabe6bf2b462dd76bd933e2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 29 18:46:40 2019 -0600
+
+    Fix resolution.
+
+commit 80c920eb626193a2aec793c01a7fb81f405466c2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 29 17:58:12 2019 -0600
+
+    Pass resolution data to webgl.
+
+commit f494c725fb05f8245d1d3833028edb74a23cd184
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 15:46:50 2019 -0600
+
+    Remove cpy2web.
+
+commit 3037b5620c6263a1b001c45c1bcc029f1e29ed0b
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Thu Aug 29 15:04:23 2019 -0600
+
+    Allow for custom vertex structures.
+
+commit 88d8ea20543c476bde8d41d8c9132e03b64078c7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 29 11:06:17 2019 -0600
+
+    Support webgl output with threads.
+
+commit 5f47e4e35ddd76d7bcae651aa1ef956e200cb12f
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 23:23:29 2019 -0600
+
+    Add in blend func.
+
+commit 072db3837ccd0526f6bbc3437ec411f1a12fab5d
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 23:18:33 2019 -0600
+
+    Add in preliminary transparency.
+
+commit d1fdc0c19df823ab6bd79420b457197ffc6abcec
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 23:10:25 2019 -0600
+
+    Remove diagnostic.
+
+commit 51c17fc6062f43818eb0e7456bd4e52941875fba
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 23:03:01 2019 -0600
+
+    Add material index.
+
+commit c63b11b282a018eab64aebb87a22e96dbe1d6394
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 21:40:20 2019 -0600
+
+    Begin material support.
+
+commit 9a31b248de24ad18dc988ca9cbbcc536f4bc9f58
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 17:54:03 2019 -0600
+
+    FIx gitignore.
+
+commit 864ec8c2519da4a4576be291a554342a0eddd332
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 17:52:35 2019 -0600
+
+    Minor cleanups and enable emissive.
+
+commit ac2aa94fa9d59a879d84025ca74804812bcf7fa1
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 17:32:58 2019 -0600
+
+    Fix float arrays flag.
+
+commit 3de4371ce380c2185d7f483f02e2abd48abc55f1
+Merge: dc9692dd 2ad31cb3
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 17:31:23 2019 -0600
+
+    Merge branch 'webgl' of github.com:vectorgraphics/asymptote into webgl
+
+commit dc9692dde857f1e57fc097adee2041443a2b1134
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 17:31:10 2019 -0600
+
+    Only create array when needed.
+
+commit 2ad31cb325dc8106ce4dc8f711dd1864f3f1ddda
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 17:29:42 2019 -0600
+
+    Simplify code; remove generated file.
+
+commit 3b7616ab660d553032d4f0d35a21d0a4c47ca39d
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 17:03:15 2019 -0600
+
+    Add a DrawableObject for general drawables.
+
+commit 4c06bf02ebba1bd20d30fb00edea9afac2e1e408
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 16:59:05 2019 -0600
+
+    Even more refractoring of code.
+
+commit 3c831c65c004549b1ad50cf21aae0bb0bf658074
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 16:51:44 2019 -0600
+
+    More refractorings of gl.js.
+
+commit 00bda50add1752053360384b34a80b519060ee4b
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 16:31:59 2019 -0600
+
+    Refractor gl.js code.
+
+commit c62534e2dac23166a0905bff68a2956f64cc7600
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 15:50:45 2019 -0600
+
+    Clean up gl.js.
+
+commit f5068d75f0891a5968c98cfe53e352b4def86aef
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 15:01:52 2019 -0600
+
+    Expose model Matrix transformation and more docs.
+
+commit 3d48b756c0f593fb63e54a991ce5e4b1bd0da9ed
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 02:50:00 2019 -0600
+
+    Add in zooming back.
+
+commit 2d362a692aa7105cc7020bba15bde86508dc9006
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 28 02:20:09 2019 -0600
+
+    Reglue back translation routine.
+
+commit 53c16fcd22a2f19cbea8f07c7054d1d9519d4806
+Merge: 4c9342e9 df4b5699
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 01:41:15 2019 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote.
+
+commit 4c9342e9dd114f4baeb94612f7bc85755aaba0f9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 01:40:03 2019 -0600
+
+    Fix last commit.
+
+commit df4b5699744d668ae4cb4367d2ab5f5cf039cc1b
+Merge: 5b876724 52d3e4d6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 01:36:05 2019 -0600
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 5b87672473974e5dc32c2f11b2afd81ffdc22372
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 01:35:54 2019 -0600
+
+    Simplify glew compilation.
+
+commit b2a6fff4e97192c5bd42b5eed689d3aa0e0c7b14
+Merge: 64d3f620 52d3e4d6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 01:07:42 2019 -0600
+
+    Remove DOS line terminators.
+
+commit 52d3e4d670a8ca843302280c7b02462eb672945d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 28 01:04:23 2019 -0600
+
+    Remove spurious DOS line terminators from shader files.
+
+commit 64d3f620dc2d49924b1ac9a14cc5c520d2d43d9b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 27 22:44:54 2019 -0600
+
+    Output canvas dimensions; support threads.
+
+commit 78e5646fc84ec2609bbe22850ccb82eb568ee8d7
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Aug 27 17:32:12 2019 -0600
+
+    Add in temporary canvas height/width.
+
+commit ac8cbda3cc382a0ceb632fe3930cb5351a50468f
+Merge: 8f7b2711 97e03e6d
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Aug 27 17:27:08 2019 -0600
+
+    Merge branch 'webgl' of github.com:vectorgraphics/asymptote into webgl
+
+commit 8f7b271188a337569ed5510434cdef82c5c19503
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Aug 27 17:27:03 2019 -0600
+
+    Allow dynamic setting of canvas size.
+
+commit 97e03e6de3b7599dc4d78f28438f956c327b94aa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 27 17:26:32 2019 -0600
+
+    Output target to webgl.
+
+commit 601ebbadadb2ef652ec4b9062443e412b7a1f314
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 27 16:52:06 2019 -0600
+
+    Fix warning message.
+
+commit bff8f83e6b6b72a977a63576e27672d4cb445b8b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 27 16:36:30 2019 -0600
+
+    Compile glew library with -O1 to help out clang compiler.
+
+commit ebe09e1b398b244c3a1163e2dea804829fe2d63f
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Tue Aug 27 16:36:22 2019 -0600
+
+    Split jsfile into its own cc file.
+
+commit d7cfc3e099ff4b094a2b864c3f43559d7257b8ba
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Aug 23 17:27:53 2019 -0600
+
+    Change jsfile to handle new p properly.
+
+commit 6fc0875e2ed6c3ef9108d0103615d8f1f5264ca7
+Merge: 2fe6c372 fa9cfab0
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Aug 23 17:22:06 2019 -0600
+
+    Merge in jsfile changes.
+
+commit 2fe6c372d13a67e4da203aeeffec99c0a5725fd2
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Aug 23 17:20:41 2019 -0600
+
+    Add multiple materials detection and shader generation.
+
+commit fa9cfab02ccda80ffae9de90f0dcd5291d1a6d14
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 23 17:16:32 2019 -0600
+
+    Add multiple patch support.
+
+commit 40aeca47850dd5dd3295abb77d8c3d5c06347624
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Aug 23 16:10:38 2019 -0600
+
+    Add arcball rotation.
+
+commit 7325cd22c2ae15edc47dbc3685ea7bed775b1c86
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Aug 23 14:45:42 2019 -0600
+
+    Add in material index data.
+
+commit 23846f565b4575b0ac410a9ec2d795ecb2978442
+Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Fri Aug 23 00:08:40 2019 -0600
+
+    Change resolution and minor cleanups.
+
+commit 85b3fd03061bcf3e8d0703295ec32d24a8792111
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 21 16:37:20 2019 -0600
+
+    Add webgl option to glrender.
+
+commit 9bfd0c90ef80dfcbd28422cc6348f1bf943a5cd7
+Merge: 05461c69 3d714156
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 21 16:28:09 2019 -0600
+
+    Merge branch 'webgl' of github.com:vectorgraphics/asymptote into webgl
+
+commit 05461c6965b795aec295c3d40bbdcb766b652bbf
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 21 16:27:10 2019 -0600
+
+    Update settings to prevent autoformat.
+
+commit 3d714156611362e7a919c7bdedee31eb52f51ef3
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 21 16:27:10 2019 -0600
+
+    Update .gitignore.
+
+commit 3ca5d56f78d8c559cd76f5e3b76b147e58203425
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 21 16:23:42 2019 -0600
+
+    Fix gl.js vertex function.
+
+commit 98a67e304b975c141ff16011fa9ea5eee15c671f
+Merge: 56076839 7f1fba23
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 21 15:58:08 2019 -0600
+
+    Update webgl files.
+
+commit 7f1fba235a28189d306312c09b43352e1d047932
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 21 10:47:38 2019 -0600
+
+    Generalize popcount to systems that lack 64-bit integers.
+
+commit 4500dd6b84fae216df649a32c57b70f225883fd1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 21 02:53:55 2019 -0600
+
+    Update HOWTO-MSWindows.
+
+commit c9ee6dc1dbb22d65311639c28ceb5c7bb1391431
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 21 01:36:17 2019 -0600
+
+    Increment version to 2.54.
+
+commit 35867d43297d07045d52916bcd3d906f62f7b023
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 20 22:50:54 2019 -0600
+
+    Update example.
+
+commit 6570978b49f65c708ea8921ca5fd95a1dab0954b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 20 22:06:06 2019 -0600
+
+    Improve diagnostic about unimplemented feature.
+
+commit d741dd1701c53b6ab697b75bc280ced837611669
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 20 16:49:25 2019 -0600
+
+    Fix memory leak.
+
+commit 767b059789cd375336d6f2ad42f5c49a9b7d387e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 20 14:52:15 2019 -0600
+
+    Check for lgamma instead of gamma, in both libm and libc.
+
+commit d12068ef272111b0831187f2906fecaca1b5fa9d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 20 14:10:23 2019 -0600
+
+    Use gc_allocator_ignore_off_page.
+
+commit ea6ec5dc839626629062044ae9291f1289875aeb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 20 14:03:43 2019 -0600
+
+    Only initialize glew once.
+
+commit 437acdd38d4c73eaabf8b52f3cec77247b58fe91
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 20 12:44:19 2019 -0600
+
+    Update gc tests.
+
+commit f01f7ed4f10ee092be2208e8e3fd63f11d1cd6ce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 19 03:33:53 2019 -0600
+
+    Fix gc struct test.
+
+commit bd88b6dcd02dd442a9765195f28502ee9255490c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 15 23:22:19 2019 -0600
+
+    Disable bulky and leaky OpenImageIO library by default.
+
+commit 56076839adb43e1a0bc99aa0019a4ff4c275f86b
+Merge: 46461352 94ac15f8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 14 14:51:57 2019 -0600
+
+    Begin multiple patch support.
+
+commit d84dd8cb79c8b0b85211643427eaa6ad1dba0a99
+Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
+Date:   Wed Aug 14 12:15:13 2019 -0600
+
+    Add in development WebGL version.
+
+commit 4646135212088ec1c2572481c628b58f671b7ac8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 14 12:06:51 2019 -0600
+
+    Import webgl development files.
+
+commit 94ac15f88e5723e38d4e4f3231944b538d8c17ec
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 14 01:36:04 2019 -0600
+
+    Fix operator *(transform, revolution).
+
+commit fbef675f843d99f46475fbe92a01fe214a03d146
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 14 00:39:44 2019 -0600
+
+    Fix skeletons of transformed solids of revolution.
+
+commit f4ac68fd0660655a055c3bc41115e8f8a7752d8c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 13 19:29:04 2019 -0600
+
+    Fix documentation.
+
+commit c694474b38ecb4057cb6380441732a6a2bb6018d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 13 18:02:47 2019 -0600
+
+    Add border to OpenGL tiles to remove antialiasing artifacts.
+
+commit 74172faf075afc446556df90acf3966931e82679
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 13 10:24:29 2019 -0600
+
+    Remove obsolete MacOS X workaround.
+
+commit 05f68ab80e7caa521c967b32ba672fa58bcaae3c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 12 00:49:22 2019 -0600
+
+    Fix DEFINE calls in configure.ac; simplify compilation under CYGWIN.
+
+commit 38280e0f75fedc2fe9e9cc1b3e5336d05bba6e56
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 11 23:56:34 2019 -0600
+
+    Prioritize tr/unorderedmap over unorderedmap (for Centos 7).
+
+commit 64121726ecd13cda057699758020d7e94c289465
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 11 23:08:15 2019 -0600
+
+    Handle oblique projections as orthographic projections in PRC.
+
+commit 557ff750b0043c3bce5fc998bf601211c7bcafa5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 11 00:37:06 2019 -0600
+
+    Simplify code.
+
+commit 7c4367160de72d618382f5a164078a11d9d07edc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 9 03:30:03 2019 -0600
+
+    Increment version to 2.53.
+
 commit c1db74235565570e829b865756794a0c5ab0f5fb
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Aug 9 02:23:28 2019 -0600
@@ -1645,6 +3290,12 @@ Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Sat Sep 1 17:16:25 2018 -0600
 
     Allow for proper buffer data transfer.
+
+commit 83c2b62df0132a310ce3d234fcc7be463b7795d6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 31 22:11:50 2018 -0600
+
+    Begin development of webgl output.
 
 commit adbb32fdd380304839cb401c76ea2ab662edfe65
 Merge: 23c4bd2d df015058

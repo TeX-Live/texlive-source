@@ -33,11 +33,14 @@
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO
 
-/* Define to 1 if you have . GNU <getopt.h> */
+/* Define to 1 if you have GNU <getopt.h>. */
 #undef HAVE_GNU_GETOPT_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `lgamma' function. */
+#undef HAVE_LGAMMA
 
 /* Define to 1 if you have the `ncurses' library (-lncurses). */
 #undef HAVE_LIBCURSES
@@ -48,10 +51,10 @@
 /* Define to 1 if you have the `gccpp' library (-lgccpp). */
 #undef HAVE_LIBGCCPP
 
-/* Define to 1 if you have the `' library (-l). GL */
+/* Define to 1 if you have the `GL' library (-lGL). */
 #undef HAVE_LIBGL
 
-/* Define to 1 if you have . the <glm/glm.hpp> header */
+/* Define to 1 if you have the <glm/glm.hpp> header. */
 #undef HAVE_LIBGLM
 
 /* Define to 1 if you have the `glut' library (-lglut). */
@@ -62,9 +65,6 @@
 
 /* Define to 1 if you have the <libintl.h> header file. */
 #undef HAVE_LIBINTL_H
-
-/* Define to 1 if you have the `m' library (-lm). */
-#undef HAVE_LIBM
 
 /* Define to 1 if you have the `ncurses' library (-lncurses). */
 #undef HAVE_LIBNCURSES
@@ -111,9 +111,6 @@
 /* Define to 1 if you have the <ncurses.h> header file. */
 #undef HAVE_NCURSES_H
 
-/* Define to 1 if you have the `pow' function. */
-#undef HAVE_POW
-
 /* Define if you have POSIX threads libraries and header files. */
 #undef HAVE_PTHREAD
 
@@ -123,11 +120,8 @@
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #undef HAVE_PTRDIFF_T
 
-/* Define to 1 if you have . a working <tirpc/rpc/rpc.h> header */
+/* Define to 1 if you have a working <tirpc/rpc/rpc.h> header. */
 #undef HAVE_RPC_RPC_H
-
-/* Define to 1 if you have the `sqrt' function. */
-#undef HAVE_SQRT
 
 /* Define to 1 if you have the <stddef.h> header file. */
 #undef HAVE_STDDEF_H
@@ -165,13 +159,13 @@
 /* Define to 1 if you have the `tgamma' function. */
 #undef HAVE_TGAMMA
 
-/* Define to 1 if you have . <tr1/unordered_map> */
+/* Define to 1 if you have <tr1/unordered_map>. */
 #undef HAVE_TR1_UNORDERED_MAP
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have . <unordered_map> */
+/* Define to 1 if you have <unordered_map>. */
 #undef HAVE_UNORDERED_MAP
 
 /* Define to 1 if you have the `vfork' function. */
