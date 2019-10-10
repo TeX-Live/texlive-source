@@ -1,3 +1,8 @@
+2019-10-10  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (LUAINPUTS.luahblatex{,-dev}): define a la other
+	LUAINPUTS.*. Report from Marcel Fabian Krueger, 10 Oct 2019 23:08:37.
+
 2019-09-04  Akira Kakuto  <kakuto@w32tex.org>
 
 	* hash.c: Typo in a comment.
