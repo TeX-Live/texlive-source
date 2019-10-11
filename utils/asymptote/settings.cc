@@ -926,8 +926,66 @@ struct versionOption : public option {
   versionOption(string name, char code, string desc)
     : option(name, code, noarg, desc, true) {}
 
+  bool disabled;
+  
+  const void feature(const char *s, bool enabled) {
+    if(enabled ^ disabled)
+      cerr << s << endl;
+  }
+
+  void features(bool enabled) {
+    disabled=!enabled;
+    cerr << endl << (disabled ? "DIS" : "EN") << "ABLED OPTIONS:" << endl;
+
+    bool glm=false;
+    bool gl=false;
+    bool gsl=false;
+    bool fftw3=false;
+    bool xdr=false;
+    bool readline=false;
+    bool sigsegv=false;
+    bool usegc=false;
+
+#if HAVE_LIBGLM
+    glm=true;
+#endif
+#ifdef HAVE_GL
+    gl=true;
+#endif
+#ifdef HAVE_LIBGSL
+    gsl=true;
+#endif
+#ifdef HAVE_LIBFFTW3
+    fftw3=true;
+#endif
+#ifdef HAVE_RPC_RPC_H
+    xdr=true;
+#endif
+#ifdef HAVE_LIBREADLINE
+    readline=true;
+#endif
+#ifdef HAVE_LIBSIGSEGV
+    sigsegv=true;
+#endif
+#ifdef USEGC
+    usegc=true;
+#endif
+
+    feature("WebGL    3D HTML rendering",glm);
+    feature("OpenGL   3D OpenGL rendering",gl);
+    feature("GSL      GNU Scientific Library (special functions)",gsl);
+    feature("FFTW3    Fast Fourier transforms",fftw3);
+    feature("XDR      external data representation (portable binary file format)",xdr);
+    feature("Readline interactive history and editing",readline);
+    feature("Sigsegv  distinguish stack overflows from segmentation faults",
+            sigsegv);
+    feature("GC       Boehm garbage collector",usegc);
+  }
+  
   bool getOption() {
     version();
+    features(1);
+    features(0);
     exit(0);
 
     // Unreachable code.
@@ -944,7 +1002,7 @@ struct divisorOption : public option {
 #ifdef USEGC
       Int n=lexical::cast<Int>(optarg);
       if(n > 0) GC_set_free_space_divisor((GC_word) n);
-#endif      
+#endif
     } catch (lexical::bad_cast&) {
       error("option requires an int as an argument");
       return false;

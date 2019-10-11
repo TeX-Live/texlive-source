@@ -1,3 +1,30 @@
+Release Notes for Version 2.58
+
+Intersection points in geometry.asy are now returned in currentcoordsys;
+a numerical precision issue was also fixed. Ambiguous function signatures
+in geometry.asy are resolved by requiring explicit casts when converting
+general forms to special cases. The xasy editor selection is now consistent.
+Building the asymptote.so shared library is supported again.
+A bug in rendering indexed triangle arrays was fixed. Execution errors in
+support utilities are now handled gracefully. Due to current limitations of
+dvisvgm (2.7.4), graphic() can only display SVG output (used by the xasy
+vector editor) for external vector EPS graphics (embedded images, PDF, PNG,
+and JPG formats are not yet supported). Building under CYGWIN with X11 is
+supported again. The --version option lists both enabled and disabled features.
+The GLX library is explicitly linked if present.
+
+Release Notes for Version 2.57
+
+Scenes with lighting disabled are rendered correctly in WebGL.
+Attempting to output HTML for 2D pictures produces an SVG file.
+A conditional was removed from the fragment shaders. A viewportshift option
+was added to the WebGL driver; the home (h) option now forces a remesh.
+The version number was removed from the local offline copy of asygl. 
+A numerical degeneracy in the conic sections intersection routine
+was fixed. A workaround for the broken XDR headers under MacOS X was
+implemented. An issue with animations was fixed. The --version option displays
+a list of compiled-in features. 
+
 Release Notes for Version 2.56
 
 An array bounds error was fixed. WebGL output now supports background

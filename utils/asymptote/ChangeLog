@@ -1,3 +1,296 @@
+commit bc7fe4b5126184c965fff4d0daaf592b89ef8d01
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 11 00:27:09 2019 -0600
+
+    Initialize all vertices in triangle arrays, even if they are offscreen.
+
+commit 7725cbf46e24261f44fbd80e79565c2d69c00a89
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 10 10:57:17 2019 -0600
+
+    Add outdir() convenience function; make asy() respect outdir();
+    update documentation and example of external EPS vector graphics.
+
+commit e6bbc5094209b432b7ed656c1d5ae1bd8b2103e1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 10 09:53:42 2019 -0600
+
+    Remove unnecessary code.
+
+commit 496a76daee4c2177e6ae95425cc86c2d53f9f453
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 10 09:39:33 2019 -0600
+
+    Revert "Make locatefile return fully qualified path."
+    
+    This reverts commit 9817571be16cc925c549a375b186fdc065a42da6.
+
+commit f6881300a037ee9706fd6ff49e3ec4bebaf5d52d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 10 09:00:51 2019 -0600
+
+    Switch order of GLEW library when linking.
+
+commit 1c671ec2a8bc186686ccdbc0f4eade2086fb6ce0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 10 02:19:02 2019 -0600
+
+    Fix bug #90: force graphics() to pass fully qualified file name to xasy;
+    due to current limitations of dvisvgm (2.7.4), this only works with vector EPS files (embedded images, PDF, PNG, and JPG formats are not supported).
+
+commit 9817571be16cc925c549a375b186fdc065a42da6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 10 02:10:37 2019 -0600
+
+    Make locatefile return fully qualified path.
+
+commit 436af6420b9ac380acc457ad433f1f119187f5f1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 10 00:42:08 2019 -0600
+
+    Fix numerical precision issue in geometry.asy.
+
+commit d59145980eb39a9d06faebdc7a0b40991a1903c9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 9 16:13:48 2019 -0600
+
+    Distinguish between msdos and cygwin builds.
+
+commit d63f1d90e26cfc27d496daee95858ed03b78692a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 9 09:30:48 2019 -0600
+
+    Change intersection points back to currentcoordsys in geometry.asy.
+
+commit f3387ed7d069683918356bfdc3bc70098ad75f44
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 9 00:19:21 2019 -0600
+
+    Handle execError gracefully, without killing parent or current process.
+
+commit cd22997a274d034d065b9fcf7afd3ff9bddcb22c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 23:11:26 2019 -0600
+
+    Resolve ambiguous function signatures in geometry.asy using ecasts to special cases.
+
+commit 2e202e2b5eb4265a73bedae080220d89a21d8a97
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 20:46:24 2019 -0600
+
+    Support building asymptote.so again.
+
+commit 705dc2e1b9f3ba2004a5bc44641bf30daedb502a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 18:12:30 2019 -0600
+
+    Make --version option list both enabled and disabled features.
+
+commit c62e05ff995b1b3e128668254918cc61c0173f15
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 18:10:51 2019 -0600
+
+    Reluctantly change default xasy editor for UNIX to vi.
+
+commit a4c4e374e1d51f2eda6c99d95da522ef4ef3986b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 17:04:22 2019 -0600
+
+    Consistently use specified xasy editor.
+
+commit 31dd51e17946061ebcbe63abdca4fdcf916eb7f5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 10:44:43 2019 -0600
+
+    Fix configuration issues.
+
+commit e547942219cdd1ac6b4dc55785e9148cb1eb9a67
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 10:05:07 2019 -0600
+
+    Explicitly link with GLX library if present.
+
+commit 8536a52466854b17060c40d80b6cf97805349ec4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 01:15:36 2019 -0600
+
+    Increment version to 2.58.
+
+commit 45b49582cbcd3188c713b0fce1eda8ca1a459441
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 00:55:18 2019 -0600
+
+    Improve feature description.
+
+commit 051f1a6386034b5631f9fa64fc293e92e65667e9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 00:22:52 2019 -0600
+
+    Remove unused variables.
+
+commit 2a237885ddc65eb8db7fc9a8d2fa51c17a5b25a1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 00:17:47 2019 -0600
+
+    Fix numerical degeneracy in points[] intersectionpoints(bqe bqe1, bqe bqe2) of geometry module.
+
+commit b9d73d9aca44db0196e74e3d52895396cf8d7288
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 8 00:10:35 2019 -0600
+
+    Make --version option display compiled-in features.
+
+commit 8544d4972958ff35132da346e4ca5a5422eb77ca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 7 17:48:46 2019 -0600
+
+    Update examples.
+
+commit 28d26ed92f31224381dfcab4adf54e3b915320b9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 7 16:20:59 2019 -0600
+
+    Fix animations.
+
+commit b4bbb947303dca29e6ac3f45ebd4a34d0d97282e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 7 15:48:22 2019 -0600
+
+    Fix warning message.
+
+commit b0b0f33ca9dbdb63cde838c863ee173534ea3295
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 7 14:28:36 2019 -0700
+
+    Workaround broken XDR headers under MacOS X.
+
+commit 9d890eca34a9413f2f9f145546d7430acf2e8d7d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 7 03:28:07 2019 -0600
+
+    Update asygl.
+
+commit cf3745d5699be73b72f1cac2b355e689dd9c1bb1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 7 03:21:43 2019 -0600
+
+    Remesh on home.
+
+commit 49c6cc075c1f587577c6a6fa1aad130adf5b4666
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 7 03:11:22 2019 -0600
+
+    Fix viewportshift.
+
+commit 12739aee501fdb72956b6bc0ceec97dfd2db35d7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 7 00:00:26 2019 -0600
+
+    Add missing conditional.
+
+commit 383bd8479e344c7dd7181808507122a31663a149
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 6 23:39:39 2019 -0600
+
+    Set ASYGLVERSION in configure.ac; install asygl.js.
+
+commit 4e60948a42e1a2e8504b3a76b300bc8f00b02d2e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 6 21:21:00 2019 -0600
+
+    Remove version number from offline asygl library;
+    include pruned gl-matrix source file and license in release.
+
+commit 56c9b2ec67ed1e0c20d933f2f6414abdaa81412a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 6 20:26:57 2019 -0600
+
+    Update asygl.
+
+commit c55b40e0cba6deb6a431affd1fcc6de9968707ec
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 6 20:24:41 2019 -0600
+
+    Use unminified pruned gl-matrix source to build asygl (to satisfy Debian rules).
+
+commit 353ed86880e1e6e75d6548708b0533bf4ad30655
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 6 02:22:54 2019 -0600
+
+    Update documentation.
+
+commit 8307d5ad2f3d37998e87c231b30009b23e47278b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 21:00:00 2019 -0600
+
+    Update asygl.
+
+commit dbbfca33d40d31bab922e92f92a6f8e80edb319b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 20:58:51 2019 -0600
+
+    Implement viewportshift in webgl.
+
+commit 562d634042a295db93d5eaa4651df35350b13f7a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 20:23:53 2019 -0600
+
+    Update examples.
+
+commit e4da7cbd7ef81b2ce81f84b7240602494096fce0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 16:28:06 2019 -0600
+
+    Remove run-time conditional from fragment shader; move initshader caller.
+
+commit 88887ac90cd05e56905dbc6f06e81b0d73b992d4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 14:42:15 2019 -0600
+
+    Output svg rather than html for 2D pictures.
+
+commit 3e7af8b130b37a606d0941ad30a4824313dfb196
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 14:41:34 2019 -0600
+
+    Cap border.
+
+commit bd00509cefeb85989ad059f3a8b6993a1ea3be85
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 14:41:19 2019 -0600
+
+    Remove unwanted MSDOS terminators.
+
+commit 58bbf1171a5479b8f73d504d15ab4566d4578e91
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 14:40:23 2019 -0600
+
+    Simplify code.
+
+commit bb7a20bfe034c0ffa2e1a64af3535491d9f4c526
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 14:39:14 2019 -0600
+
+    Fix light=nolight in WebGL.
+
+commit deddebe4b300db59dabf56c5d8ae736ca7007db6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 14:36:10 2019 -0600
+
+    Update asygl.
+
+commit f3136218f7a1bcc7c5e2e8da99e423d11d0ae5bf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 5 14:33:26 2019 -0600
+
+    Handle currentlight=nolight in WebGL.
+
+commit 12778d70f1d862dfa815f244cd01cccc84039f71
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 3 11:39:09 2019 -0600
+
+    Increment version to 2.57.
+
 commit be2e06c3b0c223338cb8b88906ff84db67690e71
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Oct 3 10:41:51 2019 -0600

@@ -33,6 +33,7 @@ let Zoom0;
 let maxViewportWidth=window.innerWidth;
 let maxViewportHeight=window.innerHeight;
 let viewportmargin=0;
+let viewportshift=[0,0];
 
 const windowTrim=10;
 let resizeStep=1.2;
@@ -171,8 +172,9 @@ function getShader(gl,id,options=[]) {
 #else
   precision mediump float;
 #endif
-  const int nLights=${Lights.length};
-  const int nMaterials=${Materials.length};\n`
+  #define nlights ${Lights.length}\n
+  const int nLights=${Math.max(Lights.length,1)};\n
+  const int nMaterials=${Math.max(Materials.length,1)};\n`
 
   if(orthographic)
     str += `#define ORTHOGRAPHIC\n`;
@@ -1396,6 +1398,7 @@ function home()
   mat4.identity(rotMat);
   initProjection();
   setProjection();
+  remesh=true;
   redraw=true;
 }
 
@@ -1973,8 +1976,8 @@ function setDimensions(width,height,X,Y)
 {
   let Aspect=width/height;
   let zoominv=1/lastzoom;
-  let xshift=X/width*lastzoom
-  let yshift=Y/height*lastzoom
+  let xshift=(X/width+viewportshift[0])*lastzoom;
+  let yshift=(Y/height+viewportshift[1])*lastzoom;
 
   if (orthographic) {
     let xsize=B[0]-b[0];
@@ -2104,12 +2107,13 @@ function webGLStart()
 
     if(canvas.height > 0) 
       canvasHeight=canvas.height;
-
-
   }
 
   setCanvas();
   ArcballFactor=1+8*Math.hypot(viewportmargin[0],viewportmargin[1])/size2;
+
+  viewportshift[0] /= Zoom0;
+  viewportshift[1] /= Zoom0;
 
   initGL();
 
