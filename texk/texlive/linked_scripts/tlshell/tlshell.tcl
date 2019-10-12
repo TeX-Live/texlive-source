@@ -167,8 +167,10 @@ proc long_message {str type {p "."}} {
   }
   if [winfo exists .tlmg.cancel] {
     bind .tlmg <Escape> {.tlmg.cancel invoke}
+    wm protocol WM_DELETE_WINDOW {cancel_or_destroy .tlmg.cancel .tlmg}
   } elseif {$type eq "ok"} {
     bind .tlmg <Escape> {.tlmg.ok invoke}
+    wm protocol WM_DELETE_WINDOW {cancel_or_destroy .tlmg.ok .tlmg}
   }
 
   ppack [ttk::frame .tlmg.tx] -in .tlmg.bg -side top -fill both -expand 1
@@ -796,6 +798,7 @@ If this takes too long, press Abort and choose another repository." \
   }
   ttk::button .loading.abo -text [__ "Abort"] -command abort_load
   ppack .loading.abo -in .loading.buttons -side right
+  wm protocol .loading {cancel_or_destroy .loading.abo .loading}
   wm resizable .loading 0 0
   place_dlg .loading .
 } ; # splash_loading
@@ -918,7 +921,8 @@ proc show_logs {} {
   ppack [ttk::label .tllg.status -textvariable ::busy -anchor w] \
       -in .tllg.bottom -side left
   bind .tllg <Escape> {.tllg.close invoke}
-  wm protocol .tllg WM_DELETE_WINDOW {.tllg.close invoke}
+  wm protocol .tllg WM_DELETE_WINDOW \
+      {cancel_or_destroy .tllg.close .tllg}
 
   # notebook pages and scrollbars
   ttk::frame .tllg.log
@@ -1271,7 +1275,8 @@ proc repository_dialog {} {
   ppack .tlr.cancel -in .tlr.closebuttons -side right
   bind .tlr <Escape> {.tlr.cancel invoke}
 
-  wm protocol .tlr WM_DELETE_WINDOW {.tlr.cancel invoke}
+  wm protocol .tlr WM_DELETE_WINDOW \
+      {cancel_or_destroy .tlr.cancel .tlr}
   wm resizable .tlr 1 0
   place_dlg .tlr .
 } ; # repository_dialog
@@ -2314,7 +2319,7 @@ proc populate_main {} {
     bind .pkg_popup <Leave> {.pkg_popup unpost}
   }
 
-  wm protocol . WM_DELETE_WINDOW {.q invoke}
+  wm protocol . WM_DELETE_WINDOW {cancel_or_destroy .q .}
   wm resizable . 1 1
   wm state . normal
 }
