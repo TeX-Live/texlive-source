@@ -1,3 +1,20 @@
+2019-10-13 Luigi Scarso <luigi.scarso@gmail.com>
+	* extra features runtoks (HH)
+	* tex.getmodenames() (as these can differ per engine/version) (HH)
+	* permit nested runtoks in more complex situations of nesting (HH)
+	* more accurate and correct test for tex.[set|get]math
+	* minor clean-up and bugs fixed
+
+
+
+2019-08-12 Luigi Scarso <luigi.scarso@gmail.com>
+	* Support new option --cnf-line from  kapthsea.
+
+
+2019-07-27 Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed \opein, to be consistent with pdftex in opening
+	  a file without extension (but not enclosed in {})
+
 2019-07-06 Luigi Scarso <luigi.scarso@gmail.com>
 	* Integration of harfbuzz. 
 	* Splitting of exe into *hbtex variants.

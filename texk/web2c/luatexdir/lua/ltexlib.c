@@ -2066,7 +2066,7 @@ static int tex_setmathparm(lua_State * L)
         }
         i = luaL_checkoption(L, (n - 2), NULL, math_param_names);
         j = luaL_checkoption(L, (n - 1), NULL, math_style_names);
-        if (i<0 && i>=math_param_last) {
+        if (i < 0 || j < 0) {
             /* invalid spec, just ignore it  */
         } else if (i>=math_param_first_mu_glue) {
             p = lua_touserdata(L, n);
@@ -2084,20 +2084,24 @@ static int tex_setmathparm(lua_State * L)
 
 static int tex_getmathparm(lua_State * L)
 {
-    if ((lua_gettop(L) == 2)) {
+    if (lua_gettop(L) == 2) {
         int i = luaL_checkoption(L, 1, NULL, math_param_names);
         int j = luaL_checkoption(L, 2, NULL, math_style_names);
-        scaled k = get_math_param(i, j);
-        if (i<0 && i>=math_param_last) {
+        if (i < 0 || j < 0) {
             lua_pushnil(L);
-        } else if (i>=math_param_first_mu_glue) {
-            if (k <= thick_mu_skip_code) {
-                k = glue_par(k);
-            }
-            lua_nodelib_push_fast(L, k);
         } else {
-            lua_pushinteger(L, k);
+            scaled k = get_math_param(i, j);
+            if (i >= math_param_first_mu_glue) {
+                if (k <= thick_mu_skip_code) {
+                    k = glue_par(k);
+                }
+                lua_nodelib_push_fast(L, k);
+            } else {
+                lua_pushinteger(L, k);
+            }
         }
+    } else {
+        lua_pushnil(L);
     }
     return 1;
 }
@@ -3483,8 +3487,8 @@ static int runtoks(lua_State * L)
     if (lua_type(L,1) == LUA_TFUNCTION) {
         int old_mode = mode;
         int ref;
-        pointer r = get_avail();
-        pointer t = get_avail();
+        halfword r = get_avail();
+        halfword t = get_avail();
         token_info(r) = token_val(extension_cmd,end_local_code);
         lua_pushvalue(L, 1);
         ref = luaL_ref(L,LUA_REGISTRYINDEX);
@@ -3502,16 +3506,31 @@ static int runtoks(lua_State * L)
         mode = old_mode;
         luaL_unref(L,LUA_REGISTRYINDEX,ref);
     } else {
-        int k = get_item_index(L, lua_gettop(L), toks_base);
-        halfword t = toks(k);
+        halfword t;
+        int k = get_item_index(L, 1, toks_base);
         check_index_range(k, "gettoks");
-        if (t != null) {
+        t = toks(k);
+        if (! t) {
+            /* nothing to do */
+        } else if ((scanner_status != defining) || (lua_toboolean(L,2))) {
+            int grouped = lua_toboolean(L,3);
             int old_mode = mode;
-            pointer r = get_avail();
-            token_info(r) = token_val(extension_cmd,end_local_code);
-            begin_token_list(r,inserted);
-            /* new_save_level(semi_simple_group); */
+            if (grouped) {
+                halfword r = get_avail();
+                token_info(r) = token_val(right_brace_cmd,0);
+                begin_token_list(r,inserted);
+            }
+            {
+                halfword r = get_avail();
+                token_info(r) = token_val(extension_cmd,end_local_code);
+                begin_token_list(r,inserted);
+            }
             begin_token_list(t,local_text);
+            if (grouped) {
+                halfword r = get_avail();
+                token_info(r) = token_val(left_brace_cmd,0);
+                begin_token_list(r,inserted);
+            }
             if (luacstrings > 0) {
                 lua_string_start();
             }
@@ -3522,9 +3541,49 @@ static int runtoks(lua_State * L)
             local_control();
             mode = old_mode;
             /* unsave(); */
+        } else {
+            halfword q;
+            halfword p = temp_token_head;
+            halfword r = token_link(t);
+            set_token_link(p, null);
+            while (r) {
+                fast_store_new_token(token_info(r));
+                r = token_link(r);
+            }
+            ins_list(token_link(temp_token_head));
         }
     }
     return 0;
+}
+
+static int quittoks(lua_State * L)
+{
+    (void) L;
+    if (tracing_nesting_par > 2) {
+        local_control_message("quitting token scanner");
+    }
+    end_local_control();
+    return 0;
+}
+
+/*tex Negative values are internal and inline. */
+
+static int tex_getmodevalues(lua_State * L)
+{
+    lua_newtable(L);
+    lua_pushinteger(L,0);
+    lua_push_string_by_name(L,unset);      /* 0 */
+    lua_rawset(L, -3);
+    lua_pushinteger(L,vmode);
+    lua_push_string_by_name(L,vertical);   /* 1 */
+    lua_rawset(L, -3);
+    lua_pushinteger(L,hmode);
+    lua_push_string_by_name(L,horizontal); /* 127 */
+    lua_rawset(L, -3);
+    lua_pushinteger(L,mmode);
+    lua_push_string_by_name(L,math);       /* 253 */
+    lua_rawset(L, -3);
+    return 1;
 }
 
 /* till here */
@@ -3650,7 +3709,9 @@ static const struct luaL_Reg texlib[] = {
     { "get_synctex_line", lua_get_synctex_line },
     /* test */
     { "runtoks", runtoks },
+    { "quittoks", quittoks },
     { "forcehmode", forcehmode },
+    { "getmodevalues", tex_getmodevalues },
     /* sentinel */
     { NULL, NULL }
 };

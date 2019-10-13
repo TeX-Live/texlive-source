@@ -799,6 +799,7 @@ make_lua_key(hlist);\
 make_lua_key(hmode_par);\
 make_lua_key(hmove);\
 make_lua_key(hold_head);\
+make_lua_key(horizontal);\
 make_lua_key(horiz_variants);\
 make_lua_key(hrule);\
 make_lua_key(hsize);\
@@ -1215,6 +1216,7 @@ make_lua_key(variable);\
 make_lua_key(vbox);\
 make_lua_key(vcenter);\
 make_lua_key(version);\
+make_lua_key(vertical);\
 make_lua_key(vert_italic);\
 make_lua_key(vert_variants);\
 make_lua_key(visiblefilename);\
@@ -1502,6 +1504,7 @@ init_lua_key(hlist);\
 init_lua_key(hmode_par);\
 init_lua_key(hmove);\
 init_lua_key(hold_head);\
+init_lua_key(horizontal);\
 init_lua_key(horiz_variants);\
 init_lua_key(hrule);\
 init_lua_key(hsize);\
@@ -1905,6 +1908,7 @@ init_lua_key(variable);\
 init_lua_key(vbox);\
 init_lua_key(vcenter);\
 init_lua_key(version);\
+init_lua_key(vertical);\
 init_lua_key(vert_italic);\
 init_lua_key(vert_variants);\
 init_lua_key(visiblefilename);\
@@ -2256,6 +2260,7 @@ use_lua_key(hlist);
 use_lua_key(hmode_par);
 use_lua_key(hmove);
 use_lua_key(hold_head);
+use_lua_key(horizontal);
 use_lua_key(horiz_variants);
 use_lua_key(hrule);
 use_lua_key(hsize);
@@ -2672,6 +2677,7 @@ use_lua_key(variable);
 use_lua_key(vbox);
 use_lua_key(vcenter);
 use_lua_key(version);
+use_lua_key(vertical);
 use_lua_key(vert_italic);
 use_lua_key(vert_variants);
 use_lua_key(visiblefilename);

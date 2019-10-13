@@ -47,6 +47,7 @@ typedef enum {
     buildpage_filter_callback,
     hpack_filter_callback, vpack_filter_callback,
     glyph_not_found_callback,
+    glyph_info_callback,
     hyphenate_callback,
     ligaturing_callback,
     kerning_callback,

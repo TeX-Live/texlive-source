@@ -461,6 +461,7 @@ const char *math_param_names[] = {
     "stackvgap", "stacknumup", "stackdenomdown",
     "fractionrule", "fractionnumvgap", "fractionnumup",
     "fractiondenomvgap", "fractiondenomdown", "fractiondelsize",
+    "skewedfractionhgap", "skewedfractionvgap",
     "limitabovevgap", "limitabovebgap", "limitabovekern",
     "limitbelowvgap", "limitbelowbgap", "limitbelowkern",
     "nolimitsubfactor", "nolimitsupfactor", /* bonus */
@@ -2621,7 +2622,7 @@ void after_math(void)
         }
         run_mlist_to_hlist(p, (mode > 0), text_style);
 	try_couple_nodes(tail,vlink(temp_head));
-	
+
         while (vlink(tail) != null) {
             tail = vlink(tail);
         }
