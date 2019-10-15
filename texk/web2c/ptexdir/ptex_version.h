@@ -1,1 +1,1 @@
-#define PTEX_VERSION "p3.8.2"
+#define PTEX_VERSION "p3.8.3"

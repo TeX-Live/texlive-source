@@ -1,3 +1,8 @@
+2019-10-14  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: Allow getting \kansujichar.
+	* ptex_version.h: pTeX version p3.8.3.
+
 2019-08-04  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ppltotf.ch: 'This property name doesn't belong in a TYPE list'
