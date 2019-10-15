@@ -1,3 +1,9 @@
+2019-10-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* synctex-p-rec.ch0, synctex-ep-rec.ch0: Fix \meaning\synctex
+	for pTeX and upTeX.
+	* am/synctex.am: Adjusted.
+
 2019-08-07  Akira Kakuto  <kakuto@w32tex.org>
 
 	* synctex.c: Improve support of non-ascii path names

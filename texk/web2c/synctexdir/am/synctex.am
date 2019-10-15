@@ -231,6 +231,7 @@ eptex_ch_synctex = \
 	synctexdir/synctex-p-rec.ch0 \
 	synctexdir/synctex-rec.ch0 \
 	synctexdir/synctex-rec.ch1 \
+	synctexdir/synctex-ep-rec.ch0 \
 	synctexdir/synctex-e-rec.ch0 \
 	synctexdir/synctex-p-rec.ch1
 
@@ -246,7 +247,8 @@ endif EPTEX_SYNCTEX
 
 EXTRA_DIST += \
 	synctexdir/synctex-ep-mem.ch0 \
-	synctexdir/synctex-ep-mem.ch1
+	synctexdir/synctex-ep-mem.ch1 \
+	synctexdir/synctex-ep-rec.ch0
 
 ## SyncTeX infrastructure: e-upTeX
 
@@ -266,6 +268,7 @@ euptex_ch_synctex = \
 	synctexdir/synctex-p-rec.ch0 \
 	synctexdir/synctex-rec.ch0 \
 	synctexdir/synctex-rec.ch1 \
+	synctexdir/synctex-ep-rec.ch0 \
 	synctexdir/synctex-e-rec.ch0 \
 	synctexdir/synctex-p-rec.ch1
 
