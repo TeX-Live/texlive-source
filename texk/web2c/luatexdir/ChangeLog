@@ -3,6 +3,7 @@
           we have now define(__sparc)
 
 2019-10-13 Luigi Scarso <luigi.scarso@gmail.com>
+	* additional primitives  \eTeXglue[stretch|shrink]order for querying order the etex way (HH)
 	* extra features runtoks (HH)
 	* tex.getmodenames() (as these can differ per engine/version) (HH)
 	* permit nested runtoks in more complex situations of nesting (HH)
