@@ -2105,7 +2105,8 @@ proc populate_main {} {
   incr inx
   menu .mn.opt.paper
   foreach p [list A4 letter] {
-    .mn.opt.paper add command -label $p -command "set_paper $p"
+    .mn.opt.paper add command -label $p -command \
+        "set_paper [string tolower $p]"
   }
 
   if {[llength $::langs] > 1} {
