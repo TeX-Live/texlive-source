@@ -1201,7 +1201,7 @@ static long pack_real(card8 * dest, long destlen, double value)
         }
     }
     res = sprintf(local_work_buffer, "%1.14g", value);
-    if ( (dest>work_buffer) &&  (dest-((card8*)work_buffer))<(res+1)) {
+    if ( (dest>((card8*)(work_buffer))) &&  (dest-((card8*)work_buffer))<(res+1)) {
        normal_warning("cff","invalid real value to pack. Continuing, but the font looks wrong.");
     }
     if (res<0)
