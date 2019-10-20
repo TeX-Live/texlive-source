@@ -1,11 +1,11 @@
 # TeXLive::TLConfig.pm - module exporting configuration values
-# Copyright 2007-2018 Norbert Preining
+# Copyright 2007-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 50190 $';
+my $svnrev = '$Revision: 52112 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -113,10 +113,10 @@ if ($^O =~ /^MSWin/i) {
 our @AcceptedFallbackDownloaders = qw/curl wget/;
 our %FallbackDownloaderProgram = ( 'wget' => 'wget', 'curl' => 'curl');
 our %FallbackDownloaderArgs = (
-  'curl' => ['--user-agent', 'texlive/curl', '--retry', '10', 
+  'curl' => ['--user-agent', 'texlive/curl', '--retry', '4', '--retry-delay', '5',
              '--fail', '--location',
              '--connect-timeout', "$NetworkTimeout", '--silent', '--output'],
-  'wget' => ['--user-agent=texlive/wget', '--tries=10',
+  'wget' => ['--user-agent=texlive/wget', '--tries=4',
              "--timeout=$NetworkTimeout", '-q', '-O'],
 );
 # the way we package things on the web
