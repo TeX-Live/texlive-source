@@ -1,42 +1,19 @@
-/*@license
- gl.js: Render Bezier patches via subdivision with WebGL.
-  Copyright 2019: John C. Bowman and Supakorn "Jamie" Rassameemasmuang
-  University of Alberta
+let P=[]; // Array of Bezier patches, triangles, curves, and pixels
+let Materials=[]; // Array of materials
+let Lights=[]; // Array of lights
+let Centers=[]; // Array of billboard centers
+let Background=[1,1,1,1]; // Background color
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-let gl;
-
-let canvas;
 let canvasWidth,canvasHeight;
-let halfCanvasWidth,halfCanvasHeight;
 
-let pixel=0.75; // Adaptive rendering constant.
-let BezierFactor=0.4;
-let FillFactor=0.1;
-let Zoom;
-let Zoom0;
+let absolute=false;
 
-let maxViewportWidth=window.innerWidth;
-let maxViewportHeight=window.innerHeight;
-let viewportmargin=0;
-let viewportshift=[0,0];
+let b,B; // Scene min,max bounding box corners (3-tuples)
+let angle; // Field of view angle
+let Zoom0; // Initial zoom
+let viewportmargin; // Margin around viewport (2-tuple)
+let viewportshift=[0,0]; // Viewport shift (for perspective projection)
 
-const windowTrim=10;
-let resizeStep=1.2;
 let zoomFactor;
 let zoomPinchFactor;
 let zoomPinchCap;
@@ -46,21 +23,40 @@ let shiftHoldDistance;
 let shiftWaitTime;
 let vibrateTime;
 
+let embedded; // Is image embedded within another window?
+
+let canvas; // Rendering canvas
+let gl; // WebGL rendering context
+let alpha; // Is background opaque?
+
+let offscreen; // Offscreen rendering canvas for embedded images
+let context; // 2D context for copying embedded offscreen images
+
+let nlights=0; // Number of lights compiled in shader
+let Nmaterials=1; // Maximum number of materials compiled in shader
+
+let materials=[]; // Subset of Materials passed as uniforms
+let maxMaterials; // Limit on number of materials allowed in shader
+
+let halfCanvasWidth,halfCanvasHeight;
+
+let pixel=0.75; // Adaptive rendering constant.
+let BezierFactor=0.4;
+let FillFactor=0.1;
+let Zoom;
+
+let maxViewportWidth=window.innerWidth;
+let maxViewportHeight=window.innerHeight;
+
+const windowTrim=10;
+let resizeStep=1.2;
+
 let lastzoom;
 let H; // maximum camera view half-height
 
 let Fuzz2=1000*Number.EPSILON;
 let Fuzz4=Fuzz2*Fuzz2;
 let third=1/3;
-
-let P=[]; // Array of Bezier patches, triangles, curves, and pixels
-let Materials=[]; // Array of materials
-let Lights=[]; // Array of lights
-let Centers=[]; // Array of billboard centers
-let Background=[1,1,1,1]; // Background color
-
-// Don't account for device pixels when embedding in another html document
-let absolute=false;
 
 let rotMat=mat4.create();
 let projMat=mat4.create(); // projection matrix
@@ -77,7 +73,6 @@ let zmin,zmax;
 let center={x:0,y:0,z:0};
 let size2;
 let ArcballFactor;
-let b,B; // Scene min,max bounding box corners
 let shift={
   x:0,y:0
 };
@@ -116,22 +111,16 @@ class Material {
     this.fresnel0=fresnel0;
   }
 
-  setUniform(program,stringLoc,index=null) {
-    let getLoc;
-    if (index === null)
-      getLoc =
-        param => gl.getUniformLocation(program,stringLoc+"."+param);
-    else
-      getLoc =
-        param => gl.getUniformLocation(program,stringLoc+"["+index+"]."+param);
+  setUniform(program,index) {
+    let getLoc=
+        param => gl.getUniformLocation(program,"Materials["+index+"]."+param);
 
     gl.uniform4fv(getLoc("diffuse"),new Float32Array(this.diffuse));
     gl.uniform4fv(getLoc("emissive"),new Float32Array(this.emissive));
     gl.uniform4fv(getLoc("specular"),new Float32Array(this.specular));
 
-    gl.uniform1f(getLoc("shininess"),this.shininess);
-    gl.uniform1f(getLoc("metallic"),this.metallic);
-    gl.uniform1f(getLoc("fresnel0"),this.fresnel0);
+    gl.uniform4f(getLoc("parameters"),this.shininess,this.metallic,
+                 this.fresnel0,0);
   }
 }
 
@@ -144,28 +133,119 @@ class Light {
     this.color=color;
   }
 
-  setUniform(program,stringLoc,index) {
+  setUniform(program,index) {
     let getLoc=
-        param => gl.getUniformLocation(program,stringLoc+"["+index+"]."+param);
+        param => gl.getUniformLocation(program,"Lights["+index+"]."+param);
 
     gl.uniform3fv(getLoc("direction"),new Float32Array(this.direction));
     gl.uniform3fv(getLoc("color"),new Float32Array(this.color));
   }
 }
 
-function initGL() {
-  try {
-    gl=canvas.getContext("webgl",{alpha:Background[3] < 1});
-  } catch(e) {}
+function initShaders()
+{
+  let maxUniforms=gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
+  maxMaterials=Math.floor((maxUniforms-14)/4);
+  Nmaterials=Math.min(Math.max(Nmaterials,Materials.length),maxMaterials);
+
+  noNormalShader=initShader();
+  pixelShader=initShader(["WIDTH"]);
+  materialShader=initShader(["NORMAL"]);
+  colorShader=initShader(["NORMAL","COLOR"]);
+  transparentShader=initShader(["NORMAL","COLOR","TRANSPARENT"]);
+}
+
+// Create buffers for the patch and its subdivisions.
+function setBuffers()
+{
+  positionBuffer=gl.createBuffer();
+  materialBuffer=gl.createBuffer();
+  colorBuffer=gl.createBuffer();
+  indexBuffer=gl.createBuffer();
+}
+
+function noGL() {
   if (!gl)
     alert("Could not initialize WebGL");
 }
 
-function getShader(gl,id,options=[]) {
-  let shaderScript=document.getElementById(id);
-  if(!shaderScript)
-    return null;
+function saveAttributes()
+{
+  let a=window.parent.document.asygl[alpha];
 
+  a.gl=gl;
+  a.nlights=Lights.length;
+  a.Nmaterials=Nmaterials;
+  a.maxMaterials=maxMaterials;
+
+  a.noNormalShader=noNormalShader;
+  a.pixelShader=pixelShader;
+  a.materialShader=materialShader;
+  a.colorShader=colorShader;
+  a.transparentShader=transparentShader;
+}
+
+function restoreAttributes()
+{
+  let a=window.parent.document.asygl[alpha];
+
+  gl=a.gl;
+  nlights=a.nlights;
+  Nmaterials=a.Nmaterials;
+  maxMaterials=a.maxMaterials;
+
+  noNormalShader=a.noNormalShader;
+  pixelShader=a.pixelShader;
+  materialShader=a.materialShader;
+  colorShader=a.colorShader;
+  transparentShader=a.transparentShader;
+}
+
+let indexExt;
+
+function initGL()
+{
+  alpha=Background[3] < 1;
+
+  if(embedded) {
+    let p=window.parent.document;
+
+    if(p.asygl == null)
+      p.asygl=Array(2);
+  
+    context=canvas.getContext("2d");
+    offscreen=p.offscreen;
+    if(!offscreen) {
+      offscreen=p.createElement("canvas");
+      p.offscreen=offscreen;
+    }
+
+    if(!p.asygl[alpha] || !p.asygl[alpha].gl) {
+      gl=offscreen.getContext("webgl",{alpha:alpha});
+      if(!gl) noGL();
+      initShaders();
+      p.asygl[alpha]={};
+      saveAttributes();
+    } else {
+      restoreAttributes();
+      if((Lights.length != nlights) ||
+         Math.min(Materials.length,maxMaterials) > Nmaterials) {
+        initShaders();
+        saveAttributes();
+      }
+    }
+  } else {
+    gl=canvas.getContext("webgl",{alpha:alpha});
+    if(!gl) noGL();
+    initShaders();
+  }
+
+  setBuffers();
+  indexExt=gl.getExtension("OES_element_index_uint");
+}
+
+function getShader(gl,shaderScript,type,options=[])
+{
   let str=`#version 100
 #ifdef GL_FRAGMENT_PRECISION_HIGH
   precision highp float;
@@ -173,29 +253,16 @@ function getShader(gl,id,options=[]) {
   precision mediump float;
 #endif
   #define nlights ${Lights.length}\n
-  const int nLights=${Math.max(Lights.length,1)};\n
-  const int nMaterials=${Math.max(Materials.length,1)};\n`
+  const int Nlights=${Math.max(Lights.length,1)};\n
+  #define Nmaterials ${Nmaterials}\n`;
 
   if(orthographic)
     str += `#define ORTHOGRAPHIC\n`;
 
   options.forEach(s => str += `#define `+s+`\n`);
 
-  let k=shaderScript.firstChild;
-  while(k) {
-    if(k.nodeType == 3)
-      str += k.textContent;
-    k=k.nextSibling;
-  }
-  let shader;
-  if(shaderScript.type == "x-shader/x-fragment")
-    shader = gl.createShader(gl.FRAGMENT_SHADER);
-  else if (shaderScript.type == "x-shader/x-vertex")
-    shader = gl.createShader(gl.VERTEX_SHADER);
-  else
-    return null;
-
-  gl.shaderSource(shader,str);
+  let shader=gl.createShader(type);
+  gl.shaderSource(shader,str+shaderScript);
   gl.compileShader(shader);
   if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS)) {
     alert(gl.getShaderInfoLog(shader));
@@ -204,32 +271,34 @@ function getShader(gl,id,options=[]) {
   return shader;
 }
 
-
 function drawBuffer(data,shader,indices=data.indices)
 {
   if(data.indices.length == 0) return;
+  
   let pixel=shader == pixelShader;
-  let normal=!pixel && (shader != noNormalShader);
+  let normal=shader != noNormalShader && !pixel;
 
-  setUniforms(shader);
+  setUniforms(data,shader);
 
   gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(data.vertices),
                 gl.STATIC_DRAW);
   gl.vertexAttribPointer(shader.vertexPositionAttribute,
                          3,gl.FLOAT,false,normal ? 24 : (pixel ? 16 : 12),0);
-  if(normal)
+  if(normal && Lights.length > 0)
     gl.vertexAttribPointer(shader.vertexNormalAttribute,
                            3,gl.FLOAT,false,24,12);
   else if(pixel)
     gl.vertexAttribPointer(shader.vertexWidthAttribute,
                            1,gl.FLOAT,false,16,12);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER,materialBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER,new Int16Array(data.materials),
-                gl.STATIC_DRAW);
-  gl.vertexAttribPointer(shader.vertexMaterialAttribute,
-                         1,gl.SHORT,false,2,0);
+  if(shader.vertexMaterialAttribute != -1) {
+    gl.bindBuffer(gl.ARRAY_BUFFER,materialBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER,new Int16Array(data.materialIndices),
+                  gl.STATIC_DRAW);
+    gl.vertexAttribPointer(shader.vertexMaterialAttribute,
+                           1,gl.SHORT,false,2,0);
+  }
 
   if(shader == colorShader || shader == transparentShader) {
     gl.bindBuffer(gl.ARRAY_BUFFER,colorBuffer);
@@ -247,6 +316,8 @@ function drawBuffer(data,shader,indices=data.indices)
   gl.drawElements(normal ? gl.TRIANGLES : (pixel ? gl.POINTS : gl.LINES),
                   indices.length,
                   indexExt ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT,0);
+  if(embedded)
+    context.drawImage(offscreen,0,0);
 }
 
 class vertexBuffer {
@@ -255,10 +326,13 @@ class vertexBuffer {
   }
   clear() {
     this.vertices=[];
-    this.materials=[];
+    this.materialIndices=[];
     this.colors=[];
     this.indices=[];
     this.nvertices=0;
+
+    this.materials=[];
+    this.materialTable=[];
   }
 
   // material vertex 
@@ -269,7 +343,7 @@ class vertexBuffer {
     this.vertices.push(n[0]);
     this.vertices.push(n[1]);
     this.vertices.push(n[2]);
-    this.materials.push(materialIndex);
+    this.materialIndices.push(materialIndex);
     return this.nvertices++;
   }
 
@@ -281,7 +355,7 @@ class vertexBuffer {
     this.vertices.push(n[0]);
     this.vertices.push(n[1]);
     this.vertices.push(n[2]);
-    this.materials.push(materialIndex);
+    this.materialIndices.push(materialIndex);
     this.colors.push(c[0]);
     this.colors.push(c[1]);
     this.colors.push(c[2]);
@@ -294,7 +368,7 @@ class vertexBuffer {
     this.vertices.push(v[0]);
     this.vertices.push(v[1]);
     this.vertices.push(v[2]);
-    this.materials.push(materialIndex);
+    this.materialIndices.push(materialIndex);
     return this.nvertices++;
   }
 
@@ -304,7 +378,7 @@ class vertexBuffer {
     this.vertices.push(v[1]);
     this.vertices.push(v[2]);
     this.vertices.push(width);
-    this.materials.push(materialIndex);
+    this.materialIndices.push(materialIndex);
     return this.nvertices++;
   }
 
@@ -317,7 +391,7 @@ class vertexBuffer {
     this.vertices[i6+3]=n[0];
     this.vertices[i6+4]=n[1];
     this.vertices[i6+5]=n[2];
-    this.materials[i]=materialIndex;
+    this.materialIndices[i]=materialIndex;
     let i4=4*i;
     this.colors[i4]=c[0];
     this.colors[i4+1]=c[1];
@@ -328,7 +402,7 @@ class vertexBuffer {
 
   append(data) {
     append(this.vertices,data.vertices);
-    append(this.materials,data.materials);
+    append(this.materialIndices,data.materialIndices);
     append(this.colors,data.colors);
     appendOffset(this.indices,data.indices,this.nvertices);
     this.nvertices += data.nvertices;
@@ -417,10 +491,21 @@ class Geometry {
     return [this.T(m),this.T([m[0],m[1],M[2]]),this.T([m[0],M[1],m[2]]),
             this.T([m[0],M[1],M[2]]),this.T([M[0],m[1],m[2]]),
             this.T([M[0],m[1],M[2]]),this.T([M[0],M[1],m[2]]),this.T(M)];
+  }
 
+  setMaterial(data,draw) {
+    if(data.materialTable[this.MaterialIndex] == null) {
+      if(data.materials.length >= Nmaterials)
+        draw();
+      data.materialTable[this.MaterialIndex]=data.materials.length;
+      data.materials.push(Materials[this.MaterialIndex]);
+    }
+    materialIndex=data.materialTable[this.MaterialIndex];
   }
 
   render() {
+    this.setMaterialIndex();
+
     // First check if re-rendering is required
     let v;
     if(this.CenterIndex == 0)
@@ -451,8 +536,6 @@ class Geometry {
       for(let i=0; i < n; ++i)
         P[i]=this.T(p[i]);
     }
-
-    materialIndex=this.MaterialIndex;
 
     let s=orthographic ? 1 : this.Min[2]/B[2];
     let res=pixel*Math.hypot(s*(viewParam.xmax-viewParam.xmin),
@@ -490,14 +573,22 @@ class BezierPatch extends Geometry {
                         sum+color[3][3] < 1020 : sum < 765;
     } else
       this.transparent=Materials[MaterialIndex].diffuse[3] < 1;
-    if(this.transparent) {
-      this.MaterialIndex=color ? -1-MaterialIndex : 1+MaterialIndex;
-      this.vertex=this.data.Vertex.bind(this.data);
-    } else {
-      this.MaterialIndex=MaterialIndex;
-      this.vertex=this.data.vertex.bind(this.data);
-    }
+    this.MaterialIndex=MaterialIndex;
+
+    this.vertex=this.transparent ? this.data.Vertex.bind(this.data) :
+      this.data.vertex.bind(this.data);
     this.L2norm(this.controlpoints);
+  }
+
+  setMaterialIndex() {
+    if(this.transparent)
+      this.setMaterial(transparentData,drawTransparent);
+    else {
+      if(this.color)
+        this.setMaterial(colorData,drawColor);
+      else
+        this.setMaterial(materialData,drawMaterial);
+    }
   }
 
 // Render a Bezier patch via subdivision.
@@ -567,6 +658,9 @@ class BezierPatch extends Geometry {
   }
 
   process(p) {
+    if(this.transparent) // Override materialIndex to encode color vs material
+      materialIndex=this.color ? -1-materialIndex : 1+materialIndex;
+
     if(p.length == 10) return this.process3(p);
     if(p.length == 3) return this.processTriangle(p);
     if(p.length == 4) return this.processQuad(p);
@@ -1257,6 +1351,10 @@ class BezierCurve extends Geometry {
     this.MaterialIndex=MaterialIndex;
   }
 
+  setMaterialIndex() {
+    this.setMaterial(material1Data,drawMaterial1);
+  }
+
   processLine(p) {
     let p0=p[0];
     let p1=p[1];
@@ -1324,6 +1422,10 @@ class Pixel extends Geometry {
     this.Max=Max;
   }
 
+  setMaterialIndex() {
+    this.setMaterial(material0Data,drawMaterial0);
+  }
+
   process(p) {
     this.data.indices.push(this.data.vertex0(this.controlpoint,this.width));
     this.append();
@@ -1352,7 +1454,17 @@ class Triangles extends Geometry {
     this.transparent=Materials[MaterialIndex].diffuse[3] < 1;
   }
     
+  setMaterialIndex() {
+    if(this.transparent)
+      this.setMaterial(transparentData,drawTransparent);
+    else
+      this.setMaterial(triangleData,drawTriangle);
+  }
+
   process(p) {
+    // Override materialIndex to encode color vs material
+    materialIndex=this.Colors.length > 0 ? -1-materialIndex : 1+materialIndex;
+
     for(let i=0, n=this.Indices.length; i < n; ++i) {
       let index=this.Indices[i];
       let PI=index[0];
@@ -1369,12 +1481,10 @@ class Triangles extends Geometry {
           let C1=this.Colors[CI[1]];
           let C2=this.Colors[CI[2]];
           this.transparent |= C0[3]+C1[3]+C2[3] < 765;
-          materialIndex=-1-this.MaterialIndex;
           this.data.iVertex(PI[0],P0,this.Normals[NI[0]],C0);
           this.data.iVertex(PI[1],P1,this.Normals[NI[1]],C1);
           this.data.iVertex(PI[2],P2,this.Normals[NI[2]],C2);
         } else {
-          materialIndex=1+this.MaterialIndex;
           this.data.iVertex(PI[0],P0,this.Normals[NI[0]]);
           this.data.iVertex(PI[1],P1,this.Normals[NI[1]]);
           this.data.iVertex(PI[2],P2,this.Normals[NI[2]]);
@@ -1404,8 +1514,8 @@ function home()
 
 function initShader(options=[])
 {
-  let fragmentShader=getShader(gl,"fragment",options);
-  let vertexShader=getShader(gl,"vertex",options);
+  let vertexShader=getShader(gl,vertex,gl.VERTEX_SHADER,options);
+  let fragmentShader=getShader(gl,fragment,gl.FRAGMENT_SHADER,options);
   let shader=gl.createProgram();
 
   gl.attachShader(shader,vertexShader);
@@ -1524,31 +1634,29 @@ function COBTarget(out,mat)
   mat4.multiply(out,translMat,out);
 }
 
-function setUniforms(shader)
+function setUniforms(data,shader)
 {
   let pixel=shader == pixelShader;
 
   gl.useProgram(shader);
 
-  shader.vertexPositionAttribute=
-    gl.getAttribLocation(shader,"position");
+  shader.vertexPositionAttribute=gl.getAttribLocation(shader,"position");
   gl.enableVertexAttribArray(shader.vertexPositionAttribute);
 
   if(pixel) {
-    shader.vertexWidthAttribute=
-      gl.getAttribLocation(shader,"width");
+    shader.vertexWidthAttribute=gl.getAttribLocation(shader,"width");
     gl.enableVertexAttribArray(shader.vertexWidthAttribute);
   }
 
-  if(shader != noNormalShader && !pixel) {
-    shader.vertexNormalAttribute=
-      gl.getAttribLocation(shader,"normal");
+  let normals=shader != noNormalShader && !pixel && Lights.length > 0;
+  if(normals) {
+    shader.vertexNormalAttribute=gl.getAttribLocation(shader,"normal");
     gl.enableVertexAttribArray(shader.vertexNormalAttribute);
   }
 
-  shader.vertexMaterialAttribute=
-    gl.getAttribLocation(shader,"materialIndex");
-  gl.enableVertexAttribArray(shader.vertexMaterialAttribute);
+  shader.vertexMaterialAttribute=gl.getAttribLocation(shader,"materialIndex");
+  if(shader.vertexMaterialAttribute != -1)
+    gl.enableVertexAttribArray(shader.vertexMaterialAttribute);
 
   shader.projViewMatUniform=gl.getUniformLocation(shader,"projViewMat");
   shader.viewMatUniform=gl.getUniformLocation(shader,"viewMat");
@@ -1560,11 +1668,15 @@ function setUniforms(shader)
     gl.enableVertexAttribArray(shader.vertexColorAttribute);
   }
 
-  for(let i=0; i < Materials.length; ++i)
-    Materials[i].setUniform(shader,"Materials",i);
+  if(normals) {
+    for(let i=0; i < Lights.length; ++i)
+      Lights[i].setUniform(shader,i);
+  }
 
-  for(let i=0; i < Lights.length; ++i)
-    Lights[i].setUniform(shader,"Lights",i);
+  if(shader.vertexMaterialAttribute != -1) {
+    for(let i=0; i < data.materials.length; ++i)
+      data.materials[i].setUniform(shader,i);
+  }
 
   gl.uniformMatrix4fv(shader.projViewMatUniform,false,projViewMat);
   gl.uniformMatrix4fv(shader.viewMatUniform,false,viewMat);
@@ -1875,18 +1987,6 @@ function handleTouchMove(event)
   }
 }
 
-let indexExt;
-
-// Create buffers for the patch and its subdivisions.
-function setBuffer()
-{
-  positionBuffer=gl.createBuffer();
-  materialBuffer=gl.createBuffer();
-  colorBuffer=gl.createBuffer();
-  indexBuffer=gl.createBuffer();
-  indexExt=gl.getExtension("OES_element_index_uint");
-}
-
 let zbuffer=[];
 
 function transformVertices(vertices)
@@ -1901,28 +2001,38 @@ function transformVertices(vertices)
   }
 }
 
-function draw()
+function drawMaterial0()
 {
-  gl.clearColor(Background[0],Background[1],Background[2],Background[3]);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-  material0Data.clear();
-  material1Data.clear();
-  materialData.clear();
-  colorData.clear();
-  triangleData.clear();
-  transparentData.clear();
-
-  P.forEach(function(p) {
-    p.render();
-  });
-
   drawBuffer(material0Data,pixelShader);
-  drawBuffer(material1Data,noNormalShader);
-  drawBuffer(materialData,materialShader);
-  drawBuffer(colorData,colorShader);
-  drawBuffer(triangleData,transparentShader);
+  material0Data.clear();
+}
 
+function drawMaterial1()
+{
+  drawBuffer(material1Data,noNormalShader);
+  material1Data.clear();
+}
+
+function drawMaterial()
+{
+  drawBuffer(materialData,materialShader);
+  materialData.clear();
+}
+
+function drawColor()
+{
+  drawBuffer(colorData,colorShader);
+  colorData.clear();
+}
+
+function drawTriangle()
+{
+  drawBuffer(triangleData,transparentShader);
+  triangleData.clear();
+}
+
+function drawTransparent()
+{
   let indices=transparentData.indices;
   if(indices.length > 0) {
     transformVertices(transparentData.vertices);
@@ -1959,6 +2069,34 @@ function draw()
     drawBuffer(transparentData,transparentShader,Indices);
     gl.depthMask(true); // Disable transparency
   }
+  transparentData.clear();
+}
+
+function drawBuffers()
+{
+  drawMaterial0();
+  drawMaterial1();
+  drawMaterial();
+  drawColor();
+  drawTriangle();
+  drawTransparent();
+}
+
+function draw()
+{
+  if(embedded) {
+    offscreen.width=canvas.width;
+    offscreen.height=canvas.height;
+    setViewport();
+  }
+
+  gl.clearColor(Background[0],Background[1],Background[2],Background[3]);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  for(let i=0; i < P.length; ++i)
+    P[i].render();
+
+  drawBuffers();
 
   remesh=false;
 }
@@ -2040,13 +2178,17 @@ function setViewport()
   gl.viewportWidth=canvasWidth;
   gl.viewportHeight=canvasHeight;
   gl.viewport(0,0,gl.viewportWidth,gl.viewportHeight);
-  home();
+  gl.scissor(0,0,gl.viewportWidth,gl.viewportHeight);
 }
 
 function setCanvas()
 {
   canvas.width=canvasWidth;
   canvas.height=canvasHeight;
+  if(embedded) {
+    offscreen.width=canvasWidth;
+    offscreen.height=canvasHeight;
+  }
   size2=Math.hypot(canvasWidth,canvasHeight);
   halfCanvasWidth=0.5*canvasWidth;
   halfCanvasHeight=0.5*canvasHeight;
@@ -2067,6 +2209,7 @@ function setsize(w,h)
   canvasHeight=h;
   setCanvas();
   setViewport();
+  home();
 }
 
 function expand() 
@@ -2085,8 +2228,11 @@ let pixelShader,noNormalShader,materialShader,colorShader,transparentShader;
 function webGLStart()
 {
   canvas=document.getElementById("Asymptote");
+  embedded=window.parent.document != document;
 
-  if(absolute) {
+  initGL();
+
+  if(absolute && !embedded) {
     canvasWidth *= window.devicePixelRatio;
     canvasHeight *= window.devicePixelRatio;
   } else {
@@ -2110,25 +2256,19 @@ function webGLStart()
   }
 
   setCanvas();
+
   ArcballFactor=1+8*Math.hypot(viewportmargin[0],viewportmargin[1])/size2;
 
   viewportshift[0] /= Zoom0;
   viewportshift[1] /= Zoom0;
 
-  initGL();
-
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
   gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.SCISSOR_TEST);
+
   setViewport();
-
-  noNormalShader=initShader();
-  pixelShader=initShader(["WIDTH"]);
-  materialShader=initShader(["NORMAL"]);
-  colorShader=initShader(["NORMAL","COLOR"]);
-  transparentShader=initShader(["NORMAL","COLOR","TRANSPARENT"]);
-
-  setBuffer();
+  home();
 
   canvas.onmousedown=handleMouseDown;
   document.onmouseup=handleMouseUpOrTouchEnd;

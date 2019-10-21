@@ -1,3 +1,301 @@
+commit e47b19bb47079c8def40e5f4b5eb7946fec6a0c2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 22:36:58 2019 -0600
+
+    Remove obsolete MSDOS Intel GPU workaround.
+
+commit 64ad659eed5015f568fbfc08a4bf65ee66e429a8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 20:29:42 2019 -0600
+
+    Port to MacOSX.
+
+commit 1abf16a851f36541dad9fe29f4ea03701dfd426b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 18:10:47 2019 -0600
+
+    Fix warning message.
+
+commit e3103ae3464da73a0af4e9e193139b68a4758333
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 17:04:00 2019 -0600
+
+    Update asygl.
+
+commit c05b1d7fab525a7d7f1a153a0af157fa16f99721
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 16:17:31 2019 -0600
+
+    Remove unused code.
+
+commit 1af6f8a4adda6fd175b72265fe1a3ddd6d0e95db
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 16:12:01 2019 -0600
+
+    Fix transparency bug introduced in a05450337791d59966d12fedecb19e73bebc2415.
+
+commit f634dfe0a8ddedbc1d575cbbe92dcab1f44c3666
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 15:16:22 2019 -0600
+
+    Remove maxvertices setting, which is no longer required;
+    fix materialTable resizing.
+
+commit 24feb014dd4bc563d52c8fa6b14c3e097ec3d03a
+Merge: ea84254a 8d8031f7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 12:53:50 2019 -0600
+
+    Merge branch 'prune'.
+
+commit 8d8031f70536399553293b76b5893f10c3e0354d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 12:27:32 2019 -0600
+
+    Don't reserve space for vertexBuffer data.
+
+commit eed0d85771f12724655450b2a07bcc3a2de3c8e6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 02:47:25 2019 -0600
+
+    Port WebGl material changes to OpenGL.
+
+commit ea84254a34b02cbfb70fb4c312beb1fb57720f68
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 02:05:16 2019 -0600
+
+    Make glm happy again.
+
+commit 3f7ebd06a25b02aae4491b063744205414fcbcdd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 01:13:50 2019 -0600
+
+    Fix nontransparent material index for WebGL indexed triangles.
+
+commit 6f74aa05e584c31361db32218d55fb7a99fcf40b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 18 15:55:28 2019 -0600
+
+    Update asygl.
+
+commit 8a741d665941592d420eb212005ad0d9b6700a67
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 18 15:52:51 2019 -0600
+
+    Pass only required material uniforms to each shader; simplify code.
+
+commit a1ea5e709290fe4055cc81f2673ac4310f4f500f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 18 02:15:11 2019 -0600
+
+    Update asygl.
+
+commit c67276f0c8149efb848cf2f6584d861b0659ae55
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 18 02:13:55 2019 -0600
+
+    If needed, use separate material array for transparent elements.
+
+commit 984de25753a7d7c337036fa7b4a1f6525422b2e4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 18 01:40:30 2019 -0600
+
+    Reindex materials only when needed.
+
+commit d80ab0d128061ce19651a0bb52923cb07ae81b5f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 18 01:28:08 2019 -0600
+
+    Fix revision 82f7f09542dbe478f173efe64b52e24091ab7144.
+
+commit 595397655afd3e6603ead89b57fc923f45bfb44c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 18 00:34:53 2019 -0600
+
+    Revert "Reduce number of materials in elevation.asy."
+    
+    This reverts commit 38a4badac82efbb0632ade0ee2ebaf486b8153dc.
+
+commit 82f7f09542dbe478f173efe64b52e24091ab7144
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 18 00:32:54 2019 -0600
+
+    Respect maximum number of uniforms.
+
+commit 256a4a88b5d9e5680c15bebbd7594d67bba858a4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 17 00:59:43 2019 -0600
+
+    Compress WebGL Material parameters into a single vec4.
+
+commit bb9232f14a9f672b65cfd9a709b1345580dd3f6a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 16 22:32:28 2019 -0600
+
+    Illustrate Arrow3(position).
+
+commit ca863003b8dd6f18cb94feaeaf64eab639d88671
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 16 22:04:17 2019 -0600
+
+    Fix splitpath settings of arrowhead3.
+
+commit 292b048048a42b75fe686c98bf550efafea730c0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 16 10:50:23 2019 -0600
+
+    Upload asygl.js; make minor updates to documentation and formatting.
+
+commit 192a328e5b899cc12ad813faf39b096ca3505606
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 23:58:59 2019 -0600
+
+    Fix materialAttrib check in OpenGL.
+
+commit 1b357c7161606554d394c3dd05d0971edda82993
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 23:56:25 2019 -0600
+
+    Update asygl.
+
+commit 1a07e8e4f74732c5a7302706df5ec658b30e62cf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 23:43:54 2019 -0600
+
+    Fix attributeMaterialIndex check; simplify code.
+
+commit 3903d300105d0822208588e144b4f1ad4b822dd8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 11:55:41 2019 -0600
+
+    Revert "Update asygl."
+    
+    This reverts commit 1e14e51305ae550ac4afeb1b259365cf69070783.
+
+commit 1e14e51305ae550ac4afeb1b259365cf69070783
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 11:34:56 2019 -0600
+
+    Update asygl.
+
+commit 22139a4951f8b568354cac72e61f613782799c68
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 11:32:19 2019 -0600
+
+    Fix shader sharing; use separate buffers for each canvas.
+
+commit 63eabdd7d504be58b4400d999c800c5fc4a444ae
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 03:46:41 2019 -0600
+
+    Revert "Update asygl."
+    
+    This reverts commit fc5e4423912f59b77a80a656869ded97a47edf60.
+
+commit fc5e4423912f59b77a80a656869ded97a47edf60
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 03:39:37 2019 -0600
+
+    Update asygl.
+
+commit 88a383380d6f340524d0b58f8ce0b32ebe3ca383
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 03:28:18 2019 -0600
+
+    Move shaders to asygl library; share shaders and buffers among embedded images.
+    Check for unused WebGL attributes.
+
+commit c6db33e7e18c45b52daaed33e10b10e08dabd371
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 02:01:19 2019 -0600
+
+    Optimize OpenGL renderer.
+
+commit ce57dbdb9a105320888ac9230b10665185febc7e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 15 00:53:37 2019 -0600
+
+    Check for unused GLSL attributes; restrict glFlush workaround to MSDOS.
+    Remove unnecessary code.
+
+commit 229f9ca69f9a59e4f393e7f92db027f9bc570325
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 14 12:15:43 2019 -0600
+
+    Update documentation.
+
+commit 38a4badac82efbb0632ade0ee2ebaf486b8153dc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 14 12:01:43 2019 -0600
+
+    Reduce number of materials in elevation.asy.
+
+commit e0e8e60a15b158c831f5ea1e300ad86486a35481
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 14 09:00:58 2019 -0600
+
+    Simplify example.
+
+commit 089e57508c96518c48b9bb3f21cb922710675f37
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 13 21:52:55 2019 -0600
+
+    Update asygl.
+
+commit 2642e40cc6b1623ea3998a1274540913d9bae824
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 13 21:52:28 2019 -0600
+
+    Apply WebGL scissors.
+
+commit c0a589e08d0078b26443effef18a68da8c53879e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 13 21:32:43 2019 -0600
+
+    Update asygl.
+
+commit 4498544f5f53dd9ea21f96485a30cb5d3b6a4656
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 13 21:30:20 2019 -0600
+
+    Fix offscreen viewport.
+
+commit 1af5c5ef00aceebb565710e1899f382826db9f8e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 13 17:25:57 2019 -0600
+
+    Update asygl.
+
+commit 324d09b31ac582d2b1cd0b9f905b7ac0089ae5dc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 13 17:20:45 2019 -0600
+
+    Organize asygl variables.
+
+commit 2508e0574a5fef5074bf5f6a0037d5190d47b0d7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 13 15:15:43 2019 -0600
+
+    Use a single WebGL rendering context for embedded images.
+
+commit 9cc2fdaee9d2efcca12b587f0902b7a89daea0f9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 13 15:15:11 2019 -0600
+
+    Update asygl.
+
+commit 14c00ed4351d108338a24af8dc8c35e3099a987c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 12 11:15:02 2019 -0600
+
+    Port miscellaneous Python support files and example to Python3.
+
+commit f80e63cfe85b233560ab9627731ef3fc16701067
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 11 03:12:52 2019 -0600
+
+    Increment version to 2.59.
+
 commit bc7fe4b5126184c965fff4d0daaf592b89ef8d01
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Oct 11 00:27:09 2019 -0600

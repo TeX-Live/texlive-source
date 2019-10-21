@@ -10,6 +10,7 @@
 #include "triple.h"
 
 #ifdef HAVE_LIBGLM
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -96,8 +97,6 @@ namespace gl {
 
 extern bool outlinemode;
 extern bool wireframeMode;
-extern size_t maxvertices;
-extern bool forceRemesh;
 
 extern bool orthographic;
 extern double xmin,xmax;
@@ -136,9 +135,6 @@ public:
 #ifdef HAVE_GL
 extern GLuint ubo;
 GLuint initHDR();
-
-void setUniforms(GLint shader);
-void deleteUniforms();
 #endif
 
 projection camera(bool user=true);
@@ -151,9 +147,7 @@ void glrender(const string& prefix, const camp::picture* pic,
               double *diffuse, double *specular, bool view, int oldpid=0);
 
 extern const double *dprojView;
-
-void initshader();
-void deleteshader();
+extern const double *dView;
 
 extern double BBT[9];
 
@@ -186,7 +180,7 @@ extern Billboard BB;
 #ifdef HAVE_LIBGLM
 typedef mem::map<CONST Material,size_t> MaterialMap;
 
-extern mem::vector<Material> material;
+extern std::vector<Material> material;
 extern MaterialMap materialMap;
 extern size_t materialIndex;
 extern int MaterialIndex;
@@ -281,18 +275,37 @@ public:
   std::vector<vertexData1> vertices1;
   std::vector<vertexData0> vertices0;
   std::vector<GLuint> indices;
+
+  std::vector<Material> materials;
+  std::vector<GLint> materialTable;
+
   void clear() {
     vertices.clear();
     Vertices.clear();
     vertices1.clear();
     vertices0.clear();
     indices.clear();
-    vertices.reserve(Nbuffer);
-    Vertices.reserve(Nbuffer);
-    vertices1.reserve(nbuffer);
-    vertices0.reserve(nbuffer);
-    indices.reserve(Nbuffer);
+    materials.clear();
+    materialTable.clear();
   }
+
+  void reserve0() {
+    vertices0.reserve(nbuffer);
+  }
+
+  void reserve1() {
+    vertices1.reserve(nbuffer);
+  }
+
+ void reserve() {
+    vertices.reserve(Nbuffer);
+    indices.reserve(Nbuffer);
+ }
+
+ void Reserve() {
+    Vertices.reserve(Nbuffer);
+    indices.reserve(Nbuffer);
+ }
   
 // Store the vertex v and its normal vector n.
   GLuint vertex(const triple &v, const triple& n) {
@@ -300,35 +313,35 @@ public:
     vertices.push_back(vertexData(v,n));
     return nvertices;
   }     
-  
+
 // Store the vertex v and its normal vector n, without an explicit color.
   GLuint tvertex(const triple &v, const triple& n) {
     size_t nvertices=Vertices.size();
     Vertices.push_back(VertexData(v,n));
     return nvertices;
   }
-  
+
 // Store the vertex v, its normal vector n, and colors c.
   GLuint Vertex(const triple &v, const triple& n, GLfloat *c) {
     size_t nvertices=Vertices.size();
     Vertices.push_back(VertexData(v,n,c));
     return nvertices;
   }     
-  
+
 // Store the vertex v.
   GLuint vertex1(const triple &v) {
     size_t nvertices=vertices1.size();
     vertices1.push_back(vertexData1(v));
     return nvertices;
   }     
-  
+
 // Store the pixel v and its width.
   GLuint vertex0(const triple &v, double width) {
     size_t nvertices=vertices0.size();
     vertices0.push_back(vertexData0(v,width));
     return nvertices;
   }     
-  
+
   // append array b onto array a with offset
   void appendOffset(std::vector<GLuint>& a,
                     const std::vector<GLuint>& b, size_t offset) {
@@ -344,22 +357,21 @@ public:
     appendOffset(indices,b.indices,vertices.size());
     vertices.insert(vertices.end(),b.vertices.begin(),b.vertices.end());
   }
-  
+
   void Append(const vertexBuffer& b) {
     appendOffset(indices,b.indices,Vertices.size());
     Vertices.insert(Vertices.end(),b.Vertices.begin(),b.Vertices.end());
   }
-  
+
   void append1(const vertexBuffer& b) {
     appendOffset(indices,b.indices,vertices1.size());
     vertices1.insert(vertices1.end(),b.vertices1.begin(),b.vertices1.end());
   }
-  
+
   void append0(const vertexBuffer& b) {
     appendOffset(indices,b.indices,vertices0.size());
     vertices0.insert(vertices0.end(),b.vertices0.begin(),b.vertices0.end());
   }
-
 };
 
 extern GLint pixelShader;
@@ -372,13 +384,22 @@ extern vertexBuffer material0Data;   // pixels
 extern vertexBuffer material1Data;   // material Bezier curves
 extern vertexBuffer materialData;    // material Bezier patches & triangles
 extern vertexBuffer colorData;       // colored Bezier patches & triangles
-extern vertexBuffer transparentData; // transparent patches & triangles
 extern vertexBuffer triangleData;    // opaque indexed triangles
+extern vertexBuffer transparentData; // transparent patches & triangles
 
-extern void drawBuffer(vertexBuffer& data, GLint shader);
-extern void drawBuffers(); 
-extern void clearBuffers();
-extern void clearMaterialBuffer(bool draw=false);
+void drawBuffer(vertexBuffer& data, GLint shader);
+void drawBuffers();
+void clearMaterialBuffer();
+
+typedef void draw_t();
+void setMaterial(vertexBuffer& data, draw_t *draw);
+
+void drawMaterial0();
+void drawMaterial1();
+void drawMaterial();
+void drawColor();
+void drawTriangle();
+void drawTransparent();
 
 #endif
 

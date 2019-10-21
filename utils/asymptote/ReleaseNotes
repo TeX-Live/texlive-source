@@ -1,3 +1,14 @@
+Release Notes for Version 2.59
+
+OpenGL memory allocation and transparency bugs introduced in version 2.54 were
+fixed. Rendering efficiency was improved. In view of limited GPU resources,
+only the required material uniforms are passed to each shader.
+The WebGL vertex and fragment shaders have been moved to the asygl library.
+Multiple embedded images now share a single WebGL context and shaders,
+to work around browser limitations. A bug in 3D arrows was fixed.
+Unavailable material attributes are now ignored. Miscellaneous Python support
+files were ported to Python3. The obsolete maxvertices setting was removed.
+
 Release Notes for Version 2.58
 
 Intersection points in geometry.asy are now returned in currentcoordsys;
