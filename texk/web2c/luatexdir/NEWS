@@ -1,12 +1,14 @@
 
 ==============================================================
-LuaTeX 1.11.1 2019-10-18
+LuaTeX 1.11.1 2019-10-22
 ==============================================================
 
 First release of luahbtex / luajithbtex, 
 luatex / luajittex with harfbuzz.
 Small bug fixes, code clean up and a couple of new primitives
-to match eTeX. See ChangeLog and the manual.
+to match eTeX.
+*** DROPPED the   "page_objnum_provider" callback, replaced with "page_order_index". ***
+See ChangeLog and the manual.
 
 
 

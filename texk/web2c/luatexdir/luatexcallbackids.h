@@ -73,7 +73,7 @@ typedef enum {
     finish_synctex_callback,
     wrapup_run_callback,
     new_graf_callback,
-    page_objnum_provider_callback,
+    page_order_index_callback,
     make_extensible_callback,
     process_pdf_image_content_callback,
     total_callbacks,

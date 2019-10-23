@@ -1,3 +1,7 @@
+2019-10-22 Luigi Scarso <luigi.scarso@gmail.com>
+    *  *** DROPPED  "page_objnum_provider" callback , replaced with "page_order_index" ***
+
+
 2019-10-18 Luigi Scarso <luigi.scarso@gmail.com>
 	* following https://tug.org/pipermail/tlbuild/2019q3/004553.html
           we have now define(__sparc)
