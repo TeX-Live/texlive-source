@@ -40,8 +40,9 @@ use Getopt::Long ();
 use IPC::Open3 ();
 use Pod::Usage ();
 use POSIX ();
+use Scalar::Util ();
 
-my $VERSION = '20191001';
+my $VERSION = '20191021';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -938,7 +939,11 @@ sub make_commands {
             waitpid($pid, 0);
 
             if ($?) {
-                my $msg = "$command\n" . do { local $/; <$child_err> } . "\n";
+                $child_out = Scalar::Util::openhandle($child_out);
+                my $out = $child_out ? do { local $/; <$child_out> } : "";
+                $child_err = Scalar::Util::openhandle($child_err);
+                my $err = $child_err ? do { local $/; <$child_err> } : "";
+                my $msg = "\n$command\n\n$out\n$err\n";
                 warn $msg;
                 print {$ARGV{logfile}} $msg;
                 $oops = 1;
@@ -948,8 +953,8 @@ sub make_commands {
         $| = 0;
         if ($oops) {
             warn <<"END_OTFTOTFM_WARNING";
-[ERROR]     One or more calls to 'otftotfm' failed;
-            please see the error messages in the log file.
+[ERROR]     One or more calls to 'otftotfm' returned a non-zero status code;
+            please check the messages above and in the log file.
 END_OTFTOTFM_WARNING
         }
     }
@@ -1052,7 +1057,7 @@ my $USAGE =<<'END_USAGE';
 Usage: autoinst [options] font[s]
 
 Possible options:
-    -encoding=ENC[,ENC]*    Specify text encoding(s) (default: OT1,T1,LY1)
+    -encoding=ENC[,ENC]*    Specify text encoding(s) (default: OT1,LY1,T1)
 
     -(no)lining             Toggle creation of lining digits
     -(no)oldstyle           Toggle creation of oldstyle digits
@@ -1108,7 +1113,7 @@ END_USAGE
 
 # Default values for the command-line arguments
 %ARGV = (
-    encoding        => 'OT1,T1,LY1',
+    encoding        => 'OT1,LY1,T1',
     textcomp        => '2',     # 0 = no, 1 = yes, 2 = ('T1' ? yes : no)
     lining          => '1',     # 0 = no, 1 = yes
     oldstyle        => '1',     # 0 = no, 1 = yes
@@ -1331,7 +1336,7 @@ END_WARNING_DUMPING_FILES
                 "$ARGV{target}"
 
             I'll do my best to work around this. Fingers crossed!
-            If you do experience any problems, try to re-run autoinst
+            If you do experience any problems, try re-running autoinst
             with a target directory without spaces in its name.
 END_WARNING_SPACES_IN_PATHS
     }
@@ -2410,13 +2415,8 @@ Also these commands are built on top of F<fontaxes>, so if that package
 cannot be found, you're limited to using the lower-level commands from
 standard NFSS (C<\fontfamily>, C<\fontseries>, C<\fontshape> etc.).
 
-
-=head2 On the choice of text encoding
-
-By default, B<autoinst> generates text fonts with OT1, T1 and LY1
-encodings, and the generated style files use LY1 as the default text encoding.
-LY1 has been chosen over T1 because it has some empty slots to accommodate
-the additional ligatures found in many OpenType fonts.
+By default, B<autoinst> generates text fonts with OT1, LY1 and T1
+encodings, and the generated style files use T1 as the default text encoding.
 Other encodings can be chosen using the I<-encoding> option
 (see L</"COMMAND-LINE OPTIONS"> below).
 
@@ -2528,11 +2528,11 @@ Add more details to the log file. Repeat this option for even more info.
 
 Generate the specified encoding(s) for the text fonts.
 Multiple encodings may be specified as a comma-separated list:
-C<-encoding=OT1,T1,LY1> (without spaces!).
+C<-encoding=OT1,LY1,T1> (without spaces!).
 The style file passes these to F<fontenc> in the specified order,
 so the I<last> one will become the default text encoding of your document.
 
-The default choice of encodings is "OT1,T1,LY1".
+The default choice of encodings is "OT1,LY1,T1".
 For each encoding, a file F<< <encoding>.enc >> (in all I<lowercase>!)
 should be somewhere where F<otftotfm> can find it. Suitable encoding files
 for OT1, T1/TS1, LY1, LGR, T2A/B/C and T3/TS3 come with B<autoinst>.
@@ -2811,7 +2811,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20191001.
+This document describes B<autoinst> version 20191021.
 
 
 =head1 RECENT CHANGES
@@ -2819,6 +2819,10 @@ This document describes B<autoinst> version 20191001.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2019-10-21>
+
+The generated F<sty> files now use T1 encoding by default.
 
 =item I<2019-10-01>
 

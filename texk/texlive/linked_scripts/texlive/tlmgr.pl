@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 52123 2019-09-19 18:18:41Z karl $
+# $Id: tlmgr.pl 52467 2019-10-20 22:10:34Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 52123 $';
-my $datrev = '$Date: 2019-09-19 20:18:41 +0200 (Thu, 19 Sep 2019) $';
+my $svnrev = '$Revision: 52467 $';
+my $datrev = '$Date: 2019-10-21 00:10:34 +0200 (Mon, 21 Oct 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7817,10 +7817,12 @@ If C<-v> has been given the revisions of the used modules are reported, too.
 
 If the C<--clean> option is not specified, this action makes a backup of
 the given packages, or all packages given C<--all>. These backups are
-saved to the value of the C<--backupdir> option, if that is an existing and
-writable directory. If C<--backupdir> is not given, the C<backupdir>
-option setting in the TLPDB is used, if present.  If both are missing,
-no backups are made.
+saved to the value of the C<--backupdir> option, if that is an existing
+and writable directory. If C<--backupdir> is not given, the C<backupdir>
+option setting in the TLPDB is used, if present. If both are missing, no
+backups are made. (The installer sets C<backupdir> to
+C<.../tlpkg/backups>, under the TL root installation directory, so it is
+usually defined; see the L</option> description for more information.)
 
 If the C<--clean> option is specified, backups are pruned (removed)
 instead of saved. The optional integer value I<N> may be specified to
@@ -8385,10 +8387,11 @@ testing installations, etc.  When disabled, the respective files are not
 downloaded at all.
 
 The options C<autobackup> and C<backupdir> determine the defaults for
-the actions C<update>, C<backup> and C<restore>.  These three actions
-need a directory in which to read or write the backups.  If
+the actions C<update>, C<backup> and C<restore>. These three actions
+need a directory in which to read or write the backups. If
 C<--backupdir> is not specified on the command line, the C<backupdir>
-option value is used (if set).
+option value is used (if set). The TL installer sets C<backupdir> to
+C<.../tlpkg/backups>, under the TL root installation directory.
 
 The C<autobackup> option (de)activates automatic generation of backups.
 Its value is an integer.  If the C<autobackup> value is C<-1>, no
@@ -9052,8 +9055,8 @@ installation with the server's idea of what is available:
 =item B<--backupdir> I<directory>
 
 These two options control the creation of backups of packages I<before>
-updating; that is, backup of packages as currently installed.  If
-neither options is given, no backup will made. If C<--backupdir> is
+updating; that is, backing up packages as currently installed.  If
+neither option is given, no backup will made. If C<--backupdir> is
 given and specifies a writable directory then a backup will be made in
 that location. If only C<--backup> is given, then a backup will be made
 to the directory previously set via the L</option> action (see
@@ -9835,9 +9838,9 @@ If xz is available (either from the system or TL) and working, use that.
   
 =back
 
-lz4 and gzip are much faster in creating tlmgr's local backups.
-The unconditional use of xz for the tlnet containers is unaffected,
-to minimize download sizes.
+lz4 and gzip are faster in creating tlmgr's local backups, hence they
+are preferred. The unconditional use of xz for the tlnet containers is
+unaffected, to minimize download sizes.
 
 =item C<TEXLIVE_DOWNLOADER>
 
@@ -9908,7 +9911,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 52123 2019-09-19 18:18:41Z karl $
+$Id: tlmgr.pl 52467 2019-10-20 22:10:34Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
