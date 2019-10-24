@@ -10,21 +10,21 @@ TEXINPUTS=$srcdir/ptexdir/tests:.; export TEXINPUTS
 
 # check consistency between runtime terminal and log
 ./ptex -ini -interaction batchmode -jobname pver1-log pver1.tex >pver1-term.log || exit 1
-sed -nE 's/^This is ([-A-Za-z]+), Version [^-]+-([^ ]+) (.*)/\1 \2/p' \
+sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
   pver1-term.log >pver1-term_ed.log || exit 1
-sed -nE 's/^This is ([-A-Za-z]+), Version [^-]+-([^ ]+) (.*)/\1 \2/p' \
+sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
   pver1-log.log >pver1-log_ed.log || exit 1
 diff pver1-term_ed.log pver1-log_ed.log || exit 2
 
 # check consistency between runtime and version output
 ./ptex -version >pver2-self.log || exit 1
-sed -nE '1 s/^([-A-Za-z]+) [^-]+-([^ ]+) (.*)/\1 \2/p' \
+sed -n '1 s/^\([-A-Za-z]*\) [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
   pver2-self.log >pver2-self_ed.log || exit 1
 diff pver1-term_ed.log pver2-self_ed.log || exit 4
 
 # check consistency between version output and version primitives
 ./ptex -ini -interaction batchmode -jobname pver2-prim pver2.tex || exit 1
-sed -nE 's/^Engine ([-A-Za-z]+) ([^ ]+) (.*)/\1 \2/p' \
+sed -n 's/^Engine \([-A-Za-z]*\) \([^ ]*\) \(.*\)/\1 \2/p' \
   pver2-prim.log >pver2-prim_ed.log || exit 1
 diff pver2-self_ed.log pver2-prim_ed.log || exit 8
 
