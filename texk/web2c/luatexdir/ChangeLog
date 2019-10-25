@@ -1,3 +1,7 @@
+2019-10-25 Luigi Scarso <luigi.scarso@gmail.com>
+    * Also support {oeps.foo} filenames in openin/out
+
+
 2019-10-22 Luigi Scarso <luigi.scarso@gmail.com>
     *  *** DROPPED  "page_objnum_provider" callback , replaced with "page_order_index" ***
 
