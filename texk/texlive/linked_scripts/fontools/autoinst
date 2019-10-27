@@ -37,12 +37,10 @@ use Cwd ();
 use File::Path ();
 use File::Spec ();
 use Getopt::Long ();
-use IPC::Open3 ();
 use Pod::Usage ();
 use POSIX ();
-use Scalar::Util ();
 
-my $VERSION = '20191021';
+my $VERSION = '20191027';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -98,7 +96,7 @@ for my $full (keys %ABBREV) {
     1.  We install all fonts using a "series" name that is the concatenation
         of whatever the font designer has chosen to call the weight and width
         (but in all *lower*case).
-    2.  We add "ssub" rules to the .fd files that map the standard NFSS codes
+    2.  We add "alias" rules to the .fd files that map the standard NFSS codes
         to actual fonts.
 
     In step 1, we follow NFSS in leaving out any occurrence of
@@ -836,7 +834,7 @@ END_WARNING_MULTIPLE_FAMILIES
         Name:       $font->{name}
         Family:     $font->{family}
         Weight:     $font->{weight} ($font->{weight_class})
-        Width:      $font->{width}
+        Width:      $font->{width} ($font->{width_class})
         Shape:      $font->{shape} @{[ $font->{is_smallcaps}
                                             ? '(smallcaps)' : '' ]}
         Size:       $font->{minsize}-$font->{maxsize}
@@ -931,23 +929,15 @@ sub make_commands {
         print "[INFO]      Generating fonts ";
         for my $command (@commands) {
             print '.';
-            my ($child_in, $child_out, $child_err);
-            my $pid = IPC::Open3::open3(
-                $child_in, $child_out, $child_err, $command
-            );
-            close $child_in;
-            waitpid($pid, 0);
-
-            if ($?) {
-                $child_out = Scalar::Util::openhandle($child_out);
-                my $out = $child_out ? do { local $/; <$child_out> } : "";
-                $child_err = Scalar::Util::openhandle($child_err);
-                my $err = $child_err ? do { local $/; <$child_err> } : "";
-                my $msg = "\n$command\n\n$out\n$err\n";
-                warn $msg;
-                print {$ARGV{logfile}} $msg;
-                $oops = 1;
-            }
+            open my $otftotfm, '-|', "$command 2>&1"
+                or die "could not fork(): $!";
+            my $msgs = do { local $/; <$otftotfm> };
+            close $otftotfm
+                or do {
+                    warn "\n$command\n\n$msgs\n";
+                    print {$ARGV{logfile}} "\n$command\n\n$msgs\n";
+                    $oops = 1;
+                };
         }
         print "\n";
         $| = 0;
@@ -1057,7 +1047,7 @@ my $USAGE =<<'END_USAGE';
 Usage: autoinst [options] font[s]
 
 Possible options:
-    -encoding=ENC[,ENC]*    Specify text encoding(s) (default: OT1,LY1,T1)
+    -encoding=ENC[,ENC]*    Specify text encoding(s) (default: OT1,T1,LY1)
 
     -(no)lining             Toggle creation of lining digits
     -(no)oldstyle           Toggle creation of oldstyle digits
@@ -1113,7 +1103,7 @@ END_USAGE
 
 # Default values for the command-line arguments
 %ARGV = (
-    encoding        => 'OT1,LY1,T1',
+    encoding        => 'OT1,T1,LY1',
     textcomp        => '2',     # 0 = no, 1 = yes, 2 = ('T1' ? yes : no)
     lining          => '1',     # 0 = no, 1 = yes
     oldstyle        => '1',     # 0 = no, 1 = yes
@@ -1293,6 +1283,14 @@ sub parse_options {
         $ARGV{target} = $localtarget;
         $ARGV{updmap} = 0;
     }
+    elsif ($ARGV{target}) {
+        $ARGV{updmap} = 0;
+        warn <<"END_WARNING_TARGET_UPDMAP";
+[WARNING]   The '-target' option may interfere with kpathsea and updmap;
+            automatic calling of updmap has been disabled.
+            Please call updmap manually.
+END_WARNING_TARGET_UPDMAP
+    }
     elsif (!$ARGV{target}) {
         my $kpsepath = eval {
             qx( kpsewhich -expand-var='\$TEXMFLOCAL:\$TEXMFHOME' );
@@ -1334,10 +1332,8 @@ END_WARNING_DUMPING_FILES
         warn <<"END_WARNING_SPACES_IN_PATHS";
 [WARNING]   The pathname of your target directory contains spaces:
                 "$ARGV{target}"
-
-            I'll do my best to work around this. Fingers crossed!
-            If you do experience any problems, try re-running autoinst
-            with a target directory without spaces in its name.
+            If you experience any problems, try re-running autoinst
+            on a target directory without spaces in its name.
 END_WARNING_SPACES_IN_PATHS
     }
 
@@ -1414,7 +1410,6 @@ sub parse_basicinfo {
     # clean up family name (it's used in LaTeX command names)
     $data{family}    =~ s/\A(?: Adobe | DTL | FF | ITC | LT | MT)//xms;
     $data{family}    =~ s/(?: LT | MT)(?: Std | Pro )\z//xms;
-    $data{family}    =~ s/(?<= Kievit ) OT//xms;
     $data{family}    =~ s/ Std \z//xms;
     $data{family}    =~ s/(\d)/$DIGITS[$1]/xmsge;
     $data{family}    =~ s/[^A-Za-z]+//xmsg;
@@ -1424,7 +1419,7 @@ sub parse_basicinfo {
     my $fullinfo = lc "$data{subfamily} | $data{fullname}";
 
     # We need to be careful when parsing the font info; in particular
-    # we must parse 'UltraCondensed' as 'Regular' weight
+    # we must parse strings like 'UltraCondensed' as 'Regular' weight
     # and 'UltraCondensed' width, not as 'Ultra' weight and 'Condensed' width.
     # The following rules should prevent accidents:
     # 1.  Search for matching widths before matching weights
@@ -1493,8 +1488,12 @@ sub parse_basicinfo {
         }
 
         $shapes = join '|', mqrs( qw(sc smallcaps) );
-        if ( $info->{family} =~ m/(.+?) (${shapes}) \z/xmsi ) {
+        if ( $info->{family} =~ m/(.+?) ( -? ${shapes}) \z/xmsi ) {
             $info->{family}       = $1;
+            $info->{is_smallcaps} = 1;
+        }
+        if ( $info->{name} =~ m/(.+?) ( -? ${shapes}) \z/xmsi ) {
+            $info->{name}         = $1;
             $info->{is_smallcaps} = 1;
         }
     }
@@ -1800,7 +1799,7 @@ END_STY_HEADER
 
     my $enc = join ',', grep { $_ ne 'OT1' } @{$ARGV{encoding}};
 
-    print {$STY} "\\RequirePackage[$enc]{fontenc}\n" if $enc;
+    print {$STY} "\\RequirePackage{fontenc}\n" if $enc;
     print {$STY} "\\RequirePackage{textcomp}\n" if $seen{TS1};
 
     print {$STY} <<'END_STY_FONTAXES_START';
@@ -2003,6 +2002,14 @@ sub write_fdfile {
 \\ProvidesFile{${enc}${fam}-${sty}.fd}
     [$TODAY (autoinst)  Font definitions for ${enc}/${fam}-${sty}.]
 
+\\ifcsname s\@fct\@alias\\endcsname\\else
+\\gdef\\s\@fct\@alias{\\sub\@sfcnt\\\@font\@aliasinfo}
+\\gdef\\\@font\@aliasinfo#1{%
+    \\\@font\@info{Font\\space shape\\space `\\curr\@fontshape'\\space will
+        \\space be\\space aliased\\MessageBreak to\\space `\\mandatory\@arg'}%
+}
+\\fi
+
 \\expandafter\\ifx\\csname ${fam}\@scale\\endcsname\\relax
     \\let\\${fam}\@\@scale\\\@empty
 \\else
@@ -2047,7 +2054,7 @@ END_SSUB_SHAPE
 
     print {$FD} <<"END_COMMENT";
 %
-%  Extra 'ssub' rules to map the standard NFSS codes to our fancy names
+%  Extra 'alias' rules to map the standard NFSS codes to our fancy names
 %
 END_COMMENT
     my %seen;
@@ -2067,7 +2074,7 @@ END_COMMENT
                         for my $shape ( keys %{$data->{$series}} ) {
                             print {$FD} <<"END_SSUB_SERIES";
 \\DeclareFontShape{$enc}{${fam}-${sty}}{$nfssseries}{$shape}{
-      <-> ssub * ${fam}-${sty}/${series}/${shape}
+      <-> alias * ${fam}-${sty}/${series}/${shape}
 }{}
 
 END_SSUB_SERIES
@@ -2415,9 +2422,12 @@ Also these commands are built on top of F<fontaxes>, so if that package
 cannot be found, you're limited to using the lower-level commands from
 standard NFSS (C<\fontfamily>, C<\fontseries>, C<\fontshape> etc.).
 
+Since version 2019-10-27, the generated style file no longer explicitly
+chooses a text encoding, so LaTeX will by default use OT1.
+Use the F<fontenc> package to change the text encoding.
+
 By default, B<autoinst> generates text fonts with OT1, LY1 and T1
-encodings, and the generated style files use T1 as the default text encoding.
-Other encodings can be chosen using the I<-encoding> option
+encodings; other encodings can be chosen using the I<-encoding> option
 (see L</"COMMAND-LINE OPTIONS"> below).
 
 
@@ -2528,11 +2538,9 @@ Add more details to the log file. Repeat this option for even more info.
 
 Generate the specified encoding(s) for the text fonts.
 Multiple encodings may be specified as a comma-separated list:
-C<-encoding=OT1,LY1,T1> (without spaces!).
-The style file passes these to F<fontenc> in the specified order,
-so the I<last> one will become the default text encoding of your document.
+C<-encoding=OT1,T1,LY1> (without spaces!).
 
-The default choice of encodings is "OT1,LY1,T1".
+The default choice of encodings is "OT1,T1,LY1".
 For each encoding, a file F<< <encoding>.enc >> (in all I<lowercase>!)
 should be somewhere where F<otftotfm> can find it. Suitable encoding files
 for OT1, T1/TS1, LY1, LGR, T2A/B/C and T3/TS3 come with B<autoinst>.
@@ -2736,6 +2744,13 @@ It's then up to the user to move the generated files to a better location
 and update all relevant databases
 (usually by calling F<texhash> and F<updmap>).
 
+I<WARNING:> using this option may interfere with F<kpathsea> and F<updmap>
+(especially when the chosen directory is outside the standard TEXMF trees),
+so using I<-target> will disable the automatic call to F<updmap>
+(as if I<-noupdmap> had been given).
+It is up to the user to manually update all databases (i.e., by calling
+F<texhash> and F<updmap> or similar).
+
 =item B<-vendor>=I<VENDOR>
 
 =item B<-typeface>=I<TYPEFACE>
@@ -2811,7 +2826,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20191021.
+This document describes B<autoinst> version 20191027.
 
 
 =head1 RECENT CHANGES
@@ -2820,9 +2835,15 @@ This document describes B<autoinst> version 20191021.
 
 =over 12
 
-=item I<2019-10-21>
+=item I<2019-10-27>
 
-The generated F<sty> files now use T1 encoding by default.
+The mapping in F<fd> files between font series and standard NFSS attributes
+now uses the new I<alias> function instead of I<ssub> (based on code by
+Frank Mittelbach). The generated F<sty> files no longer change
+the default text encoding.
+The way F<otftotfm> is called was changed to work around a Perl/Windows bug;
+the old way might cause the process to hang.
+Using I<-target> now automatically activates I<-noupdmap>.
 
 =item I<2019-10-01>
 
