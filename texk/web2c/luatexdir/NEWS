@@ -7,6 +7,7 @@ First release of luahbtex / luajithbtex,
 luatex / luajittex with harfbuzz.
 Small bug fixes, code clean up and a couple of new primitives
 to match eTeX.
+A new callcback lua.getcodepage()  for diagnostic purposes.
 *** DROPPED the   "page_objnum_provider" callback, replaced with "page_order_index". ***
 See ChangeLog and the manual.
 

@@ -1,3 +1,7 @@
+2019-10-28 Luigi Scarso <luigi.scarso@gmail.com>
+    * New callback lua.getcodepage()  for diagnostic purposes.
+
+
 2019-10-25 Luigi Scarso <luigi.scarso@gmail.com>
     * Also support {oeps.foo} filenames in openin/out
 
