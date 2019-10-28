@@ -142,7 +142,6 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ucd.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-warning.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-fallback-shape.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-aat-layout.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-aat-map.$(OBJEXT) \
@@ -243,8 +242,7 @@ am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -798,7 +796,6 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-unicode.cc \
 	@HARFBUZZ_TREE@/src/hb-unicode-emoji-table.hh \
 	@HARFBUZZ_TREE@/src/hb-vector.hh @HARFBUZZ_TREE@/src/hb-utf.hh \
-	@HARFBUZZ_TREE@/src/hb-warning.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-json.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-text.hh \
 	@HARFBUZZ_TREE@/src/hb-fallback-shape.cc \
@@ -874,6 +871,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-var-avar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-fvar-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var-gvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-hvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-mvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-vorg-table.hh \
@@ -1036,9 +1034,6 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@HARFBUZZ_TREE@/src/hb-warning.$(OBJEXT):  \
-	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-fallback-shape.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1189,7 +1184,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1833,7 +1827,6 @@ distclean: distclean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po
-	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -1933,7 +1926,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po
-	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-warning.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

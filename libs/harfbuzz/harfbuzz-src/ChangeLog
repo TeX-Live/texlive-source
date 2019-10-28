@@ -1,3 +1,831 @@
+commit ce11df1b5b8e49712bef249de19bc4768f3a691c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 28 14:45:31 2019 -0700
+
+    2.6.3
+
+ NEWS             | 8 ++++++++
+ configure.ac     | 2 +-
+ src/hb-font.cc   | 2 +-
+ src/hb-version.h | 4 ++--
+ 4 files changed, 12 insertions(+), 4 deletions(-)
+
+commit 5a59de2b983ed7a1c639ea3e4d23c341134cd6d5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 28 14:02:47 2019 -0700
+
+    Actually add +hb_font_get_nominal_glyphs()
+    
+    New API:
+    +hb_font_get_nominal_glyphs()
+
+ src/hb-font.cc | 23 +++++++++++++++++++++++
+ src/hb-font.h  |  8 ++++++++
+ 2 files changed, 31 insertions(+)
+
+commit 03028a5fe512978a8f8e2396001cf8e425b44f72
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 28 13:46:56 2019 -0700
+
+    Revert "Don't include codepoint 0 in the results of collect_unicodes."
+    
+    This reverts commit 14ad96ffbf77c33d8d33d2686d17c2375381989e.
+    
+    This was wrong.  My bad!
+    
+    https://github.com/harfbuzz/harfbuzz/issues/2031
+
+ src/hb-ot-cmap-table.hh | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+commit 2714dc31b8d0ffe3c043935dd7619be0dd7b7635
+Merge: aca63902 14ad96ff
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 28 13:01:34 2019 -0700
+
+    Merge pull request #2032 from googlefonts/collect_unicodes
+    
+    Don't include codepoint 0 in the results of collect_unicodes.
+
+commit 14ad96ffbf77c33d8d33d2686d17c2375381989e
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Oct 28 12:56:04 2019 -0700
+
+    Don't include codepoint 0 in the results of collect_unicodes.
+    It is always assumed to be the notdef glyph.
+
+ src/hb-ot-cmap-table.hh | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit aca63902814748b36bf6939421cfa95eed3a1ca7
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 22 00:06:46 2019 +0330
+
+    [gpos] Don't move pointer when match_glyph_data is not set
+
+ src/hb-ot-layout-gsubgpos.hh | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit defe9b6da018bc85750c999454c51fde0cadb9b2
+Author: Qunxin Liu <qxliu@google.com>
+Date:   Fri Oct 25 10:07:26 2019 -0700
+
+    crash fix : Heap-buffer-overflow READ 2
+    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18513
+
+ src/hb-ot-layout-gpos-table.hh                            |  12 ++++++------
+ ...z-testcase-minimized-hb-subset-fuzzer-5677906231033856 | Bin 0 -> 938 bytes
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+commit b2fcca6e14afc8085cc1c2491b2d7c780dad1450
+Author: Qunxin Liu <qxliu@google.com>
+Date:   Thu Oct 24 15:15:26 2019 -0700
+
+     fuzzer crash fix
+     https://oss-fuzz.com/testcase-detail/5643107869917184
+
+ src/hb-ot-layout-gsubgpos.hh                             |  11 +++++++----
+ ...-testcase-minimized-hb-subset-fuzzer-5643107869917184 | Bin 0 -> 3232 bytes
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+commit 9815ca0338b47c6ea4e82f2fbd39d70e3456aca1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Oct 24 21:05:38 2019 +0330
+
+    [ci] Use custom subset fuzzer timeout for failing sanitizer bots
+
+ .circleci/config.yml                    | 8 ++++----
+ test/fuzzing/run-shape-fuzzer-tests.py  | 3 ++-
+ test/fuzzing/run-subset-fuzzer-tests.py | 3 ++-
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
+commit b03b62cb304279195569180061cde745e0c9880a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Oct 23 12:18:21 2019 +0330
+
+    [ci] Add HB_NO_MT on non HB_TINY no-build-system builds
+
+ .circleci/config.yml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 5e489670e15329f5eced16e5a76145c6149a265f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 22 15:03:47 2019 -0700
+
+    Remove hb-warning.cc
+    
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/2005
+
+ src/Makefile.sources |  1 -
+ src/harfbuzz.cc      |  1 -
+ src/hb-atomic.hh     | 16 +++++-----------
+ src/hb-mutex.hh      | 25 ++++++-------------------
+ src/hb-warning.cc    | 37 -------------------------------------
+ 5 files changed, 11 insertions(+), 69 deletions(-)
+
+commit 05bcdb39d8648c49f7984c404aee096f2ad1d655
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Oct 21 16:10:06 2019 -0700
+
+    Add a specialization of array_t:hash for hb_bytes_t and hb_ubytes_t.
+
+ src/hb-array.hh              | 34 ++++++++++++++++++++++++----------
+ src/hb-ot-layout-gsubgpos.hh |  2 --
+ 2 files changed, 24 insertions(+), 12 deletions(-)
+
+commit 95ab110cd9a6083a854e538211618b2733aba643
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Oct 21 13:15:46 2019 -0700
+
+    Optimize intersects_array to fix fuzzer timeout.
+
+ src/hb-ot-layout-gsubgpos.hh                           |  10 +++++-----
+ ...estcase-minimized-hb-subset-fuzzer-5763024094232576 | Bin 0 -> 125681 bytes
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+commit be5cdcdfa21a2d956fc8c445452a78e77ede95fb
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Oct 22 11:55:04 2019 -0700
+
+    Store the hash value of a key in item_t in hb_map to reduce the number of hash computations.
+
+ src/hb-map.hh | 70 ++++++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 40 insertions(+), 30 deletions(-)
+
+commit b33a0d628e5e76992fdd02fd4178906137e6153c
+Author: Qunxin Liu <qxliu@google.com>
+Date:   Mon Oct 21 13:24:52 2019 -0700
+
+    fuzzer crash fix: Null-dereference WRITE
+    https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=18363
+
+ src/hb-ot-layout-common.hh                                |   4 +++-
+ ...z-testcase-minimized-hb-subset-fuzzer-5659903036751872 | Bin 0 -> 781 bytes
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+commit cf414e361a99decd9c1710f1012236bffd067878
+Author: Garret Rieger <grieger@google.com>
+Date:   Fri Sep 27 09:55:17 2019 -0700
+
+    Added profiling instructions to TESTING.md
+
+ TESTING.md | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+commit 1f0a9d9be979de01527c05f4dbe6fbc62799597c
+Author: Qunxin Liu <qxliu@google.com>
+Date:   Tue Sep 17 11:10:08 2019 -0700
+
+    [subset] GPOS Lookup Type 2: PairPos
+
+ src/hb-ot-layout-gpos-table.hh                     | 131 ++++++++++++++++++++-
+ test/subset/data/Makefile.am                       |   1 +
+ test/subset/data/Makefile.sources                  |   1 +
+ ...s2_1_font7.keep-layout-retain-gids.21,23,25.otf | Bin 0 -> 1764 bytes
+ ...gpos2_1_font7.keep-layout-retain-gids.21,23.otf | Bin 0 -> 1632 bytes
+ ...eep-layout-retain-gids.retain-all-codepoint.otf | Bin 0 -> 3688 bytes
+ .../gpos2_1_font7.keep-layout.21,23,25.otf         | Bin 0 -> 1428 bytes
+ .../gpos2_1_font7.keep-layout.21,23.otf            | Bin 0 -> 1308 bytes
+ ...s2_1_font7.keep-layout.retain-all-codepoint.otf | Bin 0 -> 3688 bytes
+ ...s2_2_font5.keep-layout-retain-gids.21,23,25.otf | Bin 0 -> 1776 bytes
+ ...gpos2_2_font5.keep-layout-retain-gids.21,23.otf | Bin 0 -> 1644 bytes
+ ...eep-layout-retain-gids.retain-all-codepoint.otf | Bin 0 -> 3684 bytes
+ .../gpos2_2_font5.keep-layout.21,23,25.otf         | Bin 0 -> 1440 bytes
+ .../gpos2_2_font5.keep-layout.21,23.otf            | Bin 0 -> 1320 bytes
+ ...s2_2_font5.keep-layout.retain-all-codepoint.otf | Bin 0 -> 3684 bytes
+ test/subset/data/fonts/gpos2_1_font7.otf           | Bin 0 -> 4584 bytes
+ test/subset/data/fonts/gpos2_2_font5.otf           | Bin 0 -> 4580 bytes
+ test/subset/data/tests/layout.gpos2.tests          |  12 ++
+ 18 files changed, 139 insertions(+), 6 deletions(-)
+
+commit e766783152b91fb20baf0c657586628fd7959b1b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 21 22:17:06 2019 +0330
+
+    [fuzz] Add https://crbug.com/oss-fuzz/17898 testcase
+
+ ...sterfuzz-testcase-hb-subset-fuzzer-5717414645334016 | Bin 0 -> 310324 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit b66094ada0ae7e69d5d08ee8423554629eabccaf
+Author: Qunxin Liu <qxliu@google.com>
+Date:   Mon Sep 30 16:19:18 2019 -0700
+
+    [subset] GSUB Lookup Type 6: ChainContextSubst
+
+ src/hb-ot-layout-common.hh                         | 260 ++++++++++++++-------
+ src/hb-ot-layout-gsubgpos.hh                       | 218 ++++++++++++++++-
+ test/subset/data/Makefile.am                       |   1 +
+ test/subset/data/Makefile.sources                  |   1 +
+ ...ules_f1.keep-layout-retain-gids.30,31,32,33.otf | Bin 0 -> 2380 bytes
+ ...eep-layout-retain-gids.retain-all-codepoint.otf | Bin 0 -> 3748 bytes
+ ...ultiple_subrules_f1.keep-layout.30,31,32,33.otf | Bin 0 -> 1916 bytes
+ ...ubrules_f1.keep-layout.retain-all-codepoint.otf | Bin 0 -> 3748 bytes
+ ...ules_f1.keep-layout-retain-gids.30,31,32,33.otf | Bin 0 -> 2408 bytes
+ ...eep-layout-retain-gids.retain-all-codepoint.otf | Bin 0 -> 3780 bytes
+ ...ultiple_subrules_f1.keep-layout.30,31,32,33.otf | Bin 0 -> 1944 bytes
+ ...ubrules_f1.keep-layout.retain-all-codepoint.otf | Bin 0 -> 3780 bytes
+ ...mple_f2.keep-layout-retain-gids.30,31,32,33.otf | Bin 0 -> 2368 bytes
+ ...eep-layout-retain-gids.retain-all-codepoint.otf | Bin 0 -> 3716 bytes
+ ...chaining3_simple_f2.keep-layout.30,31,32,33.otf | Bin 0 -> 1904 bytes
+ ..._simple_f2.keep-layout.retain-all-codepoint.otf | Bin 0 -> 3716 bytes
+ .../fonts/gsub_chaining1_multiple_subrules_f1.otf  | Bin 0 -> 4700 bytes
+ .../fonts/gsub_chaining2_multiple_subrules_f1.otf  | Bin 0 -> 4780 bytes
+ .../subset/data/fonts/gsub_chaining3_simple_f2.otf | Bin 0 -> 4668 bytes
+ test/subset/data/tests/layout.gsub6.tests          |  12 +
+ 20 files changed, 405 insertions(+), 87 deletions(-)
+
+commit eff91bbb4b1e6f4cc8401b1915d5ddad64e053bb
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Oct 16 16:58:57 2019 -0700
+
+    Add missing pop() for the failure case of script subsetting.
+
+ src/hb-ot-layout-common.hh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit eab191fd9c851cb7881163ddd5e11a2ebc58cef4
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Oct 2 14:28:53 2019 -0700
+
+    Rewrite hash and == function for hb_array_t as a plain loop.
+    
+    Profling showed that the current implementation were accounting for nearly all processing time in some cases. These implementations look to be about 10x faster.
+
+ src/hb-array.hh | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+commit 831daf4c76aed87d229b1edfb59a0a37caa8e581
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Oct 1 17:46:27 2019 -0700
+
+    Enforce HB_MAX_LANGSYS limit during layout subsetting.
+
+ src/hb-ot-layout-common.hh                         |  68 +++++++++++++--------
+ ...ase-minimized-hb-subset-fuzzer-5721073428987904 | Bin 0 -> 349561 bytes
+ 2 files changed, 41 insertions(+), 27 deletions(-)
+
+commit 9871461bce9a1557807f69615300e5df4f6ae322
+Author: Garret Rieger <grieger@google.com>
+Date:   Tue Oct 1 16:29:24 2019 -0700
+
+    Enforce HB_MAX_SCRIPTS during subsetting of the script table.
+
+ src/hb-ot-layout-common.hh | 46 +++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 41 insertions(+), 5 deletions(-)
+
+commit 029775bcbd0a25ee1cdb6c0653a2ce189774490a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 9 11:00:09 2019 +0700
+
+    [buffer] Minor; improve HB_NO_BUFFER_MESSAGE
+
+ src/hb-buffer.cc | 2 ++
+ src/hb-buffer.hh | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+commit 9a68e6b901967da14a5da5acb535c944794627b8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Oct 16 13:28:15 2019 +0330
+
+    [doc] minor
+    
+    Addresses https://github.com/harfbuzz/harfbuzz/pull/2013/files#r335196908
+
+ src/hb-common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b0b8551afc2ff86d027fdb380210601cb465af41
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 12 21:12:19 2019 +0330
+
+    [glyf] Use range_checker_t in composite_iter_t
+
+ src/hb-ot-glyf-table.hh     | 12 +++++++-----
+ src/hb-ot-var-gvar-table.hh | 19 +++++++++----------
+ 2 files changed, 16 insertions(+), 15 deletions(-)
+
+commit 06e35ce052388e7ce079c0250db62428ae0c5bc8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 12 15:16:31 2019 +0330
+
+    [glyf] minor
+
+ src/hb-ot-glyf-table.hh | 128 +++++++++++++++++++++++++-----------------------
+ 1 file changed, 67 insertions(+), 61 deletions(-)
+
+commit d13bb4bd94a6ba8cdd4a03d40d8089a8f8b3a7ec
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 12 12:13:57 2019 +0330
+
+    [glyf] other cleanups
+
+ src/hb-ot-glyf-table.hh | 338 +++++++++++++++++++++++-------------------------
+ 1 file changed, 160 insertions(+), 178 deletions(-)
+
+commit e7aa8c5d22b034f3d7bcf187a63cdec27732fa8a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 12 11:25:32 2019 +0330
+
+    [glyf] Introduce glyf::Glyph, a hb_bytes_t/GlyphHeader pair
+
+ src/hb-ot-glyf-table.hh | 177 +++++++++++++++++++++++++-----------------------
+ 1 file changed, 91 insertions(+), 86 deletions(-)
+
+commit 546ffc9faf869b4971765e9a4fd232cfe0eecaea
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 12 09:51:57 2019 +0330
+
+    [glyf] minor
+
+ src/hb-ot-glyf-table.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 4299ea266e03b64db4e8a132983fed9fd0a967ee
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 12 09:51:27 2019 +0330
+
+    [glyf] Move get_contour_points to GlyphHeader
+
+ src/hb-ot-glyf-table.hh | 260 ++++++++++++++++++++++++++----------------------
+ 1 file changed, 141 insertions(+), 119 deletions(-)
+
+commit b918cd8c76a6333e43b9be23178afc9e74e17024
+Author: Ben Wagner <bungeman@chromium.org>
+Date:   Thu Oct 10 15:30:48 2019 -0400
+
+    Document hb_feature_t.
+    
+    This documents hb_feature_t. This is motivated mostly by the ambiguity
+    of the units for 'start' and 'end' (clusters) and whether they are
+    inclusive or exclusive. This also documents that for lookup type 3 the
+    value is the one based index into the alternates and that in a list of
+    features later feature values override previous feature values with the
+    same tag.
+
+ src/hb-common.h | 15 +++++++++++++++
+ src/hb-shape.cc |  4 +++-
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+commit e637a4b3de2fb8bdbc1b82e822f4a6cc579e794b
+Merge: 670fec23 e4464f44
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Oct 11 10:28:58 2019 +0700
+
+    Merge pull request #2012 from harfbuzz/lepcha-oo
+    
+    Reorder U+1C29 LEPCHA VOWEL SIGN OO
+
+commit 670fec231d31bf7417de590efd3485f337a7330f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Oct 10 09:21:08 2019 +0330
+
+    Minor, add a zero length tolerant memset, hb_memset
+
+ src/hb-algs.hh   | 10 +++++++++-
+ src/hb-buffer.cc |  3 +--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+commit e4464f4484009b4efe7144570384d836cb6bbac8
+Author: David Corbett <corbett.dav@husky.neu.edu>
+Date:   Wed Oct 9 20:55:52 2019 -0400
+
+    Reorder U+1C29 LEPCHA VOWEL SIGN OO
+
+ src/gen-use-table.py                 | 3 +++
+ src/hb-ot-shape-complex-use-table.cc | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+commit e17e7443007fc0debc4a26e5cf37d5d76c747fbf
+Author: Garret Rieger <grieger@google.com>
+Date:   Wed Oct 9 11:45:42 2019 -0700
+
+    Convert existing uses of serialize_append in gsub subsetting to use subset_offset_array.
+
+ src/hb-ot-layout-gsub-table.hh | 44 +++---------------------------------------
+ 1 file changed, 3 insertions(+), 41 deletions(-)
+
+commit 36f18cecbbaf8635a2179a827242ca99d5283666
+Author: Garret Rieger <grieger@google.com>
+Date:   Mon Oct 7 14:02:31 2019 -0700
+
+    Add subset_offset_array helper function which simplifies subsetting offset arrays during stream operations.
+
+ src/hb-ot-layout-common.hh     | 54 ++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-layout-gsub-table.hh | 15 +-----------
+ 2 files changed, 55 insertions(+), 14 deletions(-)
+
+commit dc45f225212da7b8eca0ddcb3c9cd66e65983605
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 23:27:37 2019 +0330
+
+    [ot-metrics] Don't use mixed scaled and not scaled for generating extents
+
+ src/hb-ot-cff1-table.cc        | 4 ++--
+ src/hb-ot-cff2-table.cc        | 4 ++--
+ src/hb-ot-color-sbix-table.hh  | 7 +++++++
+ src/hb-ot-glyf-table.hh        | 6 +++---
+ test/api/test-ot-extents-cff.c | 6 +++---
+ 5 files changed, 17 insertions(+), 10 deletions(-)
+
+commit b068e25f8f89d9b07963dddd5d5e14f61539556f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 16:29:15 2019 +0330
+
+    [glyf] Address Behdad's reviews
+    
+    Addresses https://github.com/harfbuzz/harfbuzz/pull/1999#issuecomment-539298559
+    * Don't check against Null pool
+    * Remove cryptic _tt suffix
+
+ src/hb-ot-font.cc       |  4 ++--
+ src/hb-ot-hmtx-table.hh | 16 ++++++++--------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 6961766db2c53ea813079c61e4d996234ae8be4f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 16:26:48 2019 +0330
+
+    [glyf] fix scaling direction
+
+ src/hb-ot-glyf-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0527fda4c75e4354198df79275526d4726a3aacc
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 16:19:39 2019 +0330
+
+    minor
+
+ src/hb-subset-cff-common.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit b2628f1a3e3a6875dcdf7cb89f5b10a4ae76e6f9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 15:09:09 2019 +0330
+
+    [glyf] Move glyph bytes drop hints logic to GlyphHeader
+
+ src/hb-ot-glyf-table.hh | 92 ++++++++++++++++++++-----------------------------
+ 1 file changed, 37 insertions(+), 55 deletions(-)
+
+commit 1fb9c3b6463fdee9eb4dac697beab4d3d7a5fdcf
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 13:50:16 2019 +0330
+
+    [glyf] Implement depth limit for add_gid_and_children
+
+ src/hb-ot-glyf-table.hh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit be0eddd41896824cb093024c2b4929b612ee1fae
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 13:46:55 2019 +0330
+
+    [glyf] Move add_gid_and_children to glyf table
+
+ src/hb-ot-glyf-table.hh | 14 ++++++++++++++
+ src/hb-subset-plan.cc   | 19 +------------------
+ 2 files changed, 15 insertions(+), 18 deletions(-)
+
+commit c7621cf21115aa563ee4fb9d2fcb601984848494
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 13:24:26 2019 +0330
+
+    Minor, replace hb_set_add with private API
+
+ src/hb-ot-map.cc            |  2 +-
+ src/hb-subset-cff-common.hh |  2 +-
+ src/hb-subset-cff1.cc       |  2 +-
+ src/hb-subset-cff2.cc       |  2 +-
+ src/hb-subset-plan.cc       | 10 +++++-----
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+
+commit ad86806dcb702b25fac6a3364cf0f85e1b8f4b2a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 12:14:14 2019 +0330
+
+    [glyf] Move subset related methods inside GlyphHeader
+
+ src/hb-ot-glyf-table.hh | 428 ++++++++++++++++++++++++------------------------
+ src/hb-subset-plan.cc   |   4 +-
+ 2 files changed, 214 insertions(+), 218 deletions(-)
+
+commit 7839e23558344f206175b5a798149e0f04f38266
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 7 11:14:26 2019 +0330
+
+    [glyf] minor
+
+ src/hb-ot-glyf-table.hh | 38 +++++++++++++++-----------------------
+ 1 file changed, 15 insertions(+), 23 deletions(-)
+
+commit cbefbb2439c1a2f4c20877e611f8986b3933234e
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 7 10:15:18 2019 +0330
+
+    [glyf] Move padding removal logic to GlyphHeader
+
+ src/hb-ot-glyf-table.hh | 219 +++++++++++++++++++++++-------------------------
+ 1 file changed, 105 insertions(+), 114 deletions(-)
+
+commit 1ab8f9aa7a182fa078f6c6a5a78ef95686b1ac54
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 7 08:24:12 2019 +0330
+
+    [glyf] minor
+
+ src/hb-ot-glyf-table.hh | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+commit 13fb5612ad545b419ca217f031864dde1b71c43f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 6 23:24:06 2019 +0330
+
+    [glyf] Aggregate get_offsets uses
+
+ src/hb-ot-glyf-table.hh | 29 +++++++----------------------
+ 1 file changed, 7 insertions(+), 22 deletions(-)
+
+commit 5179b96958f2db71c315c1d8c224bab87e2f4ae8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 8 11:09:12 2019 +0330
+
+    [cff] minor on number_t
+
+ src/hb-cff-interp-common.hh | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+commit d73cdcf3612ae6114a0f828e0f667d447ed1a964
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 6 18:09:14 2019 +0330
+
+    [ot-font] Apply font scaling before turning to int
+
+ src/hb-ot-cff1-table.cc        | 12 ++++-----
+ src/hb-ot-cff1-table.hh        |  2 +-
+ src/hb-ot-cff2-table.cc        |  8 +++---
+ src/hb-ot-color-cbdt-table.hh  | 14 +++++-----
+ src/hb-ot-color-sbix-table.hh  |  8 +++---
+ src/hb-ot-font.cc              | 12 +++------
+ src/hb-ot-glyf-table.hh        | 58 ++++++++++++++++++++----------------------
+ src/hb-ot-hmtx-table.hh        |  2 +-
+ src/hb-ot-var-hvar-table.hh    |  5 ++--
+ test/api/test-ot-extents-cff.c | 20 +++++++--------
+ 10 files changed, 66 insertions(+), 75 deletions(-)
+
+commit f2339964b713815c8e0e33699bf34ee24db12215
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 6 16:41:52 2019 +0330
+
+    [glyf] minor, remove GlyphHeader::simple_* helpers
+
+ src/hb-ot-glyf-table.hh | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
+
+commit 2d7ca6a76a754a42ec09a66319ac3e4ab5efc618
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 6 16:31:29 2019 +0330
+
+    [glyf] Move get_instruction_length inside GlyphHeader struct
+
+ src/hb-ot-glyf-table.hh | 153 ++++++++++++++++++++++++++----------------------
+ 1 file changed, 84 insertions(+), 69 deletions(-)
+
+commit 50aef4d7f80b6c8a19481ad3d0fa89c7c7f222c2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 6 14:00:07 2019 +0330
+
+    [glyf] cleanup
+
+ src/hb-ot-glyf-table.hh | 128 +++++++++++++++++++++---------------------------
+ 1 file changed, 55 insertions(+), 73 deletions(-)
+
+commit ee3f4630d70099c42fd9c84796b29a236f6135b6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 6 13:56:35 2019 +0330
+
+    [glyf] Remove get_composite_iter and refactor bytes_for_glyph for shape uses
+
+ src/hb-ot-glyf-table.hh | 42 ++++++++++++++++--------------------------
+ src/hb-subset-plan.cc   |  2 +-
+ 2 files changed, 17 insertions(+), 27 deletions(-)
+
+commit 8378ab96e28fa34f154583850ff1c2c672a4310d
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 6 13:49:45 2019 +0330
+
+    [glyf] Rewrite composite iterator to new iterators convention
+
+ src/hb-ot-glyf-table.hh | 201 ++++++++++++++++++++----------------------------
+ src/hb-subset-plan.cc   |  10 +--
+ 2 files changed, 85 insertions(+), 126 deletions(-)
+
+commit b7684fa9f42dffa6bd81acfade163123b30800b8
+Merge: 79ec65ae 21c80d95
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 6 09:00:48 2019 +0330
+
+    Merge pull request #1999 from ebraminio/glyf-var
+    
+    Implement gvar table and variable glyf
+
+commit 21c80d955f69c1242c77e0ec7ccd852360dd54dd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 5 23:58:52 2019 +0330
+
+    [gvar] minor
+
+ src/hb-ot-var-gvar-table.hh | 43 +++++++++++++++++++++----------------------
+ 1 file changed, 21 insertions(+), 22 deletions(-)
+
+commit 5752863640cf4292dec313edebb57aecd47496f3
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 5 23:51:50 2019 +0330
+
+    [glyf][gvar] Make HB_NO_VAR buildable
+
+ src/hb-ot-font.cc       | 2 ++
+ src/hb-ot-glyf-table.hh | 6 ++++++
+ src/hb-ot-hmtx-table.hh | 8 ++++++++
+ 3 files changed, 16 insertions(+)
+
+commit 8e33510343d151afe49730f3a0b263a2853822b8
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 4 01:11:03 2019 +0330
+
+    [gvar] minor
+
+ src/hb-ot-var-gvar-table.hh | 132 ++++++++++++++++++++++----------------------
+ 1 file changed, 66 insertions(+), 66 deletions(-)
+
+commit b3afa8164460d63031a80d399200bcaa769c0fa1
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 4 00:32:04 2019 +0330
+
+    [glyf] Use common convention of other tables access, format
+
+ src/hb-ot-face-table-list.hh |  1 +
+ src/hb-ot-glyf-table.hh      | 65 +++++++++++++++++++-------------------------
+ 2 files changed, 29 insertions(+), 37 deletions(-)
+
+commit 88bd342c0ff686daad88bb6b4f2968bbd8b01a24
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Oct 3 22:45:37 2019 +0330
+
+    [glyf] minor
+
+ src/hb-ot-glyf-table.hh     | 247 +++++++++++++++++++++++---------------------
+ src/hb-ot-var-gvar-table.hh |  54 +++++-----
+ 2 files changed, 155 insertions(+), 146 deletions(-)
+
+commit ee7610181cee5bbc0b5dc291228fbe032097bde4
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Oct 3 15:59:45 2019 +0330
+
+    [hmtx] Use more conventional internal API style
+
+ src/Makefile.sources    |  1 -
+ src/harfbuzz.cc         |  1 -
+ src/hb-ot-font.cc       | 12 ++++++++++++
+ src/hb-ot-hmtx-table.cc | 42 ------------------------------------------
+ src/hb-ot-hmtx-table.hh | 18 ++++++++++--------
+ 5 files changed, 22 insertions(+), 52 deletions(-)
+
+commit c9577a630fd5bd08482ee7b94bc03c91fcf366c7
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Oct 3 15:48:35 2019 +0330
+
+    [hmtx] Use more optimal way to access glyf table
+
+ src/hb-ot-hmtx-table.cc | 20 ++++----------------
+ src/hb-ot-hmtx-table.hh |  4 ++--
+ 2 files changed, 6 insertions(+), 18 deletions(-)
+
+commit b9ff43c162e8f61cff8e48d3dcbf7c1fe263d625
+Author: Michiharu Ariza <ariza@typekit.com>
+Date:   Tue Oct 1 16:13:40 2019 +0330
+
+    Implement gvar table and variable glyf
+    
+    Split from Ariza's "[subset] TrueType/CFF2 variable font" work on #1594
+
+ src/Makefile.sources                               |   2 +
+ src/harfbuzz.cc                                    |   1 +
+ src/hb-ot-font.cc                                  |   4 +-
+ src/hb-ot-glyf-table.hh                            | 618 ++++++++++++++---
+ src/hb-ot-hmtx-table.cc                            |  54 ++
+ src/hb-ot-hmtx-table.hh                            |  33 +-
+ src/hb-ot-var-gvar-table.hh                        | 734 +++++++++++++++++++++
+ test/api/Makefile.am                               |   1 +
+ .../SourceSansVariable-Roman-nohvar-41,C1.ttf      | Bin 0 -> 4696 bytes
+ test/api/fonts/SourceSansVariable-Roman.anchor.ttf | Bin 0 -> 4708 bytes
+ .../api/fonts/SourceSansVariable-Roman.modcomp.ttf | Bin 0 -> 3252 bytes
+ .../fonts/SourceSerifVariable-Roman-VVAR.abc.ttf   | Bin 0 -> 5632 bytes
+ test/api/test-ot-metrics-tt-var.c                  | 250 +++++++
+ 13 files changed, 1588 insertions(+), 109 deletions(-)
+
+commit 79ec65ae10f959aeddaa1e39eba5226c604a8c87
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Oct 3 14:27:51 2019 +0330
+
+    [ot-font] Use var vmtx side bearing in calculating v-origin
+
+ src/hb-ot-font.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3fd555be543a3e9bf9fee509327dbbc9a7b51cdb
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Oct 3 13:02:41 2019 +0330
+
+    [hmtx] Prepare to fix and minor fixes
+
+ src/hb-ot-hmtx-table.hh     | 41 ++++++++++++++++-------------------------
+ src/hb-ot-var-hvar-table.hh |  9 +++++----
+ 2 files changed, 21 insertions(+), 29 deletions(-)
+
+commit 6d09b5a8a0f6ed7a2a92d91ac3d027bd54c452be
+Author: Michiharu Ariza <ariza@typekit.com>
+Date:   Thu Oct 3 12:01:39 2019 +0330
+
+    Implement hmtx/vmtx metrics read from hvar/vvar
+
+ src/hb-ot-hmtx-table.hh     | 46 ++++++++++++++++++++++++++++++++++++++++-----
+ src/hb-ot-var-hvar-table.hh | 19 +++++++++++++------
+ 2 files changed, 54 insertions(+), 11 deletions(-)
+
+commit cfafee52e4ff0441a33530847533f1b1f6019006
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Oct 2 09:22:46 2019 +0330
+
+    Add Repology badges by @luzpaz
+    
+    fixes #2002
+    to track downstream packaging of harfbuzz
+
+ README.md | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit 2d7221a0e3552b1d902629d4ab6c0ce22db983a6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 1 15:05:02 2019 +0330
+
+    [cff] minor
+
+ src/hb-ot-cff-common.hh | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit 0558413f27e9a18188c0e3d55f5ee57ea42b1548
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 1 13:49:55 2019 +0330
+
+    Minor, tweak spaces
+
+ src/hb-aat-layout-kerx-table.hh    |  4 ++--
+ src/hb-array.hh                    |  4 ++--
+ src/hb-buffer.hh                   |  3 +--
+ src/hb-font.h                      |  4 ++--
+ src/hb-font.hh                     |  8 ++++----
+ src/hb-open-file.hh                |  2 +-
+ src/hb-open-type.hh                | 10 +++++-----
+ src/hb-ot-cff-common.hh            |  4 ++--
+ src/hb-ot-cff1-table.cc            | 11 +++++------
+ src/hb-ot-cff1-table.hh            | 24 ++++++++++++------------
+ src/hb-ot-cff2-table.cc            |  4 ++--
+ src/hb-ot-cmap-table.hh            |  6 ++----
+ src/hb-ot-color-cbdt-table.hh      |  2 +-
+ src/hb-ot-color-cpal-table.hh      |  2 +-
+ src/hb-ot-kern-table.hh            | 12 ++++++------
+ src/hb-ot-layout-common.hh         |  2 +-
+ src/hb-ot-layout-gpos-table.hh     | 14 +++++++-------
+ src/hb-ot-os2-table.hh             |  4 ++--
+ src/hb-ot-shape-complex-myanmar.cc |  4 ++--
+ src/hb-subset-cff-common.hh        |  2 +-
+ src/hb-unicode.cc                  |  8 ++++----
+ src/hb-unicode.h                   | 20 ++++++++++----------
+ src/hb-vector.hh                   |  4 ++--
+ src/main.cc                        | 37 +++++++++++++++++++++++--------------
+ src/test-iter.cc                   |  2 +-
+ 25 files changed, 101 insertions(+), 96 deletions(-)
+
+commit 51b720f686adf45bc1b6db3aa76b7d2e62ad1304
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 1 12:06:22 2019 +0330
+
+    Fix -Wsizeof-array-div clang warning
+
+ src/hb-ot-shape-complex-arabic-fallback.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit faace9437ea09d89ef5f5f9c9fc3ce0dbc672142
+Merge: e48ef080 f0dd724c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 30 13:34:05 2019 -0700
+
+    Merge pull request #1807 from harfbuzz/subset-varstore
+    
+    VariationStore serializer
+
 commit e48ef0804ad7e4abd35ff3646fa6ed10ad32f1ef
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Sep 30 12:39:06 2019 -0700
@@ -2250,6 +3078,13 @@ Date:   Sat Jul 27 14:56:18 2019 +0430
  src/hb-aat-layout-lcar-table.hh | 16 ++++++++++------
  1 file changed, 10 insertions(+), 6 deletions(-)
 
+commit f0dd724c1e091f42f289efbebd2c50e830e59c6e
+Merge: 68ac767e 4e1da6bb
+Author: blueshade7 <ariza@typekit.com>
+Date:   Mon Jul 29 14:21:05 2019 -0700
+
+    Merge branch 'master' into subset-varstore
+
 commit 4e1da6bb612b0c6386ab143dbb4ca19ff25bc2ba
 Author: Ebrahim Byagowi <ebrahim@gnu.org>
 Date:   Mon Jul 29 22:03:56 2019 +0430
@@ -3050,6 +3885,16 @@ Date:   Wed Jun 26 13:23:24 2019 -0700
  util/options.cc                                    |  44 ++++++++++++---------
  14 files changed, 48 insertions(+), 24 deletions(-)
 
+commit 68ac767e430c4dfe4c556b2c4f962cc3dfc5d3e4
+Author: blueshade7 <ariza@typekit.com>
+Date:   Fri Jul 12 23:02:29 2019 -0700
+
+    added skip(), get_next_value() to inc_bimap to subset VarStore with retain-gids
+
+ src/hb-bimap.hh            | 25 ++++++++++++++++++++++++-
+ src/hb-ot-layout-common.hh | 14 +++++++-------
+ 2 files changed, 31 insertions(+), 8 deletions(-)
+
 commit 4730b350b7ee90338caf3e962343af42412ce3df
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Jul 12 15:38:35 2019 -0700
@@ -3454,6 +4299,15 @@ Date:   Tue Jul 2 14:18:38 2019 -0700
  src/Makefile.am      | 23 +++++++++++++++--------
  src/gen-ucd-table.py |  8 +++++---
  2 files changed, 20 insertions(+), 11 deletions(-)
+
+commit 634390ecaf600176245e3354edd8dfdcb7f64cc5
+Author: blueshade7 <ariza@typekit.com>
+Date:   Mon Jul 1 18:52:57 2019 -0700
+
+    added VariationStore serializer to be used by HVAR/VVAR subsetters
+
+ src/hb-ot-layout-common.hh | 165 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 163 insertions(+), 2 deletions(-)
 
 commit 040b261deeed8924edcb087e27a61392d1f85023
 Author: Michiharu Ariza <ariza@typekit.com>
