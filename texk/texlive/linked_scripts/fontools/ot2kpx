@@ -38,7 +38,7 @@ use Getopt::Long ();
 use List::Util @List::Util::EXPORT_OK;
 use Pod::Usage;
 
-my $VERSION = "20191027";
+my $VERSION = "20191029";
 
 our ($NUM_GLYPHS, $UNITS_PER_EM, %kern);
 
@@ -858,7 +858,7 @@ See the GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<ot2kpx> version 20191027.
+This document describes B<ot2kpx> version 20191029.
 
 
 =head1 RECENT CHANGES
