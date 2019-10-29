@@ -1,3 +1,130 @@
+commit 3a74ee528255cc027d84b204a87b5c25e47bff79
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 29 12:27:03 2019 -0700
+
+    2.6.4
+
+ NEWS             | 7 +++++++
+ configure.ac     | 2 +-
+ src/hb-version.h | 4 ++--
+ 3 files changed, 10 insertions(+), 3 deletions(-)
+
+commit 3958f6fb2378d83dd5107d62a8464187c93707b0
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 29 22:36:50 2019 +0330
+
+    Add in_range in hb_bytes_t to merge range_checker_t with it
+
+ src/hb-array.hh             |  9 +++++++++
+ src/hb-ot-glyf-table.hh     | 28 ++++++++++++--------------
+ src/hb-ot-var-gvar-table.hh | 49 +++++++++++++++------------------------------
+ 3 files changed, 38 insertions(+), 48 deletions(-)
+
+commit 7915c5d6fa3efac99df08a54d4437eca0b780033
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 29 22:55:34 2019 +0330
+
+    [ci] Check the recipt introduce in 7152ac3
+
+ .circleci/config.yml | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit aa3831e295540083350c640d4a630f53e70d822f
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 29 21:37:07 2019 +0330
+
+    [glyf] Use contour_bounds_t::empty to simplify get_extents logic
+
+ src/hb-ot-glyf-table.hh | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
+
+commit d59ae5836d1349b885db980cbb741da33caebfde
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 29 21:30:04 2019 +0330
+
+    [glyf] Refactor contour_bounds_t use to make its fields protected
+
+ src/hb-ot-glyf-table.hh | 47 ++++++++++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 21 deletions(-)
+
+commit 773ee8041e8905bfb06c1a71d2b4fc99110b3dc6
+Merge: 47b4074d 0efbda7a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 29 10:58:56 2019 -0700
+
+    Merge pull request #2038 from ebraminio/glyf-contour
+    
+    Remove contour_point_t so we won't need to zero its unused var
+
+commit 0efbda7a40742cbdf30d5a85061ffb6a0a55bcc0
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 29 21:03:26 2019 +0330
+
+    Remove contour_point_t so we won't need to zero its unused var
+
+ src/hb-ot-glyf-table.hh | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
+
+commit 47b4074d5f98d71d2983470602eff9b93f102af4
+Merge: dd8a8460 dd288840
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 29 03:16:34 2019 -0700
+
+    Merge pull request #2034 from khaledhosny/cmap-notdef
+    
+    [cmap] Check GID before adding ranges in format 4 & 12
+
+commit dd8a8460377ca54207877ea9da96931175dbb15f
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Tue Oct 29 09:20:41 2019 +0000
+
+    Use proper y-scale factor for height value
+
+ src/hb-ot-cff1-table.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7152ac3fcfe8a599aa0d20f8d02ef38c69111231
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 28 17:12:55 2019 -0700
+
+    Fix build
+    
+    $ make CPPFLAGS="-DHB_TINY -DHB_NO_OT_FONT" libharfbuzz-subset.la
+
+ src/hb-subset-plan.cc | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit dd288840d6f87acd13b99b71408dcdb35a2be9cb
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Tue Oct 29 01:45:49 2019 +0200
+
+    [cmap] Check GID before adding ranges in format 4 & 12
+    
+    Fixes https://github.com/harfbuzz/harfbuzz/issues/2031
+
+ src/hb-ot-cmap-table.hh          |  32 ++++++++++++++++++++++++--------
+ test/api/fonts/cmunrm.otf        | Bin 0 -> 330492 bytes
+ test/api/test-collect-unicodes.c |  22 ++++++++++++++++++++++
+ 3 files changed, 46 insertions(+), 8 deletions(-)
+
+commit fd71c045b46380281ba8a7e351fac7248938c74c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 28 17:06:53 2019 -0700
+
+    Hopefully fix up previous commit and bots
+
+ src/hb.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e832dc4c642f604d2cbb8e6b2f0b8d37151936f1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Oct 28 17:02:40 2019 -0700
+
+    [config] Make HB_NO_ERRNO work with systems defining errno as a macro
+
+ src/hb.hh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
 commit ce11df1b5b8e49712bef249de19bc4768f3a691c
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Oct 28 14:45:31 2019 -0700
