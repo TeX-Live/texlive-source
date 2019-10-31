@@ -1095,9 +1095,10 @@ sub backup_and_remove_package {
   }
   if ($opts{"backup"}) {
     $tlp->make_container($::progs{'compressor'}, $localtlpdb->root,
-                         $opts{"backupdir"}, 
-                         "${pkg}.r" . $tlp->revision,
-                         $tlp->relocated);
+                         destdir => $opts{"backupdir"}, 
+                         containername => "${pkg}.r" . $tlp->revision,
+                         relative => $tlp->relocated,
+                         user => 1);
     if ($autobackup) {
       # in case we do auto backups we remove older backups
       clear_old_backups($pkg, $opts{"backupdir"}, $autobackup);
@@ -2164,7 +2165,9 @@ sub action_backup {
         $tlp->revision . ".tar.$compressorextension\n");
       if (!$opts{"dry-run"}) {
         $tlp->make_container($::progs{'compressor'}, $localtlpdb->root,
-                             $opts{"backupdir"}, "${pkg}.r" . $tlp->revision);
+                             destdir => $opts{"backupdir"},
+                             containername => "${pkg}.r" . $tlp->revision,
+                             user => 1);
       }
     }
   }
@@ -2280,7 +2283,10 @@ sub write_w32_updater {
     push (@rst_info, "$pkg ^($oldrev^)");
     next if ($opts{"dry-run"});
     # create backup; make_container expects file name in a format: some-name.r[0-9]+
-    my ($size, undef, $fullname) = $localtlp->make_container("tar", $root, $temp, "__BACKUP_$pkg.r$oldrev");
+    my ($size, undef, $fullname) = $localtlp->make_container("tar", $root,
+                                                destdir => $temp,
+                                                containername => "__BACKUP_$pkg.r$oldrev",
+                                                user => 1);
     if ($size <= 0) {
       tlwarn("$prg: Creation of backup container of $pkg failed.\n");
       return 1; # backup failed? abort
@@ -3200,8 +3206,10 @@ sub action_update {
       if ($opts{"backup"} && !$opts{"dry-run"}) {
         my $compressorextension = $Compressors{$::progs{'compressor'}}{'extension'};
         $tlp->make_container($::progs{'compressor'}, $root,
-                             $opts{"backupdir"}, "${pkg}.r" . $tlp->revision,
-                             $tlp->relocated);
+                             destdir => $opts{"backupdir"},
+                             containername => "${pkg}.r" . $tlp->revision,
+                             relative => $tlp->relocated,
+                             user => 1);
         $unwind_package =
             "$opts{'backupdir'}/${pkg}.r" . $tlp->revision . ".tar.$compressorextension";
         
@@ -3239,9 +3247,11 @@ sub action_update {
         # no backup was made, so let us create a temporary .tar file
         # of the package
         my $tlp = $localtlpdb->get_package($pkg);
-        my ($s, undef, $fullname) = $tlp->make_container("tar", $root, $temp,
-                                      "__BACKUP_${pkg}.r" . $tlp->revision,
-                                      $tlp->relocated);
+        my ($s, undef, $fullname) = $tlp->make_container("tar", $root,
+                                      destdir => $temp,
+                                      containername => "__BACKUP_${pkg}.r" . $tlp->revision,
+                                      relative => $tlp->relocated,
+                                      user => 1);
         if ($s <= 0) {
           tlwarn("\n$prg: Creation of backup container of $pkg failed.\n");
           tlwarn("$prg: Continuing to update other packages, please retry...\n");
