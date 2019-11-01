@@ -5,6 +5,9 @@
 kpse.set_program_name("luatex")
 require("lapp-mk4")
 -- require("ebookutils")
+logging = require "make4ht-logging"
+if os.type == "windows" then logging.use_colors = false end
+local log = logging.new("tex4ebook")
 local ebookutils = require "mkutils"
 local mkparams = require "mkparams"
 local mk_config = require "make4ht-config"
@@ -24,39 +27,37 @@ local output_formats={epub=true,mobi=true,epub3=true}
 local executor=nil
 local tidy = false
 local include_fonts = false
+
+-- message used for option parsing by the mkparams lib
 local arg_message = [[
 tex4ebook - ebook generation support for LaTeX
 Usage:
 tex4ebook [switches] filename ["tex4ht.sty op."] ["tex4ht op."] ["t4ht op"] ["latex op"]
+  -a,--loglevel (default status) Set log level.
+                possible values: debug, info, status, warning, error, fatal
   -c,--config (default xhtml) Custom config file
   -d,--output-dir (default nil)  Output directory
   -e,--build-file (default nil)  If build file is different than `filename`.mk4
   -f,--format (default epub) Output format. Supported values: epub, epub3, mobi
   -h,--help  Display help message
+  -j,--jobname (default nil)  Set the jobname
   -l,--lua  Use lualatex for document compilation
   -m,--mode (default default) Switch which can be used in the makefile
   -r,--resolution (default 167)
   -s,--shell-escape  Enable shell escape in htlatex run
   -t,--tidy Run html tidy on html output. May result in wrong spacing!
-  -v,--version  Display version number
   -x,--xetex Use xelatex for document compilation
+  -v,--version  Display version number
+  ]]
   
-  <filename> (string) Input file name
+-- options for the template used by mkparams to generate the help message
+local mkparams_parameters = {
+  progname = "tex4ebook",
+  issue_tracker = "https://github.com/michal-h21/tex4ebook/issues"
+}
 
-Positional optional argumens:
-  ["tex4ht.sty op."]  Additional parameters for tex4ht.sty
-  ["tex4ht op."]      Options for tex4ht command
-  ["t4ht op"]         Options for t4ht command
-  ["latex op"]        Additional options for LaTeX
-
-Documentation:                    https://tug.org/applications/tex4ht/mn.html
-Issue tracker for tex4ht bugs:    https://puszcza.gnu.org.ua/bugs/?group=tex4ht
-Issue tracker for tex4ebook bugs: https://github.com/michal-h21/tex4ebook/issues
-]]
-
--- This option is no longer available, all files must be unicode
--- -u,--utf8 
-local args=lapp(arg_message)
+-- process the command line arguments
+local args = mkparams.get_args(mkparams_parameters, arg_message)
 
 if args["filename"] == nil and args["version"] == false then
   print(arg_message) 
@@ -66,7 +67,7 @@ else
 end
 
 if args.version then
-  print "tex4ebook v0.2c"
+  print "tex4ebook v0.3"
   return 
 end
 
@@ -85,11 +86,6 @@ if args["include-fonts"] then
   include_fonts = true
 end
 
--- local mathml = ","
--- if args["mathml"] then
---   -- mathml = ",mathml,"
---   tex4ht_sty_par = tex4ht_sty_par .. ",mathml"
--- end
 local   mode = args.mode or "default"
 
 if os.type=="unix" then
@@ -109,25 +105,7 @@ if args.tidy then
 else
   tidy = false
 end
--- Env file copying 
 
---[[if not ebookutils.file_exists("tex4ht.env") then
-local env_file = kpse.find_file("epub2.env")
-ebookutils.copy_filter(env_file,"tex4ht.env",function(s) return s % {
-move = move_cmd,
-copy = copy_cmd,
-resolution = args.resolution
-} end)
-end--]]
-
---print ("nazdar ${world}" % {world="svete"})
---print(args.config)
-
-
-local input = ebookutils.remove_extension(input_file)
-local config=ebookutils.remove_extension(args.config)
--- local tex4ht_sty_par = config ..tex4ht_sty_par..","+args.format
---local sty_args =  args[2] and ", " .. args[2]  or ""
 local sty_args = ""
 if args[2] then 
   sty_args = "," .. args[2]
@@ -138,12 +116,17 @@ local t4ht_par = t4ht_par + args[4]
 local latex_par = latex_par + args[5]
 
 -- use default parameter processing from make4ht
--- add some needed args
+-- add some needed args (is it useful anymore?)
 args.filename=input_file
+
+-- let make4ht handle the common options
 local params = mkparams.process_args(args)
+local input = params.input
+log:status("Conversion started")
+log:status("Input file: ".. params.tex_file)
 
 
-local output_format = params.output_format --args.format
+local output_format = params.output_format 
 -- use epub as default output_format
 output_format = output_format or "epub"
 local extensions = ebookutils.load_extensions(params.extensions, output_format)
@@ -152,7 +135,7 @@ local oldparams = {
   -- htlatex=latex_cmd
   -- ,input=input 
   -- ,tex_file = tex_file
-  format= output_format
+  format = output_format
   -- ,latex_par=latex_par
   -- ,tex4ht_sty_par=tex4ht_sty_par
   -- ,tex4ht_par=tex4ht_par
@@ -162,7 +145,6 @@ local oldparams = {
   ,tidy = tidy
   ,include_fonts = include_fonts
   ,resolution=args.resolution
-  ,mathml=mathml
   ,packages="\\RequirePackage{tex4ebook}"
 }  
 
@@ -175,25 +157,15 @@ params.tex4ht_sty_par=params.tex4ht_sty_par .. ",charset=utf-8,"..output_format
 params.tex4ht_par= " -cmozhtf -utf8" .. params.tex4ht_par
 
 
-if output_formats[output_format] then
-  executor=require("exec_"..output_format)
-  params=executor.prepare(params)
-  if #extensions > 0 then
-    params = ebookutils.extensions_prepare_parameters(extensions,params)
-  end
-else
-  print("Unknown output format: "..output_format)
-  return
-end
 
 -- find tex4ebook configuration file
 local configname = "tex4ebook"
 local conffile = mk_config.find_config(configname) or mk_config.find_xdg_config(configname)
 if conffile then
-  print("Using configuration file: " .. conffile)
+  log:info("Using configuration file: " .. conffile)
   ebookutils.load_config(params, conffile)
 else
-  print "No conffile"
+  log:info "No conffile"
 end
 
 local build_file = input.. ".mk4"
@@ -205,8 +177,20 @@ end
 local config_file = ebookutils.load_config(params, build_file)
 
 params["config_file"] = config_file
+
+
+if output_formats[output_format] then
+  executor=require("exec_"..output_format)
+  params=executor.prepare(params)
+  if #extensions > 0 then
+    params = ebookutils.extensions_prepare_parameters(extensions,params)
+  end
+else
+  log:error("Unknown output format: "..output_format)
+  return
+end
 --config_file.Make:run()
-print("${htlatex} ${input} \"${tex4ht_sty_par}\" \"${tex4ht_par}\" \"${t4ht_par}\" \"${latex_par}\"" % params)
+-- print("${htlatex} ${input} \"${tex4ht_sty_par}\" \"${tex4ht_par}\" \"${t4ht_par}\" \"${latex_par}\"" % params)
 if #extensions > 0 then
   config_file.Make = ebookutils.extensions_modify_build(extensions, config_file.Make)
 end
@@ -214,4 +198,5 @@ end
 executor.run(input,params)
 executor.writeContainer()
 executor.clean()
+log:status("Conversion finished")
 --print(args[1])
