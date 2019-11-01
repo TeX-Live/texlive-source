@@ -3,8 +3,10 @@
 -- This package is subject of LPPL license, version 1.3 
 kpse.set_program_name("luatex")
 
-
-
+-- logging should be globally available
+logging = require "make4ht-logging"
+if os.type == "windows" then logging.use_colors = false end
+local log = logging.new("make4ht")
 local make4ht = require("make4ht-lib")
 local lapp    = require("lapp-mk4")
 local mkutils = require("mkutils")
@@ -13,7 +15,7 @@ local mk_config = require("make4ht-config")
 -- args string is here just as sample, we dont pass it it to 
 -- mkparams.get_args() so default args string is used
 local args    =  [[
-make4ht - build system for tex4ht
+make4ht - build system for TeX4ht
 Usage:
 make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 -c,--config (default xhtml) Custom config file
@@ -27,12 +29,15 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 
 -- set version number. the template should be replaced by the
 -- actual version number by the build script
-local version = "v0.2g"
+local version = "v0.3"
 mkparams.version_number = version
 
 local args = mkparams.get_args()
 
 local parameters = mkparams.process_args(args) 
+
+log:status("Conversion started")
+log:status("Input file: " .. parameters.tex_file)
 
 local mode = parameters.mode
 local build_file = parameters.build_file 
@@ -48,7 +53,7 @@ if allowed_output_formats[ output_format ] then
 else
   -- load html5 as default output format
   if output_format then 
-    print("Cannot load output format: ".. output_format)
+    log:warning("Cannot load output format: ".. output_format)
   end
   formatter = mkutils.load_output_format("html5")
 end
@@ -56,7 +61,7 @@ end
 local configname = "make4ht"
 local conffile = mk_config.find_config(configname) or mk_config.find_xdg_config(configname)
 if conffile then
-  print("Using configuration file: " .. conffile)
+  log:info("Using configuration file: " .. conffile)
   mkutils.load_config(parameters, conffile)
 end
 local extensions = formatter.prepare_extensions(parameters.extensions)
@@ -96,15 +101,26 @@ end
 -- allow output formats to modify the build process at the end
 make = formatter.modify_build(make) or make
 
+make:match("tmp$", function(filename,params) 
+  -- remove the temporary tex file created when the input comes from the standard input
+  if params.is_tmp_file then
+    log:info("removing temp file", params.tex_file)
+    os.remove(params.tex_file)
+  end
+  -- prevent copying of the temporary file to the outdir
+  return false,"tmp file" end
+)
 
-make:match("tmp$", function() return false,"tmp file" end)
 make:match(".*",function(filename,par)
 	local outdir =  '' --par["outdir"] and par["outdir"] .."/" or ''
 	if par['outdir'] ~= "" then outdir = par['outdir'] .. '/' end
-	print("outdir: "..outdir)
+	log:info("outdir: "..outdir)
 	local outfilename = outdir .. filename
 	mkutils.copy(filename,outfilename)
 	return true
 end)
 
 make:run()
+
+log:status("Conversion finished")
+

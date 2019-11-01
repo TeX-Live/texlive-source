@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 52467 2019-10-20 22:10:34Z karl $
+# $Id: tlmgr.pl 52585 2019-10-31 18:26:15Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 52467 $';
-my $datrev = '$Date: 2019-10-21 00:10:34 +0200 (Mon, 21 Oct 2019) $';
+my $svnrev = '$Revision: 52585 $';
+my $datrev = '$Date: 2019-10-31 19:26:15 +0100 (Thu, 31 Oct 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1095,10 +1095,9 @@ sub backup_and_remove_package {
   }
   if ($opts{"backup"}) {
     $tlp->make_container($::progs{'compressor'}, $localtlpdb->root,
-                         destdir => $opts{"backupdir"}, 
-                         containername => "${pkg}.r" . $tlp->revision,
-                         relative => $tlp->relocated,
-                         user => 1);
+                         $opts{"backupdir"}, 
+                         "${pkg}.r" . $tlp->revision,
+                         $tlp->relocated);
     if ($autobackup) {
       # in case we do auto backups we remove older backups
       clear_old_backups($pkg, $opts{"backupdir"}, $autobackup);
@@ -1888,7 +1887,8 @@ sub setup_backup_directory {
   # finally, if we have --backupdir, but no --backup, just enable it
   $opts{"backup"} = 1 if $opts{"backupdir"};
 
-  info("$prg: saving backups to $opts{'backupdir'}\n")
+  my $saving_verb = $opts{"dry-run"} || $opts{"list"} ? "would save" :"saving";
+  info("$prg: $saving_verb backups to $opts{'backupdir'}\n")
     if $opts{"backup"} && !$::machinereadable;
   
   return ($ret, $autobackup);
@@ -2161,18 +2161,17 @@ sub action_backup {
       # for now default to xz and allow overriding with env var
       my $compressorextension = $Compressors{$::progs{'compressor'}}{'extension'};
       my $tlp = $localtlpdb->get_package($pkg);
-      info("saving current status of $pkg to $opts{'backupdir'}/${pkg}.r" .
-        $tlp->revision . ".tar.$compressorextension\n");
+      my $saving_verb = $opts{"dry-run"} ? "would save" : "saving";
+      info("$saving_verb current status of $pkg to $opts{'backupdir'}/${pkg}.r"
+           . $tlp->revision . ".tar.$compressorextension\n");
       if (!$opts{"dry-run"}) {
         $tlp->make_container($::progs{'compressor'}, $localtlpdb->root,
-                             destdir => $opts{"backupdir"},
-                             containername => "${pkg}.r" . $tlp->revision,
-                             user => 1);
+                             $opts{"backupdir"}, "${pkg}.r" . $tlp->revision);
       }
     }
   }
   info("no action taken due to --dry-run\n") if $opts{"dry-run"};
-  # TODO_ERRORCHECKING neets checking of the above
+  # TODO_ERRORCHECKING needs checking of the above
   return ($F_OK);
 }
 
@@ -2283,10 +2282,7 @@ sub write_w32_updater {
     push (@rst_info, "$pkg ^($oldrev^)");
     next if ($opts{"dry-run"});
     # create backup; make_container expects file name in a format: some-name.r[0-9]+
-    my ($size, undef, $fullname) = $localtlp->make_container("tar", $root,
-                                                destdir => $temp,
-                                                containername => "__BACKUP_$pkg.r$oldrev",
-                                                user => 1);
+    my ($size, undef, $fullname) = $localtlp->make_container("tar", $root, $temp, "__BACKUP_$pkg.r$oldrev");
     if ($size <= 0) {
       tlwarn("$prg: Creation of backup container of $pkg failed.\n");
       return 1; # backup failed? abort
@@ -2873,7 +2869,7 @@ sub action_update {
           machine_line("-ret", $pkg, $FLAG_REVERSED_UPDATE, $rev, $mediarev, "-", "-", "-", @addargs);
       } else {
         if ($opts{"list"}) {
-          # not issueing anything if we keep a package
+          # not issuing anything if we keep a package
           upd_info($pkg, -1, $rev, $mediarevstr, "keep");
         }
       }
@@ -3206,10 +3202,8 @@ sub action_update {
       if ($opts{"backup"} && !$opts{"dry-run"}) {
         my $compressorextension = $Compressors{$::progs{'compressor'}}{'extension'};
         $tlp->make_container($::progs{'compressor'}, $root,
-                             destdir => $opts{"backupdir"},
-                             containername => "${pkg}.r" . $tlp->revision,
-                             relative => $tlp->relocated,
-                             user => 1);
+                             $opts{"backupdir"}, "${pkg}.r" . $tlp->revision,
+                             $tlp->relocated);
         $unwind_package =
             "$opts{'backupdir'}/${pkg}.r" . $tlp->revision . ".tar.$compressorextension";
         
@@ -3247,11 +3241,9 @@ sub action_update {
         # no backup was made, so let us create a temporary .tar file
         # of the package
         my $tlp = $localtlpdb->get_package($pkg);
-        my ($s, undef, $fullname) = $tlp->make_container("tar", $root,
-                                      destdir => $temp,
-                                      containername => "__BACKUP_${pkg}.r" . $tlp->revision,
-                                      relative => $tlp->relocated,
-                                      user => 1);
+        my ($s, undef, $fullname) = $tlp->make_container("tar", $root, $temp,
+                                      "__BACKUP_${pkg}.r" . $tlp->revision,
+                                      $tlp->relocated);
         if ($s <= 0) {
           tlwarn("\n$prg: Creation of backup container of $pkg failed.\n");
           tlwarn("$prg: Continuing to update other packages, please retry...\n");
@@ -9921,7 +9913,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 52467 2019-10-20 22:10:34Z karl $
+$Id: tlmgr.pl 52585 2019-10-31 18:26:15Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
