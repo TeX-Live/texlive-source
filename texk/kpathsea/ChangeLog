@@ -1,3 +1,8 @@
+2019-11-03  Karl Berry  <karl@tug.org>
+
+	* progname.c: remove nowadays-useless register declarations.
+	Mentioned by Doug McKenna.
+
 2019-10-10  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (LUAINPUTS.luahblatex{,-dev}): define a la other

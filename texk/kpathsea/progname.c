@@ -85,7 +85,7 @@
 static void
 ReadSymLink (char *fn, char *sym)
 {
-  register int n = readlink (fn, sym, BSIZE);
+  int n = readlink (fn, sym, BSIZE);
   if (n < 0) {
     perror (fn);
     exit (1);
@@ -97,10 +97,10 @@ ReadSymLink (char *fn, char *sym)
 /* Strip first component from S, and also return it in a static buffer.  */
 
 static char *
-StripFirst (register char *s)
+StripFirst (char *s)
 {
   static char buf[BSIZE];
-  register char *s1;
+  char *s1;
 
   /* Find the end of the first path element */
   for (s1 = s; *s1 && (*s1 != '/' || s1 == s); s1++)
@@ -125,10 +125,10 @@ StripFirst (register char *s)
 /* Strip last component from S, and also return it in a static buffer.  */
 
 static char *
-StripLast (register char *s)
+StripLast (char *s)
 {
   static char buf[BSIZE];
-  register char *s1;
+  char *s1;
 
   for (s1 = s + strlen (s); s1 > s && *s1 != '/'; s1--)
     ;
@@ -142,9 +142,9 @@ StripLast (register char *s)
 /* Copy first path element from B to A, removing it from B.  */
 
 static void
-CopyFirst (register char *a, char *b)
+CopyFirst (char *a, char *b)
 {
-  register int length = strlen (a);
+  int length = strlen (a);
 
    if (length > 0 && a[length - 1] != '/') {
    a[length] = '/';
