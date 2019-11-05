@@ -34,9 +34,6 @@ my $USERTEXOPTIONS = '';
 my $RUNQUIET = 0;
 my $RUNDEBUG = 0;
 my $PARSEONLY = 0;
-my $PRINTVERSION = 0;
-my $HELP = 0;
-my $VERSION = 'Version 3.0.1';
 
 # Create a hash with three keys "str", "line", "file" and returns a
 # reference to it
@@ -259,25 +256,41 @@ sub parse {
 }
 
 sub usage {
-print << 'EOT';
-chklref -- Check unused labels and bibitems
+    print << 'EOT';
+Usage: chklref [options] texfile
 
-Copyright (C) 2005-2019 Jérôme Lelong <jerome.lelong@gmail.com>
-This program comes with ABSOLUTELY NO WARRANTY;
-This is free software, and you are welcome to redistribute it under certain conditions;
-
-Usage:
-    chklref [options] texfile
+Check unused labels and bibitems in a LaTeX file
 
 Options:
-    --tex <compiler>, -t    : Specify the TeX compiler to be used. Default = pdflatex.
-    --tex-options           : List of options to pass to the TeX compiler.
-    --debug, -d             : Run in debug mode. Do not clean the generated `.chk` file.
-    --quiet, -q             : Run in quiet mode. Do not print the output of the TeX compiler.
-    --parse-only            : Do not run the LaTeX compiler but use the already existing `.chk` file. When this option is passed, the following other options are meaningless: `--tex`, `--tex-options`, `--quiet`, `--debug`.
-    --version, -v           : Print the version of this scirpt.
-    --help,h                : Print this help.
+  --tex <compiler>, -t     Specify the TeX compiler to be used. Default is `pdflatex`.
+  --tex-options            List of options to pass to the TeX compiler. It should be a quoted
+                           string of white space delimited options. Note that we always add
+                           `-interaction nonstopmode` on top of these options.
+  --debug, -d              Run in debug mode. Do not clean the generated `.chk` file.
+  --quiet, -q              Run in quiet mode. Do not print the output of the TeX compiler.
+  --parse-only             Do not run the LaTeX compiler but use the already existing `.chk` file.
+                           When this option is passed, the following other options are meaningless:
+                           `--tex`, `--tex-options`, `--quiet`, `--debug`.
+  --version, -v            Print the version of this script.
+  --help,h                 Print this help.
+
+
+Report bugs to https://github.com/jlelong/chklref. `chklref` is known not to work with `cleveref`. If you would like to contribute to `chklref`, feel free to open a PR on https://github.com/jlelong/chklref.
 EOT
+    exit(0)
+}
+
+sub version {
+    print << 'EOT';
+chklref 3.1.2
+
+Copyright 2005-2019 Jerome Lelong <jerome.lelong@gmail.com>.
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it under GPLv3.
+
+Written by Jerome Lelong <jerome.lelong@gmail.com>
+EOT
+    exit(0)
 }
 
 sub texcompile {
@@ -292,24 +305,14 @@ sub texcompile {
 
 Getopt::Long::Configure ("bundling");
 GetOptions (
-   'version|v!' => \$PRINTVERSION,
+   'version|v!' => \&version,
    'quiet|q!' => \$RUNQUIET,
    'debug|d!' => \$RUNDEBUG,
    'tex|t=s' => \$TEX,
    'texoptions=s' => \$USERTEXOPTIONS,
    'parse-only' => \$PARSEONLY,
-   'help|h' => \$HELP
+   'help|h' => \&usage
 ) || usage();
-
-if ($HELP) {
-    usage();
-    exit(0);
-}
-
-if ($PRINTVERSION) {
-    print "chklref $VERSION\n";
-    exit(0)
-}
 
 if (@ARGV != 1) {
     usage();
