@@ -4680,12 +4680,12 @@ sub action_option {
           } elsif ($what eq $TLPDBOptions{"backupdir"}->[2]) {
             info("$prg: setting option $what to $val.\n");
             if (! -d $val) {
-              info("$prg: the directory $val does not exists, it has to be created\n");
+              info("$prg: the directory $val does not exist; you must create it\n");
               info("$prg: before backups can be done automatically.\n");
             }
             $localtlpdb->option($opt, $val);
           } elsif ($what eq $TLPDBOptions{"w32_multi_user"}->[2]) {
-            # when running w32 do not allow that a non-admin users sets
+            # when running w32 do not allow that a non-admin user sets
             # this from false to true
             my $do_it = 0;
             if (win32()) {
@@ -4758,6 +4758,8 @@ sub action_option {
               return ($F_ERROR);
             }
           }
+          my $local_location = $localtlpdb->location;
+          info("$prg: updating $local_location\n");
           $localtlpdb->save;
           # now also save the TLPOBJ of 00texlive.installation
           my $tlpo = $localtlpdb->get_package("00texlive.installation");
@@ -7603,7 +7605,7 @@ between an option name and its value.
 
 Specify the package repository from which packages should be installed
 or updated, either a local directory or network location, as below. This
-overridesthe default package repository found in the installation's TeX
+overrides the default package repository found in the installation's TeX
 Live Package Database (a.k.a. the TLPDB, which is given entirely in the
 file C<tlpkg/texlive.tlpdb>).
 
