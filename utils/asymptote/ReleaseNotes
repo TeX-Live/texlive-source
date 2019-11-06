@@ -1,3 +1,20 @@
+Release Notes for Version 2.60
+
+Transparent WebGL backgrounds were fixed. A build issue involving the revision
+number was fixed. The locatefile function now returns the fully qualified
+file name. The htmlviewer uses the absolute path for all platforms;
+it is also used for displaying svg files. SVG output for embedded PNG, JPEG,
+and external vector EPS and PDF images is supported with the latex TeX
+engine and dvisvgm 2.8. The simplex solver was optimized. A pad function that
+pads a picture to a precise size in both directions was introduced.
+The xasy front end was ported to high-resolutions screens and handles Ctrl-C
+interrupts correctly. Objects can be positioned finely with the arrow keys
+while holding down the mouse button. The origin/center order and anchor names
+were fixed. A front/back detection bug in the solids module was fixed.
+The grffile package fixes issues with included file names.
+This release requires Version 1.34 of asymptote.sty (auto-generated).
+
+
 Release Notes for Version 2.59
 
 OpenGL memory allocation and transparency bugs introduced in version 2.54 were

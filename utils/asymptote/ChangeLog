@@ -1,3 +1,207 @@
+commit 87dc3554015dccce0cf446e27a703043a9c68460
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 5 17:11:42 2019 -0700
+
+    Revert "Remove obsolete MSDOS Intel GPU workaround."
+    
+    This reverts commit e47b19bb47079c8def40e5f4b5eb7946fec6a0c2.
+
+commit 08804433e46c83fc4c38ca7db92f21b9cf70fa90
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 5 11:25:39 2019 -0700
+
+    Convert POSIX filename to MSDOS filename.
+
+commit 2d54552ca95cce7eef5d2a46bd19136e76bbaa45
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 5 00:15:02 2019 -0700
+
+    Fix commit 24c7bcbc8b6e2e08938ab1fd088e922a0806251f.
+
+commit 6bdf7fc2c23fa27d67c42482d37860d41f377d92
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 4 23:22:22 2019 -0700
+
+    Allow an object to be positioned finely with the arrow keys while holding down the mouse button. Fix origin and center order. Fix anchor names.
+
+commit 4a0a2aa6e100fefc4961af95f71a018a18e07ce9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 4 23:08:54 2019 -0700
+
+    Update asymptote.sty to use grffile.
+
+commit a11ea822167aee40c23601c4d9e2391ac2571859
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 4 21:10:30 2019 -0700
+
+    Fix commit 41cc1fa54e638954177314a0add6b2d3a043257f.
+
+commit 41cc1fa54e638954177314a0add6b2d3a043257f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 4 00:21:22 2019 -0700
+
+    Use grffile to fix issues with included file names.
+
+commit 4dc96555e0f56e387d4f64d26865d1cfdcefc0fd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 3 00:09:12 2019 -0600
+
+    Fix bug #117: Wrong silhouette generated of a cylinder.
+
+commit 309c5aa4210a9d06b12b15a5bc3d2c21467827f2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 2 20:10:10 2019 -0600
+
+    Revert "Reinstate comment about using glOptions=-indirect for old graphics card drivers."
+    
+    This reverts commit 1b752422335ba3991f3e2ad0cf145e141336ccb5.
+
+commit 6a13f8a10e9fe420f153670b59b25f235cb0407c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 2 15:05:22 2019 -0600
+
+    Fix returned x array in rationalSimplex; port optimizations to simplex.
+
+commit 1b752422335ba3991f3e2ad0cf145e141336ccb5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 2 10:55:38 2019 -0600
+
+    Reinstate comment about using glOptions=-indirect for old graphics card drivers.
+
+commit 24c7bcbc8b6e2e08938ab1fd088e922a0806251f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 2 00:18:23 2019 -0600
+
+    Make locatefile return fully qualified file name; use this for viewing WebGL files.
+
+commit c7370db9723c5c5ea2d7d699184ab571d994a9c4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 31 03:11:33 2019 -0600
+
+    Fix xasy resize.
+
+commit dea5702365e018d9972aabec6b0ca1010cb0f586
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 31 02:31:44 2019 -0600
+
+    Port xasy to high-resolution screens.
+
+commit 7bf1cf2c8bd9726adb1c3e4fc063413261a4335d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 31 02:27:46 2019 -0600
+
+    Implement pad function that pads a picture to a precise size in both
+    directions.
+
+commit cbb8cd4e40fbaec31e12e14d9328d77bcdf6c557
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 29 21:18:36 2019 -0600
+
+    Support SVG output of embedded PNG, JPEG, and external vector PDF images
+    using dvisvgm 2.8.
+
+commit b4dab27669302117b1b7c04857b08eb8b13c2406
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 29 09:02:39 2019 -0600
+
+    Fix xasy handling of Ctrl-c.
+
+commit 5557453a5f8449b7f93919edcfcc988b7cd345dc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 28 16:30:01 2019 -0600
+
+    Fix basic indices in rationalSimplex.
+
+commit 874192f5ae7e9f83f87a9172c8fd1a44f70e1231
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 28 13:35:50 2019 -0600
+
+    Simplify code.
+
+commit e40690d60d02de390e8fc62828f3051e4e2fdf9d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 28 13:32:20 2019 -0600
+
+    Fix infeasible test in simplex.asy.
+
+commit e3a121b5d592616bbbd0ea6dcb72220a062fddde
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 28 13:05:01 2019 -0600
+
+    Move basic variables in rationalSimplex to column 0.
+
+commit 343f68ac12b52ae5aa33860c7ba7103f817b594c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 28 03:26:45 2019 -0600
+
+    Check for redundant basis vectors in phase1 of rationalSimplex.
+
+commit 1812df7829f5f7fcda6cdca25acedd9b97b3145d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 26 22:31:13 2019 -0600
+
+    Standardize write(rational[]) suffixes.
+
+commit 4ace4c826aab8ef389a8db8da4ede379d6d3db45
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 26 22:25:20 2019 -0600
+
+    Fix write(rational) default suffixes.
+
+commit 215baa5db338ccc96d57b37c384bbe052576f79b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 26 22:24:42 2019 -0600
+
+    Fix iterateDual(real[][],int,int[]).
+
+commit 9efff08def182ff337b0181abe0007d70f171fbf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 25 20:55:54 2019 -0600
+
+    Avoid use of test -o.
+
+commit 4abe6fcff760363c0f852b1d79a9a206518477a5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 25 19:19:55 2019 -0600
+
+    Use htmlviewer to display svg files.
+
+commit c120b2ee98ce8983ded8d0119dff3beb6bfab9f3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 24 17:19:23 2019 -0600
+
+    Fix Makefile.in.
+
+commit 06fc2f7bac97523daadf79debb6f33b979a7d4be
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 24 17:09:35 2019 -0600
+
+    Simplify Makefile.in.
+
+commit 6fe8d14817071258f36c6ac61b772a81b482296b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 24 17:09:02 2019 -0600
+
+    Update asygl.
+
+commit 743f5bc77fe6796140f613e8754ed6e1022574a2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 24 17:07:34 2019 -0600
+
+    Fix transparent background.
+
+commit 6ac68161f924e83fd2178c30cbdfd3fd05d63900
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 23 21:09:57 2019 -0600
+
+    Fix revision.cc.
+
+commit 7ae1f80cf7fb4cb5abbcc23eef8fa4e591a413fc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 19 23:42:45 2019 -0600
+
+    Increment version to 2.60.
+
 commit e47b19bb47079c8def40e5f4b5eb7946fec6a0c2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Oct 19 22:36:58 2019 -0600

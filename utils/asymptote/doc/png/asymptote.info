@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 6.5 from
 asymptote.texi.
 
-This file documents 'Asymptote', version 2.59.
+This file documents 'Asymptote', version 2.60.
 
    <http://asymptote.sourceforge.net>
 
@@ -22,7 +22,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Prev: (dir),  Up: (dir)
 Asymptote
 *********
 
-This file documents 'Asymptote', version 2.59.
+This file documents 'Asymptote', version 2.60.
 
    <http://asymptote.sourceforge.net>
 
@@ -2840,6 +2840,11 @@ File: asymptote.info,  Node: Frames and pictures,  Next: Files,  Prev: Transform
      A 'picture' may be fit to a frame with the background color pen
      'p', using the function 'bbox(p,Fill)'.
 
+     To pad a picture to a precise size in both directions, fit the
+     picture to a frame using the function
+     frame pad(picture pic=currentpicture, real xsize=pic.xsize,
+               real ysize=pic.ysize, filltype filltype=NoFill);
+
      The functions
      pair min(picture pic, user=false);
      pair max(picture pic, user=false);
@@ -4769,7 +4774,7 @@ File: asymptote.info,  Node: LaTeX usage,  Next: Base modules,  Prev: Programmin
 ***************
 
 'Asymptote' comes with a convenient 'LaTeX' style file 'asymptote.sty'
-(v1.33 or later required) that makes 'LaTeX' 'Asymptote'-aware.
+(v1.34 or later required) that makes 'LaTeX' 'Asymptote'-aware.
 Entering 'Asymptote' code directly into the 'LaTeX' source file, at the
 point where it is needed, keeps figures organized and avoids the need to
 invent new file names for each figure.  Simply add the line
@@ -8264,10 +8269,10 @@ using the '-f' option (or 'outformat' setting).
 later) from <http://dvisvgm.sourceforge.net>.  You might need to adjust
 the configuration variable 'libgs' to point to the location of your
 'Ghostscript' library 'libgs.so' (or to an empty string, depending on
-how 'dvisvgm' was configured).  Due to current limitations of 'dvisvgm',
-'graphic()' can only display SVG output (used by the xasy editor) for
-external vector EPS graphics (embedded images, PDF, PNG, and JPG formats
-are not yet supported).
+how 'dvisvgm' was configured).  The 2.8 version of 'dvisvgm' can display
+SVG output (used by the 'xasy' editor) for external vector EPS and PDF
+images included with the 'graphic()' function, in addition to (using the
+'latex' TeX engine) PNG and JPEG embedded raster images.
 
    'Asymptote' can also produce any output format supported by the
 'ImageMagick' 'convert' program (version 6.3.5 or later recommended; an
@@ -8462,7 +8467,10 @@ The arrow keys (or mouse wheel) are convenient for temporarily raising
 and lowering objects within 'xasy', allowing an object to be selected.
 Pressing the arrow keys will pan while the shift key is held and zoom
 while the control key is held.  The mouse wheel will pan while the alt
-or shift keys is held and zoom while the control key is held.
+or shift keys is held and zoom while the control key is held.  In
+translate mode, an object can be dragged coarsely with the mouse or
+positioned finely with the arrow keys while holding down the mouse
+button.
 
    Deconstruction of compound objects (such as arrows) can be prevented
 by enclosing them within the commands
@@ -8723,9 +8731,9 @@ Index
 * acosh:                                 Mathematical functions.
                                                              (line    6)
 * add:                                   Frames and pictures.
-                                                             (line  212)
+                                                             (line  217)
 * add <1>:                               Frames and pictures.
-                                                             (line  226)
+                                                             (line  231)
 * add <2>:                               three.              (line  306)
 * addViews:                              three.              (line  427)
 * adjust:                                Pens.               (line  123)
@@ -8816,7 +8824,7 @@ Index
                                                              (line    6)
 * atleast:                               Bezier curves.      (line   56)
 * attach:                                Frames and pictures.
-                                                             (line  271)
+                                                             (line  276)
 * attach <1>:                            LaTeX usage.        (line   50)
 * attach <2>:                            graph.              (line  406)
 * autoadjust:                            three.              (line  392)
@@ -9156,7 +9164,7 @@ Index
 * erase <2>:                             Frames and pictures.
                                                              (line    7)
 * erase <3>:                             Frames and pictures.
-                                                             (line  279)
+                                                             (line  284)
 * erf:                                   Mathematical functions.
                                                              (line    6)
 * erfc:                                  Mathematical functions.
@@ -9272,8 +9280,8 @@ Index
 * graph:                                 graph.              (line    6)
 * graph3:                                graph3.             (line    6)
 * graphic:                               label.              (line   78)
+* graphic <1>:                           Options.            (line  160)
 * graphical user interface:              GUI.                (line    6)
-* graphics:                              Options.            (line  160)
 * gray:                                  Pens.               (line   25)
 * grayscale:                             Pens.               (line   25)
 * Grayscale:                             palette.            (line    9)
@@ -9665,6 +9673,8 @@ Index
                                                              (line   48)
 * pack:                                  label.              (line  100)
 * packing:                               Rest arguments.     (line   30)
+* pad:                                   Frames and pictures.
+                                                             (line  186)
 * pair:                                  Figure size.        (line    6)
 * pair <1>:                              Data types.         (line   46)
 * pairs:                                 Arrays.             (line  236)
@@ -9708,7 +9718,7 @@ Index
 * picture:                               Frames and pictures.
                                                              (line   39)
 * picture alignment:                     Frames and pictures.
-                                                             (line  226)
+                                                             (line  231)
 * piecewisestraight:                     Paths and guides.   (line   92)
 * pixel:                                 three.              (line  623)
 * Pl:                                    Mathematical functions.
@@ -9732,7 +9742,7 @@ Index
 * postfix operators:                     Self & prefix operators.
                                                              (line   19)
 * postscript:                            Frames and pictures.
-                                                             (line  292)
+                                                             (line  297)
 * PostScript fonts:                      Pens.               (line  224)
 * PostScript subpath:                    Paths.              (line   23)
 * pow10:                                 Mathematical functions.
@@ -9806,7 +9816,7 @@ Index
 * resetdefaultpen:                       Pens.               (line  370)
 * rest arguments:                        Rest arguments.     (line    6)
 * restore:                               Frames and pictures.
-                                                             (line  286)
+                                                             (line  291)
 * restricted:                            Structures.         (line    6)
 * return:                                Debugger.           (line   47)
 * reverse:                               Data types.         (line  265)
@@ -9842,7 +9852,7 @@ Index
 * S:                                     Labels.             (line   18)
 * safe:                                  Options.            (line  181)
 * save:                                  Frames and pictures.
-                                                             (line  283)
+                                                             (line  288)
 * saveline:                              Files.              (line  135)
 * Scale:                                 label.              (line   45)
 * scale:                                 Pens.               (line  123)
@@ -10007,7 +10017,7 @@ Index
 * tensorshade:                           fill.               (line   77)
 * tessellation:                          three.              (line  142)
 * tex:                                   Frames and pictures.
-                                                             (line  300)
+                                                             (line  305)
 * tex <1>:                               Options.            (line  155)
 * TeX fonts:                             Pens.               (line  215)
 * TeX string:                            Data types.         (line  207)
@@ -10017,9 +10027,9 @@ Index
 * texpath:                               Configuring.        (line   72)
 * texpath <1>:                           label.              (line  113)
 * texpreamble:                           Frames and pictures.
-                                                             (line  309)
+                                                             (line  314)
 * texreset:                              Frames and pictures.
-                                                             (line  313)
+                                                             (line  318)
 * textbook graph:                        graph.              (line  360)
 * tgz:                                   UNIX binary distributions.
                                                              (line    6)
@@ -10106,7 +10116,7 @@ Index
 * UpsideDown <1>:                        Frames and pictures.
                                                              (line  110)
 * usepackage:                            Frames and pictures.
-                                                             (line  316)
+                                                             (line  321)
 * user coordinates:                      Figure size.        (line   39)
 * user-defined operators:                User-defined operators.
                                                              (line    6)
@@ -10122,7 +10132,7 @@ Index
 * vectorfield3:                          graph3.             (line  157)
 * vectorization:                         Arrays.             (line  318)
 * verbatim:                              Frames and pictures.
-                                                             (line  292)
+                                                             (line  297)
 * vertex-dependent colors:               three.              (line  107)
 * Vertical:                              flowchart.          (line   77)
 * Viewport:                              three.              (line   76)
@@ -10261,103 +10271,103 @@ Ref: size114282
 Ref: unitsize115269
 Ref: shipout116342
 Ref: filltype118693
-Ref: add121865
-Ref: add about122807
-Ref: tex125836
-Node: Files126732
-Ref: cd127719
-Ref: scroll132404
-Node: Variable initializers135322
-Node: Structures138039
-Node: Operators145541
-Node: Arithmetic & logical145855
-Node: Self & prefix operators148225
-Node: User-defined operators149019
-Node: Implicit scaling149932
-Node: Functions150495
-Ref: stack overflow153638
-Node: Default arguments153920
-Node: Named arguments154676
-Node: Rest arguments157246
-Node: Mathematical functions160368
-Node: Arrays165024
-Ref: sort172132
-Ref: tridiagonal174757
-Ref: solve175988
-Node: Slices180128
-Node: Casts184036
-Node: Import186306
-Node: Static191564
-Node: LaTeX usage194457
-Node: Base modules200951
-Node: plain203508
-Node: simplex204182
-Node: math204456
-Node: interpolate207165
-Node: geometry207444
-Node: trembling208038
-Node: stats208307
-Node: patterns208567
-Node: markers208803
-Node: tree210663
-Node: binarytree210848
-Node: drawtree211514
-Node: syzygy211715
-Node: feynman211989
-Node: roundedpath212264
-Node: animation212547
-Ref: animate212968
-Node: embed214081
-Node: slide215035
-Node: MetaPost215367
-Node: unicode216086
-Node: latin1216960
-Node: babel217329
-Node: labelpath217559
-Node: labelpath3218380
-Node: annotate218691
-Node: CAD219161
-Node: graph219472
-Ref: ticks226633
-Ref: pathmarkers240366
-Ref: marker240837
-Ref: markuniform241191
-Ref: errorbars242999
-Ref: automatic scaling247473
-Node: palette259220
-Ref: images259338
-Ref: image263512
-Ref: logimage264032
-Ref: penimage265137
-Ref: penfunctionimage265399
-Node: three266170
-Ref: PostScript3D295249
-Node: obj296987
-Node: graph3297236
-Ref: GaussianSurface302516
-Node: grid3303665
-Node: solids304449
-Node: tube305441
-Node: flowchart307675
-Node: contour312283
-Node: contour3317598
-Node: smoothcontour3317911
-Node: slopefield319632
-Node: ode321121
-Node: Options321378
-Ref: configuration file328163
-Ref: settings328163
-Ref: texengines329427
-Ref: convert329427
-Node: Interactive mode332915
-Ref: history335065
-Node: GUI336371
-Node: GUI installation336922
-Node: GUI usage337652
-Node: PostScript to Asymptote338568
-Node: Help339326
-Node: Debugger340980
-Node: Credits342736
-Node: Index343753
+Ref: add122106
+Ref: add about123048
+Ref: tex126077
+Node: Files126973
+Ref: cd127960
+Ref: scroll132645
+Node: Variable initializers135563
+Node: Structures138280
+Node: Operators145782
+Node: Arithmetic & logical146096
+Node: Self & prefix operators148466
+Node: User-defined operators149260
+Node: Implicit scaling150173
+Node: Functions150736
+Ref: stack overflow153879
+Node: Default arguments154161
+Node: Named arguments154917
+Node: Rest arguments157487
+Node: Mathematical functions160609
+Node: Arrays165265
+Ref: sort172373
+Ref: tridiagonal174998
+Ref: solve176229
+Node: Slices180369
+Node: Casts184277
+Node: Import186547
+Node: Static191805
+Node: LaTeX usage194698
+Node: Base modules201192
+Node: plain203749
+Node: simplex204423
+Node: math204697
+Node: interpolate207406
+Node: geometry207685
+Node: trembling208279
+Node: stats208548
+Node: patterns208808
+Node: markers209044
+Node: tree210904
+Node: binarytree211089
+Node: drawtree211755
+Node: syzygy211956
+Node: feynman212230
+Node: roundedpath212505
+Node: animation212788
+Ref: animate213209
+Node: embed214322
+Node: slide215276
+Node: MetaPost215608
+Node: unicode216327
+Node: latin1217201
+Node: babel217570
+Node: labelpath217800
+Node: labelpath3218621
+Node: annotate218932
+Node: CAD219402
+Node: graph219713
+Ref: ticks226874
+Ref: pathmarkers240607
+Ref: marker241078
+Ref: markuniform241432
+Ref: errorbars243240
+Ref: automatic scaling247714
+Node: palette259461
+Ref: images259579
+Ref: image263753
+Ref: logimage264273
+Ref: penimage265378
+Ref: penfunctionimage265640
+Node: three266411
+Ref: PostScript3D295490
+Node: obj297228
+Node: graph3297477
+Ref: GaussianSurface302757
+Node: grid3303906
+Node: solids304690
+Node: tube305682
+Node: flowchart307916
+Node: contour312524
+Node: contour3317839
+Node: smoothcontour3318152
+Node: slopefield319873
+Node: ode321362
+Node: Options321619
+Ref: configuration file328404
+Ref: settings328404
+Ref: texengines329668
+Ref: convert329668
+Node: Interactive mode333190
+Ref: history335340
+Node: GUI336646
+Node: GUI installation337197
+Node: GUI usage337927
+Node: PostScript to Asymptote338990
+Node: Help339748
+Node: Debugger341402
+Node: Credits343158
+Node: Index344175
 
 End Tag Table
