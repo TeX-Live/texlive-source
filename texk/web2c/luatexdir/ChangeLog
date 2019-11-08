@@ -1,6 +1,6 @@
 2019-11-08  Luigi Scarso <luigi.scarso@gmail.com>
     * record a few more files (in kpse enabled mode) (HH)
-
+    * better recorder code in wrapped lua
 
 2019-11-05  Luigi Scarso <luigi.scarso@gmail.com>
     * fixed calculation of  if (abs(fit_class - fitness(r)) > 1)
