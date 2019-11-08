@@ -1,3 +1,17 @@
+2019-11-08  Luigi Scarso <luigi.scarso@gmail.com>
+    * record a few more files (in kpse enabled mode) (HH)
+
+
+2019-11-05  Luigi Scarso <luigi.scarso@gmail.com>
+    * fixed calculation of  if (abs(fit_class - fitness(r)) > 1)
+      in lineabreak.c (thanks to M. Krüger). This produced different
+      results in Windows and Linux.
+
+
+2019-10-31  Luigi Scarso <luigi.scarso@gmail.com>
+    * subfont key in font table (to identify subfint in ttc) plus
+      some cleanup (HH)
+
 2019-10-28 Luigi Scarso <luigi.scarso@gmail.com>
     * New callback lua.getcodepage()  for diagnostic purposes.
 
