@@ -843,7 +843,6 @@ static int lua_record_output_file(lua_State * L)
     return 0;
 }
 
-#ifndef MF_LUA
 /*tex moved here */
 
 static int lua_check_permissions(lua_State *L)
@@ -884,7 +883,6 @@ static int lua_check_permissions(lua_State *L)
     }
     return 2;
 }
-#endif /* !MF_LUA */
 
 static const struct luaL_Reg kpselib_m[] = {
     {"__gc", lua_kpathsea_finish},
@@ -921,11 +919,9 @@ static const struct luaL_Reg kpselib_l[] = {
     {"default_texmfcnf", show_texmfcnf},
     {"record_input_file", lua_record_input_file},
     {"record_output_file", lua_record_output_file},
-#ifndef MF_LUA
     /* extra */
     {"check_permission", lua_check_permissions},
     /* sentinel */
-#endif /* !MF_LUA */
     {NULL, NULL}
 };
 
