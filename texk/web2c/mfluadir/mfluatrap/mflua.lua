@@ -441,7 +441,6 @@ chMF(mflua.MF,print_scaled);mflua.MF.print_scaled = print_scaled
 local function print_two(x,y) -- {prints `|(x,y)|'}
  local res 
  -- debug 
- -- print("print_two(x,y)",x,y)
  res = '(' .. print_scaled(x) .. ',' .. print_scaled(y) .. ')'
  return res
 end
@@ -1544,12 +1543,12 @@ local function _store_current_contour()
    if (#bezier_octant_contour == 0) then
       local _t = {} 
       for i,v in ipairs(bezier_octant_I) do _t[i] = v end
-      bezier_octant_contour[1] = _t
+      bezier_octant_contour[1] = _t; 
    else
       local _cnt=0 
       for i,v in ipairs(bezier_octant_contour) do _cnt=_cnt+#v end
       local _t = {} 
-      for i,v in ipairs(bezier_octant_I) do if i>_cnt then _t[#_t+1] = v end end
+      for i,v in ipairs(bezier_octant_I) do if i>_cnt then _t[#_t+1] = v; end end
       bezier_octant_contour[#bezier_octant_contour+1] = _t
    end
    mflua.do_add_to.bezier_octant_contour = bezier_octant_contour 
@@ -1754,7 +1753,7 @@ local function print_specification_contour(h)
 	   end_loop_2=true 
 	else    
 	   bezier_contour['p'] = print_two_true(x_coord(p),y_coord(p),octant);
-           bezier_contour['control1'] = print_two_true(right_x(p),right_y(p),octant)
+           bezier_contour['control1'] = print_two_true(right_x(p),right_y(p),octant) 
            bezier_contour['control2'] = print_two_true(left_x(q),left_y(q),octant)
 	   bezier_contour['q'] =  print_two_true(x_coord(q),y_coord(q),octant)
 	   beziers_contour[#beziers_contour+1] = bezier_contour

@@ -13,6 +13,11 @@
 #if defined(JIT)
 #include <luajit.h>
 #endif
+
+/* See  shell_cmd_is_allowed below */
+shellenabledp = 1;
+restrictedshell = 0;
+
 /**************************************************************/
 /*                                                            */
 /* private functions                                          */
@@ -1414,3 +1419,6 @@ int mfluarunscript(halfword j, halfword first, halfword limit)
   }
   return 0;
 }
+
+/* TODO: check if shell_cmd_is_allowed make se sense */
+int shell_cmd_is_allowed(const char *cmd, char **safecmd, char **cmdname){return 1;}

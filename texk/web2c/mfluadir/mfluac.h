@@ -46,6 +46,11 @@ extern int mfluaprinttransitionlineto(integer, integer);
 extern int mfluaPREmakeellipse(integer, integer, integer, integer, integer, integer);
 extern int mfluaPOSTmakeellipse(integer, integer, integer, integer, integer, integer);
 
+/* TODO: check if  shell_cmd_is_allowed makes sense */
+extern int shellenabledp;
+extern int restrictedshell;
+extern int shell_cmd_is_allowed(const char *, char **, char **);
+
 #include <lauxlib.h>
 extern int luaopen_kpse(lua_State * L);
 
