@@ -123,7 +123,7 @@ deploy:
       condition: $package != ""
   - provider: script
     skip_cleanup: true
-    script: curl --user "TLuploader:$NCPW" -T lua{jit,}hbtex.$tldir https://cloud.preining.info/remote.php/webdav/
+    script: curl --user "TLuploader:$NCPW" -T lua{jit,}hbtex.$tldir https://cloud.preining.info/remote.php/webdav/luahbtex/
     on:
       branch: trunk
 
