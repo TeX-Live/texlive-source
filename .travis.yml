@@ -110,12 +110,20 @@ matrix:
 # Rename to the currently built architecture
 before_deploy:
   - if [ -n "$package" ]; then sudo mv inst/bin/* inst/bin/$tldir ; tar czvf ${package} -C inst/bin .; fi
+  - if [ -r inst/bin/*/luahbtex ] ; then cp inst/bin/*/luahbtex luahbtex.$tldir ; fi
+  - if [ -r inst/bin/*/luajithbtex ] ; then cp inst/bin/*/luajithbtex luajithbtex.$tldir ; fi
 
 deploy:
-  provider: releases
-  api_key: $GH_TOKEN
-  file: $package
-  skip_cleanup: true
-  on:
-    tags: true
-    condition: $package != ""
+  - provider: releases
+    api_key: $GH_TOKEN
+    file: $package
+    skip_cleanup: true
+    on:
+      tags: true
+      condition: $package != ""
+  - provider: script
+    skip_cleanup: true
+    script: curl --user "TLuploader:$NCPW" -T lua{jit,}hbtex.$tldir https://cloud.preining.info/remote.php/webdav/
+    on:
+      branch: trunk
+
