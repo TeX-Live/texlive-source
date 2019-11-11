@@ -5666,6 +5666,7 @@ sub check_executes {
   my %missingbins;
   my %missingengines;
   my %missinginis;
+  my @archs_to_check = $localtlpdb->available_architectures;
   for (keys %fmtlines) {
     my %r = TeXLive::TLUtils::parse_AddFormat_line("$_");
     if (defined($r{"error"})) {
@@ -5678,10 +5679,11 @@ sub check_executes {
     # special case for cont-en ...
     next if ($name eq "cont-en");
     # we check that the name exist in bin/$arch
-    my @archs_to_check = $localtlpdb->available_architectures;
-    if ($engine eq "luajittex") {
+    if ($engine =~ /^lua(jit|hb)tex$/) {
       # luajittex is special since it is not available on all architectures
-      # due to inherent reasons (machine code)
+      #   due to inherent reasons (machine code);
+      # luahbtex is special until we build it everywhere for TL'20.
+      # 
       # We do not want to have error messages here, so we do the following:
       # * if tlpkg/tlpsrc/luatex.tlpsrc is available, then load it
       #   and filter away those archs that are excluded with f/!...
@@ -5689,6 +5691,7 @@ sub check_executes {
       #   we just ignore it completely.
       my $tlpsrc_file = $localtlpdb->root . "/tlpkg/tlpsrc/luatex.tlpsrc";
       if (-r $tlpsrc_file) {
+        ddebug("check_executes: found $tlpsrc_file\n");
         require TeXLive::TLPSRC;
         my $tlpsrc = new TeXLive::TLPSRC;
         $tlpsrc->from_file($tlpsrc_file);
@@ -5699,25 +5702,24 @@ sub check_executes {
             my $pt = $1;
             my $aa = $2;
             my $pr = $3;
-            if ($pr =~ m!/luajittex$!) {
+            if ($pr =~ m!/$engine$!) {
               # bingo, get the negative patterns
               if ($aa =~ m/^!(.*)$/) {
                 @negarchs = split(/,/,$1);
+                ddebug("check_executes:  negative arches: @negarchs\n");
               }
             }
           }
         }
-        my %foo;
+        my @new_archs = ();
         for my $a (@archs_to_check) {
-          $foo{$a} = 1;
+          push (@new_archs, $a) unless grep { $a eq $_ } @negarchs;
         }
-        for my $a (@negarchs) {
-          delete $foo{$a} if defined($foo{$a});
-        }
-        @archs_to_check = keys %foo;
+        @archs_to_check = @new_archs;
       } else {
-        @archs_to_check = ();
+        @archs_to_check = (); # no tlpsrc, check nothing.
       }
+      ddebug("check_executes: final arches to check: @archs_to_check");
     }
     for my $a (@archs_to_check) {
       my $f = "$Master/bin/$a/$name";
