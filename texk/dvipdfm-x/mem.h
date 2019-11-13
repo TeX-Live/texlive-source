@@ -38,4 +38,13 @@ extern void *renew (void *p, uint32_t size);
 #define RENEW(p,n,type) (type *) renew(p,((uint32_t)(n))*sizeof(type))
 #define RELEASE(p)      free(p)
 
+/* 
+ * mem.h is not suitable for the following, but it is the only common
+ * header file for dpxcrypt.c, pdfencrypt.c, and pdffont.c, which use
+ * the function rand().
+ */
+extern void init_genrand(unsigned long long s);
+extern long genrand_int31(void);
+#define srand(x) init_genrand((x))
+#define rand()   genrand_int31()
 #endif /* _MEM_H_ */

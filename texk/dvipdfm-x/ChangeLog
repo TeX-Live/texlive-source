@@ -1,3 +1,16 @@
+2019-11-14  Akira Kakuto  <kakuto@w32tex.org>
+
+	* mt19937ar.c: Add to support common font names in all
+	platforms when SOURCE_DATE_EPOCH is suitably set. A pseudo
+	random number generating program coded by Takuji Nishimura and
+	Makoto Matsumoto.
+	* README: Add a subject "11. Random number generating function".
+	* mem.h: Add "#define srand(x) init_genrand((x))", etc. because
+	it is the only common header file for dpxcrypt.c, pdfencrypt.c,
+	and pdffont.c, which use rand().
+	* Makefile.am: Add mt19937ar.c.
+	* configure.ac: Version 20191114.
+
 2019-11-13  Akira Kakuto  <kakuto@w32tex.org>
 
 	* spc_dvips.c: Add -dDELAYSAFER in GS_CALCULATOR because

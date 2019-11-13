@@ -69,6 +69,7 @@ xdvipdfmx_SOURCES = \
 	mfileio.h \
 	mpost.c \
 	mpost.h \
+	mt19937ar.c \
 	numbers.c \
 	numbers.h \
 	otl_opt.c \
