@@ -110,6 +110,12 @@ var m:halfword; {|chr_code| part of the operand token}
 @d eptex_version_code=ptex_minor_version_code+1 {code for \.{\\epTeXversion}}
 @z
 
+@x e-pTeX: \current(x)spacingmode
+@d eTeX_dim=eTeX_int+8 {first of \eTeX\ codes for dimensions}
+@y
+@d eTeX_dim=eTeX_int+10 {first of \eTeX\ codes for dimensions}
+@z
+
 @x
 primitive("ptexversion",last_item,ptex_version_code);
 @!@:ptexversion_}{\.{\\ptexversion} primitive@>
@@ -698,4 +704,31 @@ print(" direction"); end;
 end;
 @#
 procedure print_direction(@!d:integer); {print the direction represented by d}
+@z
+
+@x e-pTeX: fetch \(no)auto(x)spacing status
+@* \[56] System-dependent changes.
+@y
+@ The \.{\\currentspacingmode} and \.{\\currentxspacingmode} commands
+return the current \pTeX's status of \.{\\(no)autospacing} and
+\.{\\(no)autoxspacing} respectively.
+
+@d current_spacing_mode_code=eTeX_int+8 {code for \.{\\currentspacingmode}}
+@d current_xspacing_mode_code=eTeX_int+9 {code for \.{\\currentxspacingmode}}
+
+@<Generate all \eTeX...@>=
+primitive("currentspacingmode",last_item,current_spacing_mode_code);
+@!@:current_spacing_mode_}{\.{\\currentspacingmode} primitive@>
+primitive("currentxspacingmode",last_item,current_xspacing_mode_code);
+@!@:current_xspacing_mode_}{\.{\\currentxspacingmode} primitive@>
+
+@ @<Cases of |last_item| for |print_cmd_chr|@>=
+current_spacing_mode_code: print_esc("currentspacingmode");
+current_xspacing_mode_code: print_esc("currentxspacingmode");
+
+@ @<Cases for fetching an integer value@>=
+current_spacing_mode_code: cur_val:=auto_spacing;
+current_xspacing_mode_code: cur_val:=auto_xspacing;
+
+@* \[56] System-dependent changes.
 @z

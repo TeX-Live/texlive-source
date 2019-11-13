@@ -12,6 +12,12 @@
 @d uptex_version_code=ptex_minor_version_code+2 {code for \.{\\uptexversion}}
 @z
 
+@x e-upTeX: \currentcjktoken
+@d eTeX_dim=eTeX_int+10 {first of \eTeX\ codes for dimensions}
+@y
+@d eTeX_dim=eTeX_int+11 {first of \eTeX\ codes for dimensions}
+@z
+
 @x
   eptex_version_code: print_esc("epTeXversion");
 @y
@@ -75,4 +81,25 @@ if j=1 then
   else
     begin buffer[m]:=info(p) mod max_char_val; incr(m); p:=link(p);
     end;
+@z
+
+@x e-upTeX: fetch \(disable|enable|force)cjktoken status
+@* \[54] System-dependent changes.
+@y
+@ The \.{\\currentcjktoken} command returns the current \upTeX's
+status of \.{\\(disable|enable|force)cjktoken}.
+
+@d current_cjk_token_code=eTeX_int+10 {code for \.{\\currentcjktoken}}
+
+@<Generate all \eTeX...@>=
+primitive("currentcjktoken",last_item,current_cjk_token_code);
+@!@:current_cjk_token_}{\.{\\currentcjktoken} primitive@>
+
+@ @<Cases of |last_item| for |print_cmd_chr|@>=
+current_cjk_token_code: print_esc("currentcjktoken");
+
+@ @<Cases for fetching an integer value@>=
+current_cjk_token_code: cur_val:=enable_cjk_token;
+
+@* \[54] System-dependent changes.
 @z

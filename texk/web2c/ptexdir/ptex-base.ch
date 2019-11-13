@@ -994,7 +994,7 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
 @d hyph_data=set_box+1 {hyphenation data ( \.{\\hyphenation}, \.{\\patterns} )}
 @d set_interaction=hyph_data+1 {define level of interaction ( \.{\\batchmode}, etc.~)}
 @d set_auto_spacing=set_interaction+1 {set auto spacing mode
-  ( \.{\\autospacing}, \.{\\noautospacing}, ( \.{\\autoxspacing}, \.{\\noautoxspacing} )}
+  ( \.{\\autospacing}, \.{\\noautospacing}, \.{\\autoxspacing}, \.{\\noautoxspacing} )}
 @d max_command=set_auto_spacing {the largest command code seen at |big_switch|}
 @z
 
