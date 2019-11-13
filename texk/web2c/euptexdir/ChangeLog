@@ -1,3 +1,11 @@
+2019-11-12  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfstrcmp-eup-{pre,post}.ch: Adapt to e-pTeX 191112.
+
+2019-10-28  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* euptex.ch1: Add a primitive \currentcjktoken.
+
 2019-09-08  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* euptex.ch1: Adapt to changes in eptexdir/.

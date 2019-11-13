@@ -109,7 +109,7 @@ disp_node: begin disp:=disp_dimen(p); revdisp:=disp; cur_v:=base_line+disp; end;
 exit: last_disp:=disp; hpack:=r;
 @y
 exit: last_disp:=disp;
-if TeXXeT_en then @<Check for LR anomalies at the end of |hpack|@>; 
+if TeXXeT_en then @<Check for LR anomalies at the end of |hpack|@>;
 hpack:=r;
 @z
 

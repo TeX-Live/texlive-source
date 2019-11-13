@@ -1,4 +1,12 @@
 @x
+    if t=" " then t:=space_token
+    else t:=other_token+t;
+@y
+  else if t=" " then t:=space_token
+  else t:=other_token+t;
+@z
+
+@x
 procedure print_kanji(@!s:KANJI_code); {prints a single character}
 begin
 s:=toBUFF(s mod max_cjk_val);

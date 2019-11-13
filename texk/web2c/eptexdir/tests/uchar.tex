@@ -1,0 +1,127 @@
+% eptex
+
+% \Uchar <chr_code>
+%  0--255：常に欧文文字トークン
+%  256以上の，内部コードで許される値：常に和文文字トークン
+% \Ucharcat <chr_code> <catcode>
+% <chr_code> in [0,128): 欧文文字トークンを生成．<catcode> in {1..4, 6..8, 10..13}
+% <chr_code> in [128,256)
+%    e-pTeX の場合：欧文文字トークンを生成．<catcode> in {1..4, 6..8, 10..13}
+%    e-upTeX の場合：欧文/和文文字トークンを生成．<catcode> in {1..4, 6..8, 10..13, 16..19}
+% <chr_code> >=256: 和文文字トークンを生成．
+%    e-pTeX の場合： <catcode> in {16..18}
+%    e-upTeX の場合：<catcode> in {16..19}
+
+
+% e-upTeX:
+
+
+\let\bg={ \let\eg=}
+{\catcode`\ =9\relax
+\gdef\KCAT{%
+  \immediate\write17{%
+    [\expandafter\string\x\space
+    \expandafter\ifcat\x$   math\space shift\fi
+    \expandafter\ifcat\x&   alignment\fi
+    \expandafter\ifcat\x^   superscript\fi
+    \expandafter\ifcat\x_   subscript\fi
+    \expandafter\ifcat\x\space space\fi
+    \expandafter\ifcat\x a  letter\fi
+    \expandafter\ifcat\x 1  other\space char\fi
+    \expandafter\ifcat\x ~  active\fi
+    \expandafter\ifcat\x 空 kanji\fi
+    \expandafter\ifcat\x ア kana\fi
+    \expandafter\ifcat\x ｛ other\space kchar\fi
+    \ifdefined\ucs
+      \expandafter\ifcat\x 한 hangul\fi
+    \fi]}%
+}}
+\let\sharp=#
+\font\x=ec-lmtt10 \x
+\scrollmode
+
+\edef\x{\Uchar`\{}\KCAT
+\edef\x{\Uchar`\}}\KCAT
+\edef\x{\Uchar`\$}\KCAT
+\edef\x{\Uchar`\&}\KCAT
+\edef\x{\Uchar`\#}\KCAT
+\edef\x{\Uchar`\^}\KCAT
+\edef\x{\Uchar`\_}\KCAT
+\edef\x{\Uchar`\ }\KCAT
+\edef\x{\Uchar`\a}\KCAT
+\edef\x{\Uchar`\1}\KCAT
+\edef\x{\Uchar`~}\KCAT
+\edef\x{\Uchar`漢}\KCAT
+\edef\x{\Uchar`あ}\KCAT
+\edef\x{\Uchar`）}\KCAT
+
+\ifdefined\ucs %======
+\immediate\write0{■\string\Uchar\space and \string\kcatcode}
+{\kcatcode"03B1=15 \kcatcode"FF=15
+\edef\x{\Uchar"FF}\KCAT%"
+\edef\x{\Uchar"03B1}\KCAT%"
+}
+
+{\kcatcode"03B1=17 \kcatcode"FF=17
+\edef\x{\Uchar"FF}\KCAT%"
+\edef\x{\Uchar"03B1}\KCAT%"
+}
+\fi %======
+
+\immediate\write0{■\string\Ucharcat.}
+
+\edef\x{\Ucharcat`\# 0}\KCAT % error "! Invalid code"
+\edef\x{\Ucharcat`\# 3}\KCAT
+\edef\x{\Ucharcat`\# 4}\KCAT
+\edef\x{\Ucharcat`\# 5}\KCAT % error "! Invalid code"
+\edef\x{\Ucharcat`\# 7}\KCAT
+\edef\x{\Ucharcat`\# 8}\KCAT
+\edef\x{\Ucharcat`\# 9}\KCAT % error "! Invalid code"
+\edef\x{\Ucharcat`\# 10}\KCAT
+\edef\x{\Ucharcat`\# 11}\KCAT
+\edef\x{\Ucharcat`\# 12}\KCAT
+\edef\x{\unexpanded\expandafter{\Ucharcat`\# 13}}
+\message{\expandafter\meaning\unexpanded\expandafter{\x}} % undefined
+\edef\x{\Ucharcat`\# 14}\KCAT % error "! Invalid code"
+\edef\x{\Ucharcat`\# 15}\KCAT % error "! Invalid code"
+
+\edef\x{\Ucharcat`\# 16} % error "! Invalid code (16)"
+\KCAT
+
+\ifdefined\ucs %======
+\edef\x{\Ucharcat`漢 3} % error "! Invalid code (3)"
+\KCAT
+
+\edef\x{\Ucharcat`＄ 16}\KCAT
+\edef\x{\Ucharcat`： 17}\KCAT
+\edef\x{\Ucharcat`あ 18}\KCAT
+\edef\x{\Ucharcat`漢 19}\KCAT
+
+{\kcatcode"03B1=15 %"
+\edef\x{\Ucharcat"03B1 12}\KCAT%" error "! Invalid code (12)"
+\edef\x{\Ucharcat"03B1 17}\KCAT%"
+}
+
+{\kcatcode"03B1=16 %"
+\edef\x{\Ucharcat"03B1 12}\KCAT%" error "! Invalid code (12)"
+\edef\x{\Ucharcat"03B1 17}\KCAT%"
+}
+
+{\kcatcode"FF=15 %"
+\edef\x{\Ucharcat"FF 12}\KCAT%"
+\edef\x{\Ucharcat"FF 17}\KCAT%"
+}
+
+{\kcatcode"FF=16 %"
+\edef\x{\Ucharcat"FF 12}\KCAT%"
+\edef\x{\Ucharcat"FF 17}\KCAT%"
+}
+\else
+
+\edef\x{\Ucharcat`漢 3} % error "! Bad character code" in eptex
+
+\fi % ======
+
+
+\end
+
