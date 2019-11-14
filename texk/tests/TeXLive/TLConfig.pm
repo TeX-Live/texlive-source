@@ -5,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 52112 $';
+my $svnrev = '$Revision: 52745 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -232,7 +232,7 @@ our %TLPDBSettings = (
 our $WindowsMainMenuName = "TeX Live $ReleaseYear";
 
 # Comma-separated list of engines which do not exist on all platforms.
-our $PartialEngineSupport = "luajittex,mfluajit";
+our $PartialEngineSupport = "luahbtex,luajittex,mfluajit";
 
 # Flags for error handling across the scripts and modules
 # all fine

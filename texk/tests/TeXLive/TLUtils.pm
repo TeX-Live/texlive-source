@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 52568 $';
+my $svnrev = '$Revision: 52706 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -1129,6 +1129,7 @@ that is a fatal error.
 =cut
 
 sub copy {
+  #too verbose ddebug("TLUtils::copy(", join (",", @_), "\n");
   my $infile = shift;
   my $filemode = 0;
   my $dereference = 0;
@@ -1180,12 +1181,13 @@ sub copy {
     if ($linktarget !~ m,^/,) {
       $infile = Cwd::abs_path(dirname($infile)) . "/$linktarget";
     }
+    ddebug("TLUtils::copy: dereferencing symlink $infile -> $linktarget");
   }
 
   if (-l $infile) {
     my $linktarget = readlink($infile);
     my $dest = "$destdir/$filename";
-    debug("TLUtils::copy: doing symlink($linktarget,$dest)"
+    ddebug("TLUtils::copy: doing symlink($linktarget,$dest)"
           . " [from readlink($infile)]\n");
     symlink($linktarget, $dest) || die "symlink($linktarget,$dest) failed: $!";
   } else {
@@ -2521,7 +2523,7 @@ END_COMPRESSOR_BAD
     $::progs{'compressor'} = $ENV{'TEXLIVE_COMPRESSOR'};
   }
 
-  if ($::opt_verbosity >= 1) {
+  if ($::opt_verbosity >= 2) {
     require Data::Dumper;
     use vars qw($Data::Dumper::Indent $Data::Dumper::Sortkeys
                 $Data::Dumper::Purity); # -w pain
@@ -2602,16 +2604,16 @@ sub setup_unix_tl_one {
   debug("(unix) trying to set up $p, default $def, arg $arg\n");
   if (-r $def) {
     if (-x $def) {
-      ddebug("default $def has executable permissions\n");
+      ddebug(" Default $def has executable permissions\n");
       # we have to check for actual "executability" since a "noexec"
       # mount option may interfere, which is not taken into account by -x.
       my $ret = system("'$def' $arg >/dev/null 2>&1" ); # we are on Unix
       if ($ret == 0) {
         $::progs{$p} = $def;
-        debug("Using shipped $def for $p (tested).\n");
+        debug(" Using shipped $def for $p (tested).\n");
         return(1);
       } else {
-        ddebug("Shipped $def has -x but cannot be executed, "
+        ddebug(" Shipped $def has -x but cannot be executed, "
                . "trying tmp copy.\n");
       }
     }
@@ -2632,19 +2634,19 @@ sub setup_unix_tl_one {
     if (! -x $tmpprog) {
       # hmm, something is going really bad, not even the copy is
       # executable. Fall back to normal path element
-      ddebug("Copied $p $tmpprog does not have -x bit, strange!\n");
+      ddebug(" Copied $p $tmpprog does not have -x bit, strange!\n");
       return(0);
     } else {
       # check again for executability
       my $ret = system("$tmpprog $arg > /dev/null 2>&1");
       if ($ret == 0) {
         # ok, the copy works
-        debug("Using copied $tmpprog for $p (tested).\n");
+        debug(" Using copied $tmpprog for $p (tested).\n");
         $::progs{$p} = $tmpprog;
         return(1);
       } else {
         # even the copied prog is not executable, strange
-        ddebug("Copied $p $tmpprog has x bit but not executable?!\n");
+        ddebug(" Copied $p $tmpprog has x bit but not executable?!\n");
         return(0);
       }
     }

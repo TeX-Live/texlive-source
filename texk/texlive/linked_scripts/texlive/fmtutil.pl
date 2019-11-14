@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 48129 2018-07-03 22:15:38Z karl $
+# $Id: fmtutil.pl 52741 2019-11-11 23:16:13Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 48129 2018-07-03 22:15:38Z karl $';
-my $lastchdate = '$Date: 2018-07-04 00:15:38 +0200 (Wed, 04 Jul 2018) $';
+my $svnid = '$Id: fmtutil.pl 52741 2019-11-11 23:16:13Z karl $';
+my $lastchdate = '$Date: 2019-11-12 00:16:13 +0100 (Tue, 12 Nov 2019) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 48129 $';
+my $svnrev = '$Revision: 52741 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -162,7 +162,7 @@ sub main {
     $opts{'user'} = 1;
 
     GetOptions ( "help" => \$opts{'help'}, "version" => \$opts{'version'} )
-        or die "Unknown option in mktexfmt command line arguments\n";
+      || die "$prg: Unknown option in mktexfmt command line arguments.\n";
     if ($ARGV[0]) {
       if ($ARGV[0] =~ m/^(.*)\.(fmt|mem|base?)$/) {
         $opts{'byfmt'} = $1;
@@ -447,12 +447,12 @@ sub callback_build_formats {
   for (@deferred_stdout) { print $stdo $_; }
   for (@deferred_stderr) { print STDERR $_; }
   #
-  print_info("Disabled formats: $disabled\n")        if ($disabled);
-  print_info("Successfully rebuilt formats: $suc\n") if ($suc);
-  print_info("Not selected formats: $nobuild\n")     if ($nobuild);
-  print_info("Not available formats: $notavail\n")   if ($notavail);
-  print_info("Failed to build: $err (@err)\n")       if ($err);
-  print_info("Total formats: $total\n");
+  print_info("disabled formats: $disabled\n")        if ($disabled);
+  print_info("successfully rebuilt formats: $suc\n") if ($suc);
+  print_info("not selected formats: $nobuild\n")     if ($nobuild);
+  print_info("not available formats: $notavail\n")   if ($notavail);
+  print_info("failed to build: $err (@err)\n")       if ($err);
+  print_info("total formats: $total\n");
   chdir($thisdir) || warn "chdir($thisdir) failed: $!";
   if (win32()) {
     # try to remove the tmpdir with all files
@@ -516,15 +516,16 @@ sub select_and_rebuild_format {
     }
   }
   if ($doit) {
-    return rebuild_one_format($fmt, $eng, $kpsefmt, $destdir, $fmtfile, $logfile);
+    return rebuild_one_format($fmt,$eng,$kpsefmt,$destdir,$fmtfile,$logfile);
   } else {
     return $FMT_NOTSELECTED;
   }
 }
 
 #  compute_format_destination
-# takes fmt/eng and returns the location where format and log files should be saved
-# return value (dump file full path, log file full path)
+# takes fmt/eng and returns the locations where format and log files
+# should be saved, that is, a list: (dump file full path, log file full path)
+# 
 sub compute_format_destination {
   my ($fmt, $eng) = @_;
   my $enginedir;
@@ -557,11 +558,12 @@ sub compute_format_destination {
 
 
 #  rebuild_one_format
-# takes fmt/eng and rebuilds it, irrelevant of any setting
+# takes fmt/eng and rebuilds it, irrelevant of any setting;
+# copies generated log file
 # return value FMT_*
 #
 sub rebuild_one_format {
-  my ($fmt, $eng, $kpsefmt, $destdir, $fmtfile, $logfile) = @_;
+  my ($fmt,$eng,$kpsefmt,$destdir,$fmtfile,$logfile) = @_;
   print_info("--- remaking $fmt with $eng\n");
 
   # get variables
@@ -575,7 +577,7 @@ sub rebuild_one_format {
   my $pool;
   my $tcx = "";
   my $tcxflag = "";
-  my $localpool=0;
+  my $localpool = 0;
   my $texargs;
 
   unlink glob "*.pool";
@@ -624,7 +626,7 @@ sub rebuild_one_format {
     $texargs = $addargs;
   }
   if ($pool) {
-    chomp ( my $poolfile = `kpsewhich -progname=$eng $pool.poo 2>$nul` );
+    chomp (my $poolfile = `kpsewhich -progname=$eng $pool.poo 2>$nul`);
     if ($poolfile && -f $poolfile) {
       print_verbose("attempting to create localized format "
                     . "using pool=$pool and tcx=$tcx.\n");
@@ -656,7 +658,7 @@ sub rebuild_one_format {
         ",$opts{'no-error-if-no-engine'}," =~ m/,$eng,/) {
       return $FMT_NOTAVAIL;
     } else {
-      print_deferred_error("not building $fmt due to missing engine $eng.\n");
+      print_deferred_error("not building $fmt due to missing engine: $eng\n");
       return $FMT_FAILURE;
     }
   }
@@ -675,17 +677,33 @@ sub rebuild_one_format {
     $cmdline .= " >&2" if $mktexfmtMode;
     $cmdline .= " <$nul";
     my $retval = system($cmdline);
+    
+    # report error if it failed.
     if ($retval != 0) {
       $retval /= 256 if ($retval > 0);
-      print_deferred_error("running \`$cmdline' return status $retval\n");
-      #
-      # original shell script did *not* check the return value
-      # we keep this behavior, but add an option --strict that
-      # errors out on all failures.
-      if ($opts{'strict'}) {
-        print_deferred_error("return error due to options --strict\n");
-        return $FMT_FAILURE;
-      }
+      print_deferred_error("running \`$cmdline' return status: $retval\n");
+    }
+
+    # Copy the log file after the program is run, so that the log file
+    # is available to inspect even on failure. So we need the dest dir tree.
+    TeXLive::TLUtils::mkdirhier($destdir);
+    #
+    # Here and in the following we use copy instead of move
+    # to make sure that in SElinux enabled cases the rules of
+    # the destination directory are applied.
+    # See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=900580
+    if (File::Copy::copy($logfile, "$destdir/$logfile")) {
+      print_info("log file copied to: $destdir/$logfile\n");
+    } else {
+      print_deferred_error("cannot copy log $logfile to: $destdir\n");
+    }
+
+    # original shell script did *not* check the return value
+    # we keep this behavior, but add an option --strict that
+    # errors out on all failures.
+    if ($retval != 0 && $opts{'strict'}) {
+      print_deferred_error("returning error due to option --strict\n");
+      return $FMT_FAILURE;
     }
 
     if ($localpool) {
@@ -695,7 +713,6 @@ sub rebuild_one_format {
         delete $ENV{'TEXPOOL'};
       }
     }
-
   }
 
   # check and install of fmt and log files
@@ -717,27 +734,18 @@ sub rebuild_one_format {
     print_deferred_error("\`$cmdline' had errors.\n");
   }
 
-  TeXLive::TLUtils::mkdirhier($destdir);
-  
-  # here and in the following we use copy instead of move
-  # to make sure that in SElinux enabled cases the rules of
-  # the destination directory are applied.]
-  # See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=900580
-  if (!File::Copy::copy( $logfile, "$destdir/$logfile")) {
-    print_deferred_error("Cannot copy $logfile to $destdir.\n");
-  }
   if ($opts{'recorder'}) {
-    # the recorder output is used by check-fmttriggers to determine
+    # the recorder output is used by tl-check-fmttriggers to determine
     # package dependencies for each format.  Unfortunately omega-based
     # engines gratuitiously changed the extension from .fls to .ofl.
     my $recfile = $fmt . ($fmt =~ m/^(aleph|lamed)$/ ? ".ofl" : ".fls");
-    if (!File::Copy::copy( $recfile, "$destdir/$recfile")) {
-      print_deferred_error("Cannot copy $recfile to $destdir.\n");
+    if (!File::Copy::copy($recfile, "$destdir/$recfile")) {
+      print_deferred_error("cannot copy recorder $recfile to: $destdir\n");
     }
   }
 
   my $destfile = "$destdir/$fmtfile";
-  if (File::Copy::copy( $fmtfile, $destfile )) {
+  if (File::Copy::copy($fmtfile, $destfile )) {
     print_info("$destfile installed.\n");
     #
     # original fmtutil.sh did some magic trick for mplib-luatex.mem
@@ -784,10 +792,10 @@ sub rebuild_one_format {
     return $FMT_SUCCESS;
 
   } else {
-    print_deferred_error("Cannot copy $fmtfile to $destfile.\n");
+    print_deferred_error("cannot copy format $fmtfile to: $destfile\n");
     if (-f $destfile) {
       # remove the empty file possibly left over if near-full file system.
-      print_verbose("Removing partial file after copy failure: $destfile\n");
+      print_verbose("removing partial file after copy failure: $destfile\n");
       unlink($destfile)
         || print_deferred_error("unlink($destfile) failed: $!\n");
     }
@@ -1032,7 +1040,7 @@ sub determine_config_files {
     my @tmp;
     for my $f (@{$opts{'cnffile'}}) {
       if (! -f $f) {
-        die "$prg: Config file \"$f\" not found.";
+        die "$prg: Config file \"$f\" not found";
       }
       push @tmp, (win32() ? lc($f) : $f);
     }

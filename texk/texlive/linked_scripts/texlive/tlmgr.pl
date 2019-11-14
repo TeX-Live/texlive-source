@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 52672 2019-11-07 18:35:53Z karl $
+# $Id: tlmgr.pl 52752 2019-11-12 21:34:13Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 52672 $';
-my $datrev = '$Date: 2019-11-07 19:35:53 +0100 (Thu, 07 Nov 2019) $';
+my $svnrev = '$Revision: 52752 $';
+my $datrev = '$Date: 2019-11-12 22:34:13 +0100 (Tue, 12 Nov 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5676,10 +5676,11 @@ sub check_executes {
     my $engine = $r{"engine"};
     my $name = $r{"name"};
     my $mode = $r{"mode"};
-    # special case for cont-en ...
+    # just never mind about these.
     next if ($name eq "cont-en");
+    next if ($name eq "lualatex-dev");
     # we check that the name exist in bin/$arch
-    if ($engine =~ /^lua(jit|hb)tex$/) {
+    if (",$TeXLive::TLConfig::PartialEngineSupport," =~ /,$engine,/) {
       # luajittex is special since it is not available on all architectures
       #   due to inherent reasons (machine code);
       # luahbtex is special until we build it everywhere for TL'20.
@@ -5719,7 +5720,7 @@ sub check_executes {
       } else {
         @archs_to_check = (); # no tlpsrc, check nothing.
       }
-      ddebug("check_executes: final arches to check: @archs_to_check");
+      ddebug("check_executes: final arches to check: @archs_to_check\n");
     }
     for my $a (@archs_to_check) {
       my $f = "$Master/bin/$a/$name";
@@ -9927,7 +9928,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 52672 2019-11-07 18:35:53Z karl $
+$Id: tlmgr.pl 52752 2019-11-12 21:34:13Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
