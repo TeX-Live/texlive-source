@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 52752 2019-11-12 21:34:13Z karl $
+# $Id: tlmgr.pl 52799 2019-11-15 18:38:19Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 52752 $';
-my $datrev = '$Date: 2019-11-12 22:34:13 +0100 (Tue, 12 Nov 2019) $';
+my $svnrev = '$Revision: 52799 $';
+my $datrev = '$Date: 2019-11-15 19:38:19 +0100 (Fri, 15 Nov 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5676,9 +5676,9 @@ sub check_executes {
     my $engine = $r{"engine"};
     my $name = $r{"name"};
     my $mode = $r{"mode"};
-    # just never mind about these.
-    next if ($name eq "cont-en");
-    next if ($name eq "lualatex-dev");
+    ddebug("check_executes: fmtline name=$name engine=$engine"
+           . " mode=$mode opt=$opt\n");
+    next if ($name eq "cont-en"); # too confusing
     # we check that the name exist in bin/$arch
     if (",$TeXLive::TLConfig::PartialEngineSupport," =~ /,$engine,/) {
       # luajittex is special since it is not available on all architectures
@@ -5688,16 +5688,28 @@ sub check_executes {
       # We do not want to have error messages here, so we do the following:
       # * if tlpkg/tlpsrc/luatex.tlpsrc is available, then load it
       #   and filter away those archs that are excluded with f/!...
-      # * if tlpkg/tlpsrc/luatex.tlpsrc is *not* available (user installation)
-      #   we just ignore it completely.
-      my $tlpsrc_file = $localtlpdb->root . "/tlpkg/tlpsrc/luatex.tlpsrc";
+      # * similarly for the other partial-support engines; too much
+      #   trouble to reverse-map to package names, so just hardwire;
+      # * if tlpkg/tlpsrc/<engine>.tlpsrc is *not* available (i.e., not
+      #   the development tree) we just ignore it completely.
+      my $pkg;
+      if ($engine eq "luajittex") {
+        $pkg = "luatex";
+      } elsif ($engine eq "luahbtex") {
+        $pkg = "latex-bin-dev";
+      } elsif ($engine eq "mfluajit") {
+        $pkg = "mflua";
+      } else {
+        die "unknown partial engine $engine, goodbye"; # should not happen
+      }
+      my $tlpsrc_file = $localtlpdb->root . "/tlpkg/tlpsrc/$pkg.tlpsrc";
       if (-r $tlpsrc_file) {
         ddebug("check_executes: found $tlpsrc_file\n");
         require TeXLive::TLPSRC;
         my $tlpsrc = new TeXLive::TLPSRC;
         $tlpsrc->from_file($tlpsrc_file);
         my @binpats = $tlpsrc->binpatterns;
-        my @negarchs;
+        my @negarchs = ();
         for my $p (@binpats) {
           if ($p =~ m%^(\w+)/(!?[-_a-z0-9,]+)\s+(.*)$%) {
             my $pt = $1;
@@ -5725,10 +5737,22 @@ sub check_executes {
     for my $a (@archs_to_check) {
       my $f = "$Master/bin/$a/$name";
       if (!check_file($a, $f)) {
-        push @{$missingbins{$_}}, "bin/$a/$name" if $mode;
+        push @{$missingbins{$_}}, "bin/$a/${name}[engine=$engine]" if $mode;
+#      # unfortunately there are too many exceptions to this check:
+#      # cygwin symlinks pointing to .exe names, pdcsplain extras, mptopdf,
+#      # *latex-dev pointing to *latex instead of the binary. Instead of
+#      # writing all those error-prone tests, just give up.
+#      } elsif (-l $f) {
+#        my $linktarget = readlink($f);
+#        #ddebug("check_executes: linktarget $linktarget, $name->$engine\n");
+#        if ($linktarget ne $engine) {
+#          print "\t bin/$a/$name: symlink to $linktarget, not $engine\n";
+#        }
+#      } else {
+#        ; #ddebug("check_executes: $f readable file, not a link\n");
       }
       if (!check_file($a, "$Master/bin/$a/$engine")) {
-        push @{$missingengines{$_}}, "bin/$a/$engine" if $mode;
+        push @{$missingengines{$_}}, "bin/$a/${engine}[fmt=$name]" if $mode;
       }
     }
     # check for the existence of the .ini file
@@ -5748,19 +5772,19 @@ sub check_executes {
   }
   if (keys %missinginis) {
     print "\f mentioned ini files that cannot be found:\n";
-    for my $i (keys %missinginis) {
+    for my $i (sort keys %missinginis) {
       print "\t $missinginis{$i} (execute: $i)\n";
     }
   }
   if (keys %missingengines) {
     print "\f mentioned engine files that cannot be found:\n";
-    for my $i (keys %missingengines) {
+    for my $i (sort keys %missingengines) {
       print "\t @{$missingengines{$i}}\n";
     }
   }
   if (keys %missingbins) {
     print "\f mentioned bin files that cannot be found:\n";
-    for my $i (keys %missingbins) {
+    for my $i (sort keys %missingbins) {
       print "\t @{$missingbins{$i}}\n";
     }
   }
@@ -9052,7 +9076,7 @@ is equivalent to
   tlmgr remove --force foobar
 
 Again, since packages are sometimes renamed or replaced, using this
-option is not ecommended.
+option is not recommended.
 
 =item B<--reinstall-forcibly-removed>
 
@@ -9928,7 +9952,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 52752 2019-11-12 21:34:13Z karl $
+$Id: tlmgr.pl 52799 2019-11-15 18:38:19Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
