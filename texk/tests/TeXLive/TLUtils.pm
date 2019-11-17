@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 52706 $';
+my $svnrev = '$Revision: 52815 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -2182,7 +2182,7 @@ sub check_file_and_remove {
     if ($tlchecksum ne $checksum) {
       tlwarn("TLUtils::check_file: checksums differ for $xzfile:\n");
       tlwarn("TLUtils::check_file:   tlchecksum=$tlchecksum, arg=$checksum\n");
-      (undef,$check_file_tmpdir) = File::temp::tempdir("tlcheckfileXXXXXXXX");
+      (undef,$check_file_tmpdir) = File::Temp::tempdir("tlcheckfileXXXXXXXX");
       tlwarn("TLUtils::check_file:   removing $xzfile, "
              . "but saving copy in $check_file_tmpdir\n");
       copy($xzfile, $check_file_tmpdir);
@@ -2202,7 +2202,7 @@ sub check_file_and_remove {
       if (!defined($check_file_tmpdir)) {
         # the tmpdir should always be undefined, since we shouldn't get
         # here if the checksums failed, but test anyway.
-        $check_file_tmpdir = File::temp::tempdir("tlcheckfileXXXXXXXX");
+        $check_file_tmpdir = File::Temp::tempdir("tlcheckfileXXXXXXXX");
         tlwarn("TLUtils::check_file:  saving copy in $check_file_tmpdir\n");
         copy($xzfile, $check_file_tmpdir);
       }

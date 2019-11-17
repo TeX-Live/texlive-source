@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 52799 2019-11-15 18:38:19Z karl $
+# $Id: tlmgr.pl 52830 2019-11-17 17:05:39Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 52799 $';
-my $datrev = '$Date: 2019-11-15 19:38:19 +0100 (Fri, 15 Nov 2019) $';
+my $svnrev = '$Revision: 52830 $';
+my $datrev = '$Date: 2019-11-17 18:05:39 +0100 (Sun, 17 Nov 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5686,7 +5686,7 @@ sub check_executes {
       # luahbtex is special until we build it everywhere for TL'20.
       # 
       # We do not want to have error messages here, so we do the following:
-      # * if tlpkg/tlpsrc/luatex.tlpsrc is available, then load it
+      # * if tlpkg/tlpsrc/luajittex.tlpsrc is available, then load it
       #   and filter away those archs that are excluded with f/!...
       # * similarly for the other partial-support engines; too much
       #   trouble to reverse-map to package names, so just hardwire;
@@ -5694,9 +5694,9 @@ sub check_executes {
       #   the development tree) we just ignore it completely.
       my $pkg;
       if ($engine eq "luajittex") {
-        $pkg = "luatex";
+        $pkg = "luajittex";
       } elsif ($engine eq "luahbtex") {
-        $pkg = "latex-bin-dev";
+        $pkg = "luahbtex";
       } elsif ($engine eq "mfluajit") {
         $pkg = "mflua";
       } else {
@@ -9076,7 +9076,7 @@ is equivalent to
   tlmgr remove --force foobar
 
 Again, since packages are sometimes renamed or replaced, using this
-option is not recommended.
+option is not ecommended.
 
 =item B<--reinstall-forcibly-removed>
 
@@ -9952,7 +9952,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 52799 2019-11-15 18:38:19Z karl $
+$Id: tlmgr.pl 52830 2019-11-17 17:05:39Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
