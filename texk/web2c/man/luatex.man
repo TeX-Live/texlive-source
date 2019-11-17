@@ -1,4 +1,4 @@
-.TH LUATEX 1 "27 May 2018" "Web2C @VERSION@"
+.TH LUATEX 1 "17 November 2019" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -8,8 +8,7 @@
 .if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-luatex, dviluatex, luajittex, texlua, texluac \- An extended version of pdfTeX using Lua as
-an embedded scripting language
+luatex, dviluatex, luahbtex, luajittex, texlua, texluac \- An extended version of TeX using Lua as an embedded scripting language
 .\"=====================================================================
 .SH SYNOPSIS
 .B luatex
@@ -50,25 +49,31 @@ remaining arguments are processed as above.
 
 If no arguments or options are specified, prompt for input.
 
-If called as \fBtexlua\fR it acts as lua interpreter.
-If called as \fBtexluac\fR it acts as lua bytecode compiler.
+If called as \fBtexlua\fR it acts as a Lua interpreter.
+If called as \fBtexluac\fR it acts as a Lua bytecode compiler.
 
-Lua\*(TX is an extended version of pdf\*(TX with Unicode and OpenType
+Lua\*(TX began as an extended version of pdf\*(TX with Unicode and OpenType
 font support, embedded \fBLua\fR scripting language, the \fBe-\*(TX\fR
-and \fBOmega\fR extensions, as well as integrated MetaPost engine, that
+and \fBOmega\fR extensions, as well as an integrated MetaPost engine, that
 can create \fIPDF\fR files as well as \fIDVI\fR files.
-For more information about luatex, see http://www.luatex.org, you can
-read Lua\*(TX manual using texdoc utility (\fBtexdoc luatex\fR).
+For more information about luatex, see http://www.luatex.org; and you can
+read the Lua\*(TX manual using the texdoc utility (\fBtexdoc luatex\fR).
 
-All Lua\*(TX text input and output is considered to be Unicode text.
+All Lua\*(TX text input and output is considered to be Unicode text,
+although various filters make it possible to support any encoding.
 
-In \fIDVI\fR mode, lua\*(TX can be used as a complete replacement for
+In \fIDVI\fR mode, Lua\*(TX can be used as a complete replacement for
 the \*(TX engine.
 
-In \fIPDF\fR mode, lua\*(TX can natively handle the \fIPDF\fR, \fIJPG\fR,
-\fIJBIG2\fR, and \fIPNG\fR graphics formats.  lua\*(TX cannot include
+In \fIPDF\fR mode, Lua\*(TX can natively handle the \fIPDF\fR, \fIJPG\fR,
+\fIJBIG2\fR, and \fIPNG\fR graphics formats.  Lua\*(TX cannot include
 PostScript or Encapsulated PostScript (EPS) graphics files; first convert
 them to PDF using \fBepstopdf\fR (1).
+
+The luajittex variant includes the Lua just-in-time compiler.
+
+The luahbtex variant can use the HarfBuzz engine for glyph shaping,
+instead of Lua\*(TX's built-in shaper.
 
 .\"=====================================================================
 .SH "OPTIONS"

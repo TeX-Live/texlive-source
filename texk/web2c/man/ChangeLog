@@ -1,3 +1,8 @@
+2019-11-17  Karl Berry  <karl@tug.org>
+
+	* latex-dev.man: new man page.
+	* Makefile.am (man1_links): add several links for latex-dev and luatex.
+
 2019-08-06  Karl Berry  <karl@freefriends.org>
 
 	* aleph.man,

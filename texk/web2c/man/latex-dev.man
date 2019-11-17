@@ -1,0 +1,28 @@
+.TH LATEX-DEV 1 "17 November 2019" "Web2C @VERSION@"
+.SH NAME
+latex-dev, pdflatex-dev, xelatex-dev, lualatex-dev, dvilualatex-dev, platex-dev, uplatex-dev \- release candidate LaTeX testing
+.SH SYNOPSIS
+.B latex-dev
+.RI [ first-line ]
+.\"=====================================================================
+.SH DESCRIPTION
+.PP
+These -dev executables are intended for testing upcoming LaTeX2e kernel
+changes. They correspond to new formats which have been tested by the
+LaTeX team for stability and usability. Thus, they are not arbitrary
+development snapshots; more like release candidates.
+.PP
+Wider testing by knowledgeable users is desired, indeed, is the main
+purpose for these executables to exist. Simply replacing the regular
+engine (e.g., pdflatex) with the -dev engine name (pdflatex-dev) is all
+that should be needed.
+.PP
+The lualatex-dev format is based on luahbtex, the luatex variant with
+harfbuzz enabled for glyph shaping.
+.PP
+Please report bugs in these -dev versions, like all LaTeX releases,
+following the procedure at https://www.latex-project.org/bugs.
+.SH "SEE ALSO"
+.BR latex (1).
+.PP
+The LaTeX home page is https://latex-project.org.
