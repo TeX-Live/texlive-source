@@ -1,5 +1,5 @@
 /*************************************************************************
-** CRC32.hpp                                                            **
+** WSNodeRemover.cpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
 ** Copyright (C) 2005-2019 Martin Gieseking <martin.gieseking@uos.de>   **
@@ -18,30 +18,28 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#ifndef CRC32_HPP
-#define CRC32_HPP
+#include "WSNodeRemover.hpp"
+#include "../XMLNode.hpp"
 
-#include <cstdlib>
-#include <istream>
-
-class CRC32 {
-	public:
-		CRC32 ();
-		CRC32 (const CRC32 &crc32) =delete;
-		void update (const uint8_t *bytes, size_t len);
-		void update (uint32_t n, int bytes=4);
-		void update (const char *str);
-		void update (std::istream &is);
-		uint32_t get () const;
-		void reset ();
-		static uint32_t compute (const uint8_t *bytes, size_t len);
-		static uint32_t compute (const char *str);
-		static uint32_t compute (std::istream &is);
-
-	private:
-		uint32_t _crc32;
-		uint32_t _tab[256];
-};
+const char* WSNodeRemover::info () const {
+	return "remove redundant whitespace nodes";
+}
 
 
-#endif
+void WSNodeRemover::execute (XMLElement *context) {
+	if (!context)
+		return;
+	bool removeWS = context->name() != "text" && context->name() != "tspan";
+	XMLNode *child = context->firstChild();
+	while (child) {
+		if (removeWS && child->toWSNode()) {
+			XMLNode *next = child->next();
+			XMLElement::remove(child);
+			child = next;
+			continue;
+		}
+		if (XMLElement *elem = child->toElement())
+			execute(elem);
+		child = child->next();
+	}
+}

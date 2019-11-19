@@ -22,6 +22,7 @@ Martin Gieseking <@PACKAGE_BUGREPORT@>
 :man source: dvisvgm
 :man version: @VERSION@
 :man manual: dvisvgm Manual
+:revdate: 2019-11-12 20:21 +0100
 
 Name
 ----
@@ -129,7 +130,8 @@ Hence, if you choose a landscape format, the page won't be rotated.
 //
 *-C, --cache*[='dir']::
 To speed up the conversion process of bitmap fonts, dvisvgm saves intermediate conversion
-information in cache files. By default, these files are stored in +$HOME/.dvisvgm/cache+.
+information in cache files. By default, these files are stored in +$XDG_CACHE_HOME/dvisvgm/+
+or +$HOME/.cache/dvisvgm+ if +XDG_CACHE_HOME+ is not set.
 If you prefer a different location, use option *--cache* to overwrite the default. Furthermore,
 it is also possible to disable the font caching mechanism completely with option *--cache=none*.
 If argument 'dir' is omitted, dvisvgm prints the path of the default cache directory together
@@ -150,16 +152,15 @@ below for further information.
 *--colornames*::
 By default, dvisvgm exclusively uses RGB values of the form '#RRGGBB' or '#RGB' to represent
 colors in the SVG file. The latter is a short form for colors whose RGB components each 
-consist of two identical hex digits, e.g. '#123' equals '#112233'.
+consist of two identical hex digits, e.g. +#123+ equals +#112233+.
 According to the SVG standard, it's also possible to use color names (like +black+ and +darkblue+)
-for a limited number of predefined colors. In order to apply these color names rather than their
-RGB values, call dvisvgm with option *--colornames*. All colors without an SVG color name will
-still be represented by RGB values.
+for a limited number of https://www.w3.org/TR/SVG11/types.html#ColorKeywords[predefined colors].
+In order to apply these color names rather than their RGB values, call dvisvgm with option
+*--colornames*. All colors without an SVG color name will still be represented by RGB values.
 
 *--comments*::
 Adds comments with further information about selected data to the SVG file. Currently, only
 font elements and font CSS rules related to native fonts are annotated.
-
 
 *-E, --eps*::
 If this option is given, dvisvgm does not expect a DVI but an EPS input file, and tries to convert
@@ -168,14 +169,14 @@ PostScript special handler.
 This option is only available if dvisvgm was built with PostScript support enabled, and requires
 Ghostscript to be available. See option *--libgs* for further information.
 
-*-e, --exact*::
+*-e, --exact-bbox*::
 This option tells dvisvgm to compute the precise bounding box of each character. By default,
 the values stored in a font's TFM file are used to determine a glyph's extent. As these values are
 intended to implement optimal character placements and are not designed to represent the exact
 dimensions, they don't necessarily correspond with the bounds of the visual glyphs. Thus, width
 and/or height of some glyphs may be larger (or smaller) than the respective TFM values. As a result,
-this can lead to clipped characters at the bounds of the SVG graphics. With option *--exact* given,
-dvisvgm analyzes the actual shape of each character and derives a usually tight bounding box.
+this can lead to clipped characters at the bounds of the SVG graphics. With option *--exact-bbox*
+given, dvisvgm analyzes the actual shape of each character and derives a usually tight bounding box.
 
 *-f, --font-format*='format'::
 Selects the file format used to embed the font data into the SVG files. Following formats are
@@ -193,8 +194,9 @@ Loads and evaluates a single font map file or a sequence of font map files. Thes
 to resolve font file names and encodings. dvisvgm does not provide its own map files but tries to read
 available ones coming with dvips or dvipdfm. If option *--fontmap* is omitted, dvisvgm looks for the
 default map files 'ps2pk.map', 'pdftex.map', 'dvipdfm.map', and 'psfonts.map' (in this order).
-Otherwise, the files as option arguments are evaluated in the given order. Multiple filenames must be
-separated by commas without leading and/or trailing whitespace.
+Otherwise, the files given as option arguments are evaluated in the given order. Multiple filenames
+must be separated by commas without leading and/or trailing whitespace.
++
 By default, redefined mappings do not replace previous ones. However, each filename can be preceded by
 an optional mode specifier (*+*, *-*, or *=*) to change this behavior:
  
@@ -221,7 +223,7 @@ where all redefinitions of 'myfile1.map' replace previous entries. Afterwards, a
 given in 'myfile2.map' are removed from the font map tree.
 +
 For further information about the map file formats and the mode specifiers, see the manuals of
-dvips and dvipdfm.
+https://tug.org/texinfohtml/dvips.html[dvips] and https://ctan.org/tex-archive/dviware/dvipdfm[dvipdfm].
 
 *--grad-overlap*::
 Tells dvisvgm to create overlapping grid segments when approximating color gradient fills (also see
@@ -268,15 +270,19 @@ while mode 2 sorts the lines by the long option names.
 Disables the removal of temporary files as created by Metafont (usually .gf, .tfm, and .log files) or
 the TrueType/WOFF module.
 
-*--libgs*='filename'::
+*--libgs*='path'::
 This option is only available if the Ghostscript library is not directly linked to dvisvgm and if
 PostScript support was not completely disabled during compilation. In this case, dvisvgm tries
 to load the shared GS library dynamically during runtime. By default, it expects the library's name
 to be +libgs.so.X+ (on Unix-like systems, where +X+ is the ABI version of the library) or
-+gsdll32.dll+/+gsdll64.dll+ (Windows). Option *--libgs* can be used to give a different name.
-Alternatively, it's also possible to set the GS library name by the environment variable *LIBGS*.
-The latter has less precedence than the command-line option, i.e. dvisvgm ignores variable *LIBGS*
-if *--libgs* is given.
++gsdll32.dll+/+gsdll64.dll+ (Windows). If dvisvgm doesn't find the library, option *--libgs* can be
+used to specify the correct path and filename, e.g. +--libgs=/usr/local/lib/libgs.so.9+ or
++--libgs=\gs\gs9.25\bin\gsdll64.dll+.
++
+Alternatively, it's also possible to assign the path to environment variable *LIBGS*, e.g.
++export LIBGS=/usr/local/lib/libgs.so.9+ or +set LIBGS=\gs\gs9.25\bin\gsdll63.dll+. *LIBGS* has
+less precedence than the command-line option, i.e. dvisvgm ignores variable *LIBGS* if *--libgs*
+is given.
 
 *-L, --linkmark*='style'::
 Selects the method how to mark hyperlinked areas. The 'style' argument can take one of the values
@@ -322,8 +328,8 @@ This option disables these calls.
 
 *-n, --no-fonts*[='variant']::
 If this option is given, dvisvgm doesn't create SVG 'font' elements but uses 'paths' instead. The
-resulting SVG files tend to be larger but they are concurrently more compatible with most applications that
-don't support SVG fonts yet. The optional argument 'variant' selects the method how to substitute fonts
+resulting SVG files tend to be larger but are concurrently more compatible with most applications that
+don't support SVG fonts. The optional argument 'variant' selects the method how to substitute fonts
 by paths. Variant 0 creates 'path' and 'use' elements in order to avoid lengthy duplicates.
 Variant 1 creates 'path' elements only.
 Option *--no-fonts* implies *--no-styles*.
@@ -343,6 +349,56 @@ By default, dvisvgm creates CSS styles and class attributes to reference fonts. 
 more compact than adding the complete font information to each text element over and over again.
 However, if you prefer direct font references, the default behavior can be disabled with
 option *--no-styles*.
+
+*-O, --optimize*[='modules']::
+Applies several optimizations on the generated SVG tree to reduce the file size. The optimizations
+are performed by running separate optimizer modules specified by optional argument 'modules'.
+It may consist of a single module name or a comma-separated list of several module names.
+The corresponding modules are executed one by one in the given order and thus transform the
+XML tree gradually.
++
+The following list describes the currently available optimizer modules.
+
+  *list*;;
+  Lists all available optimizer modules and exits.
+
+  *none*;;
+  If this argument is given, dvisvgm doesn't apply any optimization. *none* can't be combined
+  with other module names.
+
+  *all*;;
+  Performs all optimizations listed below. This is also the default if option *--optimize* is
+  used without argument. The modules are executed in a predefined order that usually leads to the
+  best results. *all* can't be combined with other module names.
+
+  *collapse-groups*;;
+  Combines nested group elements (+<g>+...+</g>+) that contain only a single group each. If possible,
+  the group attributes are moved to the outermost element of the processed subtree. This module also
+  unwraps group elements that have no attributes at all.
+
+  *group-attributes*;;
+  Creates groups (+<g>+...+</g>+) for common attributes around adjacent elements. Each attribute is
+  moved to a separate group so that multiple common attributes lead to nested groups. They can be
+  combined by applying optimizer module 'collapse-groups' afterwards. The algorithm only takes
+  inheritable properties, such as +fill+ or +stroke-width+, into account and only removes them from
+  an element if none of the other attributes, like +id+, prevents this.
+
+  *remove-clippath*;;
+  Removes all redundant 'clipPath' elements. This optimization was already present in former versions
+  of dvisvgm and was always applied by default. This behavior is retained, i.e. dvisvgm executes
+  this module even if option *--optimize* is not given. You can use argument 'none' to prevent that.
+
+  *simplify-text*;;
+  If a +text+ element only contains whitespace nodes and +tspan+ elements, all common inheritable
+  attributes of the latter are moved to the enclosing text element. All +tspan+ elements without
+  further attributes are unwrapped.
+
+  *simplify-transform*;;
+  Tries to shorten all 'transform' attributes. This module combines the transformation commands of
+  each attribute and decomposes the resulting transformation matrix into a sequence of basic
+  transformations, i.e. translation, scaling, rotation, and skewing. If this sequence is shorter
+  than the equivalent 'matrix' expression, it's assigned to the attribute. Otherwise, the matrix
+  expression is used.
 
 *-o, --output*='pattern'::
 Sets the pattern specifying the names of the generated SVG files. Parameter 'pattern' is a string
@@ -412,11 +468,14 @@ contents get the same file name. Therefore, only the first one is converted whil
 skipped. To create separate files for each page, you can add the page number to the output pattern,
 e.g. +--output="%f-%p-%hc"+.
 +
-By default, dvisvgm uses the XXH64 hash algorithm to compute the values provided through +%hd+ and
-+%hc+. It's extremely fast, and a 64-bit hash should be sufficient for most documents with an average
-size of pages. Alternatively, XXH32 and MD5 can be used as well. The desired algorithm is specified
-by argument 'params' of option *--page-hashes*. It takes one of the strings +MD5+, +XXH32+, and +XXH64+,
-where the names can be given in lower case too, like +--page-hashes=md5+.
+By default, dvisvgm uses the fast XXH64 hash algorithm to compute the values provided through +%hd+ and
++%hc+. 64-bit hashes should be sufficient for most documents with an average size of pages. Alternatively,
+XXH32 and MD5 can be used as well. The desired algorithm is specified by argument 'params' of option
+*--page-hashes*. It takes one of the strings +MD5+, +XXH32+, and +XXH64+, where the names can be given
+in lower case too, like +--page-hashes=md5+. Since version 0.7.1, xxHash provides an experimental 128-bit
+hash function, whose algorithm may still change with the next versions of the library. If the
+corresponding API is available, dvisvgm supports the new hash function and option *--page-hashes*
+additionally accepts the algorithm specifier +XXH128+.
 +
 Finally, option *--page-hashes* can take a second argument that must be separated by a comma.
 Currently, only the two parameters 'list' and 'replace' are evaluated, e.g. +--page-hashes=md5,list+
@@ -616,19 +675,23 @@ exact syntax, see the documentation of dvips, for instance.
 *dvisvgm*::
 dvisvgm offers its own small set of specials. The following list gives a brief overview.
   *dvisvgm:raw* 'text';;
-  Adds an arbitrary sequence of characters to the page section of the SVG document. dvisvgm does not perform
-  any validation here, thus the user has to ensure that the resulting SVG is still valid. Parameter 'text'
-  may contain the expressions *{?x}*, *{?y}*, and *{?color}* that expand to the current 'x' or 'y' coordinate
-  and the current color, respectively. Furthermore, *{?nl}* expands to a newline character.
- 
+  Adds an arbitrary sequence of XML nodes to the page section of the SVG document. dvisvgm checks syntax and
+  proper nesting of the inserted elements but does not perform any validation, thus the user has to ensure
+  that the resulting SVG is still valid. Opening and closing tags may be distributed among different +raw+
+  specials. The tags themselves can also be split but must be continued with the immediatly following +raw+
+  special. Both syntactically incorrect and wrongly nested tags lead to error messages.
+  Parameter 'text' may also contain the expressions *{?x}*, *{?y}*, *{?color}*, and *{?matrix}* that expand to
+  the current 'x' or 'y' coordinate, the current color, and current transformation matrix, respectively.
+  Furthermore, *{?nl}* expands to a newline character.
+
   *dvisvgm:rawdef* 'text';;
-  This command is similar to *dvisvgm:raw*, but puts the raw text into the <defs> section of the SVG document
+  This command is similar to *dvisvgm:raw*, but puts the XML nodes into the <defs> section of the SVG document
   currently being generated.
 
   *dvisvgm:rawset* 'name' ... *dvisvgm:endrawset*;;
   This pair of specials marks the begin and end of a definition of a named raw SVG fragment. All *dvisvgm:raw*
   and *dvisvgm:rawdef* specials enclosed by *dvisvgm:rawset* and *dvisvgm:endrawset* are not evaluated
-  immediately but jointly stored under the given 'name' for later use. Once defined, the named fragment can be
+  immediately but stored together under the given 'name' for later use. Once defined, the named fragment can be
   referenced throughout the DVI file by *dvisvgm:rawput* (see below).
   The two commands *dvisvgm:rawset* and *dvisvgm:endrawset* must not be nested, i.e. each call of *dvisvgm:rawset*
   has to be followed by a corresponding call of *dvisvgm:endrawset* before another *dvisvgm:rawset* may occur.
@@ -646,7 +709,15 @@ dvisvgm offers its own small set of specials. The following list gives a brief o
   can be used here. However, dvisvgm does not check the file format or the file name suffix. The lengths 'width'
   and 'height' can be given together with a unit specifier (see option *--bbox*) or as plain floating point numbers.
   In the latter case, TeX point units are assumed (1in = 72.27pt).
- 
+
+  *dvisvgm:bbox* lock;;
+  Locks the bounding box of the current page and prevents it from further updating, i.e. graphics elements added
+  after calling this special are not taken into account in determining the extent of the bounding box.
+
+  *dvisvgm:bbox* unlock;;
+  Unlocks the previously locked bounding box of the current page so that it gets updated again when adding
+  graphics elements to the page.
+
   *dvisvgm:bbox* n[ew] 'name';;
   Defines or resets a local bounding box called 'name'. The name may consist of letters and digits.
   While processing a DVI page, dvisvgm continuously updates the (global) bounding box of the current page in order to
@@ -658,8 +729,8 @@ dvisvgm offers its own small set of specials. The following list gives a brief o
   In conjunction with special *dvisvgm:raw*, the macro *{?bbox 'name'}* expands to the four values 'x', 'y', 'w', and 'h'
   (separated by spaces) specifying the coordinates of the upper left corner, width, and height of the local box 'name'.
   If box 'name' wasn't previously defined, all four values equal to zero.
- 
-  *dvisvgm:bbox* 'width' 'height' ['depth'];;
+
+  *dvisvgm:bbox* 'width' 'height' ['depth'] [+transform+];;
   Updates the bounding box of the current page by embedding a virtual rectangle ('x', 'y', 'width', 'height')
   where the lower left corner is located at the current DVI drawing position ('x','y'). If the optional parameter 'depth'
   is specified, dvisvgm embeds a second rectangle ('x', 'y', 'width', -__depth__). The lengths 'width', 'height', and
@@ -667,26 +738,33 @@ dvisvgm offers its own small set of specials. The following list gives a brief o
   In the latter case, TeX point units are assumed (1in = 72.27pt). Depending on size and position of the virtual rectangle,
   this command either enlarges the overall bounding box or leaves it as is. It's not possible to reduce its extent. This
   special should be used together with *dvisvgm:raw* in order to update the viewport of the page properly.
- 
-  *dvisvgm:bbox* a[bs] 'x1' 'y1' 'x2' 'y2';;
+  By default, the box extents are assigned unchanged and, in particular, are not altered by transformation commands.
+  In order to apply the current transformation matrix, the optional modifier +transform+ can be added at the end of
+  the special statement.
+
+  *dvisvgm:bbox* a[bs] 'x1' 'y1' 'x2' 'y2' [+transform+];;
   This variant of the bbox special updates the bounding box by embedding a virtual rectangle ('x1','y1','x2','y2').
   The points ('x1','y1') and ('x2','y2') denote the absolute coordinates of two diagonal corners of the rectangle.
- 
-  *dvisvgm:bbox* f[ix] 'x1' 'y1' 'x2' 'y2';;
+  As with the relative special variant described above, the optional modifier +transform+ allows for applying the
+  current transformation matrix to the bounding box.
+
+  *dvisvgm:bbox* f[ix] 'x1' 'y1' 'x2' 'y2' [+transform+];;
   This variant of the bbox special assigns an absolute (final) bounding box to the resulting SVG. After executing
   this command, dvisvgm doesn't further alter the bounding box coordinates, except this special is called again later.
   The points ('x1','y1') and ('x2','y2') denote the absolute coordinates of two diagonal corners of the rectangle.
+  As with the relative special variant described above, the optional modifier +transform+ allows for applying the
+  current transformation matrix to the bounding box.
 +
 The following TeX snippet adds two raw SVG elements to the output and updates the bounding box accordingly:
 +
 [source,tex]
 -------------------------------------------------------------------------------------
 \special{dvisvgm:raw <circle cx='{?x}' cy='{?y}' r='10' stroke='black' fill='red'/>}%
-\special{dvisvgm:bbox 10bp 10bp 10bp}%
-\special{dvisvgm:bbox -10bp 10bp 10bp}
+\special{dvisvgm:bbox 10bp 10bp 10bp transform}%
+\special{dvisvgm:bbox -10bp 10bp 10bp transform}
 
-\special{dvisvgm:raw <path d='M50 200 L10 250 H100 Z' stroke='black' fill='blue'/>}
-\special{dvisvgm:bbox abs 10bp 200bp 100bp 250bp}
+\special{dvisvgm:raw <path d='M50 200 L10 250 H100 Z' stroke='black' fill='blue'/>}%
+\special{dvisvgm:bbox abs 10bp 200bp 100bp 250bp transform}
 -------------------------------------------------------------------------------------
 +
 
@@ -727,12 +805,12 @@ information on the command syntax and semantics, see the documentation of +\pdfm
 https://ctan.org/pkg/pdftex[pdfTeX user manual].
 
 *ps*::
-The famous DVI driver 'dvips' introduced its own set of specials in order to embed PostScript code into DVI files,
-which greatly improves the capabilities of DVI documents. One aim of dvisvgm is to completely evaluate all
-PostScript snippets and to convert as many of them as possible to SVG. In contrast to dvips, dvisvgm uses
-floating point arithmetics to compute the precise position of each graphic element, i.e. it doesn't round the
-coordinates. Therefore, the relative locations of the graphic elements may slightly differ from those computed
-by dvips.
+The famous DVI driver https://www.tug.org/texinfohtml/dvips.html['dvips'] introduced its own set of specials
+in order to embed PostScript code into DVI files, which greatly improves the capabilities of DVI documents.
+One aim of dvisvgm is to completely evaluate all PostScript fragments and to convert as many of them as possible
+to SVG. In contrast to dvips, dvisvgm uses floating point arithmetics to compute the precise position of each
+graphic element, i.e. it doesn't round the coordinates. Therefore, the relative locations of the graphic elements
+may slightly differ from those computed by dvips.
 +
 Since PostScript is a rather complex language, dvisvgm does not implement its own PostScript interpreter
 but relies on https://ghostscript.com[Ghostscript] instead. If the Ghostscript library was not linked to the
@@ -765,32 +843,29 @@ eepic and tplot, use these specials to describe graphics.
 
 Examples
 --------
-------------
-dvisvgm file
-------------
-Converts the first page of 'file.dvi' to 'file.svg'.
++dvisvgm file+::
+	Converts the first page of 'file.dvi' to 'file.svg'.
 
---------------------
-dvisvgm - < file.dvi
---------------------
-Converts the first page of 'file.dvi' to 'stdin.svg' where the contents of 'file.dvi'
-is read from *stdin*.
++dvisvgm -p1-5 file+::
+	Converts the first five pages of 'file.dvi' to 'file-1.svg',...,'file-5.svg'.
 
----------------
-dvisvgm -z file
----------------
-Converts the first page of 'file.dvi' to 'file.svgz' with default compression level 9.
++dvisvgm -p1- file+::
+	Converts all pages of 'file.dvi' to separate SVG files.
 
--------------------------------------
-dvisvgm -p5 -z3 -ba4-l -onewfile file
--------------------------------------
-Converts the fifth page of 'file.dvi' to 'newfile.svgz' with compression level 3.
-The bounding box is set to DIN/ISO A4 in landscape format.
++dvisvgm -p1,3 -O file+::
+	Converts the first and third page of 'file.dvi' to optimized SVG files.
 
------------------------------------------------------
-dvisvgm --transform="R20,w/3,2h/5 T1cm,1cm S2,3" file
------------------------------------------------------
-Converts the first page of 'file.dvi' to 'file.svg' where three transformations are applied.
++dvisvgm - < file.dvi+::
+	Converts the first page of 'file.dvi' to 'stdin.svg' where the contents of 'file.dvi' is read from *stdin*.
+
++dvisvgm -z file+::
+	Converts the first page of 'file.dvi' to 'file.svgz' with default compression level 9.
+
++dvisvgm -p5 -z3 -ba4-l -o newfile file+::
+	Converts the fifth page of 'file.dvi' to 'newfile.svgz' with compression level 3. The bounding box is set to DIN/ISO A4 in landscape format.
+
++dvisvgm --transform="R20,w/3,2h/5 T1cm,1cm S2,3" file+::
+	Converts the first page of 'file.dvi' to 'file.svg' where three transformations are applied.
 
 [[environment]]
 Environment

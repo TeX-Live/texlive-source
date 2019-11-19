@@ -16,6 +16,7 @@ EXTRA_DIST = gtest/LICENSE \
 	gtest/src/gtest-filepath.cc \
 	gtest/src/gtest-internal-inl.h \
 	gtest/src/gtest_main.cc \
+	gtest/src/gtest-matchers.cc \
 	gtest/src/gtest-port.cc \
 	gtest/src/gtest-printers.cc \
 	gtest/src/gtest-test-part.cc \
@@ -51,7 +52,7 @@ hashcheck_LDADD = $(LIBS_LIBS)
 hashcheck.cpp: genhashcheck.py $(dvisvgm_srcdir)/src/AGLTable.hpp $(dvisvgm_srcdir)/libs/xxHash/xxhash.h
 	python $^ >$@
 
-TESTLIBS = libgtest.la ../src/libdvisvgm.a $(LIBS_LIBS) -lfreetype
+TESTLIBS = libgtest.la ../src/libdvisvgm.la $(LIBS_LIBS) -lfreetype
 if ENABLE_WOFF
 TESTLIBS += ../libs/ff-woff/libfontforge.a
 endif
@@ -117,12 +118,6 @@ CommandLineTest_SOURCES = CommandLineTest.cpp testutil.hpp
 CommandLineTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 CommandLineTest_LDADD = $(TESTLIBS)
 
-TESTS += CRC32Test
-check_PROGRAMS += CRC32Test
-CRC32Test_SOURCES = CRC32Test.cpp testutil.hpp
-CRC32Test_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
-CRC32Test_LDADD = $(TESTLIBS)
-
 TESTS += DependencyGraphTest
 check_PROGRAMS += DependencyGraphTest
 DependencyGraphTest_SOURCES = DependencyGraphTest.cpp testutil.hpp
@@ -146,6 +141,12 @@ check_PROGRAMS += DvisvgmSpecialTest
 DvisvgmSpecialTest_SOURCES = DvisvgmSpecialTest.cpp testutil.hpp
 DvisvgmSpecialTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 DvisvgmSpecialTest_LDADD = $(TESTLIBS)
+
+TESTS += EllipticalArcTest
+check_PROGRAMS += EllipticalArcTest
+EllipticalArcTest_SOURCES = EllipticalArcTest.cpp testutil.hpp
+EllipticalArcTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
+EllipticalArcTest_LDADD = $(TESTLIBS)
 
 TESTS += EmSpecialTest
 check_PROGRAMS += EmSpecialTest

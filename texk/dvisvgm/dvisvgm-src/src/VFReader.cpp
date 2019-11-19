@@ -28,12 +28,8 @@
 using namespace std;
 
 
-VFReader::VFReader (istream &is)
-	: StreamReader(is), _actions(0), _designSize(0) {
-}
-
-
-VFReader::~VFReader () {
+VFReader::VFReader (istream &is) : StreamReader(is)
+{
 }
 
 
@@ -57,7 +53,7 @@ int VFReader::executeCommand (ApproveAction approve) {
 	bool approved = !approve || approve(opcode);
 	VFActions *actions = _actions;
 	if (!approved)
-		replaceActions(0);  // disable actions
+		replaceActions(nullptr);  // disable actions
 
 	if (opcode <= 241)     // short character definition?
 		cmdShortChar(opcode);
@@ -70,9 +66,7 @@ int VFReader::executeCommand (ApproveAction approve) {
 			case 248: cmdPost();     break;  // postamble
 			default : {                      // invalid opcode
 				replaceActions(actions);      // reenable actions
-				ostringstream oss;
-				oss << "undefined VF command (opcode " << opcode << ')';
-				throw VFException(oss.str());
+				throw VFException("undefined VF command (opcode " + std::to_string(opcode) + ")");
 			}
 		}
 	}
@@ -143,8 +137,7 @@ void VFReader::cmdLongChar () {
 	else {
 		uint32_t cc  = readUnsigned(4); // character code
 		readUnsigned(4);                // equals character width from corresponding TFM file
-		vector<uint8_t> dvi(pl);        // DVI subroutine
-		readBytes(pl, dvi);
+		auto dvi = readBytes(pl);       // DVI subroutine
 		_actions->defineVFChar(cc, std::move(dvi)); // call template method for user actions
 	}
 }
@@ -158,8 +151,7 @@ void VFReader::cmdShortChar (int pl) {
 	else {
 		uint32_t cc  = readUnsigned(1); // character code
 		readUnsigned(3);                // character width from corresponding TFM file
-		vector<uint8_t> dvi(pl);        // DVI subroutine
-		readBytes(pl, dvi);
+		auto dvi = readBytes(pl);       // DVI subroutine
 		_actions->defineVFChar(cc, std::move(dvi)); // call template method for user actions
 	}
 }

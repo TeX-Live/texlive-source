@@ -1,78 +1,63 @@
-# This file is part of dvisvgm
-# Copyright (C) 2005-2019 Martin Gieseking <martin.gieseking@uos.de>
-#
-# Process this file with autoconf to produce a configure script.
-
-AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[2.6.3],[martin.gieseking@uos.de])
-DATE="March 2019"
-AC_CONFIG_SRCDIR(src)
+# $Id: configure.ac 49819 2019-01-25 23:20:32Z karl $
+dnl Process this file with autoconf to produce a configure script
+dnl for dvisvgm in TeX Live.
+dnl
+dnl   Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+dnl  Adapted for TeX Live from original dvisvgm configure.ac
+dnl  Copyright 2005-2019 Martin Gieseking
+dnl
+AC_PREREQ([2.65])
+m4_include([version.ac])[] dnl define dvisvgm_version
+AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
+DATE="November 2019"
+AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE([subdir-objects])
+AC_CONFIG_MACRO_DIRS([../../m4])dnl not just _DIR
+AC_CONFIG_AUX_DIR([../../build-aux])
+
+AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
+
+# Common code for all programs using libkpathsea.
+# PROG_AR must be run before KPSE_COMMON, since the latter calls LT_INIT.
+AM_PROG_AR
+KPSE_COMMON([dvisvgm])
 
 AH_TEMPLATE([TARGET_SYSTEM], [The machine triplet of the target system])
 AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$target"])
 
-# Checks for programs.
 AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CXX
 AX_CXX_COMPILE_STDCXX([11])
-AM_PROG_AR
 LT_INIT
+KPSE_CXX_HACK
 
 AC_PROG_RANLIB
 AC_LANG(C)
 
-AX_CHECK_COMPILE_FLAG([-Wmismatched-tags -Wno-mismatched-tags], [CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"])
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h xlocale.h])
 AC_HEADER_TIOCGWINSZ
 
-CPPFLAGS_SAVE="$CPPFLAGS"
-CFLAGS_SAVE="$CFLAGS"
-LDFLAGS_SAVE="$LDFLAGS"
+KPSE_COND_WIN32
+KPSE_KPATHSEA_FLAGS
+KPSE_FREETYPE2_FLAGS
+KPSE_ZLIB_FLAGS
 
-# Check availability and usability of the kpathsea library
-AC_ARG_VAR(KPSE_CFLAGS, [C/C++ compiler flags for the kpathsea library])
-AC_ARG_VAR(KPSE_LIBS, [linker flags for the kpathsea library])
-AC_ARG_VAR(KPSE_LIBS, [])
-AC_ARG_WITH([kpathsea],
-	[AS_HELP_STRING([--with-kpathsea=prefix], [set location of kpathsea library])],
-	[with_kpathsea="$withval"],
-	[with_kpathsea=yes])
+KPSE_SAVE_FLAGS
 
-AS_IF([test "x$with_kpathsea" != "xyes"],
-	[KPSE_CFLAGS="-I$with_kpathsea/include" KPSE_LIBS="-L$with_kpathsea/lib"]
-	[CPPFLAGS="$CPPFLAGS $KPSE_CFLAGS" CFLAGS="$CFLAGS $KPSE_CFLAGS" LDFLAGS="$LDFLAGS $KPSE_LIBS"])
-
-AC_CHECK_HEADER([kpathsea/kpathsea.h],,
-	[AC_MSG_ERROR([please install the kpathsea development package])])
-AC_CHECK_LIB([kpathsea], [kpse_find_file],,
-	[AC_MSG_ERROR([libkpathsea not found, please install the corresponding package first])])
-
-AC_MSG_CHECKING([kpathsea version])
-AC_RUN_IFELSE([AC_LANG_SOURCE([#include <stdio.h>
-	#include <kpathsea/kpathsea.h>
-	int main() {
-		FILE *f;
-		f = fopen("kpseversion", "w");
-		if(!f) exit(1);
-		fprintf(f, "%s\n", KPSEVERSION);
-		fclose(f);
-		exit(0);
-	}])],
-	[kpseversion=`cat kpseversion|sed 's/kpathsea version //'`], [kpseversion=], [kpseversion=unknown])
-AC_MSG_RESULT("$kpseversion")
-rm -f kpseversion
-AS_IF([test -z "$kpseversion"],
-	[AC_MSG_ERROR([Could not compile a simple kpathsea program -- check your installation])])
-AC_SUBST(KPSE_CFLAGS)
-AC_SUBST(KPSE_LIBS)
-
-# Check how to link Ghostscript
+# emacs-page Ghostscript complexities.
+LIBGS_INCLUDES=
+LIBGS_LIBS=
+if test "x$enable_native_texlive_build" = xyes; then
+  # TL: always dlload libgs, must avoid shared lib ref in binary.
+  HAVE_LIBGS=0
+else
 have_libgs=yes
 AC_CHECK_HEADER([ghostscript/iapi.h],
 	[AC_CHECK_LIB(gs, gsapi_revision,, [have_libgs=no])],
@@ -82,68 +67,87 @@ AS_IF([test "x$have_libgs" = "xno"],
 	[AC_CHECK_LIB(dl, dlopen,,
 		[AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])]
 		[AC_MSG_WARN(PostScript support disabled)])])
+fi
 
-# Check for pkg-config
-PKG_PROG_PKG_CONFIG
+if test -z "$HAVE_LIBGS" || test "$HAVE_LIBGS" -eq 0; then
+  AC_MSG_NOTICE([not linking to libgs, trying to arrange for dynamic loading])
+  # Windows (native or MinGW32) has neither <dlfcn.h> nor dlopen().
+  if test "x$kpse_cv_have_win32" = xno; then
+    # FreeBSD neither has nor requires libdl.
+    AC_SEARCH_LIBS([dlopen], [dl])
+    AS_CASE([$ac_cv_search_dlopen],
+            [no | "none required"], [],
+                [LIBGS_LIBS=$ac_cv_search_dlopen])
+    AC_CHECK_HEADER([dlfcn.h])
+    AC_CHECK_FUNC([dlopen])
+    if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
+      AC_DEFINE(DISABLE_GS, 1,
+                [Set to 1 if PostScript support is to be disabled])
+      LIBGS_LIBS=
+    fi
+  fi
+else
+	# query Ghostscript version
+	AC_MSG_CHECKING([Ghostscript version])
+	AC_RUN_IFELSE([AC_LANG_SOURCE([#include <stdio.h>
+		#include <ghostscript/iapi.h>
+		int main () {
+			gsapi_revision_t r;
+			if (gsapi_revision(&r, sizeof(gsapi_revision_t)) == 0) {
+				FILE *f;
+				f = fopen("gsversion", "w");
+				if (!f) exit(1);
+				fprintf(f, "%ld\n", r.revision);
+				fclose(f);
+				exit(0);
+			}
+		}])],
+		[gsversion=`cat gsversion`], [gsversion=], [gsversion=unknown])
+	AC_MSG_RESULT("$gsversion")
+	rm -f gsversion
+	if test -z "$gsversion" || test "$gsversion" -lt 831; then
+		# current Ghostscript API was introduced in version 8.31
+		# older versions are not supported
+		AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])
+		AC_MSG_WARN([Ghostscript version < 8.31 found; PostScript support disabled])
+	else
+		LIBGS_LIBS=-lgs
+	fi
+fi
+AC_SUBST([LIBGS_INCLUDES])
+AC_SUBST([LIBGS_LIBS])
 
-# Check for libraries.
-PKG_CHECK_MODULES([FREETYPE], [freetype2])
+if test "x$enable_build" != xno || test -f config.force; then
 
-AC_ARG_ENABLE([woff],
-	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
-	[],
-	[enable_woff=yes])
-AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
+# Checks for more libraries.
+KPSE_ADD_FLAGS([zlib])
+AC_CHECK_FUNC([gzopen], [],
+              [AC_MSG_ERROR([cannot find/use zlib])])
 
-AC_ARG_WITH([ttfautohint],
-	[AS_HELP_STRING([--with-ttfautohint@<:@=prefix@:>@], [enable ttfautohint support (disabled by default)])],
-	[with_ttfautohint="$withval"],
-	[with_ttfautohint=no])
+KPSE_ADD_FLAGS([freetype2])
+AC_CHECK_FUNC([FT_Init_FreeType], [],
+              [AC_MSG_ERROR([cannot find/use libfreetype])])
 
-# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
-AC_ARG_ENABLE([bundled-libs],
-	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])])
-AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$enable_bundled_libs" = "xyes"])
+KPSE_ADD_FLAGS([kpathsea])
+AC_CHECK_FUNC([kpse_set_program_name], [],
+              [AC_MSG_ERROR([cannot find/use libkpathsea])])
 
-# If option --enable-bundled-libs is not given, look for system libraries of brotli, potrace, woff2, and xxhash.
-AS_IF([test "x$enable_bundled_libs" != "xyes"],
-	[AC_CHECK_HEADER(potracelib.h,
-		[AC_SEARCH_LIBS(potrace_trace, [potrace], [have_potrace=yes])])]
-	[AC_CHECK_HEADER([xxhash.h],
-		[AC_SEARCH_LIBS(XXH32, [xxhash], [have_xxhash=yes])])]
-	[AS_IF([test "x$enable_woff" = "xyes"],
-		[PKG_CHECK_MODULES(BROTLI, [libbrotlienc], [have_brotli=yes])]
-		[PKG_CHECK_MODULES(WOFF2, [libwoff2enc], [have_woff2=yes])])])
-AM_CONDITIONAL(HAVE_POTRACE, [test "x$have_potrace" = "xyes"])
-AM_CONDITIONAL(HAVE_BROTLI, [test "x$have_brotli" = "xyes"])
-AM_CONDITIONAL(HAVE_WOFF2, [test "x$have_woff2" = "xyes"])
-AM_CONDITIONAL(HAVE_XXHASH, [test "x$have_xxhash" = "xyes"])
+# Check if the kpathsea headers are C++ safe.
+AC_LANG_PUSH([C++])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <kpathsea/kpathsea.h>]],
+                                [[printf("%s\n", concat("one", "two"))]])],
+               [],
+               [AC_MSG_ERROR([Sorry, your kpathsea headers are too old])
+                AC_DEFINE([KPSE_CXX_UNSAFE], 1,
+                          [Define to 1 if the kpathsea headers are not C++ safe.])])
+AC_LANG_POP([C++])
 
-AS_IF([test "x$enable_woff" != "xyes"],
-	[AC_DEFINE([DISABLE_WOFF], 1, [Define if WOFF support is disabled])],
-	[AS_IF([test "x$with_ttfautohint" != "xno"],
-		[AS_IF([test "x$with_ttfautohint" = "xyes"],
-			# --with-ttfautohint without path => check via pkg-config
-			[PKG_CHECK_MODULES([TTFAUTOHINT], [ttfautohint],,
-				[AC_MSG_ERROR([can't locate ttfautohint, use "--with-ttfautohint=path" to specify its location])])],
-			# --with-ttfautohint=/path/ttfautohint given
-			[TTFAUTOHINT_CFLAGS="-I$with_ttfautohint/include"]
-			[TTFAUTOHINT_LIBS="-L$with_ttfautohint/lib"])]
-		[CPPFLAGS="$CPPFLAGS $TTFAUTOHINT_CFLAGS" CFLAGS="$CFLAGS $TTFAUTOHINT_CFLAGS" LDFLAGS="$LDFLAGS $TTFAUTOHINT_LIBS"]
-		[AC_CHECK_HEADERS([ttfautohint.h],, [AC_MSG_WARN([ttfautohint.h not found])])]
-		[AC_CHECK_LIB([ttfautohint], [TTF_autohint],,
-			[AC_MSG_WARN([no working ttfautohint library found])]
-			[AC_CHECK_LIB(dl, dlopen,
-				[AC_MSG_NOTICE([enabled dynamic loading of ttfautohint])],
-				[AC_MSG_WARN([disabled ttfautohint support])])])]
-		[AC_SUBST(TTFAUTOHINT_CFLAGS) AC_SUBST(TTFAUTOHINT_LIBS)])])
+echo timestamp >config.force
+fi
 
-AC_CHECK_HEADERS([openssl/md5.h])
-PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto], [HAVE_LIBCRYPTO=1], [HAVE_LIBCRYPTO=0])
-AM_CONDITIONAL([USE_BUNDLED_MD5], [test "$HAVE_LIBCRYPTO" -eq 0])
+KPSE_RESTORE_FLAGS
 
-AC_CHECK_LIB(z, gzopen)
-
+# emacs-page
 # Check for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
@@ -158,61 +162,50 @@ AC_STRUCT_TM
 AC_FUNC_STAT
 AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
 
-# add options for selection of "optional" library locations
-# currently these libraries are mandatory; the --with-foo options
-# are used to specify the locations explicitely
+AC_ARG_ENABLE([woff],
+	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
+	[],
+	[enable_woff=yes])
+AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
 
-AC_ARG_WITH(zlib,
-	[AS_HELP_STRING([--with-zlib=DIR], [set location of the zlib library])],
-	[AS_IF([test "x$withval" != "xno"],
-		[AS_IF([test "x$withval" != "xyes"], [ZLIB_DIR=$withval])]
-		[AS_IF([test -n "$ZLIB_DIR"],
-			[ZLIB_CFLAGS="-I$ZLIB_DIR -I$ZLIB_DIR/include"]
-			[ZLIB_LIBS="-L$ZLIB_DIR/lib" -lz])])])
+# TL: skip ttfautohint?
+# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
+AC_ARG_ENABLE([bundled-libs],
+	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])],
+	[use_bundled_libs=yes])
+AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$use_bundled_libs" = "xyes" dnl
+                               || test "x$enable_native_texlive_build" = xyes])
+# that is, force using bundled libs for native TL build.
 
-AC_SUBST([ZLIB_CFLAGS])
-AC_SUBST([ZLIB_LIBS])
+# TL: use bundled md5 too
+AM_CONDITIONAL([USE_BUNDLED_MD5], true)
 
-# Check if the kpathsea headers are C++ safe
-AC_MSG_CHECKING([if the kpathsea headers are C++ safe])
-AC_LANG_PUSH([C++])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <kpathsea/kpathsea.h>]],
-                                [[printf("%s\n", concat("one", "two"))]])],
-               [AC_MSG_RESULT([yes])],
-               [AC_MSG_RESULT([no])
-                AC_DEFINE([KPSE_CXX_UNSAFE], 1,
-                          [Define to 1 if the kpathsea headers are not C++ safe.])])
-AC_LANG_POP([C++])
+# TL: these conditionals for system libraries are in the Makefile.am's.
+AM_CONDITIONAL(HAVE_POTRACE, false)
+AM_CONDITIONAL(HAVE_BROTLI, false)
+AM_CONDITIONAL(HAVE_WOFF2, false)
+AM_CONDITIONAL(HAVE_XXHASH, false)
 
-CPPFLAGS="$CPPFLAGS_SAVE"
-CFLAGS="$CFLAGS_SAVE"
-LDFLAGS="$LDFLAGS_SAVE"
+# TL: not going to build_manpage (which is the default).
+# TL: not going to attempt code coverage; need to subst it away.
+AM_CONDITIONAL([CODE_COVERAGE_ENABLED], false)
+CODE_COVERAGE_RULES=
+AC_SUBST([CODE_COVERAGE_RULES])
 
-AC_ARG_ENABLE([manpage],
-	[AS_HELP_STRING([--disable-manpage], [disable generation of manual page @<:@default=no@:>@])])
-AS_IF([test "x$enable_manpage" != "xno"],[
-	enable_manpage="no"
-	# Check for utilities required to build the manpage
-	AC_CHECK_PROG(ASCIIDOC, asciidoc, yes)
-	AS_IF([test "x$ASCIIDOC" = "xyes"], [
-		AC_CHECK_PROG(XMLTO, xmlto, yes)
-		AS_IF([test "x$XMLTO" = "xyes"], [
-			AC_CHECK_PROG(XSLTPROC, xsltproc, yes)
-			AS_IF([test "x$XSLTPROC" = "xyes"],[enable_manpage="yes"])])])])
-AS_IF([test "x$enable_manpage" != "xyes"],
-	AC_MSG_NOTICE([generation of manual page has been disabled]))
-AM_CONDITIONAL([BUILD_MANPAGE], [test "x$enable_manpage" = "xyes"])
+# TL: the original configure calls pkg_check_modules,
+# which calls ac_arg_var on the _cflags and _libs for various libraries,
+# which calls ac_subst. we'll just ac_subst them to get initial (empty)
+# definitions, so we can retain the += used by the original lib/defs.am.
+# (init brotli)
+AC_SUBST(BROTLI_CFLAGS)
+AC_SUBST(BROTLI_LIBS)
+# (init woff2)
+AC_SUBST(WOFF2_CFLAGS)
+AC_SUBST(WOFF2_LIBS)
+ 
+AC_SUBST([DVISVGM_TREE], [dvisvgm-src])
 
-AX_CODE_COVERAGE
-AS_IF([ test "$enable_code_coverage" = "yes" ], [
-	# disable optimization
-	changequote({,})
-	CFLAGS=`echo $CFLAGS | sed 's/-O[1-9s]//g'`
-	CXXFLAGS=`echo $CXXFLAGS | sed 's/-O[1-9s]//g'`
-	changequote([,])
-])
-
-AC_SUBST([dvisvgm_srcdir], ['$(top_srcdir)'])
+AC_SUBST([dvisvgm_srcdir], ['$(top_srcdir)/dvisvgm-src'])
 AC_SUBST(DATE)
 AC_SUBST(AM_CPPFLAGS)
 AC_SUBST(AM_LDFLAGS)
@@ -230,6 +223,7 @@ AC_CONFIG_FILES([
 	m4/Makefile
 	src/Makefile
 	src/version.hpp
+	src/optimizer/Makefile
 	tests/Makefile
 	tests/data/Makefile
 	doc/Makefile])

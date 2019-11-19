@@ -21,6 +21,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include <vector>
+#include <XMLString.hpp>
 #include "Calculator.hpp"
 #include "Matrix.hpp"
 
@@ -68,14 +69,14 @@ TEST(MatrixTest, svg) {
 	ostringstream oss;
 	m1.write(oss);
 	EXPECT_EQ(oss.str(), "((1,2,3),(4,5,6),(7,8,9))");
-	EXPECT_EQ(m1.getSVG(), "matrix(1 4 2 5 3 6)");
+	EXPECT_EQ(m1.toSVG(), "matrix(1 4 2 5 3 6)");
 
 	double v2[] = {1,2};
 	Matrix m2(v2, 2);
 	oss.str("");
 	m2.write(oss);
 	EXPECT_EQ(oss.str(), "((1,2,0),(0,1,0),(0,0,1))");
-	EXPECT_EQ(m2.getSVG(), "matrix(1 0 2 1 0 0)");
+	EXPECT_EQ(m2.toSVG(), "matrix(1 0 2 1 0 0)");
 }
 
 
@@ -86,7 +87,7 @@ TEST(MatrixTest, transpose) {
 	ostringstream oss;
 	m.write(oss);
 	EXPECT_EQ(oss.str(), "((1,4,7),(2,5,8),(3,6,9))");
-	EXPECT_EQ(m.getSVG(), "matrix(1 2 4 5 7 8)");
+	EXPECT_EQ(m.toSVG(), "matrix(1 2 4 5 7 8)");
 }
 
 
@@ -131,25 +132,25 @@ TEST(MatrixTest, isTranslation) {
 }
 
 
-TEST(MatrixTest, lmultiply) {
-	const Matrix m1({1, 2, 3, 4, 5, 6, 7, 8, 9});
-	const Matrix m2({9, 8, 7, 6, 5, 4, 3, 2, 1});
-	EXPECT_NE(m1, m2);
-	Matrix m3;
-	EXPECT_EQ((m3=m1).lmultiply(m2), Matrix({30, 24, 18, 84, 69, 54, 138, 114, 90}));
-	EXPECT_EQ((m3=m2).lmultiply(m1), Matrix({90, 114, 138, 54, 69, 84, 18, 24, 30}));
-	EXPECT_EQ((m3=m1).lmultiply(Matrix(1)), m1);
-}
-
-
 TEST(MatrixTest, rmultiply) {
 	const Matrix m1({1, 2, 3, 4, 5, 6, 7, 8, 9});
 	const Matrix m2({9, 8, 7, 6, 5, 4, 3, 2, 1});
 	EXPECT_NE(m1, m2);
 	Matrix m3;
-	EXPECT_EQ((m3=m1).rmultiply(m2), Matrix({90, 114, 138, 54, 69, 84, 18, 24, 30}));
-	EXPECT_EQ((m3=m2).rmultiply(m1), Matrix({30, 24, 18, 84, 69, 54, 138, 114, 90}));
-	EXPECT_EQ((m3=m1).rmultiply(Matrix(1)), m1);
+	EXPECT_EQ((m3 = m1).rmultiply(m2), Matrix({30, 24, 18, 84, 69, 54, 138, 114, 90}));
+	EXPECT_EQ((m3 = m2).rmultiply(m1), Matrix({90, 114, 138, 54, 69, 84, 18, 24, 30}));
+	EXPECT_EQ((m3 = m1).rmultiply(Matrix(1)), m1);
+}
+
+
+TEST(MatrixTest, lmultiply) {
+	const Matrix m1({1, 2, 3, 4, 5, 6, 7, 8, 9});
+	const Matrix m2({9, 8, 7, 6, 5, 4, 3, 2, 1});
+	EXPECT_NE(m1, m2);
+	Matrix m3;
+	EXPECT_EQ((m3 = m1).lmultiply(m2), Matrix({90, 114, 138, 54, 69, 84, 18, 24, 30}));
+	EXPECT_EQ((m3 = m2).lmultiply(m1), Matrix({30, 24, 18, 84, 69, 54, 138, 114, 90}));
+	EXPECT_EQ((m3 = m1).lmultiply(Matrix(1)), m1);
 }
 
 
@@ -253,4 +254,24 @@ TEST(MatrixTest, fail) {
 	EXPECT_THROW(Matrix("KX90", calc), ParserException);  // invalid argument (pole at 90+180k degrees)
 	EXPECT_THROW(Matrix("KY270", calc), ParserException); // invalid argument (pole at 90+180k degrees)
 	EXPECT_THROW(Matrix("S2,", calc), ParserException);   // missing argument
+}
+
+
+TEST(MatrixTest, parseSVGTransform) {
+	XMLString::DECIMAL_PLACES = 3;
+	EXPECT_EQ(
+		Matrix::parseSVGTransform("translate(50, 90)").toSVG(),
+		"matrix(1 0 0 1 50 90)");
+	EXPECT_EQ(
+		Matrix::parseSVGTransform("scale(10 20)").toSVG(),
+		"matrix(10 0 0 20 0 0)");
+	EXPECT_EQ(
+		Matrix::parseSVGTransform("rotate(-45)").toSVG(),
+		"matrix(.707 -.707 .707 .707 0 0)");
+	EXPECT_EQ(
+		Matrix::parseSVGTransform("translate(50, 90) rotate(-45) ").toSVG(),
+		"matrix(.707 -.707 .707 .707 50 90)");
+	EXPECT_EQ(
+		Matrix::parseSVGTransform("translate(50, 90) rotate(-45) , translate(130 160)").toSVG(),
+		"matrix(.707 -.707 .707 .707 255.061 111.213)");
 }
