@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 52830 2019-11-17 17:05:39Z karl $
+# $Id: tlmgr.pl 52848 2019-11-17 22:43:11Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 52830 $';
-my $datrev = '$Date: 2019-11-17 18:05:39 +0100 (Sun, 17 Nov 2019) $';
+my $svnrev = '$Revision: 52848 $';
+my $datrev = '$Date: 2019-11-17 23:43:11 +0100 (Sun, 17 Nov 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -9076,7 +9076,7 @@ is equivalent to
   tlmgr remove --force foobar
 
 Again, since packages are sometimes renamed or replaced, using this
-option is not ecommended.
+option is not recommended.
 
 =item B<--reinstall-forcibly-removed>
 
@@ -9952,7 +9952,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 52830 2019-11-17 17:05:39Z karl $
+$Id: tlmgr.pl 52848 2019-11-17 22:43:11Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
