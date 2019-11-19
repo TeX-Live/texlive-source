@@ -1,3 +1,10 @@
+Release Notes for Version 2.61
+
+Bugs in the OpenGL driver were fixed. A work around for the WebGL singleton
+array optimization bug on the Intel GPU was fixed. OpenGL and WebGL attributes
+are now bound before linking the shaders. Bland's rule is implemented correctly
+in the simplex solvers. A missing data file was added.  
+
 Release Notes for Version 2.60
 
 Transparent WebGL backgrounds were fixed. A build issue involving the revision

@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'GUI/windows/window1.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -959,5 +961,4 @@ class Ui_MainWindow(object):
         self.actionExportAsymptote.setText(_translate("MainWindow", "Export"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
-
 import icons_rc

@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'GUI/windows/widg_addLabel.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -136,5 +138,4 @@ class Ui_Form(object):
         self.label_2.setText(_translate("Form", "Custom Align"))
         self.txtShiftX.setPlaceholderText(_translate("Form", "Shift X"))
         self.txtShiftY.setPlaceholderText(_translate("Form", "Shift Y"))
-
 import icons_rc

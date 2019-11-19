@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'GUI/windows/widg_addPolyOpt.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -45,4 +47,3 @@ class Ui_Form(object):
         self.chkInscribed.setText(_translate("Form", "Start at Vertex"))
         self.txtSides.setToolTip(_translate("Form", "Number of Sides"))
         self.txtSides.setPlaceholderText(_translate("Form", "Sides"))
-

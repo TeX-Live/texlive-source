@@ -1,3 +1,81 @@
+commit 908e69dbbd1912344cea79f08c1eb0e67e5519f9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 17 22:26:50 2019 -0700
+
+    Fix material attribute.
+
+commit e00580292beee7b293288d78f53ba9779dad885e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 17 11:15:50 2019 -0700
+
+    Fix issues on Intel GPU under MSWindows.
+
+commit ebe76a4b0b55f94c2e8ee2d239fa34fa7b18703e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 12 09:58:53 2019 -0700
+
+    Set materials before offscreen optimization.
+
+commit 114081b38510dd52e08a0fc9508e40f873f8d218
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 9 09:36:41 2019 -0700
+
+    Move piicon.png to examples directory.
+
+commit a4fba693380c4d18a978926f17aac6af95ac4a2d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 9 09:19:43 2019 -0700
+
+    Install piicon.png instead of piicon.eps.
+
+commit 83e20a685902f7b99cb614d1816f48c01c23be90
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 9 00:25:04 2019 -0700
+
+     Use bindAttribLocation instead of getAttribLocation in OpenGL.
+
+commit 0c8bf045706326bbafd94c0225d8714f30c97a93
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 9 00:07:11 2019 -0700
+
+    Update asygl.
+
+commit 726b3718b56c067fbe12e1b9d934ad09500b195c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 9 00:05:46 2019 -0700
+
+    Bind color attribute.
+
+commit 478292990693ea59cce9028f220be0234b4a591b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Nov 8 23:27:07 2019 -0700
+
+    Fix Bland's rule in rationalSimplex and simplex.
+
+commit 399ca406efab1136e8e12f976ffb7ffd7ecf7def
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Nov 7 03:15:27 2019 -0700
+
+    Update asygl.
+
+commit eb146915adde3fc70adab78182c52f23e318df22
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Nov 7 03:13:03 2019 -0700
+
+    Use bindAttribLocation instead of getAttribLocation in WebGL.
+
+commit fb2868c7cdb3a93681ab0af8c293867a1efcdbc9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Nov 7 01:44:11 2019 -0700
+
+    Work around WebGL singleton array optimization bug on Intel GPU.
+
+commit 8ad8fb290dada087b068d518e7dc5fe78d39570f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Nov 6 00:03:32 2019 -0700
+
+    Increment version to 2.61.
+
 commit 87dc3554015dccce0cf446e27a703043a9c68460
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Nov 5 17:11:42 2019 -0700

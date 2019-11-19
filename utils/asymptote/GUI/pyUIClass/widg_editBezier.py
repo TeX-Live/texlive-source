@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'GUI/windows/widg_editBezier.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -90,5 +92,4 @@ class Ui_Form(object):
         self.cmbLockMode.setItemText(2, _translate("Form", "Lock Angle & Scale"))
         self.chkRecompute.setText(_translate("Form", "Recompute Path"))
         self.btnForceRecompute.setText(_translate("Form", "Recompute Once"))
-
 import icons_rc

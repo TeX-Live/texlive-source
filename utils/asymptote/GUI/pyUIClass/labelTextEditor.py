@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'GUI/windows/labelTextEditor.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -115,5 +117,4 @@ class Ui_Dialog(object):
         self.cmbMathStyle.setItemText(1, _translate("Dialog", "Display Style"))
         self.cmbMathStyle.setItemText(2, _translate("Dialog", "Script Style"))
         self.label.setText(_translate("Dialog", "Preview"))
-
 import icons_rc
