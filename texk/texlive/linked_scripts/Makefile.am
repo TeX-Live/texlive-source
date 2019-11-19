@@ -67,18 +67,7 @@ texmf_shell_scripts = \
 	ltxfileinfo/ltxfileinfo \
 	lua2dox/lua2dox_filter \
 	pdfbook2/pdfbook2 \
-	pdfjam/pdf180 \
-	pdfjam/pdf270 \
-	pdfjam/pdf90 \
-	pdfjam/pdfbook \
-	pdfjam/pdfflip \
 	pdfjam/pdfjam \
-	pdfjam/pdfjam-pocketmod \
-	pdfjam/pdfjam-slides3up \
-	pdfjam/pdfjam-slides6up \
-	pdfjam/pdfjoin \
-	pdfjam/pdfnup \
-	pdfjam/pdfpun \
 	pdftex-quiet/pdftex-quiet \
 	pdfxup/pdfxup \
 	pst-pdf/ps4pdf \
