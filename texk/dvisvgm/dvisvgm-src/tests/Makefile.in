@@ -101,9 +101,9 @@ TESTS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) BitmapTest$(EXEEXT) \
 	BoundingBoxTest$(EXEEXT) CalculatorTest$(EXEEXT) \
 	CMapManagerTest$(EXEEXT) CMapReaderTest$(EXEEXT) \
 	CMapTest$(EXEEXT) ColorSpecialTest$(EXEEXT) ColorTest$(EXEEXT) \
-	CommandLineTest$(EXEEXT) CRC32Test$(EXEEXT) \
-	DependencyGraphTest$(EXEEXT) DirectoryTest$(EXEEXT) \
-	DVIReaderTest$(EXEEXT) DvisvgmSpecialTest$(EXEEXT) \
+	CommandLineTest$(EXEEXT) DependencyGraphTest$(EXEEXT) \
+	DirectoryTest$(EXEEXT) DVIReaderTest$(EXEEXT) \
+	DvisvgmSpecialTest$(EXEEXT) EllipticalArcTest$(EXEEXT) \
 	EmSpecialTest$(EXEEXT) FileFinderTest$(EXEEXT) \
 	FilePathTest$(EXEEXT) FileSystemTest$(EXEEXT) \
 	FontCacheTest$(EXEEXT) FontManagerTest$(EXEEXT) \
@@ -132,9 +132,9 @@ check_PROGRAMS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) \
 	CalculatorTest$(EXEEXT) CMapManagerTest$(EXEEXT) \
 	CMapReaderTest$(EXEEXT) CMapTest$(EXEEXT) \
 	ColorSpecialTest$(EXEEXT) ColorTest$(EXEEXT) \
-	CommandLineTest$(EXEEXT) CRC32Test$(EXEEXT) \
-	DependencyGraphTest$(EXEEXT) DirectoryTest$(EXEEXT) \
-	DVIReaderTest$(EXEEXT) DvisvgmSpecialTest$(EXEEXT) \
+	CommandLineTest$(EXEEXT) DependencyGraphTest$(EXEEXT) \
+	DirectoryTest$(EXEEXT) DVIReaderTest$(EXEEXT) \
+	DvisvgmSpecialTest$(EXEEXT) EllipticalArcTest$(EXEEXT) \
 	EmSpecialTest$(EXEEXT) FileFinderTest$(EXEEXT) \
 	FilePathTest$(EXEEXT) FileSystemTest$(EXEEXT) \
 	FontCacheTest$(EXEEXT) FontManagerTest$(EXEEXT) \
@@ -196,7 +196,7 @@ am__DEPENDENCIES_4 =
 @USE_BUNDLED_MD5_FALSE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_4)
 am__DEPENDENCIES_6 = $(POTRACE_LIBS) $(XXHASH_LIBS) \
 	$(am__DEPENDENCIES_3) $(am__append_7) $(am__DEPENDENCIES_5)
-am__DEPENDENCIES_7 = libgtest.la ../src/libdvisvgm.a \
+am__DEPENDENCIES_7 = libgtest.la ../src/libdvisvgm.la \
 	$(am__DEPENDENCIES_6) $(am__append_10) $(am__DEPENDENCIES_4)
 BezierTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_BitmapTest_OBJECTS = BitmapTest-BitmapTest.$(OBJEXT)
@@ -216,9 +216,6 @@ CMapReaderTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_CMapTest_OBJECTS = CMapTest-CMapTest.$(OBJEXT)
 CMapTest_OBJECTS = $(am_CMapTest_OBJECTS)
 CMapTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
-am_CRC32Test_OBJECTS = CRC32Test-CRC32Test.$(OBJEXT)
-CRC32Test_OBJECTS = $(am_CRC32Test_OBJECTS)
-CRC32Test_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_CalculatorTest_OBJECTS = CalculatorTest-CalculatorTest.$(OBJEXT)
 CalculatorTest_OBJECTS = $(am_CalculatorTest_OBJECTS)
 CalculatorTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
@@ -247,6 +244,10 @@ am_DvisvgmSpecialTest_OBJECTS =  \
 	DvisvgmSpecialTest-DvisvgmSpecialTest.$(OBJEXT)
 DvisvgmSpecialTest_OBJECTS = $(am_DvisvgmSpecialTest_OBJECTS)
 DvisvgmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
+am_EllipticalArcTest_OBJECTS =  \
+	EllipticalArcTest-EllipticalArcTest.$(OBJEXT)
+EllipticalArcTest_OBJECTS = $(am_EllipticalArcTest_OBJECTS)
+EllipticalArcTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_EmSpecialTest_OBJECTS = EmSpecialTest-EmSpecialTest.$(OBJEXT)
 EmSpecialTest_OBJECTS = $(am_EmSpecialTest_OBJECTS)
 EmSpecialTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
@@ -424,7 +425,6 @@ am__depfiles_remade = ./$(DEPDIR)/BezierTest-BezierTest.Po \
 	./$(DEPDIR)/CMapManagerTest-CMapManagerTest.Po \
 	./$(DEPDIR)/CMapReaderTest-CMapReaderTest.Po \
 	./$(DEPDIR)/CMapTest-CMapTest.Po \
-	./$(DEPDIR)/CRC32Test-CRC32Test.Po \
 	./$(DEPDIR)/CalculatorTest-CalculatorTest.Po \
 	./$(DEPDIR)/ColorSpecialTest-ColorSpecialTest.Po \
 	./$(DEPDIR)/ColorTest-ColorTest.Po \
@@ -433,6 +433,7 @@ am__depfiles_remade = ./$(DEPDIR)/BezierTest-BezierTest.Po \
 	./$(DEPDIR)/DependencyGraphTest-DependencyGraphTest.Po \
 	./$(DEPDIR)/DirectoryTest-DirectoryTest.Po \
 	./$(DEPDIR)/DvisvgmSpecialTest-DvisvgmSpecialTest.Po \
+	./$(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Po \
 	./$(DEPDIR)/EmSpecialTest-EmSpecialTest.Po \
 	./$(DEPDIR)/FileFinderTest-FileFinderTest.Po \
 	./$(DEPDIR)/FilePathTest-FilePathTest.Po \
@@ -520,11 +521,11 @@ am__v_CCLD_1 =
 SOURCES = $(libgtest_la_SOURCES) $(BezierTest_SOURCES) \
 	$(BitmapTest_SOURCES) $(BoundingBoxTest_SOURCES) \
 	$(CMapManagerTest_SOURCES) $(CMapReaderTest_SOURCES) \
-	$(CMapTest_SOURCES) $(CRC32Test_SOURCES) \
-	$(CalculatorTest_SOURCES) $(ColorSpecialTest_SOURCES) \
-	$(ColorTest_SOURCES) $(CommandLineTest_SOURCES) \
-	$(DVIReaderTest_SOURCES) $(DependencyGraphTest_SOURCES) \
-	$(DirectoryTest_SOURCES) $(DvisvgmSpecialTest_SOURCES) \
+	$(CMapTest_SOURCES) $(CalculatorTest_SOURCES) \
+	$(ColorSpecialTest_SOURCES) $(ColorTest_SOURCES) \
+	$(CommandLineTest_SOURCES) $(DVIReaderTest_SOURCES) \
+	$(DependencyGraphTest_SOURCES) $(DirectoryTest_SOURCES) \
+	$(DvisvgmSpecialTest_SOURCES) $(EllipticalArcTest_SOURCES) \
 	$(EmSpecialTest_SOURCES) $(FileFinderTest_SOURCES) \
 	$(FilePathTest_SOURCES) $(FileSystemTest_SOURCES) \
 	$(FontCacheTest_SOURCES) $(FontManagerTest_SOURCES) \
@@ -552,11 +553,11 @@ SOURCES = $(libgtest_la_SOURCES) $(BezierTest_SOURCES) \
 DIST_SOURCES = $(libgtest_la_SOURCES) $(BezierTest_SOURCES) \
 	$(BitmapTest_SOURCES) $(BoundingBoxTest_SOURCES) \
 	$(CMapManagerTest_SOURCES) $(CMapReaderTest_SOURCES) \
-	$(CMapTest_SOURCES) $(CRC32Test_SOURCES) \
-	$(CalculatorTest_SOURCES) $(ColorSpecialTest_SOURCES) \
-	$(ColorTest_SOURCES) $(CommandLineTest_SOURCES) \
-	$(DVIReaderTest_SOURCES) $(DependencyGraphTest_SOURCES) \
-	$(DirectoryTest_SOURCES) $(DvisvgmSpecialTest_SOURCES) \
+	$(CMapTest_SOURCES) $(CalculatorTest_SOURCES) \
+	$(ColorSpecialTest_SOURCES) $(ColorTest_SOURCES) \
+	$(CommandLineTest_SOURCES) $(DVIReaderTest_SOURCES) \
+	$(DependencyGraphTest_SOURCES) $(DirectoryTest_SOURCES) \
+	$(DvisvgmSpecialTest_SOURCES) $(EllipticalArcTest_SOURCES) \
 	$(EmSpecialTest_SOURCES) $(FileFinderTest_SOURCES) \
 	$(FilePathTest_SOURCES) $(FileSystemTest_SOURCES) \
 	$(FontCacheTest_SOURCES) $(FontManagerTest_SOURCES) \
@@ -1018,9 +1019,10 @@ libgtest_la_LDFLAGS = -pthread
 EXTRA_DIST = gtest/LICENSE gtest/include gtest/src/gtest.cc \
 	gtest/src/gtest-death-test.cc gtest/src/gtest-filepath.cc \
 	gtest/src/gtest-internal-inl.h gtest/src/gtest_main.cc \
-	gtest/src/gtest-port.cc gtest/src/gtest-printers.cc \
-	gtest/src/gtest-test-part.cc gtest/src/gtest-typed-test.cc \
-	check-conv genhashcheck.py normalize.xsl
+	gtest/src/gtest-matchers.cc gtest/src/gtest-port.cc \
+	gtest/src/gtest-printers.cc gtest/src/gtest-test-part.cc \
+	gtest/src/gtest-typed-test.cc check-conv genhashcheck.py \
+	normalize.xsl
 @HAVE_POTRACE_FALSE@POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
 @HAVE_POTRACE_FALSE@POTRACE_LIBS = ../libs/potrace/libpotrace.a
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
@@ -1036,7 +1038,7 @@ AM_CXXFLAGS = -I$(dvisvgm_srcdir)/src -I$(dvisvgm_srcdir)/libs/variant/include \
 nodist_hashcheck_SOURCES = hashcheck.cpp
 hashcheck_CPPFLAGS = $(LIBS_CFLAGS)
 hashcheck_LDADD = $(LIBS_LIBS)
-TESTLIBS = libgtest.la ../src/libdvisvgm.a $(LIBS_LIBS) -lfreetype \
+TESTLIBS = libgtest.la ../src/libdvisvgm.la $(LIBS_LIBS) -lfreetype \
 	$(am__append_10) $(CODE_COVERAGE_LDFLAGS)
 BezierTest_SOURCES = BezierTest.cpp testutil.hpp
 BezierTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
@@ -1068,9 +1070,6 @@ ColorTest_LDADD = $(TESTLIBS)
 CommandLineTest_SOURCES = CommandLineTest.cpp testutil.hpp
 CommandLineTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 CommandLineTest_LDADD = $(TESTLIBS)
-CRC32Test_SOURCES = CRC32Test.cpp testutil.hpp
-CRC32Test_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
-CRC32Test_LDADD = $(TESTLIBS)
 DependencyGraphTest_SOURCES = DependencyGraphTest.cpp testutil.hpp
 DependencyGraphTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 DependencyGraphTest_LDADD = $(TESTLIBS)
@@ -1083,6 +1082,9 @@ DVIReaderTest_LDADD = $(TESTLIBS)
 DvisvgmSpecialTest_SOURCES = DvisvgmSpecialTest.cpp testutil.hpp
 DvisvgmSpecialTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 DvisvgmSpecialTest_LDADD = $(TESTLIBS)
+EllipticalArcTest_SOURCES = EllipticalArcTest.cpp testutil.hpp
+EllipticalArcTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
+EllipticalArcTest_LDADD = $(TESTLIBS)
 EmSpecialTest_SOURCES = EmSpecialTest.cpp testutil.hpp
 EmSpecialTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 EmSpecialTest_LDADD = $(TESTLIBS)
@@ -1306,10 +1308,6 @@ CMapTest$(EXEEXT): $(CMapTest_OBJECTS) $(CMapTest_DEPENDENCIES) $(EXTRA_CMapTest
 	@rm -f CMapTest$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(CMapTest_OBJECTS) $(CMapTest_LDADD) $(LIBS)
 
-CRC32Test$(EXEEXT): $(CRC32Test_OBJECTS) $(CRC32Test_DEPENDENCIES) $(EXTRA_CRC32Test_DEPENDENCIES) 
-	@rm -f CRC32Test$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(CRC32Test_OBJECTS) $(CRC32Test_LDADD) $(LIBS)
-
 CalculatorTest$(EXEEXT): $(CalculatorTest_OBJECTS) $(CalculatorTest_DEPENDENCIES) $(EXTRA_CalculatorTest_DEPENDENCIES) 
 	@rm -f CalculatorTest$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(CalculatorTest_OBJECTS) $(CalculatorTest_LDADD) $(LIBS)
@@ -1341,6 +1339,10 @@ DirectoryTest$(EXEEXT): $(DirectoryTest_OBJECTS) $(DirectoryTest_DEPENDENCIES) $
 DvisvgmSpecialTest$(EXEEXT): $(DvisvgmSpecialTest_OBJECTS) $(DvisvgmSpecialTest_DEPENDENCIES) $(EXTRA_DvisvgmSpecialTest_DEPENDENCIES) 
 	@rm -f DvisvgmSpecialTest$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(DvisvgmSpecialTest_OBJECTS) $(DvisvgmSpecialTest_LDADD) $(LIBS)
+
+EllipticalArcTest$(EXEEXT): $(EllipticalArcTest_OBJECTS) $(EllipticalArcTest_DEPENDENCIES) $(EXTRA_EllipticalArcTest_DEPENDENCIES) 
+	@rm -f EllipticalArcTest$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(EllipticalArcTest_OBJECTS) $(EllipticalArcTest_LDADD) $(LIBS)
 
 EmSpecialTest$(EXEEXT): $(EmSpecialTest_OBJECTS) $(EmSpecialTest_DEPENDENCIES) $(EXTRA_EmSpecialTest_DEPENDENCIES) 
 	@rm -f EmSpecialTest$(EXEEXT)
@@ -1536,7 +1538,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMapManagerTest-CMapManagerTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMapReaderTest-CMapReaderTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMapTest-CMapTest.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CRC32Test-CRC32Test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CalculatorTest-CalculatorTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColorSpecialTest-ColorSpecialTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColorTest-ColorTest.Po@am__quote@ # am--include-marker
@@ -1545,6 +1546,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DependencyGraphTest-DependencyGraphTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DirectoryTest-DirectoryTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DvisvgmSpecialTest-DvisvgmSpecialTest.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EmSpecialTest-EmSpecialTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileFinderTest-FileFinderTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FilePathTest-FilePathTest.Po@am__quote@ # am--include-marker
@@ -1721,20 +1723,6 @@ CMapTest-CMapTest.obj: CMapTest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CMapTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CMapTest-CMapTest.obj `if test -f 'CMapTest.cpp'; then $(CYGPATH_W) 'CMapTest.cpp'; else $(CYGPATH_W) '$(srcdir)/CMapTest.cpp'; fi`
 
-CRC32Test-CRC32Test.o: CRC32Test.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CRC32Test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CRC32Test-CRC32Test.o -MD -MP -MF $(DEPDIR)/CRC32Test-CRC32Test.Tpo -c -o CRC32Test-CRC32Test.o `test -f 'CRC32Test.cpp' || echo '$(srcdir)/'`CRC32Test.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CRC32Test-CRC32Test.Tpo $(DEPDIR)/CRC32Test-CRC32Test.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='CRC32Test.cpp' object='CRC32Test-CRC32Test.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CRC32Test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CRC32Test-CRC32Test.o `test -f 'CRC32Test.cpp' || echo '$(srcdir)/'`CRC32Test.cpp
-
-CRC32Test-CRC32Test.obj: CRC32Test.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CRC32Test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CRC32Test-CRC32Test.obj -MD -MP -MF $(DEPDIR)/CRC32Test-CRC32Test.Tpo -c -o CRC32Test-CRC32Test.obj `if test -f 'CRC32Test.cpp'; then $(CYGPATH_W) 'CRC32Test.cpp'; else $(CYGPATH_W) '$(srcdir)/CRC32Test.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CRC32Test-CRC32Test.Tpo $(DEPDIR)/CRC32Test-CRC32Test.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='CRC32Test.cpp' object='CRC32Test-CRC32Test.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CRC32Test_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CRC32Test-CRC32Test.obj `if test -f 'CRC32Test.cpp'; then $(CYGPATH_W) 'CRC32Test.cpp'; else $(CYGPATH_W) '$(srcdir)/CRC32Test.cpp'; fi`
-
 CalculatorTest-CalculatorTest.o: CalculatorTest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CalculatorTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CalculatorTest-CalculatorTest.o -MD -MP -MF $(DEPDIR)/CalculatorTest-CalculatorTest.Tpo -c -o CalculatorTest-CalculatorTest.o `test -f 'CalculatorTest.cpp' || echo '$(srcdir)/'`CalculatorTest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/CalculatorTest-CalculatorTest.Tpo $(DEPDIR)/CalculatorTest-CalculatorTest.Po
@@ -1846,6 +1834,20 @@ DvisvgmSpecialTest-DvisvgmSpecialTest.obj: DvisvgmSpecialTest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='DvisvgmSpecialTest.cpp' object='DvisvgmSpecialTest-DvisvgmSpecialTest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(DvisvgmSpecialTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DvisvgmSpecialTest-DvisvgmSpecialTest.obj `if test -f 'DvisvgmSpecialTest.cpp'; then $(CYGPATH_W) 'DvisvgmSpecialTest.cpp'; else $(CYGPATH_W) '$(srcdir)/DvisvgmSpecialTest.cpp'; fi`
+
+EllipticalArcTest-EllipticalArcTest.o: EllipticalArcTest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(EllipticalArcTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EllipticalArcTest-EllipticalArcTest.o -MD -MP -MF $(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Tpo -c -o EllipticalArcTest-EllipticalArcTest.o `test -f 'EllipticalArcTest.cpp' || echo '$(srcdir)/'`EllipticalArcTest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Tpo $(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='EllipticalArcTest.cpp' object='EllipticalArcTest-EllipticalArcTest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(EllipticalArcTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EllipticalArcTest-EllipticalArcTest.o `test -f 'EllipticalArcTest.cpp' || echo '$(srcdir)/'`EllipticalArcTest.cpp
+
+EllipticalArcTest-EllipticalArcTest.obj: EllipticalArcTest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(EllipticalArcTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EllipticalArcTest-EllipticalArcTest.obj -MD -MP -MF $(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Tpo -c -o EllipticalArcTest-EllipticalArcTest.obj `if test -f 'EllipticalArcTest.cpp'; then $(CYGPATH_W) 'EllipticalArcTest.cpp'; else $(CYGPATH_W) '$(srcdir)/EllipticalArcTest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Tpo $(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='EllipticalArcTest.cpp' object='EllipticalArcTest-EllipticalArcTest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(EllipticalArcTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o EllipticalArcTest-EllipticalArcTest.obj `if test -f 'EllipticalArcTest.cpp'; then $(CYGPATH_W) 'EllipticalArcTest.cpp'; else $(CYGPATH_W) '$(srcdir)/EllipticalArcTest.cpp'; fi`
 
 EmSpecialTest-EmSpecialTest.o: EmSpecialTest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(EmSpecialTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EmSpecialTest-EmSpecialTest.o -MD -MP -MF $(DEPDIR)/EmSpecialTest-EmSpecialTest.Tpo -c -o EmSpecialTest-EmSpecialTest.o `test -f 'EmSpecialTest.cpp' || echo '$(srcdir)/'`EmSpecialTest.cpp
@@ -2825,13 +2827,6 @@ CommandLineTest.log: CommandLineTest$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-CRC32Test.log: CRC32Test$(EXEEXT)
-	@p='CRC32Test$(EXEEXT)'; \
-	b='CRC32Test'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 DependencyGraphTest.log: DependencyGraphTest$(EXEEXT)
 	@p='DependencyGraphTest$(EXEEXT)'; \
 	b='DependencyGraphTest'; \
@@ -2856,6 +2851,13 @@ DVIReaderTest.log: DVIReaderTest$(EXEEXT)
 DvisvgmSpecialTest.log: DvisvgmSpecialTest$(EXEEXT)
 	@p='DvisvgmSpecialTest$(EXEEXT)'; \
 	b='DvisvgmSpecialTest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+EllipticalArcTest.log: EllipticalArcTest$(EXEEXT)
+	@p='EllipticalArcTest$(EXEEXT)'; \
+	b='EllipticalArcTest'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -3303,7 +3305,6 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/CMapManagerTest-CMapManagerTest.Po
 	-rm -f ./$(DEPDIR)/CMapReaderTest-CMapReaderTest.Po
 	-rm -f ./$(DEPDIR)/CMapTest-CMapTest.Po
-	-rm -f ./$(DEPDIR)/CRC32Test-CRC32Test.Po
 	-rm -f ./$(DEPDIR)/CalculatorTest-CalculatorTest.Po
 	-rm -f ./$(DEPDIR)/ColorSpecialTest-ColorSpecialTest.Po
 	-rm -f ./$(DEPDIR)/ColorTest-ColorTest.Po
@@ -3312,6 +3313,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/DependencyGraphTest-DependencyGraphTest.Po
 	-rm -f ./$(DEPDIR)/DirectoryTest-DirectoryTest.Po
 	-rm -f ./$(DEPDIR)/DvisvgmSpecialTest-DvisvgmSpecialTest.Po
+	-rm -f ./$(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Po
 	-rm -f ./$(DEPDIR)/EmSpecialTest-EmSpecialTest.Po
 	-rm -f ./$(DEPDIR)/FileFinderTest-FileFinderTest.Po
 	-rm -f ./$(DEPDIR)/FilePathTest-FilePathTest.Po
@@ -3410,7 +3412,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/CMapManagerTest-CMapManagerTest.Po
 	-rm -f ./$(DEPDIR)/CMapReaderTest-CMapReaderTest.Po
 	-rm -f ./$(DEPDIR)/CMapTest-CMapTest.Po
-	-rm -f ./$(DEPDIR)/CRC32Test-CRC32Test.Po
 	-rm -f ./$(DEPDIR)/CalculatorTest-CalculatorTest.Po
 	-rm -f ./$(DEPDIR)/ColorSpecialTest-ColorSpecialTest.Po
 	-rm -f ./$(DEPDIR)/ColorTest-ColorTest.Po
@@ -3419,6 +3420,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/DependencyGraphTest-DependencyGraphTest.Po
 	-rm -f ./$(DEPDIR)/DirectoryTest-DirectoryTest.Po
 	-rm -f ./$(DEPDIR)/DvisvgmSpecialTest-DvisvgmSpecialTest.Po
+	-rm -f ./$(DEPDIR)/EllipticalArcTest-EllipticalArcTest.Po
 	-rm -f ./$(DEPDIR)/EmSpecialTest-EmSpecialTest.Po
 	-rm -f ./$(DEPDIR)/FileFinderTest-FileFinderTest.Po
 	-rm -f ./$(DEPDIR)/FilePathTest-FilePathTest.Po

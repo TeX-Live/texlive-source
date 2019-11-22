@@ -19,7 +19,7 @@
 *************************************************************************/
 
 #include <gtest/gtest.h>
-#include "DependencyGraph.hpp"
+#include "optimizer/DependencyGraph.hpp"
 
 using namespace std;
 

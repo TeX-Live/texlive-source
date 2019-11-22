@@ -33,40 +33,39 @@ class TpicSpecialTest : public ::testing::Test {
 	protected:
 		class ActionsRecorder : public EmptySpecialActions {
 			public:
-				ActionsRecorder () : x(), y(), page("page") {}
-				void appendToPage(unique_ptr<XMLNode> &&node) {page.append(std::move(node));}
-				void embed (const BoundingBox &bb)            {bbox.embed(bb);}
-				void setX (double xx)                         {x = xx;}
-				void setY (double yy)                         {x = yy;}
-				double getX () const                          {return x;}
-				double getY () const                          {return y;}
-				Color getColor () const                       {return color;}
-				void setColor (const Color &c)                {color = c;}
-				void clear ()                                 {page.clear(); bbox=BoundingBox(0, 0, 0, 0);}
-				const Matrix& getMatrix () const              {static Matrix m(1); return m;}
+				ActionsRecorder () : x(), y() {}
+				void embed (const BoundingBox &bb) override  {bbox.embed(bb);}
+				void setX (double xx) override               {x = xx;}
+				void setY (double yy) override               {x = yy;}
+				double getX () const override                {return x;}
+				double getY () const override                {return y;}
+				Color getColor () const override             {return color;}
+				void setColor (const Color &c) override      {color = c;}
+				const Matrix& getMatrix () const override    {static Matrix m(1); return m;}
+
 				string getXMLSnippet () const {
 					ostringstream oss;
-					for (const auto &child : page.children())
+					for (XMLNode *child : *svgTree().pageNode())
 						child->write(oss);
 					return oss.str();
 				}
 
-				void write (ostream &os) const {
-					os << "page: " << page << '\n'
-						<< "bbox: " << bbox.toSVGViewBox() << '\n';
+				void clear () {
+					SpecialActions::svgTree().reset();
+					SpecialActions::svgTree().newPage(1);
+					bbox = BoundingBox(0, 0, 0, 0);
 				}
 
 			private:
 				double x, y;
 				Color color;
-				XMLElementNode page;
 				BoundingBox bbox;
 		};
 
 
 		class MyTpicSpecialHandler : public TpicSpecialHandler {
 			public:
-				MyTpicSpecialHandler (SpecialActions &a) : actions(a) {}
+				explicit MyTpicSpecialHandler (SpecialActions &a) : actions(a) {}
 				void finishPage () {dviEndPage(0, actions);}
 				bool processSpecial (const string &cmd, string params="") {
 					stringstream ss;
@@ -251,7 +250,7 @@ TEST_F(TpicSpecialTest, stroke_spline) {
 	handler.processSpecial("pa", "1000 500");
 	handler.processSpecial("sp");
 	EXPECT_EQ(recorder.getXMLSnippet(),
-		"<path fill='none' d='M0 0L36 36Q72 72 90 54Q108 36 126 54T180 108Q216 144 144 90L72 36' stroke='#000' stroke-width='1'/>"
+		"<path fill='none' d='M0 0L36 36Q72 72 90 54T126 54T180 108T144 90L72 36' stroke='#000' stroke-width='1'/>"
 	);
 	EXPECT_DOUBLE_EQ(handler.penwidth(), 1.0);
 	EXPECT_LT(handler.grayLevel(), 0);
@@ -267,7 +266,7 @@ TEST_F(TpicSpecialTest, stroke_dashed_spline) {
 	handler.processSpecial("pa", "0 0");
 	handler.processSpecial("sp", "1");
 	EXPECT_EQ(recorder.getXMLSnippet(),
-		"<path fill='none' d='M0 0L36 36Q72 72 90 54Q108 36 126 54T180 108Q216 144 108 72Z' stroke='#000' stroke-width='1' stroke-dasharray='72'/>"
+		"<path fill='none' d='M0 0L36 36Q72 72 90 54T126 54T180 108T108 72Z' stroke='#000' stroke-width='1' stroke-dasharray='72'/>"
 	);
 	EXPECT_DOUBLE_EQ(handler.penwidth(), 1.0);
 	EXPECT_LT(handler.grayLevel(), 0);
@@ -283,7 +282,7 @@ TEST_F(TpicSpecialTest, stroke_dotted_spline) {
 	handler.processSpecial("pa", "1000 500");
 	handler.processSpecial("sp", "-1");
 	EXPECT_EQ(recorder.getXMLSnippet(),
-		"<path fill='none' d='M0 0L36 36Q72 72 90 54Q108 36 126 54T180 108Q216 144 144 90L72 36' stroke='#000' stroke-width='1' stroke-dasharray='1 72'/>"
+		"<path fill='none' d='M0 0L36 36Q72 72 90 54T126 54T180 108T144 90L72 36' stroke='#000' stroke-width='1' stroke-dasharray='1 72'/>"
 	);
 	EXPECT_DOUBLE_EQ(handler.penwidth(), 1.0);
 	EXPECT_LT(handler.grayLevel(), 0);
@@ -344,22 +343,22 @@ TEST_F(TpicSpecialTest, stroke_arc) {
 	recorder.clear();
 	handler.processSpecial("ar", "0 0 1000 500 0 "+to_string(3*math::PI/4));
 	EXPECT_EQ(recorder.getXMLSnippet(),
-		"<path d='M72 0A72 36 0 0 1 -50.91 25.46' stroke-width='1' stroke='#000' stroke-linecap='round' fill='none'/>"
+		"<path d='M72 0A72 36 0 0 1-50.91 25.46' stroke-width='1' stroke='#000' stroke-linecap='round' fill='none'/>"
 	);
 	recorder.clear();
 	handler.processSpecial("ar", "0 0 1000 500 0 "+to_string(math::PI));
 	EXPECT_EQ(recorder.getXMLSnippet(),
-		"<path d='M72 0A72 36 0 1 1 -72 0' stroke-width='1' stroke='#000' stroke-linecap='round' fill='none'/>"
+		"<path d='M72 0A72 36 0 1 1-72 0' stroke-width='1' stroke='#000' stroke-linecap='round' fill='none'/>"
 	);
 	recorder.clear();
 	handler.processSpecial("ar", "0 0 1000 500 0 "+to_string(5*math::PI/4));
 	EXPECT_EQ(recorder.getXMLSnippet(),
-		"<path d='M72 0A72 36 0 1 1 -50.91 -25.46' stroke-width='1' stroke='#000' stroke-linecap='round' fill='none'/>"
+		"<path d='M72 0A72 36 0 1 1-50.91-25.46' stroke-width='1' stroke='#000' stroke-linecap='round' fill='none'/>"
 	);
 	recorder.clear();
 	handler.processSpecial("ar", "0 0 1000 500 0 "+to_string(3*math::PI/2));
 	EXPECT_EQ(recorder.getXMLSnippet(),
-		"<path d='M72 0A72 36 0 1 1 0 -36' stroke-width='1' stroke='#000' stroke-linecap='round' fill='none'/>"
+		"<path d='M72 0A72 36 0 1 1 0-36' stroke-width='1' stroke='#000' stroke-linecap='round' fill='none'/>"
 	);
 	recorder.clear();
 	handler.processSpecial("ar", "0 0 1000 500 0 "+to_string(-3*math::PI/2));
