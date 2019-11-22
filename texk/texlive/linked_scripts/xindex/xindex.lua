@@ -30,7 +30,7 @@ Report bugs to
 kpse.set_program_name("luatex")
 
 local f = kpse.find_file("lualibs.lua")
-print ("Dateiname "..f)
+print ("filename "..f)
 require("lualibs")  -- all part of LuaTeX
 require('unicode')
 require('string')
@@ -205,5 +205,4 @@ BaseRunFile = kpse.find_file("xindex-base.lua")
 dofile(BaseRunFile)
 
 logFile:close()
-
 
