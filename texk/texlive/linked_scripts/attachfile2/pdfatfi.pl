@@ -19,9 +19,8 @@ $^W=1; # turn warning on
 # This work has the LPPL maintenance status "maintained".
 #
 # The Current Maintainers of this work are
-Heiko Oberdiek and the Oberdiek Package Support Group
-https://github.com/ho-tex/oberdiek/issues
-
+# Heiko Oberdiek and the Oberdiek Package Support Group
+# https://github.com/ho-tex/attachfile2/issues
 #
 # See file "attachfile2.pdf" for a list of files that belong to
 # this project.
@@ -33,7 +32,7 @@ my $prj         = 'pdfatfi';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
 my $version     = "2.9";
-my $date        = "2019/07/24";
+my $date        = "2019/11/24";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2005-2010, 2012 by $author.";
 #
@@ -42,7 +41,7 @@ my $copyright   = "Copyright (c) 2005-2010, 2012 by $author.";
 #   2006/08/16 v2.2: Included in DTX file of attachfile2.dtx.
 #   2010/09/27 v2.6: Keys ModDateTZ and CreationDateTZ added.
 #   2016/05/16 v2.8: Option --version added.
-#   2019/07/24 v2.9: adapted version to attachfile2 version.
+#   2019/11/24 v2.10: adapted version to attachfile2 version.
 #
 
 use POSIX qw(strftime); # %z is used (GNU)
@@ -145,9 +144,9 @@ while(<IN>) {
             print "!!! Warning: File `$file' not found!\n";
         }
         else {
-            my $size = @s[7];
-            my $mtime = @s[9];
-            my $ctime = @s[10]; # inode change time
+            my $size = $s[7];
+            my $mtime = $s[9];
+            my $ctime = $s[10]; # inode change time
 
             my ($sec, $min, $hour, $mday, $mon, $year) =
                     localtime($mtime);

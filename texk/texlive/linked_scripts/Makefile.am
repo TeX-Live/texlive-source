@@ -83,6 +83,7 @@ texmf_other_scripts = \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
 	arara/arara.sh \
+	attachfile2/pdfatfi.pl \
 	authorindex/authorindex \
 	bib2gls/bib2gls.sh \
 	bib2gls/convertgls2bib.sh \
@@ -157,7 +158,6 @@ texmf_other_scripts = \
 	multibibliography/multibibliography.pl \
 	musixtex/musixflx.lua \
 	musixtex/musixtex.lua \
-	oberdiek/pdfatfi.pl \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
 	pdflatexpicscale/pdflatexpicscale.pl \
