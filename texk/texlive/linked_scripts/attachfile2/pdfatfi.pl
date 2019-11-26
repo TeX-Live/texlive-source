@@ -32,7 +32,7 @@ my $prj         = 'pdfatfi';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
 my $version     = "2.9";
-my $date        = "2019/11/24";
+my $date        = "2019/11/26";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2005-2010, 2012 by $author.";
 #
