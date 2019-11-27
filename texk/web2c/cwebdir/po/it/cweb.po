@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: CWEBbin 2019\n"
+"Project-Id-Version: CWEBbin 2020\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-01-18 16:57+0100\n"
-"PO-Revision-Date: 2019-01-18 16:57+0100\n"
+"PO-Revision-Date: 2019-09-22 17:08+0200\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -595,16 +595,16 @@ msgid "Sorting:"
 msgstr "Ordinamento:"
 
 #: ctang-i18n.ch:17
-msgid "This is CTANGLE (Version 3.64 [CWEBbin 2019])"
-msgstr "Questo è CTANGLE (Versione 3.64 [CWEBbin 2019])"
+msgid "This is CTANGLE (Version 3.64 [CWEBbin 2020])"
+msgstr "Questo è CTANGLE (Versione 3.64 [CWEBbin 2020])"
 
 #: cweav-i18n.ch:17
-msgid "This is CWEAVE (Version 3.64 [CWEBbin 2019])"
-msgstr "Questo è CWEAVE (Versione 3.64 [CWEBbin 2019])"
+msgid "This is CWEAVE (Version 3.64 [CWEBbin 2020])"
+msgstr "Questo è CWEAVE (Versione 3.64 [CWEBbin 2020])"
 
 #: cweav-twill.ch:68
-msgid "This is CTWILL (Version 3.64 [CWEBbin 2019])"
-msgstr "Questo è CTWILL (Versione 3.64 [CWEBbin 2019])"
+msgid "This is CTWILL (Version 3.64 [CWEBbin 2020])"
+msgstr "Questo è CTWILL (Versione 3.64 [CWEBbin 2020])"
 
 #: cweav-i18n.ch:301 cweav-i18n.ch:309
 msgid "buffer"

@@ -1445,7 +1445,7 @@ if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
-NULL,NULL);
+NULL,"Contemporary development on https://github.com/ascherer/cwebbin.\n");
 
 
 /*:96*/
