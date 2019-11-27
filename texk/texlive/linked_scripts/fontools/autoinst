@@ -40,7 +40,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20191118';
+my $VERSION = '20191126';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -983,7 +983,7 @@ sub make_cmdline {
                      "--encoding=$item->{encoding}[0]",
                      set_targetdirs($item->{font}{family}),
                      '--no-updmap',
-                     ($item->{font}{filename} =~ m/[.]ttf\z/xms
+                     ($item->{font}{filename} =~ m/[.]ttf\z/xmsi
                         ? '--no-type1'
                         : ''),
                      ($SCHEME{$item->{encoding}[0]}
@@ -2833,7 +2833,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20191118.
+This document describes B<autoinst> version 20191126.
 
 
 =head1 RECENT CHANGES
