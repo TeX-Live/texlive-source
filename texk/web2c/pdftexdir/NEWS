@@ -1,6 +1,8 @@
 pdfTeX 3.14159265-2.6-1.40.20 (TeX Live 2019)
 - changes:
   - new primitive \expanded (from unreleased pdftex 1.50 branch + luatex).
+  - new primitive parameter \pdfmajorversion; 1 by default, but can be
+    set to any positive integer; affects only the %PDF- line.
   - new primitive parameter \pdfomitcharset; zero by default to include
     the /CharSet value from the PDF output as usual; setting to 1 omits
     it, since it cannot feasibly be guaranteed correct as the PDF/A-2

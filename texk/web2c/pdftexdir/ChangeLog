@@ -1,3 +1,27 @@
+2019-11-25  Joseph Wright  <joseph.wright@morningstar2.co.uk>
+
+	* pdftex.web: New primitive \pdfmajorversion.
+	(pdf_major_version_code, pdf_major_version, print_param,
+         <Put each...>): housekeeping.
+	(<Initialize table entries...>): default 1.
+	(<Glob...>): fixed_pdf_major_version.
+	(pdf_version_written, <Set init...>): rename from
+	pdf_minor_version_written.
+	(check_pdfversion): rename from check_pdfminorversion,
+	and also check pdf_major_version for sanity, and set the fixed_ value,
+	and use pdf_major_version in the %PDF- line.
+	(pdf_begin_obj, pdf_begin_dict, <Initialize variables ...>,
+	 <Implement \.{\\pdfximage}>): change call to check_pdfversion. 
+	<Undump pdftex data>: undump pdf_major_version.
+	(scan_image): include pdf_major_version in call to read_image.
+	* pdftoepdf.cc (read_pdf_info): new arg major_pdf_version_wanted,
+	and check it when including PDF.
+	* ptexlib.h (readimage, undumpimagemeta): new integer args in decl.
+	* writeimg.c (readimage, undumpimagemeta): new arg
+	pdfmajorversion, and check it.
+	* writepng.c (read_png_info): check fixedpdfmajorversion
+	along with fixedpdfminorversion for various png color attributes.
+
 2019-08-06  Karl Berry  <karl@freefriends.org>
 
 	* tests/cnfline.test,
