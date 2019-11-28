@@ -31,14 +31,16 @@ pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
   pdftosrc-newpoppler.cc for poppler-0.59.0 upto poppler-0.70.1.
   pdftosrc-poppler0.71.0 for poppler-0.71.0.
   pdftosrc-poppler0.72.0 for poppler-0.72.0 upto poppler-0.75.0.
-  pdftosrc-poppler0.76.0 for poppler-0.76.0 and newer. 
+  pdftosrc-poppler0.76.0 for poppler-0.76.0 upto poppler-0.82.0.
+  pdftosrc-poppler0.83.0 for poppler-0.83.0 and newer. 
   pdftoepdf-poppler0.68.0.cc for poppler-0.59.0 upto poppler-0.68.0.
   pdftoepdf-poppler0.69.0.cc for poppler-0.69.0.
   pdftoepdf-poppler0.70.0.cc for poppler-0.70.0 and poppler-0.70.1.
   pdftoepdf-poppler0.71.0.cc for poppler-0.71.0.
   pdftoepdf-poppler0.72.0.cc for poppler-0.72.0 upto poppler-0.74.0.
   pdftoepdf-poppler0.75.0.cc for poppler-0.75.0.
-  pdftoepdf-poppler0.76.0.cc for poppler-0.76.0 and newer.
+  pdftoepdf-poppler0.76.0.cc for poppler-0.76.0 upto poppler-0.82.0.
+  pdftoepdf-poppler0.83.0.cc for poppler-0.83.0 and newer.
   Note that pdftosrc-*.cc and pdftoepdf-*.cc should be
   renamed as pdftosrc.cc, and pdftoepdf.cc, respectively, before
   compilation.

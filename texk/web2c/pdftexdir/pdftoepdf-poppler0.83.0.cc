@@ -22,7 +22,7 @@ This is based on the patch texlive-poppler-0.59.patch <2017-09-19> at
 https://git.archlinux.org/svntogit/packages.git/plain/texlive-bin/trunk
 by Arch Linux. A little modifications are made to avoid a crash for
 some kind of pdf images, such as figure_missing.pdf in gnuplot.
-The poppler should be 0.76.0 upto 0.82.0.
+The poppler should be 0.83.0 or newer versions.
 POPPLER_VERSION should be defined.
 */
 
@@ -723,7 +723,7 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
 #endif
     // initialize
     if (!isInit) {
-        globalParams = new GlobalParams();
+        globalParams = std::make_unique<GlobalParams>();
         globalParams->setErrQuiet(false);
         isInit = true;
     }
@@ -1107,7 +1107,5 @@ void epdf_check_mem()
             n = p->next;
             delete_document(p);
         }
-        // see above for globalParams
-        delete globalParams;
     }
 }
