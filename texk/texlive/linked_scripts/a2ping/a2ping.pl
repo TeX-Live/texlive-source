@@ -350,7 +350,7 @@ use just +1; # a JustLib application
 use strict;
 use integer;
 use Htex::papers;
-BEGIN { $Htex::a2ping::VERSION="2.83p" }
+BEGIN { $Htex::a2ping::VERSION="2.84p" }
 
 # Imp: option to ignore `%%Orientation: Portrait', which gs respects and rotates by 90 degrees if necessary
 # Imp: gs(704?!) sometimes finds too small bbox, see Univers.eps
@@ -399,7 +399,7 @@ BEGIN { $Htex::a2ping::VERSION="2.83p" }
 
 ### program identification
 my $program = "a2ping.pl";
-my $filedate="2018-03-07";  # See also $Htex::a2ping::VERSION.
+my $filedate="2019-11-17";  # See also $Htex::a2ping::VERSION.
 my $copyright = "Written by <pts\@fazekas.hu> from April 2003.
 This is free software, GNU GPL >=2.0. There is NO WARRANTY.
 (epstopdf 2.7 Copyright 1998-2001 by Sebastian Rahtz et al.)\n";
@@ -778,8 +778,9 @@ $GS=$::opt_gs_cmd if defined $::opt_gs_cmd;
 my $CGS=$GS;
 $CGS=$::opt_gs_ccmd if defined $::opt_gs_ccmd;
 # vvv SUXX: (r) file doesn't work with gs 8.5x -DSAFER
-#$GS.= " -dSAFER"; # -dWRITESYSTEMDICT
-#$CGS.=" -dSAFER"; # -dWRITESYSTEMDICT
+# -dNOSAFER to override SAFER activated by default since gs 9.50
+$GS.= " -dNOSAFER"; # -dWRITESYSTEMDICT
+$CGS.=" -dNOSAFER"; # -dWRITESYSTEMDICT
 
 ### get input and output filename
 if (!defined $InputFilename and defined $OutputFilename) { # --filter
