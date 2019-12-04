@@ -1,0 +1,11 @@
+dnl
+dnl   Copyright (C) 2013-2015 Peter Breitenlohner <tex-live@tug.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+dnl --------------------------------------------------------
+dnl
+dnl  m4-include this file to define the current lz4 version
+m4_define([lz4_version], [1.9.2])

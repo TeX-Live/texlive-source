@@ -4,9 +4,10 @@
 ## Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
-ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
-ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
+ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(LZ4_INCLUDES)
+ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(LZ4_LIBS)
+ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies) \
+	$(LZ4_DEPEND)
 p_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 pweb_programs = pbibtex pdvitype ppltotf ptftopl

@@ -97,6 +97,8 @@ const_string EPTEXHELP[] = {
     "  If no arguments or options are specified, prompt for input.",
     "",
     "-cnf-line=STRING        parse STRING as a configuration file line",
+    "-comp-level=NUMBER      set lz4 compression level of the format file to",
+    "                          NUMBER (1<=NUMBER<=12, default 5)",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
 #if defined(WIN32)
@@ -226,6 +228,8 @@ const_string EUPTEXHELP[] = {
     "  If no arguments or options are specified, prompt for input.",
     "",
     "-cnf-line=STRING        parse STRING as a configuration file line",
+    "-comp-level=NUMBER      set lz4 compression level of the format file to",
+    "                          NUMBER (1<=NUMBER<=12, default 5)",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
 #if defined(WIN32)
@@ -427,6 +431,8 @@ const_string PDFTEXHELP[] = {
     "  If no arguments or options are specified, prompt for input.",
     "",
     "-cnf-line=STRING        parse STRING as a configuration file line",
+    "-comp-level=NUMBER      set lz4 compression level of the format file to",
+    "                          NUMBER (1<=NUMBER<=12, default 5)",
     "-draftmode              switch on draft mode (generates no output PDF)",
     "-enc                    enable encTeX extensions such as \\mubyte",
     "-etex                   enable e-TeX extensions",
@@ -496,6 +502,8 @@ const_string PTEXHELP[] = {
     "  If no arguments or options are specified, prompt for input.",
     "",
     "-cnf-line=STRING        parse STRING as a configuration file line",
+    "-comp-level=NUMBER      set lz4 compression level of the format file to",
+    "                          NUMBER (1<=NUMBER<=12, default 5)",
     "-fmt=NAME               use NAME instead of program name or %&format.",
 #if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
@@ -623,6 +631,8 @@ const_string UPTEXHELP[] = {
     "  If no arguments or options are specified, prompt for input.",
     "",
     "-cnf-line=STRING        parse STRING as a configuration file line",
+    "-comp-level=NUMBER      set lz4 compression level of the format file to",
+    "                          NUMBER (1<=NUMBER<=12, default 5)",
     "-fmt=NAME               use NAME instead of program name or %&format.",
 #if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",

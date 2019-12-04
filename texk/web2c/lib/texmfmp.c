@@ -124,7 +124,12 @@
 #if !defined(IS_upTeX)
 # define IS_upTeX 0
 #endif
-
+
+#if IS_pTeX || defined(pdfTeX)
+#include <lz4hc.h>
+int fmt_comp_level = 5;
+#endif
+
 #if defined(__SyncTeX__)
 /* 
    SyncTeX file name should be full path in the case where
@@ -1692,6 +1697,9 @@ static struct option long_options[]
       { "efmt",                      1, 0, 0 },
 #endif
       { "cnf-line",                  1, 0, 0 },
+#if IS_pTeX || defined(pdfTeX)
+      { "comp-level",                1, 0, 0 },
+#endif
       { "help",                      0, 0, 0 },
       { "ini",                       0, &iniversion, 1 },
       { "interaction",               1, 0, 0 },
@@ -1929,7 +1937,10 @@ parse_options (int argc, string *argv)
         WARNING1 ("Ignoring unknown argument `%s' to --kanji-internal", optarg);
       }
 #endif
-
+#if IS_pTeX || defined(pdfTeX)
+    } else if (ARGUMENT_IS ("comp-level")) {
+      fmt_comp_level = atoi (optarg);
+#endif
     } else if (ARGUMENT_IS ("help")) {
         usagehelp (PROGRAM_HELP, BUG_ADDRESS);
 
@@ -2780,10 +2791,87 @@ swap_items (char *p, int nitems, int size)
 }
 #endif /* not WORDS_BIGENDIAN and not NO_DUMP_SHARE */
 
-
 /* Here we write NITEMS items, each item being ITEM_SIZE bytes long.
    The pointer to the stuff to write is P, and we write to the file
    OUT_FILE.  */
+
+#if IS_pTeX || defined(pdfTeX)
+char *fmtbuffer = NULL; /* non-NULL iff dumping */
+int fmtbuffer_len = 4194304L; /* length of fmtbuffer */
+int fmt_len = 0; /* dump: format size in bytes, undump: remaining bytes */
+unsigned char *fmtcursor;
+inline int write_fmtbuffer(const void *p, int item_size, int nitems)
+{
+  if (fmtbuffer==NULL)
+    if ((fmtbuffer=xmalloc(fmtbuffer_len))==NULL) return -1;
+  if (fmt_len + item_size * nitems >= fmtbuffer_len)
+    while (fmt_len + item_size * nitems < fmtbuffer_len) {
+      fmtbuffer_len += 1048576; 
+      if ((fmtbuffer=realloc(fmtbuffer, fmtbuffer_len))==NULL) return -1;
+     };
+  memcpy(fmtbuffer+fmt_len, p, item_size*nitems);
+  fmt_len += item_size * nitems; return nitems;
+}
+inline int read_fmtbuffer(void *p, int bytes, FILE *fp)
+{
+  if (fmtbuffer==NULL) {
+    /* decompress */
+    int l; char *in = NULL;
+    unsigned char ah, al; int r;
+    fseek(fp, 0, SEEK_END); l = ftell(fp) - 2; fseek(fp, 0, SEEK_SET);
+    if (!fread(&ah, 1, 1, fp)) 
+      { fprintf(stderr, "! Could not undump 1 byte integer\n"); uexit(1); }
+    else if (!fread(&al, 1, 1, fp)) 
+      { fprintf(stderr, "! Could not undump 1 byte integer\n"); uexit(1); }
+    fmt_len = (((unsigned int)ah)*256+al) * 1048576;
+    fmtbuffer = xmalloc(fmt_len);
+    in = xmalloc(l); fread(in, 1, l, fp); aclose(fp);
+
+    fmt_len = LZ4_decompress_safe(in, fmtbuffer, l, fmt_len);
+    if (fmt_len < 0) {
+      /* this should NEVER happen */
+      fprintf(stderr, "! decompression of format file failed: %d\n", r);
+      free(in); free(fmtbuffer); uexit(1);
+    }
+   /* fprintf(stderr, "DECOMPRESSED %10d -> %10d\n", l+2, fmt_len); */
+   free(in); fp=NULL; fmtcursor = (unsigned char *)fmtbuffer; fmtbuffer_len = 0; 
+  }
+  if (bytes <= fmt_len) {
+    memcpy(p, fmtcursor, bytes); fmtcursor += bytes;
+    fmt_len -= bytes; return bytes;
+  } else return -1;
+}
+void wclose(FILE *f) {
+  int new_len;
+  int r = LZ4_compressBound(fmt_len);
+  char *out = NULL;
+  if (f==NULL) { aclose(f); return;} /* not dumping */
+  if (fmtbuffer_len==0) { return;}   /* undumping */
+  fseek(f, 0, SEEK_SET);
+
+  /* compress */
+  out = (char *) xmalloc(r);
+  if (fmt_comp_level < LZ4HC_CLEVEL_MIN )
+    new_len = LZ4_compress_default(fmtbuffer, out, fmt_len, r);
+  else
+    new_len = LZ4_compress_HC(fmtbuffer, out, fmt_len, r, fmt_comp_level);
+  if (new_len == 0) {
+    /* this should NEVER happen */
+    fprintf(stderr, "! compression of format file failed: %d\n", r);
+    free(out); free(fmtbuffer); uexit(1);
+  }
+
+  /* write */
+  unsigned int a = (fmt_len/1048576) + 1;
+  unsigned char ah= a/256, al = a%256;
+  fwrite(&ah, 1, sizeof(unsigned char), f);
+  fwrite(&al, 1, sizeof(unsigned char), f);
+  fwrite(out, 1, new_len, f); aclose(f);
+
+  /* fprintf(stderr, "COMPRESSED %10d -> %10d\n", fmt_len, new_len+2); */
+  free(out); free(fmtbuffer);
+}
+#endif
 
 void
 #ifdef XeTeX
@@ -2799,7 +2887,11 @@ do_dump (char *p, int item_size, int nitems,  FILE *out_file)
 #ifdef XeTeX
   if (gzwrite (out_file, p, item_size * nitems) != item_size * nitems)
 #else
+#if IS_pTeX || defined(pdfTeX)
+  if (write_fmtbuffer (p, item_size, nitems) != nitems)
+#else
   if (fwrite (p, item_size, nitems, out_file) != nitems)
+#endif
 #endif
     {
       fprintf (stderr, "! Could not write %d %d-byte item(s) to %s.\n",
@@ -2827,7 +2919,11 @@ do_undump (char *p, int item_size, int nitems, FILE *in_file)
 #ifdef XeTeX
   if (gzread (in_file, p, item_size * nitems) != item_size * nitems)
 #else
+#if IS_pTeX || defined(pdfTeX)
+  if (read_fmtbuffer (p, item_size * nitems, in_file) != item_size * nitems)
+#else
   if (fread (p, item_size, nitems, in_file) != (size_t) nitems)
+#endif
 #endif
     FATAL3 ("Could not undump %d %d-byte item(s) from %s",
             nitems, item_size, nameoffile+1);
@@ -3945,3 +4041,4 @@ paintrow (screenrow row, pixelcolor init_color,
     (*mfwp->mfwsw_paintrow) (row, init_color, transition_vector, vector_size);
 }
 #endif /* MF */
+

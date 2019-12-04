@@ -269,7 +269,11 @@ extern void topenin (void);
 #else
 #define wopenin(f)	open_input (&(f), DUMP_FORMAT, FOPEN_RBIN_MODE)
 #define wopenout	bopenout
+#if defined(pTeX) || defined(epTeX) || defined(eupTeX) || defined(upTeX) || defined(pdfTeX)
+void wclose(FILE *f);
+#else
 #define wclose		aclose
+#endif
 #endif
 
 #ifdef XeTeX

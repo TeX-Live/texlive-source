@@ -1,0 +1,7 @@
+## libs/lz4/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lz4/
+dnl
+dnl Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## configure options and TL libraries required for lz4
+KPSE_WITH_LIB([lz4], , [tree])

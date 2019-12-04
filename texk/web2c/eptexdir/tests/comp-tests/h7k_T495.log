@@ -1,0 +1,26 @@
+# Wed Dec 4 08:37:32 JST 2019
+#
+# h7k@T495
+# OS: Arch Linux 
+# Kernel: x86_64 Linux 5.4.1-2-ck-zen
+# Shell: bash
+# CPU: AMD Ryzen 5 PRO 3500U w/ Radeon Vega Mobile Gfx @ 8x 2.1GHz
+# GPU: AMD/ATI
+# RAM: 1737MiB / 13939MiB
+#
+# test source: 
+# \documentclass{minimal}\begin{document}\end{document}
+#
+# comp_level  binary_size  fmt_size  fmt_time[s]  typeset_time[ms]
+0 664648 10411227 .638 128.00
+1 758888 3499152 .641 135.59
+3 758888 3027824 .723 135.41
+4 758888 2931241 .746 134.97
+5 758888 2861929 .787 134.82
+6 758888 2812083 .844 135.47
+7 758888 2774866 .926 134.41
+8 758888 2748339 1.051 134.88
+9 758888 2719458 1.397 135.14
+10 758888 2747670 1.532 134.75
+11 758888 2682200 3.496 134.21
+12 758888 2648081 8.578 133.95
