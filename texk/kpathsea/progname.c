@@ -1,6 +1,6 @@
 /* progname.c: the executable name we were invoked as; general initialization.
 
-   Copyright 1994, 1996, 1997, 2008-2013, 2016-2018 Karl Berry.
+   Copyright 1994, 1996, 1997, 2008-2013, 2016-2019 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
