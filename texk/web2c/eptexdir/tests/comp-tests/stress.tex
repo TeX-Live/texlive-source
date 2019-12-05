@@ -4,17 +4,19 @@
 \let\dump\origdump
 
 \count0=0
-\def\A{\ifnum\count0<450000
-  \edef\N{\the\numexpr1000000+\count0}
+\def\A{\ifnum\count0<453626
+  \edef\N{QW\the\numexpr1000000+\count0}
   \expandafter\xdef\csname HOGE\N\endcsname{ABCDEFGHI}%
   \advance\count0 by1\let\next=\A\else\let\next\relax
   \fi\next}
 \A
+\let\N\undefined
 \count0=0
-\def\A{\ifnum\count0<120
+\def\A{\ifnum\count0<199
   \edef\N{\the\numexpr1000000+\count0}
-  \font\S=cmr10 at \N sp\fontdimen65536\S=1sp
+  \font\S=cmr10 at \N sp\fontdimen39707\S=1sp
   \advance\count0 by1\let\next=\A\else\let\next\relax
   \fi\next}
 \A
+\font\S=cmr10 at 20pt\fontdimen19357\S=1sp
 \dump
