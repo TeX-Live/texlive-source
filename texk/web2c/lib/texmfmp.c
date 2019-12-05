@@ -2796,23 +2796,26 @@ swap_items (char *p, int nitems, int size)
    OUT_FILE.  */
 
 #if IS_pTeX || defined(pdfTeX)
+/* Compressing format files by lz4. We assume that
+  uncompressed size <= LZ4_MAX_INPUT_SIZE (0x7E000000) */
 char *fmtbuffer = NULL; /* non-NULL iff dumping */
-int fmtbuffer_len = 4194304L; /* length of fmtbuffer */
+size_t fmtbuffer_len = 4194304; /* length of fmtbuffer */
 int fmt_len = 0; /* dump: format size in bytes, undump: remaining bytes */
 unsigned char *fmtcursor;
-inline int write_fmtbuffer(const void *p, int item_size, int nitems)
+int write_fmtbuffer(const void *p, int item_size, int nitems)
 {
   if (fmtbuffer==NULL)
     if ((fmtbuffer=xmalloc(fmtbuffer_len))==NULL) return -1;
-  if (fmt_len + item_size * nitems >= fmtbuffer_len)
-    while (fmt_len + item_size * nitems < fmtbuffer_len) {
-      fmtbuffer_len += 1048576; 
+  if (fmt_len + item_size * nitems >= fmtbuffer_len) {
+    while (fmt_len + item_size * nitems >= fmtbuffer_len) {
+      fmtbuffer_len += 1048576;
       if ((fmtbuffer=realloc(fmtbuffer, fmtbuffer_len))==NULL) return -1;
-     };
+    };
+  };
   memcpy(fmtbuffer+fmt_len, p, item_size*nitems);
   fmt_len += item_size * nitems; return nitems;
 }
-inline int read_fmtbuffer(void *p, int bytes, FILE *fp)
+int read_fmtbuffer(void *p, int bytes, FILE *fp)
 {
   if (fmtbuffer==NULL) {
     /* decompress */
