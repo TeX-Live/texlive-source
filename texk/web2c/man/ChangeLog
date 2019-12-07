@@ -1,3 +1,8 @@
+2019-12-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweb.man,
+	* ctwill.man: Update manpages.
+
 2019-11-17  Karl Berry  <karl@tug.org>
 
 	* latex-dev.man: new man page.
