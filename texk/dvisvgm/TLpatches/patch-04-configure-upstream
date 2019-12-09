@@ -1,4 +1,4 @@
---- dvisvgm-2.8.1/configure.ac
+--- dvisvgm-2.8.2/configure.ac
 +++ configure.ac
 @@ -1,78 +1,63 @@
 -# This file is part of dvisvgm
@@ -7,7 +7,7 @@
 -# Process this file with autoconf to produce a configure script.
 -
 -AC_PREREQ(2.59)
--AC_INIT([dvisvgm],[2.8.1],[martin.gieseking@uos.de])
+-AC_INIT([dvisvgm],[2.8.2],[martin.gieseking@uos.de])
 +# $Id: configure.ac 49819 2019-01-25 23:20:32Z karl $
 +dnl Process this file with autoconf to produce a configure script
 +dnl for dvisvgm in TeX Live.
@@ -25,7 +25,7 @@
 +AC_PREREQ([2.65])
 +m4_include([version.ac])[] dnl define dvisvgm_version
 +AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
- DATE="November 2019"
+ DATE="December 2019"
 -AC_CONFIG_SRCDIR(src)
 +AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
  AC_CONFIG_HEADERS([config.h])

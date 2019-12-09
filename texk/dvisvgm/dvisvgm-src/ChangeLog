@@ -1,3 +1,67 @@
+2019-12-07  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+2019-12-06  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml, .travis.yml, configure.ac, src/Doxyfile, src/version.hpp: 
+  set version to 2.8.2 
+
+2019-12-05  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FileSystem.cpp: 
+  convert path separators only in Windows binaries 
+
+  * src/Process.cpp: 
+  Subprocess: handle absolute path to executable correctly 
+
+  * src/FileFinder.cpp, src/FileFinder.hpp: 
+  added FileFinder::lookupExecutable() 
+
+  * src/MetafontWrapper.cpp: 
+  call 'mf-nowin' instead of 'mf' if available (closes #121) 
+
+2019-12-04  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PSInterpreter.cpp: 
+  adapt path separators before passing them to Ghostscript
+closes #123 
+
+  * src/FilePath.cpp, src/FileSystem.cpp, src/FileSystem.hpp, 
+    src/PSInterpreter.cpp, src/PsSpecialHandler.cpp, src/dvisvgm.cpp: 
+  renamed adaptPathSeperators() to ensureForwardSlashes() 
+
+  * src/Calculator.hpp, src/CharMapID.hpp, src/Color.hpp, src/Directory.cpp, 
+    src/Directory.hpp, src/FixWord.hpp, src/FontStyle.hpp, 
+    src/GFGlyphTracer.cpp, src/GFGlyphTracer.hpp, src/GFReader.cpp, 
+    src/GFReader.hpp, src/GFTracer.cpp, src/GFTracer.hpp, 
+    src/GlyphTracerMessages.hpp, src/HtmlSpecialHandler.hpp, 
+    src/HyperlinkManager.hpp, src/Length.hpp, src/NoPsSpecialHandler.hpp, 
+    src/PSPreviewFilter.cpp, src/PSPreviewFilter.hpp, src/PathClipper.hpp, 
+    src/PreScanDVIReader.cpp, src/PreScanDVIReader.hpp, src/Process.cpp, 
+    src/PsSpecialHandler.hpp, src/RangeMap.hpp, src/SVGOutput.cpp, 
+    src/SVGOutput.hpp, src/SignalHandler.cpp, src/SignalHandler.hpp, 
+    src/TFM.hpp, src/VFReader.cpp, src/VFReader.hpp, src/VectorStream.hpp: 
+  simplified constructors, avoid constant initializers 
+
+  * src/FileSystem.cpp, src/FileSystem.hpp: 
+  removed redundant class variable 
+
+  * src/MiKTeXCom.cpp: 
+  fixed type mismatch of FindFile expression 
+
+2019-12-03  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/psdefs.cpp: 
+  fixed handling of 'nulldevice' in PS operator 'restore'
+closes #122 
+
+2019-11-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/GraphicsPath.hpp: 
+  added missing namespace prefix to pow() 
+
 2019-11-14  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS, README.md: 

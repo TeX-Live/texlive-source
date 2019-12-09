@@ -1,6 +1,6 @@
 	See ./TL-Changes.
 
---- dvisvgm-2.8.1/Makefile.am	2019-07-08 17:24:34.000000000 +0200
+--- dvisvgm-2.8.2/Makefile.am	2019-07-08 17:24:34.000000000 +0200
 +++ dvisvgm-src/Makefile.am	2019-11-16 13:57:04.091210187 +0100
 @@ -5,7 +5,7 @@
  
@@ -11,7 +11,7 @@
  ACLOCAL_AMFLAGS = -I m4
  
  if USE_BUNDLED_LIBS
---- dvisvgm-2.8.1/src/Makefile.am	2019-09-12 14:43:35.000000000 +0200
+--- dvisvgm-2.8.2/src/Makefile.am	2019-09-12 14:43:35.000000000 +0200
 +++ dvisvgm-src/src/Makefile.am	2019-11-16 15:54:55.820450555 +0100
 @@ -4,7 +4,7 @@
  ## Process this file with automake.
@@ -140,7 +140,7 @@
 +@FREETYPE2_RULE@
 +# Rebuild libz:
 +@ZLIB_RULE@
---- dvisvgm-2.8.1/src/optimizer/Makefile.am	2019-11-08 15:26:11.000000000 +0100
+--- dvisvgm-2.8.2/src/optimizer/Makefile.am	2019-11-08 15:26:11.000000000 +0100
 +++ dvisvgm-src/src/optimizer/Makefile.am	2019-11-16 15:15:54.151760519 +0100
 @@ -1,6 +1,6 @@
 -noinst_LTLIBRARIES = liboptimizer.la
