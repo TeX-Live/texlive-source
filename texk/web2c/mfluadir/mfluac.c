@@ -15,8 +15,8 @@
 #endif
 
 /* See  shell_cmd_is_allowed below */
-shellenabledp = 1;
-restrictedshell = 0;
+int shellenabledp = 1;
+int restrictedshell = 0;
 
 /**************************************************************/
 /*                                                            */
