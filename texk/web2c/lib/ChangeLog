@@ -1,3 +1,7 @@
+2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+	
+	* do_dump [FMT_COMPRESS]: change conditional from XeTeX.
+
 2019-08-10  Andreas Scherer  <https://ascherer.github.io>
 
 	* lib.h: add missing prototypes from 'openclose.c' and 'texmfmp.c'.

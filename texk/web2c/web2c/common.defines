@@ -1,4 +1,5 @@
-{common.defines.  Public domain.
+{$Id$
+ common.defines.  Public domain.
 
  This file is concatenated by ./convert to the beginning of the Pascal
  code that tangle outputs.  The idea is to put all these symbols, which
@@ -206,6 +207,7 @@
 @define type cstring;
 @define type char = 0..255;
 @define type getoptstruct;
+@define type gzFile;
 @define type integer;
 @define type integer64;
 @define type longinteger;

@@ -1,12 +1,12 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright (C) 2016-2018 Karl Berry <tex-live@tug.org>
-## Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
-ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
-ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
+ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
+ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ZLIB_LIBS)
+ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(ZLIB_DEPEND) $(default_dependencies)
 p_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 pweb_programs = pbibtex pdvitype ppltotf ptftopl
@@ -73,7 +73,8 @@ ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
 	$(tie_m) $(ptex_web_srcs)
 ptex_web_srcs = \
 	tex.web \
-	tex.ch
+	tex.ch \
+	zlib-fmt.ch
 
 # Generate ptex.ch
 ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
@@ -236,4 +237,3 @@ ptrip-clean:
 	rm -rf ptripdir
 
 DISTCLEANFILES += ptrip.diffs
-

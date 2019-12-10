@@ -1,3 +1,10 @@
+2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* am/eptex.am (eptex_CPPFLAGS): append $(ZLIB_INCLUDES).
+	(eptex_LDADD): append $(ZLIB_LIBS.)
+	(eptex_DEPENDENCIES): append $(ZLIB_DEPEND) 
+	(eptex_web_srcs): append zlib-fmt.ch.
+
 2019-11-12  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfutils.ch: Add primitives \Uchar and \Ucharcat.

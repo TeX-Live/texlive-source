@@ -1,8 +1,8 @@
 {
 /****************************************************************************\
  Part of the XeTeX typesetting system
+ Copyright (c) 2009-2019 by Jonathan Kew
  Copyright (c) 1994-2008 by SIL International
- Copyright (c) 2009 by Jonathan Kew
 
  SIL Author(s): Jonathan Kew
 
@@ -64,7 +64,6 @@ authorization from the copyright holders.
 @define procedure printutf8str();
 @define procedure setinputfileencoding();
 @define procedure terminatefontmanager;
-@define type gzFile;
 @define procedure checkfortfmfontmapping;
 @define function loadtfmfontmapping;
 @define function applytfmfontmapping();

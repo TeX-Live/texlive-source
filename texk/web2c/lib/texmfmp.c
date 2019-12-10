@@ -2786,7 +2786,7 @@ swap_items (char *p, int nitems, int size)
    OUT_FILE.  */
 
 void
-#ifdef XeTeX
+#ifdef FMT_COMPRESS
 do_dump (char *p, int item_size, int nitems,  gzFile out_file)
 #else
 do_dump (char *p, int item_size, int nitems,  FILE *out_file)
@@ -2796,7 +2796,7 @@ do_dump (char *p, int item_size, int nitems,  FILE *out_file)
   swap_items (p, nitems, item_size);
 #endif
 
-#ifdef XeTeX
+#ifdef FMT_COMPRESS
   if (gzwrite (out_file, p, item_size * nitems) != item_size * nitems)
 #else
   if (fwrite (p, item_size, nitems, out_file) != nitems)
@@ -2818,13 +2818,13 @@ do_dump (char *p, int item_size, int nitems,  FILE *out_file)
 /* Here is the dual of the writing routine.  */
 
 void
-#ifdef XeTeX
+#ifdef FMT_COMPRESS
 do_undump (char *p, int item_size, int nitems, gzFile in_file)
 #else
 do_undump (char *p, int item_size, int nitems, FILE *in_file)
 #endif
 {
-#ifdef XeTeX
+#ifdef FMT_COMPRESS
   if (gzread (in_file, p, item_size * nitems) != item_size * nitems)
 #else
   if (fread (p, item_size, nitems, in_file) != (size_t) nitems)

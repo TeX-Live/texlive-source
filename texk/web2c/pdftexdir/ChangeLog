@@ -1,3 +1,7 @@
+2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* am/pdftex.am (pdftex_ch_srcs): add zlib-fmt.ch.
+
 2019-11-25  Joseph Wright  <joseph.wright@morningstar2.co.uk>
 
 	* pdftex.web: New primitive \pdfmajorversion.

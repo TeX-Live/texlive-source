@@ -1,6 +1,7 @@
 ## texk/web2c/euptexdir/am/euptex.am: Makefile fragment for e-upTeX.
 ##
-## Copyright (C) 2011-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-upTeX
@@ -10,11 +11,11 @@ bin_PROGRAMS += euptex
 endif EUPTEX
 EXTRA_PROGRAMS += euptex
 
-euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/libmd5
+euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/libmd5 $(ZLIB_INCLUDES)
 
 # With --enable-ipc, e-upTeX may need to link with -lsocket.
-euptex_LDADD = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ipc_socketlibs) libmd5.a
-euptex_DEPENDENCIES = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies) libmd5.a
+euptex_LDADD = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ipc_socketlibs) libmd5.a $(ZLIB_LIBS)
+euptex_DEPENDENCIES = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies) libmd5.a $(ZLIB_DEPEND)
 
 # e-upTeX C sources
 euptex_c_h = euptexini.c euptex0.c euptexcoerce.h euptexd.h
@@ -48,6 +49,7 @@ euptex_web_srcs = \
 	etexdir/etex.ch \
 	etexdir/tex.ch0 \
 	tex.ch \
+	zlib-fmt.ch \
 	etexdir/tex.ech
 
 # Generate euptex.ch

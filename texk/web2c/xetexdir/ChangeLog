@@ -1,3 +1,7 @@
+2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* xetex.defines (gzFile): move to ../web2c/common.defines.
+
 2019-06-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* xetex-filedump.test, filedump.tex, filedump.log: New tests.

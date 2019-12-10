@@ -69,6 +69,7 @@ pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
 	tex.ch \
+	zlib-fmt.ch \
 	enctex.ch \
 	$(pdftex_ch_synctex) \
 	pdftexdir/pdftex.ch \
@@ -79,7 +80,7 @@ pdftex.pdf: pdftex.tex
 	env MKTEXFMT=0 pdftex '\nonstopmode\input pdftex.tex'
 pdftex.tex: $(srcdir)/pdftexdir/pdftex.web
 	weave $(srcdir)/pdftexdir/pdftex.web
-	
+
 ##
 EXTRA_DIST += $(pdftex_ch_srcs) pdftexdir/pdftex.defines
 

@@ -10,6 +10,7 @@
 #define getintone(w) ((w).cint1)
 #define setintone(w,a) ((w).cint1=(a))
 #endif
+#include <zlib.h>
 
 #ifndef KANJI
 #define KANJI
@@ -64,8 +65,8 @@ extern void init_default_kanji_select (void);
 #endif
 
 extern void init_kanji (const_string file_str, const_string internal_str);
-extern void dump_kanji (FILE *fp);
-extern void undump_kanji (FILE *fp);
+extern void dump_kanji (gzFile fp);
+extern void undump_kanji (gzFile fp);
 #define dumpkanji dump_kanji
 #define undumpkanji undump_kanji
 

@@ -1,3 +1,15 @@
+2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* am/ptex.am (ptex_cppflags): append $(ZLIB_INCLUDES).
+	(ptex_ldadd): append $(ZLIB_LIBS.)
+	(ptex_dependencies): append $(ZLIB_DEPEND) 
+	(ptex_web_srcs): append zlib-fmt.ch.
+	* kanji.h: #include <zlib.h>
+	(dump_kanji, undump_kanji): arg is now type gzFile instead of FILE *.
+	* kanji_dump.c (pTeX) [!pTeX]: #define if not already.
+	(dump_kanji, undump_kanji): chang arg type.
+	* zfmtcompress.test: new script (not enabled).
+
 2019-10-14  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Allow getting \kansujichar.

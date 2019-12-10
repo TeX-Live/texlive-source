@@ -1,3 +1,10 @@
+2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* am/etex.am (etex_CPPFLAGS): append $(ZLIB_INCLUDES).
+	(etex_LDADD): include $(ZLIB_LIBS.)
+	(etex_DEPENDENCIES): define as $(ZLIB_DEPEND) 
+	(etex_web_srcs): include zlib-fmt.ch.
+
 2018-03-24  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
             Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 

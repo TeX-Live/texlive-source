@@ -1,3 +1,14 @@
+2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* am/uptex.am (uptex_cppflags): append $(ZLIB_INCLUDES).
+	(uptex_ldadd): append $(ZLIB_LIBS.)
+	(uptex_dependencies): append $(ZLIB_DEPEND) 
+	(uptex_web_srcs): append zlib-fmt.ch.
+	* kanji.h: #include <zlib.h>
+	(dump_kanji, undump_kanji): arg is now type gzFile instead of FILE *.
+	* kanji_dump.c (pTeX) [!upTeX]: #define if not already.
+	(dump_kanji, undump_kanji): chang arg type.
+
 2019-05-28  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* am/uptex.am: Add a new test.

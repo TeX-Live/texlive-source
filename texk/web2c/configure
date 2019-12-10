@@ -18656,6 +18656,10 @@ esac
 if test "${enable_etex_synctex+set}" = set; then :
   enableval=$enable_etex_synctex;
 fi
+
+test "x$enable_web2c:$enable_etex" = xyes:yes && {
+  need_zlib=yes
+}
 # Check whether --enable-ptex was given.
 if test "${enable_ptex+set}" = set; then :
   enableval=$enable_ptex;
@@ -18674,6 +18678,7 @@ fi
 
 test "x$enable_web2c:$enable_ptex" = xyes:yes && {
   need_ptexenc=yes
+  need_zlib=yes
 }
 # Check whether --enable-eptex was given.
 if test "${enable_eptex+set}" = set; then :
@@ -18693,6 +18698,7 @@ fi
 
 test "x$enable_web2c:$enable_eptex" = xyes:yes && {
   need_ptexenc=yes
+  need_zlib=yes
 }
 # Check whether --enable-uptex was given.
 if test "${enable_uptex+set}" = set; then :
@@ -18712,6 +18718,7 @@ fi
 
 test "x$enable_web2c:$enable_uptex" = xyes:yes && {
   need_ptexenc=yes
+  need_zlib=yes
 }
 # Check whether --enable-euptex was given.
 if test "${enable_euptex+set}" = set; then :
@@ -18731,6 +18738,7 @@ fi
 
 test "x$enable_web2c:$enable_euptex" = xyes:yes && {
   need_ptexenc=yes
+  need_zlib=yes
 }
 # Check whether --enable-aleph was given.
 if test "${enable_aleph+set}" = set; then :
@@ -18761,6 +18769,7 @@ fi
 test "x$enable_web2c:$enable_pdftex" = xyes:yes && {
   need_xpdf=yes
   need_libpng=yes
+  need_zlib=yes
 }
 # Check whether --enable-luatex was given.
 if test "${enable_luatex+set}" = set; then :

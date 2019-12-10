@@ -1,6 +1,7 @@
 ## texk/web2c/etexdir/am/etex.am: Makefile fragment for e-TeX.
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-TeX
@@ -10,17 +11,19 @@ bin_PROGRAMS += etex
 endif ETEX
 EXTRA_PROGRAMS += etex
 
-etex_CPPFLAGS = $(AM_CPPFLAGS)
+etex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.
-etex_LDADD = $(LDADD) $(ipc_socketlibs)
+etex_LDADD = $(LDADD) $(ZLIB_LIBS) $(ipc_socketlibs)
+etex_DEPENDENCIES = $(ZLIB_DEPEND)
 
 # e-TeX C sources
 etex_c_h = etexini.c etex0.c etexcoerce.h etexd.h
 nodist_etex_SOURCES = $(etex_c_h) etex-pool.c
 dist_etex_SOURCES = etexdir/etexextra.c etexdir/etexextra.h etexdir/etex_version.h
 
-# We must create etexd.h and etexdir/etex_version.h before building the etex_OBJECTS.
+# We must create etexd.h and etexdir/etex_version.h before building the
+# etex_OBJECTS.
 etex_prereq = etexd.h etexdir/etex_version.h
 $(etex_OBJECTS): $(etex_prereq)
 
@@ -56,6 +59,7 @@ etex.ch: tie$(EXEEXT) etex.web $(etex_ch_srcs)
 etex_ch_srcs = \
 	etexdir/tex.ch0 \
 	tex.ch \
+	zlib-fmt.ch \
 	enctex.ch \
 	$(etex_ch_synctex) \
 	etexdir/tex.ch1 \

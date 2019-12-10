@@ -248,6 +248,14 @@ extern void topenin (void);
 #define aclose(f)     close_file_or_pipe(f)
 #endif
 
+/* define FMT_COMPRESS for engines which compress formats */
+#if defined(pTeX) || defined(epTeX) || defined(upTeX) || defined(eupTeX)
+#define FMT_COMPRESS 1
+#endif
+#if defined(eTeX) || defined(pdfTeX) || defined(XeTeX)
+#define FMT_COMPRESS 1
+#endif
+
 /* `bopenin' (and out) is used only for reading (and writing) .tfm
    files; `wopenin' (and out) only for dump files.  The filenames are
    passed in as a global variable, `nameoffile'.  */
@@ -257,7 +265,7 @@ extern void topenin (void);
 
 #define bopenout(f)	open_output (&(f), FOPEN_WBIN_MODE)
 #define bclose		aclose
-#ifdef XeTeX
+#ifdef FMT_COMPRESS
 /* f is declared as gzFile, but we temporarily use it for a FILE *
    so that we can use the standard open calls */
 #define wopenin(f)	(open_input ((FILE**)&(f), DUMP_FORMAT, FOPEN_RBIN_MODE) \
@@ -352,7 +360,7 @@ extern void paintrow (/*screenrow, pixelcolor, transspec, screencol*/);
   } while (0)
 
 /* We define the routines to do the actual work in texmfmp.c.  */
-#ifdef XeTeX
+#ifdef FMT_COMPRESS
 #include <zlib.h>
 extern void do_dump (char *, int, int, gzFile);
 extern void do_undump (char *, int, int, gzFile);

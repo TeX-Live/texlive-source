@@ -3,9 +3,12 @@
  */
 
 #include "kanji.h"
+#ifndef upTeX
+#define upTeX
+#endif
 #include <texmfmp.h>
 
-void dump_kanji (FILE *fp)
+void dump_kanji (gzFile fp)
 {
     char buffer[12];
     const char *p = get_enc_string ();
@@ -22,7 +25,7 @@ void dump_kanji (FILE *fp)
     do_dump (buffer, 1, 12, fp);
 }
 
-void undump_kanji (FILE *fp)
+void undump_kanji (gzFile fp)
 {
     char buffer[12];
     char *p;

@@ -4,9 +4,9 @@
 ## Copyright (C) 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
-uptex_ldadd = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
-uptex_dependencies = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
+uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
+uptex_ldadd = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ZLIB_LIBS)
+uptex_dependencies = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(ZLIB_DEPEND) $(default_dependencies)
 up_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 upweb_programs = upbibtex updvitype uppltotf uptftopl
@@ -66,7 +66,8 @@ uptex.web: tie$(EXEEXT) $(uptex_web_srcs)
 	$(tie_m) $(uptex_web_srcs)
 uptex_web_srcs = \
 	tex.web \
-	tex.ch
+	tex.ch \
+	zlib-fmt.ch
 
 # Generate uptex.ch
 uptex.ch: tie$(EXEEXT) uptex.web $(uptex_ch_srcs)

@@ -1,3 +1,12 @@
+2019-12-10  Hironori KITAGAWA  <h_kitagawa2001@yahoo.co.jp>
+
+	* ac/web2c.ac (etex, ptex, eptex, uptex, euptex, pdftex): use zlib.
+	* texmfmp.h (FMT_COMPRESS): define if pTeX || epTeX || upTeX || eupTeX
+	|| eTeX || pdfTeX || XeTeX.
+	(wopenin, do_dump, etc.) [FMT_COMPRESS]: change conditional from XeTeX.
+	* zlib-fmt.ch: new file to declare word_file as gzFile
+	instead of file of memory_word.
+
 2019-09-23  Karl Berry  <karl@freefriends.org>
 
 	* patgen.ch (trie_size),
