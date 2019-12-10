@@ -1,3 +1,7 @@
+2019-12-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+	* Import 2.8.2.
+
 2019-11-19  Martin Gieseking  <martin.gieseking@uos.de>
 
 	* patch-04-configure-upstream, patch-08-makefiles, patch-09-woff-zlib:
