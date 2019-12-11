@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 52815 $';
+my $svnrev = '$Revision: 53076 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -13,7 +13,7 @@ sub module_revision { return $_modulerevision; }
 
 =head1 NAME
 
-C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
+C<TeXLive::TLUtils> - utilities used in TeX Live infrastructure
 
 =head1 SYNOPSIS
 
@@ -2182,7 +2182,7 @@ sub check_file_and_remove {
     if ($tlchecksum ne $checksum) {
       tlwarn("TLUtils::check_file: checksums differ for $xzfile:\n");
       tlwarn("TLUtils::check_file:   tlchecksum=$tlchecksum, arg=$checksum\n");
-      (undef,$check_file_tmpdir) = File::Temp::tempdir("tlcheckfileXXXXXXXX");
+      $check_file_tmpdir = File::Temp::tempdir("tlcheckfileXXXXXXXX");
       tlwarn("TLUtils::check_file:   removing $xzfile, "
              . "but saving copy in $check_file_tmpdir\n");
       copy($xzfile, $check_file_tmpdir);
@@ -3476,6 +3476,7 @@ sub debug_hash {
   my @items = ();
   for my $key (sort keys %hash) {
     my $val = $hash{$key};
+    $val = ".undef" if ! defined $val;
     $key =~ s/\n/\\n/g;
     $val =~ s/\n/\\n/g;
     push (@items, "$key:$val");
@@ -4037,17 +4038,20 @@ sub download_to_temp_or_file {
   return;
 }
 
-# compare_tlpobjs 
-# returns a hash
-#   $ret{'revision'} = "leftRev:rightRev"     if revision differ
-#   $ret{'removed'} = \[ list of files removed from A to B ]
-#   $ret{'added'} = \[ list of files added from A to B ]
-#
+
+=item C<< compare_tlpobjs($tlpA, $tlpB) >>
+
+Compare the two passed L<TLPOBJ> objects.  Returns a hash:
+
+  $ret{'revision'}  = "revA:revB" # if revisions differ
+  $ret{'removed'}   = \[ list of files removed from A to B ]
+  $ret{'added'}     = \[ list of files added from A to B ]
+
+=cut
+
 sub compare_tlpobjs {
   my ($tlpA, $tlpB) = @_;
   my %ret;
-  my @rem;
-  my @add;
 
   my $rA = $tlpA->revision;
   my $rB = $tlpB->revision;
@@ -4067,20 +4071,27 @@ sub compare_tlpobjs {
   for my $f (@fA) { $removed{$f} = 1; }
   for my $f (@fB) { delete($removed{$f}); $added{$f} = 1; }
   for my $f (@fA) { delete($added{$f}); }
-  @rem = sort keys %removed;
-  @add = sort keys %added;
+  my @rem = sort keys %removed;
+  my @add = sort keys %added;
   $ret{'removed'} = \@rem if @rem;
   $ret{'added'} = \@add if @add;
+
   return %ret;
 }
 
-#
-# compare_tlpdbs
-# return several hashes
-# @{$ret{'removed_packages'}} = list of removed packages from A to B
-# @{$ret{'added_packages'}} = list of added packages from A to B
-# $ret{'different_packages'}->{$package} = output of compare_tlpobjs
-#
+
+=item C<< compare_tlpdbs($tlpdbA, $tlpdbB, @more_ignored_pkgs) >>
+
+Compare the two passed L<TLPDB> objects, ignoring the packages
+C<00texlive.installer>, C<00texlive.image>, and any passed
+C<@more_ignore_pkgs>. Returns a hash:
+
+  $ret{'removed_packages'} = \[ list of removed packages from A to B ]
+  $ret{'added_packages'}   = \[ list of added packages from A to B ]
+  $ret{'different_packages'}->{$package} = output of compare_tlpobjs
+
+=cut
+
 sub compare_tlpdbs {
   my ($tlpdbA, $tlpdbB, @add_ignored_packs) = @_;
   my @ignored_packs = qw/00texlive.installer 00texlive.image/;
@@ -4501,8 +4512,8 @@ our $jsonmode = "";
 =item C<True()>
 =item C<False()>
 
-these two function must be used to get proper JSON C<true> and C<false> 
-in the output independent of the backend used.
+These two crazy functions must be used to get proper JSON C<true> and
+C<false> in the output independent of the backend used.
 
 =cut
 
@@ -4657,9 +4668,9 @@ __END__
 
 =head1 SEE ALSO
 
-The modules L<TeXLive::TLConfig>, L<TeXLive::TLCrypto>,
-L<TeXLive::TLDownload>, L<TeXLive::TLWinGoo>, etc., and the
-documentation in the repository: C<Master/tlpkg/doc/>.
+The other modules in C<Master/tlpkg/TeXLive/> (L<TeXLive::TLConfig> and
+the rest), and the scripts in C<Master/tlpg/bin/> (especially
+C<tl-update-tlpdb>), the documentation in C<Master/tlpkg/doc/>, etc.
 
 =head1 AUTHORS AND COPYRIGHT
 
