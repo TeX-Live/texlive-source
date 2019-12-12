@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # Inspired by latexpand by D. Musliner, University of Michigan
-# 2012, 2013, 2014, 2015, 2016, 2017: Matthieu Moy <git@matthieu-moy.fr>
+# 2012-2019: Matthieu Moy <git@matthieu-moy.fr>
 # BSD License
 
 use strict;
@@ -10,7 +10,9 @@ use IO::Handle;
 use File::Spec;
 
 my $TEXINPUTS = $ENV{'TEXINPUTS'};
-if (!$TEXINPUTS) { $TEXINPUTS = getcwd(); }
+# By default, search in current directory. We use '.' and not getcwd()
+# to avoid issues if the working directory contains a ':' character.
+if (!$TEXINPUTS) { $TEXINPUTS = '.'; }
 
 my $verbose;
 my $keep_comments;
@@ -24,6 +26,7 @@ my $show_graphics;
 my $graphics_extensions = ":.pdf:.png:.jpg:.eps";
 my $expand_usepackage;
 my $expand_bbl;
+my $biber;
 my $fatal;
 my $version;
 my $makeatletter;
@@ -44,6 +47,7 @@ GetOptions (
 	'graphics-extensions' => \$graphics_extensions,
 	'expand-usepackage' => \$expand_usepackage,
 	'expand-bbl=s' => \$expand_bbl,
+	'biber=s' => \$biber,
 	'fatal' => \$fatal,
 	'version' => \$version,
         'makeatletter' => \$makeatletter,
@@ -80,7 +84,7 @@ sub get_version
 {
 	# $VERSION's value will be substituted by 'make dist', but the
 	# next line won't (the string has to be broken to avoid it).
-	my $VERSION = 'v1.5';
+	my $VERSION = 'v1.6';
 	if ($VERSION eq '@LATEXPAND' . '_VERSION@') {
 		my($vol,$dir,$file) = File::Spec->splitpath($0);
 		chdir($dir);
@@ -128,6 +132,16 @@ foreach my $file (@ARGV)
 	$in_preamble = 1;
         $inside_import = "";
 	process_file($file, "  ");
+}
+
+sub cat_file
+{
+	my $file = shift;
+	open (my $INFILE, "<", $file) || die "could not open input file '$file'\n";
+	while (<$INFILE>) {
+		print;
+	}
+	close ($INFILE);
 }
 
 sub process_file
@@ -195,8 +209,10 @@ sub process_line
 	if ($in_preamble && /^[^%]*\\makeatother/) {
 		$makeatletter_found = 0;
 	}
+	my $command;
 	if (!$makeatletter && !$makeatletter_found
-	    && (my ($command) = /^[^%]*(\\[[:alpha:]]*@[[:alpha:]]*)/)) {
+	    && (($command) = /^[^%]*(\\[[:alpha:]]*@[[:alpha:]]*)/)
+	    && ($command ne '\@')) {
 		print STDERR "Warning: command $command containing @ found in\n";
 		print STDERR "Warning: $file.\n";
 		print STDERR "Warning: consider using --makeatletter if the result is not compilable.\n";
@@ -235,8 +251,16 @@ sub process_line
 	}
 
 	unless ($keep_includes) {
-		if (my ($before, $ignored, $full_filename, $after)
-		    = /^($NON_COMMENT)\\include[{\s]+(.*?)[\s}](.*)$/) {
+		# \input{foo.tex}
+		my $ARGBRACES = '\{\\s*([^"}\\s][^}]*)(\\s*)\}';
+		# \input{"foo bar.tex"}
+		my $ARGQUOTED = '\{\\s*"([^"]*)"(\\s*)\}';
+		# \input foo.tex
+		my $ARGSPACES = '\\s([^\{\\s][^\\s]+?)\\s()';
+		my $ARGUMENT = "\\s*?(?|$ARGBRACES|$ARGQUOTED|$ARGSPACES)";
+
+		if (my ($before, $ignored, $full_filename, $trailing, $after)
+		    = /^($NON_COMMENT)\\include$ARGUMENT(.*)$/) {
 			$full_filename = find_tex_file($full_filename . ".tex");
 			if ($full_filename) {
 				say $prefix . "Found include for file: $full_filename\n";
@@ -253,15 +277,19 @@ sub process_line
 				print $nl . $after . "\n";
 				$_ = "";
 			}
-		} elsif (my ($before, $ignored, $full_filename, $after)
-			 = /^($NON_COMMENT)\\input[{\s]+(.*?)[\s}](.*)$/) {
+		} elsif (my ($before, $ignored, $full_filename, $trailing,  $after)
+			 = /^($NON_COMMENT)\\input$ARGUMENT(.*)$/) {
                         if ($inside_import) {
                               $full_filename = $inside_import . $full_filename;
                         }
 			$full_filename = find_tex_file($full_filename, ":.tex");
 			if ($full_filename) {
 				say $prefix . "Found input for file: $full_filename\n";
-				print $before . $nl;
+				# Surprisingly, space after filename
+				# in \input{foo.tex } is inserted
+				# _before_ the inclusion. Apply this
+				# rule in latexpand.
+				print $before . $trailing . $nl;
 				print "% start input $full_filename\n" if ($explain);
 				my $in_comment = process_file($full_filename, $prefix . "  ");
 				if ($explain) {
@@ -277,8 +305,8 @@ sub process_line
 				}
 				$_ = "";
 			}
-		} elsif (my ($before, $ignored, $dir, $full_filename, $after)
-			 = /^($NON_COMMENT)\\(?:sub)?import[{\s]+(.*?)[\s}][{\s]+(.*?)[\s}](.*)$/) {
+		} elsif (my ($before, $ignored, $dir, $ignored, $full_filename, $ignored,  $after)
+			 = /^($NON_COMMENT)\\(?:sub)?import$ARGUMENT$ARGUMENT(.*)$/) {
                         if ($explain) {
                               print "% dir " . $dir ."\n";
                               print "% full_filename " . $full_filename ."\n";
@@ -312,8 +340,8 @@ sub process_line
 				}
 				$_ = "";
 			}
-		} elsif (my ($before, $ignored, $args, $full_filename, $after)
-			 = /^($NON_COMMENT)\\includegraphics[\[\s]+(.*?)[\s\]][{\s]+(.*?)[\s}](.*)$/) {
+		} elsif (my ($before, $ignored, $args, $full_filename, $ignored, $after)
+			 = /^($NON_COMMENT)\\includegraphics[\[\s]+(.*?)[\s\]]$ARGUMENT(.*)$/) {
                         if ($explain) {
                                 print "% inside_import " . $inside_import ."\n";
                                 print "% before " . $before ."\n";
@@ -327,8 +355,8 @@ sub process_line
                                 print "$before\\includegraphics[$args]{$full_filename}$after\n";
                                 $_ = "";
                         }
-		} elsif (my ($before, $ignored, $args, $full_filename, $after)
-			 = /^($NON_COMMENT)\\lstinputlisting[\[\s]+(.*?)[\s\]][{\s]+(.*?)[\s}](.*)$/) {
+		} elsif (my ($before, $ignored, $args, $full_filename, $ignored, $after)
+			 = /^($NON_COMMENT)\\lstinputlisting[\[\s]+(.*?)[\s\]]$ARGUMENT(.*)$/) {
                         if ($explain) {
                                 print "% inside_import " . $inside_import ."\n";
                                 print "% before " . $before ."\n";
@@ -373,6 +401,36 @@ sub process_line
 			$_ = "";
 		}
 	}
+	if ($biber) {
+		if (my ($before, $after)
+		    = /^(.*)\\(?:addbibresource)\{[^\}]*\}(.*)$/) {
+			# See https://tex.stackexchange.com/questions/166518/biblatex-include-bbl-problem-with-verb-field/166526#166526
+			my $biber_noext = $biber;
+			$biber_noext =~ s/.bbl//;
+			print $before . $nl;
+			say $prefix . "Expanding Biber BBL file: $biber\n";
+			print '\begin{filecontents*}{' . $biber . '}' . "\n";
+			cat_file($biber);
+			print "\n";
+			print '\end{filecontents*}
+
+\usepackage{xpatch}
+
+%Patch the biblatex input command.
+%replace "testinput-bbl" if you change the name above.
+%disable if you want to run biblatex/biber normally
+\makeatletter
+\patchcmd\blx@bblinput{\blx@blxinit}
+                      {\blx@blxinit
+                       \def\jobname{' . $biber_noext . '}%new jobname
+                      }{}{\fail}
+\makeatother
+			    ';
+			say $prefix . "End expansion of Biber BBL file: $biber\n";
+			print " " . $nl . $after . "\n";
+			$_ = "";
+		}
+	}
 	if ($show_graphics) {
 		if (/\\includegraphics(\[[^\]]*\])?{([^}]*)}/) {
                         my $full_filename = $2;
@@ -393,10 +451,24 @@ sub process_line
 	print;
 }
 
+sub unquote
+{
+	my $str = shift;
+	my $x = substr($str, 0, 1);
+	my $y = substr($str, -1, 1);
+	if ($x eq $y && ($x eq '"' || $x eq "'")) {
+		$str = substr($str, 1, -1);
+	}
+	# There's a weird LaTeX syntax: \include{"file\space
+	# with\space spaces"}, so remove these \space when unquoting.
+	$str =~ s/\\space / /g;
+	return $str;
+}
+
 # search $1 in $TEXINPUTS, with possible extensions in $2
 sub find_tex_file
 {
-	my $file = shift;
+	my $file = unquote(shift);
 	my $extensions = (shift || ":");
 	foreach my $ext (split(':', $extensions, -1)) {
 		my $full = find_file_global($file . $ext);
@@ -417,15 +489,17 @@ sub find_file_global
 	my $file = shift;
 	if (open(my $fh, "-|", "kpsewhich", $file)) {
 		my $full = <$fh>;
-		chomp($full);
+		$full =~ s/\s+$//;
 		close($fh);
 		if ($full) {
 			return $full;
 		}
 	}
+	# Should be useless, but fall-back in case kpsewhich fails (or is not installed, or ...):
 	return find_file($file, $TEXINPUTS);
 }
 
+# Find files, not searching for global files (to allow not expanding global .sty packages)
 sub find_file
 {
 	my ($file, $path) = @_;
@@ -435,6 +509,13 @@ sub find_file
 		} else {
 			return;
 		}
+	}
+
+	# TEXINPUTS=...: (trailing :) means "append default search
+	# directories". We don't want global directories here, but
+	# still add . that may be needed.
+	if (substr($path, -1) eq ':') {
+		$path .= '.';
 	}
 	foreach my $dir (split(':', $path)) {
 		if (-e "$dir/$file" && ! -d "$dir/$file") {
@@ -471,6 +552,10 @@ latexpand [options] FILE...
 	--expand-bbl FILE
 	                 Expand the bibliography by inlining FILE
 	                 (should be a *.bbl file)
+	--biber FILE	 Include \bibliography{} with FILE's content,
+	                 as needed by biblatex with the biber backend.
+	                 (similar to --expand-bbl FILE, but for
+	                 biber+biblatex).
 	--help           this help message
 	--output <file>, -o <file>
 	                 generate output in <file>
@@ -577,4 +662,4 @@ https://lacl.fr/~caubert/notes/portabilite-du-tex.html#dependances
 
 =head1 VERSION
 
-This is latexpand version v1.5.
+This is latexpand version v1.6.
