@@ -135,13 +135,13 @@ CharClass *BreakRules::addCharClass(const UnicodeString &name, const UnicodeStri
         printf("epandedDef: %s\n", CStr(expandedDef)());
     }
 
-    UnicodeSet *s = new UnicodeSet(expandedDef, USET_IGNORE_SPACE, NULL, status);
+    LocalPointer<UnicodeSet> s(new UnicodeSet(expandedDef, USET_IGNORE_SPACE, NULL, status), status);
     if (U_FAILURE(status)) {
-        IntlTest::gTest->errln("%s:%d: error %s creating UnicodeSet %s", __FILE__, __LINE__,
-                               u_errorName(status), CStr(name)());
-        return NULL;
+        IntlTest::gTest->errln("%s:%d: error %s creating UnicodeSet %s\n    Expanded set definition: %s",
+                               __FILE__, __LINE__, u_errorName(status), CStr(name)(), CStr(expandedDef)());
+        return nullptr;
     }
-    CharClass *cclass = new CharClass(name, definition, expandedDef, s);
+    CharClass *cclass = new CharClass(name, definition, expandedDef, s.orphan());
     CharClass *previousClass = static_cast<CharClass *>(uhash_put(fCharClasses.getAlias(),
                                                         new UnicodeString(name),   // Key, owned by hash table.
                                                         cclass,                    // Value, owned by hash table.
@@ -660,12 +660,12 @@ void RBBIMonkeyImpl::join() {
 }
 
 
-#define MONKEY_ERROR(msg, index) { \
+#define MONKEY_ERROR(msg, index) UPRV_BLOCK_MACRO_BEGIN { \
     IntlTest::gTest->errln("%s:%d %s at index %d. Parameters to reproduce: @rules=%s,seed=%u,loop=1,verbose ", \
                     __FILE__, __LINE__, msg, index, fRuleFileName, fTestData->fRandomSeed); \
     if (fVerbose) { fTestData->dump(index); } \
     status = U_INVALID_STATE_ERROR;  \
-}
+} UPRV_BLOCK_MACRO_END
 
 void RBBIMonkeyImpl::runTest() {
     UErrorCode status = U_ZERO_ERROR;
@@ -906,7 +906,7 @@ void RBBIMonkeyTest::testMonkey() {
     UnicodeString params(fParams);
     UErrorCode status = U_ZERO_ERROR;
 
-    const char *tests[] = {"grapheme.txt", "word.txt", "line.txt", "sentence.txt", "line_normal.txt",
+    const char *tests[] = {"grapheme.txt", "word.txt", "line.txt", "line_cj.txt", "sentence.txt", "line_normal.txt",
                            "line_normal_cj.txt", "line_loose.txt", "line_loose_cj.txt", "word_POSIX.txt",
                            NULL };
     CharString testNameFromParams;
@@ -954,8 +954,8 @@ void RBBIMonkeyTest::testMonkey() {
         }
         test->fDumpExpansions = dumpExpansions;
         test->fVerbose = verbose;
-        test->fRandomGenerator.seed((uint32_t)seed);
-        test->fLoopCount = loopCount;
+        test->fRandomGenerator.seed(static_cast<uint32_t>(seed));
+        test->fLoopCount = static_cast<int32_t>(loopCount);
         test->setup(tests[i], status);
         if (U_FAILURE(status)) {
             dataerrln("%s:%d: error %s while starting test %s.", __FILE__, __LINE__, u_errorName(status), tests[i]);

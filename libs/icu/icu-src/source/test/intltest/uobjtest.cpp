@@ -48,53 +48,53 @@
 
 #define TESTCLASSID_NONE_DEFAULT(c) \
     delete testClassNoClassID(new c, #c, "new " #c)
-#define TESTCLASSID_NONE_CTOR(c, x) { \
+#define TESTCLASSID_NONE_CTOR(c, x) UPRV_BLOCK_MACRO_BEGIN { \
     delete testClassNoClassID(new c x, #c, "new " #c #x); \
     if(U_FAILURE(status)) { \
         dataerrln(UnicodeString(#c " - new " #x " - got err status ") + UnicodeString(u_errorName(status))); \
         status = U_ZERO_ERROR; \
     } \
-}
-#define TESTCLASSID_NONE_FACTORY(c, f) { \
+} UPRV_BLOCK_MACRO_END
+#define TESTCLASSID_NONE_FACTORY(c, f) UPRV_BLOCK_MACRO_BEGIN { \
     delete testClassNoClassID(f, #c, #f); \
     if(U_FAILURE(status)) { \
         dataerrln(UnicodeString(#c " - " #f " - got err status ") + UnicodeString(u_errorName(status))); \
         status = U_ZERO_ERROR; \
     } \
-}
-#define TESTCLASSID_FACTORY(c, f) { \
+} UPRV_BLOCK_MACRO_END
+#define TESTCLASSID_FACTORY(c, f) UPRV_BLOCK_MACRO_BEGIN { \
     delete testClass(f, #c, #f, c ::getStaticClassID()); \
     if(U_FAILURE(status)) { \
         dataerrln(UnicodeString(#c " - " #f " - got err status ") + UnicodeString(u_errorName(status))); \
         status = U_ZERO_ERROR; \
     } \
-}
-#define TESTCLASSID_TRANSLIT(c, t) { \
+} UPRV_BLOCK_MACRO_END
+#define TESTCLASSID_TRANSLIT(c, t) UPRV_BLOCK_MACRO_BEGIN { \
     delete testClass(Transliterator::createInstance(UnicodeString(t), UTRANS_FORWARD,parseError,status), #c, "Transliterator: " #t, c ::getStaticClassID()); \
     if(U_FAILURE(status)) { \
         dataerrln(UnicodeString(#c " - Transliterator: " #t " - got err status ") + UnicodeString(u_errorName(status))); \
         status = U_ZERO_ERROR; \
     } \
-}
-#define TESTCLASSID_CTOR(c, x) { \
+} UPRV_BLOCK_MACRO_END
+#define TESTCLASSID_CTOR(c, x) UPRV_BLOCK_MACRO_BEGIN { \
     delete testClass(new c x, #c, "new " #c #x, c ::getStaticClassID()); \
     if(U_FAILURE(status)) { \
         dataerrln(UnicodeString(#c " - new " #x " - got err status ") + UnicodeString(u_errorName(status))); \
         status = U_ZERO_ERROR; \
     } \
-}
+} UPRV_BLOCK_MACRO_END
 #define TESTCLASSID_DEFAULT(c) \
     delete testClass(new c, #c, "new " #c , c::getStaticClassID())
 #define TESTCLASSID_ABSTRACT(c) \
     testClass(NULL, #c, NULL, c::getStaticClassID())
-#define TESTCLASSID_FACTORY_HIDDEN(c, f) { \
+#define TESTCLASSID_FACTORY_HIDDEN(c, f) UPRV_BLOCK_MACRO_BEGIN { \
     UObject *objVar = f; \
     delete testClass(objVar, #c, #f, objVar!=NULL? objVar->getDynamicClassID(): NULL); \
     if(U_FAILURE(status)) { \
         dataerrln(UnicodeString(#c " - " #f " - got err status ")  + UnicodeString(u_errorName(status))); \
         status = U_ZERO_ERROR; \
     } \
-}
+} UPRV_BLOCK_MACRO_END
 
 #define MAX_CLASS_ID 200
 
@@ -495,7 +495,7 @@ void UObjectTest::testIDs()
     TESTCLASSID_NONE_CTOR(AlphabeticIndex, (Locale::getEnglish(), status));
 #endif
 
-#if UOBJTEST_DUMP_IDS
+#ifdef UOBJTEST_DUMP_IDS
     int i;
     for(i=0;i<ids_count;i++) {
         char junk[800];
@@ -509,19 +509,15 @@ void UObjectTest::testIDs()
 void UObjectTest::testUMemory() {
     // additional tests for code coverage
 #if U_OVERRIDE_CXX_ALLOCATION && U_HAVE_PLACEMENT_NEW
-    union {
-        UAlignedMemory   align_;
-        char             bytes_[sizeof(UnicodeString)];
-    } stackMemory;
-    char *bytes = stackMemory.bytes_;
+    alignas(UnicodeString) char bytes[sizeof(UnicodeString)];
     UnicodeString *p;
     enum { len=20 };
 
-    p=new(bytes) UnicodeString(len, (UChar32)0x20ac, len);
+    p=new(bytes) UnicodeString(len, (UChar32)U'€', len);
     if((void *)p!=(void *)bytes) {
         errln("placement new did not place the object at the expected address");
     }
-    if(p->length()!=len || p->charAt(0)!=0x20ac || p->charAt(len-1)!=0x20ac) {
+    if(p->length()!=len || p->charAt(0)!=u'€' || p->charAt(len-1)!=u'€') {
         errln("constructor used with placement new did not work right");
     }
 

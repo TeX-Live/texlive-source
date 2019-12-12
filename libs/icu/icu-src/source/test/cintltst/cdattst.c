@@ -42,6 +42,7 @@ static void TestContext(void);
 static void TestCalendarDateParse(void);
 static void TestParseErrorReturnValue(void);
 static void TestFormatForFields(void);
+static void TestForceGannenNumbering(void);
 
 void addDateForTest(TestNode** root);
 
@@ -61,6 +62,7 @@ void addDateForTest(TestNode** root)
     TESTCASE(TestOverrideNumberFormat);
     TESTCASE(TestParseErrorReturnValue);
     TESTCASE(TestFormatForFields);
+    TESTCASE(TestForceGannenNumbering);
 }
 /* Testing the DateFormat API */
 static void TestDateFormat()
@@ -551,7 +553,7 @@ static void TestRelativeDateFormat()
 
                 strPtr = u_strstr(strDateTime, minutesStr);
                 if ( strPtr != NULL ) {
-                    int32_t beginIndex = strPtr - strDateTime;
+                    int32_t beginIndex = (int32_t)(strPtr - strDateTime);
                     if ( fp.beginIndex != beginIndex ) {
                         log_err("UFieldPosition beginIndex %d, expected %d, in udat_format timeStyle SHORT dateStyle (%d | UDAT_RELATIVE)\n", fp.beginIndex, beginIndex, *stylePtr );
                     }
@@ -1058,7 +1060,7 @@ static void VerifygetSymbols(UDateFormat* datfor, UDateFormatSymbolType type, in
     UErrorCode status = U_ZERO_ERROR;
     UChar *result=NULL;
     int32_t resultlength, resultlengthout;
-    int32_t patternSize = strlen(expected) + 1;
+    int32_t patternSize = (int32_t)strlen(expected) + 1;
 
     pattern=(UChar*)malloc(sizeof(UChar) * patternSize);
     u_unescape(expected, pattern, patternSize);
@@ -1093,7 +1095,7 @@ static void VerifysetSymbols(UDateFormat* datfor, UDateFormatSymbolType type, in
     UChar *value=NULL;
     int32_t resultlength, resultlengthout;
     UErrorCode status = U_ZERO_ERROR;
-    int32_t valueLen, valueSize = strlen(expected) + 1;
+    int32_t valueLen, valueSize = (int32_t)strlen(expected) + 1;
 
     value=(UChar*)malloc(sizeof(UChar) * valueSize);
     valueLen = u_unescape(expected, value, valueSize);
@@ -1634,6 +1636,7 @@ static void TestOverrideNumberFormat(void) {
 
     // loop 5 times to check getter/setter
     for (i = 0; i < 5; i++){
+        status = U_ZERO_ERROR;
         UNumberFormat* overrideFmt;
         overrideFmt = unum_open(UNUM_DEFAULT, NULL, 0, localeString, NULL, &status);
         assertSuccess("unum_open()", &status);
@@ -1647,15 +1650,19 @@ static void TestOverrideNumberFormat(void) {
         }
     }
     {
+      status = U_ZERO_ERROR;
       UNumberFormat* overrideFmt;
       overrideFmt = unum_open(UNUM_DEFAULT, NULL, 0, localeString, NULL, &status);
       assertSuccess("unum_open()", &status);
-      udat_setNumberFormat(fmt, overrideFmt); // test the same override NF will not crash
+      if (U_SUCCESS(status)) {
+        udat_setNumberFormat(fmt, overrideFmt); // test the same override NF will not crash
+      }
       unum_close(overrideFmt);
     }
     udat_close(fmt);
 
     for (i=0; i<UPRV_LENGTHOF(overrideNumberFormat); i++){
+        status = U_ZERO_ERROR;
         UChar ubuf[kUbufMax];
         UDateFormat* fmt2;
         UNumberFormat* overrideFmt2;
@@ -1665,6 +1672,10 @@ static void TestOverrideNumberFormat(void) {
 
         overrideFmt2 = unum_open(UNUM_DEFAULT, NULL, 0, localeString, NULL, &status);
         assertSuccess("unum_open() in loop", &status);
+
+        if (U_FAILURE(status)) {
+            continue;
+        }
 
         u_uastrcpy(fields, overrideNumberFormat[i][0]);
         u_unescape(overrideNumberFormat[i][1], expected, UPRV_LENGTHOF(expected));
@@ -1858,4 +1869,40 @@ static void TestFormatForFields(void) {
     }
 }
 
+static void TestForceGannenNumbering(void) {
+    UErrorCode status;
+    const char* locID = "ja_JP@calendar=japanese";
+    UDate refDate = 600336000000.0; // 1989 Jan 9 Monday = Heisei 1
+    const UChar* testSkeleton = u"yMMMd";
+
+    // Test Gannen year forcing
+    status = U_ZERO_ERROR;
+    UDateTimePatternGenerator* dtpgen = udatpg_open(locID, &status);
+    if (U_FAILURE(status)) {
+        log_data_err("Fail in udatpg_open locale %s: %s", locID, u_errorName(status));
+    } else {
+        UChar pattern[kUbufMax];
+        int32_t patlen = udatpg_getBestPattern(dtpgen, testSkeleton, -1, pattern, kUbufMax, &status);
+        if (U_FAILURE(status)) {
+            log_data_err("Fail in udatpg_getBestPattern locale %s: %s", locID, u_errorName(status));
+        } else  {
+            UDateFormat *testFmt = udat_open(UDAT_PATTERN, UDAT_PATTERN, locID, NULL, 0, pattern, patlen, &status);
+            if (U_FAILURE(status)) {
+                log_data_err("Fail in udat_open locale %s: %s", locID, u_errorName(status));
+            } else {
+                UChar testString[kUbufMax];
+                int32_t testStrLen = udat_format(testFmt, refDate, testString, kUbufMax, NULL, &status);
+                if (U_FAILURE(status)) {
+                    log_err("Fail in udat_format locale %s: %s", locID, u_errorName(status));
+                } else if (testStrLen < 3 || testString[2] != 0x5143) {
+                    char bbuf[kBbufMax];
+                    u_austrncpy(bbuf, testString, testStrLen);
+                    log_err("Formatting year 1 as Gannen, got%s but expected 3rd char to be 0x5143", bbuf);
+                }
+                udat_close(testFmt);
+            }
+        }
+        udatpg_close(dtpgen);
+    }
+}
 #endif /* #if !UCONFIG_NO_FORMATTING */

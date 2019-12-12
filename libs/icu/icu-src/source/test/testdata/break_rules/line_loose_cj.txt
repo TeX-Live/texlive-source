@@ -30,6 +30,7 @@
 #           this includes: 00B0 2030 2032 2033 2035 2103 2109 FE6A FF05 FFE0
 #         * after prefix characters with LineBreak class PR and EastAsianWidth A,F,W;
 #           this includes: 00A4 00B1 20AC 2116 FE69 FF04 FFE1 FFE5 FFE6
+#         It allows breaking before 201C and after 201D, for zh_Hans, zh_Hant, and ja.
 
 
 type = line;
@@ -46,7 +47,7 @@ BK = [:LineBreak =  Mandatory_Break:];
 B2 = [:LineBreak =  Break_Both:];
 CB = [:LineBreak =  Contingent_Break:];
 CJ = [:LineBreak =  Conditional_Japanese_Starter:];
-CL = [:LineBreak =  Close_Punctuation:];
+CL = [[:LineBreak =  Close_Punctuation:] \u201d];
 CMS = [:LineBreak =  Combining_Mark:];
 CP = [:LineBreak =  Close_Parenthesis:];
 CR = [:LineBreak =  Carriage_Return:];
@@ -70,12 +71,12 @@ NL = [:LineBreak =  Next_Line:];
 NSX = [\u301C \u30A0 \u3005 \u303B \u309D \u309E \u30FD \u30FE \u203C \u2047 \u2048 \u2049 \u30FB \uFF1A \uFF1B \uFF65];
 NS = [[:LineBreak =  Nonstarter:] - NSX];
 NU = [:LineBreak =  Numeric:];
-OP = [:LineBreak =  Open_Punctuation:];
+OP = [[:LineBreak =  Open_Punctuation:] \u201c];
 POX = [\u00B0 \u2030 \u2032 \u2033 \u2035 \u2103 \u2109 \uFE6A \uFF05 \uFFE0];
 PO = [[:LineBreak =  Postfix_Numeric:] - POX];
 PRX = [\u00A4 \u00B1 \u20AC \u2116 \uFE69 \uFF04 \uFFE1 \uFFE5 \uFFE6];
 PR = [[:LineBreak =  Prefix_Numeric:] - PRX];
-QU = [:LineBreak =  Quotation:];
+QU = [[:LineBreak =  Quotation:] - [\u201c\u201d]];
 RI = [:LineBreak =  Regional_Indicator:];
 SA = [:LineBreak =  Complex_Context:];
 SG = [:LineBreak =  Surrogate:];
@@ -103,19 +104,34 @@ LB5.3:      NL ÷;
 LB6:        . (BK | CR | LF | NL);
 LB6.1:      [^BK CR LF NL SP ZW] CM* (BK | CR | LF | NL);
 
+# LB8   break after ZW SP*.
+# Precedes LB7 because both rules will match the sequences like ZW SP,
+# and LB8 must take precedence.
+
+LB8:        ZW SP* ÷ [^ZW SP BK CR LF NL];
+
+# Numbers. Equivalent to Tailoring example 8 from UAX 14.
+# Moved up, before LB14, because it can match longer sequences which must take precedence.
+#          Loose_cj tailoring: do not include $PRX at the beginning or $POX at the end.
+LB25:        ((PR | PO | POX)CM*)? ((OP | HY)CM*)? (IS CM*)? NU (CM*(NU | SY | IS))* (CM*(CL | CP))? (CM*(PR | PRX | PO))?;
+
 # Rules LB14 - LB17.
-# Moved before LB7, because they can match a longer sequence that would also match LB7,
-# for example, the sequence "OP CM SP AL" matches LB14 while the prefix of it,
-#                           "while only the prefix "OP CM SP" matches LB7.1
+# Moved up, before LB7, because they can match a longer sequence that would also match LB7.
+# For example, the sequence "OP CM SP AL" matches LB14
+# while the prefix of it, "OP CM SP" matches LB7.1
 LB14:        OP CM* SP* .;
+
+# LB 14a Break before an IS that begins a number and follows a space.
+LB14a:       SP ÷ IS CM* NU;
+
+# LB14b       × IS
+LB14b.1:     [^SP] CM* IS;
+LB14b.2:     SP IS;
+
 LB15:        QU CM* SP* OP;
 LB16:        (CL | CP)CM* SP* NS;
 LB17:        B2 CM* SP* B2;
 
-# LB8, break after ZW SP*, precedes LB7 because they will both match the sequences like ZW SP,
-# and LB8 should take precedence.
-
-LB8:        ZW SP* ÷ [^ZW SP BK CR LF NL];
 
 # LB7 Do not break before spaces or zero width space.
 
@@ -143,14 +159,9 @@ LB12:        GL CM* [^CM];
 
 LB12a:       [^SP BA BAX HY] CM* GL;
 
-# LB 13 ICU Tailoring, matches tailoring exmaple 8 from UAX 14.
-#
-#   LB13.1   [^SP] CM* [CL CP EX IS SY]    # original UAX 14 rule.
-#   LB13.2   SP    CM* [CL CP EX IS SY]
-
-LB13.1: [^NU SP] CM* [CL CP IS SY];
-LB13.2: [^SP] CM* EX;
-LB13.2: SP [CL CP EX IS SY];
+# LB 13 Do not break before ‘]’ or ‘!’ or ‘/’, even after spaces.
+LB13.1: [^SP] CM* [CL CP EX SY];
+LB13.2: SP [CL CP EX SY];
 
 
 # LB 14-17 are moved above LB 7.
@@ -200,9 +211,6 @@ LB23a.2:     (ID | EB | EM) CM* PO;
 LB24.2:      (PR | PO | POX) CM* (AL | HL);
 LB24.3:      (AL | HL | CM) CM* (PR | PO | POX);
 
-# Numbers. Equivalent to Tailoring example 8 from UAx 14.
-#          Loose_cj tailoring: do not include $PRX at the beginning or $POX at the end.
-LB25:        ((PR | PO | POX)CM*)? ((OP | HY)CM*)? NU (CM*(NU | SY | IS))* (CM*(CL | CP))? (CM*(PR | PRX | PO))?;
 
 LB26.1:      JL CM* (JL | JV | H2 | H3);
 LB26.2:      (JV | H2) CM* (JV | JT);

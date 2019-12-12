@@ -454,6 +454,7 @@ static void
 testLCID(UResourceBundle *currentBundle,
          const char *localeName)
 {
+    (void)currentBundle; // suppress compiler warnings about unused variables
     UErrorCode status = U_ZERO_ERROR;
     uint32_t expectedLCID;
     char lcidStringC[64] = {0};
@@ -706,7 +707,7 @@ TestConsistentCountryInfo(void) {
         }
         fromVariantLen = uloc_getVariant(fromLocale, fromVariant, ULOC_FULLNAME_CAPACITY, &errorCode);
         if (fromVariantLen > 0) {
-            /* Most variants are ignorable like PREEURO, or collation variants. */
+            /* Most variants are ignorable like collation variants. */
             continue;
         }
         /* Start comparing only after the current index.
@@ -728,7 +729,7 @@ TestConsistentCountryInfo(void) {
             }
             toVariantLen = uloc_getVariant(toLocale, toVariant, ULOC_FULLNAME_CAPACITY, &errorCode);
             if (toVariantLen > 0) {
-                /* Most variants are ignorable like PREEURO, or collation variants. */
+                /* Most variants are ignorable like collation variants. */
                 /* They're a variant for a reason. */
                 continue;
             }
@@ -1432,22 +1433,22 @@ static void TestAvailableIsoCodes(void){
     UChar* isoCode = (UChar*)malloc(sizeof(UChar) * (uprv_strlen(usdCode) + 1));
 
     /* testing available codes with no time ranges */
-    u_charsToUChars(eurCode, isoCode, uprv_strlen(usdCode) + 1);
+    u_charsToUChars(eurCode, isoCode, (int32_t)uprv_strlen(usdCode) + 1);
     if (ucurr_isAvailable(isoCode, U_DATE_MIN, U_DATE_MAX, &errorCode) == FALSE) {
        log_data_err("FAIL: ISO code (%s) is not found.\n", eurCode);
     }
 
-    u_charsToUChars(usdCode, isoCode, uprv_strlen(zzzCode) + 1);
+    u_charsToUChars(usdCode, isoCode, (int32_t)uprv_strlen(zzzCode) + 1);
     if (ucurr_isAvailable(isoCode, U_DATE_MIN, U_DATE_MAX, &errorCode) == FALSE) {
        log_data_err("FAIL: ISO code (%s) is not found.\n", usdCode);
     }
 
-    u_charsToUChars(zzzCode, isoCode, uprv_strlen(zzzCode) + 1);
+    u_charsToUChars(zzzCode, isoCode, (int32_t)uprv_strlen(zzzCode) + 1);
     if (ucurr_isAvailable(isoCode, U_DATE_MIN, U_DATE_MAX, &errorCode) == TRUE) {
        log_err("FAIL: ISO code (%s) is reported as available, but it doesn't exist.\n", zzzCode);
     }
 
-    u_charsToUChars(lastCode, isoCode, uprv_strlen(zzzCode) + 1);
+    u_charsToUChars(lastCode, isoCode, (int32_t)uprv_strlen(zzzCode) + 1);
     if (ucurr_isAvailable(isoCode, U_DATE_MIN, U_DATE_MAX, &errorCode) == FALSE) {
        log_data_err("FAIL: ISO code (%s) is not found.\n", lastCode);
     }

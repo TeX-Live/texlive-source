@@ -22,7 +22,9 @@
 #include "unicode/localpointer.h"
 #include "unicode/numfmt.h"
 #include "unicode/reldatefmt.h"
+#include "unicode/rbnf.h"
 #include "cmemory.h"
+#include "itformat.h"
 
 static const char *DirectionStr(UDateDirection direction);
 static const char *RelativeUnitStr(UDateRelativeUnit unit);
@@ -284,6 +286,8 @@ static WithoutQuantityExpected kEnglishNoQuantity[] = {
         {UDAT_DIRECTION_THIS, UDAT_ABSOLUTE_FRIDAY, "this Friday"},
         {UDAT_DIRECTION_THIS, UDAT_ABSOLUTE_SATURDAY, "this Saturday"},
         {UDAT_DIRECTION_THIS, UDAT_ABSOLUTE_SUNDAY, "this Sunday"},
+        {UDAT_DIRECTION_THIS, UDAT_ABSOLUTE_HOUR, "this hour"},
+        {UDAT_DIRECTION_THIS, UDAT_ABSOLUTE_MINUTE, "this minute"},
         
         {UDAT_DIRECTION_PLAIN, UDAT_ABSOLUTE_DAY, "day"},
         {UDAT_DIRECTION_PLAIN, UDAT_ABSOLUTE_WEEK, "week"},
@@ -297,6 +301,8 @@ static WithoutQuantityExpected kEnglishNoQuantity[] = {
         {UDAT_DIRECTION_PLAIN, UDAT_ABSOLUTE_FRIDAY, "Friday"},
         {UDAT_DIRECTION_PLAIN, UDAT_ABSOLUTE_SATURDAY, "Saturday"},
         {UDAT_DIRECTION_PLAIN, UDAT_ABSOLUTE_SUNDAY, "Sunday"},
+        {UDAT_DIRECTION_PLAIN, UDAT_ABSOLUTE_HOUR, "hour"},
+        {UDAT_DIRECTION_PLAIN, UDAT_ABSOLUTE_MINUTE, "minute"},
         
         {UDAT_DIRECTION_PLAIN, UDAT_ABSOLUTE_NOW, "now"}
 };
@@ -621,11 +627,11 @@ static WithQuantityExpectedRelativeDateTimeUnit kEnglishFormat[] = {
         {0.5, UDAT_REL_UNIT_SECOND, "in 0.5 seconds"},
         {1.0, UDAT_REL_UNIT_SECOND, "in 1 second"},
         {2.0, UDAT_REL_UNIT_SECOND, "in 2 seconds"},
-        {0.0, UDAT_REL_UNIT_MINUTE, "in 0 minutes"},
+        {0.0, UDAT_REL_UNIT_MINUTE, "this minute"},
         {0.5, UDAT_REL_UNIT_MINUTE, "in 0.5 minutes"},
         {1.0, UDAT_REL_UNIT_MINUTE, "in 1 minute"},
         {2.0, UDAT_REL_UNIT_MINUTE, "in 2 minutes"},
-        {0.0, UDAT_REL_UNIT_HOUR, "in 0 hours"},
+        {0.0, UDAT_REL_UNIT_HOUR, "this hour"},
         {0.5, UDAT_REL_UNIT_HOUR, "in 0.5 hours"},
         {1.0, UDAT_REL_UNIT_HOUR, "in 1 hour"},
         {2.0, UDAT_REL_UNIT_HOUR, "in 2 hours"},
@@ -682,11 +688,11 @@ static WithQuantityExpectedRelativeDateTimeUnit kEnglishFormat[] = {
         {-0.5, UDAT_REL_UNIT_SECOND, "0.5 seconds ago"},
         {-1.0, UDAT_REL_UNIT_SECOND, "1 second ago"},
         {-2.0, UDAT_REL_UNIT_SECOND, "2 seconds ago"},
-        {-0.0, UDAT_REL_UNIT_MINUTE, "0 minutes ago"},
+        {-0.0, UDAT_REL_UNIT_MINUTE, "this minute"},
         {-0.5, UDAT_REL_UNIT_MINUTE, "0.5 minutes ago"},
         {-1.0, UDAT_REL_UNIT_MINUTE, "1 minute ago"},
         {-2.0, UDAT_REL_UNIT_MINUTE, "2 minutes ago"},
-        {-0.0, UDAT_REL_UNIT_HOUR, "0 hours ago"},
+        {-0.0, UDAT_REL_UNIT_HOUR, "this hour"},
         {-0.5, UDAT_REL_UNIT_HOUR, "0.5 hours ago"},
         {-1.0, UDAT_REL_UNIT_HOUR, "1 hour ago"},
         {-2.0, UDAT_REL_UNIT_HOUR, "2 hours ago"},
@@ -740,8 +746,28 @@ static WithQuantityExpectedRelativeDateTimeUnit kEnglishFormat[] = {
         {-2.0, UDAT_REL_UNIT_SATURDAY, "2 Saturdays ago"}
 };
 
+static WithQuantityExpected kAfrikaans[] = {
+        {1.0, UDAT_DIRECTION_NEXT, UDAT_RELATIVE_MONTHS, "oor 1 maand"},
+        {2.0, UDAT_DIRECTION_NEXT, UDAT_RELATIVE_MONTHS, "oor 2 maande"},
+        {1.0, UDAT_DIRECTION_LAST, UDAT_RELATIVE_MONTHS, "1 maand gelede"},
+        {2.0, UDAT_DIRECTION_LAST, UDAT_RELATIVE_MONTHS, "2 maande gelede"},
+};
 
-class RelativeDateTimeFormatterTest : public IntlTest {
+static WithoutQuantityExpected kAfrikaansNoQuantity[] = {
+        {UDAT_DIRECTION_NEXT, UDAT_ABSOLUTE_MONTH, "volgende maand"},
+        {UDAT_DIRECTION_LAST, UDAT_ABSOLUTE_MONTH, "verlede maand"},
+};
+
+static WithQuantityExpectedRelativeDateTimeUnit kAfrikaansFormatNumeric[] = {
+        {0.0, UDAT_REL_UNIT_MONTH, "oor 0 maande"},
+        {1.0, UDAT_REL_UNIT_MONTH, "oor 1 maand"},
+        {2.0, UDAT_REL_UNIT_MONTH, "oor 2 maande"},
+        {-0.0, UDAT_REL_UNIT_MONTH, "0 maande gelede"},
+        {-1.0, UDAT_REL_UNIT_MONTH, "1 maand gelede"},
+        {-2.0, UDAT_REL_UNIT_MONTH, "2 maande gelede"},
+};
+
+class RelativeDateTimeFormatterTest : public IntlTestWithFieldPosition {
 public:
     RelativeDateTimeFormatterTest() {
     }
@@ -759,6 +785,7 @@ private:
     void TestEnglishNoQuantityShort();
     void TestEnglishNoQuantityNarrow();
     void TestSpanishNoQuantity();
+    void TestAfrikaans();
     void TestFormatWithQuantityIllegalArgument();
     void TestFormatWithoutQuantityIllegalArgument();
     void TestCustomNumberFormat();
@@ -768,6 +795,9 @@ private:
     void TestFormat();
     void TestFormatNumeric();
     void TestLocales();
+    void TestFields();
+    void TestRBNF();
+
     void RunTest(
             const Locale& locale,
             const WithQuantityExpected* expectedResults,
@@ -848,6 +878,7 @@ void RelativeDateTimeFormatterTest::runIndexedTest(
     TESTCASE_AUTO(TestEnglishNoQuantityShort);
     TESTCASE_AUTO(TestEnglishNoQuantityNarrow);
     TESTCASE_AUTO(TestSpanishNoQuantity);
+    TESTCASE_AUTO(TestAfrikaans);
     TESTCASE_AUTO(TestFormatWithQuantityIllegalArgument);
     TESTCASE_AUTO(TestFormatWithoutQuantityIllegalArgument);
     TESTCASE_AUTO(TestCustomNumberFormat);
@@ -858,6 +889,8 @@ void RelativeDateTimeFormatterTest::runIndexedTest(
     TESTCASE_AUTO(TestFormat);
     TESTCASE_AUTO(TestFormatNumeric);
     TESTCASE_AUTO(TestLocales);
+    TESTCASE_AUTO(TestFields);
+    TESTCASE_AUTO(TestRBNF);
     TESTCASE_AUTO_END;
 }
 
@@ -944,6 +977,12 @@ void RelativeDateTimeFormatterTest::TestSpanishNoQuantity() {
     RunTest("es", kSpanishNoQuantity, UPRV_LENGTHOF(kSpanishNoQuantity));
 }
 
+void RelativeDateTimeFormatterTest::TestAfrikaans() {
+    RunTest("af", kAfrikaans, UPRV_LENGTHOF(kAfrikaans));
+    RunTest("af", kAfrikaansNoQuantity, UPRV_LENGTHOF(kAfrikaansNoQuantity));
+    RunTest("af", kAfrikaansFormatNumeric, UPRV_LENGTHOF(kAfrikaansFormatNumeric), true);
+}
+
 void RelativeDateTimeFormatterTest::TestFormatWithQuantityIllegalArgument() {
     UErrorCode status = U_ZERO_ERROR;
     RelativeDateTimeFormatter fmt("en", status);
@@ -977,7 +1016,7 @@ void RelativeDateTimeFormatterTest::TestCustomNumberFormat() {
                     "Failure creating format object - %s", u_errorName(status));
             return;
         }
-        nf = (NumberFormat *) fmt.getNumberFormat().clone();
+        nf = fmt.getNumberFormat().clone();
     }
     nf->setMinimumFractionDigits(1);
     nf->setMaximumFractionDigits(1);
@@ -1277,7 +1316,7 @@ void RelativeDateTimeFormatterTest::TestSidewaysDataLoading(void) {
     fmt.format(-3.0, UDAT_DIRECTION_LAST, UDAT_RELATIVE_DAYS, actual.remove(), status);
     assertEquals("3 days ago (negative 3.0): ", expected, actual);
 
-    expected = "next yr.";
+    expected = "next yr";
     fmt.format(UDAT_DIRECTION_NEXT, UDAT_ABSOLUTE_YEAR, actual.remove(), status);
     assertEquals("next year: ", expected, actual);
 
@@ -1287,7 +1326,7 @@ void RelativeDateTimeFormatterTest::TestSidewaysDataLoading(void) {
     expected = "now";
     fmtshort.format(0.0, UDAT_DIRECTION_NEXT, UDAT_RELATIVE_SECONDS, actual.remove(), status);
 
-    expected = "next yr.";
+    expected = "next yr";
     fmt.format(UDAT_DIRECTION_NEXT, UDAT_ABSOLUTE_YEAR, actual.remove(), status);
     assertEquals("next year: ", expected, actual);
 }
@@ -1310,6 +1349,138 @@ void RelativeDateTimeFormatterTest::TestLocales() {
         std::unique_ptr<RelativeDateTimeFormatter> rdtf(new RelativeDateTimeFormatter(loc, status));
         allFormatters.push_back(std::move(rdtf));
         assertSuccess(loc.getName(), status);
+    }
+}
+
+void RelativeDateTimeFormatterTest::TestFields() {
+    IcuTestErrorCode status(*this, "TestFields");
+
+    RelativeDateTimeFormatter fmt("en-US", status);
+
+    {
+        const char16_t* message = u"automatic absolute unit";
+        FormattedRelativeDateTime fv = fmt.formatToValue(1, UDAT_REL_UNIT_DAY, status);
+        const char16_t* expectedString = u"tomorrow";
+        static const UFieldPositionWithCategory expectedFieldPositions[] = {
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_LITERAL_FIELD, 0, 8}};
+        checkMixedFormattedValue(
+            message,
+            fv,
+            expectedString,
+            expectedFieldPositions,
+            UPRV_LENGTHOF(expectedFieldPositions));
+    }
+    {
+        const char16_t* message = u"automatic numeric unit";
+        FormattedRelativeDateTime fv = fmt.formatToValue(3, UDAT_REL_UNIT_DAY, status);
+        const char16_t* expectedString = u"in 3 days";
+        static const UFieldPositionWithCategory expectedFieldPositions[] = {
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_LITERAL_FIELD, 0, 2},
+            {UFIELD_CATEGORY_NUMBER, UNUM_INTEGER_FIELD, 3, 4},
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_NUMERIC_FIELD, 3, 4},
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_LITERAL_FIELD, 5, 9}};
+        checkMixedFormattedValue(
+            message,
+            fv,
+            expectedString,
+            expectedFieldPositions,
+            UPRV_LENGTHOF(expectedFieldPositions));
+    }
+    {
+        const char16_t* message = u"manual absolute unit";
+        FormattedRelativeDateTime fv = fmt.formatToValue(UDAT_DIRECTION_NEXT, UDAT_ABSOLUTE_MONDAY, status);
+        const char16_t* expectedString = u"next Monday";
+        static const UFieldPositionWithCategory expectedFieldPositions[] = {
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_LITERAL_FIELD, 0, 11}};
+        checkMixedFormattedValue(
+            message,
+            fv,
+            expectedString,
+            expectedFieldPositions,
+            UPRV_LENGTHOF(expectedFieldPositions));
+    }
+    {
+        const char16_t* message = u"manual numeric unit";
+        FormattedRelativeDateTime fv = fmt.formatNumericToValue(1.5, UDAT_REL_UNIT_WEEK, status);
+        const char16_t* expectedString = u"in 1.5 weeks";
+        static const UFieldPositionWithCategory expectedFieldPositions[] = {
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_LITERAL_FIELD, 0, 2},
+            {UFIELD_CATEGORY_NUMBER, UNUM_INTEGER_FIELD, 3, 4},
+            {UFIELD_CATEGORY_NUMBER, UNUM_DECIMAL_SEPARATOR_FIELD, 4, 5},
+            {UFIELD_CATEGORY_NUMBER, UNUM_FRACTION_FIELD, 5, 6},
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_NUMERIC_FIELD, 3, 6},
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_LITERAL_FIELD, 7, 12}};
+        checkMixedFormattedValue(
+            message,
+            fv,
+            expectedString,
+            expectedFieldPositions,
+            UPRV_LENGTHOF(expectedFieldPositions));
+    }
+    {
+        const char16_t* message = u"manual numeric resolved unit";
+        FormattedRelativeDateTime fv = fmt.formatToValue(12, UDAT_DIRECTION_LAST, UDAT_RELATIVE_HOURS, status);
+        const char16_t* expectedString = u"12 hours ago";
+        static const UFieldPositionWithCategory expectedFieldPositions[] = {
+            {UFIELD_CATEGORY_NUMBER, UNUM_INTEGER_FIELD, 0, 2},
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_NUMERIC_FIELD, 0, 2},
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_LITERAL_FIELD, 3, 12}};
+        checkMixedFormattedValue(
+            message,
+            fv,
+            expectedString,
+            expectedFieldPositions,
+            UPRV_LENGTHOF(expectedFieldPositions));
+    }
+
+    // Test when the number field is at the end
+    fmt = RelativeDateTimeFormatter("sw", status);
+    {
+        const char16_t* message = u"numeric field at end";
+        FormattedRelativeDateTime fv = fmt.formatToValue(12, UDAT_REL_UNIT_HOUR, status);
+        const char16_t* expectedString = u"baada ya saa 12";
+        static const UFieldPositionWithCategory expectedFieldPositions[] = {
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_LITERAL_FIELD, 0, 12},
+            {UFIELD_CATEGORY_NUMBER, UNUM_INTEGER_FIELD, 13, 15},
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_NUMERIC_FIELD, 13, 15}};
+        checkMixedFormattedValue(
+            message,
+            fv,
+            expectedString,
+            expectedFieldPositions,
+            UPRV_LENGTHOF(expectedFieldPositions));
+    }
+}
+
+void RelativeDateTimeFormatterTest::TestRBNF() {
+    IcuTestErrorCode status(*this, "TestRBNF");
+
+    LocalPointer<RuleBasedNumberFormat> rbnf(new RuleBasedNumberFormat(URBNF_SPELLOUT, "en-us", status));
+    if (status.errIfFailureAndReset()) { return; }
+    RelativeDateTimeFormatter fmt("en-us", rbnf.orphan(), status);
+    UnicodeString result;
+    assertEquals("format (direction)", "in five seconds",
+        fmt.format(5, UDAT_DIRECTION_NEXT, UDAT_RELATIVE_SECONDS, result, status));
+    assertEquals("formatNumeric", "one week ago",
+        fmt.formatNumeric(-1, UDAT_REL_UNIT_WEEK, result.remove(), status));
+    assertEquals("format (absolute)", "yesterday",
+        fmt.format(UDAT_DIRECTION_LAST, UDAT_ABSOLUTE_DAY, result.remove(), status));
+    assertEquals("format (relative)", "in forty-two months",
+        fmt.format(42, UDAT_REL_UNIT_MONTH, result.remove(), status));
+
+    {
+        const char16_t* message = u"formatToValue (relative)";
+        FormattedRelativeDateTime fv = fmt.formatToValue(-100, UDAT_REL_UNIT_YEAR, status);
+        const char16_t* expectedString = u"one hundred years ago";
+        static const UFieldPositionWithCategory expectedFieldPositions[] = {
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_NUMERIC_FIELD, 0, 11},
+            {UFIELD_CATEGORY_RELATIVE_DATETIME, UDAT_REL_LITERAL_FIELD, 12, 21}};
+        checkMixedFormattedValue(
+            message,
+            fv,
+            expectedString,
+            expectedFieldPositions,
+            UPRV_LENGTHOF(expectedFieldPositions));
     }
 }
 

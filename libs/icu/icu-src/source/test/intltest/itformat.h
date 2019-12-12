@@ -17,12 +17,40 @@
 
 #if !UCONFIG_NO_FORMATTING
 
+#include "unicode/formattedvalue.h"
 #include "intltest.h"
 
 
 class IntlTestFormat: public IntlTest {
     void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL );
 };
+
+
+typedef struct UFieldPositionWithCategory {
+    UFieldCategory category;
+    int32_t field;
+    int32_t beginIndex;
+    int32_t endIndex;
+} UFieldPositionWithCategory;
+
+class IntlTestWithFieldPosition : public IntlTest {
+public:
+    void checkFormattedValue(
+        const char16_t* message,
+        const FormattedValue& fv,
+        UnicodeString expectedString,
+        UFieldCategory expectedCategory,
+        const UFieldPosition* expectedFieldPositions,
+        int32_t length);
+
+    void checkMixedFormattedValue(
+        const char16_t* message,
+        const FormattedValue& fv,
+        UnicodeString expectedString,
+        const UFieldPositionWithCategory* expectedFieldPositions,
+        int32_t length);
+};
+
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 

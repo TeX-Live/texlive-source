@@ -1,44 +1,30 @@
 	We don't want this for TeX Live cross compilation.
 
-*** source/config/mh-mingw~	Mon Oct  1 15:39:56 2018
---- source/config/mh-mingw	Tue Jan  8 10:16:08 2019
-***************
-*** 71,95 ****
-  STATIC_O = ao
-  
-- ifeq ($(ENABLE_SHARED),YES)
-- SO_TARGET_VERSION_SUFFIX = $(SO_TARGET_VERSION_MAJOR)
-- else
-- SO_TARGET_VERSION_SUFFIX = 
-- endif
-- 
-- # Static library prefix and file extension
-- LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
-- A = a
-- 
-  ## An import library is needed for z/OS and MSVC
-  IMPORT_LIB_EXT = .dll.a
-  
-- LIBPREFIX=lib
-- 
-- # Change the stubnames so that poorly working FAT disks and installation programs can work.
-- # This is also for backwards compatibility.
-- DATA_STUBNAME = dt
-- I18N_STUBNAME = in
-- LIBICU = $(STATIC_PREFIX_WHEN_USED)$(ICUPREFIX)
-- 
-  #SH### copied from Makefile.inc
-  #SH## for icu-config to test with
---- 71,77 ----
-
---- source/i18n/unicode/numberrangeformatter.h	(revision 49992)
-+++ source/i18n/unicode/numberrangeformatter.h	(working copy)
-@@ -185,7 +185,7 @@
-  * Export an explicit template instantiation. See datefmt.h
-  * (When building DLLs for Windows this is required.)
-  */
--#if U_PF_WINDOWS <= U_PLATFORM && U_PLATFORM <= U_PF_CYGWIN && !defined(U_IN_DOXYGEN)
-+#if U_PF_WINDOWS <= U_PLATFORM && U_PLATFORM < U_PF_MINGW && !defined(U_IN_DOXYGEN) && defined(X)
- template struct U_I18N_API std::atomic<impl::NumberRangeFormatterImpl*>;
- #endif
- /** \endcond */
+--- source/config/mh-mingw~	2019-10-03 04:16:41.000000000 -0700
++++ source/config/mh-mingw	2019-12-11 15:34:02.831473103 -0800
+@@ -71,25 +71,7 @@
+ STATIC_O = ao
+ 
+-ifeq ($(ENABLE_SHARED),YES)
+-SO_TARGET_VERSION_SUFFIX = $(SO_TARGET_VERSION_MAJOR)
+-else
+-SO_TARGET_VERSION_SUFFIX = 
+-endif
+-
+-# Static library prefix and file extension
+-LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
+-A = a
+-
+ ## An import library is needed for z/OS and MSVC
+ IMPORT_LIB_EXT = .dll.a
+ 
+-LIBPREFIX=lib
+-
+-# Change the stubnames so that poorly working FAT disks and installation programs can work.
+-# This is also for backwards compatibility.
+-DATA_STUBNAME = dt
+-I18N_STUBNAME = in
+-LIBICU = $(STATIC_PREFIX_WHEN_USED)$(ICUPREFIX)
+-
+ #SH### copied from Makefile.inc
+ #SH## for icu-config to test with

@@ -18,6 +18,7 @@
 
 #include "listformattertest.h"
 #include "unicode/ulistformatter.h"
+#include "cmemory.h"
 #include <string.h>
 
 #if !UCONFIG_NO_FORMATTING
@@ -540,6 +541,76 @@ void ListFormatterTest::TestOutOfOrderPatterns() {
     CheckFormatting(&formatter, input4, 4, results[3], "TestOutOfOrderPatterns()");
 }
 
+void ListFormatterTest::TestFormattedValue() {
+    IcuTestErrorCode status(*this, "TestFormattedValue");
+    LocalPointer<ListFormatter> fmt(ListFormatter::createInstance("en", status));
+    if (status.errIfFailureAndReset()) { return; }
+
+    {
+        const char16_t* message = u"Field position test 1";
+        const char16_t* expectedString = u"hello, wonderful, and world";
+        const UnicodeString inputs[] = {
+            u"hello",
+            u"wonderful",
+            u"world"
+        };
+        FormattedList result = fmt->formatStringsToValue(inputs, UPRV_LENGTHOF(inputs), status);
+        static const UFieldPositionWithCategory expectedFieldPositions[] = {
+            // field, begin index, end index
+            {UFIELD_CATEGORY_LIST_SPAN, 0, 0, 5},
+            {UFIELD_CATEGORY_LIST, ULISTFMT_ELEMENT_FIELD, 0, 5},
+            {UFIELD_CATEGORY_LIST, ULISTFMT_LITERAL_FIELD, 5, 7},
+            {UFIELD_CATEGORY_LIST_SPAN, 1, 7, 16},
+            {UFIELD_CATEGORY_LIST, ULISTFMT_ELEMENT_FIELD, 7, 16},
+            {UFIELD_CATEGORY_LIST, ULISTFMT_LITERAL_FIELD, 16, 22},
+            {UFIELD_CATEGORY_LIST_SPAN, 2, 22, 27},
+            {UFIELD_CATEGORY_LIST, ULISTFMT_ELEMENT_FIELD, 22, 27}};
+        checkMixedFormattedValue(
+            message,
+            result,
+            expectedString,
+            expectedFieldPositions,
+            UPRV_LENGTHOF(expectedFieldPositions));
+    }
+}
+
+void ListFormatterTest::DoTheRealListStyleTesting(Locale locale,
+        UnicodeString items[], int itemCount,
+        const char* style, const char* expected, IcuTestErrorCode status) {
+
+    LocalPointer<ListFormatter> formatter(
+            ListFormatter::createInstance(locale, style, status));
+
+    UnicodeString actualResult;
+    formatter->format(items, itemCount, actualResult, status);
+    assertEquals(style, UnicodeString(expected), actualResult);
+}
+
+void ListFormatterTest::TestDifferentStyles() {
+    Locale locale("fr");
+    UnicodeString input[4] = { u"rouge", u"jaune", u"bleu", u"vert" };
+    IcuTestErrorCode status(*this, "TestDifferentStyles()");
+
+    DoTheRealListStyleTesting(locale, input, 4, "standard", "rouge, jaune, bleu et vert", status);
+    DoTheRealListStyleTesting(locale, input, 4, "or", "rouge, jaune, bleu ou vert", status);
+    DoTheRealListStyleTesting(locale, input, 4, "unit", "rouge, jaune, bleu et vert", status);
+    DoTheRealListStyleTesting(locale, input, 4, "unit-narrow", "rouge jaune bleu vert", status);
+    DoTheRealListStyleTesting(locale, input, 4, "unit-short", "rouge, jaune, bleu et vert", status);
+}
+
+void ListFormatterTest::TestBadStylesFail() {
+    Locale locale("fr");
+    const char * badStyles[4] = { "", "duration", "duration-short", "something-clearly-wrong" };
+    IcuTestErrorCode status(*this, "TestBadStylesFail()");
+
+    for (int i = 0; i < 4; ++i) {
+      LocalPointer<ListFormatter> formatter(ListFormatter::createInstance(locale, badStyles[i], status));
+      if (!status.expectErrorAndReset(U_MISSING_RESOURCE_ERROR, "style \"%s\"", badStyles[i])) {
+        // Do nothing, expectErrorAndReset already reports the error
+      }
+    }
+}
+
 void ListFormatterTest::runIndexedTest(int32_t index, UBool exec,
                                        const char* &name, char* /*par */) {
     switch(index) {
@@ -581,6 +652,15 @@ void ListFormatterTest::runIndexedTest(int32_t index, UBool exec,
                  break;
         case 20: name = "TestFieldPositionIteratorWith3ItemsPatternShift";
                  if (exec) TestFieldPositionIteratorWith3ItemsPatternShift();
+                 break;
+        case 21: name = "TestFormattedValue";
+                 if (exec) TestFormattedValue();
+                 break;
+        case 22: name = "TestDifferentStyles";
+                 if (exec) TestDifferentStyles();
+                 break;
+        case 23: name = "TestBadStylesFail";
+                 if (exec) TestBadStylesFail();
                  break;
         default: name = ""; break;
     }

@@ -1369,7 +1369,7 @@ initExpectedSkippables(UnicodeSet skipSets[UNORM_MODE_COUNT], UErrorCode &errorC
     // We need not look at control codes, Han characters nor Hangul LVT syllables because they
     // do not combine forward. LV syllables are already removed.
     UnicodeSet notInteresting("[[:C:][:Unified_Ideograph:][:HST=LVT:]]", errorCode);
-    LocalPointer<UnicodeSet> unsure(&((UnicodeSet *)(skipSets[UNORM_NFC].clone()))->removeAll(notInteresting));
+    LocalPointer<UnicodeSet> unsure(&(skipSets[UNORM_NFC].clone())->removeAll(notInteresting));
     // System.out.format("unsure.size()=%d\n", unsure.size());
 
     // For each character about which we are unsure, see if it changes when we add
@@ -1577,7 +1577,7 @@ BasicNormalizerTest::TestNormalizeUTF8WithEdits() {
         u8"  AÄA\u0308A\u0308\u00ad\u0323Ä\u0323,\u00ad\u1100\u1161가\u11A8가\u3133  ";
     std::string expected = u8"  aääạ\u0308ạ\u0308,가각갃  ";
     std::string result;
-    StringByteSink<std::string> sink(&result, expected.length());
+    StringByteSink<std::string> sink(&result, static_cast<int32_t>(expected.length()));
     Edits edits;
     nfkc_cf->normalizeUTF8(0, src, sink, &edits, errorCode);
     assertSuccess("normalizeUTF8 with Edits", errorCode.get());
@@ -1780,7 +1780,7 @@ BasicNormalizerTest::TestComposeJamoTBase() {
     std::string s8(u8"\u1100\u1161\u11A7\u1100\u314F\u11A7가\u11A7");
     std::string expected8(u8"가\u11A7가\u11A7가\u11A7");
     std::string result8;
-    StringByteSink<std::string> sink(&result8, expected8.length());
+    StringByteSink<std::string> sink(&result8, static_cast<int32_t>(expected8.length()));
     nfkc->normalizeUTF8(0, s8, sink, nullptr, errorCode);
     assertSuccess("normalizeUTF8(LV+11A7)", errorCode.get());
     assertEquals("normalizeUTF8(LV+11A7)", expected8.c_str(), result8.c_str());

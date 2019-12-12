@@ -217,6 +217,9 @@
     <ClCompile Include="fldset.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
+    <ClCompile Include="formatted_string_builder_test.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
     <ClCompile Include="genderinfotest.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
@@ -274,10 +277,7 @@
     <ClCompile Include="numbertest_patternstring.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
-    <ClCompile Include="numbertest_stringbuilder.cpp">
-      <Filter>formatting</Filter>
-    </ClCompile>
-    <ClCompile Include="numbertest_stringsegment.cpp">
+    <ClCompile Include="string_segment_test.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="numbertest_parse.cpp">
@@ -290,6 +290,9 @@
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="numbertest_range.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="numbertest_permutation.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="numfmtst.cpp">
@@ -537,6 +540,15 @@
     </ClCompile>
     <ClCompile Include="erarulestest.cpp">
       <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="formattedvaluetest.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="localebuildertest.cpp">
+      <Filter>locales &amp; resources</Filter>
+    </ClCompile>
+    <ClCompile Include="localematchertest.cpp">
+      <Filter>locales &amp; resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -923,6 +935,9 @@
     </ClInclude>
     <ClInclude Include="erarulestest.h">
       <Filter>formatting</Filter>
+    </ClInclude>
+    <ClInclude Include="localebuildertest.h">
+      <Filter>locales &amp; resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

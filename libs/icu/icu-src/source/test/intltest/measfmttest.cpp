@@ -28,6 +28,7 @@
 #include "charstr.h"
 #include "cstr.h"
 #include "unicode/reldatefmt.h"
+#include "unicode/rbnf.h"
 
 struct ExpectedResult {
     const Measure *measures;
@@ -51,6 +52,8 @@ private:
     void TestCompatible58();
     void TestCompatible59();
     void TestCompatible63();
+    void TestCompatible64();
+    void TestCompatible65();
     void TestGetAvailable();
     void TestExamplesInDocs();
     void TestFormatPeriodEn();
@@ -73,6 +76,9 @@ private:
     void TestDoubleZero();
     void TestUnitPerUnitResolution();
     void TestIndividualPluralFallback();
+    void Test20332_PersonUnits();
+    void TestNumericTime();
+    void TestNumericTimeSomeSpecialFormats();
     void verifyFormat(
         const char *description,
         const MeasureFormat &fmt,
@@ -149,6 +155,8 @@ void MeasureFormatTest::runIndexedTest(
     TESTCASE_AUTO(TestCompatible58);
     TESTCASE_AUTO(TestCompatible59);
     TESTCASE_AUTO(TestCompatible63);
+    TESTCASE_AUTO(TestCompatible64);
+    TESTCASE_AUTO(TestCompatible65);
     TESTCASE_AUTO(TestGetAvailable);
     TESTCASE_AUTO(TestExamplesInDocs);
     TESTCASE_AUTO(TestFormatPeriodEn);
@@ -171,6 +179,9 @@ void MeasureFormatTest::runIndexedTest(
     TESTCASE_AUTO(TestDoubleZero);
     TESTCASE_AUTO(TestUnitPerUnitResolution);
     TESTCASE_AUTO(TestIndividualPluralFallback);
+    TESTCASE_AUTO(Test20332_PersonUnits);
+    TESTCASE_AUTO(TestNumericTime);
+    TESTCASE_AUTO(TestNumericTimeSomeSpecialFormats);
     TESTCASE_AUTO_END;
 }
 
@@ -1189,6 +1200,686 @@ void MeasureFormatTest::TestCompatible63() {
     assertSuccess("", status);
 }
 
+void MeasureFormatTest::TestCompatible64() {
+    UErrorCode status = U_ZERO_ERROR;
+    LocalPointer<MeasureUnit> measureUnit;
+    MeasureUnit measureUnitValue;
+    measureUnit.adoptInstead(MeasureUnit::createGForce(status));
+    measureUnitValue = MeasureUnit::getGForce();
+    measureUnit.adoptInstead(MeasureUnit::createMeterPerSecondSquared(status));
+    measureUnitValue = MeasureUnit::getMeterPerSecondSquared();
+    measureUnit.adoptInstead(MeasureUnit::createArcMinute(status));
+    measureUnitValue = MeasureUnit::getArcMinute();
+    measureUnit.adoptInstead(MeasureUnit::createArcSecond(status));
+    measureUnitValue = MeasureUnit::getArcSecond();
+    measureUnit.adoptInstead(MeasureUnit::createDegree(status));
+    measureUnitValue = MeasureUnit::getDegree();
+    measureUnit.adoptInstead(MeasureUnit::createRadian(status));
+    measureUnitValue = MeasureUnit::getRadian();
+    measureUnit.adoptInstead(MeasureUnit::createRevolutionAngle(status));
+    measureUnitValue = MeasureUnit::getRevolutionAngle();
+    measureUnit.adoptInstead(MeasureUnit::createAcre(status));
+    measureUnitValue = MeasureUnit::getAcre();
+    measureUnit.adoptInstead(MeasureUnit::createDunam(status));
+    measureUnitValue = MeasureUnit::getDunam();
+    measureUnit.adoptInstead(MeasureUnit::createHectare(status));
+    measureUnitValue = MeasureUnit::getHectare();
+    measureUnit.adoptInstead(MeasureUnit::createSquareCentimeter(status));
+    measureUnitValue = MeasureUnit::getSquareCentimeter();
+    measureUnit.adoptInstead(MeasureUnit::createSquareFoot(status));
+    measureUnitValue = MeasureUnit::getSquareFoot();
+    measureUnit.adoptInstead(MeasureUnit::createSquareInch(status));
+    measureUnitValue = MeasureUnit::getSquareInch();
+    measureUnit.adoptInstead(MeasureUnit::createSquareKilometer(status));
+    measureUnitValue = MeasureUnit::getSquareKilometer();
+    measureUnit.adoptInstead(MeasureUnit::createSquareMeter(status));
+    measureUnitValue = MeasureUnit::getSquareMeter();
+    measureUnit.adoptInstead(MeasureUnit::createSquareMile(status));
+    measureUnitValue = MeasureUnit::getSquareMile();
+    measureUnit.adoptInstead(MeasureUnit::createSquareYard(status));
+    measureUnitValue = MeasureUnit::getSquareYard();
+    measureUnit.adoptInstead(MeasureUnit::createKarat(status));
+    measureUnitValue = MeasureUnit::getKarat();
+    measureUnit.adoptInstead(MeasureUnit::createMilligramPerDeciliter(status));
+    measureUnitValue = MeasureUnit::getMilligramPerDeciliter();
+    measureUnit.adoptInstead(MeasureUnit::createMillimolePerLiter(status));
+    measureUnitValue = MeasureUnit::getMillimolePerLiter();
+    measureUnit.adoptInstead(MeasureUnit::createMole(status));
+    measureUnitValue = MeasureUnit::getMole();
+    measureUnit.adoptInstead(MeasureUnit::createPartPerMillion(status));
+    measureUnitValue = MeasureUnit::getPartPerMillion();
+    measureUnit.adoptInstead(MeasureUnit::createPercent(status));
+    measureUnitValue = MeasureUnit::getPercent();
+    measureUnit.adoptInstead(MeasureUnit::createPermille(status));
+    measureUnitValue = MeasureUnit::getPermille();
+    measureUnit.adoptInstead(MeasureUnit::createPermyriad(status));
+    measureUnitValue = MeasureUnit::getPermyriad();
+    measureUnit.adoptInstead(MeasureUnit::createLiterPer100Kilometers(status));
+    measureUnitValue = MeasureUnit::getLiterPer100Kilometers();
+    measureUnit.adoptInstead(MeasureUnit::createLiterPerKilometer(status));
+    measureUnitValue = MeasureUnit::getLiterPerKilometer();
+    measureUnit.adoptInstead(MeasureUnit::createMilePerGallon(status));
+    measureUnitValue = MeasureUnit::getMilePerGallon();
+    measureUnit.adoptInstead(MeasureUnit::createMilePerGallonImperial(status));
+    measureUnitValue = MeasureUnit::getMilePerGallonImperial();
+    measureUnit.adoptInstead(MeasureUnit::createBit(status));
+    measureUnitValue = MeasureUnit::getBit();
+    measureUnit.adoptInstead(MeasureUnit::createByte(status));
+    measureUnitValue = MeasureUnit::getByte();
+    measureUnit.adoptInstead(MeasureUnit::createGigabit(status));
+    measureUnitValue = MeasureUnit::getGigabit();
+    measureUnit.adoptInstead(MeasureUnit::createGigabyte(status));
+    measureUnitValue = MeasureUnit::getGigabyte();
+    measureUnit.adoptInstead(MeasureUnit::createKilobit(status));
+    measureUnitValue = MeasureUnit::getKilobit();
+    measureUnit.adoptInstead(MeasureUnit::createKilobyte(status));
+    measureUnitValue = MeasureUnit::getKilobyte();
+    measureUnit.adoptInstead(MeasureUnit::createMegabit(status));
+    measureUnitValue = MeasureUnit::getMegabit();
+    measureUnit.adoptInstead(MeasureUnit::createMegabyte(status));
+    measureUnitValue = MeasureUnit::getMegabyte();
+    measureUnit.adoptInstead(MeasureUnit::createPetabyte(status));
+    measureUnitValue = MeasureUnit::getPetabyte();
+    measureUnit.adoptInstead(MeasureUnit::createTerabit(status));
+    measureUnitValue = MeasureUnit::getTerabit();
+    measureUnit.adoptInstead(MeasureUnit::createTerabyte(status));
+    measureUnitValue = MeasureUnit::getTerabyte();
+    measureUnit.adoptInstead(MeasureUnit::createCentury(status));
+    measureUnitValue = MeasureUnit::getCentury();
+    measureUnit.adoptInstead(MeasureUnit::createDay(status));
+    measureUnitValue = MeasureUnit::getDay();
+    measureUnit.adoptInstead(MeasureUnit::createDayPerson(status));
+    measureUnitValue = MeasureUnit::getDayPerson();
+    measureUnit.adoptInstead(MeasureUnit::createHour(status));
+    measureUnitValue = MeasureUnit::getHour();
+    measureUnit.adoptInstead(MeasureUnit::createMicrosecond(status));
+    measureUnitValue = MeasureUnit::getMicrosecond();
+    measureUnit.adoptInstead(MeasureUnit::createMillisecond(status));
+    measureUnitValue = MeasureUnit::getMillisecond();
+    measureUnit.adoptInstead(MeasureUnit::createMinute(status));
+    measureUnitValue = MeasureUnit::getMinute();
+    measureUnit.adoptInstead(MeasureUnit::createMonth(status));
+    measureUnitValue = MeasureUnit::getMonth();
+    measureUnit.adoptInstead(MeasureUnit::createMonthPerson(status));
+    measureUnitValue = MeasureUnit::getMonthPerson();
+    measureUnit.adoptInstead(MeasureUnit::createNanosecond(status));
+    measureUnitValue = MeasureUnit::getNanosecond();
+    measureUnit.adoptInstead(MeasureUnit::createSecond(status));
+    measureUnitValue = MeasureUnit::getSecond();
+    measureUnit.adoptInstead(MeasureUnit::createWeek(status));
+    measureUnitValue = MeasureUnit::getWeek();
+    measureUnit.adoptInstead(MeasureUnit::createWeekPerson(status));
+    measureUnitValue = MeasureUnit::getWeekPerson();
+    measureUnit.adoptInstead(MeasureUnit::createYear(status));
+    measureUnitValue = MeasureUnit::getYear();
+    measureUnit.adoptInstead(MeasureUnit::createYearPerson(status));
+    measureUnitValue = MeasureUnit::getYearPerson();
+    measureUnit.adoptInstead(MeasureUnit::createAmpere(status));
+    measureUnitValue = MeasureUnit::getAmpere();
+    measureUnit.adoptInstead(MeasureUnit::createMilliampere(status));
+    measureUnitValue = MeasureUnit::getMilliampere();
+    measureUnit.adoptInstead(MeasureUnit::createOhm(status));
+    measureUnitValue = MeasureUnit::getOhm();
+    measureUnit.adoptInstead(MeasureUnit::createVolt(status));
+    measureUnitValue = MeasureUnit::getVolt();
+    measureUnit.adoptInstead(MeasureUnit::createBritishThermalUnit(status));
+    measureUnitValue = MeasureUnit::getBritishThermalUnit();
+    measureUnit.adoptInstead(MeasureUnit::createCalorie(status));
+    measureUnitValue = MeasureUnit::getCalorie();
+    measureUnit.adoptInstead(MeasureUnit::createElectronvolt(status));
+    measureUnitValue = MeasureUnit::getElectronvolt();
+    measureUnit.adoptInstead(MeasureUnit::createFoodcalorie(status));
+    measureUnitValue = MeasureUnit::getFoodcalorie();
+    measureUnit.adoptInstead(MeasureUnit::createJoule(status));
+    measureUnitValue = MeasureUnit::getJoule();
+    measureUnit.adoptInstead(MeasureUnit::createKilocalorie(status));
+    measureUnitValue = MeasureUnit::getKilocalorie();
+    measureUnit.adoptInstead(MeasureUnit::createKilojoule(status));
+    measureUnitValue = MeasureUnit::getKilojoule();
+    measureUnit.adoptInstead(MeasureUnit::createKilowattHour(status));
+    measureUnitValue = MeasureUnit::getKilowattHour();
+    measureUnit.adoptInstead(MeasureUnit::createNewton(status));
+    measureUnitValue = MeasureUnit::getNewton();
+    measureUnit.adoptInstead(MeasureUnit::createPoundForce(status));
+    measureUnitValue = MeasureUnit::getPoundForce();
+    measureUnit.adoptInstead(MeasureUnit::createGigahertz(status));
+    measureUnitValue = MeasureUnit::getGigahertz();
+    measureUnit.adoptInstead(MeasureUnit::createHertz(status));
+    measureUnitValue = MeasureUnit::getHertz();
+    measureUnit.adoptInstead(MeasureUnit::createKilohertz(status));
+    measureUnitValue = MeasureUnit::getKilohertz();
+    measureUnit.adoptInstead(MeasureUnit::createMegahertz(status));
+    measureUnitValue = MeasureUnit::getMegahertz();
+    measureUnit.adoptInstead(MeasureUnit::createAstronomicalUnit(status));
+    measureUnitValue = MeasureUnit::getAstronomicalUnit();
+    measureUnit.adoptInstead(MeasureUnit::createCentimeter(status));
+    measureUnitValue = MeasureUnit::getCentimeter();
+    measureUnit.adoptInstead(MeasureUnit::createDecimeter(status));
+    measureUnitValue = MeasureUnit::getDecimeter();
+    measureUnit.adoptInstead(MeasureUnit::createFathom(status));
+    measureUnitValue = MeasureUnit::getFathom();
+    measureUnit.adoptInstead(MeasureUnit::createFoot(status));
+    measureUnitValue = MeasureUnit::getFoot();
+    measureUnit.adoptInstead(MeasureUnit::createFurlong(status));
+    measureUnitValue = MeasureUnit::getFurlong();
+    measureUnit.adoptInstead(MeasureUnit::createInch(status));
+    measureUnitValue = MeasureUnit::getInch();
+    measureUnit.adoptInstead(MeasureUnit::createKilometer(status));
+    measureUnitValue = MeasureUnit::getKilometer();
+    measureUnit.adoptInstead(MeasureUnit::createLightYear(status));
+    measureUnitValue = MeasureUnit::getLightYear();
+    measureUnit.adoptInstead(MeasureUnit::createMeter(status));
+    measureUnitValue = MeasureUnit::getMeter();
+    measureUnit.adoptInstead(MeasureUnit::createMicrometer(status));
+    measureUnitValue = MeasureUnit::getMicrometer();
+    measureUnit.adoptInstead(MeasureUnit::createMile(status));
+    measureUnitValue = MeasureUnit::getMile();
+    measureUnit.adoptInstead(MeasureUnit::createMileScandinavian(status));
+    measureUnitValue = MeasureUnit::getMileScandinavian();
+    measureUnit.adoptInstead(MeasureUnit::createMillimeter(status));
+    measureUnitValue = MeasureUnit::getMillimeter();
+    measureUnit.adoptInstead(MeasureUnit::createNanometer(status));
+    measureUnitValue = MeasureUnit::getNanometer();
+    measureUnit.adoptInstead(MeasureUnit::createNauticalMile(status));
+    measureUnitValue = MeasureUnit::getNauticalMile();
+    measureUnit.adoptInstead(MeasureUnit::createParsec(status));
+    measureUnitValue = MeasureUnit::getParsec();
+    measureUnit.adoptInstead(MeasureUnit::createPicometer(status));
+    measureUnitValue = MeasureUnit::getPicometer();
+    measureUnit.adoptInstead(MeasureUnit::createPoint(status));
+    measureUnitValue = MeasureUnit::getPoint();
+    measureUnit.adoptInstead(MeasureUnit::createSolarRadius(status));
+    measureUnitValue = MeasureUnit::getSolarRadius();
+    measureUnit.adoptInstead(MeasureUnit::createYard(status));
+    measureUnitValue = MeasureUnit::getYard();
+    measureUnit.adoptInstead(MeasureUnit::createLux(status));
+    measureUnitValue = MeasureUnit::getLux();
+    measureUnit.adoptInstead(MeasureUnit::createSolarLuminosity(status));
+    measureUnitValue = MeasureUnit::getSolarLuminosity();
+    measureUnit.adoptInstead(MeasureUnit::createCarat(status));
+    measureUnitValue = MeasureUnit::getCarat();
+    measureUnit.adoptInstead(MeasureUnit::createDalton(status));
+    measureUnitValue = MeasureUnit::getDalton();
+    measureUnit.adoptInstead(MeasureUnit::createEarthMass(status));
+    measureUnitValue = MeasureUnit::getEarthMass();
+    measureUnit.adoptInstead(MeasureUnit::createGram(status));
+    measureUnitValue = MeasureUnit::getGram();
+    measureUnit.adoptInstead(MeasureUnit::createKilogram(status));
+    measureUnitValue = MeasureUnit::getKilogram();
+    measureUnit.adoptInstead(MeasureUnit::createMetricTon(status));
+    measureUnitValue = MeasureUnit::getMetricTon();
+    measureUnit.adoptInstead(MeasureUnit::createMicrogram(status));
+    measureUnitValue = MeasureUnit::getMicrogram();
+    measureUnit.adoptInstead(MeasureUnit::createMilligram(status));
+    measureUnitValue = MeasureUnit::getMilligram();
+    measureUnit.adoptInstead(MeasureUnit::createOunce(status));
+    measureUnitValue = MeasureUnit::getOunce();
+    measureUnit.adoptInstead(MeasureUnit::createOunceTroy(status));
+    measureUnitValue = MeasureUnit::getOunceTroy();
+    measureUnit.adoptInstead(MeasureUnit::createPound(status));
+    measureUnitValue = MeasureUnit::getPound();
+    measureUnit.adoptInstead(MeasureUnit::createSolarMass(status));
+    measureUnitValue = MeasureUnit::getSolarMass();
+    measureUnit.adoptInstead(MeasureUnit::createStone(status));
+    measureUnitValue = MeasureUnit::getStone();
+    measureUnit.adoptInstead(MeasureUnit::createTon(status));
+    measureUnitValue = MeasureUnit::getTon();
+    measureUnit.adoptInstead(MeasureUnit::createGigawatt(status));
+    measureUnitValue = MeasureUnit::getGigawatt();
+    measureUnit.adoptInstead(MeasureUnit::createHorsepower(status));
+    measureUnitValue = MeasureUnit::getHorsepower();
+    measureUnit.adoptInstead(MeasureUnit::createKilowatt(status));
+    measureUnitValue = MeasureUnit::getKilowatt();
+    measureUnit.adoptInstead(MeasureUnit::createMegawatt(status));
+    measureUnitValue = MeasureUnit::getMegawatt();
+    measureUnit.adoptInstead(MeasureUnit::createMilliwatt(status));
+    measureUnitValue = MeasureUnit::getMilliwatt();
+    measureUnit.adoptInstead(MeasureUnit::createWatt(status));
+    measureUnitValue = MeasureUnit::getWatt();
+    measureUnit.adoptInstead(MeasureUnit::createAtmosphere(status));
+    measureUnitValue = MeasureUnit::getAtmosphere();
+    measureUnit.adoptInstead(MeasureUnit::createHectopascal(status));
+    measureUnitValue = MeasureUnit::getHectopascal();
+    measureUnit.adoptInstead(MeasureUnit::createInchHg(status));
+    measureUnitValue = MeasureUnit::getInchHg();
+    measureUnit.adoptInstead(MeasureUnit::createKilopascal(status));
+    measureUnitValue = MeasureUnit::getKilopascal();
+    measureUnit.adoptInstead(MeasureUnit::createMegapascal(status));
+    measureUnitValue = MeasureUnit::getMegapascal();
+    measureUnit.adoptInstead(MeasureUnit::createMillibar(status));
+    measureUnitValue = MeasureUnit::getMillibar();
+    measureUnit.adoptInstead(MeasureUnit::createMillimeterOfMercury(status));
+    measureUnitValue = MeasureUnit::getMillimeterOfMercury();
+    measureUnit.adoptInstead(MeasureUnit::createPoundPerSquareInch(status));
+    measureUnitValue = MeasureUnit::getPoundPerSquareInch();
+    measureUnit.adoptInstead(MeasureUnit::createKilometerPerHour(status));
+    measureUnitValue = MeasureUnit::getKilometerPerHour();
+    measureUnit.adoptInstead(MeasureUnit::createKnot(status));
+    measureUnitValue = MeasureUnit::getKnot();
+    measureUnit.adoptInstead(MeasureUnit::createMeterPerSecond(status));
+    measureUnitValue = MeasureUnit::getMeterPerSecond();
+    measureUnit.adoptInstead(MeasureUnit::createMilePerHour(status));
+    measureUnitValue = MeasureUnit::getMilePerHour();
+    measureUnit.adoptInstead(MeasureUnit::createCelsius(status));
+    measureUnitValue = MeasureUnit::getCelsius();
+    measureUnit.adoptInstead(MeasureUnit::createFahrenheit(status));
+    measureUnitValue = MeasureUnit::getFahrenheit();
+    measureUnit.adoptInstead(MeasureUnit::createGenericTemperature(status));
+    measureUnitValue = MeasureUnit::getGenericTemperature();
+    measureUnit.adoptInstead(MeasureUnit::createKelvin(status));
+    measureUnitValue = MeasureUnit::getKelvin();
+    measureUnit.adoptInstead(MeasureUnit::createNewtonMeter(status));
+    measureUnitValue = MeasureUnit::getNewtonMeter();
+    measureUnit.adoptInstead(MeasureUnit::createPoundFoot(status));
+    measureUnitValue = MeasureUnit::getPoundFoot();
+    measureUnit.adoptInstead(MeasureUnit::createAcreFoot(status));
+    measureUnitValue = MeasureUnit::getAcreFoot();
+    measureUnit.adoptInstead(MeasureUnit::createBarrel(status));
+    measureUnitValue = MeasureUnit::getBarrel();
+    measureUnit.adoptInstead(MeasureUnit::createBushel(status));
+    measureUnitValue = MeasureUnit::getBushel();
+    measureUnit.adoptInstead(MeasureUnit::createCentiliter(status));
+    measureUnitValue = MeasureUnit::getCentiliter();
+    measureUnit.adoptInstead(MeasureUnit::createCubicCentimeter(status));
+    measureUnitValue = MeasureUnit::getCubicCentimeter();
+    measureUnit.adoptInstead(MeasureUnit::createCubicFoot(status));
+    measureUnitValue = MeasureUnit::getCubicFoot();
+    measureUnit.adoptInstead(MeasureUnit::createCubicInch(status));
+    measureUnitValue = MeasureUnit::getCubicInch();
+    measureUnit.adoptInstead(MeasureUnit::createCubicKilometer(status));
+    measureUnitValue = MeasureUnit::getCubicKilometer();
+    measureUnit.adoptInstead(MeasureUnit::createCubicMeter(status));
+    measureUnitValue = MeasureUnit::getCubicMeter();
+    measureUnit.adoptInstead(MeasureUnit::createCubicMile(status));
+    measureUnitValue = MeasureUnit::getCubicMile();
+    measureUnit.adoptInstead(MeasureUnit::createCubicYard(status));
+    measureUnitValue = MeasureUnit::getCubicYard();
+    measureUnit.adoptInstead(MeasureUnit::createCup(status));
+    measureUnitValue = MeasureUnit::getCup();
+    measureUnit.adoptInstead(MeasureUnit::createCupMetric(status));
+    measureUnitValue = MeasureUnit::getCupMetric();
+    measureUnit.adoptInstead(MeasureUnit::createDeciliter(status));
+    measureUnitValue = MeasureUnit::getDeciliter();
+    measureUnit.adoptInstead(MeasureUnit::createFluidOunce(status));
+    measureUnitValue = MeasureUnit::getFluidOunce();
+    measureUnit.adoptInstead(MeasureUnit::createFluidOunceImperial(status));
+    measureUnitValue = MeasureUnit::getFluidOunceImperial();
+    measureUnit.adoptInstead(MeasureUnit::createGallon(status));
+    measureUnitValue = MeasureUnit::getGallon();
+    measureUnit.adoptInstead(MeasureUnit::createGallonImperial(status));
+    measureUnitValue = MeasureUnit::getGallonImperial();
+    measureUnit.adoptInstead(MeasureUnit::createHectoliter(status));
+    measureUnitValue = MeasureUnit::getHectoliter();
+    measureUnit.adoptInstead(MeasureUnit::createLiter(status));
+    measureUnitValue = MeasureUnit::getLiter();
+    measureUnit.adoptInstead(MeasureUnit::createMegaliter(status));
+    measureUnitValue = MeasureUnit::getMegaliter();
+    measureUnit.adoptInstead(MeasureUnit::createMilliliter(status));
+    measureUnitValue = MeasureUnit::getMilliliter();
+    measureUnit.adoptInstead(MeasureUnit::createPint(status));
+    measureUnitValue = MeasureUnit::getPint();
+    measureUnit.adoptInstead(MeasureUnit::createPintMetric(status));
+    measureUnitValue = MeasureUnit::getPintMetric();
+    measureUnit.adoptInstead(MeasureUnit::createQuart(status));
+    measureUnitValue = MeasureUnit::getQuart();
+    measureUnit.adoptInstead(MeasureUnit::createTablespoon(status));
+    measureUnitValue = MeasureUnit::getTablespoon();
+    measureUnit.adoptInstead(MeasureUnit::createTeaspoon(status));
+    measureUnitValue = MeasureUnit::getTeaspoon();
+    assertSuccess("", status);
+}
+
+void MeasureFormatTest::TestCompatible65() {
+    UErrorCode status = U_ZERO_ERROR;
+    LocalPointer<MeasureUnit> measureUnit;
+    MeasureUnit measureUnitValue;
+    measureUnit.adoptInstead(MeasureUnit::createGForce(status));
+    measureUnitValue = MeasureUnit::getGForce();
+    measureUnit.adoptInstead(MeasureUnit::createMeterPerSecondSquared(status));
+    measureUnitValue = MeasureUnit::getMeterPerSecondSquared();
+    measureUnit.adoptInstead(MeasureUnit::createArcMinute(status));
+    measureUnitValue = MeasureUnit::getArcMinute();
+    measureUnit.adoptInstead(MeasureUnit::createArcSecond(status));
+    measureUnitValue = MeasureUnit::getArcSecond();
+    measureUnit.adoptInstead(MeasureUnit::createDegree(status));
+    measureUnitValue = MeasureUnit::getDegree();
+    measureUnit.adoptInstead(MeasureUnit::createRadian(status));
+    measureUnitValue = MeasureUnit::getRadian();
+    measureUnit.adoptInstead(MeasureUnit::createRevolutionAngle(status));
+    measureUnitValue = MeasureUnit::getRevolutionAngle();
+    measureUnit.adoptInstead(MeasureUnit::createAcre(status));
+    measureUnitValue = MeasureUnit::getAcre();
+    measureUnit.adoptInstead(MeasureUnit::createDunam(status));
+    measureUnitValue = MeasureUnit::getDunam();
+    measureUnit.adoptInstead(MeasureUnit::createHectare(status));
+    measureUnitValue = MeasureUnit::getHectare();
+    measureUnit.adoptInstead(MeasureUnit::createSquareCentimeter(status));
+    measureUnitValue = MeasureUnit::getSquareCentimeter();
+    measureUnit.adoptInstead(MeasureUnit::createSquareFoot(status));
+    measureUnitValue = MeasureUnit::getSquareFoot();
+    measureUnit.adoptInstead(MeasureUnit::createSquareInch(status));
+    measureUnitValue = MeasureUnit::getSquareInch();
+    measureUnit.adoptInstead(MeasureUnit::createSquareKilometer(status));
+    measureUnitValue = MeasureUnit::getSquareKilometer();
+    measureUnit.adoptInstead(MeasureUnit::createSquareMeter(status));
+    measureUnitValue = MeasureUnit::getSquareMeter();
+    measureUnit.adoptInstead(MeasureUnit::createSquareMile(status));
+    measureUnitValue = MeasureUnit::getSquareMile();
+    measureUnit.adoptInstead(MeasureUnit::createSquareYard(status));
+    measureUnitValue = MeasureUnit::getSquareYard();
+    measureUnit.adoptInstead(MeasureUnit::createKarat(status));
+    measureUnitValue = MeasureUnit::getKarat();
+    measureUnit.adoptInstead(MeasureUnit::createMilligramPerDeciliter(status));
+    measureUnitValue = MeasureUnit::getMilligramPerDeciliter();
+    measureUnit.adoptInstead(MeasureUnit::createMillimolePerLiter(status));
+    measureUnitValue = MeasureUnit::getMillimolePerLiter();
+    measureUnit.adoptInstead(MeasureUnit::createMole(status));
+    measureUnitValue = MeasureUnit::getMole();
+    measureUnit.adoptInstead(MeasureUnit::createPartPerMillion(status));
+    measureUnitValue = MeasureUnit::getPartPerMillion();
+    measureUnit.adoptInstead(MeasureUnit::createPercent(status));
+    measureUnitValue = MeasureUnit::getPercent();
+    measureUnit.adoptInstead(MeasureUnit::createPermille(status));
+    measureUnitValue = MeasureUnit::getPermille();
+    measureUnit.adoptInstead(MeasureUnit::createPermyriad(status));
+    measureUnitValue = MeasureUnit::getPermyriad();
+    measureUnit.adoptInstead(MeasureUnit::createLiterPer100Kilometers(status));
+    measureUnitValue = MeasureUnit::getLiterPer100Kilometers();
+    measureUnit.adoptInstead(MeasureUnit::createLiterPerKilometer(status));
+    measureUnitValue = MeasureUnit::getLiterPerKilometer();
+    measureUnit.adoptInstead(MeasureUnit::createMilePerGallon(status));
+    measureUnitValue = MeasureUnit::getMilePerGallon();
+    measureUnit.adoptInstead(MeasureUnit::createMilePerGallonImperial(status));
+    measureUnitValue = MeasureUnit::getMilePerGallonImperial();
+    measureUnit.adoptInstead(MeasureUnit::createBit(status));
+    measureUnitValue = MeasureUnit::getBit();
+    measureUnit.adoptInstead(MeasureUnit::createByte(status));
+    measureUnitValue = MeasureUnit::getByte();
+    measureUnit.adoptInstead(MeasureUnit::createGigabit(status));
+    measureUnitValue = MeasureUnit::getGigabit();
+    measureUnit.adoptInstead(MeasureUnit::createGigabyte(status));
+    measureUnitValue = MeasureUnit::getGigabyte();
+    measureUnit.adoptInstead(MeasureUnit::createKilobit(status));
+    measureUnitValue = MeasureUnit::getKilobit();
+    measureUnit.adoptInstead(MeasureUnit::createKilobyte(status));
+    measureUnitValue = MeasureUnit::getKilobyte();
+    measureUnit.adoptInstead(MeasureUnit::createMegabit(status));
+    measureUnitValue = MeasureUnit::getMegabit();
+    measureUnit.adoptInstead(MeasureUnit::createMegabyte(status));
+    measureUnitValue = MeasureUnit::getMegabyte();
+    measureUnit.adoptInstead(MeasureUnit::createPetabyte(status));
+    measureUnitValue = MeasureUnit::getPetabyte();
+    measureUnit.adoptInstead(MeasureUnit::createTerabit(status));
+    measureUnitValue = MeasureUnit::getTerabit();
+    measureUnit.adoptInstead(MeasureUnit::createTerabyte(status));
+    measureUnitValue = MeasureUnit::getTerabyte();
+    measureUnit.adoptInstead(MeasureUnit::createCentury(status));
+    measureUnitValue = MeasureUnit::getCentury();
+    measureUnit.adoptInstead(MeasureUnit::createDay(status));
+    measureUnitValue = MeasureUnit::getDay();
+    measureUnit.adoptInstead(MeasureUnit::createDayPerson(status));
+    measureUnitValue = MeasureUnit::getDayPerson();
+    measureUnit.adoptInstead(MeasureUnit::createDecade(status));
+    measureUnitValue = MeasureUnit::getDecade();
+    measureUnit.adoptInstead(MeasureUnit::createHour(status));
+    measureUnitValue = MeasureUnit::getHour();
+    measureUnit.adoptInstead(MeasureUnit::createMicrosecond(status));
+    measureUnitValue = MeasureUnit::getMicrosecond();
+    measureUnit.adoptInstead(MeasureUnit::createMillisecond(status));
+    measureUnitValue = MeasureUnit::getMillisecond();
+    measureUnit.adoptInstead(MeasureUnit::createMinute(status));
+    measureUnitValue = MeasureUnit::getMinute();
+    measureUnit.adoptInstead(MeasureUnit::createMonth(status));
+    measureUnitValue = MeasureUnit::getMonth();
+    measureUnit.adoptInstead(MeasureUnit::createMonthPerson(status));
+    measureUnitValue = MeasureUnit::getMonthPerson();
+    measureUnit.adoptInstead(MeasureUnit::createNanosecond(status));
+    measureUnitValue = MeasureUnit::getNanosecond();
+    measureUnit.adoptInstead(MeasureUnit::createSecond(status));
+    measureUnitValue = MeasureUnit::getSecond();
+    measureUnit.adoptInstead(MeasureUnit::createWeek(status));
+    measureUnitValue = MeasureUnit::getWeek();
+    measureUnit.adoptInstead(MeasureUnit::createWeekPerson(status));
+    measureUnitValue = MeasureUnit::getWeekPerson();
+    measureUnit.adoptInstead(MeasureUnit::createYear(status));
+    measureUnitValue = MeasureUnit::getYear();
+    measureUnit.adoptInstead(MeasureUnit::createYearPerson(status));
+    measureUnitValue = MeasureUnit::getYearPerson();
+    measureUnit.adoptInstead(MeasureUnit::createAmpere(status));
+    measureUnitValue = MeasureUnit::getAmpere();
+    measureUnit.adoptInstead(MeasureUnit::createMilliampere(status));
+    measureUnitValue = MeasureUnit::getMilliampere();
+    measureUnit.adoptInstead(MeasureUnit::createOhm(status));
+    measureUnitValue = MeasureUnit::getOhm();
+    measureUnit.adoptInstead(MeasureUnit::createVolt(status));
+    measureUnitValue = MeasureUnit::getVolt();
+    measureUnit.adoptInstead(MeasureUnit::createBritishThermalUnit(status));
+    measureUnitValue = MeasureUnit::getBritishThermalUnit();
+    measureUnit.adoptInstead(MeasureUnit::createCalorie(status));
+    measureUnitValue = MeasureUnit::getCalorie();
+    measureUnit.adoptInstead(MeasureUnit::createElectronvolt(status));
+    measureUnitValue = MeasureUnit::getElectronvolt();
+    measureUnit.adoptInstead(MeasureUnit::createFoodcalorie(status));
+    measureUnitValue = MeasureUnit::getFoodcalorie();
+    measureUnit.adoptInstead(MeasureUnit::createJoule(status));
+    measureUnitValue = MeasureUnit::getJoule();
+    measureUnit.adoptInstead(MeasureUnit::createKilocalorie(status));
+    measureUnitValue = MeasureUnit::getKilocalorie();
+    measureUnit.adoptInstead(MeasureUnit::createKilojoule(status));
+    measureUnitValue = MeasureUnit::getKilojoule();
+    measureUnit.adoptInstead(MeasureUnit::createKilowattHour(status));
+    measureUnitValue = MeasureUnit::getKilowattHour();
+    measureUnit.adoptInstead(MeasureUnit::createThermUs(status));
+    measureUnitValue = MeasureUnit::getThermUs();
+    measureUnit.adoptInstead(MeasureUnit::createNewton(status));
+    measureUnitValue = MeasureUnit::getNewton();
+    measureUnit.adoptInstead(MeasureUnit::createPoundForce(status));
+    measureUnitValue = MeasureUnit::getPoundForce();
+    measureUnit.adoptInstead(MeasureUnit::createGigahertz(status));
+    measureUnitValue = MeasureUnit::getGigahertz();
+    measureUnit.adoptInstead(MeasureUnit::createHertz(status));
+    measureUnitValue = MeasureUnit::getHertz();
+    measureUnit.adoptInstead(MeasureUnit::createKilohertz(status));
+    measureUnitValue = MeasureUnit::getKilohertz();
+    measureUnit.adoptInstead(MeasureUnit::createMegahertz(status));
+    measureUnitValue = MeasureUnit::getMegahertz();
+    measureUnit.adoptInstead(MeasureUnit::createDotPerCentimeter(status));
+    measureUnitValue = MeasureUnit::getDotPerCentimeter();
+    measureUnit.adoptInstead(MeasureUnit::createDotPerInch(status));
+    measureUnitValue = MeasureUnit::getDotPerInch();
+    measureUnit.adoptInstead(MeasureUnit::createEm(status));
+    measureUnitValue = MeasureUnit::getEm();
+    measureUnit.adoptInstead(MeasureUnit::createMegapixel(status));
+    measureUnitValue = MeasureUnit::getMegapixel();
+    measureUnit.adoptInstead(MeasureUnit::createPixel(status));
+    measureUnitValue = MeasureUnit::getPixel();
+    measureUnit.adoptInstead(MeasureUnit::createPixelPerCentimeter(status));
+    measureUnitValue = MeasureUnit::getPixelPerCentimeter();
+    measureUnit.adoptInstead(MeasureUnit::createPixelPerInch(status));
+    measureUnitValue = MeasureUnit::getPixelPerInch();
+    measureUnit.adoptInstead(MeasureUnit::createAstronomicalUnit(status));
+    measureUnitValue = MeasureUnit::getAstronomicalUnit();
+    measureUnit.adoptInstead(MeasureUnit::createCentimeter(status));
+    measureUnitValue = MeasureUnit::getCentimeter();
+    measureUnit.adoptInstead(MeasureUnit::createDecimeter(status));
+    measureUnitValue = MeasureUnit::getDecimeter();
+    measureUnit.adoptInstead(MeasureUnit::createFathom(status));
+    measureUnitValue = MeasureUnit::getFathom();
+    measureUnit.adoptInstead(MeasureUnit::createFoot(status));
+    measureUnitValue = MeasureUnit::getFoot();
+    measureUnit.adoptInstead(MeasureUnit::createFurlong(status));
+    measureUnitValue = MeasureUnit::getFurlong();
+    measureUnit.adoptInstead(MeasureUnit::createInch(status));
+    measureUnitValue = MeasureUnit::getInch();
+    measureUnit.adoptInstead(MeasureUnit::createKilometer(status));
+    measureUnitValue = MeasureUnit::getKilometer();
+    measureUnit.adoptInstead(MeasureUnit::createLightYear(status));
+    measureUnitValue = MeasureUnit::getLightYear();
+    measureUnit.adoptInstead(MeasureUnit::createMeter(status));
+    measureUnitValue = MeasureUnit::getMeter();
+    measureUnit.adoptInstead(MeasureUnit::createMicrometer(status));
+    measureUnitValue = MeasureUnit::getMicrometer();
+    measureUnit.adoptInstead(MeasureUnit::createMile(status));
+    measureUnitValue = MeasureUnit::getMile();
+    measureUnit.adoptInstead(MeasureUnit::createMileScandinavian(status));
+    measureUnitValue = MeasureUnit::getMileScandinavian();
+    measureUnit.adoptInstead(MeasureUnit::createMillimeter(status));
+    measureUnitValue = MeasureUnit::getMillimeter();
+    measureUnit.adoptInstead(MeasureUnit::createNanometer(status));
+    measureUnitValue = MeasureUnit::getNanometer();
+    measureUnit.adoptInstead(MeasureUnit::createNauticalMile(status));
+    measureUnitValue = MeasureUnit::getNauticalMile();
+    measureUnit.adoptInstead(MeasureUnit::createParsec(status));
+    measureUnitValue = MeasureUnit::getParsec();
+    measureUnit.adoptInstead(MeasureUnit::createPicometer(status));
+    measureUnitValue = MeasureUnit::getPicometer();
+    measureUnit.adoptInstead(MeasureUnit::createPoint(status));
+    measureUnitValue = MeasureUnit::getPoint();
+    measureUnit.adoptInstead(MeasureUnit::createSolarRadius(status));
+    measureUnitValue = MeasureUnit::getSolarRadius();
+    measureUnit.adoptInstead(MeasureUnit::createYard(status));
+    measureUnitValue = MeasureUnit::getYard();
+    measureUnit.adoptInstead(MeasureUnit::createLux(status));
+    measureUnitValue = MeasureUnit::getLux();
+    measureUnit.adoptInstead(MeasureUnit::createSolarLuminosity(status));
+    measureUnitValue = MeasureUnit::getSolarLuminosity();
+    measureUnit.adoptInstead(MeasureUnit::createCarat(status));
+    measureUnitValue = MeasureUnit::getCarat();
+    measureUnit.adoptInstead(MeasureUnit::createDalton(status));
+    measureUnitValue = MeasureUnit::getDalton();
+    measureUnit.adoptInstead(MeasureUnit::createEarthMass(status));
+    measureUnitValue = MeasureUnit::getEarthMass();
+    measureUnit.adoptInstead(MeasureUnit::createGram(status));
+    measureUnitValue = MeasureUnit::getGram();
+    measureUnit.adoptInstead(MeasureUnit::createKilogram(status));
+    measureUnitValue = MeasureUnit::getKilogram();
+    measureUnit.adoptInstead(MeasureUnit::createMetricTon(status));
+    measureUnitValue = MeasureUnit::getMetricTon();
+    measureUnit.adoptInstead(MeasureUnit::createMicrogram(status));
+    measureUnitValue = MeasureUnit::getMicrogram();
+    measureUnit.adoptInstead(MeasureUnit::createMilligram(status));
+    measureUnitValue = MeasureUnit::getMilligram();
+    measureUnit.adoptInstead(MeasureUnit::createOunce(status));
+    measureUnitValue = MeasureUnit::getOunce();
+    measureUnit.adoptInstead(MeasureUnit::createOunceTroy(status));
+    measureUnitValue = MeasureUnit::getOunceTroy();
+    measureUnit.adoptInstead(MeasureUnit::createPound(status));
+    measureUnitValue = MeasureUnit::getPound();
+    measureUnit.adoptInstead(MeasureUnit::createSolarMass(status));
+    measureUnitValue = MeasureUnit::getSolarMass();
+    measureUnit.adoptInstead(MeasureUnit::createStone(status));
+    measureUnitValue = MeasureUnit::getStone();
+    measureUnit.adoptInstead(MeasureUnit::createTon(status));
+    measureUnitValue = MeasureUnit::getTon();
+    measureUnit.adoptInstead(MeasureUnit::createGigawatt(status));
+    measureUnitValue = MeasureUnit::getGigawatt();
+    measureUnit.adoptInstead(MeasureUnit::createHorsepower(status));
+    measureUnitValue = MeasureUnit::getHorsepower();
+    measureUnit.adoptInstead(MeasureUnit::createKilowatt(status));
+    measureUnitValue = MeasureUnit::getKilowatt();
+    measureUnit.adoptInstead(MeasureUnit::createMegawatt(status));
+    measureUnitValue = MeasureUnit::getMegawatt();
+    measureUnit.adoptInstead(MeasureUnit::createMilliwatt(status));
+    measureUnitValue = MeasureUnit::getMilliwatt();
+    measureUnit.adoptInstead(MeasureUnit::createWatt(status));
+    measureUnitValue = MeasureUnit::getWatt();
+    measureUnit.adoptInstead(MeasureUnit::createAtmosphere(status));
+    measureUnitValue = MeasureUnit::getAtmosphere();
+    measureUnit.adoptInstead(MeasureUnit::createBar(status));
+    measureUnitValue = MeasureUnit::getBar();
+    measureUnit.adoptInstead(MeasureUnit::createHectopascal(status));
+    measureUnitValue = MeasureUnit::getHectopascal();
+    measureUnit.adoptInstead(MeasureUnit::createInchHg(status));
+    measureUnitValue = MeasureUnit::getInchHg();
+    measureUnit.adoptInstead(MeasureUnit::createKilopascal(status));
+    measureUnitValue = MeasureUnit::getKilopascal();
+    measureUnit.adoptInstead(MeasureUnit::createMegapascal(status));
+    measureUnitValue = MeasureUnit::getMegapascal();
+    measureUnit.adoptInstead(MeasureUnit::createMillibar(status));
+    measureUnitValue = MeasureUnit::getMillibar();
+    measureUnit.adoptInstead(MeasureUnit::createMillimeterOfMercury(status));
+    measureUnitValue = MeasureUnit::getMillimeterOfMercury();
+    measureUnit.adoptInstead(MeasureUnit::createPascal(status));
+    measureUnitValue = MeasureUnit::getPascal();
+    measureUnit.adoptInstead(MeasureUnit::createPoundPerSquareInch(status));
+    measureUnitValue = MeasureUnit::getPoundPerSquareInch();
+    measureUnit.adoptInstead(MeasureUnit::createKilometerPerHour(status));
+    measureUnitValue = MeasureUnit::getKilometerPerHour();
+    measureUnit.adoptInstead(MeasureUnit::createKnot(status));
+    measureUnitValue = MeasureUnit::getKnot();
+    measureUnit.adoptInstead(MeasureUnit::createMeterPerSecond(status));
+    measureUnitValue = MeasureUnit::getMeterPerSecond();
+    measureUnit.adoptInstead(MeasureUnit::createMilePerHour(status));
+    measureUnitValue = MeasureUnit::getMilePerHour();
+    measureUnit.adoptInstead(MeasureUnit::createCelsius(status));
+    measureUnitValue = MeasureUnit::getCelsius();
+    measureUnit.adoptInstead(MeasureUnit::createFahrenheit(status));
+    measureUnitValue = MeasureUnit::getFahrenheit();
+    measureUnit.adoptInstead(MeasureUnit::createGenericTemperature(status));
+    measureUnitValue = MeasureUnit::getGenericTemperature();
+    measureUnit.adoptInstead(MeasureUnit::createKelvin(status));
+    measureUnitValue = MeasureUnit::getKelvin();
+    measureUnit.adoptInstead(MeasureUnit::createNewtonMeter(status));
+    measureUnitValue = MeasureUnit::getNewtonMeter();
+    measureUnit.adoptInstead(MeasureUnit::createPoundFoot(status));
+    measureUnitValue = MeasureUnit::getPoundFoot();
+    measureUnit.adoptInstead(MeasureUnit::createAcreFoot(status));
+    measureUnitValue = MeasureUnit::getAcreFoot();
+    measureUnit.adoptInstead(MeasureUnit::createBarrel(status));
+    measureUnitValue = MeasureUnit::getBarrel();
+    measureUnit.adoptInstead(MeasureUnit::createBushel(status));
+    measureUnitValue = MeasureUnit::getBushel();
+    measureUnit.adoptInstead(MeasureUnit::createCentiliter(status));
+    measureUnitValue = MeasureUnit::getCentiliter();
+    measureUnit.adoptInstead(MeasureUnit::createCubicCentimeter(status));
+    measureUnitValue = MeasureUnit::getCubicCentimeter();
+    measureUnit.adoptInstead(MeasureUnit::createCubicFoot(status));
+    measureUnitValue = MeasureUnit::getCubicFoot();
+    measureUnit.adoptInstead(MeasureUnit::createCubicInch(status));
+    measureUnitValue = MeasureUnit::getCubicInch();
+    measureUnit.adoptInstead(MeasureUnit::createCubicKilometer(status));
+    measureUnitValue = MeasureUnit::getCubicKilometer();
+    measureUnit.adoptInstead(MeasureUnit::createCubicMeter(status));
+    measureUnitValue = MeasureUnit::getCubicMeter();
+    measureUnit.adoptInstead(MeasureUnit::createCubicMile(status));
+    measureUnitValue = MeasureUnit::getCubicMile();
+    measureUnit.adoptInstead(MeasureUnit::createCubicYard(status));
+    measureUnitValue = MeasureUnit::getCubicYard();
+    measureUnit.adoptInstead(MeasureUnit::createCup(status));
+    measureUnitValue = MeasureUnit::getCup();
+    measureUnit.adoptInstead(MeasureUnit::createCupMetric(status));
+    measureUnitValue = MeasureUnit::getCupMetric();
+    measureUnit.adoptInstead(MeasureUnit::createDeciliter(status));
+    measureUnitValue = MeasureUnit::getDeciliter();
+    measureUnit.adoptInstead(MeasureUnit::createFluidOunce(status));
+    measureUnitValue = MeasureUnit::getFluidOunce();
+    measureUnit.adoptInstead(MeasureUnit::createFluidOunceImperial(status));
+    measureUnitValue = MeasureUnit::getFluidOunceImperial();
+    measureUnit.adoptInstead(MeasureUnit::createGallon(status));
+    measureUnitValue = MeasureUnit::getGallon();
+    measureUnit.adoptInstead(MeasureUnit::createGallonImperial(status));
+    measureUnitValue = MeasureUnit::getGallonImperial();
+    measureUnit.adoptInstead(MeasureUnit::createHectoliter(status));
+    measureUnitValue = MeasureUnit::getHectoliter();
+    measureUnit.adoptInstead(MeasureUnit::createLiter(status));
+    measureUnitValue = MeasureUnit::getLiter();
+    measureUnit.adoptInstead(MeasureUnit::createMegaliter(status));
+    measureUnitValue = MeasureUnit::getMegaliter();
+    measureUnit.adoptInstead(MeasureUnit::createMilliliter(status));
+    measureUnitValue = MeasureUnit::getMilliliter();
+    measureUnit.adoptInstead(MeasureUnit::createPint(status));
+    measureUnitValue = MeasureUnit::getPint();
+    measureUnit.adoptInstead(MeasureUnit::createPintMetric(status));
+    measureUnitValue = MeasureUnit::getPintMetric();
+    measureUnit.adoptInstead(MeasureUnit::createQuart(status));
+    measureUnitValue = MeasureUnit::getQuart();
+    measureUnit.adoptInstead(MeasureUnit::createTablespoon(status));
+    measureUnitValue = MeasureUnit::getTablespoon();
+    measureUnit.adoptInstead(MeasureUnit::createTeaspoon(status));
+    measureUnitValue = MeasureUnit::getTeaspoon();
+    assertSuccess("", status);
+}
+
 void MeasureFormatTest::TestBasic() {
     UErrorCode status = U_ZERO_ERROR;
     MeasureUnit *ptr1 = MeasureUnit::createArcMinute(status);
@@ -1206,7 +1897,7 @@ void MeasureFormatTest::TestBasic() {
     if (!(*ptr1 != *ptr3)) {
         errln("Expect != to work.");
     }
-    MeasureUnit *ptr4 = (MeasureUnit *) ptr1->clone();
+    MeasureUnit *ptr4 = ptr1->clone();
     if (*ptr1 != *ptr4) {
         errln("Expect clone to work.");
     }
@@ -1362,6 +2053,10 @@ void MeasureFormatTest::TestExamplesInDocs() {
 
 void MeasureFormatTest::TestFormatPeriodEn() {
     UErrorCode status = U_ZERO_ERROR;
+    Measure t_1y[] = {Measure((double)1, MeasureUnit::createYear(status), status)};
+    Measure t_5M[] = {Measure((double)5, MeasureUnit::createMonth(status), status)};
+    Measure t_4d[] = {Measure((double)4, MeasureUnit::createDay(status), status)};
+    Measure t_2h[] = {Measure((double)2, MeasureUnit::createHour(status), status)};
     Measure t_19m[] = {Measure((double)19, MeasureUnit::createMinute(status), status)};
     Measure t_1h_23_5s[] = {
             Measure((double)1.0, MeasureUnit::createHour(status), status),
@@ -1504,6 +2199,46 @@ void MeasureFormatTest::TestFormatPeriodEn() {
             {t_6h_56_92m, UPRV_LENGTHOF(t_6h_56_92m), "6:56,92"},
             {t_3h_5h, UPRV_LENGTHOF(t_3h_5h), "3 Std., 5 Std."}};
 
+    ExpectedResult numericDataBn[] = {
+            {t_1m_59_9996s, UPRV_LENGTHOF(t_1m_59_9996s), "\\u09E7:\\u09EB\\u09EF.\\u09EF\\u09EF\\u09EF\\u09EC"},
+            {t_19m, UPRV_LENGTHOF(t_19m), "\\u09E7\\u09EF \\u09AE\\u09BF\\u0983"},
+            {t_1h_23_5s, UPRV_LENGTHOF(t_1h_23_5s), "\\u09E7:\\u09E6\\u09E6:\\u09E8\\u09E9.\\u09EB"},
+            {t_1h_0m_23s, UPRV_LENGTHOF(t_1h_0m_23s), "\\u09E7:\\u09E6\\u09E6:\\u09E8\\u09E9"},
+            {t_1h_23_5m, UPRV_LENGTHOF(t_1h_23_5m), "\\u09E7:\\u09E8\\u09E9.\\u09EB"},
+            {t_5h_17m, UPRV_LENGTHOF(t_5h_17m), "\\u09EB:\\u09E7\\u09ED"},
+            {t_19m_28s, UPRV_LENGTHOF(t_19m_28s), "\\u09E7\\u09EF:\\u09E8\\u09EE"},
+            {t_2y_5M_3w_4d, UPRV_LENGTHOF(t_2y_5M_3w_4d), "\\u09E8 \\u09AC\\u099B\\u09B0, \\u09EB \\u09AE\\u09BE\\u09B8, \\u09E9 \\u09B8\\u09AA\\u09CD\\u09A4\\u09BE\\u09B9, \\u09EA \\u09A6\\u09BF\\u09A8"},
+            {t_0h_0m_17s, UPRV_LENGTHOF(t_0h_0m_17s), "\\u09E6:\\u09E6\\u09E6:\\u09E7\\u09ED"},
+            {t_6h_56_92m, UPRV_LENGTHOF(t_6h_56_92m), "\\u09EC:\\u09EB\\u09EC.\\u09EF\\u09E8"},
+            {t_3h_5h, UPRV_LENGTHOF(t_3h_5h), "\\u09E9 \\u0998\\u0983, \\u09EB \\u0998\\u0983"}};
+
+    ExpectedResult numericDataBnLatn[] = {
+            {t_1m_59_9996s, UPRV_LENGTHOF(t_1m_59_9996s), "1:59.9996"},
+            {t_19m, UPRV_LENGTHOF(t_19m), "19 \\u09AE\\u09BF\\u0983"},
+            {t_1h_23_5s, UPRV_LENGTHOF(t_1h_23_5s), "1:00:23.5"},
+            {t_1h_0m_23s, UPRV_LENGTHOF(t_1h_0m_23s), "1:00:23"},
+            {t_1h_23_5m, UPRV_LENGTHOF(t_1h_23_5m), "1:23.5"},
+            {t_5h_17m, UPRV_LENGTHOF(t_5h_17m), "5:17"},
+            {t_19m_28s, UPRV_LENGTHOF(t_19m_28s), "19:28"},
+            {t_2y_5M_3w_4d, UPRV_LENGTHOF(t_2y_5M_3w_4d), "2 \\u09AC\\u099B\\u09B0, 5 \\u09AE\\u09BE\\u09B8, 3 \\u09B8\\u09AA\\u09CD\\u09A4\\u09BE\\u09B9, 4 \\u09A6\\u09BF\\u09A8"},
+            {t_0h_0m_17s, UPRV_LENGTHOF(t_0h_0m_17s), "0:00:17"},
+            {t_6h_56_92m, UPRV_LENGTHOF(t_6h_56_92m), "6:56.92"},
+            {t_3h_5h, UPRV_LENGTHOF(t_3h_5h), "3 \\u0998\\u0983, 5 \\u0998\\u0983"}};
+
+    ExpectedResult fullDataSpellout[] = {
+            {t_1y, UPRV_LENGTHOF(t_1y), "one year"},
+            {t_5M, UPRV_LENGTHOF(t_5M), "five months"},
+            {t_4d, UPRV_LENGTHOF(t_4d), "four days"},
+            {t_2h, UPRV_LENGTHOF(t_2h), "two hours"},
+            {t_19m, UPRV_LENGTHOF(t_19m), "nineteen minutes"}};
+
+    ExpectedResult fullDataSpelloutFr[] = {
+            {t_1y, UPRV_LENGTHOF(t_1y), "un\\u00A0an"},
+            {t_5M, UPRV_LENGTHOF(t_5M), "cinq\\u00A0mois"},
+            {t_4d, UPRV_LENGTHOF(t_4d), "quatre\\u00A0jours"},
+            {t_2h, UPRV_LENGTHOF(t_2h), "deux\\u00A0heures"},
+            {t_19m, UPRV_LENGTHOF(t_19m), "dix-neuf minutes"}};
+
     Locale en(Locale::getEnglish());
     LocalPointer<NumberFormat> nf(NumberFormat::createInstance(en, status));
     if (U_FAILURE(status)) {
@@ -1511,7 +2246,7 @@ void MeasureFormatTest::TestFormatPeriodEn() {
         return;
     }
     nf->setMaximumFractionDigits(4);
-    MeasureFormat mf(en, UMEASFMT_WIDTH_WIDE, (NumberFormat *) nf->clone(), status);
+    MeasureFormat mf(en, UMEASFMT_WIDTH_WIDE, nf->clone(), status);
     if (!assertSuccess("Error creating measure format en WIDE", status)) {
         return;
     }
@@ -1524,21 +2259,21 @@ void MeasureFormatTest::TestFormatPeriodEn() {
     }
     // exercise clone
     {
-        MeasureFormat *mf3 = (MeasureFormat *) mf.clone();
+        MeasureFormat *mf3 = mf.clone();
         verifyFormat("en WIDE copy", *mf3, fullData, UPRV_LENGTHOF(fullData));
         delete mf3;
     }
-    mf = MeasureFormat(en, UMEASFMT_WIDTH_SHORT, (NumberFormat *) nf->clone(), status);
+    mf = MeasureFormat(en, UMEASFMT_WIDTH_SHORT, nf->clone(), status);
     if (!assertSuccess("Error creating measure format en SHORT", status)) {
         return;
     }
     verifyFormat("en SHORT", mf, abbrevData, UPRV_LENGTHOF(abbrevData));
-    mf = MeasureFormat(en, UMEASFMT_WIDTH_NARROW, (NumberFormat *) nf->clone(), status);
+    mf = MeasureFormat(en, UMEASFMT_WIDTH_NARROW, nf->clone(), status);
     if (!assertSuccess("Error creating measure format en NARROW", status)) {
         return;
     }
     verifyFormat("en NARROW", mf, narrowData, UPRV_LENGTHOF(narrowData));
-    mf = MeasureFormat(en, UMEASFMT_WIDTH_NUMERIC, (NumberFormat *) nf->clone(), status);
+    mf = MeasureFormat(en, UMEASFMT_WIDTH_NUMERIC, nf->clone(), status);
     if (!assertSuccess("Error creating measure format en NUMERIC", status)) {
         return;
     }
@@ -1550,16 +2285,64 @@ void MeasureFormatTest::TestFormatPeriodEn() {
         return;
     }
     nf->setMaximumFractionDigits(4);
-    mf = MeasureFormat(de, UMEASFMT_WIDTH_WIDE, (NumberFormat *) nf->clone(), status);
+    mf = MeasureFormat(de, UMEASFMT_WIDTH_WIDE, nf->clone(), status);
     if (!assertSuccess("Error creating measure format de WIDE", status)) {
         return;
     }
     verifyFormat("de WIDE", mf, fullDataDe, UPRV_LENGTHOF(fullDataDe));
-    mf = MeasureFormat(de, UMEASFMT_WIDTH_NUMERIC, (NumberFormat *) nf->clone(), status);
+    mf = MeasureFormat(de, UMEASFMT_WIDTH_NUMERIC, nf->clone(), status);
     if (!assertSuccess("Error creating measure format de NUMERIC", status)) {
         return;
     }
     verifyFormat("de NUMERIC", mf, numericDataDe, UPRV_LENGTHOF(numericDataDe));
+
+    Locale bengali("bn");
+    nf.adoptInstead(NumberFormat::createInstance(bengali, status));
+    if (!assertSuccess("Error creating number format de object", status)) {
+        return;
+    }
+    nf->setMaximumFractionDigits(4);
+    mf = MeasureFormat(bengali, UMEASFMT_WIDTH_NUMERIC, nf->clone(), status);
+    if (!assertSuccess("Error creating measure format bn NUMERIC", status)) {
+        return;
+    }
+    verifyFormat("bn NUMERIC", mf, numericDataBn, UPRV_LENGTHOF(numericDataBn));
+
+    Locale bengaliLatin("bn-u-nu-latn");
+    nf.adoptInstead(NumberFormat::createInstance(bengaliLatin, status));
+    if (!assertSuccess("Error creating number format de object", status)) {
+        return;
+    }
+    nf->setMaximumFractionDigits(4);
+    mf = MeasureFormat(bengaliLatin, UMEASFMT_WIDTH_NUMERIC, nf->clone(), status);
+    if (!assertSuccess("Error creating measure format bn-u-nu-latn NUMERIC", status)) {
+        return;
+    }
+    verifyFormat("bn-u-nu-latn NUMERIC", mf, numericDataBnLatn, UPRV_LENGTHOF(numericDataBnLatn));
+
+    status = U_ZERO_ERROR;
+    LocalPointer<RuleBasedNumberFormat> rbnf(new RuleBasedNumberFormat(URBNF_SPELLOUT, en, status));
+    if (U_FAILURE(status)) {
+        dataerrln("Error creating rbnf en object - %s", u_errorName(status));
+        return;
+    }
+    mf = MeasureFormat(en, UMEASFMT_WIDTH_WIDE, rbnf->clone(), status);
+    if (!assertSuccess("Error creating measure format en WIDE with rbnf", status)) {
+        return;
+    }
+    verifyFormat("en WIDE rbnf", mf, fullDataSpellout, UPRV_LENGTHOF(fullDataSpellout));
+
+    Locale fr(Locale::getFrench());
+    LocalPointer<RuleBasedNumberFormat> rbnffr(new RuleBasedNumberFormat(URBNF_SPELLOUT, fr, status));
+    if (U_FAILURE(status)) {
+        dataerrln("Error creating rbnf fr object - %s", u_errorName(status));
+        return;
+    }
+    mf = MeasureFormat(fr, UMEASFMT_WIDTH_WIDE, rbnffr->clone(), status);
+    if (!assertSuccess("Error creating measure format fr WIDE with rbnf", status)) {
+        return;
+    }
+    verifyFormat("fr WIDE rbnf", mf, fullDataSpelloutFr, UPRV_LENGTHOF(fullDataSpellout));
 }
 
 void MeasureFormatTest::Test10219FractionalPlurals() {
@@ -1634,7 +2417,7 @@ void MeasureFormatTest::TestGreek() {
         "1 \\u03B7\\u03BC\\u03AD\\u03C1\\u03B1",
         "1 \\u03B5\\u03B2\\u03B4.",
         "1 \\u03BC\\u03AE\\u03BD.",
-        "1 \\u03AD\\u03C4.",	        // year (one)
+        "1 \\u03AD\\u03C4.",            // year (one)
         // "el_GR" 7 wide
         "7 \\u03B4\\u03B5\\u03C5\\u03C4\\u03B5\\u03C1\\u03CC\\u03BB\\u03B5\\u03C0\\u03C4\\u03B1",
         "7 \\u03BB\\u03B5\\u03C0\\u03C4\\u03AC",
@@ -1646,7 +2429,7 @@ void MeasureFormatTest::TestGreek() {
         // "el_GR" 7 short
         "7 \\u03B4\\u03B5\\u03C5\\u03C4.",
         "7 \\u03BB\\u03B5\\u03C0.",
-        "7 \\u03CE\\u03C1.",		    // hour (other)
+        "7 \\u03CE\\u03C1.",            // hour (other)
         "7 \\u03B7\\u03BC\\u03AD\\u03C1\\u03B5\\u03C2",
         "7 \\u03B5\\u03B2\\u03B4.",
         "7 \\u03BC\\u03AE\\u03BD.",
@@ -1667,7 +2450,7 @@ void MeasureFormatTest::TestGreek() {
         "1 \\u03B7\\u03BC\\u03AD\\u03C1\\u03B1",
         "1 \\u03B5\\u03B2\\u03B4.",
         "1 \\u03BC\\u03AE\\u03BD.",
-        "1 \\u03AD\\u03C4.",	        // year (one)
+        "1 \\u03AD\\u03C4.",            // year (one)
         // "el" 7 wide
         "7 \\u03B4\\u03B5\\u03C5\\u03C4\\u03B5\\u03C1\\u03CC\\u03BB\\u03B5\\u03C0\\u03C4\\u03B1",
         "7 \\u03BB\\u03B5\\u03C0\\u03C4\\u03AC",
@@ -1679,7 +2462,7 @@ void MeasureFormatTest::TestGreek() {
         // "el" 7 short
         "7 \\u03B4\\u03B5\\u03C5\\u03C4.",
         "7 \\u03BB\\u03B5\\u03C0.",
-        "7 \\u03CE\\u03C1.",		    // hour (other)
+        "7 \\u03CE\\u03C1.",            // hour (other)
         "7 \\u03B7\\u03BC\\u03AD\\u03C1\\u03B5\\u03C2",
         "7 \\u03B5\\u03B2\\u03B4.",
         "7 \\u03BC\\u03AE\\u03BD.",
@@ -1861,7 +2644,7 @@ void MeasureFormatTest::helperTestSimplePer(
     if (!assertSuccess("Error creating format object", status)) {
         return;
     }
-    Measure measure(value, (MeasureUnit *) unit.clone(), status);
+    Measure measure(value, unit.clone(), status);
     if (!assertSuccess("Error creating measure object", status)) {
         return;
     }
@@ -1934,7 +2717,7 @@ void MeasureFormatTest::TestManyLocaleDurations() {
     if (!assertSuccess("Error creating measures", status)) {
         return;
     }
-    helperTestManyLocaleDurations("da", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5 t og 37 min");
+    helperTestManyLocaleDurations("da", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5 t og 37 m");
     helperTestManyLocaleDurations("da", UMEASFMT_WIDTH_NUMERIC, measures, UPRV_LENGTHOF(measures), "5.37");
     helperTestManyLocaleDurations("de", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5 Std., 37 Min.");
     helperTestManyLocaleDurations("de", UMEASFMT_WIDTH_NUMERIC, measures, UPRV_LENGTHOF(measures), "5:37");
@@ -1942,11 +2725,11 @@ void MeasureFormatTest::TestManyLocaleDurations() {
     helperTestManyLocaleDurations("en", UMEASFMT_WIDTH_NUMERIC, measures, UPRV_LENGTHOF(measures), "5:37");
     helperTestManyLocaleDurations("en_GB", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5h 37m");
     helperTestManyLocaleDurations("en_GB", UMEASFMT_WIDTH_NUMERIC, measures, UPRV_LENGTHOF(measures), "5:37");
-    helperTestManyLocaleDurations("es", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5h 37min");
+    helperTestManyLocaleDurations("es", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5 h 37 min");
     helperTestManyLocaleDurations("es", UMEASFMT_WIDTH_NUMERIC, measures, UPRV_LENGTHOF(measures), "5:37");
     helperTestManyLocaleDurations("fi", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5t 37min");
     helperTestManyLocaleDurations("fi", UMEASFMT_WIDTH_NUMERIC, measures, UPRV_LENGTHOF(measures), "5.37");
-    helperTestManyLocaleDurations("fr", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5h 37\\u202Fmin");
+    helperTestManyLocaleDurations("fr", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5h 37min");
     helperTestManyLocaleDurations("fr", UMEASFMT_WIDTH_NUMERIC, measures, UPRV_LENGTHOF(measures), "5:37");
     helperTestManyLocaleDurations("is", UMEASFMT_WIDTH_NARROW,  measures, UPRV_LENGTHOF(measures), "5 klst. og 37 m\\u00EDn.");
     helperTestManyLocaleDurations("is", UMEASFMT_WIDTH_NUMERIC, measures, UPRV_LENGTHOF(measures), "5:37");
@@ -2327,6 +3110,111 @@ void MeasureFormatTest::TestIndividualPluralFallback() {
     UnicodeString actual;
     assertEquals("2 deg temp in fr_CA", expected, mf.format(twoDeg.orphan(), actual, errorCode), TRUE);
 }
+
+void MeasureFormatTest::Test20332_PersonUnits() {
+    IcuTestErrorCode status(*this, "Test20332_PersonUnits");
+    const struct TestCase {
+        const char* locale;
+        MeasureUnit* unitToAdopt;
+        UMeasureFormatWidth width;
+        const char* expected;
+    } cases[] = {
+        {"en-us", MeasureUnit::createYearPerson(status), UMEASFMT_WIDTH_NARROW, "25y"},
+        {"en-us", MeasureUnit::createYearPerson(status), UMEASFMT_WIDTH_SHORT, "25 yrs"},
+        {"en-us", MeasureUnit::createYearPerson(status), UMEASFMT_WIDTH_WIDE, "25 years"},
+        {"en-us", MeasureUnit::createMonthPerson(status), UMEASFMT_WIDTH_NARROW, "25m"},
+        {"en-us", MeasureUnit::createMonthPerson(status), UMEASFMT_WIDTH_SHORT, "25 mths"},
+        {"en-us", MeasureUnit::createMonthPerson(status), UMEASFMT_WIDTH_WIDE, "25 months"},
+        {"en-us", MeasureUnit::createWeekPerson(status), UMEASFMT_WIDTH_NARROW, "25w"},
+        {"en-us", MeasureUnit::createWeekPerson(status), UMEASFMT_WIDTH_SHORT, "25 wks"},
+        {"en-us", MeasureUnit::createWeekPerson(status), UMEASFMT_WIDTH_WIDE, "25 weeks"},
+        {"en-us", MeasureUnit::createDayPerson(status), UMEASFMT_WIDTH_NARROW, "25d"},
+        {"en-us", MeasureUnit::createDayPerson(status), UMEASFMT_WIDTH_SHORT, "25 days"},
+        {"en-us", MeasureUnit::createDayPerson(status), UMEASFMT_WIDTH_WIDE, "25 days"}
+    };
+    for (const auto& cas : cases) {
+        MeasureFormat mf(cas.locale, cas.width, status);
+        if (status.errIfFailureAndReset()) { return; }
+        Measure measure(25, cas.unitToAdopt, status);
+        if (status.errIfFailureAndReset()) { return; }
+        verifyFormat(cas.locale, mf, &measure, 1, cas.expected);
+    }
+}
+
+void MeasureFormatTest::TestNumericTime() {
+    IcuTestErrorCode status(*this, "TestNumericTime");
+
+    MeasureFormat fmt("en", UMEASFMT_WIDTH_NUMERIC, status);
+
+    Measure hours(112, MeasureUnit::createHour(status), status);
+    Measure minutes(113, MeasureUnit::createMinute(status), status);
+    Measure seconds(114, MeasureUnit::createSecond(status), status);
+    Measure fhours(112.8765, MeasureUnit::createHour(status), status);
+    Measure fminutes(113.8765, MeasureUnit::createMinute(status), status);
+    Measure fseconds(114.8765, MeasureUnit::createSecond(status), status);
+    if (status.errDataIfFailureAndReset(WHERE)) return;
+
+    verifyFormat("hours", fmt, &hours, 1, "112h");
+    verifyFormat("minutes", fmt, &minutes, 1, "113m");
+    verifyFormat("seconds", fmt, &seconds, 1, "114s");
+
+    verifyFormat("fhours", fmt, &fhours, 1, "112.876h");
+    verifyFormat("fminutes", fmt, &fminutes, 1, "113.876m");
+    verifyFormat("fseconds", fmt, &fseconds, 1, "114.876s");
+
+    Measure hoursMinutes[2] = {hours, minutes};
+    verifyFormat("hoursMinutes", fmt, hoursMinutes, 2, "112:113");
+    Measure hoursSeconds[2] = {hours, seconds};
+    verifyFormat("hoursSeconds", fmt, hoursSeconds, 2, "112:00:114");
+    Measure minutesSeconds[2] = {minutes, seconds};
+    verifyFormat("minutesSeconds", fmt, minutesSeconds, 2, "113:114");
+
+    Measure hoursFminutes[2] = {hours, fminutes};
+    verifyFormat("hoursFminutes", fmt, hoursFminutes, 2, "112:113.876");
+    Measure hoursFseconds[2] = {hours, fseconds};
+    verifyFormat("hoursFseconds", fmt, hoursFseconds, 2, "112:00:114.876");
+    Measure minutesFseconds[2] = {minutes, fseconds};
+    verifyFormat("hoursMminutesFsecondsinutes", fmt, minutesFseconds, 2, "113:114.876");
+
+    Measure fhoursMinutes[2] = {fhours, minutes};
+    verifyFormat("fhoursMinutes", fmt, fhoursMinutes, 2, "112:113");
+    Measure fhoursSeconds[2] = {fhours, seconds};
+    verifyFormat("fhoursSeconds", fmt, fhoursSeconds, 2, "112:00:114");
+    Measure fminutesSeconds[2] = {fminutes, seconds};
+    verifyFormat("fminutesSeconds", fmt, fminutesSeconds, 2, "113:114");
+
+    Measure fhoursFminutes[2] = {fhours, fminutes};
+    verifyFormat("fhoursFminutes", fmt, fhoursFminutes, 2, "112:113.876");
+    Measure fhoursFseconds[2] = {fhours, fseconds};
+    verifyFormat("fhoursFseconds", fmt, fhoursFseconds, 2, "112:00:114.876");
+    Measure fminutesFseconds[2] = {fminutes, fseconds};
+    verifyFormat("fminutesFseconds", fmt, fminutesFseconds, 2, "113:114.876");
+
+    Measure hoursMinutesSeconds[3] = {hours, minutes, seconds};
+    verifyFormat("hoursMinutesSeconds", fmt, hoursMinutesSeconds, 3, "112:113:114");
+    Measure fhoursFminutesFseconds[3] = {fhours, fminutes, fseconds};
+    verifyFormat("fhoursFminutesFseconds", fmt, fhoursFminutesFseconds, 3, "112:113:114.876");
+}
+
+void MeasureFormatTest::TestNumericTimeSomeSpecialFormats() {
+    IcuTestErrorCode status(*this, "TestNumericTimeSomeSpecialFormats");
+
+    Measure fhours(2.8765432, MeasureUnit::createHour(status), status);
+    Measure fminutes(3.8765432, MeasureUnit::createMinute(status), status);
+    if (status.errDataIfFailureAndReset(WHERE)) return;
+
+    Measure fhoursFminutes[2] = {fhours, fminutes};
+
+    // Latvian is one of the very few locales 0-padding the hour
+    MeasureFormat fmtLt("lt", UMEASFMT_WIDTH_NUMERIC, status);
+    if (status.errDataIfFailureAndReset(WHERE)) return;
+    verifyFormat("Latvian fhoursFminutes", fmtLt, fhoursFminutes, 2, "02:03,877");
+
+    // Danish is one of the very few locales using '.' as separator
+    MeasureFormat fmtDa("da", UMEASFMT_WIDTH_NUMERIC, status);
+    verifyFormat("Danish fhoursFminutes", fmtDa, fhoursFminutes, 2, "2.03,877");
+}
+
 
 void MeasureFormatTest::verifyFieldPosition(
         const char *description,

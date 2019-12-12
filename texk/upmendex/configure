@@ -638,6 +638,7 @@ ICU_DEPEND
 ICU_LIBS
 ICU_INCLUDES
 ICU_CONFIG
+PTHREAD_LIB
 KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
@@ -19512,6 +19513,73 @@ $as_echo "$kpse_cv_kpse_debug" >&6; }
 if test "x$kpse_cv_kpse_debug" != xyes; then :
   KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
 fi
+
+kpse_search_save_LIBS=$LIBS
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing pthread_create" >&5
+$as_echo_n "checking for library containing pthread_create... " >&6; }
+if ${ac_cv_search_pthread_create+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pthread_create ();
+int
+main ()
+{
+return pthread_create ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' pthread; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_pthread_create=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if ${ac_cv_search_pthread_create+:} false; then :
+  break
+fi
+done
+if ${ac_cv_search_pthread_create+:} false; then :
+
+else
+  ac_cv_search_pthread_create=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_pthread_create" >&5
+$as_echo "$ac_cv_search_pthread_create" >&6; }
+ac_res=$ac_cv_search_pthread_create
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
+
+LIBS=$kpse_search_save_LIBS
+case $ac_cv_search_pthread_create in #(
+  "none required") :
+     ;; #(
+  no) :
+    as_fn_error $? "Sorry, did not find pthread_create()" "$LINENO" 5 ;; #(
+  *) :
+    PTHREAD_LIB=$ac_cv_search_pthread_create ;;
+esac
 
 echo 'tldbg:KPSE_ICU_FLAGS called: more-icu-libs=icuio icui18n, icu-config-args=--ldflags-icuio.' >&5
 ##tldbg _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags.

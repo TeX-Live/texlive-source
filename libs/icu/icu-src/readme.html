@@ -3,7 +3,7 @@
 
 <html lang="en-US" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
   <head>
-    <title>ReadMe for ICU 63.1</title>
+    <title>ReadMe for ICU 65.1</title>
     <meta name="COPYRIGHT" content=
     "Copyright (C) 2016 and later: Unicode, Inc. and others. License &amp; terms of use: http://www.unicode.org/copyright.html"/>
     <!-- meta name="COPYRIGHT" content=
@@ -32,7 +32,7 @@
       International Components for Unicode<br/>
       <span class="only-rc">Release Candidate</span>
       <span class="only-milestone">(Milestone Release)</span>
-      <abbr title="International Components for Unicode">ICU</abbr> 63.1 ReadMe
+      <abbr title="International Components for Unicode">ICU</abbr> 65.1 ReadMe
     </h1>
 
     <!-- Shouldn't need to comment/uncomment this paragraph, just change the body class -->
@@ -44,7 +44,7 @@
     <p class="note only-rc">This is a release candidate version of ICU4C.
       It is not recommended for production use.</p>
 
-    <p>Last updated: 2018-Oct-05<br/>
+    <p>Last updated: 2019-Sept-16<br/>
       Copyright &copy; 2016 and later: Unicode, Inc. and others. License &amp; terms of use:
       <a href="http://www.unicode.org/copyright.html">http://www.unicode.org/copyright.html</a><br/>
       Copyright &copy; 1997-2016 International Business Machines Corporation and others.
@@ -233,7 +233,7 @@
 
     <h2><a name="News" href="#News" id="News">What Is New In This Release?</a></h2>
 
-    <p>See the <a href="http://site.icu-project.org/download/63">ICU 63 download page</a>
+    <p>See the <a href="http://site.icu-project.org/download/65">ICU 65 download page</a>
     for an overview of this release, important changes, new features, bug fixes, known issues,
     changes to supported platforms and build environments,
     and migration issues for existing applications migrating from previous ICU releases.</p>
@@ -366,8 +366,8 @@
 
           <p>If some of the following directories are missing, it's probably
           because you got an official download. If you need the data source files
-          for customization, then please download the ICU source code from <a
-          href="http://site.icu-project.org/repository">subversion</a>.</p>
+          for customization, then please download the complete ICU source code from <a
+          href="http://site.icu-project.org/repository">the ICU repository</a>.</p>
 
           <ul>
             <li><b>in/</b> A directory that contains a pre-built data library for
@@ -705,11 +705,11 @@
         source file tree clean and have build output files written to
         a different location. This is called an "out-of-source build".
         Simply invoke the configure script from the target location:
-<pre>~/icu$ svn export http://source.icu-project.org/repos/icu/trunk/icu4c
-~/icu$ mkdir trunk-dev
-~/icu$ cd trunk-dev
-~/icu/trunk-dev$ ../trunk/source/runConfigureICU Linux
-~/icu/trunk-dev$ make check</pre><br/>
+<pre>~/icu$ git clone export https://github.com/unicode-org/icu.git
+~/icu$ mkdir icu4c-build
+~/icu$ cd icu4c-build
+~/icu/icu4c-build$ ../icu/icu4c/source/runConfigureICU Linux
+~/icu/icu4c-build$ make check</pre><br/>
         (Note: this example shows a relative path to
          <code>runConfigureICU</code>. If you experience difficulty,
          try using an absolute path to <code>runConfigureICU</code>
@@ -744,7 +744,8 @@
         across library and compiler versions is very hard to achieve.
         Most ICU C++ APIs are in header files that contain a comment with
         <code>\brief C++ API</code>.
-        Consider not installing these header files.</li>
+        Consider not installing these header files, or define <code>U_SHOW_CPLUSPLUS_API</code>
+        to be <code>0</code> by modifying unicode/utypes.h before installing it.</li>
       <li><b>Disable renaming:</b> By default, ICU library entry point names
         have an ICU version suffix. Turn this off for a system-level installation,
         to enable upgrading ICU without breaking applications. For example:<br />
@@ -814,8 +815,10 @@
       <li>If you are building using 'Visual Studio 2015' instead, or if you are building the UWP projects and you have a different
       version of the Windows 10 SDK installed you will first need to modify the two "<tt>Build.Windows.*.props</tt>" files
       in the "<tt>allinone</tt>" directory before you can open the "allinone" solution file.
-      Please see the notes below about <a href="#HowToUseOtherVSVersions">building with other versions of Visual Studio</a> or the 
-      notes on <a href="#HowToRetargetTheWin10SDK">re-targeting the Windows 10 SDK for the UWP projects</a> for details.</li>
+      Please see the notes below about <a href="#HowToUseOtherVSVersions">building with other versions of Visual Studio</a> and the 
+      notes on <a href="#HowToRetargetTheWin10SDK">re-targeting the Windows 10 SDK for the UWP projects</a> for details. Alternatively,
+      you can <a href="#HowToSkipBuildingUWP">skip building the UWP projects</a> entirely as well.
+      </li>
       
       <li>Set the active platform to "Win32" or "x64" (See <a href="#HowToBuildWindowsPlatform">Windows platform note</a> below)
       and configuration to "Debug" or "Release" (See <a href="#HowToBuildWindowsConfig">Windows configuration note</a> below).</li>
@@ -859,7 +862,7 @@
           project to "iotest", and press Ctrl+F5 to run it. Make sure that it passes
           without any errors.</li>
         </ol>
-	</li>
+	    </li>
 
       <li>You are now able to develop applications with ICU by using the
       libraries and tools in <tt><i>&lt;ICU&gt;</i>\bin\</tt>. The headers are in
@@ -926,19 +929,34 @@
       <li>You can then use either '<tt>msbuild</tt>' directly, or you can use the '<tt>devenv.com</tt>' command to build ICU.</li>
       <li>Using <tt>MSBUILD</tt>:</li>
       <ul class="no-left-margin">
-        <li>To build the 32-bit Debug version, use the following command line:
+        <li>To build the 32-bit Debug version, use the following command line:<br/>
           <code>'msbuild source\allinone\allinone.sln /p:Configuration=Debug /p:Platform=Win32'</code>.</li>
-        <li>To build the 64-bit Release version, use the following command line: 
+        <li>To build the 64-bit Release version, use the following command line:<br/> 
           <code>'msbuild source\allinone\allinone.sln /p:Configuration=Release /p:Platform=x64'</code>.</li>
       </ul>
       <li>Using <tt>devenv.com</tt>:</li>
       <ul class="no-left-margin">
-        <li>To build the 32-bit Debug version, use the following command line:
+        <li>To build the 32-bit Debug version, use the following command line:<br/>
           <code>'devenv.com source\allinone\allinone.sln /build "Debug|Win32"'</code>.</li>
-        <li>To build the 64-bit Release version, use the following command line: 
+        <li>To build the 64-bit Release version, use the following command line:<br/>
           <code>'devenv.com source\allinone\allinone.sln /build "Release|x64"'</code>.</li>
       </ul>
     </ul>
+    
+    <p><a name="HowToSkipBuildingUWP" id=
+      "HowToSkipBuildingUWP"><strong>Skipping the UWP Projects on the Command Line Note:</strong></a>
+      You can skip (or omit) building the UWP projects on the command line by passing the argument
+      '<code>SkipUWP=true</code>' to either MSBUILD or devenv.</p>
+    
+      <ul>
+        <li>For example, using <tt>MSBUILD</tt>:</li>
+        <ul class="no-left-margin">
+          <li>To skip building the UWP projects with a 32-bit Debug build, use the following command line:<br/>
+            <code>'msbuild source\allinone\allinone.sln /p:Configuration=Debug /p:Platform=Win32 /p:SkipUWP=true'</code>.</li>
+          <li>To skip building the UWP projects with a 64-bit Release version, use the following command line:<br/> 
+            <code>'msbuild source\allinone\allinone.sln /p:Configuration=Release /p:Platform=x64 /p:SkipUWP=true'</code>.</li>
+        </ul>
+      </ul>
     
     <p>You can also use Cygwin with the MSVC compiler to build ICU, and you can refer to the <a href=
     "#HowToBuildCygwin">How To Build And Install On Windows with Cygwin</a>
@@ -1174,7 +1192,7 @@
     installation and uninstallation of files on the system, as well as the
     integrity of the system configuration. You may want to check if ICU can be
     packaged for your package management tools by looking into the "packaging"
-    directory. (Please note that if you are using a snapshot of ICU from Subversion, it
+    directory. (Please note that if you are using a snapshot of ICU from Git, it
     is probable that the packaging scripts or related files are not up to date
     with the contents of ICU at this time, so use them with caution).</p>
 

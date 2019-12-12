@@ -26,6 +26,9 @@
 #include "toolutil.h"
 #include "uinvchar.h"
 #include <stdio.h>
+#if U_PLATFORM_USES_ONLY_WIN32_API 
+#include "wintz.h"
+#endif
 
 /* See the comments on U_SIGNED_RIGHT_SHIFT_IS_ARITHMETIC. */
 static void TestSignedRightShiftIsArithmetic(void) {
@@ -33,7 +36,7 @@ static void TestSignedRightShiftIsArithmetic(void) {
     int32_t m=-1;
     int32_t x4=x>>4;
     int32_t m1=m>>1;
-    UBool signedRightShiftIsArithmetic= x4==0xffff5fff && m1==-1;
+    UBool signedRightShiftIsArithmetic= (x4==(int32_t)0xffff5fff && m1==-1);
     if(signedRightShiftIsArithmetic==U_SIGNED_RIGHT_SHIFT_IS_ARITHMETIC) {
         log_info("signed right shift is Arithmetic Shift Right: %d\n",
                  signedRightShiftIsArithmetic);
@@ -214,8 +217,19 @@ static void TestPUtilAPI(void){
             log_info("Note: t_timezone offset of %ld (for %s : %s) is not a multiple of 30min.", tzoffset, uprv_tzname(0), uprv_tzname(1));
         }
         /*tzoffset=uprv_getUTCtime();*/
-
     }
+
+#if U_PLATFORM_USES_ONLY_WIN32_API 
+    log_verbose("Testing uprv_detectWindowsTimeZone() ....\n");
+    {
+        const char* timezone = uprv_detectWindowsTimeZone();
+        if (timezone == NULL) {
+            log_err("ERROR: uprv_detectWindowsTimeZone failed (returned NULL).\n");
+        } else {
+            log_verbose("Detected TimeZone = %s\n", timezone);
+        }   
+    }
+#endif
 }
 
 static void TestVersion(void)

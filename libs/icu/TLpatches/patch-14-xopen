@@ -1,8 +1,8 @@
 	Do not define _XOPEN_SOURCE_EXTENDED on Solaris,
 	notwithstanding comments in icu source.
 
---- source/common/uposixdefs.h.ORIG	2018-03-26 06:38:30.000000000 -0700
-+++ source/common/uposixdefs.h	2018-03-28 15:39:29.245884244 -0700
+--- source/common/uposixdefs.h~	2019-10-03 04:16:41.000000000 -0700
++++ source/common/uposixdefs.h	2019-12-11 15:37:42.741655847 -0800
 @@ -52,8 +52,11 @@
   * Poorly upgraded Solaris machines can't have this defined.
   * Cleanly installed Solaris can use this #define.

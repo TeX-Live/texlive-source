@@ -1,3 +1,8 @@
+2019-12-12  Karl Berry  <karl@freefriends.org>
+
+	* Update for icu-65.1.
+	* patch-03-gcc-atomic: apparently no longer relevant.
+
 2019-02-10  Karl Berry  <karl@tug.org>
 
 	* patch-12-mingw: also patch numberrangeformatter.h

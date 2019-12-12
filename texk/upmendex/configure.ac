@@ -1,7 +1,8 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright 2016 Karl Berry <tex-live@tug.org>
-dnl   Copyright 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2010-2019 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -36,7 +37,20 @@ AS_CASE([$kpse_cv_have___VA_ARGS__],
         [yes], [AC_DEFINE([HAVE___VA_ARGS__], 1,
                           [Define to 1 if you have C99 variadic macros.])])
 
+dnl As of ICU 65.1, ICU requires -lpthread on x86_64-linux and, most
+dnl likely, on other platforms. Otherwise there is a crash in
+dnl std::call_once, as shown in ChangeLog. OpenBSD already has to link
+dnl with -lpthread on all platforms (see m4/kpse-icu-flags.m4), but so
+dnl far it seems only upmendex requires it elsewhere. The double
+dnl inclusion of -lpthread on obsd should be harmless.
+dnl 
+dnl The autoconf-archive ax_pthread macro (used in asymptote) goes to
+dnl much greater lengths to find the best thread library and support all
+dnl platforms. We can switch to that if necessary, but hopefully this
+dnl simple test will be enough.
+dnl 
 KPSE_KPATHSEA_FLAGS
+KPSE_SEARCH_LIBS([PTHREAD_LIB], [pthread_create], [pthread])
 KPSE_ICU_FLAGS([icuio icui18n], [--ldflags-icuio])
 
 AC_CONFIG_FILES([Makefile])

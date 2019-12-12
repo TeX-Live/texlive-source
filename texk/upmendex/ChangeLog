@@ -1,3 +1,25 @@
+2019-12-12  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac: look for a pthread library cntaining
+	pthread_create (using KPSE_SEARCH_LIBS) and set PTHREAD_LIB if found.
+	* Makefile.am (LDADD): include $(PTHREAD_LIB).
+	
+As of ICU 65.1, upmendex requires -lpthread. Otherwise, it crashes
+at sort.c:82, which merely creates the icu_collator:
+    icu_collator = ucol_open(icu_locale, &status);
+
+About 10 stack frames deep into the ICU initialization, this winds up calling
+(Build/source/libs/icu/icu-src/source/common/umutex.cpp:146):
+    std::call_once(*pInitFlag, umtx_init);
+
+which results in a fatal error from stdc++:
+    terminate called after throwing an instance of 'std::system_error'
+      what():  Unknown error -1
+
+Web searching indicated that that opaque error message is a result of not
+linking with -lpthread. So now we do so. So far our other ICU programs
+(bibtexu, xetex) don't seem to require it.
+
 2019-03-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* upmendex.ja.txt: Rename from upmendex.doc,

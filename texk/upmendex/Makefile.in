@@ -95,6 +95,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-search-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
@@ -121,7 +122,8 @@ am_upmendex_OBJECTS = convert.$(OBJEXT) fread.$(OBJEXT) \
 upmendex_OBJECTS = $(am_upmendex_OBJECTS)
 upmendex_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-upmendex_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+upmendex_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -515,6 +517,7 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+PTHREAD_LIB = @PTHREAD_LIB@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -600,7 +603,7 @@ upmendex_SOURCES = \
 
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_upmendex_SOURCES = dummy.cxx
-LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) $(ICU_LIBS_EXTRA)
+LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) $(PTHREAD_LIB) $(ICU_LIBS_EXTRA)
 EXTRA_DIST = COPYRIGHT indexsty upmendex.ja.txt $(TESTS) tests/foo.idx \
 	tests/foo.ind tests/uni.idx tests/uni.dict tests/uni.ist \
 	tests/uni.ind

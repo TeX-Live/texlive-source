@@ -18,14 +18,18 @@ void DecimalQuantityTest::runIndexedTest(int32_t index, UBool exec, const char *
     }
     TESTCASE_AUTO_BEGIN;
         TESTCASE_AUTO(testDecimalQuantityBehaviorStandalone);
-        TESTCASE_AUTO(testSwitchStorage);;
+        TESTCASE_AUTO(testSwitchStorage);
         TESTCASE_AUTO(testCopyMove);
         TESTCASE_AUTO(testAppend);
-        TESTCASE_AUTO(testConvertToAccurateDouble);
+        if (!quick) {
+            // Slow test: run in exhaustive mode only
+            TESTCASE_AUTO(testConvertToAccurateDouble);
+        }
         TESTCASE_AUTO(testUseApproximateDoubleWhenAble);
         TESTCASE_AUTO(testHardDoubleConversion);
         TESTCASE_AUTO(testToDouble);
         TESTCASE_AUTO(testMaxDigits);
+        TESTCASE_AUTO(testNickelRounding);
     TESTCASE_AUTO_END;
 }
 
@@ -76,27 +80,30 @@ void DecimalQuantityTest::checkDoubleBehavior(double d, bool explicitRequired) {
 void DecimalQuantityTest::testDecimalQuantityBehaviorStandalone() {
     UErrorCode status = U_ZERO_ERROR;
     DecimalQuantity fq;
-    assertToStringAndHealth(fq, u"<DecimalQuantity 999:0:0:-999 long 0E0>");
+    assertToStringAndHealth(fq, u"<DecimalQuantity 0:0 long 0E0>");
     fq.setToInt(51423);
-    assertToStringAndHealth(fq, u"<DecimalQuantity 999:0:0:-999 long 51423E0>");
+    assertToStringAndHealth(fq, u"<DecimalQuantity 0:0 long 51423E0>");
     fq.adjustMagnitude(-3);
-    assertToStringAndHealth(fq, u"<DecimalQuantity 999:0:0:-999 long 51423E-3>");
-    fq.setToLong(999999999999000L);
-    assertToStringAndHealth(fq, u"<DecimalQuantity 999:0:0:-999 long 999999999999E3>");
-    fq.setIntegerLength(2, 5);
-    assertToStringAndHealth(fq, u"<DecimalQuantity 5:2:0:-999 long 999999999999E3>");
-    fq.setFractionLength(3, 6);
-    assertToStringAndHealth(fq, u"<DecimalQuantity 5:2:-3:-6 long 999999999999E3>");
+    assertToStringAndHealth(fq, u"<DecimalQuantity 0:0 long 51423E-3>");
+
+    fq.setToLong(90909090909000L);
+    assertToStringAndHealth(fq, u"<DecimalQuantity 0:0 long 90909090909E3>");
+    fq.setMinInteger(2);
+    fq.applyMaxInteger(5);
+    assertToStringAndHealth(fq, u"<DecimalQuantity 2:0 long 9E3>");
+    fq.setMinFraction(3);
+    assertToStringAndHealth(fq, u"<DecimalQuantity 2:-3 long 9E3>");
+
     fq.setToDouble(987.654321);
-    assertToStringAndHealth(fq, u"<DecimalQuantity 5:2:-3:-6 long 987654321E-6>");
+    assertToStringAndHealth(fq, u"<DecimalQuantity 2:-3 long 987654321E-6>");
     fq.roundToInfinity();
-    assertToStringAndHealth(fq, u"<DecimalQuantity 5:2:-3:-6 long 987654321E-6>");
-    fq.roundToIncrement(0.005, RoundingMode::UNUM_ROUND_HALFEVEN, 3, status);
+    assertToStringAndHealth(fq, u"<DecimalQuantity 2:-3 long 987654321E-6>");
+    fq.roundToIncrement(0.005, RoundingMode::UNUM_ROUND_HALFEVEN, status);
     assertSuccess("Rounding to increment", status);
-    assertToStringAndHealth(fq, u"<DecimalQuantity 5:2:-3:-6 long 987655E-3>");
+    assertToStringAndHealth(fq, u"<DecimalQuantity 2:-3 long 987655E-3>");
     fq.roundToMagnitude(-2, RoundingMode::UNUM_ROUND_HALFEVEN, status);
     assertSuccess("Rounding to magnitude", status);
-    assertToStringAndHealth(fq, u"<DecimalQuantity 5:2:-3:-6 long 98766E-2>");
+    assertToStringAndHealth(fq, u"<DecimalQuantity 2:-3 long 98766E-2>");
 }
 
 void DecimalQuantityTest::testSwitchStorage() {
@@ -118,6 +125,15 @@ void DecimalQuantityTest::testSwitchStorage() {
     assertFalse("Should not be using byte array", fq.isUsingBytes());
     assertEquals("Failed on round", u"1.23412341234E+16", fq.toScientificString());
     assertHealth(fq);
+    // Bytes with popFromLeft
+    fq.setToDecNumber({"999999999999999999"}, status);
+    assertToStringAndHealth(fq, u"<DecimalQuantity 0:0 bytes 999999999999999999E0>");
+    fq.applyMaxInteger(17);
+    assertToStringAndHealth(fq, u"<DecimalQuantity 0:0 bytes 99999999999999999E0>");
+    fq.applyMaxInteger(16);
+    assertToStringAndHealth(fq, u"<DecimalQuantity 0:0 long 9999999999999999E0>");
+    fq.applyMaxInteger(15);
+    assertToStringAndHealth(fq, u"<DecimalQuantity 0:0 long 999999999999999E0>");
 }
 
 void DecimalQuantityTest::testCopyMove() {
@@ -126,21 +142,21 @@ void DecimalQuantityTest::testCopyMove() {
         DecimalQuantity a;
         a.setToLong(1234123412341234L);
         DecimalQuantity b = a; // copy constructor
-        assertToStringAndHealth(a, u"<DecimalQuantity 999:0:0:-999 long 1234123412341234E0>");
-        assertToStringAndHealth(b, u"<DecimalQuantity 999:0:0:-999 long 1234123412341234E0>");
+        assertToStringAndHealth(a, u"<DecimalQuantity 0:0 long 1234123412341234E0>");
+        assertToStringAndHealth(b, u"<DecimalQuantity 0:0 long 1234123412341234E0>");
         DecimalQuantity c(std::move(a)); // move constructor
-        assertToStringAndHealth(c, u"<DecimalQuantity 999:0:0:-999 long 1234123412341234E0>");
+        assertToStringAndHealth(c, u"<DecimalQuantity 0:0 long 1234123412341234E0>");
         c.setToLong(54321L);
-        assertToStringAndHealth(c, u"<DecimalQuantity 999:0:0:-999 long 54321E0>");
+        assertToStringAndHealth(c, u"<DecimalQuantity 0:0 long 54321E0>");
         c = b; // copy assignment
-        assertToStringAndHealth(b, u"<DecimalQuantity 999:0:0:-999 long 1234123412341234E0>");
-        assertToStringAndHealth(c, u"<DecimalQuantity 999:0:0:-999 long 1234123412341234E0>");
+        assertToStringAndHealth(b, u"<DecimalQuantity 0:0 long 1234123412341234E0>");
+        assertToStringAndHealth(c, u"<DecimalQuantity 0:0 long 1234123412341234E0>");
         b.setToLong(45678);
         c.setToLong(56789);
         c = std::move(b); // move assignment
-        assertToStringAndHealth(c, u"<DecimalQuantity 999:0:0:-999 long 45678E0>");
+        assertToStringAndHealth(c, u"<DecimalQuantity 0:0 long 45678E0>");
         a = std::move(c); // move assignment to a defunct object
-        assertToStringAndHealth(a, u"<DecimalQuantity 999:0:0:-999 long 45678E0>");
+        assertToStringAndHealth(a, u"<DecimalQuantity 0:0 long 45678E0>");
     }
 
     // Large numbers (requires byte allocation)
@@ -149,21 +165,21 @@ void DecimalQuantityTest::testCopyMove() {
         DecimalQuantity a;
         a.setToDecNumber({"1234567890123456789", -1}, status);
         DecimalQuantity b = a; // copy constructor
-        assertToStringAndHealth(a, u"<DecimalQuantity 999:0:0:-999 bytes 1234567890123456789E0>");
-        assertToStringAndHealth(b, u"<DecimalQuantity 999:0:0:-999 bytes 1234567890123456789E0>");
+        assertToStringAndHealth(a, u"<DecimalQuantity 0:0 bytes 1234567890123456789E0>");
+        assertToStringAndHealth(b, u"<DecimalQuantity 0:0 bytes 1234567890123456789E0>");
         DecimalQuantity c(std::move(a)); // move constructor
-        assertToStringAndHealth(c, u"<DecimalQuantity 999:0:0:-999 bytes 1234567890123456789E0>");
+        assertToStringAndHealth(c, u"<DecimalQuantity 0:0 bytes 1234567890123456789E0>");
         c.setToDecNumber({"9876543210987654321", -1}, status);
-        assertToStringAndHealth(c, u"<DecimalQuantity 999:0:0:-999 bytes 9876543210987654321E0>");
+        assertToStringAndHealth(c, u"<DecimalQuantity 0:0 bytes 9876543210987654321E0>");
         c = b; // copy assignment
-        assertToStringAndHealth(b, u"<DecimalQuantity 999:0:0:-999 bytes 1234567890123456789E0>");
-        assertToStringAndHealth(c, u"<DecimalQuantity 999:0:0:-999 bytes 1234567890123456789E0>");
+        assertToStringAndHealth(b, u"<DecimalQuantity 0:0 bytes 1234567890123456789E0>");
+        assertToStringAndHealth(c, u"<DecimalQuantity 0:0 bytes 1234567890123456789E0>");
         b.setToDecNumber({"876543210987654321", -1}, status);
         c.setToDecNumber({"987654321098765432", -1}, status);
         c = std::move(b); // move assignment
-        assertToStringAndHealth(c, u"<DecimalQuantity 999:0:0:-999 bytes 876543210987654321E0>");
+        assertToStringAndHealth(c, u"<DecimalQuantity 0:0 bytes 876543210987654321E0>");
         a = std::move(c); // move assignment to a defunct object
-        assertToStringAndHealth(a, u"<DecimalQuantity 999:0:0:-999 bytes 876543210987654321E0>");
+        assertToStringAndHealth(a, u"<DecimalQuantity 0:0 bytes 876543210987654321E0>");
     }
 }
 
@@ -363,8 +379,10 @@ void DecimalQuantityTest::testMaxDigits() {
     DecimalQuantity dq;
     dq.setToDouble(876.543);
     dq.roundToInfinity();
-    dq.setIntegerLength(0, 2);
-    dq.setFractionLength(0, 2);
+    dq.setMinInteger(0);
+    dq.applyMaxInteger(2);
+    dq.setMinFraction(0);
+    dq.roundToMagnitude(-2, UNUM_ROUND_FLOOR, status);
     assertEquals("Should trim, toPlainString", "76.54", dq.toPlainString());
     assertEquals("Should trim, toScientificString", "7.654E+1", dq.toScientificString());
     assertEquals("Should trim, toLong", 76LL, dq.toLong(true));
@@ -375,9 +393,78 @@ void DecimalQuantityTest::testMaxDigits() {
     dq.toDecNum(dn, status);
     DecimalQuantity copy;
     copy.setToDecNum(dn, status);
-    if (!logKnownIssue("13701")) {
-        assertEquals("Should trim, toDecNum", "76.54", copy.toPlainString());
+    assertEquals("Should trim, toDecNum", "76.54", copy.toPlainString());
+}
+
+void DecimalQuantityTest::testNickelRounding() {
+    IcuTestErrorCode status(*this, "testNickelRounding");
+    struct TestCase {
+        double input;
+        int32_t magnitude;
+        UNumberFormatRoundingMode roundingMode;
+        const char16_t* expected;
+    } cases[] = {
+        {1.000, -2, UNUM_ROUND_HALFEVEN, u"1"},
+        {1.001, -2, UNUM_ROUND_HALFEVEN, u"1"},
+        {1.010, -2, UNUM_ROUND_HALFEVEN, u"1"},
+        {1.020, -2, UNUM_ROUND_HALFEVEN, u"1"},
+        {1.024, -2, UNUM_ROUND_HALFEVEN, u"1"},
+        {1.025, -2, UNUM_ROUND_HALFEVEN, u"1"},
+        {1.025, -2, UNUM_ROUND_HALFDOWN, u"1"},
+        {1.025, -2, UNUM_ROUND_HALFUP,   u"1.05"},
+        {1.026, -2, UNUM_ROUND_HALFEVEN, u"1.05"},
+        {1.030, -2, UNUM_ROUND_HALFEVEN, u"1.05"},
+        {1.040, -2, UNUM_ROUND_HALFEVEN, u"1.05"},
+        {1.050, -2, UNUM_ROUND_HALFEVEN, u"1.05"},
+        {1.060, -2, UNUM_ROUND_HALFEVEN, u"1.05"},
+        {1.070, -2, UNUM_ROUND_HALFEVEN, u"1.05"},
+        {1.074, -2, UNUM_ROUND_HALFEVEN, u"1.05"},
+        {1.075, -2, UNUM_ROUND_HALFDOWN, u"1.05"},
+        {1.075, -2, UNUM_ROUND_HALFUP,   u"1.1"},
+        {1.075, -2, UNUM_ROUND_HALFEVEN, u"1.1"},
+        {1.076, -2, UNUM_ROUND_HALFEVEN, u"1.1"},
+        {1.080, -2, UNUM_ROUND_HALFEVEN, u"1.1"},
+        {1.090, -2, UNUM_ROUND_HALFEVEN, u"1.1"},
+        {1.099, -2, UNUM_ROUND_HALFEVEN, u"1.1"},
+        {1.999, -2, UNUM_ROUND_HALFEVEN, u"2"},
+        {2.25, -1, UNUM_ROUND_HALFEVEN, u"2"},
+        {2.25, -1, UNUM_ROUND_HALFUP,   u"2.5"},
+        {2.75, -1, UNUM_ROUND_HALFDOWN, u"2.5"},
+        {2.75, -1, UNUM_ROUND_HALFEVEN, u"3"},
+        {3.00, -1, UNUM_ROUND_CEILING, u"3"},
+        {3.25, -1, UNUM_ROUND_CEILING, u"3.5"},
+        {3.50, -1, UNUM_ROUND_CEILING, u"3.5"},
+        {3.75, -1, UNUM_ROUND_CEILING, u"4"},
+        {4.00, -1, UNUM_ROUND_FLOOR, u"4"},
+        {4.25, -1, UNUM_ROUND_FLOOR, u"4"},
+        {4.50, -1, UNUM_ROUND_FLOOR, u"4.5"},
+        {4.75, -1, UNUM_ROUND_FLOOR, u"4.5"},
+        {5.00, -1, UNUM_ROUND_UP, u"5"},
+        {5.25, -1, UNUM_ROUND_UP, u"5.5"},
+        {5.50, -1, UNUM_ROUND_UP, u"5.5"},
+        {5.75, -1, UNUM_ROUND_UP, u"6"},
+        {6.00, -1, UNUM_ROUND_DOWN, u"6"},
+        {6.25, -1, UNUM_ROUND_DOWN, u"6"},
+        {6.50, -1, UNUM_ROUND_DOWN, u"6.5"},
+        {6.75, -1, UNUM_ROUND_DOWN, u"6.5"},
+        {7.00, -1, UNUM_ROUND_UNNECESSARY, u"7"},
+        {7.50, -1, UNUM_ROUND_UNNECESSARY, u"7.5"},
+    };
+    for (const auto& cas : cases) {
+        UnicodeString message = DoubleToUnicodeString(cas.input) + u" @ " + Int64ToUnicodeString(cas.magnitude) + u" / " + Int64ToUnicodeString(cas.roundingMode);
+        status.setScope(message);
+        DecimalQuantity dq;
+        dq.setToDouble(cas.input);
+        dq.roundToNickel(cas.magnitude, cas.roundingMode, status);
+        status.errIfFailureAndReset();
+        UnicodeString actual = dq.toPlainString();
+        assertEquals(message, cas.expected, actual);
     }
+    status.setScope("");
+    DecimalQuantity dq;
+    dq.setToDouble(7.1);
+    dq.roundToNickel(-1, UNUM_ROUND_UNNECESSARY, status);
+    status.expectErrorAndReset(U_FORMAT_INEXACT_ERROR);
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

@@ -21,6 +21,7 @@
 
 #include "tmsgfmt.h"
 #include "cmemory.h"
+#include "loctest.h"
 
 #include "unicode/format.h"
 #include "unicode/decimfmt.h"
@@ -72,6 +73,8 @@ TestMessageFormat::runIndexedTest(int32_t index, UBool exec,
     TESTCASE_AUTO(TestDecimals);
     TESTCASE_AUTO(TestArgIsPrefixOfAnother);
     TESTCASE_AUTO(TestMessageFormatNumberSkeleton);
+    TESTCASE_AUTO(TestMessageFormatDateSkeleton);
+    TESTCASE_AUTO(TestMessageFormatTimeSkeleton);
     TESTCASE_AUTO_END;
 }
 
@@ -182,7 +185,7 @@ void TestMessageFormat::testBug2()
     // {sfb} use double format in pattern, so result will match (not strictly necessary)
     const UnicodeString pattern = "There {0,choice,0#are no files|1#is one file|1<are {0, number} files} on disk {1}. ";
     logln("The input pattern : " + pattern);
-    MessageFormat *fmt = new MessageFormat(pattern, status);
+    LocalPointer<MessageFormat> fmt(new MessageFormat(pattern, status));
     if (U_FAILURE(status)) {
         dataerrln("MessageFormat pattern creation failed. - %s", u_errorName(status));
         return;
@@ -191,7 +194,6 @@ void TestMessageFormat::testBug2()
     if (pattern != result) {
         errln("MessageFormat::toPattern() failed.");
     }
-    delete fmt;
 }
 
 #if 0
@@ -297,10 +299,10 @@ void TestMessageFormat::PatternTest()
     for (int32_t i = 0; i < 9; ++i) {
         //it_out << "\nPat in:  " << testCases[i]);
 
-        MessageFormat *form = 0;
+        LocalPointer<MessageFormat> form;
         UErrorCode success = U_ZERO_ERROR;
         UnicodeString buffer;
-        form = new MessageFormat(testCases[i], Locale::getUS(), success);
+        form.adoptInstead(new MessageFormat(testCases[i], Locale::getUS(), success));
         if (U_FAILURE(success)) {
             dataerrln("MessageFormat creation failed.#1 - %s", u_errorName(success));
             logln(((UnicodeString)"MessageFormat for ") + testCases[i] + " creation failed.\n");
@@ -365,7 +367,6 @@ void TestMessageFormat::PatternTest()
         if (failed)
             errln("MessageFormat failed test #6");
 #endif
-        delete form;
     }
 }
 
@@ -673,13 +674,13 @@ MessageFormat* TestMessageFormat::internalCreate(
         UnicodeString pattern ,Locale locale ,UErrorCode &status ,  char* errMsg)
 {
     //Create the MessageFormat with simple SelectFormat
-    MessageFormat* msgFmt = new MessageFormat(pattern, locale, status);
+    LocalPointer<MessageFormat> msgFmt(new MessageFormat(pattern, locale, status));
     if (U_FAILURE(status)) {
         dataerrln( "%s error while constructing with ErrorCode as %s" ,errMsg, u_errorName(status) );
         logln(UnicodeString("TestMessageFormat::testMsgFormatSelect #1 with error code ")+(int32_t)status);
-        return NULL;
+        return nullptr;
     }
-    return msgFmt;
+    return msgFmt.orphan();
 }
 
 void TestMessageFormat::testMsgFormatSelect(/* char* par */)
@@ -806,7 +807,8 @@ void TestMessageFormat::testMsgFormatSelect(/* char* par */)
     //Select, plural, and number formats heavily nested 
     UnicodeString t6("{0} und {1, select, female {{2, plural, one {{3, select, female {ihre Freundin} other {ihr Freund}} } other {ihre {2, number, integer} {3, select, female {Freundinnen} other {Freunde}} } }} other{{2, plural, one {{3, select, female {seine Freundin} other {sein Freund}}} other {seine {2, number, integer} {3, select, female {Freundinnen} other {Freunde}}}}} } gingen nach Paris.");
     //Create the MessageFormat with Select, plural, and number formats heavily nested  
-    MessageFormat* msgFmt6 = internalCreate(t6, Locale("de"),err,(char*)"From TestMessageFormat::TestSelectFormat create t6");
+    LocalPointer<MessageFormat> msgFmt6(
+            internalCreate(t6, Locale("de"),err,(char*)"From TestMessageFormat::TestSelectFormat create t6"));
     if (!U_FAILURE(err)) {
         //Arguments 
         Formattable testArgs10[] = {"Kirti","other",(int32_t)1,"other"}; 
@@ -845,10 +847,9 @@ void TestMessageFormat::testMsgFormatSelect(/* char* par */)
         };
         //Format
         for( int i=0; i< 14; i++){
-            internalFormat( msgFmt6 , testArgs[i], 4, exp[i] ,(char*)"From TestMessageFormat::testSelectFormat format t6");
+            internalFormat( msgFmt6.getAlias(), testArgs[i], 4, exp[i] ,(char*)"From TestMessageFormat::testSelectFormat format t6");
         }
     }
-    delete msgFmt6;
 }
 
 //---------------------------------
@@ -920,7 +921,7 @@ void TestMessageFormat::testClone()
     MessageFormat *x = new MessageFormat("There are {0} files on {1}", success);
     MessageFormat *z = new MessageFormat("There are {0} files on {1} created", success);
     MessageFormat *y = 0;
-    y = (MessageFormat*)x->clone();
+    y = x->clone();
     if ( (*x == *y) && 
          (*x != *z) && 
          (*y != *z) )
@@ -1085,7 +1086,7 @@ void TestMessageFormat::testFormat()
     result = msg.format(
         *fmt,
         result,
-        //FieldPosition(0),
+        //FieldPosition(FieldPosition::DONT_CARE),
         fp,
         err);
 
@@ -1099,7 +1100,7 @@ void TestMessageFormat::testFormat()
     result = msg.format(
         ft_arr,
         result,
-        //FieldPosition(0),
+        //FieldPosition(FieldPosition::DONT_CARE),
         fp,
         err);
 
@@ -1432,8 +1433,8 @@ static void _testCopyConstructor2()
         goto cleanup;
     }
 
-    fmt3 = (MessageFormat*) fmt1->clone();
-    fmt4 = (MessageFormat*) fmt2->clone();
+    fmt3 = fmt1->clone();
+    fmt4 = fmt2->clone();
 
     if (fmt3 == NULL) {
         it_err("testCopyConstructor2: (fmt3 != NULL)");
@@ -2020,13 +2021,56 @@ void TestMessageFormat::TestMessageFormatNumberSkeleton() {
         status.setScope(cas.messagePattern);
         MessageFormat msgf(cas.messagePattern, cas.localeName, status);
         UnicodeString sb;
-        FieldPosition fpos(0);
+        FieldPosition fpos(FieldPosition::DONT_CARE);
         Formattable argsArray[] = {{cas.arg}};
         Formattable args(argsArray, 1);
         msgf.format(args, sb, status);
 
         assertEquals(cas.messagePattern, cas.expected, sb);
     }
+}
+
+void TestMessageFormat::doTheRealDateTimeSkeletonTesting(UDate testDate,
+        const char16_t* messagePattern, const char* localeName, const char16_t* expected,
+        IcuTestErrorCode& status) {
+
+    status.setScope(messagePattern);
+    MessageFormat msgf(messagePattern, localeName, status);
+    UnicodeString sb;
+    FieldPosition fpos(FieldPosition::DONT_CARE);
+    Formattable argsArray[] = { Formattable(testDate, Formattable::kIsDate) };
+    Formattable args(argsArray, 1);
+    msgf.format(args, sb, status);
+
+    assertEquals(messagePattern, expected, sb);
+}
+
+void TestMessageFormat::TestMessageFormatDateSkeleton() {
+    IcuTestErrorCode status(*this, "TestMessageFormatDateSkeleton");
+
+    UDate date = LocaleTest::date(2021-1900, UCAL_NOVEMBER, 23, 16, 42, 55);
+
+    doTheRealDateTimeSkeletonTesting(date, u"{0,date,::MMMMd}", "en", u"November 23", status);
+    doTheRealDateTimeSkeletonTesting(date, u"{0,date,::yMMMMdjm}", "en", u"November 23, 2021, 4:42 PM", status);
+    doTheRealDateTimeSkeletonTesting(date, u"{0,date,   ::   yMMMMd   }", "en", u"November 23, 2021", status);
+    doTheRealDateTimeSkeletonTesting(date, u"{0,date,::yMMMMd}", "fr", u"23 novembre 2021", status);
+    doTheRealDateTimeSkeletonTesting(date, u"Expiration: {0,date,::yMMM}!", "en", u"Expiration: Nov 2021!", status);
+    // pattern literal
+    doTheRealDateTimeSkeletonTesting(date, u"{0,date,'::'yMMMMd}", "en", u"::2021November23", status);
+}
+
+void TestMessageFormat::TestMessageFormatTimeSkeleton() {
+    IcuTestErrorCode status(*this, "TestMessageFormatTimeSkeleton");
+
+    UDate date = LocaleTest::date(2021-1900, UCAL_NOVEMBER, 23, 16, 42, 55);
+
+    doTheRealDateTimeSkeletonTesting(date, u"{0,time,::MMMMd}", "en", u"November 23", status);
+    doTheRealDateTimeSkeletonTesting(date, u"{0,time,::yMMMMdjm}", "en", u"November 23, 2021, 4:42 PM", status);
+    doTheRealDateTimeSkeletonTesting(date, u"{0,time,   ::   yMMMMd   }", "en", u"November 23, 2021", status);
+    doTheRealDateTimeSkeletonTesting(date, u"{0,time,::yMMMMd}", "fr", u"23 novembre 2021", status);
+    doTheRealDateTimeSkeletonTesting(date, u"Expiration: {0,time,::yMMM}!", "en", u"Expiration: Nov 2021!", status);
+    // pattern literal
+    doTheRealDateTimeSkeletonTesting(date, u"{0,time,'::'yMMMMd}", "en", u"::2021November23", status);
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

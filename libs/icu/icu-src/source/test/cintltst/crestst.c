@@ -31,8 +31,10 @@
 #include "unicode/ures.h"
 #include "crestst.h"
 #include "unicode/ctest.h"
+#include "uresimp.h"
 
 static void TestOpenDirect(void);
+static void TestOpenDirectFillIn(void);
 static void TestFallback(void);
 static void TestTable32(void);
 static void TestFileStream(void);
@@ -53,9 +55,23 @@ enum E_Where
 typedef enum E_Where E_Where;
 /*****************************************************************************/
 
-#define CONFIRM_EQ(actual,expected) if (u_strcmp(expected,actual)==0){ record_pass(); } else { record_fail(); log_err("%s  returned  %s  instead of %s\n", action, austrdup(actual), austrdup(expected)); }
+#define CONFIRM_EQ(actual,expected) UPRV_BLOCK_MACRO_BEGIN { \
+    if (u_strcmp(expected,actual)==0) { \
+        record_pass(); \
+    } else { \
+        record_fail(); \
+        log_err("%s  returned  %s  instead of %s\n", action, austrdup(actual), austrdup(expected)); \
+    } \
+} UPRV_BLOCK_MACRO_END
 
-#define CONFIRM_ErrorCode(actual,expected) if ((expected)==(actual)) { record_pass(); } else { record_fail();  log_err("%s returned  %s  instead of %s\n", action, myErrorName(actual), myErrorName(expected)); }
+#define CONFIRM_ErrorCode(actual,expected) UPRV_BLOCK_MACRO_BEGIN { \
+    if ((expected)==(actual)) { \
+        record_pass(); \
+    } else { \
+        record_fail(); \
+        log_err("%s returned  %s  instead of %s\n", action, myErrorName(actual), myErrorName(expected)); \
+    } \
+} UPRV_BLOCK_MACRO_END
 
 
 /* Array of our test objects */
@@ -96,6 +112,7 @@ void addResourceBundleTest(TestNode** root)
 #if !UCONFIG_NO_FILE_IO && !UCONFIG_NO_LEGACY_CONVERSION
     addTest(root, &TestConstruction1, "tsutil/crestst/TestConstruction1");
     addTest(root, &TestOpenDirect, "tsutil/crestst/TestOpenDirect");
+    addTest(root, &TestOpenDirectFillIn, "tsutil/crestst/TestOpenDirectFillIn");
     addTest(root, &TestResourceBundles, "tsutil/crestst/TestResourceBundles");
     addTest(root, &TestTable32, "tsutil/crestst/TestTable32");
     addTest(root, &TestFileStream, "tsutil/crestst/TestFileStream");
@@ -531,7 +548,7 @@ TestOpenDirect(void) {
     }
     ures_close(idna_rules);
 
-    errorCode = U_USING_FALLBACK_WARNING;;
+    errorCode = U_USING_FALLBACK_WARNING;
     idna_rules=ures_openDirect("testdata", "idna_rules", &errorCode);
     if(U_FAILURE(errorCode)) {
         log_data_err("ures_openDirect(\"idna_rules\") failed when U_USING_FALLBACK_WARNING was set prior to call: %s\n", u_errorName(errorCode));
@@ -612,6 +629,47 @@ TestOpenDirect(void) {
         ures_close(item);
     }
     ures_close(te_IN);
+}
+
+static void
+TestOpenDirectFillIn(void) {
+    // Test that ures_openDirectFillIn() opens a stack allocated resource bundle, similar to ures_open().
+    // Since ures_openDirectFillIn is just a wrapper function, this is just a very basic test copied from
+    // the TestOpenDirect test above.
+    UErrorCode errorCode = U_ZERO_ERROR;
+    UResourceBundle *item;
+    UResourceBundle idna_rules;
+    ures_initStackObject(&idna_rules);
+
+    ures_openDirectFillIn(&idna_rules, loadTestData(&errorCode), "idna_rules", &errorCode);
+    if(U_FAILURE(errorCode)) {
+        log_data_err("ures_openDirectFillIn(\"idna_rules\") failed: %s\n", u_errorName(errorCode));
+        return;
+    }
+
+    if(0!=uprv_strcmp("idna_rules", ures_getLocale(&idna_rules, &errorCode))) {
+        log_err("ures_openDirectFillIn(\"idna_rules\").getLocale()!=idna_rules\n");
+    }
+    errorCode=U_ZERO_ERROR;
+
+    /* try an item in idna_rules, must work */
+    item=ures_getByKey(&idna_rules, "UnassignedSet", NULL, &errorCode);
+    if(U_FAILURE(errorCode)) {
+        log_err("translit_index.getByKey(local key) failed: %s\n", u_errorName(errorCode));
+        errorCode=U_ZERO_ERROR;
+    } else {
+        ures_close(item);
+    }
+
+    /* try an item in root, must fail */
+    item=ures_getByKey(&idna_rules, "ShortLanguage", NULL, &errorCode);
+    if(U_FAILURE(errorCode)) {
+        errorCode=U_ZERO_ERROR;
+    } else {
+        log_err("idna_rules.getByKey(root key) succeeded!\n");
+        ures_close(item);
+    }
+    ures_close(&idna_rules);
 }
 
 static int32_t

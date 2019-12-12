@@ -35,11 +35,17 @@
 #include "cbiapts.h"
 #include "cmemory.h"
 
-#define TEST_ASSERT_SUCCESS(status) {if (U_FAILURE(status)) { \
-log_data_err("Failure at file %s, line %d, error = %s (Are you missing data?)\n", __FILE__, __LINE__, u_errorName(status));}}
+#define TEST_ASSERT_SUCCESS(status) UPRV_BLOCK_MACRO_BEGIN { \
+    if (U_FAILURE(status)) { \
+        log_data_err("Failure at file %s, line %d, error = %s (Are you missing data?)\n", __FILE__, __LINE__, u_errorName(status)); \
+    } \
+} UPRV_BLOCK_MACRO_END
 
-#define TEST_ASSERT(expr) {if ((expr)==FALSE) { \
-log_data_err("Test Failure at file %s, line %d (Are you missing data?)\n", __FILE__, __LINE__);}}
+#define TEST_ASSERT(expr) UPRV_BLOCK_MACRO_BEGIN { \
+    if ((expr)==FALSE) { \
+        log_data_err("Test Failure at file %s, line %d (Are you missing data?)\n", __FILE__, __LINE__); \
+    } \
+} UPRV_BLOCK_MACRO_END
 
 #if !UCONFIG_NO_FILE_IO
 static void TestBreakIteratorSafeClone(void);
@@ -99,7 +105,7 @@ static UChar* toUChar(const char *src, void **freeHook) {
     UErrorCode status = U_ZERO_ERROR;
     if (src == NULL) {
         return NULL;
-    };
+    }
 
     cnv = ucnv_open(NULL, &status);
     if(U_FAILURE(status) || cnv == NULL) {
@@ -532,7 +538,7 @@ static UBreakIterator * testOpenRules(char *rules) {
     if (U_FAILURE(status)) {
         log_data_err("FAIL: ubrk_openRules: ICU Error \"%s\" (Are you missing data?)\n", u_errorName(status));
         bi = 0;
-    };
+    }
     freeToUCharStrings(&strCleanUp);
     return bi;
 
@@ -566,7 +572,7 @@ static void TestBreakIteratorRules() {
     ubrk_setText(bi,  uData, -1, &status);
 
     pos = ubrk_first(bi);
-    for (i=0; i<sizeof(breaks); i++) {
+    for (i=0; i<(int)sizeof(breaks); i++) {
         if (pos == i && breaks[i] != '*') {
             log_err("FAIL: unexpected break at position %d found\n", pos);
             break;
@@ -730,12 +736,15 @@ static void TestBreakIteratorUText(void) {
     bi = ubrk_open(UBRK_WORD, "en_US", NULL, 0, &status);
     if (U_FAILURE(status)) {
         log_err_status(status, "Failure at file %s, line %d, error = %s\n", __FILE__, __LINE__, u_errorName(status));
+        utext_close(ut);
         return;
     }
 
     ubrk_setUText(bi, ut, &status);
     if (U_FAILURE(status)) {
         log_err("Failure at file %s, line %d, error = %s\n", __FILE__, __LINE__, u_errorName(status));
+        ubrk_close(bi);
+        utext_close(ut);
         return;
     }
 
@@ -1031,7 +1040,7 @@ static const TestBISuppressionsItem testBISuppressionsItems[] = {
     { "de",             testSentenceSuppressionsDe, testSentFwdOffsetsDe,     testSentRevOffsetsDe     },
     { "es@ss=standard", testSentenceSuppressionsEs, testSentSuppFwdOffsetsEs, testSentSuppRevOffsetsEs },
     { "es",             testSentenceSuppressionsEs, testSentFwdOffsetsEs,     testSentRevOffsetsEs     },
-    { NULL, NULL, NULL }
+    { NULL, NULL, NULL, NULL }
 };
 
 static void TestBreakIteratorSuppressions(void) {

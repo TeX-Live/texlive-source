@@ -6,6 +6,7 @@
  * others. All Rights Reserved.
  ********************************************************************/
 
+#include <utility>
 
 /**
  * IntlTestUtilities is the medium level test class for everything in the directory "utility".
@@ -18,6 +19,7 @@
 #include "itutil.h"
 #include "strtest.h"
 #include "loctest.h"
+#include "localebuildertest.h"
 #include "citrtest.h"
 #include "ustrtest.h"
 #include "ucdtest.h"
@@ -33,6 +35,7 @@
 #include "usettest.h"
 
 extern IntlTest *createBytesTrieTest();
+extern IntlTest *createLocaleMatcherTest();
 static IntlTest *createLocalPointerTest();
 extern IntlTest *createUCharsTrieTest();
 static IntlTest *createEnumSetTest();
@@ -44,112 +47,40 @@ extern IntlTest *createPluralMapTest();
 extern IntlTest *createStaticUnicodeSetsTest();
 #endif
 
-
-#define CASE(id, test) case id:                               \
-                          name = #test;                       \
-                          if (exec) {                         \
-                              logln(#test "---"); logln();    \
-                              test t;                         \
-                              callTest(t, par);               \
-                          }                                   \
-                          break
-
 void IntlTestUtilities::runIndexedTest( int32_t index, UBool exec, const char* &name, char* par )
 {
     if (exec) logln("TestSuite Utilities: ");
-    switch (index) {
-        CASE(0, MultithreadTest);
-        CASE(1, StringTest);
-        CASE(2, UnicodeStringTest);
-        CASE(3, LocaleTest);
-        CASE(4, CharIterTest);
-        CASE(5, UObjectTest);
-        CASE(6, UnicodeTest);
-        CASE(7, ResourceBundleTest);
-        CASE(8, NewResourceBundleTest);
-        CASE(9, PUtilTest);
-        CASE(10, UVector32Test);
-        CASE(11, UVectorTest);
-        CASE(12, UTextTest);
-        CASE(13, LocaleAliasTest);
-        CASE(14, UnicodeSetTest);
-        CASE(15, ErrorCodeTest);
-        case 16:
-            name = "LocalPointerTest";
-            if (exec) {
-                logln("TestSuite LocalPointerTest---"); logln();
-                LocalPointer<IntlTest> test(createLocalPointerTest());
-                callTest(*test, par);
-            }
-            break;
-        case 17:
-            name = "BytesTrieTest";
-            if (exec) {
-                logln("TestSuite BytesTrieTest---"); logln();
-                LocalPointer<IntlTest> test(createBytesTrieTest());
-                callTest(*test, par);
-            }
-            break;
-        case 18:
-            name = "UCharsTrieTest";
-            if (exec) {
-                logln("TestSuite UCharsTrieTest---"); logln();
-                LocalPointer<IntlTest> test(createUCharsTrieTest());
-                callTest(*test, par);
-            }
-            break;
-        case 19:
-            name = "EnumSetTest";
-            if (exec) {
-                logln("TestSuite EnumSetTest---"); logln();
-                LocalPointer<IntlTest> test(createEnumSetTest());
-                callTest(*test, par);
-            }
-            break;
-        case 20:
-            name = "SimpleFormatterTest";
-            if (exec) {
-                logln("TestSuite SimpleFormatterTest---"); logln();
-                LocalPointer<IntlTest> test(createSimpleFormatterTest());
-                callTest(*test, par);
-            }
-            break;
-        case 21:
-            name = "UnifiedCacheTest";
-            if (exec) {
-                logln("TestSuite UnifiedCacheTest---"); logln();
-                LocalPointer<IntlTest> test(createUnifiedCacheTest());
-                callTest(*test, par);
-            }
-            break;
-        case 22:
-            name = "QuantityFormatterTest";
-            if (exec) {
-                logln("TestSuite QuantityFormatterTest---"); logln();
-                LocalPointer<IntlTest> test(createQuantityFormatterTest());
-                callTest(*test, par);
-            }
-            break;
-        case 23: 
-            name = "PluralMapTest"; 
-            if (exec) { 
-                logln("TestSuite PluralMapTest---"); logln(); 
-                LocalPointer<IntlTest> test(createPluralMapTest()); 
-                callTest(*test, par); 
-            } 
-            break;
-        case 24:
-            name = "StaticUnicodeSetsTest";
+    TESTCASE_AUTO_BEGIN;
+    TESTCASE_AUTO_CLASS(MultithreadTest);
+    TESTCASE_AUTO_CLASS(StringTest);
+    TESTCASE_AUTO_CLASS(UnicodeStringTest);
+    TESTCASE_AUTO_CLASS(LocaleTest);
+    TESTCASE_AUTO_CLASS(CharIterTest);
+    TESTCASE_AUTO_CLASS(UObjectTest);
+    TESTCASE_AUTO_CLASS(UnicodeTest);
+    TESTCASE_AUTO_CLASS(ResourceBundleTest);
+    TESTCASE_AUTO_CLASS(NewResourceBundleTest);
+    TESTCASE_AUTO_CLASS(PUtilTest);
+    TESTCASE_AUTO_CLASS(UVector32Test);
+    TESTCASE_AUTO_CLASS(UVectorTest);
+    TESTCASE_AUTO_CLASS(UTextTest);
+    TESTCASE_AUTO_CLASS(LocaleAliasTest);
+    TESTCASE_AUTO_CLASS(UnicodeSetTest);
+    TESTCASE_AUTO_CLASS(ErrorCodeTest);
+    TESTCASE_AUTO_CREATE_CLASS(LocalPointerTest);
+    TESTCASE_AUTO_CREATE_CLASS(BytesTrieTest);
+    TESTCASE_AUTO_CREATE_CLASS(UCharsTrieTest);
+    TESTCASE_AUTO_CREATE_CLASS(EnumSetTest);
+    TESTCASE_AUTO_CREATE_CLASS(SimpleFormatterTest);
+    TESTCASE_AUTO_CREATE_CLASS(UnifiedCacheTest);
+    TESTCASE_AUTO_CREATE_CLASS(QuantityFormatterTest);
+    TESTCASE_AUTO_CREATE_CLASS(PluralMapTest);
 #if !UCONFIG_NO_FORMATTING
-            if (exec) {
-                logln("TestSuite StaticUnicodeSetsTest---"); logln();
-                LocalPointer<IntlTest> test(createStaticUnicodeSetsTest());
-                callTest(*test, par);
-            }
+    TESTCASE_AUTO_CREATE_CLASS(StaticUnicodeSetsTest);
 #endif
-            break;
-        default: name = ""; break; //needed to end loop
-    }
+    TESTCASE_AUTO_CLASS(LocaleBuilderTest);
+    TESTCASE_AUTO_CREATE_CLASS(LocaleMatcherTest);
+    TESTCASE_AUTO_END;
 }
 
 void ErrorCodeTest::runIndexedTest(int32_t index, UBool exec, const char* &name, char* /*par*/) {
@@ -385,11 +316,14 @@ public:
 
     void TestLocalPointer();
     void TestLocalPointerMoveSwap();
+    void TestLocalPointerStdUniquePtr();
     void TestLocalArray();
     void TestLocalArrayMoveSwap();
+    void TestLocalArrayStdUniquePtr();
     void TestLocalXyzPointer();
     void TestLocalXyzPointerMoveSwap();
     void TestLocalXyzPointerNull();
+    void TestLocalXyzStdUniquePtr();
 };
 
 static IntlTest *createLocalPointerTest() {
@@ -403,11 +337,14 @@ void LocalPointerTest::runIndexedTest(int32_t index, UBool exec, const char *&na
     TESTCASE_AUTO_BEGIN;
     TESTCASE_AUTO(TestLocalPointer);
     TESTCASE_AUTO(TestLocalPointerMoveSwap);
+    TESTCASE_AUTO(TestLocalPointerStdUniquePtr);
     TESTCASE_AUTO(TestLocalArray);
     TESTCASE_AUTO(TestLocalArrayMoveSwap);
+    TESTCASE_AUTO(TestLocalArrayStdUniquePtr);
     TESTCASE_AUTO(TestLocalXyzPointer);
     TESTCASE_AUTO(TestLocalXyzPointerMoveSwap);
     TESTCASE_AUTO(TestLocalXyzPointerNull);
+    TESTCASE_AUTO(TestLocalXyzStdUniquePtr);
     TESTCASE_AUTO_END;
 }
 
@@ -479,6 +416,12 @@ void LocalPointerTest::TestLocalPointer() {
     // destructor
 }
 
+// Try to avoid clang -Wself-move warnings from s1 = std::move(s1);
+template<typename T>
+void moveFrom(T &dest, T &src) {
+    dest = std::move(src);
+}
+
 void LocalPointerTest::TestLocalPointerMoveSwap() {
     UnicodeString *p1 = new UnicodeString((UChar)0x61);
     UnicodeString *p2 = new UnicodeString((UChar)0x62);
@@ -493,9 +436,9 @@ void LocalPointerTest::TestLocalPointerMoveSwap() {
         errln("swap(LocalPointer) did not swap back");
     }
     LocalPointer<UnicodeString> s3;
-    s3.moveFrom(s1);
+    s3 = std::move(s1);
     if(s3.getAlias() != p1 || s1.isValid()) {
-        errln("LocalPointer.moveFrom() did not move");
+        errln("LocalPointer = std::move() did not move");
     }
     infoln("TestLocalPointerMoveSwap() with rvalue references");
     s1 = static_cast<LocalPointer<UnicodeString> &&>(s3);
@@ -510,8 +453,21 @@ void LocalPointerTest::TestLocalPointerMoveSwap() {
     // Move self assignment leaves the object valid but in an undefined state.
     // Do it to make sure there is no crash,
     // but do not check for any particular resulting value.
-    s1.moveFrom(s1);
-    s3.moveFrom(s3);
+    moveFrom(s1, s1);
+    moveFrom(s3, s3);
+}
+
+void LocalPointerTest::TestLocalPointerStdUniquePtr() {
+    auto* ptr = new UnicodeString((UChar32)0x50005);
+    // Implicit conversion operator
+    std::unique_ptr<UnicodeString> s = LocalPointer<UnicodeString>(ptr);
+    // Explicit move constructor
+    LocalPointer<UnicodeString> s2(std::move(s));
+    // Conversion operator should also work with std::move
+    s = std::move(s2);
+    // Back again with move assignment
+    s2 = std::move(s);
+    assertTrue("Pointer should remain the same", ptr == s2.getAlias());
 }
 
 // Exercise almost every LocalArray method (but not LocalPointerBase).
@@ -586,9 +542,9 @@ void LocalPointerTest::TestLocalArrayMoveSwap() {
         errln("swap(LocalArray) did not swap back");
     }
     LocalArray<UnicodeString> a3;
-    a3.moveFrom(a1);
+    a3 = std::move(a1);
     if(a3.getAlias() != p1 || a1.isValid()) {
-        errln("LocalArray.moveFrom() did not move");
+        errln("LocalArray = std::move() did not move");
     }
     infoln("TestLocalArrayMoveSwap() with rvalue references");
     a1 = static_cast<LocalArray<UnicodeString> &&>(a3);
@@ -603,8 +559,21 @@ void LocalPointerTest::TestLocalArrayMoveSwap() {
     // Move self assignment leaves the object valid but in an undefined state.
     // Do it to make sure there is no crash,
     // but do not check for any particular resulting value.
-    a1.moveFrom(a1);
-    a3.moveFrom(a3);
+    moveFrom(a1, a1);
+    moveFrom(a3, a3);
+}
+
+void LocalPointerTest::TestLocalArrayStdUniquePtr() {
+    auto* ptr = new UnicodeString[2];
+    // Implicit conversion operator
+    std::unique_ptr<UnicodeString[]> a = LocalArray<UnicodeString>(ptr);
+    // Explicit move constructor
+    LocalArray<UnicodeString> a2(std::move(a));
+    // Conversion operator should also work with std::move
+    a = std::move(a2);
+    // Back again with move assignment
+    a2 = std::move(a);
+    assertTrue("Pointer should remain the same", ptr == a2.getAlias());
 }
 
 #include "unicode/ucnvsel.h"
@@ -616,6 +585,7 @@ void LocalPointerTest::TestLocalArrayMoveSwap() {
 #include "unicode/unorm2.h"
 #include "unicode/uregex.h"
 #include "unicode/utrans.h"
+#include "unicode/uformattedvalue.h"
 
 // Use LocalXyzPointer types that are not covered elsewhere in the intltest suite.
 void LocalPointerTest::TestLocalXyzPointer() {
@@ -754,9 +724,9 @@ void LocalPointerTest::TestLocalXyzPointerMoveSwap() {
         errln("swap(LocalUNormalizer2Pointer) did not swap back");
     }
     LocalUNormalizer2Pointer f3;
-    f3.moveFrom(f1);
+    f3 = std::move(f1);
     if(f3.getAlias() != p1 || f1.isValid()) {
-        errln("LocalUNormalizer2Pointer.moveFrom() did not move");
+        errln("LocalUNormalizer2Pointer = std::move() did not move");
     }
     infoln("TestLocalXyzPointerMoveSwap() with rvalue references");
     f1 = static_cast<LocalUNormalizer2Pointer &&>(f3);
@@ -770,8 +740,8 @@ void LocalPointerTest::TestLocalXyzPointerMoveSwap() {
     // Move self assignment leaves the object valid but in an undefined state.
     // Do it to make sure there is no crash,
     // but do not check for any particular resulting value.
-    f1.moveFrom(f1);
-    f3.moveFrom(f3);
+    moveFrom(f1, f1);
+    moveFrom(f3, f3);
 #endif /* !UCONFIG_NO_NORMALIZATION */
 }
 
@@ -838,6 +808,23 @@ void LocalPointerTest::TestLocalXyzPointerNull() {
 
 }
 
+void LocalPointerTest::TestLocalXyzStdUniquePtr() {
+    IcuTestErrorCode status(*this, "TestLocalXyzStdUniquePtr");
+#if !UCONFIG_NO_FORMATTING
+    auto* ptr = ucfpos_open(status);
+    // Implicit conversion operator
+    std::unique_ptr<UConstrainedFieldPosition, void(*)(UConstrainedFieldPosition*)> a =
+        LocalUConstrainedFieldPositionPointer(ptr);
+    // Explicit move constructor
+    LocalUConstrainedFieldPositionPointer a2(std::move(a));
+    // Conversion operator should also work with std::move
+    a = std::move(a2);
+    // Back again with move assignment
+    a2 = std::move(a);
+    assertTrue("Pointer should remain the same", ptr == a2.getAlias());
+#endif // UCONFIG_NO_FORMATTING
+}
+
 /** EnumSet test **/
 #include "unicode/enumset.h"
 
@@ -874,47 +861,47 @@ void EnumSetTest::TestEnumSet() {
     logln("Enum is from [%d..%d]\n", MAX_NONBOOLEAN+1,
           LIMIT_BOOLEAN);
 
-    TEST_ASSERT_TRUE(flags.get(THING1) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING2) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING3) == FALSE);
+    assertFalse(WHERE, flags.get(THING1));
+    assertFalse(WHERE, flags.get(THING2));
+    assertFalse(WHERE, flags.get(THING3));
 
     logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
     logln("Value now: %d\n", flags.getAll());
     flags.clear();
     logln("clear -Value now: %d\n", flags.getAll());
     logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
-    TEST_ASSERT_TRUE(flags.get(THING1) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING2) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING3) == FALSE);
+    assertFalse(WHERE, flags.get(THING1));
+    assertFalse(WHERE, flags.get(THING2));
+    assertFalse(WHERE, flags.get(THING3));
     flags.add(THING1);
     logln("set THING1 -Value now: %d\n", flags.getAll());
-    TEST_ASSERT_TRUE(flags.get(THING1) == TRUE);
-    TEST_ASSERT_TRUE(flags.get(THING2) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING3) == FALSE);
+    assertTrue(WHERE, flags.get(THING1));
+    assertFalse(WHERE, flags.get(THING2));
+    assertFalse(WHERE, flags.get(THING3));
     logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
     flags.add(THING3);
     logln("set THING3 -Value now: %d\n", flags.getAll());
-    TEST_ASSERT_TRUE(flags.get(THING1) == TRUE);
-    TEST_ASSERT_TRUE(flags.get(THING2) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING3) == TRUE);
+    assertTrue(WHERE, flags.get(THING1));
+    assertFalse(WHERE, flags.get(THING2));
+    assertTrue(WHERE, flags.get(THING3));
     logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
     flags.remove(THING2);
-    TEST_ASSERT_TRUE(flags.get(THING1) == TRUE);
-    TEST_ASSERT_TRUE(flags.get(THING2) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING3) == TRUE);
+    assertTrue(WHERE, flags.get(THING1));
+    assertFalse(WHERE, flags.get(THING2));
+    assertTrue(WHERE, flags.get(THING3));
     logln("remove THING2 -Value now: %d\n", flags.getAll());
     logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
     flags.remove(THING1);
-    TEST_ASSERT_TRUE(flags.get(THING1) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING2) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING3) == TRUE);
+    assertFalse(WHERE, flags.get(THING1));
+    assertFalse(WHERE, flags.get(THING2));
+    assertTrue(WHERE, flags.get(THING3));
     logln("remove THING1 -Value now: %d\n", flags.getAll());
     logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
 
     flags.clear();
     logln("clear -Value now: %d\n", flags.getAll());
     logln("get(thing1)=%d, get(thing2)=%d, get(thing3)=%d\n",          flags.get(THING1),          flags.get(THING2),          flags.get(THING3));
-    TEST_ASSERT_TRUE(flags.get(THING1) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING2) == FALSE);
-    TEST_ASSERT_TRUE(flags.get(THING3) == FALSE);
+    assertFalse(WHERE, flags.get(THING1));
+    assertFalse(WHERE, flags.get(THING2));
+    assertFalse(WHERE, flags.get(THING3));
 }

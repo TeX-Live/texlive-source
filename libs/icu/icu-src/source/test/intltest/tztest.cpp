@@ -72,6 +72,7 @@ void TimeZoneTest::runIndexedTest( int32_t index, UBool exec, const char* &name,
     TESTCASE_AUTO(TestGetRegion);
     TESTCASE_AUTO(TestGetAvailableIDsNew);
     TESTCASE_AUTO(TestGetUnknown);
+    TESTCASE_AUTO(TestGetGMT);
     TESTCASE_AUTO(TestGetWindowsID);
     TESTCASE_AUTO(TestGetIDForWindowsID);
     TESTCASE_AUTO_END;
@@ -422,7 +423,7 @@ TimeZoneTest::TestGetAvailableIDs913()
 #endif
 
     UnicodeString str;
-    UnicodeString *buf = new UnicodeString("TimeZone::createEnumeration() = { ");
+    UnicodeString buf(u"TimeZone::createEnumeration() = { ");
     int32_t s_length;
     StringEnumeration* s = TimeZone::createEnumeration();
     if (s == NULL) {
@@ -431,11 +432,11 @@ TimeZoneTest::TestGetAvailableIDs913()
     }
     s_length = s->count(ec);
     for (i = 0; i < s_length;++i) {
-        if (i > 0) *buf += ", ";
+        if (i > 0) buf += ", ";
         if ((i & 1) == 0) {
-            *buf += *s->snext(ec);
+            buf += *s->snext(ec);
         } else {
-            *buf += UnicodeString(s->next(NULL, ec), "");
+            buf += UnicodeString(s->next(NULL, ec), "");
         }
 
         if((i % 5) == 4) {
@@ -449,8 +450,8 @@ TimeZoneTest::TestGetAvailableIDs913()
             }
         }
     }
-    *buf += " };";
-    logln(*buf);
+    buf += " };";
+    logln(buf);
 
     /* Confirm that the following zones can be retrieved: The first
      * zone, the last zone, and one in-between.  This tests the binary
@@ -477,31 +478,31 @@ TimeZoneTest::TestGetAvailableIDs913()
     }
     delete s;
 
-    buf->truncate(0);
-    *buf += "TimeZone::createEnumeration(GMT+01:00) = { ";
+    buf.truncate(0);
+    buf += "TimeZone::createEnumeration(GMT+01:00) = { ";
 
     s = TimeZone::createEnumeration(1 * U_MILLIS_PER_HOUR);
     s_length = s->count(ec);
     for (i = 0; i < s_length;++i) {
-        if (i > 0) *buf += ", ";
-        *buf += *s->snext(ec);
+        if (i > 0) buf += ", ";
+        buf += *s->snext(ec);
     }
     delete s;
-    *buf += " };";
-    logln(*buf);
+    buf += " };";
+    logln(buf);
 
 
-    buf->truncate(0);
-    *buf += "TimeZone::createEnumeration(US) = { ";
+    buf.truncate(0);
+    buf += "TimeZone::createEnumeration(US) = { ";
 
     s = TimeZone::createEnumeration("US");
     s_length = s->count(ec);
     for (i = 0; i < s_length;++i) {
-        if (i > 0) *buf += ", ";
-        *buf += *s->snext(ec);
+        if (i > 0) buf += ", ";
+        buf += *s->snext(ec);
     }
-    *buf += " };";
-    logln(*buf);
+    buf += " };";
+    logln(buf);
 
     TimeZone *tz = TimeZone::createTimeZone("PST");
     if (tz != 0) logln("getTimeZone(PST) = " + tz->getID(str));
@@ -521,7 +522,6 @@ TimeZoneTest::TestGetAvailableIDs913()
         errln("FAIL: getTimeZone(NON_EXISTENT) = " + temp);
     delete tz;
 
-    delete buf;
     delete s;
 }
 
@@ -2418,6 +2418,15 @@ void TimeZoneTest::TestGetUnknown() {
     assertEquals("getUnknown() wrong ID", expectedID, unknown.getID(id));
     assertTrue("getUnknown() wrong offset", 0 == unknown.getRawOffset());
     assertFalse("getUnknown() uses DST", unknown.useDaylightTime());
+}
+
+void TimeZoneTest::TestGetGMT() {
+    const TimeZone *gmt = TimeZone::getGMT();
+    UnicodeString expectedID = UNICODE_STRING_SIMPLE("GMT");
+    UnicodeString id;
+    assertEquals("getGMT() wrong ID", expectedID, gmt->getID(id));
+    assertTrue("getGMT() wrong offset", 0 == gmt->getRawOffset());
+    assertFalse("getGMT() uses DST", gmt->useDaylightTime());
 }
 
 void TimeZoneTest::TestGetWindowsID(void) {

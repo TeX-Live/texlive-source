@@ -36,7 +36,8 @@ static  void TestDisplayNames(void);
 /**
  * Test getAvailableLocales
  **/
- static  void TestGetAvailableLocales(void);
+static void TestGetAvailableLocales(void);
+static void TestGetAvailableLocalesByType(void);
 /**
  * Test functions to set and access a custom data directory
  **/
@@ -121,17 +122,18 @@ static void TestOrientation(void);
 static void TestLikelySubtags(void);
 
 /**
- * lanuage tag
+ * language tag
  */
 static void TestForLanguageTag(void);
-static void TestInvalidLanguageTag(void);
 static void TestToLanguageTag(void);
+static void TestBug20132(void);
 static void TestLangAndRegionCanonicalize(void);
 
 static void TestToUnicodeLocaleKey(void);
 static void TestToLegacyKey(void);
 static void TestToUnicodeLocaleType(void);
 static void TestToLegacyType(void);
+static void TestBug20149(void);
 
 /**
  * locale data

@@ -1,45 +1,27 @@
 	No `s' for STATIC_PREFIX.
 
-*** source/config/Makefile.inc.in~	Fri Sep 28 17:34:41 2018
---- source/config/Makefile.inc.in	Tue Jan  8 10:17:00 2019
-***************
-*** 47,51 ****
-  
-  # Static library prefix and file extension
-! STATIC_PREFIX = s
-  LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
-  A = a
---- 47,51 ----
-  
-  # Static library prefix and file extension
-! STATIC_PREFIX =
-  LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
-  A = a
-*** source/icudefs.mk.in~	Fri Sep 28 17:34:42 2018
---- source/icudefs.mk.in	Tue Jan  8 10:17:00 2019
-***************
-*** 211,215 ****
-  ## If we can't use the shared libraries, use the static libraries
-  ifneq ($(ENABLE_SHARED),YES)
-! STATIC_PREFIX_WHEN_USED = s
-  else
-  STATIC_PREFIX_WHEN_USED = 
---- 211,215 ----
-  ## If we can't use the shared libraries, use the static libraries
-  ifneq ($(ENABLE_SHARED),YES)
-! STATIC_PREFIX_WHEN_USED = 
-  else
-  STATIC_PREFIX_WHEN_USED = 
-***************
-*** 217,221 ****
-  
-  # Static library prefix and file extension
-! STATIC_PREFIX = s
-  LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
-  A = a
---- 217,221 ----
-  
-  # Static library prefix and file extension
-! STATIC_PREFIX = 
-  LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
-  A = a
+--- source/config/Makefile.inc.in~	2019-10-03 04:16:41.000000000 -0700
++++ source/config/Makefile.inc.in	2019-12-11 15:36:12.724809309 -0800
+@@ -47,5 +47,5 @@
+ 
+ # Static library prefix and file extension
+-STATIC_PREFIX = s
++STATIC_PREFIX =
+ LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
+ A = a
+--- source/icudefs.mk.in~	2019-10-03 04:16:41.000000000 -0700
++++ source/icudefs.mk.in	2019-12-11 15:36:12.725809296 -0800
+@@ -214,5 +214,5 @@
+ ## If we can't use the shared libraries, use the static libraries
+ ifneq ($(ENABLE_SHARED),YES)
+-STATIC_PREFIX_WHEN_USED = s
++STATIC_PREFIX_WHEN_USED = 
+ else
+ STATIC_PREFIX_WHEN_USED = 
+@@ -220,5 +220,5 @@
+ 
+ # Static library prefix and file extension
+-STATIC_PREFIX = s
++STATIC_PREFIX = 
+ LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
+ A = a

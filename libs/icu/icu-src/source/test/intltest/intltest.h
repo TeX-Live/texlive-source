@@ -18,6 +18,9 @@
 #include "unicode/testlog.h"
 #include "unicode/uniset.h"
 
+#include <vector>
+#include <string>
+
 U_NAMESPACE_USE
 
 #if U_PLATFORM == U_PF_OS390
@@ -84,7 +87,7 @@ UnicodeString toString(UBool b);
 //|     TESTCASE_AUTO_END;
 //| }
 #define TESTCASE_AUTO_BEGIN \
-    for(;;) { \
+    do { \
         int32_t testCaseAutoNumber = 0
 
 #define TESTCASE_AUTO(test) \
@@ -96,7 +99,7 @@ UnicodeString toString(UBool b);
                 test(); \
             } \
             break; \
-        }
+        } else (void)0
 
 #define TESTCASE_AUTO_CLASS(TestClass) \
         if (index == testCaseAutoNumber++) { \
@@ -108,7 +111,7 @@ UnicodeString toString(UBool b);
                 callTest(test, par); \
             } \
             break; \
-        }
+        } else (void)0
 
 #define TESTCASE_AUTO_CREATE_CLASS(TestClass) \
         if (index == testCaseAutoNumber++) { \
@@ -120,18 +123,18 @@ UnicodeString toString(UBool b);
                 callTest(*test, par); \
             } \
             break; \
-        }
+        } else (void)0
 
 #define TESTCASE_AUTO_END \
         name = ""; \
         break; \
-    }
+    } while (TRUE)
 
-#define TEST_ASSERT_TRUE(x) \
-  assertTrue(#x, (x), FALSE, FALSE, __FILE__, __LINE__)
 
-#define TEST_ASSERT_STATUS(x) \
-  assertSuccess(#x, (x), FALSE, __FILE__, __LINE__)
+// WHERE Macro yields a literal string of the form "source_file_name:line number "
+#define WHERE __FILE__ ":" XLINE(__LINE__) " "
+#define XLINE(s) LINE(s)
+#define LINE(s) #s
 
 class IntlTest : public TestLog {
 public:
@@ -147,6 +150,7 @@ public:
     virtual UBool setLeaks( UBool leaks = TRUE );
     virtual UBool setNotime( UBool no_time = TRUE );
     virtual UBool setWarnOnMissingData( UBool warn_on_missing_data = TRUE );
+    virtual UBool setWriteGoldenData( UBool write_golden_data = TRUE );
     virtual int32_t setThreadCount( int32_t count = 1);
 
     virtual int32_t getErrors( void );
@@ -297,6 +301,8 @@ public:
     UBool assertEquals(const char* message, double expected, double actual);
     UBool assertEquals(const char* message, UErrorCode expected, UErrorCode actual);
     UBool assertEquals(const char* message, const UnicodeSet& expected, const UnicodeSet& actual);
+    UBool assertEquals(const char* message,
+        const std::vector<std::string>& expected, const std::vector<std::string>& actual);
 #if !UCONFIG_NO_FORMATTING
     UBool assertEquals(const char* message, const Formattable& expected,
                        const Formattable& actual, UBool possibleDataError=FALSE);
@@ -315,6 +321,8 @@ public:
     UBool assertEquals(const UnicodeString& message, double expected, double actual);
     UBool assertEquals(const UnicodeString& message, UErrorCode expected, UErrorCode actual);
     UBool assertEquals(const UnicodeString& message, const UnicodeSet& expected, const UnicodeSet& actual);
+    UBool assertEquals(const UnicodeString& message,
+        const std::vector<std::string>& expected, const std::vector<std::string>& actual);
 
     virtual void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL ); // overide !
 
@@ -332,6 +340,7 @@ public:
     UBool       quick;
     UBool       leaks;
     UBool       warn_on_missing_data;
+    UBool       write_golden_data;
     UBool       no_time;
     int32_t     threadCount;
 

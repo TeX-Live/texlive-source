@@ -37,12 +37,15 @@ private:
     void testAvailbleLocales();
     void testParseErrors();
     void testFixedDecimal();
+    void testSelectTrailingZeros();
+    void testLocaleExtension();
 
     void assertRuleValue(const UnicodeString& rule, double expected);
     void assertRuleKeyValue(const UnicodeString& rule, const UnicodeString& key,
                             double expected);
     void checkSelect(const LocalPointer<PluralRules> &rules, UErrorCode &status, 
                                   int32_t line, const char *keyword, ...);
+    void compareLocaleResults(const char* loc1, const char* loc2, const char* loc3);
 };
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

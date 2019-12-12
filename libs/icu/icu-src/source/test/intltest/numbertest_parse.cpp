@@ -14,8 +14,6 @@
 #include <cmath>
 #include <numparse_affixes.h>
 
-using icu::unisets::get;
-
 void NumberParserTest::runIndexedTest(int32_t index, UBool exec, const char*& name, char*) {
     if (exec) {
         logln("TestSuite NumberParserTest: ");
@@ -25,6 +23,8 @@ void NumberParserTest::runIndexedTest(int32_t index, UBool exec, const char*& na
         TESTCASE_AUTO(testSeriesMatcher);
         TESTCASE_AUTO(testCombinedCurrencyMatcher);
         TESTCASE_AUTO(testAffixPatternMatcher);
+        TESTCASE_AUTO(test20360_BidiOverflow);
+        TESTCASE_AUTO(testInfiniteRecursion);
     TESTCASE_AUTO_END;
 }
 
@@ -111,6 +111,10 @@ void NumberParserTest::testBasic() {
                  {3, u"𝟱.𝟭𝟰𝟮E𝟯", u"0", 12, 5142.},
                  {3, u"𝟱.𝟭𝟰𝟮E-𝟯", u"0", 13, 0.005142},
                  {3, u"𝟱.𝟭𝟰𝟮e-𝟯", u"0", 13, 0.005142},
+                 {3, u"5.142e+3", u"0", 8, 5142.0 },
+                 {3, u"5.142\u200Ee+3", u"0", 9, 5142.0},
+                 {3, u"5.142e\u200E+3", u"0", 9, 5142.0},
+                 {3, u"5.142e+\u200E3", u"0", 9, 5142.0},
                  {7, u"5,142.50 Canadian dollars", u"#,##,##0 ¤¤¤", 25, 5142.5},
                  {3, u"a$ b5", u"a ¤ b0", 5, 5.0},
                  {3, u"📺1.23", u"📺0;📻0", 6, 1.23},
@@ -139,10 +143,10 @@ void NumberParserTest::testBasic() {
             ParsedNumber resultObject;
             parser->parse(inputString, true, resultObject, status);
             assertTrue("Greedy Parse failed: " + message, resultObject.success());
-            assertEquals(
-                    "Greedy Parse failed: " + message, cas.expectedCharsConsumed, resultObject.charEnd);
-            assertEquals(
-                    "Greedy Parse failed: " + message, cas.expectedResultDouble, resultObject.getDouble());
+            assertEquals("Greedy Parse failed: " + message,
+                cas.expectedCharsConsumed, resultObject.charEnd);
+            assertEquals("Greedy Parse failed: " + message,
+                cas.expectedResultDouble, resultObject.getDouble(status));
         }
 
         if (0 != (cas.flags & 0x02)) {
@@ -157,7 +161,7 @@ void NumberParserTest::testBasic() {
             assertEquals(
                     "Non-Greedy Parse failed: " + message,
                     cas.expectedResultDouble,
-                    resultObject.getDouble());
+                    resultObject.getDouble(status));
         }
 
         if (0 != (cas.flags & 0x04)) {
@@ -171,10 +175,10 @@ void NumberParserTest::testBasic() {
             ParsedNumber resultObject;
             parser->parse(inputString, true, resultObject, status);
             assertTrue("Strict Parse failed: " + message, resultObject.success());
-            assertEquals(
-                    "Strict Parse failed: " + message, cas.expectedCharsConsumed, resultObject.charEnd);
-            assertEquals(
-                    "Strict Parse failed: " + message, cas.expectedResultDouble, resultObject.getDouble());
+            assertEquals("Strict Parse failed: " + message,
+                cas.expectedCharsConsumed, resultObject.charEnd);
+            assertEquals("Strict Parse failed: " + message,
+                cas.expectedResultDouble, resultObject.getDouble(status));
         }
     }
 }
@@ -188,9 +192,9 @@ void NumberParserTest::testSeriesMatcher() {
     }
     PlusSignMatcher m0(symbols, false);
     MinusSignMatcher m1(symbols, false);
-    IgnorablesMatcher m2(unisets::DEFAULT_IGNORABLES);
+    IgnorablesMatcher m2(0);
     PercentMatcher m3(symbols);
-    IgnorablesMatcher m4(unisets::DEFAULT_IGNORABLES);
+    IgnorablesMatcher m4(0);
 
     ArraySeriesMatcher::MatcherArray matchers(5);
     matchers[0] = &m0;
@@ -238,7 +242,7 @@ void NumberParserTest::testSeriesMatcher() {
 void NumberParserTest::testCombinedCurrencyMatcher() {
     IcuTestErrorCode status(*this, "testCombinedCurrencyMatcher");
 
-    IgnorablesMatcher ignorables(unisets::DEFAULT_IGNORABLES);
+    IgnorablesMatcher ignorables(0);
     Locale locale = Locale::getEnglish();
 
     DecimalFormatSymbols dfs(locale, status);
@@ -305,7 +309,7 @@ void NumberParserTest::testCombinedCurrencyMatcher() {
 void NumberParserTest::testAffixPatternMatcher() {
     IcuTestErrorCode status(*this, "testAffixPatternMatcher");
     Locale locale = Locale::getEnglish();
-    IgnorablesMatcher ignorables(unisets::DEFAULT_IGNORABLES);
+    IgnorablesMatcher ignorables(0);
 
     DecimalFormatSymbols dfs(locale, status);
     dfs.setSymbol(DecimalFormatSymbols::kCurrencySymbol, u"IU$", status);
@@ -348,6 +352,60 @@ void NumberParserTest::testAffixPatternMatcher() {
             assertEquals(affixPattern + " " + cas.exactMatch, sampleParseableString.length(), result.charEnd);
         }
     }
+}
+
+void NumberParserTest::test20360_BidiOverflow() {
+    IcuTestErrorCode status(*this, "test20360_BidiOverflow");
+    UnicodeString inputString;
+    inputString.append(u'-');
+    for (int32_t i=0; i<100000; i++) {
+        inputString.append(u'\u061C');
+    }
+    inputString.append(u'5');
+
+    LocalPointer<const NumberParserImpl> parser(NumberParserImpl::createSimpleParser("en", u"0", 0, status));
+    if (status.errDataIfFailureAndReset("createSimpleParser() failed")) {
+        return;
+    }
+
+    ParsedNumber resultObject;
+    parser->parse(inputString, true, resultObject, status);
+    assertTrue("Greedy Parse, success", resultObject.success());
+    assertEquals("Greedy Parse, chars consumed", 100002, resultObject.charEnd);
+    assertEquals("Greedy Parse, expected double", -5.0, resultObject.getDouble(status));
+
+    resultObject.clear();
+    parser->parse(inputString, false, resultObject, status);
+    assertFalse("Non-Greedy Parse, success", resultObject.success());
+    assertEquals("Non-Greedy Parse, chars consumed", 1, resultObject.charEnd);
+}
+
+void NumberParserTest::testInfiniteRecursion() {
+    IcuTestErrorCode status(*this, "testInfiniteRecursion");
+    UnicodeString inputString;
+    inputString.append(u'-');
+    for (int32_t i=0; i<200; i++) {
+        inputString.append(u'\u061C');
+    }
+    inputString.append(u'5');
+
+    LocalPointer<const NumberParserImpl> parser(NumberParserImpl::createSimpleParser("en", u"0", 0, status));
+    if (status.errDataIfFailureAndReset("createSimpleParser() failed")) {
+        return;
+    }
+
+    ParsedNumber resultObject;
+    parser->parse(inputString, false, resultObject, status);
+    assertFalse("Default recursion limit, success", resultObject.success());
+    assertEquals("Default recursion limit, chars consumed", 1, resultObject.charEnd);
+
+    parser.adoptInstead(NumberParserImpl::createSimpleParser(
+        "en", u"0", PARSE_FLAG_ALLOW_INFINITE_RECURSION, status));
+    resultObject.clear();
+    parser->parse(inputString, false, resultObject, status);
+    assertTrue("Unlimited recursion, success", resultObject.success());
+    assertEquals("Unlimited recursion, chars consumed", 202, resultObject.charEnd);
+    assertEquals("Unlimited recursion, expected double", -5.0, resultObject.getDouble(status));
 }
 
 

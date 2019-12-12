@@ -110,8 +110,10 @@ void NumberSkeletonTest::validTokens() {
     for (auto& cas : cases) {
         UnicodeString skeletonString(cas);
         status.setScope(skeletonString);
-        NumberFormatter::forSkeleton(skeletonString, status);
+        UParseError perror;
+        NumberFormatter::forSkeleton(skeletonString, perror, status);
         assertSuccess(CStr(skeletonString)(), status, true);
+        assertEquals(skeletonString, -1, perror.offset);
         status.errIfFailureAndReset();
     }
 }
@@ -147,6 +149,8 @@ void NumberSkeletonTest::invalidTokens() {
             u"integer-width/xxx",
             u"integer-width/0+",
             u"integer-width/+0#",
+            u"integer-width/+#",
+            u"integer-width/+#0",
             u"scientific/foo"};
 
     expectedErrorSkeleton(cases, UPRV_LENGTHOF(cases));
@@ -193,7 +197,7 @@ void NumberSkeletonTest::stemsRequiringOption() {
     static const char16_t* stems[] = {
             u"precision-increment",
             u"measure-unit",
-            u"per-unit",
+            u"per-measure-unit",
             u"currency",
             u"integer-width",
             u"numbering-system",
@@ -204,8 +208,23 @@ void NumberSkeletonTest::stemsRequiringOption() {
         for (auto& suffix : suffixes) {
             UnicodeString skeletonString = UnicodeString(stem) + suffix;
             UErrorCode status = U_ZERO_ERROR;
-            NumberFormatter::forSkeleton(skeletonString, status);
+            UParseError perror;
+            NumberFormatter::forSkeleton(skeletonString, perror, status);
             assertEquals(skeletonString, U_NUMBER_SKELETON_SYNTAX_ERROR, status);
+
+            // Check the UParseError for integrity.
+            // If an option is present, the option is wrong; error offset is at the start of the option
+            // If an option is not present, the error offset is at the token separator (end of stem)
+            int32_t expectedOffset = u_strlen(stem) + ((suffix[0] == u'/') ? 1 : 0);
+            assertEquals(skeletonString, expectedOffset, perror.offset);
+            UnicodeString expectedPreContext = skeletonString.tempSubString(0, expectedOffset);
+            if (expectedPreContext.length() >= U_PARSE_CONTEXT_LEN - 1) {
+                expectedPreContext = expectedPreContext.tempSubString(expectedOffset - U_PARSE_CONTEXT_LEN + 1);
+            }
+            assertEquals(skeletonString, expectedPreContext, perror.preContext);
+            UnicodeString expectedPostContext = skeletonString.tempSubString(expectedOffset);
+            // None of the postContext strings in this test exceed U_PARSE_CONTEXT_LEN
+            assertEquals(skeletonString, expectedPostContext, perror.postContext);
         }
     }
 }
@@ -250,7 +269,7 @@ void NumberSkeletonTest::flexibleSeparators() {
         status.setScope(skeletonString);
         UnicodeString actual = NumberFormatter::forSkeleton(skeletonString, status).locale("en")
                                .formatDouble(5142.3, status)
-                               .toString();
+                               .toString(status);
         if (!status.errDataIfFailureAndReset()) {
             assertEquals(skeletonString, expected, actual);
         }

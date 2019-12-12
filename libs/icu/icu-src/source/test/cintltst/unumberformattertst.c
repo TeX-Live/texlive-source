@@ -12,6 +12,7 @@
 #include "unicode/unumberformatter.h"
 #include "unicode/umisc.h"
 #include "unicode/unum.h"
+#include "cformtst.h"
 #include "cintltst.h"
 #include "cmemory.h"
 
@@ -21,12 +22,20 @@ static void TestSkeletonFormatToFields(void);
 
 static void TestExampleCode(void);
 
+static void TestFormattedValue(void);
+
+static void TestSkeletonParseError(void);
+
 void addUNumberFormatterTest(TestNode** root);
 
+#define TESTCASE(x) addTest(root, &x, "tsformat/unumberformatter/" #x)
+
 void addUNumberFormatterTest(TestNode** root) {
-    addTest(root, &TestSkeletonFormatToString, "unumberformatter/TestSkeletonFormatToString");
-    addTest(root, &TestSkeletonFormatToFields, "unumberformatter/TestSkeletonFormatToFields");
-    addTest(root, &TestExampleCode, "unumberformatter/TestExampleCode");
+    TESTCASE(TestSkeletonFormatToString);
+    TESTCASE(TestSkeletonFormatToFields);
+    TESTCASE(TestExampleCode);
+    TESTCASE(TestFormattedValue);
+    TESTCASE(TestSkeletonParseError);
 }
 
 
@@ -87,7 +96,7 @@ static void TestSkeletonFormatToFields() {
     if (assertSuccessCheck("unumf_formatInt() failed", &ec, TRUE)) {
 
         // field position test:
-        UFieldPosition ufpos = {UNUM_DECIMAL_SEPARATOR_FIELD};
+        UFieldPosition ufpos = {UNUM_DECIMAL_SEPARATOR_FIELD, 0, 0};
         unumf_resultNextFieldPosition(uresult, &ufpos, &ec);
         assertIntEquals("Field position should be correct", 14, ufpos.beginIndex);
         assertIntEquals("Field position should be correct", 15, ufpos.endIndex);
@@ -105,10 +114,11 @@ static void TestSkeletonFormatToFields() {
                 {UNUM_GROUPING_SEPARATOR_FIELD, 10, 11},
                 {UNUM_INTEGER_FIELD, 1, 14},
                 {UNUM_DECIMAL_SEPARATOR_FIELD, 14, 15},
-                {UNUM_FRACTION_FIELD, 15, 17}
+                {UNUM_FRACTION_FIELD, 15, 17},
+                {UNUM_MEASURE_UNIT_FIELD, 18, 19}
             };
             UFieldPosition actual;
-            for (int32_t i = 0; i < sizeof(expectedFields) / sizeof(*expectedFields); i++) {
+            for (int32_t i = 0; i < (int32_t)(sizeof(expectedFields) / sizeof(*expectedFields)); i++) {
                 // Iterate using the UFieldPosition to hold state...
                 UFieldPosition expected = expectedFields[i];
                 actual.field = ufieldpositer_next(ufpositer, &actual.beginIndex, &actual.endIndex);
@@ -184,6 +194,64 @@ static void TestExampleCode() {
     unumf_close(uformatter);
     unumf_closeResult(uresult);
     uprv_free(buffer);
+}
+
+
+static void TestFormattedValue() {
+    UErrorCode ec = U_ZERO_ERROR;
+    UNumberFormatter* uformatter = unumf_openForSkeletonAndLocale(
+            u".00 compact-short", -1, "en", &ec);
+    assertSuccessCheck("Should create without error", &ec, TRUE);
+    UFormattedNumber* uresult = unumf_openResult(&ec);
+    assertSuccess("Should create result without error", &ec);
+
+    unumf_formatInt(uformatter, 55000, uresult, &ec); // "55.00 K"
+    if (assertSuccessCheck("Should format without error", &ec, TRUE)) {
+        const UFormattedValue* fv = unumf_resultAsValue(uresult, &ec);
+        assertSuccess("Should convert without error", &ec);
+        static const UFieldPosition expectedFieldPositions[] = {
+            // field, begin index, end index
+            {UNUM_INTEGER_FIELD, 0, 2},
+            {UNUM_DECIMAL_SEPARATOR_FIELD, 2, 3},
+            {UNUM_FRACTION_FIELD, 3, 5},
+            {UNUM_COMPACT_FIELD, 5, 6}};
+        checkFormattedValue(
+            "FormattedNumber as FormattedValue",
+            fv,
+            u"55.00K",
+            UFIELD_CATEGORY_NUMBER,
+            expectedFieldPositions,
+            UPRV_LENGTHOF(expectedFieldPositions));
+    }
+
+    // cleanup:
+    unumf_closeResult(uresult);
+    unumf_close(uformatter);
+}
+
+
+static void TestSkeletonParseError() {
+    UErrorCode ec = U_ZERO_ERROR;
+    UNumberFormatter* uformatter;
+    UParseError perror;
+
+    // The UParseError can be null. The following should not segfault.
+    uformatter = unumf_openForSkeletonAndLocaleWithError(
+            u".00 measure-unit/typo", -1, "en", NULL, &ec);
+    unumf_close(uformatter);
+
+    // Now test the behavior.
+    ec = U_ZERO_ERROR;
+    uformatter = unumf_openForSkeletonAndLocaleWithError(
+            u".00 measure-unit/typo", -1, "en", &perror, &ec);
+
+    assertIntEquals("Should have set error code", U_NUMBER_SKELETON_SYNTAX_ERROR, ec);
+    assertIntEquals("Should have correct skeleton error offset", 17, perror.offset);
+    assertUEquals("Should have correct pre context", u"0 measure-unit/", perror.preContext);
+    assertUEquals("Should have correct post context", u"typo", perror.postContext);
+
+    // cleanup:
+    unumf_close(uformatter);
 }
 
 
