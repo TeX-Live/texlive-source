@@ -1,8 +1,8 @@
 #!/bin/sh -vx
 # $Id$
-# Public domain. Origginally written by Hironori Kitagawa, 2019.
-# This test takes many hours to run, and also tests several engines,
-# so it is not enabled.
+# Public domain. Originally written by Hironori Kitagawa, 2019.
+# This test is intended to be used in a suitable temporary directory
+# after installing all engines. It should not be enabled in build stage.
 
 cat <<'EOF' > stress.tex
 \let\origdump=\dump\let\dump\relax
@@ -39,11 +39,16 @@ EOF
 test0() {
   ENGINE=$1
   echo $ENGINE
-  rm -f stress-$ENGINE.fmt test0.dvi &>/dev/null
+  rm -f stress-$ENGINE.fmt test0.dvi test0.xdv &>/dev/null
   $ENGINE -ini -etex -progname=$ENGINE -jobname=stress-$ENGINE stress &>/dev/null
   ls -l stress-$ENGINE.fmt
-  $ENGINE -fmt=./stress-$ENGINE.fmt test0.tex &>/dev/null
-  ls -l test0.dvi
+  if [[ $ENGINE = "xetex" ]]; then
+    $ENGINE -fmt=./stress-$ENGINE.fmt -no-pdf test0.tex &>/dev/null
+    ls -l test0.xdv
+  else
+    $ENGINE -fmt=./stress-$ENGINE.fmt test0.tex &>/dev/null
+    ls -l test0.dvi
+  fi
 }
 
 test0 tex
@@ -71,11 +76,16 @@ EOF
 test1() {
   ENGINE=$1
   echo $ENGINE
-  rm -f latex-$ENGINE.fmt test1.dvi &>/dev/null
+  rm -f latex-$ENGINE.fmt test1.dvi test1.xdv &>/dev/null
   $ENGINE -ini -etex -progname=latex-dev -jobname=latex-$ENGINE latex.ini &>/dev/null
   ls -l latex-$ENGINE.fmt
-  $ENGINE -fmt=./latex-$ENGINE.fmt test1.tex &>/dev/null
-  ls -l test1.dvi
+  if [[ $ENGINE = "xetex" ]]; then
+    $ENGINE -fmt=./latex-$ENGINE.fmt -no-pdf test1.tex &>/dev/null
+    ls -l test1.xdv
+  else
+    $ENGINE -fmt=./latex-$ENGINE.fmt test1.tex &>/dev/null
+    ls -l test1.dvi
+  fi
 }
 
 test1 etex
