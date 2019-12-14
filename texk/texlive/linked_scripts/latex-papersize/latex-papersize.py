@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 r"""
 Calculate LaTeX paper and margin settings for arbitrary magnification
-(C) Silas S. Brown, 2005-2009, 2016.  Version 1.62.
+(C) Silas S. Brown, 2005-2009, 2016, 2019.  Version 1.63.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ are often meant to be clearer.
 
 This is a Python script to calculate the necessary
 settings for arbitrary font and page sizes.
+Works in both Python 2 and Python 3.
 
 BASIC USAGE
 
@@ -151,11 +152,16 @@ To run dvips on the .dvi file (not needed for pdflatex):
 $(python latex-papersize.py 12 26 file.dvi)
 """
 
-import os, sys, math, commands
+import os, sys, math
+try: from commands import getoutput # Python 2
+except: from subprocess import getoutput # Python 3
+def hasKey(a,b):
+  try: return a.has_key(b) # old Python 2
+  except: return b in a # newer Python 2 + Python 3
 if len(sys.argv)==2 and sys.argv[1]=="--help":
-  print __doc__.strip() ; raise SystemExit
+  print(__doc__.strip()); raise SystemExit
 if len(sys.argv)==2 and sys.argv[1]=="--version":
-  print __doc__[:__doc__.find("\n\n")].strip() ; raise SystemExit
+  print(__doc__[:__doc__.find("\n\n")].strip()); raise SystemExit
 
 base_pointsize = float(sys.argv[1])
 desired_pointsize = float(sys.argv[2])
@@ -167,13 +173,13 @@ else:
   extra_bottom_margin_mm = 0
   pageStyle = " \\pagestyle{empty}"
 
-if os.environ.has_key("paper_width"): paper_width=float(os.environ["paper_width"])
+if hasKey(os.environ,"paper_width"): paper_width=float(os.environ["paper_width"])
 else: paper_width=210
-if os.environ.has_key("paper_height"): paper_height=float(os.environ["paper_height"])
+if hasKey(os.environ,"paper_height"): paper_height=float(os.environ["paper_height"])
 else: paper_height=297
-if os.environ.has_key("margin_left"): margin_left=float(os.environ["margin_left"])
+if hasKey(os.environ,"margin_left"): margin_left=float(os.environ["margin_left"])
 else: margin_left=10
-if os.environ.has_key("margin_top"): margin_top=float(os.environ["margin_top"])
+if hasKey(os.environ,"margin_top"): margin_top=float(os.environ["margin_top"])
 else: margin_top=10
 
 paper_magstep = 1.0*desired_pointsize/base_pointsize
@@ -188,15 +194,16 @@ if sys.argv[3]=="tex" or sys.argv[3]=="pdftex":
   s="\\textwidth=%.1fmm \\textheight=%.1fmm \\topmargin=%.1fmm \\marginparwidth=0mm \\oddsidemargin=%.1fmm \\evensidemargin=%.1fmm \\columnsep=%.1fmm%s" % (textwidth,textheight,margin_top_setting,margin_left_setting,margin_left_setting,margin_left_setting,pageStyle)
   if sys.argv[3]=="pdftex":
     s += "\\mag=%d \\pdfpagewidth=%d true mm \\pdfpageheight=%d true mm \\pdfhorigin=0 mm \\pdfvorigin=-12.95 mm \\paperwidth=%d true mm \\paperheight=%d true mm" % (1000*paper_magstep,paper_width,paper_height,paper_width,paper_height) # the -12.95mm seems to be a constant regardless of magnification (previous version had -14 but it sems -12.95 is more accurate - at least 12.9 is too small and 13 is too big).  Need \paperwidth and \paperheight in there as well in case using hyperref.
-  print s
+  print(s)
 else:
-  os.system("dvips -T %dmm,%dmm -x %d %s -o bbox_test.ps" % (paper_width*10,paper_height*10,1000*paper_magstep+0.5,sys.argv[3]))
+  r = os.system("dvips -T %dmm,%dmm -x %d %s -o bbox_test.ps" % (paper_width*10,paper_height*10,1000*paper_magstep+0.5,sys.argv[3]))
+  assert not r, "dvips failed"
   # Now, that would have got the origin wrong.  I can't
   # figure out how dvips origin and magstep is supposed to
   # interoperate, so let's work it out on a case-by-case
   # basis from the bounding box.
   # (Note: multiplying paper_width and paper_height by 10 above, because if dealing with very small paper sizes then this may give a reading of 0 if the origin is off the page.  Increasing the paper size doesn't seem to affect the origin.)
-  bbox=commands.getoutput("echo|gs -sDEVICE=bbox bbox_test.ps 2>&1|grep BoundingBox")
+  bbox=getoutput("echo|gs -sDEVICE=bbox bbox_test.ps 2>&1|grep BoundingBox")
   # (previous version used 'head -1' to take only the first page, but that can cause 'broken pipe' errors if the file contains too many pages, and will give an incorrect result if there is only one line per page and it is indented on the first page, so we'll look at ALL the pages and take the outermost bounds.  Will also look at high-resolution bounding boxes only, if available.)
   if "HiResBoundingBox" in bbox: bbox=filter(lambda x:"HiRes" in x,bbox.split("\n"))
   else: bbox=bbox.split("\n")
@@ -206,4 +213,4 @@ else:
   os.unlink("bbox_test.ps")
   existing_left_margin_mm = min(map(lambda x:x[0],bbox))*25.4/72
   existing_top_margin_mm = paper_height*10-max(map(lambda x:x[3],bbox))*25.4/72
-  print "dvips -T %dmm,%dmm -O %.1fmm,%.1fmm -x %d %s" % (paper_width,paper_height,margin_left - existing_left_margin_mm,margin_top - existing_top_margin_mm,1000*paper_magstep+0.5,sys.argv[3])
+  print("dvips -T %dmm,%dmm -O %.1fmm,%.1fmm -x %d %s" % (paper_width,paper_height,margin_left - existing_left_margin_mm,margin_top - existing_top_margin_mm,1000*paper_magstep+0.5,sys.argv[3]))
