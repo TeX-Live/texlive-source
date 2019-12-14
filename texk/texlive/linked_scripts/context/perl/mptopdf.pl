@@ -119,36 +119,34 @@ if (($pattern eq '')||($Help)) {
 }
 
 foreach my $file (@files) {
-    my ($base, $suffix) = $file =~ m/(\w+)\.(\d+|mps|ps)/ ;
-    next unless -e $file and defined $suffix ;
-    my $pdf = $base.".pdf" ;
-    if ($miktex) {
-        $command = "pdftex -undump=mptopdf" ;
-    } else {
-        $command = "pdftex -fmt=mptopdf -progname=context" ;
-    }
-    if ($dosish) {
-        $command = "$command \\relax $file" ;
-    } else {
-        $command = "$command \\\\relax $file" ;
-    }
-    my $error = system($command) ;
-    if ($error) {
-        print "\n$program : error while processing tex file\n" ;
-        exit 1 ;
-    }
-    if ($suffix =~ m/\d+$/) {
-        rename ($pdf, "$base-$suffix.pdf") ;
-        if (-e $pdf) {
-            CopyFile ($pdf, "$base-$suffix.pdf") ;
+    $_ = $file ;
+    if (s/\.(\d+|mps)$// && -e $file) {
+        if ($miktex) {
+            $command = "pdftex -undump=mptopdf" ;
+        } else {
+            $command = "pdftex -fmt=mptopdf -progname=context" ;
         }
-        $pdf = "$base-$suffix.pdf" ;
+        if ($dosish) {
+            $command = "$command \\relax $file" ;
+        } else {
+            $command = "$command \\\\relax $file" ;
+        }
+        my $error = system($command) ;
+        if ($error) {
+            print "\n$program : error while processing tex file\n" ;
+            exit 1 ;
+        }
+        my $pdfsrc = basename($_).".pdf";
+        rename ($pdfsrc, "$_-$1.pdf") ;
+        if (-e $pdfsrc) {
+            CopyFile ($pdfsrc, "$_-$1.pdf") ;
+        }
+        if ($done) {
+            $report .= " +" ;
+        }
+        $report .= " $_-$1.pdf" ;
+        ++$done  ;
     }
-    if ($done) {
-        $report .= " +" ;
-    }
-    $report .= " $pdf" ;
-    ++$done  ;
 }
 
 if ($report eq '') {
