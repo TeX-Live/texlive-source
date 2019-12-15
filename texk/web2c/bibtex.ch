@@ -1024,7 +1024,7 @@ if (last_cite = max_cites) then
         end;
 @z
 
-% [142] Don't pad with blanks, terminate with null.
+% [141] Don't pad with blanks, terminate with null.
 % Don't use a path to search for subsidiary aux files,
 % but do check the directory of the main .aux file.
 % 
@@ -1047,6 +1047,14 @@ if (not kpse_in_name_ok(stringcast(name_of_file+1))
         and not a_open_in_with_dirname(cur_aux_file, no_file_path,
                                        bib_makecstring(top_lev_str)))
     ) then
+@z
+
+@x [still 141] Be silent unless verbose.
+print ('A level-',aux_ptr:0,' auxiliary file: ');
+print_aux_name;
+@y
+log_pr ('A level-',aux_ptr:0,' auxiliary file: ');
+log_pr_aux_name;
 @z
 
 % [152] This goto gets turned into a setjmp/longjmp by ./convert --

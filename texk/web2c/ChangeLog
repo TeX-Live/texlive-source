@@ -1,3 +1,8 @@
+2019-12-15  Karl Berry  <karl@freefriends.org>
+
+	* bibtex.ch (Open this .aux file [141]): if -terse,
+	only log the "A level-N auxiliary file" message, instead of print.
+
 2019-12-10  Hironori KITAGAWA  <h_kitagawa2001@yahoo.co.jp>
 
 	* ac/web2c.ac (etex, ptex, eptex, uptex, euptex, pdftex): use zlib.
@@ -8409,6 +8414,7 @@ Tue Jan  7 16:09:55 1992  Karl Berry  (karl at hayley)
 
 	* bibtex.ch (10/main program): exit with bad status if history >
 	  warning_message.
+
 Mon Feb 21 14:50:08 1994  Karl Berry  (karl@cs.umb.edu)
 
 	* Makefile.in: srcdir changes from simon.
