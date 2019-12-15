@@ -297,7 +297,7 @@ if (hash_prime >= (16384-64)) then              bad:=10*bad+6;
 if (hash_base <> 1) then                        bad:=10*bad+6;
 @z
 
-@x [17] remove the following, since buf_size changes dynamically.
+@x [still 17] remove buf_size checks, since buf_size changes dynamically.
 if (ent_str_size > buf_size) then               bad:=10*bad+9;
 if (glob_str_size > buf_size) then              bad:=100*bad+11;
 @y
@@ -347,7 +347,7 @@ for i:=0 to @'177 do lex_class[i] := other_lex;
 for i:=@'200 to @'377 do lex_class[i] := alpha;
 @z
 
-% [32] Make RET a `white_space' character, so we won't choke on DOS
+% [still 32] Make RET a `white_space' character, so we won't choke on DOS
 % files, which use CR/LF for line endings.
 @x
 lex_class[tab] := white_space;
@@ -442,14 +442,14 @@ end;
 File closing will be done in C, too.
 @z
 
-@x [42] Dynamic buf_size.
+@x [41] Dynamic buf_size.
 @!buffer:buf_type;      {usually, lines of characters being read}
 @y
 @!buf_size:integer;     {size of buffer}
 @!buffer:buf_type;      {usually, lines of characters being read}
 @z
 
-@x [43] Dyanmic buf_size.
+@x [42] Dyanmic buf_size.
 @!buf_pointer = 0..buf_size;                    {an index into a |buf_type|}
 @!buf_type = array[buf_pointer] of ASCII_code;  {for various buffers}
 @y
@@ -457,7 +457,7 @@ File closing will be done in C, too.
 @!buf_type = ^ASCII_code;                       {for various buffers}
 @z
 
-@x [47] Dynamic buf_size.
+@x [46] Dynamic buf_size.
 overflow('buffer size ',buf_size);
 @y
 BIB_XRETALLOC_NOSET ('buffer', buffer, ASCII_code,
@@ -474,7 +474,7 @@ BIB_XRETALLOC ('name_sep_char', name_sep_char, ASCII_code,
                buf_size, buf_size + BUF_SIZE);
 @z
 
-@x [48] web2c doesn't understand f^.
+@x [47] web2c doesn't understand f^.
     buffer[last]:=xord[f^];
     get(f); incr(last);
     end;
@@ -486,7 +486,7 @@ BIB_XRETALLOC ('name_sep_char', name_sep_char, ASCII_code,
   vgetc (f); {skip the eol}
 @z
 
-@x [49] Dynamically allocate str_pool.
+@x [48] Dynamically allocate str_pool.
 @!str_pool : packed array[pool_pointer] of ASCII_code;  {the characters}
 @!str_start : packed array[str_number] of pool_pointer; {the starting pointers}
 @y
@@ -494,7 +494,7 @@ BIB_XRETALLOC ('name_sep_char', name_sep_char, ASCII_code,
 @!str_start :^pool_pointer; {the starting pointers}
 @z
 
-@x [50] pool_size is a variable now, so can't be used as a constant.
+@x [49] pool_size is a variable now, so can't be used as a constant.
 @!pool_pointer = 0..pool_size;  {for variables that point into |str_pool|}
 @!str_number = 0..max_strings;  {for variables that point into |str_start|}
 @y
@@ -502,7 +502,7 @@ BIB_XRETALLOC ('name_sep_char', name_sep_char, ASCII_code,
 @!str_number = integer;   {for variables that point into |str_start|}
 @z
 
-@x [51] Add log_pr_pool_str macro.
+@x [50] Add log_pr_pool_str macro.
 @d trace_pr_pool_str(#) == begin
                            out_pool_str(log_file,#);
                            end
@@ -514,19 +514,19 @@ BIB_XRETALLOC ('name_sep_char', name_sep_char, ASCII_code,
 @d log_pr_pool_str(#) == trace_pr_pool_str(#)
 @z
 
-@x [54] Reallocate str_pool.  We may need more than POOL_SIZE.
+@x [53] Reallocate str_pool.  We may need more than POOL_SIZE.
   if (pool_ptr+# > pool_size) then
 @y
   while (pool_ptr+# > pool_size) do
 @z
-@x [54] Reallocate str_pool.
+@x [still 53] Reallocate str_pool.
 overflow('pool size ',pool_size);
 @y
 BIB_XRETALLOC ('str_pool', str_pool, ASCII_code, pool_size,
                pool_size + POOL_SIZE);
 @z
 
-% [59] (start_name) reallocate name_of_file for the new name and
+% [58] (start_name) reallocate name_of_file for the new name and
 % terminate with null.
 @x
 if (length(file_name) > file_name_size) then
@@ -548,7 +548,7 @@ name_length := length(file_name);
 name_of_file[name_length + 1] := 0;
 @z
 
-@x [60] (file_nm_size_overflow) This procedure is not used.
+@x [59] (file_nm_size_overflow) This procedure is not used.
 procedure file_nm_size_overflow;
 begin
 overflow('file name size ',file_name_size);
@@ -556,7 +556,7 @@ end;
 @y
 @z
 
-% [61] (add_extension) Don't pad name_of_file with blanks, terminate
+% [60] (add_extension) Don't pad name_of_file with blanks, terminate
 % with null. And junk the overflow check, since Web2c can't translate
 % the print statement properly and it can never happen, anyway.
 @x
@@ -579,7 +579,7 @@ while (name_ptr <= file_name_size) do   {pad with blanks}
 name_of_file[name_length + 1] := 0;
 @z
 
-@x [62] (add_area) This procedure is not used.
+@x [61] (add_area) This procedure is not used.
 procedure add_area(@!area:str_number);
 var p_ptr: pool_pointer;        {running index}
 begin
@@ -607,13 +607,13 @@ end;
 @y
 @z
 
-@x [65] now Pascal consts or vars, instead of web macros.
+@x [64] now Pascal consts or vars, instead of web macros.
 @d hash_base = empty + 1                {lowest numbered hash-table location}
 @d hash_max = hash_base + hash_size - 1 {highest numbered hash-table location}
 @y
 @z
 
-@x [65] max_strings=hash_size settable at runtime.
+@x [still 64] max_strings=hash_size settable at runtime.
 @!hash_loc=hash_base..hash_max;         {a location within the hash table}
 @!hash_pointer=empty..hash_max;         {either |empty| or a |hash_loc|}
 @y
@@ -621,7 +621,7 @@ end;
 @!hash_pointer=integer;         {either |empty| or a |hash_loc|}
 @z
 
-@x [66] max_strings=hash_size settable at runtime.
+@x [65] max_strings=hash_size settable at runtime.
 @!hash_next : packed array[hash_loc] of hash_pointer;   {coalesced-list link}
 @!hash_text : packed array[hash_loc] of str_number;     {pointer to a string}
 @!hash_ilk : packed array[hash_loc] of str_ilk;         {the type of string}
@@ -635,46 +635,46 @@ end;
 @!hash_used : integer;    {allocation pointer for hash table}
 @z
 
-@x [69] Not used anymore.
+@x [68] Not used anymore.
 @d max_hash_value = hash_prime+hash_prime-2+127         {|h|'s maximum value}
 @y
 @z
 
-@x [69] max_strings=hash_size settable at runtime.
+@x [still 68] max_strings=hash_size settable at runtime.
 var h:0..max_hash_value;        {hash code}
 @y
 var h:integer;        {hash code}
 @z
 
-@x [69] str_lookup - Avoid 'uninitialized' warning.
+@x [still 68] str_lookup - Avoid 'uninitialized' warning.
 @!old_string:boolean;   {set to |true| if it's an already encountered string}
 @y
 @z
 
-@x [69] str_lookup - Avoid 'uninitialized' warning.
+@x [still 68] str_lookup - Avoid 'uninitialized' warning.
 old_string := false;
 @y
 str_num := 0;           {set to |>0| if it's an already encountered string}
 @z
 
-@x [71] str_lookup - Avoid 'uninitialized' warning.
+@x [70] str_lookup - Avoid 'uninitialized' warning.
             old_string := true;
 @y
 @z
 
-@x [72] str_lookup - Avoid 'uninitialized' warning.
+@x [71] str_lookup - Avoid 'uninitialized' warning.
 if (old_string) then            {it's an already encountered string}
 @y
 if (str_num>0) then             {it's an already encountered string}
 @z
 
-@x [74] Pascal Web's char
+@x [73] Pascal Web's char type will be a const char *.
 @!pds_type = packed array [pds_loc] of char;
 @y
 @!pds_type = const_cstring;
 @z
 
-@x [78] C strings start at zero instead of one.
+@x [77] C strings start at zero instead of one.
 for i:=1 to len do
     buffer[i] := xord[pds[i]];
 @y
@@ -682,13 +682,13 @@ for i:=1 to len do
     buffer[i] := xord[ucharcast(pds[i-1])];
 @z
 
-@x [98] Can't do this tangle-time arithmetic with file_name_size.
+@x [97] Can't do this tangle-time arithmetic with file_name_size.
 @!aux_name_length : 0..file_name_size+1;        {\.{.aux} name sans extension}
 @y
 @!aux_name_length : integer;
 @z
 
-@x [101] Reading the aux file name and command-line processing.
+@x [100] Reading the aux file name and command-line processing.
 This procedure consists of a loop that reads and processes a (nonnull)
 \.{.aux} file name.  It's this module and the next two that must be
 changed on those systems using command-line arguments.  Note: The
@@ -754,7 +754,7 @@ end;
 @y
 @z
 
-@x [103] Get the aux file name from the command line.
+@x [102] Get the aux file name from the command line.
 @<Process a possible command line@>=
 begin
 do_nothing;             {the ``default system'' doesn't use the command line}
@@ -764,7 +764,7 @@ end
 parse_arguments;
 @z
 
-% [107] Don't use a path to find the aux file, and don't add the
+% [106] Don't use a path to find the aux file, and don't add the
 % extension if it's already there.
 @x
 add_extension (s_aux_extension);        {this also sets |name_length|}
@@ -782,21 +782,21 @@ if (not kpse_in_name_ok(stringcast(name_of_file+1)) or
     not a_open_in(cur_aux_file,no_file_path)) then
 @z
 
-@x [107] - Check log_file name.
+@x [still 106] Check log_file name.
 if (not a_open_out(log_file)) then
 @y
 if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
     not a_open_out(log_file)) then
 @z
 
-@x [107] - Check bbl_file name
+@x [still 106] Check bbl_file name.
 if (not a_open_out(bbl_file)) then
 @y
 if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
     not a_open_out(bbl_file)) then
 @z
 
-@x [109] Add log_pr_aux_name.
+@x [108] Add log_pr_aux_name.
 procedure print_aux_name;
 begin
 print_pool_str (cur_aux_str);
@@ -816,7 +816,7 @@ log_pr_newline;
 end;
 @z
 
-@x [111] Be silent unless verbose.
+@x [110] Be silent unless verbose.
 print ('The top-level auxiliary file: ');
 print_aux_name;
 @y
@@ -830,24 +830,24 @@ else begin
 end;
 @z
 
-@x [118] bib_list is dynamically allocated.
+@x [117] bib_list is dynamically allocated.
 @!bib_list : array[bib_number] of str_number;   {the \.{.bib} file list}
 @y
 @!bib_list : ^str_number;   {the \.{.bib} file list}
 @z
-@x [still 118] bib_file also.
+@x [still 117] bib_file also.
 @!bib_file : array[bib_number] of alpha_file; {corresponding |file| variables}
 @y
 @!bib_file : ^alpha_file; {corresponding |file| variables}
 @z
 
-@x [119] max_bib_files is a variable now, so can't be used as a const.
+@x [118] max_bib_files is a variable now, so can't be used as a const.
 @!bib_number = 0..max_bib_files;        {gives the |bib_list| range}
 @y
 @!bib_number = integer;        {gives the |bib_list| range}
 @z
 
-@x [122] Don't print extension twice; add log_pr_bib_name function.
+@x [121] Don't print extension twice; add log_pr_bib_name function.
 procedure print_bib_name;
 begin
 print_pool_str (cur_bib_str);
@@ -898,7 +898,7 @@ log_pr_newline;
 end;
 @z
 
-@x [124] Reallocate when we run out of bib files.
+@x [123] Reallocate when we run out of bib files.
     overflow('number of database files ',max_bib_files);
 @y
 begin
@@ -912,7 +912,7 @@ begin
 end;
 @z
 
-@x [still 124] Use BIBINPUTS to search for the .bib file.
+@x [still 123] Use BIBINPUTS to search for the .bib file.
 add_extension (s_bib_extension);
 if (not a_open_in(cur_bib_file)) then
     begin
@@ -926,7 +926,7 @@ if (not kpse_in_name_ok(stringcast(name_of_file+1)) or
         open_bibdata_aux_err ('I couldn''t open database file ');
 @z
 
-@x [128] Use BSTINPUTS/TEXINPUTS to search for .bst files.
+@x [127] Use BSTINPUTS/TEXINPUTS to search for .bst files.
 add_extension (s_bst_extension);
 if (not a_open_in(bst_file)) then
     begin
@@ -950,7 +950,7 @@ if (not kpse_in_name_ok(stringcast(name_of_file+1)) or
     end;
 @z
 
-@x [128] Be silent unless verbose.
+@x [127] Be silent unless verbose.
 print ('The style file: ');
 print_bst_name;
 @y
@@ -964,7 +964,7 @@ else begin
 end;
 @z
 
-@x [129] Add log_pr_bst_name.
+@x [128] Add log_pr_bst_name.
 procedure print_bst_name;
 begin
 print_pool_str (bst_str);
@@ -987,19 +987,19 @@ log_pr_newline;
 end;
 @z
 
-@x [130] cite_list is dynamically allocated.
+@x [129] cite_list is dynamically allocated.
 @!cite_list : packed array[cite_number] of str_number;  {the cite-key list}
 @y
 @!cite_list : ^str_number;  {the cite-key list}
 @z
 
-@x [131] max_cites is no longer const.
+@x [130] max_cites is no longer const.
 @!cite_number = 0..max_cites;   {gives the |cite_list| range}
 @y
 @!cite_number = integer;   {gives the |cite_list| range}
 @z
 
-@x [139] Dynamic max_cites.
+@x [138] Dynamic max_cites.
 if (last_cite = max_cites) then
     begin
     print_pool_str (hash_text[cite_loc]);
@@ -1057,7 +1057,7 @@ log_pr ('A level-',aux_ptr:0,' auxiliary file: ');
 log_pr_aux_name;
 @z
 
-% [152] This goto gets turned into a setjmp/longjmp by ./convert --
+% [151] This goto gets turned into a setjmp/longjmp by ./convert --
 % unfortunately, it is a nonlocal goto.  ekrell@ulysses.att.com
 % implemented the conversion.
 @x
@@ -1080,8 +1080,9 @@ hack1;
 bst_done: a_close (bst_file);
 @z
 
+% [160] quote_next_fn and end_of_def are Pascal consts, instead of web macros.
 % max_ent_ints and max_ent_strs are gone, max_fields is no longer const.
-@x [161] quote_next_fn and end_of_def are Pascal consts, instead of web macros.
+@x
 @d quote_next_fn = hash_base - 1  {special marker used in defining functions}
 @d end_of_def = hash_max + 1      {another such special marker}
 
@@ -1102,19 +1103,19 @@ bst_done: a_close (bst_file);
 @!field_loc = integer;            {individual field storage locations}
 @z
 
-@x [162] max_strings=hash_size settable at runtime.
+@x [161] max_strings=hash_size settable at runtime.
 @!fn_type : packed array[hash_loc] of fn_class;
 @y
 @!fn_type : ^fn_class;
 @z
 
-@x [162] Dynamically allocate wiz_functions.
+@x [still 161] Dynamically allocate wiz_functions.
 @!wiz_functions : packed array[wiz_fn_loc] of hash_ptr2;
 @y
 @!wiz_functions : ^hash_ptr2;
 @z
 
-% [still 162] Convert entry_ints and entry_strs to dynamically-allocated
+% [still 161] Convert entry_ints and entry_strs to dynamically-allocated
 % one-dimensional arrays; too bad C and Pascal lag Fortran in supporting
 % run-time dimensioning of multidimensional arrays.  Other changes that
 % follow this one will convert every reference to entry_strs[p][q] to
@@ -1135,7 +1136,7 @@ bst_done: a_close (bst_file);
 @!entry_strs : ^ASCII_code; {dynamically-allocated array}
 @z
 
-@x [still 162] Dynamically allocate global strings
+@x [still 161] Dynamically allocate global strings
 @!str_glb_ptr : 0..max_glob_strs;       {general |str_global_var| location}
 @!glb_str_ptr : array[str_glob_loc] of str_number;
 @!global_strs : array[str_glob_loc] of array[0..glob_str_size] of ASCII_code;
@@ -1149,13 +1150,13 @@ bst_done: a_close (bst_file);
 @!num_glb_strs : integer;        {number of distinct |str_global_var| names}
 @z
 
-@x [still 162] Dynamically allocate field_info.
+@x [still 161] Dynamically allocate field_info.
 @!field_info : packed array[field_loc] of str_number;
 @y
 @!field_info : ^str_number;
 @z
 
-@x [188] Dynamically allocate singl_function.
+@x [187] Dynamically allocate singl_function.
 type @!fn_def_loc = 0..single_fn_space; {for a single |wiz_defined|-function}
 var singl_function : packed array[fn_def_loc] of hash_ptr2;
 @y
@@ -1164,7 +1165,7 @@ var singl_function : ^hash_ptr2;
 @!single_fn_space : integer; {space allocated for this |singl_function| instance}
 @z
 
-@x [still 188] Dynamically allocate singl_function.
+@x [still 187] Dynamically allocate singl_function.
 begin
 eat_bst_white_and_eof_check ('function');
 @y
@@ -1174,7 +1175,7 @@ singl_function := XTALLOC (single_fn_space + 1, hash_ptr2);
 eat_bst_white_and_eof_check ('function');
 @z
 
-@x [still 188] Dynamically allocate singl_function.
+@x [still 187] Dynamically allocate singl_function.
 exit:
 end;
 @y
@@ -1183,7 +1184,7 @@ libc_free (singl_function);
 end;
 @z
 
-@x [189] Reallocate if out of single function space.
+@x [188] Reallocate if out of single function space.
                             singl_fn_overflow;
 @y
                             begin
@@ -1192,7 +1193,7 @@ end;
                             end;
 @z
 
-@x [still 189] Procedure |singl_fn_overflow| replaced by inline code.
+@x [still 188] Procedure |singl_fn_overflow| replaced by inline code.
 procedure singl_fn_overflow;
 begin
 overflow('single function space ',single_fn_space);
@@ -1200,14 +1201,14 @@ end;
 @y
 @z
 
-@x [199] A variable named `int' is no good in C.
+@x [198] A variable named `int' is no good in C.
 @<Procedures and functions for handling numbers, characters, and strings@>=
 @y
 @d int == the_int
 @<Procedures and functions for handling numbers, characters, and strings@>=
 @z
 
-@x [201] Reallocate if out of wizard space.
+@x [200] Reallocate if out of wizard space.
 if (single_ptr + wiz_def_ptr > wiz_fn_space) then
     begin
     print (single_ptr + wiz_def_ptr : 0,': ');
@@ -1221,7 +1222,7 @@ while (single_ptr + wiz_def_ptr > wiz_fn_space) do
     end;
 @z
 
-@x [217] Reallocate if out of global strings.
+@x [216] Reallocate if out of global strings.
     overflow('number of string global-variables ',max_glob_strs);
 @y
     begin
@@ -1241,28 +1242,28 @@ while (single_ptr + wiz_def_ptr > wiz_fn_space) do
     end;
 @z
 
-@x [220] undefined is now a Pascal const, instead of a web macro
+@x [still 219] undefined is now a Pascal const, instead of a web macro
 @d undefined = hash_max + 1     {a special marker used for |type_list|}
 @y
 @z
 
-@x [220] type_list is dynamically allocated.
+@x [still 219] type_list is dynamically allocated.
 @!type_list : packed array[cite_number] of hash_ptr2;
 @y
 @!type_list : ^hash_ptr2;
 @z
-@x [220] entry_exists also.
+@x [still 219] entry_exists also.
 @!entry_exists : packed array[cite_number] of boolean;
 @y
 @!entry_exists : ^boolean;
 @z
-@x [220] cite_info also.
+@x [still 219] cite_info also.
 @!cite_info : packed array[cite_number] of str_number; {extra |cite_list| info}
 @y
 @!cite_info : ^str_number; {extra |cite_list| info}
 @z
 
-@x [225] Be silent unless verbose.
+@x [224] Be silent unless verbose.
     print ('Database file #',bib_ptr+1:0,': ');
     print_bib_name;@/
 @y
@@ -1276,7 +1277,7 @@ while (single_ptr + wiz_def_ptr > wiz_fn_space) do
     end;
 @z
 
-@x [227] Reallocate if out of fields.
+@x [226] Reallocate if out of fields.
 procedure check_field_overflow (@!total_fields : integer);
 begin
 if (total_fields > max_fields) then
@@ -1299,7 +1300,7 @@ if (total_fields > max_fields) then
     end;
 @z
 
-@x [243] Reallocate when we run out of s_preamble's.
+@x [242] Reallocate when we run out of s_preamble's.
     bib_err ('You''ve exceeded ',max_bib_files:0,' preamble commands');
 @y
 begin
@@ -1313,7 +1314,7 @@ begin
 end;
 @z
 
-@x [264] Add check for fieldinfo[] overflow.
+@x [263] Add check for fieldinfo[] overflow.
 field_ptr := entry_cite_ptr * num_fields + fn_info[field_name_loc];
 @y
 field_ptr := entry_cite_ptr * num_fields + fn_info[field_name_loc];
@@ -1321,13 +1322,13 @@ if (field_ptr >= max_fields) then
     confusion ('field_info index is out of range');
 @z
 
-@x [266] Fix bug in the add_database_cite procedure.
+@x [265] Fix bug in the add_database_cite procedure.
 check_field_overflow (num_fields*new_cite);
 @y
 check_field_overflow (num_fields*(new_cite+1));
 @z
 
-@x [278] Add check for fieldinfo[] overflow.
+@x [277] Add check for fieldinfo[] overflow.
 @<Add cross-reference information@>=
 begin
 @y
@@ -1337,7 +1338,7 @@ if ((num_cites - 1) * num_fields + crossref_num >= max_fields) then
     confusion ('field_info index is out of range');
 @z
 
-@x [280] Add check for fieldinfo[] overflow.
+@x [279] Add check for fieldinfo[] overflow.
 @<Subtract cross-reference information@>=
 begin
 @y
@@ -1347,7 +1348,7 @@ if ((num_cites - 1) * num_fields + crossref_num >= max_fields) then
     confusion ('field_info index is out of range');
 @z
 
-@x [286] Add check for fieldinfo[] overflow.
+@x [285] Add check for fieldinfo[] overflow.
 @<Slide this cite key down to its permanent spot@>=
 begin
 @y
@@ -1357,7 +1358,7 @@ if ((cite_xptr + 1) * num_fields > max_fields) then
   confusion ('field_info index is out of range');
 @z
 
-@x [288] Allocate entry_ints as needed.
+@x [287] Allocate entry_ints as needed.
 if (num_ent_ints*num_cites > max_ent_ints) then
     begin
     print (num_ent_ints*num_cites,': ');
@@ -1367,7 +1368,7 @@ if (num_ent_ints*num_cites > max_ent_ints) then
 entry_ints := XTALLOC ((num_ent_ints + 1) * (num_cites + 1), integer);
 @z
 
-@x [289] Allocate entry_strs as needed.
+@x [288] Allocate entry_strs as needed.
 if (num_ent_strs*num_cites > max_ent_strs) then
     begin
     print (num_ent_strs*num_cites,': ');
@@ -1377,7 +1378,7 @@ if (num_ent_strs*num_cites > max_ent_strs) then
 entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1), ASCII_code);
 @z
 
-@x [289] Macroize entry_strs[][].
+@x [still 288] Macroize entry_strs[][].
     entry_strs[str_ent_ptr][0] := end_of_string;
 @y
     x_entry_strs(str_ent_ptr)(0) := end_of_string;
@@ -1391,13 +1392,13 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
 @!lit_stk_type : ^stk_type; {their corresponding types}
 @z
 
-@x [292] Dynamic lit_stk_size.
+@x [291] Dynamic lit_stk_size.
 @!lit_stk_loc = 0..lit_stk_size;        {the stack range}
 @y
 @!lit_stk_loc = integer;        {the stack range}
 @z
 
-@x [302] Macroize entry_strs[][].
+@x [301] Macroize entry_strs[][].
     char1 := entry_strs[ptr1][char_ptr];
     char2 := entry_strs[ptr2][char_ptr];
 @y
@@ -1405,7 +1406,7 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
     char2 := x_entry_strs(ptr2)(char_ptr);
 @z
 
-@x [308] Reallocate literal stack.
+@x [307] Reallocate literal stack.
     overflow('literal-stack size ',lit_stk_size);
 @y
     begin
@@ -1416,7 +1417,7 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
     end;
 @z
 
-@x [321] Dynamic buf_size.
+@x [320] Dynamic buf_size.
 if (out_buf_length+(p_ptr2-p_ptr1) > buf_size) then
     overflow('output buffer size ',buf_size);
 @y
@@ -1424,7 +1425,7 @@ while (out_buf_length+(p_ptr2-p_ptr1) > buf_size) do
     buffer_overflow;
 @z
 
-@x [328] Add check for fieldinfo[] overflow.
+@x [327] Add check for fieldinfo[] overflow.
     field_ptr := cite_ptr*num_fields + fn_info[ex_fn_loc];
 @y
     field_ptr := cite_ptr*num_fields + fn_info[ex_fn_loc];
@@ -1442,13 +1443,13 @@ while (out_buf_length+(p_ptr2-p_ptr1) > buf_size) do
         append_ex_buf_char (x_entry_strs(str_ent_ptr)(ex_buf_ptr));
 @z
 
-@x [331] Macroize global_strs[][]
+@x [330] Macroize global_strs[][]
         append_char (global_strs[str_glb_ptr][glob_chr_ptr]);
 @y
         append_char (x_global_strs(str_glb_ptr)(glob_chr_ptr));
 @z
 
-@x [335] Bug fix: remove duplicate entry.
+@x [334] Bug fix: remove duplicate entry.
 build_in('width$      ',6,b_width,n_width);
 build_in('while$      ',6,b_while,n_while);
 build_in('width$      ',6,b_width,n_width);
@@ -1457,13 +1458,13 @@ build_in('while$      ',6,b_while,n_while);
 build_in('width$      ',6,b_width,n_width);
 @z
 
-@x [338] s_preamble is dynamically allocated.
+@x [337] s_preamble is dynamically allocated.
 @!s_preamble : array[bib_number] of str_number;
 @y
 @!s_preamble : ^str_number;
 @z
 
-@x [345] Dynamic buf_size.
+@x [344] Dynamic buf_size.
 @!name_tok : packed array[buf_pointer] of buf_pointer; {name-token ptr list}
 @!name_sep_char : packed array[buf_pointer] of ASCII_code; {token-ending chars}
 @y
@@ -1471,7 +1472,7 @@ build_in('width$      ',6,b_width,n_width);
 @!name_sep_char : ^ASCII_code; {token-ending chars}
 @z
 
-@x [358] Macroize entry_strs[][].
+@x [357] Macroize entry_strs[][].
     while (sp_ptr < sp_xptr1) do
         begin                   {copy characters into |entry_strs|}
         entry_strs[str_ent_ptr][ent_chr_ptr] := str_pool[sp_ptr];
@@ -1489,13 +1490,13 @@ build_in('width$      ',6,b_width,n_width);
     x_entry_strs(str_ent_ptr)(ent_chr_ptr) := end_of_string;
 @z
 
-@x [360] Macroize global_strs[][]
+@x [359] Macroize global_strs[][]
             global_strs[str_glb_ptr][glob_chr_ptr] := str_pool[sp_ptr];
 @y
             x_global_strs(str_glb_ptr)(glob_chr_ptr) := str_pool[sp_ptr];
 @z
 
-% [389] bibtex.web has mutually exclusive tests here; Oren said he
+% [388] bibtex.web has mutually exclusive tests here; Oren said he
 % doesn't want to fix it until 1.0, since it's obviously of no practical
 % import (or someone would have found it before GCC 2 did).  Changing
 % the second `and' to an `or' makes all but the last of multiple authors
@@ -1510,7 +1511,7 @@ while ((ex_buf_xptr < ex_buf_ptr) and
 
 % Forgot to check for pool overflow here.  Triggered by test case linked
 % from http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=520920.
-@x [439]
+@x [438]
 while (sp_ptr < sp_end) do                      {shift the substring}
 @y
 str_room(sp_end - sp_ptr);
@@ -1518,14 +1519,14 @@ while (sp_ptr < sp_end) do                      {shift the substring}
 @z
 
 % Forgot to check for pool overflow here.  Triggered by bibtex-mem.test (3).
-@x [445]
+@x [444]
 if (pop_lit2 >= cmd_str_ptr) then       {no shifting---merely change pointers}
 @y
 str_room(sp_brace_level + sp_end - sp_ptr);
 if (pop_lit2 >= cmd_str_ptr) then       {no shifting---merely change pointers}
 @z
 
-% [460] Eliminate unreferenced statement label, because `undefined' is
+% [459] Eliminate unreferenced statement label, because `undefined' is
 % now a constant expression that is not evaluated at the Web level. If
 % this label were ever required, it could be replaced by the constant
 % 9997, which is not used as a statement label in BibTeX.
@@ -1535,7 +1536,7 @@ if (pop_lit2 >= cmd_str_ptr) then       {no shifting---merely change pointers}
     trace_pr ('unknown')
 @z
 
-@x [461] Macroize entry_strs[][].
+@x [460] Macroize entry_strs[][].
         while (entry_strs[str_ent_ptr][ent_chr_ptr] <> end_of_string) do
             begin
             trace_pr (xchr[entry_strs[str_ent_ptr][ent_chr_ptr]]);
@@ -1549,7 +1550,7 @@ if (pop_lit2 >= cmd_str_ptr) then       {no shifting---merely change pointers}
             end;
 @z
 
-@x [463] Add check for fieldinfo[] overflow.
+@x [462] Add check for fieldinfo[] overflow.
     field_ptr := cite_ptr * num_fields;
     field_end_ptr := field_ptr + num_fields;
 @y
@@ -1559,6 +1560,7 @@ if (pop_lit2 >= cmd_str_ptr) then       {no shifting---merely change pointers}
         confusion ('field_info index is out of range');
 @z
 
+% emacs-page
 @x [468] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \BibTeX\ work at a particular installation.

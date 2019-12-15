@@ -1,5 +1,8 @@
 2019-12-15  Karl Berry  <karl@freefriends.org>
 
+	* bibtex.ch: somehow the WEB module numbers in comments got off
+	by one after module 30 or so. Sigh.
+
 	* bibtex.ch (Open this .aux file [141]): if -terse,
 	only log the "A level-N auxiliary file" message, instead of print.
 
