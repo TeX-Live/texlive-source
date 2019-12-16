@@ -858,13 +858,13 @@ screen_width.mf = 1664
 screen_depth.mf = 1200
 
 % BibTeX only (max_strings also determines hash_size and hash_prime).
-ent_str_size =  250
-glob_str_size = 20000
-max_strings.bibtex  = 100000
-max_strings.bibtex8 = 100000
-max_strings.bibtexu = 100000
-max_strings.pbibtex = 100000
-max_strings.upbibtex = 100000
+ent_str_size = 500
+glob_str_size = 200000
+max_strings.bibtex  = 200000
+max_strings.bibtex8 = 200000
+max_strings.bibtexu = 200000
+max_strings.pbibtex = 200000
+max_strings.upbibtex= 200000
 
 % GFtype only.
 line_length.gftype = 500

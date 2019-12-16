@@ -1,0 +1,27 @@
+#! /bin/sh -vx
+# $Id: bibtex-auxinclude.test 47980 2018-06-10 22:25:18Z karl $
+# Copyright 2019 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+# in case we're invoked standalone instead of from make.
+test -z "$srcdir" && srcdir=`cd \`dirname $0\`/.. && pwd` # web2c/
+
+cp $srcdir/tests/bibtex-bigauth.aux tests/xbigauth.aux || exit 1
+
+# Error was:
+# Your field is more than 20000 characters---line 303 of file bibtex-bigauth.bib
+# :          {Whelan}, J.~T. and {Whitcom
+# Original report from David Williams:
+#   https://tug.org/pipermail/texhax/2019-December/024121.html
+# Per his message, BibTeX entry comes from "Export Citation" at:
+#   https://ui.adsabs.harvard.edu/abs/2017ApJ...848L..12A/abstract
+
+TEXMFCNF=$srcdir/../kpathsea \
+  BSTINPUTS=$srcdir/../tests/texmf \
+  BIBINPUTS=$srcdir/tests \
+  ./bibtex tests/xbigauth || exit 1
+
+# the final author, in case glob_str_size is insufficient.
+grep MeerKAT tests/xbigauth.bbl >/dev/null || exit 1

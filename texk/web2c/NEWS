@@ -1,8 +1,13 @@
 This file records noteworthy changes.  (Public domain.)
 
-
+2020 (for TeX Live 2020)
 * New cross-engine option -cnf-line=STR.
+* All TeX engines except tex and etex now compress (with zlib) .fmt files
+  (XeTeX and LuaTeX already did so).
 
+BibTeX: now reallocates on large (>20k) field values instead of aborting.
+
+
 2019 (for TeX Live 2019,  7 April 2019)
 BibTeX: subsidiary .aux files are looked for in the directory of the
 main .aux file, if not found as-is (to work better with -output-directory).

@@ -449,7 +449,7 @@ File closing will be done in C, too.
 @!buffer:buf_type;      {usually, lines of characters being read}
 @z
 
-@x [42] Dyanmic buf_size.
+@x [42] Dynamic buf_size.
 @!buf_pointer = 0..buf_size;                    {an index into a |buf_type|}
 @!buf_type = array[buf_pointer] of ASCII_code;  {for various buffers}
 @y
@@ -460,6 +460,12 @@ File closing will be done in C, too.
 @x [46] Dynamic buf_size.
 overflow('buffer size ',buf_size);
 @y
+{These are all the arrays of |buf_type| or that use |buf_pointer|, that
+is, they all depend on the |buf_size| value. Therefore we have to
+reallocate them all at once, even though only one of them has
+overflowed. The alternative seems worse: even more surgery on the program,
+to have a separate variable for each array size instead of the common
+|buf_size|.}
 BIB_XRETALLOC_NOSET ('buffer', buffer, ASCII_code,
                      buf_size, buf_size + BUF_SIZE);
 BIB_XRETALLOC_NOSET ('sv_buffer', sv_buffer, ASCII_code,
@@ -1312,6 +1318,31 @@ begin
   BIB_XRETALLOC ('s_preamble', s_preamble, str_number, max_bib_files,
                  max_bib_files + MAX_BIB_FILES);
 end;
+@z
+
+% emacs-page
+@x [251] Reallocate field_vl_str (aka ex_buf); see tests/bibtex-bigauth.test.
+@d copy_char(#) == begin
+                   if (field_end = buf_size) then
+                       bib_field_too_long_err
+                     else
+                       begin
+                       field_vl_str[field_end] := #;
+                       incr(field_end);
+                       end;
+                   end
+@y
+@d copy_char(#) == begin
+                   {We don't always increment by 1, so have to check |>=|.}
+                   if (field_end >= buf_size) then
+                       begin
+                       log_pr ('Field filled up at ', #, ', reallocating.');
+                       log_pr_newline;
+                       buffer_overflow; {reallocates all |buf_size| buffers}
+                       end;
+                   field_vl_str[field_end] := #;
+                   incr(field_end);
+                   end
 @z
 
 @x [263] Add check for fieldinfo[] overflow.
