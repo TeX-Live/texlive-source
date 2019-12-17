@@ -2695,7 +2695,16 @@ var j:small_number; {write stream number}
     @!old_setting:0..max_selector;
 @z
 
-@x [53.1374] Disallow certain \openout filenames, and log results.
+@x [53.1374]
+  else  begin if write_open[j] then a_close(write_file[j]);
+    if subtype(p)=close_node then write_open[j]:=false
+@y
+  else  begin if write_open[j] then begin a_close(write_file[j]);
+                                          write_open[j]:=false; end;
+    if subtype(p)=close_node then do_nothing {already closed}
+@z
+
+@x [still 53.1374] Disallow certain \openout filenames, and log results.
       while not a_open_out(write_file[j]) do
         prompt_file_name("output file name",".tex");
       write_open[j]:=true;
