@@ -1,6 +1,8 @@
-## texk/web2c/am/web.am: Makefile fragment for normal web programs (except tangle).
+## $Id$
+## texk/web2c/am/web.am: Makefile fragment for the standard web programs --
+## except tangle.
 ##
-## Copyright 2018 Karl Berry <tex-live@tug.org>
+## Copyright 2018-2019 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -29,9 +31,11 @@ bibtex.p: tangle$(EXEEXT) bibtex.web bibtex.ch
 	$(tangle) bibtex bibtex
 web_tests += tests/bibtex-openout-test.pl tests/bibtex-longline-test.pl
 web_tests += tests/bibtex-mem.test
+web_tests += tests/bibtex-bigauth.test
 web_tests += tests/bibtex-auxinclude.test
 bibtex.log tests/bibtex-openout-test.log tests/bibtex-longline-test.log \
 	tests/bibtex-mem.log \
+	tests/bibtex-bigauth.log \
 	tests/bibtex-auxinclude.log: bibtex$(EXEEXT)
 
 nodist_dvicopy_SOURCES = dvicopy.c dvicopy.h
@@ -184,6 +188,9 @@ DISTCLEANFILES += longline.aux longline.bbl longline.bib longline.blg
 ## tests/bibtex-mem.test
 EXTRA_DIST += tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst
 DISTCLEANFILES += tests/memtest.bib tests/memtest?.*
+## tests/bibtex-bigauth.test
+EXTRA_DIST += tests/bibtex-bigauth.aux tests/bibtex-bigauth.bib
+EXTRA_DIST += tests/bibtex-bigauth.tex
 ## tests/bibtex-auxinclinde.test
 EXTRA_DIST += tests/auxinclude.aux tests/auxinclude.bbl tests/auxinclude.bib
 EXTRA_DIST += tests/auxinclude.tex tests/auxinclude2.aux tests/auxinclude2.tex

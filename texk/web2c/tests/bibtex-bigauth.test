@@ -1,5 +1,5 @@
 #! /bin/sh -vx
-# $Id: bibtex-auxinclude.test 47980 2018-06-10 22:25:18Z karl $
+# $Id$
 # Copyright 2019 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 

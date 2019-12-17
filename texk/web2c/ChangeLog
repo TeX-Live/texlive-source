@@ -1,10 +1,16 @@
+2019-12-17  Karl Berry  <karl@freefriends.org>
+
+	* am/web.am (web_tests): add tests/bibtex-bigauth.test (forgot
+	yesterday).
+
 2019-12-16  Karl Berry  <karl@freefriends.org>
 
 	* bibtex.ch (overflow_buffer [46]): more comments.
-	(copy_char, [251]): call overflow_buffer (to reallocate)
+	(copy_char [251]): call overflow_buffer (to reallocate)
 	  if field_vl_str (aka ex_buf) is full instead of giving up.
 	Original report from David Williams about a lengthy author list:
 	  https://tug.org/pipermail/texhax/2019-December/024121.html
+	* tests/bibtex-bigauth.{test,tex,bib,aux}: new files.
 
 2019-12-15  Karl Berry  <karl@freefriends.org>
 
