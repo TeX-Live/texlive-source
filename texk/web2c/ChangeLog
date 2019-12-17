@@ -1,5 +1,10 @@
 2019-12-17  Karl Berry  <karl@freefriends.org>
 
+	* tex.ch (out_what [1374]): always set write_open[j]:=false
+	  if we a_close(write_file[j]), not worrying about the subtype.
+	* tests/tex-closeout.test: new test.
+	* am/texmf.am (tex_tests): add it.
+	
 	* mftraptest.test,
 	triptest.test: rm the .base/.fmt file before remaking it,
 	so we can't find one left over from a previous run.

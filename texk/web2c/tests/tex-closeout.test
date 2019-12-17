@@ -1,0 +1,19 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2019 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+# in case we're invoked standalone instead of from make.
+test -z "$srcdir" && srcdir=`cd \`dirname $0\`/.. && pwd` # web2c/
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+
+# Resulted in a double free with glibc on x86_64-linux.
+fail=2
+./tex -ini '\batchmode \immediate\openout1=b \openout1=/tmp/a \end'
+
+# If TeX crashed, we won't get here. The exit status will be something
+# like 134 on GNU/Linux, but we don't want to rely on that.
+fail=0
+
+exit $fail
+
