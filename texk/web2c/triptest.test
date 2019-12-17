@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2019 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -64,8 +64,10 @@ set -x
 diff $testdir/trip.pl trip.pl || is_OK=false
 
 # get same filename in log
-$LN_S $testdir/trip.tex .
+rm -f trip.tex
+$LN_S $testdir/trip.tex . || exit 1
 
+rm -f trip.fmt
 ../tex --progname=initex --ini <$testdir/trip1.in >tripin.fot
 if test ! -s trip.fmt; then
   echo "*** trip.fmt not created by trip1.in, investigate!" >&2
