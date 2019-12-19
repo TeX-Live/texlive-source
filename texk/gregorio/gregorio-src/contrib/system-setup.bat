@@ -198,7 +198,7 @@ for %%G in (%files%) do (
 		set loc=%%H
 		set loc=!loc:/=\!
 		echo !loc! >> %output%
-		otfinfo --font-version !loc! >> %output% 2>&1
+		otfinfo --font-version "!loc!" >> %output% 2>&1
 	)
 )
 

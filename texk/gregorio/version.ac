@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current gregorio version
-m4_define([gregorio_version], [5.2.0])
+m4_define([gregorio_version], [5.2.1])

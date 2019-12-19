@@ -1,3 +1,8 @@
+2019-12-19  Akira Kakuto  <kakuto@w32tex.org>
+
+	* Import gregorio-5.2.1.
+	* version.ac: Adapted.
+
 2019-03-11  Akira Kakuto  <kakuto@w32tex.org>
 
 	* Import gregorio-5.2.0.
