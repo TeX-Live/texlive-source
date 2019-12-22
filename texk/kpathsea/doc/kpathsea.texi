@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.2
-@set month-year August 2019
+@set month-year December 2019
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -445,6 +445,12 @@ This chapter describes the generic path searching mechanism Kpathsea
 provides.  For information about searching for particular file types
 (e.g., @TeX{} fonts), see the next chapter.
 
+@cindex translations, of path searching description
+This section, with minor differences, has been translated into several
+other languages (Chinese, Spanish, Russian, Japanese, French, German,
+@dots{}) as part of the @TeX{} Live guide; see
+@url{https://tug.org/texlive/doc.html} for links.
+
 @menu
 * Searching overview::          Basic scheme for searching.
 * Path sources::                Where search paths can be defined.
@@ -652,7 +658,7 @@ start a comment.  Examples:
 
 @example
 % this is a comment
-var = a%b  % but the value of var will be "a%b".
+var = a%b  % but the value of var will be "a%b"
 @end example
 
 @item
@@ -668,7 +674,7 @@ A @samp{\} at the end of a line acts as a continuation character, i.e.,
 the next line is appended.  Whitespace at the beginning of continuation
 lines is not ignored.
 
-@item Each remaining line must look like
+@item Each remaining line will look like:
 
 @example
 @var{variable} @r{[}. @var{progname}@r{]} @r{[}=@r{]} @var{value}
@@ -681,6 +687,7 @@ lines is not ignored.
 The @var{variable} name may contain any character other than whitespace,
 @samp{=}, or @samp{.}, but sticking to @samp{A-Za-z_} is safest.
 
+@kindex .@var{progname} @r{qualifier in @file{texmf.cnf}}
 @item If @samp{.@var{progname}} is present (preceding spaces are
 ignored), the definition only applies if the program that is running
 is named (i.e., the last component of @code{argv[0]} is)
@@ -691,15 +698,21 @@ variable or other expansions.
 
 @item
 @cindex right-hand side of variable assignments
-@var{value} may contain any characters except @samp{%} and @samp{@@}.
-(These restrictions are only necessary because of the processing done
-on @file{texmf.cnf} at build time, so you can stick those characters
-in after installation if you have to.)  The
-@samp{$@var{var}.@var{prog}} feature is not available on the
+Considered as strings, @var{value} may contain any character.
+However, in practice most @file{texmf.cnf} values are related to path
+expansion, and since various special characters are used in expansion,
+such as braces and commas, they cannot be used in directory names.
+  
+The @samp{$@var{var}.@var{prog}} feature is not available on the
 right-hand side; instead, you must use an additional variable (see
-below for example).  A @samp{;} in @var{value} is translated to
-@samp{:} if running under Unix; this is useful to write a single
-@file{texmf.cnf} which can be used under both Unix and Windows.
+below for example).
+
+@kindex ; @r{translated to @samp{:} in @file{texmf.cnf}}
+A @samp{;} in @var{value} is translated to @samp{:} if running under
+Unix, in order to have a single @file{texmf.cnf} that can support both
+Unix and Windows systems. This translation happens with any value, not
+just search paths, but fortunately in practice @samp{;} is not needed
+in other values.
 
 @item All definitions are read before anything is expanded, so you can
 use variables before they are defined (like Make, unlike most other
@@ -721,14 +734,15 @@ TEXINPUTS.latex = $latex2e_inputs
 
 @cindex shell scripts as configuration files
 @cindex configuration files as shell scripts.
-This format has obvious similarities to Bourne shell scripts---change
-the comment character to @code{#}, disallow spaces around the
-@code{=}, and get rid of the @code{.@var{name}} convention, and it
-could be run through the shell.  However, there seemed little
-advantage in this, since all the information would have to passed back
-to Kpathsea and parsed there anyway, since the @code{sh} process
-couldn't affect its parent's environment.
+This format has some similarity to Bourne shell scripts---change the
+comment character to @code{#}, disallow spaces around the @code{=},
+and get rid of the @code{.@var{name}} convention, and it could be run
+through the shell.  However, there seemed little advantage in this,
+since all the information would have to passed back to Kpathsea and
+parsed there anyway, since the @code{sh} process couldn't affect its
+parent's environment.
 
+@kindex = @r{omitted in @file{texmf.cnf} and misparsing}
 The combination of spaces being ignored before the @code{.} of a
 program name qualifer and the optional @samp{=} for the assignment has
 an unexpected consequence: if the value begins with a literal @samp{.}
@@ -738,6 +752,15 @@ an empty value for @code{var} running under the program named
 @samp{;/some/path}.  To diagnose this, Kpathsea warns if the program
 name contains a path separator or other special character.  The
 simplest way to avoid the problem is to use the @code{=}.
+
+Exactly when a character will be considered special or act as itself
+depends on the context in which it is used. The rules are inherent in
+the multiple levels of interpretation of the configuration (parsing,
+expansion, search, @dots{}) and so cannot be concisely stated,
+unfortunately. There is no general escape mechanism; in particular,
+@samp{\} is not an ``escape character'' in @file{texmf.cnf} files.
+When it comes choosing directory names for installation, it is safest to
+avoid them all.
 
 @flindex cnf.c
 The implementation of all this is in @file{kpathsea/cnf.c}.
@@ -1024,11 +1047,11 @@ You can disable the trick by undefining @code{ST_NLINK_TRICK} in
 Unfortunately, in some cases files in leaf directories are
 @code{stat}'d: if the path specification is, say,
 @samp{$TEXMF/fonts//pk//}, then files in a subdirectory
-@samp{@dots{}/pk}, even if it is a leaf, are checked. The reason cannot
-be explained without reference to the implementation, so read
+@samp{@dots{}/pk}, even if it is a leaf, are checked. The reason
+cannot be explained without reference to the implementation, so read
 @file{kpathsea/elt-dirs.c} (search for @samp{may descend}) if you are
-curious.  And if you can find a way to @emph{solve} the problem, please
-let me know.
+curious.  And if you find a way to solve the problem, please let me
+know.
 
 @flindex elt-dirs.c
 Subdirectory expansion is implemented in the source file
@@ -1217,7 +1240,7 @@ happens with the elements of the leaf directory.
 
 Kpathsea goes to some lengths to minimize disk accesses for searches
 (@pxref{Subdirectory expansion}).  Nevertheless, in practice searching
-each possible directory in typical @TeX{} installations takes an
+every possible directory in typical @TeX{} installations takes an
 excessively long time.
 
 Therefore, Kpathsea can use an externally-built @dfn{filename
@@ -1225,8 +1248,7 @@ database} file named @file{ls-R} that maps files to directories, thus
 avoiding the need to exhaustively search the disk.
 
 A second database file @file{aliases} allows you to give additional
-names to the files listed in @file{ls-R}.  This can be helpful to adapt
-to ``8.3'' filename conventions in source files.
+names to the files listed in @file{ls-R}.
 
 The @file{ls-R} and @file{aliases} features are implemented in the
 source file @file{kpathsea/db.c}.

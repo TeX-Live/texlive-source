@@ -1,7 +1,13 @@
+2019-12-22  Karl Berry  <karl@freefriends.org>
+
+	* doc/kpathsea.texi (Path searching): mention translations for TL.
+	(Config files): distinguish special characters at different levels.
+	(Filename database): don't mention talking about 8.3 filenames.
+	
 2019-12-16  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (glob_str_size): increase from 20,000 to 200,000
-	for bibtex-bigauth.test (q.v.).
+	for web2c/tests/bibtex-bigauth.test (q.v.).
 	(ent_str_size, max_strings.bibtex*): increase these while we're here.
 
 2019-11-03  Karl Berry  <karl@tug.org>
