@@ -339,6 +339,7 @@ texmf_other_scripts = \
 	glossaries/makeglossaries \
 	glossaries/makeglossaries-lite.lua \
 	jfmutil/jfmutil.pl \
+	ketcindy/ketcindy.pl \
 	kotex-utils/jamo-normalize.pl \
 	kotex-utils/komkindex.pl \
 	kotex-utils/ttf2kotexfont.pl \

@@ -167,10 +167,10 @@ proc long_message {str type {p "."}} {
   }
   if [winfo exists .tlmg.cancel] {
     bind .tlmg <Escape> {.tlmg.cancel invoke}
-    wm protocol WM_DELETE_WINDOW {cancel_or_destroy .tlmg.cancel .tlmg}
+    wm protocol .tlmg WM_DELETE_WINDOW {cancel_or_destroy .tlmg.cancel .tlmg}
   } elseif {$type eq "ok"} {
     bind .tlmg <Escape> {.tlmg.ok invoke}
-    wm protocol WM_DELETE_WINDOW {cancel_or_destroy .tlmg.ok .tlmg}
+    wm protocol .tlmg WM_DELETE_WINDOW {cancel_or_destroy .tlmg.ok .tlmg}
   }
 
   ppack [ttk::frame .tlmg.tx] -in .tlmg.bg -side top -fill both -expand 1

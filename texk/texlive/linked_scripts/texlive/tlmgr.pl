@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 53076 2019-12-10 06:20:44Z preining $
+# $Id: tlmgr.pl 53225 2019-12-24 19:19:02Z karl $
 #
 # Copyright 2008-2019 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 53076 $';
-my $datrev = '$Date: 2019-12-10 07:20:44 +0100 (Tue, 10 Dec 2019) $';
+my $svnrev = '$Revision: 53225 $';
+my $datrev = '$Date: 2019-12-24 20:19:02 +0100 (Tue, 24 Dec 2019) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -676,7 +676,10 @@ for the full story.\n";
   if (!defined($::tldownload_server)) {
     debug("tlmgr:main: ::tldownload_server not defined\n");
   } else {
-    debug("tlmgr:main: ::tldownload_server defined: $::tldownload_server\n");
+    if ($::opt_verbosity >= 1) {
+      debug(debug_hash_str("$prg:main: ::tldownload_server hash:",
+                            $::tldownload_server));
+    }
   }
 
   my $ret = execute_action($action, @ARGV);
@@ -4628,10 +4631,13 @@ sub action_option {
       return($ret);
     }
     for my $o (sort keys %{$localtlpdb->options}) {
+      # ignore generate_update which is no longer used or needed.
+      next if ($o eq "generate_updmap");
       # ignore some things which are w32 specific
       next if ($o eq "desktop_integration" && !win32());
       next if ($o eq "file_assocs" && !win32());
       next if ($o eq "w32_multi_user" && !win32());
+      #
       if (win32()) {
         next if ($o =~ m/^sys_/);
       }
@@ -5340,36 +5346,34 @@ sub action_check {
   my $svn = defined($opts{"use-svn"}) ? $opts{"use-svn"} : 0;
   my $what = shift @ARGV;
   $what || ($what = "all");
+  $what =~ s/^ *//;
+  $what =~ s/ *$//;
   init_local_db();
   my $ret = 0;
-  if ($what =~ m/^all/i) {
+  if ($what =~ m/^all$/i) {
     my $tltree = init_tltree($svn);
-    print "Running check files:\n";
-    $ret |= check_files($tltree);
-    print "Running check depends:\n";
-    $ret |= check_depends();
-    print "Running check executes:\n";
-    $ret |= check_executes();
-    print "Running check runfiles:\n";
-    $ret |= check_runfiles();
-    print "Running check texmfdb paths\n";
-    $ret |= check_texmfdbs();
-  } elsif ($what =~ m/^files/i) {
+    print "Running check files:\n";        $ret |= check_files($tltree);
+    print "Running check depends:\n";      $ret |= check_depends();
+    print "Running check executes:\n";     $ret |= check_executes();
+    print "Running check runfiles:\n";     $ret |= check_runfiles();
+    print "Running check texmfdbs\n";      $ret |= check_texmfdbs();
+  } elsif ($what =~ m/^files$/i) {
     my $tltree = init_tltree($svn);
     $ret |= check_files($tltree);
-  } elsif ($what =~ m/^collections/i) {
-    tlwarn("$prg: the \"collections\" check is replaced by the \"depends\" check.\n");
+  } elsif ($what =~ m/^collections$/i) {
+    tlwarn("$prg: \"collections\" check has been replaced by \"depends\".\n");
     $ret |= check_depends();
-  } elsif ($what =~ m/^depends/i) {
+  } elsif ($what =~ m/^depends$/i) {
     $ret |= check_depends();
-  } elsif ($what =~ m/^runfiles/i) {
+  } elsif ($what =~ m/^runfiles$/i) {
     $ret |= check_runfiles();
-  } elsif ($what =~ m/^executes/i) {
+  } elsif ($what =~ m/^executes$/i) {
     $ret |= check_executes();
-  } elsif ($what =~ m/^texmfdbs/i) {
+  } elsif ($what =~ m/^texmfdbs$/i) {
     $ret |= check_texmfdbs();
   } else {
-    print "No idea how to check that: $what\n";
+    tlwarn("$prg: No idea how to check: $what\n");
+    $ret = 1;
   }
   if ($ret) {
     return ($F_ERROR);
@@ -5405,7 +5409,7 @@ sub check_files {
     push @missing, $_ if (! -r "$Master/$_");
     my @foo = @{$filetopacks{$_}};
     if ($#foo < 0) {
-      warn "that shouldn't happen: $_\n";
+      warn "that shouldn't happen #foo < 0: $_";
     } elsif ($#foo > 0) {
       push @multiple, $_;
     }
@@ -5542,8 +5546,25 @@ sub check_runfiles {
     # For the a_.* line above: source*pro has .enc files which differ
     # only in comments, hence the otftotfm-hashed name is the same.
     # Seems like it could happen more or at random with other fonts too.
-    # Just have to accept ...
-    #
+    # Most font packagers nowadays insert a prefix to avoid this,
+    # but older ones are not getting changed.
+
+    # the files here were supposedly being dealt with in the next
+    # release of their respective packages, but the releases are not
+    # forthcoming, so just ignore them. They apparently make no
+    # practical difference (maybe because of kpse's optimization of
+    # preferring same-directory results). Latest report:
+    # https://tug.org/pipermail/tex-live/2019-December/044530.html
+    next if $f
+      =~ /^( afoot\.sty
+            |gamma\.mf
+            |lexer\.lua
+            |ligature\.mf
+            |md-utrma\.pfb
+            |ot1\.cmap
+            |t1\.cmap
+           )$/x;
+
     my @copies = grep (/\/$f$/, @runtime_files);
     # map files can be duplicated between (but not within) formats.
     if ($f =~ /\.map$/) {
@@ -5591,7 +5612,7 @@ sub check_executes {
         chomp($foo);
         push @{$langcodes{$foo}}, $pkg;
       } else {
-        warn "$pkg: unmatched execute: $e\n";
+        tlwarn("$prg: unmatched execute in $pkg: $e\n");
       }
     }
   }
@@ -5599,7 +5620,7 @@ sub check_executes {
   foreach my $mf (keys %maps) {
     my @pkgsfound = @{$maps{$mf}};
     if ($#pkgsfound > 0) {
-      tlwarn ("$prg: map file $mf is referenced in the executes of @pkgsfound\n");
+      tlwarn("$prg: map file $mf is referenced in the executes of @pkgsfound\n");
     } else {
       # less then 1 occurrences is not possible, so we have only one
       # package that contains the reference to that map file
@@ -5617,7 +5638,7 @@ sub check_executes {
         foreach my $k (keys %mapfn) {
           my @bla = @{$mapfn{$k}};
           if ($#bla > 0) {
-            tlwarn ("$prg: map file $mf occurs multiple times (in pkgs: @bla)!\n");
+            tlwarn("$prg: map file $mf occurs multiple times (in pkgs: @bla)!\n");
           }
         }
       } else {
@@ -5885,9 +5906,10 @@ sub check_depends {
   return $ret;
 }
 
+# check texmfdbs -- that !! paths have an ls-R and are in TEXMFDBS,
+# and that trees with an ls-R specify !!.
+#
 sub check_texmfdbs {
-
-#!/usr/bin/perl
   my $texmfdbs = `kpsewhich -var-value TEXMFDBS`;
   my @tfmdbs = glob $texmfdbs;
   my $tfms = `kpsewhich -var-value TEXMF`;
@@ -5895,33 +5917,33 @@ sub check_texmfdbs {
   my %tfmdbs;
   my $ret = 0;
 
-  print "Checking TEXMFDBS\n";
+  debug("Checking TEXMFDBS\n");
   for my $p (@tfmdbs) {
-    print "-> $p\n";
+    debug(" $p\n");
     if ($p !~ m/^!!/) {
-      printf "Warn: entry $p in TEXMFDBS does not have leading !!\n";
+      tlwarn("$prg: item $p in TEXMFDBS does not have leading !!\n");
       $ret++;
     }
     $p =~ s/^!!//;
     $tfmdbs{$p} = 1;
-    if (! -r "$p/ls-R") {
-      printf "Warn: entry $p does not have an associated ls-R\n";
+    if (-d $p && ! -r "$p/ls-R") {
+      tlwarn("$prg: item $p in TEXMFDBS does not have an associated ls-R file\n");
       $ret++;
     }
   }
 
-  print "Checking TEXMF\n";
+  debug("Checking TEXMF\n");
   for my $p (@tfms) {
-    print "-> $p\n";
+    debug(" $p\n");
     my $pnobang = $p;
     $pnobang =~ s/^!!//;
     if (! $tfmdbs{$pnobang}) {
       if ($p =~ m/^!!/) {
-        printf "Warn: tree $p in TEXMF is not in TEXMFDBS but has !!\n";
+        tlwarn("$prg: tree $p in TEXMF not in TEXMFDBS, but has !!\n");
         $ret++;
       }
       if (-r "$pnobang/ls-R") {
-        printf "Warn: tree $p in TEXMF is not in TEXMFDBS but has ls-R file\n";
+        tlwarn("$prg: tree $p in TEXMF not in TEXMFDBS, but has ls-R file\n");
         $ret++;
       }
     }
@@ -7723,18 +7745,23 @@ trailing C</tlpkg> and/or C</archive> components are ignored.
 
 =item B<--gui> [I<action>]
 
-C<tlmgr> has a graphical interface as well as the command line
-interface.  You can give this option, C<--gui>, together with an action
-to be brought directly into the respective screen of the GUI.  For
-example, running
+Two notable GUI front-ends for C<tlmgr>, C<tlshell> and C<tlcockpit>,
+are started up as separate programs; see their own documentation.
+
+C<tlmgr> itself has a graphical interface as well as the command line
+interface. You can give the option to invoke it, C<--gui>, together with
+an action to be brought directly into the respective screen of the GUI.
+For example, running
 
   tlmgr --gui update
 
 starts you directly at the update screen.  If no action is given, the
-GUI will be started at the main screen.
+GUI will be started at the main screen.  See L<GUI FOR TLMGR>.
 
-Note that the new GUIs, tlshell and tlcockpit, are started up as
-separate programs.
+However, the native GUI requires Perl/TK, which is no longer included in
+TeX Live's Perl distribution for Windows. You may find C<tlshell> or
+C<tlcockpit> easier to work with. 
+
 
 =for comment Keep language list in sync with install-tl.
 
@@ -7743,14 +7770,15 @@ separate programs.
 By default, the GUI tries to deduce your language from the environment
 (on Windows via the registry, on Unix via C<LC_MESSAGES>). If that fails
 you can select a different language by giving this option with a
-language code (based on ISO 639-1).  Currently supported (but not
-necessarily completely translated) are: English (en, default), Czech
-(cs), German (de), French (fr), Italian (it), Japanese (ja), Dutch (nl),
-Polish (pl), Brazilian Portuguese (pt_BR), Russian (ru), Slovak (sk),
-Slovenian (sl), Serbian (sr), Ukrainian (uk), Vietnamese (vi),
-simplified Chinese (zh_CN), and traditional Chinese (zh_TW).
+language code (based on ISO 639-1). Currently supported (but not
+necessarily completely translated) are: S<English (en, default)>,
+S<Czech (cs)>, S<German (de)>, S<French (fr)>, S<Italian (it)>,
+S<Japanese (ja)>, S<Dutch (nl)>, S<Polish (pl)>, S<Brazilian Portuguese
+(pt_BR)>, S<Russian (ru)>, S<Slovak (sk)>, S<Slovenian (sl)>, S<Serbian
+(sr)>, S<Ukrainian (uk)>, S<Vietnamese (vi)>, S<simplified Chinese
+(zh_CN)>, and S<traditional Chinese (zh_TW)>.
 
-Tlshell shares its message catalog with tlmgr.
+tlshell shares its message catalog with tlmgr.
 
 =item B<--debug-translation>
 
@@ -7907,16 +7935,13 @@ performed are written to the terminal.
 Shows the available candidate repositories for package I<pkg>.
 See L<MULTIPLE REPOSITORIES> below.
 
-=head2 check [I<option>...] [files|depends|executes|runfiles|all]
+=head2 check [I<option>...] [depends|executes|files|runfiles|texmfdbs|all]
 
-Executes one (or all) check(s) on the consistency of the installation.
+Execute one (or all) check(s) of the consistency of the installation.
+If no problems are found, there will be no output. (To get a view of
+what is being done, run C<tlmgr -v check>.)
 
 =over 4
-
-=item B<files>
-
-Checks that all files listed in the local TLPDB (C<texlive.tlpdb>) are
-actually present, and lists those missing.
 
 =item B<depends>
 
@@ -7932,10 +7957,33 @@ instead since former versions for C<tlmgr> called it that way.
 Check that the files referred to by C<execute> directives in the TeX
 Live Database are present.
 
+=item B<files>
+
+Checks that all files listed in the local TLPDB (C<texlive.tlpdb>) are
+actually present, and lists those missing.
+
 =item B<runfiles>
 
 List those filenames that are occurring more than one time in the
-runfiles sections.
+runfiles sections, except for known duplicates.
+
+=item B<texmfdbs>
+
+Checks related to the C<ls-R> files. If you have defined new trees, or
+changed the C<TEXMF> or C<TEXMFDBS> variables, it can't hurt to run
+this. It checks that:
+
+=over 8
+
+=item - all items in C<TEXMFDBS> have the C<!!> prefix.
+
+=item - all items in C<TEXMFBDS> have an C<ls-R> file (if they exist at all).
+
+=item - all items in C<TEXMF> with C<!!> are listed in C<TEXMFDBS>.
+
+=item - all items in C<TEXMF> with an C<ls-R> file are listed in C<TEXMFDBS>.
+
+=back
 
 =back
 
@@ -7946,7 +7994,7 @@ Options:
 =item B<--use-svn>
 
 Use the output of C<svn status> instead of listing the files; for
-checking the TL development repository.
+checking the TL development repository. (This is run nightly.)
 
 =back
 
@@ -8466,7 +8514,7 @@ instead of only the current user.  All three options are on by default.
 
 =item B<paper [a4|letter]>
 
-=item B<S<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [I<papersize>|--list]>>
+=item B<<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [I<papersize>|--list]>>
 
 =item B<paper --json>
 
@@ -9463,7 +9511,7 @@ from a given repository:
   $ tlmgr pinning remove tlcontrib classico # remove just classico
   $ tlmgr pinning remove tlcontrib --all    # take nothing from tlcontrib
 
-A summary of the C<tlmgr pinning> actions is given above.
+A summary of C<tlmgr pinning> actions is given above.
 
 =head1 GUI FOR TLMGR
 
@@ -9960,7 +10008,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 53076 2019-12-10 06:20:44Z preining $
+$Id: tlmgr.pl 53225 2019-12-24 19:19:02Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
