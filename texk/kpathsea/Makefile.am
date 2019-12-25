@@ -253,8 +253,6 @@ web2cdir = $(datarootdir)/texmf-dist/web2c
 
 dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
 
-dist_web2c_DATA = mktex.opt mktexdir.opt mktexnam.opt
-
 dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 
 dist_noinst_DATA = texmf.cnf

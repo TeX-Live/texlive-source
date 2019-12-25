@@ -1,3 +1,11 @@
+2019-12-26  Karl Berry  <karl@tug.org>
+
+	* mktex.opt,
+	* mktexdir.opt,
+	* mktexnam.opt: remove; these will now be maintained
+	 (if changes are needed) only in Master/texmf-dist/web2c.
+	* Makefile.am (dist_web2c_DATA): remove.
+
 2019-12-22  Karl Berry  <karl@freefriends.org>
 
 	* doc/kpathsea.texi (Path searching): mention translations for TL.
