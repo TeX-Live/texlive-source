@@ -251,8 +251,6 @@ xdirtest_LDADD = libkpathsea.la
 ## The scripts and their data
 web2cdir = $(datarootdir)/texmf-dist/web2c
 
-dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
-
 dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 
 dist_noinst_DATA = texmf.cnf

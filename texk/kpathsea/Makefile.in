@@ -134,8 +134,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(dist_noinst_SCRIPTS) \
-	$(dist_web2c_SCRIPTS) $(dist_noinst_DATA) \
-	$(kpseinclude_HEADERS) $(noinst_HEADERS) $(am__DIST_COMMON)
+	$(dist_noinst_DATA) $(kpseinclude_HEADERS) $(noinst_HEADERS) \
+	$(am__DIST_COMMON)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
@@ -143,8 +143,8 @@ CONFIG_HEADER = c-auto.h
 CONFIG_CLEAN_FILES = kpathsea.pc
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" \
-	"$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(pkgconfigdir)" \
-	"$(DESTDIR)$(kpseincludedir)" "$(DESTDIR)$(kpseincludedir)"
+	"$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(kpseincludedir)" \
+	"$(DESTDIR)$(kpseincludedir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -250,7 +250,7 @@ progname_test_DEPENDENCIES = libkpathsea.la
 xdirtest_SOURCES = xdirtest.c
 xdirtest_OBJECTS = xdirtest.$(OBJEXT)
 xdirtest_DEPENDENCIES = libkpathsea.la
-SCRIPTS = $(dist_noinst_SCRIPTS) $(dist_web2c_SCRIPTS)
+SCRIPTS = $(dist_noinst_SCRIPTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -858,7 +858,6 @@ progname_test_SOURCES = progname.c
 progname_test_LDADD = libkpathsea.la
 xdirtest_LDADD = libkpathsea.la
 web2cdir = $(datarootdir)/texmf-dist/web2c
-dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
 dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 dist_noinst_DATA = texmf.cnf
 bin_links = mktexlsr:texhash
@@ -1040,41 +1039,6 @@ progname-test$(EXEEXT): $(progname_test_OBJECTS) $(progname_test_DEPENDENCIES) $
 xdirtest$(EXEEXT): $(xdirtest_OBJECTS) $(xdirtest_DEPENDENCIES) $(EXTRA_xdirtest_DEPENDENCIES) 
 	@rm -f xdirtest$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(xdirtest_OBJECTS) $(xdirtest_LDADD) $(LIBS)
-install-dist_web2cSCRIPTS: $(dist_web2c_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	@list='$(dist_web2c_SCRIPTS)'; test -n "$(web2cdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(web2cdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(web2cdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(web2cdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(web2cdir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-dist_web2cSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dist_web2c_SCRIPTS)'; test -n "$(web2cdir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(web2cdir)'; $(am__uninstall_files_from_dir)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -2133,7 +2097,7 @@ install-binPROGRAMS: install-libLTLIBRARIES
 
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" "$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(kpseincludedir)" "$(DESTDIR)$(kpseincludedir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(kpseincludedir)" "$(DESTDIR)$(kpseincludedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: $(BUILT_SOURCES)
@@ -2261,9 +2225,8 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-data-local install-dist_web2cSCRIPTS \
-	install-kpseincludeHEADERS install-nodist_kpseincludeHEADERS \
-	install-pkgconfigDATA
+install-data-am: install-data-local install-kpseincludeHEADERS \
+	install-nodist_kpseincludeHEADERS install-pkgconfigDATA
 
 install-dvi: install-dvi-recursive
 
@@ -2377,10 +2340,9 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cSCRIPTS \
-	uninstall-kpseincludeHEADERS uninstall-libLTLIBRARIES \
-	uninstall-local uninstall-nodist_kpseincludeHEADERS \
-	uninstall-pkgconfigDATA
+uninstall-am: uninstall-binPROGRAMS uninstall-kpseincludeHEADERS \
+	uninstall-libLTLIBRARIES uninstall-local \
+	uninstall-nodist_kpseincludeHEADERS uninstall-pkgconfigDATA
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 .MAKE: $(am__recursive_targets) all check check-am install install-am \
@@ -2396,21 +2358,21 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cSCRIPTS \
 	distclean-libtool distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
-	install-data-am install-data-local install-dist_web2cSCRIPTS \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-exec-hook install-exec-local install-html \
-	install-html-am install-info install-info-am \
-	install-kpseincludeHEADERS install-libLTLIBRARIES install-man \
+	install-data-am install-data-local install-dvi install-dvi-am \
+	install-exec install-exec-am install-exec-hook \
+	install-exec-local install-html install-html-am install-info \
+	install-info-am install-kpseincludeHEADERS \
+	install-libLTLIBRARIES install-man \
 	install-nodist_kpseincludeHEADERS install-pdf install-pdf-am \
 	install-pkgconfigDATA install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs installdirs-am \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-dist_web2cSCRIPTS \
-	uninstall-hook uninstall-kpseincludeHEADERS \
-	uninstall-libLTLIBRARIES uninstall-local \
-	uninstall-nodist_kpseincludeHEADERS uninstall-pkgconfigDATA
+	uninstall-am uninstall-binPROGRAMS uninstall-hook \
+	uninstall-kpseincludeHEADERS uninstall-libLTLIBRARIES \
+	uninstall-local uninstall-nodist_kpseincludeHEADERS \
+	uninstall-pkgconfigDATA
 
 .PRECIOUS: Makefile
 
