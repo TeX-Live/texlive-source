@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 51942 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2019-08-23 15:13:14 +0200 (Fri, 23 Aug 2019) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 53144 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2019-12-16 14:40:08 +0100 (Mon, 16 Dec 2019) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -281,8 +281,6 @@ local docstr = [[
 -- HELPER SUBROUTINES --
 
 local TEXDIR
-local TEXDIRBSL
-local TEXMFDISTBSL
 local guimode
 
 local function show_error(msg)
@@ -708,14 +706,12 @@ if GSEXE then
   end
 else
   -- use built in gs
-   TEXDIRBSL = string.gsub(TEXDIR,'/', '\\')
-   TEXMFDISTBSL = string.gsub(TEXMFDIST,'/', '\\')
-   os.setenv('GS_LIB', TEXDIRBSL..'\\tlpkg\\tlgs\\lib;'
-	     ..TEXDIRBSL..'\\tlpkg\\tlgs\\fonts;'
-	     ..TEXDIRBSL..'\\tlpkg\\tlgs\\Resource\\Init;'
-	     ..TEXDIRBSL..'\\tlpkg\\tlgs\\Resource;'
-	     ..TEXDIRBSL..'\\tlpkg\\tlgs\\kanji;'
-	     ..os.getenv('WINDIR')..'\\Fonts;'..TEXMFDISTBSL..'\\fonts')
+   os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'
+	     ..TEXDIR..'/tlpkg/tlgs/fonts;'
+	     ..TEXDIR..'/tlpkg/tlgs/Resource/Init;'
+	     ..TEXDIR..'/tlpkg/tlgs/Resource;'
+	     ..TEXDIR..'/tlpkg/tlgs/kanji;'
+	     ..os.getenv('WINDIR')..'/Fonts;'..TEXMFDIST..'/fonts')
   os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
   GSEXE = TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'
   GSNAME = 'gswin32c.exe'
