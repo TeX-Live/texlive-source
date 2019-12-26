@@ -267,6 +267,7 @@ if !WIN32
 endif !WIN32
 
 install-data-local: installdirs-am
+	$(MKDIR_P) '$(DESTDIR)$(web2cdir)'
 	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
 	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \

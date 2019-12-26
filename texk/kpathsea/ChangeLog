@@ -1,5 +1,7 @@
 2019-12-26  Karl Berry  <karl@tug.org>
 
+	* Makefile.am (install-data-local): must mkdir web2cdir here.
+
 	* mktexdir,
 	* mktexnam,
 	* mktexupd,
