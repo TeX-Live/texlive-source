@@ -7,7 +7,7 @@
 # Primarily written by Thomas Esser, Karl Berry, and Olaf Weber.
 # Public domain.
 
-version='$Id$'
+version='$Id: mktextfm 34656 2014-07-18 23:38:50Z karl $'
 progname=`echo $0 | sed 's%.*/%%'`
 
 # preferentially use subprograms from our own directory.

@@ -17,7 +17,6 @@
 
 
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -133,9 +132,8 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) $(dist_noinst_SCRIPTS) \
-	$(dist_noinst_DATA) $(kpseinclude_HEADERS) $(noinst_HEADERS) \
-	$(am__DIST_COMMON)
+	$(am__configure_deps) $(dist_noinst_DATA) \
+	$(kpseinclude_HEADERS) $(noinst_HEADERS) $(am__DIST_COMMON)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
@@ -250,7 +248,6 @@ progname_test_DEPENDENCIES = libkpathsea.la
 xdirtest_SOURCES = xdirtest.c
 xdirtest_OBJECTS = xdirtest.$(OBJEXT)
 xdirtest_DEPENDENCIES = libkpathsea.la
-SCRIPTS = $(dist_noinst_SCRIPTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -576,7 +573,6 @@ am__set_b = \
 DIST_SUBDIRS = . doc man win32
 am__DIST_COMMON = $(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/c-auto.in $(srcdir)/kpathsea.pc.in \
-	$(top_srcdir)/../../am/bin_links.am \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
@@ -759,7 +755,7 @@ SUBDIRS = . doc man $(am__append_6)
 #
 EXTRA_DIST = PROJECTS putenv.c bsnl.awk cnf-to-paths.awk $(TESTS) \
 	tests/cnfline/texmf.cnf tests/cnfnewline/texmf.cnf \
-	tests/cnfprog/texmf.cnf mktex.cnf
+	tests/cnfprog/texmf.cnf
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 lib_LTLIBRARIES = libkpathsea.la
@@ -858,9 +854,7 @@ progname_test_SOURCES = progname.c
 progname_test_LDADD = libkpathsea.la
 xdirtest_LDADD = libkpathsea.la
 web2cdir = $(datarootdir)/texmf-dist/web2c
-dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 dist_noinst_DATA = texmf.cnf
-bin_links = mktexlsr:texhash
 AM_TESTS_ENVIRONMENT = LN_S='$(LN_S)'; export LN_S; \
 	LT_OBJDIR='$(LT_OBJDIR)'; export LT_OBJDIR;
 #
@@ -879,7 +873,7 @@ all: $(BUILT_SOURCES) c-auto.h
 .SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/bin_links.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -901,7 +895,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles);; \
 	esac;
-$(top_srcdir)/../../am/bin_links.am $(srcdir)/../../am/rebuild.am $(am__empty):
+$(srcdir)/../../am/rebuild.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -2091,8 +2085,8 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(PROGRAMS) $(LTLIBRARIES) $(SCRIPTS) $(DATA) \
-		$(HEADERS) c-auto.h
+all-am: Makefile $(PROGRAMS) $(LTLIBRARIES) $(DATA) $(HEADERS) \
+		c-auto.h
 install-binPROGRAMS: install-libLTLIBRARIES
 
 installdirs: installdirs-recursive
@@ -2232,10 +2226,8 @@ install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-exec-local \
-	install-libLTLIBRARIES
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
+install-exec-am: install-binPROGRAMS install-libLTLIBRARIES
+
 install-html: install-html-recursive
 
 install-html-am:
@@ -2343,10 +2335,9 @@ ps-am:
 uninstall-am: uninstall-binPROGRAMS uninstall-kpseincludeHEADERS \
 	uninstall-libLTLIBRARIES uninstall-local \
 	uninstall-nodist_kpseincludeHEADERS uninstall-pkgconfigDATA
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+
 .MAKE: $(am__recursive_targets) all check check-am install install-am \
-	install-exec-am install-strip uninstall-am
+	install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--depfiles am--refresh check check-TESTS check-am clean \
@@ -2359,9 +2350,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-kpseincludeHEADERS \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
 	install-data-am install-data-local install-dvi install-dvi-am \
-	install-exec install-exec-am install-exec-hook \
-	install-exec-local install-html install-html-am install-info \
-	install-info-am install-kpseincludeHEADERS \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-kpseincludeHEADERS \
 	install-libLTLIBRARIES install-man \
 	install-nodist_kpseincludeHEADERS install-pdf install-pdf-am \
 	install-pkgconfigDATA install-ps install-ps-am install-strip \
@@ -2369,7 +2359,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-kpseincludeHEADERS \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-hook \
+	uninstall-am uninstall-binPROGRAMS \
 	uninstall-kpseincludeHEADERS uninstall-libLTLIBRARIES \
 	uninstall-local uninstall-nodist_kpseincludeHEADERS \
 	uninstall-pkgconfigDATA
@@ -2414,15 +2404,6 @@ stamp-kpathsea: Makefile paths.h
 	  cp kpathsea.tmp kpathsea.h; \
 	fi && rm -f kpathsea.tmp && date >$@
 
-install-exec-local: installdirs-am
-@WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
-@WIN32_FALSE@	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
-@WIN32_FALSE@	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
-@WIN32_FALSE@	    echo " $(INSTALL_SCRIPT) '$(srcdir)/$$f' '$(DESTDIR)$(bindir)/$$f'"; \
-@WIN32_FALSE@	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(bindir)/$$f"; \
-@WIN32_FALSE@	  else :; fi; \
-@WIN32_FALSE@	done
-
 install-data-local: installdirs-am
 	$(MKDIR_P) '$(DESTDIR)$(web2cdir)'
 	@for f in $(dist_noinst_DATA); do \
@@ -2434,43 +2415,12 @@ install-data-local: installdirs-am
 	done
 
 uninstall-local:
-@WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
-@WIN32_FALSE@	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1; then \
-@WIN32_FALSE@	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-@WIN32_FALSE@	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
-@WIN32_FALSE@	  else :; fi; \
-@WIN32_FALSE@	done
 	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1; then \
 	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \
 	    rm -f "$(DESTDIR)$(web2cdir)/$$f"; \
 	  else :; fi; \
 	done
-
-# $Id$
-# am/bin_links.am: Makefile fragment for bindir links.
-.PHONY: install-bin-links uninstall-bin-links
-
-install-bin-links:
-@WIN32_FALSE@	$(MKDIR_P) $(DESTDIR)$(bindir)
-@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
-@WIN32_FALSE@	  for s in $(bin_links); do \
-@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
-@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
-@WIN32_FALSE@	    rm -f $$link; \
-@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
-@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
-@WIN32_FALSE@	  done
-
-uninstall-bin-links:
-@WIN32_FALSE@	@for s in $(bin_links); do \
-@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
-@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
-@WIN32_FALSE@	done
-
-install-exec-hook: install-bin-links
-
-uninstall-hook: uninstall-bin-links
 #
 tests/cnfline.log tests/cnfnewline.log tests/cnfprog.log \
   tests/kpsewhich.log: kpsewhich$(EXEEXT)

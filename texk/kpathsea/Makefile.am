@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/
 ##
-## Copyright 2017-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -251,20 +251,7 @@ xdirtest_LDADD = libkpathsea.la
 ## The scripts and their data
 web2cdir = $(datarootdir)/texmf-dist/web2c
 
-dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
-
 dist_noinst_DATA = texmf.cnf
-
-install-exec-local: installdirs-am
-if !WIN32
-	@for f in $(dist_noinst_SCRIPTS); do \
-	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
-	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
-	    echo " $(INSTALL_SCRIPT) '$(srcdir)/$$f' '$(DESTDIR)$(bindir)/$$f'"; \
-	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(bindir)/$$f"; \
-	  else :; fi; \
-	done
-endif !WIN32
 
 install-data-local: installdirs-am
 	$(MKDIR_P) '$(DESTDIR)$(web2cdir)'
@@ -277,28 +264,12 @@ install-data-local: installdirs-am
 	done
 
 uninstall-local:
-if !WIN32
-	@for f in $(dist_noinst_SCRIPTS); do \
-	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1; then \
-	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
-	  else :; fi; \
-	done
-endif !WIN32
 	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1; then \
 	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \
 	    rm -f "$(DESTDIR)$(web2cdir)/$$f"; \
 	  else :; fi; \
 	done
-
-bin_links = mktexlsr:texhash
-
-include $(top_srcdir)/../../am/bin_links.am
-
-install-exec-hook: install-bin-links
-
-uninstall-hook: uninstall-bin-links
 
 ## Tests
 AM_TESTS_ENVIRONMENT  = LN_S='$(LN_S)'; export LN_S;
@@ -325,6 +296,3 @@ rebuild_target = all-am
 CLEANFILES =
 
 include $(srcdir)/../../am/rebuild.am
-
-## Not used
-EXTRA_DIST += mktex.cnf

@@ -1,3 +1,15 @@
+2019-12-29  Karl Berry  <karl@tug.org>
+
+	* mktexlsr.1,
+	* mktexmf.1,
+	* mktexpk.1,
+	* mktextfm.1: add here, moved from
+	Build/source/texk/kpathsea/man. Not yet sure of the best way
+	to handle the man pages for Master-maintained scripts, but this will
+	suffice for now.
+	* Makefile.am (dist_man_MANS): add mktex{lsr,mf,pk,tfm}.man.
+        (man1_links): add mktexlsr:texhash.
+
 2017-12-18  Karl Berry  <karl@tug.org>
 
 	* texconfig.sh: more updates from Norbert to use tlmgr (from 45882).

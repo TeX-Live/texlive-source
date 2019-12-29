@@ -195,6 +195,10 @@ texmf_other_scripts = \
 	texlive/fmtutil-sys.sh \
 	texlive/fmtutil-user.sh \
 	texlive/fmtutil.pl \
+	texlive/mktexlsr \
+	texlive/mktexmf \
+	texlive/mktexpk \
+	texlive/mktextfm \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl \
 	texlive/updmap-sys.sh \
@@ -234,6 +238,7 @@ bin_links = \
 	cluttex:clxelatex \
 	cluttex:cllualatex \
 	epstopdf:repstopdf \
+	mktexlsr:texhash \
 	pdfcrop:rpdfcrop \
 	texdef:latexdef
 

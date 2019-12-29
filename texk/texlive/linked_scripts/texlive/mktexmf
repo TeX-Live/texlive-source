@@ -7,7 +7,7 @@
 # Originally written by Thomas Esser.
 # Public domain.
 
-version='$Id$'
+version='$Id: mktexmf 34656 2014-07-18 23:38:50Z karl $'
 
 # preferentially use subprograms from our own directory.
 mydir=`echo "$0" | sed 's,/[^/]*$,,'`

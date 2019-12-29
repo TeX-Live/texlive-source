@@ -1,3 +1,20 @@
+2019-12-29  Karl Berry  <karl@tug.org>
+
+	* mktexlsr,
+	* mktexmf,
+	* mktexpk,
+	* mktextfm: remove; these will now be maintained only in
+	Master/texmf-dist/scripts/texlive, with slave copies in
+	Build/source/texk/texlive/linked_scripts as usual.
+	* Makefile.am (dist_noinst_SCRIPTS): remove, nothing left.
+	(install-exec-local): likewise remove.
+	(uninstall-local): don't uninstall the dist_noinst_SCRIPTS.
+	(bin_links): remove, now also handled in linked_scripts.
+	
+	* man/Makefile.am (man_sources): remove mktex{lsr,mf,pk,tfm}.man;
+	(man1_links): remove; these man pages will now be maintained in
+	Build/source/texk/texlive/tl_scripts.
+
 2019-12-26  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (install-data-local): must mkdir web2cdir here.

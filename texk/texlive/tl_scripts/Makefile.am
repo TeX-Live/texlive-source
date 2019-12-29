@@ -1,6 +1,7 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/texlive/tl_scripts/
 ##
-## Copyright 2013-2015 Karl Berry <tex-live@tug.org>
+## Copyright 2013-2019 Karl Berry <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Build lists of scripts.
@@ -63,6 +64,10 @@ dist_man_MANS = \
 	fontinst.1 \
 	kpsetool.1 \
 	kpsewhere.1 \
+	mktexlsr.1 \
+	mktexmf.1 \
+	mktexpk.1 \
+	mktextfm.1 \
 	ps2frag.1 \
 	pslatex.1 \
 	rubibtex.1 \
@@ -85,6 +90,7 @@ man1_links = \
 	kpsetool:kpsexpand \
 	kpsetool:kpsepath \
 	fmtutil:mktexfmt \
+	mktexlsr:texhash \
 	texconfig:texconfig-sys \
 	updmap:updmap-sys
 
