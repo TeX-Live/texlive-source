@@ -1,3 +1,7 @@
+2019-12-31  Akira Kakuto  <kakuto@w32tex.org>
+
+	* XeTeX_ext.c: Support system poppler version 0.84.0.
+
 2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* xetex.defines (gzFile): move to ../web2c/common.defines.
