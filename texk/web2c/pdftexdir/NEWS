@@ -43,20 +43,8 @@ pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
   pdftoepdf-poppler0.83.0.cc for poppler-0.83.0 and newer.
   Note that pdftosrc-*.cc and pdftoepdf-*.cc should be
   renamed as pdftosrc.cc, and pdftoepdf.cc, respectively, before
-  compilation.
-  In the case of 0.84.0, it is necessary to change
-  poppler-config.h.cmake as follows:
---- poppler-config.h.cmake.orig	Sat Dec 28 21:18:52 2019
-+++ poppler-config.h.cmake	Mon Dec 30 07:08:40 2019
-@@ -139,7 +139,7 @@
- //------------------------------------------------------------------------
- 
- #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
--#include <cstdio> // __MINGW_PRINTF_FORMAT is defined in the mingw stdio.h
-+#include <stdio.h> // __MINGW_PRINTF_FORMAT is defined in the mingw stdio.h
- #ifdef __MINGW_PRINTF_FORMAT
- #define GCC_PRINTF_FORMAT(fmt_index, va_index) \
- 	__attribute__((__format__(__MINGW_PRINTF_FORMAT, fmt_index, va_index)))
+  compilation. Further, POPPLER_VERSION should be defined properly
+  like -DPOPPLER_VERSION='"0.84.0"'.
 
 ---------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)  (April 27, 2017)

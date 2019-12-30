@@ -1,3 +1,8 @@
+2019-12-30  Akira Kakuto  <kakuto@w32tex.org>
+
+	* utils.c: Not include poppler-config.h, by assuming that
+	POPPLER_VERSION is defined properly.
+
 2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* am/pdftex.am (pdftex_ch_srcs): add zlib-fmt.ch.
