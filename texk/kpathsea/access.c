@@ -1,6 +1,6 @@
 /* access -- test for access permissions of a file.
 
-   Copyright 2008, 2009 Karl Berry.
+   Copyright 2008, 2009-2019 Karl Berry.
    Copyright 1997-2001, 2005 Olaf Weber.
 
    This program is free software; you can redistribute it and/or modify
@@ -71,7 +71,12 @@ Try `%s --help' for more information.\n", argv[0], argv[0]);
         switch (*i) {
         case 'r': mode |= R_OK; break;
         case 'w': mode |= W_OK; break;
+#if defined(_WIN32)
+/* access() crashes for unsupported test of x bit */
+        case 'x': break;
+#else
         case 'x': mode |= X_OK; break;
+#endif
         case '-': if (i == argv[1]) break;
         default:
             fprintf(stderr, "%s: Invalid MODE.\n", argv[0]);
