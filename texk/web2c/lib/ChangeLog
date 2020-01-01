@@ -1,3 +1,7 @@
+2020-01-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* printversion.c: Update copyright year.
+
 2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 	
 	* do_dump [FMT_COMPRESS]: change conditional from XeTeX.
