@@ -162,6 +162,27 @@ use warnings;
 ##
 ## 12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+## 26 Dec 2019 John Collins  Change place of setting of $view_file
+##                           Make fully consistent set of options for engines:
+##                               -latex, -latex=...,
+##                           preserving backward compatibility, and avoiding suprises. 
+## 11 Dec 2019 John Collins  Change rules for wrapping in log file: This deals
+##                             with xelatex wrapping at > standard number of
+##                             bytes in presence of non-ASCII Unicode characters.
+##  4 Dec 2019 John Collins  If there were missing subdirectories in output/aux
+##                           directories, and these were successfully created,
+##                           then ignore error from *latex, since rerun may
+##                           succeed.
+## 14 Nov 2019 John Collins  Add comment.
+## 12 Nov 2019 John Collins  Use $compiling_cmd, $warning_cmd, $success_cmd
+#                            on normal make, rather than just in -pvc mode.
+##  5 Aug 2019 John Collins  The changing of '\' to '/' in filenames is now
+##                             done for msys as well as MSWin32.
+##  8 Jul 2019 John Collins  Allow addition of hook for processing lists of
+##                             missing source files, used after run of *latex.
+##  2 Jul 2019 John Collins  Silence message about disallowing change of output
+##                            file type.
+##                           V. 4.66
 ## 28 Jun 2019 John Collins  Try to deal with log file parsing problems
 ##                           V. 4.65
 ## 21 May 2019 John Collins  Fix incorrect listings by -rules and by -deps
@@ -233,8 +254,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.65';
-$version_details = "$My_name, John Collins, 18 June 2019";
+$version_num = '4.67';
+$version_details = "$My_name, John Collins, 26 Dec. 2019";
 
 use Config;
 use File::Basename;
@@ -359,7 +380,7 @@ $illegal_in_texname = "\x00\t\f\n\r\$%\\~\x7F";
 
 
 # Hooks for customized extra processing on aux files.  The following
-# variable is an array of references to function.  Each function is
+# variable is an array of references to functions.  Each function is
 # invoked in turn when a line of an aux file is processed (if none
 # of the built-in actions have been done).  On entry to the function,
 # the following variables are set:
@@ -367,6 +388,15 @@ $illegal_in_texname = "\x00\t\f\n\r\$%\\~\x7F";
 #    $rule = name of rule during the invocation of which, the aux file
 #            was supposed to have been generated.
 @aux_hooks = ();
+# Hooks for customized processing on lists of source and missing files.
+# The following variable is an array of references to functions.  Each 
+# function is invoked in turn after a run of latex (or pdflatex etc) and
+# latexmk has analyzed the .log and .fls files for dependency information.
+# On entry to each called function, the following variables are set:
+#    $rule = name of *latex rule
+#    %dependents: maps source files and possible source files to a status.
+#                 See begining of sub parse_log for possible values.
+@latex_file_hooks = ();
 
 #########################################################################
 ## Default document processing programs, and related settings,
@@ -1739,6 +1769,11 @@ while ($_ = $ARGV[0])
   }
   elsif (/^-l$/)     { $landscape_mode = 1; }
   elsif (/^-l-$/)    { $landscape_mode = 0; }
+  elsif ( /^-latex$/ )      { 
+      $pdf_mode = 0;
+      $postscript_mode = 0; 
+      $dvi_mode = 1;
+  }
   elsif (/^-latex=(.*)$/) {
       $latex = $1;
   }
@@ -1752,6 +1787,11 @@ while ($_ = $ARGV[0])
       { $silence_logfile_warnings = 0; }
   elsif ( /^-logfilewarninglist-$/ || /^-logfilewarnings-$/ )
       { $silence_logfile_warnings = 1; }
+  elsif ( /^-lualatex$/ || /^-pdflualatex$/ )      { 
+      $pdf_mode = 4;
+      $dvi_mode = $postscript_mode = 0; 
+  }
+# See below for -lualatex=...
 # See above for -M
   elsif (/^-MF$/) {
      if ( $ARGV[0] eq '' ) {
@@ -1785,18 +1825,18 @@ while ($_ = $ARGV[0])
   elsif (/^-pdflua$/){ $pdf_mode = 4; }
   elsif (/^-pdfps$/) { $pdf_mode = 2; }
   elsif (/^-pdfxe$/) { $pdf_mode = 5; }
-#  elsif (/^-pdflatex$/) {
-#      $pdflatex = "pdflatex %O %S";
-#      $pdf_mode = 1;
-#      $dvi_mode = $postscript_mode = 0; 
-#  }
+  elsif (/^-pdflatex$/) {
+      $pdflatex = "pdflatex %O %S";
+      $pdf_mode = 1;
+      $dvi_mode = $postscript_mode = 0; 
+  }
   elsif (/^-pdflatex=(.*)$/) {
       $pdflatex = $1;
   }
-  elsif (/^-pdflualatex=(.*)$/) {
+  elsif ( /^-pdflualatex=(.*)$/ || /^-lualatex=(.*)$/ ) {
       $lualatex = $1;
   }
-  elsif (/^-pdfxelatex=(.*)$/) {
+  elsif ( /^-pdfxelatex=(.*)$/ || /^-xelatex=(.*)$/ ) {
       $xelatex = $1;
   }
   elsif (/^-pretex=(.*)$/) {
@@ -1873,14 +1913,11 @@ while ($_ = $ARGV[0])
   elsif (/^-view=ps$/)      { $view = "ps";}
   elsif (/^-view=pdf$/)     { $view = "pdf"; }
   elsif (/^-Werror$/){ $warnings_as_errors = 1; }
-  elsif (/^-lualatex$/)      { 
-      $pdf_mode = 4;
-      $dvi_mode = $postscript_mode = 0; 
-  }
-  elsif (/^-xelatex$/)      { 
+  elsif ( /^-xelatex$/ || /^-pdfxelatex$/ )      { 
       $pdf_mode = 5;
       $dvi_mode = $postscript_mode = 0; 
   }
+# See above for -xelatex=...
   elsif (/^-e$/) {  
      if ( $#ARGV < 0 ) {
         &exit_help( "No code to execute specified after -e switch"); 
@@ -2267,8 +2304,10 @@ if ( $dvi_mode || $postscript_mode
     # the only destinations.  So if ps or dvi files needed, we cannot
     # allow switching.  (There will then be an error condition if a TeX
     # engine fails to produce the correct type of output file.)
-    warn "$My_name: Disallowing switch of output file as incompatible\n",
-         "    with file requests.\n";
+    if ($diagnostics) {
+        warn "$My_name: Disallowing switch of output file as incompatible\n",
+             "    with file requests.\n";
+    }
     $can_switch = 0;
 }
 
@@ -2417,7 +2456,9 @@ foreach $filename ( @file_list )
     #      but %rule_db is needed in the continue block, which is not in the
     #      scope of a local declaration here.
     &rdb_initialize_rules;
-    
+    $view_file = '';
+    rdb_one_rule( 'view', sub{ $view_file = $$Psource; } );
+
     if ( $cleanup_mode > 0 ) {
 # ?? MAY NEED TO FIX THE FOLLOWING IF $aux_dir or $out_dir IS SET.
         my %other_generated = ();
@@ -2645,6 +2686,7 @@ foreach $filename ( @file_list )
     #Initialize failure flags now.
     $failure = 0;
     $failure_msg = '';
+    if ($compiling_cmd) { Run_subst( $compiling_cmd ); }
     $failure = &rdb_make;
     if ( ( $failure <= 0 ) || $force_mode ) {
       rdb_for_some( [keys %one_time], \&rdb_run1 );
@@ -2656,7 +2698,13 @@ foreach $filename ( @file_list )
             $failure_msg = "Warning(s) from latex (or c.) for '$filename'; treated as error";
         }
     }
-    if ($failure > 0) { next FILE; }
+    
+    if ($failure > 0) {
+        if ($failure_cmd) { Run_subst( $failure_cmd ); }
+        next FILE;
+    } else {
+        if ($success_cmd) { Run_subst( $success_cmd ); }
+    }
 } # end FILE
 continue {
     if ($deps_handle) { deps_list($deps_handle); }
@@ -2755,7 +2803,7 @@ sub test_fix_texnames {
     my $unbalanced_quote = 0;
     my $balanced_quote = 0;
     foreach (@_) {
-        if ( $^O eq "MSWin32" ) {
+        if ( ($^O eq "MSWin32") || ($^O eq "msys") ) {
             # On MS-Win, change directory separator '\' to '/', as needed
             # by the TeX engines, for which '\' introduces a macro name.
             # Remember that '/' is a valid directory separator in MS-Win.
@@ -3461,9 +3509,6 @@ sub make_preview_continuous {
     
     $quell_uptodate_msgs = 1;
 
-    local $view_file = '';
-    rdb_one_rule( 'view', sub{ $view_file = $$Psource; } );
-  
     if ( ($view eq 'dvi') || ($view eq 'pdf') || ($view eq 'ps') ) { 
         warn "Viewing $view\n";
     }
@@ -3527,8 +3572,6 @@ CHANGE:
             Run_subst( $compiling_cmd );
         }
         $failure = &rdb_make;
-
-##     warn "=========Viewer PID = $$Pviewer_process; updated=$updated\n";
 
         if ( $MSWin_fudge_break && ($^O eq "MSWin32") ) {
             $SIG{BREAK} = $SIG{INT} = 'DEFAULT';
@@ -4538,8 +4581,12 @@ sub parse_log {
             }
         }
         else {
-            # LuaTeX sometimes wraps at 80 instead of 79, so work around this
-            while ( ( ($len == $log_wrap) || ( ($engine eq 'LuaTeX') && ($len == $log_wrap+1) ) )
+            # Xetex and luatex sometimes wrap at longer line lengths:
+            # LuaTeX sometimes at 80. Xetex 80 or longer with non-ascii characters.
+            while ( ( ($len == $log_wrap)
+                      || ( ($engine eq 'LuaTeX') && ($len == $log_wrap+1) )
+                      || ( ($engine eq 'XeTeX') &&  ($len >= $log_wrap+1) )
+                    )
                     && !eof($log_file) ) {
                 push @lines, $_;
                 my $extra = <$log_file>;
@@ -5893,9 +5940,10 @@ sub rdb_read_set_rule {
                     warn "  ===== CHANGING output type from '$newext' to '$oldext' in '$rule'\n";
                     my $switch_error =  switch_output( $oldext, $newext );
                     if ($switch_error) {
-                        warn "   I could not accommodate the changed output extension\n",
-                             "   (either because the configuration does not allow it\n",
-                             "   or because there is a conflict with requested filetypes).\n",
+                        warn "   I could not accommodate the changed output extension.\n",
+                             "   That is either because the configuration does not allow it\n",
+                             "   or because there is a conflict with implicit or explicit requested filetypes.\n",
+                             "   (Typically that is about .dvi and/or .ps filetypes.)\n",
                              "===> There may be subsequent warnings, which may or may not be ignorable.\n",
                              "===> If necessary, clean out generated files and try again\n";
                     }
@@ -6124,7 +6172,7 @@ sub rdb_set_latex_deps {
     }
  
     &parse_log;
-    $missing_dirs = 'none';      # Status of missing directories
+    my $missing_dirs = 'none';      # Status of missing directories
     if (@missing_subdirs) {
         $missing_dirs = 'success';
         if ($allow_subdir_creation) {
@@ -6424,6 +6472,10 @@ NEW_SOURCE:
         }
     }
 
+    foreach my $Psub (@latex_file_hooks) {
+         &$Psub;
+    }
+
     # Some packages (e.g., bibtopic) generate a dummy error-message-providing
     #   bbl file when a bbl file does not exist.  Then the fls and log files
     #   show the bbl file as created by the primary run and hence as a
@@ -6469,6 +6521,8 @@ NEW_SOURCE:
         }
     }
     rdb_remove_files( $rule, @files_not_needed );
+
+    return ($missing_dirs, [@missing_subdirs] );
 
 } # END rdb_set_latex_deps
 
@@ -7949,7 +8003,7 @@ sub rdb_primary_run {
     }
 
     # Find current set of source files:
-    &rdb_set_latex_deps;
+    my ($missing_dirs, $PA_missing_subdirs) = &rdb_set_latex_deps;
 
     # For each file of the kind made by epstopdf.sty during a run, 
     #   if the file has changed during a run, then the new version of
@@ -7978,6 +8032,12 @@ sub rdb_primary_run {
     if ($return_latex && $$Pout_of_date_user) {
        print "Error in (pdf)LaTeX, but change of user file(s), ",
              "so ignore error & provoke rerun\n"
+          if (! $silent);
+       $return = 0;
+    }
+    if ($return_latex && ($missing_dirs ne 'none') ) {
+       print "Error in (pdf)LaTeX, but needed subdirectories in output directory\n",
+             "   were missing and successfully created, so try again.\n"
           if (! $silent);
        $return = 0;
     }
@@ -9359,6 +9419,22 @@ sub add_aux_hook {
     #     add_aux_hook( sub{  code of subroutine... } );
     my ($sub_name) = @_;
     push @aux_hooks, $sub_name;
+}
+
+####################################################
+
+sub add_latex_file_hook {
+    # Usage: add_latex_file_hook( sub_name )
+    # Add the name subroutine to the array of hooks for
+    # processing list of possible dependency files after a run of *latex.
+    # The argument is either a string naming the subroutine, e.g.
+    #     add_latex_file_hook( 'subname' );
+    # or a Perl reference to the subroutine, e.g.,
+    #     add_latex_file_hook( \&subname );
+    # It is also possible to use an anonymous subroutine, e.g.,
+    #     add_latex_file_hook( sub{  code of subroutine... } );
+    my ($sub_name) = @_;
+    push @latex_file_hooks, $sub_name;
 }
 
 ####################################################
