@@ -56,9 +56,8 @@ dvipdfm-x - maintained here, by us, contains
   xdvipdfmx
     old info: http://project.ktug.org/dvipdfmx/
 
-dvipng 1.16 - checked 7apr19
-  http://savannah.nongnu.org/files/?group=dvipng
-  http://mirror.ctan.org/dviware/dvipng/ (but maybe stale)
+dvipng 1.17 - checked 06jan20
+  http://mirror.ctan.org/dviware/dvipng/
 
 dvipos - maintained here, by us
 

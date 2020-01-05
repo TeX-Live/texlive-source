@@ -9,4 +9,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current dvipng version
-m4_define([dvipng_version], [1.16])
+m4_define([dvipng_version], [1.17])

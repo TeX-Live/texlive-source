@@ -1,12 +1,10 @@
-Release notes for version 1.16 of the dvipng package:
+Release notes for version 1.17 of the dvipng package:
 
 This program makes PNG graphics from DVI files as obtained from TeX
 and its relatives.
 
 
-This is a security release that adds checks for malignant font files. 
-It also amends the build process, mostly to adjust for recent FreeType 
-versions, and makes a few more small adjustments.
+This is a bugfix release that re-enables PK font rendering and enables gamma printout and interactive mode startup without DVI.
 
 
 Report any bugs you find, see README for instructions.

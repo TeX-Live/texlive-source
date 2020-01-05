@@ -1,5 +1,5 @@
-Changes applied to the dvipng-1.16 tree as obtained from:
-	http://savannah.nongnu.org/files/?group=dvipng
+Changes applied to the dvipng-1.17 tree as obtained from:
+	http://mirror.ctan.org/dviware/dvipng/
 
 Removed:
 	configure
@@ -11,8 +11,8 @@ Created Autoconf macro files ../m4/gs-device.m4 and ../m4/makeinfo.m4
 	adapting code in aclocal.m4.
 
 Copied these files to ../doc/:
+	dvipng.1
 	dvipng.texi
 	install.texi
 	macros.texi
 	readme.texi
-

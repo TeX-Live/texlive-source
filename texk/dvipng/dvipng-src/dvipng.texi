@@ -9,8 +9,8 @@ dvipng [options] [filename] -
 @c man end
 @end ifset
 
-@set version 1.16
-@set month-year April 2019
+@set version 1.17
+@set month-year January 2020
 
 @c Put everything in one index (arbitrarily chosen to be the concept index).
 @syncodeindex fn cp
@@ -39,7 +39,7 @@ dvipng [options] [filename] -
 @author by Jan-@AA{}ke Larsson.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2002-2015, 2019 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2020 Jan-@AA{}ke Larsson
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -938,7 +938,7 @@ Georg Schwarz, Jason Farmer, Brian V. Smith, Samuel Hathaway, Thomas
 R. Shemanske, Stephen Gibson, Christian Ridderstr@"om, Ezra Peisach,
 William H Wheeler, Thomas Klausner, Harald Koenig, Adrian Bunk, Kevin
 Smith, Jason Riedy, Wolfram Krause, Reinhard Kotucha, Takeshi Abe, 
-Waldeck Schutzer, and Andy Nguyen.
+Waldeck Schutzer, Ahzo, and Andy Nguyen.
 
 @ifset man
 @c man begin NOTES

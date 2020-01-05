@@ -1,3 +1,27 @@
+2020-01-05  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Prepare for 1.17
+
+2019-11-29  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Fix typo that cause PK files to fail
+
+2019-07-03  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Fix format for gamma interactive printout. Add credit.
+
+2019-07-01  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Fix segfault when starting interactive mode without DVI. Thanks to Ahzo for finding the issue.
+
+2019-06-29  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Revert change for acinclude.m4, and add test for strncasecmp
+
+2019-06-27  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Remove segfault for invalid color names
+
 2019-04-06  Jan-흆e Larsson  <jan-ake.larsson@liu.se>
 
     Release 1.16
@@ -5,8 +29,6 @@
 2019-04-06  Jan-흆e Larsson  <jan-ake.larsson@liu.se>
 
     Check for a possible integer addition overflow
-    Check bounds for mmap access
-    Update copyright notice
     Check bounds for mmap access
     Update copyright notice
 
