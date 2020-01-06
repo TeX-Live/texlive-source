@@ -1,6 +1,8 @@
 2020-01-06  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import dvipng-1.17.
+	* patch-08-win32: add to support non-ascii image file names
+	on Windows (Windows only).
 
 2019-04-07  Karl Berry  <karl@freefriends.org>
 

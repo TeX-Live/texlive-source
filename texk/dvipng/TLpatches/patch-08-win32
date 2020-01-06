@@ -1,0 +1,28 @@
+--- special.c.orig	Fri Aug 31 16:39:04 2018
++++ special.c	Mon Jan 06 18:53:34 2020
+@@ -492,6 +492,25 @@
+ 
+       PSCodeInit(&image, NULL);
+       image.filename=kpse_find_file(psname,kpse_pict_format,0);
++#if !defined(MIKTEX) && defined(WIN32)
++      if (image.filename == NULL) {
++        wchar_t *wnam;
++        char *tmpnam;
++        int tmpcp;
++        tmpcp = file_system_codepage;
++        file_system_codepage = CP_UTF8;
++        tmpnam = kpse_find_file(psname,kpse_pict_format,0);
++        if (tmpnam) {
++          wnam = get_wstring_from_mbstring(CP_UTF8, tmpnam, wnam=NULL);
++          if (wnam) {
++            image.filename = get_mbstring_from_wstring(tmpcp, wnam, image.filename=NULL);
++            free(wnam);
++          }
++          free(tmpnam);
++        }
++        file_system_codepage = tmpcp;
++      }
++#endif
+       if (MmapFile(image.filename,&(image.fmmap)) || image.fmmap.size==0) {
+ 	Warning("Image file %s unusable, image will be left blank",
+ 		image.filename);
