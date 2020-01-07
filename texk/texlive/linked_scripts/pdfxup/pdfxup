@@ -181,15 +181,15 @@ function dimtopt()
 	    ;;
 	*mm)
 	    dim=${dim%mm};
-	    eval dim=$((dim*2845/100))pt;
+	    eval dim=$((dim*2845/1000))pt;
 	    ;;
 	*cm)
 	    dim=${dim%cm};
-	    eval dim=$((dim*284/10))pt;
+	    eval dim=$((dim*2845/100))pt;
 	    ;;
 	*in)
 	    dim=${dim%in};
-	    eval dim=$((dim*723/10))pt;
+	    eval dim=$((dim*7228/100))pt;
 	    ;;
 	*[!0-9]*)
 	    ## should not occur... has been filtered out by main 'case'

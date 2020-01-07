@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 52741 2019-11-11 23:16:13Z karl $
+# $Id: fmtutil.pl 53340 2020-01-06 23:55:32Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2014-2018 Norbert Preining
+# Copyright 2014-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 52741 2019-11-11 23:16:13Z karl $';
-my $lastchdate = '$Date: 2019-11-12 00:16:13 +0100 (Tue, 12 Nov 2019) $';
+my $svnid = '$Id: fmtutil.pl 53340 2020-01-06 23:55:32Z preining $';
+my $lastchdate = '$Date: 2020-01-07 00:55:32 +0100 (Tue, 07 Jan 2020) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 52741 $';
+my $svnrev = '$Revision: 53340 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -1040,7 +1040,18 @@ sub determine_config_files {
     my @tmp;
     for my $f (@{$opts{'cnffile'}}) {
       if (! -f $f) {
-        die "$prg: Config file \"$f\" not found";
+        # if $f is a pure file name, that is dirname $f == ".",
+        # then try to find it via kpsewhich
+        if (dirname($f) eq ".") {
+          chomp(my $kpfile = `kpsewhich $f`);
+          if ($kpfile ne "") {
+            $f = $kpfile;
+          } else {
+            die "$prg: Config file \"$f\" cannot be found via kpsewhich";
+          }
+        } else {
+          die "$prg: Config file \"$f\" not found";
+        }
       }
       push @tmp, (win32() ? lc($f) : $f);
     }
@@ -1363,7 +1374,9 @@ Explanation of trees and files normally used:
   If --cnffile is specified on the command line (possibly multiple
   times), its value(s) are used.  Otherwise, fmtutil reads all the
   fmtutil.cnf files found by running \`kpsewhich -all fmtutil.cnf', in the
-  order returned by kpsewhich.
+  order returned by kpsewhich. Files passed in via --cnffile are
+  first tried to be loaded directly, and if not found and the file names
+  don't contain directory parts, are searched via kpsewhich.
 
   In any case, if multiple fmtutil.cnf files are found, all the format
   definitions found in all the fmtutil.cnf files are merged.
