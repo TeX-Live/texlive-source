@@ -123,17 +123,17 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-am_dvips_OBJECTS = bbox.$(OBJEXT) color.$(OBJEXT) dopage.$(OBJEXT) \
-	dosection.$(OBJEXT) dospecial.$(OBJEXT) download.$(OBJEXT) \
-	dpicheck.$(OBJEXT) drawPS.$(OBJEXT) dviinput.$(OBJEXT) \
-	dvips.$(OBJEXT) emspecial.$(OBJEXT) finclude.$(OBJEXT) \
-	fontdef.$(OBJEXT) header.$(OBJEXT) hps.$(OBJEXT) \
-	loadfont.$(OBJEXT) output.$(OBJEXT) papersiz.$(OBJEXT) \
-	pprescan.$(OBJEXT) prescan.$(OBJEXT) repack.$(OBJEXT) \
-	resident.$(OBJEXT) scalewidth.$(OBJEXT) scanpage.$(OBJEXT) \
-	search.$(OBJEXT) skippage.$(OBJEXT) t1part.$(OBJEXT) \
-	tfmload.$(OBJEXT) unpack.$(OBJEXT) virtualfont.$(OBJEXT) \
-	writet1.$(OBJEXT)
+am_dvips_OBJECTS = bbox.$(OBJEXT) bitmapenc.$(OBJEXT) color.$(OBJEXT) \
+	dopage.$(OBJEXT) dosection.$(OBJEXT) dospecial.$(OBJEXT) \
+	download.$(OBJEXT) dpicheck.$(OBJEXT) drawPS.$(OBJEXT) \
+	dviinput.$(OBJEXT) dvips.$(OBJEXT) emspecial.$(OBJEXT) \
+	finclude.$(OBJEXT) fontdef.$(OBJEXT) header.$(OBJEXT) \
+	hps.$(OBJEXT) loadfont.$(OBJEXT) output.$(OBJEXT) \
+	papersiz.$(OBJEXT) pprescan.$(OBJEXT) prescan.$(OBJEXT) \
+	repack.$(OBJEXT) resident.$(OBJEXT) scalewidth.$(OBJEXT) \
+	scanpage.$(OBJEXT) search.$(OBJEXT) skippage.$(OBJEXT) \
+	t1part.$(OBJEXT) tfmload.$(OBJEXT) unpack.$(OBJEXT) \
+	virtualfont.$(OBJEXT) writet1.$(OBJEXT)
 dvips_OBJECTS = $(am_dvips_OBJECTS)
 dvips_LDADD = $(LDADD)
 dvips_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -153,21 +153,22 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/afm2tfm.Po ./$(DEPDIR)/bbox.Po \
-	./$(DEPDIR)/color.Po ./$(DEPDIR)/dopage.Po \
-	./$(DEPDIR)/dosection.Po ./$(DEPDIR)/dospecial.Po \
-	./$(DEPDIR)/download.Po ./$(DEPDIR)/dpicheck.Po \
-	./$(DEPDIR)/drawPS.Po ./$(DEPDIR)/dviinput.Po \
-	./$(DEPDIR)/dvips.Po ./$(DEPDIR)/emspecial.Po \
-	./$(DEPDIR)/finclude.Po ./$(DEPDIR)/fontdef.Po \
-	./$(DEPDIR)/header.Po ./$(DEPDIR)/hps.Po \
-	./$(DEPDIR)/loadfont.Po ./$(DEPDIR)/output.Po \
-	./$(DEPDIR)/papersiz.Po ./$(DEPDIR)/pprescan.Po \
-	./$(DEPDIR)/prescan.Po ./$(DEPDIR)/repack.Po \
-	./$(DEPDIR)/resident.Po ./$(DEPDIR)/scalewidth.Po \
-	./$(DEPDIR)/scanpage.Po ./$(DEPDIR)/search.Po \
-	./$(DEPDIR)/skippage.Po ./$(DEPDIR)/t1part.Po \
-	./$(DEPDIR)/tfmload.Po ./$(DEPDIR)/unpack.Po \
-	./$(DEPDIR)/virtualfont.Po ./$(DEPDIR)/writet1.Po
+	./$(DEPDIR)/bitmapenc.Po ./$(DEPDIR)/color.Po \
+	./$(DEPDIR)/dopage.Po ./$(DEPDIR)/dosection.Po \
+	./$(DEPDIR)/dospecial.Po ./$(DEPDIR)/download.Po \
+	./$(DEPDIR)/dpicheck.Po ./$(DEPDIR)/drawPS.Po \
+	./$(DEPDIR)/dviinput.Po ./$(DEPDIR)/dvips.Po \
+	./$(DEPDIR)/emspecial.Po ./$(DEPDIR)/finclude.Po \
+	./$(DEPDIR)/fontdef.Po ./$(DEPDIR)/header.Po \
+	./$(DEPDIR)/hps.Po ./$(DEPDIR)/loadfont.Po \
+	./$(DEPDIR)/output.Po ./$(DEPDIR)/papersiz.Po \
+	./$(DEPDIR)/pprescan.Po ./$(DEPDIR)/prescan.Po \
+	./$(DEPDIR)/repack.Po ./$(DEPDIR)/resident.Po \
+	./$(DEPDIR)/scalewidth.Po ./$(DEPDIR)/scanpage.Po \
+	./$(DEPDIR)/search.Po ./$(DEPDIR)/skippage.Po \
+	./$(DEPDIR)/t1part.Po ./$(DEPDIR)/tfmload.Po \
+	./$(DEPDIR)/unpack.Po ./$(DEPDIR)/virtualfont.Po \
+	./$(DEPDIR)/writet1.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -669,6 +670,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 afm2tfm_SOURCES = afm2tfm.c
 dvips_SOURCES = \
 	bbox.c \
+	bitmapenc.c \
 	color.c \
 	config.h \
 	debug.h \
@@ -889,6 +891,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/afm2tfm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bbox.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bitmapenc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/color.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dopage.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dosection.Po@am__quote@ # am--include-marker
@@ -1685,6 +1688,7 @@ distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f ./$(DEPDIR)/afm2tfm.Po
 	-rm -f ./$(DEPDIR)/bbox.Po
+	-rm -f ./$(DEPDIR)/bitmapenc.Po
 	-rm -f ./$(DEPDIR)/color.Po
 	-rm -f ./$(DEPDIR)/dopage.Po
 	-rm -f ./$(DEPDIR)/dosection.Po
@@ -1855,6 +1859,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f ./$(DEPDIR)/afm2tfm.Po
 	-rm -f ./$(DEPDIR)/bbox.Po
+	-rm -f ./$(DEPDIR)/bitmapenc.Po
 	-rm -f ./$(DEPDIR)/color.Po
 	-rm -f ./$(DEPDIR)/dopage.Po
 	-rm -f ./$(DEPDIR)/dosection.Po

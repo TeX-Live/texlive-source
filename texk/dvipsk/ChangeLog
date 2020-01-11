@@ -1,3 +1,29 @@
+2020-01-11  Tomas Rokicki  <rokicki@gmail.com>
+
+	Support encodings for bitmapped fonts, e.g., when cmr10
+	is used as a bitmap. TUGboat article:
+	https://tug.org/TUGboat/tb40-2/tb125rokicki-type3search.pdf
+	
+	* dvips-all.enc,
+	* bitmapenc.c: new files.
+	* Makefile.am (dvips_SOURCES): add it.
+	* dosection.c (dosection): call bmenc_startsection.
+	* download.c (unpack_bb): new fn.
+	(downchar): call unpack_bb.
+	(download): call downloadbmencoding .. finishbitmapencoding
+	if needed.
+	* dvips.c (helparr): new option -J to control feature.
+	* dvips.h (tfd): new integer members llx, lly, urx, urx.
+	* dvips.texi (Option details): describe -J option.
+	(Configuration file commands): describe J config directive.
+	(Bitmap font encodings): new section.
+	* loadfont.c (loadfont): initialize and update global font
+	bounding box, to set font sizes for the new bitmap encodings.
+	* output.c (psnameout, pslineout): new fns.
+	* protos.h: add declarations for the various new fns and
+	variable encodetype3.
+	* resident.c (getdefaults): handle J directive.
+
 2019-05-03  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dvips.c, output.c, search.c: Support non-ascii file names

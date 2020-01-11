@@ -295,7 +295,7 @@ static const char *helparr[] = {
 #endif
 "-h f Add header file",
 "-i*  Separate file per section",
-"-j*  Download fonts partially",
+"-j*  Download fonts partially        -J*  Include encodings for bitmap fonts",
 "-k*  Print crop marks                -K*  Pull comments from inclusions",
 "-l # Last page                       -L*  Last special papersize wins",
 "-m*  Manual feed                     -M*  Don't make fonts",
@@ -833,6 +833,9 @@ case 'i':
 case 'j':
                partialdownload = (*p != '0');
                break;
+case 'J':
+               bitmapencopt(*p > ' ' ? (*p - '0') : 0) ;
+               break ;
 case 'k':
                cropmarks = (*p != '0');
                break;

@@ -180,6 +180,7 @@ typedef struct tfd {
    quarterword psflag;
    quarterword codewidth;
    integer maxchars;
+   integer llx, lly, urx, ury ;
    char *name, *area;
    struct resfont *resfont;
    struct tft *localfonts;
