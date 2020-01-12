@@ -4165,6 +4165,19 @@ $as_echo "$as_me: $host -> \`--disable-luajittex'" >&6;}
      ;;
 esac ;;
 esac
+case $enable_luajithbtex in #(
+  yes | no) :
+    : ;; #(
+  *) :
+    case $host in #(
+  alpha* | sparc* | x86_64-*-solaris* | powerpc-*-darwin* ) :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: $host -> \`--disable-luajithbtex'" >&5
+$as_echo "$as_me: $host -> \`--disable-luajithbtex'" >&6;}
+                      ac_configure_args="$ac_configure_args '--disable-luajithbtex'" ;; #(
+  *) :
+     ;;
+esac ;;
+esac
 case $enable_mfluajit in #(
   yes | no) :
     : ;; #(
@@ -4174,6 +4187,19 @@ case $enable_mfluajit in #(
     { $as_echo "$as_me:${as_lineno-$LINENO}: $host -> \`--disable-mfluajit'" >&5
 $as_echo "$as_me: $host -> \`--disable-mfluajit'" >&6;}
                       ac_configure_args="$ac_configure_args '--disable-mfluajit'" ;; #(
+  *) :
+     ;;
+esac ;;
+esac
+case $enable_mfluajit-nowin in #(
+  yes | no) :
+    : ;; #(
+  *) :
+    case $host in #(
+  alpha* | sparc* | x86_64-*-solaris* | powerpc-*-darwin* ) :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: $host -> \`--disable-mfluajit-nowin'" >&5
+$as_echo "$as_me: $host -> \`--disable-mfluajit-nowin'" >&6;}
+                      ac_configure_args="$ac_configure_args '--disable-mfluajit-nowin'" ;; #(
   *) :
      ;;
 esac ;;
