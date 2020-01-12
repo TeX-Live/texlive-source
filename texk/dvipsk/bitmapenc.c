@@ -310,10 +310,11 @@ void bmenc_startsection() {
  *   so we can use binary search.
  */
 static const char **bitmap_all_find(const char *fontname) {
+   int ptr, bit;
    if (numstatic == 0)
       return 0 ;
-   int ptr = 0 ;
-   int bit = 1 ;
+   ptr = 0 ;
+   bit = 1 ;
    while ((bit << 1) < numstatic)
       bit <<= 1 ;
    while (bit > 0) {
@@ -332,6 +333,7 @@ static const char **bitmap_all_find(const char *fontname) {
  */
 static void downloadenc(struct bmenc *enc) {
    int fresh = 0 ;
+   char cmdbuf[16] ;
    if (enc->downloaded_seq < 0) {
       int i ;
       newline() ;
@@ -341,7 +343,6 @@ static void downloadenc(struct bmenc *enc) {
       fresh = 1 ;
    }
    newline() ;
-   char cmdbuf[16] ;
    sprintf(cmdbuf, "/EN%d", enc->downloaded_seq) ;
    if (fresh) {
       cmdout("A") ;
@@ -363,6 +364,7 @@ static void downloadenc(struct bmenc *enc) {
 static int getencoding_seq(const char *fontname) ;
 int downloadbmencoding(const char *name, double scale,
                        int llx, int lly, int urx, int ury) {
+   int slop;
    int seq = getencoding_seq(name) ;
    if (seq < 0)
       return -1 ;
@@ -386,7 +388,7 @@ int downloadbmencoding(const char *name, double scale,
    // we add a bit of slop here, because this is only used for
    // highlighting, and in theory if the bounding box is too
    // tight, on some RIPs, characters could be clipped.
-   int slop = 1 ;
+   slop = 1;
    specialout('[') ;
    numout(llx-slop) ;
    numout(lly-slop) ;

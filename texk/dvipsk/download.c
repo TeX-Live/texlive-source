@@ -203,6 +203,8 @@ lfontout(int n)
 void
 download(charusetype *p, int psfont)
 {
+   double scale;
+   int seq;
    register int b, i;
    register halfword bit;
    register chardesctype *c;
@@ -299,8 +301,8 @@ download(charusetype *p, int psfont)
    newline();
    fprintf(bitfile, "%%DVIPSBitmapFont: %s %s %g %d\n", name+1, curfnt->name,
                      fontscale, numcc);
-   double scale = fontscale * DPI / 72.0 ;
-   int seq = -1 ;
+   scale = fontscale * DPI / 72.0 ;
+   seq = -1 ;
    if (encodetype3)
       seq = downloadbmencoding(curfnt->name, scale,
                          curfnt->llx, curfnt->lly, curfnt->urx, curfnt->ury) ;

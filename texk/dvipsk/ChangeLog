@@ -1,3 +1,8 @@
+2020-01-12  Akira Kakuto  <kakuto@w32tex.org>
+
+	* bitmapenc.c, download.c: Support old compilers, by declaring
+	variables early in a block.
+
 2020-01-11  Tomas Rokicki  <rokicki@gmail.com>
 
 	Support encodings for bitmapped fonts, e.g., when cmr10
