@@ -84,7 +84,7 @@ AS_CASE([$with_x:$kpse_cv_have_win32],
         [with_x=no
          AC_MSG_NOTICE([WIN32 -> `--without-x'])
          ac_configure_args="$ac_configure_args '--without-x'"])
-AC_FOREACH([Kpse_Pkg], [luajittex mfluajit], [dnl
+AC_FOREACH([Kpse_Pkg], [luajittex luajithbtex mfluajit mfluajit-nowin], [dnl
 AS_CASE([$enable_]Kpse_Pkg,
         [yes | no], [:],
           [AS_CASE([$host],
