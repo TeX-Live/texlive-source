@@ -3,7 +3,7 @@
 # epspdf conversion utility, GUI frontend
 
 #####
-# Copyright (C) 2006-2019 Siep Kroonenberg
+# Copyright (C) 2006-2020 Siep Kroonenberg
 # siepo at bitmuis dot nl
 #
 # This program is free software, licensed under the GNU GPL, >=2.0.
@@ -130,34 +130,38 @@ proc getsettings {} {
   }
 
   # unix: viewer settings
+  # It may depend on installed plugins whether a pdf viewer
+  # can render postscript.
+  # AFAIK, no such plugins exist for xpdf or mupdf.
+  # chrome and firefox also only render pdf and not postscript.
   # configured viewer, if valid, heads the list
   if {$::classic_unix} {
-
-    set ::ps_viewers {}
-    if {$::settings(ps_viewer) ne "" && [is_prog $::settings(ps_viewer)]} {
-      lappend ::ps_viewers $::settings(ps_viewer)
-    }
-    foreach v {evince okular gv qpdfview} {
-      if {$v ne $::settings(ps_viewer) && [is_prog $v]} {
-        lappend ::ps_viewers $v
-      }
-    }
-    # puts [join $::ps_viewers " "]
 
     set ::pdf_viewers {}
     if {$::settings(pdf_viewer) ne "" && [is_prog $::settings(pdf_viewer)]} {
       lappend ::pdf_viewers $::settings(pdf_viewer)
     }
-    foreach v {evince okular mupdf qpdfview texworks xpdf zathura} {
+    foreach v {
+      atril evince okular qpdfview mupdf xpdf zathura gv firefox chrome \
+          chromium chromium-browser} {
       if {$v ne $::settings(pdf_viewer) && [is_prog $v]} {
         lappend ::pdf_viewers $v
       }
     }
     # puts [join $::pdf_viewers " "]
 
-    if {[llength ::pdf_viewers] == 0 && [llength ::ps_viewers] != 0} {
-      lappend ::pdf_viewers [lindex $::ps_viewers 0]
+    set ::ps_viewers {}
+    if {$::settings(ps_viewer) ne "" && [is_prog $::settings(ps_viewer)]} {
+      lappend ::ps_viewers $::settings(ps_viewer)
     }
+    foreach v $::pdf_viewers {
+      if {$v ne $::settings(ps_viewer) && \
+          $v ni {xpdf mupdf firefox chrome chromium chromium-browser}} {
+        lappend ::ps_viewers $v
+      }
+    }
+    # puts [join $::ps_viewers " "]
+
     if {[llength ::pdf_viewers] == 0} {
       tk_messageBox -message "No viewers found"
     } elseif {[llength ::ps_viewers] == 0} {
@@ -227,16 +231,27 @@ proc ppack {b args} {pack $b {*}$args -padx 3 -pady 3}
 font create bfont {*}[font configure TkDefaultFont]
 font configure bfont -weight bold
 
-proc update_combo {w vls} {
-  upvar $vls vs
+proc update_combo w {
+  # check that a manually supplied entry is actually a program
+  # proc used for postscript- and pdf viewers
+  set vls [$w cget -values]
   set new [$w get]
-  if {$new ni $vs} {
+  if {$new ni $vls} {
     if {[is_prog $new]} {
-      set vs [linsert $vs 0 $new]
-      $w configure -values $vs
+      set vls [linsert $vls 0 $new]
+      $w configure -values $vls
     } else {
-      tk_messageBox -title Error -icon error -message "$vl Not a program"
+      tk_messageBox -title Error -icon error -message "$new not a program"
+      raise .config_t
+      focus $w
     }
+  }
+}
+
+proc revert_combo w {
+  # aborts entry of new value
+  if {[$w current] < 0} {
+    $w current 0
   }
 }
 
@@ -319,11 +334,15 @@ if {$::classic_unix} {
   grid [ttk::combobox .config_t.viewf.pdf] -row 1 -column 1 -sticky e
   .config_t.viewf.pdf configure -values $::pdf_viewers
   .config_t.viewf.pdf configure -textvariable ::settings(pdf_viewer)
-  bind .config_t.viewf.pdf <Return> {update_combo %W $::pdf_viewers}
+  bind .config_t.viewf.pdf <Escape> {revert_combo %W}
+  bind .config_t.viewf.pdf <Return> {update_combo %W}
+  bind .config_t.viewf.pdf <FocusOut> {update_combo %W}
   grid [ttk::combobox .config_t.viewf.ps] -row 2 -column 1 -sticky e
   .config_t.viewf.ps configure -values $::ps_viewers
   .config_t.viewf.ps configure -textvariable ::settings(ps_viewer)
-  bind .config_t.viewf.ps <Return> {update_combo %W $::ps_viewers}
+  bind .config_t.viewf.ps <Escape> {revert_combo %W}
+  bind .config_t.viewf.ps <Return> {update_combo %W}
+  bind .config_t.viewf.ps <FocusOut> {update_combo %W}
   grid columnconfigure .config_t.viewf 1 -weight 1 -pad 2
 }
 

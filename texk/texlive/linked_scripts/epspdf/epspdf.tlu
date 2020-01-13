@@ -11,8 +11,10 @@ epspdf conversion utility
 0.6.3: compatibility fixes for luatex 0.9x
 0.6.4: adaptations for newer versions of LuaTeX and ghostscript;
        some refactoring; better handling of some corner cases
+0.6.5: eliminate .setpdfwrite from ghostscript commandlines,
+       since this is now considered obsolete
 
-Copyright (C) 2006-2019 Siep Kroonenberg
+Copyright (C) 2006-2020 Siep Kroonenberg
 
 siepo at bitmuis nl
 
@@ -1895,17 +1897,13 @@ function any_to_any()
 
   -- `distiller' settings
   -- these depend on whether final output is pdf
-  -- '.setpdfwrite' is just some optimization option for ghostscript
   if options.type=='pdf' then
     if settings.pdf_target and (settings.pdf_target~='default') then
       table.insert(pdf_options, '-dPDFSETTINGS#/'..settings.pdf_target)
     end
-    if settings.pdf_target=='screen' or settings.pdf_target=='ebook' then
-      pdf_tail_options = {'-c', '.setpdfwrite', '-f'}
-      -- -f ensures that the input filename is not added to the -c string
-    else
+    if settings.pdf_target~='screen' and settings.pdf_target~='ebook' then
       pdf_tail_options = {
-        '-c', '.setpdfwrite <</NeverEmbed [ ] >> setdistillerparams', '-f'}
+        '-c', '<</NeverEmbed [ ] >> setdistillerparams', '-f'}
     end
   end
 
@@ -2228,7 +2226,7 @@ descriptions.use_pdftops = 'Use pdftops if available'
 
 settings.ps_viewer = false
 descriptions.ps_viewer =
-  'Epspdftk: viewer for PostScript files; not used on Windows or OS X'
+  'Epspdftk: viewer for PostScript files; not used on Windows or Mac OS'
 
 settings.pdf_viewer = false
 descriptions.pdf_viewer =
@@ -2271,7 +2269,8 @@ gs_options = {'-q', '-dNOPAUSE', '-dBATCH', '-P-', '-dSAFER'}
 pdf_options = {'-sDEVICE#pdfwrite'} -- '-dUseCIEColor' causes serious slowdown
 -- options for final conversion to pdf;
 -- will be completed after reading settings and options
-pdf_tail_options = {'-c', '.setpdfwrite', '-f'}
+-- -f ensures that the input filename is not added to a -c string
+pdf_tail_options = {'-f'}
 gray_options = {'-dProcessColorModel#/DeviceGray',
   '-sColorConversionStrategy#Gray'}
 
