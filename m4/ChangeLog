@@ -1,3 +1,14 @@
+2020-01-13  Karl Berry  <karl@tug.org>
+
+	* kpse-setup.m4 (KPSE_SETUP): use AS_TR_SH on the argument when
+	disabling the jit packages, for the sake of making mfluajit-nowin
+	into mfluajit_nowin for shell usage.
+	Also change one "WIN32" to "Windows" in an error message.
+
+2020-01-12  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
+
+	* kpse-setup.m4 (KPSE_SETUP): also disable mfluajit and mfluajit-nowin.
+
 2019-06-26  Karl Berry  <karl@freefriends.org>
 
 	* kpse-harfbuzz-flags.m4 (KPSE_HARFBUZZ_FLAGS): omit KPSE_ICU_FLAGS.

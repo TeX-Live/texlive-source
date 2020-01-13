@@ -77,7 +77,7 @@ KPSE_WEB2C_PREPARE
 KPSE_CHECK_WIN32
 AS_CASE([$with_x:$kpse_cv_have_win32],
         [yes:no | no:*], [:],
-        [yes:*], [AC_MSG_ERROR([you can not use `--with-x' for WIN32])],
+        [yes:*], [AC_MSG_ERROR([you can not use `--with-x' for Windows])],
         [*:no], [with_x=yes
                  AC_MSG_NOTICE([Assuming `--with-x'])
                  ac_configure_args="$ac_configure_args '--with-x'"],
@@ -85,7 +85,7 @@ AS_CASE([$with_x:$kpse_cv_have_win32],
          AC_MSG_NOTICE([WIN32 -> `--without-x'])
          ac_configure_args="$ac_configure_args '--without-x'"])
 AC_FOREACH([Kpse_Pkg], [luajittex luajithbtex mfluajit mfluajit-nowin], [dnl
-AS_CASE([$enable_]Kpse_Pkg,
+AS_CASE([$enable_[]AS_TR_SH([Kpse_Pkg])],
         [yes | no], [:],
           [AS_CASE([$host],
                    [alpha* | sparc* | x86_64-*-solaris* | powerpc-*-darwin* ],

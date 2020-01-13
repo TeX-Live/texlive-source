@@ -3320,7 +3320,7 @@ case $with_x:$kpse_cv_have_win32 in #(
   yes:no | no:*) :
     : ;; #(
   yes:*) :
-    as_fn_error $? "you can not use \`--with-x' for WIN32" "$LINENO" 5 ;; #(
+    as_fn_error $? "you can not use \`--with-x' for Windows" "$LINENO" 5 ;; #(
   *:no) :
     with_x=yes
                  { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--with-x'" >&5
@@ -3371,7 +3371,7 @@ $as_echo "$as_me: $host -> \`--disable-mfluajit'" >&6;}
      ;;
 esac ;;
 esac
-case $enable_mfluajit-nowin in #(
+case $enable_mfluajit_nowin in #(
   yes | no) :
     : ;; #(
   *) :
