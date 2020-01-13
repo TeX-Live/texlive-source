@@ -1,3 +1,9 @@
+2020-01-13  Karl Berry  <karl@freefriends.org>
+
+	* patch-04-data-makefile: new Makefilepatch needed on Solaris
+	found by Mojca, from:
+	https://unicode-org.atlassian.net/browse/ICU-20852
+
 2020-01-04  Karl Berry  <karl@freefriends.org>
 
 	* patch-10-ES: new patch from Mojca.
