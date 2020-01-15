@@ -2,8 +2,8 @@
 #
 # cjk-gs-integrate - setup Ghostscript for CID/TTF CJK fonts
 #
-# Copyright 2015-2019 by Norbert Preining
-# Copyright 2016-2019 by Japanese TeX Development Community
+# Copyright 2015-2020 by Norbert Preining
+# Copyright 2016-2020 by Japanese TeX Development Community
 #
 # This work is based on research and work by (in alphabetical order)
 #   Yusuke Kuroki
@@ -39,7 +39,7 @@ use Cwd 'abs_path';
 use strict;
 
 (my $prg = basename($0)) =~ s/\.pl$//;
-my $version = '20190816.0';
+my $version = '20200115.0';
 
 if (win32()) {
   # conversion between internal (utf-8) and console (cp932):
@@ -359,23 +359,21 @@ if ($opt_debug >= 2) {
   $Data::Dumper::Indent = 1;
 }
 
-my $otfinfo_available;
-chomp(my $otfinfo_help = `otfinfo --help 2>$nul`);
+my $zrlistttc = kpse_miscfont("zrlistttc.lua");
+my $zrlistttc_available;
+chomp(my $zrlistttc_help = `texlua $zrlistttc 2>$nul`);
 if ($?) {
-  # to tell the truth, we want to show below as a warning
-  # but BasicTeX (scheme-small) does not have 'otfinfo' (lcdf-typetools);
-  # show info only for debugging
-  print_debug("The program 'otfinfo' not found in PATH.\n");
-  print_debug("Sorry, we can't be safe enough to distinguish\n");
-  print_debug("uppercase / lowercase file names.\n");
-  # but the below should be an error!
   if ($opt_strictpsname) {
-    print_error("'otfinfo' not found, cannot proceed!\n");
+    print_error("The script 'zrlistttc.lua' not found, cannot proceed!\n");
     exit(1);
   }
-  $otfinfo_available = 0;
+  # show info only for debugging
+  print_debug("The script 'zrlistttc.lua' not found.\n");
+  print_debug("Sorry, we can't be safe enough to distinguish\n");
+  print_debug("uppercase / lowercase file names.\n");
+  $zrlistttc_available = 0;
 } else {
-  $otfinfo_available = 1;
+  $zrlistttc_available = 1;
 }
 
 if (macosx()) {
@@ -682,26 +680,18 @@ sub do_nonotf_fonts {
     if $opt_texmflink;
   for my $k (sort keys %fontdb) {
     if ($fontdb{$k}{'available'} && $fontdb{$k}{'type'} eq 'TTF') {
-    # generate_font_snippet($fontdest,
-    #   $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
       $outp .= generate_cidfmap_entry($k, $fontdb{$k}{'class'}, $fontdb{$k}{'ttfname'}, -1);
       link_font($fontdb{$k}{'target'}, $cidfsubst, $fontdb{$k}{'ttfname'});
       link_font($fontdb{$k}{'target'}, "$opt_texmflink/$ttf_pathpart", $fontdb{$k}{'ttfname'})
         if $opt_texmflink;
     } elsif ($fontdb{$k}{'available'} && $fontdb{$k}{'type'} eq 'TTC') {
-    # generate_font_snippet($fontdest,
-    #   $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
       $outp .= generate_cidfmap_entry($k, $fontdb{$k}{'class'}, $fontdb{$k}{'ttcname'}, $fontdb{$k}{'subfont'});
       link_font($fontdb{$k}{'target'}, $cidfsubst, $fontdb{$k}{'ttcname'});
       link_font($fontdb{$k}{'target'}, "$opt_texmflink/$ttf_pathpart", $fontdb{$k}{'ttcname'})
         if $opt_texmflink;
     } elsif ($fontdb{$k}{'available'} && $fontdb{$k}{'type'} eq 'OTC') {
-      # currently Ghostscript does not have OTC support; not creating gs resource
+      # currently Ghostscript does not have OTC support; we don't know what to do
       print_debug("gs does not support OTC, not creating gs resource for $k\n");
-    # generate_font_snippet($fontdest,
-    #   $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
-    # $outp .= generate_cidfmap_entry($k, $fontdb{$k}{'class'}, $fontdb{$k}{'otcname'}, $fontdb{$k}{'subfont'});
-    # link_font($fontdb{$k}{'target'}, $cidfsubst, $fontdb{$k}{'otcname'});
       link_font($fontdb{$k}{'target'}, "$opt_texmflink/$otf_pathpart", $fontdb{$k}{'otcname'})
         if $opt_texmflink;
     }
@@ -1303,7 +1293,8 @@ sub check_for_files {
       push @extradirs, "c:/windows/fonts//";
     } else {
       # other dirs to check, for normal unix?
-      for my $d (qw!/Library/Fonts /System/Library/Fonts /System/Library/Assets
+      for my $d (qw!/Library/Fonts /System/Library/Fonts
+                    /System/Library/Assets /System/Library/AssetsV2
                     /Network/Library/Fonts /usr/share/fonts!) {
         push @extradirs, "$d//" if (-d $d); # recursive search
       }
@@ -1420,36 +1411,44 @@ sub check_for_files {
       # check for subfont extension
       my $realfile = $f;
       $realfile =~ s/^(.*)\(\d*\)$/$1/;
-      # check for casefolding
-      # we might catch different names (batang/Batang) and identify them wrongly on
-      #  * case-insensitive file systems (like HFS on MacOS)
-      #  * kpathsea 6.3.0 or later, with casefolding fallback search (TL2018)
-      # check the actual psname using otfinfo utility, only when we "know"
-      # both uppercase/lowercase font files are possible and they are different
+      my $index = 0;
+      if ($fontdb{$k}{'files'}{$f}{'type'} eq 'TTC' || $fontdb{$k}{'files'}{$f}{'type'} eq 'OTC') {
+        if ($f =~ m/^(.*)\((\d*)\)$/) {
+          $index = $2;
+        }
+      }
+      # double check for casefolding or incompatible OTC/TTC index
+      #   [1] casefolding issue
+      #     we might catch different names (batang/Batang) and identify them wrongly on
+      #        * case-insensitive file systems (like HFS on MacOS)
+      #        * kpathsea 6.3.0 or later, with casefolding fallback search (TL2018)
+      #     check the actual psname using zrlistttc.lua, only when we "know"
+      #     both uppercase/lowercase font files are possible and they are different
+      #   [2] incompatible index
+      #     the index in msgothic.ttc changed at some time between Win7 and Win10.
       my $actualpsname;
       my $bname;
       for my $b (sort keys %{$bntofn{$realfile}}) {
-        $fontdb{$k}{'casefold'} = "debug" if $opt_strictpsname;
-        if ($fontdb{$k}{'casefold'} && $otfinfo_available &&
-            ($fontdb{$k}{'files'}{$f}{'type'} eq 'OTF' || $fontdb{$k}{'files'}{$f}{'type'} eq 'TTF')) {
+        $fontdb{$k}{'doublecheck'} = "debug" if $opt_strictpsname;
+        if ($fontdb{$k}{'doublecheck'} && $zrlistttc_available) {
           print_debug("We need to test whether\n");
           print_debug("  $b\n");
-          print_debug("is the correct one. Invoking otfinfo ...\n");
-          chomp($actualpsname = `otfinfo -p "$b"`);
+          print_debug("is the correct one. Invoking zrlistttc ...\n");
+          chomp($actualpsname = `texlua $zrlistttc -i $index "$b"`);
           if ($?) {
-            # something is wrong with the font file, or otfinfo does not support it;
+            # something is wrong with the font file, or zrlistttc does not support it;
             # still there is a chance that Ghostscript supports, so don't discard it
             print_debug("... command exited with $?!\n");
             print_debug("OK, I'll take this, but it may not work properly.\n");
-            print_warning("otfinfo check failed for $b\n") if $opt_strictpsname;
+            print_warning("zrlistttc check failed for $b\n") if $opt_strictpsname;
             $bname = $b;
             last;
           }
           $actualpsname =~ s/[\r\n]+\z//; # perl's chomp() on git-bash cannot strip CR of CRLF ??
           if ($actualpsname ne $k) {
-            print_debug("... PSName returned by otfinfo ($actualpsname) is\n");
+            print_debug("... PSName returned by zrlistttc ($actualpsname) is\n");
             print_debug("different from our database ($k), discarding!\n");
-            print_warning("otfinfo check failed for $b\n") if $opt_strictpsname;
+            print_warning("zrlistttc check failed for $b\n") if $opt_strictpsname;
           } else {
             print_debug("... test passed.\n");
             $bname = $b;
@@ -1635,7 +1634,7 @@ sub read_each_font_database {
   my $fontname = "";
   my $fontclass = "";
   my %fontprovides = ();
-  my $fontcasefold = "";
+  my $fontdoublecheck = "";
   my %fontfiles;
   my $psname = "";
   my $lineno = 0;
@@ -1656,7 +1655,7 @@ sub read_each_font_database {
           }
           $fontdb{$realfontname}{'origname'} = $fontname;
           $fontdb{$realfontname}{'class'} = $fontclass;
-          $fontdb{$realfontname}{'casefold'} = $fontcasefold;
+          $fontdb{$realfontname}{'doublecheck'} = $fontdoublecheck;
           $fontdb{$realfontname}{'files'} = { %fontfiles };
           $fontdb{$realfontname}{'provides'} = { %fontprovides };
           if ($opt_debug >= 3) {
@@ -1664,14 +1663,14 @@ sub read_each_font_database {
           }
           # reset to start
           $fontname = $fontclass = $psname = "";
-          $fontcasefold = "";
+          $fontdoublecheck = "";
           %fontfiles = ();
           %fontprovides = ();
         } else {
           print_warning("incomplete entry above line $lineno for $fontname/$fontclass, skipping!\n");
           # reset to start
           $fontname = $fontclass = $psname = "";
-          $fontcasefold = "";
+          $fontdoublecheck = "";
           %fontfiles = ();
           %fontprovides = ();
         }
@@ -1711,7 +1710,8 @@ sub read_each_font_database {
     if ($l =~ m/^PSName:\s*(.*)$/) { $psname = $1; next; }
     if ($l =~ m/^Class:\s*(.*)$/) { $fontclass = $1 ; next ; }
     if ($l =~ m/^Provides\((\d+)\):\s*(.*)$/) { $fontprovides{$2} = $1; next; }
-    if ($l =~ m/^Casefold:\s*(.*)$/) { $fontcasefold = $1 ; next ; }
+    if ($l =~ m/^Doublecheck:\s*(.*)$/) { $fontdoublecheck = $1 ; next ; }
+    if ($l =~ m/^Casefold:\s*(.*)$/) { $fontdoublecheck = $1 ; next ; } # no longer used
     # new code: distinguish 4 types (otf, otc, ttf, ttc)
     if ($l =~ m/^OTFname(\((\d+)\))?:\s*(.*)$/) {
       my $fn = $3;
@@ -1824,7 +1824,7 @@ sub dump_font_database {
     for my $p (sort keys %{$fontdb{$k}{'provides'}}) {
       print FOO "Provides($fontdb{$k}{'provides'}{$p}): $p\n";
     }
-    print FOO "Casefold: $fontdb{$k}{'casefold'}\n" if ($fontdb{$k}{'casefold'});
+    print FOO "Doublecheck: $fontdb{$k}{'doublecheck'}\n" if ($fontdb{$k}{'doublecheck'});
     for my $f (sort { $fontdb{$k}{'files'}{$a}{'priority'}
                       <=>
                       $fontdb{$k}{'files'}{$b}{'priority'} }
@@ -1943,10 +1943,11 @@ sub find_gs_resource {
 
 sub kpse_miscfont {
   my ($file) = @_;
-  chomp(my $foo = `kpsewhich -format=miscfont $file`);
-  # for GitHub repository diretory structure
+  my $foo = '';
+  # first, prioritize GitHub repository diretory structure
+  $foo = "database/$file" if (-f "database/$file");
   if ($foo eq "") {
-    $foo = "database/$file" if (-f "database/$file");
+    chomp($foo = `kpsewhich -format=miscfont $file`);
   }
   return $foo;
 }
@@ -2327,6 +2328,9 @@ INCLUDE cjkgs-ume.dat
 # Sazanami (free)
 INCLUDE cjkgs-sazanami.dat
 
+# Harano Aji Fonts (free)
+INCLUDE cjkgs-haranoaji.dat
+
 # Osaka (Apple)
 
 Name: Osaka
@@ -2426,7 +2430,7 @@ INCLUDE cjkgs-solaris.dat
 Name: Baekmuk-Batang
 Class: Korea
 Provides(70): HYSMyeongJo-Medium
-Casefold: true
+Doublecheck: true
 TTFname(20): batang.ttf
 TTFname(10): Baekmuk-Batang.ttf
 
@@ -2439,7 +2443,7 @@ TTFname(10): Baekmuk-Dotum.ttf
 Name: Baekmuk-Gulim
 Class: Korea
 Provides(70): HYRGoThic-Medium
-Casefold: true
+Doublecheck: true
 TTFname(20): gulim.ttf
 TTFname(10): Baekmuk-Gulim.ttf
 
@@ -2494,7 +2498,7 @@ INCLUDE cjkgs-hancom.dat
 
 Name: Batang
 Class: Korea
-Casefold: true
+Doublecheck: true
 TTFname(50): Batang.ttf
 TTCname(20): batang.ttc(0)
 
@@ -2514,7 +2518,7 @@ TTCname(20): gulim.ttc(3)
 
 Name: Gulim
 Class: Korea
-Casefold: true
+Doublecheck: true
 TTFname(50): Gulim.ttf
 TTCname(20): gulim.ttc(0)
 
@@ -2664,6 +2668,7 @@ TTFname(10): MSMHei-Bold.ttf
 # Remove-only database (should begin with !INCLUDE)
 # that is, entries which contain at least one 'RMVname' line
 # note that this line should come at the _end_ of all INCLUDE files
+!INCLUDE cjkgs-removeonly.dat
 !INCLUDE cjkgs-macos-removeonly.dat
 
 
