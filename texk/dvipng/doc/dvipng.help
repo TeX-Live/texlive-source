@@ -1,6 +1,6 @@
-This is dvipng 1.17 Copyright 2002-2015, 2019 Jan-Ake Larsson
+This is ./dvipng 1.17 Copyright 2002-2015, 2019 Jan-Ake Larsson
 
-Usage: dvipng [OPTION]... FILENAME[.dvi]
+Usage: ./dvipng [OPTION]... FILENAME[.dvi]
 Options are chosen to be similar to dvips' options where possible:
   -d #         Debug (# is the debug bitmap, 1 if not given)
   -D #         Output resolution

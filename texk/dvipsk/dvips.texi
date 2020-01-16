@@ -2,7 +2,7 @@
 @setfilename dvips.info
 @settitle Dvips: A DVI-to-PostScript translator
 
-@set version 5.999
+@set version 2020.1
 @set month-year January 2020
 
 @copying
@@ -3386,19 +3386,22 @@ italics, and @file{texmsym.enc} for math symbols.
 @node Bitmap font encodings
 @subsection Bitmap font encodings
 
+@cindex bitmap font encodings
+@cindex font encodings, bitmap
+@cindex encodings, for bitmap fonts
+
 To dvips, bitmapped fonts do not have any notion of linguistics; they
 are simply a vector of glyphs.  By comparison, PostScript fonts are
 required to contain an encoding vector that at the least provides
 glyph names; these names can permit PostScript and PDF viewers to
 extract legible text from Postscript and PDF output.
 
-Unlike previous versions, 
-dvips versions 2019 and later add glyph naming information to Type 3
-bitmapped fonts (if they can locate such information) as an Encoding
-vector.  This provides some support for search, for copy and paste,
-and even some limited support for accessibility.  The -J command line
-option and J configuration option enables and disables this
-functionality; by default it is enabled.
+Unlike previous versions, dvips versions 2019 and later add glyph
+naming information to Type 3 bitmapped fonts (if they can locate such
+information) as an Encoding vector.  This provides some support for
+search, for copy and paste, and even some limited support for
+accessibility.  The -J command line option and J configuration option
+enables and disables this functionality; by default it is enabled.
 
 To do this, dvips must find encoding information for the bitmapped
 fonts.  It does this by first searching for a font-specific encoding
@@ -3407,23 +3410,24 @@ in the standard encoding path.  If it does not find such a file, it
 will search for a @file{dvips-all.enc} file which contains a base set of
 encodings for many fonts.
 
-The specific syntax of an encoding file is unspecified, except that
-it must be a PostScript fragment that leaves exactly one object on
-the operand stack.  (This is different from the encoding files used
-to define encodings for PostScript fonts, described earlier).
-Normally that object is just an array of 256
-names; in this case, that array is used as the encoding vector for
-the font.  Alternatively, the object can be a procedure that, when
-executed, leaves a legal encoding vector on the stack.  This second
-option is made available to support future enhancements that may
-add additional constructs to the font dictionary to enhance the
-interpretation of font characters.
+The specific syntax of an encoding file is unspecified, except that it
+must be a PostScript fragment that leaves exactly one object on the
+operand stack.  (This is different from the encoding files used to
+define encodings for PostScript fonts, described earlier).  Normally
+that object is just an array of 256 names; in this case, that array is
+used as the encoding vector for the font.  Alternatively, the object
+can be a procedure that, when executed, leaves a legal encoding vector
+on the stack.  This second option is made available to support future
+enhancements that may add additional constructs to the font dictionary
+to enhance the interpretation of font characters.
 
-The @file{dvips-all.enc} file contains encodings for many fonts, and it
-is loaded by dvips at most once.  The format is just a sequence of
-font names, one per line, each terminated by a colon, followed by
-the encoding to use for those files.
+The @file{dvips-all.enc} file contains encodings for many fonts, and
+it is loaded by dvips at most once.  The format is just a sequence of
+font names, one per line, each terminated by a colon, followed by the
+encoding to use for those files.
 
+@cindex bounding box, for bitmap fonts
+@cindex coordinate system, for bitmap fonts
 As part of its operation, to enable heuristics in PostScript and
 PDF viewers to properly identify word breaks and column gutters,
 dvips also generates a modified font bounding box and a modified

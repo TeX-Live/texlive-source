@@ -3,12 +3,12 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.2
-@set month-year December 2019
+@set month-year January 2020
 
 @copying
 This file documents the Kpathsea library for path searching.
 
-Copyright @copyright{} 1996--2019 Karl Berry & Olaf Weber.
+Copyright @copyright{} 1996--2020 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -67,7 +67,7 @@ approved by the @TeX{} Users Group.
 @author Karl Berry
 @author Olaf Weber
 @author Taco Hoekwater
-@author @url{http://tug.org/kpathsea}
+@author @url{https://tug.org/kpathsea}
 
 @page
 @vskip 0pt plus 1filll
@@ -132,7 +132,7 @@ this library:
 @noindent Other software that we do not maintain also uses it.
 
 Kpathsea is now maintained as part of the @TeX{} Live distribution
-(@url{http://tug.org/texlive}), which includes several more
+(@url{https://tug.org/texlive}), which includes several more
 Kpathsea-using programs.  For information on configuration, building,
 installing, and more, @pxref{,,,tlbuild, Building @TeX{} Live}.
 
@@ -153,7 +153,7 @@ along with any changes you have made, and allow anyone to modify the
 library source and distribute their modifications.  It does not mean
 you have to distribute the source to your program using the library,
 although we hope you will.  See accompanying files for the text of the
-GNU licenses, or @url{http2://www.gnu.org/licenses}.
+GNU licenses, or @url{https://gnu.org/licenses}.
 
 @cindex @TeX{} Users Group
 If you know enough about @TeX{} to be reading this manual, then you (or
@@ -357,8 +357,8 @@ This section describes the default installation hierarchy of the
 distribution.  It conforms to both the GNU coding standards and the
 @TeX{} directory structure (TDS) standard.  For rationale and further
 explanation, please see those documents.  The GNU document is
-available from @url{http://www.gnu.org/prep/standards}.  The TDS
-document is available from @url{http://www.mirror.ctan.org/tds}
+available from @url{https://gnu.org/prep/standards}.  The TDS
+document is available from @url{http://mirror.ctan.org/tds}
 (@pxref{unixtex.ftp}).
 
 In short, here is a skeleton of the default directory structure,
@@ -1208,7 +1208,7 @@ Sorry that it's annoyingly lengthy, but implementing this inside
 Kpathsea would be a lot of error-prone trouble for something that is
 only useful for debugging.  If your @code{find} does not support
 @code{-iname}, you can get GNU Find from
-@url{https://www.gnu.org/software/findutils}.
+@url{https://gnu.org/software/findutils}.
 
 The casefolding search is implemented in the source file
 @file{kpathsea/pathsearch.c}.  Two implementation points:
@@ -2043,7 +2043,7 @@ suffix @samp{.bib}.
 @item bltxml
 @flindex .bltxml
 @vindex BLTXMLINPUTS
-(Bib@LaTeX{}ML bibliography files for Biber, @url{http://ctan.org/pkg/biber})
+(Bib@LaTeX{}ML bibliography files for Biber, @url{https://ctan.org/pkg/biber})
 @code{BLTXMLINPUTS}
 suffix @samp{.bltxml}.
 
@@ -2059,7 +2059,7 @@ suffix @samp{.bst}.
 @flindex .dll
 @flindex .so
 @vindex CLUAINPUTS
-(dynamic libraries for Lua, @url{http://ctan.org/pkg/luatex})
+(dynamic libraries for Lua, @url{https://ctan.org/pkg/luatex})
 @code{CLUAINPUTS}
 suffixes @samp{.dll} and @samp{.so}.
 
@@ -2315,7 +2315,7 @@ additional suffix @samp{.pro}.
 @item ris
 @flindex .ris
 @vindex RISINPUTS
-(RIS bibliography files, primarily for Biber, @url{http://ctan.org/pkg/biber})
+(RIS bibliography files, primarily for Biber, @url{https://ctan.org/pkg/biber})
 @code{RISINPUTS}
 suffix @samp{.ris}.
 
@@ -3309,7 +3309,7 @@ The @file{c-*.h} header files can also help your program adapt to many
 different systems.  You will almost certainly want to use Autoconf and
 probably Automake for configuring and building your software if you use
 Kpathsea; I strongly recommend using Autoconf and Automake regardless.
-They are available from @url{http://www.gnu.org/software}.
+They are available from @url{https://gnu.org/software}.
 
 
 @node Program-specific files
@@ -3484,7 +3484,7 @@ me to understand.  Please also include a @file{ChangeLog} entry.
 @pindex gdb@r{, recommended}
 If the bug involved is an actual crash (i.e., core dump), it is easy
 and useful to include a stack trace from a debugger (I recommend the
-GNU debugger GDB (@url{http://www.gnu.org/software/gdb}).  If the
+GNU debugger GDB (@url{https://gnu.org/software/gdb}).  If the
 cause is apparent (a @code{NULL} value being dereferenced, for
 example), please send the details along.  If the program involved is
 @TeX{} or Metafont, and the crash is happening at apparently-sound
@@ -3508,7 +3508,7 @@ diagnosing, or fixing the bug.
 @flindex tex-k@@tug.org
 Web2c and Kpathsea in general are discussed on the mailing list
 @email{tex-k@@tug.org}.  You can subscribe and peruse the archives on
-the web @url{http://lists.tug.org/tex-k}.
+the web @url{https://lists.tug.org/tex-k}.
 
 You do not need to join to submit a report, nor will it affect whether
 you get a response.  Be aware that large data files are sometimes
@@ -3517,7 +3517,7 @@ the list.
 
 If you are looking for general @TeX{} help, such as how to install a
 full @TeX{} system or how to use @LaTeX{}, please see
-@url{http://tug.org/begin.html}.
+@url{https://tug.org/begin.html}.
 
 
 @node Debugging
@@ -3858,7 +3858,7 @@ If Metafont runs, but generates fonts at the wrong resolution or for
 the wrong device, most likely @code{mktexpk}'s built-in guess for the
 mode is wrong, and you should override it as above.
 
-See @url{http://ctan.org/pkg/modes} for a list of resolutions and mode
+See @url{https://ctan.org/pkg/modes} for a list of resolutions and mode
 names for most devices (additional submissions are welcome).
 
 @flindex .2602gf

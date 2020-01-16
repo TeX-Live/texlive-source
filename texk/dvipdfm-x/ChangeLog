@@ -1,3 +1,9 @@
+2020-01-16  Karl Berry  <karl@freefriends.org>
+
+	* xbb.c (show_version),
+	* dvipdfmx.c (show_version): copyright 2020.
+	* configure.ac: version 20200116 for TL'20.
+
 2019-11-14  Akira Kakuto  <kakuto@w32tex.org>
 
 	* mt19937ar.c: Add to support common font names in all

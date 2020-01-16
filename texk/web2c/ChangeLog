@@ -1,3 +1,9 @@
+2020-01-16  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi: 2020.
+	* pdftexdir/pdftex.web,
+	* pdftexdir/pdftex_version.h: 1.40.21 for TL'20.
+
 2019-12-17  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (out_what [1374]): always set write_open[j]:=false

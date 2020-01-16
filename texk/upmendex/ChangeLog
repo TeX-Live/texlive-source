@@ -1,3 +1,9 @@
+2020-01-16  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac,
+	* COPYRIGHT,
+	* main.c (VERSION): version 0.53 for TL'20.
+
 2019-12-12  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac: look for a pthread library cntaining

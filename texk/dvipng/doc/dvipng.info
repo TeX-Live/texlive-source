@@ -1,4 +1,4 @@
-This is dvipng.info, produced by makeinfo version 5.0 from dvipng.texi.
+This is dvipng.info, produced by makeinfo version 5.1 from dvipng.texi.
 
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
@@ -43,43 +43,43 @@ File: dvipng.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: To
 This program makes PNG and/or GIF graphics from DVI files as obtained
 from TeX and its relatives.
 
-   If GIF support is enabled, GIF output is chosen by using the
-`dvigif' binary or with the `--gif' option.
+   If GIF support is enabled, GIF output is chosen by using the 'dvigif'
+binary or with the '--gif' option.
 
    It is intended to produce anti-aliased screen-resolution images as
-fast as is possible. The target audience is people who need to generate
-and regenerate many images again and again. The primary target is the
+fast as is possible.  The target audience is people who need to generate
+and regenerate many images again and again.  The primary target is the
 preview-latex (X)Emacs package, a package to preview formulas from
-within (X)Emacs. Yes, you get to see your formulas in the (X)Emacs
-buffer, see `http://www.gnu.org/software/auctex/preview-latex.html'.
+within (X)Emacs.  Yes, you get to see your formulas in the (X)Emacs
+buffer, see <http://www.gnu.org/software/auctex/preview-latex.html>.
 
    Another example is WeBWorK, an internet-based method for delivering
-homework problems to students over the internet, giving students
-instant feedback as to whether or not their answers are correct, see
-`http://webwork.math.rochester.edu'.
+homework problems to students over the internet, giving students instant
+feedback as to whether or not their answers are correct, see
+<http://webwork.math.rochester.edu>.
 
    A more recent addition to the dvipng-using applications out there is
-MediaWiki, the software behind Wikipedia and many other wikis out
-there. Dvipng is used to render mathematical formulae from version
-1.8.0 of MediaWiki, see `http://www.mediawiki.org'.
+MediaWiki, the software behind Wikipedia and many other wikis out there.
+Dvipng is used to render mathematical formulae from version 1.8.0 of
+MediaWiki, see <http://www.mediawiki.org>.
 
    Other applications may also benefit, like web applications as
 latex2html and WYSIWYG editors like LyX.
 
-   The benefits of `dvipng'/`dvigif' include
+   The benefits of 'dvipng'/'dvigif' include
 
-   * Speed. It is a very fast bitmap-rendering code for DVI files, which
-     makes it suitable for generating large amounts of images
+   * Speed.  It is a very fast bitmap-rendering code for DVI files,
+     which makes it suitable for generating large amounts of images
      on-the-fly, as needed in preview-latex, WeBWorK and others.
 
    * It does not read the postamble, so it can be started before TeX
-     finishes. There is a `--follow' switch that makes dvipng wait at
+     finishes.  There is a '--follow' switch that makes dvipng wait at
      end-of-file for further output, unless it finds the POST marker
      that indicates the end of the DVI.
 
-   * Interactive query of options. dvipng can read options interactively
-     through stdin, and all options are usable. It is even possible to
-     change the input file through this interface.
+   * Interactive query of options.  dvipng can read options
+     interactively through stdin, and all options are usable.  It is
+     even possible to change the input file through this interface.
 
    * Supports PK, VF, PostScript Type1, and TrueType fonts, subfonts
      (i.e., as used in CJK-LaTeX), color specials, and inclusion of
@@ -87,15 +87,14 @@ latex2html and WYSIWYG editors like LyX.
 
    * and more...
 
-
 
 File: dvipng.info,  Node: Installation,  Next: Basic usage,  Prev: Introduction,  Up: Top
 
 2 Installation
 **************
 
-Installing dvipng should be simple: merely `./configure', `make', and
-`make install'.
+Installing dvipng should be simple: merely './configure', 'make', and
+'make install'.
 
 * Menu:
 
@@ -113,46 +112,46 @@ File: dvipng.info,  Node: Prerequisites,  Next: Configure,  Up: Installation
 
    * The GD Graphics Draw library, libgd
 
-     The drawing library `libgd' is necessary, and is downloadable at
-     `https://bitbucket.org/libgd/gd-libgd/downloads', and there are
+     The drawing library 'libgd' is necessary, and is downloadable at
+     <https://bitbucket.org/libgd/gd-libgd/downloads>, and there are
      binary packages for most operating systems from their respective
-     distributors. In any case, the library installs using `autoconf' so
-     it should not be difficult for you to install it from source, and
-     then proceed with installing dvipng.
+     distributors.  In any case, the library installs using 'autoconf'
+     so it should not be difficult for you to install it from source,
+     and then proceed with installing dvipng.
 
    * The path-searching library kpathsea
 
      Kpathsea is most likely included in your LaTeX installation, but it
-     may happen that ./configure does not find it; see below. If you do
-     not have it, download it from `http://www.ctan.org' and compile it.
+     may happen that ./configure does not find it; see below.  If you do
+     not have it, download it from <http://www.ctan.org> and compile it.
      I have no experience with this, so I cannot help much here.
 
    * The font-rendering library FreeType 2
 
      While not strictly necessary, a recent FreeType 2 is recommended
-     since dvipng currently will produce better-quality images when
-     this library is available. To take advantage of this, you should
-     have at least FreeType 2.1.9.
+     since dvipng currently will produce better-quality images when this
+     library is available.  To take advantage of this, you should have
+     at least FreeType 2.1.9.
 
      FreeType 2 will enable direct support for PostScript and TrueType
      fonts, so that dvipng will not need to generate bitmapped variants
      on disk of the TeX fonts since modern TeX distributions include
-     PostScript versions of them. Then, you can render images at
+     PostScript versions of them.  Then, you can render images at
      different (and unusual) resolutions without cluttering the disk
      with lots of bitmapped fonts.
 
-     Finally, it will enable subfont support in dvipng. That is, if you
+     Finally, it will enable subfont support in dvipng.  That is, if you
      want to render CJK-LaTeX characters, you must have FreeType 2
      installed.
 
    * libpng and libz
 
      To be able to compress and write PNG files to disk, dvipng (or
-     really libgd) uses libpng which in turn uses libz. These should be
+     really libgd) uses libpng which in turn uses libz.  These should be
      available on any modern system, if not, download them and install
      them.
 
-   * The `texinfo' package
+   * The 'texinfo' package
 
      This is needed for building the documentation.
 
@@ -162,32 +161,32 @@ File: dvipng.info,  Node: Configure,  Next: Build/install,  Prev: Prerequisites,
 2.2 Configure
 =============
 
-The first step is to configure the source code, telling it where
-various files will be.  To do so, run
+The first step is to configure the source code, telling it where various
+files will be.  To do so, run
 
      ./configure OPTIONS
 
    (Note: if you have fetched dvipng from CVS rather than a regular
-release, you will have to first generate `./configure' by running
-`autoconf' 2.53 or later.)
+release, you will have to first generate './configure' by running
+'autoconf' 2.53 or later.)
 
    On many machines, you will not need to specify any options, but if
-`configure' cannot determine something on its own, you'll need to help
-it out. For a list of the options type
+'configure' cannot determine something on its own, you'll need to help
+it out.  For a list of the options type
 
      ./configure --help
 
    On some machines, the libraries will be installed in directories that
-are not in the linker's search path. This will generate an error when
-running `./configure', indicating that it cannot find libgd or
-libkpathsea (most likely). You then need to specify the path to the
-respective library's object files. They are typically called e.g.,
-`libgd.a' or `libgd.so'. If they are located in e.g., `/sw/local/lib',
+are not in the linker's search path.  This will generate an error when
+running './configure', indicating that it cannot find libgd or
+libkpathsea (most likely).  You then need to specify the path to the
+respective library's object files.  They are typically called e.g.,
+'libgd.a' or 'libgd.so'.  If they are located in e.g., '/sw/local/lib',
 do
 
      ./configure LDFLAGS=-L/sw/local/lib
 
-   If the library is available as a shared object file (`.so'), the
+   If the library is available as a shared object file ('.so'), the
 runtime linker may also need to be told where to find the library, then
 use
 
@@ -195,11 +194,11 @@ use
 
    When either of these is necessary, it is likely that the C header
 files are also installed in directories that are not in the C
-preprocessor's search path. This will also generate an error when
-running `./configure', indicating that it cannot find e.g., `gd.h' or
-`kpathsea.h' (most likely). You then need to specify the path to the
-respective library's C header files. If they are located in e.g.,
-`/sw/local/include', do
+preprocessor's search path.  This will also generate an error when
+running './configure', indicating that it cannot find e.g., 'gd.h' or
+'kpathsea.h' (most likely).  You then need to specify the path to the
+respective library's C header files.  If they are located in e.g.,
+'/sw/local/include', do
 
      ./configure CPPFLAGS=-I/sw/local/include
 
@@ -216,7 +215,7 @@ File: dvipng.info,  Node: Build/install,  Next: Installation outside the texmf t
 2.3 Build/install
 =================
 
-Once `configure' has been run, simply enter
+Once 'configure' has been run, simply enter
 
      make
 
@@ -234,14 +233,13 @@ File: dvipng.info,  Node: Installation outside the texmf tree,  Next: Advice for
 2.4 Installation outside the texmf tree
 =======================================
 
-In some cases, a dvipng binary installed outside the texmf tree will
-not be able to find virtual fonts, or the PostScript font maps
-(normally used by dvips). This may be because _only_ $SELFAUTOLOC,
-$SELFAUTODIR, and $SELFAUTOPARENT are used in the texmf tree
-configuration file `texmf.cnf'. If so, give the switch
-`--enable-selfauto-set' to `./configure'. This will make dvipng adjust
-these three internally so that kpathsea thinks that dvipng _is_
-installed in the texmf tree.
+In some cases, a dvipng binary installed outside the texmf tree will not
+be able to find virtual fonts, or the PostScript font maps (normally
+used by dvips).  This may be because _only_ $SELFAUTOLOC, $SELFAUTODIR,
+and $SELFAUTOPARENT are used in the texmf tree configuration file
+'texmf.cnf'.  If so, give the switch '--enable-selfauto-set' to
+'./configure'.  This will make dvipng adjust these three internally so
+that kpathsea thinks that dvipng _is_ installed in the texmf tree.
 
 
 File: dvipng.info,  Node: Advice for non-privileged users,  Prev: Installation outside the texmf tree,  Up: Installation
@@ -250,18 +248,18 @@ File: dvipng.info,  Node: Advice for non-privileged users,  Prev: Installation o
 =========================================
 
 Often people without system administration privileges want to install
-software for their private use. In that case you need to specify more
-options to the `configure' script, usually this is done by using the
-`--prefix' option to the `configure' script, and let it point to the
-personal home directory. In that way, resulting binaries will be
-installed under the `bin' subdirectory of your home directory, manual
-pages under `man' and so on. That way, it is reasonably easy to
+software for their private use.  In that case you need to specify more
+options to the 'configure' script, usually this is done by using the
+'--prefix' option to the 'configure' script, and let it point to the
+personal home directory.  In that way, resulting binaries will be
+installed under the 'bin' subdirectory of your home directory, manual
+pages under 'man' and so on.  That way, it is reasonably easy to
 maintain a bunch of additional packages, since the prefix argument is
-supported by most `configure' scripts.
+supported by most 'configure' scripts.
 
-   You'll have to add something like `/home/myself/bin' to your `PATH'
+   You'll have to add something like '/home/myself/bin' to your 'PATH'
 shell variable, if it isn't there already, and similarly set the
-`INFOPATH' and `MANPATH' variables to be able to access the
+'INFOPATH' and 'MANPATH' variables to be able to access the
 documentation.
 
 
@@ -274,20 +272,20 @@ To use dvipng at its simplest, simply type
 
      dvipng foo
 
-where `foo.dvi' is the output of TeX that you want to convert to PNG
-format. If there are four pages in `foo.dvi', those pages will be
-output as `foo1.png', `foo2.png', `foo3.png', and `foo4.png',
+where 'foo.dvi' is the output of TeX that you want to convert to PNG
+format.  If there are four pages in 'foo.dvi', those pages will be
+output as 'foo1.png', 'foo2.png', 'foo3.png', and 'foo4.png',
 respectively.
 
-   If you have enabled the PostScript font support (via FreeType),
-fonts will be rendered as they are needed. Otherwise, dvipng will use
+   If you have enabled the PostScript font support (via FreeType), fonts
+will be rendered as they are needed.  Otherwise, dvipng will use
 bitmapped (PK) fonts, and if you use PK fonts that have not been used on
 your system before, they may be automatically generated; this process
-can take a few minutes, so progress reports appear by default. The next
+can take a few minutes, so progress reports appear by default.  The next
 time the same font is used, it will have been saved on disk, so
-rendering will go much faster. (If dvipng tries to endlessly generate
-the same fonts over and over again, something is wrong. *Note Unable to
-generate fonts: (kpathsea)Unable to generate fonts.)
+rendering will go much faster.  (If dvipng tries to endlessly generate
+the same fonts over and over again, something is wrong.  *Note
+(kpathsea)Unable to generate fonts::.)
 
    Many options are available (see the next section).  For a brief
 summary of available options, just type
@@ -305,7 +303,7 @@ section will give a good idea of the capabilities of the driver.
 
 * Menu:
 
-* Option summary::              Quick listing, from dvipng --help.
+* Option summary::              Quick listing, from dvipng -help.
 * Option details::              More information about each option.
 
 
@@ -315,9 +313,9 @@ File: dvipng.info,  Node: Option summary,  Next: Option details,  Up: Command-li
 ==================
 
 Here is a handy summary of the options; it is printed out when you run
-dvipng with no arguments or with the standard `--help' option.
+dvipng with no arguments or with the standard '--help' option.
 
-     This is ./dvipng 1.16 Copyright 2002-2015, 2019 Jan-Ake Larsson
+     This is ./dvipng 1.17 Copyright 2002-2015, 2019 Jan-Ake Larsson
 
      Usage: ./dvipng [OPTION]... FILENAME[.dvi]
      Options are chosen to be similar to dvips' options where possible:
@@ -367,311 +365,309 @@ File: dvipng.info,  Node: Option details,  Prev: Option summary,  Up: Command-li
 ==================
 
 Many of the parameterless options listed here can be turned off by
-suffixing the option with a zero (`0'); for instance, to turn off page
-reversal, use `-r0'.  Such options are marked with a trailing `*'.
+suffixing the option with a zero ('0'); for instance, to turn off page
+reversal, use '-r0'.  Such options are marked with a trailing '*'.
 
-`-'
+'-'
      Read additional options from standard input after processing the
      command line.
 
-`--help'
+'--help'
      Print a usage message and exit.
 
-`--version'
+'--version'
      Print the version number and exit.
 
-`-bd NUM'
-
-`-bd COLOR_SPEC'
-
-`-bd 'NUM COLOR_SPEC''
-     Set the pixel width of the transparent border (default 0). Using
+'-bd NUM'
+'-bd COLOR_SPEC'
+'-bd 'NUM COLOR_SPEC''
+     Set the pixel width of the transparent border (default 0).  Using
      this option will make the image edges transparent, but it only
-     affects pixels with the background color. Giving a COLOR_SPEC will
+     affects pixels with the background color.  Giving a COLOR_SPEC will
      set the fallback color, to be used in viewers that cannot handle
-     transparency (the default is the background color). The color spec
+     transparency (the default is the background color).  The color spec
      should be in TeX color \special syntax, e.g., 'rgb 1.0 0.0 0.0'.
      Setting the fallback color makes the default border width 1 px.
      *Note Color::.
 
-`--bdpi NUM'
-     This option only has an effect when using bitmapped (PK) fonts. The
-     option sets the base (Metafont) resolution, both horizontal and
-     vertical, to NUM dpi (dots per inch). This option is necessary
+'--bdpi NUM'
+     This option only has an effect when using bitmapped (PK) fonts.
+     The option sets the base (Metafont) resolution, both horizontal and
+     vertical, to NUM dpi (dots per inch).  This option is necessary
      when manually selecting Metafont mode with the -mode option (see
      below).
 
-`-bg COLOR_SPEC'
-     Choose background color for the images. This option will be
+'-bg COLOR_SPEC'
+     Choose background color for the images.  This option will be
      ignored if there is a background color \special in the DVI. The
      color spec should be in TeX color \special syntax, e.g., 'rgb 1.0
-     0.0 0.0'. You can also specify 'Transparent' or 'transparent'
+     0.0 0.0'.  You can also specify 'Transparent' or 'transparent'
      which will give you a transparent background with the normal
-     background as a fallback color. A capitalized 'Transparent' will
+     background as a fallback color.  A capitalized 'Transparent' will
      give a full-alpha transparency, while an all-lowercase
      'transparent' will give a simple fully transparent background with
-     non-transparent antialiased pixels. The latter would be suitable
+     non-transparent antialiased pixels.  The latter would be suitable
      for viewers who cannot cope with a true alpha channel.  GIF images
      do not support full alpha transparency, so in case of GIF output,
      both variants will use the latter behaviour.  *Note Color::.
 
-`-d NUM'
+'-d NUM'
      Set the debug flags, showing what dvipng (thinks it) is doing.
-     This will work unless dvipng has been compiled without the `DEBUG'
-     option (not recommended). Set the flags as you need them, use `-d
-     -1' as the first option for maximum output. *Note Debug options::.
+     This will work unless dvipng has been compiled without the 'DEBUG'
+     option (not recommended).  Set the flags as you need them, use '-d
+     -1' as the first option for maximum output.  *Note Debug options::.
 
-`-D NUM'
-     Set the output resolution, both horizontal and vertical, to NUM
-     dpi (dots per inch).
+'-D NUM'
+     Set the output resolution, both horizontal and vertical, to NUM dpi
+     (dots per inch).
 
      One may want to adjust this to fit a certain text font size (e.g.,
      on a web page), and for a text font height of FONT_PX pixels (in
      Mozilla) the correct formula is
           DPI = FONT_PX * 72.27 / 10 [px * TeXpt/in / TeXpt]
      The last division by ten is due to the standard font height 10pt in
-     your document, if you use 12pt, divide by 12. Unfortunately, some
+     your document, if you use 12pt, divide by 12.  Unfortunately, some
      proprietary browsers have font height in pt (points), not pixels.
      You have to rescale that to pixels, using the screen resolution
      (default is usually 96 dpi) which means the formula is
           FONT_PX = FONT_PT * 96 / 72 [pt * px/in / (pt/in)]
-     On some high-res screens, the value is instead 120 dpi. Good luck!
+     On some high-res screens, the value is instead 120 dpi.  Good luck!
 
-`--depth*'
-     Report the depth of the image. This only works reliably when the
-     LaTeX style `preview.sty' from preview-latex is used with the
-     `active' option. It reports the number of pixels from the bottom
-     of the image to the baseline of the image. This can be used for
+'--depth*'
+     Report the depth of the image.  This only works reliably when the
+     LaTeX style 'preview.sty' from preview-latex is used with the
+     'active' option.  It reports the number of pixels from the bottom
+     of the image to the baseline of the image.  This can be used for
      vertical positioning of the image in, e.g., web documents, where
      one would use (Cascading StyleSheets 1)
           <IMG SRC="FILENAME.PNG" STYLE="vertical-align: -DEPTHpx">
      The depth is a negative offset in this case, so the minus sign is
      necessary, and the unit is pixels (px).
 
-`--dvinum*'
+'--dvinum*'
      Set this option to make the output page number be the TeX page
-     numbers rather than the physical page number. See the `-o' switch.
+     numbers rather than the physical page number.  See the '-o' switch.
 
-`-fg COLOR_SPEC'
-     Choose foreground color for the images. This option will be
+'-fg COLOR_SPEC'
+     Choose foreground color for the images.  This option will be
      ignored if there is a foreground color \special in the DVI. The
      color spec should be in TeX color \special syntax, e.g., 'rgb 1.0
      0.0 0.0'.  *Note Color::.
 
-`--follow*'
-     Wait for data at end-of-file. One of the benefits of dvipng is
+'--follow*'
+     Wait for data at end-of-file.  One of the benefits of dvipng is
      that it does not read the postamble, so it can be started before
-     TeX finishes. This switch makes dvipng wait at end-of-file for
+     TeX finishes.  This switch makes dvipng wait at end-of-file for
      further output, unless it finds the POST marker that indicates the
-     end of the DVI. This is similar to `tail -f' but for DVI-to-PNG
+     end of the DVI. This is similar to 'tail -f' but for DVI-to-PNG
      conversion.
 
-`--freetype*'
-     Enable/disable FreeType font rendering (default on). This option is
-     available if the FreeType2 font library was present at compilation
-     time.  If this is the case, dvipng will have direct support for
-     PostScript Type1 and TrueType fonts internally, rather than using
-     `gsftopk' for rendering the fonts. If you have PostScript versions
-     of Computer Modern installed, there will be no need to generate
-     bitmapped (PK) variants on disk of these. Then, you can render
-     images at different (and unusual) resolutions without cluttering
-     the disk with lots of bitmapped fonts.  One reason to disable
-     FreeType font rendering would be to generate identical output on
-     different platforms, since FreeType uses the native renderer and
-     therefore can give slightly different output on each platform.
+'--freetype*'
+     Enable/disable FreeType font rendering (default on).  This option
+     is available if the FreeType2 font library was present at
+     compilation time.  If this is the case, dvipng will have direct
+     support for PostScript Type1 and TrueType fonts internally, rather
+     than using 'gsftopk' for rendering the fonts.  If you have
+     PostScript versions of Computer Modern installed, there will be no
+     need to generate bitmapped (PK) variants on disk of these.  Then,
+     you can render images at different (and unusual) resolutions
+     without cluttering the disk with lots of bitmapped fonts.  One
+     reason to disable FreeType font rendering would be to generate
+     identical output on different platforms, since FreeType uses the
+     native renderer and therefore can give slightly different output on
+     each platform.
 
-`--gamma NUM'
+'--gamma NUM'
      Control the interpolation of colors in the greyscale anti-aliasing
      color palette.  Default value is 1.0.  For 0 < NUM < 1, the fonts
      will be lighter (more like the background), and for NUM > 1, the
      fonts will be darker (more like the foreground).
 
-`--gif*'
+'--gif*'
      The images are output in the GIF format, if GIF support is enabled.
-     This is the default for the `dvigif' binary, which only will be
-     available when GIF support is enabled. GIF images are palette
-     images (see the `--palette' option) and does not support true alpha
-     channels (see the `--bg' option). See also the `--png' option.
+     This is the default for the 'dvigif' binary, which only will be
+     available when GIF support is enabled.  GIF images are palette
+     images (see the '--palette' option) and does not support true alpha
+     channels (see the '--bg' option).  See also the '--png' option.
 
-`--height*'
-     Report the height of the image. This only works reliably when the
-     LaTeX style `preview.sty' from preview-latex is used with the
-     `active' option. It reports the number of pixels from the top of
-     the image to the baseline of the image. The total height of the
-     image is obtained as the sum of the values reported from
-     `--height' and `--depth'.
+'--height*'
+     Report the height of the image.  This only works reliably when the
+     LaTeX style 'preview.sty' from preview-latex is used with the
+     'active' option.  It reports the number of pixels from the top of
+     the image to the baseline of the image.  The total height of the
+     image is obtained as the sum of the values reported from '--height'
+     and '--depth'.
 
-`-l [=]NUM'
-     The last page printed will be the first one numbered NUM. Default
+'-l [=]NUM'
+     The last page printed will be the first one numbered NUM.  Default
      is the last page in the document.  If NUM is prefixed by an equals
-     sign, then it (and the argument to the `-p' option, if specified)
+     sign, then it (and the argument to the '-p' option, if specified)
      is treated as a physical (absolute) page number, rather than a
-     value to compare with the TeX `\count0' values stored in the DVI
-     file.  Thus, using `-l =9' will end with the ninth page of the
+     value to compare with the TeX '\count0' values stored in the DVI
+     file.  Thus, using '-l =9' will end with the ninth page of the
      document, no matter what the pages are actually numbered.
 
-`--mode MODE'
-     This option only has an effect when using bitmapped (PK) fonts. Use
-     MODE as the Metafont device name for the PK fonts (both for path
-     searching and font generation). This needs to be augmented with
-     the base device resolution, given with the `--bdpi' option. See
-     the file `ftp://ftp.tug.org/tex/modes.mf' for a list of
-     resolutions and mode names for most devices. *Note Unable to
-     generate fonts: (kpathsea)Unable to generate fonts.
+'--mode MODE'
+     This option only has an effect when using bitmapped (PK) fonts.
+     Use MODE as the Metafont device name for the PK fonts (both for
+     path searching and font generation).  This needs to be augmented
+     with the base device resolution, given with the '--bdpi' option.
+     See the file <ftp://ftp.tug.org/tex/modes.mf> for a list of
+     resolutions and mode names for most devices.  *Note
+     (kpathsea)Unable to generate fonts::.
 
-`-M*'
-     This option only has an effect when using bitmapped (PK) fonts. It
-     turns off automatic PK font generation (`mktexpk').
+'-M*'
+     This option only has an effect when using bitmapped (PK) fonts.  It
+     turns off automatic PK font generation ('mktexpk').
 
-`--nogs*'
+'--nogs*'
      This switch prohibits the internal call to GhostScript for
-     displaying PostScript specials. `--nogs0' turns the call back on.
+     displaying PostScript specials.  '--nogs0' turns the call back on.
 
-`--nogssafer*'
+'--nogssafer*'
      Normally, if GhostScript is used to render PostScript specials, the
-     GhostScript interpreter is run with the option `-dSAFER'. The
-     `--nogssafer' option runs GhostScript without `-dSAFER'. The
-     `-dSAFER' option in Ghostscript disables PostScript operators such
+     GhostScript interpreter is run with the option '-dSAFER'.  The
+     '--nogssafer' option runs GhostScript without '-dSAFER'.  The
+     '-dSAFER' option in Ghostscript disables PostScript operators such
      as deletefile, to prevent possibly malicious PostScript programs
      from having any effect.
 
-`--norawps*'
+'--norawps*'
      Some packages generate raw PostScript specials, even non-rendering
      such specials.  This switch turns off the internal call to
      GhostScript intended to display these raw PostScript specials.
-     `--norawps0' turns the call back on.
+     '--norawps0' turns the call back on.
 
-`-o NAME'
-     Send output to the file NAME. A single occurrence of `%d' or
-     `%01d', ..., `%09d' will be exchanged for the physical page number
-     (this can be changed, see the `--dvinum' switch). The default
-     output filename is `FILE%d.png' where the input DVI file was
-     `FILE.dvi'.
+'-o NAME'
+     Send output to the file NAME.  A single occurrence of '%d' or
+     '%01d', ..., '%09d' will be exchanged for the physical page number
+     (this can be changed, see the '--dvinum' switch).  The default
+     output filename is 'FILE%d.png' where the input DVI file was
+     'FILE.dvi'.
 
-`-O X-OFFSET,Y-OFFSET'
+'-O X-OFFSET,Y-OFFSET'
      Move the origin by X-OFFSET,Y-OFFSET, a comma-separated pair of
-     dimensions such as `.1in,-.3cm'.  The origin of the page is
-     shifted from the default position (of one inch down, one inch to
-     the right from the upper left corner of the paper) by this amount.
+     dimensions such as '.1in,-.3cm'.  The origin of the page is shifted
+     from the default position (of one inch down, one inch to the right
+     from the upper left corner of the paper) by this amount.
 
-`-p [=]NUM'
-     The first page printed will be the first one numbered NUM. Default
-     is the first page in the document.  If NUM is prefixed by an
-     equals sign, then it (and the argument to the `-l' option, if
-     specified) is treated as a physical (absolute) page number, rather
-     than a value to compare with the TeX `\count0' values stored in the
-     DVI file.  Thus, using `-p =3' will start with the third page of
-     the document, no matter what the pages are actually numbered.
+'-p [=]NUM'
+     The first page printed will be the first one numbered NUM.  Default
+     is the first page in the document.  If NUM is prefixed by an equals
+     sign, then it (and the argument to the '-l' option, if specified)
+     is treated as a physical (absolute) page number, rather than a
+     value to compare with the TeX '\count0' values stored in the DVI
+     file.  Thus, using '-p =3' will start with the third page of the
+     document, no matter what the pages are actually numbered.
 
-`--palette*'
-     When an external image is included, `dvipng' will automatically
+'--palette*'
+     When an external image is included, 'dvipng' will automatically
      switch to truecolor mode, to avoid unnecessary delay and quality
      reduction, and enable the EPS translator to draw on a transparent
-     background and outside of the boundingbox. This switch will force
-     palette (256-color) output and make `dvipng' revert to opaque
-     clipped image inclusion. This will also override the `--truecolor'
+     background and outside of the boundingbox.  This switch will force
+     palette (256-color) output and make 'dvipng' revert to opaque
+     clipped image inclusion.  This will also override the '--truecolor'
      switch if present.
 
-`--picky*'
-     No images are output when a warning occurs. Normally, dvipng will
+'--picky*'
+     No images are output when a warning occurs.  Normally, dvipng will
      output an image in spite of a warning, but there may be something
-     missing in this image. One reason to use this option would be if
-     you have a more complete but slower fallback converter. Mainly,
+     missing in this image.  One reason to use this option would be if
+     you have a more complete but slower fallback converter.  Mainly,
      this is useful for failed figure inclusion and unknown \special
      occurrences, but warnings will also occur for missing or unknown
      color specs and missing PK fonts.
 
-`--png*'
-     The images are output in the PNG format. This is the default for
-     the `dvipng' binary. See also the `--gif' option.
+'--png*'
+     The images are output in the PNG format.  This is the default for
+     the 'dvipng' binary.  See also the '--gif' option.
 
-`-pp FIRSTPAGE-LASTPAGE'
-     Print pages FIRSTPAGE through LASTPAGE; but not quite equivalent
-     to `-p FIRSTPAGE -l LASTPAGE'. For example, when rendering a book,
+'-pp FIRSTPAGE-LASTPAGE'
+     Print pages FIRSTPAGE through LASTPAGE; but not quite equivalent to
+     '-p FIRSTPAGE -l LASTPAGE'.  For example, when rendering a book,
      there may be several instances of a page in the DVI file (one in
-     `\frontmatter', one in `\mainmatter', and one in `\backmatter').
-     In case of several pages matching, `-pp FIRSTPAGE-LASTPAGE' will
-     render _all_ pages that matches the specified range, while `-p
+     '\frontmatter', one in '\mainmatter', and one in '\backmatter').
+     In case of several pages matching, '-pp FIRSTPAGE-LASTPAGE' will
+     render _all_ pages that matches the specified range, while '-p
      FIRSTPAGE -l LASTPAGE' will render the pages from the _first_
      occurrence of FIRSTPAGE to the _first_ occurrence of LASTPAGE.
-     This is the (undocumented) behaviour of dvips. In dvipng you can
+     This is the (undocumented) behaviour of dvips.  In dvipng you can
      give both kinds of options, in which case you get all pages that
-     matches the range in `-pp' between the pages from `-p' to `-l'.
-     Also multiple `-pp' options accumulate, unlike `-p' and `-l'.  The
-     `-' separator can also be `:'. Note that `-pp -1' will be
+     matches the range in '-pp' between the pages from '-p' to '-l'.
+     Also multiple '-pp' options accumulate, unlike '-p' and '-l'.  The
+     '-' separator can also be ':'.  Note that '-pp -1' will be
      interpreted as "all pages up to and including 1", if you want a
-     page numbered -1 (only the table of contents, say) put `-pp -1--1',
-     or more readable, `-pp -1:-1'.
+     page numbered -1 (only the table of contents, say) put '-pp -1--1',
+     or more readable, '-pp -1:-1'.
 
-`-q*'
+'-q*'
      Run quietly.  Don't chatter about pages converted, etc. to standard
      output; report no warnings (only errors) to standard error.
 
-`-Q NUM'
-     Set the quality to NUM. That is, choose the number of antialiasing
-     levels for bitmapped fonts (PK), to be NUM*NUM+1. The default
+'-Q NUM'
+     Set the quality to NUM.  That is, choose the number of antialiasing
+     levels for bitmapped fonts (PK), to be NUM*NUM+1.  The default
      value is 4 which gives 17 levels of antialiasing for antialiased
-     fonts from these two. If FreeType is available, its rendering is
+     fonts from these two.  If FreeType is available, its rendering is
      unaffected by this option.
 
-`-r*'
-     Toggle output of pages in reverse/forward order. By default, the
+'-r*'
+     Toggle output of pages in reverse/forward order.  By default, the
      first page in the DVI is output first.
 
-`--strict*'
-     The program exits when a warning occurs. Normally, dvipng will
+'--strict*'
+     The program exits when a warning occurs.  Normally, dvipng will
      output an image in spite of a warning, but there may be something
-     missing in this image. One reason to use this option would be if
-     you have a more complete but slower fallback converter. See the
-     `--picky' option above for a list of when warnings occur.
+     missing in this image.  One reason to use this option would be if
+     you have a more complete but slower fallback converter.  See the
+     '--picky' option above for a list of when warnings occur.
 
-`-T IMAGE_SIZE'
-     Set the image size to IMAGE_SIZE which can be either of `bbox',
-     `tight', or a comma-separated pair of dimensions HSIZE,VSIZE such
-     as `.1in,.3cm'. The default is `bbox' which produces a PNG that
+'-T IMAGE_SIZE'
+     Set the image size to IMAGE_SIZE which can be either of 'bbox',
+     'tight', or a comma-separated pair of dimensions HSIZE,VSIZE such
+     as '.1in,.3cm'.  The default is 'bbox' which produces a PNG that
      includes all ink put on the page and in addition the DVI origin,
      located 1in from the top and 1in from the left edge of the paper.
-     This usually gives whitespace above and to the left in the
-     produced image. The value `tight' will make dvipng only include
-     all ink put on the page, producing neat images.
+     This usually gives whitespace above and to the left in the produced
+     image.  The value 'tight' will make dvipng only include all ink put
+     on the page, producing neat images.
 
-`--truecolor*'
-     This will make `dvipng' generate truecolor output. Note that
+'--truecolor*'
+     This will make 'dvipng' generate truecolor output.  Note that
      truecolor output is automatic if you include an external image in
-     your DVI, e.g., via a PostScript special (i.e., the `graphics' or
-     `graphicx' package). This switch is overridden by the `--palette'
+     your DVI, e.g., via a PostScript special (i.e., the 'graphics' or
+     'graphicx' package).  This switch is overridden by the '--palette'
      switch.
 
-`-v*'
-     Enable verbose operation. This will currently indicate what fonts
+'-v*'
+     Enable verbose operation.  This will currently indicate what fonts
      is used, in addition to the usual output.
 
-`--width*'
-     Report the width of the image. See also `--height' and `--depth'.
+'--width*'
+     Report the width of the image.  See also '--height' and '--depth'.
 
-`-x NUM'
-     This option is deprecated; it should not be used. It is much
-     better to select the output resolution directly with the `-D'
-     option. This option sets the magnification ratio to NUM/1000 and
+'-x NUM'
+     This option is deprecated; it should not be used.  It is much
+     better to select the output resolution directly with the '-D'
+     option.  This option sets the magnification ratio to NUM/1000 and
      overrides the magnification specified in the DVI file.  Must be
      between 10 and 100000.  It is recommended that you use standard
      magstep values (1095, 1200, 1440, 1728, 2074, 2488, 2986, and so
-     on) to help reduce the total number of PK files generated.  NUM
-     may be a real number, not an integer, for increased precision.
+     on) to help reduce the total number of PK files generated.  NUM may
+     be a real number, not an integer, for increased precision.
 
-`-z NUM'
-     Set the PNG compression level to NUM. This option is enabled if
-     your `libgd' is new enough. The default compression level is 1,
+'-z NUM'
+     Set the PNG compression level to NUM.  This option is enabled if
+     your 'libgd' is new enough.  The default compression level is 1,
      which selects maximum speed at the price of slightly larger PNGs.
-     For an older `libgd', the hard-soldered value 5 is used. The
-     include file `png.h' says
-
+     For an older 'libgd', the hard-soldered value 5 is used.  The
+     include file 'png.h' says
           Currently, valid values range from 0 - 9, corresponding
           directly to the zlib compression levels 0 - 9 (0 - no
-          compression, 9 - "maximal" compression). Note that tests have
-          shown that zlib compression levels 3-6 usually perform as
-          well as level 9 for PNG images, and do considerably fewer
-          calculations. In the future, these values may not correspond
+          compression, 9 - "maximal" compression).  Note that tests have
+          shown that zlib compression levels 3-6 usually perform as well
+          as level 9 for PNG images, and do considerably fewer
+          calculations.  In the future, these values may not correspond
           directly to the zlib compression levels.
 
 
@@ -680,12 +676,12 @@ File: dvipng.info,  Node: Graphics,  Next: Color,  Prev: Command-line options,  
 5 Graphics
 **********
 
-`dvipng' attempts to handle graphics as included by the `graphicx' and
-`graphics' packages, without the need of specifying a driver to these
-packages. This means that it recognizes the encapsulated postscript
-inclusion meant for `dvips', but is also able (from version 1.8) to
-include bitmapped graphics. It also tries to handle some of the raw
-PostScript that is output from various packages. Some of the
+'dvipng' attempts to handle graphics as included by the 'graphicx' and
+'graphics' packages, without the need of specifying a driver to these
+packages.  This means that it recognizes the encapsulated postscript
+inclusion meant for 'dvips', but is also able (from version 1.8) to
+include bitmapped graphics.  It also tries to handle some of the raw
+PostScript that is output from various packages.  Some of the
 possibilities and problems are mentioned below.
 
 * Menu:
@@ -701,25 +697,25 @@ File: dvipng.info,  Node: Encapsulated PostScript,  Next: Bitmapped graphics,  U
 ===========================
 
 When an EPS file is included, a call to GhostScript is performed to
-produce a bitmapped image that can be included. The default is to
+produce a bitmapped image that can be included.  The default is to
 produce an image with transparent background, at the same size as the
 DVI page currently being converted to PNG, and include that as
-foreground on the PNG. Of course, if the image is to be cropped, that
-is done. The included image will be a truecolor image, so for maximum
+foreground on the PNG. Of course, if the image is to be cropped, that is
+done.  The included image will be a truecolor image, so for maximum
 performance the output PNG will be in truecolor mode as well.
 
-   This conversion needs the `pngalpha' output device to be present in
-your copy of GhostScript. If that device is not present, or you use the
-`--palette' switch or request GIF output, the fallback is to use the
-`png16m' device to produce a cropped opaque image for inclusion. Other
-relevant switches are `--noghostscript' and `--nogssafer'. *Note Option
+   This conversion needs the 'pngalpha' output device to be present in
+your copy of GhostScript.  If that device is not present, or you use the
+'--palette' switch or request GIF output, the fallback is to use the
+'png16m' device to produce a cropped opaque image for inclusion.  Other
+relevant switches are '--noghostscript' and '--nogssafer'.  *Note Option
 details::.
 
    The most common problem with including graphics is an incorrect
-bounding box. Complain to whoever wrote the software that generated the
-file if the bounding box is indeed incorrect. An adjusted boundingbox
-can be specified in the `\includegraphics' call, as in this example
-(using `graphicx'):
+bounding box.  Complain to whoever wrote the software that generated the
+file if the bounding box is indeed incorrect.  An adjusted boundingbox
+can be specified in the '\includegraphics' call, as in this example
+(using 'graphicx'):
 
      \includegraphics[bb=10 20 100 200]{imagename.eps}
 
@@ -729,11 +725,11 @@ File: dvipng.info,  Node: Bitmapped graphics,  Next: Raw PostScript,  Prev: Enca
 5.2 Bitmapped graphics
 ======================
 
-dvipng can include PNG, JPEG and GIF graphics. When including such
-images via `\includegraphics' you need to specify the bounding box
-since TeX itself cannot read them from the files in question.  The
-bounding box size should be given as `0 0 w h' in pixels, e.g., if the
-file `imagename.png' is 300x400 pixels, the inclusion would read
+dvipng can include PNG, JPEG and GIF graphics.  When including such
+images via '\includegraphics' you need to specify the bounding box since
+TeX itself cannot read them from the files in question.  The bounding
+box size should be given as '0 0 w h' in pixels, e.g., if the file
+'imagename.png' is 300x400 pixels, the inclusion would read
 
      \includegraphics[bb=0 0 300 400]{imagename.png}
 
@@ -743,10 +739,10 @@ That is, default resolution will be 72 dpi for included bitmaps, which
 is the default size in the few other bitmap-capable drivers that are
 known to me (dvipdfm and PDFLaTeX).
 
-   If you want 100 dpi you need to specify the width accordingly. You
+   If you want 100 dpi you need to specify the width accordingly.  You
 just divide your image width by 100: a 135 pixel wide image at 100 dpi
-will take up 1.35 inches. If you want 200 dpi you divide by 200, and so
-on. Simple, eh? The example above at 200 dpi would be 1.5 inches wide:
+will take up 1.35 inches.  If you want 200 dpi you divide by 200, and so
+on.  Simple, eh?  The example above at 200 dpi would be 1.5 inches wide:
 
      \includegraphics[bb=0 0 300 400,witdh=1.5in]{imagename.png}
 
@@ -756,40 +752,40 @@ File: dvipng.info,  Node: Raw PostScript,  Prev: Bitmapped graphics,  Up: Graphi
 5.3 Raw PostScript
 ==================
 
-dvipng attempts to handle raw PostScript. Rendering raw PostScript
+dvipng attempts to handle raw PostScript.  Rendering raw PostScript
 specials is done on top of the page by including a transparent image
-generated by the `pngalpha' device in GhostScript (automatically
-selecting `truecolor' mode in dvipng).
+generated by the 'pngalpha' device in GhostScript (automatically
+selecting 'truecolor' mode in dvipng).
 
    Included PostScript headers are respected, and if the header
-`tex.pro' is included, dvipng also throws in `color.pro' and
-`special.pro'. The package `xcolor' includes its own headers with color
+'tex.pro' is included, dvipng also throws in 'color.pro' and
+'special.pro'.  The package 'xcolor' includes its own headers with color
 names, and this is not only kept as a PostScript header, but is also
-read and interpreted by dvipng itself. An attempt is also made to
-respect the PGF header. The non-rendering specials from `hyperref' are
+read and interpreted by dvipng itself.  An attempt is also made to
+respect the PGF header.  The non-rendering specials from 'hyperref' are
 handled via some heuristics and do not give an error.
 
    Really rendering and moving things with raw PostScript specials is
-more troublesome. The \rotatebox macro serves as a good example. The
+more troublesome.  The \rotatebox macro serves as a good example.  The
 dvips driver of the graphicx package surrounds DVI glyphs with
 PostScript code so that after conversion by dvips, the glyphs (now
-themselves in PostScript) will be rotated in the desired way. dvipng
-does not handle this, at present. An attempt has been made to handle
-the rendering specials output by PGF (tikz), and also PSTricks. Some
+themselves in PostScript) will be rotated in the desired way.  dvipng
+does not handle this, at present.  An attempt has been made to handle
+the rendering specials output by PGF (tikz), and also PSTricks.  Some
 things work, but others do not.  This is especially clear when mixing
-PostScript and DVI rendering commands such as glyphs. dvipng cannot at
-present detect if PostScript code moves `currentpoint' or rotates the
-frame since GhostScript does not return such information. A
+PostScript and DVI rendering commands such as glyphs.  dvipng cannot at
+present detect if PostScript code moves 'currentpoint' or rotates the
+frame since GhostScript does not return such information.  A
 recommendation would be to produce images from these packages as EPS
 files and include them into your document in the standard manner.
 
    Another way to handle this would be to use a slower fallback (with
-dvips and gs, for example). If you want to disable raw PostScript
-handling in dvipng, use the switch `--norawps'.  This switch turns off
+dvips and gs, for example).  If you want to disable raw PostScript
+handling in dvipng, use the switch '--norawps'.  This switch turns off
 the internal call to GhostScript intended to display these raw
-PostScript specials. Further, when dvipng encounters raw PostScript and
-the gs call is turned off, it gives a warning. It is now possible to
-use the switch `--picky' to disable page rendering of pages with
+PostScript specials.  Further, when dvipng encounters raw PostScript and
+the gs call is turned off, it gives a warning.  It is now possible to
+use the switch '--picky' to disable page rendering of pages with
 warnings, and use the slower fallback for these pages.
 
 
@@ -799,8 +795,8 @@ File: dvipng.info,  Node: Color,  Next: Diagnosing problems,  Prev: Graphics,  U
 *******
 
 To support color, dvipng recognizes a certain set of specials as
-generated by the `color' and `xcolor' style files. These specials start
-with the keyword `color' or the keyword `background', followed by a
+generated by the 'color' and 'xcolor' style files.  These specials start
+with the keyword 'color' or the keyword 'background', followed by a
 color specification.
 
 * Menu:
@@ -814,23 +810,23 @@ File: dvipng.info,  Node: Color specifications,  Next: Color specials,  Up: Colo
 6.1 Color specifications
 ========================
 
-The color specification supported by dvipng is by-value or by-name. The
-by-value spec starts with the name of a color model (one of `rgb',
-`hsb', `cmy', `cmyk', or `gray') followed by the appropriate number of
-parameters. Thus, the color specification `rgb 0.3 0.4 0.5' would
-correspond to the color that is `0.3 0.4 0.5' in its red, blue and
-green values. The color model used internally in dvipng is `RGB'
-(discretized to 256 levels), for details on the formulas used in
-conversion, see the `xcolor' documentation.
+The color specification supported by dvipng is by-value or by-name.  The
+by-value spec starts with the name of a color model (one of 'rgb',
+'hsb', 'cmy', 'cmyk', or 'gray') followed by the appropriate number of
+parameters.  Thus, the color specification 'rgb 0.3 0.4 0.5' would
+correspond to the color that is '0.3 0.4 0.5' in its red, blue and green
+values.  The color model used internally in dvipng is 'RGB' (discretized
+to 256 levels), for details on the formulas used in conversion, see the
+'xcolor' documentation.
 
    By-name color specifications are single (case-dependent) words and
-are compared with color names defined in `dvipsnam.def' (from the
-`graphics' bundle), `svgnam.def' and `xcolor.sty' (from the `xcolor'
-bundle). See the `xcolor' documentation for a list of names and the
+are compared with color names defined in 'dvipsnam.def' (from the
+'graphics' bundle), 'svgnam.def' and 'xcolor.sty' (from the 'xcolor'
+bundle).  See the 'xcolor' documentation for a list of names and the
 corresponding colors.
 
-   On the command-line, the name `Transparent' can also be used as an
-argument to `--bg' to choose transparent background.  *Note Option
+   On the command-line, the name 'Transparent' can also be used as an
+argument to '--bg' to choose transparent background.  *Note Option
 details::.
 
 
@@ -839,28 +835,27 @@ File: dvipng.info,  Node: Color specials,  Prev: Color specifications,  Up: Colo
 6.2 Color specials
 ==================
 
-We will describe `background' first, since it is the simplest. The
-`background' keyword must be followed by a color specification.  That
-color specification is used as a fill color for the background. The
-last `background' special on a page is the one that gets used, and is
-used for the whole of the page image. (This is possible because the
+We will describe 'background' first, since it is the simplest.  The
+'background' keyword must be followed by a color specification.  That
+color specification is used as a fill color for the background.  The
+last 'background' special on a page is the one that gets used, and is
+used for the whole of the page image.  (This is possible because the
 prescan phase of dvipng notices all of the color specials so that the
 appropriate information can be written out during the second phase.)
 
-   The `color' special itself has three forms. The first is just
-`color' followed by a color specification. In this case, the current
+   The 'color' special itself has three forms.  The first is just
+'color' followed by a color specification.  In this case, the current
 global color is set to that color; the color stack must be empty when
 such a command is executed.
 
-   The second form is `color push' followed by a color specification.
+   The second form is 'color push' followed by a color specification.
 This saves the current color on the color stack and sets the color to be
 that given by the color specification.  This is the most common way to
 set a color.
 
-   The final form of the `color' special is just `color pop', with no
-color specification; this says to pop the color last pushed on the
-color stack from the color stack and set the current color to be that
-color.
+   The final form of the 'color' special is just 'color pop', with no
+color specification; this says to pop the color last pushed on the color
+stack from the color stack and set the current color to be that color.
 
    dvipng correctly handles these color specials across pages, even when
 the pages are rendered repeatedly or in reverse order.
@@ -873,7 +868,7 @@ File: dvipng.info,  Node: Diagnosing problems,  Next: Credits,  Prev: Color,  Up
 
 You've gone through all the trouble of installing dvipng, carefully read
 all the instructions in this manual, and still can't get something to
-work. The following sections provide some helpful hints if you find
+work.  The following sections provide some helpful hints if you find
 yourself in such a situation.
 
 * Menu:
@@ -890,16 +885,16 @@ File: dvipng.info,  Node: Contact information,  Next: Debug options,  Up: Diagno
 Bug reports should be sent to <dvipng@nongnu.org>.
 
    Questions, suggestions for new features, pleas for help, and/or
-praise should go to <dvipng@nongnu.org>. For more information on this
-mailing list, send a message with just the word `help' as subject or
+praise should go to <dvipng@nongnu.org>.  For more information on this
+mailing list, send a message with just the word 'help' as subject or
 body to <dvipng-request@nongnu.org> or look at
-`http://lists.nongnu.org/mailman/listinfo/dvipng'.
+<http://lists.nongnu.org/mailman/listinfo/dvipng>.
 
-   Offers to support further development will be appreciated. For
+   Offers to support further development will be appreciated.  For
 developer access, ask on <dvipng@nongnu.org>.
 
-   For details on the TeX path-searching library, and `mktexpk'
-problems, *note Common problems: (kpathsea)Common problems.
+   For details on the TeX path-searching library, and 'mktexpk'
+problems, *note (kpathsea)Common problems::.
 
 
 File: dvipng.info,  Node: Debug options,  Prev: Contact information,  Up: Diagnosing problems
@@ -907,56 +902,43 @@ File: dvipng.info,  Node: Debug options,  Prev: Contact information,  Up: Diagno
 7.2 Debug options
 =================
 
-The `-d' flag to dvipng helps in tracking down certain errors.  The
+The '-d' flag to dvipng helps in tracking down certain errors.  The
 parameter to this flag is an integer that tells what errors are
 currently being tracked.  To track a certain class of debug messages,
 simply provide the appropriate number given below; if you wish to track
 multiple classes, sum the numbers of the classes you wish to track.  To
-track all classes, you can use `-1'.
+track all classes, you can use '-1'.
 
    Some of these debugging options are actually provided by Kpathsea
-(*note Debugging: (kpathsea)Debugging.).
+(*note (kpathsea)Debugging::).
 
    The classes are:
 1
      Normal dvi op-codes
-
 2
      Virtual fonts
-
 4
      PK fonts
-
 8
      TFM files
-
 16
      Glyph rendering
-
 32
      FreeType calls
-
 64
      Encoding loads
-
 128
      Color specials
-
 256
      GhostScript specials
-
 512
-     Kpathsea `stat' calls
-
+     Kpathsea 'stat' calls
 1024
      Kpathsea hash table lookups
-
 2048
      Kpathsea path element expansion
-
 4096
      Kpathsea path searches
-
 
 
 File: dvipng.info,  Node: Credits,  Next: Copying,  Prev: Diagnosing problems,  Up: Top
@@ -965,10 +947,10 @@ File: dvipng.info,  Node: Credits,  Next: Copying,  Prev: Diagnosing problems,  
 *********
 
 A number of persons have contributed, if I forget to mention someone, I
-apologize. First and foremost we have David Kastrup whose preview-latex
+apologize.  First and foremost we have David Kastrup whose preview-latex
 project provided the incentive to write this program.  There is also a
 number of people who have contributed by reporting bugs and suggesting
-improvements as the thing has evolved. These include but is perhaps not
+improvements as the thing has evolved.  These include but is perhaps not
 limited to (in semi-random order): Thomas Esser (teTeX), Christian
 Schenk (MIKTeX), Brian R Furry (debian package), Angus Leeming (LyX),
 Thomas Boutell (libgd), John Jones (first user report), Uwe Kern
@@ -988,9 +970,9 @@ File: dvipng.info,  Node: Copying,  Next: Index,  Prev: Credits,  Up: Top
 *********
 
 This program is free software: you can redistribute it and/or modify it
-under the terms of the GNU Lesser General Public License as published
-by the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at
+your option) any later version.
 
    This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -998,7 +980,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
 General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-License along with this program. If not, see
+License along with this program.  If not, see
 <http://www.gnu.org/licenses/>.
 
 
@@ -1011,108 +993,109 @@ File: dvipng.info,  Node: Index,  Prev: Copying,  Up: Top
 Index
 *****
 
-
+ [index ]
 * Menu:
 
-* -dSAFER:                               Option details.      (line 168)
-* absolute page number, and -l:          Option details.      (line 142)
-* absolute page number, and -p:          Option details.      (line 195)
-* antialiasing levels, number of:        Option details.      (line 248)
-* background color (option):             Option details.      (line  42)
-* base resolution, setting:              Option details.      (line  35)
-* baseline reporting:                    Option details.      (line  78)
+* -dSAFER:                               Option details.      (line 167)
+* absolute page number, and '-l':        Option details.      (line 141)
+* absolute page number, and '-p':        Option details.      (line 194)
+* antialiasing levels, number of:        Option details.      (line 247)
+* background color (option):             Option details.      (line  40)
+* base resolution, setting:              Option details.      (line  33)
+* baseline reporting:                    Option details.      (line  76)
+* baseline reporting <1>:                Option details.      (line 133)
 * color specifications:                  Color specifications.
                                                               (line   6)
 * command-line options:                  Command-line options.
                                                               (line   6)
 * compilation:                           Installation.        (line   6)
-* compression:                           Option details.      (line 300)
+* compression:                           Option details.      (line 299)
 * configuration, of dvipng:              Installation.        (line   6)
-* dark fonts:                            Option details.      (line 121)
+* dark fonts:                            Option details.      (line 120)
+* debugging:                             Option details.      (line  54)
 * debugging <1>:                         Diagnosing problems. (line   6)
-* debugging:                             Option details.      (line  56)
-* depth reporting:                       Option details.      (line  78)
-* exit on erroneous images:              Option details.      (line 259)
-* first page printed:                    Option details.      (line 195)
-* follow mode:                           Option details.      (line  99)
-* font generation, avoiding:             Option details.      (line 160)
-* forcing palette output:                Option details.      (line 204)
-* foreground color (option):             Option details.      (line  93)
-* FreeType font rendering:               Option details.      (line 107)
-* fuzzy images:                          Option details.      (line 121)
-* gamma:                                 Option details.      (line 121)
-* GhostScript and -dSAFER:               Option details.      (line 168)
-* GhostScript, turning off:              Option details.      (line 164)
-* GIF image format:                      Option details.      (line 127)
-* height reporting:                      Option details.      (line 134)
+* depth reporting:                       Option details.      (line  76)
+* exit on erroneous images:              Option details.      (line 258)
+* first page printed:                    Option details.      (line 194)
+* follow mode:                           Option details.      (line  97)
+* font generation, avoiding:             Option details.      (line 159)
+* forcing palette output:                Option details.      (line 203)
+* foreground color (option):             Option details.      (line  91)
+* FreeType font rendering:               Option details.      (line 105)
+* fuzzy images:                          Option details.      (line 120)
+* gamma:                                 Option details.      (line 120)
+* GhostScript and -dSAFER:               Option details.      (line 167)
+* GhostScript, turning off:              Option details.      (line 163)
+* GIF image format:                      Option details.      (line 126)
+* height reporting:                      Option details.      (line 133)
 * installation, of dvipng:               Installation.        (line   6)
 * invoking dvipng:                       Basic usage.         (line   6)
-* last page printed:                     Option details.      (line 142)
-* light fonts:                           Option details.      (line 121)
-* magnification, overriding DVI:         Option details.      (line 290)
-* Metafont mode, specifying:             Option details.      (line 151)
-* mktexpk, avoiding:                     Option details.      (line 160)
-* mode name, specifying:                 Option details.      (line 151)
-* no erroneous images:                   Option details.      (line 213)
-* offset pages:                          Option details.      (line 189)
+* last page printed:                     Option details.      (line 141)
+* light fonts:                           Option details.      (line 120)
+* magnification, overriding DVI:         Option details.      (line 289)
+* Metafont mode, specifying:             Option details.      (line 150)
+* mktexpk, avoiding:                     Option details.      (line 159)
+* mode name, specifying:                 Option details.      (line 150)
+* no erroneous images:                   Option details.      (line 212)
+* offset pages:                          Option details.      (line 188)
 * option, details of:                    Option details.      (line   6)
 * options, dvipng:                       Command-line options.
                                                               (line   6)
 * options, reading from standard input:  Option details.      (line  11)
 * options, summary:                      Option summary.      (line   6)
-* output resolution, setting:            Option details.      (line  62)
-* output, redirecting:                   Option details.      (line 182)
-* page range:                            Option details.      (line 226)
-* page, first printed:                   Option details.      (line 195)
-* page, last printed:                    Option details.      (line 142)
-* physical page number, and -l:          Option details.      (line 142)
-* physical page number, and -p:          Option details.      (line 195)
-* PNG image format:                      Option details.      (line 222)
+* output resolution, setting:            Option details.      (line  60)
+* output, redirecting:                   Option details.      (line 181)
+* page range:                            Option details.      (line 225)
+* page, first printed:                   Option details.      (line 194)
+* page, last printed:                    Option details.      (line 141)
+* physical page number, and '-l':        Option details.      (line 141)
+* physical page number, and '-p':        Option details.      (line 194)
+* PNG image format:                      Option details.      (line 221)
 * PostScript inclusion problems:         Encapsulated PostScript.
                                                               (line  21)
 * PostScript, turning off raw PostScript specials: Option details.
-                                                              (line 176)
+                                                              (line 175)
 * problems:                              Diagnosing problems. (line   6)
-* quality:                               Option details.      (line 248)
-* quiet operation:                       Option details.      (line 244)
-* reverse pagination:                    Option details.      (line 255)
-* silent operation:                      Option details.      (line 244)
+* quality:                               Option details.      (line 247)
+* quiet operation:                       Option details.      (line 243)
+* reverse pagination:                    Option details.      (line 254)
+* silent operation:                      Option details.      (line 243)
 * standard input, reading options from:  Option details.      (line  11)
-* standard output, output to:            Option details.      (line 182)
-* transparent border fallback color:     Option details.      (line  25)
-* transparent border width:              Option details.      (line  25)
+* standard output, output to:            Option details.      (line 181)
+* transparent border fallback color:     Option details.      (line  23)
+* transparent border width:              Option details.      (line  23)
 * trouble:                               Diagnosing problems. (line   6)
-* truecolor output:                      Option details.      (line 276)
-* warnings, suppressing:                 Option details.      (line 244)
-* width reporting:                       Option details.      (line 287)
+* truecolor output:                      Option details.      (line 275)
+* warnings, suppressing:                 Option details.      (line 243)
+* width reporting:                       Option details.      (line 286)
 
 
 
 Tag Table:
 Node: Top296
 Node: Introduction1191
-Node: Installation3430
-Node: Prerequisites3777
-Node: Configure5810
-Node: Build/install7849
-Node: Installation outside the texmf tree8317
-Node: Advice for non-privileged users9024
-Node: Basic usage10032
-Node: Command-line options11195
-Node: Option summary11619
-Node: Option details13987
-Node: Graphics29116
-Node: Encapsulated PostScript29868
-Node: Bitmapped graphics31211
-Node: Raw PostScript32434
-Node: Color34673
-Node: Color specifications35061
-Node: Color specials36160
-Node: Diagnosing problems37572
-Node: Contact information38055
-Node: Debug options38796
-Node: Credits39808
-Node: Copying41031
-Node: Index41817
+Node: Installation3436
+Node: Prerequisites3783
+Node: Configure5822
+Node: Build/install7869
+Node: Installation outside the texmf tree8337
+Node: Advice for non-privileged users9047
+Node: Basic usage10058
+Node: Command-line options11202
+Node: Option summary11625
+Node: Option details13993
+Node: Graphics29167
+Node: Encapsulated PostScript29922
+Node: Bitmapped graphics31272
+Node: Raw PostScript32500
+Node: Color34753
+Node: Color specifications35142
+Node: Color specials36245
+Node: Diagnosing problems37662
+Node: Contact information38146
+Node: Debug options38874
+Node: Credits39863
+Node: Copying41088
+Node: Index41875
 
 End Tag Table

@@ -1,3 +1,9 @@
+2020-01-16  Karl Berry  <karl@freefriends.org>
+
+	* afm2tfm.c,
+	* dvips.c,
+	* configure.ac: version 2020.1 and copyright 2020.
+
 2020-01-12  Akira Kakuto  <kakuto@w32tex.org>
 
 	* bitmapenc.c, download.c: Support old compilers, by declaring

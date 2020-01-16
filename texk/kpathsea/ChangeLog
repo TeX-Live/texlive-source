@@ -1,3 +1,8 @@
+2020-01-16  Karl Berry  <karl@freefriends.org>
+
+	* doc/kpathsea.texi,
+	* version.ac (kpse_dev): no /dev.
+
 2019-12-31  Akira Kakuto  <kakuto@w32tex.org>
 
 	* access.c: not test x bit on Windows, because access() crashes.

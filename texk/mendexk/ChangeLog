@@ -1,3 +1,9 @@
+2020-01-16  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac,
+	* COPYRIGHT,
+	* main.c (VERSION): version 3.2 16-Jan-2020 for TL'20.
+
 2019-03-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* mendex.ja.txt: Rename from mendex.doc

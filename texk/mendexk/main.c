@@ -19,7 +19,7 @@ char *styfile,*idxfile[256],*indfile,*dicfile,*logfile;
 #endif
 KpathseaSupportInfo kp_ist,kp_dict;
 
-#define VERSION "version 3.1 [17-Feb-2019]"
+#define VERSION "version 3.2 [16-Jan-2020]"
 
 int main(int argc, char **argv)
 {
@@ -189,7 +189,7 @@ int main(int argc, char **argv)
 
 			default:
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);
-				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2017-2019 Japanese TeX Development Community\n");
+				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2017-2020 Japanese TeX Development Community\n");
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% mendex [-ilqrcgfEJS"
 #ifdef WIN32

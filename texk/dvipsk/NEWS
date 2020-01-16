@@ -1,6 +1,10 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
+dvips 2020.1 (TeX Live 2020):
+  Encodings for bitmap fonts.
+  https://tug.org/TUGboat/tb40-2/tb125rokicki-type3search.pdf
+  
 dvips 5.999 (TeX Live 2019):
   Buffer overflows.
 
