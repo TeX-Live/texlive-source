@@ -1,3 +1,240 @@
+commit fe3aaeb627833abb5a7685781d75bc8b4d0c967e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 14 14:14:11 2020 -0700
+
+    Replace object with iframe in WebGL usage comment.
+
+commit ecc6df99d5d549399deea418a85b575f4382fc96
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 12 22:23:08 2020 -0700
+
+    Update asygl.
+
+commit 339ae281829782c08d0770457f3cb178660b50eb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 12 22:13:49 2020 -0700
+
+    Disable zooming of embedded WebGL images until activated with a click or touch event, using ESC to cancel activation.
+
+commit 83f6f46dd747a7f5ffb70724c96e4df8c7baf422
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 12 18:14:58 2020 -0700
+
+    Fix various HTML warnings.
+
+commit 63e57e22672ef485fafbe6cb207e03a4d4d30e66
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 12 16:48:53 2020 -0700
+
+    Use relative paths in asymptote.pdf images.
+
+commit 79296236068897d39e112d12eaf98ecaaaebecbc
+Merge: b3b0d915 2898b83f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 12 16:42:21 2020 -0700
+
+    Merge pull request #126 from ivankokan/master
+    
+    WIP: Hyperbola by foci passing through a point
+
+commit b3b0d915aca4f6ceb3e398904e06882d06c8bc1b
+Author: Lemures Lemniscati <lemures.lemniscati@gmail.com>
+Date:   Mon Jan 13 08:03:07 2020 +0900
+
+    Eliminate one more magic offset -37.01pt (related to #123). (#132)
+
+commit cbce9f0777e6c14da2e2aebd02a4a4503ebb0f7b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 12 14:51:29 2020 -0700
+
+    Add end-of-line comments.
+
+commit da4cf743b5803ccc09227d543358ef561268c242
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 12 14:41:27 2020 -0700
+
+    Remove import of obsolete grffile package.
+
+commit c96a7612a3c3d6c2fec92c0232af721abdf9578d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 11 22:56:23 2020 -0700
+
+    Update asygl.
+
+commit 1c0db1574a4b4c45f762e500e2d6b5e8b9c0e17c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 11 22:54:10 2020 -0700
+
+    Avoid WebGL polling.
+
+commit 4fe02ea82ec6054f89bd901404d9eba533c8d392
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 11 14:49:06 2020 -0700
+
+    Update asygl.
+
+commit 12b212ec97a5ef9fa84157723481ac165cfcaaf1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 11 14:48:27 2020 -0700
+
+    Store webgl context in top rather than parent window.
+
+commit 648fa0336acc70b753bdf61a30588b6aa859a949
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 10 23:13:37 2020 -0700
+
+    Update asygl.
+
+commit b206e1bea6bf4b59c480fd0f3f705db4301578a3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 10 23:10:25 2020 -0700
+
+    Populate canvas style with design width and height.
+
+commit 685b9eae1f418757d78d53d3e3408acbb64d14e8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 8 19:54:08 2020 -0700
+
+    Fix typo in documentation.
+
+commit b35aa3a56960f9eb6bbecab2e4b325ee02d3b160
+Merge: 374823eb 8cfac4d9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 5 09:49:20 2020 -0700
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote.
+
+commit 374823ebedec9a0019e32a20110980650d28a39e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 5 09:49:03 2020 -0700
+
+    Fix documentation of surface tube.
+
+commit 8cfac4d98c45505e59794c24e03c9192010616cd
+Author: Lemures Lemniscati <lemures.lemniscati@gmail.com>
+Date:   Mon Dec 9 14:48:45 2019 +0900
+
+    Fix issue #123 (#131)
+    
+    * Revert "Workaround lualatex bug #123."
+    
+    This reverts commit 41fbc67260971ebd5ab817ac902944d96462f543.
+    Not a lualatex bug, but a wrong assumption in asymptote that
+    \parindent were always 17.61pt.
+    
+    * Fix offset settings where texengine is latex and pdf #123.
+
+commit ff4b7ed15b7e5a04f2e5d669a5cdde839dc43e97
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Dec 8 22:34:52 2019 -0700
+
+    Add diagnostic to rationalSimplex.
+
+commit 5a15f56a587a9b725c0ad6531598260788ca4677
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 30 13:32:29 2019 -0700
+
+    Fix Bland's rule in iterateDual.
+
+commit 51b71e20deb597100963be8ae720124091c9cb99
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Nov 27 09:31:19 2019 -0700
+
+    Remove superfluous semi-colons.
+
+commit d4b3051e0a1afc421723539272bba61df1a8b69f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 26 07:57:25 2019 -0700
+
+    Suppress redundant shipout in example.
+
+commit 9ea04c5be89ed5d805a21fc0f613cfa04e778b11
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 26 07:55:43 2019 -0700
+
+    Remove non-ASCII characters from geometry.asy.
+
+commit 80bc74cbc63f3d98bd15535d451a04cdca41e811
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 25 19:01:36 2019 -0700
+
+    Prevent asy from hanging on texpreamble errors.
+
+commit ddf49a3ed614644573673fcf44afa5c1c35279cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 25 16:27:08 2019 -0700
+
+    Avoid duplicate intersections: don't increase intersection fuzz with depth.
+
+commit 14c455c0dd519bc55e3f51bbe6d2e7288b8e48f9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 25 11:55:30 2019 -0700
+
+    Fix typo in documentation.
+
+commit 2898b83f6e50ed08557e130154e087523d97beff
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Mon Nov 25 18:12:53 2019 +0100
+
+    Angles considering special cases
+
+commit b5455dd04d4a8b71973e03fa973832b5893b689c
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Mon Nov 25 17:16:13 2019 +0100
+
+    Remove unnecessary code
+
+commit a0aee9784264c7f22de6ac01648de2293de5aec2
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Mon Nov 25 16:50:11 2019 +0100
+
+    Reorder/align some statements
+
+commit 41fbc67260971ebd5ab817ac902944d96462f543
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 24 11:41:56 2019 -0700
+
+    Workaround lualatex bug #123.
+
+commit ec3c7f09772ebc78880f7a08740e7009e57d20b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 23 00:26:50 2019 -0700
+
+    Fix diagnostic.
+
+commit 7fbf7c5b0635c6dacaa856901f1c349b95a6c966
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 23 00:15:20 2019 -0700
+
+    Fix example.
+
+commit 0f3c966c8b3f905e64c70e005c81679a61289314
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Fri Nov 22 14:53:19 2019 +0100
+
+    hyperbola by foci passing through a point
+
+commit 1f6ccfc849a2f920007b270a7cc3c2d4e3a93203
+Merge: b050a1b4 1fca842e
+Author: Ivan Kokan <ivan.kokan@gmail.com>
+Date:   Fri Nov 22 14:15:24 2019 +0100
+
+    Merge pull request #1 from vectorgraphics/master
+    
+    Sync
+
+commit 1fca842ea05a0a26afd7df011e2cf6e1d6f70994
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 17 23:43:12 2019 -0700
+
+    Update example.
+
+commit 9160692eeafe63b7a73aad62917aec6aa4acd26f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 17 23:30:30 2019 -0700
+
+    Increment version to 2.62.
+
 commit 908e69dbbd1912344cea79f08c1eb0e67e5519f9
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Nov 17 22:26:50 2019 -0700
@@ -3863,11 +4100,23 @@ Date:   Fri Jan 4 12:37:38 2019 -0700
 
     Reinstate sorting of transparent triangles.
 
+commit b050a1b46b5c01706465c6fe942aad133499c01d
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Fri Jan 4 16:55:08 2019 +0100
+
+    Routines are shifted, hence ordinary numbers are changed + missing keyword explicit
+
 commit eb8fe25a71efa3ec8cba807bfd1d30078bdc85c1
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jan 4 08:44:26 2019 -0700
 
     Update documentation.
+
+commit 68f88a9036b87296918f138a5294d32632f31609
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Fri Jan 4 16:27:57 2019 +0100
+
+    Updated docs with missing void dot(...)
 
 commit 28bfc3a3b786de71c0e93069f0d2f3c18d2e7324
 Author: John Bowman <bowman@ualberta.ca>
@@ -6882,6 +7131,12 @@ Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Sep 25 17:14:37 2017 -0600
 
     Implement int popcount(int) and use it to build a 64-bit int CTZ(int).
+
+commit bfc45f91a1f31ad9b9ec35cbdd38614021fe3cf4
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Mon Sep 25 00:20:40 2017 +0200
+
+    dot: global setting dotfilltype introduced (preserving current behavior), docs updated
 
 commit 66fc685efa9a161b70e67c9f319d9030b2d2eea9
 Author: John Bowman <bowman@ualberta.ca>

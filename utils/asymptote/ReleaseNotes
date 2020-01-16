@@ -1,3 +1,17 @@
+Release Notes for Version 2.62
+
+A hyperbola(point F1, point F2, point M) function was added to the
+geometry module. Duplicate intersections are avoided. Errors in the
+texpreamble are handled gracefully, without hanging. Unwanted
+indentation under LuaLaTex was removed. The WebGL canvas is populated
+with the design width and height. The WebGL context is stored in the top
+rather than parent window. To avoid polling, WebGL images now draw directly.
+Zooming of embedded WebGL images is disabled until activated with a
+click or touch event, using ESC to cancel activation. WebGL usage
+comments now suggest embedding as an iframe rather than an object.
+The obsolete grffile package is no longer used. Typos in the documentation
+were fixed.
+
 Release Notes for Version 2.61
 
 Bugs in the OpenGL driver were fixed. A work around for the WebGL singleton

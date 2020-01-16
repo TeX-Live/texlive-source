@@ -88,7 +88,6 @@ let materialBuffer;
 let colorBuffer;
 let indexBuffer;
 
-let redraw=true;
 let remesh=true;
 let mouseDownOrTouchActive=false;
 let lastMouseX=null;
@@ -171,7 +170,7 @@ function noGL() {
 
 function saveAttributes()
 {
-  let a=window.parent.document.asygl[alpha];
+  let a=window.top.document.asygl[alpha];
 
   a.gl=gl;
   a.nlights=Lights.length;
@@ -187,7 +186,7 @@ function saveAttributes()
 
 function restoreAttributes()
 {
-  let a=window.parent.document.asygl[alpha];
+  let a=window.top.document.asygl[alpha];
 
   gl=a.gl;
   nlights=a.nlights;
@@ -208,7 +207,7 @@ function initGL()
   alpha=Background[3] < 1;
 
   if(embedded) {
-    let p=window.parent.document;
+    let p=window.top.document;
 
     if(p.asygl == null)
       p.asygl=Array(2);
@@ -1501,7 +1500,7 @@ function home()
   initProjection();
   setProjection();
   remesh=true;
-  redraw=true;
+  draw();
 }
 
 let positionAttribute=0;
@@ -1676,6 +1675,8 @@ function setUniforms(data,shader)
 
 function handleMouseDown(event)
 {
+  if(!zoomEnabled)
+    enableZoom();
   mouseDownOrTouchActive=true;
   lastMouseX=event.clientX;
   lastMouseY=event.clientY;
@@ -1697,6 +1698,8 @@ let touchStartTime;
 function handleTouchStart(event)
 {
   event.preventDefault();
+  if(!zoomEnabled)
+    enableZoom();
   let touches=event.targetTouches;
   swipe=rotate=pinch=false;
   if(zooming) return;
@@ -1849,13 +1852,38 @@ function processDrag(newX,newY,mode,factor=1)
   lastMouseY=newY;
 
   setProjection();
-  redraw=true;
+  draw();
+}
+
+let zoomEnabled=0;
+
+function enableZoom()
+{
+  zoomEnabled=1;
+  canvas.addEventListener("wheel",handleMouseWheel,false);
+}
+
+function disableZoom()
+{
+  zoomEnabled=0;
+  canvas.removeEventListener("wheel",handleMouseWheel,false);
 }
 
 function handleKey(event)
 {
+  let ESC=27;
+
+  if(!zoomEnabled)
+    enableZoom();
+
+  if(embedded && zoomEnabled && event.keyCode == ESC) {
+    disableZoom();
+    return;
+  }
+
   let keycode=event.key;
   let axis=[];
+
   switch(keycode) {
   case 'x':
     axis=[1,0,0];
@@ -1886,7 +1914,7 @@ function handleKey(event)
   if(axis.length > 0) {
     mat4.rotate(rotMat,rotMat,0.1,axis);
     updateViewMatrix();
-    redraw=true;
+    draw();
   }
 }
 
@@ -1902,7 +1930,7 @@ function handleMouseWheel(event)
   capzoom();
   setProjection();
 
-  redraw=true;
+  draw();
 }
 
 function handleMouseMove(event)
@@ -1974,7 +2002,7 @@ function handleTouchMove(event)
     pinchStart=distance;
     swipe=rotate=zooming=false;
     setProjection();
-    redraw=true;
+    draw();
   }
 }
 
@@ -2097,15 +2125,6 @@ function draw()
   remesh=false;
 }
 
-function tick()
-{
-  requestAnimationFrame(tick);
-  if(redraw) {
-    draw();
-    redraw=false;
-  }
-}
-
 function setDimensions(width,height,X,Y)
 {
   let Aspect=width/height;
@@ -2224,7 +2243,7 @@ let pixelShader,noNormalShader,materialShader,colorShader,transparentShader;
 function webGLStart()
 {
   canvas=document.getElementById("Asymptote");
-  embedded=window.parent.document != document;
+  embedded=window.top.document != document;
 
   initGL();
 
@@ -2232,11 +2251,8 @@ function webGLStart()
     canvasWidth *= window.devicePixelRatio;
     canvasHeight *= window.devicePixelRatio;
   } else {
-    if(canvas.width == 0) 
-      canvas.width=Math.max(window.innerWidth-windowTrim,windowTrim);
-
-    if(canvas.height == 0) 
-      canvas.height=Math.max(window.innerHeight-windowTrim,windowTrim);
+    canvas.width=Math.max(window.innerWidth-windowTrim,windowTrim);
+    canvas.height=Math.max(window.innerHeight-windowTrim,windowTrim);
 
     let Aspect=canvasWidth/canvasHeight;
     if(canvas.width > canvas.height*Aspect) 
@@ -2271,13 +2287,12 @@ function webGLStart()
   document.onmousemove=handleMouseMove;
   canvas.onkeydown=handleKey;
 
-  canvas.addEventListener("wheel",handleMouseWheel,false);
+  if(!embedded)
+    enableZoom();
   canvas.addEventListener("touchstart",handleTouchStart,false);
   canvas.addEventListener("touchend",handleMouseUpOrTouchEnd,false);
   canvas.addEventListener("touchcancel",handleMouseUpOrTouchEnd,false);
   canvas.addEventListener("touchleave",handleMouseUpOrTouchEnd,false);
   canvas.addEventListener("touchmove",handleTouchMove,false);
   document.addEventListener("keydown",handleKey,false);
-
-  tick();
 }
