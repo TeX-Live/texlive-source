@@ -138,6 +138,10 @@ texfot/texfot.pl
 texlive/fmtutil-sys.sh
 texlive/fmtutil-user.sh
 texlive/fmtutil.pl
+texlive/mktexlsr
+texlive/mktexmf
+texlive/mktexpk
+texlive/mktextfm
 texlive/rungs.tlu
 texlive/tlmgr.pl
 texlive/updmap-sys.sh
@@ -145,6 +149,7 @@ texlive/updmap-user.sh
 texlive/updmap.pl
 texliveonfly/texliveonfly.py
 texloganalyser/texloganalyser
+texplate/texplate.sh
 thumbpdf/thumbpdf.pl
 tlcockpit/tlcockpit.sh
 tlshell/tlshell.tcl

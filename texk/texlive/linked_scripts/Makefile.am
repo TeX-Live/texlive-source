@@ -206,6 +206,7 @@ texmf_other_scripts = \
 	texlive/updmap.pl \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
+	texplate/texplate.sh \
 	thumbpdf/thumbpdf.pl \
 	tlcockpit/tlcockpit.sh \
 	tlshell/tlshell.tcl \
