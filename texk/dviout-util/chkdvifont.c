@@ -226,6 +226,7 @@ struct FONT_ATR font;
 struct VFFONT_ATR vffont;
 
 int f_v = -1;   /* verbose mode */
+int f_vv = 0;   /* more verbose mode */
 int f_d;        /* ignore default data */
 int f_t;        /* file_type */
 int n_data;     /* number of font_data */
@@ -301,6 +302,9 @@ int main(int argc, char **argv)
           case 'c':
               f_v = 1;
               break;
+          case 'v':
+              f_vv = 1;
+              break;
           case 'F':
               f_d = 1;
           case 'f':
@@ -316,7 +320,8 @@ int main(int argc, char **argv)
               f_t = 2;
               break;
           default:
-              usage();
+              fprintf(stderr, "Unknown option: %s\n", argv[i]);
+              exit(1);
         }
     }
 
@@ -945,10 +950,10 @@ void tfm_define(FILE * fp)
     fclose(fp);
 
     if (f_v != 0) {
-        if (ch == 'o')
+        if (ch == 'o') {
             printf("\t\"%s\" is a %cfm level %d file :%3ld  -> %3ld\n",
                 font.n, ch, tfmver, bc, ec);
-        else {
+        } else {
             printf("\t\"%s\" is a %cfm%s file :%3ld  -> %3ld\n",
                 font.n, ch, u, bc, ec);
             if (ch == 'j' && tfmver > 0) {
@@ -956,6 +961,40 @@ void tfm_define(FILE * fp)
                 if (tfmver & 1) printf("\t\t+ 3-byte kanji code\n");
                 if (tfmver & 2) printf("\t\t+ SKIP command in glue_kern\n");
                 if (tfmver & 4) printf("\t\t+ rearrangement in glue_kern\n");
+            }
+        }
+        if (f_vv > 0) {
+            printf("\t\tPARAMETERS:\n");
+            if (ch == 'j')
+                printf("\t\t  nt: %5d\n", nt);
+            printf("\t\t  lh: %5ld\n", lh);
+            printf("\t\t  bc: %5ld\n", bc);
+            printf("\t\t  ec: %5ld\n", ec);
+            printf("\t\t  nw: %5ld\n", nw);
+            printf("\t\t  nh: %5ld\n", nh);
+            printf("\t\t  nd: %5ld\n", nd);
+            printf("\t\t  ni: %5ld\n", ni);
+            printf("\t\t  nl: %5ld\n", nl);
+            printf("\t\t  nk: %5ld\n", nk);
+            if (ch == 'j')
+                printf("\t\t  ng: %5ld\n", ne); /* ng */
+            else
+                printf("\t\t  ne: %5ld\n", ne);
+            printf("\t\t  np: %5ld\n", np);
+            if (ch == 'o') {
+                printf("\t\t+ FONTDIR: ");
+                switch (fontdir) {
+                  case 0: printf("TL (default)"); break;
+                  case 1: printf("LT"); break;
+                  case 2: printf("TR"); break;
+                  case 3: printf("LB"); break;
+                  case 4: printf("BL"); break;
+                  case 5: printf("RT"); break;
+                  case 6: printf("BR"); break;
+                  case 7: printf("RB"); break;
+                  default: printf("unknown");
+                }
+                printf("\n");
             }
         }
     }
@@ -1276,6 +1315,7 @@ void usage()
         "       chkdvifont [-s] [-c] [-{f|F}<font_data_file>] [-p] font_file_name\n\n"
         "Option\t -c: check mode\n"
         "\t -s: silent check mode\n"
+        "\t -v: more verbose (only for TFM/OFM mode)\n"
         "\t -f: use font_data_file (-F: and ignore default data)\n"
         "\t -d: force DVI mode\n"
         "\t -t: force TFM/OFM mode\n"
