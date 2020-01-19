@@ -1,5 +1,10 @@
 2020-01-19  Karl Berry  <karl@freefriends.org>
 
+	* kpsewhich.c (ENSURE_NONEMPTY_STRING): new macro.
+	(read_command_line): ensure nonempty arguments to --format,
+	--safe-{in,out}-name, --var-brace-value, --var-value.
+	Empty args to the other options seem possible.
+
 	* line.c (read_line): silently drop nul (zero) bytes.
 	* tests/cnfnull.test: test for nul bytes in texmf.cnf.
 	* Makefile.am (TESTS),

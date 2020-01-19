@@ -589,6 +589,14 @@ help_formats (kpathsea kpse, string *argv)
    option table in a variable `long_options'.  */
 #define ARGUMENT_IS(a) STREQ (long_options[option_index].name, a)
 
+/* If S is NULL or the empty string, abort.  */
+#define ENSURE_NONEMPTY_STRING(s) do {                                \
+  if (!(s) || ! *(s)) {                                               \
+    fprintf (stderr, "kpsewhich: empty argument for %s\n",            \
+             long_options[option_index].name);                        \
+    fputs ("Try `kpsewhich --help' for more information.\n", stderr); \
+    exit (EXIT_FAILURE); } } while (0)
+
 /* SunOS cc can't initialize automatic structs.  */
 static struct option long_options[]
   = { { "D",                    1, 0, 0 },
@@ -634,7 +642,7 @@ read_command_line (kpathsea kpse, int argc, string *argv)
       break;
 
     if (g == '?')
-      exit (1);  /* Unknown option.  */
+      exit (EXIT_FAILURE);  /* Unknown option.  */
 
     assert (g == 0); /* We have no short option names.  */
 
@@ -674,6 +682,7 @@ read_command_line (kpathsea kpse, int argc, string *argv)
       var_to_expand = optarg;
 
     } else if (ARGUMENT_IS ("format")) {
+      ENSURE_NONEMPTY_STRING (optarg);
       user_format_string = optarg;
 
     } else if (ARGUMENT_IS ("help")) {
@@ -703,9 +712,11 @@ read_command_line (kpathsea kpse, int argc, string *argv)
       progname = optarg;
 
     } else if (ARGUMENT_IS ("safe-in-name")) {
+      ENSURE_NONEMPTY_STRING (optarg);
       safe_in_name = optarg;
 
     } else if (ARGUMENT_IS ("safe-out-name")) {
+      ENSURE_NONEMPTY_STRING (optarg);
       safe_out_name = optarg;
 
     } else if (ARGUMENT_IS ("show-path")) {
@@ -716,14 +727,16 @@ read_command_line (kpathsea kpse, int argc, string *argv)
       str_list_add (&subdir_paths, optarg);
 
     } else if (ARGUMENT_IS ("var-brace-value")) {
+      ENSURE_NONEMPTY_STRING (optarg);
       var_to_brace_value = optarg;
 
     } else if (ARGUMENT_IS ("var-value")) {
+      ENSURE_NONEMPTY_STRING (optarg);
       var_to_value = optarg;
 
     } else if (ARGUMENT_IS ("version")) {
       puts (kpathsea_version_string);
-      puts ("Copyright 2019 Karl Berry & Olaf Weber.\n\
+      puts ("Copyright 2020 Karl Berry & Olaf Weber.\n\
 License LGPLv2.1+: GNU Lesser GPL version 2.1 or later <https://gnu.org/licenses/lgpl.html>\n\
 This is free software: you are free to change and redistribute it.\n\
 There is NO WARRANTY, to the extent permitted by law.\n");
@@ -734,10 +747,11 @@ There is NO WARRANTY, to the extent permitted by law.\n");
   }
 
   if (user_path && user_format_string) {
-    fprintf (stderr, "-path (%s) and -format (%s) are mutually exclusive.\n",
+    fprintf (stderr,
+            "kpsewhich: -path (%s) and -format (%s) are mutually exclusive.\n",
              user_path, user_format_string);
     fputs ("Try `kpsewhich --help' for more information.\n", stderr);
-    exit (1);
+    exit (EXIT_FAILURE);
   }
 
   if (optind == argc
@@ -746,7 +760,7 @@ There is NO WARRANTY, to the extent permitted by law.\n");
       && !safe_in_name && !safe_out_name) {
     fputs ("Missing argument. Try `kpsewhich --help' for more information.\n",
            stderr);
-    exit (1);
+    exit (EXIT_FAILURE);
   }
 }
 
