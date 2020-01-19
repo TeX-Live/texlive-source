@@ -1,3 +1,8 @@
+2020-01-20  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import gmp-6.2.0.
+	* Makefile.am, version.ac: Updated for 6.2.0.
+
 2017-12-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Makefile.am: Move several files from unused to used

@@ -86,9 +86,11 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/addmul_1.c \
 	@GMP_TREE@/mpn/generic/bdiv_dbm1c.c \
 	@GMP_TREE@/mpn/generic/bdiv_q.c \
+	@GMP_TREE@/mpn/generic/bdiv_q_1.c \
 	@GMP_TREE@/mpn/generic/binvert.c \
 	@GMP_TREE@/mpn/generic/cmp.c \
 	@GMP_TREE@/mpn/generic/com.c \
+	@GMP_TREE@/mpn/generic/compute_powtab.c \
 	@GMP_TREE@/mpn/generic/copyd.c \
 	@GMP_TREE@/mpn/generic/copyi.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_q.c \
@@ -199,7 +201,6 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/add_err2_n.c \
 	@GMP_TREE@/mpn/generic/add_err3_n.c \
 	@GMP_TREE@/mpn/generic/add_n_sub_n.c \
-	@GMP_TREE@/mpn/generic/bdiv_q_1.c \
 	@GMP_TREE@/mpn/generic/bdiv_qr.c \
 	@GMP_TREE@/mpn/generic/broot.c \
 	@GMP_TREE@/mpn/generic/brootinv.c \
@@ -216,8 +217,11 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/divis.c \
 	@GMP_TREE@/mpn/generic/dump.c \
 	@GMP_TREE@/mpn/generic/fib2_ui.c \
+	@GMP_TREE@/mpn/generic/fib2m.c \
 	@GMP_TREE@/mpn/generic/gcd.c \
 	@GMP_TREE@/mpn/generic/gcd_1.c \
+	@GMP_TREE@/mpn/generic/gcd_11.c \
+	@GMP_TREE@/mpn/generic/gcd_22.c \
 	@GMP_TREE@/mpn/generic/get_d.c \
 	@GMP_TREE@/mpn/generic/hgcd2_jacobi.c \
 	@GMP_TREE@/mpn/generic/hgcd_jacobi.c \
@@ -245,6 +249,7 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/redc_2.c \
 	@GMP_TREE@/mpn/generic/remove.c \
 	@GMP_TREE@/mpn/generic/rootrem.c \
+	@GMP_TREE@/mpn/generic/sbpi1_bdiv_r.c \
 	@GMP_TREE@/mpn/generic/scan0.c \
 	@GMP_TREE@/mpn/generic/sec_invert.c \
 	@GMP_TREE@/mpn/generic/sec_mul.c \
@@ -252,6 +257,7 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/sec_sqr.c \
 	@GMP_TREE@/mpn/generic/sec_tabselect.c \
 	@GMP_TREE@/mpn/generic/sizeinbase.c \
+	@GMP_TREE@/mpn/generic/strongfibo.c \
 	@GMP_TREE@/mpn/generic/sub_err1_n.c \
 	@GMP_TREE@/mpn/generic/sub_err2_n.c \
 	@GMP_TREE@/mpn/generic/sub_err3_n.c \

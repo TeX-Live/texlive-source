@@ -137,9 +137,11 @@ am__objects_2 = mp_bases.$(OBJEXT) popcount.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/addmul_1.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/bdiv_dbm1c.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/bdiv_q.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/bdiv_q_1.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/binvert.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/cmp.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/com.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/compute_powtab.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/copyd.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/copyi.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_q.$(OBJEXT) \
@@ -322,9 +324,11 @@ am__depfiles_remade = ./$(DEPDIR)/gmptest-gmptest.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/addmul_1.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_dbm1c.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_q.Po \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_q_1.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/binvert.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/cmp.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/com.Po \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/compute_powtab.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/copyd.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/copyi.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_bdiv_q.Po \
@@ -956,9 +960,11 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/addmul_1.c \
 	@GMP_TREE@/mpn/generic/bdiv_dbm1c.c \
 	@GMP_TREE@/mpn/generic/bdiv_q.c \
+	@GMP_TREE@/mpn/generic/bdiv_q_1.c \
 	@GMP_TREE@/mpn/generic/binvert.c \
 	@GMP_TREE@/mpn/generic/cmp.c \
 	@GMP_TREE@/mpn/generic/com.c \
+	@GMP_TREE@/mpn/generic/compute_powtab.c \
 	@GMP_TREE@/mpn/generic/copyd.c \
 	@GMP_TREE@/mpn/generic/copyi.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_q.c \
@@ -1069,7 +1075,6 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/add_err2_n.c \
 	@GMP_TREE@/mpn/generic/add_err3_n.c \
 	@GMP_TREE@/mpn/generic/add_n_sub_n.c \
-	@GMP_TREE@/mpn/generic/bdiv_q_1.c \
 	@GMP_TREE@/mpn/generic/bdiv_qr.c \
 	@GMP_TREE@/mpn/generic/broot.c \
 	@GMP_TREE@/mpn/generic/brootinv.c \
@@ -1086,8 +1091,11 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/divis.c \
 	@GMP_TREE@/mpn/generic/dump.c \
 	@GMP_TREE@/mpn/generic/fib2_ui.c \
+	@GMP_TREE@/mpn/generic/fib2m.c \
 	@GMP_TREE@/mpn/generic/gcd.c \
 	@GMP_TREE@/mpn/generic/gcd_1.c \
+	@GMP_TREE@/mpn/generic/gcd_11.c \
+	@GMP_TREE@/mpn/generic/gcd_22.c \
 	@GMP_TREE@/mpn/generic/get_d.c \
 	@GMP_TREE@/mpn/generic/hgcd2_jacobi.c \
 	@GMP_TREE@/mpn/generic/hgcd_jacobi.c \
@@ -1115,6 +1123,7 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/redc_2.c \
 	@GMP_TREE@/mpn/generic/remove.c \
 	@GMP_TREE@/mpn/generic/rootrem.c \
+	@GMP_TREE@/mpn/generic/sbpi1_bdiv_r.c \
 	@GMP_TREE@/mpn/generic/scan0.c \
 	@GMP_TREE@/mpn/generic/sec_invert.c \
 	@GMP_TREE@/mpn/generic/sec_mul.c \
@@ -1122,6 +1131,7 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/sec_sqr.c \
 	@GMP_TREE@/mpn/generic/sec_tabselect.c \
 	@GMP_TREE@/mpn/generic/sizeinbase.c \
+	@GMP_TREE@/mpn/generic/strongfibo.c \
 	@GMP_TREE@/mpn/generic/sub_err1_n.c \
 	@GMP_TREE@/mpn/generic/sub_err2_n.c \
 	@GMP_TREE@/mpn/generic/sub_err3_n.c \
@@ -1432,6 +1442,9 @@ clean-noinstLIBRARIES:
 @GMP_TREE@/mpn/generic/bdiv_q.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/bdiv_q_1.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/binvert.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
@@ -1439,6 +1452,9 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/com.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/compute_powtab.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/copyd.$(OBJEXT):  \
@@ -1887,9 +1903,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/addmul_1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_dbm1c.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_q.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_q_1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/binvert.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/cmp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/com.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/compute_powtab.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/copyd.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/copyi.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_bdiv_q.Po@am__quote@ # am--include-marker
@@ -2613,9 +2631,11 @@ distclean: distclean-recursive
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/addmul_1.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_dbm1c.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_q.Po
+	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_q_1.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/binvert.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/cmp.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/com.Po
+	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/compute_powtab.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/copyd.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/copyi.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_bdiv_q.Po
@@ -2837,9 +2857,11 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/addmul_1.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_dbm1c.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_q.Po
+	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_q_1.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/binvert.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/cmp.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/com.Po
+	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/compute_powtab.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/copyd.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/copyi.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_bdiv_q.Po
