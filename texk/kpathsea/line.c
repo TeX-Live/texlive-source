@@ -1,6 +1,6 @@
 /* line.c: return the next line from a file, or NULL.
 
-   Copyright 1992, 1993, 1995, 1996, 2008, 2013, 2014 Karl Berry.
+   Copyright 1992, 1993, 1995, 1996, 2008, 2013, 2014, 2020 Karl Berry.
    Copyright 1998, 1999, 2001, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -55,6 +55,11 @@ read_line (FILE *f)
   FLOCKFILE (f);
 
   while ((c = getc (f)) != EOF && c != '\n' && c != '\r') {
+    /* Silently drop null bytes.  */
+    if (c == 0) {
+      continue;
+    }
+    
     line[loc] = c;
     loc++;
 

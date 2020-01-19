@@ -1,0 +1,23 @@
+#!/bin/sh -vx
+# $Id$
+# Copyright 2020 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+# 
+# Test nul (zero) bytes in texmf.cnf.
+
+cnf_dir=cnfnull
+cnf_file=$cnf_dir/texmf.cnf
+
+# Create the texmf.cnf dynamically so we don't have to check in a file
+# containing nul bytes.
+rm -rf $cnf_dir
+mkdir $cnf_dir
+test -d $cnf_dir || exit 1
+printf 'x\0=1\n\0' >$cnf_file || exit 1
+
+val=`./kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=x`
+test x"$val" = x1 || exit 1
+
+# Before we dropped nul bytes in 2020, kpse gave a warning:
+#   warning: cnfnull/texmf.cnf:1: (kpathsea) No cnf value on line: x.
+# and did not assign anything (since the string ended with the x).

@@ -1,3 +1,10 @@
+2020-01-19  Karl Berry  <karl@freefriends.org>
+
+	* line.c (read_line): silently drop nul (zero) bytes.
+	* tests/cnfnull.test: test for nul bytes in texmf.cnf.
+	* Makefile.am (TESTS),
+	(tests/cnfnull.test): add it.
+
 2020-01-16  Karl Berry  <karl@freefriends.org>
 
 	* doc/kpathsea.texi,
