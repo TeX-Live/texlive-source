@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 53144 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2019-12-16 14:40:08 +0100 (Mon, 16 Dec 2019) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 53431 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2020-01-17 06:29:55 +0100 (Fri, 17 Jan 2020) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -800,7 +800,7 @@ elseif progname == 'dviout' then
   end
   local par = [["-gen=']] .. string.gsub(TEXDIR, '/', '\\') .. 
               [[\tlpkg\dviout\gen_pk'" "-TEXROOT=']] ..
-              table.concat(texrt, ';') .. [['" "-gsx=']] .. GSEXE .. [['"]];
+              table.concat(texrt, ';') .. [['" "-gsx=']] .. GSEXE .. ' -dDELAYSAFER' .. [['"]];
   ARGV = {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', par}
 elseif progname == 'mkluatexfontdb' then
   progname = 'luaotfload-tool'

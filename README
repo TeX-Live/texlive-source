@@ -28,8 +28,8 @@ Build information for some of the platforms.
 See also Master/tlpkg/bin/tl-update-bindir
 
 aarch64-linux:
-  aarch64 Debian GNU/Linux 9 (stretch)
-  gcc (Debian 6.3.0-18) 6.3.0 20170516
+  aarch64 Debian GNU/Linux 10 (buster)
+  gcc (Debian 8.3.0-6) 8.3.0
   ./Build --enable-arm-neon=check
 
 i386-netbsd, amd64-netbsd:

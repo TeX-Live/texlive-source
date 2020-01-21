@@ -1,11 +1,11 @@
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007-2019 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2020 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 53225 $';
+my $svnrev = '$Revision: 53343 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -1519,6 +1519,7 @@ sub install_packages {
     $totalsize += $tlpsizes{$p};
   }
   my $starttime = time();
+  my @packs_again; # packages that we failed to download and should retry later
   foreach my $package (@packs) {
     my $tlpobj = $tlpobjs{$package};
     my $reloc = $tlpobj->relocated;
@@ -1531,7 +1532,21 @@ sub install_packages {
     foreach my $h (@::install_packages_hook) {
       &$h($n,$totalnr);
     }
-    # return false if something went wrong
+    # push $package to @packs_again if download failed
+    if (!$fromtlpdb->install_package($package, $totlpdb)) {
+      tlwarn("TLUtils::install_packages: Failed to install $package\n"
+             ."Will be retried later.\n");
+      push @packs_again, $package;
+    } else {
+      $donesize += $tlpsizes{$package};
+    }
+  }
+  # try to download packages in @packs_again again
+  foreach my $package (@packs_again) {
+    my $infostr = sprintf("Retrying to install: $package [%dk]",
+                     int($tlpsizes{$package}/1024) + 1);
+    info("$infostr\n");
+    # return false if download failed again
     if (!$fromtlpdb->install_package($package, $totlpdb)) {
       return 0;
     }
@@ -3601,7 +3616,7 @@ sub process_logging_options {
 
 =head2 Miscellaneous
 
-Some ideas from Fabrice Popineau's C<FileUtils.pm>.
+A few ideas from Fabrice Popineau's C<FileUtils.pm>.
 
 =over 4
 
@@ -4469,7 +4484,7 @@ sub setup_sys_user_mode {
     print STDERR "" .
       "$prg [ERROR]: Either -sys or -user mode is required.\n" .
       "$prg [ERROR]: In nearly all cases you should use $prg -sys.\n" .
-      "$prg [ERROR]: For special cases see http://tug.org/texlive/scripts-sys-user.html\n" ;
+      "$prg [ERROR]: For special cases see https://tug.org/texlive/scripts-sys-user.html\n" ;
     exit(1);
   }
   return ($texmfconfig, $texmfvar);
@@ -4539,6 +4554,12 @@ sub repository_to_array {
 }
 
 
+=back
+
+=head2 JSON
+
+=over 4
+
 =item C<encode_json($ref)>
 
 Returns the JSON representation of the object C<$ref> is pointing at.
@@ -4561,7 +4582,10 @@ bless $TLFalse, 'TLBOOLEAN';
 
 our $jsonmode = "";
 
+=pod
+
 =item C<True()>
+
 =item C<False()>
 
 These two crazy functions must be used to get proper JSON C<true> and
@@ -4709,8 +4733,13 @@ sub array_to_json {
   my $ret = "[" . join(",", map { encode_json(\$_) } @$hr) . "]";
   return($ret);
 }
+
+=pod
+
 =back
+
 =cut
+
 1;
 __END__
 
@@ -4723,7 +4752,7 @@ C<tl-update-tlpdb>), the documentation in C<Master/tlpkg/doc/>, etc.
 =head1 AUTHORS AND COPYRIGHT
 
 This script and its documentation were written for the TeX Live
-distribution (L<http://tug.org/texlive>) and both are licensed under the
+distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
 =cut
