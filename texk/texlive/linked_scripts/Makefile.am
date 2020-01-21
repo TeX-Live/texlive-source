@@ -204,6 +204,8 @@ texmf_other_scripts = \
 	texlive/updmap-sys.sh \
 	texlive/updmap-user.sh \
 	texlive/updmap.pl \
+	texlive-extra/allcm.sh \
+	texlive-extra/allneeded.sh \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	texplate/texplate.sh \
@@ -236,6 +238,7 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 
 ## Symlinks within $(bindir): FILE:LINK here means "ln -s FILE LINK" is done.
 bin_links = \
+	allcm:allec \
 	cluttex:clxelatex \
 	cluttex:cllualatex \
 	epstopdf:repstopdf \

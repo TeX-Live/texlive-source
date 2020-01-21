@@ -26,8 +26,6 @@ EXTRA_DIST = scripts.lst
 # These first variable definitions are what scripts_links.am requires.
 perl_scripts = e2pall
 sh_scripts = \
-	allcm \
-	allneeded \
 	dvi2fax \
 	dvired \
 	fontinst \

@@ -258,8 +258,6 @@ EXTRA_DIST = scripts.lst $(top_builddir)/../../build-aux/relpath \
 # These first variable definitions are what scripts_links.am requires.
 perl_scripts = e2pall
 sh_scripts = \
-	allcm \
-	allneeded \
 	dvi2fax \
 	dvired \
 	fontinst \

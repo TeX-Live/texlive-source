@@ -1,7 +1,5 @@
 tl_scripts='
 e2pall.pl
-allcm.sh
-allneeded.sh
 dvi2fax.sh
 dvired.sh
 fontinst.sh

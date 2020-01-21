@@ -147,6 +147,8 @@ texlive/tlmgr.pl
 texlive/updmap-sys.sh
 texlive/updmap-user.sh
 texlive/updmap.pl
+texlive-extra/allcm.sh
+texlive-extra/allneeded.sh
 texliveonfly/texliveonfly.py
 texloganalyser/texloganalyser
 texplate/texplate.sh
