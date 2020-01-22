@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2019 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 2012-2015 by Khaled Hosny <khaledhosny@eglug.org>
@@ -2259,6 +2259,8 @@ read_length (double *vp, double mag, const char **pp, const char *endptr)
   return  error;
 }
 
+#include "pdfencrypt.h"
+
 static int
 scan_special_encrypt (int *key_bits, int32_t *permission, char *opassword, char *upassword,
                       const char **curptr, const char *endptr)
@@ -2279,15 +2281,21 @@ scan_special_encrypt (int *key_bits, int32_t *permission, char *opassword, char 
       skip_white(&p, endptr);
       if (!strcmp(kp, "ownerpw")) {
         if ((obj = parse_pdf_string(&p, endptr))) {
-          if (pdf_string_value(obj))
-            strncpy(opassword, pdf_string_value(obj), sizeof(opassword)-1);
+          if (pdf_string_value(obj)) {
+            int str_length = (MAX_PWD_LEN - 1 > pdf_string_length(obj)
+                ? pdf_string_length(obj) : MAX_PWD_LEN - 1);
+            strncpy(opassword, pdf_string_value(obj), str_length);
+          }
           pdf_release_obj(obj);
         } else
           error = -1;
       } else if (!strcmp(kp, "userpw")) {
         if ((obj = parse_pdf_string(&p, endptr))) {
-          if (pdf_string_value(obj))
-            strncpy(upassword, pdf_string_value(obj), sizeof(upassword)-1);
+          if (pdf_string_value(obj)) {
+            int str_length = (MAX_PWD_LEN - 1 > pdf_string_length(obj)
+                ? pdf_string_length(obj) : MAX_PWD_LEN - 1);
+            strncpy(upassword, pdf_string_value(obj), str_length);
+          }
           pdf_release_obj(obj);
         } else
           error = -1;

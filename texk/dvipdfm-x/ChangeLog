@@ -1,3 +1,8 @@
+2020-01-22  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dvi.c: Correct wrong sizes of opassword and upassword
+	in scan_special_encrypt().
+
 2020-01-16  Karl Berry  <karl@freefriends.org>
 
 	* xbb.c (show_version),
