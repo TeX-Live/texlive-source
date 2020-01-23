@@ -72,6 +72,8 @@ texmf_shell_scripts = \
 	pdfxup/pdfxup \
 	pst-pdf/ps4pdf \
 	simpdftex/simpdftex \
+	texlive-extra/allcm.sh \
+	texlive-extra/allneeded.sh \
 	texosquery/texosquery.sh \
 	texosquery/texosquery-jre5.sh \
 	texosquery/texosquery-jre8.sh \
@@ -204,8 +206,6 @@ texmf_other_scripts = \
 	texlive/updmap-sys.sh \
 	texlive/updmap-user.sh \
 	texlive/updmap.pl \
-	texlive-extra/allcm.sh \
-	texlive-extra/allneeded.sh \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	texplate/texplate.sh \

@@ -1,3 +1,9 @@
+2020-01-23  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_shell_scripts): allcm.sh and allneeded.sh
+	in the new texlive-extra/ belong here instead of texmf_other_scripts,
+	since there is no Windows wrapper for them.
+
 2019-12-29  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (texmf_other_scripts): add mktexlsr mktexmf
