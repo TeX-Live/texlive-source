@@ -25,6 +25,7 @@ void process_score ()
     active[i] = true;
     bar_rest[i] = false;
     append (instrument_size[i], NULL, "\\normalvalue", SHORT_LEN);
+    instr_numsize[i] = 1.0;
   }
   spacing = MAX_SPACING;
   restbars = 0;

@@ -22,6 +22,9 @@ char TransformNotes2[SHORT_LEN];      /* 2nd argument of \TransformNotes    */
 bool TransformNotesDefined;
 char instrument_size[MAX_STAFFS][SHORT_LEN];
      /* instrument size as set by setsize or by default ("\\@one") */
+float instr_numsize[MAX_STAFFS];
+     /* nummerical intrument size */
+int staff_instr[MAX_STAFFS];  /* instrument for each staff */
 
 char line[LINE_LEN];            /* line of input                      */
 

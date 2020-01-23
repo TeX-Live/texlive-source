@@ -11,6 +11,7 @@ void analyze_notes (char **ln)
    and initialize terminator[i] etc.                          */
 {
   int i; char *s; char *t;  
+  int instr=1;
   int newlines = 0;
   s = *ln+1;  /* skip "/"  */
   while (isalpha(*s)) {s++;}  /* skip rest of the initial command  */
@@ -52,6 +53,8 @@ void analyze_notes (char **ln)
     if (tt == NULL) error ("can't parse note-spacing command.");
     s = tt; 
     terminator[i] = *s;
+    staff_instr[i] = instr;
+    if (terminator[i] == '&') instr++;
     if (*s != '$') s++;
   }
   lineno = lineno + newlines;
@@ -212,7 +215,7 @@ output_rests (void)
 }
 
 void initialize_notes ()
-{ int i;  int instrument = 0; int staff = 0;
+{ int i;  
   if (debug)
   { fprintf (logfile, "\nEntering initialize_notes\n");
     status_all ();
@@ -221,13 +224,10 @@ void initialize_notes ()
     output_rests ();
 
   fprintf (outfile, "\\scale");
-  do  /* determine instrument for spacing_staff */
-  {
-    instrument++; 
-    staff = staff + staffs[instrument];
-  }
-  while (staff < spacing_staff );  
-  fprintf (outfile, "%s\n", instrument_size[instrument]);
+  if (debug)
+     fprintf (logfile, "spacing_staff = %i, staff_instr[spacing_staff] = %i, instrument_size[staff_instr[spacing_staff]] = %s\n",
+                       spacing_staff,       staff_instr[spacing_staff],      instrument_size[staff_instr[spacing_staff]]);
+  fprintf (outfile, "%s\n", instrument_size[staff_instr[spacing_staff]]);
   oldspacing_staff = spacing_staff;
 
   if (spacing == MAX_SPACING)
@@ -411,7 +411,10 @@ void generate_notes ()
           spacing = spacings[i];
           spacing_staff = i;
         }
-        else if (spacings[i] == spacing && vspacing[spacing_staff] > 0) 
+        else if (spacings[i] == spacing && 
+                  (vspacing[spacing_staff] > 0 || 
+                   /* for staffs with equal spacing, use the one with larger instrument size  */
+                   instr_numsize[staff_instr[i]] > instr_numsize[staff_instr[spacing_staff]])) 
           spacing_staff = i;
       }
     if (appoggiatura)
@@ -519,7 +522,28 @@ void process_command (char **ln)
     }
     *p = '\0';
     if (debug)
+    {
       fprintf (logfile, "instrument_size[%d] = %s\n", n, instrument_size[n]); 
+      fflush (logfile);
+    }
+    /* determine numerical instrument size to allow numerical comparison  */
+    if (prefix ("\\normalvalue", instrument_size[n]))
+      instr_numsize[n] = 1.0;
+    else if (prefix ("\\smallvalue", instrument_size[n]))
+      instr_numsize[n] = 0.8;
+    else if (prefix ("\\tinyvalue", instrument_size[n]))
+      instr_numsize[n] = 0.64;
+    else if (prefix ("\\largevalue", instrument_size[n]))
+      instr_numsize[n] = 1.2;
+    else if (prefix ("\\Largevalue", instrument_size[n]))
+      instr_numsize[n] = 1.44;
+    else 
+      error ("\\setsize argument unreadable.");    
+    if (debug)
+    {
+      fprintf (logfile, "instr_numsize[%d] = %f\n", n, instr_numsize[n]);
+      fflush (logfile);
+    }
     while (*ln <= s) { putc (**ln, outfile); (*ln)++;}
   }
 

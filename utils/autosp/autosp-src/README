@@ -1,5 +1,5 @@
 This is the README for the autosp package, 
-version 2019-01-08.
+version 2019-08-27.
 
 autosp is a preprocessor that generates note-spacing
 commands for MusiXTeX scores. It simplifies the creation
@@ -63,6 +63,8 @@ multiplicity: \ib... results in \Notes, \ibb... results in
 Collective coding of note sequences (including accidentals
 and dots) is handled by expanding the sequence into a
 sequence of individual note commands.
+
+autosp scales notes by the relevant instrument-size value.
 
 Limitations
 

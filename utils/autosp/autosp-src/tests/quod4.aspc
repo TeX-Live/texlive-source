@@ -42,49 +42,202 @@
 \staffbotmarg=3.0\Interligne%
 \startpiece\addspace\afterruleskip%
 \systemnumbers%
+\scale\normalvalue
 \anotes
   \ds&
   \cu d&
   \ds&
   \ds\en
 \bar%1
+\scale\normalvalue
 \anotes
-  \ha N\sk\sk\sk\ha M\sk\sk\sk\sk\sk&
-  \ibu1g2\qb1{g}\qb1{h}\qb1{i}\tqh1j\ibl1k{-2}\qb1k\nbbl1\qb1j\tqb1i\ibu1h0\qb1h\nbbu1\qb1g\tqh1h&
+  \ha N\sk\sk\sk\ha M&
+  \ibu1g2\qb1{g}\qb1{h}\qb1{i}\tqh1j\ibl1k{-2}\qb1k&
   &
-  \hp\sk\sk\sk\qp\sk\sk\ds\cu d\sk\hqsk\en
+  \hp\sk\sk\sk\qp\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \nbbl1\qb1j\tqb1i&
+  &
+  \sk\sk\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \ibu1h0\qb1h&
+  &
+  \ds\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \nbbu1\qb1g\tqh1h&
+  &
+  \cu d\sk\hqsk\hqsk\en
 \def\atnextbar{\znotes&&\centerpause&\en}%
+%
 \bar%2
+\scale\normalvalue
 \anotes
-  \ha L\sk\sk\sk\qa{.K}\sk\sk\sk\cu J\sk&
-  \ibu1i{-2}\qb1i\tqh1h\itied1g\qa g\sk\ttie1\qa g\sk\sk\ibu1f0\shake{n}\qb1f\nbbu1\qb1e\tqh1f&
-  \qa{n}\sk\qa{n}\sk\qa o\sk\sk\cl o\ds\sk&
-  \ibu3g2\qb3{g}\qb3{h}\qb3{i}\tqh3j\ibl3k{-2}\qb3k\nbbl3\qb3j\tqb3i\cu h\ds\sk\hqsk\en
+  \ha L\sk&
+  \ibu1i{-2}\qb1i\tqh1h&
+  \qa{n}\sk&
+  \ibu3g2\qb3{g}\qb3{h}\en
+\scale\normalvalue
+\anotes
+  \sk\sk\qa{.K}&
+  \itied1g\qa g\sk\ttie1\qa g&
+  \qa{n}\sk\qa o&
+  \qb3{i}\tqh3j\ibl3k{-2}\qb3k\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \sk\sk&
+  \sk\sk&
+  \nbbl3\qb3j\tqb3i\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \ibu1f0\shake{n}\qb1f&
+  \cl o&
+  \cu h\en
+\scale\normalvalue
+\anotes
+  \cu J\sk&
+  \nbbu1\qb1e\tqh1f&
+  \ds\sk&
+  \ds\sk\hqsk\hqsk\en
 \bar%3
+\scale\normalvalue
 \anotes
-  \hu I\sk\sk\tqsk\sk\hu J\sk\sk\sk&
-  \qa g\sk\ds\tqsk\cl k\ibu1j{-2}\qb1{j}\qb1{i}\qb1h\tqh1g&
-  \ibl2n{-1}\qb2{n}\qb2{o}\qb2{n}\tqsk\tqb2{=m}\ibl2j{0}\qb2{l}\qb2{k}\qb2j\tqb2p&
-  \qa{k}\sk\qa{k}\tqsk\sk\qa{l}\sk\qa{l}\sk\en
+  \hu I\sk&
+  \qa g\sk&
+  \ibl2n{-1}\qb2{n}\qb2{o}&
+  \qa{k}\sk\en
+\scale\normalvalue
+\anotes
+  \sk\tqsk\sk\tqsk\hu J\sk\sk\sk&
+  \ds\tqsk\tqsk\cl k\ibu1j{-2}\qb1{j}\qb1{i}\qb1h\tqh1g&
+  \qb2{n}\tqsk\tqsk\tqb2{=m}\ibl2j{0}\qb2{l}\qb2{k}\qb2j\tqb2p&
+  \qa{k}\tqsk\sk\tqsk\qa{l}\sk\qa{l}\sk\en
 \bar%4
+\scale\normalvalue
 \anotes
-  \ha K\sk\sk\sk\sk\qa G\sk\ds\ibbl0b{-1}\qb0b\tqb0a&
-  \itied1f\shake{n}\qa f\sk\ttie1\ibbu1e{-2}\qb1f\tbbu1\qb1e\itied1d\tqh1d\ttie1\qa d\sk\qp\sk\sk&
-  \ibl2o{-1}\qb2{o}\qb2{n}\qb2{o}\sk\tqb2m\ibl2n{-2}\qb2n\tqb2m\ibl2n{-5}\qb2n\tqb2k\sk&
-  \ibl3k{-1}\qb3{k}\qb3{l}\qb3{k}\sk\tqb3j\ibu3h{-2}\shake{p}\qb3i\tqh3h\qa g\sk\sk\hqsk\en
+  \ha K\sk&
+  \itied1f\shake{n}\qa f\sk&
+  \ibl2o{-1}\qb2{o}\qb2{n}&
+  \ibl3k{-1}\qb3{k}\qb3{l}\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \ttie1\ibbu1e{-2}\qb1f\tbbu1\qb1e&
+  \qb2{o}\sk&
+  \qb3{k}\sk\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \itied1d\tqh1d&
+  \tqb2m&
+  \tqb3j\en
+\scale\normalvalue
+\anotes
+  \qa G\sk&
+  \ttie1\qa d\sk&
+  \ibl2n{-2}\qb2n\tqb2m&
+  \ibu3h{-2}\shake{p}\qb3i\tqh3h\en
+\scale\normalvalue
+\anotes
+  \ds&
+  \qp&
+  \ibl2n{-5}\qb2n&
+  \qa g\en
+\scale\normalvalue
+\anotes
+  \ibbl0b{-1}\qb0b\tqb0a&
+  \sk\sk&
+  \tqb2k\sk&
+  \sk\sk\hqsk\hqsk\en
 \bar%5
+\scale\normalvalue
 \anotes
-  \ibl0M0\qb0N\nbbl0\qb0M\tqb0N\ibl0K0\qb0L\nbbl0\qb0K\tqb0L\qa{.M}\sk\sk\sk\cu I&
-  \qa{n}\sk\sk\qa{n}\sk\sk\qa{o}\sk\sk\qa{o}\sk&
-  \ibl2n2\qb2{n}\qb2{o}\sk\qb2{p}\tqb2q\sk\ibl2r{-2}\qb2r\nbbl2\qb2q\tqb2p\ibl2o6\qb2o\itieu2r\tqb2r&
-  \hp\sk\sk\sk\sk\sk\hqsk\qp\sk\sk\ds\cl k\en
+  \ibl0M0\qb0N&
+  \qa{n}&
+  \ibl2n2\qb2{n}&
+  \hp\en
+\scale\normalvalue
+\anotes
+  \nbbl0\qb0M\tqb0N&
+  \sk\sk&
+  \qb2{o}\sk&
+  \sk\sk\en
+\scale\normalvalue
+\anotes
+  \ibl0K0\qb0L&
+  \qa{n}&
+  \qb2{p}&
+  \sk\en
+\scale\normalvalue
+\anotes
+  \nbbl0\qb0K\tqb0L&
+  \sk\sk&
+  \tqb2q\sk&
+  \sk\sk\en
+\scale\normalvalue
+\anotes
+  \qa{.M}&
+  \qa{o}&
+  \ibl2r{-2}\qb2r&
+  \hqsk\qp\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \sk\sk&
+  \nbbl2\qb2q\tqb2p&
+  \sk\sk\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \qa{o}&
+  \ibl2o6\qb2o&
+  \ds\en
+\scale\normalvalue
+\anotes
+  \cu I&
+  \sk&
+  \itieu2r\tqb2r&
+  \cl k\en
 \bar%6
+\scale\normalvalue
 \anotes
-  \qa{.L}\sk\sk\ibbl0M2\qb0M\tqb0N\tqsk\itieu0a\qa a\sk\sk\ttie0\ibbl0a{-2}\qb0{a}\qb0{N}\qb0{M}\tqsk\tqb0L&
-  \ibl1n{-1}\qb1{n}\qb1{o}\qb1{n}\tqb1m\sk\tqsk\ibl1l{-2}\qb1l\tqb1k\sk\cl{^j}\sk\ds\tqsk\sk&
-  \ttie2\ibl2r{-2}\qb2r\tqb2q\qa p\sk\sk\tqsk\qa{.o}\sk\sk\sk\sk\ibbl2i2\qb2i\tqsk\tqb2{^j}&
-  \ibl3n{-2}\qb3{n}\qb3{m}\qb3{l}\tqb3k\sk\hqsk\tqsk\shake{n}\ibl3i0\qb3{^j}\nbbl3\qb3i\tqb3j\cu h\sk\ds\tqsk\sk\hqsk\en
+  \qa{.L}\sk\sk&
+  \ibl1n{-1}\qb1{n}\qb1{o}\qb1{n}&
+  \ttie2\ibl2r{-2}\qb2r\tqb2q\qa p&
+  \ibl3n{-2}\qb3{n}\qb3{m}\qb3{l}\en
+\scale\normalvalue
+\anotes
+  \ibbl0M2\qb0M\tqb0N&
+  \tqb1m\sk&
+  \sk\sk&
+  \tqb3k\sk\en
+\scale\normalvalue
+\anotes
+  \tqsk\itieu0a\qa a&
+  \tqsk\ibl1l{-2}\qb1l&
+  \tqsk\qa{.o}&
+  \hqsk\tqsk\shake{n}\ibl3i0\qb3{^j}\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \tqb1k\sk&
+  \sk\sk&
+  \nbbl3\qb3i\tqb3j\en
+\scale\normalvalue
+\anotes
+  \ttie0\ibbl0a{-2}\qb0{a}\qb0{N}\qb0{M}\tqsk\tqsk\tqb0L&
+  \cl{^j}\sk\ds\tqsk\sk\tqsk&
+  \sk\sk\ibbl2i2\qb2i\tqsk\tqsk\tqb2{^j}&
+  \cu h\sk\ds\tqsk\sk\tqsk\hqsk\hqsk\en
 \bar%7
+\scale\normalvalue
 \anotes
   \qa{M}\sk\qa{K}\sk\qa{N}\sk\qa{G}\sk&
   \ibu1g0\qb1{f}\qb1{g}\qb1{h}\tqh1f\ibu1g{-2}\qb1{g}\qb1{f}\qb1{e}\tqh1d&
@@ -92,67 +245,311 @@
   \qa{h}\sk\qa{h}\sk\qa{i}\sk\qa{i}\sk\en
 \bar%8
 \nspace
+\scale\normalvalue
 \anotes
-  \tqsk\qu{.H}\sk\sk\sk\tqsk\sk\cu{^J}\ql K\sk\sk\sk\cl K&
-  \tqsk\ibu1c4\qb1{^c}\qb1{d}\sk\qb1{e}\tqsk\sk\itied1h\tqh1h\ttie1\ibu1h{-2}\qb1h\sk\tqh1g\sk\cu f&
-  \tqsk\ibl2l{-1}\qb2{.l}\sk\itieu2k\tbbl2\tqb2k\ttie2\ibbl2j0\qb2k\tqsk\tbbl2\qb2{^j}\itieu2l\tqb2l\ttie2\ibbl2l{-1}\qb2{l}\qb2{k}\qb2{l}\tqb2j\cl k&
-  \tqsk\ibu3h{0}\qb3{h}\qb3{i}\sk\qb3{h}\tqsk\sk\tqh3g\ibu3f{-1}\qb3f\sk\tqh3e\sk\cu d\en
+  \tqsk\tqsk\qu{.H}&
+  \tqsk\tqsk\ibu1c4\qb1{^c}&
+  \tqsk\tqsk\ibl2l{-1}\qb2{.l}&
+  \tqsk\tqsk\ibu3h{0}\qb3{h}\en
+\scale\normalvalue
+\anotes
+  \sk\sk\sk\tqsk\sk&
+  \qb1{d}\sk\qb1{e}\tqsk\sk&
+  \sk\itieu2k\tbbl2\tqb2k\ttie2\ibbl2j0\qb2k\tqsk\tqsk\tbbl2\qb2{^j}&
+  \qb3{i}\sk\qb3{h}\tqsk\sk\en
+\scale\normalvalue
+\anotes
+  \tqsk\cu{^J}&
+  \tqsk\itied1h\tqh1h&
+  \itieu2l\tqb2l&
+  \tqsk\tqh3g\en
+\scale\normalvalue
+\anotes
+  \ql K\sk\sk\sk&
+  \ttie1\ibu1h{-2}\qb1h\sk\tqh1g\sk&
+  \ttie2\ibbl2l{-1}\qb2{l}\qb2{k}\qb2{l}\tqb2j&
+  \ibu3f{-1}\qb3f\sk\tqh3e\sk\en
+\scale\normalvalue
+\anotes
+  \cl K&
+  \cu f&
+  \cl k&
+  \cu d\en
 \leftrightrepeat
 \advance\barno-1%
+\scale\normalvalue
 \anotes
   \ds&
   \cl m&
   \ds&
   \cl o\en
 \bar%9
+\scale\normalvalue
 \anotes
-  \qa{d}\sk\qa{c}\sk\qa{b}\sk\sk\qa{N}\sk&
-  \ibl1k0\qb1{k}\qb1{m}\qb1{k}\tqb1{m}\ibl1k0\qb1{n}\qb1{k}\sk\qb1{k}\tqb1n&
-  \qa{o}\sk\qa{o}\sk\qa{p}\sk\sk\qa{p}\sk&
-  \ibl3m0\qb3{m}\qb3{o}\qb3{m}\tqb3o\ibl3k2\qb3k\nbbl3\qb3l\tqb3m\ibl3n{-4}\qb3n\tqb3l\en
+  \qa{d}\sk\qa{c}\sk\qa{b}&
+  \ibl1k0\qb1{k}\qb1{m}\qb1{k}\tqb1{m}\ibl1k0\qb1{n}&
+  \qa{o}\sk\qa{o}\sk\qa{p}&
+  \ibl3m0\qb3{m}\qb3{o}\qb3{m}\tqb3o\ibl3k2\qb3k\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \qb1{k}\sk&
+  \sk\sk&
+  \nbbl3\qb3l\tqb3m\en
+\scale\normalvalue
+\anotes
+  \qa{N}\sk&
+  \qb1{k}\tqb1n&
+  \qa{p}\sk&
+  \ibl3n{-4}\qb3n\tqb3l\en
 \bar%10
+\scale\normalvalue
 \anotes
-  \ibl0b{-1}\qb0{c}\qb0{b}\qb0{c}\tqb0a\tqsk\qa{.b}\tqsk\sk\sk\sk\cl{^a}&
-  \cl l\ds\qp\sk\tqsk\qa{m}\tqsk\sk\sk\qa{m}\sk&
-  \ibl2o{-1}\qb2{o}\qb2{p}\qb2{o}\tqb2n\tqsk\ibl2m{-2}\qb2m\tqsk\tqb2l\sk\cl{^k}\ds&
-  \ibl3o{-2}\qb3{o}\qb3{n}\qb3{m}\tqb3l\tqsk\ibl3j0\shake n\qb3{^k}\tqsk\nbbl3\qb3{^j}\tqb3k\ibl3i8\qb3i\tqb3{p}\en
+  \ibl0b{-1}\qb0{c}\qb0{b}\qb0{c}\tqb0a&
+  \cl l\ds\qp\sk&
+  \ibl2o{-1}\qb2{o}\qb2{p}\qb2{o}\tqb2n&
+  \ibl3o{-2}\qb3{o}\qb3{n}\qb3{m}\tqb3l\en
+\scale\normalvalue
+\anotes
+  \tqsk\tqsk\qa{.b}&
+  \tqsk\tqsk\qa{m}&
+  \tqsk\tqsk\ibl2m{-2}\qb2m&
+  \tqsk\tqsk\ibl3j0\shake n\qb3{^k}\en
+\scale\normalvalue
+\anotes
+  \tqsk\sk\sk&
+  \tqsk\sk\sk&
+  \tqsk\tqsk\tqb2l\sk&
+  \tqsk\tqsk\nbbl3\qb3{^j}\tqb3k\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \tqsk\qa{m}&
+  \cl{^k}&
+  \ibl3i8\qb3i\en
+\scale\normalvalue
+\anotes
+  \tqsk\cl{^a}&
+  \sk&
+  \ds&
+  \tqb3{p}\en
 \bar%11
+\scale\normalvalue
 \anotes
-  \qa{N}\sk\qa{N}\sk\tqsk\qa{.a}\sk\sk\sk\sk\cl{^a}\sk&
-  \ibl1l0\qb1{n}\qb1{l}\qb1{n}\tqb1l\tqsk\ibl1m{-1}\qb1{m}\sk\qb1{n}\sk\qb1{m}\tqb1l\sk&
-  \qa{p}\sk\qa{p}\sk\tqsk\qa{q}\sk\sk\sk\qa{q}\sk\sk&
-  \ibl3m0\qb3{l}\qb3{p}\qb3{l}\tqb3{p}\tqsk\ibbl3k2\qb3{^k}\qb3{l}\qb3{m}\tqb3n\ibl3o{-2}\qb3o\nbbl3\qb3n\tqb3m\hqsk\en
+  \qa{N}\sk\qa{N}\sk&
+  \ibl1l0\qb1{n}\qb1{l}\qb1{n}\tqb1l&
+  \qa{p}\sk\qa{p}\sk&
+  \ibl3m0\qb3{l}\qb3{p}\qb3{l}\tqb3{p}\en
+\scale\normalvalue
+\anotes
+  \tqsk\tqsk\qa{.a}\sk\sk\sk&
+  \tqsk\tqsk\ibl1m{-1}\qb1{m}\sk\qb1{n}\sk&
+  \tqsk\tqsk\qa{q}\sk\sk\sk&
+  \tqsk\tqsk\ibbl3k2\qb3{^k}\qb3{l}\qb3{m}\tqb3n\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \qb1{m}&
+  \qa{q}&
+  \ibl3o{-2}\qb3o\en
+\scale\normalvalue
+\anotes
+  \cl{^a}\sk&
+  \tqb1l\sk&
+  \sk\sk&
+  \nbbl3\qb3n\tqb3m\hqsk\hqsk\en
 \bar%12
 \nspace
+\scale\normalvalue
 \anotes
-  \tqsk\qa b\sk\sk\tqsk\qa I\sk\sk\sk\qa{.L}\sk\sk\sk\cl{=K}\sk&
-  \tqsk\ibl1k2\qb1{^k}\nbbl1\qb1l\tqb1m\tqsk\itied1i\qu i\sk\sk\sk\ttie1\ibu1i0\qb1i\nbbu1\qb1h\tqh1i\ibu1g2\qb1g\nbbu1\qb1h\tqh1i&
-  \tqsk\ibl2o{-1}\qb2p\qb2q\sk\tqsk\qb2p\sk\tqb2o\sk\ibl2n0\qb2n\nbbl2\qb2m\tqb2n\cl l\ds\sk&
-  \tqsk\ibl3n{-2}\qb3n\nbbl3\qb3m\tqb3l\tqsk\ibbl3k0\qb3{^k}\qb3{l}\qb3m\tqb3k\hqsk\itieu3l\ha l\sk\sk\sk\sk\sk\hqsk\en
+  \tqsk\tqsk\qa b&
+  \tqsk\tqsk\ibl1k2\qb1{^k}&
+  \tqsk\tqsk\ibl2o{-1}\qb2p&
+  \tqsk\tqsk\ibl3n{-2}\qb3n\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \nbbl1\qb1l\tqb1m&
+  \qb2q\sk&
+  \nbbl3\qb3m\tqb3l\en
+\scale\normalvalue
+\anotes
+  \tqsk\tqsk\qa I\sk\sk\sk&
+  \tqsk\tqsk\itied1i\qu i\sk\sk\sk&
+  \tqsk\tqsk\qb2p\sk\tqb2o\sk&
+  \tqsk\tqsk\ibbl3k0\qb3{^k}\qb3{l}\qb3m\tqb3k\en
+\scale\normalvalue
+\anotes
+  \qa{.L}&
+  \ttie1\ibu1i0\qb1i&
+  \ibl2n0\qb2n&
+  \hqsk\itieu3l\ha l\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \nbbu1\qb1h\tqh1i&
+  \nbbl2\qb2m\tqb2n&
+  \sk\sk\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \ibu1g2\qb1g&
+  \cl l&
+  \sk\en
+\scale\normalvalue
+\anotes
+  \cl{=K}\sk&
+  \nbbu1\qb1h\tqh1i&
+  \ds\sk&
+  \sk\sk\hqsk\hqsk\en
 \bar%13
+\scale\normalvalue
 \anotes
-  \qa{J}\sk\sk\sk\qa{c}\sk\sk\qa{.b}\sk\sk\sk\ibbu0J{-2}\qb0J\tqh0I&
-  \ibl1j2\qb1{j}\sk\qb1{k}\sk\qb1{l}\sk\tqb1m\ibl1n{-1}\qb1n\nbbl1\qb1m\tqb1l\cl k\ds\sk&
-  \hp\sk\sk\sk\sk\sk\sk\qa n\sk\sk\ibl2i{-5}\qb2n\tqb2g\sk&
-  \ttie3\ibbl3k1\slur lku1\qb3{l}\qb3{k}\slur mlu1\qb3m\tqb3l\ibbl3m1\isluru3n\qb3n\tbbl3\tslur3m\qb3m\tqb3o\qa{.k}\sk\sk\sk\ibbl3j2\qb3j\tqb3k\hqsk\en
+  \qa{J}\sk\sk\sk\qa{c}\sk&
+  \ibl1j2\qb1{j}\sk\qb1{k}\sk\qb1{l}\sk&
+  \hp\sk\sk\sk\sk\sk&
+  \ttie3\ibbl3k1\slur lku1\qb3{l}\qb3{k}\slur mlu1\qb3m\tqb3l\ibbl3m1\isluru3n\qb3n\tbbl3\tslur3m\qb3m\en
+\scale\normalvalue
+\anotes
+  \sk\qa{.b}&
+  \tqb1m\ibl1n{-1}\qb1n&
+  \sk\qa n&
+  \tqb3o\qa{.k}\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \nbbl1\qb1m\tqb1l&
+  \sk\sk&
+  \sk\sk\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \cl k&
+  \ibl2i{-5}\qb2n&
+  \sk\en
+\scale\normalvalue
+\anotes
+  \ibbu0J{-2}\qb0J\tqh0I&
+  \ds\sk&
+  \tqb2g\sk&
+  \ibbl3j2\qb3j\tqb3k\hqsk\hqsk\en
 \bar%14
+\scale\normalvalue
 \anotes
-  \qa{.H}\sk\sk\sk\ibbu0I2\qb0I\tqh0J\qa{.K}\sk\sk\sk\ibbu0J2\qb0J\tqh0K&
-  \ds\cu h\sk\ibu1e0\qb1e\nbbu1\qb1d\tqh1e\ibu1g1\qb1f\sk\itied1g\tqh1g\ttie1\ibu1g{-1}\qb1g\tqh1f\sk&
-  \ibl2j1\qb2{.j}\sk\tbbl2\tqb2k\ibl2j{-2}\qb2j\tqb2i\sk\ibu2h1\qb2h\sk\tqh2i\ibl2j2\qb2j\tqb2k\sk&
-  \ibl3l2\qb3l\nbbl3\qb3m\tqb3n\ibl3o{-2}\qb3o\tqb3n\sk\hqsk\ibbl3m{-2}\shake{o}\qb3m\tbbl3\qb3l\tqb3k\ibu3i{-6}\qb3j\tqh3d\sk\hqsk\en
+  \qa{.H}&
+  \ds&
+  \ibl2j1\qb2{.j}&
+  \ibl3l2\qb3l\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \cu h&
+  \sk&
+  \nbbl3\qb3m\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \sk&
+  \tbbl2\tqb2k&
+  \tqb3n\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \ibu1e0\qb1e&
+  \ibl2j{-2}\qb2j&
+  \ibl3o{-2}\qb3o\en
+\scale\normalvalue
+\anotes
+  \ibbu0I2\qb0I\tqh0J&
+  \nbbu1\qb1d\tqh1e&
+  \tqb2i\sk&
+  \tqb3n\sk\en
+\scale\normalvalue
+\anotes
+  \qa{.K}\sk&
+  \ibu1g1\qb1f\sk&
+  \ibu2h1\qb2h\sk&
+  \hqsk\ibbl3m{-2}\shake{o}\qb3m\tbbl3\qb3l\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \itied1g\tqh1g\ttie1\ibu1g{-1}\qb1g&
+  \tqh2i\ibl2j2\qb2j&
+  \tqb3k\ibu3i{-6}\qb3j\en
+\scale\normalvalue
+\anotes
+  \ibbu0J2\qb0J\tqh0K&
+  \tqh1f\sk&
+  \tqb2k\sk&
+  \tqh3d\sk\hqsk\hqsk\en
 \bar%15
+\scale\normalvalue
 \anotes
-  \ibu0I0\qb0{G}\qb0{H}\sk\qb0{I}\tqh0G\qa{.J}\sk\sk\sk\cu{^J}&
-  \qa{d}\sk\sk\qa{d}\sk\qa{e}\sk\sk\qa{e}\sk&
-  \ibu2i0\qb2i\nbbu2\qb2h\tqh2i\cu g\ds\ds\ibbl2l{-2}\qb2l\tqb2k\ibl2j4\qb2j\tqb2l&
-  \ibl3i0\qb3{i}\qb3{j}\sk\qb3{k}\tqb3i\ibu3j{-2}\qb3{j}\qb3{i}\sk\qb3{h}\tqh3g\en
+  \ibu0I0\qb0{G}&
+  \qa{d}&
+  \ibu2i0\qb2i&
+  \ibl3i0\qb3{i}\en
+\scale\normalvalue
+\anotes
+  \qb0{H}\sk&
+  \sk\sk&
+  \nbbu2\qb2h\tqh2i&
+  \qb3{j}\sk\en
+\scale\normalvalue
+\anotes
+  \qb0{I}\tqh0G&
+  \qa{d}\sk&
+  \cu g\ds&
+  \qb3{k}\tqb3i\en
+\scale\normalvalue
+\anotes
+  \qa{.J}&
+  \qa{e}&
+  \ds&
+  \ibu3j{-2}\qb3{j}\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \sk\sk&
+  \ibbl2l{-2}\qb2l\tqb2k&
+  \qb3{i}\sk\en
+\scale\normalvalue
+\anotes
+  \sk&
+  \qa{e}&
+  \ibl2j4\qb2j&
+  \qb3{h}\en
+\scale\normalvalue
+\anotes
+  \cu{^J}&
+  \sk&
+  \tqb2l&
+  \tqh3g\en
 \bar%16
+\scale\normalvalue
 \anotes
-  \qa{K}\sk\sk\sk\qa{K}\sk\sk\qa N\sk\sk\cu G&
-  \ibu1g{1}\qb1{d}\sk\qb1{e}\sk\qb1{d}\sk\tqh1j\ibu1i{-2}\qb1i\tqh1h\sk\cu g&
-  \ibbl2h1\qb2{h}\qb2{k}\qb2{j}\tqb2i\ibbl2j0\qb2j\tbbl2\qb2h\itieu2k\tqb2k\ttie2\ibl2j0\qb2k\nbbl2\qb2j\tqb2k\cl i&
-  \ibu3f2\qb3f\sk\tqh3g\sk\ibu3h{-4}\qb3h\sk\tqh3f\qa g\sk\sk\cu g\en
+  \qa{K}\sk\sk\sk\qa{K}\sk&
+  \ibu1g{1}\qb1{d}\sk\qb1{e}\sk\qb1{d}\sk&
+  \ibbl2h1\qb2{h}\qb2{k}\qb2{j}\tqb2i\ibbl2j0\qb2j\tbbl2\qb2h&
+  \ibu3f2\qb3f\sk\tqh3g\sk\ibu3h{-4}\qb3h\sk\en
+\scale\normalvalue
+\anotes
+  \sk\qa N&
+  \tqh1j\ibu1i{-2}\qb1i&
+  \itieu2k\tqb2k\ttie2\ibl2j0\qb2k&
+  \tqh3f\qa g\en
+\scale\normalvalue
+\anotes
+  \sk\sk&
+  \tqh1h\sk&
+  \nbbl2\qb2j\tqb2k&
+  \sk\sk\en
+\scale\normalvalue
+\anotes
+  \cu G&
+  \cu g&
+  \cl i&
+  \cu g\en
 \setrightrepeat
 \endpiece%
 \eject

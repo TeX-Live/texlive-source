@@ -1,5 +1,9 @@
 AUTOSP
 
+2019-12-22
+
+  correct \setsize note scaling using instr_numsize in generate_notes
+
 2019-08-26
 
   scale notes when \setsize instrument has the spacing staff

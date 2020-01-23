@@ -1,4 +1,4 @@
-char version[12] = "2019-08-26";
+char version[12] = "2019-12-22";
 
 /*  Copyright (C) 2014-19 R. D. Tennent School of Computing,
  *  Queen's University, rdt@cs.queensu.ca
