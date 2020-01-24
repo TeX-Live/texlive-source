@@ -1,3 +1,8 @@
+2020-01-24  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dvi.c: Forgot to null-terminate strings in the previous
+	changes.
+
 2020-01-22  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dvi.c: Correct wrong sizes of opassword and upassword

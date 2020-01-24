@@ -2285,6 +2285,7 @@ scan_special_encrypt (int *key_bits, int32_t *permission, char *opassword, char 
             int str_length = (MAX_PWD_LEN - 1 > pdf_string_length(obj)
                 ? pdf_string_length(obj) : MAX_PWD_LEN - 1);
             strncpy(opassword, pdf_string_value(obj), str_length);
+            opassword[str_length] = '\0';
           }
           pdf_release_obj(obj);
         } else
@@ -2295,6 +2296,7 @@ scan_special_encrypt (int *key_bits, int32_t *permission, char *opassword, char 
             int str_length = (MAX_PWD_LEN - 1 > pdf_string_length(obj)
                 ? pdf_string_length(obj) : MAX_PWD_LEN - 1);
             strncpy(upassword, pdf_string_value(obj), str_length);
+            upassword[str_length] = '\0';
           }
           pdf_release_obj(obj);
         } else
