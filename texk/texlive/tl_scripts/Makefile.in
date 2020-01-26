@@ -87,7 +87,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(wrappers)
 subdir = tl_scripts
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-win32.m4 \
@@ -96,8 +95,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-win32.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(dist_texconfig_SCRIPTS) \
-	$(dist_texmf_SCRIPTS) $(dist_texconfig_DATA) \
-	$(dist_web2c_DATA) $(am__DIST_COMMON)
+	$(dist_texconfig_DATA) $(dist_web2c_DATA) $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
@@ -128,12 +126,10 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(texmfdir)" \
-	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
+am__installdirs = "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(man5dir)" "$(DESTDIR)$(texconfigdir)" \
 	"$(DESTDIR)$(web2cdir)"
-SCRIPTS = $(dist_texconfig_SCRIPTS) $(dist_texmf_SCRIPTS) \
-	$(nodist_bin_SCRIPTS)
+SCRIPTS = $(dist_texconfig_SCRIPTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -160,9 +156,7 @@ MANS = $(dist_man_MANS)
 DATA = $(dist_texconfig_DATA) $(dist_web2c_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/Makefile.in \
-	$(top_srcdir)/../../am/bin_links.am \
-	$(top_srcdir)/../../am/man1_links.am \
-	$(top_srcdir)/../../am/script_links.am ChangeLog README
+	$(top_srcdir)/../../am/man1_links.am ChangeLog README
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -251,36 +245,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-DISTCLEANFILES = scripts-list
-EXTRA_DIST = scripts.lst $(top_builddir)/../../build-aux/relpath \
-	updmap.help2man fmtutil.help2man
-
-# These first variable definitions are what scripts_links.am requires.
-perl_scripts = e2pall
-sh_scripts = \
-	dvi2fax \
-	dvired \
-	fontinst \
-	kpsetool \
-	kpsewhere \
-	ps2frag \
-	pslatex \
-	rubibtex \
-	rumakeindex \
-	texconfig-dialog \
-	texconfig-sys \
-	texconfig \
-	texlinks
-
-nodist_bin_SCRIPTS = $(am__append_1)
-scriptsdir = texmf-dist/scripts/texlive
-all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/$(WIN_WRAPPER)/runscript.exe
-#
-#
-texmfdir = $(datarootdir)/$(scriptsdir)
-dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(sh_scripts:=.sh)
 dist_man_MANS = \
   	allcm.1 \
 	allec.1 \
@@ -306,12 +270,6 @@ dist_man_MANS = \
 	updmap.1 \
 	updmap.cfg.5
 
-bin_links = \
-	allcm:allec \
-	fmtutil:mktexfmt \
-	kpsetool:kpsexpand \
-	kpsetool:kpsepath
-
 man1_links = \
 	fmtutil:fmtutil-sys \
 	kpsetool:kpsexpand \
@@ -326,6 +284,7 @@ dist_texconfig_SCRIPTS = tcfmgr
 dist_texconfig_DATA = tcfmgr.map
 web2cdir = $(datarootdir)/texmf-dist/web2c
 dist_web2c_DATA = fmtutil.cnf
+EXTRA_DIST = updmap.help2man fmtutil.help2man
 Master_dir = $(top_srcdir)/../../../../Master
 tl_scripts_dir = $(Master_dir)/texmf-dist/scripts/texlive
 #
@@ -338,7 +297,7 @@ run_texlinks = $(texlinks_prog) -v \
 all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/script_links.am $(top_srcdir)/../../am/bin_links.am $(top_srcdir)/../../am/man1_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -358,7 +317,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles);; \
 	esac;
-$(top_srcdir)/../../am/script_links.am $(top_srcdir)/../../am/bin_links.am $(top_srcdir)/../../am/man1_links.am $(am__empty):
+$(top_srcdir)/../../am/man1_links.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -403,76 +362,6 @@ uninstall-dist_texconfigSCRIPTS:
 	files=`for p in $$list; do echo "$$p"; done | \
 	       sed -e 's,.*/,,;$(transform)'`; \
 	dir='$(DESTDIR)$(texconfigdir)'; $(am__uninstall_files_from_dir)
-install-dist_texmfSCRIPTS: $(dist_texmf_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(texmfdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(texmfdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmfdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmfdir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-dist_texmfSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(texmfdir)'; $(am__uninstall_files_from_dir)
-install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-nodist_binSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
 install-man1: $(dist_man_MANS)
 	@$(NORMAL_INSTALL)
 	@list1=''; \
@@ -643,9 +532,9 @@ distdir-am: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(SCRIPTS) $(MANS) $(DATA) all-local
+all-am: Makefile $(SCRIPTS) $(MANS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)"; do \
+	for dir in "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -674,7 +563,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -700,15 +588,15 @@ info: info-am
 info-am:
 
 install-data-am: install-dist_texconfigDATA \
-	install-dist_texconfigSCRIPTS install-dist_texmfSCRIPTS \
-	install-dist_web2cDATA install-man
+	install-dist_texconfigSCRIPTS install-dist_web2cDATA \
+	install-man
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-nodist_binSCRIPTS
+install-exec-am:
 
 install-html: install-html-am
 
@@ -747,111 +635,35 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-dist_texconfigDATA \
-	uninstall-dist_texconfigSCRIPTS uninstall-dist_texmfSCRIPTS \
-	uninstall-dist_web2cDATA uninstall-man \
-	uninstall-nodist_binSCRIPTS
+	uninstall-dist_texconfigSCRIPTS uninstall-dist_web2cDATA \
+	uninstall-man
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1 uninstall-man5
 
 .MAKE: install-am install-data-am install-strip uninstall-am
 
-.PHONY: all all-am all-local check check-am clean clean-generic \
-	cscopelist-am ctags-am distclean distclean-generic distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-data-hook \
-	install-dist_texconfigDATA install-dist_texconfigSCRIPTS \
-	install-dist_texmfSCRIPTS install-dist_web2cDATA install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-man5 install-nodist_binSCRIPTS \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am tags-am uninstall \
-	uninstall-am uninstall-dist_texconfigDATA \
-	uninstall-dist_texconfigSCRIPTS uninstall-dist_texmfSCRIPTS \
+.PHONY: all all-am check check-am clean clean-generic cscopelist-am \
+	ctags-am distclean distclean-generic distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-data-hook install-dist_texconfigDATA \
+	install-dist_texconfigSCRIPTS install-dist_web2cDATA \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-man1 install-man5 install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags-am uninstall uninstall-am \
+	uninstall-dist_texconfigDATA uninstall-dist_texconfigSCRIPTS \
 	uninstall-dist_web2cDATA uninstall-hook uninstall-man \
-	uninstall-man1 uninstall-man5 uninstall-nodist_binSCRIPTS
+	uninstall-man1 uninstall-man5
 
 .PRECIOUS: Makefile
 
 
-scripts-list: Makefile
-	@echo "Create $@"
-	@echo "tl_scripts='" >$@
-	@for f in $(dist_texmf_SCRIPTS); do echo "$$f"; done >>$@
-	@echo "'" >>$@
-	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
-
-@MAINTAINER_MODE_TRUE@all-local: scripts-list
-@MAINTAINER_MODE_FALSE@all-local:
-.PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
-	install-links uninstall-links
-@WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@	$(AM_V_GEN)$(LN_S) $(runscript) $@
-
-install-lua-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=lua EXT=lua install-links
-
-install-perl-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=perl EXT=pl install-links
-
-install-shell-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
-
-install-sh-links:
-@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=sh EXT=sh install-links
-
-# We support native builds, multiplatform or not, as well as distro builds.
-install-links:
-	@relpath="$(top_srcdir)/../../build-aux/relpath"; \
-	test -r $$relpath || { \
-	  echo 'script_links.am:install-links: could not find relpath script'; \
-	  exit 1; \
-	}; \
-	REL=`$(SHELL) $$relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
-	if test -z "$$REL"; then \
-	  echo 'script_links.am:install_links: unable to compute relative path for linked $(TYPE) scripts' >&2; \
-	  exit 1; \
-	fi; \
-	cd $(DESTDIR)$(bindir) && \
-	  for f in $($(TYPE)_scripts); do \
-	    rm -f $$f; \
-	    if $(AM_V_P); then echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
-	      else echo "  LINK     $$f"; fi; \
-	    $(LN_S) $$REL/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
-	  done  
-
-uninstall-links:
-@WIN32_FALSE@	@for f in $(all_scripts) $(sh_scripts); do \
-@WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-@WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-@WIN32_FALSE@	done
-
-install-data-hook: install-bin-links install-man1-links install-perl-links install-sh-links
-uninstall-hook: uninstall-bin-links uninstall-man1-links uninstall-links
-
-# $Id: bin_links.am 43248 2017-02-16 21:38:29Z karl $
-# am/bin_links.am: Makefile fragment for bindir links.
-.PHONY: install-bin-links uninstall-bin-links
-
-install-bin-links:
-@WIN32_FALSE@	$(MKDIR_P) $(DESTDIR)$(bindir)
-@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
-@WIN32_FALSE@	  for s in $(bin_links); do \
-@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
-@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
-@WIN32_FALSE@	    rm -f $$link; \
-@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
-@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
-@WIN32_FALSE@	  done
-
-uninstall-bin-links:
-@WIN32_FALSE@	@for s in $(bin_links); do \
-@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
-@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
-@WIN32_FALSE@	done
+install-data-hook: install-man1-links
+uninstall-hook: uninstall-man1-links
 .PHONY: install-man1-links uninstall-man1-links
 
 install-man1-links:
@@ -890,10 +702,6 @@ run-texlinks: $(DESTDIR)$(bindir)/texlinks
 $(DESTDIR)$(bindir)/texlinks: $(DESTDIR)$(web2cdir)/fmtutil.cnf
 $(DESTDIR)$(web2cdir)/fmtutil.cnf:
 	$(MAKE) $(AM_MAKEFLAGS) install
-
-.PHONY: echo-shell-scripts
-echo-shell-scripts:
-	@echo $(sh_scripts)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

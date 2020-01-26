@@ -1,8 +1,7 @@
 $Id$
-Copyright 2013 TeX Users Group.
-You may freely use, modify and/or distribute this file.
+Public domain.
 
-This directory contains scripts which originated in teTeX, but with
-teTeX's demise, are now maintained as part of TeX Live.  Some have been
-significantly or completely rewritten from the teTeX versions; most
-notably, updmap and fmtutil are now implemented in Perl.
+This directory contains documentation for scripts which are maintained
+as part of TeX Live. The scripts themselves are maintained under Master:
+Master/texmf-dist/scripts/texlive/
+Master/texmf-dist/scripts/texlive-extra

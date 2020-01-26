@@ -1,54 +1,11 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/texlive/tl_scripts/
 ##
-## Copyright 2013-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2013-2020 Karl Berry <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-## Build lists of scripts.
-##
-scripts-list: Makefile
-	@echo "Create $@"
-	@echo "tl_scripts='" >$@
-	@for f in $(dist_texmf_SCRIPTS); do echo "$$f"; done >>$@
-	@echo "'" >>$@
-	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
-
-if MAINTAINER_MODE
-all-local: scripts-list
-else !MAINTAINER_MODE
-all-local:
-endif !MAINTAINER_MODE
-
-DISTCLEANFILES = scripts-list
-
-EXTRA_DIST = scripts.lst
-
-# These first variable definitions are what scripts_links.am requires.
-perl_scripts = e2pall
-sh_scripts = \
-	dvi2fax \
-	dvired \
-	fontinst \
-	kpsetool \
-	kpsewhere \
-	ps2frag \
-	pslatex \
-	rubibtex \
-	rumakeindex \
-	texconfig-dialog \
-	texconfig-sys \
-	texconfig \
-	texlinks
-nodist_bin_SCRIPTS =
-scriptsdir = texmf-dist/scripts/texlive
-#
-include $(top_srcdir)/../../am/script_links.am
-#
-texmfdir = $(datarootdir)/$(scriptsdir)
-dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(sh_scripts:=.sh)
-
-install-data-hook: install-bin-links install-man1-links install-perl-links install-sh-links
-uninstall-hook: uninstall-bin-links uninstall-man1-links uninstall-links
+install-data-hook: install-man1-links
+uninstall-hook: uninstall-man1-links
 
 dist_man_MANS = \
   	allcm.1 \
@@ -75,14 +32,6 @@ dist_man_MANS = \
 	updmap.1 \
 	updmap.cfg.5
 
-bin_links = \
-	allcm:allec \
-	fmtutil:mktexfmt \
-	kpsetool:kpsexpand \
-	kpsetool:kpsepath
-
-include $(top_srcdir)/../../am/bin_links.am
-
 man1_links = \
 	fmtutil:fmtutil-sys \
 	kpsetool:kpsexpand \
@@ -106,7 +55,7 @@ dist_web2c_DATA = fmtutil.cnf
 ## handwritten material.  But don't actually update updmap/fmtutil.1,
 ## since we don't want to require help2man for an install.  Leave that
 ## to be done by hand (see tlpkg/doc/releng.txt).
-EXTRA_DIST += updmap.help2man fmtutil.help2man
+EXTRA_DIST = updmap.help2man fmtutil.help2man
 .PHONY: xmans xupdmap.1 xfmtutil.1
 xmans: xupdmap.1 xfmtutil.1
 Master_dir = $(top_srcdir)/../../../../Master
@@ -121,7 +70,6 @@ xfmtutil.1: fmtutil.help2man $(tl_scripts_dir)/fmtutil.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(tl_scripts_dir)/fmtutil.pl >/tmp/$@
 	groff -mandoc -Thtml /tmp/$@ >/tmp/$@.html
-
 
 ## 
 ## This target is invoked by the top-level make,
@@ -146,9 +94,3 @@ endif !WIN32
 $(DESTDIR)$(bindir)/texlinks: $(DESTDIR)$(web2cdir)/fmtutil.cnf
 $(DESTDIR)$(web2cdir)/fmtutil.cnf:
 	$(MAKE) $(AM_MAKEFLAGS) install
-
-## 
-## This target is invoked by check-wrapper-consistency (run from cron).
-.PHONY: echo-shell-scripts
-echo-shell-scripts:
-	@echo $(sh_scripts)
