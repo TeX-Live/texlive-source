@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: texlinks.sh 36938 2015-04-19 21:15:06Z karl $
+# $Id: texlinks.sh 53554 2020-01-26 23:58:37Z karl $
 
 # Thomas Esser, 1999, 2002, 2003. public domain.
 
@@ -39,7 +39,7 @@ export PATH
 # hack around a bug in zsh:
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
-version='$Id: texlinks.sh 36938 2015-04-19 21:15:06Z karl $'
+version='$Id: texlinks.sh 53554 2020-01-26 23:58:37Z karl $'
 progname=texlinks
 cnf=fmtutil.cnf   # name of the config file
 

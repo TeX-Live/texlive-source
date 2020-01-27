@@ -18,6 +18,19 @@ pst-pdf/ps4pdf
 simpdftex/simpdftex
 texlive-extra/allcm.sh
 texlive-extra/allneeded.sh
+texlive-extra/dvi2fax.sh
+texlive-extra/dvired.sh
+texlive-extra/fontinst.sh
+texlive-extra/kpsetool.sh
+texlive-extra/kpsewhere.sh
+texlive-extra/ps2frag.sh
+texlive-extra/pslatex.sh
+texlive-extra/rubibtex.sh
+texlive-extra/rumakeindex.sh
+texlive-extra/texconfig-dialog.sh
+texlive-extra/texconfig-sys.sh
+texlive-extra/texconfig.sh
+texlive-extra/texlinks.sh
 texosquery/texosquery.sh
 texosquery/texosquery-jre5.sh
 texosquery/texosquery-jre8.sh
@@ -149,6 +162,7 @@ texlive/tlmgr.pl
 texlive/updmap-sys.sh
 texlive/updmap-user.sh
 texlive/updmap.pl
+texlive-extra/e2pall.pl
 texliveonfly/texliveonfly.py
 texloganalyser/texloganalyser
 texplate/texplate.sh

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: texconfig-sys.sh 34586 2014-07-13 00:06:11Z karl $
+# $Id: texconfig-sys.sh 53554 2020-01-26 23:58:37Z karl $
 # texconfig-sys: Thomas Esser, public domain.
 
 # wrapper script for texconfig with TEXMFVAR and TEXMFCONFIG set to
