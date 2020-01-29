@@ -306,12 +306,12 @@ case 'N':   if (*p == ']') {
                if (seenchars >= 256)
                   return 0 ;
                if (strncmp(p, "/.notdef", 8) == 0 &&
-                   (p[8] <= ' ' || index("{}[]<>()%/", p[8]) == 0)) {
+                   (p[8] <= ' ' || strchr("{}[]<>()%/", p[8]) == 0)) {
                   bme->existsbm[seenchars>>3] &= ~(1<<(seenchars & 7)) ;
                }
                // see PostScript language reference manual syntax for this
                p++ ;
-               while (*p > ' ' && index("{}[]<>()%/", *p) == 0)
+               while (*p > ' ' && strchr("{}[]<>()%/", *p) == 0)
                   p++ ;
                seenchars++ ;
             } else if ('0' <= *p && *p <= '9') {
@@ -329,7 +329,7 @@ case '#':   if (*p != '{') return 0 ;
 case '{':   if (strncmp(p, "/.notdef", 8) != 0)
                return 0 ;
             p += 8 ;
-            if (*p > ' ' && index("{}[]<>()%/", *p) == 0)
+            if (*p > ' ' && strchr("{}[]<>()%/", *p) == 0)
                return 0 ;
             while (num > 0) {
                if (seenchars >= 256)
