@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2019 Marc Penninga.
+    Copyright (C) 2005-2020 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20191126';
+my $VERSION = '20200129';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -89,7 +89,7 @@ for my $full (keys %ABBREV) {
     - width:  uc, ec, c, sc, m, sx, x, ex, ux
 
     These codes are not always a perfect match with the weights and widths
-    present in a font family; some families (especially sanserif ones)
+    present in a font family; some families (especially many sans serif ones)
     contain more or different weights and widths, and the naming of those
     weights and widths isn't always consistent between font families.
     To handle this situation, we use a two-tiered approach:
@@ -199,15 +199,6 @@ my @WIDTHS = grep { $_ ne 'regular' } map { @{$_} } values %NFSS_WIDTH;
 
     The NFSS_SHAPE table maps various shape names to NFSS codes.
 
-    Note that this table works the other way around compared to
-    the two previous tables; it directly maps shape names to NFSS codes.
-    The reason the other tables are a bit contorted is that there,
-    we might have multiple weighs or widths mapping to the same code,
-    and we need a way to prioritise some weights/widths over others.
-
-    For shapes, that's not the case; font families don't have both Slanted
-    and Oblique shapes, since these are different names for the same thing.
-
     Like in the other NFSS_* tables, entries may be added to teach autoinst
     about new shapes.
 
@@ -219,8 +210,6 @@ my @NFSS_SHAPE = (
     roman       =>  'n',
     upright     =>  'n',
     italic      =>  'it',
-    cursive     =>  'it',
-    kursiv      =>  'it',
     inclined    =>  'sl',
     oblique     =>  'sl',
     slanted     =>  'sl',
@@ -304,7 +293,7 @@ my %SHAPE = (
 
 =begin Comment
 
-    The next table is used to generate extra ssub rules in the .fd files
+    The SSUB_SHAPE table is used to generate extra ssub rules in .fd files
     to map missing Slanted shapes to Italic and vice versa.
 
 =end Comment
@@ -463,15 +452,18 @@ my %STYLE_DEFAULTS = (
 
 
 sub main {
+    print "autoinst, version $VERSION\n";
+
     ARGV::parse_options();
 
     my @fonts = map { Fontinfo::parse_fontinfo($_) } @ARGV;
 
+    $ARGV{logfile} ||= sprintf "%s.log", lc $fonts[0]->{family};
     create_logfile(@fonts);
     Fontinfo::assert_unique(@fonts);
 
     # We can only handle the '-inferiors=auto' option now,
-    # since this requires knowing which inferior figures this font supports;
+    # since we need to know which inferior figures this font supports;
     # so we have to do the font info parsing first.
     if ($ARGV{inferiors} eq 'auto') {
         Fontinfo::handle_auto_inferiors(@fonts);
@@ -517,6 +509,7 @@ sub main {
     }
 
     close $ARGV{logfile};
+    print "\n";
 
     return;
 }
@@ -751,6 +744,7 @@ sub create_logfile {
     }
     open my $LOG, '>>', $ARGV{logfile}
         or die "$0: cannot create $ARGV{logfile}: $!";
+    $ARGV{logfile} = $LOG;
 
     print {$LOG} <<"END_ARGUMENTS";
 
@@ -787,44 +781,21 @@ I'm using the following options:
     fractions:          @{[ $ARGV{fractions}    ? 'yes' : 'no' ]}
     ligatures:          @{[ $ARGV{ligatures}    ? 'yes' : 'no' ]}
 
-    dry run/real:       @{[ $ARGV{dryrun}       ? 'dry run' : 'real' ]}
     auto/manual:        @{[ $ARGV{manual}       ? 'manual'  : 'auto' ]}
     target:             $ARGV{target}
-    extra:              @{[ $ARGV{extra} || '<empty>' ]}
+    extra:              $ARGV{extra}
 
     figurekern:         @{[ $ARGV{figurekern}   ? 'keep' : 'remove' ]}
     mergewidths:        @{[ $ARGV{mergewidths}  ? 'yes' : 'no' ]}
     mergeweights:       @{[ $ARGV{mergeweights} ? 'yes' : 'no' ]}
     mergeshapes:        @{[ $ARGV{mergeshapes}  ? 'yes' : 'no' ]}
 
-    nfssweight:         @{[ join q{, }, @{$ARGV{nfssweight}} or '-' ]}
-    nfsswidth:          @{[ join q{, }, @{$ARGV{nfsswidth}}  or '-' ]}
+    nfssweight:         @{[ join q{, }, @{$ARGV{nfssweight}} ]}
+    nfsswidth:          @{[ join q{, }, @{$ARGV{nfsswidth}}  ]}
+
+    @{[ $ARGV{dryrun} ? 'DRY RUN' : '' ]}
 
 END_ARGUMENTS
-
-    my %fontfamilies = map { ( $_->{family} => 1 ) } @fonts;
-    my @fontfamilies = keys %fontfamilies;
-    if (scalar @fontfamilies > 1) {
-        warn <<"END_WARNING_MULTIPLE_FAMILIES";
-[WARNING]   Your fonts seem to belong to multiple families:
-
-            @{[ join( "\n" . q{ } x 12, sort @fontfamilies ) ]}
-
-            "autoinst" performs best when installing one family at a time.
-            If you think your fonts should all be in the same family,
-            you might have found a bug in autoinst's font info parsing.
-
-            Please see the log file $ARGV{logfile} for details on how
-            the fonts' families, weights, widths and shapes were parsed.
-END_WARNING_MULTIPLE_FAMILIES
-
-        # increase verbosity if necessary, to log all relevant info
-        if ($ARGV{verbose} < 1) {
-            $ARGV{verbose} = 1;
-        }
-    }
-
-    $ARGV{logfile} = $LOG;
 
     return if $ARGV{verbose} < 1;
 
@@ -836,10 +807,11 @@ END_WARNING_MULTIPLE_FAMILIES
     $font->{filename}
         Name:       $font->{name}
         Family:     $font->{family}
+        Subfamily:  $font->{subfamily}
         Weight:     $font->{weight} ($font->{weight_class})
         Width:      $font->{width} ($font->{width_class})
         Shape:      $font->{shape} @{[ $font->{is_smallcaps}
-                                            ? '(smallcaps)' : '' ]}
+                                            ? 'smallcaps' : '' ]}
         Size:       $font->{minsize}-$font->{maxsize}
         Features:   @{[ join ', ', sort keys %{$font->{feature}} ]}
 END_PARSE_FONT
@@ -905,6 +877,7 @@ END_FONTINFO
     }
 
     return if $ARGV{verbose} < 2;
+    print {$LOG} "\n\n";
     print {$LOG} join "\n\n", @cmds;
     print {$LOG} "\n";
 }
@@ -981,7 +954,7 @@ sub make_cmdline {
     return join ' ', 'otftotfm',
                      ($ARGV{manual} ? '--pl' : '--automatic'),
                      "--encoding=$item->{encoding}[0]",
-                     set_targetdirs($item->{font}{family}),
+                     set_targetdirs($item->{font}),
                      '--no-updmap',
                      ($item->{font}{filename} =~ m/[.]ttf\z/xmsi
                         ? '--no-type1'
@@ -1008,23 +981,34 @@ sub make_cmdline {
 #-----------------------------------------------------------------------
 # Return a string with all "directory" options for otftotfm set
 #-----------------------------------------------------------------------
-my @FILETYPES = qw(tfm vf type1 truetype);
-
 sub set_targetdirs {
-    my $family = shift;
+    my $font = shift;
 
-    my %dir = map { ($_ => File::Spec->catdir(
-                        $ARGV{target},
-                        'fonts',
-                        $_,
-                        $ARGV{vendor},
-                        $ARGV{typeface} || $family))
+    my $family = $font->{family};
+    my ($fonttype) = map { lc $_ } $font->{filename} =~ m/[.]([ot]tf)\z/xmsi;
+
+    my @FILETYPES = qw(tfm vf);
+    push @FILETYPES, $fonttype eq 'otf' ? qw(type1)
+                   : $fonttype eq 'ttf' ? qw(truetype)
+                   :                      qw(type1 truetype)
+                   ;
+
+    my %dir = map { (
+                        $_ => File::Spec->catdir(
+                            $ARGV{target},
+                            'fonts',
+                            $_,
+                            $ARGV{vendor},
+                            $ARGV{typeface} || $family
+                        )
+                    )
                   }
                   @FILETYPES;
 
-    $dir{$_} = File::Spec->catdir(
-            $ARGV{target}, 'fonts', $_, 'dvips', $ARGV{typeface} || $family)
-        for qw(enc map);
+    $dir{$_}
+        = File::Spec->catdir(
+            $ARGV{target}, 'fonts', $_, 'dvips', $ARGV{typeface} || $family
+        ) for qw(enc map);
 
     File::Path::make_path(values %dir) unless $ARGV{dryrun};
 
@@ -1085,7 +1069,7 @@ Possible options:
     -manual                 Manual mode (see documentation)
 
     -(no)figurekern         Keep or remove kerns between tabular figures
-    -(no)mergewidths        Merge Condended/Extended subfamilies with main
+    -(no)mergewidths        Merge condended/extended subfamilies with main
     -(no)mergeweights       Merge separate weights with main family
     -(no)mergeshapes        Merge separate shapes with main family
 
@@ -1461,7 +1445,6 @@ sub parse_basicinfo {
 
     # In many font families, each font is in a subfamily of its own;
     # so we remove width, weight and shape from the 'subfamily' value.
-    my $subst;
     $data{subfamily} =~ s/$info->{width}//xmsi;
     $data{subfamily} =~ s/$info->{weight}//xmsi;
     $data{subfamily} =~ s/$info->{shape}//xmsi;
@@ -1520,8 +1503,13 @@ sub parse_basicinfo {
 
     # Some font families put extreme weights into separate families;
     # we provide an option to merge these with the 'main' font family.
+    # Note that if the font's family name includes the word "Text"
+    # (as in Libre Caslon Text) this should not be mistaken for a weight.
     if ($ARGV{mergeweights}) {
         my $weights = join '|', mqrs(@WEIGHTS), qw(medium regular);
+        if ( $info->{family} =~ m/text \z/xmsi ) {
+            $weights =~ s/text[|]?//xms;
+        }
         if ( $info->{family} =~ m/(.+?) (${weights}) \z/xmsi
                 and ( $info->{weight} eq 'regular'
                    or $info->{weight} eq ( $UNABBREVIATE{ lc($2) } // lc($2) )
@@ -1532,13 +1520,10 @@ sub parse_basicinfo {
         }
     }
 
-    # Fix confusion about "Text": weight vs part of familyname.
-    # In the latter case, we strip it off anyway.
+    # Strip off the "Text" from family names that contain this string.
+    # This was a crude way to fix a bug in the previous paragraph;
+    # it's unnecessary now, but we don't want to break the old behaviour.
     $info->{family} =~ s/text \z//xmsi;
-
-    if ( !$ARGV{logfile} ) {
-        $ARGV{logfile} = sprintf "%s.log", lc $info->{family}
-    }
 
     $info->{basicshape} = $NFSS_SHAPE{$info->{shape}};
 
@@ -1706,6 +1691,28 @@ sub assert_unique {
     if ($err_details) {
         print {$ARGV{logfile}} $err_details, $ERR_PARSE;
         die $err_details, $ERR_PARSE;
+    }
+
+    my %fontfamilies = map { ( $_->{family} => 1 ) } @fonts;
+    my @fontfamilies = keys %fontfamilies;
+    if (scalar @fontfamilies > 1) {
+        warn <<"END_WARNING_MULTIPLE_FAMILIES";
+[WARNING]   Your fonts seem to belong to multiple families:
+
+                @{[ join( "\n" . q{ } x 16, sort @fontfamilies ) ]}
+
+            "autoinst" performs best when installing one family at a time.
+            If you think your fonts should all be in the same family,
+            you may have found a bug in autoinst's font info parsing.
+
+            Please see the log file for details on how the fonts' families,
+            weights, widths and shapes were parsed.
+END_WARNING_MULTIPLE_FAMILIES
+
+        # increase verbosity if necessary, to log all relevant info
+        if ($ARGV{verbose} < 1) {
+            $ARGV{verbose} = 1;
+        }
     }
 
     return 1;
@@ -2461,7 +2468,7 @@ The mapping of shapes to NFSS codes is done using the following table:
     SHAPE                               CODE
     --------------------------------    ----
     Roman, Upright                      n
-    Italic, Cursive, Kursive            it
+    Italic                              it
     Oblique, Slant(ed), Incline(d)      sl
 
 (I<Exception:> Adobe Silentium Pro contains two Roman shapes;
@@ -2810,7 +2817,7 @@ don't paraphase.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2019 Marc Penninga.
+Copyright (C) 2005-2020 Marc Penninga.
 
 
 =head1 LICENSE
@@ -2833,7 +2840,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20191126.
+This document describes B<autoinst> version 20200129.
 
 
 =head1 RECENT CHANGES
@@ -2841,6 +2848,10 @@ This document describes B<autoinst> version 20191126.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2020-01-29>
+
+Don't create empty subdirectories in the target TEXMF tree.
 
 =item I<2019-11-18>
 

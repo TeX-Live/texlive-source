@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 53428 2020-01-16 23:29:27Z karl $
+# $Id: tlmgr.pl 53582 2020-01-28 14:16:34Z siepo $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 53428 $';
-my $datrev = '$Date: 2020-01-17 00:29:27 +0100 (Fri, 17 Jan 2020) $';
+my $svnrev = '$Revision: 53582 $';
+my $datrev = '$Date: 2020-01-28 15:16:34 +0100 (Tue, 28 Jan 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -2359,11 +2359,12 @@ sub write_w32_updater {
   >con echo DO NOT CLOSE THIS WINDOW!
   >con echo TeX Live infrastructure update in progress ...
   >con echo Detailed command logging to $upd_log
-  chdir /d "%~dp0.."
+  pushd "%~dp0.."
   if not errorlevel 1 goto :update
   >con echo Could not change working directory to "%~dp0.."
   >con echo Aborting infrastructure update, no changes have been made.
   >con $gui_pause 
+  popd
   exit /b 1
     
 :update
@@ -2379,6 +2380,7 @@ sub write_w32_updater {
   >con echo Infrastructure update finished successfully.
   >con echo $post_update_msg
   >con $gui_pause 
+  popd
   exit /b 0
 
 :rollback
@@ -2395,6 +2397,7 @@ sub write_w32_updater {
   >con echo self restore: @rst_info
   >con echo Infrastructure update failed. Previous version has been restored.
   >con $gui_pause 
+  popd
   exit /b 1
 
 :panic
@@ -2405,6 +2408,7 @@ sub write_w32_updater {
   >con echo To repair your TeX Live installation download and run:
   >con echo $TeXLive::TLConfig::TeXLiveURL/update-tlmgr-latest.exe
   >con $gui_pause 
+  popd
   exit /b 666
 EOF
 
@@ -3529,14 +3533,14 @@ sub action_update {
 
   # only when we are not dry-running we restart the program
   if (!win32() && $restart_tlmgr && !$opts{"dry-run"} && !$opts{"list"}) {
-    info ("Restarting tlmgr to complete update ...\n");
+    info("$prg: Restarting to complete update ...\n");
     debug("restarting tlmgr @::SAVEDARGV\n");
     # cleanup temp files before re-exec-ing tlmgr
     File::Temp::cleanup();
     exec("tlmgr", @::SAVEDARGV);
     # we need warn here, otherwise perl gives warnings!
-    warn ("$prg: cannot restart tlmgr, please retry update\n");
-    return ($F_ERROR);
+    warn("$prg: cannot restart tlmgr, please retry update\n");
+    return($F_ERROR);
   }
 
   # for --dry-run we cannot restart tlmgr (no way to fake successful 
@@ -3547,7 +3551,7 @@ sub action_update {
     $opts{"dry-run"} = -1;
     $localtlpdb = undef;
     $remotetlpdb = undef;
-    info ("Restarting tlmgr to complete update ...\n");
+    info ("$prg --dry-run: would restart tlmgr to complete update ...\n");
     $ret |= action_update();
     return ($ret);
   }
@@ -6152,7 +6156,7 @@ sub action_conf {
           info("$k = " . $cf->value($k) . "\n");
         }
       } else {
-        info("$arg config file $fn not present\n");
+        info("$prg: $arg config file $fn not present\n");
         return($F_WARNING);
       }
     } else {
@@ -6242,7 +6246,7 @@ sub action_conf {
       } elsif (!defined($val)) {
         if (defined($opts{'delete'})) {
           if (defined($cf->value($key))) {
-            info("removing setting $arg $key value: " . $cf->value($key)
+            info("$prg: removing setting $arg $key value: " . $cf->value($key)
                  . "from $fn\n"); 
             $cf->delete_key($key);
           } else {
@@ -7471,9 +7475,9 @@ sub clear_old_backups {
       # only echo out if explicitly asked for verbose which is done
       # in the backup --clean action
       if ($verb) {
-        info ("Removing backup $backupdir/$e->[1]\n");
+        info("$prg: Removing backup $backupdir/$e->[1]\n");
       } else {
-        debug ("Removing backup $backupdir/$e->[1]\n");
+        debug("Removing backup $backupdir/$e->[1]\n");
       }
       unlink("$backupdir/$e->[1]") unless $dryrun;
     }
@@ -10008,7 +10012,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 53428 2020-01-16 23:29:27Z karl $
+$Id: tlmgr.pl 53582 2020-01-28 14:16:34Z siepo $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

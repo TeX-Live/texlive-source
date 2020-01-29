@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2019 Marc Penninga.
+    Copyright (C) 2005-2020 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ use File::Basename;
 use Getopt::Long;
 use Pod::Usage;
 
-my $VERSION = "20191126";
+my $VERSION = "20200129";
 
 parse_commandline();
 
@@ -398,7 +398,7 @@ Marc Penninga <marcpenninga@gmail.com>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2019 Marc Penninga.
+Copyright (C) 2005-2020 Marc Penninga.
 
 
 =head1 LICENSE
@@ -421,7 +421,7 @@ See the GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<afm2afm> version 20191126.
+This document describes B<afm2afm> version 20200129.
 
 
 =head1 RECENT CHANGES
