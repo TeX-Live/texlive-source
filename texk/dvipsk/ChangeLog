@@ -1,3 +1,19 @@
+2020-01-29  Tomas Rokicki  <rokicki@gmail.com>
+	
+	* bitmapenc.c (struct bmenc): new member existsbm.
+	(parseencodingfile): rename from parseencoding; change calls.
+	(trytoparseenc),
+	(parseenc): new fns.
+	(addbmenc): call parseenc.
+	(getencoding_seq): change type to struct bmenc.
+	(downloadbmencoding): check that every defined character has a name.
+	(doubleout): take double instead of float.
+	* dvips-all.enc: more fonts.
+	* dvips.c (-bitmapfontenc): rename option from -J.
+	* dvips.texi: adjust documentation.
+	* resident.c (get_defaults): new case b for bitmapfontenc,
+	renamed from J.
+
 2020-01-16  Karl Berry  <karl@freefriends.org>
 
 	* afm2tfm.c,

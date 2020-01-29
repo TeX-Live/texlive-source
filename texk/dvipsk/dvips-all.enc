@@ -670,6 +670,8 @@ bbold9:
 /S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/langle/rangle/quoteleft
 /a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/endash/bar/emdash
 /quotedbleright/omega 128{/.notdef}repeat]
+ccmi10:
+ccmic9:
 cmbrmb10:
 cmbrmi10:
 cmbrmi8:
@@ -729,10 +731,21 @@ repeat/Lcaron 3{/.notdef}repeat/Scaron/.notdef/Tcaron/.notdef/.notdef/Zcaron
 /.notdef/ecaron/iacute/.notdef/dcaron/.notdef/.notdef/ncaron/oacute
 /ocircumflex/.notdef/odieresis/.notdef/rcaron/uring/uacute/.notdef/udieresis
 /yacute/quotedblbase/csquotedblright]
+cccsc10:
+ccr5:
 cmcsc10:
 cmcsc8:
 cmcsc9:
 cmr5:
+punk10:
+punk12:
+punk20:
+punkbx20:
+punkbxx20:
+punksl20:
+punkslx20:
+punkz20:
+ttmc10:
 [/Gamma/Delta/Theta/Lambda/Xi/Pi/Sigma/Upsilon/Phi/Psi/Omega/arrowup
 /arrowdown/quotesingle/exclamdown/questiondown/dotlessi/dotlessj/grave/acute
 /caron/breve/macron/ring/cedilla/germandbls/ae/oe/oslash/AE/OE/Oslash
@@ -761,6 +774,7 @@ repeat/Lslash/Nacute 5{/.notdef}repeat/Sacute 7{/.notdef}repeat/Zacute
 /guillemotright/.notdef/sacute 7{/.notdef}repeat/zacute/.notdef/zdotaccent 23
 {/.notdef}repeat/Oacute 31{/.notdef}repeat/oacute 11{/.notdef}repeat
 /quotedblbase]
+cmntt10:
 cmsltt10:
 cmsltt9:
 cmtcsc10:
@@ -768,6 +782,7 @@ cmtt10:
 cmtt12:
 cmtt8:
 cmtt9:
+cmttsq14:
 [/Gamma/Delta/Theta/Lambda/Xi/Pi/Sigma/Upsilon/Phi/Psi/Omega/arrowup
 /arrowdown/quotesingle/exclamdown/questiondown/dotlessi/dotlessj/grave/acute
 /caron/breve/macron/ring/cedilla/germandbls/ae/oe/oslash/AE/OE/Oslash
@@ -966,6 +981,14 @@ repeat/lcaron/.notdef/.notdef/agrave/scaron/.notdef/tcaron/.notdef/.notdef
 /ecaron/iacute/.notdef/dcaron/.notdef/.notdef/ncaron/oacute/ocircumflex
 /.notdef/odieresis/.notdef/rcaron/uring/uacute/.notdef/udieresis/yacute
 /quotedblbase/csquotedblright]
+ccn10:
+ccr10:
+ccr7:
+ccr8:
+ccr9:
+ccsl10:
+ccsl9:
+ccslc9:
 cmb10:
 cmbr10:
 cmbr17:
@@ -983,9 +1006,12 @@ cmbx6:
 cmbx7:
 cmbx8:
 cmbx9:
+cmbxcd10:
 cmbxsl10:
 cmdunh10:
+cmhFv:
 cmr10:
+cmr10mod:
 cmr12:
 cmr17:
 cmr6:
@@ -1018,16 +1044,23 @@ cmssi12:
 cmssi17:
 cmssi8:
 cmssi9:
+cmsslu30:
 cmssq8:
 cmssqi8:
 cmssu10:
 cmssxicsc10:
+cmtitl:
 cmtl10:
 cmvtt10:
+f36:
+geom10:
 lcmss8:
 lcmssb8:
 lcmssi8:
 pcmi10:
+xbmc10:
+xmas0:
+xmas1:
 [/Gamma/Delta/Theta/Lambda/Xi/Pi/Sigma/Upsilon/Phi/Psi/Omega/ff/fi/fl/ffi
 /ffl/dotlessi/dotlessj/grave/acute/caron/breve/macron/ring/cedilla
 /germandbls/ae/oe/oslash/AE/OE/Oslash/suppress/exclam/quotedblright
@@ -1102,6 +1135,8 @@ plvtt10:
 /lslash/nacute/.notdef/.notdef/guillemotleft/guillemotright/.notdef/sacute 7
 {/.notdef}repeat/zacute/.notdef/zdotaccent 23{/.notdef}repeat/Oacute 31{
 /.notdef}repeat/oacute 11{/.notdef}repeat/quotedblbase]
+bible12:
+ccti10:
 cmbxti10:
 cmbxti12:
 cmbxti7:
@@ -1748,6 +1783,7 @@ xylubt12:
 /d97/d98/d99/d100/d101/d102/d103/d104/d105/d106/d107/d108/d109/d110/d111
 /d112/d113/d114/d115/d116/d117/d118/d119/d120/d121/d122/d123/d124/d125/d126
 /d127 128{/.notdef}repeat]
+cmntex10:
 cmtex10:
 cmtex8:
 cmtex9:
@@ -4530,6 +4566,9 @@ cmsy6:
 cmsy7:
 cmsy8:
 cmsy9:
+cmsytt10:
+euxm10:
+euxm7:
 [/minus/periodcentered/multiply/asteriskmath/divide/diamondmath/plusminus
 /minusplus/circleplus/circleminus/circlemultiply/circledivide/circledot
 /circlecopyrt/openbullet/bullet/equivasymptotic/equivalence/reflexsubset

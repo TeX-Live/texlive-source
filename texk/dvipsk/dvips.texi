@@ -592,6 +592,13 @@ do color separations or other neat tricks.
 Print only the even pages.  This option uses @TeX{} page numbers, not
 physical page numbers.
 
+@item -bitmapfontenc @var{option}
+@opindex -bitmapfontenc @var{option}
+@cindex bitmap font encoding
+Turns bitmap font encoding to @samp{off}, @samp{on} (no warnings
+for missing bitmap font encodings), or @samp{strict} (with warnings
+for missing bitmap font encodings).
+
 @item -c @var{num}
 @opindex -c @var{num}
 @vindex /#copies
@@ -738,13 +745,6 @@ Download only needed characters from Type 1 fonts. This is the
 default in the current release.  Some debugging flags trace this operation
 (@pxref{Debug options}).  You can also control partial downloading on a
 per-font basis (@pxref{psfonts.map}).
-
-@item -J @var{num}
-@opindex -J @r{for bitmap font encoding}
-Download encodings for bitmapped fonts.  This flag has
-three possible values: @samp{-J0} (to turn it off), @samp{-J} or @samp{-J1}
-(to turn it on with no warnings), or @samp{-J2} (to turn it on and
-enable warnings).
 
 @item -k*
 @opindex -k @r{for cropmarks}
@@ -1345,6 +1345,12 @@ Memory conservation.  Same as @samp{-a}, @pxref{Option details}.
 @opindex b @r{config command (#copies)}
 Multiple copies.  Same as @samp{-b}, @pxref{Option details}.
 
+@item bitmapfontenc @var{option}
+@opindex bitmapfontenc @r{config command (bitmap font encoding)}
+Turns bitmap font encoding to @samp{off}, @samp{on} (no warnings
+for missing bitmap font encodings), or @samp{strict} (with warnings
+for missing bitmap font encodings).
+
 @item c @var{filename}
 @opindex c @r{config command (include another config file)}
 Include @var{filename} as an additional configuration file, read
@@ -1398,10 +1404,6 @@ details}.
 @item j*
 @opindex j @r{config command (partial font downloading)}
 Partially download Type 1 fonts.  Same as @samp{-j}, @pxref{Option details}.
-
-@item J*
-@opindex J @r{config command (bitmap font encoding)}
-Enable bitmap font encoding.  Same as @samp{-J}, @pxref{Option details}.
 
 @item K*
 @opindex K @r{config command (comment removal)}
@@ -3392,17 +3394,20 @@ italics, and @file{texmsym.enc} for math symbols.
 
 To dvips, bitmapped fonts do not have any notion of linguistics; they
 are simply a vector of glyphs.  By comparison, PostScript fonts are
-required to contain an encoding vector that at the least provides
+required to contain an encoding vector that at least provides
 glyph names; these names can permit PostScript and PDF viewers to
 extract legible text from Postscript and PDF output.
 
-Unlike previous versions, dvips versions 2019 and later add glyph
+Unlike previous versions, dvips versions 2020 and later add glyph
 naming information to Type 3 bitmapped fonts (if they can locate such
 information) as an Encoding vector.  This provides some support for
 search, for copy and paste, and even some limited support for
-accessibility.  The -J command line option and J configuration option
-enables and disables this functionality; by default it is enabled.
+accessibility.  The @samp{bitmapfontenc} command line option
+(@pxref{Option details} and @code{bitmapfontenc} configuration option
+(@pxref{Configuration file commands}) enable and disable this
+functionality; by default it is set to enabled, without warnings.
 
+@flindex dvips-all.enc
 To do this, dvips must find encoding information for the bitmapped
 fonts.  It does this by first searching for a font-specific encoding
 file; for instance, for cmr10, it will search for @file{dvips-cmr10.enc}
