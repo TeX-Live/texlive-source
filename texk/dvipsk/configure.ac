@@ -1,4 +1,4 @@
-# $Id$
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl   Copyright 2016-2020 Karl Berry <tex-live@tug.org>
@@ -14,7 +14,7 @@ AC_CONFIG_SRCDIR([dvips.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-dnl Common code for all programs using libkpathsea.
+# Common code for all programs using libkpathsea.
 KPSE_COMMON([dvipsk])
 KPSE_CANONICAL_HOST
 
@@ -26,9 +26,13 @@ AC_SEARCH_LIBS([pow], [m])
 
 KPSE_KPATHSEA_FLAGS
 
+# For dvips-all.enc.
+encdir='${datarootdir}/texmf-dist/fonts/enc/dvips/base'
+AC_SUBST([encdir])
+
 AC_CONFIG_FILES([Makefile])
 
-dnl The subdirectory squeeze must be configured for the build system.
+# The subdirectory squeeze must be configured for the build system.
 KPSE_NATIVE_SUBDIRS([squeeze])
 
 AC_OUTPUT

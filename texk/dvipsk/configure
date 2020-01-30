@@ -638,6 +638,7 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 subdirs
+encdir
 KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
@@ -2739,6 +2740,7 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 
+# Common code for all programs using libkpathsea.
 am__api_version='1.16'
 
 # Find a good install program.  We prefer a C program (faster),
@@ -15210,9 +15212,14 @@ if test "x$kpse_cv_kpse_debug" != xyes; then :
 fi
 
 
+# For dvips-all.enc.
+encdir='${datarootdir}/texmf-dist/fonts/enc/dvips/base'
+
+
 ac_config_files="$ac_config_files Makefile"
 
 
+# The subdirectory squeeze must be configured for the build system.
 
 
 subdirs="$subdirs squeeze"

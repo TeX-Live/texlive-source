@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/dvipsk/
 ##
-## Copyright 2017-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2020 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -71,6 +71,8 @@ info_TEXINFOS = dvips.texi
 dvips_TEXINFOS = contrib/config.proto dvips.help
 
 DISTCLEANFILES = $(DVIS) $(PSS)
+
+enc_DATA = dvips-all.enc
 
 prolog_DATA = $(prologues)
 

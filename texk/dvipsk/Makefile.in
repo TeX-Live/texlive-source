@@ -112,7 +112,8 @@ CONFIG_HEADER = c-auto.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(infodir)" \
-	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(prologdir)"
+	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(encdir)" \
+	"$(DESTDIR)$(prologdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_afm2tfm_OBJECTS = afm2tfm.$(OBJEXT)
 afm2tfm_OBJECTS = $(am_afm2tfm_OBJECTS)
@@ -274,7 +275,7 @@ am__uninstall_files_from_dir = { \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(dist_man1_MANS)
-DATA = $(prolog_DATA)
+DATA = $(enc_DATA) $(prolog_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -634,6 +635,7 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
+encdir = @encdir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -718,6 +720,7 @@ DISTCLEANFILES = $(DVIS) $(PSS) afmtest.tfm beginfontk1.ps \
 	eepic-nan.ps pfbincl.ps *badnews* same-name.out dvipstst.ps \
 	missfont.log mtest.ps overflow-color-push.ps \
 	overflow-epsfile.ps overflow-psbox.ps
+enc_DATA = dvips-all.enc
 prolog_DATA = $(prologues)
 dist_prologues = \
 	color.lpro \
@@ -1143,6 +1146,27 @@ uninstall-man1:
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
 	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
+install-encDATA: $(enc_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(enc_DATA)'; test -n "$(encdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(encdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(encdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(encdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(encdir)" || exit $$?; \
+	done
+
+uninstall-encDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(enc_DATA)'; test -n "$(encdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(encdir)'; $(am__uninstall_files_from_dir)
 install-prologDATA: $(prolog_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(prolog_DATA)'; test -n "$(prologdir)" || list=; \
@@ -1641,7 +1665,7 @@ check: check-recursive
 all-am: Makefile $(INFO_DEPS) $(PROGRAMS) $(MANS) $(DATA) c-auto.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(infodir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(prologdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(infodir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(encdir)" "$(DESTDIR)$(prologdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -1735,7 +1759,8 @@ info: info-recursive
 
 info-am: $(INFO_DEPS)
 
-install-data-am: install-info-am install-man install-prologDATA
+install-data-am: install-encDATA install-info-am install-man \
+	install-prologDATA
 
 install-dvi: install-dvi-recursive
 
@@ -1907,9 +1932,9 @@ ps: ps-recursive
 
 ps-am: $(PSS)
 
-uninstall-am: uninstall-binPROGRAMS uninstall-dvi-am uninstall-html-am \
-	uninstall-info-am uninstall-man uninstall-pdf-am \
-	uninstall-prologDATA uninstall-ps-am
+uninstall-am: uninstall-binPROGRAMS uninstall-dvi-am uninstall-encDATA \
+	uninstall-html-am uninstall-info-am uninstall-man \
+	uninstall-pdf-am uninstall-prologDATA uninstall-ps-am
 
 uninstall-man: uninstall-man1
 
@@ -1925,19 +1950,19 @@ uninstall-man: uninstall-man1
 	distclean-libtool distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-man1 install-pdf \
-	install-pdf-am install-prologDATA install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-aminfo \
-	maintainer-clean-generic mostlyclean mostlyclean-aminfo \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-dvi-am \
-	uninstall-html-am uninstall-info-am uninstall-man \
-	uninstall-man1 uninstall-pdf-am uninstall-prologDATA \
-	uninstall-ps-am
+	install-data-am install-dvi install-dvi-am install-encDATA \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-pdf install-pdf-am install-prologDATA install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-aminfo maintainer-clean-generic mostlyclean \
+	mostlyclean-aminfo mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am recheck tags tags-am \
+	uninstall uninstall-am uninstall-binPROGRAMS uninstall-dvi-am \
+	uninstall-encDATA uninstall-html-am uninstall-info-am \
+	uninstall-man uninstall-man1 uninstall-pdf-am \
+	uninstall-prologDATA uninstall-ps-am
 
 .PRECIOUS: Makefile
 

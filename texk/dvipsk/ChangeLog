@@ -1,3 +1,8 @@
+2020-01-30  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (enc_DATA): new variable, for new file dvips-all.enc.
+	* configure.ac (encdir): define it.
+
 2020-01-30  Akira Kakuto  <kakuto@w32tex.org>
 
 	* bitmapenc.c: use strchr() instead of index(), because index()
