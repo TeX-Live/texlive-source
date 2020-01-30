@@ -1,3 +1,7 @@
+2020-01-30  Karl Berry  <karl@tug.org>
+
+	* mktextfm.1: mention new MF_MODE_EXTRA_INFO feature.
+
 2019-12-29  Karl Berry  <karl@tug.org>
 
 	* mktexlsr.1,

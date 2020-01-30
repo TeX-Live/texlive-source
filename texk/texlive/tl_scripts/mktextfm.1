@@ -1,20 +1,9 @@
-.TH MKTEXTFM 1 "1 March 2011" "Kpathsea @VERSION@"
+.TH MKTEXTFM 1 "30 January 2020" "TeX Live" "User Commands"
 .\"=====================================================================
-.if n .ds MP MetaPost
-.if t .ds MP MetaPost
+.if t .ds MF Metafont
 .if n .ds MF Metafont
-.if t .ds MF M\s-2ETAFONT\s0
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP for troff
-.el .ds OX TeX for nroff
-.\" the same but obliqued
-.\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
-.if n .ds BX BibTeX
-.\" LX definition must follow TX so LX can use TX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
-.if n .ds LX LaTeX
 .\"=====================================================================
 .SH NAME
 mktextfm \- create a TFM file for a font
@@ -24,26 +13,30 @@ mktextfm \- create a TFM file for a font
 .I font
 .\"=====================================================================
 .SH DESCRIPTION
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(TX can be found in the info file
-or manual
-.IR "Kpathsea: A library for path searching" .
-.PP
 .B mktextfm
-is used to generate a
-.I tfm
-file from the \*(MF source files for
+is used to generate a tfm file from the \*(MF source files for
 .IR font ,
+or 
+.BR hbf2gf (1),
 if possible.  If
 .I destdir
 is given, the generated file will be installed there, otherwise a
-(rather complicated) heuristic is used.
+(rather complicated) heuristic is used.  If the tfm file already exists
+in the destination location, this is reported and nothing is done.
 .PP
-The name of the generated file is printed on standard output.
+If a GF (Generic Font) bitmap file is also generated, as is typical with
+\(*MF, it is converted to PK (Packed Font) and installed similarly.
+.PP
+The full pathname of the generated file is printed on standard output.
+.PP
+If available, the
+.BR mf-nowin (1)
+variant of \*(MF is used to generate fonts to avoid the possibility of
+online display.
 .PP
 .B mktextfm
-is typically called by other programs, rather than from the command
-line.
+is typically called by other programs, via Kpathsea, rather than from
+the command line.
 .\"=====================================================================
 .SH OPTIONS
 .B mktextfm
@@ -55,11 +48,45 @@ Otherwise, it is appended to the root destination directory set in the
 script.
 .TP
 .B --help
-Print help message and exit.
+Print help message and exit successfully.
 .TP
 .B --version
-Print version information and exit.
+Print version information and exit successfully.
+.\"=====================================================================
+.SH ENVIRONMENT
+One environment variable is specific to
+.BR mktextfm :
+.BR MF_MODE_EXTRA_INFO .
+If this is set to a non-empty value, a \*(MF macro
+.B mode_include_extra_info
+will be invoked when the font is made.  The standard
+.B modes.mf
+file defines this, as of modes.mf version 4.0, released in 2020.
+This causes the so-called Xerox-world information, notably including the
+.B CODINGSCHEME
+for the font, to be included in the tfm file. (This is not done by
+default since it is too intrusive to redefine the necessary primitives,
+per Don Knuth.) The
+.BR mftrace (1)
+program, for example, can use this to get a clue about the font
+encoding, although the information is not always perfectly definitive or
+unambiguous.
+.PP
+For more about the encodings of \*(MF fonts, see the section ``Bitmap
+font encodings'' in the Dvips manual (e.g.,
+https://tug.org/texinfohtml/dvips.html).
+.PP
+The many other environment variables and various configuration files
+that control a \*(TX system also affect the behavior of
+.BR mktextfm ,
+as usual.
 .\"=====================================================================
 .SH "SEE ALSO"
+.BR mf (1),
 .BR mktexmf (1),
 .BR mktexpk (1).
+.\"=====================================================================
+.SH "REPORTING BUGS"
+Report bugs to: tex-k@tug.org (https://lists.tug.org/tex-k)
+.br
+\*(TX Live home page: https://tug.org/texlive/
