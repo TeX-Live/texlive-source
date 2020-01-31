@@ -1,6 +1,6 @@
 /* mktextfm.c
 
-   Copyright 2000, 2019 Akira Kakuto.
+   Copyright 2000, 2020 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ usage (void)
 static void
 version (void)
 {
-  fprintf (stderr, "%s, (C version 1.5 --ak 2009-2012)\n", progname);
+  fprintf (stderr, "%s, (C version 1.6 --ak 2009-2020)\n", progname);
   fprintf (stderr, KPSEVERSION WEB2CVERSION "\n");
   return;
 }
@@ -91,6 +91,7 @@ main (int ac, char **av)
 
   char texbindir[TBUF];
   char fullbin[TBUF];
+  char *extra_info;
 
   kpse_set_program_name (av[0], NULL);
   progname = kpse_program_name;
@@ -167,7 +168,7 @@ issetdest = 2 : current directory
       return (100);
     }
     issetdest = 1;
-    if (strlen(av[2]) > TBUF - 1 || strlen(av[3]) > TBUF - 1) {
+    if (strlen(av[2]) > TBUF - 1 || strlen(av[3]) > TBUF - 150) {
       fprintf (stderr, "Too long a string.\n");
       return (100);
     }
@@ -180,7 +181,7 @@ issetdest = 2 : current directory
         *p = '/';
     }
   } else {
-    if (strlen(av[1]) > TBUF - 1) {
+    if (strlen(av[1]) > TBUF - 150) {
       fprintf (stderr, "Too long a string.\n");
       return (100);
     }
@@ -302,8 +303,21 @@ issetdest = 2 : current directory
   _dup2 (fileno (fnul), fileno (stdin));
 
 /* METAFONT command line */
+/*
+The idea here is to provide a programmatic way to get the
+codingscheme and other so-called Xerox-world information into the
+tfm: if the envvar MF_MODE_EXTRA_INFO is set, then modes.mf (as of
+the 3.9 release in January 2020) will arrange for that.  We do not
+do this by default because Knuth objected.
+*/
+  extra_info = getenv("MF_MODE_EXTRA_INFO");
   strcpy (cmd, "--progname=mf --base=mf ");
-  strcat (cmd, "\\mode:=ljfour; \\mag:=1; nonstopmode; input ");
+  strcat (cmd, "\\mode:=ljfour; mag:=1; ");
+  if (extra_info) {
+    strcat(cmd, "if known mode_include_extra_info_available: ");
+    strcat(cmd, "mode_include_extra_info fi; ");
+  }
+  strcat (cmd, "nonstopmode; input ");
   strcat (cmd, fontname);
   strcat (cmd, ";");
 
