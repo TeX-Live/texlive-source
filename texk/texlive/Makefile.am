@@ -1,9 +1,11 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/texlive/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2020 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-SUBDIRS = tl_scripts
+SUBDIRS = tl_support
 if LINKED_SCRIPTS
 SUBDIRS += linked_scripts
 endif LINKED_SCRIPTS

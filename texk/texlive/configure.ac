@@ -1,6 +1,8 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2014-2020 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -29,6 +31,6 @@ KPSE_COND_WIN32_WRAP
 
 AC_CONFIG_FILES([Makefile
   linked_scripts/Makefile
-  tl_scripts/Makefile])
+  tl_support/Makefile])
 
 AC_OUTPUT

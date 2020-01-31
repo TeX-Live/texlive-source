@@ -512,7 +512,7 @@ CONFIG_AUX = $(recurse_top)subsubdir-conf.cmd
 # Run texlinks here since the binaries won't be there
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
-texlinks_dir = texk/texlive/tl_scripts
+texlinks_dir = texk/texlive/tl_support
 
 # should be harmless to run it, but just in case:
 build_info_target = buildinfo

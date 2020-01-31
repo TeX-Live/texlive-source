@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live top-level
 ##
-## Copyright 2016      Karl Berry <tex-live@tug.org>
+## Copyright 2016-2020 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -47,7 +47,7 @@ include $(srcdir)/am/recurse.am
 # Run texlinks here since the binaries won't be there
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
-texlinks_dir = texk/texlive/tl_scripts
+texlinks_dir = texk/texlive/tl_support
 world: all
 # Serialize 'make all' and 'make install-strip'.
 	@echo "top-level make $@: running install-strip..."

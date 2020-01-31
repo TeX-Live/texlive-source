@@ -1,3 +1,10 @@
+2020-01-31  Karl Berry  <karl@tug.org>
+
+
+	* tl_support: rename subdirectory from tl_scripts, since there is
+	only one (sub)script list.
+	* configure.ac (AC_CONFIG_FILES): change generation.
+
 2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.

@@ -1,5 +1,5 @@
 ## $Id$
-## Makefile.am for the TeX Live subdirectory texk/texlive/tl_scripts/
+## Makefile.am for the TeX Live subdirectory texk/texlive/tl_support/
 ##
 ## Copyright 2013-2020 Karl Berry <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.

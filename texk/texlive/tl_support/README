@@ -1,0 +1,13 @@
+$Id$
+Public domain.
+
+This directory mostly contains documentation for scripts which are maintained
+as part of TeX Live. The scripts themselves are maintained under Master:
+Master/texmf-dist/scripts/texlive/
+Master/texmf-dist/scripts/texlive-extra
+
+In addition, the tcfmgr script and tcfmgr.map file, which are installed
+under texmf-dist/texconfig and only used by texconfig, are here.
+
+And there is a copy of fmtutil.cnf, for the sake of the run-texlinks target.
+(It is kept in sync manually, via Master/tlpkg/dev/srclist.txt.)

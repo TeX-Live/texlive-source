@@ -1,3 +1,8 @@
+2020-01-31  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texlinks_dir): now texk/texlive/tl_support
+	(instead of tl_scripts).
+
 2020-01-16  Karl Berry  <karl@freefriends.org>
 
 	* version.ac (tex_live_version): remove /dev, preparing for TL'20.
