@@ -1,3 +1,10 @@
+2020-01-31  Karl Berry  <karl@freefriends.org>
+
+	* mktexlsr.1,
+	* mktexmf.1,
+	* mktexpk.1: replace @KPATHSEA_VERSION@ with current info,
+	since these are no longer substituted.
+
 2020-01-30  Karl Berry  <karl@tug.org>
 
 	* mktextfm.1: mention new MF_MODE_EXTRA_INFO feature.
