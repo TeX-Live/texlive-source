@@ -1,3 +1,8 @@
+2020-02-01  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweb.man,
+	* ctwill.man: Regenerate manpages with Pandoc 2.9.1.1.
+
 2019-12-07  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweb.man,

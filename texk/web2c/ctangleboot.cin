@@ -814,7 +814,7 @@ sprint_section_name(output_file_name,*an_output_file);
 if((C_file= fopen(check_file_name,"wb"))==NULL)
 fatal(_("! Cannot open output file "),check_file_name);
 
-printf("\n(%s)",output_file_name);update_terminal;
+if(show_progress){printf("\n(%s)",output_file_name);update_terminal;}
 cur_line= 1;
 stack_ptr= stack+1;
 cur_name= (*an_output_file);

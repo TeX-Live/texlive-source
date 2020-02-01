@@ -1,3 +1,7 @@
+2020-02-01  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctang-w2c.ch: Fix verbosity bug in ctangle.
+
 2019-05-29  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch, comm-w2c.h: Minor changes.
