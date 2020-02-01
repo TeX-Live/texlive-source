@@ -7,7 +7,7 @@
 # Primarily written by Thomas Esser, Karl Berry, and Olaf Weber.
 # Public domain.
 
-version='$Id: mktextfm 53254 2019-12-29 19:18:55Z karl $'
+version='$Id: mktextfm 53602 2020-01-30 22:18:33Z karl $'
 progname=`echo $0 | sed 's%.*/%%'`
 
 # preferentially use subprograms from our own directory.
@@ -21,15 +21,22 @@ Makes a TFM file for FONT, if possible. Use DESTDIR for the root of where
 to install into, either the absolute directory name to use (if it starts
 with a /) or relative to the default DESTDIR (if not).
 
+See the mktexpk and updmap help messages for more general information on
+making fonts available.
+
+If the environment variable MF_MODE_EXTRA_INFO is non-empty, the
+codingscheme and other so-called Xerox-world information will be
+included in the tfm file.
+
 Report bugs to: tex-k@tug.org
-TeX Live home page: <http://tug.org/texlive/>
+TeX Live home page: <https://tug.org/texlive/>
 "
 
 # Handle non-positional options, except for --version/--help
 while test $# -gt 0; do
   case "$1" in
-    --destdir) shift; DEST="$1"; shift ;;
-    --destdir=*) DEST=`echo "$1" | sed 's/--destdir=//'`; shift ;;
+    --destdir|-destdir) shift; DEST="$1"; shift ;;
+    --destdir=*|-destdir=*) DEST=`echo "$1" | sed 's/--*destdir=//'`; shift ;;
     --version|-version) break ;;
     --help|-help) break ;;
     *) break ;;
@@ -99,7 +106,20 @@ else
     MF=mf
   fi
 
-  cmd="$MF \mode:=$MODE; mag:=$MAG; nonstopmode; input $NAME"
+  # The idea here is to provide a programmatic way to get the
+  # codingscheme and other so-called Xerox-world information into the
+  # tfm: if the envvar MF_MODE_EXTRA_INFO is set, then modes.mf (as of
+  # the 3.9 release in January 2020) will arrange for that.  We do not
+  # do this by default because Knuth objected.
+  #
+  if test -n "$MF_MODE_EXTRA_INFO"; then
+    mf_extra_info="if known mode_include_extra_info_available: "
+    mf_extra_info="$mf_extra_info mode_include_extra_info fi"
+   else
+   mf_extra_info=""
+  fi
+  
+  cmd="$MF \mode:=$MODE; mag:=$MAG; $mf_extra_info; nonstopmode; input $NAME"
 fi
 
 echo "$progname: Running $cmd"

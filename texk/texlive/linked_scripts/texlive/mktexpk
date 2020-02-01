@@ -7,7 +7,7 @@
 # Originally written by Thomas Esser, Karl Berry, and Olaf Weber.
 # Public domain.
 
-version='$Id: mktexpk 53254 2019-12-29 19:18:55Z karl $'
+version='$Id: mktexpk 53602 2020-01-30 22:18:33Z karl $'
 progname=`echo $0 | sed 's%.*/%%'`
 
 # preferentially use subprograms from our own directory.
@@ -20,7 +20,7 @@ usage="Usage: $progname [OPTIONS] NAME [REDIRECT],
 
 --dpi DPI           use resolution DPI.
 --bdpi BDPI         use base resolution BDPI.
---mag MAG           use magnificiation MAG.
+--mag MAG           use magnification MAG.
 --mfmode MODE       use MODE as the METAFONT mode.
 --destdir DESTDIR   write fonts in DESTDIR.
 
@@ -35,15 +35,15 @@ newly created pk file.
 
 If you expected the font to be available as an outline, and thus this
 script does not work and should not have been called, most likely the
-font's .tfm name is missing from the relevant map file (e.g.,
-psfonts.map for dvips, pdftex.map for pdftex).  These map files are
-typically maintained using updmap; q.v.
+font's .tfm name is missing from the relevant map file (i.e.,
+psfonts.map for dvips-syntax programs, pdftex.map for pdftex-syntax
+programs).  These map files are typically maintained using updmap; q.v.
 
 For step-by-step instructions on making new fonts known to TeX, see
-http://tug.org/fonts/fontinstall.html.
+https://tug.org/fonts/fontinstall.html.
 
 Report bugs to: tex-k@tug.org
-TeX Live home page: <http://tug.org/texlive/>
+TeX Live home page: <https://tug.org/texlive/>
 "
 
 # Handle non-positional options, except for --version/--help
@@ -144,7 +144,7 @@ if kpsewhich $NAME.mf >/dev/null 2>&1 || mktexmf $NAME >/dev/null 2>&1; then
     8000) MODE=dpdfezzz;;
        *) echo "$progname: Can't guess mode for $BDPI dpi devices." >&2
           echo "$progname: Use a config file or option to specify the mode; see:" >&2
-          echo "$progname: http://tug.org/texinfohtml/kpathsea.html#Unable-to-generate-fonts" >&2
+          echo "$progname: https://tug.org/texinfohtml/kpathsea.html#Unable-to-generate-fonts" >&2
           exit 1
     esac
   fi

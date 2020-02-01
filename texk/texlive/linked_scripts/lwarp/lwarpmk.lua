@@ -1,8 +1,8 @@
 #!/usr/bin/env texlua
 
--- Copyright 2016-2019 Brian Dunn
+-- Copyright 2016-2020 Brian Dunn
 
-printversion = "v0.78"
+printversion = "v0.79"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -699,7 +699,7 @@ else -- not --version
 
 -- print intro:
 
-print ("lwarpmk: " .. printversion .. "  Automated make for the LaTeX lwarp package.")
+print ("lwarpmk: " .. printversion .. "  Automated make for the LaTeX Lwarp package.")
 
 -- lwarpmk print:
 
