@@ -15,7 +15,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-   Assumes the cx mode in mf.base .
+   Assumes the ljfour mode in mf.base .
    Usage: mktextfm [--destdir DESTDIR] name
 */
 
