@@ -7,11 +7,39 @@
 -- Note: we keep this file small as much as possible so that make it easier
 --       to install a new version of texdoc in TEXMFHOME.
 
--- setup the kpse library and load texdoclib
-kpse.set_program_name(arg[-1], 'texdoc')
-local texdoc = require('texdoclib')
+local lfs = require 'lfs'
+local kpse = require 'kpse'
 
--- execute
+-- setup kpse library
+kpse.set_program_name(arg[-1], 'texdoc')
+
+-- get realpath of this file
+local function realpath(p)
+    if os.type == 'unix' then
+        local h = io.popen(string.format("realpath '%s'", p))
+        local r = h:read('*a')
+        h:close()
+        return r:gsub('\n$', '')
+    else
+        return ''
+    end
+end
+local file = realpath(arg[0])
+
+-- if the file is not in TEXMFMAIN, set temporal TEXMFAUXTREES and TEXMFDIST
+local texmf = file:match('^(.*/texmf[^/]*)/scripts/texdoc/texdoc.tlu$')
+if texmf ~= nil then
+    if texmf ~= kpse.var_value('TEXMFMAIN') then
+        io.stderr:write('Info: ' ..
+            'Running Texdoc not installed in the current TEXMFMAIN.\n')
+        os.setenv('TEXMFAUXTREES', texmf .. ',')
+        os.setenv('TEXMFDIST', ',')
+    end
+end
+
+-- load the library and execute
+local texdoc = require 'texdoclib'
+assert(texdoc.cli, 'Internal error: Texdoc is not installed properly.')
 texdoc.cli.exec()
 
 -- vim: ft=lua:
