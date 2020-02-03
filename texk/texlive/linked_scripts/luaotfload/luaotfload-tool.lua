@@ -9,8 +9,8 @@
 
 local ProvidesLuaModule = { 
     name          = "luaotfload-tool",
-    version       = "3.11",       --TAGVERSION
-    date          = "2019-11-10", --TAGDATE
+    version       = "3.12",       --TAGVERSION
+    date          = "2020-02-02", --TAGDATE
     description   = "luaotfload-tool / database functionality",
     license       = "GPL v2.0"
 }
@@ -454,6 +454,9 @@ local show_info_table show_info_table = function (t, depth)
     for n = 1, #keys do
         local key = keys [n]
         local val = t [key]
+        if key == "subfontindex" then
+            val = val - 1 -- We use 0-based subfont indices
+        end
         if type (val) == "table" then
             texiowrite_nl (indent .. stringformat (info_fmt, key, "<table>"))
             show_info_table (val, depth + 1)
@@ -670,16 +673,11 @@ end
 
 local subfont_by_name
 subfont_by_name = function (lst, askedname, n)
-    if not n then
-        return subfont_by_name (lst, askedname, 1)
-    end
-
-    local font = lst[n]
-    if font then
+    for n = 1, #lst do
+        local font = lst[n]
         if fonts.names.sanitize_fontname (font.fullname) == askedname then
             return font
         end
-        return subfont_by_name (lst, askedname, n + 1)
     end
     return false
 end
@@ -726,7 +724,7 @@ local show_font_info = function (basename, askedname, detail, subfont)
                 for subfont = 1, nfonts do
                     logreport (true, 1, "resolve",
                                [[Showing info for font no. %d]],
-                               subfont)
+                               subfont - 1)
                     show_info_items(shortinfo[subfont])
                     if detail == true then
                         show_full_info(fullname, subfont)
@@ -1211,7 +1209,7 @@ actions.query = function (job)
         if subfont then
             logreport (false, 0, "resolve",
                        "Resolved file name %q, subfont nr. %q",
-                       foundname, subfont)
+                       foundname, subfont - 1)
         else
             logreport (false, 0, "resolve",
                        "Resolved file name %q", foundname)
