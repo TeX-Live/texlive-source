@@ -1,11 +1,15 @@
 #!/bin/sh
 
 
-kernel=`uname -s`
-if test "${kernel#*CYGWIN}" != "$kernel"
-then
- jarpath=`cygpath -w $(kpsewhich --progname=texosquery --format=texmfscripts texosquery-jre5.jar)`
-else
- jarpath=`kpsewhich --progname=texosquery --format=texmfscripts texosquery-jre5.jar`
+scriptname=`basename "$0" .sh`
+jar="$scriptname.jar"
+jarpath=`kpsewhich --progname="$scriptname" --format=texmfscripts "$jar"`
+
+kernel=`uname -s 2>/dev/null`
+if echo "$kernel" | grep CYGWIN >/dev/null; then
+  CYGWIN_ROOT=`cygpath -w /`
+  export CYGWIN_ROOT
+  jarpath=`cygpath -w "$jarpath"`
 fi
+
 java -jar "$jarpath" "$@"
