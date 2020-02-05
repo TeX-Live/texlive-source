@@ -2469,6 +2469,9 @@ string_code:if cur_cs<>0 then sprint_cs(cur_cs)
 @d if_ybox_code=if_tbox_code+1 { `\.{\\ifybox}' }
 @d if_dbox_code=if_ybox_code+1 { `\.{\\ifdbox}' }
 @d if_mbox_code=if_dbox_code+1 { `\.{\\ifmbox}' }
+@#
+@d if_jfont_code=if_mbox_code+1  { `\.{\\ifjfont}' }
+@d if_tfont_code=if_jfont_code+1 { `\.{\\iftfont}' }
 @z
 
 @x [28.487] l.9887 - pTeX: iftdir, ifydir, ifddir, iftbox, ifybox, ifdbox
@@ -2493,6 +2496,10 @@ primitive("ifdbox",if_test,if_dbox_code);
 @!@:if_dbox_}{\.{\\ifdbox} primitive@>
 primitive("ifmbox",if_test,if_mbox_code);
 @!@:if_mbox_}{\.{\\ifmbox} primitive@>
+primitive("ifjfont",if_test,if_jfont_code);
+@!@:if_jfont_}{\.{\\ifjfont} primitive@>
+primitive("iftfont",if_test,if_tfont_code);
+@!@:if_tfont_}{\.{\\iftfont} primitive@>
 @z
 
 @x [28.488] l.9907 - pTeX: iftdir, ifydir, ifddir, iftbox, ifybox, ifdbox
@@ -2507,6 +2514,8 @@ primitive("ifmbox",if_test,if_mbox_code);
   if_ybox_code:print_esc("ifybox");
   if_dbox_code:print_esc("ifdbox");
   if_mbox_code:print_esc("ifmbox");
+  if_jfont_code:print_esc("ifjfont");
+  if_tfont_code:print_esc("iftfont");
 @z
 
 @x [28.501] l.10073 - pTeX: iftdir, ifydir, ifddir, iftbox, ifybox, ifdbox
@@ -2518,6 +2527,11 @@ if_ddir_code: b:=(abs(direction)=dir_dtou);
 if_mdir_code: b:=(direction<0);
 if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code, if_dbox_code, if_mbox_code:
   @<Test box register status@>;
+if_jfont_code, if_tfont_code:
+  begin scan_font_ident;
+  if this_if=if_jfont_code then b:=(font_dir[cur_val]=dir_yoko)
+  else if this_if=if_tfont_code then b:=(font_dir[cur_val]=dir_tate);
+  end;
 @z
 
 @x [28.505] l.10118 - pTeX: Test box register status : iftbox, ifybox, ifdbox
