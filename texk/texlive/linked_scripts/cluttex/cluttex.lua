@@ -1133,8 +1133,9 @@ local function parse_aux_file(auxfile, outdir, report, seen)
   for l in io.lines(auxfile) do
     local subauxfile = string_match(l, "\\@input{(.+)}")
     if subauxfile then
-      if fsutil.isfile(subauxfile) then
-        parse_aux_file(pathutil.join(outdir, subauxfile), outdir, report, seen)
+      local subauxfile_abs = pathutil.abspath(subauxfile, outdir)
+      if fsutil.isfile(subauxfile_abs) then
+        parse_aux_file(subauxfile_abs, outdir, report, seen)
       else
         local dir = pathutil.join(outdir, pathutil.dirname(subauxfile))
         if not fsutil.isdir(dir) then
@@ -1159,8 +1160,11 @@ local function extract_bibtex_from_aux_file(auxfile, outdir, biblines)
       end
     elseif name == "@input" then
       local subauxfile = string_match(l, "\\@input{(.+)}")
-      if subauxfile and fsutil.isfile(subauxfile) then
-        extract_bibtex_from_aux_file(pathutil.join(outdir, subauxfile), outdir, biblines)
+      if subauxfile then
+        local subauxfile_abs = pathutil.abspath(subauxfile, outdir)
+        if fsutil.isfile(subauxfile_abs) then
+          extract_bibtex_from_aux_file(subauxfile_abs, outdir, biblines)
+        end
       end
     end
   end
@@ -1192,17 +1196,19 @@ local texio_write_nl = texio.write_nl
 
   -- Packages coded in Lua doesn't follow -output-directory option and doesn't write command to the log file
   initscript:write(string.format("local output_directory = %q\n", options.output_directory))
+  -- tex.jobname may not be available when io.open is called for the first time
+  initscript:write(string.format("local jobname = %q\n", options.jobname))
   initscript:write([==[
 local luawritelog
 local function openluawritelog()
   if not luawritelog then
-    luawritelog = assert(io_open(output_directory .. "/" .. tex.jobname .. ".cluttex-fls", "w"))
+    luawritelog = assert(io_open(output_directory .. "/" .. jobname .. ".cluttex-fls", "w"))
   end
   return luawritelog
 end
 io.open = function(fname, mode)
   -- luatexja-ruby
-  if mode == "w" and fname == tex.jobname .. ".ltjruby" then
+  if mode == "w" and fname == jobname .. ".ltjruby" then
     fname = output_directory .. "/" .. fname
   end
   if type(mode) == "string" and string.find(mode, "w") ~= nil then
@@ -1363,7 +1369,7 @@ return {
 end
 package.preload["texrunner.handleoption"] = function(...)
 local COPYRIGHT_NOTICE = [[
-Copyright (C) 2016,2018-2019  ARATA Mizuki
+Copyright (C) 2016-2020  ARATA Mizuki
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1436,6 +1442,8 @@ Options:
                                Enable special support for some shell-escaping
                                  packages.
                                Currently supported: minted, epstopdf
+      --check-driver=DRIVER    Check that the correct driver file is loaded.
+                               DRIVER is one of `dvipdfmx', `dvips', `dvisvgm'.
 
       --[no-]shell-escape
       --shell-restricted
@@ -1516,6 +1524,10 @@ local option_spec = {
   },
   {
     long = "package-support",
+    param = true
+  },
+  {
+    long = "check-driver",
     param = true
   },
   -- Options for TeX
@@ -1621,6 +1633,10 @@ local function set_default_values(options)
   if options.halt_on_error == nil then
     options.halt_on_error = true
   end
+
+  if options.output_format == nil then
+    options.output_format = "pdf"
+  end
 end
 
 -- inputfile, engine, options = handle_cluttex_options(arg)
@@ -1708,6 +1724,11 @@ local function handle_cluttex_options(arg)
           message.warn("ClutTeX provides no special support for '"..pkg.."'.")
         end
       end
+
+    elseif name == "check-driver" then
+      assert(options.check_driver == nil, "multiple --check-driver options")
+      assert(param == "dvipdfmx" or param == "dvips" or param == "dvisvgm", "wrong value for --check-driver option")
+      options.check_driver = param
 
       -- Options for TeX
     elseif name == "synctex" then
@@ -1818,6 +1839,27 @@ local function handle_cluttex_options(arg)
   end
 
   set_default_values(options)
+
+  if options.output_format == "pdf" then
+    if options.check_driver ~= nil then
+      error("--check-driver can only be used when the output format is DVI.")
+    end
+    if engine.supports_pdf_generation then
+      if engine.is_luatex then
+        options.check_driver = "luatex"
+      elseif engine.name == "xetex" or engine.name == "xelatex" then
+        options.check_driver = "xetex"
+      elseif engine.name == "pdftex" or engine.name == "pdflatex" then
+        options.check_driver = "pdftex"
+      else
+        message.warning("Unknown engine: "..engine.name)
+        message.warning("Driver check will not work.")
+      end
+    else
+      -- ClutTeX uses dvipdfmx to generate PDF from DVI output.
+      options.check_driver = "dvipdfmx"
+    end
+  end
 
   return inputfile, engine, options
 end
@@ -2127,7 +2169,7 @@ local CMD = {
 
 local function exec_msg(commandline)
   if use_colors then
-    io.stderr:write(CMD.fg_x_white, CMD.bg_red, "[EXEC]", CMD.reset, " ", CMD.fg_red, commandline, CMD.reset, "\n")
+    io.stderr:write(CMD.fg_x_white, CMD.bg_red, "[EXEC]", CMD.reset, " ", CMD.fg_cyan, commandline, CMD.reset, "\n")
   else
     io.stderr:write("[EXEC] ", commandline, "\n")
   end
@@ -2659,8 +2701,194 @@ return {
   safeinput = safeinput,
 }
 end
+package.preload["texrunner.checkdriver"] = function(...)
 --[[
-  Copyright 2016,2018-2019 ARATA Mizuki
+  Copyright 2020 ARATA Mizuki
+
+  This file is part of ClutTeX.
+
+  ClutTeX is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  ClutTeX is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with ClutTeX.  If not, see <http://www.gnu.org/licenses/>.
+]]
+local assert = assert
+local ipairs = ipairs
+local error = error
+local string = string
+local pathutil = require "texrunner.pathutil"
+local message = require "texrunner.message"
+
+local right_values = {
+  dvips = {
+    graphics = "dvips",
+    expl3    = "dvips",
+    hyperref = "dvips",
+    xypic    = "dvips",
+  },
+  dvipdfmx = {
+    graphics = "dvipdfmx",
+    expl3    = "dvipdfmx",
+    hyperref = "dvipdfmx",
+    xypic    = "pdf",
+  },
+  dvisvgm = {
+    graphics = "dvisvgm",
+    expl3    = "dvisvgm",
+  },
+  xetex = {
+    graphics = "xetex",
+    expl3    = "xdvipdfmx",
+    hyperref = "xetex",
+    xypic    = "pdf",
+  },
+  pdftex = {
+    graphics = "pdftex",
+    expl3    = "pdfmode",
+    hyperref = "pdftex",
+    xypic    = "pdf",
+  },
+  luatex = {
+    graphics = "luatex",
+    expl3    = "pdfmode",
+    hyperref = "luatex",
+    xypic    = "pdf",
+  },
+}
+
+-- expected_driver: one of "dvips", "dvipdfmx", "dvisvgm", "pdftex", "xetex", "luatex"
+local function checkdriver(expected_driver, filelist)
+  if CLUTTEX_VERBOSITY >= 1 then
+    message.info("checkdriver: expects ", expected_driver)
+  end
+
+  local loaded = {}
+  for i,t in ipairs(filelist) do
+    if t.kind == "input" then
+      local basename = pathutil.basename(t.path)
+      loaded[basename] = true
+    end
+  end
+
+  local graphics_driver = nil -- "dvipdfmx" | "dvips" | "dvisvgm" | "pdftex" | "luatex" | "xetex" | "unknown"
+  if loaded["graphics.sty"] or loaded["color.sty"] then
+    if loaded["dvipdfmx.def"] then
+      graphics_driver = "dvipdfmx"
+    elseif loaded["dvips.def"] then
+      graphics_driver = "dvips"
+    elseif loaded["dvisvgm.def"] then
+      graphics_driver = "dvisvgm"
+    elseif loaded["pdftex.def"] then
+      graphics_driver = "pdftex"
+    elseif loaded["luatex.def"] then
+      graphics_driver = "luatex"
+    elseif loaded["xetex.def"] then
+      graphics_driver = "xetex"
+    else
+      -- Not supported: dvipdf, dvipsone, emtex, textures, pctexps, pctexwin, pctexhp, pctex32, truetex, tcidvi, vtex
+      graphics_driver = "unknown"
+    end
+  end
+  local expl3_driver = nil -- "pdfmode" | "dvisvgm" | "xdvipdfmx" | "dvipdfmx" | "dvips" | "unknown"
+  if loaded["expl3-code.tex"] or loaded["expl3.sty"] or loaded["l3backend-dvips.def"] or loaded["l3backend-dvipdfmx.def"] or loaded["l3backend-xdvipdfmx.def"] or loaded["l3backend-pdfmode.def"] then
+    if loaded["l3backend-pdfmode.def"] then
+      expl3_driver = "pdfmode" -- pdftex, luatex
+    elseif loaded["l3backend-dvisvgm.def"] then
+      expl3_driver = "dvisvgm"
+    elseif loaded["l3backend-xdvipdfmx.def"] then
+      expl3_driver = "xdvipdfmx"
+    elseif loaded["l3backend-dvipdfmx.def"] then
+      expl3_driver = "dvipdfmx"
+    elseif loaded["l3backend-dvips.def"] then
+      expl3_driver = "dvips"
+    else
+      -- TODO: driver=latex2e?
+      expl3_driver = "unknown"
+    end
+  end
+  local hyperref_driver = nil -- "luatex" | "pdftex" | "xetex" | "dvipdfmx" | "dvips" | "unknown"
+  if loaded["hyperref.sty"] then
+    if loaded["hluatex.def"] then
+      hyperref_driver = "luatex"
+    elseif loaded["hpdftex.def"] then
+      hyperref_driver = "pdftex"
+    elseif loaded["hxetex.def"] then
+      hyperref_driver = "xetex"
+    elseif loaded["hdvipdfm.def"] then
+      hyperref_driver = "dvipdfmx"
+    elseif loaded["hdvips.def"] then
+      hyperref_driver = "dvips"
+    else
+      -- Not supported: dvipson, dviwind, tex4ht, texture, vtex, vtexhtm, xtexmrk, hypertex
+      hyperref_driver = "unknown"
+    end
+    -- TODO: dvisvgm?
+  end
+  local xypic_driver = nil -- "pdf" | "dvips" | "unknown"
+  if loaded["xy.tex"] then
+    if loaded["xypdf.tex"] then
+      xypic_driver = "pdf" -- pdftex, luatex, xetex, dvipdfmx
+    elseif loaded["xydvips.tex"] then
+      xypic_driver = "dvips"
+    else
+      -- Not supported: dvidrv, dvitops, oztex, 17oztex, textures, 16textures, xdvi
+      xypic_driver = "unknown"
+    end
+    -- TODO: dvisvgm?
+  end
+
+  if CLUTTEX_VERBOSITY >= 1 then
+    message.info("checkdriver: graphics=", tostring(graphics_driver))
+    message.info("checkdriver: expl3=", tostring(expl3_driver))
+    message.info("checkdriver: hyperref=", tostring(hyperref_driver))
+    message.info("checkdriver: xypic=", tostring(xypic_driver))
+  end
+
+  local expected = assert(right_values[expected_driver], "invalid value for expected_driver")
+  if graphics_driver ~= nil and expected.graphics ~= nil and graphics_driver ~= expected.graphics then
+    message.diag("The driver option for graphics(x)/color is missing or wrong.")
+    message.diag("Consider setting '", expected.graphics, "' option.")
+  end
+  if expl3_driver ~= nil and expected.expl3 ~= nil and expl3_driver ~= expected.expl3 then
+    message.diag("The driver option for expl3 is missing or wrong.")
+    message.diag("Consider setting 'driver=", expected.expl3, "' option when loading expl3.")
+  end
+  if hyperref_driver ~= nil and expected.hyperref ~= nil and hyperref_driver ~= expected.hyperref then
+    message.diag("The driver option for hyperref is missing or wrong.")
+    message.diag("Consider setting '", expected.hyperref, "' option.")
+  end
+  if xypic_driver ~= nil and expected.xypic ~= nil and xypic_driver ~= expected.xypic then
+    message.diag("The driver option for Xy-pic is missing or wrong.")
+    if expected_driver == "dvipdfmx" then
+      message.diag("Consider setting 'dvipdfmx' option or running \\xyoption{pdf}.")
+    elseif expected_driver == "pdftex" then
+      message.diag("Consider setting 'pdftex' option or running \\xyoption{pdf}.")
+    elseif expected.xypic == "pdf" then
+      message.diag("Consider setting 'pdf' package option or running \\xyoption{pdf}.")
+    elseif expected.xypic == "dvips" then
+      message.diag("Consider setting 'dvips' option.")
+    end
+  end
+end
+
+--[[
+filelist[i] = {path = ""}
+]]
+
+return {
+  checkdriver = checkdriver,
+}
+end
+--[[
+  Copyright 2016-2020 ARATA Mizuki
 
   This file is part of ClutTeX.
 
@@ -2678,7 +2906,7 @@ end
   along with ClutTeX.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-CLUTTEX_VERSION = "v0.4"
+CLUTTEX_VERSION = "v0.5"
 
 -- Standard libraries
 local coroutine = coroutine
@@ -2700,6 +2928,7 @@ local message     = require "texrunner.message"
 local safename    = require "texrunner.safename"
 local extract_bibtex_from_aux_file = require "texrunner.auxfile".extract_bibtex_from_aux_file
 local handle_cluttex_options = require "texrunner.handleoption".handle_cluttex_options
+local checkdriver = require "texrunner.checkdriver".checkdriver
 
 os.setlocale("", "ctype") -- Workaround for recent Universal CRT
 
@@ -2729,9 +2958,6 @@ end
 local jobname = options.jobname
 assert(jobname ~= "", "jobname cannot be empty")
 
-if options.output_format == nil then
-  options.output_format = "pdf"
-end
 local output_extension
 if options.output_format == "dvi" then
   output_extension = engine.dvi_extension or "dvi"
@@ -2953,6 +3179,10 @@ local function single_run(auxstatus, iteration)
     local logfile = assert(io.open(path_in_output_directory("log")))
     execlog = logfile:read("*a")
     logfile:close()
+  end
+
+  if options.check_driver ~= nil then
+    checkdriver(options.check_driver, filelist)
   end
 
   if options.makeindex then

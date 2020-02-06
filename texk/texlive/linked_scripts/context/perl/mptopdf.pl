@@ -3,6 +3,12 @@ eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $
 
 # MikTeX users can set environment variable TEXSYSTEM to "miktex".
 
+# There have been suggestions to patch this script for dealing with different
+# output templates (a relative new metapost feature) but these have given
+# unwanted side effects. One can always wrap this script in another script
+# to deal with whatever patterns needed. We won't touch what has worked for
+# ages. (December 2019)
+
 #D \module
 #D   [       file=mptopdf.pl,
 #D        version=2010.05.28, %  2000.05.29
