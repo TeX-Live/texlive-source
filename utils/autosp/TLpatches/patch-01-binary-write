@@ -1,7 +1,7 @@
-diff -ur autosp-2019-12-22/autosp.c autosp-src/autosp.c
---- autosp-2019-12-22/autosp.c	Mon Dec 23 05:43:59 2019
-+++ autosp-src/autosp.c	Thu Jan 23 12:32:48 2020
-@@ -183,7 +183,7 @@
+diff -ur autosp-2020-02-06/autosp.c autosp-src/autosp.c
+--- autosp-2020-02-06/autosp.c	Thu Feb 06 23:00:34 2020
++++ autosp-src/autosp.c	Fri Feb 07 07:43:38 2020
+@@ -221,7 +221,7 @@
    }
    else
    {
@@ -10,7 +10,7 @@ diff -ur autosp-2019-12-22/autosp.c autosp-src/autosp.c
      if (outfile == NULL)
      { printf ("Can't open %s\n", outfilename);
        exit (EXIT_FAILURE);
-@@ -201,7 +201,7 @@
+@@ -239,7 +239,7 @@
    *logfilename_n = '\0';
    append (logfilename, &logfilename_n, "alog", sizeof (logfilename));
    if (debug)  
@@ -19,9 +19,9 @@ diff -ur autosp-2019-12-22/autosp.c autosp-src/autosp.c
      if (logfile == NULL)
      { printf ("Can't open %s\n", logfilename);
        exit (EXIT_FAILURE);
-diff -ur autosp-2019-12-22/rebar.c autosp-src/rebar.c
---- autosp-2019-12-22/rebar.c	Tue Jan 08 22:28:27 2019
-+++ autosp-src/rebar.c	Thu Jan 23 12:33:20 2020
+diff -ur autosp-2020-02-06/rebar.c autosp-src/rebar.c
+--- autosp-2020-02-06/rebar.c	Thu Feb 06 16:22:35 2020
++++ autosp-src/rebar.c	Fri Feb 07 07:44:13 2020
 @@ -264,7 +264,7 @@
        else
          append (outfilename, &outfilename_n, ".aspc", sizeof (outfilename));
@@ -31,9 +31,9 @@ diff -ur autosp-2019-12-22/rebar.c autosp-src/rebar.c
      if (outfile == NULL)
      { fprintf (stderr,"Can't open %s\n", outfilename);
        exit (EXIT_FAILURE);
-diff -ur autosp-2019-12-22/spacing_note.c autosp-src/spacing_note.c
---- autosp-2019-12-22/spacing_note.c	Wed May 16 22:35:31 2018
-+++ autosp-src/spacing_note.c	Thu Jan 23 12:35:52 2020
+diff -ur autosp-2020-02-06/spacing_note.c autosp-src/spacing_note.c
+--- autosp-2020-02-06/spacing_note.c	Thu Feb 06 16:22:35 2020
++++ autosp-src/spacing_note.c	Fri Feb 07 07:47:00 2020
 @@ -30,7 +30,7 @@
      update_global_skip (n);
        /* commas will be discarded by filter_output (i) */
@@ -61,9 +61,9 @@ diff -ur autosp-2019-12-22/spacing_note.c autosp-src/spacing_note.c
  
    t = strpbrk (s+1, "{\\&|$"); /* collective coding?  */
    if (*t == '{')  /*  {...}  */
-diff -ur autosp-2019-12-22/tex2aspc.c autosp-src/tex2aspc.c
---- autosp-2019-12-22/tex2aspc.c	Wed Aug 28 20:34:53 2019
-+++ autosp-src/tex2aspc.c	Thu Jan 23 12:38:10 2020
+diff -ur autosp-2020-02-06/tex2aspc.c autosp-src/tex2aspc.c
+--- autosp-2020-02-06/tex2aspc.c	Thu Feb 06 16:22:35 2020
++++ autosp-src/tex2aspc.c	Fri Feb 07 07:47:30 2020
 @@ -342,7 +342,7 @@
      append (outfilename, &outfilename_n, ".aspc", sizeof (outfilename));
    }

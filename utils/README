@@ -9,7 +9,7 @@ asymptote 2.62 - checked 16jan20
   see http://tug.org/texlive/build.html#asymptote
   and tlpkg/bin/tl-update-asy
 
-autosp 2019-12-22 - checked 23jan20
+autosp 2020-02-06 - checked 07feb20
   http://ctan.org/pkg/autosp
 
 devnag - from devanagari package installed in texmf-dist.
