@@ -6,6 +6,12 @@
 	regarded simply as an empty string if it is NULL from now on.
 	See https://tex.stackexchange.com/questions/522794/problem-in-updated-tex-live,
 	although we can't reproduce the problem.
+	* spc_pdfm.c: Add two pdftex specials which are basically
+	similar to the existing dvipdfmx special "pdf:literal",
+	"pdf:page:" and "pdf:direct:". It is not possible to test
+	properly since exact spec is unknown to us. Currently,
+	"pdf:direct:" is just an alias of "pdf:page:". It cannot be
+	properly implemented at present.
 
 2020-01-24  Akira Kakuto  <kakuto@w32tex.org>
 
