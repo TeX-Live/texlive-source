@@ -1,7 +1,7 @@
 all: pmxab.c scor2prt.c
 
-pmxab.c: pmx284.for
-	f2c -g -\!bs < pmx284.for > pmxab.c
+pmxab.c: pmx294.for
+	f2c -g -\!bs < pmx294.for > pmxab.c
 
 scor2prt.c: scor2prt.for
 	f2c -g -\!bs < scor2prt.for > scor2prt.c

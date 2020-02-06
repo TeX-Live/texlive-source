@@ -232,13 +232,13 @@ PATCHES = libf2c/patch-01-binary libf2c/patch-03-DOS-line-endings \
 	libf2c/patch-04-MSVC-complex libf2c/patch-05-FreeBSD-off_t libf2c/patch-06-WIN32 \
 	libf2c/patch-07-MuslLibc \
         libf2c/patch-08-WIN64 \
-        libf2c/patch-09-tmpfile \
-	PATCH-pmx284.for
+        libf2c/patch-09-tmpfile 
 ## pmx.test
 EXTRA_DIST += tests/barsant.mid tests/barsant.pml tests/barsant.pmx \
 	tests/barsant.tex tests/barsant1.pmx tests/barsant2.pmx
-EXTRA_DIST += scor2prt.for pmx284.for.orig pmx284.for 
+EXTRA_DIST += scor2prt.for pmx294.for 
 EXTRA_DIST += $(PATCHES)
 EXTRA_DIST += version.ac configure.ac Makefile.am Makefile.f2c
+EXTRA_DIST += pmx.tex
 DISTCLEANFILES = barsant* pmxaerr.dat
 

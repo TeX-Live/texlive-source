@@ -1,0 +1,892 @@
+%%%%%%%%%%%%%%%%%%%%%%%
+%%                   %%
+%% pmx.tex           %%
+%%                   %%
+%%%%%%%%%%%%%%%%%%%%%%%
+\ifx\pmxversion\undefined\else\endinput\fi
+\def\pmxversion{2.94}\def\pmxdate{23 Jan 20}
+% 2.94 add def'ns of \hbp, \hbpp
+% 2.80 add def'n of \slx, real stemlength
+% 2.73 4 Feb 16 Fix \pmxclefsym to include \smalltreblelowoct
+% 2.73 Added \pmxlyr command.
+% 2.619 At movement break, directly set \nbinstruments in \newmovement;
+%   probably don't need \newnoi any more.
+%   (2.619a) Added \resetlyrics in \newmovement.
+% 2.614 Comment out definitions of some dotted rests, since either in 
+%         musixtex.tex or not needed.
+% Modified for two figured bass lines 081115
+% 2.502 (Olivier Vogel) change all the commands of the form
+%   \font\...=\fontid sy1000 to \font\...=cmsy10
+% 2.408 comment out extra definition of \mdot
+%        tweak \hpausep, replace \liftPAuse, add \liftPAusep
+% 2.406  redefine \starteq to put down strut for first system inside \znotes
+% 2.354a add \zcharnote{##2}{~} to \tieforsl
+% 2.354
+%   Macros \tieforisu, etc, to replace slurs with ties, for use with musixps
+% 2.353
+%   Define \pmxversion
+%   Insert Dirk's 2nd set of (LaTeX-aware) redefinitions for \centerline etc.
+%   Add 5th option for \endset to \newmovement, for Rz.
+% 12/24/01 add \setzalaligne
+% 12/23/01 Remove \parskip re-definition.
+% 12/16/01 Define \psforts (postscript slur endings to replace \midslur)
+% 10/20/01 added defn's of \bigcna, etc
+% 10/20/01 define \resetsize, redefine \gaft, \grace, and \shlft so resizing
+%   is conditional on current staff line spacing. 
+% 11 September Redefine liftpausc to include ledger line.
+% 26 Aug 01 Add \pcaesura, \pbreath
+% 10/21/00  Added PMXbarnotrue/false and stopped PMX zapping writezbarno
+% 15 October added vertical equalization macros
+% 4 July added \PAusep, \brevep, dynamic mark placement \pmxdyn, \sfz
+% 1 July inserted stuff for hairpins 
+% 31 May 99 Redefined \smno
+%
+\immediate\write10%
+{PMX, a Preprocessor for MusiXTeX, Version\space\pmxversion b\space<\pmxdate>}%
+% Check for MusiXTeX version. TeX generates an error, not an ordinary
+% \end, because the \ifnum is not completed.
+\ifnum\mxvernumber<121\immediate\write16{ }
+\immediate\write16{****************}
+\immediate\write16{! STOPPING TeX because MusiXTeX Version = \mxvernumber}
+\immediate\write16{          while PMX 2.71+ requires at least 121}
+\immediate\write16{****************}
+\immediate\write16{ }\end{document}\fi
+%
+\edef\catcodeat{\the\catcode`\@}\catcode`\@=11
+%
+%  The next 4 lines are for Don's home use only
+%
+\font\specfnt=cmssqi8%
+\def\mtr#1{\zcharnote{#1}%
+{\specfnt\kern 1.5\internote\raise 0.3\internote\hbox to 0pt{/\hss}%
+\kern -0.7\internote\raise 1.0\internote\hbox to 0pt{/\hss}}}
+%
+\newif\ifolder%
+%
+%  Older fonts had clefs at different heights.  If you have the older 
+%  version you should uncomment the following line
+%\oldertrue%
+%
+%  The next 3 lines should be in musixmad.  They were omitted in 
+%  some early versions!
+%
+%\newcount\s@Nx
+%\newcount\s@Nxi
+%\newcount\s@Nxii
+%
+% Stemlength macro shorthands for 2-note unbeamed tremolos
+%
+\def\slx#1{\stdstemfalse\nostemcut\stemlength{#1}}
+\def\slz{\stemcut\stemlength{4.66}}
+%
+%  Special clef change stuff
+%
+\newcount\reflect
+\def\pmxnewclefs{\m@loop\s@l@ctclefs\o@c\a@c\repeat}%
+\newtoks\pmxclefsym
+\def\pmxclef#1#2{\ifnum#1=0\def\pmxclefsym{\smalltrebleclef}\else\ifnum#1<5%
+\def\pmxclefsym{\smallaltoclef}\else\ifnum#1=7\def\pmxclefsym{\smalltrebleclef}%
+\else\ifnum#1=8\def\pmxclefsym{\smalltreblelowoct}%
+\else\def\pmxclefsym{\smallbassclef}\fi\fi\fi\fi%
+% Adjust height here for older clef default heights.
+\reflect#2\ifolder\ifnum#1=0\advance\reflect-2\else\ifnum#1<5\advance\reflect-4%
+\else\advance\reflect-6\fi\fi\fi%
+\lcharnote{0}{\raise\reflect\internote\hbox{\pmxclefsym}}}%
+%
+%  Grace note stuff, incl. macro to reset size after going tiny.
+%  This may assume that \musicsize is 20pt but some staves may have
+%    \setsize#1\smallvalue 
+%
+\def\resetsize{\ifdim\internote<.95\Internote%
+\let\musictinyfont\musicthirteen\smallnotesize\else\normalnotesize\fi}%
+\def\settiny{\ifdim\internote<.95\Internote\let\musictinyfont\musiceleven\fi%
+\tinynotesize}%
+\def\grace#1#2#3{\off{-#1pt}\settiny\stdstemfalse#2\zcu{#3}%
+\resetsize\off{#1pt}}%
+\def\shlft#1#2{\off{-#1pt}\settiny\stdstemfalse#2\resetsize\off{#1pt}}%
+\def\gaft#1#2{\bsk\roffset{#1}{{\settiny\stdstemfalse#2\resetsize}}\sk}%
+%
+%  The following keep octaviation out of brackets.
+%  10/20/01: Are these used anywhere???
+%
+%\def\Gshl#1{\off{-#1pt}\tinynotesize}%
+%\def\Gshr#1{\normalnotesize\off{#1pt}}%
+\def\segnoo#1#2{\zcharnote{#2}{\kern#1pt\musicsmallfont\char"56}}%
+\def\ssegno#1{\zcharnote{#1}{\musictinyfont\char86}}%
+%
+% Some ornaments...
+%
+% Font for x-trill symbol.  Could make this more general.
+%
+\def\xtr#1{\zcharnote{#1}{\xtrfont\char"02}}
+%
+% Plus-trill
+%
+\def\ptr#1{\ptrx{#1}{1.8}{.35}}
+\def\ptrx#1#2#3{\zcharnote{#1}{\raise.9\internote\hbox{%
+\pcil\h@lf\qn@width\kern\pcil%
+\razclef#2\internote\pcil#3\internote\kern-\h@lf\razclef\vrule height \h@lf\pcil 
+depth \h@lf\pcil width \razclef\kern-\h@lf\razclef\kern-\h@lf\pcil\kern-.1pt
+\vrule height \h@lf\razclef depth \h@lf\razclef width \pcil}}%
+}%
+%
+%  Put in a number for an xtuplet.
+%
+\def\xnum#1#2#3{\off{#1\elemskip}\zcharnote{#2}{\smalltype\it #3}%
+\off{-#1\elemskip}}
+%
+%  accidental skips
+%
+\def\ast#1{\off{#1\elemskip}}
+%
+%  Check for and read a .mod file; open the .ask file
+%
+\newread\pmxmod
+\def\readmod#1{\openin\pmxmod #1.mod\relax
+\ifeof\pmxmod\else\input #1.mod\fi\closein\pmxmod} 
+%
+%  Macros for optional small notes, usually w/ down stems.  Offset to center
+%  them below a large note.  I used these in Matteis.
+%
+%\def\smno#1{\roffset{.17}{\tinynotesize#1\normalnotesize}}%
+%
+%  Redefined, due to some mysterious problem with \roffset
+%
+\def\smno#1{\off{.17\qn@width}\tinynotesize#1\normalnotesize\off{-.17\qn@width}}%
+\def\pmno#1{\roffset{.08}{\smallnotesize#1\normalnotesize}}%
+\def\smq#1{\smno{\zql{#1}}}\def\smc#1{\smno{\zcl{#1}}}%
+\def\smh#1{\smno{\zhl{#1}}}%
+%
+%  Single-digit meter symbol 
+%
+\newbox\workbox%
+\def\meterN#1{\setbox\workbox=\vbox{\hbox{\ \meterfont #1}}%
+\vbox to 8\internote{\offinterlineskip\vss\hbox to \wd\workbox{\hss
+\meterfont #1\hss}\vss }}%
+%
+%  Meter symbol '3' with vertical slash
+%
+\def\meterIIIS{\kern\internote\raise\Interligne\hbox{\meterfont 3}%
+\kern -2.0\internote
+\vrule height 7\internote depth -\internote width0.3\internote
+\kern 1.7\internote}%
+%
+% Fractional meter with a slash
+%
+\def\meterfracS#1#2{%
+\kern\internote\raise2\Interligne\rlap{\meterfont #1}%\lower2\Interligne%
+\hbox{\meterfont #2}%
+\kern -1.85\internote
+\vrule height 8\internote width0.3\internote
+\kern 1.55\internote}%
+%
+%  *Symbols* for use in figures
+%
+\def\sharpfig{\musixchar92}
+\def\flatfig{\musixchar90}
+\def\natfig{\musixchar94}
+\def\fsmsh{\llap{\musixchar92}}
+\def\fsmfl{\llap{\musixchar90}}
+\def\fsmna{\llap{\musixchar94}}
+%
+%  Macros for editorial accidentals
+%
+\def\qedit#1{\roffset{.2}{\zcharnote{#1}{\normtype\rm?}}}
+\def\qsharp#1{%
+\loffset{.2}{\zcharnote{#1}{\sharpfig\lower1.3\internote\hbox{\normtype\rm?}}}}
+\def\qflat#1{%
+\loffset{.2}{\zcharnote{#1}{\flatfig\lower.8\internote\hbox{\normtype\rm?}}}}
+\def\qnat#1{%
+\loffset{.2}{\zcharnote{#1}{\natfig\lower1.2\internote\hbox{\normtype\rm?}}}}
+\def\esharp#1{\roffset{.3}{\zcharnote{#1}{\sharpfig}}}
+\def\eflat#1{\roffset{.3}{\zcharnote{#1}{\flatfig}}}
+\def\enat#1{\roffset{.3}{\zcharnote{#1}{\natfig}}}
+%
+%  Cautionary big accidentals
+%
+\def\bigcna{\cna} \def\bigcfl{\cfl} \def\bigcsh{\csh}
+%
+%  Some fonts...for some reason my system can't do cmbx12 scaled \magstep4
+%  9/17/97 Must redo the following 3 lines to permit EC/DC fonts
+%
+%\font\BIGfont=cmbx10 scaled\magstep4\font\Bigfont=cmbx10 scaled\magstep2
+%\font\tempo=\fontid bx12% 
+%\font\dyn=\fontid bx10% 
+\iflongDCfontnames
+\font\xtrfont=cmsy10
+\font\tempo=\fontid bx1200 
+\font\dyn=\fontid bx1000 
+\else\iflongECfontnames
+\font\xtrfont=cmsy10
+\font\tempo=\fontid bx1200 
+\font\dyn=\fontid bx1000 
+\else
+%\font\xtrfont=cmsy10
+%\font\BIGfont=cmbx10 scaled\magstep4
+%\font\Bigfont=cmbx10 scaled\magstep2
+\font\xtrfont=cmsy10
+% Definitions deleted per Bob Tennent's request 150726
+%\font\BIGfont=\fontid bx10 scaled\magstep4
+%\font\Bigfont=\fontid bx10 scaled\magstep2
+\font\tempo=\fontid bx12% 
+\font\dyn=\fontid bx10% 
+\fi\fi
+%
+%  Continuation figure
+%
+\def\Cont#1#2{\advance\figdrop by #1\lower\figdrop\internote%
+\hbox to \z@{\kern -0.3\noteskip%
+\vbox{\hrule height 1.4\lthick width #2\noteskip}\hss}%
+\advance\figdrop by -#1}%
+\def\Cott#1#2{\advance\figdtwo by #1\lower\figdtwo\internote%
+\hbox to \z@{\kern -0.3\noteskip%
+\vbox{\hrule height 1.4\lthick width #2\noteskip}\hss}%
+\advance\figdtwo by -#1}%
+
+%
+%  Tiny C clef on line #1:  Will need to mod with new fonts 11-4-96
+%
+\newdimen\razclef\newdimen\symwid%
+\newdimen\pcil %\ifnum\musicsize=20\pcil4pt\else\pcil3.25pt\fi%
+\def\preclef#1#2{%
+\ifnum#2=20\pcil4pt\else\pcil3.25pt\fi%
+\symwid3.692\pcil%
+\hbox{\vbox{\hrule height \lthick width \symwid}%
+\kern-\symwid\raise\pcil\vbox{\hrule height \lthick width \symwid}%
+\kern-\symwid\raise2\pcil\vbox{\hrule height \lthick width \symwid}%
+\kern-\symwid\raise3\pcil\vbox{\hrule height \lthick width \symwid}%
+\kern-\symwid\raise4\pcil\vbox{\hrule height \lthick width \symwid}%
+\razclef-2.43\pcil\advance\razclef#1\pcil%
+\kern-\symwid\raise\razclef\hbox to \symwid{\hss\smallaltoclef\hss}%
+}}%
+\def\namewpc#1#2#3#4#5{\raise#4pt\hbox to \parindent{\raise#5pt\hbox{#1}%
+\hfill\preclef{#2}{#3}}}
+%
+%  Stuff for figure placements
+%
+%  9/17/97 redo font names
+%
+%\font\figfont=cmr10
+\def\figfont{\normtype\rm}%
+%
+\newcount\figdrop
+\newcount\figdtwo
+%\figdrop=6
+\newcount\sysno
+\global\sysno=0\relax%
+\def\Figu#1#2{\off{.9pt}\advance\figdrop by #1\lower\figdrop\internote%
+\hbox to \z@{\figfont#2\hss}\off{-.9pt}\advance\figdrop by -#1}%
+%
+%  Special Figure macro for 2-bass parts
+%
+%\def\Figt#1#2{\zcharnote{#1}{\kern.9pt\figfont#2}}%
+\def\Figt#1#2{\off{.9pt}\advance\figdtwo by #1\lower\figdtwo\internote%
+\hbox to \z@{\figfont#2\hss}\off{-.9pt}\advance\figdtwo by -#1}%
+%
+%  Bar numbering
+%
+\systemnumbers%
+\def\raisebarno{3.5\internote}%
+\def\shiftbarno{3.5\internote}%
+\newdimen\rbnbl\newdimen\sbnbl\newdimen\xrbn\newdimen\xsbn%
+\newdimen\rbndim\newdimen\sbndim%
+\global\rbndim\raisebarno\global\sbndim\shiftbarno%
+\global\def\raisebarno{\rbndim}\global\def\shiftbarno{\sbndim}%
+\global\rbnbl\rbndim\global\sbnbl\sbndim\global\xrbn0pt\global\xsbn0pt%
+%
+%  The following 2 macros are messy, but they retain \raisebarno as a macro and
+%  retain original definition in musixtex for the end-of-line utility.
+% 
+\def\bnrs#1#2{%
+%
+% If here, baseline values will not change.  On exit, \rbndim will
+% be the temporary value, \xrbn will be the increment (must save to check later;
+% if <>0 then baseline hasn't changed!), and \rbnbl is still the baseline value.
+%
+ \global\xrbn#1\internote\global\advance\rbndim\xrbn%
+ \global\xsbn#2\internote\global\advance\sbndim\xsbn%
+}%
+\def\writebarno{%
+  \ifnum\barno>1%
+    \boxit{\smalltype\bf\the\barno\barnoadd}%
+    \ifdim\raisebarno=\rbnbl%
+      \empty%
+    \else%
+      \ifdim\xrbn=0pt%
+        \global\rbnbl\raisebarno%
+        \global\def\raisebarno{\rbndim}%
+      \else%
+        \global\xrbn0pt%
+      \fi%
+      \global\rbndim\rbnbl%
+    \fi%
+    \ifdim\shiftbarno=\sbnbl%
+      \empty%
+    \else%
+      \ifdim\xsbn=0pt%
+        \global\sbnbl\shiftbarno%
+        \global\def\shiftbarno{\sbndim}%
+      \else%
+        \global\xsbn0pt%
+      \fi%
+      \global\sbndim\sbnbl%
+    \fi%
+  \fi%
+}%
+%
+%  Make small accidentals the default
+%
+\smallaccid%
+%
+%  Put in a new time signature. Modified 151226
+%
+\def\newtimes#1%
+{\ifnum#1=0%
+  \n@wbar\writ@newclefs\advance\barsinlin@\@ne%
+%
+% Added 151216
+%
+  \wbarno@x\Writ@newsigns%
+  \advance\n@skip0.3\afterruleskip\widthtyp@\@ne\t@rmskip%
+  \Writ@meters\lastbarpos\lin@pos\addspace\afterruleskip%
+\else\ifnum#1=1%
+  \alaligne 
+\else
+  \wbarno@x%
+%
+% Added 151226
+%
+\addspace\afterruleskip  
+%
+% -0.7 gave too much space before meter.  
+%
+%  \advance\n@skip-0.7\afterruleskip\widthtyp@\@ne\t@rmskip%
+  \advance\n@skip-\afterruleskip\widthtyp@\@ne\t@rmskip%
+  \Writ@meters\addspace\afterruleskip%
+\fi\fi}%
+%
+%  changecontext with no line break
+%
+\def\xchangecontext{\n@wbar\writ@newclefs
+  \wbarno@x\Writ@newsigns\Writ@meters\addspace\afterruleskip}%
+%
+%  changecontext with forced line break and no barline
+%
+\def\zachangecontext{\advance\n@skip\beforeruleskip \widthtyp@\@ne \t@rmskip
+  \zn@wbar \writ@newclefs \advance\barsinlin@\@ne 
+  \Writ@newsigns\z@suspend\contpiece }
+%
+%  Dotted rests.
+%
+%\def\hsp{\pt7\hs} 
+%\def\hspp{\ppt7\hs} 
+%\def\qsp{\pt5\qs}\def\dsp{\pt5\ds}\def\qpp{\pt5\qp}
+%\def\qspp{\ppt5\qs}\def\dspp{\ppt5\ds}\def\qppp{\ppt5\qp}
+%\def\pausep{\off{.33\qn@width}\pt5\off{-.33\qn@width}\pause}
+%\def\pausep{\wholeshift{\pt5}\pause}
+\def\hpausepp{\wholeshift{\ppt5}\hpause}
+\def\pausepp{\wholeshift{\ppt5}\pause}
+%
+%  Redefine headline to lower pagenumber.  The original defn:
+%  \def\makeheadline{\vbox to\z@{\vskip-22.5\p@
+%  \line{\vbox to8.5\p@{}\the\headline}\vss}\nointerlineskip}
+%
+\def\makeheadline{\vbox to\z@{\vskip-8\p@
+  \line{\vbox to8.5\p@{}\the\headline}\vss}\nointerlineskip}
+%
+% Dot at arbitrary height above a top line of staff
+%
+%\def\mdot#1{\zcharnote8{\kern-5.3pt\raise{#1}\internote\hbox{\musixchar0}}}
+%
+% Titles
+%
+%\def\titles#1#2#3#4#5#6#7{\kern-\lin@pos%
+%\kern-3.2\Interligne\kern-\parindent\kern-\afterruleskip%
+%\kern-\sign@skip%
+%\vbox{\vskip#1\Interligne
+%\ifx\relax#2\relax\else\leftline{\Bigtype #2}\fi\vskip#3\Interligne%
+%\ifx\relax#4\relax\else\centerline{\BIGtype #4}\fi\vskip#5\Interligne%
+%\ifx\relax#6\relax\else\rightline{\Bigtype #6}\fi\vskip#7\Interligne}}%
+%
+% New def'n per Dirk Laurie to allow multiple lines.
+%
+\ifx\documentclass\undefined
+\def\centerlines#1{{\def\\{\hss\egroup\medskip\par\line\bgroup\hss}%
+  \line\bgroup\hss#1\hss\egroup}}
+\def\leftlines#1{{\def\\{\hss\egroup\smallskip\par\line\bgroup}%
+  \line\bgroup#1\hss\egroup}}
+\def\rightlines#1{{\def\\{\egroup\smallskip\par\line\bgroup\hss}%
+  \line\bgroup\hss#1\egroup}}
+\else
+\def\centerlines#1{{\centering#1\\}}
+\def\leftlines#1{{\raggedright#1\\}}
+\def\rightlines#1{{\raggedleft#1\\}}
+\fi
+%\def\centerline#1{{\def\\{\hss\egroup\medskip\par\line\bgroup\hss}%
+%  \line\bgroup\hss#1\hss\egroup}}
+%\def\leftline#1{{\def\\{\hss\egroup\smallskip\par\line\bgroup}%
+%  \line\bgroup#1\hss\egroup}}
+%\def\rightline#1{{\def\\{\egroup\smallskip\par\line\bgroup\hss}%
+%  \line\bgroup\hss#1\egroup}}
+\def\titles#1#2#3#4#5#6#7{\kern-\lin@pos%
+\kern-3.2\Interligne\kern-\parindent\kern-\afterruleskip%
+\kern-\sign@skip%
+\vbox{\vskip#1\Interligne
+% Next 3 lines replaced at Bob Tennent's request 150726
+%\ifx\relax#2\relax\else{\Bigtype\leftlines{#2}}\fi\vskip#3\Interligne%
+%\ifx\relax#4\relax\else{\BIGtype\centerlines{#4}}\fi\vskip#5\Interligne%
+%\ifx\relax#6\relax\else{\Bigtype\rightlines{#6}}\fi\vskip#7\Interligne}}%
+\ifx\relax#2\relax\else{\bigtype\leftlines{#2}}\fi\vskip#3\Interligne%
+\ifx\relax#4\relax\else{\BIgtype\centerlines{#4}}\fi\vskip#5\Interligne%
+\ifx\relax#6\relax\else{\bigtype\rightlines{#6}}\fi\vskip#7\Interligne}}%
+%
+% Slashes on stems
+%
+\def\usoff#1{%
+% Set \pcil to (stem length)-9\Internote
+  \ifnum#1>10
+    \pcil-3.8\Internote
+  \else
+    \pcil#1\Internote
+    \ifnum#1>3
+      \pcil-.38\pcil\advance\pcil-.5\Internote
+      \ifnum#1>7
+        \advance\pcil.38\Internote
+      \fi
+    \else
+      \ifnum#1<-2
+        \pcil-\pcil\advance\pcil-5\Internote
+      \else
+        \pcil-2\Internote
+      \fi
+    \fi
+  \fi
+  \advance\pcil#1\Internote
+}%
+%
+\def\us#1{\usoff{#1}%
+  \raise\pcil\hbox{\loffset{.5}{\ibu009}\roffset{.5}{\tbu0}}}%
+\def\ls#1{\reflect-#1\advance\reflect8 %
+\usoff{\reflect}\advance\pcil-7\Internote%
+  \lower\pcil\hbox{\loffset{.5}{\ibl009}\roffset{.5}{\tbl0}}}%
+%
+%  Thinner slashes, better coding
+%
+\newdimen\pmxtop\def\aslash#1#2#3{%
+%
+% #1 = note level relative to bottom line.  #2 = 0/1 for down/up stem
+% #3 = 0/1 for down/up slash,  For downstem, reflect, do as up, then unreflect.
+%
+\ifcase#3\def\slchar{\char248}\or\def\slchar{\char184}\fi%
+\ifcase#2\pmxtop-#1\internote\advance\pmxtop8\internote\or\pmxtop#1\internote%
+\fi\advance\pmxtop4.66\interbeam\ifdim\pmxtop>11\internote\uptop{11}\uptop{12}%
+\uptop{13}\uptop{14}\uptop{15}\uptop{16}\fi%
+\ifdim\pmxtop<4\internote\pmxtop4\internote\fi%
+%
+% \pmxtop now top of stem for upstem.  Unreflect if downstem
+%
+\ifcase#2\pmxtop-\pmxtop\advance\pmxtop8\internote\ifcase#3%
+\advance\pmxtop2.5\internote\or\advance\pmxtop.9\internote\fi%
+\ccharnote0{\raise\pmxtop\hbox{\musictinyfont\slchar}}%
+\or\ifcase#3\advance\pmxtop-.9\internote\or\advance\pmxtop-2.5\internote\fi%
+\roff{\ccharnote0{\raise\pmxtop\hbox{\musictinyfont\slchar}}}\fi}%
+\def\uptop#1{\ifdim\pmxtop>#1\internote\advance\pmxtop-.25\interbeam\fi}%
+%
+% Signature change at end of line
+%
+\def\sigatend#1#2{\setdoublebar\xbar\hardspace{-#2pt}\generalsignature{#1}%
+\zchangecontext\hardspace{-#2pt}\advance\barno-1\let\barrul@\empty}%
+%
+%  Macros for beams
+%
+\def\rbbu#1{\roff{\tbbu{#1}}}
+\def\rbbbu#1{\roff{\tbbbu{#1}}}
+\def\rbbbbu#1{\roff{\tbbbbu{#1}}}
+\def\rbbl#1{\roff{\tbbl{#1}}}
+\def\rbbbl#1{\roff{\tbbbl{#1}}}
+\def\rbbbbl#1{\roff{\tbbbbl{#1}}}
+%
+%  Stuff for second voice per staff
+%
+\def\nextvoice{%
+\@ndstaff\reflect\noport@@\advance\noport@@-1\beginstaff\noport@@\reflect}%
+%
+%  Macros for moving slur starts and stops
+%
+\def\isu#1#2#3{\roffset{#3}{\isluru{#1}{#2}}}%
+\def\isd#1#2#3{\roffset{#3}{\islurd{#1}{#2}}}%
+\def\ts#1#2#3{\roffset{#3}{\tslur{#1}{#2}}}%
+%
+%  Macro to replace old \tslur with special postscript slur endings 
+%
+\def\psforts#1{\let\tst\tslur\def\tslur##1##2{%
+\ifnum#1=0\tst{##1}{##2}\else%
+\ifnum#1=1\tfslur{##1}{##2}\else%
+\ifnum#1<4\tst{##1}{##2}\else%
+\ifnum#1=4\thslur{##1}{##2}\else%
+\ifnum#1=5\tHslur{##1}{##2}\else%
+\tHHslur{##1}{##2}\fi\fi\fi\fi\fi\let\tslur\tst}}%
+%
+%  Macros to replace slurs with ties
+%
+\def\tieforisu{\let\ist\isluru%
+\def\isluru##1##2{\itieu{##1}{##2}\let\isluru\ist}}%
+\def\tieforisd{\let\ist\islurd%
+\def\islurd##1##2{\itied{##1}{##2}\let\islurd\ist}}%
+\def\tieforts{\let\ist\tslur%
+\def\tslur##1##2{\ttie{##1}\zcharnote{##2}{~}\let\tslur\ist}}%
+%
+%  Replacement trill macros, to avoid overfull boxes on 1st pass
+%
+\let\savtr\trille\let\savTr\Trille%
+\def\trille#1#2{\ifeof\inmux\else\savtr{#1}{#2}\fi}%
+\def\Trille#1#2{\ifeof\inmux\else\savTr{#1}{#2}\fi}%
+%
+% Mordent as \rpar.  If dotted, must move dot to right.
+%
+\def\lpn#1{\loffset{.3}{\lpar{#1}}}%   '(' 
+\def\rpn#1{\roffset{.3}{\rpar{#1}}}%   Beam or not, no dot [ ')' only ]
+\def\clm#1#2{\mdot{#1}{#2}\cl{#2}}%          Non-beam, dot [ '.' + ')' + note ]
+\def\cum#1#2{\mdot{#1}{#2}\cu{#2}}%
+\def\qlm#1#2{\mdot{#1}{#2}\ql{#2}}%                 
+\def\qum#1#2{\mdot{#1}{#2}\qu{#2}}%
+\def\hlm#1#2{\mdot{#1}{#2}\hl{#2}}%                 
+\def\hum#1#2{\mdot{#1}{#2}\hu{#2}}%
+\def\qbm#1#2#3{\mdot{#2}{#3}\qb{#1}{#3}}%    Beamed & dotted
+\def\mdot#1#2{\roffset{.32}{\pt{#1}}\roffset{.24}{\rpar{#2}}}%
+\def\lpnu#1{\smallnotesize\loffset{.3}{\zcharnote{#1}%
+{\raise1pt\hbox{\musixchar3}}}\normalnotesize}% 
+\def\lpnd#1{\smallnotesize\loffset{.3}{\zcharnote{#1}%
+{\lower1pt\hbox{\musixchar3}}}\normalnotesize}% 
+\def\rpnu#1{\smallnotesize\roffset{.6}{\zcharnote{#1}%
+{\raise1pt\hbox{\musixchar4}}}\normalnotesize}%
+\def\rpnd#1{\smallnotesize\roffset{.6}{\zcharnote{#1}%
+{\lower1pt\hbox{\musixchar4}}}\normalnotesize}%
+%
+% For use with mid-bar signature changes, to permit using \ast machinery
+%
+\def\rdoff{\let\toff\off\let\off\addspace}%
+%
+% For raising arpeggios by .5/internote
+%
+\def\raisearp#1#2{\zcharnote{#1}{%
+  \raise.5\internote\hbox{%
+  \uplap{\leaders\hbox{\musixchar70}\vskip#2\Interligne}}}}
+%
+% New Movement Macro
+%
+%\def\newmovement#1#2{\let\holdstop\stoppiece\let\holdcont\contpiece%
+\def\newmovement#1#2#3{\let\holdstop\stoppiece\let\holdcont\contpiece%
+\ifcase#2\def\endset{\setdoubleBAR}\or\def\endset{\setdoublebar}\or%
+%\def\endset{\setrightrepeat}\or\def\endset{\empty}\fi%
+\def\endset{\setrightrepeat}\or\def\endset{\empty}%
+ \or\def\endset{\empty}\fi%
+ \def\stoppiece{\endset%
+%
+%+++
+\ifnum#2=4\zstoppiece\else%
+%+++
+%
+\holdstop%
+%
+%+++
+\fi%
+%+++
+%
+\vskip#1\internote%
+\let\stoppiece\holdstop}%
+% \def\contpiece{
+ \def\contpiece{\def\nbinstruments{#3}% <-- assignment inserted here
+%
+% Added 120904 per Rainer's suggestion to fix problem with M-Tx at m-break.
+%
+\ifx\resetlyrics\undefined\else\resetlyrics\fi%
+%
+\startpiece\addspace\afterruleskip\let\contpiece\holdcont}%
+}%
+%
+%  Redefinitions for moving dots vertically by x\interligne and
+%  horizontally by y headwidths.  Should work for all kinds of dotted notes.
+%  Usage: \def\C@Point#1#2{\PMXpt{.0}{-.2}} (x and y hardwired by PMX)
+% 
+\global\let\C@Psave\C@Point%
+\def\PMXpt#1#2#3{\ifodd\n@i\else\raise\internote\fi%
+\hbox{\raise#1\internote\hbox{\kern#2\qn@width\musixchar#3\kernm#2\qn@width}}%
+\global\let\C@Point\C@Psave}%
+%
+%  Shifted, pointed chord notes (Missing in musixtex.tex ???) 
+%
+\def\lhp#1{\loff{\zhp{#1}}}
+\def\rhp#1{\roff{\zhp{#1}}}
+\def\lqp#1{\loff{\zqp{#1}}}
+\def\rqp#1{\roff{\zqp{#1}}}
+\def\rhpp#1{\roff{\zhpp{#1}}}
+\def\lhpp#1{\loff{\zhpp{#1}}}
+\def\rqpp#1{\roff{\zqpp{#1}}}
+\def\lqpp#1{\loff{\zqpp{#1}}}
+%
+%  Redefine to include \sk !!!
+%
+\def\liftpause#1{\C@ps\@l@v@n\si@{#1}\sk}
+%\def\liftPAuse#1{\C@ps{58}0{#1}\sk}
+% 1/19/03 Replaced old def'n; added \liftPAusep
+\def\liftPAuse#1{\reflect#1\multiply\reflect2%
+\zcharnote{0}{\raise\reflect\internote\hbox{\kern.4\qn@width\musixchar58}}\sk}%
+\def\liftPAusep#1{\reflect#1\multiply\reflect2%
+\zcharnote{0}{\raise\reflect\internote\hbox{\kern.4\qn@width\musixchar58%
+\kern-\qn@width\pt4}}\sk}%
+\def\lifthpause#1{\C@ps\t@n\f@ur{#1}\sk}%
+\def\liftpausep#1{\reflect#1\advance\reflect2%
+\wholeshift{\raise\reflect\Interligne\hbox{\pt0}}\liftpause{#1}}%
+\def\liftpausepp#1{\reflect#1\advance\reflect2%
+\wholeshift{\raise\reflect\Interligne\hbox{\ppt0}}\liftpause{#1}}%
+\def\lifthpausep#1{\reflect#1\advance\reflect2%
+\wholeshift{\raise\reflect\Interligne\hbox{\pt0}}\lifthpause{#1}}%
+\def\lifthpausepp#1{\reflect#1\advance\reflect2%
+\wholeshift{\raise\reflect\Interligne\hbox{\ppt0}}\lifthpause{#1}}%
+%
+%  Text up to bar line.  Use before last note, assume 1 noteskip to bar.
+% 
+\def\bartext#1#2{\sk\loffset{.3}{\zcharnote{#1}{\llap{#2}}}\bsk}
+%
+%  Macro used before movement break to change # of instruments.
+%  120818 Set \nbinstruments in \newmovement; probably don't need this any more.
+% 
+\def\newnoi#1{\let\atnb\atnextbar\def\atnextbar{\atnb\def\nbinstruments{#1}}}%
+%
+%  Set up top page numbers with optional centered heading
+%
+% #2=0 if odds on rt, else 1.  #1 = initial page no. #3=name
+\def\toppageno#1#2#3{\pageno#1%
+\headline{\reflect#2\advance\reflect\pageno%
+\ifodd\reflect\rhead{#3}\else\lhead{#3}\fi}%
+\def\rhead##1{\tempo\ifnum\pageno>1\hfil{##1}\fi\hfil\llap\folio}%
+\def\lhead##1{\tempo\rlap\folio\hfil{##1}\hfil}}%
+%
+% Temporary date and file name. To use it:
+%
+% (1) Define a script to create a file tempdate.dat. The file will 
+%     contain a single line of text to be centered at the bottom of
+%     each page.  I use a 4DOS alias (makedate) that inserts current date
+%     filename, and filedate as follows:
+%
+%  echo \smalltype\rm Printed %_date from file %1.pmx %@filedate[c:\pmx\%1.pmx],
+%  %@filetime[c:\pmx\%1.pmx] >tempdate.dat
+%
+% (2) Include a call to makedate in the batch file you use to run pmx+tex.
+%     Be sure tempdate.dat is written to a directory accessible to TeX.
+%
+% (3) Include in-line tex \\tempdate\ at the top of the pmx file.
+%
+\def\tempdate{\def\makefootline{\baselineskip2pt\line{\the\footline}}
+\footline{\hss\input tempdate.dat\hss}}
+%
+\def\pnotes#1{\vnotes#1\elemskip}%
+%
+% Hairpins and other dynamic stuff
+%
+\newdimen\hpi\newdimen\hpii\newdimen\hpiii\newdimen\hpiv%
+\newdimen\hpv\newdimen\hpvi\newdimen\hpvii\newdimen\hpviii%
+\newdimen\hpix\newdimen\hpx\newdimen\hpxi\newdimen\hpxii\newdimen\hptmp%
+%
+\def\hpstrt#1#2{\getcurpos\advance\y@v#2\qn@width\advance\y@v\txt@ff%
+\global\csname hp\romannumeral#1\endcsname=\y@v}%
+%
+\def\hpendall#1#2#3#4{\getcurpos%
+\advance\y@v-\csname hp\romannumeral#1\endcsname%
+\zcharnote{#2}{\kernm\y@v\advance\y@v\txt@ff\advance\y@v#3\qn@width#4{\y@v}}}%
+%
+\def\hpcend#1#2#3{\hpendall{#1}{#2}{#3}\crescendo}%
+\def\hpdend#1#2#3{\hpendall{#1}{#2}{#3}\decrescendo}%
+%
+\def\pmxdyn#1#2#3{\ccharnote{#1}{\kern#2\qn@width#3}}
+\def\txtdyn#1#2#3{\zcharnote{#1}{\kern#2\qn@width#3}}
+%
+\def\sfz{{\ppff s\f@kern\f@kern f\f@kern z}}%
+%
+% Dotted breve and rest
+%
+\def\brevep{\def\w@h{\musixchar32\roffset\qu@rt{\C@Point\z@\raise}}%
+  \y@v\wn@width \g@w}
+\def\PAusep{\loffset{.5}{\pt5}\PAuse}%
+%
+% Vertical equalization macros
+%
+%\newskip\pssav\pssav\parskip%
+%
+%  Remove this from here in 2.352, since it caused some incompatibilities.
+%   (Let PMX write it into *.tex when needed).
+%
+%\parskip 0pt plus 12\Interligne minus 99\Interligne%
+\def\upamt{27}\def\dnamt{-20}%
+%\def\upstrut{\znotes\nextinstrument\nextinstrument\zcharnote{\upamt}{X}\en}%
+%
+%  Let PMX write the def'n of \upstrut since I couldn't get the loop to work
+%
+\def\dnstrut{\znotes\zcharnote{\dnamt}{~}\en}%
+%
+%  Call the following inline type1 anywhere in first line of equalization.
+%
+\def\starteq{\gdef\everystaff{\upstrut\dnstrut}\dnstrut}%
+%
+%  And put this as type 1 in the next-to-last line of equalization!
+%
+%\def\endeq{\gdef\everystaff{\upstrut\global\parskip\pssav%
+\def\endeq{\gdef\everystaff{\upstrut%
+\gdef\everystaff{\empty}}}%
+%
+\gdef\spread#1{\global\let\cont\contpiece%
+\gdef\contpiece{\vskip#1\internote\cont\global\let\contpiece\cont}}%
+%
+% The following avoid zapping \writezbarno in several special situations
+%
+\def\PMXbarnotrue{\let\z@sw\empty}%
+\def\PMXbarnofalse{\let\z@sw\@ne}%
+%
+% Centered rests
+%
+\def\pausc{\lrlap{\pause\off{\qn@width}}}%
+\def\PAusc{\lrlap{\PAuse\off{\txt@ff}}}%
+%\def\liftpausc#1{\raise#1\Interligne\pausc}%
+\def\liftpausc#1{\raise#1\Interligne\lrlap{\
+\raise6\internote\hbox{\musixchar11}\off{1.2\qn@width}}}%
+\def\liftPAusc#1{\raise#1\Interligne\PAusc}%
+%
+% CenterBar and mbrest modified 2/01 to account for simick mods in
+%   musixtex 1.01
+%
+\def\CenterBar#1#2#3{%
+\y@ii\lin@pos\advance\y@ii-\lastbarpos%
+\ifx\volta@startcor\undefined \else\advance\y@ii\cut@v\fi%
+\advance\y@ii-#2pt\advance\y@ii-#3pt\kern-#3pt%
+\kern-\h@lf\y@ii\lrlap{#1}\kern\h@lf\y@ii\kern#3pt}%
+%
+% mbrest mods 151226. Changed # of args in mbrest from 3 to 1;
+%   changed pmx271 accordingly
+% 160103 back to 3 args
+%
+\def\mbgap{\qsk\hqsk}%
+\def\mbrhgt{9}%
+\def\mbrest#1#2#3{%
+%\CenterBar{\ccn{9}{\meterfont#1}}{#2}{#3}%
+\CenterBar{\ccn{\mbrhgt}{\meterfont#1}}{#2}{#3}%
+\CenterBar{%
+\ifcase #1%
+\relax%
+\or\cpause% 1
+\or\cPAuse% 2
+\or\cPAuse\mbgap\cpause% 3
+\or\cPAUSe% 4
+\or\cPAUSe\mbgap\cpause% 5
+\or\cPAUSe\mbgap\cPAuse% 6
+\or\cPAUSe\mbgap\cPAuse\mbgap\cpause% 7
+\or\cPAUSe\mbgap\cPAUSe% 8
+\or\cPAUSe\mbgap\cPAUSe\mbgap\cpause% 9
+\else
+\def\vertpart{\hbox{\vrule width.6pt height1.5\internote depth1.5\internote}}%
+\raise4\internote\hbox{\vertpart%
+\vrule width0.7\y@ii height.5\internote depth.5\internote%
+\vertpart}%
+\fi}{#2}{#3}}%
+%
+% 151226 Redefine \xchangecontext to add in \afterruleskip
+%
+\def\xchangecontext{\n@wbar\writ@newclefs
+  \wbarno@x\Writ@newsigns\Writ@meters\lastbarpos\lin@pos\addspace\afterruleskip}%
+%
+% 151227 Define \ccoda so it positions like any other ornament
+%
+\def\ccoda{\n@iv85\@Char}%
+\def\pcaesura#1#2{\raise#1\internote\hbox{%
+\rlap{\kern.5\noteskip\kern#2\qn@width\musixchar79}}}%
+\def\pbreath#1#2{\zcharnote6{\raise#1\internote\hbox{%
+\rlap{\kern.5\noteskip\kern#2\qn@width\BIGfont'}}}}%
+%
+% Macro to set up for blank bar line
+%
+%\def\setzalaligne{\let\alat\alaligne%
+%  \def\alaligne{\zalaligne\let\alaligne\alat}}%
+\def\setzalaligne{\let\zalat\stoppiece%
+  \def\stoppiece{\zstoppiece\let\stoppiece\zalat}}%
+%
+% Slanted line arpeggio or coule ornament
+%
+\def\arpg#1#2{%
+\roffset{#2}{\zcharnote0{\raise#1\internote\hbox{\varline0{6pt}{20}}}}}%
+\def\arpgu#1{\arpg{#1}{.8}}%
+%
+% \pmxlyr command, see Usage afer \endinput.  Dirk Laurie 2016-01-24
+% The unrolled loops are necessary because \assignlyricshere must have 
+% a raw string literal as argument.
+\def\pmxlyr#1{%
+\ifnum\noinstrum@nt=1%
+  \ifnum\noport@@=1%
+    \if@pmx@nextvoice\setlyrics{I1P1V2}{#1}\assignlyricshere{I1P1V2}%
+    \else\setlyrics{I1P1V1}{#1}\assignlyricshere{I1P1V1}\fi\fi%
+  \ifnum\noport@@=2%
+    \if@pmx@nextvoice\setlyrics{I1P2V2}{#1}\assignlyricshere{I1P2V2}%
+    \else\setlyrics{I1P2V1}{#1}\assignlyricshere{I1P2V1}\fi\fi\fi%
+\ifnum\noinstrum@nt=2%
+  \ifnum\noport@@=1%
+    \if@pmx@nextvoice\setlyrics{I2P1V2}{#1}\assignlyricshere{I2P1V2}%
+    \else\setlyrics{I2P1V1}{#1}\assignlyricshere{I2P1V1}\fi\fi%
+  \ifnum\noport@@=2%
+    \if@pmx@nextvoice\setlyrics{I2P2V2}{#1}\assignlyricshere{I2P2V2}%
+    \else\setlyrics{I2P2V1}{#1}\assignlyricshere{I2P2V1}\fi\fi\fi%
+\ifnum\noinstrum@nt=3%
+  \ifnum\noport@@=1%
+    \if@pmx@nextvoice\setlyrics{I3P1V2}{#1}\assignlyricshere{I3P1V2}%
+    \else\setlyrics{I3P1V1}{#1}\assignlyricshere{I3P1V1}\fi\fi%
+  \ifnum\noport@@=2%
+    \if@pmx@nextvoice\setlyrics{I3P2V2}{#1}\assignlyricshere{I3P2V2}%
+    \else\setlyrics{I3P2V1}{#1}\assignlyricshere{I3P2V1}\fi\fi\fi%
+\ifnum\noinstrum@nt=4%
+  \ifnum\noport@@=1%
+    \if@pmx@nextvoice\setlyrics{I4P1V2}{#1}\assignlyricshere{I4P1V2}%
+    \else\setlyrics{I4P1V1}{#1}\assignlyricshere{I4P1V1}\fi\fi%
+  \ifnum\noport@@=2%
+    \if@pmx@nextvoice\setlyrics{I4P2V2}{#1}\assignlyricshere{I4P2V2}%
+    \else\setlyrics{I4P2V1}{#1}\assignlyricshere{I4P2V1}\fi\fi\fi%
+}%
+%
+% Definition for \lyrlink&\at, used with pmxlyr strings with '~'and '@'
+%
+\def\lk{\lyrlink}%
+\def\at#1{\lyrraisehere{#1\internote}}%
+%
+% 190526 Items for short line enhancements
+%
+\let\wbnt\writebarno
+\def\nobarno{\gdef\writebarno{\global\let\writebarno\wbnt}}
+%
+% 200123 Open headed dotted chord notes
+%
+\def\hbp{\h@symbol\@qbp}%
+\def\hbpp{\h@symbol\@qbpp}%
+%
+\catcode`\@=\catcodeat
+\endinput
+
+Usage: 
+  \pmxlyr{TEXT}     (assigns TEXT as lyrics in the current context)
+
+In PMX, enter the command with a trailing backslash. Starting at PMX 2.73,
+"TEXT" on a music line is equivalent to \pmxlyr{TEXT}.
+
+Spaces and hyphens separate TEXT into syllables. An underscore between 
+words combines syllables from different words into a single syllable.
+
+TEXT may contain any TeX macro, in particular:
+  \space           Space character that does not separate syllables 
+  \lyrhyphenchar   Hyphen that does not separate syllables
+  {\empty}         Invisible syllable (for notes that get no lyrics)
+
+\pmxlyr uses the unexpanded contents of TEXT when looking for the
+syllable splitters, e.g. \def\mylyrics{many words of poetry} followed
+by \pmxlyr{\mylyrics} will put all those words on one note. 
+
+For more information on what is acceptable in TEXT, consult mxlyrdoc.pdf. 
+
+Limits: Lyrics are recognized only on the first two staves of instruments
+1 to 4. Elsewhere they are ignored.
+

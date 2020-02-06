@@ -1,3 +1,30 @@
+2.94
+  Allow moving dots on main and chord note in 2-note termolos
+  Add definitions of \hbp and \hbpp to pmx.tex
+2.91
+  Tweak: insert \stdstemfalse before every user-shortened or lengthened
+  stem. 
+    This cancels defaul extensions to middle line and also (with 'L') allows
+    stems that are longer than 4.66 but still don't reach middle line.
+  Allow alteration of number height in multibar rest, option n.
+  Fix bug introduced in 2.89 so that the "o" in "mo800" is now OK.
+2.90
+  Many tweaks to allow gaps at end or middle of a system using 
+    L[n]S[x] and LC[y]. New pmx.tex.
+2.88
+  Comment out print*,"Changed pathname to..." since it was going 
+    iteration when optimizing linebreaks with the undocumented option Ao.
+  Add nv back in as argument for getmidi, so loop transferring data
+    from midivel to midvelc can be executed. This corrects bug and
+    allows per-instrument change in midi velocities at the start
+    of any block
+  Add subroutine inst2chan to transfer midi data as noted above. Works with
+    Iv but buggy when used with IT and Ib
+2.87
+  Allow changes to and from octave treble clef. Instrument with it
+    must only have one staff.
+  Some fixes for beam multiplicity changes at staff jumps. Must still
+    use inline for mult. increase at downward staff jump. See sjb.pmx.
 2.84
   Bug fix: dots in chordal seconds
   Bug fix: Initialize ihornb for non-beamed, down xtup

@@ -1,4 +1,4 @@
-This is PMX, version 2.8.4 (2018-02-12). PMX provides a preprocessor for MusiXTeX.
+This is PMX, version 2.9.4 (2020-01-21). PMX provides a preprocessor for MusiXTeX.
 
 pmxab builds a TeX input file based on a .pmx input file in a much
 simpler language, making most of the layout decisions by itself. It has
