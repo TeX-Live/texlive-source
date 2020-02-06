@@ -1,3 +1,12 @@
+2020-02-06  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfobj.c: In pdf_new_string(), the supplied string was
+	checked and dvipdfmx aborted when it was NULL. This check
+	is removed since it is actually not necessary. The string is
+	regarded simply as an empty string if it is NULL from now on.
+	See https://tex.stackexchange.com/questions/522794/problem-in-updated-tex-live,
+	although we can't reproduce the problem.
+
 2020-01-24  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dvi.c: Forgot to null-terminate strings in the previous
