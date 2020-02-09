@@ -1,3 +1,8 @@
+2020-02-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: forgot to set cur_val_level in fetching
+	\kansujichar (Bug introduced in commit on 2019-10-14).
+
 2020-02-05  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Add new primitives \ifjfont and \iftfont.

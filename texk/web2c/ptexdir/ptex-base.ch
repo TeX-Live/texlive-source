@@ -6429,7 +6429,7 @@ begin scan_int;
     error; return;
     end
   else
-    cur_val:=fromDVI(kansuji_char(cur_val));
+    begin cur_val:=fromDVI(kansuji_char(cur_val)); cur_val_level:=int_val; end
 end
 
 @ |print_kansuji| procedure converts a number to KANJI number.
