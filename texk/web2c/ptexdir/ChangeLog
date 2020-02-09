@@ -1,3 +1,8 @@
+2020-02-09  Phelype Oleinik  <phe.h.o1@gmail.com>
+
+	* ptexdir/ptex-base.ch: extra end; needed for the scan_file_name
+	change in tex.ch.
+
 2020-02-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: forgot to set cur_val_level in fetching

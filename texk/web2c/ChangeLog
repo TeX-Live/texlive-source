@@ -1,3 +1,9 @@
+2020-02-09  Phelype Oleinik  <phe.h.o1@gmail.com>
+
+	* tex.ch (29.256, scan_file_name): new procedure to implement
+	group-delimited filenames for \input.
+	* ptexdir/ptex-base.ch: extra end; needed.
+
 2020-02-01  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin: Regenerate after verbosity bugfix.

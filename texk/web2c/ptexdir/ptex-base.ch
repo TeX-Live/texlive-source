@@ -2623,6 +2623,7 @@ loop@+begin if (cur_cmd>other_char)or(cur_chr>255) then {not a character}
   if not more_name(cur_chr) then goto done;
   get_x_token;
   end;
+  end;
 done: end_name; name_in_progress:=false;
 @y
 skip_mode:=false;
@@ -2640,6 +2641,7 @@ loop@+begin
    spurious spaces to file names in some cases.}
    else if ((cur_chr=" ") and (state<>token_list) and (loc>limit)) or not more_name(cur_chr) then goto done;
   get_x_token;
+  end;
   end;
 done: end_name; name_in_progress:=false;
 skip_mode:=true;

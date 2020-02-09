@@ -1,9 +1,22 @@
 This file records noteworthy changes.  (Public domain.)
 
 2020 (for TeX Live 2020)
+* \input now also accepts a group-delimited filename, e.g.,
+\input{foo.tex}. The usage with a standard space/token-delimited
+filename is completely unchanged.
+
+The group-delimited name was previously implemented in LuaTeX; now it is
+available in all engines. ASCII double quote characters (") are removed
+from the filename, but it is otherwise left unchanged after
+tokenization. This does not currently impact LaTeX's \input command, as
+that is a macro redefinition of the standard \input primitive.
+
 * New cross-engine option -cnf-line=STR.
+
 * All TeX engines except tex and etex now compress (with zlib) .fmt files
   (XeTeX and LuaTeX already did so).
+
+pTeX: new primitives \ifjfont and \iftfont.
 
 BibTeX: now reallocates on large (>20k) field values instead of aborting.
 
