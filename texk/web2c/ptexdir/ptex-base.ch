@@ -6422,14 +6422,14 @@ else
 end;
 
 @ @<Fetch kansuji char code from some table@>=
-begin scan_int;
+begin scan_int; cur_val_level:=int_val;
   if (cur_val<0)or(cur_val>9) then
     begin print_err("Invalid KANSUJI number ("); print_int(cur_val); print_char(")");
     help1("I'm skipping this control sequences.");@/
     error; return;
     end
   else
-    begin cur_val:=fromDVI(kansuji_char(cur_val)); cur_val_level:=int_val; end
+    cur_val:=fromDVI(kansuji_char(cur_val));
 end
 
 @ |print_kansuji| procedure converts a number to KANJI number.
