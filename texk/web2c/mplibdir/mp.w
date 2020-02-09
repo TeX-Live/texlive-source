@@ -2960,11 +2960,15 @@ void *mp_xmalloc (MP mp, size_t nmem, size_t size) {
 }
 
 @ @<Internal library declarations@>=
-int mp_snprintf_res ;
+/*int mp_snprintf_res ;*/
 /* Some compilers (i.e. gcc 8.2.0 ) complained with the old */
 /* #define mp_snprintf (void)snprintf                       */
 /* about truncation. For the moment we store the result.    */
-#  define mp_snprintf mp_snprintf_res=snprintf
+/*#  define mp_snprintf mp_snprintf_res=snprintf            */
+/* Now gcc 10 does't like common symbols, so we switch back */ 
+/* to the old define. */
+#define mp_snprintf (void)snprintf     
+
 
 @* Dynamic memory allocation.
 
