@@ -1387,6 +1387,27 @@ else  begin for k:=1 to name_length do append_char(name_of_file[k]);
   end;
 @z
 
+@x [29.526] l.10193 - look for a left_brace when scanning a file name
+@p procedure scan_file_name;
+label done;
+@y
+@p procedure scan_file_name;
+label done;
+var
+  @!save_warning_index: pointer;
+begin
+  save_warning_index := warning_index;
+  warning_index := cur_cs; {store |cur_cs| here to remember until later}
+  @<Get the next non-blank non-relax non-call...@>; {here the program expands
+    tokens and removes spaces and \.{\\relax}es from the input. The \.{\\relax}
+    removal follows LuaTeX''s implementation, and other cases of
+    balanced text scanning.}
+  back_input; {return the last token to be read by either code path}
+  if cur_cmd=left_brace then
+    scan_file_name_braced
+  else
+@z
+
 @x [29.526] l.10194 - stop scanning file name if we're at end-of-line.
   if not more_name(cur_chr) then goto done;
 @y
@@ -1395,6 +1416,63 @@ else  begin for k:=1 to name_length do append_char(name_of_file[k]);
    spurious spaces to file names in some cases.}
   if (cur_chr=" ") and (state<>token_list) and (loc>limit) then goto done;
   if not more_name(cur_chr) then goto done;
+@z
+
+@x [29.526] l.10203 - scan a bgroup/egroup-delimited file name
+done: end_name; name_in_progress:=false;
+end;
+@y
+  end;
+done: end_name; name_in_progress:=false;
+warning_index := save_warning_index; {restore |warning_index|}
+end;
+
+@ When |scan_file_name| starts it looks for a |left_brace|
+(skipping \.{\\relax}es, as other \.{\\toks}-like primitives).
+If a |left_brace| is found, then the procedure scans a file
+name contained in a balanced token list, expanding tokens as
+it goes. When the scanner finds the balanced token list, it
+is converted into a string and fed character-by-character to
+|more_name| to do its job the same as in the ``normal'' file
+name scanning.
+
+@p procedure scan_file_name_braced;
+var
+  @!save_scanner_status: small_number; {|scanner_status| upon entry}
+  @!save_def_ref: pointer; {|def_ref| upon entry, important if inside `\.{\\message}}
+  @!save_cur_cs: pointer;
+  @!s: str_number; {temp string}
+  @!p: pointer; {temp pointer}
+  @!i: integer; {loop tally}
+  @!save_stop_at_space: boolean; {this should be in tex.ch}
+  @!dummy: boolean;
+    {Initialising}
+begin save_scanner_status := scanner_status; {|scan_toks| sets |scanner_status| to |absorbing|}
+  save_def_ref := def_ref; {|scan_toks| uses |def_ref| to point to the token list just read}
+  save_cur_cs := cur_cs; {we set |cur_cs| back a few tokens to use in runaway errors}
+    {Scanning a token list}
+  cur_cs := warning_index; {for possible runaway error}
+  {mimick |call_func| from pdfTeX}
+  if scan_toks(false, true) <> 0 then do_nothing; {actually do the scanning}
+  {s := tokens_to_string(def_ref);}
+  old_setting := selector; selector:=new_string;
+  show_token_list(link(def_ref),null,pool_size-pool_ptr);
+  selector := old_setting;
+  s := make_string;
+  {turns the token list read in a string to input}
+    {Restoring some variables}
+  delete_token_ref(def_ref); {remove the token list from memory}
+  def_ref := save_def_ref; {and restore |def_ref|}
+  cur_cs := save_cur_cs; {restore |cur_cs|}
+  scanner_status := save_scanner_status; {restore |scanner_status|}
+    {Passing the read string to the input machinery}
+  save_stop_at_space := stop_at_space; {save |stop_at_space|}
+  stop_at_space := false; {set |stop_at_space| to false to allow spaces in file names}
+  begin_name;
+  for i:=str_start(s) to str_start(s+1)-1 do
+    dummy := more_name(str_pool[i]); {add each read character to the current file name}
+  stop_at_space := save_stop_at_space; {restore |stop_at_space|}
+end;
 @z
 
 @x [29.530] l.10245 - prompt_file_name: prevent empty filenames.

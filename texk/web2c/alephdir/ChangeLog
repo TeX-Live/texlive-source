@@ -1,3 +1,8 @@
+2020-02-10  Akira Kakuto  <kakuto@w32tex.org>
+
+	* com16bit.ch: Sync with tex.ch for changes by Phelype Oleinik
+	to support \input {...}.
+
 2019-12-18  Akira Kakuto  <kakuto@w32tex.org>
 
 	* com16bit.ch: Sync with tex.ch for out_what [1374].
