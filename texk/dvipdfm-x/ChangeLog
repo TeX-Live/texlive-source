@@ -1,3 +1,8 @@
+2020-02-12  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dvipdfmx.c: Fix a potential bug in set_default_pdf_filename().
+	see https://tug.org/pipermail/tex-live/2020-February/044731.html
+
 2020-02-06  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfobj.c: In pdf_new_string(), the supplied string was
