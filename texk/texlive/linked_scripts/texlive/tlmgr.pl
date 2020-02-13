@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 53582 2020-01-28 14:16:34Z siepo $
+# $Id: tlmgr.pl 53746 2020-02-10 10:14:56Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 53582 $';
-my $datrev = '$Date: 2020-01-28 15:16:34 +0100 (Tue, 28 Jan 2020) $';
+my $svnrev = '$Revision: 53746 $';
+my $datrev = '$Date: 2020-02-10 11:14:56 +0100 (Mon, 10 Feb 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7050,10 +7050,14 @@ END_NO_INTERNET
         tldie("$prg: verification of checksum for $location failed: $msg\n");
       } elsif ($ret == $VS_EXPKEYSIG) {
         # do nothing, try to get new tlpdb and hope sig is better?
-        debug("$prg: good signature bug gpg key expired, continuing anyway!\n");
+        tlwarn("Verification problem of the TL database at $location:\n");
+        tlwarn("--> $VerificationStatusDescription{$ret}\n");
+        # debug("$prg: good signature bug gpg key expired, continuing anyway!\n");
       } elsif ($ret == $VS_REVKEYSIG) {
         # do nothing, try to get new tlpdb and hope sig is better?
-        debug("$prg: good signature but from revoked gpg key, continuing anyway!\n");
+        tlwarn("Verification problem of the TL database at $location:\n");
+        tlwarn("--> $VerificationStatusDescription{$ret}\n");
+        #debug("$prg: good signature but from revoked gpg key, continuing anyway!\n");
       } elsif ($ret == $VS_VERIFIED) {
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
@@ -10012,7 +10016,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 53582 2020-01-28 14:16:34Z siepo $
+$Id: tlmgr.pl 53746 2020-02-10 10:14:56Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
