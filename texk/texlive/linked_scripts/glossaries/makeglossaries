@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 4.44
+# Version : 4.45
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -31,7 +31,7 @@
 # glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="4.44 (2019-12-06)";
+my $version="4.45 (2020-01-18)";
 
 # History:
 # v4.43:
@@ -1140,7 +1140,8 @@ sub makeindex{
 # This is a subroutine in case of possible extension.
 # For example, what happens in the event of 'textbf' and 'emph'?
 # Should one override the other or be combined? Combining is harder
-# as it would need a corresponding LaTeX command.
+# as it would need a corresponding LaTeX command. (bib2gls deals
+# with this better through its --map-formats switcn.)
 # 2.21 check for range encap moved earlier
 
 sub encap_overrides{

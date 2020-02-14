@@ -36,6 +36,8 @@
    Also makeglossaries and makeglossaries-lite.lua.
   
    History:
+   * 4.45:
+     - no change.
    * 4.44:
      - no change.
    * 4.41:
@@ -66,7 +68,7 @@
      - changed first line from lua to texlua
 --]]
 
-thisversion = "4.44 (2019-12-06)"
+thisversion = "4.45 (2020-01-18)"
 
 quiet = false
 dryrun = false
