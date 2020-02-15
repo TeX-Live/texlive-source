@@ -1,0 +1,209 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>1.x vs 2.x &#8212; pplib 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pplib 2.x" href="ppapi-2.x.html" />
+    <link rel="prev" title="pplib" href="pplib.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ppapi-2.x.html" title="pplib 2.x"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pplib.html" title="pplib"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="pplib.html">pplib 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="pplib.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1.x vs 2.x</a><ul>
+<li><a class="reference internal" href="#allocation">Allocation</a></li>
+<li><a class="reference internal" href="#strings-and-names">Strings And Names</a></li>
+<li><a class="reference internal" href="#cleanups">Cleanups</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pplib.html"
+                        title="previous chapter">pplib</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ppapi-2.x.html"
+                        title="next chapter"><code class="docutils literal notranslate"><span class="pre">pplib</span></code> 2.x</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ppnew.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="x-vs-2-x">
+<h1>1.x vs 2.x<a class="headerlink" href="#x-vs-2-x" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="allocation">
+<h2>Allocation<a class="headerlink" href="#allocation" title="Permalink to this headline">¶</a></h2>
+<p>Allocation mechanisms has been revised. All objects are still allocated from a private storage (called heap),
+but now the heap serves properly aligned memory chunks. Implementation of the heap is (hopefully) platform
+independent, so all <code class="docutils literal notranslate"><span class="pre">ARM_COMPLIANT</span></code> checks has been removed. Some details work differently on 32/64-bit
+machines, this distinction seems inevitable. Allocation related code has been moved to <code class="docutils literal notranslate"><span class="pre">util/utilmem*.c</span></code> files.</p>
+<p>[There are actually 3 different allocators - <strong>heap</strong>, <strong>stock</strong>, and <strong>pool</strong> - each of which has 4 variants
+for 1, 2, 4 and 8 bytes alignment. So far <code class="docutils literal notranslate"><span class="pre">pplib</span></code> uses only the <strong>heap</strong>, but I want to have this part
+in a single place for a while. More notes about allocators in <code class="docutils literal notranslate"><span class="pre">utilmemallc.h</span></code>.]</p>
+<p><code class="docutils literal notranslate"><span class="pre">pplib</span></code> uses two heaps:</p>
+<ul class="simple">
+<li>bytes heap - providing 2-bytes aligned memory chunks for byte data</li>
+<li>structures heap - providing 8-bytes aligned chunks for all structures</li>
+</ul>
+<p>2-bytes alignment of byte data is caused by implementation details / limits, <code class="docutils literal notranslate"><span class="pre">pplib</span></code> doesn’t make a use of it
+(could be unaligned as well). All the structures are stored in 8-bytes aligned chunks on both 32 and 64-bit machines
+(in some structures we use <code class="docutils literal notranslate"><span class="pre">double</span></code> and <code class="docutils literal notranslate"><span class="pre">int64_t</span></code>, which generally needs 8-bytes).</p>
+</div>
+<div class="section" id="strings-and-names">
+<h2>Strings And Names<a class="headerlink" href="#strings-and-names" title="Permalink to this headline">¶</a></h2>
+<p>So far, both <code class="docutils literal notranslate"><span class="pre">ppname</span></code> and <code class="docutils literal notranslate"><span class="pre">ppstring</span></code> were aliases to <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code> with an extra structure hidden just below
+the data address. The idea was to make a string or name usable whenever chars array can, at the cost of some
+pointers trickery. Both names and strings keep an information about pdf-encoded data, as well as plain bytes data.
+I implemented this feature once <code class="docutils literal notranslate"><span class="pre">pplib</span> <span class="pre">1.0</span></code> was almost done, and to avoid a revolution, I made that with yet
+another trick. This all was dirty and caused lots of alignment issues.</p>
+<p>Now <code class="docutils literal notranslate"><span class="pre">ppstring</span></code> and <code class="docutils literal notranslate"><span class="pre">ppname</span></code> are <strong>structures</strong>, keeping data and size members, pretty much like <code class="docutils literal notranslate"><span class="pre">pparray</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">ppname</span> <span class="p">{</span>
+  <span class="n">ppbyte</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+  <span class="n">size_t</span> <span class="n">size</span><span class="p">;</span>
+  <span class="n">ppname</span> <span class="o">*</span><span class="n">alterego</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="n">flags</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">struct</span> <span class="n">ppstring</span> <span class="p">{</span>
+  <span class="n">ppbyte</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+  <span class="n">size_t</span> <span class="n">size</span><span class="p">;</span>
+  <span class="n">ppstring</span> <span class="o">*</span><span class="n">alterego</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="n">flags</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Data member is a pointer to (2-bytes aligned) bytes array – <code class="docutils literal notranslate"><span class="pre">ppbyte</span> <span class="pre">*</span></code>. <code class="docutils literal notranslate"><span class="pre">ppbyte</span></code> is an alias to <code class="docutils literal notranslate"><span class="pre">char</span></code>.
+<code class="docutils literal notranslate"><span class="pre">pplib</span></code> makes no assumptions about <code class="docutils literal notranslate"><span class="pre">ppbyte</span></code> signedness. [I’d prefer to have <code class="docutils literal notranslate"><span class="pre">uint8_t</span></code>, but better
+keep that in sync with <code class="docutils literal notranslate"><span class="pre">ppdict_get_*</span></code> suite, which accepts <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span></code>. Using <code class="docutils literal notranslate"><span class="pre">&quot;string</span> <span class="pre">literals&quot;</span></code>
+with <code class="docutils literal notranslate"><span class="pre">ppdict_get</span></code> function is the most common case, I guess.]</p>
+<p><code class="docutils literal notranslate"><span class="pre">ppname_size()</span></code> and <code class="docutils literal notranslate"><span class="pre">ppstring_size()</span> <span class="pre">``</span> <span class="pre">now</span> <span class="pre">have</span>
+<span class="pre">trivial</span> <span class="pre">``ppname_data()</span></code> and <code class="docutils literal notranslate"><span class="pre">ppstring_data()</span></code> counterparts:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define ppname_size(name) ((name)-&gt;size)</span>
+<span class="c1">#define ppname_data(name) ((name)-&gt;data)</span>
+
+<span class="c1">#define ppstring_size(string) ((string)-&gt;size)</span>
+<span class="c1">#define ppstring_data(string) ((string)-&gt;data)</span>
+</pre></div>
+</div>
+<p>Switching between encoded / decoded variants is made via explicit <code class="docutils literal notranslate"><span class="pre">alterego</span></code> member. If encoded and decoded forms
+are identical, then <code class="docutils literal notranslate"><span class="pre">self-&gt;alfterego</span> <span class="pre">==</span> <span class="pre">self</span></code> (never NULL). Helper functions for that:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PPAPI</span> <span class="n">ppname</span> <span class="o">*</span> <span class="n">ppname_decoded</span> <span class="p">(</span><span class="n">ppname</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+<span class="n">PPAPI</span> <span class="n">ppname</span> <span class="o">*</span> <span class="n">ppname_encoded</span> <span class="p">(</span><span class="n">ppname</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+
+<span class="n">PPAPI</span> <span class="n">ppbyte</span> <span class="o">*</span> <span class="n">ppname_decoded_data</span> <span class="p">(</span><span class="n">ppname</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+<span class="n">PPAPI</span> <span class="n">ppbyte</span> <span class="o">*</span> <span class="n">ppname_encoded_data</span> <span class="p">(</span><span class="n">ppname</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+
+<span class="n">PPAPI</span> <span class="n">ppstring</span> <span class="o">*</span> <span class="n">ppstring_decoded</span> <span class="p">(</span><span class="n">ppstring</span> <span class="o">*</span><span class="n">string</span><span class="p">);</span>
+<span class="n">PPAPI</span> <span class="n">ppstring</span> <span class="o">*</span> <span class="n">ppstring_encoded</span> <span class="p">(</span><span class="n">ppstring</span> <span class="o">*</span><span class="n">string</span><span class="p">);</span>
+
+<span class="n">PPAPI</span> <span class="n">ppbyte</span> <span class="o">*</span> <span class="n">ppstring_decoded_data</span> <span class="p">(</span><span class="n">ppstring</span> <span class="o">*</span><span class="n">string</span><span class="p">);</span>
+<span class="n">PPAPI</span> <span class="n">ppbyte</span> <span class="o">*</span> <span class="n">ppstring_encoded_data</span> <span class="p">(</span><span class="n">ppstring</span> <span class="o">*</span><span class="n">string</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Since <code class="docutils literal notranslate"><span class="pre">ppname</span></code> and <code class="docutils literal notranslate"><span class="pre">ppstring</span></code> are now structures, all API functions returning name/string or taking name/string
+as an argument, now take <strong>a pointer to name/string</strong>. Watch out for <code class="docutils literal notranslate"><span class="pre">ppdict_get_*</span></code> functions suite. They still accept
+<code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></code> key as an argument, but <code class="docutils literal notranslate"><span class="pre">ppname</span></code> type can no longer be used there:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppname</span> <span class="n">key</span><span class="p">;</span>
+<span class="n">ppdict_get_something</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">);</span>      <span class="o">//</span> <span class="n">wrong</span>
+<span class="n">ppdict_get_something</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">data</span><span class="p">);</span> <span class="o">//</span> <span class="n">ok</span>
+
+<span class="n">ppname</span> <span class="o">*</span><span class="n">pkey</span><span class="p">;</span>
+<span class="n">ppdict_get_something</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="p">(</span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="p">)</span><span class="n">pkey</span><span class="p">);</span> <span class="o">//</span> <span class="n">wrong</span>
+<span class="n">ppdict_get_something</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">pkey</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">);</span>         <span class="o">//</span> <span class="n">ok</span>
+</pre></div>
+</div>
+<p>Consequently, functions / macros that used pointer to <code class="docutils literal notranslate"><span class="pre">ppname</span></code> (<code class="docutils literal notranslate"><span class="pre">ppdict_first()</span></code> / <code class="docutils literal notranslate"><span class="pre">ppdict_next()</span></code>),
+now needs <code class="docutils literal notranslate"><span class="pre">ppname</span> <span class="pre">**pname</span></code>.</p>
+</div>
+<div class="section" id="cleanups">
+<h2>Cleanups<a class="headerlink" href="#cleanups" title="Permalink to this headline">¶</a></h2>
+<p>Some of unused utils were removed. There is still some code in utils part that is not used by the library,
+but I need this tollbox in many other places and don’t want to maintain two versions.</p>
+<p>Some unification in integer types; <code class="docutils literal notranslate"><span class="pre">size_t</span></code> seems to be the best choice for and integer representing machine
+word (<code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">long</span></code> is not long enough on windows), less utils dependencies, less compiler warnings.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ppapi-2.x.html" title="pplib 2.x"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pplib.html" title="pplib"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="pplib.html">pplib 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, p.jackowski@gust.org.pl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

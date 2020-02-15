@@ -1,3 +1,4 @@
+rockspec_format = "3.0"
 package = "luaharfbuzz"
 version = "scm-1"
 source = {
@@ -7,7 +8,9 @@ description = {
   summary = "Lua bindings for the Harfbuzz text shaping library",
   homepage = "https://github.com/ufytex/luaharfbuzz",
   license = "MIT",
-  maintainer = "Deepak Jois <deepak.jois@gmail.com>"
+  maintainer = "Deepak Jois <deepak.jois@gmail.com>",
+  issues_url = "https://github.com/ufytex/luaharfbuzz/issues",
+  labels = {"unicode", "fonts"}
 }
 dependencies = {
   "lua >= 5.2"

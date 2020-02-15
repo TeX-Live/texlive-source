@@ -677,6 +677,7 @@ static int luatex_kpse_lua_find(lua_State * L)
         /*tex library not found in this path */
         return 1;
     }
+    recorder_record_input(filename);
     if (luaL_loadfile(L, filename) != 0) {
         luaL_error(L, "error loading module %s from file %s:\n\t%s",
             lua_tostring(L, 1), filename, lua_tostring(L, -1));
@@ -714,6 +715,7 @@ static int luatex_kpse_clua_find(lua_State * L)
             /*tex library not found in this path */
             return 1;
         }
+        recorder_record_input(filename);
         extensionless = strdup(filename);
         if (!extensionless) {
             /*tex allocation failure */

@@ -19,10 +19,17 @@ HarfBuzz is an OpenType text shaping engine. It is used in software like Qt,
 Pango, Firefox, Chromium, XeTeX and LibreOffice.
 
 _luaharfbuzz_ provides bindings for the most common types in Harfbuzz. The
-initial motivation for building it is to use Harfbuzz with the [LuaTeX]
+initial motivation for building it was to use Harfbuzz with the [LuaTeX]
 typesetting system. However, the module isn’t tied to LuaTeX in any way. It
 can be used with any Lua codebase.
 
+luaharfbuzz is currently being used inside [HarfTeX], a TeX engine built
+on top of LuaTeX and designed to use Harfbuzz for shaping text. For more
+details read this TUGboat journal article titled [Bringing world scripts to LuaTeX: The
+HarfBuzz experiment][tugboat-article]
+
+[HarfTeX]: https://github.com/khaledhosny/harftex
+[tugboat-article]: https://tug.org/TUGboat/tb40-1/tb124hosny-harfbuzz.pdf
 [LuaTeX]:luatex.org
 
 ## Installing Harfbuzz
@@ -42,9 +49,6 @@ brew install harfbuzz
 ```
 apt-get install libharfbuzz0b libharfbuzz-dev
 ```
-
-#### Windows
-Getting the whole setup running on Windows is very tedious, so all instructions are in their own file [README-win.md](https://github.com/deepakjois/luaharfbuzz/blob/master/README-win.md).
 
 #### Other Platforms
 _Send a pull request if you want to include specific instructions to install
@@ -139,6 +143,8 @@ In order to make changes to the code and run the tests, the following dependenci
 
 * [Busted](http://olivinelabs.com/busted/) – `luarocks install busted`
 * [luacheck](luacheck.readthedocs.org) – `luarocks install luacheck`
+* [luacov](https://keplerproject.github.io/luacov/) – `luarocks install luacov`
+* [ldoc](https://stevedonovan.github.io/ldoc/) – `luarocks install ldoc`
 
 Run the test suite:
 ```
@@ -148,6 +154,11 @@ make spec
 Lint the codebase:
 ```
 make lint
+```
+
+Generate documentation from sources:
+```
+make doc
 ```
 
 ## Contact

@@ -18,13 +18,13 @@ $(libluajitpplib_a_OBJECTS): $(LUAJIT_DEPEND)
 
 
 libluapplib_a_CPPFLAGS = \
-	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUA_INCLUDES)
+	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/src -I$(top_srcdir)/luatexdir/luapplib/src/util $(ZLIB_INCLUDES) $(LUA_INCLUDES)
 
 #liblua53pplib_a_CPPFLAGS = \
-#	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUA_LUA53_INCLUDES)
+#	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/src -I$(top_srcdir)/luatexdir/luapplib/src/util $(ZLIB_INCLUDES) $(LUA_LUA53_INCLUDES)
 
 libluajitpplib_a_CPPFLAGS = \
-	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/util $(ZLIB_INCLUDES) $(LUAJIT_INCLUDES)
+	-I$(top_srcdir)/luatexdir/luapplib -I$(top_srcdir)/luatexdir/luapplib/src -I$(top_srcdir)/luatexdir/luapplib/src/util $(ZLIB_INCLUDES) $(LUAJIT_INCLUDES)
 
 libluapplib_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitpplib_a_CFLAGS = # $(WARNING_CFLAGS)
@@ -34,53 +34,60 @@ nodist_libluapplib_a_SOURCES = $(libluapplib_sources)
 nodist_libluajitpplib_a_SOURCES = $(libluapplib_sources)
 
 libluapplib_sources = \
-	luatexdir/luapplib/ppapi.h \
-	luatexdir/luapplib/pparray.c \
-	luatexdir/luapplib/pparray.h \
-	luatexdir/luapplib/ppconf.h \
-	luatexdir/luapplib/ppcrypt.c \
-	luatexdir/luapplib/ppcrypt.h \
-	luatexdir/luapplib/ppdict.c \
-	luatexdir/luapplib/ppdict.h \
-	luatexdir/luapplib/ppfilter.h \
-	luatexdir/luapplib/ppheap.c \
-	luatexdir/luapplib/ppheap.h \
-	luatexdir/luapplib/pplib.h \
-	luatexdir/luapplib/ppload.c \
-	luatexdir/luapplib/ppload.h \
-	luatexdir/luapplib/ppstream.c \
-	luatexdir/luapplib/ppstream.h \
-	luatexdir/luapplib/pptest1.c \
-	luatexdir/luapplib/pptest2.c \
-	luatexdir/luapplib/pptest3.c \
-	luatexdir/luapplib/ppxref.c \
-	luatexdir/luapplib/ppxref.h \
-	luatexdir/luapplib/util/utilarm.h \
-	luatexdir/luapplib/util/utilbasexx.c \
-	luatexdir/luapplib/util/utilbasexx.h \
-	luatexdir/luapplib/util/utilcrypt.c \
-	luatexdir/luapplib/util/utilcrypt.h \
-	luatexdir/luapplib/util/utilcryptdef.h \
-	luatexdir/luapplib/util/utildecl.h \
-	luatexdir/luapplib/util/utilflate.c \
-	luatexdir/luapplib/util/utilflate.h \
-	luatexdir/luapplib/util/utilfpred.c \
-	luatexdir/luapplib/util/utilfpred.h \
-	luatexdir/luapplib/util/utiliof.c \
-	luatexdir/luapplib/util/utiliof.h \
-	luatexdir/luapplib/util/utillog.c \
-	luatexdir/luapplib/util/utillog.h \
-	luatexdir/luapplib/util/utillzw.c \
-	luatexdir/luapplib/util/utillzw.h \
-	luatexdir/luapplib/util/utilmd5.c \
-	luatexdir/luapplib/util/utilmd5.h \
-	luatexdir/luapplib/util/utilmem.c \
-	luatexdir/luapplib/util/utilmem.h \
-	luatexdir/luapplib/util/utilnumber.c \
-	luatexdir/luapplib/util/utilnumber.h \
-	luatexdir/luapplib/util/utilplat.h \
-	luatexdir/luapplib/util/utilsha.c \
-	luatexdir/luapplib/util/utilsha.h
+	luatexdir/luapplib/src/ppapi.h \
+	luatexdir/luapplib/src/pparray.c \
+	luatexdir/luapplib/src/pparray.h \
+	luatexdir/luapplib/src/ppconf.h \
+	luatexdir/luapplib/src/ppcrypt.c \
+	luatexdir/luapplib/src/ppcrypt.h \
+	luatexdir/luapplib/src/ppdict.c \
+	luatexdir/luapplib/src/ppdict.h \
+	luatexdir/luapplib/src/ppfilter.h \
+	luatexdir/luapplib/src/ppheap.c \
+	luatexdir/luapplib/src/ppheap.h \
+	luatexdir/luapplib/src/pplib.h \
+	luatexdir/luapplib/src/ppload.c \
+	luatexdir/luapplib/src/ppload.h \
+	luatexdir/luapplib/src/ppstream.c \
+	luatexdir/luapplib/src/ppstream.h \
+	luatexdir/luapplib/src/pptest1.c \
+	luatexdir/luapplib/src/pptest2.c \
+	luatexdir/luapplib/src/pptest3.c \
+	luatexdir/luapplib/src/ppxref.c \
+	luatexdir/luapplib/src/ppxref.h \
+	luatexdir/luapplib/src/util/utilbasexx.c \
+	luatexdir/luapplib/src/util/utilbasexx.h \
+	luatexdir/luapplib/src/util/utilcrypt.c \
+	luatexdir/luapplib/src/util/utilcrypt.h \
+	luatexdir/luapplib/src/util/utilcryptdef.h \
+	luatexdir/luapplib/src/util/utildecl.h \
+	luatexdir/luapplib/src/util/utilflate.c \
+	luatexdir/luapplib/src/util/utilflate.h \
+	luatexdir/luapplib/src/util/utilfpred.c \
+	luatexdir/luapplib/src/util/utilfpred.h \
+	luatexdir/luapplib/src/util/utiliof.c \
+	luatexdir/luapplib/src/util/utiliof.h \
+	luatexdir/luapplib/src/util/utillog.c \
+	luatexdir/luapplib/src/util/utillog.h \
+	luatexdir/luapplib/src/util/utillzw.c \
+	luatexdir/luapplib/src/util/utillzw.h \
+	luatexdir/luapplib/src/util/utilmd5.c \
+	luatexdir/luapplib/src/util/utilmd5.h \
+	luatexdir/luapplib/src/util/utilmem.c \
+	luatexdir/luapplib/src/util/utilmem.h \
+	luatexdir/luapplib/src/util/utilmemallc.h \
+	luatexdir/luapplib/src/util/utilmemallh.h \
+	luatexdir/luapplib/src/util/utilmemheap.c \
+	luatexdir/luapplib/src/util/utilmemheap.h \
+	luatexdir/luapplib/src/util/utilmemheapiof.c \
+	luatexdir/luapplib/src/util/utilmemheapiof.h \
+	luatexdir/luapplib/src/util/utilmeminfo.c \
+	luatexdir/luapplib/src/util/utilmeminfo.h \
+	luatexdir/luapplib/src/util/utilnumber.c \
+	luatexdir/luapplib/src/util/utilnumber.h \
+	luatexdir/luapplib/src/util/utilplat.h \
+	luatexdir/luapplib/src/util/utilsha.c \
+	luatexdir/luapplib/src/util/utilsha.h 
 
 
 #liblua53pplib_sources = $(libluapplib_sources)

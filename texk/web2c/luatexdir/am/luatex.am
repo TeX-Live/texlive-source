@@ -113,8 +113,8 @@ luatex_DEPENDENCIES = $(luatex_depend) libluatex.a libluatexspecific.a
 luajittex_DEPENDENCIES = $(luatex_depend) libluajittex.a libluajittexspecific.a
 
 luahbtex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) libmputil.a libmd5.a
-luahbtex_DEPENDENCIES = $(luahbtex_depend) libluatex.a libluahbtexspecific.a
-luajithbtex_DEPENDENCIES = $(luatex_depend) libluajittex.a libluajithbtexspecific.a
+luahbtex_DEPENDENCIES = $(luahbtex_depend) libluatex.a libluahbtexspecific.a libluaharfbuzz.a
+luajithbtex_DEPENDENCIES = $(luatex_depend) libluajittex.a libluajithbtexspecific.a libluajitharfbuzz.a
 
 
 

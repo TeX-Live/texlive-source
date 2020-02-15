@@ -140,10 +140,26 @@ describe("harfbuzz module", function()
       assert.are_same(layers,f:ot_color_glyph_get_layers(100))
     end)
 
-    it("can check color layers", function()
+    it("can check PNG glyph support", function()
       local f = harfbuzz.Face.new('fonts/notocoloremoji-subset.ttf')
       assert.are_equal(false,face:ot_color_has_png())
       assert.are_equal(true,f:ot_color_has_png())
+    end)
+
+    it("can check SVG glyph support", function()
+      local f = harfbuzz.Face.new('fonts/TwitterColorEmoji-SVGinOT.ttf')
+      assert.are_equal(false,face:ot_color_has_svg())
+      assert.are_equal(true,f:ot_color_has_svg())
+    end)
+
+    it("can return glyph color png", function()
+      local f = harfbuzz.Face.new('fonts/TwitterColorEmoji-SVGinOT.ttf')
+
+      assert.are_equal(nil,face:ot_color_glyph_get_svg(100))
+      assert.are_equal(nil,f:ot_color_glyph_get_svg(0))
+      assert.are_same(751,f:ot_color_glyph_get_svg(5):get_length())
+      assert.are_same(804,f:ot_color_glyph_get_svg(6):get_length())
+      assert.are_same("<?xml version='1.0' encoding='UTF-8'?>",f:ot_color_glyph_get_svg(5):get_data():sub(1, 38))
     end)
 
     it("can return script tags", function()
@@ -319,6 +335,30 @@ describe("harfbuzz module", function()
       local fs = 'kern'
       local f = harfbuzz.Feature.new(fs)
       assert.are_equal(fs, tostring(f))
+    end)
+
+    it("has visible fields", function()
+      local f = harfbuzz.Feature.new('-kern')
+      print(getmetatable(f).__index)
+      assert.are_equal(tostring(f.tag), 'kern')
+      assert.are_equal(f.value, 0)
+      assert.are_equal(f.start, nil)
+      assert.are_equal(f._end, nil)
+
+      f = harfbuzz.Feature.new('aalt[3:5]=4')
+      assert.are_equal(tostring(f.tag), 'aalt')
+      assert.are_equal(f.value, 4)
+      assert.are_equal(f.start, 3)
+      assert.are_equal(f._end, 5)
+    end)
+
+    it("has editable fields", function()
+      local f = harfbuzz.Feature.new('-kern')
+      f.tag, f.value, f.start, f._end = harfbuzz.Tag.new"aalt", 4, 3, 5
+      assert.are_equal(tostring(f), "aalt[3:5]=4")
+
+      f.tag, f.value, f.start, f._end = harfbuzz.Tag.new"harf", 0, nil, nil
+      assert.are_equal(tostring(f), "-harf")
     end)
   end)
 

@@ -1,0 +1,8 @@
+src/build/*
+src/CMakeFiles/*
+src/CMakeCache.txt
+src/.vs/*
+src/.cproject
+src/.project
+src/.settings
+zlib/*

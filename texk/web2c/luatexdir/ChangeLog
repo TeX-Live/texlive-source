@@ -1,3 +1,42 @@
+2020-02-12  Luigi Scarso <luigi.scarso@gmail.com>
+    * restore state for \input delimited with {}
+
+
+2020-02-11  Luigi Scarso <luigi.scarso@gmail.com>
+    * patches for -fno-common (thanks to D. Seifert of Gentoo team)
+
+
+2020-01-25  Luigi Scarso <luigi.scarso@gmail.com>
+    * sync with upstream pplib 
+    * sync with upstream luaharfbuzz 
+
+
+2020-01-11  Luigi Scarso <luigi.scarso@gmail.com>
+    * shape fix (HH)
+
+2020-01-03  Luigi Scarso <luigi.scarso@gmail.com>
+    * luatex 1.12.0: updated to pplib 2.0
+
+2020-01-02  Luigi Scarso <luigi.scarso@gmail.com>
+    * better separation between luatex and luahbtex at build time
+
+
+2019-12-31  Luigi Scarso <luigi.scarso@gmail.com>
+    * scaled virtual font (HH)
+
+
+2019-12-19  Luigi Scarso <luigi.scarso@gmail.com>
+    * fixed inclusion of pdf files with a invalid pageDict (exit, don't load it)
+
+
+2019-12-11  Luigi Scarso <luigi.scarso@gmail.com>
+    * add catcode table check to set_macro (HH)
+
+
+2019-12-05  Luigi Scarso <luigi.scarso@gmail.com>
+    * two fixes for lua user nodes (error report of Sigitas Tolusis <sigitas@vtex.lt> )
+
+
 2019-11-08  Luigi Scarso <luigi.scarso@gmail.com>
     * record a few more files (in kpse enabled mode) (HH)
     * better recorder code in wrapped lua

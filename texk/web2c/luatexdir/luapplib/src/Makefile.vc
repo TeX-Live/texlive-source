@@ -1,0 +1,98 @@
+
+CC=cl /nologo
+LN=link /nologo
+AR=lib /nologo # LIB variable has a special meaning for msvc
+
+CFLAGS=/W3 /D_CRT_SECURE_NO_DEPRECATE /O2
+
+# hans
+# 5045: spectre
+# 4820: local vars with same name as outer variable
+# 4456: local vars with same name as outer variable
+# 4457: local vars with same function parameter
+# 4668: missing defines
+# 4244: assignment in conditional expression
+# 4127: constant conditional expression
+# 4131: old style declarator
+# 4464: relative include path
+# 4201: nonstandard extension used: nameless struct/union
+# 4710: no inlined
+# 4711: inline expansion
+# 4706: assignment in conditionals
+
+#WFLAGS= /W3 /D_CRT_SECURE_NO_DEPRECATE
+WFLAGS= /Wall /D_CRT_SECURE_NO_DEPRECATE /wd5045 /wd4820 /wd4456 /wd4457 /wd4668 /wd4244 /wd4127 /wd4131 /wd4464 /wd4201 /wd4710 /wd4711
+CFLAGS= $(WFLAGS) /O2
+
+#LFLAGS = /NODEFAULTLIB:LIBCMT # produces binary dependent from redistributable
+LFLAGS = /NOIMPLIB
+
+PPALLOC=utilmem.c utilmemheap.c utilmemheapiof.c utilmeminfo.c
+PPUTILS=utillog.c utilnumber.c utiliof.c utilmd5.c utilsha.c utilcrypt.c
+PPFILTERS=utilbasexx.c utilflate.c utillzw.c utilfpred.c
+PPMODULES=ppheap.c pparray.c ppdict.c ppstream.c ppcrypt.c ppxref.c ppload.c
+
+OUTDIR=build
+UTILSDIR=util
+
+PPSTATICALLOCOBJ=$(PPALLOC:.c=.obj)
+PPSTATICALLOCOBJ=$(PPSTATICALLOCOBJ:util=build\util)
+PPSTATICUTILSOBJ=$(PPUTILS:.c=.obj)
+PPSTATICUTILSOBJ=$(PPSTATICUTILSOBJ:util=build\util)
+PPSTATICFILTERSOBJ=$(PPFILTERS:.c=.obj)
+PPSTATICFILTERSOBJ=$(PPSTATICFILTERSOBJ:util=build\util)
+PPSTATICOBJ=$(PPMODULES:.c=.obj)
+PPSTATICOBJ=$(PPSTATICOBJ:pp=build\pp)
+PPSTATICLIB=build\pp.lib
+
+# dependencies
+FLATEDIR=..\zlib
+FLATELIB=$(FLATEDIR)\zlib.static.lib
+PPSTATICDEPS=$(FLATELIB)
+
+# tests
+TESTDIR=..\..\pplib-tests
+PPTEST1=build\pptest1.exe
+PPTEST2=build\pptest2.exe
+PPTEST3=build\pptest3.exe
+
+# includes
+INC=/I $(UTILSDIR)
+AUX=/I $(FLATEDIR)
+
+default: $(PPSTATICLIB) $(PPTEST1) $(PPTEST2) $(PPTEST3) $(PPTEST4)
+
+$(PPSTATICOBJ): $(*B).c
+  $(CC) $(CFLAGS) $(INC) /Fo:$@ /c $**
+
+$(PPSTATICALLOCOBJ): $(UTILSDIR)\$(*B).c
+  $(CC) $(CFLAGS) $(INC) /Fo:$@ /c $**
+
+$(PPSTATICUTILSOBJ): $(UTILSDIR)\$(*B).c
+  $(CC) $(CFLAGS) $(INC) /Fo:$@ /c $**
+
+$(PPSTATICFILTERSOBJ): $(UTILSDIR)\$(*B).c
+  $(CC) $(CFLAGS) $(INC) $(AUX) /Fo:$@ /c $**
+
+$(PPSTATICLIB): $(PPSTATICOBJ) $(PPSTATICALLOCOBJ) $(PPSTATICUTILSOBJ) $(PPSTATICFILTERSOBJ)
+  $(AR) /OUT:$@ $**
+
+$(PPTEST1): $(PPSTATICLIB) pptest1.c
+  $(CC) $(CFLAGS) /Fo:build\pptest1.obj /c pptest1.c
+  $(LN) $(LFLAGS) /OUT:$(PPTEST1) build\pptest1.obj $(PPSTATICLIB) $(PPSTATICDEPS) $(LIBS)
+
+$(PPTEST2): $(PPSTATICLIB) pptest2.c
+  $(CC) $(CFLAGS) /Fo:build\pptest2.obj /c pptest2.c
+  $(LN) $(LFLAGS) /OUT:$(PPTEST2) build\pptest2.obj $(PPSTATICLIB) $(PPSTATICDEPS) $(LIBS)
+
+$(PPTEST3): $(PPSTATICLIB) pptest3.c
+  $(CC) $(CFLAGS) /I util /Fo:build\pptest3.obj /c pptest3.c
+  $(LN) $(LFLAGS) /OUT:$(PPTEST3) build\pptest3.obj $(PPSTATICLIB) $(PPSTATICDEPS) $(LIBS)
+
+clean:
+  del /q build\*.obj build\*.lib build\*.exe
+
+test: $(PPTEST1) $(PPTEST2) $(PPTEST3)
+  build\pptest1 $(TESTDIR)\*.pdf $(TESTDIR)/crypt\*.pdf >pptest1.log
+  build\pptest2 $(TESTDIR)\*.pdf $(TESTDIR)/crypt\*.pdf >pptest2.log
+  build\pptest3 $(TESTDIR)\*.pdf $(TESTDIR)/crypt\*.pdf >pptest3.log
