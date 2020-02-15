@@ -13,7 +13,7 @@ static int lua_geti (lua_State *L, int index, lua_Integer i) {
 }
 #endif
 
-int shape_full (lua_State *L) {
+static int shape_full (lua_State *L) {
   Font *font = (Font *)luaL_checkudata(L, 1, "harfbuzz.Font");
   Buffer *buf = (Buffer *)luaL_checkudata(L, 2, "harfbuzz.Buffer");
   unsigned int i;
@@ -50,12 +50,12 @@ int shape_full (lua_State *L) {
   return 1;
 }
 
-int version (lua_State *L) {
+static int version (lua_State *L) {
   lua_pushstring(L, hb_version_string());
   return 1;
 }
 
-int list_shapers (lua_State *L) {
+static int list_shapers (lua_State *L) {
   const char **shaper_list = hb_shape_list_shapers ();
   int i = 0;
 
