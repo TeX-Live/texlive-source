@@ -1,3 +1,8 @@
+2020-02-16  Karl Berry  <karl@tug.org>
+
+	* pklib.c (dpi): declare extern, as also defined in ftlib.c,
+	to appease -fno-common.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
