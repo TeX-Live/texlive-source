@@ -204,7 +204,7 @@ int main(int argc, char ** argv)
 	pstfm_nt=1; /* initialize */
 	if (ucs) {
 		if (ucs==ENTRY_CUSTOM) ch_max=usertable_charset[usertable_charset_max-1].max;
-		else if (useset3) ch_max=0x2FFFF;
+		else if (useset3) ch_max=0x3FFFF;
 		else ch_max=0xFFFF;
 		for (ch=0;ch<=ch_max;ch++) {
 			if (search_cjk_entry(ch,ucs))

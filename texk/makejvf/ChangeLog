@@ -1,3 +1,10 @@
+2020-02-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uniblock.c, main.c: Update references Unicode blocks Blocks-13.0.0.txt
+	and CMap files. More strictly check an index.
+	* COPYRIGHT: Update copyright years.
+	* version.h: Bump version.
+
 2019-02-23  Akira Kakuto  <kakuto@w32tex.org>
 
 	* main.c: Support old compiler.

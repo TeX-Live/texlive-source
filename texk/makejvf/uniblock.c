@@ -16,8 +16,8 @@ struct ublock {
 /*
  References:
  [1] http://www.unicode.org/Public/UNIDATA/Blocks.txt
-        Blocks-12.0.0.txt
-        Date: 2018-07-30, 19:40:00 GMT [KW]
+        Blocks-13.0.0.txt
+        Date: 2019-07-10, 19:06:00 GMT [KW]
  [2] CMap files
      https://github.com/adobe-type-tools/cmap-resources/
      Adobe-CNS1-7/                  Adobe-CNS1-7 materials
@@ -25,7 +25,7 @@ struct ublock {
      Adobe-GB1-5/                   Adobe-GB1-5 materials
         cid2code.txt (Version 12/05/2017)
      Adobe-Japan1-7/                Adobe-Japan1-7 materials
-        cid2code.txt (Version 02/05/2019)
+        cid2code.txt (Version 07/30/2019)
      Adobe-Korea1-2/                Adobe-Korea1-2 materials
         cid2code.txt (Version 01/31/2012)
  Following code points are omitted from ENTRY_J:
@@ -34,6 +34,7 @@ struct ublock {
    Supplemental Puncutuation  U+2E40      Double Hyphen             15516
    Latin Extended-D           U+A7B5      Latin Small Letter Beta   15909
    Latin Extended-E           U+AB53      Latin Small Letter Chi    15911
+   Geometric Shapes Extended  U+1F79C     Diamond Target            12244
 */
 
 static struct ublock ublock_data[] = {
@@ -242,8 +243,10 @@ static struct ublock ublock_data[] = {
   {0x10C80, 0x10CFF, ENTRY_NO  , 0}, /* Old Hungarian */
   {0x10D00, 0x10D3F, ENTRY_NO  , 0}, /* Hanifi Rohingya */
   {0x10E60, 0x10E7F, ENTRY_NO  , 0}, /* Rumi Numeral Symbols */
+  {0x10E80, 0x10EBF, ENTRY_NO  , 0}, /* Yezidi */
   {0x10F00, 0x10F2F, ENTRY_NO  , 0}, /* Old Sogdian */
   {0x10F30, 0x10F6F, ENTRY_NO  , 0}, /* Sogdian */
+  {0x10FB0, 0x10FDF, ENTRY_NO  , 0}, /* Chorasmian */
   {0x10FE0, 0x10FFF, ENTRY_NO  , 0}, /* Elymaic */
   {0x11000, 0x1107F, ENTRY_NO  , 0}, /* Brahmi */
   {0x11080, 0x110CF, ENTRY_NO  , 0}, /* Kaithi */
@@ -265,6 +268,7 @@ static struct ublock ublock_data[] = {
   {0x11700, 0x1173F, ENTRY_NO  , 0}, /* Ahom */
   {0x11800, 0x1184F, ENTRY_NO  , 0}, /* Dogra */
   {0x118A0, 0x118FF, ENTRY_NO  , 0}, /* Warang Citi */
+  {0x11900, 0x1195F, ENTRY_NO  , 0}, /* Dives Akuru */
   {0x119A0, 0x119FF, ENTRY_NO  , 0}, /* Nandinagari */
   {0x11A00, 0x11A4F, ENTRY_NO  , 0}, /* Zanabazar Square */
   {0x11A50, 0x11AAF, ENTRY_NO  , 0}, /* Soyombo */
@@ -274,6 +278,7 @@ static struct ublock ublock_data[] = {
   {0x11D00, 0x11D5F, ENTRY_NO  , 0}, /* Masaram Gondi */
   {0x11D60, 0x11DAF, ENTRY_NO  , 0}, /* Gunjala Gondi */
   {0x11EE0, 0x11EFF, ENTRY_NO  , 0}, /* Makasar */
+  {0x11FB0, 0x11FBF, ENTRY_NO  , 0}, /* Lisu Supplement */
   {0x11FC0, 0x11FFF, ENTRY_NO  , 0}, /* Tamil Supplement */
   {0x12000, 0x123FF, ENTRY_NO  , 0}, /* Cuneiform */
   {0x12400, 0x1247F, ENTRY_NO  , 0}, /* Cuneiform Numbers and Punctuation */
@@ -290,6 +295,8 @@ static struct ublock ublock_data[] = {
   {0x16FE0, 0x16FFF, ENTRY_NO  , 0}, /* Ideographic Symbols and Punctuation */
   {0x17000, 0x187FF, ENTRY_NO  , 0}, /* Tangut */
   {0x18800, 0x18AFF, ENTRY_NO  , 0}, /* Tangut Components */
+  {0x18B00, 0x18CFF, ENTRY_NO  , 0}, /* Khitan Small Script */
+  {0x18D00, 0x18D8F, ENTRY_NO  , 0}, /* Tangut Supplement */
   {0x1B000, 0x1B0FF, ENTRY_NO  , 0}, /* Kana Supplement */
   {0x1B100, 0x1B12F, ENTRY_NO  , 0}, /* Kana Extended-A */
   {0x1B130, 0x1B16F, ENTRY_NO  , 0}, /* Small Kana Extension */
@@ -327,12 +334,14 @@ static struct ublock ublock_data[] = {
   {0x1F900, 0x1F9FF, ENTRY_NO  , 0}, /* Supplemental Symbols and Pictographs */
   {0x1FA00, 0x1FA6F, ENTRY_NO  , 0}, /* Chess Symbols */
   {0x1FA70, 0x1FAFF, ENTRY_NO  , 0}, /* Symbols and Pictographs Extended-A */
+  {0x1FB00, 0x1FBFF, ENTRY_NO  , 0}, /* Symbols for Legacy Computing */
   {0x20000, 0x2A6DF, ENTRY_GCJ , 1}, /* CJK Unified Ideographs Extension B */
   {0x2A700, 0x2B73F, ENTRY_CJ  , 1}, /* CJK Unified Ideographs Extension C */
   {0x2B740, 0x2B81F, ENTRY_J   , 1}, /* CJK Unified Ideographs Extension D */
   {0x2B820, 0x2CEAF, ENTRY_C   , 1}, /* CJK Unified Ideographs Extension E */
   {0x2CEB0, 0x2EBEF, ENTRY_CJ  , 1}, /* CJK Unified Ideographs Extension F */
   {0x2F800, 0x2FA1F, ENTRY_CJ  , 1}, /* CJK Compatibility Ideographs Supplement */
+  {0x30000, 0x3134F, ENTRY_NO  , 1}, /* CJK Unified Ideographs Extension G */
   {0xE0000, 0xE007F, ENTRY_NO  , 0}, /* Tags */
   {0xE0100, 0xE01EF, ENTRY_NO  , 0}, /* Variation Selectors Supplement */
   {0xF0000, 0xFFFFF, ENTRY_NO  , 0}, /* Supplementary Private Use Area-A */
@@ -353,8 +362,8 @@ int search_cjk_entry(long ch, long cjk) {
   if (cjk==ENTRY_NO) {
     return 1;
   } else if (cjk==ENTRY_CUSTOM) {
-    while(usertable_charset[ic].max<ch) ic++;
-    return (usertable_charset[ic].min<=ch && ch<=usertable_charset[ic].max);
+    while(usertable_charset[ic].max<ch && ic<usertable_charset_max) ic++;
+    return (ic<MAX_CHAR_TABLE && usertable_charset[ic].min<=ch && ch<=usertable_charset[ic].max);
   } else if (ublock_data[ib].min<=ch && ch<=ublock_data[ib].max) {
     return ublock_data[ib].cjk & cjk;
   } else {
