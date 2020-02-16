@@ -25,36 +25,36 @@ int restrictedshell = 0;
 /**************************************************************/
 static lua_State *Luas[1];
 
-static 
-void stackdump_g(lua_State* L)
-{
-    int i;
-    int top = lua_gettop(L);
+/* static  */
+/* void stackdump_g(lua_State* L) */
+/* { */
+/*     int i; */
+/*     int top = lua_gettop(L); */
  
-    printf("total in stack %d\n",top);
+/*     printf("total in stack %d\n",top); */
  
-    for (i = 1; i <= top; i++)
-    {  /* repeat for each level */
-        int t = lua_type(L, i);
-        printf("[%d][%d] ",i,i-top-1);
-        switch (t) {
-            case LUA_TSTRING:  /* strings */
-                printf("string: '%s'\n", lua_tostring(L, i));
-                break;
-            case LUA_TBOOLEAN:  /* booleans */
-                printf("boolean %s\n",lua_toboolean(L, i) ? "true" : "false");
-                break;
-            case LUA_TNUMBER:  /* numbers */
-                printf("number: %g\n", lua_tonumber(L, i));
-                break;
-            default:  /* other values */
-                printf("%s\n", lua_typename(L, t));
-                break;
-        }
-        printf("  ");  /* put a separator */
-    }
-    printf("\n");  /* end the listing */
-}
+/*     for (i = 1; i <= top; i++) */
+/*     {  /\* repeat for each level *\/ */
+/*         int t = lua_type(L, i); */
+/*         printf("[%d][%d] ",i,i-top-1); */
+/*         switch (t) { */
+/*             case LUA_TSTRING:  /\* strings *\/ */
+/*                 printf("string: '%s'\n", lua_tostring(L, i)); */
+/*                 break; */
+/*             case LUA_TBOOLEAN:  /\* booleans *\/ */
+/*                 printf("boolean %s\n",lua_toboolean(L, i) ? "true" : "false"); */
+/*                 break; */
+/*             case LUA_TNUMBER:  /\* numbers *\/ */
+/*                 printf("number: %g\n", lua_tonumber(L, i)); */
+/*                 break; */
+/*             default:  /\* other values *\/ */
+/*                 printf("%s\n", lua_typename(L, t)); */
+/*                 break; */
+/*         } */
+/*         printf("  ");  /\* put a separator *\/ */
+/*     } */
+/*     printf("\n");  /\* end the listing *\/ */
+/* } */
 
 
 static
@@ -67,14 +67,14 @@ void priv_lua_reporterrors(lua_State *L, int status)
 }
 
 
-static
-void priv_lua_writemessage(lua_State *L, char *startmsg, char *bodymsg, char *endmsg, int status)
-{
-  (void) L;
-  if ( status!=0 ) {
-    fprintf(stdout,"%s%s%s\n",startmsg,bodymsg,endmsg);
-  }
-}
+/* static */
+/* void priv_lua_writemessage(lua_State *L, char *startmsg, char *bodymsg, char *endmsg, int status) */
+/* { */
+/*   (void) L; */
+/*   if ( status!=0 ) { */
+/*     fprintf(stdout,"%s%s%s\n",startmsg,bodymsg,endmsg); */
+/*   } */
+/* } */
 
 
 #define link_field(p) mem[p].hhfield.rh /* {the |link| field of a memory word} */
@@ -582,7 +582,7 @@ int mfluabeginprogram(void)
   res = luaL_loadfile(L, luafile);
   free(luafile);
   if ( res==LUA_OK ) {
-    if(res=lua_pcall(L,0,0,0)){
+    if((res=lua_pcall(L,0,0,0))){
       priv_lua_reporterrors(L, res);
       goto EXIT;
     }
@@ -594,7 +594,7 @@ int mfluabeginprogram(void)
   GETGLOBALTABLEMFLUA(mfluabeginprogram);
   if (lua_istable(L, -1)) {
     lua_getfield(L,-1,"begin_program");
-    if(res=lua_pcall(L,0,0,0))
+    if((res=lua_pcall(L,0,0,0)))
       priv_lua_reporterrors(L, res);
   }
  EXIT:
@@ -641,7 +641,7 @@ int mfluaendprogram(void)
   if (lua_istable(L, -1)) {
     lua_getfield(L,-1,"end_program");
     /* do the call (0 arguments, 0 result) */
-    if(res = lua_pcall(L, 0, 0, 0)){
+    if((res=lua_pcall(L, 0, 0, 0))){
       lua_pushstring(L,"error in end_program:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -663,7 +663,7 @@ int mfluaPREstartofMF(void)
   if (lua_istable(L, -1)) { 
     lua_getfield(L,-1,"PRE_start_of_MF");
     /* do the call (0 arguments, 0 result) */
-    if(res = lua_pcall(L, 0, 0, 0)){
+    if((res=lua_pcall(L, 0, 0, 0))){
       lua_pushstring(L,"error in PRE_start_of_MF:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -684,7 +684,7 @@ int mfluaPREmaincontrol(void)
   if (lua_istable(L, -1)) {
     lua_getfield(L,-1, "PRE_main_control");
     /* do the call (0 arguments, 0 result) */
-    if(res = lua_pcall(L, 0, 0, 0)){
+    if((res=lua_pcall(L, 0, 0, 0))){
       lua_pushstring(L,"error in PRE_main_control:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -704,7 +704,7 @@ int mfluaPOSTmaincontrol(void)
   if (lua_istable(L, -1)) {
     lua_getfield(L,-1, "POST_main_control");
     /* do the call (0 arguments, 0 result) */
-    if(res = lua_pcall(L, 0, 0, 0)){
+    if((res=lua_pcall(L, 0, 0, 0))){
       lua_pushstring(L,"error in POST_main_control:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -726,7 +726,7 @@ int mfluainitialize(void)
   if (lua_istable(L, -1)) {
     lua_getfield(L,-1, "mflua_initialize");
     /* do the call (0 arguments, 0 result) */
-    if(res = lua_pcall(L, 0, 0, 0)){
+    if((res=lua_pcall(L, 0, 0, 0))){
       lua_pushstring(L,"error in mflua_initialize:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -747,7 +747,7 @@ int mfluaPOSTfinalcleanup(void)
   if (lua_istable(L, -1)) {
     lua_getfield(L,-1, "POST_final_cleanup");
     /* do the call (0 arguments, 0 result) */
-    if(res = lua_pcall(L, 0, 0, 0)){
+    if((res=lua_pcall(L, 0, 0, 0))){
       lua_pushstring(L,"error in POST_final_cleanup:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -803,7 +803,7 @@ int mfluaprintpath(halfword h, strnumber s, boolean nuline)
     lua_pushnumber(L, s);   /* push 2nd argument */
     lua_pushnumber(L, nuline);   /* push 3nd argument */
     /* do the call (3 arguments, 0 result) */
-    if(res = lua_pcall(L, 3, 0, 0)){
+    if((res=lua_pcall(L, 3, 0, 0))){
       lua_pushstring(L,"error in printpath:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -828,7 +828,7 @@ int mfluaprintedges(strnumber s, boolean nuline, integer xoff, integer yoff)
     lua_pushnumber(L, xoff);   /* push 3nd argument */
     lua_pushnumber(L, yoff);   /* push 4nd argument */
     /* do the call (4 arguments, 0 result) */
-    if(res = lua_pcall(L, 4, 0, 0)){
+    if((res=lua_pcall(L, 4, 0, 0))){
       lua_pushstring(L,"error in printedges:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -855,7 +855,7 @@ int mfluaPREoffsetprep(halfword c, halfword h)
     lua_pushnumber(L, c);   /* push 1st argument */
     lua_pushnumber(L, h);   /* push 2nd argument */
     /* do the call (2 arguments, 0 result) */
-    if(res = lua_pcall(L, 2, 0, 0)){ 
+    if((res=lua_pcall(L, 2, 0, 0))){ 
       lua_pushstring(L,"error in PRE_offset_prep:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -878,7 +878,7 @@ int mfluaPOSToffsetprep(halfword c, halfword h)
     lua_pushnumber(L, c);   /* push 1st argument */
     lua_pushnumber(L, h);   /* push 2nd argument */
     /* do the call (2 arguments, 0 result) */
-    if(res = lua_pcall(L, 2, 0, 0)){ 
+    if((res=lua_pcall(L, 2, 0, 0))){ 
       lua_pushstring(L,"error in POST_offset_prep:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -900,7 +900,7 @@ int mfluaPREmakespecrhs(halfword rhs)
     lua_getfield(L,-1, "PRE_make_spec_rhs");
     lua_pushnumber(L, rhs);   /* push 1st argument */
     /* do the call (1 arguments, 0result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in PRE_make_spec_rhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -922,7 +922,7 @@ int mfluaPOSTmakespecrhs(halfword rhs)
     lua_getfield(L,-1, "POST_make_spec_rhs");
     lua_pushnumber(L, rhs);   /* push 1st argument */
     /* do the call (1 arguments, 0result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in POST_make_spec_rhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -944,7 +944,7 @@ int mfluaPREmakespeclhs(halfword lhs)
     lua_getfield(L,-1, "PRE_make_spec_lhs");
     lua_pushnumber(L, lhs);   /* push 1st argument */
   /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in PRE_make_spec_lhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -965,7 +965,7 @@ int mfluaPOSTmakespeclhs(halfword lhs)
     lua_getfield(L,-1, "POST_make_spec_lhs");
     lua_pushnumber(L, lhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in POST_make_spec_lhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -988,7 +988,7 @@ int mfluaPREfillenveloperhs(halfword rhs)
     lua_getfield(L,-1, "PRE_fill_envelope_rhs");
     lua_pushnumber(L, rhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){ 
+    if((res=lua_pcall(L, 1, 0, 0))){ 
       lua_pushstring(L,"error in PRE_fill_envelope_rhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1011,7 +1011,7 @@ int mfluaPOSTfillenveloperhs(halfword rhs)
     lua_getfield(L,-1, "POST_fill_envelope_rhs");
     lua_pushnumber(L, rhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){ 
+    if((res=lua_pcall(L, 1, 0, 0))){ 
       lua_pushstring(L,"error in POST_fill_envelope_rhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1034,7 +1034,7 @@ int mfluaPREfillenvelopelhs(halfword lhs)
     lua_getfield(L,-1, "PRE_fill_envelope_lhs");
     lua_pushnumber(L, lhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in PRE_fill_envelope_lhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1057,7 +1057,7 @@ int mfluaPOSTfillenvelopelhs(halfword lhs)
     lua_getfield(L,-1, "POST_fill_envelope_lhs");
     lua_pushnumber(L, lhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in POST_fill_envelope_lhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1080,7 +1080,7 @@ int mfluaPREfillspecrhs(halfword rhs)
     lua_getfield(L,-1, "PRE_fill_spec_rhs");
     lua_pushnumber(L, rhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){ 
+    if((res=lua_pcall(L, 1, 0, 0))){ 
       lua_pushstring(L,"error in PRE_fill_spec_rhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1101,7 +1101,7 @@ int mfluaPOSTfillspecrhs(halfword rhs)
     lua_getfield(L,-1, "POST_fill_spec_rhs");
     lua_pushnumber(L, rhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){ 
+    if((res=lua_pcall(L, 1, 0, 0))){ 
       lua_pushstring(L,"error in POST_fill_spec_rhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1123,7 +1123,7 @@ int mfluaPREfillspeclhs(halfword lhs)
     L = Luas[0];
     lua_pushnumber(L, lhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in PRE_fill_spec_lhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1146,7 +1146,7 @@ int mfluaPOSTfillspeclhs(halfword lhs)
     L = Luas[0];
     lua_pushnumber(L, lhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in POST_fill_spec_lhs:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1169,7 +1169,7 @@ int mfluaPREmovetoedges(halfword lhs)
     lua_getfield(L,-1, "PRE_move_to_edges");
     lua_pushnumber(L, lhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in PRE_move_to_edges:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1191,7 +1191,7 @@ int mfluaPOSTmovetoedges(halfword lhs)
     lua_getfield(L,-1, "POST_move_to_edges");
     lua_pushnumber(L, lhs);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in POST_move_to_edges:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1213,7 +1213,7 @@ int mfluaPREmakechoices(halfword p)
     lua_getfield(L,-1,"PRE_make_choices");  /* function to be called */
     lua_pushnumber(L, p);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in PRE_make_choices:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1236,7 +1236,7 @@ int mfluaPOSTmakechoices(halfword p)
     lua_getfield(L,-1,"POST_make_choices");  /* function to be called */
     lua_pushnumber(L, p);   /* push 1st argument */
     /* do the call (1 arguments, 0 result) */
-    if(res = lua_pcall(L, 1, 0, 0)){
+    if((res=lua_pcall(L, 1, 0, 0))){
       lua_pushstring(L,"error in POST_make_choices:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1262,7 +1262,7 @@ int mfluaprintretrogradeline(integer x0, integer y0, integer cur_x, integer cur_
     lua_pushnumber(L, cur_x);   /* push 3th argument */
     lua_pushnumber(L, cur_y);   /* push 4th argument */
     /* do the call (4 arguments, 0 result) */
-    if(res = lua_pcall(L, 4, 0, 0)){
+    if((res=lua_pcall(L, 4, 0, 0))){
       lua_pushstring(L,"error in print_retrograde_line:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1273,7 +1273,7 @@ int mfluaprintretrogradeline(integer x0, integer y0, integer cur_x, integer cur_
 }
 
 
-int mfluaPREmakeellipse(integer major_axis, integer minor_axis, integer theta , integer tx, integer ty,integer q)
+int mfluaPREmakeellipse(integer major_axis, integer minor_axis, integer theta_angle , integer tx_val, integer ty_val,integer q)
 {
   lua_State *L;
   int res;
@@ -1284,12 +1284,12 @@ int mfluaPREmakeellipse(integer major_axis, integer minor_axis, integer theta , 
     lua_getfield(L,-1,"PRE_make_ellipse");
     lua_pushnumber(L, major_axis);   /* push 1st argument */
     lua_pushnumber(L, minor_axis);   /* push 2nd argument */
-    lua_pushnumber(L, theta);   /* push 3th argument */
-    lua_pushnumber(L, tx);   /* push 4th argument */
-    lua_pushnumber(L, ty);   /* push 5th argument */
+    lua_pushnumber(L, theta_angle);   /* push 3th argument */
+    lua_pushnumber(L, tx_val);   /* push 4th argument */
+    lua_pushnumber(L, ty_val);   /* push 5th argument */
     lua_pushnumber(L, q);   /* push 6th argument */
     /* do the call (6 arguments, 0 result) */
-    if(res = lua_pcall(L, 6, 1, 0)){
+    if((res=lua_pcall(L, 6, 1, 0))){
       lua_pushstring(L,"error in PRE_make_ellipse:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1301,7 +1301,7 @@ int mfluaPREmakeellipse(integer major_axis, integer minor_axis, integer theta , 
       
 
 
-int mfluaPOSTmakeellipse(integer major_axis, integer minor_axis, integer theta , integer tx, integer ty,integer q)
+int mfluaPOSTmakeellipse(integer major_axis, integer minor_axis, integer mfl_theta , integer mfl_tx, integer mfl_ty,integer q)
 {
   lua_State *L;
   int res;
@@ -1312,12 +1312,12 @@ int mfluaPOSTmakeellipse(integer major_axis, integer minor_axis, integer theta ,
     lua_getfield(L,-1,"POST_make_ellipse");
     lua_pushnumber(L, major_axis);   /* push 1st argument */
     lua_pushnumber(L, minor_axis);   /* push 2nd argument */
-    lua_pushnumber(L, theta);   /* push 3th argument */
-    lua_pushnumber(L, tx);   /* push 4th argument */
-    lua_pushnumber(L, ty);   /* push 5th argument */
+    lua_pushnumber(L, mfl_theta);   /* push 3th argument */
+    lua_pushnumber(L, mfl_tx);   /* push 4th argument */
+    lua_pushnumber(L, mfl_ty);   /* push 5th argument */
     lua_pushnumber(L, q);   /* push 6th argument */
     /* do the call (6 arguments, 0 result) */
-    if(res = lua_pcall(L, 6, 1, 0)){
+    if((res=lua_pcall(L, 6, 1, 0))){
       lua_pushstring(L,"error in POST_make_ellipse:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1340,7 +1340,7 @@ int mfluaprinttransitionlinefrom(integer x, integer y)
     lua_pushnumber(L, x);   /* push 1st argument */
     lua_pushnumber(L, y);   /* push 2nd argument */
     /* do the call (2 arguments, 0 result) */
-    if(res = lua_pcall(L, 2, 0, 0)){
+    if((res=lua_pcall(L, 2, 0, 0))){
       lua_pushstring(L,"error in print_transition_line_from:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1363,7 +1363,7 @@ int mfluaprinttransitionlineto(integer x, integer y)
     lua_pushnumber(L, x);   /* push 1st argument */
     lua_pushnumber(L, y);   /* push 2nd argument */
     /* do the call (2 arguments, 0 result) */
-    if(res = lua_pcall(L, 2, 0, 0)){
+    if((res=lua_pcall(L, 2, 0, 0))){
       lua_pushstring(L,"error in print_transition_line_to:");
       lua_swap(L);lua_concat (L, 2);
       priv_lua_reporterrors(L, res);
@@ -1390,7 +1390,7 @@ int mfluaprinttransitionlineto(integer x, integer y)
   }                                 \
 } while (0)
 
-int mfluarunscript(halfword j, halfword first, halfword limit) 
+int mfluarunscript(halfword j, halfword first_val, halfword limit) 
 {
   int i ;
   lua_State *L ;
@@ -1399,13 +1399,13 @@ int mfluarunscript(halfword j, halfword first, halfword limit)
   const char *str;
   size_t len;
   L = Luas[0];
-  last_char = strpool[j+limit-first] ;
+  last_char = strpool[j+limit-first_val] ;
   /* end of a C string */ 
-  strpool[j+limit-first] = '\0';
+  strpool[j+limit-first_val] = '\0';
   str = (const char *)(strpool+j) ;
   /* do the call (0 arguments, 1 result) */
   error = (luaL_loadstring(L, str) || lua_pcall(L, 0, 1, 0)) ; 
-  strpool[j+limit-first] = last_char;
+  strpool[j+limit-first_val] = last_char;
   if(error) {
     priv_lua_reporterrors(L,error);
   } else {
@@ -1420,5 +1420,5 @@ int mfluarunscript(halfword j, halfword first, halfword limit)
   return 0;
 }
 
-/* TODO: check if shell_cmd_is_allowed make se sense */
+/* TODO: check if shell_cmd_is_allowed makes sense */
 int shell_cmd_is_allowed(const char *cmd, char **safecmd, char **cmdname){return 1;}
