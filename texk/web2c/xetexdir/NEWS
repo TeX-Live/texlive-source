@@ -2,6 +2,8 @@ XeTeX 0.999992 (January 2020)
 
 * Merged various minor fixes from TeX Live svn sources
   - includes new \filedump primitive
+* Merged new feature:
+  - new \input{...} group-delimited syntax (cross-engine).
 
 ==============================================================
 XeTeX 0.999991 (January 2019)

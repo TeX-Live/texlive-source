@@ -2,9 +2,10 @@ pdfTeX 3.14159265-2.6-1.40.21 (TeX Live 2020)
 - changes:
   - new primitive \pdfmajorversion; this merely changes the version
     number in the PDF output, has no effect on PDF content.
-  - new option --cnf-line.
+  - new \input{...} group-delimited syntax (cross-engine).
+  - new option --cnf-line (cross-engine).
   - have \pdfximage etc. do same search for image files as for input files, 
-  - (un)compress .fmt files (with zlib).
+  - (un)compress .fmt files with zlib (cross-engine).
   
 pdfTeX 3.14159265-2.6-1.40.20 (TeX Live 2019)
 - changes:

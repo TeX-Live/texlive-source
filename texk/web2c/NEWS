@@ -16,7 +16,10 @@ that is a macro redefinition of the standard \input primitive.
 * All TeX engines except tex and etex now compress (with zlib) .fmt files
   (XeTeX and LuaTeX already did so).
 
-pTeX: new primitives \ifjfont and \iftfont.
+pTeX (and all variants): new primitives \ifjfont and \iftfont.
+eptex, euptex: new primitives \Uchar, \Ucharcat, \current(x)spacingmode,
+  \ifincsname; revise \fontchar?? and \iffontchar.
+euptex only: new primitive  \currentcjktoken.
 
 BibTeX: now reallocates on large (>20k) field values instead of aborting.
 
