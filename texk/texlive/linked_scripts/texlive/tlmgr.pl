@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 53746 2020-02-10 10:14:56Z preining $
+# $Id: tlmgr.pl 53820 2020-02-17 03:23:13Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 53746 $';
-my $datrev = '$Date: 2020-02-10 11:14:56 +0100 (Mon, 10 Feb 2020) $';
+my $svnrev = '$Revision: 53820 $';
+my $datrev = '$Date: 2020-02-17 04:23:13 +0100 (Mon, 17 Feb 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -4657,7 +4657,7 @@ sub action_option {
         $ret |= $F_WARNING;
       }
     }
-  } elsif ($what =~ m/^showall$/i) {
+  } elsif ($what =~ m/^(showall|help)$/i) {
     if ($opts{'json'}) {
       my $json = $localtlpdb->options_as_json();
       print("$json\n");
@@ -7006,12 +7006,13 @@ sub setup_one_remotetlpdb {
       ddebug("loc copy found!\n");
       # we found the tlpdb matching the current location
       # check for the remote hash
-      my $path = "$location/$InfraLocation/$DatabaseName.$TeXLive::TLConfig::ChecksumExtension";
+      my $path = "$location/$InfraLocation/$DatabaseName";
       ddebug("remote path of digest = $path\n");
-
-      my ($ret,$msg)
-        = TeXLive::TLCrypto::verify_checksum($loc_copy_of_remote_tlpdb, $path);
-      if ($ret == $VS_CONNECTION_ERROR) {
+      my ($verified, $status)
+        = TeXLive::TLCrypto::verify_checksum_and_check_return($loc_copy_of_remote_tlpdb, $path,
+            $is_main, 1); # the 1 means local copy mode!
+      # deal with those cases that need special treatment
+      if ($status == $VS_CONNECTION_ERROR) {
         info(<<END_NO_INTERNET);
 Unable to download the checksum of the remote TeX Live database,
 but found a local copy, so using that.
@@ -7027,46 +7028,17 @@ END_NO_INTERNET
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
-      } elsif ($ret == $VS_UNSIGNED) {
-        # we require the main database to be signed, but allow for
-        # subsidiary to be unsigned
-        if ($is_main) {
-          tldie("$prg: main database at $location is not signed: $msg\n");
-        }
-        # the remote database has not be signed, warn
-        debug("$prg: remote database is not signed, continuing anyway!\n");
-      } elsif ($ret == $VS_GPG_UNAVAILABLE) {
-        # no gpg available
-        debug("$prg: no gpg available for verification, continuing anyway!\n");
-      } elsif ($ret == $VS_PUBKEY_MISSING) {
-        # pubkey missing
-        debug("$prg: $msg, continuing anyway!\n");
-      } elsif ($ret == $VS_CHECKSUM_ERROR) {
-        # no problem, checksum is wrong, we need to get new tlpdb
-      } elsif ($ret == $VS_SIGNATURE_ERROR) {
-        # umpf, signature error
-        # TODO should we die here? Probably yes because one of 
-        # checksum file or signature file has changed!
-        tldie("$prg: verification of checksum for $location failed: $msg\n");
-      } elsif ($ret == $VS_EXPKEYSIG) {
-        # do nothing, try to get new tlpdb and hope sig is better?
-        tlwarn("Verification problem of the TL database at $location:\n");
-        tlwarn("--> $VerificationStatusDescription{$ret}\n");
-        # debug("$prg: good signature bug gpg key expired, continuing anyway!\n");
-      } elsif ($ret == $VS_REVKEYSIG) {
-        # do nothing, try to get new tlpdb and hope sig is better?
-        tlwarn("Verification problem of the TL database at $location:\n");
-        tlwarn("--> $VerificationStatusDescription{$ret}\n");
-        #debug("$prg: good signature but from revoked gpg key, continuing anyway!\n");
-      } elsif ($ret == $VS_VERIFIED) {
+      } elsif ($status == $VS_VERIFIED || $status == $VS_EXPKEYSIG || $status == $VS_REVKEYSIG) {
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
-        # we did verify this tlpdb, make sure that is recorded
-        $remotetlpdb->is_verified(1);
-      } else {
-        tldie("$prg: unexpected return value from verify_checksum: $ret\n");
+        # if verification was successful, make sure that is recorded
+        $remotetlpdb->verification_status($status);
+        $remotetlpdb->is_verified($verified);
       }
+      # nothing to do in the else case
+      # we tldie already in the verify_checksum_and_check_return
+      # for all other cases
     }
   }
   if (!$local_copy_tlpdb_used) {
@@ -8417,7 +8389,7 @@ Synonym for L</info>.
 
 =item B<option [--json] [show]>
 
-=item B<option [--json] showall>
+=item B<option [--json] showall|help>
 
 =item B<option I<key> [I<value>]>
 
@@ -8428,7 +8400,8 @@ saved in the TLPDB with a short description and the C<key> used for
 changing it in parentheses.
 
 The second form, C<showall>, is similar, but also shows options which
-can be defined but are not currently set to any value.
+can be defined but are not currently set to any value (C<help> is a
+synonym).
 
 Both C<show...> forms take an option C<--json>, which dumps the option
 information in JSON format.  In this case, both forms dump the same
@@ -8443,7 +8416,7 @@ Possible values for I<key> are (run C<tlmgr option showall> for
 the definitive list):
 
  repository (default package repository),
- formats    (create formats at installation time),
+ formats    (generate formats at installation or update time),
  postcode   (run postinst code blobs)
  docfiles   (install documentation files),
  srcfiles   (install source files),
@@ -8468,7 +8441,8 @@ be used as a synonym for C<repository>.)
 
 If C<formats> is set (this is the default), then formats are regenerated
 when either the engine or the format files have changed.  Disable this
-only when you know how and want to regenerate formats yourself.
+only when you know how and want to regenerate formats yourself whenever
+needed (which is often, in practice).
 
 The C<postcode> option controls execution of per-package
 postinstallation action code.  It is set by default, and again disabling
@@ -9918,7 +9892,7 @@ user installations.
 
 =item C<TEXLIVE_COMPRESSOR>
 
-This option allows selecting a different compressor program for
+This variable allows selecting a different compressor program for
 backups and intermediate rollback containers. The order of selection is:
 
 =over 8
@@ -10009,14 +9983,13 @@ regardless of any setting.
 
 =back
 
-
 =head1 AUTHORS AND COPYRIGHT
 
 This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 53746 2020-02-10 10:14:56Z preining $
+$Id: tlmgr.pl 53820 2020-02-17 03:23:13Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

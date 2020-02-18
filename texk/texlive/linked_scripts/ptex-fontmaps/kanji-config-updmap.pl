@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20190506.0
+# Version 20200217.0
 #
 # formerly known as updmap-setup-kanji
 #
@@ -22,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20190506.0';
+my $version = '20200217.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -255,6 +255,12 @@ sub ReadDatabase {
       next if ($l =~ m/^\s*$/); # skip empty line
       next if ($l =~ m/^\s*#/); # skip comment line
       $l =~ s/\s*#.*$//; # skip comment after '#'
+      if ($l =~ m/^JA\*\((\d+)\):\s*(.*):\s*(.*)$/) { # no -04 map
+        $representatives{'ja'}{$2}{'priority'} = $1;
+        $representatives{'ja'}{$2}{'file'} = $3;
+        $representatives{'ja'}{$2}{'nojis04'} = 1;
+        next;
+      }
       if ($l =~ m/^JA\((\d+)\):\s*(.*):\s*(.*)$/) {
         $representatives{'ja'}{$2}{'priority'} = $1;
         $representatives{'ja'}{$2}{'file'} = $3;
@@ -273,6 +279,13 @@ sub ReadDatabase {
       if ($l =~ m/^KO\((\d+)\):\s*(.*):\s*(.*)$/) {
         $representatives{'ko'}{$2}{'priority'} = $1;
         $representatives{'ko'}{$2}{'file'} = $3;
+        next;
+      }
+      if ($l =~ m/^JA-AI0\*:\s*(.*):\s*(.*)$/) { # no -04 map
+        $representatives{'ja'}{$1}{'priority'} = 9999; # lowest
+        $representatives{'ja'}{$1}{'file'} = $2;
+        $representatives{'ja'}{$1}{'nojis04'} = 1;
+        $ai0flags{'ja'}{$1} = 1;
         next;
       }
       if ($l =~ m/^JA-AI0:\s*(.*):\s*(.*)$/) {
@@ -311,10 +324,11 @@ sub ReadDatabase {
 
 sub kpse_miscfont {
   my ($file) = @_;
-  chomp(my $foo = `kpsewhich -format=miscfont $file`);
-  # for GitHub repository diretory structure
+  my $foo = '';
+  # first, prioritize GitHub repository diretory structure
+  $foo = "database/$file" if (-f "database/$file");
   if ($foo eq "") {
-    $foo = "database/$file" if (-f "database/$file");
+    chomp($foo = `kpsewhich -format=miscfont $file`);
   }
   return $foo;
 }
@@ -366,17 +380,32 @@ sub gen_mapfile {
 
 sub GetStatus {
   my $opt_mode = shift;
-  my $val = `$updmap_real --quiet --showoption ${opt_mode}Embed`;
-  my $STATUS;
+  my $val;
+  my $STATUS = "";
+  my $VARIANT = "";
+
+  # fetch jaEmbed/scEmbed/tcEmbed/koEmbed
+  $val = `$updmap_real --quiet --showoption ${opt_mode}Embed`;
   if ($val =~ m/^${opt_mode}Embed=([^()\s]*)(\s+\()?/) {
     $STATUS = $1;
   } else {
     die "Cannot find status of current ${opt_mode}Embed setting via updmap --showoption!\n";
   }
+  # fetch jaVariant
+  if ($opt_mode eq "ja") {
+    $val = `$updmap_real --quiet --showoption ${opt_mode}Variant`;
+    if ($val =~ m/^${opt_mode}Variant=([^()\s]*)(\s+\()?/) {
+      $VARIANT = $1; # should be '' or '-04'
+    } else {
+      die "Cannot find status of current ${opt_mode}Variant setting via updmap --showoption!\n";
+    }
+  }
 
-  my $testmap = gen_mapfile($opt_mode, $STATUS);
+  my $testmap = gen_mapfile($opt_mode, "$STATUS$VARIANT");
+  $VARIANT = "<empty>" if ($VARIANT eq ""); # for printing
   if (check_mapfile($testmap)) {
     print "CURRENT family for $opt_mode: $STATUS";
+    print " (variant: $VARIANT)" if ($opt_mode eq "ja");
     print " (AI0)" if ($ai0flags{$opt_mode}{$STATUS});
     print "\n";
   } else {
@@ -410,10 +439,16 @@ sub SetupMapFile {
     print " (AI0)" if ($ai0flags{$opt_mode}{$rep});
     print " for $opt_mode\n";
     system("$updmap --quiet --nomkmap --nohash --setoption ${opt_mode}Embed $rep");
-    if ($opt_jis) {
-      system("$updmap --quiet --nomkmap --nohash --setoption jaVariant -04");
-    } else {
-      system("$updmap --quiet --nomkmap --nohash --setoption jaVariant \"\"");
+    if ($opt_mode eq "ja") {
+      if ($opt_jis && $representatives{'ja'}{$rep}{'nojis04'}) {
+        print STDERR "WARNING: No -04 map available, option --jis2004 ignored!\n";
+        $opt_jis = 0;
+      }
+      if ($opt_jis) {
+        system("$updmap --quiet --nomkmap --nohash --setoption jaVariant -04");
+      } else {
+        system("$updmap --quiet --nomkmap --nohash --setoption jaVariant \"\"");
+      }
     }
   } else {
     die "NOT EXIST $MAPFILE\n";

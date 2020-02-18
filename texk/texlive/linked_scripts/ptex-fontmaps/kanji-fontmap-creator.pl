@@ -2,7 +2,7 @@
 #
 # kanji-fontmap-creator
 # (c) 2012-2014 Norbert Preining
-# Version: 20190506.0
+# Version: 20200217.0
 # Licenced under the GPLv2 or any higher version
 #
 # gui to create map files for (kanji-config-)updmap
@@ -41,7 +41,7 @@ my $opt_help = 0;
 my $opt_version = 0;
 
 my $prg = "kanji-fontmap-creator";
-my $version = "20190506.0";
+my $version = "20200217.0";
 
 #
 # global vars configuring operation

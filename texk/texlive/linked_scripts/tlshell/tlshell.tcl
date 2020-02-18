@@ -1,6 +1,6 @@
 #!/usr/bin/env wish
 
-# Copyright 2017-2019 Siep Kroonenberg
+# Copyright 2017-2020 Siep Kroonenberg
 
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -85,7 +85,7 @@ proc do_debug {s} {
     file mkdir ${::instroot}/temp
     set dbg [open "${::instroot}/temp/mydbglog" a]
     puts $dbg "TCL: $s"
-    close $dbg
+    chan close $dbg
     # Track debug output in the log dialog if it is running:
     if [winfo exists .tllg.dbg.tx] {
       .tllg.dbg.tx configure -state normal
@@ -107,7 +107,7 @@ proc maketemp {ext} {
     # create empty file. although we just want a name,
     # we must make sure that it can be created.
     set fid [open $fname w]
-    close $fid
+    chan close $fid
     if {! [file exists $fname]} {error "Cannot create temporary file"}
     if {$::tcl_platform(platform) eq "unix"} {
       file attributes $fname -permissions 0600
@@ -2390,7 +2390,7 @@ proc initialize {} {
   populate_main
 
   # testing writablilty earlier led to sizing problems
-  if {! [file writable $::instroot]} {
+  if {! [dir_writable $::instroot]} {
     set ans [tk_messageBox -type yesno -icon warning -message \
          [__ "%s is not writable. You can probably not do much.
   Are you sure you want to continue?" $::instroot]]
