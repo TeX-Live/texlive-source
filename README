@@ -33,11 +33,13 @@ aarch64-linux:
   ./Build --enable-arm-neon=check
 
 i386-netbsd, amd64-netbsd:
-  gcc version 4.5.3 (NetBSD nb2 20110806)
-  NetBSD/amd64 6.1.3
-  TL_MAKE=gmake CC=gcc CXX=g++ CFLAGS=-D_NETBSD_SOURCE \
-  LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' \
-  ./Build --enable-xindy CLISP=/usr/local/bin/clisp
+  NetBSD/amd64 9.0
+  gcc version 7.4.0 (nb3 20190319)
+    TL_MAKE=gmake CC=gcc CXX=g++ \
+    CFLAGS=-D_NETBSD_SOURCE \
+    CXXFLAGS='-D_NETBSD_SOURCE -std=c++11' \
+    LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' \
+  ./Build --enable-xindy CLISP=/usr/local/bin/clisp --disable-dvisvgm
 
 i386-freebsd, amd64-freebsd:
   http://anthesphoria.net/FreeBSD/TeXLive-2018/ has details for 2018.
