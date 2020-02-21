@@ -30038,8 +30038,8 @@ end
 
 @ @<Save current position to |pdf_last_x_pos|, |pdf_last_y_pos|@>=
 begin
-  pdf_last_x_pos:=cur_h + cur_h_offset;
-  pdf_last_y_pos:=cur_page_height - cur_v - cur_v_offset
+  pdf_last_x_pos:=cur_h + 4736286;
+  pdf_last_y_pos:=cur_page_height - cur_v - 4736286;
 end
 
 @ @<Calculate page dimensions and margins@>=
