@@ -16,13 +16,15 @@ kpse.set_program_name(arg[-1], 'texdoc')
 -- get realpath of this file
 local function realpath(p)
     if os.type == 'unix' then
-        local h = io.popen(string.format("realpath '%s'", p))
-        local r = h:read('*a')
-        h:close()
-        return r:gsub('\n$', '')
-    else
-        return ''
+        local e = os.execute('which realpath >/dev/null 2>&1')
+        if e == 0 then
+            local h = io.popen(string.format("realpath '%s'", p))
+            local r = h:read('*a')
+            h:close()
+            return r:gsub('\n$', '')
+        end
     end
+    return ''
 end
 local file = realpath(arg[0])
 
