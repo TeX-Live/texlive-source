@@ -1,8 +1,18 @@
+2020-02-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch, upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch,
+	uptex_version.h: upTeX version u1.26.
+	* uptex-m.ch, kanji.c:
+	Update reference of Unicode blocks to
+	"Blocks-13.0.0.txt Date: 2019-07-10, 19:06:00 GMT [KW]".
+	* COPYRIGHT, COPYRIGHT.ja:
+	Update copyright year.
+
 2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* am/uptex.am (uptex_cppflags): append $(ZLIB_INCLUDES).
 	(uptex_ldadd): append $(ZLIB_LIBS.)
-	(uptex_dependencies): append $(ZLIB_DEPEND) 
+	(uptex_dependencies): append $(ZLIB_DEPEND)
 	(uptex_web_srcs): append zlib-fmt.ch.
 	* kanji.h: #include <zlib.h>
 	(dump_kanji, undump_kanji): arg is now type gzFile instead of FILE *.

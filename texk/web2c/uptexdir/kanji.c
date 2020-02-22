@@ -56,8 +56,8 @@ integer calc_pos(integer c)
 }
 
 /* Ref. http://www.unicode.org/Public/UNIDATA/Blocks.txt */
-/* # Blocks-12.0.0.txt                                   */
-/* # Date: 2018-07-30, 19:40:00 GMT [KW]                 */
+/* # Blocks-13.0.0.txt                                   */
+/* # Date: 2019-07-10, 19:06:00 GMT [KW]                 */
 static long ucs_range[]={
       0x0000, /* Basic Latin					     */ /* 0x00 */
       0x0080, /* Latin-1 Supplement				     */
@@ -264,10 +264,12 @@ static long ucs_range[]={
       0x10C80, /* Old Hungarian				     */
       0x10D00, /* Hanifi Rohingya				     */
       0x10E60, /* Rumi Numeral Symbols				     */
+      0x10E80, /* Yezidi					     */
       0x10F00, /* Old Sogdian					     */
       0x10F30, /* Sogdian					     */
+      0x10FB0, /* Chorasmian					     */ /* 0xd0 */
       0x10FE0, /* Elymaic					     */
-      0x11000, /* Brahmi					     */ /* 0xd0 */
+      0x11000, /* Brahmi					     */
       0x11080, /* Kaithi					     */
       0x110D0, /* Sora Sompeng					     */
       0x11100, /* Chakma					     */
@@ -281,12 +283,13 @@ static long ucs_range[]={
       0x11400, /* Newa						     */
       0x11480, /* Tirhuta					     */
       0x11580, /* Siddham					     */
-      0x11600, /* Modi						     */
+      0x11600, /* Modi						     */ /* 0xe0 */
       0x11660, /* Mongolian Supplement				     */
-      0x11680, /* Takri					     */ /* 0xe0 */
+      0x11680, /* Takri					     */
       0x11700, /* Ahom						     */
       0x11800, /* Dogra					     */
       0x118A0, /* Warang Citi					     */
+      0x11900, /* Dives Akuru					     */
       0x119A0, /* Nandinagari					     */
       0x11A00, /* Zanabazar Square				     */
       0x11A50, /* Soyombo					     */
@@ -296,10 +299,11 @@ static long ucs_range[]={
       0x11D00, /* Masaram Gondi				     */
       0x11D60, /* Gunjala Gondi				     */
       0x11EE0, /* Makasar					     */
+      0x11FB0, /* Lisu Supplement				     */ /* 0xf0 */
       0x11FC0, /* Tamil Supplement				     */
       0x12000, /* Cuneiform					     */
       0x12400, /* Cuneiform Numbers and Punctuation		     */
-      0x12480, /* Early Dynastic Cuneiform			     */ /* 0xf0 */
+      0x12480, /* Early Dynastic Cuneiform			     */
       0x13000, /* Egyptian Hieroglyphs				     */
       0x13430, /* Egyptian Hieroglyph Format Controls		     */
       0x14400, /* Anatolian Hieroglyphs			     */
@@ -311,11 +315,13 @@ static long ucs_range[]={
       0x16F00, /* Miao						     */
       0x16FE0, /* Ideographic Symbols and Punctuation		     */
       0x17000, /* Tangut					     */
-      0x18800, /* Tangut Components				     */
+      0x18800, /* Tangut Components				     */ /* 0x100 */
+      0x18B00, /* Khitan Small Script				     */
+      0x18D00, /* Tangut Supplement				     */
       0x1B000, /* Kana Supplement				     */
       0x1B100, /* Kana Extended-A				     */
       0x1B130, /* Small Kana Extension				     */
-      0x1B170, /* Nushu					     */ /* 0x100 */
+      0x1B170, /* Nushu					     */
       0x1BC00, /* Duployan					     */
       0x1BCA0, /* Shorthand Format Controls			     */
       0x1D000, /* Byzantine Musical Symbols			     */
@@ -325,13 +331,13 @@ static long ucs_range[]={
       0x1D300, /* Tai Xuan Jing Symbols			     */
       0x1D360, /* Counting Rod Numerals			     */
       0x1D400, /* Mathematical Alphanumeric Symbols		     */
-      0x1D800, /* Sutton SignWriting				     */
+      0x1D800, /* Sutton SignWriting				     */ /* 0x110 */
       0x1E000, /* Glagolitic Supplement			     */
       0x1E100, /* Nyiakeng Puachue Hmong			     */
       0x1E2C0, /* Wancho					     */
       0x1E800, /* Mende Kikakui				     */
       0x1E900, /* Adlam					     */
-      0x1EC70, /* Indic Siyaq Numbers				     */ /* 0x110 */
+      0x1EC70, /* Indic Siyaq Numbers				     */
       0x1ED00, /* Ottoman Siyaq Numbers			     */
       0x1EE00, /* Arabic Mathematical Alphabetic Symbols	     */
       0x1F000, /* Mahjong Tiles				     */
@@ -341,21 +347,23 @@ static long ucs_range[]={
       0x1F200, /* Enclosed Ideographic Supplement		     */
       0x1F300, /* Miscellaneous Symbols and Pictographs	     */
       0x1F600, /* Emoticons					     */
-      0x1F650, /* Ornamental Dingbats				     */
+      0x1F650, /* Ornamental Dingbats				     */ /* 0x120 */
       0x1F680, /* Transport and Map Symbols			     */
       0x1F700, /* Alchemical Symbols				     */
       0x1F780, /* Geometric Shapes Extended			     */
       0x1F800, /* Supplemental Arrows-C			     */
       0x1F900, /* Supplemental Symbols and Pictographs		     */
-      0x1FA00, /* Chess Symbols				     */ /* 0x120 */
+      0x1FA00, /* Chess Symbols				     */
       0x1FA70, /* Symbols and Pictographs Extended-A		     */
+      0x1FB00, /* Symbols for Legacy Computing			     */
       0x20000, /* CJK Unified Ideographs Extension B		     */
       0x2A700, /* CJK Unified Ideographs Extension C		     */
       0x2B740, /* CJK Unified Ideographs Extension D		     */
       0x2B820, /* CJK Unified Ideographs Extension E		     */
       0x2CEB0, /* CJK Unified Ideographs Extension F		     */
       0x2F800, /* CJK Compatibility Ideographs Supplement	     */
-      0x30000, /* reserved					     */
+      0x30000, /* CJK Unified Ideographs Extension G		     */
+      0x31350, /* reserved					     */ /* 0x130 */
       0x40000, /* reserved					     */
       0x50000, /* reserved					     */
       0x60000, /* reserved					     */
@@ -363,7 +371,7 @@ static long ucs_range[]={
       0x80000, /* reserved					     */
       0x90000, /* reserved					     */
       0xA0000, /* reserved					     */
-      0xB0000, /* reserved					     */ /* 0x130 */
+      0xB0000, /* reserved					     */
       0xC0000, /* reserved					     */
       0xD0000, /* reserved					     */
       0xE0000, /* Tags						     */
@@ -373,7 +381,7 @@ static long ucs_range[]={
   /* Value over 0x10FFFF is illegal under Unicode,
      They are for some special use.  *** experimental ***  */
       0x110000, /* Reserved					     */
-      0x120000, /* Reserved					     */
+      0x120000, /* Reserved					     */ /* 0x140 */
       0x130000, /* Reserved					     */
       0x140000, /* Reserved					     */
       0x150000, /* Reserved					     */
@@ -381,7 +389,7 @@ static long ucs_range[]={
       0x170000, /* Reserved					     */
       0x180000, /* Reserved					     */
       0x190000, /* Reserved					     */
-      0x1A0000, /* Reserved					     */ /* 0x140 */
+      0x1A0000, /* Reserved					     */
       0x1B0000, /* Reserved					     */
       0x1C0000, /* Reserved					     */
       0x1D0000, /* Reserved					     */
@@ -389,7 +397,7 @@ static long ucs_range[]={
       0x1F0000, /* Reserved					     */
       0x200000, /* Reserved					     */
       0x210000, /* Reserved					     */
-      0x220000, /* Reserved					     */
+      0x220000, /* Reserved					     */ /* 0x150 */
       CJK_CHAR_LIMIT
 };
 

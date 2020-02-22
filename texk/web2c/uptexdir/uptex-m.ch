@@ -1,4 +1,4 @@
-% This is a change file for upTeX u1.25
+% This is a change file for upTeX u1.26
 % By Takuji Tanaka.
 %
 % (02/26/2007) TTK  upTeX u0.01
@@ -41,6 +41,7 @@
 % (2019-02-23) TTK  upTeX u1.24
 % (2019-05-06) HK   Hironori Kitagawa fixed a bug in \if.
 % (2019-05-06) TTK  upTeX u1.25
+% (2020-02-22) TTK  upTeX u1.26
 
 @x upTeX: banner
   {printed when \pTeX\ starts}
@@ -48,8 +49,8 @@
   {printed when \pTeX\ starts}
 @#
 @d upTeX_version=1
-@d upTeX_revision==".25"
-@d upTeX_version_string=='-u1.25' {current u\pTeX\ version}
+@d upTeX_revision==".26"
+@d upTeX_version_string=='-u1.26' {current u\pTeX\ version}
 @#
 @d upTeX_banner=='This is upTeX, Version 3.14159265',pTeX_version_string,upTeX_version_string
 @d upTeX_banner_k==upTeX_banner
@@ -259,8 +260,8 @@ if (isinternalUPTEX) then begin
   @t\hskip10pt@>kcat_code(@"93):=hangul; { Hangul Jamo Extended-B }
   @t\hskip10pt@>kcat_code(@"98):=kanji; { CJK Compatibility Ideographs }
   { \hskip10pt|kcat_code(@"A1):=other_kchar;| Halfwidth and Fullwidth Forms }
-  @+@t\1@>for k:=@"FD to @"FF do kcat_code(k):=kana; { Kana Supplement .. Small Kana Extension }
-  @+@t\1@>for k:=@"122 to @"127 do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. CJK Compatibility Ideographs Supplement }
+  @+@t\1@>for k:=@"103 to @"105 do kcat_code(k):=kana; { Kana Supplement .. Small Kana Extension }
+  @+@t\1@>for k:=@"129 to @"12F do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. G }
   @t\hskip10pt@>kcat_code(@"1FD):=not_cjk; { Latin-1 Letters }
   @t\hskip10pt@>kcat_code(@"1FE):=kana; { Fullwidth digit and latin alphabet }
   @t\hskip10pt@>kcat_code(@"1FF):=kana; { Halfwidth katakana }
