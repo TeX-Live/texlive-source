@@ -19,7 +19,7 @@ char *styfile,*idxfile[256],*indfile,*dicfile,*logfile;
 #endif
 KpathseaSupportInfo kp_ist,kp_dict;
 
-#define VERSION "version 0.53"
+#define VERSION "version 0.54"
 
 int main(int argc, char **argv)
 {
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 				u_getVersion(icuVersion);
 				u_versionToString(icuVersion, icu_version);
 				fprintf(stderr,"upmendex - index processor, %s (%s).\n",VERSION, TL_VERSION);
-				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2015-2019 TANAKA Takuji\n");
+				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2015-2020 TANAKA Takuji\n");
 				fprintf(stderr," using ICU version %s\n",icu_version);
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% upmendex [-ilqrcgf] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [--] [idx0 idx1 ...]\n");

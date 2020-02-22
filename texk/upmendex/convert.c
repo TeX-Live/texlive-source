@@ -217,7 +217,8 @@ int convert(UChar *buff1, UChar *buff2)
 				 ||is_jpn_kana(buff3)||is_kor_hngl(buff3)||is_zhuyin(buff3)
 					||is_comb_diacritical_mark(buff3)) {
 				buff2[j]=buff3[0];
-				i++;
+				if (wclen==2) buff2[j+1]=buff3[1];
+				i+=wclen;
 				j+=wclen;
 			}
 

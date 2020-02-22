@@ -649,6 +649,7 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 {
 	int k, len, hi, lo, mi;
 	UChar ch,src[2],dest[8],strX[4],strY[4],strZ[4];
+	UChar32 c32;
 	UErrorCode perr;
 	UCollationResult order;
 	static int hanzi_mode=0;
@@ -668,8 +669,22 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		ini[0]=extkanatable[ch-EXKANATOP];
 		return;
 	}
-	else if (ch==0x309F) { ini[0]=0x30E8; return; }  /* HIRAGANA YORI */
-	else if (ch==0x30FF) { ini[0]=0x30B3; return; }  /* KATAKANA KOTO */
+	else if (ch==0x309F) { ini[0]=0x30E8; return; }  /* HIRAGANA YORI -> ヨ */
+	else if (ch==0x30FF) { ini[0]=0x30B3; return; }  /* KATAKANA KOTO -> コ */
+	else if (is_jpn_kana(istr)==2) {
+		c32=U16_GET_SUPPLEMENTARY(istr[0],istr[1]);
+		switch (c32) {
+			case 0x1B150: case 0x1B164:
+				ini[0]=0x30F0; break;  /* ヰ */
+			case 0x1B151: case 0x1B165:
+				ini[0]=0x30F1; break;  /* ヱ */
+			case 0x1B152: case 0x1B166:
+				ini[0]=0x30F2; break;  /* ヲ */
+			case 0x1B167: default:
+				ini[0]=0x30F3; break;  /* ン */
+		}
+		return;
+	}
 	else if (is_kor_hngl(&ch)) {
 		if ((ch>=0xAC00)&&(ch<=0xD7AF)) {               /* Hangul Syllables */
 			ch=(ch-0xAC00)/(21*28)+CHOSEONG_KIYEOK; /* convert to Hangul Jamo, Initial consonants */
