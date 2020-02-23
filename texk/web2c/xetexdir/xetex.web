@@ -24188,7 +24188,7 @@ are inside the individual sections.
     if prev_class = char_class_boundary then begin {boundary}
       if (state<>token_list) or (token_type<>backed_up_char) then begin
         find_sa_element(inter_char_val, char_class_boundary*char_class_limit + space_class, false);
-        if cur_ptr<>null then begin
+        if (cur_ptr<>null) and (sa_ptr(cur_ptr)<>null) then begin
           if cur_cmd<>letter then cur_cmd:=other_char;
           cur_tok:=(cur_cmd*max_char_val)+cur_chr;
           back_input; token_type:=backed_up_char;
@@ -24198,7 +24198,7 @@ are inside the individual sections.
       end
     end else begin
       find_sa_element(inter_char_val, prev_class*char_class_limit + space_class, false);
-      if cur_ptr<>null then begin
+      if (cur_ptr<>null) and (sa_ptr(cur_ptr)<>null) then begin
         if cur_cmd<>letter then cur_cmd:=other_char;
         cur_tok:=(cur_cmd*max_char_val)+cur_chr;
         back_input; token_type:=backed_up_char;
@@ -24214,7 +24214,7 @@ are inside the individual sections.
   if XeTeX_inter_char_tokens_en and (space_class<>char_class_ignored) and (prev_class<>char_class_boundary) then begin
     prev_class:=char_class_boundary;
     find_sa_element(inter_char_val, space_class*char_class_limit + char_class_boundary, false); {boundary}
-    if cur_ptr<>null then begin
+    if (cur_ptr<>null) and (sa_ptr(cur_ptr)<>null) then begin
       if cur_cs=0 then begin
         if cur_cmd=char_num then cur_cmd:=other_char;
         cur_tok:=(cur_cmd*max_char_val)+cur_chr;
