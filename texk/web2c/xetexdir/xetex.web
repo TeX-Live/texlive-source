@@ -9774,7 +9774,7 @@ set_page_int:@<Fetch the |dead_cycles| or the |insert_penalties|@>;
 set_page_dimen: @<Fetch something on the |page_so_far|@>;
 set_shape: @<Fetch the |par_shape| size@>;
 set_box_dimen: @<Fetch a box dimension@>;
-char_given,math_given: scanned_result(cur_chr)(int_val);
+char_given,math_given,XeTeX_math_given: scanned_result(cur_chr)(int_val);
 assign_font_dimen: @<Fetch a font dimension@>;
 assign_font_int: @<Fetch a font integer@>;
 register: @<Fetch a register@>;
