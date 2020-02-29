@@ -49,11 +49,12 @@ pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
   pdftoepdf-poppler0.72.0.cc for poppler-0.72.0 upto poppler-0.74.0.
   pdftoepdf-poppler0.75.0.cc for poppler-0.75.0.
   pdftoepdf-poppler0.76.0.cc for poppler-0.76.0 upto poppler-0.82.0.
-  pdftoepdf-poppler0.83.0.cc for poppler-0.83.0 and newer.
+  pdftoepdf-poppler0.83.0.cc for poppler-0.83.0 upto poppler-0.85.0.
+  pdftoepdf-poppler0.86.0.cc for poppler-0.86.0 and newer.
   Note that pdftosrc-*.cc and pdftoepdf-*.cc should be
   renamed as pdftosrc.cc, and pdftoepdf.cc, respectively, before
   compilation. Further, POPPLER_VERSION should be defined properly
-  like -DPOPPLER_VERSION='"0.84.0"'.
+  like -DPOPPLER_VERSION='"0.86.0"'.
 
 ---------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)  (April 27, 2017)
