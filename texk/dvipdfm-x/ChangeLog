@@ -1,3 +1,10 @@
+2020-02-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pdfdev.c: Revert the commit on 2019-06-30: see
+	https://tug.org/pipermail/tex-live/2020-February/044855.html.
+	Note that the problem with fake-bold reappears!
+	https://tug.org/pipermail/dvipdfmx/2019-June/000014.html.
+
 2020-02-12  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dvipdfmx.c: Fix a potential bug in set_default_pdf_filename().
