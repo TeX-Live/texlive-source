@@ -1,3 +1,12 @@
+2020-02-29  Tomas Rokicki  <rokicki@gmail.com>
+
+	* loadfont.c (bitmapfontseen): define new global.
+	(loadfont): set it, if a bitmap font is seen.
+	* protos.h (bitmapfontseen): declare it.
+	* output.c (initprinter): If bitmapfontseen, emit
+	%%ViewingOrientation comment to try to cope with Distiller's
+        auto-orientation (page rotation).
+
 2020-01-30  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (enc_DATA): new variable, for new file dvips-all.enc.
