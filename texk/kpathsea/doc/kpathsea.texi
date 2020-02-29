@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.2
-@set month-year January 2020
+@set month-year March 2020
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -1104,8 +1104,8 @@ case.
 
 This same problematic scenario has always existed on Windows, but for
 whatever reason, it has become much more common since Apple also went
-to a case-insensitive filesystem.  Hence the move to change the
-Kpathsea behavior now.
+to a case-insensitive filesystem.  Hence the relatively late change
+to the Kpathsea behavior.
 
 @cindex Windows and casefolding
 The fallback case-insensitive search is omitted at compile-time on

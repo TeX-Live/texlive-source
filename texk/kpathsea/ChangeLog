@@ -1,3 +1,9 @@
+2020-02-29  Karl Berry  <karl@freefriends.org>
+
+	* pathsearch.c: doc fix.
+	
+	* doc/unixtex.texi: update urls, typos, etc.
+
 2020-01-19  Karl Berry  <karl@freefriends.org>
 
 	* kpsewhich.c (ENSURE_NONEMPTY_STRING): new macro.

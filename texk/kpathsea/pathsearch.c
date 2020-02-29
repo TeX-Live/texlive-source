@@ -173,7 +173,7 @@ casefold_readable_file (kpathsea kpse, string name)
         if (kpathsea_readable_file (kpse, ret)) {
           break; /* success */
         } else {
-          /* This only happens the name matches, but the potential file is
+          /* This only happens when the name matches, but the potential file is
              not actually readable, e.g., a broken symlink.  It seems
              sufficiently unusual to be worth logging.  */
   #ifdef KPSE_DEBUG
