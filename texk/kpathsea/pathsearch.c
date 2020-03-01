@@ -1,6 +1,6 @@
 /* pathsearch.c: look up a filename in a path.
 
-   Copyright 1993, 1994, 1995, 1997, 2007, 2009-2012, 2018 Karl Berry.
+   Copyright 1993, 1994, 1995, 1997, 2007, 2009-2012, 2018, 2020 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
