@@ -1,3 +1,9 @@
+2020-03-01  Karl Berry  <karl@freefriends.org>
+
+	* Import xdvi-22.87.04 from
+	https://sourceforge.net/projects/xdvi/files/xdvik, includes
+	changes made here.
+
 2019-07-22  Karl Berry  <karl@freefriends.org>
 
 	* psgs.c (initGS): don't use now-gone-from-ghostscript execute

@@ -9,6 +9,14 @@ Versions containing major changes are marked as `beta'; these
 may contain undetected bugs. Such versions shouldn't be used
 by distributors.
 
+   * 22.87.04 (2020-02-29):
+	+ Added xdvi.desktop and a mechanism to install it (TeX Live r46347)
+	+ Some changes in the man page (TeX Live r46371 and r50583)
+	+ Adjust psgs.c to make it work with Ghostscript 9.27
+	+ Fixed bug #400 (eps picture overlays) and removed
+	  GS_PIXMAP_CLEARING_HACK
+	+ Updated support libraries from texlive 2020 (r53905)
+
    * 22.87.03 (2016-04-02):
 	+ incorporated changes in xdvik itself from the TeX Live version:
 	  m4/xdvi-check-iconv.m4: Somewhat improved logic.

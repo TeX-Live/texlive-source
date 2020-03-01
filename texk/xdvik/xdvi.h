@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2014  Paul Vojta
+Copyright (c) 1990-2019  Paul Vojta
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -89,18 +89,6 @@ in xdvi.c.
 #else
 # define DEFAULT_PAPER		"us"
 #endif
-
-/*
- * If this is set to 1, xdvi will explicitly clear the internal GS
- * buffer after every page that contained a PS special (figure etc.)
- * to avoid artifacts with later PS specials (overlapping lines etc.);
- * see also bug #633420. This workaround will slow down the drawing of
- * the next page considerably. Currently xdvi also sometimes dies with
- * `Internal error in beginheader_gs()'
- * when paging quickly through a file with this hack enabled.
- * Set to 0 to disable the hack.
- */
-#define GS_PIXMAP_CLEARING_HACK 1
 
 /*
  * Define to 1 if you want to use the experimental font creation code
@@ -1055,9 +1043,6 @@ extern Boolean ignore_papersize_specials;
 extern Boolean have_raw_postscript;
 #if PS
 extern struct psprocs psp, no_ps_procs;
-#  ifdef PS_GS
-extern Boolean had_ps_specials;
-#  endif
 #endif
 
 #ifdef MAGICK

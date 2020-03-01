@@ -1172,7 +1172,7 @@ parse_debugging_string(const char *arg)
     
     curr = last = arg;
 
-    while (curr != '\0') {
+    while (*curr != '\0') {
 	Boolean matched = False;
 
 	while (isspace((int)*curr))

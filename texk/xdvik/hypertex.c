@@ -902,7 +902,7 @@ add_anchor(struct htex_page_info *info, htexAnchorT type,
 	    if (str[0] != '#') {
 		info->anchors[info->curr_cnt].a_href = xmalloc(len + 2);
 		strcpy(info->anchors[info->curr_cnt].a_href, "#");
-		strncat(info->anchors[info->curr_cnt].a_href, str, len);
+		memcpy(info->anchors[info->curr_cnt].a_href + 1, str, len);
 		info->anchors[info->curr_cnt].a_href[len + 1] = '\0';
 	    }
 	    else {
@@ -924,7 +924,8 @@ add_anchor(struct htex_page_info *info, htexAnchorT type,
 	    else {
 		info->anchors[info->curr_cnt].a_href = xmalloc(len + strlen("file:") + 1);
 		strcpy(info->anchors[info->curr_cnt].a_href, "file:");
-		strncat(info->anchors[info->curr_cnt].a_href, str, len);
+		memcpy(info->anchors[info->curr_cnt].a_href + strlen("file:"),
+		    str, len);
 		info->anchors[info->curr_cnt].a_href[len + strlen("file:")] = '\0';
 	    }
 	}

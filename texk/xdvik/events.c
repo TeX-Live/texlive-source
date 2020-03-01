@@ -1,6 +1,6 @@
 /*======================================================================*\
 
-Copyright (c) 1990-2016  Paul Vojta and others
+Copyright (c) 1990-2019  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -1702,6 +1702,9 @@ goto_page(int new_page, home_proc proc, Boolean force)
        (i.e. when accidentally changing page instead of unpausing)
     */
     if (globals.pausing.flag) {
+#if PS_GS
+	gs_erase_page();
+#endif
 	XClearWindow(DISP, mane.win);
     }
 	    
@@ -2608,6 +2611,9 @@ Act_set_shrink_factor(Widget w, XEvent *event,
        will survive changing shrink
     */
     if (globals.pausing.flag) {
+#if PS_GS
+	gs_erase_page();
+#endif
 	XClearWindow(DISP, mane.win);
     }
     
@@ -2656,6 +2662,9 @@ Act_shrink_to_dpi(Widget w, XEvent *event,
 
     /* like elsewhere */
     if (globals.pausing.flag) {
+#if PS_GS
+	gs_erase_page();
+#endif
 	XClearWindow(DISP, mane.win);
     }
 #if 0
@@ -3142,11 +3151,11 @@ Act_set_gs_alpha(Widget w, XEvent *event,
     
     set_menu(&resource.gs_alpha, Act_set_gs_alpha, check_toggle);
 
-#if GS_PIXMAP_CLEARING_HACK
-    had_ps_specials = False; /* else infinite loop and/or crash in redraw! */
-#endif
     /* like elsewhere */
     if (globals.pausing.flag) {
+#if PS_GS
+	gs_erase_page();
+#endif
 	XClearWindow(DISP, mane.win);
     }
     
@@ -6156,6 +6165,9 @@ redraw_page(void)
 #endif /* COLOR */
     
     if (!globals.pausing.flag) {
+#if PS_GS
+	gs_erase_page();
+#endif
 	XClearWindow(DISP, mane.win);
     }
 
@@ -6222,13 +6234,6 @@ do_pages(void)
 				      True,
 #endif
 				      &errflag)) {
-#if PS_GS
-			if (resource.gs_alpha) {
-			    /* restart gs so that user has a method for fixing GS artifacts with gs_alpha
-			       by using `reload' (see also GS_PIXMAP_CLEARING_HACK) */
-			    ps_destroy();
-			}
-#endif
 			statusline_info(STATUS_SHORT, "File reloaded.");
 		    }
 		    /* 		    else { */
@@ -6263,13 +6268,6 @@ do_pages(void)
 
 		can_exposures(&mane);
 		can_exposures(&magnifier);
-
-#if PS && PS_GS && GS_PIXMAP_CLEARING_HACK
-		if (had_ps_specials && !MAGNIFIER_ACTIVE) {
-		    erasepage_gs();
-		    had_ps_specials = False;
-		}
-#endif /* PS && PS_GS && GS_PIXMAP_CLEARING_HACK */
 
 		if (globals.dvi_file.bak_fp != NULL) {
 		    TRACE_EVENTS((stderr, "redraw_page()"));

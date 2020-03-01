@@ -199,13 +199,17 @@ SFreplaceText(SFDir *dir, char *str)
 {
     int len;
 
-    *(dir->path) = 0;
+    *(dir->path) = '\0';
     len = strlen(str);
+
     if (str[len - 1] == '/') {
 	(void)strcat(SFcurrentPath, str);
     }
     else {
-	(void)strncat(SFcurrentPath, str, len - 1);
+	char *p = SFcurrentPath + strlen(SFcurrentPath);
+
+	(void)memcpy(p, str, len - 1);
+	p[len - 1] = '\0';
     }
     /*     if (strncmp(SFcurrentPath, SFstartDir, strlen(SFstartDir))) { */
     /* 	SFsetText(SFcurrentPath); */

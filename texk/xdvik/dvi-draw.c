@@ -1,6 +1,6 @@
 /* The rest of the code has the following copyright:
 
-Copyright (c) 1990-2013  Paul Vojta and others
+Copyright (c) 1990-2019  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -2282,10 +2282,6 @@ draw_page(void)
 
 #ifdef PS
 	psp.interrupt();
-	/* reset this flag too, just to make sure ... */
-# if defined(PS_GS) && GS_PIXMAP_CLEARING_HACK
-	had_ps_specials = False;
-# endif
 #endif
 	globals.ev.flags &= ~EV_MAG_GONE;
 #if 0

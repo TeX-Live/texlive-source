@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2016  Paul Vojta and others
+Copyright (c) 1990-2019  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -106,14 +106,6 @@ This module is based on prior work as noted below.
   used to warn user about this:
 */
 Boolean have_raw_postscript = False;
-
-# if PS_GS && GS_PIXMAP_CLEARING_HACK
-/*
-  Flag whether this page contains PS material;
-  used to flush the GS buffer
-*/
-Boolean had_ps_specials = False;
-# endif /* PS_GS && GS_PIXMAP_CLEARING_HACK */
 
 #endif
 
@@ -2551,26 +2543,18 @@ applicationDoSpecial(char *cp, size_t len)
 		warned_hypertex_too_old = True;
 	    }
 	}
-	else {
-	    /* When not ignoring SDict entries, the distiller and pagecolor
-	       code in lshort.dvi from CTAN:info/lshort/russian/lshrtdvi.zip
-	       causes a failed assertion for 'color_bot_size > 0' in dvi-draw.c;
-	       there's something wrong with the parsing order/event handling here
-	       (see bug #856547).
-	       But we also don't want those entries to trigger erasepage_gs(), so
-	       it's correct to ignore them here.
-	    */
-#if PS_GS && GS_PIXMAP_CLEARING_HACK
-	    had_ps_specials = True;
-#endif
-	}
+	/* When not ignoring SDict entries, the distiller and pagecolor
+	   code in lshort.dvi from CTAN:info/lshort/russian/lshrtdvi.zip
+	   causes a failed assertion for 'color_bot_size > 0' in dvi-draw.c;
+	   there's something wrong with the parsing order/event handling here
+	   (see bug #856547).
+	   But we also don't want those entries to trigger erasepage_gs()
+	   [deleted in r3810], so it's correct to ignore them here.
+	*/
 	return;
     }
     if (memicmp(cp, "psfile", 6) == 0 && (p = endofcommand(cp + 6)) != NULL) {
     	epsf_special(p);
-#if PS_GS && GS_PIXMAP_CLEARING_HACK
-	had_ps_specials = True;
-#endif
 	return;
     }
     if (memicmp(cp, "html:", 5) == 0) {

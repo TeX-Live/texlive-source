@@ -703,7 +703,7 @@ replace_extension(const char *fname, const char *extension,
 	size_t len = strlen(extension);
 	if (len + (sep - fname) > buf_len)
 	    return;
-	strncpy(buf, fname, sep - fname);
+	memcpy(buf, fname, sep - fname);
 	strcpy(buf + (sep - fname), extension);
     }
     return;

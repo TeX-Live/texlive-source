@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1994-2004  Paul Vojta
+Copyright (c) 1994-2019  Paul Vojta
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -141,10 +141,10 @@ static char *GS_outb_out;	/* next byte to come out of buffer */
 static int GS_write_ack;	/* flag to set when done writing */
 static Boolean GS_in_header;	/* if we're sending a header */
 static Boolean GS_in_doc;	/* if we've sent header information */
+static Boolean GS_page_dirty = False; /* if we've drawn since last erase */
 static int GS_ev_mask;		/* events for which we'll stop */
 static int GS_die_ack = 0;	/* flags to set when GS dies */
 static Boolean GS_timer_set;	/* if there's a timer set */
-static Boolean GS_old;		/* if we're using gs 2.xx */
 
 #define	GS_MASK_NORMAL	EV_GE_NEWPAGE
 #define	GS_MASK_HEADER	EV_GE_PS_TOGGLE
@@ -159,7 +159,6 @@ static Atom gs_colors_atom;
 static char line[LINELEN + 1];
 static char *linepos = line;
 static char ackstr[] = "\347\310\376";
-static char oldstr[] = "\347\310\375";
 
 static void gs_died(int, struct xchild *);
 
@@ -253,10 +252,6 @@ read_from_gs(int fd, void *data)
 		    globals.ev.flags |= EV_ACK;
 		if (globals.debug & DBG_PS)
 		    printf("Got GS ack; %d pending.\n", GS_pending);
-	    } else if (memcmp(p, oldstr, 3) == 0) {
-		if (globals.debug & DBG_PS)
-		    puts("Using old GS version.");
-		GS_old = True;
 	    } else
 		continue;
 
@@ -284,8 +279,7 @@ read_from_gs(int fd, void *data)
 	if (linepos >= line + LINELEN) {
 	    p = line + LINELEN;
 	    if ((*--p != '\347' && *--p != '\347' && *--p != '\347')
-		|| (memcmp(p, ackstr, line + LINELEN - p) != 0
-		    && memcmp(p, oldstr, line + LINELEN - p) != 0))
+		|| memcmp(p, ackstr, line + LINELEN - p) != 0)
 		p = line + LINELEN;
 	    *p = '\0';
 	    printf("gs: %s\n", line);
@@ -477,7 +471,7 @@ waitack(void)
     }
 
     GS_die_ack = EV_ACK;
-    
+
     for (;;) {	/* loop because there might be stray ACKs. */
 	/*  	fprintf(stderr, "looping for stray ACKs, page %d\n", current_page); */
 	(void) read_events(EV_GE_ACK);
@@ -578,7 +572,6 @@ initGS(void)
     
     static const char str2[] =
 	"[0 1 1 0 0 0] concat\n"
-	"revision 300 lt{(\347\310\375) print flush}if\n"
 	"stop\n%%xdvimark\n";
     
     /*
@@ -677,6 +670,7 @@ initGS(void)
     psp = gs_procs;
     GS_active = False;
     GS_in_header = True;
+    GS_page_dirty = False;
     GS_pending = 1;
     GS_mag = GS_shrink = -1;
     gs_xio.fd = GS_fd;
@@ -740,6 +734,24 @@ gs_resume_prescan(void)
 	psp = no_ps_procs;
 }
 
+void
+gs_erase_page(void)
+{
+    static const char str[] = " erasepage stop\n%%xdvimark\n";
+
+    if (!GS_page_dirty) return;
+
+    if (globals.debug & DBG_PS)
+	puts("Erasing gs page");
+
+    if (GS_active)
+	XDVI_FATAL((stderr, "Internal error in gs_erase_page()."));
+
+    ++GS_pending;
+    gs_send(str, sizeof(str) - 1);
+    waitack();
+}
+
 static void
 gs_died(int status, struct xchild *child)
 {
@@ -757,7 +769,7 @@ gs_died(int status, struct xchild *child)
     (void)close(child->io->fd);
 
     scanned_page = scanned_page_ps = scanned_page_reset;
-    GS_active = GS_in_doc = False;
+    GS_active = GS_in_doc = GS_page_dirty = False;
     GS_pending = 0;
     globals.ev.flags |= GS_die_ack;
 }
@@ -783,7 +795,7 @@ destroy_gs(void)
 
 	scanned_page = scanned_page_ps = scanned_page_reset;
     }
-    GS_active = GS_in_doc = False;
+    GS_active = GS_in_doc = GS_page_dirty = False;
     GS_pending = 0;
 }
 
@@ -852,8 +864,12 @@ checkgs(Boolean in_header)
 {
     char buf[150];
 
-    /* For gs 2, we pretty much have to start over to enlarge the window. */
-    if ((GS_old && (globals.page.w > GS_page_w || globals.page.h > GS_page_h))
+    /*
+     * For geometry changes, we pretty much have to restart Ghostscript.
+     * This is what Ghostview does (for example, in gv-3.7.4
+     * this occurs in Setup() in Ghostview.c).
+     */
+    if (globals.page.w > GS_page_w || globals.page.h > GS_page_h
 	|| GS_alpha != resource.gs_alpha)
 	destroy_gs();
 
@@ -861,27 +877,6 @@ checkgs(Boolean in_header)
 	(void)initGS();
 
     if (!GS_active) {
-	/* check whether page_w or page_h have increased */
-	if (globals.page.w > GS_page_w || globals.page.h > GS_page_h) {
-	    if (globals.ev.flags & GS_ev_mask)
-		longjmp(globals.ev.canit, 1);
-	    ++GS_pending;
-	    sprintf(buf,
-		    "H mark /HWSize [%d %d] /ImagingBBox [0 0 %d %d] "
-		    "currentdevice putdeviceprops pop\n"
-		    "initgraphics [0 1 1 0 0 0] concat stop\n"
-		    "%%%%xdvimark\n",
-		    GS_page_w = globals.page.w,
-		    GS_page_h = globals.page.h,
-		    globals.page.h,
-		    globals.page.w);
-	    gs_send(buf, strlen(buf));
-	    if (!in_header) {
-		globals.ev.flags |= EV_NEWPAGE;	/* ||| redraw the page */
-		longjmp(globals.ev.canit, 1);
-	    }
-	}
-
 	if (magnification != GS_mag) {
 	    if (globals.ev.flags & GS_ev_mask)
 		longjmp(globals.ev.canit, 1);
@@ -962,6 +957,7 @@ drawraw_gs(const char *cp)
 	return;
     if (globals.debug & DBG_PS)
 	printf("raw ps sent to context: %s\n", cp);
+    GS_page_dirty = True;
     gs_send(cp, strlen(cp));
     gs_send("\n", 1);
 }
@@ -996,6 +992,7 @@ drawfile_gs(const char *cp, FILE *f)
     if (globals.debug & DBG_PS)
 	printf("expanded path: |%s|\n", cp);
 
+    GS_page_dirty = True;
     gs_send("(", 1);
     gs_send(cp, strlen(cp));
     gs_send(")run\n", 5);
@@ -1078,21 +1075,7 @@ newdoc_gs(void)
 	GS_mag = GS_shrink = -1;
 	GS_in_doc = False;
 
-	if (!GS_old) GS_page_w = GS_page_h = 0;
-    }
-}
-
-void erasepage_gs(void)
-{
-    /* In buffered mode, gs has no way of knowing that the screen has been 
-       erased. Clear the gs window buffer with an erasepage command. */ 
-    
-    if (resource.gs_alpha && GS_pid > 0 && !GS_active) {
-	if (globals.debug & DBG_PS)
-	    puts("erasing page!");
-	beginheader_gs();
-	drawraw_gs("erasepage");
-	endheader_gs();
+	GS_page_w = GS_page_h = 0;
     }
 }
 

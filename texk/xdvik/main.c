@@ -455,8 +455,10 @@ is_good_dvi_file(const char *filename, Boolean from_history)
 
     if ((ret = REALPATH(real_filename, canonical_path)) == NULL) {
 	/* REALPATH failed, use real_filename */
-	strncpy(canonical_path, real_filename, MAXPATHLEN);
-	canonical_path[MAXPATHLEN] = '\0';
+	size_t n = strnlen(real_filename, MAXPATHLEN);
+
+	memcpy(canonical_path, real_filename, n);
+	canonical_path[n] = '\0';
 	ret = canonical_path;
     }
     free(real_filename);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2004 the xdvik development team
+ * Copyright (c) 2002-2019 the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -26,6 +26,6 @@
 extern Boolean initGS(void);
 extern void gs_resume_prescan(void);
 extern void restart_gs(void);
-extern void erasepage_gs(void);
+extern void gs_erase_page(void);
 
 #endif /* PSGS_H_ */

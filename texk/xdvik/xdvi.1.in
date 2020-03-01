@@ -2035,7 +2035,7 @@ Moves page down two thirds of a window-full. With a float argument to ``down'',
 moves down the corresponding fraction of a window-full.
 .\"  Therefore, a more
 .\" ``smooth'' scrolling using the ``Up'' and ``Down'' keys can be
-.\" achieved by the the following setting:
+.\" achieved by the following setting:
 .\" .sp
 .\" xdvi.mainTranslations: #override\e
 .\" .br
@@ -3224,7 +3224,7 @@ via the
 mechanism, as a single argument after the `!'. Any arguments
 listed in the
 .B Dvips options
-field are segmented at whitespaces and passed as separate arguments to dvips.
+field are segmented at whitespace and passed as separate arguments to dvips.
 If you e.g. want to print the file 2-up, you should enter
 the following string into the
 .B Printer
@@ -4342,6 +4342,7 @@ directives).
 the
 .B Kpathsea
 documentation,
+.BR https://ctan.org/pkg/xdvi/ .
 and the Xdvik home page at
 .BR http://xdvi.sourceforge.net/ .
 .SH AUTHORS
@@ -4356,10 +4357,9 @@ is Paul Vojta, U.C. Berkeley.
 .PP
 Code for the xdvik variant has been contributed
 by many people, whose names are scattered across the
-source files. Xdvik is hosted on
-.B CTAN:dviware/xdvik
-and on SourceForge; for the most up-to-date information, please
-visit:
+source files.
+.PP
+For the most up-to-date information, please visit:
 .PP
 .B http://xdvi.sourceforge.net
 .PP
