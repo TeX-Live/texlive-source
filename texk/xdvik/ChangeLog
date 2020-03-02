@@ -1,3 +1,9 @@
+2020-03-02  Karl Berry  <karl@freefriends.org>
+
+	* main.c (is_good_dvi_file): avoid using strnlen, not present
+	on Solaris.
+	https://tug.org/pipermail/tlbuild/2020q1/004659.html
+
 2020-03-01  Karl Berry  <karl@freefriends.org>
 
 	* Import xdvi-22.87.04 from
