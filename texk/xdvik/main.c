@@ -457,7 +457,7 @@ is_good_dvi_file(const char *filename, Boolean from_history)
 	/* REALPATH failed, use real_filename */
 	size_t n = strlen(real_filename);
 	if (n >= MAXPATHLEN) {
-	  n = MAXPATHLEN;
+	  n = MAXPATHLEN - 1;
 	}
 
 	memcpy(canonical_path, real_filename, n);
