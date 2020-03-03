@@ -1,3 +1,20 @@
+Release Notes for Version 2.63
+
+A race condition in the AsyGL library was fixed. Emissive and
+shininess values can be overridden for vertex colors. Thin Bezier
+curves can be drawn with lighting enabled. Outline mode for 3D surfaces
+was fixed; outline and mesh mode were ported to WebGL. Degenerate
+surface normals were fixed. The octant1, hemisphere, and sphere
+surfaces were replaced by nondegenerate versions that render faster.
+The unitcone, unitfrustum, and DefaultHead3 arrowhead were simplified.
+A robust and more efficient tube routine was implemented;
+the PRC tube primitive was removed. WebGL compression was achieved by
+implementing sphere, disk, cylinder, and tube primitives in the AsyGL library. 
+Patches are now split in both directions only when required.
+If the GNU Readline library is unavailable, the Editline library
+is used to at least support command-line editing, without history features.
+An MSDOS configuration issue was fixed.
+
 Release Notes for Version 2.62
 
 A hyperbola(point F1, point F2, point M) function was added to the

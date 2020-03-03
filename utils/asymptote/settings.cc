@@ -35,6 +35,8 @@
 #include "pipestream.h"
 #include "array.h"
 
+#include "glrender.h"
+
 #ifdef HAVE_LIBCURSES
 extern "C" {
 
@@ -943,30 +945,44 @@ struct versionOption : public option {
     bool fftw3=false;
     bool xdr=false;
     bool readline=false;
+    bool editline=false;
     bool sigsegv=false;
     bool usegc=false;
 
 #if HAVE_LIBGLM
     glm=true;
 #endif
+
 #ifdef HAVE_GL
     gl=true;
 #endif
+
 #ifdef HAVE_LIBGSL
     gsl=true;
 #endif
+
 #ifdef HAVE_LIBFFTW3
     fftw3=true;
 #endif
+
 #ifdef HAVE_RPC_RPC_H
     xdr=true;
 #endif
-#if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
+
+#ifdef HAVE_LIBCURSES
+#ifdef HAVE_LIBREADLINE
     readline=true;
+#else
+#ifdef HAVE_LIBEDIT
+    editline=true;
 #endif
+#endif
+#endif
+
 #ifdef HAVE_LIBSIGSEGV
     sigsegv=true;
 #endif
+
 #ifdef USEGC
     usegc=true;
 #endif
@@ -977,6 +993,8 @@ struct versionOption : public option {
     feature("FFTW3    Fast Fourier transforms",fftw3);
     feature("XDR      external data representation (portable binary file format)",xdr);
     feature("Readline interactive history and editing",readline);
+    if(!readline)
+      feature("Editline interactive editing (if Readline is unavailable)",editline);
     feature("Sigsegv  distinguish stack overflows from segmentation faults",
             sigsegv);
     feature("GC       Boehm garbage collector",usegc);
@@ -1369,7 +1387,7 @@ void initSettings() {
                             "Additional frame delay", 0.0));
   addOption(new realSetting("resizestep", 0, "step", "Resize step", 1.2));
   addOption(new IntSetting("digits", 0, "n",
-                           "Default output file precision", 6));
+                           "Default output file precision", 7));
   
   addOption(new realSetting("paperwidth", 0, "bp", ""));
   addOption(new realSetting("paperheight", 0, "bp", ""));

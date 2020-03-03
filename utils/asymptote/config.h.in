@@ -15,6 +15,9 @@
 /* Define to 1 if you have the `dup2' function. */
 #undef HAVE_DUP2
 
+/* Define to 1 if you have the <editline/readline.h> header file. */
+#undef HAVE_EDITLINE_READLINE_H
+
 /* Define to 1 if you have the `feenableexcept' function. */
 #undef HAVE_FEENABLEEXCEPT
 
@@ -44,6 +47,9 @@
 
 /* Define to 1 if you have the `ncurses' library (-lncurses). */
 #undef HAVE_LIBCURSES
+
+/* Define to 1 if you have the `edit' library (-ledit). */
+#undef HAVE_LIBEDIT
 
 /* Define to 1 if you have the `fftw3' library (-lfftw3). */
 #undef HAVE_LIBFFTW3
@@ -110,6 +116,9 @@
 
 /* Define to 1 if you have the <ncurses.h> header file. */
 #undef HAVE_NCURSES_H
+
+/* Define to 1 if you have the `popcount' function. */
+#undef HAVE_POPCOUNT
 
 /* Define if you have POSIX threads libraries and header files. */
 #undef HAVE_PTHREAD

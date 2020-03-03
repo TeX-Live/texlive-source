@@ -1,3 +1,511 @@
+commit 6df59d64acb38ad48002d1cae4350ca5cede5267
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 2 22:15:59 2020 -0700
+
+    Increase default output precision to 7.
+
+commit 41e51a6302829c2c85af94c50b53e54a9052c7cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 2 20:47:10 2020 -0700
+
+    Check for editline header.
+
+commit 4a2852bb9f609a35e38f032cbc3f401441bf1d6c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 2 20:13:09 2020 -0700
+
+    Fix unused variable warning messages.
+
+commit 0dbd4412b4772ffbde89d3feedc26e3ecee1dc62
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 2 19:55:26 2020 -0700
+
+    Support compilation without LIBGLM.
+
+commit dc49282bb475174689adcdbe18979ef366e79d4a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 2 09:11:49 2020 -0700
+
+    Fix numerical precision issue in tube subdivision; invert tubethreshold.
+
+commit c59833c3fd8ff7c88950bf1ac7dda50a1fb2796a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 1 22:56:56 2020 -0700
+
+    Update asygl.
+
+commit 104a2c9db80d702a86f10d6ccd403c1e1c38d88a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 1 22:54:49 2020 -0700
+
+    Fix WebGL cylinder bounds.
+
+commit 9f583631684d4f53d5818a70f3db14b747ec9653
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 1 21:34:35 2020 -0700
+
+    Fix warning message.
+
+commit f23a3c044ed9fb2ba7e58045f8b785baa31a1d99
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 1 21:32:20 2020 -0700
+
+    Update fftw++.
+
+commit 484d45498dc7180a91aba3f62f1ee247fc3210b0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 1 18:49:16 2020 -0700
+
+    Check for popcount.
+
+commit 301f42493376b65ae7127ec7d4f49fc3cb519183
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 1 11:32:45 2020 -0700
+
+    Revert to light=nolight default for drawing a path3.
+
+commit f483a0715496e7ae423e38253af2d3c5152013ca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 1 11:10:46 2020 -0700
+
+    Check radius of curvature at both tube ends; simplify code.
+
+commit 839c3a85d6a715c06fabccfed990a9959ce83eb5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 29 20:11:47 2020 -0700
+
+    Update asygl.
+
+commit 3ffe64476247b4d3680c9a7ec2d85fd3fe9e012f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 29 19:44:44 2020 -0700
+
+    Port curve lighting to WebGL.
+
+commit 9d932516731c26a811b512ed91a7631e5c825344
+Merge: ffa4ef3f d4285d04
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 29 17:21:30 2020 -0700
+
+    Merge branch 'curvenormal'.
+
+commit d4285d04fd982fb7a977b44770cf2c3464bd121c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 22:03:33 2020 -0700
+
+    Implement curve lighting.
+
+commit ffa4ef3f199dec850a38d52a669464989a0cb32c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 28 00:29:04 2020 -0700
+
+    Make comma optional in stream reads of parenthesized pairs or triples.
+
+commit 7f3cebcec4ced07f9e076ece132dd552314f5c17
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 28 00:10:47 2020 -0700
+
+    Fix getc bug.
+
+commit 19e5bc0c14e59deff28327db3318469b617a806a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 26 22:20:36 2020 -0700
+
+    Implement 2D and 3D FFTs.
+
+commit 00f2621999ede5d11bcf4a6841f76a2b8f9913d0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 26 22:18:21 2020 -0700
+
+    Return nonempty palettes for undersized requests.
+
+commit d5fe9828872b9a38db42bf5bcd4e556c10c7d8b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 20:04:32 2020 -0700
+
+    Update asygl.
+
+commit 384d99a345db43235456f8c2c631ad70c12f9dc5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 19:59:16 2020 -0700
+
+    Add directional flatness test; simplify unitcone and unitfrustum.
+
+commit b0db12cdeab174f662b62c31d20af69aaa8b87cc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 17:01:38 2020 -0700
+
+    Update asygl.
+
+commit 85e78e1ee51a21e294b362e66104706f02bd69d3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 16:53:39 2020 -0700
+
+    Fix primitive subdivision cracks by enforcing bounds on the entire object.
+
+commit e50f6dea3d9f1d6a2773e5e6dbf60a508657fe30
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 13:50:48 2020 -0700
+
+    Remove obsolete BezierFactor.
+
+commit 6ba502a16fd84653edbaba01e683d407d838cf95
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 12:21:15 2020 -0700
+
+    Update asygl.
+
+commit 975b6c2c474ba1cd0df54974c74379a2784483a0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 12:13:43 2020 -0700
+
+    Fix subdivision crack adjustments.
+
+commit 86218eb8ca0fda14515c62687f1a9ae71cf9ed50
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 11:44:25 2020 -0700
+
+    Port commit 0d63d91ba66b022ef753fa7cb088e120294b7039 to WebGL.
+
+commit 93f45abe9bf89b142a7ecdd517b1b20faffc5512
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 22 23:31:37 2020 -0700
+
+    Reformat.
+
+commit 34e78162304f3b989d17a2e0101f8136d8abd1de
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 22 23:23:53 2020 -0700
+
+    Improve workcone example.
+
+commit 0d63d91ba66b022ef753fa7cb088e120294b7039
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 22 22:58:30 2020 -0700
+
+    Split patches in both directions only when required.
+
+commit 716db94b4302b728d2a98a352ccf31afdfca92de
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 22 12:58:09 2020 -0700
+
+    Remove redundant Bezier patch flatness test.
+
+commit cdbe687ca2faf5e77a7a5fdd8774930f4a1a7ebe
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 22 12:38:36 2020 -0700
+
+    Add surface operator cast(surface[] s) for backwards compatibility.
+
+commit 5f12a9e9bf4aeea489f614749f05a2b9bb0e8394
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 22 12:21:49 2020 -0700
+
+    Update tube.asy and example.
+
+commit 713b2bcc7ab237faaf174b3474f8eb9064dac121
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 21 21:26:42 2020 -0700
+
+    Fix straight Bezier patch bounds bug in commit 59227a95289288cf7f259559bb43e21b02dfff59.
+
+commit 59227a95289288cf7f259559bb43e21b02dfff59
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 21 20:19:16 2020 -0700
+
+    Fix WebGL primitive tube bounds.
+
+commit 1eee76fad6144b5ca89d4f46d5e51e2abb0894d7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 21 09:44:18 2020 -0700
+
+    Update asygl.
+
+commit dc02c6b64851aa315def86f944e43ce9c842c3b6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 21 09:42:05 2020 -0700
+
+    Fix degenerate WebGL tube primitive.
+
+commit ca6b1cb2ba259bc43948621b607fde9e01768b46
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 21 09:19:30 2020 -0700
+
+    Fix material bug in primitives.
+
+commit 36045af736195662ed0019b2910d9b1603329295
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 21 02:22:37 2020 -0700
+
+    Update asygl.
+
+commit 60ae5b446350c3938af0702016848cb45be4769d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 21 02:21:46 2020 -0700
+
+    Fix typos in gl.js; temporarily work around unitcylinder primitive bug.
+
+commit e761621867b49f3edb21363bff859b904cd9afc8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 21 01:31:19 2020 -0700
+
+    Temporarily disable offscreen culling of WebGL tubes.
+
+commit 89c4c49f4121864db68d83e5a954a557ec9a4791
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 21 00:03:12 2020 -0700
+
+    Update asygl.
+
+commit 9833a4300c0318a297899284a9cc49ca11633a09
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 20 23:43:45 2020 -0700
+
+    Implement WebGL tube primitive; remove PRC tube primitive.
+
+commit 78be4fe3ad53a6eca98318efd689f5eb1dd68424
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 17 22:06:53 2020 -0700
+
+    Improve tube rendering; simplify DefaultHead3; fix degenerate normal tests.
+
+commit ba6f8988132d3f0b82e0d51bd3a49089fc2bb067
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 17 21:25:27 2020 -0700
+
+    Fix test degenerate normals.
+
+commit 9beb5b6c72ce47c8fad8c33f14b78015c9baa40f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 5 22:26:02 2020 -0700
+
+    Fix MSDOS configuration issue.
+
+commit 9e2be068ab6d03ed82651ab21d8271c1707eb0bd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 3 09:07:07 2020 -0700
+
+    Update asygl.
+
+commit 202291e8a54c356e22885609ade96dfb79bdc360
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 3 09:02:36 2020 -0700
+
+    Add general surface primitives; implement sphere, cylinder, and disk.
+
+commit a615e55bec2cddeaecddaac49cc7a00b664260c7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 2 10:31:13 2020 -0700
+
+    Update URLs in manual.
+
+commit bed68b2135d2ca238107977e24c7fd74e11b71ea
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 1 11:36:31 2020 -0700
+
+    Fix MacOS X OpenGL diagnostic.
+
+commit 890542188cd2071ffa8aac0da1f266bd3e9d35fd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 30 22:27:37 2020 -0700
+
+    Fix arrowheads.
+
+commit 229a1ce4dfe12cfbce64f62411d38aff7bc23d66
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 30 12:24:58 2020 -0700
+
+    Update asygl.
+
+commit c54573e22bc7e4c6ed226f3c96fdf59df396310c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 30 12:24:19 2020 -0700
+
+    Work around uglify bug.
+
+commit af0f23b9fcbe5a86d6504e92a542ec9327a4f13a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 30 12:13:40 2020 -0700
+
+    Revert "Update asygl."
+    
+    This reverts commit aca1a213e5512866ad4658131c6ec49dd24ad920.
+
+commit aca1a213e5512866ad4658131c6ec49dd24ad920
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 30 12:10:46 2020 -0700
+
+    Update asygl.
+
+commit b6af466ba0a5d87fa1eeb4799f42e360a4b5d968
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 30 12:08:15 2020 -0700
+
+    Implement asygl sphere primitive; remove PRCshininess translation.
+
+commit 4283a1dba8b15010ec1f1455d1544f20381425f2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 28 23:26:19 2020 -0700
+
+    Fix epsilon.
+
+commit 60ec71c54ac97a5b5b24987cf663168e713b7ca2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 28 16:43:43 2020 -0700
+
+    Fix degenerate surface normals.
+
+commit fdf8aeae3c1a11fb04f70674ca060a814fe2b12c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 22 09:24:35 2020 -0700
+
+    Update asygl.
+
+commit 85ee50a6b64875ea3c5e6acf8195eb2139916839
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 22 09:24:03 2020 -0700
+
+    Don't delete embedded shaders.
+
+commit be28c80bd4aabecfa106de5e897255d4bc03b9e9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 22 01:28:58 2020 -0700
+
+    Update asygl.
+
+commit 136fb78e7f18500cc97867cc36d3dc6a9f2c69b0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 22 01:25:50 2020 -0700
+
+    Fix billboard labels in wireframe mode.
+
+commit 59176146c24186463cc4d981acf760008a111403
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 22 01:04:06 2020 -0700
+
+    Update asygl.
+
+commit cafd93a3e58a774d3022c68fd9ab7088346cf4e3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 22 01:02:45 2020 -0700
+
+    Fix wireframe mode with transparency and indexed triangles.
+
+commit 52e5d3f4e21cfdb04ec44667b76d4ae6db8ed387
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 22 00:34:36 2020 -0700
+
+    Update asygl.
+
+commit 6ab2b06ad276aff1d71cea3ee9302b7f6771fb42
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 22 00:34:05 2020 -0700
+
+    Fix wireframe modes with transparency.
+
+commit 5930496436c9791ae8779b02791ff2fb7e3d3b30
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 22 00:07:32 2020 -0700
+
+    Update asygl.
+
+commit 84209ded0c2cace5fd9f104ec3c44a6139dec662
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 21 19:46:35 2020 -0700
+
+    Implement mesh mode in WebGL.
+
+commit d4593b6ccd91019edd123d0e867456994022d9e2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 20 21:14:55 2020 -0700
+
+    Disable OpenGL at compile time if version 3.2 is unavailable under MacOS X.
+
+commit ba29f3dc345f69c5e312b1b4969f6ba05f770292
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 19 18:23:28 2020 -0700
+
+    Implement nondegenerate octant1, hemisphere, and sphere (requires 208 instead of 128 control points but generates fewer triangles, renders faster, and avoids transparency artifacts at poles).
+
+commit eb33c6bf005144d04003a8d6528d98b36701f55f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 18 23:30:01 2020 -0700
+
+    Fix outline mode.
+
+commit 3e155439ed1f587db52f9e2cb756d4cd0b5b6e96
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 18 17:56:40 2020 -0700
+
+    Update config utilities.
+
+commit c9ac7a566ebefb4c07e24c6d55e4cd4b7c85d078
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 18 17:42:03 2020 -0700
+
+    Fix assertion.
+
+commit bfa91b25f845ffae6fea8d0bc9665024dfd6c9ba
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 18 13:41:05 2020 -0700
+
+    Fix include path.
+
+commit a0c44e0b438217ad04eb7833a8acc3a7bd571c0f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 18 13:33:45 2020 -0700
+
+    Fallback to Editline if GNU Readline library is unavailable, to at least
+    have command-line editing (without history support).
+
+commit bae3845ec61e394c996dffb1256d96094fa80788
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 18 00:30:08 2020 -0700
+
+    Update sourceforge URLs.
+
+commit 94460625cfb662ea5ceb1e769208ecc386d115d7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 17 07:48:50 2020 -0700
+
+    Allow overriding default emissive and shininess values for vertex-dependent colors.
+
+commit fb3a60597c869d559e21f6dcfce0f64e7c5e1a1e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 16 15:01:01 2020 -0700
+
+    Fix a6a1ec40a864c27b7ca02336940c24f7a5a53c1a.
+
+commit 5aec7d5bd3f569343b250ca2997bb966235f436b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 16 14:27:16 2020 -0700
+
+    Update asygl.
+
+commit e7da4b39f67abdd73e42afb02b6107edd16fe856
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 16 13:48:42 2020 -0700
+
+    Update asygl.
+
+commit 218f96b42824c6a1dfa70b0289344b0a71fa282f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 16 13:26:39 2020 -0700
+
+    Update asygl.
+
+commit a6a1ec40a864c27b7ca02336940c24f7a5a53c1a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 16 13:24:49 2020 -0700
+
+    Avoid race condition.
+
+commit 18c8da80a5f780dd2b814844c0f3d132bc525636
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 14 21:25:42 2020 -0700
+
+    Increment version to 2.63.
+
 commit fe3aaeb627833abb5a7685781d75bc8b4d0c967e
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Jan 14 14:14:11 2020 -0700
