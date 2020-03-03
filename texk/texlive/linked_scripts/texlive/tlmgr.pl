@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 53842 2020-02-19 07:28:40Z preining $
+# $Id: tlmgr.pl 54001 2020-03-02 17:58:52Z karl $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 53842 $';
-my $datrev = '$Date: 2020-02-19 08:28:40 +0100 (Wed, 19 Feb 2020) $';
+my $svnrev = '$Revision: 54001 $';
+my $datrev = '$Date: 2020-03-02 18:58:52 +0100 (Mon, 02 Mar 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5714,7 +5714,7 @@ sub check_executes {
     next if ($name eq "cont-en"); # too confusing
     # we check that the name exist in bin/$arch
     if (",$TeXLive::TLConfig::PartialEngineSupport," =~ /,$engine,/) {
-      # luajittex is special since it is not available on all architectures
+      # luajit[hb]tex is special since it is not available on all architectures
       #   due to inherent reasons (machine code);
       # luahbtex is special until we build it everywhere for TL'20.
       # 
@@ -5726,7 +5726,7 @@ sub check_executes {
       # * if tlpkg/tlpsrc/<engine>.tlpsrc is *not* available (i.e., not
       #   the development tree) we just ignore it completely.
       my $pkg;
-      if ($engine eq "luajittex") {
+      if ($engine =~ /luajit(hb)?tex/) {
         $pkg = "luajittex";
       } elsif ($engine eq "luahbtex") {
         $pkg = "luahbtex";
@@ -7144,11 +7144,13 @@ and the repository are not compatible:
   # check for being frozen
   if ($remotetlpdb->config_frozen) {
     my $frozen_msg = <<FROZEN;
-TeX Live $TeXLive::TLConfig::ReleaseYear is frozen forever and will no
-longer be updated.  This happens in preparation for a new release.
+TeX Live $TeXLive::TLConfig::ReleaseYear is frozen and will no longer
+be routinely updated. This happens in preparation for a new release.
 
-If you're interested in helping to pretest the new release (when
-pretests are available), please read https://tug.org/texlive/pretest.html.
+If you're willing to help with pretesting the new release, and we hope
+you are, (when pretests are available), please read
+https://tug.org/texlive/pretest.html.
+
 Otherwise, just wait, and the new release will be ready in due time.
 FROZEN
     # don't die here, we want to allow updates even if tlnet is frozen!
@@ -9999,7 +10001,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 53842 2020-02-19 07:28:40Z preining $
+$Id: tlmgr.pl 54001 2020-03-02 17:58:52Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
