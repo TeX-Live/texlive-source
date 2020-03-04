@@ -1,3 +1,34 @@
+commit df95759c3752e7fc902894ce73ba86d91e16a5e9
+Merge: 396d060c ae3dc713
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 3 16:52:03 2020 -0700
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote.
+
+commit 396d060c5a4b0d2b5782889fd83f191c0d0de7a4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 3 16:50:54 2020 -0700
+
+    Work around incorrect declaration in NetBSD readline.h v1.33.
+
+commit ae3dc713aa789672c931474e467bcca82ae4a73f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 3 14:44:10 2020 -0700
+
+    Add memory to rmf tube basis.
+
+commit 23f160e092e1fb7bebe4f3f7e131242791816987
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 3 00:51:52 2020 -0700
+
+    Update examples.
+
+commit 52ad58d7c865f029f162f1f40e9c87a09a5ecf4d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 2 23:36:16 2020 -0700
+
+    Increment version to 2.64.
+
 commit 6df59d64acb38ad48002d1cae4350ca5cede5267
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Mar 2 22:15:59 2020 -0700

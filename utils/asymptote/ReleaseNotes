@@ -1,3 +1,9 @@
+Release Notes for Version 2.64
+
+Discontinuities were removed from the rotating minimizing frame used for
+constructing tubes. A work around was implemented for an incorrect
+declaration in obsolete versions of the NetBSD readline header file.
+
 Release Notes for Version 2.63
 
 A race condition in the AsyGL library was fixed. Emissive and
