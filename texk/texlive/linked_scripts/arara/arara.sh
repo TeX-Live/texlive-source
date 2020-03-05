@@ -3,7 +3,7 @@
 # Note from Paulo: this script provides better Cygwin support than our original
 # approach, so the team decided to use it as a proper wrapper for arara as well.
 
-scriptname=`basename "$0"`
+scriptname=`basename "$0" .sh`
 jar="$scriptname.jar"
 jarpath=`kpsewhich --progname="$scriptname" --format=texmfscripts "$jar"`
 
