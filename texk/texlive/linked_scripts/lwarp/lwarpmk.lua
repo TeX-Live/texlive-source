@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2020 Brian Dunn
 
-printversion = "v0.80"
+printversion = "v0.81"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -228,7 +228,9 @@ if sourcename=="lwarp" then
     print ("lwarpmk: ===")
     print ("lwarpmk: lwarp.sty has recently been recompiled in this directory,")
     print ("lwarpmk: and \"lwarpmk.conf\" is no longer set for your own project.")
-    print ("lwarpmk: Recompile your own project using pdf/lua/xelatex <projectname>.")
+    print ("lwarpmk:   (Perhaps you are not in your project's directory?)")
+    print ("lwarpmk: In your project directory, recompile your project")
+    print ("lwarpmk: using pdf/lua/xelatex <projectname>.")
     print ("lwarpmk: After a recompile, \"lwarpmk.conf\" will be set for your project,")
     print ("lwarpmk: and you may again use lwarpmk.")
     print ("lwarpmk: ===")
