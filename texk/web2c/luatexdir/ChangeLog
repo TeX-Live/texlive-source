@@ -1,3 +1,11 @@
+2020-03-06  Karl Berry  <karl@tug.org>
+
+	* am/luatex.am (texlua[jit][c]) [LUA[JIT]HBTEX && !LUA[JIT]TEX]:
+	keep these as links to base lua[jit]tex, not overwriting
+	with links to luahb[jit]tex, unless the base luatex is not installed.
+	https://tug.org/pipermail/tex-live/2020-March/044948.html
+	(and preceding)
+
 2020-02-12  Luigi Scarso <luigi.scarso@gmail.com>
     * restore state for \input delimited with {}
 

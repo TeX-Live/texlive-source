@@ -229,7 +229,8 @@ TESTS = tangle.test $(am__EXEEXT_45) ctiedir/ctie.test \
 @LUAHBTEX_TRUE@@WIN32_TRUE@am__append_90 = call_luahbtex
 @LUAHBTEX_TRUE@@WIN32_TRUE@am__append_91 = install-luahbtex-links
 @LUAHBTEX_TRUE@@WIN32_TRUE@am__append_92 = uninstall-luahbtex-links
-@LUAHBTEX_TRUE@@WIN32_FALSE@am__append_93 = luahbtex$(EXEEXT):texlua luahbtex$(EXEEXT):texluac
+# keep texlua[c] as links to luatex unless luatex is not installed.
+@LUAHBTEX_TRUE@@LUATEX_FALSE@@WIN32_FALSE@am__append_93 = luahbtex$(EXEEXT):texlua luahbtex$(EXEEXT):texluac
 @LUAJITTEX_TRUE@am__append_94 = luajittex
 @LUAJITTEX_TRUE@@WIN32_TRUE@am__append_95 = call_luajittex
 @LUAJITTEX_TRUE@@WIN32_TRUE@am__append_96 = install-luajittex-links
@@ -239,7 +240,8 @@ TESTS = tangle.test $(am__EXEEXT_45) ctiedir/ctie.test \
 @LUAJITHBTEX_TRUE@@WIN32_TRUE@am__append_100 = call_luajithbtex
 @LUAJITHBTEX_TRUE@@WIN32_TRUE@am__append_101 = install-luajithbtex-links
 @LUAJITHBTEX_TRUE@@WIN32_TRUE@am__append_102 = uninstall-luajithbtex-links
-@LUAJITHBTEX_TRUE@@WIN32_FALSE@am__append_103 = luajithbtex$(EXEEXT):texluajit luajithbtex$(EXEEXT):texluajitc
+# keep texluajit[c] as links to luajittex unless luajittex is not installed.
+@LUAJITHBTEX_TRUE@@LUAJITTEX_FALSE@@WIN32_FALSE@am__append_103 = luajithbtex$(EXEEXT):texluajit luajithbtex$(EXEEXT):texluajitc
 @LUATEX_TRUE@am__append_104 = $(luatex_tests)
 @LUAHBTEX_TRUE@am__append_105 = $(luahbtex_tests)
 @LUAJITTEX_TRUE@am__append_106 = $(luajittex_tests)
