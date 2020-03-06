@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 54087 2020-03-05 00:48:55Z preining $
+# $Id: tlmgr.pl 54118 2020-03-05 22:27:22Z karl $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 54087 $';
-my $datrev = '$Date: 2020-03-05 01:48:55 +0100 (Thu, 05 Mar 2020) $';
+my $svnrev = '$Revision: 54118 $';
+my $datrev = '$Date: 2020-03-05 23:27:22 +0100 (Thu, 05 Mar 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5529,6 +5529,7 @@ sub check_runfiles {
             |README.*
             |a_.*\.enc
             |cid2code\.txt
+            |context\.json
             |etex\.src
             |fithesis.*
             |u?kinsoku\.tex
@@ -5716,7 +5717,6 @@ sub check_executes {
     if (",$TeXLive::TLConfig::PartialEngineSupport," =~ /,$engine,/) {
       # luajit[hb]tex is special since it is not available on all architectures
       #   due to inherent reasons (machine code);
-      # luahbtex is special until we build it everywhere for TL'20.
       # 
       # We do not want to have error messages here, so we do the following:
       # * if tlpkg/tlpsrc/luajittex.tlpsrc is available, then load it
@@ -5728,8 +5728,6 @@ sub check_executes {
       my $pkg;
       if ($engine =~ /luajit(hb)?tex/) {
         $pkg = "luajittex";
-      } elsif ($engine eq "luahbtex") {
-        $pkg = "luahbtex";
       } elsif ($engine eq "mfluajit") {
         $pkg = "mflua";
       } else {
@@ -10011,7 +10009,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 54087 2020-03-05 00:48:55Z preining $
+$Id: tlmgr.pl 54118 2020-03-05 22:27:22Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
