@@ -1043,7 +1043,8 @@ alphabets-inc.tex : $(DOCS)
 	echo '\section{Codepage latin9}' >>$@
 	for i in $(DOCS_LATIN9); do echo "\\input{$$i}" >>$@; done
 	echo '\ienc{cp1251}' >>$@
-	echo '\fenc{T2A}' >>$@
+# zsh, dash, others make echo '\f' output a form feed. Sigh.
+	printf '\%s{T2A}\n' "fenc" >>$@
 	echo '\chapter{Cyrillic scripts}' >>$@
 	echo '\section{Codepage 1251}' >>$@
 	for i in $(DOCS_CYR_1251); do echo "\\input{$$i}" >>$@; done

@@ -1,3 +1,10 @@
+2020-03-08  Karl Berry  <karl@tug.org>
+
+	* xindy-src/make-rules/alphabets/Makefile.am (alphabets-inc.tex):
+	echo '\f' is not portable; with zsh, dash, others, it outputs
+	a form feed. Use printf instead. Report from jfbu,
+	https://tug.org/pipermail/tex-live/2020-March/044966.html
+
 2019-02-10  Karl Berry  <karl@tug.org>
 
 	* ac/withenable.ac (KPSE_ENABLE_PROG): just disable,
