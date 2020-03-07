@@ -39,7 +39,7 @@ use Cwd 'abs_path';
 use strict;
 
 (my $prg = basename($0)) =~ s/\.pl$//;
-my $version = '20200115.0';
+my $version = '20200307.0';
 
 if (win32()) {
   # conversion between internal (utf-8) and console (cp932):
@@ -574,6 +574,7 @@ sub main {
   }
   print_info(($opt_remove ? "removing" : "generating") . " snippets and cidfmap.aliases for font aliases ...\n");
   do_aliases();
+  do_cmaps();
   write_akotfps_datafile() if $opt_akotfps;
   if ($opt_texmflink && !$dry_run) {
     print_info("running mktexlsr ...\n");
@@ -727,7 +728,7 @@ sub do_aliases {
   #
   $outp .= "\n\n% Aliases\n";
   #
-  my (@jal, @kal, @tal, @sal);
+  my (@jal, @kal, @tal, @sal, @ai0al);
   #
   for my $al (sort keys %aliases) {
     my $target;
@@ -766,6 +767,8 @@ sub do_aliases {
       push @sal, "/$al /$target ;";
     } elsif ($class eq 'CNS') {
       push @tal, "/$al /$target ;";
+    } elsif ($class eq 'AI0') {
+      push @ai0al, "/$al /$target ;";
     } else {
       print STDERR "unknown class $class for $al\n";
     }
@@ -779,6 +782,7 @@ sub do_aliases {
   $outp .= "\n% Korean fonts\n" . join("\n", @kal) . "\n" if @kal;
   $outp .= "\n% Traditional Chinese fonts\n" . join("\n", @tal) . "\n" if @tal;
   $outp .= "\n% Simplified Chinese fonts\n" . join("\n", @sal) . "\n" if @sal;
+  $outp .= "\n% Adobe-Identity-0 fonts\n" . join("\n", @ai0al) . "\n" if @ai0al;
   #
   return if $dry_run;
   if ($outp && !$opt_remove) {
@@ -796,6 +800,67 @@ sub do_aliases {
   if (-f "$opt_output/$cidfmap_aliases_pathpart") {
     unlink "$opt_output/$cidfmap_aliases_pathpart" if $opt_cleanup;
   }
+}
+
+sub do_cmaps {
+  # add symlinking CMaps
+  # for which we generate snippets but gs does not provide
+  my $cmapdest = "$opt_output/CMap";
+  return if $dry_run;
+  if ($opt_remove) {
+    # we remove only if both of the following conditions are met:
+    #   (1) it is a link
+    #   (2) the link target is the same as kpsewhich result
+    # otherwise it's unsafe to remove, as it may have been added
+    # by others or distributed by gs itself
+    for my $class (%encode_list) {
+      for my $enc (@{$encode_list{$class}}) {
+        if (-l "$cmapdest/$enc") {
+          my $linkt = readlink("$cmapdest/$enc");
+          if ($linkt) {
+            if ($linkt eq search_cmap($enc)) {
+              unlink("$cmapdest/$enc");
+            }
+          }
+        }
+      }
+    }
+    return;
+  }
+  # add mode
+  if (! -d "$cmapdest") {
+    print_debug("Creating directory $cmapdest ...\n");
+    make_dir("$cmapdest", "cannot create CMap directory");
+  }
+  for my $class (%encode_list) {
+    if ($class =~ m/^AI0-(.*)$/) {
+      # skip AI0 font-specific CMap when the real font is unavailable
+      next if (!$fontdb{$1}{'available'});
+    }
+    for my $enc (@{$encode_list{$class}}) {
+      if (! -f "$cmapdest/$enc") {
+        print_debug("CMap $enc is not found in gs resource directory\n");
+        my $dest = search_cmap($enc);
+        if ($dest) {
+          print_debug("Symlinking CMap $dest ...\n");
+          link_font($dest, "$cmapdest", $enc);
+        } else {
+          print_debug("CMap $enc is not found by kpsewhich\n");
+        }
+      }
+    }
+  }
+}
+
+my %cmap_cache;
+
+sub search_cmap {
+  my ($cmap) = @_;
+  # search CMap with kpsewhich and cache
+  if (! exists $cmap_cache{$cmap}) {
+    chomp($cmap_cache{$cmap} = `kpsewhich -format=cmap $cmap`);
+  }
+  return $cmap_cache{$cmap};
 }
 
 sub update_master_cidfmap {
@@ -899,6 +964,9 @@ sub generate_cidfmap_entry {
     $s .= "1) 5]";
   } elsif ($c eq "Korea") {
     $s .= "1) 2]";
+  } elsif ($c eq "AI0") {
+    print_warning("cannot use class AI0 for non-OTF $n, skipping.\n");
+    return '';
   } else {
     print_warning("unknown class $c for $n, skipping.\n");
     return '';
@@ -913,6 +981,9 @@ sub generate_font_snippet {
   if ($opt_akotfps) {
     add_akotfps_data($n);
     return;
+  }
+  if ($c eq "AI0") {
+    $c = "AI0-$n";
   }
   for my $enc (@{$encode_list{$c}}) {
     if ($opt_remove) {
@@ -1205,7 +1276,7 @@ sub info_found_fonts {
 # dump aliases
 sub info_list_aliases {
   print "List of ", ($opt_listallaliases ? "all" : "available"), " aliases and their options (in decreasing priority):\n" unless $opt_machine;
-  my (@jal, @kal, @tal, @sal);
+  my (@jal, @kal, @tal, @sal, @ai0al);
   for my $al (sort keys %aliases) {
     my $cl;
     my @ks = sort { $a <=> $b} keys(%{$aliases{$al}});
@@ -1237,6 +1308,8 @@ sub info_list_aliases {
       push @sal, $foo;
     } elsif ($cl eq 'CNS') {
       push @tal, $foo;
+    } elsif ($cl eq 'AI0') {
+      push @ai0al, $foo;
     } else {
       print STDERR "unknown class $cl for $al\n";
     }
@@ -1246,11 +1319,13 @@ sub info_list_aliases {
     print @kal if @kal;
     print @sal if @sal;
     print @tal if @tal;
+    print @ai0al if @ai0al;
   } else {
     print "Aliases for Japanese fonts:\n", @jal, "\n" if @jal;
     print "Aliases for Korean fonts:\n", @kal, "\n" if @kal;
     print "Aliases for Simplified Chinese fonts:\n", @sal, "\n" if @sal;
     print "Aliases for Traditional Chinese fonts:\n", @tal, "\n" if @tal;
+    print "Aliases for Adobe-Identity-0 fonts:\n", @ai0al, "\n" if @ai0al;
   }
 }
 
@@ -1429,11 +1504,13 @@ sub check_for_files {
       my $actualpsname;
       my $bname;
       for my $b (sort keys %{$bntofn{$realfile}}) {
-        $fontdb{$k}{'doublecheck'} = "debug" if $opt_strictpsname;
-        if ($fontdb{$k}{'doublecheck'} && $zrlistttc_available) {
+        if ($opt_strictpsname && !$fontdb{$k}{'doublecheck'}) {
+          $fontdb{$k}{'doublecheck'} = "debug"; # stub
+        }
+        if ($fontdb{$k}{'doublecheck'} && $fontdb{$k}{'doublecheck'} ne "false" && $zrlistttc_available) {
           print_debug("We need to test whether\n");
-          print_debug("  $b\n");
-          print_debug("is the correct one. Invoking zrlistttc ...\n");
+          print_debug("  $b:$index\n");
+          print_debug("is the correct one ($k). Invoking zrlistttc ...\n");
           chomp($actualpsname = `texlua $zrlistttc -i $index "$b"`);
           if ($?) {
             # something is wrong with the font file, or zrlistttc does not support it;
@@ -1448,7 +1525,12 @@ sub check_for_files {
           if ($actualpsname ne $k) {
             print_debug("... PSName returned by zrlistttc ($actualpsname) is\n");
             print_debug("different from our database ($k), discarding!\n");
-            print_warning("zrlistttc check failed for $b\n") if $opt_strictpsname;
+            if ($opt_strictpsname && $fontdb{$k}{'doublecheck'} eq "debug") {
+              # in our database, we've set $fontdb{$k}{'doublecheck'} to "true" intentionally
+              # when we *know* doublecheck is actually required;
+              # if the stub "debug" detects a difference, our database should contain a bug!
+              print_warning("zrlistttc check failed for $b: please report to the author!\n");
+            }
           } else {
             print_debug("... test passed.\n");
             $bname = $b;
@@ -1633,6 +1715,7 @@ sub read_each_font_database {
   my (@curdbl) = @_;
   my $fontname = "";
   my $fontclass = "";
+  my @fontcmaps = ();
   my %fontprovides = ();
   my $fontdoublecheck = "";
   my %fontfiles;
@@ -1658,12 +1741,18 @@ sub read_each_font_database {
           $fontdb{$realfontname}{'doublecheck'} = $fontdoublecheck;
           $fontdb{$realfontname}{'files'} = { %fontfiles };
           $fontdb{$realfontname}{'provides'} = { %fontprovides };
+          if ($fontclass eq "AI0") {
+            $encode_list{"AI0-$realfontname"} = [ @fontcmaps ];
+          } elsif (@fontcmaps) {
+            print_warning("CMap entry for $realfontname (Class: $fontclass) ignored!\n");
+          }
           if ($opt_debug >= 3) {
             print_dddebug("Dumping fontfiles for $realfontname: " . Data::Dumper::Dumper(\%fontfiles));
           }
           # reset to start
           $fontname = $fontclass = $psname = "";
           $fontdoublecheck = "";
+          @fontcmaps = ();
           %fontfiles = ();
           %fontprovides = ();
         } else {
@@ -1671,6 +1760,7 @@ sub read_each_font_database {
           # reset to start
           $fontname = $fontclass = $psname = "";
           $fontdoublecheck = "";
+          @fontcmaps = ();
           %fontfiles = ();
           %fontprovides = ();
         }
@@ -1709,6 +1799,7 @@ sub read_each_font_database {
     if ($l =~ m/^Name:\s*(.*)$/) { $fontname = $1; next; }
     if ($l =~ m/^PSName:\s*(.*)$/) { $psname = $1; next; }
     if ($l =~ m/^Class:\s*(.*)$/) { $fontclass = $1 ; next ; }
+    if ($l =~ m/^CMap:\s*(.*)$/) { push(@fontcmaps, $1); next ; }
     if ($l =~ m/^Provides\((\d+)\):\s*(.*)$/) { $fontprovides{$2} = $1; next; }
     if ($l =~ m/^Doublecheck:\s*(.*)$/) { $fontdoublecheck = $1 ; next ; }
     if ($l =~ m/^Casefold:\s*(.*)$/) { $fontdoublecheck = $1 ; next ; } # no longer used
@@ -1820,7 +1911,13 @@ sub dump_font_database {
   for my $k (sort keys %fontdb) {
     print FOO "Name: $fontdb{$k}{'origname'}\n";
     print FOO "PSName: $k\n" if ($fontdb{$k}{'origname'} ne $k);
-    print FOO "Class: $fontdb{$k}{'class'}\n";
+    my $class = $fontdb{$k}{'class'};
+    print FOO "Class: $class\n";
+    if ($class eq "AI0") {
+      for my $cmap (@{$encode_list{"AI0-$k"}}) {
+        print FOO "CMap: $cmap\n";
+      }
+    }
     for my $p (sort keys %{$fontdb{$k}{'provides'}}) {
       print FOO "Provides($fontdb{$k}{'provides'}{$p}): $p\n";
     }
@@ -2148,6 +2245,7 @@ alias if necessary.
 For the Japanese fonts:
     Morisawa Pr6N, Morisawa, Hiragino ProN, Hiragino,
     Kozuka Pr6N, Kozuka ProVI, Kozuka Pro, Kozuka Std,
+    HaranoAji,
     Yu OS X, Yu Win, MS,
     Moga-Mobo-ex, Moga-Mobo, IPAex, IPA, Ume
 
@@ -2328,7 +2426,7 @@ INCLUDE cjkgs-ume.dat
 # Sazanami (free)
 INCLUDE cjkgs-sazanami.dat
 
-# Harano Aji Fonts (free)
+# Harano Aji Fonts (free) -- Provides J70, J71
 INCLUDE cjkgs-haranoaji.dat
 
 # Osaka (Apple)
@@ -2536,8 +2634,18 @@ Name: GungsuhChe
 Class: Korea
 TTCname(20): batang.ttc(3)
 
+# for Windows 10
+# and Office for Mac 2016 (at least Ver.16.11.0, 2018-03)
+Name: MalgunGothic
+Class: Korea
+Doublecheck: true
+TTFname: malgun.ttf
+
+# for Windows 7
+# and Office for Mac 2016 (Ver.15.32.0, 2017-03)
 Name: MalgunGothicRegular
 Class: Korea
+Doublecheck: true
 TTFname: malgun.ttf
 
 Name: MalgunGothicBold
