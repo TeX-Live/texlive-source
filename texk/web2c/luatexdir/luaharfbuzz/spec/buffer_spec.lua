@@ -5,6 +5,15 @@ describe("harfbuzz.Buffer", function()
     harfbuzz.Buffer.new()
   end)
 
+  it("can add a single codepoints with explicit cluster value", function()
+    local b = harfbuzz.Buffer.new()
+    b:add(0x06CC, 42)
+    local glyphs = b:get_glyphs()
+    assert.are_equal(#glyphs, 1)
+    assert.are_equal(glyphs[1].cluster, 42)
+    assert.are_equal(glyphs[1].codepoint, 0x06CC)
+  end)
+
   it("can add a UTF8 string", function()
     local b = harfbuzz.Buffer.new()
     local s = "Some String"

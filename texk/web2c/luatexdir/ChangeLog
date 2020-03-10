@@ -1,14 +1,28 @@
+2020-03-09 Luigi Scarso <luigi.scarso@gmail.com>
+    * texluahb / texluahbjit for luahbtex / luajithbtex
+
+2020-03-09 Luigi Scarso <luigi.scarso@gmail.com>
+    * --shell-restricted now forbids loading of dso (dll/so object)
+
+2020-03-09 Luigi Scarso <luigi.scarso@gmail.com>
+    * append_vlist : node|nil [prevdepth] (fix + extension/warning) (HH)
+
+2020-03-01 Luigi Scarso <luigi.scarso@gmail.com>
+    * fixed lua stack overflow in run_put_next (M. Kruger)
+
+2020-02-29 Luigi Scarso <luigi.scarso@gmail.com>
+    * luahbtex: add (single codepoint) "add" method to buffer (M.Kruger)
+
 2020-03-06  Karl Berry  <karl@tug.org>
 
-	* am/luatex.am (texlua[jit][c]) [LUA[JIT]HBTEX && !LUA[JIT]TEX]:
-	keep these as links to base lua[jit]tex, not overwriting
-	with links to luahb[jit]tex, unless the base luatex is not installed.
-	https://tug.org/pipermail/tex-live/2020-March/044948.html
-	(and preceding)
+    * am/luatex.am (texlua[jit][c]) [LUA[JIT]HBTEX && !LUA[JIT]TEX]:
+    keep these as links to base lua[jit]tex, not overwriting
+    with links to luahb[jit]tex, unless the base luatex is not installed.
+    https://tug.org/pipermail/tex-live/2020-March/044948.html
+    (and preceding)
 
 2020-02-12  Luigi Scarso <luigi.scarso@gmail.com>
     * restore state for \input delimited with {}
-
 
 2020-02-11  Luigi Scarso <luigi.scarso@gmail.com>
     * patches for -fno-common (thanks to D. Seifert of Gentoo team)
