@@ -1,5 +1,9 @@
 AUTOSP
 
+2020-02-09
+
+  correct \Cpause handling at \alaligne when \TransformNotes is used 
+
 2019-12-22
 
   correct \setsize note scaling using instr_numsize in generate_notes

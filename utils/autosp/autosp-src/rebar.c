@@ -264,7 +264,7 @@ main (int argc, char *argv[])
       else
         append (outfilename, &outfilename_n, ".aspc", sizeof (outfilename));
     }
-    outfile = fopen (outfilename, "wb");
+    outfile = fopen (outfilename, "w");
     if (outfile == NULL)
     { fprintf (stderr,"Can't open %s\n", outfilename);
       exit (EXIT_FAILURE);

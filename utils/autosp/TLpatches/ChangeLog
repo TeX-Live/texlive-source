@@ -1,3 +1,8 @@
+2020-03-11  Karl Berry  <karl@tug.org>
+
+	Import autosp-2020-03-11.
+	* patch-01-binary-write: Remove, now upstream
+
 2020-02-07  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import autosp-2020-02-06.

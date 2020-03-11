@@ -1,4 +1,4 @@
-char version[12] = "2020-02-06";
+char version[12] = "2020-03-11";
 
 /*  Copyright (C) 2014-20 R. D. Tennent School of Computing,
  *  Queen's University, rdt@cs.queensu.ca
@@ -221,7 +221,7 @@ int main (int argc, char *argv[])
   }
   else
   {
-    outfile = fopen (outfilename, "wb");
+    outfile = fopen (outfilename, "w");
     if (outfile == NULL)
     { printf ("Can't open %s\n", outfilename);
       exit (EXIT_FAILURE);
@@ -239,7 +239,7 @@ int main (int argc, char *argv[])
   *logfilename_n = '\0';
   append (logfilename, &logfilename_n, "alog", sizeof (logfilename));
   if (debug)  
-  { logfile = fopen (logfilename, "wb");
+  { logfile = fopen (logfilename, "w");
     if (logfile == NULL)
     { printf ("Can't open %s\n", logfilename);
       exit (EXIT_FAILURE);
