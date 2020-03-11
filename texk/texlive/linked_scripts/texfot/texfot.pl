@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.38 2019/06/30 22:59:39 karl Exp $
+# $Id: texfot,v 1.40 2020/03/10 22:35:15 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -8,7 +8,7 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.38 2019/06/30 22:59:39 karl Exp $';
+my $ident = '$Id: texfot,v 1.40 2020/03/10 22:35:15 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -83,7 +83,7 @@ sub main {
   
   # It's not ideal to read all of stdout and then all of stderr; it would
   # be better to intermix them in the original order of child output.
-  # this is simpler than other ways of avoiding possible deadlock (such
+  # But this is simpler than other ways of avoiding possible deadlock (such
   # as select, sysread, etc.).
   &debug ("processing stdout from child");
   &process_output (\*TEXOUT, "");
@@ -104,9 +104,10 @@ sub main {
 
 
 
-# Read filehandle $FH; print lines that we want to stdout, prefixed by
-# $PREFIX.  If $PREFIX is null, omit lines by default; if $PREFIX is
-# non-null, print lines by default.
+# Read filehandle $FH, printing lines that we want to stdout,
+# prefixed by $PREFIX.
+# If $PREFIX is null (happens for processing stdout), omit lines by default;
+# if $PREFIX is non-null (processing stderr), print lines by default.
 # 
 sub process_output {
   my ($fh,$prefix) = @_;
@@ -118,7 +119,8 @@ sub process_output {
 
     warn "\n" if $opt_debug; # get blank line without texfot: prefix
     &debug ("looking at line: $_");
-    &debug ("checking if have print_next (is $print_next)\n");
+    
+    &debug ("checking if have print_next (= $print_next)\n");
     if ($print_next) {
       &debug ("  printing next ($print_next)\n");
       print $prefix;
@@ -132,8 +134,9 @@ sub process_output {
       LaTeX\ Warning:\ You\ have\ requested\ package
      |LaTeX\ Font\ Warning:\ Some\ font\ shapes
      |LaTeX\ Font\ Warning:\ Size\ substitutions
-     |Package\ caption\ Warning:\ Unsupported\ document\ class
+     |Package\ caption\ Warning:\ Un(supported|known)\ document\ class
      |Package\ fixltx2e\ Warning:\ fixltx2e\ is\ not\ required
+     |Package\ layouts\ Warning:\ Layout\ scale
      |Package\ frenchb?\.ldf\ Warning:\ (Figures|The\ definition)
      |\*\*\*\ Reloading\ Xunicode\ for\ encoding  # spurious ***
      |This\ is\ `?(epsf\.tex|.*\.sty|TAP) # so what
