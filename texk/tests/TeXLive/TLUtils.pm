@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 53343 $';
+my $svnrev = '$Revision: 54143 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -273,16 +273,16 @@ sub platform {
 
 =item C<platform_name($canonical_host)>
 
-Convert a canonical host names as returned by C<config.guess> into
-TeX Live platform names.
+Convert ORIG_PLATFORM, a canonical host name as returned by
+C<config.guess>, into a TeX Live platform name.
 
 CPU type is determined by a regexp, and any C</^i.86/> name is replaced
 by C<i386>.
 
-For OS we need a list because what's returned is not likely to match our
-historical names, e.g., C<config.guess> returns C<linux-gnu> but we need
-C<linux>.  This list might/should contain OSs which are not currently
-supported.
+For the OS value we need a list because what's returned is not likely to
+match our historical names, e.g., C<config.guess> returns C<linux-gnu>
+but we need C<linux>. This list contains old OSs which are not currently
+supported, just in case.
 
 If a particular platform is not found in this list we use the regexp
 C</.*-(.*$)/> as a last resort and hope it provides something useful.
@@ -290,12 +290,15 @@ C</.*-(.*$)/> as a last resort and hope it provides something useful.
 =cut
 
 sub platform_name {
-  my ($guessed_platform) = @_;
+  my ($orig_platform) = @_;
+  my $guessed_platform = $orig_platform;
 
+  # try to parse out some bsd variants that use amd64.
   $guessed_platform =~ s/^x86_64-(.*-k?)(free|net)bsd/amd64-$1$2bsd/;
   my $CPU; # CPU type as reported by config.guess.
   my $OS;  # O/S type as reported by config.guess.
   ($CPU = $guessed_platform) =~ s/(.*?)-.*/$1/;
+
   $CPU =~ s/^alpha(.*)/alpha/;   # alphaev whatever
   $CPU =~ s/mips64el/mipsel/;    # don't distinguish mips64 and 32 el
   $CPU =~ s/powerpc64/powerpc/;  # don't distinguish ppc64
@@ -307,7 +310,7 @@ sub platform_name {
     $CPU = $guessed_platform =~ /hf$/ ? "armhf" : "armel";
   }
 
-  my @OSs = qw(aix cygwin darwin freebsd hpux irix
+  my @OSs = qw(aix cygwin darwin dragonfly freebsd hpux irix
                kfreebsd linux netbsd openbsd solaris);
   for my $os (@OSs) {
     # Match word boundary at the beginning of the os name so that
@@ -316,7 +319,12 @@ sub platform_name {
     #   solaris2 is matched.
     $OS = $os if $guessed_platform =~ /\b$os/;
   }
-
+  
+  if (! $OS) {
+    warn "$0: could not guess OS from config.guess string: $orig_platform";
+    $OS = "unknownOS";
+  }
+  
   if ($OS eq "linux") {
     # deal with the special case of musl based distributions
     # config.guess returns
@@ -336,7 +344,7 @@ sub platform_name {
     # We don't use uname numbers here.)
     #
     # this changes each year, per above:
-    my $mactex_darwin = 12;  # lowest minor rev supported by x86_64-darwin.
+    my $mactex_darwin = 13;  # lowest minor rev supported by x86_64-darwin.
     #
     # Most robust approach is apparently to check sw_vers (os version,
     # returns "10.x" values), and sysctl (processor hardware).
@@ -345,7 +353,7 @@ sub platform_name {
     if ($os_major != 10) {
       warn "$0: only MacOSX is supported, not $OS $os_major.$os_minor "
            . " (from sw_vers -productVersion: $sw_vers)\n";
-      return "unknown-unknown";
+      return "unknownmac-unknownmac";
     }
     if ($os_minor >= $mactex_darwin) {
       ; # current version, default is ok (x86_64-darwin).
@@ -412,8 +420,9 @@ sub platform_desc {
     'universal-darwin' => 'MacOSX universal binaries',
     'win32'            => 'Windows',
     'x86_64-cygwin'    => 'Cygwin on x86_64',
-    'x86_64-darwin'       => 'MacOSX current (10.12-) on x86_64',
+    'x86_64-darwin'       => 'MacOSX current (10.13-) on x86_64',
     'x86_64-darwinlegacy' => 'MacOSX legacy (10.6-) on x86_64',
+    'x86_64-dragonfly' => 'DragonFlyBSD on x86_64',
     'x86_64-linux'     => 'GNU/Linux on x86_64',
     'x86_64-linuxmusl' => 'GNU/Linux on x86_64 with musl',
     'x86_64-solaris'   => 'Solaris on x86_64',
@@ -2789,30 +2798,41 @@ sub download_file {
   }
 }
 
+
 sub _download_file_lwp {
   my ($url, $dest) = @_;
-  if (defined($::tldownload_server) && $::tldownload_server->enabled) {
-    debug("persistent connection set up, trying to get $url (for $dest)\n");
-    my $ret = $::tldownload_server->get_file($url, $dest);
-    if ($ret) {
-      ddebug("downloading file via persistent connection succeeded\n");
-      return $ret;
-    } else {
-      debug("TLUtils::download_file: persistent connection ok,"
-             . " but download failed: $url\n");
-      debug("TLUtils::download_file: retrying with wget.\n");
+  if (!defined($::tldownload_server)) {
+    ddebug("::tldownload_server not defined\n");
+    return(0);
+  }
+  if (!$::tldownload_server->enabled) {
+    # try to reinitialize a disabled connection
+    # disabling happens after 6 failed download trials
+    # we just re-initialize the connection
+    if (!setup_persistent_downloads()) {
+      # setup failed, give up
+      debug("reinitialization of LWP download failed\n");
+      return(0);
     }
+    # we don't need to check for ->enabled, because
+    # setup_persistent_downloads calls TLDownload->new()
+    # which, if it succeeds, automatically set enabled to 1
+  }
+  # we are still here, so try to download
+  debug("persistent connection set up, trying to get $url (for $dest)\n");
+  my $ret = $::tldownload_server->get_file($url, $dest);
+  if ($ret) {
+    ddebug("downloading file via persistent connection succeeded\n");
+    return $ret;
   } else {
-    if (!defined($::tldownload_server)) {
-      ddebug("::tldownload_server not defined\n");
-    } else {
-      ddebug("::tldownload_server->enabled is not set\n");
-    }
-    debug("persistent connection not set up\n");
+    debug("TLUtils::download_file: persistent connection ok,"
+           . " but download failed: $url\n");
+    debug("TLUtils::download_file: retrying with other downloaders.\n");
   }
   # if we are still here, download with LWP didn't succeed.
   return(0);
 }
+
 
 sub _download_file_program {
   my ($url, $dest, $type) = @_;
@@ -3418,9 +3438,11 @@ strings.  The message will be omitted unless C<-v -v -v> was specified.
 If the log file (see L<process_logging_options>) is defined, it also
 writes there.
 
-This third level debugging message reports messages about processing
-each line of any tlpdb files read, in addition to the first and second
-levels.
+In addition to the first and second levels, this third level debugging
+message reports messages about processing each line of any tlpdb files
+read, and messages about files tested or matched against tlpsrc
+patterns. This output is extremely voluminous, so unless you're
+debugging those parts of the code, it just gets in the way.
 
 =cut
 
@@ -3839,7 +3861,16 @@ false.
 sub setup_persistent_downloads {
   if ($TeXLive::TLDownload::net_lib_avail) {
     ddebug("setup_persistent_downloads has net_lib_avail set\n");
-    $::tldownload_server = TeXLive::TLDownload->new;
+    if ($::tldownload_server) {
+      if ($::tldownload_server->initcount() > $TeXLive::TLConfig::MaxLWPReinitCount) {
+        debug("stop retrying to initialize LWP after 10 failures\n");
+        return 0;
+      } else {
+        $::tldownload_server->reinit();
+      }
+    } else {
+      $::tldownload_server = TeXLive::TLDownload->new;
+    }
     if (!defined($::tldownload_server)) {
       ddebug("TLUtils:setup_persistent_downloads: failed to get ::tldownload_server\n");
     } else {

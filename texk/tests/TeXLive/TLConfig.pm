@@ -1,11 +1,11 @@
 # TeXLive::TLConfig.pm - module exporting configuration values
-# Copyright 2007-2019 Norbert Preining
+# Copyright 2007-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 53076 $';
+my $svnrev = '$Revision: 54123 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -45,6 +45,8 @@ BEGIN {
     %TLPDBSettings
     %TLPDBConfigs
     $NetworkTimeout
+    $MaxLWPErrors
+    $MaxLWPReinitCount
     $PartialEngineSupport
     $F_OK $F_WARNING $F_ERROR $F_NOPOSTACTION
     $ChecksumLength
@@ -56,11 +58,11 @@ BEGIN {
 
 # the year of our release, will be used in the location of the
 # network packages, and in menu names, and other places.
-$ReleaseYear = 2019;
+$ReleaseYear = 2020;
 
 # users can upgrade from this year to the current year; might be the
 # same as the release year, or any number of releases earlier.
-# Generally not tested.
+# Generally not tested, but should be.
 $MinRelease = 2016;
 
 # Meta Categories do not ship files, but only call for other packages.
@@ -92,6 +94,10 @@ our $BlockSize = 4096;
 
 # timeout for network connections (wget, LWP) in seconds
 our $NetworkTimeout = 30;
+# number of errors during an LWP session until it is marked as disabled
+our $MaxLWPErrors = 5;
+# max number of times we reenable LWP after it was disabled
+our $MaxLWPReinitCount = 10;
 
 our $Archive = "archive";
 our $TeXLiveServerURL = "http://mirror.ctan.org";
@@ -189,7 +195,7 @@ our %TLPDBOptions = (
       "Directory for backups" ],
   "create_formats" =>
     [ "b", 1, "formats",  
-      "Create formats on installation" ],
+      "Generate formats at installation or update" ],
   "desktop_integration" =>
     [ "b", 1, "desktop_integration",
       "Create Start menu shortcuts (w32)" ],
@@ -235,7 +241,7 @@ our %TLPDBSettings = (
 our $WindowsMainMenuName = "TeX Live $ReleaseYear";
 
 # Comma-separated list of engines which do not exist on all platforms.
-our $PartialEngineSupport = "luahbtex,luajittex,mfluajit";
+our $PartialEngineSupport = "luajithbtex,luajittex,mfluajit";
 
 # Flags for error handling across the scripts and modules
 # all fine
