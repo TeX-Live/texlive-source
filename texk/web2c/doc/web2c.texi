@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2020
-@set month-year January 2020
+@set month-year March 2020
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -63,7 +63,7 @@ This file documents the installation and use of the programs in Web2c,
 an implementation of Donald Knuth's TeX system.
 
 Copyright @copyright{} 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007, 2008, 2009 Karl Berry & Olaf Weber.
+2004, 2005, 2007, 2008, 2009, 2010-2020 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -88,7 +88,6 @@ except that this permission notice may be stated in a translation
 
 
 @titlepage
-
 @title Web2c
 @subtitle for version @value{version}
 @subtitle @value{month-year}
@@ -525,7 +524,7 @@ control some array sizes and other features are described in
 * Initial and virgin::          Making memory dumps vs. production runs.
 * Memory dumps::                .fmt/.base files for fast startup.
 * Editor invocation::           The `e' response at errors.
-* \input filenames::            ~ and $ expansion in TeX/MF/MP.
+* \input filenames::            Filename delimiters and Kpathsea expansion.
 @end menu
 
 
@@ -808,9 +807,42 @@ Metafont and MetaPost, the statement terminator @samp{;} also works.
 @code{\input} that allow different notation; here we are concerned only
 with the primitive operation.)  
 
-As of Web2c version 7.5.3, double-quote characters can be used to
-include spaces or other special cases.  In typical use, the @samp{"}
-characters surround the entire filename:
+As (allowed) extensions to standard @TeX{}, Web2c also supports
+specifying the filename in double quotes (@code{"some name"}) and in
+braces (@code{@{"some name"@}}), which is convenient for filenames
+containing spaces or other special characters, as described in the
+sections below.
+
+In all cases, space tokens are ignored after the filename is read.
+
+@cindex @code{"} character, ignored in filenames
+@cindex double quote character, ignored in filenames
+Also, double quote (@code{"}) characters are ignored within the
+filename; there is no way to read files whose names contain a @code{"}.
+
+@cindex portable filenames
+However, for maximal portability of your document across systems, use
+only the characters @samp{a}--@samp{z}, @samp{0}--@samp{9}, and
+@samp{.}.  Do not use anything but simple filenames, since directory
+separators vary among systems; instead, add the necessary directories
+to the appropriate search path.
+
+@menu
+* Quotes: \input quoted filename.   \input "some name"
+* Braces: \input braced filename.   \input @{some name@}
+* Caveats: \input filename caveats. Tokenization, nulls, Kpathsea expansion.
+@end menu
+
+
+@node \input quoted filename
+@subsubsection @code{\input} quoted filename: @code{\input "some name"}
+
+@cindex @code{\input} quoted filename
+@cindex quoted filename for @code{\input}
+
+As of Web2c version 7.5.3 (2004), double-quote characters can be used
+to include spaces or other special characters.  In typical use, the
+@samp{"} characters surround the entire filename:
 @example
 \input "filename with spaces"
 @end example
@@ -821,16 +853,57 @@ can enclose any characters, as in:
 \input filename" "with" "spaces
 @end example
 
-One more point.  In @LaTeX{}, the quotes are needed inside the braces, thus
+One more point.  In @LaTeX{}, the quotes are needed inside the braces
+of its @code{\input} macro, thus:
 @example
 \input@{a b@}    % fails
 \input@{"a b"@}  % ok
 @end example
 
-This quoting mechanism comes into play @emph{after} @TeX{} has
-tokenized and expanded the input.  So, multiple spaces and tabs may be
-seen as a single space, active characters such as @samp{~} are
-expanded first, and so on.  (See below.)
+There is no way to quote the quote character.
+
+
+@node \input braced filename
+@subsubsection @code{\input} braced filename: @code{\input@{some name@}}
+
+@cindex @code{\input} braced (grouped) filename
+@cindex braced filename for @code{\input}
+@cindex group-delimited filename for @code{\input}
+
+As of Web2c 2020, @code{\input} filenames in @TeX{} engines (this does
+not apply in Metafont and MetaPost) can also be specified within a
+@TeX{} group, typically curly braces. For example:
+@example
+\input@{filename with spaces@}
+@end example
+
+As always with @TeX{}, the brace characters are not hardwired; what
+counts is the category code: the first token after the @code{\input}
+must be of catcode@tie{}1 (begin group), and it is matched with the
+next character of catcode@tie{}2 (end group).
+
+Within the group-delimited filename, braces are treated as normal
+characters.
+
+As with all forms of filenames, following spaces are ignored (after
+the end group), and double quote (@code{"}) characters are ignored
+within the filename.
+
+
+@node \input filename caveats
+@subsubsection @code{\input} filename caveats
+
+@cindex @code{\input} filename caveats
+@cindex caveats for @code{\input} filenames
+@cindex tokenization, and @code{\input} filenames
+@cindex expansion, and @code{\input} filenames
+@cindex multiple spaces, and @code{\input} filenames
+@cindex tabs, and @code{\input} filenames
+The quoting mechanisms just described come into play @emph{after}
+@TeX{} has tokenized and expanded the input.  So, multiple spaces and
+tabs will generally be seen as a single space, active characters such
+as @samp{~} are expanded first (generally causing an error), and so
+on.  More examples below.
 
 @cindex NUL, not allowed in filenames
 @cindex eight-bit characters in filenames
@@ -839,42 +912,29 @@ On the other hand, various C library routines and Unix itself use the null
 byte (character code zero, ASCII NUL) to terminate strings.  So
 filenames in Web2c cannot contain nulls, even though @TeX{} itself does
 not treat NUL specially.
-In addition, some older Unix variants do not allow eight-bit characters
-(codes 128--255) in filenames.
-
-@cindex portable filenames
-For maximal portability of your document across systems, use only the
-characters @samp{a}--@samp{z}, @samp{0}--@samp{9}, and @samp{.}, and
-restrict your filenames to at most eight characters (not including the
-extension), and at most a three-character extension.  Do not use
-anything but simple filenames, since directory separators vary among
-systems; instead, add the necessary directories to the appropriate
-search path.
 
 @kindex ~ @r{expansion in filenames}
 @kindex $ @r{expansion in filenames}
 Finally, the present Web2c implementation does @samp{~} and @samp{$}
-expansion on @var{name}, unlike Knuth's original implementation and
-older versions of Web2c.  Thus:
+expansion on @var{name}, unlike Knuth's original implementation.
+Thus:
 @example
 \input ~jsmith/$foo.bar
 @end example
-will dereference the environment variable or Kpathsea config file value
-@samp{foo} and read that file extended with @samp{.bar} in user
-@samp{jsmith}'s home directory.  You can also use braces, as in
-@samp{$@{foo@}bar}, if you want to follow the variable name with a letter,
-numeral, or @samp{_}.
+will dereference the environment variable or Kpathsea config file
+value @samp{foo} and read that file, extended with @samp{.bar}, in
+user @samp{jsmith}'s home directory.  You can also use braces in the
+variable expansion, as in @samp{$@{foo@}bar}, if you want to follow
+the variable name with a letter, numeral, or @samp{_}.
 
 (So another way to get a program to read a filename containing
 whitespace is to define an environment variable and dereference it.)
 
-@findex \string
-In all the common @TeX{} formats (plain @TeX{}, @LaTeX{}, AMS@TeX{}),
-the characters @samp{~} and @samp{$} have special category codes, so to
-actually use these in a document you have to change their catcodes or
-use @code{\string}.  (The result is unportable anyway, see the
-suggestions above.)  The place where they are most likely to be useful
-is when typing interactively.
+@findex \string@r{, and @code{\input filenames}}
+In all the common @TeX{} formats (plain @TeX{}, @LaTeX{}, Con@TeX{}t,
+AMS@TeX{}, @dots{}), the characters @samp{~} and @samp{$} have special
+category codes, so to actually use these in a document you have to
+change their catcodes or use @code{\string}.
 
 
 @node TeX

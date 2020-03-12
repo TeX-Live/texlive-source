@@ -1,3 +1,9 @@
+2020-03-12  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi (\input quoted filename),
+	(\input braced filename),
+	(\input filename caveats): new subnodes of "\input filenames".
+
 2020-02-09  Phelype Oleinik  <phe.h.o1@gmail.com>
 
 	* tex.ch (29.256, scan_file_name): new procedure to implement
