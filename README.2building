@@ -7,28 +7,28 @@
 
 The top-level 'Build' script is intended to simplify building the
 binaries distributed with TeX Live itself--we call this the "native" TL
-build.  It configures and makes everything in a subdirectory of the main
-build tree (default 'Work/'), installs everything in another
-subdirectory (default 'inst/'), and finally runs 'make check'.  The
-exact directory and command names can be specified via environment
-variables and a few leading options.  All remaining arguments
-(assignments or options) are passed to the 'configure' script.  Please
-take a look at the './Build' source file itself for more information; it
+build.  It runs 'configure && make world', which builds everything in a
+subdirectory of the main source tree (default 'Work/'), installs
+everything in another subdirectory (default 'inst/'), and finally runs
+'make check'.  The exact directory and command names can be specified
+via environment variables and a few leading options.  All remaining
+arguments (assignments or options) are passed to the 'configure' script.
+Please take a look at the './Build' source file for more information; it
 is a straightforward shell script.
 
    An alternative, and the one we will mainly discuss here, is to run
-'configure' and 'make' oneself in a suitable empty subdirectory.
-Building in the source directory itself is not supported (sorry).
+'configure' and 'make' in a suitable empty subdirectory.  Building in
+the source directory itself is not supported (sorry).
 
 4.1 Build iteration
 ===================
 
 Running the top-level 'configure' script configures the top level and
 the subdirectories 'libs', 'utils', and 'texk'.  Running 'make' at the
-top-level first iterates over all TeX-specific libraries, and then runs
-'make' in 'libs', 'utils', and 'texk' to iterate over all generic
-libraries, utility programs, and TeX-specific programs.  These
-iterations consist of two steps:
+top level first iterates over the TeX-specific libraries, and then runs
+'make' in 'libs', 'utils', and 'texk' to iterate over the generic
+libraries, utility programs, and TeX-specific programs, respectively.
+These iterations consist of two steps:
 
   1. For each library or program module not yet configured, run
      'configure', adding the configure option '--disable-build' if the
@@ -39,28 +39,29 @@ iterations consist of two steps:
      'check' to run tests, 'install', etc.
 
    Running the top-level 'make' a second time iterates again over all
-the library and program modules, but finds (should find) nothing to be
-done unless some source files have been modified.
+the library and program modules, and finds (should find) nothing to be
+done.
 
 4.2 Build problems
 ==================
 
-If configuring or building a module fails, you should first find and fix
-the problem, then perhaps remove the subdirectory for that module from
-the build tree, and finally rerun the top level 'make' (or 'Build' with
-'--no-clean' as its first argument).
+If configuring or building a module fails, you should first try to find
+and fix the problem.  Failing that, a possible workaround is to remove
+the subdirectory for that module from the build tree (so 'configure'
+won't try to run there, and finally rerun the top level 'make' (or
+'./Build' '--no-clean').
 
 4.3 Build in parallel
 =====================
 
 The TL build system carefully formulates dependencies as well as 'make'
-rules when a tool (such as 'tangle', 'ctangle', or 'convert') creates
+rules when a tool (such as 'tangle', 'ctangle', and 'convert') creates
 several output files.  This allows for parallel builds ('make -j N' with
 N>1 or even 'make -j') that can considerably speed up the TL build.
 
-   Incidentally, a noticeable speed-up can also be (independently)
-gained by using a configure cache file, i.e., with the option '-C'
-(recommended).
+   Incidentally, a noticeable speed-up can be independently gained by
+using a configure cache file, i.e., specifying the 'configure' option
+'-C' (recommended).
 
 4.4 Build distribution
 ======================
@@ -72,7 +73,8 @@ all of TL.
 
    This is useful for checking consistency of the source tree and
 Makefiles, but the result is not a complete or even usable TeX system,
-since all the support files are lacking; *note Installing::.
+since all the support files are lacking; *note Installing::.  We do not
+actually distribute any such tarball, and have no plans to do so.
 
 4.5 Build one package
 =====================
@@ -81,23 +83,16 @@ To build one package, the basic idea is to use the 'configure' option
 '--disable-all-pkgs' (*note --disable-all-pkgs::).  Then all program and
 library modules are configured but none are made.  However, the
 'Makefile's still contain all build rules and dependencies and can be
-invoked to build an individual program or library and causes to first
-build any required libraries.
+invoked to build an individual program or library, first building any
+required libraries.
 
-   This "build-on-demand" procedure is used, e.g., in the upstream
-LuaTeX repository to build LuaTeX, essentially from a subset of the
-complete TeX Live tree.  Similarly, when, e.g., building the original
-e-TeX has been disabled (as it is by default), one can run 'make etex'
-(or 'make etex.exe') in 'texk/web2c/' to build e-TeX (although there is
-no comparably simple way to install e-TeX).
-
-   If you want to work on a single program within the TL sources, this
-is the recommended way to do it.  Here is an example from start to
-finish for working on 'dvipdfm-x'.
+   Here is an example from start to finish for working on 'dvipdfm-x'.
+(Unfortunately, this does not suffice for building one, or a subset, of
+the TeX engines; see the next section.)
 
      mkdir mydir && cd mydir  # new working directory
 
-     # Get sources (<http://tug.org/texlive/svn>)
+     # Get sources (<https://tug.org/texlive/svn>), e.g.:
      rsync -a --delete --exclude=.svn --exclude=Work \
            tug.org::tldevsrc/Build/source/ .
 
@@ -106,27 +101,30 @@ finish for working on 'dvipdfm-x'.
 
      # Do the configure:
      ../configure --disable-all-pkgs --enable-dvipdfm-x \
-       -C CFLAGS=-g CXXFLAGS=-g >&outc
+       -C CFLAGS=-g CXXFLAGS=-g >&outc || echo fail
 
      # Do the make:
-     make >&outm
+     make >&outm || echo fail
 
      # Test:
      cd texk/dvipdfm-x
      make check
 
-   Then you modify source files in 'mydir/texk/dvipdfm-x' and rerun
-'make' in 'mydir/Work/texk/dvipdfm-x' to rebuild.
+   Then you can modify source files in 'mydir/texk/dvipdfm-x' and rerun
+'make' in 'mydir/Work/texk/dvipdfm-x' to rebuild; that build directory
+is where the binary ends up and where you can run a debugger, etc.
 
    The second line of the 'configure' invocation shows examples of extra
 things you likely want to specify if you intend to hack the sources (and
-not just build binaries): the '-C' speeds up 'configure', and the
-'CFLAGS' and 'CXXFLAGS' settings eliminate compiler optimization for
-debugging purposes.
+not just build binaries): the '-C' speeds 'configure' by enabling a
+cache file, and the 'CFLAGS' and 'CXXFLAGS' settings eliminate compiler
+optimization for debugging purposes.
 
-   Of course, one should actually look at the output and check that
+   Of course, you need to actually look at the output and check that
 things are working.  There are many 'configure' options you can tweak as
-desired; check the output from 'configure --help'.
+desired; check the output from 'configure --help'.  It is also a good
+idea to run 'make check' after making any changes, to ensure that
+whatever tests have been written still pass.
 
    Finally, the above retrieves the entire TL source tree (several
 hundred megabytes).  It is natural to ask if this is really necessary.
@@ -134,22 +132,54 @@ Strictly speaking, the answer is no, but it is vastly more convenient to
 do so.  If you cut down the source tree, you must also give additional
 'configure' flags to individually disable using system versions of
 libraries, or the intricacies of the dependencies (such as 'teckit'
-requiring 'zlib') will have undesired side effects.  For an example, see
-the 'build-pdftex.sh' script in the 'pdftex' development source
-(<http://pdftex.org>), which is indeed a cut-down TL source tree.
+requiring 'zlib') will have undesired side effects.  For an example of
+this approach, see the 'build-pdftex.sh' script in the 'pdftex'
+development source (details at <http://pdftex.org>), which is indeed
+such a cut-down TL source tree.
 
-   Even with '--disable-all-pkgs', dependencies will be checked.  For
-instance, if a non-MacOSX system does not have 'fontconfig', XeTeX
-cannot be built (*note Prerequisites::) and 'configure' will terminate.
-To proceed without such dependencies, specify '--enable-missing' also.
-(Arguably this should happen automatically.)
+   Some libraries and programs require C++11.  If you want to build with
+an older compiler lacking such support, you need to (re)move those
+source directories; specifying '--disable' for them does not suffice,
+unfortunately.  Specifically, before running 'configure':
+
+     rm -rf libs/icu libs/poppler libs/graphite2 texk/dvisvgm
+
+   Also, even with '--disable-all-pkgs', dependencies are (currently)
+checked.  For instance, if a (non-MacOSX) system does not have
+'fontconfig', XeTeX cannot be built (*note Prerequisites::), and
+'configure' will terminate even with '--disable-xetex'.  To proceed
+without such dependencies, specify '--enable-missing' also.  (Patches to
+improve this would be most welcome.)
 
    By default, the 'gcc' compilers will be used if present; otherwise,
 individual packages may use something different.  You can explicitly
 specify the compilers to be used with the environment variables 'CC',
 'CXX', and 'OBJCXX'.
 
-4.6 Cross compilation
+4.6 Build one engine
+====================
+
+Unfortunately, there is one common case where the steps in the preceding
+section to build one package (*note Build one package::) do not suffice:
+wanting to build one, or a subset, of the TeX engines (or other Web2c
+programs).
+
+   The simplest way to do this is to disable everything and then
+explicitly specify what to make.  For example, to build only LuaTeX:
+
+     ./configure --disable-all-pkgs  # or ./Build
+     cd Work/texk/web2c              # build directory
+     make luatex                     # specify target
+
+   This works because the 'make' automatically runs 'configure' as
+necessary for the dependencies and target.  Furthermore, the source tree
+can be cut down to just what is needed for the given engine (the
+separate pdfTeX and LuaTeX source repositories do this, if you want to
+peruse examples).
+
+   We hope to improve the situation in the future.  Patches are welcome.
+
+4.7 Cross compilation
 =====================
 
 In a cross compilation a "build" system is used to create binaries to be
@@ -174,7 +204,7 @@ MacOSX system one could use:
        OBJCXX='clang++ -arch i386'" \
        ./Build --build=i386-apple-darwin
 
-4.6.1 Cross configuring
+4.7.1 Cross configuring
 -----------------------
 
 In a standard cross compilation, binaries for the host system cannot
@@ -220,7 +250,7 @@ C and C++ programs required for the build process as configure arguments
      BUILDCXXFLAGS=...
      BUILDLDFLAGS=...
 
-4.6.2 Cross problems
+4.7.2 Cross problems
 --------------------
 
 The fact that binaries for the host system cannot be executed on the
@@ -246,10 +276,10 @@ during the cross compilation.
    This approach would also be possible for the tools such as 'tangle'
 used in the module 'texk/web2c' to build the WEB programs, but that
 would require first building a native 'kpathsea' library.  To avoid this
-complication, cross compilation of the WEB or CWEB programs requires
+complication, cross compilation of programs written in (C)WEB requires
 sufficiently recent installed versions of 'tangle', 'ctangle',
 'otangle', and 'tie'.
 
    Building 'xindy' requires running the host system 'clisp' binary,
-thus cross compilation is not possible.
+thus cross compilation is painful, but possible.
 

@@ -14,6 +14,7 @@
 * tlmgr MULTIPLE REPOSITORIES::
 * tlmgr GUI FOR TLMGR::
 * tlmgr MACHINE-READABLE OUTPUT::
+* tlmgr ENVIRONMENT VARIABLES::
 * tlmgr AUTHORS AND COPYRIGHT::
 @end menu
 
@@ -32,11 +33,11 @@ tlmgr [@emph{option}...] @emph{action} [@emph{option}...] [@emph{operand}...]
 
 @strong{tlmgr} manages an existing TeX Live installation, both packages and
 configuration options.  For information on initially downloading and
-installing TeX Live, see @url{http://tug.org/texlive/acquire.html}.
+installing TeX Live, see @url{https://tug.org/texlive/acquire.html}.
 
 The most up-to-date version of this documentation (updated nightly from
 the development sources) is available at
-@url{http://tug.org/texlive/tlmgr.html}, along with procedures for updating
+@url{https://tug.org/texlive/tlmgr.html}, along with procedures for updating
 @code{tlmgr} itself and information about test versions.
 
 TeX Live is organized into a few top-level @emph{schemes}, each of which is
@@ -46,7 +47,7 @@ files.  Schemes typically contain a mix of collections and packages, but
 each package is included in exactly one collection, no more and no less.
 A TeX Live installation can be customized and managed at any level.
 
-See @url{http://tug.org/texlive/doc} for all the TeX Live documentation
+See @url{https://tug.org/texlive/doc} for all the TeX Live documentation
 available.
 
 @node tlmgr EXAMPLES
@@ -65,9 +66,13 @@ with @code{tlmgr}:
 Tell @code{tlmgr} to use a nearby CTAN mirror for future updates; useful if
 you installed TeX Live from the DVD image and want to have continuing
 updates.  The two commands are equivalent; @code{ctan} is just an alias for
-the given url.  Caveat: @code{mirror.ctan.org} resolves to many different
-hosts, and they are not perfectly synchronized; we recommend updating
-only daily (at most), and not more often.
+the given url.
+
+Caveat: @code{mirror.ctan.org} resolves to many different hosts, and they
+are not perfectly synchronized; we recommend updating only daily (at
+most), and not more often. You can choose a particular mirror if
+problems; the list of all CTAN mirrors with the status of each is at
+@url{https://ctan.org/mirrors/mirmon}.
 
 @item @code{tlmgr update --list}
 @anchor{tlmgr @code{tlmgr update --list}}
@@ -105,34 +110,123 @@ between an option name and its value.
 @item @strong{--repository} @emph{url|path}
 @anchor{tlmgr @strong{--repository} @emph{url|path}}
 
-Specifies the package repository from which packages should be installed
-or updated, overriding the default package repository found in the
-installation's TeX Live Package Database (a.k.a. the TLPDB, defined
-entirely in the file @code{tlpkg/texlive.tlpdb}).  The documentation for
-@code{install-tl} has more details about this
-(@url{http://tug.org/texlive/doc/install-tl.html}).
+Specify the package repository from which packages should be installed
+or updated, either a local directory or network location, as below. This
+overridesthe default package repository found in the installation's TeX
+Live Package Database (a.k.a. the TLPDB, which is given entirely in the
+file @code{tlpkg/texlive.tlpdb}).
 
-@code{--repository} changes the repository location only for the current
+This @code{--repository} option changes the location only for the current
 run; to make a permanent change, use @code{option repository} (see the
 @ref{tlmgr option,, option} action).
+
+As an example, you can choose a particular CTAN mirror with something
+like this:
+
+@verbatim
+  -repository http://ctan.example.org/its/ctan/dir/systems/texlive/tlnet
+@end verbatim
+
+Of course a real hostname and its particular top-level CTAN directory
+have to be specified.  The list of CTAN mirrors is available at
+@url{https://ctan.org/mirrors/mirmon}.
+
+Here's an example of using a local directory:
+
+@verbatim
+  -repository /local/TL/repository
+@end verbatim
 
 For backward compatibility and convenience, @code{--location} and @code{--repo}
 are accepted as aliases for this option.
 
+Locations can be specified as any of the following:
+
+@table @asis
+@item @code{/some/local/dir}
+@anchor{tlmgr @code{/some/local/dir}}
+
+@item @code{file:/some/local/dir}
+@anchor{tlmgr @code{file:/some/local/dir}}
+
+Equivalent ways of specifying a local directory.
+
+@item @code{ctan}
+@anchor{tlmgr @code{ctan}}
+
+@item @code{http://mirror.ctan.org/systems/texlive/tlnet}
+@anchor{tlmgr @code{http://mirror.ctan.org/systems/texlive/tlnet}}
+
+Pick a CTAN mirror automatically, trying for one that is both nearby and
+up-to-date. The chosen mirror is used for the entire download. The bare
+@code{ctan} is merely an alias for the full url. (See @url{https://ctan.org} for
+more about CTAN and its mirrors.)
+
+@item @code{http://server/path/to/tlnet}
+@anchor{tlmgr @code{http://server/path/to/tlnet}}
+
+Standard HTTP. If the (default) LWP method is used, persistent
+connections are supported. TL can also use @code{curl} or @code{wget} to do the
+downloads, or an arbitrary user-specified program, as described in the
+@code{tlmgr} documentation
+(@url{https://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES}).
+
+@item @code{https://server/path/to/tlnet}
+@anchor{tlmgr @code{https://server/path/to/tlnet}}
+
+Again, if the (default) LWP method is used, this supports persistent
+connections. Unfortunately, some versions of @code{wget} and @code{curl} do not
+support https, and even when @code{wget} supports https, certificates may be
+rejected even when the certificate is fine, due to a lack of local
+certificate roots. The simplest workaround for this problem is to use
+http or ftp.
+
+@item @code{ftp://server/path/to/tlnet}
+@anchor{tlmgr @code{ftp://server/path/to/tlnet}}
+
+If the (default) LWP method is used, persistent connections are
+supported.
+
+@item @code{user@@machine:/path/to/tlnet}
+@anchor{tlmgr @code{user@@machine:/path/to/tlnet}}
+
+@item @code{scp://user@@machine/path/to/tlnet}
+@anchor{tlmgr @code{scp://user@@machine/path/to/tlnet}}
+
+@item @code{ssh://user@@machine/path/to/tlnet}
+@anchor{tlmgr @code{ssh://user@@machine/path/to/tlnet}}
+
+These forms are equivalent; they all use @code{scp} to transfer files. Using
+@code{ssh-agent} is recommended. (Info:
+@url{https://en.wikipedia.org/wiki/OpenSSH},
+@url{https://en.wikipedia.org/wiki/Ssh-agent}.)
+
+@end table
+
+If the repository is on the network, trailing @code{/} characters and/or
+trailing @code{/tlpkg} and/or @code{/archive} components are ignored.  
+
 @item @strong{--gui} [@emph{action}]
 @anchor{tlmgr @strong{--gui} [@emph{action}]}
 
-@code{tlmgr} has a graphical interface as well as the command line
-interface.  You can give this option, @code{--gui}, together with an action
-to be brought directly into the respective screen of the GUI.  For
-example, running
+Two notable GUI front-ends for @code{tlmgr}, @code{tlshell} and @code{tlcockpit},
+are started up as separate programs; see their own documentation.
+
+@code{tlmgr} itself has a graphical interface as well as the command line
+interface. You can give the option to invoke it, @code{--gui}, together with
+an action to be brought directly into the respective screen of the GUI.
+For example, running
 
 @verbatim
   tlmgr --gui update
 @end verbatim
 
 starts you directly at the update screen.  If no action is given, the
-GUI will be started at the main screen.
+GUI will be started at the main screen.  See @ref{tlmgr GUI FOR TLMGR,, GUI FOR TLMGR}.
+
+However, the native GUI requires Perl/TK, which is no longer included in
+TeX Live's Perl distribution for Windows. You may find @code{tlshell} or
+@code{tlcockpit} easier to work with. 
 
 @item @strong{--gui-lang} @emph{llcode}
 @anchor{tlmgr @strong{--gui-lang} @emph{llcode}}
@@ -140,12 +234,15 @@ GUI will be started at the main screen.
 By default, the GUI tries to deduce your language from the environment
 (on Windows via the registry, on Unix via @code{LC_MESSAGES}). If that fails
 you can select a different language by giving this option with a
-language code (based on ISO 639-1).  Currently supported (but not
-necessarily completely translated) are: English (en, default), Czech
-(cs), German (de), French (fr), Italian (it), Japanese (ja), Dutch (nl),
-Polish (pl), Brazilian Portuguese (pt_BR), Russian (ru), Slovak (sk),
-Slovenian (sl), Serbian (sr), Ukrainian (uk), Vietnamese (vi),
-simplified Chinese (zh_CN), and traditional Chinese (zh_TW).
+language code (based on ISO 639-1). Currently supported (but not
+necessarily completely translated) are: @w{English (en, default)},
+@w{Czech (cs)}, @w{German (de)}, @w{French (fr)}, @w{Italian (it)},
+@w{Japanese (ja)}, @w{Dutch (nl)}, @w{Polish (pl)}, @w{Brazilian Portuguese
+(pt_BR)}, @w{Russian (ru)}, @w{Slovak (sk)}, @w{Slovenian (sl)}, @w{Serbian
+(sr)}, @w{Ukrainian (uk)}, @w{Vietnamese (vi)}, @w{simplified Chinese
+(zh_CN)}, and @w{traditional Chinese (zh_TW)}.
+
+tlshell shares its message catalog with tlmgr.
 
 @item @strong{--debug-translation}
 @anchor{tlmgr @strong{--debug-translation}}
@@ -243,7 +340,7 @@ revision number for the loaded TeX Live Perl modules are shown, too.
 * tlmgr version::
 * tlmgr backup::
 * tlmgr candidates @emph{pkg}::
-* tlmgr check [@emph{option}...] [files|depends|executes|runfiles|all]::
+* tlmgr check [@emph{option}...] [depends|executes|files|runfiles|texmfdbs|all]::
 * tlmgr conf::
 * tlmgr dump-tlpdb [@emph{option}...] [--json]::
 * tlmgr generate::
@@ -275,7 +372,7 @@ revision number for the loaded TeX Live Perl modules are shown, too.
 @appendixsubsec help
 
 Display this help information and exit (same as @code{--help}, and on the
-web at @url{http://tug.org/texlive/doc/tlmgr.html}).  Sometimes the
+web at @url{https://tug.org/texlive/doc/tlmgr.html}).  Sometimes the
 @code{perldoc} and/or @code{PAGER} programs on the system have problems,
 resulting in control characters being literally output.  This can't
 always be detected, but you can set the @code{NOPERLDOC} environment
@@ -300,10 +397,12 @@ If @code{-v} has been given the revisions of the used modules are reported, too.
 
 If the @code{--clean} option is not specified, this action makes a backup of
 the given packages, or all packages given @code{--all}. These backups are
-saved to the value of the @code{--backupdir} option, if that is an existing and
-writable directory. If @code{--backupdir} is not given, the @code{backupdir}
-option setting in the TLPDB is used, if present.  If both are missing,
-no backups are made.
+saved to the value of the @code{--backupdir} option, if that is an existing
+and writable directory. If @code{--backupdir} is not given, the @code{backupdir}
+option setting in the TLPDB is used, if present. If both are missing, no
+backups are made. (The installer sets @code{backupdir} to
+@code{.../tlpkg/backups}, under the TL root installation directory, so it is
+usually defined; see the @ref{tlmgr option,, option} description for more information.)
 
 If the @code{--clean} option is specified, backups are pruned (removed)
 instead of saved. The optional integer value @emph{N} may be specified to
@@ -353,18 +452,14 @@ performed are written to the terminal.
 Shows the available candidate repositories for package @emph{pkg}.
 See @ref{tlmgr MULTIPLE REPOSITORIES,, MULTIPLE REPOSITORIES} below.
 
-@node tlmgr check [@emph{option}...] [files|depends|executes|runfiles|all]
-@appendixsubsec check [@emph{option}...] [files|depends|executes|runfiles|all]
+@node tlmgr check [@emph{option}...] [depends|executes|files|runfiles|texmfdbs|all]
+@appendixsubsec check [@emph{option}...] [depends|executes|files|runfiles|texmfdbs|all]
 
-Executes one (or all) check(s) on the consistency of the installation.
+Execute one (or all) check(s) of the consistency of the installation.
+If no problems are found, there will be no output. (To get a view of
+what is being done, run @code{tlmgr -v check}.)
 
 @table @asis
-@item @strong{files}
-@anchor{tlmgr @strong{files}}
-
-Checks that all files listed in the local TLPDB (@code{texlive.tlpdb}) are
-actually present, and lists those missing.
-
 @item @strong{depends}
 @anchor{tlmgr @strong{depends}}
 
@@ -381,11 +476,39 @@ instead since former versions for @code{tlmgr} called it that way.
 Check that the files referred to by @code{execute} directives in the TeX
 Live Database are present.
 
+@item @strong{files}
+@anchor{tlmgr @strong{files}}
+
+Checks that all files listed in the local TLPDB (@code{texlive.tlpdb}) are
+actually present, and lists those missing.
+
 @item @strong{runfiles}
 @anchor{tlmgr @strong{runfiles}}
 
 List those filenames that are occurring more than one time in the
-runfiles sections.
+runfiles sections, except for known duplicates.
+
+@item @strong{texmfdbs}
+@anchor{tlmgr @strong{texmfdbs}}
+
+Checks related to the @code{ls-R} files. If you have defined new trees, or
+changed the @code{TEXMF} or @code{TEXMFDBS} variables, it can't hurt to run
+this. It checks that:
+
+@table @asis
+@item - all items in @code{TEXMFDBS} have the @code{!!} prefix.
+@anchor{tlmgr - all items in @code{TEXMFDBS} have the @code{!!} prefix.}
+
+@item - all items in @code{TEXMFBDS} have an @code{ls-R} file (if they exist at all).
+@anchor{tlmgr - all items in @code{TEXMFBDS} have an @code{ls-R} file (if they exist at all).}
+
+@item - all items in @code{TEXMF} with @code{!!} are listed in @code{TEXMFDBS}.
+@anchor{tlmgr - all items in @code{TEXMF} with @code{!!} are listed in @code{TEXMFDBS}.}
+
+@item - all items in @code{TEXMF} with an @code{ls-R} file are listed in @code{TEXMFDBS}.
+@anchor{tlmgr - all items in @code{TEXMF} with an @code{ls-R} file are listed in @code{TEXMFDBS}.}
+
+@end table
 
 @end table
 
@@ -396,7 +519,7 @@ Options:
 @anchor{tlmgr @strong{--use-svn}}
 
 Use the output of @code{svn status} instead of listing the files; for
-checking the TL development repository.
+checking the TL development repository. (This is run nightly.)
 
 @end table
 
@@ -407,8 +530,8 @@ checking the TL development repository.
 @item @strong{conf [texmf|tlmgr|updmap [--conffile @emph{file}] [--delete] [@emph{key} [@emph{value}]]]}
 @anchor{tlmgr @strong{conf [texmf|tlmgr|updmap [--conffile @emph{file}] [--delete] [@emph{key} [@emph{value}]]]}}
 
-@item @strong{conf auxtrees [--conffile @emph{file}] [show|add|delete] [@emph{value}]}
-@anchor{tlmgr @strong{conf auxtrees [--conffile @emph{file}] [show|add|delete] [@emph{value}]}}
+@item @strong{conf auxtrees [--conffile @emph{file}] [show|add|remove] [@emph{value}]}
+@anchor{tlmgr @strong{conf auxtrees [--conffile @emph{file}] [show|add|remove] [@emph{value}]}}
 
 With only @code{conf}, show general configuration information for TeX Live,
 including active configuration files, path settings, and more.  This is
@@ -444,8 +567,8 @@ additional texmf trees, completely under user control.  @code{auxtrees show}
 shows the list of additional trees, @code{auxtrees add} @emph{tree} adds a tree
 to the list, and @code{auxtrees remove} @emph{tree} removes a tree from the list
 (if present). The trees should not contain an @code{ls-R} file (or files
-might not be found if the @code{ls-R} becomes stale). This works by
-manipulating the Kpathsea variable @code{TEXMFAUXTREES}, in
+will not be found if the @code{ls-R} becomes stale). This works by
+manipulating the Kpathsea variable @code{TEXMFAUXTREES}, in (by default)
 @code{ROOT/texmf.cnf}.  Example:
 
 @verbatim
@@ -454,7 +577,8 @@ manipulating the Kpathsea variable @code{TEXMFAUXTREES}, in
 @end verbatim
 
 In all cases the configuration file can be explicitly specified via the
-option @code{--conffile} @emph{file}, if desired.
+option @code{--conffile} @emph{file}, e.g., if you don't want to change the
+system-wide configuration.
 
 Warning: The general facility for changing configuration values is here,
 but tinkering with settings in this way is strongly discouraged.  Again,
@@ -531,7 +655,7 @@ The TeX Live installer and @code{tlmgr} routinely call @code{generate} for
 all of these files.
 
 For managing your own fonts, please read the @code{updmap --help}
-information and/or @url{http://tug.org/fonts/fontinstall.html}.
+information and/or @url{https://tug.org/fonts/fontinstall.html}.
 
 For managing your own formats, please read the @code{fmtutil --help}
 information.
@@ -696,6 +820,14 @@ dependencies in a similar way.
 If this option is given, the installation source will not be used; only
 locally installed packages, collections, or schemes are listed.
 
+@item @strong{--only-remote}
+@anchor{tlmgr @strong{--only-remote}}
+
+Only list packages from the remote repository. Useful when checking what
+is available in a remote repository using
+@code{tlmgr --repo ... --only-remote info}. Note that
+@code{--only-installed} and @code{--only-remote} cannot both be specified.
+
 @item @strong{--data @code{item1,item2,...}}
 @anchor{tlmgr @strong{--data @code{item1@comma{}item2@comma{}...}}}
 
@@ -731,8 +863,8 @@ with @code{--usertree}.  See @ref{tlmgr USER MODE,, USER MODE} below.
 @appendixsubsec install [@emph{option}...] @emph{pkg}...
 
 Install each @emph{pkg} given on the command line, if it is not already
-installed.  (It does not touch existing packages; see the @code{update}
-action for how to get the latest version of a package.)
+installed.  It does not touch existing packages; see the @code{update}
+action for how to get the latest version of a package.
 
 By default this also installs all packages on which the given @emph{pkg}s are
 dependent.  Options:
@@ -803,6 +935,10 @@ after all.  You can get them by using these options in conjunction with
 
 @end table
 
+This action does not automatically add new symlinks in system
+directories; you need to run @code{tlmgr path add} (@ref{tlmgr path,, path}) yourself if
+you are using this feature and want new symlinks added.
+
 @node tlmgr key
 @appendixsubsec key
 
@@ -824,7 +960,7 @@ With the @code{list} argument, @code{key} lists all keys.
 
 The @code{add} argument requires another argument, either a filename or
 @code{-} for stdin, from which the key is added. The key is added to the
-local keyring @code{GNUPGHOME/repository-keys.gpg}, which is normally)
+local keyring @code{GNUPGHOME/repository-keys.gpg}, which is normally
 @code{tlpkg/gpg/repository-keys.gpg}.
 
 The @code{remove} argument requires a key id and removes the requested id
@@ -844,8 +980,8 @@ Synonym for @ref{tlmgr info,, info}.
 @item @strong{option [--json] [show]}
 @anchor{tlmgr @strong{option [--json] [show]}}
 
-@item @strong{option [--json] showall}
-@anchor{tlmgr @strong{option [--json] showall}}
+@item @strong{option [--json] showall|help}
+@anchor{tlmgr @strong{option [--json] showall|help}}
 
 @item @strong{option @emph{key} [@emph{value}]}
 @anchor{tlmgr @strong{option @emph{key} [@emph{value}]}}
@@ -857,7 +993,8 @@ saved in the TLPDB with a short description and the @code{key} used for
 changing it in parentheses.
 
 The second form, @code{showall}, is similar, but also shows options which
-can be defined but are not currently set to any value.
+can be defined but are not currently set to any value (@code{help} is a
+synonym).
 
 Both @code{show...} forms take an option @code{--json}, which dumps the option
 information in JSON format.  In this case, both forms dump the same
@@ -873,7 +1010,7 @@ the definitive list):
 
 @verbatim
  repository (default package repository),
- formats    (create formats at installation time),
+ formats    (generate formats at installation or update time),
  postcode   (run postinst code blobs)
  docfiles   (install documentation files),
  srcfiles   (install source files),
@@ -901,7 +1038,8 @@ be used as a synonym for @code{repository}.)
 
 If @code{formats} is set (this is the default), then formats are regenerated
 when either the engine or the format files have changed.  Disable this
-only when you know how and want to regenerate formats yourself.
+only when you know how and want to regenerate formats yourself whenever
+needed (which is often, in practice).
 
 The @code{postcode} option controls execution of per-package
 postinstallation action code.  It is set by default, and again disabling
@@ -915,10 +1053,11 @@ testing installations, etc.  When disabled, the respective files are not
 downloaded at all.
 
 The options @code{autobackup} and @code{backupdir} determine the defaults for
-the actions @code{update}, @code{backup} and @code{restore}.  These three actions
-need a directory in which to read or write the backups.  If
+the actions @code{update}, @code{backup} and @code{restore}. These three actions
+need a directory in which to read or write the backups. If
 @code{--backupdir} is not specified on the command line, the @code{backupdir}
-option value is used (if set).
+option value is used (if set). The TL installer sets @code{backupdir} to
+@code{.../tlpkg/backups}, under the TL root installation directory.
 
 The @code{autobackup} option (de)activates automatic generation of backups.
 Its value is an integer.  If the @code{autobackup} value is @code{-1}, no
@@ -957,8 +1096,8 @@ instead of only the current user.  All three options are on by default.
 @item @strong{paper [a4|letter]}
 @anchor{tlmgr @strong{paper [a4|letter]}}
 
-@item @strong{@w{[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|--list]}}
-@anchor{tlmgr @strong{@w{[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|--list]}}}
+@item @strong{<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|--list]}>
+@anchor{tlmgr @strong{<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|--list]}>}
 
 @item @strong{paper --json}
 @anchor{tlmgr @strong{paper --json}}
@@ -1003,10 +1142,12 @@ settings.
 @item @strong{path [--w32mode=user|admin] remove}
 @anchor{tlmgr @strong{path [--w32mode=user|admin] remove}}
 
-On Unix, merely adds or removes symlinks for binaries, man pages, and
-info pages in the system directories specified by the respective options
-(see the @ref{tlmgr option,, option} description above).  Does not change any
-initialization files, either system or personal.
+On Unix, adds or removes symlinks for executables, man pages, and info
+pages in the system directories specified by the respective options (see
+the @ref{tlmgr option,, option} description above). Does not change any initialization
+files, either system or personal. Furthermore, any executables added or
+removed by future updates are not taken care of automatically; this
+command must be rerun as needed.
 
 On Windows, the registry part where the binary directory is added or
 removed is determined in the following way:
@@ -1089,7 +1230,7 @@ platform instead of auto detection.
 
 @code{platform set auto} switches TeX Live to auto detection mode for platform.
 
-Platform detection is needed to select the proper @code{xz}, @code{xzdec} and 
+Platform detection is needed to select the proper @code{xz} and 
 @code{wget} binaries that are shipped with TeX Live.
 
 @code{arch} is a synonym for @code{platform}.
@@ -1222,6 +1363,10 @@ written to the terminal.
 
 @end table
 
+This action does not automatically remove symlinks to executables from
+system directories; you need to run @code{tlmgr path remove} (@ref{tlmgr path,, path})
+yourself if you are using this feature and want stale symlinks removed.
+
 @node tlmgr repository
 @appendixsubsec repository
 
@@ -1229,8 +1374,8 @@ written to the terminal.
 @item @strong{repository list}
 @anchor{tlmgr @strong{repository list}}
 
-@item @strong{repository list @emph{path|tag}}
-@anchor{tlmgr @strong{repository list @emph{path|tag}}}
+@item @strong{repository list @emph{path|url|tag}}
+@anchor{tlmgr @strong{repository list @emph{path|url|tag}}}
 
 @item @strong{repository add @emph{path} [@emph{tag}]}
 @anchor{tlmgr @strong{repository add @emph{path} [@emph{tag}]}}
@@ -1241,21 +1386,46 @@ written to the terminal.
 @item @strong{repository set @emph{path}[#@emph{tag}] [@emph{path}[#@emph{tag}] ...]}
 @anchor{tlmgr @strong{repository set @emph{path}[#@emph{tag}] [@emph{path}[#@emph{tag}] ...]}}
 
+@item @strong{repository status}
+@anchor{tlmgr @strong{repository status}}
+
 This action manages the list of repositories.  See @ref{,,, MULTIPLE_REPOSITORIES} below for detailed explanations.
 
-The first form (@code{list}) lists all configured repositories and the
-respective tags if set. If a path, url, or tag is given after the
-@code{list} keyword, it is interpreted as source from where to 
-initialize a TeX Live Database and lists the contained packages.
-This can also be an up-to-now not used repository, both locally
-and remote. If one pass in addition @code{--with-platforms}, for each
-package the available platforms (if any) are listed, too.
+The first form, @code{repository list}, lists all configured repositories
+and the respective tags if set. If a path, url, or tag is given after
+the @code{list} keyword, it is interpreted as the source from which to
+initialize a TL database and lists the contained packages. This can also
+be an otherwise-unused repository, either local or remote. If the option
+@code{--with-platforms} is specified in addition, for each package the
+available platforms (if any) are also listed.
 
-The third form (@code{add}) adds a repository
-(optionally attaching a tag) to the list of repositories.  The forth
-form (@code{remove}) removes a repository, either by full path/url, or by
-tag.  The last form (@code{set}) sets the list of repositories to the items
-given on the command line, not keeping previous settings
+The form @code{repository add} adds a repository (optionally attaching a
+tag) to the list of repositories, while @code{repository remove} removes a
+repository, either by full path/url, or by tag.
+
+The form @code{repository set} sets the list of available repositories to
+the items given on the command line, overwriting previous settings.
+
+The form @code{repository status} reports the verification status of the
+loaded repositories with the format of one repository per line
+with fields separated by a single space:
+
+@table @asis
+@item The tag (which can be the same as the url);
+@anchor{tlmgr The tag (which can be the same as the url);}
+
+= the url;
+
+= iff machine-readable output is specified, the verification code (a
+number);
+
+= a textual description of the verification status, as the last field
+extending to the end of line.
+
+@end table
+
+That is, in normal (not machine-readable) output, the third field
+(numeric verification status) is not present.
 
 In all cases, one of the repositories must be tagged as @code{main};
 otherwise, all operations will fail!
@@ -1464,9 +1634,9 @@ must be specified.  Options:
 @item @strong{--all}
 @anchor{tlmgr @strong{--all} 5}
 
-Update all installed packages except for @code{tlmgr} itself.  Thus, if
-updates to @code{tlmgr} itself are present, this will simply give an error,
-unless also the option @code{--force} or @code{--self} is given.  (See below.)
+Update all installed packages except for @code{tlmgr} itself. If updates to
+@code{tlmgr} itself are present, this gives an error, unless also the option
+@code{--force} or @code{--self} is given. (See below.)
 
 In addition to updating the installed packages, during the update of a
 collection the local installation is (by default) synchronized to the
@@ -1483,13 +1653,20 @@ Analogously, if a package has been added to a collection on the server
 that is also installed locally, it will be added to the local
 installation.  This is called ``auto-install'' and is announced as such
 when using the option @code{--list}.  This auto-installation can be
-suppressed using the option @code{--no-auto-install}.
+suppressed using the option @code{--no-auto-install} (also not recommended).
 
 An exception to the collection dependency checks (including the
 auto-installation of packages just mentioned) are those that have been
 ``forcibly removed'' by you, that is, you called @code{tlmgr remove --force}
 on them.  (See the @code{remove} action documentation.)  To reinstall any
 such forcibly removed packages use @code{--reinstall-forcibly-removed}.
+
+To reiterate: automatic removals and additions are entirely determined
+by comparison of collections. Thus, if you manually install an
+individual package @code{foo} which is later removed from the server,
+@code{tlmgr} will not notice and will not remove it locally. (It has to be
+this way, without major rearchitecture work, because the tlpdb does not
+record the repository from which packages come from.)
 
 If you want to exclude some packages from the current update run (e.g.,
 due to a slow link), see the @code{--exclude} option below.
@@ -1563,12 +1740,12 @@ the key @code{update-exclude}.
 @item @strong{--no-auto-remove} [@emph{pkg}...]
 @anchor{tlmgr @strong{--no-auto-remove} [@emph{pkg}...]}
 
-By default, @code{tlmgr} tries to remove packages which have disappeared on
-the server, as described above under @code{--all}.  This option prevents
-such removals, either for all packages (with @code{--all}), or for just the
-given @emph{pkg} names.  This can lead to an inconsistent TeX installation,
-since packages are not infrequently renamed or replaced by their
-authors.  Therefore this is not recommend.
+By default, @code{tlmgr} tries to remove packages in an existing collection
+which have disappeared on the server, as described above under @code{--all}.
+This option prevents such removals, either for all packages (with
+@code{--all}), or for just the given @emph{pkg} names. This can lead to an
+inconsistent TeX installation, since packages are not infrequently
+renamed or replaced by their authors. Therefore this is not recommended.
 
 @item @strong{--no-auto-install} [@emph{pkg}...]
 @anchor{tlmgr @strong{--no-auto-install} [@emph{pkg}...]}
@@ -1594,6 +1771,9 @@ is equivalent to
   tlmgr remove --force foobar
 @end verbatim
 
+Again, since packages are sometimes renamed or replaced, using this
+option is not recommended.
+
 @item @strong{--reinstall-forcibly-removed}
 @anchor{tlmgr @strong{--reinstall-forcibly-removed}}
 
@@ -1617,8 +1797,8 @@ installation with the server's idea of what is available:
 @anchor{tlmgr @strong{--backupdir} @emph{directory} 3}
 
 These two options control the creation of backups of packages @emph{before}
-updating; that is, backup of packages as currently installed.  If
-neither options is given, no backup will made. If @code{--backupdir} is
+updating; that is, backing up packages as currently installed.  If
+neither option is given, no backup will made. If @code{--backupdir} is
 given and specifies a writable directory then a backup will be made in
 that location. If only @code{--backup} is given, then a backup will be made
 to the directory previously set via the @ref{tlmgr option,, option} action (see
@@ -1669,11 +1849,15 @@ fallback information, but if you don't like them accumulating (e.g.,
 @code{mirror.ctan.org} resolves to many different hosts, each resulting in
 a possibly different hash), it's harmless to delete them.
 
+This action does not automatically add or remove new symlinks in system
+directories; you need to run @code{tlmgr} @ref{tlmgr path,, path} yourself if you are using
+this feature and want new symlinks added.
+
 @node tlmgr CONFIGURATION FILE FOR TLMGR
 @appendixsec CONFIGURATION FILE FOR TLMGR
 
-There are two configuration files for @code{tlmgr}: One is system-wide in
-@code{TEXMFSYSCONFIG/tlmgr/config}, and the other is user-specific in
+@code{tlmgr} reads two configuration files: one is system-wide, in
+@code{TEXMFSYSCONFIG/tlmgr/config}, and the other is user-specific, in
 @code{TEXMFCONFIG/tlmgr/config}.  The user-specific one is the default for
 the @code{conf tlmgr} action.  (Run @code{kpsewhich
 -var-value=TEXMFSYSCONFIG} or @code{... TEXMFCONFIG ...} to see the actual
@@ -1741,8 +1925,8 @@ disables this process.
 
 The checksum algorithm is SHA-512.  Your system must have one of (looked
 for in this order) the Perl @code{Digest::SHA} module, the @code{openssl}
-program (@url{http://openssl.org}), the @code{sha512sum} program (from GNU
-Coreutils, @url{http://www.gnu.org/software/coreutils}), or finally the
+program (@url{https://openssl.org}), the @code{sha512sum} program (from GNU
+Coreutils, @url{https://www.gnu.org/software/coreutils}), or finally the
 @code{shasum} program (just to support old Macs).  If none of these are
 available, a warning is issued and @code{tlmgr} proceeds without checking
 checksums.  (Incidentally, other SHA implementations, such as the pure
@@ -1781,8 +1965,9 @@ above) to succeed, and a working GnuPG (@code{gpg}) program (see below for
 search method).  Then, unless cryptographic verification has been
 disabled, a signature file (@code{texlive.tlpdb.*.asc}) of the checksum file
 is downloaded and the signature verified. The signature is created by
-the TeX Live Distribution GPG key 0x06BAB6BC, which in turn is signed by
-Karl Berry's key 0x30D155AD and Norbert Preining's key 0x6CACA448.  All
+the TeX Live Distribution GPG key 0x0D5E5D9106BAB6BC, which in turn is
+signed by Karl Berry's key 0x0716748A30D155AD and
+Norbert Preining's key 0x6CACA448860CDC13.  All
 of these keys are obtainable from the standard key servers.
 
 Additional trusted keys can be added using the @code{key} action.
@@ -1956,11 +2141,10 @@ only one enabled (as is the case by default):
 @end verbatim
 
 Ok.  Let's add the @code{tlcontrib} repository (this is a real
-repository, hosted at @url{http://tlcontrib.metatex.org}, maintained by
-Taco Hoekwater et al.), with the tag @code{tlcontrib}:
+repository hosted at @url{http://contrib.texlive.info}) with the tag @code{tlcontrib}:
 
 @verbatim
- $ tlmgr repository add http://tlcontrib.metatex.org/2012 tlcontrib
+ $ tlmgr repository add http://contrib.texlive.info/current tlcontrib
 @end verbatim
 
 Check the repository list again:
@@ -1968,64 +2152,69 @@ Check the repository list again:
 @verbatim
  $ tlmgr repository list
  List of repositories (with tags if set):
-    http://tlcontrib.metatex.org/2012 (tlcontrib)
+    http://contrib.texlive.info/current (tlcontrib)
     /var/www/norbert/tlnet (main)
 @end verbatim
 
-Now we specify a pinning entry to get the package @code{context} from
+Now we specify a pinning entry to get the package @code{classico} from
 @code{tlcontrib}:
 
 @verbatim
- $ tlmgr pinning add tlcontrib context
+ $ tlmgr pinning add tlcontrib classico
 @end verbatim
 
-Check that we can find @code{context}:
+Check that we can find @code{classico}:
 
 @verbatim
- $ tlmgr show context
- tlmgr: package repositories:
+ $ tlmgr show classico
+ package:     classico
  ...
- package:     context
- repository:  tlcontrib/26867
+ shortdesc:   URW Classico fonts
  ...
 @end verbatim
 
-- install @code{context}:
+- install @code{classico}:
 
 @verbatim
- $ tlmgr install context
+ $ tlmgr install classico
  tlmgr: package repositories:
  ...
- [1/1,  ??:??/??:??] install: context @tlcontrib [
+ [1/1,  ??:??/??:??] install: classico @tlcontrib [737k]
 @end verbatim
 
-In the output here you can see that the @code{context} package has been
+In the output here you can see that the @code{classico} package has been
 installed from the @code{tlcontrib} repository (@code{@@tlcontrib}).
 
 Finally, @code{tlmgr pinning} also supports removing certain or all packages
 from a given repository:
 
 @verbatim
-  $ tlmgr pinning remove tlcontrib context  # remove just context
+  $ tlmgr pinning remove tlcontrib classico # remove just classico
   $ tlmgr pinning remove tlcontrib --all    # take nothing from tlcontrib
 @end verbatim
 
-A summary of the @code{tlmgr pinning} actions is given above.
+A summary of @code{tlmgr pinning} actions is given above.
 
 @node tlmgr GUI FOR TLMGR
 @appendixsec GUI FOR TLMGR
 
 The graphical user interface for @code{tlmgr} requires Perl/Tk
-@url{http://search.cpan.org/search?query=perl%2Ftk}.  For Windows the
-necessary modules are shipped within TeX Live, for all other (i.e.,
-Unix-based) systems Perl/Tk (as well as Perl of course) has to be
-installed outside of TL.  @url{http://tug.org/texlive/distro.html#perltk}
-has a list of invocations for some distros.
+@url{https://search.cpan.org/search?query=perl%2Ftk}. For Unix-based
+systems Perl/Tk (as well as Perl of course) has to be installed
+outside of TL.  @url{https://tug.org/texlive/distro.html#perltk} has a
+list of invocations for some distros.  For Windows the necessary
+modules are no longer shipped within TeX Live, so you'll have to have an
+external Perl available that includes them.
 
-The GUI is started with the invocation @code{tlmgr gui}; assuming Tk is
-loadable, the graphical user interface will be shown.  The main window
-contains a menu bar, the main display, and a status area where messages
-normally shown on the console are displayed.
+We are talking here about the GUI built into tlmgr itself, not about the
+other tlmgr GUIs, which are: tlshell (Tcl/Tk-based), tlcockpit
+(Java-based) and, only on Macs, TeX Live Utility. These are invoked as
+separate programs.
+
+The GUI mode of tlmgr is started with the invocation @code{tlmgr gui};
+assuming Tk is loadable, the graphical user interface will be shown.
+The main window contains a menu bar, the main display, and a status
+area where messages normally shown on the console are displayed.
 
 Within the main display there are three main parts: the @code{Display
 configuration} area, the list of packages, and the action buttons.
@@ -2237,7 +2426,7 @@ on Windows).
 @anchor{tlmgr @code{Help menu}}
 
 Provides access to the TeX Live manual (also on the web at
-@url{http://tug.org/texlive/doc.html}) and the usual ``About'' box.
+@url{https://tug.org/texlive/doc.html}) and the usual ``About'' box.
 
 @end table
 
@@ -2279,7 +2468,7 @@ Pass the arbitrary X resource string @emph{xresource}.
 @end table
 
 A few other obscure options are recognized but not mentioned here.  See
-the Perl/Tk documentation (@url{http://search.cpan.org/perldoc?Tk}) for the
+the Perl/Tk documentation (@url{https://search.cpan.org/perldoc?Tk}) for the
 complete list, and any X documentation for general information.
 
 @node tlmgr MACHINE-READABLE OUTPUT
@@ -2453,12 +2642,101 @@ If a value is not saved in the database the string @code{(not set)} is shown.
 If you are developing a program that uses this output, and find that
 changes would be helpful, do not hesitate to write the mailing list.
 
+@node tlmgr ENVIRONMENT VARIABLES
+@appendixsec ENVIRONMENT VARIABLES
+
+@code{tlmgr} uses many of the standard TeX environment variables, as
+reported by, e.g., @code{tlmgr conf} (@ref{tlmgr conf,, conf}).
+
+In addition, for ease in scripting and debugging, @code{tlmgr} looks for the
+following environment variables. These are not of interest for normal
+user installations.
+
+@table @asis
+@item @code{TEXLIVE_COMPRESSOR}
+@anchor{tlmgr @code{TEXLIVE_COMPRESSOR}}
+
+This variable allows selecting a different compressor program for
+backups and intermediate rollback containers. The order of selection is:
+
+@enumerate
+@item If the environment variable @code{TEXLIVE_COMPRESSOR} is
+defined, use it; abort if it doesn't work. Possible values:
+@code{lz4}, @code{gzip}, @code{xz}. The necessary options are added internally.
+
+@item If lz4 is available (either from the system or TL) and working, use that.
+
+@item If gzip is available (from the system) and working, use that.
+
+@item If xz is available (either from the system or TL) and working, use that.
+
+@end enumerate
+
+lz4 and gzip are faster in creating tlmgr's local backups, hence they
+are preferred. The unconditional use of xz for the tlnet containers is
+unaffected, to minimize download sizes.
+
+@item @code{TEXLIVE_DOWNLOADER}
+@anchor{tlmgr @code{TEXLIVE_DOWNLOADER}}
+
+@item @code{TL_DOWNLOAD_PROGRAM}
+@anchor{tlmgr @code{TL_DOWNLOAD_PROGRAM}}
+
+@item @code{TL_DOWNLOAD_ARGS}
+@anchor{tlmgr @code{TL_DOWNLOAD_ARGS}}
+
+These options allow selecting different download programs then the ones
+automatically selected by the installer. The order of selection is:
+
+@enumerate
+@item If the environment variable @code{TEXLIVE_DOWNLOADER} is defined, use it;
+abort if the specified program doesn't work. Possible values: @code{lwp},
+@code{curl}, @code{wget}. The necessary options are added internally.
+
+@item If the environment variable @code{TL_DOWNLOAD_PROGRAM} is
+defined (can be any value), use it together with
+@code{TL_DOWNLOAD_ARGS}; abort if it doesn't work.
+
+@item If LWP is available and working, use that (by far the most
+efficient method, as it supports persistent downloads).
+
+@item If curl is available (from the system) and working, use that.
+
+@item If wget is available (either from the system or TL) and working, use that.
+
+@end enumerate
+
+TL provides @code{wget} binaries for platforms where necessary, so some
+download method should always be available.
+
+@item @code{TEXLIVE_PREFER_OWN}
+@anchor{tlmgr @code{TEXLIVE_PREFER_OWN}}
+
+By default, compression and download programs provided by the system,
+i.e., found along @code{PATH} are preferred over those shipped with TeX
+Live.
+
+This can create problems with systems that are too old, and so can be
+overridden by setting the environment variable @code{TEXLIVE_PREFER_OWN} to
+1. In this case, executables shipped with TL will be preferred.
+
+Extra compression/download programs not provided by TL, such as gzip,
+lwp, and curl, are still checked for on the system and used if
+available, per the above. @code{TEXLIVE_PREFER_OWN} only applies when the
+program being checked for is shipped with TL, namely the lz4 and
+xz compressors and wget downloader.
+
+Exception: on Windows, the @code{tar.exe} shipped with TL is always used,
+regardless of any setting.
+
+@end table
+
 @node tlmgr AUTHORS AND COPYRIGHT
 @appendixsec AUTHORS AND COPYRIGHT
 
 This script and its documentation were written for the TeX Live
-distribution (@url{http://tug.org/texlive}) and both are licensed under the
+distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 47303 2018-04-05 17:52:22Z karl $
+$Id: tlmgr.pl 54118 2020-03-05 22:27:22Z karl $
 

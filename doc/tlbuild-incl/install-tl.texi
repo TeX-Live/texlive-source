@@ -30,10 +30,10 @@ install-tl-advanced.bat [@emph{option}]...
 @appendixsec DESCRIPTION
 
 This installer creates a runnable TeX Live installation from various
-media, including over the network, from local hard disk, a DVD, etc.
-The installer works across all platforms supported by TeX Live.  For
-information on initially downloading the TeX Live, see
-@url{http://tug.org/texlive/acquire.html}.
+media, including over the network, from local hard disk, a DVD, etc. The
+installer works on all platforms supported by TeX Live. For information
+on initially downloading TeX Live, see
+@url{https://tug.org/texlive/acquire.html}.
 
 The basic idea of TeX Live installation is for you to choose one of the
 top-level @emph{schemes}, each of which is defined as a different set of
@@ -51,15 +51,15 @@ highly recommended.
 @node install-tl REFERENCES
 @appendixsec REFERENCES
 
-Post-installation configuration, package updates, and much more, are
+Post-installation configuration, package updates, and more, are
 handled through @strong{tlmgr}(1), the TeX Live Manager
-(@url{http://tug.org/texlive/tlmgr.html}).
+(@url{https://tug.org/texlive/tlmgr.html}).
 
 The most up-to-date version of this installer documentation is on the
-Internet at @url{http://tug.org/texlive/doc/install-tl.html}.
+Internet at @url{https://tug.org/texlive/doc/install-tl.html}.
 
 For the full documentation of TeX Live, see
-@url{http://tug.org/texlive/doc}.
+@url{https://tug.org/texlive/doc}.
 
 @node install-tl OPTIONS
 @appendixsec OPTIONS
@@ -72,7 +72,7 @@ option by either a space or @code{=}.
 @item @strong{-gui} [[=]@emph{module}]
 @anchor{install-tl @strong{-gui} [[=]@emph{module}]}
 
-If no @emph{module} is given, starts the @code{perltk} (see below) GUI installer.
+If no @emph{module} is given, starts the Tcl/Tk (see below) GUI installer.
 
 If @emph{module} is given loads the given installer module. Currently the
 following modules are supported:
@@ -84,97 +84,92 @@ following modules are supported:
 The text mode user interface (default on Unix systems).  Same as the
 @code{-no-gui} option.
 
+@item @code{tcl}
+@anchor{install-tl @code{tcl}}
+
+The Tcl/Tk user interface (default on Macs and Windows).  It starts
+with a small number of configuration options, roughly equivalent
+to what the wizard option below offers, but a button @code{Advanced}
+takes you to a screen with roughly the same options as the @code{perltk}
+interface.
+
 @item @code{wizard}
 @anchor{install-tl @code{wizard}}
 
-The wizard mode user interface (default on Windows), asking only minimal
-questions before installing all of TeX Live.
+The wizard mode user interface, asking only minimal questions before
+installing all of TeX Live.
+
+@item @code{expert}
+@anchor{install-tl @code{expert}}
+
+A generic name for, currently, @code{perltk}; it may select a different GUI
+in the future.
 
 @item @code{perltk}
 @anchor{install-tl @code{perltk}}
 
-The expert GUI installer, providing access to more options.  
-Can also be invoked on Windows by running @code{install-tl-advanced.bat}.
+The expert GUI installer, providing access to more options.
 
 @end table
 
-The @code{perltk} and @code{wizard} modules, and thus also when calling with
-bare @code{-gui} (with no @emph{module}), require the Perl/Tk module
-(@url{http://tug.org/texlive/distro.html#perltk}); if Perl/Tk is not
-available, installation continues in text mode.
+The @code{perltk} and @code{wizard} modules require the Perl/Tk module
+(@url{https://tug.org/texlive/distro.html#perltk}). if Perl/Tk is not
+available, installation continues in text mode, except on Windows,
+where all gui options except @code{text} are diverted to the default
+@code{tcl} GUI.
+
+The @code{tcl} GUI requires Tcl/Tk. This is standard on Macs and is often
+already installed on GNU/Linux. For Windows, TeX Live provides a Tcl/Tk
+runtime.
 
 @item @strong{-no-gui}
 @anchor{install-tl @strong{-no-gui}}
 
-Use the text mode installer (default except on Windows).
+Use the text mode installer (default except on Windows and Macs).
 
 @item @strong{-lang} @emph{llcode}
 @anchor{install-tl @strong{-lang} @emph{llcode}}
 
-By default, the GUI tries to deduce your language from the environment
-(on Windows via the registry, on Unix via @code{LC_MESSAGES}). If that fails
-you can select a different language by giving this option with a
-language code (based on ISO 639-1).  Currently supported (but not
-necessarily completely translated) are: English (en, default), Czech
-(cs), German (de), French (fr), Italian (it), Japanese (ja), Dutch (nl),
-Polish (pl), Brazilian Portuguese (pt_BR), Russian (ru), Slovak (sk),
-Slovenian (sl), Serbian (sr), Ukrainian (uk), Vietnamese (vi),
-simplified Chinese (zh_CN), and traditional Chinese (zh_TW).
+By default, the GUI tries to deduce your language from the
+environment. The Tcl GUI uses the language detection built into
+Tcl/Tk; the Perl/Tk GUIs use the @code{LC_MESSAGES} environment
+variable. If that fails you can select a different language by
+giving this option with a language code (based on ISO 639-1).
+Currently supported (but not necessarily completely translated) are:
+English (en, default), Czech (cs), German (de), French (fr), Italian
+(it), Japanese (ja), Dutch (nl), Polish (pl), Brazilian Portuguese
+(pt_BR), Russian (ru), Slovak (sk), Slovenian (sl), Serbian (sr),
+Ukrainian (uk), Vietnamese (vi), simplified Chinese (zh_CN), and
+traditional Chinese (zh_TW).
 
 @item @strong{-repository} @emph{url|path}
 @anchor{install-tl @strong{-repository} @emph{url|path}}
 
 Specify the package repository to be used as the source of the
-installation, either a local directory via @code{/path/to/directory} or a
-@code{file:/} url, or a network location via a @code{http://}, @code{https://}, or
-@code{ftp://} url.  (No other protocols are supported, and @code{https://} may
-not work on all platforms.)
+installation. In short, this can be a directory name or a url using
+http(s), ftp, or scp. The documentation for @code{tlmgr} has the details
+(@url{https://tug.org/texlive/doc/tlmgr.html#OPTIONS}).
 
-The default is to pick a mirror automatically, using
+For installation, the default is to pick a mirror automatically, using
 @url{http://mirror.ctan.org/systems/texlive/tlnet}; the chosen mirror is
-used for the entire download.  You can use the special argument @code{ctan}
-as an abbreviation for this.  See @url{http://ctan.org} for more about CTAN
-and its mirrors.
-
-If the repository is on the network, trailing @code{/} characters and/or
-trailing @code{/tlpkg} and @code{/archive} components are ignored.  For example,
-you could choose a particular CTAN mirror with something like this:
-
-@verbatim
-  -repository http://ctan.example.org/its/ctan/dir/systems/texlive/tlnet
-@end verbatim
-
-Of course a real hostname and its particular top-level CTAN directory
-have to be specified.  The list of CTAN mirrors is available at
-@url{http://ctan.org/mirrors}.
-
-If the repository is local, the installation type (compressed or live) is
-automatically determined, by checking for the presence of a
-@code{archive} directory relative to the root.  Compressed is
-preferred if both are available, since it is faster.  Here's an example
-of using a local directory:
-
-@verbatim
-  -repository /local/TL/repository
-@end verbatim
+used for the entire download. You can use the special argument @code{ctan}
+as an abbreviation for this. (See @url{https://ctan.org} for more about CTAN
+and its mirrors.)
 
 After installation is complete, you can use that installation as the
 repository for another installation.  If you chose to install less than
 the full scheme containing all packages, the list of available schemes
 will be adjusted accordingly.
 
-For backward compatibility and convenience, @code{--location} and @code{--repo}
-are accepted as aliases for this option.
-
 @item @strong{-select-repository}
 @anchor{install-tl @strong{-select-repository}}
 
-This option allows manual selection of a mirror from the current list of
-active CTAN mirrors.  This option is supported in all installer modes
-(text, wizard, perltk), and will also offer to install from local media
-if available, or from a repository specified on the command line (see
-above).  It's useful when the (default) automatic redirection does not
-choose a good host for you.
+This option allows you to choose a particular mirror from the current
+list of active CTAN mirrors. This option is supported in the @code{text},
+@code{wizard} and @code{perltk} installer modes, and will also offer to install
+from local media if available, or from a repository specified on the
+command line. It's useful when the (default) automatic redirection does
+not choose a good host for you.
 
 @item @strong{-all-options}
 @anchor{install-tl @strong{-all-options}}
@@ -198,14 +193,14 @@ actions.  To install multiple custom binary sets, manually rename
 @code{custom} before doing each.
 
 For more information on custom binaries, see
-@url{http://tug.org/texlive/custom-bin.html}.  For general information on
-building TeX Live, see @url{http://tug.org/texlive/build.html}.
+@url{https://tug.org/texlive/custom-bin.html}.  For general information on
+building TeX Live, see @url{https://tug.org/texlive/build.html}.
 
 @item @strong{-debug-translation}
 @anchor{install-tl @strong{-debug-translation}}
 
-In GUI mode, this switch makes @code{tlmgr} report any missing, or more
-likely untranslated, messages to standard error.  Helpful for
+In the Perl/Tk GUI modes, this option reports any missing, or more
+likely untranslated, messages to standard error. Helpful for
 translators to see what remains to be done.
 
 @item @strong{-force-platform} @emph{platform}
@@ -218,12 +213,12 @@ runnable, or installation will fail.  @code{-force-arch} is a synonym.
 @item @strong{-help}, @strong{--help}, @strong{-?}
 @anchor{install-tl @strong{-help}@comma{} @strong{--help}@comma{} @strong{-?}}
 
-Display this help and exit.  (This help is on the web at
-@url{http://tug.org/texlive/doc/install-tl.html}).  Sometimes the
-@code{perldoc} and/or @code{PAGER} programs on the system have problems,
-possibly resulting in control characters being literally output.  This
-can't always be detected, but you can set the @code{NOPERLDOC} environment
-variable and @code{perldoc} will not be used.
+Display this help and exit. (This help is also on the web at
+@url{https://tug.org/texlive/doc/install-tl.html}). Sometimes the @code{perldoc}
+and/or @code{PAGER} programs on the system have problems, possibly resulting
+in control characters being literally output. This can't always be
+detected, but you can set the @code{NOPERLDOC} environment variable and
+@code{perldoc} will not be used.
 
 @item @strong{-in-place}
 @anchor{install-tl @strong{-in-place}}
@@ -239,9 +234,9 @@ installer interfaces.  USE AT YOUR OWN RISK.
 @item @strong{-init-from-profile} @emph{profile_file}
 @anchor{install-tl @strong{-init-from-profile} @emph{profile_file}}
 
-Similar to @strong{-profile} (see @ref{install-tl PROFILES,, PROFILES} below), but only initializes the
-installation configuration from @emph{profile_file} and then starts the
-interactive session.
+Similar to @strong{-profile} (see @ref{install-tl PROFILES,, PROFILES} below), but only initializes
+the installation configuration from @emph{profile_file} and then starts a
+normal interactive session. Environment variables are not ignored.
 
 @item @strong{-logfile} @emph{file}
 @anchor{install-tl @strong{-logfile} @emph{file}}
@@ -260,16 +255,11 @@ release.
 For the text mode installer only: do not clear the screen when entering
 a new menu (for debugging purposes).
 
-@item @strong{-non-admin}
-@anchor{install-tl @strong{-non-admin}}
-
-For Windows only: configure for the current user, not for all users.
+@item @strong{-no-persistent-downloads}
+@anchor{install-tl @strong{-no-persistent-downloads}}
 
 @item @strong{-persistent-downloads}
 @anchor{install-tl @strong{-persistent-downloads}}
-
-@item @strong{-no-persistent-downloads}
-@anchor{install-tl @strong{-no-persistent-downloads}}
 
 For network installs, activating this option makes the installer try to
 set up a persistent connection using the @code{Net::LWP} Perl module.  This
@@ -288,7 +278,12 @@ By default, if a GnuPG @code{gpg} binary is found in PATH, downloads are
 verified against a cryptographic signature. This option disables such
 verification.  The full description is in the Crytographic Verification
 section of the @code{tlmgr} documentation, e.g.,
-@url{http://tug.org/texlive/doc/tlmgr.html#CRYPTOGRAPHIC-VERIFICATION}
+@url{https://tug.org/texlive/doc/tlmgr.html#CRYPTOGRAPHIC-VERIFICATION}
+
+@item @strong{-non-admin}
+@anchor{install-tl @strong{-non-admin}}
+
+For Windows only: configure for the current user, not for all users.
 
 @item @strong{-portable}
 @anchor{install-tl @strong{-portable}}
@@ -307,7 +302,8 @@ Print the TeX Live identifier for the detected platform
 @anchor{install-tl @strong{-profile} @emph{profile_file}}
 
 Load @emph{profile_file} and do the installation with no user interaction,
-that is, a batch (unattended) install.  See @ref{install-tl PROFILES,, PROFILES} below.
+that is, a batch (unattended) install.  Environment variables are
+ignored. See @ref{install-tl PROFILES,, PROFILES} below.
 
 @item @strong{-q}
 @anchor{install-tl @strong{-q}}
@@ -334,8 +330,8 @@ Include verbose debugging messages; repeat for maximum debugging: @code{-v
 @item @strong{-version}, @strong{--version}
 @anchor{install-tl @strong{-version}@comma{} @strong{--version}}
 
-Output version information and exit.  If @code{-v} has also been given the
-revisions of the used modules are reported, too.
+Output version information and exit.  If @code{-v} is also given, the
+versions of the TeX Live modules used are also reported.
 
 @end table
 
@@ -346,11 +342,17 @@ A @emph{profile} file contains all the values needed to perform an
 installation.  After a normal installation has finished, a profile for
 that exact installation is written to the file @code{tlpkg/texlive.profile}.
 In addition, from the text menu one can select @code{P} to save the current
-setup as a profile at any time.  Such a profile file can be given as the
-argument to @code{-profile}, for example to redo the exact same installation
-on a different system.  Alternatively, you can use a custom profile,
-most easily created by starting from a generated one and changing
-values, or an empty file, which will take all the defaults.
+setup as a profile at any time.
+
+Such a profile file can be given as the argument to @code{-profile}, for
+example to redo the exact same installation on a different system.
+Alternatively, you can use a custom profile, most easily created by
+starting from a generated one and changing values, or an empty file,
+which will take all the defaults.
+
+As mentioned above, the installer only supports selection by scheme and
+collections, not individual packages, so packages cannot be specified in
+profile files either. Use @code{tlmgr} to work at the package level.
 
 Within a profile file, each line consists of
 
@@ -441,7 +443,7 @@ Enable @code{\write18} for a restricted set of programs.
 
 @strong{tlpdb options} (prefix @code{tlpdbopt_})
 
-The definitive list is given in @code{tlpkg/TeXLive/TLConfig.pm}, in
+The definitive list is given in @code{tlpkg/TeXLive/TLConfig.pm}, in the hash
 @code{%TeXLive::TLConfig::TLPDBOptions}, together with explanations.  All
 items given there @emph{except} for @code{tlpdbopt_location} can be specified.
 Here is the current list:
@@ -465,13 +467,13 @@ Here is the current list:
 @strong{platform options} (prefix @code{binary_})
 
 For each supported platform in TeX Live (directories under @code{bin/}), the
-variable @code{binary_}@emph{PLATFORM} can be set.  For example:
+variable @code{binary_}@emph{PLATFORM} can be set with value 1.  For example:
 
 @verbatim
-  binary_x86_64-linux
+  binary_x86_64-linux 1
 @end verbatim
 
-If no @code{binary_} variable is specified, the default is whatever the
+If no @code{binary_} settings are made, the default is whatever the
 current machine is running.
 
 In releases before 2017, many profile variables had different
@@ -480,16 +482,29 @@ accepted and transformed to the names given above.  When a profile is
 written, the names above are always used.
 
 For more details on all of the above options, consult the TeX Live
-installation manual, linked from @url{http://tug.org/texlive/doc}.
+installation manual, linked from @url{https://tug.org/texlive/doc}.
 
 @node install-tl ENVIRONMENT VARIABLES
 @appendixsec ENVIRONMENT VARIABLES
 
-For ease in scripting and debugging, @code{install-tl} will look for the
-following environment variables.  They are not of interest for normal
+For ease in scripting and debugging, @code{install-tl} looks for the
+following environment variables. They are not of interest for normal
 user installations.
 
 @table @asis
+@item @code{TEXLIVE_DOWNLOADER}
+@anchor{install-tl @code{TEXLIVE_DOWNLOADER}}
+
+@item @code{TL_DOWNLOAD_PROGRAM}
+@anchor{install-tl @code{TL_DOWNLOAD_PROGRAM}}
+
+@item @code{TL_DOWNLOAD_ARGS}
+@anchor{install-tl @code{TL_DOWNLOAD_ARGS}}
+
+These override the normal choice of a download program; see the @code{tlmgr}
+documentation, e.g.,
+@url{https://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES}.
+
 @item @code{TEXLIVE_INSTALL_ENV_NOCHECK}
 @anchor{install-tl @code{TEXLIVE_INSTALL_ENV_NOCHECK}}
 
@@ -502,11 +517,17 @@ variables.
 
 Omit creating the ConTeXt cache.  This is useful for redistributors.
 
+@item @code{TEXLIVE_INSTALL_NO_IMPORT}
+@anchor{install-tl @code{TEXLIVE_INSTALL_NO_IMPORT}}
+
+Omit check for installing on top of a previous installation and then
+asking about importing previous settings.
+
 @item @code{TEXLIVE_INSTALL_NO_WELCOME}
 @anchor{install-tl @code{TEXLIVE_INSTALL_NO_WELCOME}}
 
 Omit printing the welcome message after successful installation, e.g.,
-for testing.
+when testing.
 
 @item @code{TEXLIVE_INSTALL_PREFIX}
 @anchor{install-tl @code{TEXLIVE_INSTALL_PREFIX}}
@@ -549,8 +570,8 @@ Don't try to run the @code{--help} message through @code{perldoc}.
 @appendixsec AUTHORS AND COPYRIGHT
 
 This script and its documentation were written for the TeX Live
-distribution (@url{http://tug.org/texlive}) and both are licensed under the
+distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: install-tl 46908 2018-03-10 00:46:28Z preining $
+$Id: install-tl 54143 2020-03-06 23:51:18Z karl $
 

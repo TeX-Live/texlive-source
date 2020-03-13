@@ -1,3 +1,9 @@
+2020-03-13  Karl Berry  <karl@tug.org>
+
+	* tlbuild.texi: update for 2020.
+
+	* build-tools.txt: bison 3.5.2.
+
 2019-12-22  Karl Berry  <karl@freefriends.org>
 
 	* build-tools.txt: bison 3.5.

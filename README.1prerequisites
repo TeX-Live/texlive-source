@@ -6,36 +6,37 @@
 ***************
 
 Overall, building the TeX Live programs, when using all libraries from
-the TL source tree, requires only C and C++ compilers and GNU 'make'.
-(If 'make' from your 'PATH' is not GNU make, you can set 'MAKE' in the
-environment to whatever is necessary.)
+the TL source tree, requires C and C++11 compilers and GNU 'make'.  If
+'make' from your 'PATH' is not GNU make, you can set the 'MAKE'
+environment variable to whatever is necessary.
 
    GNU 'make' is required only because of some third-party libraries,
 notably FreeType; all the TL-maintained directories (and
-Automake/Autoconf output in general) should work with any reasonable
-'make'.
+Automake/Autoconf output in general) work with any reasonable 'make'.
 
-   However, a few programs in the tree have additional requirements:
+   A C++11 compiler is similarly required because of the third-party
+libraries ICU and Poppler; the program 'dvisvgm' also requires C++11.
+It is possible to build everything else with older compilers, but you
+have to remove the C++11-dependent sources.  *Note Build one package::.
 
-'dvisvgm'
-     requires a C++11 compiler, such as gcc 4.8.1 (or later) or clang
-     3.3 (or later).
+   A few programs in the tree have additional requirements:
 
 'web2c'
      requires 'perl' for some tests run by 'make check'.
 
 'xdvik'
 'xpdfopen'
-     require X11 headers and libraries, often in "development" packages
-     that are not installed by default.
+     require X11 headers and libraries, typically in "development"
+     packages that are not installed by default.
 
 'xetex'
      requires 'fontconfig' (again both headers and library), or, for
      MacOSX only, the 'ApplicationServices' and 'Cocoa' frameworks.
 
 'xindy'
-     requires GNU 'clisp' and in addition 'perl', 'latex', and
-     'pdflatex' to build the rules and/or documentation.
+     requires GNU 'clisp', 'libsigsegv', and 'libiconv'; additionally,
+     to build the rules and/or documentation: 'perl', 'latex',
+     'pdflatex'.
 
 Lacking the required tools, building these programs must avoided, e.g.,
 'configure --without-x --disable-xetex --disable-xindy'
@@ -44,23 +45,21 @@ Lacking the required tools, building these programs must avoided, e.g.,
 expect:
 
    * Modification of any '.y' or '.l' source files requires 'bison' or
-     'flex' to updatete the corresponding C sources.
+     'flex' to update the corresponding C sources.
 
    * Modification of the sources for '.info' files requires 'makeinfo'.
 
    * Modification of any part of the build system (M4 macros,
      'configure.ac', 'Makefile.am', or their fragments) requires GNU M4,
      GNU Autoconf, GNU Automake, and GNU Libtool to update the generated
-     files.  *Note Build system tools::.
+     files.  Furthermore, to reliably reproduce the build files, the
+     original GNU releases of these tools must be used, not any distro
+     packaging of them.  *Note Build system tools::, for more
+     discussion.
 
    If you haven't modified any source files, and infrastructure tools
 such as 'autoconf' or 'makeinfo' are still being run, check your
 timestamps--notably, 'use-commit-times' must be set to 'yes' in your
 Subversion configuration (*note Build system tools::).  Barring buggy
 commits, no infrastructure tools are needed to do a normal build.
-
-   As an example, on Debian systems the necessary build dependencies can
-be installed via:
-
-     apt-get install libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev
 

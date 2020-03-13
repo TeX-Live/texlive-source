@@ -5,10 +5,10 @@
 2 Overview of build system
 **************************
 
-The TeX Live build system was redesigned in 2009, consistently using
-Autoconf, Automake, and Libtool.  Thus
+The TeX Live build system was redesigned in 2009 to consistently use
+Autoconf, Automake, and Libtool.  Thus, running
    'configure && make && make check && make install'
-or the basically-equivalent top-level 'Build' script suffice to build
+or the essentially-equivalent top-level 'Build' script suffices to build
 and install the TL programs.  The 'make check' clause performs various
 tests of the generated programs--not strictly required but strongly
 recommended.  Running 'configure --help' will display a comprehensive
@@ -34,7 +34,7 @@ program and library module (or package) specifies its own requirements
 and properties, such as required libraries, whether an installed
 (system) version of a library can be used, 'configure' options to be
 seen at the top level, and more.  An explicit list of all available
-modules is kept in only one central place, namely 'm4/kpse-pkgs.m4'.
+modules is kept in a single central place: 'm4/kpse-pkgs.m4'.
 
    A second, related goal is to configure and build each library before
 configuring any other (program or library) module which uses that
@@ -47,6 +47,6 @@ independently.  The corresponding modules use (most of) the distributed
 source tree and document any modifications of that source.
 
    All this is for the sake of simplifying both upgrading of modules and
-integrating new modules into the TL build system.  (Not to say that
-either task is trivial.)
+integrating new modules into the TL build system.  (Despite all efforts,
+neither task is easy.)
 

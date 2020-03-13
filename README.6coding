@@ -10,9 +10,9 @@ should produce no (GCC) compiler warnings at all.  In spite of
 considerable efforts into that direction we are still far from that goal
 and there are reasons that we may never fully reach it.  Below are some
 rules about declarations of functions or variables and the use of
-'const'.  These rules should be applied to most of the TeX Live tree,
-the exception being code that is maintained independently and whose
-maintainers don't want to accept patches.
+'const'.  These rules should be applied to the code maintained in the
+TeX Live tree and for other packages whose maintainers are willing to
+accept patches.
 
 8.1 Declarations and definitions
 ================================
@@ -25,7 +25,7 @@ all function prototypes and definitions must conform to the ANSI C
 standard (including 'void' in the declaration of C functions with no
 parameters).  On the other hand, TL is built for a wide variety of
 systems, not all of which support the C99 standard.  Therefore using C99
-features should be avoided if that can easily be done.  In particular C
+features should be avoided if that can easily be done.  In particular, C
 code must not contain declarations after statements or C++-style
 comments.
 
@@ -34,7 +34,7 @@ verify that they are available and otherwise provide an alternative.
 For example, the module 'texk/chktex' uses the C99 function 'stpcpy()'
 that may or may not be available on a particular system.  It uses
 'AC_CHECK_DECLS([stpcpy])' in 'configure.ac' to test this, and provides
-the perhaps slightly less efficient alternative
+a perhaps less efficient alternative (in the file 'Utility.h'):
 
      #if !(defined HAVE_DECL_STPCPY && HAVE_DECL_STPCPY)
      static inline char *stpcpy(char *dest, const char *src)
@@ -43,13 +43,11 @@ the perhaps slightly less efficient alternative
      }
      #endif
 
-in the file 'Utility.h'.
-
 Static functions
 ................
 
 Functions used in only one file should be declared 'static'; they
-require no prototype except as forward declaration.
+require no prototype except in forward declarations.
 
 Extern functions
 ................
@@ -90,16 +88,16 @@ quantity supposed to be constant.
    Getting all 'const' qualifiers right can get quite involved but can
 almost always be done.  There are only a couple notable exceptions: the
 X11 headers are full of declarations that ought to use 'const' but do
-not, and the same is true to some extent for 'libfreetype' (but,
-thankfully, not for 'zlib' nowadays).
+not; at one time, 'libfreetype' also did not fully specify 'const', but
+this has not been checked recently.
 
 What must be avoided with 'const'
 .................................
 
 The GCC compiler warnings "assignment discards qualifiers..." and
 analogous warnings for "initialization", "passing arg", or "return" must
-be strenously avoided in our own code.  The only exception is when they
-are caused by X11 headers or macros or other third party code.
+be strenuously avoided in our own code.  The only exception is when they
+are caused by X11 declarations or other third party code.
 
 What should be avoided with 'const'
 ...................................

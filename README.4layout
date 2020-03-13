@@ -13,8 +13,8 @@ build and install them together with some of their support files.
 6.1 Build system tools
 ======================
 
-As mentioned above (*note Prerequisites::), a normal build requires very
-little.  On the other hand, if you want to modify the TeX Live
+As mentioned above (*note Prerequisites::), a normal build has few
+requirements.  On the other hand, if you want to modify the TeX Live
 infrastructure sources, such as 'configure.ac' or 'Makefile.am' files,
 you will need to have several additional tools installed.
 
@@ -28,12 +28,12 @@ many extra hassles, so don't do that, tempting as it may be.
    Currently the versions we use are:
 
      autoconf (GNU Autoconf) 2.69
-     automake (GNU automake) 1.15.1
-     bison (GNU Bison) 3.0.4
+     automake (GNU automake) 1.16.1
+     bison (GNU Bison) 3.5.2
      flex 2.6.0
      ltmain.sh (GNU libtool) 2.4.6
      m4 (GNU M4) 1.4.18
-     makeinfo (GNU texinfo) 6.5
+     makeinfo (GNU texinfo) 6.7
 
    These versions should be used to update the generated files (e.g.,
 'configure' or 'Makefile.in') in all or parts of the TL tree after their
@@ -41,16 +41,20 @@ dependencies have been changed.  This can be done explicitly with the
 top-level 'reautoconf' script or implicitly by using the configure
 option '--enable-maintainer-mode'.
 
-   The files in the Subversion repository (see
-<http://tug.org/texlive/svn>) are all up to date, but unfortunately this
-may not be reflected by their timestamps.  (For starters, be sure to set
-'use-commit-times=yes' in '~/.subversion/config' or the equivalent.)
+   It has often turned out that the bison and flex versions are not
+critical; however, the autotools versions are.  If you don't have the
+given versions, get them before modifying the build infrastructure.
 
-   To avoid unnecessary runs of 'bison', 'flex', or 'makeinfo' it may be
-necessary to 'touch' the generated ('.c', '.h', or '.info') files.  With
-'--enable-maintainer-mode' it may also be necessary to 'touch' first
-'aclocal.m4', then 'configure' and 'config.h.in' (or 'c-auto.in'), and
-finally all 'Makefile.in' files.  Perhaps 'make -t' will help.
+   The files in the Subversion repository (see
+<https://tug.org/texlive/svn>) are all up to date (barring bugs).  For
+this to be reflected by their timestamps in your checkout, be sure to
+set 'use-commit-times=yes' in '~/.subversion/config' or the equivalent.
+
+   If timestamps are wrong, you may also be able to avoid unnecessary
+runs of 'bison', 'flex', or 'makeinfo' with 'touch' of the generated
+('.c', '.h', or '.info') files.  With '--enable-maintainer-mode' it may
+also be necessary to 'touch' first 'aclocal.m4', then 'configure' and
+'config.h.in' (or 'c-auto.in'), and finally all 'Makefile.in' files.
 
 6.2 Top-level directories
 =========================
@@ -81,31 +85,28 @@ configured for the benefit of 'make' targets such as 'dist' or
 
    The top-level 'build-aux/' directory contains the common files
 'compile', 'config.guess', 'config.sub', 'depcomp', etc. used by most
-packages.  These are from the GNU Gnulib sources
-(<http://www.gnu.org/software/gnulib>), which in turn synchronizes with
-the appropriate ultimate upstream repository.  There are, however,
-independent copies in, e.g., 'libs/freetype2/freetype-*/builds/unix/',
-and a few other places.  The 'reautoconf' script does not touch those,
-but a TL cron job keeps them in sync (nightly).
-
-   The directory 'extra/' contains things which are not part of the TL
-build, but are present just for (someone's) convenience, e.g., is
-'epstopdf' development source is here.
+packages.  These are taken from the GNU Gnulib sources
+(<https://www.gnu.org/software/gnulib>), which in turn synchronizes with
+any ultimate upstream repository.  There are independent copies of some
+of these in a few other places, e.g.,
+'libs/freetype2/freetype-*/builds/unix/'.  The 'reautoconf' script does
+not touch those, but a TL cron job keeps them in sync (nightly).
 
    When the top-level './Build' script is used to build TL, two more two
 more top-level directories appear: 'Work/' for the build tree, and
 'inst/' for the install tree (from 'make install').  These names (and
 everything else about 'Build''s operation) can be changed by setting
-environment variables before running it; see the script file.
+environment variables before running it; see the script source.
 
 6.3 Autoconf macros
 ===================
 
-Here we describe some of the Autoconf macros used in several modules-not
-a complete list, by any means.  These general macros are supplemented by
-module-specific macros in directories such as 'texk/dvipng/m4/'; some of
-those are described in *note Library modules:: and *note Program
-modules::.
+Here we describe a few of the Autoconf macros used in several
+modules--many more are defined in the sources; see the top-level 'm4/'
+directory.  These general macros are supplemented by module-specific
+macros in directories such as 'texk/dvipng/m4/'; some of those are
+described in following sections (*note Library modules:: and *note
+Program modules::).
 
 6.3.1 General setup macros
 --------------------------
@@ -126,8 +127,8 @@ The TL sources use two general setup macros:
         'LT_INIT([win32-dll])'
         'AC_SYS_LARGEFILE'
         'AC_FUNC_FSEEKO'
-     and check for frequently used functions, headers, types, and
-     structures.  This is used for TeX-specific modules.
+     along with checks for frequently used functions, headers, types,
+     and structures.  This is used for TeX-specific modules.
 
 6.3.2 Macros for programs
 -------------------------
@@ -135,11 +136,11 @@ The TL sources use two general setup macros:
 Macros for program checks:
 
  -- Macro: KPSE_CHECK_LATEX
-     Set 'LATEX' to the name of the first of 'latex', 'elatex', or
-     'lambda' which exists in 'PATH', or to 'no' if none of them exists.
-     Call 'AC_SUBST' for 'LATEX'.  The result of this test can be
-     overridden by setting the 'LATEX' environment variable or the cache
-     variable 'ac_cv_prog_LATEX'.
+     Set 'LATEX' to the first of 'latex', 'elatex', or 'lambda' which
+     exists in 'PATH', or to 'no' if none of them exists.  Call
+     'AC_SUBST' for 'LATEX'.  The result of this test can be overridden
+     by setting the 'LATEX' environment variable or the cache variable
+     'ac_cv_prog_LATEX'.
 
  -- Macro: KPSE_CHECK_PDFLATEX
      Check for 'pdflatex' in 'PATH' and set 'PDFLATEX'.
@@ -159,8 +160,8 @@ Macros for compiler-related checks:
      When using the (Objective) C/C++ compiler, set
      'WARNING_[OBJ]C[XX]FLAGS' to suitable warning flags (depending on
      the value given to or implied for '--enable-compiler-warnings').
-     Call 'AC_SUBST' for them.  At the moment this only works for GNU
-     compilers, but could be extended to others if necessary.
+     Call 'AC_SUBST' for them.  At present this assumes GNU compiler
+     warning options, but could be extended to others if necessary.
 
      This macro caches its results in the 'kpse_cv_warning_cflags', ...
      variables.
@@ -168,9 +169,9 @@ Macros for compiler-related checks:
  -- Macro: KPSE_COMPILER_VISIBILITY
      When using the C or C++ compiler, try to set
      'VISIBILITY_C[XX]FLAGS' to flags to hide external symbols.  Call
-     'AC_SUBST' for this variable.  At the moment this only tests for
-     the compiler option '-fvisibility=hidden', but that could be
-     extended with more checks if necessary.
+     'AC_SUBST' for this variable.  At present this only tests for the
+     compiler option '-fvisibility=hidden', but could be extended if
+     necessary.
 
      This macro caches its results in the 'kpse_cv_visibility_cflags' or
      'kpse_cv_visibility_cxxflags' variable.
@@ -178,8 +179,7 @@ Macros for compiler-related checks:
  -- Macro: KPSE_CXX_HACK
      Provide the configure option '--enable-cxx-runtime-hack'.  If
      enabled and when using 'g++', try to statically link with
-     'libstdc++', somewhat improving portability of the resulting
-     binary.
+     'libstdc++', notably improving portability of the resulting binary.
 
      This macro caches its result in the 'kpse_cv_cxx_hack' variable.
 
@@ -202,10 +202,12 @@ library.  E.g., for 'libs/libpng':
  -- Macro: KPSE_LIBPNG_FLAGS
      Provide the configure option '--with-system-libpng'.  Set and
      'AC_SUBST' 'make' variables for modules using this library (either
-     an installed version or from the TeX Live tree): 'LIBPNG_INCLUDES'
-     for use in 'CPPFLAGS', 'LIBPNG_LIBS' for use in 'LDADD',
-     'LIBPNG_DEPEND' for use as dependency, and 'LIBPNG_RULE' defining
-     'make' rules to rebuild the library.
+     an installed version or from the TeX Live tree):
+
+     'LIBPNG_INCLUDES'   for use in 'CPPFLAGS',
+     'LIBPNG_LIBS'       for use in 'LDADD',
+     'LIBPNG_DEPEND'     for use as a Makefile dependency,
+     'LIBPNG_RULE'       for the 'make' rules to rebuild the library.
 
  -- Macro: KPSE_ADD_FLAGS (NAME)
      Temporarily extend 'CPPFLAGS' and 'LIBS' with the values required
@@ -229,7 +231,7 @@ and its 'Makefile.am' would be along these lines:
      ## Rebuild libpng
      @LIBPNG_RULE@
 
-   If it was necessary to examine whether certain 'zlib' or 'libpng'
+   If it were necessary to examine whether certain 'zlib' or 'libpng'
 features were available, 'configure.ac' should be continued this way:
      KPSE_ADD_FLAGS([zlib])
      ... # tests for 'zlib' features, if any
@@ -244,10 +246,10 @@ Windows differs in several aspects from Unix-like systems, many of them
 due to the lack of symbolic links.
 
  -- Macro: KPSE_CHECK_WIN32
-     Check if compiling for a Windows system.  The result is 'no' for
-     Unix-like systems (including Cygwin), 'mingw32' for Windows with
-     GCC, or 'native' for Windows with MSVC. The result is cached in the
-     'kpse_cv_have_win32' variable.
+     Check if compiling for a Windows system.  The result is either 'no'
+     for Unix-like systems (including Cygwin), 'mingw32' for Windows
+     with GCC, or 'native' for Windows with MSVC. The result is cached
+     in the 'kpse_cv_have_win32' variable.
 
  -- Macro: KPSE_COND_WIN32
      Call 'KPSE_CHECK_WIN32' and define the Automake conditional 'WIN32'
@@ -266,7 +268,7 @@ due to the lack of symbolic links.
      Linked scripts::).
 
  -- Macro: KPSE_WIN32_CALL
-     Call 'KPSE_COND_WIN32', check if the file
+     Call 'KPSE_COND_WIN32' and check if the file
      'texk/texlive/w32_wrapper/callexe.c' exists; if it does, create a
      symlink in the build tree.  Compiling 'callexe.c' with
      '-DEXEPROG='"FOO.exe"'' and installing 'callexe.exe' as 'BAR.exe'
@@ -283,14 +285,14 @@ structure and variation.
 6.4.1 The 'png' library in 'libs/libpng'
 ----------------------------------------
 
-This generic library uses the source tree in, e.g., the subdirectory
-'libpng-src/' with all modifications for TL recorded in 'TLpatches/*'.
+The "generic" 'png' library uses the source tree in the subdirectory
+'libpng-src/', with all modifications for TL recorded in 'TLpatches/*'.
 The 'configure.ac' fragment 'ac/withenable.ac' contains
 
      KPSE_WITH_LIB([libpng], [zlib])
 
-specifying the module name, and indicating the dependency on 'zlib'.  A
-third literal argument 'tree' would specify that the library from the
+to specify the module name and indicate the dependency on 'zlib'.  A
+third literal argument ''tree'' would specify that the library from the
 TeX Live tree cannot be replaced by a system version.  That not being
 the case here, a second fragment 'ac/libpng.ac' contains
 
@@ -308,27 +310,30 @@ thus providing the simple C code
        return 0; }
 
 which Autoconf uses to verify the usability of a system version with C
-code.  The analogous macro 'KPSE_TRY_LIBXX' would check using C++ code.
-These fragments are included by 'configure.ac' at the top level.
+code.  The analogous macro 'KPSE_TRY_LIBXX' would check using C++.
+These fragments are included by the 'configure.ac' at the top level of
+TL ('Build/source/configure.ac').
 
-   For this library, among many other modules, a proxy build system for
-TL is used ('configure.ac', 'Makefile.am', and 'include/Makefile.am'),
-ignoring the distributed one.  Consequently, a few generated files and
-auxiliary scripts are removed from the distributed source tree.  The
-public headers 'png.h', 'pngconf.h', and 'pnglibconf.h' are "installed"
-(as symlinks) under 'include/' in the build tree exactly as they are for
-a system version under, e.g., '/usr/include/'.
+   For this library, like many other modules, a proxy build system for
+TL is used, consisting of our own 'configure.ac', 'Makefile.am',
+'include/Makefile.am'; the distributed build system is not used.
+(Consequently, a few generated files and auxiliary scripts are removed
+from the distributed source tree.)
+
+   The public headers 'png.h', 'pngconf.h', and 'pnglibconf.h' are
+"installed" (as symlinks) under 'include/' in the build tree exactly as
+they are for a system version under, e.g., '/usr/include/'.
 
    The module is supplemented by the file 'm4/kpse-libpng-flags.m4' that
 defines the M4 macro 'KPSE_LIBPNG_FLAGS' used by all modules depending
 on this library in their 'configure.ac' to generate the 'make' variables
 'LIBPNG_INCLUDES' for use in 'CPPFLAGS', 'LIBPNG_LIBS' for use in
-'LDADD', 'LIBPNG_DEPEND' for use as dependencies, and 'LIBPNG_RULE'
-defining 'make' rules to rebuild the library.
+'LDADD', 'LIBPNG_DEPEND' for use as dependencies, and 'LIBPNG_RULE' for
+the 'make' rules to rebuild the library.
 
    'm4/kpse-libpng-flags.m4' also supplies the configure option
-'--with-system-libpng' and uses 'pkg-config' to determine the flags
-required for the system library.
+'--with-system-libpng', which then uses 'pkg-config' to determine the
+flags required for the system library.
 
 6.4.2 The 'zlib' library in 'libs/zlib'
 ---------------------------------------
@@ -342,36 +347,40 @@ locations of the 'zlib' headers and/or library.
 6.4.3 The 'freetype' library in 'libs/freetype2'
 ------------------------------------------------
 
-This module uses a wrapper build system with an almost trivial
-'configure.ac' and with a 'Makefile.am' that invokes 'configure' and
-'make' for the distributed source, followed by 'make install' with the
-build tree as destination.  The flags required for the system library
-are obtained through 'freetype-config'.
+This module uses a wrapper build system.  In contrast to the proxy build
+described earlier, the wrapper build has an almost trivial
+'configure.ac' and a 'Makefile.am' which invokes the 'configure' and
+'make' in the distributed source, followed by 'make install' with the TL
+build tree as destination.  In other words, this actually uses the build
+system provided by upstream (possibly patched).
+
+   The flags required for the system library are obtained through
+'freetype-config'.
 
 6.4.4 The 'kpathsea' library in 'texk/kpathsea'
 -----------------------------------------------
 
 This is one of the TeX-specific libraries that are maintained as part of
-TeX Live (*note (kpathsea)::).  Despite being a core part of the TeX
-system, it is not a terribly special case in the infrastructure.  The
-TeX libraries are Libtool libraries (static and/or shared) and are
-installed by 'make install' together with the programs.  They are,
-however, not part of the TL DVD as distributed by TeX user groups, and
-have never been officially released for standalone use.
+TeX Live (*note (kpathsea)::); the other is 'ptexenc'.  These TeX
+libraries are Libtool libraries (static and/or shared) and are installed
+by 'make install' together with the programs.  They are, however, not
+part of the TL DVD as distributed by TeX user groups, and have never
+been officially released for standalone use.
 
-   It is possible, and perhaps even useful for distro builds (*note
-Distro builds::), to specify the configure option
-'--with-system-kpathsea' in order to use a system version of the
-library.  Programs outside the TL tree should use 'pkg-config' for the
-required flags.
+   It is possible, and probably useful for distro builds (*note Distro
+builds::), to specify the configure option '--with-system-kpathsea' in
+order to use a system version of the library.  Programs outside the TL
+tree should use 'pkg-config' for the required flags.
 
-   In addition to 'ac/withenable.ac' and 'ac/kpathsea.ac' there is a
-third fragment 'ac/mktex.ac' included by both 'ac/withenable.ac' and
-'configure.ac' that supplies configure options such as
-'--enable-mktextfm-default', which determine the compile time default of
-whether or not to run 'mktextfm' to generate a missing '.tfm' file.  In
-any case, however, the command line options '-mktex=tfm' or
-'-no-mktex=tfm' for the TeX-like engines override this default.
+   In addition to 'kpathsea/ac/withenable.ac' and
+'kpathsea/ac/kpathsea.ac' here there is a third fragment
+'kpathsea.ac/mktex.ac', included by both 'withenable.ac' and
+'configure.ac', which supplies configure options such as
+'--enable-mktextfm-default'.  These determine the compile time default
+of whether or not to run 'mktextfm' (and similar) to generate a missing
+'.tfm' (or whatever) file.  In any case, however, the command line
+options '-mktex=tfm' or '-no-mktex=tfm' for the TeX-like engines
+override this default.
 
 6.5 Program modules
 ===================
@@ -382,10 +391,10 @@ for a few of the programs in TL.
 6.5.1 The 't1utils' package in 'utils/t1utils'
 ----------------------------------------------
 
-Once again we use the distributed source tree 't1utils-src' with
-modifications documented in 'TLpatches/*' and a proxy build system
-consisting of 'configure.ac' and 'Makefile.am'.  The fragment
-'ac/withenable.ac' contains
+Here we use the distributed source tree 't1utils-src' with modifications
+documented in 'TLpatches/*' and a proxy build system consisting of
+'configure.ac' and 'Makefile.am'.  The fragment 'ac/withenable.ac'
+contains
 
      KPSE_ENABLE_PROG([t1utils])
 
@@ -396,45 +405,46 @@ configure option '--disable-t1utils'.
 ------------------------------------------
 
 This module uses the distributed source tree 'xindy-src/' with
-modifications documented in 'TLpatches/*', a proxy 'configure.ac', and a
-wrapper 'Makefile.am' that descends into 'xindy-src'.  The 'xindy' build
-requires a 'make' that supports a 'VPATH' build, can handle all targets,
-and do not refer to '${top_srcdir}' or '${top_builddir}'.  The fragment
-'ac/withenable.ac' contains
+modifications documented in 'TLpatches/*', and a wrapper 'configure.ac'
+and 'Makefile.am' that descends into 'xindy-src'.
 
-     KPSE_ENABLE_PROG([xindy], , [disable native])
+   The 'xindy' build requires a 'make' that supports a 'VPATH' build,
+can handle all targets, and do not refer to '${top_srcdir}' or
+'${top_builddir}'.  The fragment 'xindy/ac/withenable.ac' contains
+
+     KPSE_ENABLE_PROG([xindy], , [disable])
      m4_include(kpse_TL[utils/xindy/ac/xindy.ac])
      m4_include(kpse_TL[utils/xindy/ac/clisp.ac])
 
 where 'disable' in the third argument indicates that 'xindy' is only
 built if explicitly enabled by the user with 'configure --enable-xindy'
-(the need for 'clisp' is too painful to require by default), and
-'native' disallows cross compilation.  The additional fragments
-'ac/xindy.ac' and 'ac/clisp.ac' specify more 'configure' options to be
-seen at the top level with 'ac/xindy.ac' also included by
-'configure.ac'.
+(the need for 'clisp' makes it too painful to enable by default).
+
+   The additional fragments 'ac/xindy.ac' and 'ac/clisp.ac' specify more
+'configure' options to be seen at the top level, with 'ac/xindy.ac' also
+included by 'configure.ac'.
 
 6.5.3 The 'xdvik' package in 'texk/xdvik'
 -----------------------------------------
 
 This package is maintained as part of the TeX Live tree with sources in
-its top level directory and the subdirectory 'gui'.  The fragment
-'ac/withenable.ac' contains
+its own directory ('texk/xdvik/').  The fragment
+'xdvik/ac/withenable.ac' contains
 
      dnl extra_dirs = texk/xdvik/squeeze
      KPSE_ENABLE_PROG([xdvik], [kpathsea freetype2], [x])
      m4_include(kpse_TL[texk/xdvik/ac/xdvik.ac])
 
-thus specifying the dependency on the 'kpathsea', 'freetype', and X11
+thus specifying dependencies on the 'kpathsea', 'freetype', and X11
 libraries.  The M4 comment (following 'dnl') signals the subsidiary
 'squeeze/configure.ac'.  This is needed because the main executable
 'xdvi-bin' (to be installed as, e.g., 'xdvi-xaw') is for the 'host'
 system whereas the auxiliary program 'squeeze/squeeze' has to run on the
-'build' system and in a cross compilation they differ.
+'build' system; in a cross compilation, these differ.
 
    The additional fragment 'ac/xdvik.ac' is also included by
 'configure.ac' and supplies the configure option '--with-xdvi-x-toolkit'
-also seen at the top-level.
+also seen at the top level.
 
 6.5.4 The subdirectory 'utils/asymptote'
 ----------------------------------------
@@ -442,7 +452,8 @@ also seen at the top-level.
 This subdirectory contains the sources for 'asy' and 'xasy' but due to
 its complexity and prerequisites (e.g., OpenGL) it is not part of the TL
 build system.  These programs must be built and installed independently,
-but are included on the TL DVD together with their support files.
+but are included on the TL DVD together with their support files.  See
+<https://tug.org/build.html#asymptote>.
 
 6.6 Extending TeX Live
 ======================
@@ -451,11 +462,11 @@ This section outlines the basic process for adding new packages to the
 TL build system.
 
    In any case, a new package directory 'foo' should contain the
-original sources, as modified for TL, in 'foo/foo-src', and the changes
-should be documented in 'foo/TLpatches/*'; changes should also be
-submitted upstream whenever reasonable, of course.  In addition, 'foo/'
+original sources, modified only with changes necessary for TL, in
+'foo/foo-src'.  The changes should be documented in 'foo/TLpatches/*',
+and also be submitted upstream whenever reasonable.  In addition, 'foo/'
 will need the usual Automake build-related files ('configure.ac',
-'Makefile.am', etc.  Please keep a 'ChangeLog' for all TL changes.
+'Makefile.am', etc.  Please maintain 'foo/ChangeLog' for all TL changes.
 
 6.6.1 Adding a new program module
 ---------------------------------
@@ -475,25 +486,25 @@ mandatory first argument and three optional arguments:
 
   1. a list of required libraries from the TL tree;
 
-  2. a list of options ('disable' if this module is not to be built
+  2. a list of options: 'disable' if this module is not to be built
      without the configure option '--enable-PROG', 'native' if cross
      compilation is not possible, 'x' if the program requires X11
-     libraries);
+     libraries;
 
   3. a comment added to the help text for the 'configure' option
      '--enable-PROG' or '--disable-PROG'.
 
-   If the module requires specific configure options to be seen at the
+   If the module requires specific 'configure' options to be seen at the
 top level, they should be defined in an additional fragment 'ac/PROG.ac'
 included from 'ac/withenable.ac' and 'configure.ac'.
 
    Usually, the new program is maintained somewhere outside of TeX Live.
-In that case, we put the upstream sources into a subdirectory 'PROG-src'
-(e.g., 'utils/newprog/newprog-src').  We do not run 'configure' in this
-original '...-src' directory, only in our own directory, but we do
-compile using the source files in '...-src'.
+In that case, as above, we put the upstream sources into a subdirectory
+'PROG-src' (e.g., 'utils/newprog/newprog-src').  We do not typically run
+'configure' in this original '...-src' directory, but only in our own
+directory; but we do compile using the source files in '...-src'.
 
-   So, these are the files that we must generally create:
+   So, to summarize the files that we must (usually) create:
 
 'ac/withenable.ac'
      The 'KPSE_ENABLE_PROG' call just explained.
@@ -518,10 +529,11 @@ compile using the source files in '...-src'.
      Record all TL-specific changes, now and in the future.
 
    Then, run GNU 'autoreconf' in the new directory (*note Build system
-tools::).  After that works, 'svn add' the necessary files, notably
-'Makefile.in aclocal.m4 configure', and 'svn:ignore' the Automake cache
-'autom4te.cache'.  (This is so people checking out the TL source tree do
-not have to run any autotools, but can simply run 'configure'.)
+tools::).  After that works, 'svn add' the necessary files, including
+the generated 'Makefile.in aclocal.m4 configure', and 'svn:ignore' the
+Automake cache 'autom4te.cache'.  (This is so people checking out the TL
+source tree do not have to run any autotools, but can simply run
+'configure'.)
 
    Then, run the TL tool 'reautoconf' in the top-level TL 'source/'
 directory, to incorporate the new program into the build tree.
@@ -537,7 +549,7 @@ directory, 'make' in the build directory, etc.
 
 A generic library module in a subdirectory 'libs/LIB' must not depend on
 TeX-specific libraries, by definition.  It is included by adding its
-name 'LIB' to the M4 list 'kpse_libs_pkgs' in 'm4/kpse-pkgs.m4'--before
+name 'LIB' to the M4 macro 'kpse_libs_pkgs' in 'm4/kpse-pkgs.m4'--before
 any other libraries from the TeX Live tree on which it depends.
 
    As with program modules, the subdirectory 'libs/LIB' must contain the
@@ -545,9 +557,9 @@ sources and build system for the library (and any installable support
 programs) and a fragment 'ac/withenable.ac' that contains the M4 macro
 'KPSE_WITH_LIB' defined in 'm4/kpse-setup.m4' with 'LIB' as the
 mandatory first argument and two optional arguments: a list of required
-libraries from the TL tree, and a list of options (currently there is
-only one: specify 'tree' if this library cannot be replaced by a system
-version).
+libraries from the TL tree, and a list of options: for libraries,
+currently there is only one--specify 'tree' if this library cannot be
+replaced by a system version.
 
    If a system version can be used, a second fragment 'ac/LIB.ac' is
 needed, containing the M4 macro 'KPSE_TRY_LIB' (or 'KPSE_TRY_LIBXX')
@@ -566,7 +578,7 @@ system version.
    If a system library is allowed, 'KPSE_LIB_FLAGS' also provides the
 configure option '--with-system-LIB' and uses the additional M4 macro
 'KPSE_LIB_SYSTEM_FLAGS' to generate the 'make' variables for a system
-library.  Furthermore the definition of the M4 macro
+library.  In addition, the definition of the M4 macro
 'KPSE_ALL_SYSTEM_FLAGS' in 'm4/kpse-pkgs.m4' must be extended by the
 line:
    'AC_REQUIRE([KPSE_LIB_SYSTEM_FLAGS])'
@@ -579,8 +591,8 @@ other TeX-specific libraries but must not depend on any generic library
 from the TL tree.  It is included in the same general ways as a generic
 library (see the previous section), with these modifications:
 
-   * The library name 'LIB' is added to the M4 list 'kpse_texlibs_pkgs'
-     also in 'm4/kpse-pkgs.m4'.
+   * The library name 'LIB' is added to the M4 macro
+     'kpse_texlibs_pkgs', which is also in 'm4/kpse-pkgs.m4'.
 
    * The fragment 'ac/withenable.ac' must use 'KPSE_WITH_TEXLIB'.
 

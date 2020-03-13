@@ -13,17 +13,17 @@ at the top level gives an exhaustive list of all global options and a
 few important module-specific ones, whereas, e.g.,
    'texk/lcdf-typetools/configure --help'
 also displays the 'lcdf-typetools' specific options, which are not shown
-at the top-level.
+at the top level.
 
    The help text also mentions several influential environment
-variables, but for TeX Live it is better to specify them as assigments
+variables, but for TeX Live it is better to specify them as assignments
 on the command line.
 
    The './Build' script used to make the binaries shipped with TeX Live
 invokes the top-level 'configure' with a few additional options (*note
 Building::).  The defaults discussed below are those for the actual
-'configure' script; invoking 'configure' via './Build' may yield
-different results.
+'configure' script; invoking 'configure' via './Build' yields different
+results.
 
    Defaults for most options are set at the top level and propagated
 explicitly to all subdirectories.  Options specified on the command line
@@ -43,15 +43,14 @@ by the TeX user groups.  This requires GNU 'make' and implies
 are explicitly disabled), and enforces '--disable-shared'.
 
    If building TL for a GNU/Linux or other distribution, this should be
-disabled and system versions of most libraries would be used (*note
-Distro builds::).  This may fail without GNU 'make', but will be tried
-regardless.
+disabled and system versions of most libraries should be used (*note
+Distro builds::).
 
    A related option, '--enable-texlive-build', is automatically passed
 to all subdirectories (and cannot be disabled).  Subdirectories that can
 also be built independently from the TL tree (such as 'utils/xindy' and
-'texk/dvipng') can use this option, e.g., to choose TL-specific
-installation paths.
+'texk/dvipng') but cooperate with TL can use this option to enable
+TL-specific adaptations, such as installation paths.
 
 7.1.2 '--prefix', '--bindir', ...
 ---------------------------------
@@ -66,9 +65,10 @@ location: (automake)Staged Installs.).
 7.1.3 '--disable-largefile'
 ---------------------------
 
-Omit large file support (LFS), needed on most 32-bit Unix systems for
-files with 2GB or more.  Regardless of this, the size of 'DVI' and 'GF'
-files must always be <2GB, due to the file format specifications.
+Omit large file support (LFS), which is needed on most 32-bit Unix
+systems for files with 2GB or more.  Regardless of this option, the size
+of 'DVI' and 'GF' files must always be <2GB, due to the file format
+specifications.
 
    With LFS, there is no fixed limit on the size of PDF files created by
 'pdftex' or PostScript files created by 'dvips'.  The size of PDF images
@@ -85,22 +85,19 @@ when figuring out a specific (sub)set of modules to enable.
 7.1.5 '--enable-compiler-warnings='LEVEL
 ----------------------------------------
 
-Enable various levels of compiler warnings for (Objective) C and C++:
-the LEVEL value can be one of: 'no min yes max all'.  The default is
-'yes' in 'maintainer-mode' (see below) and 'min' otherwise.  This option
-defines 'WARNING_[OBJ]C[XX]FLAGS' but these flags are not used in all
-library and program modules.  Using them should help to resolve
-portability problems.
-
-   At present, these warning flags are only defined for the GNU
-compilers but flags for other compilers could be added when needed.
+Enable various levels of compiler warnings for C, C++, and/or
+Objective C: the LEVEL value can be one of: 'no min yes max all'.  The
+default is 'yes' in 'maintainer-mode' (see below) and 'min' otherwise.
+This option defines the variables 'WARNING_[OBJ]C[XX]FLAGS', but these
+variables are not consistently used in all library and program modules.
+At present, these warning flags assume options from the GNU compilers.
 
 7.1.6 '--enable-cxx-runtime-hack'
 ---------------------------------
 
-If enabled (as it is for the native TL build) and when using 'g++', try
-to statically link with 'libstdc++', somewhat improving portability of
-the resulting binary.  *Note Macros for compilers::.
+If enabled (as it is for the native TL build), when using 'g++', try to
+statically link with 'libstdc++', thus improving portability of the
+resulting binary.  *Note Macros for compilers::.
 
 7.1.7 '--enable-maintainer-mode'
 --------------------------------
@@ -114,11 +111,12 @@ rebuilds infrastructure files as needed.  *Note 'missing' and
 7.1.8 '--enable-multiplatform'
 ------------------------------
 
-If enabled and '--bindir=DIR' or '--libdir=DIR' are not specified,
-install executables and libraries in per-platform subdirectories of
-'EPREFIX/bin' and 'EPREFIX/lib' where EPREFIX is the value given or
-implied for 'exec_prefix'.  In any case, the values for 'bindir' and
-'libdir' are automatically propagated to all subdirectories.
+If enabled (as it is for the native TL build) and '--bindir=DIR' or
+'--libdir=DIR' are not specified, install executables and libraries in
+per-platform subdirectories of 'EPREFIX/bin' and 'EPREFIX/lib' where
+EPREFIX is the value given or implied for 'exec_prefix'.  In any case,
+the values for 'bindir' and 'libdir' are automatically propagated to all
+subdirectories.
 
 7.1.9 '--enable-shared'
 -----------------------
@@ -131,16 +129,16 @@ Build shared versions of the TeX-specific libraries such as
 ------------------------------
 
 Enable the use of less verbose build rules.  When using GNU 'make' (or
-another 'make' implementation supporting nested variable expansions),
-you can specify 'V=1' on the 'make' command line to get more verbosity,
-or 'V=0' to get less, regardless of this option.
+any 'make' implementation supporting nested variable expansions), you
+can specify 'V=1' on the 'make' command line to get more verbosity, or
+'V=0' to get less, regardless of this option.
 
 7.1.11 '--without-ln-s'
 -----------------------
 
 Required when using a system without a working 'ln -s' to build binaries
 for a Unix-like system.  However, 'make install' will not create
-anything useful and might even fail.
+anything useful, and might fail.
 
 7.1.12 '--without-x'
 --------------------
@@ -155,7 +153,7 @@ Here are (some of) the program-specific 'configure' options.
 7.2.1 '--enable-PROG', '--disable-PROG'
 ---------------------------------------
 
-Do or do not build and install the program(s) of the module 'PROG'.
+Do or do not build and install the program(s) of module 'PROG'.
 
 7.2.2 '--disable-all-pkgs'
 --------------------------
@@ -165,10 +163,7 @@ enabled.  This is useful when one wants to work on only a single
 program, which is specified with an additional '--enable' option, e.g.,
 '--enable-dvipdfm-x'.  It's still simplest to check out and configure
 the whole source tree, but at least only the program you are interested
-in, and its dependencies, are built.  The 'configure' will generally
-take less than a minute with everything disabled.  (It is a good idea to
-run 'make check' after doing this, and after making any changes, to
-ensure that whatever tests have been written still pass.)
+in, and its dependencies, are built.  *Note Build one package::.
 
    Without this option, all modules are built except those that are
 explicitly disabled or specify 'disable' in their 'ac/withenable.ac'
@@ -178,13 +173,13 @@ fragment.
 ----------------------------------------
 
 '--with-banner-add=STR'
-Add 'STR' to the default version string ('TeX Live YEAR' or 'Web2C
-YEAR') appended to banner lines.  This is ignored for a native TL build,
-but distro builds should specify, e.g., '/SOMEDISTRO'.
+Add 'STR' to the default version string (which is ''TeX Live YEAR'' or
+''Web2C YEAR'') appended to banner lines.  This is ignored for a native
+TL build, but distro builds should specify, e.g., '/SOMEDISTRO'.
 
 '--with-editor=CMD'
-Specify the command 'CMD' to invoke from the 'e' option of TeX-like
-engines, replacing the default 'vi +%d '%s'' for Unix or 'texworks
+Specify the command 'CMD' to invoke from the 'e' option of TeX and
+friends, replacing the default 'vi +%d '%s'' for Unix or 'texworks
 --position=%d "%s"' for Windows.
 
 '--with-fontconfig-includes=DIR', '--with-fontconfig-libdir=DIR'
@@ -213,8 +208,8 @@ Do not or do build the various TeX, Metafont, and MetaPost engines
 (defaults are defined in the fragment 'texk/web2c/ac/web2c.ac').
 
 '--disable-web-progs'
-Do not build the core WEB programs 'bibtex', ..., 'weave'.  Useful if,
-e.g., you only want to (re)build some engines.
+Do not build the original WEB programs 'bibtex', ..., 'weave'.  Useful
+if, e.g., you only want to (re)build some engines.
 
 '--enable-auto-core'
 This option causes TeX and Metafont to produce a core dump when a
@@ -227,12 +222,12 @@ from linking explicitly with dependencies of 'libfontconfig' such as
 'libexpat'.
 
 '--enable-*win'
-Include various types of other window support for Metafont (EPSF output,
-'mftalk', old terminals, ...).
+Include various types of non-X window support for Metafont (EPSF output,
+'mftalk', old graphics terminals, ...).
 
 '--enable-tex-synctex', '--disable-etex-synctex', ...
 Build the TeX engines with or without 'SyncTeX' support; ignored for a
-native TeX Live build, defaults are again defined in
+native TeX Live build.  Defaults are defined in
 'texk/web2c/ac/web2c.ac'.
 
 '--disable-synctex'
@@ -261,7 +256,7 @@ created by default.  In addition, 'dvipdfm' is created as a symlink to
 'dvipdfmx', with backward-compatible (very slightly different) behavior.
 
 '--disable-dvipdfmx'
-Do not build the 'dvipdfmx' program with the 'dvipdfm' symlink.
+Do not build the 'dvipdfmx' program or make the 'dvipdfm' symlink.
 
 '--disable-xdvipdfmx'
 Do not build the 'xdvipdfmx' program.
@@ -272,8 +267,8 @@ Do not build the 'xdvipdfmx' program.
 '--with-system-libgs'
 Build 'dvisvgm' using installed Ghostscript ('gs') headers and library
 (not allowed for a native TL build).  The default is to load the 'gs'
-library at runtime if possible, or otherwise disable support for
-PostScript specials.
+library at runtime if possible, else to disable support for PostScript
+specials.
 
 '--without-libgs'
 Build 'dvisvgm' without PostScript support at all.  Because the dynamic
@@ -294,15 +289,15 @@ the TL scripts required to run 'texlinks'.
 ----------------------------------------
 
 '--with-gs=FILENAME'
-Hardwire the location of Ghostscript ('gs').
+Hardwire the location of Ghostscript ('gs') as called by Xdvik.
 
 '--with-xdvi-x-toolkit=KIT'
 Use toolkit 'KIT' for 'xdvik', one of: 'motif xaw xaw3d neXtaw'.  The
 default is 'motif' if available, else 'xaw'.
 
 '--enable-xi2-scrolling'
-Use XInput 2.1 "smooth scrolling" if available.  (default: yes, except
-for a native TL build).
+Use XInput 2.1 "smooth scrolling" if available (default: yes, except for
+a native TL build).
 
 7.2.9 Configure options for 'utils/xindy'
 -----------------------------------------
@@ -316,13 +311,12 @@ Build and install 'xindy' documentation (default: yes, except for a
 native TL build).
 
 '--with-clisp-runtime=FILENAME'
-Specifies the Full path for the CLISP runtime file ('lisp.run' or
+Specifies the full path for the Clisp runtime file ('lisp.run' or
 'lisp.exe') to be installed.  When specified as 'default' (the default
-for a native TL build) the path is determined by the CLISP executable;
+for a native TL build) the path is determined by the Clisp executable;
 the value 'system' (not allowed for a native TL build, but the default
-for a non-native one) indicates that 'xindy' will use the installed
-version of 'clisp' (which must be identical to the one used to build
-'xindy').
+otherwise) indicates that 'xindy' will use the installed version of
+'clisp' (which must be identical to the one used to build 'xindy').
 
 7.3 Library-specific configure options
 ======================================
@@ -335,7 +329,7 @@ with this generic one:
    Use an installed (system) version of the library 'LIB'; this option
 exists for most libraries, but is not allowed for a native TL build.
 Using a system version implies also using the system versions of all
-libraries (if any) that LIB depends on.
+libraries that LIB depends on.
 
    For many libraries '--with-LIB-includes=DIR' and
 '--with-LIB-libdir=DIR' can specify non-standard search locations;
@@ -348,7 +342,8 @@ required system libraries and bails out if tests fail.
 --------------------------------------
 
 '--enable-CMD-default', '--disable-CMD-default'
-Determine the compile time default whether or not to run CMD, one of:
+Determine the compile time default for whether or not to run CMD, which
+is one of:
 'mkocp'
      (Omega compiled translation process file)
 'mkofm'
@@ -365,24 +360,22 @@ Determine the compile time default whether or not to run CMD, one of:
      (TFM file)
 
 to generate the specified type of file dynamically.  The default can be
-overridden by the user in any case.
+overridden by the user in any case (*note kpathsea library::).
 
 7.3.2 Configure options for system 'poppler'
 --------------------------------------------
 
-Building LuaTeX (or LuaJITTeX) and XeTeX requires 'poppler', either from
-the TL tree or system headers and library.  Building pdfTeX requires
-either 'xpdf' from the TeX Live tree or system 'poppler' headers and
-library.
+Building XeTeX requires 'poppler', either from the TL tree or system
+headers and library.  Building pdfTeX requires either 'xpdf' from the
+TeX Live tree or system 'poppler' headers and library.
 
 '--with-system-poppler'
 Use a system version (0.18 or newer) of 'poppler' for LuaTeX (or
 LuaJITTeX) and XeTeX, and use 'pkg-config' to obtain the required flags.
 
 '--with-system-xpdf'
-Use a system version (0.12 or better) of 'poppler' (and 'pkg-config')
-for pdfTeX instead of 'xpdf' from the TL tree.  *Note
---disable-largefile::.
+Use a system version (0.12 or newer) of 'poppler' (and 'pkg-config') for
+pdfTeX instead of 'xpdf' from the TL tree.  *Note --disable-largefile::.
 
 7.4 Variables for configure
 ===========================
@@ -396,7 +389,7 @@ but that might not work for cross compilations.
 'CPPFLAGS'
      And plenty more.  As usual with Autoconf, these variables specify
      the name (or full path) of compilers, preprocessor flags, and
-     similar.  *Note autoconf: (GNU Autoconf)Preset Output Variables.
+     similar.  *Note (autoconf)Preset Output Variables::.
 
 'CLISP'
      Name (or full path) of the 'clisp' executable, used to build
@@ -408,7 +401,7 @@ but that might not work for cross compilations.
      These specify the name (or path) for the 'freetype-config',
      'icu-config', and 'pkg-config' commands used to determine the flags
      required for system versions of 'libfreetype', the ICU libraries,
-     or many other libraries.
+     and other libraries, respectively.
 
 'KPSEWHICH'
      Name (or path) of an installed 'kpsewhich' binary, used by 'make

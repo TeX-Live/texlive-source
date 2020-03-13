@@ -9,14 +9,14 @@ This section discusses the results of 'make install' in the source tree.
 
    The main consideration is that 'make install' is not enough to make a
 usable TeX installation.  Beyond the compiled binaries, (thousands of)
-support files are needed; just as a first example 'plain.tex' is not in
+support files are needed; just as a first example, 'plain.tex' is not in
 the source tree.
 
    These support files are maintained completely independently and are
-not present in the source tree.  The best basis for dealing with them is
-the TeX Live (plain text) database in 'Master/tlpkg/texlive.tlpdb',
+not present in the TL source tree.  The best basis for dealing with them
+is the TeX Live (plain text) database in 'Master/tlpkg/texlive.tlpdb',
 and/or the TeX Live installer, 'install-tl'.  More information is under
-'Master/tlpkg' and at <http://tug.org/texlive/distro.html>.
+'Master/tlpkg' and at <https://tug.org/texlive/distro.html>.
 
 5.1 Installation directories
 ============================
@@ -28,7 +28,7 @@ Running 'make install' (or 'make install-strip') installs executables in
 'INFODIR'.
 
    The values of these directories are determined by 'configure' and can
-be specified explictly as options such as '--prefix=PREFIX' or
+be specified explicitly as options such as '--prefix=PREFIX' or
 '--bindir=BINDIR'; otherwise, they are given by their usual Autoconf
 defaults:
 
@@ -55,7 +55,7 @@ except possibly modified as follows:
 The top-level 'configure' script displays all these installation paths.
 
    For the native TL build, the 'Build' script leaves the binaries in
-'./inst/bin/STD-PLATFORM-NAME'.  The new binaries are not directly
+'./inst/bin/STD-SYSTEM-TRIPLET'.  The new binaries are not directly
 usable from that location; they need to be copied to
 'Master/bin/TL-PLATFORM'.  The other files and directories that end up
 in './inst/' are ignored.
@@ -72,8 +72,9 @@ elsewhere with copies under 'texk/texlive/linked_scripts'.
 'DATAROOTDIR/texmf-dist/scripts'; for Unix-like systems a symbolic link
 is made in 'BINDIR'.  For example, a symlink points from 'BINDIR/ps2eps'
 to 'DATAROOTDIR/texmf-dist/scripts/ps2eps/ps2eps.pl'.  For Windows, a
-standard wrapper binary (e.g., 'BINDIR/ps2eps.exe') serves the same
-purpose.  (The source for the wrapper is in 'texk/texlive/w32_wrapper'.)
+standard wrapper binary (copied to, e.g., 'BINDIR/ps2eps.exe') serves
+the same purpose.  The source for the wrapper is in
+'texk/texlive/w32_wrapper'.
 
    One reason for this is to avoid having many copies of the same
 script; a more important reason is that it guarantees the scripts will
@@ -83,9 +84,9 @@ stay in sync across the different supported operating systems.
 to be as close as possible to what is in the TL distribution.  At
 present, there are a few exceptions--Asymptote, Biber, Xindy--and each
 one creates considerable extra work.  We don't want to add more.  (See
-<http://tug.org/texlive/build.html> for information about building those
-exceptions, as well as the 'xz' and 'wget' programs that are used in the
-TL infrastructure.)
+<https://tug.org/texlive/build.html> for information about building
+those exceptions, as well as the 'xz' and 'wget' programs that are used
+in the TL infrastructure.)
 
 5.3 Distro builds
 =================
@@ -96,12 +97,12 @@ different from a "distro" build needed by, e.g., a full GNU/Linux or BSD
 operating system distribution.
 
    The native TL distribution uses shared libraries only when absolutely
-necessary ('libc', 'libm', X11 libraries, and 'libfontconfig').
-However, a distro typically wants to use as many shared libraries as
+necessary ('libc', 'libm', X11 libraries, and 'libfontconfig').  In
+contrast, a distro typically wants to use as many shared libraries as
 possible from elsewhere on the system, including TeX-specific libraries
 such as 'libkpathsea' (even though Kpathsea has never officially been
-released as a shared library, but we digress).  In addition, the
-installation paths will, in general, be completely different.
+released as a shared library).  In addition, the installation paths
+will, in general, be completely different.
 
    Here are the 'configure' options that distro builds are likely to
 find most relevant:
@@ -122,8 +123,8 @@ find most relevant:
      Do not build the static versions of the TeX-specific libraries.
 
 '--with-system-LIB'
-     Use system versions for as many libraries LIB as possible.
-     'configure --help' will give you the list of possibilities.
+     Look for and use a system version of the library LIB.  'configure
+     --help' will give you the list of possibilities.
 
 '--with-LIB-includes=DIR'
 '--with-LIB-libdir=DIR'
@@ -142,7 +143,7 @@ find most relevant:
 (*note Installing::), and many other issues, such as font maps,
 languages, and formats, independently of the build.  Norbert Preining
 has written a detailed article on adapting TL for distros:
-<http://tug.org/TUGboat/tb34-3/tb108preining-distro.pdf>.  (If the
+<https://tug.org/TUGboat/tb34-3/tb108preining-distro.pdf>.  (If the
 article needs updating in the future, perhaps we will merge it into this
 document.)
 
