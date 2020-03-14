@@ -1,7 +1,7 @@
 ## $Id$
 ## Proxy Makefile.am to build libpng for TeX Live.
 ##
-##   Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+##   Copyright 2016-2020 Karl Berry <tex-live@tug.org>
 ##   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
@@ -47,6 +47,11 @@ if PNG_ARM_NEON
 nodist_libpng_a_SOURCES += @LIBPNG_TREE@/arm/arm_init.c\
 	@LIBPNG_TREE@/arm/filter_neon.S @LIBPNG_TREE@/arm/filter_neon_intrinsics.c \
 	@LIBPNG_TREE@/arm/palette_neon_intrinsics.c
+endif
+
+if PNG_POWERPC_VSX
+nodist_libpng_a_SOURCES += @LIBPNG_TREE@/powerpc/powerpc_init.c\
+        @LIBPNG_TREE@/powerpc/filter_vsx_intrinsics.c
 endif
 
 $(libpng_a_OBJECTS): config.force

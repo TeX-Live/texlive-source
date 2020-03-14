@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2016-2020 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -123,6 +123,55 @@ AM_CONDITIONAL([PNG_ARM_NEON],
       arm*|aarch64*) :;;
       *)    test "$enable_arm_neon" != '';;
     esac])
+
+# emacs-page
+# PowerPC
+# ===
+#
+# PowerPC VSX (SIMD) support.
+
+AC_ARG_ENABLE([powerpc-vsx],
+AS_HELP_STRING([[[--enable-powerpc-vsx]]],
+      [Enable POWERPC VSX optimizations: =no/off, check, api, yes/on:]
+      [no/off: disable the optimizations; check: use internal checking code]
+      [api: disable by default, enable by a call to png_set_option]
+      [yes/on: turn on unconditionally.]
+      [If not specified: determined by the compiler.]),
+   [case "$enableval" in
+      no|off)
+         # disable the default enabling on __ppc64__ systems:
+         AC_DEFINE([PNG_POWERPC_VSX_OPT], [0],
+                   [Disable POWERPC VSX optimizations])
+         # Prevent inclusion of the platform specific files below:
+         enable_powerpc_vsx=no;;
+      check)
+         AC_DEFINE([PNG_POWERPC_VSX_CHECK_SUPPORTED], [],
+                   [Check for POWERPC VSX support at run-time])
+         AC_MSG_WARN([--enable-powerpc-vsx Please check contrib/powerpc/README file]
+            [for the list of supported OSes.]);;
+      api)
+         AC_DEFINE([PNG_POWERPC_VSX_API_SUPPORTED], [],
+                   [Turn on POWERPC VSX optimizations at run-time]);;
+      yes|on)
+         AC_DEFINE([PNG_POWERPC_VSX_OPT], [2],
+                   [Enable POWERPC VSX optimizations])
+         AC_MSG_WARN([--enable-powerpc-vsx: please specify 'check' or 'api', if]
+            [you want the optimizations unconditionally pass '-maltivec -mvsx']
+            [or '-mcpu=power8'to the compiler.]);;
+      *)
+         AC_MSG_ERROR([--enable-powerpc-vsx=${enable_powerpc_vsx}: invalid value])
+   esac])
+
+# Add PowerPC specific files to all builds where the host_cpu is powerpc('powerpc*') or
+# where POWERPC optimizations were explicitly requested (this allows a fallback if a
+# future host CPU does not match 'powerpc*')
+
+AM_CONDITIONAL([PNG_POWERPC_VSX],
+   [test "$enable_powerpc_vsx" != 'no' &&
+    case "$host_cpu" in
+      powerpc*|ppc64*) :;;
+    esac])
+
 
 AC_CONFIG_FILES([Makefile include/Makefile])
 

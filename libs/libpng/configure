@@ -625,6 +625,8 @@ ac_includes_default="\
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
+PNG_POWERPC_VSX_FALSE
+PNG_POWERPC_VSX_TRUE
 PNG_ARM_NEON_FALSE
 PNG_ARM_NEON_TRUE
 LIBPNG_DEFINES
@@ -745,6 +747,7 @@ with_system_zlib
 with_zlib_includes
 with_zlib_libdir
 enable_arm_neon
+enable_powerpc_vsx
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1391,6 +1394,12 @@ Optional Features:
                           call to png_set_option; yes/on: turn on
                           unconditionally. If not specified: determined by the
                           compiler.
+  --enable-powerpc-vsx  Enable POWERPC VSX optimizations: =no/off, check,
+                          api, yes/on: no/off: disable the optimizations;
+                          check: use internal checking code api: disable by
+                          default, enable by a call to png_set_option yes/on:
+                          turn on unconditionally. If not specified:
+                          determined by the compiler.
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -6029,6 +6038,67 @@ else
 fi
 
 
+# emacs-page
+# PowerPC
+# ===
+#
+# PowerPC VSX (SIMD) support.
+
+# Check whether --enable-powerpc-vsx was given.
+if test "${enable_powerpc_vsx+set}" = set; then :
+  enableval=$enable_powerpc_vsx; case "$enableval" in
+      no|off)
+         # disable the default enabling on __ppc64__ systems:
+
+$as_echo "#define PNG_POWERPC_VSX_OPT 0" >>confdefs.h
+
+         # Prevent inclusion of the platform specific files below:
+         enable_powerpc_vsx=no;;
+      check)
+
+$as_echo "#define PNG_POWERPC_VSX_CHECK_SUPPORTED /**/" >>confdefs.h
+
+         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: --enable-powerpc-vsx Please check contrib/powerpc/README file
+            for the list of supported OSes." >&5
+$as_echo "$as_me: WARNING: --enable-powerpc-vsx Please check contrib/powerpc/README file
+            for the list of supported OSes." >&2;};;
+      api)
+
+$as_echo "#define PNG_POWERPC_VSX_API_SUPPORTED /**/" >>confdefs.h
+;;
+      yes|on)
+
+$as_echo "#define PNG_POWERPC_VSX_OPT 2" >>confdefs.h
+
+         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: --enable-powerpc-vsx: please specify 'check' or 'api', if
+            you want the optimizations unconditionally pass '-maltivec -mvsx'
+            or '-mcpu=power8'to the compiler." >&5
+$as_echo "$as_me: WARNING: --enable-powerpc-vsx: please specify 'check' or 'api', if
+            you want the optimizations unconditionally pass '-maltivec -mvsx'
+            or '-mcpu=power8'to the compiler." >&2;};;
+      *)
+         as_fn_error $? "--enable-powerpc-vsx=${enable_powerpc_vsx}: invalid value" "$LINENO" 5
+   esac
+fi
+
+
+# Add PowerPC specific files to all builds where the host_cpu is powerpc('powerpc*') or
+# where POWERPC optimizations were explicitly requested (this allows a fallback if a
+# future host CPU does not match 'powerpc*')
+
+ if test "$enable_powerpc_vsx" != 'no' &&
+    case "$host_cpu" in
+      powerpc*|ppc64*) :;;
+    esac; then
+  PNG_POWERPC_VSX_TRUE=
+  PNG_POWERPC_VSX_FALSE='#'
+else
+  PNG_POWERPC_VSX_TRUE='#'
+  PNG_POWERPC_VSX_FALSE=
+fi
+
+
+
 ac_config_files="$ac_config_files Makefile include/Makefile"
 
 
@@ -6183,6 +6253,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${PNG_ARM_NEON_TRUE}" && test -z "${PNG_ARM_NEON_FALSE}"; then
   as_fn_error $? "conditional \"PNG_ARM_NEON\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${PNG_POWERPC_VSX_TRUE}" && test -z "${PNG_POWERPC_VSX_FALSE}"; then
+  as_fn_error $? "conditional \"PNG_POWERPC_VSX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

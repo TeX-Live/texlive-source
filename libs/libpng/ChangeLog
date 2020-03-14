@@ -1,3 +1,12 @@
+2020-03-14  Karl Berry  <karl@freefriends.org>
+
+	Import VSX support from upstream to TL configure.
+	* configure.ac (powerpc-vsx): new AC_ARG_ENABLE, copied
+	from libpng-src/configure.ac.
+	* Makefile.am (nodist_libpng_a_SOURCES) [PNG_POWERPC_VSX]:
+	add powerpc/*.c, copied from libpng-src/Makefile.am.
+	From Johannes Hielscher, tlbuild mail 16 Feb 2020 23:09:54 (item 2).
+
 2019-05-03 Akira Kakuto  <kakuto@w32tex.org>
 
 	Import libpng-1.6.37.
