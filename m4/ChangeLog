@@ -1,3 +1,8 @@
+2020-03-14  Karl Berry  <karl@freefriends.org>
+
+	* kpse-setup.m4 (KPSE_SETUP): make that powerpc*, not powerpc-*.
+	Johannes H tlbuild mail, 16 Feb 2020 23:09:54.
+
 2020-03-12  Karl Berry  <karl@freefriends.org>
 
 	* kpse-setup.m4 (KPSE_SETUP): disable jit programs on any

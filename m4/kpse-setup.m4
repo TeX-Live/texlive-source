@@ -1,6 +1,6 @@
 # $Id$
 # Private macros for the TeX Live (TL) tree.
-# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2020 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -88,7 +88,7 @@ AC_FOREACH([Kpse_Pkg], [luajittex luajithbtex mfluajit mfluajit-nowin], [dnl
 AS_CASE([$enable_[]AS_TR_SH([Kpse_Pkg])],
         [yes | no], [:],
           [AS_CASE([$host],
-                   [alpha* | sparc* | x86_64-*-solaris* | powerpc-* ],
+                   [alpha* | sparc* | x86_64-*-solaris* | powerpc* ],
                      [AC_MSG_NOTICE([$host -> `--disable-]Kpse_Pkg['])
                       ac_configure_args="$ac_configure_args '--disable-]Kpse_Pkg['"])])
 ])
