@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006-2019 TeX Users Group.
+Copyright 2006-2020 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -129,7 +129,7 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
       pdftex - http://pdftex.org/
    [u]pmpost - nothing current, see README for old info
         ptex - https://github.com/texjporg/tex-jp-build
-               old info: http://ascii.asciimw.jp/pb/ptex/
+               old info: https://asciidwango.github.io/ptex/
      synctex - maintained here, but also https://github.com/jlaurens/synctex
        uptex - http://www.t-lab.opal.ne.jp/tex/uptex_en.html
        xetex - http://tug.org/xetex/
