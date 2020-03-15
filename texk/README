@@ -34,8 +34,8 @@ chktex 1.7.6 - checked 15mar20
 cjkutils 4.8.4 - checked 18apr15
   http://cjk.ffii.org/cjk-4.8.4.tar.gz
 
-detex 2.8.5 - checked 03feb19
-  https://github.com/pkubowicz/opendetex
+detex 2.8.6 - checked 15mar20
+  https://github.com/pkubowicz/opendetex/releases
     old info: http://www.cs.purdue.edu/homes/trinkle/detex/
 
 dtl - maintained here, by Takuji

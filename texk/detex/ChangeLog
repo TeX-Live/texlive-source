@@ -1,3 +1,8 @@
+2020-03-15  Karl Berry  <karl@freefriends.org>
+
+	* opendetex-2.8.6 is identical to what we compiled before.
+	Not even the version number was changed, apparently.
+
 2019-02-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Import opendetex-2.8.5, TLpatches adapted.
