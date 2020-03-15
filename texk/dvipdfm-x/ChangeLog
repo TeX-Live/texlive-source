@@ -1,3 +1,9 @@
+2020-03-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tfm.c, tfm.h, vf.c: Fallback multibyte character
+	in virtual font for (u)pTeX.
+	* configure.ac: version 20200315.
+
 2020-02-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* pdfdev.c: Revert the commit on 2019-06-30: see
